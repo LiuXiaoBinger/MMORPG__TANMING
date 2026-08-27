@@ -1,4 +1,4 @@
-# Unity generated data
+﻿# Unity generated data
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -6,10 +6,11 @@
 [Bb]uild/
 [Bb]uilds/
 [Bb]undles/
-[Uu]ser[Ss]ettings/
+# [Uu]ser[Ss]ettings/
 [Mm]emoryCaptures/
 [Rr]ecordings/
-[Yy]oo/
+# [Yy]oo/
+**/CacheBundleFiles/
 
 # IDE and local user settings
 .vs/
@@ -41,4 +42,5 @@ Thumbs.db
 *.log
 
 # Local utility files outside the project
-hfs/
+# hfs/
+FighterAnimations
