@@ -1,0 +1,566 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MyShaderVariants
+  m_Shaders:
+  - first: {fileID: 64, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: SHADOWS_SINGLE_CASCADE SHADOWS_SPLIT_SPHERES
+        passType: 0
+  - first: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+  - first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _DETAIL_MULX2 _METALLICGLOSSMAP
+          _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _DETAIL_MULX2 _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSION _METALLICGLOSSMAP
+          _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _METALLICGLOSSMAP _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _NORMALMAP
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+      - keywords: SHADOWS_DEPTH _METALLICGLOSSMAP
+        passType: 8
+      - keywords: _METALLICGLOSSMAP
+        passType: 8
+  - first: {fileID: 6, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 1
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+  - first: {fileID: 103, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 106, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: _SUNDISK_SIMPLE
+        passType: 0
+  - first: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 210, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: DIRECTIONAL EFFECT_BUMP LIGHTPROBE_SH _ALPHAPREMULTIPLY_ON _EMISSION
+          _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSION _METALLICGLOSSMAP
+          _NORMALMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH _ALPHABLEND_ON _FADING_ON
+        passType: 4
+      - keywords: PROCEDURAL_INSTANCING_ON _ALPHABLEND_ON
+        passType: 8
+      - keywords: PROCEDURAL_INSTANCING_ON _ALPHAPREMULTIPLY_ON
+        passType: 8
+      - keywords: PROCEDURAL_INSTANCING_ON _METALLICGLOSSMAP
+        passType: 8
+      - keywords: SHADOWS_DEPTH _ALPHABLEND_ON
+        passType: 8
+      - keywords: SHADOWS_DEPTH _ALPHAPREMULTIPLY_ON
+        passType: 8
+      - keywords: SHADOWS_DEPTH _METALLICGLOSSMAP
+        passType: 8
+  - first: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: _ALPHABLEND_ON
+        passType: 0
+      - keywords: PROCEDURAL_INSTANCING_ON _ALPHABLEND_ON
+        passType: 8
+      - keywords: SHADOWS_DEPTH _ALPHABLEND_ON
+        passType: 8
+  - first: {fileID: 9000, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9001, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9002, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9003, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9004, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9007, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9101, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9103, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 10511, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 1
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 10720, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 10722, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 1
+  - first: {fileID: 19011, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 145bae762d8de8f4c8fb1b284128fae7, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f155c26344a3f204a85be3c3d983e749, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: -6465566751694194690, guid: 1a990567e3a4fa847826061cb6e1bba7, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: afb821238573a934e931ebd8c53f1b59, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: ea42115d0809b2d4f945b7866c4bdf14, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 190e283e54578424bbb1a4606a4bb37f, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_PARTICLE_UV_ANIMATION _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 384b4cb3a762edf4496ef77190d69485, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 23af926fc8e21ef4e88a609a5ed484ae, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: b4c58e4c77437344c9597cef480cf15f, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSIVE_SIMPLE
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSIVE_SIMPLE _IS_ANGELRING_OFF
+          _IS_CLIPPING_OFF
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSIVE_SIMPLE _IS_ANGELRING_OFF
+          _IS_TRANSCLIPPING_OFF _SHADINGGRADEMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSIVE_SIMPLE _IS_ANGELRING_OFF
+          _IS_TRANSCLIPPING_ON _SHADINGGRADEMAP
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH _EMISSIVE_SIMPLE _IS_ANGELRING_OFF _IS_TRANSCLIPPING_ON
+          _SHADINGGRADEMAP
+        passType: 4
+      - keywords: _IS_OUTLINE_CLIPPING_NO _OUTLINE_NML
+        passType: 4
+      - keywords: _OUTLINE_NML
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+      - keywords: SHADOWS_DEPTH _IS_CLIPPING_OFF
+        passType: 8
+      - keywords: _IS_CLIPPING_OFF
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: e7ca17732f192dc469d5f8b58a26d6f1, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 21427971a435e1049841ff5cdb9ac474, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _BUILTIN_ALPHATEST_ON
+          _BUILTIN_AlphaClip
+        passType: 4
+      - keywords: SHADOWS_DEPTH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+      - keywords: _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 9c1854b105e1700458b323055010b09c, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 39e8f6c102c13be47b740080b506f3c5, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DECAL ENABLE_UV_NOISE _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 46a912b304fe066489ecbf153dde7e91, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DECAL _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 090b6f8c2f4b1324880c934394cf25c7, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 00191177e5fd5c4468ad546ce87ef329, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 4
+      - keywords: SHADOWS_DEPTH _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 8
+  - first: {fileID: 4800000, guid: 5f1925e6d55e34a42967433aa5e7684c, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: bd6af5d577c618947b73aa60db554e51, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 58bd24c3542ca78448b90ae35be39b26, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _ADD_MICRODETAIL
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _BUILTIN_ALPHATEST_ON
+          _BUILTIN_AlphaClip _USE_LERP_FOR_ADDITIVE
+        passType: 4
+      - keywords: SHADOWS_DEPTH _ADD_MICRODETAIL
+        passType: 8
+      - keywords: SHADOWS_DEPTH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _USE_LERP_FOR_ADDITIVE
+        passType: 8
+      - keywords: _ADD_MICRODETAIL
+        passType: 8
+      - keywords: _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _USE_LERP_FOR_ADDITIVE
+        passType: 8
+  - first: {fileID: 4800000, guid: 9a05f5e278d7e794b861aa0979ece425, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSION _METALLICGLOSSMAP
+          _NORMALMAP
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: ca825309dbbb03640874997c5db5cb48, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+  - first: {fileID: -6465566751694194690, guid: e48f517cb46f20243a268277c8c95fb7, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 0da09546e2687eb41b3d37b5eca2c715, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 482790da9e6ee014b93589bbc3fa82cd, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+          _BUILTIN_SURFACE_TYPE_TRANSPARENT _USEALPHANOISE _USEUVNOISE
+        passType: 4
+      - keywords: SHADOWS_DEPTH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _BUILTIN_SURFACE_TYPE_TRANSPARENT
+          _USEALPHANOISE _USEUVNOISE
+        passType: 8
+      - keywords: _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _BUILTIN_SURFACE_TYPE_TRANSPARENT
+          _USEALPHANOISE _USEUVNOISE
+        passType: 8
+  - first: {fileID: 4800000, guid: 9d725f267d6fb9d47981c30980b4fbd0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 36121c42b945b624fb938cb9637f28d0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: f7274c59c7afcab42a8df44effe493b6, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _BASECOLOR_CONTAINS_ALPHA
+          _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _BUILTIN_ALPHATEST_ON
+          _BUILTIN_AlphaClip
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH _BASECOLOR_CONTAINS_ALPHA _BUILTIN_ALPHATEST_ON
+          _BUILTIN_AlphaClip _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 4
+      - keywords: SHADOWS_DEPTH _BASECOLOR_CONTAINS_ALPHA _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+      - keywords: SHADOWS_DEPTH _BASECOLOR_CONTAINS_ALPHA _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+          _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: SHADOWS_DEPTH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+      - keywords: _BASECOLOR_CONTAINS_ALPHA _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+      - keywords: _BASECOLOR_CONTAINS_ALPHA _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+          _BUILTIN_SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip
+        passType: 8
+  - first: {fileID: 4800000, guid: b68b99c2e57cef4419465c63c527201b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 2ba3ea62053e4584fb5f829f88027c3a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 9fe369639c8078e4baabb30604c81ab5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 8bea85fdac912d94799d84a2e681e10b, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+  - first: {fileID: -6465566751694194690, guid: f89c156ed0cb6614cadd160bd49c164c, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 5f63115a7b81b84469158f3b5ae4ad25, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 7e6369f96058ed84892604d368e357fe, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 7a8adb964f5d0b845aa1262aff472189, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
+        passType: 4
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _BUILTIN_ALPHATEST_ON
+          _BUILTIN_AlphaClip _FLIP_NORMAL_GREEN_CHANNEL
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+      - keywords: SHADOWS_DEPTH _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _FLIP_NORMAL_GREEN_CHANNEL
+        passType: 8
+      - keywords: _BUILTIN_ALPHATEST_ON _BUILTIN_AlphaClip _FLIP_NORMAL_GREEN_CHANNEL
+        passType: 8
+  - first: {fileID: 4800000, guid: 49528ee8a4dd8b144a7ff32fe6313789, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 148015dba073af64d86172739cd02c14, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DECAL ENABLE_UV_NOISE _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 2114e074068967f45a8f5d2daf1ac475, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DECAL ENABLE_GLOW ENABLE_UV_NOISE _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 448aa5faa874e114a8c466600729fc82, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DECAL _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: f32acd5fe3136ff449c3b68c0b5f9715, type: 3}
+    second:
+      variants:
+      - keywords: _CHANNEL_R
+        passType: 0
+  - first: {fileID: 4800000, guid: 9aadc53d7cdc63f4898ea042aa9d853b, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN _EMISSIVE_SIMPLE
+        passType: 4
+      - keywords: _OUTLINE_NML
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 8a2dbc1613b61f247af945306bf329a6, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHA_BLEND _CHANNEL_A
+        passType: 4
+  - first: {fileID: 4800000, guid: 0cca3c4f7b649204a9c9edee0085da26, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: a94def2acffda4e4bb6a001369871457, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 65ebf61e1c6310c4aa8065768071beff, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: b2c128c90cba75b4c84aeffaffdce7b1, type: 3}
+    second:
+      variants:
+      - keywords: ENABLE_DISSLOVE ENABLE_DISSLOVE_VERTEX_COLOR _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: 4800000, guid: 6886be02a0addcf49adef3284834824d, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHA_BLEND
+        passType: 4
+  - first: {fileID: -6465566751694194690, guid: d0f6fa7b79f2b5046b73fb4f2aef1666, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL LIGHTPROBE_SH
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: SHADOWS_DEPTH
+        passType: 8

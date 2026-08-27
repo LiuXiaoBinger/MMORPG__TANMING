@@ -1,0 +1,1667 @@
+{
+    "ShaderTotalCount": 72,
+    "VariantTotalCount": 160,
+    "ShaderVariantInfos": [
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-ScreenSpaceShadows",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "SHADOWS_SINGLE_CASCADE",
+                        "SHADOWS_SPLIT_SPHERES"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Legacy Shaders/Diffuse",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/BlitCopy",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Standard",
+            "ShaderVariantCount": 10,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_DETAIL_MULX2",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_DETAIL_MULX2",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSION",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_METALLICGLOSSMAP"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_METALLICGLOSSMAP"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Legacy Shaders/VertexLit",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 1,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Legacy Shaders/Transparent/Diffuse",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Skybox/Cubemap",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Skybox/Procedural",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "_SUNDISK_SIMPLE"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Legacy Shaders/Particles/Additive",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Legacy Shaders/Particles/Alpha Blended",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Particles/Standard Surface",
+            "ShaderVariantCount": 9,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "EFFECT_BUMP",
+                        "LIGHTPROBE_SH",
+                        "_ALPHAPREMULTIPLY_ON",
+                        "_EMISSION",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSION",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_ALPHABLEND_ON",
+                        "_FADING_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_ALPHAPREMULTIPLY_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_METALLICGLOSSMAP"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ALPHAPREMULTIPLY_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_METALLICGLOSSMAP"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Particles/Standard Unlit",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ALPHABLEND_ON"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUITextureClip",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUITextureClipText",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUITexture",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUITextureBlit",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUIRoundedRect",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-GUIRoundedRectWithColorPerBorder",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/Internal-UIRAtlasBlitCopy",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/UIElements/EditorUIE",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Nature/Tree Soft Occlusion Leaves",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 1,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Mobile/Particles/Additive",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Mobile/Particles/VertexLit Blended",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 1,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/TextCore/Distance Field SSD",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/DissolveNoise.shader",
+            "ShaderName": "Hovl/Particles/DissolveNoise",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_Particle__KW__10/AutoBuild_Game_Particle__KW__10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/MainCity_Res/FBX/Water Mats, Shaders/Leaves Foliage.shadergraph",
+            "ShaderName": "Shader Graphs/Leaves Foliage",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/AquariusFantasy/Aquarius Fantasy - Fae Pack/Aquarius Max Character, Scripts/Leaves_Gradient_Windy.shader",
+            "ShaderName": "AquariusMax/Leaves_Gradient_Windy",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/HS_Ice.shadergraph",
+            "ShaderName": "Shader Graphs/HS_Ice",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Materials/AutoBuild_Game_Particle__KW__3_4_5_35_6_7_8_10/AutoBuild_Game_Particle__KW__3_4_5_35_6_7_8_10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__3_4_5_35_6_7_8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_PARTICLE_UV_ANIMATION",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/E3D-RenderCore/Shader/ShaderB/E3DEffect-C1-Add.shader",
+            "ShaderName": "E3DEffect/C1/Add",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_Particle__KW__8_10/AutoBuild_Game_Particle__KW__8_10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/Role_JX/Shaders/LegacyToon.shader",
+            "ShaderName": "Toon (Built-in)",
+            "ShaderVariantCount": 11,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSIVE_SIMPLE"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSIVE_SIMPLE",
+                        "_IS_ANGELRING_OFF",
+                        "_IS_CLIPPING_OFF"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSIVE_SIMPLE",
+                        "_IS_ANGELRING_OFF",
+                        "_IS_TRANSCLIPPING_OFF",
+                        "_SHADINGGRADEMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSIVE_SIMPLE",
+                        "_IS_ANGELRING_OFF",
+                        "_IS_TRANSCLIPPING_ON",
+                        "_SHADINGGRADEMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_EMISSIVE_SIMPLE",
+                        "_IS_ANGELRING_OFF",
+                        "_IS_TRANSCLIPPING_ON",
+                        "_SHADINGGRADEMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_IS_OUTLINE_CLIPPING_NO",
+                        "_OUTLINE_NML"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_OUTLINE_NML"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_IS_CLIPPING_OFF"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_IS_CLIPPING_OFF"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/MainCity_Res/FBX/Water Mats, Shaders/Waterfall Realistic A.shadergraph",
+            "ShaderName": "Shader Graphs/Waterfall Realistic A",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/RoleFaber/Shaders/ShaderGraph/IDA_Hair.shadergraph",
+            "ShaderName": "Shader Graphs/IDA_Hair",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/MainCity_Res/FBX/Water Mats, Shaders/Advanced_Material_A.shadergraph",
+            "ShaderName": "Shader Graphs/Advanced_Material_A",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Shader_UIEffect.shader",
+            "ShaderName": "GM_MMO/Game/Particle_01",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DECAL",
+                        "ENABLE_UV_NOISE",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Materials/AutoBuild_Game_UIParticle__KW__14_8_10/AutoBuild_Game_UIParticle__KW__14_8_10.shader",
+            "ShaderName": "AutoBuild/Game/UIParticle__KW__14_8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DECAL",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/xuanjuepan/E3D-RenderCore/Shader/PBR/E3D-ActorPBR-Mask-Normal.shader",
+            "ShaderName": "E3D/Actor/PBR-Mask-Normal",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/HS_Blend_CG.shadergraph",
+            "ShaderName": "Shader Graphs/HS_Blend_CG",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/UIShaders/LaserCenter.shader",
+            "ShaderName": "IndieImpulse/Unlit/LaserCenter",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Add_CenterGlow.shader",
+            "ShaderName": "Hovl/Particles/Add_CenterGlow",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/RoleFaber/Shaders/ShaderGraph/IDA_Skin.shadergraph",
+            "ShaderName": "Shader Graphs/IDA_Skin",
+            "ShaderVariantCount": 6,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_ADD_MICRODETAIL"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_USE_LERP_FOR_ADDITIVE"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ADD_MICRODETAIL"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_USE_LERP_FOR_ADDITIVE"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_ADD_MICRODETAIL"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_USE_LERP_FOR_ADDITIVE"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/Sword/Sword_Saber/Shader_Mat_Texture/Double-sided.shader",
+            "ShaderName": "Standard Double Sided",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSION",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/BlendDistort.shader",
+            "ShaderName": "Hovl/Particles/BlendDistort",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/MainCity_Res/FBX/Water Mats, Shaders/Water Shader.shadergraph",
+            "ShaderName": "Shader Graphs/Water Shader",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Effects/Weapon/Mat/AFBDistortionAndDissolve.shadergraph",
+            "ShaderName": "Shader Graphs/AFBDistortionAndDissolve",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Lightning.shadergraph",
+            "ShaderName": "KriptoFX/RE2/Lightning",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT",
+                        "_USEALPHANOISE",
+                        "_USEUVNOISE"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT",
+                        "_USEALPHANOISE",
+                        "_USEUVNOISE"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT",
+                        "_USEALPHANOISE",
+                        "_USEUVNOISE"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/E3D-RenderCore/Shader/ShaderB/E3DEffect-C2-Add-Tex-WithAlpha.shader",
+            "ShaderName": "E3DEffect/C2/Add-Tex-WithAlpha",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Distortion.shader",
+            "ShaderName": "Hovl/Particles/Distortion",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/RoleFaber/Shaders/ShaderGraph/IDA_Base.shadergraph",
+            "ShaderName": "Shader Graphs/IDA_Base",
+            "ShaderVariantCount": 9,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BASECOLOR_CONTAINS_ALPHA",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_BUILTIN_SURFACE_TYPE_TRANSPARENT"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Blend_CenterGlow.shader",
+            "ShaderName": "Hovl/Particles/Blend_CenterGlow",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Scroll.shader",
+            "ShaderName": "Hovl/Particles/Scroll",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Explosion.shader",
+            "ShaderName": "Hovl/Particles/Explosion",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Round-1T-Flow.shader",
+            "ShaderName": "E3D/UI/Round-1T-Flow",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/AquariusFantasy/Aquarius Fantasy - Fae Pack/Aquarius Max Character, Scripts/Top_Planar_Shader_A1.shadergraph",
+            "ShaderName": "Shader Graphs/Top_Planar_Shader_A1",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/UIShaders/LaserCenterType2.shader",
+            "ShaderName": "IndieImpulse/Unlit/LaserCenterType2",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/UIShaders/GradientMask.shader",
+            "ShaderName": "IndieImpulse/Unlit/GradientMask",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/RoleFaber/Shaders/ShaderGraph/IDA_Clothes.shadergraph",
+            "ShaderName": "Shader Graphs/IDA_Clothes",
+            "ShaderVariantCount": 6,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_FLIP_NORMAL_GREEN_CHANNEL"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_FLIP_NORMAL_GREEN_CHANNEL"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "_BUILTIN_ALPHATEST_ON",
+                        "_BUILTIN_AlphaClip",
+                        "_FLIP_NORMAL_GREEN_CHANNEL"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/xuanjuepan/Resources/Shader/MogoSkybox.shader",
+            "ShaderName": "Mogo/Skybox",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_Particle__KW__14_8_9_10/AutoBuild_Game_Particle__KW__14_8_9_10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__14_8_9_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DECAL",
+                        "ENABLE_UV_NOISE",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Materials/AutoBuild_Game_Particle__KW__14_23_8_9_10_27/AutoBuild_Game_Particle__KW__14_23_8_9_10_27.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__14_23_8_9_10_27",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DECAL",
+                        "ENABLE_GLOW",
+                        "ENABLE_UV_NOISE",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_Particle__KW__14_8_10/AutoBuild_Game_Particle__KW__14_8_10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__14_8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DECAL",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/ETC+Alpha/Unlit - Transparent Colored.shader",
+            "ShaderName": "ETC+Alpha/NGUI/Unlit/Transparent Colored",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "_CHANNEL_R"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Models/NPC/QuQu/Shader/Toon_ShadingGradeMap_AngelRing.shader",
+            "ShaderName": "UnityChanToonShader/AngelRing/Toon_ShadingGradeMap",
+            "ShaderVariantCount": 4,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSIVE_SIMPLE"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_OUTLINE_NML"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_Particle__KW__10_24/AutoBuild_Game_Particle__KW__10_24.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__10_24",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_ALPHA_BLEND",
+                        "_CHANNEL_A"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Fire.shader",
+            "ShaderName": "Hovl/Particles/Fire",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Blend_LinePath.shader",
+            "ShaderName": "Hovl/Particles/Blend_LinePath",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Effect_Shader/Add_Fresnel.shader",
+            "ShaderName": "Hovl/Particles/Add_Fresnel",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/Materials/AutoBuild_Game_Particle__KW__1_2_8_10/AutoBuild_Game_Particle__KW__1_2_8_10.shader",
+            "ShaderName": "AutoBuild/Game/Particle__KW__1_2_8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "ENABLE_DISSLOVE",
+                        "ENABLE_DISSLOVE_VERTEX_COLOR",
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Shaders/LoginCGShader/AutoBuild_Game_UIParticle__KW__8_10/AutoBuild_Game_UIParticle__KW__8_10.shader",
+            "ShaderName": "AutoBuild/Game/UIParticle__KW__8_10",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "_ALPHA_BLEND"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Effects/Weapon/Mat/AFBTrailShader.shadergraph",
+            "ShaderName": "Shader Graphs/AFBTrailShader",
+            "ShaderVariantCount": 3,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        ""
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        }
+    ]
+}
