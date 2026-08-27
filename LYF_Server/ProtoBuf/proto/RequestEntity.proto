@@ -1,0 +1,55 @@
+syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用proto2
+
+message BasePackage{
+	int32 proto_code = 1;//协议码
+	int32 unity_session_id=2;//unity端的sessionID.
+	int32 gate_session_id =3;//gated端连接gameserver使用
+	bytes data = 10;//数据
+}
+message RegistVarifyReq{
+	string email = 2;//邮箱
+}
+
+message RegistReq{
+	string user_name =1;//用户名
+	string email=2;//手机号
+	string varify=3;//验证码
+	string password =4;//密码；
+}
+
+//登录
+message LoginReq{
+	string user_name=1;//用户名
+	string password= 2;//密码
+}
+
+//获取服务器列表
+message GetServerListReq{
+	int32 server_id=1;//
+}
+
+//登录游戏服务器
+message LoginGameServerReq{
+	int32 account_id = 1;//
+	int32 game_server_id=2;//
+}
+
+//创建角色请求数据
+message CreateRoleReq{
+	int32 account_id = 1;//
+	int32 game_server_id=2;//所属的服务器
+	string nickname =3;//昵称
+	int32 job_id=4;//职业
+}
+
+//请求游戏开始
+message StartGameReq
+{
+	int32 role_id =1;//角色id
+}
+
+//那个角色进入世界
+message EnterWroldReq
+{
+	int32 role_id =1;//角色id
+}

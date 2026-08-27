@@ -1,0 +1,145 @@
+syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用proto2
+
+enum CmdCode{
+	Succeed = 0;//请求成功
+	AcctExist = 1;//账号已存在
+	ServerError=2;//服务端错误
+	AcctNotExist = 3;//账号不存在
+	PasswordError= 4;//密码错误
+	AcctDisable = 5;//账号禁用
+	ReqParamError= 6;//请求参数错误
+	NicknameExist = 7;//昵称已存在
+	UserNameIllegal = 8;//用户名不合法
+	PhoneNumIllegal= 9;//手机号码不合法
+	PasswordIllegal=10;//密码不合法
+	UserOftenLogin=11;//用户频繁登录
+	VarifyError= 12;//验证码错误
+	RoleNotExist = 13;//角色不存在
+}
+
+message RegistVarifyRet{
+	CmdCode cmd_code = 1;//错误码
+	string email = 2;//邮箱
+}
+
+message ErrMsg{
+	CmdCode cmd_code = 1;//错误码
+}
+
+message RegistRet{
+	CmdCode cmd_code = 1;//表示注册是否成功
+}
+
+message LoginRet{
+	CmdCode cmd_code = 1;//表示登录是否成功
+	GameServer game_server=2;//表示最后登录的服务器
+	int32 account_id = 3;//用户ID
+}
+
+message GameServer{
+	int32 server_id = 1;//服务器ID
+	string server_name=2;//名称
+	int32 run_state = 3;//运行状态
+	int32 is_new = 4;//是否是新服
+	string ip_host=5;//IP地址
+	int32 prot = 6;//端口
+}
+
+message GetServerListRet{
+	CmdCode cmd_code = 1;//表示请求是否成功
+	repeated GameServer game_servers=2;//服务器列表
+}
+
+message LoginGameServerRet{
+	CmdCode cmd_code = 1;//表示请求是否成功
+	CreateRoleRet create_role_info = 2;//已创建的角色
+}
+
+message CreateRoleRet{
+	CmdCode cmd_code = 1;//表示创建角色是否成功
+	int32 role_id= 2;//角色ID
+	string nickname= 3;//昵称
+	int32 job_id = 4;//职业ID
+	int32 level = 5;//等级
+}
+
+message StartGameRet{
+	CmdCode cmd_code = 1;//表示请求是否成功
+	MainRoleInfo main_role_info = 2;//主角色完整信息
+}
+
+// 所有角色共用的基础属性，对应 RoleBaseArrtTable。
+message RoleBaseInfo{
+	int32 role_id = 1;        //角色ID
+	string nickname = 2;      //角色昵称
+	int32 level = 3;          //角色等级
+	int32 xiu_wei = 4;        //角色修为
+
+	int32 max_hp = 5;         //最大生命值
+	int32 curr_hp = 6;        //当前生命值
+	int32 max_mp = 7;         //最大法力值
+	int32 curr_mp = 8;        //当前法力值
+
+	int32 job_id = 9;         //职业ID
+
+	// 攻击属性
+	int32 atk_external_min = 10; //外功攻击最小值
+	int32 atk_external_max = 11; //外功攻击最大值
+	int32 atk_internal_min = 12;//内功攻击最小值
+	int32 atk_internal_max = 13;//内功攻击最大值
+
+	// 防御属性
+	int32 def_external = 14;    //外功防御
+	int32 def_external_delta = 15;//外功防御变动值
+	int32 def_internal = 16;    //内功防御
+	int32 def_internal_delta = 17;//内功防御变动值
+
+	// 常规战斗词条
+	int32 hit_point = 18;        //命中属性值
+	int32 block_point = 19;      //格挡属性值
+	int32 zhen_ji = 20;          //振击属性值
+	int32 wu_gu = 21;            //无咎属性值
+
+	// 暴击相关
+	int32 crit_point = 22;       //暴击属性值
+	int32 crit_resist_point = 23;//暴抗属性值
+	float crit_damage = 24;      //暴击伤害百分比，151表示151%
+	float crit_damage_reduce = 25;//暴击伤害减免百分比
+
+	// 治疗相关
+	int32 heal_strength = 26;    //治疗强度
+	float heal_bonus = 27;       //治疗增益百分比，1表示1%
+
+	// PVP专属词条
+	int32 zhu_xin = 28;          //诛心，PVP增伤
+	int32 jian_ren = 29;         //坚韧，PVP减伤
+
+	// 位置信息
+	string pos = 30;             //地图位置
+	int32 map_id = 31;           //地图ID
+}
+
+// 主角色专有信息，由基础属性与账号、成长、服务器信息组成。
+message MainRoleInfo{
+	RoleBaseInfo base_info = 1;  //通用角色基础属性
+	int32 account_id = 2;         //所属账号ID
+	int32 money = 3;              //角色货币
+
+	int32 exp = 4;                //当前经验值
+	int32 skill_up_point = 5;     //技能升级点
+	string camera_offset = 6;     //客户端镜头偏移数据
+	int32 server_id = 7;          //所在游戏服务器ID
+}
+//返回的角色所有技能信息数据
+message RoleSkillInfoRet
+{
+	CmdCode cmd_code = 1;//表示请求是否成功
+	repeated RoleSkillInfo roleSkillInfoList = 2;
+}
+//技能信息数据
+message RoleSkillInfo
+{
+	int32 skill_id = 1;
+	int32 level = 2;
+	string bind_key = 3;
+}

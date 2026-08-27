@@ -1,0 +1,44 @@
+# Unity generated data
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Bb]uild/
+[Bb]uilds/
+[Bb]undles/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Yy]oo/
+
+# IDE and local user settings
+.vs/
+.idea/
+*.suo
+*.user
+*.userprefs
+*.DotSettings.user
+
+# Generated Unity project files
+LYF_MMO/*.csproj
+LYF_MMO/*.sln
+
+# Server build output
+**/bin/
+**/obj/
+LYF_Server/packages/
+**/node_modules/
+
+# Generated HybridCLR output
+LYF_MMO/HybridCLRData/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Crash dumps and local logs
+*.dmp
+*.log
+
+# Local utility files outside the project
+hfs/
