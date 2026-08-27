@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3c6ac3aebf67c40bc65ffccc1f0be4, type: 3}
+  m_Name: JX_Attack01
+  m_EditorClassIdentifier: 
+  atkConfigEntities:
+  - _effectInfo:
+      _fx: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+      _parentName: EffectPos
+      _position: {x: -0.18, y: -0.58, z: -0.58}
+      _eulerAngles: {x: 40.97, y: 83.41, z: 216.81}
+      _scale: {x: 1, y: 1, z: 1}
+    _audioClips: []
+    _shakeScreenInfo:
+      _delay: 0
+      _duration: 0
+      _force: 0

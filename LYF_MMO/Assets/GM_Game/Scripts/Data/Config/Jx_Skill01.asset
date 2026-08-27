@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3c6ac3aebf67c40bc65ffccc1f0be4, type: 3}
+  m_Name: Jx_Skill01
+  m_EditorClassIdentifier: 
+  atkConfigEntities:
+  - _effectInfo:
+      _fx: {fileID: 8701421742278864558, guid: 10a89178a9905cf469575043f6255f62, type: 3}
+      _parentName: EffectPos
+      _position: {x: 0, y: 0, z: -1}
+      _eulerAngles: {x: -92, y: 0, z: 0}
+      _scale: {x: 0, y: 0, z: 0}
+    _audioClips: []
+    _shakeScreenInfo:
+      _delay: 0
+      _duration: 0
+      _force: 0
+  - _effectInfo:
+      _fx: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+      _parentName: EffectPos
+      _position: {x: -0.04, y: 0.1, z: -0.49}
+      _eulerAngles: {x: 81.45, y: 346.05, z: 142.66}
+      _scale: {x: 0, y: 0, z: 0}
+    _audioClips: []
+    _shakeScreenInfo:
+      _delay: 0
+      _duration: 0
+      _force: 0
