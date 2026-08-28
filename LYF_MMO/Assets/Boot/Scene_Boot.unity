@@ -1094,7 +1094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce80814cc2cc5164d8af713199387c02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playMode: 2
+  _playMode: 0
   defaultHostServer: http://192.168.9.1:8080/
   fallbackHostServer: http://192.168.9.1:8080/
   _hotUpdateView: {fileID: 1783064698}

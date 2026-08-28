@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Collections;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using YooAsset;
@@ -31,12 +33,56 @@ public class RoleCurrInfoWindow : WindowBase
    [SerializeField,Header("技能槽父组件")]private Transform _skillSlotParent;
    // 技能槽显示的快捷键顺序。
    private string[] _skilKkey = { "Q","E","R","F","1","2","3","4","5","6"};
+   private Dictionary<string,SkillSlotWidget> _slots = new Dictionary<string,SkillSlotWidget>();
+   private Subject<Dictionary<string,SkillSlotWidget>> _sub = new Subject<Dictionary<string,SkillSlotWidget>>(); 
+   /// <summary>
+   /// 服务端返回角色技能信息
+   /// </summary>
+   /// <param name="obj"></param>
+   public override void ReFreshUI(object obj)
+   {
+      RepeatedField<RoleSkillInfo> roleSkillInfoList = obj as RepeatedField<RoleSkillInfo>;
+      if (roleSkillInfoList != null)
+      {
+         if (_slots.Count > 0)
+         {
+            UpdateSlotWidget( roleSkillInfoList);
+         }
+         else
+         {
+            //等待技能槽对象生成完成后再更新ui
+            _sub.Where(_ => _slots.Count > 0)
+               .Subscribe(_ =>
+                  {
+                     UpdateSlotWidget( roleSkillInfoList);
+                  }
+               );
+         }
+         
+      }
+   }
+
+   private void UpdateSlotWidget(RepeatedField<RoleSkillInfo> roleSkillInfoList)
+   {
+      for (int i = 0; i < roleSkillInfoList.Count; i++)
+      {
+         if (roleSkillInfoList[i].Level >0&&
+             !string.IsNullOrEmpty(roleSkillInfoList[i].BindKey))
+         {
+            if (_slots.ContainsKey(roleSkillInfoList[i].BindKey))
+            {
+               //刷新技能槽对象
+               _slots[roleSkillInfoList[i].BindKey].ReFreshUI(roleSkillInfoList[i]);
+            }
+         }
+      }
+   }
 
    /// <summary>
    /// 根据传入数据刷新角色头像、昵称、职业等级及生命/法力值。
    /// </summary>
    /// <param name="obj">角色当前信息。</param>
-   public  void ReFreshUI()
+   public  void UpdateRoleInfo()
    {
       //todo
       MainRoleInfo roleInfo = Global.Instance.mainRoleInfo;
@@ -78,7 +124,7 @@ public class RoleCurrInfoWindow : WindowBase
    /// </summary>
    public override void InitWindow()
    {
-      ReFreshUI();
+      UpdateRoleInfo();
       Global.Instance.YooPackage.LoadAssetAsync($"{ConstDefine.PrefabPath}UIPrefabs/SkillSlotWidget").Completed +=
          (AssetOperationHandle handle) =>
          {
@@ -94,9 +140,11 @@ public class RoleCurrInfoWindow : WindowBase
                SkillSlotWidget slot = obj.GetComponent<SkillSlotWidget>();
                if (slot != null)
                {
-                  slot.ReFreshUI(_skilKkey[i]);
+                  _slots.Add(_skilKkey[i], slot);
+                  slot.SetKey(_skilKkey[i]);
                }
             }
+            _sub.OnNext(_slots);
          };
    }
 }

@@ -71,7 +71,7 @@ public class GameRoleCtrl:IContainer
             return;
         }
 
-        Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
+        Session seesion = SessionMgr.Instance.GetSession(basePackage.GateSessionId);
         switch (basePackage.ProtoCode)
         {
             case NetDefine.CMD_RoleSkillInfoCode:

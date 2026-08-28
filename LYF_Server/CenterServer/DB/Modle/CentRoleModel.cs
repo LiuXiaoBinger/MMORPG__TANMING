@@ -20,7 +20,7 @@ public class CentRoleModel
     public RoleSkillInfoRet RoleSkillInfo(EnterWroldReq req)
     {
         RoleSkillInfoRet ret = new RoleSkillInfoRet();
-
+        ret.CmdCode = CmdCode.Succeed;
         List< RoleSkillTable> roleSkillList = _db.Queryable<RoleSkillTable>().Where(v => v.RoleID == req.RoleId).ToList();
         if (roleSkillList != null && roleSkillList.Count > 0)
         {

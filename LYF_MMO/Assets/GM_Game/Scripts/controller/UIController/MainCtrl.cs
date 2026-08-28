@@ -30,6 +30,9 @@ public class MainCtrl : CtrlBase
             Debug.Log("RoleSkillInfoHandle"+ret.ToString());
             //更新技能相关列表
             UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.SkillInfoWindow,ret.RoleSkillInfoList);
+            
+            //更新技能相关列表
+            UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.RoleCurrtInfoWindow,ret.RoleSkillInfoList);
         }
     }
 

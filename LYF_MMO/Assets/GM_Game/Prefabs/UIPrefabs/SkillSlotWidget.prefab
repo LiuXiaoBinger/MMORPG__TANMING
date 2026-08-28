@@ -153,7 +153,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1824819883640359013
 RectTransform:
   m_ObjectHideFlags: 0
@@ -203,13 +203,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 915eaaf905c2bea4cb921dbba38310a5, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 2
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3443969536720924311
@@ -591,6 +591,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _imgIcon: {fileID: 8218036358940775233}
-  _texkKey: {fileID: 8933008035423859441}
+  _texKey: {fileID: 8933008035423859441}
   _imgMask: {fileID: 5616037506335646368}
   _texCD: {fileID: 5880199291759690589}

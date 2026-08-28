@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using cfg;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -49,9 +50,23 @@ public class MainRoleCtrl : RoleCtrlBase
    {
       _inputCtrl.ShiftPressedEvent += ShifKeyIsPress;
       _inputCtrl.JumpingEvent += JumpKeyPress;
-      _inputCtrl.SkillKeyEvent += SkillKeyEvent;
+      //_inputCtrl.SkillKeyEvent += SkillKeyEvent;
    }
+   /// <summary>
+   /// 角色释放技能
+   /// </summary>
+   /// <param name="skillInfo"></param>
+   /// <returns></returns>
+   public override bool UseSkill(SkillInfo skillInfo)
+   {
+      if(skillInfo==null||_roleBaseInfo == null||_roleBaseInfo.CurrHp<=0){return false;}
 
+      //向服务端发送请求，角色释放技能 todo
+      AttackState attackState =_fsm.GetState(RoleState.Attck) as AttackState;
+      attackState._atkType = 1;
+      ChangeState(RoleState.Attck);
+      return true;
+   }
    /// <summary>
    /// 技能相关按键事件
    /// </summary>
@@ -135,6 +150,8 @@ public class MainRoleCtrl : RoleCtrlBase
       }
       PlayerMovement();
    }
+
+   
 
    private void PlayerMovement()
    {

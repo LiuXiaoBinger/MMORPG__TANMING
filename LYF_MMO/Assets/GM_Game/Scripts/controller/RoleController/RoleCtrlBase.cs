@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using cfg;
 using HighlightPlus;
 using UniRx;
 using UnityEngine;
@@ -24,8 +25,7 @@ public class RoleCtrlBase : MonoBehaviour
   
    #region 角色基础信息
    public RoleType _roleType;
-   protected RoleBaseInfo _baseInfo;
-  
+   protected RoleBaseInfo _roleBaseInfo;
    protected int _rootMotionSpeed = 1;
    #endregion
    #region 相机相关
@@ -161,7 +161,7 @@ public class RoleCtrlBase : MonoBehaviour
    protected float _verticalSpeed;
    //需要到达的高度
    protected float _verticalHeiht;
-
+   
 
 
    /// <summary>
@@ -380,7 +380,9 @@ public class RoleCtrlBase : MonoBehaviour
    {
       //todo
       _roleType = roleType;
-      _baseInfo =  baseInfo;
+      _roleBaseInfo =  baseInfo;
       
    }
+   
+   public virtual bool UseSkill(SkillInfo skillInfo){return false;}
 }
