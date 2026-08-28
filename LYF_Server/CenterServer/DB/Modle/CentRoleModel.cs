@@ -2,6 +2,7 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 using SqlSugar;
 
 public class CentRoleModel
@@ -50,31 +51,77 @@ public class CentRoleModel
     /// <returns></returns>
     public RoleKanpsackInfoRet RoleKanpaskInfo(EnterWroldReq req)
     {
-        //todo
         RoleKanpsackInfoRet ret = new RoleKanpsackInfoRet();
-
-        RoleKnapsackTable roleKnapsackTable = _db.Queryable<RoleKnapsackTable>()
-            .Where(v => v.RoleId == req.RoleId).First();
-        if (roleKnapsackTable != null)
+        if (req == null || req.RoleId <= 0)
         {
-            //已|分割
-            string[] slotarr = roleKnapsackTable.Knapsack.Split('|');
-            for (int i = 0; i < slotarr.Length; i++)
-            {
-                RoleKanpsackSlot slot = new RoleKanpsackSlot()
-                {
-                    SlotNo = i,
-                    ItemId = int.Parse(slotarr[i].Split(',')[0]),
-                    Count = int.Parse(slotarr[i].Split(',')[1])
-                };
-                ret.RoleItemLst.Add(slot);
-            }
+            ret.CmdCode = CmdCode.ReqParamError;
+            return ret;
         }
-        else
+
+        List<ItemTable> itemList = _db.Queryable<ItemTable>()
+            .Where(v => v.RoleID == req.RoleId)
+            .OrderBy(v => v.BagType)
+            .OrderBy(v => v.BagIndex)
+            .ToList();
+        if (itemList == null)
         {
             ret.CmdCode = CmdCode.ServerError;
+            return ret;
         }
-        
+
+        Dictionary<int, EquipTable> equipByItemId = _db.Queryable<EquipTable>()
+            .Where(v => v.RoleID == req.RoleId)
+            .ToList()
+            .ToDictionary(v => v.ItemID);
+        Dictionary<int, EquipXLGeneTable> geneByItemId = _db.Queryable<EquipXLGeneTable>()
+            .Where(v => v.RoleID == req.RoleId)
+            .ToList()
+            .ToDictionary(v => v.ItemID);
+
+        foreach (ItemTable item in itemList)
+        {
+            RoleItemInfo itemInfo = new RoleItemInfo
+            {
+                ItemId = item.ItemID,
+                Count = item.count,
+                RoleId = item.RoleID,
+                ItemTypeId = item.ItemTypeID,
+                BagType = item.BagType,
+                BagIndex = item.BagIndex
+            };
+
+            EquipTable equip;
+            if (equipByItemId.TryGetValue(item.ItemID, out equip))
+            {
+                itemInfo.EquipInfo = new RoleEquipItemInfo
+                {
+                    ItemId = equip.ItemID,
+                    RoleId = equip.RoleID,
+                    StrengthenLevel = equip.StrengthenLevel,
+                    EquipType = equip.EquipType
+                };
+            }
+
+            EquipXLGeneTable gene;
+            if (geneByItemId.TryGetValue(item.ItemID, out gene))
+            {
+                itemInfo.EquipGeneInfo = new RoleEquipGeneInfo
+                {
+                    ItemId = gene.ItemID,
+                    RoleId = gene.RoleID,
+                    GeneId0 = gene.GeneID0,
+                    GeneId1 = gene.GeneID1,
+                    GeneId2 = gene.GeneID2,
+                    GeneValue0 = gene.GeneValue0,
+                    GeneValue1 = gene.GeneValue1,
+                    GeneValue2 = gene.GeneValue2
+                };
+            }
+
+            ret.RoleItemLst.Add(itemInfo);
+        }
+
+        ret.CmdCode = CmdCode.Succeed;
         return ret;
     }
 }

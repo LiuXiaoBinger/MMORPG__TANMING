@@ -121,6 +121,9 @@
     <Compile Include="DB\Table\RoleKnapsackTable.cs" />
     <Compile Include="DB\Table\RoleBaseArrtTable.cs" />
     <Compile Include="DB\Table\RoleSkillTable.cs" />
+    <Compile Include="DB\Table\ItemTable.cs" />
+    <Compile Include="DB\Table\EquipTable.cs" />
+    <Compile Include="DB\Table\EquipXLGeneTable.cs" />
     <Compile Include="DB\Table\RoleTable.cs" />
     <Compile Include="Redis\RedisMgr.cs" />
     <Compile Include="CenterApp.cs" />

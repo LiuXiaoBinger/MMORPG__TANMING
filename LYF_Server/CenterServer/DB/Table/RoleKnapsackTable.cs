@@ -16,8 +16,15 @@ public class RoleKnapsackTable
     public int RoleId { get; set; }
     
     //背包数据
-    [SugarColumn(Length = 1000)]
-    public string Knapsack { get; set; }
+    //[SugarColumn(Length = 1000)]
+    //public string Knapsack { get; set; }
+    //item当前id
+    public int curitemid { get; set; }
+    
+    //现在背包数量 Knapsacktype,count 背包类型，以及背包数量
+
+    public byte roleKnapsack { get; set; } = 0;
+    public byte roleKnapsackcount { get; set; } = 100;
     
     //创建时间
     public DateTime CreateDate { get; set; }

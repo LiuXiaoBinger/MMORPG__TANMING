@@ -147,11 +147,44 @@ message RoleSkillInfo
 message RoleKanpsackInfoRet
 {
 	CmdCode cmd_code = 1;//表示请求是否成功
-	repeated RoleKanpsackSlot role_item_lst=2;
+	repeated Kanpsacktypecount Kanpsacktypecount_lst=2;//包类别加数量
+	repeated RoleItemInfo role_item_lst=3;//物品数据
 }
-message RoleKanpsackSlot
+
+message Kanpsacktypecount
 {
-	int32 slot_no = 1;//格子编号
-	int32 item_id = 2;//物品id
-	int32 count = 3;
+	int32 type =1;//包类型
+	int32 count =2;//已经开票该包裹的数量
 }
+message RoleItemInfo
+{
+	int32 item_id = 1;//物品id
+	int32 count = 2;//物品数量
+	int32 role_id = 3;//角色id
+	int32 item_type_id = 4;//物品配置id
+	int32 bag_type = 5;//背包类型
+	int32 bag_index = 6;//所在背包位置
+	RoleEquipItemInfo equip_info = 7;//装备信息，非装备物品为空
+	RoleEquipGeneInfo equip_gene_info = 8;//装备词条信息，非装备物品为空
+}
+
+message RoleEquipItemInfo
+{
+	int32 item_id = 1;//物品id
+	int32 role_id = 2;//角色id
+	int32 strengthen_level = 3;//装备强化等级，非装备时为0
+	int32 equip_type = 4;//装备类别
+}
+
+message RoleEquipGeneInfo
+{
+	int32 item_id = 1;//物品id
+	int32 role_id = 2;//角色id
+	int32 gene_id0 = 3;//装备词条0
+	int32 gene_id1 = 4;//装备词条1
+	int32 gene_id2 = 5;//装备词条2
+	int32 gene_value0 = 6;//装备词条0数值
+	int32 gene_value1 = 7;//装备词条1数值
+	int32 gene_value2 = 8;//装备词条2数值
+}
+

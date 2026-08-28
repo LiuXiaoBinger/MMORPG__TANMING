@@ -12,4 +12,6 @@ public class OnlineRole
 
     //当前玩家信息
     public MainRoleInfo mainRoleInfo;
+    
+    //这里存储玩家背包数据
 }

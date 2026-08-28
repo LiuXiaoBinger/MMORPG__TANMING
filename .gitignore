@@ -44,3 +44,7 @@ Thumbs.db
 # Local utility files outside the project
 # hfs/
 FighterAnimations
+/SkillInfo.xlsx
+/add_cancel_columns.py
+/cells_payload.json
+/styles_payload.json

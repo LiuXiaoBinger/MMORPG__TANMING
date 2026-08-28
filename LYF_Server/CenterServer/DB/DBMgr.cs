@@ -22,7 +22,10 @@ public class DBMgr:Singleton<DBMgr>
             , typeof(GameServerTable)
             ,typeof(RoleTable),typeof(RoleBaseArrtTable)
             ,typeof(RoleSkillTable)
-            ,typeof(RoleKnapsackTable)); //所有库都支持  
+            ,typeof(RoleKnapsackTable)
+            ,typeof(ItemTable)
+            ,typeof(EquipTable)
+            ,typeof(EquipXLGeneTable)); //所有库都支持  
 
         /*for (int i = 0; i < 30; i++)
         {

@@ -285,22 +285,17 @@ public class LoginModle
             RoleId = roleid,
         };
 
-//创建每一个背包格子数据
+/*//创建每一个背包格子数据
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (i == 99)
             {
                 sb.Append($" {0},{0}");
-
             }
-            else
-            {
-                sb.Append($" {0},{0}|");
-            }
-        }
+        }*/
 
-        roleKnapsackTable.Knapsack = sb.ToString();
+        //roleKnapsackTable.Knapsack = sb.ToString();
         _db.Insertable(roleKnapsackTable).ExecuteCommand();
     }
 
