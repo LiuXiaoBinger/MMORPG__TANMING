@@ -25,6 +25,7 @@ public class NetDefine
     public const ushort CMD_RoleSkillInfoCode = 11080;//技能
     public const ushort CMD_SyncRoleEnterWorldCode = 11090;//同步角色进入游戏世界数据给其他玩家
     public const ushort CMD_SyncotherOnlineCode = 11100;//同步其他角色给主角
+    public const ushort CMD_RoleKnapsackInfoCode = 11110;//同步其他角色给主角
 }
 
 

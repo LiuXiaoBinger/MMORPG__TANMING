@@ -118,6 +118,7 @@
     <Compile Include="DB\Modle\LoginModle.cs" />
     <Compile Include="DB\Table\AccoutTable.cs" />
     <Compile Include="DB\Table\GameServerTable.cs" />
+    <Compile Include="DB\Table\RoleKnapsackTable.cs" />
     <Compile Include="DB\Table\RoleBaseArrtTable.cs" />
     <Compile Include="DB\Table\RoleSkillTable.cs" />
     <Compile Include="DB\Table\RoleTable.cs" />

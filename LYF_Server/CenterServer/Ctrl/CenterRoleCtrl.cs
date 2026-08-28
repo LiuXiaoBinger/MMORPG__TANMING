@@ -52,9 +52,13 @@ public class CenterRoleCtrl:IContainer
         
         //返回角色的技能信息
         RoleSkillInfoRet ret= _centRoleModel.RoleSkillInfo(req);
-        LogMsg.Info("OnEnterWroldHandle=>ret::" + ret.ToString());
+        LogMsg.Info("OnEnterWroldHandle=>RoleSkillInfoRet::" + ret.ToString());
         serverBase.SendData(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
     
+        //返回角色背包数据
+        RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
+        LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
+        serverBase.SendData(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
     }
 
    

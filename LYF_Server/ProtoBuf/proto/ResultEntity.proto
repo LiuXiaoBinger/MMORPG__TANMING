@@ -143,3 +143,15 @@ message RoleSkillInfo
 	int32 level = 2;
 	string bind_key = 3;
 }
+//返回的角色背包信息
+message RoleKanpsackInfoRet
+{
+	CmdCode cmd_code = 1;//表示请求是否成功
+	repeated RoleKanpsackSlot role_item_lst=2;
+}
+message RoleKanpsackSlot
+{
+	int32 slot_no = 1;//格子编号
+	int32 item_id = 2;//物品id
+	int32 count = 3;
+}

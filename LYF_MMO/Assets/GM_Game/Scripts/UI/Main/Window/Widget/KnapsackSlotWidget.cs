@@ -21,26 +21,33 @@ public class KnapsackSlotWidget : MonoBehaviour,
    [SerializeField,Header("物品特效")]private Image _imgFx;
    public int _count;
    public string _spriteName;
-   public void RefreshUI(int count, string spriteName)
+   public void RefreshUI(RoleKanpsackSlot roleKanpsackSlot)
    {
-       _count = count;
-       _spriteName = spriteName;
-       if (count > 0)
+       if (roleKanpsackSlot != null)
        {
-           _imgIcon.gameObject.Show();
-           _texCount.gameObject.Show();
-           _texCount.SetText($"{count}");
-           
-           ResourceMgr.Instance.LoadSpriteAsync($"Icon/Item/{spriteName}",(Sprite sprite )=>
+           _count = roleKanpsackSlot.Count;
+           //_spriteName = spriteName;
+           if (_count > 0)
            {
-               _imgIcon.sprite = sprite;
-           });
+               _imgIcon.gameObject.Show();
+               _texCount.gameObject.Show();
+               _texCount.SetText($"{_count}");
+           
+               //todo 配置物品表
+               /*ResourceMgr.Instance.LoadSpriteAsync($"Icon/Item/{spriteName}",(Sprite sprite )=>
+               {
+                   _imgIcon.sprite = sprite;
+               });*/
+           }
+           else
+           {
+               _imgIcon.gameObject.Show(false);
+               _texCount.gameObject.Show(false);
+           }
        }
-       else
-       {
-           _imgIcon.gameObject.Show(false);
-           _texCount.gameObject.Show(false);
-       }
+       
+      
+       
    }
    /// <summary>
    /// 鼠标进入
@@ -81,14 +88,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
        {
            if (uiDragWidget._dragType == DragType.KanpsackSlot)
            {
-               KnapsackSlotWidget knapsackSlotWidget = uiDragWidget._defluParent.GetComponent<KnapsackSlotWidget>();
-               if (knapsackSlotWidget != null)
-               {
-                   int tempCount = _count;
-                   string tempSpriteName = _spriteName;
-                   RefreshUI(knapsackSlotWidget._count,knapsackSlotWidget._spriteName);
-                   knapsackSlotWidget.RefreshUI(tempCount,tempSpriteName);
-               }
+              //提交给服务端
            }
        }
    }

@@ -21,7 +21,8 @@ public class DBMgr:Singleton<DBMgr>
         Db.CodeFirst.InitTables(typeof(AccoutTable)
             , typeof(GameServerTable)
             ,typeof(RoleTable),typeof(RoleBaseArrtTable)
-            ,typeof(RoleSkillTable)); //所有库都支持  
+            ,typeof(RoleSkillTable)
+            ,typeof(RoleKnapsackTable)); //所有库都支持  
 
         /*for (int i = 0; i < 30; i++)
         {

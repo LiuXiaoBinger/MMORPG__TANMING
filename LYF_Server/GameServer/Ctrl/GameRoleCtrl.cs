@@ -66,20 +66,32 @@ public class GameRoleCtrl:IContainer
     /// <param name="basePackage"></param>
     public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
     {
-        if (basePackage == null)
-        {
-            return;
-        }
-
         Session seesion = SessionMgr.Instance.GetSession(basePackage.GateSessionId);
         switch (basePackage.ProtoCode)
         {
             case NetDefine.CMD_RoleSkillInfoCode:
                 OnRoleSkillInfoResultHandle(seesion, basePackage);
                 break;
-            
+            case NetDefine.CMD_RoleKnapsackInfoCode:
+                OnRoleKnapsackInfoResultHandle(seesion, basePackage);
+                break;
         }
     }
+
+    /// <summary>
+    /// 角色背包信息
+    /// </summary>
+    /// <param name="seesion"></param>
+    /// <param name="basePackage"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void OnRoleKnapsackInfoResultHandle(Session seesion, BasePackage basePackage)
+    {
+        RoleKanpsackInfoRet ret = RoleKanpsackInfoRet.Parser.ParseFrom(basePackage.Data);
+        LogMsg.Info("OnRoleKnapsackInfoResultHandle::" + ret.ToString());
+        //把结果数据返回给gate
+        seesion.SendData(basePackage);
+    }
+
     /// <summary>
     /// 角色技能信息返回数据
     /// </summary>

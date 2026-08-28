@@ -340,6 +340,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: bg1
+      rect:
+        serializedVersion: 2
+        x: 1358
+        y: 427
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 370776f69bce8ca45b8e3e71241aba2f
+      internalID: 1241243269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -356,6 +377,7 @@ TextureImporter:
       '[AtlasTex]OutGame (New)_2': 744497908
       '[AtlasTex]OutGame (New)_3': 145976181
       '[AtlasTex]OutGame (New)_bG': -489091479
+      bg1: 1241243269
       btn_yellow: 159825823
       buy_mony: 1280584010
       close: 1757168914

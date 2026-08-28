@@ -52,7 +52,24 @@ public class GateRoleCtrl:IContainer
             case NetDefine.CMD_SyncotherOnlineCode:
                 OnSyncOtherOnlineResultHandle(seesion, basePackage);
                 break;
+            case NetDefine.CMD_RoleKnapsackInfoCode:
+                OnRoleKnapsackInfoResultHandle(seesion, basePackage);
+                break;
         }
+    }
+
+    /// <summary>
+    /// 角色背包信息
+    /// </summary>
+    /// <param name="seesion"></param>
+    /// <param name="basePackage"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void OnRoleKnapsackInfoResultHandle(Session seesion, BasePackage basePackage)
+    {
+        RoleKanpsackInfoRet ret = RoleKanpsackInfoRet.Parser.ParseFrom(basePackage.Data);
+        LogMsg.Info("OnRoleKnapsackInfoResultHandle::" + ret.ToString());
+        //把结果数据返回给gate
+        seesion.SendData(basePackage);
     }
     /// <summary>
     /// 同步其他玩家

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,7 +35,11 @@ public class KnapsackWindow : WindowBase,IDragHandler
     /// <param name="obj"></param>
     public  override void ReFreshUI(object obj)
     {
-        
+        RepeatedField<RoleKanpsackSlot> roleKanpsackSlots  = obj as RepeatedField<RoleKanpsackSlot>;
+        if (roleKanpsackSlots != null)
+        {
+            AddItemSlot(roleKanpsackSlots);
+        }
     }
 
     public void Awake()
@@ -44,16 +49,16 @@ public class KnapsackWindow : WindowBase,IDragHandler
 
     private void Start()
     {
-        AddItemSlot();
+        //AddItemSlot();
     }
 
-    private void AddItemSlot()
+    private void AddItemSlot(RepeatedField<RoleKanpsackSlot> roleKanpsackSlots)
     {
         //test 
         Global.Instance.YooPackage.LoadAssetAsync($"{ConstDefine.PrefabPath}UIPrefabs/KnapsackSlotWidget").Completed +=
             (AssetOperationHandle handle) =>
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < roleKanpsackSlots.Count; i++)
                 {
                     GameObject obj = handle.InstantiateSync();
                     if (obj != null)
@@ -64,14 +69,7 @@ public class KnapsackWindow : WindowBase,IDragHandler
                     KnapsackSlotWidget slot = obj.GetComponent<KnapsackSlotWidget>();
                     if (slot != null)
                     {
-                        if (i < 10)
-                        {
-                            slot.RefreshUI(i+1,_strings[i]);
-                        }
-                        else
-                        {
-                            slot.RefreshUI(0,"");
-                        }
+                        slot.RefreshUI(roleKanpsackSlots[i]);
                         
                     }
                 }

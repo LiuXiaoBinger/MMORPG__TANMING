@@ -26,7 +26,7 @@ namespace GameServer
             GameRoleCtrl  gameRoleCtrl = new GameRoleCtrl();
             server.RegistCommand(NetDefine.CMD_EnterWroldCode, gameRoleCtrl);//进入游戏请求
             client.RegistCommand(NetDefine.CMD_RoleSkillInfoCode, gameRoleCtrl);//技能数据返回unity
-           
+            client.RegistCommand(NetDefine.CMD_RoleKnapsackInfoCode, gameRoleCtrl);//返回角色背包信息
             while (true)
             {
                 Thread.Sleep(1);

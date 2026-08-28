@@ -20,8 +20,25 @@ public class MainCtrl : CtrlBase
     private void RegisCommand()
     {
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleSkillInfoCode,RoleSkillInfoHandle);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleKnapsackInfoCode,RoleKnapsackInfoHandle);
     }
-
+    /// <summary>
+    /// 角色端返回角色背包数据
+    /// </summary>
+    /// <param name="data"></param>
+    private void RoleKnapsackInfoHandle(ByteString data)
+    {
+        RoleKanpsackInfoRet ret =RoleKanpsackInfoRet.Parser.ParseFrom(data);
+        if (ret != null && ret.CmdCode == CmdCode.Succeed)
+        {
+            Debug.Log("RoleKnapsackInfoHandle:: "+ret.ToString());
+            UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.KnapsackWindow,ret.RoleItemLst);
+        }
+    }
+    /// <summary>
+    /// 服务端返回技能相关处理
+    /// </summary>
+    /// <param name="data"></param>
     private void RoleSkillInfoHandle(ByteString data)
     {
         RoleSkillInfoRet ret =RoleSkillInfoRet.Parser.ParseFrom(data);
