@@ -86,6 +86,12 @@ public class UIRoot : MonoBehaviour
       PlayerInputCtr.Instance.MainUIKeyHandler += MainCtrl.MainUIKeyHandler;
    }
 
+   public Camera GetUICamera()
+   {
+      if(_canvas!=null) return _canvas.worldCamera;
+      return null;
+   }
+   
    public Vector2 ScreenPointToviewPoint(Vector2 screenPoint)
    {
       Vector2 pos;

@@ -1,0 +1,7227 @@
+fileFormatVersion: 2
+guid: b2a969344c0f3c640b7e8036440be3a7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: select
+  - first:
+      213: 21300002
+    second: ui_Battlefield_1.png
+  - first:
+      213: 21300004
+    second: ui_Battlefield_2.png
+  - first:
+      213: 21300006
+    second: ui_Battlefield_3.png
+  - first:
+      213: 21300008
+    second: ui_Battlefield_4.png
+  - first:
+      213: 21300010
+    second: ui_Battlefield_5.png
+  - first:
+      213: 21300012
+    second: ui_Battlefield_6.png
+  - first:
+      213: 21300014
+    second: ui_Battlefield_7.png
+  - first:
+      213: 21300016
+    second: ui_Battlefield_8.png
+  - first:
+      213: 21300018
+    second: ui_Battlefield_9.png
+  - first:
+      213: 21300020
+    second: UI_Chat_line1.png
+  - first:
+      213: 21300022
+    second: UI_common_BoardBase_03.png
+  - first:
+      213: 21300024
+    second: UI_common_BoardBase_03-2.png
+  - first:
+      213: 21300026
+    second: UI_common_BoardBase_04.png
+  - first:
+      213: 21300028
+    second: UI_common_BoardBase_04-2.png
+  - first:
+      213: 21300030
+    second: UI_common_BoardBase_08.png
+  - first:
+      213: 21300032
+    second: UI_Common_BoardBase_11.png
+  - first:
+      213: 21300034
+    second: UI_common_Boardmid04.png
+  - first:
+      213: 21300036
+    second: UI_Common_Boardmid10.png
+  - first:
+      213: 21300038
+    second: UI_Common_Btn_00.png
+  - first:
+      213: 21300040
+    second: UI_common_Btn_01.png
+  - first:
+      213: 21300042
+    second: UI_common_Btn_02.png
+  - first:
+      213: 21300044
+    second: UI_common_Btn_03.png
+  - first:
+      213: 21300046
+    second: UI_Common_Leader.png
+  - first:
+      213: 21300048
+    second: UI_Common_Mouster_Frame.png
+  - first:
+      213: 21300050
+    second: UI_Common_NPC_Frame.png
+  - first:
+      213: 21300052
+    second: UI_Common_Profession_Icon_00.png
+  - first:
+      213: 21300054
+    second: UI_Common_Profession_Icon_01.png
+  - first:
+      213: 21300056
+    second: UI_Common_Profession_Icon_02.png
+  - first:
+      213: 21300058
+    second: UI_Common_Profession_Icon_03.png
+  - first:
+      213: 21300060
+    second: UI_Common_Profession_Icon_04.png
+  - first:
+      213: 21300062
+    second: UI_Common_Profession_Icon_05.png
+  - first:
+      213: 21300064
+    second: UI_Common_Profession_Icon_06.png
+  - first:
+      213: 21300066
+    second: UI_Common_Profession_Icon_07.png
+  - first:
+      213: 21300068
+    second: UI_Common_Profession_Icon_08.png
+  - first:
+      213: 21300070
+    second: UI_Common_Profession_Icon_09.png
+  - first:
+      213: 21300072
+    second: UI_Common_Profession_Icon_10.png
+  - first:
+      213: 21300074
+    second: UI_Common_Profession_Icon_11.png
+  - first:
+      213: 21300076
+    second: UI_Common_Profession_Icon_12.png
+  - first:
+      213: 21300078
+    second: UI_Common_Prompt02.png
+  - first:
+      213: 21300080
+    second: UI_Common_SplitLine04.png
+  - first:
+      213: 21300082
+    second: UI_common_task_aishen_kejie01.png
+  - first:
+      213: 21300084
+    second: UI_common_task_aishen_yijie01.png
+  - first:
+      213: 21300086
+    second: UI_common_task_aishen_yiwancheng01.png
+  - first:
+      213: 21300088
+    second: UI_common_task_zhixian_kejie01.png
+  - first:
+      213: 21300090
+    second: UI_common_task_zhixian_yijie01.png
+  - first:
+      213: 21300092
+    second: UI_common_task_zhixian_yiwancheng01.png
+  - first:
+      213: 21300094
+    second: UI_common_task_zhiye_kejie01.png
+  - first:
+      213: 21300096
+    second: UI_common_task_zhiye_yijie01.png
+  - first:
+      213: 21300098
+    second: UI_common_task_zhiye_yiwancheng01.png
+  - first:
+      213: 21300100
+    second: UI_common_task_zhuxian_kejie01.png
+  - first:
+      213: 21300102
+    second: UI_common_task_zhuxian_yijie01.png
+  - first:
+      213: 21300104
+    second: UI_common_task_zhuxian_yiwancheng01.png
+  - first:
+      213: 21300106
+    second: UI_Icon_Biaoqing.png
+  - first:
+      213: 21300108
+    second: UI_Icon_Biaoqing2.png
+  - first:
+      213: 21300110
+    second: UI_icon_frame.png
+  - first:
+      213: 21300112
+    second: UI_icon_frame2.png
+  - first:
+      213: 21300114
+    second: UI_icon_frame3.png
+  - first:
+      213: 21300116
+    second: UI_icon_frame4.png
+  - first:
+      213: 21300118
+    second: UI_Icon_Function_AutoFishing_Title.png
+  - first:
+      213: 21300120
+    second: UI_Icon_Liaotianshi.png
+  - first:
+      213: 21300122
+    second: UI_Icon_LifeProfession_zheyangsan_01.png
+  - first:
+      213: 21300124
+    second: UI_icon_Miaozhun.png
+  - first:
+      213: 21300126
+    second: UI_icon_number.png
+  - first:
+      213: 21300128
+    second: UI_Icon_paizhao2.png
+  - first:
+      213: 21300130
+    second: UI_Icon_Shousuo.png
+  - first:
+      213: 21300132
+    second: UI_icon_skill_flip.png
+  - first:
+      213: 21300134
+    second: UI_Icon_Zuoqi.png
+  - first:
+      213: 21300136
+    second: UI_Icon_Zuoxia.png
+  - first:
+      213: 21300138
+    second: UI_iconitem_frame.png
+  - first:
+      213: 21300140
+    second: UI_iconitem_huadong01.png
+  - first:
+      213: 21300142
+    second: UI_iconitem_huadong02.png
+  - first:
+      213: 21300144
+    second: UI_main_add.png
+  - first:
+      213: 21300146
+    second: UI_main_Arena_Bg.png
+  - first:
+      213: 21300148
+    second: UI_main_Arena_Bg01.png
+  - first:
+      213: 21300150
+    second: UI_main_Arena_Bg02.png
+  - first:
+      213: 21300152
+    second: UI_main_Arena_Bg03.png
+  - first:
+      213: 21300154
+    second: UI_main_Arena_Bg03_Bar.png
+  - first:
+      213: 21300156
+    second: UI_main_Arena_Bg04.png
+  - first:
+      213: 21300158
+    second: UI_main_Arena_Bg04_Bar.png
+  - first:
+      213: 21300160
+    second: UI_main_Arena_Exit.png
+  - first:
+      213: 21300162
+    second: UI_main_Arena_Free.png
+  - first:
+      213: 21300164
+    second: UI_main_Arena_Huiji01.png
+  - first:
+      213: 21300166
+    second: UI_main_Arena_Huiji02.png
+  - first:
+      213: 21300168
+    second: UI_main_Arena_Info.png
+  - first:
+      213: 21300170
+    second: UI_main_Arena_Jisha.png
+  - first:
+      213: 21300172
+    second: UI_main_Arena_Jishared.png
+  - first:
+      213: 21300174
+    second: UI_main_Arena_kaifang.png
+  - first:
+      213: 21300176
+    second: UI_main_Arena_Logbg.png
+  - first:
+      213: 21300178
+    second: UI_main_Arena_Radom.png
+  - first:
+      213: 21300180
+    second: UI_main_Arena_SetBtn.png
+  - first:
+      213: 21300182
+    second: UI_main_Arena_Shezhi.png
+  - first:
+      213: 21300184
+    second: UI_main_Arena_Shouqi.png
+  - first:
+      213: 21300186
+    second: UI_main_Arena_Yaoqing.png
+  - first:
+      213: 21300188
+    second: UI_main_Arena_Zhaomu.png
+  - first:
+      213: 21300190
+    second: UI_main_Arena_Zhugong.png
+  - first:
+      213: 21300192
+    second: UI_main_Arena_Zhugongred.png
+  - first:
+      213: 21300194
+    second: UI_main_BG_Fishing.png
+  - first:
+      213: 21300196
+    second: UI_Main_Btn_Audio.png
+  - first:
+      213: 21300198
+    second: UI_main_Btn_Fishing.png
+  - first:
+      213: 21300200
+    second: UI_main_BtnCooking.png
+  - first:
+      213: 21300202
+    second: UI_main_BtnSitdown.png
+  - first:
+      213: 21300204
+    second: UI_main_BtnTouch.png
+  - first:
+      213: 21300206
+    second: UI_main_CD.png
+  - first:
+      213: 21300208
+    second: UI_main_chat_channel.png
+  - first:
+      213: 21300210
+    second: ui_Main_Climbing_up.png
+  - first:
+      213: 21300212
+    second: ui_Main_Down.png
+  - first:
+      213: 21300214
+    second: UI_main_exp_base.png
+  - first:
+      213: 21300216
+    second: UI_Main_Exp_Base001.png
+  - first:
+      213: 21300218
+    second: UI_main_exp_base01.png
+  - first:
+      213: 21300220
+    second: UI_main_exp_baseframe.png
+  - first:
+      213: 21300222
+    second: UI_main_exp_job.png
+  - first:
+      213: 21300224
+    second: UI_Main_Exp_Job001.png
+  - first:
+      213: 21300226
+    second: UI_main_exp_job01.png
+  - first:
+      213: 21300228
+    second: UI_main_exp_jobframe.png
+  - first:
+      213: 21300230
+    second: UI_main_exp_split line.png
+  - first:
+      213: 21300232
+    second: UI_Main_FindAims_Bg.png
+  - first:
+      213: 21300234
+    second: UI_main_Fishing_Auto.png
+  - first:
+      213: 21300236
+    second: UI_main_Fishing_Auto_Out.png
+  - first:
+      213: 21300238
+    second: UI_main_Fishing_Auto_Qipao.png
+  - first:
+      213: 21300240
+    second: UI_main_Fishing_Auto_Shezhi.png
+  - first:
+      213: 21300242
+    second: UI_main_Fishing_di.png
+  - first:
+      213: 21300244
+    second: UI_main_Fishing_Dianji.png
+  - first:
+      213: 21300246
+    second: UI_main_Fishing_Lift.png
+  - first:
+      213: 21300248
+    second: UI_main_Fishing_Qipao.png
+  - first:
+      213: 21300250
+    second: UI_main_friend.png
+  - first:
+      213: 21300252
+    second: UI_Main_Friends_Btn_haoyou.png
+  - first:
+      213: 21300254
+    second: UI_Main_Friends_Img_qipao.png
+  - first:
+      213: 21300256
+    second: UI_main_function_bg.png
+  - first:
+      213: 21300258
+    second: UI_main_icon_open.png
+  - first:
+      213: 21300260
+    second: UI_Main_Identification_MiniBoss.png
+  - first:
+      213: 21300262
+    second: UI_Main_Identification_Mvp.png
+  - first:
+      213: 21300264
+    second: UI_main_infor_base.png
+  - first:
+      213: 21300266
+    second: UI_main_infor_Bosshp.png
+  - first:
+      213: 21300268
+    second: UI_main_infor_Bosshp_frame.png
+  - first:
+      213: 21300270
+    second: UI_main_infor_Bosssp.png
+  - first:
+      213: 21300272
+    second: UI_main_infor_Bosssp2.png
+  - first:
+      213: 21300274
+    second: UI_main_infor_Bosssp3.png
+  - first:
+      213: 21300276
+    second: UI_main_infor_guaiwuhp.png
+  - first:
+      213: 21300278
+    second: UI_main_infor_hp.png
+  - first:
+      213: 21300280
+    second: UI_main_infor_hpmp_frame.png
+  - first:
+      213: 21300282
+    second: UI_main_infor_hpmp_frame2.png
+  - first:
+      213: 21300284
+    second: UI_main_infor_job.png
+  - first:
+      213: 21300286
+    second: UI_main_infor_light.png
+  - first:
+      213: 21300288
+    second: UI_main_infor_mp.png
+  - first:
+      213: 21300290
+    second: UI_main_infor_profession.png
+  - first:
+      213: 21300292
+    second: UI_main_infor_role_level01.png
+  - first:
+      213: 21300294
+    second: UI_main_infor_role_level02.png
+  - first:
+      213: 21300296
+    second: UI_main_Interactive_Bathe.png
+  - first:
+      213: 21300298
+    second: UI_main_Interactive_Collect.png
+  - first:
+      213: 21300300
+    second: UI_main_Interactive_Collection.png
+  - first:
+      213: 21300302
+    second: UI_main_Interactive_Cooking.png
+  - first:
+      213: 21300304
+    second: UI_main_Interactive_Dessert.png
+  - first:
+      213: 21300306
+    second: UI_main_Interactive_Fishing.png
+  - first:
+      213: 21300308
+    second: UI_main_Interactive_Fumo.png
+  - first:
+      213: 21300310
+    second: UI_main_Interactive_Jiaoshui.png
+  - first:
+      213: 21300312
+    second: UI_main_Interactive_Jump.png
+  - first:
+      213: 21300314
+    second: UI_main_Interactive_Mining.png
+  - first:
+      213: 21300316
+    second: UI_main_Interactive_Openbox.png
+  - first:
+      213: 21300318
+    second: UI_main_Interactive_Operate.png
+  - first:
+      213: 21300320
+    second: UI_main_Interactive_Pharmaceutical.png
+  - first:
+      213: 21300322
+    second: UI_main_Interactive_Release.png
+  - first:
+      213: 21300324
+    second: UI_main_Interactive_Seat.png
+  - first:
+      213: 21300326
+    second: UI_main_Interactive_Shiyong.png
+  - first:
+      213: 21300328
+    second: UI_main_Interactive_Sleep.png
+  - first:
+      213: 21300330
+    second: UI_main_Interactive_Slider.png
+  - first:
+      213: 21300332
+    second: UI_main_Interactive_Smelting.png
+  - first:
+      213: 21300334
+    second: UI_main_Interactive_Speel.png
+  - first:
+      213: 21300336
+    second: UI_main_Interactive_Zhijing.png
+  - first:
+      213: 21300338
+    second: UI_main_job_split line.png
+  - first:
+      213: 21300340
+    second: UI_main_mapname_dian.png
+  - first:
+      213: 21300342
+    second: UI_main_mapname_line.png
+  - first:
+      213: 21300344
+    second: UI_main_monsterselected_close.png
+  - first:
+      213: 21300346
+    second: UI_main_move01.png
+  - first:
+      213: 21300348
+    second: UI_main_move02.png
+  - first:
+      213: 21300350
+    second: UI_main_move03.png
+  - first:
+      213: 21300352
+    second: UI_main_move04.png
+  - first:
+      213: 21300354
+    second: UI_main_qiehuanjineng.png
+  - first:
+      213: 21300356
+    second: ui_Main_Ride.png
+  - first:
+      213: 21300358
+    second: UI_main_Round.png
+  - first:
+      213: 21300360
+    second: UI_main_Round01.png
+  - first:
+      213: 21300362
+    second: UI_main_skill_frame.png
+  - first:
+      213: 21300364
+    second: UI_main_skilloff .png
+  - first:
+      213: 21300366
+    second: UI_main_slider01.png
+  - first:
+      213: 21300368
+    second: UI_main_slider02.png
+  - first:
+      213: 21300370
+    second: ui_Main_Speedup.png
+  - first:
+      213: 21300372
+    second: UI_Main_SystemInfo_Bg.png
+  - first:
+      213: 21300374
+    second: UI_Main_SystemInfo_Dianchi.png
+  - first:
+      213: 21300376
+    second: UI_Main_SystemInfo_Dianchi_Bg.png
+  - first:
+      213: 21300378
+    second: UI_Main_SystemInfo_Dianchi_chongdian.png
+  - first:
+      213: 21300380
+    second: UI_Main_SystemInfo_None.png
+  - first:
+      213: 21300382
+    second: UI_Main_SystemInfo_Wifi_01.png
+  - first:
+      213: 21300384
+    second: UI_Main_SystemInfo_Wifi_02.png
+  - first:
+      213: 21300386
+    second: UI_Main_SystemInfo_Wifi_03.png
+  - first:
+      213: 21300388
+    second: UI_Main_SystemInfo_Wifi_04.png
+  - first:
+      213: 21300390
+    second: UI_Main_SystemInfo_Wifi_Bg.png
+  - first:
+      213: 21300392
+    second: UI_Main_SystemInfo_Yidong_01.png
+  - first:
+      213: 21300394
+    second: UI_Main_SystemInfo_Yidong_02.png
+  - first:
+      213: 21300396
+    second: UI_Main_SystemInfo_Yidong_Bg.png
+  - first:
+      213: 21300398
+    second: UI_main_tab_expression01.png
+  - first:
+      213: 21300400
+    second: UI_main_tab_expression02.png
+  - first:
+      213: 21300402
+    second: UI_main_tab_lower_Selecte.png
+  - first:
+      213: 21300404
+    second: UI_main_tab_lower_Unchecked.png
+  - first:
+      213: 21300406
+    second: UI_main_tab_shrink_btn.png
+  - first:
+      213: 21300408
+    second: UI_main_tab_team_chuangjian.png
+  - first:
+      213: 21300410
+    second: UI_main_tab_team_jijie.png
+  - first:
+      213: 21300412
+    second: UI_main_tab_team_sousuo.png
+  - first:
+      213: 21300414
+    second: UI_main_tab_team_yaoqing.png
+  - first:
+      213: 21300416
+    second: UI_main_tab_up_Selecte.png
+  - first:
+      213: 21300418
+    second: UI_main_tab_up_Unchecked.png
+  - first:
+      213: 21300420
+    second: UI_main_task_branch.png
+  - first:
+      213: 21300422
+    second: UI_main_task_thread.png
+  - first:
+      213: 21300424
+    second: UI_main_team_Add to.png
+  - first:
+      213: 21300426
+    second: UI_main_team_level.png
+  - first:
+      213: 21300428
+    second: ui_Main_up.png
+  - first:
+      213: 21300430
+    second: UI_main_voice.png
+  - first:
+      213: 21300432
+    second: UI_Main_Weather_Icon_daxue.png
+  - first:
+      213: 21300434
+    second: UI_Main_Weather_Icon_dayu.png
+  - first:
+      213: 21300436
+    second: UI_Main_Weather_Icon_leiyu.png
+  - first:
+      213: 21300438
+    second: UI_Main_Weather_Icon_qing.png
+  - first:
+      213: 21300440
+    second: UI_Main_Weather_Icon_shachen.png
+  - first:
+      213: 21300442
+    second: UI_Main_Weather_Icon_wu.png
+  - first:
+      213: 21300444
+    second: UI_Main_Weather_Icon_xiaoxue.png
+  - first:
+      213: 21300446
+    second: UI_Main_Weather_Icon_xiaoyu.png
+  - first:
+      213: 21300448
+    second: UI_Main_Weather_Icon_yin.png
+  - first:
+      213: 21300450
+    second: UI_Main_Weather_kedu.png
+  - first:
+      213: 21300452
+    second: UI_Main_Weather_kedutiaohong.png
+  - first:
+      213: 21300454
+    second: UI_Main_Weather_kedutiaolan.png
+  - first:
+      213: 21300456
+    second: UI_Main_Weather_tipsdi.png
+  - first:
+      213: 21300458
+    second: UI_Main_Weather_tubiaodikuang.png
+  - first:
+      213: 21300460
+    second: UI_Main_Weather_zhizhen.png
+  - first:
+      213: 21300462
+    second: UI_map_zoom_frame.png
+  - first:
+      213: 21300464
+    second: UI_role_xuanzhongBG_3.png
+  - first:
+      213: 21300466
+    second: UI_Shaixuan_Biaoshi.png
+  - first:
+      213: 21300468
+    second: UI_Shaixuan_xuanzhong.png
+  - first:
+      213: 21300470
+    second: UI_Main_Btn_QuickChat.png
+  - first:
+      213: 21300472
+    second: UI_Main_Img_QuickChat.png
+  - first:
+      213: 21300474
+    second: UI_Main_Img_QuickChatXuanze.png
+  - first:
+      213: 21300476
+    second: UI_Icon_Jingtou.png
+  - first:
+      213: 21300478
+    second: UI_main_tab01_Selecte.png
+  - first:
+      213: 21300480
+    second: UI_main_tab01_Unchecked.png
+  - first:
+      213: 21300482
+    second: UI_main_tab02_Selecte.png
+  - first:
+      213: 21300484
+    second: UI_main_tab02_Unchecked.png
+  - first:
+      213: 21300486
+    second: UI_Icon_Guanzhan.png
+  - first:
+      213: 21300488
+    second: UI_Icon_Lingdang.png
+  - first:
+      213: 21300490
+    second: UI_main_Interactive_Tafang.png
+  - first:
+      213: 21300492
+    second: UI_Main_BG_NPCchat.png
+  - first:
+      213: 21300494
+    second: UI_map_identification_npc_duanzao.png
+  - first:
+      213: 21300496
+    second: UI_map_identification_npc_leitai.png
+  - first:
+      213: 21300498
+    second: UI_map_identification_npc_tafang.png
+  - first:
+      213: 21300500
+    second: UI_map_identification_npc_wuxianta.png
+  - first:
+      213: 21300502
+    second: UI_map_identification_npc_zhanchang.png
+  - first:
+      213: 21300504
+    second: UI_NPC_Bubble_leitai.png
+  - first:
+      213: 21300506
+    second: UI_NPC_Bubble_tafang.png
+  - first:
+      213: 21300508
+    second: UI_main_Img_FunctionOpen_bg_1.png
+  - first:
+      213: 21300510
+    second: UI_main_Img_FunctionOpen_bg_2.png
+  - first:
+      213: 21300512
+    second: UI_main_MapName_Img.png
+  - first:
+      213: 21300514
+    second: UI_Main_Btn_MiaoZhun.png
+  - first:
+      213: 21300516
+    second: UI_Main_Btn_QieHuan.png
+  - first:
+      213: 21300518
+    second: UI_Main_Btn_SelectBoss.png
+  - first:
+      213: 21300520
+    second: UI_Main_Btn_SelectBoss_BG.png
+  - first:
+      213: 21300522
+    second: UI_Main_Btn_SkillBg.png
+  - first:
+      213: 21300524
+    second: UI_Main_Btn_SkillOff_01.png
+  - first:
+      213: 21300526
+    second: UI_Main_Btn_SkillOff_02.png
+  - first:
+      213: 21300528
+    second: ui_Battlefield_0.png
+  - first:
+      213: 21300530
+    second: UI_Main_Bg_bifen_01.png
+  - first:
+      213: 21300532
+    second: UI_Main_Bg_bifen_02.png
+  - first:
+      213: 21300534
+    second: UI_Main_Bg_duiwubifen_01.png
+  - first:
+      213: 21300536
+    second: UI_Main_Bg_Guildicon_01.png
+  - first:
+      213: 21300538
+    second: UI_Main_Bg_maobian_01.png
+  - first:
+      213: 21300540
+    second: UI_Main_Bg_Mvp_01.png
+  - first:
+      213: 21300542
+    second: UI_Main_Bg_Mvp_02.png
+  - first:
+      213: 21300544
+    second: UI_Main_Icon_Resource_01.png
+  - first:
+      213: 21300546
+    second: UI_Main_Pic_bifenvs_01.png
+  - first:
+      213: 21300548
+    second: UI_Main_Pic_duiwubifen_01.png
+  - first:
+      213: 21300550
+    second: UI_Main_Pic_duiwubifen_02.png
+  - first:
+      213: 21300552
+    second: UI_Main_Pic_duiwubifen_03.png
+  - first:
+      213: 21300554
+    second: UI_Main_Pic_duiwubifen_04.png
+  - first:
+      213: 21300556
+    second: UI_Main_Tab_Blueteam_01.png
+  - first:
+      213: 21300558
+    second: UI_Main_Tab_Redteam_01.png
+  - first:
+      213: 21300560
+    second: UI_Main_Arena_Free.png
+  - first:
+      213: 21300562
+    second: UI_Main_Arena_Radom.png
+  - first:
+      213: 21300564
+    second: UI_main_icon_Down.png
+  - first:
+      213: 21300566
+    second: UI_Icon_3D.png
+  - first:
+      213: 21300568
+    second: UI_BlessedExperience_Icon_Entrance_01.png
+  - first:
+      213: 21300570
+    second: UI_Icon_2.5D.png
+  - first:
+      213: 21300572
+    second: UI_Main_Bg_task_01.png
+  - first:
+      213: 21300574
+    second: UI_Main_Bg_task_02.png
+  - first:
+      213: 21300576
+    second: UI_Main_Bg_task_03.png
+  - first:
+      213: 21300578
+    second: UI_Main_Bg_task_04.png
+  - first:
+      213: 21300580
+    second: UI_Main_Bg_task_05.png
+  - first:
+      213: 21300582
+    second: UI_Main_Bg_task_06.png
+  - first:
+      213: 21300584
+    second: "\u79BB\u5F00.png"
+  - first:
+      213: 21300586
+    second: UI_Main_Arrow_Down_01.png
+  - first:
+      213: 21300588
+    second: UI_Main_Icon_Zhandou_01.png
+  - first:
+      213: 21300590
+    second: UI_Main_Icon_task_01.png
+  - first:
+      213: 21300592
+    second: UI_Main_Icon_task_02.png
+  - first:
+      213: 21300594
+    second: UI_Main_Icon_Team_01.png
+  - first:
+      213: 21300596
+    second: UI_Main_Icon_Team_02.png
+  - first:
+      213: 21300598
+    second: UI_main_Img_FunctionOpen_bg_3.png
+  - first:
+      213: 21300600
+    second: UI_Main_Btn_SelectBoss2.png
+  - first:
+      213: 21300602
+    second: UI_Main_Btn_SelectBosschoise.png
+  - first:
+      213: 21300604
+    second: UI_Main_Btn_SelectBossHP.png
+  - first:
+      213: 21300606
+    second: UI_Main_Btn_SelectBossHPbg.png
+  - first:
+      213: 21300608
+    second: UI_Main_Bg_functionopen_01.png
+  - first:
+      213: 21300610
+    second: UI_Main_Battlebg_01.png
+  - first:
+      213: 21300612
+    second: UI_Main_BattleIcon_01.png
+  - first:
+      213: 21300614
+    second: UI_Main_BattleIcon_02.png
+  - first:
+      213: 21300616
+    second: UI_Main_BattleIcon_03.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ui_Battlefield_0.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5455af491d206d54a91997894665bb66
+      internalID: 21300528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 55
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd20a0d804077dd43a778616ad345f98
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 110
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ac8583e3310dc84a88fb8d9af04f83c
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_3.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 165
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64be2945db939f146af9822603622f87
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_4.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 220
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e61de83c04e4a942a709a93821bf3db
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_5.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 275
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec212b5f6e5ae034a9f4d5cbfc938f2c
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_6.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 330
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1c0d2306a918b044b094f17b027ba6a
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_7.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 385
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa47da1d3801ad749b5180810a78c7ed
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_8.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 440
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99ec976b69cd4384da2fbf78cd330c61
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Battlefield_9.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 495
+        width: 44
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 282e2d3824d4c8741a106c62ae7ba1cc
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_BlessedExperience_Icon_Entrance_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 550
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 754ff6e11373caa4eb793d4ea14f6576
+      internalID: 21300568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chat_line1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 597
+        width: 160
+        height: 2
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8afd228e0bcbc3346a27846d576d2f4a
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_BoardBase_08.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 600
+        width: 36
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 17, y: 17, z: 17, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41c812e47561a204f95d79d074ccbf79
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_BoardBase_11.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 637
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 21, y: 26, z: 24, w: 19}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5db0a9da5a8c0ed4f91ef3c20b24be86
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_Boardmid04.png
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 600
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 17, y: 17, z: 17, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb77f71c122d9954cbc66efa44e9d8f2
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_00.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 688
+        width: 40
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 20, y: 12, z: 17, w: 22}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7614ec695b2bdcd41ae3e9c653a8d800
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Leader.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 728
+        width: 24
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99469cf2d629d5048aea1cc8a4414d17
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Mouster_Frame.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 752
+        width: 26
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 33, z: 12, w: 33}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb06e25620bdc714ca25421be4240936
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_NPC_Frame.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 821
+        width: 26
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 34, z: 12, w: 33}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36b53c8807218f642973cd156ce0a227
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_00.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 890
+        width: 53
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69f5bbd5dcbabbe4daa3a36039853816
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_08.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 944
+        width: 52
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6651d8d116b047f4aa7f883f368fed7c
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_09.png
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 944
+        width: 52
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31207fe1637652a47b680e6a4745dd4c
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_10.png
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 728
+        width: 52
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f53ea86fb3eb1e4fa6eed417efe2544
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_11.png
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 635
+        width: 52
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2e184e3439a3174fa72705bba99abc6
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Profession_Icon_12.png
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 782
+        width: 52
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 004a1ce2161be2646bcb8a50d65e635f
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_SplitLine04.png
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 836
+        width: 4
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 2, y: 0, z: 2, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 925bc2b68fead724d86d81c38b5d0923
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_aishen_kejie01.png
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 600
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbbbf62e7661a8146830c36d2da8a3ac
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_aishen_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 600
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 844dd3146261f0e44ac787af8a0c376b
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_aishen_yiwancheng01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 998
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a745136044acf1f4d98234ccde928266
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhixian_kejie01.png
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 689
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2389e33a6d831c244b5f9487c45afdd3
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhixian_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 689
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a02c66387aba4489f977b673fbaa84
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhixian_yiwancheng01.png
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 998
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3595c0b5b4d48b04c8439e315304ab40
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhiye_kejie01.png
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 836
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d95bc77b963099b48a8a010be8ba239a
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhiye_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 863
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bba9287edf3d43449dd2cb9b201c617
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhiye_yiwancheng01.png
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 998
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 355a2e56e2450ff419a877169204632a
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhuxian_kejie01.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 890
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42909b671a890c64cb00a5499029d2ab
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhuxian_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 917
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df5f5e84450d59e4ab83c8611e318c37
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhuxian_yiwancheng01.png
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 998
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1650bdeb2f717a4294552c9887e7c91
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_iconitem_frame.png
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 998
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 11, z: 11, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9b917260e656ad4884d78068b195f1a
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_iconitem_huadong01.png
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 716
+        width: 10
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fcd3cd2962a283479a87e56a5717408
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_iconitem_huadong02.png
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 716
+        width: 10
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffdb0e772c7577e40a0fcfd65f639f48
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_2.5D.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 836
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6518153a48b0864bb9ab1783375a09c
+      internalID: 21300570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_3D.png
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 883
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1d3062544520aa45837b77f600dc9a2
+      internalID: 21300566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Biaoqing.png
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 930
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6decf6d93c44aa40b779d1ee6799a1b
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Biaoqing2.png
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 977
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1098789787225b84d94a18140fff8cbb
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_frame.png
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 716
+        width: 55
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2db8cc18ad992a2479735ec0177d2ec7
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_frame2.png
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 773
+        width: 61
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd1d2d0e5a48584ca0f77be83264d96
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_frame3.png
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 627
+        width: 61
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aa2d9031209e7a4b984d18ebecd65fc
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_frame4.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 689
+        width: 62
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c19e7c85de4d4ad4c96c8012cfd60ed7
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Function_AutoFishing_Title.png
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 835
+        width: 112
+        height: 87
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb784c78c4af6f346a7080bd52c7999b
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Guanzhan.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 923
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b408e0a6b1ce1f4da35ebbcac0150e8
+      internalID: 21300486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Jingtou.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 970
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81648727b8c615d44be12f3545d86071
+      internalID: 21300476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Liaotianshi.png
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 923
+        width: 29
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c92970d3bff76ca46949bf27cba2a622
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_LifeProfession_zheyangsan_01.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc94abdb414008949a89f0030230a152
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Lingdang.png
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 689
+        width: 32
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87f852e0ff7c0d24cac755cb20fbb656
+      internalID: 21300488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_Miaozhun.png
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 963
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb84710704d78734a88d4fcd52d955bd
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_number.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 752
+        width: 40
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10394c34fafd4d54082212b5fc288979
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_paizhao2.png
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 770
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff70f8bb3a89ae649aac2f8d2dfe2284
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Shousuo.png
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 600
+        width: 43
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3ae23ff2212e0249a2f7cfd244460e6
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_skill_flip.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 752
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f046a2bbe6ed9141b5c04c8a87d9ff0
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Zuoqi.png
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 129
+        width: 53
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27ad83301a0f8764f8eb01132ea2b452
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Zuoxia.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 129
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bebf44710c9053841af43f90656f3a72
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_add.png
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 129
+        width: 24
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bc71ca9e2bbc494ca2df7e186e619fe
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 801
+        width: 343
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 140, y: 8, z: 140, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea0aa32cfd206f44c9c2b5207c308700
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg01.png
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 0
+        width: 232
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a94f21f1d25251141b66220b00bbcb8c
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg02.png
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 155
+        width: 50
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 24, y: 0, z: 24, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4598ee4cf2f155c4ba48e897a07e5326
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg03.png
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 923
+        width: 34
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 16, y: 0, z: 16, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb3898e54ac013648934c7483cc31d92
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg03_Bar.png
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 129
+        width: 22
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 0, z: 11, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb84ef4dbb72d4e49b336473d79aabbd
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg04.png
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 817
+        width: 23
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 0, z: 9, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d271eb710667de44973f4b23c04baa2
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Bg04_Bar.png
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 716
+        width: 10
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c5f1b4955db92f4ca245aab1c135ce7
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Exit.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 951
+        width: 48
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d15af7aa25b52e14d8405b9c9ec679fd
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Arena_Free.png
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 835
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be70095c70d1889468d4194c51811ed0
+      internalID: 21300560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Huiji01.png
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 53
+        width: 42
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3c628268f750e14c83644269f68b280
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Huiji02.png
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 820
+        width: 42
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5650d926c90a0d840bc3359946699060
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Info.png
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 96
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f709e37832f7c24186d49a4d151f29b
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Jisha.png
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 96
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb7427e4005163142afb2fa2d31927e9
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Jishared.png
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 53
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b44a5fd41fddb484394081424b583bf0
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_kaifang.png
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 863
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48aff185a412603439643ad73700a988
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Logbg.png
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 894
+        width: 220
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1efb4fcdfd46b884795f60f85eb87d4d
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Arena_Radom.png
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 856
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68fb1a8ce0880184cbccc0d3782bda37
+      internalID: 21300562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_SetBtn.png
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 820
+        width: 52
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 26, y: 26, z: 26, w: 26}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 264d36d8e606f644c9df452b6ddca8c3
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Shezhi.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 820
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f10ca1d9de74b8649bf575b8e449308d
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Shouqi.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 851
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4afd5624dc7fda428a1bb3bb73ae29e
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Yaoqing.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 820
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89720848ecebc434488852d5bcceeccc
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Zhaomu.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 851
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 190b3960e0e452243ace4cd382b06fee
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Zhugong.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 820
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e4c212468344d14fa370a770099efde
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Arena_Zhugongred.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 849
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ae3b647ef59d1e408face019aed7d9f
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Arrow_Down_01.png
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 820
+        width: 35
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a53e877fca4f9004a9ba1800eb817c45
+      internalID: 21300586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Battlebg_01.png
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 820
+        width: 31
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bb83e48c70711f4d94ad5212b30a6e1
+      internalID: 21300610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_BattleIcon_01.png
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 752
+        width: 11
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb786a6e70c778243b6e7b90b29c4b2d
+      internalID: 21300612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_BattleIcon_02.png
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 977
+        width: 11
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1373208d59e6b55459c31040a79019c7
+      internalID: 21300614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_BattleIcon_03.png
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 863
+        width: 11
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3405d95b70730147a6d770a6e65f24c
+      internalID: 21300616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_bifen_01.png
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 927
+        width: 224
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbe8888cb9fc1d44eb9cf6784b0e05a2
+      internalID: 21300530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_bifen_02.png
+      rect:
+        serializedVersion: 2
+        x: 486
+        y: 875
+        width: 80
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 993d00395a6f22c498cc3050cb0d9ad1
+      internalID: 21300532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_duiwubifen_01.png
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 894
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4ecf0d4c5aea76429dbe2d4fd9ce58b
+      internalID: 21300534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_BG_Fishing.png
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 820
+        width: 102
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8c8a6437fff0ae4baf28b139dc985b5
+      internalID: 21300194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_functionopen_01.png
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 914
+        width: 86
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7c232cce894762429a81ec8aba8d70c
+      internalID: 21300608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_Guildicon_01.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 190
+        width: 82
+        height: 82
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 31, y: 35, z: 31, w: 31}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd342a885be4a3645ab00c7264482065
+      internalID: 21300536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_maobian_01.png
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 976
+        width: 38
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 17, z: 16, w: 15}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f89d33cb1f4ed643b0b8aeaefc98402
+      internalID: 21300538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_Mvp_01.png
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 976
+        width: 40
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 17, z: 10, w: 9}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30fe67301f2af2249b7063358e0fb3aa
+      internalID: 21300540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_Mvp_02.png
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 976
+        width: 40
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 9, y: 15, z: 11, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ef25e92c4dbe3448b5d7d0ab49d86b6
+      internalID: 21300542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_BG_NPCchat.png
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 82
+        width: 534
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 11, z: 0, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5148e2b3a717e94782687507f24d3cb
+      internalID: 21300492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_task_01.png
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 976
+        width: 71
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 40, y: 24, z: 9, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb123b800a3f042488cb5fc5dab51ad8
+      internalID: 21300572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_task_02.png
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 860
+        width: 83
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 34, y: 21, z: 29, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19d3abafcd8de7246a7cabdf270746a3
+      internalID: 21300574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_task_03.png
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 903
+        width: 66
+        height: 120
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 22, y: 23, z: 20, w: 28}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ca9e988bde1aa84485ebdaf6529dc59
+      internalID: 21300576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_task_05.png
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 0
+        width: 52
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d84148a23a8d69b448dabc96d21325f4
+      internalID: 21300580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Bg_task_06.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 273
+        width: 66
+        height: 120
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 39, y: 0, z: 47, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dda64f7cb445ec346b8ede27b9ee827f
+      internalID: 21300582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_BtnCooking.png
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 0
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cdecece1f7d4ab4d8c3f87c02fe1b4c
+      internalID: 21300200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_BtnSitdown.png
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 0
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abcbc805a1a82684ca2650ebb513d35a
+      internalID: 21300202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_BtnTouch.png
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 0
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8984f5ce1fe1680489d44c63d84b8e17
+      internalID: 21300204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_Audio.png
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 0
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a60b3af7612694b4892fda76efae8f88
+      internalID: 21300196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Btn_Fishing.png
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 0
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebc8fe665303e424c873ea149b00af0e
+      internalID: 21300198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_MiaoZhun.png
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 0
+        width: 58
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c324cb7618c51564f92ff9e273f84d1f
+      internalID: 21300514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_QieHuan.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 394
+        width: 58
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a9731cf3df9ec94f83ad99d7e6dd249
+      internalID: 21300516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_QuickChat.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 453
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb771300c00cda4439fbd5d3797fb501
+      internalID: 21300470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBoss.png
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 500
+        width: 92
+        height: 92
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee05171d0a314f44e9b65719f00f5173
+      internalID: 21300518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBoss2.png
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 394
+        width: 67
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72e75acd953eead4abdc4c2641462f11
+      internalID: 21300600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBosschoise.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 273
+        width: 58
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab523b4dbaf14344bba010d0a803d6cc
+      internalID: 21300602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBossHP.png
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 186
+        width: 78
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8190c0419c8f707478592ac2eb5d863a
+      internalID: 21300604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBossHPbg.png
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 265
+        width: 78
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e66b146044288a409b3324bef7db92f
+      internalID: 21300606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SelectBoss_BG.png
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 854
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 13, z: 13, w: 13}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 953080aaddc897546b4bea6558e5559b
+      internalID: 21300520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SkillBg.png
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 125
+        width: 88
+        height: 88
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4074fce0b5b3ba94eb24f7b7e963f7ff
+      internalID: 21300522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SkillOff_01.png
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 461
+        width: 73
+        height: 73
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 080787075a758ad469366e5d02ef68e3
+      internalID: 21300524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Btn_SkillOff_02.png
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 344
+        width: 91
+        height: 92
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f020c0c6bfe79f24faa31e4f9f0802b3
+      internalID: 21300526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_CD.png
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 535
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74ac31fe95d09eb41b05bb818532a096
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_chat_channel.png
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 927
+        width: 44
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62b9bda358237ba4e99bdaef4cd4de07
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Main_Climbing_up.png
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 214
+        width: 105
+        height: 105
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3120a2607fe1fa648881d2a0e0f46298
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Main_Down.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 616
+        width: 66
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d69d8c07bb253b4ca4369bad8b8ddb7
+      internalID: 21300212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_base.png
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 461
+        width: 62
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ef4af5bacbc7d24eae8cd39cb969ecd
+      internalID: 21300214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Exp_Base001.png
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 627
+        width: 12
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 6, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81ffc9738e663dd4d8789b8b8e54c8a5
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_base01.png
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 627
+        width: 12
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 6, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caf990d1d28dc5c409443dc17ca3475d
+      internalID: 21300218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_baseframe.png
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 145
+        width: 12
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9442838a11c7a374d9819abf0854195a
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_job.png
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 1001
+        width: 62
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd75781a250b1b34eb0df831f88d474a
+      internalID: 21300222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Exp_Job001.png
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 145
+        width: 12
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 6, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 925aa315256ea8c4498b052cfa234614
+      internalID: 21300224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_job01.png
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 265
+        width: 12
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72b2695bf41c5ed41b921bd4924a303d
+      internalID: 21300226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_jobframe.png
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 689
+        width: 12
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90e516668695df44988f5b132b837080
+      internalID: 21300228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_exp_split line.png
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 877
+        width: 3
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa5cad81fb320948950a3cbcc48a29f
+      internalID: 21300230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_FindAims_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 47
+        width: 208
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 100, y: 10, z: 100, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a52c73074fa4f7478ecd77ef59dc109
+      internalID: 21300232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Auto.png
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 683
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f7a3e9fe9bd20d4ab12d17666ad434c
+      internalID: 21300234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Auto_Out.png
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 616
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c8b31a075dce3b4a83c3adb5fd4fa1a
+      internalID: 21300236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Auto_Qipao.png
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 437
+        width: 63
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1faab085ae01d684aa716c9749ce1592
+      internalID: 21300238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Auto_Shezhi.png
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 96
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c75c30ceead1ed947a508a39e3b948c0
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_di.png
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 47
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 12, z: 12, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fd6eec8dc98fff44a7e9eb2710e629a
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Dianji.png
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 506
+        width: 66
+        height: 74
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85f41ca6c2c8dd64690d4f04d0398f06
+      internalID: 21300244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Lift.png
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 320
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6eeaf25496b1f409be054cce3393af
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Fishing_Qipao.png
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 401
+        width: 63
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 331d2687a371bcd489cd9dd72d879e84
+      internalID: 21300248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_friend.png
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 401
+        width: 31
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0903a9b37f7c0e74bbe9f56ffec76b98
+      internalID: 21300250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Friends_Btn_haoyou.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 344
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c0bf89e85732a4b9a5b5d77218924e
+      internalID: 21300252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Friends_Img_qipao.png
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 976
+        width: 22
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3157ba0d5b3c1ef4f9494858db6b32a5
+      internalID: 21300254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_function_bg.png
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 157
+        width: 78
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 26, y: 0, z: 49, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a43eb0a0c22ef064a95b816f474c186b
+      internalID: 21300256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_icon_Down.png
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 214
+        width: 28
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efd1a18375d9ee548802fa6bcb906c3b
+      internalID: 21300564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_icon_open.png
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 320
+        width: 63
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3fc2389ae5806949a82a04ddd984a1d
+      internalID: 21300258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_Resource_01.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 999
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 110c57ee91b2c224fafb800b5928104c
+      internalID: 21300544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_task_01.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 535
+        width: 21
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 377cb5bfa07d4ac4e9f9ea67b69c2680
+      internalID: 21300590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_task_02.png
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 470
+        width: 31
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2981ba5ed9d1b54e8b0c0613d4b5e64
+      internalID: 21300592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_Team_01.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 96
+        width: 36
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa5a574661fd57e4fa3f5787bdfaa351
+      internalID: 21300594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_Team_02.png
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 1001
+        width: 27
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba7ff60e9a247f54fa563dd19cd55d36
+      internalID: 21300596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Icon_Zhandou_01.png
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 581
+        width: 38
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69a0a4890e12eb24cb4d2ecfe12b333a
+      internalID: 21300588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Identification_MiniBoss.png
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 744
+        width: 37
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c802cbe58e0a7424f839fac7a7bb6b00
+      internalID: 21300260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Identification_Mvp.png
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 677
+        width: 37
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 576ca1309a4ed364c995f48000739b66
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Img_FunctionOpen_bg_1.png
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 132
+        width: 519
+        height: 160
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 951e80af4fd71b44fbdfe8d57bdd24d9
+      internalID: 21300508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Img_FunctionOpen_bg_2.png
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 581
+        width: 158
+        height: 158
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba16564ee64a61f4a92b84f11ad4329a
+      internalID: 21300510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Img_FunctionOpen_bg_3.png
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 387
+        width: 331
+        height: 114
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96d3a28efd1afac4c9f1245597da49b1
+      internalID: 21300598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Img_QuickChat.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 132
+        width: 14
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbcf1d70846a8c9418e2947601f3f8ad
+      internalID: 21300472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Img_QuickChatXuanze.png
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 59
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 14, z: 14, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11e1eb13b0d5da4488f8626453b121c9
+      internalID: 21300474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_base.png
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 40
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad4ca04f55b1b3a409e38c5a71ef74af
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_Bosshp.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 53
+        width: 113
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 7, y: 0, z: 7, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca2669e2c61b0524e9c4eb0dd10467f7
+      internalID: 21300266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_Bosshp_frame.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 817
+        width: 16
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 8, y: 0, z: 8, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a1f011fe7d3088429b43a591ffa7719
+      internalID: 21300268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_Bosssp.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 68
+        width: 113
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 199285a73dc14d948ab7d219534a58ee
+      internalID: 21300270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_Bosssp2.png
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 72
+        width: 113
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09dc370621aa81b4f80e888500f45fd0
+      internalID: 21300272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_Bosssp3.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 881
+        width: 83
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06992659731e4ae478405f236df0bad7
+      internalID: 21300274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_guaiwuhp.png
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 698
+        width: 11
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc45accd82a6f79409cf6cae2229f9b0
+      internalID: 21300276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_hp.png
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 387
+        width: 11
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e06ba80dc60349548a36d81eb169043c
+      internalID: 21300278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_hpmp_frame.png
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 320
+        width: 11
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0994dc79dbed0f2498f949f6076722a2
+      internalID: 21300280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_hpmp_frame2.png
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 332
+        width: 11
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a8d8dc9f2259b747911e51243d73fd9
+      internalID: 21300282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_job.png
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 47
+        width: 40
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33e10aeb739a4c4bae30193405308dd
+      internalID: 21300284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_light.png
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 710
+        width: 7
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed110da174be28d4786f9802799e6643
+      internalID: 21300286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_mp.png
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 47
+        width: 11
+        height: 11
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a3dbfa62ca6ef4ebdaba8cfe89f0fd
+      internalID: 21300288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_profession.png
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 0
+        width: 35
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c851852a9c2d0bb46994387abd077a30
+      internalID: 21300290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_role_level01.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 561
+        width: 22
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdc3e5d310b0a5941a6b5627d329ef1a
+      internalID: 21300292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_infor_role_level02.png
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 92
+        width: 22
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5baeff5427e25c04a828ec438d93991f
+      internalID: 21300294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Bathe.png
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 36
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77c13ec5f5b18224f9897f156ddcb6e7
+      internalID: 21300296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Collect.png
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 0
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dd5fa1e46eb6f648a0f469c14ba3291
+      internalID: 21300298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Collection.png
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 57
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e29d1c33e4b4ab64fa712286a91bfe35
+      internalID: 21300300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Cooking.png
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 740
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94e072a55e7b44e47b42172cf83c4eaa
+      internalID: 21300302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Dessert.png
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 740
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ebcbdfa283a25749b3da23c6a37376d
+      internalID: 21300304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Fishing.png
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 740
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90107bc67fa7d7d44b5783ec921e57b7
+      internalID: 21300306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Fumo.png
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 740
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57de279b51134f249b8f8d85a15d2431
+      internalID: 21300308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Jiaoshui.png
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 506
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 374e28c5f19b8ca4f969bf4df2d11156
+      internalID: 21300310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Jump.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 502
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f05d8ab4bd992fa4c83d004916da5903
+      internalID: 21300312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Mining.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 502
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a4a09d418cc0748b87b7d467fdedd9
+      internalID: 21300314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Openbox.png
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43981be55128fe24998c47e447bf869d
+      internalID: 21300316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Operate.png
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fc323818aa8a654aae7d651ae729af2
+      internalID: 21300318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Pharmaceutical.png
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81bc9dafd1ad7cd408143a320f3e019b
+      internalID: 21300320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Release.png
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be0312d43c75d7d4e9e8e3c50e738fcb
+      internalID: 21300322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Seat.png
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 230a62b561099fa4190703c31698f8db
+      internalID: 21300324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Shiyong.png
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 293
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532f66f612c0bbb468313a9d42eabe7d
+      internalID: 21300326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Sleep.png
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 0
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2697068b5e0a4a46bc4aa8ea40d2b76
+      internalID: 21300328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Slider.png
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 57
+        width: 69
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdf55458aa1d4d34e98e66763b346960
+      internalID: 21300330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Smelting.png
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 559
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22116ae2974042546a9204a474006151
+      internalID: 21300332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Speel.png
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 502
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b2d6869ee52d01409475a362330f90d
+      internalID: 21300334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Tafang.png
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 616
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0be9f55327a649d449715d275ad1bff2
+      internalID: 21300490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Interactive_Zhijing.png
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 673
+        width: 56
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fc64cdb78cf27145bb1b9e2f0071da8
+      internalID: 21300336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_job_split line.png
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 47
+        width: 3
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 763850b4e49409c4ab7ec9f4550b05fc
+      internalID: 21300338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_mapname_dian.png
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 716
+        width: 14
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e34f74fab86abf4419ebcb94b180df91
+      internalID: 21300340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_MapName_Img.png
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 96
+        width: 243
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bc62f572512a534486f9356145e582c
+      internalID: 21300512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_mapname_line.png
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 72
+        width: 113
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 269f49827a70bd5469f9f9143148ed1f
+      internalID: 21300342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_monsterselected_close.png
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 470
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fbae2f4743554049a6937d664bd6a3e
+      internalID: 21300344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_move01.png
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 559
+        width: 173
+        height: 173
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 250e96f5a1e9db949b81f9e0b36d7cb7
+      internalID: 21300346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_move02.png
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 733
+        width: 58
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfc62ae9cccbf334188060b630d8128c
+      internalID: 21300348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_move03.png
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 502
+        width: 180
+        height: 206
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea8a0b9bc9bfdd41b8599a4cac5a772
+      internalID: 21300350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_move04.png
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 293
+        width: 152
+        height: 152
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8da7fd17736f45342a8bbb7f6a05a03d
+      internalID: 21300352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Pic_bifenvs_01.png
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 293
+        width: 38
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd5d7d9158bbc9d41ae6bbcba25e12b1
+      internalID: 21300546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Pic_duiwubifen_01.png
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 716
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 349d3fc6f2e48b945a3f2e317456bbd1
+      internalID: 21300548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Pic_duiwubifen_02.png
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 293
+        width: 13
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88895d984c2ed4346a0f6c1ed31eb517
+      internalID: 21300550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Pic_duiwubifen_03.png
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 999
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3966d23275b9bef449cb554affd787e1
+      internalID: 21300552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Pic_duiwubifen_04.png
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 581
+        width: 13
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfa1fe91cd9100a4cbab99759be89092
+      internalID: 21300554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_qiehuanjineng.png
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 128
+        width: 110
+        height: 116
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d961e33c3c3dfe841bf5010e104a1b75
+      internalID: 21300354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Main_Ride.png
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 733
+        width: 62
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d66ed228bc39c2a44a0989a30f2ee59d
+      internalID: 21300356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Round.png
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 795
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c76504da651cf694586aeca14c50f386
+      internalID: 21300358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_Round01.png
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 245
+        width: 44
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63a34b99b5042e748a5e8de2c88b0d38
+      internalID: 21300360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_skill_frame.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 733
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d6f0a0d66dbd7441a2e6ce3d20666b0
+      internalID: 21300362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_slider01.png
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 502
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8961117428c880b4997a8ff4cb604fd5
+      internalID: 21300366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_slider02.png
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 502
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 167db05e1ef22dd4db5a965820ca6685
+      internalID: 21300368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Main_Speedup.png
+      rect:
+        serializedVersion: 2
+        x: 690
+        y: 814
+        width: 105
+        height: 105
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dd16e48fbccfd64588972dda8b251c9
+      internalID: 21300370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 0
+        width: 31
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 1, y: 0, z: 29, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d3328dfa39b35349b0fd5f329fa8d73
+      internalID: 21300372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Dianchi.png
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 495
+        width: 21
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3805377145a2f8a40a5f740bfdc02e09
+      internalID: 21300374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Dianchi_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 1001
+        width: 27
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16285c6db1ba7554abd4023cb3968c88
+      internalID: 21300376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Dianchi_chongdian.png
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 495
+        width: 8
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90af761bc9b10ac468e3542e79e6c3fc
+      internalID: 21300378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_None.png
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 976
+        width: 8
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b139392c6cb604949bdc51140d2dae07
+      internalID: 21300380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Wifi_01.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 883
+        width: 20
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f7d04d10d7b5e34ba587c3c21be2bc6
+      internalID: 21300382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Wifi_02.png
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 737
+        width: 14
+        height: 5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33a46a1814e24b44d9e7df406ddecfd7
+      internalID: 21300384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Wifi_03.png
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 994
+        width: 6
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a614c00fb12a3f49b4bb6b483eba1b0
+      internalID: 21300386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Wifi_04.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 970
+        width: 6
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ab53ca4e608f02468ae6da41964c69e
+      internalID: 21300388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Wifi_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 783
+        width: 20
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bba554ba1116d446a26a6c26579e45e
+      internalID: 21300390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Yidong_01.png
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 970
+        width: 4
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 2, z: 0, w: 2}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f19d02b147799b84eab563e757522887
+      internalID: 21300392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Yidong_02.png
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 627
+        width: 4
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 2, z: 0, w: 2}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25862d04fe9031e468f379a79f01ba27
+      internalID: 21300394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_SystemInfo_Yidong_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 792
+        width: 22
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7d76d499d4d9644d90302aacce76b72
+      internalID: 21300396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab01_Selecte.png
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 59
+        width: 30
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 4, z: 0, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7de25cb5a5875c342b8f1a8920282edc
+      internalID: 21300478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab01_Unchecked.png
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 795
+        width: 30
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 4, z: 0, w: 15}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 759b54779ffbafd48b174908308ddc46
+      internalID: 21300480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab02_Selecte.png
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 792
+        width: 28
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 4, z: 0, w: 4}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7df9c8fd11d020e41bec2b8cb82d31f7
+      internalID: 21300482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab02_Unchecked.png
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 1015
+        width: 28
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 4, z: 0, w: 4}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2311f968b3791f408805208cef3be6b
+      internalID: 21300484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Tab_Blueteam_01.png
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 96
+        width: 40
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 4, z: 11, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2375425612b307d4da52e810e6b5901c
+      internalID: 21300556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_expression01.png
+      rect:
+        serializedVersion: 2
+        x: 695
+        y: 350
+        width: 42
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9949221ab63da4b4e963da4c6ec9ee40
+      internalID: 21300398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_expression02.png
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 709
+        width: 42
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb99d33ada3af26428eb1aaf3e3d2fe3
+      internalID: 21300400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_lower_Selecte.png
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 814
+        width: 27
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 337f17b65ecc35942828eba286e64008
+      internalID: 21300402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_lower_Unchecked.png
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 709
+        width: 27
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae4cf2c7da82e2d4d814161376dd9489
+      internalID: 21300404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Tab_Redteam_01.png
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 93
+        width: 40
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 10, y: 5, z: 10, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9fd44d523f2bed47864a0a3712a8ce9
+      internalID: 21300558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_shrink_btn.png
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 96
+        width: 19
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b02c6665337a046877415bcbd5763b
+      internalID: 21300406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_team_chuangjian.png
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 94
+        width: 36
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfd733a9318dbf74397b578402c69dcc
+      internalID: 21300408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_team_jijie.png
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 733
+        width: 27
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb29e945bd54cbc458a480c5926aa84c
+      internalID: 21300410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_team_sousuo.png
+      rect:
+        serializedVersion: 2
+        x: 642
+        y: 502
+        width: 30
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42fdc493ed9dd46479b3012e94f59275
+      internalID: 21300412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_team_yaoqing.png
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 764
+        width: 25
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6518193f2e9294b863bfaeb0293a29
+      internalID: 21300414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_up_Selecte.png
+      rect:
+        serializedVersion: 2
+        x: 690
+        y: 920
+        width: 27
+        height: 79
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5728cafb79cda794e8c4b1a2b56819e0
+      internalID: 21300416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_tab_up_Unchecked.png
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 920
+        width: 27
+        height: 79
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caf85538f4e18f84fbe25c959a574e05
+      internalID: 21300418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_task_branch.png
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 0
+        width: 21
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9866ad61f23d70a4d904d323ff811fce
+      internalID: 21300420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_task_thread.png
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 27
+        width: 21
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ca66ab1cc5352f45938eedaaa53189d
+      internalID: 21300422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_team_Add to.png
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 96
+        width: 31
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c26196b2c1ec8b43bd8905e80dad54d
+      internalID: 21300424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_team_level.png
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 96
+        width: 31
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72abafeafe82fd64b9b297fb0baa252c
+      internalID: 21300426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Main_up.png
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 920
+        width: 66
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 917ab4f170b8f4a48bc2837b6fe95474
+      internalID: 21300428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_main_voice.png
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 96
+        width: 22
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 093afeac57898ef4ca6217d6d6822d05
+      internalID: 21300430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_daxue.png
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 446
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bac8cf1d3fe31844599cf14653fc9d09
+      internalID: 21300432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_dayu.png
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 446
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aec63746d6c4f249820235cb6b946f7
+      internalID: 21300434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_leiyu.png
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 446
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da75755d040d8274391bec986a8da551
+      internalID: 21300436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_qing.png
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 790
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f82de533da28f90458ef6e86bfe07eeb
+      internalID: 21300438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_shachen.png
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 709
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6eb39fc3ebc734418dd4b2a45ec9ebd
+      internalID: 21300440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_wu.png
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 839
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4697d145c9239f49824ff2859257a31
+      internalID: 21300442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_xiaoxue.png
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 888
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e1815c10dccb3a40b115aa9073398d6
+      internalID: 21300444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_xiaoyu.png
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 937
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec165483a2ed95f42ab9fbbd78ef00a4
+      internalID: 21300446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_Icon_yin.png
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 758
+        width: 48
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abf3d21238a7b8a40a79846cac7c0ab5
+      internalID: 21300448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_kedu.png
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 709
+        width: 55
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 7, y: 15, z: 45, w: 15}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d433042304a123c4588d0b16e9bc36ce
+      internalID: 21300450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_kedutiaohong.png
+      rect:
+        serializedVersion: 2
+        x: 695
+        y: 450
+        width: 25
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4a4f7b7635e4734ba4aaefb7c76a7d4
+      internalID: 21300452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_kedutiaolan.png
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 209
+        width: 25
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08731b16e213cb74086bf62d86c2e34d
+      internalID: 21300454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_tipsdi.png
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 807
+        width: 55
+        height: 65
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 12, z: 30, w: 48}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 510896f64a686874b8965f9f2ec1a0a0
+      internalID: 21300456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_tubiaodikuang.png
+      rect:
+        serializedVersion: 2
+        x: 894
+        y: 748
+        width: 53
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beaaee1ded68e26498f96223aa28c700
+      internalID: 21300458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_zhizhen.png
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 59
+        width: 10
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11920957496be994ebba6d1f2c412016
+      internalID: 21300460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_zoom_frame.png
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 75
+        width: 10
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d234b3f1b7d47ca4488b5ed0227a6ae1
+      internalID: 21300462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_xuanzhongBG_3.png
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 986
+        width: 33
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 16, y: 16, z: 16, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 364c4a0733771b34c8d0961f72ed208a
+      internalID: 21300464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shaixuan_Biaoshi.png
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 873
+        width: 38
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b486634802d79db4ca2ab26907b7c8bc
+      internalID: 21300466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shaixuan_xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 912
+        width: 55
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 9, y: 9, z: 40, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b544d1a04bb51f7408fd3538d14093bb
+      internalID: 21300468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 467ce345a60cdaf459d53eadd5bbfe99
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_BlessedExperience_Icon_Entrance_01.png: 21300568
+      UI_Chat_line1.png: 21300020
+      UI_Common_BoardBase_11.png: 21300032
+      UI_Common_Btn_00.png: 21300038
+      UI_Common_Leader.png: 21300046
+      UI_Common_Mouster_Frame.png: 21300048
+      UI_Common_NPC_Frame.png: 21300050
+      UI_Common_Profession_Icon_00.png: 21300052
+      UI_Common_Profession_Icon_08.png: 21300068
+      UI_Common_Profession_Icon_09.png: 21300070
+      UI_Common_Profession_Icon_10.png: 21300072
+      UI_Common_Profession_Icon_11.png: 21300074
+      UI_Common_Profession_Icon_12.png: 21300076
+      UI_Common_SplitLine04.png: 21300080
+      UI_Icon_2.5D.png: 21300570
+      UI_Icon_3D.png: 21300566
+      UI_Icon_Biaoqing.png: 21300106
+      UI_Icon_Biaoqing2.png: 21300108
+      UI_Icon_Function_AutoFishing_Title.png: 21300118
+      UI_Icon_Guanzhan.png: 21300486
+      UI_Icon_Jingtou.png: 21300476
+      UI_Icon_Liaotianshi.png: 21300120
+      UI_Icon_LifeProfession_zheyangsan_01.png: 21300122
+      UI_Icon_Lingdang.png: 21300488
+      UI_Icon_Shousuo.png: 21300130
+      UI_Icon_Zuoqi.png: 21300134
+      UI_Icon_Zuoxia.png: 21300136
+      UI_Icon_paizhao2.png: 21300128
+      UI_Main_Arena_Free.png: 21300560
+      UI_Main_Arena_Radom.png: 21300562
+      UI_Main_Arrow_Down_01.png: 21300586
+      UI_Main_BG_NPCchat.png: 21300492
+      UI_Main_BattleIcon_01.png: 21300612
+      UI_Main_BattleIcon_02.png: 21300614
+      UI_Main_BattleIcon_03.png: 21300616
+      UI_Main_Battlebg_01.png: 21300610
+      UI_Main_Bg_Guildicon_01.png: 21300536
+      UI_Main_Bg_Mvp_01.png: 21300540
+      UI_Main_Bg_Mvp_02.png: 21300542
+      UI_Main_Bg_bifen_01.png: 21300530
+      UI_Main_Bg_bifen_02.png: 21300532
+      UI_Main_Bg_duiwubifen_01.png: 21300534
+      UI_Main_Bg_functionopen_01.png: 21300608
+      UI_Main_Bg_maobian_01.png: 21300538
+      UI_Main_Bg_task_01.png: 21300572
+      UI_Main_Bg_task_02.png: 21300574
+      UI_Main_Bg_task_03.png: 21300576
+      UI_Main_Bg_task_05.png: 21300580
+      UI_Main_Bg_task_06.png: 21300582
+      UI_Main_Btn_Audio.png: 21300196
+      UI_Main_Btn_MiaoZhun.png: 21300514
+      UI_Main_Btn_QieHuan.png: 21300516
+      UI_Main_Btn_QuickChat.png: 21300470
+      UI_Main_Btn_SelectBoss.png: 21300518
+      UI_Main_Btn_SelectBoss2.png: 21300600
+      UI_Main_Btn_SelectBossHP.png: 21300604
+      UI_Main_Btn_SelectBossHPbg.png: 21300606
+      UI_Main_Btn_SelectBoss_BG.png: 21300520
+      UI_Main_Btn_SelectBosschoise.png: 21300602
+      UI_Main_Btn_SkillBg.png: 21300522
+      UI_Main_Btn_SkillOff_01.png: 21300524
+      UI_Main_Btn_SkillOff_02.png: 21300526
+      UI_Main_Exp_Base001.png: 21300216
+      UI_Main_Exp_Job001.png: 21300224
+      UI_Main_FindAims_Bg.png: 21300232
+      UI_Main_Friends_Btn_haoyou.png: 21300252
+      UI_Main_Friends_Img_qipao.png: 21300254
+      UI_Main_Icon_Resource_01.png: 21300544
+      UI_Main_Icon_Team_01.png: 21300594
+      UI_Main_Icon_Team_02.png: 21300596
+      UI_Main_Icon_Zhandou_01.png: 21300588
+      UI_Main_Icon_task_01.png: 21300590
+      UI_Main_Icon_task_02.png: 21300592
+      UI_Main_Identification_MiniBoss.png: 21300260
+      UI_Main_Identification_Mvp.png: 21300262
+      UI_Main_Img_QuickChat.png: 21300472
+      UI_Main_Img_QuickChatXuanze.png: 21300474
+      UI_Main_Pic_bifenvs_01.png: 21300546
+      UI_Main_Pic_duiwubifen_01.png: 21300548
+      UI_Main_Pic_duiwubifen_02.png: 21300550
+      UI_Main_Pic_duiwubifen_03.png: 21300552
+      UI_Main_Pic_duiwubifen_04.png: 21300554
+      UI_Main_SystemInfo_Bg.png: 21300372
+      UI_Main_SystemInfo_Dianchi.png: 21300374
+      UI_Main_SystemInfo_Dianchi_Bg.png: 21300376
+      UI_Main_SystemInfo_Dianchi_chongdian.png: 21300378
+      UI_Main_SystemInfo_None.png: 21300380
+      UI_Main_SystemInfo_Wifi_01.png: 21300382
+      UI_Main_SystemInfo_Wifi_02.png: 21300384
+      UI_Main_SystemInfo_Wifi_03.png: 21300386
+      UI_Main_SystemInfo_Wifi_04.png: 21300388
+      UI_Main_SystemInfo_Wifi_Bg.png: 21300390
+      UI_Main_SystemInfo_Yidong_01.png: 21300392
+      UI_Main_SystemInfo_Yidong_02.png: 21300394
+      UI_Main_SystemInfo_Yidong_Bg.png: 21300396
+      UI_Main_Tab_Blueteam_01.png: 21300556
+      UI_Main_Tab_Redteam_01.png: 21300558
+      UI_Main_Weather_Icon_daxue.png: 21300432
+      UI_Main_Weather_Icon_dayu.png: 21300434
+      UI_Main_Weather_Icon_leiyu.png: 21300436
+      UI_Main_Weather_Icon_qing.png: 21300438
+      UI_Main_Weather_Icon_shachen.png: 21300440
+      UI_Main_Weather_Icon_wu.png: 21300442
+      UI_Main_Weather_Icon_xiaoxue.png: 21300444
+      UI_Main_Weather_Icon_xiaoyu.png: 21300446
+      UI_Main_Weather_Icon_yin.png: 21300448
+      UI_Main_Weather_kedu.png: 21300450
+      UI_Main_Weather_kedutiaohong.png: 21300452
+      UI_Main_Weather_kedutiaolan.png: 21300454
+      UI_Main_Weather_tipsdi.png: 21300456
+      UI_Main_Weather_tubiaodikuang.png: 21300458
+      UI_Main_Weather_zhizhen.png: 21300460
+      UI_Shaixuan_Biaoshi.png: 21300466
+      UI_Shaixuan_xuanzhong.png: 21300468
+      UI_common_BoardBase_08.png: 21300030
+      UI_common_Boardmid04.png: 21300034
+      UI_common_task_aishen_kejie01.png: 21300082
+      UI_common_task_aishen_yijie01.png: 21300084
+      UI_common_task_aishen_yiwancheng01.png: 21300086
+      UI_common_task_zhixian_kejie01.png: 21300088
+      UI_common_task_zhixian_yijie01.png: 21300090
+      UI_common_task_zhixian_yiwancheng01.png: 21300092
+      UI_common_task_zhiye_kejie01.png: 21300094
+      UI_common_task_zhiye_yijie01.png: 21300096
+      UI_common_task_zhiye_yiwancheng01.png: 21300098
+      UI_common_task_zhuxian_kejie01.png: 21300100
+      UI_common_task_zhuxian_yijie01.png: 21300102
+      UI_common_task_zhuxian_yiwancheng01.png: 21300104
+      UI_icon_Miaozhun.png: 21300124
+      UI_icon_frame.png: 21300110
+      UI_icon_frame2.png: 21300112
+      UI_icon_frame3.png: 21300114
+      UI_icon_frame4.png: 21300116
+      UI_icon_number.png: 21300126
+      UI_icon_skill_flip.png: 21300132
+      UI_iconitem_frame.png: 21300138
+      UI_iconitem_huadong01.png: 21300140
+      UI_iconitem_huadong02.png: 21300142
+      UI_main_Arena_Bg.png: 21300146
+      UI_main_Arena_Bg01.png: 21300148
+      UI_main_Arena_Bg02.png: 21300150
+      UI_main_Arena_Bg03.png: 21300152
+      UI_main_Arena_Bg03_Bar.png: 21300154
+      UI_main_Arena_Bg04.png: 21300156
+      UI_main_Arena_Bg04_Bar.png: 21300158
+      UI_main_Arena_Exit.png: 21300160
+      UI_main_Arena_Huiji01.png: 21300164
+      UI_main_Arena_Huiji02.png: 21300166
+      UI_main_Arena_Info.png: 21300168
+      UI_main_Arena_Jisha.png: 21300170
+      UI_main_Arena_Jishared.png: 21300172
+      UI_main_Arena_Logbg.png: 21300176
+      UI_main_Arena_SetBtn.png: 21300180
+      UI_main_Arena_Shezhi.png: 21300182
+      UI_main_Arena_Shouqi.png: 21300184
+      UI_main_Arena_Yaoqing.png: 21300186
+      UI_main_Arena_Zhaomu.png: 21300188
+      UI_main_Arena_Zhugong.png: 21300190
+      UI_main_Arena_Zhugongred.png: 21300192
+      UI_main_Arena_kaifang.png: 21300174
+      UI_main_BG_Fishing.png: 21300194
+      UI_main_BtnCooking.png: 21300200
+      UI_main_BtnSitdown.png: 21300202
+      UI_main_BtnTouch.png: 21300204
+      UI_main_Btn_Fishing.png: 21300198
+      UI_main_CD.png: 21300206
+      UI_main_Fishing_Auto.png: 21300234
+      UI_main_Fishing_Auto_Out.png: 21300236
+      UI_main_Fishing_Auto_Qipao.png: 21300238
+      UI_main_Fishing_Auto_Shezhi.png: 21300240
+      UI_main_Fishing_Dianji.png: 21300244
+      UI_main_Fishing_Lift.png: 21300246
+      UI_main_Fishing_Qipao.png: 21300248
+      UI_main_Fishing_di.png: 21300242
+      UI_main_Img_FunctionOpen_bg_1.png: 21300508
+      UI_main_Img_FunctionOpen_bg_2.png: 21300510
+      UI_main_Img_FunctionOpen_bg_3.png: 21300598
+      UI_main_Interactive_Bathe.png: 21300296
+      UI_main_Interactive_Collect.png: 21300298
+      UI_main_Interactive_Collection.png: 21300300
+      UI_main_Interactive_Cooking.png: 21300302
+      UI_main_Interactive_Dessert.png: 21300304
+      UI_main_Interactive_Fishing.png: 21300306
+      UI_main_Interactive_Fumo.png: 21300308
+      UI_main_Interactive_Jiaoshui.png: 21300310
+      UI_main_Interactive_Jump.png: 21300312
+      UI_main_Interactive_Mining.png: 21300314
+      UI_main_Interactive_Openbox.png: 21300316
+      UI_main_Interactive_Operate.png: 21300318
+      UI_main_Interactive_Pharmaceutical.png: 21300320
+      UI_main_Interactive_Release.png: 21300322
+      UI_main_Interactive_Seat.png: 21300324
+      UI_main_Interactive_Shiyong.png: 21300326
+      UI_main_Interactive_Sleep.png: 21300328
+      UI_main_Interactive_Slider.png: 21300330
+      UI_main_Interactive_Smelting.png: 21300332
+      UI_main_Interactive_Speel.png: 21300334
+      UI_main_Interactive_Tafang.png: 21300490
+      UI_main_Interactive_Zhijing.png: 21300336
+      UI_main_MapName_Img.png: 21300512
+      UI_main_Round.png: 21300358
+      UI_main_Round01.png: 21300360
+      UI_main_add.png: 21300144
+      UI_main_chat_channel.png: 21300208
+      UI_main_exp_base.png: 21300214
+      UI_main_exp_base01.png: 21300218
+      UI_main_exp_baseframe.png: 21300220
+      UI_main_exp_job.png: 21300222
+      UI_main_exp_job01.png: 21300226
+      UI_main_exp_jobframe.png: 21300228
+      UI_main_exp_split line.png: 21300230
+      UI_main_friend.png: 21300250
+      UI_main_function_bg.png: 21300256
+      UI_main_icon_Down.png: 21300564
+      UI_main_icon_open.png: 21300258
+      UI_main_infor_Bosshp.png: 21300266
+      UI_main_infor_Bosshp_frame.png: 21300268
+      UI_main_infor_Bosssp.png: 21300270
+      UI_main_infor_Bosssp2.png: 21300272
+      UI_main_infor_Bosssp3.png: 21300274
+      UI_main_infor_base.png: 21300264
+      UI_main_infor_guaiwuhp.png: 21300276
+      UI_main_infor_hp.png: 21300278
+      UI_main_infor_hpmp_frame.png: 21300280
+      UI_main_infor_hpmp_frame2.png: 21300282
+      UI_main_infor_job.png: 21300284
+      UI_main_infor_light.png: 21300286
+      UI_main_infor_mp.png: 21300288
+      UI_main_infor_profession.png: 21300290
+      UI_main_infor_role_level01.png: 21300292
+      UI_main_infor_role_level02.png: 21300294
+      UI_main_job_split line.png: 21300338
+      UI_main_mapname_dian.png: 21300340
+      UI_main_mapname_line.png: 21300342
+      UI_main_monsterselected_close.png: 21300344
+      UI_main_move01.png: 21300346
+      UI_main_move02.png: 21300348
+      UI_main_move03.png: 21300350
+      UI_main_move04.png: 21300352
+      UI_main_qiehuanjineng.png: 21300354
+      UI_main_skill_frame.png: 21300362
+      UI_main_slider01.png: 21300366
+      UI_main_slider02.png: 21300368
+      UI_main_tab01_Selecte.png: 21300478
+      UI_main_tab01_Unchecked.png: 21300480
+      UI_main_tab02_Selecte.png: 21300482
+      UI_main_tab02_Unchecked.png: 21300484
+      UI_main_tab_expression01.png: 21300398
+      UI_main_tab_expression02.png: 21300400
+      UI_main_tab_lower_Selecte.png: 21300402
+      UI_main_tab_lower_Unchecked.png: 21300404
+      UI_main_tab_shrink_btn.png: 21300406
+      UI_main_tab_team_chuangjian.png: 21300408
+      UI_main_tab_team_jijie.png: 21300410
+      UI_main_tab_team_sousuo.png: 21300412
+      UI_main_tab_team_yaoqing.png: 21300414
+      UI_main_tab_up_Selecte.png: 21300416
+      UI_main_tab_up_Unchecked.png: 21300418
+      UI_main_task_branch.png: 21300420
+      UI_main_task_thread.png: 21300422
+      UI_main_team_Add to.png: 21300424
+      UI_main_team_level.png: 21300426
+      UI_main_voice.png: 21300430
+      UI_map_zoom_frame.png: 21300462
+      UI_role_xuanzhongBG_3.png: 21300464
+      ui_Battlefield_0.png: 21300528
+      ui_Battlefield_1.png: 21300002
+      ui_Battlefield_2.png: 21300004
+      ui_Battlefield_3.png: 21300006
+      ui_Battlefield_4.png: 21300008
+      ui_Battlefield_5.png: 21300010
+      ui_Battlefield_6.png: 21300012
+      ui_Battlefield_7.png: 21300014
+      ui_Battlefield_8.png: 21300016
+      ui_Battlefield_9.png: 21300018
+      ui_Main_Climbing_up.png: 21300210
+      ui_Main_Down.png: 21300212
+      ui_Main_Ride.png: 21300356
+      ui_Main_Speedup.png: 21300370
+      ui_Main_up.png: 21300428
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

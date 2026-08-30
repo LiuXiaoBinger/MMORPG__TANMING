@@ -1,6 +1,10 @@
 ﻿
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 public class LogMsg {
 
@@ -18,13 +22,25 @@ public class LogMsg {
         SetWindowText(GetConsoleWindow(), text);
     }
 
-    public static void Info(string msg, LogMsgType lv = LogMsgType.None) {
+    public static void Info(
+        string msg,
+        LogMsgType lv = LogMsgType.None,
+        [CallerMemberName] string callerMember = "",
+        [CallerFilePath] string callerFile = "",
+        [CallerLineNumber] int callerLine = 0) {
 
-
+        // Include the managed thread ID in every log entry so asynchronous callbacks
+        // can be traced back to the thread that handled them.
+        Type callerType = new StackTrace(1, false).GetFrame(0)?.GetMethod()?.DeclaringType;
+        string callerClass = callerType == null ? "UnknownClass" : callerType.Name;
+        string callerFileName = string.IsNullOrEmpty(callerFile)
+            ? "UnknownFile"
+            : Path.GetFileName(callerFile);
+        msg = DateTime.Now.ToLongTimeString()
+            + " [Thread:" + Thread.CurrentThread.ManagedThreadId + "]"
+            + " [" + callerClass + "." + callerMember
+            + " @ " + callerFileName + ":" + callerLine + "] >> " + msg;
         logCB?.Invoke(msg);
-
-        //Add Time Stamp
-        msg = DateTime.Now.ToLongTimeString() + " >> " + msg;
 
         if (lv == LogMsgType.None) {
             Console.WriteLine(msg);

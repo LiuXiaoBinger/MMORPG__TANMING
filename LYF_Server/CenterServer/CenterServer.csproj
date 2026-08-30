@@ -134,6 +134,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{d36b3520-7e5a-46da-9657-58d6e84ddc56}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Network\Network.csproj">
       <Project>{e695f887-4879-41c0-85f3-d86a91150282}</Project>
       <Name>Network</Name>

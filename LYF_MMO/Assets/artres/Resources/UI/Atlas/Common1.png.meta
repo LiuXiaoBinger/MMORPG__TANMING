@@ -1,0 +1,4254 @@
+fileFormatVersion: 2
+guid: c46212db0fcbdd547a2a319e0ab42aba
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Common_Bg_Choice_01.png
+  - first:
+      213: 21300002
+    second: UI_Common_Bg_Head_02.png
+  - first:
+      213: 21300004
+    second: UI_Common_Bg_Item_01.png
+  - first:
+      213: 21300006
+    second: UI_Common_Bg_Item_02.png
+  - first:
+      213: 21300008
+    second: UI_Common_Bg_Item_03.png
+  - first:
+      213: 21300010
+    second: UI_Common_Bg_Item_04.png
+  - first:
+      213: 21300012
+    second: UI_Common_Bg_Item_05.png
+  - first:
+      213: 21300014
+    second: UI_Common_Bg_Item_06.png
+  - first:
+      213: 21300016
+    second: UI_Common_Bg_Middle_02.png
+  - first:
+      213: 21300018
+    second: UI_Common_Bg_Normal_01.png
+  - first:
+      213: 21300020
+    second: UI_Common_Bg_Normal_02.png
+  - first:
+      213: 21300022
+    second: UI_Common_Bg_Normal_03.png
+  - first:
+      213: 21300024
+    second: UI_Common_Bg_Normal_04.png
+  - first:
+      213: 21300026
+    second: UI_Common_Bg_Normal_05.png
+  - first:
+      213: 21300028
+    second: UI_Common_Bg_progress_01.png
+  - first:
+      213: 21300030
+    second: UI_Common_Bg_Role_00.png
+  - first:
+      213: 21300032
+    second: UI_Common_Bg_Role_01.png
+  - first:
+      213: 21300034
+    second: UI_Common_Bg_TabLeft_03.png
+  - first:
+      213: 21300036
+    second: UI_Common_Bg_Title_03.png
+  - first:
+      213: 21300038
+    second: UI_Common_Btn_Add_01.png
+  - first:
+      213: 21300040
+    second: UI_Common_Btn_Close_01.png
+  - first:
+      213: 21300042
+    second: UI_Common_Btn_Medium_01.png
+  - first:
+      213: 21300044
+    second: UI_Common_Btn_Medium_02.png
+  - first:
+      213: 21300046
+    second: UI_Common_Btn_Normal_01.png
+  - first:
+      213: 21300048
+    second: UI_Common_Btn_Normal_02.png
+  - first:
+      213: 21300050
+    second: UI_Common_Btn_Reset_01.png
+  - first:
+      213: 21300052
+    second: UI_Common_Btn_Subtract_01.png
+  - first:
+      213: 21300054
+    second: UI_Common_Divide_Figure_01.png
+  - first:
+      213: 21300056
+    second: UI_Common_Divide_Figure_02.png
+  - first:
+      213: 21300058
+    second: UI_Common_Divide_Figure_Middle_01.png
+  - first:
+      213: 21300060
+    second: UI_Common_Divide_Figure_Middle_02.png
+  - first:
+      213: 21300062
+    second: UI_Common_Frame_Middle_Figure_01.png
+  - first:
+      213: 21300064
+    second: UI_Common_Icon_Hongdian.png
+  - first:
+      213: 21300066
+    second: UI_Common_Icon_jiantou_01.png
+  - first:
+      213: 21300068
+    second: UI_Common_Icon_WenHao_01.png
+  - first:
+      213: 21300070
+    second: UI_Common_Icon_xingxing_01.png
+  - first:
+      213: 21300072
+    second: UI_Common_Icon_xingxing_02.png
+  - first:
+      213: 21300074
+    second: UI_Common_Input_Head_01.png
+  - first:
+      213: 21300076
+    second: UI_Common_Nav_up_liebiao_01.png
+  - first:
+      213: 21300078
+    second: UI_Common_Panel_Head_01.png
+  - first:
+      213: 21300080
+    second: UI_Common_Panel_Head_02.png
+  - first:
+      213: 21300082
+    second: UI_Common_Panel_Head_03.png
+  - first:
+      213: 21300084
+    second: UI_Common_Panel_Occupation_01.png
+  - first:
+      213: 21300086
+    second: UI_Common_Panel_Small_nandu_01.png
+  - first:
+      213: 21300088
+    second: UI_Common_Pic_Add_01.png
+  - first:
+      213: 21300090
+    second: UI_Common_Pic_Choice_01.png
+  - first:
+      213: 21300092
+    second: UI_Common_pic_Figure_01.png
+  - first:
+      213: 21300094
+    second: UI_Common_Pic_TabLeft_etract_01.png
+  - first:
+      213: 21300096
+    second: UI_Common_Pic_TabLeft_Figure_01.png
+  - first:
+      213: 21300098
+    second: UI_Common_Tab_Left_01.png
+  - first:
+      213: 21300100
+    second: UI_Common_Tab_Left_02.png
+  - first:
+      213: 21300102
+    second: UI_Common_Tab_Left_03.png
+  - first:
+      213: 21300104
+    second: UI_Common_Tab_Left_04.png
+  - first:
+      213: 21300106
+    second: UI_Common_Tab_Right_01.png
+  - first:
+      213: 21300108
+    second: UI_Common_Tab_Right_02.png
+  - first:
+      213: 21300110
+    second: UI_Common_Tab_Right_03.png
+  - first:
+      213: 21300112
+    second: UI_Common_Tab_Title_01.png
+  - first:
+      213: 21300114
+    second: UI_Common_Tab_Title_02.png
+  - first:
+      213: 21300116
+    second: UI_Common_Bg_gongneng_01.png
+  - first:
+      213: 21300118
+    second: UI_Common_Bg_qujianjianbian_01.png
+  - first:
+      213: 21300120
+    second: UI_Common_Bg_Tips_01.png
+  - first:
+      213: 21300122
+    second: UI_Common_Btn_Close_02.png
+  - first:
+      213: 21300124
+    second: UI_Common_Btn_Friend_01.png
+  - first:
+      213: 21300126
+    second: UI_Common_Btn_Gift_01.png
+  - first:
+      213: 21300128
+    second: UI_Common_Btn_Look_01.png
+  - first:
+      213: 21300130
+    second: UI_Common_Btn_Share_01.png
+  - first:
+      213: 21300132
+    second: UI_Common_Btn_Small_Close_01.png
+  - first:
+      213: 21300134
+    second: UI_Common_Btn_Small_Share_01.png
+  - first:
+      213: 21300136
+    second: UI_Common_Divide_Baifang_01.png
+  - first:
+      213: 21300138
+    second: UI_Common_Divide_Figure_03.png
+  - first:
+      213: 21300140
+    second: UI_Common_Frame_Middle_Figure_02.png
+  - first:
+      213: 21300142
+    second: UI_Common_Panel_Small_Head_01.png
+  - first:
+      213: 21300144
+    second: UI_Common_Panel_Small_Head_02.png
+  - first:
+      213: 21300146
+    second: UI_Common_Panel_Small_Head_03.png
+  - first:
+      213: 21300148
+    second: UI_Common_Pic_lock_1.png
+  - first:
+      213: 21300150
+    second: UI_Common_Tab_Middle_01.png
+  - first:
+      213: 21300152
+    second: UI_Common_Tab_Right_04.png
+  - first:
+      213: 21300154
+    second: UI_Common_Tab_Right_05.png
+  - first:
+      213: 21300156
+    second: UI_Common_Tab_Small_01.png
+  - first:
+      213: 21300158
+    second: UI_Common_Tab_Small_02.png
+  - first:
+      213: 21300160
+    second: UI_Common_Tab_Small_03.png
+  - first:
+      213: 21300162
+    second: UI_Common_Tab_Small_Title_01.png
+  - first:
+      213: 21300164
+    second: UI_Common_Tab_Small_Title_02.png
+  - first:
+      213: 21300166
+    second: UI_Common_Arrow_Left_01.png
+  - first:
+      213: 21300168
+    second: UI_Common_Bg_10Fillet_01.png
+  - first:
+      213: 21300170
+    second: UI_Common_Projection_Normal_01.png
+  - first:
+      213: 21300172
+    second: UI_Common_Btn_Look_02.png
+  - first:
+      213: 21300174
+    second: UI_Common_Bg_20Fillet_01.png
+  - first:
+      213: 21300176
+    second: UI_Common_Bg_Dropdown_01.png
+  - first:
+      213: 21300178
+    second: UI_Common_Bg_Dropdown_02.png
+  - first:
+      213: 21300180
+    second: UI_Common_Bg_Dropdown_03.png
+  - first:
+      213: 21300182
+    second: UI_Common_Bg_Normal_06.png
+  - first:
+      213: 21300184
+    second: UI_Common_Btn_Close_03.png
+  - first:
+      213: 21300186
+    second: UI_Common_Frame_Choice_01.png
+  - first:
+      213: 21300188
+    second: UI_Common_Panel_Foot_01.png
+  - first:
+      213: 21300190
+    second: UI_Common_Bg_Normal_07.png
+  - first:
+      213: 21300192
+    second: UI_Common_Btn_Scrollbar_01.png
+  - first:
+      213: 21300194
+    second: UI_Common_Btn_Subtract_02.png
+  - first:
+      213: 21300196
+    second: UI_Common_Btn_Add_02.png
+  - first:
+      213: 21300198
+    second: UI_Common_Btn_Normal_03.png
+  - first:
+      213: 21300200
+    second: UI_Common_Divide_Figure_04.png
+  - first:
+      213: 21300202
+    second: UI_Common_Btn_Dropdown_01.png
+  - first:
+      213: 21300204
+    second: UI_Common_Icon_Jingtanhao_01.png
+  - first:
+      213: 21300206
+    second: UI_Common_Bg_Normal_08.png
+  - first:
+      213: 21300208
+    second: UI_Common_Bg_Normal_09.png
+  - first:
+      213: 21300210
+    second: UI_Common_Bg_Recommend_01.png
+  - first:
+      213: 21300212
+    second: UI_Common_Btn_Scrollbar_02.png
+  - first:
+      213: 21300214
+    second: UI_Common_Bg_Aircular100px_01.png
+  - first:
+      213: 21300216
+    second: UI_Common_Bg_Tips_Attribute_01.png
+  - first:
+      213: 21300218
+    second: UI_Common_Btn_Semipermeable_01.png
+  - first:
+      213: 21300220
+    second: UI_Common_Btn_Dropdown_02.png
+  - first:
+      213: 21300222
+    second: UI_Common_Btn_Left_01.png
+  - first:
+      213: 21300224
+    second: UI_Common_Btn_Right_01.png
+  - first:
+      213: 21300226
+    second: UI_Common_Frame_Choice_02_4px.png
+  - first:
+      213: 21300228
+    second: UI_Common_Bg_Dropdown_04.png
+  - first:
+      213: 21300230
+    second: UI_Common_Bg_Dropdown_05.png
+  - first:
+      213: 21300232
+    second: UI_Common_Bg_Dropdown_06.png
+  - first:
+      213: 21300234
+    second: UI_Common_Bg_Role_02.png
+  - first:
+      213: 21300236
+    second: UI_Common_Bg_Money_01.png
+  - first:
+      213: 21300238
+    second: UI_Common_Bg_Normal_10.png
+  - first:
+      213: 21300240
+    second: UI_Common_Icon_jiantou_02.png
+  - first:
+      213: 21300242
+    second: UI_Common_Icon_jiantou_03.png
+  - first:
+      213: 21300244
+    second: UI_Common_Pic_Bubble.png
+  - first:
+      213: 21300246
+    second: UI_Common_Divide_Figure_05.png
+  - first:
+      213: 21300248
+    second: UI_Common_Icon_seal_01.png
+  - first:
+      213: 21300250
+    second: UI_Common_Bg_Normal_11.png
+  - first:
+      213: 21300252
+    second: UI_Common_Bg_Normal_12.png
+  - first:
+      213: 21300254
+    second: UI_Common_Bg_Tips_02.png
+  - first:
+      213: 21300256
+    second: UI_Common_Btn_Normal_04.png
+  - first:
+      213: 21300258
+    second: UI_Common_Btn_Normal_05.png
+  - first:
+      213: 21300260
+    second: UI_Common_Icon_Sousuo_01.png
+  - first:
+      213: 21300262
+    second: UI_Common_Panel_Small_Head_04.png
+  - first:
+      213: 21300264
+    second: UI_Common_Panel_Small_Head_05.png
+  - first:
+      213: 21300266
+    second: UI_Common_Switch_Foot_01.png
+  - first:
+      213: 21300268
+    second: UI_Common_Switch_Foot_02.png
+  - first:
+      213: 21300270
+    second: UI_Common_Tab_Right_06.png
+  - first:
+      213: 21300272
+    second: UI_Common_Tab_Right_07.png
+  - first:
+      213: 21300274
+    second: UI_Common_Bg_Normal_13.png
+  - first:
+      213: 21300276
+    second: UI_Common_Arrow_GO.png
+  - first:
+      213: 21300278
+    second: UI_Common_Bg_Normal_14.png
+  - first:
+      213: 21300280
+    second: UI_Common_Btn_Login_01.png
+  - first:
+      213: 21300282
+    second: UI_Common_Icon_seal_02.png
+  - first:
+      213: 21300284
+    second: UI_Common_Frame_Middle_Figure_03.png
+  - first:
+      213: 21300286
+    second: UI_Common_Btn_GO.png
+  - first:
+      213: 21300288
+    second: UI_Common_Pic_Tanhao.png
+  - first:
+      213: 21300290
+    second: UI_Common_Panel_Head_04.png
+  - first:
+      213: 21300292
+    second: UI_Common_Bg_Normal_15.png
+  - first:
+      213: 21300294
+    second: UI_Common_Frame_Middle_Figure_04.png
+  - first:
+      213: 21300296
+    second: UI_Common_Pic_Reach.png
+  - first:
+      213: 21300298
+    second: UI_Common_Bg_Normal_16.png
+  - first:
+      213: 21300300
+    second: UI_Common_Bg_Tips_03.png
+  - first:
+      213: 21300302
+    second: UI_Common_Bg_Input.png
+  - first:
+      213: 21300304
+    second: UI_Common_RedPoint.png
+  - first:
+      213: 21300306
+    second: UI_Common_Bg_Tips_04.png
+  - first:
+      213: 21300308
+    second: UI_Common_Btn_Mini_01.png
+  - first:
+      213: 21300310
+    second: UI_Common_Bg_Recommend_02.png
+  - first:
+      213: 21300312
+    second: UI_Common_Bg_gongneng_02.png
+  - first:
+      213: 21300314
+    second: UI_Common_Divide_Figure_06.png
+  - first:
+      213: 21300316
+    second: UI_Common_Bg_8Fillet_01.png
+  - first:
+      213: 21300318
+    second: UI_Common_Bubble_01.png
+  - first:
+      213: 21300320
+    second: UI_Common_Pic_lock_02.png
+  - first:
+      213: 21300322
+    second: UI_Common_Bg_Normal_17.png
+  - first:
+      213: 21300324
+    second: UI_Common_Btn_Normal_06.png
+  - first:
+      213: 21300326
+    second: UI_Common_plane_Login_02.png
+  - first:
+      213: 21300328
+    second: UI_Common_TipsBG_Login_01.png
+  - first:
+      213: 21300330
+    second: UI_Common_Bg_Normal_18.png
+  - first:
+      213: 21300332
+    second: UI_Common_Bg_Role_03.png
+  - first:
+      213: 21300334
+    second: UI_Common_Input_Head_02.png
+  - first:
+      213: 21300336
+    second: UI_Common_Btn_Normal_07.png
+  - first:
+      213: 21300338
+    second: UI_Common_Icon_jiantou_04.png
+  - first:
+      213: 21300340
+    second: UI_Common_Icon_seal_03.png
+  - first:
+      213: 21300342
+    second: UI_Common_Divide_Figure_07.png
+  - first:
+      213: 21300344
+    second: UI_Common_Identification_01.png
+  - first:
+      213: 21300346
+    second: UI_Common_Identification_02.png
+  - first:
+      213: 21300348
+    second: UI_Common_Img_blz.png
+  - first:
+      213: 21300350
+    second: UI_Common_Img_blz1.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Common_Arrow_GO.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 40
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcc6b3d76944fba4188add67998661f2
+      internalID: 21300276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Arrow_Left_01.png
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 0
+        width: 51
+        height: 41
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26dee7406af7028439c90a90ad5ffd9f
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_10Fillet_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 31
+        width: 20
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 10, y: 10, z: 10, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a4da96851349e479489bd525f3f37c
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_20Fillet_01.png
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 0
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 18, z: 18, w: 18}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84e6b9e210b3a114ba61365472429143
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_8Fillet_01.png
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 0
+        width: 16
+        height: 16
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 8, y: 8, z: 8, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 961a4330fffd66b43bc1570913cae2d1
+      internalID: 21300316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Aircular100px_01.png
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 0
+        width: 100
+        height: 100
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 50, y: 50, z: 50, w: 50}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cde56efe2f5d1d4e9cac5bfe4faebc0
+      internalID: 21300214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Choice_01.png
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 41
+        width: 29
+        height: 29
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 14, z: 11, w: 9}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e0698351b683b242ac46bdff3ffa669
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_01.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 46
+        width: 32
+        height: 32
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 12, y: 11, z: 13, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c2a2251d513cae4c9ed67598385a3fa
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_02.png
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 46
+        width: 28
+        height: 28
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 10, y: 10, z: 10, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 563163f9630211440acdb35be8956b38
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_03.png
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 75
+        width: 26
+        height: 25
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 12, y: 12, z: 12, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22d704d931c9f9a438311db53b1360f5
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_04.png
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 79
+        width: 28
+        height: 28
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 13, y: 13, z: 13, w: 13}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6254a9ce230794643992be4f532b6b61
+      internalID: 21300228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 83
+        width: 35
+        height: 34
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 20, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 908bea93923e28f48a60a1d5082dc3c9
+      internalID: 21300230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Dropdown_06.png
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 0
+        width: 95
+        height: 78
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 61, y: 30, z: 18, w: 35}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be8cc7bf3b5a30d4196741db55ee40a9
+      internalID: 21300232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_gongneng_01.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 0
+        width: 68
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c690925a231f9024795e92bb0db851f6
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_gongneng_02.png
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 0
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ae2becf3032ab9438c958f57f86f61c
+      internalID: 21300312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Head_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 56
+        width: 20
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 6, y: 6, z: 6, w: 6}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a7e7152dd817f42b1aae455a51ef9e
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Input.png
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 75
+        width: 26
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 10, z: 11, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b969437fbf28b6469a72bc31cfe110b
+      internalID: 21300302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Item_01.png
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 0
+        width: 72
+        height: 72
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d5adfc84c725504db7b5d62f6487431
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Middle_02.png
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 41
+        width: 20
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 6, y: 6, z: 6, w: 4}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c5c4b20271513943bba6a19ce7ddb91
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Money_01.png
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 0
+        width: 147
+        height: 38
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 72, y: 0, z: 72, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc040216553bccf44a5454bd50cdb397
+      internalID: 21300236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_01.png
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 0
+        width: 159
+        height: 214
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 59, y: 37, z: 60, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a66241c7f9660a49a066a0af85b0049
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_02.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 73
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 8, y: 9, z: 8, w: 7}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65af8a5dca230ff4392cf5188c58efe5
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_03.png
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 105
+        width: 20
+        height: 100
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 8, y: 88, z: 8, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fb45a84b9601f941bbce11ca0404cd3
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_04.png
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 41
+        width: 28
+        height: 28
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 13, z: 12, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26abdb081c8ed6948ba5e4c80a1ae6c9
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_05.png
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 43
+        width: 132
+        height: 572
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 0, z: 117, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0eeec99860b6544b64901745bf7d15
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_06.png
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 112
+        width: 30
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 9, y: 0, z: 10, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 822a22f1b3ac72c43a51d6ec3106d210
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_07.png
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 74
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 14, y: 23, z: 14, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5aeee8d0363c0d49a8279e531d7ef0d
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_08.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 147
+        width: 58
+        height: 29
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 27, y: 11, z: 27, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3760dabae4b05984c855e85b9489558f
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_09.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 181
+        width: 58
+        height: 48
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 24, y: 27, z: 30, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2953812dfc44e74cb873784bbf7e7eb
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_10.png
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 0
+        width: 120
+        height: 100
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 54, y: 11, z: 52, w: 83}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afceedfcb11445d4880ea541d1759a6b
+      internalID: 21300238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_11.png
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 83
+        width: 44
+        height: 44
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 19, y: 15, z: 19, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c39a72da0676ea4392816d9d099a80b
+      internalID: 21300250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_12.png
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 118
+        width: 82
+        height: 56
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 39, y: 26, z: 24, w: 21}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c7b2335bcd1e7849b955961627afb5f
+      internalID: 21300252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_13.png
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 77
+        width: 40
+        height: 200
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8112de3152e27fe45bdf34b84b9cc93d
+      internalID: 21300274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_14.png
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 106
+        width: 107
+        height: 107
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 52, y: 72, z: 47, w: 28}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17fff6ad31cbf6f4dbd2bc5a75f6af9f
+      internalID: 21300278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_15.png
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 210
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 16, y: 19, z: 17, w: 19}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35a40633ab35d25449ea38b54d3b9c9c
+      internalID: 21300292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_16.png
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 105
+        width: 88
+        height: 72
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 16, y: 21, z: 13, w: 21}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90a4a5c1114c06745a1b72a3dacfb6c8
+      internalID: 21300298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Normal_17.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 179
+        width: 154
+        height: 25
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f39152472a718764bba7793f42000a3c
+      internalID: 21300322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_progress_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 122
+        width: 26
+        height: 14
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 9, y: 5, z: 9, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f29e6b806c59cc4ca716198995aa604
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_qujianjianbian_01.png
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 119
+        width: 20
+        height: 82
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 10, y: 0, z: 10, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a54688629b77bd41a55676f4b270dbf
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Recommend_01.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 132
+        width: 60
+        height: 33
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 47, y: 0, z: 12, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 681a0d2b1b532d449aab1be563a95141
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Recommend_02.png
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 206
+        width: 62
+        height: 33
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 43, y: 0, z: 16, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4714d0addcbbd9447ac70c20ca4843be
+      internalID: 21300310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Role_00.png
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 182
+        width: 88
+        height: 88
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 29, y: 31, z: 29, w: 28}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c624545f3ca550a4ba2d467780691282
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Role_01.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 209
+        width: 88
+        height: 88
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 28, y: 31, z: 28, w: 25}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebe1d5c3887b58d418ecb8dc17a010ce
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Role_02.png
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 218
+        width: 80
+        height: 80
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c63982d58e2e548b94bb5298fe8309
+      internalID: 21300234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Role_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 255
+        width: 88
+        height: 88
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b7deb22bf07fa4db1472e9e6caadc2
+      internalID: 21300332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_TabLeft_03.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 105
+        width: 20
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 5, y: 0, z: 5, w: 3}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5425ec60b34621f4fa4e370ca79128d9
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Tips_01.png
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 219
+        width: 132
+        height: 132
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 21, y: 22, z: 71, w: 76}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef86cf67e953fcc458b6393e505e29fb
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Tips_02.png
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 219
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 15, y: 14, z: 12, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be26ba1b9b17e6e408b8bfa3c8521dff
+      internalID: 21300254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Tips_03.png
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 244
+        width: 66
+        height: 62
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 25, y: 28, z: 30, w: 23}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 573949da978e68644bd1a2eb2608e877
+      internalID: 21300300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Tips_04.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 244
+        width: 48
+        height: 48
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 24, y: 26, z: 24, w: 22}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb1876bf556b2194690bc5a4d536d939
+      internalID: 21300306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bg_Tips_Attribute_01.png
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 282
+        width: 99
+        height: 72
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 6, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06cb41042933f2d46890549e9eadc33c
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Add_01.png
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 77
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1425694b0a8a1b74493f6a428e97b8dd
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Add_02.png
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 128
+        width: 32
+        height: 32
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb3394e058561b54bb948dff08fd53f8
+      internalID: 21300196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Close_01.png
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 165
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fb50074c65a25b47a7ce407850b8227
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Close_02.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 302
+        width: 82
+        height: 82
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afb1773d7485cca4f93f84bb1526f95a
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Close_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 348
+        width: 181
+        height: 179
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57ec32dd4cccd444499d35fc9abc2a57
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Dropdown_01.png
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 216
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6af0a028457d03a4a924a3f38e01605c
+      internalID: 21300202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Dropdown_02.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 297
+        width: 42
+        height: 42
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f0b1d710d494a84d93add3f33f49a8c
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_GO.png
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 311
+        width: 90
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc6b5bbb31311c74da53ad38bdd144dc
+      internalID: 21300286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Left_01.png
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 344
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5964b582d2d7f548a7a434ae12959fd
+      internalID: 21300222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Login_01.png
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 356
+        width: 305
+        height: 94
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 644bd89703163b54ea918d44798dd16a
+      internalID: 21300280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Look_01.png
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 209
+        width: 50
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0491c0befbf74214f87962498ec0a2e1
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Look_02.png
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 303
+        width: 50
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3920a32823a23f42a198ad714345c3e
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Medium_01.png
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 275
+        width: 108
+        height: 52
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 19, y: 0, z: 21, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e9f661698ac2045a11e6ec70edd075
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Medium_02.png
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 389
+        width: 143
+        height: 54
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e07fc6e3b86b741a38c3aa6b09f8dc
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Mini_01.png
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 275
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0243aa6992971b4d8f7e7a04b914ab3
+      internalID: 21300308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_01.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 395
+        width: 168
+        height: 62
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 25, y: 0, z: 25, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 035ce881e84a08f428c2a0253aaaa3ae
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_02.png
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 455
+        width: 174
+        height: 62
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 25, y: 0, z: 25, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d96626763ff78c143a6037b70cddcfc5
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_03.png
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 522
+        width: 168
+        height: 62
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 25, y: 0, z: 25, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 372cccac94b9ec14992921f9db7bfbf0
+      internalID: 21300198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_04.png
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 522
+        width: 136
+        height: 52
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a00327b9d45223a4aa3af67db410c48f
+      internalID: 21300256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_05.png
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 455
+        width: 136
+        height: 52
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f30fa94fc82baa43b3a59c68c163e74
+      internalID: 21300258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_06.png
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 579
+        width: 87
+        height: 38
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a431f91872d154546aa9ee23b6ffdaa4
+      internalID: 21300324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Normal_07.png
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 589
+        width: 110
+        height: 41
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a3c79d7f5f462448296042d46ec1ce
+      internalID: 21300336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Reset_01.png
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 105
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420a69cbee495644996e4fb8b7e40ae3
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Right_01.png
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 156
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80820479408280f49a79dc4f53938895
+      internalID: 21300224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Scrollbar_01.png
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 303
+        width: 38
+        height: 39
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75a4f596e51202e42898aaf1cfaa98d4
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Scrollbar_02.png
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 207
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c89ced761eb7ea4cb4ecb7ee0b7d5fc
+      internalID: 21300212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Share_01.png
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 589
+        width: 44
+        height: 44
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad618367fc9bed14790ebfecf0a379eb
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Small_Close_01.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 362
+        width: 26
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cb28b7836ef4ff4d8e58c0e356f6a4f
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Small_Share_01.png
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 83
+        width: 25
+        height: 23
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42bd08a055e19db4381edd923048d5d0
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Subtract_01.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 579
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 151403db4cb80a5429cc4f8c557efd04
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Subtract_02.png
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 359
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ce62ceace4360b4bbd93d3c6641f202
+      internalID: 21300194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Bubble_01.png
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 400
+        width: 38
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 9, y: 36, z: 23, w: 25}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c338df081fe7e284c97de1c9791202a2
+      internalID: 21300318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Baifang_01.png
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 210
+        width: 2
+        height: 2
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 1, y: 1, z: 1, w: 1}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25d360887a4a2994485f85f208a750b8
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 66
+        width: 8
+        height: 2
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fdf7ad6f9c9b4643aec1d0f2e5aadcf
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_02.png
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 332
+        width: 159
+        height: 11
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 131, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3276d95c2ccbd842ad7e38eca8f4da2
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_03.png
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 267
+        width: 49
+        height: 9
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 31, y: 0, z: 9, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e9c20a63519048448f426967d9193dd
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_04.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 359
+        width: 70
+        height: 12
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 70, y: 0, z: 4, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c81eb53f4943564488700603d5721be2
+      internalID: 21300200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_05.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 344
+        width: 18
+        height: 2
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eed272cdaa89704183dc80e554cc254
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_06.png
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 622
+        width: 59
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 877c349e94447bd4191261fef2acce31
+      internalID: 21300314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_07.png
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 302
+        width: 38
+        height: 4
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 0, z: 13, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b210391312c5b4983def2ee864f9cd
+      internalID: 21300342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_Middle_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 234
+        width: 38
+        height: 10
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2a494e959fcd024189da4b67c22e78e
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Divide_Figure_Middle_02.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 351
+        width: 14
+        height: 1
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 4, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c54ff3bb0744334a851c820b2349c84
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Choice_01.png
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 630
+        width: 90
+        height: 90
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 46, y: 44, z: 44, w: 46}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bf46e6de394cb74299c84fab648feac
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Choice_02_4px.png
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 21
+        width: 12
+        height: 12
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 5, y: 5, z: 5, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f96c3017583025f4891800c5ed8a8470
+      internalID: 21300226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Middle_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 448
+        width: 60
+        height: 60
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02237fb694f0fa545a2a9d3deb9ab400
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Middle_Figure_02.png
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 462
+        width: 112
+        height: 80
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 43, y: 55, z: 43, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95d1664b637f0e149933402aab3e61af
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Middle_Figure_03.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 462
+        width: 72
+        height: 57
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 36, y: 34, z: 35, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6171c9ffc994da64a8675b5855d4b460
+      internalID: 21300284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Frame_Middle_Figure_04.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 524
+        width: 144
+        height: 129
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef57f6003ded4ff46b1e88713ab1a885
+      internalID: 21300294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_jiantou_01.png
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 362
+        width: 18
+        height: 12
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6caf7fd51fcef948bf29f962a51b7a7
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_jiantou_02.png
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 462
+        width: 42
+        height: 25
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 838f1afe813f31544be49fb5c7e0a3e2
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_jiantou_03.png
+      rect:
+        serializedVersion: 2
+        x: 492
+        y: 473
+        width: 42
+        height: 25
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e03674b80f2fef4eacdcc476dfa5d6e
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_jiantou_04.png
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 492
+        width: 38
+        height: 24
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c1dbc1bcfc19b744bfaa9bec86fe42b
+      internalID: 21300338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_Jingtanhao_01.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 218
+        width: 30
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7704944f2996e40b6a416ef60e9b18
+      internalID: 21300204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_seal_01.png
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 620
+        width: 122
+        height: 108
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a011e3236e00a004d94e56141c175f73
+      internalID: 21300248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_seal_02.png
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 635
+        width: 89
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25b46901f3092de49b0e9fc8f5343d36
+      internalID: 21300282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_seal_03.png
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 647
+        width: 122
+        height: 108
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29d8c0c36d800de40ac82004a3a2ba57
+      internalID: 21300340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_Sousuo_01.png
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 503
+        width: 36
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b45449f7cd9926d40bc3cc5449194580
+      internalID: 21300260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_WenHao_01.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 253
+        width: 31
+        height: 32
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 709c7a4ce73f7dd469967f91285901fb
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_xingxing_01.png
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 362
+        width: 22
+        height: 22
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975e5677ec1c769409447d309b53472c
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Icon_xingxing_02.png
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 248
+        width: 22
+        height: 22
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a388e5c6708e89408518c0407bb0431
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Identification_01.png
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 513
+        width: 59
+        height: 59
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe1363a16ec44604a93a824815805d34
+      internalID: 21300344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Identification_02.png
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 666
+        width: 59
+        height: 59
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5786283e2ebd654a931da1d547bb0fa
+      internalID: 21300346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Img_blz.png
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 544
+        width: 30
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9881c16935644d4381ec273e063bdec
+      internalID: 21300348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Img_blz1.png
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 579
+        width: 30
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f8412c5e167984fb811ec57b823bad
+      internalID: 21300350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Input_Head_01.png
+      rect:
+        serializedVersion: 2
+        x: 995
+        y: 248
+        width: 20
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 5, y: 5, z: 5, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc3bfec0f035da843a54c2aec857b56e
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Input_Head_02.png
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 725
+        width: 139
+        height: 62
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a5bdb83cbaff414fa246ffd130b6028
+      internalID: 21300334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Nav_up_liebiao_01.png
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 647
+        width: 30
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 10, y: 0, z: 10, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce0a535082def64b9fef83b091b2f4b
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Foot_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 577
+        width: 202
+        height: 70
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 160, y: 0, z: 17, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb3fa1aed16ad7b4f85433d78462e263
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Head_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 652
+        width: 360
+        height: 77
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 255, y: 0, z: 50, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c2e187141fccf4486fa939996a098a
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Head_02.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 733
+        width: 199
+        height: 50
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 147, y: 0, z: 37, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 191fcb8ac391d704baf6dff59f6243c9
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Head_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 532
+        width: 158
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 77, y: 0, z: 77, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bf2b66189c4beb4fac59bd1e99adc04
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Head_04.png
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 760
+        width: 178
+        height: 38
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 85, y: 0, z: 90, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76cf435fce2101a4f862aaa26d9982b3
+      internalID: 21300290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_Head_01.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 658
+        width: 141
+        height: 28
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 122, y: 0, z: 8, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97ebb928b3930fc4da95521cd0f36b52
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_Head_02.png
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 730
+        width: 74
+        height: 24
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 4, y: 0, z: 11, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39db2cbc882061446b3b33d6490c7bf5
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_Head_03.png
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 682
+        width: 40
+        height: 36
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 0, z: 18, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9942f1dda6152749a9138efa77269c4
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_Head_04.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 691
+        width: 33
+        height: 33
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 16, y: 14, z: 13, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6409dd420496f114a832491192ad4930
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_Head_05.png
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 577
+        width: 54
+        height: 54
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 22, y: 23, z: 22, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3e104cced8bf7143813b83e359d5c0b
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Panel_Small_nandu_01.png
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 691
+        width: 34
+        height: 26
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 12, y: 0, z: 13, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98d49b326f4bc6540a1d0f8d00cf20a9
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_Add_01.png
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 547
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b85d7c229142b3d40a590c8cada07393
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_Bubble.png
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 592
+        width: 55
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 41, y: 23, z: 10, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1db404fe98f3c7468d47808f97fe8d2
+      internalID: 21300244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_Choice_01.png
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 547
+        width: 35
+        height: 34
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ceeb19f6308a504a98666bd7d26d808
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_pic_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 760
+        width: 44
+        height: 54
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd6d67a8ef46fba419923924bfd2f25b
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_lock_02.png
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 586
+        width: 33
+        height: 37
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c935d548be4fa7242b455361297ca783
+      internalID: 21300320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_lock_1.png
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 760
+        width: 42
+        height: 47
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58b013d47abe9d24baf7a7cff1a8a235
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_TabLeft_etract_01.png
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 532
+        width: 18
+        height: 32
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f32c258bb2bc2724198e370f58e1e65e
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_TabLeft_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 812
+        width: 190
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2ccb736bfe267840b3221527f2e3ac7
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Pic_Tanhao.png
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 311
+        width: 15
+        height: 28
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de045c3058984094fb409373b07f189b
+      internalID: 21300288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_plane_Login_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 734
+        width: 49
+        height: 43
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 22, y: 22, z: 24, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda8beaed8ddd3c41b543dfe0ab1f164
+      internalID: 21300326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Projection_Normal_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 782
+        width: 41
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 20, y: 21, z: 18, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5b0e277081624488982a7235883ca9
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_RedPoint.png
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 647
+        width: 18
+        height: 18
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ccf48b4813a20e4a84dacb2615ceb95
+      internalID: 21300304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Switch_Foot_01.png
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 628
+        width: 18
+        height: 18
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63d896789bc42d94cbf4807aaae9c088
+      internalID: 21300266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Switch_Foot_02.png
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 234
+        width: 12
+        height: 12
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be46cace63d7b124098b9bf7a52b175d
+      internalID: 21300268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Left_01.png
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 782
+        width: 185
+        height: 83
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc589f866f1af6947be4c75507b18e81
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Left_02.png
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 788
+        width: 181
+        height: 78
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62e1dac92735a5049a90226651cfb04e
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Left_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 870
+        width: 172
+        height: 54
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 74, y: 23, z: 66, w: 22}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4679b664d27870445a653c62b50e6ded
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Left_04.png
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 803
+        width: 172
+        height: 67
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8277ef65da5682c479d34968f180f466
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Middle_01.png
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 803
+        width: 100
+        height: 100
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 9, y: 41, z: 10, w: 41}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c8650dc79aa024e9a4b8344837479f
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_01.png
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 871
+        width: 109
+        height: 71
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 971304a8ba621f64b98a433cf4a63375
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 929
+        width: 92
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efdefa0229127bd41924127e61edade4
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_03.png
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 819
+        width: 80
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bb268f28aa41a14da83fe54afdf89c1
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_04.png
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 847
+        width: 166
+        height: 94
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd17c5d7d9c919640826f485545838f4
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_05.png
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 875
+        width: 139
+        height: 87
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64f22e64e60a8934c91bb4dc2b5e9d2a
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_06.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 947
+        width: 100
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6898e2de9ad78e458fa1be8309da6d1
+      internalID: 21300270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Right_07.png
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 875
+        width: 100
+        height: 68
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e90d7a54d943c244bfc6dc7a1f0c62d
+      internalID: 21300272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Small_01.png
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 947
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 19, z: 17, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10329f801f626f840a40bc2079c131cf
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Small_02.png
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 734
+        width: 40
+        height: 40
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 18, z: 17, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75b851850d47b734fb8141f25f2344c0
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Small_03.png
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 734
+        width: 40
+        height: 41
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 18, z: 17, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a41a60a3e81e0294d9802b874a7cdf96
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Small_Title_01.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 734
+        width: 96
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 11, y: 11, z: 10, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03c276209209cba4fa5cb5cb9811f60e
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Small_Title_02.png
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 908
+        width: 96
+        height: 30
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 42, y: 13, z: 30, w: 7}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59fddea255dcd28488c365707027d7ac
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Title_01.png
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 892
+        width: 46
+        height: 46
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 15, y: 14, z: 15, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e9a73c3b34639747a011b94defabdf5
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Tab_Title_02.png
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 908
+        width: 47
+        height: 48
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 18, y: 21, z: 17, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a3268332a88f0f44a1c71d0631b6704
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_TipsBG_Login_01.png
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 948
+        width: 156
+        height: 19
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 840338b15a4c73148937148331871cc0
+      internalID: 21300328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: d6e463d8ef181504c978cc9847955fad
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Common_Arrow_GO.png: 21300276
+      UI_Common_Arrow_Left_01.png: 21300166
+      UI_Common_Bg_10Fillet_01.png: 21300168
+      UI_Common_Bg_20Fillet_01.png: 21300174
+      UI_Common_Bg_8Fillet_01.png: 21300316
+      UI_Common_Bg_Aircular100px_01.png: 21300214
+      UI_Common_Bg_Choice_01.png: 21300000
+      UI_Common_Bg_Dropdown_01.png: 21300176
+      UI_Common_Bg_Dropdown_02.png: 21300178
+      UI_Common_Bg_Dropdown_03.png: 21300180
+      UI_Common_Bg_Dropdown_04.png: 21300228
+      UI_Common_Bg_Dropdown_05.png: 21300230
+      UI_Common_Bg_Dropdown_06.png: 21300232
+      UI_Common_Bg_Head_02.png: 21300002
+      UI_Common_Bg_Input.png: 21300302
+      UI_Common_Bg_Item_01.png: 21300004
+      UI_Common_Bg_Middle_02.png: 21300016
+      UI_Common_Bg_Money_01.png: 21300236
+      UI_Common_Bg_Normal_01.png: 21300018
+      UI_Common_Bg_Normal_02.png: 21300020
+      UI_Common_Bg_Normal_03.png: 21300022
+      UI_Common_Bg_Normal_04.png: 21300024
+      UI_Common_Bg_Normal_05.png: 21300026
+      UI_Common_Bg_Normal_06.png: 21300182
+      UI_Common_Bg_Normal_07.png: 21300190
+      UI_Common_Bg_Normal_08.png: 21300206
+      UI_Common_Bg_Normal_09.png: 21300208
+      UI_Common_Bg_Normal_10.png: 21300238
+      UI_Common_Bg_Normal_11.png: 21300250
+      UI_Common_Bg_Normal_12.png: 21300252
+      UI_Common_Bg_Normal_13.png: 21300274
+      UI_Common_Bg_Normal_14.png: 21300278
+      UI_Common_Bg_Normal_15.png: 21300292
+      UI_Common_Bg_Normal_16.png: 21300298
+      UI_Common_Bg_Normal_17.png: 21300322
+      UI_Common_Bg_Recommend_01.png: 21300210
+      UI_Common_Bg_Recommend_02.png: 21300310
+      UI_Common_Bg_Role_00.png: 21300030
+      UI_Common_Bg_Role_01.png: 21300032
+      UI_Common_Bg_Role_02.png: 21300234
+      UI_Common_Bg_Role_03.png: 21300332
+      UI_Common_Bg_TabLeft_03.png: 21300034
+      UI_Common_Bg_Tips_01.png: 21300120
+      UI_Common_Bg_Tips_02.png: 21300254
+      UI_Common_Bg_Tips_03.png: 21300300
+      UI_Common_Bg_Tips_04.png: 21300306
+      UI_Common_Bg_Tips_Attribute_01.png: 21300216
+      UI_Common_Bg_gongneng_01.png: 21300116
+      UI_Common_Bg_gongneng_02.png: 21300312
+      UI_Common_Bg_progress_01.png: 21300028
+      UI_Common_Bg_qujianjianbian_01.png: 21300118
+      UI_Common_Btn_Add_01.png: 21300038
+      UI_Common_Btn_Add_02.png: 21300196
+      UI_Common_Btn_Close_01.png: 21300040
+      UI_Common_Btn_Close_02.png: 21300122
+      UI_Common_Btn_Close_03.png: 21300184
+      UI_Common_Btn_Dropdown_01.png: 21300202
+      UI_Common_Btn_Dropdown_02.png: 21300220
+      UI_Common_Btn_GO.png: 21300286
+      UI_Common_Btn_Left_01.png: 21300222
+      UI_Common_Btn_Login_01.png: 21300280
+      UI_Common_Btn_Look_01.png: 21300128
+      UI_Common_Btn_Look_02.png: 21300172
+      UI_Common_Btn_Medium_01.png: 21300042
+      UI_Common_Btn_Medium_02.png: 21300044
+      UI_Common_Btn_Mini_01.png: 21300308
+      UI_Common_Btn_Normal_01.png: 21300046
+      UI_Common_Btn_Normal_02.png: 21300048
+      UI_Common_Btn_Normal_03.png: 21300198
+      UI_Common_Btn_Normal_04.png: 21300256
+      UI_Common_Btn_Normal_05.png: 21300258
+      UI_Common_Btn_Normal_06.png: 21300324
+      UI_Common_Btn_Normal_07.png: 21300336
+      UI_Common_Btn_Reset_01.png: 21300050
+      UI_Common_Btn_Right_01.png: 21300224
+      UI_Common_Btn_Scrollbar_01.png: 21300192
+      UI_Common_Btn_Scrollbar_02.png: 21300212
+      UI_Common_Btn_Share_01.png: 21300130
+      UI_Common_Btn_Small_Close_01.png: 21300132
+      UI_Common_Btn_Small_Share_01.png: 21300134
+      UI_Common_Btn_Subtract_01.png: 21300052
+      UI_Common_Btn_Subtract_02.png: 21300194
+      UI_Common_Bubble_01.png: 21300318
+      UI_Common_Divide_Baifang_01.png: 21300136
+      UI_Common_Divide_Figure_01.png: 21300054
+      UI_Common_Divide_Figure_02.png: 21300056
+      UI_Common_Divide_Figure_03.png: 21300138
+      UI_Common_Divide_Figure_04.png: 21300200
+      UI_Common_Divide_Figure_05.png: 21300246
+      UI_Common_Divide_Figure_06.png: 21300314
+      UI_Common_Divide_Figure_07.png: 21300342
+      UI_Common_Divide_Figure_Middle_01.png: 21300058
+      UI_Common_Divide_Figure_Middle_02.png: 21300060
+      UI_Common_Frame_Choice_01.png: 21300186
+      UI_Common_Frame_Choice_02_4px.png: 21300226
+      UI_Common_Frame_Middle_Figure_01.png: 21300062
+      UI_Common_Frame_Middle_Figure_02.png: 21300140
+      UI_Common_Frame_Middle_Figure_03.png: 21300284
+      UI_Common_Frame_Middle_Figure_04.png: 21300294
+      UI_Common_Icon_Jingtanhao_01.png: 21300204
+      UI_Common_Icon_Sousuo_01.png: 21300260
+      UI_Common_Icon_WenHao_01.png: 21300068
+      UI_Common_Icon_jiantou_01.png: 21300066
+      UI_Common_Icon_jiantou_02.png: 21300240
+      UI_Common_Icon_jiantou_03.png: 21300242
+      UI_Common_Icon_jiantou_04.png: 21300338
+      UI_Common_Icon_seal_01.png: 21300248
+      UI_Common_Icon_seal_02.png: 21300282
+      UI_Common_Icon_seal_03.png: 21300340
+      UI_Common_Icon_xingxing_01.png: 21300070
+      UI_Common_Icon_xingxing_02.png: 21300072
+      UI_Common_Identification_01.png: 21300344
+      UI_Common_Identification_02.png: 21300346
+      UI_Common_Img_blz.png: 21300348
+      UI_Common_Img_blz1.png: 21300350
+      UI_Common_Input_Head_01.png: 21300074
+      UI_Common_Input_Head_02.png: 21300334
+      UI_Common_Nav_up_liebiao_01.png: 21300076
+      UI_Common_Panel_Foot_01.png: 21300188
+      UI_Common_Panel_Head_01.png: 21300078
+      UI_Common_Panel_Head_02.png: 21300080
+      UI_Common_Panel_Head_03.png: 21300082
+      UI_Common_Panel_Head_04.png: 21300290
+      UI_Common_Panel_Small_Head_01.png: 21300142
+      UI_Common_Panel_Small_Head_02.png: 21300144
+      UI_Common_Panel_Small_Head_03.png: 21300146
+      UI_Common_Panel_Small_Head_04.png: 21300262
+      UI_Common_Panel_Small_Head_05.png: 21300264
+      UI_Common_Panel_Small_nandu_01.png: 21300086
+      UI_Common_Pic_Add_01.png: 21300088
+      UI_Common_Pic_Bubble.png: 21300244
+      UI_Common_Pic_Choice_01.png: 21300090
+      UI_Common_Pic_TabLeft_Figure_01.png: 21300096
+      UI_Common_Pic_TabLeft_etract_01.png: 21300094
+      UI_Common_Pic_Tanhao.png: 21300288
+      UI_Common_Pic_lock_02.png: 21300320
+      UI_Common_Pic_lock_1.png: 21300148
+      UI_Common_Projection_Normal_01.png: 21300170
+      UI_Common_RedPoint.png: 21300304
+      UI_Common_Switch_Foot_01.png: 21300266
+      UI_Common_Switch_Foot_02.png: 21300268
+      UI_Common_Tab_Left_01.png: 21300098
+      UI_Common_Tab_Left_02.png: 21300100
+      UI_Common_Tab_Left_03.png: 21300102
+      UI_Common_Tab_Left_04.png: 21300104
+      UI_Common_Tab_Middle_01.png: 21300150
+      UI_Common_Tab_Right_01.png: 21300106
+      UI_Common_Tab_Right_02.png: 21300108
+      UI_Common_Tab_Right_03.png: 21300110
+      UI_Common_Tab_Right_04.png: 21300152
+      UI_Common_Tab_Right_05.png: 21300154
+      UI_Common_Tab_Right_06.png: 21300270
+      UI_Common_Tab_Right_07.png: 21300272
+      UI_Common_Tab_Small_01.png: 21300156
+      UI_Common_Tab_Small_02.png: 21300158
+      UI_Common_Tab_Small_03.png: 21300160
+      UI_Common_Tab_Small_Title_01.png: 21300162
+      UI_Common_Tab_Small_Title_02.png: 21300164
+      UI_Common_Tab_Title_01.png: 21300112
+      UI_Common_Tab_Title_02.png: 21300114
+      UI_Common_TipsBG_Login_01.png: 21300328
+      UI_Common_pic_Figure_01.png: 21300092
+      UI_Common_plane_Login_02.png: 21300326
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
