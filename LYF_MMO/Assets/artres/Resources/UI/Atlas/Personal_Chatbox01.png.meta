@@ -1,0 +1,565 @@
+fileFormatVersion: 2
+guid: 85ef187895ef0104cbcc02b4f0b0b3d9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Chatbox01_Icon_01.png
+  - first:
+      213: 21300002
+    second: UI_Chatbox01_Icon_02.png
+  - first:
+      213: 21300004
+    second: UI_Chatbox01_Icon_03.png
+  - first:
+      213: 21300006
+    second: UI_Chatbox01_Icon_04.png
+  - first:
+      213: 21300008
+    second: UI_Chatbox01_Icon_010.png
+  - first:
+      213: 21300010
+    second: UI_Chatbox01_Icon_011.png
+  - first:
+      213: 21300012
+    second: UI_Chatbox01_Icon_05.png
+  - first:
+      213: 21300014
+    second: UI_Chatbox01_Icon_06.png
+  - first:
+      213: 21300016
+    second: UI_Chatbox01_Icon_07.png
+  - first:
+      213: 21300018
+    second: UI_Chatbox01_Icon_08.png
+  - first:
+      213: 21300020
+    second: UI_Chatbox01_Icon_09.png
+  - first:
+      213: 21300022
+    second: UI_Chatbox01_Icon_012.png
+  - first:
+      213: 21300024
+    second: UI_Chatbox01_Icon_013.png
+  - first:
+      213: 21300026
+    second: UI_Chatbox01_Icon_014.png
+  - first:
+      213: 21300028
+    second: UI_Chatbox01_Icon_015.png
+  - first:
+      213: 21300030
+    second: UI_Chatbox01_Icon_016.png
+  - first:
+      213: 21300032
+    second: UI_Chatbox01_Icon_017.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 31, y: 16, z: 74, w: 34}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7b405945f5fa1444b515a0db9a672a6
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_010.png
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 0
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 42, y: 26, z: 63, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c2626e5e930dbf4f80a203f3735f316
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_011.png
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 0
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 46, y: 26, z: 60, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb70a446209fdb5479cbfccbba3ece62
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_012.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 0
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 50, y: 22, z: 48, w: 29}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf15995f8dd13fa4187744e856f2bd82
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_013.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 53
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 54, y: 33, z: 51, w: 18}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 628ece0728bcba74fa9e846c7166018b
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_014.png
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 53
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 49, y: 24, z: 55, w: 25}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e75bd0316d12d654190c53c636ec9548
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_015.png
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 53
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 59, y: 28, z: 47, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5766ab29d976534abbd42c0acb4d2a6
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_016.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 53
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 42, y: 31, z: 62, w: 21}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f063246582beaa04da79fd5694806b9c
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_017.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 106
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 61, y: 19, z: 45, w: 30}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a0794e5f86df284fa9c52cd58b66c32
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 106
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 55, y: 26, z: 46, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b83ccf4b568dbc4b87596c6faff19c9
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_03.png
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 106
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 55, y: 26, z: 51, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5c891fc1421ba94d8f08f9c9808241e
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_04.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 106
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 52, y: 24, z: 54, w: 26}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc52503104c4a674a9e816bd4de75d95
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 159
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 52, y: 25, z: 55, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b341ffc1c5e8e204585b552ea70972f3
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_06.png
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 159
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 49, y: 28, z: 57, w: 23}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49ca2233be1ac1644a92a73b4447e04c
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_07.png
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 159
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 41, y: 28, z: 59, w: 23}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 950f30d08cfb5fb4b885e7d35ccfd382
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_08.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 159
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 52, y: 27, z: 48, w: 23}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea982f5b5fcf08469cc9b40c3c80d74
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Chatbox01_Icon_09.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 212
+        width: 108
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 55, y: 27, z: 52, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23096a061cfd2094397168de4114b127
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: d955bae74969a354ba291ce4491bd412
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Chatbox01_Icon_01.png: 21300000
+      UI_Chatbox01_Icon_010.png: 21300008
+      UI_Chatbox01_Icon_011.png: 21300010
+      UI_Chatbox01_Icon_012.png: 21300022
+      UI_Chatbox01_Icon_013.png: 21300024
+      UI_Chatbox01_Icon_014.png: 21300026
+      UI_Chatbox01_Icon_015.png: 21300028
+      UI_Chatbox01_Icon_016.png: 21300030
+      UI_Chatbox01_Icon_017.png: 21300032
+      UI_Chatbox01_Icon_02.png: 21300002
+      UI_Chatbox01_Icon_03.png: 21300004
+      UI_Chatbox01_Icon_04.png: 21300006
+      UI_Chatbox01_Icon_05.png: 21300012
+      UI_Chatbox01_Icon_06.png: 21300014
+      UI_Chatbox01_Icon_07.png: 21300016
+      UI_Chatbox01_Icon_08.png: 21300018
+      UI_Chatbox01_Icon_09.png: 21300020
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

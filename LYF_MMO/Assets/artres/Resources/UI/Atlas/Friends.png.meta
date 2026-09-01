@@ -1,0 +1,920 @@
+fileFormatVersion: 2
+guid: 7e0fc04783bbb0b4d8cd00449360f555
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Friends_Btn_jiapu.png
+  - first:
+      213: 21300002
+    second: UI_Friends_Btn_jiayuan.png
+  - first:
+      213: 21300004
+    second: UI_Friends_Btn_qingkong.png
+  - first:
+      213: 21300006
+    second: UI_Friends_Btn_tianjiahaoyou.png
+  - first:
+      213: 21300008
+    second: UI_Friends_Button_Xinxikuang.png
+  - first:
+      213: 21300010
+    second: UI_Friends_Button_Xinxitubiao.png
+  - first:
+      213: 21300012
+    second: UI_Friends_Img_bg_01.png
+  - first:
+      213: 21300014
+    second: UI_Friends_Img_bg_02.png
+  - first:
+      213: 21300016
+    second: UI_Friends_Img_haoyoudu.png
+  - first:
+      213: 21300018
+    second: UI_Friends_Img_liaotiankuang.png
+  - first:
+      213: 21300020
+    second: UI_Friends_Img_liaotianqipao.png
+  - first:
+      213: 21300022
+    second: UI_Friends_Img_xian.png
+  - first:
+      213: 21300024
+    second: UI_Icon_Friends.png
+  - first:
+      213: 21300026
+    second: UI_Icon_Haoyou.png
+  - first:
+      213: 21300028
+    second: UI_Icon_Tianjiahaoyou.png
+  - first:
+      213: 21300030
+    second: UI_Friends_Btn_Lianjie.png
+  - first:
+      213: 21300032
+    second: UI_Friends_Button_Huanyuanweizhi.png
+  - first:
+      213: 21300034
+    second: UI_Friends_Button_Quxiaokuaijie.png
+  - first:
+      213: 21300036
+    second: UI_Friends_Button_Zuixiaohua.png
+  - first:
+      213: 21300038
+    second: UI_Friends_Img_Kapula.png
+  - first:
+      213: 21300040
+    second: UI_Friends_Img_Xuanzhoghuangse.png
+  - first:
+      213: 21300042
+    second: UI_Friends_Btn_sousuo.png
+  - first:
+      213: 21300044
+    second: UI_Friends_Btn_Delate.png
+  - first:
+      213: 21300046
+    second: UI_Friends_Btn_Emoji.png
+  - first:
+      213: 21300048
+    second: UI_Friends_Btn_Speak.png
+  - first:
+      213: 21300050
+    second: UI_Friends_Icon_heart.png
+  - first:
+      213: 21300052
+    second: UI_Friends_Pic_liaotian.png
+  - first:
+      213: 21300054
+    second: UI_Friends_Img_liaotiankuang_01.png
+  - first:
+      213: 21300056
+    second: UI_Friends_Btn_Keyboard.png
+  - first:
+      213: 21300058
+    second: UI_Commonicon_Divide_Figure_01.png
+  - first:
+      213: 21300060
+    second: UI_CommonIcon_Icon_Email_01.png
+  - first:
+      213: 21300062
+    second: UI_CommonIcon_Icon_Email_02.png
+  - first:
+      213: 21300064
+    second: UI_CommonIcon_Icon_Friend_01.png
+  - first:
+      213: 21300066
+    second: UI_CommonIcon_Icon_Friend_02.png
+  - first:
+      213: 21300068
+    second: UI_CommonIcon_Icon_Friend_03.png
+  - first:
+      213: 21300070
+    second: UI_CommonIcon_Tab_haoyou_01.png
+  - first:
+      213: 21300072
+    second: UI_CommonIcon_Tab_haoyou_02.png
+  - first:
+      213: 21300074
+    second: UI_CommonIcon_Tab_youjian_01.png
+  - first:
+      213: 21300076
+    second: UI_CommonIcon_Tab_youjian_02.png
+  - first:
+      213: 21300078
+    second: UI_Email_Icon_biaoqian_01.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Commonicon_Divide_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaba41a0adda7b74c97adafb38dd1099
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Icon_Friend_03.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 0
+        width: 34
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4be328a77743035479b15fbedf19d292
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Tab_haoyou_01.png
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 0
+        width: 38
+        height: 37
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8819fa460dcb71546b41597fc5c9b37c
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Tab_haoyou_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 27
+        width: 36
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 732924694bb186c4a86cbd7a607df638
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Tab_youjian_01.png
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 0
+        width: 40
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34673f8cc7a5e154fb3453c21d631895
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Tab_youjian_02.png
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 0
+        width: 38
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb1ab9cc84dbe714581f60cbdac96130
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Email_Icon_biaoqian_01.png
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 0
+        width: 41
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 205e2770b4627e6459e925aedd28a8d1
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_Delate.png
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 30
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59d294b1fab3b254f98fbc80cecd3d43
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_Emoji.png
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 38
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f4c312860069a04cabe3e7ca756f397
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_jiapu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 62
+        width: 29
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 160b63e0dca40e444ae5d6cc35187703
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_jiayuan.png
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 27
+        width: 27
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3bac45299533604f80cc3cd494c3c65
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_Keyboard.png
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 0
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b101a8ac700e3418c00f4bdda9939a
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_Lianjie.png
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 0
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f77f64df84671f24fae1b40a319a3043
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_qingkong.png
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 36
+        width: 27
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f815292bfbce6b4ab91ae3dd4a45559
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_sousuo.png
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 56
+        width: 26
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f75d79cf85820c46b00b367eb622ea4
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_Speak.png
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 0
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa45b8e3a9f710c4b970a47eaf180134
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Btn_tianjiahaoyou.png
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 71
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 889ce7a66936bc94e82ca708e56f0b0e
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Icon_heart.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 81
+        width: 27
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5700aa037fda7e41959c5cd1737667d
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_bg_01.png
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 47
+        width: 38
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3a91e026534bef468c3f8a8448f2038
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_bg_02.png
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 51
+        width: 45
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfcdfaafe9ea7814e9ce3c5af6627425
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_haoyoudu.png
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 69
+        width: 27
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 482bbfa8563002044adad7c10d62f4aa
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_Kapula.png
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 0
+        width: 379
+        height: 342
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a687675818e8884e80e0bcb2738c564
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_liaotiankuang.png
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 81
+        width: 59
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 30, y: 12, z: 23, w: 33}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b30ae718f7f0b72468cf844ec4be1363
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_liaotiankuang_01.png
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 97
+        width: 165
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 59, y: 24, z: 54, w: 32}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a46f8d3eefba1de4cb92e51c65ea978d
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_liaotianqipao.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 158
+        width: 232
+        height: 126
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae2425f14c95b124a85956b26ae1a738
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Img_xian.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 343
+        width: 367
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ab3ac4d9643ed64887b41d1af416674
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Friends_Pic_liaotian.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 348
+        width: 674
+        height: 545
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d27a17cc3431c4db21643b5245084a
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Friends.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 106
+        width: 57
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad80f82d59518264abc1ee123ba72c75
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Haoyou.png
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 158
+        width: 108
+        height: 94
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 002e522c994f33d43b654042204ed0c9
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Tianjiahaoyou.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 894
+        width: 112
+        height: 94
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d79491b58acea3f43942e057ff12da2d
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 2c300d61c6fcbbd419646d8c1597c81f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_CommonIcon_Icon_Friend_03.png: 21300068
+      UI_CommonIcon_Tab_haoyou_01.png: 21300070
+      UI_CommonIcon_Tab_haoyou_02.png: 21300072
+      UI_CommonIcon_Tab_youjian_01.png: 21300074
+      UI_CommonIcon_Tab_youjian_02.png: 21300076
+      UI_Commonicon_Divide_Figure_01.png: 21300058
+      UI_Email_Icon_biaoqian_01.png: 21300078
+      UI_Friends_Btn_Delate.png: 21300044
+      UI_Friends_Btn_Emoji.png: 21300046
+      UI_Friends_Btn_Keyboard.png: 21300056
+      UI_Friends_Btn_Lianjie.png: 21300030
+      UI_Friends_Btn_Speak.png: 21300048
+      UI_Friends_Btn_jiapu.png: 21300000
+      UI_Friends_Btn_jiayuan.png: 21300002
+      UI_Friends_Btn_qingkong.png: 21300004
+      UI_Friends_Btn_sousuo.png: 21300042
+      UI_Friends_Btn_tianjiahaoyou.png: 21300006
+      UI_Friends_Icon_heart.png: 21300050
+      UI_Friends_Img_Kapula.png: 21300038
+      UI_Friends_Img_bg_01.png: 21300012
+      UI_Friends_Img_bg_02.png: 21300014
+      UI_Friends_Img_haoyoudu.png: 21300016
+      UI_Friends_Img_liaotiankuang.png: 21300018
+      UI_Friends_Img_liaotiankuang_01.png: 21300054
+      UI_Friends_Img_liaotianqipao.png: 21300020
+      UI_Friends_Img_xian.png: 21300022
+      UI_Friends_Pic_liaotian.png: 21300052
+      UI_Icon_Friends.png: 21300024
+      UI_Icon_Haoyou.png: 21300026
+      UI_Icon_Tianjiahaoyou.png: 21300028
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

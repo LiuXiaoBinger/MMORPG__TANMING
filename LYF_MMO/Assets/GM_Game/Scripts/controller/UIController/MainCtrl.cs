@@ -32,7 +32,11 @@ public class MainCtrl : CtrlBase
         if (ret != null && ret.CmdCode == CmdCode.Succeed)
         {
             Debug.Log("RoleKnapsackInfoHandle:: "+ret.ToString());
-            UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.KnapsackWindow,ret.RoleItemLst);
+            UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.KnapsackWindow,ret);
+            /*switch (ret.)
+            {
+                
+            }*/
         }
     }
     /// <summary>

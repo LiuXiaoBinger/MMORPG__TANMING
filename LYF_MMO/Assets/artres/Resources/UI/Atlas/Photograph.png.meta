@@ -1,0 +1,2474 @@
+fileFormatVersion: 2
+guid: 63c99269f20878640b466621f045af7b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Photograph_Album01.png
+  - first:
+      213: 21300002
+    second: UI_Photograph_Album01_weixuanzhong.png
+  - first:
+      213: 21300004
+    second: UI_Photograph_Album02.png
+  - first:
+      213: 21300006
+    second: UI_Photograph_AlbumAdd.png
+  - first:
+      213: 21300008
+    second: UI_Photograph_Back.png
+  - first:
+      213: 21300010
+    second: UI_Photograph_Book01.png
+  - first:
+      213: 21300012
+    second: UI_Photograph_Book02.png
+  - first:
+      213: 21300014
+    second: UI_Photograph_Book03.png
+  - first:
+      213: 21300016
+    second: UI_Photograph_Book04.png
+  - first:
+      213: 21300018
+    second: UI_Photograph_Book05.png
+  - first:
+      213: 21300020
+    second: UI_Photograph_Bookicon.png
+  - first:
+      213: 21300022
+    second: UI_Photograph_BtnAR.png
+  - first:
+      213: 21300024
+    second: UI_Photograph_BtnAR01.png
+  - first:
+      213: 21300026
+    second: UI_Photograph_BtnAR02.png
+  - first:
+      213: 21300028
+    second: UI_Photograph_BtnFREE.png
+  - first:
+      213: 21300030
+    second: UI_Photograph_BtnFREE01.png
+  - first:
+      213: 21300032
+    second: UI_Photograph_BtnFREE02.png
+  - first:
+      213: 21300034
+    second: UI_Photograph_BtnMoren.png
+  - first:
+      213: 21300036
+    second: UI_Photograph_BtnMOREN01.png
+  - first:
+      213: 21300038
+    second: UI_Photograph_BtnMOREN02.png
+  - first:
+      213: 21300040
+    second: UI_Photograph_BtnZIPAI.png
+  - first:
+      213: 21300042
+    second: UI_Photograph_BtnZIPAI01.png
+  - first:
+      213: 21300044
+    second: UI_Photograph_BtnZIPAI02.png
+  - first:
+      213: 21300046
+    second: UI_Photograph_Cameradrag.png
+  - first:
+      213: 21300048
+    second: UI_Photograph_Camerafar.png
+  - first:
+      213: 21300050
+    second: UI_Photograph_Cameraframe.png
+  - first:
+      213: 21300052
+    second: UI_Photograph_Cameraframe01.png
+  - first:
+      213: 21300054
+    second: UI_Photograph_Cameraframe02.png
+  - first:
+      213: 21300056
+    second: UI_Photograph_Cameranear.png
+  - first:
+      213: 21300058
+    second: UI_Photograph_delete.png
+  - first:
+      213: 21300060
+    second: UI_Photograph_di.png
+  - first:
+      213: 21300062
+    second: UI_Photograph_Expression.png
+  - first:
+      213: 21300064
+    second: UI_Photograph_Individualization.png
+  - first:
+      213: 21300066
+    second: UI_Photograph_Input.png
+  - first:
+      213: 21300068
+    second: UI_Photograph_jingtou.png
+  - first:
+      213: 21300070
+    second: UI_Photograph_logo.png
+  - first:
+      213: 21300072
+    second: UI_Photograph_photo.png
+  - first:
+      213: 21300074
+    second: UI_Photograph_Photographicpaper.png
+  - first:
+      213: 21300076
+    second: UI_Photograph_Photohorn.png
+  - first:
+      213: 21300078
+    second: UI_Photograph_photomood.png
+  - first:
+      213: 21300080
+    second: UI_Photograph_photomood01.png
+  - first:
+      213: 21300082
+    second: UI_Photograph_photomoodAdd.png
+  - first:
+      213: 21300084
+    second: UI_Photograph_picture.png
+  - first:
+      213: 21300086
+    second: UI_Photograph_picture02.png
+  - first:
+      213: 21300088
+    second: UI_Photograph_rename.png
+  - first:
+      213: 21300090
+    second: UI_Photograph_replace.png
+  - first:
+      213: 21300092
+    second: UI_Photograph_Savephone.png
+  - first:
+      213: 21300094
+    second: UI_Photograph_Savexiangce.png
+  - first:
+      213: 21300096
+    second: UI_Photograph_Setup.png
+  - first:
+      213: 21300098
+    second: UI_Photograph_Share.png
+  - first:
+      213: 21300100
+    second: UI_Photograph_Shareqq.png
+  - first:
+      213: 21300102
+    second: UI_Photograph_Sharesina.png
+  - first:
+      213: 21300104
+    second: UI_Photograph_ShareWechat.png
+  - first:
+      213: 21300106
+    second: UI_Photograph_ShareWechatfriend.png
+  - first:
+      213: 21300108
+    second: UI_Photograph_shezhi.png
+  - first:
+      213: 21300110
+    second: UI_Photograph_TypeBtn01.png
+  - first:
+      213: 21300112
+    second: UI_Photograph_TypeBtn02.png
+  - first:
+      213: 21300114
+    second: UI_Photograph_xuanzhong.png
+  - first:
+      213: 21300116
+    second: UI_Photograph_yeshu.png
+  - first:
+      213: 21300118
+    second: UI_PhotoSticker_Close.png
+  - first:
+      213: 21300120
+    second: UI_PhotoSticker_frame.png
+  - first:
+      213: 21300122
+    second: UI_PhotoSticker_Scene_PhotoCan.png
+  - first:
+      213: 21300124
+    second: UI_PhotoSticker_Scene_PhotoNo.png
+  - first:
+      213: 21300126
+    second: UI_PhotoSticker_zoom.png
+  - first:
+      213: 21300128
+    second: UI_Photograph_Bg_PhotoName_03.png
+  - first:
+      213: 21300130
+    second: UI_Photograph_Divide_Line_01.png
+  - first:
+      213: 21300132
+    second: UI_Photograph_Icon_Photo_01.png
+  - first:
+      213: 21300134
+    second: UI_Photograph_Icon_Photo_02.png
+  - first:
+      213: 21300136
+    second: UI_Photograph_Icon_Photo_03.png
+  - first:
+      213: 21300138
+    second: UI_Photograph_Icon_Photo_04.png
+  - first:
+      213: 21300140
+    second: UI_Photograph_Icon_Photo_05.png
+  - first:
+      213: 21300142
+    second: UI_Photograph_Icon_Photo_06.png
+  - first:
+      213: 21300144
+    second: UI_Photograph_Icon_Photo_07.png
+  - first:
+      213: 21300146
+    second: UI_Photograph_Switch_Foot_01.png
+  - first:
+      213: 21300148
+    second: UI_Photograph_Switch_Foot_02.png
+  - first:
+      213: 21300150
+    second: UI_Photograph_Icon_Delate.png
+  - first:
+      213: 21300152
+    second: UI_Photograph_Icon_Redact.png
+  - first:
+      213: 21300154
+    second: UI_Photograph_Icon_Share.png
+  - first:
+      213: 21300156
+    second: UI_Photograph_XianShi.png
+  - first:
+      213: 21300158
+    second: UI_Share_Icon_01.png
+  - first:
+      213: 21300160
+    second: UI_Photograph_Shareqqspece.png
+  - first:
+      213: 21300162
+    second: UI_Share_Icon_02.png
+  - first:
+      213: 21300164
+    second: UI_Share_Icon_Close_01.png
+  - first:
+      213: 21300166
+    second: UI_Photograph_ShareFacebook.png
+  - first:
+      213: 21300168
+    second: UI_Photograph_ShareLine.png
+  - first:
+      213: 21300170
+    second: UI_Photograph_ShareTwitter.png
+  - first:
+      213: 21300172
+    second: UI_Photograph_ShareIcon.png
+  - first:
+      213: 21300174
+    second: UI_Photograph_Kakaotalk.png
+  - first:
+      213: 21300176
+    second: UI_Share_Icon_03.png
+  - first:
+      213: 21300178
+    second: UI_Photograph_ShareBg_01.png
+  - first:
+      213: 21300180
+    second: UI_Photograph_ShareBg_02.png
+  - first:
+      213: 21300182
+    second: UI_Photograph_ShareBg_03.png
+  - first:
+      213: 21300184
+    second: UI_Photograph_ShareBg_04.png
+  - first:
+      213: 21300186
+    second: "\u7EC4393.png"
+  - first:
+      213: 21300188
+    second: UI_Photograph_ShareBg_05.png
+  - first:
+      213: 21300190
+    second: UI_Share_Icon_04.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Photograph_Album01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 111
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4e4d45fd1e123d4484818a44f7102a7
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Album01_weixuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 27
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4a7b73afbb95014da31334a3ac0492b
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Album02.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 0
+        width: 111
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23b85292d6630bd4497d3ef7717a37ae
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_AlbumAdd.png
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 0
+        width: 156
+        height: 156
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa04358f4eb80a4fbe171aa311032a0
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Back.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 100
+        width: 68
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da55f9fa9d9b2a4db0034372021b6b7
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Bg_PhotoName_03.png
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 100
+        width: 30
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 0, z: 12, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18d4f7aed58bb85478c8f03e2bfdd819
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Book01.png
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 0
+        width: 214
+        height: 601
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95c987d2ebe7da243ada73449e8fd497
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Book02.png
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 157
+        width: 223
+        height: 593
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b82cd55b1491ab5469af287e22630873
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Book03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 169
+        width: 58
+        height: 57
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 26, y: 26, z: 26, w: 26}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a82506484bcade148bc8eba4099466bf
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Book04.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 157
+        width: 87
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 760fc689a0789714891a6489b08630e2
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Book05.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 244
+        width: 90
+        height: 102
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 536a917a918d9ce468d3228f4350a65b
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Bookicon.png
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 157
+        width: 20
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0133e8601cf46a04282625a8f8e04797
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnAR.png
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 127
+        width: 33
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae1ca8ccf1eaa30498a90037cbeaa88e
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnAR01.png
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 100
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3e5d0807c358464ba6d717364d008ab
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnAR02.png
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 100
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d082159a4d601ff42ab2189964e5f04a
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnFREE.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 100
+        width: 33
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a4c3fed52643434e978bb0c9bf348ee
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnFREE01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 227
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f654da655f9564d4b8641b9b5dc4f202
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnFREE02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 261
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e41333fd7339d33498b1a19493a55077
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnMoren.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 127
+        width: 33
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1de0e931841a1374ebea084a3eee6bdd
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnMOREN01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 295
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b0e8f61dcec0344cbc3567121c6680f
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnMOREN02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 329
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09d27f1a4780a604fb11cdcedd03f4da
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnZIPAI.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 363
+        width: 33
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11f1889354c7356448337ddf7b4155ff
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnZIPAI01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 390
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 654704a7cd675314caa03ad3992116a2
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_BtnZIPAI02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 424
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 725bd6eedf97c0b4289fb07e32f29130
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Cameradrag.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 458
+        width: 42
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7de628a3a6b2084fa28543e6161ba5f
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Camerafar.png
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 363
+        width: 21
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3481e1408a246e6498cfe1bfdae5ffe4
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Cameraframe.png
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 370
+        width: 7
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 6, z: 0, w: 7}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1af0ccc7d2c90e6418d494ceea62a832
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Cameraframe01.png
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 100
+        width: 12
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 10, z: 0, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f013ec169947a146b3e88cffc39e822
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Cameraframe02.png
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 370
+        width: 19
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 8, y: 0, z: 9, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60074b7aa8ac216428e1d0d1f7a06d72
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Cameranear.png
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 122
+        width: 21
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 102a36d3cde41574e89f5f84db09e9b3
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_delete.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 501
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4378d6e11a2c2c142bc5a4922632b8f8
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_di.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 562
+        width: 52
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 12, z: 32, w: 48}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9affbda008ae63b4c9e8f9199dd498df
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Divide_Line_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 751
+        width: 912
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89a65001ee9fed24abe6e8faee936664
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Expression.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 629
+        width: 63
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdbb4c67caf5efa40883209611cf413b
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Delate.png
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 180
+        width: 25
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b472bc9b626cf134a9c6d466c86bd868
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_01.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 347
+        width: 82
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b56b6a0e8ff2444949a481f27b0ccf
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 692
+        width: 64
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8ea2e6430c2ebf428b432f622b87984
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_03.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 390
+        width: 69
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26387389baad3ee48b116d6b6fb5e64a
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_04.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 446
+        width: 74
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0ffcc678d1257e47af7185fb7448a48
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_05.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 501
+        width: 82
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ae4cabff376e1f42b6cc5ed026a6fd1
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_06.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 572
+        width: 58
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 992c1e8125f0f874cbfffc638673d109
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Photo_07.png
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 572
+        width: 54
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ebdf4411b60bcf4b8c4eaeaa182ac2b
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Redact.png
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 390
+        width: 31
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f22428dd18e65d74f9750484be1618db
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Icon_Share.png
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 347
+        width: 31
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fea2594119722349a5f2bdfcd7f1e52
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Individualization.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 651
+        width: 63
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76aae0389fd235247aa430434734c0ac
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Input.png
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 651
+        width: 63
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b154d99c5a319b14d89c48589e9990bd
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_jingtou.png
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 206
+        width: 27
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc31053ddb4d81740859ee72b9b18d51
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Kakaotalk.png
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 602
+        width: 53
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeba1ba6b5768a347ab3c5aedb6dc65b
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_logo.png
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 652
+        width: 68
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e73660c1f7d93d4d92ff0d3529cb3bf
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_photo.png
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 602
+        width: 118
+        height: 118
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39ce4b8b63300b44e9350778e54eb240
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Photographicpaper.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 28
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f063cf60347007408a239e5be365d23
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Photohorn.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 420
+        width: 32
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 666e1e8aef9474e4fabdcb609ca23e19
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_photomood.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 55
+        width: 27
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 0, z: 13, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d394552755368a64a97f2a5bd41eff5c
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_photomood01.png
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 82
+        width: 17
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20fa9bbe2f149f448bff0c9744366a1b
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_photomoodAdd.png
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 602
+        width: 362
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d43d93057e56ce7468d04358ecf6972a
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_picture.png
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 0
+        width: 139
+        height: 152
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 186597d9e136440478dadf8e5c386f1b
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_picture02.png
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 0
+        width: 188
+        height: 157
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b504261584529344eae3632200c56f78
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_rename.png
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 0
+        width: 70
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fe8533a0a1e18043a8b1b6445b7935c
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_replace.png
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 71
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fba7e01d55a77f40932bcf91b442b41
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Savephone.png
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 695
+        width: 49
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab4edffddc047f541bf90afa816ef25a
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Savexiangce.png
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 132
+        width: 53
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0077c09274e36194a9802b46e25469bc
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Setup.png
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 633
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d23cbcaea46b35f44ae085f2753177d5
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Share.png
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 633
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c36876cd89f835b429e85ee935e02fe8
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareBg_01.png
+      rect:
+        serializedVersion: 2
+        x: 670
+        y: 633
+        width: 57
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 22, y: 17, z: 22, w: 30}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 504f2510b0b06e04bb0f17428dbdf5f6
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareBg_02.png
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 381
+        width: 26
+        height: 5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ceb93b060dd3934b9a5ec8681c9294b
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareBg_03.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 227
+        width: 10
+        height: 77
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 4, y: 35, z: 4, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25e54292627e53640ab5b13756224639
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareBg_04.png
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 132
+        width: 12
+        height: 301
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 116, z: 4, w: 75}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6c57bbd093399a4e8b1109ce6bc4405
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareBg_05.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 632
+        width: 54
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 17, y: 0, z: 20, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fa5a0bb0d99ddb44b16e96db6792924
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareFacebook.png
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 633
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3920e4461b0554042b004e199ed67cf4
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareIcon.png
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 633
+        width: 61
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a8000596aa472c4d950a0060818d44f
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareLine.png
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 633
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a8bcb7b01646cb45974884d467f7342
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Shareqq.png
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 694
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e083175b743cdd40803db98aba49315
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Shareqqspece.png
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 755
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94acc6dfaffd2ac48bb8c6532c2776f0
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_Sharesina.png
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 153
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a07a20678e53d424e80e3813e283a775
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareTwitter.png
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 153
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38c0131a9b4525d4189ef192e1c906f8
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareWechat.png
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 434
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 558763f91ec044a49bb3e13da0f9320e
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_ShareWechatfriend.png
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 495
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcaf3be3b01860a4b9ad1196d218142e
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_shezhi.png
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 305
+        width: 21
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95a2bf1c084bbe44ea4dac3df7307694
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_TypeBtn01.png
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 694
+        width: 54
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 781db0bad9fba244285766408ddc4566
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_TypeBtn02.png
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 694
+        width: 54
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae46e98c5761f2b4ca336fcad962834d
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_XianShi.png
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 434
+        width: 64
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7cb22014b3bd6748a5986dd09cc5480
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 327
+        width: 25
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 596204474e604c1459ab782cc82013f3
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Photograph_yeshu.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 454
+        width: 34
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 500a8fc2f0c5c864ab2c0206d9d34716
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PhotoSticker_Close.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 471
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f56c00b49e7f6140b4044eac2e5b6e3
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PhotoSticker_frame.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 353
+        width: 10
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6933112fcb2215843a3e4234404459fb
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PhotoSticker_Scene_PhotoCan.png
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 695
+        width: 36
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff0a1818d2753d14cbca30fd831b5f4c
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PhotoSticker_Scene_PhotoNo.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 714
+        width: 36
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 794067f5994170644b486cff91ee38e5
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PhotoSticker_zoom.png
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 728
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0d2680c1aa851f46aef1acfb7f2346e
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Share_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 694
+        width: 47
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 968136bd02c1bce4bad4de00aac3439f
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Share_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 100
+        width: 14
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d984d4b12688b3d4190a6feb10bea915
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Share_Icon_03.png
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 499
+        width: 65
+        height: 63
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f3617cb537110b49815fdba4201f0a7
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Share_Icon_04.png
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 434
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ca7fa443b48d2842a8f4a667a997b0d
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Share_Icon_Close_01.png
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 515
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee5bb7030bf2f2447a53a7c528fed146
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: f6ce56f7357a4fb43bf601a464650dfe
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_PhotoSticker_Close.png: 21300118
+      UI_PhotoSticker_Scene_PhotoCan.png: 21300122
+      UI_PhotoSticker_Scene_PhotoNo.png: 21300124
+      UI_PhotoSticker_frame.png: 21300120
+      UI_PhotoSticker_zoom.png: 21300126
+      UI_Photograph_Album01.png: 21300000
+      UI_Photograph_Album01_weixuanzhong.png: 21300002
+      UI_Photograph_Album02.png: 21300004
+      UI_Photograph_AlbumAdd.png: 21300006
+      UI_Photograph_Back.png: 21300008
+      UI_Photograph_Bg_PhotoName_03.png: 21300128
+      UI_Photograph_Book01.png: 21300010
+      UI_Photograph_Book02.png: 21300012
+      UI_Photograph_Book03.png: 21300014
+      UI_Photograph_Book04.png: 21300016
+      UI_Photograph_Book05.png: 21300018
+      UI_Photograph_Bookicon.png: 21300020
+      UI_Photograph_BtnAR.png: 21300022
+      UI_Photograph_BtnAR01.png: 21300024
+      UI_Photograph_BtnAR02.png: 21300026
+      UI_Photograph_BtnFREE.png: 21300028
+      UI_Photograph_BtnFREE01.png: 21300030
+      UI_Photograph_BtnFREE02.png: 21300032
+      UI_Photograph_BtnMOREN01.png: 21300036
+      UI_Photograph_BtnMOREN02.png: 21300038
+      UI_Photograph_BtnMoren.png: 21300034
+      UI_Photograph_BtnZIPAI.png: 21300040
+      UI_Photograph_BtnZIPAI01.png: 21300042
+      UI_Photograph_BtnZIPAI02.png: 21300044
+      UI_Photograph_Cameradrag.png: 21300046
+      UI_Photograph_Camerafar.png: 21300048
+      UI_Photograph_Cameraframe.png: 21300050
+      UI_Photograph_Cameraframe01.png: 21300052
+      UI_Photograph_Cameraframe02.png: 21300054
+      UI_Photograph_Cameranear.png: 21300056
+      UI_Photograph_Divide_Line_01.png: 21300130
+      UI_Photograph_Expression.png: 21300062
+      UI_Photograph_Icon_Delate.png: 21300150
+      UI_Photograph_Icon_Photo_01.png: 21300132
+      UI_Photograph_Icon_Photo_02.png: 21300134
+      UI_Photograph_Icon_Photo_03.png: 21300136
+      UI_Photograph_Icon_Photo_04.png: 21300138
+      UI_Photograph_Icon_Photo_05.png: 21300140
+      UI_Photograph_Icon_Photo_06.png: 21300142
+      UI_Photograph_Icon_Photo_07.png: 21300144
+      UI_Photograph_Icon_Redact.png: 21300152
+      UI_Photograph_Icon_Share.png: 21300154
+      UI_Photograph_Individualization.png: 21300064
+      UI_Photograph_Input.png: 21300066
+      UI_Photograph_Kakaotalk.png: 21300174
+      UI_Photograph_Photographicpaper.png: 21300074
+      UI_Photograph_Photohorn.png: 21300076
+      UI_Photograph_Savephone.png: 21300092
+      UI_Photograph_Savexiangce.png: 21300094
+      UI_Photograph_Setup.png: 21300096
+      UI_Photograph_Share.png: 21300098
+      UI_Photograph_ShareBg_01.png: 21300178
+      UI_Photograph_ShareBg_02.png: 21300180
+      UI_Photograph_ShareBg_03.png: 21300182
+      UI_Photograph_ShareBg_04.png: 21300184
+      UI_Photograph_ShareBg_05.png: 21300188
+      UI_Photograph_ShareFacebook.png: 21300166
+      UI_Photograph_ShareIcon.png: 21300172
+      UI_Photograph_ShareLine.png: 21300168
+      UI_Photograph_ShareTwitter.png: 21300170
+      UI_Photograph_ShareWechat.png: 21300104
+      UI_Photograph_ShareWechatfriend.png: 21300106
+      UI_Photograph_Shareqq.png: 21300100
+      UI_Photograph_Shareqqspece.png: 21300160
+      UI_Photograph_Sharesina.png: 21300102
+      UI_Photograph_TypeBtn01.png: 21300110
+      UI_Photograph_TypeBtn02.png: 21300112
+      UI_Photograph_XianShi.png: 21300156
+      UI_Photograph_delete.png: 21300058
+      UI_Photograph_di.png: 21300060
+      UI_Photograph_jingtou.png: 21300068
+      UI_Photograph_logo.png: 21300070
+      UI_Photograph_photo.png: 21300072
+      UI_Photograph_photomood.png: 21300078
+      UI_Photograph_photomood01.png: 21300080
+      UI_Photograph_photomoodAdd.png: 21300082
+      UI_Photograph_picture.png: 21300084
+      UI_Photograph_picture02.png: 21300086
+      UI_Photograph_rename.png: 21300088
+      UI_Photograph_replace.png: 21300090
+      UI_Photograph_shezhi.png: 21300108
+      UI_Photograph_xuanzhong.png: 21300114
+      UI_Photograph_yeshu.png: 21300116
+      UI_Share_Icon_01.png: 21300158
+      UI_Share_Icon_02.png: 21300162
+      UI_Share_Icon_03.png: 21300176
+      UI_Share_Icon_04.png: 21300190
+      UI_Share_Icon_Close_01.png: 21300164
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

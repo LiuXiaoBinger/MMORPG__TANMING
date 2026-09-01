@@ -1,0 +1,868 @@
+fileFormatVersion: 2
+guid: ff5bf9691a905384795d1e8efeea1b0d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Label01_Icon_01.png
+  - first:
+      213: 21300002
+    second: UI_Label01_Icon_02.png
+  - first:
+      213: 21300004
+    second: UI_LabelIcon_Monster_01.png
+  - first:
+      213: 21300006
+    second: UI_LabelIcon_Monster_02.png
+  - first:
+      213: 21300008
+    second: UI_LabelIcon_Monster_03.png
+  - first:
+      213: 21300010
+    second: UI_LabelIcon_Monster_04.png
+  - first:
+      213: 21300012
+    second: UI_LabelIcon_Monster_05.png
+  - first:
+      213: 21300014
+    second: UI_LabelIcon_Monster_06.png
+  - first:
+      213: 21300016
+    second: UI_LabelIcon_Monster_07.png
+  - first:
+      213: 21300018
+    second: UI_LabelIcon_Monster_08.png
+  - first:
+      213: 21300020
+    second: UI_LabelIcon_Monster_09.png
+  - first:
+      213: 21300022
+    second: UI_LabelIcon_Monster_10.png
+  - first:
+      213: 21300024
+    second: UI_LabelIcon_boy.png
+  - first:
+      213: 21300026
+    second: UI_LabelIcon_chengjiu1.png
+  - first:
+      213: 21300028
+    second: UI_LabelIcon_chengjiu10.png
+  - first:
+      213: 21300030
+    second: UI_LabelIcon_chengjiu2.png
+  - first:
+      213: 21300032
+    second: UI_LabelIcon_chengjiu3.png
+  - first:
+      213: 21300034
+    second: UI_LabelIcon_chengjiu4.png
+  - first:
+      213: 21300036
+    second: UI_LabelIcon_chengjiu5.png
+  - first:
+      213: 21300038
+    second: UI_LabelIcon_chengjiu6.png
+  - first:
+      213: 21300040
+    second: UI_LabelIcon_chengjiu7.png
+  - first:
+      213: 21300042
+    second: UI_LabelIcon_chengjiu8.png
+  - first:
+      213: 21300044
+    second: UI_LabelIcon_chengjiu9.png
+  - first:
+      213: 21300046
+    second: UI_LabelIcon_dengji.png
+  - first:
+      213: 21300048
+    second: UI_LabelIcon_girl.png
+  - first:
+      213: 21300050
+    second: UI_LabelIcon_shishang1.png
+  - first:
+      213: 21300052
+    second: UI_LabelIcon_shishang2.png
+  - first:
+      213: 21300054
+    second: UI_LabelIcon_shishang3.png
+  - first:
+      213: 21300056
+    second: UI_LabelIcon_shishang4.png
+  - first:
+      213: 21300058
+    second: UI_LabelIcon_shishang5.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Label01_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 60
+        height: 43
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9127486729fc044d91935e668b3efbd
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_boy.png
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6cd60110cc929f49a4b3f88df656bf6
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu1.png
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8895422e5dd44d4088e977277011f07
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu10.png
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bc513a602be0fa41a1a3364f0580785
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu2.png
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48fb9a50edce54c4b81f3cd035a71849
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu3.png
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20d473fb685f5234987d99b70b843fa6
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu4.png
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 343449e5de2ced1419c700b66760925d
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu5.png
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b74ff252e893893478484c8d28235b1b
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu6.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afcad9b3ef11ef34b9110c24e83d252b
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu7.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 258
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c37f44af456e10044b2032ef69e5f253
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu8.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 387
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd9f101a248dbf74f9c9fc2c805eb681
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_chengjiu9.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 516
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 495a37fa16a293145a1e7ba93c51e946
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_dengji.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 645
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd0c79d56f56c4d43b7057b46832aaab
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_girl.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 774
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20fd9bb8fc285934dab183bc376555e0
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_01.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 919fc929cb114774da7bfd0488db97ef
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_02.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 258
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 003f9bed621c1cd4582ddc4bdafb1131
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_03.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 387
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc7a6cd55b5807448b498d74f66dbd14
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_04.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 516
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b5aa9c678a741245a2f7d1016047834
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_05.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 645
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6077533ac6421541b543da44d64e741
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_06.png
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 774
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3395af3fab529a4d89feadb35907b25
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_07.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20540dec8f01c9649844f959bcfae7bc
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_08.png
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e5766255d96094992a62306271cad2
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_09.png
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c266f9f9f79094a8565144d1c74ccf
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_Monster_10.png
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63255a4333546da4aa6ef081d4e0e743
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_shishang1.png
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 129
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 432b0d81852dac54ba1e9d1d1efd2e0b
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_shishang2.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 258
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3970fd3dfd324a54189cf4ff5b9ea7f1
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_shishang3.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 387
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bbb4d00cc5c84e4e845c97872c6b809
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_shishang4.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 516
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51828b4273f5d2148a0927b170757b3f
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LabelIcon_shishang5.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 645
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5b26b1c3dea1cb4c8c4392bfa9104da
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Label01_Icon_02.png: 21300002
+      UI_LabelIcon_Monster_01.png: 21300004
+      UI_LabelIcon_Monster_02.png: 21300006
+      UI_LabelIcon_Monster_03.png: 21300008
+      UI_LabelIcon_Monster_04.png: 21300010
+      UI_LabelIcon_Monster_05.png: 21300012
+      UI_LabelIcon_Monster_06.png: 21300014
+      UI_LabelIcon_Monster_07.png: 21300016
+      UI_LabelIcon_Monster_08.png: 21300018
+      UI_LabelIcon_Monster_09.png: 21300020
+      UI_LabelIcon_Monster_10.png: 21300022
+      UI_LabelIcon_boy.png: 21300024
+      UI_LabelIcon_chengjiu1.png: 21300026
+      UI_LabelIcon_chengjiu10.png: 21300028
+      UI_LabelIcon_chengjiu2.png: 21300030
+      UI_LabelIcon_chengjiu3.png: 21300032
+      UI_LabelIcon_chengjiu4.png: 21300034
+      UI_LabelIcon_chengjiu5.png: 21300036
+      UI_LabelIcon_chengjiu6.png: 21300038
+      UI_LabelIcon_chengjiu7.png: 21300040
+      UI_LabelIcon_chengjiu8.png: 21300042
+      UI_LabelIcon_chengjiu9.png: 21300044
+      UI_LabelIcon_dengji.png: 21300046
+      UI_LabelIcon_girl.png: 21300048
+      UI_LabelIcon_shishang1.png: 21300050
+      UI_LabelIcon_shishang2.png: 21300052
+      UI_LabelIcon_shishang3.png: 21300054
+      UI_LabelIcon_shishang4.png: 21300056
+      UI_LabelIcon_shishang5.png: 21300058
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

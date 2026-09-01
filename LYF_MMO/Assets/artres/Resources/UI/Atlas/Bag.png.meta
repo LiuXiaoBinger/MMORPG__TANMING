@@ -1,0 +1,740 @@
+fileFormatVersion: 2
+guid: e8321615f2c44634d91563e5f03a1ace
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Bag_Arrow.png
+  - first:
+      213: 21300002
+    second: UI_Bag_Equip_01.png
+  - first:
+      213: 21300004
+    second: UI_Bag_Equip_02.png
+  - first:
+      213: 21300006
+    second: UI_Bag_Equip_03.png
+  - first:
+      213: 21300008
+    second: UI_Bag_Equip_04.png
+  - first:
+      213: 21300010
+    second: UI_Bag_Equip_05.png
+  - first:
+      213: 21300012
+    second: UI_Bag_Equip_06.png
+  - first:
+      213: 21300014
+    second: UI_Bag_Equip_07.png
+  - first:
+      213: 21300016
+    second: UI_Bag_Equip_08.png
+  - first:
+      213: 21300018
+    second: UI_Bag_Equip_09.png
+  - first:
+      213: 21300020
+    second: UI_Bag_Equip_10.png
+  - first:
+      213: 21300022
+    second: UI_Bag_Equip_11.png
+  - first:
+      213: 21300024
+    second: UI_Bag_Equip_12.png
+  - first:
+      213: 21300026
+    second: UI_Bag_Fuzhong.png
+  - first:
+      213: 21300028
+    second: UI_Bag_IconBG.png
+  - first:
+      213: 21300030
+    second: UI_Bag_Lock.png
+  - first:
+      213: 21300032
+    second: UI_Bag_Shuliang.png
+  - first:
+      213: 21300034
+    second: UI_Bag_xuanzhong.png
+  - first:
+      213: 21300036
+    second: UI_Bag_Equip_13.png
+  - first:
+      213: 21300038
+    second: UI_Bag_Equip_14.png
+  - first:
+      213: 21300040
+    second: UI_Bag_IconBG2.png
+  - first:
+      213: 21300042
+    second: UI_Bag_Equip_15.png
+  - first:
+      213: 21300044
+    second: UI_Bag_Equip_16.png
+  - first:
+      213: 21300046
+    second: UI_Bag_Fashion.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Bag_Arrow.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 12
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d97462acfdd046b4b825d8857fc5ffac
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 16
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20c190e2ee9bd2249ab61c5de106a516
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 93
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 531a0f0f78da3484181f4b2b275e60d9
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 170
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62fc0334916d860478472663567dcd6b
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_04.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 247
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8d8001bedfbe5a459150568477d3761
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 324
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8d8891d7f74b2045948d7c57a26da86
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_06.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 401
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ba79fb26daff2a4bb1082a6df6b99a9
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_07.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 0
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba30beea60c334d47ade9f0914f74b5e
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_08.png
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 0
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d62444815c04aa40bfcc3f772de01b0
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_09.png
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 0
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 962580a83835daf4f9e8ed8a027d0dd6
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_10.png
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 0
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c90a4a232f84b344b51eafc960799a8
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_11.png
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 0
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc9b2422d45940a428c5501bc5234bfd
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_12.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 77
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64568de5d50be1348b528c480052c0e9
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_13.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 150
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd3bbd058fc55fa4cb5cd0f9e7f577e5
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_14.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 223
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c97163bb1dee4524c870fd253a8d8e0d
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_15.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 296
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 645a6a72a63d4f845b98d220dd9537b2
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Equip_16.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 373
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 578efeefba5c01d40b1deef15ce545ce
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Fashion.png
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 0
+        width: 35
+        height: 43
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927c250b53fa3a246ab35f411b77e2cb
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Fuzhong.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 478
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3f7b55c2073e484a94a82ebdc0bd0de
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_IconBG.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 77
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21717b295ef745a4493d23e9940a1e41
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_IconBG2.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 150
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17f1e79f866e8dc49ba649343ee19297
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Lock.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 223
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 511fc84d3022a524bb8faead8407fcd5
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_Shuliang.png
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 478
+        width: 30
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ab36f944ef16a4097b286b8c3e59ec
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Bag_xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 478
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3045946092ab484ebb717f0e50611bd
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Bag_Arrow.png: 21300000
+      UI_Bag_Equip_01.png: 21300002
+      UI_Bag_Equip_02.png: 21300004
+      UI_Bag_Equip_03.png: 21300006
+      UI_Bag_Equip_04.png: 21300008
+      UI_Bag_Equip_05.png: 21300010
+      UI_Bag_Equip_06.png: 21300012
+      UI_Bag_Equip_07.png: 21300014
+      UI_Bag_Equip_08.png: 21300016
+      UI_Bag_Equip_09.png: 21300018
+      UI_Bag_Equip_10.png: 21300020
+      UI_Bag_Equip_11.png: 21300022
+      UI_Bag_Equip_12.png: 21300024
+      UI_Bag_Equip_13.png: 21300036
+      UI_Bag_Equip_14.png: 21300038
+      UI_Bag_Equip_15.png: 21300042
+      UI_Bag_Equip_16.png: 21300044
+      UI_Bag_Fashion.png: 21300046
+      UI_Bag_Fuzhong.png: 21300026
+      UI_Bag_IconBG.png: 21300028
+      UI_Bag_IconBG2.png: 21300040
+      UI_Bag_Lock.png: 21300030
+      UI_Bag_Shuliang.png: 21300032
+      UI_Bag_xuanzhong.png: 21300034
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

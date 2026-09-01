@@ -21,7 +21,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
    [SerializeField,Header("物品特效")]private Image _imgFx;
    public int _count;
    public string _spriteName;
-   public void RefreshUI(RoleKanpsackSlot roleKanpsackSlot)
+   public void RefreshUI(RoleItemInfo roleKanpsackSlot)
    {
        if (roleKanpsackSlot != null)
        {

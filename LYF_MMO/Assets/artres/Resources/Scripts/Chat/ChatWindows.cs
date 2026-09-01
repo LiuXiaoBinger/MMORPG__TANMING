@@ -80,6 +80,9 @@ public sealed class ChatWindows : MonoBehaviour
     private readonly List<RectTransform> pooledPlayerRows = new List<RectTransform>();
     private readonly List<RectTransform> pooledSystemRows = new List<RectTransform>();
     private readonly List<ChatMessage> visibleMessages = new List<ChatMessage>();
+    // 记录设置面板 Toggle 的最后一次状态。用于兜底同步嵌套预制体中的 Toggle 事件。
+    private readonly bool[] channelVisibilityStates = new bool[Enum.GetValues(typeof(ChatChannel)).Length];
+    private readonly bool[] channelVisibilityStateInitialized = new bool[Enum.GetValues(typeof(ChatChannel)).Length];
     private bool poolRefreshInProgress;
     private int systemPoolIndex;
     // 每个频道各自保存未读消息数量，切换频道时不会互相覆盖。
@@ -124,6 +127,15 @@ public sealed class ChatWindows : MonoBehaviour
     public event Action<ChatMessage> MessageSent;
     // 接收到外部消息后触发，可供其他系统监听。
     public event Action<ChatMessage> MessageReceived;
+    // 聊天设置修改频道可见性后触发，供折叠聊天入口同步未读角标。
+    public event Action<ChatChannel, bool> ChannelVisibilityChanged;
+
+    /// <summary>返回频道标签是否在聊天设置中处于启用状态。</summary>
+    public bool IsChannelTabVisible(ChatChannel channel)
+    {
+        Toggle tab = GetChannelTab(channel);
+        return tab != null && tab.gameObject.activeSelf;
+    }
 
     private void Awake()
     {
@@ -209,6 +221,10 @@ public sealed class ChatWindows : MonoBehaviour
 
     private void Update()
     {
+        // 设置面板来自嵌套预制体。即使其 onValueChanged 监听在某些加载顺序下丢失，
+        // 这里也会根据 Toggle 的真实状态立即同步频道标签和玩家设置。
+        SynchronizeChannelVisibilitySettings();
+
         // 只有启用回车发送、输入框存在且正在输入时，才检查按键。
         if (!submitWithReturn || !IsInputFocused())
         {
@@ -369,7 +385,11 @@ public sealed class ChatWindows : MonoBehaviour
             {
                 IncrementUnreadCount(message.Channel);
             }
-            RefreshVisibleMessages(scrollToBottom, previousPosition);
+            else
+            {
+                RefreshVisibleMessages(scrollToBottom, previousPosition);
+            }
+           
         }
         else if (!message.IsLocalPlayer)
         {
@@ -658,6 +678,9 @@ public sealed class ChatWindows : MonoBehaviour
             return;
         }
 
+        // 消息内容必须处于列表同级提示层之上，避免顶部提示遮住刚发送的文字。
+        content.SetAsLastSibling();
+
         // Content 的父节点作为 ScrollRect 的可视区域（Viewport）。
         RectTransform viewport = content.parent as RectTransform;
         if (viewport == null)
@@ -775,17 +798,58 @@ public sealed class ChatWindows : MonoBehaviour
         Toggle capturedToggle = visibilityToggle;
         // 首次进入游戏时所有可配置频道默认显示；之后恢复玩家上次的选择。
         bool isVisible = PlayerPrefs.GetInt(GetChannelVisibilityPreferenceKey(channel), 1) == 1;
-        // 使用 isOn 触发 Toggle 的视觉刷新，确保启动时勾选图形也同步显示。
-        capturedToggle.isOn = isVisible;
-        SetChannelTabVisible(channel, isVisible);
+        // 初始化时不触发其他监听，避免加载顺序影响频道标签状态。
+        capturedToggle.SetIsOnWithoutNotify(isVisible);
+        ApplyChannelVisibility(channel, isVisible, false);
         capturedToggle.onValueChanged.AddListener(isOn => OnChannelVisibilityChanged(channel, isOn));
     }
 
     private void OnChannelVisibilityChanged(ChatChannel channel, bool isVisible)
     {
-        PlayerPrefs.SetInt(GetChannelVisibilityPreferenceKey(channel), isVisible ? 1 : 0);
-        PlayerPrefs.Save();
+        ApplyChannelVisibility(channel, isVisible, true);
+    }
+
+    private void SynchronizeChannelVisibilitySettings()
+    {
+        SynchronizeChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
+        SynchronizeChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
+        SynchronizeChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
+        SynchronizeChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
+        SynchronizeChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
+    }
+
+    private void SynchronizeChannelVisibilitySetting(Toggle visibilityToggle, ChatChannel channel)
+    {
+        if (visibilityToggle == null)
+        {
+            return;
+        }
+
+        int index = (int)channel;
+        if (!channelVisibilityStateInitialized[index] || channelVisibilityStates[index] != visibilityToggle.isOn)
+        {
+            ApplyChannelVisibility(channel, visibilityToggle.isOn, true);
+        }
+    }
+
+    private void ApplyChannelVisibility(ChatChannel channel, bool isVisible, bool savePreference)
+    {
+        int index = (int)channel;
+        if (channelVisibilityStateInitialized[index] && channelVisibilityStates[index] == isVisible)
+        {
+            return;
+        }
+
+        channelVisibilityStateInitialized[index] = true;
+        channelVisibilityStates[index] = isVisible;
+        if (savePreference)
+        {
+            PlayerPrefs.SetInt(GetChannelVisibilityPreferenceKey(channel), isVisible ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
         SetChannelTabVisible(channel, isVisible);
+        ChannelVisibilityChanged?.Invoke(channel, isVisible);
     }
 
     private static string GetChannelVisibilityPreferenceKey(ChatChannel channel)
@@ -886,6 +950,10 @@ public sealed class ChatWindows : MonoBehaviour
 
     private void SetTemplateText(Transform row, ChatMessage message)
     {
+        // 消息模板的 Bubble 默认关闭。仅激活行根节点不会激活其中的文字，
+        // 因此要先确保 TextMessage 到消息行之间的整条父级路径均处于启用状态。
+        row.gameObject.SetActive(true);
+
         // 优先使用 TMP 文本；保留 legacy 文本兜底，兼容尚未迁移的旧模板。
         TMP_Text messageText = FindTMPText(row, "TextMessage");
         Text legacyMessageText = FindLegacyText(row, "TextMessage");
@@ -906,14 +974,14 @@ public sealed class ChatWindows : MonoBehaviour
 
         if (messageText != null)
         {
+            ActivatePathToRow(messageText.transform, row);
             messageText.text = message.Text;
-            messageText.gameObject.SetActive(true);
             messageText.alignment = message.IsLocalPlayer ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
         }
         else if (legacyMessageText != null)
         {
+            ActivatePathToRow(legacyMessageText.transform, row);
             legacyMessageText.text = message.Text;
-            legacyMessageText.gameObject.SetActive(true);
             legacyMessageText.alignment = message.IsLocalPlayer ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft;
         }
 
@@ -948,6 +1016,18 @@ public sealed class ChatWindows : MonoBehaviour
         if (audioObject != null)
         {
             audioObject.gameObject.SetActive(message.HasVoice);
+        }
+    }
+
+    private static void ActivatePathToRow(Transform target, Transform row)
+    {
+        for (Transform current = target; current != null; current = current.parent)
+        {
+            current.gameObject.SetActive(true);
+            if (current == row)
+            {
+                break;
+            }
         }
     }
 

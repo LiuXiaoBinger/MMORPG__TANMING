@@ -1,0 +1,5252 @@
+fileFormatVersion: 2
+guid: 033d40a6d2e4e5e478721454c119b631
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_common_task_aishen_yijie01.png
+  - first:
+      213: 21300002
+    second: UI_common_task_zhixian_yijie01.png
+  - first:
+      213: 21300004
+    second: UI_common_task_zhiye_yijie01.png
+  - first:
+      213: 21300006
+    second: UI_common_task_zhuxian_yijie01.png
+  - first:
+      213: 21300008
+    second: UI_map_Battle_Cannon_1.png
+  - first:
+      213: 21300010
+    second: UI_map_Battle_Cannon_2.png
+  - first:
+      213: 21300012
+    second: UI_map_Battle_Cannonbig_1.png
+  - first:
+      213: 21300014
+    second: UI_map_Battle_Cannonbig_2.png
+  - first:
+      213: 21300016
+    second: UI_map_Battle_Crystal_1.png
+  - first:
+      213: 21300018
+    second: UI_map_Battle_Crystal_2.png
+  - first:
+      213: 21300020
+    second: UI_map_Battle_Crystalbig_1.png
+  - first:
+      213: 21300022
+    second: UI_map_Battle_Crystalbig_2.png
+  - first:
+      213: 21300024
+    second: UI_map_Battle_Gate_1.png
+  - first:
+      213: 21300026
+    second: UI_map_Battle_Gate_2.png
+  - first:
+      213: 21300028
+    second: UI_map_Battle_Gatebig_1.png
+  - first:
+      213: 21300030
+    second: UI_map_Battle_Gatebig_2.png
+  - first:
+      213: 21300032
+    second: UI_map_Battle_Guardian_0.png
+  - first:
+      213: 21300034
+    second: UI_map_Battle_Guardian_1.png
+  - first:
+      213: 21300036
+    second: UI_map_Battle_Guardian_2.png
+  - first:
+      213: 21300038
+    second: UI_map_Battle_Guardianbig_0.png
+  - first:
+      213: 21300040
+    second: UI_map_Battle_Guardianbig_1.png
+  - first:
+      213: 21300042
+    second: UI_map_Battle_Guardianbig_2.png
+  - first:
+      213: 21300044
+    second: UI_map_Battle_Stela_0.png
+  - first:
+      213: 21300046
+    second: UI_map_Battle_Stela_1.png
+  - first:
+      213: 21300048
+    second: UI_map_Battle_Stela_2.png
+  - first:
+      213: 21300050
+    second: UI_map_Battle_Stelabig_0.png
+  - first:
+      213: 21300052
+    second: UI_map_Battle_Stelabig_1.png
+  - first:
+      213: 21300054
+    second: UI_map_Battle_Stelabig_2.png
+  - first:
+      213: 21300056
+    second: UI_map_Battle_tower_0.png
+  - first:
+      213: 21300058
+    second: UI_map_Battle_tower_1.png
+  - first:
+      213: 21300060
+    second: UI_map_Battle_tower_2.png
+  - first:
+      213: 21300062
+    second: UI_map_Battle_towerbig_0.png
+  - first:
+      213: 21300064
+    second: UI_map_Battle_towerbig_1.png
+  - first:
+      213: 21300066
+    second: UI_map_Battle_towerbig_2.png
+  - first:
+      213: 21300068
+    second: UI_map_BtnMap.png
+  - first:
+      213: 21300070
+    second: UI_map_channel_Crowded01.png
+  - first:
+      213: 21300072
+    second: UI_map_channel_Crowded02.png
+  - first:
+      213: 21300074
+    second: UI_map_channel_fluent01.png
+  - first:
+      213: 21300076
+    second: UI_map_channel_fluent02.png
+  - first:
+      213: 21300078
+    second: UI_map_channel_free01.png
+  - first:
+      213: 21300080
+    second: UI_map_channel_free02.png
+  - first:
+      213: 21300082
+    second: UI_map_channel_full01.png
+  - first:
+      213: 21300084
+    second: UI_map_channel_full02.png
+  - first:
+      213: 21300086
+    second: UI_map_drop-down.png
+  - first:
+      213: 21300088
+    second: UI_map_enlarge.png
+  - first:
+      213: 21300090
+    second: UI_map_frame.png
+  - first:
+      213: 21300092
+    second: UI_map_Icon_Aierbeita.png
+  - first:
+      213: 21300094
+    second: UI_map_Icon_Feiyang.png
+  - first:
+      213: 21300096
+    second: UI_map_Icon_Jifen.png
+  - first:
+      213: 21300098
+    second: UI_map_Icon_Mengluoke.png
+  - first:
+      213: 21300100
+    second: UI_map_Icon_Pulongdela.png
+  - first:
+      213: 21300102
+    second: UI_map_Icon_Yisilude.png
+  - first:
+      213: 21300104
+    second: UI_map_identification_enemy.png
+  - first:
+      213: 21300106
+    second: UI_map_identification_npc.png
+  - first:
+      213: 21300108
+    second: UI_map_identification_npc_aishen.png
+  - first:
+      213: 21300110
+    second: UI_map_identification_npc_collect.png
+  - first:
+      213: 21300112
+    second: UI_map_identification_npc_daojudian.png
+  - first:
+      213: 21300114
+    second: UI_map_identification_npc_gonghuiguanli.png
+  - first:
+      213: 21300116
+    second: UI_map_identification_npc_gonghuiyanhui.png
+  - first:
+      213: 21300118
+    second: UI_map_identification_npc_guizhongwupin.png
+  - first:
+      213: 21300120
+    second: UI_map_identification_npc_jixian.png
+  - first:
+      213: 21300122
+    second: UI_map_identification_npc_kapian.png
+  - first:
+      213: 21300124
+    second: UI_map_identification_npc_kapula.png
+  - first:
+      213: 21300126
+    second: UI_map_identification_npc_leyuantuan.png
+  - first:
+      213: 21300128
+    second: UI_map_identification_npc_lifadian.png
+  - first:
+      213: 21300130
+    second: UI_map_identification_npc_maoshou.png
+  - first:
+      213: 21300132
+    second: UI_map_identification_npc_meitongdian.png
+  - first:
+      213: 21300134
+    second: UI_map_identification_npc_toushi.png
+  - first:
+      213: 21300136
+    second: UI_map_identification_npc_tushuguanliyuan.png
+  - first:
+      213: 21300138
+    second: UI_map_identification_npc_zhuangbeishangdian.png
+  - first:
+      213: 21300140
+    second: UI_map_identification_npc_zuoqi.png
+  - first:
+      213: 21300142
+    second: UI_map_identification_own.png
+  - first:
+      213: 21300144
+    second: UI_map_identification_portal.png
+  - first:
+      213: 21300146
+    second: UI_map_identification_task_teshu.png
+  - first:
+      213: 21300148
+    second: UI_map_identification_task_teshucomplete.png
+  - first:
+      213: 21300150
+    second: UI_map_identification_task_zhixian.png
+  - first:
+      213: 21300152
+    second: UI_map_identification_task_zhixiancomplete.png
+  - first:
+      213: 21300154
+    second: UI_map_identification_task_zhuanzhi.png
+  - first:
+      213: 21300156
+    second: UI_map_identification_task_zhuanzhicomplete.png
+  - first:
+      213: 21300158
+    second: UI_map_identification_task_zhuxian.png
+  - first:
+      213: 21300160
+    second: UI_map_identification_task_zhuxiancomplete.png
+  - first:
+      213: 21300162
+    second: UI_map_identification_teammate.png
+  - first:
+      213: 21300164
+    second: UI_map_identificationBig_npc_aishen.png
+  - first:
+      213: 21300166
+    second: UI_map_identificationBig_npc_collect.png
+  - first:
+      213: 21300168
+    second: UI_map_identificationBig_npc_daojudian.png
+  - first:
+      213: 21300170
+    second: UI_map_identificationBig_npc_gonghuiguanli.png
+  - first:
+      213: 21300172
+    second: UI_map_identificationBig_npc_gonghuiyanhui.png
+  - first:
+      213: 21300174
+    second: UI_map_identificationBig_npc_guizhongwupin.png
+  - first:
+      213: 21300176
+    second: UI_map_identificationBig_npc_jixian.png
+  - first:
+      213: 21300178
+    second: UI_map_identificationBig_npc_kapian.png
+  - first:
+      213: 21300180
+    second: UI_map_identificationBig_npc_kapula.png
+  - first:
+      213: 21300182
+    second: UI_map_identificationBig_npc_leyuantuan.png
+  - first:
+      213: 21300184
+    second: UI_map_identificationBig_npc_lifadian.png
+  - first:
+      213: 21300186
+    second: UI_map_identificationBig_npc_maoshou.png
+  - first:
+      213: 21300188
+    second: UI_map_identificationBig_npc_meitongdian.png
+  - first:
+      213: 21300190
+    second: UI_map_identificationBig_npc_toushi.png
+  - first:
+      213: 21300192
+    second: UI_map_identificationBig_npc_tushuguanliyuan.png
+  - first:
+      213: 21300194
+    second: UI_map_identificationBig_npc_weituo.png
+  - first:
+      213: 21300196
+    second: UI_map_identificationBig_npc_zhaungbeishangdian.png
+  - first:
+      213: 21300198
+    second: UI_map_identificationBig_npc_zuoqi.png
+  - first:
+      213: 21300200
+    second: UI_map_Interactive_Collection.png
+  - first:
+      213: 21300202
+    second: UI_map_Interactive_Fishing.png
+  - first:
+      213: 21300204
+    second: UI_map_Interactive_Mining.png
+  - first:
+      213: 21300206
+    second: UI_map_Interactive_WorldPve.png
+  - first:
+      213: 21300208
+    second: UI_map_Interactive_WorldPveBG.png
+  - first:
+      213: 21300210
+    second: UI_map_Minibiaoshi.png
+  - first:
+      213: 21300212
+    second: UI_map_Mubiaodian.png
+  - first:
+      213: 21300214
+    second: UI_map_Mvp.png
+  - first:
+      213: 21300216
+    second: UI_map_Name.png
+  - first:
+      213: 21300218
+    second: UI_map_narrow.png
+  - first:
+      213: 21300220
+    second: UI_map_path01.png
+  - first:
+      213: 21300222
+    second: UI_map_path02.png
+  - first:
+      213: 21300224
+    second: UI_map_path03.png
+  - first:
+      213: 21300226
+    second: UI_Map_Text_Frame.png
+  - first:
+      213: 21300228
+    second: UI_map_xuanzhong.png
+  - first:
+      213: 21300230
+    second: UI_map_zidongxunlu.png
+  - first:
+      213: 21300232
+    second: UI_NPC_Arrow.png
+  - first:
+      213: 21300234
+    second: UI_NPC_Btn_DisplayInfor.png
+  - first:
+      213: 21300236
+    second: UI_NPC_Btn_HiddenInfor.png
+  - first:
+      213: 21300238
+    second: UI_NPC_Btn_View.png
+  - first:
+      213: 21300240
+    second: UI_NPC_Bubble_Aishen.png
+  - first:
+      213: 21300242
+    second: UI_NPC_Bubble_Daojudian.png
+  - first:
+      213: 21300244
+    second: UI_NPC_Bubble_Duanzao.png
+  - first:
+      213: 21300246
+    second: UI_NPC_Bubble_Fumo.png
+  - first:
+      213: 21300248
+    second: UI_NPC_Bubble_Gonghuiguanli.png
+  - first:
+      213: 21300250
+    second: UI_NPC_Bubble_Gonghuiyanhui.png
+  - first:
+      213: 21300252
+    second: UI_NPC_Bubble_Guizhongwupin.png
+  - first:
+      213: 21300254
+    second: UI_NPC_Bubble_Kapian.png
+  - first:
+      213: 21300256
+    second: UI_NPC_Bubble_Kapula.png
+  - first:
+      213: 21300258
+    second: UI_NPC_Bubble_Leyuantuan.png
+  - first:
+      213: 21300260
+    second: UI_NPC_Bubble_liaotianshi.png
+  - first:
+      213: 21300262
+    second: UI_NPC_Bubble_liaotianshi02.png
+  - first:
+      213: 21300264
+    second: UI_NPC_Bubble_Lifadian.png
+  - first:
+      213: 21300266
+    second: UI_NPC_Bubble_Meitongdian.png
+  - first:
+      213: 21300268
+    second: UI_NPC_Bubble_Shenggeshilian.png
+  - first:
+      213: 21300270
+    second: UI_NPC_Bubble_Toushi.png
+  - first:
+      213: 21300272
+    second: UI_NPC_Bubble_Tushuguanliyuan.png
+  - first:
+      213: 21300274
+    second: UI_NPC_Bubble_Wuxianta.png
+  - first:
+      213: 21300276
+    second: UI_NPC_Bubble_Zaiju.png
+  - first:
+      213: 21300278
+    second: UI_NPC_Bubble_Zhanchang.png
+  - first:
+      213: 21300280
+    second: UI_NPC_Bubble_Zhuangbeishangren.png
+  - first:
+      213: 21300282
+    second: UI_NPC_Bubble_Zhuanzhi.png
+  - first:
+      213: 21300284
+    second: UI_NPC_Bubble01.png
+  - first:
+      213: 21300286
+    second: UI_NPC_Bubble02.png
+  - first:
+      213: 21300288
+    second: UI_NPC_MapLine.png
+  - first:
+      213: 21300290
+    second: UI_map_Boss.png
+  - first:
+      213: 21300292
+    second: UI_map_Jingying.png
+  - first:
+      213: 21300294
+    second: UI_map_Juqing.png
+  - first:
+      213: 21300296
+    second: UI_main_Task_Yuan.png
+  - first:
+      213: 21300298
+    second: UI_main_Task_YuanJiantou.png
+  - first:
+      213: 21300300
+    second: UI_PreyMap_Img_Born.png
+  - first:
+      213: 21300302
+    second: UI_NPC_Bubble_Migongfuben.png
+  - first:
+      213: 21300304
+    second: UI_Map_Task_Jiantou.png
+  - first:
+      213: 21300306
+    second: UI_Map_Task_Xuanzhong.png
+  - first:
+      213: 21300308
+    second: UI_map_Interactive_Shalou1.png
+  - first:
+      213: 21300310
+    second: UI_map_Interactive_Shalou2.png
+  - first:
+      213: 21300312
+    second: UI_map_Interactive_WorldPve01.png
+  - first:
+      213: 21300314
+    second: UI_map_Interactive_WorldPve02.png
+  - first:
+      213: 21300316
+    second: UI_map_Interactive_WorldPve03.png
+  - first:
+      213: 21300318
+    second: UI_map_Interactive_WorldPve04.png
+  - first:
+      213: 21300320
+    second: UI_map_Interactive_WorldPve05.png
+  - first:
+      213: 21300322
+    second: UI_map_Interactive_WorldPve06.png
+  - first:
+      213: 21300324
+    second: UI_NPC_Bubble_Duobiqiu.png
+  - first:
+      213: 21300326
+    second: UI_NPC_Bubble_Heianmigong.png
+  - first:
+      213: 21300328
+    second: UI_NPC_Bubble_Weixing.png
+  - first:
+      213: 21300330
+    second: UI_map_identification_npc_dazuiniao.png
+  - first:
+      213: 21300332
+    second: UI_map_identification_npc_lieying.png
+  - first:
+      213: 21300334
+    second: UI_map_identificationBig_npc_shoutuiche.png
+  - first:
+      213: 21300336
+    second: UI_NPC_Bubble_Dazuiniaoshangren.png
+  - first:
+      213: 21300338
+    second: UI_NPC_Bubble_Lieyingshangren.png
+  - first:
+      213: 21300340
+    second: UI_NPC_Bubble_Shoutuicheshangren.png
+  - first:
+      213: 21300342
+    second: UI_map_identification_npc_shoutuiche.png
+  - first:
+      213: 21300344
+    second: UI_map_Jingyingguai.png
+  - first:
+      213: 21300346
+    second: UI_common_task_weituo.png
+  - first:
+      213: 21300348
+    second: UI_map_identification_npc_wuqishangdian.png
+  - first:
+      213: 21300350
+    second: UI_Map_Task_Jiantou02.png
+  - first:
+      213: 21300352
+    second: UI_NPC_Bubble_Wenzhang.png
+  - first:
+      213: 21300354
+    second: UI_map_identification_npc_wenzhang.png
+  - first:
+      213: 21300356
+    second: UI_map_identification_npc_duanzao.png
+  - first:
+      213: 21300358
+    second: UI_map_identification_npc_leitai.png
+  - first:
+      213: 21300360
+    second: UI_map_identification_npc_tafang.png
+  - first:
+      213: 21300362
+    second: UI_map_identification_npc_wuxianta.png
+  - first:
+      213: 21300364
+    second: UI_map_identification_npc_zhanchang.png
+  - first:
+      213: 21300366
+    second: UI_NPC_Bubble_leitai.png
+  - first:
+      213: 21300368
+    second: UI_NPC_Bubble_tafang.png
+  - first:
+      213: 21300370
+    second: UI_Map_Hengfu.png
+  - first:
+      213: 21300372
+    second: UI_Map_Weizhi.png
+  - first:
+      213: 21300374
+    second: UI_map_identification_npc_zhuangbei.png
+  - first:
+      213: 21300376
+    second: UI_NPC_Bubble_Zhuangbei.png
+  - first:
+      213: 21300378
+    second: UI_map_identification_npc_Zhutipaidui.png
+  - first:
+      213: 21300380
+    second: UI_NPC_Bubble_Zhutipaidui.png
+  - first:
+      213: 21300382
+    second: UI_Map_Btn_enlarge.png
+  - first:
+      213: 21300384
+    second: UI_Map_Btn_narrow.png
+  - first:
+      213: 21300386
+    second: UI_Map_Btn_Enclosure.png
+  - first:
+      213: 21300388
+    second: UI_map_identification_own.png.png
+  - first:
+      213: 21300390
+    second: UI_Map_Bg_Weather.png
+  - first:
+      213: 21300392
+    second: UI_Map_Icon_Weather.png
+  - first:
+      213: 21300394
+    second: UI_Main_Weather_kedutiaohong.png
+  - first:
+      213: 21300396
+    second: UI_Main_Weather_kedutiaolan.png
+  - first:
+      213: 21300398
+    second: UI_Map_Btn_chibang.png
+  - first:
+      213: 21300400
+    second: UI_Map_Btn_MapInfo.png
+  - first:
+      213: 21300402
+    second: UI_Map_Btn_SHIJIE.png
+  - first:
+      213: 21300404
+    second: UI_map_Icon_Bossbuff.png
+  - first:
+      213: 21300406
+    second: UI_NPC_Bubble_Match.png
+  - first:
+      213: 21300408
+    second: UI_map_identificationBig_npc_match.png
+  - first:
+      213: 21300410
+    second: UI_map_Btn_bg.png
+  - first:
+      213: 21300412
+    second: UI_map_Btn_pipei.png
+  - first:
+      213: 21300414
+    second: UI_map_Btn_wanfashuoming.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_common_task_aishen_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 21
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30441de4b2e1d5341aacab3dc50622a1
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_weituo.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 25
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ab9dd1030778e54b8e3eb8992d8b121
+      internalID: 21300346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhixian_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 0
+        width: 21
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15e05f576b1ec9a49ac18d634a3eb3e2
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhiye_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 48
+        width: 21
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d749a29b176ec70488e2562baa4e27a6
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_common_task_zhuxian_yijie01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 73
+        width: 21
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8db959f85a1bc84687ae77662cec00d
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_kedutiaohong.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 98
+        width: 25
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1afb1faf6805727458e75d30b91647a5
+      internalID: 21300394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Main_Weather_kedutiaolan.png
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 48
+        width: 25
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33878bd088c08b64ea6258ecb974263c
+      internalID: 21300396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Cannonbig_1.png
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 0
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f918b3b674828e4784a0e37583536cd
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Cannonbig_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 137
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b853fb11cdeb2d4e9cec1db36102f01
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Cannon_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 165
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22df9a9fae5206b488321ecc1d2edc94
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Cannon_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8cf6f2592d49a9469a0e3e16389d95f
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Crystalbig_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 213
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62c1d7b8d49d00d4ca83c9d01573e547
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Crystalbig_2.png
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 165
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f6faef893cc10e46a543127274ba553
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Crystal_1.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 137
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5b62dbc65f433f4e9b994976b2029a0
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Crystal_2.png
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 87
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da4f51b05af88f942b5afa543ad61fb3
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Gatebig_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 241
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c080eba462f0e7b498a80077e24a57f8
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Gatebig_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 269
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c40b274d828d078408050c8aac8785e1
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Gate_1.png
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 111
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 315899ea834609d42b7440dfc70fa5f7
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Gate_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 297
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006768e6a882d604299521c1a2bc46fd
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardianbig_0.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 321
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0e90684d76a4fc4a991913556e65755
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardianbig_1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 349
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af888e807e884d242bb5e376756fb54c
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardianbig_2.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 377
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5465e60e5bb1f64181bf532189fbb77
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardian_0.png
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 297
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32297807429d98a4ab1cc331526b9b45
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardian_1.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 193
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16fe8fac0d9d22f40b24191184bfd45f
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Guardian_2.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 217
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffcff61cd32a0894a9f6e57f84789e67
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stelabig_0.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 241
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d98917ff766a1c4eb8aa97f6ba6a54f
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stelabig_1.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 269
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15820730395adbc4c90a0818b9eea494
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stelabig_2.png
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 135
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a573dcb4d3058f43871efe10732b266
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stela_0.png
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 87
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 155e504f662fdb24c8cb49b4fc825e4d
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stela_1.png
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 111
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bc4a89876ad7654188b94d28ba909fa
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_Stela_2.png
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 28
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 412996c0d4a94de48834b3de7da541b2
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_towerbig_0.png
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 52
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aae729f2b36faf499600aa56119db68
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_towerbig_1.png
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 0
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f13f77c8ec1e53a4795cd418f3fe4edf
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_towerbig_2.png
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 80
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2d7704a98562044284852b76405156c
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_tower_0.png
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 28
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e97609615885a554080334a6de8c23a4
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_tower_1.png
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 108
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1918af1809410dc4487540abce01256f
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Battle_tower_2.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 52
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62422b365ade64a4a9f5a0f576221808
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Bg_Weather.png
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 163
+        width: 50
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 0, z: 33, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64ae3fbb15bec074297da48731db2927
+      internalID: 21300390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Boss.png
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 132
+        width: 26
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8976eef7d6ab306459bbf3211b08ee1a
+      internalID: 21300290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_BtnMap.png
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 200
+        width: 21
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ab5280531e73943b1c901fd8d00cb0
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Btn_bg.png
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 76
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ef7468e3182e92428d7664c2755221b
+      internalID: 21300410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_chibang.png
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 0
+        width: 55
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7b28164e7159954bbb7c3b541425d69
+      internalID: 21300398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_Enclosure.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 405
+        width: 55
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7a765a320376b143b92daa198bd40bf
+      internalID: 21300386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_enlarge.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 321
+        width: 52
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7645a8ca70be8844a8493202f67c31e1
+      internalID: 21300382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_MapInfo.png
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 225
+        width: 55
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b23fb7fac2449fa49a864c6206bc126c
+      internalID: 21300400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_narrow.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 160
+        width: 52
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57f81eba625813c48aa234892ccfcd60
+      internalID: 21300384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Btn_pipei.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 57
+        width: 48
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123794ee81bc20546aac4f1f7c378b75
+      internalID: 21300412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Btn_SHIJIE.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 0
+        width: 55
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8baeaa0dba694b844afee1ba2f6470a3
+      internalID: 21300402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Btn_wanfashuoming.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 373
+        width: 45
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62bfd0b5754193a4492438998f948f72
+      internalID: 21300414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_Crowded01.png
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 25
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 603ef3f268413fe4eb09664c6994b963
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_Crowded02.png
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 25
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fd95efa33cad9142ad801b559f394a3
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_fluent01.png
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 35
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb255ce8c3a531e458cebf302cac26f3
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_fluent02.png
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 35
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a1b1ee0b451e9b4fbb1153cdcc249de
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_free01.png
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 200
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25230ce54e599804aa0b1bb74e96d0f8
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_free02.png
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 210
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72a5fac1301d9bf42aca89ae6ae9a7b2
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_full01.png
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 200
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34ca045b59258f847ae0a1fbf49f1a5c
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_channel_full02.png
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 210
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 488d84a6aee539c41b77473c9599e94b
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_drop-down.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 373
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e646317e2ed76042a384c958c961f3a
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_enlarge.png
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 123
+        width: 31
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ae78dbea504c8742b9d50561c1bb022
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_frame.png
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 57
+        width: 15
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5b3b5126db262f4e8fba60d2664b4bc
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Hengfu.png
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 282
+        width: 66
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 64, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcbd2c692e1240c438d068e0fd6acc3c
+      internalID: 21300370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Aierbeita.png
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 212
+        width: 64
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3563b7fbcdf4195498d1415e6de8cd8b
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Bossbuff.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 110
+        width: 41
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b26762d2e2491849a04f8d42b35fdd1
+      internalID: 21300404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Feiyang.png
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 425
+        width: 63
+        height: 65
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67f0a960fbdc5ff44bcff8c70ac053c7
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Jifen.png
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 321
+        width: 63
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ba7c925ecca05e45a4d95ca63f084f3
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Mengluoke.png
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 389
+        width: 61
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73fb5e7eca68d7449a23d96bebee0fc0
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Pulongdela.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 281
+        width: 66
+        height: 65
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 709481bf0ef2c474298491a34869c4e1
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Icon_Weather.png
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 281
+        width: 39
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcbecfdd3afcca3428953c826667200e
+      internalID: 21300392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Icon_Yisilude.png
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 159
+        width: 67
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71f4bf4160519f546b79d475b068d515
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_aishen.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 462
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79d4a333bbbe11345886ba6276da8b44
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_collect.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 462
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a4b914e353cba7408c559a969b7fd6b
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_daojudian.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 347
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef01cf0bd32aa0f4f8f1f1f1f81227b2
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_gonghuiguanli.png
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 110
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5615bb983a5c36544b7ee1a060fc8655
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_gonghuiyanhui.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 57
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d434a316f8082d948bf3c847d03839c5
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_guizhongwupin.png
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 0
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28d5d749845973841be703d03d4344a3
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_jixian.png
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 28
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d1b47a9325d0ea498d74c0a2d9b53ec
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_kapian.png
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 221
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 653d5a77f1e172d4eb0e14ee17ac2076
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_kapula.png
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 249
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc2235ca1af617149a37d8f9111dc8e5
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_leyuantuan.png
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 221
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7753dac60888600419d3eb5b28f2cf5c
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_lifadian.png
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 249
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc543a915f9148843a14b20f53062c3d
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_maoshou.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 221
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcbcefcab167af749ba0e5a2b9aa8066
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_match.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 249
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b545ffd07c98f5c42ad99fe3a1a93205
+      internalID: 21300408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_meitongdian.png
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 458
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 843bbdd571157014aa0c7245f086598c
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_toushi.png
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 458
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfe649e55b6787a40baa7e294019ac8f
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_tushuguanliyuan.png
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 458
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abf27346c6709b0499cee0a22f455d63
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_weituo.png
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 85
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b25bdaa4b0345064ba1d222ef6e59eaf
+      internalID: 21300194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_zhaungbeishangdian.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 56
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa1aff5bfd5c8e14d8d947d5750f9d70
+      internalID: 21300196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identificationBig_npc_zuoqi.png
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 113
+        width: 24
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f507c5461cf7bb643be94db04b948808
+      internalID: 21300198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_enemy.png
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 123
+        width: 8
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0724d713a6ef2eb4a8382ff74b9bc6ba
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc.png
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 85
+        width: 17
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a530264fbeb89cc4cb0de5b8256b06fc
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_aishen.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 159
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123b90a426774714d84660faec9bbe77
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_collect.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 183
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76f967ceb6e4a684693e904593d75bcf
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_daojudian.png
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 321
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a06087d2dc763a0459985d934b789d3c
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_dazuiniao.png
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 345
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10ede1f0392fb6845b6446ac254f643b
+      internalID: 21300330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_duanzao.png
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 0
+        width: 26
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 774311aadd0e6d14eac0ca632014d557
+      internalID: 21300356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_gonghuiguanli.png
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 28
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1a79ecb30ac74e468bc638f37472345
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_gonghuiyanhui.png
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 486
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55a457e0495c691479297399a940ce60
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_guizhongwupin.png
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 486
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e911c1aeddd675343b6ade4abac7c7f3
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_jixian.png
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 486
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79a10f46dcecbed44a390762fe5edfe9
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_kapian.png
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 486
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbff832325327d04fb475676a47527d3
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_kapula.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 84
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0726e0f8b50c5b247972d88522392af7
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_leitai.png
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 52
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c062b2ed6ea6e4bb0b1029224c1061
+      internalID: 21300358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_leyuantuan.png
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 28
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e09d85a909e7c4489d20af4af21b31
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_lieying.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 0
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 917f37ba7c18b354688d1adfcaa725cb
+      internalID: 21300332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_lifadian.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 108
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8da6a50f77ee41748b3d457c43836dc1
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_maoshou.png
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 132
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 582b61e70e68b9b45945043e710a6512
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_meitongdian.png
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 156
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec0185c6d33e0cc40a01764a6be0c7b1
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_shoutuiche.png
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 180
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e817da549aa5ac40abdd3afb6450735
+      internalID: 21300342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_tafang.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 78
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d87f070495d1848925a5dd932840a4
+      internalID: 21300360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_toushi.png
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 52
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6aa299a757a8c54fbeb11c938394905
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_tushuguanliyuan.png
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 24
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 772b13da7d5834c4a84611ce4c7b5bfd
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_wenzhang.png
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 0
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1eb7ad19871169e4e949ad82ab86e0c1
+      internalID: 21300354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_wuqishangdian.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 104
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7faa0ddb59a71ae4d875a1faa943065c
+      internalID: 21300348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_wuxianta.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 128
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6f74669612923e4db1e0ed29d117d93
+      internalID: 21300362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_zhanchang.png
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 375
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17ed7e8b5b3087a4d9f11a788831b83c
+      internalID: 21300364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_zhuangbei.png
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 104
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cce15b12bae01640870e0d213ebdcc1
+      internalID: 21300374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_zhuangbeishangdian.png
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 76
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9998965f5860bf4a8e3d85a8f27accf
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_Zhutipaidui.png
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 48
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5849c72239e9ae04188aa3bdf87a7f1f
+      internalID: 21300378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_npc_zuoqi.png
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 24
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e404cbd6afe26fa41a14424c77c42d48
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_own.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 401
+        width: 82
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98f2c9e49dc877146a244ccd585b2f4c
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_portal.png
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 138
+        width: 15
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad1e0c81bcc68fb44abeff596b260f66
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_teshu.png
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 347
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b522ba5d0c8460f45b881b9c691f76cd
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_teshucomplete.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 0
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7be1ae1f4fad4544bb20c0fce8f4fc5
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhixian.png
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 374
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7681201c83bfad74e9ae346849b717ff
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhixiancomplete.png
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 347
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1095e05f76c0e4540a860d6584a9f3a0
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhuanzhi.png
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 370
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c8dfe30645109d4da7ac0d2f4485d46
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhuanzhicomplete.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 490
+        width: 23
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec47daa4ce6f09d42880ce906b521bb6
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhuxian.png
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 474
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e09076bbdcba314fb74651ae8dd4a85
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_task_zhuxiancomplete.png
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 474
+        width: 23
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9122656a89a6420459d54515f4d9533e
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_identification_teammate.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 474
+        width: 8
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efe1c5e9cc739d142af937429a7b19a7
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_Collection.png
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 474
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635c1705baf447a4e9ff61cdca8a1eca
+      internalID: 21300200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_Fishing.png
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 474
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a536d89a42be4649ad171f1da737cbd
+      internalID: 21300202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_Mining.png
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 277
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd69da664a938984ba7a4e39d2e91b7d
+      internalID: 21300204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_Shalou1.png
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 57
+        width: 13
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15d0dabe01536064797cf43cc7a1186d
+      internalID: 21300308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_Shalou2.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 57
+        width: 13
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf3da7f54bf94ee4eba2ea9989bb8da1
+      internalID: 21300310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve.png
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 301
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3dd5b5d6fc68d345a8b2d6692d3f499
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve01.png
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 490
+        width: 18
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 550e773ba020c774583e3d20dcaa3f7b
+      internalID: 21300312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve02.png
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 336
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaa5133b255874e4597fba7405929881
+      internalID: 21300314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve03.png
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 363
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f338f5d231539a94f85c7aa0ad85b55d
+      internalID: 21300316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve04.png
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 336
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 864b91bcd6b58ca40a7c3562560ee86d
+      internalID: 21300318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve05.png
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 398
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7079e080e6980e43b6e7d1e443ca6a1
+      internalID: 21300320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPve06.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 363
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f04174376f038d41b01410c8eedd4e9
+      internalID: 21300322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Interactive_WorldPveBG.png
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 155
+        width: 139
+        height: 139
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63077f2f72831c54a86788c4614d73ff
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Jingying.png
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 295
+        width: 26
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e757dc3a44ffc324da68257e3eb58905
+      internalID: 21300292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Jingyingguai.png
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 389
+        width: 17
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24e0fd144d2e1684aa2a1e192daedabb
+      internalID: 21300344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Juqing.png
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 326
+        width: 26
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18df2543ba11aee478adfcf934395db0
+      internalID: 21300294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Minibiaoshi.png
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 491
+        width: 17
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6492ecc057893d4ba23e0803118232c
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Mubiaodian.png
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 128
+        width: 15
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3128bb282e3d38b4281c0a74bf8345dd
+      internalID: 21300212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Mvp.png
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 491
+        width: 17
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207627d50d7316b4b82e87adc7fcdbee
+      internalID: 21300214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_Name.png
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 425
+        width: 118
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d573bdaed27b15441b2be29fbf00ff9e
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_narrow.png
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 458
+        width: 32
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21ae9ad6f67a8ab44b03f76b0589df90
+      internalID: 21300218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_path01.png
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 100
+        width: 21
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73ea60e377e96fa4d9810fe47c705b82
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_path02.png
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 390
+        width: 23
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7bf72305d020be48b60a50945a938dc
+      internalID: 21300222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_path03.png
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 458
+        width: 12
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 798e50a5bcdc82d43bbab3cc26f0e15d
+      internalID: 21300224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Task_Jiantou.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 458
+        width: 47
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 510d921dd070f8b44b497666318e6c49
+      internalID: 21300304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Task_Jiantou02.png
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 72
+        width: 25
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e8f8ef743fc2d648a40f6c3aeff6ad9
+      internalID: 21300350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Task_Xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 458
+        width: 51
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da2b2dbe5310eda47b330f7a973354d5
+      internalID: 21300306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Text_Frame.png
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 204
+        width: 18
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4129c3ad24eb144f9672e410ed563d6
+      internalID: 21300226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Map_Weizhi.png
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 0
+        width: 32
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e80282dead83c4b881fc1f701c5b67
+      internalID: 21300372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 138
+        width: 8
+        height: 8
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db76ccce3fdd7d04a9737c7c210855d6
+      internalID: 21300228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_map_zidongxunlu.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 390
+        width: 7
+        height: 7
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd39f8136771a6e43b48b45a00c74160
+      internalID: 21300230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Arrow.png
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 99
+        width: 185
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 987ecb2f3da5c844dbff7dccf46e2b3e
+      internalID: 21300232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Btn_DisplayInfor.png
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 65
+        width: 30
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e5bf821117976344b723a7a3865afec
+      internalID: 21300234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Btn_HiddenInfor.png
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 295
+        width: 30
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 162fa36e4cb3f09449846d1b2b288b56
+      internalID: 21300236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Btn_View.png
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 354
+        width: 36
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fb92c1b9c7ad4b48925b1f04869d8af
+      internalID: 21300238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble01.png
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 322
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 8, y: 8, z: 8, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d28221fcfd46c241a5d7cc0a714e547
+      internalID: 21300284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble02.png
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 494
+        width: 25
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d879fed81c8cb2489e7d4fb230c105d
+      internalID: 21300286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Aishen.png
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 491
+        width: 21
+        height: 19
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cfef0576f4c06d4a9998574e876a176
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Daojudian.png
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 122
+        width: 18
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74c313f9533fb16488c34e8cc65f7586
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Dazuiniaoshangren.png
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 295
+        width: 17
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 357f0f81e1c7afc4eb7cf690c73ff328
+      internalID: 21300336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Duanzao.png
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 321
+        width: 20
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee9d22dedafb7244d822c2e679ace051
+      internalID: 21300244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Duobiqiu.png
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 295
+        width: 20
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738499723fb33fe43a07bc37b93f4072
+      internalID: 21300324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Fumo.png
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 380
+        width: 29
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e4576c152b2d5c4989b5367e117dd65
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Gonghuiguanli.png
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 347
+        width: 24
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d68a6dd1df7d7124f9ec70c41bd27e67
+      internalID: 21300248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Gonghuiyanhui.png
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 317
+        width: 32
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c55fad699137724db4aed3b2fc1d28c
+      internalID: 21300250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Guizhongwupin.png
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 373
+        width: 28
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5178c4b618d944385cd5679ee26363
+      internalID: 21300252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Heianmigong.png
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 48
+        width: 15
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d7e09a07fb4d0b419ec4d12b1eac144
+      internalID: 21300326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Kapian.png
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 345
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ae0fa0e2b45a74ca02bb20da388c6c
+      internalID: 21300254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Kapula.png
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 295
+        width: 25
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 830641244ea02cd408db682d3d6d692a
+      internalID: 21300256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_leitai.png
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 320
+        width: 26
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 896a4c2821b2a104b9c8415e6ded09c2
+      internalID: 21300366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Leyuantuan.png
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 372
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa44f2f3a6e46b44b48dcb060e360ad
+      internalID: 21300258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_liaotianshi.png
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 397
+        width: 20
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ab3ce0d6ebe3af4f926a3ff31eef8d0
+      internalID: 21300260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_liaotianshi02.png
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 345
+        width: 17
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb18234150995934fbb22085ddff7549
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Lieyingshangren.png
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 370
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deddc283cf57f134385288e5d01ee558
+      internalID: 21300338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Lifadian.png
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 295
+        width: 19
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cc5a00745823ce4fa5216c761e8d66a
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Match.png
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 401
+        width: 22
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c3d1746970b5f41913961140d7c7fd
+      internalID: 21300406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Meitongdian.png
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 427
+        width: 25
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4ffc84960776084abdd264e5bff665e
+      internalID: 21300266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Migongfuben.png
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 397
+        width: 19
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87e22853715035644bca2851fac60f42
+      internalID: 21300302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Shenggeshilian.png
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 416
+        width: 32
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a14322d67bec9c48828a7f064b426dd
+      internalID: 21300268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Shoutuicheshangren.png
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 442
+        width: 33
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdbb8ca7853700c4cb4e78517b83ab7f
+      internalID: 21300340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_tafang.png
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 467
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e99485220ba9e3d4cb2235ad0ad3b673
+      internalID: 21300368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Toushi.png
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 467
+        width: 27
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 247067a59db1ed445a4f177fc0d8cb58
+      internalID: 21300270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Tushuguanliyuan.png
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 488
+        width: 24
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0aec1ab9c71454cb8513a04c972c04
+      internalID: 21300272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Weixing.png
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 488
+        width: 19
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2b02f4fbe7a556499b7ccdc8edb9413
+      internalID: 21300328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Wenzhang.png
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 0
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92896b514e05233489cdd5819531b940
+      internalID: 21300352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Wuxianta.png
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 25
+        width: 25
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 588e9f838e7ba5b4ebaea109733153f7
+      internalID: 21300274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zaiju.png
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 0
+        width: 25
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87819f5d1839b6947a8731c293c60aaf
+      internalID: 21300276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zhanchang.png
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 55
+        width: 26
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a971b114d3346164d967b5623c0be8db
+      internalID: 21300278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zhuangbei.png
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 24
+        width: 24
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438b4a3ecf1276f478c10c4ae1502ea2
+      internalID: 21300376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zhuangbeishangren.png
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 45
+        width: 25
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6ff1ad89fa6bb0458dee2f7ccc93142
+      internalID: 21300280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zhuanzhi.png
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 70
+        width: 25
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b631dc61f414c1419136faae7d5d86f
+      internalID: 21300282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_Bubble_Zhutipaidui.png
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 0
+        width: 30
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4aa4d71a257375a42849b6ef1327b102
+      internalID: 21300380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NPC_MapLine.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 375
+        width: 10
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ebc930f8a5df554485b4a87ec90beb4
+      internalID: 21300288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyMap_Img_Born.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 390
+        width: 4
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 1, y: 1, z: 1, w: 1}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79e37bcedbd15b9438eff3aada26876a
+      internalID: 21300300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: a5db9d7de4a53e44abaffd1422f5e3cd
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Main_Weather_kedutiaohong.png: 21300394
+      UI_Main_Weather_kedutiaolan.png: 21300396
+      UI_Map_Bg_Weather.png: 21300390
+      UI_Map_Btn_Enclosure.png: 21300386
+      UI_Map_Btn_MapInfo.png: 21300400
+      UI_Map_Btn_SHIJIE.png: 21300402
+      UI_Map_Btn_chibang.png: 21300398
+      UI_Map_Btn_enlarge.png: 21300382
+      UI_Map_Btn_narrow.png: 21300384
+      UI_Map_Hengfu.png: 21300370
+      UI_Map_Icon_Weather.png: 21300392
+      UI_Map_Task_Jiantou.png: 21300304
+      UI_Map_Task_Jiantou02.png: 21300350
+      UI_Map_Task_Xuanzhong.png: 21300306
+      UI_Map_Text_Frame.png: 21300226
+      UI_Map_Weizhi.png: 21300372
+      UI_NPC_Arrow.png: 21300232
+      UI_NPC_Btn_DisplayInfor.png: 21300234
+      UI_NPC_Btn_HiddenInfor.png: 21300236
+      UI_NPC_Btn_View.png: 21300238
+      UI_NPC_Bubble01.png: 21300284
+      UI_NPC_Bubble02.png: 21300286
+      UI_NPC_Bubble_Aishen.png: 21300240
+      UI_NPC_Bubble_Daojudian.png: 21300242
+      UI_NPC_Bubble_Dazuiniaoshangren.png: 21300336
+      UI_NPC_Bubble_Duanzao.png: 21300244
+      UI_NPC_Bubble_Duobiqiu.png: 21300324
+      UI_NPC_Bubble_Fumo.png: 21300246
+      UI_NPC_Bubble_Gonghuiguanli.png: 21300248
+      UI_NPC_Bubble_Gonghuiyanhui.png: 21300250
+      UI_NPC_Bubble_Guizhongwupin.png: 21300252
+      UI_NPC_Bubble_Heianmigong.png: 21300326
+      UI_NPC_Bubble_Kapian.png: 21300254
+      UI_NPC_Bubble_Kapula.png: 21300256
+      UI_NPC_Bubble_Leyuantuan.png: 21300258
+      UI_NPC_Bubble_Lieyingshangren.png: 21300338
+      UI_NPC_Bubble_Lifadian.png: 21300264
+      UI_NPC_Bubble_Match.png: 21300406
+      UI_NPC_Bubble_Meitongdian.png: 21300266
+      UI_NPC_Bubble_Migongfuben.png: 21300302
+      UI_NPC_Bubble_Shenggeshilian.png: 21300268
+      UI_NPC_Bubble_Shoutuicheshangren.png: 21300340
+      UI_NPC_Bubble_Toushi.png: 21300270
+      UI_NPC_Bubble_Tushuguanliyuan.png: 21300272
+      UI_NPC_Bubble_Weixing.png: 21300328
+      UI_NPC_Bubble_Wenzhang.png: 21300352
+      UI_NPC_Bubble_Wuxianta.png: 21300274
+      UI_NPC_Bubble_Zaiju.png: 21300276
+      UI_NPC_Bubble_Zhanchang.png: 21300278
+      UI_NPC_Bubble_Zhuangbei.png: 21300376
+      UI_NPC_Bubble_Zhuangbeishangren.png: 21300280
+      UI_NPC_Bubble_Zhuanzhi.png: 21300282
+      UI_NPC_Bubble_Zhutipaidui.png: 21300380
+      UI_NPC_Bubble_leitai.png: 21300366
+      UI_NPC_Bubble_liaotianshi.png: 21300260
+      UI_NPC_Bubble_liaotianshi02.png: 21300262
+      UI_NPC_Bubble_tafang.png: 21300368
+      UI_NPC_MapLine.png: 21300288
+      UI_PreyMap_Img_Born.png: 21300300
+      UI_common_task_aishen_yijie01.png: 21300000
+      UI_common_task_weituo.png: 21300346
+      UI_common_task_zhixian_yijie01.png: 21300002
+      UI_common_task_zhiye_yijie01.png: 21300004
+      UI_common_task_zhuxian_yijie01.png: 21300006
+      UI_map_Battle_Cannon_1.png: 21300008
+      UI_map_Battle_Cannon_2.png: 21300010
+      UI_map_Battle_Cannonbig_1.png: 21300012
+      UI_map_Battle_Cannonbig_2.png: 21300014
+      UI_map_Battle_Crystal_1.png: 21300016
+      UI_map_Battle_Crystal_2.png: 21300018
+      UI_map_Battle_Crystalbig_1.png: 21300020
+      UI_map_Battle_Crystalbig_2.png: 21300022
+      UI_map_Battle_Gate_1.png: 21300024
+      UI_map_Battle_Gate_2.png: 21300026
+      UI_map_Battle_Gatebig_1.png: 21300028
+      UI_map_Battle_Gatebig_2.png: 21300030
+      UI_map_Battle_Guardian_0.png: 21300032
+      UI_map_Battle_Guardian_1.png: 21300034
+      UI_map_Battle_Guardian_2.png: 21300036
+      UI_map_Battle_Guardianbig_0.png: 21300038
+      UI_map_Battle_Guardianbig_1.png: 21300040
+      UI_map_Battle_Guardianbig_2.png: 21300042
+      UI_map_Battle_Stela_0.png: 21300044
+      UI_map_Battle_Stela_1.png: 21300046
+      UI_map_Battle_Stela_2.png: 21300048
+      UI_map_Battle_Stelabig_0.png: 21300050
+      UI_map_Battle_Stelabig_1.png: 21300052
+      UI_map_Battle_Stelabig_2.png: 21300054
+      UI_map_Battle_tower_0.png: 21300056
+      UI_map_Battle_tower_1.png: 21300058
+      UI_map_Battle_tower_2.png: 21300060
+      UI_map_Battle_towerbig_0.png: 21300062
+      UI_map_Battle_towerbig_1.png: 21300064
+      UI_map_Battle_towerbig_2.png: 21300066
+      UI_map_Boss.png: 21300290
+      UI_map_BtnMap.png: 21300068
+      UI_map_Btn_bg.png: 21300410
+      UI_map_Btn_pipei.png: 21300412
+      UI_map_Btn_wanfashuoming.png: 21300414
+      UI_map_Icon_Aierbeita.png: 21300092
+      UI_map_Icon_Bossbuff.png: 21300404
+      UI_map_Icon_Feiyang.png: 21300094
+      UI_map_Icon_Jifen.png: 21300096
+      UI_map_Icon_Mengluoke.png: 21300098
+      UI_map_Icon_Pulongdela.png: 21300100
+      UI_map_Icon_Yisilude.png: 21300102
+      UI_map_Interactive_Collection.png: 21300200
+      UI_map_Interactive_Fishing.png: 21300202
+      UI_map_Interactive_Mining.png: 21300204
+      UI_map_Interactive_Shalou1.png: 21300308
+      UI_map_Interactive_Shalou2.png: 21300310
+      UI_map_Interactive_WorldPve.png: 21300206
+      UI_map_Interactive_WorldPve01.png: 21300312
+      UI_map_Interactive_WorldPve02.png: 21300314
+      UI_map_Interactive_WorldPve03.png: 21300316
+      UI_map_Interactive_WorldPve04.png: 21300318
+      UI_map_Interactive_WorldPve05.png: 21300320
+      UI_map_Interactive_WorldPve06.png: 21300322
+      UI_map_Interactive_WorldPveBG.png: 21300208
+      UI_map_Jingying.png: 21300292
+      UI_map_Jingyingguai.png: 21300344
+      UI_map_Juqing.png: 21300294
+      UI_map_Minibiaoshi.png: 21300210
+      UI_map_Mubiaodian.png: 21300212
+      UI_map_Mvp.png: 21300214
+      UI_map_Name.png: 21300216
+      UI_map_channel_Crowded01.png: 21300070
+      UI_map_channel_Crowded02.png: 21300072
+      UI_map_channel_fluent01.png: 21300074
+      UI_map_channel_fluent02.png: 21300076
+      UI_map_channel_free01.png: 21300078
+      UI_map_channel_free02.png: 21300080
+      UI_map_channel_full01.png: 21300082
+      UI_map_channel_full02.png: 21300084
+      UI_map_drop-down.png: 21300086
+      UI_map_enlarge.png: 21300088
+      UI_map_frame.png: 21300090
+      UI_map_identificationBig_npc_aishen.png: 21300164
+      UI_map_identificationBig_npc_collect.png: 21300166
+      UI_map_identificationBig_npc_daojudian.png: 21300168
+      UI_map_identificationBig_npc_gonghuiguanli.png: 21300170
+      UI_map_identificationBig_npc_gonghuiyanhui.png: 21300172
+      UI_map_identificationBig_npc_guizhongwupin.png: 21300174
+      UI_map_identificationBig_npc_jixian.png: 21300176
+      UI_map_identificationBig_npc_kapian.png: 21300178
+      UI_map_identificationBig_npc_kapula.png: 21300180
+      UI_map_identificationBig_npc_leyuantuan.png: 21300182
+      UI_map_identificationBig_npc_lifadian.png: 21300184
+      UI_map_identificationBig_npc_maoshou.png: 21300186
+      UI_map_identificationBig_npc_match.png: 21300408
+      UI_map_identificationBig_npc_meitongdian.png: 21300188
+      UI_map_identificationBig_npc_toushi.png: 21300190
+      UI_map_identificationBig_npc_tushuguanliyuan.png: 21300192
+      UI_map_identificationBig_npc_weituo.png: 21300194
+      UI_map_identificationBig_npc_zhaungbeishangdian.png: 21300196
+      UI_map_identificationBig_npc_zuoqi.png: 21300198
+      UI_map_identification_enemy.png: 21300104
+      UI_map_identification_npc.png: 21300106
+      UI_map_identification_npc_Zhutipaidui.png: 21300378
+      UI_map_identification_npc_aishen.png: 21300108
+      UI_map_identification_npc_collect.png: 21300110
+      UI_map_identification_npc_daojudian.png: 21300112
+      UI_map_identification_npc_dazuiniao.png: 21300330
+      UI_map_identification_npc_duanzao.png: 21300356
+      UI_map_identification_npc_gonghuiguanli.png: 21300114
+      UI_map_identification_npc_gonghuiyanhui.png: 21300116
+      UI_map_identification_npc_guizhongwupin.png: 21300118
+      UI_map_identification_npc_jixian.png: 21300120
+      UI_map_identification_npc_kapian.png: 21300122
+      UI_map_identification_npc_kapula.png: 21300124
+      UI_map_identification_npc_leitai.png: 21300358
+      UI_map_identification_npc_leyuantuan.png: 21300126
+      UI_map_identification_npc_lieying.png: 21300332
+      UI_map_identification_npc_lifadian.png: 21300128
+      UI_map_identification_npc_maoshou.png: 21300130
+      UI_map_identification_npc_meitongdian.png: 21300132
+      UI_map_identification_npc_shoutuiche.png: 21300342
+      UI_map_identification_npc_tafang.png: 21300360
+      UI_map_identification_npc_toushi.png: 21300134
+      UI_map_identification_npc_tushuguanliyuan.png: 21300136
+      UI_map_identification_npc_wenzhang.png: 21300354
+      UI_map_identification_npc_wuqishangdian.png: 21300348
+      UI_map_identification_npc_wuxianta.png: 21300362
+      UI_map_identification_npc_zhanchang.png: 21300364
+      UI_map_identification_npc_zhuangbei.png: 21300374
+      UI_map_identification_npc_zhuangbeishangdian.png: 21300138
+      UI_map_identification_npc_zuoqi.png: 21300140
+      UI_map_identification_own.png: 21300142
+      UI_map_identification_portal.png: 21300144
+      UI_map_identification_task_teshu.png: 21300146
+      UI_map_identification_task_teshucomplete.png: 21300148
+      UI_map_identification_task_zhixian.png: 21300150
+      UI_map_identification_task_zhixiancomplete.png: 21300152
+      UI_map_identification_task_zhuanzhi.png: 21300154
+      UI_map_identification_task_zhuanzhicomplete.png: 21300156
+      UI_map_identification_task_zhuxian.png: 21300158
+      UI_map_identification_task_zhuxiancomplete.png: 21300160
+      UI_map_identification_teammate.png: 21300162
+      UI_map_narrow.png: 21300218
+      UI_map_path01.png: 21300220
+      UI_map_path02.png: 21300222
+      UI_map_path03.png: 21300224
+      UI_map_xuanzhong.png: 21300228
+      UI_map_zidongxunlu.png: 21300230
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

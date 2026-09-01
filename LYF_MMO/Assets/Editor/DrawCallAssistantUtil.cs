@@ -51,6 +51,15 @@ public class DrawCallAssistantUtil : EditorWindow
 
     void OnGUI()
     {
+        Color previousContentColor = GUI.contentColor;
+        Color previousLabelColor = GUI.skin.label.normal.textColor;
+        Color previousButtonColor = GUI.skin.button.normal.textColor;
+        Color previousToggleColor = GUI.skin.toggle.normal.textColor;
+        GUI.contentColor = Color.white;
+        GUI.skin.label.normal.textColor = Color.white;
+        GUI.skin.button.normal.textColor = Color.white;
+        GUI.skin.toggle.normal.textColor = Color.white;
+
         GameObject go = Selection.activeGameObject;
 
         GUILayout.BeginVertical();
@@ -165,7 +174,7 @@ public class DrawCallAssistantUtil : EditorWindow
             GUILayout.Space(10);
             GUILayout.Label(">>>>>NO.3:层级与Batch显示", style);
             GUILayout.Space(10);
-            style.normal.textColor = Color.black;
+            style.normal.textColor = Color.white;
             for (int i = 0; i < _assetNodeList.Count; i++)
             {
                 GUILayout.BeginHorizontal();
@@ -210,6 +219,11 @@ public class DrawCallAssistantUtil : EditorWindow
             GUILayout.EndScrollView();
         }
         GUILayout.EndVertical();
+
+        GUI.contentColor = previousContentColor;
+        GUI.skin.label.normal.textColor = previousLabelColor;
+        GUI.skin.button.normal.textColor = previousButtonColor;
+        GUI.skin.toggle.normal.textColor = previousToggleColor;
     }
     /// <summary>
     /// 初始化;
@@ -486,7 +500,7 @@ public class AssetNode
         _scale = go.transform.localScale;
         _rotation = go.transform.localRotation;
         _colorAlpha = -1f;
-        _color = Color.black;
+        _color = Color.white;
         RectTransform trans = go.transform as RectTransform;
         _rect = Rect.zero;
         if (trans)
