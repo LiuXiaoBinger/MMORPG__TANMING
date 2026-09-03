@@ -1761,16 +1761,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 38f1ffb39a7dc924fb937153896251f9, type: 2}
-  m_Color: {r: 0.12813964, g: 0.19496846, b: 0.1415054, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 744497908, guid: 355a9c87eb3563246b3ee5f0c80ea5ac, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 21300216, guid: c46212db0fcbdd547a2a319e0ab42aba, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

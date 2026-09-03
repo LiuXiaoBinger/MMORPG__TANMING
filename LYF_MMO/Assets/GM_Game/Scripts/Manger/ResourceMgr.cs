@@ -30,7 +30,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
         else
         {
-            Global.Instance.YooPackage.LoadAssetAsync($"{ConstDefine.PrefabPath}{path}")
+            string assetLocation = path.StartsWith("Assets/", StringComparison.Ordinal)
+                ? path
+                : $"{ConstDefine.PrefabPath}{path}";
+
+            Global.Instance.YooPackage.LoadAssetAsync(assetLocation)
                 .Completed += (AssetOperationHandle handle) =>
             {
                 GameObject go = handle.InstantiateSync();

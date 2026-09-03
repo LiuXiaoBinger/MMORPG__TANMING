@@ -8,8 +8,8 @@ MonoImporter:
   userData: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 27676
+  productId: 20002646
   packageName: DOTween (HOTween v2)
   packageVersion: 1.2.825
-  assetPath: Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModulePhysics.cs
-  uploadId: 939688
+  assetPath: Assets/GM_Game/Plugins/DOTween/Modules/DOTweenModulePhysics.cs
+  uploadId: 0

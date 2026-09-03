@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 510442579884844261}
   - component: {fileID: 1720916779809482932}
   - component: {fileID: 2923661974840902888}
-  - component: {fileID: 8478423819701761922}
   - component: {fileID: 3573608025342911907}
   m_Layer: 5
   m_Name: Text
@@ -79,22 +78,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u901A\u7528\u5927\u6309\u94AE"
---- !u!114 &8478423819701761922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1589113463810140624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -633457502, guid: 0a06b724a7ecc1948b8fd5525e4102e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LocalKey: 1902504192
-  Ignore: 0
-  NotNeedReplaceFont: 0
-  CheckSwitchOff: 0
 --- !u!114 &3573608025342911907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,7 +105,6 @@ GameObject:
   - component: {fileID: 6363183641338288393}
   - component: {fileID: 5226798454590021222}
   - component: {fileID: 6542931538277083337}
-  - component: {fileID: 6543104484644895233}
   - component: {fileID: 6488230758540764589}
   m_Layer: 5
   m_Name: Btn_Big_01
@@ -226,19 +208,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6543104484644895233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6583650217777126319}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -894698670, guid: 0a06b724a7ecc1948b8fd5525e4102e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onClickId: 1
 --- !u!95 &6488230758540764589
 Animator:
   serializedVersion: 3

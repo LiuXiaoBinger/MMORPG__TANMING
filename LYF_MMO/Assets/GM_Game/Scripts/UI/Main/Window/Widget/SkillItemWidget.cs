@@ -32,7 +32,7 @@ public class SkillItemWidget : MonoBehaviour
                 _imgMask.gameObject.Show();
             }
             _texSkillLevel.SetText($"技能等级:{roleSkillInfo.Level}");
-            SkillInfo skillInfo  =LubanMgr.Instance.GetSkillInfo(roleSkillInfo.SkillId);
+            SkillInfo skillInfo  =LubanMgr.Instance.GetSkillInfoById(roleSkillInfo.SkillId);
             if (skillInfo != null)
             {
                 //设置技能图标

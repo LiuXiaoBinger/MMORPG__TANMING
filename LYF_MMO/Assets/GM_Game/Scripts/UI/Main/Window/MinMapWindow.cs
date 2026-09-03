@@ -37,7 +37,7 @@ public class MinMapWindow : WindowBase
          //实施更新小地图位置 ，根据角色信息的位置来更新
          _mapHelp.transform.position = _mainRoleCtrl.transform.position;
          
-         _imgMinMap.rectTransform.anchoredPosition = new Vector2(_mapHelp.transform.localPosition.x*-_mapsize,_mapHelp.transform.localPosition.z*-_mapsize);
+         _imgMinMap.rectTransform.anchoredPosition = new Vector2((_mapHelp.transform.localPosition.x*-_mapsize),(_mapHelp.transform.localPosition.z*-_mapsize));
          //箭头
          _imgArrow.transform.localEulerAngles = new Vector3(0,0,360-_mainRoleCtrl.transform.localEulerAngles.y+90);
       }

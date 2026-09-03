@@ -1,0 +1,490 @@
+fileFormatVersion: 2
+guid: 91b194520c657634a9c42d68374b4622
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_LuckyDraw_Img_01.png
+  - first:
+      213: 21300002
+    second: UI_LuckyDraw_Img_02.png
+  - first:
+      213: 21300004
+    second: UI_LuckyDraw_Img_03.png
+  - first:
+      213: 21300006
+    second: UI_LuckyDraw_Img_04.png
+  - first:
+      213: 21300008
+    second: UI_LuckyDraw_Img_05.png
+  - first:
+      213: 21300010
+    second: UI_LuckyDraw_Img_06.png
+  - first:
+      213: 21300012
+    second: UI_LuckyDraw_Img_07.png
+  - first:
+      213: 21300014
+    second: UI_LuckyDraw_Lock_07.png
+  - first:
+      213: 21300016
+    second: UI_LuckyDraw_Img_08.png
+  - first:
+      213: 21300018
+    second: UI_LuckyDraw_Img_09.png
+  - first:
+      213: 21300020
+    second: UI_LuckyDraw_Img_10.png
+  - first:
+      213: 21300022
+    second: UI_LuckyDraw_Img_11.png
+  - first:
+      213: 21300024
+    second: UI_LuckyDraw_Img_12.png
+  - first:
+      213: 21300026
+    second: UI_LuckyDraw_Img_13.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 45
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df28945013ee8e04da07a4a52b003999
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 45
+        width: 62
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5e6810c3a90274a843cf3869cbe157
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_03.png
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 0
+        width: 44
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 498fc74f614ce724b857666e3b901782
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_04.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 106
+        width: 40
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 19, y: 17, z: 19, w: 18}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef806760cfbcef64ea71adfb480f268f
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 143
+        width: 157
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e514b6b5167074b44aef475a436213d7
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_06.png
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 106
+        width: 55
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43ada9b07b5f08c44ab6114992aa2c26
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_07.png
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 43
+        width: 34
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6d633e979243f84e98a2218d1b33af0
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_08.png
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 0
+        width: 42
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b49abcaf1db3745a01ee3347880063
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_09.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 164
+        width: 83
+        height: 193
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 295bc25ba4b9a6b4e89ba31cdf17cf02
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_10.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 87
+        width: 25
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b90ba8202b79b7047977d97db767a4e9
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_11.png
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 87
+        width: 34
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fe03925865482a4d8a0a97d8d3e8f45
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_12.png
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 130
+        width: 755
+        height: 10
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 287, y: 4, z: 317, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d5d39ef0d004645aea6e08e453ef4a
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Img_13.png
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 0
+        width: 188
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f7cb34b941851143b592021191e4ac6
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_LuckyDraw_Lock_07.png
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 56
+        width: 48
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ae0b5c490d2ef644afe000ccb25510f
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: bac6c2c743c42a04486910a606367a48
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_LuckyDraw_Img_01.png: 21300000
+      UI_LuckyDraw_Img_02.png: 21300002
+      UI_LuckyDraw_Img_03.png: 21300004
+      UI_LuckyDraw_Img_04.png: 21300006
+      UI_LuckyDraw_Img_05.png: 21300008
+      UI_LuckyDraw_Img_06.png: 21300010
+      UI_LuckyDraw_Img_07.png: 21300012
+      UI_LuckyDraw_Img_08.png: 21300016
+      UI_LuckyDraw_Img_09.png: 21300018
+      UI_LuckyDraw_Img_10.png: 21300020
+      UI_LuckyDraw_Img_11.png: 21300022
+      UI_LuckyDraw_Img_12.png: 21300024
+      UI_LuckyDraw_Img_13.png: 21300026
+      UI_LuckyDraw_Lock_07.png: 21300014
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

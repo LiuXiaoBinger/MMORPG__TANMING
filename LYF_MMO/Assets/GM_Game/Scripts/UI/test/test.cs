@@ -47,6 +47,7 @@ public class test : MonoBehaviour
       operation = _package.InitializeAsync(editorParameters);
       yield return operation;
       
+      GetComponent<NpcManager>()?.Initialize();
       UIRoot.Instance.InitMainCtrl();
       
       yield break;

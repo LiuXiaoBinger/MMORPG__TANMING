@@ -62,6 +62,7 @@ public class UIBase : MonoBehaviour
            }
            else
            {
+               windowDic[windowType].ReFreshUI(obj);
                windowDic[windowType].Show(true);
            }
        }

@@ -22,6 +22,15 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
 
    private CanvasGroup _canvasGroup;
    private RectTransform _rectTransform;
+   // 拖拽前的 RectTransform 数据，用于拖拽取消时恢复原始布局。
+   private Vector2 _initialAnchorMin;
+   private Vector2 _initialAnchorMax;
+   private Vector2 _initialPivot;
+   private Vector2 _initialSizeDelta;
+   private Vector3 _initialAnchoredPosition3D;
+   private Vector3 _initialLocalScale;
+   private Quaternion _initialLocalRotation;
+
    private void Start()
    {
       _rectTransform  =transform as RectTransform;
@@ -29,6 +38,15 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
       _defluParent = transform.parent;
       _canvas = UIRoot.Instance._canvas;
       _canvasGroup = GetComponent<CanvasGroup>();
+
+      // 记录 Inspector 中的锚点、边距、位置、缩放与旋转数据。
+      _initialAnchorMin = _rectTransform.anchorMin;
+      _initialAnchorMax = _rectTransform.anchorMax;
+      _initialPivot = _rectTransform.pivot;
+      _initialSizeDelta = _rectTransform.sizeDelta;
+      _initialAnchoredPosition3D = _rectTransform.anchoredPosition3D;
+      _initialLocalScale = _rectTransform.localScale;
+      _initialLocalRotation = _rectTransform.localRotation;
    }
 
    /// <summary>
@@ -57,9 +75,20 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
       _canvasGroup.blocksRaycasts = true;
       if (transform.parent == _canvas.transform)
       {
-        
-         gameObject.SetParent(_defluParent);
+         RestoreInitialTransform();
       }
       
+   }
+
+   private void RestoreInitialTransform()
+   {
+      transform.SetParent(_defluParent, false);
+      _rectTransform.anchorMin = _initialAnchorMin;
+      _rectTransform.anchorMax = _initialAnchorMax;
+      _rectTransform.pivot = _initialPivot;
+      _rectTransform.sizeDelta = _initialSizeDelta;
+      _rectTransform.anchoredPosition3D = _initialAnchoredPosition3D;
+      _rectTransform.localScale = _initialLocalScale;
+      _rectTransform.localRotation = _initialLocalRotation;
    }
 }

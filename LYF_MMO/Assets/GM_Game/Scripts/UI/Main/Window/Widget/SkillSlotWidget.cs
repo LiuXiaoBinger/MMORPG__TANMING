@@ -29,7 +29,7 @@ public class SkillSlotWidget : MonoBehaviour
    public  void ReFreshUI(RoleSkillInfo roleSkillInfo)
    {
       // to
-       _skillInfo =LubanMgr.Instance.GetSkillInfo(roleSkillInfo.SkillId);
+       _skillInfo =LubanMgr.Instance.GetSkillInfoById(roleSkillInfo.SkillId);
        if (_skillInfo != null)
        {
           //根据当前技能槽，绑定键盘按键

@@ -19,6 +19,7 @@ public class MainCtrl : CtrlBase
 
     private void RegisCommand()
     {
+        // 装备数据和背包数据由同一个服务器快照返回，因此共用背包协议码。
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleSkillInfoCode,RoleSkillInfoHandle);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleKnapsackInfoCode,RoleKnapsackInfoHandle);
     }
@@ -32,11 +33,9 @@ public class MainCtrl : CtrlBase
         if (ret != null && ret.CmdCode == CmdCode.Succeed)
         {
             Debug.Log("RoleKnapsackInfoHandle:: "+ret.ToString());
+            // 背包窗口显示所有物品，角色属性窗口只读取 RoleCurrtEquipPack。
             UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.KnapsackWindow,ret);
-            /*switch (ret.)
-            {
-                
-            }*/
+            UIRoot.Instance.MainCtrl.RefreshWindow(WindowType.RoleAttriibuteWindow, ret);
         }
     }
     /// <summary>

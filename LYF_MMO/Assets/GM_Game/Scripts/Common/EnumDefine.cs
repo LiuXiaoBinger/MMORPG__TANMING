@@ -48,6 +48,7 @@ public enum DragType
 {
     KanpsackSlot,//背包Slot
 }
+
 /// <summary>
 /// 场景类型
 /// </summary>
@@ -59,9 +60,6 @@ public enum SceneType
     Scene_MainCity//主城
 }
 
-public enum RoleJobtype
-{
-    MJS = 1,
-}
+
 
 
