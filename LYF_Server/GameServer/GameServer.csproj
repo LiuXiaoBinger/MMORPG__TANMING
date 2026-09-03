@@ -38,14 +38,15 @@
         <Compile Include="Ctrl\GameWorldBC.cs" />
         <Compile Include="Ctrl\Game_LoginCtrl.cs" />
         <Compile Include="Entity\OnlineRole.cs" />
+        <Compile Include="manger\RoleManager.cs" />
         <Compile Include="GameGlobal.cs" />
         <Compile Include="GameServerApp.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj">
-        <Project>{d36b3520-7e5a-46da-9657-58d6e84ddc56}</Project>
-        <Name>Common</Name>
+      <ProjectReference Include="..\MMoRpgCommon\MMoRpgCommon.csproj">
+        <Project>{a9070ac6-e01d-4cfe-a171-34ea469d0038}</Project>
+        <Name>MMoRpgCommon</Name>
       </ProjectReference>
       <ProjectReference Include="..\Network\Network.csproj">
         <Project>{e695f887-4879-41c0-85f3-d86a91150282}</Project>
@@ -73,6 +74,9 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="manger\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

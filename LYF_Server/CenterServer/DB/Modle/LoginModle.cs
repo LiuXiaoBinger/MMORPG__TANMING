@@ -125,7 +125,7 @@ public class LoginModle
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    public GetServerListRet GetServerList(GetServerListReq req)
+    internal GetServerListRet GetServerList(GetServerListReq req)
     {
         GetServerListRet ret = new GetServerListRet();
         if (req.ServerId == 0)
@@ -223,6 +223,13 @@ public class LoginModle
         }
         else
         {
+            var professionInfo = LubanMgr.Instance.GetProfessionInfoById(req.JobId);
+            if (professionInfo == null)
+            {
+                ret.CmdCode = CmdCode.ServerError;
+                return ret;
+            }
+
             DateTime now = DateTime.Now;
 
             RoleTable role = new RoleTable()
@@ -246,12 +253,38 @@ public class LoginModle
             {
                 RoleBaseArrtTable roleBaseArrtTable = new RoleBaseArrtTable()
                 {
+                    Id = id,
                     roleID = id,
+                    XiuWei = professionInfo.Qi,
+                    MaxHP = professionInfo.MaxHp,
+                    CurrHP = professionInfo.MaxHp,
+                    MaxMP = professionInfo.MaxMp,
+                    CurrMP = professionInfo.MaxMp,
+                    AtkExternalMin = professionInfo.AtkExternalMin,
+                    AtkExternalMax = professionInfo.AtkExternalMax,
+                    AtkInternalMin = professionInfo.AtkInternalMin,
+                    AtkInternalMax = professionInfo.AtkInternalMax,
+                    DefExternal = professionInfo.DefExternal,
+                    DefExternalDelta = professionInfo.DefExternalDelta,
+                    DefInternal = professionInfo.DefInternal,
+                    DefInternalDelta = professionInfo.DefInternalDelta,
+                    HitPoint = professionInfo.HitPoint,
+                    BlockPoint = professionInfo.BlockPoint,
+                    ZhenJi = professionInfo.ZhenJi,
+                    WuGu = professionInfo.WuGu,
+                    CritPoint = professionInfo.CritPoint,
+                    CritResistPoint = professionInfo.CritResistPoint,
+                    CritDamage = professionInfo.CritDamage,
+                    CritDamageReduce = professionInfo.CritDamageReduce,
+                    HealStrength = professionInfo.HealStrength,
+                    HealBonus = professionInfo.HealBonus,
+                    ZhuXin = professionInfo.ZhuXin,
+                    JianRen = professionInfo.JianRen,
                 };
-                CreateRoleSkillInfo(id, req.JobId);
-                CreateRoleKnapsackInfo(id);
                 if (_db.Insertable(roleBaseArrtTable).ExecuteCommand() > 0)
                 {
+                    CreateRoleSkillInfo(id, req.JobId);
+                    CreateRoleKnapsackInfo(id);
                     ret.RoleId = id;
                     ret.Nickname = role.Nickname;
                     ret.JobId = role.JobID;
@@ -285,25 +318,15 @@ public class LoginModle
             RoleId = roleid,
         };
 
-/*//创建每一个背包格子数据
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 3; i++)
-        {
-            if (i == 99)
-            {
-                sb.Append($" {0},{0}");
-            }
-        }*/
 
-        //roleKnapsackTable.Knapsack = sb.ToString();
         _db.Insertable(roleKnapsackTable).ExecuteCommand();
     }
 
     /// <summary>
-        /// 为角色创建技能信息
-        /// </summary>
-        /// <param name="roleid"></param>
-        private void CreateRoleSkillInfo(int roleid, int jobid)
+    /// 为角色创建技能信息
+    /// </summary>
+    /// <param name="roleid"></param>
+    private void CreateRoleSkillInfo(int roleid, int jobid)
         {
             //删除表数据
             List<RoleSkillTable> listRoleSkillTables =
@@ -346,84 +369,84 @@ public class LoginModle
             _db.Insertable(listRoleSkillTables).ExecuteCommand();
         }
 
-        /// <summary>
-        /// 开始请求游戏开始返回角色信息
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        public StartGameRet StartGame(StartGameReq req)
+    /// <summary>
+    /// 开始请求游戏开始返回角色信息
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    public StartGameRet StartGame(StartGameReq req)
+    {
+        StartGameRet ret = new StartGameRet();
+        if (req == null || req.RoleId <= 0)
         {
-            StartGameRet ret = new StartGameRet();
-            if (req == null || req.RoleId <= 0)
-            {
-                ret.CmdCode = CmdCode.ReqParamError;
-                return ret;
-            }
-
-            RoleTable roleTable = _db.Queryable<RoleTable>()
-                .Where(v => v.Id == req.RoleId)
-                .First();
-            if (roleTable == null)
-            {
-                ret.CmdCode = CmdCode.AcctNotExist;
-                return ret;
-            }
-
-            RoleBaseArrtTable attrTable = _db.Queryable<RoleBaseArrtTable>()
-                .Where(v => v.roleID == roleTable.Id)
-                .First();
-            if (attrTable == null)
-            {
-                ret.CmdCode = CmdCode.ServerError;
-                return ret;
-            }
-
-            ret.CmdCode = CmdCode.Succeed;
-            ret.MainRoleInfo = new MainRoleInfo
-            {
-                AccountId = roleTable.AccountID,
-                Money = roleTable.Money,
-
-                Exp = roleTable.Exp,
-                SkillUpPoint = roleTable.SkillUpPoint,
-                CameraOffset = roleTable.CameraOffset ?? string.Empty,
-                ServerId = roleTable.ServerId,
-                BaseInfo = new RoleBaseInfo
-                {
-                    RoleId = roleTable.Id,
-                    Nickname = roleTable.Nickname ?? string.Empty,
-                    Pos = roleTable.Pos ?? string.Empty,
-                    MapId = roleTable.MapId,
-                    XiuWei = attrTable.XiuWei,
-                    MaxHp = attrTable.MaxHP,
-                    CurrHp = attrTable.CurrHP,
-                    MaxMp = attrTable.MaxMP,
-                    CurrMp = attrTable.CurrMP,
-                    AtkExternalMin = attrTable.AtkExternalMin,
-                    AtkExternalMax = attrTable.AtkExternalMax,
-                    AtkInternalMin = attrTable.AtkInternalMin,
-                    AtkInternalMax = attrTable.AtkInternalMax,
-                    DefExternal = attrTable.DefExternal,
-                    DefExternalDelta = attrTable.DefExternalDelta,
-                    DefInternal = attrTable.DefInternal,
-                    DefInternalDelta = attrTable.DefInternalDelta,
-                    HitPoint = attrTable.HitPoint,
-                    BlockPoint = attrTable.BlockPoint,
-                    ZhenJi = attrTable.ZhenJi,
-                    WuGu = attrTable.WuGu,
-                    CritPoint = attrTable.CritPoint,
-                    CritResistPoint = attrTable.CritResistPoint,
-                    CritDamage = attrTable.CritDamage,
-                    CritDamageReduce = attrTable.CritDamageReduce,
-                    HealStrength = attrTable.HealStrength,
-                    HealBonus = attrTable.HealBonus,
-                    ZhuXin = attrTable.ZhuXin,
-                    JianRen = attrTable.JianRen,
-                    JobId = roleTable.JobID,
-                    Level = roleTable.Level,
-                }
-            };
+            ret.CmdCode = CmdCode.ReqParamError;
             return ret;
         }
+
+        RoleTable roleTable = _db.Queryable<RoleTable>()
+            .Where(v => v.Id == req.RoleId)
+            .First();
+        if (roleTable == null)
+        {
+            ret.CmdCode = CmdCode.AcctNotExist;
+            return ret;
+        }
+
+        RoleBaseArrtTable attrTable = _db.Queryable<RoleBaseArrtTable>()
+            .Where(v => v.roleID == roleTable.Id)
+            .First();
+        if (attrTable == null)
+        {
+            ret.CmdCode = CmdCode.ServerError;
+            return ret;
+        }
+
+        ret.CmdCode = CmdCode.Succeed;
+        ret.MainRoleInfo = new MainRoleInfo
+        {
+            AccountId = roleTable.AccountID,
+            Money = roleTable.Money,
+
+            Exp = roleTable.Exp,
+            SkillUpPoint = roleTable.SkillUpPoint,
+            CameraOffset = roleTable.CameraOffset ?? string.Empty,
+            ServerId = roleTable.ServerId,
+            BaseInfo = new RoleBaseInfo
+            {
+                RoleId = roleTable.Id,
+                Nickname = roleTable.Nickname ?? string.Empty,
+                Pos = roleTable.Pos ?? string.Empty,
+                MapId = roleTable.MapId,
+                XiuWei = attrTable.XiuWei,
+                MaxHp = attrTable.MaxHP,
+                CurrHp = attrTable.CurrHP,
+                MaxMp = attrTable.MaxMP,
+                CurrMp = attrTable.CurrMP,
+                AtkExternalMin = attrTable.AtkExternalMin,
+                AtkExternalMax = attrTable.AtkExternalMax,
+                AtkInternalMin = attrTable.AtkInternalMin,
+                AtkInternalMax = attrTable.AtkInternalMax,
+                DefExternal = attrTable.DefExternal,
+                DefExternalDelta = attrTable.DefExternalDelta,
+                DefInternal = attrTable.DefInternal,
+                DefInternalDelta = attrTable.DefInternalDelta,
+                HitPoint = attrTable.HitPoint,
+                BlockPoint = attrTable.BlockPoint,
+                ZhenJi = attrTable.ZhenJi,
+                WuGu = attrTable.WuGu,
+                CritPoint = attrTable.CritPoint,
+                CritResistPoint = attrTable.CritResistPoint,
+                CritDamage = attrTable.CritDamage,
+                CritDamageReduce = attrTable.CritDamageReduce,
+                HealStrength = attrTable.HealStrength,
+                HealBonus = attrTable.HealBonus,
+                ZhuXin = attrTable.ZhuXin,
+                JianRen = attrTable.JianRen,
+                JobId = roleTable.JobID,
+                Level = roleTable.Level,
+            }
+        };
+        return ret;
+    }
     }
 

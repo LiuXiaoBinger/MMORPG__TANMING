@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
+            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{A9070AC6-E01D-4CFE-A171-34EA469D0038}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>MMoRpgCommon</RootNamespace>
+        <AssemblyName>MMoRpgCommon</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System"/>
+        <Reference Include="System.Core"/>
+        <Reference Include="System.Data"/>
+        <Reference Include="System.Xml"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Class1.cs"/>
+        <Compile Include="EntityData\Entity\EntityBase.cs" />
+        <Compile Include="EntityData\Entity\MainRoleEntity.cs" />
+        <Compile Include="EntityData\Entity\MonsterEntity.cs" />
+        <Compile Include="EntityData\Entity\NpcEntity.cs" />
+        <Compile Include="EntityData\Entity\RoleBaseAttrEntity.cs" />
+        <Compile Include="EntityData\Gene\GeneBase.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\AtkExternalMaxGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\AtkExternalMinGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\AtkInternalMaxGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\AtkInternalMinGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\BlockPointGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CritDamageGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CritDamageReduceGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CritPointGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CritResistPointGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CurrHPGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\CurrMPGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\DefExternalDeltaGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\DefExternalGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\DefInternalDeltaGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\DefInternalGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\HealBonusGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\HealStrengthGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\HitPointGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\JianRenGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\MaxHPGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\MaxMPGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\WuGuGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\ZhenJiGene.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\ZhuXinGene.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\DamageBuff\DamageBuffGeneBase.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\TimeBuffGeneBase.cs" />
+        <Compile Include="EntityData\Item\EquipBase.cs" />
+        <Compile Include="EntityData\Item\ItemBase.cs" />
+        <Compile Include="EntityData\Item\ItemFactory.cs" />
+        <Compile Include="enum\BackPackEnum.cs" />
+        <Compile Include="enum\EquipEnum.cs" />
+        <Compile Include="enum\ItemMainType.cs" />
+        <Compile Include="enum\JobEnum.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="EntityData\Gene\SpecialGene\DamageBuff\.gitkeep" />
+      <None Include="EntityData\Gene\SpecialGene\TimeBuff\.gitkeep" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>

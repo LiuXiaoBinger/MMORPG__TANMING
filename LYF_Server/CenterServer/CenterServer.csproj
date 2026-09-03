@@ -120,6 +120,7 @@
     <Compile Include="DB\Table\GameServerTable.cs" />
     <Compile Include="DB\Table\RoleKnapsackTable.cs" />
     <Compile Include="DB\Table\RoleBaseArrtTable.cs" />
+    <Compile Include="DB\Table\RoleNpcShopPurchaseTable.cs" />
     <Compile Include="DB\Table\RoleSkillTable.cs" />
     <Compile Include="DB\Table\ItemTable.cs" />
     <Compile Include="DB\Table\EquipTable.cs" />
@@ -134,9 +135,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{d36b3520-7e5a-46da-9657-58d6e84ddc56}</Project>
-      <Name>Common</Name>
+    <ProjectReference Include="..\MMoRpgCommon\MMoRpgCommon.csproj">
+      <Project>{a9070ac6-e01d-4cfe-a171-34ea469d0038}</Project>
+      <Name>MMoRpgCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\Network\Network.csproj">
       <Project>{e695f887-4879-41c0-85f3-d86a91150282}</Project>

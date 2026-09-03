@@ -147,8 +147,12 @@ message RoleSkillInfo
 message RoleKanpsackInfoRet
 {
 	CmdCode cmd_code = 1;//表示请求是否成功
-	repeated Kanpsacktypecount Kanpsacktypecount_lst=2;//包类别加数量
-	repeated RoleItemInfo role_item_lst=3;//物品数据
+	repeated Kanpsacktypecount kanpsack_type_count_lst=2;//各背包物品数量
+	repeated RoleItemInfo role_pack_all=3;//角色背包总览：装备、消耗品、材料
+	repeated RoleItemInfo role_pack_equip=4;//角色装备背包
+	repeated RoleItemInfo role_pack_consume=5;//角色消耗品背包
+	repeated RoleItemInfo role_pack_material=6;//角色材料背包
+	repeated RoleItemInfo role_currt_equip_pack=7;//角色当前已装备栏
 }
 
 message Kanpsacktypecount

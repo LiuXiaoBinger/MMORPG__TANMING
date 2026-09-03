@@ -60,28 +60,32 @@ public static partial class ResultEntityReflection {
           "GgoIY21kX2NvZGUYASABKA4yCC5DbWRDb2RlEikKEXJvbGVTa2lsbEluZm9M",
           "aXN0GAIgAygLMg4uUm9sZVNraWxsSW5mbyJCCg1Sb2xlU2tpbGxJbmZvEhAK",
           "CHNraWxsX2lkGAEgASgFEg0KBWxldmVsGAIgASgFEhAKCGJpbmRfa2V5GAMg",
-          "ASgJIooBChNSb2xlS2FucHNhY2tJbmZvUmV0EhoKCGNtZF9jb2RlGAEgASgO",
-          "MgguQ21kQ29kZRIxChVLYW5wc2Fja3R5cGVjb3VudF9sc3QYAiADKAsyEi5L",
-          "YW5wc2Fja3R5cGVjb3VudBIkCg1yb2xlX2l0ZW1fbHN0GAMgAygLMg0uUm9s",
-          "ZUl0ZW1JbmZvIjAKEUthbnBzYWNrdHlwZWNvdW50EgwKBHR5cGUYASABKAUS",
-          "DQoFY291bnQYAiABKAUizwEKDFJvbGVJdGVtSW5mbxIPCgdpdGVtX2lkGAEg",
-          "ASgFEg0KBWNvdW50GAIgASgFEg8KB3JvbGVfaWQYAyABKAUSFAoMaXRlbV90",
-          "eXBlX2lkGAQgASgFEhAKCGJhZ190eXBlGAUgASgFEhEKCWJhZ19pbmRleBgG",
-          "IAEoBRImCgplcXVpcF9pbmZvGAcgASgLMhIuUm9sZUVxdWlwSXRlbUluZm8S",
-          "KwoPZXF1aXBfZ2VuZV9pbmZvGAggASgLMhIuUm9sZUVxdWlwR2VuZUluZm8i",
-          "YwoRUm9sZUVxdWlwSXRlbUluZm8SDwoHaXRlbV9pZBgBIAEoBRIPCgdyb2xl",
-          "X2lkGAIgASgFEhgKEHN0cmVuZ3RoZW5fbGV2ZWwYAyABKAUSEgoKZXF1aXBf",
-          "dHlwZRgEIAEoBSKqAQoRUm9sZUVxdWlwR2VuZUluZm8SDwoHaXRlbV9pZBgB",
-          "IAEoBRIPCgdyb2xlX2lkGAIgASgFEhAKCGdlbmVfaWQwGAMgASgFEhAKCGdl",
-          "bmVfaWQxGAQgASgFEhAKCGdlbmVfaWQyGAUgASgFEhMKC2dlbmVfdmFsdWUw",
-          "GAYgASgFEhMKC2dlbmVfdmFsdWUxGAcgASgFEhMKC2dlbmVfdmFsdWUyGAgg",
-          "ASgFKogCCgdDbWRDb2RlEgsKB1N1Y2NlZWQQABINCglBY2N0RXhpc3QQARIP",
-          "CgtTZXJ2ZXJFcnJvchACEhAKDEFjY3ROb3RFeGlzdBADEhEKDVBhc3N3b3Jk",
-          "RXJyb3IQBBIPCgtBY2N0RGlzYWJsZRAFEhEKDVJlcVBhcmFtRXJyb3IQBhIR",
-          "Cg1OaWNrbmFtZUV4aXN0EAcSEwoPVXNlck5hbWVJbGxlZ2FsEAgSEwoPUGhv",
-          "bmVOdW1JbGxlZ2FsEAkSEwoPUGFzc3dvcmRJbGxlZ2FsEAoSEgoOVXNlck9m",
-          "dGVuTG9naW4QCxIPCgtWYXJpZnlFcnJvchAMEhAKDFJvbGVOb3RFeGlzdBAN",
-          "YgZwcm90bzM="));
+          "ASgJIrcCChNSb2xlS2FucHNhY2tJbmZvUmV0EhoKCGNtZF9jb2RlGAEgASgO",
+          "MgguQ21kQ29kZRIzChdrYW5wc2Fja190eXBlX2NvdW50X2xzdBgCIAMoCzIS",
+          "LkthbnBzYWNrdHlwZWNvdW50EiQKDXJvbGVfcGFja19hbGwYAyADKAsyDS5S",
+          "b2xlSXRlbUluZm8SJgoPcm9sZV9wYWNrX2VxdWlwGAQgAygLMg0uUm9sZUl0",
+          "ZW1JbmZvEigKEXJvbGVfcGFja19jb25zdW1lGAUgAygLMg0uUm9sZUl0ZW1J",
+          "bmZvEikKEnJvbGVfcGFja19tYXRlcmlhbBgGIAMoCzINLlJvbGVJdGVtSW5m",
+          "bxIsChVyb2xlX2N1cnJ0X2VxdWlwX3BhY2sYByADKAsyDS5Sb2xlSXRlbUlu",
+          "Zm8iMAoRS2FucHNhY2t0eXBlY291bnQSDAoEdHlwZRgBIAEoBRINCgVjb3Vu",
+          "dBgCIAEoBSLPAQoMUm9sZUl0ZW1JbmZvEg8KB2l0ZW1faWQYASABKAUSDQoF",
+          "Y291bnQYAiABKAUSDwoHcm9sZV9pZBgDIAEoBRIUCgxpdGVtX3R5cGVfaWQY",
+          "BCABKAUSEAoIYmFnX3R5cGUYBSABKAUSEQoJYmFnX2luZGV4GAYgASgFEiYK",
+          "CmVxdWlwX2luZm8YByABKAsyEi5Sb2xlRXF1aXBJdGVtSW5mbxIrCg9lcXVp",
+          "cF9nZW5lX2luZm8YCCABKAsyEi5Sb2xlRXF1aXBHZW5lSW5mbyJjChFSb2xl",
+          "RXF1aXBJdGVtSW5mbxIPCgdpdGVtX2lkGAEgASgFEg8KB3JvbGVfaWQYAiAB",
+          "KAUSGAoQc3RyZW5ndGhlbl9sZXZlbBgDIAEoBRISCgplcXVpcF90eXBlGAQg",
+          "ASgFIqoBChFSb2xlRXF1aXBHZW5lSW5mbxIPCgdpdGVtX2lkGAEgASgFEg8K",
+          "B3JvbGVfaWQYAiABKAUSEAoIZ2VuZV9pZDAYAyABKAUSEAoIZ2VuZV9pZDEY",
+          "BCABKAUSEAoIZ2VuZV9pZDIYBSABKAUSEwoLZ2VuZV92YWx1ZTAYBiABKAUS",
+          "EwoLZ2VuZV92YWx1ZTEYByABKAUSEwoLZ2VuZV92YWx1ZTIYCCABKAUqiAIK",
+          "B0NtZENvZGUSCwoHU3VjY2VlZBAAEg0KCUFjY3RFeGlzdBABEg8KC1NlcnZl",
+          "ckVycm9yEAISEAoMQWNjdE5vdEV4aXN0EAMSEQoNUGFzc3dvcmRFcnJvchAE",
+          "Eg8KC0FjY3REaXNhYmxlEAUSEQoNUmVxUGFyYW1FcnJvchAGEhEKDU5pY2tu",
+          "YW1lRXhpc3QQBxITCg9Vc2VyTmFtZUlsbGVnYWwQCBITCg9QaG9uZU51bUls",
+          "bGVnYWwQCRITCg9QYXNzd29yZElsbGVnYWwQChISCg5Vc2VyT2Z0ZW5Mb2dp",
+          "bhALEg8KC1ZhcmlmeUVycm9yEAwSEAoMUm9sZU5vdEV4aXN0EA1iBnByb3Rv",
+          "Mw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -98,7 +102,7 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::MainRoleInfo), global::MainRoleInfo.Parser, new[]{ "BaseInfo", "AccountId", "Money", "Exp", "SkillUpPoint", "CameraOffset", "ServerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfoRet), global::RoleSkillInfoRet.Parser, new[]{ "CmdCode", "RoleSkillInfoList" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfo), global::RoleSkillInfo.Parser, new[]{ "SkillId", "Level", "BindKey" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleKanpsackInfoRet), global::RoleKanpsackInfoRet.Parser, new[]{ "CmdCode", "KanpsacktypecountLst", "RoleItemLst" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleKanpsackInfoRet), global::RoleKanpsackInfoRet.Parser, new[]{ "CmdCode", "KanpsackTypeCountLst", "RolePackAll", "RolePackEquip", "RolePackConsume", "RolePackMaterial", "RoleCurrtEquipPack" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::Kanpsacktypecount), global::Kanpsacktypecount.Parser, new[]{ "Type", "Count" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleItemInfo), global::RoleItemInfo.Parser, new[]{ "ItemId", "Count", "RoleId", "ItemTypeId", "BagType", "BagIndex", "EquipInfo", "EquipGeneInfo" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleEquipItemInfo), global::RoleEquipItemInfo.Parser, new[]{ "ItemId", "RoleId", "StrengthenLevel", "EquipType" }, null, null, null, null),
@@ -4997,8 +5001,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public RoleKanpsackInfoRet(RoleKanpsackInfoRet other) : this() {
     cmdCode_ = other.cmdCode_;
-    kanpsacktypecountLst_ = other.kanpsacktypecountLst_.Clone();
-    roleItemLst_ = other.roleItemLst_.Clone();
+    kanpsackTypeCountLst_ = other.kanpsackTypeCountLst_.Clone();
+    rolePackAll_ = other.rolePackAll_.Clone();
+    rolePackEquip_ = other.rolePackEquip_.Clone();
+    rolePackConsume_ = other.rolePackConsume_.Clone();
+    rolePackMaterial_ = other.rolePackMaterial_.Clone();
+    roleCurrtEquipPack_ = other.roleCurrtEquipPack_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -5023,32 +5031,88 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
     }
   }
 
-  /// <summary>Field number for the "Kanpsacktypecount_lst" field.</summary>
-  public const int KanpsacktypecountLstFieldNumber = 2;
-  private static readonly pb::FieldCodec<global::Kanpsacktypecount> _repeated_kanpsacktypecountLst_codec
+  /// <summary>Field number for the "kanpsack_type_count_lst" field.</summary>
+  public const int KanpsackTypeCountLstFieldNumber = 2;
+  private static readonly pb::FieldCodec<global::Kanpsacktypecount> _repeated_kanpsackTypeCountLst_codec
       = pb::FieldCodec.ForMessage(18, global::Kanpsacktypecount.Parser);
-  private readonly pbc::RepeatedField<global::Kanpsacktypecount> kanpsacktypecountLst_ = new pbc::RepeatedField<global::Kanpsacktypecount>();
+  private readonly pbc::RepeatedField<global::Kanpsacktypecount> kanpsackTypeCountLst_ = new pbc::RepeatedField<global::Kanpsacktypecount>();
   /// <summary>
-  ///包类别加数量
+  ///各背包物品数量
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public pbc::RepeatedField<global::Kanpsacktypecount> KanpsacktypecountLst {
-    get { return kanpsacktypecountLst_; }
+  public pbc::RepeatedField<global::Kanpsacktypecount> KanpsackTypeCountLst {
+    get { return kanpsackTypeCountLst_; }
   }
 
-  /// <summary>Field number for the "role_item_lst" field.</summary>
-  public const int RoleItemLstFieldNumber = 3;
-  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_roleItemLst_codec
+  /// <summary>Field number for the "role_pack_all" field.</summary>
+  public const int RolePackAllFieldNumber = 3;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_rolePackAll_codec
       = pb::FieldCodec.ForMessage(26, global::RoleItemInfo.Parser);
-  private readonly pbc::RepeatedField<global::RoleItemInfo> roleItemLst_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  private readonly pbc::RepeatedField<global::RoleItemInfo> rolePackAll_ = new pbc::RepeatedField<global::RoleItemInfo>();
   /// <summary>
-  ///物品数据
+  ///角色背包总览：装备、消耗品、材料
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public pbc::RepeatedField<global::RoleItemInfo> RoleItemLst {
-    get { return roleItemLst_; }
+  public pbc::RepeatedField<global::RoleItemInfo> RolePackAll {
+    get { return rolePackAll_; }
+  }
+
+  /// <summary>Field number for the "role_pack_equip" field.</summary>
+  public const int RolePackEquipFieldNumber = 4;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_rolePackEquip_codec
+      = pb::FieldCodec.ForMessage(34, global::RoleItemInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleItemInfo> rolePackEquip_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  /// <summary>
+  ///角色装备背包
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleItemInfo> RolePackEquip {
+    get { return rolePackEquip_; }
+  }
+
+  /// <summary>Field number for the "role_pack_consume" field.</summary>
+  public const int RolePackConsumeFieldNumber = 5;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_rolePackConsume_codec
+      = pb::FieldCodec.ForMessage(42, global::RoleItemInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleItemInfo> rolePackConsume_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  /// <summary>
+  ///角色消耗品背包
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleItemInfo> RolePackConsume {
+    get { return rolePackConsume_; }
+  }
+
+  /// <summary>Field number for the "role_pack_material" field.</summary>
+  public const int RolePackMaterialFieldNumber = 6;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_rolePackMaterial_codec
+      = pb::FieldCodec.ForMessage(50, global::RoleItemInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleItemInfo> rolePackMaterial_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  /// <summary>
+  ///角色材料背包
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleItemInfo> RolePackMaterial {
+    get { return rolePackMaterial_; }
+  }
+
+  /// <summary>Field number for the "role_currt_equip_pack" field.</summary>
+  public const int RoleCurrtEquipPackFieldNumber = 7;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_roleCurrtEquipPack_codec
+      = pb::FieldCodec.ForMessage(58, global::RoleItemInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleItemInfo> roleCurrtEquipPack_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  /// <summary>
+  ///角色当前已装备栏
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleItemInfo> RoleCurrtEquipPack {
+    get { return roleCurrtEquipPack_; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5067,8 +5131,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
       return true;
     }
     if (CmdCode != other.CmdCode) return false;
-    if(!kanpsacktypecountLst_.Equals(other.kanpsacktypecountLst_)) return false;
-    if(!roleItemLst_.Equals(other.roleItemLst_)) return false;
+    if(!kanpsackTypeCountLst_.Equals(other.kanpsackTypeCountLst_)) return false;
+    if(!rolePackAll_.Equals(other.rolePackAll_)) return false;
+    if(!rolePackEquip_.Equals(other.rolePackEquip_)) return false;
+    if(!rolePackConsume_.Equals(other.rolePackConsume_)) return false;
+    if(!rolePackMaterial_.Equals(other.rolePackMaterial_)) return false;
+    if(!roleCurrtEquipPack_.Equals(other.roleCurrtEquipPack_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -5077,8 +5145,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   public override int GetHashCode() {
     int hash = 1;
     if (CmdCode != global::CmdCode.Succeed) hash ^= CmdCode.GetHashCode();
-    hash ^= kanpsacktypecountLst_.GetHashCode();
-    hash ^= roleItemLst_.GetHashCode();
+    hash ^= kanpsackTypeCountLst_.GetHashCode();
+    hash ^= rolePackAll_.GetHashCode();
+    hash ^= rolePackEquip_.GetHashCode();
+    hash ^= rolePackConsume_.GetHashCode();
+    hash ^= rolePackMaterial_.GetHashCode();
+    hash ^= roleCurrtEquipPack_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -5101,8 +5173,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
       output.WriteRawTag(8);
       output.WriteEnum((int) CmdCode);
     }
-    kanpsacktypecountLst_.WriteTo(output, _repeated_kanpsacktypecountLst_codec);
-    roleItemLst_.WriteTo(output, _repeated_roleItemLst_codec);
+    kanpsackTypeCountLst_.WriteTo(output, _repeated_kanpsackTypeCountLst_codec);
+    rolePackAll_.WriteTo(output, _repeated_rolePackAll_codec);
+    rolePackEquip_.WriteTo(output, _repeated_rolePackEquip_codec);
+    rolePackConsume_.WriteTo(output, _repeated_rolePackConsume_codec);
+    rolePackMaterial_.WriteTo(output, _repeated_rolePackMaterial_codec);
+    roleCurrtEquipPack_.WriteTo(output, _repeated_roleCurrtEquipPack_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -5117,8 +5193,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
       output.WriteRawTag(8);
       output.WriteEnum((int) CmdCode);
     }
-    kanpsacktypecountLst_.WriteTo(ref output, _repeated_kanpsacktypecountLst_codec);
-    roleItemLst_.WriteTo(ref output, _repeated_roleItemLst_codec);
+    kanpsackTypeCountLst_.WriteTo(ref output, _repeated_kanpsackTypeCountLst_codec);
+    rolePackAll_.WriteTo(ref output, _repeated_rolePackAll_codec);
+    rolePackEquip_.WriteTo(ref output, _repeated_rolePackEquip_codec);
+    rolePackConsume_.WriteTo(ref output, _repeated_rolePackConsume_codec);
+    rolePackMaterial_.WriteTo(ref output, _repeated_rolePackMaterial_codec);
+    roleCurrtEquipPack_.WriteTo(ref output, _repeated_roleCurrtEquipPack_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -5132,8 +5212,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
     if (CmdCode != global::CmdCode.Succeed) {
       size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CmdCode);
     }
-    size += kanpsacktypecountLst_.CalculateSize(_repeated_kanpsacktypecountLst_codec);
-    size += roleItemLst_.CalculateSize(_repeated_roleItemLst_codec);
+    size += kanpsackTypeCountLst_.CalculateSize(_repeated_kanpsackTypeCountLst_codec);
+    size += rolePackAll_.CalculateSize(_repeated_rolePackAll_codec);
+    size += rolePackEquip_.CalculateSize(_repeated_rolePackEquip_codec);
+    size += rolePackConsume_.CalculateSize(_repeated_rolePackConsume_codec);
+    size += rolePackMaterial_.CalculateSize(_repeated_rolePackMaterial_codec);
+    size += roleCurrtEquipPack_.CalculateSize(_repeated_roleCurrtEquipPack_codec);
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -5149,8 +5233,12 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
     if (other.CmdCode != global::CmdCode.Succeed) {
       CmdCode = other.CmdCode;
     }
-    kanpsacktypecountLst_.Add(other.kanpsacktypecountLst_);
-    roleItemLst_.Add(other.roleItemLst_);
+    kanpsackTypeCountLst_.Add(other.kanpsackTypeCountLst_);
+    rolePackAll_.Add(other.rolePackAll_);
+    rolePackEquip_.Add(other.rolePackEquip_);
+    rolePackConsume_.Add(other.rolePackConsume_);
+    rolePackMaterial_.Add(other.rolePackMaterial_);
+    roleCurrtEquipPack_.Add(other.roleCurrtEquipPack_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -5175,11 +5263,27 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
           break;
         }
         case 18: {
-          kanpsacktypecountLst_.AddEntriesFrom(input, _repeated_kanpsacktypecountLst_codec);
+          kanpsackTypeCountLst_.AddEntriesFrom(input, _repeated_kanpsackTypeCountLst_codec);
           break;
         }
         case 26: {
-          roleItemLst_.AddEntriesFrom(input, _repeated_roleItemLst_codec);
+          rolePackAll_.AddEntriesFrom(input, _repeated_rolePackAll_codec);
+          break;
+        }
+        case 34: {
+          rolePackEquip_.AddEntriesFrom(input, _repeated_rolePackEquip_codec);
+          break;
+        }
+        case 42: {
+          rolePackConsume_.AddEntriesFrom(input, _repeated_rolePackConsume_codec);
+          break;
+        }
+        case 50: {
+          rolePackMaterial_.AddEntriesFrom(input, _repeated_rolePackMaterial_codec);
+          break;
+        }
+        case 58: {
+          roleCurrtEquipPack_.AddEntriesFrom(input, _repeated_roleCurrtEquipPack_codec);
           break;
         }
       }
@@ -5206,11 +5310,27 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
           break;
         }
         case 18: {
-          kanpsacktypecountLst_.AddEntriesFrom(ref input, _repeated_kanpsacktypecountLst_codec);
+          kanpsackTypeCountLst_.AddEntriesFrom(ref input, _repeated_kanpsackTypeCountLst_codec);
           break;
         }
         case 26: {
-          roleItemLst_.AddEntriesFrom(ref input, _repeated_roleItemLst_codec);
+          rolePackAll_.AddEntriesFrom(ref input, _repeated_rolePackAll_codec);
+          break;
+        }
+        case 34: {
+          rolePackEquip_.AddEntriesFrom(ref input, _repeated_rolePackEquip_codec);
+          break;
+        }
+        case 42: {
+          rolePackConsume_.AddEntriesFrom(ref input, _repeated_rolePackConsume_codec);
+          break;
+        }
+        case 50: {
+          rolePackMaterial_.AddEntriesFrom(ref input, _repeated_rolePackMaterial_codec);
+          break;
+        }
+        case 58: {
+          roleCurrtEquipPack_.AddEntriesFrom(ref input, _repeated_roleCurrtEquipPack_codec);
           break;
         }
       }

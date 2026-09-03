@@ -15,11 +15,7 @@ namespace CenterServer
         static void Main(string[] args)
         {
             LubanMgr.Instance.Init();
-           Dictionary<int,SkillInfo> jobskill= LubanMgr.Instance.GetSkillInfosByJob(1);
-           foreach (KeyValuePair<int, SkillInfo> item in jobskill)
-           {
-               LogMsg.Info(jobskill[item.Key].ToString());
-           }
+           
             NetServer server = new NetServer(null);
             server.StartServer(NetDefine.IPHost, NetDefine.CenterServerPort);
 

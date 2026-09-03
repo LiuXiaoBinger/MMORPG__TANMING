@@ -57,14 +57,36 @@
     <Compile Include="Common\ExitUtils.cs" />
     <Compile Include="Common\LogMsg.cs" />
     <Compile Include="Common\Singleton.cs" />
+    <Compile Include="LubanManage\Codes\EquipInfo.cs" />
+    <Compile Include="LubanManage\Codes\Gene.cs" />
+    <Compile Include="LubanManage\Codes\ItemInfo.cs" />
+    <Compile Include="LubanManage\Codes\NpcInfo.cs" />
+    <Compile Include="LubanManage\Codes\ProfessionInfo.cs" />
+    <Compile Include="LubanManage\Codes\QuestInfo.cs" />
+    <Compile Include="LubanManage\Codes\RoleLevelAttributeInfo.cs" />
+    <Compile Include="LubanManage\Codes\RoleLevelInfo.cs" />
+    <Compile Include="LubanManage\Codes\ShopInfo.cs" />
     <Compile Include="LubanManage\Codes\SkillInfo.cs" />
     <Compile Include="LubanManage\Codes\Tables.cs" />
+    <Compile Include="LubanManage\Codes\TbEquipInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbGene.cs" />
+    <Compile Include="LubanManage\Codes\TbItemInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbNpcInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbProfessionInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbQuestInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbRoleLevelAttributeInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbRoleLevelInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbShopInfo.cs" />
     <Compile Include="LubanManage\Codes\TbSkillInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbWalletInfo.cs" />
+    <Compile Include="LubanManage\Codes\WalletInfo.cs" />
     <Compile Include="LubanManage\LubanLib\BeanBase.cs" />
     <Compile Include="LubanManage\LubanLib\ByteBuf.cs" />
     <Compile Include="LubanManage\LubanLib\ITypeId.cs" />
     <Compile Include="LubanManage\LubanLib\StringUtil.cs" />
+    <Compile Include="LubanManage\ItemConfigBase.cs" />
     <Compile Include="LubanManage\LubanMgr.cs" />
+    <Compile Include="LubanManage\Parse\NpcParseInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proto\RequestEntity.cs" />
     <Compile Include="Proto\ResultEntity.cs" />
@@ -78,10 +100,29 @@
     <Compile Include="Socket\NetServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MMoRpgCommon\MMoRpgCommon.csproj">
+      <Project>{A9070AC6-E01D-4CFE-A171-34EA469D0038}</Project>
+      <Name>MMoRpgCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LubanManage\Tb\tbequipinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbgene.bytes" />
+    <Content Include="LubanManage\Tb\tbiteminfo.bytes" />
+    <Content Include="LubanManage\Tb\tbnpcinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbprofessioninfo.bytes" />
+    <Content Include="LubanManage\Tb\tbquestinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbrolelevelattributeinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbrolelevelinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbshopinfo.bytes" />
     <Content Include="LubanManage\Tb\tbskillinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbwalletinfo.bytes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LubanManage\Parse\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,6 +7,8 @@ using SqlSugar;
 
 public class CentRoleModel
 {
+    
+
     private SqlSugarClient _db = null;
     public CentRoleModel(SqlSugarClient db)
     {
@@ -80,13 +82,14 @@ public class CentRoleModel
 
         foreach (ItemTable item in itemList)
         {
+            KnapsackType packType = (KnapsackType)item.BagType;
             RoleItemInfo itemInfo = new RoleItemInfo
             {
                 ItemId = item.ItemID,
                 Count = item.count,
                 RoleId = item.RoleID,
                 ItemTypeId = item.ItemTypeID,
-                BagType = item.BagType,
+                BagType = (int)packType,
                 BagIndex = item.BagIndex
             };
 
@@ -118,10 +121,50 @@ public class CentRoleModel
                 };
             }
 
-            ret.RoleItemLst.Add(itemInfo);
+            AddItemToPack(ret, packType, itemInfo);
         }
+
+        AddPackCount(ret, KnapsackType.RolePackAll, ret.RolePackAll.Count);
+        AddPackCount(ret, KnapsackType.RolePackEquip, ret.RolePackEquip.Count);
+        AddPackCount(ret, KnapsackType.RolePackConsume, ret.RolePackConsume.Count);
+        AddPackCount(ret, KnapsackType.RolePackMaterial, ret.RolePackMaterial.Count);
+        AddPackCount(ret, KnapsackType.RoleCurrtEquipPack, ret.RoleCurrtEquipPack.Count);
 
         ret.CmdCode = CmdCode.Succeed;
         return ret;
+    }
+
+    /// <summary>
+    /// 将物品放入对应背包；总背包只包含装备、消耗品和材料。
+    /// </summary>
+    private static void AddItemToPack(RoleKanpsackInfoRet ret, KnapsackType packType, RoleItemInfo itemInfo)
+    {
+        switch (packType)
+        {
+            case KnapsackType.RolePackEquip:
+                ret.RolePackEquip.Add(itemInfo);
+                ret.RolePackAll.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackConsume:
+                ret.RolePackConsume.Add(itemInfo);
+                ret.RolePackAll.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackMaterial:
+                ret.RolePackMaterial.Add(itemInfo);
+                ret.RolePackAll.Add(itemInfo);
+                break;
+            case KnapsackType.RoleCurrtEquipPack:
+                ret.RoleCurrtEquipPack.Add(itemInfo);
+                break;
+        }
+    }
+
+    private static void AddPackCount(RoleKanpsackInfoRet ret, KnapsackType packType, int count)
+    {
+        ret.KanpsackTypeCountLst.Add(new Kanpsacktypecount
+        {
+            Type = (int)packType,
+            Count = count
+        });
     }
 }
