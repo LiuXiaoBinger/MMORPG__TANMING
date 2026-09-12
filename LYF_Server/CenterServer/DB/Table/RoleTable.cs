@@ -21,9 +21,6 @@ internal class RoleTable
     //用户ID
     public int AccountID { get; set; }
 
-    //游戏币
-    public int Money { get; set; }
-
     //昵称
     [SugarColumn(Length = 30)]
     public string Nickname { get; set; }
@@ -40,7 +37,11 @@ internal class RoleTable
     //技能升级点
     public int SkillUpPoint { get; set; }
 
+    //角色itemUid
+    public long itemUid { get; set; }
 
+    // CenterServer 已提交的角色物品快照版本，用于保存请求幂等校验。
+    public long ItemSaveVersion { get; set; }
    
 
     //角色当前位置

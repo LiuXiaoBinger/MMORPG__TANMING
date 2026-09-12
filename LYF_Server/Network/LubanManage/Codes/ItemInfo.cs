@@ -19,6 +19,8 @@ public sealed partial class ItemInfo : Luban.BeanBase
         ItemTypeId = _buf.ReadInt();
         ItemMainType = _buf.ReadInt();
         ItemSubType = _buf.ReadInt();
+        TimeType = _buf.ReadInt();
+        PackType = _buf.ReadInt();
         Quality = _buf.ReadInt();
         Icon = _buf.ReadString();
         Name = _buf.ReadString();
@@ -30,7 +32,7 @@ public sealed partial class ItemInfo : Luban.BeanBase
         Source = _buf.ReadString();
         SellPrice = _buf.ReadInt();
         SellCurrencyType = _buf.ReadInt();
-        CanStack = _buf.ReadInt();
+        MaxStackCount = _buf.ReadInt();
         GeneId0 = _buf.ReadInt();
         GeneId1 = _buf.ReadInt();
         GeneId2 = _buf.ReadInt();
@@ -60,6 +62,14 @@ public sealed partial class ItemInfo : Luban.BeanBase
     /// 物品小类别
     /// </summary>
     public readonly int ItemSubType;
+    /// <summary>
+    /// 物品生命周期
+    /// </summary>
+    public readonly int TimeType;
+    /// <summary>
+    /// 包类别
+    /// </summary>
+    public readonly int PackType;
     /// <summary>
     /// 品级
     /// </summary>
@@ -105,9 +115,9 @@ public sealed partial class ItemInfo : Luban.BeanBase
     /// </summary>
     public readonly int SellCurrencyType;
     /// <summary>
-    /// 是否可以叠加(0否,1是)
+    /// 单个物品实例最大堆叠数量；不可堆叠填1
     /// </summary>
-    public readonly int CanStack;
+    public readonly int MaxStackCount;
     /// <summary>
     /// 词条0 ID(0表示无)
     /// </summary>
@@ -162,6 +172,8 @@ public sealed partial class ItemInfo : Luban.BeanBase
         + "ItemTypeId:" + ItemTypeId + ","
         + "ItemMainType:" + ItemMainType + ","
         + "ItemSubType:" + ItemSubType + ","
+        + "TimeType:" + TimeType + ","
+        + "PackType:" + PackType + ","
         + "Quality:" + Quality + ","
         + "Icon:" + Icon + ","
         + "Name:" + Name + ","
@@ -173,7 +185,7 @@ public sealed partial class ItemInfo : Luban.BeanBase
         + "Source:" + Source + ","
         + "SellPrice:" + SellPrice + ","
         + "SellCurrencyType:" + SellCurrencyType + ","
-        + "CanStack:" + CanStack + ","
+        + "MaxStackCount:" + MaxStackCount + ","
         + "GeneId0:" + GeneId0 + ","
         + "GeneId1:" + GeneId1 + ","
         + "GeneId2:" + GeneId2 + ","

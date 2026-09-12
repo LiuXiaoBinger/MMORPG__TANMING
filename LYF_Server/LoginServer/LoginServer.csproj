@@ -64,7 +64,7 @@
     <Compile Include="Grpc\GRPCMgr.cs" />
     <Compile Include="Grpc\Message.cs" />
     <Compile Include="Grpc\MessageGrpc.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="LoginServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

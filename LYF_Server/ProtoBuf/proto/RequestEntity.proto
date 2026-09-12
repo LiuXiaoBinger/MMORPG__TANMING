@@ -1,5 +1,7 @@
 syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用proto2
 
+import "ResultEntity.proto";
+
 message BasePackage{
 	int32 proto_code = 1;//协议码
 	int32 unity_session_id=2;//unity端的sessionID.
@@ -52,4 +54,54 @@ message StartGameReq
 message EnterWroldReq
 {
 	int32 role_id =1;//角色id
+}
+
+// 请求开启背包格子。open_grid_count 是本次申请开启的数量。
+message OpenKnapsackGridReq
+{
+	int32 role_id = 1;//角色ID
+	int32 open_grid_count = 2;//本次申请开启的格子数量
+	int32 knapsack_type = 3;//背包类型，对应 KnapsackType
+}
+
+// GameServer 向 CenterServer 同步最终格子数的内部协议，客户端不可调用。
+message SyncKnapsackGridCountReq
+{
+	int32 role_id = 1;//角色ID
+	int32 opened_grid_count = 2;//GameServer 已验证后的当前总格子数
+	int32 knapsack_type = 3;//背包类型，对应 KnapsackType
+}
+
+// 单个背包容器的完整物品快照，仅用于 GameServer 到 CenterServer 的内部持久化。
+message ItemDataList
+{
+	int32 bag_type = 1;//背包类型，对应 KnapsackType
+	repeated RoleItemInfo items = 2;//该背包当前包含的全部物品
+}
+
+// GameServer 定时提交的角色物品脏数据，同一角色同一时刻只允许一个版本在途。
+message SaveRoleDataReq
+{
+	int32 role_id = 1;//角色 ID
+	int64 version = 2;//角色物品变更版本，用于重试幂等和 ACK 匹配
+	repeated ItemDataList item_data_lists = 3;//本次发生变化的背包完整快照
+	reserved 4;//旧货币快照字段已并入 RoleVirtualItemPack
+  repeated RoleCountInfo role_count_info_list = 5;//本次发生变化的角色次数快照
+  bool role_count_snapshot = 6;//是否携带次数完整快照，true 且列表为空表示清空次数
+}
+
+
+// 商城购买商品明细。goods_id 对应 ShopItemInfo.GoodsId，价格和物品由服务端配置读取。
+message BuyShopItem
+{
+	uint32 goods_id = 1;//具体商品配置 ID
+	uint32 buy_count = 2;//购买份数，必须大于零
+}
+
+// 客户端购买商城商品请求。role_id 仅用于与网关会话中的角色做一致性校验。
+message BuyShopItemReq
+{
+	uint32 shop_id = 1;//商店配置 ID，对应 ShopTable.Id
+	repeated BuyShopItem items = 2;//本次购买的商品明细
+	uint32 role_id = 5;//角色 ID，仅用于校验，不作为服务端身份来源
 }

@@ -7,13 +7,13 @@ using SqlSugar;
 internal class EquipTable
 {
     /// <summary>
-    /// 物品ID，与 RoleID 组成复合主键，对应 ItemTable.ItemID。
+    /// 物品实例唯一ID，与 RoleID 组成复合主键，对应 ItemTable.ItemUID。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
-    public int ItemID { get; set; }
+    public long ItemUID { get; set; }
 
     /// <summary>
-    /// 所属角色ID，与 ItemID 组成复合主键，对应 RoleTable.Id。
+    /// 所属角色ID，与 ItemUID 组成复合主键，对应 RoleTable.Id。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public int RoleID { get; set; }

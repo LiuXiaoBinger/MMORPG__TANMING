@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 public class NetServer
 {
+    // 连接断开时由宿主业务线程接收网关会话 ID，执行角色下线保存。
+    public Action<int> OnSessionDisconnected { get; set; }
     private Socket _socket;
 
     private Dictionary<int, IContainer> _cmdDic = new Dictionary<int, IContainer>();
@@ -65,7 +67,7 @@ public class NetServer
             
             LogMsg.Info($"客户    5sdf55端::{clientSocket.RemoteEndPoint} 连接成功....");
             //开始接收客户端数据
-            Session session = new Session(_cmdDic,_client);
+            Session session = new Session(_cmdDic, _client, OnSessionDisconnected);
             session.ReceiveData(clientSocket);
 
             //当处理完成当前客户端连接后，继续处理下一个客户端的连接请求

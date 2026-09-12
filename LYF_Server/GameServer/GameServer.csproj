@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
             Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
@@ -34,14 +34,58 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Ctrl\GameRoleCtrl.cs" />
-        <Compile Include="Ctrl\GameWorldBC.cs" />
+        <Compile Include="Components\base\RoleComponentBase.cs" />
+        <Compile Include="Components\RoItemComponent.cs" />
+        <Compile Include="Components\RoleComponentContainer.cs" />
+        <Compile Include="Components\RoleCountComponent.cs" />
+        <Compile Include="Components\RoleShopRecord.cs" />
         <Compile Include="Ctrl\Game_LoginCtrl.cs" />
-        <Compile Include="Entity\OnlineRole.cs" />
+        <Compile Include="Entity\Role\OnlineRole.cs" />
+        <Compile Include="Entity\Role\RoleDataFieldManager.cs" />
+        <Compile Include="Entity\Role\RoleNetSender.cs" />
+        <Compile Include="Entity\Role\SaveRoleDataTimer.cs" />
+        <Compile Include="manger\Command\GameCommand.cs" />
+        <Compile Include="manger\Command\GameCommandDispatcher.cs" />
+        <Compile Include="manger\Command\GameCommandSession.cs" />
+        <Compile Include="manger\Command\GameCommandSource.cs" />
+        <Compile Include="MessageHandler\ClientMessageManager.cs" />
+        <Compile Include="MessageHandler\Login\LoginGameServerHandler.cs" />
+        <Compile Include="MessageHandler\Login\CreateRoleHandler.cs" />
+        <Compile Include="MessageHandler\Login\StartGameHandler.cs" />
+        <Compile Include="MessageHandler\Role\EnterWorldHandler.cs" />
+        <Compile Include="MessageHandler\Role\RoleSkillInfoHandler.cs" />
+        <Compile Include="MessageHandler\Role\SaveRoleDataHandler.cs" />
+        <Compile Include="MessageHandler\Knapsack\RoleKnapsackInfoHandler.cs" />
+        <Compile Include="MessageHandler\Knapsack\OpenKnapsackGridHandler.cs" />
+        <Compile Include="MessageHandler\Knapsack\SyncKnapsackGridCountHandler.cs" />
+        <Compile Include="MessageHandler\Shop\RequestBuyShopItem.cs" />
+        <Compile Include="MessageHandler\Shop\BuyShopItemCenterResultHandler.cs" />
+        <Compile Include="Service\item\BagListener.cs" />
+        <Compile Include="Service\item\BagTransition.cs" />
+        <Compile Include="manger\BackstageActivityManager.cs" />
+        <Compile Include="manger\DecoupleManager.cs" />
+        <Compile Include="manger\GvgManager.cs" />
+        <Compile Include="manger\LimitedTimeOfferManager.cs" />
+        <Compile Include="manger\MallRefreshManager.cs" />
+        <Compile Include="manger\MerchantEventManager.cs" />
+        <Compile Include="manger\MonsterWaveManager.cs" />
+        <Compile Include="manger\OpenSystemManager.cs" />
+        <Compile Include="manger\RedisManager.cs" />
+        <Compile Include="manger\RoGamesManager.cs" />
+        <Compile Include="manger\SceneManager.cs" />
+        <Compile Include="manger\TimeLimitManager.cs" />
+        <Compile Include="manger\WorldEventManager.cs" />
         <Compile Include="manger\RoleManager.cs" />
         <Compile Include="GameGlobal.cs" />
         <Compile Include="GameServerApp.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Service\item\ItemDataListDB.cs" />
+        <Compile Include="Service\item\itemdef.cs" />
+        <Compile Include="Service\item\ItemTransition.cs" />
+        <Compile Include="Service\item\RoItemContainer.cs" />
+        <Compile Include="Service\shop\ShopCondition.cs" />
+        <Compile Include="Service\shop\ShopManager.cs" />
+        <Compile Include="Service\shop\ShopStatic.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\MMoRpgCommon\MMoRpgCommon.csproj">
@@ -58,6 +102,7 @@
         <HintPath>..\packages\Google.Protobuf.3.31.1\lib\net45\Google.Protobuf.dll</HintPath>
       </Reference>
       <Reference Include="mscorlib" />
+      <Reference Include="System" />
       <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
         <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
       </Reference>
@@ -74,9 +119,6 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="manger\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

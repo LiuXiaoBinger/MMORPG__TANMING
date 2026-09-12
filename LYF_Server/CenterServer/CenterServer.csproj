@@ -92,6 +92,9 @@
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <!-- 固定使用 6.0.0.0，并复制到 CenterServer 输出目录，避免旧版本 DLL 残留。 -->
+      <SpecificVersion>True</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -120,12 +123,14 @@
     <Compile Include="DB\Table\GameServerTable.cs" />
     <Compile Include="DB\Table\RoleKnapsackTable.cs" />
     <Compile Include="DB\Table\RoleBaseArrtTable.cs" />
-    <Compile Include="DB\Table\RoleNpcShopPurchaseTable.cs" />
+    <Compile Include="DB\Table\RoleShopPurchaseTable.cs" />
+    <Compile Include="DB\Table\RoleCountTable.cs" />
     <Compile Include="DB\Table\RoleSkillTable.cs" />
     <Compile Include="DB\Table\ItemTable.cs" />
     <Compile Include="DB\Table\EquipTable.cs" />
     <Compile Include="DB\Table\EquipXLGeneTable.cs" />
     <Compile Include="DB\Table\RoleTable.cs" />
+    <Compile Include="DB\Task\CRoleWriteTask.cs" />
     <Compile Include="Redis\RedisMgr.cs" />
     <Compile Include="CenterApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

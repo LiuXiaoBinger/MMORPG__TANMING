@@ -1,0 +1,1165 @@
+fileFormatVersion: 2
+guid: f8bfeb19f026f1b48b3bfe82b4a08902
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_icon_ItemDrawing_bolibeibao.png
+  - first:
+      213: 21300002
+    second: UI_icon_ItemDrawing_caoye.png
+  - first:
+      213: 21300004
+    second: UI_icon_ItemDrawing_emochibangershi.png
+  - first:
+      213: 21300006
+    second: UI_icon_ItemDrawing_emofaquan.png
+  - first:
+      213: 21300008
+    second: UI_icon_ItemDrawing_feilikadetougu.png
+  - first:
+      213: 21300010
+    second: UI_icon_ItemDrawing_fennudezui.png
+  - first:
+      213: 21300012
+    second: UI_icon_ItemDrawing_gongzhuguanmian.png
+  - first:
+      213: 21300014
+    second: UI_icon_ItemDrawing_haidaochuanzhangmao.png
+  - first:
+      213: 21300016
+    second: UI_icon_ItemDrawing_houguan.png
+  - first:
+      213: 21300018
+    second: UI_icon_ItemDrawing_huaguan.png
+  - first:
+      213: 21300020
+    second: UI_icon_ItemDrawing_huangjinguanmian.png
+  - first:
+      213: 21300022
+    second: UI_icon_ItemDrawing_huangjinmao.png
+  - first:
+      213: 21300024
+    second: UI_icon_ItemDrawing_huaye.png
+  - first:
+      213: 21300026
+    second: UI_icon_ItemDrawing_hunlifaguan.png
+  - first:
+      213: 21300028
+    second: UI_icon_ItemDrawing_jinshutoukui.png
+  - first:
+      213: 21300030
+    second: UI_icon_ItemDrawing_kuangyeweiba.png
+  - first:
+      213: 21300032
+    second: UI_icon_ItemDrawing_lanyangyangdemao.png
+  - first:
+      213: 21300034
+    second: UI_icon_ItemDrawing_liangdaozhetougu.png
+  - first:
+      213: 21300036
+    second: UI_icon_ItemDrawing_maoerfaquan.png
+  - first:
+      213: 21300038
+    second: UI_icon_ItemDrawing_maowubianmao.png
+  - first:
+      213: 21300040
+    second: UI_icon_ItemDrawing_mofamao.png
+  - first:
+      213: 21300042
+    second: UI_icon_ItemDrawing_papadiboluotai.png
+  - first:
+      213: 21300044
+    second: UI_icon_ItemDrawing_pochanzhishuai.png
+  - first:
+      213: 21300046
+    second: UI_icon_ItemDrawing_shanyangtoukui.png
+  - first:
+      213: 21300048
+    second: UI_icon_ItemDrawing_shengzhizhimao.png
+  - first:
+      213: 21300050
+    second: UI_icon_ItemDrawing_shenhongmeigui.png
+  - first:
+      213: 21300052
+    second: UI_icon_ItemDrawing_shoulingguanmian.png
+  - first:
+      213: 21300054
+    second: UI_icon_ItemDrawing_tianshibolimaozi.png
+  - first:
+      213: 21300056
+    second: UI_icon_ItemDrawing_tianshichibangershi.png
+  - first:
+      213: 21300058
+    second: UI_icon_ItemDrawing_tianshifajia.png
+  - first:
+      213: 21300060
+    second: UI_icon_ItemDrawing_tiedingkouzhao.png
+  - first:
+      213: 21300062
+    second: UI_icon_ItemDrawing_tusi.png
+  - first:
+      213: 21300064
+    second: UI_icon_ItemDrawing_wangguan.png
+  - first:
+      213: 21300066
+    second: UI_icon_ItemDrawing_wangzhefagu.png
+  - first:
+      213: 21300068
+    second: UI_icon_ItemDrawing_xiaoemochibang.png
+  - first:
+      213: 21300070
+    second: UI_icon_ItemDrawing_xiaoemomao.png
+  - first:
+      213: 21300072
+    second: UI_icon_ItemDrawing_xiaohainaizui.png
+  - first:
+      213: 21300074
+    second: UI_icon_ItemDrawing_xiaotianshizhiyi.png
+  - first:
+      213: 21300076
+    second: UI_icon_ItemDrawing_yandou.png
+  - first:
+      213: 21300078
+    second: UI_icon_ItemDrawing_yaoer.png
+  - first:
+      213: 21300080
+    second: UI_icon_ItemDrawing_yumaomao.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_bolibeibao.png
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 512
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 550, y: 449}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f241a0c6d0dea540818bd7287ea6c16
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_caoye.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 128
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 833}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635f570593826384b859d0de191d1e0b
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_emochibangershi.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 256
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 705}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 705f21295f957bb4d848371a30dfc898
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_emofaquan.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 384
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 577}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 885087c04cc3e3943b00a428686b7f33
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_feilikadetougu.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 512
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 449}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aacaa80df876dcc49991cfea4cacc2f5
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_fennudezui.png
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 916, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4cdfe229c1738f47939eb6d4abe8931
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_gongzhuguanmian.png
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 794, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b890a939967e1b42b79fba68b8f3024
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_haidaochuanzhangmao.png
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 672, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49c6a2983b70cc448a9ad9fb683b8829
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_houguan.png
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 550, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f02da6c326b2ffd4fa361abb37edfb01
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_huaguan.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d7c615683adb9443ad9d996b8dc32a5
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_huangjinguanmian.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 128
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 833}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50980277c42d856419470973f2be3394
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_huangjinmao.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 256
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 705}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ccd6daed543469468a9fd2dbfb153fb
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_huaye.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 384
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 577}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dd1ce915a9541744b53d9259f0aed5d
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_hunlifaguan.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 512
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 449}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e181e4039c0441042bb80b93dcdcfe21
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_jinshutoukui.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 325ee6bbf0c48554a904e73deee2c7ab
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_kuangyeweiba.png
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 916, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 148e341e354220544a6331d06d11ca9f
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_lanyangyangdemao.png
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 794, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d77208fd3724fe54abb9b156cd775aa5
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_liangdaozhetougu.png
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 672, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33cfa51833edec640b10d041f183c9eb
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_maoerfaquan.png
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 550, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae61466da6b3f9f48a961467cf0cce1b
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_maowubianmao.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83cf503fd5242c243a2728bf20cf8e60
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_mofamao.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02812ffe15bb8fb468f00ad7167fb13a
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_papadiboluotai.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 128
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 833}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3af4a395785ae5c499e400f1ae0e27c5
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_pochanzhishuai.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 256
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 705}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c432437db6da9554185dddc8ed08f9ed
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_shanyangtoukui.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 384
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 577}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b52fbaa2d9f6cde4c87d16d41d17baee
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_shengzhizhimao.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 512
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 449}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26cb5aba511a0ab4da6cb37aa35a095b
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_shenhongmeigui.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17938244d6d64d74898581c06461c29f
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_shoulingguanmian.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 379a0e4317976d349ba3dfb15509af1a
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_tianshibolimaozi.png
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 916, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 692cda2ddeabb6e42a22652d692d57e0
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_tianshichibangershi.png
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 794, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e96e768e91d6ba74da178f72391b79f1
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_tianshifajia.png
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 672, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 007f3022dac501f4589e809e72d952b1
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_tiedingkouzhao.png
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 550, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca87b5c1e5b4eb24aaf2bd1236c472a5
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_tusi.png
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 428, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bda897afeeb086d48aa0eaa71e49af98
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_wangguan.png
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 306, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2603a3699b16d84ab903fabefbf329b
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_wangzhefagu.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 184, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26050f7941beac943b4b30f91ff79ccc
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_xiaoemochibang.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 128
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 833}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96abc2ee7f8545c448655a6b013dd43c
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_xiaoemomao.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 256
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 705}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8b4788257cde5443824fce597cb7461
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_xiaohainaizui.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 384
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 577}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2e46515093d2774382edb1cae0d81ec
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_xiaotianshizhiyi.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 512
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 449}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0555f1d418a7e5243852f0324f3478ef
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_yandou.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 640
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 321}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: faab09e13a445354e965ecc3b084b673
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_yaoer.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 768
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 193}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f7522ed3a9306a4ebc7d1666819562f
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_ItemDrawing_yumaomao.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 896
+        width: 120
+        height: 126
+      alignment: 1
+      pivot: {x: 62, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b823140b01450478f3012c9690f5de
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_icon_ItemDrawing_bolibeibao.png: 21300000
+      UI_icon_ItemDrawing_caoye.png: 21300002
+      UI_icon_ItemDrawing_emochibangershi.png: 21300004
+      UI_icon_ItemDrawing_emofaquan.png: 21300006
+      UI_icon_ItemDrawing_feilikadetougu.png: 21300008
+      UI_icon_ItemDrawing_fennudezui.png: 21300010
+      UI_icon_ItemDrawing_gongzhuguanmian.png: 21300012
+      UI_icon_ItemDrawing_haidaochuanzhangmao.png: 21300014
+      UI_icon_ItemDrawing_houguan.png: 21300016
+      UI_icon_ItemDrawing_huaguan.png: 21300018
+      UI_icon_ItemDrawing_huangjinguanmian.png: 21300020
+      UI_icon_ItemDrawing_huangjinmao.png: 21300022
+      UI_icon_ItemDrawing_huaye.png: 21300024
+      UI_icon_ItemDrawing_hunlifaguan.png: 21300026
+      UI_icon_ItemDrawing_jinshutoukui.png: 21300028
+      UI_icon_ItemDrawing_kuangyeweiba.png: 21300030
+      UI_icon_ItemDrawing_lanyangyangdemao.png: 21300032
+      UI_icon_ItemDrawing_liangdaozhetougu.png: 21300034
+      UI_icon_ItemDrawing_maoerfaquan.png: 21300036
+      UI_icon_ItemDrawing_maowubianmao.png: 21300038
+      UI_icon_ItemDrawing_mofamao.png: 21300040
+      UI_icon_ItemDrawing_papadiboluotai.png: 21300042
+      UI_icon_ItemDrawing_pochanzhishuai.png: 21300044
+      UI_icon_ItemDrawing_shanyangtoukui.png: 21300046
+      UI_icon_ItemDrawing_shengzhizhimao.png: 21300048
+      UI_icon_ItemDrawing_shenhongmeigui.png: 21300050
+      UI_icon_ItemDrawing_shoulingguanmian.png: 21300052
+      UI_icon_ItemDrawing_tianshibolimaozi.png: 21300054
+      UI_icon_ItemDrawing_tianshichibangershi.png: 21300056
+      UI_icon_ItemDrawing_tianshifajia.png: 21300058
+      UI_icon_ItemDrawing_tiedingkouzhao.png: 21300060
+      UI_icon_ItemDrawing_tusi.png: 21300062
+      UI_icon_ItemDrawing_wangguan.png: 21300064
+      UI_icon_ItemDrawing_wangzhefagu.png: 21300066
+      UI_icon_ItemDrawing_xiaoemochibang.png: 21300068
+      UI_icon_ItemDrawing_xiaoemomao.png: 21300070
+      UI_icon_ItemDrawing_xiaohainaizui.png: 21300072
+      UI_icon_ItemDrawing_xiaotianshizhiyi.png: 21300074
+      UI_icon_ItemDrawing_yandou.png: 21300076
+      UI_icon_ItemDrawing_yaoer.png: 21300078
+      UI_icon_ItemDrawing_yumaomao.png: 21300080
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

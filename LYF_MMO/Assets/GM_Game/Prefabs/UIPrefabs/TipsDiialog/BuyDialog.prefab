@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.45911938, g: 0.35372403, b: 0.35372403, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -624,8 +624,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1015,8 +1015,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4283265625
-  m_fontColor: {r: 0.3497318, g: 0.44654083, b: 0.30190653, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1089,7 +1089,7 @@ GameObject:
   - component: {fileID: 7968170627519626378}
   - component: {fileID: 5216799220455513758}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: tex_mony
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1238,13 +1238,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4685445387107686511}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.000009841753, y: 0.0058184876, z: 0.0016914315, w: 0.9999817}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1718463592784029316}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0.667, z: 0.194}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 49.7}
@@ -1287,8 +1287,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4290173368
-  m_fontColor: {r: 0.72254604, g: 0.8490566, b: 0.71288705, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1361,7 +1361,7 @@ GameObject:
   - component: {fileID: 6493504650688135399}
   - component: {fileID: 5507132714659024433}
   m_Layer: 5
-  m_Name: Text
+  m_Name: tex_count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1762,14 +1762,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.899371, g: 0.8795735, b: 0.8795735, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300216, guid: c46212db0fcbdd547a2a319e0ab42aba, type: 3}
+  m_Sprite: {fileID: 21300238, guid: c46212db0fcbdd547a2a319e0ab42aba, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1791,6 +1791,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe46353761203642b2bd6e0216e8ad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _productIcon: {fileID: 5501230932934619690}
+  _productName: {fileID: 4105145348822811960}
+  _currencyIcon: {fileID: 7616586993542448119}
+  _currencyText: {fileID: 5216799220455513758}
+  _quantityInput: {fileID: 6624924580638211965}
+  _decreaseButton: {fileID: 6981047019701723869}
+  _increaseButton: {fileID: 8457283959105420634}
 --- !u!1 &8756205135834980336
 GameObject:
   m_ObjectHideFlags: 0

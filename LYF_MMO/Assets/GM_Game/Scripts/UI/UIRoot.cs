@@ -59,8 +59,10 @@ public class UIRoot : MonoBehaviour
 
    private void InitCtrl()
    {
-      if(_loginview != null) ;
-         LoginViewCtrl = new LoginCtrl(_loginview);
+       if (_loginview != null)
+       {
+          LoginViewCtrl = new LoginCtrl(_loginview);
+       }
       
       if(_createRoleView != null) 
          CreateRoleCtrl = new CreateRoleCtrl(_createRoleView);
@@ -70,12 +72,16 @@ public class UIRoot : MonoBehaviour
    /// </summary>
    public void InitMainCtrl()
    {
-      if (_mainView != null)
-      {
-         
-         MainCtrl = new MainCtrl(_mainView);
-         
-         _mainView.Show();
+       if (_mainView != null)
+       {
+          if (MainCtrl != null)
+          {
+             // 场景重复初始化前释放旧控制器，避免协议和输入事件重复注册。
+             MainCtrl.Dispose();
+          }
+          MainCtrl = new MainCtrl(_mainView);
+          MainCtrl.RegisterMainInput();
+          _mainView.Show();
       }
    }
    /// <summary>
@@ -83,7 +89,30 @@ public class UIRoot : MonoBehaviour
    /// </summary>
    public void RegisterMainUIKeyHandler()
    {
-      PlayerInputCtr.Instance.MainUIKeyHandler += MainCtrl.MainUIKeyHandler;
+      if (MainCtrl != null)
+      {
+         MainCtrl.RegisterMainInput();
+      }
+   }
+
+   private void OnDestroy()
+   {
+      if (LoginViewCtrl != null)
+      {
+         LoginViewCtrl.Dispose();
+      }
+      if (CreateRoleCtrl != null)
+      {
+         CreateRoleCtrl.Dispose();
+      }
+      if (MainCtrl != null)
+      {
+         MainCtrl.Dispose();
+      }
+      if (Instance == this)
+      {
+         Instance = null;
+      }
    }
 
    public Camera GetUICamera()

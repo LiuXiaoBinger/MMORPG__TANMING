@@ -1,68 +1,96 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UniRx;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.UI;
 
-/**
-* Title:
-* Descrpiton:
-*/
-
+/// <summary>
+/// 单个游戏服务器条目，只显示服务器展示数据并抛出点击事件。
+/// </summary>
 public class GameServerItem : MonoBehaviour
 {
-    [SerializeField,Header("服务器名称")]private TMP_Text _textSeverName;
-    [SerializeField,Header("服务器状态")]private Image _imageRun;
-    
-    private GameServer _gameServer;
-    public Action<GameServer> ONItemClickCB;
-    public void RefreshUI(GameServer gameServer)
+    /// <summary>服务器名称文本。</summary>
+    [SerializeField, Header("服务器名称")] private TMP_Text _textSeverName;
+    /// <summary>服务器状态图标。</summary>
+    [SerializeField, Header("服务器状态")] private Image _imageRun;
+
+    /// <summary>当前条目对应的服务器编号。</summary>
+    private int _serverId;
+    /// <summary>当前条目显示的服务器名称。</summary>
+    private string _serverName = string.Empty;
+    /// <summary>服务器条目单击事件。</summary>
+    public Action<int> ONItemClickCB;
+    /// <summary>服务器条目双击事件。</summary>
+    public Action<int> ONItemDoubleClickCB;
+
+    /// <summary>上一次点击的未缩放时间。</summary>
+    private float _lastClickTime = -1f;
+
+    /// <summary>获取当前条目的服务器编号。</summary>
+    public int ServerId
     {
-        _gameServer = gameServer;
+        get { return _serverId; }
+    }
+
+    /// <summary>获取当前条目的服务器名称。</summary>
+    public string ServerName
+    {
+        get { return _serverName; }
+    }
+
+    /// <summary>使用控制器提供的展示数据刷新条目。</summary>
+    public void RefreshUI(GameServerViewData viewData)
+    {
+        if (viewData == null)
+        {
+            return;
+        }
+        _serverId = viewData.ServerId;
+        _serverName = viewData.ServerName;
         Color color = Color.white;
-        if (gameServer.RunState == 1)
+        if (viewData.RunState == 1)
         {
             color = Color.red;
-        }else if(gameServer.RunState==2)
+        }
+        else if (viewData.RunState == 2)
         {
             color = Color.yellow;
-            
-        }else if (gameServer.RunState == 3)
+        }
+        else if (viewData.RunState == 3)
         {
             color = Color.green;
         }
-        _imageRun.color = color;
-        string str = "";
-        if (gameServer.IsNew == 1)
+        if (_imageRun != null)
         {
-            str = "(新服)";
+            _imageRun.color = color;
         }
-        
-        _textSeverName.text = gameServer.ServerName+str;
+
+        string newServerText = string.Empty;
+        if (viewData.IsNew)
+        {
+            newServerText = "(新服)";
+        }
+        if (_textSeverName != null)
+        {
+            _textSeverName.text = viewData.ServerName + newServerText;
+        }
     }
 
-    private int _clickCount = 0;
+    /// <summary>上报服务器条目的单击和双击事件。</summary>
     public void OnItemClick()
     {
-        ++_clickCount;
-        
-        if(_clickCount>=2)
+        if (ONItemClickCB != null)
         {
-            _clickCount = 0;
-            UIRoot.Instance.LoginViewCtrl.ShowWindow(WindowType.GameServerWindow,_gameServer);
+            ONItemClickCB.Invoke(_serverId);
         }
-        ONItemClickCB?.Invoke(_gameServer);
-    }
-
-    private void ResetClickCount()
-    {
-        Observable.Timer(TimeSpan.FromMilliseconds(300)).Subscribe(_ =>
+        if (_lastClickTime >= 0f && Time.unscaledTime - _lastClickTime <= 0.3f)
         {
-            _clickCount = 0;
-        });
+            _lastClickTime = -1f;
+            if (ONItemDoubleClickCB != null)
+            {
+                ONItemDoubleClickCB.Invoke(_serverId);
+            }
+            return;
+        }
+        _lastClickTime = Time.unscaledTime;
     }
-    
 }

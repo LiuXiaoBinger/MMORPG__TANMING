@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SqlSugar;
 
@@ -133,8 +134,10 @@ public class LoginModle
             List<GameServerTable> listTable = _db.Queryable<GameServerTable>().ToList();
             if (listTable != null && listTable.Count > 0)
             {
-                foreach (GameServerTable table in listTable)
+                List<GameServerTable> tableSnapshot = new List<GameServerTable>(listTable);
+                for (int index = 0; index < tableSnapshot.Count; index++)
                 {
+                    GameServerTable table = tableSnapshot[index];
                     GameServer gameServer = new GameServer()
                     {
                         ServerId = table.Id,
@@ -165,7 +168,8 @@ public class LoginModle
     {
         LoginGameServerRet ret = new LoginGameServerRet();
 
-        AccoutTable accountTable = _db.Queryable<AccoutTable>().Where(v => v.Id == req.AccountId).First();
+        AccoutTable accountTable = _db.Queryable<AccoutTable>().
+            Where(v => v.Id == req.AccountId).First();
         if (accountTable != null)
         {
 
@@ -235,7 +239,6 @@ public class LoginModle
             RoleTable role = new RoleTable()
             {
                 AccountID = req.AccountId,
-                Money = 10000, //默认是0
                 Nickname = req.Nickname,
                 JobID = req.JobId,
                 Level = 1, //默认1
@@ -285,6 +288,7 @@ public class LoginModle
                 {
                     CreateRoleSkillInfo(id, req.JobId);
                     CreateRoleKnapsackInfo(id);
+                    CreateRoleVirtualItemInfo(id);
                     ret.RoleId = id;
                     ret.Nickname = role.Nickname;
                     ret.JobId = role.JobID;
@@ -306,20 +310,61 @@ public class LoginModle
     /// <param name="roleid"></param>
     private void CreateRoleKnapsackInfo(int roleid)
     {
-        RoleKnapsackTable roleKnapsackTable =
-            _db.Queryable<RoleKnapsackTable>().Where(v => v.RoleId == roleid).First();
-        if (roleKnapsackTable != null)
+        // 建角时为四类可持久化背包各创建一条 81 格记录；穿戴栏不参与扩容。
+        List<RoleKnapsackTable> oldRows =
+            _db.Queryable<RoleKnapsackTable>().Where(v => v.RoleId == roleid).ToList();
+        if (oldRows != null && oldRows.Count > 0)
         {
-            _db.Deleteable(roleKnapsackTable).ExecuteCommand();
-            
+            _db.Deleteable(oldRows).ExecuteCommand();
         }
-        roleKnapsackTable = new RoleKnapsackTable()
+
+        DateTime now = DateTime.Now;
+        List<RoleKnapsackTable> rows = new List<RoleKnapsackTable>();
+        KnapsackType[] persistedTypes = new[]
         {
-            RoleId = roleid,
+            KnapsackType.RolePackPlain,
+            KnapsackType.RolePackEquip,
+            KnapsackType.RolePackConsume,
+            KnapsackType.RolePackMaterial
         };
+        for (int index = 0; index < persistedTypes.Length; index++)
+        {
+            KnapsackType type = persistedTypes[index];
+            rows.Add(new RoleKnapsackTable
+            {
+                RoleId = roleid,
+                roleKnapsack = (byte)type,
+                roleKnapsackcount = 81,
+                CreateDate = now,
+                UpdateDate = now
+            });
+        }
 
+        _db.Insertable(rows).ExecuteCommand();
+    }
 
-        _db.Insertable(roleKnapsackTable).ExecuteCommand();
+    /// <summary>创建角色初始铜币物品，货币从建角开始就使用虚拟物品背包持久化。</summary>
+    /// <param name="roleId">新建角色 ID。</param>
+    private void CreateRoleVirtualItemInfo(int roleId)
+    {
+        DateTime now = DateTime.Now;
+        // 初始铜币的实例 UID 使用角色 ID 和物品配置 ID 组成，保证建角重试不会生成不同实例。
+        long itemUid = ((long)roleId << 32) | (uint)ItemEnum.ZENY;
+        ItemTable item = new ItemTable
+        {
+            ItemUID = itemUid,
+            RoleID = roleId,
+            ItemTypeID = (int)ItemEnum.ZENY,
+            BagType = (int)KnapsackType.RoleVirtualItemPack,
+            BagIndex = 0,
+            count = 10000,
+            ItemSign = (int)ItemSign.IsNoSign,
+            MoneyType = 0,
+            TotalPrice = 0L,
+            CreateDate = now,
+            UpdateDate = now
+        };
+        _db.Insertable(item).ExecuteCommand();
     }
 
     /// <summary>
@@ -342,8 +387,11 @@ public class LoginModle
             }
 
             var JobSkillMap = LubanMgr.Instance.GetSkillInfosByJob(jobid);
-            foreach (var item in JobSkillMap)
+            List<KeyValuePair<int, cfg.SkillInfo>> skillSnapshot =
+                new List<KeyValuePair<int, cfg.SkillInfo>>(JobSkillMap);
+            for (int index = 0; index < skillSnapshot.Count; index++)
             {
+                KeyValuePair<int, cfg.SkillInfo> item = skillSnapshot[index];
                 RoleSkillTable roleSkillTable = new RoleSkillTable()
                 {
                     RoleID = roleid,
@@ -358,9 +406,18 @@ public class LoginModle
                 if (item.Value.Type == 1 || item.Value.Type == 3 || item.Value.Type == 4)
                 {
                     roleSkillTable.SkillLevel = 1;
-                    roleSkillTable.Bindkey = item.Value.Type == 1 ? "Q" :
-                        item.Value.Type == 3 ? "F" :
-                        item.Value.Type == 4 ? "V" : "";
+                    if (item.Value.Type == 1)
+                    {
+                        roleSkillTable.Bindkey = "Q";
+                    }
+                    else if (item.Value.Type == 3)
+                    {
+                        roleSkillTable.Bindkey = "F";
+                    }
+                    else
+                    {
+                        roleSkillTable.Bindkey = "V";
+                    }
                 }
 
                 listRoleSkillTables.Add(roleSkillTable);
@@ -405,7 +462,6 @@ public class LoginModle
         ret.MainRoleInfo = new MainRoleInfo
         {
             AccountId = roleTable.AccountID,
-            Money = roleTable.Money,
 
             Exp = roleTable.Exp,
             SkillUpPoint = roleTable.SkillUpPoint,
@@ -446,7 +502,76 @@ public class LoginModle
                 Level = roleTable.Level,
             }
         };
+
         return ret;
     }
+
+    private static KnapsackType[] GetPersistedKnapsackTypes()
+    {
+        return new[]
+        {
+            KnapsackType.RolePackPlain,
+            KnapsackType.RolePackEquip,
+            KnapsackType.RolePackConsume,
+            KnapsackType.RolePackMaterial
+        };
     }
+
+    /// <summary>旧角色只有普通背包记录时，以其容量作为所有分类的迁移下限。</summary>
+    private static int GetLegacyFallback(List<RoleKnapsackTable> rows)
+    {
+        RoleKnapsackTable oldAll = null;
+        if (rows != null)
+        {
+            oldAll = rows.FirstOrDefault(v => v.roleKnapsack == (byte)KnapsackType.RolePackPlain);
+        }
+        if (oldAll == null)
+        {
+            return 81;
+        }
+        return Math.Max(81, (int)oldAll.roleKnapsackcount);
+    }
+
+    /// <summary>分类记录存在时保留更大容量；不存在时继承旧普通背包容量。</summary>
+    private static int GetMigratedGridCount(RoleKnapsackTable row, int legacyFallback)
+    {
+        if (row == null)
+        {
+            return legacyFallback;
+        }
+        return Math.Max(legacyFallback, Math.Max(81, (int)row.roleKnapsackcount));
+    }
+
+    /// <summary>首次读取旧角色时补齐缺失分类记录，后续扩容可直接按类型更新。</summary>
+    private void EnsureMissingKnapsackRows(int roleId, List<RoleKnapsackTable> rows, int legacyFallback)
+    {
+        List<RoleKnapsackTable> missingRows = new List<RoleKnapsackTable>();
+        DateTime now = DateTime.Now;
+        KnapsackType[] persistedTypes = GetPersistedKnapsackTypes();
+        for (int typeIndex = 0; typeIndex < persistedTypes.Length; typeIndex++)
+        {
+            KnapsackType type = persistedTypes[typeIndex];
+            if (rows != null && rows.Any(v => v.roleKnapsack == (byte)type))
+            {
+                continue;
+            }
+
+            RoleKnapsackTable row = new RoleKnapsackTable
+            {
+                RoleId = roleId,
+                roleKnapsack = (byte)type,
+                roleKnapsackcount = (byte)legacyFallback,
+                CreateDate = now,
+                UpdateDate = now
+            };
+            missingRows.Add(row);
+            rows.Add(row);
+        }
+
+        if (missingRows.Count > 0)
+        {
+            _db.Insertable(missingRows).ExecuteCommand();
+        }
+    }
+}
 

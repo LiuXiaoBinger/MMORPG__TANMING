@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Google.Protobuf;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-/**
-* Title: 注册窗口
-* Descrpiton:
-*/
 
+/// <summary>
+/// 注册窗口，只采集注册输入并抛出用户操作事件。
+/// </summary>
 public class RegistWindow : WindowBase
 {
     [SerializeField, Header("账号输入框")] private TMP_InputField _iptAcct;
@@ -18,74 +13,52 @@ public class RegistWindow : WindowBase
     [SerializeField, Header("密码输入框")] private TMP_InputField _iptPasd;
     [SerializeField, Header("确认密码输入框")] private TMP_InputField _iptSurePasd;
 
+    /// <summary>注册提交事件。</summary>
+    public Action<string, string, string, string, string> RegisterRequested;
+
+    /// <summary>验证码请求事件，保留旧字段名兼容已有绑定代码。</summary>
+    public Action<string> verifyCodeBtnClickedAction;
+
+    /// <summary>返回登录窗口事件。</summary>
+    public Action BackRequested;
+
+    /// <summary>Inspector 绑定入口：提交注册表单。</summary>
     public void OnRegistBtnClicked()
     {
-        //1.判断输入框是否为空。
-        if (string.IsNullOrEmpty(_iptAcct.text)) {
-            Debug.Log("账号为空..");
-            TipsMgr.Instance.ShowSystemTips("请输入账号..");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(_iptMobile.text)) {
-            Debug.Log("邮箱为空..");
-            TipsMgr.Instance.ShowSystemTips("手机号为空..");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(_iptVerify.text)) {
-            TipsMgr.Instance.ShowSystemTips("请输入验证码..");
-            Debug.Log("验证码为空..");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(_iptPasd.text)) {
-            Debug.Log("密码为空..");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(_iptSurePasd.text)) {
-            Debug.Log("确认密码为空..");
-            return;
-        }
-
-        //2.验证账号，手机号码，密码的合法性。
-
-        //3.判断密码和确认是否一致，
-        if (!_iptPasd.text.Equals(_iptSurePasd.text))
+        if (RegisterRequested == null)
         {
-            Debug.Log("两次密码不一致");
             return;
         }
-        //4，开始注册
-        //TODO
-        //Debug.Log("注册成功..");
-        //Show(false);
-        
-        RegistReq req = new RegistReq()
-        {
-            UserName =  _iptAcct.text,
-            Email =  _iptMobile.text,
-            Varify =  _iptVerify.text,
-            Password = _iptPasd.text,
-        };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_RegistCode,req.ToByteString());
-    }
-    public Action<string> verifyCodeBtnClickedAction;
-    public void OnVerifyCodeBtnClicked() {
 
-       // Debug.Log("获取验证码成功..");
-        if (string.IsNullOrEmpty(_iptMobile.text)) {
-            Debug.Log("邮箱为空..");
-            TipsMgr.Instance.ShowSystemTips("手机号为空..");
-            return;
-        }
-        verifyCodeBtnClickedAction?.Invoke(_iptMobile.text);
-        
+        RegisterRequested.Invoke(GetText(_iptAcct), GetText(_iptMobile), GetText(_iptVerify),
+            GetText(_iptPasd), GetText(_iptSurePasd));
     }
-    
-    public void OnBackBtnClicked() 
+
+    /// <summary>Inspector 绑定入口：请求验证码。</summary>
+    public void OnVerifyCodeBtnClicked()
     {
-        UIRoot.Instance.LoginViewCtrl.ShowWindow(WindowType.LoginWindow);        
+        if (verifyCodeBtnClickedAction != null)
+        {
+            verifyCodeBtnClickedAction.Invoke(GetText(_iptMobile));
+        }
+    }
+
+    /// <summary>Inspector 绑定入口：返回登录窗口。</summary>
+    public void OnBackBtnClicked()
+    {
+        if (BackRequested != null)
+        {
+            BackRequested.Invoke();
+        }
+    }
+
+    /// <summary>安全读取输入框文本。</summary>
+    private static string GetText(TMP_InputField inputField)
+    {
+        if (inputField == null)
+        {
+            return string.Empty;
+        }
+        return inputField.text;
     }
 }

@@ -17,6 +17,11 @@ public class NetUtils : Singleton<NetUtils>
     /// <returns></returns>
     public byte[] MakeData(byte[] data)
     {
+        if (data == null)
+        {
+            throw new ArgumentNullException(nameof(data));
+        }
+
         //1.判断数据是否要压缩。
         bool isCom = data.Length > 200 ? true : false;
         if (isCom)
@@ -31,6 +36,11 @@ public class NetUtils : Singleton<NetUtils>
 
         //消息体
         byte[] buffer = isComBytes.Concat(crcBytes).Concat(data).ToArray();
+        if (buffer.Length > ushort.MaxValue)
+        {
+            // 协议长度字段仍为 uint16，超过上限必须由业务层拆分，禁止截断长度后发送坏包。
+            throw new InvalidOperationException("网络消息超过 65535 字节上限，请先拆分业务数据。");
+        }
         //消息头
         byte[] head = BitConverter.GetBytes((ushort)buffer.Length);
         //消息包
@@ -44,14 +54,14 @@ public class NetUtils : Singleton<NetUtils>
     /// 解析数据
     /// </summary>
     /// <returns></returns>
-    public byte[] ParseData(byte[] buffer, int msgLen)
+    public byte[] ParseData(byte[] buffer, int msgLen, int offset = 0)
     {
-        bool isCom = BitConverter.ToBoolean(buffer, 2);
-        ushort crc = BitConverter.ToUInt16(buffer, 3);
+        bool isCom = BitConverter.ToBoolean(buffer, offset + 2);
+        ushort crc = BitConverter.ToUInt16(buffer, offset + 3);
 
         byte[] data = new byte[msgLen - 1 - 2];
 
-        Buffer.BlockCopy(buffer, 5, data, 0, data.Length);
+        Buffer.BlockCopy(buffer, offset + 5, data, 0, data.Length);
         //crc校验成功
         ushort newCrc = CRC16(data);
         if (crc == newCrc)

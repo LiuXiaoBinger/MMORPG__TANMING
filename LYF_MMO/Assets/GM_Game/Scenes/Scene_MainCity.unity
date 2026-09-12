@@ -390,6 +390,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 699457750723275706, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 699457750723275706, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4606378012333407194, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1000
@@ -441,6 +449,14 @@ PrefabInstance:
     - target: {fileID: 6359616036830003013, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8625421884607700949, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8625421884607700949, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1485,6 +1501,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 943945203399769037, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
       propertyPath: m_Layer
@@ -2662,6 +2682,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1480371567}
   - component: {fileID: 1480371566}
+  - component: {fileID: 1480371568}
   m_Layer: 0
   m_Name: MainCityMgr
   m_TagString: Untagged
@@ -2696,6 +2717,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1480371568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480371565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fd3680e5c5e4a4e8fed0e4fc6ae3fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _npcRoot: {fileID: 0}
 --- !u!1001 &1612790989
 PrefabInstance:
   m_ObjectHideFlags: 0

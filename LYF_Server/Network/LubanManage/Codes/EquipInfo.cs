@@ -23,13 +23,19 @@ public sealed partial class EquipInfo : Luban.BeanBase
         EquipName = _buf.ReadString();
         Icon = _buf.ReadString();
         Attribute = _buf.ReadString();
-        Desc = _buf.ReadString();
         NeedLevel = _buf.ReadInt();
         Source = _buf.ReadString();
         SellPrice = _buf.ReadInt();
         SellCurrencyType = _buf.ReadInt();
         Job = _buf.ReadInt();
-        BCanBeStacked = _buf.ReadInt();
+        MaxStackCount = _buf.ReadInt();
+        CanStrengthen = _buf.ReadInt();
+        MaxStrengthenLevel = _buf.ReadInt();
+        MaxGemLevel = _buf.ReadInt();
+        GemSlotCount = _buf.ReadInt();
+        Des = _buf.ReadString();
+        TimeType = _buf.ReadInt();
+        PackType = _buf.ReadInt();
         GeneId0 = _buf.ReadInt();
         GeneId1 = _buf.ReadInt();
         GeneId2 = _buf.ReadInt();
@@ -42,11 +48,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
         GeneValue3 = _buf.ReadInt();
         GeneValue4 = _buf.ReadInt();
         GeneValue5 = _buf.ReadInt();
-        CanStrengthen = _buf.ReadInt();
-        MaxStrengthenLevel = _buf.ReadInt();
-        MaxGemLevel = _buf.ReadInt();
-        GemSlotCount = _buf.ReadInt();
-        Des = _buf.ReadString();
     }
 
     public static EquipInfo DeserializeEquipInfo(ByteBuf _buf)
@@ -83,10 +84,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
     /// </summary>
     public readonly string Attribute;
     /// <summary>
-    /// 物品简介
-    /// </summary>
-    public readonly string Desc;
-    /// <summary>
     /// 使用物品所需等级
     /// </summary>
     public readonly int NeedLevel;
@@ -107,9 +104,37 @@ public sealed partial class EquipInfo : Luban.BeanBase
     /// </summary>
     public readonly int Job;
     /// <summary>
-    /// 是否可以叠加
+    /// 单个物品实例最大堆叠数量；不可堆叠填1
     /// </summary>
-    public readonly int BCanBeStacked;
+    public readonly int MaxStackCount;
+    /// <summary>
+    /// 是否可以强化(0否,1是)
+    /// </summary>
+    public readonly int CanStrengthen;
+    /// <summary>
+    /// 强化最高等级
+    /// </summary>
+    public readonly int MaxStrengthenLevel;
+    /// <summary>
+    /// 可镶嵌宝石最高等级
+    /// </summary>
+    public readonly int MaxGemLevel;
+    /// <summary>
+    /// 宝石孔数量
+    /// </summary>
+    public readonly int GemSlotCount;
+    /// <summary>
+    /// 装备简介
+    /// </summary>
+    public readonly string Des;
+    /// <summary>
+    /// 物品生命周期
+    /// </summary>
+    public readonly int TimeType;
+    /// <summary>
+    /// 包类别
+    /// </summary>
+    public readonly int PackType;
     /// <summary>
     /// 属性槽位0 Gene ID
     /// </summary>
@@ -158,26 +183,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
     /// 属性槽位5数值
     /// </summary>
     public readonly int GeneValue5;
-    /// <summary>
-    /// 是否可以强化(0否,1是)
-    /// </summary>
-    public readonly int CanStrengthen;
-    /// <summary>
-    /// 强化最高等级
-    /// </summary>
-    public readonly int MaxStrengthenLevel;
-    /// <summary>
-    /// 可镶嵌宝石最高等级
-    /// </summary>
-    public readonly int MaxGemLevel;
-    /// <summary>
-    /// 宝石孔数量
-    /// </summary>
-    public readonly int GemSlotCount;
-    /// <summary>
-    /// 装备简介
-    /// </summary>
-    public readonly string Des;
    
     public const int __ID__ = -1215706914;
     public override int GetTypeId() => __ID__;
@@ -196,13 +201,19 @@ public sealed partial class EquipInfo : Luban.BeanBase
         + "EquipName:" + EquipName + ","
         + "Icon:" + Icon + ","
         + "Attribute:" + Attribute + ","
-        + "Desc:" + Desc + ","
         + "NeedLevel:" + NeedLevel + ","
         + "Source:" + Source + ","
         + "SellPrice:" + SellPrice + ","
         + "SellCurrencyType:" + SellCurrencyType + ","
         + "Job:" + Job + ","
-        + "bCanBeStacked:" + BCanBeStacked + ","
+        + "MaxStackCount:" + MaxStackCount + ","
+        + "CanStrengthen:" + CanStrengthen + ","
+        + "MaxStrengthenLevel:" + MaxStrengthenLevel + ","
+        + "MaxGemLevel:" + MaxGemLevel + ","
+        + "GemSlotCount:" + GemSlotCount + ","
+        + "Des:" + Des + ","
+        + "TimeType:" + TimeType + ","
+        + "PackType:" + PackType + ","
         + "GeneId0:" + GeneId0 + ","
         + "GeneId1:" + GeneId1 + ","
         + "GeneId2:" + GeneId2 + ","
@@ -215,11 +226,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
         + "GeneValue3:" + GeneValue3 + ","
         + "GeneValue4:" + GeneValue4 + ","
         + "GeneValue5:" + GeneValue5 + ","
-        + "CanStrengthen:" + CanStrengthen + ","
-        + "MaxStrengthenLevel:" + MaxStrengthenLevel + ","
-        + "MaxGemLevel:" + MaxGemLevel + ","
-        + "GemSlotCount:" + GemSlotCount + ","
-        + "Des:" + Des + ","
         + "}";
     }
 }

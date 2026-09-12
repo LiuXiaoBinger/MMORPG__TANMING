@@ -22,21 +22,34 @@ public static partial class RequestEntityReflection {
   static RequestEntityReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChNSZXF1ZXN0RW50aXR5LnByb3RvImIKC0Jhc2VQYWNrYWdlEhIKCnByb3Rv",
-          "X2NvZGUYASABKAUSGAoQdW5pdHlfc2Vzc2lvbl9pZBgCIAEoBRIXCg9nYXRl",
-          "X3Nlc3Npb25faWQYAyABKAUSDAoEZGF0YRgKIAEoDCIgCg9SZWdpc3RWYXJp",
-          "ZnlSZXESDQoFZW1haWwYAiABKAkiTwoJUmVnaXN0UmVxEhEKCXVzZXJfbmFt",
-          "ZRgBIAEoCRINCgVlbWFpbBgCIAEoCRIOCgZ2YXJpZnkYAyABKAkSEAoIcGFz",
-          "c3dvcmQYBCABKAkiLwoITG9naW5SZXESEQoJdXNlcl9uYW1lGAEgASgJEhAK",
-          "CHBhc3N3b3JkGAIgASgJIiUKEEdldFNlcnZlckxpc3RSZXESEQoJc2VydmVy",
-          "X2lkGAEgASgFIkAKEkxvZ2luR2FtZVNlcnZlclJlcRISCgphY2NvdW50X2lk",
-          "GAEgASgFEhYKDmdhbWVfc2VydmVyX2lkGAIgASgFIl0KDUNyZWF0ZVJvbGVS",
-          "ZXESEgoKYWNjb3VudF9pZBgBIAEoBRIWCg5nYW1lX3NlcnZlcl9pZBgCIAEo",
-          "BRIQCghuaWNrbmFtZRgDIAEoCRIOCgZqb2JfaWQYBCABKAUiHwoMU3RhcnRH",
-          "YW1lUmVxEg8KB3JvbGVfaWQYASABKAUiIAoNRW50ZXJXcm9sZFJlcRIPCgdy",
-          "b2xlX2lkGAEgASgFYgZwcm90bzM="));
+          "ChNSZXF1ZXN0RW50aXR5LnByb3RvGhJSZXN1bHRFbnRpdHkucHJvdG8iYgoL",
+          "QmFzZVBhY2thZ2USEgoKcHJvdG9fY29kZRgBIAEoBRIYChB1bml0eV9zZXNz",
+          "aW9uX2lkGAIgASgFEhcKD2dhdGVfc2Vzc2lvbl9pZBgDIAEoBRIMCgRkYXRh",
+          "GAogASgMIiAKD1JlZ2lzdFZhcmlmeVJlcRINCgVlbWFpbBgCIAEoCSJPCglS",
+          "ZWdpc3RSZXESEQoJdXNlcl9uYW1lGAEgASgJEg0KBWVtYWlsGAIgASgJEg4K",
+          "BnZhcmlmeRgDIAEoCRIQCghwYXNzd29yZBgEIAEoCSIvCghMb2dpblJlcRIR",
+          "Cgl1c2VyX25hbWUYASABKAkSEAoIcGFzc3dvcmQYAiABKAkiJQoQR2V0U2Vy",
+          "dmVyTGlzdFJlcRIRCglzZXJ2ZXJfaWQYASABKAUiQAoSTG9naW5HYW1lU2Vy",
+          "dmVyUmVxEhIKCmFjY291bnRfaWQYASABKAUSFgoOZ2FtZV9zZXJ2ZXJfaWQY",
+          "AiABKAUiXQoNQ3JlYXRlUm9sZVJlcRISCgphY2NvdW50X2lkGAEgASgFEhYK",
+          "DmdhbWVfc2VydmVyX2lkGAIgASgFEhAKCG5pY2tuYW1lGAMgASgJEg4KBmpv",
+          "Yl9pZBgEIAEoBSIfCgxTdGFydEdhbWVSZXESDwoHcm9sZV9pZBgBIAEoBSIg",
+          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUiVgoTT3BlbktuYXBz",
+          "YWNrR3JpZFJlcRIPCgdyb2xlX2lkGAEgASgFEhcKD29wZW5fZ3JpZF9jb3Vu",
+          "dBgCIAEoBRIVCg1rbmFwc2Fja190eXBlGAMgASgFIl0KGFN5bmNLbmFwc2Fj",
+          "a0dyaWRDb3VudFJlcRIPCgdyb2xlX2lkGAEgASgFEhkKEW9wZW5lZF9ncmlk",
+          "X2NvdW50GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUiPgoMSXRlbURh",
+          "dGFMaXN0EhAKCGJhZ190eXBlGAEgASgFEhwKBWl0ZW1zGAIgAygLMg0uUm9s",
+          "ZUl0ZW1JbmZvIqwBCg9TYXZlUm9sZURhdGFSZXESDwoHcm9sZV9pZBgBIAEo",
+          "BRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzIN",
+          "Lkl0ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIO",
+          "LlJvbGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCEoE",
+          "CAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEoDRIRCglidXlf",
+          "Y291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hvcF9pZBgBIAEo",
+          "DRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3JvbGVfaWQYBSAB",
+          "KA1iBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-        new pbr::FileDescriptor[] { },
+        new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::BasePackage), global::BasePackage.Parser, new[]{ "ProtoCode", "UnitySessionId", "GateSessionId", "Data" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RegistVarifyReq), global::RegistVarifyReq.Parser, new[]{ "Email" }, null, null, null, null),
@@ -46,7 +59,13 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LoginGameServerReq), global::LoginGameServerReq.Parser, new[]{ "AccountId", "GameServerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CreateRoleReq), global::CreateRoleReq.Parser, new[]{ "AccountId", "GameServerId", "Nickname", "JobId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameReq), global::StartGameReq.Parser, new[]{ "RoleId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null)
         }));
   }
   #endregion
@@ -2307,6 +2326,1666 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
           break;
         case 8: {
           RoleId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 请求开启背包格子。open_grid_count 是本次申请开启的数量。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<OpenKnapsackGridReq> _parser = new pb::MessageParser<OpenKnapsackGridReq>(() => new OpenKnapsackGridReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<OpenKnapsackGridReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[9]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public OpenKnapsackGridReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public OpenKnapsackGridReq(OpenKnapsackGridReq other) : this() {
+    roleId_ = other.roleId_;
+    openGridCount_ = other.openGridCount_;
+    knapsackType_ = other.knapsackType_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public OpenKnapsackGridReq Clone() {
+    return new OpenKnapsackGridReq(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private int roleId_;
+  /// <summary>
+  ///角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "open_grid_count" field.</summary>
+  public const int OpenGridCountFieldNumber = 2;
+  private int openGridCount_;
+  /// <summary>
+  ///本次申请开启的格子数量
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int OpenGridCount {
+    get { return openGridCount_; }
+    set {
+      openGridCount_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "knapsack_type" field.</summary>
+  public const int KnapsackTypeFieldNumber = 3;
+  private int knapsackType_;
+  /// <summary>
+  ///背包类型，对应 KnapsackType
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int KnapsackType {
+    get { return knapsackType_; }
+    set {
+      knapsackType_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as OpenKnapsackGridReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(OpenKnapsackGridReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (OpenGridCount != other.OpenGridCount) return false;
+    if (KnapsackType != other.KnapsackType) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (OpenGridCount != 0) hash ^= OpenGridCount.GetHashCode();
+    if (KnapsackType != 0) hash ^= KnapsackType.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (OpenGridCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(OpenGridCount);
+    }
+    if (KnapsackType != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (OpenGridCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(OpenGridCount);
+    }
+    if (KnapsackType != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
+    if (OpenGridCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(OpenGridCount);
+    }
+    if (KnapsackType != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(OpenKnapsackGridReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
+    if (other.OpenGridCount != 0) {
+      OpenGridCount = other.OpenGridCount;
+    }
+    if (other.KnapsackType != 0) {
+      KnapsackType = other.KnapsackType;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          OpenGridCount = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          KnapsackType = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          OpenGridCount = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          KnapsackType = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// GameServer 向 CenterServer 同步最终格子数的内部协议，客户端不可调用。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsackGridCountReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SyncKnapsackGridCountReq> _parser = new pb::MessageParser<SyncKnapsackGridCountReq>(() => new SyncKnapsackGridCountReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SyncKnapsackGridCountReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[10]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncKnapsackGridCountReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncKnapsackGridCountReq(SyncKnapsackGridCountReq other) : this() {
+    roleId_ = other.roleId_;
+    openedGridCount_ = other.openedGridCount_;
+    knapsackType_ = other.knapsackType_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncKnapsackGridCountReq Clone() {
+    return new SyncKnapsackGridCountReq(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private int roleId_;
+  /// <summary>
+  ///角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "opened_grid_count" field.</summary>
+  public const int OpenedGridCountFieldNumber = 2;
+  private int openedGridCount_;
+  /// <summary>
+  ///GameServer 已验证后的当前总格子数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int OpenedGridCount {
+    get { return openedGridCount_; }
+    set {
+      openedGridCount_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "knapsack_type" field.</summary>
+  public const int KnapsackTypeFieldNumber = 3;
+  private int knapsackType_;
+  /// <summary>
+  ///背包类型，对应 KnapsackType
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int KnapsackType {
+    get { return knapsackType_; }
+    set {
+      knapsackType_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SyncKnapsackGridCountReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SyncKnapsackGridCountReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (OpenedGridCount != other.OpenedGridCount) return false;
+    if (KnapsackType != other.KnapsackType) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (OpenedGridCount != 0) hash ^= OpenedGridCount.GetHashCode();
+    if (KnapsackType != 0) hash ^= KnapsackType.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (OpenedGridCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(OpenedGridCount);
+    }
+    if (KnapsackType != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (OpenedGridCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(OpenedGridCount);
+    }
+    if (KnapsackType != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
+    if (OpenedGridCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(OpenedGridCount);
+    }
+    if (KnapsackType != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(KnapsackType);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SyncKnapsackGridCountReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
+    if (other.OpenedGridCount != 0) {
+      OpenedGridCount = other.OpenedGridCount;
+    }
+    if (other.KnapsackType != 0) {
+      KnapsackType = other.KnapsackType;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          OpenedGridCount = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          KnapsackType = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          OpenedGridCount = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          KnapsackType = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 单个背包容器的完整物品快照，仅用于 GameServer 到 CenterServer 的内部持久化。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<ItemDataList> _parser = new pb::MessageParser<ItemDataList>(() => new ItemDataList());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<ItemDataList> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[11]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ItemDataList() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ItemDataList(ItemDataList other) : this() {
+    bagType_ = other.bagType_;
+    items_ = other.items_.Clone();
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ItemDataList Clone() {
+    return new ItemDataList(this);
+  }
+
+  /// <summary>Field number for the "bag_type" field.</summary>
+  public const int BagTypeFieldNumber = 1;
+  private int bagType_;
+  /// <summary>
+  ///背包类型，对应 KnapsackType
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int BagType {
+    get { return bagType_; }
+    set {
+      bagType_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "items" field.</summary>
+  public const int ItemsFieldNumber = 2;
+  private static readonly pb::FieldCodec<global::RoleItemInfo> _repeated_items_codec
+      = pb::FieldCodec.ForMessage(18, global::RoleItemInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleItemInfo> items_ = new pbc::RepeatedField<global::RoleItemInfo>();
+  /// <summary>
+  ///该背包当前包含的全部物品
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleItemInfo> Items {
+    get { return items_; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as ItemDataList);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(ItemDataList other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (BagType != other.BagType) return false;
+    if(!items_.Equals(other.items_)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (BagType != 0) hash ^= BagType.GetHashCode();
+    hash ^= items_.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (BagType != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(BagType);
+    }
+    items_.WriteTo(output, _repeated_items_codec);
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (BagType != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(BagType);
+    }
+    items_.WriteTo(ref output, _repeated_items_codec);
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (BagType != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(BagType);
+    }
+    size += items_.CalculateSize(_repeated_items_codec);
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(ItemDataList other) {
+    if (other == null) {
+      return;
+    }
+    if (other.BagType != 0) {
+      BagType = other.BagType;
+    }
+    items_.Add(other.items_);
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          BagType = input.ReadInt32();
+          break;
+        }
+        case 18: {
+          items_.AddEntriesFrom(input, _repeated_items_codec);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          BagType = input.ReadInt32();
+          break;
+        }
+        case 18: {
+          items_.AddEntriesFrom(ref input, _repeated_items_codec);
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// GameServer 定时提交的角色物品脏数据，同一角色同一时刻只允许一个版本在途。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SaveRoleDataReq> _parser = new pb::MessageParser<SaveRoleDataReq>(() => new SaveRoleDataReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SaveRoleDataReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[12]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SaveRoleDataReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SaveRoleDataReq(SaveRoleDataReq other) : this() {
+    roleId_ = other.roleId_;
+    version_ = other.version_;
+    itemDataLists_ = other.itemDataLists_.Clone();
+    roleCountInfoList_ = other.roleCountInfoList_.Clone();
+    roleCountSnapshot_ = other.roleCountSnapshot_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SaveRoleDataReq Clone() {
+    return new SaveRoleDataReq(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private int roleId_;
+  /// <summary>
+  ///角色 ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "version" field.</summary>
+  public const int VersionFieldNumber = 2;
+  private long version_;
+  /// <summary>
+  ///角色物品变更版本，用于重试幂等和 ACK 匹配
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Version {
+    get { return version_; }
+    set {
+      version_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "item_data_lists" field.</summary>
+  public const int ItemDataListsFieldNumber = 3;
+  private static readonly pb::FieldCodec<global::ItemDataList> _repeated_itemDataLists_codec
+      = pb::FieldCodec.ForMessage(26, global::ItemDataList.Parser);
+  private readonly pbc::RepeatedField<global::ItemDataList> itemDataLists_ = new pbc::RepeatedField<global::ItemDataList>();
+  /// <summary>
+  ///本次发生变化的背包完整快照
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::ItemDataList> ItemDataLists {
+    get { return itemDataLists_; }
+  }
+
+  /// <summary>Field number for the "role_count_info_list" field.</summary>
+  public const int RoleCountInfoListFieldNumber = 5;
+  private static readonly pb::FieldCodec<global::RoleCountInfo> _repeated_roleCountInfoList_codec
+      = pb::FieldCodec.ForMessage(42, global::RoleCountInfo.Parser);
+  private readonly pbc::RepeatedField<global::RoleCountInfo> roleCountInfoList_ = new pbc::RepeatedField<global::RoleCountInfo>();
+  /// <summary>
+  ///本次发生变化的角色次数快照
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleCountInfo> RoleCountInfoList {
+    get { return roleCountInfoList_; }
+  }
+
+  /// <summary>Field number for the "role_count_snapshot" field.</summary>
+  public const int RoleCountSnapshotFieldNumber = 6;
+  private bool roleCountSnapshot_;
+  /// <summary>
+  ///是否携带次数完整快照，true 且列表为空表示清空次数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool RoleCountSnapshot {
+    get { return roleCountSnapshot_; }
+    set {
+      roleCountSnapshot_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SaveRoleDataReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SaveRoleDataReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (Version != other.Version) return false;
+    if(!itemDataLists_.Equals(other.itemDataLists_)) return false;
+    if(!roleCountInfoList_.Equals(other.roleCountInfoList_)) return false;
+    if (RoleCountSnapshot != other.RoleCountSnapshot) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (Version != 0L) hash ^= Version.GetHashCode();
+    hash ^= itemDataLists_.GetHashCode();
+    hash ^= roleCountInfoList_.GetHashCode();
+    if (RoleCountSnapshot != false) hash ^= RoleCountSnapshot.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (Version != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(Version);
+    }
+    itemDataLists_.WriteTo(output, _repeated_itemDataLists_codec);
+    roleCountInfoList_.WriteTo(output, _repeated_roleCountInfoList_codec);
+    if (RoleCountSnapshot != false) {
+      output.WriteRawTag(48);
+      output.WriteBool(RoleCountSnapshot);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (Version != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(Version);
+    }
+    itemDataLists_.WriteTo(ref output, _repeated_itemDataLists_codec);
+    roleCountInfoList_.WriteTo(ref output, _repeated_roleCountInfoList_codec);
+    if (RoleCountSnapshot != false) {
+      output.WriteRawTag(48);
+      output.WriteBool(RoleCountSnapshot);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
+    if (Version != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Version);
+    }
+    size += itemDataLists_.CalculateSize(_repeated_itemDataLists_codec);
+    size += roleCountInfoList_.CalculateSize(_repeated_roleCountInfoList_codec);
+    if (RoleCountSnapshot != false) {
+      size += 1 + 1;
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SaveRoleDataReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
+    if (other.Version != 0L) {
+      Version = other.Version;
+    }
+    itemDataLists_.Add(other.itemDataLists_);
+    roleCountInfoList_.Add(other.roleCountInfoList_);
+    if (other.RoleCountSnapshot != false) {
+      RoleCountSnapshot = other.RoleCountSnapshot;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Version = input.ReadInt64();
+          break;
+        }
+        case 26: {
+          itemDataLists_.AddEntriesFrom(input, _repeated_itemDataLists_codec);
+          break;
+        }
+        case 42: {
+          roleCountInfoList_.AddEntriesFrom(input, _repeated_roleCountInfoList_codec);
+          break;
+        }
+        case 48: {
+          RoleCountSnapshot = input.ReadBool();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Version = input.ReadInt64();
+          break;
+        }
+        case 26: {
+          itemDataLists_.AddEntriesFrom(ref input, _repeated_itemDataLists_codec);
+          break;
+        }
+        case 42: {
+          roleCountInfoList_.AddEntriesFrom(ref input, _repeated_roleCountInfoList_codec);
+          break;
+        }
+        case 48: {
+          RoleCountSnapshot = input.ReadBool();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 商城购买商品明细。goods_id 对应 ShopItemInfo.GoodsId，价格和物品由服务端配置读取。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<BuyShopItem> _parser = new pb::MessageParser<BuyShopItem>(() => new BuyShopItem());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<BuyShopItem> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[13]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItem() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItem(BuyShopItem other) : this() {
+    goodsId_ = other.goodsId_;
+    buyCount_ = other.buyCount_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItem Clone() {
+    return new BuyShopItem(this);
+  }
+
+  /// <summary>Field number for the "goods_id" field.</summary>
+  public const int GoodsIdFieldNumber = 1;
+  private uint goodsId_;
+  /// <summary>
+  ///具体商品配置 ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public uint GoodsId {
+    get { return goodsId_; }
+    set {
+      goodsId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "buy_count" field.</summary>
+  public const int BuyCountFieldNumber = 2;
+  private uint buyCount_;
+  /// <summary>
+  ///购买份数，必须大于零
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public uint BuyCount {
+    get { return buyCount_; }
+    set {
+      buyCount_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as BuyShopItem);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(BuyShopItem other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (GoodsId != other.GoodsId) return false;
+    if (BuyCount != other.BuyCount) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (GoodsId != 0) hash ^= GoodsId.GetHashCode();
+    if (BuyCount != 0) hash ^= BuyCount.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (GoodsId != 0) {
+      output.WriteRawTag(8);
+      output.WriteUInt32(GoodsId);
+    }
+    if (BuyCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteUInt32(BuyCount);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (GoodsId != 0) {
+      output.WriteRawTag(8);
+      output.WriteUInt32(GoodsId);
+    }
+    if (BuyCount != 0) {
+      output.WriteRawTag(16);
+      output.WriteUInt32(BuyCount);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (GoodsId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt32Size(GoodsId);
+    }
+    if (BuyCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt32Size(BuyCount);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(BuyShopItem other) {
+    if (other == null) {
+      return;
+    }
+    if (other.GoodsId != 0) {
+      GoodsId = other.GoodsId;
+    }
+    if (other.BuyCount != 0) {
+      BuyCount = other.BuyCount;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          GoodsId = input.ReadUInt32();
+          break;
+        }
+        case 16: {
+          BuyCount = input.ReadUInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          GoodsId = input.ReadUInt32();
+          break;
+        }
+        case 16: {
+          BuyCount = input.ReadUInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 客户端购买商城商品请求。role_id 仅用于与网关会话中的角色做一致性校验。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<BuyShopItemReq> _parser = new pb::MessageParser<BuyShopItemReq>(() => new BuyShopItemReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<BuyShopItemReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[14]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItemReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItemReq(BuyShopItemReq other) : this() {
+    shopId_ = other.shopId_;
+    items_ = other.items_.Clone();
+    roleId_ = other.roleId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public BuyShopItemReq Clone() {
+    return new BuyShopItemReq(this);
+  }
+
+  /// <summary>Field number for the "shop_id" field.</summary>
+  public const int ShopIdFieldNumber = 1;
+  private uint shopId_;
+  /// <summary>
+  ///商店配置 ID，对应 ShopTable.Id
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public uint ShopId {
+    get { return shopId_; }
+    set {
+      shopId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "items" field.</summary>
+  public const int ItemsFieldNumber = 2;
+  private static readonly pb::FieldCodec<global::BuyShopItem> _repeated_items_codec
+      = pb::FieldCodec.ForMessage(18, global::BuyShopItem.Parser);
+  private readonly pbc::RepeatedField<global::BuyShopItem> items_ = new pbc::RepeatedField<global::BuyShopItem>();
+  /// <summary>
+  ///本次购买的商品明细
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::BuyShopItem> Items {
+    get { return items_; }
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 5;
+  private uint roleId_;
+  /// <summary>
+  ///角色 ID，仅用于校验，不作为服务端身份来源
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public uint RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as BuyShopItemReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(BuyShopItemReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ShopId != other.ShopId) return false;
+    if(!items_.Equals(other.items_)) return false;
+    if (RoleId != other.RoleId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ShopId != 0) hash ^= ShopId.GetHashCode();
+    hash ^= items_.GetHashCode();
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ShopId != 0) {
+      output.WriteRawTag(8);
+      output.WriteUInt32(ShopId);
+    }
+    items_.WriteTo(output, _repeated_items_codec);
+    if (RoleId != 0) {
+      output.WriteRawTag(40);
+      output.WriteUInt32(RoleId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ShopId != 0) {
+      output.WriteRawTag(8);
+      output.WriteUInt32(ShopId);
+    }
+    items_.WriteTo(ref output, _repeated_items_codec);
+    if (RoleId != 0) {
+      output.WriteRawTag(40);
+      output.WriteUInt32(RoleId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ShopId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ShopId);
+    }
+    size += items_.CalculateSize(_repeated_items_codec);
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt32Size(RoleId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(BuyShopItemReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ShopId != 0) {
+      ShopId = other.ShopId;
+    }
+    items_.Add(other.items_);
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ShopId = input.ReadUInt32();
+          break;
+        }
+        case 18: {
+          items_.AddEntriesFrom(input, _repeated_items_codec);
+          break;
+        }
+        case 40: {
+          RoleId = input.ReadUInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ShopId = input.ReadUInt32();
+          break;
+        }
+        case 18: {
+          items_.AddEntriesFrom(ref input, _repeated_items_codec);
+          break;
+        }
+        case 40: {
+          RoleId = input.ReadUInt32();
           break;
         }
       }

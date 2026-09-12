@@ -34,6 +34,15 @@ public class CenterRoleCtrl:IContainer
             case NetDefine.CMD_EnterWroldCode:
                 OnEnterWroldHandle(serverBase, basePackage);
                 break;
+            case NetDefine.CMD_SyncKnapsackGridCountCode:
+                OnSyncKnapsackGridCountHandle(serverBase, basePackage);
+                break;
+            case NetDefine.CMD_BuyShopItemCode:
+                OnBuyShopItemHandle(serverBase, basePackage);
+                break;
+            case NetDefine.CMD_SaveRoleDataCode:
+                OnSaveRoleDataHandle(serverBase, basePackage);
+                break;
             
             default:
                 break;
@@ -59,6 +68,68 @@ public class CenterRoleCtrl:IContainer
         RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
         LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
         serverBase.SendData(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
+
+    }
+
+    /// <summary>
+    /// 接收 GameServer 主循环确认后的格子数并写入数据库。
+    /// </summary>
+    private void OnSyncKnapsackGridCountHandle(ServerBase serverBase, BasePackage basePackage)
+    {
+        SyncKnapsackGridCountReq req = SyncKnapsackGridCountReq.Parser.ParseFrom(basePackage.Data);
+        OpenKnapsackGridRet ret = _centRoleModel.SyncKnapsackGridCount(req);
+        serverBase.SendData(basePackage, NetDefine.CMD_SyncKnapsackGridCountCode, ret.ToByteString());
+    }
+
+    /// <summary>
+    /// 接收 GameServer 转发的商城请求。
+    /// 当前中心服没有完成货币扣除和物品发放，所以只返回功能未就绪，不写入购买记录。
+    /// </summary>
+    private void OnBuyShopItemHandle(ServerBase serverBase, BasePackage basePackage)
+    {
+        BuyShopItemReq request;
+        try
+        {
+            request = BuyShopItemReq.Parser.ParseFrom(basePackage.Data);
+        }
+        catch (Google.Protobuf.InvalidProtocolBufferException ex)
+        {
+            LogMsg.Info("中心服商城购买请求解析失败: " + ex.Message, LogMsgType.Error);
+            BuyShopItemRes invalidResponse = new BuyShopItemRes
+            {
+                Error = new ErrorInfo
+                {
+                    Code = CmdCode.InvalidQuantity,
+                    Message = "购买请求格式无效"
+                }
+            };
+            serverBase.SendData(basePackage, NetDefine.CMD_BuyShopItemCode,
+                invalidResponse.ToByteString());
+            return;
+        }
+
+        BuyShopItemRes response = _centRoleModel.ProcessShopPurchase(request);
+        serverBase.SendData(basePackage, NetDefine.CMD_BuyShopItemCode, response.ToByteString());
+    }
+
+    /// <summary>解析 GameServer 角色保存请求并投递数据库任务，网络线程不直接写库。</summary>
+    private static void OnSaveRoleDataHandle(ServerBase serverBase, BasePackage basePackage)
+    {
+        try
+        {
+            SaveRoleDataReq request = SaveRoleDataReq.Parser.ParseFrom(basePackage.Data);
+            DBMgr.Instance.PushTask(new CRoleWriteTask(request, serverBase, basePackage));
+        }
+        catch (Google.Protobuf.InvalidProtocolBufferException ex)
+        {
+            LogMsg.Info("角色保存请求解析失败: " + ex.Message, LogMsgType.Error);
+            SaveRoleDataRet result = new SaveRoleDataRet
+            {
+                CmdCode = CmdCode.ReqParamError,
+                Message = "角色保存请求格式无效"
+            };
+            serverBase.SendData(basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
+        }
     }
 
    

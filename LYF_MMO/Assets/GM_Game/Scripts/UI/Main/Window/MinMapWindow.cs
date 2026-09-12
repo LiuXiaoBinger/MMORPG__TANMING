@@ -23,11 +23,6 @@ public class MinMapWindow : WindowBase
       Debug.Log("_mapsize:"+_mapsize);
       _mapHelp = MinMapHelp.instance;
 
-      if (_mainRoleCtrl == null)
-      {
-         _mainRoleCtrl = Global.Instance.roleCtrlBase;
-
-      }
    }
 
    private void Update()
@@ -41,10 +36,12 @@ public class MinMapWindow : WindowBase
          //箭头
          _imgArrow.transform.localEulerAngles = new Vector3(0,0,360-_mainRoleCtrl.transform.localEulerAngles.y+90);
       }
-      else
-      {
-         _mainRoleCtrl = Global.Instance.roleCtrlBase;
-      }
+   }
+
+   /// <summary>由主界面控制器设置需要跟踪的角色。</summary>
+   public void SetTrackedRole(RoleCtrlBase roleController)
+   {
+      _mainRoleCtrl = roleController;
    }
    
    public void OnPluseBtnClicked()

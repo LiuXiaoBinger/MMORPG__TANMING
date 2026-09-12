@@ -21,10 +21,11 @@ public class RoleKnapsackTable
     //item当前id
     public int curitemid { get; set; }
     
-    //现在背包数量 Knapsacktype,count 背包类型，以及背包数量
-
+    // 背包类型：0 为普通背包，1/2/3 分别为装备、消耗品、材料，四类互相独立。
+    // 旧数据未填该字段时默认值 0，继续按普通背包记录兼容读取。
     public byte roleKnapsack { get; set; } = 0;
-    public byte roleKnapsackcount { get; set; } = 100;
+    // 新角色默认 9x9 共 81 格，Count 的语义是已开启容量而不是物品数量。
+    public byte roleKnapsackcount { get; set; } = 81;
     
     //创建时间
     public DateTime CreateDate { get; set; }

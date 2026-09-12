@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace MMoRpgCommon
 {
 
@@ -14,16 +12,9 @@ public class NpcEntity : global::EntityBase
     public string PrefabPath { get; set; } = string.Empty;
     public string Think { get; set; } = string.Empty;
     public string Talk { get; set; } = string.Empty;
-    public List<NpcShopData> ShopItemList { get; set; } = new List<NpcShopData>();
-}
-
-/// <summary>
-/// NPC 商城条目。使用基础数据类型，避免公共实体依赖客户端或配置程序集。
-/// </summary>
-public class NpcShopData
-{
-    public int ShopID { get; set; }
-    public int LimitType { get; set; }
-    public int LimitCount { get; set; }
+    /// <summary>
+    /// NPC 关联的商店主表 ID；商品明细由 ShopItemInfo.ShopId 关联。
+    /// </summary>
+    public int ShopId { get; set; }
 }
 }

@@ -63,57 +63,6 @@
     public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
-        switch (basePackage.ProtoCode)
-        {
-            case NetDefine.CMD_LoginGameServerCode:
-                OnLoginGameServerResultHandle(seesion, basePackage);
-                break;
-            case NetDefine.CMD_CreateRoleCode:
-                OnCreateRoleResultHandle(seesion, basePackage);
-                break;
-            case NetDefine.CMD_StartGameCode:
-                OnStartGameResultHandle(seesion, basePackage);
-                break;
-        }
-    }
-
-    private void OnStartGameResultHandle(Session seesion, BasePackage basePackage)
-    {
-        StartGameRet ret = StartGameRet.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnStartGameResultHandle::" + ret.ToString());
-        if (ret.CmdCode != CmdCode.Succeed)
-        {
-            seesion.SendError(basePackage,ret.CmdCode);
-            return;
-        }
-        //把结果数据返回给gate
-        seesion.SendData(basePackage);
-    }
-
-    private void OnLoginGameServerResultHandle(Session seesion, BasePackage basePackage)
-    {
-        LoginGameServerRet ret = LoginGameServerRet.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnLGetServerListResultHandle::" + ret.ToString());
-        if (ret.CmdCode != CmdCode.Succeed)
-        {
-            seesion.SendError(basePackage,ret.CmdCode);
-            return;
-        }
-        //把结果数据返回给unity
-        seesion.SendData(basePackage);
-    }
-    
-    //创建角色
-    private void OnCreateRoleResultHandle(Session seesion, BasePackage basePackage)
-    {
-        CreateRoleRet ret = CreateRoleRet.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnCreateRoleResultHandle::" + ret.ToString());
-        if (ret.CmdCode != CmdCode.Succeed)
-        {
-            seesion.SendError(basePackage,ret.CmdCode);
-            return;
-        }
-        //把结果数据返回给unity
-        seesion.SendData(basePackage);
+        GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);
     }
 }

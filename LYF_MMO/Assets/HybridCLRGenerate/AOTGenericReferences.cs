@@ -213,9 +213,12 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Func<int,object,byte>
 	// System.Func<object,System.Threading.Tasks.VoidTaskResult>
 	// System.Func<object,byte>
+	// System.Func<object,int,byte>
 	// System.Func<object,int>
 	// System.Func<object>
 	// System.IObservable<long>
+	// System.IObservable<object>
+	// System.IObserver<object>
 	// System.Nullable<UnityEngine.Vector3>
 	// System.Predicate<GhostEffect.MeshInfo>
 	// System.Predicate<UnityEngine.CombineInstance>
@@ -237,10 +240,27 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Threading.Tasks.ContinuationTaskFromResultTask<System.Threading.Tasks.VoidTaskResult>
 	// System.Threading.Tasks.Task<System.Threading.Tasks.VoidTaskResult>
 	// System.Threading.Tasks.TaskFactory<System.Threading.Tasks.VoidTaskResult>
+	// UniRx.InternalUtil.ImmutableList<object>
+	// UniRx.InternalUtil.ListObserver<object>
 	// UniRx.Observer.Subscribe<long>
+	// UniRx.Observer.Subscribe<object>
 	// UniRx.Observer.Subscribe_<long>
+	// UniRx.Observer.Subscribe_<object>
+	// UniRx.Operators.ISelect<object>
+	// UniRx.Operators.OperatorObservableBase.<>c__DisplayClass3_0<object>
+	// UniRx.Operators.OperatorObservableBase<object>
+	// UniRx.Operators.OperatorObserverBase<object,object>
+	// UniRx.Operators.WhereObservable.<>c__DisplayClass5_0<object>
+	// UniRx.Operators.WhereObservable.Where<object>
+	// UniRx.Operators.WhereObservable.Where_<object>
+	// UniRx.Operators.WhereObservable<object>
+	// UniRx.Subject.Subscription<object>
+	// UniRx.Subject<object>
+	// UnityEngine.Events.InvokableCall<UnityEngine.Vector2>
 	// UnityEngine.Events.InvokableCall<object>
+	// UnityEngine.Events.UnityAction<UnityEngine.Vector2>
 	// UnityEngine.Events.UnityAction<object>
+	// UnityEngine.Events.UnityEvent<UnityEngine.Vector2>
 	// UnityEngine.Events.UnityEvent<object>
 	// UnityEngine.InputSystem.InputBindingComposite<UnityEngine.Vector2>
 	// UnityEngine.InputSystem.InputControl<UnityEngine.Vector2>
@@ -276,6 +296,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// object[] System.Array.Empty<object>()
 		// System.Void System.Array.Resize<UnityEngine.CombineInstance>(UnityEngine.CombineInstance[]&,int)
 		// System.Void System.Array.Sort<HighlightPlus.HighlightEffect.ModelMaterials>(HighlightPlus.HighlightEffect.ModelMaterials[],System.Comparison<HighlightPlus.HighlightEffect.ModelMaterials>)
+		// object System.Linq.Enumerable.FirstOrDefault<object>(System.Collections.Generic.IEnumerable<object>,System.Func<object,bool>)
 		// bool System.Linq.Enumerable.SequenceEqual<object>(System.Collections.Generic.IEnumerable<object>,System.Collections.Generic.IEnumerable<object>)
 		// bool System.Linq.Enumerable.SequenceEqual<object>(System.Collections.Generic.IEnumerable<object>,System.Collections.Generic.IEnumerable<object>,System.Collections.Generic.IEqualityComparer<object>)
 		// System.Void System.Runtime.CompilerServices.AsyncTaskMethodBuilder.AwaitUnsafeOnCompleted<System.Runtime.CompilerServices.TaskAwaiter,ServerListWindow.<GenerateServerListItem>d__5>(System.Runtime.CompilerServices.TaskAwaiter&,ServerListWindow.<GenerateServerListItem>d__5&)
@@ -301,8 +322,11 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// System.Void System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start<ServerListWindow.<GenerateServerListItem>d__5>(ServerListWindow.<GenerateServerListItem>d__5&)
 		// object& System.Runtime.CompilerServices.Unsafe.As<object,object>(object&)
 		// System.Void* System.Runtime.CompilerServices.Unsafe.AsPointer<object>(object&)
+		// System.IObservable<object> UniRx.Observable.Where<object>(System.IObservable<object>,System.Func<object,bool>)
 		// System.IDisposable UniRx.ObservableExtensions.Subscribe<long>(System.IObservable<long>,System.Action<long>)
+		// System.IDisposable UniRx.ObservableExtensions.Subscribe<object>(System.IObservable<object>,System.Action<object>)
 		// System.IObserver<long> UniRx.Observer.CreateSubscribeObserver<long>(System.Action<long>,System.Action<System.Exception>,System.Action)
+		// System.IObserver<object> UniRx.Observer.CreateSubscribeObserver<object>(System.Action<object>,System.Action<System.Exception>,System.Action)
 		// System.Void* Unity.Collections.LowLevel.Unsafe.UnsafeUtility.AddressOf<UnityEngine.Vector2>(UnityEngine.Vector2&)
 		// int Unity.Collections.LowLevel.Unsafe.UnsafeUtility.SizeOf<UnityEngine.Vector2>()
 		// object UnityEngine.Component.GetComponent<object>()
@@ -323,8 +347,11 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// UnityEngine.Vector2 UnityEngine.InputSystem.InputActionState.ApplyProcessors<UnityEngine.Vector2>(int,UnityEngine.Vector2,UnityEngine.InputSystem.InputControl<UnityEngine.Vector2>)
 		// UnityEngine.Vector2 UnityEngine.InputSystem.InputActionState.ReadValue<UnityEngine.Vector2>(int,int,bool)
 		// object UnityEngine.Object.FindAnyObjectByType<object>(UnityEngine.FindObjectsInactive)
+		// object UnityEngine.Object.FindObjectOfType<object>(bool)
 		// object[] UnityEngine.Object.FindObjectsByType<object>(UnityEngine.FindObjectsInactive,UnityEngine.FindObjectsSortMode)
 		// object UnityEngine.Object.Instantiate<object>(object)
+		// object UnityEngine.Object.Instantiate<object>(object,UnityEngine.Transform)
+		// object UnityEngine.Object.Instantiate<object>(object,UnityEngine.Transform,bool)
 		// object[] UnityEngine.Resources.ConvertObjects<object>(UnityEngine.Object[])
 		// object UnityEngine.Resources.GetBuiltinResource<object>(string)
 		// object UnityEngine.Resources.Load<object>(string)

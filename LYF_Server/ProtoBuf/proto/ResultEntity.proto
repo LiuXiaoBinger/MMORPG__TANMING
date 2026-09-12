@@ -15,6 +15,20 @@ enum CmdCode{
 	UserOftenLogin=11;//用户频繁登录
 	VarifyError= 12;//验证码错误
 	RoleNotExist = 13;//角色不存在
+	FeatureNotReady = 14;//权威业务事务尚未接入
+	DuplicateRequest = 15;//相同请求号对应不同请求内容
+	NotEnoughCurrency = 16;//货币不足
+	ShopItemNotFound = 17;//商城商品不存在
+	PurchaseLimitReached = 18;//超过购买限制
+	BagFull = 19;//背包空间不足
+	InvalidSession = 20;//会话或角色映射无效
+	InvalidQuantity = 21;//商品列表或购买数量非法
+	InvalidShop = 22;//商店或 NPC 归属非法
+	TransactionFailed = 23;//权威购买事务失败
+	InsufficientItems = 24;//物品不足
+	IncorrectBackpackType = 25;//背包类型错误
+	ItemNotExist = 26;//物品不存在
+	ItemNotEnough = 27;//物品不足
 }
 
 message RegistVarifyRet{
@@ -24,6 +38,17 @@ message RegistVarifyRet{
 
 message ErrMsg{
 	CmdCode cmd_code = 1;//错误码
+}
+
+// 业务响应的结构化错误信息，客户端以 code 判断结果，message 仅用于诊断显示。
+message ErrorInfo{
+	CmdCode code = 1;//机器可判断的错误码
+	string message = 2;//可选诊断信息
+}
+
+// 商城购买响应。
+message BuyShopItemRes{
+	ErrorInfo error = 1;//购买处理结果
 }
 
 message RegistRet{
@@ -66,6 +91,8 @@ message CreateRoleRet{
 message StartGameRet{
 	CmdCode cmd_code = 1;//表示请求是否成功
 	MainRoleInfo main_role_info = 2;//主角色完整信息
+	reserved 3, 4, 5;//背包容量和旧货币已统一放入 RoleKanpsackInfo
+	reserved "opened_knapsack_grid_count", "kanpsack_type_count_lst";
 }
 
 // 所有角色共用的基础属性，对应 RoleBaseArrtTable。
@@ -123,7 +150,8 @@ message RoleBaseInfo{
 message MainRoleInfo{
 	RoleBaseInfo base_info = 1;  //通用角色基础属性
 	int32 account_id = 2;         //所属账号ID
-	int32 money = 3;              //角色货币
+	reserved 3;
+	reserved "money";
 
 	int32 exp = 4;                //当前经验值
 	int32 skill_up_point = 5;     //技能升级点
@@ -147,22 +175,61 @@ message RoleSkillInfo
 message RoleKanpsackInfoRet
 {
 	CmdCode cmd_code = 1;//表示请求是否成功
-	repeated Kanpsacktypecount kanpsack_type_count_lst=2;//各背包物品数量
-	repeated RoleItemInfo role_pack_all=3;//角色背包总览：装备、消耗品、材料
-	repeated RoleItemInfo role_pack_equip=4;//角色装备背包
-	repeated RoleItemInfo role_pack_consume=5;//角色消耗品背包
-	repeated RoleItemInfo role_pack_material=6;//角色材料背包
-	repeated RoleItemInfo role_currt_equip_pack=7;//角色当前已装备栏
+	RoleKanpsackInfo role_kanpsack_info = 2;//角色背包、货币和持久化版本信息
+}
+
+// 角色背包完整信息，包含物品背包、装备栏、容量、货币和持久化版本。
+message RoleKanpsackInfo
+{
+	repeated Kanpsacktypecount kanpsack_type_count_lst = 1;//各背包已开启格子容量
+	repeated RoleItemInfo role_pack_plain = 2;//角色普通背包，不包含装备、消耗品和材料
+	repeated RoleItemInfo role_pack_equip = 3;//角色装备背包
+	repeated RoleItemInfo role_pack_consume = 4;//角色消耗品背包
+	repeated RoleItemInfo role_pack_material = 5;//角色材料背包
+	repeated RoleItemInfo role_currt_equip_pack = 6;//角色当前已装备栏
+	int64 save_version = 7;//CenterServer 已持久化的物品版本
+  repeated RoleItemInfo role_virtual_item_pack = 8;//角色虚拟物品，不占用普通背包格子
+  repeated RoleCountInfo role_count_info_list = 9;//角色商城、副本次数
+}
+
+// 角色商城和副本次数的通用登录与持久化快照。
+message RoleCountInfo
+{
+  int32 action = 1;//次数行为，对应 RoleCountAction
+  int32 count_key = 2;//商品 GoodsId 或副本配置 ID
+  int64 count = 3;//已使用次数
+  int64 last_refresh_time = 4;//上次刷新时间的 UTC ticks
+}
+
+// 角色登录进入世界时返回的商城购买次数记录。
+message RoleShopPurchaseInfoRet
+{
+	CmdCode cmd_code = 1;//查询结果
+	repeated RoleShopPurchaseInfo purchase_info_list = 2;//角色已保存的商城购买记录
+}
+
+// 一条角色商城商品购买次数记录，对应 RoleShopPurchaseTable。
+message RoleShopPurchaseInfo
+{
+	reserved 2;
+	reserved "npc_id";
+	int32 role_id = 1;//角色 ID
+	int32 goods_id = 3;//商品配置 ID，对应 ShopItemInfo.GoodsId
+	string daily_purchase_date = 4;//每日限购计数所属日期，使用 ISO-8601 文本
+	int32 daily_purchase_count = 5;//当日已购买次数
+	int32 total_purchase_count = 6;//永久累计购买次数
+	string create_date = 7;//记录创建时间，使用 ISO-8601 文本
+	string update_date = 8;//记录最后更新时间，使用 ISO-8601 文本
 }
 
 message Kanpsacktypecount
 {
 	int32 type =1;//包类型
-	int32 count =2;//已经开票该包裹的数量
+	int32 count =2;//该包裹已开启的格子数量
 }
 message RoleItemInfo
 {
-	int32 item_id = 1;//物品id
+	int64 item_uid = 1;//物品实例 UID，全链路禁止截断为 32 位
 	int32 count = 2;//物品数量
 	int32 role_id = 3;//角色id
 	int32 item_type_id = 4;//物品配置id
@@ -170,11 +237,16 @@ message RoleItemInfo
 	int32 bag_index = 6;//所在背包位置
 	RoleEquipItemInfo equip_info = 7;//装备信息，非装备物品为空
 	RoleEquipGeneInfo equip_gene_info = 8;//装备词条信息，非装备物品为空
+	int32 item_sign = 9;//物品状态位
+	int32 money_type = 10;//买入价格使用的货币类型
+	int64 total_price = 11;//当前堆叠的总买入价格
+	int64 create_time_utc_ticks = 12;//物品创建时间的 UTC ticks
+	int64 expire_time_utc_ticks = 13;//物品过期时间的 UTC ticks，0 表示永久
 }
 
 message RoleEquipItemInfo
 {
-	int32 item_id = 1;//物品id
+	int64 item_uid = 1;//物品实例 UID
 	int32 role_id = 2;//角色id
 	int32 strengthen_level = 3;//装备强化等级，非装备时为0
 	int32 equip_type = 4;//装备类别
@@ -182,7 +254,7 @@ message RoleEquipItemInfo
 
 message RoleEquipGeneInfo
 {
-	int32 item_id = 1;//物品id
+	int64 item_uid = 1;//物品实例 UID
 	int32 role_id = 2;//角色id
 	int32 gene_id0 = 3;//装备词条0
 	int32 gene_id1 = 4;//装备词条1
@@ -192,3 +264,54 @@ message RoleEquipGeneInfo
 	int32 gene_value2 = 8;//装备词条2数值
 }
 
+// CenterServer 在数据库事务提交后返回的角色物品保存确认。
+message SaveRoleDataRet
+{
+	CmdCode cmd_code = 1;//保存结果
+	int32 role_id = 2;//角色 ID
+	int64 version = 3;//已确认或拒绝的请求版本
+	string message = 4;//失败诊断信息，成功时为空
+	int64 persisted_version = 5;//中心服当前已持久化版本，拒绝旧版本时用于对齐状态
+}
+
+// 背包开格子结果。无论成功或失败，都会返回服务器当前已开启的数量。
+message OpenKnapsackGridRet
+{
+	CmdCode cmd_code = 1;//处理结果
+	int32 role_id = 2;//角色ID
+	int32 current_opened_grid_count = 3;//服务器当前已开启的背包格子数量
+	int32 knapsack_type = 4;//背包类型，对应 KnapsackType
+}
+// 一般表示什么物品数量变化
+message CountItemInfo{
+	int64 type = 1;
+	int64 id = 2;
+	int32 count = 3;
+	int64 cd_time_stamp = 4;
+}
+//通知客户端数量变化
+message GetCountInfoRes{
+	CmdCode cmd_code = 1;
+	repeated CountItemInfo item_list = 2;
+}
+message CountUpdateSyncInfo{
+	CmdCode cmd_code = 1;
+	repeated CountItemInfo item_list = 2;
+}
+message MapKey64Value32
+{
+		uint64 key = 1;
+		int32 val = 2;
+}
+message UpdateItem
+{
+	repeated MapKey64Value32 delete_list = 1;//需要删除的itme
+	int64 update_time = 2;
+	repeated RoleItemInfo item_list = 3;
+}
+
+message UpdateItemRet
+{
+	CmdCode cmd_code = 1;
+	UpdateItem ItemDate = 2;
+}

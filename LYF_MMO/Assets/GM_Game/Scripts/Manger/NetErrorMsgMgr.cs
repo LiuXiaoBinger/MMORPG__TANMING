@@ -24,8 +24,25 @@ public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
     /// <param name="data"></param>
     private void OnErrorMsgHandle(ByteString data)
     {
+        if (data == null || data.Length == 0)
+        {
+            Debug.LogWarning("收到空的通用错误码消息");
+            TipsMgr.Instance.ShowSystemTips("请求失败，请稍后重试");
+            return;
+        }
 
-        ErrMsg errMsg = ErrMsg.Parser.ParseFrom(data);
+        ErrMsg errMsg;
+        try
+        {
+            errMsg = ErrMsg.Parser.ParseFrom(data);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning($"解析通用错误码消息失败：{exception.Message}");
+            TipsMgr.Instance.ShowSystemTips("请求失败，请稍后重试");
+            return;
+        }
+
         switch (errMsg.CmdCode)
         {
             case CmdCode.AcctExist:
@@ -65,7 +82,11 @@ public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
                 TipsMgr.Instance.ShowSystemTips("验证码错误");
                 break;
             case CmdCode.RoleNotExist:
-                TipsMgr.Instance.ShowSystemTips("验证码错误");
+                TipsMgr.Instance.ShowSystemTips("角色不存在");
+                break;
+            default:
+                // GateServer 只发送通用错误码时，未知或后续新增错误码也必须反馈给玩家。
+                TipsMgr.Instance.ShowSystemTips($"请求失败，错误码：{errMsg.CmdCode}");
                 break;
         }
 

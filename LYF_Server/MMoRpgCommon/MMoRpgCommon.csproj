@@ -12,6 +12,7 @@
         <AssemblyName>MMoRpgCommon</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -72,14 +73,30 @@
         <Compile Include="EntityData\Gene\NormalGene\ZhuXinGene.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\DamageBuff\DamageBuffGeneBase.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\TimeBuffGeneBase.cs" />
-        <Compile Include="EntityData\Item\EquipBase.cs" />
-        <Compile Include="EntityData\Item\ItemBase.cs" />
-        <Compile Include="EntityData\Item\ItemFactory.cs" />
-        <Compile Include="enum\BackPackEnum.cs" />
+    <Compile Include="enum\BackPackEnum.cs" />
         <Compile Include="enum\EquipEnum.cs" />
-        <Compile Include="enum\ItemMainType.cs" />
+        <Compile Include="enum\Item.cs" />
+        <Compile Include="enum\ChangeReason.cs" />
+        <Compile Include="enum\OnlineRoleState.cs" />
+        <Compile Include="enum\RExtraParamType.cs" />
         <Compile Include="enum\JobEnum.cs" />
+        <Compile Include="enum\ShopType.cs" />
+        <Compile Include="enum\Role.cs" />
+        <Compile Include="enum\RoleCountAction.cs" />
+        <Compile Include="enum\Time.cs" />
+        <Compile Include="Time\ITimer.cs" />
+        <Compile Include="Time\CTimerMgr.cs" />
+        <Compile Include="Item\EquipBase.cs" />
+        <Compile Include="Item\ItemBase.cs" />
+        <Compile Include="Item\ItemFactory.cs" />
+        <Compile Include="Item\ItemDesc.cs" />
+        <Compile Include="Item\ItemExtraData.cs" />
+        <Compile Include="Item\itemstrust.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Role\RoleCount.cs" />
+        <Compile Include="shop\ShopItem.cs" />
+        <Compile Include="UID\UIDHelper.cs" />
+        <Compile Include="UID\UIDType.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="EntityData\Gene\SpecialGene\DamageBuff\.gitkeep" />

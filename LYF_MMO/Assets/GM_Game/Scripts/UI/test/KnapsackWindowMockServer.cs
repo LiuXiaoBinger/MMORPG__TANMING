@@ -12,19 +12,31 @@ public class KnapsackWindowMockServer : MonoBehaviour
     [SerializeField, Header("背包窗口")] private KnapsackWindow _knapsackWindow;
     [SerializeField, Header("启动时模拟服务器回包")] private bool _simulateOnStart = true;
     [SerializeField, Header("模拟回包延迟秒"), Min(0f)] private float _delaySeconds = 0.2f;
-    [SerializeField, Header("每个独立包裹的模拟物品数"), Min(1)] private int _itemsPerPack = 500;
-    [SerializeField, Header("模拟添加物品按钮")] private Button _btnAddMockItem;
-    [SerializeField, Header("点击时追加到的包裹")] private KnapsackType _addItemPack = KnapsackType.RolePackAll;
-    [SerializeField, Header("每次点击添加数量（当前 9 列，默认添加一整行）"), Min(1)] private int _addItemCountPerClick = 9;
+    [SerializeField, Header("每个独立包裹的模拟物品数"), Min(0)] private int _itemsPerPack = 12;
+    [SerializeField, Header("模拟开格子按钮")] private Button _btnAddMockItem;
+    [SerializeField, Header("点击时扩容的包裹")] private KnapsackType _addItemPack = KnapsackType.RolePackPlain;
+    [SerializeField, Header("每次点击增加格子数（当前 9 列，默认一整行）"), Min(1)] private int _addItemCountPerClick = 9;
 
     private RoleKanpsackInfoRet _mockResponse;
+    /// <summary>测试专用客户端角色，不写入正式角色世界。</summary>
+    private ClientRole _clientRole;
+    /// <summary>测试专用背包控制器，验证正式组件到窗口的数据流。</summary>
+    private KnapsackCtrl _knapsackCtrl;
 
     private void Awake()
     {
         if (_btnAddMockItem == null)
         {
-            // 允许场景中的测试按钮通过固定名称自动绑定，避免每次替换预制体都要手动拖引用。
-            Button[] buttons = GetComponentsInChildren<Button>(true);
+            // 仅在测试组件内按固定名称查找用户已放置的按钮，不创建运行时按钮。
+            Button[] buttons;
+            if (_knapsackWindow == null)
+            {
+                buttons = GetComponentsInChildren<Button>(true);
+            }
+            else
+            {
+                buttons = _knapsackWindow.GetComponentsInChildren<Button>(true);
+            }
             for (int index = 0; index < buttons.Length; index++)
             {
                 if (buttons[index].name == "MockAddItemButton")
@@ -35,101 +47,27 @@ public class KnapsackWindowMockServer : MonoBehaviour
             }
         }
 
-        if (_btnAddMockItem == null)
-        {
-            _btnAddMockItem = CreateRuntimeAddButton();
-        }
-
         if (_btnAddMockItem != null)
         {
-            _btnAddMockItem.onClick.AddListener(AddMockItems);
+            _btnAddMockItem.onClick.AddListener(AddMockSlots);
         }
-    }
-
-    private Button CreateRuntimeAddButton()
-    {
-        if (_knapsackWindow == null)
-        {
-            return null;
-        }
-
-        Transform bg = _knapsackWindow.transform.Find("BG");
-        if (bg == null)
-        {
-            return null;
-        }
-
-        GameObject buttonObject = new GameObject(
-            "MockAddItemButton",
-            typeof(RectTransform),
-            typeof(CanvasRenderer),
-            typeof(Image),
-            typeof(Button));
-        buttonObject.layer = 5;
-        buttonObject.transform.SetParent(bg, false);
-
-        RectTransform buttonRect = buttonObject.transform as RectTransform;
-        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
-        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
-        buttonRect.pivot = new Vector2(0.5f, 0.5f);
-        buttonRect.anchoredPosition = new Vector2(-80f, -282f);
-        buttonRect.sizeDelta = new Vector2(110f, 52f);
-
-        Image image = buttonObject.GetComponent<Image>();
-        Transform styleSource = bg.Find("Btn_Kuaijie");
-        Image sourceImage = styleSource == null ? null : styleSource.GetComponent<Image>();
-        if (sourceImage != null)
-        {
-            image.sprite = sourceImage.sprite;
-            image.type = sourceImage.type;
-            image.material = sourceImage.material;
-            image.color = sourceImage.color;
-        }
-        else
-        {
-            image.color = new Color(0.19f, 0.52f, 0.88f, 1f);
-        }
-
-        Button button = buttonObject.GetComponent<Button>();
-        button.targetGraphic = image;
-
-        GameObject labelObject = new GameObject(
-            "Label",
-            typeof(RectTransform),
-            typeof(TMPro.TextMeshProUGUI));
-        labelObject.layer = 5;
-        labelObject.transform.SetParent(buttonObject.transform, false);
-        RectTransform labelRect = labelObject.transform as RectTransform;
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = Vector2.zero;
-        labelRect.offsetMax = Vector2.zero;
-
-        TMPro.TextMeshProUGUI label = labelObject.GetComponent<TMPro.TextMeshProUGUI>();
-        label.text = "模拟添加";
-        label.fontSize = 18f;
-        label.alignment = TMPro.TextAlignmentOptions.Center;
-        label.color = Color.white;
-        label.raycastTarget = false;
-
-        TMPro.TMP_Text[] sourceTexts = bg.GetComponentsInChildren<TMPro.TMP_Text>(true);
-        for (int index = 0; index < sourceTexts.Length; index++)
-        {
-            if (sourceTexts[index] != label)
-            {
-                label.font = sourceTexts[index].font;
-                break;
-            }
-        }
-
-        return button;
     }
 
     private void OnDestroy()
     {
         if (_btnAddMockItem != null)
         {
-            _btnAddMockItem.onClick.RemoveListener(AddMockItems);
+            _btnAddMockItem.onClick.RemoveListener(AddMockSlots);
+        }
+        if (_knapsackCtrl != null)
+        {
+            _knapsackCtrl.Dispose();
+            _knapsackCtrl = null;
+        }
+        if (_clientRole != null)
+        {
+            _clientRole.Dispose();
+            _clientRole = null;
         }
     }
 
@@ -158,14 +96,15 @@ public class KnapsackWindowMockServer : MonoBehaviour
         }
 
         _mockResponse = CreateMockResponse();
-        _knapsackWindow.ReFreshUI(_mockResponse);
+        EnsureTestRole();
+        _clientRole.LoadRoleData(_mockResponse);
     }
 
     /// <summary>
-    /// 供 UI 按钮和 Inspector 右键菜单调用：在指定独立包裹末尾模拟服务器新增物品。
+    /// 供测试按钮和 Inspector 右键菜单调用：模拟服务器确认当前包裹新增一整行容量。
     /// </summary>
-    [ContextMenu("模拟添加物品")]
-    public void AddMockItems()
+    [ContextMenu("模拟开一行背包格子")]
+    public void AddMockSlots()
     {
         if (_knapsackWindow == null)
         {
@@ -173,43 +112,61 @@ public class KnapsackWindowMockServer : MonoBehaviour
             return;
         }
 
-        if (_mockResponse == null)
+        EnsureTestRole();
+        RoItemComponent itemComponent;
+        if (!_clientRole.TryGetComponent(out itemComponent))
         {
-            _mockResponse = CreateMockResponse();
+            return;
         }
 
-        int[] itemTypeIds = GetMockItemTypeIds(_addItemPack);
-        int startBagIndex = GetPackItems(_mockResponse, _addItemPack).Count;
-        for (int offset = 0; offset < _addItemCountPerClick; offset++)
+        int currentCount = itemComponent.GetOpenedGridCount(_addItemPack);
+        itemComponent.SetOpenedGridCount(_addItemPack,
+            currentCount + Mathf.Max(1, _addItemCountPerClick));
+    }
+
+    /// <summary>创建测试角色并把背包控制器绑定到角色物品组件。</summary>
+    private void EnsureTestRole()
+    {
+        if (_clientRole != null)
         {
-            int bagIndex = startBagIndex + offset;
-            int itemTypeId = itemTypeIds[bagIndex % itemTypeIds.Length];
-            AddItemToPack(_mockResponse, CreateItem(_addItemPack, bagIndex, itemTypeId, bagIndex % 99 + 1));
+            return;
         }
 
-        UpdatePackCount(_mockResponse, _addItemPack);
-        _knapsackWindow.ReFreshUI(_mockResponse);
+        MainRoleInfo roleInfo = new MainRoleInfo
+        {
+            BaseInfo = new RoleBaseInfo
+            {
+                RoleId = 1,
+                Nickname = "背包测试角色"
+            }
+        };
+        _clientRole = new ClientRole(roleInfo);
+        _knapsackCtrl = new KnapsackCtrl(_knapsackWindow);
+        _knapsackCtrl.BindRole(_clientRole);
     }
 
     private RoleKanpsackInfoRet CreateMockResponse()
     {
         RoleKanpsackInfoRet response = new RoleKanpsackInfoRet
         {
-            CmdCode = CmdCode.Succeed
+            CmdCode = CmdCode.Succeed,
+            RoleKanpsackInfo = new RoleKanpsackInfo()
         };
 
-        // 五个列表彼此独立：全部包裹不再包含装备、消耗品或材料包裹中的对象。
-        PopulatePack(response, KnapsackType.RolePackAll, GetMockItemTypeIds(KnapsackType.RolePackAll));
-        PopulatePack(response, KnapsackType.RolePackEquip, GetMockItemTypeIds(KnapsackType.RolePackEquip));
-        PopulatePack(response, KnapsackType.RolePackConsume, GetMockItemTypeIds(KnapsackType.RolePackConsume));
-        PopulatePack(response, KnapsackType.RolePackMaterial, GetMockItemTypeIds(KnapsackType.RolePackMaterial));
-        PopulatePack(response, KnapsackType.RoleCurrtEquipPack, GetMockItemTypeIds(KnapsackType.RoleCurrtEquipPack));
+        RoleKanpsackInfo info = response.RoleKanpsackInfo;
 
-        AddPackCount(response, KnapsackType.RolePackAll, response.RolePackAll.Count);
-        AddPackCount(response, KnapsackType.RolePackEquip, response.RolePackEquip.Count);
-        AddPackCount(response, KnapsackType.RolePackConsume, response.RolePackConsume.Count);
-        AddPackCount(response, KnapsackType.RolePackMaterial, response.RolePackMaterial.Count);
-        AddPackCount(response, KnapsackType.RoleCurrtEquipPack, response.RoleCurrtEquipPack.Count);
+        // 五个列表彼此独立：全部包裹不再包含装备、消耗品或材料包裹中的对象。
+        PopulatePack(info, KnapsackType.RolePackPlain, GetMockItemTypeIds(KnapsackType.RolePackPlain));
+        PopulatePack(info, KnapsackType.RolePackEquip, GetMockItemTypeIds(KnapsackType.RolePackEquip));
+        PopulatePack(info, KnapsackType.RolePackConsume, GetMockItemTypeIds(KnapsackType.RolePackConsume));
+        PopulatePack(info, KnapsackType.RolePackMaterial, GetMockItemTypeIds(KnapsackType.RolePackMaterial));
+        PopulatePack(info, KnapsackType.RoleCurrtEquipPack, GetMockItemTypeIds(KnapsackType.RoleCurrtEquipPack));
+
+        AddPackCount(info, KnapsackType.RolePackPlain, GetInitialCapacity(info.RolePackPlain));
+        AddPackCount(info, KnapsackType.RolePackEquip, GetInitialCapacity(info.RolePackEquip));
+        AddPackCount(info, KnapsackType.RolePackConsume, GetInitialCapacity(info.RolePackConsume));
+        AddPackCount(info, KnapsackType.RolePackMaterial, GetInitialCapacity(info.RolePackMaterial));
+        AddPackCount(info, KnapsackType.RoleCurrtEquipPack, GetInitialCapacity(info.RoleCurrtEquipPack));
 
         return response;
     }
@@ -229,24 +186,7 @@ public class KnapsackWindowMockServer : MonoBehaviour
         }
     }
 
-    private static IList<RoleItemInfo> GetPackItems(RoleKanpsackInfoRet response, KnapsackType type)
-    {
-        switch (type)
-        {
-            case KnapsackType.RolePackEquip:
-                return response.RolePackEquip;
-            case KnapsackType.RolePackConsume:
-                return response.RolePackConsume;
-            case KnapsackType.RolePackMaterial:
-                return response.RolePackMaterial;
-            case KnapsackType.RoleCurrtEquipPack:
-                return response.RoleCurrtEquipPack;
-            default:
-                return response.RolePackAll;
-        }
-    }
-
-    private void PopulatePack(RoleKanpsackInfoRet response, KnapsackType type, int[] itemTypeIds)
+    private void PopulatePack(RoleKanpsackInfo response, KnapsackType type, int[] itemTypeIds)
     {
         for (int bagIndex = 0; bagIndex < _itemsPerPack; bagIndex++)
         {
@@ -256,13 +196,13 @@ public class KnapsackWindowMockServer : MonoBehaviour
         }
     }
 
-    private static void AddItemToPack(RoleKanpsackInfoRet response, RoleItemInfo item)
+    private static void AddItemToPack(RoleKanpsackInfo response, RoleItemInfo item)
     {
         // 只写入物品所属的那个包裹列表，禁止跨包裹追加。
         switch ((KnapsackType)item.BagType)
         {
-            case KnapsackType.RolePackAll:
-                response.RolePackAll.Add(item);
+            case KnapsackType.RolePackPlain:
+                response.RolePackPlain.Add(item);
                 break;
             case KnapsackType.RolePackEquip:
                 response.RolePackEquip.Add(item);
@@ -285,7 +225,7 @@ public class KnapsackWindowMockServer : MonoBehaviour
     {
         return new RoleItemInfo
         {
-            ItemId = itemTypeId * 100 + bagIndex,
+            ItemUid = itemTypeId * 100 + bagIndex,
             ItemTypeId = itemTypeId,
             Count = count,
             RoleId = 1,
@@ -294,7 +234,7 @@ public class KnapsackWindowMockServer : MonoBehaviour
         };
     }
 
-    private static void AddPackCount(RoleKanpsackInfoRet response, KnapsackType type, int count)
+    private static void AddPackCount(RoleKanpsackInfo response, KnapsackType type, int count)
     {
         response.KanpsackTypeCountLst.Add(new Kanpsacktypecount
         {
@@ -303,19 +243,18 @@ public class KnapsackWindowMockServer : MonoBehaviour
         });
     }
 
-    private static void UpdatePackCount(RoleKanpsackInfoRet response, KnapsackType type)
+    /// <summary>
+    /// Mock 容量至少为 81，且不得小于已生成物品占用的最高格子位置。
+    /// </summary>
+    private static int GetInitialCapacity(IList<RoleItemInfo> itemList)
     {
-        int count = GetPackItems(response, type).Count;
-        for (int index = 0; index < response.KanpsackTypeCountLst.Count; index++)
+        int capacity = 81;
+        for (int index = 0; index < itemList.Count; index++)
         {
-            Kanpsacktypecount packCount = response.KanpsackTypeCountLst[index];
-            if (packCount.Type == (int)type)
-            {
-                packCount.Count = count;
-                return;
-            }
+            capacity = Mathf.Max(capacity, itemList[index].BagIndex + 1);
         }
 
-        AddPackCount(response, type, count);
+        return capacity;
     }
+
 }

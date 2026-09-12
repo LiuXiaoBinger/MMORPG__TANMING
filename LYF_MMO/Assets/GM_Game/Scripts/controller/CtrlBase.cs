@@ -39,9 +39,9 @@ public class CtrlBase : IDisposable
         if (!_view.gameObject.activeSelf) { _view.Show(); }
         _view.ShowMainWindow(windowType,obj);
     }
-    public void Dispose()
+    public virtual void Dispose()
     {
-        // TODO 在此释放托管资源
+        // 子控制器在这里注销网络、输入和视图事件。
     }
     public virtual void RefreshWindow(WindowType windowType, Object obj=null)
     {

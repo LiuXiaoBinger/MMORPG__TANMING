@@ -8,13 +8,13 @@ using SqlSugar;
 internal class ItemTable
 {
     /// <summary>
-    /// 物品ID，与 RoleID 组成复合主键；不同角色之间可以重复。
+    /// 物品实例唯一ID，与 RoleID 组成复合主键；不同角色之间可以重复。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
-    public int ItemID { get; set; }
+    public long ItemUID { get; set; }
 
     /// <summary>
-    /// 所属角色ID，与 ItemID 组成复合主键，对应 RoleTable.Id。
+    /// 所属角色ID，与 ItemUID 组成复合主键，对应 RoleTable.Id。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public int RoleID { get; set; }
@@ -39,10 +39,23 @@ internal class ItemTable
     /// </summary>
     public int count { get; set; }
 
+    /// <summary>物品绑定等运行时状态位。</summary>
+    public int ItemSign { get; set; }
+
+    /// <summary>买入价格使用的货币类型。</summary>
+    public int MoneyType { get; set; }
+
+    /// <summary>当前堆叠物品的总买入价格。</summary>
+    public long TotalPrice { get; set; }
+
     /// <summary>
     /// 创建时间。
     /// </summary>
     public DateTime CreateDate { get; set; }
+
+    /// <summary>物品过期时间，空值表示永久有效。</summary>
+    [SugarColumn(IsNullable = true)]
+    public DateTime? ExpireDate { get; set; }
 
     /// <summary>
     /// 更新时间。

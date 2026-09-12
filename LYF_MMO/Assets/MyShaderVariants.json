@@ -1,6 +1,6 @@
 {
-    "ShaderTotalCount": 72,
-    "VariantTotalCount": 160,
+    "ShaderTotalCount": 77,
+    "VariantTotalCount": 165,
     "ShaderVariantInfos": [
         {
             "AssetPath": "Resources/unity_builtin_extra",
@@ -1659,6 +1659,71 @@
                     "PassType": 8,
                     "Keywords": [
                         "SHADOWS_DEPTH"
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/artres/Resources/Shader/RO/UI/ROUI__beta154.shader",
+            "ShaderName": "RO/UI/ETC2",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/artres/Resources/Shader/RO/UI/ROTextOutLine__beta153.shader",
+            "ShaderName": "RO/UI/TextOutLine",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/artres/Resources/Shader/RO/UI/ROUIEmpty__beta153.shader",
+            "ShaderName": "RO/UI/Empty",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/artres/Resources/Shader/RO/UI/ROUIRT__beta153.shader",
+            "ShaderName": "RO/UI/Render Texture",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/artres/Resources/Shader/TMP/TMP_SDF.shader",
+            "ShaderName": "TextMeshPro/Distance Field",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
                     ]
                 }
             ]

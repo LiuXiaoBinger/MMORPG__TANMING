@@ -1,58 +1,83 @@
-using System.Collections;
 using System.Collections.Generic;
-using Google.Protobuf.Collections;
 using TMPro;
 using UnityEngine;
-using YooAsset;
 
-/**
-* Title:
-* Descrpiton:
-*/
-
+/// <summary>
+/// 技能列表窗口，只负责展示控制器提供的技能数据。
+/// </summary>
 public class SkillInfoWindow : WindowBase
 {
-   [SerializeField, Header("技能列表父组件")] private Transform _content;
+    [SerializeField, Header("技能列表父组件")] private Transform _content;
+    [SerializeField, Header("职业")] private TMP_Text _texJob;
+    [SerializeField, Header("技能升级点")] private TMP_Text _texPoint;
 
-   [SerializeField, Header("职业")] private TMP_Text _texJob;
-   [SerializeField,Header("技能升级点")] private TMP_Text _texPoint;
+    private readonly List<GameObject> _skillItems = new List<GameObject>();
+    private int _listVersion;
 
+    public override void ReFreshUI(object obj)
+    {
+        List<SkillViewData> skills = obj as List<SkillViewData>;
+        if (skills == null)
+        {
+            return;
+        }
+        ClearSkillItems();
+        _listVersion++;
+        for (int index = 0; index < skills.Count; index++)
+        {
+            AddSkillItem(skills[index], _listVersion);
+        }
+    }
 
-   private void Start()
-   {
-      
-   }
-   public  override void ReFreshUI(object obj)
-   {
-      MainRoleInfo roleInfo = Global.Instance.mainRoleInfo;
-      if (roleInfo != null)
-      {
-         _texJob.text = ConstDefine.RoleJobName[roleInfo.BaseInfo.JobId];
-         _texPoint.text = roleInfo.BaseInfo.Level.ToString();
-      }
-      //根据服务端返回所学技能信息 更新ui
-      //todo
-      RepeatedField<RoleSkillInfo> roleSkillInfoList = obj as RepeatedField<RoleSkillInfo>;
-      if (roleSkillInfoList != null)
-      {
-         Global.Instance.YooPackage.LoadAssetAsync($"{ConstDefine.PrefabPath}UIPrefabs/SkillItemWidget").Completed +=
-            (AssetOperationHandle handle) =>
+    /// <summary>更新技能窗口顶部的职业和可用点数。</summary>
+    public void SetHeader(string jobName, int availablePoints)
+    {
+        if (_texJob != null)
+        {
+            _texJob.text = jobName;
+        }
+        if (_texPoint != null)
+        {
+            _texPoint.text = availablePoints.ToString();
+        }
+    }
+
+    private void AddSkillItem(SkillViewData skill, int listVersion)
+    {
+        ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/SkillItemWidget", itemObject =>
+        {
+            if (listVersion != _listVersion)
             {
-               for (int i = 0; i < roleSkillInfoList.Count; i++)
-               {
-                  GameObject obj = handle.InstantiateSync();
-                  if (obj != null)
-                  {
-                     // 将技能槽放入技能栏父节点下。
-                     obj.SetParent(_content);
-                  }
-                  SkillItemWidget slot = obj.GetComponent<SkillItemWidget>();
-                  if (slot != null)
-                  {
-                     slot.RefreshUI(roleSkillInfoList[i]);
-                  }
-               }
-            };
-      }
-   }
+                if (itemObject != null)
+                {
+                    Destroy(itemObject);
+                }
+                return;
+            }
+            if (itemObject == null || _content == null)
+            {
+                return;
+            }
+            itemObject.transform.SetParent(_content, false);
+            _skillItems.Add(itemObject);
+            SkillItemWidget widget = itemObject.GetComponent<SkillItemWidget>();
+            if (widget != null)
+            {
+                widget.RefreshUI(skill);
+            }
+        });
+    }
+
+    private void ClearSkillItems()
+    {
+        for (int index = 0; index < _skillItems.Count; index++)
+        {
+            GameObject item = _skillItems[index];
+            if (item != null)
+            {
+                Destroy(item);
+            }
+        }
+        _skillItems.Clear();
+    }
 }

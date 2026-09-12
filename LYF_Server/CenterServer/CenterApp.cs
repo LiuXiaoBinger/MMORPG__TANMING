@@ -33,9 +33,13 @@ namespace CenterServer
             
             CenterRoleCtrl  RoleCtrl = new CenterRoleCtrl(new CentRoleModel(db));
             server.RegistCommand(NetDefine.CMD_EnterWroldCode, RoleCtrl);//进入游戏请求
+            server.RegistCommand(NetDefine.CMD_SyncKnapsackGridCountCode, RoleCtrl);//同步背包已开格子数量
+            server.RegistCommand(NetDefine.CMD_BuyShopItemCode, RoleCtrl);//处理 GameServer 转发的商城购买请求
+            server.RegistCommand(NetDefine.CMD_SaveRoleDataCode, RoleCtrl);//接收 GameServer 定时角色物品快照
            
             while (true)
             {
+                DBMgr.Instance.Update();
                 Thread.Sleep(1);
             }
 

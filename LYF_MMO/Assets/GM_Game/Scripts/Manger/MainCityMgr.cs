@@ -1,87 +1,90 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Google.Protobuf;
 using UnityEngine;
-/**
-* Title:
-* Descrpiton:
-*/
 
+/// <summary>主城角色表现管理器，负责把角色模型转换为 Unity 表现对象。</summary>
 public class MainCityMgr : MonoBehaviour
 {
+   /// <summary>主城管理器单例。</summary>
    public static MainCityMgr Instance;
 
-   private MainRoleInfo _mainRoleInfo;
-   void Awake()
+   /// <summary>注册主城网络消息。</summary>
+   private void Awake()
    {
       Instance = this;
-      _mainRoleInfo  = Global.Instance.mainRoleInfo;
-      RegisCommand();
-   }
-   private void RegisCommand()
-   {
-      SocketDispatcher.Instance.AddEventHandler
-         (NetDefine.CMD_SyncotherOnlineCode,SyncotherOnlineHandle);
+      SocketDispatcher.Instance.AddEventHandler(
+         NetDefine.CMD_SyncotherOnlineCode, SyncotherOnlineHandle);
    }
 
+   /// <summary>创建本地角色表现并通知服务端进入场景。</summary>
+   private void Start()
+   {
+      ClientRole localRole = null;
+      if (Global.Instance != null && Global.Instance.RoleWorld != null)
+      {
+         localRole = Global.Instance.RoleWorld.LocalRole;
+      }
+      if (localRole == null || localRole.BaseInfo == null)
+      {
+         return;
+      }
+
+      string prefabPath = "Role/Role_JX";
+      if (localRole.BaseInfo.JobId == (int)RoleJobtype.MJS)
+      {
+         prefabPath = "Role/Role_MJS";
+      }
+      CreateRole(RoleType.MainRole, localRole.BaseInfo, prefabPath);
+
+      EnterWroldReq request = new EnterWroldReq
+      {
+         RoleId = localRole.BaseInfo.RoleId
+      };
+      NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
+   }
+
+   /// <summary>处理其他玩家同步消息并更新角色世界模型。</summary>
    private void SyncotherOnlineHandle(ByteString data)
    {
       RoleBaseInfo roleBaseInfo = RoleBaseInfo.Parser.ParseFrom(data);
-      if (roleBaseInfo != null)
+      if (roleBaseInfo == null || Global.Instance == null || Global.Instance.RoleWorld == null)
       {
-         Debug.Log("同步其他玩家数据::"+roleBaseInfo.ToString());
-         //生成其他玩家
-         CreateRole(RoleType.OtherRole,roleBaseInfo,"Role/Role_MJS_Other");
+         return;
+      }
+      ClientRole existingRole;
+      bool alreadyExists = Global.Instance.RoleWorld.TryGetRole(
+         roleBaseInfo.RoleId, out existingRole);
+      Global.Instance.RoleWorld.AddOrUpdateOtherRole(roleBaseInfo);
+      if (!alreadyExists)
+      {
+         CreateRole(RoleType.OtherRole, roleBaseInfo, "Role/Role_MJS_Other");
       }
    }
 
-
-   private void Start()
+   /// <summary>异步加载角色预制体并初始化表现控制器。</summary>
+   private void CreateRole(RoleType roleType, RoleBaseInfo baseInfo, string prefabPath)
    {
-      //创建主角
-      if (_mainRoleInfo != null)
+      ResourceMgr.Instance.LoadPrefabAsync(prefabPath, obj =>
       {
-         if (_mainRoleInfo.BaseInfo.JobId == (int)RoleJobtype.MJS)
+         if (obj == null)
          {
-            CreateRole(RoleType.MainRole,_mainRoleInfo.BaseInfo,"Role/Role_MJS");
+            return;
          }
-         
-      }
-      else
-      {
-         CreateRole(RoleType.MainRole,_mainRoleInfo.BaseInfo,"Role/Role_JX");
-      }
-      
-      //向服务器发送主角已经进入场景 服务器端将主角同步给其他玩家 其他玩家也同步给主角
-      EnterWroldReq req = new EnterWroldReq()
-      {
-         RoleId = _mainRoleInfo.BaseInfo.RoleId,
-      };
-      NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode,req.ToByteString());
-   }
-   /// <summary>
-   /// 创建角色
-   /// </summary>
-   /// <param name="mainRole">角色类型</param>
-   /// <param name="baseInfo">角色基础信息</param>
-   /// <param name="roleRoleJx">资源路径</param>
-   /// <exception cref="NotImplementedException"></exception>
-   private  void CreateRole(RoleType roleType, RoleBaseInfo baseInfo, string prefabPath)
-   {
-      ResourceMgr.Instance.LoadPrefabAsync(prefabPath, (GameObject obj) =>
-      {
-         if (obj != null)
+         obj.transform.position = new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
+         RoleCtrlBase roleCtrlBase = obj.GetComponent<RoleCtrlBase>();
+         if (roleCtrlBase != null)
          {
-            //todo
-            obj.transform.position = new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
-            
-            RoleCtrlBase roleCtrlBase = obj.GetComponent<RoleCtrlBase>();
-            if (roleCtrlBase != null)
-            {
-               roleCtrlBase.InitCtrl(roleType,baseInfo);
-            }
+            roleCtrlBase.InitCtrl(roleType, baseInfo);
          }
       });
+   }
+
+   /// <summary>注销主城网络消息并释放单例引用。</summary>
+   private void OnDestroy()
+   {
+      SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SyncotherOnlineCode);
+      if (ReferenceEquals(Instance, this))
+      {
+         Instance = null;
+      }
    }
 }

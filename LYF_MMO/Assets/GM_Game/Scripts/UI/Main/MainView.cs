@@ -12,8 +12,41 @@ public class MainView : UIBase
    [SerializeField,Header("技能信息window")] private SkillInfoWindow _skillInfoWindow;
    [SerializeField,Header("背包")] private KnapsackWindow _knapsackWindow;
    [SerializeField,Header("交谈相关Window")] private TalkWindow _talkWindow;
-   [SerializeField,Header("NPC商城")] private ShopWindow _shopWindow;
+   [SerializeField,Header("NPC商城")] private NpcShopWindow _shopWindow;
    [SerializeField,Header("角色信息window")] private RoleAttriibuteWindow _roleAttriibuteWindow;
+   [SerializeField,Header("聊天window")] private ChatWindow _chatWindow;
+   [SerializeField,Header("小地图window")] private MinMapWindow _minMapWindow;
+
+   public RoleCurrInfoWindow RoleCurrentWindow => _roleCurrInfoWindow;
+   public SkillInfoWindow SkillWindow => _skillInfoWindow;
+   public NpcShopWindow ShopWindow => _shopWindow;
+   public RoleAttriibuteWindow RoleAttributeWindow => _roleAttriibuteWindow;
+   public KnapsackWindow KnapsackWindow => _knapsackWindow;
+   public TalkWindow TalkWindow => _talkWindow;
+   public MinMapWindow MinMapWindow
+   {
+      get
+      {
+         if (_minMapWindow == null)
+         {
+            _minMapWindow = GetComponentInChildren<MinMapWindow>(true);
+         }
+         return _minMapWindow;
+      }
+   }
+
+   /// <summary>获取聊天窗口，兼容尚未绑定序列化字段的旧预制体。</summary>
+   public ChatWindow ChatWindow
+   {
+      get
+      {
+         if (_chatWindow == null)
+         {
+            _chatWindow = GetComponentInChildren<ChatWindow>(true);
+         }
+         return _chatWindow;
+      }
+   }
    public override void InitView()
    {
       base.InitView();

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,11 +42,26 @@ public class TipsMgr :Singleton<TipsMgr>
    // 购买弹窗异步加载期间也要上锁，避免同一帧的连续点击创建多个实例。
    private bool _isBuyGoodsDialogLoading;
    private BuyDialog _buyGoodsDialog;
+   private int _buyDialogRequestVersion;
 
    /// <summary>
    /// 显示商品购买确认弹窗；同一时间只允许存在一个。
    /// </summary>
-   public void ShowBuyGoodsDialog(Image imgIcon, TMP_Text texName, TMP_Text texPrice)
+   public void ShowBuyGoodsDialog(Image imgIcon, TMP_Text texName, TMP_Text texPrice, Action onConfirm = null)
+   {
+      int unitPrice = ParsePrice(texPrice == null ? string.Empty : texPrice.text);
+      string currencyName = unitPrice <= 0 ? "货币（价格待确认）" : "货币";
+      ShowBuyGoodsDialog(imgIcon, texName == null ? string.Empty : texName.text, string.Empty,
+         unitPrice, 0, currencyName, string.Empty, 1,
+         _ => onConfirm?.Invoke());
+   }
+
+   /// <summary>
+   /// 显示带商品和货币信息的购买弹窗。
+   /// </summary>
+   public void ShowBuyGoodsDialog(Image imgIcon, string productName, string productIconPath,
+      int unitPrice, int currencyType, string currencyName, string currencyIconPath, int maxQuantity,
+      Action<int> onConfirm)
    {
       if (_isBuyGoodsDialogLoading || _buyGoodsDialog != null)
       {
@@ -52,6 +69,7 @@ public class TipsMgr :Singleton<TipsMgr>
       }
 
       _isBuyGoodsDialogLoading = true;
+      int requestVersion = ++_buyDialogRequestVersion;
       ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/TipsDiialog/BuyDialog", (GameObject go) =>
       {
          _isBuyGoodsDialogLoading = false;
@@ -82,8 +100,61 @@ public class TipsMgr :Singleton<TipsMgr>
 
          go.SetParent(canvas.transform);
          _buyGoodsDialog = dialog;
-         dialog.Initialize(OnBuyGoodsDialogClosed);
+         dialog.Initialize(OnBuyGoodsDialogClosed, onConfirm, productName, unitPrice,
+            currencyType, currencyName, maxQuantity);
+
+         if (imgIcon != null)
+         {
+            dialog.SetProductIcon(imgIcon.sprite);
+         }
+
+         string requestedProductIconPath = productIconPath;
+         string requestedCurrencyIconPath = currencyIconPath;
+         if (!string.IsNullOrEmpty(requestedProductIconPath))
+         {
+            ResourceMgr.Instance.LoadSpriteAsync(requestedProductIconPath, sprite =>
+            {
+               if (_buyGoodsDialog == dialog && dialog != null && requestVersion == _buyDialogRequestVersion)
+               {
+                  dialog.SetProductIcon(sprite);
+               }
+            });
+         }
+
+         if (!string.IsNullOrEmpty(requestedCurrencyIconPath))
+         {
+            ResourceMgr.Instance.LoadSpriteAsync(requestedCurrencyIconPath, sprite =>
+            {
+               if (_buyGoodsDialog == dialog && dialog != null && requestVersion == _buyDialogRequestVersion)
+               {
+                  dialog.SetCurrencyIcon(sprite);
+               }
+            });
+         }
       });
+   }
+
+   /// <summary>
+   /// 从旧商品卡片价格文本中提取单价，避免兼容入口固定显示零价格。
+   /// </summary>
+   private static int ParsePrice(string priceText)
+   {
+      if (string.IsNullOrWhiteSpace(priceText))
+      {
+         return 0;
+      }
+
+      string[] parts = priceText.Trim().Split(' ');
+      foreach (string part in parts)
+      {
+         if (int.TryParse(part, NumberStyles.Integer, CultureInfo.InvariantCulture, out int price) &&
+            price >= 0)
+         {
+            return price;
+         }
+      }
+
+      return 0;
    }
 
    /// <summary>

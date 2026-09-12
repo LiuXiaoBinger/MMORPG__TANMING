@@ -19,6 +19,12 @@ public class GateRoleCtrl:IContainer
             case NetDefine.CMD_EnterWroldCode:
                 OnEnterWroldHandle(serverBase, basePackage);
                 break;
+            case NetDefine.CMD_OpenKnapsackGridCode:
+                OnOpenKnapsackGridHandle(serverBase, basePackage);
+                break;
+            case NetDefine.CMD_BuyShopItemCode:
+                OnBuyShopItemHandle(serverBase, basePackage);
+                break;
             
             default:
                 break;
@@ -36,6 +42,32 @@ public class GateRoleCtrl:IContainer
     }
 
     /// <summary>
+    /// 网关不执行业务，只保留 Unity 会话信息并将请求转发给 GameServer。
+    /// </summary>
+    private void OnOpenKnapsackGridHandle(ServerBase serverBase, BasePackage basePackage)
+    {
+        if (serverBase == null || serverBase._client == null)
+        {
+            return;
+        }
+
+        serverBase._client.SendData(basePackage);
+    }
+
+    /// <summary>
+    /// 网关只透传商城购买请求，保留 UnitySessionId 和 GateSessionId，禁止在此扣费或发货。
+    /// </summary>
+    private static void OnBuyShopItemHandle(ServerBase serverBase, BasePackage basePackage)
+    {
+        if (serverBase == null || serverBase._client == null || basePackage == null)
+        {
+            return;
+        }
+
+        serverBase._client.SendData(basePackage);
+    }
+
+    /// <summary>
     /// 网关服务器作为客户端，接收游戏逻辑服务器数据
     /// </summary>
     /// <param name="serverBase"></param>
@@ -43,59 +75,6 @@ public class GateRoleCtrl:IContainer
     public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
-        switch (basePackage.ProtoCode)
-        {
-            case NetDefine.CMD_RoleSkillInfoCode:
-                OnRoleSkillInfoResultHandle(seesion, basePackage);
-                break;
-            case NetDefine.CMD_SyncRoleEnterWorldCode:
-            case NetDefine.CMD_SyncotherOnlineCode:
-                OnSyncOtherOnlineResultHandle(seesion, basePackage);
-                break;
-            case NetDefine.CMD_RoleKnapsackInfoCode:
-                OnRoleKnapsackInfoResultHandle(seesion, basePackage);
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 角色背包信息
-    /// </summary>
-    /// <param name="seesion"></param>
-    /// <param name="basePackage"></param>
-    /// <exception cref="NotImplementedException"></exception>
-    private void OnRoleKnapsackInfoResultHandle(Session seesion, BasePackage basePackage)
-    {
-        RoleKanpsackInfoRet ret = RoleKanpsackInfoRet.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnRoleKnapsackInfoResultHandle::" + ret.ToString());
-        //把结果数据返回给gate
-        seesion.SendData(basePackage);
-    }
-    /// <summary>
-    /// 同步其他玩家
-    /// </summary>
-    /// <param name="seesion"></param>
-    /// <param name="basePackage"></param>
-    /// <exception cref="NotImplementedException"></exception>
-    private void OnSyncOtherOnlineResultHandle(Session seesion, BasePackage basePackage)
-    {
-        RoleBaseInfo ret = RoleBaseInfo.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnRoleSkillInfoResultHandle::" + ret.ToString());
-        
-        //把结果数据返回给gate
-        seesion.SendData(basePackage);
-    }
-
-    private void OnRoleSkillInfoResultHandle(Session seesion, BasePackage basePackage)
-    {
-        RoleSkillInfoRet ret = RoleSkillInfoRet.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnRoleSkillInfoResultHandle::" + ret.ToString());
-        if (ret.CmdCode != CmdCode.Succeed)
-        {
-            seesion.SendError(basePackage,ret.CmdCode);
-            return;
-        }
-        //把结果数据返回给gate
-        seesion.SendData(basePackage);
+        GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);
     }
 }

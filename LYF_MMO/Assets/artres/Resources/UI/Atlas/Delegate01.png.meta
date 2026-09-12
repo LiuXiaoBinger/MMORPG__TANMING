@@ -1,0 +1,918 @@
+fileFormatVersion: 2
+guid: 8a6ed82c4ef061843854c6f3ecc9c9d2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Delegate_Img_Baiyutuanlilian.png
+  - first:
+      213: 21300002
+    second: UI_Delegate_Img_Emobaozang.png
+  - first:
+      213: 21300004
+    second: UI_Delegate_Img_Gaojimowuyanjiu.png
+  - first:
+      213: 21300006
+    second: UI_Delegate_Img_Gepiniyayiji.png
+  - first:
+      213: 21300008
+    second: UI_Delegate_Img_Jiaoguodieying.png
+  - first:
+      213: 21300010
+    second: UI_Delegate_Img_Lingqiaoshilian.png
+  - first:
+      213: 21300012
+    second: UI_Delegate_Img_Maoshoushangdui.png
+  - first:
+      213: 21300014
+    second: UI_Delegate_Img_Maoyichuanshuoshouji.png
+  - first:
+      213: 21300016
+    second: UI_Delegate_Img_Miwuzhisen.png
+  - first:
+      213: 21300018
+    second: UI_Delegate_Img_Mowushilian.png
+  - first:
+      213: 21300020
+    second: UI_Delegate_Img_Shenggeshilian.png
+  - first:
+      213: 21300022
+    second: UI_Delegate_Img_Shoujidaoju.png
+  - first:
+      213: 21300024
+    second: UI_Delegate_Img_Wuzhongtianran.png
+  - first:
+      213: 21300026
+    second: UI_Delegate_Img_Yanluzhijing.png
+  - first:
+      213: 21300028
+    second: UI_Delegate_Bg_Medium_01.png
+  - first:
+      213: 21300030
+    second: UI_Delegate_Bg_Medium_02.png
+  - first:
+      213: 21300032
+    second: UI_Delegate_Bg_Medium_03.png
+  - first:
+      213: 21300034
+    second: UI_Delegate_Bg_Medium_04.png
+  - first:
+      213: 21300036
+    second: UI_Delegate_Bg_Medium_05.png
+  - first:
+      213: 21300038
+    second: UI_Delegate_Bg_Medium_06.png
+  - first:
+      213: 21300040
+    second: UI_Delegate_Icon_Weituoquan_01.png
+  - first:
+      213: 21300042
+    second: UI_Delegate_Progress_Yellow_01.png
+  - first:
+      213: 21300044
+    second: UI_Delegate_Bg_Medium_07.png
+  - first:
+      213: 21300046
+    second: UI_Delegate_Frame_Choice_01.png
+  - first:
+      213: 21300048
+    second: UI_Delegate_Btn_Medium_01.png
+  - first:
+      213: 21300050
+    second: UI_Delegate_Frame_Choice_02.png
+  - first:
+      213: 21300052
+    second: UI_Delegate_Bg_Arrow_01.png
+  - first:
+      213: 21300054
+    second: UI_Delegate_Btn_Medium_02.png
+  - first:
+      213: 21300056
+    second: UI_Delegate_Img_Paodianrenwu.png
+  - first:
+      213: 21300058
+    second: UI_Delegate_Icon_Wanfashuoming_01.png
+  - first:
+      213: 21300060
+    second: UI_Delegate_Pic_Left_01.png
+  - first:
+      213: 21300062
+    second: UI_Delegate_Icon_yuekatequan_01.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Arrow_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 190
+        height: 300
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 884cc86a106463a4282881fab30baabc
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 301
+        width: 179
+        height: 74
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38aef75aecff3e84597f0ba86b938093
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_02.png
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 301
+        width: 284
+        height: 107
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 13, z: 13, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36ed67b43bd172d40920b5e53e3f3491
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 376
+        width: 141
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe33924ccf5218f43b23c168dac44667
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_04.png
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 0
+        width: 541
+        height: 199
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c803b4758370c0f4bb05171a974202ad
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_05.png
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 200
+        width: 102
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 0, z: 7, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97f1c0550cffea347bbf0257dddb0fbe
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_06.png
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 225
+        width: 62
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 44, y: 0, z: 13, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 222abc9888cefb24284c0b3754e7f7f4
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Bg_Medium_07.png
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 200
+        width: 294
+        height: 117
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9e662084beb8584484a825b1a415117
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Btn_Medium_01.png
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 0
+        width: 164
+        height: 163
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a3ff84ccc04df14c8ce4730f32144c0
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Btn_Medium_02.png
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 164
+        width: 190
+        height: 184
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd8bdfd865607bf4ca0aacc7d5bd5ef2
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Frame_Choice_02.png
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 0
+        width: 106
+        height: 105
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 52, y: 51, z: 52, w: 51}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fb7d5b1cc9c85140b927890b69e2922
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Icon_Wanfashuoming_01.png
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 200
+        width: 74
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78d9adfd6bf6f3c48ae8b30f8e318c2c
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Icon_Weituoquan_01.png
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 225
+        width: 38
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927c18f0acdbc354ba7e0f8738ded6b4
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Icon_yuekatequan_01.png
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 106
+        width: 42
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dadeab3e900959b4e83021077d02ae24
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Baiyutuanlilian.png
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 318
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b17a86c050683004a85b8e53cf845b5a
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Emobaozang.png
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 349
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92f4075be78ec3144acfb44224842f8d
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Gaojimowuyanjiu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 409
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad488e62605f31b4cbabb874fff45ec6
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Gepiniyayiji.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 418
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d08c44f2c4cc8464c99d1b16bdbd963e
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Jiaoguodieying.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 509
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b71b39b1d086db4aaa6f7efcc03aa9c
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Lingqiaoshilian.png
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 449
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a514ef6fbdfb941905a5e9d3f93f0b
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Maoshoushangdui.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 518
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6d38641129017c4980d344e17b80b92
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Maoyichuanshuoshouji.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 609
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ffb5b5eb6633784aab7bcfc08f9cc2a
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Miwuzhisen.png
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 549
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22378e8ee6f656a4a98e322919bf95d8
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Mowushilian.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 618
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7055f8b38440387498a2cfcef595c2ff
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Paodianrenwu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 709
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a131d591ed6b8fa44bb9ae96e2118e49
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Shenggeshilian.png
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 649
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1074c08a3bb20354c83d21a3279e45a1
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Shoujidaoju.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 718
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 386775133903ab04ebc51131024d5e7c
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Wuzhongtianran.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 809
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e66a57beeeb833449c6591dae2d5b92
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Img_Yanluzhijing.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 909
+        width: 276
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77be4be6bdadc784ea4fa639a5bd3de7
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Pic_Left_01.png
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 164
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 14, z: 12, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a120678ad3e65343b5c310dce64202a
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Delegate_Progress_Yellow_01.png
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 187
+        width: 18
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 8, y: 0, z: 4, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b16843b50b0976349b9069dd1005d16f
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: fcc835ac326fc394a9f25d2b206c896e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Delegate_Bg_Arrow_01.png: 21300052
+      UI_Delegate_Bg_Medium_01.png: 21300028
+      UI_Delegate_Bg_Medium_02.png: 21300030
+      UI_Delegate_Bg_Medium_03.png: 21300032
+      UI_Delegate_Bg_Medium_04.png: 21300034
+      UI_Delegate_Bg_Medium_05.png: 21300036
+      UI_Delegate_Bg_Medium_06.png: 21300038
+      UI_Delegate_Bg_Medium_07.png: 21300044
+      UI_Delegate_Btn_Medium_01.png: 21300048
+      UI_Delegate_Btn_Medium_02.png: 21300054
+      UI_Delegate_Frame_Choice_02.png: 21300050
+      UI_Delegate_Icon_Wanfashuoming_01.png: 21300058
+      UI_Delegate_Icon_Weituoquan_01.png: 21300040
+      UI_Delegate_Icon_yuekatequan_01.png: 21300062
+      UI_Delegate_Img_Baiyutuanlilian.png: 21300000
+      UI_Delegate_Img_Emobaozang.png: 21300002
+      UI_Delegate_Img_Gaojimowuyanjiu.png: 21300004
+      UI_Delegate_Img_Gepiniyayiji.png: 21300006
+      UI_Delegate_Img_Jiaoguodieying.png: 21300008
+      UI_Delegate_Img_Lingqiaoshilian.png: 21300010
+      UI_Delegate_Img_Maoshoushangdui.png: 21300012
+      UI_Delegate_Img_Maoyichuanshuoshouji.png: 21300014
+      UI_Delegate_Img_Miwuzhisen.png: 21300016
+      UI_Delegate_Img_Mowushilian.png: 21300018
+      UI_Delegate_Img_Paodianrenwu.png: 21300056
+      UI_Delegate_Img_Shenggeshilian.png: 21300020
+      UI_Delegate_Img_Shoujidaoju.png: 21300022
+      UI_Delegate_Img_Wuzhongtianran.png: 21300024
+      UI_Delegate_Img_Yanluzhijing.png: 21300026
+      UI_Delegate_Pic_Left_01.png: 21300060
+      UI_Delegate_Progress_Yellow_01.png: 21300042
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

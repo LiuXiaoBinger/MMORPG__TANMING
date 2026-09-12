@@ -21,7 +21,7 @@ public sealed partial class NpcInfo : Luban.BeanBase
         PrefabPath = _buf.ReadString();
         Pos = _buf.ReadString();
         Tyep = _buf.ReadInt();
-        ItemList = _buf.ReadString();
+        ShopId = _buf.ReadInt();
         Think = _buf.ReadString();
         Talk = _buf.ReadString();
         Mapid = _buf.ReadInt();
@@ -53,9 +53,9 @@ public sealed partial class NpcInfo : Luban.BeanBase
     /// </summary>
     public readonly int Tyep;
     /// <summary>
-    /// 商品列表（格式：商城配置ID:限购类型:限购数量；1每日限购，2永久限购，3无限限购；无限限购数量填0）
+    /// 所属商店ID，关联ShopTable.Id
     /// </summary>
-    public readonly string ItemList;
+    public readonly int ShopId;
     /// <summary>
     /// 自言自语
     /// </summary>
@@ -84,7 +84,7 @@ public sealed partial class NpcInfo : Luban.BeanBase
         + "PrefabPath:" + PrefabPath + ","
         + "Pos:" + Pos + ","
         + "tyep:" + Tyep + ","
-        + "ItemList:" + ItemList + ","
+        + "ShopId:" + ShopId + ","
         + "Think:" + Think + ","
         + "Talk:" + Talk + ","
         + "mapid:" + Mapid + ","

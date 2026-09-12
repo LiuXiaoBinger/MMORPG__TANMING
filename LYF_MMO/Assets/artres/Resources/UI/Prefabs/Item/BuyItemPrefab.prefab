@@ -164,7 +164,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1391516940954757310}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -290,10 +290,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 192896424524467332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -48.618088, y: -16.25}
+  m_SizeDelta: {x: 86.915, y: 22.29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1444367479024045542
 CanvasRenderer:
@@ -323,10 +323,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 11
+  m_text: 9999999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3993037bb5ace8e4d9f2555109577b24, type: 2}
-  m_sharedMaterial: {fileID: 0}
+  m_sharedMaterial: {fileID: 6718054227848337956, guid: 3993037bb5ace8e4d9f2555109577b24, type: 2}
   m_fontSharedMaterials:
   - {fileID: 0}
   m_fontMaterial: {fileID: 0}
@@ -352,14 +352,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_fontStyle: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -585,8 +585,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 132.25, y: -20}
-  m_SizeDelta: {x: 111.20001, y: 32}
+  m_AnchoredPosition: {x: 135.51068, y: -20}
+  m_SizeDelta: {x: 104.6786, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1443845724491295862
 CanvasRenderer:
@@ -631,7 +631,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -2.3, y: -42.3}
+  m_AnchoredPosition: {x: -2.300003, y: -42.3}
   m_SizeDelta: {x: 404, y: 86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1443867976551834050
@@ -1017,6 +1017,7 @@ MonoBehaviour:
   _imgIcon: {fileID: 3150681141924638429}
   _textName: {fileID: 1624654922307357774}
   _textDetails: {fileID: 1622653152612631952}
+  _priceImgIcon: {fileID: 1064204223093054939}
   _textPrice: {fileID: 7973424071862573563}
   _textNeedNum: {fileID: 15803080405627810}
   _buyButton: {fileID: 1624065526094383802}
@@ -1053,9 +1054,9 @@ RectTransform:
   - {fileID: 3498881663007667532}
   m_Father: {fileID: 192896424524467332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 21.294998, y: -16.25}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1443728625684801370
@@ -1073,7 +1074,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1664881009131447280}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1752,7 +1753,7 @@ GameObject:
   - component: {fileID: 3912707642324966198}
   - component: {fileID: 1064204223093054939}
   m_Layer: 5
-  m_Name: PriceIcon (1)
+  m_Name: PriceImgIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1774,7 +1775,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 13.827055, y: -0.24799919}
+  m_AnchoredPosition: {x: -18, y: -0.000022888184}
   m_SizeDelta: {x: 98, y: 91.73}
   m_Pivot: {x: 0.47567484, y: 0.5}
 --- !u!222 &3912707642324966198

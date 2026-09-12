@@ -564,3 +564,28 @@ ShaderVariantCollection:
         passType: 8
       - keywords: SHADOWS_DEPTH
         passType: 8
+  - first: {fileID: 4800000, guid: a36d95b12c64c7c4fac8f955abf1abe0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 142596bd9a2bf604bb3ebf5a3d1ebc8b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f009f9f8f657ccd458a543041f0d1b75, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 00e37f17fc828eb45bcca7644fed7a9a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0

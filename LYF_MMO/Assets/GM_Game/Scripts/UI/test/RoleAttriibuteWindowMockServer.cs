@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -41,40 +41,43 @@ public class RoleAttriibuteWindowMockServer : MonoBehaviour
             return;
         }
 
-        RoleKanpsackInfoRet response = new RoleKanpsackInfoRet
+        List<EquipmentViewData> equipments = new List<EquipmentViewData>();
+        Dictionary<int, cfg.EquipInfo> equipConfigMap = LubanMgr.Instance.GetEquipInfos();
+        List<cfg.EquipInfo> equipConfigs = new List<cfg.EquipInfo>();
+        if (equipConfigMap != null)
         {
-            CmdCode = CmdCode.Succeed
-        };
+            equipConfigs.AddRange(equipConfigMap.Values);
+        }
 
         // 按枚举生成 12 条当前穿戴装备，模拟服务器的 RoleCurrtEquipPack。
         Array equipTypes = Enum.GetValues(typeof(EquipType));
         for (int index = 0; index < equipTypes.Length; index++)
         {
             EquipType equipType = (EquipType)equipTypes.GetValue(index);
-            cfg.EquipInfo equipConfig = LubanMgr.Instance.GetEquipInfos()?.Values
-                .FirstOrDefault(info => info.EquipType == (int)equipType);
-            // 优先使用 Luban 装备表中的 ItemTypeId，保证测试显示真实配置图标。
-            int itemTypeId = equipConfig == null ? 21001 + index : equipConfig.ItemTypeId;
-
-            response.RoleCurrtEquipPack.Add(new RoleItemInfo
+            cfg.EquipInfo equipConfig = null;
+            for (int configIndex = 0; configIndex < equipConfigs.Count; configIndex++)
             {
-                ItemId = 900000 + index,
-                Count = 1,
-                RoleId = 1,
-                ItemTypeId = itemTypeId,
-                BagType = (int)KnapsackType.RoleCurrtEquipPack,
-                BagIndex = index,
-                EquipInfo = new RoleEquipItemInfo
+                if (equipConfigs[configIndex].EquipType == (int)equipType)
                 {
-                    ItemId = 900000 + index,
-                    RoleId = 1,
-                    StrengthenLevel = index + 1,
-                    EquipType = (int)equipType
+                    equipConfig = equipConfigs[configIndex];
+                    break;
                 }
-            });
+            }
+            // 优先使用 Luban 装备表中的 ItemTypeId，保证测试显示真实配置图标。
+            int itemTypeId = 21001 + index;
+            string equipName = "测试装备 " + itemTypeId;
+            string iconPath = "Icon/Item/Item_" + itemTypeId;
+            if (equipConfig != null)
+            {
+                itemTypeId = equipConfig.ItemTypeId;
+                equipName = equipConfig.EquipName;
+                iconPath = equipConfig.Icon;
+            }
+            equipments.Add(new EquipmentViewData(equipType, itemTypeId, equipName,
+                iconPath, index + 1));
         }
 
-        _window.ReFreshUI(response);
+        _window.ReFreshUI(equipments);
     }
 
     [ContextMenu("清空模拟当前装备")]
@@ -88,7 +91,7 @@ public class RoleAttriibuteWindowMockServer : MonoBehaviour
         if (_window != null)
         {
             // 空列表代表服务器通知当前没有穿戴任何装备。
-            _window.ReFreshUI(new RoleKanpsackInfoRet { CmdCode = CmdCode.Succeed });
+            _window.ReFreshUI(new List<EquipmentViewData>());
         }
     }
 }

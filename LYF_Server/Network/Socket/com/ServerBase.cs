@@ -17,8 +17,11 @@ public class ServerBase
     //指令集
     protected Dictionary<int, IContainer> _cmdDic = new Dictionary<int, IContainer>();
 
-    //缓冲区
-    private byte[] _buffer = new byte[1024 * 4];
+    // TCP 单次接收可能只有 4KB，保留半包并支持协议允许的最大帧。
+    private const int FrameHeaderSize = 2;
+    private const int MaxFrameLength = ushort.MaxValue;
+    private readonly byte[] _buffer = new byte[FrameHeaderSize + MaxFrameLength];
+    private int _receiveLength;
 
     protected Socket _socket;
 
@@ -32,7 +35,20 @@ public class ServerBase
     /// </summary>
     protected void BeginReceive()
     {
-        _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnReceiveCB, null);
+        if (_socket == null)
+        {
+            return;
+        }
+
+        int availableLength = _buffer.Length - _receiveLength;
+        if (availableLength <= 0)
+        {
+            Disconnect();
+            LogMsg.Info("网络接收缓存已满，丢弃异常连接", LogMsgType.Error);
+            return;
+        }
+
+        _socket.BeginReceive(_buffer, _receiveLength, availableLength, SocketFlags.None, OnReceiveCB, null);
     }
 
     /// <summary>
@@ -44,40 +60,11 @@ public class ServerBase
     {
         try
         {
-            //返回的字节数
-            int len = _socket.EndReceive(ar);
-            if (len > 0)
+            int receivedLength = _socket.EndReceive(ar);
+            if (receivedLength > 0)
             {
-
-                while (true)
-                {
-
-                    ushort msgLen = BitConverter.ToUInt16(_buffer, 0);//无符号16位整数，范围从0-65535
-                    if (len >= msgLen + 2)
-                    {
-                        //拿到了解析后的最终数据。
-                        byte[] data = NetUtils.Instance.ParseData(_buffer, msgLen);
-                        if (data != null)
-                        {
-                            BasePackage basePackage = BasePackage.Parser.ParseFrom(data);
-                            Console.WriteLine("basePackage::" + basePackage.ToString());
-                            HandleCommand(basePackage);
-                        }
-
-                        len -= (msgLen + 2);
-                        //如果len还大于0 ，则发生了粘包
-                        if (len > 0)
-                        {
-                            Buffer.BlockCopy(_buffer, msgLen + 2, _buffer, 0, len);
-                        }
-
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                }
+                _receiveLength += receivedLength;
+                ProcessReceiveBuffer();
                 BeginReceive();
             }
             else
@@ -89,7 +76,46 @@ public class ServerBase
         catch (Exception ex)
         {
             Disconnect();
-            LogMsg.Info(ex.Message);
+            SocketException se = ex as SocketException;
+            LogMsg.Info($"[ServerBase] OnReceiveCB failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error);
+        }
+    }
+
+    /// <summary>从累积缓存中提取完整帧，半包保留到下一次 Socket 接收。</summary>
+    private void ProcessReceiveBuffer()
+    {
+        int parseOffset = 0;
+        while (_receiveLength - parseOffset >= FrameHeaderSize)
+        {
+            ushort messageLength = BitConverter.ToUInt16(_buffer, parseOffset);
+            if (messageLength < 3)
+            {
+                throw new InvalidOperationException("网络消息长度小于协议头和校验字段。");
+            }
+
+            int frameLength = FrameHeaderSize + messageLength;
+            if (_receiveLength - parseOffset < frameLength)
+            {
+                break;
+            }
+
+            byte[] data = NetUtils.Instance.ParseData(_buffer, messageLength, parseOffset);
+            if (data != null)
+            {
+                BasePackage basePackage = BasePackage.Parser.ParseFrom(data);
+                HandleCommand(basePackage);
+            }
+            parseOffset += frameLength;
+        }
+
+        if (parseOffset > 0)
+        {
+            int remainingLength = _receiveLength - parseOffset;
+            if (remainingLength > 0)
+            {
+                Buffer.BlockCopy(_buffer, parseOffset, _buffer, 0, remainingLength);
+            }
+            _receiveLength = remainingLength;
         }
     }
 
@@ -108,6 +134,8 @@ public class ServerBase
             _socket.Close();
             _socket = null;
         }
+
+        _receiveLength = 0;
 
     }
 
@@ -135,7 +163,7 @@ public class ServerBase
 
             _socket.Send(NetUtils.Instance.MakeData(basePackage.ToByteArray()));
         }
-        catch (Exception ex) { Console.WriteLine(ex.Message); }
+        catch (Exception ex) { SocketException se = ex as SocketException; LogMsg.Info($"[ServerBase] SendData failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error); }
     }
 
 

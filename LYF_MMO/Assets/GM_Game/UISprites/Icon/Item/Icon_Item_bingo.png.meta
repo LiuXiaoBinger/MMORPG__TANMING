@@ -1,0 +1,1390 @@
+fileFormatVersion: 2
+guid: bb45c7186703f5e4db993d7ee53cd9d6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_icon_item_bingo1.png
+  - first:
+      213: 21300002
+    second: UI_icon_item_bingo10.png
+  - first:
+      213: 21300004
+    second: UI_icon_item_bingo11.png
+  - first:
+      213: 21300006
+    second: UI_icon_item_bingo12.png
+  - first:
+      213: 21300008
+    second: UI_icon_item_bingo13.png
+  - first:
+      213: 21300010
+    second: UI_icon_item_bingo14.png
+  - first:
+      213: 21300012
+    second: UI_icon_item_bingo15.png
+  - first:
+      213: 21300014
+    second: UI_icon_item_bingo16.png
+  - first:
+      213: 21300016
+    second: UI_icon_item_bingo17.png
+  - first:
+      213: 21300018
+    second: UI_icon_item_bingo18.png
+  - first:
+      213: 21300020
+    second: UI_icon_item_bingo19.png
+  - first:
+      213: 21300022
+    second: UI_icon_item_bingo2.png
+  - first:
+      213: 21300024
+    second: UI_icon_item_bingo20.png
+  - first:
+      213: 21300026
+    second: UI_icon_item_bingo21.png
+  - first:
+      213: 21300028
+    second: UI_icon_item_bingo22.png
+  - first:
+      213: 21300030
+    second: UI_icon_item_bingo23.png
+  - first:
+      213: 21300032
+    second: UI_icon_item_bingo24.png
+  - first:
+      213: 21300034
+    second: UI_icon_item_bingo25.png
+  - first:
+      213: 21300036
+    second: UI_icon_item_bingo26.png
+  - first:
+      213: 21300038
+    second: UI_icon_item_bingo27.png
+  - first:
+      213: 21300040
+    second: UI_icon_item_bingo28.png
+  - first:
+      213: 21300042
+    second: UI_icon_item_bingo29.png
+  - first:
+      213: 21300044
+    second: UI_icon_item_bingo3.png
+  - first:
+      213: 21300046
+    second: UI_icon_item_bingo30.png
+  - first:
+      213: 21300048
+    second: UI_icon_item_bingo31.png
+  - first:
+      213: 21300050
+    second: UI_icon_item_bingo32.png
+  - first:
+      213: 21300052
+    second: UI_icon_item_bingo33.png
+  - first:
+      213: 21300054
+    second: UI_icon_item_bingo34.png
+  - first:
+      213: 21300056
+    second: UI_icon_item_bingo35.png
+  - first:
+      213: 21300058
+    second: UI_icon_item_bingo36.png
+  - first:
+      213: 21300060
+    second: UI_icon_item_bingo37.png
+  - first:
+      213: 21300062
+    second: UI_icon_item_bingo38.png
+  - first:
+      213: 21300064
+    second: UI_icon_item_bingo39.png
+  - first:
+      213: 21300066
+    second: UI_icon_item_bingo4.png
+  - first:
+      213: 21300068
+    second: UI_icon_item_bingo40.png
+  - first:
+      213: 21300070
+    second: UI_icon_item_bingo41.png
+  - first:
+      213: 21300072
+    second: UI_icon_item_bingo42.png
+  - first:
+      213: 21300074
+    second: UI_icon_item_bingo43.png
+  - first:
+      213: 21300076
+    second: UI_icon_item_bingo44.png
+  - first:
+      213: 21300078
+    second: UI_icon_item_bingo45.png
+  - first:
+      213: 21300080
+    second: UI_icon_item_bingo46.png
+  - first:
+      213: 21300082
+    second: UI_icon_item_bingo47.png
+  - first:
+      213: 21300084
+    second: UI_icon_item_bingo48.png
+  - first:
+      213: 21300086
+    second: UI_icon_item_bingo49.png
+  - first:
+      213: 21300088
+    second: UI_icon_item_bingo5.png
+  - first:
+      213: 21300090
+    second: UI_icon_item_bingo50.png
+  - first:
+      213: 21300092
+    second: UI_icon_item_bingo6.png
+  - first:
+      213: 21300094
+    second: UI_icon_item_bingo7.png
+  - first:
+      213: 21300096
+    second: UI_icon_item_bingo8.png
+  - first:
+      213: 21300098
+    second: UI_icon_item_bingo9.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_icon_item_bingo1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1eb89d395f27148a5c615c95b0bb1e
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo10.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 102
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6a4af6fa4ba3a6479decebaac31c183
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo11.png
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca45fb413cd973049bcfa98105a5dac3
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo12.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 204
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d9a3023361b6e14c85f92770e808db2
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo13.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 306
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d68ab83ab38a7f0469b21cc0a4328b8a
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo14.png
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 204
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e62a11b6f07b1844eac818ba2c79d448
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo15.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 102
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7d776dcde86ee14fb70e24c33eb6358
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo16.png
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40ed5b04a9a9f0b47b9e6011d7c5894b
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo17.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 408
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f94a382c96ffe64fa36ed60d5c57e6d
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo18.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 510
+        width: 97
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7346500471ae1d0419f086dc638f76a0
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo19.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 306
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49f3acb78a94d7e43b2b0b8f679f0b4c
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo2.png
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 408
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d36fbba26aad544e910ffdba4a0c085
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo20.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 102
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53dd29443c8f9144c885160ce2a0e69b
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo21.png
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 0
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c51805fc89858a41967baeeb1dc3379
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo22.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 204
+        width: 102
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fa9a5014d4d6bd448b5d92b461187ad
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo23.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 612
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbd827858fc682940baae17eec99bdba
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo24.png
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 510
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9020dd6ae27196a41abbb95e1d648c52
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo25.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 408
+        width: 103
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d8f97d7d690b0e4293289385a3cf3d8
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo26.png
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 306
+        width: 103
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aba94b519864551418fca9b11d8b3d33
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo27.png
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 204
+        width: 103
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b7bd5daebbaf834c9b6ce35f03cd98d
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo28.png
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 102
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4801b167c3ac2334c8dff9fb82741e6c
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo29.png
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 0
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8197c067053f4648bd28b5eaa024e14
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo3.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 714
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b78caa3b48c56d54da9c2740ffacc58b
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo30.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 816
+        width: 107
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: facd5c63e6278da4d9c1a3b4108c6aa0
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo31.png
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 714
+        width: 97
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe3130569a9baf4db28989746edb24f
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo32.png
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 612
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65112ec77870898408e09c0c39491117
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo33.png
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 510
+        width: 106
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 249fa024c7e4b3246a1206e22a990614
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo34.png
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 408
+        width: 106
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0efd1208d037bcd44a8ffcab93e6dd5b
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo35.png
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 306
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dde02b9c0e098845af4a59bad9688a8
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo36.png
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 204
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3e7dc8ecf4679a4792f76013e918ba2
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo37.png
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 102
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afbbe8f2ca618494f8c07a34b9360092
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo38.png
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 0
+        width: 106
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a54877adcbf98847a68e721b56b43a1
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo39.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 918
+        width: 106
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 150887af8b7e3ff44aa3999c342cef8e
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo4.png
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 918
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2edfbb4c2a55daa4aa9b78fe1bca7963
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo40.png
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 816
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c02acde15dff82a488a49736c4f921aa
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo41.png
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 714
+        width: 96
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 933d55e3c4773ef47ae729ba05e60be0
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo42.png
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 612
+        width: 102
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f6424b9856b76b4b9fd5469fcb5b6bc
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo43.png
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 510
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27dfdc2b97fb8d94f868a58b2246cd8e
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo44.png
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 918
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19df656b94894174ab877916fad6bb31
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo45.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 816
+        width: 103
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebb9d4cc1af4ba747a0dbdaac1fa202a
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo46.png
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 714
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7024ad497da6fac44b51a11f88899c89
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo47.png
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 612
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdf3487d2c89c82428d1028fae2b83e2
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo48.png
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 918
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b5c9b031c529b6469615a3f73b8c608
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo49.png
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 816
+        width: 104
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26ff49d029dfba9438d390b5a232817a
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo5.png
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 714
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c38274939708f904f941ac4133a60df2
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo50.png
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 918
+        width: 105
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fe86989557135945abb9e6e7727d6b0
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo6.png
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 816
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcdb195c8b5c52e47acff77f8be9b775
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo7.png
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 306
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae07feb04a6c38d479f615a582bb2888
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo8.png
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 408
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbbe306b30098cd46a8726f98ec4bc31
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_icon_item_bingo9.png
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 510
+        width: 95
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293b438a0f2012f44b4986cce6ca02c0
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_icon_item_bingo1.png: 21300000
+      UI_icon_item_bingo10.png: 21300002
+      UI_icon_item_bingo11.png: 21300004
+      UI_icon_item_bingo12.png: 21300006
+      UI_icon_item_bingo13.png: 21300008
+      UI_icon_item_bingo14.png: 21300010
+      UI_icon_item_bingo15.png: 21300012
+      UI_icon_item_bingo16.png: 21300014
+      UI_icon_item_bingo17.png: 21300016
+      UI_icon_item_bingo18.png: 21300018
+      UI_icon_item_bingo19.png: 21300020
+      UI_icon_item_bingo2.png: 21300022
+      UI_icon_item_bingo20.png: 21300024
+      UI_icon_item_bingo21.png: 21300026
+      UI_icon_item_bingo22.png: 21300028
+      UI_icon_item_bingo23.png: 21300030
+      UI_icon_item_bingo24.png: 21300032
+      UI_icon_item_bingo25.png: 21300034
+      UI_icon_item_bingo26.png: 21300036
+      UI_icon_item_bingo27.png: 21300038
+      UI_icon_item_bingo28.png: 21300040
+      UI_icon_item_bingo29.png: 21300042
+      UI_icon_item_bingo3.png: 21300044
+      UI_icon_item_bingo30.png: 21300046
+      UI_icon_item_bingo31.png: 21300048
+      UI_icon_item_bingo32.png: 21300050
+      UI_icon_item_bingo33.png: 21300052
+      UI_icon_item_bingo34.png: 21300054
+      UI_icon_item_bingo35.png: 21300056
+      UI_icon_item_bingo36.png: 21300058
+      UI_icon_item_bingo37.png: 21300060
+      UI_icon_item_bingo38.png: 21300062
+      UI_icon_item_bingo39.png: 21300064
+      UI_icon_item_bingo4.png: 21300066
+      UI_icon_item_bingo40.png: 21300068
+      UI_icon_item_bingo41.png: 21300070
+      UI_icon_item_bingo42.png: 21300072
+      UI_icon_item_bingo43.png: 21300074
+      UI_icon_item_bingo44.png: 21300076
+      UI_icon_item_bingo45.png: 21300078
+      UI_icon_item_bingo46.png: 21300080
+      UI_icon_item_bingo47.png: 21300082
+      UI_icon_item_bingo48.png: 21300084
+      UI_icon_item_bingo49.png: 21300086
+      UI_icon_item_bingo5.png: 21300088
+      UI_icon_item_bingo50.png: 21300090
+      UI_icon_item_bingo6.png: 21300092
+      UI_icon_item_bingo7.png: 21300094
+      UI_icon_item_bingo8.png: 21300096
+      UI_icon_item_bingo9.png: 21300098
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -49,7 +49,7 @@ public class NetClient : ServerBase
         catch (Exception ex)
         {
             Disconnect();
-            Console.WriteLine(ex.Message);
+            LogMsg.Info("[NetClient] socket connect failed, socketErrorCode=" + GetSocketErrorCode(ex), LogMsgType.Error);
         }
     }
 
@@ -72,8 +72,20 @@ public class NetClient : ServerBase
         catch (Exception ex)
         {
             Disconnect();
-            Console.WriteLine(ex.Message);
+            LogMsg.Info("[NetClient] socket connect failed, socketErrorCode=" + GetSocketErrorCode(ex), LogMsgType.Error);
         }
+    }
+
+    /// <summary>获取连接异常对应的套接字错误码。</summary>
+    private static int GetSocketErrorCode(Exception exception)
+    {
+        SocketException socketException = exception as SocketException;
+        if (socketException != null)
+        {
+            return (int)socketException.SocketErrorCode;
+        }
+
+        return exception.HResult;
     }
 
     /// <summary>
@@ -96,10 +108,11 @@ public class NetClient : ServerBase
             return;
         }
 
-        IContainer container = _cmdDic[basePackage.ProtoCode];
-        if (container == null)
+        IContainer container;
+        if (!_cmdDic.TryGetValue(basePackage.ProtoCode, out container) || container == null)
         {
-            LogMsg.Info("command not regist..");
+            // 未注册协议不能抛出字典异常，否则接收线程会误判为网络错误并主动断开连接。
+            LogMsg.Info("command not regist, protoCode=" + basePackage.ProtoCode, LogMsgType.Warn);
             return;
         }
 

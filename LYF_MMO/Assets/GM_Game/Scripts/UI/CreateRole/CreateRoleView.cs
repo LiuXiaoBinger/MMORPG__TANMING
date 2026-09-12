@@ -26,4 +26,11 @@ public class CreateRoleView : UIBase
     {
         _selectRoleWindow.StartGameBtnClicked = func;
     }
+
+    /// <summary>清理创建角色控制器注册的视图事件。</summary>
+    public void ClearActions()
+    {
+        _createRoleWindow.CreateRoleBtnClickAction = null;
+        _selectRoleWindow.StartGameBtnClicked = null;
+    }
 }

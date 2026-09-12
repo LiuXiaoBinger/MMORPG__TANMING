@@ -11,10 +11,13 @@ using System.Threading.Tasks;
 public class Session : ServerBase
 {
     public int SessionID{get;set;}
-    public Session(Dictionary<int, IContainer> cmdDic, NetClient client)
+    private readonly Action<int> _onDisconnected;
+
+    public Session(Dictionary<int, IContainer> cmdDic, NetClient client, Action<int> onDisconnected = null)
     {
         _client = client;
         _cmdDic = cmdDic;
+        _onDisconnected = onDisconnected;
         SessionMgr.Instance.AddSession(this);
     }
 
@@ -34,10 +37,11 @@ public class Session : ServerBase
     protected override void HandleCommand(BasePackage basePackage)
     {
 
-        IContainer container = _cmdDic[basePackage.ProtoCode];
-        if (container == null)
+        IContainer container;
+        if (!_cmdDic.TryGetValue(basePackage.ProtoCode, out container) || container == null)
         {
-            LogMsg.Info("command not regist..");
+            // 未注册协议只记录并丢弃，不能因为单个未知包中断客户端连接。
+            LogMsg.Info("command not regist, protoCode=" + basePackage.ProtoCode, LogMsgType.Warn);
             return;
         }
 
@@ -56,12 +60,16 @@ public class Session : ServerBase
         container.OnServerCommand(this, basePackage);
     }
 
-    public void DisConnect()
+    public override void Disconnect()
     {
-        LogMsg.Info("Disconnect"+_socket.RemoteEndPoint+"断开了连接..");
+        LogMsg.Info("客户端会话断开，SessionID=" + SessionID);
         base.Disconnect();
-       
+        // 仅通知宿主，不在 Socket 线程直接修改角色状态；宿主应投递到逻辑线程。
+        _onDisconnected?.Invoke(SessionID);
     }
+
+    /// <summary>兼容历史调用名称，统一进入可重写的断开流程。</summary>
+    public void DisConnect() { Disconnect(); }
 
 
 

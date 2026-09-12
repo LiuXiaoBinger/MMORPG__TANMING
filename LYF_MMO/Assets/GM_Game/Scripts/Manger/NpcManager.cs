@@ -12,6 +12,10 @@ public class NpcManager : MonoBehaviour
     private readonly Dictionary<int, NpcEntity> _npcEntities = new Dictionary<int, NpcEntity>();
     private bool _initialized;
 
+    private void Awake()
+    {
+        Initialize();
+    }
     public void Initialize()
     {
         if (_initialized)
@@ -73,6 +77,8 @@ public class NpcManager : MonoBehaviour
             }
 
             npcObject.transform.position = spawnPosition;
+            // Pos 的第四段为 NPC 的 Y 轴朝向，位置和朝向都由服务端配置驱动。
+            npcObject.transform.rotation = Quaternion.Euler(0f, info.RotationY, 0f);
             npcObject.name = string.IsNullOrEmpty(info.Name) ? $"NPC_{info.ID}" : info.Name;
 
             NpcEntity entity = CreateEntity(info);
@@ -99,26 +105,9 @@ public class NpcManager : MonoBehaviour
             PrefabPath = info.PrefabPath ?? string.Empty,
             Think = info.Think ?? string.Empty,
             Talk = info.Talk ?? string.Empty,
+            ShopId = info.ShopId,
             Position = info.Position.ToString(),
         };
-
-        if (info.ShopItemList != null)
-        {
-            foreach (NpcShopItem shopItem in info.ShopItemList)
-            {
-                if (shopItem == null)
-                {
-                    continue;
-                }
-
-                entity.ShopItemList.Add(new NpcShopData
-                {
-                    ShopID = shopItem.ShopID,
-                    LimitType = (int)shopItem.LimitType,
-                    LimitCount = shopItem.LimitCount,
-                });
-            }
-        }
 
         return entity;
     }

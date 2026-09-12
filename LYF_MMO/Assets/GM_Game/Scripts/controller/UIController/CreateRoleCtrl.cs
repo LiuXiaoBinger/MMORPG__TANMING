@@ -33,8 +33,13 @@ public class CreateRoleCtrl : CtrlBase
         {
             Debug.Log("开始游戏成功 ...");
             
-            //1.缓存主角数据
-            Global.Instance.mainRoleInfo = ret.MainRoleInfo;
+            // 创建新的本地角色时会先清理旧角色和其他玩家，覆盖切换角色生命周期。
+            ClientRole localRole = Global.Instance.RoleWorld.LoadLocalRole(ret.MainRoleInfo);
+            if (localRole == null)
+            {
+                TipsMgr.Instance.ShowSystemTips("角色数据无效，无法进入游戏");
+                return;
+            }
             //2.加载场景
             SceneMgr.Instance.LoadSceneMode(SceneType.Scene_MainCity, () =>
             {
@@ -78,6 +83,17 @@ public class CreateRoleCtrl : CtrlBase
         {
             Debug.Log("CreateRole Error角色创建失败");
             TipsMgr.Instance.ShowSystemTips("角色创建失败");
+        }
+    }
+
+    /// <summary>注销创建角色协议和视图事件。</summary>
+    public override void Dispose()
+    {
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_CreateRoleCode);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_StartGameCode);
+        if (_createRoleView != null)
+        {
+            _createRoleView.ClearActions();
         }
     }
     

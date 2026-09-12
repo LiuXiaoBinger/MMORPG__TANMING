@@ -26,6 +26,13 @@ public class NetDefine
     public const ushort CMD_SyncRoleEnterWorldCode = 11090;//同步角色进入游戏世界数据给其他玩家
     public const ushort CMD_SyncotherOnlineCode = 11100;//同步其他角色给主角
     public const ushort CMD_RoleKnapsackInfoCode = 11110;//同步其他角色给主角
+    public const ushort CMD_RoleShopPurchaseInfoCode = 11111;//同步角色商城购买次数
+    public const ushort CMD_OpenKnapsackGridCode = 11120;//请求开启背包格子并返回当前已开启数量
+    public const ushort CMD_SyncKnapsackGridCountCode = 11121;//GameServer 同步已开背包格子数量到中心服
+    public const ushort CMD_BuyShopItemCode = 11130;//客户端购买商城商品
+    public const ushort CMD_SaveRoleDataCode = 11140;//GameServer 定时保存角色物品数据
+    public const ushort CMD_CountUpdateSyncInfoCode = 11150;//更新商店购买 副本次数到客户端 与中心服务器
+    public const ushort CMD_SC_UpdateItemInfoCode = 11160;//更新item给客户端
 }
 
 
