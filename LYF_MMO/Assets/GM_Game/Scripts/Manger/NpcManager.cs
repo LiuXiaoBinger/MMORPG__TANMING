@@ -14,7 +14,7 @@ public class NpcManager : MonoBehaviour
 
     private void Awake()
     {
-        Initialize();
+        //Initialize();
     }
     public void Initialize()
     {

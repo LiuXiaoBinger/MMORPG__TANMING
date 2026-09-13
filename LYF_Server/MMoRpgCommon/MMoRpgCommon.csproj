@@ -83,6 +83,7 @@
         <Compile Include="enum\ShopType.cs" />
         <Compile Include="enum\Role.cs" />
         <Compile Include="enum\RoleCountAction.cs" />
+        <Compile Include="enum\StateDefine.cs" />
         <Compile Include="enum\Time.cs" />
         <Compile Include="Time\ITimer.cs" />
         <Compile Include="Time\CTimerMgr.cs" />
