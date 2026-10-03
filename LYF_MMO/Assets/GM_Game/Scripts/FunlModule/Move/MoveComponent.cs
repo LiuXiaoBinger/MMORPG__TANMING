@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class MoveComponent : RoleComponentBase
 {
-    public MoveComponent(ClientRole owner) : base(owner)
+    public MoveComponent(PlayerEntity owner) : base(owner)
     {
     }
     /// <summary>影子跟随的间隔时间（秒）。他机收到移动同步后，从当前点到目标点平滑移动的窗口时长</summary>

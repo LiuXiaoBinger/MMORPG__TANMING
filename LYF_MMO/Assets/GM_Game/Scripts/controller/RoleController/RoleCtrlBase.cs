@@ -6,6 +6,7 @@ using HighlightPlus;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MMoRpgCommon.SceneEntity;
 
 /**
 * Title:role基类
@@ -30,8 +31,10 @@ public class RoleCtrlBase : MonoBehaviour
    #endregion
    #region 相机相关
 
-   [Header("相机跟随点")]public Transform LookAt; 
-   
+   [Header("相机跟随点")]public Transform LookAt;
+
+   private ROObject _entityobj=null;
+
    #endregion
    
    //角色有限状态机
@@ -63,6 +66,17 @@ public class RoleCtrlBase : MonoBehaviour
 
    public float decelerationMultiplier { get; set; } = 1f;       // 减速度倍率
 
+   public void SetROObject(ROObject obj)
+   {
+      if (_entityobj == null)
+      {
+         _entityobj = obj;
+      }
+   }
+   public ROObject GetROObject( )
+   {
+      return _entityobj;
+   }
    #endregion
    private void Awake()
    {
@@ -80,7 +94,13 @@ public class RoleCtrlBase : MonoBehaviour
 
    private void Update()
    {
-      
+      // 已绑定新场景实体时，移动、重力和动画全部由实体组件链驱动；旧控制器禁止重复推进。
+      MEntity sceneEntity = _entityobj as MEntity;
+      if (sceneEntity != null && sceneEntity.LifecycleState == EntityLifecycleState.Active)
+      {
+         return;
+      }
+
       //检测是否在地面
       //IsGorund();
       Gravity();
@@ -108,7 +128,57 @@ public class RoleCtrlBase : MonoBehaviour
    private IDisposable _obs;
    public void ChangeState(RoleState state)
    {
+      MEntity entity = _entityobj as MEntity;
+      if (entity != null && entity.LifecycleState == EntityLifecycleState.Active)
+      {
+         // 绑定场景实体后，新状态机拥有 Animator 唯一写入权；旧 FSM 仅供未绑定对象兼容。
+         RouteStateToEntity(entity, state);
+         // Jump、Slider 及未知旧状态没有对应的新状态机入口，路由后统一保持 Idle 语义。
+         if (state == RoleState.Idle || state == RoleState.Run ||
+             state == RoleState.FastRun || state == RoleState.Attck ||
+             state == RoleState.Hit)
+         {
+            _roleState = state;
+         }
+         else
+         {
+            _roleState = RoleState.Idle;
+         }
+         return;
+      }
       _fsm.ChangeState(state);
+   }
+
+   private static void RouteStateToEntity(MEntity entity, RoleState state)
+   {
+      if (state == RoleState.Idle)
+      {
+         entity.MoveComp.SetMovingForPresentation(false);
+         entity.Machine.ForceToDefault();
+      }
+      else if (state == RoleState.Run || state == RoleState.FastRun)
+      {
+         entity.MoveComp.SetMovingForPresentation(true);
+         entity.Machine.ForceToDefault();
+      }
+      else if (state == RoleState.Attck)
+      {
+         // 旧控制器没有技能 ID、等级和效果载荷，不能再派发空的 SkillStarted；
+         // 正式技能表现统一由 SkillCtrl 通过强类型事件启动。
+         entity.MoveComp.SetMovingForPresentation(false);
+         entity.Machine.ForceToDefault();
+      }
+      else if (state == RoleState.Hit)
+      {
+         entity.DispatchEvent(MEventType.DamageReceived, null);
+      }
+      else
+      {
+         // 旧状态机传入的新实体未知状态（包括旧 Jump/Slider）统一回默认状态；
+         // Special 只允许由明确的业务事件触发，不能作为状态路由兜底。
+         entity.MoveComp.SetMovingForPresentation(false);
+         entity.Machine.ForceToDefault();
+      }
    }
 
    /// <summary>
@@ -116,6 +186,13 @@ public class RoleCtrlBase : MonoBehaviour
    /// </summary>
    private void OnAnimatorMove()
    {
+      // 新场景实体由 MMoveComponent 独占 CharacterController 位移，禁止旧根运动重复推进。
+      MEntity sceneEntity = _entityobj as MEntity;
+      if (sceneEntity != null && sceneEntity.LifecycleState == EntityLifecycleState.Active)
+      {
+         return;
+      }
+
       if (_roleState == RoleState.Slider)
       {
          _rootMotionSpeed = 5;
@@ -223,12 +300,21 @@ public class RoleCtrlBase : MonoBehaviour
    /// </summary>
    public virtual void Gravity()
    {
+      if(PlayStateMgr.Instance==null) return;
       //isGrounded = false;
       if (!CheckShereGround() && verticalVelocity.y > - PlayStateMgr.Instance.stats.gravityTopSpeed)
       {
          var speed = verticalVelocity.y;
          // 上升时用普通重力，下落时用更强的下落重力
-         var force = verticalVelocity.y > 0 ? PlayStateMgr.Instance.stats.gravity : PlayStateMgr.Instance.stats.fallGravity;
+         float force;
+         if (verticalVelocity.y > 0)
+         {
+            force = PlayStateMgr.Instance.stats.gravity;
+         }
+         else
+         {
+            force = PlayStateMgr.Instance.stats.fallGravity;
+         }
          speed -= force * gravityMultiplier * Time.deltaTime;
 
          // 限制最大下落速度
@@ -268,15 +354,22 @@ public class RoleCtrlBase : MonoBehaviour
    {
       //Debug.Log("axis " + axis.ToString());
       
-      axis.x = Mathf.Abs(axis.x) > deadzone ? RemapToDeadzone(axis.x, deadzone) : 0;
-      axis.y = Mathf.Abs(axis.y) > deadzone ? RemapToDeadzone(axis.y, deadzone) : 0;
+      if (Mathf.Abs(axis.x) > deadzone) axis.x = RemapToDeadzone(axis.x, deadzone);
+      else axis.x = 0f;
+      if (Mathf.Abs(axis.y) > deadzone) axis.y = RemapToDeadzone(axis.y, deadzone);
+      else axis.y = 0f;
       return new Vector3(axis.x, 0, axis.y);
    }
    /// <summary>
    /// 将输入值按给定死区重新映射到 0-1
    /// </summary>
    //protected float RemapToDeadzone(float value,float deadzone)=>(value - deadzone) / (1-deadzone);
-   protected float RemapToDeadzone(float value,float deadzone)=>(value - (value > 0 ? -deadzone : deadzone)) / (1-deadzone);
+   protected float RemapToDeadzone(float value,float deadzone)
+   {
+      float offset = deadzone;
+      if (value > 0) offset = -deadzone;
+      return (value - offset) / (1f - deadzone);
+   }
 
    public virtual Vector3 GetMovementCameraDirection(Transform mainCameraTransform ,Vector2 value,float deadzone)
    {

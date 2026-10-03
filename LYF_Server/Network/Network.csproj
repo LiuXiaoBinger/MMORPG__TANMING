@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="LubanManage\Tb\tbcountinfo.bytes" />
     <Reference Include="Google.Protobuf, Version=3.31.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.31.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
@@ -63,6 +64,7 @@
     <Compile Include="LubanManage\Codes\ItemInfo.cs" />
     <Compile Include="LubanManage\Codes\KnapsackInfo.cs" />
     <Compile Include="LubanManage\Codes\NpcInfo.cs" />
+    <Compile Include="LubanManage\Codes\PresentTable.cs" />
     <Compile Include="LubanManage\Codes\ProfessionInfo.cs" />
     <Compile Include="LubanManage\Codes\QuestInfo.cs" />
     <Compile Include="LubanManage\Codes\RoleLevelAttributeInfo.cs" />
@@ -70,6 +72,8 @@
     <Compile Include="LubanManage\Codes\ShopItemInfo.cs" />
     <Compile Include="LubanManage\Codes\ShopTable.cs" />
     <Compile Include="LubanManage\Codes\SkillInfo.cs" />
+    <Compile Include="LubanManage\Codes\SkillEffectInfo.cs" />
+    <Compile Include="LubanManage\Codes\SkillPresentationInfo.cs" />
     <Compile Include="LubanManage\Codes\Tables.cs" />
     <Compile Include="LubanManage\Codes\TbEquipInfo.cs" />
     <Compile Include="LubanManage\Codes\TbCountInfo.cs" />
@@ -77,6 +81,7 @@
     <Compile Include="LubanManage\Codes\TbItemInfo.cs" />
     <Compile Include="LubanManage\Codes\TbKnapsackInfo.cs" />
     <Compile Include="LubanManage\Codes\TbNpcInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbPresentTable.cs" />
     <Compile Include="LubanManage\Codes\TbProfessionInfo.cs" />
     <Compile Include="LubanManage\Codes\TbQuestInfo.cs" />
     <Compile Include="LubanManage\Codes\TbRoleLevelAttributeInfo.cs" />
@@ -84,6 +89,8 @@
     <Compile Include="LubanManage\Codes\TbShopItemInfo.cs" />
     <Compile Include="LubanManage\Codes\TbShopTable.cs" />
     <Compile Include="LubanManage\Codes\TbSkillInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbSkillEffectInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbSkillPresentationInfo.cs" />
     <Compile Include="LubanManage\LubanLib\BeanBase.cs" />
     <Compile Include="LubanManage\LubanLib\ByteBuf.cs" />
     <Compile Include="LubanManage\LubanLib\ITypeId.cs" />
@@ -128,6 +135,14 @@
     <Content Include="LubanManage\Tb\tbshopiteminfo.bytes" />
     <Content Include="LubanManage\Tb\tbshoptable.bytes" />
     <Content Include="LubanManage\Tb\tbskillinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbskilleffectinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbskillpresentationinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbpresenttable.bytes" />
   </ItemGroup>
+  <ItemDefinitionGroup>
+    <Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemDefinitionGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

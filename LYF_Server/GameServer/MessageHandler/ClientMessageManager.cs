@@ -374,6 +374,7 @@ public static class GameMessageProtocolRegister
         server.RegistCommand(NetDefine.CMD_EnterWroldCode, messageManager);
         server.RegistCommand(NetDefine.CMD_OpenKnapsackGridCode, messageManager);
         server.RegistCommand(NetDefine.CMD_BuyShopItemCode, messageManager);
+        server.RegistCommand(NetDefine.CMD_SkillCastCode, messageManager);
 
         // CenterServer 回包统一由客户端网络回调入队。
         client.RegistCommand(NetDefine.CMD_LoginGameServerCode, messageManager);
@@ -401,7 +402,7 @@ public static class GameMessageProtocolRegister
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_EnterWroldCode, new EnterWorldHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.CenterServer,
-            NetDefine.CMD_RoleSkillInfoCode, new RoleSkillInfoHandler(), CenterMessageRoute.ForwardToGate);
+            NetDefine.CMD_RoleSkillInfoCode, new RoleSkillInfoHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.CenterServer,
             NetDefine.CMD_RoleKnapsackInfoCode, new RoleKnapsackInfoHandler(), CenterMessageRoute.ForwardToGate);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
@@ -410,6 +411,8 @@ public static class GameMessageProtocolRegister
             NetDefine.CMD_SyncKnapsackGridCountCode, new SyncKnapsackGridCountHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_BuyShopItemCode, new RequestBuyShopItem(), CenterMessageRoute.Internal);
+        RegisterHandler(messageManager, GameCommandSource.GateServer,
+            NetDefine.CMD_SkillCastCode, new SkillCastHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.CenterServer,
             NetDefine.CMD_BuyShopItemCode, new BuyShopItemCenterResultHandler(),
             CenterMessageRoute.ForwardToGate);

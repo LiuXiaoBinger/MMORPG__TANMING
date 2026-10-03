@@ -109,6 +109,16 @@ public static class GateClientResponseForwarder
                     // 次数同步是服务端主动通知，仍需验证 protobuf 后原样转发给客户端。
                     resultCode = CountUpdateSyncInfo.Parser.ParseFrom(package.Data).CmdCode;
                     return true;
+                case NetDefine.CMD_SkillCastCode:
+                    // 拒绝结果也携带权威 MP/CD，不能转换成只有错误码的通用包。
+                    resultCode = SkillCastRet.Parser.ParseFrom(package.Data).CmdCode;
+                    return true;
+                case NetDefine.CMD_SkillCastStartCode:
+                    SkillCastStartNtf.Parser.ParseFrom(package.Data);
+                    return true;
+                case NetDefine.CMD_SkillCastEndCode:
+                    SkillCastEndNtf.Parser.ParseFrom(package.Data);
+                    return true;
                 default:
                     return false;
             }
@@ -128,7 +138,8 @@ public static class GateClientResponseForwarder
     {
         return commandCode == NetDefine.CMD_OpenKnapsackGridCode ||
             commandCode == NetDefine.CMD_BuyShopItemCode ||
-            commandCode == NetDefine.CMD_RoleShopPurchaseInfoCode;
+            commandCode == NetDefine.CMD_RoleShopPurchaseInfoCode ||
+            commandCode == NetDefine.CMD_SkillCastCode;
     }
 
     /// <summary>

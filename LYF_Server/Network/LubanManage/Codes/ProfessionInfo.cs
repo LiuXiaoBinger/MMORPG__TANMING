@@ -19,6 +19,7 @@ public sealed partial class ProfessionInfo : Luban.BeanBase
         Id = _buf.ReadInt();
         IconPath = _buf.ReadString();
         PrefabPath = _buf.ReadString();
+        PresentTableID = _buf.ReadInt();
         BornPosition = _buf.ReadString();
         Name = _buf.ReadString();
         MaxHp = _buf.ReadInt();
@@ -63,6 +64,10 @@ public sealed partial class ProfessionInfo : Luban.BeanBase
     /// 职业角色预制体资源路径
     /// </summary>
     public readonly string PrefabPath;
+    /// <summary>
+    /// 实体动画表ID
+    /// </summary>
+    public readonly int PresentTableID;
     /// <summary>
     /// 角色出生位置，格式 x,y,z
     /// </summary>
@@ -177,6 +182,7 @@ public sealed partial class ProfessionInfo : Luban.BeanBase
         + "Id:" + Id + ","
         + "IconPath:" + IconPath + ","
         + "PrefabPath:" + PrefabPath + ","
+        + "PresentTableID:" + PresentTableID + ","
         + "BornPosition:" + BornPosition + ","
         + "Name:" + Name + ","
         + "MaxHp:" + MaxHp + ","

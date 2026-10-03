@@ -1,5 +1,6 @@
 ﻿
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using cfg;
@@ -7,6 +8,12 @@ using cfg;
 public class LubanMgr:Singleton<LubanMgr>
 {
     private Dictionary<int, SkillInfo> _skillInfos;
+    /// <summary>按稳定效果 ID 索引的技能等级效果表，启动后只读。</summary>
+    private Dictionary<int, SkillEffectInfo> _skillEffectInfos;
+    /// <summary>技能 ID 到学习等级再到效果的双层索引，启动时检查组合键唯一。</summary>
+    private Dictionary<int, Dictionary<int, SkillEffectInfo>> _skillEffectsByLevel;
+    /// <summary>按表现配置 ID 索引的技能动画资源表，供客户端选择变体。</summary>
+    private Dictionary<int, SkillPresentationInfo> _skillPresentationInfos;
     private Dictionary<int, ItemInfo> _itemInfos;
     private Dictionary<int, EquipInfo> _equipInfos;
     private Dictionary<int, ItemConfigBase> _itemConfigInfos;
@@ -17,17 +24,34 @@ public class LubanMgr:Singleton<LubanMgr>
     private Dictionary<int, QuestInfo> _questInfos;
     private Dictionary<int, RoleLevelInfo> _roleLevelInfos;
     private Dictionary<int, RoleLevelAttributeInfo> _roleLevelAttributeInfos;
+    // 按表现配置 ID 索引的角色表现表，初始化后供运行时查询模型、动画和碰撞参数。
+    private Dictionary<int, PresentTable> _presentTables;
     private Dictionary<int, ShopTable> _shopTables;
     private Dictionary<int, ShopItemInfo> _shopItemInfos;
     private Dictionary<int, CountInfo> _countInfos;
     // 外层按商店主表 ID 分组，内层按商店商品配置 ID 索引。
     private Dictionary<int, Dictionary<int, ShopItemParseInfo>> _shopItemParseInfos;
+
+    /// <summary>
+    /// 从 Luban 二进制配置文件加载并缓存运行时所需的全部配置表。
+    /// </summary>
     public void Init()
     {
-        Tables tables =new Tables((string file)=> new Luban.ByteBuf(File.ReadAllBytes(
-            $"D:/unitypro/LYFMMORGP/LYF_Server/Network/LubanManage/Tb/{file}.bytes")));
+        // 服务部署时优先从输出目录读取全部表数据；旧 Unity 开发目录仍可回退读取。
+        string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+            "LubanManage", "Tb");
+        if (!File.Exists(Path.Combine(dataDirectory, "tbskilleffectinfo.bytes")))
+        {
+            dataDirectory = "D:/unitypro/LYFMMORGP/LYF_Server/Network/LubanManage/Tb";
+        }
+        // file 是 Luban 生成器传入的表名，不接受外部业务请求作为文件路径。
+        Tables tables = new Tables((string file) => new Luban.ByteBuf(
+            File.ReadAllBytes(Path.Combine(dataDirectory, file + ".bytes"))));
 
         _skillInfos = tables.TbSkillInfo.DataMap;
+        _skillEffectInfos = tables.TbSkillEffectInfo.DataMap;
+        _skillEffectsByLevel = BuildSkillEffectsByLevel(tables.TbSkillEffectInfo.DataList);
+        _skillPresentationInfos = tables.TbSkillPresentationInfo.DataMap;
         _itemInfos = tables.TbItemInfo.DataMap;
         _equipInfos = tables.TbEquipInfo.DataMap;
         _itemConfigInfos = CreateItemConfigInfos(_itemInfos, _equipInfos);
@@ -38,6 +62,8 @@ public class LubanMgr:Singleton<LubanMgr>
         _questInfos = tables.TbQuestInfo.DataMap;
         _roleLevelInfos = tables.TbRoleLevelInfo.DataMap;
         _roleLevelAttributeInfos = tables.TbRoleLevelAttributeInfo.DataMap;
+        // 直接复用 Luban 生成表的索引，避免启动后重复复制配置数据。
+        _presentTables = tables.TbPresentTable.DataMap;
         _shopTables = tables.TbShopTable.DataMap;
         _shopItemInfos = tables.TbShopItemInfo.DataMap;
         _countInfos = tables.TbCountInfo.DataMap;
@@ -170,11 +196,101 @@ public class LubanMgr:Singleton<LubanMgr>
 
     #region 技能相关
 
+    /// <summary>建立等级效果索引并验证服务器权威技能参数。</summary>
+    /// <param name="effectList">Luban 装载的全部技能等级效果。</param>
+    /// <returns>按技能 ID 与正整数等级查找效果的索引。</returns>
+    private Dictionary<int, Dictionary<int, SkillEffectInfo>> BuildSkillEffectsByLevel(
+        List<SkillEffectInfo> effectList)
+    {
+        // 外层索引的每个元素对应旧 SkillInfo 中一个稳定技能 ID。
+        Dictionary<int, Dictionary<int, SkillEffectInfo>> effectsBySkill =
+            new Dictionary<int, Dictionary<int, SkillEffectInfo>>();
+        for (int index = 0; index < effectList.Count; index++)
+        {
+            // 当前行描述一个技能在一个学习等级的唯一权威数值。
+            SkillEffectInfo effect = effectList[index];
+            if (effect == null || effect.Id <= 0 || effect.Level <= 0 ||
+                effect.SkillId <= 0 || !_skillInfos.ContainsKey(effect.SkillId) ||
+                effect.TargetMode < 0 || effect.TargetMode > 3 ||
+                effect.CooldownMs < 0 || effect.CooldownGroupId < 0 ||
+                effect.GroupCooldownMs < 0 || effect.CastMs < 0 ||
+                effect.RecoveryMs < 0 || effect.MpCost < 0 ||
+                effect.CastMs > int.MaxValue - effect.RecoveryMs)
+            {
+                throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
+            }
+
+            if (effect.TargetMode == 0 &&
+                (effect.MinRangeCm != 0 || effect.MaxRangeCm != 0 || effect.RadiusCm != 0 ||
+                effect.MaxTargets != 0 || effect.HitCount != 0 || effect.HitIntervalMs != 0 ||
+                effect.DamagePermyriad != 0 || effect.FlatDamage != 0))
+            {
+                throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);
+            }
+
+            // 一个技能 ID 下每个学习等级只允许映射到一条效果配置。
+            Dictionary<int, SkillEffectInfo> effectsByLevel;
+            if (!effectsBySkill.TryGetValue(effect.SkillId, out effectsByLevel))
+            {
+                effectsByLevel = new Dictionary<int, SkillEffectInfo>();
+                effectsBySkill.Add(effect.SkillId, effectsByLevel);
+            }
+            if (effectsByLevel.ContainsKey(effect.Level))
+            {
+                throw new InvalidDataException("技能等级效果重复，技能=" + effect.SkillId +
+                    "，等级=" + effect.Level);
+            }
+            effectsByLevel.Add(effect.Level, effect);
+        }
+
+        return effectsBySkill;
+    }
+
+    /// <summary>按技能 ID 和角色已学等级读取唯一权威效果。</summary>
+    /// <param name="skillId">旧 SkillInfo.Id 中的稳定技能 ID。</param>
+    /// <param name="level">角色数据库保存的正整数学习等级。</param>
+    /// <returns>匹配的技能等级效果，缺失时返回空。</returns>
+    public SkillEffectInfo GetSkillEffectInfoBySkillAndLevel(int skillId, int level)
+    {
+        // 命中的内层索引只包含同一技能的等级效果。
+        Dictionary<int, SkillEffectInfo> effectsByLevel;
+        if (_skillEffectsByLevel != null &&
+            _skillEffectsByLevel.TryGetValue(skillId, out effectsByLevel))
+        {
+            // 当前等级的效果实例由生成表持有，不应在业务层修改。
+            SkillEffectInfo effect;
+            if (effectsByLevel.TryGetValue(level, out effect))
+            {
+                return effect;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>返回效果 ID 到效果配置的只读使用索引，调用方不得修改集合。</summary>
+    /// <returns>服务端启动时加载的技能效果集合。</returns>
+    public Dictionary<int, SkillEffectInfo> GetSkillEffectInfos()
+    {
+        return _skillEffectInfos;
+    }
+
+    /// <summary>返回表现配置 ID 到动画变体的索引，调用方不得修改集合。</summary>
+    /// <returns>服务端启动时加载的技能表现集合。</returns>
+    public Dictionary<int, SkillPresentationInfo> GetSkillPresentationInfos()
+    {
+        return _skillPresentationInfos;
+    }
+
+    /// <summary>读取旧技能定义表，旧 CD/MP 字段仅供既有 UI 兼容。</summary>
+    /// <returns>稳定技能 ID 到技能定义的索引，调用方不得修改集合。</returns>
     public Dictionary<int, SkillInfo> GetSkillInfos()
     {
         return _skillInfos;
     }
 
+    /// <summary>按稳定技能 ID 查找旧技能定义，用于职业和类型校验。</summary>
+    /// <param name="id">SkillInfo.Id 中的稳定技能 ID。</param>
+    /// <returns>匹配的技能定义，未配置时为空。</returns>
     public SkillInfo GetSkillInfoById(int id)
     {
         if (_skillInfos!=null&&_skillInfos.ContainsKey(id))
@@ -184,18 +300,28 @@ public class LubanMgr:Singleton<LubanMgr>
         return null;
     }
     /// <summary>
-    /// 通过职业id获取技能信息
+    /// 按职业 ID 获取该职业的旧技能定义快照。
     /// </summary>
-    /// <param name="jobid"></param>
-    /// <returns></returns>
+    /// <param name="jobid">角色职业配置 ID。</param>
+    /// <returns>技能 ID 到定义的独立字典，调用方可筛选但不得修改原表。</returns>
     public Dictionary<int, SkillInfo> GetSkillInfosByJob(int jobid)
     {
+        // 返回值是独立字典，避免调用方修改服务器加载的原始技能索引。
         Dictionary<int, SkillInfo> jobSkillInfos = new Dictionary<int, SkillInfo>();
-        foreach (var ite in _skillInfos)
+        if (_skillInfos == null)
         {
-            if (ite.Value.JobId == jobid)
+            return jobSkillInfos;
+        }
+        // 字典先复制为可按整数索引遍历的快照，保留原 SkillInfo 引用。
+        List<KeyValuePair<int, SkillInfo>> skillSnapshot =
+            new List<KeyValuePair<int, SkillInfo>>(_skillInfos);
+        for (int index = 0; index < skillSnapshot.Count; index++)
+        {
+            // 一条技能定义的职业 ID 决定是否包含在返回快照中。
+            KeyValuePair<int, SkillInfo> skillEntry = skillSnapshot[index];
+            if (skillEntry.Value.JobId == jobid)
             {
-                jobSkillInfos.Add(ite.Key, ite.Value);
+                jobSkillInfos.Add(skillEntry.Key, skillEntry.Value);
             }
         }
 
@@ -430,6 +556,34 @@ public class LubanMgr:Singleton<LubanMgr>
     public RoleLevelAttributeInfo GetRoleLevelAttributeInfoById(int id)
     {
         if (_roleLevelAttributeInfos != null && _roleLevelAttributeInfos.TryGetValue(id, out RoleLevelAttributeInfo info))
+        {
+            return info;
+        }
+        return null;
+    }
+
+    #endregion
+
+    #region 表现相关
+
+    /// <summary>
+    /// 获取全部角色表现配置，返回值为表现配置 ID 到配置对象的索引集合。
+    /// </summary>
+    /// <returns>角色表现配置字典；未初始化时返回 null。</returns>
+    public Dictionary<int, PresentTable> GetPresentTables()
+    {
+        return _presentTables;
+    }
+
+    /// <summary>
+    /// 根据表现配置 ID 获取角色表现配置。
+    /// </summary>
+    /// <param name="id">表现配置唯一 ID，来源于 PresentTable.Id。</param>
+    /// <returns>匹配的表现配置；未初始化或 ID 不存在时返回 null。</returns>
+    public PresentTable GetPresentTableById(int id)
+    {
+        // 保存字典查找到的表现配置，未命中时保持空引用并返回 null。
+        if (_presentTables != null && _presentTables.TryGetValue(id, out PresentTable info))
         {
             return info;
         }

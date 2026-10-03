@@ -124,7 +124,24 @@ namespace HighlightPlus
 
         private void Start()
         {
+            _mainRole = ResolveMainRole();
+        }
+
+        /// <summary>解析本地主角兼容控制器；优先读取当前对象，异步绑定期间回退到全局主角引用。</summary>
+        /// <returns>已经创建并绑定的主角控制器；主角尚未准备完成时返回 null。</returns>
+        private RoleCtrlBase ResolveMainRole()
+        {
+            if (_mainRole != null)
+            {
+                return _mainRole;
+            }
+
             _mainRole = GetComponent<RoleCtrlBase>();
+            if (_mainRole == null && Global.Instance != null)
+            {
+                _mainRole = Global.Instance.roleCtrlBase;
+            }
+            return _mainRole;
         }
 
         void Update()
@@ -225,7 +242,12 @@ namespace HighlightPlus
                         _selectRole = hitTrans.GetComponent<RoleCtrlBase>();
                         if (_selectRole != null)
                         {
-                            _mainRole._targetRole = _selectRole;
+                            // 当前主角控制器可能仍在异步装配；未就绪时只保留高亮选择，不写角色目标。
+                            RoleCtrlBase mainRole = ResolveMainRole();
+                            if (mainRole != null)
+                            {
+                                mainRole._targetRole = _selectRole;
+                            }
                             if (_selectRole._roleType != RoleType.NPC)
                             {
                                 //SelectedBarWidget selectedBarWidget = UIRootMgr.Instance.SelectedBar;
@@ -239,7 +261,7 @@ namespace HighlightPlus
                                 NpcCtrl npcCtrl = _selectRole as NpcCtrl;
                                 if (npcCtrl != null)
                                 {
-                                    npcCtrl.OpenTalk( _mainRole);
+                                    npcCtrl.OpenTalk(mainRole);
                                 }
                             }
 
@@ -260,7 +282,12 @@ namespace HighlightPlus
                 {
                     if (_selectRole != null) { ShowSelectEffect(false); }
                     //UIRootMgr.Instance.SelectedBar.gameObject.Show(false);
-                    _mainRole._targetRole = null;
+                    // 主角尚未创建完成时仅清除高亮选择，避免空引用中断输入更新。
+                    RoleCtrlBase mainRole = ResolveMainRole();
+                    if (mainRole != null)
+                    {
+                        mainRole._targetRole = null;
+                    }
                     internal_DeselectAll();
                 }
                 SwitchesObject(null);

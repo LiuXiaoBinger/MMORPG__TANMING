@@ -1,14 +1,46 @@
-﻿
+
 
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
+using MMoRpgCommon.SceneEntity;
 
 /// <summary>
 /// 存储服务端的在线玩家
 /// </summary>
 public class OnlineRole
 {
+    /// <summary>与场景 PlayerEntity 的运行时绑定；OnlineRole 本身仍然只是持久角色数据根。</summary>
+    private ulong _sceneUid;
+
+    /// <summary>当前角色在场景中的实体 ID，无效值表示尚未进入场景。</summary>
+    public ulong SceneUid
+    {
+        get { return _sceneUid; }
+    }
+
+    /// <summary>判断在线角色是否已绑定场景实体。</summary>
+    public bool HasSceneEntity
+    {
+        get { return _sceneUid > 0UL; }
+    }
+
+    /// <summary>绑定场景实体 ID，不把场景实体组件混入角色持久化组件。</summary>
+    public void BindSceneEntity(ulong sceneUid)
+    {
+        if (sceneUid == 0UL)
+        {
+            throw new ArgumentException("场景实体 UID 必须有效", "sceneUid");
+        }
+        _sceneUid = sceneUid;
+    }
+
+    /// <summary>离开场景或下线时清除实体绑定。</summary>
+    public void ClearSceneEntityBinding()
+    {
+        _sceneUid = 0UL;
+    }
+
     /// <summary>模块时间记录：记录模块最近修改时间与上次落库时间。</summary>
     public struct ModuleTime
     {
@@ -99,6 +131,8 @@ public class OnlineRole
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
         _components.SetComponent(new RoleShopRecord(this));
+        // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放。
+        _components.SetComponent(new RoleSkillComponent(this));
         _components.Initialize();
         _componentsInitialized = true;
     }
@@ -247,6 +281,12 @@ public class OnlineRole
     /// <summary>进入离线保存阶段；角色仍保留在角色索引中，以便接收 ACK 和执行重试。</summary>
     public void BeginOffline()
     {
+        // 离线先中断当前施法，防止旧会话的结束事件作用于重连后的角色。
+        RoleSkillComponent skillComponent;
+        if (TryGetComponent(out skillComponent))
+        {
+            skillComponent.InterruptActiveCast(true);
+        }
         State = OnlineRoleState.Offline;
         _saveRoleDataTimer.Stop();
         _roleNetSender.SendRoleDataToDB();

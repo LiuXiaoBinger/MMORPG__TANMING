@@ -29,11 +29,11 @@ public sealed class ShopCtrl : CtrlBase
     private void OnShopWindowFrameUpdated()
     {
         if (_shopWindow == null || !_shopWindow.isActiveAndEnabled ||
-            Global.Instance == null || Global.Instance.RoleWorld == null)
+            Global.Instance == null || Global.Instance.SceneWorld == null)
         {
             return;
         }
-        ClientRole role = Global.Instance.RoleWorld.LocalRole;
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
         if (role == null || role.DirtyTracker == null)
         {
             return;

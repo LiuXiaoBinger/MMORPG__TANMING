@@ -83,19 +83,22 @@ public class CentRoleModel
     }
 
     /// <summary>
-    /// 查询角色技能信息
+    /// 查询指定持久角色的技能列表，并在成功或失败回包中保留该角色 ID。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">GameServer 已校验会话后转发的进入世界请求，携带持久角色 ID。</param>
+    /// <returns>包含原角色 ID、查询结果码及技能等级明细的回包。</returns>
     public RoleSkillInfoRet RoleSkillInfo(EnterWroldReq req)
     {
-        RoleSkillInfoRet ret = new RoleSkillInfoRet();
+        // 角色 ID 必须来自中心服处理的请求，供 GameServer 抵御复合会话复用后的迟到回包。
+        RoleSkillInfoRet ret = new RoleSkillInfoRet { RoleId = req.RoleId };
         ret.CmdCode = CmdCode.Succeed;
+        // 本次角色查询结果的每一行对应已持久化的学习等级和快捷键。
         List< RoleSkillTable> roleSkillList = _db.Queryable<RoleSkillTable>().Where(v => v.RoleID == req.RoleId).ToList();
         if (roleSkillList != null && roleSkillList.Count > 0)
         {
             for (int i = 0; i < roleSkillList.Count; i++)
             {
+                // 单条角色技能的 ID/等级来自数据库，不使用客户端提供的效果或数值。
                 RoleSkillInfo roleSkillInfo = new RoleSkillInfo()
                 {
                     SkillId =  roleSkillList[i].SkillID,

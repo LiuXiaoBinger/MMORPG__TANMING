@@ -225,9 +225,6 @@ PrefabInstance:
       addedObject: {fileID: 6270977204894472761}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d1411dfe5b6473348aa04ec662133c4d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5015143598541242322}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d1411dfe5b6473348aa04ec662133c4d, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8114839910197911711}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d1411dfe5b6473348aa04ec662133c4d, type: 3}
       insertIndex: -1
@@ -287,24 +284,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4341cf428464ae046b9cc3d83c75f3a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5015143598541242322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060944389765059962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ebf0cb64092380468bcca60b4d9fcc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 0
-  LookAt: {fileID: 1627460630017519509}
 --- !u!114 &8114839910197911711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,7 +291,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1060944389765059962}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03211446dce2bc4428be275d9b4d3fc0, type: 3}
   m_Name: 

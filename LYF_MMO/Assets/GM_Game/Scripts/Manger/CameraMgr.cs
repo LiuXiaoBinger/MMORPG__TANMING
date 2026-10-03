@@ -16,7 +16,10 @@ public class CameraMgr : MonoBehaviour
     [SerializeField] private float _yAxisSpeed = 0.1f;
     [SerializeField] private float _xAxisSpeed = 10f;
     [SerializeField] private float _delayTimer = 0.6f;
-    private RoleCtrlBase  _roleMainCtrl;
+    /// <summary>当前本地主角模型根节点，用于角色属性窗口旋转展示。</summary>
+    private Transform _roleMainTransform;
+    /// <summary>当前相机注视节点，通常为主角模型下的 LookAtPos。</summary>
+    private Transform _lookAtTransform;
     public static CameraMgr Instance;
     private CinemachineFreeLook _cinemachine;
 
@@ -30,13 +33,21 @@ public class CameraMgr : MonoBehaviour
         // SetOrbites(12);
     }
 
-    public void InitCamera( RoleCtrlBase roleCtrl )
+    /// <summary>让自由视角相机跟随本地主角模型，不依赖旧 MainRoleCtrl。</summary>
+    /// <param name="roleTransform">本地主角模型根节点。</param>
+    /// <param name="lookAtTransform">模型内的相机注视节点；为空时暂时使用模型根节点。</param>
+    public void InitCamera(Transform roleTransform, Transform lookAtTransform)
     {
-        if (roleCtrl != null)
+        if (roleTransform != null && _cinemachine != null)
         {
-            _cinemachine.Follow = roleCtrl.transform;
-            _cinemachine.LookAt = roleCtrl.LookAt;
-            _roleMainCtrl = roleCtrl;
+            _roleMainTransform = roleTransform;
+            _lookAtTransform = lookAtTransform;
+            if (_lookAtTransform == null)
+            {
+                _lookAtTransform = roleTransform;
+            }
+            _cinemachine.Follow = _roleMainTransform;
+            _cinemachine.LookAt = _lookAtTransform;
         }
         SetOrbites(12);
     }
@@ -171,15 +182,22 @@ public class CameraMgr : MonoBehaviour
     /// <param name="cinemYAxis"></param>
     private void ToggleAngle(float cinemOffset, float roleRotaY, float cinemYAxis,Vector3 lookatpos,float roleAttrWindowOffset)
     {
+        if (_roleMainTransform == null || _cinemachine == null)
+        {
+            return;
+        }
         //设置轨道
         SetOrbites(cinemOffset);
         //设置角色选择，让角色正对摄像机 Camera.main.transform.eulerAngles.y
-        _roleMainCtrl.transform.eulerAngles = new Vector3(0, roleRotaY, 0);
+        _roleMainTransform.eulerAngles = new Vector3(0, roleRotaY, 0);
         //设置相机旋转x轴旋转
         _cinemachine.m_YAxis.Value = cinemYAxis;
         
         //设置Lookat点属性
-        _cinemachine.LookAt.localPosition = lookatpos;
+        if (_lookAtTransform != null && _lookAtTransform != _roleMainTransform)
+        {
+            _lookAtTransform.localPosition = lookatpos;
+        }
 
         _roleAtttWindowRectTransform.DOAnchorPos(new Vector2(roleAttrWindowOffset, 0), _delayTimer);
     }

@@ -17,6 +17,9 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     /// <summary>单调递增的连接代次种子。</summary>
     private long _connectionGenerationSeed;
 
+    /// <summary>正在建立连接的待定代次；连接成功前不对业务暴露。</summary>
+    private long _pendingConnectionGeneration;
+
     /// <summary>当前有效连接代次，零表示没有有效连接。</summary>
     private long _activeConnectionGeneration;
 
@@ -30,6 +33,15 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     public long CurrentConnectionGeneration
     {
         get { return Volatile.Read(ref _activeConnectionGeneration); }
+    }
+
+    /// <summary>底层 Socket 是否已经收到连接成功回调；连接代次分配阶段仍为 false。</summary>
+    private int _isConnected;
+
+    /// <summary>获取底层 TCP 连接状态，不代表登录业务已经完成。</summary>
+    public bool IsConnected
+    {
+        get { return Volatile.Read(ref _isConnected) == 1; }
     }
 
     /// <summary>初始化网络模块并连接登录服务器。</summary>
@@ -53,11 +65,13 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         Action connFail = null)
     {
         Disconnect();
+        Volatile.Write(ref _isConnected, 0);
 
         long connectionGeneration = Interlocked.Increment(ref _connectionGenerationSeed);
         NetClient client = new NetClient(host, port, ClientType.Unity);
         _client = client;
-        Volatile.Write(ref _activeConnectionGeneration, connectionGeneration);
+        Volatile.Write(ref _pendingConnectionGeneration, connectionGeneration);
+        Volatile.Write(ref _activeConnectionGeneration, 0);
 
         client.OnReceiveMsg += (protoCode, data) =>
             OnReceiveMsgHandle(client, protoCode, data);
@@ -102,13 +116,18 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
             return;
         }
 
-        long connectionGeneration = CurrentConnectionGeneration;
+        long connectionGeneration = Volatile.Read(ref _pendingConnectionGeneration);
         if (connectionGeneration <= 0)
         {
             // 同一个 NetClient 自动重连后使用新代次，隔离断线前已排队的回调。
             connectionGeneration = Interlocked.Increment(ref _connectionGenerationSeed);
-            Volatile.Write(ref _activeConnectionGeneration, connectionGeneration);
         }
+
+        // 连接成功后才把待定代次提升为业务可见的有效代次。
+        Volatile.Write(ref _activeConnectionGeneration, connectionGeneration);
+        Volatile.Write(ref _pendingConnectionGeneration, 0);
+        // 只有收到连接成功回调后才标记已连接，避免连接尝试阶段被当成有效会话。
+        Volatile.Write(ref _isConnected, 1);
 
         long callbackGeneration = connectionGeneration;
         PostToMainThread(() =>
@@ -134,19 +153,42 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         }
 
         long failedGeneration = Interlocked.Exchange(ref _activeConnectionGeneration, 0);
+        Volatile.Write(ref _pendingConnectionGeneration, 0);
+        Volatile.Write(ref _isConnected, 0);
         if (failedGeneration <= 0)
         {
+            // 连接尚未成功时不触发商城和角色会话清理，但失败回调仍必须回到 Unity 主线程执行。
+            PostToMainThread(() =>
+            {
+                if (!ReferenceEquals(_client, sourceClient))
+                {
+                    return;
+                }
+                // 失败回调排队期间若已有新连接成功，忽略这次过期的初次连接失败通知。
+                if (CurrentConnectionGeneration != 0)
+                {
+                    return;
+                }
+                if (connFail != null)
+                {
+                    connFail.Invoke();
+                }
+            });
             return;
         }
         PostToMainThread(() =>
         {
             ShopMgr.Instance.HandleDisconnected(failedGeneration);
-            if (!ReferenceEquals(_client, sourceClient) ||
-                CurrentConnectionGeneration != 0)
+            if (!ReferenceEquals(_client, sourceClient))
             {
                 return;
             }
-            ClearRoleWorld();
+            // 即使自动重连已经建立新代次，也要定向清理仍属于失败代次的旧角色会话。
+            ClearSceneWorld(failedGeneration);
+            if (CurrentConnectionGeneration != 0)
+            {
+                return;
+            }
             if (connFail != null)
             {
                 connFail.Invoke();
@@ -159,10 +201,12 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     {
         NetClient disconnectedClient = _client;
         long disconnectedGeneration = Interlocked.Exchange(ref _activeConnectionGeneration, 0);
+        Volatile.Write(ref _pendingConnectionGeneration, 0);
+        Volatile.Write(ref _isConnected, 0);
         _client = null;
 
         ShopMgr.Instance.HandleDisconnected(disconnectedGeneration);
-        ClearRoleWorld();
+        ClearSceneWorld();
         if (disconnectedClient != null)
         {
             // 先移除当前引用，底层断开回调便不会误清理后续新连接状态。
@@ -186,13 +230,27 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     }
 
     /// <summary>清理当前连接对应的客户端角色运行时数据。</summary>
-    private static void ClearRoleWorld()
+    private static void ClearSceneWorld()
     {
-        if (Global.Instance == null || Global.Instance.RoleWorld == null)
+        // 当前全局生命周期实例同时拥有待加载角色和已创建场景角色，断线时必须一起清理。
+        Global global = Global.Instance;
+        if (global == null)
         {
             return;
         }
-        Global.Instance.RoleWorld.Clear();
-        Global.Instance.roleCtrlBase = null;
+        global.ClearLocalRoleSession();
+    }
+
+    /// <summary>仅清理由指定失败连接代次拥有的客户端角色会话。</summary>
+    /// <param name="failedConnectionGeneration">底层连接失败时失效的正数代次。</param>
+    private static void ClearSceneWorld(long failedConnectionGeneration)
+    {
+        // 当前全局实例会核对角色会话代次，旧失败回调不会删除已由新连接接管的角色。
+        Global global = Global.Instance;
+        if (global == null)
+        {
+            return;
+        }
+        global.ClearLocalRoleSession(failedConnectionGeneration);
     }
 }

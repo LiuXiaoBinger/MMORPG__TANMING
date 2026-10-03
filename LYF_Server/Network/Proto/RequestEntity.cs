@@ -34,20 +34,21 @@ public static partial class RequestEntityReflection {
           "AiABKAUiXQoNQ3JlYXRlUm9sZVJlcRISCgphY2NvdW50X2lkGAEgASgFEhYK",
           "DmdhbWVfc2VydmVyX2lkGAIgASgFEhAKCG5pY2tuYW1lGAMgASgJEg4KBmpv",
           "Yl9pZBgEIAEoBSIfCgxTdGFydEdhbWVSZXESDwoHcm9sZV9pZBgBIAEoBSIg",
-          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUiVgoTT3BlbktuYXBz",
-          "YWNrR3JpZFJlcRIPCgdyb2xlX2lkGAEgASgFEhcKD29wZW5fZ3JpZF9jb3Vu",
-          "dBgCIAEoBRIVCg1rbmFwc2Fja190eXBlGAMgASgFIl0KGFN5bmNLbmFwc2Fj",
-          "a0dyaWRDb3VudFJlcRIPCgdyb2xlX2lkGAEgASgFEhkKEW9wZW5lZF9ncmlk",
-          "X2NvdW50GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUiPgoMSXRlbURh",
-          "dGFMaXN0EhAKCGJhZ190eXBlGAEgASgFEhwKBWl0ZW1zGAIgAygLMg0uUm9s",
-          "ZUl0ZW1JbmZvIqwBCg9TYXZlUm9sZURhdGFSZXESDwoHcm9sZV9pZBgBIAEo",
-          "BRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzIN",
-          "Lkl0ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIO",
-          "LlJvbGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCEoE",
-          "CAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEoDRIRCglidXlf",
-          "Y291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hvcF9pZBgBIAEo",
-          "DRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3JvbGVfaWQYBSAB",
-          "KA1iBnByb3RvMw=="));
+          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUiNAoMU2tpbGxDYXN0",
+          "UmVxEhIKCnNraWxsX3V1aWQYASABKAQSEAoIc2tpbGxfaWQYAiABKAUiVgoT",
+          "T3BlbktuYXBzYWNrR3JpZFJlcRIPCgdyb2xlX2lkGAEgASgFEhcKD29wZW5f",
+          "Z3JpZF9jb3VudBgCIAEoBRIVCg1rbmFwc2Fja190eXBlGAMgASgFIl0KGFN5",
+          "bmNLbmFwc2Fja0dyaWRDb3VudFJlcRIPCgdyb2xlX2lkGAEgASgFEhkKEW9w",
+          "ZW5lZF9ncmlkX2NvdW50GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUi",
+          "PgoMSXRlbURhdGFMaXN0EhAKCGJhZ190eXBlGAEgASgFEhwKBWl0ZW1zGAIg",
+          "AygLMg0uUm9sZUl0ZW1JbmZvIqwBCg9TYXZlUm9sZURhdGFSZXESDwoHcm9s",
+          "ZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0",
+          "cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlz",
+          "dBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hv",
+          "dBgGIAEoCEoECAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEo",
+          "DRIRCglidXlfY291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hv",
+          "cF9pZBgBIAEoDRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3Jv",
+          "bGVfaWQYBSABKA1iBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -60,6 +61,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::CreateRoleReq), global::CreateRoleReq.Parser, new[]{ "AccountId", "GameServerId", "Nickname", "JobId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameReq), global::StartGameReq.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastReq), global::SkillCastReq.Parser, new[]{ "SkillUuid", "SkillId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
@@ -2336,6 +2338,251 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
 }
 
 /// <summary>
+/// 客户端请求释放已学技能。身份和等级由 GameServer 按复合会话及中心服技能快照解析。
+/// 本阶段只允许无需目标的 TargetMode=0；跨端场景 UID 映射尚未建立，故不携目标 UID。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SkillCastReq> _parser = new pb::MessageParser<SkillCastReq>(() => new SkillCastReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SkillCastReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[9]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastReq(SkillCastReq other) : this() {
+    skillUuid_ = other.skillUuid_;
+    skillId_ = other.skillId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastReq Clone() {
+    return new SkillCastReq(this);
+  }
+
+  /// <summary>Field number for the "skill_uuid" field.</summary>
+  public const int SkillUuidFieldNumber = 1;
+  private ulong skillUuid_;
+  /// <summary>
+  ///客户端生成的单次施法标识，参照 RO 在 1~9999 内循环
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong SkillUuid {
+    get { return skillUuid_; }
+    set {
+      skillUuid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_id" field.</summary>
+  public const int SkillIdFieldNumber = 2;
+  private int skillId_;
+  /// <summary>
+  ///原 SkillInfo.Id；不能由客户端指定等级、效果或消耗
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SkillId {
+    get { return skillId_; }
+    set {
+      skillId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SkillCastReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SkillCastReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (SkillUuid != other.SkillUuid) return false;
+    if (SkillId != other.SkillId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (SkillUuid != 0UL) hash ^= SkillUuid.GetHashCode();
+    if (SkillId != 0) hash ^= SkillId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(SkillId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(SkillId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (SkillUuid != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SkillUuid);
+    }
+    if (SkillId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SkillId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SkillCastReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.SkillUuid != 0UL) {
+      SkillUuid = other.SkillUuid;
+    }
+    if (other.SkillId != 0) {
+      SkillId = other.SkillId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
 /// 请求开启背包格子。open_grid_count 是本次申请开启的数量。
 /// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
@@ -2353,7 +2600,7 @@ public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[9]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[10]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2637,7 +2884,7 @@ public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsack
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[10]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[11]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2921,7 +3168,7 @@ public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[11]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[12]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3154,7 +3401,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[12]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[13]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3496,7 +3743,7 @@ public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[13]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[14]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3740,7 +3987,7 @@ public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::RequestEntityReflection.Descriptor.MessageTypes[14]; }
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[15]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

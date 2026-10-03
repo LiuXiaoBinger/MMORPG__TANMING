@@ -98,6 +98,13 @@
         <Compile Include="shop\ShopItem.cs" />
         <Compile Include="UID\UIDHelper.cs" />
         <Compile Include="UID\UIDType.cs" />
+        <Compile Include="SceneEntity\EntityType.cs" />
+        <Compile Include="SceneEntity\EntityLifecycleState.cs" />
+        <Compile Include="SceneEntity\EntityComponentType.cs" />
+        <Compile Include="SceneEntity\EntityTransformSnapshot.cs" />
+        <Compile Include="SceneEntity\EntitySnapshot.cs" />
+        <Compile Include="SceneEntity\SceneEntityData.cs" />
+        <Compile Include="SceneEntity\IEntityComponent.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="EntityData\Gene\SpecialGene\DamageBuff\.gitkeep" />

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 public class BagTransition
 {
     // 本次事务操作的客户端角色。
-    protected ClientRole m_role;
+    protected PlayerEntity m_role;
     // 角色拥有的背包组件，负责容器和容量状态。
     protected  RoItemComponent m_roItemComponent;
     // 当前事务的业务来源和审计上下文。
@@ -26,7 +26,7 @@ public class BagTransition
     protected  int money_count_ = 0;
     // 本次操作附带的 IDIP 审计参数。
     protected  IdipParam idip_param_ = new IdipParam();
-    public BagTransition(ClientRole role)
+    public BagTransition(PlayerEntity role)
     {
         m_role = role;
         RoItemComponent knapsackComponent;
@@ -40,7 +40,7 @@ public class BagTransition
     /// <summary>
     /// 当前事务所属客户端角色。
     /// </summary>
-    public ClientRole Role
+    public PlayerEntity Role
     {
         get { return m_role; }
     }
@@ -249,7 +249,7 @@ public sealed class BagItemChange
 
 public class BagTakeItemTransition : BagTransition
 {
-    public BagTakeItemTransition(ClientRole role) : base(role)
+    public BagTakeItemTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -321,7 +321,7 @@ public class BagTakeItemTransition : BagTransition
 
 public class BagGiveItemTransition : BagTransition
 {
-    public BagGiveItemTransition(ClientRole role) : base(role)
+    public BagGiveItemTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -432,7 +432,7 @@ public class BagExpansionTransition : BagTransition
     private const int MinOpenedGridCount = 81;
     private const int MaxOpenedGridCount = byte.MaxValue;
 
-    public BagExpansionTransition(ClientRole role) : base(role)
+    public BagExpansionTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -482,7 +482,7 @@ public class BagExpansionTransition : BagTransition
 
 public class BagWearItemTransition : BagTransition
 {
-    public BagWearItemTransition(ClientRole role) : base(role)
+    public BagWearItemTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -588,7 +588,7 @@ public class BagWearItemTransition : BagTransition
 
 public class BagUseItemTransition : BagTransition
 {
-    public BagUseItemTransition(ClientRole role) : base(role)
+    public BagUseItemTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -608,7 +608,7 @@ public class BagUseItemTransition : BagTransition
 
 public class BagMoveItemTransition : BagTransition
 {
-    public BagMoveItemTransition(ClientRole role) : base(role)
+    public BagMoveItemTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -637,7 +637,7 @@ public class BagMoveItemTransition : BagTransition
 
 public class BagSimulateTransition : BagTransition
 {
-    public BagSimulateTransition(ClientRole role) : base(role)
+    public BagSimulateTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -661,7 +661,7 @@ public class BagSimulateTransition : BagTransition
 
 public class BagLockTransition : BagTransition
 {
-    public BagLockTransition(ClientRole role) : base(role)
+    public BagLockTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -686,7 +686,7 @@ public class BagLockTransition : BagTransition
 
 public class BagChangeAttrTransition : BagTransition
 {
-    public BagChangeAttrTransition(ClientRole role) : base(role)
+    public BagChangeAttrTransition(PlayerEntity role) : base(role)
     {
     }
 
@@ -711,7 +711,7 @@ public class BagChangeAttrTransition : BagTransition
 // 批量发奖事务：先检查全部物品是否都能放入，全部满足后才一次性提交；否则不发任何物品。
 public class BagZhuDongGetItemTranstion :  BagTransition
 {
-    public BagZhuDongGetItemTranstion(ClientRole role) : base(role)
+    public BagZhuDongGetItemTranstion(PlayerEntity role) : base(role)
     {
     }
     

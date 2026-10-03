@@ -29,6 +29,12 @@ enum CmdCode{
 	IncorrectBackpackType = 25;//背包类型错误
 	ItemNotExist = 26;//物品不存在
 	ItemNotEnough = 27;//物品不足
+	SkillNotLearned = 28;//角色未学习此技能或等级为零
+	SkillConfigMissing = 29;//当前等级缺失有效技能效果配置
+	SkillOnCooldown = 30;//技能或公共冷却尚未结束
+	SkillInsufficientMp = 31;//权威法力值不足
+	SkillStateBlocked = 32;//角色当前状态不允许释放技能
+	SkillTargetUnsupported = 33;//目标模式尚未接入权威场景实体链
 }
 
 message RegistVarifyRet{
@@ -163,6 +169,7 @@ message RoleSkillInfoRet
 {
 	CmdCode cmd_code = 1;//表示请求是否成功
 	repeated RoleSkillInfo roleSkillInfoList = 2;
+	int32 role_id = 3;//中心服查询的持久角色 ID；GameServer 转发前必须核对当前复合会话角色
 }
 //技能信息数据
 message RoleSkillInfo
@@ -170,6 +177,44 @@ message RoleSkillInfo
 	int32 skill_id = 1;
 	int32 level = 2;
 	string bind_key = 3;
+}
+
+// 施法请求结果；失败时也返回原施法 UUID 及当前权威 MP/CD。
+message SkillCastRet
+{
+	CmdCode cmd_code = 1;//服务器校验和提交结果
+	uint64 skill_uuid = 2;//原样对应 SkillCastReq.skill_uuid
+	int32 skill_id = 3;//请求的原 SkillInfo.Id
+	int32 effect_id = 4;//已学等级解析出的 SkillEffectInfo.Id，无法解析时为零
+	reserved 5;//原服务端另行分配的施法 ID 已废弃，保留字段号防止误用
+	int64 server_time_unix_ms = 6;//回包生成时的服务器 UTC Unix 毫秒
+	int32 current_mp = 7;//角色当前权威 MP
+	int64 cooldown_end_unix_ms = 8;//该技能 CD 结束的服务器 UTC Unix 毫秒，无 CD 时为零
+	int64 group_cooldown_end_unix_ms = 9;//公共 CD 结束的服务器 UTC Unix 毫秒，无公共 CD 时为零
+	int32 cast_duration_ms = 10;//本次施法持续毫秒数，失败时为零
+	int32 using_times = 11;//成功施法采用的表现列表下标，从零开始；本人据此确认预测段数
+}
+
+// 服务器确认施法后给本人和同地图附近角色的表现通知，不表示命中或伤害。
+message SkillCastStartNtf
+{
+	int32 caster_role_id = 1;//施法者持久化角色 ID；客户端用他人角色 RoleId 索引定位实体
+	uint64 skill_uuid = 2;//原样沿用客户端生成的本次施法 UUID，按施法角色区分
+	int32 skill_id = 3;//原 SkillInfo.Id
+	int32 effect_id = 4;//已学等级对应的技能效果 ID
+	int64 start_server_time_unix_ms = 5;//服务器确认施法的 UTC Unix 毫秒
+	int32 cast_duration_ms = 6;//服务器权威施法持续毫秒数
+	int32 using_times = 7;//按当前职业模型和武器表现列表取模的零起始段数，供远端选择动作
+}
+
+// 服务器正常结束或中断施法的表现通知；本期没有命中广播。
+message SkillCastEndNtf
+{
+	int32 caster_role_id = 1;//施法者持久化角色 ID，不能当客户端本地实体 UID 使用
+	uint64 skill_uuid = 2;//对应开始通知的原施法 UUID
+	int32 skill_id = 3;//结束的原技能 ID
+	int64 end_server_time_unix_ms = 4;//服务器结束施法的 UTC Unix 毫秒
+	bool interrupted = 5;//死亡、断线、切图等中断为 true，正常结束为 false
 }
 //返回的角色背包信息
 message RoleKanpsackInfoRet

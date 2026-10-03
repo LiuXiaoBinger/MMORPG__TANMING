@@ -4,10 +4,10 @@ using System;
 public abstract class RoleComponentBase
 {
     /// <summary>组件所属客户端角色。</summary>
-    protected ClientRole Owner { get; private set; }
+    protected PlayerEntity Owner { get; private set; }
 
     /// <summary>创建组件并绑定所属角色。</summary>
-    protected RoleComponentBase(ClientRole owner)
+    protected RoleComponentBase(PlayerEntity owner)
     {
         if (owner == null)
         {
@@ -18,11 +18,6 @@ public abstract class RoleComponentBase
 
     /// <summary>初始化组件运行时状态。</summary>
     public virtual void Initialize()
-    {
-    }
-
-    /// <summary>装载组件协议数据。</summary>
-    public virtual void Load(object roleData)
     {
     }
 

@@ -36,7 +36,8 @@
     <ItemGroup>
         <Compile Include="Ctrl\GateClientResponseForwarder.cs" />
         <Compile Include="Ctrl\GateLoginCtrl.cs" />
-        <Compile Include="Ctrl\GateRoleCtrl.cs" />
+    <Compile Include="Ctrl\GateRoleCtrl.cs" />
+    <Compile Include="Ctrl\GateSkillCtrl.cs" />
         <Compile Include="GateServerApp.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

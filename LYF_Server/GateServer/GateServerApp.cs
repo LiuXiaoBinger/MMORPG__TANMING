@@ -35,6 +35,12 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_CountUpdateSyncInfoCode, gateRoleCtrl);//同步商城和副本次数
 
             client.RegistCommand(NetDefine.CMD_SC_UpdateItemInfoCode, gateRoleCtrl);
+            // 技能请求由网关透传，权威结果和起止通知按 Unity 会话原路返回。
+            GateSkillCtrl gateSkillCtrl = new GateSkillCtrl();
+            server.RegistCommand(NetDefine.CMD_SkillCastCode, gateSkillCtrl);
+            client.RegistCommand(NetDefine.CMD_SkillCastCode, gateSkillCtrl);
+            client.RegistCommand(NetDefine.CMD_SkillCastStartCode, gateSkillCtrl);
+            client.RegistCommand(NetDefine.CMD_SkillCastEndCode, gateSkillCtrl);
             while (true)
             {
                 Thread.Sleep(1);

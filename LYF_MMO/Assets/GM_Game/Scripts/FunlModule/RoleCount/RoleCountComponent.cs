@@ -13,7 +13,7 @@ public sealed class RoleCountComponent : RoleComponentBase
         new Dictionary<Tuple<long, long>, RoleCountItemInfo>();
 
     /// <summary>创建客户端角色次数组件。</summary>
-    public RoleCountComponent(ClientRole owner) : base(owner)
+    public RoleCountComponent(PlayerEntity owner) : base(owner)
     {
     }
 

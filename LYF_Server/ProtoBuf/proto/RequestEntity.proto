@@ -56,6 +56,14 @@ message EnterWroldReq
 	int32 role_id =1;//角色id
 }
 
+// 客户端请求释放已学技能。身份和等级由 GameServer 按复合会话及中心服技能快照解析。
+// 本阶段只允许无需目标的 TargetMode=0；跨端场景 UID 映射尚未建立，故不携目标 UID。
+message SkillCastReq
+{
+	uint64 skill_uuid = 1;//客户端生成的单次施法标识，参照 RO 在 1~9999 内循环
+	int32 skill_id = 2;//原 SkillInfo.Id；不能由客户端指定等级、效果或消耗
+}
+
 // 请求开启背包格子。open_grid_count 是本次申请开启的数量。
 message OpenKnapsackGridReq
 {

@@ -13,7 +13,7 @@ public sealed class RoleComponentContainer
         new List<RoleComponentBase>();
 
     /// <summary>创建角色组件容器。</summary>
-    public RoleComponentContainer(ClientRole owner)
+    public RoleComponentContainer(PlayerEntity owner)
     {
         if (owner == null)
         {

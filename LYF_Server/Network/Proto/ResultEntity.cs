@@ -60,74 +60,91 @@ public static partial class ResultEntityReflection {
           "Zm8SIAoJYmFzZV9pbmZvGAEgASgLMg0uUm9sZUJhc2VJbmZvEhIKCmFjY291",
           "bnRfaWQYAiABKAUSCwoDZXhwGAQgASgFEhYKDnNraWxsX3VwX3BvaW50GAUg",
           "ASgFEhUKDWNhbWVyYV9vZmZzZXQYBiABKAkSEQoJc2VydmVyX2lkGAcgASgF",
-          "SgQIAxAEUgVtb25leSJZChBSb2xlU2tpbGxJbmZvUmV0EhoKCGNtZF9jb2Rl",
+          "SgQIAxAEUgVtb25leSJqChBSb2xlU2tpbGxJbmZvUmV0EhoKCGNtZF9jb2Rl",
           "GAEgASgOMgguQ21kQ29kZRIpChFyb2xlU2tpbGxJbmZvTGlzdBgCIAMoCzIO",
-          "LlJvbGVTa2lsbEluZm8iQgoNUm9sZVNraWxsSW5mbxIQCghza2lsbF9pZBgB",
-          "IAEoBRINCgVsZXZlbBgCIAEoBRIQCghiaW5kX2tleRgDIAEoCSJgChNSb2xl",
-          "S2FucHNhY2tJbmZvUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIt",
-          "ChJyb2xlX2thbnBzYWNrX2luZm8YAiABKAsyES5Sb2xlS2FucHNhY2tJbmZv",
-          "Io0DChBSb2xlS2FucHNhY2tJbmZvEjMKF2thbnBzYWNrX3R5cGVfY291bnRf",
-          "bHN0GAEgAygLMhIuS2FucHNhY2t0eXBlY291bnQSJgoPcm9sZV9wYWNrX3Bs",
-          "YWluGAIgAygLMg0uUm9sZUl0ZW1JbmZvEiYKD3JvbGVfcGFja19lcXVpcBgD",
-          "IAMoCzINLlJvbGVJdGVtSW5mbxIoChFyb2xlX3BhY2tfY29uc3VtZRgEIAMo",
-          "CzINLlJvbGVJdGVtSW5mbxIpChJyb2xlX3BhY2tfbWF0ZXJpYWwYBSADKAsy",
-          "DS5Sb2xlSXRlbUluZm8SLAoVcm9sZV9jdXJydF9lcXVpcF9wYWNrGAYgAygL",
-          "Mg0uUm9sZUl0ZW1JbmZvEhQKDHNhdmVfdmVyc2lvbhgHIAEoAxItChZyb2xl",
-          "X3ZpcnR1YWxfaXRlbV9wYWNrGAggAygLMg0uUm9sZUl0ZW1JbmZvEiwKFHJv",
-          "bGVfY291bnRfaW5mb19saXN0GAkgAygLMg4uUm9sZUNvdW50SW5mbyJcCg1S",
-          "b2xlQ291bnRJbmZvEg4KBmFjdGlvbhgBIAEoBRIRCgljb3VudF9rZXkYAiAB",
-          "KAUSDQoFY291bnQYAyABKAMSGQoRbGFzdF9yZWZyZXNoX3RpbWUYBCABKAMi",
-          "aAoXUm9sZVNob3BQdXJjaGFzZUluZm9SZXQSGgoIY21kX2NvZGUYASABKA4y",
-          "CC5DbWRDb2RlEjEKEnB1cmNoYXNlX2luZm9fbGlzdBgCIAMoCzIVLlJvbGVT",
-          "aG9wUHVyY2hhc2VJbmZvIsoBChRSb2xlU2hvcFB1cmNoYXNlSW5mbxIPCgdy",
-          "b2xlX2lkGAEgASgFEhAKCGdvb2RzX2lkGAMgASgFEhsKE2RhaWx5X3B1cmNo",
-          "YXNlX2RhdGUYBCABKAkSHAoUZGFpbHlfcHVyY2hhc2VfY291bnQYBSABKAUS",
-          "HAoUdG90YWxfcHVyY2hhc2VfY291bnQYBiABKAUSEwoLY3JlYXRlX2RhdGUY",
-          "ByABKAkSEwoLdXBkYXRlX2RhdGUYCCABKAlKBAgCEANSBm5wY19pZCIwChFL",
-          "YW5wc2Fja3R5cGVjb3VudBIMCgR0eXBlGAEgASgFEg0KBWNvdW50GAIgASgF",
-          "IsoCCgxSb2xlSXRlbUluZm8SEAoIaXRlbV91aWQYASABKAMSDQoFY291bnQY",
-          "AiABKAUSDwoHcm9sZV9pZBgDIAEoBRIUCgxpdGVtX3R5cGVfaWQYBCABKAUS",
-          "EAoIYmFnX3R5cGUYBSABKAUSEQoJYmFnX2luZGV4GAYgASgFEiYKCmVxdWlw",
-          "X2luZm8YByABKAsyEi5Sb2xlRXF1aXBJdGVtSW5mbxIrCg9lcXVpcF9nZW5l",
-          "X2luZm8YCCABKAsyEi5Sb2xlRXF1aXBHZW5lSW5mbxIRCglpdGVtX3NpZ24Y",
-          "CSABKAUSEgoKbW9uZXlfdHlwZRgKIAEoBRITCgt0b3RhbF9wcmljZRgLIAEo",
-          "AxIdChVjcmVhdGVfdGltZV91dGNfdGlja3MYDCABKAMSHQoVZXhwaXJlX3Rp",
-          "bWVfdXRjX3RpY2tzGA0gASgDImQKEVJvbGVFcXVpcEl0ZW1JbmZvEhAKCGl0",
-          "ZW1fdWlkGAEgASgDEg8KB3JvbGVfaWQYAiABKAUSGAoQc3RyZW5ndGhlbl9s",
-          "ZXZlbBgDIAEoBRISCgplcXVpcF90eXBlGAQgASgFIqsBChFSb2xlRXF1aXBH",
-          "ZW5lSW5mbxIQCghpdGVtX3VpZBgBIAEoAxIPCgdyb2xlX2lkGAIgASgFEhAK",
-          "CGdlbmVfaWQwGAMgASgFEhAKCGdlbmVfaWQxGAQgASgFEhAKCGdlbmVfaWQy",
-          "GAUgASgFEhMKC2dlbmVfdmFsdWUwGAYgASgFEhMKC2dlbmVfdmFsdWUxGAcg",
-          "ASgFEhMKC2dlbmVfdmFsdWUyGAggASgFInsKD1NhdmVSb2xlRGF0YVJldBIa",
-          "CghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIP",
-          "Cgd2ZXJzaW9uGAMgASgDEg8KB21lc3NhZ2UYBCABKAkSGQoRcGVyc2lzdGVk",
-          "X3ZlcnNpb24YBSABKAMifAoTT3BlbktuYXBzYWNrR3JpZFJldBIaCghjbWRf",
-          "Y29kZRgBIAEoDjIILkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIhChljdXJy",
-          "ZW50X29wZW5lZF9ncmlkX2NvdW50GAMgASgFEhUKDWtuYXBzYWNrX3R5cGUY",
-          "BCABKAUiTwoNQ291bnRJdGVtSW5mbxIMCgR0eXBlGAEgASgDEgoKAmlkGAIg",
-          "ASgDEg0KBWNvdW50GAMgASgFEhUKDWNkX3RpbWVfc3RhbXAYBCABKAMiUAoP",
-          "R2V0Q291bnRJbmZvUmVzEhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIh",
-          "CglpdGVtX2xpc3QYAiADKAsyDi5Db3VudEl0ZW1JbmZvIlQKE0NvdW50VXBk",
-          "YXRlU3luY0luZm8SGgoIY21kX2NvZGUYASABKA4yCC5DbWRDb2RlEiEKCWl0",
-          "ZW1fbGlzdBgCIAMoCzIOLkNvdW50SXRlbUluZm8iKwoPTWFwS2V5NjRWYWx1",
-          "ZTMyEgsKA2tleRgBIAEoBBILCgN2YWwYAiABKAUiagoKVXBkYXRlSXRlbRIl",
-          "CgtkZWxldGVfbGlzdBgBIAMoCzIQLk1hcEtleTY0VmFsdWUzMhITCgt1cGRh",
-          "dGVfdGltZRgCIAEoAxIgCglpdGVtX2xpc3QYAyADKAsyDS5Sb2xlSXRlbUlu",
-          "Zm8iSgoNVXBkYXRlSXRlbVJldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENv",
-          "ZGUSHQoISXRlbURhdGUYAiABKAsyCy5VcGRhdGVJdGVtKq8ECgdDbWRDb2Rl",
-          "EgsKB1N1Y2NlZWQQABINCglBY2N0RXhpc3QQARIPCgtTZXJ2ZXJFcnJvchAC",
-          "EhAKDEFjY3ROb3RFeGlzdBADEhEKDVBhc3N3b3JkRXJyb3IQBBIPCgtBY2N0",
-          "RGlzYWJsZRAFEhEKDVJlcVBhcmFtRXJyb3IQBhIRCg1OaWNrbmFtZUV4aXN0",
-          "EAcSEwoPVXNlck5hbWVJbGxlZ2FsEAgSEwoPUGhvbmVOdW1JbGxlZ2FsEAkS",
-          "EwoPUGFzc3dvcmRJbGxlZ2FsEAoSEgoOVXNlck9mdGVuTG9naW4QCxIPCgtW",
-          "YXJpZnlFcnJvchAMEhAKDFJvbGVOb3RFeGlzdBANEhMKD0ZlYXR1cmVOb3RS",
-          "ZWFkeRAOEhQKEER1cGxpY2F0ZVJlcXVlc3QQDxIVChFOb3RFbm91Z2hDdXJy",
-          "ZW5jeRAQEhQKEFNob3BJdGVtTm90Rm91bmQQERIYChRQdXJjaGFzZUxpbWl0",
-          "UmVhY2hlZBASEgsKB0JhZ0Z1bGwQExISCg5JbnZhbGlkU2Vzc2lvbhAUEhMK",
-          "D0ludmFsaWRRdWFudGl0eRAVEg8KC0ludmFsaWRTaG9wEBYSFQoRVHJhbnNh",
-          "Y3Rpb25GYWlsZWQQFxIVChFJbnN1ZmZpY2llbnRJdGVtcxAYEhkKFUluY29y",
-          "cmVjdEJhY2twYWNrVHlwZRAZEhAKDEl0ZW1Ob3RFeGlzdBAaEhEKDUl0ZW1O",
-          "b3RFbm91Z2gQG2IGcHJvdG8z"));
+          "LlJvbGVTa2lsbEluZm8SDwoHcm9sZV9pZBgDIAEoBSJCCg1Sb2xlU2tpbGxJ",
+          "bmZvEhAKCHNraWxsX2lkGAEgASgFEg0KBWxldmVsGAIgASgFEhAKCGJpbmRf",
+          "a2V5GAMgASgJIosCCgxTa2lsbENhc3RSZXQSGgoIY21kX2NvZGUYASABKA4y",
+          "CC5DbWRDb2RlEhIKCnNraWxsX3V1aWQYAiABKAQSEAoIc2tpbGxfaWQYAyAB",
+          "KAUSEQoJZWZmZWN0X2lkGAQgASgFEhsKE3NlcnZlcl90aW1lX3VuaXhfbXMY",
+          "BiABKAMSEgoKY3VycmVudF9tcBgHIAEoBRIcChRjb29sZG93bl9lbmRfdW5p",
+          "eF9tcxgIIAEoAxIiChpncm91cF9jb29sZG93bl9lbmRfdW5peF9tcxgJIAEo",
+          "AxIYChBjYXN0X2R1cmF0aW9uX21zGAogASgFEhMKC3VzaW5nX3RpbWVzGAsg",
+          "ASgFSgQIBRAGIrYBChFTa2lsbENhc3RTdGFydE50ZhIWCg5jYXN0ZXJfcm9s",
+          "ZV9pZBgBIAEoBRISCgpza2lsbF91dWlkGAIgASgEEhAKCHNraWxsX2lkGAMg",
+          "ASgFEhEKCWVmZmVjdF9pZBgEIAEoBRIhChlzdGFydF9zZXJ2ZXJfdGltZV91",
+          "bml4X21zGAUgASgDEhgKEGNhc3RfZHVyYXRpb25fbXMYBiABKAUSEwoLdXNp",
+          "bmdfdGltZXMYByABKAUihQEKD1NraWxsQ2FzdEVuZE50ZhIWCg5jYXN0ZXJf",
+          "cm9sZV9pZBgBIAEoBRISCgpza2lsbF91dWlkGAIgASgEEhAKCHNraWxsX2lk",
+          "GAMgASgFEh8KF2VuZF9zZXJ2ZXJfdGltZV91bml4X21zGAQgASgDEhMKC2lu",
+          "dGVycnVwdGVkGAUgASgIImAKE1JvbGVLYW5wc2Fja0luZm9SZXQSGgoIY21k",
+          "X2NvZGUYASABKA4yCC5DbWRDb2RlEi0KEnJvbGVfa2FucHNhY2tfaW5mbxgC",
+          "IAEoCzIRLlJvbGVLYW5wc2Fja0luZm8ijQMKEFJvbGVLYW5wc2Fja0luZm8S",
+          "MwoXa2FucHNhY2tfdHlwZV9jb3VudF9sc3QYASADKAsyEi5LYW5wc2Fja3R5",
+          "cGVjb3VudBImCg9yb2xlX3BhY2tfcGxhaW4YAiADKAsyDS5Sb2xlSXRlbUlu",
+          "Zm8SJgoPcm9sZV9wYWNrX2VxdWlwGAMgAygLMg0uUm9sZUl0ZW1JbmZvEigK",
+          "EXJvbGVfcGFja19jb25zdW1lGAQgAygLMg0uUm9sZUl0ZW1JbmZvEikKEnJv",
+          "bGVfcGFja19tYXRlcmlhbBgFIAMoCzINLlJvbGVJdGVtSW5mbxIsChVyb2xl",
+          "X2N1cnJ0X2VxdWlwX3BhY2sYBiADKAsyDS5Sb2xlSXRlbUluZm8SFAoMc2F2",
+          "ZV92ZXJzaW9uGAcgASgDEi0KFnJvbGVfdmlydHVhbF9pdGVtX3BhY2sYCCAD",
+          "KAsyDS5Sb2xlSXRlbUluZm8SLAoUcm9sZV9jb3VudF9pbmZvX2xpc3QYCSAD",
+          "KAsyDi5Sb2xlQ291bnRJbmZvIlwKDVJvbGVDb3VudEluZm8SDgoGYWN0aW9u",
+          "GAEgASgFEhEKCWNvdW50X2tleRgCIAEoBRINCgVjb3VudBgDIAEoAxIZChFs",
+          "YXN0X3JlZnJlc2hfdGltZRgEIAEoAyJoChdSb2xlU2hvcFB1cmNoYXNlSW5m",
+          "b1JldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSMQoScHVyY2hhc2Vf",
+          "aW5mb19saXN0GAIgAygLMhUuUm9sZVNob3BQdXJjaGFzZUluZm8iygEKFFJv",
+          "bGVTaG9wUHVyY2hhc2VJbmZvEg8KB3JvbGVfaWQYASABKAUSEAoIZ29vZHNf",
+          "aWQYAyABKAUSGwoTZGFpbHlfcHVyY2hhc2VfZGF0ZRgEIAEoCRIcChRkYWls",
+          "eV9wdXJjaGFzZV9jb3VudBgFIAEoBRIcChR0b3RhbF9wdXJjaGFzZV9jb3Vu",
+          "dBgGIAEoBRITCgtjcmVhdGVfZGF0ZRgHIAEoCRITCgt1cGRhdGVfZGF0ZRgI",
+          "IAEoCUoECAIQA1IGbnBjX2lkIjAKEUthbnBzYWNrdHlwZWNvdW50EgwKBHR5",
+          "cGUYASABKAUSDQoFY291bnQYAiABKAUiygIKDFJvbGVJdGVtSW5mbxIQCghp",
+          "dGVtX3VpZBgBIAEoAxINCgVjb3VudBgCIAEoBRIPCgdyb2xlX2lkGAMgASgF",
+          "EhQKDGl0ZW1fdHlwZV9pZBgEIAEoBRIQCghiYWdfdHlwZRgFIAEoBRIRCgli",
+          "YWdfaW5kZXgYBiABKAUSJgoKZXF1aXBfaW5mbxgHIAEoCzISLlJvbGVFcXVp",
+          "cEl0ZW1JbmZvEisKD2VxdWlwX2dlbmVfaW5mbxgIIAEoCzISLlJvbGVFcXVp",
+          "cEdlbmVJbmZvEhEKCWl0ZW1fc2lnbhgJIAEoBRISCgptb25leV90eXBlGAog",
+          "ASgFEhMKC3RvdGFsX3ByaWNlGAsgASgDEh0KFWNyZWF0ZV90aW1lX3V0Y190",
+          "aWNrcxgMIAEoAxIdChVleHBpcmVfdGltZV91dGNfdGlja3MYDSABKAMiZAoR",
+          "Um9sZUVxdWlwSXRlbUluZm8SEAoIaXRlbV91aWQYASABKAMSDwoHcm9sZV9p",
+          "ZBgCIAEoBRIYChBzdHJlbmd0aGVuX2xldmVsGAMgASgFEhIKCmVxdWlwX3R5",
+          "cGUYBCABKAUiqwEKEVJvbGVFcXVpcEdlbmVJbmZvEhAKCGl0ZW1fdWlkGAEg",
+          "ASgDEg8KB3JvbGVfaWQYAiABKAUSEAoIZ2VuZV9pZDAYAyABKAUSEAoIZ2Vu",
+          "ZV9pZDEYBCABKAUSEAoIZ2VuZV9pZDIYBSABKAUSEwoLZ2VuZV92YWx1ZTAY",
+          "BiABKAUSEwoLZ2VuZV92YWx1ZTEYByABKAUSEwoLZ2VuZV92YWx1ZTIYCCAB",
+          "KAUiewoPU2F2ZVJvbGVEYXRhUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21k",
+          "Q29kZRIPCgdyb2xlX2lkGAIgASgFEg8KB3ZlcnNpb24YAyABKAMSDwoHbWVz",
+          "c2FnZRgEIAEoCRIZChFwZXJzaXN0ZWRfdmVyc2lvbhgFIAEoAyJ8ChNPcGVu",
+          "S25hcHNhY2tHcmlkUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIP",
+          "Cgdyb2xlX2lkGAIgASgFEiEKGWN1cnJlbnRfb3BlbmVkX2dyaWRfY291bnQY",
+          "AyABKAUSFQoNa25hcHNhY2tfdHlwZRgEIAEoBSJPCg1Db3VudEl0ZW1JbmZv",
+          "EgwKBHR5cGUYASABKAMSCgoCaWQYAiABKAMSDQoFY291bnQYAyABKAUSFQoN",
+          "Y2RfdGltZV9zdGFtcBgEIAEoAyJQCg9HZXRDb3VudEluZm9SZXMSGgoIY21k",
+          "X2NvZGUYASABKA4yCC5DbWRDb2RlEiEKCWl0ZW1fbGlzdBgCIAMoCzIOLkNv",
+          "dW50SXRlbUluZm8iVAoTQ291bnRVcGRhdGVTeW5jSW5mbxIaCghjbWRfY29k",
+          "ZRgBIAEoDjIILkNtZENvZGUSIQoJaXRlbV9saXN0GAIgAygLMg4uQ291bnRJ",
+          "dGVtSW5mbyIrCg9NYXBLZXk2NFZhbHVlMzISCwoDa2V5GAEgASgEEgsKA3Zh",
+          "bBgCIAEoBSJqCgpVcGRhdGVJdGVtEiUKC2RlbGV0ZV9saXN0GAEgAygLMhAu",
+          "TWFwS2V5NjRWYWx1ZTMyEhMKC3VwZGF0ZV90aW1lGAIgASgDEiAKCWl0ZW1f",
+          "bGlzdBgDIAMoCzINLlJvbGVJdGVtSW5mbyJKCg1VcGRhdGVJdGVtUmV0EhoK",
+          "CGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIdCghJdGVtRGF0ZRgCIAEoCzIL",
+          "LlVwZGF0ZUl0ZW0qvQUKB0NtZENvZGUSCwoHU3VjY2VlZBAAEg0KCUFjY3RF",
+          "eGlzdBABEg8KC1NlcnZlckVycm9yEAISEAoMQWNjdE5vdEV4aXN0EAMSEQoN",
+          "UGFzc3dvcmRFcnJvchAEEg8KC0FjY3REaXNhYmxlEAUSEQoNUmVxUGFyYW1F",
+          "cnJvchAGEhEKDU5pY2tuYW1lRXhpc3QQBxITCg9Vc2VyTmFtZUlsbGVnYWwQ",
+          "CBITCg9QaG9uZU51bUlsbGVnYWwQCRITCg9QYXNzd29yZElsbGVnYWwQChIS",
+          "Cg5Vc2VyT2Z0ZW5Mb2dpbhALEg8KC1ZhcmlmeUVycm9yEAwSEAoMUm9sZU5v",
+          "dEV4aXN0EA0SEwoPRmVhdHVyZU5vdFJlYWR5EA4SFAoQRHVwbGljYXRlUmVx",
+          "dWVzdBAPEhUKEU5vdEVub3VnaEN1cnJlbmN5EBASFAoQU2hvcEl0ZW1Ob3RG",
+          "b3VuZBAREhgKFFB1cmNoYXNlTGltaXRSZWFjaGVkEBISCwoHQmFnRnVsbBAT",
+          "EhIKDkludmFsaWRTZXNzaW9uEBQSEwoPSW52YWxpZFF1YW50aXR5EBUSDwoL",
+          "SW52YWxpZFNob3AQFhIVChFUcmFuc2FjdGlvbkZhaWxlZBAXEhUKEUluc3Vm",
+          "ZmljaWVudEl0ZW1zEBgSGQoVSW5jb3JyZWN0QmFja3BhY2tUeXBlEBkSEAoM",
+          "SXRlbU5vdEV4aXN0EBoSEQoNSXRlbU5vdEVub3VnaBAbEhMKD1NraWxsTm90",
+          "TGVhcm5lZBAcEhYKElNraWxsQ29uZmlnTWlzc2luZxAdEhMKD1NraWxsT25D",
+          "b29sZG93bhAeEhcKE1NraWxsSW5zdWZmaWNpZW50TXAQHxIVChFTa2lsbFN0",
+          "YXRlQmxvY2tlZBAgEhoKFlNraWxsVGFyZ2V0VW5zdXBwb3J0ZWQQIWIGcHJv",
+          "dG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -144,8 +161,11 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameRet), global::StartGameRet.Parser, new[]{ "CmdCode", "MainRoleInfo" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleBaseInfo), global::RoleBaseInfo.Parser, new[]{ "RoleId", "Nickname", "Level", "XiuWei", "MaxHp", "CurrHp", "MaxMp", "CurrMp", "JobId", "AtkExternalMin", "AtkExternalMax", "AtkInternalMin", "AtkInternalMax", "DefExternal", "DefExternalDelta", "DefInternal", "DefInternalDelta", "HitPoint", "BlockPoint", "ZhenJi", "WuGu", "CritPoint", "CritResistPoint", "CritDamage", "CritDamageReduce", "HealStrength", "HealBonus", "ZhuXin", "JianRen", "Pos", "MapId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MainRoleInfo), global::MainRoleInfo.Parser, new[]{ "BaseInfo", "AccountId", "Exp", "SkillUpPoint", "CameraOffset", "ServerId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfoRet), global::RoleSkillInfoRet.Parser, new[]{ "CmdCode", "RoleSkillInfoList" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfoRet), global::RoleSkillInfoRet.Parser, new[]{ "CmdCode", "RoleSkillInfoList", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfo), global::RoleSkillInfo.Parser, new[]{ "SkillId", "Level", "BindKey" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastRet), global::SkillCastRet.Parser, new[]{ "CmdCode", "SkillUuid", "SkillId", "EffectId", "ServerTimeUnixMs", "CurrentMp", "CooldownEndUnixMs", "GroupCooldownEndUnixMs", "CastDurationMs", "UsingTimes" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastStartNtf), global::SkillCastStartNtf.Parser, new[]{ "CasterRoleId", "SkillUuid", "SkillId", "EffectId", "StartServerTimeUnixMs", "CastDurationMs", "UsingTimes" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastEndNtf), global::SkillCastEndNtf.Parser, new[]{ "CasterRoleId", "SkillUuid", "SkillId", "EndServerTimeUnixMs", "Interrupted" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleKanpsackInfoRet), global::RoleKanpsackInfoRet.Parser, new[]{ "CmdCode", "RoleKanpsackInfo" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleKanpsackInfo), global::RoleKanpsackInfo.Parser, new[]{ "KanpsackTypeCountLst", "RolePackPlain", "RolePackEquip", "RolePackConsume", "RolePackMaterial", "RoleCurrtEquipPack", "SaveVersion", "RoleVirtualItemPack", "RoleCountInfoList" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleCountInfo), global::RoleCountInfo.Parser, new[]{ "Action", "CountKey", "Count", "LastRefreshTime" }, null, null, null, null),
@@ -282,6 +302,30 @@ public enum CmdCode {
   ///物品不足
   /// </summary>
   [pbr::OriginalName("ItemNotEnough")] ItemNotEnough = 27,
+  /// <summary>
+  ///角色未学习此技能或等级为零
+  /// </summary>
+  [pbr::OriginalName("SkillNotLearned")] SkillNotLearned = 28,
+  /// <summary>
+  ///当前等级缺失有效技能效果配置
+  /// </summary>
+  [pbr::OriginalName("SkillConfigMissing")] SkillConfigMissing = 29,
+  /// <summary>
+  ///技能或公共冷却尚未结束
+  /// </summary>
+  [pbr::OriginalName("SkillOnCooldown")] SkillOnCooldown = 30,
+  /// <summary>
+  ///权威法力值不足
+  /// </summary>
+  [pbr::OriginalName("SkillInsufficientMp")] SkillInsufficientMp = 31,
+  /// <summary>
+  ///角色当前状态不允许释放技能
+  /// </summary>
+  [pbr::OriginalName("SkillStateBlocked")] SkillStateBlocked = 32,
+  /// <summary>
+  ///目标模式尚未接入权威场景实体链
+  /// </summary>
+  [pbr::OriginalName("SkillTargetUnsupported")] SkillTargetUnsupported = 33,
 }
 
 #endregion
@@ -5026,6 +5070,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
   public RoleSkillInfoRet(RoleSkillInfoRet other) : this() {
     cmdCode_ = other.cmdCode_;
     roleSkillInfoList_ = other.roleSkillInfoList_.Clone();
+    roleId_ = other.roleId_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -5061,6 +5106,21 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
     get { return roleSkillInfoList_; }
   }
 
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 3;
+  private int roleId_;
+  /// <summary>
+  ///中心服查询的持久角色 ID；GameServer 转发前必须核对当前复合会话角色
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -5078,6 +5138,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
     }
     if (CmdCode != other.CmdCode) return false;
     if(!roleSkillInfoList_.Equals(other.roleSkillInfoList_)) return false;
+    if (RoleId != other.RoleId) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -5087,6 +5148,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
     int hash = 1;
     if (CmdCode != global::CmdCode.Succeed) hash ^= CmdCode.GetHashCode();
     hash ^= roleSkillInfoList_.GetHashCode();
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -5110,6 +5172,10 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
       output.WriteEnum((int) CmdCode);
     }
     roleSkillInfoList_.WriteTo(output, _repeated_roleSkillInfoList_codec);
+    if (RoleId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(RoleId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -5125,6 +5191,10 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
       output.WriteEnum((int) CmdCode);
     }
     roleSkillInfoList_.WriteTo(ref output, _repeated_roleSkillInfoList_codec);
+    if (RoleId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(RoleId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -5139,6 +5209,9 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
       size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CmdCode);
     }
     size += roleSkillInfoList_.CalculateSize(_repeated_roleSkillInfoList_codec);
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -5155,6 +5228,9 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
       CmdCode = other.CmdCode;
     }
     roleSkillInfoList_.Add(other.roleSkillInfoList_);
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -5182,6 +5258,10 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
           roleSkillInfoList_.AddEntriesFrom(input, _repeated_roleSkillInfoList_codec);
           break;
         }
+        case 24: {
+          RoleId = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -5207,6 +5287,10 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
         }
         case 18: {
           roleSkillInfoList_.AddEntriesFrom(ref input, _repeated_roleSkillInfoList_codec);
+          break;
+        }
+        case 24: {
+          RoleId = input.ReadInt32();
           break;
         }
       }
@@ -5492,6 +5576,1378 @@ public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
 }
 
 /// <summary>
+/// 施法请求结果；失败时也返回原施法 UUID 及当前权威 MP/CD。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SkillCastRet> _parser = new pb::MessageParser<SkillCastRet>(() => new SkillCastRet());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SkillCastRet> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[15]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastRet() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastRet(SkillCastRet other) : this() {
+    cmdCode_ = other.cmdCode_;
+    skillUuid_ = other.skillUuid_;
+    skillId_ = other.skillId_;
+    effectId_ = other.effectId_;
+    serverTimeUnixMs_ = other.serverTimeUnixMs_;
+    currentMp_ = other.currentMp_;
+    cooldownEndUnixMs_ = other.cooldownEndUnixMs_;
+    groupCooldownEndUnixMs_ = other.groupCooldownEndUnixMs_;
+    castDurationMs_ = other.castDurationMs_;
+    usingTimes_ = other.usingTimes_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastRet Clone() {
+    return new SkillCastRet(this);
+  }
+
+  /// <summary>Field number for the "cmd_code" field.</summary>
+  public const int CmdCodeFieldNumber = 1;
+  private global::CmdCode cmdCode_ = global::CmdCode.Succeed;
+  /// <summary>
+  ///服务器校验和提交结果
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::CmdCode CmdCode {
+    get { return cmdCode_; }
+    set {
+      cmdCode_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_uuid" field.</summary>
+  public const int SkillUuidFieldNumber = 2;
+  private ulong skillUuid_;
+  /// <summary>
+  ///原样对应 SkillCastReq.skill_uuid
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong SkillUuid {
+    get { return skillUuid_; }
+    set {
+      skillUuid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_id" field.</summary>
+  public const int SkillIdFieldNumber = 3;
+  private int skillId_;
+  /// <summary>
+  ///请求的原 SkillInfo.Id
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SkillId {
+    get { return skillId_; }
+    set {
+      skillId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "effect_id" field.</summary>
+  public const int EffectIdFieldNumber = 4;
+  private int effectId_;
+  /// <summary>
+  ///已学等级解析出的 SkillEffectInfo.Id，无法解析时为零
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int EffectId {
+    get { return effectId_; }
+    set {
+      effectId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "server_time_unix_ms" field.</summary>
+  public const int ServerTimeUnixMsFieldNumber = 6;
+  private long serverTimeUnixMs_;
+  /// <summary>
+  ///回包生成时的服务器 UTC Unix 毫秒
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ServerTimeUnixMs {
+    get { return serverTimeUnixMs_; }
+    set {
+      serverTimeUnixMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "current_mp" field.</summary>
+  public const int CurrentMpFieldNumber = 7;
+  private int currentMp_;
+  /// <summary>
+  ///角色当前权威 MP
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CurrentMp {
+    get { return currentMp_; }
+    set {
+      currentMp_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "cooldown_end_unix_ms" field.</summary>
+  public const int CooldownEndUnixMsFieldNumber = 8;
+  private long cooldownEndUnixMs_;
+  /// <summary>
+  ///该技能 CD 结束的服务器 UTC Unix 毫秒，无 CD 时为零
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long CooldownEndUnixMs {
+    get { return cooldownEndUnixMs_; }
+    set {
+      cooldownEndUnixMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "group_cooldown_end_unix_ms" field.</summary>
+  public const int GroupCooldownEndUnixMsFieldNumber = 9;
+  private long groupCooldownEndUnixMs_;
+  /// <summary>
+  ///公共 CD 结束的服务器 UTC Unix 毫秒，无公共 CD 时为零
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long GroupCooldownEndUnixMs {
+    get { return groupCooldownEndUnixMs_; }
+    set {
+      groupCooldownEndUnixMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "cast_duration_ms" field.</summary>
+  public const int CastDurationMsFieldNumber = 10;
+  private int castDurationMs_;
+  /// <summary>
+  ///本次施法持续毫秒数，失败时为零
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CastDurationMs {
+    get { return castDurationMs_; }
+    set {
+      castDurationMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "using_times" field.</summary>
+  public const int UsingTimesFieldNumber = 11;
+  private int usingTimes_;
+  /// <summary>
+  ///成功施法采用的表现列表下标，从零开始；本人据此确认预测段数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int UsingTimes {
+    get { return usingTimes_; }
+    set {
+      usingTimes_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SkillCastRet);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SkillCastRet other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (CmdCode != other.CmdCode) return false;
+    if (SkillUuid != other.SkillUuid) return false;
+    if (SkillId != other.SkillId) return false;
+    if (EffectId != other.EffectId) return false;
+    if (ServerTimeUnixMs != other.ServerTimeUnixMs) return false;
+    if (CurrentMp != other.CurrentMp) return false;
+    if (CooldownEndUnixMs != other.CooldownEndUnixMs) return false;
+    if (GroupCooldownEndUnixMs != other.GroupCooldownEndUnixMs) return false;
+    if (CastDurationMs != other.CastDurationMs) return false;
+    if (UsingTimes != other.UsingTimes) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (CmdCode != global::CmdCode.Succeed) hash ^= CmdCode.GetHashCode();
+    if (SkillUuid != 0UL) hash ^= SkillUuid.GetHashCode();
+    if (SkillId != 0) hash ^= SkillId.GetHashCode();
+    if (EffectId != 0) hash ^= EffectId.GetHashCode();
+    if (ServerTimeUnixMs != 0L) hash ^= ServerTimeUnixMs.GetHashCode();
+    if (CurrentMp != 0) hash ^= CurrentMp.GetHashCode();
+    if (CooldownEndUnixMs != 0L) hash ^= CooldownEndUnixMs.GetHashCode();
+    if (GroupCooldownEndUnixMs != 0L) hash ^= GroupCooldownEndUnixMs.GetHashCode();
+    if (CastDurationMs != 0) hash ^= CastDurationMs.GetHashCode();
+    if (UsingTimes != 0) hash ^= UsingTimes.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (CmdCode != global::CmdCode.Succeed) {
+      output.WriteRawTag(8);
+      output.WriteEnum((int) CmdCode);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EffectId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(EffectId);
+    }
+    if (ServerTimeUnixMs != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(ServerTimeUnixMs);
+    }
+    if (CurrentMp != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(CurrentMp);
+    }
+    if (CooldownEndUnixMs != 0L) {
+      output.WriteRawTag(64);
+      output.WriteInt64(CooldownEndUnixMs);
+    }
+    if (GroupCooldownEndUnixMs != 0L) {
+      output.WriteRawTag(72);
+      output.WriteInt64(GroupCooldownEndUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (CmdCode != global::CmdCode.Succeed) {
+      output.WriteRawTag(8);
+      output.WriteEnum((int) CmdCode);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EffectId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(EffectId);
+    }
+    if (ServerTimeUnixMs != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(ServerTimeUnixMs);
+    }
+    if (CurrentMp != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(CurrentMp);
+    }
+    if (CooldownEndUnixMs != 0L) {
+      output.WriteRawTag(64);
+      output.WriteInt64(CooldownEndUnixMs);
+    }
+    if (GroupCooldownEndUnixMs != 0L) {
+      output.WriteRawTag(72);
+      output.WriteInt64(GroupCooldownEndUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (CmdCode != global::CmdCode.Succeed) {
+      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CmdCode);
+    }
+    if (SkillUuid != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SkillUuid);
+    }
+    if (SkillId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SkillId);
+    }
+    if (EffectId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(EffectId);
+    }
+    if (ServerTimeUnixMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ServerTimeUnixMs);
+    }
+    if (CurrentMp != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrentMp);
+    }
+    if (CooldownEndUnixMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(CooldownEndUnixMs);
+    }
+    if (GroupCooldownEndUnixMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(GroupCooldownEndUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SkillCastRet other) {
+    if (other == null) {
+      return;
+    }
+    if (other.CmdCode != global::CmdCode.Succeed) {
+      CmdCode = other.CmdCode;
+    }
+    if (other.SkillUuid != 0UL) {
+      SkillUuid = other.SkillUuid;
+    }
+    if (other.SkillId != 0) {
+      SkillId = other.SkillId;
+    }
+    if (other.EffectId != 0) {
+      EffectId = other.EffectId;
+    }
+    if (other.ServerTimeUnixMs != 0L) {
+      ServerTimeUnixMs = other.ServerTimeUnixMs;
+    }
+    if (other.CurrentMp != 0) {
+      CurrentMp = other.CurrentMp;
+    }
+    if (other.CooldownEndUnixMs != 0L) {
+      CooldownEndUnixMs = other.CooldownEndUnixMs;
+    }
+    if (other.GroupCooldownEndUnixMs != 0L) {
+      GroupCooldownEndUnixMs = other.GroupCooldownEndUnixMs;
+    }
+    if (other.CastDurationMs != 0) {
+      CastDurationMs = other.CastDurationMs;
+    }
+    if (other.UsingTimes != 0) {
+      UsingTimes = other.UsingTimes;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          CmdCode = (global::CmdCode) input.ReadEnum();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EffectId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          CurrentMp = input.ReadInt32();
+          break;
+        }
+        case 64: {
+          CooldownEndUnixMs = input.ReadInt64();
+          break;
+        }
+        case 72: {
+          GroupCooldownEndUnixMs = input.ReadInt64();
+          break;
+        }
+        case 80: {
+          CastDurationMs = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          UsingTimes = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          CmdCode = (global::CmdCode) input.ReadEnum();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EffectId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          CurrentMp = input.ReadInt32();
+          break;
+        }
+        case 64: {
+          CooldownEndUnixMs = input.ReadInt64();
+          break;
+        }
+        case 72: {
+          GroupCooldownEndUnixMs = input.ReadInt64();
+          break;
+        }
+        case 80: {
+          CastDurationMs = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          UsingTimes = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 服务器确认施法后给本人和同地图附近角色的表现通知，不表示命中或伤害。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SkillCastStartNtf> _parser = new pb::MessageParser<SkillCastStartNtf>(() => new SkillCastStartNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SkillCastStartNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[16]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastStartNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastStartNtf(SkillCastStartNtf other) : this() {
+    casterRoleId_ = other.casterRoleId_;
+    skillUuid_ = other.skillUuid_;
+    skillId_ = other.skillId_;
+    effectId_ = other.effectId_;
+    startServerTimeUnixMs_ = other.startServerTimeUnixMs_;
+    castDurationMs_ = other.castDurationMs_;
+    usingTimes_ = other.usingTimes_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastStartNtf Clone() {
+    return new SkillCastStartNtf(this);
+  }
+
+  /// <summary>Field number for the "caster_role_id" field.</summary>
+  public const int CasterRoleIdFieldNumber = 1;
+  private int casterRoleId_;
+  /// <summary>
+  ///施法者持久化角色 ID；客户端用他人角色 RoleId 索引定位实体
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CasterRoleId {
+    get { return casterRoleId_; }
+    set {
+      casterRoleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_uuid" field.</summary>
+  public const int SkillUuidFieldNumber = 2;
+  private ulong skillUuid_;
+  /// <summary>
+  ///原样沿用客户端生成的本次施法 UUID，按施法角色区分
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong SkillUuid {
+    get { return skillUuid_; }
+    set {
+      skillUuid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_id" field.</summary>
+  public const int SkillIdFieldNumber = 3;
+  private int skillId_;
+  /// <summary>
+  ///原 SkillInfo.Id
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SkillId {
+    get { return skillId_; }
+    set {
+      skillId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "effect_id" field.</summary>
+  public const int EffectIdFieldNumber = 4;
+  private int effectId_;
+  /// <summary>
+  ///已学等级对应的技能效果 ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int EffectId {
+    get { return effectId_; }
+    set {
+      effectId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "start_server_time_unix_ms" field.</summary>
+  public const int StartServerTimeUnixMsFieldNumber = 5;
+  private long startServerTimeUnixMs_;
+  /// <summary>
+  ///服务器确认施法的 UTC Unix 毫秒
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long StartServerTimeUnixMs {
+    get { return startServerTimeUnixMs_; }
+    set {
+      startServerTimeUnixMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "cast_duration_ms" field.</summary>
+  public const int CastDurationMsFieldNumber = 6;
+  private int castDurationMs_;
+  /// <summary>
+  ///服务器权威施法持续毫秒数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CastDurationMs {
+    get { return castDurationMs_; }
+    set {
+      castDurationMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "using_times" field.</summary>
+  public const int UsingTimesFieldNumber = 7;
+  private int usingTimes_;
+  /// <summary>
+  ///按当前职业模型和武器表现列表取模的零起始段数，供远端选择动作
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int UsingTimes {
+    get { return usingTimes_; }
+    set {
+      usingTimes_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SkillCastStartNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SkillCastStartNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (CasterRoleId != other.CasterRoleId) return false;
+    if (SkillUuid != other.SkillUuid) return false;
+    if (SkillId != other.SkillId) return false;
+    if (EffectId != other.EffectId) return false;
+    if (StartServerTimeUnixMs != other.StartServerTimeUnixMs) return false;
+    if (CastDurationMs != other.CastDurationMs) return false;
+    if (UsingTimes != other.UsingTimes) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (CasterRoleId != 0) hash ^= CasterRoleId.GetHashCode();
+    if (SkillUuid != 0UL) hash ^= SkillUuid.GetHashCode();
+    if (SkillId != 0) hash ^= SkillId.GetHashCode();
+    if (EffectId != 0) hash ^= EffectId.GetHashCode();
+    if (StartServerTimeUnixMs != 0L) hash ^= StartServerTimeUnixMs.GetHashCode();
+    if (CastDurationMs != 0) hash ^= CastDurationMs.GetHashCode();
+    if (UsingTimes != 0) hash ^= UsingTimes.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (CasterRoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EffectId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(EffectId);
+    }
+    if (StartServerTimeUnixMs != 0L) {
+      output.WriteRawTag(40);
+      output.WriteInt64(StartServerTimeUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (CasterRoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EffectId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(EffectId);
+    }
+    if (StartServerTimeUnixMs != 0L) {
+      output.WriteRawTag(40);
+      output.WriteInt64(StartServerTimeUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (CasterRoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SkillUuid);
+    }
+    if (SkillId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SkillId);
+    }
+    if (EffectId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(EffectId);
+    }
+    if (StartServerTimeUnixMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(StartServerTimeUnixMs);
+    }
+    if (CastDurationMs != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CastDurationMs);
+    }
+    if (UsingTimes != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(UsingTimes);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SkillCastStartNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.CasterRoleId != 0) {
+      CasterRoleId = other.CasterRoleId;
+    }
+    if (other.SkillUuid != 0UL) {
+      SkillUuid = other.SkillUuid;
+    }
+    if (other.SkillId != 0) {
+      SkillId = other.SkillId;
+    }
+    if (other.EffectId != 0) {
+      EffectId = other.EffectId;
+    }
+    if (other.StartServerTimeUnixMs != 0L) {
+      StartServerTimeUnixMs = other.StartServerTimeUnixMs;
+    }
+    if (other.CastDurationMs != 0) {
+      CastDurationMs = other.CastDurationMs;
+    }
+    if (other.UsingTimes != 0) {
+      UsingTimes = other.UsingTimes;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          CasterRoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EffectId = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          StartServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 48: {
+          CastDurationMs = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          UsingTimes = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          CasterRoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EffectId = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          StartServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 48: {
+          CastDurationMs = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          UsingTimes = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 服务器正常结束或中断施法的表现通知；本期没有命中广播。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SkillCastEndNtf> _parser = new pb::MessageParser<SkillCastEndNtf>(() => new SkillCastEndNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SkillCastEndNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[17]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastEndNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastEndNtf(SkillCastEndNtf other) : this() {
+    casterRoleId_ = other.casterRoleId_;
+    skillUuid_ = other.skillUuid_;
+    skillId_ = other.skillId_;
+    endServerTimeUnixMs_ = other.endServerTimeUnixMs_;
+    interrupted_ = other.interrupted_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SkillCastEndNtf Clone() {
+    return new SkillCastEndNtf(this);
+  }
+
+  /// <summary>Field number for the "caster_role_id" field.</summary>
+  public const int CasterRoleIdFieldNumber = 1;
+  private int casterRoleId_;
+  /// <summary>
+  ///施法者持久化角色 ID，不能当客户端本地实体 UID 使用
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CasterRoleId {
+    get { return casterRoleId_; }
+    set {
+      casterRoleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_uuid" field.</summary>
+  public const int SkillUuidFieldNumber = 2;
+  private ulong skillUuid_;
+  /// <summary>
+  ///对应开始通知的原施法 UUID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong SkillUuid {
+    get { return skillUuid_; }
+    set {
+      skillUuid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "skill_id" field.</summary>
+  public const int SkillIdFieldNumber = 3;
+  private int skillId_;
+  /// <summary>
+  ///结束的原技能 ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SkillId {
+    get { return skillId_; }
+    set {
+      skillId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "end_server_time_unix_ms" field.</summary>
+  public const int EndServerTimeUnixMsFieldNumber = 4;
+  private long endServerTimeUnixMs_;
+  /// <summary>
+  ///服务器结束施法的 UTC Unix 毫秒
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long EndServerTimeUnixMs {
+    get { return endServerTimeUnixMs_; }
+    set {
+      endServerTimeUnixMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "interrupted" field.</summary>
+  public const int InterruptedFieldNumber = 5;
+  private bool interrupted_;
+  /// <summary>
+  ///死亡、断线、切图等中断为 true，正常结束为 false
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Interrupted {
+    get { return interrupted_; }
+    set {
+      interrupted_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SkillCastEndNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SkillCastEndNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (CasterRoleId != other.CasterRoleId) return false;
+    if (SkillUuid != other.SkillUuid) return false;
+    if (SkillId != other.SkillId) return false;
+    if (EndServerTimeUnixMs != other.EndServerTimeUnixMs) return false;
+    if (Interrupted != other.Interrupted) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (CasterRoleId != 0) hash ^= CasterRoleId.GetHashCode();
+    if (SkillUuid != 0UL) hash ^= SkillUuid.GetHashCode();
+    if (SkillId != 0) hash ^= SkillId.GetHashCode();
+    if (EndServerTimeUnixMs != 0L) hash ^= EndServerTimeUnixMs.GetHashCode();
+    if (Interrupted != false) hash ^= Interrupted.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (CasterRoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EndServerTimeUnixMs != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(EndServerTimeUnixMs);
+    }
+    if (Interrupted != false) {
+      output.WriteRawTag(40);
+      output.WriteBool(Interrupted);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (CasterRoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SkillUuid);
+    }
+    if (SkillId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SkillId);
+    }
+    if (EndServerTimeUnixMs != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(EndServerTimeUnixMs);
+    }
+    if (Interrupted != false) {
+      output.WriteRawTag(40);
+      output.WriteBool(Interrupted);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (CasterRoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CasterRoleId);
+    }
+    if (SkillUuid != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SkillUuid);
+    }
+    if (SkillId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SkillId);
+    }
+    if (EndServerTimeUnixMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(EndServerTimeUnixMs);
+    }
+    if (Interrupted != false) {
+      size += 1 + 1;
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SkillCastEndNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.CasterRoleId != 0) {
+      CasterRoleId = other.CasterRoleId;
+    }
+    if (other.SkillUuid != 0UL) {
+      SkillUuid = other.SkillUuid;
+    }
+    if (other.SkillId != 0) {
+      SkillId = other.SkillId;
+    }
+    if (other.EndServerTimeUnixMs != 0L) {
+      EndServerTimeUnixMs = other.EndServerTimeUnixMs;
+    }
+    if (other.Interrupted != false) {
+      Interrupted = other.Interrupted;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          CasterRoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EndServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 40: {
+          Interrupted = input.ReadBool();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          CasterRoleId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SkillUuid = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SkillId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          EndServerTimeUnixMs = input.ReadInt64();
+          break;
+        }
+        case 40: {
+          Interrupted = input.ReadBool();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
 ///返回的角色背包信息
 /// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
@@ -5509,7 +6965,7 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[15]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[18]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5762,7 +7218,7 @@ public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[16]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[19]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6198,7 +7654,7 @@ public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[17]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[20]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6522,7 +7978,7 @@ public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurch
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[18]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[21]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6755,7 +8211,7 @@ public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchase
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[19]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[22]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -7196,7 +8652,7 @@ public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[20]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[23]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -7437,7 +8893,7 @@ public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[21]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[24]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8136,7 +9592,7 @@ public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[22]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[25]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8457,7 +9913,7 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[23]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[26]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8941,7 +10397,7 @@ public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[24]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[27]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9305,7 +10761,7 @@ public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[25]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[28]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9629,7 +11085,7 @@ public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[26]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[29]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9941,7 +11397,7 @@ public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[27]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[30]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10165,7 +11621,7 @@ public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncIn
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[28]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[31]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10389,7 +11845,7 @@ public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[29]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[32]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10624,7 +12080,7 @@ public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[30]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[33]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10877,7 +12333,7 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[31]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[34]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

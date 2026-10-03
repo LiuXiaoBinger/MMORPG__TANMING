@@ -27,11 +27,12 @@ public sealed class RoleInfoCtrl : CtrlBase
     /// <summary>从全局角色模型生成当前角色信息展示数据。</summary>
     public void RefreshCurrentRole()
     {
-        if (_roleCurrentWindow == null || Global.Instance == null)
+        if (_roleCurrentWindow == null || Global.Instance == null ||
+            Global.Instance.SceneWorld == null)
         {
             return;
         }
-        ClientRole localRole = Global.Instance.RoleWorld.LocalRole;
+        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
         if (localRole == null)
         {
             return;

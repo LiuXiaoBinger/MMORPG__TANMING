@@ -23,7 +23,7 @@ public class RoItemComponent : RoleComponentBase
     /// 构造角色物品组件。
     /// </summary>
     /// <param name="owner">所属客户端角色，不能为空。</param>
-    public RoItemComponent(ClientRole owner)
+    public RoItemComponent(PlayerEntity owner)
         : base(owner)
     {
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,9 @@ public class KnapsackWindowMockServer : MonoBehaviour
 
     private RoleKanpsackInfoRet _mockResponse;
     /// <summary>测试专用客户端角色，不写入正式角色世界。</summary>
-    private ClientRole _clientRole;
+    private PlayerEntity _clientRole;
+    /// <summary>测试专用实体世界，由世界统一分配玩家 UID。</summary>
+    private SceneEntityWorld _testWorld;
     /// <summary>测试专用背包控制器，验证正式组件到窗口的数据流。</summary>
     private KnapsackCtrl _knapsackCtrl;
 
@@ -64,10 +67,15 @@ public class KnapsackWindowMockServer : MonoBehaviour
             _knapsackCtrl.Dispose();
             _knapsackCtrl = null;
         }
-        if (_clientRole != null)
+        if (_clientRole != null && _testWorld != null)
         {
-            _clientRole.Dispose();
+            _testWorld.Remove(_clientRole.UID);
             _clientRole = null;
+        }
+        if (_testWorld != null)
+        {
+            _testWorld.Dispose();
+            _testWorld = null;
         }
     }
 
@@ -140,7 +148,18 @@ public class KnapsackWindowMockServer : MonoBehaviour
                 Nickname = "背包测试角色"
             }
         };
-        _clientRole = new ClientRole(roleInfo);
+        if (_testWorld == null)
+        {
+            _testWorld = new SceneEntityWorld();
+        }
+        _clientRole = _testWorld.Create(EntityType.Player, 0) as PlayerEntity;
+        if (_clientRole == null)
+        {
+            Debug.LogError("KnapsackWindowMockServer: 创建测试玩家实体失败。", this);
+            return;
+        }
+        _clientRole.InitializeLocalRole(roleInfo);
+        _clientRole.AfterAddedToWorld();
         _knapsackCtrl = new KnapsackCtrl(_knapsackWindow);
         _knapsackCtrl.BindRole(_clientRole);
     }

@@ -18,7 +18,7 @@ public class RoleAnimaBehaviour : MonoBehaviour
 
    private void AnimaEnd()
    {
-      _roleCtrl.ChangeState(RoleState.Idle);
+      //_roleCtrl.ChangeState(RoleState.Idle);
    }
    private void DoAttackConfig(atkConfigEntity atkConfigEntity)
    {
@@ -43,13 +43,24 @@ public class RoleAnimaBehaviour : MonoBehaviour
          }
       }
    }
+   /// <summary>响应角色剪辑的战斗特效事件；组件失活时忽略仍可能送达的动画事件。</summary>
+   /// <param name="animationEvent">剪辑事件携带的攻击配置、配置索引与技能阶段标记。</param>
    private void PlayEffect(AnimationEvent animationEvent)
    {
+      // Unity 的 AnimationEvent 可能调用已禁用的 MonoBehaviour，失活组件不得执行战斗表现。
+      if (!isActiveAndEnabled)
+      {
+         return;
+      }
+
+      // 事件引用的攻击表现配置，仅用于本次动画事件。
       RoleAtkConfig config = animationEvent.objectReferenceParameter as RoleAtkConfig;
 
+      // 配置列表中的事件索引，由动画资源的整数参数指定。
       int index = animationEvent.intParameter;
       if (config != null)
       {
+         // 当前事件要实例化的攻击特效配置，后续阶段标记可能调整其空间参数。
          atkConfigEntity atkConfigEntity= config.atkConfigEntities[index];
 
          if (!string.IsNullOrEmpty(animationEvent.stringParameter))

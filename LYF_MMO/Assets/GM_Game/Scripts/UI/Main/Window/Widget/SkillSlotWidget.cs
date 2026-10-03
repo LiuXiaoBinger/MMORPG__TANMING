@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 快捷技能槽，只显示技能图标和控制器下发的冷却表现。
+/// 快捷技能槽，显示图标并从当前角色技能核心逐帧读取冷却剩余时间。
 /// </summary>
 public class SkillSlotWidget : MonoBehaviour
 {
@@ -24,6 +24,10 @@ public class SkillSlotWidget : MonoBehaviour
     private IDisposable _cooldownSubscription;
     /// <summary>技能图标异步绑定版本。</summary>
     private int _bindingVersion;
+    /// <summary>当前槽位绑定的旧技能主表 ID，零表示没有技能核心可读取。</summary>
+    private int _skillId;
+    /// <summary>当前技能配置的完整 CD 秒数，作为遮罩填充比例的基准。</summary>
+    private float _cooldownDuration;
 
     /// <summary>设置技能槽固定快捷键。</summary>
     public void SetKey(string key)
@@ -44,6 +48,8 @@ public class SkillSlotWidget : MonoBehaviour
         {
             return;
         }
+        _skillId = skill.SkillId;
+        _cooldownDuration = skill.Cooldown;
         if (!string.IsNullOrEmpty(skill.IconPath))
         {
             ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
@@ -66,6 +72,8 @@ public class SkillSlotWidget : MonoBehaviour
     {
         DisposeCooldown();
         _bindingVersion++;
+        _skillId = 0;
+        _cooldownDuration = 0f;
         if (_imgIcon != null)
         {
             _imgIcon.sprite = null;
@@ -74,7 +82,8 @@ public class SkillSlotWidget : MonoBehaviour
         SetCooldownVisible(false);
     }
 
-    /// <summary>播放由技能控制器确认后的冷却表现。</summary>
+    /// <summary>按不受 timeScale 影响的实时时钟播放技能冷却表现。</summary>
+    /// <param name="duration">本次刷新时的剩余冷却秒数，非正数表示立即清除遮罩。</param>
     public void StartCooldown(float duration)
     {
         DisposeCooldown();
@@ -84,11 +93,49 @@ public class SkillSlotWidget : MonoBehaviour
             return;
         }
 
-        float remainingTime = duration;
+        // 无技能核心绑定时保留原有独立计时行为，兼容直接调用 StartCooldown 的槽位。
+        float cooldownEndRealtime = Time.realtimeSinceStartup + duration;
+        // 订阅创建时的技能和角色引用，角色切换或槽位重绑后不得读取新角色的旧 CD。
+        int boundSkillId = _skillId;
+        PlayerEntity boundRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            boundRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        // 有完整配置时按总 CD 计算填充；直接调用仍沿用传入的剩余秒数。
+        float fillDuration = duration;
+        if (_cooldownDuration > 0f)
+        {
+            fillDuration = _cooldownDuration;
+        }
         SetCooldownVisible(true);
+        if (_texCD != null)
+        {
+            _texCD.SetText(duration.ToString("F1"));
+        }
+        if (_imgMask != null)
+        {
+            _imgMask.fillAmount = Mathf.Clamp01(duration / fillDuration);
+        }
         _cooldownSubscription = Observable.EveryUpdate().Subscribe(_ =>
         {
-            remainingTime -= Time.deltaTime;
+            // 技能槽优先读取核心实时 CD；预测超时回滚后下一帧即可清掉旧遮罩。
+            float remainingTime = cooldownEndRealtime - Time.realtimeSinceStartup;
+            if (boundSkillId > 0)
+            {
+                if (boundRole == null || boundRole.Skill == null ||
+                    Global.Instance == null || Global.Instance.SceneWorld == null ||
+                    Global.Instance.SceneWorld.LocalRole != boundRole ||
+                    _skillId != boundSkillId)
+                {
+                    remainingTime = 0f;
+                }
+                else
+                {
+                    remainingTime = boundRole.Skill.GetRemainingCooldown(
+                        boundSkillId, Time.realtimeSinceStartup);
+                }
+            }
             if (remainingTime > 0f)
             {
                 if (_texCD != null)
@@ -97,7 +144,7 @@ public class SkillSlotWidget : MonoBehaviour
                 }
                 if (_imgMask != null)
                 {
-                    _imgMask.fillAmount = remainingTime / duration;
+                    _imgMask.fillAmount = Mathf.Clamp01(remainingTime / fillDuration);
                 }
                 return;
             }

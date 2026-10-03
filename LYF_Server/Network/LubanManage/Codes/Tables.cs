@@ -19,13 +19,16 @@ public partial class Tables
     public TbItemInfo TbItemInfo {get; }
     public TbKnapsackInfo TbKnapsackInfo {get; }
     public TbNpcInfo TbNpcInfo {get; }
+    public TbPresentTable TbPresentTable {get; }
     public TbProfessionInfo TbProfessionInfo {get; }
     public TbQuestInfo TbQuestInfo {get; }
     public TbRoleLevelAttributeInfo TbRoleLevelAttributeInfo {get; }
     public TbRoleLevelInfo TbRoleLevelInfo {get; }
     public TbShopItemInfo TbShopItemInfo {get; }
     public TbShopTable TbShopTable {get; }
+    public TbSkillEffectInfo TbSkillEffectInfo {get; }
     public TbSkillInfo TbSkillInfo {get; }
+    public TbSkillPresentationInfo TbSkillPresentationInfo {get; }
 
     public Tables(System.Func<string, ByteBuf> loader)
     {
@@ -35,13 +38,16 @@ public partial class Tables
         TbItemInfo = new TbItemInfo(loader("tbiteminfo"));
         TbKnapsackInfo = new TbKnapsackInfo(loader("tbknapsackinfo"));
         TbNpcInfo = new TbNpcInfo(loader("tbnpcinfo"));
+        TbPresentTable = new TbPresentTable(loader("tbpresenttable"));
         TbProfessionInfo = new TbProfessionInfo(loader("tbprofessioninfo"));
         TbQuestInfo = new TbQuestInfo(loader("tbquestinfo"));
         TbRoleLevelAttributeInfo = new TbRoleLevelAttributeInfo(loader("tbrolelevelattributeinfo"));
         TbRoleLevelInfo = new TbRoleLevelInfo(loader("tbrolelevelinfo"));
         TbShopItemInfo = new TbShopItemInfo(loader("tbshopiteminfo"));
         TbShopTable = new TbShopTable(loader("tbshoptable"));
+        TbSkillEffectInfo = new TbSkillEffectInfo(loader("tbskilleffectinfo"));
         TbSkillInfo = new TbSkillInfo(loader("tbskillinfo"));
+        TbSkillPresentationInfo = new TbSkillPresentationInfo(loader("tbskillpresentationinfo"));
         ResolveRef();
     }
     
@@ -53,13 +59,16 @@ public partial class Tables
         TbItemInfo.ResolveRef(this);
         TbKnapsackInfo.ResolveRef(this);
         TbNpcInfo.ResolveRef(this);
+        TbPresentTable.ResolveRef(this);
         TbProfessionInfo.ResolveRef(this);
         TbQuestInfo.ResolveRef(this);
         TbRoleLevelAttributeInfo.ResolveRef(this);
         TbRoleLevelInfo.ResolveRef(this);
         TbShopItemInfo.ResolveRef(this);
         TbShopTable.ResolveRef(this);
+        TbSkillEffectInfo.ResolveRef(this);
         TbSkillInfo.ResolveRef(this);
+        TbSkillPresentationInfo.ResolveRef(this);
     }
 }
 

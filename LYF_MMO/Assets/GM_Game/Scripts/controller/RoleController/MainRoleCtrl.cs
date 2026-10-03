@@ -1,12 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using cfg;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
-using UniRx;
-using Observable = UniRx.Observable;
 
 /**
 * Title:主角控制器类
@@ -29,8 +26,6 @@ public class MainRoleCtrl : RoleCtrlBase
    {
       Global.Instance.roleCtrlBase = this;
       
-      //当进入主城服务器返回角色数据后，拿到摄像机参数，设置相机
-      CameraMgr.Instance.InitCamera(this);
       _inputCtrl = GetComponent<PlayerInputCtr>();
       _ghostEffect = GetComponent<GhostEffect>();
       
@@ -43,13 +38,21 @@ public class MainRoleCtrl : RoleCtrlBase
 
    protected override void OnStart()
    {
-      UIRoot.Instance.RegisterMainUIKeyHandler();
+      // 直接从主城场景启动时不会经过选角回调，主角入场必须补建正式主界面控制器。
+      if (UIRoot.Instance != null && UIRoot.Instance.MainCtrl == null)
+      {
+         UIRoot.Instance.InitMainCtrl();
+      }
+      // 主角输入组件可能晚于主界面控制器创建，统一走幂等注册补齐技能快捷键。
+      if (UIRoot.Instance != null)
+      {
+         UIRoot.Instance.RegisterMainUIKeyHandler();
+      }
    }
    
    private void RegistKeyEventHandle()
    {
-      _inputCtrl.ShiftPressedEvent += ShifKeyIsPress;
-      _inputCtrl.JumpingEvent += JumpKeyPress;
+     // _inputCtrl.ShiftPressedEvent += ShifKeyIsPress;
       //_inputCtrl.SkillKeyEvent += SkillKeyEvent;
    }
    /// <summary>
@@ -66,67 +69,6 @@ public class MainRoleCtrl : RoleCtrlBase
       attackState._atkType = 1;
       ChangeState(RoleState.Attck);
       return true;
-   }
-   /// <summary>
-   /// 技能相关按键事件
-   /// </summary>
-   /// <param name="obj"></param>
-   /// <exception cref="NotImplementedException"></exception>
-   private void SkillKeyEvent(string key)
-   {
-      AttackState attackState =_fsm.GetState(RoleState.Attck) as AttackState;
-      switch (key)
-      {
-         case"F":
-            ChangeState(RoleState.Slider);
-            break;
-         case "Q":
-            attackState._atkType = 1;
-            
-            ChangeState(RoleState.Attck);
-            
-            break;
-         case "E":
-            attackState._atkType = 2;
-            attackState._atkindex = 34;
-            ChangeState(RoleState.Attck);
-            break;
-         case "R":
-            attackState._atkType = 2;
-            attackState._atkindex = 35;
-            ChangeState(RoleState.Attck);
-            break;
-         case "1":
-            attackState._atkType = 2;
-            attackState._atkindex = 36;
-            ChangeState(RoleState.Attck);
-            break;
-         case "2":
-            attackState._atkType = 2;
-            attackState._atkindex = 37;
-            ChangeState(RoleState.Attck);
-            break;
-         default:
-            break;
-      }
-   }
-
-   private void JumpKeyPress()
-   {
-      if (_roleState == RoleState.Idle||_roleState == RoleState.Run||_roleState == RoleState.FastRun)
-      {
-         if (!CheckShereGround()) return;
-         Observable.Timer(TimeSpan.FromMilliseconds(250)).Subscribe(_ =>
-         {
-            verticalVelocity = Vector3.up *PlayStateMgr.Instance.stats.maxJumpHeight;
-            //_verticalHeiht += 8;
-         });
-      
-         ChangeState(RoleState.Jump);
-      }
-      
-      
-      
    }
 
    private void ShifKeyIsPress(bool ispressed)
@@ -148,7 +90,7 @@ public class MainRoleCtrl : RoleCtrlBase
          _ghostEffect.CreateGhostEffectObject(Color.white,0.2f,
             0.2f,0.2f,0.2f);
       }
-      PlayerMovement();
+     // PlayerMovement();
    }
 
    
@@ -262,6 +204,49 @@ public class MainRoleCtrl : RoleCtrlBase
    {
       FaceDirection(direction, PlayStateMgr.Instance.stats.rotationSpeed);
    }
-   
+   /// <summary>
+   /// 技能相关按键事件
+   /// </summary>
+   /// <param name="obj"></param>
+   /// <exception cref="NotImplementedException"></exception>
+   private void SkillKeyEvent(string key)
+   {
+      AttackState attackState =_fsm.GetState(RoleState.Attck) as AttackState;
+      switch (key)
+      {
+         case"F":
+            ChangeState(RoleState.Slider);
+            break;
+         case "Q":
+            attackState._atkType = 1;
+
+            ChangeState(RoleState.Attck);
+
+            break;
+         case "E":
+            attackState._atkType = 2;
+            attackState._atkindex = 34;
+            ChangeState(RoleState.Attck);
+            break;
+         case "R":
+            attackState._atkType = 2;
+            attackState._atkindex = 35;
+            ChangeState(RoleState.Attck);
+            break;
+         case "1":
+            attackState._atkType = 2;
+            attackState._atkindex = 36;
+            ChangeState(RoleState.Attck);
+            break;
+         case "2":
+            attackState._atkType = 2;
+            attackState._atkindex = 37;
+            ChangeState(RoleState.Attck);
+            break;
+         default:
+            break;
+      }
+   }
+
    
 }

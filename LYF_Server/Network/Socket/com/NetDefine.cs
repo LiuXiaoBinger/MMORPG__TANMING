@@ -33,6 +33,12 @@ public class NetDefine
     public const ushort CMD_SaveRoleDataCode = 11140;//GameServer 定时保存角色物品数据
     public const ushort CMD_CountUpdateSyncInfoCode = 11150;//更新商店购买 副本次数到客户端 与中心服务器
     public const ushort CMD_SC_UpdateItemInfoCode = 11160;//更新item给客户端
+    /// <summary>客户端施法请求与服务端权威结果共用的协议号。</summary>
+    public const ushort CMD_SkillCastCode = 11170;
+    /// <summary>服务器确认施法后的表现开始通知协议号。</summary>
+    public const ushort CMD_SkillCastStartCode = 11171;
+    /// <summary>服务器正常结束或中断施法的表现结束通知协议号。</summary>
+    public const ushort CMD_SkillCastEndCode = 11173;
 }
 
 

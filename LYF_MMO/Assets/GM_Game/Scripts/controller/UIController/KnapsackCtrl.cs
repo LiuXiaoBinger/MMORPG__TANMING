@@ -12,7 +12,7 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>当前绑定的角色物品组件。</summary>
     private RoItemComponent _itemComponent;
     /// <summary>当前绑定角色，用于读取角色级脏标记。</summary>
-    private ClientRole _role;
+    private PlayerEntity _role;
 
     /// <summary>上次渲染的物品数量，用于判断是否需要定位到新物品。</summary>
     private int _lastRenderedItemCount = -1;
@@ -49,16 +49,16 @@ public sealed class KnapsackCtrl : IDisposable
             _window.FrameUpdated += OnWindowFrameUpdated;
         }
 
-        ClientRole localRole = null;
-        if (Global.Instance != null && Global.Instance.RoleWorld != null)
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
-            localRole = Global.Instance.RoleWorld.LocalRole;
+            localRole = Global.Instance.SceneWorld.LocalRole;
         }
         BindRole(localRole);
     }
 
     /// <summary>绑定本地角色，并监听其背包模型变化。</summary>
-    public void BindRole(ClientRole role)
+    public void BindRole(PlayerEntity role)
     {
         if (_itemComponent != null)
         {

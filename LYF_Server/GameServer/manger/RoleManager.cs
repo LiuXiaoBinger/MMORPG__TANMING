@@ -26,6 +26,9 @@ public class RoleManager
     private readonly Dictionary<long, int> m_roleIdBySessionMap = new Dictionary<long, int>();
     /// <summary>重连时暂存的新角色，待旧实例完成保存后再激活。</summary>
     private readonly Dictionary<int, OnlineRole> m_pendingRoleMap = new Dictionary<int, OnlineRole>();
+    /// <summary>待激活重连角色的原 EnterWorld 请求，激活后只重放一次。</summary>
+    private readonly Dictionary<int, PendingEnterWorldRequest> _pendingEnterWorldRequests =
+        new Dictionary<int, PendingEnterWorldRequest>();
 
     /// <summary>初始化角色管理器。</summary>
     public void OnInit()
@@ -88,6 +91,7 @@ public class RoleManager
                 if (m_pendingRoleMap.TryGetValue(roleID, out replacedPendingRole))
                 {
                     replacedPendingRole.Dispose();
+                    _pendingEnterWorldRequests.Remove(roleID);
                 }
                 m_pendingRoleMap[roleID] = onlineRole;
                 LogMsg.Info("角色重连等待旧实例保存完成，已暂存新会话，角色=" + roleID, LogMsgType.Warn);
@@ -113,6 +117,7 @@ public class RoleManager
                     if (m_pendingRoleMap.TryGetValue(roleID, out replacedPendingRole))
                     {
                         replacedPendingRole.Dispose();
+                        _pendingEnterWorldRequests.Remove(roleID);
                     }
                     m_pendingRoleMap[roleID] = onlineRole;
                     LogMsg.Info("会话冲突角色等待保存完成，已暂存新会话，角色=" + roleID, LogMsgType.Warn);
@@ -171,6 +176,7 @@ public class RoleManager
         {
             pendingRole.Dispose();
             m_pendingRoleMap.Remove(roleID);
+            _pendingEnterWorldRequests.Remove(roleID);
         }
 
         OnlineRole onlineRole;
@@ -214,6 +220,21 @@ public class RoleManager
         {
             RemoveOnlineRole(roleIds[i]);
         }
+
+        // 待激活重连角色尚未进入在线索引，也必须按断开的 Gate 会话清理。
+        List<KeyValuePair<int, OnlineRole>> pendingEntries =
+            new List<KeyValuePair<int, OnlineRole>>(m_pendingRoleMap);
+        for (int index = 0; index < pendingEntries.Count; index++)
+        {
+            // 当前项是等待旧角色落库后激活的新会话角色。
+            KeyValuePair<int, OnlineRole> pending = pendingEntries[index];
+            if (pending.Value != null && pending.Value.GateSessionId == gateSessionId)
+            {
+                pending.Value.Dispose();
+                m_pendingRoleMap.Remove(pending.Key);
+                _pendingEnterWorldRequests.Remove(pending.Key);
+            }
+        }
     }
 
     /// <summary>旧角色保存完成后激活暂存的新会话，统一走正常登录初始化流程。</summary>
@@ -239,6 +260,19 @@ public class RoleManager
 
             m_pendingRoleMap.Remove(pending.Key);
             ActivateOnlineRole(pending.Key, pending.Value);
+
+            // 旧实例保存完成后，使用已激活新会话重放唯一一次进入世界请求。
+            PendingEnterWorldRequest pendingEnterWorld;
+            if (_pendingEnterWorldRequests.TryGetValue(pending.Key, out pendingEnterWorld))
+            {
+                _pendingEnterWorldRequests.Remove(pending.Key);
+                if (pendingEnterWorld.Package != null &&
+                    GetOnlineRoleBySession(pendingEnterWorld.Package.GateSessionId,
+                        pendingEnterWorld.Package.UnitySessionId) == pending.Value)
+                {
+                    HandleClientEnterWorld(pendingEnterWorld.Transport, pendingEnterWorld.Package);
+                }
+            }
         }
     }
 
@@ -288,11 +322,31 @@ public class RoleManager
         }
 
         OnlineRole currentRole = GetOnlineRoleBySession(package.GateSessionId, package.UnitySessionId);
-        if (currentRole == null || currentRole.mainRoleInfo == null ||
+        if (currentRole == null)
+        {
+            // 旧在线实例待保存时，新会话的首个 EnterWorld 不能丢弃，否则 11080 永远不会装载。
+            OnlineRole pendingRole;
+            if (m_pendingRoleMap.TryGetValue(request.RoleId, out pendingRole) &&
+                pendingRole != null && pendingRole.GateSessionId == package.GateSessionId &&
+                pendingRole.UnitySessionId == package.UnitySessionId)
+            {
+                _pendingEnterWorldRequests[request.RoleId] =
+                    new PendingEnterWorldRequest(serverBase, package);
+            }
+            return;
+        }
+        if (currentRole.mainRoleInfo == null ||
             currentRole.mainRoleInfo.BaseInfo == null ||
             currentRole.mainRoleInfo.BaseInfo.RoleId != request.RoleId)
         {
             return;
+        }
+
+        // 再次进入世界或切图前结束上一场景中的活动施法，CD 仍保持在线状态。
+        RoleSkillComponent skillComponent;
+        if (currentRole.TryGetComponent(out skillComponent))
+        {
+            skillComponent.InterruptActiveCast(true);
         }
 
         // 会话校验通过后再转发中心服，避免伪造角色请求进入后续流程。
@@ -418,6 +472,57 @@ public class RoleManager
         if (result.CmdCode != CmdCode.Succeed)
         {
             LogMsg.Info("背包开格子数量持久化失败: " + result, LogMsgType.Error);
+        }
+    }
+
+    /// <summary>向施法者和同地图 100 米内的现有在线角色发送开始表现。</summary>
+    /// <param name="caster">已通过会话校验的在线施法者。</param>
+    /// <param name="notice">仅代表施法已接受、不代表命中或伤害的通知。</param>
+    public void BroadcastSkillStart(OnlineRole caster, SkillCastStartNtf notice)
+    {
+        if (caster == null || notice == null)
+        {
+            return;
+        }
+        BroadcastSkillNotice(caster, NetDefine.CMD_SkillCastStartCode, notice.ToByteString());
+    }
+
+    /// <summary>向施法者和同地图附近角色发送自然结束或中断表现。</summary>
+    /// <param name="caster">需要结束当前施法的在线角色。</param>
+    /// <param name="notice">包含服务器施法 ID 和中断标记的结束通知。</param>
+    public void BroadcastSkillEnd(OnlineRole caster, SkillCastEndNtf notice)
+    {
+        if (caster == null || notice == null)
+        {
+            return;
+        }
+        BroadcastSkillNotice(caster, NetDefine.CMD_SkillCastEndCode, notice.ToByteString());
+    }
+
+    /// <summary>通过现有附近角色快照转发技能表现，不把此范围当作权威命中范围。</summary>
+    /// <param name="caster">通知的施法者，本人始终先收到一次通知。</param>
+    /// <param name="protocolCode">11171 开始或 11173 结束协议号。</param>
+    /// <param name="payload">protobuf 序列化边界上的强类型通知载荷。</param>
+    private void BroadcastSkillNotice(OnlineRole caster, ushort protocolCode, ByteString payload)
+    {
+        caster.SendToClient(protocolCode, payload);
+        if (caster.mainRoleInfo == null || caster.mainRoleInfo.BaseInfo == null)
+        {
+            return;
+        }
+
+        // 引用快照允许下线流程同时维护角色索引，仍修改原在线角色对象。
+        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        for (int index = 0; index < onlineRoles.Count; index++)
+        {
+            // 只向现有同地图 100 米可见范围的其他在线角色转发表现事件。
+            OnlineRole observer = onlineRoles[index];
+            if (observer == null || observer == caster || observer.State != OnlineRoleState.Online ||
+                !IsNearbyRole(observer, caster.mainRoleInfo))
+            {
+                continue;
+            }
+            observer.SendToClient(protocolCode, payload);
         }
     }
 

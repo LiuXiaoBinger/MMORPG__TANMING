@@ -1,4 +1,4 @@
-﻿
+
 
 using System.Collections.Generic;
 
@@ -38,7 +38,7 @@ public class ItemTransition
          return result;
      }
 
-     public static CmdCode TryTakeItem(ClientRole role, List<ItemDesc> items)
+     public static CmdCode TryTakeItem(PlayerEntity role, List<ItemDesc> items)
      {
         if (items.Count == 0) { return CmdCode.Succeed; }
         for (int index = 0; index < items.Count; index++)
@@ -54,12 +54,12 @@ public class ItemTransition
         return CmdCode.Succeed;
     }
 
-     public static ItemZhuDongGetResult TryZhuDongGetItem(ClientRole role, List<ItemDesc> items,KnapsackType type = KnapsackType.RolePackPlain)
+     public static ItemZhuDongGetResult TryZhuDongGetItem(PlayerEntity role, List<ItemDesc> items,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);
          return trans.TryZhuDongGetItem(items, type);
      }
-     public static ItemZhuDongGetResult TryZhuDongGetItem(ClientRole role, ItemDesc item,KnapsackType type = KnapsackType.RolePackPlain)
+     public static ItemZhuDongGetResult TryZhuDongGetItem(PlayerEntity role, ItemDesc item,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);
          return trans.TryZhuDongGetItem(new List<ItemDesc>(){item}, type);

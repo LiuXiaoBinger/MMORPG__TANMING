@@ -4,7 +4,7 @@
 public class RoleShopRecord : RoleComponentBase
 {
     /// <summary>创建商店记录组件。</summary>
-    public RoleShopRecord(ClientRole owner) : base(owner)
+    public RoleShopRecord(PlayerEntity owner) : base(owner)
     {
     }
 

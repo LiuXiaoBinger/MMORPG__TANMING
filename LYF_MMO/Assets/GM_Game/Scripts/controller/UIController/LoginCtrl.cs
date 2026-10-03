@@ -339,10 +339,14 @@ public class LoginCtrl : CtrlBase
     /// <summary>注销登录协议和视图事件。</summary>
     public override void Dispose()
     {
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RegistCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_LoginCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_GetServerListCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_LoginGameServerCode);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_RegistCode, OnRegistHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_LoginCode, OnLoginHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_GetServerListCode, OnGetServerListHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_LoginGameServerCode, OnLoginGameServerHandle);
         if (_loginview != null)
         {
             _loginview.ClearActions();

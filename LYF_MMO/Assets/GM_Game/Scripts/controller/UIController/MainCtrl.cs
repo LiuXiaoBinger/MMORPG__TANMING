@@ -24,6 +24,18 @@ public class MainCtrl : CtrlBase
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
     private NpcEntity _currentTalkNpc;
 
+    /// <summary>将技能协议回包交给正式 11080 解析和当前角色装载链。</summary>
+    /// <param name="payload">已序列化的 RoleSkillInfoRet protobuf 消息体。</param>
+    /// <returns>协议有效且回包角色与本地主角匹配时返回 true。</returns>
+    public bool LoadSkillResponse(ByteString payload)
+    {
+        if (_skillCtrl == null)
+        {
+            return false;
+        }
+        return _skillCtrl.ApplyRoleSkillInfoPayload(payload);
+    }
+
     /// <summary>创建主界面控制器并组合各业务子控制器。</summary>
     public MainCtrl(UIBase view) : base(view)
     {
@@ -38,9 +50,9 @@ public class MainCtrl : CtrlBase
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
         _knapsackCtrl = new KnapsackCtrl(_mainView);
-        if (Global.Instance != null && Global.Instance.RoleWorld != null)
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
-            Global.Instance.RoleWorld.LocalRoleChanged += OnLocalRoleChanged;
+            Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
         }
         BindTrackedRole();
         _chatWindow = _mainView.ChatWindow;
@@ -128,11 +140,17 @@ public class MainCtrl : CtrlBase
         {
             return;
         }
-        _mainView.MinMapWindow.SetTrackedRole(Global.Instance.roleCtrlBase);
+        // 小地图直接跟踪场景世界中的本地玩家实体，不再依赖旧 MainRoleCtrl。
+        PlayerEntity localRole = null;
+        if (Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        _mainView.MinMapWindow.SetTrackedRole(localRole);
     }
 
     /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
-    private void OnLocalRoleChanged(ClientRole role)
+    private void OnLocalRoleChanged(PlayerEntity role)
     {
         if (_knapsackCtrl != null)
         {
@@ -176,10 +194,10 @@ public class MainCtrl : CtrlBase
             return;
         }
 
-        ClientRole localRole = null;
-        if (Global.Instance != null && Global.Instance.RoleWorld != null)
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
-            localRole = Global.Instance.RoleWorld.LocalRole;
+            localRole = Global.Instance.SceneWorld.LocalRole;
         }
         if (localRole == null)
         {
@@ -210,10 +228,10 @@ public class MainCtrl : CtrlBase
         {
             return;
         }
-        ClientRole localRole = null;
-        if (Global.Instance != null && Global.Instance.RoleWorld != null)
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
-            localRole = Global.Instance.RoleWorld.LocalRole;
+            localRole = Global.Instance.SceneWorld.LocalRole;
         }
         if (localRole == null)
         {
@@ -236,8 +254,14 @@ public class MainCtrl : CtrlBase
             return;
         }
 
+        // 服务端返回的背包完整快照，用于刷新角色背包和装备界面。
         RoleKanpsackInfo info = result.RoleKanpsackInfo;
-        ClientRole localRole = Global.Instance.RoleWorld.LocalRole;
+        // 当前场景中的本地玩家；Global 或 SceneWorld 已清理时保持为空并忽略旧回包。
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
         if (localRole == null || !localRole.LoadRoleData(result))
         {
             return;
@@ -256,8 +280,14 @@ public class MainCtrl : CtrlBase
             return;
         }
 
+        // 接收扩容结果的本地玩家背包组件。
         RoItemComponent itemComponent;
-        ClientRole localRole = Global.Instance.RoleWorld.LocalRole;
+        // 当前场景中的本地玩家；启动门控未开放或断线清理后保持为空。
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
         if (localRole != null && localRole.TryGetComponent(out itemComponent))
         {
             itemComponent.SetOpenedGridCount((KnapsackType)result.KnapsackType,
@@ -321,11 +351,16 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RoleKnapsackInfoCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_OpenKnapsackGridCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_BuyShopItemCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SC_UpdateItemInfoCode);
-        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_CountUpdateSyncInfoCode);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_OpenKnapsackGridCode, OpenKnapsackGridHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_BuyShopItemCode, BuyShopItemHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_SC_UpdateItemInfoCode, UpdateItemInfoHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_CountUpdateSyncInfoCode, CountUpdateSyncInfoHandle);
         if (_mainInputRegistered && PlayerInputCtr.Instance != null)
         {
             PlayerInputCtr.Instance.MainUIKeyHandler -= MainUIKeyHandler;
@@ -356,9 +391,9 @@ public class MainCtrl : CtrlBase
         {
             _knapsackCtrl.Dispose();
         }
-        if (Global.Instance != null && Global.Instance.RoleWorld != null)
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
-            Global.Instance.RoleWorld.LocalRoleChanged -= OnLocalRoleChanged;
+            Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
         }
         _currentTalkNpc = null;
     }

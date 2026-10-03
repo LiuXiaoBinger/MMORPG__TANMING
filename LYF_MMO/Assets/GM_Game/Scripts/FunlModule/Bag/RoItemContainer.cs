@@ -16,14 +16,14 @@ public class RoItemContainer
 
     /// <summary>返回只读物品视图；增删改必须经过 RoItemComponent 的事务入口。</summary>
     public IReadOnlyDictionary<long, ItemBase> GetItemMap() { return _items; }
-    public RoItemContainer(KnapsackType containerType, ClientRole role)
+    public RoItemContainer(KnapsackType containerType, PlayerEntity role)
     {
         ContainerType = containerType;
         Role = role;
     }
 
     /// <summary>按背包类型创建对应容器。未覆盖的类型使用通用背包容器。</summary>
-    public static RoItemContainer Create(KnapsackType type, ClientRole role)
+    public static RoItemContainer Create(KnapsackType type, PlayerEntity role)
     {
         switch (type)
         {
@@ -45,7 +45,7 @@ public class RoItemContainer
     }
 
     public KnapsackType ContainerType { get; private set; }
-    public ClientRole Role { get; private set; }
+    public PlayerEntity Role { get; private set; }
     /// <summary>只读物品视图，禁止业务模块直接写入容器字典。</summary>
     public IReadOnlyDictionary<long, ItemBase> Items { get { return _items; } }
     public int ContainerSize { get { return _containerSize; } }
@@ -370,33 +370,33 @@ public class RoItemContainer
 /// <summary>普通背包容器。</summary>
 public class PlainBag : RoItemContainer
 {
-    public PlainBag(KnapsackType type, ClientRole role) : base(type, role) { }
+    public PlainBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
 }
 
 /// <summary>装备背包容器。</summary>
 public class EquipBag : RoItemContainer
 {
-    public EquipBag(KnapsackType type, ClientRole role) : base(type, role) { }
+    public EquipBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
 }
 
 /// <summary>材料背包容器。</summary>
 public class MaterialBag : RoItemContainer
 {
-    public MaterialBag(KnapsackType type, ClientRole role) : base(type, role) { }
+    public MaterialBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
     public void CalculateContainerSize() { }
 }
 
 /// <summary>消耗品背包容器。</summary>
 public class ConsumeBag : RoItemContainer
 {
-    public ConsumeBag(KnapsackType type, ClientRole role) : base(type, role) { }
+    public ConsumeBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
     public override bool CheckIn(ItemBase item, int pos = InvalidItemPos) { return base.CheckIn(item, pos); }
 }
 
 /// <summary>角色已穿戴装备容器，对应 C++ BodyBag。</summary>
 public class BodyBag : RoItemContainer
 {
-    public BodyBag(KnapsackType type, ClientRole role) : base(type, role) { }
+    public BodyBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
     public bool IsChangeEquipPage { get; set; }
     public override void CalcContainerAttr() { }
 }
@@ -404,7 +404,7 @@ public class BodyBag : RoItemContainer
 /// <summary>仓库容器。</summary>
 public class Warehouse : RoItemContainer
 {
-    public Warehouse(KnapsackType type, ClientRole role) : base(type, role) { }
+    public Warehouse(KnapsackType type, PlayerEntity role) : base(type, role) { }
     public override bool CheckIn(ItemBase item, int pos = InvalidItemPos) { return base.CheckIn(item, pos); }
 }
 
@@ -414,7 +414,7 @@ public class ShortCutBag : RoItemContainer
     // 快捷栏槽位到物品实例 UID 的映射。
     private readonly Dictionary<ulong, ulong> _shortcutMap = new Dictionary<ulong, ulong>();
 
-    public ShortCutBag(KnapsackType type, ClientRole role) : 
+    public ShortCutBag(KnapsackType type, PlayerEntity role) :
         base(type, role) { }
 
     public ItemBase GetShortCutItemByUid(long uid)
@@ -431,7 +431,7 @@ public class ShortCutBag : RoItemContainer
 class MoneyBag : RoItemContainer
 {
    
-    public MoneyBag(KnapsackType type, ClientRole role) :
+    public MoneyBag(KnapsackType type, PlayerEntity role) :
 base(type, role) { }
 
 

@@ -47,7 +47,7 @@ public class ShopMgr : Singleton<ShopMgr>
         {
             return int.MaxValue;
         }
-        ClientRole localRole = GetLocalRole();
+        PlayerEntity localRole = GetLocalRole();
         if (localRole == null)
         {
             return 0;
@@ -78,7 +78,7 @@ public class ShopMgr : Singleton<ShopMgr>
     {
         NetClient client = NetSocketMgr.Client;
         long connectionGeneration = NetSocketMgr.Instance.CurrentConnectionGeneration;
-        ClientRole localRole = GetLocalRole();
+        PlayerEntity localRole = GetLocalRole();
         if (  client == null || connectionGeneration <= 0 || shopTableId <= 0 ||
             goodsId <= 0 || buyCount <= 0 || localRole == null || localRole.BaseInfo == null)
         {
@@ -208,13 +208,13 @@ public class ShopMgr : Singleton<ShopMgr>
     }
 
     /// <summary>获取当前登录角色，避免商城管理器自行缓存角色数据。</summary>
-    private static ClientRole GetLocalRole()
+    private static PlayerEntity GetLocalRole()
     {
-        if (Global.Instance == null || Global.Instance.RoleWorld == null)
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
         {
             return null;
         }
-        return Global.Instance.RoleWorld.LocalRole;
+        return Global.Instance.SceneWorld.LocalRole;
     }
 
     /// <summary>按 GoodsId 查找商城商品配置。</summary>
@@ -234,7 +234,7 @@ public class ShopMgr : Singleton<ShopMgr>
     }
 
     /// <summary>校验购买所需虚拟物品余额，价格为零时不要求货币配置。</summary>
-    private static bool CheckCurrencyBalance(ClientRole role, int currencyItemId,
+    private static bool CheckCurrencyBalance(PlayerEntity role, int currencyItemId,
         int unitPrice, int buyCount)
     {
         if (unitPrice < 0)

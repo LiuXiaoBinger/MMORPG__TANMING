@@ -139,6 +139,19 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: Animations
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GM_Game/Animas
+        CollectorGUID: 7baac35e56629d540bd08b5a784eb203
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
     - GroupName: artres
       GroupDesc: 
       AssetTags: 
@@ -146,6 +159,19 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/artres
         CollectorGUID: 432d1b8dac5e8c544b658b26e4f4dd13
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+    - GroupName: Resources
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GM_Game/Resources
+        CollectorGUID: a3fa8ed5efa143b0862fdf5a3d1f1f7e
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
