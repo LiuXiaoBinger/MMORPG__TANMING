@@ -1,5 +1,6 @@
 namespace MMoRpgCommon.SceneEntity
 {
+    /// <summary>普通实体组件容器的稳定类型索引；新增类型只追加编号，既有编号保持兼容。</summary>
     public enum EntityComponentType
     {
         None = 0,
@@ -34,6 +35,8 @@ namespace MMoRpgCommon.SceneEntity
         Eagle = 29,
         Dummy = 30,
         /// <summary>角色跳跃动画表现组件，独立于待机和其他视图组件注册。</summary>
-        Jump = 31
+        Jump = 31,
+        /// <summary>实体普通程序位移组件，在输入移动提交前求值；保留此前所有组件编号。</summary>
+        Displacement = 32
     }
 }

@@ -178,3 +178,16 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: SkillRuntimePresentation
+      GroupDesc: "YCombat \u5DF2\u6821\u9A8C\u6280\u80FD\u8FD0\u884C\u8868\u73B0"
+      AssetTags: skill-presentation
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GM_Game/Scripts/Data/Skill/Runtime
+        CollectorGUID: 7da4a0a1ebd9da34db38a0385e426cb3
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: skill-presentation
+        UserData:

@@ -1,0 +1,3991 @@
+# 测试记录
+
+## 2026-10-10 技能编辑器图文解析文档（只读分析 + HTML 文档新增）
+
+- 分析范围：逐文件研读技能编辑器五部分——① 嵌入包 Runtime `LYF_MMO/Packages/com.ethan.act-action-editor/Runtime`（SkillConfigSO 与 Global 内嵌类型、ActionPlayer 播放/校验/流程/输入缓冲、位移后端与 MoveSolver、碰撞几何、交互窗、镜头/HitFeel）；② 包编辑器镜像 `LYF_MMO/Assets/GM_Game/Editor/Skill/ActionEditor`（SkillEditorWindow、Timeline、BuiltinTrackRegistry 16 轨道、Inspector、预览隔离副本、ActionEditorAgent）；③ 宿主桥接 `LYF_MMO/Assets/GM_Game/Editor/Skill`（SkillEditorAssetTools 校验/导出、SkillEditorBinding、SkillCastingRulesExportTool）；④ 运行时技能 `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Skill`（MSkillComponent/Core/MSkill/MArtSkill、FxEvents 缓存与租约、施法入口链路）与配置资产目录 `LYF_MMO/Assets/GM_Game/Scripts/Data/Skill`；⑤ 独立验证程序集 `LYF_MMO/Assets/GM_Game/Scripts/UI/test/Editor/SkillVerification`。另核对服务端 `LYF_Server` RoleSkillComponent.TryCast 与两端 SkillCastingRules.json（逐字节一致）。
+- 交付物：`项目分析/SKILL_EDITOR_GRAPHIC_GUIDE.html`，单文件、全中文、11 章、9 张内联 SVG（架构图、界面布局标注图、轨道 Clip 体系图、导出时序图、运行时播放流程图、规则数据流图、教程流水线图），固定侧边目录导航、暗色代码块与离线语法高亮；接口解析均标注源码相对项目根目录路径。
+- 文档验证：使用 html skill 的 shot.py 在桌面（1440 宽）与移动（390 宽）两视口实际渲染。桌面 consoleErrors/resourceErrors/horizontalOverflow 均为空、无挤压列；目录锚点跳转正常；全部 SVG 图渲染无文字重叠（架构图箭头穿越条件编译胶囊、界面图标注压按钮等问题已修复并重新内联）；代码块语法高亮正确（修复了高亮脚本多趟替换打烂自身 span 标签的缺陷）；表格列宽完整。移动端卡片堆叠、表格与代码块横向滚动、图表占满视口宽度。
+- 离线验证：CSS/JS/SVG 全部内联，无外网 CDN 与外部资源引用，断网可直接双击打开。
+- 未修改代码声明：本次为只读代码分析，未改动任何业务代码、配置资产、场景、预制体与包源码；仅新增交付 HTML、Docs/AI 协作记录与 `项目修改日志/` 变更记录。
+- 未运行项：未启动 Unity、未做实机截图（界面图均明确标注"界面示意图，非 Unity 实机截图"）；文档中的源码疑点（Jump/endKey 与 jumpList 差一、NavMeshAgentBackend.SetActorCollisionIgnored 空实现、causePlayerStagger Obsolete 仍序列化、SkillTypeCombined/Channelling 已定义未接入、MoveCasting 服务端不校验、MMoveComponent `#if false` 死代码等）均已在正文以提示框如实标注。
+
+## 2026-09-27 Q 普攻接段节奏返工独立复验
+
+- RO 证据：`项目分析/RO_Q_COMBO_TEMPO_REFERENCE.md`；RO 剑士三段普通攻击 `SkillStateTime=0.7s`，与 `Time=0.9s`、`AnimationLength=0.6s` 分离。本项目 MJS 剪辑更长，700ms 是参照 RO 节奏的本项目配置值。
+- 构建：客户端 `GM_Game`、服务端 `GameServer` 隔离构建均 0 错误；客户端完整开发构建 42 条既有警告，独立增量构建 38 条；服务端首次完整构建 11 条既有警告，注释补齐后增量构建 7 条。`Network` 开发构建 0 错误、0 警告；正式客户端插件与对应开发构建 DLL SHA256 一致为 `33F5B3359A26C56910BDD5D8C8A00A43AA298DEEB67452F9D1BB5A3AA2617E3C`。独立不同输出目录重编的 DLL 哈希不用于字节一致性判断。
+- 客户端源码断言：`MSkill` 在 0.699s 仍处技能状态、0.701s 状态结束，完整动画时钟独立保留；单动作技能原完整时长行为保持。旧服务器结束通知按施法 ID 清旧实例，不清理新段。
+- 服务端正式组件断言：650ms 下一段被活动施法拒绝，700ms 接受第二段；段序 0→1→2→0，失败/重传不推进，六秒重置和其他单动作时长保持。11170/11171 的 `CastDurationMs` 对 Q 返回 700ms。
+- 配置：`#SkillPresentationInfo.xlsx` 增加 `SkillStateTimeMs`，Q 三行均为 700ms，原 2167/1967/2500ms `DurationMs` 保留；Luban 生成类、bytes 和客户端插件已同步。业务代码目标范围静态规范与差异检查通过，未添加输入缓存、动画倍率或自动三连。
+- 未运行：未注入 Unity 键盘、未创建角色探针，未运行 Game View 画面及四服联机。长 MJS 剪辑在 700ms 后转 Idle 或下一段的实际关键姿态、过渡流畅度和移动阻断需要用户手动确认。
+
+## 2026-09-27 Q 普攻三段轮换最终验收
+
+- 参与：架构子 Agent 提供 RO 对照，客户端与后端子 Agent 开发，独立测试审查子 Agent 复验并打回租约及注释问题；返工后终审通过，无剩余阻断项。范围见 `项目修改日志/2026-09-27-RO-NORMAL-ATTACK-COMBO-CHANGELOG.md`，设计见 `项目分析/RO_NORMAL_ATTACK_USING_TIMES_DESIGN.md`。
+- 独立构建：最终 `GM_Game` 隔离构建 0 错误、42 条既有警告；`GameServer`/`Network` 0 错误、11 条警告。证据保留 `_temp/skill-combo-review/client-build.log` 和 `server-build.log`；正式客户端 Network.dll 与后端开发输出哈希一致，未用独立不同构建目录的 DLL 覆盖正式插件。
+- 核心断言：直接编译正式 Core/Data/Prediction 源码，验证 0→1→2→0、超过十秒重置、MP 不足不推进、技能重装继承、旧确认/取消/超时不覆盖新 CD、重复结果拒绝、最新权威 CD 和单动作待确认行为；`_temp/skill-combo-review/core-check.log` 为 PASS。
+- 服务端断言：使用正式组件源码的隔离构建结果，验证三段轮换、六秒等号续段/超过六秒重置、拒绝/缓存重传不推进、2167/1967/2500ms 段时长及结束帧、11170 字段 11/11171 字段 7 段数 protobuf 往返、其他单动作时长不变；`server-check.log` 为 PASS。内存夹具没有真实网关，结束发送的无效会话日志属于预期，不能用作网络通过证据。
+- 配置：正式表现表新增两行，重新生成 bytes 为 759 字节，SHA256 `502F5FC7D19DD28924ECF0B689105F1356FD66C781709AA043D5AE8D98C1E3CF`；原五行业务值一致。空音频单元格在归档检查中为空字符串、正式回读为空白 null，Luban 语义同为空音频，不声称 JSON 字节完全一致。原 SkillInfo/SkillEffectInfo 表及 bytes 保持不变；新增源码 `.meta` 与 csproj 索引已登记。
+- 静态审查：目标业务范围无新增命名空间、foreach、三目或弱类型业务载荷；中文注释复审通过。目标 `git -c core.whitespace=cr-at-eol diff --check` 通过；CRLF 按正常换行处理，未为此全文件格式化。
+- 未运行：未注入键盘、未生成 Unity 测试角色/探针，也未做 Game View 物理按键或真实四服联调。手动验收按当前测试角色逐次 Q 检查三段顺序、动画结束续段、第三段完整播放、施法移动阻断；联机检查本人确认不重播、他人段数及 MP/CD。
+
+## 2026-09-27 RO 技能施放链最终独立复验
+
+- 独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/ro-cast-review/final6 --verbosity quiet -clp:ErrorsOnly`，0 错误、38 条既有警告；临时产物保留在 `_temp/ro-cast-review/final6`。
+- 静态检查：`test.cs` 仅构造并经正式解析入口装载 11080，全项目技能键只有正式 `SkillCtrl` 订阅；无 Client 时可进入 `BeginPrediction`，有 Client 时先尝试 11170；11170 序号确认、11171 服务器施法 ID 去重、未确认时长加 2 秒回滚、已确认时长加 10 秒兜底、技能槽逐帧读取核心 CD 和单技能优先的组 CD 展示均通过源码核对。
+- 规范与返工：目标文件未发现新增 `namespace`、`foreach`、三目、`dynamic` 或 `object[]`；目标 `git diff --check` 通过。已移除来源标记、业务离线施法分支、单请求重试和过期状态、本地组 CD 预测、测试侧第二按键订阅及无调用的快照包装入口；独立审查通过。
+- 未执行：Unity Game View 的用户物理键盘与动画画面验收、真实四服联机回包、MP/伤害结算。11171 缺少 RO 请求 UUID，当前依赖服务端先发送 11170 再发送 11171 的现有顺序；极端乱序为剩余风险。完整修改见 `项目修改日志/2026-09-27-RO-SKILL-CAST-ALIGNMENT-CHANGELOG.md`。
+
+## 2026-09-24 项目文档归档整理验证
+
+- 归档结果：项目修改日志目录包含 45 份历史修改/测试流程记录，另有 README 与本次变更说明；项目分析目录包含 9 份历史项目解析、架构设计和方案文档，另有 README。两个目标目录原已存在；归档保留原内容。
+- 约束更新：`AGENTS.md`、`AIconfig/workflow.md`、产品经理/策划架构师/测试角色说明明确归档边界；`Docs/AI/PROJECT_CONTEXT.md` 与 `DECISIONS.md` 已记录长期规则。
+- 路径核验：`Docs/AI` 仅包含四份协作入口记录；根目录未发现散落的 Markdown 修改日志或专题设计正文。
+- 验证：检查两个归档目录清单、角色模板、协作记录引用；本次修改的文档和配置未发现行尾空白。没有运行代码构建，因为本轮不涉及业务代码。
+- 全仓差异检查：`git diff --check` 受既有用户改动影响失败，报告涉及 `AssetBundleCollectorSetting.asset`、Unity `.meta`/场景、`NpcManager.cs`、`MainRoleCtrl.cs`、`OnlineRole.cs` 等文件的空白。上述文件不属于本次范围，未作修改。
+- 未解决问题：历史协作记录中少数描述性文字仍称“根目录变更说明”；本次修正了可定位的旧文件路径，保留纯叙述性历史文字。
+
+## 2026-09-15 SceneEntity 中文注释补充（Action + 3DModel 批次）
+
+- 变更范围：`SceneEntity/Component/Action/` 15 个文件 + `SceneEntity/3DModel/` 14 个文件，共 29 个 C# 文件。
+- 修改内容：仅新增中文 XML 注释和行内注释，业务逻辑零变更；已有注释保留。
+- 覆盖内容：
+  - Action 目录（15 个）：MActionComponent 动作状态抽象基类完整生命周期（许可/开始/更新/结束/强制停止/清理）、事件注册与转移判定钩子、PlayAnim 动画播放逻辑；MBasicActionComponent 通用基类默认转移判定；MDefaultActionComponent 默认状态 idle/move 自动切换与移动战斗事件刷新；MSkillComponent 技能组件快捷组件与动作状态双重身份、技能集合维护；MSingingComponent/MSpecialComponent/MBeHitComponent/MDeadComponent/MStunComponent/MBornComponent/MClimbComponent/MCollectComponent/MDanceComponent/MFishingComponent/MFearRunComponent 各具体动作状态类级职责、StateName 动画映射、事件注册说明。
+  - 3DModel 目录（14 个）：MModel 模型加载会话版本号校验/异步回调防串台/Animator 生命周期；MModelMgr 模型对象池单例；MModelOriginData 模型原始配置数据；MObjectAnimator 简化版动画器；MAnimator Animator 封装全部字段/属性/方法注释（状态常量、参数缓存字典、Play/CrossFade 原生状态与兼容参数双路径、OverrideAnim 片段替换、Reset 资源释放）；MAnimatorPool 双类型对象池；MAnimatorStateCompatibility 旧 Controller 参数兼容协议（Movement/Action 参数映射）；MAnimatorControllerAssetProvider YooAsset 异步加载与 Location 校验；MAnimatorControllerAssetLease 资源租约幂等释放；MAnimationStateNames 状态名常量逐项说明；MAnimationClipInfo 引用计数与片段元数据；MAnimationAssetProvider 动画资源适配器；MAnimInfo 逻辑 key 与片段绑定信息；MGameObject 变换缓存机制（未加载时缓存属性，加载后自动同步）。
+- 验证方式：人工抽查 MDefaultActionComponent.cs、MFearRunComponent.cs、MAnimationClipInfo.cs、MAnimator.cs（前 80 行）、MGameObject.cs（前 60 行）五个代表性文件，确认类级 summary、字段注释、方法 XML 注释（含 param/returns）、关键逻辑行内注释齐全，业务代码行未改动。
+- 未执行：Unity 编译（按任务要求，仅注释变更，无需编译验证）。
+- 未解决问题：无。
+
+## 2026-09-15 SceneEntity 中文注释补充（Component 批次 16 个文件）
+
+- 变更范围：`SceneEntity/Component/` 根目录 11 个文件 + `Component/State/` 5 个文件，共 16 个 C# 文件。
+- 修改内容：仅新增中文 XML 注释和行内注释，业务逻辑零变更；已有注释保留。
+- 覆盖内容：
+  - 组件基类与容器：EntityComponentBase 事件订阅记录/批量解绑/RebindOwner 宿主重绑/ResetForPool 池回收；EntityComponentContainer 按类型字典与顺序列表双结构、Initialize/Update/LateUpdate 顺序驱动、Shutdown 逆序回收、Invoke 异常隔离。
+  - 组件管理器：MComponentMgr 普通组件池与动作状态池双池结构、CreateComponent 生命周期校验、CreateSpecialComponents 四个专用组件创建、ReleaseSpecialComponents 状态机唯一回收 Skill 约定、AcquireActionState/ReleaseActionState 对象池复用、RegisterExtraComponents/AppendExtraComponents 按实体类型追加组件。
+  - 专用组件：MMoveComponent 目标快照/插值系数/移动开始结束事件；MBuffComponent Buff ID-等级表；EntityTransformComponent 快照直写；EntityRoleComponent RoleId/UserName；EntityProjectileComponent 超时 MarkPendingDestroy；EntityMonsterComponent MonsterId/Rank；EntityAttributesComponent 范围钳制与 Hp/Mp/综合属性事件派发；EntityComponentMarker 占位不可复用语义。
+  - 状态机：MStateMachine 按实体类型注册动作状态清单（集合/NPC/怪物/玩家分支）、CanSkill/CanTransfer 权限校验、TransferToState 状态切换与 StateChanged 事件、UpdateSeconds 完成自动回默认、LateUpdate 延迟动画播放、Shutdown 容器统一回收；MActionStateContainer 三套索引（StateDefine/复合键/顺序列表）；IMStateTransform 接口契约；CommonStateTypeTool 许可矩阵越界保护；ActionStateKey 复合键相等比较与哈希。
+- 验证方式：人工抽查 MStateMachine.cs（状态机核心）、EntityAttributesComponent.cs（含范围钳制与事件分支）、EntityComponentContainer.cs（生命周期包装）三个代表性文件，确认类级 summary、字段注释、方法 XML 注释（含 param/returns）、关键逻辑行内注释齐全，业务代码行未改动。
+- 未执行：Unity 编译（按任务要求，仅注释变更，无需编译验证）。
+- 未解决问题：无。
+
+## 2026-09-15 SceneEntity 中文注释补充（根目录 + Entity 批次）
+
+- 变更范围：`SceneEntity/` 根目录 9 个文件、`SceneEntity/Entity/` 18 个文件，共 27 个 C# 文件。
+- 修改内容：仅新增中文 XML 注释和行内注释，业务逻辑零变更；保留已有注释。
+- 覆盖内容：
+  - 根目录：MEntityPool 对象池单例职责/Acquire/Release 方法参数与副作用、SceneEntityWorld 实体世界 UID 分配/Add/Remove/Update/LateUpdate/Clear 完整生命周期、ROObject 接口全部成员逐一注释、SceneEntityFactory 工厂方法与 Builder 映射、MSceneObject 变换快照与表现控制器关联、MObject 通用对象层组件容器与事件分发器生命周期、MEntity 实体层四个专用组件与模型持有关系、ProjectileType/MonsterRank 枚举逐项说明。
+  - Entity 目录：RoleEntity 其他角色同步信息、PlayerEntity 本地玩家业务组件容器与背包/金币操作 API、MonsterEntity 怪物等级档位、NpcEntity NPC 全部配置字段、BossEntity/EliteEntity/MercenaryEntity 继承关系、DummyEntity/EagleEntity 训练假人与鹰类召唤物、CollectionEntity 采集物、TrapEntity 陷阱、ProjectileEntity 及四类派生投射物（Target/Rect/Ring/Anim）继承关系说明。
+- 验证方式：人工抽查 MEntity.cs、PlayerEntity.cs、NpcEntity.cs、ProjectileType.cs 四个代表性文件，确认类级 summary、字段注释、方法 XML 注释（含 param/returns）、关键逻辑行内注释齐全。
+- 未执行：Unity 编译（按任务要求，仅注释变更，无需编译验证）。
+- 未解决问题：无。
+
+## 2026-09-15 SceneEntity 中文注释补充（Builder + event 批次）
+
+- 变更范围：`SceneEntity/Builder/` 15 个文件、`SceneEntity/event/` 13 个文件（含 eventclassArg 子目录 7 个），共 28 个 C# 文件。
+- 修改内容：仅新增中文 XML 注释和行内注释，业务逻辑零变更；保留已有注释。
+- 覆盖内容：
+  - Builder 目录：类级职责说明、Build 方法 XML 注释（uid/configId 参数、返回值）、构造函数注释、字段说明、组件挂载流程行内注释、子类继承关系说明。
+  - event 目录：事件分发器类级职责、字段说明、Add/Remove/Dispatch/Clear 方法 XML 注释（参数、返回值、副作用）、监听器快照复制和 Clone 副本机制行内注释、输入桥接方法完整参数说明、事件参数类字段/属性/构造/Clone/Recycle 注释、MEventType 枚举逐项分类说明。
+- 验证方式：人工抽查 ProjectileEntityBuilder.cs、MEventDispatcher.cs、EntityInputEventBridge.cs 三个代表性文件，确认类/字段/方法/参数/返回值/关键逻辑注释齐全。
+- 未执行：Unity 编译（按任务要求，仅注释变更，无需编译验证）。
+- 未解决问题：无。
+
+## 2026-09-15 代码注释完整性约束登记
+
+- 变更范围：`AGENTS.md`、`Docs/AI/PROJECT_CONTEXT.md`、`Docs/AI/DECISIONS.md`、`Docs/AI/CURRENT_TASK.md`。
+- 验证结果：已核对四个文件均包含“类型/接口、函数、字段/属性/常量/事件、参数及局部变量必须有具体中文注释”的约束，并明确注释需描述实际语义。
+- 本轮未修改业务代码，未执行编译或运行测试；后续代码审核和静态检查需增加注释完整性检查。
+
+## 2026-09-15 EntityId 删除与 UID 迁移验证
+
+- 公共库构建：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/common-uid-build`，成功。
+- 客户端构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-build-final4`，成功，0 个错误。
+- 服务端 GameServer 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/server-uid-build3`，成功，0 个错误。
+- 静态扫描：实体相关源码不再包含 `EntityId` 类型、`EntityIdAllocator`、`new UID` 或损坏的 `ulong` 构造调用；`ConfigId`、`RoleId` 语义保留。
+- 未执行：Unity Play Mode、实体池多轮复用和网络联调。
+
+## 2026-09-15 UID 迁移主 Agent 最终复核
+
+- `MMoRpgCommon` 构建：成功，0 错误；输出 `_temp/common-uid-final2`。
+- Unity 客户端 `GM_Game` 构建：成功，0 错误；输出 `_temp/uid-final-build`，仅有 31 个既有警告。
+- GameServer 构建：成功，0 错误；输出 `_temp/server-uid-final`，仅有既有警告。
+- 静态扫描：业务源码未发现 `EntityId`、`EntityIdAllocator`、`OwnerEntityId`、`SceneEntityId`、`TargetEntityId` 等旧身份命名；实体世界字典、快照字段和池接口统一使用 `ulong UID`。
+- `git diff --check` 仅报告既有换行格式转换及 3 个文件末尾空行，不影响编译。
+- 未执行：Unity Play Mode、对象池运行态多轮复用和网络联调。
+
+## 2026-09-14 RO 状态许可与 Animator 兼容返工
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/animator-state-fix-build`，0 错误，31 个既有警告。
+- 静态规则：状态与动画目标文件 `namespace=0`、`foreach=0`、三目运算符=0、`object`/`object[]`/`dynamic`=0。
+- 状态许可矩阵 15×15 与 RO `state_machine_define.cpp` 逐项一致。
+- `controllerLocation` 已通过 YooAsset 异步租约绑定 Controller，回收释放并以会话版本忽略过期回调；Movement/Action 兼容映射已落地。
+- 未执行：Unity Play Mode、真实 YooAsset Controller 地址和动作参数运行态回归。
+
+## 2026-09-14 MAnimator 类结构说明
+
+- 已根据当前实体代码和已审核设计核对继承、组合及管理器关系。
+- 本轮仅输出设计结构，不涉及源码修改，因此未执行编译或 PlayMode；后续实现前仍需按文档验收清单验证。
+
+## 2026-09-14 实体事件参数强类型重构基线
+
+- 本轮开始前检查：`SceneEntity/event/MEventArgs.cs` 使用 `Data: object`、`IntValue`、`FloatValue`、`BoolValue`、`StringValue` 承载多个不相关业务事件；`IEventArg.Init(params object[])` 也存在无类型载荷。
+- 调用基线：`ROObject`、`MObject`、`MEventDispatcher`、`EntityInputEventBridge`、`EntityMoveComponent`、`EntityTransformComponent` 和 `EntityComponentBase` 直接依赖 `MEventArgs`。
+- 参考范围：已读取 `F:/UnityPro/ro/Ro_cs422nb/clientcode/CSProject/MoonClient/Event/IEventArg.cs`、`MEventDispatcher.cs`、`MEventType.cs`；参考项目采用具体事件参数类配合 `IEventArg`，而不是单一万能数据对象。
+- 本条为重构前基线记录，尚未修改业务代码、尚未构建。
+
+## 2026-09-14 实体事件参数强类型重构最终审核
+
+- 独立代码审核结论：通过。`InputKeyDown`、`InputKeyUp`、`InputKeyHeld` 只传递 `KeyInputEventArgs`；`InputAxisChanged` 只传递 `InputAxisChangedEventArgs`；新增 `InputActionStarted`、`InputActionPerformed`、`InputActionCanceled` 三个动作事件且只传递 `InputActionEventArgs`。
+- 输入桥接对动作事件执行白名单校验，错误事件类型会记录错误并拒绝派发，避免后续重新混用事件参数类型。
+- 最终复构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-event-review-final-build`，0 个错误、31 个既有警告。
+- 静态检查：客户端业务代码中 `MEventArgs` 与工程编译项为 0；本次事件范围未发现 `object`、`object[]`、`dynamic`、`Init(params object[])`、`foreach`、三目运算符或新增命名空间。
+- 未执行 Unity Play Mode 的真实键鼠、触摸和 Input System 动作监听回归；该项不阻塞本次静态重构验收。
+
+## 2026-09-14 MAnimator 与角色/怪物状态机设计文档检查
+
+- 参考源码：已读取 `F:/UnityPro/ro/Ro_cs422nb/clientcode/CSProject/MoonClient/AsyncObj/MAnimator.cs`，并核对 `AsyncObj/MAnimationMgr.cs`、`Components/State/MStateMachine.cs`、`Components/Action/MActionComponent.cs` 的职责和调用时序。
+- 产物：新增 `项目分析/ANIMATOR_STATE_MACHINE_DESIGN.md`，覆盖 MAnimator API、AnimatorOverrideController、Clip 引用计数/YooAsset 适配、对象池回收、异步回调过期保护、EntityViewComponent 绑定、Player/Role/Monster 状态机和旧 RoleFSM 迁移方案。
+- 代码变更：本轮未修改客户端、服务端、协议、配置表、场景或预制体业务代码，因此未执行编译和 PlayMode。
+- 静态文档核对：文档明确记录无命名空间、无 `foreach`、无三目运算符、顶级类型一文件一类型等后续实现约束；未发现需要编译的源码变更。
+- 审核状态：独立子 Agent 已完成最新版本复审并通过；确认 LateUpdate/PendingDestroy 时序、精确毫秒/秒接口、Global.Awake 注册顺序、ActionStateKey 独立容器、MActionComponent 的 MEventArgs/Attached/ResetForPool 契约，以及通过 EntityViewComponent.AnimatorFacade 的安全访问均已明确。
+- 未解决：动画配置表字段、具体 YooAsset location 约定、状态同步协议字段和各实体动作组件清单需在实现前由客户端/策划确认。
+
+## 2026-09-14 MAnimator 设计文档第一轮返工
+
+- 审核反馈：初审不通过，缺少动作状态注册/回收、时间单位统一、RuntimeAnimatorController 生命周期、Clip 异步租约配对、状态事件仲裁和旧 RoleFSM 全量映射。
+- 文档修订：补充 `MActionStateRegistry/MActionStateFactory` 装配顺序与回收规则；明确毫秒仅在 `MEntity.Update` 入口转换为秒，`MAnimator.Update` 每帧唯一调用；补充控制器租约和 OverrideController 清理；定义 ClipLease 的 Requested/Loading/Ready/Failed/Stale 状态及 Retain/Release 配对；补充 RO 动作契约和事件解绑；定义状态队列来源优先级、同优先级排序、服务器终态覆盖预测 token；补齐 Idle/Run/FastRun/Jump/Slider/Attack/Hit 映射及相机副作用迁移。
+- 本轮仍未修改业务代码，未执行编译或 PlayMode；等待独立 Agent 复审。
+
+## 2026-09-14 MAnimator 设计文档第二轮返工
+
+- 复审反馈：仍缺少世界层实际 LateUpdate 调度、动作状态 Attached/事件订阅时机、BlendTree 组共享时间、远程 RoleEntity 状态字段缺失时的降级策略，以及更明确的仲裁伪流程。
+- 文档修订：增加 `Global.LateUpdate → SceneEntityWorld.LateUpdate → MEntity.LateUpdate` 链路，规定 `EntityViewComponent.UpdateAnimator` 为 MAnimator 唯一更新点；补充 `MActionStateFactory` 的 Attached/注册/解绑/回收顺序；补充 BlendTree 全组 normalizedTime 和失败回退；补充状态队列仲裁伪代码与服务器序列覆盖规则；补充 `RemoteActionSyncState` 适配层和无序列字段降级；补齐 RO 动画元数据预加载与 LRU 参数。
+- 本轮仍未修改业务代码，未执行编译或 PlayMode；等待独立 Agent 再次复审。
+
+## 2026-09-14 MAnimator 设计文档第三轮返工
+
+- 复审反馈：需要明确 LateUpdate 对 `ROObject`/世界接口的编译接入，以及动作状态不能复用普通组件类型键。
+- 文档修订：增加 `ROObject.LateUpdate(int)`、`MObject/MEntity` 默认与转发责任、`SceneEntityWorld.LateUpdate` 调用约定；定义 `MActionStateContainer` 独立保存动作状态，避免与 `EntityComponentContainer` 和四个专用组件键冲突。
+- 本轮仍未修改业务代码，未执行编译或 PlayMode；等待独立 Agent 再次复审。
+
+## 2026-09-14 MAnimator 设计文档第四轮返工
+
+- 复审反馈：LateUpdate 销毁时机和精确接口仍需统一；动作状态容器不能以 `StateDefine` 单键；动作组件需与当前 `EntityComponentBase` 构造、事件和回收契约一致；状态注册必须早于实体 Build。
+- 文档修订：明确 Update 末移除 PendingDestroy、LateUpdate 仅处理 Active/Sleeping；给出 `ROObject.LateUpdate(int)`、`MEntity.Update(int)`、`MComponentMgr.UpdateSpecialComponents(entity,int,float)`、`MStateMachine.UpdateSeconds(float)`、`MAnimator.Update(float)` 精确签名和无 Update 行为；定义 `ActionStateKey → MActionComponent`、`StateDefine → List` 容器 API；明确 Global.Awake 注册与实体 Initialize Attach/Attached/SetDefault 顺序；修正 MEventArgs、AnimatorFacade、ResetForPool 及旧字段移除规则；补充 RoleState.Attck 拼写和旧表现入口迁移。
+- 本轮仍未修改业务代码，未执行编译或 PlayMode；等待独立 Agent 最终复审。
+
+## 2026-09-14 MAnimator 设计文档最终复审
+
+- 审核对象：`项目分析/ANIMATOR_STATE_MACHINE_DESIGN.md` 最新版本。
+- 审核结论：通过，无阻塞项；独立审核 Agent 逐项确认六项返工要求已满足。
+- 验证范围：仅文档和协作记录，未修改客户端、服务端、协议、配置表、场景或预制体业务代码，因此未执行编译和 PlayMode。
+- 后续交接：进入实现阶段时，按文档第 11 节先实现动画资源适配和 `MAnimator`，再接入视图、状态机及 Player/Role/Monster 状态；实现任务必须委派客户端子 Agent 并执行静态检查、构建和 PlayMode 验收。
+
+## 2026-09-11 移除商城购买回包重复限购字段验证
+
+- 修改：`RequestBuyShopItem` 成功回包不再读取或填充剩余限购次数；`BuyShopItemRes` 删除剩余次数和虚拟背包快照字段，仅保留 `ErrorInfo`。
+- 静态检查：`RequestBuyShopItem` 无 `remaining_purchase_count`、`RemainingPurchaseCount` 或成功回包快照写入；`RoleShopRecord.UseBuyTimes` 仍由 `ShopStatic.BuyItems` 调用。
+- 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/remove-purchase-echo-build` 成功，0 个错误，8 个既有警告。
+- 未执行：Center/Game/Gate/Unity 真实商城购买联调；客户端和 Gate 使用的新协议程序集需要由主 Agent 按现有发布流程同步。
+
+## 2026-09-11 商城购买客户端前置校验验证
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/shop-purchase-client-build` 成功，0 个错误，17 个既有警告。
+- 静态检查：商城购买目标文件无新增 `foreach` 和三目运算符；购买回包只访问 `BuyShopItemRes.Error`，未访问购买物品、虚拟背包或剩余次数字段。
+- 验证内容：购买前读取 `RoleCountComponent.GetLeftCount` 和 `RoItemComponent.GetVirtualItemCount`；校验失败直接调用 `TipsMgr.ShowSystemTips` 并在设置在途状态前返回。
+- 未执行：Unity Play Mode、真实服务器商城购买回包、角色快照刷新和真实货币扣除联调。
+- 补充构建：在加入成功回包后的本地次数和货币更新后，`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/shop-purchase-client-build2` 仍成功，0 个错误，17 个既有警告。
+- 需求修正：按用户要求删除成功回包后的本地货币/次数修改及其临时字段，购买结果只通知成功或失败；发包前校验逻辑保留。
+- 最终构建：移除 `ApplyLocalPurchaseResult` 后，`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/shop-purchase-client-build3` 成功，0 个错误，17 个既有警告。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/shop-purchase-client-build/`、`D:/unitypro/LYFMMORGP/_temp/shop-purchase-client-build2/`，用途为本次客户端构建，待产品经理确认后清理。
+
+## 2026-09-11 商城购买结果同步验证
+
+- 静态检查：购买成功回包只在 `ShopMgr` 读取服务器返回的虚拟物品和限购剩余字段；`MainCtrl` 负责注册 `CMD_SC_UpdateItemInfoCode` 并交给背包组件，UI 不直接解析协议。
+- 增量处理：`RoItemComponent.ApplyServerItemDelta` 支持服务器物品新增、删除、数量变化和跨容器移动，并复用已有背包细粒度事件；虚拟物品快照只清理并重建虚拟物品容器。
+- 规则检查：修改文件无新增 `foreach` 和三目运算符，新增接口和关键状态均有中文注释。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/shop-sync-client-build` 成功，0 个错误，17 个既有警告。
+- 未执行：Unity Play Mode、真实服务器购买回包字段填充、UpdateItemRet 运行态推送和四端联调。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/shop-sync-client-build/`，用途为本次客户端构建，待产品经理确认后清理。
+
+## 2026-09-11 RoleKanpsackInfo 结构复核
+
+- 静态检查：协议源文件中 `RoleKanpsackInfoRet` 只包含结果码和嵌套信息；`RoleKanpsackInfo` 包含各背包、容量、装备栏、虚拟物品背包和保存版本；未发现旧的直接字段或 `MainRoleInfo.Money` 引用。
+- 构建：Network、GameServer、CenterServer、GateServer Debug 隔离构建均成功，0 个错误；保留项目已有警告。
+- 规则检查：本次复核涉及的服务端业务文件无新增 `foreach` 或三目运算符；临时构建产物位于 `D:/unitypro/LYFMMORGP/_temp/proto-final-check/`，待产品经理确认后清理。
+- 未执行：未连接真实数据库，未进行 Center/Game/Gate/Unity 四端登录联调。
+
+## 2026-09-10 YooAsset 图集子 Sprite 地址诊断
+
+- 检查最新资源清单：`Bundles/StandaloneWindows64/DefaultPackage/2026-09-10-680/PackageManifest_DefaultPackage_2026-09-10-680.json` 包含 `Assets/GM_Game/UISprites/Icon/Item/Icon_ItemConsumables01.png`，不包含 `UI_icon_item_Zeng.png` 子资源定位项。
+- 检查纹理导入信息：`Icon_ItemConsumables01.png.meta` 的 `spriteMode=2`，并包含名为 `UI_icon_item_Zeng.png` 的切片，确认它是子 Sprite 而非独立文件。
+- 检查收集配置：`AssetBundleCollectorSetting.asset` 中 `EnableAddressable=0`；`UISprites` 收集器为 `AddressByFileName + PackDirectory + CollectAll`，地址规则在关闭 Addressable 时不会写入清单。
+- 检查客户端调用：`ResourceMgr.LoadSpriteAsync` 将表内路径拼接到 `Assets/GM_Game/UISprites/` 后调用 `LoadAssetAsync<Sprite>`，没有图集子资源选择步骤。
+- 结论：构建已收录图集主资源，失败发生在 location 映射阶段；重新构建相同配置不会自动产生子 Sprite 路径。当前未执行代码修复或 Unity 运行验证。
+
+## 2026-09-06 禁止三目运算符规则
+
+- 验证内容：确认项目协作入口和决策记录已加入“禁止使用三目运算符”规则。
+- 验证结果：`AGENTS.md` 与 `Docs/AI/DECISIONS.md` 均已写入；本次仅修改文档，未涉及业务代码，因此无需编译。
+
+### RoItemComponent 延迟物品持久化代码审查（2026-09-06）
+
+- 审查结论：不通过；发现 4 个 P1、2 个 P2，已反馈后端返工。
+- P1 版本语义：`CenterServer/DB/CRoleWriteTask.cs:44-50` 使用 `role.ItemSaveVersion >= request.Version` 统一返回成功，不能区分重复请求与落后请求；GameServer 会把同版本成功 ACK 当作本地快照已提交并清脏，存在旧实例数据丢失风险。
+- P1 生命周期：`GameServer/manger/RoleManager.cs:55-65` 在旧角色等待保存时直接退出 `AddOnlineRole`，新重连角色没有排队、回调或接管路径；全仓只发现 `RemoveOnlineRole` 定义，没有断线/退出调用方。
+- P1 网络承载：`Network/Socket/com/ServerBase.cs:21,35,48-81` 仅使用 4KB 收包缓冲，包不完整时没有保存已收片段。用当前协议构造四类背包各 81 条随机物品快照，原始请求 18755 字节、GZip 后 13919 字节，超过 4096 字节，完整快照无法可靠到达 Center。
+- P1 客户端协议：`LYF_MMO/GM_Game.csproj:614` 引用的 `Assets/GM_Game/Plugins/Net/Network.dll` SHA256 与本次 Network 构建产物不同；反射确认旧 DLL 的 `RoleItemInfo` 仍只有 `ItemId:System.Int32`，并缺少 `RoleKanpsackInfoRet.SaveVersion` 和 `SaveRoleDataReq`。
+- P2 脏标记边界：`GameServer/Service/item/RoItemContainer.cs:22,50,98,122,155,170,234` 暴露可变字典和裸容器修改入口，`ContainerOnItemChange` 为空，`SortOutBag` 也只改位置不标脏；只能证明当前组件四个入口主动标脏，不能保证所有背包变化都标脏。
+- P2 注释：`RoleNetSender.cs:10-13`、`ItemDataListDB.cs:9-12`、`CRoleWriteTask.cs:13-15` 的关键状态字段没有逐项中文注释。
+- 通过项：`RoItemComponent` 当前 Add/Delete/Modify/Swap 主路径均设置脏版本；发送前不清脏；旧 ACK 不会清除更高的本地脏版本；单角色单在途和 5 秒失败/超时重发逻辑存在；登录恢复覆盖普通物品、装备、词条、位置和保存版本；服务器 proto、运行时容器和三张数据库实体均使用 `long/int64`；Center 任务在单消费者队列执行且事务提交后才返回成功；新增六个业务类型均一类型一文件，项目文件和协议注册完整。
+- 独立构建：Network、GameServer、CenterServer 使用 `_temp/item-persistence-review-20260906/` 隔离输出，均为 0 错误；分别保留 4、7、4 条既有警告。相关差异 `git diff --check` 通过。
+- 未执行：真实 MySQL 事务提交/回滚、Center 连接中断、四端联网和大包实发未验证；大包问题依据协议序列化长度和接收状态机静态行为判定。
+
+### RoItemComponent 延迟物品持久化验证（2026-09-06）
+
+#### 代码审查返工复测
+
+- Network 构建：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug`，0 错误、0 警告。
+- GameServer 构建：同配置，0 错误，保留 3 条既有 `ShopStatic`/`OnlineRole` 警告。
+- CenterServer 构建：同配置，0 错误、0 警告。
+- BehaviorTest：使用返工后的三端隔离产物编译运行，输出 `PASS: login-64bit, add/delete/modify/swap-dirty, ack-version, timer-60s`，退出码 0。
+- 版本审查：`CRoleWriteTask` 对版本相等返回幂等成功，版本更旧返回错误和权威 `persisted_version`，不执行快照删除/插入和版本更新；GameServer 仅对 `CmdCode.Succeed` 清脏。
+- 收包审查：`ServerBase` 的 4KB 接收边界测试路径改为完整帧累计解析，`NetUtils.ParseData` 支持偏移；未改变现有 uint16 帧协议。
+- 会话审查：重连和会话冲突的旧角色未完成保存时，新角色进入待激活表；`Update` 在旧角色可释放后激活，`RemoveOnlineRole` 会清理尚未激活的会话。
+- 容器审查：`GetItemMap` 和 `Items` 均为只读视图，未引入新的裸字典写入口。
+- 未执行：未连接真实 MySQL，未进行四端联调和真实 Socket 长包压测；客户端文件未修改。
+
+- 构建：Network、GameServer、CenterServer 分别使用隔离的 `OutputPath` 和 `BaseIntermediateOutputPath` 构建到 `D:/unitypro/LYFMMORGP/_temp/item-persistence-20260906/`，三者均为 0 错误。Network/Center 保留 4 条既有公共库警告，GameServer 保留上述 4 条及 `ShopStatic`、`OnlineRole` 共 7 条既有警告。
+- 行为测试：`_temp/item-persistence-20260906/BehaviorTest.cs` 编译并运行成功，输出 `PASS: login-64bit, add/delete/modify/swap-dirty, ack-version, timer-60s`，退出码为 0。
+- 恢复路径：在未配置 `UIDHelper` 逻辑服实例 ID 的情况下，`ItemFactory`、普通物品、装备和 `RoItemComponent.LoadKnapsack` 均能恢复已有 64 位 UID；恢复过程不生成临时 UID。
+- 新建路径：配置逻辑服实例 ID 后连续构造两个新物品，UID 序列差为 1，确认 `ItemBase(int...)` 不再重复消耗 UID 序列。
+- 启动配置：静态确认 `GameServerApp.Main` 在建立网络连接和初始化游戏模块前配置 `UIDHelper`；支持 `GAME_SERVER_INSTANCE_ID`，非法或超出 0-255 时启动失败，避免静默产生跨服重复 UID。
+- 状态验证：登录装载不标脏；Add/Delete/Modify/Swap 均进入脏状态；旧 ACK 不会清除更高版本；匹配 ACK 清脏；跨包移动同时保存源与目标快照；删除后的快照不包含旧实例；60 秒前不触发、边界时触发。
+- 静态检查：6 个新增业务类型各自仅出现于一个同名文件；ItemUID 在协议、GameServer 容器和 Center 三张表中均为 64 位；相关文件 `git diff --check` 清理后无新增空白错误。
+- 未执行：未连接真实 MySQL，未验证 `CRoleWriteTask` 的实际事务提交、回滚、重复版本和连接中断；未启动 Center/Game/Gate/Unity 四端联调；客户端协议程序集未同步。
+
+### #EquipInfo 列重排回读验证（2026-09-06）
+
+- 测试目标：确认 `Luaban/MiniTemplate/Datas/#EquipInfo.xlsx` 12 个装备 sheet 完成列重排后数据无损、顺序正确。
+- 验证方式：openpyxl 以 `data_only=True` 独立回读，逐 sheet 断言 `max_column==32`，表头顺序与预期列表完全一致（基本信息→NeedLevel等→CanStrengthen/MaxStrengthenLevel/MaxGemLevel/GemSlotCount/Des/PackType→GeneId0-5/GeneValue0-5）。
+- 验证结果：12 个 sheet 全部通过；`PackType` 数据行均为 int `1`，`Des`（装备简介）内容完整；原 `Desc`（物品简介）列已删除；`Sheet1` 空表未改动。
+- 数据完整性：重排采用"读取全部单元格值+样式→按新索引写回→删除多余列"方式，逐格迁移，未丢失任何数据或样式。
+- 未执行项：Luban 配置导出与客户端读取验证待配置导出联调时确认。
+
+### 背包延迟持久化设计记录（2026-09-06）
+
+- 分析范围：现有 `BagTransition`、`RoItemComponent`、`GameGlobal.Update`、CenterServer 背包容量持久化链路及参考 roserver 的延迟处理思路。
+- 本次未修改业务代码、协议、数据库或客户端，未执行构建。
+- 设计验收点：内存变更与持久化解耦、同角色顺序提交、失败重试、角色下线强制刷盘、服务器停机优雅刷盘，以及重启后的快照校验。
+
+### 背包系统总体设计方案记录（2026-09-06）
+
+- 分析范围：`PROJECT_CONTEXT.md`、`DECISIONS.md`、`GameServer/Service/item`、角色组件、`RoleKnapsackTable` 及背包 protobuf。
+- 本次未修改业务代码，未执行构建；记录方案用于后续产品、策划、后端、客户端和测试 Agent 交接。
+- 关键风险：当前物品运行时 UID 为 `long`，数据库/协议仍存在 `int` 兼容边界；正式接入前需单独完成迁移和四端联调。
+
+## 2026-09-06 #EquipInfo 包类别默认值 1 回读验证
+
+- 测试目标：确认 `Luaban/MiniTemplate/Datas/#EquipInfo.xlsx` 12 个装备 sheet 的包类别（PackType）数据行已由 0 改为 1，且字段结构无损。
+- 验证方式：openpyxl 以 `data_only=True` 独立回读原文件，逐 sheet 断言 `AG4==1` 且为 int 类型、`AG1=='PackType'`、`max_column==33`。
+- 验证结果：12 个 sheet 全部通过；字段名/类型/注释行与其余 32 列未改动。
+- 异常记录：首次保存报 `PermissionError: [Errno 13]`（文件瞬时占用，检查无 EXCEL/WPS 进程、无只读属性、文件可写），重试后保存成功；未造成数据损坏。
+- 未执行项：Luban 配置导出与客户端读取验证待配置导出联调时确认。
+
+## 2026-09-06 #EquipInfo 配置表包类别字段回读验证
+
+- 测试目标：确认 `Luaban/MiniTemplate/Datas/#EquipInfo.xlsx` 12 个装备 sheet 均已追加 `PackType`（包类别）字段列且原数据无损。
+- 验证方式：用 openpyxl 以 `data_only=True` 独立回读原文件（与生成路径不同），逐 sheet 断言 `max_column==33`、`AG1=='PackType'`、`AG2=='int'`、`AG3=='包类别'`、`AG4==0` 且为 int 类型。
+- 验证结果：12 个 sheet 全部通过；抽查 MainWeapon 第 4 行 B..AF 原数据与修改前逐格一致；`Sheet1` 仍为空表未改动；新列字体与相邻列一致（宋体 11，无边框填充）。
+- 文件安全：修改前原文件 MD5 `c260a90e75e27f7a56b2ff59646737b0`，确认用户无新增改动后才写入；配置表修改不涉及代码编译。
+- 未执行项：未进行 Luban 配置导出与客户端读取验证，需策划/客户端在后续配置导出联调中确认新字段正常进入生成代码。
+
+## 2026-09-04 商城购买客户端链路接入
+
+- 静态检查：客户端新增 `ShopPurchaseClient` 独立管理请求号和待处理回调；商品组件携带 NPC/商城上下文；确认弹窗通过回调提交请求；`MainCtrl` 注册 `CMD_BuyShopItemCode` 并按 `request_id` 分发结果；未修改测试目录或新增 Mock 入口。
+- 协议程序集：已将 `_temp/shop-buy-protocol-20260904/bin/Network.dll` 同步到 `LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`，旧插件备份在 `_temp/shop-client-20260904/Network.dll.backup`。
+- 构建命令：`dotnet build GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-client-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-client-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 Unity 引用冲突、Singleton 类型冲突、弃用 API 和异步调用等警告。首次构建因旧 Network.dll 缺少购买协议类型产生 3 个错误，已通过同步新版 DLL 修复。
+- 未执行项：未进行真实四服务器与 Unity 联网联调、购买成功后的库存/货币刷新验证；需测试 Agent 继续验证。
+
+## 2026-09-04 RoleKnapsackComponent 背包事务融合
+
+- 测试目标：确认 C++ `Bag` 的主要事务职责已映射到 C# 类型，且不引入当前项目不存在的依赖。
+- 静态检查：`GameServer/Service/item` 共 15 个 C# 文件；每个顶级类型独立同名文件；`GameServer.csproj` 显式包含全部 15 个编译项；事务骨架仅引用当前 `OnlineRole`、`RoleKnapsackComponent`、`ItemBase`、`EquipBase` 和 `KnapsackType`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条已有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未进行真实物品扣除、发放、穿戴、货币、邮件和任务通知测试；等待权威数据模型和协议接入。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/`，待产品经理确认后清理。
+
+## 2026-09-04 商城购买商品协议与链路需求拆解
+
+- 本记录为产品经理范围拆解，未修改客户端、服务端业务代码，未执行构建。
+- 当前可验证边界：项目已有 `ShopInfo` 配置字段（商品配置 ID、物品 ID、价格、货币类型、绑定标记）和 `RoleNpcShopPurchaseTable`，但尚未发现可用于 GameServer 权威购买的货币余额、物品 UID/库存、背包空间、幂等请求和原子事务实现。
+- 阻塞项：用户协议中的 `BuyShopItem`、`ErrorInfo` 未在 proto 定义，命令号和错误码也未确定；在这些内容明确前不能验证协议生成、Gate 转发、GameServer 购买处理或真实扣费发货。
+- 下一步：策划与系统架构师先提交协议字段、命令号、购买数量/价格校验、货币与物品事务、限购和幂等规则；之后再由后端、客户端、测试和代码审查角色按流程实施。
+
+## 2026-09-04 背包事务类型骨架
+
+- 测试目标：确认 C++ 背包事务概念已映射为当前 C# 项目的独立类型，并且不引入不存在的业务依赖。
+- 静态检查：`GameServer/Service/item` 共 15 个 `.cs` 文件；每个顶级类型独立同名文件；`GameServer.csproj` 显式包含 15 个编译项；事务基类和派生类仅引用现有 `OnlineRole`、`RoleKnapsackComponent`、`KnapsackType`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条已有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未进行真实物品扣除、发放、购买、穿戴、邮件和任务通知测试；这些功能等待权威数据模型和协议接入。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/bag-transition-review-20260904/`，待产品经理确认后清理。
+
+## 2026-09-04 Luban 背包配置表初始化补全
+
+- 测试目标：确认新增 `TbKnapsackInfo` 已被 `LubanMgr` 正确缓存、初始化、打印并可查询。
+- 静态检查：确认 `KnapsackInfo` 字典、`tables.TbKnapsackInfo.DataMap`、启动打印和 `GetKnapsackInfoByType` 均已写入。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/luban-init-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/luban-init-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未启动多服务和客户端进行真实联网联调；本次仅更新 Luban 表初始化。
+
+## 2026-09-04 RoleManager 会话冲突与组件异常隔离返工
+
+- 测试目标：验证同一 GateSessionId + UnitySessionId 绑定新角色时，旧角色完整释放并清理双索引；验证单组件生命周期异常不会阻断后续组件和角色索引清理。
+- 静态检查：`RoleManager.AddOnlineRole` 冲突分支设置旧角色离线、删除旧角色会话键、调用 `Dispose` 并移除旧角色主索引；`RoleComponentContainer` 各生命周期逐组件调用 `InvokeSafely`，异常仅记录日志后继续。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-component-isolation-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-component-isolation-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`LoginCtrl.cs` 验证码异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行项：未启动多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 RoleManager 同角色替换状态补充
+
+- 测试目标：确认按 `roleID` 替换旧在线角色时，旧实例在索引清理和组件释放前被标记为离线。
+- 静态检查：`RoleManager.AddOnlineRole` 已在 `roleID` 替换分支设置 `oldRole.State = OnlineRoleState.Offline`，随后删除旧会话索引并调用 `Dispose`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-replace-state-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-replace-state-final-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告。
+
+## 2026-09-04 OnlineRole 组件生命周期融合
+
+- 测试目标：确认角色组件容器按固定顺序执行生命周期，组件更新仅在逻辑线程进行，且背包容量不产生第二份状态真相。
+- 静态检查：`OnlineRole` 提供 `InitSerializes`、`AfterLoad`、`AfterAddedToRole`、`Update`、`Dispose` 和泛型 `SetComponent/GetComponent/TryGetComponent`；`RoleManager` 在新增、替换、移除角色时调用对应生命周期；`RoleKnapsackComponent` 直接代理 `OpenedKnapsackGridCount`。
+- 结构检查：`LYF_Server/GameServer` 一类一文件扫描通过；未新增技能空组件。
+- 空白检查：`git diff --check -- LYF_Server/GameServer Docs/AI` 无新增空白错误（仅提示既有换行符转换）。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-components-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-components-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 GameServer 命令层精简与客户端消息管理器
+
+- 测试目标：确认客户端命令由独立 `ClientMessageManager` 统一接收和分发，`RoleManager` 不再承担网络协议路由，且线程边界、协议号和会话语义保持不变。
+- 静态检查：`ClientMessageManager` 实现 `IContainer`，Gate/Center 回调仅投递 `GameCommand`；按来源和协议调用 `Game_LoginCtrl`、`RoleManager` 的公开业务入口；GameServerApp 的网络注册统一指向该管理器；`RoleManager` 仅保留角色索引、角色业务、中心结果处理和固定帧更新。
+- 层级评估：保留 `GameModuleManager` 与 `GameModuleBase`，前者负责模块注册/协议路由，后者负责每模块并发队列和 Update 消费，职责不同，合并会损失线程边界与扩展点。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/client-message-manager-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/client-message-manager-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 业务管理器直接固定帧更新
+
+- 测试目标：确认业务管理器移除 `GameModuleBase` 继承后，由 `GameGlobal` 直接按顺序驱动 `Update`，客户端消息队列仍正常消费。
+- 静态检查：`RoleManager`、Redis、小游戏、活动、场景等管理器均为普通单例类并提供 `Update(int)`；`GameGlobal.UpdateLogicFrame` 直接调用全部管理器；项目中已无 `GameModuleManager`、`GameManagerModule`、`IGameModule` 引用；`ClientMessageManager` 独立维护命令队列并实现 `IContainer`。
+- 一类一文件检查：GameServer（排除 `obj/bin`）每个源文件至多一个顶级类型，结果通过。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\direct-manager-update-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\direct-manager-update-final\\obj\\"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 代码审查结论：通过；确认网络线程入队、客户端消息消费、业务管理器固定帧更新和角色职责边界符合本次要求。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 GameServer 管理器继承层精简
+
+- 测试目标：确认移除无实际价值的 `GameModuleManager`、`GameManagerModule`、`IGameModule` 继承层后，客户端命令队列和固定帧更新仍正常。
+- 静态检查：确认所有业务管理器均为普通单例并公开 `Update(int)`；`ClientMessageManager` 独立维护 `ConcurrentQueue<GameCommand>`，`GameCommandDispatcher` 直接投递该队列；`GameGlobal` 直接按既定顺序调用各管理器；旧层级和 `GameServerModuleBootstrap` 无项目引用。
+- 空白检查：`git diff --check -- LYF_Server/GameServer Docs/AI` 无新增空白错误（仅提示既有换行符转换）。
+- 首次构建：因 `ClientMessageManager` 缺少 `System.Threading` 引用出现 3 个错误，已补充 using 并重新构建。
+- 最终构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/manager-layer-simplify-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/manager-layer-simplify-final-20260904/obj/"`。
+- 最终构建结果：成功，0 个错误；保留既有 2 条警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 客户端消息管理器最终复验
+
+- 测试目标：确认新增消息管理器已接入实际网络入口，角色管理器不再重复承担消息分发，且精简后未破坏线程边界。
+- 静态检查：`GameServerApp.cs` 的 Gate/Center 协议注册全部指向 `ClientMessageManager.Instance`；`ClientMessageManager` 实现 `IContainer` 并继承模块队列基类；`RoleManager` 不再包含 `OnServerCommand`、`OnClientCommand` 或 `ProcessNetMessage`；角色业务入口由消息管理器调用。
+- 结构检查：`LYF_Server/GameServer`（排除 `obj/bin`）每个源文件至多一个顶级类型；命令层保留 `GameCommandDispatcher`、`GameModuleManager`、`GameModuleBase` 的必要职责，移除无用的角色网络入口。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\client-message-manager-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\client-message-manager-final\\obj\\"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 代码审查结论：通过；客户端消息入口、角色职责边界和必要的队列层级均符合当前架构。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 附近角色补发会话路由修正
+
+- 测试目标：验证进入世界后附近角色补发只发送到当前玩家的 Gate/Unity 会话，不复用进入世界请求包。
+- 静态检查：`RoleManager.SendNearbyRoles` 使用 `GetOnlineRoleBySession` 校验当前角色双索引，通过 `SessionMgr.GetSession` 获取目标会话，并调用 `Session.SendData(unitySessionId, ...)` 为每个附近角色独立构造包；`BroadcastRoleEnterWorld` 保持不变。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/nearby-session-routing-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/nearby-session-routing-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未执行项：未启动多 Gate、多客户端进行真实联网联调。
+
+## 2026-09-04 附近角色补发会话路由复验
+
+- 测试目标：验证 `SendNearbyRoles` 修复后按当前玩家的 Gate/Unity 会话发送，且不污染进入世界请求包。
+- 静态检查：方法签名仅接收当前 `OnlineRole`；通过 `GetOnlineRoleBySession` 校验双索引，使用 `SessionMgr.GetSession(sessionRole.GateSessionId)` 获取目标会话，并调用 `targetSession.SendData(sessionRole.UnitySessionId, ...)` 为每个附近角色独立构造包。未发现复用 `serverBase` 或 `package` 发送附近角色的路径。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\nearby-session-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\nearby-session-final\\obj\\"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 代码审查复审：通过；确认当前玩家补发路由、目标玩家广播路由和包独立性均符合会话模型。
+- 未执行项：未启动多 Gate、多客户端进行真实联网联调。
+
+## 2026-09-04 一类一文件约束配置
+
+- 测试目标：确认项目配置、工作流和持久决策记录纳入“一类一文件”及“主 Agent 只调度不改业务代码”约束。
+- 检查范围：`AGENTS.md`、`AIconfig/config.toml`、`AIconfig/workflow.md`、`Docs/AI/DECISIONS.md`、`Docs/AI/CURRENT_TASK.md`。
+- 结果：已完成配置和记录更新；业务源代码尚未拆分，等待后端开发 Agent 执行。
+- 未执行项：GameServer 静态类型扫描、编译和代码审查将在拆分完成后执行。
+
+## 2026-09-04 GameGlobal 中文注释补充
+
+- 测试目标：确认 `GameGlobal` 注释补充不改变固定帧逻辑且项目可编译。
+- 修改范围：`LYF_Server/GameServer/GameGlobal.cs`，仅新增中文注释。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/gameglobal-comments-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/gameglobal-comments-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留已有 `OnlineRole._roleBaseAttrEntity` 未使用警告。
+- 未执行项：未启动完整多服务和客户端进行联网联调；本次未修改运行时代码逻辑。
+
+## 2026-09-04 GameServer 管理器队列与预注册
+
+- 测试目标：确认 GameGlobal 角色接口已移除，总队列只路由到管理器队列，各管理器在自身 Update 中消费，并完成参考管理器骨架预注册。
+- 静态检查：扫描 `LYF_Server/GameServer`，未发现 `GameGlobal.Instance.AddOlineRole`、`RemoveOlineRole`、`GetOlineRole`、`GetAllOlineRole` 等旧转发调用；确认 `GameModuleBase` 实现独立命令队列，`GameModuleManager` 只调用 `EnqueueNetMessage`；确认骨架均以 `XXXManager.Instance` 注册。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/module-queues-bootstrap-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/module-queues-bootstrap-20260904/obj/"`。
+- 首次静态检查：发现 `GameServerApp.cs` 一处新增空白行，已修复。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未启动完整服务器和 Unity 客户端进行真实联网联调；空模块仅提供 Update 骨架，尚未承载具体玩法。
+
+## 2026-09-04 管理器单例结构修正
+
+- 测试目标：确认参考项目中的业务模块按管理器单例方式预创建，而不是启动时反复 `new` 临时模块。
+- 静态检查：确认 `GameServerModules.cs` 已移除 `EmptyGameModule` 和 `new XXXModule()`，所有预置业务对象均提供 `XXXManager.Instance`，并继承带独立命令队列的 `GameManagerModule<T>`。
+- 验证结果：通过；已完成最终方案构建复验。
+
+## 2026-09-04 GameServer 模块队列最终构建复验
+
+- 复验目标：使用规范 `_temp` 输出路径重新确认模块队列改造可编译。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/module-queues-bootstrap-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/module-queues-bootstrap-final-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 输出位置：`D:/unitypro/LYFMMORGP/_temp/module-queues-bootstrap-final-20260904/`。
+
+## 2026-09-04 AIconfig 项目化配置
+
+- 测试目标：确认 Agent 模板已按 LYFMMORGP 的实际 Unity、.NET、协议目录、依赖和角色分工完成修订。
+- 检查范围：`AIconfig/config.toml`、`workflow.md`、`agent/*.md`、`AGENTS.md`、`Docs/AI/PROJECT_CONTEXT.md`。
+- 静态检查：确认模板不再引用 `Shared/Protocol`、Unity 2022.3、.NET 8、MemoryPack、DOTS-ECS 等与当前项目不符的强制路径或技术栈；确认新增产品经理和测试工程师定义。
+- 验证结果：通过；配置文件和文档已写入项目，未修改业务代码，未执行 Unity 或 .NET 构建。
+- 未执行项：AIconfig 不会自动注入 Codex 平台运行时；实际执行仍需遵守 `AGENTS.md` 和 `Docs/AI`。
+
+## 2026-09-04 AIconfig Agent 模板解析
+
+- 检查目标：解析 `AIconfig` 模板的配置项、工作流、角色职责，并与当前项目实际配置对照。
+- 检查文件：`AIconfig/config.toml`、`AIconfig/workflow.md`、`AIconfig/agent/architect.md`、`code_reviewer.md`、`game_server.md`、`unity_client.md`。
+- 检查结果：确认模板包含全局策略、项目规则、质量门禁、4 个角色定义和 6 步协作流程；未发现独立产品经理或测试角色定义。
+- 差异结果：模板中的 Unity 2022.3、.NET 8、`Shared/Protocol` 与当前 Unity 2023.2.20f1c1、.NET Framework 4.8、`LYF_Server/ProtoBuf/proto` 不一致；模板中的 DOTS-ECS、MemoryPack 也不是当前项目已确认依赖。
+- 生效结果：确认 `AIconfig` 目前仅作为项目文件存在，当前会话实际遵循 `AGENTS.md` 和 `Docs/AI`；本次未修改模板和业务代码，未执行编译。
+
+## 2026-09-04 Agent 职责配置位置核对
+
+- 检查目标：定位项目内 Agent 职责和独立配置文件。
+- 检查方式：读取 `AGENTS.md` 与 `Docs/AI`，扫描 `.codex` 和文档目录中的 Agent、TOML、JSON 配置候选文件。
+- 检查结果：职责配置位于根目录 `AGENTS.md` 的“角色分工”；没有发现项目内独立的角色 Agent 配置文件。Codex 子 Agent 运行状态不属于项目文件。
+- 结论：通过；本次为只读分析，不涉及源码、构建或临时产物。
+
+## 2026-09-04 项目结构与持久记录规范
+
+- 测试目标：确认项目结构、模块职责、GameServer 消息流程及后续记录要求已经写入持久协作文档。
+- 检查范围：`PROJECT_CONTEXT.md`、`CURRENT_TASK.md`、`DECISIONS.md`、`TEST_REPORT.md`。
+- 验证方式：逐份读取并检查新增章节，确认包含客户端分层、服务端职责、网络队列流程、测试隔离、临时目录和任务交接规则。
+- 验证结果：通过；本次仅修改协作文档，不涉及源码编译，未产生新的构建产物。
+- 未执行项：未执行 Unity 或 .NET 编译；本次变更不影响运行时代码。
+
+## 2026-09-04 背包开格子服务端处理
+
+- 协议生成：使用 `LYF_Server/ProtoBuf/bin/protoc.exe` 重生成协议 C# 代码，临时生成目录为 `_temp/protobuf-open-knapsack-grid-20260904`。
+- 队列校验：现已升级为 `GameCommandDispatcher`；`GameRoleCtrl.OnServerCommand` 对开格子命令只投递不可变 `GameCommand`，`GameServerApp` 主循环通过 `GameGlobal.Update` 消费队列，业务状态不在网络接收线程修改。
+- 容量校验：`CentRoleModel.RoleKanpaskInfo` 的 `KanpsackTypeCountLst.Count` 已改为 `RoleKnapsackTable.roleKnapsackcount`，不再读取物品数量；新角色默认和旧角色兼容下限均为 81 格。
+- 持久化校验：开格子成功后 GameServer 以内部命令 11121 通知 CenterServer 写入 `roleKnapsackcount`；登录回包携带 `opened_knapsack_grid_count` 初始化在线角色数据。
+- 构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/build-open-knapsack-grid-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/build-open-knapsack-grid-20260904/obj/"`，0 错误。最终仍有 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未进行运行联调：MySQL、Redis、Center/Login/Gate/GameServer 与客户端未同时启动；客户端尚未接入 11120 协议，需后续联调验证。
+
+## 2026-09-03 背包 Mock 测试按钮清理
+
+- 根因：`UIRoot.prefab` 上的 `KnapsackWindowMockServer` 在启动时动态创建 `MockAddItemButton`。
+- 处理：删除动态按钮代码，并从正式预制体移除该测试组件。
+- 静态校验：`KnapsackWindowMockServer.cs` 为 0 错误、0 警告。
+- 引用扫描：未发现 `MockAddItemButton`、`CreateRuntimeAddButton` 或测试组件 GUID 的正式引用。
+- Unity 控制台：0 条错误/警告。
+
+## 2026-09-03 NPC 商城窗口类型重命名
+
+- 重命名：`ShopWindow.cs` -> `NpcShopWindow.cs`，`ShopWindow` -> `NpcShopWindow`。
+- 引用检查：`MainView` 的序列化字段已更新；窗口枚举 `WindowType.ShopWindow` 保持不变。
+- 资源安全：`.meta` 随脚本移动，GUID 为 `c31991ec038b4f8408fd9066c521a62a`，预制体脚本引用应保持不变。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug`，0 错误、16 条既有警告。
+
+## 2026-09-03 Animator 编辑器异常诊断
+
+- 异常位置：`UnityEditor.Graphs.AnimationStateMachine.Graph.GenerateConnectionKey`，发生在 Animator 窗口重绘链路。
+- 只读扫描：11 个 `Animator Controller`，未发现空状态、空子状态机或目标为空且非 Exit 的 Transition。
+- Override Controller 扫描：0 个。
+- 结论：未发现可安全修改的损坏动画资源；建议先重开 Animator 窗口，确认具体 Controller 后再定点处理。
+
+## 2026-09-03 目录清理
+
+- 排除目录：`LYF_MMO`、`LYF_Server`、`navicat`，未修改内容。
+- 已处理：根目录 `.codex-tmp`（约 70 MB，构建/验证输出）移动至 `_temp/codex-tmp-20260903`。
+- 清理方式：可恢复移动，没有执行永久删除。
+- 保留项目：备份目录、`.codex`、场景备份、脚本、JSON/Excel 和 `.git` 均未处理。
+
+## 2026-09-03
+
+### NPC 商城购买弹窗防重复
+
+- 静态校验：
+  - `TipsMgr.cs`：0 错误，0 警告
+  - `BuyDialog.cs`：0 错误，0 警告
+- Unity 编辑器：编译未进行中，编辑器可操作。
+- Unity 控制台：本次最终检查返回 0 条错误/警告。
+- 代码检查：确认 `git diff --check` 无空白错误。
+- 验收结论：代码逻辑满足“加载中和已打开期间忽略其他商品点击”；尚未完成真实运行时人工双击操作录屏验收。
+
+## 测试 Agent 记录规则
+
+- 记录执行时间、测试目标、命令或操作、结果和失败堆栈。
+- 失败时标记“需返工”，并在 `CURRENT_TASK.md` 写出复现步骤。
+- 修复后新增一条记录，不删除历史失败记录。
+
+## 2026-09-04 背包已开格子同步与 GameServer 消息队列
+
+- 客户端编译：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug`，0 错误；同步新 `Network.dll` 后为 20 条警告，其中新增 4 条为引用程序集版本冲突警告，无代码编译错误。
+- 服务端编译：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug`，0 错误，2 条既有警告。
+- 静态检查：测试脚本不存在 `CreateRuntimeAddButton` 或 `AddMockItems`；正式 `UIRoot.prefab` 未引用 `KnapsackWindowMockServer`。
+- 行为检查：客户端最少显示 81 格，`KanpsackTypeCountLst.Count` 增加 9 时扩展一整行；物品根据 `BagIndex` 对应格子显示，空位不依赖物品列表长度。
+- 服务端流程：`CMD_OpenKnapsackGridCode` 由 Gate 转发至 GameServer；GameServer 网络线程入 `ConcurrentQueue`，主循环每次最多消费 100 条并执行开格子，再向客户端回包与通知 CenterServer 持久化。
+- 未执行项：未启动完整四服务器和 Unity 客户端进行联网人工操作验证。
+- 协议接入：已将 `LYF_Server/Network/bin/Debug/Network.dll` 同步至 `LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`，并由 `MainCtrl` 注册 `CMD_OpenKnapsackGridCode` 回包，使用服务器返回的容量刷新背包窗口。
+- Unity MCP 校验：`KnapsackWindow.cs`、`KnapsackWindowMockServer.cs`、`MainCtrl.cs` 均为 0 错误、0 警告；Unity Console 当前 0 条错误/警告。
+
+## 2026-09-04 GameServer 命令分发重构
+
+- 范围：仅修改 `LYF_Server/GameServer`，未改动 Network 底层、GateServer、CenterServer、客户端或参考 C++ 项目。
+- 线程模型校验：`Game_LoginCtrl` 与 `GameRoleCtrl` 的 Gate/Center 网络回调均只投递 `GameCommand`；`GameCommandDispatcher` 在游戏主循环按命令号和来源分发，单条命令异常不会中断后续处理。
+- Tick 校验：`GameServerApp` 每轮调用 `GameGlobal.Update` 并短暂让出 CPU；`GameGlobal.Update` 每轮先执行 `ProcessNetMessage`，累计时间达到 50ms 后才调用 `GameModuleManager.Update` 和 `RoleManager.Update`；单轮最多消费 3,000 条网络消息，掉帧时不进行无界补帧。
+- 角色索引校验：`RoleManager` 维护角色 ID 与双会话组合索引，上线、下线、重复登录替换和状态切换均由逻辑线程处理；对外返回角色字典快照，不暴露内部集合。
+- GameServer 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/build-game-command-refactor-20260904/game/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/build-game-command-refactor-20260904/game-obj/"`，0 错误，1 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用。
+- 解决方案构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/build-game-command-refactor-20260904/solution/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/build-game-command-refactor-20260904/solution-obj/"`，0 错误，2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未执行项：未启动 MySQL、Redis、Center/Login/Gate/GameServer 与 Unity 客户端进行真实多进程联网联调；该项需由测试角色在服务依赖可用时执行。
+
+## 2026-09-04 GameServer 参考项目复核与最终构建
+
+- 参考范围：只读分析 `F:/UnityPro/ro/Ro_cs422nb/roserver/gameserver`。确认其采用“网络收包队列 + 单逻辑线程固定 50ms Tick”的模型；没有读取或改动 Login、Gate、Center 等其他参考服务器。
+- 架构核验：Gate 与 Center 的 `OnServerCommand`/`OnClientCommand` 均只投递不可变 `GameCommand`；角色上线、会话索引、进入世界、背包开格子和中心服回包均由 Dispatcher 消费线程执行；背包容量校验和修改已下沉到 `Service/KnapsackService.cs`，控制器只做协议路由。
+- 队列核验：容量上限 20,000，单轮处理上限 3,000；积压、未注册命令和单条处理异常均会记录日志，不会中断后续命令。
+- 构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-reference-architecture/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-reference-architecture/obj/"`，0 错误，1 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用。
+- 最终构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-reference-architecture-final/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-reference-architecture-final/obj/"`，0 错误，2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 静态检查：`git diff --check` 在本次 GameServer 和协作文档范围内无新增错误；根目录其他 Unity 用户修改的尾随空格未处理。
+
+## 2026-09-04 Process_Update 两阶段模型修正
+
+- 结构核验：`GameGlobal.Update` 现在每轮先调用 `ProcessNetMessage`，由 `GameCommandDispatcher` 出队，再按协议交给 `GameModuleManager.ProcessNetMessage`；累计时间未达到 50ms 时不执行模块 `Update`。
+- 固定帧核验：累计达到 50ms 后，按注册顺序调用 `GameModuleManager.Update(delta)`，随后调用 `RoleManager.Update(delta)`；单个模块异常会被隔离，不影响同帧其他模块。
+- 参考一致性：该流程对应参考 C++ 的 `GSConfig::ProcessNetMessage()` 与 `deltaTime >= FRAME_TIME` 两个阶段；消息处理上限为 3,000 条，掉帧不进行无界补帧。
+- 最终构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-process-update-final/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/gameserver-process-update-final/obj/"`，0 错误，2 条既有警告。
+
+## 2026-09-04 RoleManager 角色模块合并
+
+- 静态检查：GameServer 中已无 `GameRoleCtrl`、`GameWorldBC`、`GameWorldBCd` 引用；`GameServer.csproj` 已移除两个旧控制器文件，`GameServerApp` 直接注册 `RoleManager.Instance`。
+- 模块检查：`RoleManager` 统一承载角色协议入口、角色/会话双索引、进入世界和附近角色广播；`GameGlobal` 只通过 `GameModuleManager.Update` 调用角色固定帧，未重复调用 `RoleManager.Update`。
+- 构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/rolemanager-merge/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/rolemanager-merge/obj/"`，0 错误，2 条既有警告。
+
+## 2026-09-04 GameServer 关键逻辑中文注释补全
+
+- 测试目标：确认本轮 GameServer 架构代码的关键字段、协议来源、线程边界、角色索引和固定帧逻辑均有中文注释，且补注释未引入编译问题。
+- 修改范围：`LYF_Server/GameServer/manger/GameCommand.cs`、`GameCommandDispatcher.cs`、`GameModuleManager.cs`、`RoleManager.cs`、`GameGlobal.cs`、`Ctrl/Game_LoginCtrl.cs`、`Entity/OnlineRole.cs`、`Service/KnapsackService.cs`、`GameServerApp.cs`。
+- 静态检查：执行 `git diff --check -- LYF_Server/GameServer Docs/AI`，无新增空白错误；Git 仅提示既有换行符转换。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/comments-completion-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/comments-completion-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未启动 MySQL、Redis、Center/Login/Gate/GameServer 与 Unity 客户端进行真实联网联调；该项不影响本次注释和编译验收。
+
+## 2026-09-04 GameServer 管理器一类一文件拆分
+
+- 测试目标：确认 GameServer 全量顶级类型均按“一类一文件”拆分，且不改变模块注册、独立队列和固定帧行为。
+- 静态检查：扫描 `LYF_Server/GameServer`，新增接口、基类、管理器、启动注册表、命令来源/会话类型和 `OnlineRoleState` 均为独立同名文件；已删除 `GameServerModules.cs`，项目中无其引用。
+- 空白检查：`git diff --check -- LYF_Server/GameServer` 无新增空白错误（仅提示既有换行符转换）。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/split-module-types-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/split-module-types-final-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 验证码异步调用未等待。
+- 未执行项：未启动完整四服务器和 Unity 客户端进行联网联调；代码审查由审查 Agent 执行。
+
+## 2026-09-04 一类一文件最终验证
+
+- 测试目标：验证 GameServer 管理器拆分后每个顶级类型独立文件，并确认项目引用和完整解决方案构建正常。
+- 静态扫描：扫描 `LYF_Server/GameServer` 下排除 `obj/bin` 的 32 个 `.cs` 文件；每个文件恰好一个顶级类、接口、枚举、委托或结构体，且类型名与文件名一致，结果通过。
+- 项目文件检查：`GameServer.csproj` 包含全部 32 个 GameServer 源文件；已删除的 `GameServerModules.cs` 未被引用，结果通过。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/one-type-per-file-final/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/one-type-per-file-final/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行项：未启动完整多进程服务器和 Unity 客户端进行联网联调；本次结构拆分未改变协议和运行时行为。
+
+## 2026-09-04 OnlineRole 组件架构最终复审
+
+- 复审范围：`RoleComponentContainer.cs`、`OnlineRole.cs`、`RoleManager.cs`。
+- 会话冲突检查：同角色 ID 和同复合会话两类替换路径均设置旧角色为 `Offline`，清理角色/会话双索引并调用 `Dispose`；通过。
+- 生命周期检查：五个生命周期钩子均逐组件异常隔离并继续处理；通过。
+- 一类一文件检查：GameServer 31 个源文件扫描通过。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review2-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review2-final\\obj\\"`。
+- 构建结果：0 个错误；保留既有 2 条警告。
+- 审查结论：通过，建议主 Agent 完成最终验收。
+- 未执行项：未进行真实多进程联网联调。
+
+## 2026-09-04 OnlineRole 组件架构最终复审（主 Agent 指定复核）
+
+- 检查项：RoleManager 两类角色替换、组件生命周期异常隔离、中文注释、线程边界、一类一文件和构建。
+- 结果：全部通过。两类替换均设置旧角色 `Offline`，清理双索引并调用 `Dispose`；五个组件生命周期均通过 `InvokeSafely` 隔离异常。
+- 静态检查：GameServer 排除 `obj/bin` 后 31 个源文件，一类一文件通过；新增关键逻辑具备中文注释；网络回调只入 `GameCommandDispatcher` 队列。
+- 构建：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review2-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review2-final\\obj\\"`，0 错误，2 条既有警告。
+- 审查结论：通过，可交主 Agent 最终验收。
+- 未执行项：未进行真实多进程服务与 Unity 客户端联网联调。
+
+## 2026-09-04 角色组件目录代码审查
+
+- 检查范围：`Entity/Components` 目录、`OnlineRole.cs`、`GameServer.csproj`、一类一文件、中文注释和线程边界。
+- 目录与引用：三个组件均位于 `LYF_Server/GameServer/Entity/Components`，旧根目录路径无残留；项目编译清单和 `OnlineRole` 引用正常，通过。
+- 行为检查：组件注册、生命周期顺序、异常隔离、背包容量代理和角色更新行为未改变，通过。
+- 规范检查：GameServer 排除 `obj/bin` 后 31 个源文件一类一文件通过；新增关键逻辑具备中文注释；网络回调只进入命令队列，通过。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-components-directory-review-final\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-components-directory-review-final\\obj\\"`。
+- 构建结果：0 个错误，保留既有 2 条警告（`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待）。
+- 审查结论：通过；目录整理未发现行为回归。
+- 未执行项：未进行真实多进程服务与 Unity 客户端联网联调。
+
+## 2026-09-04 OnlineRole 组件架构主 Agent 最终验收
+
+- 一类一文件扫描：GameServer 排除 `obj/bin` 后 31 个源文件通过，未发现多顶级类型文件。
+- 项目引用：`GameServer.csproj` 已包含 `IRoleComponent`、`RoleComponentContainer`、`RoleKnapsackComponent`。
+- 空白检查：`git diff --check -- LYF_Server/GameServer Docs/AI` 无新增空白错误。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-final-integration-20260904\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-final-integration-20260904\\obj\\"`。
+- 构建结果：完整解决方案生成成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 代码审查：审查 Agent 最终复审通过，并确认中文注释、生命周期异常隔离、角色替换清理和网络线程边界。
+- 未执行项：未启动 Center/Login/Gate/GameServer 与 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 角色组件目录整理验证
+
+- 验证目标：确认三个角色组件迁移到 `Entity/Components` 后项目引用、源码扫描和完整服务端构建正常。
+- 静态检查：`GameServer.csproj` 已引用 `Entity\\Components\\IRoleComponent.cs`、`RoleComponentContainer.cs`、`RoleKnapsackComponent.cs`；旧 `Entity\\*.cs` 组件路径无残留；`git diff --check -- LYF_Server/GameServer Docs/AI` 通过。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-components-directory-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-components-directory-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 结论：目录迁移不改变组件生命周期、角色注册获取和服务端行为。
+- 未执行项：未进行真实多进程服务与 Unity 客户端联网联调。
+
+## 2026-09-04 按 KnapsackType 拆分背包容量验证
+
+- 静态检查：协议请求/回包新增 `knapsack_type` 和四类容量列表字段，旧字段号未复用；GameServer 容量状态改为 `Dictionary<KnapsackType,int>`；CenterServer 查询、创建、同步均按类型过滤，穿戴栏不写入容量表；未修改测试脚本。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-type-build-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-type-build-20260904/obj/"`。
+- 构建结果：完整服务端方案成功，0 个警告，0 个错误；Network 协议项目单独构建同样通过。
+- 结论：四类容量链路已完成编译验证；未执行真实数据库数据迁移和多进程联网联调。
+
+## 2026-09-04 按 KnapsackType 最终构建复验
+
+- 复验内容：补充旧协议单值容量兼容返回，并重新构建完整服务端方案。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-type-build-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-type-build-final-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 1 条既有警告（`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 静态检查：`git diff --check -- LYF_Server Docs/AI` 无新增空白错误；未发现服务端业务仍引用已删除的单容量字段。
+- 未执行项：未进行真实数据库迁移、四服务器进程和 Unity 客户端联网联调。
+
+## 2026-09-04 客户端 Network.dll 协议同步验证
+
+- 同步来源：`D:/unitypro/LYFMMORGP/_temp/client-knapsack-type-20260904/network-bin/Network.dll`。
+- 同步目标：`LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`。
+- 备份位置：`D:/unitypro/LYFMMORGP/_temp/knapsack-protocol-dll-backup-20260904/Network.dll`；备份在覆盖前完成，且与新版 DLL 哈希不同。
+- 哈希校验：同步后的插件 DLL 与来源 DLL SHA-256 均为 `D9F9E1C009E4CA5ECC7FBC12DA308DF2AACF` 前缀，确认字节一致。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-protocol-client-build-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-protocol-client-build-20260904/obj/" --nologo`。
+- 构建结果：成功，0 个错误；保留 20 条项目既有警告，包括 Unity 引用的 `System.Numerics.Vectors` 版本冲突、`Singleton<T>` 重名、过时 API 和未使用字段。
+- 结论：客户端已能引用新协议 DLL，之前 `OpenKnapsackGridRet.KnapsackType` 缺失导致的编译阻塞已解除。
+- 未执行项：未在 Unity Editor 中执行真实网络开格子流程。
+
+## 2026-09-04 旧总背包容量迁移返工验证
+
+- 验证范围：`LoginModle.StartGame` 与 `CentRoleModel.RoleKanpaskInfo` 的旧总背包回退、分类容量保护和缺失记录补齐；`KnapsackService` 的穿戴栏类型拒绝白名单。
+- 静态/单元式场景 1：`RolePackAll=120`、其余三类缺失，解析结果为总包/装备/消耗品/材料均为 120，通过。
+- 静态/单元式场景 2：`RolePackAll=120`、`RolePackEquip=150`、其余缺失，解析结果为总包 120、装备 150、消耗品/材料 120，通过。
+- 静态/单元式场景 3：`RoleCurrtEquipPack` 不在 `KnapsackService.IsPersistedType` 白名单中，开格子请求会返回参数错误，通过。
+- 代码检查：两个读取入口均包含 `GetLegacyFallback`、`GetMigratedGridCount` 和 `EnsureMissingKnapsackRows`；`git diff --check -- LYF_Server/CenterServer/DB/Modle/LoginModle.cs LYF_Server/CenterServer/DB/Modle/CentRoleModel.cs Docs/AI` 无新增空白错误。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-legacy-migration-fix-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-legacy-migration-fix-20260904/obj/" --nologo`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待）。
+- 未执行项：未连接真实数据库验证补齐写入，也未执行多进程服务与 Unity 客户端联网联调。
+
+## 2026-09-04 角色组件目录主 Agent 最终验收
+
+- 目录结构：`GameServer/Entity/Components` 包含 `IRoleComponent.cs`、`RoleComponentContainer.cs`、`RoleKnapsackComponent.cs`；`Entity` 根目录未保留组件源码。
+- 静态检查：组件目录三个文件均为单一同名顶级类型；`GameServer.csproj` 编译路径与实际目录一致；`git diff --check -- LYF_Server/GameServer Docs/AI` 无新增空白错误。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\component-directory-final-20260904\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\component-directory-final-20260904\\obj\\"`。
+- 构建结果：完整解决方案生成成功，0 个错误；保留既有 2 条警告。
+- 设计记录：已在 `PROJECT_CONTEXT.md` 和 `DECISIONS.md` 增加按职责建立目录的约束。
+- 未执行项：未进行真实多进程服务与 Unity 客户端联网联调。
+
+## 2026-09-04 协作规则配置核验
+
+- 核验范围：`AGENTS.md`、`AIconfig/config.toml`、`AIconfig/workflow.md`、`AIconfig/agent/*.md`、`Docs/AI/DECISIONS.md`。
+- 核验结果：已明确每个顶级类、接口、枚举和委托独立同名文件；已明确主 Agent 不直接修改客户端或服务端业务代码，业务代码必须由对应开发子 Agent 执行。
+- 流程结果：已明确产品拆解、架构设计、开发、测试、审查、复审和主 Agent 验收顺序；测试与审查结果必须回写 `Docs/AI`。
+- 强制委派核验：配置已要求涉及客户端或服务端业务代码时，主 Agent 必须先创建并委派对应开发子 Agent。
+- 业务源码变更：无。
+- 未执行项：本次为配置静态核验，不涉及编译或运行测试。
+
+## 2026-09-04 OnlineRole 角色组件架构复验
+
+- 测试目标：验证角色组件注册、获取、生命周期、重复注册保护，以及 RoleManager 的调用顺序和一类一文件约束。
+- 组件静态检查：`IRoleComponent` 定义 `Initialize`、`AfterLoad`、`AfterAddedToRole`、`Update`、`Dispose` 生命周期；`RoleComponentContainer` 按注册顺序初始化/更新、按逆序释放；`GetComponent` 缺失时抛出明确异常，`TryGetComponent` 返回 false；重复类型注册和组件所属角色不匹配均被拒绝。
+- OnlineRole 检查：`InitSerializes` 使用初始化标记保证可重复调用不会重复创建 `RoleKnapsackComponent`；组件通过 `SetComponent/GetComponent/TryGetComponent` 暴露；`Dispose` 可触发组件释放；背包容量组件直接代理角色唯一容量字段。
+- RoleManager 顺序检查：新增角色依次执行 `InitSerializes -> AfterLoad -> 状态置为 Online -> 索引登记 -> AfterAddedToRole`；替换/移除角色先调用旧角色 `Dispose`；固定帧通过 `role.Update(delta)` 驱动组件更新。
+- 一类一文件扫描：排除 `obj/bin` 后扫描 GameServer 31 个 `.cs` 文件，检测到的 29 个顶级类型均独立同名文件，无多顶级类型文件；`AssemblyInfo.cs` 为仅程序集属性文件，符合例外。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-component-final/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-component-final/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行项：未启动多进程服务和 Unity 客户端进行联网联调；本次为静态架构复验和编译验证。
+
+## 2026-09-04 GameServer 固定帧注册顺序返工
+
+- 返工原因：代码审查发现登录模块和角色模块先于 Redis、RoGames 注册，导致 `GameModuleManager` 固定帧更新顺序与决策不一致。
+- 修改文件：`LYF_Server/GameServer/manger/GameServerModuleBootstrap.cs`。
+- 静态检查：确认固定帧顺序为 Redis、RoGames、RoleManager、Decouple、HttpTask、MonsterWave、LimitedTimeOffer、MerchantEvent、MallRefresh、OpenSystem、BackstageActivity、TimeLimit、Frame、Scene、WorldEvent、Gvg；登录模块注册位于末尾且仍保留登录、创建角色、开始游戏三个协议映射。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bootstrap-order-fix-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bootstrap-order-fix-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+
+## 2026-09-04 一类一文件代码审查
+
+- 审查范围：`LYF_Server/GameServer` 顶级类型拆分、`GameServer.csproj` 编译清单、模块单例/队列/Update 结构及注册顺序。
+- 静态结果：排除 `obj/bin` 后扫描 32 个 `.cs` 文件，每个文件恰好包含一个顶级类、接口、枚举、委托或结构体，且类型名与文件名一致；`GameServerModules.cs` 不存在；项目清单无缺失或多余源文件。
+- 构建结果：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\one-type-per-file-review\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\one-type-per-file-review\\obj\\"`，0 个错误；保留既有 2 条警告（`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待）。
+- 队列与单例结果：`GameModuleBase` 为各模块提供独立并发队列和 `Update` 消费入口；所有预注册玩法管理器继承 `GameManagerModule<T>` 并通过 `XXXManager.Instance` 使用；总队列仅经 `GameModuleManager` 路由。
+- 问题清单（需返工）：`GameServerModuleBootstrap.RegisterAll` 当前先注册登录、角色，再注册 Redis/小游戏等管理器，导致实际固定帧顺序为“登录、角色、Redis、小游戏……”。这与 `Docs/AI/DECISIONS.md` 约定的 roserver 顺序“Redis、小游戏、角色、解耦、HTTP、怪物波次、限时特惠、商人、商城刷新、系统开放、后台活动、限时系统、相框、场景、世界事件、GVG”不一致；后端 Agent 需调整注册顺序，或由架构负责人明确豁免并更新决策记录。
+- 审查结论：一类一文件拆分和构建门禁通过；因固定帧注册顺序不符合已确认架构决策，本轮代码审查暂不通过，待修正后复审。
+
+## 2026-09-04 固定帧注册顺序复验与代码审查复审
+
+- 测试目标：验证返工后的管理器注册顺序、协议路由和一类一文件结构未回归。
+- 静态检查：确认 `GameServerModuleBootstrap.RegisterAll` 按 Redis、RoGames、RoleManager、Decouple、HttpTask、MonsterWave、LimitedTimeOffer、MerchantEvent、MallRefresh、OpenSystem、BackstageActivity、TimeLimit、Frame、Scene、WorldEvent、Gvg 顺序注册；登录模块最后注册且保留登录、创建角色、开始游戏三个协议映射。32 个 GameServer 源文件仍为一类一文件，`GameServerModules.cs` 无引用。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bootstrap-order-fix-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bootstrap-order-fix-final-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 代码审查复审：通过；此前固定帧顺序问题已修正，队列、单例、Update 和项目文件清单均无回归。
+- 未执行项：未启动完整四服务器与 Unity 客户端进行真实联网联调。
+
+## 2026-09-04 主 Agent 最终集成验证
+
+- 验证目标：在返工后的最终工作区重新执行完整服务端方案构建，并确认协作约束和注册顺序记录一致。
+- 构建命令：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\bootstrap-order-fix-final-20260904\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\bootstrap-order-fix-final-20260904\\obj\\"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待）。
+- 集成结论：一类一文件约束、主 Agent 调度边界、模块独立队列、单例管理器和 roserver 固定帧注册顺序均已落实；未发现新的静态问题。
+
+## 2026-09-04 OnlineRole 组件化代码审查
+
+- 审查范围：`Entity/IRoleComponent.cs`、`RoleComponentContainer.cs`、`RoleKnapsackComponent.cs`、`OnlineRole.cs`、`manger/RoleManager.cs` 及 `GameServer.csproj`。
+- 一类一文件：通过。排除 `obj/bin` 后 GameServer 共 30 个含类型源文件，每个文件恰好一个顶级类型，且类型名与文件名一致；项目文件包含 31 个编译项（另含无顶级类型的 `AssemblyInfo.cs`），组件文件均已纳入。
+- 架构与线程边界：组件容器按注册顺序执行 `Initialize`、`AfterLoad`、`AfterAddedToRole`、`Update`，销毁按逆序执行；`RoleManager` 仅在逻辑线程触发生命周期，组件持有 `OnlineRole` 上下文；背包组件代理角色唯一容量字段，未引入重复状态。网络回调仍经 `ClientMessageManager` 队列，未发现跨线程直接修改组件状态。
+- 注释检查：接口生命周期、容器顺序、角色初始化/销毁、背包容量代理和角色管理边界均有中文注释；未发现新增关键逻辑缺少基本说明。
+- 构建结果：`dotnet build LYF_Server\\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review\\bin\\" -p:BaseIntermediateOutputPath="D:\\unitypro\\LYFMMORGP\\_temp\\role-component-review\\obj\\"`，0 个错误；保留既有 2 条警告（`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 问题清单：
+  - [P1] `LYF_Server/GameServer/manger/RoleManager.cs:57-61`：同一 `(GateSessionId, UnitySessionId)` 绑定到新角色时，仅执行 `m_onlineRoleMap.Remove(mappedRoleID)`，未将被替换的旧 `OnlineRole` 标记离线、调用 `Dispose` 或清理其组件资源。组件化后会造成旧角色组件泄漏，并可能保留在线状态；应复用统一替换/下线清理路径。
+  - [P1] `LYF_Server/GameServer/Entity/RoleComponentContainer.cs:68-103`、`RoleManager.cs:34-37,48-68,96-99`：组件 `Initialize`/`AfterLoad`/`AfterAddedToRole`/`Update`/`Dispose` 均未做异常隔离或回滚。任一组件抛异常时，新增角色可能半初始化且未释放；更新会停止当前角色及后续角色；销毁异常会阻止索引移除，留下离线角色和会话映射。应明确失败策略，至少保证单组件异常不阻断同角色其他组件/其他角色，并在替换和移除路径最终清理索引。
+- 审查结论：一类一文件、构建、组件注册入口和线程边界通过；因上述两个生命周期问题，组件化改造本轮打回后端 Agent 修复，修复后需重跑静态扫描、构建并复审。
+
+## 2026-09-04 OnlineRole 角色组件架构第二轮代码审查
+
+- 审查范围：`LYF_Server/GameServer/Entity/RoleComponentContainer.cs`、`OnlineRole.cs`、`manger/RoleManager.cs` 及项目引用。
+- P1 复核：组件容器已对五个生命周期阶段逐组件捕获异常并记录日志，单个组件失败不会阻断同角色后续组件、其他角色更新或索引清理；`RoleManager` 同一复合会话冲突分支已标记旧角色离线、清理双索引并调用 `Dispose`。
+- 注释检查：角色组件接口、生命周期顺序、异常隔离、会话索引和线程边界均有简洁中文注释；未发现新增关键逻辑缺少注释。
+- 一类一文件：排除 `obj/bin` 后扫描 GameServer 31 个 `.cs` 文件，通过；每个顶级类型均独立同名文件，`AssemblyInfo.cs` 为无类型例外。
+- 构建命令：`dotnet build LYF_Server\LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:\unitypro\LYFMMORGP\_temp\role-component-review2\bin\" -p:BaseIntermediateOutputPath="D:\unitypro\LYFMMORGP\_temp\role-component-review2\obj\"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告（`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待）。
+- 残留问题：[P2] `RoleManager.AddOnlineRole` 按相同角色 ID 替换旧实例时未设置 `oldRole.State = Offline`；建议后端统一在 Dispose 前标记离线，避免外部持有旧引用时状态不一致。
+- 审查结论：两个原 P1 已修复；因上述 P2 状态一致性问题，本轮暂不完全通过，补充后需再次复审。未进行真实多进程联网联调。
+
+## 2026-09-04 客户端按 KnapsackType 容量适配
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/KnapsackWindow.cs`、`LYF_MMO/Assets/GM_Game/Scripts/controller/UIController/MainCtrl.cs`。
+- 实现结果：`UpdateOpenedGridCount(KnapsackType type, int openedGridCount)` 只更新匹配分类；不存在时新增该类型记录；只有当前分类立即刷新。`MainCtrl` 将 `OpenKnapsackGridRet.KnapsackType` 转为 `KnapsackType` 传入。正式客户端未发现扩容请求入口，未新增请求，也未修改 `UI/test` Mock。
+- Unity：`ready_for_tools=true`，未编译，控制台错误/警告 0 条。
+- 静态检查：`git diff --check` 通过。
+- Network 构建：`LYF_Server/Network/Network.csproj` 使用 `_temp/client-knapsack-type-20260904/` 输出，0 警告、0 错误。
+- GM_Game 构建：使用现有正式 `Network.dll` 失败 1 个 `CS1061`，原因是 DLL 无 `KnapsackType` 属性；该 DLL 需替换为新版协议产物后复验。
+- 当前结论：源码改动完成，测试暂不通过，阻塞为客户端协议 DLL 未同步；未进行真实联网联调。
+
+## 2026-09-04 Luban 背包配置表初始化验证
+
+- 验证命令：`dotnet build Network/Network.csproj --no-restore -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/luban-init/obj/ -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/luban-init/bin/`。
+- 验证结果：Network 构建成功，0 个警告，0 个错误；`TbKnapsackInfo` 已完成加载、启动打印和按 `KnapsackType` 查询。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/luban-init/`，待产品经理确认后清理。
+
+## 2026-09-04 角色背包默认容量配置表验证
+
+- 测试对象：`Luaban/MiniTemplate/Datas/#KnapsackInfo.xlsx`；本次测试未修改该配置表、`__tables__.xlsx` 或任何客户端、服务端业务文件。
+- 表格静态校验：使用 Artifact Tool 读取 `Sheet1!A1:C7`，字段为 `KnapsackType`、`DefaultGridCount`；有效数据恰为四行 `(0,81)`、`(1,81)`、`(2,81)`、`(3,81)`，不存在类型 `4`。字段类型均为 `int`，与 `KnapsackType` 的四类可扩容背包一致。
+- 公式和可读性校验：公式错误扫描（`#REF!`、`#DIV/0!`、`#VALUE!`、`#NAME?`、`#N/A`）匹配 0 项；已渲染表格，标题、类型说明与四条容量数据均可见。
+- Luban 生成验证：在 `Luaban/MiniTemplate` 执行 `dotnet .\\Luban\\Luban.dll -t all -c cs-bin -d bin --conf .\\luban.conf`，并通过 `outputCodeDir`、`outputDataDir` 将全部输出定向至 `D:/unitypro/LYFMMORGP/_temp/knapsack-config-test-20260904/luban-output/`。命令成功完成，生成 `Code/KnapsackInfo.cs`、`Code/TbKnapsackInfo.cs` 与 `Data/tbknapsackinfo.bytes`。
+- 产物复核：`TbKnapsackInfo` 以 `KnapsackType` 建立 `Dictionary<int, KnapsackInfo>`；生成二进制为 9 字节 `04 00 51 01 51 02 51 03 51`，其中记录数为 4，四组类型/容量与源表一致。
+- 结论：通过。本轮配置表满足四类角色背包默认容量均为 81、排除穿戴栏类型 `4` 的验收标准。
+- 未执行项：本轮按任务边界未修改服务端新角色初始化逻辑，也未将临时 Luban 产物复制到正式运行目录；未执行运行时读取配置、数据库创建角色或多服务器联调。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/knapsack-config-test-20260904/`，包含只读检查脚本、渲染图、Artifact 检查结果和定向 Luban 生成产物，待产品经理确认后清理。
+
+## 2026-09-04 按 KnapsackType 分类型容量代码审查
+
+- 检查范围：数据库表与模型、GameServer 背包链路、协议源/生成代码、Unity 背包窗口/MainCtrl、Network.dll、中文注释、一类一文件和线程边界。
+- 通过项：四类容量独立存储且新角色各 81；扩容只修改指定类型；`RoleCurrtEquipPack` 被拒绝扩容；协议字段双端存在；客户端 DLL 与工程构建可用；网络消息经队列在逻辑线程处理；关键逻辑有中文注释。
+- [P1] 失败项：`LoginModle.cs:426-431`、`CentRoleModel.cs:179-186` 对旧单条总背包记录只继承总背包容量，缺失三类在旧容量大于 81 时回退为 81，违反“旧单条记录迁移保留容量”。
+- 构建：完整 `LYF_Server.sln` 和 `LYF_MMO/GM_Game.csproj` 均为 0 错误，保留既有编译警告；产物位于 `_temp/knapsack-type-review-final/` 与 `_temp/knapsack-type-client-review/`。
+- 审查结论：不通过，退回后端 Agent；修复后需增加旧容量大于 81、已有分类更大容量和穿戴栏请求拒绝测试。
+- 未执行项：未进行真实数据库迁移和多进程联网联调。
+
+## 2026-09-04 旧背包单条记录迁移修复复审
+
+- 审查范围：`LYF_Server/CenterServer/DB/Modle/LoginModle.cs`、`LYF_Server/CenterServer/DB/Modle/CentRoleModel.cs`、`LYF_Server/GameServer/Service/KnapsackService.cs`，以及背包类型枚举和容量表模型。
+- 静态推演：旧总包 `120` 时得到总包、装备、消耗品、材料均为 `120`；旧总包 `120` 且装备包 `150` 时得到 `120/150/120/120`；仅装备包 `150` 时得到 `81/150/81/81`，已有较大容量未降低。
+- 迁移行为：`GetPersistedKnapsackTypes` 仅包含四类可扩容背包；`EnsureMissingKnapsackRows` 仅插入缺失记录，既有记录不更新；`GetMigratedGridCount` 以旧总包与已有分类记录中的较大容量回包。两处新增迁移注释均为中文。
+- 穿戴栏检查：`RoleCurrtEquipPack` 未参与补齐循环；`KnapsackService.IsPersistedType` 不接受该类型，扩容请求会返回参数错误。
+- 一类一文件：`LoginModle.cs` 与 `CentRoleModel.cs` 均仅含一个同名顶级类，通过。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-legacy-migration-fix-20260904/review-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-legacy-migration-fix-20260904/review-obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 差异检查：`git diff --check -- LYF_Server Docs/AI AGENTS.md AIconfig` 无空白错误；仅输出既有行尾转换提示。
+- 审查结论：通过。此前旧总包容量大于 81 时缺失分类回退为 81 的 P1 已修复；未执行真实数据库迁移和多进程联网联调。
+
+## 2026-09-04 GameServer 协议处理器架构只读分析
+
+- 分析范围：`F:/UnityPro/ro/Ro_cs422nb/roserver/gameserver/ptcregister.cpp`、`protocol/item/rpcc2g_useitem.cpp`，以及当前 `GameServer/manger/ClientMessageManager.cs`、`GameServerApp.cs`、`GameGlobal.cs`、`Ctrl/Game_LoginCtrl.cs`、`Service/KnapsackService.cs`、`manger/RoleManager.cs`、`Network/Socket/com/NetDefine.cs` 和 protobuf 源文件。
+- 参考结论：roserver 的 `CProtocolRegister::Regiter()` 仅登记协议实例；`RpcC2G_UseItem` 的业务在 `protocol/item/rpcc2g_useitem.cpp` 独立实现。该模式适合当前 GameServer，但必须保留现有队列和逻辑线程消费，不能在网络回调中直接调用 Handler。
+- 当前消息盘点：已确认 11 个真实入站来源/命令组合，覆盖登录、创建角色、开始游戏、进入世界、角色技能回包、背包数据回包、开背包格子和持久化结果；其中同一登录命令号按 Gate/Center 来源拆成不同处理器。出站同步消息与其他服务命令不创建入站 Handler。
+- 协议缺口：购买物品、使用物品、装备强化在当前 `NetDefine.cs` 和 protobuf 中均不存在；本轮设计明确禁止创建空处理类。
+- 输出：新增 `项目分析/MESSAGE_HANDLER_ARCHITECTURE.md`，并在 `CURRENT_TASK.md` 登记开发范围和验收标准。
+- 验证：本轮为只读架构分析与文档记录，未修改客户端/服务端业务代码，未执行构建；开发后需由测试 Agent 独立构建和验证。
+
+## 2026-09-04 GameServer 协议处理器按领域拆分开发自检
+
+- 检查范围：`LYF_Server/GameServer/MessageHandler/`、`manger/ClientMessageManager.cs`、`GameServerApp.cs`、`GameServer.csproj`。
+- 目录和处理器：新建 `Login`、`Role`、`Knapsack`、`Item`、`Shop`、`Equip`、`Task` 子目录；存在 15 个新增 C# 源文件，其中 4 个注册基础设施类型和 11 个真实入站 Handler。`Item`、`Shop`、`Equip`、`Task` 仅保留目录，不含空 Handler。
+- 注册覆盖：`GameMessageProtocolRegister` 有 11 次 `RegisterHandler` 调用，分别覆盖 Gate 的登录、创建角色、开始游戏、进入世界、开背包格子，以及 Center 的登录、创建角色、开始游戏、角色技能、背包信息、背包容量持久化结果。网络入口同样为 Gate 5 条、Center 6 条。
+- 静态检查：`ClientMessageManager` 中搜索 `Game_LoginCtrl`、`RoleManager` 和 `switch`，匹配 0 项；注册表键包含来源与协议号；代码包含重复注册、未知来源、非法协议号和未注册消息的日志拒绝路径；每个新增顶级类型位于独立同名文件，新增 C# 文件均显式写入旧式 `GameServer.csproj`。
+- 首次构建：完整方案构建发现 `SyncKnapsackGridCountFromCenterHandler.Key` 缺少 `get` 访问器，产生 8 个语法错误；已修复，失败记录保留。
+- 修复后构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/message-handler-refactor-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/message-handler-refactor-20260904/obj/"`。
+- 修复后构建结果：成功，0 个错误，保留 1 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用。所有构建产物位于 `D:/unitypro/LYFMMORGP/_temp/message-handler-refactor-20260904/`。
+- 差异检查：`git diff --check -- LYF_Server/GameServer Docs/AI` 无空白错误；仅输出工作区既有文件的 LF/CRLF 转换提示。
+- 未执行项：未启动真实四服务器进程，未进行 Unity 联网联调；未知消息和重复注册拒绝路径为静态审阅，待测试 Agent 进行独立复验。
+
+## 2026-09-04 GameServer 处理器业务命名与来源分支开发验证
+
+- 修改范围：`LYF_Server/GameServer/MessageHandler/`、`manger/ClientMessageManager.cs`、`GameServer.csproj` 及协作架构记录。
+- 文件结构：删除全部 `*FromGateHandler.cs`、`*FromCenterHandler.cs`；保留 `LoginGameServerHandler.cs`、`CreateRoleHandler.cs`、`StartGameHandler.cs`、`EnterWorldHandler.cs`、`RoleSkillInfoHandler.cs`、`RoleKnapsackInfoHandler.cs`、`OpenKnapsackGridHandler.cs`、`SyncKnapsackGridCountHandler.cs` 八个业务命名处理器。
+- 注册验证：登录、建角、开始游戏各创建一个处理器实例，并以 Gate/Center 两个 `(来源, 协议号)` 键登记；`CanHandle` 接受两个来源，`Handle` 根据 `GameMessageHandlerContext.Source` 分别处理请求或回包。其余五条单向协议仍使用来源键注册，并在处理器内校验来源。
+- 静态检查：搜索 `FromGate`、`FromCenter`、旧 `IGameMessageHandler.Key` 与旧 `Register(IGameMessageHandler)` 均无匹配；`ClientMessageManager` 不引用 `Game_LoginCtrl`、`RoleManager`，不含业务 `switch`；`GameServer.csproj` 显式编译项与八个处理器文件一致。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/handler-name-cleanup-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/handler-name-cleanup-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 未执行项：未启动真实四服务器与 Unity 客户端进行联网联调；本记录为后端开发构建验证，仍需测试与代码审查独立复验。
+
+## 2026-09-04 RoleKnapsackComponent 背包事务融合复验
+
+- 构建命令：`dotnet build LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-final-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-final-20260904/obj/"`。
+- 构建结果：完整服务端方案构建成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 静态检查：`git diff --check -- GameServer Docs/AI` 通过；事务类型均按一类一文件组织，`GameServer.csproj` 已显式包含新增文件。
+- 未执行项：未启动真实四服务器和 Unity 联网联调；事务实际扣除、发放和装备操作需待权威数据模型接入后验证。
+
+## 2026-09-04 商城购买协议策划与系统架构设计
+
+- 只读分析范围：`RequestEntity.proto`、`ResultEntity.proto`、`NetDefine.cs`、GateServer/GameServer 网络注册与转发、`ShopInfo`、NPC 商店配置、`RoleNpcShopPurchaseTable`。
+- 文档产出：新增 `项目分析/SHOP_BUY_PROTOCOL_DESIGN.md`，未修改客户端或服务端业务源码，未生成构建产物。
+- 设计验证：确认现有商品配置可支持服务端反查价格/货币/物品；确认限购表主键包含 `RoleID + NpcID + ShopID`，因此请求必须带 `npc_id`；确认现有表仅有每日和永久计数，周/月/年不能直接开放。
+- 交接结论：建议命令号 `11130`，请求幂等字段 `request_id`，响应 `ErrorInfo` 回显请求号；Gate 只透传，GameServer 逻辑线程校验并在权威事务未接入时返回 `FeatureNotReady` 或 `ServerError`。
+- 未执行项：未运行协议生成、Gate/GameServer/Unity 构建和联网联调；等待后端与客户端依据设计文档实施后由测试 Agent 验证。
+## 2026-09-04 商城购买协议后端链路开发自检
+
+- 协议生成：使用 `D:/unitypro/LYFMMORGP/LYF_Server/ProtoBuf/bin/protoc.exe`，将两个协议源生成到 `_temp/shop-buy-protocol-20260904/proto-out/`，并同步至 `LYF_Server/Network/Proto`；生成代码包含新增消息和 `CmdCode` 14-23。
+- 网络链路：`NetDefine.CMD_BuyShopItemCode` 为 11130；GateServer `GateRoleCtrl` 与 `GateServerApp` 新增双向透传/注册；GameServer 注册 Gate 侧命令与 `RequestBuyShopItem`。
+- 处理器静态校验：检查会话、角色在线、非零请求号、条目数量、单项数量、重复商品、NPC 商店类型、ShopInfo/NPC 归属和重复请求号；无权威事务时固定返回 `FeatureNotReady`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-buy-protocol-20260904/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-buy-protocol-20260904/obj/"`。
+- 构建结果：成功，0 个错误；保留 2 条既有警告：登录服异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 差异检查：`git diff --check` 通过，仅有既有 LF/CRLF 转换提示。
+- 未执行项：未执行真实购买事务、数据库幂等恢复、四服务器进程和 Unity 联网联调，待测试 Agent 独立复验。
+- 补充复验：`RequestBuyShopItem` 同一 `(RoleID, request_id)` 且载荷一致时复用 `FeatureNotReady`；载荷不一致时返回 `DuplicateRequest`；临时缓存上限为 10000，避免进程内存无界增长。
+- 补充构建：增加 GameServer 显式 `System` 引用后重建成功，0 个错误，保留 `OnlineRole._roleBaseAttrEntity` 既有警告。
+
+## 2026-09-05 商城购买请求 role_id 字段补充
+
+- 协议变更：`BuyShopItemReq` 保留 `shop_type=1`、`items=2`、`npc_id=3`、`request_id=4`，新增 `role_id=5`；未调整既有字段编号或错误码。
+- 生成命令：使用 `D:/unitypro/LYFMMORGP/LYF_Server/ProtoBuf/bin/protoc.exe` 生成到 `D:/unitypro/LYFMMORGP/_temp/shop-buy-protocol-roleid-20260905/proto-out/`，并同步 `Network/Proto/RequestEntity.cs`、`ResultEntity.cs`。
+- 处理器校验：`RequestBuyShopItem` 从会话双索引取得在线角色，拒绝 `role_id=0` 或与会话角色 ID 不一致的请求，返回 `InvalidSession`；客户端字段不作为身份来源。
+- 待执行：完整服务端方案构建、差异检查和测试/代码审查 Agent 独立复验。
+- 复验结果（2026-09-05）：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-buy-protocol-roleid-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-buy-protocol-roleid-20260905/obj/"` 成功，0 个错误，保留 2 条既有警告（登录服异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用）。
+- 差异检查：`git diff --check -- LYF_Server/ProtoBuf LYF_Server/Network LYF_Server/GameServer Docs/AI` 通过；生成和构建产物均位于 `_temp/shop-buy-protocol-roleid-20260905/`。
+- 兼容性复核：协议源静态确认 `shop_type=1`、`items=2`、`npc_id=3`、`request_id=4`、`role_id=5` 均存在；`BuyShopItemRes` 与 `ErrorInfo` 均已生成。GateServer 对 11130 请求/结果各注册一次，GameServer 注册器包含一个 `RequestBuyShopItem` 实例；网络回调继续通过 `ClientMessageManager` 入队，处理器只在逻辑线程执行。
+
+### 客户端同步验证（2026-09-05）
+
+- DLL 校验：`LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll` 已同步自 `_temp/shop-buy-protocol-roleid-20260905/bin/Network.dll`，SHA256 均为 `52F8EDFD7229E3EE07912D4B3659238F720EFF09E1B4112E565A1512E4BEC8CA`；更新前 DLL 已备份到 `_temp/shop-buy-client-roleid-20260905/original/Network.dll`。
+- 协议反射检查：`BuyShopItemReq.RoleId` 存在，类型为 `System.UInt32`。
+- 逻辑检查：`ShopPurchaseClient` 在发送前校验 `Global.Instance.mainRoleInfo.BaseInfo.RoleId > 0`，将该值写入请求；该字段只用于服务端会话角色的一致性校验，客户端不能以此建立身份。
+- Unity 编译：执行 Unity 资产刷新和脚本编译后，编辑器控制台为 0 错误、0 警告。
+- 未执行项：未进行真实 GateServer/GameServer/Unity 联网购买和权威事务验证。
+
+## 2026-09-04 商城购买协议客户端接入验证
+
+- DLL 校验：客户端 `Network.dll` 已同步自 `_temp/shop-buy-protocol-20260904/bin/Network.dll`，SHA256 为 `C5F29603F15EBFBA747D5113163B48D1AAA36614F3108F1F06E86A660438B573`；原 DLL 已备份到 `_temp/shop-buy-client-20260904/original/`。
+- 协议静态检查：新 DLL 包含 `BuyShopItemReq`、`BuyShopItem`、`BuyShopItemRes`、`ErrorInfo`、`NetDefine.CMD_BuyShopItemCode` 和购买错误码，字段与设计文档一致。
+- Unity MCP 脚本校验：`ShopPurchaseClient.cs`、`BuyItemWidget.cs`、`NpcShopWindow.cs`、`MainCtrl.cs` 均为 0 错误、0 警告。
+- 行为检查：请求生成非零 `request_id`，商品卡片发送 `shop_type/npc_id/shop_id/buy_count`；响应仅按本地待处理请求号回调，错误码只用于提示和结束等待状态，未实现客户端本地成功逻辑。
+- 未执行项：Unity 真机运行、GateServer -> GameServer 多进程联调和真实购买事务未执行，交由测试 Agent 继续验证。
+- 阻塞发现：静态检查发现 GameServer `RequestBuyShopItem` 引用了生成协议中不存在的 `BuyShopItemReq.RoleId`，与会话确定角色身份的设计不一致；未修改服务端，已交后端修正后再联调。
+## 2026-09-05 商城购买协议 role_id 最终复验
+
+- 协议字段：`shop_type=1`、`items=2`、`npc_id=3`、`request_id=4`、`role_id=5`；生成 C# 与客户端 DLL 均包含 `RoleId`。
+- 服务端构建 0 错误，GM_Game 构建 0 错误；保留项目既有警告。
+- 静态检查：处理器校验会话角色与 `role_id` 一致性；Gate 仅透传；客户端填充当前角色 ID；`git diff --check` 通过。
+- 结论：协议和 Unity -> GateServer -> GameServer 链路骨架通过；未进行真实多服务器联网、扣费发货、限购事务和重启幂等验证。
+
+## 2026-09-05 GameMessageHandlerContext 注释验证
+
+- 修改文件：`LYF_Server/GameServer/MessageHandler/GameMessageHandlerContext.cs`。
+- 验证结果：`dotnet build LYF_Server.sln --no-restore --configuration Debug` 成功，0 个错误；保留既有 2 条警告。
+- 差异检查：`git diff --check -- GameServer/MessageHandler/GameMessageHandlerContext.cs` 通过。
+
+## 2026-09-05 BagTransition 单文件合并验证
+
+- 验证范围：`LYF_Server/GameServer/Service/BagTransition/BagTransition.cs` 与 `GameServer.csproj`。
+- 静态检查：事务目录 C# 文件数为 1；`BagTransition.cs` 包含 15 个类型定义；项目清单仅包含 `Service\\BagTransition\\BagTransition.cs`，无旧 `Service\\item` 引用。
+- 构建命令：`dotnet build LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-single-file-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/bag-transition-single-file-20260905/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 差异检查：目标文件无行尾空白；全仓 `git diff --check` 报告的行尾空白来自本次范围外的既有文件。
+
+## 2026-09-05 按商店 ID 查询商品配置验证
+
+- 修改文件：`LYF_Server/Network/LubanManage/LubanMgr.cs`。
+- 验证命令：`dotnet build Network/Network.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-by-shopid-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-by-shopid-20260905/obj/"`。
+- 验证结果：构建成功，0 个警告、0 个错误。
+
+## 2026-09-05 ShopItemInfo 运行时解析验证
+
+- 修改范围：`Network/LubanManage/Parse/ShopItemParseInfo.cs`、`ShopItemPurchaseCondition.cs`、`ShopItemEnvironmentCondition.cs`、`LubanMgr.cs`、`Network.csproj`。
+- 字段映射：`Id/ItemId/BindAfterPurchase` 映射商品、道具和绑定状态；`PurchaseLimitType/PurchaseLimitCount` 映射限购；解锁、职业、等级、任务与时间字段映射环境限制；`ItemPerMount/Discount/PriceChange/Price/CurrencyType` 映射购买消耗。
+- 验证命令：`dotnet build Network/Network.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-parse-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-parse-20260905/obj/"`。
+- 验证结果：构建成功，0 个警告、0 个错误。
+
+## 2026-09-05 解析商品按商店 ID 分组验证
+
+- 结构检查：`_shopItemParseInfos` 外层键为 `ShopId`，内层为 `ShopItemID -> ShopItemParseInfo`；按商店查询不再扫描完整商品表。
+- 验证命令：`dotnet build Network/Network.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-parse-grouped-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-item-parse-grouped-20260905/obj/"`。
+- 验证结果：构建成功，0 个警告、0 个错误。
+
+## 2026-09-05 ItemDesc 公共物品描述验证
+
+- 修改范围：`MMoRpgCommon/Item/ItemDesc.cs`、`ItemExtraData.cs`、`enum/Item.cs`、`MMoRpgCommon.csproj`。
+- 静态检查：`ItemDesc` 字段与参考结构对应；默认绑定策略为发放不绑定、扣除匹配已绑定；扩展数据默认非空；中文 `ToString` 输出包含物品 ID、数量、UID 和变化原因。
+- 验证命令：`dotnet build MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/item-desc-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/item-desc-20260905/obj/"`。
+- 验证结果：构建成功，0 个警告、0 个错误。
+
+## 2026-09-05 商城类型枚举与 NPC 查询分支验证
+
+- 静态检查：`ShopType` 独立放置于 `MMoRpgCommon/enum/ShopType.cs`，包含中文注释并已加入 `MMoRpgCommon.csproj`；`RequestBuyShopItem` 先校验枚举，再按 `Npc/Mall/Activity` 分支，非 NPC 分支不会调用 `GetNpcInfoById`。
+- NPC 分支：校验 `npc_id`、NPC 配置存在且类型为 `ShopType.Npc`，每个商品同时校验 `ShopInfo` 存在和归属 NPC。
+- 非 NPC 分支：`Mall`、`Activity` 返回 `FeatureNotReady`；未知数值返回 `InvalidShop`，不会继续执行商品列表查询。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/obj/"`；`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/server-obj/"`。
+- 构建结果：公共库和完整服务端均成功，0 个错误；保留既有登录服异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用两条警告。
+- 差异检查：`git diff --check -- LYF_Server/MMoRpgCommon LYF_Server/GameServer/MessageHandler/Shop/RequestBuyShopItem.cs` 通过；仅有既有行尾转换提示。
+- 未执行项：未进行真实多服务器购买联调；客户端强类型枚举参数和 `MMoRpgCommon.dll` 同步由客户端 Agent 后续复验。
+
+### 客户端强类型枚举复验（2026-09-05）
+
+- `ShopPurchaseClient`、`BuyItemWidget`、`NpcShopWindow` 已改用 `MMoRpgCommon.ShopType`，协议发送仍使用对应稳定数值。
+- NPC 窗口拒绝非 `ShopType.Npc` 类型，并继续传递 `npc_id`；`MMoRpgCommon.dll` 已更新到 `LYF_MMO/Assets/GM_Game/Plugins/Common/MMoRpgCommon.dll`，原文件备份位于 `_temp/shop-type-enum-20260905/client-common/`。
+- 客户端构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-type-enum-20260905/client-obj/"`。
+- 构建结果：0 个错误，保留项目既有 21 条警告；未发现因枚举参数改造产生的新错误。
+## 2026-09-05 商城类型枚举与 NPC 商品查询复验
+
+- `ShopType` 位于共享项目 `MMoRpgCommon/enum/ShopType.cs`，保持一类一文件并已加入工程清单。
+- `RequestBuyShopItem` 对未知类型返回 `InvalidShop`；`Npc` 类型要求有效 `npc_id`、NPC 类型匹配并在该 NPC 商品列表中查找 `shop_id`；`Mall`/`Activity` 不读取 NPC 配置，返回 `FeatureNotReady`。
+- 完整 `LYF_Server.sln` 构建：0 错误、2 条既有警告；`git diff --check` 通过。
+- 未执行真实联网及商城扣费发货事务验证。
+## 2026-09-05 商城表与商品表配置验证
+
+- 使用 artifact-tool 读取参考 `ShopTable.xlsm`、`ShopCommoditTable.xlsm`，确认主表与明细表通过 `ShopId` 关联。
+- 已渲染并检查项目 `#ShopItemInfo.xlsx` 原格式，扩展后商品表为 19 列、16 条商品记录；新建 `#ShopTable.xlsx` 为 9 列、4 条商店记录，标题/类型/说明行均可读。
+- Luban 命令验证：`dotnet Luban/Luban.dll -t all -c cs-bin -d bin --conf luban.conf`，校验成功并生成 `tbshopiteminfo.bytes`、`tbshoptable.bytes` 及对应 C# 类型。
+- 生成结果确认逻辑类型为 `ShopItemInfo/TbShopItemInfo` 和 `ShopTable/TbShopTable`；现有代码仍使用旧 `ShopInfo/TbShopInfo`，已记录为后端后续迁移事项，未覆盖旧正式生成代码。
+- 临时产物：`_temp/shop-table-final-20260905/`、`_temp/shop-table-luban-auto-20260905/`，待产品经理确认后清理。
+
+## 2026-09-05 NPC 商店配置迁移与审查修复验证
+
+- Luban：执行 `dotnet Luban/Luban.dll -t server -c cs-bin -d bin --conf luban.conf -x outputCodeDir="D:/unitypro/LYFMMORGP/_temp/npc-info-20260905/Code" -x outputDataDir="D:/unitypro/LYFMMORGP/_temp/npc-info-20260905/Data"`，成功生成新 `NpcInfo`、`Tables`、`ShopTable`、`ShopItemInfo` 与 13 个二进制表。
+- 同步校验：正式 `NpcInfo.cs` 和 `tbnpcinfo.bytes` 的 SHA256 与 `_temp/npc-info-20260905` 对应生成产物一致。
+- 结构检查：服务端搜索 `ShopInfo`、`TbShopInfo`、`ItemList`、`ShopItemList`、`NpcShopItem`、`ShopLimitType`、`GetShopInfoById`、`GetShopInfos` 为 0；`NpcParseInfo` 和 `NpcEntity` 各仅保留一个顶级类型。
+- 审查修复：购买校验不再比较 `npcInfo.Type` 与 `ShopType.Npc`；改为校验 `NpcParseInfo.ShopId`、`ShopTable` 存在且 `ShopTable.ShopType == ShopType.Npc`。`NpcParseInfo.ParsePosition` 现在接受至少三段坐标，并将第 4 段朝向解析到 `RotationY`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-fix-20260905/build-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-fix-20260905/build-obj/"`。
+- 构建结果：0 错误；保留 2 条既有警告，分别为 `LoginCtrl.cs` 的未等待异步调用与 `OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行项：未启动四服务器和 Unity 客户端进行真实购买联调；客户端仍需同步本次构建的 `Network.dll`、`MMoRpgCommon.dll` 并应用 `RotationY`。
+- 旧记录更正：此前关于 `ShopInfo/TbShopInfo`、NPC `ItemList` 和 “NPC 类型等于商店类型” 的描述已过期，以本记录为准。
+
+## 2026-09-05 NPC 客户端同步与最终复验
+
+- DLL 同步：将 `_temp/npc-info-fix-20260905/build-bin/Network.dll`、`MMoRpgCommon.dll` 同步至 `LYF_MMO/Assets/GM_Game/Plugins/Net/` 和 `Plugins/Common/`；同步前文件备份在 `_temp/npc-info-fix-20260905/client-backup/`，SHA256 与构建产物一致。
+- 客户端修复：`NpcManager` 使用 `NpcParseInfo.RotationY` 应用配置的 Y 轴朝向；NPC 商城按 `NpcEntity.ShopId -> ShopTable -> ShopItemInfo` 生成商品；正式脚本无旧 `ShopInfo`、`ShopItemList`、`NpcShopData` 等引用。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-fix-20260905/client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-fix-20260905/client-obj/"`。
+- 构建结果：0 错误，21 条既有 Unity/引用警告；`git diff --check` 通过。
+- 审查结论：NPC 新字段、商店关联、坐标朝向解析、网络线程边界和中文注释通过；未执行真实四服务器联网联调。`ItemConfigBase.cs` 多类型文件为既有全局约束问题，未在本轮扩大范围。
+
+## 2026-09-05 商城购买协议基线兼容性架构复核
+
+- 类型：只读协议与链路审查，无业务代码修改、无构建产物。
+- 检查：确认 `BuyShopItemReq` 保留用户字段 `shop_type=1`、`items=2`；当前追加 `npc_id=3`、`request_id=4`、`role_id=5`，响应追加 `request_id=2`，未重排字段。
+- 发现：字段追加对 Protobuf wire 格式兼容，但 GameServer 当前把 `request_id`、`role_id` 校验为非零，只含基线字段的旧客户端会收到错误，不满足最小协议行为兼容。
+- 结论：后端需明确采用扩展正式契约或缺省字段兼容方案；`npc_id` 是否可省略取决于商品能否唯一反查 NPC，不能绕过现有按 NPC 的限购键。验收用例和差异清单已写入 `项目分析/SHOP_BUY_PROTOCOL_DESIGN.md` 第 7 节。
+
+## 2026-09-05 NPC 配置迁移客户端验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/NpcManager.cs`。
+- 静态检查：客户端商城相关脚本未引用旧 `ShopInfo`、`NpcShopItem`、`ShopItemList` 或 NPC `ItemList`；`NpcManager` 使用 `NpcParseInfo.ShopId`，并将 `RotationY` 应用于实例化 NPC 的 Y 轴旋转。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-client-final-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/npc-info-client-final-20260905/obj/"`。
+- 构建结果：成功，0 个错误，保留项目既有 21 条警告；构建输出均位于 `_temp/npc-info-client-final-20260905/`。
+- 未执行项：未启动 Unity 场景验证 NPC 实例朝向，未进行 GateServer/GameServer/Unity 真实联网联调。
+
+## 2026-09-05 Center 回包网关错误码客户端提示验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/NetErrorMsgMgr.cs`。
+- 静态检查：`CMD_ErrCode` 对空数据和 protobuf 解析异常显示统一中文提示；`switch` 的 `default` 分支覆盖所有未显式映射的 `CmdCode`；商城 `BuyShopItemRes.Error` 保持由 `BuyItemWidget.OnBuyCompleted` 独立处理，未接入通用错误码路径。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/client-obj/"`。
+- 构建结果：成功，0 个错误，保留项目既有 21 条警告（Unity 引用冲突、弃用 API、未等待异步调用等）；构建输出位于 `_temp/center-gate-forward-20260905/`。
+- 差异检查：`git diff --check -- LYF_MMO/Assets/GM_Game/Scripts/Manger/NetErrorMsgMgr.cs` 通过，仅报告项目既有 LF/CRLF 行尾提示。
+- 未执行项：尚未启动 CenterServer、GameServer、GateServer 与 Unity 进行端到端错误码转发验证。
+
+## 2026-09-05 Center 回包网关转发后端验证
+
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 `OnlineRole._roleBaseAttrEntity` 未使用警告。首次全量构建还显示 LoginServer 中未等待异步调用的既有警告，后续增量构建未重复输出该警告。
+- 静态检查：`LoginGameServerHandler`、`CreateRoleHandler`、`StartGameHandler`、`RoleSkillInfoHandler`、`RoleKnapsackInfoHandler` 均调用 `GameCenterResponseForwarder.TryForwardToGate`；开始游戏在转发后才进行本服在线角色初始化。旧的 `RoleManager` 技能/背包中心回包直发方法已删除，避免绕开统一入口。
+- 内部消息检查：`SyncKnapsackGridCountHandler` 只调用 `RoleManager.HandleCenterSyncKnapsackGridCount`，并有中文注释标记为持久化确认，未进入 `GameCenterResponseForwarder` 客户端回包白名单。
+- 网关检查：`GateLoginCtrl`、`GateRoleCtrl` 的客户端回包均委派给 `GateClientResponseForwarder`；`SendData(package)` 和 `SendError(package, ...)` 均位于该统一入口。解析失败、未知回包和普通非成功 `CmdCode` 走 `CMD_ErrCode`；购买和扩容失败保留原业务回包，确保购买 `request_id` 和权威格子数不会丢失。
+- 格式检查：`git diff --check -- LYF_Server/GameServer LYF_Server/GateServer` 通过，无空白错误；仅有工作区既有 LF/CRLF 行尾提示。
+- 未执行项：未启动四服务器和 Unity 做真实网络收发验证；无法在静态构建中覆盖网关会话已断开、CenterServer 返回畸形 protobuf、CenterServer 返回业务失败和开始游戏本服初始化异常等运行时路径。
+
+### 代码审查返工验证（2026-09-05）
+
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/obj/"`。
+- 构建结果：成功，0 个错误；保留既有 2 条警告：LoginServer 未等待异步调用、`OnlineRole._roleBaseAttrEntity` 未使用。构建产物仍位于 `_temp/center-gate-forward-20260905/`，未经产品经理确认不得清理。
+- 路由元数据检查：`GameCenterResponseForwarder.cs` 不含 `NetDefine.CMD_*` 或协议 `switch`；全部 6 条 CenterServer 注册均在 `GameMessageProtocolRegister` 同一位置声明路由，5 条为 `ForwardToGate`，`CMD_SyncKnapsackGridCountCode` 明确为 `Internal`。
+- 网关错误顺序检查：失败扩容分支调用 `session.SendData(package)` 后调用 `session.SendError(CreateErrorPackage(package), resultCode)`；错误包为独立 `BasePackage`，不会篡改原扩容回包。购买失败只保留 `BuyShopItemRes`，不触发第二条通用错误消息。
+- 格式检查：`git diff --check -- LYF_Server/GameServer LYF_Server/GateServer Docs/AI` 通过，无空白错误；仅输出既有 LF/CRLF 行尾提示。
+- 未执行项：未启动真实四服务器/Unity 网络环境，尚未观测 Unity 实际接收“失败扩容原包后再接收 CMD_ErrCode”的消息顺序。
+
+### Center 回包前置转发验证（2026-09-05）
+
+- 静态流程检查：`ClientMessageManager.ProcessCommand` 在 `registration.Handler.Handle(context)` 前，对 `GameCommandSource.CenterServer + CenterMessageRoute.ForwardToGate` 唯一调用 `GameCenterResponseForwarder.TryForwardToGate(context)`；所有登录、创建角色、开始游戏、技能、背包和商城 Center Handler 均不再直接调用转发器。
+- 注册检查：`GameMessageProtocolRegister` 的 Center 回包继续以元数据声明 6 条路由，其中登录、创建角色、开始游戏、技能、背包、商城购买为 `ForwardToGate`，`CMD_SyncKnapsackGridCountCode` 明确为 `Internal`，不会进入前置转发分支。
+- 会话安全检查：`GameCenterResponseForwarder` 找不到 `GateSession` 时记录错误；`StartGameHandler` 在该会话不存在时拒绝创建在线角色，但前置转发已经先尝试执行，任何后续本地解析异常不会影响有效会话的回包。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/obj/"`。
+- 构建结果：失败，11 个错误均来自未纳入本任务范围的 `LYF_Server/GameServer/Service/shop/ShopStatic.cs:25`，其中 `const ShopType GetType() const` 是 C++ 语法，当前 C# 编译器无法解析；另有既有 LoginServer 异步未等待警告。未修改该工作区文件，待其负责人修复后重建。
+- 格式检查：`git diff --check -- LYF_Server/GameServer LYF_Server/GateServer Docs/AI` 通过，无新增空白错误；仅有工作区既有 LF/CRLF 行尾提示。
+
+### 代码审查复验（2026-09-05）
+
+- 审查结论：通过，未发现阻塞问题。`GameCenterResponseForwarder` 已只依赖 `GameMessageProtocolRegister` 中的 `CenterMessageRoute` 元数据，不再维护固定协议白名单；内部持久化确认明确为 `Internal`。
+- 会话和错误路径：GameServer 使用 `GateSessionId` 定位目标 Gate，会保留原 `UnitySessionId` 供 Gate 定位客户端；扩容失败先发送 `OpenKnapsackGridRet` 再以独立包发送 `CMD_ErrCode`，商城失败保持 `BuyShopItemRes` 的 `request_id` 与 `ErrorInfo` 专用提示，避免重复提示。
+- 残余风险：服务端返工后的完整重建成功；客户端构建成功。未执行真实四服务器与 Unity 的联网时序验证。
+
+## 2026-09-05 Center -> Game -> Gate -> Unity 独立测试复验
+
+- 测试范围：只读核查 `GameCenterResponseForwarder`、五个 Center 回包处理器、`GateClientResponseForwarder`、网关注册和 `NetErrorMsgMgr`；未修改业务代码。
+- 服务端构建：执行 `dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/test-server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/test-server-obj/"`，0 错误，保留既有 2 条警告：`LoginCtrl.cs` 未等待异步调用、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 客户端构建：执行 `dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/test-client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forward-20260905/test-client-obj/"`，0 错误，保留项目既有 21 条 Unity 引用冲突、弃用 API 和未等待异步调用警告。
+- 路由核查：登录游戏服、创建角色、开始游戏、角色技能、角色背包五个 Center 客户端回包均同时存在于 GameServer 客户端可见白名单、Center 网络注册和 Gate 客户端注册；处理器在 GameServer 解析或开始游戏初始化前调用统一转发入口。背包持久化确认 `CMD_SyncKnapsackGridCountCode` 未误转发给 Unity。
+- 错误与业务回包核查：Gate 的九类已注册客户端回包均有协议解析分支；解析失败、未知回包和普通非成功 `CmdCode` 使用 `CMD_ErrCode`。商城失败保留 `BuyShopItemRes.request_id`，扩容失败保留 `OpenKnapsackGridRet.CurrentOpenedGridCount`，不会被通用错误包替换；客户端 `NetErrorMsgMgr` 对空包、解析异常和未知错误码均显示中文 Tips。
+- 格式检查：`git diff --check` 针对本轮相关文件无空白错误，仅显示工作区既有 LF/CRLF 行尾提示。
+- 未联调风险：尚未实际启动 CenterServer、GameServer、GateServer 和 Unity；未覆盖会话已断开、Center 回包畸形、普通失败错误码和开始游戏本服初始化异常时的端到端发送行为。
+
+## 2026-09-05 BuyDialog 数量购买弹窗验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/Tips/BuyDialog.cs`、`Manger/TipsMgr.cs`、`UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`、`Prefabs/UIPrefabs/TipsDiialog/BuyDialog.prefab`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-20260905/obj/"`。
+- 构建结果：0 个错误，保留项目既有 Unity 引用冲突、弃用 API、异步调用等警告；构建产物均位于 `_temp/buy-dialog-20260905/`。
+- 静态检查：`git diff --check` 通过；预制体字段已绑定商品图标、名称、货币图标、货币总价、数量输入框和加减按钮。
+- 未执行项：未在 Unity 运行场景中实际点击加减/输入数量，也未进行真实商城联网购买和限购边界联调。
+
+### 货币类别显示复核（2026-09-05）
+
+- `BuyItemWidget` 和 `GoodsItemWidget` 传入的货币文本现在包含货币类型与货币名称；弹窗显示格式为“货币类型 X · 名称 总价”。
+- 复核构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-final-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-final-20260905/obj/"`，0 错误，21 条既有警告。
+- 未执行：Unity 场景实际点击、限购边界和真实商城联网验证。
+- 兼容性备注：当前 NPC 商城窗口实际使用 `BuyItemWidget` 提交购买；旧 `GoodsItemWidget` 预制体仍保留原入口，未接入角色/NPC购买上下文，后续复用该预制体前需要补齐购买请求回调。
+
+## 2026-09-05 BuyDialog 代码审查返工验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/Tips/BuyDialog.cs`、`Manger/TipsMgr.cs`、`UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`。
+- 静态证据：`GoodsItemWidget` 仅被 `Assets/GM_Game/Prefabs/UIPrefabs/GoodsItemWidget.prefab` 的按钮事件引用，当前 NPC 商城窗口实际实例化 `BuyItemWidget`；旧组件已提供带 `npcId/shopType` 的刷新重载，缺少上下文会安全禁用购买。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-review-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-review-20260905/obj/"`。
+- 构建结果：0 个错误，保留项目既有 17 条 Unity 引用冲突、弃用 API、异步调用和字段未使用警告；产物均位于 `_temp/buy-dialog-review-20260905/`。
+- Unity MCP 校验：四个客户端脚本均 0 错误、0 警告；Unity 控制台读取到 0 条错误。
+- 未执行项：未在 Unity 场景实际点击加减/确认，未进行限购边界和真实商城联网验证。
+
+## 2026-09-05 ShopMgr 商城购买回包职责集中
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/ShopMgr.cs`、`NetSocketMgr.cs`、`UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`、`LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`。
+- 协议同步：客户端 DLL 使用 `_temp/shop-purchase-limit-20260905/server-bin/Network.dll`，包含 `BuyShopItemRes.RemainingPurchaseCount`；旧 DLL 备份于 `_temp/shop-manager-client-20260905/original/Network.dll`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-client-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-client-20260905/obj/"`。
+- 构建结果：0 个错误，保留项目既有 17 条 Unity 引用冲突、弃用 API、异步调用和字段未使用警告。
+- 格式检查：针对本轮客户端脚本执行 `git diff --check`，通过；仅有既有 LF/CRLF 行尾转换提示。
+- 未执行项：未进行 Unity 场景实际点击、超时/断线运行验证和真实商城联网联调。
+
+## 2026-09-05 BuyDialog 代码审查局部返工
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`。
+- 修改内容：商品卡片显示货币类别与名称；空商品图标路径不再触发异步加载；购买确认、等待状态和回包处理补充中文注释。
+- 构建验证：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-review-fix-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-review-fix-20260905/obj/"`，0 个错误，保留 21 条项目既有警告。
+- 格式验证：针对本轮文件执行 `git diff --check`，通过；仅有既有行尾转换提示。
+- 未执行项：未进行 Unity 场景真实点击、限购边界和商城联网验证。
+
+## 2026-09-05 BuyDialog 最终复验
+
+- 最终构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-final-review-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/buy-dialog-final-review-20260905/obj/"`，0 个错误，21 条项目既有警告。
+- Unity MCP 脚本校验：`BuyDialog.cs`、`TipsMgr.cs`、`BuyItemWidget.cs`、`GoodsItemWidget.cs` 均为 0 错误、0 警告；Unity 控制台读取到 0 条错误/警告。
+- 静态检查：`git diff --check` 通过；BuyDialog 预制体商品图标、商品名称、货币图标、货币总价、数量输入框、加减按钮引用均非空。
+- 复验结论：数量变化会实时刷新单价乘数量的总价，确认时提交实际数量；货币类别和名称独立传入并显示；异步图标加载受绑定版本和路径保护。
+- 未执行项：未进行 Unity 场景真实点击、限购边界和四端真实商城联网验证。
+
+## 2026-09-05 商城购买响应剩余限购数量协议
+
+- 修改文件：`LYF_Server/ProtoBuf/proto/ResultEntity.proto`、`LYF_Server/Network/Proto/ResultEntity.cs`。
+- 协议检查：`BuyShopItemRes` 原有字段编号未改变，新增 `uint32 remaining_purchase_count = 3`；protoc 生成代码包含属性、序列化、反序列化、复制、比较和反射描述信息。
+- 生成命令：使用 `LYF_Server/ProtoBuf/bin/protoc.exe`，输出目录为 `D:/unitypro/LYFMMORGP/_temp/shop-purchase-limit-20260905/proto/`；正式生成代码同步至 `LYF_Server/Network/Proto/ResultEntity.cs`。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-purchase-limit-20260905/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-purchase-limit-20260905/server-obj/"`。
+- 构建结果：0 个错误，保留 2 条既有警告：`OnlineRole._roleBaseAttrEntity` 未使用、`LoginCtrl.cs` 异步调用未等待。
+- 业务检查：`RequestBuyShopItem` 当前所有合法购买仍返回 `FeatureNotReady`，未填写剩余限购数量，未伪造购买成功或扣费；待权威事务接入后再填充该字段。
+- 未执行项：未进行 CenterServer/GameServer/GateServer/Unity 真实购买联调；客户端 `Network.dll` 需由客户端 Agent 同步并验证。
+
+## 2026-09-05 商城购买客户端回调职责收窄验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/ShopMgr.cs`、`UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-ui-refactor-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-ui-refactor-20260905/obj/"`。
+- 构建结果：0 个错误，保留项目既有 21 条 Unity 引用冲突、弃用 API、异步调用和字段未使用警告；产物均位于 `_temp/shop-manager-ui-refactor-20260905/`。
+- 静态检查：`git diff --check` 通过；客户端商品组件未再声明 `BuyShopItemRes`、`CmdCode` 或成功/失败回调参数，`ShopMgr` 保留超时、解析异常和断线清理。
+- 未执行项：未进行 Unity 场景点击、真实商城联网和服务端购买记录/DB 持久化联调。
+
+### 限购为零静态复验
+
+- 有限购商品的初始数量或服务端刷新数量为 `0` 时，购买按钮不可交互，旧 `GoodsItemWidget` 入口也会被拦截。
+- 不限购商品通过 `PurchaseLimitType == 0` 分支保持可购买，不会因 `RemainingPurchaseCount` 默认值为 `0` 被误禁用。
+- 最新构建结果：0 个错误，17 个项目既有警告；`git diff --check` 通过（仅有既有行尾转换提示）。
+
+## 2026-09-05 商城购买请求 ShopId 客户端验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/ShopMgr.cs`、`UI/Main/Window/NpcShopWindow.cs`、`UI/Main/Window/Widget/BuyItemWidget.cs`、`GoodsItemWidget.cs`、`Plugins/Net/Network.dll`。
+- 协议 DLL：客户端插件已备份至 `_temp/shop-id-client-20260905/original/Network.dll`，替换为 `_temp/shop-id-protocol-20260905/final-bin/Network.dll`，两者 SHA256 不同；新 DLL 提供 `BuyShopItemReq.ShopId`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-client-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-client-20260905/obj/"`。
+- 构建结果：0 个错误；保留项目既有 Unity 引用冲突、弃用 API、异步调用和字段未使用警告；产物与构建日志位于 `_temp/shop-id-client-20260905/`。
+- 静态检查：`NpcShopWindow` 只将 `ShopTable.Id` 传给 `BuyItemWidget`；两个商品组件和 `ShopMgr` 不再引用 `shop_type`/`ShopType` 作为购买请求字段；`git diff --check` 通过，仅有既有行尾转换提示。
+- 字段映射复核：`ShopMgr` 顶层 `BuyShopItemReq.ShopId = ShopTable.Id`，明细 `BuyShopItem.ShopId = ShopItemInfo.Id`；商品 ID 未被误写为顶层商店 ID。
+- 未执行项：未进行 Unity 场景点击和四端真实商城联网验证。
+
+### 2026-09-05 Network.dll 最终同步验证
+
+- 源文件：`_temp/shop-id-final/server-bin/Network.dll`。
+- 目标文件：`LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`。
+- 备份文件：`_temp/shop-id-final/client-original/Network.dll`。
+- SHA256：服务端源文件与客户端目标文件均为 `740018052BEF5B2337744622C0D531E1E9F8A7084E48A5451E7B47EE76F708AC`；备份旧 DLL 的 SHA256 为 `BE994675F4C7E35F4DADE6AE719A4242589CCF3C286FF9E3D06ABD1559F5D0CC`。
+- 结论：协议插件同步成功；本轮未修改业务代码，未重复执行客户端构建。
+
+## 2026-09-05 商城购买中心服落库骨架验证
+
+- `DBMgr.InitTables` 已包含 `RoleNpcShopPurchaseTable`、`RoleShopPurchaseRequestTable`；CenterServer 与 GameServer 工程清单已同步。
+- `RequestBuyShopItem` 校验后转发 CenterServer；CenterServer 注册和处理 `CMD_BuyShopItemCode`；GameServer 使用独立结果处理器向 GateServer 转发 `BuyShopItemRes`。
+- CenterServer 当前固定返回 `FeatureNotReady`，未调用限购写入，未实现货币扣除和物品发放前不会构造 `Succeed`。
+- `RecordCommittedNpcShopPurchase` 使用 `BeginTran(IsolationLevel.Serializable)`；幂等键为 `(RoleID, RequestID)`，同指纹复用结果、不同指纹返回 `DuplicateRequest`；每日计数跨日重置，永久计数不重置，成功响应计算剩余限购数量。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-purchase-persistence-20260905/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-purchase-persistence-20260905/server-obj/"`。
+- 构建结果：0 个错误、0 个新增警告；未启动数据库和四端进行真实购买联调，货币/物品权威事务仍是阻塞项。
+
+## 2026-09-05 商城购买最终构建与静态验收
+
+- 客户端命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-final-20260905/client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-final-20260905/client-obj/"`。
+- 客户端结果：0 个错误，保留 21 条项目既有 Unity 引用冲突、弃用 API 和异步调用警告。
+- 服务端命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-final-20260905/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-manager-final-20260905/server-obj/"`。
+- 服务端结果：0 个错误，保留 2 条既有警告；数据库初始化、Center/Game 回包路由和商城幂等落库骨架均已编译。
+- 静态结果：商品 UI 未引用 `BuyShopItemRes` 或 `CmdCode`；`ShopMgr` 是购买结果唯一处理入口；相关文件 `git diff --check` 无空白错误（仅有既有行尾转换提示）。
+- 未执行：未启动 MySQL 和四端服务进行真实购买；无法验证真实扣费、发货、事务回滚、并发限购及断线重试。
+
+## 2026-09-05 商城协议字段精简验证
+
+- 协议源文件删除 `BuyShopItemReq.npc_id`、`BuyShopItemReq.request_id` 和 `BuyShopItemRes.request_id`，使用项目 protoc 重新生成 `Network/Proto/RequestEntity.cs`、`ResultEntity.cs`。
+- 删除 `RoleShopPurchaseRequestTable`、数据库初始化引用及服务端幂等请求缓存；`ShopMgr` 不再生成或匹配请求号。
+- 服务端构建：`LYF_Server.sln` 0 个错误，保留 2 条既有警告。
+- 客户端构建：`GM_Game.csproj` 0 个错误，保留 21 条项目既有警告。
+- 静态检查：正式商城协议和处理器中已无 `request_id`、`npc_id` 引用；相关文件 `git diff --check` 无空白错误，仅有既有行尾转换提示。
+- 未执行：未进行 Unity 场景点击、MySQL 实际写入和四端联网购买验证。
+
+## 2026-09-05 BuyShopItemReq 顶层 shop_id 验证
+
+- `RequestEntity.proto` 顶层请求字段已改为 `shop_id = 1`，生成属性为 `BuyShopItemReq.ShopId`；商品明细 `BuyShopItem.ShopId` 未修改。
+- 正式服务端源码已无 `request.ShopType` 或 `shop_type` 的商城请求引用；GameServer 按 `ShopTable.Id` 定位配置并从配置读取商店类型。CenterServer 和 GateServer 链路未发现失效字段引用。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-protocol-20260905/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-protocol-20260905/server-obj/"`。
+- 构建结果：0 个错误，保留 2 条既有警告；未进行 Unity 客户端协议 DLL 同步和四端真实购买联调。
+
+## 2026-09-05 BuyShopItemReq shop_id 服务端复验
+
+- 协议源和生成代码：`BuyShopItemReq.shop_id = 1` 与正式 `RequestEntity.cs` 的 `ShopId` 属性一致；使用 protoc 重新生成到 `_temp/shop-id-protocol-20260905/proto/` 后，与正式 `RequestEntity.cs`、`ResultEntity.cs` 内容一致。
+- 服务端清理：`ShopType` 注释改为说明配置类型；`ShopManager` 局部参数改为 `shopType`；服务端无 `shop_type` 残留，未恢复 `npc_id` 或 `request_id`。
+- 静态检查：GameServer 使用 `request.ShopId` 查询 `ShopTable.Id`；商品明细使用 `BuyShopItem.ShopId` 校验归属；CenterServer/GateServer 未发现旧字段引用。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-protocol-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-protocol-20260905/obj/"`。
+- 构建结果：0 个错误，保留项目既有 2 条警告：`LoginCtrl.cs` 异步调用未等待、`OnlineRole._roleBaseAttrEntity` 未使用。
+- 未执行：客户端 `Network.dll` 同步、Unity 实际购买操作和四端真实商城联网联调。
+- 最终复核：`BuyShopItemReq` 使用 `ShopId`；正式源码未发现 `request.ShopType`、顶层 `shop_type`、`request_id` 或 `npc_id` 的商城协议依赖。最终 `LYF_Server.sln` 重建 0 错误、2 条既有警告；未同步 Unity 客户端 DLL，未进行四端真实联调。
+
+## 2026-09-05 shop_id 客户端同步最终验证
+
+- 服务端构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-final/server-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-final/server-obj/"`，0 个错误，保留 2 条既有警告。
+- 客户端构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-final/client-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/shop-id-final/client-obj/"`，0 个错误，保留 21 条既有警告。
+- 协议映射检查：`BuyShopItemReq.ShopId` 使用 `ShopTable.Id`，`BuyShopItem.ShopId` 使用 `ShopItemInfo.Id`；GameServer 按顶层商店 ID 校验商品归属，客户端 DLL 已同步。
+- 字段残留检查：正式协议、商城处理器和购买 UI 中无 `shop_type`、`request_id`、`npc_id`；`ShopType` 只作为配置读取后的内部枚举。
+- `git diff --check`：本轮相关文件无新增空白错误；工作区另有既有 `LubanMgr.cs` 行尾/空白提示，未改动。
+- 未执行：Unity 场景实际点击、数据库写入、四端真实网络购买和并发限购验证。
+
+## 2026-09-05 Center -> Game -> Gate 前置转发测试复验
+
+- 测试类型：只读静态链路与构建验证；未修改任何客户端或服务端业务代码。
+- 逻辑线程与顺序：`ClientMessageManager.ProcessCommand` 在从注册表取到 Center 消息且路由为 `ForwardToGate` 后，先调用 `GameCenterResponseForwarder.TryForwardToGate(context)`，再调用 `registration.Handler.Handle(context)`。转发器使用 `context.GateSession.SendData(context.Package)`，保留原 `UnitySessionId`、`GateSessionId`、协议号和原始载荷。
+- 注册矩阵：`CMD_LoginGameServerCode`、`CMD_CreateRoleCode`、`CMD_StartGameCode`、`CMD_RoleSkillInfoCode`、`CMD_RoleKnapsackInfoCode`、`CMD_BuyShopItemCode` 均为 `ForwardToGate`；`CMD_SyncKnapsackGridCountCode` 为 `Internal`。所有可见项均已在 Gate `client.RegistCommand` 登记。
+- 重复与拦截检查：`GameCenterResponseForwarder` 是 MessageHandler 目录中唯一的 Center 回包统一发送点；登录、角色、背包和商城的 Center Handler 均不再发送原包。`SyncKnapsackGridCountHandler` 仅解析并交给 `RoleManager.HandleCenterSyncKnapsackGridCount`，没有转发调用。
+- 错误码检查：`GateClientResponseForwarder` 对 protobuf 解析失败、未知协议和普通非成功结果调用 `Session.SendError(..., CmdCode)`；`NetErrorMsgMgr` 已注册 `CMD_ErrCode`，空包、解析异常和未映射错误码都会调用中文 Tips。商城和扩容失败保留专用回包；扩容额外发送通用错误码。
+- 中文注释与类型文件：本轮新增/关键入口均含中文注释；`GameCenterResponseForwarder`、`GateClientResponseForwarder`、`CenterMessageRoute`、`GameMessageRegistration` 各自独立文件；`git diff --check` 未报告空白错误，仅有既有 CRLF 提示。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug -t:Rebuild -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forwarding-test-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/center-gate-forwarding-test-20260905/obj/"`。
+- 构建结果：失败，11 个错误均由 `LYF_Server/GameServer/Service/shop/ShopStatic.cs:34` 的 C++ 风格 `const ShopType GetType() const` 引起；该文件不在本测试范围，未修改。`MMoRpgCommon`、`Network`、`GateServer`、`CenterServer`、`LoginServer` 已成功构建；保留既有 `LoginCtrl.cs:129` 未等待异步调用警告。未执行真实四端联网验证。
+## 2026-09-05 角色商城购买记录登录同步
+
+- 静态检查：`ResultEntity.proto` 仅保留独立 `RoleShopPurchaseInfoRet`；`RoleShopPurchaseInfo` 不含 `npc_id`，字段号 2 和旧名称均 reserved；`LoginModle` 和 `StartGameRet` 无 `RoleShopPurchaseInfo` 残留。
+- Center→Game→Gate：Center 在 `CMD_EnterWroldCode` 处理中查询 `RoleShopPurchaseTable`，发送 `CMD_RoleShopPurchaseInfoCode`；GameServer 注册 `ForwardToGate` 和 `RoleShopPurchaseInfoHandler`；Gate 注册协议并由 `GateClientResponseForwarder` 验证后透传。
+- 组件：`RoleShopPurchaseComponent` 为在线角色保存深拷贝后的购买记录；组件独立文件并在 `OnlineRole.InitSerializes` 注册。
+- 协议生成：使用 `LYF_Server/ProtoBuf/bin/protoc.exe` 生成 `Network/Proto/ResultEntity.cs`，产物暂存于 `_temp/role-shop-login-proto-20260905/`。
+- 构建：`Network.csproj`、`CenterServer.csproj`、`GateServer.csproj` 均 0 警告、0 错误，产物位于 `_temp/role-shop-login-build-20260905/`。
+- 完整方案：`LYF_Server.sln` 失败于无关 `GameServer/Service/shop/ShopStatic.cs:80` 的未定义 `ItemDesc`、`item_info`、`item` 符号（4 个错误）；另有既有警告，未修改该文件。
+- 未执行：客户端 DLL 同步、Unity 实际登录和四端联网验证。
+
+### 审查返工复验
+
+- 静态检查：商城记录 Handler 对 `Package.Data == null` 或 `Length == 0` 直接返回；只有成功解析且 `CmdCode.Succeed` 时才替换 `RoleShopPurchaseComponent` 数据。
+- Gate 空包检查：`TryReadResultCode` 统一拒绝 `null`/零长度载荷，进入错误包分支，不向 Unity 发送空业务包。
+- Center 异常隔离：`GetRoleShopPurchaseInfo` 捕获数据库查询和映射异常，清空部分结果并返回 `ServerError`；技能、背包回包已在此前发送，不受影响。
+- 本轮未修改 `ShopStatic.cs`，完整方案构建阻塞原因保持不变；需在其修复后重跑完整构建。
+- 独立构建：Network、CenterServer、GateServer 均 0 警告、0 错误；完整方案仍只受无关 `ShopStatic.cs` 未定义符号阻断。
+
+### 客户端接入验证（2026-09-05）
+
+- 协议 DLL：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug`，0 个警告、0 个错误；确认包含 `RoleShopPurchaseInfoRet`，记录无 `npc_id`。
+- DLL 同步：服务端产物 `_temp/role-shop-client-protocol-20260905/bin/Network.dll` 已复制到 `LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`，旧 DLL 备份于同目录 `original/`。
+- 客户端构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-client-build-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-client-build-20260905/obj/"`，0 个错误，保留 21 条项目既有警告。
+- 静态检查：`ShopMgr` 随网络模块提前注册登录回包，保存记录并为两个商品组件提供剩余限购查询；`MainCtrl` 不承载购买记录业务；`git diff --check` 无新增空白错误。
+- 未执行：Unity 实际登录场景及 Center/Game/Gate/Unity 四端联网联调。
+
+### 空商城回包防护复验（2026-09-05）
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/ShopMgr.cs`。
+- 静态检查：解析前检查 `ByteString == null` 或 `Length == 0`，直接返回并保留已有商城购买快照；`MainCtrl` 未改动。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-client-empty-packet-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-client-empty-packet-20260905/obj/"`。
+- 构建结果：0 个错误，保留 21 条项目既有 Unity 引用冲突、弃用 API 和未使用字段警告。
+- `git diff --check`：本轮相关文件无新增空白错误；未执行 Unity 实际登录和四端联网验证。
+
+### GameServer 单项目构建复验（2026-09-05）
+
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-final-20260905/gameserver-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-final-20260905/gameserver-obj/"`。
+- 结果：被既有 `LYF_Server/GameServer/Service/shop/ShopStatic.cs:80` 的 `ItemDesc` 调用错误阻断（1 个错误，另有该文件既有警告和 `OnlineRole` 未使用字段警告）；本任务未修改该文件。
+- 本轮商城协议相关的 Network、CenterServer、GateServer 和客户端构建均已单独通过；GameServer 完整编译需先修复上述无关文件。
+### 角色商城购买记录登录同步最终复验（2026-09-05）
+
+- 协议静态检查：`RoleShopPurchaseInfoRet` 为独立登录回包；记录字段包含 `role_id`、`shop_id`、每日/累计购买次数及时间，`npc_id` 与 `request_id` 均无正式引用。
+- 链路静态检查：Center 查询 `RoleShopPurchaseTable`，GameServer `RoleShopPurchaseInfoHandler` 写入 `RoleShopPurchaseComponent`，统一转发器在 Handler 前发送 Gate，Gate 校验后交给 Unity；客户端 `ShopMgr` 在网络初始化阶段注册并保存快照。
+- 独立构建：`Network.csproj`、`CenterServer.csproj`、`GateServer.csproj` 和 `GM_Game.csproj` 均构建通过；服务端 0 警告/0 错误，客户端 0 错误并保留 21 条既有警告。
+- 协议 DLL：客户端插件与 `_temp/role-shop-client-protocol-20260905/bin/Network.dll` SHA256 一致；最终客户端构建产物位于 `_temp/role-shop-client-empty-packet-20260905/`。
+- 返工验证：GameServer Handler、Gate 回包校验和客户端 `ShopMgr` 均拒绝空数据；Center 商城查询捕获数据库/映射异常并返回 `ServerError`。
+- 阻塞与风险：完整 `LYF_Server.sln` 仍被既有 `GameServer/Service/shop/ShopStatic.cs` 未定义符号阻断；未进行真实四端联网、数据库实写、断线和多 Gate 会话路由验证。
+- 审查遗留：`RoleShopPurchaseInfoHandler` 目前通过 Center 查询条件和 Gate/Unity 会话双索引确定角色，尚未逐条校验记录内 `RoleId` 与在线角色 ID；该项需在多 Gate 联调前补充或由会话层统一保证。
+## 2026-09-05 RoItemContainer 容器子类转换验证
+
+- 静态检查：`git diff --check -- GameServer/Service/item/RoItemContainer.cs` 通过。
+- 构建命令：`dotnet build GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/ro-item-container-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/ro-item-container-20260905/obj/"`。
+- 构建结果：MMoRpgCommon、Network 编译成功；GameServer 失败 1 个既有错误：`BagTransition.cs` 引用不存在的 `RoleKnapsackComponent`。本次 `RoItemContainer.cs` 与 `RoItemComponent.cs` 未报告编译错误；保留既有 `ShopStatic.GetType()` 警告。
+- 未执行：真实角色物品加载、UID 唯一性、负重规则和四端联调，等待权威物品模型接入。
+## 2026-09-05 背包子类语义重命名验证
+
+- 静态检查：`git diff --check -- GameServer/Service/item/RoItemContainer.cs` 通过。
+- 构建命令：`dotnet build GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/ro-item-container-rename-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/ro-item-container-rename-20260905/obj/"`。
+- 构建结果：公共库和 Network 编译成功；GameServer 仍有 1 个既有错误：`BagTransition.cs(12)` 找不到 `RoleKnapsackComponent`。新增类名未产生编译错误；保留既有 `ItemDesc.ToString()`、`ShopStatic.GetType()` 警告。
+
+## 2026-09-05 数据库 ItemID 更名为 ItemUID 后端修复验证
+
+- 根因：`ItemTable`、`EquipTable` 已改为 `uint ItemUID`，但 `EquipXLGeneTable` 仍保留 `int ItemID`，`CentRoleModel` 的装备/词条索引仍声明为 `Dictionary<int, ...>` 并向已重命名的协议属性 `ItemId` 写值，导致 CenterServer 出现 UID 类型错误和协议属性错误。
+- 修改范围：`LYF_Server/CenterServer/DB/Table/ItemTable.cs`、`EquipTable.cs`、`EquipXLGeneTable.cs`、`DB/Modle/CentRoleModel.cs`。
+- 静态检查：上述三张表与 CenterServer 查询映射不再有旧 `ItemID` 实例字段；物品、装备、词条均按 `ItemUID` 关联；`ItemTypeID` 与 Luban/商城配置 ID 未修改；`git diff --check` 通过，仅输出既有 CRLF 转换提示。
+- 构建：`MMoRpgCommon.csproj` 0 错误、1 条既有 `ItemDesc.ToString` 警告；`Network.csproj` 0 错误、1 条同源既有警告；`CenterServer.csproj` 0 错误、1 条同源既有警告；`GameServer.csproj` 0 错误、4 条既有警告（`ItemDesc.ToString`、`ShopStatic.GetType`、未赋值字段、未使用字段）。
+- 产物：`D:/unitypro/LYFMMORGP/_temp/item-uid-fix-20260905/`，未经产品经理确认不得清理。
+- 未执行：未连接实际数据库验证列迁移后的历史数据读取，也未执行 Unity 客户端登录联调。
+
+## 2026-09-05 ItemUID 数据库类型返工验证
+
+- 审查结论：用户仅将数据库列名 `ItemID` 改为 `ItemUID`，未授权把 SQL 映射类型由 `int` 改为 `uint`；此前 `uint`、范围拒绝和强制转换均属于不必要的行为变更。
+- 修复：`ItemTable`、`EquipTable`、`EquipXLGeneTable` 的 `ItemUID` 均为 `int`；`CentRoleModel` 的装备与词条索引恢复为 `Dictionary<int, ...>`，回包直接写入 `ItemId = ItemUID`。
+- 保留：三表继续以 `ItemUID` 关联，背包 protobuf 保持 `item_id`，未修改 `ItemTypeID`、Luban 或商城配置 `ItemID`。
+- 静态检查：CenterServer 中未发现 `uint ItemUID`、`Dictionary<uint, ...>`、`Int32.MaxValue` UID 拒绝或 `(int)ItemUID` 强制转换；`git diff --check` 通过，仅输出既有 CRLF 转换提示。
+- 构建：`CenterServer.csproj` 0 错误、1 条既有 `ItemDesc.ToString` 警告；`GameServer.csproj` 0 错误、4 条既有警告（`ItemDesc.ToString`、`ShopStatic.GetType`、未赋值字段、未使用字段）。
+- 产物：`D:/unitypro/LYFMMORGP/_temp/item-uid-int-revert-20260905/`，未经产品经理确认不得清理。
+- 未执行：未连接实际数据库验证改名后的查询映射，也未执行 Unity 客户端登录联调。
+
+## 2026-09-05 ItemUID 数据库映射协议兼容返工
+
+- 审查结论：用户只要求数据库持久化列从 `ItemID` 更名为 `ItemUID`，背包 protobuf 第 1 字段必须保持兼容名称 `item_id`，不能改为 `item_Uid`。
+- 协议修复：`ResultEntity.proto` 的 `RoleItemInfo`、`RoleEquipItemInfo`、`RoleEquipGeneInfo` 均恢复 `int32 item_id = 1`；使用 `ProtoBuf/bin/protoc.exe` 重新生成 `Network/Proto/ResultEntity.cs`，生成属性均为 `ItemId`。
+- 映射边界：CenterServer 保持 `ItemTable`、`EquipTable`、`EquipXLGeneTable` 的 `uint ItemUID` 和 `Dictionary<uint, ...>` 关联；仅在发出兼容协议时赋值 `ItemId = (int)ItemUID`。`ItemUID > Int32.MaxValue` 时返回 `ServerError`，避免截断；未修改 `ItemTypeID`、Luban 或商城配置 `ItemID`。
+- 构建：`Network.csproj`、`CenterServer.csproj`、`GameServer.csproj` 均为 0 错误。Network/CenterServer 各保留 1 条既有 `ItemDesc.ToString` 警告；GameServer 保留 4 条既有警告（`ItemDesc.ToString`、`ShopStatic.GetType`、未赋值字段、未使用字段）。
+- 产物：`D:/unitypro/LYFMMORGP/_temp/item-uid-proto-revert-20260905/`，未经产品经理确认不得清理。
+- 未执行：未连接实际数据库验证列迁移后的历史数据读取，也未执行 Unity 客户端登录联调。
+
+## 2026-09-05 ItemUID 数据库列重命名最终独立测试
+
+- 测试范围：仅验证数据库实体 `ItemID` 改名为 `ItemUID` 的兼容返工；未修改客户端或服务端业务代码。
+- 字段与关联检查：`CenterServer/DB/Table/ItemTable.cs:14`、`EquipTable.cs:13`、`EquipXLGeneTable.cs:13` 均为 `int ItemUID`。`CentRoleModel.cs:197` 和 `201` 分别以 `Dictionary<int, EquipTable>`、`Dictionary<int, EquipXLGeneTable>` 按 `ItemUID` 建索引；`CentRoleModel.cs:211`、`224`、`236` 保持写入协议属性 `ItemId`。
+- 协议兼容检查：`ProtoBuf/proto/ResultEntity.proto:210`、`222`、`230` 均保持 `int32 item_id = 1`；生成代码 `Network/Proto/ResultEntity.cs:6944`、`7439`、`7764` 均保留 `ItemIdFieldNumber` 和 `ItemId` API。未发现 `item_uid`、`item_Uid` 或 `ItemUid` 残留。
+- 配置 ID 边界检查：`ItemTable.ItemTypeID` 仍为配置 ID；商城解析 `Network/LubanManage/Parse/ShopItemParseInfo.cs:24` 仍使用配置 `ItemID`，未将 Luban 或商城商品配置 ID 改成实例 UID。
+- 空白检查：`git diff --check -- CenterServer/DB/Table/ItemTable.cs CenterServer/DB/Table/EquipTable.cs CenterServer/DB/Table/EquipXLGeneTable.cs CenterServer/DB/Modle/CentRoleModel.cs ProtoBuf/proto/ResultEntity.proto Network/Proto/ResultEntity.cs` 无空白错误；仅有既有 LF/CRLF 提示。
+- 构建命令：`dotnet build LYF_Server/CenterServer/CenterServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/CenterServer/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/CenterServer/obj/"`。
+- CenterServer 结果：0 错误，1 条既有警告：`MMoRpgCommon/Item/ItemDesc.cs:80` 的 `ToString()` 隐藏基类成员。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/GameServer/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/GameServer/obj/"`。
+- GameServer 结果：0 错误，4 条既有警告：`ItemDesc.cs:80`、`ShopStatic.cs:36`、`OnlineRole.cs:88`、`ShopStatic.cs:8`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/GM_Game/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/GM_Game/obj/"`。
+- GM_Game 结果：0 错误，21 条既有警告，主要是 `System.Numerics.Vectors` 程序集版本冲突、`Singleton<T>` 与 Network.dll 重名、过时 Unity API 和未使用字段。
+- 测试结论：通过。构建产物位于 `D:/unitypro/LYFMMORGP/_temp/item-uid-test-20260905/`，未经产品经理确认不得清理。
+- 未验证：没有连接实际数据库，无法验证既有表列已迁移、历史行读取和复合键约束；未进行 Center/Game/Gate/Unity 四端登录联调。
+## 2026-09-05 服务端分类 UID 生成器验证
+
+- 独立行为测试：六种业务类型均正确写入高 3 位；`UID_Max` 和保留值 `6` 均抛出 `ArgumentOutOfRangeException`；10 万次并发生成的 UID 均为正数且无重复；时钟回拨和序列耗尽路径通过。
+- 静态检查：`UIDType` 只含用户指定的七个成员；`UIDHelper` 仅公开 `ConfigureServerInstanceId(int)`、`CreateUID(UIDType)` 和 `EpochUtc`，未包含解析 API；未修改数据库、协议、物品或其他业务文件。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/uid-generator-typed-test/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/uid-generator-typed-test/obj/"`。
+- 构建结果：失败，既有 `LYF_Server/MMoRpgCommon/Item/ItemBase.cs:44` 的未完成 C# 语法触发 `CS1585`，未报告 `UIDHelper` 或 `UIDType` 错误。该文件第 14、34 行保留旧 C++ 调用 `UIDHelper::CreateUID(UID_Item)`，待该物品文件被单独修复时改为 `UIDHelper.CreateUID(UIDType.UID_Item)`。
+- 空白检查：`git diff --check -- LYF_Server/MMoRpgCommon/UID/UIDHelper.cs LYF_Server/MMoRpgCommon/UID/UIDType.cs LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj` 通过，仅有既有 LF/CRLF 提示。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/uid-generator-simple/`、`D:/unitypro/LYFMMORGP/_temp/uid-generator-typed/` 和 `D:/unitypro/LYFMMORGP/_temp/uid-generator-typed-test/`，未经产品经理确认不得清理。
+- 未执行：未做跨进程重启、真实多逻辑服部署或物品 UID 持久化联调；同一实例 ID 的并发进程必须由部署层避免。
+
+## 2026-09-05 RItem 到 ItemBase 只读架构解析
+
+- 检查类型：只读代码与静态结构对比，未修改业务源码、协议、数据库或客户端插件，未产生构建产物。
+- 参考证据：`ro_item.h` 中 `RItem` 持有 `uint64_t item_uid_` 与独立 `uint32_t item_id_`；`ro_item_container.cpp` 使用 `item->GetUID()` 作为容器 `itemmap_` 主键，`GetItemUIDByPos` 与 `GetItemItemIDByPos` 分别返回实例 UID、配置 ID。
+- 当前问题：`MMoRpgCommon/Item/ItemBase.cs` 含未完成 C++ 语法和私有 UID，无法满足 `ItemFactory` 赋值；`RoItemContainer.cs` 的 UID 查询、主键、重复检查、移出和按位置移出均使用 `ItemID`，将配置 ID 错当为实例 UID；`ItemFactory.cs` 同文件定义四个顶级类型，违反一类型一文件约束。
+- 设计验收：已在 `CURRENT_TASK.md` 落档字段、API、初始化/复制语义、双索引容器规则、协议/数据库 UID 类型迁移边界、明确排除功能及后续五角色任务拆分。
+- 未验证：本轮未构建。待实现后必须验证 Common、GameServer、UID 唯一索引、同配置多实例、格位双索引、数量归零移出、绑定差异堆叠和非法 UID 拒绝。
+
+## 2026-09-05 RItem 风格 ItemBase 实现验证
+
+- 修复：`ItemBase.cs` 已移除未完成的 C++ 占位语法，建立 `long ItemUID`（实例）与 `int ItemID`（配置）的明确边界；默认构造通过 `UIDHelper.CreateUID(UIDType.UID_Item)` 生成 UID，工厂加载已有实例时覆盖为持久化 UID。
+- 容器验证：`RoItemContainer` 主索引为 `Dictionary<long, ItemBase>`；按格位查询 UID 返回 `ItemUID`，按格位查询配置返回 `ItemID`；放入、取出、按 UID 查询和数量归零移除均按实例 UID 操作；排序和数量统计仍使用配置 ID。
+- 静态检查：未发现 `RoItemContainer` 继续以 `ItemID` 作为字典键、UID 查找键或按位置移出参数；`git diff --check` 未发现空白错误，仅输出既有 LF/CRLF 提示。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/ritem-fix-20260905/common-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/ritem-fix-20260905/common-obj/"`。
+- Common 结果：0 错误，保留既有 `ItemDesc.ToString()` 隐藏 `object.ToString()` 的 1 条警告。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/ritem-fix-20260905/game-bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/ritem-fix-20260905/game-obj/"`。
+- GameServer 结果：0 错误，保留既有 4 条警告：`ItemDesc.ToString()`、`ShopStatic.GetType()`、`ShopStatic.type` 未赋值和 `OnlineRole._roleBaseAttrEntity` 未使用。
+- 未验证：未连接数据库加载 64 位 UID，也未修改客户端协议；同配置多实例、绑定差异堆叠和真实角色背包持久化加载待后续专项测试。
+
+### 成员封装复验
+
+- 静态检查：`ItemBase` 的实例 UID、配置 ID、归属、位置、数量、状态、价格和时间均为私有字段；`ItemFactory` 与 `RoItemContainer` 通过 `Get/Set` 方法访问，不存在对这些成员的公开属性读写。
+- 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/itembase-encapsulation-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/itembase-encapsulation-20260905/obj/"`，0 错误，保留既有 4 条警告。
+
+### ChangeReason 类型拆分验证（2026-09-06）
+
+- 静态检查：`Item.cs` 已不再定义 `ChangeReason` 和 `RExtraParamType`；两类分别位于同名文件，`ChangeReason` 的 7 个字段均为私有并带中文注释。
+- 构造与接口：无参构造默认主/次原因 NONE、怪物类型 `-1`、附加参数 `0`、流水号空串、经验倍率 `1.0`；单参和双参构造及 Getter/Setter、三种隐式转换均已实现。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --configuration Debug --no-restore -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/change-reason-build/"`。
+- 结果：0 个错误，保留既有 `ItemDesc.ToString()` 和 `IdipParam` 未使用字段警告；未执行真实商城/背包联调。
+- GameServer 联编尝试：被工作区现有 `GameServer/Entity/OnlineRole.cs` 中未完成的 C++ 风格代码阻断（`item_count`、`item_id` 等符号及指针运算错误），这些错误与本次 `ChangeReason` 类型拆分无关，未修改该文件。
+
+### 私有字段注释复验
+
+- 静态检查：`ItemBase` 的 `_itemUid`、`_itemId`、`_roleId`、`_bagType`、`_bagIndex`、`_count`、`_itemSign`、`_moneyType`、`_totalPrice`、`_createTime`、`_expireTime` 与 `_extraData` 均有独立中文语义注释。
+- 构建：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/itembase-field-comments-20260905/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/itembase-field-comments-20260905/obj/"`，0 错误，保留既有 `ItemDesc.ToString()` 警告。
+
+## 2026-09-06 角色商城购买记录登录同步代码审查与构建
+
+- 审查类型：只读代码审查，未修改客户端、服务端、协议或数据库业务文件。
+- 协议生成校验：使用 `LYF_Server/ProtoBuf/bin/protoc.exe` 将 `ProtoBuf/proto/RequestEntity.proto`、`ResultEntity.proto` 生成到 `D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/proto-generated/`；生成的两个 C# 文件与 `LYF_Server/Network/Proto/` 对应文件 SHA256 完全一致。确认 `RoleShopPurchaseInfoRet`、`RoleShopPurchaseInfo`、`CMD_RoleShopPurchaseInfoCode` 及字段 `PurchaseInfoList` 均存在。
+- 静态链路检查：Center `CenterRoleCtrl.cs:54-72` 在进入世界后发送商城回包；`CentRoleModel.cs:112-158` 查询并映射 `RoleShopPurchaseTable`；GameServer `GameMessageProtocolRegister.cs:57-59` 注册 `ForwardToGate`，`RoleShopPurchaseInfoHandler.cs:41-72` 按复合会话查找角色并缓存；Gate `GateServerApp.cs:32` 注册协议，`GateClientResponseForwarder.cs:87-89` 解析回包；客户端 `NetSocketMgr.cs:30-31` 提前注册，`ShopMgr.cs:98-127` 解析并保存快照。相关业务文件每个顶级类型独立，新增关键逻辑含中文注释。
+- P1 未通过项：`RoleManager.cs:120-132` 发送 `EnterWroldReq` 到 Center 前未校验请求角色与当前复合会话；由于 `ClientMessageManager.cs:180-188` 在 Handler 前执行 `ForwardToGate`，仅依赖 `RoleShopPurchaseInfoHandler` 的角色 ID 检查不能阻止其他角色商城记录泄露给 Unity。未进行攻击性联网测试，依据代码路径判定为阻塞项。
+- P2 未通过项：Gate 对 `CMD_RoleShopPurchaseInfoCode` 的失败结果只透传专用回包，不发送 `CMD_ErrCode`；客户端 `ShopMgr` 仅日志处理失败，不展示 Tips。该行为与“网关校验失败统一错误码提示”的既有约束不一致。
+- P2 风险项：客户端 `ShopMgr.ReplacePurchaseRecords` 未校验 `RoleShopPurchaseInfo.RoleId`；数据库实体注释仍引用不存在的 `NpcID`，表名仍是 `roleNpcShopPurchase`。需要确认数据库是否已完成从 NPC 维度到 Shop 维度的迁移，当前不能据此判定数据库实测通过。
+- 构建命令与结果：
+  - `dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/Network/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/Network/obj/"`：0 错误，保留 4 条既有 MMoRpgCommon 警告。
+  - `dotnet build LYF_Server/CenterServer/CenterServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/CenterServer/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/CenterServer/obj/"`：0 错误，保留 4 条既有警告。
+  - `dotnet build LYF_Server/GateServer/GateServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GateServer/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GateServer/obj/"`：0 错误，保留 4 条既有警告。
+  - `dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GameServer/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GameServer/obj/"`：失败 2 个错误，均为既有 `GameServer/Entity/Components/RoItemComponent.cs:103` 的 C++ 风格 `ItemDesc(item_id, item_count)` 残留，不属于本次商城同步改动。
+  - `dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GM_Game/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/GM_Game/obj/"`：0 错误，保留 21 条项目既有 Unity/引用警告。
+- 产物与限制：构建、protoc 和反射辅助文件均位于 `D:/unitypro/LYFMMORGP/_temp/role-shop-review-20260906/`；未连接真实数据库，未启动 Center→Game→Gate→Unity 四端联调，未验证断线、重连、空记录和多 Gate 会话隔离。客户端插件 `LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll` 与本次 Network 构建 DLL SHA256 不同（目标商城消息 API 可反射到，但插件整体不是当前构建产物），后续应由客户端开发同步并记录备份。
+- 测试结论：协议生成和三端/客户端独立编译通过；商城登录同步审查不通过，必须先处理 P1 会话绑定问题，再复测 Gate 错误码、客户端角色校验和真实四端链路。
+
+## 2026-09-06 BagTransition 背包扩容链路验证
+
+- 静态检查：确认 `KnapsackService.cs` 已删除，`GameServer.csproj` 不再包含其编译项；扩容代码仅使用 `RolePackPlain`、`RolePackEquip`、`RolePackConsume`、`RolePackMaterial`，未修改协议。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-transition-20260906/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-transition-20260906/obj/"`。
+- 构建结果：GameServer、Network、MMoRpgCommon 均成功，0 个错误；保留 7 条既有警告（ItemDesc.ToString、IdipParam 未使用字段、ShopStatic、OnlineRole 字段）。
+- 未执行：未连接真实数据库，未进行扩容请求的四端联调、容量并发和 Center 持久化失败重试验证。
+
+## 2026-09-06 背包容器拆分与容量封装验证
+
+- 静态检查：`GameServer/Service/item` 下事务与容器顶级类型均已按同名文件拆分；`ShortCutBag` 唯一私有字段有中文注释；无 `OpenedKnapsackGridCounts` 外部写入。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-transition-container-review-20260906/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/knapsack-transition-container-review-20260906/obj/"`。
+- 构建结果：GameServer、Network、MMoRpgCommon 成功，0 错误；保留 7 条既有警告（ItemDesc、IdipParam、ShopStatic、OnlineRole）。
+- 空白检查：本次拆分文件未发现空白错误；全量 `GameServer` 差异仍报告 `Entity/OnlineRole.cs:100-101` 两处既有行尾空白，本次未修改对应行。
+- 未执行：未连接数据库，未验证真实扩容请求及 Center 持久化失败重试。
+
+## 2026-09-06 Luban 物品包类别读取验证
+
+- 静态映射：`ItemConfigBase` 暴露只读 `KnapsackType PackType`；`NormalItemConfig` 读取 `ItemInfo.PackType`，`WeaponItemConfig` 读取 `EquipInfo.PackType`。`NormalizePackType` 仅接受 `RolePackPlain`、`RolePackEquip`、`RolePackConsume`、`RolePackMaterial`；非法配置会记录中文警告，并按配置来源回退到总览包或装备包。
+- 查询接口：`LubanMgr.GetItemPackTypeById(int itemId)` 返回 `KnapsackType?`；未找到统一物品配置时返回 `null`，不会把未找到误判为零值 `RolePackPlain`。
+- 结构检查：`ItemConfigBase.cs`、`NormalItemConfig.cs`、`WeaponItemConfig.cs` 各只包含一个顶级类型；`Network.csproj` 已显式包含三个文件。
+- Network 构建命令：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/luban-packtype-20260906/Network/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/luban-packtype-20260906/Network/obj/`。
+- Network 构建结果：0 错误，4 条既有 `MMoRpgCommon` 警告（`ItemDesc.ToString` 隐藏、`IdipParam` 三个未使用字段）；产物位于 `D:/unitypro/LYFMMORGP/_temp/luban-packtype-20260906/Network/`。
+- GameServer 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/luban-packtype-20260906/GameServer/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/luban-packtype-20260906/GameServer/obj/`。
+- GameServer 构建结果：0 错误，保留上述 4 条公共库警告及 `ShopStatic.GetType` 隐藏、`ShopStatic.type` 未赋值、`OnlineRole._roleBaseAttrEntity` 未使用 3 条既有警告。
+- 空白检查：新增解析文件和项目清单无空白错误；全范围检查仍报告 `LubanMgr.cs:29` 已存在的行尾空白，本次未修改该行。
+- 运行时配置读取：通过构建产物加载现有 Luban bytes 并执行 `LubanMgr.Init()`；普通物品 `2001` 的原始 `PackType=0` 查询为 `RolePackPlain`，装备 `21001` 的原始 `PackType=1` 查询为 `RolePackEquip`，两类映射均正确。
+- 未执行：未启动完整服务端，也未验证物品按包类别进入对应容器；构建产物由产品经理确认后再清理。
+
+## 2026-09-06 Luban 装备表生成物返工验证
+
+- 正式生成命令：在 `D:/unitypro/LYFMMORGP/Luaban/MiniTemplate` 执行 `dotnet Luban/Luban.dll -t all -c cs-bin -d bin --conf .\\luban.conf -x outputCodeDir="D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/output/Code" -x outputDataDir="D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/output/Data"`；生成成功。
+- 字段顺序：`EquipInfo` 依次读取 `ItemTypeId`、`ItemMainType`、`ItemSubType`、`EquipType`、`EquipName`、`Icon`、`Attribute`、`NeedLevel`、`Source`、`SellPrice`、`SellCurrencyType`、`Job`、`BCanBeStacked`、`CanStrengthen`、`MaxStrengthenLevel`、`MaxGemLevel`、`GemSlotCount`、`Des`、`PackType`、`GeneId0-5`、`GeneValue0-5`；不再包含旧 `Desc`。
+- 同步校验：重新生成的 `EquipInfo.cs`、`TbEquipInfo.cs`、`Tables.cs` 与正式目录同名文件 SHA256 一致。生成的 `tbequipinfo.bytes` 与原正式 bytes 不同，已安全同步；同步后的二者 SHA256 均为 `26C9F4624900A1CCA34A2721968CA5498908CA9733246EA8EFCA508F2C71A25A`。
+- 占用检查：系统中存在 Unity、Unity Hub 和 WPS 进程；对正式 `tbequipinfo.bytes` 的独占读写打开成功，因此无文件锁。未关闭、终止或重启任何进程。
+- 适配与空白检查：`WeaponItemConfig.cs` 未发现 `config.Desc` 或其他已删除 `EquipInfo.Desc` 引用，仅使用 `EquipName`、`Des`、`PackType` 等现存字段；`LubanMgr.cs`、适配文件与生成代码的 `git diff --check` 通过。
+- Network 构建：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/Network/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/Network/obj/`，0 错误，保留 `ItemDesc.ToString` 隐藏和 `IdipParam` 三个未使用字段共 4 条既有警告。
+- GameServer 复测：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/GameServer-retest/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/luban-packtype-regeneration-20260906/GameServer-retest/obj/`，0 错误，保留上述 4 条公共库警告及 `ShopStatic.GetType` 隐藏、`ShopStatic.type` 未赋值、`OnlineRole._roleBaseAttrEntity` 未使用共 7 条既有警告。
+- 运行时读取：通过构建的 Network 程序集执行 `LubanMgr.Init()` 加载正式 bytes；装备 `21001` 读取到 `EquipName=清池梦查·湖字主武器`、`CanStrengthen=1`、`MaxStrengthenLevel=80`、`MaxGemLevel=6`、`GemSlotCount=2`、非空 `Des`、原始 `PackType=1`、`GeneId0=3`、`GeneValue0=1236`，`GetItemPackTypeById` 返回 `RolePackEquip`。
+- 未执行：未启动完整 Center/Gate/Game/Unity 链路，未验证物品按包类别进入对应容器；本任务的生成、构建及备份文件保留在 `_temp/luban-packtype-regeneration-20260906/`，等待产品经理确认后清理。
+
+## 2026-09-06 Luban TimeType 生命周期字段验证
+
+- 表格验证：使用 artifact-tool 从临时只读副本检查工作簿结构和渲染，确认 `#ItemInfo.xlsx` 的 `TimeType` 位于 `PackType` 后；`#EquipInfo.xlsx` 的 12 个非空装备 sheet 均位于 `PackType` 后，空 `Sheet1` 未改动。字段三行依次为 `TimeType`、`int`、`物品生命周期`，所有数据行为数值 `0`。写入正式表前以 SHA256 对比确认正式工作簿未被用户改动；原始工作簿备份在 `D:/unitypro/LYFMMORGP/_temp/time-type-20260906/`。
+- Luban 生成：在隔离的 `MiniTemplate` 副本执行 `dotnet Luban/Luban.dll -t all -c cs-bin -d bin --conf .\\luban.conf -x outputCodeDir="D:/unitypro/LYFMMORGP/_temp/time-type-20260906/output/Code" -x outputDataDir="D:/unitypro/LYFMMORGP/_temp/time-type-20260906/output/Data"`，成功。生成的 `ItemInfo.cs`、`EquipInfo.cs` 均按 `TimeType -> PackType -> GeneId0` 读取；仅同步这两个生成 C# 文件及 `tbiteminfo.bytes`、`tbequipinfo.bytes` 到正式 Network 目录，SHA256 一致。
+- 静态映射：`ItemConfigBase` 新增只读 `int TimeType` 与中文注释、构造参数；`NormalItemConfig` 映射 `ItemInfo.TimeType`，`WeaponItemConfig` 映射 `EquipInfo.TimeType`；三个文件保持一类型一文件，项目文件已存在其编译登记，无需修改。
+- Network 构建：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/time-type-20260906/Network/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/time-type-20260906/Network/obj/`，0 错误，保留 `ItemDesc.ToString` 和 `IdipParam` 的 4 条既有警告。
+- 运行时读取：使用构建出的 `Network.dll` 执行 `LubanMgr.Init()` 加载正式 bytes；普通物品 `2001` 与装备 `21001` 的原始 `TimeType` 均为 `0`，对应统一 `ItemConfigBase.TimeType` 也均为 `0`。
+- GameServer 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -o D:/unitypro/LYFMMORGP/_temp/time-type-20260906/GameServer/bin -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/time-type-20260906/GameServer/obj/` 被现有 `GameServer/Service/item/PackageLogic/BagGiveItemTransition.cs:46` 的 `CS1503`（`long` 无法转换为 `int`）阻断；未报告本次 TimeType 改动相关错误。
+- 代码审查复核：从正式工作簿再次运行 Luban 到 `_temp/time-type-review-regenerate-20260906/`，`ItemInfo.cs`、`EquipInfo.cs`、`TbItemInfo.cs`、`TbEquipInfo.cs`、`Tables.cs` 与两个 bytes 的 SHA256 均和正式文件一致；`ItemConfigBase.TimeType` 为带中文注释的只读 `int`，普通物品和装备适配器均映射该字段；一类型一文件和 `git diff --check` 通过。
+- 测试 Agent 独立复验：使用 artifact-tool 严格校验正式工作簿，普通物品表 `TimeType` 位于第 5 列，装备 12 个业务 Sheet 位于第 20 列，均为唯一字段且类型为 `int`、注释为“物品生命周期”、所有数据行为整数 `0`；空 `Sheet1` 未修改。独立加载正式 bytes 的运行时检查输出 `item=0,equip=0,itemConfig=0,equipConfig=0`（配置 ID `2001/21001`）。Network 构建 0 错误、4 条既有警告；GameServer 首错仍为既有 `BagGiveItemTransition.cs:46` 的 `CS1503 long->int`，未引入新的 TimeType 相关错误。严格脚本和日志保留在 `_temp/time-type-test-20260906/`。
+
+## 2026-09-06 ItemDataListDB 延迟物品持久化解析
+
+- 本次为只读架构解析，未执行构建或测试，未修改任何业务文件。
+- 依据用户提供的 `ItemDataListDB` 代码：新增/删除物品仅修改 `size_` 并调用 `SetNeedSave()`；该类没有网络对象、消息队列或发送调用，因此不能直接完成中心服通知。`Save2Db` 的函数体未提供，具体序列化细节无法验证。
+
+## 2026-09-06 延迟物品持久化审查返工验证
+
+- Network、GameServer、CenterServer 均隔离构建通过，0 错误；警告均为项目既有警告，产物位于 `_temp/item-persistence-rework-20260906/`。
+- 静态校验确认负重接口及 `BagMaxLoadChangeTransition` 已移除；容器容量和格子校验保留；`git diff --check` 未发现本次修改空白错误。
+- 断开流程已接入网关会话事件队列，角色在 ACK 前不会释放；同版本快照会比较内容后再幂等确认。
+- 未执行真实 MySQL、四端联调及客户端构建；本轮未修改客户端文件。
+
+## 2026-09-06 物品最大堆叠数量改造验证
+
+- 表格：`#ItemInfo.xlsx`、`#EquipInfo.xlsx` 已将 `CanStack`/`bCanBeStacked` 改为 `MaxStackCount`，字段类型保持 `int`，不可堆叠值为 1，普通可堆叠物品默认值为 99；原始文件备份和生成过程均在 `_temp/stack-count-20260906/`。
+- Luban：重新生成并同步 `ItemInfo.cs`、`EquipInfo.cs`、`TbItemInfo.cs`、`TbEquipInfo.cs`、`Tables.cs` 和两个 bytes；运行时字段统一为 `MaxStackCount`，未发现旧字段引用。
+- Network、GameServer、CenterServer 隔离构建均 0 错误；Network 4 条、GameServer 7 条警告均为既有警告。
+- 静态行为检查：`AddItem` 计算已有堆叠可用容量，预检新格子数，按 `MaxStackCount` 循环创建实例，并在每次实例变更后设置脏状态；`MaxStackCount=1` 时数量 N 会创建 N 个实例。
+- 未执行真实 MySQL 和四端联调；未修改客户端文件。构建产物保留在 `_temp/stack-count-20260906/build/`，待产品经理确认后清理。
+
+## 2026-09-06 AddItem 堆叠计算溢出复验
+
+- `RoItemComponent.AddItem` 的已有堆叠容量累计、剩余数量和所需格子计算已改用 `long`；转换为 `int` 前增加最大值检查。
+- Network、GameServer、CenterServer 隔离构建均 0 错误；警告数量与项目既有警告一致。产物位于 `_temp/stack-count-overflow-20260906/`。
+- 未执行真实数据库和四端联调；未修改客户端文件。
+
+## 2026-09-06 最大堆叠数量与负重移除审查复验
+
+- 表格静态检查：`#ItemInfo.xlsx` 的 `MaxStackCount` 数据均为 99；`#EquipInfo.xlsx` 的 12 个业务 Sheet 数据均为 1，字段类型均为 `int`。
+- Luban 重生成：在 `_temp/stack-count-review-20260906/luban/` 隔离生成成功；5 个生成 C# 文件及两个 bytes 与正式文件 SHA256 一致。
+- 负重清理：正式源码范围未发现 `CanStack`、`bCanBeStacked`、`BCanBeStacked`、`KnapsackService`、`BagMaxLoad`、`MaxLoad`、`LoadWeight`、`负重` 或 `重量` 残留。
+- 构建：`dotnet build LYF_Server/Network/Network.csproj`、`GameServer/GameServer.csproj`、`CenterServer/CenterServer.csproj` 均成功，0 错误；构建输出位于 `_temp/stack-count-review-20260906/`。
+- 审查阻塞：`RoItemComponent.ModifyItem` 正增量没有校验 `MaxStackCount`，可突破单实例堆叠上限；当前结论为不通过，详见 `_temp/stack-count-review-20260906/review.txt`。
+- 未执行：真实数据库和四端联调；待后端修复后补做 `MaxStackCount=1/99`、已有堆叠接近上限、超过上限、拆分及容量不足原子性测试。
+## 2026-09-06 ItemBase 物品状态位接口验证
+
+- 修改文件：`LYF_Server/MMoRpgCommon/Item/ItemBase.cs`。新增 `SetSign(SignBit bit, bool sign)` 与 `GetSign(SignBit bit)`，分别对应 C++ 的状态位置位/清位和状态位读取。
+- 构建命令：`dotnet build MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/item-sign-methods-20260906/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/item-sign-methods-20260906/obj/"`。
+- 构建结果：通过，0 错误。保留 4 条既有警告：`ItemDesc.ToString()` 隐藏成员，以及 `IdipParam` 的 3 个未使用字段。
+- 静态验证：`SetSign` 使用 `1 << (int)bit` 建立掩码，设位使用 `|`，清位使用 `& ~`，仅影响目标状态位；`GetSign` 通过右移及 `& 1` 返回目标位。现有 `SignBit` 为 `0..10`，位移合法。
+- 格式验证：`git diff --check -- MMoRpgCommon/Item/ItemBase.cs` 通过；仅报告既有 LF/CRLF 转换提示。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/item-sign-methods-20260906/`，待产品经理确认后清理。
+- 代码审查：通过，未发现问题。`SetSign` 的设位和清位仅影响目标位，`GetSign` 与 C++ 的右移掩码判断等价；`BindBit` 与既有 `SetBound` 语义兼容。
+
+## 2026-09-06 RoItemComponent 代码注释补充验证
+
+- 测试目标：确认 RoItemComponent 类、字段、属性、方法及关键逻辑均已补充简洁中文注释，且仅新增注释未改变任何业务逻辑。
+- 修改范围：仅 LYF_Server/GameServer/Entity/Components/RoItemComponent.cs；ItemDataListDB.cs 已有较完整注释，本轮未修改。
+- 注释覆盖：类级 <summary> 职责说明；构造函数、Owner 属性、Initialize、GetContainer、容量管理（Set/Load/ApplyOpenedGridCount）、LoadKnapsack 登录装载、GetItemNum、AddItem 堆叠填充、DeleteItem/ModifyItem/SwapItem 变更入口、OnItemChange 脏标记统一入口、NeedSave/Save/OnSaveAcknowledged 持久化链路、GetDefineContiner/LoadItems/CreateLoadedItem/FindContainer 内部工具、NextChangeVersion/MarkDataListChanged/SafeAddPrice 版本与安全计算，均补充 XML 注释或行内注释。
+- 关键逻辑行内注释：AddItem 的 long 溢出保护与空格预检、LoadKnapsack 的 UID 去重与版本恢复、SwapItem 的跨容器回滚、MarkDataListChanged 的 swap 双容器脏标记、SafeAddPrice 的溢出判断。
+- 构建命令：`dotnet build D:\unitypro\LYFMMORGP\LYF_Server\LYF_Server.sln --no-restore --configuration Debug`，输出重定向至 `D:/unitypro/LYFMMORGP/_temp/build_roitem_comment_20260906.log`。
+- 构建结果：成功，0 个错误；保留 8 条既有警告（MMoRpgCommon 4 条：ItemDesc.ToString 隐藏、IdipParam 三个未使用字段；LoginServer 1 条：异步调用未等待；GameServer 3 条：ShopStatic.GetType 隐藏、ShopStatic.type 未赋值、OnlineRole._roleBaseAttrEntity 未使用），均与本次注释修改无关。
+- 静态检查：仅新增注释行，未修改任何可执行代码、方法签名、字段类型或控制流；已有注释全部保留。
+- 未执行项：未启动 MySQL、Redis、四端服务器和 Unity 客户端进行联网联调；本次为纯注释补充，不影响运行时行为。
+- 临时产物：构建日志保留于 `D:/unitypro/LYFMMORGP/_temp/build_roitem_comment_20260906.log`，待产品经理确认后清理。
+
+## 2026-09-06 CRoleWriteTask 代码注释补充验证
+
+- 测试目标：确认 `CRoleWriteTask` 类、字段、方法及关键逻辑均已补充简洁中文注释，且仅新增注释未改变任何业务逻辑。
+- 修改范围：仅 `LYF_Server/CenterServer/DB/Task/CRoleWriteTask.cs`。
+- 注释覆盖：类级 `<summary>` 职责说明（CenterServer 数据库写任务、事务保存角色物品/装备/基因数据、版本幂等与过期拒绝）；构造函数、`_request`/`_serverBase`/`_basePackage` 字段；Execute 主流程、ValidateRequest 参数校验、SaveItemDataLists 删旧写新、SnapshotMatches 幂等比对、Reply 回包、IsValidBagType、FromUtcTicks 时间转换，均补充 XML 注释或行内注释。
+- 关键逻辑行内注释：Execute 的事务开启、版本三分支校验（同版本幂等/过期拒绝/新版本写入）、异常回滚不覆盖原异常；SaveItemDataLists 的删除顺序（词条→装备→物品）与插入顺序（物品→装备→词条）、过期时间 null 语义；SnapshotMatches 的数量校验、UID 字典逐字段比对、扩展记录双向存在性校验、最终记录数一致性。
+- 构建命令：`dotnet build D:\unitypro\LYFMMORGP\LYF_Server\LYF_Server.sln --no-restore --configuration Debug`，输出重定向至 `D:/unitypro/LYFMMORGP/_temp/build_crolewrite_comment_20260906.log`。
+- 构建结果：成功，0 个错误，0 个警告。
+- 静态检查：仅新增注释行，未修改任何可执行代码、方法签名、字段类型或控制流；已有注释全部保留。
+- 未执行项：未启动 MySQL、Redis、四端服务器和 Unity 客户端进行联网联调；本次为纯注释补充，不影响运行时行为。
+- 临时产物：构建日志保留于 `D:/unitypro/LYFMMORGP/_temp/build_crolewrite_comment_20260906.log`，待产品经理确认后清理。
+
+## 2026-09-06 虚拟货币背包验证
+
+- 新增 `CurrencyType`、`RoleCurrencyTable`、`RoleCurrencyComponent`；货币按角色和类型独立保存，余额使用 `long`，不占用物品格子。
+- 登录回包和保存协议增加 `CurrencyInfo` 列表；CenterServer 负责读取/初始化/持久化，GameServer 装载并纳入现有延迟保存与 ACK 清脏链路。
+- 商城购买按货币类型聚合总价，先原子扣款，再发放物品；发放失败返还本次扣款。
+- 版本边界：货币变更会读取物品组件当前版本并生成更高版本，货币单独修改时不会因角色已有较高物品版本而被拒绝。
+- Network、GameServer、CenterServer 均构建成功，0 错误；产物位于 `D:/unitypro/LYFMMORGP/_temp/currency-build-20260906/final2/`。
+- 未执行真实 MySQL 和四端联调；未修改客户端，Unity 网络程序集和货币 UI 待后续同步。
+
+## 2026-09-06 虚拟货币背包代码审查返工验证
+
+## 2026-09-06 虚拟货币并入 BagTransition 验证
+
+- 修改 `RoItemComponent` 持有货币虚拟背包状态，删除 `RoleCurrencyComponent` 编译项和实现文件。
+- 修改 `BagTakeItemTransition`/`BagGiveItemTransition`，按 `ItemDesc + KnapsackType` 统一处理货币扣除与发放；商城改为通过事务入口扣款。
+- 登录、保存快照、ACK 清脏和释放条件均已切换到 `RoItemComponent`。
+- Network、GameServer、CenterServer 隔离构建均通过，0 错误；保留项目既有警告。
+- 未执行真实 MySQL 和四端联调；货币 ItemDesc 使用 `CurrencyType` 数值作为虚拟物品标识，后续应与完整虚拟物品枚举统一。
+
+- 静态验证：`RoleNetSender` 的空请求判断同时检查物品和货币列表；`OnlineRole.SaveAllMoudle()` 不再使用会跳过货币组件的短路调用；`CanDispose()` 同时检查物品、货币脏状态。
+- 商城边界：每项购买数量限制为 `1..999`；价格乘法、同货币总价累加和奖励数量均在扣款前执行上限校验，奖励数量严格限制在现有 `int` 物品数量模型内。
+- 构建：Network、GameServer、CenterServer 分别执行 Debug 隔离构建，全部成功且 0 错误。Network/CenterServer 各 4 条、GameServer 7 条既有警告，与本次修改无关。
+- 格式检查：`git diff --check` 通过，仅提示 `OnlineRole.cs` 后续可能进行 LF/CRLF 行尾转换，不属于空白错误。
+- 未执行：真实 MySQL 货币读写事务、商城购买运行测试及 Center/Game/Gate/Unity 四端联调；本轮未修改客户端。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/currency-review-fix-20260906/final/`，待产品经理确认后清理。
+
+## 2026-09-06 RoleKanpsackInfo 协议结构重构验证
+
+- 协议：`RoleKanpsackInfoRet` 现在包含 `CmdCode` 与 `RoleKanpsackInfo`；后者包含背包容量、四类物品列表、穿戴栏、`SaveVersion` 和 `CurrencyInfoList`。`MainRoleInfo.money` 已删除，字段 3 保留为 reserved。
+- 生成：使用 `LYF_Server/ProtoBuf/bin/protoc.exe` 生成 `ResultEntity.cs`，输出保留在 `D:/unitypro/LYFMMORGP/_temp/role-knapsack-proto-20260906/`，并同步正式 Network 协议文件。
+- 引用：CenterServer `CentRoleModel` 组装嵌套背包信息和货币；GameServer `RoItemComponent.LoadKnapsack` 从嵌套对象装载容量、物品和货币；Unity 背包窗口、装备窗口和测试 Mock 已切换到嵌套对象。
+- 构建：Network、GameServer、CenterServer、GateServer Debug 隔离构建全部成功，0 个错误。保留项目既有警告：Network/CenterServer/GateServer 4 条、GameServer 7 条，均与本次协议重构无关。
+- 静态检查：旧的 `RoleKanpsackInfoRet` 直接背包字段仅剩生成代码历史文本和待清理的客户端引用检查目标；服务端无 `MainRoleInfo.Money` 使用。`git diff --check` 未发现本次修改空白错误。
+- 未执行：真实 MySQL、Center/Game/Gate/Unity 四端联调及 Unity 编辑器导入后的完整编译。
+- 审核结论：协议结构和引用迁移通过；生成代码内的三目表达式属于 protoc 自动生成内容，未手改。业务文件中存在历史遗留三目表达式（例如 `CentRoleModel.cs`、`RoItemComponent.cs`、客户端 UI），不由本次协议字段重构新增，后续可按全项目规则单独清理。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/role-knapsack-proto-20260906/`，待产品经理确认后清理。
+# 2026-09-07 类型文件拆分规则调整
+
+- 校验内容：确认 `AGENTS.md` 明确已有多类型文件不强制拆分，新设计的多个顶级类型必须按同名文件分别创建；`DECISIONS.md` 已同步记录该决策。
+- 验收结果：规范文件内容已写入，未修改业务代码；通过文本静态检查。
+- 未执行：本次仅调整协作规则，不需要编译、运行测试或 Unity 验证。
+
+
+# 2026-09-07 PackageLogic 合并到 BagTransition.cs 验证
+
+- 验证内容：21 个 PackageLogic 类型是否完整并入 `BagTransition.cs`、using 去重、注释骨架剥离、csproj 引用清理、源文件删除后全解决方案编译。
+- 类型完整性：对合并后文件执行 `^(public|...)(class|enum|struct|interface)\s+\w+` 正则，命中 22 条，与"原 BagTransition 基类 + 21 个源文件类型"一一对应，无遗漏。
+- using 校验：合并文件头部仅 `using System;` 与 `using System.Collections.Generic;` 两行，无重复 using。
+- 注释骨架校验：逐文件比对，原 14 处文件末尾孤立前向 `/// <summary>`（含 `BagTransition.cs` 原末尾"修改物品属性的事务骨架"）均已剥离；各类型自身文档注释全部保留。
+- csproj 校验：`GameServer.csproj` 中 `PackageLogic` 关键字 0 命中；`Service\item\BagTransition.cs` 引用保留。
+- 源文件夹：`PackageLogic` 目录下 .cs 文件计数为 0，文件夹本身保留。
+- 构建：`dotnet build D:\unitypro\LYFMMORGP\LYF_Server\LYF_Server.sln --no-restore --configuration Debug`，输出重定向 `_temp/build.log`，退出码 0；官方汇总"0 个错误，8 个警告"；`GameServer.exe` 正常产出。
+- 警告归属：8 条警告均为历史既有（`IdipParam` 未使用字段、`LoginCtrl` async 未 await、`ShopStatic.GetType` 隐藏基类成员、`OnlineRole._roleBaseAttrEntity` 未使用、`ShopStatic.type` 未赋值、`ItemDesc.ToString` 隐藏基类成员），分布于 MMoRpgCommon/LoginServer/GameServer 既有文件，本次未引入新警告。
+- 业务逻辑零变更：合并前后类型成员与方法体逐字一致，仅调整文件归属与排列顺序；C# 同文件内前向引用合法，编译通过证明类型解析无缺失。
+- 未执行：未启动服务器运行时联调；本次为纯文件合并重构，不改变运行行为。
+- 回滚路径：`_temp/PackageLogic_backup/` 含 21 个原始 .cs；`_temp/BagTransition.cs.bak` 与 `_temp/GameServer.csproj.bak` 为合并前快照。
+
+
+# 2026-09-07 MessageHandler 合并到 ClientMessageManager.cs 验证
+
+- 验证内容：7 个 MessageHandler 类型是否完整并入 `ClientMessageManager.cs`、using 去重、csproj 引用清理、子目录 handler 未误伤、源文件备份后全解决方案编译。
+- 类型完整性：对合并后文件执行 `^(public|...)(class|enum|struct|interface)\s+\w+` 正则，命中 8 条（`ClientMessageManager`/`CenterMessageRoute`/`IGameMessageHandler`/`GameMessageHandlerKey`/`GameMessageRegistration`/`GameMessageHandlerContext`/`GameCenterResponseForwarder`/`GameMessageProtocolRegister`），与"原 ClientMessageManager + 7 个源文件类型"一一对应，无遗漏。
+- using 校验：合并文件头部仍为 `using System;`/`using System.Collections.Concurrent;`/`using System.Collections.Generic;`/`using System.Threading;` 四行，无重复 using；`GameMessageHandlerKey.cs` 的 `using System;` 已被覆盖。
+- csproj 校验：`GameServer.csproj` 中 MessageHandler 根目录仅剩 `ClientMessageManager.cs` 一条；7 个被合并文件 0 命中；Login/Role/Knapsack/Shop 等子目录 12 个 handler 引用全部保留。
+- 目录校验：`MessageHandler` 根目录 .cs 文件计数为 1（仅 ClientMessageManager.cs）；Equip/Item/Knapsack/Login/Role/Shop/Task 子目录完整保留；备份目录 `_temp/MessageHandler_backup/` 含 7 个原始 .cs。
+- 构建：`dotnet build D:\unitypro\LYFMMORGP\LYF_Server\LYF_Server.sln --no-restore --configuration Debug`，输出重定向 `_temp/build2.log`，退出码 0；官方汇总"0 个错误，8 个警告"。
+- 警告归属：8 条警告与上一轮 PackageLogic 合并后完全一致（`IdipParam` 未使用字段、`LoginCtrl` async 未 await、`ShopStatic.GetType` 隐藏、`OnlineRole._roleBaseAttrEntity` 未使用、`ShopStatic.type` 未赋值、`ItemDesc.ToString` 隐藏），均为历史既有，本次未引入新警告。
+- 业务逻辑零变更：合并前后类型成员与方法体逐字一致，仅调整文件归属；C# 同文件内前向引用合法，编译通过证明类型解析无缺失。
+- 未执行：未启动服务器运行时联调；本次为纯文件合并重构，不改变运行行为。
+- 回滚路径：`_temp/MessageHandler_backup/` 含 7 个原始 .cs；`_temp/ClientMessageManager.cs.bak` 为合并前快照；`_temp/GameServer.csproj.bak2` 为本轮 csproj 修改前快照。
+# 2026-09-07 商城商品明细字段消歧验证
+
+- 协议修改：`BuyShopItem.shop_id` 改为 `shop_item_id`，注释明确对应 `ShopItemInfo.Id`；顶层请求 `shop_id` 继续对应 `ShopTable.Id`。
+- 代码同步：更新 `ShopStatic`、`RequestBuyShopItem`、`ShopCondition` 和 Unity `ShopMgr` 的商品明细访问；重新生成 `Network/Proto/RequestEntity.cs` 并同步 Unity 网络程序集。
+- 静态检查：服务端和客户端脚本范围内未发现商品明细继续访问旧 `ShopId` 的引用；顶层 `BuyShopItemReq.ShopId` 保留。
+- 构建结果：Network、GameServer Debug 构建均成功，0 个错误；共 8 个既有警告，与本次字段重命名无关。
+- 未执行：真实 Gate/Game/Center/Unity 四端商城购买联调。
+# 2026-09-07 商城商品字段改为 GoodsId 验证
+
+- 协议：`BuyShopItem` 字段已改为 `goods_id`，生成属性为 `GoodsId`；顶层 `BuyShopItemReq.ShopId` 未改变。
+- 引用：`ShopStatic`、`RequestBuyShopItem`、`ShopCondition`、Unity `ShopMgr` 已完成明细字段迁移。
+- 协议生成：已使用项目 `protoc.exe` 重新生成 `Network/Proto/RequestEntity.cs`。
+- 构建：GameServer 暂未通过，首个错误为 `LYF_Server/GameServer/Service/shop/ShopCondition.cs:49` 的不完整 `GetBuyLeftTimes` 调用；该错误与本次字段改名无关，未擅自修改用户已有逻辑。
+- 静态结果：旧商品明细 `ShopId` 引用已清理；临时生成文件保存在 `_temp/shop-goods-id-20260907/`。
+# 2026-09-07 RoleShopPurchaseInfo 商品字段消歧验证
+
+- 协议：`RoleShopPurchaseInfo.shop_id` 已改为 `goods_id`，生成 C# 属性为 `GoodsId`，对应 `ShopItemInfo.Id`。
+- 代码：CenterServer 使用 `GoodsId = row.ShopID`，Unity `ShopMgr` 按 `GoodsId` 建立限购记录索引；数据库实体暂保留 `ShopID`，因为本次未执行数据库列迁移。
+- 生成与构建：`ResultEntity.cs` 已重新生成；Network 构建成功，0 错误。GameServer 当前仍被 `RoleShopRecord.cs` 既有未完成代码（`role_`、`RoleCountManager`、`COUNT_TABLE_SHOP_TYPE`、`commodit_id`）阻断，与本次字段改名无关。
+- 插件：重新生成的 Network 程序集已同步到 Unity `Assets/GM_Game/Plugins/Net/Network.dll`。
+# 2026-09-07 RoleCountManager 验证
+
+- 参考解析：完成对 `roserver/gameserver/unit/role_count_manager.h/.cpp` 的职责和接口对照，保留 `(type,id)` 计数模型及上限/增量接口命名语义。
+- 代码验证：新增 `RoleCountType` 和 `RoleCountManager`，`OnlineRole` 初始化时注册组件；`RoleShopRecord` 登录装载时同步每日/永久购买次数，并通过管理器查询剩余次数。
+- 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug` 成功，0 个错误，8 个既有警告。
+- 未完成：尚未新增通用计数数据库表和登录/保存协议；当前周限购记录仍缺少独立周计数持久化字段，后续扩展表结构时再接入 `RoleCountManager` 的持久化链路。
+- 临时产物：构建输出位于 `D:/unitypro/LYFMMORGP/_temp/role-count-manager-20260907/`。
+# 2026-09-07 RoleCountType 简化验证
+
+- 静态检查：`RoleCountType` 仅保留 `Shop` 和 `Dungeon`；商城每日/每周/永久周期通过 `PurchaseLimitType` scope 区分，不再重复定义商城枚举值。
+- 行为接入：`RoleShopRecord` 装载和查询均使用 `RoleCountType.Shop`，每日与永久记录分别使用不同 scope。
+- 构建结果：GameServer Debug 构建成功，0 个错误，8 个既有警告。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/role-count-shop-scope-20260907/`。
+# 2026-09-07 CountTable 角色次数系统设计记录
+
+- 分析对象：参考项目 `CountTable.xlsm` 的 `Id/Action/Key/Name/RefreshType/RefreshNum/Limit/Active/TellClient` 九列及当前项目 `RoleCountManager`、商城限购记录和延迟保存链路。
+- 分析结果：确认参考项目按 `Action + Key` 管理次数，刷新配置与角色运行时计数分离；本项目拟采用相同模型。
+- 本轮未修改：未修改 Excel、proto、数据库实体或业务代码，未执行编译；设计方案已在本轮回复中说明。
+# 2026-09-07 CountInfo 配置表验证
+
+- 参考读取：使用表格工具读取 `F:/UnityPro/ro/Ro_cs422nb/config/Table/Excels/CountTable.xlsm`，确认参考表为 9 列 `Id/Action/Key/Name/RefreshType/RefreshNum/Limit/Active/TellClient`。
+- 新表：创建 `Luaban/MiniTemplate/Datas/#CountInfo.xlsx`，包含 16 条现有商城商品次数配置；`Key` 已修正为商品配置 `ItemId`（2001、2002、2003、2005、21001 等），不是商城行号。
+- 旧表：`#ShopItemInfo.xlsx` 已删除 `PurchaseLimitType`、`PurchaseLimitCount` 两列，后续列已左移，原商品、价格和商店关联字段保留。
+- 视觉检查：新表标题、类型行、注释行和数据区域渲染可读；临时预览与检查文件位于 `_temp/count-table-20260907/`。
+- 占用检查：修改前对 `#ShopItemInfo.xlsx` 执行独占读写检查成功；未关闭 WPS 进程。
+- 未执行：本轮未生成 Luban 代码，未修改服务端/客户端业务逻辑，未进行编译；等待策划确认 `PurchaseLimitType=2/3` 到 `RefreshType` 的最终映射。
+# 2026-09-07 角色次数系统后端实现
+
+- Luban 生成命令成功，产物暂存 `_temp/count-gen-20260907`，并同步 Network/LubanManage。
+- `dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug`：0 错误，5 个既有警告。
+- 未完成：次数快照协议、CenterServer RoleCountTable 写入链路和真实商城限购联调。
+
+# 2026-09-07 RoleCountManager 脏状态审查
+
+- 修复：RoleCountManager 使用变更代数，Save 不再提前清脏，Center ACK 且期间无新修改时才清理；OnlineRole.OnRoleDataSaved 接入次数 ACK。
+- 验证：dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug，0 错误，4 个历史警告。
+- 风险：次数登录读取仍未接入 RoleKanpsackInfo；RoleCountManager 刷新语义和旧 RoleShopRecord 仍需后端 Agent 完成统一。
+# 2026-09-07 GoodsId 字段消歧验证
+
+# 2026-09-07 角色组件基类与次数登录闭环验证
+
+## 审核返工验证
+- 组件基类已重命名为 `RoleComponentBase`，旧 `IRoleComponent` 不再参与工程。
+- `RoleComponentContainer` 统一保存、ACK 和角色级版本；次数快照支持空列表清库与同版本比较。
+- CenterServer 不再额外下发 `RoleShopPurchaseInfo`，商城次数统一随背包数据返回。
+- Debug 全解决方案构建：0 错误，4 条既有警告。
+
+- 协议：`RoleCountInfo` 移入 `ResultEntity.proto`，`RoleKanpsackInfo` 增加次数列表；已重新生成 Network 协议代码。
+- 组件：组件容器统一收集脏数据、保存快照和 ACK，OnlineRole 不再按物品/次数组件分别拼包。
+- Center/Game：CenterServer 查询 `RoleCountTable` 并在背包登录回包返回；GameServer 将列表装载到 `RoleCountManager`。
+- 结构：次数运行时使用 `Dictionary<Tuple<long,long>, RoleCountItemInfo>`，对应参考项目的 `map<pair<Action,Key>,...>`。
+- 构建：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug` 成功，0 错误，4 条既有警告。
+- 未执行：真实 MySQL 登录读取、保存 ACK 和 Gate/Game/Unity 四端联调。
+
+- Luban 生成成功，产物位于 `_temp/count-gen-goods-20260907`。
+- 全解决方案 Debug 构建成功：0 错误，5 个既有警告。
+- 静态检查确认 ShopItemParseInfo/LubanMgr 已使用 `GoodsId`；未执行客户端业务修改。
+- 追加检查：生成的 `ShopItemInfo`、`CountInfo` 均已使用 `GoodsId`，全解决方案复核构建 0 错误、0 警告，日志 `_temp/count-goods-verify.log`。
+
+# 2026-09-07 OnlineRole.SendToClient 构建验证
+
+- 验证范围：`LYF_Server/GameServer/Entity/OnlineRole.cs` 新增的本端客户端定向发送方法。
+- 静态检查：方法按顺序校验 `protoCode`、`GateSessionId`、`UnitySessionId` 和网关 `Session`；失败写入中文错误日志并返回 `false`，成功调用 `Session.SendData` 后返回 `true`；新增代码未使用三目运算符。
+- 构建命令：`dotnet build D:/unitypro/LYFMMORGP/LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug`。
+- 构建结果：成功，0 个错误、12 个既有警告；未新增编译警告。
+- 构建日志：`D:/unitypro/LYFMMORGP/_temp/build-online-role-send-to-client-20260907.log`，等待产品经理确认后清理。
+- 未执行：未启动 GateServer、GameServer 和 Unity 客户端进行真实发包联调。
+
+# 2026-09-07 OnlineRole.SendToClient 代码审核
+
+- 审核结论：通过，未发现阻塞问题。
+- 路由核查：通过 `SessionMgr.Instance.GetSession(GateSessionId)` 定位本角色所在网关连接，再调用 `gateSession.SendData(UnitySessionId, protoCode, data)` 指定目标 Unity 客户端；与现有 `RoleManager` 定向发送方式一致。
+- 防御检查：无效协议号、无效网关会话 ID、无效 Unity 会话 ID、网关会话不存在时均记录中文错误并返回 `false`；空协议体沿用 `ServerBase.SendData` 的既有允许语义。
+- 规范检查：方法、参数和返回值均有中文 XML 注释；新增方法未使用三目运算符；除引入 `Google.Protobuf` 和新增该方法外，未发现本任务引入的范围扩展。
+- 剩余边界：`ServerBase.SendData` 返回 `void` 并在内部捕获 Socket 异常，所以 `true` 只表示底层发送入口已被调用，不能证明数据已送达客户端；真实送达仍需 GateServer 与 Unity 联调验证。
+- 本轮仅做静态代码审核并更新协作记录，未修改业务代码，未重复执行构建。
+- 虚拟物品配置表验证：`#ItemInfo.xlsx` 新增 26 条 ItemMainType=7、PackType=5、TimeType=0 的物品；`#ShopItemInfo.xlsx` 货币字段改为 `CurrencyItemId` 并统一引用 101；Luban 全量生成退出码 0。
+- 使用 `@oai/artifact-tool` 检查并渲染两个工作簿；公式错误扫描为 0，预览保存在 `_temp/currency-item-edit-20260907/`。
+- Luban 生成输出已同步到 `LYF_Server/Network/LubanManage`，其中 `ShopItemInfo.cs` 已生成 `CurrencyItemId`；生成日志为 `_temp/currency-item-edit-20260907/luban-generate.log`。
+# 2026-09-07 客户端虚拟物品货币适配验证
+
+- 编译命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-virtual-item-build-final`。
+- 编译结果：成功，0 个错误、21 个警告；警告为 Unity 引用程序集版本冲突、既有 Singleton 重复类型和既有脚本告警，本次修改未新增编译错误。
+- 静态检查：客户端业务脚本中 `WalletInfo`、`GetWalletInfoById`、`.CurrencyType`、`PurchaseLimitType`、`PurchaseLimitCount`、`CurrencyInfoList` 均为 0 命中。
+- 规则检查：本次修改的 `ShopMgr`、`GoodsItemWidget`、`BuyItemWidget` 未使用三目运算符；`git diff --check` 无空白错误，仅有行尾转换提示。
+- 程序集检查：Unity 客户端 `Network.dll` 与服务端构建产物 SHA256 一致；两处客户端 `MMoRpgCommon.dll` 已同步最新枚举定义。
+- 构建日志：`D:/unitypro/LYFMMORGP/_temp/client-virtual-item-build.log`。
+- 未执行：Unity MCP 未提供可用工具，未执行编辑器 Console 检查和四端商城购买联调。
+
+# 2026-09-08 虚拟物品货币迁移后端收尾验证
+
+- 静态检查：`RoItemComponent.LoadKnapsack` 中 `LoadItems(info.RoleVirtualItemPack, ...)` 仅剩 1 处；服务端源码、协议、项目文件和文件名中 `CurrencyInfo`、`RoleCurrencyTable`、`WalletInfo`、`tbwalletinfo` 均为 0 命中。全项目扫描另发现 Unity `Assets/HybridCLRGenerate/link.xml` 残留 `cfg.WalletInfo`，已交接客户端 Agent 清理。
+- 配置链路：生成的 `ShopItemInfo.CurrencyItemId` 注释明确关联 `#ItemInfo.ItemTypeId`；`ShopItemParseInfo` 将该字段传入购买消耗；`RequestBuyShopItem` 在扣款前校验货币物品配置存在且 `PackType=RoleVirtualItemPack`。
+- 边界验证：通过反射调用构建产物中的 `ItemDesc.IsLegalVirtualItem`，`101、603、604、607、701` 返回 true，`0、1000、-1` 返回 false。
+- 规则检查：本次新增和修改的关键逻辑包含中文注释；未新增三目运算符。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/virtual-item-backend-fix-build`。
+- 构建结果：成功，0 个错误、13 个警告；警告为解决方案级 `--output` 提示及项目既有代码警告，本次未新增编译错误。
+- 构建日志：`D:/unitypro/LYFMMORGP/_temp/virtual-item-backend-fix-build.log`；编译输出位于 `D:/unitypro/LYFMMORGP/_temp/virtual-item-backend-fix-build/`。
+- 未执行：真实 MySQL 登录/保存、商城扣款运行验证，以及 CenterServer、GameServer、GateServer、Unity 四端联调。
+
+# 2026-09-08 虚拟物品货币迁移客户端收尾验证
+
+- HybridCLR 检查：已删除 `LYF_MMO/Assets/HybridCLRGenerate/link.xml` 中失效的 `cfg.WalletInfo` 保留项。
+- 静态检查：`LYF_MMO/Assets/GM_Game/Scripts`、`Assets/Boot`、`Assets/HybridCLRGenerate/link.xml` 和 `GM_Game.csproj` 中 `WalletInfo`、`CurrencyInfo`、`RoleCurrencyTable`、`RoleCurrencyComponent`、旧钱包 `CurrencyType` 均为 0 命中；没有误删 `SellCurrencyType` 或 `CurrencyItemId`。
+- 程序集校验：客户端 `Plugins/Net/Network.dll` 的 SHA256 为 `B6A22833952FE06DE8F40E9F619B715E89EDE06A9EF8B536C021B67B84E740B5`；两处 `MMoRpgCommon.dll` 的 SHA256 均为 `C3A0E32F18C60FF632C021E30473B1FC9BCC5C6C01ECE976985DFC90775F903F`，与 `_temp/virtual-item-backend-fix-build` 最新产物一致。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-virtual-item-finalize-build`。
+- 构建结果：成功，0 个错误、21 个既有警告；警告仍为 Unity 引用程序集版本冲突、`Singleton<T>` 重复类型和已有脚本告警。
+- 构建日志：`D:/unitypro/LYFMMORGP/_temp/client-virtual-item-finalize-build.log`；编译输出位于 `D:/unitypro/LYFMMORGP/_temp/client-virtual-item-finalize-build/`，等待产品经理确认后清理。
+- 未执行：Unity 编辑器 Console/HybridCLR 裁剪验证、真实商城购买、真实 MySQL 读写以及 CenterServer、GameServer、GateServer、Unity 四端联调。
+
+# 2026-09-08 虚拟物品货币迁移代码审核复核
+
+- 审核方式：只读检查服务端虚拟物品组件、BagTransition、CenterServer 保存任务、Luban 配置输出、Unity 程序集哈希和旧钱包引用；检查产物与脚本均位于 `D:/unitypro/LYFMMORGP/_temp/virtual-item-code-review-20260908`。
+- 配置读取：使用 `@oai/artifact-tool` 只读解析 `Luaban/MiniTemplate/Datas/#ItemInfo.xlsx` 与 `#ShopItemInfo.xlsx`；确认 26 条虚拟物品均为 `ItemMainType=7、PackType=5、TimeType=0`，商城第五列为 `CurrencyItemId` 且当前引用 101；未写回工作簿。
+- 通过项：`RoItemComponent.LoadKnapsack` 虚拟背包装载调用仅 1 处；`ItemDesc.IsLegalVirtualItem` 对 `101、603、604、607、701` 返回 true，对 `0、1000、-1` 返回 false；GameServer 业务层继续检查 Luban 配置主类型和虚拟背包类型；客户端 `Network.dll` SHA256 为 `B6A22833952FE06DE8F40E9F619B715E89EDE06A9EF8B536C021B67B84E740B5`，两处 `MMoRpgCommon.dll` SHA256 为 `C3A0E32F18C60FF632C021E30473B1FC9BCC5C6C01ECE976985DFC90775F903F`，与 `_temp/virtual-item-backend-fix-build` 产物一致。
+- P1 失败：`LYF_Server/GameServer/Entity/Components/RoleCountManager.cs:45-55` 在未配置计数项分支解引用空 `conf`，可直接触发 NullReferenceException，符合本次程序崩溃风险；需修复后复测。
+- P1 失败：空次数快照清库无法发送/通过 Center 校验。`RoleNetSender` 以两个列表均为空判定无保存数据，`CRoleWriteTask.ValidateRequest` 又拒绝 `RoleCountSnapshot=true` 且空列表；需允许显式清空并验证 ACK。
+- P2 失败：`Luaban/MiniTemplate/output/Code/Tables.cs:29,46,65` 残留 `TbWalletInfo` 声明、加载和解析，模板生成输出与已删除钱包表不一致。
+- 规范失败：迁移相关 `ItemDataListDB.cs`、`RoItemContainer.cs`、`RoleCountManager.cs` 仍存在 `?:` 三目运算符；项目规则要求改为 `if/else`。本次未直接修改业务代码，待后端 Agent 返工。
+- 构建参考：沿用 2026-09-08 收尾构建记录，服务端 0 错误、客户端 0 错误；本轮审核未重复编译，因已发现阻塞项，不能视为最终验收。
+- 未执行：真实 MySQL 事务、Unity 编辑器 Console/HybridCLR 导入、商城购买和四端联调。
+
+# 2026-09-08 虚拟物品与角色次数系统第二次审核返工验证
+
+- 空配置检查：`RoleCountManager.GetAndCreateItemInfo` 对不存在的 `CountInfo` 返回 null；构建产物验证无空引用编译风险。
+- 空次数快照检查：`RoleNetSender` 的无数据判断保留 `RoleCountSnapshot` 标记；`CRoleWriteTask.ValidateRequest` 接受显式空快照；`SaveRoleCountData` 删除旧行后跳过空列表插入。
+- Luban 检查：`Luaban/MiniTemplate/output/Code/Tables.cs` 和服务端 `Tables.cs` 均无 `TbWalletInfo`；`ShopItemInfo.cs` 均使用 `CurrencyItemId`；Luban/服务端生成目录旧钱包名称命中为 0；服务端 `tbshopinfo.bytes` 已删除。
+- 三目检查：迁移相关手写文件集合（RoleCount、背包持久化、商城购买、角色保存、Luban 管理）中 `?:` 命中为 0；自动生成协议代码未手工改动。
+- 构建命令：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/virtual-item-review-fix2-build`。
+- 构建结果：成功，0 个错误、13 个既有警告；日志：`D:/unitypro/LYFMMORGP/_temp/virtual-item-review-fix2-build.log`。
+- `git diff --check`：通过，仅提示 `LubanMgr.cs` 的行尾转换信息。
+- 未执行：真实数据库事务、空快照运行时清库、商城购买和四端联调。
+
+# 2026-09-08 后端返工程序集同步与客户端最终构建
+
+- 同步来源：`D:/unitypro/LYFMMORGP/_temp/virtual-item-review-fix2-build/Network.dll`、`MMoRpgCommon.dll`。
+- 同步目标：`LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll`、`LYF_MMO/Assets/GM_Game/Plugins/Net/MMoRpgCommon.dll`、`LYF_MMO/Assets/GM_Game/Plugins/Common/MMoRpgCommon.dll`。
+- SHA256 校验：`Network.dll` 来源与目标均为 `5C742533B15CC3014E8BC11D7B9830EE7E37B0AABEA67E333CC93BE56443BD8F`；`MMoRpgCommon.dll` 来源与三个目标均为 `DC57C9336AB6D118AA54D9A30AA1E1E90FEBC35E1BC9F6B8C5FBD5540B7B803B`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-final-build`。
+- 构建结果：成功，0 个错误、21 个既有警告；日志位于 `D:/unitypro/LYFMMORGP/_temp/client-final-build.log`。
+- 本轮未修改客户端业务脚本；未执行 Unity 编辑器导入、真实商城购买及四端网络联调。
+
+# 2026-09-08 Codex 崩溃后最终恢复核对
+
+- 结论：确认异常来自 Codex 进程崩溃，项目修改没有回退或丢失。
+- 服务端：`dotnet build LYF_Server/LYF_Server.sln --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/virtual-item-review-fix2-build` 成功，0 个错误、13 个既有警告。
+- 客户端程序集：Unity `Network.dll` 与 `_temp/virtual-item-review-fix2-build/Network.dll` SHA256 一致；Unity `MMoRpgCommon.dll` 与对应服务端产物 SHA256 一致。
+- 客户端：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-final-build` 成功，0 个错误、21 个既有警告。
+- 静态核对：迁移相关手写代码三目表达式命中 0；Luban 正式输出无 `TbWalletInfo`；虚拟背包登录加载仅 1 次；空配置计数查询不会解引用空对象。
+- 未执行：真实 MySQL、商城购买、空快照运行时清库和 Center/Game/Gate/Unity 四端联调。
+## 2026-09-08 FindItemForGive 验证
+
+- 修改文件：`LYF_Server/GameServer/Service/item/RoItemContainer.cs`。
+- 静态检查：`git diff --check -- GameServer/Service/item/RoItemContainer.cs` 通过；本次新增实现未发现 `?:`。
+- 语义检查：函数对 `desc == null` 或无效 `ItemID` 返回空列表；按配置 `MaxStackCount` 过滤同 ID、数量大于零且未满的物品，并复制 `ItemUID`、`ItemSign`。
+- 构建命令：`dotnet build GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/find-item-for-give-20260908/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/find-item-for-give-20260908/obj/"`。
+- 构建结果：未通过。失败来自既有 `GameServer/Service/item/BagTransition.cs:672` C++ 风格 `for (const auto* item : same_item_list)`，共 8 个语法错误；`MMoRpgCommon` 和 `Network` 在本次构建中成功生成。
+- 未执行：真实背包发放和四端联调；待清理前述 `_temp` 临时产物。
+
+## 2026-09-08 ItemTransition 按背包类型分类验证
+
+- 静态检查：`git diff --check -- LYF_Server/GameServer/Service/item/ItemTransition.cs` 通过；新增函数未使用三目运算符。
+- 语义检查：`ClassifyItemsByBagType` 对空列表、空管理器、空物品、非法 `ItemID` 和未配置物品返回或跳过；已配置物品按 `GetItemPackTypeById` 返回的 `KnapsackType` 聚合到同一列表。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/item-transition-classify-20260908`。
+- 构建结果：成功，0 个错误、13 条既有警告。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/item-transition-classify-20260908/`，待产品经理确认后清理。
+- 未执行：真实背包发放和四端联调。
+
+# 2026-09-08 公共定时器基础设施验证
+
+- 参考解析：确认 `Ro_cs422nb` 中 `ITimer` 只定义 `OnTimer`，`CTimerMgr` 负责注册、倒计时、回调和回收，`SaveRoleDataTimer` 只在回调中设置角色保存标记。
+- 修改范围：新增 `LYF_Server/MMoRpgCommon/Time/ITimer.cs` 与 `CTimerMgr.cs`；GameServer 的 `SaveRoleDataTimer` 改为注册公共定时器；`GameGlobal` 统一推进定时器；补充 `项目分析/TIMER_USAGE.md`。
+- 静态检查：新增及适配代码中文注释完整；`rg "\\?:" LYF_Server/MMoRpgCommon/Time LYF_Server/GameServer/Entity/SaveRoleDataTimer.cs` 无命中。
+- 构建命令：
+  - `dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/timer-build/common/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/timer-build/common/obj/"`
+  - `dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath="D:/unitypro/LYFMMORGP/_temp/timer-build/gameserver/bin/" -p:BaseIntermediateOutputPath="D:/unitypro/LYFMMORGP/_temp/timer-build/gameserver/obj/"`
+- 构建结果：MMoRpgCommon 成功，0 个错误、4 个既有警告；GameServer 成功，0 个错误、13 个既有警告。日志分别为 `_temp/timer-build-common.log` 与 `_temp/timer-build-gameserver.log`。
+- 行为测试：使用 `_temp/timer-smoke/TimerSmoke.cs` 验证单次触发、有限重复、掉帧时最多触发一次、剩余时间查询和取消，输出为“定时器行为测试通过”。
+- 未执行：未启动 GameServer 等待完整保存周期，未执行真实多服定时器联调；`_temp/timer-build` 临时产物待产品经理确认后清理。
+
+# 2026-09-08 公共定时器代码审查
+
+- 审查范围：`LYF_Server/MMoRpgCommon/Time/ITimer.cs`、`CTimerMgr.cs`、`LYF_Server/GameServer/Entity/SaveRoleDataTimer.cs`、`GameGlobal.cs`、`OnlineRole.cs`、`MMoRpgCommon.csproj` 和 `项目分析/TIMER_USAGE.md`。
+- Block：`LYF_Server/GameServer/GameGlobal.cs:76-78` 使用三目运算符，违反项目全局禁止 `?:` 规则；必须改为 `if/else`。
+- Block：`LYF_Server/GameServer/GameGlobal.cs:69-79` 在累计时间为 50 到 99 毫秒时固定传入 50 并将累计值清零，丢弃余量，导致定时器和所有固定帧逻辑长期漂移；应按参考项目保留余量，或明确传入实际经过时间。
+- Critical：`LYF_Server/GameServer/GameGlobal.cs:61-63` 使用 `DateTime.UtcNow.Ticks` 计算间隔，系统校时或虚拟机时钟跳变会让定时器提前触发或长时间延迟；应使用单调时钟（例如 `Stopwatch` 或项目统一的单调时间工具）。
+- Warning：`LYF_Server/MMoRpgCommon/Time/CTimerMgr.cs:136` 每次 `Update` 都创建 `List<TimerEntry>`，即使没有到期回调也会在 20Hz 热路径产生分配；应复用缓存列表或采用无分配的待处理结构。
+- Warning：`LYF_Server/MMoRpgCommon/Time/CTimerMgr.cs:7` 的线程说明写成“业务线程只负责注册和取消”，但 `SetTimer`、`KillTimer`、`Clear` 和 `Update` 均无同步保护；应明确所有接口只能由逻辑线程调用，或实现跨线程投递/同步，否则并发修改字典可能抛异常。
+- Warning：`LYF_Server/MMoRpgCommon/Time/CTimerMgr.cs:20-34` 使用 `public` 可变字段承载定时器条目，且 `CTimerMgr` 的 `_instance`、`_timerEntries`、`_nextHandle` 缺少逐项中文字段注释；与“成员变量不使用 public”和关键状态注释约束不符，应改为私有字段并补齐注释。
+- 通过项：`ITimer` 为最小回调接口；`SaveRoleDataTimer` 位于 GameServer 且仅注册/取消公共定时器、回调只设置保存标记；`GameGlobal` 在固定逻辑帧调用一次 `CTimerMgr.Update`；公共库和 GameServer 构建均为 0 错误，已有定时器烟测通过。
+- 审查结论：打回修复，不得进入最终验收。以上问题属于服务端后端；修复后需重新构建、静态检查和定时器边界测试。真实 GameServer 60 秒保存周期和多服联调仍未执行。
+- 本轮未修改业务代码；构建产物和日志继续保留在 `D:/unitypro/LYFMMORGP/_temp/timer-build`，待产品经理确认后清理。
+
+# 2026-09-08 公共定时器审查返工验证
+
+- 修复内容：`GameGlobal` 使用 `Stopwatch.GetTimestamp` 计算单调时间；按 50 毫秒固定步长消费累计时间，保留不足一帧和超出追赶上限的余量；删除本任务范围内的三目运算符。
+- `CTimerMgr`：定时器条目字段全部改为私有；新增复用的到期条目缓存，`Update` 不再每帧分配 `List<TimerEntry>`；所有公开接口文档明确仅限逻辑线程调用。
+- 静态检查：`rg "\\?:" LYF_Server/GameServer/GameGlobal.cs LYF_Server/MMoRpgCommon/Time LYF_Server/GameServer/Entity/SaveRoleDataTimer.cs` 无命中；未发现 `DateTime.UtcNow` 定时计算或 `new List<TimerEntry>` 热路径分配。
+- 待验证：已完成代码修改，下一步执行 MMoRpgCommon/GameServer 构建和 `_temp/timer-smoke` 行为测试。
+
+# 2026-09-08 公共定时器审查返工构建验证
+
+- 静态检查：`GameGlobal.cs`、`CTimerMgr.cs` 和 `SaveRoleDataTimer.cs` 本任务范围内无 `?:`；未使用 `DateTime.UtcNow` 进行定时；`TimerEntry` 数据字段均为私有；`CTimerMgr` 只在初始化时创建一次到期缓存列表。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug` 与 `dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug`，输出目录及中间文件位于 `_temp/timer-review-fix-build`。
+- 构建结果：MMoRpgCommon 成功，0 个错误、4 个既有警告；GameServer 成功，0 个错误、13 个既有警告。日志为 `_temp/timer-review-fix-build/common.log` 和 `_temp/timer-review-fix-build/gameserver.log`。
+- 行为测试：重新编译并运行 `_temp/timer-smoke/TimerSmoke.cs`，单次、有限重复、掉帧单次触发、剩余时间和取消测试均通过，输出“定时器行为测试通过”。
+- 未执行：未启动真实 GameServer 等待 60 秒保存周期，也未进行多服时钟和四端联调；临时产物待产品经理确认后清理。
+
+# 2026-09-08 公共定时器最终验收
+
+- 返工复核：`GameGlobal` 已使用 `Stopwatch.GetTimestamp` 单调时钟；累计时间按 50 毫秒固定步长消费，未消费余量继续保留；本任务范围内无 `?:`。
+- 管理器复核：`CTimerMgr.TimerEntry` 状态字段均为私有；通过内部构造、属性和推进方法访问；`_dueEntries` 只初始化一次并在每轮复用；公共接口注释明确只能由 GameServer 逻辑线程调用。
+- 目录边界：`SaveRoleDataTimer` 仅位于 `LYF_Server/GameServer/Entity`，`MMoRpgCommon/Time` 仅包含通用 `ITimer` 和 `CTimerMgr`；未把角色保存业务放入公共库。
+- 静态检查：`rg "\\?:|DateTime\\.UtcNow" LYF_Server/GameServer/GameGlobal.cs LYF_Server/MMoRpgCommon/Time LYF_Server/GameServer/Entity/SaveRoleDataTimer.cs` 无命中；`CTimerMgr.Update` 方法体内未创建 `List<TimerEntry>`，到期列表只在管理器初始化时创建一次。
+- 构建：MMoRpgCommon 0 个错误、4 个既有警告；GameServer 0 个错误、13 个既有警告。构建输出和日志位于 `D:/unitypro/LYFMMORGP/_temp/timer-review-fix-build`。
+- 行为测试：重新编译并运行 `D:/unitypro/LYFMMORGP/_temp/timer-review-fix-smoke/TimerSmoke.exe`，输出“定时器行为测试通过”，覆盖单次、有限重复、掉帧、剩余时间和取消。
+- 审查结论：原代码审查阻塞项已完成返工并通过静态复核；没有新增客户端或协议修改。
+- 未执行：真实 GameServer 运行 60 秒保存周期、多服务器时钟压力和 Center/Game/Gate/Unity 四端联调；`_temp` 临时产物待产品经理确认后清理。
+
+# 2026-09-09 角色脏数据保存版本诊断
+
+- 检查范围：`GameServer/Entity/Role/OnlineRole.cs`、`GameServer/Entity/Role/RoleNetSender.cs`、`GameServer/Components/RoItemComponent.cs`、`GameServer/MessageHandler/Knapsack/RoleKnapsackInfoHandler.cs`、`CenterServer/DB/Task/CRoleWriteTask.cs`、`CenterServer/DB/Table/RoleTable.cs`。
+- 静态结论：CenterServer 已按请求版本与 `RoleTable.ItemSaveVersion` 区分新版本、同版本幂等和过期版本；GameServer 重试会复用在途请求版本，正常 ACK 不会因为重试重复递增。
+- 风险结论：角色级 `_saveVersion` 未从登录回包显式初始化，且保存定时器早于背包数据加载启动；背包加载失败、回包时序延迟或加载前发生修改时，可能产生低于 CenterServer 权威版本的请求。
+- 风险结论：过期版本返回失败后当前发送器仍会重试同一旧请求，可能形成无限重试；需要在后端修复中增加版本冲突恢复或旧会话隔离。
+- 溢出结论：`long` 的正常运行周期内不会实际达到上限；严禁达到上限后回绕到 0。应在接近上限时告警，并采用 epoch 或停服迁移方式原子重置。
+- 验证状态：本轮未修改业务代码，未执行构建；待后端 Agent 实现版本基线、加载门闩和过期冲突处理后，重新执行三端构建及保存链路测试。
+
+# 2026-09-09 物品扣除绑定分类验证
+
+- 静态检查：`GetItemForReduce`、`GetItemsByTID` 区域无 `auto`、`std::`、`vector`、`.first`、`.second` 等 C++ 残留；新增代码无三目运算符，中文注释完整。
+- 语义检查：默认容器 `-1` 使用配置所属容器，全部容器 `-2` 遍历已初始化容器，其它值按 `KnapsackType` 获取；同 ID 物品按 `IsBind()` 分入绑定和非绑定列表，并按 UID 倒序保持扣除优先级。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/reduce-item-build-final/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/reduce-item-build-final/obj/`。
+- 构建结果：成功，0 个错误、14 条既有警告。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/reduce-item-build-final/`（前置构建产物位于 `D:/unitypro/LYFMMORGP/_temp/reduce-item-build/`），待产品经理确认后清理。
+- 未执行：真实背包扣除运行验证和四端联调。
+
+# 2026-09-09 RoleManager foreach 迁移验证
+
+- 静态检查：`LYF_Server/GameServer/manger/RoleManager.cs` 中 `foreach` 命中数为 0，`for` 命中数为 6；本次新增遍历没有三目运算符。
+- 语义检查：在线角色、断线角色 ID、待激活角色和附近广播均先创建快照列表再按下标遍历；快照元素是原 `OnlineRole` 引用，角色状态修改仍会写入原对象；原字典可在处理过程中安全删除。
+- 格式检查：`git diff --check -- LYF_Server/GameServer/manger/RoleManager.cs` 通过。
+- 首次代码审查：不通过。发现离线角色移除未清理会话索引、更新后可能误删同 ID 新实例、文件残留三目、进入世界缺少会话校验和公开函数注释不足，已退回后端 Agent 返工。
+- 返工验证：移除角色前使用 `TryGetValue` 和 `ReferenceEquals` 确认原实例，并同步删除仍指向该角色的会话键；进入世界按 Gate/Unity 会话取得角色并核对请求角色 ID；公开方法和关键字段已补充中文说明。
+- 最终静态检查：`rg "foreach|\\?:|\\?" LYF_Server/GameServer/manger/RoleManager.cs` 无命中；`git diff --check` 无空白错误，仅提示工作树行尾将按 Git 设置转换。
+- 最终构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-final-check/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-final-check/obj/` 成功，0 个错误、14 个既有警告。
+- 后续约束：修改其他文件时禁止新增 `foreach`，历史 `foreach` 按文件触碰逐步迁移，不进行无范围控制的全项目机械替换。
+- 配置检查：`AGENTS.md`、`Docs/AI/PROJECT_CONTEXT.md`、`Docs/AI/DECISIONS.md` 和 `AIconfig/config.toml` 均已记录 `foreach` 禁用及快照引用语义。
+- 现状说明：工作区历史代码仍有 117 处 `foreach`；本次只迁移需求涉及的 `RoleManager.cs`，避免无范围批量重构。后续新增或修改的代码不得再引入 `foreach`。
+## 2026-09-09 角色保存版本归属重构验证
+
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/save-version-owner-build`。
+- 构建结果：成功，0 个错误，14 个既有警告。
+- 静态检查：角色版本追平逻辑已移除；`RoleComponentBase.GetSaveVersion` 为非虚函数；修改文件未新增三目运算符。
+- 未执行：真实 CenterServer ACK、登录时序和四端联调；需代码审核 Agent 复核。
+
+## 2026-09-09 角色保存加载门闩与批次版本返工
+
+- 静态检查：`OnlineRole.cs`、`SaveRoleDataTimer.cs`、`RoleKnapsackInfoHandler.cs`、`RoleCountComponent.cs`、`ItemDataListDB.cs`、`BagTransition.cs`、`RoleComponentContainer.cs` 均为 `foreach=0`、三目符号命中数 `0`；`RoleComponentContainer.GetSaveVersion` 无命中。
+- 版本检查：角色仅在 `RoleKanpsackInfo` 完整装载、`InitializeSaveVersion` 成功且 `CompleteRoleDataLoad` 调用后启动保存定时器；重复或冲突版本不会覆盖已记录基线；`SaveAllMoudle` 在 `long.MaxValue` 拒绝新快照并记录中文告警。
+- ACK 检查：`ItemDataListDB` 和 `RoleCountComponent` 的保存代数与保存版本绑定，ACK 需同时匹配版本和代数才清理脏状态。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review2/common-bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review2/common-obj/`。
+- 构建结果：MMoRpgCommon 成功，0 个错误、4 个既有警告。
+- GameServer 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review2/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review2/obj/`；被工作区已有 `LYF_Server/GameServer/Components/RoItemComponent.cs:631` 的 `delay_del_item_map/emplace` C++ 语法残留阻断，2 个错误，非本次改动引入。
+- 格式检查：`git diff --check` 通过，仅有工作树行尾转换提示。
+- 未执行：完整 GameServer 运行、真实 CenterServer ACK、登录时序及四端联调；待 `RoItemComponent.cs:631` 修复后重跑 GameServer 构建和门闩/版本行为测试。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review2/`，待产品经理确认后清理。
+
+## 2026-09-09 角色保存版本返工最终构建
+
+- 修改文件：`LYF_Server/GameServer/MessageHandler/Knapsack/RoleKnapsackInfoHandler.cs`，删除重复的 `using System;`。
+- 静态检查：本次角色保存版本返工涉及的 7 个文件均无 `foreach` 和三目运算符；`RoleComponentContainer.GetSaveVersion` 无命中；`git diff --check` 通过。
+- 构建命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review-final/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review-final/obj/`。
+- 构建结果：成功，0 个错误、12 个既有警告；此前 `RoleKnapsackInfoHandler.cs` 的 `CS0105` 重复 using 警告已消失。
+- 未执行：真实 CenterServer ACK、登录时序、长时间保存周期、数据库事务和 Center/Game/Gate/Unity 四端联调。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/rolemanager-for-review-final/`，待产品经理确认后清理。
+# 2026-09-10 #ItemInfo 图标路径校验
+
+- 修改文件：`Luaban/MiniTemplate/Datas/#ItemInfo.xlsx`，仅 `Icon` 列 10 条路径发生变化。
+- 校验脚本：使用 openpyxl 回读表格，确认 30 条物品记录均存在；逐条检查独立 PNG 文件或图集 `.meta` 中的 Sprite 子资源名称。
+- 校验结果：30/30 路径通过，失败 0；与修改前副本对比，非 `Icon` 列的值和样式均未变化。
+- 临时文件：`D:/unitypro/LYFMMORGP/_temp/item-icon-fix-20260910/#ItemInfo.before.xlsx`、`validation.txt`，用于变更对比和验证记录，待产品经理确认后清理。
+- 未执行：未启动 Unity/YooAsset 实机加载和重新构建资源包；需在资源包重新构建后验证图集子资源地址是否被当前 YooAsset 版本接受。
+
+# 2026-09-10 Sprite 普通资源与图集切片兼容验证
+
+- 静态检查：普通 Sprite 优先，失败或为空才执行图集回退；图集通过 `LoadSubAssetsAsync<Sprite>` 和 `GetSubAssetObject<Sprite>` 获取。
+- 规则检查：修改文件无 `foreach` 和三目运算符，关键分支和状态均有中文注释，`git diff --check` 无空白错误。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/yooasset-atlas-sprite-build` 成功，0 错误、21 个既有警告。
+- 代码审核：通过，无阻塞问题。当前实现按 PNG 图集主资源约定解析路径。
+- 未执行：尚未重建 YooAsset 资源包并在 Unity 界面确认独立 Sprite 与图集切片实际显示。
+
+# 2026-09-10 YooAsset 无效切片地址日志修复
+
+- 复现：`LoadAssetAsync<Sprite>` 收到 `Assets/GM_Game/UISprites/Icon/Item/Icon_ItemConsumables01/UI_icon_item_Zeng.png` 时，YooAsset 在回退前输出 `The location is invalid`。
+- 修复验证：`ResourceMgr.LoadSpriteAsync` 已在普通加载前调用 `CheckLocationValid`；无效虚拟路径不再传给 `LoadAssetAsync`，而是直接解析并加载图集主资源。
+- API 核对：YooAsset 1.5.7 的 `ResourcePackage.CheckLocationValid` 使用当前活动清单的 `TryMappingToAssetPath`，只检查地址，不发起资源加载。
+- 构建：`GM_Game.csproj` 编译成功，0 个错误；产物位于 `D:/unitypro/LYFMMORGP/_temp/yooasset-atlas-sprite-build-check2`。
+- 规则检查：`ResourceMgr.cs` 无 `foreach` 和三目运算符，`git diff --check` 通过。
+- 未执行：需要在当前 Unity 运行环境重新打开购买弹窗，确认控制台不再出现该无效地址错误，并确认图集切片正确显示。
+
+# 2026-09-10 客户端 UI MVC 分层审查报告
+
+- 审查方式：扫描 UI 对网络、全局模型、配置、商城及资源管理器的依赖，并读取登录、商城、技能、背包和角色属性关键文件核对调用链。
+- 通过项：`Loginview`、`CreateRoleView`、`MainView` 主要负责窗口注册和事件暴露；现有 UI Controller 已承担部分协议回包及流程协调；`BuyDialog` 数量步进与控件刷新属于合理的 View 表现逻辑。
+- P1：`BuyItemWidget.cs` 与 `GoodsItemWidget.cs` 直接查询限购/货币配置、判断购买条件并调用 `ShopMgr.SendBuyRequest`；应由商城控制器准备商品 ViewModel 并提交购买。
+- P1：`SkillSlotWidget.cs` 直接订阅全局输入并调用 `Global.Instance.roleCtrlBase.UseSkill`；技能释放应由技能或角色控制器处理。
+- P1：`LoginWindow.cs`、`RegistWindow.cs`、`GameServerWindow.cs` 直接读写 `PlayerPrefs`、创建协议和调用 `NetSocketMgr.Client.SendData`；应移动到 `LoginCtrl` 或账号服务。
+- P2：`NpcShopWindow.cs` 直接查询和筛选 Luban 商城配置；`SkillInfoWindow.cs`、`RoleCurrInfoWindow.cs`、`RoleAttriibuteWindow.cs` 及部分 Widget 直接读取 `Global`/`LubanMgr` 并完成配置映射，应由 Controller/ViewModel 层提供展示数据。
+- P2：`ChatWindow.cs` 直接控制 `PlayerInputCtr`；应通过 ChatCtrl 或界面输入协调器处理游戏输入状态。
+- 规范风险：本次读取到的部分历史 UI 文件仍有 `foreach` 或三目表达式；本轮未修改，后续重构触碰时必须按项目规则迁移。
+- 构建：本轮为只读架构审查，未修改业务代码，未执行构建。
+
+# 2026-09-10 客户端 UI MVC 分层重构验证
+
+- 架构范围：登录、选服、商城、技能、角色当前信息、装备展示、聊天、NPC 对话、主界面组合控制器和控制器释放流程。
+- 修改文件范围：`SocketDispatcher.cs`、`NetSocketMgr.cs`、`ShopMgr.cs`、`CtrlBase.cs`、六个 UI Controller、六个 ViewModel、登录相关 View、主界面的商城/技能/角色/聊天/NPC/小地图 View 和 Widget、`MainView.cs`、`UIRoot.cs`；没有修改协议、服务端、场景和预制体。
+- 首次构建：Unity 刷新 `GM_Game.csproj` 后，`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/mvc-main-verification-3` 成功，0 个错误、18 个既有警告。
+- 首次代码审核：不通过。发现小地图主角异步创建时序、旧连接商城回包污染新请求、技能旧槽位残留、聊天异步回显清除新输入、View 持有协议/领域对象和新增注释不足等问题，已退回客户端 Agent 返工。
+- 返工验证：`NetSocketMgr`、`SocketDispatcher` 和 `ShopMgr` 使用连接代次隔离网络消息与商城在途请求；`MainRoleCtrl.OnStart -> UIRoot.RegisterMainUIKeyHandler -> MainCtrl.RegisterMainInput` 会在主角创建后重新绑定小地图；技能槽和聊天输入时序问题已修正；登录服务器与 NPC 对话改用纯展示模型。
+- 最终构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/mvc-refactor-final-build` 成功，0 个错误、18 个既有警告；日志位于 `_temp/mvc-refactor-final-build.log`。
+- Unity 编译：`Editor.log` 显示脚本编译和热重载完成，最新日志未出现 `error CS`、`Compilation failed` 或脚本编译异常。
+- 静态边界：正式 UI 对 `NetSocketMgr|SocketDispatcher|PlayerPrefs|LubanMgr|ShopMgr|Global.Instance.roleCtrlBase|PlayerInputCtr|GetServerListRet|NpcEntity` 的扫描结果为 0。
+- 规则检查：`controller/UIController`、`UI/Login`、`UI/Main`、`ShopMgr`、`NetSocketMgr` 和 `SocketDispatcher` 无 `foreach`、无三目运算符；新增六个 ViewModel 均存在同名 `.meta`；`git diff --check` 无空白错误，仅有工作树行尾转换提示。
+- Inspector 兼容：预制体已绑定的 `OnLoginBtnClicked`、`onGotoRegisterBtnClicked`、`OnVerifyCodeBtnClicked`、`OnGotoServerListBtnClicked`、`OnConfirmBtnClicked`、`OnSendBrnClicked` 和商品购买入口仍存在。
+- 未执行：没有在 Unity Play Mode 连接真实服务器执行登录选服、断线/自动重连期间购买、小地图移动、技能移除换绑、快速连续聊天输入及重复打开商城测试；这些属于剩余运行态风险。
+- 临时产物：`_temp/mvc-client-build`、`_temp/mvc-main-verification-*`、`_temp/mvc-client-refactor-fix-build`、`_temp/mvc-refactor-final-build` 及对应日志继续保留，待产品经理确认后清理。
+
+# 2026-09-10 客户端角色组件化架构分析
+
+- 检查范围：客户端 `Scripts/Manger`、`Scripts/controller`、`Scripts/FunlModule/Bag` 及现有 UI MVC 结构。
+- 现状：客户端同时存在进程级 Singleton Manager、UI Controller、角色 MonoBehaviour Controller，以及 `BagMgr/BagDataModel/BagApi/BagEquipMgr/BagTipsMgr/BagItemCdMgr` 等尚未落地的背包骨架；职责命名和生命周期尚未统一。
+- 风险：若背包、任务、战斗、基因和 Buff 都继续新增 Singleton Manager，会产生初始化顺序、切角色残留、跨模块双向依赖和 UI 直接读取全局状态问题。
+- 建议：使用 `LocalPlayerContext + RoleComponentContainer + RoleComponentBase` 管理角色级纯 C# 组件；使用 Module Handler、Application Service 和 UI MVC 分离网络、业务用例与表现；多实体战斗保留为 `CombatSystem`，不强行塞入角色组件。
+- 验证状态：本轮是只读架构分析，没有修改客户端业务代码、协议、场景或预制体，因此未执行编译和运行测试。
+
+# 2026-09-11 ClientRole 与 RoleWorldSystem 验证
+
+- 修改范围：客户端 `FunlModule/Role`、`FunlModule/Component`、背包/次数/商城角色依赖，以及 `Global`、开始游戏、主城、网络断线、商城、主控制器和角色信息控制器入口。
+- 类型检查：新增 `ClientRole.cs`、`RoleWorldSystem.cs` 及对应 `.meta`，一类一文件；客户端 `OnlineRole` 文件和引用均已移除。
+- 职责检查：未发现 `RoleNetSender`、`RoleDataFieldManager`、`GateSessionId`、`UnitySessionId`、`SaveAllMoudle`、`OnSaveAcknowledged` 等服务端持久化或会话符号残留。
+- 入口检查：开始游戏创建 `LocalRole`；背包完整回包装载 `RoItemComponent` 与 `RoleCountComponent`；其他玩家同步进入角色世界索引；断线和应用退出清理角色世界。
+- 规则检查：本次目标文件无 `foreach`、无三目运算符；唯一 `?` 命中为 `KnapsackType?` 可空值类型，不是三目表达式；`git diff --check` 无空白错误，只有工作区行尾转换提示。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-role-final-build`。
+- 构建结果：成功，0 个错误、17 个既有警告；构建产物保留在 `_temp/client-role-final-build`，等待产品经理确认后清理。
+- 未执行：Unity Play Mode 和真实服务器联调；开始游戏与背包快照消息时序、其他玩家退出、断线自动重连、切换角色仍属于运行态验证缺口。
+# 2026-09-11 RoleKanpsackInfo 协议结构统一验证
+
+- 协议检查：`ResultEntity.proto` 中 `RoleKanpsackInfoRet` 仅保留结果码和嵌套 `RoleKanpsackInfo`；嵌套结构包含容量列表、四类背包、当前装备栏、虚拟物品背包和 `save_version`。`MainRoleInfo` 的字段 3（money）及其名称已 reserved，`StartGameRet` 的旧容量字段已 reserved。
+- 登录链路检查：CenterServer 的 `CentRoleModel.RoleKanpaskInfo` 统一向嵌套对象写入背包、虚拟货币、容量、次数和保存版本；GameServer 仅由 `RoleKnapsackInfoHandler` 装载嵌套对象；开始游戏处理器不再读取旧容量字段；Gate 按外层 `RoleKanpsackInfoRet.CmdCode` 校验。
+- 规则检查：`CentRoleModel.cs`、`LoginModle.cs`、`Game_LoginCtrl.cs`、生成协议文件和 proto 文件扫描 `foreach` 与三目运算符均为 0；`MainRoleInfo` money 读写扫描为 0。
+- 协议生成：使用 `LYF_Server/ProtoBuf/bin/protoc.exe` 重新生成 `ResultEntity.cs` 到 `_temp/role-kanpsack-proto-gen`，并更新 `LYF_Server/Network/Proto/ResultEntity.cs`。
+- 构建：Network 成功（0 错误，4 个既有警告）；GameServer 成功（0 错误，14 个既有警告）；CenterServer 成功（0 错误）；GateServer 成功（0 错误，4 个既有警告）；Unity `GM_Game.csproj` 成功（0 错误，21 个既有警告）。
+- 客户端协议：已将新构建的 `Network.dll` 和 `MMoRpgCommon.dll` 更新到 `LYF_MMO/Assets/GM_Game/Plugins/Net` 与 `Plugins/Common`，使 Unity 使用嵌套结构和 `int64 ItemUid`。
+- 未执行：未连接真实 MySQL、未进行 Center→Game→Gate→Unity 登录联调；`_temp/role-kanpsack-*` 构建产物待产品经理确认后清理。
+- 补充修复：`GateClientResponseForwarder` 对商城回包缺少 `ErrorInfo` 的分支改为 `if/else`，去除三目表达式；GateServer 已重新构建通过（0 错误，4 个既有警告）。
+
+## 2026-09-11 背包 MVC 最终测试复核
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/bag-mvc-final-test/client` 成功，0 个错误、17 个既有警告；`GameServer.csproj` 使用隔离输出成功，0 个错误、10 个既有警告。日志保存在 `_temp/bag-mvc-final-test/client-build.log` 和 `server-build.log`。
+- 静态检查：背包 MVC 目标文件 `foreach=0`、三目运算符 `?:=0`；目标文件均包含中文注释/说明。`KnapsackWindowMockServer` 和 `MockAddItemButton` 在正式 `UIRoot.prefab` 中命中数均为 0。
+- 隔离行为测试：基于最新客户端构建产物重新编译运行 `_temp/bag-mvc-final-smoke/bin/KnapsackMvcSmoke.exe`，输出“通过：初始81格、扩容、删除、穿戴事件链路”。覆盖四类背包初始 81 格、扩容到 90 且事件单次通知、部分删除数量变化和跨容器穿戴移动。
+- 回归边界：角色切换/断线清理通过代码路径核对：`KnapsackCtrl.BindRole` 解绑旧组件后绑定新组件，`Dispose` 解除事件，`RoleWorldSystem.Clear` 释放本地角色并触发 `LocalRoleChanged`；`MainCtrl` 监听并重新绑定。`RoItemComponent.ReduceItem` 当前代码已走 `DeleteItem` 扣除路径，但尚未使用真实配置单独运行回归。未启动 Unity Play Mode，未进行真实服务器联调；`LoadKnapsack` protobuf 快照路径未在普通 .NET 烟测执行（Unity `System.Memory` 依赖冲突），已完成静态检查。
+- 空白检查：目标代码 `git diff --check` 无业务代码空白错误；仅 `UIRoot.prefab` 存在由 Unity 序列化产生的尾随空格提示，属于既有/资源格式内容，未改动清理。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/bag-mvc-final-test/`、`_temp/bag-mvc-final-smoke/`，用途为构建与隔离行为验证，待产品经理确认后清理。
+
+# 2026-09-11 背包 MVC 改造最终审核与测试
+
+- 代码审核：通过。审核确认 `KnapsackWindow` 仅负责展示，`KnapsackCtrl` 负责数据转换，`RoItemComponent` 负责背包状态；角色切换和断线清理会解除旧组件事件订阅。
+- 构建：`GM_Game.csproj` 成功，0 错误、17 个既有警告；`GameServer.csproj` 成功，0 错误、10 个既有警告。产物位于 `_temp/bag-mvc-final-test/`。
+- 隔离烟测：使用最新客户端程序集重编并运行 `_temp/bag-mvc-final-smoke/bin/KnapsackMvcSmoke.exe`，退出码 0，输出“通过：初始81格、扩容、删除、穿戴事件链路”。
+- 静态检查：目标文件 `foreach=0`、三目运算符 `?:=0`，关键状态和函数均有中文注释；正式 `UIRoot.prefab` 未发现 `KnapsackWindowMockServer` 或 `MockAddItemButton`。
+- 未执行：Unity Play Mode、Center/Game/Gate/Unity 真实联调、真实数据库和 protobuf 快照运行态验证；`ReduceItem` 尚未使用真实配置进行单独回归。
+- 空白检查：业务代码无新增空白错误；`UIRoot.prefab` 仅有 Unity 序列化空字段产生的尾随空格提示，未进行无关清理。
+
+# 2026-09-11 RolePackPlain 独立容器语义复核
+
+- 变更范围：客户端 `KnapsackCtrl.cs`、`KnapsackWindow.cs` 的页签展示语义；未修改测试脚本和服务端业务代码。
+- 静态结果：`RolePackPlain` 页面只读取普通背包容器，不再追加装备、消耗品和材料；展示位置使用物品真实 `BagIndex`。
+- 构建：`GM_Game.csproj` 成功，0 错误、21 个既有警告；产物位于 `D:/unitypro/LYFMMORGP/_temp/knapsack-plain-build/`。
+- 规则检查：目标文件无 `foreach`、无三目运算符，`git diff --check` 通过。
+- 未执行：本轮未改服务端协议/回包，因此未进行服务端联调；历史服务端兼容聚合逻辑需后续单独迁移任务处理。
+
+# 2026-09-11 背包 UI 增量刷新验证
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/bag-incremental-build2` 成功，0 个错误、17 个既有警告。
+- 静态检查：`RoItemComponent`、`KnapsackCtrl`、`KnapsackWindow`、`KnapsackSlotWidget` 和新增背包变更类型文件无 `foreach`、无三目运算符；变更事件仅携带不可变基础字段，不向窗口传递 `ItemBase`。
+- 实现检查：新增/删除/数量/移动事件按 UID 和格位增量更新；数量变化由 `KnapsackSlotWidget.RefreshCount` 只更新数量文本；登录、切页和全量快照仍使用完整渲染。
+- 未执行：Unity Play Mode、真实服务器联调和真实资源图标加载；需要后续测试组件覆盖可见格与非可见格变更。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/bag-incremental-build2/`，待产品经理确认后清理。
+
+# 2026-09-11 背包 UI 增量刷新最终复核
+
+- 代码范围：`RoItemComponent`、`KnapsackCtrl`、`KnapsackWindow`、`KnapsackSlotWidget` 及两个背包变更快照类型。
+- 静态核对：新增/删除/数量变化/移动路径均直接调用局部刷新；只有角色绑定、切页和完整快照调用 `RefreshCurrentCategory`；数量变化调用 `RefreshCount`，不重新加载图标。
+- 构建：`GM_Game.csproj` 成功，0 错误、17 个既有警告，产物位于 `D:/unitypro/LYFMMORGP/_temp/knapsack-incremental-build/`。
+- 规则检查：目标文件无 `foreach`、无三目运算符；变更事件不暴露可变 `ItemBase`；新增类型各自独立文件并有中文注释。
+- 未执行：Unity Play Mode、真实四端联调、资源包图标加载和完整测试场景回归。
+
+# 2026-09-11 背包 UI 增量刷新继续验收
+
+- 格式清理：客户端 Agent 清理 `KnapsackWindow.cs` 两处尾随空格，并合并重复 XML `summary` 注释。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/knapsack-incremental-final` 成功，0 个错误、17 个既有警告。
+- 静态检查：`RoItemComponent`、`KnapsackCtrl`、`KnapsackWindow`、`KnapsackSlotWidget` 及变更快照类型无 `foreach`、无三目运算符；目标范围 `git diff --check` 通过。
+- 隔离烟测：运行 `_temp/bag-mvc-final-smoke/bin/KnapsackMvcSmoke.exe` 成功，输出“通过：初始81格、扩容、删除、穿戴事件链路”。
+- 未执行：Unity Play Mode、真实四端联调、真实资源包图标加载；上述属于环境联调项，不影响本次代码构建验收。
+# 2026-09-11 背包 UI 增量刷新专项测试
+
+- 最新客户端构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/bag-incremental-specialized-build` 成功，0 个错误；仅报告既有依赖版本和弃用 API 警告。
+- 详细事件烟测：在 `_temp/bag-incremental-detailed-smoke` 使用最新 `GM_Game.dll` 编译运行，退出码 0。验证容量变更、新增物品、堆叠数量部分删除、完整删除、同容器移动、跨容器移动均各产生一次对应 `KnapsackChangedEventArgs`，背包类型、旧/新格位和数量字段正确。
+- 基础回归烟测：`_temp/bag-mvc-final-smoke/bin/KnapsackMvcSmoke.exe` 退出码 0，初始 81 格、扩容、删除、穿戴事件链路通过。
+- 增量入口静态检查：`KnapsackCtrl.ApplyIncrementalChange` 调用 `RefreshSlot` 4 次且不调用整页 `Render`；`KnapsackWindow.RefreshSlot` 不调用整页 `Render`；数量变化最终调用 `KnapsackSlotWidget.RefreshCount`，避免重复加载图标。
+- 规则检查：目标文件 `foreach=0`、三目运算符 `?:=0`；`KnapsackWindow.cs`、控制器和事件快照无新增尾随空格；目标范围 `git diff --check` 通过。
+- 非可见格覆盖：代码路径确认 `RefreshSlot` 先更新 `_displayItemsBySlot` 缓存，再按可见范围决定是否绑定 Slot，后续滚动会从缓存读取；未在 Unity Play Mode 实测滚动表现。
+- 容量变化说明：`UpdateCapacity` 会重新计算虚拟列表布局并强制刷新当前可见 Slot；这是容量变化后的布局重绑定，不会重建整页数据或重新加载非可见格图标。
+- 未执行与风险：未启动 Unity Play Mode、未进行真实 Center/Game/Gate/Unity 联调、未验证 YooAsset 实际图标加载；拖拽移动的 UI 入口仍需运行态验证，真实配置下 `ReduceItem` 扣除路径也未单独回归。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/bag-incremental-specialized-build`、`_temp/bag-incremental-detailed-smoke`，用途为本次构建和隔离烟测，待产品经理确认后清理。
+## 2026-09-11 客户端脏标记机制只读分析
+
+- 分析范围：`ClientRole`、`RoleWorldSystem`、`RoleComponentBase`、`RoleComponentContainer`、`RoItemComponent`、`RoleCountComponent`、`KnapsackCtrl`、`RoleInfoCtrl` 和 `Global`。
+- 结论：客户端已有背包和次数的事件通知及背包增量刷新，但没有统一的角色脏位聚合；角色基础信息更新缺少变更事件，外部直接修改可变 protobuf 数据可能绕过通知。
+- 验证方式：静态阅读调用链和 `rg` 检查变更通知、脏状态、版本与刷新入口；本次没有修改代码，因此未执行构建、运行测试或 Unity Play Mode。
+- 未解决问题：尚未实现 `RoleDirtyMask`、本地版本、变更快照、同帧批处理和角色基础属性/装备/技能/Buff/任务领域接入；后续实现需单独安排客户端开发与测试任务。
+
+# 2026-09-11 商城购买客户端改造代码审核
+
+- 审核范围：`ShopMgr.cs`、`ShopCtrl.cs`、`MainCtrl.cs`。
+- 审核结论：通过。`ShopMgr` 未缓存货币余额或购买次数；发包前分别从本地角色的 `RoItemComponent` 和 `RoleCountComponent` 读取并校验。
+- 回包行为：`HandleResponse` 只解析 `BuyShopItemRes.Error`、清理在途状态并触发 `PurchaseCompleted`，没有根据请求本地扣除货币或增加购买次数；`ShopCtrl` 负责提示和成功后的商城显示刷新。
+- 规范检查：目标文件中文说明完整，`foreach=0`，三目运算符=0，`git diff --check` 通过。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/shop-review-build` 成功，0 个错误、17 个既有警告。
+- 非阻塞建议：`SendBuyRequest` 可补充校验 `ShopItemInfo.ShopId == shopTableId`，避免调用方传入跨商店商品；该校验不替代服务端权威校验。
+- 未执行：Unity Play Mode 真实商城购买、服务器四端联调和服务端扣款回包刷新验证。
+# 2026-09-11 商城服务端同步构建
+
+- 命令：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/purchase-sync-build3`。
+- 结果：构建成功，0 个错误、8 个既有警告。
+- 静态约束：本次触碰的商城处理器、物品组件、事务类和次数组件无 `foreach`、无三目运算符；新增同步逻辑含中文注释。
+- 未执行：Center/Gate/Game/Unity 真实购买联调，需验证客户端对 `UpdateItemRet` 和 `BuyShopItemRes` 快照的合并行为。
+# 2026-09-11 移除商城购买回包重复限购读取验证
+
+- 静态核对：`ShopStatic.BuyItems` 调用 `RoleShopRecord.UseBuyTimes`，该路径通过 `RoleCountComponent` 发送次数变化；本次要求删除 `RequestBuyShopItem` 成功响应中的重复次数读取。
+- 待验证：后端 Agent 修改后重新构建 GameServer 和 GM_Game，并确认客户端不再依赖 `BuyShopItemRes.RemainingPurchaseCount`。
+
+# 2026-09-11 客户端次数同步验证
+
+- 协议：更新客户端 `Network.dll`，使用只包含 `ErrorInfo` 的 `BuyShopItemRes`。
+- 客户端：注册 `CMD_CountUpdateSyncInfoCode`，解析 `CountUpdateSyncInfo` 后写入 `RoleCountComponent`，由 `CountChanged` 驱动商城显示。
+- 构建：Network 0 错误；GM_Game 0 错误、17 个既有警告。
+- 静态检查：客户端不再读取购买回包的剩余次数或虚拟背包字段；真实购买联调仍未执行。
+
+# 2026-09-11 商城购买物品、货币与限购同步验证
+
+- GameServer 构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/purchase-final-build`，0 错误，8 个既有警告。
+- GM_Game 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/purchase-client-final`，0 错误，17 个既有警告。
+- 静态检查：购买请求的回滚遍历已使用 `for`；客户端商城不缓存角色货币和限购数据，服务器结果分别写入虚拟物品组件和次数组件。
+- 未执行：真实服务器四端购买联调、数据库落库校验和 Unity Play Mode；需要重点验证多商品请求的限购回包是否逐商品返回（当前协议只提供单个 `remaining_purchase_count`）。
+# 2026-09-12 客户端脏标记设计文档检查
+
+- 本次为只读设计输出，未修改业务代码、协议、配置表、场景或预制体。
+- 已生成 `项目分析/CLIENT_DIRTY_MARK_DESIGN.md`，覆盖角色组件、脏位聚合、背包/次数现有事件、商城同步、MVC 边界、角色生命周期和验收标准。
+- 文档检查：文件存在，章节结构完整；未执行编译或运行测试，因为本次没有代码变更。
+
+# 2026-09-12 客户端脏标记机制实现测试
+
+# 2026-09-12 客户端脏标记返工复验
+
+# 2026-09-12 CenterServer Unsafe 依赖修复验证
+
+- 根因确认：`CenterServer.csproj` 引用 6.0.0.0，而原 `CenterServer/bin/Debug/System.Runtime.CompilerServices.Unsafe.dll` 实际为 4.0.4.1；启动时触发程序集清单不匹配。
+- 后端修复：统一 CenterServer 使用 `packages/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461`，启用精确版本和私有复制，避免旧 DLL 残留。
+- 构建：`dotnet build LYF_Server/CenterServer/CenterServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/center-unsafe-build`，0 个警告、0 个错误。
+- 运行验证：从 `_temp/center-unsafe-build` 启动 CenterServer，进程保持运行超过 3 秒，未出现 Unsafe 加载异常或 `AccoutTable` CodeFirst 异常；随后主动停止测试进程。
+- 未解决：未连接实际 MySQL 数据库执行完整建表验证；原 `bin/Debug` 目录需使用最新构建产物启动。
+
+- 客户端 Agent 修复了模块聚合器误调用、旧格位漏标记及旧事件绕过 UI 脏刷新问题。
+- `dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/dirty-mark-final3`：0 个错误，仅既有警告。
+- 静态检查：目标代码未发现 `foreach` 或三目运算符；商城和背包均通过窗口激活帧消费脏状态。
+- 代码审核复验：通过。未执行 Unity Play Mode、真实服务器四端联调。
+
+- 构建：执行 `dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/dirty-mark-test-build`，结果成功，0 个错误；仅有 Unity 依赖版本冲突、过时 API 和隐藏成员等既有警告。
+- 工程文件：`GM_Game.csproj` 已包含 `ClientDirtyModule.cs`、`ClientDirtyTracker.cs`、`ClientDirtySnapshot.cs`、`ClientChangeContext.cs` 四个脏标记类型文件。
+- 静态规则：脏标记、背包、次数、商城和窗口控制器目标文件扫描 `foreach` 为 0；三目运算符模式为 0。空值条件运算符和可空类型不属于三目表达式。
+- 延迟刷新核对：`RoItemComponent.NotifyKnapsackChanged` 先更新模型并写入角色背包页脏状态；正式代码未发现 `KnapsackChangedDetailed` 的 UI 订阅。`KnapsackCtrl` 仅在窗口帧事件且窗口可见时消费当前页脏快照，支持完整刷新和指定格位刷新，消费后清除标记。
+- 次数模块核对：`RoleCountComponent.NotifyChanged` 写入 `ClientDirtyModule.RoleCount`；`ShopCtrl` 在商城窗口帧事件中检查并消费次数脏标记，重新生成限购展示。当前未发现其他界面对 `CountChanged` 的订阅。
+- 跨模块支持：`ClientChangeContext` 保存事务编号和来源；跨背包移动会同时标记源页与目标页，为拍卖行等后续交换预留上下文。
+- 生命周期核对：`ClientRole.Dispose` 清理全部脏状态；控制器解绑角色时清空本地缓存，避免切换角色或断线后旧标记污染新角色。
+- 未执行：Unity Play Mode、真实四端联调、商城实际购买、滚动到非可见格后的运行态刷新仍需后续环境测试。
+- 风险项：`RoItemComponent.NotifyKnapsackChanged` 仍保留并触发历史 `KnapsackChangedDetailed`/`KnapsackChanged` 事件；当前正式脚本未发现 UI 订阅，但后续新增订阅必须仅用于模型层，不能直接刷新窗口。
+- 风险项：`ShopCtrl.OnPurchaseCompleted` 在购买成功回包时会主动调用 `RefreshShopWindow`；若严格要求所有商城限购展示均通过 `RoleCount` 脏标记延迟消费，应由客户端 Agent 移除该即时刷新或限定为提示层不重建商品列表。
+- 风险项：同一背包内移动仅标记目标格位；若旧格位 UI 仍缓存旧物品，需要同时标记旧格位或改为完整刷新。跨背包移动已同时标记源页和目标页。
+
+
+# 2026-09-12 CenterServer Unsafe 版本冲突专项验证
+
+- 根因核对：`CenterServer.csproj` 引用 `System.Runtime.CompilerServices.Unsafe.6.0.0`，但旧输出目录中的 DLL 清单为 4.0.4.1，导致 SqlSugar CodeFirst 加载时程序集引用不匹配。
+- 修改文件：`LYF_Server/CenterServer/CenterServer.csproj`。Unsafe 引用增加 `SpecificVersion=True` 和 `Private=True`，确保 6.0.0.0 DLL 被复制到 CenterServer 输出目录。
+- 构建命令：`dotnet build LYF_Server/CenterServer/CenterServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/unsafe-center-build-final`。
+- 构建结果：成功，0 个错误、0 个警告。
+- 输出验证：`_temp/unsafe-center-build-final/System.Runtime.CompilerServices.Unsafe.dll` 和 `CenterServer/bin/Debug/System.Runtime.CompilerServices.Unsafe.dll` 均为 `Version=6.0.0.0`；生成配置包含重定向到 6.0.0.0。
+- 未执行：真实数据库连接、SqlSugar CodeFirst 初始化和 CenterServer 长时间运行验证。
+
+## 2026-09-12 CenterServer CodeFirst 实际启动复验
+
+## 2026-09-12 GateServer/GameServer 购买后断线修复验证
+
+## 2026-09-12 未注册协议日志验证
+
+- 代码审核：后端代理确认修改范围正确，未注册协议会记录协议号并安全丢弃，不再因字典异常断开连接。
+
+- `NetClient` 和 `Session` 对未知协议改用 `TryGetValue`，现在会输出 `command not regist, protoCode=协议号` 的 Warn 日志，并丢弃该包，不再抛字典异常导致 `OnReceiveCB` 主动断开。
+- 同时修复了连接异常日志中的条件表达式，改为统一错误码方法，符合项目禁止三目运算符约束。
+- GateServer 构建：0 个警告、0 个错误；GameServer 构建：0 个错误（既有 7 个警告）。
+- 代码审核：通过；未执行真实未知协议注入和四端联调。
+
+- 日志分析：购买成功后的 `11150` 次数同步未在 GateServer 的客户端命令表注册，导致 `NetClient.HandleCommand` 字典下标异常，`OnReceiveCB` 随后断开连接；`10054` 是断开结果，不是购买业务错误。
+- 修改：GateServer 注册 `CMD_CountUpdateSyncInfoCode`，网关对 11150 使用 `CountUpdateSyncInfo` 解析校验后透传；GameServer 明确填写同步结果 `CmdCode=Succeed`。
+- 构建：GateServer 0 个警告、0 个错误；GameServer 0 个错误（7 个既有警告）。产物位于 `_temp/gate-count-fix-build` 与 `_temp/game-count-fix-build`。
+- 代码审核：通过，确认 11150 注册、协议校验和中文注释完整。
+- 未执行：真实商城购买四端联调；需使用新构建覆盖运行目录后复测购买、次数同步、物品同步和断线重连。
+- 返工复验：清理 `GateServerApp.cs` 尾随空格后，`git diff --check` 通过；GateServer 最终构建 0 个警告、0 个错误，产物位于 `_temp/gate-count-fix-final`。
+
+- 环境核对：MySQL `127.0.0.1:3308` 端口可连接，符合 `DBMgr` 的当前连接配置。
+- 从 `D:/unitypro/LYFMMORGP/_temp/center-unsafe-build` 启动 CenterServer，运行 4 秒后进程仍存活，输出已监听 `127.0.0.1:10110`。
+- 结果：`DBMgr.initDB()` 中的 `SqlSugar.CodeFirst.InitTables` 已实际执行，未再出现 Unsafe 加载异常或 `AccoutTable` 建表异常；测试进程已主动停止。
+# 2026-09-13 Unity 主城卡顿诊断
+
+- 范围：只读检查 `New Scene` 与 `Scene_MainCity`，未修改项目文件、场景、预制体或资源。
+- 硬件：Intel Core i9-14900HX；NVIDIA GeForce RTX 4070 Laptop GPU，显存约 8GB；系统内存约 32GB。当前证据不足以判定硬件不足。
+- 场景静态检查：两个场景均启用烘焙光照设置，但 `m_LightingDataAsset` 引用空 GUID；`New Scene` 有两盏 Directional Light、PostProcessVolume、Main Camera 和大量模型/角色表现对象。
+- 运行检查：`New Scene` Play Mode 初始化期间 MCP 连接失联；Unity 日志确认 YooAsset 执行模拟构建，存在 Unknown 脚本，`NpcManager.Awake` 在 YooAsset 包初始化完成前调用 `LoadPrefabAsync`，抛出 `Package initialize not completed`；同时存在服务端未启动导致的 10061 重连日志。
+- 资源检查：`Assets/GM_Game/Scenes/MainCity_Res` 约 731 个文件、964MB，PNG 约 850MB；大贴图最高超过 30MB，存在集中加载和显存上传压力。
+- 验收结果：已完成场景、日志、硬件和进程证据采集；未执行 Profiler 帧采样、重新烘焙或任何修复。Unity MCP 在 Play Mode 中失联，因此运行时统计不完整。
+- 交接建议：客户端 Agent 后续先处理测试脚本初始化顺序/缺失脚本，再验证光照烘焙；之后用 Profiler 区分 CPU 初始化、GPU 渲染和资源加载耗时。
+
+## 2026-09-13 运行帧 Statistics 补充
+
+- 数据来源：用户提供的 Unity 运行时 Statistics 截图。
+- 关键数据：31.5 FPS（31.7ms/帧）；CPU Main 31.7ms；Render Thread 8.4ms；Batches 1718；SetPass Calls 1032；Shadow Casters 903；Tris 6.1M；Verts 7.3M；Visible Skinned Meshes 61。
+- 结论：当前卡顿首先是主线程帧耗时超预算，优先排查脚本 Update、Animator、CharacterController/Physics 和阴影相关准备；渲染线程明显低于主线程，暂不支持“显卡性能不足”为主因。
+- 风险提示：Statistics 不能拆分主线程耗时，仍需 Unity Profiler Timeline 进一步确认具体函数；本次没有修改项目文件。
+
+## 2026-09-13 MainCity_Geometry 与灯光 A/B 验证
+
+- 用户实测：关闭 `MainCity_Geometry` 后帧率上升；关闭灯光后帧率上升。
+- 结论：已确认卡顿与主城几何和灯光处理强相关。结合 903 个 Shadow Casters，实时阴影和几何剔除/提交是当前最高优先级排查项。
+- 下一步：保留灯光，仅将 Directional Light 的阴影关闭进行对照；然后逐步降低阴影距离、分辨率和级联数量，并检查远景几何是否仍投射阴影。不能仅凭该 A/B 结果断定所有耗时都来自灯光，仍需 Profiler Timeline 定位。
+- 本次没有修改项目文件。
+- 静态复核：`New Scene` 存在两个启用方向光，其中一个 `m_Shadows.m_Type=2`（软阴影）；场景 `m_LightingDataAsset` 和 `m_OcclusionCullingData` 均为空引用。该组合可解释关闭灯光后帧率上升，但仍需 Profiler 对照确认各项耗时比例。
+
+## 2026-09-13 Occlusion Culling 操作说明
+
+- 本次为只读指导，没有修改场景或生成烘焙数据。
+- 已明确步骤：对象标记 Occluder/Occludee Static；Window > Rendering > Occlusion Culling > Bake；Main Camera 勾选 Occlusion Culling；从同一相机位置对比 FPS、Batches、SetPass、Shadow Casters。
+- 限制：遮挡剔除只影响渲染可见性；如果 `MainCity_Geometry` 是单个大网格，或场景没有有效遮挡数据，收益会很小；碰撞体仍需单独优化。
+
+## 2026-09-13 Occlusion Culling A/B 复核
+
+- 用户实测：开启遮挡剔除后帧率变化不明显。
+- 静态检查：`MainCity_Geometry.prefab` 约 681 个 Transform，属于大型嵌套预制体；内部包含多个实时灯光。当前场景仍缺少有效 `LightingDataAsset`。
+- 结论：遮挡剔除不是当前主要瓶颈；关闭灯光后帧率上升更符合实时灯光/光照 Pass 成本。后续应优先烘焙静态灯光、减少实时点光源、关闭非关键阴影，再用 Profiler 验证。
+- 本次未修改场景、预制体或资源。
+# 2026-09-13 共享实体系统构建验证
+
+- `dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-common-namespaced`：0 错误，4 个既有警告。
+- `dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-game-namespaced`：0 错误，7 个既有警告。
+- 新增共享/服务端实体代码静态检查：`foreach=0`，三目运算符=0，实体顶级类型按独立文件拆分。
+- 客户端构建暂未通过：工程引用旧版 `MMoRpgCommon.dll`，导致新增 `MMoRpgCommon.SceneEntity` 类型不可见；需更新插件 DLL 后复验。
+- 未执行 Unity Play Mode 和真实四端场景同步联调。
+
+# 2026-09-13 客户端角色实体命名迁移验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-client-check2`。
+- 构建结果：成功，0 个错误，26 个既有警告；输出已写入 `_temp/entity-client-check2/`。
+- 静态检查：客户端业务范围未发现 `ClientRole`、`RoleWorldSystem`、`RoleWorld` 或公开 `.EntityWorld` 旧引用；未发现 `foreach` 或三目运算符。
+- 类型核对：本地角色使用 `PlayerEntity`，其他玩家使用 `RoleEntity`，`SceneWorldSystem` 内部统一驱动场景实体世界并通过实体 ID 绑定表现组件。
+- 未执行：Unity Editor Play Mode、主城资源加载、网络四端实体同步和实体组件运行时联调。
+
+- 复验构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-client-final-acceptance` 成功，0 个错误，26 个既有警告。
+- Unity MCP 编辑器复核：请求脚本刷新并编译后，编辑器状态为空闲且控制台错误数为 0；未进入 Play Mode。
+
+# 2026-09-13 PlayerEntity/RoleEntity 实体继承最终验证
+
+- 静态类型核对：`PlayerEntity : ROObject`、`RoleEntity : ROObject` 均位于 `Assets/GM_Game/Scripts/SceneEntity/Entity`，未发现 `FunlModule/Role` 下重复同名类型。
+- 管理器核对：`SceneWorldSystem` 直接使用单个 `SceneEntityWorld` 管理实体；未发现 `PlayerEntityId`、`BindPlayerEntity`、公开 `SceneEntityWorld EntityWorld`、`ClientRole` 或 `RoleWorldSystem` 残留。
+- 规则扫描：客户端实体范围无 `namespace` 声明、`foreach` 或三目运算符；实体和实体组件按独立源文件组织。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/player-entity-fix3`，0 个错误。
+- Unity 验证：刷新并请求脚本编译后，`mcpforunity://editor/state` 显示编辑器空闲且 `is_compiling=false`；`read_console(types=["error"])` 返回 0 条错误。
+- 未执行：Unity Play Mode、NPC/角色实体运行时生成、真实网络实体同步和四端联调。
+- 临时产物：`_temp/player-entity-fix3/`、`_temp/player-entity-build3.log`，用途为本轮客户端构建和日志记录，待产品经理确认后清理。
+
+# 2026-09-14 客户端实体事件系统验证
+
+- 参考核对：已阅读 `F:/UnityPro/ro/Ro_cs422nb/clientcode/CSProject/MoonClient/Event/MEventType.cs`、`MEventDispatcher.cs` 与 `Entity/MObject.cs`。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-event-build` 成功，0 个错误，31 个既有工程警告。
+- 静态规则：`SceneEntity` 未发现 `namespace`、`foreach` 或三目运算符；新增顶级类型均独立同名文件。
+- 行为静态核对：重复监听被拒绝；派发使用监听快照；回调异常隔离；实体销毁前后派发事件并清空监听。
+- 输入边界：键盘、鼠标、触摸和轴事件由 `EntityInputEventBridge` 接收输入层调用后派发，未在 `ROObject` 中轮询 Unity `Input`。
+- 未执行：Unity Play Mode、实际输入控制器转发和服务器同步领域事件联调。
+- 临时产物：`_temp/entity-event-build/`，用途为本轮客户端构建，待产品经理确认后清理。
+
+## 输入桥接补充验证
+
+- `PlayerInputCtr` 已在不修改自动生成 `PlayerInput.cs` 的前提下，将 Shift、Jump 和 Movement 的 Input System 回调，以及 `Keyboard.current.onTextInput` 通过 `EntityInputEventBridge` 投递给当前 `PlayerEntity`。
+- 空状态安全：`Global.Instance`、`SceneWorld` 或本地玩家不存在时会直接返回，不影响输入控制器既有事件。
+- 复验构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-event-input-build` 成功，0 个错误，31 个既有工程警告。
+- 静态核对：未修改自动生成 `PlayerInput.cs`；`PlayerInputCtr` 没有新增 `namespace`、`foreach` 或三目运算符；Shift、Jump 和 Movement 的目标回调均调用事件桥接。
+- 临时产物：`_temp/entity-event-input-build/`，用途为输入桥接复验构建，待产品经理确认后清理。
+
+# 2026-09-14 实体事件强类型参数重构验证
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entity-event-strongly-typed-build` 成功，0 个错误、31 个既有警告。
+- 静态扫描：`LYF_MMO` 内 `MEventArgs` 引用为 0；事件目录和直接调用文件未发现 `object`、`object[]`、`dynamic`、`Init(params object[])`、`foreach`、三目运算符或新增命名空间。
+- 行为核对：无载荷事件传递 `null`；有载荷事件按监听器克隆为不可变具名参数；分发器不自动调用调用方载荷的 `Recycle`，避免动作状态组件暂存事件时发生对象池复用污染。
+- 未执行：Unity Play Mode、真实键盘/鼠标/触摸和 Input Action 输入回归；未处理工程既有的依赖版本、类型冲突和过时 API 警告。
+- 临时产物：`_temp/entity-event-strongly-typed-build/`，用于本轮客户端构建，待产品经理确认后清理。
+
+## 审核返工复验
+
+- 问题：`PlayerInputCtr` 曾将 `InputActionEventArgs` 派发至 `InputKey*` 和 `InputAxisChanged`，造成同一事件类型拥有不同参数类型。
+- 修复：新增 `InputActionStarted`、`InputActionPerformed`、`InputActionCanceled`；Shift、Jump、Movement 的 Input System 回调全部迁移到动作专用事件。输入桥会拒绝将 Input Action 参数派发到其他事件。
+- 构建：同一构建命令复验成功，0 个错误、31 个既有警告。
+- 静态核对：`PlayerInputCtr` 向旧键盘/输入轴事件派发 Input Action 的匹配为 0；`InputKey*` 仅通过 `KeyInputEventArgs` 派发，`InputAxisChanged` 仅通过 `InputAxisChangedEventArgs` 派发；目标范围禁用模式仍为 0。
+
+# 2026-09-14 RO 风格 MModel 关系重设计检查
+
+- 检查范围：`项目分析/ANIMATOR_STATE_MACHINE_DESIGN.md` 及本轮协作记录。
+- 设计检查：确认实体关系为 `MObject → MSceneObject → MEntity`，`MEntity` 直接持有 `MModel Model`，`MModel` 直接持有 `MAnimator Ator`。
+- 设计检查：确认文档不再使用 `EntityViewComponent`、`AnimatorFacade` 或普通组件容器查找 Animator 的绑定方案；动作组件统一访问 `Entity.Model.Ator`。
+- 设计检查：确认 `MModel` 表现组件、实体普通组件、`MActionStateContainer` 动作状态三类对象边界明确，四个专用组件不进入普通组件集合。
+- 静态结果：文档结构核对通过；本轮没有客户端/服务端代码变更，因此未执行编译和 Unity PlayMode。
+- 待完成：由独立审核 Agent 复核类结构与 RO_cs422nb 源码的一致性；实现阶段再执行客户端构建、异步资源和状态机运行验证。
+
+## 2026-09-14 RO 风格 MModel 关系设计审核复验
+
+- 独立审核 Agent 复核通过：`MObject → MSceneObject → MEntity` 层级、`MEntity.Model`、`MModel.Ator` 和 `Entity.Model.Ator` 访问边界符合用户要求。
+- 返工项已完成：正文不再保留旧表现中间层类型名称；`MActionStateContainer` 使用 `ActionStateKey` 唯一主索引，并以 `StateDefine` 建立辅助索引。
+- 范围声明已补充：RO 的 `MPubVehicle`、`MSoul`、`MSceneTriggerObject`、`MDrop` 暂不纳入本轮实体实现。
+- 验收结果：设计文档检查通过；无业务代码变更，因此未执行编译或 Unity PlayMode。
+# 2026-09-14 客户端 RO 模型动画链路实现验证
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/model-build-final2` 成功，0 个错误，警告为既有工程警告。
+- 静态检查：`SceneEntity` 及主城绑定代码未发现 `namespace`、`foreach`、三目运算符、`EntityViewComponent` 或 `AttachView` 残留。
+- 结构核对：`MEntity.Model` 直接持有 `MModel`，`MModel.Ator` 持有 `MAnimator`；动作组件通过 `Entity.Model.Ator` 播放；模型和组件池均在实体销毁时回收。
+- 未执行：Unity Play Mode、真实资源异步加载、角色/怪物状态切换及旧 `RoleFSM` 隔离运行回归。
+- 临时产物：`_temp/model-build-final2/` 与 `model-build-final2.log`，用途为本轮客户端构建验证，待产品经理确认后清理。
+
+# 2026-09-14 客户端 RO 动作状态实现验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug`。
+- 结果：0 个错误，31 个既有警告；日志位于 `_temp/client-entity-build3.log`。
+- 静态检查：SceneEntity 范围无 `namespace`、`foreach`、三目运算符；Builder 不再引用 `EntityViewComponent`。
+- 结构检查：`MEntity` 直接持有 `MModel`；`MStateMachine` 注册状态容器并以秒值更新；实体世界转发 LateUpdate；动作状态由专用池回收。
+- 未执行：Unity Play Mode、模型异步加载和实际 Animator 状态切换回归；`EntityViewComponent.cs` 文件仍保留兼容，但不在实体初始化链路使用。
+# 2026-09-14 RO 动作状态注册冲突复验
+
+- 对照参考项目确认 `MDefaultActionComponent` 负责默认待机/移动表现，`MFearRunComponent` 对应独立 `kStateFearRun`；因此普通移动不应重复占用状态键。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug` 成功，0 个错误、31 个既有警告；日志位于 `_temp/client-entity-build4.log`。
+- 静态扫描：`SceneEntity` 范围 `namespace=0`、`foreach=0`、三目运算符=0。
+- 未执行：Unity Play Mode、模型异步加载、真实 Animator 状态切换及对象池多轮复用运行验证。
+- 更新链路核对：`MComponentMgr.UpdateSpecialComponents` 仅驱动逻辑 Update；`MStateMachine.LateUpdate` 仅由 `MEntity.LateUpdate` 调用，不再同帧重复播放动画。
+# 2026-09-14 RO 实体状态系统最终客户端验证
+
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug` 成功，0 个错误；最终日志 `_temp/client-ro-entity-final.log`，增量构建报告 2 个既有程序集版本冲突警告。
+- 规则扫描：`SceneEntity`、`RoleCtrlBase.cs`、`Global.cs` 的 `namespace=0`、`foreach=0`、三目运算符=0。
+- 命名扫描：`EntityMoveComponent/EntityBuffComponent/EntitySkillComponent` 和自造的具体 `*ActionComponent` 旧类型引用为 0；保留 RO 原名 `MDefaultActionComponent` 及内部抽象 `MBasicActionComponent`。
+- 池链静态核对：全部 Builder 通过 `MEntityPool.Acquire` 获取实体；World 在 Destroy 后 Release；Transform/Attributes/Role/Monster/Projectile 普通组件通过 `MComponentMgr` 创建；Marker 明确不池化；Skill 只进入动作状态池。
+- 生命周期核对：实体复用重置身份、生命周期、Transform、事件、模型及具体运行字段；Player 重置角色容器状态、DirtyTracker、flags、disposed 与 AfterAddedToWorld 防重复标记。
+- 帧末链核对：全客户端只有 `Global.SceneWorld.LateUpdate` 和 `MEntity.Machine.LateUpdate` 两级调用点，`UpdateSpecialComponents` 不再提前调用 LateUpdate。
+- 隔离核对：绑定 `MEntity` 后 `RoleCtrlBase.ChangeState` 提前返回，不调用旧 `RoleFSM.ChangeState`；未绑定对象仍保留原兼容入口。
+- 未执行：Unity Play Mode、真实 Animator Controller/AnimationClip、YooAsset 动画句柄、角色与怪物完整状态切换、实体/组件/Animator 池多轮运行态复用和网络联调。
+
+# 2026-09-14 RO 实体状态系统独立测试（不通过）
+
+- 测试结论：不通过。客户端工程可以编译，静态规则与工程登记检查通过，但本地玩家入世界生命周期存在确定性缺口，不能进入最终验收。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug`。
+- 构建结果：0 个错误、31 个既有警告；日志位于 `_temp/ro-state-final-test-20260914/GM_Game-build.log`，构建产物位于 `_temp/ro-state-final-test-20260914/build/`。
+- 静态规则：`SceneEntity`、`MainCityMgr.cs`、`SceneWorldSystem.cs`、`Global.cs` 及 `GM_Game.csproj` 范围内 `namespace=0`、`foreach=0`、三目运算符=0、`EntityViewComponent/AttachView=0`。
+- 工程登记：`SceneEntity` 共 95 个 `.cs` 文件，`GM_Game.csproj` 中缺失登记 0、重复登记 0；`git diff --check` 通过，仅有 LF/CRLF 转换提示。
+- 阻塞问题：`SceneWorldSystem.LoadLocalRole` 在 `SceneWorldSystem.cs:34` 调用 `InitializeLocalRole` 后直接通知 `LocalRoleChanged`，没有调用 `PlayerEntity.AfterAddedToWorld`。而 `InitializeLocalRole` 只初始化角色组件，真正的 `_roleComponents.AfterAddedToWorld()` 位于 `PlayerEntity.cs:81-88`，因此正常世界创建路径下角色组件永远收不到入世界通知。
+- 返工要求：客户端在本地玩家完成数据和角色组件初始化后、发布 `LocalRoleChanged` 前补齐一次 `AfterAddedToWorld`，并保持该通知的防重复语义；返工后重新执行构建、规则扫描和本地角色生命周期复验。
+- 其他待审风险：`MStateMachine.TransferToState(IMStateTransform)` 的公开重载可绕过 `CanTransfer`；`MainCityMgr` 的异步模型加载在实体提前移除时可能遗留孤立对象；`SceneEntityWorld.Create/CreateProjectile` 未处理 `Add` 失败后的回收。这些问题需要代码审核确认并分别补测。
+- 未执行：由于已发现阻塞问题，本轮未进入 Unity Play Mode；真实 Animator 播放、动作状态事件、YooAsset 异步加载及实体/模型/组件/动作池多轮复用仍待返工后运行态验证。
+
+## 2026-09-14 RO 实体状态系统返工复验（仍不通过）
+
+- 复验结论：首次阻塞已修复，但整体仍不通过；代码审核确认另有两个对象池/异步生命周期阻塞项。
+- 已修复项：`SceneWorldSystem.LoadLocalRole` 当前调用顺序为 `InitializeLocalRole`（第 34 行）→ `AfterAddedToWorld`（第 36 行）→ `LocalRoleChanged`（第 37 行）。`PlayerEntity.AfterAddedToWorld` 在第 83 行校验初始化、销毁及防重复标记，对象池复用时在第 179-182 行重置相关状态，因此本地角色每轮生命周期能够通知一次且不会在公布前遗漏通知。
+- 独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/ro-state-retest-20260914/build`，结果为 0 个错误、31 个既有警告；日志为 `_temp/ro-state-retest-20260914/GM_Game-retest.log`。
+- 规则复验：`SceneEntity`、`MainCityMgr.cs`、`SceneWorldSystem.cs`、`Global.cs`、`GM_Game.csproj` 范围内 `namespace=0`、`foreach=0`、三目运算符=0、`EntityViewComponent/AttachView=0`。
+- 工程登记复验：`SceneEntity` 共 95 个 `.cs` 文件，`CompileMissing=0`、`CompileDuplicate=0`；`git diff --check` 退出码为 0，仅输出既有 LF/CRLF 转换提示。
+- 剩余阻塞一：`MainCityMgr.CreateRole` 第 92-129 行的异步回调只依据捕获实体对象当前的可变 `EntityId` 查询世界。原实体在加载完成前移除时，新建 `GameObject` 不会销毁；同一实体对象若已被池复用，旧请求甚至可能把旧模型绑定到新实体。
+- 剩余阻塞二：`SceneEntityWorld.Create/CreateProjectile` 第 33-48 行忽略 `Add` 返回值。世界已释放等情况下，Builder 已创建或从池取出的实体不会执行 `Destroy/Release`，方法仍返回未纳管实体，导致实体、组件和模型池链不闭环。
+- 非阻塞加固：`MStateMachine.TransferToState(IMStateTransform)` 没有再次调用 `CanTransfer`，但与 RO 参考实现一致；现有业务事件入口和枚举重载已校验，另外调用点用于强制回默认。建议后续收窄该重载的可见性，防止新调用绕过状态许可。
+- 待审核项：普通组件创建目前可能执行两次 `RebindOwner`，第二次会清空 `OnAttachToHost` 记录的事件列表；当前普通组件尚未注册事件，但该行为会破坏后续普通事件组件的自动解绑语义，等待代码审核最终分级。
+- 未执行：由于仍有确定性生命周期阻塞，本轮未进入 Unity Play Mode；修复后需继续执行异步失效、实体池复用和世界释放后创建的专项测试。
+
+# 2026-09-14 本地玩家入世界生命周期返工复验
+
+- 代码核对：`SceneWorldSystem.LoadLocalRole` 的正常路径顺序已调整为“实体世界创建 → `InitializeLocalRole` → `AfterAddedToWorld` → `LocalRoleChanged`”。`PlayerEntity.AfterAddedToWorld` 自带防重复判断，保留每轮实体复用只通知一次的语义。
+- 静态扫描：`SceneWorldSystem.cs` 的 `namespace=0`、`foreach=0`、三目运算符=0。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/local-role-world-hook-build-20260914`。
+- 构建结果：成功，0 个错误、31 个既有警告；日志为 `_temp/local-role-world-hook-build-20260914.log`。
+- 未执行：Unity Play Mode、角色组件运行态回调、状态切换、真实模型加载及对象池多轮复用；由后续测试 Agent 继续验证。
+- 临时产物未清理，等待产品经理确认。
+
+# 2026-09-14 RO 实体状态系统最终返工复验
+
+- 最终结论：静态验收通过，三组返工项均已闭环；未发现新的确定性阻塞。Unity Play Mode、真实资源包、状态播放和网络联调尚未执行，运行态验收仍需单独进行。
+- 独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/ro-state-final-retest-20260914/build` 成功，0 个错误、31 个既有警告；日志位于 `_temp/ro-state-final-retest-20260914/GM_Game-final-retest.log`。
+- 规则扫描：目标范围 `namespace=0`、`foreach=0`、三目运算符=0；`ClientRole`、`RoleWorldSystem`、`EntityViewComponent`、`AttachView` 残留引用均为 0。`object/dynamic` 唯一命中是 `ActionStateKey.Equals(object)` 的标准 .NET 相等性覆写，不是业务载荷。
+- 工程登记：`SceneEntity` 共 100 个 `.cs` 文件，`GM_Game.csproj` 中 `CompileMissing=0`、`CompileDuplicate=0`；`git diff --check` 退出码 0，仅报告既有 LF/CRLF 转换提示。
+- 本地玩家生命周期：`SceneWorldSystem.LoadLocalRole` 顺序为实体创建、`InitializeLocalRole`、`AfterAddedToWorld`、`LocalRoleChanged`；`PlayerEntity` 复用时重置通知标记，组件入世界通知每轮只触发一次。
+- NPC 生命周期：`NpcManager` 只通过 `SceneWorld.CreateEntity(EntityType.Npc, ...)` 创建，销毁按实体 ID 移除；异步回调校验管理器版本、固定请求 ID、实体引用、Active 状态和世界登记，失效对象销毁。
+- 实体/组件池：`SceneEntityWorld.Create/CreateProjectile` 对 Build 为空或 Add 失败执行 Destroy/Release 并返回空；普通组件唯一 `AddComponent` 绑定，专用组件和动作状态独立绑定/回收；普通组件 Shutdown 先于专用组件和模型释放，双 Rebind 问题已消除。
+- 状态矩阵：`CommonStateTypeTool` 为 15×15、每行 15 项的 RO 许可矩阵，非法枚举范围拒绝；`Singing→Skill` 等合法切换可用，业务入口经过 `CanTransfer`。
+- Animator：`controllerLocation` 通过 YooAsset 加载 Controller lease；失败、过期会话、空 Animator 和 Reset 均释放 lease。JX/Demon Controller 静态包含 `Movement(float)` 与 `Action(int)` 参数，原生状态不存在时使用 Idle/Move/技能等兼容映射。
+- 旧状态机隔离：绑定且 Active 的 `MEntity` 由 `RoleCtrlBase` 路由到新状态机；未绑定对象才使用旧 `RoleFSM`，无双写 Animator 链路。
+- 未执行与下一步：尚未执行 Unity Play Mode、真实 YooAsset 延迟回调、Animator Controller/Clip 播放、状态矩阵运行态遍历、实体/组件/模型/Animator 多轮池复用和四端网络联调。建议在专用测试场景执行这些运行态用例。
+- 临时产物：`_temp/ro-state-final-retest-20260914/`，等待产品经理确认清理。
+
+# 2026-09-14 NPC 实体世界与强类型角色组件返工验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/npc-rules-fix-20260914/build`。
+- 构建结果：成功，0 个错误，31 个既有工程警告；完整日志位于 `_temp/npc-rules-fix-20260914/GM_Game-build.log`。
+- 规则扫描：`NpcManager.cs`、`MEventHandler.cs`、`EventCallbackHandler.cs`、`RoleComponentBase.cs` 未发现 `namespace`、`foreach`、三目运算符、`??`、`object`、`object[]` 或 `dynamic`。
+- 结构核对：`NpcManager` 不再 `new NpcEntity`，正式路径只调用 `SceneWorld.CreateEntity`；实体销毁按 `EntityId` 调用 `RemoveEntity`；异步回调校验管理器版本、实体 ID、实体引用和世界登记后才绑定模型。
+- 类型拆分：事件委托和事件处理器分别位于 `EventCallbackHandler.cs`、`MEventHandler.cs`，`GM_Game.csproj` 新登记委托文件，两个文件均仅包含一个顶级类型。
+- 强类型核对：`RoleComponentBase.Load(object)` 已删除；全部角色组件装载入口均使用具名协议类型，未发现覆盖和调用残留。
+- 差异检查：`git diff --check` 通过，仅报告既有换行格式转换提示。
+- 未执行：Unity Play Mode、真实 YooAsset 延迟回调、管理器销毁与实体池复用运行态测试；需后续测试 Agent 继续验证。
+- 临时产物：`_temp/npc-rules-fix-20260914/`，用途为本轮客户端构建日志和程序集输出，待产品经理确认后清理。
+
+# 2026-09-14 客户端实体池与异步表现生命周期返工验证
+
+- 修改范围：`MainCityMgr.cs`、`SceneEntityWorld.cs`、`MComponentMgr.cs`、`MObject.cs`；未修改服务端、协议、场景、预制体或旧 `RoleFSM`。
+- 首次构建：输出至 `_temp/pool-lifecycle-fix-20260914/build`，因 `MainCityMgr` 的局部变量 `transformComponent` 未满足 C# 明确赋值规则而失败，结果为 1 个错误、31 个既有警告；失败日志为 `_temp/pool-lifecycle-fix-20260914/GM_Game-build.log`。
+- 修复：将回调中的 `transformComponent` 明确初始化为空，不改变实体校验与绑定行为。
+- 复验构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/pool-lifecycle-fix-20260914/build`，结果为 0 个错误、31 个既有警告；日志为 `_temp/pool-lifecycle-fix-20260914/GM_Game-build-rerun.log`。
+- 规则扫描：四个目标文件未发现 `namespace`、`foreach`、三目运算符、`dynamic`、`object[]` 或业务 `object` 载荷，行尾空白命中 0。
+- 差异检查：`git diff --check` 退出码为 0，仅输出 `MainCityMgr.cs` 既有 LF/CRLF 转换提示。
+- 生命周期静态核对：异步回调同时校验世界引用、固定 ID、实体引用和 Active 生命周期；所有失效或无法绑定分支销毁加载对象；世界创建 Add 失败执行 Destroy/Release；普通组件和专用组件各自只有一个绑定入口；普通组件在专用组件和模型释放前完成 Shutdown。
+- 未执行：Unity Play Mode、真实 YooAsset 延迟回调、池对象被移除并复用后的旧回调、世界释放后创建及事件组件多轮复用测试。
+- 临时产物未清理，等待产品经理确认。
+
+# 2026-09-15 EntityId 与 UID 语义复核
+
+- 检查范围：当前客户端 `MObject`、`ROObject`、`SceneEntityWorld`、`MEntityPool`，公共库 `EntityId`，以及参考项目 `Ro_cs422nb/rogamelibs/entity/object.h`、`ro_list_node_data.h`。
+- 复核结果：参考项目使用 `INodeData::uuid_ / GetUUID()` 作为运行时对象唯一身份，`ROObject::GetID()` 作为类型/配置 ID；当前项目 `EntityId` 承担前者而 `MObject.UID` 未接入，存在重复身份设计。
+- 结论：本轮未修改业务代码；已将 UID 统一运行时身份、ConfigId 配置身份、RoleId 持久身份和 EntityId 兼容迁移原则写入 `Docs/AI/DECISIONS.md`。
+- 未执行：统一 UID 的代码迁移、客户端构建和 Unity Play Mode；这些属于后续实施任务。
+
+# 2026-09-15 EntityId 删除与 UID 统一迁移最终复验
+
+- 源码扫描：`LYF_Server`、`LYF_MMO` 业务源码和工程文件中，`EntityId`、`EntityIdAllocator`、`OwnerEntityId`、`SceneEntityId`、`ownerEntityId`、`sceneEntityId`、`AllocateEntityId`、`TargetEntityId` 命中均为 0。
+- 公共库构建：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/common-uid-final`，0 个错误、0 个警告。
+- 客户端构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-client-final`，0 个错误、31 个既有警告。
+- 服务端构建：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-server-final`，0 个错误、7 个既有警告。
+- 语义核对：实体运行时身份统一为 `ulong UID`；`RoleId` 和 `ConfigId` 未改作 UID。未执行 Unity Play Mode、对象池运行态复用和网络联调。
+
+# 2026-09-15 重复 UID 生成清理验证
+
+- 修改范围：`PlayerEntity.cs`、`NpcEntity.cs`、`KnapsackWindowMockServer.cs`；未修改服务端业务。
+- 静态检查：客户端实体代码不再包含 `_legacyUid`、`AllocateLegacyUid` 或无 UID 的 `PlayerEntity(MainRoleInfo)`/`NpcEntity()` 构造入口；测试脚本通过 `SceneEntityWorld.Create` 获取实体 UID。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-duplicate-cleanup-build`。
+- 构建结果：0 个错误、31 个既有警告；日志与产物位于 `_temp/uid-duplicate-cleanup-build`。
+- 未执行：Unity Play Mode、测试世界运行态对象池多轮复用及网络联调。
+
+# 2026-09-15 重复 UID 清理最终复验
+
+- 静态扫描命令：`rg -n -i "_legacyUid|AllocateLegacyUid|PlayerEntity\\s*\\(\\s*MainRoleInfo|NpcEntity\\s*\\(\\s*\\)" LYF_MMO/Assets/GM_Game/Scripts`，结果为 0 命中；场景实体范围未发现 `EntityId` 旧类型命名残留。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-duplicate-final`。
+- 构建结果：成功，0 个错误、31 个既有警告；产物位于 `_temp/uid-duplicate-final/`。
+- UID 语义核对：实体自身只读取 `MObject.UID`；世界分配器产生 UID 后由 Builder/Pool 注入，实体子类不再维护独立计数器或兼容 UID。`OwnerUID`、`TargetUID` 为关系字段，保留合理。
+- 测试脚本核对：`KnapsackWindowMockServer` 通过 `SceneEntityWorld.Create` 创建测试玩家，并在销毁时按玩家 `UID` 移除，测试实体不会脱离世界索引。
+- 未执行：Unity Play Mode、对象池多轮复用、真实异步资源回调和网络联调。
+
+# 2026-09-15 OwnerUID 清理最终复验
+
+- 静态扫描：`rg -n "OwnerUID|ownerUid|ownerUID|OwnerUid" LYF_MMO LYF_Server --glob '*.cs' --glob '*.csproj' --glob '*.xml'`，结果为 0 命中。
+- 客户端构建：0 个错误、31 个既有警告，产物 `_temp/owner-uid-final-client/`。
+- 公共库构建：0 个错误、0 个警告，产物 `_temp/owner-uid-final-common/`。
+- GameServer 构建：0 个错误、7 个既有警告，产物 `_temp/owner-uid-final-server/`。
+- 语义核对：`MObject.UID`/`ROObject.UID` 是唯一实体实例身份；基础实体不再维护 OwnerUID，关联对象由具体组件使用 UID 表达。
+- 未执行：Unity Play Mode、对象池多轮复用、真实资源异步回调和网络联调。
+
+- 公共库复验：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-duplicate-common`，0 个错误、0 个警告。
+- 服务端复验：`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/uid-duplicate-server`，0 个错误、7 个既有警告。
+# 2026-09-15 OwnerUID 清理验证
+
+- 静态扫描：`rg -n "OwnerUID|ownerUid" LYF_MMO/Assets/GM_Game/Scripts LYF_Server`，结果为 0 命中。
+- 公共库、服务端和客户端构建均成功，0 个错误；日志与产物位于 `_temp/owner-clean-common`、`_temp/owner-clean-server3`、`_temp/owner-clean-client2`。
+- 覆盖范围：实体基类、子类、Builder、Factory、World、对象池、公共快照及 NPC/测试创建入口均已改为 UID 单一身份。
+- 未执行：Unity Play Mode、真实资源异步回调、对象池多轮运行态复用和网络联调。
+
+## 2026-09-15 PlayerInputCtr 30 ֡��������֤
+
+- ��֤���`dotnet build GM_Game.csproj --no-restore --configuration Debug --output LYF_MMO/_temp/input-30-frame-build`��
+- ����������ɹ���0 ������41 �����о��档
+- ��̬��飺ȷ�� `Update` �������ﵽ 30 �����㣻δ�޸�ʵʱ `Movement` ��ȡ�����붯���¼��ص���
+- δִ�У�Unity Play Mode ʵ�������¼���֤���ƶ��¼������߼��Դ�ҵ��ʵ�֡�
+
+## 2026-09-15 RO 风格统一输入事件重构验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/event-ro-final-verify`。
+- 构建结果：0 个错误，保留工程既有警告。
+- 静态核对：`EntityInputEventBridge` 的所有输入统一派发 `MEventType.Input`，具体类别由 `InputEventArgs.Kind` 表示；旧输入事件枚举和旧专用参数不再被业务调用。
+- 待审核：独立代码审核 Agent 正在检查 RO 结构对齐、注释完整性和工程引用；Unity Play Mode 输入回归尚未执行。
+## 2026-09-15 PlayerInputCtr 33 毫秒时间节流验证
+
+- 验证命令：`dotnet build GM_Game.csproj --no-restore --configuration Debug --output _temp/input-time-build`。
+- 结果：构建成功，0 个错误，37 个既有警告。
+- 静态审查：`Update` 使用 `Time.unscaledDeltaTime` 累积时间，达到 `0.033f` 秒执行一次并保留余量；不再使用帧计数。
+- 未执行：Unity Play Mode 实际输入事件验证；移动事件发送逻辑仍待业务实现。
+
+## 2026-09-15 RO 风格统一输入事件最终验证
+
+- 最终构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/event-ro-final-verify4`。
+- 构建结果：0 个错误，37 个既有警告。
+- 静态扫描：事件目录、输入控制器和工程文件中未发现 `MEventArgs`、`InputEventKind`、`params object[]`、旧输入事件枚举或来源专用桥接 API。
+- 当前事件链：`PlayerInputCtr -> EntityInputEventBridge.DispatchInput -> MEventType.Input -> InputEventArgs -> MEventDispatcher`。
+- 未执行 Unity Play Mode 的真实输入回归；待最终审核 Agent 输出复核结论。
+## 2026-09-15 PlayerInputCtr 33 毫秒时间节流复验
+
+- 验证命令：`dotnet build GM_Game.csproj --no-restore --configuration Debug --output _temp/input-time-final`。
+- 结果：构建成功，0 个错误，37 个既有警告。
+- 静态审查：`Update` 使用 `Time.unscaledDeltaTime` 和 `0.033f` 秒周期，保留超出时间；`OnEnable`、`OnDisable` 清零累加器。
+- 未执行：Unity Play Mode 实际输入事件验证；移动事件发送逻辑仍待业务实现。
+
+## 2026-09-15 RO 事件系统最终复验
+
+- 代码审核返工已完成：`MMoveEventArgs.Clone` 补齐 `isLocalMove`，对象池首次回收会先初始化队列，`IEventArg.Clone` 注释与共享参数的 RO 分发语义一致，`MMoveEventArgs` 增加类级说明。
+- 最终构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/event-ro-final-verify5`。
+- 最终构建结果：0 个错误，37 个既有警告。
+- 静态扫描：事件目录和输入控制器未发现 `MEventArgs`、`InputEventKind`、`params object[]`、旧输入事件枚举或来源专用桥接接口。
+- 待审核 Agent 对 verify5 输出最终结论；Unity Play Mode 输入实测尚未执行。
+- 最终代码审核结论：通过。审核确认统一 `Input` 事件、桥接接口、参数回收、移动参数完整克隆、对象池首次回收和注释均符合要求。
+- 审核依据：`_temp/event-ro-final-verify5.log`，0 个错误、37 个既有警告；静态扫描目标残留为 0。
+- 剩余风险：尚未执行 Unity Play Mode 的真实输入回归。
+## 2026-09-15 事件参数对象池与主城其他玩家同步测试组件
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/maincity-mock-build`。
+- 构建结果：成功，0 个错误、39 个既有项目警告；日志位于 `_temp/maincity-mock-build.log`，产物位于 `_temp/maincity-mock-build/`。
+- 对象池静态检查：`InputEventArgs` 和 `EntityStateChangedEventArgs` 的业务创建点均已改为静态工厂方法；源码扫描未发现直接 `new InputEventArgs(...)` 或 `new EntityStateChangedEventArgs(...)`。
+- 主城链路静态检查：协议回调 `SyncotherOnlineHandle` 仅负责反序列化并调用 `HandleOtherRoleOnline`；该入口先检查角色是否已存在，只有首次创建才调用 `CreateRole`。
+- 测试组件静态检查：`MainCityOtherRoleMock` 位于 `UI/test`，通过 `MainCityMgr` 正式入口创建角色，销毁时以 `RoleId + UID` 双重校验调用 `RemoveOtherRole`；按脚本名称和 meta GUID 扫描，正式 `.unity`/`.prefab` 中均为零命中。
+- 未执行：Unity Play Mode 真实异步预制体回调、手动 ContextMenu 触发、重复角色同步和测试组件销毁后的角色回收验证。
+## 2026-09-15 事件对象池与主城模拟返工验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/maincity-mock-build`。
+- 构建结果：成功，0 个错误、41 个项目既有警告；日志为 `_temp/maincity-mock-build.log`。
+- 移动对象池检查：`PlayerInputCtr` 未直接调用 `MEventPool<MMoveEventArgs>.GetEvent()`；仅 `MMoveEventArgs.Create` 管理该类型的获取和字段重置。
+- 参数交接检查：两个输入桥接方法都在 `entity == null` 时调用 `eventArgs.Recycle()`；成功派发才将生命周期交给实体分发器。
+- 所有权检查：真实同步入口先删除同 RoleId 的测试 UID 登记；测试清理由 `MainCityMgr.RemoveTestOtherRole` 校验登记 UID 与世界实体 UID 后执行。
+- 资源检查：`MainCityOtherRoleMock.cs` 和 `.meta` 均存在，GUID 为 `59da04f052e200243825559c934988cf`，已登记 `GM_Game.csproj`；按类名和 GUID 扫描正式 `.unity`/`.prefab` 均为零命中。
+- 未执行：Unity Play Mode 实测与真实网络同步联调。
+- 最终复验：补齐返工范围局部变量注释后重新执行同一构建命令，结果仍为 0 个错误、41 个项目既有警告。
+## 2026-09-15 主城其他玩家同步测试组件最终异常回收验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/maincity-mock-build`。
+- 构建结果：成功，0 个错误、45 个既有项目警告；日志位于 `_temp/maincity-mock-build.log`。
+- 静态核对：`MEventDispatcher.DispatchEvent` 的参数回收位于最外层 `finally`；输入桥接器的空实体分支直接回收，有效实体分支移交分发器回收。
+- 主城测试核对：`MainCityOtherRoleMock` 位于 `UI/test` 并已登记工程；正式 `.unity`、`.prefab` 中未引用该组件；真实网络同步同角色 ID 会移除测试所有权记录。
+- 未执行：Unity Play Mode 手动挂载、异步角色预制体加载、真实网络同步接管和对象池多轮复用运行态验证。
+## 2026-09-15 主城其他玩家同步测试组件最终独立审核
+
+- 审核结论：通过。
+- 复现构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/maincity-mock-final-audit`。
+- 结果：0 个错误、41 个既有警告；日志为 `_temp/maincity-mock-final-audit.log`。该复现结果取代本轮先前记录的 45 个警告计数。
+- 静态检查：正式 `.unity`、`.prefab` 不含 `MainCityOtherRoleMock`；分发器 finally 回收、桥接空实体回收和真实同步撤销测试所有权均通过独立复核。
+- 未执行：Unity Play Mode 与真实网络联调。
+## 2026-09-15 Ro_cs422nb 状态机与动作安装机制只读分析
+
+- 分析范围：参考项目 `F:/UnityPro/ro/Ro_cs422nb/clientcode/CSProject/MoonClient/` 下的 `AsyncObj/MAnimator.cs`、`Model3D/MModel.cs`、`Entity/MEntity.cs`、`Components/State/MStateMachine.cs`、`Components/Action/MActionComponent.cs`、`Components/Common/MIdleComponent.cs`、`Components/Common/MMoveComponent.cs`、`Components/Local/MLocalSyncComponent.cs`，以及 SWIG 暴露的原生 `StateMachineComponent`。
+- 验证结果：确认状态组件在 `MEntity.InitComponents` 创建；模型加载完成后由 `MModel.onModelLoadCallback` 初始化 `MAnimator`；待机/移动/技能等由各动作组件调用 `MEntity.OverrideAnim`，统一进入 `MAnimator.OverrideAnim`；状态切换由 `MStateMachine` 记录并在 `LateUpdate` 调用当前状态 `PlayAnim`。
+- 结论：Controller 节点是稳定状态插槽，角色专属 Clip 通过 `AnimatorOverrideController` 动态覆盖；原生状态机负责逻辑/同步状态，C# 状态机负责客户端动作生命周期和动画表现。
+- 本轮为只读解析，未修改业务代码，未执行编译；详细分析见根目录 `项目分析/RO_STATE_MACHINE_RUNTIME_ANALYSIS.md`。
+# 2026-09-16 EntityType Flags 客户端迁移
+
+- 公共库构建：dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entitytype-common-build，成功，0 个错误，4 个既有警告。
+- 客户端构建：dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entitytype-client-build，成功，0 个错误，工程既有警告。
+- 静态检查：客户端实体工厂、MObject、MStateMachine 不再使用组合类别的精确相等判断；本地玩家构造和 Builder 均传入 Role | Player。
+- 未执行：服务端 Flags 迁移、Unity Play Mode、网络快照运行态验证。
+
+## 2026-09-16 EntityType Flags 服务端迁移
+
+- dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/entitytype-server-build：0 错误，7 个既有警告。
+- 静态核对玩家为 Role | Player，工厂实体类别与组件装配使用位判断。
+- 尚未执行客户端构建、Unity Play Mode 和跨端快照联调。
+
+
+# 2026-09-16 PresentTable 表加载验证
+
+- 静态检查：`LubanMgr` 新增表现表区域未发现 `foreach`、三目运算符、命名空间声明、`object` 或 `dynamic`；已生成表文件和 `tbpresenttable.bytes` 路径存在。
+- 语义检查：`Init()` 直接引用 `tables.TbPresentTable.DataMap`；`GetPresentTables()` 返回全量索引；`GetPresentTableById(int id)` 未初始化或 ID 不存在时返回 `null`。
+- 构建命令：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/present-table-build-final/network/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/present-table-build-final/network/obj/`；`dotnet build LYF_Server/GameServer/GameServer.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/present-table-build-final/gameserver/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/present-table-build-final/gameserver/obj/`。
+- 构建结果：Network 0 个错误、4 条既有警告；GameServer 0 个错误、11 条既有警告。
+- 临时产物：`D:/unitypro/LYFMMORGP/_temp/present-table-build-final/`，待产品经理确认后清理。
+- 未执行：真实服务器运行时查询、Unity 表现资源加载和四端联调。
+# 2026-09-16 PresentTable 最终复核
+
+- 复核命令：Network 与 GameServer 分别使用独立输出目录 `D:/unitypro/LYFMMORGP/_temp/present-table-build-final2/network/`、`D:/unitypro/LYFMMORGP/_temp/present-table-build-final2/gameserver/` 构建。
+- 复核结果：Network 0 个错误、4 条既有警告；GameServer 0 个错误、11 条既有警告。
+- 规则复核：表现表新增区域无 `foreach`、三目运算符、命名空间声明、`object` 或 `dynamic`。
+# 2026-09-16 RO 风格 MAnimator/MAnimationMgr 重构测试待命记录
+
+- 计划验证：`GM_Game.csproj` 构建至 `D:/unitypro/LYFMMORGP/_temp`；扫描动画重构文件的 `namespace`、`foreach`、三目运算符和弱类型载荷；验证 `MEntity.OverrideAnim` 返回 `MAnimator.MAnimInfo`、延迟 `AfterOverrideAnim` 参数在实体销毁/复用时释放、`ForceToDefault` 触发状态动画刷新。
+- 中间态证据：仅发现新增 `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/AsyncObj/MAnimationMgr.cs`；`MAnimator.cs` 与 `MEntity.cs` 仍引用旧顶级 `MAnimInfo`，旧 `MAnimInfo.cs`、`MAnimationClipInfo.cs`、`MAnimationAssetProvider.cs` 仍未移除，`MDelayedEntityEvent`、`MAfterOverrideAnimEventArgs`、`MEvent_AfterOverrideAnim` 均未落地。
+- 状态机证据：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/State/MStateMachine.cs` 的 `TransferToState` 内仍为注释的 `//MarkTriggered();`，因此 `ForceToDefault()` 不能让 `LateUpdate` 执行 `PlayAnim`。
+- 结论：未执行构建及运行态测试，不能给出通过结论。客户端开发 Agent 发生两次连接中断，需待完整代码重新提交后由独立测试 Agent 执行本测试清单。
+# 2026-09-16 animInfo.txt RO 格式索引复核
+
+- 检查对象：`LYF_MMO/Assets/GM_Game/Resources/ResInfo/animInfo.txt`。
+- 检查结果：成功解析为二维 JSON，共 12 条记录；每条恰含 Location、时长秒、循环标记三列，未发现重复 Location。
+- 资源核对：12 个 Location 对应 `.anim` 文件全部存在；索引时长与 `m_StopTime`、索引循环标记与 `m_LoopTime` 逐条一致。
+- 未执行：YooAsset 运行时清单校验与 Unity Play Mode 动画加载验证。
+
+# 2026-09-16 RO 动画资源合并第二次返工验证
+
+- 开发构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/anim-ro-merge-rework2`，结果为 0 个错误、39 个项目既有警告。
+- 第一次独立复现构建：输出到 `_temp/animation-ro-first-review-build`，0 个错误、39 个既有警告；因启动预加载、播放门控、混合树、关键预加载集合、LRU 驱动和反初始化缺失，审核不通过并退回。
+- 第二次独立复现构建：输出到 `_temp/animation-ro-second-review-build`，0 个错误、39 个既有警告；因 `IsPreloadFinished` 当前状态语义和正式动作真实剪辑安装链缺失，审核不通过并再次退回。
+- 第二次返工静态结果：旧 `MAnimationAssetProvider`、顶级 `MAnimationClipInfo`、顶级 `MAnimInfo` 及其文件、Meta、工程项均为 0 残留；目标文件 `namespace`、`foreach`、三目、弱类型业务载荷和行尾空白均为 0 命中。
+- 行为核对：`MAnimator.MAnimInfo` 同时持有 ready 与 preparing；快速 A→B→C、缓存同步回调、加载失败保留旧 ready、Reset/Uninit 旧回调隔离已通过静态推演。启动时动画索引成功前不创建 SceneWorld，失败每 3 秒重试；全局 Update 稳定驱动 LRU。
+- 动作核对：正式 Play/CrossFade 前按 PresentTable 安装真实剪辑；没有通用真实来源的动作不会放行 Controller 占位剪辑，而是记录失败并安装真实 Idle 回退。
+- 当前审核：第三次独立完整复审进行中，尚未给出最终通过结论。
+- 未执行：Unity Play Mode、真实 YooAsset 延迟完成、快速连续覆盖、失败重试、对象池多轮复用和客户端退出时在途加载实测。
+
+# 2026-09-16 RO 动画资源合并第三至第五次独立验证
+
+- 第三次独立构建：输出 `_temp/animation-ro-third-review-build`，0 个错误、39 个既有警告；因正式角色未接 RO Controller、槽位失败错误提升 ready、旧兼容移动映射缺失而退回。
+- 第三次返工构建：输出 `_temp/anim-ro-merge-rework3`，0 个错误、39 个既有警告；本地/其他角色创建链均传 RO Controller 完整 Location，11 个要求槽位静态存在，preparing 的 Pending/Applied/Failed 闭环完成。
+- 第四次独立构建：输出 `_temp/animation-ro-fourth-review-build`，0 个错误、39 个既有警告；因 DefaultPackage 未收集动画索引目录和动画目录而退回。
+- 第四次返工构建：输出 `_temp/anim-ro-merge-rework4`，0 个错误、39 个既有警告；新增 AnimationIndex 与 Animations 收集组，12 个动画文件均存在且落入 Animations Collector，索引目录 GUID 与配置一致，RO Controller 由现有 artres Collector 覆盖。
+- 第五次独立构建：审核 Agent 复现为 0 个错误、39 个既有警告。业务代码、资源配置、12 条 animInfo 路径与 Collector 闭环、旧类型/文件/Meta/工程项残留、禁用语法和目标行尾检查均通过；仅因协作记录未补齐而未放行。
+- 静态生命周期结论：ready/preparing、同步缓存回调、Controller 先后到、快速 A→B→C、失败保留旧 ready、Reset/Uninit、混合树、关键状态预加载、LRU 与启动门控均通过完整推演。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate/资源包重新构建、运行时 `CheckLocationValid`、真实延迟加载、对象池多轮复用和退出时在途加载实测。Unity Editor 当前占用项目，未并行启动同项目 Batch Mode。
+- 下一步：第六次完整独立审核；如不通过继续退回开发 Agent，返工后重新完整审核。
+
+# 2026-09-16 RO 动画资源合并第六次审核与第五次返工验证
+
+- 第六次独立审核结论：不通过。`CreateRoleCtrl.StartGame` 在动画索引启动门控期间直接调用尚未创建的 `Global.SceneWorld.LoadLocalRole`，会空引用；简单判空会吞掉成功回包，因此必须补充可恢复的强类型排队机制。
+- 第五次返工构建：开发 Agent 执行 `dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/anim-ro-merge-rework5`，结果为 0 个错误、39 个项目既有警告。
+- 静态时序推演：开始游戏回包先到时排队并在世界创建后消费；动画索引先到时立即加载；预载失败时保留角色请求并随 3 秒重试继续；重复成功回包按账号、角色、实体和场景切换状态去重；断线、换号或退出时清除待处理请求、当前角色和事件订阅。
+- 静态边界检查：`LoadLocalRole` 正式调用收口到 `Global.TryConsumePendingLocalRole`；`CreateRoleCtrl` 对 `SceneWorld` 零直接访问；`MainCtrl`、`RoleInfoCtrl` 的相关协议入口补充世界门控；禁用语法与目标行尾空白扫描通过。
+- 本条仅记录开发 Agent 自验，不代表独立审核通过。当前待同一检查 Agent 执行第七次从第 1 项开始的完整审核。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate 或资源包重建、运行时 `CheckLocationValid`、快速重复回包、断线重登、真实延迟资源加载和对象池多轮复用实测。
+# 2026-09-16 RO 动画资源合并第七次独立审核
+
+- 审核结论：不通过。
+- 独立构建：_temp/animation-ro-seventh-review-build，0 个错误、39 个项目既有警告。
+- 通过项：旧动画类型、文件、Meta 与工程项零残留；ready/preparing 和异步剪辑时序；动作播放门控；RO Controller 与覆盖槽位；12 条动画资源与 YooAsset Collector；禁用语法、注释、协作记录和根变更说明。
+- 阻塞项一：异步进城回调未校验会话与角色身份，断线清理后旧回调仍可能隐藏选角 UI 并初始化主界面。
+- 阻塞项二：ClearLocalRoleSession 清理顺序使 LocalRoleChanged(null) 回调期间仍可读取旧 roleCtrlBase，小地图会遗留失效跟踪引用。
+- 审核建议：同时覆盖连接失败不在主线程触发时的清理安全，以及快速自动重连时旧回调与新会话之间的代次隔离。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate 或资源包重建、运行时 CheckLocationValid、真实断线重登和快速重复回包实测。
+- 后续：开发 Agent 返工并更新变更说明后，必须执行第八次从第 1 项开始的完整独立审核。
+# 2026-09-16 RO 动画资源合并第七次审核返工验证
+
+- rework6 范围：Global.cs、NetSocketMgr.cs、CreateRoleCtrl.cs，以及根变更说明。
+- 场景回调隔离：捕获 Global、SceneWorld、PlayerEntity、UID、账号、角色、连接代次和 UI 控制器实例；回调先复位 transition，校验失败不隐藏选角 UI、不调用 InitMainCtrl。
+- 会话清理顺序：roleCtrlBase 在 SceneWorld.Clear 触发 LocalRoleChanged(null) 之前置空。
+- 重连隔离：待处理角色仅能由相同连接代次消费；旧连接失败回调按失败代次清理，不能删除已由新代次接管的角色会话。
+- 开发 Agent 首次构建因缺少 EntityLifecycleState 的 using 为 1 个错误；补充必要 using 后，_temp/anim-ro-merge-rework6 最终构建为 0 个错误、39 个项目既有警告。
+- 开发 Agent 静态检查：三类竞态断言、禁用 namespace/foreach/三目/弱类型业务载荷和行尾空白均通过。本条不代替独立审核。
+- 未执行：Unity Play Mode、真实断线及自动重连、YooAsset EditorSimulate 或资源包重建、运行时 CheckLocationValid。
+- 后续：同一检查 Agent 必须从验收清单第 1 项执行第八次完整审核。
+# 2026-09-16 RO 动画资源合并第八次独立审核
+
+- 审核结论：不通过。
+- 独立构建：0 个错误、39 个项目既有警告。
+- 通过项：旧动画类型、文件、Meta、工程项零残留；ready/preparing 生命周期；资源、Collector 和 13 个 Controller 槽位；项目禁用语法和行尾检查。
+- 阻塞竞态：SceneMgr 使用共享 _obs 保存并发场景加载订阅。A/B 请求重叠时，A 完成会释放 B 的订阅而不是自己的订阅，A 订阅泄漏并重复回调；旧场景仍可能真实激活，造成场景串台与最终请求回调丢失。
+- 返工验收：每请求独立订阅生命周期；明确 latest-wins 或串行队列；旧请求不影响新请求、不重复完成；最终请求进入正确场景；过期请求不改写当前场景、不隐藏有效加载 UI。
+- 必须覆盖：A 主城→断线→B 选角、B 先完成、A 先完成、连续 A→B→C。
+- 未执行：Unity Play Mode、真实断线自动重连、YooAsset EditorSimulate 或资源包重建。
+- 后续：开发 Agent 返工后，执行第九次从第 1 项开始的完整独立审核。
+# 2026-09-16 RO 动画资源合并第八次审核返工验证
+
+- rework7 范围：SceneMgr.cs 与根动画合并变更说明。
+- 实现：每请求独占订阅和句柄；串行 latest-wins；等待槽仅保留最后意图；旧请求不释放新订阅、不执行回调、不写当前场景、不隐藏 Loading。
+- 开发 Agent 最终构建：_temp/anim-ro-merge-rework7，0 个错误、39 个项目既有警告；首次构建曾因同名枚举遮蔽出现 1 个错误，使用完整限定名后修复。
+- 静态时序：A→B 时 A 清理后 B 落地；串行结构下 B 不会先于 A 完成；A→B→C 时 B 不启动，A 清理后直接 C。
+- 底层核对：YooAsset 1.5.7 的 suspendLoad 会设置 allowSceneActivation=false，UnSuspend 会改为 true。独立审核必须检查过期 Additive 请求解除挂起并立即卸载的运行语义，不能仅以未调用 SceneOperationHandle.ActivateScene 认定旧场景没有激活副作用。
+- 开发 Agent 静态扫描：无 namespace、foreach、三目、object[]、dynamic、旧 _obs 或新增空白错误。本条不代替独立审核。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate、真实 A/B/C 场景重叠和断线自动重连。
+- 后续：同一检查 Agent 从验收清单第 1 项执行第九次完整审核。
+# 2026-09-16 RO 动画资源合并第九次独立审核
+
+- 审核结论：不通过；SceneMgr 1 个阻塞项，其余 11 项通过。
+- 独立构建：_temp/animation-ro-ninth-review-build，0 个错误、39 个项目既有警告。
+- 阻塞：过期请求 UnSuspend 会把 allowSceneActivation 设为 true，真实实例化旧 Additive 场景并触发 Awake、OnEnable、Start。
+- 确定性竞态：旧主城 UnloadAsync 后未等待便启动新主城；新实例注册协议后，旧实例 OnDestroy 可能按协议号删除新实例处理器，导致新主城失去协议响应。
+- 返工验收：过期场景业务生命周期无副作用；等待旧场景卸载完成再启动新请求；协议注册注销具备实例所有权；覆盖 A主城→B选角、A主城→B选角→C主城、生命周期顺序、失败和同步重入。
+- 其余通过：旧类型零残留；唯一 ClipInfo/MAnimInfo；ready/preparing；动作门控；RO Controller/13槽位；12条索引与Collector；Global门控；登录和连接代次；禁用语法；Docs。
+- 未执行：Unity Play Mode、真实场景生命周期、真实断线自动重连和 YooAsset 模拟清单。
+- 后续：开发 Agent返工后，同一检查 Agent从第 1 项执行第十次完整审核。
+# 2026-09-16 RO 动画资源合并第九次审核返工验证
+
+- rework8 范围：SceneMgr、SocketDispatcher、MainCityMgr、CreateRoleCtrl、LoginCtrl、MainCtrl、SkillCtrl，以及 Scene_CreateRole、Scene_MainCity 两张场景。
+- 业务副作用隔离：两张场景全部原根收拢到唯一默认禁用 SceneBusinessRoot；过期 Additive 场景从完成加载到卸载结束不启用业务根。
+- 卸载屏障：过期请求等待自身卸载完成；latest 启用前等待旧托管场景与普通场景卸载完成；请求中途过期时按旧场景、自身场景、最新请求的顺序串行。
+- 协议所有权：RemoveEventHandler 只有协议号和当前强类型委托同时匹配才删除；全部正式调用方已迁移，无按协议号无条件删除旁路。
+- 开发 Agent 最终构建：_temp/anim-ro-merge-rework8，0 个错误、39 个项目既有警告。
+- 开发静态检查：7 个 C# 文件禁用语法全零；两场景各 BUSINESS=1、INACTIVE=1、SCENE_ROOTS=1、MISSING=0，除业务根外无普通顶级 Transform 或根 Prefab；差异空白检查通过。本条不代替独立审核。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate、过期场景生命周期、同场景 A→B→C 和真实断线重连。
+- 后续：同一检查 Agent 从验收清单第 1 项执行第十次完整审核。
+# 2026-09-16 RO 动画资源合并第十次独立审核
+
+- 审核结论：不通过；2 个 SceneMgr 阻塞项。
+- 独立构建：_temp/animation-ro-tenth-review-build，0 个错误、39 个项目既有警告。
+- 阻塞一：SceneOperationHandle.UnloadAsync 立即释放 Provider，调用后再读 SceneObject 无法获得卸载失败的真实场景，过期场景和上一托管场景的 Unity 兜底路径失效。
+- 阻塞二：业务根启用早于隐藏旧 Loading；根内 Awake/OnEnable 同步发起新请求时，新 Loading 会被旧请求随后隐藏。
+- 返工验收：卸载前缓存 Scene；失败兜底使用缓存并等待；旧场景未销毁不启用新根；Loading 显示、刷新、隐藏具备请求代次所有权并覆盖同步重入。
+- 其余全量项通过：场景 YAML、旧类型零残留、动画生命周期、动作和混合树、Controller、12 条索引与资源、Collector、Global/登录/连接、协议所有权、规则扫描与协作记录。
+- 未执行：Unity Play Mode、真实卸载失败、业务根同步重入、YooAsset EditorSimulate。
+- 后续：rework9 后由同一检查 Agent从第 1 项执行第十一次完整审核。
+# 2026-09-16 RO 动画资源合并第十次审核返工验证
+
+- rework9 范围：SceneMgr.cs 与根动画合并变更说明。
+- 卸载快照：LoadedSceneSnapshot 与 PreviousManagedSceneSnapshot 均在 YooAsset UnloadAsync 前保存，卸载失败兜底不读取失效 handle。
+- 卸载状态：三类场景统一保存 Scene 快照与 Unity 异步操作；空操作或完成后仍 loaded 最多重试 3 次，耗尽后明确阻断调度且不启用新根。
+- Loading 所有权：显示、刷新、隐藏均校验请求代次；提交先隐藏旧 Loading，再启用业务根与调用完成回调，覆盖 Awake/OnEnable 和 callback 同步重入。
+- 开发 Agent 最终构建：_temp/anim-ro-merge-rework9，0 个错误、39 个项目既有警告。
+- 开发静态检查：无 namespace、foreach、三目、object[]、dynamic、旧 _obs 或新增空白错误。本条不代替独立审核。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate、卸载失败注入、Loading 同步重入和真实 A→B→C。
+- 后续：同一检查 Agent 从验收清单第 1 项执行第十一次完整审核。
+# 2026-09-16 RO 动画资源合并第十一次独立完整审核
+
+- 最终结论：通过，无阻塞项，不需要返工。
+- 独立构建：D:/unitypro/LYFMMORGP/_temp/animation-ro-eleventh-review-build，0 个错误、39 个项目既有警告。
+- 动画结构：旧三个顶级类型及文件、Meta、工程项零残留；唯一 MAnimationMgr.ClipInfo 与 MAnimator.MAnimInfo；ready/preparing 全时序通过。
+- 动画资源：12 条 animInfo 记录逐条核对 Location、.anim、.meta、m_StopTime、m_LoopTime；RO Controller 13 槽与 Meta GUID、ResInfo/Animas/artres Collector 通过。
+- 生命周期：Global 启动与登录门控、连接代次、异步进城、SceneBusinessRoot、三类场景卸载、cleanup blocked、Loading 代次和协议委托所有权通过静态推演。
+- 场景资源：Scene_CreateRole 唯一默认禁用业务根包含 8 个原根；Scene_MainCity 唯一默认禁用业务根包含 15 个原根；父级、Prefab TransformParent、单位变换和 SceneRoots 完整。
+- 规则检查：目标范围 namespace、foreach、三目、object[]、dynamic 均为零；旧文件扫描为零；git diff --check 无空白错误，仅有 LF/CRLF 提示。
+- 未执行：Unity Play Mode、YooAsset EditorSimulate、卸载失败注入、Loading 同步重入、真实 A→B→C 与断线重连。以上为剩余运行态测试范围。
+## 2026-09-18 Unity 启动报错诊断验证
+
+- 日志文件：`C:/Users/lyf/AppData/Local/Unity/Editor/Editor.log`。
+- 发现 `Exception: YooAssets not initialize !`，调用链为 `Global.Awake:94 -> YooAssets.GetPackage`；根因是测试启动脚本的 YooAsset 包初始化没有可靠地先于 `Global.Awake` 完成。
+- 发现 `RoleCtrlBase.Gravity:275 -> RoleCtrlBase.Update:100` 空引用；根因是 `PlayStateMgr.Instance.stats` 生命周期未满足时仍执行重力计算。
+- 发现网络连接码 `10061` 和 OpenUPM `ECONNRESET`，分别归类为外部服务未启动和包仓库网络问题。
+- 未执行代码修改和 Unity Play Mode；本报告为诊断结果，待用户确认后进入客户端修复流程。
+## 2026-09-18 测试脚本 YooAsset 初始化时序修复
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/test/test.cs`。
+- 结果：初始化流程改为 `YooAssets.Initialize` -> 创建并设置 `DefaultPackage` -> 等待 `InitializeAsync` 成功 -> 添加 `Global`；测试脚本不再直接调用未执行的协程。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-yooasset-init-build`，0 个错误，39 个既有警告。
+- 静态检查：目标脚本未命中 `namespace`、`foreach`、三目运算符、`object`/`dynamic` 载荷；代码注释为中文。
+- 未执行：Unity Play Mode、EditorSimulate 清单实际加载和场景运行验证。## 2026-09-18 YooAsset ���������С������
+
+- ��־���֣�Editor.log ��ȷ��¼ Invalid collect path : Assets/GM_Game/Resources/ResInfo��SimulateBuild pipeline build failed �� SimulateManifestFilePath is null or empty��ͬʱ��¼ Global.Awake -> YooAssets.GetPackage �� YooAssets not initialize !��
+- �����飺test.cs ������ YooAsset ��ʼ����DefaultPackage ����/������Ĭ�ϰ����á�ģ���嵥·��У�顢InitializeAsync �ɹ��жϺͳ��� Global ���ã����ٵ��� NpcManager��UIRoot�����ٵȴ� SceneWorld�������� Global��
+- ������飺New Scene.unity �� Global GameObject Ĭ�Ͻ����Ұ� Global ��������Զ����Ƴ� NpcManager �����
+- ���������dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-yooasset-simple-build Ϊ 0 ������39 �����о��档
+- ��̬�����Ŀ��ű��ͳ���δ���� namespace��foreach����Ŀ�������object��dynamic��git diff --check �޿հ״���
+- δִ�У�Unity EditorSimulate �ɹ�������Play Mode ����ʵ Global Awake ������֤���ռ�·���������������Դ��������������
+# 2026-09-18 YooAsset 测试场景 NPC 初始化恢复
+
+- Editor.log 根因：YooAsset 报 The collecting asset file is existed: Assets/GM_Game/Resources/ResInfo/animInfo.txt，因为 AnimationIndex（ResInfo）与 Resources 收集器重复覆盖同一文件；旧运行日志还包含模拟构建失败及 Global 提前读取资源包的连锁错误。
+- 修改验证：测试脚本含 YooAsset 初始化成功门控、Global 启用、SceneWorld 等待和一轮 NPC 初始化保护；场景 Global 默认禁用且测试对象挂载 NpcManager；资源配置中 AnimationIndex 组为 0，Resources 组为 1，ResInfo 路径重复收集为 0。
+- 构建命令：dotnet build LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/restore-npc-test-build。
+- 构建结果：通过，0 个错误，39 个项目既有警告。
+- Unity 运行验证：MCP 实例 LYF_MMO@47ea91c229a904f3 初始可连接，已停止旧 Play Mode 后重新进入 New Scene；进入播放期间 MCP WebSocket 断开，连续读取 Editor 状态和 Console 均返回 session not ready，因此未能取得本轮运行态日志。Editor.log 的重复收集错误来自断线前旧会话，不能作为修复后的运行结果。
+- 未解决：需要 Unity MCP 恢复后重新执行一次 Play Mode Console 验证，确认模拟清单、Global.SceneWorld 和 NPC 初始化日志。- 场景引用补充后复建：同一构建输出目录增量构建退出码 0，0 个错误；本次增量输出 2 个警告（完整冷构建基线为 39 个既有警告）。
+## 2026-09-18 New Scene NpcManager 序列化绑定静态检查
+
+- 检查文件：`LYF_MMO/Assets/GM_Game/Scenes/New Scene.unity`。
+- 静态结果：`testGameObject=True`、`testGlobalRef=True`、`testNpcRef=True`、`npcComponent=True`、`globalDisabled=True`、`globalComponent=True`；测试对象、Global 引用、NpcManager 引用和 Global 默认禁用状态均通过。
+- 关键断言：`--- !u!114 &138351007` 下存在 `_npcManager: {fileID: 138351009}`；`--- !u!114 &138351009` 属于 GameObject `138351006`；`--- !u!1 &700000001` 的 `m_IsActive` 为 `0`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/bind-npc-manager-build`。
+- 构建结果：通过，0 个错误，39 个既有警告；输出目录为 `D:/unitypro/LYFMMORGP/_temp/bind-npc-manager-build`。
+- 未执行：Unity Play Mode 和运行时 NPC 实例化验证仍需 Unity MCP 恢复后执行。
+## 2026-09-18 测试场景模拟主角角色包验证
+
+- 修改范围：`LYF_MMO/Assets/GM_Game/Scripts/UI/test/test.cs`；未修改 `Global.cs`、正式登录/角色协议处理代码或协议生成代码。
+- 静态验证：角色包为强类型 `MainRoleInfo` 和 `RoleBaseInfo`；创建统一调用 `Global.SubmitLocalRoleLoad`，后续由正式 `SceneWorld.LoadLocalRole` 创建 `PlayerEntity`。测试入口等待 YooAsset 初始化成功、Global 启用和 SceneWorld 就绪后运行；测试侧提交标记、当前 LocalRole 身份比较以及 Global 内置账号/角色 ID 检查共同阻止重复创建。
+- 连接代次验证：正式 `Global.SubmitLocalRoleLoad` 要求 `NetSocketMgr.CurrentConnectionGeneration > 0`。测试脚本发现代次为零时调用既有 `NetSocketMgr.ConnectServer(NetDefine.IPHost, NetDefine.LoginServerPort)`，由正式网络管理器同步分配代次；不修改 Global，不通过反射或字段写入伪造状态。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj -o D:/unitypro/LYFMMORGP/_temp/test-mock-role-packet-build`。
+- 构建结果：通过，0 个错误，39 个项目既有警告。警告包括 Unity 参考程序集 `System.Numerics.Vectors` 版本冲突、现有类型冲突和未使用字段，均非本次 `test.cs` 引入。
+- 输出目录：`D:/unitypro/LYFMMORGP/_temp/test-mock-role-packet-build`。
+- Unity Play Mode：未执行。当前没有可用 Unity MCP 运行态会话，未验证 EditorSimulate 清单加载、网络连接成功与主角模型实例化；需要恢复 Unity 会话后在专用测试场景验证。
+## 2026-09-18 主城其他玩家正式协议模拟验证
+
+- 修改范围：`LYF_MMO/Assets/GM_Game/Scripts/UI/test/MainCityOtherRoleMock.cs`、`LYF_MMO/Assets/GM_Game/Scenes/New Scene.unity`；未修改 `MainCityMgr.cs`、`Global.cs`、`SocketDispatcher.cs` 或协议生成代码。
+- 协议核对：`CMD_SyncotherOnlineCode` 为 `11100`，服务端发送 `RoleBaseInfo.ToByteString()`；客户端正式处理为 `SocketDispatcher.DispatchEvent -> MainCityMgr.SyncotherOnlineHandle -> RoleBaseInfo.Parser.ParseFrom -> HandleOtherRoleOnline -> SceneWorldSystem.AddOrUpdateOtherRole`，首次角色继续调用 `CreateRole` 创建表现。
+- 测试实现：已有 `MainCityOtherRoleMock` 构造 `RoleBaseInfo(RoleId=900001, Nickname=主城模拟玩家, JobId=1)` 并投递同一协议字节。Start 协程在延迟后逐帧等待 `MainCityMgr.Instance`、`Global.Instance` 与 `Global.Instance.SceneWorld`，只在全部就绪后自动投递；组件成功后阻止重复投递，不直接创建、更新或删除场景实体。
+- 场景静态检查：`New Scene` 的专用测试对象 `138351006` 已挂载脚本 GUID `59da04f052e200243825559c934988cf`，`_simulateOnStart=1`；预置 `Global` 保持默认禁用，未改正式主城场景。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/mock-maincity-role-response-build` 成功，0 个错误、39 个既有警告。
+- Unity Play Mode：未执行。当前无可用 Unity MCP 编辑器会话，未验证运行时日志和模型实例化；恢复后应在 `New Scene` 验证角色 ID `900001` 的 `Role/Role_MJS_Other` 表现对象。
+## 2026-09-18 主城其他玩家 Play Mode 测试执行记录
+
+- 测试文件：`LYF_MMO/Assets/GM_Game/Scripts/UI/test/Editor/MainCityOtherRolePlayModeTests.cs`。测试按 Unity Test Framework 编写：打开 `New Scene`、进入 Play Mode、最长等待 30 秒，并断言 `Global.Instance.SceneWorld.TryGetRole(900001)` 成功。
+- 执行命令：`D:/Program Files/2023.2.20f1c1/Editor/Unity.exe -batchmode -nographics -projectPath D:/unitypro/LYFMMORGP/LYF_MMO -runTests -testPlatform PlayMode -testResults D:/unitypro/LYFMMORGP/_temp/maincity-other-role-playmode-results.xml -logFile D:/unitypro/LYFMMORGP/_temp/maincity-other-role-playmode.log -quit`。
+- 实际结果：未执行测试。Unity 日志在项目初始化阶段报错 `It looks like another Unity instance is running with this project open` 与 `Multiple Unity instances cannot open the same project`，随后退出；虽进程退出码为 0，但没有产生测试结果 XML，不能视为通过。
+- 产物：日志已生成 `D:/unitypro/LYFMMORGP/_temp/maincity-other-role-playmode.log`；结果文件 `D:/unitypro/LYFMMORGP/_temp/maincity-other-role-playmode-results.xml` 不存在。
+- 下一步：关闭占用 `LYF_MMO` 的 Unity 实例后复跑同一命令；通过条件为 XML 中测试通过，且运行期断言确认角色 ID `900001` 位于 `Global.Instance.SceneWorld`。
+## 2026-09-18 PlayMode 测试程序集编译修复验证
+
+- 失败原因：旧测试脚本位于 `Assets/GM_Game/Scripts/UI/test/Editor/`，默认 Editor 程序集没有通过 asmdef 声明 `TestAssemblies`，所以编译时找不到 `UnitySetUp` 和 `UnityTest`。
+- 修复范围：删除旧 `Editor/MainCityOtherRolePlayModeTests.cs`；新增 `PlayMode/MainCityOtherRolePlayModeTests.cs`、`PlayMode/MainCityOtherRolePlayModeTests.asmdef`。asmdef 名称为 `GM_Game.MainCityOtherRole.PlayModeTests`，引用 `GM_Game` 和 `TestAssemblies`。
+- 生成项目核对：`LYF_MMO/GM_Game.MainCityOtherRole.PlayModeTests.csproj` 已包含测试类和 asmdef，证明 Unity 项目生成已识别新程序集。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.MainCityOtherRole.PlayModeTests.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/maincity-other-role-playmode-test-build`。
+- 构建结果：成功，0 个错误、40 个既有工程警告；`UnitySetUp`、`UnityTest`、NUnit 和运行时场景 API 均已解析。
+- 静态检查：测试类无 `namespace`、`foreach`、三目运算符、`object` 或 `dynamic`，且不包含 `using UnityEditor`。
+- 运行限制：未重跑 Unity batchmode，因为项目仍被另一 Unity 实例占用；另外 `New Scene` 未进入 Build Settings，测试运行时会给出明确前置条件失败，不改写用户配置。
+## 2026-09-18 New Scene MainCityMgr 默认启用验证
+
+- 场景检查：`New Scene.unity` 中 GameObject `MainCityMgr`（fileID `1480371565`）当前 `m_IsActive: 1`；其 `MainCityMgr` MonoBehaviour（fileID `1480371566`、脚本 GUID `583407fd4052c9746ad8e5261f7dac75`）当前 `m_Enabled: 1`。
+- 预期链路：启动时 MainCityMgr 进入 Awake 并向 SocketDispatcher 注册 `CMD_SyncotherOnlineCode`；已有 `MainCityOtherRoleMock` 等待 Global、SceneWorld 和 MainCityMgr 后投递角色 `900001` 的正式协议。
+- Unity 刷新检查：检测到 3 个 Unity 进程；等待 15 秒期间 `C:/Users/lyf/AppData/Local/Unity/Editor/Editor.log` 的长度和更新时间未变化，无法获得本次外部 YAML 修改后的 Console 新日志。未将历史 `Editor` 路径错误当作当前错误。
+- 编译基线：`GM_Game.MainCityOtherRole.PlayModeTests.csproj` 上一轮独立构建为 0 错误；本轮只改场景激活位，未改 C# 文件。
+- 未执行：未重启或关闭用户正在使用的 Unity 实例，未执行新的 PlayMode 运行。
+## 2026-09-18 普通角色 RO 待机动画组件
+
+- 修改范围：新增 `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MIdleComponent.cs`，并在 `RoleEntityBuilder`、`PlayerEntityBuilder` 注册；`MDefaultActionComponent` 的战斗静止状态固定返回 `FIdle`。
+- 设计：`MIdleComponent` 是普通 View 组件，随角色实体容器完成创建、初始化、每帧等待模型 Animator 与对象池释放。模型准备完成后读取 `PresentDataView`，分别调用 `OverrideAnim(Idle, IdleAnim)` 和 `OverrideAnim(FIdle, IdleFAnim)`；两个槽位都登记成功后才触发状态机刷新。
+- 载具处理：`IsRideVehicle` 或 `IsRidePubVehicle` 为真时跳过角色待机动画装配，不覆盖载具表现。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/role-idle-component-build`，通过，0 个错误、39 个项目既有警告。
+- 静态检查：新增组件与两处角色构建器未命中 `namespace`、`foreach`、三目运算符、`object`/`dynamic` 载荷；`git diff --check` 通过。
+- 未执行：Unity Play Mode 和主城角色实际动画播放验证，原因是当前 Unity 编辑器会话未通过 MCP 提供可用运行态连接。
+
+## 2026-09-18 普通角色 RO 待机动画组件审核返工
+
+- 修复战斗待机状态：`MDefaultActionComponent` 的进入/退出战斗事件改用独立事件处理器，分别唯一设置 `Entity.BattleIdle` 为 true/false；刷新入口只在状态机当前状态为本默认组件时触发，特殊动作不被战斗事件中断。
+- 射击保护：`StateName` 先处理 `State.Shoot`，移动时维持 `ZdMoveRun`，静止时维持 `ShootIdle`，不允许 `BattleIdle` 抢占。
+- 规范清理：删除三目表达式、`FootSteps` 的 `object[]` 形参和相关死代码注释；`FootSteps()` 现在无参并校验 Animator 和脚步时间数组。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/role-idle-component-rework-build`，通过，0 个错误、39 个既有警告。
+- 静态检查：`MDefaultActionComponent.cs` 未命中 `namespace`、`foreach`、三目运算符、`object`/`dynamic`；`git diff --check` 通过。
+- 未执行：Unity Play Mode。需要编辑器会话恢复后验证 `CombatStarted -> FIdle`、`CombatEnded -> Idle`、射击静止/移动优先级及特殊状态不被覆盖。
+
+## 2026-09-18 普通角色 RO 待机动画组件第二次审核 P2 返工
+
+- 业务逻辑未修改。已清除 `MDefaultActionComponent.cs` 第 149、152、157、211、214 行尾随空白。
+- 根目录 `项目修改日志/2026-09-18-ROLE_IDLE_COMPONENT_CHANGELOG.md` 已将差异检查表述限定为本功能目标文件，并说明全局 `git diff` 受用户既有无关改动影响，不能等同全局通过。
+- 验证：目标 C# 文件行尾空白检查通过；禁用语法扫描通过；`git diff --check -- MDefaultActionComponent.cs 项目修改日志/2026-09-18-ROLE_IDLE_COMPONENT_CHANGELOG.md` 通过。
+- 本轮未运行完整构建，原因是仅格式与文档变更，上一轮 `role-idle-component-rework-build` 已验证业务代码为 0 错误、39 个既有警告。
+
+## 2026-09-18 普通角色 RO 待机动画组件最终 P2 文档返工
+
+- 修改范围仅为 `项目修改日志/2026-09-18-ROLE_IDLE_COMPONENT_CHANGELOG.md` 的验证描述；未修改业务代码。
+- 已对 `MIdleComponent.cs`、`MDefaultActionComponent.cs`、`RoleEntityBuilder.cs`、`PlayerEntityBuilder.cs` 分别执行 `git diff --no-index --check NUL <文件>`；每条命令未输出空白错误。退出码 1 仅表示文件内容与 NUL 不同，属于未跟踪文件的预期结果。
+- 全局 `git diff --check` 受用户既有无关改动影响，不作为本功能通过依据。
+
+## 2026-09-18 普通角色 RO 待机动画组件最终 P2 验证说明补充
+
+- 修改范围仅为根目录变更说明的无索引校验退出码解释，未修改业务代码。
+- 已复核 `git diff --no-index --check NUL MDefaultActionComponent.cs`：输出仅含 CRLF 转换提示，没有 `trailing whitespace` 或 `new blank line` 诊断；退出码 1 是 NUL 与现有文件内容差异的预期结果。
+
+## 2026-09-18 本地主角 Role_MJS 模型入口
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/Manger/MainCityMgr.cs`、`LYF_MMO/Assets/GM_Game/Scripts/UI/test/test.cs`。
+- 根因验证：`test.cs` 原模拟主角角色包未设置 `JobId`；`MainCityMgr.Start` 只检查一次本地主角，Global 延迟启用时不会自动补建表现。其他角色路径明确使用 `Role/Role_MJS_Other`，不是本地主角模型。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/main-role-mjs-build`。
+- 构建结果：通过，0 个错误，39 个既有警告。
+- 静态检查：目标文件未命中 `namespace`、`foreach`、三目运算符、`object`/`dynamic`；`git diff --check` 未报告空白错误。
+- 未执行：Unity Play Mode。需要编辑器空闲后确认主角模型为 `Role_MJS(Clone)`，以及其他玩家模型保持 `Role_MJS_Other(Clone)`。
+# 2026-09-18 测试场景本地主角与其他玩家模型隔离验证
+
+- 检查范围：`MainCityMgr.CreateLocalRole`、`test.SimulateMainRolePacket`、`MainCityOtherRoleMock` 及 `New Scene` 序列化配置。
+- 根因确认：本地主角代码已使用 `Role/Role_MJS`；`Role/Role_MJS_Other` 来自场景中自动启用的 `MainCityOtherRoleMock`，其 `_simulateOnStart` 原为 `1`。
+- 修正结果：`New Scene` 的 `_simulateOnStart` 改为 `0`。登录主角测试不会自动创建其他玩家；其他玩家同步测试仍可手动启用该组件。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-prefab-fix-build`。
+- 构建结果：0 个错误、39 个既有警告。
+- 未执行：Unity Play Mode，需在编辑器空闲后确认运行时只出现 `Role_MJS(Clone)` 本地主角，并按需手动验证 `Role_MJS_Other(Clone)` 其他玩家测试。
+## 2026-09-18 本地主角 Role_MJS Play Mode 实际验证
+
+- 验证场景：`Assets/GM_Game/Scenes/New Scene.unity`；Unity MCP 实例 `LYF_MMO@47ea91c229a904f3`。
+- Console 实际日志：`模拟主角角色包已提交，Global 状态：Loaded`、`开始加载本地主角模型：Role/Role_MJS`、`角色表现绑定成功，角色 UID：2，资源路径：Role/Role_MJS`。
+- Game View 截图：`LYF_MMO/Assets/Screenshots/screenshot-20260918-222801.png`，可看到主城角色模型。
+- 结果：本地主角生成链路通过，使用 `Role/Role_MJS`；`Role_MJS_Other` 未参与本地主角入口。
+- 发现的独立既有错误：`CameraMgr.Update` 第 50 行空引用、Global 资源包不存在时的重试日志；未在本任务中修改。
+
+- 说明：Unity 截图属于本次验证产生的临时文件，已移入 `D:/unitypro/LYFMMORGP/_temp/main-role-playmode/screenshot-20260918-222801.png`，未保留在客户端资源目录。
+
+## 2026-09-18 测试主角禁止主动重连
+
+- 修改范围：`LYF_MMO/Assets/GM_Game/Scripts/UI/test/test.cs`。
+- 静态检查：已删除 `EnsureTestConnectionGeneration` 及其 `ConnectServer` 调用；测试协程仅等待 `CurrentConnectionGeneration > 0`，不主动断开或创建连接；未新增 `namespace`、`foreach`、三目运算符或 `object` 业务载荷。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-no-reconnect-build`。
+- 构建结果：通过，0 个错误、39 个既有警告。
+- 未执行：Unity Play Mode。应在专用 `New Scene` 场景中确认网络失败/重连不会回收本地主角，并确认模型为 `Role_MJS(Clone)`。
+## 2026-09-18 离线测试主角允许零连接代次
+
+- 修改范围：`LYF_MMO/Assets/GM_Game/Scripts/Global.cs`、`LYF_MMO/Assets/GM_Game/Scripts/UI/test/test.cs`。
+- 静态检查：test.cs 已删除连接代次等待协程和无网络提示；Global 仅在 `_localRoleConnectionGeneration > 0` 时校验当前网络代次，离线测试角色可直接进入 SceneWorld；未新增 `namespace`、`foreach`、三目运算符或 `object` 业务载荷。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-offline-build`。
+- 构建结果：通过，0 个错误、39 个既有警告。
+- 未执行：Unity Play Mode。应在无服务器的 `New Scene` 确认本地主角使用 `Role_MJS(Clone)`，并在真实连接下确认断线代次清理仍有效。
+## 2026-09-18 离线测试主角实际运行验收补充
+
+- 无服务器监听端口时运行 `New Scene`，仍成功提交模拟主角包并绑定 `Role/Role_MJS`。
+- Console 出现：`动画索引加载完成`、`模拟主角角色包已提交，Global 状态：Loaded`、`角色表现绑定成功，角色 UID：2，资源路径：Role/Role_MJS`。
+- Game View 截图已移入 `D:/unitypro/LYFMMORGP/_temp/main-role-offline-playmode/screenshot-20260918-233329.png`，可看到主角模型。
+- Play Mode 已停止。
+
+## 2026-09-19 主角模型被连接失败回调回收修复
+
+- 静态证据：Editor.log 记录 `Role/Role_MJS` 绑定成功后持续出现 10061 连接失败；代码链为 `OnConnectionFailed -> ClearLocalRoleSession -> SceneWorld.Clear -> MEntity.OnDestroying -> MModel.Reset`。
+- 静态修复：`NetSocketMgr` 的有效代次在连接成功前保持 0，并新增 `IsConnected`；Global 只有真实连接成功才记录代次；test 防止重复 Global 和覆盖已有 LocalRole。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-connection-state-build2`。
+- 构建结果：通过，0 个错误、39 个既有警告。
+- 未执行：Unity Play Mode；需要复验无服务器场景绑定主角后不再被 10061 回调清理。
+## 2026-09-19 初次连接失败回调保留
+
+- 修改范围：`LYF_MMO/Assets/GM_Game/Scripts/Manger/NetSocketMgr.cs`。
+- 静态检查：`failedGeneration <= 0` 分支只投递 `connFail`，未调用 `ShopMgr.HandleDisconnected` 或角色清理；回调仍在 Unity 主线程执行。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-connection-fail-callback-build`。
+- 构建结果：通过，0 个错误、39 个既有警告。
+## 2026-09-19 零代次连接失败回调竞态修复
+
+- 验证目标：避免初次连接失败回调晚于自动重连成功回调执行时误报失败。
+- 修改范围：`NetSocketMgr.OnConnectionFailed` 零代次分支，在主线程闭包内增加客户端引用和 `CurrentConnectionGeneration == 0` 双重校验。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/test-local-role-connection-fail-race-build`。
+- 构建结果：通过，0 个错误、39 个既有警告。
+- 未执行：Unity Play Mode 断线/重连交错运行态回归。
+# 2026-09-21 角色状态效果同步方案分析记录
+
+- 分析范围：PROJECT_CONTEXT.md、CURRENT_TASK.md、DECISIONS.md，以及当前 GameServer 消息队列、OnlineRole/角色组件、Gate 转发和客户端 SceneWorld/角色组件架构。
+- 分析结论：状态效果由 GameServer 在逻辑帧中权威创建、刷新、叠加和移除；GateServer 不参与结算；客户端按快照和增量维护状态模型，UI 仅订阅模型变化。状态实例携带实例 ID、配置 ID、来源、层数、服务器开始时间、服务器结束时间、状态版本和可见性。临时战斗状态不写数据库，长期状态通过组件脏标记延迟保存。
+- 未修改代码，未执行构建或运行测试。本记录对应设计阶段，后续实现必须追加协议、配置、代码和测试结果。
+# 2026-09-21 移动同步数据方案分析记录
+
+- 分析范围：现有 GameServer 50ms 逻辑帧、GameCommand 网络队列、OnlineRole/SceneWorld、客户端 PlayerEntity/RoleEntity 与主城同步入口。
+- 设计结论：移动同步分为客户端输入包、服务器权威移动快照、离散移动事件三类；客户端不上传最终位置作为可信数据，服务器不按每帧广播所有对象；本地角色预测后按服务器快照回滚校正，其他角色使用带服务器时间的快照插值。UI、相机、Animator 参数和本地平滑中间值不进入协议。
+- 未修改代码，未执行构建或运行测试。本记录对应设计阶段，后续实现需追加协议和运行验证记录。
+## 2026-09-21 移动同步广播时机澄清
+
+- 设计修正：玩家 A 的移动经 GameServer 逻辑线程计算出权威结果后，应在同一逻辑帧生成移动变化通知并广播给 AOI 范围内玩家 B；不能等待下一次周期性完整快照。
+- 快照定位：`RoleMovementSnapshot` 是服务器权威结果，可作为每次移动变化通知的载荷；周期性快照只用于校正、重连、初次进入场景和丢包恢复，不是移动广播的唯一方式。
+- 当前队列约束：网络线程只入队，所谓“立刻”表示 GameServer 下一次逻辑消费后立即发送，不表示在网络回调线程直接修改角色或广播。
+## 2026-09-21 移动同步方案审核与重设计
+
+- 审核 Agent 结论：上一版按每个 50ms 逻辑帧广播移动结果不通过，虽然不构成严格锁步帧同步，但会演变为按逻辑帧发送状态，网络开销和设计边界不合适。
+- 最终方案：采用服务器权威的事件驱动移动段同步。客户端只在开始、停止、方向/速度模式变化和 100~150ms 心跳时发送移动意图；GameServer 仍按 50ms 校验和推进，但只在命令或权威状态变化时向 AOI 广播移动段；周期性校正为 500~1000ms，完整快照只用于进场、重连和丢包恢复。
+- 关键规则：不使用公共 FrameId，不要求客户端同帧模拟；其他客户端只根据服务器下发的移动段插值/短时外推，不执行玩家 A 的输入；移动命令按角色合并最新输入，停止和强制移动事件不得丢弃。
+- 本次仍未修改代码，未执行构建或运行测试。
+## 2026-09-21 移动同步场景数据补充
+
+- 结论：服务器要权威计算坡面、落地、悬空、越界和不可通行区域，必须加载服务器可查询的场景数据；不需要运行 Unity 完整渲染和刚体物理。
+- 推荐数据：每个场景/分线导出高度或导航网格、可行走区域、坡度限制、静态碰撞代理、区域属性和数据版本。服务器通过地面高度、地面法线和导航/碰撞查询修正角色位置。
+- 爬坡处理：客户端只发送水平移动意图，服务器根据 XZ 查询坡面高度与法线，沿坡面投影速度并校验最大坡度，生成权威 Y 坐标和移动结果；客户端可预测，但最终以服务器结果为准。
+- 未修改代码，未执行构建或运行测试。
+## 2026-09-21 Unity 场景数据导出方案
+
+- 设计结论：不让 GameServer 读取 Unity Scene、Prefab 或 FBX；由 Unity Editor 导出服务器专用场景数据，GameServer 运行时只读取结构化二进制。
+- 推荐第一版：导出 NavMesh 三角形作为可行走地面，导出标记为服务器碰撞的静态碰撞代理，加入场景边界、最大坡度、区域属性和数据版本；使用项目已有 Google.Protobuf 序列化为 `.bytes`。
+- 导出流程：编辑器读取场景中的 NavMesh 与 ServerCollision 标记对象，转换为坐标、三角形、碰撞代理和元数据，写入临时目录校验后复制到服务端正式 SceneData 目录。服务器按 SceneId 加载并通过地面、可行走和碰撞查询计算权威移动。
+- 未修改代码，未执行构建或运行测试。
+## 2026-09-21 移动同步压力模型修正
+
+- 设计修正：大型 MMORPG 不应让 GameServer 对所有角色每个 50ms 运行完整 Unity 物理。服务器只维护运动学状态，使用分段位置计算、空间索引、NavMesh/高度查询和按需碰撞校验。
+- 推荐策略：普通移动以轻量速度/位移/区域校验为主；移动段开始、方向变化、场景边界、碰撞风险和定期校正时才查询地面与静态碰撞。AOI 限制广播范围，动态物理只处理影响玩法的对象。
+- 坡面处理：不要求每帧查询精确法线；服务器在移动段关键点或固定校验间隔查询地面高度/坡度，客户端负责平滑表现，超过误差阈值再纠正。
+- 说明：无法获知逆水寒或一梦江湖的内部实现，以上是大型 MMORPG 常见的轻量服务器权威与客户端预测混合方案。
+## 2026-09-21 魔兽世界开源模拟器移动同步参考
+
+- 事实说明：魔兽世界原始客户端和服务器并不开源；可参考的是 TrinityCore、AzerothCore 等开源服务器模拟器，具体操作码会随版本不同。
+- 参考结论：客户端发送移动开始/停止/方向/跳跃/转向和周期心跳，载荷包含 MovementFlags、客户端时间、位置、朝向、运输对象和坠落信息；服务器在会话逻辑线程校验并更新角色移动状态，再向 AOI 附近玩家广播移动数据。
+- 服务器不运行完整刚体物理，而是使用 Map/VMap/MMap 等地图、地形和碰撞查询，在越界、速度异常、瞬移或强制位移时纠正位置；服务器控制移动可使用样条/路径数据。
+- 对当前项目的借鉴：采用移动事件+心跳的状态同步，不做公共帧锁步；使用场景碰撞数据做按需校验，服务器将已确认移动状态广播给 AOI，客户端本地即时表现并按校正包修正。
+- 未修改代码，未执行构建或运行测试。
+## 2026-09-21 客户端位置快照同步简化方案
+
+- 设计调整：当前阶段不让 GameServer 加载 Unity 场景碰撞、NavMesh 或高度数据，采用客户端定时上报具体位置的轻量同步方案。
+- 流程：客户端移动时按约 100ms 上报位置、朝向、移动状态和序号；GameServer 只校验会话角色、场景一致性、时间和最大位移，接受后保存并广播给 AOI 附近玩家；客户端其他角色对快照做插值。
+- 服务器不做：坡面查询、完整物理、复杂静态碰撞和每帧权威模拟。客户端负责本地地形表现，服务器仅保留基础异常保护；停止移动和场景切换立即发送快照。
+- 风险：客户端可伪造位置，不能直接用于严格 PvP、攻击距离和反作弊结算。后续需要时只对战斗区域或关键技能增加服务器场景校验，不改变普通移动同步主流程。
+- 未修改代码，未执行构建或运行测试。
+## 2026-09-21 移动快照频率与轻量校验调整
+
+- 设计调整：不采用固定 100ms 位置上报。角色开始移动、停止移动、方向/速度模式变化、技能开始和技能结束时立即同步；持续移动期间每约 250~300ms 发送一次位置快照，静止时不发送。
+- 服务器校验降级为基础距离检查：根据两次服务器接收时间和配置最大速度计算允许距离，增加容差；一秒内移动超过明显不可能的距离时记录并回退/纠正，不做 NavMesh、坡度或完整碰撞检测。
+- 客户端其他玩家使用快照插值；低频快照不足时只做短时平滑外推，收到停止或技能结束快照立即收敛到最新位置。
+- 未修改代码，未执行构建或运行测试。
+## 2026-09-21 移动同步设计文档审核完成
+
+- 文档：`项目分析/MOVEMENT_SYNC_DESIGN.md`。
+- 审核 Agent：`movement_sync_doc_review`，独立审核两轮，最终通过。
+- 验收结论：客户端移动期间固定 300ms 上传位置快照；开始、停止、转向、技能起止立即同步；服务器不加载 Unity 场景、不运行完整物理，只做逻辑线程时间/距离/速度异常检查；非法位置不广播给 AOI；关键事件按 MoveSeq 排序；下行使用 MovementVersion 丢弃旧数据但不作为公共帧号；客户端其他玩家使用插值和短时外推。
+- 本次只修改设计文档和协作记录，未修改业务代码，未执行构建或运行测试。该文档可作为后续协议和代码实现基线。
+## 2026-09-21 跳跃功能设计审核
+
+- 本轮只完成设计，没有修改客户端、服务端、协议和配置代码。
+- 设计文档：项目分析/JUMP_DESIGN.md。
+- 审核 Agent：jump_design_review。
+- 审核结论：推荐显式垂直速度 + 重力 + CharacterController.Move；不推荐 Rigidbody 或固定时长曲线。
+- 覆盖范围：一段跳、二段跳、三段跳、落地重置、土狼时间、跳跃输入缓存、空中水平控制、动画事件边界和对象池复位。
+- 关键风险：当前项目同时存在旧 RoleCtrlBase/MainRoleCtrl 和现代 MMoveComponent 两套运动入口；实现时必须只保留一个重力与 Move 权威，避免重复位移。
+- 验证状态：未执行编译和运行测试，因为本轮明确不写代码。
+
+## 2026-09-21 跳跃网络同步设计审核
+
+- 需求：在本地跳跃设计基础上补充网络同步方案，本轮仍未修改代码。
+- 文档：项目分析/JUMP_SYNC_DESIGN.md。
+- 审核 Agent：jump_sync_design_review，结论通过。
+- 关键结论：客户端立即预测，GameServer 逻辑线程确认和校验，GateServer 只转发，服务器不运行 Unity 完整物理。
+- 多段跳序号：MoveSeq + AirborneSequence + JumpId + JumpCount，避免重复、乱序和旧落地事件结束新跳跃。
+- 关键事件：JumpStart、JumpEnd、JumpAdjust/HeadBump、ForceMoveStart/End 不得被普通 300ms 快照覆盖；普通空中状态允许快照合并。
+- 服务器校验：状态、跳跃次数、时间、水平/垂直运动包络和强制位移优先级；不信任客户端速度、重力和落地时间。
+- 远端表现：使用服务器实际跳跃参数和 EventAgeMs 重建，撞头和落地必须有独立事件；超时或重连无法恢复时归一到 Grounded。
+- 验证状态：只完成文档和独立设计审核，未执行编译或运行测试。
+
+## 2026-09-23 客户端跳跃动画组件与 PresentTable 配置验证
+
+- 表格验证：使用 Artifact Tool 导入 `Luaban/MiniTemplate/Datas/#PresentTable.xlsx`，确认 `JumpStartAnim`、`JumpLoopAnim`、`JumpEndAnim` 三列及第 4 行动画值存在；渲染范围 `AJ1:AS4` 可读。
+- Luban 验证：执行 `dotnet Luaban/MiniTemplate/Luban/Luban.dll -t all -c cs-bin -d bin`，校验和生成成功；产物保存在 `D:/unitypro/LYFMMORGP/_temp/luban-present-jump/`。
+- Network 验证：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/network-jump-build`，0 个错误、0 个警告；新 Network.dll 已同步到 Unity 插件目录。
+- 客户端验证：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-animation-final-build3`，0 个错误、既有警告；新增 `MJumpComponent`、`BeginJump`、`EndJump` 编译通过。
+- 静态检查：目标文件未命中 `namespace`、`foreach`、三目运算符、`object`/`dynamic`；`git diff --check` 通过。
+- 未执行：Unity Editor Play Mode 和真实动画资源加载；后续需在专用测试场景确认 `animInfo.txt` 包含 `Anim_JX_Jump_Start/Loop/End`，并调用 `MMoveComponent.BeginJump(1/2/3)` 验证重复起跳动画和 `EndJump()` 单次落地动画。
+- 追加修正：依据实际 `AnimCtrl_Role_jx.controller`，跳跃 Animator 状态键统一为 `Jump_Start`、`Jump_Loop`、`Jump_End`；重新构建输出 `D:/unitypro/LYFMMORGP/_temp/jump-animation-final-build4`，0 个错误。
+
+## 2026-09-23 跳跃组件类型索引冲突修复验证
+
+- 验证目标：确保 `MIdleComponent` 与 `MJumpComponent` 不因共用 `EntityComponentType.View` 互相覆盖。
+- 修改范围：`LYF_Server/MMoRpgCommon/SceneEntity/EntityComponentType.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MJumpComponent.cs`，以及同步生成的 `MMoRpgCommon.dll`、`Network.dll`。
+- 构建命令：`dotnet build LYF_Server/MMoRpgCommon/MMoRpgCommon.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-component-type-common-build`；`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-component-type-network-build`；`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-component-type-client-build`。
+- 结果：公共库 0 错误、4 个既有警告；Network 0 错误、0 警告；客户端 0 错误、项目既有警告；目标文件 `git diff --check` 通过。
+- 静态约束：未新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；公共枚举文件保留项目既有命名空间以兼容现有引用。
+- 审核：`jump_animation_review` 已复核通过，确认独立组件类型可避免待机组件与跳跃组件索引覆盖，注释和项目约束符合要求。
+- 未执行：Unity Editor Play Mode；仍需在专用测试场景确认组件容器同时注册待机和跳跃组件后不抛重复类型异常，并验证三段跳动画。
+
+## 2026-09-23 通用 Animator 跳跃槽位验证
+
+# 2026-09-23 Animator 跳跃状态机重复挂载修复验证
+
+- 复现证据：修复前根层同时包含三个 Jump 状态，并且另有 `Jump` 子状态机。
+- 修复结果：根层不再包含三个 Jump 状态；根层挂载 `Jump` 状态机；Jump 子状态机仍包含三个状态。
+- 静态校验：根层三个 Jump fileID 均不存在，Jump 状态机引用存在，Jump 子状态机三个状态均存在。
+- 代码构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-controller-fix-build`，0 个错误，保留项目既有警告。
+- 约束校验：`git diff --check` 通过；本次未新增业务 C# 代码。
+- 代码审核：`jump_animation_review` 复核通过，确认 `Base Layer.Jump.<状态>` 路径和动画 GUID 对应关系正确。
+- 未完成：当前 Unity 编辑器无可用 MCP 实例，尚未进行 Play Mode 和 Animator 窗口实机确认；运行前需重新导入 Controller/刷新 YooAsset 模拟清单。
+
+- 验证目标：确保通用 `MAnimator.controller` 提供三个可被 `AnimatorOverrideController` 按名称查找的原始剪辑槽位。
+- 修改范围：`LYF_MMO/Assets/artres/Resources/Controller/MAnimator.controller`、`LYF_MMO/Assets/artres/Resources/Anims/Default/Jump_Start.anim`、`Jump_Loop.anim`、`Jump_End.anim` 及对应 `.meta`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/AsyncObj/MAnimator.cs`。
+- 资源结构：`MAnimator.controller` 的 Base Layer 挂载独立 `Jump` 子状态机，三个状态分别引用 GUID 对应的同名占位剪辑；Jump_Loop 占位剪辑启用循环，实际角色剪辑运行时覆盖。
+- 代码构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-controller-slot-build`，结果 0 错误、43 个项目既有警告。
+- 资源导入：Unity `Editor.log` 记录 `Jump_Start.anim`、`Jump_Loop.anim`、`Jump_End.anim` 和 `MAnimator.controller` 均由 NativeFormatImporter 成功导入，未出现资源解析错误。
+- 静态检查：目标代码和资源未新增 `foreach`、三目运算符、业务 `object/dynamic`；`git diff --check` 通过；MAnimator 的嵌套状态路径使用 `Base Layer.Jump.<状态>`。
+- 审核状态：`jump_animation_review` 已复核通过 AnimatorOverrideController 原始剪辑匹配和 `Base Layer.Jump.<状态>` 路径逻辑。
+- 未执行：Unity Editor Play Mode，需用真实角色动画资源确认三个覆盖剪辑能够实际播放。
+
+## 2026-09-23 跳跃动画与快速移动输入最小修复验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-movement-animation-fix-build3`。
+- 结果：构建成功，0 个错误，保留项目既有警告。
+- 静态检查：四个目标文件未新增 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`；目标改动未引入编译错误。
+- 代码审核：`jump_animation_review` 已复核通过缺槽位 Warning；补充预制体 Controller 回退 Warning 后再次构建通过。
+- 未执行：Unity Editor Play Mode 和真实资源异步加载验证。
+
+## 2026-09-23 客户端输入停止与跳跃等待修复验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MJumpComponent.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-input-jump-fix-build`。
+- 构建结果：成功，0 个错误，保留项目既有 39 个警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`；`git diff --check` 通过。
+- 行为核对：started/performed 进入 `EntityInputEventBridge.DispatchInputMove` 并由 `MEvent_Move` 监听；canceled 进入 `MEvent_StopMove`；移动参数由 `MEventDispatcher` 唯一回收，停止事件不创建池对象；跳跃组件在动画索引预加载完成前不调用短名解析。
+- 未执行：Unity Editor Play Mode；尚需实测快速方向切换、松开停止和跳跃动画资源异步加载。
+- 追加验证：`DispatchMovement` 的 `moveArgsOwnershipTransferred` 标记通过静态检查，确认桥接调用异常不会触发外层二次 `Recycle`；构建复跑 0 个错误、39 个既有警告。
+# 2026-09-23 Special 动作动画配置修复
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/Action/MActionComponent.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/special-animation-fix-build`。
+- 构建结果：0 个错误，保留项目既有 39 个警告。
+- 静态审核：Special 映射按 `FreeStyleAnim`、`OpenAnim`、通用 `Default/Special.anim` 顺序读取；不复用 Idle；约束扫描通过；审核 Agent 结论通过。
+- Unity 实测：通过 Unity MCP 清空旧日志，运行 `Assets/GM_Game/Scenes/New Scene.unity` 约 3 秒，控制台错误 0、警告 0，原“状态=Special”错误未复现；随后已停止 Play Mode。
+- 未解决问题：若 YooAsset 清单不包含通用 Special 槽位，具体角色仍需补充资源索引或表现表配置。
+# 2026-09-24 Special 状态误触发原因分析（只读）
+
+- 检查范围：`RoleCtrlBase.RouteStateToEntity`、`RoleState`、`MainRoleCtrl` 跳跃/滑铲入口、`MSpecialComponent` 事件订阅、`MActionComponent.PlayAnim` 失败回退、`MStateMachine.TransferToState/LateUpdate`。
+- 结论：未知状态兜底分支派发 `SpecialActionStarted`；Jump 与 Slider 目前没有路由分支，故被误判为 Special。动画加载失败时仅将 Animator 播放目标设为 Idle，状态机当前状态仍是 Special。
+- 当前 Unity MCP 资源不可访问，因此未能读取本轮编辑器控制台或触发按键复现；结论来自源码调用链静态检查。
+- 本轮未修改业务代码、未执行构建或运行测试。
+# 2026-09-24 客户端跳跃链路与 Special 回退验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-jump-component-fix-build-final`。
+- 构建结果：成功，0 个错误，38 个项目既有警告。
+- 静态检查：新增代码未命中 `namespace`、`foreach`、三目运算符、`object[]`、`dynamic`；目标文件 `git diff --check` 通过。
+- 链路检查：`Jump.started` 唯一进入 `LocalRole.MoveComp.TryJump()`；旧 `JumpingEvent`、`JumpKeyPress` 已移除；项目内无 `SpecialActionStarted` 的兜底派发。
+- 运动检查：`MMoveComponent` 最多接受三次起跳，每段重置向上速度；同一帧合并水平/垂直位移后调用一次 CharacterController；下降接地后调用 `EndJump()` 并重置次数。
+- 未执行：当前没有可用 Unity MCP 实例，未执行 Play Mode；后续需在专用测试场景验证连续三段跳、第四次拒绝、落地重置和 Special 告警不再出现。
+
+## 2026-09-24 跳跃落地移动与 Shift 走跑切换验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/Action/MDefaultActionComponent.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MJumpComponent.cs`。
+- 根因检查：`MMoveComponent._targetDir` 由 `MEvent_Move` 更新，只在收到 `MEvent_StopMove` 或明确不可移动时清除；起跳及 `EndJump()` 不清方向。原地面移动不续行的直接原因是 `MJumpComponent` 落地动画计时结束后直接播放 Idle，覆盖了仍保留的移动表现。Shift 之前没有接入新 `MMoveComponent`，速度及默认动画一直固定跑步。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-movement-jump-run-build`。
+- 构建结果：成功，0 个错误、38 个项目警告；警告为当前工程现存依赖冲突、重复类型及未使用字段等，不影响本次构建。
+- 静态检查：目标文件约束扫描未发现 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`；`git diff --check` 通过；未修改 `MainRoleCtrl`、`RoleCtrlBase`。
+- 行为链检查：Shift 按键阶段直接写入本地 `MoveComp.IsRunning`；`PlayerUpdate` 使用普通/跑步不同速度且限幅；`MDefaultActionComponent` 依据战斗状态和跑步输入选择 Walk/Run 槽位；`MJumpComponent` 落地动画结束后交回默认状态机，读取落地时保留的移动方向和跑步模式。
+- 未执行：当前 Agent 没有可用 Unity MCP 工具，未执行 Unity Play Mode；需在编辑器中实测按住方向键起跳并落地继续移动，以及按住/松开 Shift 的速度、动画切换。
+
+### 注释门禁补充验证（2026-09-24）
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/Action/MDefaultActionComponent.cs`；仅补充方法/属性说明，不改行为。
+- 检查：`PlayerUpdate` 参数标明逻辑帧间隔单位毫秒及负值的积分处理；`SetRunning`、`IsRunning`、`ApplyRunningState`、`StateName` 的用途、参数或状态语义均有说明。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-move-run-param-doc-build/output --verbosity quiet`；成功，0 错误、38 个项目现存警告。
+- 临时产物：本次构建输出和日志位于 `D:/unitypro/LYFMMORGP/_temp/client-move-run-param-doc-build/`。
+- 未执行：本次为注释门禁复核，不运行 Unity Play Mode。
+
+## 2026-09-24 空中按前进至落地仍 Idle 修复验证
+
+- 本轮实际修改：仅 `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`；`PlayerInputCtr.cs` 的 33ms 移动采样是工作区既有代码，本轮未修改。
+- 修复内容：修正移动组件在跳跃期间按 `!Entity.IsMovable` 调用 `stopMove()` 清除方向的问题：跳跃期间允许记录和保留水平输入，普通非跳跃状态仍使用原不可移动限制；输入变为零仍由既有 `canceled` 回调即时停止。
+- 明确复现检查：起跳后空中按住前进时，started/performed 或既有 33ms 采样会把方向送入 `onMoveEvent`；跳跃期间事件校验不会因地面动作状态拒绝，`PlayerUpdate` 也不会因该状态清除方向，落地后默认状态机按 `Entity.IsMoving` 选择 Walk/Run。空中松开时 `canceled` 清除方向，后续采样读取零向量，不会重新启动移动。此为源码链静态核对，不代表 Play Mode 运行验收。
+- 构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/air-jump-move-fix-build/output --verbosity quiet`；0 错误，38 个项目既有警告。
+- 静态检查：目标 `MMoveComponent.cs` 未命中 `namespace`、`foreach`、三目运算符、`object` 或 `dynamic`；`git diff --check -- LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs` 无空白错误，仅报告 LF/CRLF 行尾提示。全工作区 `git diff --check` 有多个与本任务无关的已有脏文件空白告警，未做清理。
+- Unity 运行：未执行 Play Mode；本轮没有可访问的 Unity MCP 工具，不能把静态链检查表述为运行时验收。
+- 后续复测步骤：专用测试场景中先按 Space 起跳，空中再按住 W 直到落地，确认落地后仍前进并播放 Walk/Run；另测空中按 W 后落地前松开，确认停止且不会残留方向。
+
+### 独立代码审查与 Play Mode 连接复查
+
+- 独立测试 Agent 审查结论：通过静态逻辑审查。空中 `Movement.started/performed` 能进入 `onMoveEvent` 并设置 `_targetDir`、`_isMoving`；跳跃期间 `PlayerUpdate` 不再因 `IsMovable` 触发 `stopMove()`；`canceled` 仍走 `MEvent_StopMove` 清除方向；落地动画结束后默认动作按移动/Shift 状态选 Walk/Run 或 Idle。未发现必须返工的静态逻辑问题。
+- 独立复建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/air-jump-move-fix-final-recheck/output --verbosity quiet`；0 错误、38 个现有警告。
+- 约束复查：目标文件 `git diff --check` 无空白错误；本次涉及的 `MMoveComponent.cs` 未新增 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`。`PlayerInputCtr.cs` 是此前已存在的工作区修改，本次未改动。
+- Play Mode：未执行。当前 Unity MCP 工具不可用；Windows 桌面连接两次均返回 `unsupported Codex auth method: apikey`、`apps=[]`，无法可靠操控运行中的 Unity。此项属于未验收，不是通过，也没有实际功能失败可据此打回开发。
+- 待办：需在可连接 Unity 的会话中执行“先起跳、空中按住 W 至落地”和“空中按 W 后落地前松开”两条真实输入回归；若任一不符预期，再按失败现象返工并重测。
+
+## 2026-09-24 跳跃落地移动动画直达验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`、`MJumpComponent.cs`、`Action/MDefaultActionComponent.cs`。
+- 静态链路：非零移动事件设置 `HasDirectionalInput=true`；`MEvent_StopMove` 调用 `stopMove()` 清除方向输入；跳跃期间 `PlayerUpdate` 不清方向；`JumpEnded` 检测到方向输入时不播放 `Jump_End`，而是 `ForceToDefault()` 并 `MarkTriggered()`；默认状态对本地主角根据方向输入直接选择 Walk/Run。没有方向输入时保留 `Jump_End`，结束后回 Idle。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-landing-direct-move-build/output --verbosity quiet`。
+- 构建结果：成功，0 个错误、38 个项目既有警告。
+- 约束检查：三个目标文件未命中 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；目标文件 `git diff --check` 无空白错误。
+- Unity 运行：未执行 Play Mode；本轮没有可使用的 Unity MCP 工具，不能将静态检查记为运行通过。
+
+### 第一次审查失败与返工复审
+
+- 第一次审查：不通过。无方向输入落地时，`JumpEnded` 播放 `Jump_End` 后，状态机可在同帧消费停止移动遗留的 `_isTriggered`；由于 `IsJump` 已为 false，默认动作会立即播放 Idle 并覆盖 `Jump_End`。
+- 返工内容：`MJumpComponent.IsLandingAnimationPlaying` 提供强类型只读保护状态；`MDefaultActionComponent.PlayAnim` 在 `IsJump` 或落地动画保护阶段返回原动画；`Jump_End` 完成后先清除保护状态，再执行 `ForceToDefault()` 与 `MarkTriggered()`。起跳、移动落地和组件回收都会清除落地保护状态。
+- 二次构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/jump-landing-end-guard-build/output --verbosity quiet`；0 错误、38 个项目既有警告。
+- 第二次审查：独立测试已确认静态逻辑与编译通过；未发现需要再次返工的问题。
+- Play Mode：仍未执行。当前 Unity MCP/桌面连接不可用，因此二次审查通过仅代表静态逻辑和构建通过，不代表真实输入运行验收。
+
+## 2026-09-24 HighlightManager 空引用与 MainRoleCtrl 兼容验证
+
+- 异常位置：`HighlightManager.Update()` 原第 263 行直接访问 `_mainRole._targetRole`。
+- 根因验证：`Role_MJS.prefab` 包含 `HighlightManager`、`PlayerInputCtr`、`GhostEffect` 和 `CharacterController`，但未包含 `MainRoleCtrl`；原 `Start()` 的 `GetComponent<RoleCtrlBase>()` 必然返回 null。
+- 修改文件：`LYF_MMO/Assets/GM_Game/Plugins/HighlightPlus/Scripts/HighlightManager.cs`、`LYF_MMO/Assets/GM_Game/Scripts/Manger/MainCityMgr.cs`。
+- 空引用检查：选中角色、打开 NPC 对话、点击空白取消选择三处均通过 `ResolveMainRole()` 获取主角并判空；主角尚未准备完成时只更新高亮，不再访问空控制器。
+- 兼容检查：主角模型绑定后补齐或复用 `MainRoleCtrl`，依次调用 `InitCtrl(RoleType.MainRole, baseInfo)` 与 `SetROObject(sceneEntity)`；`Awake/Start/UseSkill` 等非移动职责保留。
+- 双重控制检查：活动场景实体绑定后，`RoleCtrlBase.Update()` 在调用 Gravity 和 `MainRoleCtrl.OnUpdate()` 前返回，`OnAnimatorMove()` 也提前返回，因此旧 `PlayerMovement`、重力、根运动和旧跳跃不会执行。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/highlight-mainrole-compat-final-build/output --verbosity quiet`。
+- 构建结果：成功，0 错误、38 个项目既有警告；目标文件 `git diff --check` 无空白错误，仅有行尾格式提示。
+- Unity 运行：未执行 Play Mode，需在可连接 Unity 的环境中点击角色、NPC 和场景空白复测控制台。
+
+### 独立测试与代码审查
+
+- 独立复核确认 `HighlightManager` 不再直接解引用 `_mainRole`；选择角色、NPC 对话和点击空白取消选择均通过 `ResolveMainRole()` 解析兼容控制器并执行空值保护。`NpcCtrl.OpenTalk()` 对空主角引用也有保护，不会再次触发原第 263 行空引用。
+- 主角表现绑定后只补齐或复用一个 `MainRoleCtrl`，并依次执行 `InitCtrl(RoleType.MainRole, baseInfo)`、`SetROObject(sceneEntity)`；`Awake`、`Start`、`UseSkill`、相机初始化、选中和 NPC 对话兼容职责仍然保留。
+- 活动 `MEntity` 下，`RoleCtrlBase.Update()` 在旧重力、旧 `CharacterController.Move` 和 `MainRoleCtrl.PlayerMovement()` 之前返回，`OnAnimatorMove()` 也在旧根运动之前返回；跳跃入口继续为 `PlayerInputCtr -> LocalRole.MoveComp.TryJump()`，未恢复第二套移动、重力或跳跃权威。
+- 独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/highlight-mainrole-review-build --verbosity quiet`，结果为 0 个错误、38 个项目既有警告。
+- 独立约束检查：本轮新增代码未使用 `foreach`、三目运算符、`dynamic` 或业务 `object` 载荷，目标文件 `git diff --check` 通过。
+- Play Mode 未执行：当前 Unity MCP 工具不可用，Windows 桌面连接返回 `unsupported Codex auth method: apikey` 且应用列表为空。本结论仅表示静态逻辑、代码约束和编译通过，不代表点击角色、NPC、场景空白的运行验收通过。
+
+## 2026-09-24 快速点按方向停止修复验证
+
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-quick-tap-stop-build/output --verbosity quiet`。
+- 构建结果：成功，0 个错误、38 个项目已有警告。
+- 输入链路：Movement started/performed 的非零值立即派发移动；回调零值、canceled、33ms 零值对账、OnDisable 和 OnDestroy 均会派发 Stop。`MMoveComponent.stopMove()` 清理方向、预测位置和运行态，并在方向标记单独变化时补发默认动画刷新。
+- 生命周期复核：OnEnable 只重置输入缓存并启用动作资产，角色未创建时不会解引用角色；OnDisable/OnDestroy 重复 Stop 只做幂等清理。
+- 静态检查：目标文件未命中 `namespace`、`foreach`、三目运算符、`dynamic` 或 `object[]`；`git diff --check` 无空白错误，仅报告既有行尾格式提示。
+- 未执行：Unity Play Mode 真实快速点按。需要在编辑器连续快速点按 W/A/S/D，确认松开后位移立即停止且 Walk/Run 切回 Idle；并回归跳跃空中按住方向的落地继续移动。
+# 2026-09-24 跳跃落地移动输入收敛返工验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/air-jump-input-convergence-build/output --verbosity quiet`。
+- 构建结果：成功，0 个错误、38 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符、`object[]` 或 `dynamic`；`git diff --check` 未报告目标代码空白错误，仅有既有行尾格式提示。
+- 逻辑检查：非零输入通过 started/performed 即时写入移动组件，33ms 采样负责持续重试；canceled、零输入周期对账、OnDisable 和 OnDestroy 都会清除输入并发送停止；方向输入从 true 变 false 时即使 `_isMoving` 已为 false 也会刷新默认动画。
+- Play Mode：未执行。当前没有 Unity MCP 工具，桌面控制返回 `apps=[]` 和 `unsupported Codex auth method: apikey`，无法操控 Unity；此项必须保持为未验收。
+- 待测：起跳后空中按住 W 至落地继续 Walk/Run；空中按 W 后落地前松开应播放 `Jump_End` 后 Idle；地面快速点按前后方向并松开后必须停止。
+
+## 2026-09-24 跳跃落地输入时序修复验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/client-jump-held-input-build/output --verbosity quiet`。
+- 构建结果：成功，0 个错误，保留项目既有 38 个警告。
+- 静态逻辑：33ms 对账只接收 `Movement.IsPressed()` 的实时值；取消回调记录事件时间；迟到旧回调不会重新派发移动；真实新按键时间戳更晚时仍可正常开始移动。
+- 约束检查：本轮目标文件未新增 `namespace`、`foreach`、三目运算符、`object[]` 或 `dynamic`；业务载荷未使用无约束对象。
+- 未执行：Unity Editor Play Mode。当前 MCP/桌面连接不可用，不能将运行时跳跃和快速点按行为标记为通过。
+- 后续交接：在可运行 Unity 的环境中执行三条回归用例：空中按住方向落地继续移动、空中松开后落地停止、地面快速点按后立即停止。
+
+## 2026-09-25 快速松开方向键输入时序修复复核
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/quick-tap-final-build/output --verbosity quiet`。
+- 结果：0 个错误、38 个项目既有警告。
+- 静态检查：目标输入和移动文件未发现新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；`git diff --check` 未发现目标文件空白错误。
+- 逻辑审查：`Movement.IsPressed()` 过滤已释放按键的残留采样；`canceled` 时间戳拒绝旧回调；零值对账、取消、禁用和销毁均派发停止，避免重新进入 Walk/Run。
+- 独立审查：已有测试 Agent 的静态审查结论为通过；本轮协作接口无法成功启动新的独立 Agent，未伪造额外审查结论。
+- Unity Play Mode：未执行。当前 Unity MCP 返回不可用，桌面连接为 `apps=[]`/`unsupported Codex auth method: apikey`；因此运行时快速点按行为仍待实测。
+
+## 2026-09-25 快速 S 键/双击移动动画问题（未修复）
+
+- 用户新增复现：快速按一下 S 或过快双击方向键后，移动动画仍保持，无法回到 Idle。
+- 现有构建证据不能覆盖该运行时问题；之前构建为 0 错误、38 个既有警告。
+- 本轮没有修改业务代码，也没有执行新的构建；原因是主协作接口连续返回参数解析错误，无法按约束委派客户端 Agent。
+- Unity Play Mode 仍未执行，不能据此判定输入和动画状态已通过。
+- 待验证用例：单次 S 短按、S 双击、W/S 快速反向、空中按键后释放；每条都要确认位移停止、`HasDirectionalInput=false`、`IsMoving=false` 且默认动作回到 Idle。
+
+## 2026-09-25 快速松开移动动画收敛修复复核
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`。
+- 修复验证：`stopMove()` 在 `_hasDirectionalInput` 从 true 清零、但 `_isMoving` 已为 false 时，若当前为默认动作状态仍会调用 `MStateMachine.MarkTriggered()`，下一次 LateUpdate 会按 `HasDirectionalInput=false` 选择 Idle。
+- 构建命令：`dotnet build D:/unitypro/LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/quick-release-fix-build/output --verbosity quiet`。
+- 构建结果：0 个错误、38 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；修改范围注释已说明竞态和生命周期。
+- 未执行：Unity Play Mode；当前环境没有可用 Unity MCP/桌面连接，不能将快速 S 点按、双击和 W/S 反向标记为实机通过。
+
+- 返工补充：`PlayerInputCtr` 的取消闸门阻断 canceled 后的残留采样，新的非零 started/performed 回调才会开启下一轮移动。
+
+- 审查返工：非零移动回调增加 `Movement.IsPressed()` 实时校验；释放状态下只进入停止收敛路径，不会再次派发移动。
+
+## 2026-09-25 Idle 状态误播移动动画修复验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/Action/MDefaultActionComponent.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`。
+- 静态根因：`MDefaultActionComponent.ShouldPlayMovementAnimation()` 之前仅检查本地玩家的 `HasDirectionalInput`；兼容状态入口将 `IsMoving` 设为 false 后，残留方向标记仍会让 `StateName` 返回 Walk/Run。`SetMovingForPresentation(false)` 原先在状态已为 false 时直接返回，也不会清除该标记。
+- 修复验证：本地移动动画必须同时满足 `HasDirectionalInput=true` 和 `IsMoving=true`；兼容入口重复收到 Idle 也会清除方向、预测位移并保持状态机的既有刷新链路。
+- 构建命令：`dotnet build D:/unitypro/LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/idle-walk-state-fix-build/output --verbosity quiet`。
+- 构建结果：0 个错误、38 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；`git diff --check` 未发现目标范围空白错误。
+- Unity Play Mode：未执行。当前环境没有可用 Unity MCP/桌面连接，需在编辑器中复测短按 S、快速双击、W/S 反向和兼容 Idle 切换，确认 Animator 最终进入 Idle 槽位。
+
+## 2026-09-25 兼容 Controller Idle 播放修复验证
+
+- 追加修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/AsyncObj/MAnimator.cs`。
+- 根因验证：MJS 的 `AnimCtrl_Role_jx` 使用 `Movement/Action` 参数和 Blend Tree，不提供 `Idle`、`NonZdMoveWalk` 等独立覆盖槽位；原 `Play/CrossFade` 在 `IsClipReady` 为 false 时直接返回，Animator 继续保持旧移动状态。
+- 修复验证：`MAnimator.Play/CrossFade` 在剪辑不可用时调用 `MAnimatorStateCompatibility.Apply`；Idle 将 Movement 设为 0，Walk/Run 将 Movement 设为 2，技能等状态仍写入 Action 参数。
+- 最终构建：`dotnet build D:/unitypro/LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/idle-walk-state-fix-build-final/output --verbosity quiet`；0 个错误、39 个项目既有警告。
+- 静态检查：三个目标文件未新增 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`；`git diff --check` 无目标范围空白错误。
+- Unity Play Mode：未执行，当前无法连接 Unity 编辑器；真实 Animator 槽位和快速按键仍需实机回归。
+
+## 2026-09-25 Idle/跑步兼容动画审查返工验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/AsyncObj/MAnimatorStateCompatibility.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs`。
+- 返工验证：兼容 Controller 的跑步状态写入 `Movement=3`，行走状态写入 `Movement=2`；重复 Idle 调用在默认状态显式标记状态机刷新，技能、跳跃等特殊状态不会进入该分支。
+- 构建命令：`dotnet build D:/unitypro/LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/idle-walk-state-fix-review-build/output --verbosity quiet`。
+- 构建结果：0 个错误、39 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符或业务 `object/dynamic`；`git diff --check` 无目标范围空白错误。
+- Unity Play Mode：未执行，当前环境无法连接 Unity 编辑器。
+
+## 2026-09-25 方向键最短保持时间构建验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/controller/InputController/PlayerInputCtr.cs`。
+- 构建命令：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/min-hold-input-build/output --verbosity quiet`。
+- 构建结果：0 个错误、39 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；输入停止使用 Update 非阻塞计时，没有 `Sleep` 或协程竞态。
+- 逻辑检查：started/performed 开始或更新保持窗口；canceled/零值安排停止；0.1 秒内继续派发最后方向，超过时间才清理并派发 Stop；重新按键会取消等待。
+- 竞态检查：取消后的同一时间戳仅允许新的 Started 回调清除闸门，迟到 Performed 不会恢复移动；W/S 同帧反向仍可开始新输入。
+- Unity Play Mode：未执行，当前环境无法连接 Unity 编辑器，需在编辑器回归短按 S、快速双击、W/S 反向、长按和空中输入。
+
+## 2026-09-25 正式 MAnimator 嵌套状态路径构建验证
+
+- 修改文件：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/AsyncObj/MAnimator.cs`。
+- 资源核对：`MainCityMgr` 使用 `Assets/artres/Resources/Controller/MAnimator.controller`；该控制器的正式状态位于 `Base Layer.Idle.*`、`Base Layer.Move.*`、`Base Layer.Jump.*`，并未声明 `Movement` 或 `Action` 参数。
+- 修复验证：Idle、FIdle、四种 Walk/Run、Jump_Start、Jump_Loop、Jump_End 均可映射到嵌套状态全路径；剪辑未就绪时先播放原生状态，兼容参数仅在 `Supports` 成功时执行。
+- 构建命令：`dotnet build D:/unitypro/LYFMMORGP/LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/current-anim-path-build/output --verbosity quiet`。
+- 构建结果：0 个错误、39 个项目既有警告。
+- 静态检查：目标文件未新增 `namespace`、`foreach`、三目运算符、业务 `object/dynamic`；`git diff --check` 无新增空白错误。
+- Unity Play Mode：未执行，当前环境无法连接 Unity 编辑器；需实测短按方向、快速双击和快速反向。
+
+## 2026-09-25 移动同步与状态同步设计文档产出验证
+
+- 产出文件：项目分析/移动同步与状态同步设计.md（新增，未改动业务代码）。
+- 文档结构核对：8 个章节齐全——名词解释（18 个术语，每个含是什么/为什么/本方案怎么用）、总体架构（Mermaid 数据流图+同步层级表+参数表）、移动同步详细设计、状态同步详细设计、AOI 视野管理、类与函数接口实现、协议设计、落地实施与验收。
+- 代码块静态检查：所有 C# 代码块无 
+amespace、无 oreach（统一用 or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/else）；字段/方法均有中文注释说明用途与单位。
+- proto 字段编号核对：ReqMoveReport 1~10、NotifyMoveReconcile 1~6、NotifyMoveBroadcast 1、MoveSnapshotItem 1~9、NotifyStateChange 1~5、NotifyAttrDelta 1、AttrDeltaItem 1~4、NotifyEntityEnterView 1、NotifyEntityLeaveView 1、EntitySnapshotData 1~12，无重复编号。
+- 括号匹配抽查：服务端 MoveComponent/SyncComponent/AoiGrid/ViewManager/MoveReportHandler 与客户端 MoveReporter/MoveReconciler/RemoteMoveInterpolator 代码块括号闭合一致。
+- 编译验证：本次为纯设计文档，未新增/修改业务代码，不触发 GM_Game.csproj 或 GameServer 编译。
+- 已知遗留：ViewManager 差集辅助参考方法存在两个分支逻辑相同的冗余 if/else（不影响落地）；落地时按"一类一文件"拆分并简化。
+- 未执行：Unity Play Mode、多开客户端实机同步观察（属于 P1~P6 落地阶段验收）。
+## 2026-09-26 移动同步与状态同步方案复核验证
+
+- 验证范围：`项目分析/移动同步与状态同步设计.md` 与当前客户端、GameServer、GateServer、公共实体层接口的一致性。
+- 源码证据：`GameGlobal` 每 50ms 调用 `SceneManager.Update`，但当前 `SceneManager.Update` 为空；`OnlineRole.SceneUid` 已定义但场景实体尚未进入正式业务绑定；Gate 下行转发会拒绝未登记协议。
+- 独立审查：架构审查 Agent 完成只读复核，确认场景生命周期、Gate 接线、位移校验公式、AOI 双向关系、状态事件版本和协议命名为必须修订项；结论已纳入文档。
+- 静态验证：Markdown 代码围栏数量为偶数；标题结构可解析；`git diff --check -- 项目分析/移动同步与状态同步设计.md` 未报告目标文档空白错误。
+- 业务验证：本次没有修改客户端、GateServer 或 GameServer 业务代码，因此未执行编译和 Unity Play Mode；不能据此声明移动同步已经实现。
+- 待后续验证：两个独立客户端的移动开始/停止/转向/三段跳、重连与切图、跨 AOI、负坐标、多实例隔离、超速修正，以及主城 CPU/带宽/队列积压压测。
+
+## 2026-09-26 MJS 攻击/技能 FBX 剪辑批量提取（Editor 自动化）
+
+- 操作：新增 `Assets/Editor/MjsAtkClipExtractTool.cs`，通过哨兵文件触发 `[InitializeOnLoad]` 自动执行，批量重命名 6 个 FBX 内剪辑并提取独立 .anim。
+- 编译：Unity 2023.2.20f1c1 脚本域重载编译通过，Editor.log 无 `error CS`、无 NullReference/CompilerException。
+- 文件系统：`Assets/GM_Game/Animas/Role/MJS/Atk/` 下新增 Anim_JX_Atk02/Atk03/Skill01/Skill02/Skill03/Skill04 共 6 个 .anim 及同名 .meta；连同原有 Atk01 共 7 组 FBX+.anim。
+- 内容抽查：Atk02/Skill01/Skill04 三个 .anim 文件头 m_Name 正确；各文件 FloatCurve 块 130（Skill04=135），关键帧数 2389~7189 不等，证明为各剪辑独立数据。
+- 导入设置核对：6 个 FBX.meta 的剪辑 name 已与 FBX 同名，takeName 原样保留，帧范围与任务表一致，Skill04 avatarSetup=1 其余=2。
+- 结论：通过。未做运行时播放验证。
+
+## 2026-09-26 MJS 独立动画剪辑重命名并移动（Editor 自动化）
+
+- 操作：新增 `Assets/Editor/MjsAnimRenameMoveTool.cs`，哨兵触发自动执行，MoveAsset 移动+重命名 7 个 .anim（JX→MJS）到 Common/ALL/Skill，并同步内部 clip.name。
+- 编译：Unity 2023.2.20f1c1 脚本域重载编译通过，无 error CS、无 Exception。
+- 文件系统：Skill 目录新增 7 个 Anim_MJS_*.anim 及同名 .meta；Atk 目录仅剩 7 个 FBX 及 .meta，无 .anim 残留。
+- 内容抽查：Anim_MJS_Atk02.anim、Anim_MJS_Skill04.anim 文件头 m_Name 均为 Anim_MJS_*。
+- 结论：通过。GUID 由 MoveAsset 保持不变，未做运行时引用绑定逐一核对。
+
+## 2026-09-26 RO 技能模块测试基线（开发进行中）
+
+- 验证命令：`git status --short`、`rg --files`、`rg -n`；使用打包 Python 的 `openpyxl.load_workbook(read_only=True, data_only=True)` 只读解析 `Luaban/MiniTemplate/Datas/#SkillInfo.xlsx`、`#SkillEffectInfo.xlsx`、`#SkillPresentationInfo.xlsx`，并使用 `Get-FileHash -Algorithm SHA256` 记录旧文件基线。
+- 表格结果：旧技能 7 行、新效果 5 行、新表现 5 行；主键、`(SkillId, Level)` 与表现变体组合键无重复；效果的旧技能外键、表现的效果外键均有效；无目标模式的未来命中字段均为零，时间、费用和范围字段无负数。
+- 旧文件基线：`#SkillInfo.xlsx` SHA-256 为 `90E32FE72DAB4BE4ECD573C59E222EEBA1F95C3116D08E50308D12634A854F47`；`LYF_Server/Network/LubanManage/Tb/tbskillinfo.bytes` SHA-256 为 `6878777A134EB3182D0F7DECEFEF9A699617E331982084CCAA5668C407287256`。该值是本轮检查时的工作区基线，并非 Git 历史原件证明。
+- 动画结果：5 条 `ClipLocation` 均有实际 `.anim` 文件，均出现在 `animInfo.txt`，短名与文件名一致，`DurationMs` 与索引秒值换算误差小于 1ms；职业 1 的 `PrefabPath=Role/Role_MJS`、`PresentTableID=1`，表现表模型为 `Role_MJS`。
+- 协议入口只读检查：`11170/11171/11173` 已在 `NetDefine` 定义，`RequestEntity.proto` 和 `ResultEntity.proto` 已定义施法请求、结果与起止通知，Gate 已登记请求和三条下行。此项只证明当前源码登记，生成物一致性及实际转发留待构建和联调。
+- 后续测试矩阵：Luban 新旧表双端装载；proto 生成与 `Network.dll` 一致；Network、GameServer、GateServer、CenterServer、Unity 客户端构建；改动文件的中文注释、一类一文件、禁用 `namespace`/`foreach`/三目与弱类型载荷；成功施法的一次 MP/CD 提交、一次开始/结束通知；未学/零级、等级效果缺失、职业不符、MP 不足、CD/组 CD、死亡、未装载、非法复合会话、重复序号与同帧双请求；本人预测回滚、他人表现和资源释放。
+- 时序专项：核对 11080 技能列表在在线角色激活后装载；旧角色重连处于待保存状态时，若进入世界只请求一次，检查新会话激活后是否还能收到技能列表。条件不足时记为未验证风险，不视作已具备装载能力。
+- 当前未执行：开发尚在进行，暂不对缺少业务接线作最终失败判断；构建、专用施法测试、四服务联网与 Unity Play Mode 待代码稳定后执行。当前只读检查未生成临时文件。
+
+## 2026-09-26 RO 技能协议 Network 独立构建
+
+- 命令：`dotnet build LYF_Server/Network/Network.csproj --no-restore --configuration Debug -p:OutputPath=D:/unitypro/LYFMMORGP/_temp/skill-network-check/bin/ -p:BaseIntermediateOutputPath=D:/unitypro/LYFMMORGP/_temp/skill-network-check/obj/ --verbosity quiet`。
+- 首次结果：沙箱内访问 `C:/Users/lyf/AppData/Local/Microsoft SDKs` 被拒，MSBuild 报 MSB4184；这是运行环境权限失败，未进入项目代码编译。
+- 复验结果：按工具权限流程在沙箱外执行同一命令，构建成功，0 错误、4 个 `MMoRpgCommon` 既有警告（CS0114 一条、CS0169 三条）。
+- 产物：`_temp/skill-network-check/bin/Network.dll`，279040 字节；中间文件在 `_temp/skill-network-check/obj/`。未复制或覆盖 Unity 客户端 DLL，也未据此声明客户端接线完成。
+- 协议命令：本机 `protoc 3.21.9` 对 `RequestEntity.proto`、`ResultEntity.proto` 执行 `--descriptor_set_out` 与 `--csharp_out`，临时结果分别位于 `_temp/skill-network-check/skill-proto-descriptor.pb` 和 `_temp/skill-network-check/proto-generated/`；未改正式生成代码。
+- 协议结果：重新生成的 `SkillCastReq` 2 个字段、`SkillCastRet` 10 个字段、`SkillCastStartNtf` 6 个字段、`SkillCastEndNtf` 5 个字段，与正式 `Network/Proto` C# 生成文件逐项比较，属性名和字段号均一致。整文件 SHA-256 不一致，因此本条仅证明新增四个消息的字段契约一致，不证明历史整文件字节一致。
+
+## 2026-09-26 RO 技能配置运行时装载首次测试（失败，待返工）
+
+- 专用测试：新增 `LYF_Server/Tests/SkillConfigSmoke.cs`，不加入正式服务工程；它在运行基目录检查三张技能表，并调用 `LubanMgr.Instance.Init()`，核对五组旧技能、一级效果与职业一表现关系。测试入口编译至 `_temp/skill_build/Network/SkillConfigSmoke.exe`，无编译错误。
+- 编译命令：VS2019 `csc.exe /target:exe /out:D:/unitypro/LYFMMORGP/_temp/skill_build/Network/SkillConfigSmoke.exe /r:<同目录 Network.dll> /r:<同目录 MMoRpgCommon.dll> /r:<同目录 Google.Protobuf.dll> LYF_Server/Tests/SkillConfigSmoke.cs`。
+- 运行命令：`_temp/skill_build/Network/SkillConfigSmoke.exe`；退出码 1，`LubanMgr.Init()` 在 `LubanMgr.cs:48` 读取构建输出目录时报 `FileNotFoundException`：缺 `_temp/skill_build/Network/LubanManage/Tb/tbcountinfo.bytes`。测试确实进入输出目录优先分支，而非回退读取源码目录。
+- 根因静态复核：`Tables.cs` 共装载 16 张二进制表，`Network.csproj` 的 `<Content>` 当前只登记 14 张；缺 `tbcountinfo.bytes` 和 `tbpresenttable.bytes`。失败已反馈服务端开发 Agent；补齐构建输出后原样重跑。构建输出和中间测试产物均在 `_temp`，测试源码位于专用 Tests 目录。
+
+## 2026-09-26 RO 技能配置运行时装载隔离复测
+
+- 为隔离运行时逻辑与项目文件复制缺项，仅将源码已有的 `tbcountinfo.bytes`、`tbpresenttable.bytes` 复制到 `_temp/skill_build/Network/LubanManage/Tb`，未修改 `Network.csproj` 或正式输出。
+- 原样运行 `_temp/skill_build/Network/SkillConfigSmoke.exe` 通过：`LubanMgr.Init()` 实际从构建目录装载 16 张表，旧技能 5、新效果 5、新表现 5 的关系校验全部通过。
+- 结论：运行时表解析和新旧技能索引有效；`Network.csproj` 未登记两张既有表的发布缺项仍未修复，不能把本次隔离复制结果视为正式构建发布通过。
+
+## 2026-09-26 RO 技能正式输出及权威组件复验
+
+- 正式发布输出：服务端 Agent 在 `Network.csproj` 补齐 `tbcountinfo.bytes`、`tbpresenttable.bytes` 后，测试 Agent 使用全新 `_temp/skill-network-publish-retest/bin/` 构建 `Network.csproj`，0 错误、4 个公共库既有警告；输出目录现含 `Tables.cs` 所需的 16 张二进制表。首次沙箱内构建仍被本机 Windows SDK 路径权限拒绝，按权限流程重跑成功。
+- 配置复验：`SkillConfigSmoke.cs` 重新编译引用全新输出中的 `Network.dll`、`MMoRpgCommon.dll` 和 `Google.Protobuf.dll`，并在同目录运行 `SkillConfigSmoke.exe`；退出码 0，`LubanMgr.Init()` 实际从该输出装载 16 张表，旧技能 5 / 新效果 5 / 新表现 5 的映射通过。本次不依赖前述手工复制的隔离产物。
+- 服务端权威专用测试：新增 `LYF_Server/Tests/SkillAuthoritySmoke.cs`，不加入正式业务工程；以 VS2019 `csc.exe` 引用 `_temp/skill_build/Network` 中 `GameServer.exe`、`Network.dll`、`MMoRpgCommon.dll`、`Google.Protobuf.dll` 编译至同目录。首次执行测试 exe 因缺少 GameServer 程序集重定向配置在入口前异常退出 `-532462766`；仅在 `_temp` 内复制同目录 `GameServer.exe.config` 为测试 exe 配置后复验退出码 0。
+- 权威断言通过：技能列表未装载时拒绝且 MP 不变；10010 一级成功扣 20 MP、生成非零服务器施法 ID 与开始通知；同序号同技能重传返回同一结果且不二次扣 MP/广播；结束活动施法后新序号仍受单技能 CD 拒绝；未学习、非法技能 ID、MP 不足与死亡拒绝路径均不扣费。测试角色无真实 Gate 会话，`InterruptActiveCast` 产生一次预期发送失败日志，不代表联网广播已验证。
+- 静态约束：`rg` 对新增 `RoleSkillComponent`、`SkillCastHandler`、`PendingEnterWorldRequest`、`GateSkillCtrl`、客户端 `Skill` 目录、`SkillStartedEventArgs` 和 `SkillCtrl` 检查 `namespace`、`foreach`、三目运算符、`dynamic`、`object[]`/业务弱类型载荷，目标范围 0 命中。生成的 Luban/protobuf 文件是第三方生成边界，按项目例外不手改。
+- 协议登记：11170/11171/11173 在 `NetDefine`；Gate 上行 11170、下行三条均登记且转发器解析消息；GameServer 11170 仅从 Gate 入逻辑线程 Handler；客户端 `SkillCtrl` 登记并注销三条回包处理。字段号另见前述临时 `protoc` 对照记录。
+- 重连时序静态复核：新会话暂存在 `m_pendingRoleMap` 时，`HandleClientEnterWorld` 按同一 Gate/Unity 复合会话保存唯一请求；旧实例保存完成后 `ProcessPendingRoles` 先激活新角色，再重放该请求到 Center，11080 回包经复合会话定位新角色并调用 `LoadLearnedSkills`。伪造或过期会话不进入该重放路径；实际 DB ACK 时序和 11080 网络到达顺序尚未联调。
+- 表现回收静态复核：客户端 `ApplyServerEnd` 仅接受当前 `ServerCastId`，同一动画 Location 的旧结束通知不能结束后一施法；`MAnimator.ReleaseAnim` 要求当前 `ClipPath` 与预期 Location 匹配，`MAnimInfo.Reset` 取消 preparing/ready 租约。尚未在 Unity Play Mode 验证模型加载、实际播放、断线或池复用。
+- 未覆盖：真实四服务联网、客户端预测及他人广播、组 CD（当前 5 条真实效果的 `CooldownGroupId` 均为 0）、非零目标模式（当前真实数据均为 0）、效果缺失或职业不符的运行时分支、同帧双请求和服务器自然结束通知次数；这些保留为后续专项/联调验收，不以本次组件 smoke 代替。
+
+## 2026-09-26 RO 技能角色快照隔离与早到回包复审
+
+- 修改文件：新增 `LYF_Server/Tests/SkillRoleSnapshotSmoke.cs`，仅作专用测试，不加入正式服务工程；测试变更说明归档于 `项目修改日志/2026-09-26-RO-SKILL-ROLE-SNAPSHOT-TEST-CHANGELOG.md`。
+- 协议验证：`ResultEntity.proto` 的 `RoleSkillInfoRet.role_id = 3` 已由 CenterServer `CentRoleModel.RoleSkillInfo` 填入；正式 `ResultEntity.cs` 生成物的字段号和名称一致。`protoc 3.21.9` 对 `ResultEntity.proto` 成功生成 `_temp/skill-role-snapshot/ResultEntity.desc`。专用测试另外用 Protobuf 描述符断言字段 3 名为 `role_id`。
+- 隔离构建：VS2019 MSBuild 将 `MMoRpgCommon`、`Network`、`GameServer` 构建至 `_temp/skill-role-snapshot/bin/`，均 0 错误；公共库 4 条、GameServer 7 条既有警告。首次沙箱内构建因本机 Windows SDK 目录访问受限报 MSB4184，按权限流程在沙箱外重跑通过。测试入口用 VS2019 `csc.exe` 引用同目录程序集编译，只有 Google.Protobuf 3.31.0/3.31.1 引用版本提示；复制同目录 GameServer 绑定重定向配置到测试 exe 后运行。
+- 角色切换断言：`SkillRoleSnapshotSmoke.exe` 退出码 0。角色 B 占有复合会话时，A 的迟到 11080 经 `RoleSkillInfoHandler.Handle` 拒绝且 B 技能组件仍未装载；同会话 B 回包通过 `IsMatchingRole`，并由 B 组件成功装载。测试无真实 Gate，会话匹配后的转发由源码静态复核，未声明真实网络转发通过。
+- 转发顺序：GameServer 将 11080 注册为 `CenterMessageRoute.Internal`；处理器先解析 `RoleId` 并按 Gate/Unity 复合会话核对当前在线角色，再允许 Gate 转发与组件装载。客户端 `SkillCtrl` 在本地角色未创建时按 RoleId 和连接代次暂存 11080；`LocalRoleChanged(null)` 保留同连接待应用快照但清空上一角色视图；新角色仅消费同 RoleId 快照，`Dispose` 清空缓存。客户端早到时序为静态复核，未执行 Unity Play Mode。
+- 无表现技能：客户端成功结果先于开始通知到达时会记录服务器施法 ID；`CanStart` 在结束通知前阻止下一请求，11171 重复开始不重建实例，11173 按 ID 清理。该路径为静态复核，未做 Unity 运行验证。
+- 产物一致性：项目正式 `_temp/skill_build/Network/Network.dll` 与 Unity 插件 `LYF_MMO/Assets/GM_Game/Plugins/Net/Network.dll` 的 SHA-256 均为 `AF805591BFC54F124315A474C0450FACA195861E357025954DB9A3A7BF3DE54B`。本次独立隔离构建的 DLL 哈希不同，因此专项测试仅证明当前源码的角色隔离行为，不以其字节哈希证明客户端插件一致。
+- 最终结论：本轮代码审查提出的跨角色 11080 装载、旧技能缓存、无表现施法占用三项问题已修复并通过上述专项/静态验收。剩余 Warning：真实四服务联网、同连接换角迟到回包、Unity Play Mode 动画与 UI 早到回包未联调；后续按正式场景验证。
+## 2026-09-27 技能全学习模拟服务器与按键动画专项
+
+- 独立构建：测试 Agent 使用隔离目录构建 `GM_Game.csproj`，0 错误、42 条既有警告；产物位于 `_temp/skill-playmode-review/build`。
+- 静态审查：新增模拟服务器、Play Mode 探针与 Editor 入口未命中 `namespace`、`foreach`、三目或弱类型载荷；`git diff --check` 通过。审查确认测试对象只在运行态创建，不序列化进场景。连接关闭后的 Receive=0 清理仍属小风险，新增脚本 `.meta` 需 Unity 导入生成。
+- Unity 状态：进程 37444 仍在运行且 Responding=True，窗口标题为 `LYF_MMO - New Scene`；Computer Use 返回空应用清单并报告浏览器认证错误，无法触发 Unity 菜单。Editor.log 最后更新时间 11:51；哨兵 `_temp/skill-playmode/start.pending` 仍在。
+- Play Mode 结果：`_temp/skill-playmode/result.log` 不存在，技能截图不存在；因此没有证据证明 Mock TCP 已启动或 11080 已返回，也没有按键/TCP 11170/11171/11173/Animator clip/Idle 实测数据。本轮动画验收未通过，状态为未执行（环境阻塞），不得以独立构建通过代替运行验收。
+- 后续：Unity 编辑器可操作后运行 `Tools/测试/全部学习技能与按键动画实测`，检查全部五个有表现配置技能的真实输入链和动画证据；同时确认 Unity 为新增测试脚本生成 `.meta`。详细记录见 `项目修改日志/2026-09-27-SKILL-MOCK-ANIMATION-CHANGELOG.md`。
+
+## 2026-09-27 技能全学习模拟服务器与按键动画专项复测通过
+
+- 修改后构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output _temp/skill-input-build2 --verbosity quiet -clp:ErrorsOnly`，0 错误、42 个既有警告。
+- 组件边界复核：`RoleAnimaBehaviour` 未被销毁，测试夹具仅设置 `enabled=false`；正式 `PlayEffect` 对失活组件直接返回。目标文件静态扫描无禁用语法命中，`git diff --check` 通过。
+- Unity Play Mode 运行证据：2026-09-27 04:44:52Z 新轮次启动 Mock；11080 返回 RoleId=10001 的 7 项技能，全部 Level=1。Q/10010、E/10040、R/10050、F/10060、1/10070 均各有一次 11170、11171、11173；对应剪辑 `Anim_MJS_Atk01`、`Anim_MJS_Skill01`、`Anim_MJS_Skill02`、`Anim_MJS_Skill03`、`Anim_MJS_Skill04` 进度从 0 增长至 0.9828555~0.9939035，且 `结束Idle=true`。
+- 自动化结论：`result.log` 末行是 `PASS 全部5项真实按键/TCP/Animator进度/结束Idle；Mock保持运行，Q/E/R/F/1可手动测试，退出Play自动关闭`。新轮次未出现旧的 `RoleAnimaBehaviour.DoAttackConfig` 空引用。
+- 手动焦点补验：向 Unity 主窗口发送 Q、E 后，Mock 日志追加 Seq=6、Seq=7 的 11170/11171/11173，证明物理键盘路径能到达正式技能 TCP 链。
+- 证据位置：`_temp/skill-playmode/result.log`、`_temp/skill-playmode/desktop.png`、`_temp/skill-playmode/manual-e.png`；旧失败轮次保留为 `_temp/skill-playmode/result-partial-2026-09-27-0425Z.log`。临时文件不清理，待产品经理确认。
+- 最终状态：本次用户验收通过。未覆盖真实四服联机、伤害结算、Buff、多人广播和特效资源完整性，作为后续专项范围。
+
+## 2026-09-27 现有测试角色模拟技能回包与手动按键准备
+
+- 正式链路静态复核：`test.cs` 在模拟角色生成后由旧技能表构造全项一级 `RoleSkillInfoRet`，调用 `ToByteString()`，经 `MainCtrl.LoadSkillResponse`、`SkillCtrl.TryParseRoleSkillInfo`、角色 ID 校验装载技能核心与两个 UI 窗口。联网回调仍保留连接代次校验；离线按键进入 `BeginLocalCast`，不以 TCP 连接为前置条件。
+- 测试角色状态：专用测试脚本将 HP/MP 设为 1000，满足本地施法 MP/存活校验；模型加载后仅设置运行态 `RoleAnimaBehaviour.enabled=false`，不修改正式预制体。
+- 界面证据：撤下探针前的 `_temp/skill-playmode/skill-ui-timeout.png` 可见 Q/E/R/F/1 五个快捷图标。该探针把预制体内 inactive 模板计入条目数而误判失败；截图只证明当时快捷栏显示，不能证明最新测试脚本的手动按键动画。
+- 构建与审查：最新 `GM_Game.csproj` 构建 0 错误、38 条既有警告；目标文件 `git diff --check` 与禁用语法扫描通过。旧 `#SkillInfo.xlsx` 与 `tbskillinfo.bytes` 哈希保持既有基线。自动探针、Mock TCP 与 Editor 启动脚本已移除，生成项目文件已同步去掉两条已删除脚本索引。
+- 未执行：按用户要求不再用代码注入键盘或自动播放测试；最新版本 Play Mode 中用户手动按键的 Animator 剪辑、进度、回 Idle 尚未验证，不能标为通过。
+- 手动验收：打开 `New Scene` 进入 Play，控制台应显示技能回包装载数量；按 L 检查技能列表，按 Q/E/R/F/1 检查角色动画、冷却和可重复释放。失败时按具体现象返工。
+- 编辑器状态核对：`GM_Game.dll` 更新至 2026-09-27 14:01:50，晚于本轮业务与测试脚本源文件；最终截图 `_temp/skill-playmode/editor-final-mode.png` 显示 Unity 停在 Edit Mode。未把旧 Play 域的自动探针日志用于本次验收。
+
+## 2026-09-27 技能结束回位定位与修复验收
+
+- 根/骨骼区分：临时加载 `Role_MJS` 并采样 Skill01，模型根 Y 始终为 0；Idle 骨盆 Y≈1.171，Skill01 t=0.4 骨盆 Y≈0.637，双脚 Y≈0.19/0.14。原剪辑中段的骨盆下移存在于动作曲线，不能把它归因于模型 Transform 被重设。关闭 Y Bake 的临时克隆实验使根 Y≈-0.459，骨盆与双脚世界高度不变；正式资源未修改。
+- 时序复现：Skill 动作结束时 `Finish` 同步进入 `AfterFinish` 和 `MSkill.Reset`，原 `ReleaseAnim` 先恢复占位槽；`MStateMachine.UpdateSeconds` 随后才转默认，Idle 过渡在 LateUpdate 执行。Unity 临时 Animator 实验确认提前恢复时当前 Animator 状态仍为 Skill，但 `CurrentAnimatorClipInfo` 已从 `Anim_MJS_Skill01` 变成占位 `Skill`。
+- 修复验证：`MSkill.Reset` 请求延迟释放；`MAnimator.Update` 逐帧确认不在 Skill、且过渡结束后才释放。Unity 临时 Animator 对照中，Skill 期间保持真实剪辑，切 Idle 后释放；旧 Skill01 待释放后新 Skill02 成功接管、以及新剪辑加载失败仍保留旧 ready 再于 Idle 回收，两条路径均通过。临时实例已销毁，场景 dirty=false，Console 错误 0。
+- 构建与审查：客户端子 Agent 构建 `GM_Game` 0 错误/38 条既有警告；独立审查 Agent 构建 0 错误/42 条既有警告，目标文件 `diff --check` 与禁用语法扫描通过。审查覆盖新施法同槽接管、异步成功/失败、Reset 清理。
+- 实测边界：未替用户在 Game View 触发物理按键并目测最终效果；原动作中的下蹲/跳跃曲线仍保留，用户手动复验后才能确认感知上的“下沉”是否已满足预期。
+
+## 2026-09-27 施法期间移动阻断复测
+
+- 独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/skill-move-review/rebuild --verbosity quiet -clp:ErrorsOnly`，0 错误、38 条既有警告；客户端开发侧构建同为 0 错误，Unity 脚本重编后 Console 错误 0。
+- 静态时序：`MSkillComponent` 禁水平移动并于施法开始清除旧速度；`MMoveComponent` 在输入与逐帧积分两处拦截技能状态，仍推进垂直重力、CharacterController 位移及接地。方向键保持期间 `PlayerInputCtr` 约每 33 毫秒重派输入，技能结束后可重新进入移动。
+- 审查返工：首次审查发现空中施法落地可由 `MJumpComponent` 播放 Jump_End 或提前切默认，故未通过。开发修复后，独立复审确认技能期间落地只清理跳跃表现；Jump_End 已开始再施法时旧结束标记和待播项清除，不会由旧时钟中断技能。物理 `EndJump` 保留，复审通过。
+- 规范检查：三份目标文件无新增 `namespace`、`foreach`、三目、`dynamic`、`object[]` 业务载荷，目标差异空白检查通过。构建产物保留于 `_temp/skill-move-review/rebuild`。
+- 运行边界：未用代码注入键盘或代替用户做 Game View 手动按键；按住方向施法、空中落地和技能结束恢复的画面及手感仍需用户确认。
+
+## 2026-09-27 技能按键入口简化验收
+
+- 最终独立构建：`dotnet build LYF_MMO/GM_Game.csproj --no-restore --configuration Debug --output D:/unitypro/LYFMMORGP/_temp/skill-input-simplify-review --verbosity quiet -clp:ErrorsOnly`，0 错误、38 条既有警告；隔离产物时间晚于最终 `SkillCtrl.cs` 修改。
+- 静态路径：直接装载的模拟技能回包按键走 `BeginLocalCast`，无连接状态前置判断；正式网络 11080 在传输可用时走预测和 11170 请求，传输不可用时仍播放本地表现。联网回包维持施法序号匹配，避免重复播放。
+- 审查返工：连接代次切换时先撤销旧预测，再清待确认序号；角色切换时，即使命中暂存的早到 11080，也先清旧角色待确认和迟到序号，防止旧结果写入新角色。直接注入切本地会话时清理旧预测并过滤本地主角旧开始/结束广播。独立代码复审通过。
+- 规范检查：目标文件无新增 `namespace`、`foreach`、三目、`dynamic` 或 `object[]` 业务载荷；目标 `git diff --check` 通过。构建中间产物保留在 `_temp/skill-input-simplify-review`。
+- 运行边界：未使用代码注入键盘或自动探针；Unity Game View 的 Q/E/R/F/1 动画、冷却显示与真实四服回包顺序尚待手动/联调验证。
+
+## 2026-09-27 RO SkillUuid 整改与独立复审
+
+- RO 源码核对：`MPlayer.NextSkillUUID` 为 1 至 9999 循环，`MNavigationComponent` 用同一 UUID 请求和预表现，`MSkillComponent` 的开始/结束通知按 UUID 匹配当前或旧实例，服务端将请求 UUID 原样传入施法实例。RO 客户端连击重置 10 秒、服务端默认组合窗口 6 秒，本项目对应值一致。
+- 协议与静态审查：`SkillCastReq`、`SkillCastRet`、`SkillCastStartNtf`、`SkillCastEndNtf` 均为 `SkillUuid`；业务源码不再有 `ClientCastSeq`、`ServerCastId`、服务器另分配 ID、最大序号门槛及历史结果缓存。原 `server_cast_id` 的结果包字段号 5 标记 reserved。目标文件 `git diff --check` 及禁用语法扫描通过。正式 Unity `Network.dll` 与本轮服务端构建产物 SHA-256 同为 `E3029A1B6ADBAC8E32D5D9161D39B529477FBBE6D695A8029027ECD5380F14E3`。
+- 编译：GameServer 隔离构建 0 错误、11 条既有警告；客户端 `GM_Game` 最终返工后隔离构建 0 错误、38 条既有警告，产物位于 `_temp/skill-uuid-client/no-presentation-final`。所有中间文件仍在项目根目录 `_temp`，未经确认未清理。
+- 运行测试：独立测试 Agent 用本轮 GameServer/Network 重新编译并运行 `LYF_Server/Tests/SkillAuthoritySmoke.cs`，退出码 0；覆盖 UUID 原样回传、活动状态阻断、CD、未学习、MP 不足和死亡。测试夹具首次缺旧程序集绑定重定向配置而启动失败，补用既有配置后通过；测试角色没有网关会话产生一行预期发送失败日志。
+- 返工复审：`MSkillComponent` 删除无动画纯占位后，缺表现时仍保存 UUID 预测以接收 11170 MP/CD，11171 仅警告且不占动作状态，超时会回滚；Q 旧段仍按对应 UUID 回收。独立复审通过。
+- 未执行：Unity Game View 物理按键、视觉动画、真实四服消息顺序和远端角色广播。本轮构建与夹具不替代这些运行验收。
+
+## 2026-09-27 RO 施法实例列表初审、返工与复审
+
+- 初审失败：对照 RO 的当前施法及 `_skills`，本项目仅多段移交旧实例，单段会继续占槽并阻断下一技能；旧列表没有逐帧运行。开发子 Agent 改为通用列表留存和更新，解除旧动画槽。
+- 首次复审失败：A 在旧列表、B 在当前槽时重复 `SkillStarted(A/B)`，原动作入口先自转并移走 B，`OnStart` 查重后 `Finish` 提前结束 B。整改为 `OnSkillStartedEvent` 在调用 `_onActionEvent.Invoke` 前通过 `FindSkill(UUID)` 检查当前与列表，重复直接返回。
+- 最终静态复审通过：重复 A/B 不进入状态自转；不同 UUID 在状态许可下启动，任意活动技能退出动作槽后保留；11173 仅清理匹配 UUID；列表实例逐帧更新，动画释放后 `_animationReleased` 禁止重装；清空与 Q 700 毫秒路径无新增阻断。
+- 构建：客户端子 Agent 最终返工构建 0 错误、38 条警告；主 Agent 使用最终源码、将输出和中间文件全部定向 `_temp/ro-skill-lifecycle-final/` 重建，0 错误、42 条警告。独立只读复审进程的构建在 Windows SDK 路径访问时报 MSB4184，没有进入业务编译，不能计为代码失败。
+- 测试边界：上述 A/B 和生命周期为源码时序审查，未生成角色探针或测试按键脚本，未执行 Unity Play Mode、实际断线或网络事件回放。当前无实际弹体数据/逻辑，不能宣称弹道运行已验证。
+
+## 2026-09-27 RO 技能对象池验收
+
+- 初审与返工：底层池初版额外永久活跃集合、缺 RO 创建委托和列表池元素约束被打回；客户端子 Agent 恢复 RO `CreateObj` / `UnityAction`、原 `WINDOWS && DEBUG` 检查与计数语义，列表借还双清理，并补齐目标中文注释。最终独立审查通过，无阻断项。
+- 正式源码纯内存验证：`dotnet run --project _temp/ro-skill-pool-tests/SkillPoolTests.csproj` 退出码 0，115 项断言通过；独立审查再以 `--configuration Release` 重编运行，115 项同样通过。证据 `_temp/ro-skill-pool-tests/result.log`。首次夹具编译缺 `Debug.LogError` 边界替身，补齐后通过，该失败不属于生产源码缺陷。
+- 覆盖：技能/核心/数据/预测复用清零、施法持有升级前核心、预测引用转移、确认/取消/超时、同级快照丢弃、当前与旧实例结束/拒绝、多个旧实例与当前同时清空、重复开始广播新核心消费、缺表现和初始化失败归还；未调用池 Clear 的完整生产周期各池活跃计数平衡。
+- 编译：客户端返工构建 0 错误、42 条既有警告；主 Agent 最终隔离构建 0 错误、42 条警告，输出和中间产物 `_temp/ro-skill-pool-final/bin` 与 `obj`；独立审查构建 0 错误、38 条警告，产物 `_temp/skill-lifecycle-review/pool-final`。
+- 静态：目标文件禁用语法扫描无命中；`git diff --check` 退出 0，仅已有行尾转换提示；四份新池 `.meta` 与技能 `.meta` 存在，`GM_Game.csproj` 索引齐全；客户端业务链未发现直接构造四种技能池对象的调用。原表、协议、场景和资源未列入本次修改范围。
+- 边界：夹具直接链接正式池与技能源码，Unity、实体/动作机、配置访问边界采用轻量替身；未运行 Unity Game View、实际异步资源和 Animator 画面、按键、弹体或四服联调。没有生成角色探针或将测试组件挂正式场景。
+- 盘点与修改记录：`项目分析/RO_SKILL_OBJECT_POOL_AUDIT.md`、`项目修改日志/2026-09-27-RO-SKILL-OBJECT-POOL-CHANGELOG.md`。临时文件保留根目录 `_temp`。
+
+## 2026-09-27 RO 技能子类与 10070 既有特效
+
+- 范围：`MSkill` 抽象基类、`MArtSkill` 具体池借还、10070 剪辑事件特效与四份角色预制体旧动画事件组件失活。飞行物按用户要求暂不开发；Q 原有三段变体保持原流程。
+- 审查闭环：旧 `RoleAnimaBehaviour` 双重播放风险打回后，四份正式预制体对应组件均 `m_Enabled: 0` 且完整保留；冷剪辑超过动作状态时长漏事件再次打回后，10070 独立持有 `MAnimationMgr.ClipInfo`，脱离可复用动作槽读取原事件。独立最终静态复审通过，引用借还对称，无跨回池异步完成回调。
+- 构建：客户端返工及独立复审均 0 错误、42 条既有警告；最终独立产物在 `_temp/skill04-independent-review/cold-final/bin`、`obj`。目标新增/修改技能文件未发现 namespace、foreach、dynamic、object 业务载荷或三目语法；预制体差异空白检查通过，仅行尾转换提示。
+- 纯内存回归：`_temp/ro-skill-pool-tests/result.log` 最终 171 项断言通过、退出码 0。夹具链接正式技能与池源码，Unity、资源、实体边界使用替身。覆盖两事件各一次、根/子粒子寿命、目标和无目标落点、池复用；新增实际组件 `StateUpdate(1.2s)` 超过 1.133 秒后自动退出动作槽并转旧列表，新技能替换共享槽后旧实例仍只读自己资源，拒绝/回池后资源晚到不补发，独立剪辑引用最终归零。
+- 资源核对：`Anim_MJS_Skill04.anim` 约 0.1265/0.2969 秒事件正确引用 `Jx_Skill04.asset` 的两份粒子资源；落剑预制体没有弹体运动或碰撞组件。原表、动画与粒子资产未列入本轮写入范围。
+- 验收边界：未运行真实 Unity 画面、挂点、YooAsset 冷加载或四服联调，不能将替身断言视为真实渲染通过。当前按键目标 UID 为零，大剑沿用角色前方 10 单位落点，无伤害结算。资源到达前施法若已被结束/拒绝/超时回收，不会补发；拒绝前已生成粒子会继续有限尾迹。
+- 交接：用户在现有模拟角色手动按 1 确认表现。本轮未新增生成角色、按键探针或正式场景测试组件。修改文件、设计与返工记录见 `项目修改日志/2026-09-27-RO-SKILL-SUBTYPE-CHANGELOG.md`；RO 子类分析见 `项目分析/RO_SKILL_SUBTYPE_ALIGNMENT.md`。
+
+## 2026-09-27 RO 技能统一动画入口整改验收
+
+- 文件范围：`SceneEntity/Skill/MSkill.cs`、`MArtSkill.cs`、`SceneEntity/Component/Action/MSkillComponent.cs`，以及根目录 `_temp/ro-skill-pool-tests` 夹具。未修改通用状态机、动画管理器、表格、协议、场景或美术资源。
+- RO 对照与独立审查：通过。原 `Begin → TryPrepareAnimation` 及 Update 重试移除，使用 `Fire → Execute → Start` 启动逻辑；状态机统一 `PlayAnim → TriggerAnim` 覆盖/播放动画。Skill 组件不调用基类通用 PlayAnim，避免其缺少通用 Skill 字段时回退 Idle。Start 每次施法仅执行一次，10070 独立剪辑引用在 Reset 释放，旧实例只能继续特效时间轴，不能重装当前动画。
+- 构建：客户端开发与独立审查构建均 0 错误、42 条既有警告。独立产物保留 `_temp/ro-skill-animation-interface-review`；旧接口与禁用语法扫描无命中，目标差异检查通过。
+- 运行回归：`dotnet run --project _temp/ro-skill-pool-tests/SkillPoolTests.csproj` 退出码 0，189 项断言通过；证据 `_temp/ro-skill-pool-tests/result.log`。原 171 项迁移至 Fire 接口，覆盖 Q 700 毫秒、UUID、核心/预测/技能池、1 号特效、冷加载和拒绝回收。新增验证正式 Fire/Update 不调用 Override/Play/CrossFade；正式组件 PlayAnim 只触发一次覆盖与 0.1 参数 CrossFade、基类 PlayAnim 调用数为零；后续 Update 不重播；模型缺失经过 0.4 秒后统一入口以 0.2 归一进度 Play；已退出动作槽的旧实例 TriggerAnim 不抢槽。
+- 静态补充：正式 `MStateMachine.LateUpdate` 的模型空值条件保留 `_isTriggered`，Animator 可用后调用 PlayAnim 并消费触发标记；该真实状态机未纳入本轮替身夹具。`Global` 在动画索引预加载成功后才创建场景世界并消费角色，技能 Start 单次查询剪辑符合既有初始化顺序。
+- 边界：夹具仍使用 Unity/资源/模型边界替身，未运行 Unity Game View 实际按键、冷资源加载或四服联调。用户手动复验现有模拟角色 Q/E/R/F/1；没有新增角色或按键探针。日志见 `项目修改日志/2026-09-27-RO-SKILL-ANIMATION-ENTRY-CHANGELOG.md`。
+
+## 2026-10-02 RO 技能表现参考文档核验
+
+- 文件：`项目分析/RO_SKILL_FX_ANIMATION_ROOT_MOTION_REFERENCE.md`；本轮仅修改文档和协作记录，没有业务代码、配置或资源改动，故不执行编译。
+- 静态证据：核对 RO `pbl_skill.proto` 的 `MSkillData/AnimationData/FxData/ChargeData`；追踪 `MSkillFactory.BuildSkillData`、`MSkill.Fire/TriggerAnim`、`MSkillComponent.PlayAnim`、`MArtSkill.FireEvents/fxListEvents/OverrideAnim/fx/playFx/charge`、`MTimerMgr.SetTimer/Update`、`MFxMgr.CreateFx`、`MDisplacementComponent.onStart/Update/onStop`。用 XML 解析只读核对两份真实技能 `.txt` 与 `EffectTable.csv` 的特效 ID/时间，未修改 RO 项目。
+- 核对结果：多段动画和特效是同一施法时钟上的独立列表；计时器以秒配置、毫秒舍入并在更新帧派发。实体冲锋由独立位移组件按曲线移动；所查技能、组件、模型和 Animator C# 无显式 `OnAnimatorMove`/`deltaPosition`/`applyRootMotion` 技能位移链。对所有 FBX 根曲线或预制体设置不作全局推断。
+- 文档检查：`git diff --check -- 项目分析/RO_SKILL_FX_ANIMATION_ROOT_MOTION_REFERENCE.md` 退出码 0。未运行 RO 客户端、逐帧录屏或当前游戏，具体显示帧须结合剪辑 FPS、播放倍率和实机计时器验证。
+- 修改日志：`项目修改日志/2026-10-02-RO-SKILL-FX-ANIMATION-REFERENCE-CHANGELOG.md`。
+
+## 2026-10-02 RO 技能编辑器参考调查核验
+
+- 文件：`项目分析/RO_SKILL_EDITOR_REFERENCE.md`、`项目修改日志/2026-10-02-RO-SKILL-EDITOR-REFERENCE-CHANGELOG.md` 及两份协作记录；仅文档变更，无业务代码、配置、资源改动，不需编译。
+- 只读证据：RO `config/Assets/Editor/EditorResources/SkillData` 有 3422 份 `.config`，`config/Assets/Editor` 没有 C#；`clientproj/Assets/Editor` 的 28 个 C# 文件中未找到技能编辑窗口。核对 `MConfigData` 与同名 `MSkillData`、protobuf、`MSkillFactory.BuildSkillData`、`ROSkillComponent.AttachSkillEditorSkill`、`SkillReader.LoadSkill` 和 `ROSkillCore.SetSkillEditorSkillData`。
+- 结论边界：可确认编辑辅助配置、运行时 `.bytes` 加载和预览注入接口；未找到编辑器 UI、保存/导出及时间轴绘制源码。未运行 RO Unity 编辑器，不验证实际界面和操作体验。
+- 文档检查：`git diff --check` 通过；未解决的源码缺口已在分析文档注明。
+
+## 2026-10-07 YCombatEditor 融合方案审查
+
+- 范围：只读核对 `D:/unitypro/JNBJ/YCombatEditor` 的 `package.json`、`SkillEditorWindow`、`SkillConfigSO`、`Global`、`ActionPlayer`、`ActionTiming`、`ActionContracts` 与文档；对照本项目 Unity 版本、`MSkillFactory`、`MSkillData`、`MArtSkill`、`MSkillComponent`、Luban 表。仅新增分析文档、修改日志和协作记录，不执行客户端/服务端编译。
+- 独立审查：首轮未通过，指出 10070 挂点/目标落点无法由 Y FX 表达、音频无运行处理器、单段裁剪/混合不兼容；复审又指出隐藏轨道/默认运行字段必须白名单、异步句柄与 YooAsset 收集缺口、Y 自动回填 `skillClip`、默认 `moveCurve` 非空。主 Agent 修订 `项目分析/YCOMBAT_EDITOR_INTEGRATION_DESIGN.md` 后，审查 Agent 最终确认无剩余静态阻断，方案通过。
+- 验证边界：源码和文档审查不等于 Unity 2023 兼容。尚未运行隔离 UPM 编译、编辑器保存/预览、YooAsset 实包和角色 Game View，均列为方案中的实施门禁；本轮未修改正式业务系统。
+
+## 2026-10-07 YCombatEditor 正式工程首轮导入（续接，非最终验收）
+
+- 在无正式 Unity Editor 进程情况下启动唯一 Unity 2023.2.20f1c1 batch 导入；嵌入包被 Package Manager 正确识别，最终返回 0。证据 `_temp/ycombat-integration/initial-import.log`。
+- 首次资源扫描曾产生 CS0246（新 SkillRuntimePresentation/SkillRuntimeFxEvent 尚未导入）和强制重编译输出目录异常；后续资源刷新生成新类型索引，再编译 GM_Game、复制 ScriptAssemblies 并完成 ReloadAssembly。失败痕迹保留，不以该轮退出码认定最终编译门禁通过；最终冻结后须重新编译无错误。
+- 运行开发子 Agent 临时全量源码索引构建 0 错误、43 条警告，日志 `_temp/ycombat-runtime-build/build.log`。修复旧事件冷回退、模型晚到不吞事件、特效真实尾迹和独立依赖租约；尚待独立审查和正式 Unity 复验。
+- 原配置/动画保留核验基线共 44 个文件记录到 `_temp/ycombat-integration/preserved-assets-baseline.json`；该基线仅供本次实施后对比，不替代版本历史。
+- 专门审查 Agent 已对特殊规则输出未通过：当前固定禁移动/互断无法由编辑资产配置。本轮委派 `casting_rules` 实际接入 RO InteruptSkill/MoveCasting，默认空/false；技能中主动起跳保持明确禁用，已有空中重力继续。未增加无效跳取消字段或新协议。
+- 平台因 agent thread limit 拒绝再次启动专门终审 Agent，采用开发子 Agent 交叉独立审查：运行开发者审包/导出/规则，编辑端开发者审运行资源/时序，各自不审核自己写的代码作为独立结论。
+- 未执行真实键盘、Game View、渲染预览或 YooAsset 实包加载；未生成游戏角色或键盘探针。
+
+## 2026-10-07 首次正式技能资产生成失败与返工
+
+- 执行 `SkillEditorAssetTools.GenerateAndExport`，日志 `_temp/ycombat-integration/generate-assets.log`，Unity 返回 1。
+- 失败点：生成器误把旧表已含 `Assets/.../Anim_MJS_Atk01.anim` 的完整 Location 当作短名再次拼目录/扩展名，实际动画文件存在，导致 AssetDatabase 查询为空。已打回编辑开发子 Agent 适配真实原表路径，禁止改旧表或替换资源。
+- 新增包/规则源文件首次导入期间有暂态缺类型编译错误，随后进入生成方法；最终冻结后重新运行干净编译与生成，不能将此轮标记通过。
+- 资产数量、保存重开及依赖门禁本轮未通过，后续修复后另追加结果；旧动画/配置未改。
+
+## 2026-10-07 第二次正式资产生成失败与挂点返工
+
+- 完整 Location 修复后执行总生成器，证据 `_temp/ycombat-integration/generate-assets-retry.log`，Unity 返回 1，无此次新增 CS 编译错误。
+- 失败原因：旧 RoleAtkConfig 的 JX `root/Hips/.../hand_R` 路径在 MJS 预览模型中不存在。校验阻止无挂点配置发布，已打回编辑开发核对真实模型骨骼及具名挂点映射，不可静默跳过或猜选首个骨骼。
+- 已创建 3001001、3004001 两份编辑配置与绑定，旧资产未改，后续生成保留并续接。正式运行资产/规则 JSON 尚未完整生成，本轮数据门禁未通过。
+- 运行开发子 Agent 已准备独立专用 Editor 合同测试（17 项），待数据生成后执行；没有生成游戏角色或键盘探针。
+
+## 2026-10-07 真实骨骼映射与第三轮导出白名单返工
+
+- 专用只读诊断 `SkillAuthoringAssetDiagnostics.DumpModelSockets` 返回 0，无新增 CS/Exception；证据 `_temp/ycombat-integration/model-sockets.log`。只加载预制体资产，不实例化游戏角色、不改场景。
+- 确认 JX Avatar RightHand=hand_R，MJS Avatar RightHand=hand_r，实际唯一 MJS 右手路径 `root/pelvis/spine_01/spine_02/spine_03/spine_04/spine_05/clavicle_r/upperarm_r/lowerarm_r/hand_r`。共享 SkillFxSocketResolver 仅对已确认的旧右手路径执行 Avatar 语义映射，未知/歧义仍拒绝；运行冷回退使用同一解析器，旧配置保留。
+- 修复后总生成器已创建八份编辑配置与绑定；导出再次拒绝 Unity 引擎元字段 m_CorrespondingSourceObject（并非包运行字段），返回 1，证据 `_temp/ycombat-integration/generate-assets-socket-fixed.log`。已打回开发明确区分引擎原生序列化元字段和包字段，禁止 m_* 通配绕过业务白名单。
+- 本轮正式运行资产/规则文件门禁仍未完成；所有失败日志保留，后续通过结果另追加。
+
+## 2026-10-07 第四轮编译失败与专用构建验证器修复
+
+- 数据白名单已按具体引擎元字段修复；第四轮尚未进入生成方法，因新增专用资源构建验证器缺 `using YooAsset` 导致 CS0103（YooAssetSettingsData），返回1。证据 `_temp/ycombat-integration/generate-assets-final.log`。
+- 编辑开发已补实际 API 所属命名空间；该修复只作用于专用 Editor 测试工具，未改第三方 API、游戏表现或旧资源。第五轮重新正式编译/生成，日志 `_temp/ycombat-integration/generate-assets-validated.log`。
+
+## 2026-10-07 第五轮专用验证器 API 可见性失败
+
+- `using YooAsset` 补齐后实编发现 YooAssetSettingsData 在1.5.7中是 internal，跨程序集直接调用导致 CS0122，生成方法未执行，Unity 返回1。证据 `_temp/ycombat-integration/generate-assets-validated.log`。
+- 已打回编辑开发核对实际 API 可见性，改用明确的序列化/反射边界或经核实的文件命名实现，禁止修改第三方库可见性。须先隔离编译专用验证器，再重跑正式生成。
+- 此失败属于新专用资源验证脚本，未产生技能资源、旧表或场景改动；验收仍未通过。
+
+## 2026-10-07 第六轮持久化比较返工与真实 Editor 复验
+
+- 第六轮已创建全部编辑/运行资产、规则 JSON 和收集组，但 ValidateAll 拒绝 3001001 的持久化时长，证据 `_temp/ycombat-integration/generate-assets-ready.log`。开发子 Agent 将预期时长显式转换为 float；秒、米、角度及向量各轴使用明确 1e-6 绝对容限，并先拒绝 NaN/Infinity。资源身份、ID、帧、枚举与旧事件标志仍精确比较。独立源码复审通过，隔离 Editor 编译 0 错误、1 警告。
+- 用户随后打开正式 GUI Editor（PID 2156），后续全部使用此唯一实例，未关闭用户窗口或另开 batch。工具客户端保留旧握手失败，改用已恢复的官方 HTTP MCP JSON-RPC；先读取 editor/state/custom-tools/menu-items 与工具实际 schema，再执行测试。实例非 Play、空闲，真实源码编译及 ReloadAssembly 后 Console 错误为零。
+- 当前 Editor 的 ValidateAll 已通过；再执行 GenerateAndExport，先检查技能资产无未保存编辑，保存后针对 Skill SO 强制同步重导入，最终 ValidateAll 通过。证据 `_temp/ycombat-integration/mcp-generate-reload-verification.txt`；78 个生成资产/元数据/规则/收集器文件重复生成 SHA256 零变化，证据 `generated-assets-idempotence-result.json`。
+- 专用 Editor 合同测试真实执行通过 17 项，Editor.log 与 Console 均记录 `YCOMBAT_CONTRACT_PASS assertions=17`；证据 `_temp/ycombat-integration/mcp-contract-tests.txt`、`mcp-final-contract-console.txt`。测试仅修改内存副本，未生成游戏角色或写入正式场景。
+- 原动画、RoleAtkConfig 与相关元数据基线 44 个文件最终 SHA256 全部一致，证据 `_temp/ycombat-integration/preserved-assets-final-result.json`。该基线不包含全部旧技能表，不能称为全表哈希验证。新增 51 个客户端文件均有 meta；新增收集组空值的 Unity YAML 行尾空格已由开发子 Agent 限定修复，差异检查通过。
+
+## 2026-10-07 服务端完整隔离构建与规则回归
+
+- 首次设置 BuildProjectReferences=false 后缺引用程序集，CS0006，证据 `_temp/ycombat-integration/server-final-build.log`。之后主 Agent 未成功创建隔离 props 却运行完整 Build，0 错误、11 警告，但输出误落 LYF_Server 三项目 bin/Debug；证据 `server-final-references-build.log`。该轮不能作为隔离构建通过，标准目录产物保留，不清理用户文件。
+- 已单独创建并核实 `_temp/ycombat-integration/server-final/isolated-output.props`，使用 CustomBeforeMicrosoftCommonTargets 对每个项目设置输出与中间目录，再完整 Rebuild。0 错误、11 条既有警告，MMoRpgCommon、Network、GameServer 均输出根 `_temp`；证据 `_temp/ycombat-integration/server-final-isolated-build.log`。正式两端 JSON 和构建输出 Config/SkillCastingRules.json 的 SHA256 一致：`AE614206BE0800DF77F82E91EEFF8BDA0C0FABA14B079744BF0006994C82DC2C`。未修改协议或覆盖客户端 Network.dll。
+- 最新正式程序集复跑规则测试 26 项通过，证据 `_temp/ycombat-casting-rules/authority-final-result-correct-fixture.log`。首次误复制默认禁止规则导致测试“E允许打断Q”失败，保留 `authority-final-result.log`；改用原专用测试 Config 后通过，正式规则始终为五行空名单/MoveCasting=false。无网关会话的两条发送失败为独立进程夹具边界。
+- 覆盖新技能名单方向、重复 UUID、成功互断、未学/MP/CD 拒绝不取消旧施法。服务端无水平移动权威链，MoveCasting 不代表两端坐标结算已验收；Game View、真实按键与四服联调仍未执行。
+
+## 2026-10-07 YCombatEditor 实包与编辑窗口最终验收
+
+- 正式 Editor 后台没有执行最初排入的 delayCall，结果文件未出现。只读委托诊断确认唯一待执行委托来自本次临时 MCP 编译程序集；精准移除该委托后，直接调用现有专用 `SkillPresentationBuildVerification.BuildAndVerify`，未新建 runner，也未执行其他任务的回调。
+- 同步 MCP 工具调用约 30 秒后返回 success=false/message=null，但 Unity 构建继续执行。因此该传输响应不作为构建结果；独立完成文件 `_temp/ycombat-integration/bundle-live-verification-result.txt` 为 PASS，真实 Editor.log 最终记录 `YCOMBAT_BUNDLE_VERIFY_SUCCESS actual-bundles=46 runtime-assets=7`。精简日志 `_temp/ycombat-integration/final-unity-verification-markers.log`。
+- 使用正式 YooAsset 收集设置和构建映射生成完整模拟清单（1573 资产、760 包），核对七份运行配置的完整 Location，Authoring 条目为零；真实构建技能相关完整依赖闭包的 46 个原生 Bundle（26,238,573 字节），从文件加载全部包并实际读取七份强类型 SO，粒子引用无空值。10070 另从实包读取原剪辑、蓄力与落剑各一条原事件及资源。全部加载包在 finally 中 Unload(true) 后才打印成功。
+- 实包与清单路径 `_temp/ycombat-integration/bundle-verification-20261007111447/`。此门禁采用 YooAsset SimulateBuild 全清单和原生 Bundle 子集加载，证明收集映射与实际依赖资源有效；不代表完整 YooAsset 发布、Player 构建或正式 YooAsset 句柄冷加载已验收。
+- 已调用正式 `SkillEditorAssetTools.Open` 打开 `JX_Attack01_Reference`，核对窗口配置为该资产、模型为 Role_JX、真实预览 Animator 存在，正式场景脏状态没有变化。证据 `_temp/ycombat-integration/mcp-editor-open-verification-retry.txt`。第一次临时验收代码误将私有 previewAnim 当公开字段，内存编译失败，未执行窗口操作；改用注明原因的反射边界后通过。没有修改业务源码。
+- 打开窗口后 Console 错误仍为零，证据 `_temp/ycombat-integration/mcp-console-final.txt`。预览模型由原编辑器生成隐藏且不保存的副本，不是游戏测试角色；没有进入 Play、模拟按键、添加正式场景测试组件或保存正式场景。窗口载入验证不等于实际 GPU 预览画面或技能按键通过。
+- 子 Agent 最终交叉独立审查通过：编辑开发者审运行表现与资源生命周期；运行开发者审编辑/导出、规则和最终实包证据。静态规范、元数据与差异检查通过。实现与配置门禁完成，实际 Game View、目标头顶、技能移动/跳跃手感、四服联调及运行句柄冷加载交由后续实机验收。
+
+## 2026-10-07 技能编辑器中英文界面验收
+
+- 范围：14个 SkillEditorWindow partial、两个宿主 Inspector、SkillEditorAssetTools.Open 标题，以及三个独立语言/显示帮助类和 meta。原 Runtime、技能配置与规则JSON、场景、协议不在本轮代码修改范围。仅本项目固定嵌入包改动，原 YCombatEditor 仓库不修改。
+- 独立审查闭环：完整 Tooltip 和 Header 漏译、priorityRule.Any 上下文、Flags原事务回调、持久资产场景引用限制、只读 Range/Min 控件差异均打回对应开发者修复。最终独立静态审查 PASS，无剩余代码阻断，报告 `_temp/ycombat-language/independent-final-review.md`。独立元数据检查覆盖236处 Header/Tooltip、227个唯一原文，漏项为零；框架验证文案未映射候选为零，证据 `review-metadata-coverage.json`。
+- 编译：冻结后 `compile/editor-build.log` 与 `host-compile/host-build.log` 两项隔离编译均0错误、各1条既有Unity引用版本冲突警告。早期核心编译0错误/3警告不代替最终冻结编译。正式 Unity 第一次 scripts 刷新后发现最新只读修复晚于程序集时间，随后执行 all 强制刷新并重编；`final-unity-state-frozen.txt` 确认编译/域重载完成、资源扫描结束，Console切换前后均0错误，见 `final-unity-console-before-switch.txt`、`final-unity-console-after-switch.txt`。
+- 验收脚本失败留痕：第一次 MCP 内存编译引用 Global 时撞到两个程序集的同名类，未执行窗口操作，记录 `live-language-verification-first-failure.txt`。改用 SkillConfigSO 所在程序集反射定位轨道枚举；随后发现重编后的现有窗口配置为空，记录 `live-language-verification-empty-window.txt`，没有覆盖用户已载入配置。通过原 `SkillEditorAssetTools.Open` 复用空窗口恢复先前 JX 参考，正式场景仍未标脏，记录 `restore-editor-reference.txt`。这两次未计为通过。
+- 实时双向切换：已有 JX 窗口执行中文→English→中文，标题实际为“ACT 技能编辑器”/“ACT Action Editor”，轨道为“动画”/“Animation”，属性标签和玩家/敌人枚举同步变化，稳定内部轨道键始终 Animation。两方向 EditorPrefs 重读、无偏好默认中文、非法历史值默认中文均通过；finally 恢复原个人偏好。证据 `live-language-verification-result.txt`，原停止状态结果另存 `live-language-verification-idle-pass.txt`。
+- 数据与进度隔离：切换前后配置对象身份、完整 EditorJsonUtility 序列化、原资源脏标记、预览对象身份、选择、缩放、Undo组和正式场景状态保持一致。为发现归零/停止回归，仅在同一次主线程内临时设置第17帧、0.25秒计时与播放标志；三次切换均未改变，finally恢复原值，未调用动画采样、驱动特效或进入 Play。此项证明语言回调保持视图状态，不是实际连续GPU播放验收。
+- 最终状态：`final-window-state.txt` 记录中文、JX参考、第0帧、停止、计时0，assetDirty=false、sceneDirty=false。无生成游戏角色、自动按键、正式场景测试组件或技能配置保存。
+- 保护与规范：最终 `review-change-summary.json` 记录17既有源码变化、3新源码及同名meta；187保护文件SHA256零变化。独立66文件保护也零变化。新增/修改范围规范扫描无问题，强类型/反射边界、中文注释、稳定序列化键、数值约束由独立审查核对。目标 git diff --check 退出0；因包本身未跟踪，再独立比较17源码前置快照与三个新源码，新增行尾空白为零，证据 `final-whitespace-check.json`、`final-incremental-whitespace-check.json`。所有中间产物保留根 `_temp/ycombat-language`。
+- 验证边界：未取得真实编辑器截图，没有鼠标逐个展开所有菜单，也未对最小900px窗口的字体/截断作像素视觉验收。本轮功能结论依据正式 Editor API、源码显示调用、元数据覆盖、编译及保护验证。Game View/物理按键/四服与Bundle构建不属于本次显示改造门禁，未重复前轮测试。说明与完整改动记录分别见 `项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md`、`项目修改日志/2026-10-07-YCOMBAT-EDITOR-LANGUAGE-CHANGELOG.md`。
+
+## 2026-10-08 技能源码与配置目录分离
+
+- 范围：Data/Skill顶层9运行/配置类型源码移至SceneEntity/Skill，Editor直接6源码与原宿主Editor asmdef移至Assets/GM_Game/Editor/Skill，原Tests完整目录移至UI/test/Editor/SkillVerification。源码、asmdef与原meta按原身份搬迁；4份工程仅更新准确9/7/6/3处路径，服务端3个共享源码Link仍指Config。
+- 保护：迁移前99文件基线，45项按独立映射迁移、54项保留原位置，SHA256全一致；Data/Skill下.cs/.asmdef均0，24.asset/1.json/29.meta不变。独立24配置m_Script均唯一解析到原类型及原程序集；7外围保护文件不变。原20源码按最近asmdef归入9运行、6宿主Editor、5验证Editor，验证源不误归合同测试或GM_Game。报告 `_temp/skill-code-relocation-20261008/independent-relocation-review.json`、`independent-static-verification.json`。
+- 独立审查：PASS，无需返工；源码内容没有变化，无新增行为测试。开发项目路径脚本初次预检误用新旧前缀的全局逆转而安全停止，任何csproj尚未写入；随后改为精确替换区间验证，通过后才写四份工程。保留原开发脚本/路径记录，不计此前预检为成功。
+- 编译：冻结源码独立Rebuild GM_Game为0错误/37警告，LYF.SkillAuthoring.Editor为0错误/2警告，LYF.SkillAuthoring.Verification.Editor为0错误/2警告。使用冻结正式csproj派生临时工程、直接编译实际源，依次引用本轮前置输出。警告含既有代码/Unity引用冲突和隔离AdditionalFile适配USG0001。GameServer连MMoRpgCommon/Network完整Rebuild为0错误/11警告，通过CustomBeforeMicrosoftCommonTargets将每个项目bin/obj定向本轮_temp。没有覆盖正式Network.dll或服务端输出。摘要 `independent-build-summary.json`，四份日志分别client-main-build.log、host-editor-build.log、verification-editor-build.log、server-build.log。
+- 部署数据：正式客户端Resources JSON、游戏服Config JSON及隔离GameServer/bin/Config部署JSON的SHA256均为 `AE614206BE0800DF77F82E91EEFF8BDA0C0FABA14B079744BF0006994C82DC2C`。构建后静态保护再次通过。
+- 实时边界：当前正式GUI Unity已运行，另2个Unity进程为导入worker；未启动第二实例/关闭用户窗口。MCP8081拒绝连接，8080初始化返回404；未安装工具或重配Unity。Editor.log从本轮基线字节2,311,416起暂无此次迁移导入/编译/域重载，不能声称正式Unity实编或Console清零。新增Editor及Editor/Skill文件夹meta由当前Unity下次刷新生成，未猜造GUID。原Tests文件夹meta随目录保留为SkillVerification.meta。
+- 差异：4份工程git diff --check通过；独立精确字节区间验证表明只变预期路径，源码不改。未改场景、旧表、资源、配置和业务行为；未创建角色/按键探针或重复Bundle构建。所有临时结果位于 `_temp/skill-code-relocation-20261008`，未经确认不清理。
+- 结论：目录整理、资产身份保护、独立审查和对应隔离编译门禁完成；正式Unity导入待当前实例刷新。开发/审查/测试报告分别migration-content-hashes.json、independent-final-review.md、independent-test-report.md。正式归档 `项目修改日志/2026-10-08-SKILL-CODE-DIRECTORY-CHANGELOG.md`，用法 `项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md`。
+
+## 2026-10-08 连续 Q 普攻动画切换修复验收
+
+- 需求与范围：连续 Q 普攻时人物短暂下沉复原。本轮业务仅修改 MAnimator.cs 的 CrossFade 两重载；独立开发 q_ground_develop、审查 q_ground_review、测试 q_ground_test，主 Agent 维护记录。
+- 定位证据：RO 的 CrossFade 在当前状态等于目标或处于过渡时直接 Play，其余固定秒数融合。本项目此前无条件 Animator.CrossFade，Q 三段复用 Skill 槽时产生自过渡且秒单位错误；本轮恢复 RO 的分支。原 RootT.y 曲线是 Humanoid 身体曲线，不等同于实体/脚骨地下证据；旧 RoleCtrlBase 对 Active 场景实体的更新与根运动早退，静态未发现 Q 独立修改实体 Y 的路径。
+- 独立门禁：开发与测试两次最终 GM_Game 隔离 Rebuild 均 0 错误；独立审查 PASS，无返工项。真实 MAnimator.cs 与真实兼容适配源码链接到薄 Animator 测试边界，40 项调用断言 PASS：同 Skill 重播、过渡中重播、首次进入/退出固定 0.1 秒、归一化起点按实际已安装剪辑长度换秒、旧 ready/占位、异步恢复及兼容路径。该回归只证明业务播放分支与时间语义，未模拟 Unity Humanoid 的姿态或物理。
+- 保护与规范：仅 CrossFade 增量，中文注释完整，无新增 namespace/foreach/三目/弱类型业务载荷；差异空白检查通过。Atk02 哈希与本次基线相同，保留用户既有 Y Bake 修改；Q 三段、700ms窗、原表、其他动画、正式场景及物理未修改。
+- 产物：全部基线、开发/独立编译及边界验证位于 `_temp/q-combo-ground-20261008`。开发交付 develop-result.md，审查 independent-code-review.md，独立报告 test/independent-test-report.md，断言输出 test/animator-boundary-result.log。独立编译共 37 个诊断（35 C#、1 MSB3277、1 隔离 USG0001），无错误。正式归档 `项目修改日志/2026-10-08-Q-COMBO-GROUND-CHANGELOG.md`。
+- 运行边界：当前 MCP 不可用，没有自动生成角色、模拟按键、挂正式测试组件或另开同工程 Editor。正式 Library/ScriptAssemblies/GM_Game.dll 时间 10:05:22 早于修复 MAnimator.cs 的 10:30:22，当前 Editor 尚无本次刷新编译证据；隔离编译不能当作 Unity 实编。真实连续 Q 地下画面、实体/模型/脚骨世界高度均待当前 Unity 正常编译后用现有角色手动复验；若仍下沉继续交开发定位，不能宣称已取得下沉完全消失的画面验收。
+
+## 2026-10-08 当前技能动画与特效播放链只读核对
+
+- 请求：说明当前技能如何播放动画及特效；本轮仅核对源码/配置，没有修改业务或资源。
+- 范围：SkillCtrl.OnSkillKey/RequestAuthoritativeCast、MSkillComponent.BeginPrediction/OnStart/PlayAnim、MStateMachine.LateUpdate、MSkill.Fire/TriggerAnim、MArtSkill.Start/Update/PlayRuntimeEffect/TryPlayLegacyEffect、SkillRuntimeFxLifetime，以及七份 Runtime 配置。
+- 结论：按键校验后以 skill_uuid 发请求并本地立即预表现；统一状态机入口安装并播放 Skill 槽。表现特效由 MArtSkill 按独立施法经过秒数派发，编辑帧导出为 TimeSeconds；冷配置整次沿用旧剪辑事件，10070保留旧蓄力/落剑事件。Q第一段当前无新配置特效，第二段23帧约0.1917秒，第三段23/54帧约0.1917/0.45秒。特效尾粒结束销毁并释放资源引用。
+- 验证：只读函数调用与配置交叉核对；没有运行画面或新编译测试，不扩大为运行验收。上一轮连续Q修复的真实画面验收仍待Unity正常编译后复验。
+- 记录：项目修改日志/2026-10-08-Q-COMBO-GROUND-CHANGELOG.md。下一步：将核对结果直接说明给用户。
+
+## 2026-10-08 旧 AnimationEvent 消费链用途核对
+
+- 请求：解释 MArtSkill 中读取 clip.events 的循环，核对新 RO 实现是否需要此路径。
+- 范围与结论：只读核对 RO MArtSkill.fxListEvents（237起）、EArtsSkillTimerCb.EFx分派、fx，以及本项目 MArtSkill.Start/Update 和3007001配置。RO按技能数据FxList/At向MTimerMgr注册特效回调，不读取AnimationClip.events；用户指出该循环非RO新链属实。本项目额外保留它作为旧兼容：新配置未ready/无效时走旧事件，10070运行资产PreserveLegacyFxEvents=1且FxEvents为空，所以1技能蓄力/落剑确实仍依赖该循环，不能描述为死代码。
+- 状态：本轮解释与参考核对，没有修改业务/资源或执行编译。清理该链须先把10070两条特效完整导出到正式轨道，并处理配置冷加载；不能直接删除导致1技能特效消失。用户本轮为用途询问，未在此解释任务中展开配置迁移开发。
+- 验证：真实参考源码和本项目配置交叉核对，无运行验证。后续如进入清理，必须委派开发并独立测试审核；保留旧动画和原表。
+
+## 2026-10-08 删除旧动画事件技能特效链验收
+
+- 需求：用户明确要求删除旧的clip.events消费链并由子Agent检查。运行开发legacy_fx_develop、Editor/配置开发legacy_fx_assets_develop、独立审查测试legacy_fx_review_test。
+- 修改：5运行源码删除AnimationEvent消费、TryPlayLegacyEffect、ClipInfo特效租约、10070旧路径和PreserveLegacyFxEvents；宿主导出/绑定、Inspector、中英标签、BuildVerification及合同测试删除旧例外；8绑定与7运行配置清理旧标志，10070运行资产发布两FX。原动画/表/RoleAtkConfig/预制体、八作者轨道、UUID/池/旧实例列表/Q700ms窗和MAnimator修复保留。
+- 行为：统一FxEvents时间轴。10070按既有30FPS作者轨道第4/9帧播放蓄力/落剑（0.13333334/0.3秒），保留EffectPos与TargetTop无目标前10单位。Fire快照本段表现ID和原表时长，冷配置就绪后按施法时钟补发；Q换段不串轨道。无效整轨只报一次，不读取旧事件。Editor首次导入旧动画作制作参考仍保留。
+- 编译：开发GM_Game隔离编译0错误；独立GM_Game、LYF.SkillAuthoring.Editor、LYF.SkillAuthoring.Verification.Editor、LYF.SkillAuthoring.ContractTests.Editor最终源码隔离Rebuild均0错误，警告37/2/2/2。所有bin/obj均本轮_temp，未覆盖正式程序集。
+- 回归：链接真实技能/核心/缓存/生命周期源码薄Unity/YooAsset调用边界，27断言通过；冷加载补发一次、真实Core换段ID锁定/700ms窗、模型晚到、有/无目标落剑、回池旧加载隔离、同ID缓存重建、无效轨道一次报错/Reset恢复、尾粒租约释放均通过。没有镜像重写特效业务实现。
+- 审查：无本轮增量阻断项；运行旧标识残留0，10070两阶段逐字段与作者轨道一致，其他绑定/运行资产仅删标志。1578保护文件SHA256保持，八作者轨道及29meta字节保持。
+- 既有配置差异：首次七轨道全量比较发现3001003编辑稿仅F23，运行发布仍F23+F54；开发前快照确认本轮之前已存在。保留first-static-failure.json后改以本轮增量验收，不覆盖用户稿件或删已发布F54。本轮不能声称七条编辑轨道均已同步发布；该旧差异记录交接，主动重发布3001003时使用编辑稿。
+- 失败保留：开发静态秒容限1e-8过严，改为生产一致1e-6复验通过；独立隔离工程生成encoding='utf8'引发MSB4025，改为utf-8后编译通过。失败log保留，正式业务与数据未为夹具失败更改。
+- 边界：未执行正式Unity域重载、Editor合同、实际Bundle/GPU/Game View或YooAsset运行冷句柄；薄边界不等于真实画面。待当前Editor正常编译后手动现有角色验证特效；不创建角色/自动按键/第二Editor，不清理_temp。
+- 证据：_temp/legacy-fx-removal-20261008，运行runtime-development-result.md，Editor editor-assets/develop-result.md，独立test/independent-review.md、test/independent-test-report.md、test/independent-build-summary.json、test/independent-static-verification.json、test/runtime-boundary-result.log及verified-source-hashes.json。独立最终审查PASS，无返工项。正式归档项目修改日志/2026-10-08-LEGACY-SKILL-FX-REMOVAL-CHANGELOG.md，使用说明同步项目分析/YCOMBAT_EDITOR_INTEGRATION_GUIDE.md和USAGE.md。
+
+## 2026-10-08 Q普攻三段特效配置验收
+
+- 需求：第一段补特效，第三段删多余特效。配置开发q_fx_config_develop，独立审查验证q_fx_config_review。
+- 修改仅3asset：第一段作者SkillConfigSO_3001001与Runtime_3001001复制现JX_Attack01_Reference唯一F48@120FPS刀光，保持粒子/EffectPos/偏移/旋转/缩放；第三段Runtime_3001003只删除F54尾事件，F23事件原字节保留，与作者稿同步。第二段及全部源码/动画/表/资源不改。
+- 验证：独立62项静态断言PASS。三段作者/运行均1/1/1，触发秒数.4/.19166666/.19166666，均≤700ms窗与完整剪辑。作者字段逐项映射到生产ReadFx字段一致、同一粒子GUID唯一解析、fileID属于真实ParticleSystem组件、EffectPos完整路径存在。54配置文件基线仅3变化，其他51项/meta/JX参考/第二段/第三作者/绑定保持。
+- 证据：_temp/q-basic-fx-20261008/develop/baseline.json、change-manifest.json、develop-result.md，review/independent-static-verification.json。目标差异空白检查通过，纯数据改动不重复编译或造运行测试脚本。
+- 边界：没有此次Unity导入/Bundle更新/Game View按键画面，静态通过不代表JX参数在MJS模型上视觉对齐已实测。当前Editor正常刷新后由现有角色手测；没有自动按键/角色生成/第二Editor，不清理_temp。
+- 日志：项目修改日志/2026-10-08-Q-BASIC-FX-CONFIG-CHANGELOG.md。三段单刀光现状已同步项目分析/YCOMBAT_EDITOR_INTEGRATION_GUIDE.md与USAGE.md。此前3001003未发布差异本次按用户要求解决，第一段不伪造原MJS剪辑事件来源。
+
+- 独立终审补充：_temp/q-basic-fx-20261008/review/independent-review.md PASS，无返工项；35项原模型/粒子/表/动画与冻结源码保护哈希保持。临时解析夹具三次失败留review/fixture-failures.md，最终仅修正_temp解析器后静态62断言通过，业务数据未为测试失败更改。
+
+## 2026-10-08 第三普攻双阶段纠正验收
+
+- 需求：用户再次陈述“第三下普攻有两段特效”。主发澄清且只读核查后按“第三应有两段”合理默认纠正上一轮误删，并公开说明；当前保留用户后续更正意图可能。
+- 开发q_fx_config_develop、独立审查q_third_fx_inspect。仅第三作者SkillConfigSO_3001003与Runtime_3001003两asset恢复F54第二Effect_Skill3原事件，F23第一刀光及首两段保持；作者/runtime2/2，当前三段1/1/2。第二参数从本项之前保存的删前原配置逐字恢复，不猜测新的空间定位。
+- 独立188静态断言PASS，无返工。54配置基线仅2目标变，其他52含全部meta/首两段保护；118项本轮非目标保护+35项前轮冻结保护哈希保持。运行资产与原双阶段快照完整字节一致；作者仅追加第二项，全部运行字段映射、真实粒子GUID/fileID、帧时点F23/.19166666、F54/.45与700ms窗核对通过。差异空白检查0。
+- 只读澄清证据：原Atk03动画存在.19360256/.4461279两PlayEffect事件；正式Role_MJS的RoleAnimaBehaviour失活且PlayEffect有isActiveAndEnabled守卫，因此不能因原资源有两条直接断言新链重复；当前运行旧消费已删除。此次为双阶段配置纠正，未据静态结果宣称旧组件重复故障。
+- 边界：纯配置无业务修改，不重复编译/Bundle/角色生成/自动按键；未取得正式Unity导入或Game View画面。原第二世界绝对定位仍保持原参数，未实测位置对齐；当前Editor正常刷新后手测，不清理_temp。
+- 证据：_temp/q-third-fx-20261008/develop/develop-result.md、review/independent-review.md、review/independent-static-verification.json。根日志项目修改日志/2026-10-08-Q-THIRD-FX-CORRECTION-CHANGELOG.md；当前GUIDE/USAGE同步第三两阶段。
+
+## 2026-10-08 技能编辑器预览位移修复验收
+
+- 需求：动画编辑时预览人物跑远。开发 preview_motion_develop；独立审查/测试 preview_motion_review；主 Agent 验收当前窗口并维护记录。
+- 根因：真实绑定 Role_MJS 根预制体保存 (67.43,19.414,80.668976) 米，旧克隆继承该历史位置；原 Y 同路径也有缺口。显式采样不断重建图且无根基准另有漂移风险，本项未以原生根运动数值证明风险是唯一原因。
+- 唯一业务修改：包 Editor/Window/SkillEditorWindow.Preview.cs。预制体副本放原点，保留朝向/缩放，保存实际采样的角色/Animator根局部变换，采样前后/finally复位；骨骼和EffectPos姿态仍由动画采样。场景源沿原实例化姿态，旧模式保持，正式ActionClipAnimator/角色根运动/动画配置不改。
+- 编译：开发完整Editor隔离0错误/3诊断；独立正式csproj派生全源码Rebuild0错误，保留既有及隔离引用/分析器/AdditionalFile警告。开发74与独立216真实方法薄调用边界断言通过，覆盖重复同帧、倒拖、回零循环、嵌套Animator、骨骼保留、异常finally、销毁/重建及源对象保护。边界不模拟原生Humanoid/Playable。
+- 代码审查：最终PASS。曾修创建/采样Animator选择不一致，并纠正场景源世界对齐注释；冻结SHA256 e57a70799716c018128cb97587aa88678416cdcc033e183d831ccb44a70a5175。包中文手册、CHANGELOG及项目USAGE补审通过，F聚焦文字已按审查更正为事件位置。
+- 正式Unity：computer-use技能在现有实例执行Assets/Refresh，最终Editor DLL本机20:26:05晚于最终源码；Editor-final-refresh.log记录Tundra成功、Mono重载和资产刷新完成。首次域重载3条内置TransformInspector/GameObjectInspector异常保留，无本包栈；最终刷新没有再现。未新开Editor。
+- 实际UI验收：最终3001003/Role_MJS显式120FPS，从第293帧点回0，姿态更新且在同一区域。现有播放按钮循环预览约56秒（2026-10-08T12:29:48.031Z至12:30:43.677Z），人物仍留固定Scene视角内同一区域，随后停止回0。截图 final-frame0、final-loop、final-stopped-frame0及最终窗口保存在ui目录；截图Console0错误/3警告、窗口问题0。仅此动画观察，未测全七段/原生Transform数值，也未测PlayMode、GameView按键、Bundle/服务器。
+- 保护：独立521前置文件仅源码变化、520项保持；主有意改两包文档后终检521项仅源码与两文档变化，518保持，Q作者/Runtime1/1/2保持。项目USAGE和协作/修改日志是正式记录增量。没有保存或导出用户未保存资产，没有角色生成/自动游戏按键或正式测试组件。
+- 证据：_temp/skill-editor-preview-motion-20261008/develop/develop-result.md；review/independent-review.md、independent-test-report.md；ui/final-protection.json、loop-observation.json、Editor-final-refresh.log、compiled-source-times.txt及PNG。所有_temp产物未经确认不清理。
+- 未决：旧时间模式及场景源有父级世界矩阵兼容不在本项范围，Motion预览仍只绘参考、不驱动根位移。正常编辑第三段可继续；其他动画若出现具体漂移再按同流程定位。正式归档：项目修改日志/2026-10-08-SKILL-EDITOR-PREVIEW-MOTION-CHANGELOG.md；用法：项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md。
+
+## 2026-10-08 普通攻击3-2刀光及局部参数验收
+
+- 用户明确3-2仍用普通攻击特效，局部位置(.92,.36,.07)米、局部欧拉角(298.69,254.45,98.72)度。配置开发q32_fx_develop，独立q32_fx_review。
+- 仅第三作者SkillConfigSO_3001003及Runtime_3001003第二事件，粒子替换为第一刀光同一真实Effect_Attack01，GUID31a002e239edec74f82b993716735ce8/fileID2613513961126100727。EffectPos NamedSocket=1，作者followCharacter=1/useWorldSpace=0，生产SetParent(false)后赋局部位置/旋转，完整映射一致。F54/.45s、第一事件原字节、原尾部、缩放与前三段数量1/1/2保持。
+- 独立PASS，90静态断言通过。4168本轮前置文件仅2目标变，4166保持，无增删；meta、原表、动画、粒子预制体、角色、技能业务/编辑源码与上一轮预览修复保持。开发391前置其余389保护保持。真实粒子GUID唯一解析、组件fileID、EffectPos存在、作者/Runtime时间/变换/定位逐字段与增量范围核验通过。
+- 当前GUIDE/USAGE说明已更新为第三两次普攻Effect_Attack01及用户局部参数，独立复核准确。原技能3特效资源保留，历史恢复说明不改写。
+- 失败留痕：开发第一次临时换行识别误判在写入前退出；独立第一次增量空白夹具误判既有行，first-static-failure.json保留。仅修_temp夹具，正式数据未为测试调整，最终复验通过。
+- 边界：纯配置没有重复编译/新业务逻辑/角色生成/游戏自动按键，未操作用户未保存编辑窗口，不全量保存/生成；没有此次Unity导入/Bundle更新或画面实测，静态通过不等于视觉对齐通过。
+- 证据_temp/q-third-second-basic-fx-20261008/develop/develop-result.md、review/independent-review.md、independent-static-verification.json及基线；归档项目修改日志/2026-10-08-Q-THIRD-SECOND-BASIC-FX-CHANGELOG.md，使用项目分析/YCOMBAT_EDITOR_INTEGRATION_GUIDE.md和USAGE.md。验收结束，不清理_temp。
+
+## 技能编辑器代码集中与中文注释验收
+
+- 需求：源码集中便于阅读、补具体中文注释；用户明确保留位移、碰撞、飞行物、音效、镜头、流程等全部现有制作功能。开发editor_simplify_develop、支持editor_support_comments、独立审查测试editor_simplify_review，主维护记录。
+- 源码：Editor整树迁入LYF_MMO/Assets/GM_Game/Editor/Skill/ActionEditor，65内部文件加原目录meta共66项，原目录已不存在。保持Ethan.ActionEditor.Editor.asmdef、35meta/GUID及全部菜单/API；Runtime、配置和原参考仓库不动。28Editor源码增改中文注释，2原语言源已有完整说明、字节保持；宿主SkillEditorAssetTools.cs仅补3局部和精修5说明。
+- 允许实现差异仅两处：Help.Open与Agent.NewResult通过typeof(SkillConfigSO).Assembly定位仍在嵌入包中的Runtime。独立30源码2153声明中文覆盖0缺口，28源码RawKind/Text全等价，2源码仅指定typeof变化，预处理/namespace/foreach/三目原结构保持。宿主6源255声明核对，目标5594 token等价、其他5源字节保持。
+- 编译：四程序集实际新路径全源隔离Rebuild均0错误，Editor4警告、宿主/Verification/Contract各2警告。引用冲突/既有字段/分析器提示保留；没有覆盖正式DLL或手改Unity自动csproj。隔离工程按旧源到新源映射读取本次冻结稿。
+- 有意义回归：实际Help.Open与Agent.NewResult源码链接独立Runtime程序集，薄Unity PackageInfo/Application边界22断言PASS；三份真实包内文档存在、URL解析、空包/缺文档原错误行为及包版本上下文均验证。未调用Unity UI或将全部类型塞同程序集假验证。
+- 保护：4417前置文件，66搬迁、35meta字节相同，35内容修改均允许、4382内容保持，非计划新增0。原Q作者/Runtime1/1/2、3-2普攻粒子与局部变换、原表/动画/预制体/前轮预览根修复保护；开发191资源保护通过。新增限制策略/Inspector已撤销，不存在重复源码。
+- 返工：首注释工具换行/跨度错误独立604语法错误，第二次562错误，均打回且保留原文证据；第二次独立确认SDK Roslyn树在2048边界误重建逗号。正式窗口先恢复自身前置原稿，在_temp按同源跨度映射生成候选，标识符断言、词法/语法/源trivia等价后应用。独立审查以128前置空白避SDK解析边界，另有实际程序集编译。#region伪覆盖、短名语义、XML位置和两条旧说明修正后最终PASS。
+- 文档：源码阅读索引、目录整理方案、项目GUIDE/USAGE、包中文手册/CHANGELOG/README/AGENTS/AgentGuide/AgentCapabilities同步；自动化入口相对路径真实存在。修改归档项目修改日志/2026-10-10-SKILL-EDITOR-SIMPLIFY-CHANGELOG.md。
+- 边界：computer-use native pipe不可用，已重试及重初始化恢复失败；本轮未取得正式Unity Refresh/域重载/窗口画面证据，正式DLL早于最终源。隔离通过不等于当前Editor采用最终稿或PlayMode/Bundle通过。没有保存用户未保存资产、生成角色/模拟按键、挂正式测试组件或开启第二Unity。后续正常Editor刷新再生工程并手动开窗口核界面；原单次FX粘贴endKeyNumber问题仅交接，不混入整理修改。
+- 证据：_temp/skill-editor-simplify-20261010/review/independent-review.md、independent-test-report.md、ast-final.json、host-ast-final.json、independent-protection.json、四build.log、package-boundary-result.log、fixture-failures.md；develop/develop-result.md、migration-manifest.json、final-hashes.json；comments/develop-result.md与host-narrow-develop-result.md。临时文件不清理。
+
+## RO技能音效只读核对
+
+- 证据：RO MArtSkill.FireEvents为AudioList按At/LoopCycle/LoopCount注册EAudio，audio根据End>At选择PlayAudioInstance并注册EKillAudio，否则PlayAudio；实例列表在释放时StopAudioInstance。MModel交MAudioMgr播放3D音效或取得FMOD事件实例。FxList另注册EFx；动画MSkill.TriggerAnim用ClipName/SkillClips，有AnimList则交定时覆盖。
+- 当前ReadFx检查audioClip必须为空且contentKind为粒子，SkillRuntimeFxEvent不包含音效；窗口PlayFxAndSound仅预览调用AudioSource.PlayOneShot。正式粒子按TimeSeconds在MArtSkill.Update派发。
+- 结论仅为源码对照，不是编译/实机验证；没有修改业务/资源/协议，不自动补音效处理器。修改记录项目修改日志/2026-10-10-RO-SKILL-AUDIO-COMPARE.md。
+
+## RO技能轨道类别只读核对
+
+- 证据：pbl_skill.proto:8的MSkillData及嵌套数据、MArtSkill.FireEvents:259、Affix_HuoYanZhiDi_RongYanPenShe.config编辑辅助列表，与既有RO_SKILL_EDITOR_REFERENCE交叉复核。
+- 确认时间轴数据类别：AnimList/AudioList/ChargeList/RotateList/WarningList/ShakeList/CameraFxData/CameraPostEffect/ChangeColorList/SkillBarList；ResultList/MobUnitList/AIEventList/BuffList由协议确认，未冒称客户端统一派发。LongAttackData位于ResultList中，CombineSkillList不是已确认独立编辑轨道。
+- 边界：窗口UI源码缺失，具体轨道显示名称/数量不能确认；本轮仅源与产物核对，未编译/运行/界面操作，无业务或资产变更。记录项目修改日志/2026-10-10-RO-SKILL-TRACK-COMPARE.md。
+
+## 2026-10-10 RO 技能制作轨道补齐验收准备
+
+- 独立审查测试 Agent：ro_tracks_review_test。数据开发 ro_tracks_data_develop，界面开发 ro_tracks_editor_develop；失败只交开发修改，审查员不代改。
+- 当前九类新增 RO 数据：RotateList、ShakeList、CameraFxData、CameraPostEffect、ChangeColorList、SkillBarList、MobUnitList、AIEventList、BuffList。原字段/枚举/秒语义须与实际 proto 核对，不能引用历史摘要中误记的 Args2。
+- 保护基线已准备：4823项广文件快照；编译准备五程序集派生工程，所有新增 Runtime 类型需参与真实编译再供 Editor/宿主使用。
+- 尚未完成最终编译、独立回归或UI验收，当前不出通过结论。默认零后处理的Unity内联序列化、禁用但含非默认参数的发布拒绝、旧资产兼容、保存复制删除拖动时间窗是验收重点。
+- 临时证据：_temp/ro-skill-tracks-20261010/review；方案项目分析/RO_SKILL_TRACK_EXTENSION_DESIGN.md；修改日志项目修改日志/2026-10-10-RO-SKILL-TRACK-EXTENSION-CHANGELOG.md。
+
+## 2026-10-10 RO 九类制作轨道最终验收
+
+- 独立审查 ro_tracks_review_test 最终PASS，无遗留代码阻断项；数据/界面开发收到所有问题并返工复验。源码范围详见项目修改日志/2026-10-10-RO-SKILL-TRACK-EXTENSION-CHANGELOG.md。
+- 五程序集真实源码隔离Rebuild0错：Runtime59/Editor32/宿主6/Verification5/Contract1源；警告2/4/2/2/2为既有Unity引用/AdditionalFile/未使用字段提示。全部19新增Runtime实际参与编译，依赖使用本轮输出，不写正式Library或Unity工程。
+- 最终真实源码薄边界518断言PASS：完整MSkillTrackTiming+真实FrameRate86；窗口30个完整Add/Remove/Move/Count/Copy/Paste方法170；完整标签类262。覆盖九类末端/FPS/循环/无效时间/执行门禁、null列表/单对象/亚帧跨度/当前引用/复制/删除及字段枚举双语。
+- RO原schema9类63字段/9枚举原值一致，原16TrackType身份保持，新16至24唯一。新19Runtime198声明+新2Editor208声明共406具体中文覆盖0缺口；新源无namespace/foreach/三目。21新meta GUID唯一。
+- 实际失败及返工：首TAIL未定义编译失败保留；关闭后处理制作末端遗漏、全零内联对象、英文截断已修。最后核真实RO镜头源，删除负FOV/三轴振幅拒绝、Frequency修为Time内次数；Index沿MListElemData有符号int删除原创非负门禁。最终增加4个具体Timing断言后复验，不扩无关测试。
+- 保护：4823项4811保持，12计划内变化，42新增全在两manifest，54冻结路径0差异，无删除/未计划新增。七技能/Q1/1/2/3-2粒子与局部变换、原表/动画/角色/正式运行/预览根修复保持。主额外重算最终54SHA也0差异。
+- 边界：Contract仅编译未执行NUnit；Unity/Mathf/GUI/JSON/Undo为薄测试边界，不等于原生窗口、真实撤销/保存重开。无正式Unity Refresh/域重载、PlayMode、Bundle或新增音效/镜头/召唤游戏运行证据。未新建角色、自动按键、挂正式测试组件、操作未保存资产或开第二Unity。新增内容为制作保存能力，正式执行/Scene预览后续接入，宿主非默认内容拒绝发布。
+- 证据：_temp/ro-skill-tracks-20261010/review/independent-review.md、independent-test-report.md、independent-build-summary.json、independent-protection.json、verified-source-hashes.json、三个boundary/source-manifest.json和result.log；主root-manifest-check.json；两开发manifest及develop-result.md。失败日志和_temp按规则保留。
+- 下一步交接：正常Editor刷新后从原技能窗口添加九类轨道，原生交互/Undo/保存重开实际核对尚待；出现具体问题再委派开发与独立复审。正式记录、项目设计/使用/阅读索引、包手册/CHANGELOG已同步。
+
+
+## 2026-10-10 RO真实声音与Animation水平根运动验证
+
+- 独立audio_motion_review审查，资产audio_motion_assets、运行audio_motion_runtime开发；问题打回，不由主/测试代改业务。
+- 12wav来自RO真实Action.bank样本，经独立解码hash/非空/非静音/24kHz16bit时长核对，正式AudioImporter meta真实GUID唯一。非RO Timeline样例未使用。
+- 六程序集隔离Rebuild真实源0错（GM265/Runtime59/集中Editor34/宿主8/Verification5/Contract1），本轮依赖输出逐级引用；既有警告37/2/4/2/2/2。Contract编译不等于NUnit执行。
+- 真实16运行源薄边界36断言：Q释放动作槽单次尾音保留、Reset租约清理、当前owner与准备中clip/过渡/窗口/水平Y保护/单次consume、普通/战斗走跑循环、Idle、重复起跳、冷回调等。
+- 真实编辑方法薄边界24断言：固定AudioClip强引用、FPS秒映射、单帧粘贴end=key合法、区间/随机拒绝、根含末帧与重叠/绕重力碰撞拒绝、源运行依赖、预览人体尺度/同帧/倒拖/回零/烘焙XZ保护。
+- Unity2023隔离工程实际AssetDatabase/生产PrepareAndExport/独立NativeAudioMotionValidation.Run162断言PASS，报告review/native-asset-result.json。实际验证七源/Runtime声音和根字段/依赖、Q1整段保护/Q特效1/1/2和3-2参数、六稿skillID0/真实剪辑、RootPreview前向/重复帧/回零，二次Setup70文件SHA幂等。没有实例化游戏角色。
+- 生成配置保护回拷28文件（14原asset+14新asset/meta），写前所有原SHA等于最初输入，所有新路径不存在；不回拷worker临时GM.asmdef/测试代码/Prefab/场景/动画/材质/meta身份替换。最终范围保护报告待追加。
+- 真实失败留痕：首隔离环境缺Network.dll/NUnit、后缺SkillFxSocketResolver，补真依赖/临时排除包Tests后成功，未改生产为stub。独立发现Q切槽StopAudio截尾、原Y音效粘贴语义、借用Camera声源及baseVolume均返工修；Native首验期望3007001单音过时，核最终F4蓄力/F9落剑双音+双FX后只修临时夹具，原失败保留。
+- 正式Editor曾自动刷新/域重载更新3程序集及12音频meta；未获取最新配置回拷后的正式UI/PlayMode现场证据。desktop native pipe失败按流程恢复仍失败，MCP8081活跃instances空；未用替代UI绕过。
+- 隔离Prefab省略五类非相关业务脚本并有部分shader资源缺失，警告保留；原生资产/RootT曲线预览不等于运行Animator.deltaPosition/CharacterController/听觉/完整YooAsset Bundle通过。用户手动游戏角色/按键验收，Agent未生成角色或自动按游戏键。原表、动画、Prefab、场景和临时资料保留。
+- 证据_temp/skill-audio-rootmotion-20261010/review，开发manifest和generated-assets-copy-manifest在runtime/assets子目录；正式归档项目修改日志/2026-10-10-SKILL-AUDIO-ROOT-MOTION-CHANGELOG.md。临时文件不清理。
+
+- 独立总审最终PASS，无阻断。920基线895保持/25计划修改，58新增均在manifest，无删除/未计划修改；正式28配置SHA与原生验收产物一致；运行16源、编辑7源方法边界冻结当前零差异，末稿六程序集0错。新源与修改范围中文注释/无namespace/foreach/三目规则审查通过。主22+41+28=91路径哈希再次核0差异。终审报告review/independent-review.md及independent-test-report.md，游戏听感/按键/原生碰撞现场验证边界继续保持。
+
+## 2026-10-10 技能/走跳无声修复验收
+
+- 根因实证：New Scene世界Main Camera无AudioListener；UIRoot/UICamera监听世界位置(987.3,999.4,0)，角色位置(62.1493416,19.4139996,80.6689758)，距离1350.105米。音源spatialBlend=1、minDistance1/maxDistance25米、Logarithmic；结论为严重衰减，不误称25米外硬静音。当前EditorSimulate清单含新普通稿/七声音配置，AudioManager音量1、DisableAudio0。
+- 独立audio_motion_review终审PASS：GM_Game265真实源隔离Rebuild0错/37既有警告；当前CameraMgr五个完整监听方法薄边界19断言PASS，包含原生单组件Add约束、重复绑定、原状态恢复、临时停启、无UI、无关组件保护、A→B→A同帧往返与最终回收。
+- Unity2023隔离API RunReuse真实通过：A/B各1个AudioListener、回A同组件身份、A启用/B禁用；临时相机finally清理，无角色生成/资产保存。此项证明原生组件复用契约，不等于完整正式Play音频输出。
+- 实际返工：首帧尾Destroy同帧切回失败，第二pending新增监听方案原生失败（Unity拒绝同GO第二AudioListener），均打回开发。末稿_ownedAudioListeners只跟踪自建组件，换相机暂禁保留、最终销毁统一清理，复验通过；原始失败报告未覆盖。
+- 范围保护：2606文件2605字节保持，仅CameraMgr修改，无删除/未计划变化。原表、12声音、作者/Runtime配置、根位移、Q特效1/1/2及3-2参数、场景/Prefab保持。新增/修改范围中文注释通过，无新增namespace/foreach/三目/弱类型。主重核SHA与开发/独立/边界/编译冻结一致cae67152139b344e182375e3bcdcde515712fb635bc1a9381577dbef9ac8ba27。
+- 现场边界：当前Play仍旧DLL，新InitCamera需正常编译后下一次运行。未取得最终听感，不强停用户运行、不增每帧补救、不调整系统音量；用户停止Play等待编译重开后手动测试Q与走跳。无代码阻断；现场听感待确认。
+- 证据_temp/skill-no-audio-20261010/review/independent-review.md、independent-test-report.md、GM_Game-final-build.log、listener-boundary-final.log、independent-protection.json、verified-source-hashes.json、native-listener-reuse.json/log；首listener-pending-first-failure.log与native-listener-multiplicity.json/log保留。正式归档项目修改日志/2026-10-10-SKILL-NO-AUDIO-FIX-CHANGELOG.md，不清理_temp。
+## 2026-10-10 无声修复正式程序集只读补验
+
+- 独立audio_motion_review只读Cecil元数据/IL PASS：正式GM_Game.dll更新22:54:13，598016字节，SHA256 a6cfc44b74afffae3d7680b70fe46bb40da3c9c568043f3d557c31636405949f；CameraMgr六生命周期方法与最终owned列表特征一致，不存在pending候选，InitCamera确有Bind调用。源码SHA仍为cae67152139b344e182375e3bcdcde515712fb635bc1a9381577dbef9ac8ba27。
+- 正式日志有Csc/强制重编/域重载，之后主角表现与模拟全学包再次加载，无该段新增声音失败记录；不证明InitCamera条件值、实际运行监听位置或音频输出正常。旧DLL交接结论已按最新证据纠正。
+- 未执行正式类型/修改业务/写Library或重复既有回归。本轮desktop Computer Use尝试及恢复均native pipe不可用，现场对象/听感未验；用户最新反馈待回。没有擅自静音/音量操作或创建角色/按游戏键。
+- 证据_temp/skill-no-audio-20261010/review/formal-assembly-followup.md、formal-assembly-inspection.json/log、formal-refresh-log-evidence.json。正式归档项目修改日志/2026-10-10-SKILL-NO-AUDIO-FIX-CHANGELOG.md，不清理_temp。
+## 2026-10-11 多段技能音效调整（制作与独立验收完成）
+
+- 用户要求：技能声音单调，部分多段动作只听到一段。利用现有多AudioEvents，按动作阶段制作，不新增播放系统。
+- 已完成：Setup+Q3/E/R/F四作者/四Runtime共9原文件；新增RO Action.bank原样Swing_Big_b121/Swing_Short_h344/Swing_Big_c512及Unity meta共6新文件。E两声F9/0.3秒Big_b/.65、F36/1.2秒Short_h/.30；R原F63/.525秒Knight/.35并加F136/1.133333秒Big_c/.45；Q3第二F54音量.20；F第二从F84/.7秒移F142/1.183333秒、音量.25，粒子F84保留。
+- 理由：E原长声包络晚且第二快段尾弱；R原声音已有多包络，新增后刀提升辨识，不误称第二阶段完全无声。F原第二音约.9805秒结束，早于第二手快段1.2583秒；F142+20ms RMS主窗中心.09秒约1.2733秒，动作附近发声。Q3/F第二声原相对第一约13.3/10.6dB，调量缩小至约3.75/3.02dB（全段RMS估算不是LUFS或听感测量）。
+- 流程：原生隔离Unity生产制作两次70文件幂等；候选独立170检查与32迁移原生断言PASS，宿主8源隔离Rebuild0错/2旧警告，才保护回拷14目标。写前8旧SHA全等、6新路径不存在。最终独立广保护2608中2599保持/9计划变化/6计划新增，无删除/未计划修改；15正式哈希和编译冻结一致，主再次核15路径0差异。
+- 保留：七行所有非声音字段、FX/root/动画/表/场景/Prefab/CameraMgr、原12波形、Q1/Q2、1技能与走跳全保护。Setup精确旧clip/frame/defaultVolume迁移；自定义音量原项保留；若用户改帧/资源则原项保留且缺新默认追加，说明已同步。
+- 源码规范/来源/GUID映射/作者运行秒帧审查通过。四离线试听已有Q3/E/R/F，严格使用发布时点/音量、不EQ/normalize/裁剪；实际三维游戏听感待用户手动测试，不宣称声音主观已通过。不自动角色/按键、不保存正式场景、不写正式测试入口、不清理_temp。
+- 交接：正常Unity导入后重新运行测试E/R/F与Q第三段；无需重新制作整套。方案项目分析/SKILL_AUDIO_POLISH_NOTES.md；声音映射项目分析/SKILL_AUDIO_ROOT_MOTION_INTEGRATION.md与用法YCOMBAT_EDITOR_INTEGRATION_USAGE.md已同步。正式归档项目修改日志/2026-10-10-SKILL-AUDIO-POLISH-CHANGELOG.md（沿发起日）。证据_temp/skill-audio-polish-20261010/assets/manifest.json、generated-assets-copy-manifest.json、develop-result.md、stage-preview-manifest.json及review/independent-protection.json/独立报告。
+## 2026-10-11 音频中文命名及分类验收完成
+
+- 已迁移十五wav及原meta到MJX/移动、跳跃、技能（通用挥刀、E、R、1、备用），例如E_第一段重挥刀.wav、E_第二段短挥刀.wav、跳跃_起跳破风.wav。原波形/导入参数/meta/GUID均保持，共享声音不重复复制。新目录8份meta由Unity创建。
+- 源码仅SkillEditorAudioMotionSetup.cs音频相对路径与对应说明同步；制作脚本旧默认迁移也引用新备用资源位置，无正式旧音频文件名路径残留。collector原SO依赖链覆盖，未修改。所有作者/Runtime资产保持原字节，不重新导出；事件帧秒/音量/FX/root、表/动画/场景/角色与监听修复保护。
+- 开发audio_organize_develop，独立audio_organize_review审查：Unity原生MoveAsset迁移十五身份通过，独立原生67项资源检查包含44个作者/Runtime声音引用；必要宿主8源码隔离Rebuild0错/2旧警告。2614前置文件2583原位保持，30wave/meta按映射迁移，1计划源码修改，8新目录meta；无未计划改动。最终39路径冻结一致，主重算39SHA0差异。
+- 文档项目分析/AUDIO_ASSET_USAGE_GUIDE.md包括十五原名/新名、目录及七技能12声音事件和六普通稿10声音事件的帧/FPS秒/音量。项目分析/SKILL_AUDIO_ROOT_MOTION_INTEGRATION.md当前声音表、YCOMBAT_EDITOR_INTEGRATION_GUIDE.md和USAGE.md入口同步，原来源名用于追溯。
+- 开发临时入口反斜线转义与独立编译临时工程编码夹具失败只修_temp，原失败日志保留，未为测试改播放逻辑。本轮不重导全配置、不生成角色/按游戏键、不保存用户未保存场景、不调整系统音量或打开第二正式Unity。只资源与必要宿主验证，正式Game听感/发布Bundle未实测。
+- 正式日志项目修改日志/2026-10-11-AUDIO-ORGANIZE-CHANGELOG.md；证据_temp/audio-organize-20261011/develop/migration-manifest.json、final-manifest.json、native-move-result.json、develop-result.md和review/independent-protection.json、native-reference-result.json、host-build.log及独立报告。临时资料不清理。无代码/引用阻断，用户可从新目录选声音并按原编辑器发布。
+## 2026-10-11 全Audios英文目录与用途名（最终验收）
+
+- 已完成全量十八wav：Characters/MJS/Movement、Jump、Skills（Shared/E/R/SwordDrop/Legacy），以及Shared/Skills/Effects三既有特效音源。所有资源与目录名全ASCII，文件名前缀Movement_、Jump_、Skill_识别类别；例如Movement_Footstep01、Jump_TakeoffWhoosh、Skill_E_Phase02_ShortSlash。旧Skill/MJX及中文路径不再存在。
+- 三原特效声音按实际Prefab AudioSource引用命名：DragonAttack到Skill_04_ChargeFx，Clip_Skill5到Skill_04_ReleaseFx，Shield_buff到Skill_02_ChargeFx；Prefab不改，未凭文件名添加龙角色或绑定新技能。
+- 开发audio_organize_develop，独立audio_organize_review最终范围验证PASS。十八wave和原meta、十个旧目录meta/GUID全保；三新父目录meta由Unity实际生成。源码仅Setup英文根与相对路径/相关中文注释。所有70配置、3FX预制体、collector/表/动画/场景/播放实现/声音时点音量/根位移保持。
+- 验证：Unity原生迁移与独立79项检查PASS，含18clip/13目录/44作者Runtime音频强引用及依赖/3FX AudioSource强引用及依赖/collector；宿主8真实源隔离Rebuild0错/2旧警告。2629前置2582保持，36wave/meta和10目录meta按映射迁移，1计划源码更新、3新目录meta；无未计划变化。31clip/目录GUID各唯一、无旧源filename/root字符串。50正式冻结与原生输入一致，主重核50SHA0差异、全18wave路径无非ASCII。
+- 使用说明项目分析/AUDIO_ASSET_USAGE_GUIDE.md现是全目录英文结构、18旧源/新用途映射、22声音事件帧秒音量；三个现用技能说明路径及素材表同步。旧中文方案历史记录保留但当前决策采用英文。
+- 失败留痕：迁移临时MoveAsset已到目标目录no-op被拒绝，只修_temp工具跳过no-op并用原GUID恢复隔离输入重跑；独立GUID扫描夹具加CRLF容忍以读取旧meta，未修改生产meta迎合夹具。不重导制作配置，不生成角色/游戏按键/保存用户未保存场景或启动第二正式Unity。本轮仅资源/引用/必要编译，实际Game声音和完整Bundle发布未测。
+- 正式日志项目修改日志/2026-10-11-AUDIO-ENGLISH-REFACTOR-CHANGELOG.md；证据_temp/audio-english-refactor-20261011/develop/migration-manifest.json、final-manifest.json、native-move-result.json、develop-result.md；review/native-reference-result.json、independent-protection.json、host-build.log及独立报告，主root-manifest-check.json。临时不清理。无代码/引用阻断，后续编辑从新英文目录选择同GUID声音。
+## 2026-10-11 技能轨道拖动修复（验证结果待终审归档）
+
+- 开发track_drag_develop修复五源：ActionEditor/Window/SkillEditorWindow.Interaction.cs、Timeline.cs、Structure.cs，ActionEditor/Timeline/BuiltinTrackRegistry.cs，以及Editor/Skill/SkillEditorAudioMotionTools.cs（均在LYF_MMO/Assets/GM_Game内）。声音恢复独立轨道，显式contentKind保证空Audio不混入Fx；仅视觉参与粒子/预警共享行，Sound复制粘贴/选择/删除沿原fxList下标。
+- 通用拖动修复10类：Attack/Fx/Sound/Warning/Cancel/Projectile/SuperArmor/AdjustMotion/Trail/Move。正数点末帧跟随起点、0/负单次哨兵保留、区间跨度保持。已核其他动画/Camera/Interaction/Flow/Jump/HitFx及九RO秒字段，不引入新运行系统。
+- 独立Unity原生前稿复现key8/end8左拖变key4/end8和Sound无独立行；末稿238断言PASS，覆盖14帧型事件/九RO秒字段/全部25枚举对应21规范行、Sound60→30叠层高度及FX高度保护、隐藏/布局重排/滚动/复制删除、真实Undo/Redo及切配置。通过反射执行真实生产方法，不等于正式窗口视觉和实际鼠标拖动现场验收。
+- 独立真实源码三程序集隔离Rebuild：Runtime59/Editor34/宿主8源，0错，2/4/2既有警告。开发Editor34源编译也通过。主重算五源SHA与开发final-manifest一致。
+- 正式Editor自动刷新日志已见forced synchronous recompile与Mono successfully reloaded assembly；MCP无活动实例，未获取正式窗口截图。没有重新强编正式工程或修改用户现场。
+- 用户当前SkillConfigSO_3007001/fxList[2]的蓄力音频仍为key4/end8，正式单次音效不支持区间；原生导出正确拒绝且未改作者数据。不能仅凭历史差异确定用户意图。新诊断明确资源/条目/起末帧和工具/显示高级属性下将结束帧设0或等于开始帧再发布的操作。该既有区间是当前发布的剩余限制。
+- 现用说明项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md已追加轨道与单次设置；证据_temp/skill-track-drag-20261011/develop/final-manifest.json、develop-result.md、editor-build.log，review/native-before-repro.json、native-track-result.json、native-track-core-result.json、independent-build-summary.json、三编译日志，主root-manifest-check.json。
+- 独立保护及终审报告归档尚在进行；不提前标记整体完成。临时不清理。
+
+## 2026-10-11 技能轨道拖动修复（最终验收完成）
+
+- 独立track_drag_review终审PASS，无业务代码阻断；238项Unity原生回归、三真实程序集Rebuild0错完成。全部25TrackType按原别名形成21制作行，音效独立，10类原点/区间事件拖动共同修复，其他动画/流程/镜头/交互/HitFx及九RO轨道核验通过。
+- 正式五源：LYF_MMO/Assets/GM_Game/Editor/Skill/ActionEditor/Window/SkillEditorWindow.Interaction.cs、SkillEditorWindow.Timeline.cs、SkillEditorWindow.Structure.cs，ActionEditor/Timeline/BuiltinTrackRegistry.cs，及Editor/Skill/SkillEditorAudioMotionTools.cs。现用说明项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md已同步；正式日志项目修改日志/2026-10-11-SKILL-TRACK-DRAG-FIX-CHANGELOG.md。
+- 保护2632前置中2627保持/5计划源码修改，无新增生产文件/删除/未计划变化。101真实编译源末稿一致；五源与开发/独立/原生输入一致，主重算也0差异。配置、音频/meta/GUID、原表/动画/特效/root/运行逻辑和用户当前制作改动均保持。
+- 五源规范通过，自动增量审查4ActionEditor源，ReadAudio第五源人工逐行审查；原Builtin namespace包装保持第三方身份，无新增namespace/foreach/三目/弱类型业务载荷。新增参数/局部变量等有中文用途注释。
+- 剩余交接：SkillConfigSO_3007001/fxList[2]的Skill_SwordDrop_Charge仍是开始4/结束8区间，正式单次播放仍拒绝。若按单次播放，选中音效→工具/显示高级属性→结束帧设0或等于开始帧→重新发布。禁止根据历史差异擅自重写用户资产；本轮修复会避免以后合法点拖动意外变区间。
+- 原生测试直接调用完整窗口生产方法、真实Unity Undo/SerializedObject，现场用户鼠标和OnGUI像素/截图尚未验证；不把方法/布局数据回归冒称视觉实测。正式Editor日志只读见自动编译域重载，MCP无会话。不造角色/按游戏键/保存用户未保存场景/重导配置/开第二正式Unity。没有未解决代码阻断，既有区间发布限制已明确告知。
+- 证据_temp/skill-track-drag-20261011/review/independent-review.md、independent-test-report.md、independent-protection.json、verified-source-hashes.json、native-before-repro.json、native-track-result.json、independent-build-summary.json、编译日志；develop/final-manifest.json/develop-result.md，主root-manifest-check.json。原229回归和临时XML编码失败留痕，临时资料不清理。此次验收完成，不扩大无关测试。
+
+## 技能编辑器特效暂停与双重声音对齐：末稿验证
+
+- 范围：九份既有集中窗口源、两份新增源及两份meta，13正式路径；主协调，preview_pause_develop／sound_waveform_develop开发，preview_pause_review独立审查测试，失败只交开发修改。源码文件及设计详见项目修改日志/2026-10-11-SKILL-PREVIEW-PAUSE-ALIGN-CHANGELOG.md。
+- 原生旧版复现：playFrame=false时粒子时间仍由0推进到0.25秒。修复后原生61断言通过，覆盖根／子粒子冻结、暂停重绘实例保持、倒拖重建、回零、恢复、循环、30／120FPS、倍率、自定义寿命、停止／切配置回收、重叠声音独立源及样本位置、活跃true内嵌音源接管和原false不自动发声。正式Skill04的Audio节点原来不活跃，保持其不播放，不以禁音所有源代替暂停。
+- 原生波形／对齐34断言通过：真实GetData双声道反相保留、跨4096块负主峰、尾块回绕排除、缩放缓存、静音／空／Streaming失败、clip身份替换、完整长度不改点事件末帧／END、重叠独立行、触发点／内部点平移、0哨兵／区间跨度、负触发帧拒绝及真实Undo／Redo。
+- 原拖动核心229项本轮一次复验通过；旧OverlapAndExport9项按点跨度分lane的期望已过时，长声音现在按真实显示长度分lane，由本轮新断言覆盖，不将旧错误预期作为生产要求。自动seed／playOnAwake／随机速度1～4真实粒子F12→F3→F12：两次种子1、4颗seed逐颗一致，最大位置差0，无需额外种子策略修改。
+- 三程序集103真实源隔离Rebuild0错：Runtime59、Editor36、宿主8；警告2／4／2为既有引用和未使用字段等提示，输出／obj全在_temp。末稿固定步dt和清理秒单位注释、停用预览不重复Scene重绘由开发返工后复编复验。
+- 保护2632基线：2623不变／9计划修改／4新增，无删除及未计划修改；13正式／隔离worker一致，103编译源冻结一致。主再次重算develop／waveform两manifest共13正式SHA无差异。作者Runtime配置、音频波形/meta/GUID、原表／动画／FX／root／场景及正式运行链保持。
+- 夹具失败留痕：循环范围假设两次、真实Prefab不活跃节点GetComponent未含inactive一次；只修_temp夹具，不改生产迎合测试。波形手势在batch中Event.current getter为null，直接赋值不建立GUI上下文；临时OnGUI＋SendEvent无图形和图形各一次仍无回调。保留诊断及失败日志，未直接设置抓偏变量伪装验证。抓取偏移算法经源码审查，真实OnGUI鼠标／像素未验。
+- 现场边界：MCP当前无Unity会话；computer-use当前缺node_repl入口，未能按该技能初始化。原生AudioSource状态和timeSamples不等于设备声音输出，隔离方法／布局断言不等于正式用户窗口视觉。没有创建正式角色／按游戏键、保存未保存场景、重导用户技能稿、修改音频导入或开启第二正式Unity。现有3007001 key4/end8区间单次发布限制沿前轮交接。
+- 证据_temp/skill-preview-pause-align-20261011/review：native-before-repro.json、native-preview-result.json、native-waveform-result.json、native-random-seed.json、原拖动核心结果、independent-build-summary.json、三build.log、independent-protection.json、verified-source-hashes.json及独立最终报告；develop／waveform交接和final-manifest，主root-manifest-check.json。临时资料不清理。使用步骤项目分析/YCOMBAT_EDITOR_INTEGRATION_USAGE.md已补，最终独立报告归档后记录结论。
+
+最终结论：preview_pause_review独立审查与测试均PASS，报告已归档review/independent-review.md和independent-test-report.md。主读取两报告并重核13正式SHA通过，新增两meta在Assets／Packages全域GUID各唯一（root-new-guid-check.json）。无剩余代码阻断，正式GUI鼠标／像素及实际设备听感保留未验边界；本轮验收结束，不扩大测试。
+
+## 1技能仅首段与其他轨道预览：独立末稿验证
+
+- 本轮preview_pause_develop开发、preview_pause_review独立测试审查，主协调／验收／记录。最终七既有窗口源，完整范围项目修改日志/2026-10-11-SKILL-PREVIEW-MULTISTAGE-CHANGELOG.md；没有新增生产文件或游戏运行修改。
+- 真问题复现：当前3007001 END34@30FPS，F4蓄力／F13落剑均触发；落剑延迟层0.8～1.05秒，旧预览F34循环清理只留下Sword前段。独立跨Editor.update证实F34延迟层0、F38有6、F45有119、F58有303，实例一直存活，stopAction猜测证伪并保持源设置。取证仅隔离作者克隆改世界定位以独立检查真实粒子，不生成正式角色。
+- 首稿打回：尾段延长后650帧所有29粒子系统count0但手工Simulate＋Pause下IsAlive仍真，无法循环。开发追加有限上界和实际count0清理，保留真实延迟／尾粒与倍率。两处测试前置0帧／最小编辑总帧误断言只修_temp，全部失败证据保留。
+- 终稿原生58／58通过，Unity退出0：真实1完整后段F38／45／58、285个30FPS tick有限循环、同一落剑只触发一次、尾段暂停／倒拖／回到同帧／继续／停止；声音在END后续尾、准确样本位置、负例END之后新FX／声音均不发；手动飞行／派生提示／内嵌循环音源有限结束、自定义清理保持；标尺SetFrame／Seek尾段定位及制作范围不变；空测试动画容器尾段固定正式END且源变换不采样；四组事件速度／系统simulationSpeed换算一次及失活层保护。
+- 其他轨道核查：FX和Sound统一循环截尾已修；动画／根运动保持末帧；碰撞／位移／轨迹Scene参考原区间不扩；手动飞行／派生仍原手动入口；镜头、九RO轨道、Buff／AI等原制作保存及参考范围，不新增或冒称Scene执行。
+- 独立三真实程序集103源码Rebuild0错：Runtime59／Editor36／宿主8，警告2／4／2为既有提示；输出及obj在_temp，末稿103源冻结一致。保护2636基线2629保持／7计划源码变化／无新增删除及未计划变化，七生产／worker／开发清单一致。主再次重核七源SHA通过。
+- 当前3007001配置key4／13、placementKind2／forwardDistance10、rotation(-90,180,0)、声音key4/end8、END34与baseline字节一致。全部作者Runtime资产、音频／meta／GUID、原表／动画／Prefab／场景及正式运行链保留。用户原区间声音单次发布限制仍按前轮交接处理。
+- 边界：真实Prefab原生count/time及空容器动画状态验证不等于用户Scene像素、鼠标和实际设备听感；TargetTop未设目标时前方10米兜底不代表实际头顶现场已验。没有保存未保存现场、创建正式角色／游戏按键、自动重导配置、改原资源或开启第二正式Unity。未重跑无关229编辑／服务器／Bundle回归。
+- 证据_temp/skill-preview-multistage-20261011/review：native-actual-before.json、native-tick-before.json、native-multistage-first-candidate.json、native-multistage-failed-lifecycle.json、native-multistage-final.json、native-multistage-final-after-rework.log、三build.log、independent-build-summary.json、independent-protection.json、verified-source-hashes.json和两独立最终报告；develop交接／final-manifest，主root-manifest-check.json。临时资料不清理，独立报告归档后记录最终结论。
+
+最终结论：review/independent-review.md及independent-test-report.md已归档，独立返工复验PASS。主读取两报告并核对58／58原生结果、103真实源零错、2636保护及七末稿SHA一致，记录／说明齐全，无剩余代码阻断。正式GUI与实际设备输出边界保留，不把本轮粒子／音频状态验证扩称现场用户体验已验；本轮验收结束。
+# 2026-10-11 RO 技能时间线：基线与验收准备
+
+- 本轮开发 skill_timeline_develop，独立审查测试 skill_timeline_review，主协调记录。范围与设计见 `项目修改日志/2026-10-11-SKILL-TIMELINE-RO-CHANGELOG.md`。
+- 独立冻结 2765 前置路径，含当前技能源码、用户配置资产、原动画、场景、协议与 ProjectSettings。禁止将旧 Git 版本当作当前基线覆盖用户已有修改。
+- 当前真实 GM_Game 基线 265 源隔离 Rebuild：0 错误、37 既有警告；临时工程首次 XML 编码问题仅修 `_temp` 夹具，失败日志保留。
+- RO 已确认 FireEvents 在 MArtSkill 为 protected virtual void，Start 调用；SetTimer 零/负 interval 同步回调并返回 token=0；AddedTimerToken 与 KillTimerAll 管理本次施法票据。RO 的 object[] 在本项目以具名强类型替代。
+- 正式 Unity MCP 只读 instance_count=0，未运行正式 Editor 测试、操作用户现场或保存资产。末稿必须分别记录真实源编译、调度与技能生命周期回归、保护验证，以及未验的实机范围。
+- 证据 `_temp/skill-timeline-ro-20261011/review/baseline.json`、`GM_Game-baseline-build.log`、`baseline-build-summary.json`。当前为验收准备，尚未完成。
+- 首稿：独立 GM_Game 267 真实源 Rebuild 0 错误、37 既有警告；完整生产计时器/技能/核心/缓存/声音/根运动边界回归 69 项通过。
+- 独立追加重入用例发现阻断：零时刻扩展回调 Reset 后，FireEvents 注册循环继续读取已经清空的表现资产并抛空引用。已打回开发修复，必须验证取消后安全退出及回调重新 Fire 同一池实例。失败证据 `review/runtime-boundary-reentrant-failure.log`，不将首稿编译通过视为最终完成。
+- 返工：FireEvents 冻结配置资产、UUID、施法代次，同步回调返回核原批次；Reset 更新代次，载荷核 UUID/代次。零秒 Reset、不同及同 UUID 再 Fire、旧代次负例与当前代次阳性均通过。Fire 返回值核原代次仍有效，防止启动过程取消仍误报成功。
+- 最终独立测试 85/85 通过，证据 `review/runtime-boundary-final-with-pool.log`。23 份真实生产链源含 MTimerMgr/MSkill/MArtSkill/Core/Cache/Sound/Root 及 MSkillFactory/MCommonObjectPool/MObjectPool/MListPool，调度和工厂池借还均未 Stub；Unity 原生对象、资源、声音/动画边界采用薄夹具。厂内外部 Luban 表查询在此专用测试不装配配置表，正式全程序集另行覆盖真实依赖。先前82项日志保留，最后3项补足真实工厂借还链，最终统计使用85。
+- 回归覆盖零/负/正延迟、至少1ms、同毫秒稳定序、跨帧、查询秒单位、取消与回调内取消重入、pause/Elapsed同停恢复、异常隔离、旧票据保护；暖/冷资产按原锁定行与已过时间补发、缺模型pending两轨独立恢复与取消、池复用、t0重入与代次；Q旧/新双实例、原根运动窗口/租约、粒子独立资源尾迹、普通走跳声音。现有技能没有可调timeline时间倍率入口，不冒称测试了新增倍率功能。
+- 末稿 GM_Game 267 真实源隔离 Rebuild：0 错误、37 个基线既有警告，没有新增警告。`review/source-consistency.json` 核267编译源和23完整链输入与正式末稿一致。
+- 最终保护 `review/independent-protection.json`：2765 基线中2762字节保持，仅3计划源码修改和4计划新增，无删除/未计划改变。两meta GUID各唯一；五源码全文件无 namespace/foreach/三目/弱类型业务载荷，增改声明/参数/局部变量中文具体注释独立审核通过。所有测试逻辑在 `_temp`，未挂正式组件。
+- 主已读取两独立最终报告，重算开发七路径manifest全部相符，证据 `root-manifest-check.json`。正式日志 `项目修改日志/2026-10-11-SKILL-TIMELINE-RO-CHANGELOG.md`，当前任务/上下文/决策同步。
+- 最终结论：开发63/63、独立85/85、真实编译及保护审查通过，无剩余代码阻断。本轮MCP无活动实例，未执行正式Unity角色画面/设备听感/PlayMode/服务器联机/Bundle发布；只读Editor自动刷新域重载不等同实机验收。计时器pause仅停止技能时钟，不代表Animator/物理/设备整体暂停。用户资产与未保存现场保持，临时不清理；本轮完成。
+
+
+## 2026-10-11 当前表现导出：独立复现与验收准备
+
+- 用户当前 3007001：完整动画34@30FPS、FX4/45、声音0/end2与46/end0、制作END46。独立 worker 原生 Export 复现四层失败：显式完整动画末帧误拒、FX45越旧动画范围、声音0–2单帧门禁、声音46越旧动画范围。分层试验仅隔离内存克隆，未写正式资产。
+- 开发 export_fix_develop；独立测试审查 export_fix_review 独占既有隔离 worker；只读分析 export_trace_analysis；主协调记录。八既有源目标详见项目修改日志/2026-10-11-SKILL-EXPORT-FIX-CHANGELOG.md。
+- 统一声音契约为当前预览实际单次完整音频，保留作者结束帧制作标记；动画与旧表原时长、动作窗、根运动不延长，制作时间轴独立支持晚事件。已有 Interrupted 必须透传区分正常保尾与真正中断清理。
+- 待末稿验证真实导出、自然结束后FX45/声音46、尾音回收、中断、冷资产及模型、同帧终点、池复用、旧资产兼容；编译、规范和生产保护独立通过方可结束。
+- 证据 _temp/skill-export-fix-20261011，正式现场界面与设备声音尚未验，当前仍开发中。
+
+### 当前表现导出修复：末稿验证
+
+- 八既有源最终冻结。独立原生Export27/27通过，真实3007001原稿完整动画end34、FX45、Audio46、Audio0/end2原样保留，Runtime动画Duration1.133/独立Timeline46/30秒，依赖与所有已发布内容逐项一致；30/120FPS与24FPS非整数自然末及真裁剪等负例通过。
+- 辅助独立运行45/45通过，24完整生产源包含实际组件/计时器/工厂/对象池；自然End后45/46与完整声尾、当前槽退出/根解除、真正打断、冷配置/迟模型、旧0资产、同UUID与同池对象重新Fire/旧票据、20秒长音和自然End先于预测确认均通过。原生对象/状态机/加载为薄边界，声音结束通过Stop交付状态；SkillCtrl Interrupted透传源码核对，未执行真实protobuf/网络。
+- 反馈返工两项：完整长音纳入RO十秒兜底起点；旧预测到期只回收仍IsPredicted实例，避免已自然结束的尾段被误清。失败仅交开发修改。
+- 四370真实源Rebuild零错：267/59/36/8，警告37/2/4/2均基线既有。编译源与正式冻结一致。
+- 2786前置保护：2778不变/8计划源码修改/无新增删除或未计划改变；八源码规范/中文注释通过，开发manifest及主root-manifest-check.json全部一致。作者/Runtime、原表、声音/meta/GUID、动画/特效/场景保持，不自动重导用户配置、不操作用户角色/未保存现场。
+- 证据_temp/skill-export-fix-20261011/review（27原生、构建、保护和SHA）；analysis-runtime（45真实链、24SHA、实际Compile项及独立报告）；develop（交接和8manifest）；主root-manifest-check.json。夹具依赖、换行重建、测试静态类型和主PowerShell无效空游标预检失败均仅临时侧修复/留痕，不改生产迎合测试；临时资料保留。
+- 独立总审报告归档待最终确认；代码和隔离导出验证通过，正式GUI像素/鼠标、设备听感与真实服务器联调未验。用户退出Play、等待编译后通过原绑定按钮显式导出。
+
+最终结论：export_fix_review已归档independent-review.md及independent-test-report.md，总审PASS。主读取两报告与source-consistency.json、45运行报告及2786保护结果，八源开发manifest重算一致；27原生/45运行/370编译/24运行输入/4原生修改源均对应同一末稿。CURRENT_TASK/PROJECT_CONTEXT/DECISIONS、正式日志与用法已同步，本轮完成；现场GUI/设备听感/联机边界保持未验，不自动发布用户资产，不扩大测试，临时资料保留。
+
+## 2026-10-11 RO 时间线职责纠正：最终独立验收
+
+- 结论：PASS，无剩余代码阻断。开发57项，本轮独立94/94＝45项当前后动画生命周期重新验证＋49项真实MModel/Cache职责专项；94为本轮当前源结果，未复用上轮85项作为验收。267完整GM_Game生产源Rebuild 0错、37基线既有警告；26份完整生产运行输入含真实MModel、Cache、计时器、技能/组件/核心、工厂/对象池、声音与根采集。
+- 四源：`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Skill/MArtSkill.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Skill/SkillRuntimePresentationCache.cs`、`LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/3DModel/MModel.cs`、`LYF_MMO/Assets/GM_Game/Scripts/Global.cs`。Update实际仅base.Update与PruneAudio；后者回收已结束声源，不触发或重试声音。单独驱动MTimerMgr即可派发到期事件，真实缓存完成与真实MModel.FinishLoad通知可不调用技能Update补已到期指令，反复Update不重注册/重派发。
+- 缓存专项：冷完成按原累计时钟差值补发、暖同步完成、资源包缺失后一次安装通知、地址/身份无效或加载失败终态、取消监听、异常隔离、旧同ID记录/句柄释放、同步再入取消及同UUID旧ready闭包拒绝均通过。
+- 完整MModel专项：Load/SetGameObject/FinishLoad/Reset、模型/动画/声音/根采集完成先后、外部回调顺序、旧会话完成、外回调Reset、首监听Reset截断旧快照、监听异常隔离、模型重建恢复及技能Reset解绑后无旧池对象监听均通过。
+- 当前后动画45项本轮复验覆盖自然End后F45/F46、完整声尾回池、20秒长音、旧Timeline=0、冷资产/模型迟到、同UUID工厂池重借、自然End先于预测确认、真正Interrupted立即清理、当前槽退出根释放；Q旧新实例、旧UUID取消不抢新根、真实clip/config门控就绪后无需Update重绑定采XZ、Y丢弃且delta只消费一次通过。Collector→MMove源码本轮字节保持。
+- 缺固定挂点：声音独立执行，粒子按队首保pending；带齐层级模型reloadReady补两粒子、已执行声音不重发通过。当前无正式业务动态挂点组装入口，本轮不扩新系统或轮询。
+- 保护：当前工作区2788路径基线（历史2786清单补纳本就存在MTimerMgr源/meta），2784原字节保持，4计划既有源变化，无新增/删除/未计划变化，无新GUID；用户作者/Runtime、表/声音/动画/粒子/场景/预制体/meta与所有未提交前置成果保持。中文具体注释及禁止namespace/foreach/三目/弱类型业务载荷审查通过；MModel.Delegate[]仅.NET事件分发边界，中文原因已说明。
+- 末稿一致：267编译输入独立核0差异，26运行输入主支持重算0差异；四修改源与开发final-manifest、独立verified-source-hashes、当前SHA全部一致。证据 `_temp/skill-timeline-responsibility-20261011/root-manifest-check.json`。
+- 构建证据：`_temp/skill-timeline-responsibility-20261011/review/GM_Game-build.log`、`source-consistency.json`；运行 `review/runtime-final.log` 末行RESPONSIBILITY_RUNTIME_PASS assertions=94；独立结论 `review/independent-review.md` 与 `review/independent-test-report.md` 均PASS且主已读取；保护/规范见同目录independent-protection.json、static-style-check.json、verified-source-hashes.json、final-diff.txt。
+- 失败保留：runtime-first.log薄Vector3夹具缺magnitude编译失败，只修_temp；runtime-third.log的Q夹具Cleanup清所有核心却期待只取消旧UUID，改为专用ApplyServerEnd(old,true)复验，只修_temp。两个失败及后续通过日志完整保留，不改生产迎合夹具。
+- 未执行：本轮未检测MCP，不援引旧无实例结果；正式Unity GUI/设备听感/PlayMode/真实网络/服务器/Bundle发布未验。原生对象/Animator状态与delta、YooAsset完成是薄边界交付，声音结束通过Stop交付，不能扩称设备或正式场景体验。未挂正式测试组件、未自动导出或保存用户现场；临时资料保留，由产品经理确认后清理。
+- 正式归档：`项目分析/RO_SKILL_TIMELINE_RESPONSIBILITY.md`、`项目修改日志/2026-10-11-SKILL-TIMELINE-RESPONSIBILITY-CHANGELOG.md`；四协作入口同步，本轮完成，下一步原正式入口现场体验，不扩大已通过的隔离测试。
+
+## 2026-10-11 RO技能注册代码精简与FireEvents入口恢复：最终验收
+
+- PASS，无代码阻断；唯一业务修改 `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Skill/MArtSkill.cs`。FireEvents仍protected virtual void，末稿117（原116因参数中文注释增行）；Start53直接65调用。主链Start→FireEvents→SetTimer→OnProcessTimer→switch→fx/audio，两for直接AddedTimerToken(SetTimer)。删除TryResolve层但完整资产/全轨校验搬入FireEvents；Ready短捕获代次交具名方法，fx/audio为实际原消费器，不新增薄wrapper。必要强类型SO、cache/model、取消订阅、UUID代次及同步重入保留；Update仍仅base+Prune，TriggerAnim/Collector→MMove根职责不变。
+- 独立99/99＝45最新后动画当前复验＋49职责重新执行＋5直接FireEvents入口专项；99是当前末稿重新执行，不用旧94充数。5专项验证冷Start也立即进入protected FireEvents、Update不注册、冷Ready回同FireEvents一次、重复Execute/Update不重入、暖Start单次进入与播放；原自然End晚事件/完整声尾、Interrupted、同UUID池重入、冷/迟模型、Q旧新根归属与挂点reload恢复保持。
+- 267完整GM_Game源Rebuild0错/37基线既有警告；26完整生产运行源含真实MModel/Cache/计时器/技能/组件/工厂/池/声音/根采集。267编译输入独立0差异，26当前SHA主辅助重算0差异，一源开发/独立manifest/当前哈希相同：bafde6665be75a6a71982dec092d7dd4f76dc2a564d659a8e1026d294dfd45c2。
+- 独立同口径减量：Start方法体有效29→7；注册/Ready/消费方法体含原TryResolve100→79；整文件有效301→281、物理588→559、复合条件112→96、分号169→158。分号含for头部，仅符号统计，不称精确减少11条独立语句；开发含声明109→89属于另一口径，不混算。
+- 当前保护2788：2787字节保持，仅1计划MArtSkill变化，无新增/删除/未计划；其它业务、用户配置/资源、场景、协议、meta/GUID不动。两独立报告PASS主已读。失败仅runtime-before.log首次.NET9 System.Private.CoreLib BadImageFormatException环境异常，原命令重试通过，无生产调整；日志名称不表示旧业务复现。
+- 证据 `_temp/skill-timeline-ro-simplify-20261011/`：review/independent-review.md、review/independent-test-report.md、review/GM_Game-build.log、review/runtime-final.log（RO_SIMPLIFY_RUNTIME_PASS assertions=99）、review/independent-protection.json、review/source-consistency.json、review/structure-measure.json、review/verified-source-hashes.json、develop/final-manifest.json、develop/simplification-metrics.json、root-manifest-check.json。测试仅_temp，未保存用户现场、挂正式测试组件或自动重导。
+- 未验正式Unity画面/设备听感/联机/PlayMode/Bundle，未新查MCP；原生状态/Animator及加载交付仍薄边界，不扩称设备体验。当前任务、本轮日志 `项目修改日志/2026-10-11-SKILL-TIMELINE-RO-SIMPLIFY-CHANGELOG.md` 及既有分析 `项目分析/RO_SKILL_TIMELINE_RESPONSIBILITY.md` 已增量归档，临时保留由产品经理确认后清理；本轮完成，下一步原正式入口体验。
+
+## 2026-10-11 RO 到期回调与模型 GO 边界：最终独立验收
+
+- 结论：通过，无剩余代码阻断。ro_timeline_responsibility_develop 开发，ro_timeline_responsibility_review 独立测试审查，ro_root_motion_reference 只读核真实RO；主只协调、验收、记录，没有直接修改业务。
+- 三份业务文件：LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Skill/MArtSkill.cs、MSkill.cs，以及SceneEntity/3DModel/MModel.cs。Start:49精确base.Start/FireEvents两句；FireEvents:83仍protected virtual void；OnProcessTimer:321→InnerProcessTimer:150→audio:170/fx:206单条到期数据。模型AddLoadGoCallback:264/RemoveLoadGoCallback:287暖零票据、冷可取消；删除启动模型监听、OnModelReady、PresentationReady事件、两套技能pending与无参消费者。Update只基类时钟和已结束声音回收。
+- 独立末注释稿92/92通过：45项当前后动画生命周期重新执行＋47项新GO职责，不以旧99/94/85充数。RuntimeBoundary直接链接26完整生产源含MModel、缓存、计时器、技能/组件、工厂/池、声音及根采集；Unity原生对象、Animator/状态机、声源及资源交付为薄边界。
+- GO专项覆盖到期才申请、Start/Update不申请、暖同步零票据/冷一次交付、取消兄弟/异常隔离、外部回调Reset、Load旧会话、同模型重载保尚未交付任务、真正Reset清等待、Interrupted立即取消、自然End保GO/声尾但解除动画owner、同UUID真池复用拒绝旧闭包、Q独立任务与新动画owner、暖零秒Reset/重Fire、冷配置补发、缺固定挂点跳过/冷完整挂点正常、取消再添加和有符号token回绕的登记顺序。
+- 45生命周期包含当前锁定配置行与冷配置、自然End后F45/F46、完整长声尾、旧Timeline=0、真正打断、同UUID真实工厂池重借、Q及当前动作槽解除根归属、尾音完成后回池；Collector→MMove本轮字节保持，实际动画水平增量未移入技能Update。
+- 独立267完整GM_Game源Rebuild零错、37基线既有警告。开发3源、独立3源、运行前26源、编译267源冻结均对应正式末稿，主重算299项SHA零差异，root-manifest-check.json；独立final-manifest-check.json三个差异列表均空、runtimeExit=0/runtimeAssertions=92。
+- 当前2788前置路径中2785字节保持、恰三计划源码变化，无新增/删除/未计划变化。MArtSkill本轮前置SHA a822049e2332baab09b5480c92964db31c503d72c8077d1a416b8145fe154183；保用户SetTimer换行/既有空格，不从旧bafde稿覆盖。资产、原表、音频/meta/GUID、动画/粒子/场景/预制体及服务器保持；未自动重导配置或保存现场。
+- 中文具体注释由独立逐行审查，本轮增改无namespace/foreach/三目/弱类型业务载荷；MModel.Load最后两条局部/回调参数注释缺漏交开发补齐，末注释稿复编复验通过。RO object[]继续适配为已有MSkillTimerArgs强类型载荷。
+- 实际返工：Dictionary删除首项后新增复用槽位导致GO交付3→2，runtime-order-repro.log保留。开发_loadGoOrder记录真实登记序，取消同步移除、逐条交付，删除再Add/int回绕通过。首次薄MGameObject缺NativeObject、首次finalize早于编译缺源SHA、开发临时csproj编码失败只修_temp夹具，未改生产迎合测试；失败保留，不计通过。
+- RO事实：fx到期才调用模型AddLoadGoCallback，Stop移token；audio使用FMOD模型接口，冷普通声可跳过、区间实例由模型音频持有。本项目Unity AudioSource需Transform，冷声音在GO边界等待是本地适配，不声称RO音频同FX。完整已加载模型缺固定挂点报告并跳过该粒子为明确行为变化，不再无限待重载；冷GO正常等待初始化。
+- 主已读取review/independent-review.md及independent-test-report.md，均通过；证据_temp/skill-timeline-ro-callback-20261011/review中的runtime-candidate-final.log、GM_Game-build.log、runtime-executed-source-hashes.json、compiled-source-hashes.json、final-manifest-check.json、independent-protection.json、static-style-check.json、verified-source-hashes.json与final-diff.txt；develop/develop-result.json、final-manifest.json和主root-manifest-check.json。正式归档项目修改日志/2026-10-11-SKILL-TIMELINE-RO-CALLBACK-CHANGELOG.md，分析项目分析/RO_SKILL_TIMELINE_RESPONSIBILITY.md，四协作记录已同步。
+- 未验边界：本轮未新调用MCP；正式Unity GUI/PlayMode/真实Animator根运动和设备听感/网络/服务器/Bundle发布未验，不把完整生产逻辑加薄原生边界扩大为现场体验。未挂正式测试组件；下一步原正式入口体验，不扩大已通过隔离验证或自动发布资产。临时证据保留，由产品经理确认后清理。
+
+## 2026-10-11 特效时间显示：验收准备
+
+- 独立冻结本轮UI和用户技能配置基线。单帧DrawEventTrack最小色块8像素、标签4像素导致裁剪；EffectTrackLabel无帧秒内容，Inspector无秒摘要。
+- 三既有显示源由fx_time_develop开发，fx_time_review独立验证。纯显示lane/时间资源标签/tooltip/Inspector摘要，真实色块与编辑命中仍原帧范围；不改正式播放、作者或Runtime。
+- 待验缩放/横滚、同帧/相邻、点末帧哨兵/真实区间、双语、30/120FPS、数据保护及对应编译。证据_temp/skill-fx-time-display-20261011，当前尚未完成。
+
+- 用户澄清触发时间和持续时间都要看，范围增为四集中窗口既有源；持续只读复用预览保守参数估算、区别资源循环/技能单轮/custom截断，不改实际播放算法或END。
+- 首稿36真实编辑器源Rebuild零错/4既有警告；147相关UI/技能配置保护基线仅4授权源码变化。原生19项帧秒、速度、延迟/子系统、缓存等通过后，真实1技能Prefab持续参数失败：AssetDatabase源的activeInHierarchy不能直接代表生成后粒子活跃状态。已打回开发在源根内按activeSelf祖先链只读判断，root本来inactive仍排除，不激活资源；正式与隔离Prefab字节一致，不是漏拷资源。
+- 隔离原生GUI首次MouseMove未投递，后带图形隔离worker诊断出现native Crash，已停止GUI尝试并保日志；只继续无图形原生参数/字体布局验证，正式GUI鼠标/像素未验。未修改正式现场。
+
+- 原生只读取证明确：真实Juqi源activeSelf=true/activeInHierarchy=false/16粒子，落剑true/false/13粒子。开发改为生成源根内activeSelf祖先路径判断，根失活仍排除，不激活原Prefab。返工后两真实资源持续估算3.500/9.050秒，原作者字段保持；这只是预览参数估算，不是实测精确寿命。
+- 前述隔离worker所谓native Crash的实际原因已查明为上一隔离进程尚未退出产生Multiple instances锁冲突；只处理隔离worker，正式现场无影响。GUI事件未投递边界保持未验。无图形EditorStyles.miniLabel未初始化使后续字体布局夹具失败，独立审查正尝试原生字体边界初始化，不改生产GUI迎合夹具。
+- 主规范检查补正修改函数DrawEventTrack内既有laneH三目为if/else、Structure新循环变量具体注释；开发撤回仅自己误匹配到的无关动画等价lane变更，最终动画方法保持本轮基线。正对最终四源复编复核，首稿/Prefab修稿manifest保留不作最终证据。
+
+### 特效两类时间：最终独立验收
+
+- fx_time_review独立总审PASS，independent-review.md和independent-test-report.md已归档；fx_time_develop返工Prefab资源活跃判定与规范末稿后通过。主读取两报告/source-consistency/147保护，重算开发4manifest+36编译输入40项SHA零差异，root-manifest-check.json。
+- 原生无图形33/33，真实1两Prefab活跃路径有效（16/13系统，参数估算3.500/9.050秒）、双语/30及120FPS/点及区间、延迟/倍率/子系统/失活祖先/cache/custom/loop、真实字体CalcSize+纯显示lane/横滚不改END、生产拖动方法哨兵与跨度保持。字体初始化仅薄边界，未完成正式OnGUI像素/悬停/物理鼠标。
+- 36真实集中Editor源Rebuild零错/4既有警告；147相关保护中143不变、4授权源码变化、无增删或未计划。用户最新作者声音60帧和Runtime/meta保持；正式播放链、原粒子/声音/动画/场景未改，不自动发布或保存现场。
+- 误匹配无关动画lane两行自身改动已由开发撤掉，独立全文函数与baseline一致；曾称native Crash实际是隔离进程未退出导致多实例锁冲突，独立仅处理精确隔离worker，不影响正式Unity。GUI空回调、MiniLabel未初始化及锁失败日志均保留，不作为生产通过证据。
+- 证据_temp/skill-fx-time-display-20261011/review中两报告、native-final-native-font.log/native-fx-time-result.log、编译、source-consistency、verified hashes、静态规范/保护与final-diff；develop末/首/Prefab稿manifest/result；主root-manifest-check.json。当前任务、上下文、使用说明及项目修改日志/2026-10-11-SKILL-FX-TIME-DISPLAY-CHANGELOG.md已同步。本轮完成，用户等待Unity编译后查看现有轨道和选中属性，无剩余代码阻断，临时保留不扩验。
+
+## 2026-10-11 RO 技能位移与根运动：独立验收准备
+
+- 已核实际RO普通技能链为FireEvents→MTimerMgr(ECharge=13)→OnProcessTimer→InnerProcessTimer→charge→MDisplacementComponent.onStart/Update/onStop；角度单位度，曲线值为累计位移比例。全仓检索发现通用OnAnimatorMove桥但无角色业务订阅，不把它描述为RO角色Animator根驱动。
+- 本轮ro_skill_motion_review冻结当前2788路径，基线GM_Game267真实源编译零错/37旧警告；92既有生命周期/GO用例在准备夹具中通过，仅为基线，不计本轮新运动实现完成。
+- 原生导出验证使用本轮_temp/ro-skill-motion-20261011/review下专属native-worker，与另一特效显示任务及正式Unity现场隔离；首次batch导入正常退出。临时UTF-8/重复stub夹具问题只修_temp、失败保留。
+- 开发范围和验收方案见项目修改日志/2026-10-11-RO-SKILL-MOTION-CHANGELOG.md及项目分析/RO_SKILL_MOTION_IMPLEMENTATION.md。当前客户端开发进行中，最终运动/导出/碰撞/生命周期与规范结果待独立审查，失败必须交开发返工。
+
+- 独立首稿新增52项中51通过，真实失败为计时器Init后clock重合不能识别旧运动；已返工会话身份。原生默认Program误拒为Unity真实零曲线wrap=ClampForever与假设Default不符，已返工按原默认曲线比较；不是修改作者或夹具迎合生产错误。
+- 后续同步换GO不追历史、旧pending失效与冷Clamp负基线等专项复验进行中。侧碰撞首次夹具在Fire后才换GO却未先建reload基线，导致正确冷保护跳过历史位移；只修_temp设置时序，保失败日志，不修改生产迎合。
+- 七原资产只读检查发现3007001作者声音60帧/2秒而发布Runtime制作范围为1.8秒/54帧，ValidatePublished失败；最初口头“46帧”已按真实回读纠正。本轮before两旧导出源对同一当前输入已原生复现相同ReadAudio失配，证据native-baseline-mismatch.txt/log；明确既有未发布边界，不把隔离克隆新导出通过冒称七原资产全一致，不自动重导。
+
+### RO 程序位移：最终独立验收
+
+- 结论：通过，无本轮未修复的已复现阻断。ro_skill_motion_analysis只读参考、ro_skill_motion_develop修改客户端、ro_skill_motion_review独立测试审查；主仅协调/验收/正式记录，已读取independent-review.md、independent-test-report.md及final-audit.json。
+- 155运行断言通过（63新增运动＋92当前既有生命周期重跑），31完整生产源链接真实Skill/Timer/Model/Move/Cache/Factory/Pool/Collector链；Unity Animator/CharacterController/表/资源交付为薄边界。覆盖首帧不双积分、sameclock、大tick多段末量、三策略/硬cap/回拉/瞬时/非零首末、冷资源剩余及过窗、同步GO和完成段pending、暂停/Init重合clock、Q/自然End/Interrupted/同UUID池复用、输入MoveCasting/跳跃重力一次提交、侧碰撞停止/非Player最小分支、非法数据与重叠门禁、真实权威确认切共享Core后仍用本次冻结时长。
+- 64隔离Unity原生导出断言通过、退出0，真实SkillConfigSO/SerializedObject/AnimationCurve/ReadCharge/ReadRootMotion/Export/ValidatePublished。覆盖30/120FPS、Program End无+1、默认ClampForever、合法无限阶梯切线、曲线复制/权重/wrap、三策略及未支持参数门禁、程序与动画点/重叠/相邻、真实发布及反校验。七原作者Validate/Animation投影/空ChargeList兼容通过，六发布完全一致；3007001既有2秒vs1.8秒未发布失配单列，before原生复现同失败，不改资产迎合。
+- 独立最终271完整GM_Game源Rebuild零错/37既有警告；8宿主Editor源零错/2既有警告。开发相同实际数量；旧口头59宿主源已纠正，基线267不算末稿。两次最后时长修复只动MSkill/driver，不影响原生170输入，按SHA保其64项有效。
+- 范围：9既有业务源、4新增独立类型及4meta，共13源17路径；2788前置保护中2777不变、9本轮、2并发授权Window，新增8、零删除/未授权变化。前特效动画lane差分是撤销自身短暂无关等价改动恢复其真正原函数，已由前任务与主核，未纳入运动成果或再改既有函数。Collector、作者Schema与所有用户配置/资源、场景/协议/服务器保持。
+- 规范：13运动源逐声明人工中文用途/单位/身份/生命周期注释审查，独立去字符串注释扫描无namespace/foreach/三目/弱业务载荷；四meta GUID唯一，测试仅_temp。主重核开发17、独立17、运行31、独立编译271＋8、原生170、开发编译271＋8共793项SHA零差异，root-manifest-check.json=PASS。
+- 真实返工闭环：Init后重合clock续旧运动→会话标识；默认零竖直曲线误拒→真实默认比较；同步换GO及完成pending→核NativeObject清旧量；null旧资产/非有限采样先于cap/冷Clamp负基线→适配；真实BeginPrediction/ApplyCastResult换Core短段误拒当前长段→只读冻结时长。侧碰撞失败为换GO夹具未先建基线，只修_temp；初期XML/重复stub/GBK亦只修_temp。已读历史共享Core失败尾段另存shared-core-failure-captured-tail.txt，说明来源，当前runtime-final.log为155终验成功，其他首稿/返工失败日志保留。
+- 证据_temp/ro-skill-motion-20261011/review：两独立报告、final-audit.json、verified-source-hashes.json、runtime-final.log/runtime-executed-source-hashes.json、GM_Game-build.log/Editor-build.log及两编译输入SHA、native-charge-result.json/native-charge-final.log/native-input-hashes.json、native-baseline-mismatch.txt/log。develop有末稿17manifest、279编译输入、develop-result.md/json、final-style.json/final-diff.txt，主有root-manifest-check.json。
+- 未验现场：真实Animator.deltaPosition/Collector精确末帧及跨窗、正式PlayMode/画面/设备听感、原生CharacterController墙体物理、真服务器联调与Bundle发布。本轮未新调用MCP、未挂正式测试组件或自动发布。正式分析/使用说明、项目修改日志/2026-10-11-RO-SKILL-MOTION-CHANGELOG.md及四入口已同步，下一步原正式入口体验；临时保留待产品经理确认清理。
+
+## 2026-10-11 特效播放范围与重叠：验收准备
+
+- 用户截图为1技能蓄力F4/0.133秒、落剑F45/1.500秒，只有触发小块和持续参数文字。源码按各事件独立Spawn并逐实例Simulate，没有等待前实例结束条件；实际资源delay和双实例存活待独立原生验证。
+- fx_range_develop最小三源实施时间范围/延迟分段/分行与暂停定位，fx_range_review独立验证，失败打回。三源before已冻结在_temp/skill-fx-range-20261011/develop；审核独占隔离Unity，不改正式现场或用户资源，不自动导出。
+- 正式记录项目修改日志/2026-10-11-SKILL-FX-RANGE-CHANGELOG.md。编译、粒子状态、GUI边界与保护结果完成后追加；临时资料保留。主首次记录补丁因TEST_REPORT锚点不存在失败，改用独立补丁及追加，未涉及源码。
+
+### 特效播放范围：原生并发与末稿一致性
+
+- 真实1技能隔离原生生产PlayFxAndSound/SeekPreviewFrame/SampleAnim/FxUpdate验证：F45第二实例立即生成，F46两计时独立增加，无排队门禁；同帧全部生成，暂停/倒拖/恢复及清理通过。内存克隆仅改WorldAbsolute定位避免生成角色，粒子资源、帧和倍率原样；不称正式TargetTop角色或GUI画面实测。
+- 逐帧粒子计数显示Juqi最后非零F49、落剑首非零F53，4–90帧无非零计数重叠；空对象存活不能称可见重叠。落剑各层原delay0.25～1.1秒解释视觉先后。计数也不等于渲染像素。
+- 独立末稿原生43项通过，native-final.log返回0；范围显示/倍率/FPS/同值与随机TwoConstants/custom/失活/双语/显示分行/横滚/真实拖动哨兵/作者END不变覆盖。真实参数预计Juqi F4→F109、落剑F53→F317，尾端是保守估算，未当实测最后可见帧。
+- 主核开发3源manifest、独立36编译输入及原生77输入共116项SHA全一致，root-manifest-check.json=PASS。两独立总审报告及602路径保护结论待审核归档；未验正式GUI像素/悬停/鼠标，不扩大无关测试。
+
+### 特效播放范围：最终独立验收
+
+- fx_range_review两报告PASS，主已阅读independent-review.md、independent-test-report.md及final-audit.json。末稿43原生通过/退出0，36真实Editor源零错/4既有警告；602既有保护599不变/3授权源码变化，无新增删除未授权；中文注释及新增规范门禁通过。
+- 开发3manifest、独立编译36、原生77共116当前SHA主重算零差异，root-manifest-check.json=PASS；开发/审核当前最终输入一致。此次同值TwoConstants及旧三行说明修正已复验，首18/候选41日志保留不重复计成果。
+- 实际修改Structure/Timeline/SerializedInspector三既有Window源；四行文字及独立时间范围、重叠显示分行与原Seek/Sample暂停导航，原配置/作者END/Runtime/粒子资源、声音波形、RO正式技能/运动链保持。
+- 排队疑问已核为独立实例按帧触发，真实可见粒子计数存在原资源时序先后：Juqi末F49/落剑首F53，无非零计数重叠。参数尾端不是可见尾端；计数不是像素。正式GUI/物理鼠标按钮、原角色TargetTop/挂点、实际渲染/听感及PlayMode/服务器未验。
+- 本轮无剩余代码阻断，隔离worker已退出。使用说明、CURRENT_TASK/PROJECT_CONTEXT与项目修改日志/2026-10-11-SKILL-FX-RANGE-CHANGELOG.md同步；用户等编译后在原窗口查看/暂停逐帧，不自动发布或保存现场。临时证据保留待产品经理确认清理，不继续扩大测试。
+
+## 2026-10-11 特效制作区间导出：复现准备
+
+- 用户新截图index1粒子笼统错误。当前3007001落剑已用户改F13/end111、最后声音F49，与历史F45/F60不同，本轮独立冻结新基线，不回退用户调整。只读ReadFx确认非零结束帧拒绝触发；其它混音/倍率/custom字段默认。
+- 开发fx_export_develop最小适配制作标记与预览单次播放，审核fx_export_review独立before原生复现、末稿隔离Export/边界/拒绝项/编译/保护，失败返工；不自动发布正式Runtime或保存现场。首次rg旧Global路径不存在，rg --files已找到Runtime/Data/Global.cs，未产生修改。
+- 证据_temp/skill-fx-export-20261011；正式日志项目修改日志/2026-10-11-SKILL-FX-EXPORT-CHANGELOG.md。最终结果待验证，临时资料保留。
+
+- 验收假设纠正：主核原ActionTiming.ContentEnd对fxList只keyNumber，end111是原显示标记，不应额外延长Runtime触发时长。撤销最初“制作时长保111”假设，只保作者字段；开发/审核已收到，ReadTimelineDuration不改。原Y end<=start为单帧哨兵，兼容原契约，不自创倒序拒绝。
+
+### 特效制作区间导出：最终验收
+
+- fx_export_develop仅ReadFx及summary末稿，fx_export_review独立总审PASS。before原生Validate/Export复现截图错误，末稿64原生通过/退出0：实际落剑13/30秒单次事件，2条FX稳定排序，声音49及作者末111保持；原TimelineDuration=49/30，结束显示标记不扩时长。
+- 0/等开始/非负倒序/111/10000制作末标记兼容，负帧沿原Y ACT112拒；120FPS、未接入各字段和NaN保拒、绑定/fxList/字段值准确诊断、无粒子/零缩放等原门禁保持。七作者Validate通过，六旧发布兼容；当前1原发布既有差异单列，隔离Export后反校验及依赖通过，未改正式资产。
+- 8真实宿主Editor源Rebuild零错/2旧警告；2788保护2787不变/1授权源码变化/无增删未授权。ReadFx注释及禁namespace/foreach/三目/弱载荷审查通过，ReadTimelineDuration和包/预览/运行链保持。
+- 主重核开发1manifest/独立8编译/301原生输入共310项SHA零差异，_temp/skill-fx-export-20261011/root-manifest-check.json PASS；末稿SHA3358a03a03523b5d714560a198dbe1ad7e2294a61781a10510a3fea00a9a6096。
+- 正式GUI鼠标点击/PlayMode画面/听感未验，原生导出只隔离，正式用户配置F13/end111/F49、Runtime/meta/资源及场景保护。无剩余本轮代码阻断；等待编译后用户原按钮显式导出，不自动发布或保存现场。
+- 证据_temp/skill-fx-export-20261011/review下before/final原生日志、native-result.json、8源编译日志、final-audit、两报告、保护/一致性及哈希；develop下result/manifest/diff/host-build。正式日志项目修改日志/2026-10-11-SKILL-FX-EXPORT-CHANGELOG.md及使用说明/协作入口同步，临时保留，不扩大测试。
+
+- 主已读取本轮两独立报告并确认最终PASS；独立审计夹具初稿按方法签名前缀比较时误把合法summary变化判越界，仅调整_temp比较边界至summary之前，最终方法以外完整相同。不是业务失败或修改生产迎合测试，原生/保护结果不受影响，临时证据保留。
+
+## 2026-10-11 RO特效End只读核对
+
+- 只读真实proto/MArtSkill/MFx/MFxMgr，确认At/End/DestroyDelay单位秒、playTime=(DestroyDelay+End-At)*_timeScale，MFx.Init把时长记DestroyTime，Mgr.Update正值减帧秒归零移除；非正默认走特效表PlayTime/FxTimer路径。结束时间有实际用途，不能声称与本项目纯标记相同。
+- 未改业务/用户资产、未运行编译或运行测试。分析项目分析/RO_SKILL_FX_END_SEMANTICS.md，归档项目修改日志/2026-10-11-RO-FX-END-ANALYSIS-CHANGELOG.md；当前查询完成，能力差异需后续开发审核接入。搜索未命中Editor命名文件不代表不存在编辑器，仅以已定位协议/执行链回答。
+
+## 2026-10-11 位移组件实体挂接：验收准备
+
+- 用户明确位移组件必须经实体CreateComponent挂接。独立冻结当前真实工作区，核RO实体:964与本地MComponentMgr/EntityComponentBase/普通容器/实体生命周期；业务由开发Agent改，独立不代改。
+- 验收新增实体创建/唯一组件查询、普通优先阶段与专用Move时序、容器不二次推进、真实释放与池重绑、停止、重力碰撞一次提交，重跑63运动/92生命周期。既有155仅上轮证据，不计本轮完成。
+- 对应完整客户端/共享编译、enum旧值兼容与DLL实际引用、规范注释及当前资产保护待末稿。原生导出源未改则仅按SHA继承边界，不冒称本轮新原生运行。
+- 临时_temp/displacement-entity-20261011，正式日志项目修改日志/2026-10-11-DISPLACEMENT-ENTITY-COMPONENT-CHANGELOG.md，当前开发中，发现失败交开发返工。
+
+### 位移组件实体挂接：最终独立验收
+
+- 结论PASS，无剩余已复现代码阻断。主已读取displacement_entity_review的independent-review.md、independent-test-report.md及final-audit.json；业务由displacement_entity_develop修改，主协调、验收和记录。
+- 189项末稿运行通过：63运动、92当前技能生命周期重新运行、34新增真实实体组件。链接45完整生产文件，真实MObject→MSceneObject→MEntity、ROObject、MComponentMgr、EntityComponentBase、EntityComponentContainer、事件派发及Skill/Timer/Model/Move/Factory/Pool/Collector；状态机、Unity原生与配置资源仍薄边界。
+- Created挂接、实体快捷与容器同实例、重复Initialize、Active禁止追加、每帧唯一曲线求值、Move不再推进、输入/重力/程序量唯一碰撞提交、自然末帧先提交后退出通过；禁用、睡眠、直接卸载、重挂、Destroy、PrepareForReuse、真实ResetForPool/池重借新宿主、旧代停止隔离与事件记录清理通过。候选直接卸载未立即清状态由主要求开发加OnDetachFromHost Stop，四新增回归通过；最后枚举类型注释稿已重新189运行。
+- 独立271真实GM_Game源码Rebuild零错/37既有警告，实际引用新Common DLL；65共享源码Rebuild零错/4旧警告。compiled-shared-source-hashes.json有66项，为65源＋1csproj，不是66源码。
+- 最终六源码及两DLL共八业务路径；MComponentMgr、EntityComponentBase、Collector、作者Schema、Runtime及原资源场景meta保持。五客户端差分和共享enum逐声明中文注释人工审查及禁foreach/三目/弱业务载荷扫描通过；客户端无namespace，共享原类型身份保持，不新增声明。
+- 独立2796前置保护中2789不变、7授权变化（5客户端源＋2DLL），无新增、删除或越界。共享enum没有事前字节快照，不能称完整before SHA保护；原工具全文与可靠旧DLL核旧0–31及导出类型保持，仅新增32。可靠旧DLL SHA与冻结旧Common相同；当前Common/Net字节相等且等于开发同次构建产物，独立共享构建因元数据不同按反射契约一致核验。
+- 主重算开发8末稿＋336编译源＋独立8末稿＋271客户端输入＋66共享输入＋45运行输入，共734项SHA零差异，root-manifest-check.json=PASS。两报告和final-audit匹配同一最终源码，不引用旧摘要稿运行。
+- 本轮未新跑原生导出；旧170输入已有8后续授权差异，previous-native-input-comparison.json明确不继承旧64为本轮验收。当前作者F13/end111/F49字节保持，不自动导出或保存现场。
+- 夹具XML编码、数学stub、默认碰撞组件重复添加、睡眠float比较及旧Move.Shutdown归属断言仅修_temp，失败日志保留，不把夹具修正冒称生产返工。
+- 未验边界：真实Unity PlayMode/画面/设备听感、原生墙体碰撞、Animator.deltaPosition精确末帧与跨窗、服务器与Bundle。下一步使用原正式入口体验，不扩大已通过测试，不挂正式测试组件或自动发布。
+- 证据_temp/displacement-entity-20261011/review下两报告、final-audit.json、runtime-final.log/45运行输入、GM_Game及MMoRpgCommon编译日志/输入SHA、shared-assembly-contract.json、previous-native-input-comparison.json；develop下8末稿manifest/336源SHA/编译/规范/差分，主root-manifest-check.json。正式分析、项目修改日志/2026-10-11-DISPLACEMENT-ENTITY-COMPONENT-CHANGELOG.md及四协作入口已同步；临时保留待产品经理确认清理。
+
+## 2026-10-11 实体显式组件初始化精简：验收准备
+
+- 仅删除MEntity.OnBeforeInitialize的AppendExtraComponents调用并调整函数说明，确认显式位移挂接与基类普通初始化保留。客户端Assets/Packages登记依赖检查及末稿真实编译、实体生命周期回归由独立Agent执行。
+- 新证据_temp/entity-explicit-components-20261011；前次189与编译仅历史证据，不替代本轮。正式日志项目修改日志/2026-10-11-ENTITY-EXPLICIT-COMPONENTS-CHANGELOG.md，结果待报告。
+
+### 实体显式组件初始化精简：最终验收
+
+- 独立两报告PASS，主已读取；271真实GM_Game源码本轮Rebuild零错/37既有警告，原夹具复制新目录重新执行189断言（63运动＋92生命周期＋34真实实体组件），退出0。不新增镜像测试或复用历史通过数。
+- Assets/Packages的RegisterExtraComponents/AppendExtraComponents仅定义无实际调用；MEntity显式位移创建、原Builder装配及真实MObject.Initialize的虚装配→普通容器Initialize→Active保持。唯一源码变化为删Append调用及修summary；中文注释及禁止语法检查通过。
+- 2796保护中2795不变，恰MEntity授权变化，无增删越界。上轮组件八路径除MEntity外七项保持，含共享枚举与两DLL；用户F13/end111/F49、Runtime、资源meta和场景保持。主核开发1末稿＋独立1末稿＋271编译输入＋45运行输入，共318项SHA零差异，root-manifest-check.json=PASS。
+- 本轮未重建共享DLL或跑原生导出。Unity原生/状态机/表资源仍薄边界；真实画面、PlayMode、墙体、Animator精确末帧跨窗、听感、服务器/Bundle未验。无剩余已复现业务阻断，不扩大测试或自动发布。
+- 审计夹具误假设CRLF但真实before为LF，仅修_temp精确删行检查后通过；没有生产返工或覆盖旧证据。证据_temp/entity-explicit-components-20261011/review下两报告、final-audit、271编译与45运行输入/日志、依赖搜索/精确差分及develop的before/末稿manifest，主root-manifest-check。正式日志项目修改日志/2026-10-11-ENTITY-EXPLICIT-COMPONENTS-CHANGELOG.md及CURRENT_TASK已同步；临时保留待产品经理确认清理。
+
+## 2026-10-11 RO 技能CD与脱手生命周期：验收准备
+
+- 独立核RO两类CD键/秒单位/工厂借还、MSkill.Update返回bool/Cease及当前实体与状态机更新时序；冻结本轮现有工作区，准备真实链CD行为和脱手回归。
+- 业务由ro_cd_lifetime_develop实现，ro_cd_lifetime_review独立验证，不通过返工。旧189仅历史证据，本轮必须重新运行受影响链并核实际预测/权威CD查询及回收，真实源编译与最终输入SHA。
+- 临时_temp/ro-skill-cd-lifetime-20261011，不覆盖旧证据；正式日志项目修改日志/2026-10-11-RO-SKILL-CD-LIFETIME-CHANGELOG.md。资产F13/end111/F49保持，现场Unity与隔离边界分别记录。
+
+### RO 技能CD与脱手生命周期：最终独立验收
+
+- 独立两报告及final-audit均PASS，主已读取；253末稿断言通过＝原189本轮重跑（63运动＋92既有生命周期＋34实体）＋48新CD＋16新生命周期，dotnet运行退出0。47完整生产文件包含真实实体/组件管理器/基类/容器、技能/Core/工厂/池/计时器/模型/运动及两个新类型，Unity原生、表资源和状态机仍薄边界。
+- 48CD覆盖实际Set影响CanStart/查询、两表同引用和同数字键隔离、同值刷新/缩短校正、零值/多项到期/清场归池、毫秒桥/不缩放/时钟跳变/同刻不双扣/睡眠暂停、预测与成功/拒绝/重复旧UUID/超时回滚、升级/移除/Shutdown。16生命周期覆盖当前/脱手唯一推进、默认与true Cease归池、未来Timer和冷GO取消、正在播放声音停止、删前项不漏双更新、同对象池重借重Fire旧false隔离。自然End晚事件/冷GO/完整声尾及Q/位移末帧通过当前原189回归。
+- 独立273完整GM_Game源码Rebuild零错/37基线旧警告，开发同数量零错；基线271编译另存，不能当末稿。主开发10manifest＋273编译、独立10manifest＋273编译＋47运行，共613项SHA零差异，root-manifest-check.json=PASS。
+- 范围5旧业务源、2新独立类型及2meta、既有生成工程索引共10路径。独立2796保护2791不变/5授权旧C#修改/4新源码meta，无删除越界；作者F13/end111/F49、Runtime、资源/场景/meta、共享DLL、服务器协议表及前置成果保持。七源逐声明中文注释和禁namespace/foreach/三目/弱载荷通过，新GUID各唯一。
+- 生成GM_Game.csproj不在双方baseline且没有before字节快照；仅核两新Compile各一次、原271索引均在及开发replace脚本，不能声明其他节点完整before保护。新增差分无尾空白，HEAD整文件仍有MArtSkill既有用户登记行空白，不误称全HEAD检查通过。
+- 主审首稿Cease(false)不终止而等待自然End，已交开发修为任意cleanUp都真结束；默认资源注销专项复验通过，自然End等待仍仅原ApplyServerEnd(false)契约。原189断言和数据保持，薄Tick改真实Skill先Machine调度。夹具XML声明utf8和float精确1.7阈值残量仅修_temp，生产未迎合；239/249候选和失败日志保留，不计末稿通过数。
+- 证据_temp/ro-skill-cd-lifetime-20261011/review两报告、final-audit/10末稿、final-diff、runtime-final.log/47输入、GM_Game-build.log/273输入及独立baseline；develop的before/末稿/编译/规范/保护，主root-manifest-check。正式分析、项目修改日志/2026-10-11-RO-SKILL-CD-LIFETIME-CHANGELOG.md及四入口已同步。
+- 无剩余已复现代码/规范阻断。本轮未重建共享DLL、执行原生导出、挂正式测试组件或保存现场；网络仅源码核链及完整编译。实际PlayMode/画面/键盘施法/听感/墙体/Animator精确末帧跨窗/服务器联调/Bundle未验。下一步原正式入口体验，不扩大测试或自动发布资产，临时保留待产品经理确认清理。
+# 2026-10-11 RO 技能去除额外确认等待：验收准备
+
+- 新需求覆盖旧逐笔预测确认超时回滚；分析、开发、独立审核已委派。新目录保存当前 before，生成工程提前保存快照，保护当前作者 F13/end111/F49 与既有成果。
+- 待验证：无服务器确认的再次施放和生命周期、实际回包 CD/MP/拒绝链、旧 UUID 去重、Q、自然尾段与实体位移；本轮尚未得到编译或运行结果，旧 253 仅历史证据。
+- 正式日志 `项目修改日志/2026-10-11-RO-SKILL-NO-CONFIRM-WAIT-CHANGELOG.md`，新临时证据 `_temp/ro-skill-no-confirm-wait-20261011/`，失败交开发返工。
+
+## RO 技能去除额外确认等待：最终验收
+
+- 主已读取本轮 independent-review.md、independent-test-report.md 与 final-audit.json，三者结论均 PASS；605 项 SHA 复核和六份正式文档差分空白检查通过，当前任务已收尾。
+- 独立 final-audit PASS，无生产代码失败；本轮 275 项重新运行通过：92 既有表现生命周期、63 运动、34 实体、49 新语义 CD、16 Cease/池重入、21 无确认专项。旧确认超时断言按用户新语义替换，历史 253 不作为本轮结果。
+- 51 完整生产输入包括真实 SkillCtrl、SkillViewData、实体/组件/技能/Core/工厂/计时/模型/运动及 protobuf 的真实 Request/Result 编解码；快捷输入→发包→立即表现→跨旧期限再次施放→迟到 CD/MP/两窗口、旧拒绝保新实例、无 End 回池后最新结果、重复/旧连接、UUID 重用、升级旧核心 Cease 保新及权威 CD 均通过。输入/Socket/UI/基础信息/SceneWorld、Unity原生资源和状态机仍薄边界，不冒称真实网络联调。
+- 独立及开发 273 真实客户端源码 Rebuild 零错误/37 既有警告；四源码中文声明与参数/局部用途审查及禁 namespace/foreach/三目/弱业务载荷通过，新增差分无空白问题。业务中不加入测试入口。
+- 主复核开发 4 末稿+273 编译、独立 4 末稿+273 编译+51 运行，共 605 项 SHA 零差异；`root-manifest-check.json` PASS。独立 2801 路径前置保护2797不变、四授权旧源改动，无新增删除越界；本轮工程有真实 before，全部字节不变。旧 MSkillPrediction 定义仍编译/链接但无运行业务调用，未删除用户源/meta/索引。
+- 必要自查修正：新施放清已应用 UUID 标记支持回绕；Cease 读当前安装 Core 避免升级前旧核心清新 CD；均重新编译和运行。无未来制作的脱手推进夹具改为含未来事件，旧期限期望改新语义、剪辑时长和重复薄角色定义只修 `_temp`，失败日志保留，生产未迎合夹具。
+- 当前无未修复已复现业务阻断。未重建共享 DLL、执行原生导出或发布 Bundle；作者 F13/end111/F49、Runtime、资源/meta/正式场景、服务器协议/表保持。真实 TCP/服务器、PlayMode/画面/听感、原生墙体与 Animator 精确末帧跨窗未验。
+- 证据：本轮 review 下 runtime-final.log、51运行/273编译输入SHA、GM_Game-build.log、final-audit、verified-source-hashes、独立两报告及before；develop下四源manifest/diff/273编译/规范/保护，主root_verify.py/root-manifest-check.json。正式日志和分析同步，临时保留待产品经理确认清理，下一步原正式入口体验，不扩大无关验证。
+
+# 2026-10-11 RO 技能更新精简：验收准备
+
+- 开发与独立审查已委派，新 `_temp/ro-skill-update-simple-20261011/` 保存事前源码、包装源/meta和生成工程完整快照。
+- 待验真实 RO 当前动作 OnUpdate 与常驻列表倒序 Update 分工、每帧一次/Cease自删除、Q/自然尾/声音/冷 GO/Timer、无确认/迟到结果和运动实体；去除仅用于假设重入的旧断言，不为它们恢复快照包装。
+- AGENTS.md、AIconfig/workflow.md 已加入参考移植优先原结构/最小适配/不扩需求外机制的约束；实际业务结果尚待末稿，不引用旧275作为本轮通过。
+- 日志 `项目修改日志/2026-10-11-RO-SKILL-UPDATE-SIMPLE-CHANGELOG.md`，未验真实Unity或网络；不改资源、不自动发布、不清临时。
+
+## RO 技能更新精简：最终独立验收
+
+- 主已读取本轮 independent-review.md、independent-test-report.md、final-audit.json，结论均PASS，无已复现业务阻断。独立274断言＝92生命周期+63运动+34实体+49CD+15列表/Cease+21无确认，50完整生产源含真实SkillCtrl/protobuf执行；272真实GM_Game源Rebuild零错/37旧，不能用历史275/273替代本轮。
+- 真实Entity验证当前仅动作OnUpdate推进、Skill先Machine导致移交当帧不重复、下一帧列表一次推进；倒序三普通生产技能两项自Cease移除，中间存活技能不漏。Q/自然Timer晚事件/冷GO/完整声音/默认Cease/无确认续放/迟到CD与MP/实体运动均重新运行。移除三项假设虚Update删兄弟/重Fire断言，补两项普通自删除回归，275−3＋2＝274，不为人造场景恢复包装。
+- 五业务路径为两源码、工程索引和包装源/meta删除；2801保护2796不变、三授权修改/两授权删除，无新增或越界。删除类型仅前次Agent新增且无用户其他使用；CD更新块完整字节相同，真实异步计时代次保持。
+- 独立工程保护发现删Compile丢BOM，交开发恢复后精确核92687→92598，仅89字节Compile删除，其余BOM/换行/节点一致。未变业务不扩大重测。首夹具缺Stop仅补_temp薄边界，失败日志保留；生产未为夹具改逻辑。
+- 主root_verify.py重算开发3末稿+272编译、独立3末稿+272编译+50运行，共600项SHA零差异，另核两删除文件before SHA及正式路径不存在，root-manifest-check PASS。两源码修改范围中文声明/参数/索引/局部用途和禁namespace/foreach/三目/弱载荷、新增差分空白检查通过。
+- 正式约束修改AGENTS.md和AIconfig/workflow.md，四协作入口和项目分析/RO_SKILL_CD_LIFETIME.md同步；主只协调/记录，业务由开发Agent实施并独立审核。详细日志项目修改日志/2026-10-11-RO-SKILL-UPDATE-SIMPLE-CHANGELOG.md。
+- 证据本轮review两报告、final-audit、manifest/删除SHA、274日志、272编译/50运行SHA；develop的before/manifest/diff/272构建/保护和csproj-byte-check，主600项复核。作者F13/end111/F49/Runtime、资源/正式场景、服务端/表/协议及共享DLL保持，不导出或挂测试组件。
+- 未验真实Unity PlayMode/画面/听感、TCP/服务器、原生墙体、Animator精确末帧或Bundle；Unity/状态机/输入SocketUI/资源交付为薄边界。下一步原入口体验，不扩大测试或清临时。
+
+# 2026-10-11 技能 CD 提前清零：验收准备
+
+- 用户报告无限施放；源码疑点为Cease自然回收调用Reload清单CD。独立需在修改前完整输入链复现10秒CD/0.5秒表现、约0.61秒后再次输入成功，再用同场景验证修复后CD剩余/请求数。
+- 当前尚无本轮运行或编译结果；274历史结果不能替代新缺陷验证。旧“预表现Cease清CD”期望必须按本次实际缺陷修正，真实等待层不复活。
+- 新证据 `_temp/skill-cd-early-reset-20261011/`，正式日志 `项目修改日志/2026-10-11-SKILL-CD-EARLY-RESET-CHANGELOG.md`；开发最小两源，独立复现/编译/正常CD及受影响回归后收尾。
+
+## 技能 CD 提前清零：最终独立验收
+
+- 主已读取independent-review.md、independent-test-report.md、final-audit.json，三者PASS。before完整SkillCtrl/protobuf输入实际输出0.61秒CD=0/已回池/第二次请求成功；同一末稿保9.39秒契约在冻结旧两源实际失败，末稿通过，before两日志与契约失败报告保留。
+- 独立298当前断言＝274受影响回归重跑+9真实输入早回收CD+15正式五技能配置。0.61秒回池但仍9.39秒CD、20次快捷键不发包不创建、9.99秒阻断/10秒归零成功，中断保9.9秒；旧UUID/升级回收/成功拒绝迟到重复、Q、未来Timer/冷GO/声尾/实体运动均通过。零CD仅兼容用例，当前正式配置没有零CD行。
+- 50完整生产源包含真实SkillCtrl/协议编解码/Factory/Core/Component/Timer/池/Entity/Model/Move等；当前实际生成TbSkillEffectInfo/ByteBuf独立只读解析bytes，CD五行为500/8000/10000/9000/13000毫秒、组0，与xlsx一致，真实Factory乘0.001f和正式行值输入验证通过。查询映射/资源交付、Unity原生/状态机/输入SocketUI/基础角色仍薄边界，不称现场网络或资源加载实测。
+- 独立及开发272真实GM_Game源码Rebuild零错误/37既有警告；实际两旧源仅删除Cease→Reload清CD与无其他调用Reload定义，补一中文职责注释，无新增声明/字段/接口/状态。禁namespace/foreach/三目/弱载荷、新增差分空白和中文修改范围审查通过。
+- 主root_verify.py复核开发2末稿+272编译、独立2末稿+272编译+50运行+10实际配置读取，共608项SHA零差异；root-manifest-check PASS。2799前置保护2797保持/两授权修改，无增删越界，工程真实before全部字节一致，用户作者/Runtime/资源/meta/场景/表/协议/DLL保持。
+- before输入共50：保护baseline覆盖42，额外8共享实体/生成协议源按原before运行SHA另核不变；同契约before与原before全部50一致，不冒称保护baseline覆盖全部输入。独立审计曾以布尔false表示部分输入未在baseline，已改具名覆盖42+8/各自差异0结构，非业务失败，没有扩大或重复运行。
+- 旧测试缺口为自然无确认回池/迟到结果通过却未断言池后仍有合法CD，本轮beforeFAIL/finalPASS新增用例补齐，未保错误清CD期望。无剩余已复现阻断；不改配置、不重建共享DLL、不导出或发布、不挂正式测试组件。
+- 证据本轮review两报告/audit、before与同契约失败、298运行、272编译/50运行/10配置SHA及真实生成读取器结果；develop两末稿/diff/编译/保护/实际表证据，主608复核。正式日志项目修改日志/2026-10-11-SKILL-CD-EARLY-RESET-CHANGELOG.md与四入口/分析同步。
+- 未验真实Unity PlayMode/画面/听感、TCP/服务器、原生墙体、Animator精确末帧/Bundle；下一步原入口体验，临时保留待产品经理确认清理，不扩大已通过验证。
+
+# 2026-10-11 客户端/服务端 Git 上传：准备
+
+- 已读取仓库分支/远端/状态，客户端和服务端在同一根仓库，main存在一个未推送提交，origin/main只读查询成功。
+- 本次不修改业务或导出资源；最近技能298运行/272编译为已有证据，不声明本次新跑。检查暂存完整性、临时文件排除、文件大小和远端提交一致，结果完成追加。
+- .gitignore与上传日志/协作记录纳入；本机UserSettings保留未暂存，缓存/备份/锁文件留本地。日志 `项目修改日志/2026-10-11-CLIENT-SERVER-GIT-UPLOAD-CHANGELOG.md`，证据 `_temp/git-upload-20261011/`。
+

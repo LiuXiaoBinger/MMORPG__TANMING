@@ -177,6 +177,12 @@ public abstract class MEntity : MSceneObject
     /// <summary>移动组件（专用快捷组件，由 MComponentMgr 注入）</summary>
     public MMoveComponent MoveComp { get; private set; }
 
+    /// <summary>实体直属的普通位移组件，由普通容器负责初始化、每帧推进和池回收。</summary>
+    protected MDisplacementComponent _displacementComp;
+
+    /// <summary>技能计时器与输入移动读取的同一实体位移实例；实体未装配或已销毁时为空。</summary>
+    public MDisplacementComponent DisplacementComp { get { return _displacementComp; } }
+
     /// <summary>Buff 组件（专用快捷组件，由 MComponentMgr 注入）</summary>
     public MBuffComponent Buff { get; private set; }
 
@@ -256,15 +262,15 @@ public abstract class MEntity : MSceneObject
         base.Initialize();
     }
 
-    /// <summary>初始化前追加额外普通组件</summary>
+    /// <summary>显式挂接实体位移组件，再交基类进入普通组件初始化流程。</summary>
     protected override void OnBeforeInitialize()
     {
-        MComponentMgr.Instance.AppendExtraComponents(this);
+        _displacementComp = MComponentMgr.singleton.CreateComponent<MDisplacementComponent>(this);
         base.OnBeforeInitialize();
     }
 
     /// <summary>
-    /// 每帧逻辑更新：先驱动专用组件，再走基类普通组件更新，最后同步模型位置和朝向
+    /// 每帧先推进普通位移组件，再驱动原专用组件和其余普通组件，最后消费模型位移。
     /// </summary>
     /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
     public override void Update(int deltaMilliseconds)
@@ -274,7 +280,9 @@ public abstract class MEntity : MSceneObject
             return;
         }
 
-        // 移动、Buff、技能和状态机属于实体专用组件，必须在普通表现组件之前推进。
+        // 程序差量先求值，专用 Move 再统一提交碰撞；保留 Move 先于技能离槽处理的原顺序。
+        Components.UpdateBeforeMovement(deltaMilliseconds);
+        // 移动、Buff、技能和状态机仍在其余普通表现组件之前推进。
         MComponentMgr.Instance.UpdateSpecialComponents(this, deltaMilliseconds);
         base.Update(deltaMilliseconds);
         Move();
@@ -427,6 +435,8 @@ public abstract class MEntity : MSceneObject
     /// </summary>
     protected override void OnDestroying()
     {
+        // 普通容器已回收位移组件，清快捷引用后再释放技能，避免碰触已归池实例。
+        _displacementComp = null;
         // 先释放专用组件
         MComponentMgr.Instance.ReleaseSpecialComponents(this);
         // 再回收模型到模型池
@@ -522,6 +532,7 @@ public abstract class MEntity : MSceneObject
         BattleIdle = false;
         IsMixToDefaultAction = true;
         MoveComp = null;
+        _displacementComp = null;
         Buff = null;
         Skill = null;
         Machine = null;

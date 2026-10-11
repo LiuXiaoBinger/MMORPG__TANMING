@@ -1,0 +1,216 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63be86e5a5c2bfd4a8f571387edbfe20, type: 3}
+  m_Name: SkillConfigSO_3004001
+  m_EditorClassIdentifier: 
+  RotateList: []
+  MobUnitList: []
+  AIEventList: []
+  BuffList: []
+  ChangeColorList: []
+  SkillBarList: []
+  ShakeList: []
+  CameraPostEffect:
+    UseCameraEffect: 0
+    EveryOne: 0
+    Range: 0
+    At: 0
+    End: 0
+    EffectType: 0
+    Args0: 0
+    Args1: 0
+    Index: 0
+  CameraFxData: []
+  actionEditorSchemaVersion: 1
+  timingVersion: 1
+  phases: []
+  timelineFrameRate: 30
+  flowNodes: []
+  skillID: 10040
+  skillName: "\u6E05\u98CE\u5251\u6CD5"
+  skillDescription: "\u6E05\u98CE\u5251\u6CD5\uFF0C\u7A81\u523A\u524D\u65B9\u533A\u57DF\u5185\u6240\u6709\u654C\u4EBA\uFF0C\u5E76\u9020\u62105\u6B21<color=#F00>(120-130)%</color>\u4F24\u5BB3\u3002"
+  skillType: 2
+  previewModelName: Role_MJS
+  ownerType: 0
+  skillCD: 0
+  cancelPriority: 0
+  energyCostOnActivate: 0
+  defaultEnergyGainOnHit: 0
+  animSegments:
+  - clip: {fileID: 7400000, guid: 3cb1688486b8c6547a872272501acaef, type: 2}
+    startFrame: 0
+    clipStartFrame: 0
+    clipEndFrame: 0
+    blendInFrames: 0
+  skillClip: {fileID: 7400000, guid: 3cb1688486b8c6547a872272501acaef, type: 2}
+  exitFrame: 0
+  moveSegmentList:
+  - keyNumber: 0
+    endKeyNumber: 92
+    driveMode: 1
+    rootMotionScale: 1
+    space: 0
+    origin: 0
+    target: 0
+    resolveDirectionPerFrame: 0
+    customDirection: {x: 0, y: 0, z: 0}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 0
+      m_PostInfinity: 0
+      m_RotationOrder: 0
+    maxDistance: 0
+    targetOffset: {x: 0, y: 0, z: 0}
+    offsetSpace: 0
+    stopAtTargetOffset: 0
+    arriveTolerance: 0
+    minKeepDistance: 0
+    verticalCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 0
+      m_PostInfinity: 0
+      m_RotationOrder: 0
+    verticalDistance: 0
+    alignFacing: 0
+    ignoreGravity: 0
+    ignoreActorCollision: 0
+    overshootPolicy: 0
+  moveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  totalMoveDistance: 0
+  tracks:
+  - type: 0
+    displayName: 
+    expanded: 1
+  - type: 2
+    displayName: 
+    expanded: 1
+  - type: 5
+    displayName: 
+    expanded: 1
+  jumpList: []
+  attackList: []
+  cameraCues: []
+  fxList:
+  - contentKind: 1
+    keyNumber: 9
+    endKeyNumber: 0
+    particleSystem: {fileID: 8701421742278864558, guid: 10a89178a9905cf469575043f6255f62, type: 3}
+    offset: {x: 0, y: 0, z: -1}
+    socketPath: EffectPos
+    placementKind: 1
+    forwardDistance: 0
+    audioClip: {fileID: 0}
+    followCharacter: 1
+    rotation: {x: -92, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  - contentKind: 1
+    keyNumber: 36
+    endKeyNumber: 0
+    particleSystem: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+    offset: {x: -0.04, y: 0.1, z: -0.49}
+    socketPath: EffectPos
+    placementKind: 1
+    forwardDistance: 0
+    audioClip: {fileID: 0}
+    followCharacter: 1
+    rotation: {x: 81.45, y: 346.05, z: 142.66}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  - contentKind: 2
+    keyNumber: 9
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: 
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 3095adc0f432b6b45ab407db95cc5267, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.65
+  - contentKind: 2
+    keyNumber: 36
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: 
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 590384e82dc51ba4490cce70b75f0dc1, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.3
+  cancelList: []
+  projectileList: []
+  hitFxList: []
+  interactionWindows: []
+  moveCancelFrame: -1
+  warningCueList: []
+  superArmorList: []
+  adjustMotionList: []
+  trailToggleList: []
+  isSuperArmorSkill: 0
+  phase2AttackList: []
+  phase2FxList: []
+  phase2RangeMultiplier: 1

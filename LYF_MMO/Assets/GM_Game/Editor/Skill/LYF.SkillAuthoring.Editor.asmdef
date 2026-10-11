@@ -1,0 +1,7 @@
+{
+  "name": "LYF.SkillAuthoring.Editor",
+  "rootNamespace": "",
+  "references": ["GM_Game", "Ethan.ActionEditor.Runtime", "Ethan.ActionEditor.Editor"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

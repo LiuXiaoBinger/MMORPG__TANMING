@@ -487,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 5214432260198619977, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: _mainRoleCtrl
       value: 
-      objectReference: {fileID: 443721698}
+      objectReference: {fileID: 0}
     - target: {fileID: 6359616036830003013, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_Name
       value: UIRoot
@@ -570,17 +570,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e9d9b10bd3819e4ab5568e5f7a81e78, type: 3}
---- !u!114 &443721698 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5015143598541242322, guid: 0e9d9b10bd3819e4ab5568e5f7a81e78, type: 3}
-  m_PrefabInstance: {fileID: 443721697}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ebf0cb64092380468bcca60b4d9fcc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &443721699 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1627460630017519509, guid: 0e9d9b10bd3819e4ab5568e5f7a81e78, type: 3}
@@ -1414,6 +1403,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCity_Geometry
       objectReference: {fileID: 0}
+    - target: {fileID: 4182671143565922927, guid: 32e5fb71e6a9be840acebadfc1bf182f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4659532506089449999, guid: 32e5fb71e6a9be840acebadfc1bf182f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1986,6 +1979,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 740b409a06d15e24585f64ea5178177c, type: 3}
       propertyPath: m_Name
       value: SK_INQUISITOR_M_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 740b409a06d15e24585f64ea5178177c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 740b409a06d15e24585f64ea5178177c, type: 3}
       propertyPath: m_Controller

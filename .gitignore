@@ -33,6 +33,20 @@ LYF_Server/packages/
 # Generated HybridCLR output
 LYF_MMO/HybridCLRData/
 
+# 临时文件目录
+LYF_MMO/_temp/
+/_temp/
+/_prefab_cleanup_backup_*/
+/.codex/
+/.codely-cli/
+/LYF_MMO/UserSettings/
+~$*.xlsx
+
+# 本地分析截图与嵌入包规划，不作为项目源码发布
+/项目分析/_shots/
+/LYF_MMO/Packages/com.ethan.act-action-editor/ROADMAP.zh-CN.md
+/LYF_MMO/Packages/com.ethan.act-action-editor/ROADMAP.zh-CN.md.meta
+
 # OS files
 .DS_Store
 Thumbs.db

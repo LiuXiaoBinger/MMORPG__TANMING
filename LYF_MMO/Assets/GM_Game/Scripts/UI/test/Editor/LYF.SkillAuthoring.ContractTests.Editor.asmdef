@@ -1,0 +1,7 @@
+{
+  "name": "LYF.SkillAuthoring.ContractTests.Editor",
+  "rootNamespace": "",
+  "references": ["GM_Game", "LYF.SkillAuthoring.Editor", "Ethan.ActionEditor.Runtime"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false
+}

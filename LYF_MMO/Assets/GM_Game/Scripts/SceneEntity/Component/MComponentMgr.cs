@@ -303,24 +303,7 @@ public sealed class MComponentMgr
         }
     }
 
-    /// <summary>按实体类型批量创建并挂接登记过的附加组件。</summary>
-    /// <param name="entity">宿主对象，未登记过附加组件的实体直接返回。</param>
-    public void AppendExtraComponents(ROObject entity)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-        List<Type> types;
-        if (!_extraComponentTypes.TryGetValue(entity.EntityType, out types))
-        {
-            return;
-        }
-        for (int index = 0; index < types.Count; index++)
-        {
-            CreateComponent(entity, types[index]);
-        }
-    }
+    
 
     /// <summary>从普通组件池取出一个可复用组件，池中无可用实例时反射新建。</summary>
     /// <param name="owner">宿主对象，用于构造新组件。</param>

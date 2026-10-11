@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e1014802217754caf00538866b10a2, type: 3}
+  m_Name: SkillRuntimePresentation_3004001
+  m_EditorClassIdentifier: 
+  PresentationId: 3004001
+  SkillId: 10040
+  AnimationLocation: Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Skill01.anim
+  DurationSeconds: 3.1
+  FxEvents:
+  - SourceEventIndex: 0
+    Frame: 9
+    TimeSeconds: 0.3
+    Particle: {fileID: 8701421742278864558, guid: 10a89178a9905cf469575043f6255f62, type: 3}
+    PlacementKind: 1
+    SocketPath: EffectPos
+    LocalPosition: {x: 0, y: 0, z: -1}
+    LocalEulerAngles: {x: -92, y: 0, z: 0}
+    LocalScale: {x: 1, y: 1, z: 1}
+    ForwardDistance: 0
+  - SourceEventIndex: 1
+    Frame: 36
+    TimeSeconds: 1.2
+    Particle: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+    PlacementKind: 1
+    SocketPath: EffectPos
+    LocalPosition: {x: -0.04, y: 0.1, z: -0.49}
+    LocalEulerAngles: {x: 81.45, y: 346.05, z: 142.66}
+    LocalScale: {x: 1, y: 1, z: 1}
+    ForwardDistance: 0
+  AudioEvents:
+  - SourceEventIndex: 2
+    Frame: 9
+    TimeSeconds: 0.3
+    Clip: {fileID: 8300000, guid: 3095adc0f432b6b45ab407db95cc5267, type: 3}
+    Volume: 0.65
+  - SourceEventIndex: 3
+    Frame: 36
+    TimeSeconds: 1.2
+    Clip: {fileID: 8300000, guid: 590384e82dc51ba4490cce70b75f0dc1, type: 3}
+    Volume: 0.3
+  RootMotionSegments:
+  - StartSeconds: 0
+    EndSeconds: 3.1
+    Scale: 1

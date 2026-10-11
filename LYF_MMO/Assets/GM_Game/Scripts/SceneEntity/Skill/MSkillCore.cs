@@ -4,9 +4,6 @@
 /// </summary>
 public sealed class MSkillCore
 {
-    /// <summary>RO 预表现时长结束后等待服务器确认的秒数。</summary>
-    private const float PerformanceGraceSeconds = 2f;
-
     /// <summary>RO 本地动作轮换间隔超过十秒时重新使用第一段。</summary>
     private const float ComboResetSeconds = 10f;
 
@@ -55,15 +52,17 @@ public sealed class MSkillCore
     /// <summary>当前选中动作占用技能状态的时长，单位为秒；与完整剪辑长度分开。</summary>
     public float SkillStateTimeSeconds { get; private set; }
 
-    /// <summary>当前冷却截止的本机不受时间缩放影响的时间，单位为秒。</summary>
-    private float _cooldownEndRealtime;
+    /// <summary>已装配核心所属的组件；装配后单技能 CD 只在其 RO 冷却记录内保存，核心只保最近施法及结果去重身份。</summary>
+    private MSkillComponent _cooldownOwner;
 
-    /// <summary>尚待确认的独立施法记录，连击动画结束后不丢弃上一段 UUID。</summary>
-    private readonly System.Collections.Generic.List<MSkillPrediction> _predictions =
-        new System.Collections.Generic.List<MSkillPrediction>();
+    /// <summary>尚未装配到实体的独立核心使用的冷却截止秒数；装配后不再作为 CD 数据源。</summary>
+    private float _cooldownEndRealtime;
 
     /// <summary>该核心最后启动的施法 UUID，仅此 UUID 可更新当前冷却快照。</summary>
     private ulong _latestSkillUuid;
+
+    /// <summary>最近已应用权威结果的 UUID，仅用于重复结果去重，不阻止施法或按帧等待回包。</summary>
+    private ulong _latestResultUuid;
 
     /// <summary>字典和存活施法实例合计持有数；为零时由工厂归还。</summary>
     private int _ownerCount;
@@ -113,13 +112,29 @@ public sealed class MSkillCore
         {
             // 旧单段调用入口也必须借用可归还的动作数据。
             MSkillData fallbackData = MCommonObjectPool<MSkillData>.Get();
-            fallbackData.Initialize(0, animationLocation,
+            fallbackData.Initialize(0, 0, animationLocation,
                 animationDurationSeconds, animationDurationSeconds);
             _presentations.Add(fallbackData);
         }
+        _cooldownOwner = null;
         _cooldownEndRealtime = 0f;
         _latestSkillUuid = 0;
+        _latestResultUuid = 0;
         _ownerCount = 1;
+    }
+
+    /// <summary>将已学核心的 CD 接到实体组件唯一记录；等级更换继续使用同技能原记录，不复制倒计时。</summary>
+    /// <param name="owner">持有本核心的技能组件，不能跨实体共享。</param>
+    public void BindCooldown(MSkillComponent owner)
+    {
+        // 独立核心装配前的剩余秒数，仅在组件尚无该技能记录时移交。
+        float remainingSeconds = GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
+        _cooldownOwner = owner;
+        if (owner != null && !owner.SkillCDDic.ContainsKey(SkillId) && remainingSeconds > 0f)
+        {
+            owner.SetSkillCD(SkillId, remainingSeconds);
+        }
+        _cooldownEndRealtime = 0f;
     }
 
     /// <summary>施法实例持有核心直到其 UUID 生命周期结束。</summary>
@@ -146,7 +161,7 @@ public sealed class MSkillCore
         }
     }
 
-    /// <summary>最终归还时清除动作段和预测记录，旧施法引用已全部解除。</summary>
+    /// <summary>最终归还时清除动作段及最近施法身份，旧施法引用已全部解除。</summary>
     public void Reset()
     {
         // index 为核心独占动作段列表的零起始下标，逐项归还后统一清空容器。
@@ -158,15 +173,6 @@ public sealed class MSkillCore
             MCommonObjectPool<MSkillData>.Release(data);
         }
         _presentations.Clear();
-        // index 为预测记录列表的零起始下标，逐项归还尚未确认的临时记录。
-        for (int index = 0; index < _predictions.Count; index++)
-        {
-            // 尚未确认的预测记录，随核心一起失效。
-            MSkillPrediction prediction = _predictions[index];
-            prediction.Reset();
-            MCommonObjectPool<MSkillPrediction>.Release(prediction);
-        }
-        _predictions.Clear();
         SkillId = 0;
         Level = 0;
         EffectId = 0;
@@ -179,25 +185,34 @@ public sealed class MSkillCore
         AnimationLocation = null;
         AnimationDurationSeconds = 0f;
         SkillStateTimeSeconds = 0f;
+        _cooldownOwner = null;
         _cooldownEndRealtime = 0f;
         _latestSkillUuid = 0;
+        _latestResultUuid = 0;
         _usingTimes = -1;
         _fireRealtime = 0f;
     }
 
-    /// <summary>当前是否存在等待服务器接受或拒绝的预测施法。</summary>
-    public bool HasPendingPrediction
-    {
-        get { return _predictions.Count > 0; }
-    }
-
-    /// <summary>是否配置多段武器动作；只有此类普通连击可在旧段等待确认时续下一段。</summary>
+    /// <summary>是否配置多段武器动作，用于本地次数轮换和每段动作解锁窗口。</summary>
     public bool HasMultiplePresentations { get { return _presentations.Count > 1; } }
 
     /// <summary>本地或服务器最近选择的动作序号，从零开始。</summary>
     public int UsingTimes { get { return System.Math.Max(0, _usingTimes); } }
 
-    /// <summary>等级配置更新时继承旧核心的冷却和待确认 UUID，避免技能快照吞掉结果回包。</summary>
+    /// <summary>当前动作段的表现表主键，核心尚无表现段时为零。</summary>
+    public int PresentationId
+    {
+        get
+        {
+            if (_presentations.Count == 0)
+            {
+                return 0;
+            }
+            return _presentations[UsingTimes].PresentationId;
+        }
+    }
+
+    /// <summary>等级配置更新时继承冷却、最近施法及已应用结果身份，旧回包不能覆盖更新一次施法。</summary>
     /// <param name="previous">更新前仍在同一角色上的技能核心。</param>
     public void AdoptRuntimeState(MSkillCore previous)
     {
@@ -205,10 +220,10 @@ public sealed class MSkillCore
         {
             return;
         }
-        _cooldownEndRealtime = previous._cooldownEndRealtime;
-        _predictions.AddRange(previous._predictions);
-        previous._predictions.Clear();
+        _cooldownEndRealtime = UnityEngine.Time.realtimeSinceStartup +
+            previous.GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
         _latestSkillUuid = previous._latestSkillUuid;
+        _latestResultUuid = previous._latestResultUuid;
         _usingTimes = previous._usingTimes;
         _fireRealtime = previous._fireRealtime;
     }
@@ -222,7 +237,7 @@ public sealed class MSkillCore
     /// <summary>查询在给定本机时间和法力值下能否发起技能请求。</summary>
     /// <param name="realtimeSeconds">本机不受时间缩放影响的时间，单位为秒。</param>
     /// <param name="currentMp">角色当前已知法力值，非负整数；最终由服务器校验。</param>
-    /// <returns>配置有效、法力充足且冷却结束时返回 true；单段技能还要求没有待确认请求。</returns>
+    /// <returns>配置有效、法力充足且冷却结束时返回 true；是否收到旧施法回包不构成门禁。</returns>
     public bool CanStart(float realtimeSeconds, int currentMp)
     {
         if (SkillId <= 0 || Level <= 0 || EffectId <= 0 ||
@@ -232,11 +247,11 @@ public sealed class MSkillCore
         {
             return false;
         }
-        if ((!HasMultiplePresentations && HasPendingPrediction) || currentMp < MpCost)
+        if (currentMp < MpCost)
         {
             return false;
         }
-        return realtimeSeconds >= _cooldownEndRealtime;
+        return GetRemainingCooldown(realtimeSeconds) <= 0f;
     }
 
     /// <summary>读取目前剩余的冷却时长，供控制器刷新技能槽。</summary>
@@ -244,7 +259,11 @@ public sealed class MSkillCore
     /// <returns>非负剩余秒数。</returns>
     public float GetRemainingCooldown(float realtimeSeconds)
     {
-        // 冷却剩余秒数，过期时钳制为零，避免界面出现负倒计时。
+        if (_cooldownOwner != null)
+        {
+            return _cooldownOwner.GetSkillCD(SkillId, realtimeSeconds);
+        }
+        // 未挂实体的独立核心保留原不缩放截止时间契约，正式组件不使用该后备。
         float remainingSeconds = _cooldownEndRealtime - realtimeSeconds;
         if (remainingSeconds <= 0f)
         {
@@ -253,7 +272,7 @@ public sealed class MSkillCore
         return remainingSeconds;
     }
 
-    /// <summary>本地请求发送前登记预测冷却，只有对应施法结果可以确认或回滚。</summary>
+    /// <summary>本地请求后立即设置预测 CD 并选动作，使用次数不等待服务器回包推进。</summary>
     /// <param name="skillUuid">客户端生成并由服务器原样回传的非零施法 UUID。</param>
     /// <param name="realtimeSeconds">请求发起时的本机不受时间缩放影响的秒数。</param>
     /// <param name="currentMp">本地已知法力值；该检查仅影响预表现。</param>
@@ -264,22 +283,10 @@ public sealed class MSkillCore
         {
             return false;
         }
-        // 保存预测前的截止时间；只有最后一段超时才能据此回滚，旧段不能覆盖新段 CD。
-        float previousCooldownEnd = _cooldownEndRealtime;
-        _cooldownEndRealtime = realtimeSeconds + CooldownSeconds;
+        ApplyAuthoritativeCooldown(CooldownSeconds, realtimeSeconds);
         _latestSkillUuid = skillUuid;
+        _latestResultUuid = 0;
         AdvancePresentation(realtimeSeconds);
-        // 有动画时按剪辑时长，无动画时按服务器施法时长，均留 RO 的两秒确认宽限。
-        float presentationSeconds = CastDurationSeconds;
-        if (HasPresentation)
-        {
-            presentationSeconds = AnimationDurationSeconds;
-        }
-        // 本次记录由核心持有，直到确认、拒绝、超时或核心清理。
-        MSkillPrediction prediction = MCommonObjectPool<MSkillPrediction>.Get();
-        prediction.Initialize(skillUuid, previousCooldownEnd,
-            realtimeSeconds + presentationSeconds + PerformanceGraceSeconds);
-        _predictions.Add(prediction);
         return true;
     }
 
@@ -320,80 +327,18 @@ public sealed class MSkillCore
         SkillStateTimeSeconds = data.SkillStateTimeSeconds;
     }
 
-    /// <summary>预表现超过确认期限时回滚本次预测冷却。</summary>
-    /// <param name="realtimeSeconds">当前本机不缩放时间，单位为秒。</param>
-    /// <returns>已撤销的施法 UUID，尚未到期时返回零。</returns>
-    public ulong ExpirePrediction(float realtimeSeconds)
-    {
-        // 按启动顺序查找已超过本段确认期限的请求。
-        for (int index = 0; index < _predictions.Count; index++)
-        {
-            // 当前等待确认的单次施法；每次返回一笔，组件继续保留其他待确认记录。
-            MSkillPrediction prediction = _predictions[index];
-            if (realtimeSeconds >= prediction.DeadlineRealtime)
-            {
-                // 撤销前保存 UUID，用于清理对应旧表现而不是当前新段。
-                ulong expiredSkillUuid = prediction.SkillUuid;
-                CancelPrediction(expiredSkillUuid);
-                return expiredSkillUuid;
-            }
-        }
-        return 0;
-    }
-
-    /// <summary>仅对匹配的预测施法应用服务器给出的剩余冷却。</summary>
-    /// <param name="skillUuid">服务器原样回传的单次施法 UUID。</param>
-    /// <param name="remainingCooldownSeconds">权威剩余冷却秒数，负数按零处理。</param>
-    /// <param name="realtimeSeconds">收到结果时的本机不受时间缩放影响的秒数。</param>
-    /// <returns>找到待确认记录时返回 true；旧段可确认实例，但不覆盖最新段的冷却。</returns>
+    /// <summary>最新施法的首次权威结果校正单技能 CD；旧 UUID 或重复结果不会改写后续施法。</summary>
+    /// <param name="skillUuid">服务器原样回传的非零施法 UUID。</param>
+    /// <param name="remainingCooldownSeconds">权威剩余秒数，非正数清除冷却。</param>
+    /// <param name="realtimeSeconds">应用结果的本机不缩放秒数。</param>
+    /// <returns>属于最新施法且尚未应用过该结果时为真，供组件决定是否同步 MP 和组 CD。</returns>
     public bool ApplyCastResult(ulong skillUuid, float remainingCooldownSeconds,
         float realtimeSeconds)
     {
-        // 按索引确认唯一施法 UUID，移除匹配记录后立即返回。
-        for (int index = 0; index < _predictions.Count; index++)
-        {
-            if (_predictions[index].SkillUuid != skillUuid)
-            {
-                continue;
-            }
-            // 匹配记录已脱离核心列表，旧 UUID 不再可被重复确认。
-            MSkillPrediction prediction = _predictions[index];
-            _predictions.RemoveAt(index);
-            prediction.Reset();
-            MCommonObjectPool<MSkillPrediction>.Release(prediction);
-            if (IsLatestCast(skillUuid))
-            {
-                ApplyAuthoritativeCooldown(remainingCooldownSeconds, realtimeSeconds);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /// <summary>发送失败或确认超时后撤销该笔预测，仅最新请求可以回滚当前冷却。</summary>
-    /// <param name="skillUuid">失败请求的单次施法 UUID。</param>
-    /// <returns>UUID 与当前预测一致时返回 true。</returns>
-    public bool CancelPrediction(ulong skillUuid)
-    {
-        // 按索引匹配待撤销请求，旧段与新段分别保存回滚数据。
-        for (int index = 0; index < _predictions.Count; index++)
-        {
-            // 配对的旧段只能撤销自身；最新段才允许恢复预测前的冷却。
-            MSkillPrediction prediction = _predictions[index];
-            if (prediction.SkillUuid != skillUuid)
-            {
-                continue;
-            }
-            if (IsLatestCast(skillUuid))
-            {
-                _cooldownEndRealtime = prediction.PreviousCooldownEnd;
-            }
-            _predictions.RemoveAt(index);
-            prediction.Reset();
-            MCommonObjectPool<MSkillPrediction>.Release(prediction);
-            return true;
-        }
-        return false;
+        if (!IsLatestCast(skillUuid) || _latestResultUuid == skillUuid) return false;
+        _latestResultUuid = skillUuid;
+        ApplyAuthoritativeCooldown(remainingCooldownSeconds, realtimeSeconds);
+        return true;
     }
 
     /// <summary>判断结果是否属于本核心最后发起的一段，用于防止旧回包覆盖更新的 MP/CD。</summary>
@@ -404,7 +349,7 @@ public sealed class MSkillCore
         return skillUuid != 0 && skillUuid == _latestSkillUuid;
     }
 
-    /// <summary>应用服务器主动同步的冷却；不会解除另一笔尚待结果的预测请求。</summary>
+    /// <summary>应用当前权威冷却到唯一 CD 记录，直接供施法校验和正式 UI 查询。</summary>
     /// <param name="remainingCooldownSeconds">服务器给出的非负剩余冷却秒数。</param>
     /// <param name="realtimeSeconds">应用同步时的本机不受时间缩放影响的秒数。</param>
     public void ApplyAuthoritativeCooldown(float remainingCooldownSeconds,
@@ -413,6 +358,11 @@ public sealed class MSkillCore
         if (remainingCooldownSeconds < 0f)
         {
             remainingCooldownSeconds = 0f;
+        }
+        if (_cooldownOwner != null)
+        {
+            _cooldownOwner.SetSkillCD(SkillId, remainingCooldownSeconds, realtimeSeconds);
+            return;
         }
         _cooldownEndRealtime = realtimeSeconds + remainingCooldownSeconds;
     }

@@ -1,0 +1,75 @@
+# ============================================================
+# Codex 多 Agent 项目级配置 —— 全局约束（config.toml）
+# 适用场景：Unity 客户端 + C# 服务端 的多人游戏项目
+# 作用：定义 Codex 主 agent 与全部子 agent 在本项目内的
+#       执行策略、思考粒度、工具边界与项目硬性规范
+# 说明：本文件为项目级配置，仅对当前项目生效。
+#       本文件已按 LYFMMORGP 项目实际目录和技术栈修订。
+# ============================================================
+
+[project]
+name = "LYFMMORGP"
+description = "Unity MMORPG 客户端 + .NET Framework 多服务器后端"
+language = ["csharp", "protobuf", "toml", "markdown"]
+engine = "unity-2023.2.20f1c1"
+server_framework = ".NET Framework 4.8"
+target_platform = ["PC"]
+client_root = "LYF_MMO"
+server_root = "LYF_Server"
+
+[codex]
+# ---------- 执行策略：决定主 agent 如何拆任务、调度子 agent ----------
+strategy = "plan-first"                  # plan-first：先规划再执行（推荐）
+think_granularity = "detailed"           # 思考粒度：detailed / balanced / fast
+max_planning_rounds = 3                  # 每项任务最多规划轮数
+parallel_subagents = true                # 客户端、后端和测试可在边界清晰时并行
+allow_self_review = false                # 主 agent 不直接修改业务代码，只负责调度、验收和记录
+require_subagent_for_business_code = true # 涉及客户端或服务端业务代码时必须创建并委派给对应子 agent
+
+[agent_policy]
+# ---------- 子 agent 运行约束 ----------
+require_scope_check = true               # 执行前先确认是否在自己职责范围内
+require_design_before_code = true        # 写代码前必须先输出简要设计
+max_edit_batch = 20                      # 单轮最多修改文件数
+no_silent_failure = true                 # 失败必须显式报告，不得静默跳过
+report_on_complete = true                # 任务完成必须输出变更摘要
+
+[project_rules]
+# ---------- 项目硬性规范：所有角色（含主 agent）必须遵守 ----------
+code_style = "C# 现有项目风格：显式类型优先、命名清晰；新增或修改业务代码的类型、接口、函数、字段、属性、常量、事件、参数和局部变量必须使用具体中文注释，说明用途、数据语义、单位/范围或生命周期"
+comment_completeness_rule = "新增或修改业务代码必须覆盖类型/接口、函数（含构造函数）、字段、属性、常量、事件、参数及局部变量的具体中文注释；禁止仅重复标识符名称"
+folder_layout = "Unity 客户端位于 LYF_MMO/；.NET 服务端位于 LYF_Server/；临时产物统一位于 _temp/"
+documentation_archives = "项目修改说明统一存放于 项目修改日志/；项目解析、参考分析、架构设计和功能方案统一存放于 项目分析/；Docs/AI 仅保留四份协作入口记录"
+protocol_rule = "协议源文件统一位于 LYF_Server/ProtoBuf/proto/，生成代码进入 Network；禁止绕过协议源文件私自新增消息号"
+determinism_rule = "战斗和帧逻辑使用服务端 LogicTick/固定时间步；禁止用客户端时间或不受控随机作为权威结果"
+performance_rule = "Update、网络回调和高频逻辑避免无必要分配、LINQ、装箱和字符串拼接；需结合现有实现逐步优化"
+version_control = "commit 信息遵循 conventional-commits"
+one_type_per_file = true                 # 每个类、接口、枚举和委托必须独立使用一个源文件
+main_agent_boundary = "主 agent 只负责需求拆解、任务委派、结果验收和协作记录；业务代码必须由对应开发子 agent 修改"
+
+forbidden = [
+  "硬编码 IP / 端口 / 密钥到代码",
+  "服务端逻辑放到客户端做权威校验",
+  "未经审核直接合入主分支",
+  "在 LYF_Server/ProtoBuf/proto 之外自行定义网络协议",
+  "将构建、生成或验证中间文件写入 _temp 之外",
+  "将测试按钮、Mock 或调试入口写入正式业务脚本或正式预制体",
+  "覆盖、回退或删除用户已有修改",
+  "在同一个源文件中定义多个顶级类、接口、枚举或委托",
+  "在项目代码中使用 foreach；集合遍历统一使用 for",
+  "新增或修改业务代码缺少类型、接口、函数、字段、属性、常量、事件、参数或局部变量的具体中文注释",
+  "主 agent 直接修改客户端或服务端业务代码",
+]
+
+[review]
+# ---------- 审查阶段要求（代码审查员执行） ----------
+rounds_limit = 3                         # 每个任务最多审查轮数
+quality_gates = [
+  "协议一致性",      # 消息定义是否与 LYF_Server/ProtoBuf/proto 对齐
+  "帧同步确定性",    # 是否引入破坏确定性的写法
+  "GC 与性能",       # 热路径是否产生 GC 压力
+  "安全",            # 登录鉴权、输入校验、防作弊（服务端权威）
+  "代码规范",        # 是否遵守 code_style、注释完整性与目录规范
+  "项目记录",        # 更新 Docs/AI 协作记录，并将变更日志/专题分析分别归档到项目修改日志/项目分析
+]
+auto_fix_after_review = false            # 审查后必须由开发角色修复，审查员不代改

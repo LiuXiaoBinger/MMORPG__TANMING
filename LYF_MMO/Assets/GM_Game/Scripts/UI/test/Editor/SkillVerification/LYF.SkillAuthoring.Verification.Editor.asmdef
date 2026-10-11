@@ -1,0 +1,7 @@
+{
+  "name": "LYF.SkillAuthoring.Verification.Editor",
+  "rootNamespace": "",
+  "references": ["GM_Game", "LYF.SkillAuthoring.Editor", "YooAsset", "YooAsset.Editor"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

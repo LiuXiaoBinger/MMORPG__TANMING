@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63be86e5a5c2bfd4a8f571387edbfe20, type: 3}
+  m_Name: JX_Attack01_Reference
+  m_EditorClassIdentifier: 
+  actionEditorSchemaVersion: 1
+  timingVersion: 1
+  phases: []
+  timelineFrameRate: 120
+  flowNodes: []
+  skillID: 10010
+  skillName: "JX_Attack01 \u539F\u52A8\u753B\u7279\u6548\u53C2\u8003"
+  skillDescription: "\u65E7 JX \u52A8\u753B\u4E0E PlayEffect \u5B9E\u9645\u4E8B\u4EF6\uFF1B\u4E0D\u7ED1\u5B9A\u6B63\u5F0F
+    MJS Q\u3002"
+  skillType: 1
+  previewModelName: Role_JX
+  ownerType: 0
+  skillCD: 0
+  cancelPriority: 0
+  energyCostOnActivate: 0
+  defaultEnergyGainOnHit: 0
+  animSegments:
+  - clip: {fileID: -7030401614675919370, guid: ce77ffc368ef00c47a724737245b135f, type: 3}
+    startFrame: 0
+    clipStartFrame: 0
+    clipEndFrame: 0
+    blendInFrames: 0
+  skillClip: {fileID: -7030401614675919370, guid: ce77ffc368ef00c47a724737245b135f, type: 3}
+  exitFrame: 0
+  moveSegmentList: []
+  moveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  totalMoveDistance: 0
+  tracks:
+  - type: 0
+    displayName: 
+    expanded: 1
+  - type: 2
+    displayName: 
+    expanded: 1
+  jumpList: []
+  attackList: []
+  cameraCues: []
+  fxList:
+  - contentKind: 1
+    keyNumber: 48
+    endKeyNumber: 0
+    particleSystem: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+    offset: {x: -0.18, y: -0.58, z: -0.58}
+    socketPath: EffectPos
+    placementKind: 1
+    forwardDistance: 0
+    audioClip: {fileID: 0}
+    followCharacter: 1
+    rotation: {x: 40.97, y: 83.41, z: 216.81}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  cancelList: []
+  projectileList: []
+  hitFxList: []
+  interactionWindows: []
+  moveCancelFrame: -1
+  warningCueList: []
+  superArmorList: []
+  adjustMotionList: []
+  trailToggleList: []
+  isSuperArmorSkill: 0
+  phase2AttackList: []
+  phase2FxList: []
+  phase2RangeMultiplier: 1

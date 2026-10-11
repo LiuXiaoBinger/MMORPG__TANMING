@@ -189,6 +189,11 @@ public sealed class MJumpComponent : EntityComponentBase
         if (Entity != null && Entity.MoveComp != null &&
             Entity.MoveComp.HasDirectionalInput)
         {
+            if (Entity.Model != null)
+            {
+                // 移动中落地不播放Jump_End动画，零秒落地声仍由相同编辑轨道触发一次。
+                Entity.Model.Sound.Play(MAnimator.STATE_JUMP_END);
+            }
             _isEnding = false;
             _phaseElapsedSeconds = 0f;
             _pendingStateName = string.Empty;

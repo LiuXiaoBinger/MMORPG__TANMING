@@ -123,13 +123,13 @@ public sealed class MMoveComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 处理本地玩家按键跳跃：地面开始一段跳，空中依次开始二段和三段跳。
+    /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；技能状态即使 MoveCasting 为 true 也禁止主动起跳。
     /// </summary>
     /// <returns>成功开始下一段跳跃时返回 true；未接地或已达到三段时返回 false。</returns>
     public bool TryJump()
     {
         if (Entity == null || Entity.Model == null || !Entity.IsPlayer ||
-            !Entity.IsMovable)
+            Entity.CurrentState == StateDefine.kStateSkill || !Entity.IsMovable)
         {
             return false;
         }
@@ -392,6 +392,26 @@ public sealed class MMoveComponent : EntityComponentBase
         {
             PlayerUpdate(deltaMilliseconds);
         }
+        else
+        {
+            // 远端角色只新增技能曲线移动，不扩造玩家输入、跳跃或 Animator 根运动逻辑。
+            // 实体普通容器已经求值的程序组件；移动组件不持有其生命周期或重复推进它。
+            MDisplacementComponent displacementComp = Entity.DisplacementComp;
+            if (displacementComp == null)
+            {
+                return;
+            }
+            // 当前帧唯一消费的水平米数，模型与当前施法身份仍由位移组件校验。
+            UVEC3 displacement = displacementComp.ConsumeDelta();
+            if (displacement != UVEC3.zero)
+            {
+                Entity.MoveCharacter(displacement);
+                if (Entity.Model.HasSideCollision)
+                {
+                    displacementComp.StopDisplacement();
+                }
+            }
+        }
     }
 
     /// <summary>按当前输入推进玩家水平移动、跳跃垂直速度与落地检测。</summary>
@@ -408,9 +428,9 @@ public sealed class MMoveComponent : EntityComponentBase
 
         // 当前模型的水平速度；跳跃和水平移动在此合成为一次 CharacterController.Move。
         UVEC3 horizontalVelocity = Entity.Model.lastVelocity;
-        // 技能动作禁止空中水平转向；其他动作仍允许跳跃期间记录方向。
-        if (Entity.CurrentState == StateDefine.kStateSkill ||
-            (!Entity.IsMovable && !Entity.IsJump))
+        // 技能动作按 MoveCasting 决定水平输入；禁止移动的技能即使在空中也不保留水平速度。
+        if (!Entity.IsMovable &&
+            (Entity.CurrentState == StateDefine.kStateSkill || !Entity.IsJump))
         {
             stopMove();
             horizontalVelocity = UVEC3.zero;
@@ -444,9 +464,25 @@ public sealed class MMoveComponent : EntityComponentBase
         // 本帧完整运动位移，水平与垂直只由移动组件合并并提交一次。
         UVEC3 frameMovement = horizontalVelocity * deltaSeconds;
         frameMovement.y = _verticalVelocity * deltaSeconds;
+        if (Entity.Model.RootMotion != null)
+        {
+            // 实际技能动画的水平delta与输入、重力只提交一次碰撞移动；不会放开MoveCasting。
+            frameMovement += Entity.Model.RootMotion.ConsumeDelta();
+        }
+        // RO 程序段与动画根窗口已禁止重叠，输入、根、程序和重力仍仅一次碰撞提交。
+        // 从实体读取当前普通组件，允许未装配位移的实体仍执行原输入及动画根移动。
+        MDisplacementComponent displacementComp = Entity.DisplacementComp;
+        if (displacementComp != null)
+        {
+            frameMovement += displacementComp.ConsumeDelta();
+        }
         if (frameMovement != UVEC3.zero)
         {
             Entity.MoveCharacter(frameMovement);
+            if (Entity.Model.HasSideCollision && displacementComp != null)
+            {
+                displacementComp.StopDisplacement();
+            }
         }
 
         // 首次更新后才把 CharacterController 的接地结果作为后续首跳校验依据。
@@ -598,9 +634,9 @@ public sealed class MMoveComponent : EntityComponentBase
             onSyncMoveEvent(args);
             return;
         }
-        // 技能动作期间禁止水平输入；其他动作保留跳跃时的空中方向控制。
-        if (Entity.CurrentState == StateDefine.kStateSkill ||
-            (!Entity.IsMovable && !Entity.IsJump))
+        // MoveCasting 只影响技能水平输入，其他动作保留原有空中方向控制。
+        if (!Entity.IsMovable &&
+            (Entity.CurrentState == StateDefine.kStateSkill || !Entity.IsJump))
         {
             return;
         }

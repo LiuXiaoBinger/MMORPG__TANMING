@@ -114,13 +114,40 @@ public sealed class EntityComponentContainer
         }
     }
 
-    /// <summary>按注册顺序依次调用每个组件的 Update。</summary>
+    /// <summary>移动提交前推进容器内的程序位移组件，其初始化和回收仍属于普通组件生命周期。</summary>
+    /// <param name="deltaMilliseconds">本帧间隔，单位毫秒；由实体更新入口调用一次。</param>
+    public void UpdateBeforeMovement(int deltaMilliseconds)
+    {
+        // 容器按独立类型键持有的原位移实例；不创建每帧闭包或临时集合。
+        EntityComponentBase displacement;
+        if (!_components.TryGetValue(EntityComponentType.Displacement, out displacement))
+        {
+            return;
+        }
+        try
+        {
+            displacement.Update(deltaMilliseconds);
+        }
+        // 当前位移组件的推进异常，隔离后允许原输入移动与其它组件继续更新。
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogError("实体组件生命周期失败: " + displacement.GetType().Name + ".Update，" + exception);
+        }
+    }
+
+    /// <summary>按注册顺序推进其余普通组件，位移已由移动前阶段推进，不能再次更新。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
     public void Update(int deltaMilliseconds)
     {
+        // 当前普通组件在原注册列表中的位置，位移保持单帧唯一更新。
         for (int index = 0; index < _ordered.Count; index++)
         {
+            // 本次更新的原组件引用，位移类型在前一阶段已经完成求值。
             EntityComponentBase component = _ordered[index];
+            if (component.ComponentType == EntityComponentType.Displacement)
+            {
+                continue;
+            }
             Invoke(component, "Update",
                 delegate { component.Update(deltaMilliseconds); });
         }

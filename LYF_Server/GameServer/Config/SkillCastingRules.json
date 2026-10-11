@@ -1,0 +1,29 @@
+{
+    "Rules": [
+        {
+            "SkillId": 10010,
+            "InteruptSkill": [],
+            "MoveCasting": false
+        },
+        {
+            "SkillId": 10040,
+            "InteruptSkill": [],
+            "MoveCasting": false
+        },
+        {
+            "SkillId": 10050,
+            "InteruptSkill": [],
+            "MoveCasting": false
+        },
+        {
+            "SkillId": 10060,
+            "InteruptSkill": [],
+            "MoveCasting": false
+        },
+        {
+            "SkillId": 10070,
+            "InteruptSkill": [],
+            "MoveCasting": false
+        }
+    ]
+}

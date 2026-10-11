@@ -1,0 +1,181 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63be86e5a5c2bfd4a8f571387edbfe20, type: 3}
+  m_Name: SkillConfigSO_3005001
+  m_EditorClassIdentifier: 
+  RotateList: []
+  MobUnitList: []
+  AIEventList: []
+  BuffList: []
+  ChangeColorList: []
+  SkillBarList: []
+  ShakeList: []
+  CameraPostEffect:
+    UseCameraEffect: 0
+    EveryOne: 0
+    Range: 0
+    At: 0
+    End: 0
+    EffectType: 0
+    Args0: 0
+    Args1: 0
+    Index: 0
+  CameraFxData: []
+  actionEditorSchemaVersion: 1
+  timingVersion: 1
+  phases: []
+  timelineFrameRate: 120
+  flowNodes: []
+  skillID: 10050
+  skillName: "\u5343\u5F71\u5251\u51B3"
+  skillDescription: "\u5343\u5F71\u5251\u51B3\uFF0C\u51DD\u805A\u80FD\u529B\uFF0C\u51B2\u523A\u524D\u65B9\u533A\u57DF\u5185\u6240\u6709\u654C\u4EBA\uFF0C\u5E76\u9020\u62106\u6B21<color=#F00>(150-160)%</color>\u4F24\u5BB3\u3002"
+  skillType: 2
+  previewModelName: Role_MJS
+  ownerType: 0
+  skillCD: 0
+  cancelPriority: 0
+  energyCostOnActivate: 0
+  defaultEnergyGainOnHit: 0
+  animSegments:
+  - clip: {fileID: 7400000, guid: 2393ff47e3d731a4d89e0bb0a4a186b4, type: 2}
+    startFrame: 0
+    clipStartFrame: 0
+    clipEndFrame: 0
+    blendInFrames: 0
+  skillClip: {fileID: 7400000, guid: 2393ff47e3d731a4d89e0bb0a4a186b4, type: 2}
+  exitFrame: 0
+  moveSegmentList: []
+  moveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  totalMoveDistance: 0
+  tracks:
+  - type: 0
+    displayName: 
+    expanded: 1
+  - type: 2
+    displayName: 
+    expanded: 1
+  jumpList: []
+  attackList: []
+  cameraCues: []
+  fxList:
+  - contentKind: 1
+    keyNumber: 63
+    endKeyNumber: 0
+    particleSystem: {fileID: 1940141728416200899, guid: d2adf48ae55888c4683f2077eaf21822, type: 3}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: root/pelvis/spine_01/spine_02/spine_03/spine_04/spine_05/clavicle_r/upperarm_r/lowerarm_r/hand_r
+    placementKind: 1
+    forwardDistance: 0
+    audioClip: {fileID: 0}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  - contentKind: 1
+    keyNumber: 136
+    endKeyNumber: 0
+    particleSystem: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: EffectPos
+    placementKind: 1
+    forwardDistance: 0
+    audioClip: {fileID: 0}
+    followCharacter: 1
+    rotation: {x: -90, y: 0, z: 30}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  - contentKind: 2
+    keyNumber: 63
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: 
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: becd81bc6701abb44ab5aaf4223512bf, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.35
+  - contentKind: 2
+    keyNumber: 136
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath: 
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 4811e7203cf86e941a3d011a220e8d30, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.45
+  cancelList: []
+  projectileList: []
+  hitFxList: []
+  interactionWindows: []
+  moveCancelFrame: -1
+  warningCueList: []
+  superArmorList: []
+  adjustMotionList: []
+  trailToggleList: []
+  isSuperArmorSkill: 0
+  phase2AttackList: []
+  phase2FxList: []
+  phase2RangeMultiplier: 1

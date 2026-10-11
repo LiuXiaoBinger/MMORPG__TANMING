@@ -5,8 +5,33 @@ using cfg;
 /// 将 Luban 的技能效果和职业表现表装配成客户端长期使用的技能核心。
 /// 配置查找仅在技能列表同步或服务器开始广播时执行，不进入逐帧状态更新。
 /// </summary>
-public static class MSkillFactory
+public sealed class MSkillFactory
 {
+    /// <summary>RO 同名工厂实例，冷却记录的借出归还沿用 singleton 调用；原静态技能接口保持可用。</summary>
+    public static readonly MSkillFactory singleton = new MSkillFactory();
+
+    /// <summary>仅创建一个冷却记录工厂入口，池仍由 MCommonObjectPool 统一持有。</summary>
+    private MSkillFactory() { }
+
+    /// <summary>借出零状态的 RO 冷却记录，交由一个组件的单技能或公共组列表独占。</summary>
+    /// <returns>没有旧键、旧时长或旧时钟的可复用记录。</returns>
+    public SkillCDGroupInfo GetSkillCdGroupInfo()
+    {
+        return MCommonObjectPool<SkillCDGroupInfo>.Get();
+    }
+
+    /// <summary>组件从列表与字典同时解除引用后归还记录，防止池重借时携带上一实体的 CD。</summary>
+    /// <param name="info">已解除组件持有的冷却记录；空值忽略。</param>
+    public void ReturnSkillCdGroupInfo(SkillCDGroupInfo info)
+    {
+        if (info == null) return;
+        info.SkillGroupType = 0;
+        info.CD = 0f;
+        info.CurrentCD = 0f;
+        info.UpdatedRealtime = 0f;
+        MCommonObjectPool<SkillCDGroupInfo>.Release(info);
+    }
+
     /// <summary>按角色已学等级查找效果，并装配该职业默认武器的技能核心。</summary>
     /// <param name="skillId">角色技能列表下发的旧技能主表 ID。</param>
     /// <param name="level">角色已学习的正数等级。</param>
@@ -136,7 +161,7 @@ public static class MSkillFactory
                 {
                     // 本表现行由最终核心独占，直到核心的最后持有者解除引用。
                     MSkillData data = MCommonObjectPool<MSkillData>.Get();
-                    data.Initialize(row.VariantIndex, row.ClipLocation,
+                    data.Initialize(row.Id, row.VariantIndex, row.ClipLocation,
                         row.DurationMs * 0.001f, row.SkillStateTimeMs * 0.001f);
                     result.Add(data);
                 }

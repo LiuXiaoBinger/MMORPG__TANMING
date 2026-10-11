@@ -16,17 +16,19 @@ public sealed class MSkillComponent : MBasicActionComponent
     private readonly Dictionary<int, MSkillCore> _cores =
         new Dictionary<int, MSkillCore>();
 
-    /// <summary>仍等待服务器结果的技能 ID；常驻组件按索引检查预测到期。</summary>
-    private readonly List<int> _pendingSkillIds = new List<int>();
-
-    /// <summary>公共冷却组的本机截止时间，单位为不受时间缩放影响的秒数。</summary>
-    private readonly Dictionary<int, float> _groupCooldownEnds =
-        new Dictionary<int, float>();
+    /// <summary>RO 公共组冷却记录，按索引递减并到期归池，元素与 SkillCDGroupDic 为同一对象。</summary>
+    private readonly List<SkillCDGroupInfo> SkillCDGroupList = new List<SkillCDGroupInfo>();
+    /// <summary>RO 单技能冷却记录，按索引递减并到期归池，元素与 SkillCDDic 为同一对象。</summary>
+    private readonly List<SkillCDGroupInfo> SkillCDList = new List<SkillCDGroupInfo>();
+    /// <summary>公共组 ID 到当前冷却记录；与单技能 ID 即使数值相同也独立维护。</summary>
+    public readonly Dictionary<int, SkillCDGroupInfo> SkillCDGroupDic = new Dictionary<int, SkillCDGroupInfo>();
+    /// <summary>技能主表 ID 到唯一单技能冷却记录，已装配核心的预测与权威结果共同读写此处。</summary>
+    public readonly Dictionary<int, SkillCDGroupInfo> SkillCDDic = new Dictionary<int, SkillCDGroupInfo>();
 
     /// <summary>实体当前动作槽借出的单次表现；空值表示槽位未占用。</summary>
     private MSkill _currentSkill;
 
-    /// <summary>已退出动作状态但仍在施放的实例，按施法 UUID 等待服务器确认和结束。</summary>
+    /// <summary>已脱离主动作槽或独立运行的存活技能，保留各自的时间轴与 UUID。</summary>
     private readonly List<MSkill> _skills = new List<MSkill>();
 
     /// <summary>本实体最后一次本地施法 UUID，用于防止旧段回包覆盖更新的 MP。</summary>
@@ -39,8 +41,15 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>组件类型为技能快捷组件，不进入普通组件集合。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Skill; } }
 
-    /// <summary>技能动作期间禁止水平移动；跳跃的垂直积分与落地检测由移动组件继续执行。</summary>
-    public override bool IsActiveMovable { get { return false; } }
+    /// <summary>按当前技能 RO MoveCasting 控制普通水平移动；主动起跳仍禁止，已有重力和落地继续。</summary>
+    public override bool IsActiveMovable
+    {
+        get
+        {
+            return _currentSkill != null && _currentSkill.IsActive &&
+                SkillCastingRulesCatalog.IsMoveCasting(_currentSkill.SkillId);
+        }
+    }
 
     /// <summary>技能状态对应的动画机状态名。</summary>
     public override string StateName { get { return MAnimator.STATE_SKILL; } }
@@ -72,24 +81,18 @@ public sealed class MSkillComponent : MBasicActionComponent
             MSkillCore removedCore;
             _cores.TryGetValue(skillId, out removedCore);
             _cores.Remove(skillId);
-            _pendingSkillIds.Remove(skillId);
+            SetSkillCD(skillId, 0f);
             // index 从最后一项递减，回收被移除技能的旧施法后仍能检查前面的原实例。
             for (int index = _skills.Count - 1; index >= 0; index--)
             {
                 if (_skills[index].SkillId == skillId)
                 {
-                    MSkillFactory.ReturnSkill(_skills[index]);
-                    _skills.RemoveAt(index);
+                    _skills[index].Cease(true);
                 }
             }
             if (_currentSkill != null && _currentSkill.SkillId == skillId)
             {
-                MSkillFactory.ReturnSkill(_currentSkill);
-                _currentSkill = null;
-                if (Entity != null && Entity.Machine != null)
-                {
-                    Entity.Machine.ForceToDefault();
-                }
+                _currentSkill.Cease(true);
             }
             if (removedCore != null)
             {
@@ -110,7 +113,7 @@ public sealed class MSkillComponent : MBasicActionComponent
             }
             return;
         }
-        // previous 是同技能的原字典核心，携带已有 CD 与待确认 UUID，替换后解除其字典持有。
+        // previous 是同技能的原字典核心，携带已有 CD 与最近施法身份，替换后解除其字典持有。
         MSkillCore previous;
         if (_cores.TryGetValue(core.SkillId, out previous) && previous != null)
         {
@@ -120,10 +123,11 @@ public sealed class MSkillComponent : MBasicActionComponent
                 core.Release();
                 return;
             }
-            // 等级升级时携带旧 CD 与待确认施法，使后续权威回包仍可按 UUID 匹配。
+            // 等级升级沿用唯一 CD 记录及最近施法身份，不重新阻断已可释放的技能。
             core.AdoptRuntimeState(previous);
         }
         _cores[core.SkillId] = core;
+        core.BindCooldown(this);
         _learnedSkillIds.Add(core.SkillId);
         if (previous != null)
         {
@@ -180,13 +184,12 @@ public sealed class MSkillComponent : MBasicActionComponent
     {
         if (_currentSkill != null)
         {
-            MSkillFactory.ReturnSkill(_currentSkill);
-            _currentSkill = null;
+            _currentSkill.Cease(true);
         }
-        // index 为旧施法列表的零起始下标，清空列表前依次归还全部实例。
-        for (int index = 0; index < _skills.Count; index++)
+        // 倒序清理存活技能，Cease 从原列表移除自身。
+        for (int index = _skills.Count - 1; index >= 0; index--)
         {
-            MSkillFactory.ReturnSkill(_skills[index]);
+            _skills[index].Cease(true);
         }
         _skills.Clear();
         _latestSkillUuid = 0;
@@ -206,8 +209,161 @@ public sealed class MSkillComponent : MBasicActionComponent
             coreSnapshot[index].Release();
         }
         MListPool<MSkillCore>.Release(coreSnapshot);
-        _groupCooldownEnds.Clear();
-        _pendingSkillIds.Clear();
+        ClearGroupCd();
+    }
+
+    /// <summary>RO 同名单技能剩余冷却查询，使用当前本机不缩放时钟。</summary>
+    /// <param name="skill_id">技能主表正数 ID，不是效果 ID 或公共组 ID。</param>
+    /// <returns>未登记或已到期时为零，否则为非负剩余秒数。</returns>
+    public float GetSkillCD(int skill_id)
+    {
+        return GetSkillCD(skill_id, Time.realtimeSinceStartup);
+    }
+
+    /// <summary>在调用方提供的同一不缩放时钟上查询单技能冷却，供核心预测及原 UI 接口共同读取。</summary>
+    /// <param name="skill_id">技能主表 ID。</param>
+    /// <param name="realtimeSeconds">查询的不缩放秒数；早于登记时刻时不反向增加冷却。</param>
+    /// <returns>唯一 RO 记录的非负剩余秒数。</returns>
+    internal float GetSkillCD(int skill_id, float realtimeSeconds)
+    {
+        // 原单技能记录引用，查询只计算帧间剩余值，不重复扣减列表数据。
+        SkillCDGroupInfo info;
+        if (!SkillCDDic.TryGetValue(skill_id, out info)) return 0f;
+        return Mathf.Max(0f, info.CurrentCD - Mathf.Max(0f, realtimeSeconds - info.UpdatedRealtime));
+    }
+
+    /// <summary>RO 同名总冷却查询，用于技能图标进度；记录已到期时返回零。</summary>
+    /// <param name="skill_id">技能主表 ID。</param>
+    /// <returns>最近一次 SetSkillCD 写入的总秒数。</returns>
+    public float GetSkillTotalCD(int skill_id)
+    {
+        // 当前有效记录；即使列表尚未下一帧移除，过期查询也不展示旧进度。
+        SkillCDGroupInfo info;
+        if (GetSkillCD(skill_id) <= 0f || !SkillCDDic.TryGetValue(skill_id, out info)) return 0f;
+        return info.CD;
+    }
+
+    /// <summary>RO 同名设置单技能冷却；相同值也刷新本次冷却，非正数删除并立即归池。</summary>
+    /// <param name="skill_id">技能主表正数 ID；与组冷却的数字键独立。</param>
+    /// <param name="cd">需要同步的剩余秒数，非正值表示清除。</param>
+    public void SetSkillCD(int skill_id, float cd)
+    {
+        SetSkillCD(skill_id, cd, Time.realtimeSinceStartup);
+    }
+
+    /// <summary>按预测或权威结果的原时间戳设置唯一单技能记录，不再保留核心的第二个截止值。</summary>
+    /// <param name="skill_id">技能主表正数 ID。</param>
+    /// <param name="cd">需要同步的剩余秒数；无效浮点或非正数清除。</param>
+    /// <param name="realtimeSeconds">写入发生的本机不缩放秒数。</param>
+    internal void SetSkillCD(int skill_id, float cd, float realtimeSeconds)
+    {
+        if (skill_id <= 0) return;
+        // 已有记录始终复用原引用，清除时必须从两处解除再归池。
+        SkillCDGroupInfo info;
+        SkillCDDic.TryGetValue(skill_id, out info);
+        if (cd <= 0f || float.IsNaN(cd) || float.IsInfinity(cd))
+        {
+            if (info != null)
+            {
+                SkillCDList.Remove(info);
+                SkillCDDic.Remove(skill_id);
+                MSkillFactory.singleton.ReturnSkillCdGroupInfo(info);
+            }
+            return;
+        }
+        if (info == null)
+        {
+            info = MSkillFactory.singleton.GetSkillCdGroupInfo();
+            info.SkillGroupType = skill_id;
+            SkillCDDic.Add(skill_id, info);
+            SkillCDList.Add(info);
+        }
+        // 同名设置接口的总量与剩余一起刷新，不以配置基础值覆盖本次权威同步值。
+        info.CD = cd;
+        info.CurrentCD = cd;
+        info.UpdatedRealtime = realtimeSeconds;
+    }
+
+    /// <summary>RO 同名按核心设置公共组冷却，组归属来自当前等级效果配置，时长采用同步值。</summary>
+    /// <param name="core">当前实体的技能核心，CooldownGroupId 为零时不设置。</param>
+    /// <param name="cd">公共组的权威剩余秒数；非正值清除。</param>
+    public void SetGroupCd(MSkillCore core, float cd)
+    {
+        if (core == null || Entity == null || !Entity.IsPlayer) return;
+        SetGroupCdByType(core.CooldownGroupId, cd, Time.realtimeSinceStartup);
+    }
+
+    /// <summary>RO 同名按公共组 ID 同步剩余冷却，独立于任何一个单技能记录。</summary>
+    /// <param name="type">正数 CooldownGroupId，零表示没有公共组。</param>
+    /// <param name="cd">该组剩余秒数；非正或无效浮点清除。</param>
+    public void SetGroupCdByType(int type, float cd)
+    {
+        SetGroupCdByType(type, cd, Time.realtimeSinceStartup);
+    }
+
+    /// <summary>权威结果在其接收时钟设置公共组冷却，同值刷新、归零清除都只操作该组。</summary>
+    /// <param name="type">正数公共组 ID。</param>
+    /// <param name="cd">服务器给出的剩余秒数。</param>
+    /// <param name="realtimeSeconds">接收结果的本机不缩放秒数。</param>
+    private void SetGroupCdByType(int type, float cd, float realtimeSeconds)
+    {
+        if (type <= 0) return;
+        // 公共组原引用，更新不会在列表里重复插入同一键。
+        SkillCDGroupInfo info;
+        SkillCDGroupDic.TryGetValue(type, out info);
+        if (cd <= 0f || float.IsNaN(cd) || float.IsInfinity(cd))
+        {
+            if (info != null)
+            {
+                SkillCDGroupList.Remove(info);
+                SkillCDGroupDic.Remove(type);
+                MSkillFactory.singleton.ReturnSkillCdGroupInfo(info);
+            }
+            return;
+        }
+        if (info == null)
+        {
+            info = MSkillFactory.singleton.GetSkillCdGroupInfo();
+            info.SkillGroupType = type;
+            SkillCDGroupDic.Add(type, info);
+            SkillCDGroupList.Add(info);
+        }
+        info.CD = cd;
+        info.CurrentCD = cd;
+        info.UpdatedRealtime = realtimeSeconds;
+    }
+
+    /// <summary>RO 同名清场入口，同时清除单技能和公共组记录；已装配核心也立即读到零。</summary>
+    public void ClearGroupCd()
+    {
+        // 组记录归池后立刻清容器，不保留可复用对象引用。
+        for (int index = SkillCDGroupList.Count - 1; index >= 0; index--)
+        {
+            MSkillFactory.singleton.ReturnSkillCdGroupInfo(SkillCDGroupList[index]);
+        }
+        SkillCDGroupList.Clear();
+        SkillCDGroupDic.Clear();
+        // 单技能列表中的记录与组记录互不共享，每项仅归还一次。
+        for (int index = SkillCDList.Count - 1; index >= 0; index--)
+        {
+            MSkillFactory.singleton.ReturnSkillCdGroupInfo(SkillCDList[index]);
+        }
+        SkillCDList.Clear();
+        SkillCDDic.Clear();
+    }
+
+    /// <summary>RO 技能结束通知，只解除原实例引用；具体技能在回调后自行清理并归还工厂。</summary>
+    /// <param name="skill">正在 Cease 的原实例，不能按技能 ID 猜测或解除其他 UUID。</param>
+    public void OnSkillEnd(MSkill skill)
+    {
+        if (skill == null) return;
+        _skills.Remove(skill);
+        if (!ReferenceEquals(_currentSkill, skill)) return;
+        _currentSkill = null;
+        if (Entity != null && Entity.Machine != null && Entity.Machine.CurrentState == this)
+        {
+            Entity.Machine.ForceToDefault();
+        }
     }
 
     /// <summary>按 RO 规则先读单技能 CD，其结束后再读服务器同步的组 CD。</summary>
@@ -216,26 +372,16 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <returns>非负剩余秒数。</returns>
     public float GetRemainingCooldown(int skillId, float realtimeSeconds)
     {
-        // 已学技能核心负责保存当前单技能截止时间。
+        // 当前等级只提供公共组归属，单技能冷却本体由 RO 字典唯一持有。
         MSkillCore core = GetSkillCore(skillId);
-        if (core == null)
-        {
-            return 0f;
-        }
-        // 单技能 CD 优先于公共组 CD 显示。
-        float remainingSeconds = core.GetRemainingCooldown(realtimeSeconds);
-        if (remainingSeconds > 0f || core.CooldownGroupId <= 0)
-        {
-            return remainingSeconds;
-        }
-        // 组 CD 只由服务器结果写入；没有权威截止时间时显示零。
-        float groupEndRealtime;
-        if (!_groupCooldownEnds.TryGetValue(core.CooldownGroupId,
-            out groupEndRealtime))
-        {
-            return 0f;
-        }
-        return Mathf.Max(0f, groupEndRealtime - realtimeSeconds);
+        if (core == null) return 0f;
+        // 单技能冷却优先显示，归零后才显示公共组冷却。
+        float remainingSeconds = GetSkillCD(skillId, realtimeSeconds);
+        if (remainingSeconds > 0f || core.CooldownGroupId <= 0) return remainingSeconds;
+        // 本组原记录引用，查询在帧间也按相同不缩放时钟扣减。
+        SkillCDGroupInfo info;
+        if (!SkillCDGroupDic.TryGetValue(core.CooldownGroupId, out info)) return 0f;
+        return Mathf.Max(0f, info.CurrentCD - Mathf.Max(0f, realtimeSeconds - info.UpdatedRealtime));
     }
 
     /// <summary>只做本地体验校验，服务器仍独立验证等级、状态、MP 和冷却。</summary>
@@ -248,22 +394,47 @@ public sealed class MSkillComponent : MBasicActionComponent
         // 本次技能 ID 对应的已学等级核心。
         MSkillCore core = GetSkillCore(skillId);
         if (core == null || Entity == null || Entity.Machine == null ||
-            !Entity.Machine.CanTransfer(StateDefine.kStateSkill) ||
+            !CanSkill(skillId) ||
             !core.CanStart(realtimeSeconds, currentMp))
         {
             return false;
         }
-        if (core.CooldownGroupId > 0)
+        if (GetRemainingCooldown(skillId, realtimeSeconds) > 0f)
         {
-            // 本组已知的 CD 截止时间，缺失时不阻断施法。
-            float groupEnd;
-            if (_groupCooldownEnds.TryGetValue(core.CooldownGroupId,
-                out groupEnd) && realtimeSeconds < groupEnd)
-            {
-                return false;
-            }
+            return false;
         }
         return true;
+    }
+
+    /// <summary>沿用 RO 新技能 InteruptSkill 决定互断；非技能状态继续使用既有状态矩阵。</summary>
+    /// <param name="skillId">当前准备释放的新技能主表 ID。</param>
+    /// <returns>状态允许施法，或新技能允许打断当前活动技能时为 true。</returns>
+    public bool CanSkill(int skillId)
+    {
+        if (Entity == null || Entity.Machine == null)
+        {
+            return false;
+        }
+        if (Entity.Machine.CurrentState != this)
+        {
+            return Entity.Machine.CanTransfer(StateDefine.kStateSkill);
+        }
+        if (_currentSkill == null || !_currentSkill.IsActive || _currentSkill.IsSkillStateFinished)
+        {
+            return true;
+        }
+        return SkillCastingRulesCatalog.CanInterrupt(skillId, _currentSkill.SkillId);
+    }
+
+    /// <summary>技能事件转移使用同一 RO 互断规则，避免输入校验通过但状态矩阵拒绝自转移。</summary>
+    /// <param name="eventArg">强类型技能开始载荷，非技能载荷不能切入。</param>
+    /// <param name="last">之前的状态枚举，技能权限读取实体真实当前状态。</param>
+    /// <returns>新技能允许切入时为 true。</returns>
+    protected override bool OnGetEvent(IEventArg eventArg, StateDefine last)
+    {
+        // 当前事件的临时施法信息，不能在回调结束后继续持有。
+        SkillStartedEventArgs skillEvent = eventArg as SkillStartedEventArgs;
+        return skillEvent != null && CanSkill(skillEvent.SkillId);
     }
 
     /// <summary>建立本地预测冷却；有真实动画配置时同步触发技能动作状态。</summary>
@@ -285,10 +456,6 @@ public sealed class MSkillComponent : MBasicActionComponent
         {
             return false;
         }
-        if (!_pendingSkillIds.Contains(skillId))
-        {
-            _pendingSkillIds.Add(skillId);
-        }
         _latestSkillUuid = skillUuid;
         if (!core.HasPresentation)
         {
@@ -306,7 +473,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         {
             return true;
         }
-        // 请求已经发送，动画状态未能切入也必须保留 UUID 以接纳 11170 权威结果。
+        // 请求已经发送，动画未能切入仍保留最近 UUID 接纳结果，不增加等待门禁。
         return true;
     }
 
@@ -325,17 +492,15 @@ public sealed class MSkillComponent : MBasicActionComponent
     {
         // 结果对应的已学技能核心，切图后可能已清空。
         MSkillCore core = GetSkillCore(skillId);
-        if (core == null || !core.ApplyCastResult(skillUuid,
-            remainingCooldown, realtimeSeconds))
-        {
-            return false;
-        }
-        if (!core.HasPendingPrediction)
-        {
-            _pendingSkillIds.Remove(skillId);
-        }
-        // 不同技能间的旧段结果同样不能覆盖最后发起请求的 MP 和公共冷却快照。
-        bool isLatestResult = skillUuid == _latestSkillUuid;
+        if (core == null || skillUuid == 0) return false;
+        // 当前或脱手原实例按 UUID 匹配，旧结果只处理自己的表现，不改最新 CD/MP。
+        MSkill skill = FindSkill(skillUuid);
+        // 核心只对最近一次施法首次接收结果进行校正，无外置待确认列表或按帧过期事务。
+        bool appliedCooldown = core.ApplyCastResult(skillUuid, remainingCooldown, realtimeSeconds);
+        if (!appliedCooldown && core.IsLatestCast(skillUuid)) return false;
+        if (!appliedCooldown && skill == null) return false;
+        // 跨技能的旧结果同样不能覆盖实体最新 MP 和公共组冷却。
+        bool isLatestResult = appliedCooldown && skillUuid == _latestSkillUuid;
         if (accepted && isLatestResult && core.IsLatestCast(skillUuid))
         {
             // 确认只校正核心供下一段使用的计数，当前实例已捕获其动画与段号。
@@ -343,11 +508,8 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
         if (isLatestResult && core.CooldownGroupId > 0)
         {
-            _groupCooldownEnds[core.CooldownGroupId] =
-                realtimeSeconds + Mathf.Max(0f, remainingGroupCooldown);
+            SetGroupCdByType(core.CooldownGroupId, remainingGroupCooldown, realtimeSeconds);
         }
-        // 结果按施法 UUID 查找当前或已结束的动作，不按技能 ID 猜配连击段。
-        MSkill skill = FindSkill(skillUuid);
         if (accepted)
         {
             if (skill != null)
@@ -357,20 +519,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
         else if (skill != null)
         {
-            if (skill == _currentSkill)
-            {
-                _currentSkill = null;
-                MSkillFactory.ReturnSkill(skill);
-                if (Entity != null && Entity.Machine != null)
-                {
-                    Entity.Machine.ForceToDefault();
-                }
-            }
-            else
-            {
-                _skills.Remove(skill);
-                MSkillFactory.ReturnSkill(skill);
-            }
+            skill.Cease(true);
         }
         return isLatestResult;
     }
@@ -407,13 +556,20 @@ public sealed class MSkillComponent : MBasicActionComponent
             core.Release();
             return true;
         }
+        // 本地主角的请求已直接启动表现，晚广播找不到原实例时不能把旧段重新作为远端技能播放。
+        PlayerEntity localPlayer = Entity as PlayerEntity;
+        if (localPlayer != null && localPlayer.IsLocal)
+        {
+            core.Release();
+            return false;
+        }
         if (!core.HasPresentation)
         {
             Debug.LogWarning("服务器技能开始通知没有对应真实动画。技能=" + core.SkillId);
             core.Release();
             return false;
         }
-        if (!Entity.Machine.CanTransfer(StateDefine.kStateSkill))
+        if (!CanSkill(core.SkillId))
         {
             core.Release();
             return false;
@@ -445,11 +601,36 @@ public sealed class MSkillComponent : MBasicActionComponent
         return false;
     }
 
-    /// <summary>按施法 UUID 结束动画表现，重复或过期结束通知无效。</summary>
+    /// <summary>按 UUID 处理自然结束或打断；自然结束退出动作但保留尚未完成的制作时间轴。</summary>
     /// <param name="skillUuid">开始广播的非零单次施法 UUID。</param>
-    /// <returns>当前表现与 UUID 匹配且完成清理时返回 true。</returns>
-    public bool ApplyServerEnd(ulong skillUuid)
+    /// <param name="interrupted">真表示打断或兜底清理，立即回池；假表示服务器正常结束，允许表现事件和声音收尾。</param>
+    /// <returns>找到当前或旧实例并接受该结束通知时返回 true。</returns>
+    public bool ApplyServerEnd(ulong skillUuid, bool interrupted = true)
     {
+        if (!interrupted)
+        {
+            // 自然结束按同一 UUID 查找；找不到的过期广播不能结束当前新技能。
+            MSkill endedSkill = FindSkill(skillUuid);
+            if (endedSkill == null || !endedSkill.IsActive)
+            {
+                return false;
+            }
+            endedSkill.MarkServerEnded();
+            if (ReferenceEquals(endedSkill, _currentSkill))
+            {
+                // 动作槽和根位移立即释放；未来票据仍归此旧实例持有，继续由常驻更新推进。
+                OnSkillAutoEnd();
+                if (Entity != null && Entity.Machine != null && Entity.Machine.CurrentState == this)
+                {
+                    Entity.Machine.ForceToDefault();
+                }
+            }
+            if (endedSkill.IsPresentationFinished)
+            {
+                endedSkill.Cease();
+            }
+            return true;
+        }
         if (skillUuid == 0 || _currentSkill == null || !_currentSkill.IsActive ||
             _currentSkill.SkillUuid != skillUuid)
         {
@@ -458,20 +639,13 @@ public sealed class MSkillComponent : MBasicActionComponent
             {
                 if (_skills[index].SkillUuid == skillUuid && skillUuid != 0)
                 {
-                    MSkillFactory.ReturnSkill(_skills[index]);
-                    _skills.RemoveAt(index);
+                    _skills[index].Cease(true);
                     return true;
                 }
             }
             return false;
         }
-        MSkillFactory.ReturnSkill(_currentSkill);
-        _currentSkill = null;
-        if (Entity != null && Entity.Machine != null &&
-            Entity.Machine.CurrentState == this)
-        {
-            Entity.Machine.ForceToDefault();
-        }
+        _currentSkill.Cease(true);
         return true;
     }
 
@@ -500,72 +674,59 @@ public sealed class MSkillComponent : MBasicActionComponent
         return null;
     }
 
-    /// <summary>常驻组件逐帧回收未获服务器确认的预测，包含动画已结束的施法。</summary>
-    /// <param name="deltaMilliseconds">实体本帧更新间隔，单位为毫秒；期限使用不缩放时钟。</param>
+    /// <summary>实体常驻毫秒入口，只桥接一次 RO 秒更新，施法不依赖服务器确认。</summary>
+    /// <param name="deltaMilliseconds">实体本帧更新间隔，单位为毫秒；仅转换技能帧时钟，冷却仍沿不缩放时钟。</param>
     public override void Update(int deltaMilliseconds)
     {
-        // 技能动作状态只在当前状态更新；确认期限必须在动作退出后继续检查。
+        Update(deltaMilliseconds * 0.001f);
+    }
+
+    /// <summary>RO 同名常驻更新：推进技能列表并维护冷却，当前动作由状态机更新。</summary>
+    /// <param name="fDeltaT">本帧技能逻辑秒数；冷却沿既有不缩放时钟推进，不受动画时间倍率影响。</param>
+    public override void Update(float fDeltaT)
+    {
+        base.Update(fDeltaT);
+        // 冷却与权威结果使用本机不缩放秒数，不按实体动画倍率改变倒计时。
         float realtimeSeconds = Time.realtimeSinceStartup;
-        // 从尾到头检查有未确认施法的技能 ID，删除失效核心时保持索引有效。
-        for (int index = _pendingSkillIds.Count - 1; index >= 0; index--)
+        // i 从尾到头推进存活技能，Cease 删除自身不影响前项索引。
+        for (int i = _skills.Count - 1; i >= 0; i--)
         {
-            // 待确认技能对应的旧主表 ID，核心升级后仍从当前字典读取。
-            int skillId = _pendingSkillIds[index];
-            // 当前技能等级对应的核心，技能快照升级后可能已替换实例。
-            MSkillCore core = GetSkillCore(skillId);
-            if (core == null)
+            // 当前存活技能原实例。
+            MSkill skill = _skills[i];
+            if (!skill.Update(fDeltaT))
             {
-                _pendingSkillIds.RemoveAt(index);
-                continue;
+                skill.Cease(true);
             }
-            // 已超过动画时长加宽限期的施法 UUID，零表示尚未到期。
-            ulong expiredSkillUuid = core.ExpirePrediction(realtimeSeconds);
-            if (expiredSkillUuid == 0)
+        }
+        if (Entity != null && Entity.IsPlayer)
+        {
+            // 公共组独立倒序归零移除，单技能相同数字键不会受影响。
+            for (int index = SkillCDGroupList.Count - 1; index >= 0; index--)
             {
-                continue;
-            }
-            if (!core.HasPendingPrediction)
-            {
-                _pendingSkillIds.RemoveAt(index);
-            }
-            // 超时的旧段已经归还动画槽，只回收该实例，不影响正在播放的新段。
-            MSkill expiredSkill = FindSkill(expiredSkillUuid);
-            if (expiredSkill != null && expiredSkill != _currentSkill)
-            {
-                _skills.Remove(expiredSkill);
-                MSkillFactory.ReturnSkill(expiredSkill);
-            }
-            if (_currentSkill != null && _currentSkill.IsActive &&
-                _currentSkill.IsPredicted &&
-                _currentSkill.SkillUuid == expiredSkillUuid)
-            {
-                MSkillFactory.ReturnSkill(_currentSkill);
-                _currentSkill = null;
-                if (Entity != null && Entity.Machine != null &&
-                    Entity.Machine.CurrentState == this)
+                // 原组记录引用，帧间查询不会改其值；本帧从上次更新时间一次扣减。
+                SkillCDGroupInfo info = SkillCDGroupList[index];
+                info.CurrentCD -= Mathf.Max(0f, realtimeSeconds - info.UpdatedRealtime);
+                info.UpdatedRealtime = realtimeSeconds;
+                if (info.CurrentCD <= 0f)
                 {
-                    Entity.Machine.ForceToDefault();
+                    SkillCDGroupList.RemoveAt(index);
+                    SkillCDGroupDic.Remove(info.SkillGroupType);
+                    MSkillFactory.singleton.ReturnSkillCdGroupInfo(info);
                 }
             }
-        }
-        if (_currentSkill != null &&
-            _currentSkill.IsServerEndOverdue(realtimeSeconds))
-        {
-            // 服务器结束通知丢失时按 RO 的动画时长加十秒释放已确认实例。
-            ApplyServerEnd(_currentSkill.SkillUuid);
-        }
-        // RO 的旧施法列表在动作状态退出后继续逐帧运行，各实例各自等待结束通知。
-        for (int index = _skills.Count - 1; index >= 0; index--)
-        {
-            _skills[index].Update(deltaMilliseconds * 0.001f);
-        }
-        // 从尾到头清理丢失服务器结束通知的旧实例，保证删除后遍历仍有效。
-        for (int index = _skills.Count - 1; index >= 0; index--)
-        {
-            if (_skills[index].IsServerEndOverdue(realtimeSeconds))
+            // 单技能列表与已装配核心共享唯一冷却源，到期后核心查询也立即返回零。
+            for (int index = SkillCDList.Count - 1; index >= 0; index--)
             {
-                MSkillFactory.ReturnSkill(_skills[index]);
-                _skills.RemoveAt(index);
+                // 原单技能记录引用，退出字典和列表后才允许池复用。
+                SkillCDGroupInfo info = SkillCDList[index];
+                info.CurrentCD -= Mathf.Max(0f, realtimeSeconds - info.UpdatedRealtime);
+                info.UpdatedRealtime = realtimeSeconds;
+                if (info.CurrentCD <= 0f)
+                {
+                    SkillCDList.RemoveAt(index);
+                    SkillCDDic.Remove(info.SkillGroupType);
+                    MSkillFactory.singleton.ReturnSkillCdGroupInfo(info);
+                }
             }
         }
     }
@@ -585,6 +746,11 @@ public sealed class MSkillComponent : MBasicActionComponent
         SkillStartedEventArgs skillEvent = eventArg as SkillStartedEventArgs;
         if (skillEvent != null && FindSkill(skillEvent.SkillUuid) != null)
         {
+            return;
+        }
+        if (skillEvent == null || !CanSkill(skillEvent.SkillId))
+        {
+            // 无效或不许可的新技能不能经过基类拒绝回默认路径，避免误停当前施法。
             return;
         }
         _onActionEvent.Invoke(eventArg);
@@ -611,7 +777,7 @@ public sealed class MSkillComponent : MBasicActionComponent
             Finish();
             return;
         }
-        // 新施法接管动作槽时，旧实例继续按自己的 UUID 等待服务器结束通知。
+        // 新施法接管动作槽时，旧实例继续完成自己的表现，权威通知只按原 UUID 匹配。
         OnSkillAutoEnd();
         if (_currentSkill == null)
         {
@@ -629,9 +795,9 @@ public sealed class MSkillComponent : MBasicActionComponent
             Finish();
             return;
         }
-        if (Entity.MoveComp != null)
+        if (Entity.MoveComp != null && !IsActiveMovable)
         {
-            // 施法开始即清除上一帧的方向和水平速度，避免在下一次移动更新前继续滑行。
+            // 禁止施法移动的技能开始时清除旧方向和水平速度；MoveCasting 技能保留有效输入。
             Entity.MoveComp.StopHorizontalMovement();
         }
     }
@@ -648,41 +814,48 @@ public sealed class MSkillComponent : MBasicActionComponent
         return StateName;
     }
 
-    /// <summary>逐帧推进动画；剪辑结束后回默认动作，仍等服务器结束通知回收施法 UUID。</summary>
+    /// <summary>RO 当前动作更新：推进主技能，动作窗结束后释放动作槽。</summary>
     /// <param name="deltaTime">距上一帧的非负秒数。</param>
     protected override void OnUpdate(float deltaTime)
     {
-        if (_currentSkill != null)
+        base.OnUpdate(deltaTime);
+        if (_currentSkill == null)
         {
-            _currentSkill.Update(deltaTime);
+            Stop();
+            return;
         }
-        if (_currentSkill == null || !_currentSkill.IsActive ||
-            _currentSkill.IsSkillStateFinished)
+        if (!_currentSkill.Update(deltaTime))
+        {
+            _currentSkill.Cease(true);
+            Stop();
+            return;
+        }
+        if (_currentSkill.IsEnd())
         {
             Finish();
         }
     }
 
-    /// <summary>技能动作退出后仍保留施法实例，等待同一 UUID 的结束通知或超时回收。</summary>
+    /// <summary>技能动作退出后保留未完成的制作表现，按自身完成状态或 RO 实例存活上限回收。</summary>
     /// <param name="selfTrans">是否由技能自身切回技能状态触发。</param>
     protected override void OnStop(bool selfTrans = false)
     {
     }
 
-    /// <summary>将当前施法移交旧实例列表，供迟到的结果与结束通知按 UUID 匹配。</summary>
+    /// <summary>动作结束后把仍存活的主技能移交列表，继续自己的时间轴。</summary>
     private void OnSkillAutoEnd()
     {
         if (_currentSkill == null || !_currentSkill.IsActive)
         {
             return;
         }
-        // 动画租约在离开动作槽时释放，施法实例仍保留其服务器生命周期。
+        // 动画租约在离开动作槽时释放，施法实例继续完成自己的未来事件和声尾。
         _currentSkill.ReleaseAnimation();
         _skills.Add(_currentSkill);
         _currentSkill = null;
     }
 
-    /// <summary>任意施法退出动作槽后保留实例，等待同一 UUID 的结束通知。</summary>
+    /// <summary>动作退出时移交仍存活的技能，自然收尾不等待服务器回包。</summary>
     /// <param name="selfTrans">是否由技能自身切回技能状态触发。</param>
     protected override void AfterFinish(bool selfTrans = false)
     {

@@ -1,0 +1,8 @@
+# RO技能音效与当前实现只读对照
+
+- 请求：核对RO技能音效、特效是否与当前项目类似；仅阅读与解释，不开发新增功能。
+- RO证据：参考clientcode/CSProject/MoonClient/Skill/SkillLogic/MArtSkill.cs的FireEvents、fxListEvents、InnerProcessTimer、audio、killAudio；Model3D/MModel.cs的PlayAudio/PlayAudioInstance/StopAudioInstance；Skill/MSkill.cs的TriggerAnim。参考仓库只读。
+- 结论：RO分别用FxList/AudioList按At与循环间隔注册MTimerMgr，定时回调分别派发特效/音效。音效Clip交角色Model及MAudioMgr，单次3D播放或受End控制的FMOD实例，实例保存在列表并在释放时停止。动画走ClipName/SkillClips及AnimList，不使用本项目AnimationLocation/DurationSeconds这些字段名。
+- 当前证据：SkillRuntimePresentation、SkillRuntimeFxEvent、MArtSkill消费FxEvents；宿主SkillEditorAssetTools.ReadFx只接普通单次粒子，audioClip非空或非粒子contentKind拒绝导出；编辑器SkillEditorWindow.PlayFxAndSound可用AudioSource.PlayOneShot预览。
+- 区别：两者同为配置时间驱动；RO使用统一定时器注册并支持正式音效，当前粒子通过Update按TimeSeconds派发，音效仅有编辑器预览尚无正式导出/执行链。不能把编辑器保留音效入口描述为已接入游戏。
+- 验证：函数调用和字段分支交叉核对，无编译/PlayMode/界面测试；本轮未修改业务、资产、协议或参考代码。协作记录同步Docs/AI/CURRENT_TASK.md及TEST_REPORT.md。

@@ -424,7 +424,7 @@ public sealed class SkillCtrl : CtrlBase
         caster.Skill.ApplyServerStart(core, notice.SkillUuid);
     }
 
-    /// <summary>服务器广播结束时只停止相同施法 UUID 的当前表现。</summary>
+    /// <summary>服务器结束广播按同一 UUID 匹配当前或旧实例；自然结束保留事件尾段，打断立即注销并回池。</summary>
     /// <param name="data">SkillCastEndNtf 的 protobuf 消息体。</param>
     private void OnSkillCastEnd(ByteString data)
     {
@@ -438,7 +438,8 @@ public sealed class SkillCtrl : CtrlBase
         RoleEntity caster = FindRole(notice.CasterRoleId);
         if (caster != null && caster.Skill != null)
         {
-            caster.Skill.ApplyServerEnd(notice.SkillUuid);
+            // 协议已有打断标志；自然结束保留时间轴尾段，真实打断立即注销此 UUID 的全部未触发指令。
+            caster.Skill.ApplyServerEnd(notice.SkillUuid, notice.Interrupted);
         }
     }
 

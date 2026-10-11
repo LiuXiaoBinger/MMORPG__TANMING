@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e1014802217754caf00538866b10a2, type: 3}
+  m_Name: SkillRuntimePresentation_3001002
+  m_EditorClassIdentifier: 
+  PresentationId: 3001002
+  SkillId: 10010
+  AnimationLocation: Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Atk02.anim
+  DurationSeconds: 1.967
+  FxEvents:
+  - SourceEventIndex: 0
+    Frame: 23
+    TimeSeconds: 0.19166666
+    Particle: {fileID: 2613513961126100727, guid: 31a002e239edec74f82b993716735ce8, type: 3}
+    PlacementKind: 1
+    SocketPath: EffectPos
+    LocalPosition: {x: 0.09, y: -0.2, z: -0.17}
+    LocalEulerAngles: {x: 270, y: 35.54, z: 0}
+    LocalScale: {x: 1, y: 1, z: 1}
+    ForwardDistance: 0
+  AudioEvents:
+  - SourceEventIndex: 1
+    Frame: 23
+    TimeSeconds: 0.19166666
+    Clip: {fileID: 8300000, guid: b6ecbbaf3e445b346862c58ca57db223, type: 3}
+    Volume: 0.7
+  RootMotionSegments:
+  - StartSeconds: 0
+    EndSeconds: 1.9666667
+    Scale: 1

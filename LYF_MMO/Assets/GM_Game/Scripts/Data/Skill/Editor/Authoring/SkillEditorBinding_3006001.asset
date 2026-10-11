@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90fa525cd76d3944a2aeaf6a40765ab, type: 3}
+  m_Name: SkillEditorBinding_3006001
+  m_EditorClassIdentifier: 
+  PresentationId: 3006001
+  SkillId: 10060
+  EffectId: 2006001
+  ProfessionId: 1
+  ModelKey: Role_MJS
+  WeaponType: 0
+  VariantIndex: 0
+  Config: {fileID: 11400000, guid: 48716fe344647ec479982f1e78fcb6b1, type: 2}
+  PreviewModel: {fileID: 8115728581419920701, guid: d76aa3412cb81bd4598ec4a0db60d14f, type: 3}
+  SourceClip: {fileID: 7400000, guid: 478c129cf9e4edb478ea3570090e4d17, type: 2}
+  SkillStateTimeMs: 3167
+  FxSources:
+  - SourceEventIndex: 0
+    OriginalTimeSeconds: 0.31017473
+    ImportedFrame: 37
+    Stage: 
+  - SourceEventIndex: 1
+    OriginalTimeSeconds: 0.6996964
+    ImportedFrame: 84
+    Stage: skill03_2

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -31,6 +32,23 @@ public sealed class MModel
     public MAnimator Ator { get { return _mAtor; } }
     /// <summary>模型根对象上的碰撞控制器，由移动组件请求位移时负责碰撞约束。</summary>
     private CharacterController _characterController;
+    /// <summary>沿RO模型持有的声音组件，模型重置时停止全部声音。</summary>
+    private readonly SoundComponent _sound = new SoundComponent();
+    /// <summary>实际Animator节点的根位移采集器，供实体移动组件消费。</summary>
+    private SkillRootMotionCollector _rootMotion;
+    /// <summary>模型声音入口，普通动作按编辑器轨道自动派发。</summary>
+    public SoundComponent Sound { get { return _sound; } }
+    /// <summary>实际动画器的水平根位移入口，模型未加载时为空。</summary>
+    public SkillRootMotionCollector RootMotion { get { return _rootMotion; } }
+    /// <summary>仅保存调用时模型尚未加载的单次 GO 请求，按 RO 票据取消，不常驻订阅技能。</summary>
+    private readonly Dictionary<int, Action<GameObject>> _loadGoCallbacks =
+        new Dictionary<int, Action<GameObject>>();
+    /// <summary>冷 GO 票据的真实登记顺序，取消再登记或整数回绕也不按字典槽位乱序交付。</summary>
+    private readonly List<int> _loadGoOrder = new List<int>();
+    /// <summary>单次 GO 加载回调递增票据，零保留给已同步执行的暖模型请求。</summary>
+    private int _loadGoToken;
+    /// <summary>统一动画入口登记的当前技能动作所有者，同模型重载后恢复其动画，离开动作立即解除。</summary>
+    private MSkill _skillAnimation;
     /// <summary>获取模型原始配置数据。</summary>
     public MModelOriginData OriginData { get { return _originData; } }
     /// <summary>获取模型是否已加载完成。</summary>
@@ -92,8 +110,9 @@ public sealed class MModel
     public void Load(string location, string controllerLocation,
         bool useObjectAnimator, Action<MModel> callback)
     {
-        Reset();
+        ResetNativeModel();
         _sessionVersion++;
+        // 本次模型加载会话号，回收或再次重载后旧完成结果不得接管当前模型。
         int callbackSession = _sessionVersion;
         _modelLocation = location;
         _originData.ModelLocation = location;
@@ -105,6 +124,7 @@ public sealed class MModel
             FinishLoad(null, callbackSession, callback);
             return;
         }
+        // gameObject 为本次实例化结果，旧会话迟到时销毁该结果而不触及新模型。
         ResourceMgr.Instance.LoadPrefabAsync(location, gameObject =>
         {
             // 会话号不匹配说明已被回收或重新加载，销毁临时实例并丢弃回调
@@ -127,7 +147,7 @@ public sealed class MModel
     public void SetGameObject(GameObject gameObject, string controllerLocation,
         bool useObjectAnimator)
     {
-        Reset();
+        ResetNativeModel();
         _sessionVersion++;
         _mObj.CaptureNativeTransform(gameObject);
         _originData.ControllerLocation = controllerLocation;
@@ -152,6 +172,8 @@ public sealed class MModel
         {
             _mAtor.Update(deltaSeconds);
         }
+
+        _sound.Update();
 
         //Move();
     }
@@ -182,6 +204,13 @@ public sealed class MModel
         }
     }
 
+    /// <summary>最近一次碰撞提交是否碰到侧墙；程序运动据此结束，不重试未穿过的距离。</summary>
+    public bool HasSideCollision
+    {
+        get { return _characterController != null && _characterController.enabled &&
+            (_characterController.collisionFlags & CollisionFlags.Sides) != 0; }
+    }
+
     /// <summary>使用 CharacterController 应用本帧位移；模型未加载碰撞器时直接移动 Transform。</summary>
     /// <param name="movement">本帧世界空间位移，单位为米。</param>
     public void MoveCharacter(Vector3 movement)
@@ -207,9 +236,24 @@ public sealed class MModel
     /// </summary>
     public void Reset()
     {
+        ResetNativeModel();
+        _loadGoCallbacks.Clear();
+        _loadGoOrder.Clear();
+        _skillAnimation = null;
+    }
+
+    /// <summary>同一模型重新加载时只释放旧原生对象；已到期 GO 请求及当前动画归属等待新对象。</summary>
+    private void ResetNativeModel()
+    {
         _sessionVersion++;
         _isLoading = false;
         _isLoaded = false;
+        _sound.Reset();
+        if (_rootMotion != null)
+        {
+            _rootMotion.Unbind();
+        }
+        _rootMotion = null;
         if (_mAtor != null)
         {
             MAnimatorPool.Instance.Release(_mAtor);
@@ -219,6 +263,55 @@ public sealed class MModel
         _modelLocation = string.Empty;
         _originData.Reset();
         _visible = true;
+    }
+
+    /// <summary>沿 RO 接口申请一次模型 GO 回调；已加载同步执行并返回零，否则返回可取消票据。</summary>
+    /// <param name="callback">拿到完整模型时执行的具体操作，载荷是本模型原生 GameObject。</param>
+    /// <returns>冷模型等待票据；零表示已同步执行或未提供回调。</returns>
+    public int AddLoadGoCallback(Action<GameObject> callback)
+    {
+        if (callback == null)
+        {
+            return 0;
+        }
+        if (_isLoaded)
+        {
+            callback(_mObj.NativeObject);
+            return 0;
+        }
+        do
+        {
+            unchecked { _loadGoToken++; }
+        } while (_loadGoToken == 0 || _loadGoCallbacks.ContainsKey(_loadGoToken));
+        _loadGoCallbacks.Add(_loadGoToken, callback);
+        _loadGoOrder.Add(_loadGoToken);
+        return _loadGoToken;
+    }
+
+    /// <summary>沿 RO 接口取消尚未交付的模型 GO 操作，不影响其他施法。</summary>
+    /// <param name="token">AddLoadGoCallback 返回的非零等待票据。</param>
+    /// <returns>仍在等待且已移除时为 true。</returns>
+    public bool RemoveLoadGoCallback(int token)
+    {
+        _loadGoOrder.Remove(token);
+        return _loadGoCallbacks.Remove(token);
+    }
+
+    /// <summary>登记统一技能动画的当前所有者，模型迟到时只恢复这个动作。</summary>
+    /// <param name="skill">仍占用当前技能动作槽的实例。</param>
+    public void BindSkillAnimation(MSkill skill)
+    {
+        _skillAnimation = skill;
+    }
+
+    /// <summary>技能退出动作槽时解除自己的动画归属，不影响已接管模型的新动作。</summary>
+    /// <param name="skill">请求解除归属的原技能实例。</param>
+    public void ReleaseSkillAnimation(MSkill skill)
+    {
+        if (ReferenceEquals(_skillAnimation, skill))
+        {
+            _skillAnimation = null;
+        }
     }
 
     /// <summary>
@@ -244,12 +337,59 @@ public sealed class MModel
             return;
         }
         _mObj.SetGameObject(gameObject);
+        // 模型中真正播放动画的原生组件；根运动采集必须位于同一节点。
         Animator animator = gameObject.GetComponentInChildren<Animator>(true);
         _mAtor = MAnimatorPool.Instance.Acquire(_originData.UseObjectAnimator);
         _mAtor.Init(this, _mObj, animator, _originData.ControllerLocation);
+        if (animator != null)
+        {
+            _rootMotion = animator.GetComponent<SkillRootMotionCollector>();
+            if (_rootMotion == null)
+            {
+                _rootMotion = animator.gameObject.AddComponent<SkillRootMotionCollector>();
+            }
+            _rootMotion.Init(this, animator);
+        }
+        _sound.Init(this);
         _isLoaded = true;
         _mObj.IsActive = _visible;
         _characterController = gameObject.GetComponent<CharacterController>();
         if (callback != null) callback(this);
+        if (callbackSession != _sessionVersion || !_isLoaded)
+        {
+            return;
+        }
+        // 统一动画当前所有者的原对象；旧 Q、自然结束或已回池实例必须由此门控阻止恢复。
+        MSkill skillAnimation = _skillAnimation;
+        if (skillAnimation != null && skillAnimation.IsActive)
+        {
+            skillAnimation.TriggerAnim();
+        }
+        // 只快照本次模型到达前的操作；回调引发新加载时不消费新会话任务。
+        List<int> callbacks = new List<int>(_loadGoOrder);
+        // index 按登记顺序交付一次到期操作，回调期间取消的票据不再执行。
+        for (int index = 0; index < callbacks.Count; index++)
+        {
+            if (callbackSession != _sessionVersion || !_isLoaded)
+            {
+                return;
+            }
+            // 此票据原始回调；前一条操作取消它后不再交付，不能从旧快照直接调用。
+            Action<GameObject> loadGoCallback;
+            if (!_loadGoCallbacks.TryGetValue(callbacks[index], out loadGoCallback))
+            {
+                continue;
+            }
+            RemoveLoadGoCallback(callbacks[index]);
+            try
+            {
+                loadGoCallback(gameObject);
+            }
+            catch (Exception exception)
+            {
+                // exception 是单个到期操作的失败，不能阻断其他独立施法的 GO 操作。
+                Debug.LogException(exception);
+            }
+        }
     }
 }

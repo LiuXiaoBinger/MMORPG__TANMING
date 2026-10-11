@@ -634,7 +634,7 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 平滑过渡到指定动画状态。
+    /// 按 RO 的秒制过渡到指定动画状态，同状态接段或过渡中切段直接播放。
     /// </summary>
     /// <param name="stateName">目标动画状态名。</param>
     /// <param name="transitionDuration">过渡时长（秒）。</param>
@@ -645,13 +645,13 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 在指定层平滑过渡到指定动画状态。
-    /// 优先检查当前 Controller 的原生状态是否存在，存在时使用 CrossFade，否则才尝试兼容参数驱动。
+    /// 在指定层按 RO 切换动画，同状态或过渡中直接播放，其他情况按固定秒数融合。
+    /// 先解析当前 Controller 的原生状态；不存在时沿用兼容参数驱动。
     /// </summary>
     /// <param name="stateName">目标动画状态名。</param>
     /// <param name="transitionDuration">过渡时长（秒）。</param>
     /// <param name="layer">动画层索引。</param>
-    /// <param name="normalizedTime">归一化播放时间。</param>
+    /// <param name="normalizedTime">目标剪辑的归一化起点，通常位于 0 到 1；固定时间融合时换算为秒。</param>
     /// <returns>true 表示过渡成功。</returns>
     public virtual bool CrossFade(string stateName, float transitionDuration,
         int layer, float normalizedTime)
@@ -661,35 +661,53 @@ public class MAnimator
             return false;
         }
         _currentState = stateName;
-        if (!IsClipReady(stateName, normalizedTime))
-        {
-            // 剪辑尚未就绪时仍先进入 Controller 自带的原生状态，避免旧移动画面残留。
-            if (_animator != null && HasNativeState(stateName, layer))
-            {
-                string nativeStatePath = GetNativeStatePath(stateName, layer);
-                _animator.CrossFade(nativeStatePath, transitionDuration, layer,
-                    normalizedTime);
-                return true;
-            }
-            // 只有声明 Movement/Action 参数的旧控制器才允许使用兼容协议。
-            if (MAnimatorStateCompatibility.Apply(_animator, stateName))
-            {
-                return true;
-            }
-            return false;
-        }
+        // 保存异步加载完成后的续播起点；准备期间仍沿用当前已安装的原生剪辑。
+        IsClipReady(stateName, normalizedTime);
         if (_animator == null)
         {
             return false;
         }
-        if (HasNativeState(stateName, layer))
+
+        // 当前控制器中的完整目标路径，包含本项目 Idle、Move、Jump 的嵌套状态机。
+        string nativeStatePath = GetNativeStatePath(stateName, layer);
+        if (string.IsNullOrEmpty(nativeStatePath))
         {
-            // 嵌套 Jump 状态机需要使用完整路径，普通状态仍使用原状态名。
-            string nativeStatePath = GetNativeStatePath(stateName, layer);
-            _animator.CrossFade(nativeStatePath, transitionDuration, layer, normalizedTime);
+            return MAnimatorStateCompatibility.Apply(_animator, stateName);
+        }
+
+        // 当前层正在采样的状态，不能把共享 Skill 槽的新剪辑与它自身的旧进度融合。
+        AnimatorStateInfo currentStateInfo = _animator.GetCurrentAnimatorStateInfo(layer);
+        if (_animator.IsInTransition(layer) || currentStateInfo.IsName(nativeStatePath))
+        {
+            // RO 在连击复用同状态或打断过渡时直接接到新动作起点，不创建同槽自过渡。
+            _animator.Play(nativeStatePath, layer, normalizedTime);
             return true;
         }
-        return MAnimatorStateCompatibility.Apply(_animator, stateName);
+
+        // 固定时间 API 的起点单位是秒，保持现有公共接口的归一化参数语义。
+        float fixedTimeOffset = 0f;
+        if (normalizedTime != 0f)
+        {
+            // 目标状态绑定信息；准备中 Length 属于新资源，不能用于当前仍安装的旧剪辑。
+            MAnimInfo targetAnimInfo = GetAnimInfo(stateName);
+            // 当前实际安装的 ready 剪辑；尚无 ready 时使用控制器原始占位剪辑。
+            AnimationClip targetClip = null;
+            if (targetAnimInfo != null)
+            {
+                targetClip = targetAnimInfo.Clip;
+            }
+            if (targetClip == null)
+            {
+                targetClip = FindOriginalClip(stateName);
+            }
+            if (targetClip != null)
+            {
+                fixedTimeOffset = normalizedTime * targetClip.length;
+            }
+        }
+        _animator.CrossFadeInFixedTime(nativeStatePath, transitionDuration, layer,
+            fixedTimeOffset);
+        return true;
     }
 
     /// <summary>按当前归一化进度续播已记录状态，用于 Controller 绑定或剪辑覆盖后恢复动画。</summary>

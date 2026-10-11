@@ -90,11 +90,18 @@ public class Global : MonoBehaviour {
     private void Awake() {
         Instance = this;
 
+        // 全局只启动一个 RO 时间轴时钟，施法实例只登记票据，不自行推进管理器。
+        MTimerMgr.singleton.Init();
+
         DontDestroyOnLoad(this);
         _package = YooAssets.GetPackage("DefaultPackage");
+        // 资源包安装后一次补启动此前持有的表现资产，冷技能不再在 Update 中反复查询。
+        SkillRuntimePresentationCache.NotifyResourcePackageReady();
         NetSocketMgr.Instance.Init();
         PlayStateMgr.Instance.init();
         LubanMgr.Instance.Init();
+        // 同步锁定本次进程施法权限，之后才允许动画门控开放角色；缺配置采用稳定禁止默认。
+        SkillCastingRulesCatalog.Initialize();
         BeginAnimationPreload();
     }
 
@@ -359,7 +366,7 @@ public class Global : MonoBehaviour {
         }
     }
 
-    /// <summary>推进动画资源缓存和客户端角色模型组件。</summary>
+    /// <summary>推进动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
     private void Update()
     {
         MAnimationMgr.singleton.UpdateCache();
@@ -371,6 +378,8 @@ public class Global : MonoBehaviour {
         }
         // 当前 Unity 帧间隔换算为实体系统使用的毫秒整数。
         int deltaMilliseconds = Mathf.RoundToInt(Time.deltaTime * 1000f);
+        // 与技能累计时钟使用同一整数毫秒来源，角色数量与当前/旧技能数量均不加速时间轴。
+        MTimerMgr.singleton.Update(deltaMilliseconds * 0.001f);
         SceneWorld.Update(deltaMilliseconds);
     }
 
@@ -417,6 +426,8 @@ public class Global : MonoBehaviour {
         ClearLocalRoleSession();
         SceneWorld = null;
         LocalRoleLoadCompleted = null;
+        // 实体已逐个取消其技能票据，退出再解除任何剩余全局回调引用。
+        MTimerMgr.singleton.Uninit();
         MAnimationMgr.singleton.Uninit();
     }
 }

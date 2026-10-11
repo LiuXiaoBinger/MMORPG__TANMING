@@ -33,6 +33,8 @@ public sealed class RoleSkillComponent : RoleComponentBase
     /// <param name="owner">拥有中心服角色快照和网关会话的在线角色。</param>
     public RoleSkillComponent(OnlineRole owner) : base(owner)
     {
+        // 角色开放前同步装载一次编辑器导出的权限，不依赖客户端异步表现资产。
+        SkillCastingRulesCatalog.Initialize();
     }
 
     /// <summary>中心服成功回包是否已建立完整学习等级快照。</summary>
@@ -117,7 +119,9 @@ public sealed class RoleSkillComponent : RoleComponentBase
         {
             InterruptActiveCast(false);
         }
-        if (_activeSkillUuid != 0UL)
+        if (_activeSkillUuid != 0UL &&
+            (_activeSkillUuid == request.SkillUuid ||
+                !SkillCastingRulesCatalog.CanInterrupt(request.SkillId, _activeSkillId)))
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
@@ -158,6 +162,13 @@ public sealed class RoleSkillComponent : RoleComponentBase
         if (result.CurrentMp < effect.MpCost)
         {
             return Reject(result, CmdCode.SkillInsufficientMp);
+        }
+
+        if (_activeSkillUuid != 0UL)
+        {
+            // 新技能的全部拒绝条件已验证；只有真正可提交的请求才能中断旧 UUID。
+            // 先发旧技能 End，再由处理器回结果和发新技能 Start；已扣的 MP/CD 不退还。
+            InterruptActiveCast(true);
         }
 
         // 当前职业模型与默认武器的表现列表，对应 RO GetUsingTimes 的动作列表取模。
