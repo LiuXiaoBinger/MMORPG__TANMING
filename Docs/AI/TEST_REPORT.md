@@ -3989,3 +3989,11 @@ amespace、无 oreach（统一用 or 或数组 CopyTo 后按下标遍历）、
 - 本次不修改业务或导出资源；最近技能298运行/272编译为已有证据，不声明本次新跑。检查暂存完整性、临时文件排除、文件大小和远端提交一致，结果完成追加。
 - .gitignore与上传日志/协作记录纳入；本机UserSettings保留未暂存，缓存/备份/锁文件留本地。日志 `项目修改日志/2026-10-11-CLIENT-SERVER-GIT-UPLOAD-CHANGELOG.md`，证据 `_temp/git-upload-20261011/`。
 
+## 客户端/服务端 Git 上传：完成验收
+
+- 暂存验收PASS：授权清单与实际暂存909条增删路径完全一致，Git重命名统计902个变更文件；客户端550、服务端6、Luban190，其余为协作配置与正式文档。无超100 MiB文件，客户端Assets内脚本对应meta齐全，无本机设置/临时文件误入。
+- 正常提交 `c724c259e3f7e2db18f9bb081bdc7603f608878f` 并push origin/main成功，远端由60b2b74快进至c724c25，包含原已有本地提交01f8063；ls-remote与本地HEAD精确相同，未强推、未重写历史。
+- 上传后工作区仅两份本机设置有未暂存修改：LYF_MMO/UserSettings/EditorUserSettings.asset、LYF_MMO/UserSettings/Layouts/default-2023.dwlt；保留用户原内容，不回退或清理。
+- 全量暂存空白检查存在Unity meta常规尾空格及既有文档尾空白，未为上传格式化无关文件。本轮只修改忽略规则与上传记录；不把已有298断言/272源编译宣称为本轮新测试，不扩大为全客户端资源、服务器或现场验收。
+- 证据 `_temp/git-upload-20261011/staged-validation.json`、staged-files.json、git-add-literal.log与staged-whitespace.log。修正重复暂存已删除路径的临时清单逻辑后通过，未改业务代码；无未解决上传问题，完成记录另行提交并推送。
+
