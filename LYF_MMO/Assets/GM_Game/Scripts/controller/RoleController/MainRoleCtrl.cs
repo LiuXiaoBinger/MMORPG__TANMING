@@ -10,16 +10,25 @@ using UnityEngine.InputSystem.Utilities;
 * Descrpiton:
 */
 
+/// <summary>
+/// 本地主控角色表现控制器：把自身注册为 Global.roleCtrlBase，挂载输入与残影组件，
+/// 并在滑铲时生成残影、在攻击状态切回时驱动对应动画。正式移动已由场景实体链接管，本类仅保留兼容路径。
+/// </summary>
 public class MainRoleCtrl : RoleCtrlBase
 {
    // 用于锁定移动方向的时间戳（当前时间小于此值时，禁止移动输入）
    protected float m_movementDirectionUnlockTime;
-   
+
+   /// <summary>角色输入组件，用于读取移动与技能按键。</summary>
    private PlayerInputCtr _inputCtrl;
+   /// <summary>主相机变换缓存，用于把屏幕输入换算为世界朝向。</summary>
    private Transform _mainCameraTransform;
+   /// <summary>移动速度，普通为10、加速为18。</summary>
    private float _moveSpeed = 10;
+   /// <summary>旋转速度（历史字段，旧移动路径使用）。</summary>
    private float _rotationSpeed = 10000;
-   
+
+   /// <summary>挂在主角模型上的残影组件，滑铲时生成鬼影。</summary>
    private GhostEffect _ghostEffect;
 
    protected override void OnAwake()

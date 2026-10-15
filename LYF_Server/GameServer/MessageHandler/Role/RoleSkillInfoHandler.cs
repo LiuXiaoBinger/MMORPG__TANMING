@@ -18,8 +18,13 @@ public sealed class RoleSkillInfoHandler : IGameMessageHandler
     /// <returns>角色在线、回包角色 ID 有效且两者一致时返回 true。</returns>
     public static bool IsMatchingRole(OnlineRole role, RoleSkillInfoRet response)
     {
-        if (role == null || response == null || role.State != OnlineRoleState.Online ||
-            response.RoleId <= 0)
+        // 角色或回包任一缺失，或角色不在线时直接判定不匹配。
+        if (role == null || response == null)
+        {
+            return false;
+        }
+        // 角色在线但回包角色 ID 无效时同样不匹配。
+        if (role.State != OnlineRoleState.Online || response.RoleId <= 0)
         {
             return false;
         }

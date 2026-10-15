@@ -10,22 +10,24 @@ public sealed class MStateMachine : EntityComponentBase
 {
     /// <summary>动作状态容器，按 StateDefine 和类型双向索引已注册状态。</summary>
     private readonly MActionStateContainer _states = new MActionStateContainer();
+
     /// <summary>当前激活状态。</summary>
     private IMStateTransform _current;
+
     /// <summary>默认状态（通常是 Idle），动作结束后自动回退到这里。</summary>
     private IMStateTransform _default;
+
     /// <summary>上一个激活状态，用于动画切换和 StateChanged 事件参数。</summary>
     private IMStateTransform _previous;
+
     /// <summary>标记本帧是否已经触发过动画播放，避免同一帧多次 PlayAnim。</summary>
     private bool _isTriggered;
+
     /// <summary>上一次播放的动画状态名，供 <see cref="IMStateTransform.PlayAnim"/> 做去重切换。</summary>
     private string _preState;
+
     /// <summary>是否已经注册过默认状态列表，避免对象池复用时重复注册。</summary>
     private bool _registered;
-
-    /// <summary>构造状态机组件。</summary>
-    /// <param name="owner">宿主实体。</param>
-    public MStateMachine(ROObject owner) : base(owner) { }
 
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Sync"/>。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Sync; } }
@@ -50,6 +52,50 @@ public sealed class MStateMachine : EntityComponentBase
 
     /// <summary>动作状态容器，外部可按类型或 StateDefine 查询状态。</summary>
     public MActionStateContainer States { get { return _states; } }
+
+    /// <summary>构造状态机组件。</summary>
+    /// <param name="owner">宿主实体。</param>
+    public MStateMachine(ROObject owner) : base(owner) { }
+
+    /// <summary>帧更新：把毫秒转换为秒后驱动当前状态。</summary>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        UpdateSeconds(deltaMilliseconds * 0.001f);
+    }
+
+    /// <summary>
+    /// 每帧更新当前状态；状态标记为完成后自动切换到默认状态。
+    /// </summary>
+    public override void Update(float fDeltaT)
+    {
+        _current.StateUpdate(fDeltaT);
+
+        if (_current.IsFinished)
+        {
+            TransferToState(_default);
+        }
+    }
+
+    /// <summary>
+    /// 帧末动画刷新：仅在本帧触发过状态切换且模型 Animator 可用时，
+    /// 调用当前状态的 PlayAnim 播放动画，并把已播放状态名传回状态做下次去重。
+    /// </summary>
+    /// <param name="deltaSeconds">距上一帧的秒数（本状态机未使用）。</param>
+    public override void LateUpdate(float deltaSeconds)
+    {
+        base.LateUpdate(deltaSeconds);
+        // 本帧发生过状态切换且当前状态对象存在时，才进入动画刷新。
+        if (_isTriggered && _current != null)
+        {
+            // 实体模型与 Animator 均可用时，调用当前状态播放动画并回传状态名去重。
+            if (Entity != null && Entity.Model != null && Entity.Model.Ator != null)
+            {
+                _preState = _current.PlayAnim(_preState);
+                _isTriggered = false;
+            }
+        }
+    }
 
     /// <summary>
     /// 状态机初始化：首次进入时按实体类型注册全部可用动作状态，
@@ -81,11 +127,16 @@ public sealed class MStateMachine : EntityComponentBase
         // Skill 是实体快捷组件也是动作状态，由状态容器持有并在状态机销毁时唯一回收。
         RegisterExistingState(entity.Skill);
         // 集合物、陷阱、投射物、傀儡、鹰等无普通动作，只保留默认状态
-        if ((entity.EntityType & EntityType.Collection) != EntityType.None ||
-            (entity.EntityType & EntityType.Trap) != EntityType.None ||
+        // 集合类与陷阱类实体不注册普通动作。
+        bool isStaticTriggerEntity =
+            (entity.EntityType & EntityType.Collection) != EntityType.None ||
+            (entity.EntityType & EntityType.Trap) != EntityType.None;
+        // 投射物、傀儡与鹰属于无普通动作的特殊实体。
+        bool isNoActionEntity =
             (entity.EntityType & EntityType.Projectile) != EntityType.None ||
             (entity.EntityType & EntityType.Dummy) != EntityType.None ||
-            (entity.EntityType & EntityType.Eagle) != EntityType.None)
+            (entity.EntityType & EntityType.Eagle) != EntityType.None;
+        if (isStaticTriggerEntity || isNoActionEntity)
         {
             return;
         }
@@ -103,11 +154,16 @@ public sealed class MStateMachine : EntityComponentBase
         RegisterState(typeof(MStunComponent));
         RegisterState(typeof(MBornComponent));
         // 怪物、精英、Boss、雇佣兵、宠物不再注册生活动作
-        if ((entity.EntityType & EntityType.Monster) != EntityType.None ||
-            (entity.EntityType & EntityType.Elite) != EntityType.None ||
+        // 怪物与精英类实体不注册生活动作。
+        bool isMonsterLikeEntity =
+            (entity.EntityType & EntityType.Monster) != EntityType.None ||
+            (entity.EntityType & EntityType.Elite) != EntityType.None;
+        // Boss、雇佣兵与宠物同样不注册生活动作。
+        bool isCombatPetLikeEntity =
             (entity.EntityType & EntityType.Boss) != EntityType.None ||
             (entity.EntityType & EntityType.Mercenary) != EntityType.None ||
-            (entity.EntityType & EntityType.Pet) != EntityType.None)
+            (entity.EntityType & EntityType.Pet) != EntityType.None;
+        if (isMonsterLikeEntity || isCombatPetLikeEntity)
         {
             return;
         }
@@ -241,13 +297,6 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>完成当前状态，通常由状态内部在动画播完后调用。</summary>
     public void Finish() { if (_current != null) _current.Finish(); }
 
-    /// <summary>帧更新：把毫秒转换为秒后驱动当前状态。</summary>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        UpdateSeconds(deltaMilliseconds * 0.001f);
-    }
-
     /// <summary>动作状态内部统一使用秒，实体入口仍使用毫秒。</summary>
     /// <param name="deltaSeconds">距上一帧的秒数。</param>
     public void UpdateSeconds(float deltaSeconds)
@@ -256,22 +305,6 @@ public sealed class MStateMachine : EntityComponentBase
         _current.StateUpdate(deltaSeconds);
         // 当前状态已完成且不是默认状态时，自动切回默认状态
         if (_current.IsFinished && _current != _default) TransferToState(_default);
-    }
-
-    /// <summary>
-    /// 帧末动画刷新：仅在本帧触发过状态切换且模型 Animator 可用时，
-    /// 调用当前状态的 PlayAnim 播放动画，并把已播放状态名传回状态做下次去重。
-    /// </summary>
-    /// <param name="deltaSeconds">距上一帧的秒数（本状态机未使用）。</param>
-    public override void LateUpdate(float deltaSeconds)
-    {
-        base.LateUpdate(deltaSeconds);
-        if (_isTriggered && _current != null && Entity != null &&
-            Entity.Model != null && Entity.Model.Ator != null)
-        {
-            _preState = _current.PlayAnim(_preState); 
-            _isTriggered = false;
-        }
     }
 
     protected override void EventSubscribe()
@@ -326,18 +359,5 @@ public sealed class MStateMachine : EntityComponentBase
         MEntity entity = hostObj as MEntity;
         if (entity != null) entity.SetMachineComponent(this);
         base.OnAttachToHost(hostObj);
-    }
-    
-    /// <summary>
-    /// 每帧更新当前状态；状态标记为完成后自动切换到默认状态。
-    /// </summary>
-    public override void Update(float fDeltaT)
-    {
-        _current.StateUpdate(fDeltaT);
-
-        if (_current.IsFinished)
-        {
-            TransferToState(_default);
-        }
     }
 }

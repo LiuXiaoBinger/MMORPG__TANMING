@@ -360,3 +360,16 @@ message UpdateItemRet
 	CmdCode cmd_code = 1;
 	UpdateItem ItemDate = 2;
 }
+
+// 服务器向现有附近角色转发的 RO 移动状态，本人按本地移动继续执行。
+message SyncMoveNtf
+{
+  int32 role_id = 1;//移动者持久角色 ID，用于客户端现有角色索引
+  float dx = 2;//本段结束世界坐标 X，单位米
+  float dy = 3;//本段结束世界坐标 Y，单位米
+  float dz = 4;//本段结束世界坐标 Z，单位米
+  float face = 5;//绕世界 Y 轴的朝向，单位度，0 到 360
+  float time = 6;//本段移动耗时，单位秒，供远端插值
+  bool is_moving = 7;//本段末帧是否仍处于主动移动状态
+  bool is_moved = 8;//本段是否产生位置变化，供远端动画接入
+}

@@ -14,26 +14,6 @@ public abstract class MObject : ROObject
     /// <summary>事件分发器，负责按事件类型分发到所有监听器</summary>
     private readonly MEventDispatcher _eventDispatcher = new MEventDispatcher();
 
-    /// <summary>
-    /// 基础构造函数，初始化身份信息和生命周期状态。
-    /// </summary>
-    /// <param name="uid">运行时唯一 UID，必须非零</param>
-    /// <param name="entityType">实体类型枚举</param>
-    /// <param name="configId">配置表 ID</param>
-    /// <exception cref="ArgumentException">UID 为 0 时抛出</exception>
-    protected MObject(ulong uid, EntityType entityType, int configId)
-    {
-        if (uid == 0UL)
-        {
-            throw new ArgumentException("实体 UID 必须有效", "uid");
-        }
-
-        UID = uid;
-        EntityType = entityType;
-        ConfigId = configId;
-        LifecycleState = EntityLifecycleState.Created;
-    }
-
     /// <summary>实体运行时唯一身份 UID</summary>
     public virtual ulong UID { get; protected set; }
 
@@ -64,22 +44,76 @@ public abstract class MObject : ROObject
     /// <summary>当前状态机状态（由派生类实现）</summary>
     public abstract StateDefine CurrentState { get; }
 
+    /// <summary>是否为主角（本机玩家）</summary>
+    public bool IsPlayer
+    {
+        get { return (EntityType & EntityType.Player) != EntityType.None; }
+    }
+
+    /// <summary>是否具有角色类别位；本地玩家和其他角色均返回 true。</summary>
+    public bool IsRole
+    {
+        get { return (EntityType & EntityType.Role) != EntityType.None; }
+    }
+
+    /// <summary>
+    /// 基础构造函数，初始化身份信息和生命周期状态。
+    /// </summary>
+    /// <param name="uid">运行时唯一 UID，必须非零</param>
+    /// <param name="entityType">实体类型枚举</param>
+    /// <param name="configId">配置表 ID</param>
+    /// <exception cref="ArgumentException">UID 为 0 时抛出</exception>
+    protected MObject(ulong uid, EntityType entityType, int configId)
+    {
+        if (uid == 0UL)
+        {
+            throw new ArgumentException("实体 UID 必须有效", "uid");
+        }
+
+        UID = uid;
+        EntityType = entityType;
+        ConfigId = configId;
+        LifecycleState = EntityLifecycleState.Created;
+    }
+
+    /// <summary>
+    /// 每帧逻辑更新，仅在 Active 状态下驱动组件更新
+    /// </summary>
+    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
+    public virtual void Update(int deltaMilliseconds)
+    {
+        /*if (LifecycleState != EntityLifecycleState.Active)
+        {
+            return;
+        }
+
+        _components.Update(deltaMilliseconds);*/
+        if (_components != null)
+        {
+            _components.Update(deltaMilliseconds);
+        }
+        
+    }
+
+    /// <summary>
+    /// 帧末更新，仅在 Active 状态下驱动组件 LateUpdate
+    /// </summary>
+    /// <param name="deltaSeconds">帧间隔秒数</param>
+    public virtual void LateUpdate(float deltaSeconds)
+    {
+        if (LifecycleState != EntityLifecycleState.Active)
+        {
+            return;
+        }
+        _components.LateUpdate(deltaSeconds);
+    }
+
     /// <summary>关联 Unity 表现控制器（由派生类实现）</summary>
     public abstract void SetEntityCtrl(RoleCtrlBase ctrl);
 
     /// <summary>获取表现控制器（由派生类实现）</summary>
     public abstract RoleCtrlBase GetEntityCtrl();
 
-    /// <summary>是否为主角（本机玩家）</summary>
-    public bool IsPlayer
-    {
-        get { return (EntityType & EntityType.Player) != EntityType.None; }
-    }
-    /// <summary>是否具有角色类别位；本地玩家和其他角色均返回 true。</summary>
-    public bool IsRole
-    {
-        get { return (EntityType & EntityType.Role) != EntityType.None; }
-    }
     /// <summary>
     /// 添加事件监听器
     /// </summary>
@@ -141,10 +175,14 @@ public abstract class MObject : ROObject
         _components.Add(component);
     }
 
+    /// <summary>按组件类型查询普通组件容器中已挂载的组件实例。</summary>
+    /// <typeparam name="T">要查询的组件类型。</typeparam>
+    /// <returns>命中的组件实例；未挂载返回 null。</returns>
     public T GetMComponentByT<T>() where T : EntityComponentBase
     {
         return Components.GetMComponentByT<T>();
     }
+
     /// <summary>
     /// 执行初始化流程，装配组件并进入 Active 状态。
     /// 仅在 Created 状态下有效，重复调用直接忽略。
@@ -165,38 +203,6 @@ public abstract class MObject : ROObject
     /// <summary>初始化前回调，派生类可在此追加额外组件</summary>
     protected virtual void OnBeforeInitialize()
     {
-    }
-
-    /// <summary>
-    /// 每帧逻辑更新，仅在 Active 状态下驱动组件更新
-    /// </summary>
-    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
-    public virtual void Update(int deltaMilliseconds)
-    {
-        /*if (LifecycleState != EntityLifecycleState.Active)
-        {
-            return;
-        }
-
-        _components.Update(deltaMilliseconds);*/
-        if (_components != null)
-        {
-            _components.Update(deltaMilliseconds);
-        }
-        
-    }
-
-    /// <summary>
-    /// 帧末更新，仅在 Active 状态下驱动组件 LateUpdate
-    /// </summary>
-    /// <param name="deltaSeconds">帧间隔秒数</param>
-    public virtual void LateUpdate(float deltaSeconds)
-    {
-        if (LifecycleState != EntityLifecycleState.Active)
-        {
-            return;
-        }
-        _components.LateUpdate(deltaSeconds);
     }
 
     /// <summary>进入睡眠状态，暂停逻辑更新并广播 Sleep 事件</summary>

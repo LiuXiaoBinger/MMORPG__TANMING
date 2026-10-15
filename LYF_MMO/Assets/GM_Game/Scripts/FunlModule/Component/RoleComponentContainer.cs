@@ -21,6 +21,12 @@ public sealed class RoleComponentContainer
         }
     }
 
+    /// <summary>更新全部组件。</summary>
+    public void Update(int deltaMilliseconds)
+    {
+        InvokeAll("Update", component => component.Update(deltaMilliseconds));
+    }
+
     /// <summary>注册组件，同一具体类型只能注册一次。</summary>
     public void SetComponent<T>(T component) where T : RoleComponentBase
     {
@@ -78,12 +84,6 @@ public sealed class RoleComponentContainer
     public void AfterAddedToWorld()
     {
         InvokeAll("AfterAddedToWorld", component => component.AfterAddedToWorld());
-    }
-
-    /// <summary>更新全部组件。</summary>
-    public void Update(int deltaMilliseconds)
-    {
-        InvokeAll("Update", component => component.Update(deltaMilliseconds));
     }
 
     /// <summary>按注册逆序释放全部组件。</summary>

@@ -9,15 +9,23 @@ using UnityEngine.UI;
 public class BuyItemWidget : MonoBehaviour
 {
     [SerializeField, Header("商品图标")] private Image _imgIcon;
+
     [SerializeField, Header("商品名称")] private Text _textName;
+
     [SerializeField, Header("商品详情")] private Text _textDetails;
+
     [SerializeField, Header("货币图标")] private Image _priceImgIcon;
+
     [SerializeField, Header("商品价格")] private TMP_Text _textPrice;
+
     [SerializeField, Header("限购数量")] private Text _textNeedNum;
+
     [SerializeField, Header("购买按钮")] private Button _buyButton;
 
     private ShopGoodsViewData _viewData;
+
     private Action<ShopGoodsViewData> _clickHandler;
+
     private int _bindingVersion;
 
     private void Awake()

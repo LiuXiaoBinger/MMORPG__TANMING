@@ -160,9 +160,21 @@ public sealed class CRoleWriteTask
     private void ValidateRequest()
     {
         // 基础字段校验：请求非空、角色 ID 合法、版本号大于 0，且至少包含物品、次数或次数快照标记。
-        if (_request == null || _request.RoleId <= 0 || _request.Version <= 0 ||
-            (_request.ItemDataLists.Count == 0 && _request.RoleCountInfoList.Count == 0 &&
-             !_request.RoleCountSnapshot))
+        // 请求对象缺失时直接判为非法。
+        if (_request == null)
+        {
+            throw new InvalidOperationException("角色保存请求参数无效，缺少物品或次数快照");
+        }
+        // 角色 ID 或版本号不合法时判为非法。
+        if (_request.RoleId <= 0 || _request.Version <= 0)
+        {
+            throw new InvalidOperationException("角色保存请求参数无效，缺少物品或次数快照");
+        }
+        // 既无物品列表、又无次数信息且无次数快照标记时判为非法。
+        bool hasNoItemData = _request.ItemDataLists.Count == 0;
+        bool hasNoCountInfo = _request.RoleCountInfoList.Count == 0;
+        bool noCountSnapshot = !_request.RoleCountSnapshot;
+        if (hasNoItemData && hasNoCountInfo && noCountSnapshot)
         {
             throw new InvalidOperationException("角色保存请求参数无效，缺少物品或次数快照");
         }
@@ -183,17 +195,31 @@ public sealed class CRoleWriteTask
             {
                 // 物品字段校验：UID/类型 ID/数量合法、角色 ID 匹配、背包类型与所属列表一致、
                 // 格子索引非负、UID 全局唯一。
-                if (item == null || item.ItemUid <= 0 || item.ItemTypeId <= 0 || item.Count <= 0 ||
-                    item.RoleId != _request.RoleId || item.BagType != itemDataList.BagType ||
-                    item.BagIndex < 0 || !itemUids.Add(item.ItemUid))
+                // 物品对象缺失或 UID、类型 ID 不合法时判为非法。
+                if (item == null || item.ItemUid <= 0 || item.ItemTypeId <= 0)
+                {
+                    throw new InvalidOperationException("物品快照包含非法或重复数据");
+                }
+                // 数量、角色归属、背包类型与所属列表一致性校验。
+                if (item.Count <= 0 || item.RoleId != _request.RoleId || item.BagType != itemDataList.BagType)
+                {
+                    throw new InvalidOperationException("物品快照包含非法或重复数据");
+                }
+                // 格子索引非负，且 UID 全局唯一（Add 仅在前面校验全部通过后执行）。
+                if (item.BagIndex < 0 || !itemUids.Add(item.ItemUid))
                 {
                     throw new InvalidOperationException("物品快照包含非法或重复数据");
                 }
                 // 装备扩展数据校验：装备信息和词条信息的 UID、角色 ID 必须与主物品记录一致。
-                if ((item.EquipInfo != null &&
-                    (item.EquipInfo.ItemUid != item.ItemUid || item.EquipInfo.RoleId != item.RoleId)) ||
-                    (item.EquipGeneInfo != null &&
-                    (item.EquipGeneInfo.ItemUid != item.ItemUid || item.EquipGeneInfo.RoleId != item.RoleId)))
+                // 装备主信息存在且其 UID、角色 ID 与主物品记录不一致时判为非法。
+                if (item.EquipInfo != null &&
+                    (item.EquipInfo.ItemUid != item.ItemUid || item.EquipInfo.RoleId != item.RoleId))
+                {
+                    throw new InvalidOperationException("装备扩展数据与物品实例不一致");
+                }
+                // 装备词条信息存在且其 UID、角色 ID 与主物品记录不一致时判为非法。
+                if (item.EquipGeneInfo != null &&
+                    (item.EquipGeneInfo.ItemUid != item.ItemUid || item.EquipGeneInfo.RoleId != item.RoleId))
                 {
                     throw new InvalidOperationException("装备扩展数据与物品实例不一致");
                 }
@@ -331,7 +357,10 @@ public sealed class CRoleWriteTask
         List<RoleCountTable> rows = new List<RoleCountTable>();
         foreach (RoleCountInfo value in list)
         {
-            if (value == null || value.Action <= 0 || value.CountKey <= 0 || value.Count < 0) continue;
+            // 空对象或动作 ID 不合法的次数记录直接跳过。
+            if (value == null || value.Action <= 0) continue;
+            // 计数键不合法或数量为负的次数记录直接跳过。
+            if (value.CountKey <= 0 || value.Count < 0) continue;
             DateTime refresh = DateTime.MinValue;
             if (value.LastRefreshTime > 0) refresh = new DateTime(value.LastRefreshTime, DateTimeKind.Utc).ToLocalTime();
             rows.Add(new RoleCountTable { RoleId = roleId, Action = value.Action, CountKey = value.CountKey,
@@ -391,11 +420,25 @@ public sealed class CRoleWriteTask
         {
             RoleItemInfo requested;
             // UID 不存在或任一字段（类型、背包、格子、数量、绑定、货币、总价）不一致即不匹配。
-            if (!requestedByUid.TryGetValue(stored.ItemUID, out requested) ||
-                stored.ItemTypeID != requested.ItemTypeId || stored.BagType != requested.BagType ||
-                stored.BagIndex != requested.BagIndex || stored.count != requested.Count ||
-                stored.ItemSign != requested.ItemSign || stored.MoneyType != requested.MoneyType ||
-                stored.TotalPrice != requested.TotalPrice)
+            // 请求中不存在该 UID 即判定不匹配。
+            if (!requestedByUid.TryGetValue(stored.ItemUID, out requested))
+            {
+                return false;
+            }
+            // 类型、背包类型、格子索引三者不一致即判定不匹配。
+            if (stored.ItemTypeID != requested.ItemTypeId || stored.BagType != requested.BagType ||
+                stored.BagIndex != requested.BagIndex)
+            {
+                return false;
+            }
+            // 数量、绑定标记、货币类型三者不一致即判定不匹配。
+            if (stored.count != requested.Count || stored.ItemSign != requested.ItemSign ||
+                stored.MoneyType != requested.MoneyType)
+            {
+                return false;
+            }
+            // 总价不一致即判定不匹配。
+            if (stored.TotalPrice != requested.TotalPrice)
             {
                 return false;
             }
@@ -437,11 +480,20 @@ public sealed class CRoleWriteTask
             // 请求有词条信息时，数据库必须存在且三个词条的 ID 和数值全部一致。
             if (requested.EquipGeneInfo != null)
             {
-                if (!geneByUid.TryGetValue(requested.ItemUid, out storedGene) ||
-                    storedGene.GeneID0 != requested.EquipGeneInfo.GeneId0 ||
+                // 数据库中找不到该词条记录即判定不匹配。
+                if (!geneByUid.TryGetValue(requested.ItemUid, out storedGene))
+                {
+                    return false;
+                }
+                // 三个词条 ID 不一致即判定不匹配。
+                if (storedGene.GeneID0 != requested.EquipGeneInfo.GeneId0 ||
                     storedGene.GeneID1 != requested.EquipGeneInfo.GeneId1 ||
-                    storedGene.GeneID2 != requested.EquipGeneInfo.GeneId2 ||
-                    storedGene.GeneValue0 != requested.EquipGeneInfo.GeneValue0 ||
+                    storedGene.GeneID2 != requested.EquipGeneInfo.GeneId2)
+                {
+                    return false;
+                }
+                // 三个词条数值不一致即判定不匹配。
+                if (storedGene.GeneValue0 != requested.EquipGeneInfo.GeneValue0 ||
                     storedGene.GeneValue1 != requested.EquipGeneInfo.GeneValue1 ||
                     storedGene.GeneValue2 != requested.EquipGeneInfo.GeneValue2)
                 {

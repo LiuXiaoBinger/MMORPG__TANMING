@@ -119,6 +119,10 @@ public static class GateClientResponseForwarder
                 case NetDefine.CMD_SkillCastEndCode:
                     SkillCastEndNtf.Parser.ParseFrom(package.Data);
                     return true;
+                case NetDefine.CMD_SyncMoveCode:
+                    // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
+                    SyncMoveNtf.Parser.ParseFrom(package.Data);
+                    return true;
                 default:
                     return false;
             }
@@ -136,10 +140,13 @@ public static class GateClientResponseForwarder
     /// </summary>
     private static bool ShouldForwardBusinessResult(int commandCode)
     {
-        return commandCode == NetDefine.CMD_OpenKnapsackGridCode ||
-            commandCode == NetDefine.CMD_BuyShopItemCode ||
-            commandCode == NetDefine.CMD_RoleShopPurchaseInfoCode ||
+        // 是否为背包开格子或商城购买回包。
+        bool isKnapsackOrBuyCode = commandCode == NetDefine.CMD_OpenKnapsackGridCode ||
+            commandCode == NetDefine.CMD_BuyShopItemCode;
+        // 是否为商城购买信息或技能释放回包。
+        bool isShopInfoOrSkillCode = commandCode == NetDefine.CMD_RoleShopPurchaseInfoCode ||
             commandCode == NetDefine.CMD_SkillCastCode;
+        return isKnapsackOrBuyCode || isShopInfoOrSkillCode;
     }
 
     /// <summary>

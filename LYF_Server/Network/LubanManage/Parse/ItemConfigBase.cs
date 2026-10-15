@@ -122,9 +122,13 @@ public abstract class ItemConfigBase
     /// </summary>
     protected static KnapsackType NormalizePackType(int value, KnapsackType fallback, int itemId)
     {
-        if (value == (int)KnapsackType.RolePackPlain || value == (int)KnapsackType.RolePackEquip ||
-            value == (int)KnapsackType.RolePackConsume || value == (int)KnapsackType.RolePackMaterial ||
-            value == (int)KnapsackType.RoleVirtualItemPack)
+        // 是否为角色普通、装备、消耗品三类主背包。
+        bool isMainPackType = value == (int)KnapsackType.RolePackPlain ||
+            value == (int)KnapsackType.RolePackEquip || value == (int)KnapsackType.RolePackConsume;
+        // 是否为角色材料背包或虚拟物品背包。
+        bool isMaterialOrVirtualPack = value == (int)KnapsackType.RolePackMaterial ||
+            value == (int)KnapsackType.RoleVirtualItemPack;
+        if (isMainPackType || isMaterialOrVirtualPack)
         {
             return (KnapsackType)value;
         }

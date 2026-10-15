@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Luban
 {
+    /// <summary>Luban 调试字符串工具：反射拼接对象字段/属性用于日志输出。</summary>
     public static class StringUtil
     {
         public static string ToStr(object o)

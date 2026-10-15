@@ -18,8 +18,14 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
     /// <param name="context">中心服消息上下文。</param>
     public void Handle(GameMessageHandlerContext context)
     {
-        if (context == null || context.Source != GameCommandSource.CenterServer ||
-            context.Package == null || context.Package.Data == null)
+        // 上下文缺失或来源不是中心服时丢弃该回包。
+        if (context == null || context.Source != GameCommandSource.CenterServer)
+        {
+            LogMsg.Info("角色背包信息回包为空", LogMsgType.Error);
+            return;
+        }
+        // 协议包或包数据缺失同样视为空回包。
+        if (context.Package == null || context.Package.Data == null)
         {
             LogMsg.Info("角色背包信息回包为空", LogMsgType.Error);
             return;

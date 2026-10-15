@@ -35,11 +35,17 @@ public class RoleCountItemInfo
     
 }
 
+/// <summary>
+/// 轻量一次性自旋标志：用于标记某段逻辑是否已进入/已处理，保证同一周期内不重复执行。
+/// </summary>
 public class Switch
 {
+    /// <summary>默认构造，标志初始为 false。</summary>
     public Switch() { }
-    ~Switch() { } 
- public bool Set() 
+    /// <summary>空终结器，保留以与历史代码一致。</summary>
+    ~Switch() { }
+    /// <summary>置位成功返回 true；已置位则返回 false。</summary>
+ public bool Set()
 { 
     if (_flag)
     {
@@ -51,6 +57,7 @@ public class Switch
         return true;
     }
 }
+    /// <summary>读取标志后立即复位；原为 true 返回 true。</summary>
  public bool TestAndReset()
  {
     if (!_flag)
@@ -60,9 +67,12 @@ public class Switch
     _flag = false;
     return true;
  }
+    /// <summary>只读测试当前标志，不复位。</summary>
  public bool Test() { return _flag; }
+    /// <summary>手动复位标志。</summary>
  public void Reset() { _flag = false; }
 
 
+    /// <summary>内部标志位，false 表示未置位。</summary>
  public bool _flag=false;
 };

@@ -226,7 +226,13 @@ public class RoItemComponent : RoleComponentBase
     private bool ApplyOpenedGridCount(KnapsackType type, int count)
     {
         RoItemContainer container = GetContainer(type);
-        if (!IsExpandableType(type) || container == null || count < MinOpenedGridCount || count > MaxOpenedGridCount)
+        // 类型不可扩容或容器尚未创建时拒绝写入。
+        if (!IsExpandableType(type) || container == null)
+        {
+            return false;
+        }
+        // 目标格子数小于最小或大于最大合法范围时拒绝写入。
+        if (count < MinOpenedGridCount || count > MaxOpenedGridCount)
         {
             return false;
         }
@@ -240,8 +246,11 @@ public class RoItemComponent : RoleComponentBase
     /// <returns>可扩容返回 true，穿戴栏等返回 false。</returns>
     private static bool IsExpandableType(KnapsackType type)
     {
-        return type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip ||
-            type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        // 是否为普通包裹或装备包裹类型。
+        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
+        // 是否为消耗品包裹或材料包裹类型。
+        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        return isPlainOrEquip || isConsumeOrMaterial;
     }
 
     /// <summary>获取四类可扩容背包的类型数组，用于批量初始化与遍历。</summary>
@@ -271,7 +280,13 @@ public class RoItemComponent : RoleComponentBase
     /// <param name="ret">中心服返回的角色背包信息回包。</param>
     public void LoadKnapsack(RoleKanpsackInfoRet ret)
     {
-        if (ret == null || ret.CmdCode != CmdCode.Succeed || ret.RoleKanpsackInfo == null || _itemContainers == null)
+        // 回包为空或命令码非成功时直接放弃装载。
+        if (ret == null || ret.CmdCode != CmdCode.Succeed)
+        {
+            return;
+        }
+        // 背包数据为空或容器字典未初始化时直接放弃装载。
+        if (ret.RoleKanpsackInfo == null || _itemContainers == null)
         {
             return;
         }
@@ -449,7 +464,13 @@ public class RoItemComponent : RoleComponentBase
     public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason, 
         ItemSign itemSign, int moneyType, long price, UpdateType updateType, IdipParam idipParam)
     {
-        if (Owner == null || itemId <= 0 || itemCount <= 0 || price < 0)
+        // 归属角色缺失或物品 ID、数量不合法时返回 null。
+        if (Owner == null || itemId <= 0 || itemCount <= 0)
+        {
+            return null;
+        }
+        // 单价为负时返回 null。
+        if (price < 0)
         {
             return null;
         }

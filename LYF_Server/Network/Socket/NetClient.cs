@@ -7,20 +7,30 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// TCP 主动连接器：服务端之间互联（登录/网关/中心/游戏）时使用，支持异步连接与定时自动重连。
+/// </summary>
 public class NetClient : ServerBase
 {
 
+    /// <summary>对端主机地址。</summary>
     private string _host;
+    /// <summary>对端端口。</summary>
     private int _port;
 
+    /// <summary>断线后的重连定时器。</summary>
     private Timer _reconnectTimer;
-    //是否需要重连
+    /// <summary>是否需要自动重连。</summary>
     public bool _isNeedReconn = true;
 
-    //连接服务端成功回调
+    /// <summary>连接服务端成功回调。</summary>
     public Action OnConnSucceed;
-    //连接服务端失败回调
+    /// <summary>连接服务端失败回调。</summary>
     public Action OnConnFailed;
+    /// <summary>构造客户端连接器。</summary>
+    /// <param name="ip">对端主机地址。</param>
+    /// <param name="port">对端端口。</param>
+    /// <param name="clientType">本连接的客户端类型，决定消息分发方式。</param>
     public NetClient(string ip, int port, ClientType clientType)
     {
         _host = ip;

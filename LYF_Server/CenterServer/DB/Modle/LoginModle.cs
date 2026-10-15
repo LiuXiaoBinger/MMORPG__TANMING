@@ -6,22 +6,28 @@ using System.Text;
 using SqlSugar;
 
 /// <summary>
-/// 处理登录模块相关数据库业务
+/// 处理登录模块相关数据库业务。负责账号注册、密码登录、游戏服务器列表查询、选服并回传已有角色、
+/// 创建角色（含初始属性、技能、四类背包与虚拟铜币）以及开始游戏时回传主角色完整信息。
 /// </summary>
 public class LoginModle
 {
+    /// <summary>共享数据库客户端，由 CenterApp 注入。</summary>
     private SqlSugarClient _db = null;
 
+    /// <summary>
+    /// 构造登录数据访问层。
+    /// </summary>
+    /// <param name="db">已初始化的 SqlSugar 客户端。</param>
     public LoginModle(SqlSugarClient db)
     {
         _db = db;
     }
 
     /// <summary>
-    /// 登录请求处理
+    /// 账号密码登录。校验账号存在、密码一致、账号未禁用，并回传上次登录的游戏服务器信息。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">客户端账号密码请求。</param>
+    /// <returns>登录结果码及账号 ID、上次登录服务器信息。</returns>
     internal LoginRet Login(LoginReq req)
     {
         LoginRet ret = new LoginRet();
@@ -76,9 +82,9 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 注册
+    /// 账号注册。校验用户名不重复、邮箱验证码一致，通过后写入账号表并默认绑定首次登录服务器 1。
     /// </summary>
-    /// <param name="req"></param>
+    /// <param name="req">注册请求，携带用户名、邮箱、密码与验证码。</param>
     internal RegistRet RegistAccont(RegistReq req)
     {
         RegistRet ret = new RegistRet();
@@ -122,10 +128,10 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 获取服务器列表
+    /// 获取游戏服务器列表。req.ServerId 为 0 时返回全部服务器，否则按请求参数错误处理。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">服务器列表请求，ServerId=0 表示拉取全部。</param>
+    /// <returns>服务器列表回包，含每个服务器的名称、状态、新服标记与地址端口。</returns>
     internal GetServerListRet GetServerList(GetServerListReq req)
     {
         GetServerListRet ret = new GetServerListRet();
@@ -160,10 +166,10 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 请求登录游戏服务器处理
+    /// 选服登录。校验账号与目标服务器存在后，更新账号最近登录服务器，并回传该账号已创建的角色概要。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">选服请求，携带账号 ID 与目标游戏服务器 ID。</param>
+    /// <returns>结果码及已创建角色的角色 ID、昵称、职业、等级概要。</returns>
     internal LoginGameServerRet LoginGameServer(LoginGameServerReq req)
     {
         LoginGameServerRet ret = new LoginGameServerRet();
@@ -211,10 +217,11 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 创建角色请求处理
+    /// 创建角色请求处理。校验昵称在目标服务器唯一、职业配置存在，随后写入角色主表、
+    /// 按职业表写入基础属性、创建初始技能、四类 81 格背包与虚拟铜币物品。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">建角请求，携带账号 ID、昵称、职业 ID 与目标服务器 ID。</param>
+    /// <returns>结果码及新角色 ID、昵称、职业与等级。</returns>
     public CreateRoleRet CreateRole(CreateRoleReq req)
     {
         CreateRoleRet ret = new CreateRoleRet();
@@ -427,10 +434,11 @@ public class LoginModle
         }
 
     /// <summary>
-    /// 开始请求游戏开始返回角色信息
+    /// 开始游戏。按角色 ID 联查角色主表与基础属性表，回传主角色完整信息（账号、经验、技能点、
+    /// 相机偏移、服务器 ID 与全量属性/职业/等级）。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">开始游戏请求，携带持久角色 ID。</param>
+    /// <returns>结果码及主角色完整信息。</returns>
     public StartGameRet StartGame(StartGameReq req)
     {
         StartGameRet ret = new StartGameRet();
@@ -506,6 +514,10 @@ public class LoginModle
         return ret;
     }
 
+    // 注意：以下四个私有方法（GetPersistedKnapsackTypes / GetLegacyFallback /
+    // GetMigratedGridCount / EnsureMissingKnapsackRows）为旧版背包分类迁移逻辑的残留副本，
+    // 当前 LoginModle 内无任何调用者（实际背包读取由 CentRoleModel 同名方法负责），
+    // 经全局搜索确认属于死代码。本次仅加注释不删除，详见《项目分析/废代码分析报告-服务端-分服与测试.md》。
     private static KnapsackType[] GetPersistedKnapsackTypes()
     {
         return new[]

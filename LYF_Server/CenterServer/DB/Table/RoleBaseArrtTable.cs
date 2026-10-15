@@ -1,7 +1,11 @@
 ﻿using SqlSugar;
 using System;
 
-[SugarTable("RoleBaseArrt", TableDescription = "角色表")]
+/// <summary>
+/// 角色基础属性表，按角色保存血量、法力、攻防、命中、暴击、治疗、PVP 等成长属性。
+/// 建角时由职业配置写入，数值为整数或百分比原始值。
+/// </summary>
+[SugarTable("RoleBaseArrt", TableDescription = "角色基础属性表")]
 public class RoleBaseArrtTable
 {
     /// <summary>
@@ -10,6 +14,7 @@ public class RoleBaseArrtTable
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public int Id { get; set; }
+    /// <summary>所属角色 ID，与 Id 一致的冗余角色字段，供按角色查询使用。</summary>
     public int roleID { get; set; }
      /// <summary>
     /// 角色修为   

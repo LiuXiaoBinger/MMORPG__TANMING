@@ -6,9 +6,10 @@ using UnityEngine;
 * Descrpiton:
 */
 
+/// <summary>加速奔跑状态：进入时把 Movement 浮点置为3，播快跑动画。</summary>
 public class FastRunState : RoleFSMStateBase
 {
-   
+
     public FastRunState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)
     {
     }

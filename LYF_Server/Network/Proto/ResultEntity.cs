@@ -128,23 +128,26 @@ public static partial class ResultEntityReflection {
           "TWFwS2V5NjRWYWx1ZTMyEhMKC3VwZGF0ZV90aW1lGAIgASgDEiAKCWl0ZW1f",
           "bGlzdBgDIAMoCzINLlJvbGVJdGVtSW5mbyJKCg1VcGRhdGVJdGVtUmV0EhoK",
           "CGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIdCghJdGVtRGF0ZRgCIAEoCzIL",
-          "LlVwZGF0ZUl0ZW0qvQUKB0NtZENvZGUSCwoHU3VjY2VlZBAAEg0KCUFjY3RF",
-          "eGlzdBABEg8KC1NlcnZlckVycm9yEAISEAoMQWNjdE5vdEV4aXN0EAMSEQoN",
-          "UGFzc3dvcmRFcnJvchAEEg8KC0FjY3REaXNhYmxlEAUSEQoNUmVxUGFyYW1F",
-          "cnJvchAGEhEKDU5pY2tuYW1lRXhpc3QQBxITCg9Vc2VyTmFtZUlsbGVnYWwQ",
-          "CBITCg9QaG9uZU51bUlsbGVnYWwQCRITCg9QYXNzd29yZElsbGVnYWwQChIS",
-          "Cg5Vc2VyT2Z0ZW5Mb2dpbhALEg8KC1ZhcmlmeUVycm9yEAwSEAoMUm9sZU5v",
-          "dEV4aXN0EA0SEwoPRmVhdHVyZU5vdFJlYWR5EA4SFAoQRHVwbGljYXRlUmVx",
-          "dWVzdBAPEhUKEU5vdEVub3VnaEN1cnJlbmN5EBASFAoQU2hvcEl0ZW1Ob3RG",
-          "b3VuZBAREhgKFFB1cmNoYXNlTGltaXRSZWFjaGVkEBISCwoHQmFnRnVsbBAT",
-          "EhIKDkludmFsaWRTZXNzaW9uEBQSEwoPSW52YWxpZFF1YW50aXR5EBUSDwoL",
-          "SW52YWxpZFNob3AQFhIVChFUcmFuc2FjdGlvbkZhaWxlZBAXEhUKEUluc3Vm",
-          "ZmljaWVudEl0ZW1zEBgSGQoVSW5jb3JyZWN0QmFja3BhY2tUeXBlEBkSEAoM",
-          "SXRlbU5vdEV4aXN0EBoSEQoNSXRlbU5vdEVub3VnaBAbEhMKD1NraWxsTm90",
-          "TGVhcm5lZBAcEhYKElNraWxsQ29uZmlnTWlzc2luZxAdEhMKD1NraWxsT25D",
-          "b29sZG93bhAeEhcKE1NraWxsSW5zdWZmaWNpZW50TXAQHxIVChFTa2lsbFN0",
-          "YXRlQmxvY2tlZBAgEhoKFlNraWxsVGFyZ2V0VW5zdXBwb3J0ZWQQIWIGcHJv",
-          "dG8z"));
+          "LlVwZGF0ZUl0ZW0igwEKC1N5bmNNb3ZlTnRmEg8KB3JvbGVfaWQYASABKAUS",
+          "CgoCZHgYAiABKAISCgoCZHkYAyABKAISCgoCZHoYBCABKAISDAoEZmFjZRgF",
+          "IAEoAhIMCgR0aW1lGAYgASgCEhEKCWlzX21vdmluZxgHIAEoCBIQCghpc19t",
+          "b3ZlZBgIIAEoCCq9BQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4",
+          "aXN0EAESDwoLU2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1Q",
+          "YXNzd29yZEVycm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVy",
+          "cm9yEAYSEQoNTmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAI",
+          "EhMKD1Bob25lTnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIK",
+          "DlVzZXJPZnRlbkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90",
+          "RXhpc3QQDRITCg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1",
+          "ZXN0EA8SFQoRTm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZv",
+          "dW5kEBESGAoUUHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMS",
+          "EgoOSW52YWxpZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJ",
+          "bnZhbGlkU2hvcBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZm",
+          "aWNpZW50SXRlbXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJ",
+          "dGVtTm90RXhpc3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RM",
+          "ZWFybmVkEBwSFgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNv",
+          "b2xkb3duEB4SFwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3Rh",
+          "dGVCbG9ja2VkECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhYgZwcm90",
+          "bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -182,7 +185,8 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::CountUpdateSyncInfo), global::CountUpdateSyncInfo.Parser, new[]{ "CmdCode", "ItemList" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MapKey64Value32), global::MapKey64Value32.Parser, new[]{ "Key", "Val" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::UpdateItem), global::UpdateItem.Parser, new[]{ "DeleteList", "UpdateTime", "ItemList" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::UpdateItemRet), global::UpdateItemRet.Parser, new[]{ "CmdCode", "ItemDate" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::UpdateItemRet), global::UpdateItemRet.Parser, new[]{ "CmdCode", "ItemDate" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SyncMoveNtf), global::SyncMoveNtf.Parser, new[]{ "RoleId", "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved" }, null, null, null, null)
         }));
   }
   #endregion
@@ -12553,6 +12557,490 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
             ItemDate = new global::UpdateItem();
           }
           input.ReadMessage(ItemDate);
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 服务器向现有附近角色转发的 RO 移动状态，本人按本地移动继续执行。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<SyncMoveNtf> _parser = new pb::MessageParser<SyncMoveNtf>(() => new SyncMoveNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<SyncMoveNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[35]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncMoveNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncMoveNtf(SyncMoveNtf other) : this() {
+    roleId_ = other.roleId_;
+    dx_ = other.dx_;
+    dy_ = other.dy_;
+    dz_ = other.dz_;
+    face_ = other.face_;
+    time_ = other.time_;
+    isMoving_ = other.isMoving_;
+    isMoved_ = other.isMoved_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public SyncMoveNtf Clone() {
+    return new SyncMoveNtf(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private int roleId_;
+  /// <summary>
+  ///移动者持久角色 ID，用于客户端现有角色索引
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dx" field.</summary>
+  public const int DxFieldNumber = 2;
+  private float dx_;
+  /// <summary>
+  ///本段结束世界坐标 X，单位米
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public float Dx {
+    get { return dx_; }
+    set {
+      dx_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dy" field.</summary>
+  public const int DyFieldNumber = 3;
+  private float dy_;
+  /// <summary>
+  ///本段结束世界坐标 Y，单位米
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public float Dy {
+    get { return dy_; }
+    set {
+      dy_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dz" field.</summary>
+  public const int DzFieldNumber = 4;
+  private float dz_;
+  /// <summary>
+  ///本段结束世界坐标 Z，单位米
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public float Dz {
+    get { return dz_; }
+    set {
+      dz_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "face" field.</summary>
+  public const int FaceFieldNumber = 5;
+  private float face_;
+  /// <summary>
+  ///绕世界 Y 轴的朝向，单位度，0 到 360
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public float Face {
+    get { return face_; }
+    set {
+      face_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "time" field.</summary>
+  public const int TimeFieldNumber = 6;
+  private float time_;
+  /// <summary>
+  ///本段移动耗时，单位秒，供远端插值
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public float Time {
+    get { return time_; }
+    set {
+      time_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "is_moving" field.</summary>
+  public const int IsMovingFieldNumber = 7;
+  private bool isMoving_;
+  /// <summary>
+  ///本段末帧是否仍处于主动移动状态
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool IsMoving {
+    get { return isMoving_; }
+    set {
+      isMoving_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "is_moved" field.</summary>
+  public const int IsMovedFieldNumber = 8;
+  private bool isMoved_;
+  /// <summary>
+  ///本段是否产生位置变化，供远端动画接入
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool IsMoved {
+    get { return isMoved_; }
+    set {
+      isMoved_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as SyncMoveNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(SyncMoveNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Dx, other.Dx)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Dy, other.Dy)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Dz, other.Dz)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Face, other.Face)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Time, other.Time)) return false;
+    if (IsMoving != other.IsMoving) return false;
+    if (IsMoved != other.IsMoved) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (Dx != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Dx);
+    if (Dy != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Dy);
+    if (Dz != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Dz);
+    if (Face != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Face);
+    if (Time != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Time);
+    if (IsMoving != false) hash ^= IsMoving.GetHashCode();
+    if (IsMoved != false) hash ^= IsMoved.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (Dx != 0F) {
+      output.WriteRawTag(21);
+      output.WriteFloat(Dx);
+    }
+    if (Dy != 0F) {
+      output.WriteRawTag(29);
+      output.WriteFloat(Dy);
+    }
+    if (Dz != 0F) {
+      output.WriteRawTag(37);
+      output.WriteFloat(Dz);
+    }
+    if (Face != 0F) {
+      output.WriteRawTag(45);
+      output.WriteFloat(Face);
+    }
+    if (Time != 0F) {
+      output.WriteRawTag(53);
+      output.WriteFloat(Time);
+    }
+    if (IsMoving != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(IsMoving);
+    }
+    if (IsMoved != false) {
+      output.WriteRawTag(64);
+      output.WriteBool(IsMoved);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoleId);
+    }
+    if (Dx != 0F) {
+      output.WriteRawTag(21);
+      output.WriteFloat(Dx);
+    }
+    if (Dy != 0F) {
+      output.WriteRawTag(29);
+      output.WriteFloat(Dy);
+    }
+    if (Dz != 0F) {
+      output.WriteRawTag(37);
+      output.WriteFloat(Dz);
+    }
+    if (Face != 0F) {
+      output.WriteRawTag(45);
+      output.WriteFloat(Face);
+    }
+    if (Time != 0F) {
+      output.WriteRawTag(53);
+      output.WriteFloat(Time);
+    }
+    if (IsMoving != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(IsMoving);
+    }
+    if (IsMoved != false) {
+      output.WriteRawTag(64);
+      output.WriteBool(IsMoved);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
+    if (Dx != 0F) {
+      size += 1 + 4;
+    }
+    if (Dy != 0F) {
+      size += 1 + 4;
+    }
+    if (Dz != 0F) {
+      size += 1 + 4;
+    }
+    if (Face != 0F) {
+      size += 1 + 4;
+    }
+    if (Time != 0F) {
+      size += 1 + 4;
+    }
+    if (IsMoving != false) {
+      size += 1 + 1;
+    }
+    if (IsMoved != false) {
+      size += 1 + 1;
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(SyncMoveNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0) {
+      RoleId = other.RoleId;
+    }
+    if (other.Dx != 0F) {
+      Dx = other.Dx;
+    }
+    if (other.Dy != 0F) {
+      Dy = other.Dy;
+    }
+    if (other.Dz != 0F) {
+      Dz = other.Dz;
+    }
+    if (other.Face != 0F) {
+      Face = other.Face;
+    }
+    if (other.Time != 0F) {
+      Time = other.Time;
+    }
+    if (other.IsMoving != false) {
+      IsMoving = other.IsMoving;
+    }
+    if (other.IsMoved != false) {
+      IsMoved = other.IsMoved;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 21: {
+          Dx = input.ReadFloat();
+          break;
+        }
+        case 29: {
+          Dy = input.ReadFloat();
+          break;
+        }
+        case 37: {
+          Dz = input.ReadFloat();
+          break;
+        }
+        case 45: {
+          Face = input.ReadFloat();
+          break;
+        }
+        case 53: {
+          Time = input.ReadFloat();
+          break;
+        }
+        case 56: {
+          IsMoving = input.ReadBool();
+          break;
+        }
+        case 64: {
+          IsMoved = input.ReadBool();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadInt32();
+          break;
+        }
+        case 21: {
+          Dx = input.ReadFloat();
+          break;
+        }
+        case 29: {
+          Dy = input.ReadFloat();
+          break;
+        }
+        case 37: {
+          Dz = input.ReadFloat();
+          break;
+        }
+        case 45: {
+          Face = input.ReadFloat();
+          break;
+        }
+        case 53: {
+          Time = input.ReadFloat();
+          break;
+        }
+        case 56: {
+          IsMoving = input.ReadBool();
+          break;
+        }
+        case 64: {
+          IsMoved = input.ReadBool();
           break;
         }
       }

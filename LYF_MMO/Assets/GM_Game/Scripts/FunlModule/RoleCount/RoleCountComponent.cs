@@ -37,8 +37,13 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>设置客户端次数模型，并通知控制器刷新界面。</summary>
     public bool SetCount(RoleCountAction action, int key, long count)
     {
-        if (Owner == null || !Owner.IsRoleDataReady() || action == RoleCountAction.None ||
-            key <= 0 || count < 0L)
+        // 所属角色缺失、数据未就绪或动作为空时拒绝写入。
+        if (Owner == null || !Owner.IsRoleDataReady() || action == RoleCountAction.None)
+        {
+            return false;
+        }
+        // 计数键必须为正，且计数值不得为负。
+        if (key <= 0 || count < 0L)
         {
             return false;
         }
@@ -141,7 +146,13 @@ public sealed class RoleCountComponent : RoleComponentBase
         for (int index = 0; index < values.Count; index++)
         {
             RoleCountInfo value = values[index];
-            if (value == null || value.Action <= 0 || value.CountKey <= 0 || value.Count < 0L)
+            // 计数快照缺失或动作、键值非法时跳过。
+            if (value == null || value.Action <= 0 || value.CountKey <= 0)
+            {
+                continue;
+            }
+            // 计数值不得为负。
+            if (value.Count < 0L)
             {
                 continue;
             }
@@ -170,7 +181,13 @@ public sealed class RoleCountComponent : RoleComponentBase
         for (int index = 0; index < syncInfo.ItemList.Count; index++)
         {
             CountItemInfo item = syncInfo.ItemList[index];
-            if (item == null || item.Type <= 0 || item.Id <= 0 || item.Count < 0)
+            // 计数项缺失或类型、ID 非法时跳过。
+            if (item == null || item.Type <= 0 || item.Id <= 0)
+            {
+                continue;
+            }
+            // 计数值不得为负。
+            if (item.Count < 0)
             {
                 continue;
             }

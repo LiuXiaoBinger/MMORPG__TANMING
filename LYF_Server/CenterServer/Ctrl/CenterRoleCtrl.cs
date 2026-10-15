@@ -3,29 +3,35 @@
 
 using Google.Protobuf;
 
+/// <summary>
+/// 中心服角色持久化协议控制器。接收 GameServer 转发的进入世界、背包容量同步、
+/// 商城购买与角色物品快照保存等请求，通过 <see cref="CentRoleModel"/> 读写 MySQL。
+/// </summary>
 public class CenterRoleCtrl:IContainer
 {
-    
+
     // 登录与角色业务的数据访问层。
     private CentRoleModel _centRoleModel = null;
 
     /// <summary>
-    /// 创建登录控制器。
+    /// 创建角色持久化控制器。
     /// </summary>
-    /// <param name="loginModle">登录和角色相关业务模块。</param>
+    /// <param name="centRoleModel">中心服角色与背包数据访问模块。</param>
     public CenterRoleCtrl(CentRoleModel  centRoleModel)
     {
         _centRoleModel = centRoleModel;
     }
+
+    /// <summary>IContainer 初始化回调，本控制器无预加载资源，留空实现。</summary>
     public void OnInit()
     {
-        
+
     }
     /// <summary>
-    /// 中心服务器作为服务器，接收game客户端
+    /// 中心服务器作为服务器，接收 GameServer 转发的角色协议包并按协议号分发。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">当前网络服务器对象。</param>
+    /// <param name="basePackage">包含协议号与 protobuf 数据的网络包。</param>
     public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
     {
         switch (basePackage.ProtoCode)
@@ -132,9 +138,12 @@ public class CenterRoleCtrl:IContainer
         }
     }
 
-   
+    /// <summary>
+    /// IContainer 客户端命令回调。角色持久化协议均由服务器间命令（OnServerCommand）处理，
+    /// 中心服不直接接收 Unity 客户端命令，故此回调留空实现。
+    /// </summary>
     public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
     {
-       
+
     }
 }

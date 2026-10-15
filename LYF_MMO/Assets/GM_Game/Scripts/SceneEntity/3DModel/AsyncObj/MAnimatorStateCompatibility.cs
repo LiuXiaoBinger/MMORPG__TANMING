@@ -105,10 +105,13 @@ public static class MAnimatorStateCompatibility
             animator.SetInteger(ActionParameter, 1);
             return true;
         }
-        if (stateName == MAnimationStateNames.Move ||
+        // 旧协议 Move/FMove 或自动导航行走状态。
+        bool isOldOrZdWalkState = stateName == MAnimationStateNames.Move ||
             stateName == MAnimationStateNames.FMove ||
-            stateName == MAnimator.STATE_ZD_MOVE_WALK ||
-            stateName == MAnimator.STATE_NONZD_MOVE_WALK)
+            stateName == MAnimator.STATE_ZD_MOVE_WALK;
+        // 非自动导航行走状态。
+        bool isNonZdWalkState = stateName == MAnimator.STATE_NONZD_MOVE_WALK;
+        if (isOldOrZdWalkState || isNonZdWalkState)
         {
             animator.SetFloat(MovementParameter, 2f);
             animator.SetInteger(ActionParameter, 1);

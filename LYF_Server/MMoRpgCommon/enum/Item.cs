@@ -67,11 +67,14 @@ public enum ItemMainType
 }
 
 
+/// <summary>道具是否绑定。绑定道具不可交易。</summary>
 public enum ItemBind
 {
     kItemBindNo = 0,
     kItemBindIs = 1,
 };
+
+/// <summary>限时道具的生命周期类型，决定过期销毁与热更规则。</summary>
 public enum TimeLimitType
 {
     kTimeLimitType_None = 0,                    //没有时效性类型,永久
@@ -83,6 +86,7 @@ public enum TimeLimitType
     kTimeLimitType_BackStageActivityValid_Extra_Time = 6   //后台活动，不在活动期间不销毁，按照 extra time 判断过期
 };
 
+/// <summary>道具在背包槽位之间移入/移出的原因。</summary>
 public enum ITEM_SWAP_REASON
 {
     ISR_None = 0,
@@ -481,6 +485,7 @@ public enum ItemChangeReason {
     //ItemChangeReason_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 
+/// <summary>道具附加标记的位编号，ItemSign 按位组合使用。</summary>
 public enum SignBit 
 {
     /// 第0位表示物品是否绑定1是绑定，0是不绑定
@@ -507,6 +512,7 @@ public enum SignBit
     InductionBit = 10
 };
 
+/// <summary>道具附加标记位掩码，由 SignBit 各位左移组合。</summary>
 public enum ItemSign 
 {
     //位运算优先级很低，一定要加括号！
@@ -523,6 +529,7 @@ public enum ItemSign
     IsReformReborn = (1 << SignBit.ReformRebornBit),
     IsInductionBit = (1 << SignBit.InductionBit),
 };
+/// <summary>IDIP（充值/第三方发放）相关的流水参数。</summary>
 public struct IdipParam
 {
     string serial_num; // IDIP 请求流水号。

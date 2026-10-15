@@ -9,13 +9,23 @@ using UnityEngine.UI;
 public class GoodsItemWidget : MonoBehaviour
 {
     [SerializeField, Header("物品图标")] private Image _imgIcon;
+
     [SerializeField, Header("物品名称")] private TMP_Text _texName;
+
     [SerializeField, Header("物品价格")] private TMP_Text _texPrice;
+
     [SerializeField, Header("商店配置编号（旧组件兼容入口）")] private int _shopId;
 
     private ShopGoodsViewData _viewData;
+
     private Action<ShopGoodsViewData> _clickHandler;
+
     private int _bindingVersion;
+
+    private void OnDestroy()
+    {
+        _clickHandler = null;
+    }
 
     public void RefreshUI(ShopGoodsViewData viewData, Action<ShopGoodsViewData> clickHandler)
     {
@@ -68,10 +78,5 @@ public class GoodsItemWidget : MonoBehaviour
             _texPrice.text = _viewData.Price + " " + _viewData.CurrencyName +
                 "\n限购 " + remainingPurchaseCount;
         }
-    }
-
-    private void OnDestroy()
-    {
-        _clickHandler = null;
     }
 }

@@ -34,6 +34,7 @@ public class KnapsackWindow : WindowBase
 {
     /// <summary>窗口帧循环事件，由背包控制器消费当前页脏标记。</summary>
     public event Action FrameUpdated;
+
     // ============================================================
     // 一、Inspector 可配置字段
     // ============================================================
@@ -59,6 +60,7 @@ public class KnapsackWindow : WindowBase
 
     // 顶部货币显示
     [SerializeField, Header("金币")] private TMP_Text _texGold;
+
     [SerializeField, Header("灵石")] private TMP_Text _texLs;
 
     // ============================================================
@@ -67,22 +69,35 @@ public class KnapsackWindow : WindowBase
     // 五个分类：普通背包、装备、消耗品、材料、当前装备。
     [Header("背包分类按钮")]
     [SerializeField] private Button _btnAll;
+
     [SerializeField] private Button _btnEquip;
+
     [SerializeField] private Button _btnConsume;
+
     [SerializeField] private Button _btnMaterial;
+
     [SerializeField] private Button _btnCurrtEquip;
 
     // 每个分类有"选中态"和"未选中态"两个 GameObject，切换时控制显隐
     [Header("背包分类选中状态")]
     [SerializeField] private GameObject _allOff;
+
     [SerializeField] private GameObject _allOn;
+
     [SerializeField] private GameObject _equipOff;
+
     [SerializeField] private GameObject _equipOn;
+
     [SerializeField] private GameObject _consumeOff;
+
     [SerializeField] private GameObject _consumeOn;
+
     [SerializeField] private GameObject _materialOff;
+
     [SerializeField] private GameObject _materialOn;
+
     [SerializeField] private GameObject _currtEquipOff;
+
     [SerializeField] private GameObject _currtEquipOn;
 
     // ============================================================
@@ -138,6 +153,51 @@ public class KnapsackWindow : WindowBase
     }
 
     // ============================================================
+    // 五、生命周期
+    // ============================================================
+
+    private void Awake()
+    {
+        // 首次初始化：注册事件、回收模板、计算布局、刷新列表
+        EnsureInitialized();
+    }
+
+    private void OnEnable()
+    {
+        // 窗口重新显示时再刷新一次，确保使用当前 ScrollRect 的实际尺寸。
+        // （窗口可能在 Awake 时还没完成布局，尺寸不准确）
+        if (_initialized)
+        {
+            RefreshCurrentType();
+        }
+    }
+
+    /// <summary>窗口激活期间检查背包脏标记，关闭时不触发控制器刷新。</summary>
+    private void Update()
+    {
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+        Action handler = FrameUpdated;
+        if (handler != null)
+        {
+            handler.Invoke();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_initialized)
+        {
+            UnbindTabButtons();
+            UnbindScrollRect();
+        }
+        CategorySelected = null;
+        FrameUpdated = null;
+    }
+
+    // ============================================================
     // 四、外部接口：接收服务器数据
     // ============================================================
 
@@ -189,10 +249,16 @@ public class KnapsackWindow : WindowBase
             return;
         }
 
-        bool countOnly = oldData != null && itemData != null &&
-            oldData.ItemUid == itemData.ItemUid &&
-            oldData.ItemTypeId == itemData.ItemTypeId &&
-            oldData.IconPath == itemData.IconPath;
+        // 仅当新旧数据均有效时才逐字段比较；任一为空视为需要整体刷新。
+        bool countOnly = false;
+        if (oldData != null && itemData != null)
+        {
+            // 两侧非空后，依次比较唯一标识、类型与图标路径是否完全一致。
+            bool sameUid = oldData.ItemUid == itemData.ItemUid;
+            bool sameType = oldData.ItemTypeId == itemData.ItemTypeId;
+            bool sameIcon = oldData.IconPath == itemData.IconPath;
+            countOnly = sameUid && sameType && sameIcon;
+        }
         BindSlot(_activeSlots[poolIndex], slotIndex, countOnly);
     }
 
@@ -210,51 +276,6 @@ public class KnapsackWindow : WindowBase
         if (obj != null)
         {
             Debug.LogWarning("背包窗口不再接收协议或业务数据，请通过 KnapsackCtrl 刷新。");
-        }
-    }
-
-    // ============================================================
-    // 五、生命周期
-    // ============================================================
-
-    private void Awake()
-    {
-        // 首次初始化：注册事件、回收模板、计算布局、刷新列表
-        EnsureInitialized();
-    }
-
-    private void OnEnable()
-    {
-        // 窗口重新显示时再刷新一次，确保使用当前 ScrollRect 的实际尺寸。
-        // （窗口可能在 Awake 时还没完成布局，尺寸不准确）
-        if (_initialized)
-        {
-            RefreshCurrentType();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (_initialized)
-        {
-            UnbindTabButtons();
-            UnbindScrollRect();
-        }
-        CategorySelected = null;
-        FrameUpdated = null;
-    }
-
-    /// <summary>窗口激活期间检查背包脏标记，关闭时不触发控制器刷新。</summary>
-    private void Update()
-    {
-        if (!isActiveAndEnabled)
-        {
-            return;
-        }
-        Action handler = FrameUpdated;
-        if (handler != null)
-        {
-            handler.Invoke();
         }
     }
 
@@ -350,9 +371,13 @@ public class KnapsackWindow : WindowBase
     // 五个按钮的快捷方法，都调用 SelectType 传入对应的独立容器类型。
     // SelectAll 保留旧方法名以兼容预制体事件绑定，实际映射为普通背包页。
     private void SelectAll() => SelectType(KnapsackType.RolePackPlain);
+
     private void SelectEquip() => SelectType(KnapsackType.RolePackEquip);
+
     private void SelectConsume() => SelectType(KnapsackType.RolePackConsume);
+
     private void SelectMaterial() => SelectType(KnapsackType.RolePackMaterial);
+
     private void SelectCurrtEquip() => SelectType(KnapsackType.RoleCurrtEquipPack);
 
     /// <summary>

@@ -5,6 +5,7 @@ public abstract class RoleComponentBase
 {
     /// <summary>组件所属角色，仅子类可访问。</summary>
     protected OnlineRole Owner { get; private set; }
+    // 组件自身的脏标记开关；历史移植字段，当前未被读取，仅 SetModify 写入。
     private Switch modified_ =new Switch();
     /// <summary>创建组件并绑定角色。</summary>
     protected RoleComponentBase(OnlineRole owner)
@@ -42,6 +43,9 @@ public abstract class RoleComponentBase
     /// <summary>释放组件资源。</summary>
     public virtual void Dispose() { Owner = null; }
 
+    /// <summary>
+    /// 标记本组件发生业务修改：置位自身脏开关并记录模块修改时间。
+    /// </summary>
     public void SetModify()
     {
         modified_.Set();

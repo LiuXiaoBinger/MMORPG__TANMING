@@ -5,11 +5,17 @@ using UnityEngine.UI;
 namespace IndieImpulseAssets {
     public class UISmoothTransitionMatValue : MonoBehaviour {
         public float startValue = -0.28f;
+
         public float endValue = 0.53f;
+
         public float duration = 0.78f;
+
         public bool setMatOnDisable = false;
+
         public string MatValue = "_CenterMove";
+
         private Material material;
+
         private float elapsedTime;
 
         private void Awake() {
@@ -55,19 +61,17 @@ namespace IndieImpulseAssets {
             }
         }
 
-        public void SetScaleDirection(float scaleX) {
-            RectTransform rectTransform = GetComponent<RectTransform>();
-            if (rectTransform != null) {
-                rectTransform.localScale = new Vector3(scaleX, rectTransform.localScale.y, rectTransform.localScale.z);
-            }
-        }
-
         private void OnDestroy() {
             if (material != null) {
                 Destroy(material); // Clean up the material instance when the object is destroyed
             }
         }
 
-
+        public void SetScaleDirection(float scaleX) {
+            RectTransform rectTransform = GetComponent<RectTransform>();
+            if (rectTransform != null) {
+                rectTransform.localScale = new Vector3(scaleX, rectTransform.localScale.y, rectTransform.localScale.z);
+            }
+        }
     }
 }

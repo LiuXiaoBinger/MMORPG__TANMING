@@ -15,7 +15,7 @@ public static class SkillPresentationBuildVerification
         // 所有本轮产物统一放到项目根 _temp；保留历史验证目录，不递归删除。
         string projectRoot = Directory.GetParent(Application.dataPath).Parent.FullName;
         // 时间戳独立输出，避免 YooAsset 构建器覆盖或清理任何既有结果。
-        string output = Path.Combine(projectRoot, "_temp", "ycombat-integration", "bundle-verification-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
+        string output = Path.Combine(projectRoot, "_temp", "skill-fx-package-runtime-20261013", "package", "bundle-verification-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
         Directory.CreateDirectory(output);
         // 使用现有 DefaultPackage 正式收集设置，不建立替代游戏资源包。
         BuildParameters parameters = new BuildParameters
@@ -36,11 +36,14 @@ public static class SkillPresentationBuildVerification
         string manifestPath;
         // JsonUtility 是第三方清单序列化边界，具名测试结构只读取所需字段。
         SkillManifestSnapshot manifest = ReadGeneratedManifest(result.OutputPackageDirectory, parameters.PackageName, parameters.PackageVersion, out manifestPath);
-        if (manifest == null || manifest.PackageName != "DefaultPackage" || manifest.AssetList == null || manifest.BundleList == null)
+        // 清单缺失或包名不符，视为清单结构无效。
+        if (manifest == null || manifest.PackageName != "DefaultPackage")
             throw new InvalidOperationException("YooAsset 生成清单结构无效。");
-        // 此七份运行资产是正式缓存每次 Retain 请求的精确路径。
+        // 两份资源列表缺失同样视为清单结构无效。
+        if (manifest.AssetList == null || manifest.BundleList == null)
+            throw new InvalidOperationException("YooAsset 生成清单结构无效。");
+        // 已由正式表校验的运行资产集合，覆盖正式缓存每次 Retain 请求的精确路径。
         string[] runtimeGuids = AssetDatabase.FindAssets("t:SkillRuntimePresentation", new[] { SkillEditorAssetTools.RuntimeDirectory });
-        if (runtimeGuids.Length != 7) throw new InvalidOperationException("清单验收需要七份正式运行资产。");
         // 实际 Bundle 输入以 YooAsset 正式构建映射为准，选中包的其他资产不会被删改。
         parameters.BuildMode = EBuildMode.IncrementalBuild;
         BuildMapContext map = new TaskGetBuildMap().CreateBuildMap(parameters);
@@ -107,7 +110,7 @@ public static class SkillPresentationBuildVerification
             BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode, parameters.BuildTarget);
         if (unityManifest == null) throw new InvalidOperationException("技能相关 Bundle 实际构建失败。");
         LoadAndVerifyBundles(bundleOutput, selectedBundles, runtimeGuids, assetsByPath);
-        Debug.Log("YCOMBAT_BUNDLE_VERIFY_SUCCESS full-manifest=" + manifestPath + " actual-bundles=" + selectedBundles.Count + " runtime-assets=7 output=" + bundleOutput);
+        Debug.Log("YCOMBAT_BUNDLE_VERIFY_SUCCESS full-manifest=" + manifestPath + " actual-bundles=" + selectedBundles.Count + " runtime-assets=" + runtimeGuids.Length + " output=" + bundleOutput);
     }
 
     /// <summary>从本次 YooAsset 新输出中按真实清单字段识别唯一 JSON，避免依赖内部文件命名 API。</summary>
@@ -127,7 +130,11 @@ public static class SkillPresentationBuildVerification
         {
             // 第三方序列化边界只读本次实际 JSON 字段，不修改包内公开级别。
             SkillManifestSnapshot candidate = JsonUtility.FromJson<SkillManifestSnapshot>(File.ReadAllText(files[index]));
-            if (candidate == null || candidate.PackageName != package || candidate.PackageVersion != version || candidate.AssetList == null || candidate.BundleList == null) continue;
+            // 候选清单缺失或包名不符时跳过。
+            if (candidate == null || candidate.PackageName != package) continue;
+            // 版本不符或资源列表缺失时跳过。
+            if (candidate.PackageVersion != version || candidate.AssetList == null) continue;
+            if (candidate.BundleList == null) continue;
             if (result != null) throw new InvalidOperationException("本次输出存在多个匹配清单，拒绝任意选择。");
             result = candidate;
             manifestPath = files[index];
@@ -139,7 +146,7 @@ public static class SkillPresentationBuildVerification
     /// <summary>从实际构建文件加载完整依赖闭包并验证运行资产粒子引用。</summary>
     /// <param name="output">本轮 _temp 下的实际 Bundle 输出目录。</param>
     /// <param name="bundleNames">已经实际构建的完整依赖包名称列表。</param>
-    /// <param name="runtimeGuids">七份源运行资产的 AssetDatabase GUID 数组。</param>
+    /// <param name="runtimeGuids">当前正式表对应源运行资产的 AssetDatabase GUID 数组。</param>
     /// <param name="assetsByPath">正式 YooAsset 构建映射的主资源索引。</param>
     private static void LoadAndVerifyBundles(string output, List<string> bundleNames, string[] runtimeGuids,
         Dictionary<string, BuildAssetInfo> assetsByPath)

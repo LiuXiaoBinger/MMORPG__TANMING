@@ -2,45 +2,35 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>RO普通技能表现载体，消费编辑器粒子、声音和程序位移时间轴，按声明窗口接管真实水平根位移。</summary>
+/// <summary>RO普通技能表现载体，派发粒子、声音、程序位移及原滑行残影回调，按窗口接管水平根位移。</summary>
 public class MArtSkill : MSkill
 {
     /// <summary>本次表现轨道校验失败后为 true，直到归还；阻止每帧重复报错。</summary>
     private bool _runtimePresentationInvalid;
 
-    /// <summary>RO 演出技能回调身份，只公开本项目正式执行的粒子、声音与程序位移编号。</summary>
-    protected enum EArtsSkillTimerCb
-    {
-        /// <summary>RO 原值 10，执行一条已导出的单次粒子指令。</summary>
-        EFx = 10,
-        /// <summary>RO 原值 11，执行一条已导出的单次三维声音指令。</summary>
-        EAudio = 11,
-        /// <summary>RO 原值十三，到期交付一条程序水平位移指令。</summary>
-        ECharge = 13
-    }
-
     /// <summary>本次锁定资产是否已完整注册时间轴，冷就绪后只允许注册一次。</summary>
     private bool _eventsRegistered;
+
     /// <summary>本代施法等待资源终态的可取消通知，捕获锁定 UUID 与代次，归还前解除。</summary>
     private Action<SkillRuntimePresentation> _presentationReady;
+
     /// <summary>RO 式已到期操作所在模型，用于真正取消时移除其尚未交付的 GO 回调。</summary>
     private MModel _loadGoModel;
+
     /// <summary>仅保存已到期但 GO 未加载的声音或粒子票据，模型交付后移除，取消时逐条注销。</summary>
     private readonly List<int> _skillFxTokens = new List<int>();
+
     /// <summary>本次施法正在播放的并行三维声音；真实取消和回池时停止，普通动作槽退出保留尾音。</summary>
     private readonly List<AudioSource> _audioList = new List<AudioSource>();
 
     /// <summary>本次施法是否曾成功开始程序位移，离槽或归还时只停止原身份。</summary>
     private bool _haveCharge;
+
     /// <summary>最近成功开始程序位移的原代次，Reset 自增代次后仍用于解除旧运动。</summary>
     private ulong _chargeGeneration;
 
     /// <summary>普通技能的 RO 运行类型，零表示 Art。</summary>
     public override int SkillType { get { return SkillLogicType.SkillTypeArt; } }
-
-    /// <summary>RO 同名动作结束实现，使用本次 Fire 冻结的技能状态窗口，连击不会被制作尾段拖住。</summary>
-    /// <returns>当前动作达到解锁时长时为真。</returns>
-    public override bool IsEnd() { return IsSkillStateFinished; }
 
     /// <summary>自然结束只能在资产已注册、未来票据已交付、缺模型指令已派发且全部声音结束后回池。</summary>
     public override bool IsPresentationFinished
@@ -51,8 +41,12 @@ public class MArtSkill : MSkill
             {
                 return true;
             }
-            return _eventsRegistered && base.IsPresentationFinished &&
-                _skillFxTokens.Count == 0 && _audioList.Count == 0;
+            // 事件已注册且基类无未来票据，同时待交付特效与声音均清空才视为表现收尾。
+            bool eventsRegisteredAndBaseFinished =
+                _eventsRegistered && base.IsPresentationFinished;
+            bool fxTokensEmpty = _skillFxTokens.Count == 0;
+            bool audioListEmpty = _audioList.Count == 0;
+            return eventsRegisteredAndBaseFinished && fxTokensEmpty && audioListEmpty;
         }
     }
 
@@ -62,6 +56,20 @@ public class MArtSkill : MSkill
         base.Start();
         FireEvents();
     }
+
+    /// <summary>只推进施法时钟并回收已经播完的声音；事件注册与派发全部由生命周期和计时回调触发。</summary>
+    /// <param name="deltaSeconds">本帧经过的非负秒数，与全局计时器使用相同毫秒来源。</param>
+    /// <returns>动作仍占槽、未来事件、冷模型请求或活动音尾仍需保持本实例时为真。</returns>
+    public override bool Update(float deltaSeconds)
+    {
+        // 先解除本帧已经播完的声源，基类再根据动作槽、剩余表现和 RO 生命周期判断存活。
+        PruneAudio();
+        return base.Update(deltaSeconds);
+    }
+
+    /// <summary>RO 同名动作结束实现，使用本次 Fire 冻结的技能状态窗口，连击不会被制作尾段拖住。</summary>
+    /// <returns>当前动作达到解锁时长时为真。</returns>
+    public override bool IsEnd() { return IsSkillStateFinished; }
 
     /// <summary>原锁定表现行完成加载后回到 FireEvents，不重选连击段。</summary>
     /// <param name="presentation">加载终态资产，空值表示失败。</param>
@@ -82,20 +90,13 @@ public class MArtSkill : MSkill
         FireEvents();
     }
 
-    /// <summary>只推进施法时钟并回收已经播完的声音；事件注册与派发全部由生命周期和计时回调触发。</summary>
-    /// <param name="deltaSeconds">本帧经过的非负秒数，与全局计时器使用相同毫秒来源。</param>
-    /// <returns>动作仍占槽、未来事件、冷模型请求或活动音尾仍需保持本实例时为真。</returns>
-    public override bool Update(float deltaSeconds)
-    {
-        // 先解除本帧已经播完的声源，基类再根据动作槽、剩余表现和 RO 生命周期判断存活。
-        PruneAudio();
-        return base.Update(deltaSeconds);
-    }
-
-    /// <summary>把本次锁定的粒子、声音与程序位移时间轴一次登记到 MTimerMgr。</summary>
+    /// <summary>把本次粒子、声音、程序位移和原滑行残影采样一次登记到MTimerMgr。</summary>
     protected virtual void FireEvents() // 注册各种 timeline 回调。
     {
-        if (_eventsRegistered || _runtimePresentationInvalid || !IsActive || _presentationReady != null)
+        // 已注册、已标记失效或已退出动作槽时不再重复登记；存在待加载通知也等待回调。
+        bool alreadyRegistered = _eventsRegistered || _runtimePresentationInvalid;
+        bool inactiveOrWaiting = !IsActive || _presentationReady != null;
+        if (alreadyRegistered || inactiveOrWaiting)
         {
             return;
         }
@@ -103,7 +104,8 @@ public class MArtSkill : MSkill
         ulong fireGeneration = _fireGeneration;
         if (_runtimePresentation == null)
         {
-            _runtimePresentation = SkillRuntimePresentationCache.GetReady(_runtimePresentationId);
+            _runtimePresentation = SkillRuntimePresentationCache.
+                GetReady(_runtimePresentationId);
             if (_runtimePresentation == null)
             {
                 // readyAsset 是原行加载终态，闭包只保存不可变代次。
@@ -114,11 +116,19 @@ public class MArtSkill : MSkill
         }
         // 本代资产快照先整体校验，防止零秒同步回调 Reset 后循环解引用空字段。
         SkillRuntimePresentation presentation = _runtimePresentation;
-        if (presentation.PresentationId != _runtimePresentationId ||
-            presentation.SkillId != SkillId || presentation.AnimationLocation != _animationLocation ||
+        // 表现行身份与本次施法锁定的身份不一致即视为资产错位。
+        bool presentationIdentityMismatch =
+            presentation.PresentationId != _runtimePresentationId ||
+            presentation.SkillId != SkillId ||
+            presentation.AnimationLocation != _animationLocation;
+        // 表现时长必须为正有限秒数，且与锁定时长偏差不超过 0.05 秒。
+        bool presentationDurationMismatch =
             !IsFinite(presentation.DurationSeconds) || presentation.DurationSeconds <= 0f ||
-            Mathf.Abs(presentation.DurationSeconds - _runtimePresentationDurationSeconds) > 0.05f ||
-            !ValidateRuntimePresentation(presentation))
+            Mathf.Abs(presentation.DurationSeconds - _runtimePresentationDurationSeconds) > 0.05f;
+        // 整条事件轨道二次校验，任何数据不可解释即拒绝派发。
+        bool presentationRuntimeInvalid = !ValidateRuntimePresentation(presentation);
+        if (presentationIdentityMismatch || presentationDurationMismatch ||
+            presentationRuntimeInvalid)
         {
             _runtimePresentation = null;
             _runtimePresentationInvalid = true;
@@ -126,6 +136,27 @@ public class MArtSkill : MSkill
             return;
         }
         _eventsRegistered = true;
+        // Excel技能主表的类别：3表示滑行，按配置类别注册残影，不依赖具体技能ID。
+        cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(SkillId);
+        
+        if (skillInfo != null && skillInfo.Type == 3)
+        {
+            // index为30Hz残影采样的零起始序号；冷登记只保留尚未经过的点，不追补旧姿态。
+            for (int index = 0; index < Mathf.
+                     CeilToInt(_runtimePresentationDurationSeconds * 30f); index++)
+            {
+                // 相对施法原点的采样秒数，不追补过期姿态，避免模型就绪时集中生成残影。
+                float sampleSeconds = index / 30f;
+                if (sampleSeconds < TimelineElapsedSeconds)
+                {
+                    continue;
+                }
+                AddedTimerToken(MTimerMgr.singleton.SetTimer(
+                    sampleSeconds - TimelineElapsedSeconds,
+                    _onProcessTimer, new MSkillTimerArgs(SkillUuid, 
+                        (int)EArtsSkillTimerCb.EGhost, fireGeneration)));
+            }
+        }
         // index 为本段粒子的稳定导出顺序，同时间按此顺序派发。
         for (int index = 0; index < presentation.FxEvents.Count; index++)
         {
@@ -176,9 +207,9 @@ public class MArtSkill : MSkill
     }
 
     /// <summary>沿 RO 同名回调分发到期事件，模型未就绪时保留独立轨道的等待顺序。</summary>
-    /// <param name="id">RO EArtsSkillTimerCb 编号，现有范围为 EFx/EAudio/ECharge。</param>
+    /// <param name="id">RO粒子/声音/位移编号，或本项目原滑行残影采样编号EGhost。</param>
     /// <param name="param">统一回调已经验证施法 UUID 的强类型事件载荷。</param>
-    /// <returns>本类识别并接管粒子、声音或程序位移时返回 true。</returns>
+    /// <returns>本类接管粒子、声音、程序位移或原滑行残影采样时返回true。</returns>
     protected override bool InnerProcessTimer(int id, MSkillTimerArgs param)
     {
         if (base.InnerProcessTimer(id, param))
@@ -196,8 +227,32 @@ public class MArtSkill : MSkill
             case EArtsSkillTimerCb.EAudio when param.AudioEvent != null:
                 audio(param.AudioEvent);
                 return true;
+            case EArtsSkillTimerCb.EGhost:
+                ghost();
+                return true;
         }
         return false;
+    }
+
+    /// <summary>只为当前滑行动作生成原白色残影；模型未就绪或动作退槽时直接跳过，不重试。</summary>
+    private void ghost()
+    {
+        // 逐级确认施法者动作槽、动作状态与模型原生对象就绪，缺一不能生成残影。
+        if (_firer == null) return;
+        if (_firer.Skill == null) return;
+        if (_firer.Skill.CurrentSkill != this) return;
+        if (IsSkillStateFinished) return;
+        if (_firer.Model == null) return;
+        if (!_firer.Model.IsLoaded) return;
+        if (_firer.Model.GameObject == null) return;
+        if (_firer.Model.GameObject.NativeObject == null) return;
+        // 残影挂在模型原根节点，沿用现成组件和原参数，生成的网格快照在0.2秒内自行淡出。
+        GhostEffect effect = _firer.Model.GameObject.NativeObject.GetComponent<GhostEffect>();
+        if (effect == null)
+        {
+            effect = _firer.Model.GameObject.NativeObject.AddComponent<GhostEffect>();
+        }
+        effect.CreateGhostEffectObject(Color.white, 0.2f, 0.2f, 0.2f, 0.2f);
     }
 
     /// <summary>沿 RO charge 入口将已到期的程序运动交独立驱动，技能不逐帧扫描或直接改坐标。</summary>
@@ -313,10 +368,13 @@ public class MArtSkill : MSkill
     /// <returns>全部事件可解释且按时间排序时返回 true。</returns>
     private static bool ValidateRuntimePresentation(SkillRuntimePresentation presentation)
     {
-        if (presentation.FxEvents == null || presentation.AudioEvents == null ||
-            presentation.RootMotionSegments == null ||
+        // 三类事件列表必须齐全，缺一不能校验派发。
+        bool presentationEventsMissing = presentation.FxEvents == null ||
+            presentation.AudioEvents == null || presentation.RootMotionSegments == null;
+        bool presentationDurationInvalid =
             !IsFinite(presentation.EffectiveTimelineDurationSeconds) ||
-            presentation.EffectiveTimelineDurationSeconds < presentation.DurationSeconds)
+            presentation.EffectiveTimelineDurationSeconds < presentation.DurationSeconds;
+        if (presentationEventsMissing || presentationDurationInvalid)
         {
             return false;
         }
@@ -329,29 +387,42 @@ public class MArtSkill : MSkill
         {
             // 当前粒子事件的运行数据，由导出器写入并在这里二次核验。
             SkillRuntimeFxEvent fxEvent = presentation.FxEvents[index];
-            if (fxEvent == null || fxEvent.Particle == null ||
-                !IsFinite(fxEvent.TimeSeconds) ||
+            // 粒子事件与粒子资源必须存在，后续字段读取均以此为前提。
+            if (fxEvent == null || fxEvent.Particle == null) return false;
+            bool fxTimeInvalid = !IsFinite(fxEvent.TimeSeconds) ||
                 fxEvent.TimeSeconds < previousTime ||
-                fxEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds ||
-                fxEvent.SourceEventIndex < 0 || fxEvent.Frame < 0 ||
-                (fxEvent.TimeSeconds == previousTime &&
-                    fxEvent.SourceEventIndex < previousSourceIndex) ||
-                !IsFinite(fxEvent.ForwardDistance) || fxEvent.ForwardDistance < 0f ||
-                !IsFinite(fxEvent.LocalPosition.x) ||
+                fxEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds;
+            bool fxIndexInvalid = fxEvent.SourceEventIndex < 0 || fxEvent.Frame < 0;
+            // 同时间粒子按原序号递增，重复顺序视为非法。
+            bool fxOrderInvalid = fxEvent.TimeSeconds == previousTime &&
+                fxEvent.SourceEventIndex < previousSourceIndex;
+            bool fxForwardInvalid = !IsFinite(fxEvent.ForwardDistance) ||
+                fxEvent.ForwardDistance < 0f;
+            bool fxPositionInvalid = !IsFinite(fxEvent.LocalPosition.x) ||
                 !IsFinite(fxEvent.LocalPosition.y) ||
-                !IsFinite(fxEvent.LocalPosition.z) ||
-                !IsFinite(fxEvent.LocalEulerAngles.x) ||
+                !IsFinite(fxEvent.LocalPosition.z);
+            bool fxRotationInvalid = !IsFinite(fxEvent.LocalEulerAngles.x) ||
                 !IsFinite(fxEvent.LocalEulerAngles.y) ||
-                !IsFinite(fxEvent.LocalEulerAngles.z) ||
-                !IsFinite(fxEvent.LocalScale.x) ||
+                !IsFinite(fxEvent.LocalEulerAngles.z);
+            bool fxScaleFiniteInvalid = !IsFinite(fxEvent.LocalScale.x) ||
                 !IsFinite(fxEvent.LocalScale.y) ||
-                !IsFinite(fxEvent.LocalScale.z) ||
-                fxEvent.LocalScale.x <= 0f || fxEvent.LocalScale.y <= 0f ||
-                fxEvent.LocalScale.z <= 0f ||
-                (fxEvent.PlacementKind == SkillFxPlacementKind.NamedSocket &&
-                    string.IsNullOrEmpty(fxEvent.SocketPath)) ||
+                !IsFinite(fxEvent.LocalScale.z);
+            bool fxScalePositiveInvalid = fxEvent.LocalScale.x <= 0f ||
+                fxEvent.LocalScale.y <= 0f || fxEvent.LocalScale.z <= 0f;
+            // 命名挂点必须给出挂点路径。
+            bool fxSocketInvalid = fxEvent.PlacementKind == SkillFxPlacementKind.NamedSocket &&
+                string.IsNullOrEmpty(fxEvent.SocketPath);
+            bool fxPlacementRangeInvalid =
                 (int)fxEvent.PlacementKind < (int)SkillFxPlacementKind.ActorRoot ||
-                (int)fxEvent.PlacementKind > (int)SkillFxPlacementKind.WorldAbsolute)
+                (int)fxEvent.PlacementKind > (int)SkillFxPlacementKind.WorldAbsolute;
+            bool fxTimeBad = fxTimeInvalid || fxIndexInvalid || fxOrderInvalid;
+            bool fxVectorBad = fxForwardInvalid || fxPositionInvalid || fxRotationInvalid;
+            bool fxScaleBad = fxScaleFiniteInvalid || fxScalePositiveInvalid || fxSocketInvalid;
+            if (fxTimeBad || fxVectorBad || fxScaleBad)
+            {
+                return false;
+            }
+            if (fxPlacementRangeInvalid)
             {
                 return false;
             }
@@ -365,11 +436,19 @@ public class MArtSkill : MSkill
         {
             // 当前单次声音，触发秒数属于制作时间轴；完整声音尾音可超过动画末尾。
             SkillRuntimeAudioEvent audioEvent = presentation.AudioEvents[index];
-            if (audioEvent == null || audioEvent.Clip == null || audioEvent.Frame < 0 ||
-                audioEvent.SourceEventIndex < 0 || !IsFinite(audioEvent.TimeSeconds) ||
-                audioEvent.TimeSeconds < previousTime || audioEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds ||
-                (audioEvent.TimeSeconds == previousTime && audioEvent.SourceEventIndex < previousSourceIndex) ||
-                !IsFinite(audioEvent.Volume) || audioEvent.Volume < 0f || audioEvent.Volume > 1f)
+            // 声音事件与音频片段必须存在，缺一不能派发。
+            if (audioEvent == null || audioEvent.Clip == null) return false;
+            bool audioBasicInvalid = audioEvent.Frame < 0 || audioEvent.SourceEventIndex < 0;
+            bool audioTimeInvalid = !IsFinite(audioEvent.TimeSeconds) ||
+                audioEvent.TimeSeconds < previousTime ||
+                audioEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds;
+            // 同时间声音按原序号递增，重复顺序视为非法。
+            bool audioOrderInvalid = audioEvent.TimeSeconds == previousTime &&
+                audioEvent.SourceEventIndex < previousSourceIndex;
+            bool audioVolumeInvalid = !IsFinite(audioEvent.Volume) ||
+                audioEvent.Volume < 0f || audioEvent.Volume > 1f;
+            bool audioTimeBad = audioBasicInvalid || audioTimeInvalid || audioOrderInvalid;
+            if (audioTimeBad || audioVolumeInvalid)
             {
                 return false;
             }
@@ -382,9 +461,14 @@ public class MArtSkill : MSkill
         {
             // 半开窗口使用原动画秒数，不把Clip RootT曲线直接当世界米。
             SkillRuntimeRootMotionSegment segment = presentation.RootMotionSegments[index];
-            if (segment == null || !IsFinite(segment.StartSeconds) || !IsFinite(segment.EndSeconds) ||
-                segment.StartSeconds < previousTime || segment.EndSeconds <= segment.StartSeconds ||
-                segment.EndSeconds > presentation.DurationSeconds || !IsFinite(segment.Scale) || segment.Scale < 0f)
+            // 半开窗口数据必须存在且起止秒数有限、不早于上一段。
+            if (segment == null) return false;
+            bool segmentTimeInvalid = !IsFinite(segment.StartSeconds) ||
+                !IsFinite(segment.EndSeconds) || segment.StartSeconds < previousTime;
+            bool segmentRangeInvalid = segment.EndSeconds <= segment.StartSeconds ||
+                segment.EndSeconds > presentation.DurationSeconds;
+            bool segmentScaleInvalid = !IsFinite(segment.Scale) || segment.Scale < 0f;
+            if (segmentTimeInvalid || segmentRangeInvalid || segmentScaleInvalid)
             {
                 return false;
             }
@@ -396,8 +480,14 @@ public class MArtSkill : MSkill
         {
             // 当前前向程序段，RO 尚未接入的横移和追目标字段必须在 IsValid 中拒绝。
             MSkillChargeData chargeData = presentation.ChargeList[index];
-            if (chargeData == null || !chargeData.IsValid(presentation.DurationSeconds) ||
-                chargeData.At < previousTime || (index > 0 && chargeData.At == presentation.ChargeList[index - 1].At))
+            // 段数据存在且通过自身范围校验，且开始时间不早于上一段。
+            if (chargeData == null) return false;
+            bool chargeInvalid = !chargeData.IsValid(presentation.DurationSeconds) ||
+                chargeData.At < previousTime;
+            // 非首段开始时间不得与前一段相同，index>0 守卫下标前移。
+            bool duplicateStart = index > 0 &&
+                chargeData.At == presentation.ChargeList[index - 1].At;
+            if (chargeInvalid || duplicateStart)
             {
                 return false;
             }
@@ -407,8 +497,12 @@ public class MArtSkill : MSkill
             {
                 // 当前动画半开区间；其结束时刻可以作为下一个程序段的开始。
                 SkillRuntimeRootMotionSegment root = presentation.RootMotionSegments[rootIndex];
-                if (chargeData.At < root.EndSeconds && (chargeData.End > root.StartSeconds ||
-                    (chargeData.At == chargeData.End && chargeData.At >= root.StartSeconds)))
+                // 程序段起点落在动画窗口结束之前，才可能与窗口发生重叠。
+                bool startsBeforeWindowEnds = chargeData.At < root.EndSeconds;
+                // 程序段终点越过窗口起点，或瞬时段起点落在窗口起点上，均构成重叠。
+                bool overlapsWindow = chargeData.End > root.StartSeconds ||
+                    (chargeData.At == chargeData.End && chargeData.At >= root.StartSeconds);
+                if (startsBeforeWindowEnds && overlapsWindow)
                 {
                     return false;
                 }
@@ -430,12 +524,11 @@ public class MArtSkill : MSkill
     /// <returns>粒子已成功生成返回 true；完整模型仍缺挂点时报告配置错误并返回 false，不阻塞后续指令。</returns>
     private bool PlayRuntimeEffect(SkillRuntimeFxEvent fxEvent)
     {
-        if (_firer == null || _firer.Model == null ||
-            _firer.Model.GameObject == null ||
-            _firer.Model.GameObject.Transform == null)
-        {
-            return false;
-        }
+        // 逐级确认施法者模型、原生 GameObject 与 Transform 均就绪，缺一不能挂粒子。
+        if (_firer == null) return false;
+        if (_firer.Model == null) return false;
+        if (_firer.Model.GameObject == null) return false;
+        if (_firer.Model.GameObject.Transform == null) return false;
         // 当前实体模型根节点；角色和挂点模式均基于此节点定位。
         Transform roleTransform = _firer.Model.GameObject.Transform;
         // 本次粒子的父节点，世界定位模式保持为空。
@@ -566,13 +659,16 @@ public class MArtSkill : MSkill
     {
         base.TriggerAnim();
         // 动画安装前即可登记当前所有者；真实采集由 OwnsRootMotion 的资源与剪辑就绪条件门控。
-        if (IsActive && !_animationReleased && _firer != null && _firer.Skill != null &&
-            ReferenceEquals(_firer.Skill.CurrentSkill, this) && _firer.Model != null &&
-            _firer.Model.RootMotion != null && _boundAnimator != null &&
-            ReferenceEquals(_boundAnimator, _firer.Model.Ator))
-        {
-            _firer.Model.RootMotion.Bind(this);
-        }
+        if (!IsActive) return;
+        if (_animationReleased) return;
+        if (_firer == null) return;
+        if (_firer.Skill == null) return;
+        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return;
+        if (_firer.Model == null) return;
+        if (_firer.Model.RootMotion == null) return;
+        if (_boundAnimator == null) return;
+        if (!ReferenceEquals(_boundAnimator, _firer.Model.Ator)) return;
+        _firer.Model.RootMotion.Bind(this);
     }
 
     /// <summary>确认该实例仍占用当前模型动作槽，防止旧技能列表和准备中剪辑产生位移。</summary>
@@ -580,13 +676,17 @@ public class MArtSkill : MSkill
     /// <returns>当前技能、动画和模型全部属于本次施法时为true。</returns>
     public bool OwnsRootMotion(MModel model)
     {
-        if (!IsActive || _animationReleased || _runtimePresentation == null || _firer == null ||
-            _firer.Skill == null || !ReferenceEquals(_firer.Skill.CurrentSkill, this) ||
-            !ReferenceEquals(_firer.Model, model) || model == null ||
-            model.Ator == null || !ReferenceEquals(_boundAnimator, model.Ator))
-        {
-            return false;
-        }
+        // 本代施法仍占用动作槽且表现资产已就绪时才核对模型与动画器。
+        if (!IsActive) return false;
+        if (_animationReleased) return false;
+        if (_runtimePresentation == null) return false;
+        if (_firer == null) return false;
+        if (_firer.Skill == null) return false;
+        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return false;
+        if (!ReferenceEquals(_firer.Model, model)) return false;
+        if (model == null) return false;
+        if (model.Ator == null) return false;
+        if (!ReferenceEquals(_boundAnimator, model.Ator)) return false;
         // 已安装的Skill槽必须属于本段，异步准备下一剪辑时停止旧段delta。
         MAnimator.MAnimInfo animation = model.Ator.GetAnimInfo(MAnimator.STATE_SKILL);
         return animation != null && animation.IsClipReady && animation.ReadyClipPath == _animationLocation;
@@ -660,5 +760,18 @@ public class MArtSkill : MSkill
     public override void Recycle()
     {
         MCommonObjectPool<MArtSkill>.Release(this);
+    }
+
+    /// <summary>RO粒子、声音、位移回调身份，以及本项目恢复的滑行残影采样编号。</summary>
+    protected enum EArtsSkillTimerCb
+    {
+        /// <summary>RO 原值 10，执行一条已导出的单次粒子指令。</summary>
+        EFx = 10,
+        /// <summary>RO 原值 11，执行一条已导出的单次三维声音指令。</summary>
+        EAudio = 11,
+        /// <summary>RO 原值十三，到期交付一条程序水平位移指令。</summary>
+        ECharge = 13,
+        /// <summary>本项目追加的滑行网格残影采样编号，非RO原事件编号。</summary>
+        EGhost = 100
     }
 }

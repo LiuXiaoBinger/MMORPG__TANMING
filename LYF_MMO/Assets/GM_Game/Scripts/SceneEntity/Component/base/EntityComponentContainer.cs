@@ -11,8 +11,38 @@ public sealed class EntityComponentContainer
     /// <summary>按组件类型索引的组件字典，用于 Get/TryGet/Contains 快速查找。</summary>
     private readonly Dictionary<EntityComponentType, EntityComponentBase> _components =
         new Dictionary<EntityComponentType, EntityComponentBase>();
+
     /// <summary>按注册顺序排列的组件列表，用于 Initialize/Update/LateUpdate 顺序驱动。</summary>
     private readonly List<EntityComponentBase> _ordered = new List<EntityComponentBase>();
+
+    /// <summary>按注册顺序推进其余普通组件，位移已由移动前阶段推进，不能再次更新。</summary>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
+    public void Update(int deltaMilliseconds)
+    {
+        // 当前普通组件在原注册列表中的位置，位移保持单帧唯一更新。
+        for (int index = 0; index < _ordered.Count; index++)
+        {
+            // 本次更新的原组件引用，位移类型在前一阶段已经完成求值。
+            EntityComponentBase component = _ordered[index];
+            if (component.ComponentType == EntityComponentType.Displacement)
+            {
+                continue;
+            }
+            Invoke(component, "Update",
+                delegate { component.Update(deltaMilliseconds); });
+        }
+    }
+
+    /// <summary>按注册顺序依次调用每个组件的 LateUpdate。</summary>
+    /// <param name="deltaSeconds">距上一帧的秒数。</param>
+    public void LateUpdate(float deltaSeconds)
+    {
+        for (int index = 0; index < _ordered.Count; index++)
+        {
+            EntityComponentBase component = _ordered[index];
+            Invoke(component, "LateUpdate", delegate { component.LateUpdate(deltaSeconds); });
+        }
+    }
 
     /// <summary>向容器注册一个组件，同类型组件不允许重复注册。</summary>
     /// <param name="component">要注册的组件实例，为空时抛出异常。</param>
@@ -135,24 +165,6 @@ public sealed class EntityComponentContainer
         }
     }
 
-    /// <summary>按注册顺序推进其余普通组件，位移已由移动前阶段推进，不能再次更新。</summary>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
-    public void Update(int deltaMilliseconds)
-    {
-        // 当前普通组件在原注册列表中的位置，位移保持单帧唯一更新。
-        for (int index = 0; index < _ordered.Count; index++)
-        {
-            // 本次更新的原组件引用，位移类型在前一阶段已经完成求值。
-            EntityComponentBase component = _ordered[index];
-            if (component.ComponentType == EntityComponentType.Displacement)
-            {
-                continue;
-            }
-            Invoke(component, "Update",
-                delegate { component.Update(deltaMilliseconds); });
-        }
-    }
-
     /// <summary>逆序销毁所有组件，统一交由组件池回收，最后清空容器。</summary>
     public void Shutdown()
     {
@@ -165,17 +177,6 @@ public sealed class EntityComponentContainer
         }
         _ordered.Clear();
         _components.Clear();
-    }
-
-    /// <summary>按注册顺序依次调用每个组件的 LateUpdate。</summary>
-    /// <param name="deltaSeconds">距上一帧的秒数。</param>
-    public void LateUpdate(float deltaSeconds)
-    {
-        for (int index = 0; index < _ordered.Count; index++)
-        {
-            EntityComponentBase component = _ordered[index];
-            Invoke(component, "LateUpdate", delegate { component.LateUpdate(deltaSeconds); });
-        }
     }
 
     /// <summary>包装单个组件生命周期调用，捕获异常并打印日志，避免单个组件崩溃阻断其他组件。</summary>

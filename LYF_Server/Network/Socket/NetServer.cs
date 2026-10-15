@@ -8,19 +8,28 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// TCP 监听服务端：绑定端口并异步 Accept 客户端连接，为每个连接创建 Session。
+/// </summary>
 public class NetServer
 {
     // 连接断开时由宿主业务线程接收网关会话 ID，执行角色下线保存。
     public Action<int> OnSessionDisconnected { get; set; }
+    /// <summary>监听 Socket。</summary>
     private Socket _socket;
 
+    /// <summary>协议号到命令处理器的映射。</summary>
     private Dictionary<int, IContainer> _cmdDic = new Dictionary<int, IContainer>();
+    /// <summary>本服务作为客户端连接上游时使用的连接器，可为 null（如中心服）。</summary>
     private  NetClient _client;
+    /// <summary>构造监听服务端。</summary>
+    /// <param name="client">本服务连接上游的连接器；无上游时传 null。</param>
     public NetServer(NetClient client )
     {
         _client = client;
     }
 
+    /// <summary>绑定地址端口并在后台线程开始监听。</summary>
     public void StartServer(string ip, int port)
     {
 

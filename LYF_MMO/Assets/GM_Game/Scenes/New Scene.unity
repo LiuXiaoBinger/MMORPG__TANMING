@@ -436,14 +436,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2037422776407045469, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.000022888184
-      objectReference: {fileID: 0}
-    - target: {fileID: 4091994709158125743, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 88.79999
-      objectReference: {fileID: 0}
     - target: {fileID: 4606378012333407194, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 987.3
@@ -484,17 +476,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5214432260198619977, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
-      propertyPath: _mainRoleCtrl
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6359616036830003013, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_Name
       value: UIRoot
-      objectReference: {fileID: 0}
-    - target: {fileID: 8551151169094967463, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8625421884607700949, guid: 10b01d52055e5784c8de2884d38587c8, type: 3}
       propertyPath: m_AnchorMax.x

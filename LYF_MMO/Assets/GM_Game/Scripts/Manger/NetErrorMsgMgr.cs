@@ -8,9 +8,13 @@ using UnityEngine;
  */
 
 
+/// <summary>
+/// 通用网络错误码管理器：注册 CMD_ErrCode 回包，把服务端下发的错误码翻译成玩家可见的系统提示。
+/// </summary>
 public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
 {
 
+    /// <summary>注册通用错误码回包处理器，由启动流程调用一次。</summary>
     public void Init()
     {
 
@@ -19,9 +23,9 @@ public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
     }
 
     /// <summary>
-    /// 处理错误消息
+    /// 处理错误消息：解析 ErrMsg 并按 CmdCode 分支弹出对应中文提示。
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="data">CMD_ErrCode 对应的 Protobuf 二进制体。</param>
     private void OnErrorMsgHandle(ByteString data)
     {
         if (data == null || data.Length == 0)

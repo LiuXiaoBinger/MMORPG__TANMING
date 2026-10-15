@@ -9,11 +9,17 @@ using YooAsset;
  */
 
 
+/// <summary>
+/// YooAsset 资源加载管理器：按路径缓存 Prefab、特效和 Sprite 的异步句柄，
+/// 已缓存资源直接实例化，未缓存资源走异步加载并在回调前保持句柄引用。
+/// </summary>
 public class ResourceMgr : Singleton<ResourceMgr>
 {
 
 
+    /// <summary>按路径缓存的 Prefab 资源句柄；命中后直接 InstantiateSync 出新实例，句柄长期持有。</summary>
     private Dictionary<string, AssetOperationHandle> prefabDic = new Dictionary<string, AssetOperationHandle>();
+    /// <summary>按路径缓存的特效资源句柄；与 prefabDic 同样长期持有以避免特效反复加载。</summary>
     private Dictionary<string, AssetOperationHandle> effectDic = new Dictionary<string, AssetOperationHandle>();
     /// <summary>普通 Sprite 的资源句柄，用于维持已缓存资源的生命周期。</summary>
     private Dictionary<string, AssetOperationHandle> _spriteHandleDic = new Dictionary<string, AssetOperationHandle>();

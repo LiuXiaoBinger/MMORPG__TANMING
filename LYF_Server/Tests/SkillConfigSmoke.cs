@@ -50,10 +50,27 @@ public static class SkillConfigSmoke
                 skillIds[index], 1);
             // 当前职业默认模型的单段动画表现配置。
             SkillPresentationInfo presentation;
-            if (skill == null || effect == null || effect.Id != effectIds[index] ||
-                effect.SkillId != skillIds[index] || effect.Level != 1 ||
-                !presentations.TryGetValue(presentationIds[index], out presentation) ||
-                presentation.EffectId != effect.Id || presentation.ProfessionId != 1 ||
+            // 技能与效果定义必须同时存在。
+            if (skill == null || effect == null)
+            {
+                Console.Error.WriteLine("技能表映射失败：" + skillIds[index]);
+                return 3;
+            }
+            // 效果 ID、技能 ID 与等级必须与旧表期望一致。
+            if (effect.Id != effectIds[index] || effect.SkillId != skillIds[index] ||
+                effect.Level != 1)
+            {
+                Console.Error.WriteLine("技能表映射失败：" + skillIds[index]);
+                return 3;
+            }
+            // 表现表必须能查到当前职业默认表现。
+            if (!presentations.TryGetValue(presentationIds[index], out presentation))
+            {
+                Console.Error.WriteLine("技能表映射失败：" + skillIds[index]);
+                return 3;
+            }
+            // 表现记录必须指向该效果，且职业与模型键匹配。
+            if (presentation.EffectId != effect.Id || presentation.ProfessionId != 1 ||
                 presentation.ModelKey != "Role_MJS")
             {
                 Console.Error.WriteLine("技能表映射失败：" + skillIds[index]);

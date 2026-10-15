@@ -8,32 +8,24 @@ using YooAsset;
 /// </summary>
 public class Global : MonoBehaviour {
 
-    /// <summary>开始游戏角色数据提交后的处理状态，用于区分拒绝、排队、立即加载和重复回包。</summary>
-    public enum LocalRoleLoadSubmitResult
-    {
-        /// <summary>角色数据无效、账号不匹配或全局生命周期已结束，提交未被接受。</summary>
-        Rejected = 0,
-
-        /// <summary>角色数据已暂存，等待动画索引或场景实体世界就绪后继续加载。</summary>
-        Queued = 1,
-
-        /// <summary>角色数据已经在本次提交中加载为本地玩家实体。</summary>
-        Loaded = 2,
-
-        /// <summary>相同角色已经存在于场景实体世界，本次重复回包未重新创建实体。</summary>
-        AlreadyLoaded = 3
-    }
-
     /// <summary>动画索引加载失败后的重试间隔，单位为秒，使用不受时间缩放影响的时钟。</summary>
     private const float AnimationPreloadRetryIntervalSeconds = 3f;
+
+
 
     /// <summary>全局 Unity 生命周期入口。</summary>
     public static Global Instance;
 
+
+
     /// <summary>YooAsset 默认资源包。</summary>
     private ResourcePackage _package;
+
+
     /// <summary>获取 YooAsset 默认资源包。</summary>
     public ResourcePackage YooPackage { get => _package; }
+
+
 
     /// <summary>当前账号登录信息；更换账号或退出登录时会清理上一账号的待加载角色和场景角色。</summary>
     [HideInInspector]
@@ -50,11 +42,17 @@ public class Global : MonoBehaviour {
         }
     }
 
+
+
     /// <summary>当前账号登录信息的实际存储字段，生命周期持续到账号切换或 Global 销毁。</summary>
     private LoginRet _loginInfo;
 
+
+
     /// <summary>客户端唯一角色运行时容器。</summary>
     public SceneWorldSystem SceneWorld { get; private set; }
+
+
 
     /// <summary>动画索引是否已经成功加载；为 false 时不会创建场景实体世界。</summary>
     public bool IsAnimationReady
@@ -62,29 +60,47 @@ public class Global : MonoBehaviour {
         get { return MAnimationMgr.singleton.IsPreloaded; }
     }
 
+
+
     /// <summary>当前是否已有动画索引异步加载请求，防止失败重试期间重复登记回调。</summary>
     private bool _isAnimationPreloadRequested;
+
+
 
     /// <summary>下一次允许重试动画索引加载的实时秒数。</summary>
     private float _nextAnimationPreloadRetryTime;
 
+
+
     /// <summary>Global 是否正在退出或销毁；进入清理后不再发起异步重试。</summary>
     private bool _isShuttingDown;
+
+
 
     /// <summary>动画门控期间最新一次成功开始游戏回包的角色副本，仅由 Global 消费一次。</summary>
     private MainRoleInfo _pendingMainRoleInfo;
 
+
+
     /// <summary>场景角色创建失败后下一次允许重试的实时秒数，避免每帧重复创建。</summary>
     private float _nextPendingRoleLoadRetryTime;
+
+
 
     /// <summary>当前待加载或已加载本地角色所属的网络连接代次；零表示离线测试角色或没有网络角色会话。</summary>
     private long _localRoleConnectionGeneration;
 
+
+
     /// <summary>本地角色真正进入 SceneWorld 后触发，事件载荷为本次成功创建的强类型玩家实体。</summary>
     public event Action<PlayerEntity> LocalRoleLoadCompleted;
 
+
+
     /// <summary>当前主角表现控制器，与纯数据角色模型保持分离。</summary>
     [HideInInspector] public RoleCtrlBase roleCtrlBase;
+
+
 
     /// <summary>初始化全局客户端模块。</summary>
     private void Awake() {
@@ -104,6 +120,55 @@ public class Global : MonoBehaviour {
         SkillCastingRulesCatalog.Initialize();
         BeginAnimationPreload();
     }
+
+
+
+    /// <summary>推进动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
+    private void Update()
+    {
+        MAnimationMgr.singleton.UpdateCache();
+        UpdateAnimationPreload();
+        UpdatePendingLocalRoleLoad();
+        if (SceneWorld == null)
+        {
+            return;
+        }
+        // 当前 Unity 帧间隔换算为实体系统使用的毫秒整数。
+        int deltaMilliseconds = Mathf.RoundToInt(Time.deltaTime * 1000f);
+        // 与技能累计时钟使用同一整数毫秒来源，角色数量与当前/旧技能数量均不加速时间轴。
+        MTimerMgr.singleton.Update(deltaMilliseconds * 0.001f);
+        SceneWorld.Update(deltaMilliseconds);
+    }
+
+
+
+    /// <summary>在 Unity 帧末唯一驱动实体状态机和模型动画刷新。</summary>
+    private void LateUpdate()
+    {
+        if (SceneWorld == null)
+        {
+            return;
+        }
+        // 当前 Unity 帧间隔换算为实体帧末更新使用的毫秒整数。
+        int deltaMilliseconds = Mathf.RoundToInt(Time.deltaTime * 1000f);
+        SceneWorld.LateUpdate(deltaMilliseconds);
+    }
+
+
+
+    /// <summary>Global 被销毁时兜底释放场景实体和全部动画 YooAsset 句柄。</summary>
+    private void OnDestroy()
+    {
+        if (!ReferenceEquals(Instance, this))
+        {
+            return;
+        }
+
+        ReleaseRuntimeResources();
+        Instance = null;
+    }
+
+
 
     /// <summary>
     /// 发起动画索引异步加载；只有成功回调才创建场景实体世界，从入口阻断未就绪实体。
@@ -127,6 +192,8 @@ public class Global : MonoBehaviour {
         _isAnimationPreloadRequested = true;
         MAnimationMgr.singleton.Preload(OnAnimationPreloadCompleted);
     }
+
+
 
     /// <summary>
     /// 处理动画索引加载结果；成功后开放 SceneWorld，失败时保持阻断并安排下一次重试。
@@ -155,6 +222,8 @@ public class Global : MonoBehaviour {
             AnimationPreloadRetryIntervalSeconds;
     }
 
+
+
     /// <summary>在动画索引失败或资源包暂不可用时，按固定间隔重新发起加载。</summary>
     private void UpdateAnimationPreload()
     {
@@ -171,6 +240,8 @@ public class Global : MonoBehaviour {
 
         BeginAnimationPreload();
     }
+
+
 
     /// <summary>
     /// 提交开始游戏成功回包中的角色数据；世界未就绪时保留最新副本，世界就绪时立即消费。
@@ -227,6 +298,8 @@ public class Global : MonoBehaviour {
         return LocalRoleLoadSubmitResult.Queued;
     }
 
+
+
     /// <summary>在 SceneWorld 可用时消费最新待加载角色；失败时保留请求并按重试间隔再次尝试。</summary>
     /// <returns>本次是否成功创建本地玩家并发出完成事件。</returns>
     private bool TryConsumePendingLocalRole()
@@ -263,6 +336,8 @@ public class Global : MonoBehaviour {
         return true;
     }
 
+
+
     /// <summary>通过强类型事件公布已经存在于 SceneWorld 的本地玩家实体。</summary>
     /// <param name="localRole">已完成入世界生命周期的玩家实体；为空时不触发事件。</param>
     private void NotifyLocalRoleLoadCompleted(PlayerEntity localRole)
@@ -279,6 +354,8 @@ public class Global : MonoBehaviour {
         }
     }
 
+
+
     /// <summary>场景角色创建曾失败时按固定间隔重试，保证已接受的成功回包不会被吞掉。</summary>
     private void UpdatePendingLocalRoleLoad()
     {
@@ -290,22 +367,42 @@ public class Global : MonoBehaviour {
         TryConsumePendingLocalRole();
     }
 
+
+
     /// <summary>判断协议角色数据是否具备创建本地玩家所需的账号和正数角色 ID。</summary>
     /// <param name="roleInfo">待验证的开始游戏角色数据。</param>
     /// <returns>基础信息存在且角色 ID、账号 ID 均为正数时返回 true。</returns>
     private static bool IsValidMainRoleInfo(MainRoleInfo roleInfo)
     {
-        return roleInfo != null && roleInfo.BaseInfo != null &&
-            roleInfo.BaseInfo.RoleId > 0 && roleInfo.AccountId > 0;
+        if (roleInfo == null)
+        {
+            return false;
+        }
+        if (roleInfo.BaseInfo == null)
+        {
+            return false;
+        }
+        // 角色 ID 与账号 ID 均为正数，才具备创建本地玩家所需的有效账号角色。
+        return roleInfo.BaseInfo.RoleId > 0 && roleInfo.AccountId > 0;
     }
+
+
 
     /// <summary>判断 SceneWorld 当前本地玩家是否就是本次回包指定的同一账号角色。</summary>
     /// <param name="roleInfo">用于比对账号 ID 和角色 ID 的服务器角色数据。</param>
     /// <returns>当前已加载角色与回包账号、角色 ID 均相同时返回 true。</returns>
     private bool IsSameLoadedRole(MainRoleInfo roleInfo)
     {
-        if (SceneWorld == null || SceneWorld.LocalRole == null ||
-            SceneWorld.LocalRole.RoleInfo == null ||
+        if (SceneWorld == null)
+        {
+            return false;
+        }
+        if (SceneWorld.LocalRole == null)
+        {
+            return false;
+        }
+        // 当前本地玩家的角色数据与基础信息均已就位，才继续比对账号与角色 ID。
+        if (SceneWorld.LocalRole.RoleInfo == null ||
             SceneWorld.LocalRole.BaseInfo == null)
         {
             return false;
@@ -313,6 +410,8 @@ public class Global : MonoBehaviour {
         return SceneWorld.LocalRole.RoleInfo.AccountId == roleInfo.AccountId &&
             SceneWorld.LocalRole.BaseInfo.RoleId == roleInfo.BaseInfo.RoleId;
     }
+
+
 
     /// <summary>判断登录信息赋值是否代表账号切换或退出，用于隔离旧账号待处理角色。</summary>
     /// <param name="previousLogin">赋值前的登录结果；首次登录时允许为空。</param>
@@ -332,11 +431,15 @@ public class Global : MonoBehaviour {
         return previousLogin.AccountId != nextLogin.AccountId;
     }
 
+
+
     /// <summary>无条件清除当前账号的待加载角色和已创建场景角色，供换号、主动断线和退出调用。</summary>
     public void ClearLocalRoleSession()
     {
         ClearLocalRoleSessionCore();
     }
+
+
 
     /// <summary>仅清理由指定失败连接代次拥有的角色会话，避免旧失败回调删除自动重连后的新角色。</summary>
     /// <param name="failedConnectionGeneration">已经失效的正数网络连接代次。</param>
@@ -352,6 +455,8 @@ public class Global : MonoBehaviour {
         return true;
     }
 
+
+
     /// <summary>按表现引用、待处理数据、场景实体的顺序清空本地角色会话。</summary>
     private void ClearLocalRoleSessionCore()
     {
@@ -366,34 +471,7 @@ public class Global : MonoBehaviour {
         }
     }
 
-    /// <summary>推进动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
-    private void Update()
-    {
-        MAnimationMgr.singleton.UpdateCache();
-        UpdateAnimationPreload();
-        UpdatePendingLocalRoleLoad();
-        if (SceneWorld == null)
-        {
-            return;
-        }
-        // 当前 Unity 帧间隔换算为实体系统使用的毫秒整数。
-        int deltaMilliseconds = Mathf.RoundToInt(Time.deltaTime * 1000f);
-        // 与技能累计时钟使用同一整数毫秒来源，角色数量与当前/旧技能数量均不加速时间轴。
-        MTimerMgr.singleton.Update(deltaMilliseconds * 0.001f);
-        SceneWorld.Update(deltaMilliseconds);
-    }
 
-    /// <summary>在 Unity 帧末唯一驱动实体状态机和模型动画刷新。</summary>
-    private void LateUpdate()
-    {
-        if (SceneWorld == null)
-        {
-            return;
-        }
-        // 当前 Unity 帧间隔换算为实体帧末更新使用的毫秒整数。
-        int deltaMilliseconds = Mathf.RoundToInt(Time.deltaTime * 1000f);
-        SceneWorld.LateUpdate(deltaMilliseconds);
-    }
 
     /// <summary>退出客户端时断开连接并清理角色运行时数据。</summary>
     private void OnApplicationQuit()
@@ -402,17 +480,7 @@ public class Global : MonoBehaviour {
         ReleaseRuntimeResources();
     }
 
-    /// <summary>Global 被销毁时兜底释放场景实体和全部动画 YooAsset 句柄。</summary>
-    private void OnDestroy()
-    {
-        if (!ReferenceEquals(Instance, this))
-        {
-            return;
-        }
 
-        ReleaseRuntimeResources();
-        Instance = null;
-    }
 
     /// <summary>按实体后资源的顺序清理运行时状态；该方法可被退出和销毁流程重复安全调用。</summary>
     private void ReleaseRuntimeResources()
@@ -430,4 +498,24 @@ public class Global : MonoBehaviour {
         MTimerMgr.singleton.Uninit();
         MAnimationMgr.singleton.Uninit();
     }
+
+
+
+
+    /// <summary>开始游戏角色数据提交后的处理状态，用于区分拒绝、排队、立即加载和重复回包。</summary>
+    public enum LocalRoleLoadSubmitResult
+    {
+        /// <summary>角色数据无效、账号不匹配或全局生命周期已结束，提交未被接受。</summary>
+        Rejected = 0,
+
+        /// <summary>角色数据已暂存，等待动画索引或场景实体世界就绪后继续加载。</summary>
+        Queued = 1,
+
+        /// <summary>角色数据已经在本次提交中加载为本地玩家实体。</summary>
+        Loaded = 2,
+
+        /// <summary>相同角色已经存在于场景实体世界，本次重复回包未重新创建实体。</summary>
+        AlreadyLoaded = 3
+    }
+
 }

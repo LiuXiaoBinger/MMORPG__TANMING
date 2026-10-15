@@ -7,7 +7,7 @@ public sealed class MSkillTimerArgs
     /// <summary>注册时锁定的池实例施法代次，同 UUID 同步重新 Fire 时也拒绝旧回调。</summary>
     public ulong FireGeneration { get; private set; }
 
-    /// <summary>对应 RO EArtsSkillTimerCb 的事件编号，现有运行范围为 EFx、EAudio 和 ECharge。</summary>
+    /// <summary>RO的EFx/EAudio/ECharge编号，或本项目无载荷滑行残影EGhost编号。</summary>
     public int Id { get; private set; }
 
     /// <summary>粒子回调持有的本次锁定事件；声音回调中为空。</summary>
@@ -20,6 +20,17 @@ public sealed class MSkillTimerArgs
     public MSkillChargeData ChargeData { get; private set; }
     /// <summary>冷资产登记时已过的段内秒数；负一表示正常未来回调，不丢本帧跨界运动。</summary>
     public float ChargeInitialElapsedSeconds { get; private set; } = -1f;
+
+    /// <summary>创建无业务载荷的表现计时参数，用于原滑行动作的残影采样。</summary>
+    /// <param name="skillUuid">回调所属的非零施法UUID。</param>
+    /// <param name="id">本项目残影回调编号，不占用RO既有事件编号。</param>
+    /// <param name="fireGeneration">登记时的施法代次，动作结束或对象复用后回调失效。</param>
+    public MSkillTimerArgs(ulong skillUuid, int id, ulong fireGeneration)
+    {
+        SkillUuid = skillUuid;
+        Id = id;
+        FireGeneration = fireGeneration;
+    }
 
     /// <summary>创建粒子时间轴参数，生命周期从注册延续到成功派发或施法取消。</summary>
     /// <param name="skillUuid">本次注册所属的非零施法 UUID。</param>

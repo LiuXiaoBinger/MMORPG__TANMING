@@ -8,10 +8,13 @@ using UnityEngine.UI;
 public class EquipSlotWidget : MonoBehaviour
 {
     [SerializeField, Header("装备图标")] private Image _imgIcon;
+
     [SerializeField, Header("装备名称")] private TMP_Text _texName;
+
     [SerializeField, Header("强化等级")] private TMP_Text _texStrengthen;
 
     private int _itemTypeId;
+
     private int _loadVersion;
 
     private void Awake()

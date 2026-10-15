@@ -9,12 +9,13 @@ using UnityEngine;
 
 
 public class InputStyle01 : MonoBehaviour {
-
     [SerializeField, Header("占位符")] private TMP_Text _texPlaceholder;
+
     [SerializeField, Header("动画持续时间")] private float _duretion = 0.1f;
+
     [SerializeField, Header("移动偏移量")] private float _moveY = 20;
+
     private float _posY;
-    
 
     private void Start() {
 
@@ -44,6 +45,4 @@ public class InputStyle01 : MonoBehaviour {
         });
 
     }
-
-
 }

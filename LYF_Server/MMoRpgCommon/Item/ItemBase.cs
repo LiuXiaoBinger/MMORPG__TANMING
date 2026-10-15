@@ -204,9 +204,11 @@ public class ItemBase
         return _moneyType;
     }
 
+    /// <summary>设置该堆叠物品的总买入价格，负价格归一为 0。</summary>
     public void SetTotalPrice(long price) { _totalPrice = price > 0 ? price : 0; ; }
     /// <summary>获取该物品堆叠的总买入价格。</summary>
     public long GetTotalPrice() { return _totalPrice; }
+    /// <summary>按当前堆叠数计算单价，堆叠数为 0 时返回 0。</summary>
     public long GetAvgPrice() { return  _count > 0 ? _totalPrice / _count : 0; }
 
     /// <summary>设置价格和货币类型，负价格会规范化为零。</summary>
@@ -262,11 +264,13 @@ public class ItemBase
         _createTime = source.GetCreateTime();
         _expireTime = source.GetExpireTime();
     }
+    /// <summary>旧式绑定位设置入口，与 SetBound 功能重复。</summary>
     void SetBind(bool bind)
     {
         SetSign(SignBit.BindBit, bind);
     }
 
+    /// <summary>读取当前物品的绑定状态位。</summary>
     public ItemBind IsBind()
     {
         if (GetSign(SignBit.BindBit))
@@ -276,22 +280,25 @@ public class ItemBase
         return ItemBind.kItemBindNo;
     }
 
-    
+    /// <summary>判断配置 ID 是否为货币类道具（金币、绑定币、钻石等）。</summary>
     public static bool IsMoney(int item_id)
     {
-        return item_id == (int)ItemEnum.ZENY 
-               || item_id == (int)ItemEnum.ROMONEY 
-               || item_id == (int)ItemEnum.DIAMOND 
-               || item_id == (int)ItemEnum.Coin104;
+        // 是否为金币或绑定币。
+        bool isBaseCurrency = item_id == (int)ItemEnum.ZENY || item_id == (int)ItemEnum.ROMONEY;
+        // 是否为钻石或充值币。
+        bool isPremiumCurrency = item_id == (int)ItemEnum.DIAMOND || item_id == (int)ItemEnum.Coin104;
+        return isBaseCurrency || isPremiumCurrency;
     }
+    /// <summary>判断配置 ID 是否为付费货币（钻石/充值币）。</summary>
     public static bool IsDiamond(int item_id)
     {
         return item_id == (int)ItemEnum.DIAMOND || item_id == (int)ItemEnum.Coin104;
     }
+    /// <summary>判断配置 ID 是否为主流通货币。</summary>
     public static bool IsPrimaryMoney(int item_id)
     {
-        return item_id == (int)ItemEnum.DIAMOND 
-               || item_id == (int)ItemEnum.Coin104 
+        return item_id == (int)ItemEnum.DIAMOND
+               || item_id == (int)ItemEnum.Coin104
                || item_id == (int)ItemEnum.QQ_POINT;
     }
 }

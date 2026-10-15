@@ -8,17 +8,26 @@ public class RoItemComponent : RoleComponentBase
 {
     // 四类可扩容背包的最小初始容量。
     private const int MinOpenedGridCount = 81;
+
     // 数据库存储为 byte 时允许的最大容量。
     private const int MaxOpenedGridCount = byte.MaxValue;
+
     // 仅保存四类可扩容背包的权威容量。
     private readonly Dictionary<KnapsackType, int> _openedGridCounts =
         new Dictionary<KnapsackType, int>();
+
     /// <summary>物品模型发生变化时通知控制器刷新界面。</summary>
     public event Action<ItemBase, ChangeReason, UpdateType> ItemChanged;
+
     /// <summary>背包物品或容量发生变化时通知背包控制器。</summary>
     public event Action KnapsackChanged;
+
     /// <summary>背包发生细粒度变化时通知控制器，参数是不可变快照。</summary>
     public event Action<KnapsackChangedEventArgs> KnapsackChangedDetailed;
+
+    // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
+    private Dictionary<KnapsackType, RoItemContainer> _itemContainers;
+
     /// <summary>
     /// 构造角色物品组件。
     /// </summary>
@@ -28,8 +37,12 @@ public class RoItemComponent : RoleComponentBase
     {
     }
 
-    // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
-    private Dictionary<KnapsackType, RoItemContainer> _itemContainers;
+    /// <summary>组件每帧更新，当前物品组件无需逐帧逻辑。</summary>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        
+    }
 
     /// <summary>
     /// 初始化全部背包容器，并为四类可扩容背包设置默认 81 格容量。
@@ -224,7 +237,13 @@ public class RoItemComponent : RoleComponentBase
     {
         changed = false;
         RoItemContainer container = GetContainer(type);
-        if (!IsExpandableType(type) || container == null || count < MinOpenedGridCount || count > MaxOpenedGridCount)
+        // 类型不可扩容或对应容器尚未创建时拒绝写入。
+        if (!IsExpandableType(type) || container == null)
+        {
+            return false;
+        }
+        // 目标格子数低于下限或高于上限时拒绝。
+        if (count < MinOpenedGridCount || count > MaxOpenedGridCount)
         {
             return false;
         }
@@ -244,8 +263,11 @@ public class RoItemComponent : RoleComponentBase
     /// <returns>可扩容返回 true，穿戴栏等返回 false。</returns>
     private static bool IsExpandableType(KnapsackType type)
     {
-        return type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip ||
-            type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        // 普通格与装备格属于可扩容背包类型。
+        bool isBaseType = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
+        // 消耗品格与材料格同样属于可扩容背包类型。
+        bool isResourceType = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        return isBaseType || isResourceType;
     }
 
     /// <summary>获取四类可扩容背包的类型数组，用于批量初始化与遍历。</summary>
@@ -274,7 +296,13 @@ public class RoItemComponent : RoleComponentBase
     /// <param name="ret">中心服返回的角色背包信息回包。</param>
     public void LoadKnapsack(RoleKanpsackInfoRet ret)
     {
-        if (ret == null || ret.CmdCode != CmdCode.Succeed || ret.RoleKanpsackInfo == null || _itemContainers == null)
+        // 回包缺失、返回失败或背包数据为空时放弃装载。
+        if (ret == null || ret.CmdCode != CmdCode.Succeed || ret.RoleKanpsackInfo == null)
+        {
+            return;
+        }
+        // 客户端容器字典尚未初始化时放弃装载。
+        if (_itemContainers == null)
         {
             return;
         }
@@ -414,8 +442,13 @@ public class RoItemComponent : RoleComponentBase
     /// <summary>新增或替换服务器推送的单个物品实例，保持 UID 和格位与服务器一致。</summary>
     private void ApplyServerItem(RoleItemInfo itemInfo)
     {
-        if (itemInfo == null || itemInfo.ItemUid <= 0 || itemInfo.ItemTypeId <= 0 ||
-            itemInfo.Count <= 0 || itemInfo.BagIndex < 0)
+        // 服务端物品数据缺失或标识字段非法时拒绝应用。
+        if (itemInfo == null || itemInfo.ItemUid <= 0 || itemInfo.ItemTypeId <= 0)
+        {
+            return;
+        }
+        // 数量必须为正，且背包格位不得为负。
+        if (itemInfo.Count <= 0 || itemInfo.BagIndex < 0)
         {
             return;
         }
@@ -484,6 +517,7 @@ public class RoItemComponent : RoleComponentBase
     {
         
     }
+
     /// <summary>
     /// 获取背包容器还有多少空格子
     /// </summary>
@@ -517,6 +551,7 @@ public class RoItemComponent : RoleComponentBase
         }
         return ret;
     }
+
     /// <summary>
     /// 获取该物品最大堆叠数量
     /// </summary>
@@ -535,12 +570,6 @@ public class RoItemComponent : RoleComponentBase
             return itemData.MaxStackCount;
         }
         return 1;
-    }
-    /// <summary>组件每帧更新，当前物品组件无需逐帧逻辑。</summary>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        
     }
 
     /// <summary>释放组件持有的容器和事件订阅。</summary>
@@ -622,7 +651,13 @@ public class RoItemComponent : RoleComponentBase
     public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason, 
         ItemSign itemSign, int moneyType, long price, UpdateType updateType, IdipParam idipParam)
     {
-        if (Owner == null || itemId <= 0 || itemCount <= 0 || price < 0)
+        // 所属角色缺失或物品 ID 非法时拒绝发放。
+        if (Owner == null || itemId <= 0)
+        {
+            return null;
+        }
+        // 发放数量必须为正，且单价不得为负。
+        if (itemCount <= 0 || price < 0)
         {
             return null;
         }
@@ -820,8 +855,6 @@ public class RoItemComponent : RoleComponentBase
         return true;
     }
 
-  
-
     /// <summary>
     /// 通知任务模块
     /// </summary>
@@ -1018,9 +1051,6 @@ public class RoItemComponent : RoleComponentBase
             }
         }
     }
-
-   
-    
 
     /// <summary>
     /// 根据物品配置 ID 确定其所属的背包容器。
@@ -1276,6 +1306,7 @@ public class RoItemComponent : RoleComponentBase
         }
         return items.Value;
     }
+
     /// <summary>
     /// 获取容器中指定物品的绑定和非绑定实例。
     /// </summary>

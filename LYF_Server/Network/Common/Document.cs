@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// 网络协议说明文档占位类：仅存放 TCP 粘包与 ProtoBuf 概念笔记，无任何运行时代码。
+/// </summary>
 internal class Document
 {
 

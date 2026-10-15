@@ -44,8 +44,11 @@ public class RoleManager
         {
             OnlineRole role = onlineRoles[i];
             role.Update(deltaMilliseconds);
-            if (role.State == OnlineRoleState.Offline && role.CanDispose() &&
-                role.mainRoleInfo != null && role.mainRoleInfo.BaseInfo != null)
+            // 角色已离线且无在途保存、组件无脏数据，满足可释放条件。
+            bool offlineAndDisposable = role.State == OnlineRoleState.Offline && role.CanDispose();
+            // 主角色信息及其基础信息完整，可据此定位并注销角色。
+            bool hasDisposableMainRole = role.mainRoleInfo != null && role.mainRoleInfo.BaseInfo != null;
+            if (offlineAndDisposable && hasDisposableMainRole)
             {
                 int roleId = role.mainRoleInfo.BaseInfo.RoleId;
                 role.Dispose();
@@ -326,9 +329,13 @@ public class RoleManager
         {
             // 旧在线实例待保存时，新会话的首个 EnterWorld 不能丢弃，否则 11080 永远不会装载。
             OnlineRole pendingRole;
-            if (m_pendingRoleMap.TryGetValue(request.RoleId, out pendingRole) &&
-                pendingRole != null && pendingRole.GateSessionId == package.GateSessionId &&
-                pendingRole.UnitySessionId == package.UnitySessionId)
+            // 该角色 ID 是否命中待处理表。
+            bool foundPending = m_pendingRoleMap.TryGetValue(request.RoleId, out pendingRole);
+            // 待处理角色非空且网关、客户端会话标识完全匹配（pendingRole 判空前置防 NRE）。
+            bool pendingSessionMatch = pendingRole != null &&
+                pendingRole.GateSessionId == package.GateSessionId &&
+                pendingRole.UnitySessionId == package.UnitySessionId;
+            if (foundPending && pendingSessionMatch)
             {
                 _pendingEnterWorldRequests[request.RoleId] =
                     new PendingEnterWorldRequest(serverBase, package);
@@ -400,8 +407,15 @@ public class RoleManager
         }
 
         OnlineRole role = GetOnlineRoleBySession(package.GateSessionId, package.UnitySessionId);
-        if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null ||
-            role.mainRoleInfo.BaseInfo.RoleId != request.RoleId)
+        // 在线角色、主角色信息或基础信息缺失时按参数错误返回。
+        if (role == null || role.mainRoleInfo == null)
+        {
+            result.CmdCode = CmdCode.ReqParamError;
+            serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
+            return;
+        }
+        // 基础信息缺失或角色 ID 与请求不符时按参数错误返回。
+        if (role.mainRoleInfo.BaseInfo == null || role.mainRoleInfo.BaseInfo.RoleId != request.RoleId)
         {
             result.CmdCode = CmdCode.ReqParamError;
             serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
@@ -517,12 +531,40 @@ public class RoleManager
         {
             // 只向现有同地图 100 米可见范围的其他在线角色转发表现事件。
             OnlineRole observer = onlineRoles[index];
-            if (observer == null || observer == caster || observer.State != OnlineRoleState.Online ||
-                !IsNearbyRole(observer, caster.mainRoleInfo))
+            // 空对象、自身或非在线角色均不转发。
+            if (observer == null || observer == caster || observer.State != OnlineRoleState.Online)
+            {
+                continue;
+            }
+            // 距离不在同地图 100 米范围内的角色不转发。
+            if (!IsNearbyRole(observer, caster.mainRoleInfo))
             {
                 continue;
             }
             observer.SendToClient(protocolCode, payload);
+        }
+    }
+
+    /// <summary>向现有同地图 100 米范围的其他在线角色同步移动终点和朝向。</summary>
+    /// <param name="pRole">本次移动的原在线角色，其基础位置已由移动组件更新。</param>
+    /// <param name="notice">客户端本段移动数据，角色 ID 由服务器填充。</param>
+    public void SyncMove(OnlineRole pRole, SyncMoveNtf notice)
+    {
+        // 序列化一次后复用不可变字节；本人继续本地移动，不等待移动回包。
+        ByteString payload = notice.ToByteString();
+        // 使用现有索引的引用快照，保持角色对象和既有附近判断一致。
+        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        // 快照下标只在本次广播内有效。
+        for (int index = 0; index < onlineRoles.Count; index++)
+        {
+            // 目标仍是正式索引中的原角色对象，用于读取当前会话与地图。
+            OnlineRole observer = onlineRoles[index];
+            if (observer == pRole || observer.State != OnlineRoleState.Online ||
+                !IsNearbyRole(observer, pRole.mainRoleInfo))
+            {
+                continue;
+            }
+            observer.SendToClient(NetDefine.CMD_SyncMoveCode, payload);
         }
     }
 
@@ -561,8 +603,13 @@ public class RoleManager
         OnlineRole sessionRole = GetOnlineRoleBySession(
             currentOnlineRole.GateSessionId,
             currentOnlineRole.UnitySessionId);
-        if (sessionRole == null || sessionRole.mainRoleInfo == null ||
-            sessionRole.mainRoleInfo.BaseInfo == null ||
+        // 会话绑定的在线角色或其主角色信息缺失时放弃补发。
+        if (sessionRole == null || sessionRole.mainRoleInfo == null)
+        {
+            return;
+        }
+        // 基础信息缺失或会话角色 ID 与当前角色不符时放弃补发。
+        if (sessionRole.mainRoleInfo.BaseInfo == null ||
             sessionRole.mainRoleInfo.BaseInfo.RoleId != currentRole.BaseInfo.RoleId)
         {
             return;
@@ -592,8 +639,13 @@ public class RoleManager
     private static bool IsNearbyRole(OnlineRole role, MainRoleInfo currentRole)
     {
         // 先过滤空对象和地图，再计算三维距离，避免无效坐标触发异常。
-        if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null ||
-            currentRole == null || currentRole.BaseInfo == null)
+        // 角色一侧的主角色快照或基础信息缺失时按不邻近处理。
+        if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
+        {
+            return false;
+        }
+        // 参考角色一侧缺失时按不邻近处理。
+        if (currentRole == null || currentRole.BaseInfo == null)
         {
             return false;
         }

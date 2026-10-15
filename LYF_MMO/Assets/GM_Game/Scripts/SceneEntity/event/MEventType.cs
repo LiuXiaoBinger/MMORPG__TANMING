@@ -89,8 +89,12 @@ public enum MEventType
     // ===== 输入事件（由 EntityInputEventBridge 派发） =====
     /// <summary>统一输入事件；具体动作数据由 InputEventArgs 承载。</summary>
     InputKey,
+    /// <summary>请求移动到目标点事件；载荷为 MMoveEventArgs，由移动组件消费。</summary>
     MEvent_Move,
+    /// <summary>请求停止移动事件；当前无额外载荷。</summary>
     MEvent_StopMove,
     /// <summary>自定义事件类型，用于业务扩展。</summary>
-    Custom
+    Custom,
+    /// <summary>RO同名导航输入事件，承载到达后释放技能的MNavigationEventArgs。</summary>
+    MEvent_Navigation
 }

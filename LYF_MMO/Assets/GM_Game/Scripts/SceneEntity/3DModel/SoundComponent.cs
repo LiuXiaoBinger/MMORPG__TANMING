@@ -7,51 +7,30 @@ public sealed class SoundComponent
 {
     /// <summary>MJS普通动作导出资产的固定资源地址。</summary>
     private const string LocomotionLocation = "Assets/GM_Game/Scripts/Data/Skill/Runtime/SkillRuntimeLocomotionConfig_MJS.asset";
+
     /// <summary>仍被模型持有的普通动作共享加载记录，最后模型释放时归还。</summary>
     private static LocomotionCacheEntry _sharedEntry;
-    /// <summary>普通动作加载记录的生命周期独立于模型，迟到回调只操作该记录。</summary>
-    private sealed class LocomotionCacheEntry
-    {
-        /// <summary>当前引用该记录的模型数量，非负。</summary>
-        public int Owners;
-        /// <summary>已发起的异步资源句柄，加载前为空。</summary>
-        public AssetOperationHandle Handle;
-        /// <summary>句柄是否已完成，待完成记录由回调归还。</summary>
-        public bool Completed;
-        /// <summary>加载成功的普通动作只读配置。</summary>
-        public SkillRuntimeLocomotionConfig Config;
-        /// <summary>资源清单或加载错误已经报告，避免每帧重复。</summary>
-        public bool Failed;
-    }
+
     /// <summary>当前声音所属模型，重置时解除。</summary>
     private MModel _host;
+
     /// <summary>本模型持有的共享动作资产记录。</summary>
     private LocomotionCacheEntry _entry;
+
     /// <summary>当前仍播放的普通动作声音实例，重置时全部停止。</summary>
     private readonly List<AudioSource> _sources = new List<AudioSource>();
+
     /// <summary>本次实际播放的剪辑路径，用于检测动作切换。</summary>
     private string _actionLocation;
+
     /// <summary>当前声音轨道下一条未触发事件的下标。</summary>
     private int _nextEventIndex;
+
     /// <summary>上次观测的动作时间，单位秒，用于检测循环回绕。</summary>
     private float _previousSeconds;
+
     /// <summary>当前动作是否已经播放，首次动作从零开始消费声音。</summary>
     private bool _hasAction;
-
-    /// <summary>绑定模型并持有普通动作声音配置，配置冷加载不会捕获实体池对象。</summary>
-    /// <param name="host">管理该组件生命周期的模型。</param>
-    public void Init(MModel host)
-    {
-        Reset();
-        _host = host;
-        if (_sharedEntry == null)
-        {
-            _sharedEntry = new LocomotionCacheEntry();
-        }
-        _entry = _sharedEntry;
-        _entry.Owners++;
-        BeginLoad(_entry);
-    }
 
     /// <summary>从实际播放剪辑的时钟派发普通动作音效；技能动画不匹配这些配置。</summary>
     public void Update()
@@ -101,12 +80,37 @@ public sealed class SoundComponent
         _previousSeconds = seconds;
     }
 
+    /// <summary>绑定模型并持有普通动作声音配置，配置冷加载不会捕获实体池对象。</summary>
+    /// <param name="host">管理该组件生命周期的模型。</param>
+    public void Init(MModel host)
+    {
+        Reset();
+        _host = host;
+        if (_sharedEntry == null)
+        {
+            _sharedEntry = new LocomotionCacheEntry();
+        }
+        _entry = _sharedEntry;
+        _entry.Owners++;
+        BeginLoad(_entry);
+    }
+
     /// <summary>RO状态触发入口，用于移动中落地直接切回走跑时仍播放落地声音。</summary>
     /// <param name="stateName">本次物理动作状态，只支持Jump_End即时落地触发。</param>
     public void Play(string stateName)
     {
-        if (stateName != MAnimator.STATE_JUMP_END || _host == null || _host.Ator == null ||
-            _entry == null || _entry.Config == null)
+        // 仅处理跳跃结束的即时落地触发。
+        if (stateName != MAnimator.STATE_JUMP_END)
+        {
+            return;
+        }
+        // 宿主模型或其 Animator 缺失时不补发落地声音。
+        if (_host == null || _host.Ator == null)
+        {
+            return;
+        }
+        // 动作配置缺失时不补发落地声音。
+        if (_entry == null || _entry.Config == null)
         {
             return;
         }
@@ -171,10 +175,22 @@ public sealed class SoundComponent
     /// <returns>已播放的实例；模型或事件无效时返回空。</returns>
     public static AudioSource PlayAudioInstance(MModel host, SkillRuntimeAudioEvent audioEvent)
     {
-        if (host == null || host.GameObject == null || host.GameObject.Transform == null ||
-            audioEvent == null || audioEvent.Clip == null ||
-            float.IsNaN(audioEvent.Volume) || float.IsInfinity(audioEvent.Volume) ||
-            audioEvent.Volume < 0f || audioEvent.Volume > 1f)
+        // 宿主模型节点链路缺失时不创建声源。
+        if (host == null || host.GameObject == null || host.GameObject.Transform == null)
+        {
+            return null;
+        }
+        // 声音事件或其剪辑缺失时不创建声源。
+        if (audioEvent == null || audioEvent.Clip == null)
+        {
+            return null;
+        }
+        // 音量为非数值或无穷时不创建声源。
+        bool isVolumeNotNumber = float.IsNaN(audioEvent.Volume) ||
+            float.IsInfinity(audioEvent.Volume);
+        // 音量超出 [0,1] 合法区间时不创建声源。
+        bool isVolumeOutOfRange = audioEvent.Volume < 0f || audioEvent.Volume > 1f;
+        if (isVolumeNotNumber || isVolumeOutOfRange)
         {
             return null;
         }
@@ -212,7 +228,13 @@ public sealed class SoundComponent
     /// <param name="entry">当前被模型持有的加载记录。</param>
     private static void BeginLoad(LocomotionCacheEntry entry)
     {
-        if (entry.Handle != null || entry.Failed || Global.Instance == null || Global.Instance.YooPackage == null)
+        // 已有加载句柄或此前加载失败时不重复发起。
+        if (entry.Handle != null || entry.Failed)
+        {
+            return;
+        }
+        // 全局实例或其资源包尚未就绪时不发起加载。
+        if (Global.Instance == null || Global.Instance.YooPackage == null)
         {
             return;
         }
@@ -280,11 +302,16 @@ public sealed class SoundComponent
             {
                 break;
             }
+            // 待触发声音记录有效，且其时间戳为有限数值。
             if (audioEvent != null && !float.IsNaN(audioEvent.TimeSeconds) &&
-                !float.IsInfinity(audioEvent.TimeSeconds) && audioEvent.TimeSeconds >= 0f &&
-                audioEvent.TimeSeconds <= action.DurationSeconds)
+                !float.IsInfinity(audioEvent.TimeSeconds))
             {
-                PlayEvent(audioEvent);
+                // 时间戳落在动作合法时长区间内才播放。
+                if (audioEvent.TimeSeconds >= 0f &&
+                    audioEvent.TimeSeconds <= action.DurationSeconds)
+                {
+                    PlayEvent(audioEvent);
+                }
             }
             _nextEventIndex++;
         }
@@ -323,5 +350,24 @@ public sealed class SoundComponent
         _nextEventIndex = 0;
         _previousSeconds = 0f;
         _hasAction = false;
+    }
+
+    /// <summary>普通动作加载记录的生命周期独立于模型，迟到回调只操作该记录。</summary>
+    private sealed class LocomotionCacheEntry
+    {
+        /// <summary>当前引用该记录的模型数量，非负。</summary>
+        public int Owners;
+
+        /// <summary>已发起的异步资源句柄，加载前为空。</summary>
+        public AssetOperationHandle Handle;
+
+        /// <summary>句柄是否已完成，待完成记录由回调归还。</summary>
+        public bool Completed;
+
+        /// <summary>加载成功的普通动作只读配置。</summary>
+        public SkillRuntimeLocomotionConfig Config;
+
+        /// <summary>资源清单或加载错误已经报告，避免每帧重复。</summary>
+        public bool Failed;
     }
 }

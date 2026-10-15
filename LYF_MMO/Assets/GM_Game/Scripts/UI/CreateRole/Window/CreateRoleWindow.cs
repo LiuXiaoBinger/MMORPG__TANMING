@@ -12,11 +12,17 @@ using UnityEngine;
 public class CreateRoleWindow : WindowBase
 {
    [SerializeField, Header("昵称输入框")] private TMP_InputField _iptNickname;
+
    [SerializeField, Header("魔剑士")] private GameObject MJSobj;
+
    [SerializeField, Header("拳师")] private GameObject QSobj;
+
    List<GameObject>_listObj = new List<GameObject>();
+
    public Action<string,int> CreateRoleBtnClickAction;
+
    private int _jobindex = 0;
+
    private void Awake()
    {
       if (MJSobj != null)
@@ -45,6 +51,7 @@ public class CreateRoleWindow : WindowBase
       }
       _listObj[_jobindex].Show();
    }
+
    public void OnSelectRoleJobrightClicked()
    {
       _listObj[_jobindex].Show(false);
@@ -55,6 +62,7 @@ public class CreateRoleWindow : WindowBase
       }
       _listObj[_jobindex].Show();
    }
+
    public void OnCreateRoleClicked()
    {
       

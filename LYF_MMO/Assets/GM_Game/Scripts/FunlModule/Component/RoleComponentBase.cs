@@ -16,6 +16,11 @@ public abstract class RoleComponentBase
         Owner = owner;
     }
 
+    /// <summary>推进组件客户端逻辑。</summary>
+    public virtual void Update(int deltaMilliseconds)
+    {
+    }
+
     /// <summary>初始化组件运行时状态。</summary>
     public virtual void Initialize()
     {
@@ -28,11 +33,6 @@ public abstract class RoleComponentBase
 
     /// <summary>角色加入客户端角色世界后的回调。</summary>
     public virtual void AfterAddedToWorld()
-    {
-    }
-
-    /// <summary>推进组件客户端逻辑。</summary>
-    public virtual void Update(int deltaMilliseconds)
     {
     }
 

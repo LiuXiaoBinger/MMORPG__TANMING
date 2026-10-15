@@ -2,6 +2,9 @@
 
 using System.Collections.Generic;
 
+/// <summary>
+/// 物品事务的静态帮助类：按背包类型分组物品、预检能否扣除、主动领奖空间预检。
+/// </summary>
 public class ItemTransition
 {
      /// <summary>

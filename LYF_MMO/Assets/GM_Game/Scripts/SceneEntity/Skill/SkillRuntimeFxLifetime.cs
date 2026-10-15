@@ -9,6 +9,21 @@ public sealed class SkillRuntimeFxLifetime : MonoBehaviour
     /// <summary>本克隆体的根粒子；由真实存活状态决定回收，不估算寿命曲线的最大常量。</summary>
     private ParticleSystem _effect;
 
+    /// <summary>所有子粒子的延迟发射和存活尾粒均结束后销毁克隆体，随后 OnDestroy 解除租约。</summary>
+    private void LateUpdate()
+    {
+        if (_effect == null || !_effect.IsAlive(true))
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    /// <summary>对象销毁时释放源资产及其粒子依赖的最后一个实例引用。</summary>
+    private void OnDestroy()
+    {
+        ReleaseLease();
+    }
+
     /// <summary>独立持有编辑器表现资产；调用方无须另外 Retain。</summary>
     /// <param name="presentationId">导出表现资产的正数主键。</param>
     public void Bind(int presentationId)
@@ -32,21 +47,6 @@ public sealed class SkillRuntimeFxLifetime : MonoBehaviour
             ParticleSystem.MainModule main = particles[index].main;
             main.loop = false;
         }
-    }
-
-    /// <summary>所有子粒子的延迟发射和存活尾粒均结束后销毁克隆体，随后 OnDestroy 解除租约。</summary>
-    private void LateUpdate()
-    {
-        if (_effect == null || !_effect.IsAlive(true))
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    /// <summary>对象销毁时释放源资产及其粒子依赖的最后一个实例引用。</summary>
-    private void OnDestroy()
-    {
-        ReleaseLease();
     }
 
     /// <summary>解绑时恰好解除当前来源的一份持有，组件重复解绑不会再扣减引用。</summary>

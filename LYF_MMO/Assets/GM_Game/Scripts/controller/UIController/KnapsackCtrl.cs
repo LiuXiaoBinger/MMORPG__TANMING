@@ -11,14 +11,17 @@ public sealed class KnapsackCtrl : IDisposable
 
     /// <summary>当前绑定的角色物品组件。</summary>
     private RoItemComponent _itemComponent;
+
     /// <summary>当前绑定角色，用于读取角色级脏标记。</summary>
     private PlayerEntity _role;
 
     /// <summary>上次渲染的物品数量，用于判断是否需要定位到新物品。</summary>
     private int _lastRenderedItemCount = -1;
+
     /// <summary>当前页按格位缓存的展示数据，增量事件只改动对应条目。</summary>
     private readonly Dictionary<int, KnapsackSlotViewData> _slotDataByIndex =
         new Dictionary<int, KnapsackSlotViewData>();
+
     /// <summary>当前页按物品 UID 索引格位，移动和删除时可快速定位旧格子。</summary>
     private readonly Dictionary<long, int> _slotIndexByUid =
         new Dictionary<long, int>();
@@ -38,6 +41,34 @@ public sealed class KnapsackCtrl : IDisposable
     {
         _window = window;
         Initialize();
+    }
+
+    /// <summary>背包窗口帧循环调用，按当前页消费脏标记。</summary>
+    public void Update(int deltaMilliseconds)
+    {
+        if (_window == null || !_window.isActiveAndEnabled)
+        {
+            return;
+        }
+        if (_role == null || _role.DirtyTracker == null)
+        {
+            return;
+        }
+        ClientDirtySnapshot snapshot;
+        if (!_role.DirtyTracker.TryGetKnapsack(_window.CurrentType, out snapshot))
+        {
+            return;
+        }
+
+        if (snapshot.FullRefresh)
+        {
+            RefreshCurrentCategory(false);
+        }
+        else
+        {
+            RefreshDirtySlots(snapshot);
+        }
+        _role.DirtyTracker.ClearKnapsack(_window.CurrentType);
     }
 
     /// <summary>注册窗口事件并绑定当前本地角色。</summary>
@@ -91,31 +122,6 @@ public sealed class KnapsackCtrl : IDisposable
     private void OnWindowFrameUpdated()
     {
         Update(0);
-    }
-
-    /// <summary>背包窗口帧循环调用，按当前页消费脏标记。</summary>
-    public void Update(int deltaMilliseconds)
-    {
-        if (_window == null || !_window.isActiveAndEnabled || _role == null ||
-            _role.DirtyTracker == null)
-        {
-            return;
-        }
-        ClientDirtySnapshot snapshot;
-        if (!_role.DirtyTracker.TryGetKnapsack(_window.CurrentType, out snapshot))
-        {
-            return;
-        }
-
-        if (snapshot.FullRefresh)
-        {
-            RefreshCurrentCategory(false);
-        }
-        else
-        {
-            RefreshDirtySlots(snapshot);
-        }
-        _role.DirtyTracker.ClearKnapsack(_window.CurrentType);
     }
 
     /// <summary>只刷新脏摘要中的格位，避免打开页面前产生 UI 工作。</summary>

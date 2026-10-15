@@ -9,15 +9,6 @@ using UVEC3 = UnityEngine.Vector3;
 /// </summary>
 public abstract class MEntity : MSceneObject
 {
-    /// <summary>移动方式：普通/飞行/下落</summary>
-    public enum MoveType
-    {
-        Normal,
-        Fly,
-        Fall,
-    }
-
-
     #region 实体属性
 
     /// <summary>是否战斗状态</summary>
@@ -94,8 +85,10 @@ public abstract class MEntity : MSceneObject
 
     /// <summary>模型 box 高度（含缩放）</summary>
     public float Height { get { return _height * _scale; } set { _height = value; } }
+
     /// <summary>是否乘坐公共载具</summary>
     public bool IsRidePubVehicle { get { return /*PubVehicle != null*/false; } }
+
     #endregion
 
 
@@ -137,10 +130,13 @@ public abstract class MEntity : MSceneObject
 
     /// <summary>是否移动中（来自移动组件）</summary>
     public bool IsJump { get { return MoveComp.IsJump; } }
+
     /// <summary>是否与默认动作混合（动画混合开关）</summary>
     public bool IsMixToDefaultAction { get; set; } = true;
+
     /// <summary>是否显示待机连击动画</summary>
     bool _showIdleComboAnim = false;
+
     /// <summary>待机连击动画开关：开启时广播连击同步，变化时刷新默认状态</summary>
     public bool ShowIdleComboAnim
     {
@@ -158,24 +154,13 @@ public abstract class MEntity : MSceneObject
         }
     }
 
-    #endregion
-
-    /// <summary>
-    /// 实体构造函数，从模型池获取 MModel 实例
-    /// </summary>
-    /// <param name="uid">运行时唯一 UID</param>
-    /// <param name="entityType">实体类型枚举</param>
-    /// <param name="configId">配置表 ID</param>
-    protected MEntity(ulong uid, EntityType entityType, int configId)
-        : base(uid, entityType, configId)
-    {
-        // 从模型池获取一个空闲 MModel，复用避免频繁实例化
-        _model = MModelMgr.Instance.Acquire();
-    }
-
     public EntityAttributesComponent AttrComp { get; private set; }
+
     /// <summary>移动组件（专用快捷组件，由 MComponentMgr 注入）</summary>
     public MMoveComponent MoveComp { get; private set; }
+
+    /// <summary>RO同名导航快捷查询，组件实际挂在实体普通容器中，不另存生命周期引用。</summary>
+    public MNavigationComponent NavComp { get { return GetMComponentByT<MNavigationComponent>(); } }
 
     /// <summary>实体直属的普通位移组件，由普通容器负责初始化、每帧推进和池回收。</summary>
     protected MDisplacementComponent _displacementComp;
@@ -217,10 +202,12 @@ public abstract class MEntity : MSceneObject
     {
         get
         {
-            return !IsDead && _isMovable &&
-                   CanManualMove &&
-                   (Machine.CurrentState.IsActiveMovable
-                    || Machine.CurrentState.IsActiveInterrupt) ;
+            // 基础可动条件：未死亡、未被禁移动且允许手动移动。
+            bool basicMovable = !IsDead && _isMovable && CanManualMove;
+            // 当前状态允许移动：处于可动状态或可被打断状态。
+            bool stateAllowsMove = Machine.CurrentState.IsActiveMovable ||
+                Machine.CurrentState.IsActiveInterrupt;
+            return basicMovable && stateAllowsMove;
         }
         set { _isMovable = value; }
     }
@@ -232,6 +219,7 @@ public abstract class MEntity : MSceneObject
         set { _model.Position = value; }
     }
 
+    /// <summary>跑步速度（米/秒）；读取属性组件的载具或跑步速度，写入时同步基类速度供移动组件使用。</summary>
     public float RunSpeed {
         get { return AttrComp.VehicleOrRunSpeed; }
         set { base.RunSpeed = value; } }
@@ -245,28 +233,19 @@ public abstract class MEntity : MSceneObject
 
     public bool InCarrying { get; set; } = false;
 
+    #endregion
 
     /// <summary>
-    /// 执行初始化：先创建并初始化专用组件，再走基类普通组件初始化流程
+    /// 实体构造函数，从模型池获取 MModel 实例
     /// </summary>
-    public override void Initialize()
+    /// <param name="uid">运行时唯一 UID</param>
+    /// <param name="entityType">实体类型枚举</param>
+    /// <param name="configId">配置表 ID</param>
+    protected MEntity(ulong uid, EntityType entityType, int configId)
+        : base(uid, entityType, configId)
     {
-        if (LifecycleState != EntityLifecycleState.Created)
-        {
-            return;
-        }
-
-        // 专用组件（Move/Buff/Skill/Machine）优先创建和初始化
-        MComponentMgr.Instance.CreateSpecialComponents(this);
-        MComponentMgr.Instance.InitializeSpecialComponents(this);
-        base.Initialize();
-    }
-
-    /// <summary>显式挂接实体位移组件，再交基类进入普通组件初始化流程。</summary>
-    protected override void OnBeforeInitialize()
-    {
-        _displacementComp = MComponentMgr.singleton.CreateComponent<MDisplacementComponent>(this);
-        base.OnBeforeInitialize();
+        // 从模型池获取一个空闲 MModel，复用避免频繁实例化
+        _model = MModelMgr.Instance.Acquire();
     }
 
     /// <summary>
@@ -307,6 +286,49 @@ public abstract class MEntity : MSceneObject
 
 
     }
+
+    /// <summary>实体逻辑更新后统一驱动状态机动画刷新。</summary>
+    public override void LateUpdate(float deltaSeconds)
+    {
+        if (LifecycleState != EntityLifecycleState.Active)
+        {
+            return;
+        }
+        // 状态机帧末刷新动画参数
+        if (Machine != null)
+        {
+            Machine.LateUpdate(deltaSeconds);
+        }
+        // 模型帧末更新（动画播放、特效等）
+        if (_model != null)
+        {
+            _model.LateUpdate(deltaSeconds);
+        }
+    }
+
+    /// <summary>
+    /// 执行初始化：先创建并初始化专用组件，再走基类普通组件初始化流程
+    /// </summary>
+    public override void Initialize()
+    {
+        if (LifecycleState != EntityLifecycleState.Created)
+        {
+            return;
+        }
+
+        // 专用组件（Move/Buff/Skill/Machine）优先创建和初始化
+        MComponentMgr.Instance.CreateSpecialComponents(this);
+        MComponentMgr.Instance.InitializeSpecialComponents(this);
+        base.Initialize();
+    }
+
+    /// <summary>显式挂接实体位移组件，再交基类进入普通组件初始化流程。</summary>
+    protected override void OnBeforeInitialize()
+    {
+        _displacementComp = MComponentMgr.singleton.CreateComponent<MDisplacementComponent>(this);
+        base.OnBeforeInitialize();
+    }
+
     /// <summary>消费本帧位移：MoveModel 推进实际表现模型</summary>
     protected virtual void Move()
     {
@@ -317,6 +339,7 @@ public abstract class MEntity : MSceneObject
         MoveModel(_model, _movement);
         _movement = UnityEngine.Vector3.zero;
     }
+
     /// <summary>
     /// 静态移动推进：普通移动做高度寻路/空气墙平滑/墙体碰撞；
     /// 飞行处理地形高度与上升；下落直接设置位置。
@@ -397,24 +420,6 @@ public abstract class MEntity : MSceneObject
         model.Move();
         return false;
     }
-    /// <summary>实体逻辑更新后统一驱动状态机动画刷新。</summary>
-    public override void LateUpdate(float deltaSeconds)
-    {
-        if (LifecycleState != EntityLifecycleState.Active)
-        {
-            return;
-        }
-        // 状态机帧末刷新动画参数
-        if (Machine != null)
-        {
-            Machine.LateUpdate(deltaSeconds);
-        }
-        // 模型帧末更新（动画播放、特效等）
-        if (_model != null)
-        {
-            _model.LateUpdate(deltaSeconds);
-        }
-    }
 
     /// <summary>
     /// 加载实体模型，实体状态机无需等待模型加载完成即可运行。
@@ -453,6 +458,7 @@ public abstract class MEntity : MSceneObject
     {
         MoveComp = component;
     }
+
     /// <summary>
     /// 由 MComponentMgr 注入移动组件
     /// </summary>
@@ -461,6 +467,7 @@ public abstract class MEntity : MSceneObject
     {
         AttrComp = component;
     }
+
     /// <summary>
     /// 由 MComponentMgr 注入 Buff 组件
     /// </summary>
@@ -538,6 +545,8 @@ public abstract class MEntity : MSceneObject
         Machine = null;
     }
 
+    /// <summary>累加一帧世界空间位移增量，暂存到待提交位移中，由移动组件统一提交碰撞。</summary>
+    /// <param name="moveDelta">本帧世界空间位移增量，单位为米。</param>
     public void AppendMove(Vector3 moveDelta)
     {
         _movement += moveDelta;
@@ -554,6 +563,7 @@ public abstract class MEntity : MSceneObject
 
         _model.MoveCharacter(movement);
     }
+
     /// <summary>追加位移（分量）</summary>
     public void AppendMove(float x, float y, float z)
     {
@@ -562,9 +572,12 @@ public abstract class MEntity : MSceneObject
         _movement.z += z;
     }
 
-
     #region 静态函数
 
+    /// <summary>按当前移动配置平滑加速到指定方向和顶速的简化入口，内部补全转向阻力与加速度后转调完整 Accelerate。</summary>
+    /// <param name="entity">待加速的实体。</param>
+    /// <param name="direction">期望移动方向向量。</param>
+    /// <param name="topSpeed">本次加速的目标顶速（米/秒）。</param>
     public static void Accelerate(MEntity entity,Vector3 direction ,float topSpeed)
     {
 
@@ -575,6 +588,7 @@ public abstract class MEntity : MSceneObject
 
         Accelerate(entity,direction, turningDrag, finalAcceleration, topSpeed);
     }
+
     // 根据输入的方向平滑加速移动
     public static void Accelerate(MEntity entity,Vector3 direction, float turningDrag,
         float acceleration, float topSpeed)
@@ -627,6 +641,7 @@ public abstract class MEntity : MSceneObject
     {
         FaceDirection(entity,direction, PlayStateMgr.Instance.stats.rotationSpeed);
     }
+
     protected static void FaceDirection(MEntity entity,Vector3 direction, float currentRotationSpeed)
     {
         if (direction != Vector3.zero)
@@ -640,6 +655,7 @@ public abstract class MEntity : MSceneObject
             entity.Model.Rotation = Quaternion.RotateTowards(rotation,target,rotationDelta);
         }
     }
+
     #endregion
 
     /// <summary>
@@ -677,5 +693,13 @@ public abstract class MEntity : MSceneObject
             return animInfo;
         }
         return null;
+    }
+
+    /// <summary>移动方式：普通/飞行/下落</summary>
+    public enum MoveType
+    {
+        Normal,
+        Fly,
+        Fall,
     }
 }

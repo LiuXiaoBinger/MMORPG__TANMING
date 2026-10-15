@@ -32,17 +32,20 @@ public class EquipBase : ItemBase
     /// 第一个词条配置 ID 和数值。
     /// </summary>
     public int GeneID0 { get; set; }
+    /// <summary>第一个词条的实际数值。</summary>
     public int GeneValue0 { get; set; }
 
     /// <summary>
     /// 第二个词条配置 ID 和数值。
     /// </summary>
     public int GeneID1 { get; set; }
+    /// <summary>第二个词条的实际数值。</summary>
     public int GeneValue1 { get; set; }
 
     /// <summary>
     /// 第三个词条配置 ID 和数值。
     /// </summary>
     public int GeneID2 { get; set; }
+    /// <summary>第三个词条的实际数值。</summary>
     public int GeneValue2 { get; set; }
 }

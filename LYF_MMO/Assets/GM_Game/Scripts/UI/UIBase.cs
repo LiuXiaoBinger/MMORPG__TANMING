@@ -8,8 +8,12 @@ using Object = System.Object;
 * Descrpiton:适用于所有UI的基类
 */
 
+/// <summary>
+/// 所有 UI 视图的基类：维护 WindowType 到子窗口的字典，负责视图显隐与子窗口切换/刷新。
+/// </summary>
 public class UIBase : MonoBehaviour
 { 
+    /// <summary>本视图管理的全部子窗口，按键为窗口枚举。</summary>
     protected Dictionary<WindowType, WindowBase> windowDic;
 
     public virtual void InitView()

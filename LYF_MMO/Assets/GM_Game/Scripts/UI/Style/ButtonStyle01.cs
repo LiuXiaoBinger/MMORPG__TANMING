@@ -9,12 +9,18 @@ using UnityEngine.EventSystems;
 * Descrpiton:
 */
 
-public class ButtonStyle01 : MonoBehaviour, 
-    IPointerDownHandler, IPointerUpHandler, 
+/// <summary>
+/// 按钮动效控件：按下时缩小、松开回弹，鼠标进入/离开时显示或隐藏按钮专属特效对象。
+/// </summary>
+public class ButtonStyle01 : MonoBehaviour,
+    IPointerDownHandler, IPointerUpHandler,
     IPointerEnterHandler, IPointerExitHandler
 {
+    /// <summary>按钮默认缩放。</summary>
     [SerializeField, Header("按钮的默认缩放")] private float _btnDefaultScale = 1 ;
+    /// <summary>按钮按下时的缩放。</summary>
     [SerializeField, Header("按钮按下时的缩放")] private float _btnDownScale = 0.85f;
+    /// <summary>按钮悬停时显示的特效对象。</summary>
     [SerializeField, Header("UI特效对象")] private GameObject _effectGo;
     public void OnPointerDown(PointerEventData eventData)
     {

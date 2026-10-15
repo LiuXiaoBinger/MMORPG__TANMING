@@ -1,12 +1,16 @@
 ﻿using System;
 
+/// <summary>
+/// 登录服控制器。上行：接收 Unity 的注册/登录/选服/验证码请求，做用户名密码邮箱合法性与登录频率
+/// 限制后转发中心服；下行：接收中心服处理结果，按 Unity 会话回传错误码或结果数据。
+/// </summary>
 public class LoginCtrl:IContainer
 {
     /// <summary>
-    /// 登录服务器作为客户端，收到中心服务器发来的处理结果数据
+    /// 登录服务器作为客户端，收到中心服务器发来的处理结果数据，按协议号分发回传 Unity。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">中心服方向的连接对象。</param>
+    /// <param name="basePackage">中心服回包协议。</param>
     public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
@@ -87,10 +91,16 @@ public class LoginCtrl:IContainer
         seesion.SendData(basePackage);
     }
 
+    /// <summary>IContainer 初始化回调，登录控制器无预加载资源，留空实现。</summary>
     public void OnInit()
     {
     }
 
+    /// <summary>
+    /// 登录服务器作为服务器，接收 Unity 上行请求并按协议号分发到验证码、注册、登录、列表、选服处理。
+    /// </summary>
+    /// <param name="serverBase">收到 Unity 请求的登录服传输对象。</param>
+    /// <param name="basePackage">上行请求协议包。</param>
     public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
     {
 

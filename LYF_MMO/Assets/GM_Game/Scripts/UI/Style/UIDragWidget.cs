@@ -10,25 +10,43 @@ using UnityEngine.UI;
 * Descrpiton:
 */
 
+/// <summary>
+/// 可拖拽 UI 控件：拖拽期间把自身挂到 Canvas 顶层避免被遮挡，结束后若未落到目标槽位则恢复原始布局。
+/// </summary>
 public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandler
 {
+   /// <summary>拖拽柄图。</summary>
    private Image _imgDrag;
+
    //默认父组件
+   /// <summary>拖拽前的父节点，结束后用于恢复。</summary>
    public Transform _defluParent;
+
    //拖拽类型
+   /// <summary>拖拽类型枚举。</summary>
    public DragType _dragType;
+
    //拖拽Widget 在拖拽的过程中，有可能被其他ui挡住，所以在拖拽中的时候，把它的父组件设置为canvas
+   /// <summary>顶层 Canvas，拖拽中把父级切到它上面。</summary>
    private Canvas _canvas;
 
    private CanvasGroup _canvasGroup;
+
    private RectTransform _rectTransform;
+
    // 拖拽前的 RectTransform 数据，用于拖拽取消时恢复原始布局。
    private Vector2 _initialAnchorMin;
+
    private Vector2 _initialAnchorMax;
+
    private Vector2 _initialPivot;
+
    private Vector2 _initialSizeDelta;
+
    private Vector3 _initialAnchoredPosition3D;
+
    private Vector3 _initialLocalScale;
+
    private Quaternion _initialLocalRotation;
 
    private void Start()
@@ -58,6 +76,7 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
       _canvasGroup.blocksRaycasts = false;
       gameObject.SetParent(_canvas.transform);
    }
+
    /// <summary>
    /// 拖拽中
    /// </summary>
@@ -66,6 +85,7 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
    {
       _rectTransform.anchoredPosition = UIRoot.Instance.ScreenPointToviewPoint(eventData.position);
    }
+
    /// <summary>
    /// 拖拽结束
    /// </summary>

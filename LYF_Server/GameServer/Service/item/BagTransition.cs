@@ -496,8 +496,14 @@ public class BagExpansionTransition : BagTransition
     /// <summary>判断是否为持久化的四类可扩容背包。</summary>
     private static bool IsExpandableType(KnapsackType type)
     {
-        return type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip ||
-            type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        // 是否为角色普通背包。
+        bool isPlainPack = type == KnapsackType.RolePackPlain;
+        // 是否为角色装备背包。
+        bool isEquipPack = type == KnapsackType.RolePackEquip;
+        // 是否为角色消耗品或材料背包。
+        bool isConsumeOrMaterialPack = type == KnapsackType.RolePackConsume ||
+            type == KnapsackType.RolePackMaterial;
+        return isPlainPack || isEquipPack || isConsumeOrMaterialPack;
     }
 }
 

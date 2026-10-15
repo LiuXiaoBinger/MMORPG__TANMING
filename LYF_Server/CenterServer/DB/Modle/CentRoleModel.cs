@@ -7,13 +7,24 @@ using System.Linq;
 using Google.Protobuf;
 using SqlSugar;
 
+/// <summary>
+/// 中心服角色与背包数据访问层。负责进入世界时查询并回包角色技能、分类型背包物品、
+/// 装备/装备词条扩展、角色通用次数与已开格子容量，以及背包容量同步与商城购买占位处理。
+/// 所有方法在中心服逻辑线程执行，直接读写 MySQL，不持有跨线程可变状态。
+/// </summary>
 public class CentRoleModel
 {
     // 背包 UI 至少需要 9x9 个格子；旧角色没有记录时使用该兼容容量。
     private const int DefaultOpenedKnapsackGridCount = 81;
-    
 
+
+    /// <summary>共享数据库客户端，由 CenterApp 注入，全进程复用。</summary>
     private SqlSugarClient _db = null;
+
+    /// <summary>
+    /// 构造角色数据访问层。
+    /// </summary>
+    /// <param name="db">已初始化的 SqlSugar 客户端。</param>
     public CentRoleModel(SqlSugarClient db)
     {
         _db = db;
@@ -39,8 +50,14 @@ public class CentRoleModel
     public OpenKnapsackGridRet SyncKnapsackGridCount(SyncKnapsackGridCountReq req)
     {
         OpenKnapsackGridRet ret = new OpenKnapsackGridRet();
-        if (req == null || req.RoleId <= 0 || req.OpenedGridCount <= 0 || req.OpenedGridCount > byte.MaxValue ||
-            !IsPersistedKnapsackType((KnapsackType)req.KnapsackType))
+        // 请求缺失或角色 ID、已开格子数不合法时按参数错误返回。
+        if (req == null || req.RoleId <= 0 || req.OpenedGridCount <= 0)
+        {
+            ret.CmdCode = CmdCode.ReqParamError;
+            return ret;
+        }
+        // 已开格子数超出 byte 范围或背包类型不在持久化范围内时按参数错误返回。
+        if (req.OpenedGridCount > byte.MaxValue || !IsPersistedKnapsackType((KnapsackType)req.KnapsackType))
         {
             ret.CmdCode = CmdCode.ReqParamError;
             return ret;
@@ -96,6 +113,7 @@ public class CentRoleModel
         List< RoleSkillTable> roleSkillList = _db.Queryable<RoleSkillTable>().Where(v => v.RoleID == req.RoleId).ToList();
         if (roleSkillList != null && roleSkillList.Count > 0)
         {
+            // 持久技能行的索引，逐行保留等级与绑定，仅规范本次 F/2 功能对应两项。
             for (int i = 0; i < roleSkillList.Count; i++)
             {
                 // 单条角色技能的 ID/等级来自数据库，不使用客户端提供的效果或数值。
@@ -105,6 +123,20 @@ public class CentRoleModel
                     Level =  roleSkillList[i].SkillLevel,
                     BindKey = roleSkillList[i].Bindkey
                 };
+                // F 固定使用已接入的滑行，旧 F 斩天剑移至 2；只规范回包，不覆盖数据库键位。
+                if (roleSkillInfo.SkillId == 10080)
+                {
+                    roleSkillInfo.BindKey = "F";
+                    if (roleSkillInfo.Level <= 0)
+                    {
+                        roleSkillInfo.Level = 1;
+                    }
+                }
+                else if (roleSkillInfo.SkillId == 10060 &&
+                    string.Equals(roleSkillInfo.BindKey, "F", StringComparison.OrdinalIgnoreCase))
+                {
+                    roleSkillInfo.BindKey = "2";
+                }
                 ret.RoleSkillInfoList.Add(roleSkillInfo);
             }
         }
@@ -168,10 +200,11 @@ public class CentRoleModel
     }
 
     /// <summary>
-    /// 获取主角背包信息
+    /// 获取主角背包信息：分类型物品列表、装备/词条扩展、已开格子容量、角色通用次数与保存版本。
+    /// 旧角色缺失的分类记录会在建表读取时补齐，容量取旧普通背包与默认 81 格的较大值。
     /// </summary>
-    /// <param name="req"></param>
-    /// <returns></returns>
+    /// <param name="req">进入世界请求，携带持久角色 ID。</param>
+    /// <returns>完整背包与次数信息回包，失败时仅携带错误码。</returns>
     public RoleKanpsackInfoRet RoleKanpaskInfo(EnterWroldReq req)
     {
         RoleKanpsackInfoRet ret = new RoleKanpsackInfoRet();
@@ -367,8 +400,11 @@ public class CentRoleModel
 
     private static bool IsPersistedKnapsackType(KnapsackType type)
     {
-        return type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip ||
-            type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        // 是否为普通包裹或装备包裹类型。
+        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
+        // 是否为消耗品包裹或材料包裹类型。
+        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        return isPlainOrEquip || isConsumeOrMaterial;
     }
 
     private static KnapsackType[] GetPersistedKnapsackTypes()

@@ -10,21 +10,49 @@ using UnityEngine.UI;
 public class BuyDialog : MonoBehaviour
 {
    [SerializeField, Header("商品图标")] private Image _productIcon;
+
    [SerializeField, Header("商品名称")] private TMP_Text _productName;
+
    [SerializeField, Header("货币图标")] private Image _currencyIcon;
+
    [SerializeField, Header("货币名称和总价")] private TMP_Text _currencyText;
+
    [SerializeField, Header("购买数量输入框")] private TMP_InputField _quantityInput;
+
    [SerializeField, Header("减少数量按钮")] private Button _decreaseButton;
+
    [SerializeField, Header("增加数量按钮")] private Button _increaseButton;
 
    private Action<BuyDialog> _onClosed;
+
    private Action<int> _onConfirm;
+
    private int _unitPrice;
+
    private int _currencyType;
+
    private int _maxQuantity;
+
    private int _quantity = 1;
+
    private string _currencyName;
+
    private bool _isRefreshingQuantity;
+
+   private void Awake()
+   {
+      BindQuantityEvents();
+   }
+
+   private void OnDestroy()
+    {
+      UnbindQuantityEvents();
+      // 无论是关闭按钮还是其他流程销毁弹窗，都必须通知管理器释放锁定。
+      Action<BuyDialog> onClosed = _onClosed;
+      _onClosed = null;
+      _onConfirm = null;
+      onClosed?.Invoke(this);
+    }
 
    /// <summary>
    /// 由弹窗管理器登记关闭回调，用于在弹窗销毁时解除重复打开限制。
@@ -87,21 +115,6 @@ public class BuyDialog : MonoBehaviour
     {
        Destroy(gameObject);
     }
-
-   private void OnDestroy()
-    {
-      UnbindQuantityEvents();
-      // 无论是关闭按钮还是其他流程销毁弹窗，都必须通知管理器释放锁定。
-      Action<BuyDialog> onClosed = _onClosed;
-      _onClosed = null;
-      _onConfirm = null;
-      onClosed?.Invoke(this);
-    }
-
-   private void Awake()
-   {
-      BindQuantityEvents();
-   }
 
    //点击购买
     public void OnConfirmButtonClick()

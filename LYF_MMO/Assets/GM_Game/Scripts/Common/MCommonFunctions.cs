@@ -4,21 +4,32 @@ using System.Text;
 
 
 
+/// <summary>
+/// 客户端通用数学、几何与字符串工具集合，沿用 RO 的静态函数入口。
+/// 包含浮点近似判等、快速哈希、角度/向量换算、线段矩形圆相交判定及递归查找节点等。
+/// </summary>
 public class MCommonFunctions
     {
+        /// <summary>自增的临时ID计数器，NewId 每次取值后自增，用于生成进程内唯一临时标识。</summary>
         private static int _newId = 0;
+        /// <summary>浮点判等的最小误差阈值（约1e-6），小于该差值即视为相等。</summary>
         private static readonly float _eps = 0.000001f; // 最小判等的float值
+        /// <summary>预计算的正弦查表，下标为角度*2（0.5度一步，覆盖0~360度），减少运行时三角计算。</summary>
         private static float[] _ROSin = new float[721];
+        /// <summary>预计算的余弦查表，与 _ROSin 同步生成。</summary>
         private static float[] _ROCos = new float[721];
 
+        /// <summary>浮点判等阈值的只读出口。</summary>
         public static float XEps
         {
             get { return _eps; }
         }
+        /// <summary>获取一个自增的进程内唯一临时ID。</summary>
         public static int NewId
         {
             get { return ++_newId; }
         }
+        /// <summary>由系统 Tick 毫秒与自增ID组合生成的唯一令牌，避免同毫秒碰撞。</summary>
         public static long UniqueToken
         {
             get { return DateTime.Now.Ticks + NewId; }
@@ -288,10 +299,13 @@ public class MCommonFunctions
         public static bool IsLineSegmentCross(Vector3 p1, Vector3 p2, Vector3 q1, Vector3 q2)
         {
             //fast detect
-            if (Mathf.Min(p1.x, p2.x) <= Mathf.Max(q1.x, q2.x) &&
-                Mathf.Min(q1.x, q2.x) <= Mathf.Max(p1.x, p2.x) &&
-                Mathf.Min(p1.z, p2.z) <= Mathf.Max(q1.z, q2.z) &&
-                Mathf.Min(q1.z, q2.z) <= Mathf.Max(p1.z, p2.z))
+            // X 轴投影区间相交：两条线段在水平 X 方向上存在重叠范围。
+            bool xOverlap = Mathf.Min(p1.x, p2.x) <= Mathf.Max(q1.x, q2.x) &&
+                Mathf.Min(q1.x, q2.x) <= Mathf.Max(p1.x, p2.x);
+            // Z 轴投影区间相交：两条线段在纵深 Z 方向上存在重叠范围。
+            bool zOverlap = Mathf.Min(p1.z, p2.z) <= Mathf.Max(q1.z, q2.z) &&
+                Mathf.Min(q1.z, q2.z) <= Mathf.Max(p1.z, p2.z);
+            if (xOverlap && zOverlap)
             {
                 //( p1 - q1 ) * ( q2 - q1 )
                 float p1xq = CrossProduct(p1.x - q1.x, p1.z - q1.z,
@@ -458,7 +472,11 @@ public class MCommonFunctions
 
             point = Quaternion.Inverse(rotation) * (point - center);
             //return (point.x > rect[0].x && point.x < rect[3].x && point.z > rect[0].z && point.z < rect[2].z);
-            return (point.x > -halfScale.x && point.x < halfScale.x && point.z > -halfScale.z && point.z < halfScale.z);
+            // 落点在本地水平 X 半轴范围内。
+            bool insideX = point.x > -halfScale.x && point.x < halfScale.x;
+            // 落点在本地纵深 Z 半轴范围内。
+            bool insideZ = point.z > -halfScale.z && point.z < halfScale.z;
+            return insideX && insideZ;
         }
 
         public static bool IsInRect3D(Vector3 point, Vector3 center, Vector3 halfScale, Quaternion rotation)
@@ -481,9 +499,13 @@ public class MCommonFunctions
             var point1 = q * (point - center);
             var qq = Quaternion.Inverse(rotation);*/
             point = Quaternion.Inverse(rotation) * (point - center);
-            return ((point.x > -halfScale.x) && (point.x < halfScale.x)
-                && (point.y > -halfScale.y) && (point.y < halfScale.y)
-                && (point.z > -halfScale.z) && (point.z < halfScale.z));
+            // 落点在本地水平 X 半轴范围内。
+            bool insideX = point.x > -halfScale.x && point.x < halfScale.x;
+            // 落点在本地竖直 Y 半轴范围内。
+            bool insideY = point.y > -halfScale.y && point.y < halfScale.y;
+            // 落点在本地纵深 Z 半轴范围内。
+            bool insideZ = point.z > -halfScale.z && point.z < halfScale.z;
+            return insideX && insideY && insideZ;
         }
 
         public static bool IsInRectIncludeBorder(Vector3 point, Rect rect, Vector3 center, Quaternion rotation)
@@ -497,7 +519,11 @@ public class MCommonFunctions
             //q.z = 0;
 
             point = Quaternion.Inverse(rotation) * (point - center);
-            return (point.x >= rect.xMin && point.x <= rect.xMax && point.z >= rect.yMin && point.z <= rect.yMax);
+            // 落点在本地水平 X 半轴范围内。
+            bool insideX = point.x >= rect.xMin && point.x <= rect.xMax;
+            // 落点在本地纵深 Z 半轴范围内（rect.yMin/yMax 对应投影后的 Z 上下界）。
+            bool insideZ = point.z >= rect.yMin && point.z <= rect.yMax;
+            return insideX && insideZ;
         }
 
         public static bool IsInEllipse(Vector3 point, Vector3 scale, Vector3 center, Quaternion rotation)

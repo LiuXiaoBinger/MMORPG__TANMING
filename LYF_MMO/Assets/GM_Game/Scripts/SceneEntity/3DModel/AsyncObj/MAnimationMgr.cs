@@ -988,8 +988,12 @@ public sealed class MAnimationMgr
             {
                 // 当前字符决定未加引号标量的结束边界。
                 char currentCharacter = _text[_position];
-                if (currentCharacter == ',' || currentCharacter == ']' ||
-                    currentCharacter == '[' || char.IsWhiteSpace(currentCharacter))
+                // 当前字符是逗号或方括号等结构符号，标志未加引号标量结束。
+                bool isStructuralBoundary = currentCharacter == ',' ||
+                    currentCharacter == ']' || currentCharacter == '[';
+                // 当前字符是空白，同样标志未加引号标量结束。
+                bool isWhitespaceBoundary = char.IsWhiteSpace(currentCharacter);
+                if (isStructuralBoundary || isWhitespaceBoundary)
                 {
                     break;
                 }

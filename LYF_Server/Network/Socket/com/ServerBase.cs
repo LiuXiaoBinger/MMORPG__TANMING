@@ -7,27 +7,35 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// TCP 连接基类：统一负责异步接收、按 2 字节长度帧拆包、ProtoBuf 反序列化与发送封包。
+/// </summary>
 public class ServerBase
 {
-    //客户端类型
+    /// <summary>本连接的客户端类型，决定消息如何分发。</summary>
     public ClientType _clientType;
 
+    /// <summary>Unity 类型连接收到消息时的回调：参数为协议号与消息体字节串。</summary>
     public Action<int, ByteString> OnReceiveMsg;
 
-    //指令集
+    /// <summary>协议号到命令处理器的映射。</summary>
     protected Dictionary<int, IContainer> _cmdDic = new Dictionary<int, IContainer>();
 
     // TCP 单次接收可能只有 4KB，保留半包并支持协议允许的最大帧。
     private const int FrameHeaderSize = 2;
     private const int MaxFrameLength = ushort.MaxValue;
+    /// <summary>接收累积缓存，长度为帧头 + 最大帧。</summary>
     private readonly byte[] _buffer = new byte[FrameHeaderSize + MaxFrameLength];
+    /// <summary>缓存中当前已累积的字节数。</summary>
     private int _receiveLength;
 
+    /// <summary>底层 Socket。</summary>
     protected Socket _socket;
 
-    //连接状态
+    /// <summary>连接状态。</summary>
     protected ConnState _connState;
 
+    /// <summary>本连接所属的上游连接器引用，可为 null。</summary>
     public NetClient _client;
 
     /// <summary>
@@ -119,11 +127,13 @@ public class ServerBase
         }
     }
 
+    /// <summary>子类实现：处理一个已拆包的协议包。</summary>
     protected virtual void HandleCommand(BasePackage basePackage)
     {
 
     }
 
+    /// <summary>断开连接并清理 Socket 与缓存。</summary>
     public virtual void Disconnect()
     {
 

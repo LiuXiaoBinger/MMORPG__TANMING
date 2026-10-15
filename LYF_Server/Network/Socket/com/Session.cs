@@ -8,11 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// 一条已建立的 TCP 会话：负责异步接收、拆包、按协议号分发命令，并在断开时回调宿主。
+/// </summary>
 public class Session : ServerBase
 {
+    /// <summary>会话 ID，由 SessionMgr 分配。</summary>
     public int SessionID{get;set;}
+    /// <summary>断开回调，参数为会话 ID；由宿主投递到逻辑线程处理角色下线。</summary>
     private readonly Action<int> _onDisconnected;
 
+    /// <summary>构造会话并注册到 SessionMgr。</summary>
+    /// <param name="cmdDic">命令处理器表引用，通常与 NetServer 共用同一份。</param>
+    /// <param name="client">本服务连接上游的连接器，可为 null。</param>
+    /// <param name="onDisconnected">断开回调。</param>
     public Session(Dictionary<int, IContainer> cmdDic, NetClient client, Action<int> onDisconnected = null)
     {
         _client = client;

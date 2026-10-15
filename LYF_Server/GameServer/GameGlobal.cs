@@ -1,10 +1,13 @@
 ﻿
-
-
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
+/// <summary>
+/// GameServer 进程级主循环与逻辑时间基准。
+/// 网络线程只把包复制成不可变 GameCommand 入队；本类在主循环消费队列，
+/// 并按 50ms（20Hz）固定步长驱动各业务管理器 Update，所有游戏状态只在该线程修改。
+/// </summary>
 public class GameGlobal:Singleton<GameGlobal>
 {
     // 逻辑帧间隔，50 毫秒对应每秒 20 次逻辑更新。
@@ -35,7 +38,7 @@ public class GameGlobal:Singleton<GameGlobal>
         _lastUpdateTimestamp = Stopwatch.GetTimestamp();
         _deltaMilliseconds = 0;
         LogicTick = 0;
-        //商店
+        // 预载 Luban 静态商店表到内存，供后续购买请求按 ShopId 直接查询。
         ShopManager.Instance.Initialize();
     }
 
@@ -63,9 +66,12 @@ public class GameGlobal:Singleton<GameGlobal>
     {
         ProcessNetMessage();
 
+        // 当前单调时钟刻度，单位由Stopwatch.Frequency给出，不受系统校时影响。
         long nowTimestamp = Stopwatch.GetTimestamp();
+        // 本轮可计入的完整毫秒数，不足一毫秒的刻度保留到后续高速轮询。
         long deltaMilliseconds = GetElapsedMilliseconds(nowTimestamp, _lastUpdateTimestamp);
-        _lastUpdateTimestamp = nowTimestamp;
+        // 原点只推进已经计入的整数毫秒，避免忙循环每轮清掉亚毫秒余量使技能时间停滞。
+        _lastUpdateTimestamp += deltaMilliseconds * Stopwatch.Frequency / 1000;
         if (deltaMilliseconds < 0)
         {
             deltaMilliseconds = 0;
@@ -80,6 +86,7 @@ public class GameGlobal:Singleton<GameGlobal>
             _deltaMilliseconds += deltaMilliseconds;
         }
 
+        // 本轮已追赶的50ms逻辑帧数量，达到原有上限后将剩余时间留给下一轮。
         int catchUpFrameCount = 0;
         while (_deltaMilliseconds >= LogicFrameMilliseconds &&
                catchUpFrameCount < MaxCatchUpFrameCount)
@@ -152,6 +159,12 @@ public class GameGlobal:Singleton<GameGlobal>
         UpdateManager("GvgManager", GvgManager.Instance.Update, deltaMilliseconds);
     }
 
+    /// <summary>
+    /// 以 try/catch 包裹单个管理器的固定帧更新，单个管理器异常只记录日志，不中断其余管理器。
+    /// </summary>
+    /// <param name="managerName">管理器名称，用于异常日志定位。</param>
+    /// <param name="update">管理器的 Update 委托。</param>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
     private static void UpdateManager(string managerName, Action<int> update, int deltaMilliseconds)
     {
         try

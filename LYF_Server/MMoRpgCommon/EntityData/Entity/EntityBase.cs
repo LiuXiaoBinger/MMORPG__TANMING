@@ -23,8 +23,23 @@ public abstract class EntityBase
     /// </summary>
     public string Position { get; set; } = string.Empty;
 
+    /// <summary>
+    /// 最大生命值。
+    /// </summary>
     public int MaxHP { get; set; }
+
+    /// <summary>
+    /// 当前生命值。
+    /// </summary>
     public int CurrHP { get; set; }
+
+    /// <summary>
+    /// 最大法力值。
+    /// </summary>
     public int MaxMP { get; set; }
+
+    /// <summary>
+    /// 当前法力值。
+    /// </summary>
     public int CurrMP { get; set; }
 }

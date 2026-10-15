@@ -45,8 +45,13 @@ public static class SkillAuthoritySmoke
             accepted = skillComponent.TryCast(
                 new SkillCastReq { SkillUuid = 2UL, SkillId = 10010 },
                 out result, out startNotice);
-            if (!accepted || result.CmdCode != CmdCode.Succeed || startNotice == null ||
-                result.SkillUuid != 2UL || startNotice.SkillUuid != 2UL ||
+            // 未成功、错误码不符或缺少开始通知时直接断言失败。
+            if (!accepted || result.CmdCode != CmdCode.Succeed || startNotice == null)
+            {
+                return Fail("成功施法未原子扣除 MP 或未生成通知");
+            }
+            // 结果与通知中的 UUID 必须沿用请求值，且 MP 已按 20 点权威扣除。
+            if (result.SkillUuid != 2UL || startNotice.SkillUuid != 2UL ||
                 result.CurrentMp != initialMp - 20)
             {
                 return Fail("成功施法未原子扣除 MP 或未生成通知");
@@ -58,8 +63,13 @@ public static class SkillAuthoritySmoke
             bool retryAccepted = skillComponent.TryCast(
                 new SkillCastReq { SkillUuid = 2UL, SkillId = 10010 },
                 out retryResult, out retryNotice);
-            if (retryAccepted || retryResult.CmdCode != CmdCode.SkillStateBlocked ||
-                role.mainRoleInfo.BaseInfo.CurrMp != initialMp - 20 || retryNotice != null)
+            // 重试未被拒绝或错误码不是活动状态阻断时直接断言失败。
+            if (retryAccepted || retryResult.CmdCode != CmdCode.SkillStateBlocked)
+            {
+                return Fail("活动技能未阻断再次施法");
+            }
+            // MP 必须保持扣除后不变，且不应再产生新的开始通知。
+            if (role.mainRoleInfo.BaseInfo.CurrMp != initialMp - 20 || retryNotice != null)
             {
                 return Fail("活动技能未阻断再次施法");
             }

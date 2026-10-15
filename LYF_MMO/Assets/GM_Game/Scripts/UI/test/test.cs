@@ -211,11 +211,22 @@ public class test : MonoBehaviour
     {
         // 提交结果可能表示待处理，必须等场景世界真正创建本地主角。
         PlayerEntity role = null;
-        while (Global.Instance == null || Global.Instance.SceneWorld == null ||
-            Global.Instance.SceneWorld.LocalRole == null || MainCityMgr.Instance == null ||
-            UIRoot.Instance == null)
+        while (true)
         {
-            yield return null;
+            // 全局场景世界或本地主角尚未创建时继续等待。
+            if (Global.Instance == null || Global.Instance.SceneWorld == null ||
+                Global.Instance.SceneWorld.LocalRole == null)
+            {
+                yield return null;
+                continue;
+            }
+            // 主城管理器或主界面根节点尚未就绪时继续等待。
+            if (MainCityMgr.Instance == null || UIRoot.Instance == null)
+            {
+                yield return null;
+                continue;
+            }
+            break;
         }
         role = Global.Instance.SceneWorld.LocalRole;
         MainCityMgr.Instance.EnsureLocalRolePresentation(role);
@@ -231,13 +242,13 @@ public class test : MonoBehaviour
         UIRoot.Instance.MainCtrl.ShowView();
         UIRoot.Instance.MainCtrl.RegisterMainInput();
 
-        // 原技能表全部条目构成本地模拟回包的已学列表，额外两项没有战斗快捷键。
+        // 原技能表全部条目构成本地模拟回包的已学列表，无表现的剩余条目不占快捷键。
         List<cfg.SkillInfo> skills = new List<cfg.SkillInfo>(LubanMgr.Instance.GetSkillInfos().Values);
         skills.Sort((left, right) => left.Id.CompareTo(right.Id));
-        // 五项带动画的技能与角色界面快捷栏保持相同键位。
-        int[] animatedSkillIds = { 10010, 10040, 10050, 10060, 10070 };
-        // 与技能 ID 索引一一对应的正式输入键文字。
-        string[] bindKeys = { "Q", "E", "R", "F", "1" };
+        // 六项有正式表现的技能；10060由原F移到2，10080滑行使用F。
+        int[] animatedSkillIds = { 10010, 10040, 10050, 10060, 10070, 10080 };
+        // 与技能 ID 索引一一对应，模拟11080后由正式控制器统一更新输入和图标。
+        string[] bindKeys = { "Q", "E", "R", "2", "1", "F" };
         // 本地模拟的 11080 回复包只描述等级和键位，正式控制器负责装载核心与界面。
         RoleSkillInfoRet response = new RoleSkillInfoRet();
         response.CmdCode = CmdCode.Succeed;
@@ -269,10 +280,21 @@ public class test : MonoBehaviour
             yield break;
         }
         // 旧模型动画事件接收器在此测试场景会访问缺失的网络战斗对象，仅在运行态关闭组件。
-        while (role.Model == null || !role.Model.IsLoaded || role.Model.GameObject == null ||
-            role.Model.GameObject.NativeObject == null)
+        while (true)
         {
-            yield return null;
+            // 模型尚未加载完成时继续等待。
+            if (role.Model == null || !role.Model.IsLoaded)
+            {
+                yield return null;
+                continue;
+            }
+            // 模型游戏对象或其原生对象尚未就绪时继续等待。
+            if (role.Model.GameObject == null || role.Model.GameObject.NativeObject == null)
+            {
+                yield return null;
+                continue;
+            }
+            break;
         }
         RoleAnimaBehaviour[] receivers = role.Model.GameObject.NativeObject.GetComponentsInChildren<RoleAnimaBehaviour>(true);
         for (int index = 0; index < receivers.Length; index++)

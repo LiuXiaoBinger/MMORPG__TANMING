@@ -32,5 +32,4 @@ public class WindowTitleDragHandle : MonoBehaviour, IDragHandler
         _targetWindow.anchoredPosition += eventData.delta / scaleFactor;
         
     }
-
 }

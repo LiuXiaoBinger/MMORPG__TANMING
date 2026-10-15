@@ -8,18 +8,60 @@ using UnityEngine;
 /// </summary>
 public class NpcManager : MonoBehaviour
 {
+
     [SerializeField, Header("NPC 实例父节点，可为空")] private Transform _npcRoot;
+
+
 
     private readonly Dictionary<int, NpcEntity> _npcEntities =
         new Dictionary<int, NpcEntity>();
+
+
     private bool _initialized;
+
+
     private bool _destroyed;
+
+
     private int _lifecycleVersion;
+
+
 
     private void Awake()
     {
         // NPC 仍由现有场景入口显式调用 Initialize，避免改变场景加载时序。
     }
+
+
+
+    /// <summary>管理器销毁时按实体 ID 从统一世界移除 NPC，并使未完成异步请求失效。</summary>
+    private void OnDestroy()
+    {
+        if (_destroyed)
+        {
+            return;
+        }
+        _destroyed = true;
+        _initialized = false;
+        _lifecycleVersion++;
+
+        List<NpcEntity> entitySnapshot = new List<NpcEntity>(_npcEntities.Values);
+        _npcEntities.Clear();
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return;
+        }
+        for (int index = 0; index < entitySnapshot.Count; index++)
+        {
+            NpcEntity entity = entitySnapshot[index];
+            if (entity != null)
+            {
+                Global.Instance.SceneWorld.RemoveEntity(entity.UID);
+            }
+        }
+    }
+
+
 
     public void Initialize()
     {
@@ -50,12 +92,16 @@ public class NpcManager : MonoBehaviour
         }
     }
 
+
+
     public NpcEntity GetNpc(int npcId)
     {
         NpcEntity entity;
         _npcEntities.TryGetValue(npcId, out entity);
         return entity;
     }
+
+
 
     private void CreateNpc(NpcParseInfo info)
     {
@@ -98,6 +144,8 @@ public class NpcManager : MonoBehaviour
         });
     }
 
+
+
     /// <summary>写入 NPC 配置字段，保留现有对话、商店和地图业务读取方式。</summary>
     private static void ApplyEntityConfig(NpcEntity entity, NpcParseInfo info)
     {
@@ -131,6 +179,8 @@ public class NpcManager : MonoBehaviour
         }
     }
 
+
+
     private Vector3 ResolveSpawnPosition(NpcParseInfo info)
     {
         Vector3 spawnPosition = new Vector3(
@@ -142,6 +192,8 @@ public class NpcManager : MonoBehaviour
         }
         return spawnPosition;
     }
+
+
 
     private static void ApplyEntityTransform(NpcEntity entity,
         Vector3 spawnPosition, float rotationY)
@@ -159,6 +211,8 @@ public class NpcManager : MonoBehaviour
             Yaw = rotationY
         });
     }
+
+
 
     /// <summary>异步完成时同时校验管理器生命周期、实体 ID 和世界内对象身份。</summary>
     private void HandleNpcLoaded(NpcParseInfo info, NpcEntity entity,
@@ -210,12 +264,18 @@ public class NpcManager : MonoBehaviour
         entity.Model.SetGameObject(npcObject, string.Empty, false);
     }
 
+
+
     private bool IsCurrentRequest(int npcId, NpcEntity entity,
         ulong requestUID, int requestVersion)
     {
-        if (_destroyed || requestVersion != _lifecycleVersion || entity == null ||
+        // 生命周期已失效：管理器已销毁或请求版本与当前版本不一致。
+        bool lifecycleStale = _destroyed || requestVersion != _lifecycleVersion;
+        // 实体无效：实体为空、UID 不匹配或已脱离活跃状态（内部短路保护空引用）。
+        bool entityInvalid = entity == null ||
             entity.UID != requestUID ||
-            entity.LifecycleState != EntityLifecycleState.Active)
+            entity.LifecycleState != EntityLifecycleState.Active;
+        if (lifecycleStale || entityInvalid)
         {
             return false;
         }
@@ -237,6 +297,8 @@ public class NpcManager : MonoBehaviour
         return ReferenceEquals(worldEntity, entity);
     }
 
+
+
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)
     {
         NpcEntity entity;
@@ -252,31 +314,5 @@ public class NpcManager : MonoBehaviour
         }
     }
 
-    /// <summary>管理器销毁时按实体 ID 从统一世界移除 NPC，并使未完成异步请求失效。</summary>
-    private void OnDestroy()
-    {
-        if (_destroyed)
-        {
-            return;
-        }
-        _destroyed = true;
-        _initialized = false;
-        _lifecycleVersion++;
-
-        List<NpcEntity> entitySnapshot = new List<NpcEntity>(_npcEntities.Values);
-        _npcEntities.Clear();
-        if (Global.Instance == null || Global.Instance.SceneWorld == null)
-        {
-            return;
-        }
-        for (int index = 0; index < entitySnapshot.Count; index++)
-        {
-            NpcEntity entity = entitySnapshot[index];
-            if (entity != null)
-            {
-                Global.Instance.SceneWorld.RemoveEntity(entity.UID);
-            }
-        }
-    }
 }
 

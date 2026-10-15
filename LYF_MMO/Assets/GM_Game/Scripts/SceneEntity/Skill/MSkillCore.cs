@@ -240,10 +240,15 @@ public sealed class MSkillCore
     /// <returns>配置有效、法力充足且冷却结束时返回 true；是否收到旧施法回包不构成门禁。</returns>
     public bool CanStart(float realtimeSeconds, int currentMp)
     {
-        if (SkillId <= 0 || Level <= 0 || EffectId <= 0 ||
-            TargetMode != 0 || CooldownSeconds < 0f ||
-            CooldownGroupId < 0 || GroupCooldownSeconds < 0f ||
-            CastDurationSeconds < 0f || MpCost < 0)
+        // 主键、等级与效果 ID 必须为正，否则配置不完整不能发起。
+        bool identityInvalid = SkillId <= 0 || Level <= 0 || EffectId <= 0;
+        // 目标模式与冷却相关字段必须落在合法范围。
+        bool cooldownInvalid = TargetMode != 0 || CooldownSeconds < 0f ||
+            CooldownGroupId < 0;
+        // 组冷却、施法时长与法力消耗不得为负。
+        bool costInvalid = GroupCooldownSeconds < 0f || CastDurationSeconds < 0f ||
+            MpCost < 0;
+        if (identityInvalid || cooldownInvalid || costInvalid)
         {
             return false;
         }

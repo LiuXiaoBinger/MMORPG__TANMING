@@ -17,6 +17,9 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>本主城实例注册的其他玩家同步委托，用于按委托身份精确注销。</summary>
    private OnActionHandler _syncOtherOnlineHandler;
 
+   /// <summary>本主城实例持有的移动同步委托，场景销毁时解除注册。</summary>
+   private OnActionHandler _syncMoveHandler;
+
    /// <summary>本地主角加载完成事件委托，用于在 Global 延迟创建角色后补建主角表现。</summary>
    private System.Action<PlayerEntity> _localRoleLoadCompletedHandler;
 
@@ -40,6 +43,8 @@ public class MainCityMgr : MonoBehaviour
       _syncOtherOnlineHandler = SyncotherOnlineHandle;
       SocketDispatcher.Instance.AddEventHandler(
          NetDefine.CMD_SyncotherOnlineCode, _syncOtherOnlineHandler);
+      _syncMoveHandler = SyncMoveHandle;
+      SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
       _localRoleLoadCompletedHandler = OnLocalRoleLoadCompleted;
    }
 
@@ -55,6 +60,50 @@ public class MainCityMgr : MonoBehaviour
    {
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
+   }
+
+   /// <summary>注销主城网络消息并释放单例引用。</summary>
+   private void OnDestroy()
+   {
+      SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
+      _syncMoveHandler = null;
+      if (_syncOtherOnlineHandler != null)
+      {
+         SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_SyncotherOnlineCode, _syncOtherOnlineHandler);
+         _syncOtherOnlineHandler = null;
+      }
+      if (_localRoleLoadSubscribed && Global.Instance != null &&
+          _localRoleLoadCompletedHandler != null)
+      {
+         Global.Instance.LocalRoleLoadCompleted -= _localRoleLoadCompletedHandler;
+      }
+      _localRoleLoadSubscribed = false;
+      _localRoleLoadCompletedHandler = null;
+      if (ReferenceEquals(Instance, this))
+      {
+         Instance = null;
+      }
+   }
+
+   /// <summary>把服务器移动通知转换为 RO 移动事件，交由既有远端角色组件追赶目标。</summary>
+   /// <param name="data">11181 移动通知的 Protobuf 二进制消息体。</param>
+   private void SyncMoveHandle(ByteString data)
+   {
+      // 服务端协议中的角色 ID 使用持久化 ID，位置为世界米、Time 为秒。
+      SyncMoveNtf ptc = SyncMoveNtf.Parser.ParseFrom(data);
+      // 当前主城世界已存在的角色；移动消息不负责创建额外实体或缓存等待队列。
+      RoleEntity role;
+      if (!Global.Instance.SceneWorld.TryGetRole(ptc.RoleId, out role) || role.IsPlayer)
+      {
+         return;
+      }
+      // Y 轴角度转换成水平单位朝向，沿用 RO 移动事件的 face 字段。
+      Vector3 face = Quaternion.Euler(0f, ptc.Face, 0f) * Vector3.forward;
+      // 事件池负责本次同步载荷生命周期，分发结束自动归还。
+      MMoveEventArgs moveArgs = MMoveEventArgs.Create(ptc.IsMoving,
+         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false);
+      role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
    }
 
    /// <summary>订阅 Global 的本地主角加载完成事件，并立即处理已经存在的本地主角。</summary>
@@ -142,16 +191,6 @@ public class MainCityMgr : MonoBehaviour
       Debug.Log("开始加载本地主角模型：" + prefabPath +
          "，角色 ID：" + localRole.BaseInfo.RoleId, this);
       CreateRole(RoleType.MainRole, localRole, prefabPath);
-
-      if (_enterWorldSent)
-      {
-         return;
-      }
-
-      EnterWroldReq request = new EnterWroldReq();
-      request.RoleId = localRole.BaseInfo.RoleId;
-      NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
-      _enterWorldSent = true;
    }
 
    /// <summary>按职业配置选择本地主角模型资源路径。</summary>
@@ -312,6 +351,9 @@ public class MainCityMgr : MonoBehaviour
    }
 
    /// <summary>异步加载角色预制体并初始化表现控制器。</summary>
+   /// <param name="roleType">决定本地出生、初次入场或远端同步表现的角色类别。</param>
+   /// <param name="role">当前主城世界已创建且持有本次模型的角色实体。</param>
+   /// <param name="prefabPath">角色表现预制体的YooAsset加载地址。</param>
    private void CreateRole(RoleType roleType, SceneObject role, string prefabPath)
    {
       if (role == null)
@@ -376,11 +418,15 @@ public class MainCityMgr : MonoBehaviour
             }
 
          SceneObject currentEntity = null;
-         bool isCurrentRequest = Global.Instance != null &&
-             ReferenceEquals(Global.Instance.SceneWorld, requestedWorld) &&
-             requestedWorld.TryGetEntity(requestedUID, out currentEntity) &&
+         // 全局实例就绪且与请求所指场景世界为同一世界。
+         bool worldReady = Global.Instance != null &&
+             ReferenceEquals(Global.Instance.SceneWorld, requestedWorld);
+         // 请求 UID 仍能取回同一活跃实体（TryGetEntity 为纯字典查询，内部短路保护后续引用）。
+         bool entityReady = requestedWorld.TryGetEntity(requestedUID, out currentEntity) &&
              ReferenceEquals(currentEntity, requestedEntity) &&
              currentEntity.LifecycleState == EntityLifecycleState.Active;
+         // 仍处于当前请求对应的活跃实体上，才继续绑定模型。
+         bool isCurrentRequest = worldReady && entityReady;
          if (!isCurrentRequest)
          {
             DestroyLoadedRole(obj);
@@ -401,7 +447,16 @@ public class MainCityMgr : MonoBehaviour
 
           try
           {
-            obj.transform.position = new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
+            if (roleType == RoleType.MainRole)
+            {
+               obj.transform.position = new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
+            }
+            else
+            {
+               // 远端玩家入场消息已经携带服务器当前位置，沿现有网络坐标转换读取世界米数。
+               System.Numerics.Vector3 serverPosition = baseInfo.Pos.ToVector3();
+               obj.transform.position = new Vector3(serverPosition.X, serverPosition.Y, serverPosition.Z);
+            }
             transformComponent.Apply(new EntityTransformSnapshot
             {
                X = obj.transform.position.x,
@@ -416,12 +471,33 @@ public class MainCityMgr : MonoBehaviour
             if (roleType == RoleType.MainRole)
             {
                BindMainRoleCompatibilityController(obj, sceneEntity, baseInfo);
+               // 主界面先于异步主角模型创建，在输入组件就绪后补齐技能和界面快捷键订阅。
+               UIRoot.Instance.RegisterMainUIKeyHandler();
+            }
+            else
+            {
+               // 正式其他玩家预制体上的旧兼容控制器绑定实体后停止自己的重力与根运动写入。
+               OtherRoleCtrl otherRoleController = obj.GetComponent<OtherRoleCtrl>();
+               otherRoleController.InitCtrl(RoleType.OtherRole, baseInfo);
+               otherRoleController.SetROObject(sceneEntity);
             }
             if (roleType == RoleType.MainRole && CameraMgr.Instance != null)
             {
                // 主角相机直接跟踪模型根节点和 LookAtPos，不再依赖旧 MainRoleCtrl。
                Transform lookAtTransform = FindChildTransform(obj.transform, "LookAtPos");
                CameraMgr.Instance.InitCamera(obj.transform, lookAtTransform);
+            }
+            if (roleType == RoleType.MainRole && !_enterWorldSent)
+            {
+               // 本地模型已经就位；先同步出生坐标，避免服务器用空位置按原点过滤附近玩家。
+               // 模型异步加载期间移动组件自然累计的秒数由现有上报入口消费。
+               PlayerEntity localRole = (PlayerEntity)sceneEntity;
+               localRole.UpdateMove();
+               // 入场请求必须排在本次出生位置包之后，服务器据此收发同图百米内玩家。
+               EnterWroldReq request = new EnterWroldReq();
+               request.RoleId = baseInfo.RoleId;
+               NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
+               _enterWorldSent = true;
             }
             Debug.Log("角色表现绑定成功，角色 UID：" + requestedUID +
                "，资源路径：" + prefabPath, this);
@@ -509,28 +585,6 @@ public class MainCityMgr : MonoBehaviour
       if (roleObject != null)
       {
          UnityEngine.Object.Destroy(roleObject);
-      }
-   }
-
-   /// <summary>注销主城网络消息并释放单例引用。</summary>
-   private void OnDestroy()
-   {
-      if (_syncOtherOnlineHandler != null)
-      {
-         SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_SyncotherOnlineCode, _syncOtherOnlineHandler);
-         _syncOtherOnlineHandler = null;
-      }
-      if (_localRoleLoadSubscribed && Global.Instance != null &&
-          _localRoleLoadCompletedHandler != null)
-      {
-         Global.Instance.LocalRoleLoadCompleted -= _localRoleLoadCompletedHandler;
-      }
-      _localRoleLoadSubscribed = false;
-      _localRoleLoadCompletedHandler = null;
-      if (ReferenceEquals(Instance, this))
-      {
-         Instance = null;
       }
    }
 }

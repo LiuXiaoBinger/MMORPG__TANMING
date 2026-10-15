@@ -64,9 +64,19 @@ public sealed class MSkillFactory
         // 按效果主键查到的行必须再次核对技能 ID，避免错表播放其他技能。
         Dictionary<int, SkillEffectInfo> effects =
             LubanMgr.Instance.GetSkillEffectInfos();
+        // 效果表缺失时直接放弃装配，避免对空字典做查找。
+        if (effects == null)
+        {
+            return null;
+        }
         SkillEffectInfo effect;
-        if (effects == null || !effects.TryGetValue(effectId, out effect) ||
-            effect == null || effect.SkillId != skillId)
+        // TryGetValue 带 out 赋值，必须在 effects 非空后单独调用以保持原短路与赋值次数。
+        if (!effects.TryGetValue(effectId, out effect))
+        {
+            return null;
+        }
+        // 命中行必须再次归属到本技能，防止错表播放其他技能。
+        if (effect == null || effect.SkillId != skillId)
         {
             return null;
         }
@@ -154,17 +164,27 @@ public sealed class MSkillFactory
             {
                 // 当前候选行必须与实际职业模型及默认武器/变体精确匹配。
                 SkillPresentationInfo row = rows[index];
-                if (row != null && row.EffectId == effectId &&
-                    row.ProfessionId == profession.Id &&
-                    row.ModelKey == present.Prefab && row.WeaponType == 0 &&
-                    row.VariantIndex >= 0)
+                // 空行直接跳过，后续字段读取均以行非空为前提。
+                if (row == null)
                 {
-                    // 本表现行由最终核心独占，直到核心的最后持有者解除引用。
-                    MSkillData data = MCommonObjectPool<MSkillData>.Get();
-                    data.Initialize(row.Id, row.VariantIndex, row.ClipLocation,
-                        row.DurationMs * 0.001f, row.SkillStateTimeMs * 0.001f);
-                    result.Add(data);
+                    continue;
                 }
+                // 效果与职业必须同时归属，任一不符则不是当前候选。
+                if (row.EffectId != effectId || row.ProfessionId != profession.Id)
+                {
+                    continue;
+                }
+                // 模型键、默认武器类型与变体序号共同锁定正式动作段。
+                if (row.ModelKey != present.Prefab || row.WeaponType != 0 ||
+                    row.VariantIndex < 0)
+                {
+                    continue;
+                }
+                // 本表现行由最终核心独占，直到核心的最后持有者解除引用。
+                MSkillData data = MCommonObjectPool<MSkillData>.Get();
+                data.Initialize(row.Id, row.VariantIndex, row.ClipLocation,
+                    row.DurationMs * 0.001f, row.SkillStateTimeMs * 0.001f);
+                result.Add(data);
             }
         }
         finally

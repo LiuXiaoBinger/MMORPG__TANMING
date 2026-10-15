@@ -11,70 +11,95 @@ public sealed class MModel
 {
     /// <summary>内部封装的 Unity GameObject 包装器，负责变换和层级管理。</summary>
     private readonly MGameObject _mObj = new MGameObject();
+
     /// <summary>Animator 封装实例，从 MAnimatorPool 获取。</summary>
     private MAnimator _mAtor;
+
     /// <summary>模型加载和动画控制器的原始配置数据，用于复用时恢复参数。</summary>
     private MModelOriginData _originData = new MModelOriginData();
+
     /// <summary>当前加载的模型资源 Location。</summary>
     private string _modelLocation = string.Empty;
+
     /// <summary>会话版本号，每次加载或重置时递增，用于校验异步回调是否属于当前会话。</summary>
     private int _sessionVersion;
+
     /// <summary>是否正在异步加载中。</summary>
     private bool _isLoading;
+
     /// <summary>是否已加载完成。</summary>
     private bool _isLoaded;
+
     /// <summary>模型是否可见，未加载完成时不激活。</summary>
     private bool _visible = true;
 
     /// <summary>获取内部 GameObject 包装器。</summary>
     public MGameObject GameObject { get { return _mObj; } }
+
     /// <summary>获取 Animator 封装实例，动作状态组件通过此访问动画播放接口。</summary>
     public MAnimator Ator { get { return _mAtor; } }
+
     /// <summary>模型根对象上的碰撞控制器，由移动组件请求位移时负责碰撞约束。</summary>
     private CharacterController _characterController;
+
     /// <summary>沿RO模型持有的声音组件，模型重置时停止全部声音。</summary>
     private readonly SoundComponent _sound = new SoundComponent();
+
     /// <summary>实际Animator节点的根位移采集器，供实体移动组件消费。</summary>
     private SkillRootMotionCollector _rootMotion;
+
     /// <summary>模型声音入口，普通动作按编辑器轨道自动派发。</summary>
     public SoundComponent Sound { get { return _sound; } }
+
     /// <summary>实际动画器的水平根位移入口，模型未加载时为空。</summary>
     public SkillRootMotionCollector RootMotion { get { return _rootMotion; } }
+
     /// <summary>仅保存调用时模型尚未加载的单次 GO 请求，按 RO 票据取消，不常驻订阅技能。</summary>
     private readonly Dictionary<int, Action<GameObject>> _loadGoCallbacks =
         new Dictionary<int, Action<GameObject>>();
+
     /// <summary>冷 GO 票据的真实登记顺序，取消再登记或整数回绕也不按字典槽位乱序交付。</summary>
     private readonly List<int> _loadGoOrder = new List<int>();
+
     /// <summary>单次 GO 加载回调递增票据，零保留给已同步执行的暖模型请求。</summary>
     private int _loadGoToken;
+
     /// <summary>统一动画入口登记的当前技能动作所有者，同模型重载后恢复其动画，离开动作立即解除。</summary>
     private MSkill _skillAnimation;
+
     /// <summary>获取模型原始配置数据。</summary>
     public MModelOriginData OriginData { get { return _originData; } }
+
     /// <summary>获取模型是否已加载完成。</summary>
     public bool IsLoaded { get { return _isLoaded; } }
+
     /// <summary>获取模型是否正在加载中。</summary>
     public bool IsLoading { get { return _isLoading; } }
+
     /// <summary>获取当前模型资源 Location。</summary>
     public string ModelLocation { get { return _modelLocation; } }
+
     /// <summary>模型可见性，设置时同时控制 GameObject 激活状态（需已加载）。</summary>
     public bool Visible
     {
         get { return _visible; }
         set { _visible = value; _mObj.IsActive = value && _isLoaded; }
     }
+
     /// <summary>模型世界坐标位置。</summary>
     public Vector3 Position
     {
         get { return _mObj.Position; }
         set { _mObj.Position = value; }
     }
+
     /// <summary>模型世界旋转。</summary>
     public Quaternion Rotation
     {
         get { return _mObj.Rotation; }
         set { _mObj.Rotation = value; }
     }
+
     /// <summary>模型缩放。</summary>
     public Vector3 Scale
     {
@@ -84,12 +109,14 @@ public sealed class MModel
 
     //当前速度
     public Vector3 velocity { get; set; }
+
     //2d速度
     public Vector3 lastVelocity
     {
         get { return new Vector3(velocity.x, 0, velocity.z); }
         set { velocity = new Vector3(value.x, velocity.y, value.z); }
     }
+
     //垂直速度
     public Vector3 verticalVelocity
     {
@@ -98,6 +125,53 @@ public sealed class MModel
     }
 
     public Vector3 Forward { get { return _mObj.Forward; } set { _mObj.Forward = value; } }
+
+    /// <summary>查询 Unity 碰撞控制器上一帧记录的接地结果。</summary>
+    public bool IsGrounded
+    {
+        get
+        {
+            return _characterController != null && _characterController.isGrounded;
+        }
+    }
+
+    /// <summary>模型是否已经加载并挂载 CharacterController。</summary>
+    public bool HasCharacterController
+    {
+        get
+        {
+            return _characterController != null && _characterController.enabled;
+        }
+    }
+
+    /// <summary>最近一次碰撞提交是否碰到侧墙；程序运动据此结束，不重试未穿过的距离。</summary>
+    public bool HasSideCollision
+    {
+        get { return _characterController != null && _characterController.enabled &&
+            (_characterController.collisionFlags & CollisionFlags.Sides) != 0; }
+    }
+
+    /// <summary>
+    /// 逐帧更新驱动，转发到 Animator 封装的 Update。
+    /// </summary>
+    /// <param name="deltaSeconds">距上一帧时间（秒）。</param>
+    public void Update(float deltaSeconds)
+    {
+        if (_mAtor != null)
+        {
+            _mAtor.Update(deltaSeconds);
+        }
+
+        _sound.Update();
+
+        //Move();
+    }
+
+    /// <summary>帧末更新钩子，预留用于后续动画状态收尾。</summary>
+    /// <param name="deltaSeconds">距上一帧时间（秒）。</param>
+    public void LateUpdate(float deltaSeconds)
+    {
+    }
 
     /// <summary>
     /// 异步加载模型预制体。
@@ -162,53 +236,13 @@ public sealed class MModel
         _mObj.SetParent(parent);
     }
 
-    /// <summary>
-    /// 逐帧更新驱动，转发到 Animator 封装的 Update。
-    /// </summary>
-    /// <param name="deltaSeconds">距上一帧时间（秒）。</param>
-    public void Update(float deltaSeconds)
-    {
-        if (_mAtor != null)
-        {
-            _mAtor.Update(deltaSeconds);
-        }
-
-        _sound.Update();
-
-        //Move();
-    }
-
+    /// <summary>按当前速度向量驱动 CharacterController 执行一次位移；速度为零时不产生移动。</summary>
     public void Move()
     {
         if (_characterController != null && velocity.magnitude != 0)
         {
             _characterController.Move(velocity);
         }
-    }
-
-    /// <summary>查询 Unity 碰撞控制器上一帧记录的接地结果。</summary>
-    public bool IsGrounded
-    {
-        get
-        {
-            return _characterController != null && _characterController.isGrounded;
-        }
-    }
-
-    /// <summary>模型是否已经加载并挂载 CharacterController。</summary>
-    public bool HasCharacterController
-    {
-        get
-        {
-            return _characterController != null && _characterController.enabled;
-        }
-    }
-
-    /// <summary>最近一次碰撞提交是否碰到侧墙；程序运动据此结束，不重试未穿过的距离。</summary>
-    public bool HasSideCollision
-    {
-        get { return _characterController != null && _characterController.enabled &&
-            (_characterController.collisionFlags & CollisionFlags.Sides) != 0; }
     }
 
     /// <summary>使用 CharacterController 应用本帧位移；模型未加载碰撞器时直接移动 Transform。</summary>
@@ -222,12 +256,6 @@ public sealed class MModel
         }
 
         Position += movement;
-    }
-
-    /// <summary>帧末更新钩子，预留用于后续动画状态收尾。</summary>
-    /// <param name="deltaSeconds">距上一帧时间（秒）。</param>
-    public void LateUpdate(float deltaSeconds)
-    {
     }
 
     /// <summary>

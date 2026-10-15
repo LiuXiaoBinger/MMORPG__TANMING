@@ -31,6 +31,7 @@ public sealed class EntityAttributesComponent : EntityComponentBase
         get { return EntityComponentType.Attributes; }
     }
 
+    /// <summary>载具或跑步的实际移动速度（米/秒）；载具分支当前未启用，直接返回跑步速度。</summary>
     public float VehicleOrRunSpeed {
         get
         {
@@ -45,6 +46,7 @@ public sealed class EntityAttributesComponent : EntityComponentBase
         }
     }
 
+    /// <summary>跑步移动顶速（米/秒），读取全局移动配置的奔跑顶速。</summary>
     public float RunSpeed
     { get => PlayStateMgr.Instance.stats.runningTopSpeed; }
 
@@ -54,6 +56,7 @@ public sealed class EntityAttributesComponent : EntityComponentBase
         get { return 0; }
     }
 
+    /// <summary>跑步时动画机播放速度倍率；鹰类分支当前未启用，固定为 1。</summary>
     public float RunAtorSpeed {  get
     {
         /*if (Entity.IsEagle)

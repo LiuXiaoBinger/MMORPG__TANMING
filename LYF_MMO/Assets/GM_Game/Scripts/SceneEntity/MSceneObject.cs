@@ -16,6 +16,7 @@ public abstract class MSceneObject : MObject
 
     /// <summary>实体直属模型对象，模型内部持有 MAnimator。</summary>
     protected MModel _model;
+
     #region 属性变量
 
     /// <summary>渲染层级（默认 0），用于控制模型渲染层级</summary>
@@ -30,6 +31,14 @@ public abstract class MSceneObject : MObject
     /// <summary>默认渲染层级</summary>
     public int DefaultLayer { get { return _layer; } }
 
+    /// <summary>逻辑 Transform 快照（位置、朝向）</summary>
+    public override EntityTransformSnapshot Transform { get { return _transform; } }
+
+    public abstract Vector3 Position { get; set; }
+
+    /// <summary>移动速度（跑步速度，供移动组件/动画使用）</summary>
+    public virtual float RunSpeed { get; set; }
+
     #endregion
 
     /// <summary>
@@ -43,13 +52,8 @@ public abstract class MSceneObject : MObject
     {
     }
 
-    /// <summary>逻辑 Transform 快照（位置、朝向）</summary>
-    public override EntityTransformSnapshot Transform { get { return _transform; } }
-
-    public abstract Vector3 Position { get; set; }
-    /// <summary>移动速度（跑步速度，供移动组件/动画使用）</summary>
-    public virtual float RunSpeed { get; set; }
-
+    /// <summary>实体每帧驱动入口：先推进基类逻辑，再驱动挂载的模型 Animator 与声音等表现。</summary>
+    /// <param name="fDeltaT">距上一帧的毫秒数。</param>
     public override void Update(int fDeltaT)
     {
         base.Update(fDeltaT);

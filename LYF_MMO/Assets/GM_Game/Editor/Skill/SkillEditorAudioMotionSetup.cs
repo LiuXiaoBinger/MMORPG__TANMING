@@ -64,7 +64,11 @@ public static class SkillEditorAudioMotionSetup
                 AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_Charge.wav", 4, 0.35f);
                 AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_ReleaseImpact.wav", 9, 0.65f);
             }
-            if (presentationId == 3001001 || presentationId == 3001002 || presentationId == 3001003 || presentationId == 3004001 || presentationId == 3006001)
+            // 第一批需要补充根位移的技能表现 ID。
+            bool isFirstRootMotionSkill = presentationId == 3001001 || presentationId == 3001002 || presentationId == 3001003;
+            // 第二批需要补充根位移的技能表现 ID。
+            bool isSecondRootMotionSkill = presentationId == 3004001 || presentationId == 3006001;
+            if (isFirstRootMotionSkill || isSecondRootMotionSkill)
                 AddRootMotionIfEmpty(binding.Config, binding.SourceClip);
             EditorUtility.SetDirty(binding.Config);
             AssetDatabase.SaveAssetIfDirty(binding.Config);

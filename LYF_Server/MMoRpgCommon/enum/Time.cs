@@ -1,4 +1,7 @@
-﻿public enum RefreshMark
+﻿/// <summary>
+/// 次数/活动数据的周期刷新标记；kRefreshMarkCount 仅作数组上界哨兵，不代表真实周期。
+/// </summary>
+public enum RefreshMark
 {
     kRefreshMarkNone = 0,
     kRefreshMarkDayZero,      //>> 每天凌晨0点

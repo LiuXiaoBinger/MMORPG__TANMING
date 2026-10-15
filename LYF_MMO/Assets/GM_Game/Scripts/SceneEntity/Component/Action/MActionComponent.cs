@@ -31,6 +31,7 @@ using MMoRpgCommon.SceneEntity;
         protected IEventArg _evt; //切状态的时候暂存的evt数据
         /// <summary>动作事件处理回调，注册后用于监听状态转移消息。</summary>
         protected MEventHandler _onActionEvent;
+        /// <summary>动作结束事件回调，收到结束事件时自动触发 Finish() 正常结束本状态。</summary>
         private readonly MEventHandler _onFinishEvent;
 
         /// <summary>获取该状态是否需要与服务端做预测同步，默认 true。TODO: 后续接入 syncMode 配置。</summary>

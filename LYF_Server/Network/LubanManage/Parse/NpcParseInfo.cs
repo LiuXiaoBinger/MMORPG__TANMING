@@ -8,16 +8,22 @@ using cfg;
 /// </summary>
 public class NpcParseInfo
 {
+    /// <summary>NPC 配置 ID。</summary>
     public int ID { get; private set; }
+    /// <summary>NPC 显示名称。</summary>
     public string Name { get; private set; }
+    /// <summary>NPC 预制体资源路径。</summary>
     public string PrefabPath { get; private set; }
+    /// <summary>NPC 在场景中的出生坐标。</summary>
     public Vector3 Position { get; private set; }
 
     /// <summary>
     /// NPC 在场景中的 Y 轴朝向（度）。Pos 的第 4 段为空或无效时使用 0。
     /// </summary>
     public float RotationY { get; private set; }
+    /// <summary>NPC 所在地图 ID。</summary>
     public int MapID { get; private set; }
+    /// <summary>NPC 类型（配置 Tyep 字段）。</summary>
     public int Type { get; private set; }
 
     /// <summary>
@@ -25,7 +31,9 @@ public class NpcParseInfo
     /// </summary>
     public int ShopId { get; private set; }
 
+    /// <summary>NPC 思考/行为描述文本。</summary>
     public string Think { get; private set; }
+    /// <summary>NPC 对话文本。</summary>
     public string Talk { get; private set; }
 
     /// <summary>

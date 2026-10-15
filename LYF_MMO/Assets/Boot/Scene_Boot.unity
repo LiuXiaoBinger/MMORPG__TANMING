@@ -212,7 +212,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u4E0B\u8F7D\u8FDB\u5EA6\u301050%\u3011"
+  m_text: "\u6B63\u5728\u542F\u52A8.."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3993037bb5ace8e4d9f2555109577b24, type: 2}
   m_sharedMaterial: {fileID: 6718054227848337956, guid: 3993037bb5ace8e4d9f2555109577b24, type: 2}
@@ -1094,7 +1094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce80814cc2cc5164d8af713199387c02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playMode: 0
+  _playMode: 2
   defaultHostServer: http://192.168.9.1:8080/
   fallbackHostServer: http://192.168.9.1:8080/
   _hotUpdateView: {fileID: 1783064698}

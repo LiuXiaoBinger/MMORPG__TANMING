@@ -75,8 +75,13 @@ public class RoItemContainer
     /// <summary>检查物品是否可以放入指定位置。</summary>
     public virtual bool CheckIn(ItemBase item, int pos = InvalidItemPos)
     {
-        if (item == null || item.GetItemUID() <= 0 || item.GetItemID() <= 0 ||
-            item.GetItemCount() <= 0 || _items.ContainsKey(item.GetItemUID()))
+        // 物品缺失或 UID、物品 ID 非法时不可放入。
+        if (item == null || item.GetItemUID() <= 0 || item.GetItemID() <= 0)
+        {
+            return false;
+        }
+        // 数量必须为正，且该 UID 尚未被容器占用。
+        if (item.GetItemCount() <= 0 || _items.ContainsKey(item.GetItemUID()))
         {
             return false;
         }
@@ -346,8 +351,13 @@ public class RoItemContainer
         for (int index = 0; index < snapshot.Count; index++)
         {
             ItemBase item = snapshot[index];
-            if (item == null || item.GetItemID() != desc.ItemID ||
-                item.GetItemCount() <= 0 || item.GetItemCount() >= maxStackCount)
+            // 空槽位或物品配置不匹配时跳过。
+            if (item == null || item.GetItemID() != desc.ItemID)
+            {
+                continue;
+            }
+            // 数量非法或已达单格堆叠上限时跳过。
+            if (item.GetItemCount() <= 0 || item.GetItemCount() >= maxStackCount)
             {
                 continue;
             }

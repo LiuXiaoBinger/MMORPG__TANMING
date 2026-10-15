@@ -137,8 +137,12 @@ public class LoginCtrl : CtrlBase
         string password, string confirmPassword)
     {
         if (string.IsNullOrWhiteSpace(account) || string.IsNullOrWhiteSpace(email) ||
-            string.IsNullOrWhiteSpace(verifyCode) || string.IsNullOrEmpty(password) ||
-            string.IsNullOrEmpty(confirmPassword))
+            string.IsNullOrWhiteSpace(verifyCode))
+        {
+            TipsMgr.Instance.ShowSystemTips("请完整填写注册信息");
+            return;
+        }
+        if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
         {
             TipsMgr.Instance.ShowSystemTips("请完整填写注册信息");
             return;

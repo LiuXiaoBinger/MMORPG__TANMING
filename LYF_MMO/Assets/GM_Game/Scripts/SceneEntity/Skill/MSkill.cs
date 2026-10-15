@@ -22,12 +22,6 @@ public abstract class MSkill
     /// <summary>每次 Reset 更新的实例施法代次，区分同一池对象甚至同 UUID 的同步重新 Fire。</summary>
     protected ulong _fireGeneration;
 
-    /// <summary>构造池内技能实例并绑定强类型时间轴回调，后续 Fire 重用该委托。</summary>
-    protected MSkill()
-    {
-        _onProcessTimer = OnProcessTimer;
-    }
-
     /// <summary>本次释放持有的技能核心引用，直到该施法实例归还才解除。</summary>
     protected MSkillCore _core;
 
@@ -36,6 +30,7 @@ public abstract class MSkill
 
     /// <summary>实际持有本次 Skill 槽位剪辑租约的动画器，模型重建后仍指向旧实例。</summary>
     protected MAnimator _boundAnimator;
+
     /// <summary>统一动画入口登记归属的模型，模型迟到或重载时恢复当前动作，退出时解除。</summary>
     protected MModel _animationModel;
 
@@ -47,6 +42,7 @@ public abstract class MSkill
 
     /// <summary>本次表现行在旧表登记的完整时长，单位为秒，仅用于导出资产一致性校验。</summary>
     protected float _runtimePresentationDurationSeconds;
+
     /// <summary>程序指令校验采用本次 Fire 冻结的完整动作秒数，权威连击确认改共享核心时也不改本段范围。</summary>
     internal float DisplacementDurationSeconds { get { return _runtimePresentationDurationSeconds; } }
 
@@ -64,12 +60,16 @@ public abstract class MSkill
 
     /// <summary>本次 Fire 冻结的全局计时毫秒原点，程序位移与 timeline 共用，不按技能帧重复积分。</summary>
     protected long _startedTimerMilliseconds;
+
     /// <summary>本次 Fire 冻结的计时器初始化版本，全局重新 Init 后旧程序运动必须停止。</summary>
     private ulong _timerSessionVersion;
+
     /// <summary>本次 Fire 冻结的水平技能单位方向，程序位移各段不跟随手动输入转向。</summary>
     private Vector3 _skillForward;
+
     /// <summary>RO 同名施法方向接口，Y Forward 程序段沿该固定世界方向移动。</summary>
     public Vector3 SkillTowardsTo { get { return _skillForward; } }
+
     /// <summary>计时器原点至今经过的秒数，程序位移独占该时钟；FX/声音既有补发时钟保持。</summary>
     protected float TimelineElapsedSeconds { get { return (MTimerMgr.singleton.ElapsedTime - _startedTimerMilliseconds) * 0.001f; } }
 
@@ -127,15 +127,41 @@ public abstract class MSkill
         get { return IsActive && _elapsedSeconds >= _skillStateTimeSeconds; }
     }
 
-    /// <summary>RO 同名动作解锁判断，仅表示当前动作窗结束，独立于技能制作尾段及服务器生命周期。</summary>
-    /// <returns>本次活动技能已运行到动作状态解锁秒数时为真。</returns>
-    public abstract bool IsEnd();
-
     /// <summary>当前表现绑定的已学习技能核心，实例无效时为空。</summary>
     public MSkillCore Core
     {
         get { return _core; }
     }
+
+    /// <summary>构造池内技能实例并绑定强类型时间轴回调，后续 Fire 重用该委托。</summary>
+    protected MSkill()
+    {
+        _onProcessTimer = OnProcessTimer;
+    }
+
+    /// <summary>具体技能登记本次表现事件；此入口不播放角色动画。</summary>
+    protected virtual void Start()
+    {
+    }
+
+    /// <summary>逐帧推进存活技能的逻辑时钟，动画统一由动作状态的 PlayAnim 触发。</summary>
+    /// <param name="deltaSeconds">距上一帧的非负时间，单位为秒。</param>
+    /// <returns>动作仍占槽或制作事件、完整声尾未完成时为真；到期或完成后调用方应 Cease。</returns>
+    public virtual bool Update(float deltaSeconds)
+    {
+        if (!IsActive) return false;
+        if (!_execute || MTimerMgr.singleton.IsPause) return true;
+        if (deltaSeconds > 0f)
+        {
+            _elapsedSeconds += deltaSeconds;
+        }
+        return !IsLifetimeOverdue() &&
+            (!_animationReleased || !IsPresentationFinished);
+    }
+
+    /// <summary>RO 同名动作解锁判断，仅表示当前动作窗结束，独立于技能制作尾段及服务器生命周期。</summary>
+    /// <returns>本次活动技能已运行到动作状态解锁秒数时为真。</returns>
+    public abstract bool IsEnd();
 
     /// <summary>按 RO 启动一次技能逻辑，锁定施法数据后执行 Start；动画由动作状态统一触发。</summary>
     /// <param name="core">已按技能 ID 与等级解析的技能配置核心。</param>
@@ -149,9 +175,29 @@ public abstract class MSkill
         ulong targetUid, Vector3 castPoint, bool predicted)
     {
         Reset();
-        if (core == null || firer == null || skillUuid == 0 || core.SkillId <= 0 ||
-            core.AnimationDurationSeconds <= 0f ||
-            string.IsNullOrEmpty(core.AnimationLocation))
+        // 核心与施法者必须同时存在，且施法 UUID 非零才允许启动。
+        if (core == null)
+        {
+            return false;
+        }
+        if (firer == null)
+        {
+            return false;
+        }
+        if (skillUuid == 0)
+        {
+            return false;
+        }
+        // 核心必须带有正技能 ID、正动画时长与动画路径，否则无法表现。
+        if (core.SkillId <= 0)
+        {
+            return false;
+        }
+        if (core.AnimationDurationSeconds <= 0f)
+        {
+            return false;
+        }
+        if (string.IsNullOrEmpty(core.AnimationLocation))
         {
             return false;
         }
@@ -212,26 +258,6 @@ public abstract class MSkill
         }
     }
 
-    /// <summary>具体技能登记本次表现事件；此入口不播放角色动画。</summary>
-    protected virtual void Start()
-    {
-    }
-
-    /// <summary>逐帧推进存活技能的逻辑时钟，动画统一由动作状态的 PlayAnim 触发。</summary>
-    /// <param name="deltaSeconds">距上一帧的非负时间，单位为秒。</param>
-    /// <returns>动作仍占槽或制作事件、完整声尾未完成时为真；到期或完成后调用方应 Cease。</returns>
-    public virtual bool Update(float deltaSeconds)
-    {
-        if (!IsActive) return false;
-        if (!_execute || MTimerMgr.singleton.IsPause) return true;
-        if (deltaSeconds > 0f)
-        {
-            _elapsedSeconds += deltaSeconds;
-        }
-        return !IsLifetimeOverdue() &&
-            (!_animationReleased || !IsPresentationFinished);
-    }
-
     /// <summary>RO 同名施法结束入口：先解除所属组件的当前槽或脱手引用，再注销回调并归还具体技能池。</summary>
     /// <param name="cleanUp">RO 兼容的额外清理标记；本项目没有额外分支，任意值都终止并注销本次回调，自然尾段由组件延后调用 Cease。</param>
     public virtual void Cease(bool cleanUp = false)
@@ -254,10 +280,19 @@ public abstract class MSkill
     /// <returns>实体、当前槽、UUID 与代次都匹配且动作未释放时返回 true。</returns>
     internal bool OwnsDisplacement(MEntity entity, ulong skillUuid, ulong fireGeneration)
     {
-        return IsActive && !_animationReleased && _fireGeneration == fireGeneration &&
-            _timerSessionVersion == MTimerMgr.singleton.SessionVersion &&
-            SkillUuid == skillUuid && skillUuid != 0 && ReferenceEquals(_firer, entity) &&
-            entity != null && entity.Skill != null && ReferenceEquals(entity.Skill.CurrentSkill, this);
+        // 本代施法仍存活且未释放，才继续核对计时器与身份。
+        if (!IsActive) return false;
+        if (_animationReleased) return false;
+        if (_fireGeneration != fireGeneration) return false;
+        if (_timerSessionVersion != MTimerMgr.singleton.SessionVersion) return false;
+        if (SkillUuid != skillUuid) return false;
+        if (skillUuid == 0) return false;
+        // 施法者必须与目标实体同一，且实体当前动作槽就是本技能。
+        if (!ReferenceEquals(_firer, entity)) return false;
+        if (entity == null) return false;
+        if (entity.Skill == null) return false;
+        if (!ReferenceEquals(entity.Skill.CurrentSkill, this)) return false;
+        return true;
     }
 
     /// <summary>按同一个施法 UUID 确认预表现，避免服务器广播重复播放动画。</summary>
@@ -387,11 +422,12 @@ public abstract class MSkill
         {
             _tokens.Remove(token);
         }
-        if (!IsActive || _firer == null || args == null || args.SkillUuid != SkillUuid ||
-            args.FireGeneration != _fireGeneration)
-        {
-            return;
-        }
+        // 仅存活施法且参数完整时才按 UUID 与代次分发事件。
+        if (!IsActive) return;
+        if (_firer == null) return;
+        if (args == null) return;
+        if (args.SkillUuid != SkillUuid) return;
+        if (args.FireGeneration != _fireGeneration) return;
         InnerProcessTimer(args.Id, args);
     }
 
@@ -407,12 +443,14 @@ public abstract class MSkill
     /// <summary>按 RO 从统一动作播放入口覆盖并播放技能动画，迟到触发按施法时钟续播。</summary>
     public virtual void TriggerAnim()
     {
-        if (!IsActive || _animationReleased || _core == null || _firer == null ||
-            _firer.Model == null || _firer.Skill == null ||
-            !ReferenceEquals(_firer.Skill.CurrentSkill, this))
-        {
-            return;
-        }
+        // 存活且未释放、核心与施法者齐全时才绑定并播放动画。
+        if (!IsActive) return;
+        if (_animationReleased) return;
+        if (_core == null) return;
+        if (_firer == null) return;
+        if (_firer.Model == null) return;
+        if (_firer.Skill == null) return;
+        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return;
         _animationModel = _firer.Model;
         _animationModel.BindSkillAnimation(this);
         if (_animationModel.Ator == null)

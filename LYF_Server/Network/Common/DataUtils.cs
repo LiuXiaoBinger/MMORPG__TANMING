@@ -7,16 +7,19 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// 服务端通用数据工具：登录时间缓存、账号/手机号/邮箱格式校验、MD5。
+/// </summary>
 public class DataUtils : Singleton<DataUtils>
 {
-    //登录时,缓存登录的时间毫秒..
+    /// <summary>登录时间缓存：键为账号用户名，值为最近一次登录的 UTC 毫秒时间戳。</summary>
     public Dictionary<string, long> _loginTimeDic = new Dictionary<string, long>();
 
     /// <summary>
     /// 添加登录毫秒值
     /// </summary>
-    /// <param name="username"></param>
-    /// <param name="time"></param>
+    /// <param name="username">账号用户名。</param>
+    /// <param name="milliseconds">登录时刻的 UTC 毫秒时间戳。</param>
     public void AddLoginMilliseconds(string username, long milliseconds)
     {
         /*if (!_loginTimeDic.ContainsKey(username))
@@ -26,6 +29,7 @@ public class DataUtils : Singleton<DataUtils>
         _loginTimeDic[username] = milliseconds;
     }
 
+    /// <summary>查询指定账号最近一次登录的 UTC 毫秒时间戳；未记录时返回 0。</summary>
     public long GetLoginMilliseconds(string username)
     {
         if (_loginTimeDic.ContainsKey(username))

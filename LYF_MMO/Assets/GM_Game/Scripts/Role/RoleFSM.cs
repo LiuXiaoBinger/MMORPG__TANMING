@@ -6,11 +6,19 @@ using UnityEngine;
 * Descrpiton:
 */
 
-public class RoleFSM 
+/// <summary>
+/// 角色有限状态机：按 RoleState 管理各动画状态实例，负责状态切换时退出旧状态、进入新状态并同步 Animator 参数。
+/// </summary>
+public class RoleFSM
 {
+   /// <summary>状态机所属的角色表现控制器，状态切换时读写其当前状态与类型。</summary>
    RoleCtrlBase _roleCtrl;
+   /// <summary>RoleState 到具体状态实例的映射，构造时一次性注册全部状态。</summary>
    private Dictionary<RoleState, RoleFSMStateBase> _stateDic;
 
+   /// <summary>构造状态机并注册待机、跑、快跑、跳、滑铲、攻击、受击七个状态。</summary>
+   /// <param name="roleCtrl">所属角色表现控制器。</param>
+   /// <param name="animator">驱动角色动画的 Animator。</param>
    public RoleFSM( RoleCtrlBase roleCtrl,Animator animator)
    {
       _roleCtrl  = roleCtrl;

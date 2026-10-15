@@ -32,6 +32,8 @@ public sealed class PlayerEntityBuilder : EntityBuilder
         MComponentMgr.Instance.CreateComponent<MIdleComponent>(entity);
         // 挂载角色跳跃表现组件，统一装配起跳、空中循环和落地动画。
         MComponentMgr.Instance.CreateComponent<MJumpComponent>(entity);
+        // 本地主角挂载RO导航到达模块，接收输入交接并发送技能请求。
+        MComponentMgr.Instance.CreateComponent<MNavigationComponent>(entity);
 
         return entity;
     }

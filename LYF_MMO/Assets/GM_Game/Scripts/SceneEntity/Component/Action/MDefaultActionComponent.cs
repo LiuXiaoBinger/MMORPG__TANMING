@@ -7,6 +7,7 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MDefaultActionComponent : MBasicActionComponent
 {
+    /// <summary>默认动作组件内部的子状态机，决定当前应选用普通/战斗/自拍/搬运/射击/组合技哪一套待机与移动动画槽位。</summary>
     public enum State : int
     {
         /// <summary>普通待机/移动。</summary>
@@ -38,8 +39,6 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     private float _lastStepTimeIdx = 0;
     /// <summary>获取或设置移动音效是否循环播放。</summary>
     public bool MoveAudioLoop { get; set; } = false;
-    /// <summary>后摇（HouYao）结束前额外等待的间隔（秒）。</summary>
-    private const float HOU_YAO_INTERVAL = 0.05f;
     /// <summary>构造函数，初始化默认状态并注册移动事件回调。</summary>
     /// <param name="owner">宿主场景实体对象。</param>
     public MDefaultActionComponent(ROObject owner) : base(owner)
@@ -76,7 +75,9 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
             }
 
             // 战斗中静止时固定使用 FIdle；普通 Idle 和 FIdle 的真实剪辑由 MIdleComponent 预先装配。
-            if (Entity.BattleIdle && !shouldPlayMovement && !Entity.IsJump && !Entity.InCarrying)
+            // 是否属于静止待机姿态：不播移动、非跳跃、非搬运。
+            bool battleIdlePose = !shouldPlayMovement && !Entity.IsJump && !Entity.InCarrying;
+            if (Entity.BattleIdle && battleIdlePose)
             {
                 return MAnimator.STATE_FIDLE;
             }
@@ -225,10 +226,17 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     /// </summary>
     private void FootSteps()
     {
-        if (Entity == null || !Entity.IsMoving || Entity.Model == null ||
-            Entity.Model.Ator == null || Entity.Model.Ator.Speed <= 0 ||
-            Entity.Model.Ator.GetCurrentAnimInfo() == null || _footStepsTimes == null ||
-            _footStepsTimes.Length == 0)
+        // 任一前置条件不满足即跳过本次脚步检查；按原 || 短路顺序逐组早退。
+        if (Entity == null || !Entity.IsMoving || Entity.Model == null)
+        {
+            return;
+        }
+        if (Entity.Model.Ator == null || Entity.Model.Ator.Speed <= 0 ||
+            Entity.Model.Ator.GetCurrentAnimInfo() == null)
+        {
+            return;
+        }
+        if (_footStepsTimes == null || _footStepsTimes.Length == 0)
         {
             return;
         }
@@ -239,28 +247,35 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         _lastStepTimeIdx = Entity.Model.Ator.GetCurrentAnimInfo().NormalizedTime % 1;
     }
     /// <summary>
-    /// 逐帧更新：非公共坐骑移动时同步动画机速度到跑步速度；
+    /// 逐帧更新：移动且处于跑步模式时同步动画机速度到属性跑速；
     /// 非循环移动音效模式下，根据当前动画归一化时间是否越过脚步声时间点来触发 FootSteps。
     /// </summary>
     /// <param name="fDeltaT">距上一帧时间（秒）。</param>
     protected override void OnUpdate(float fDeltaT)
     {
-        if (Entity.IsMoving && Entity.MoveComp != null && Entity.MoveComp.IsRunning &&
-                            /*!Entity.IsRidePubVehicle
-                            &&*/ !MCommonFunctions.IsEqual
-                                (Entity.AtorSpeed, Entity.AttrComp.RunAtorSpeed))
+        // 实体是否仍处于移动状态。
+        bool stillMoving = Entity.IsMoving;
+        // 仅在移动且处于跑步模式时读取属性跑速，保持原条件的短路顺序。
+        if (stillMoving && Entity.MoveComp != null && Entity.MoveComp.IsRunning)
         {
-            Entity.AtorSpeed = Entity.AttrComp.RunAtorSpeed;
+            if (!MCommonFunctions.IsEqual(Entity.AtorSpeed, Entity.AttrComp.RunAtorSpeed))
+            {
+                Entity.AtorSpeed = Entity.AttrComp.RunAtorSpeed;
+            }
         }
         if (MoveAudioLoop)
         {
             return;
         }
 
-        if (Entity.IsMoving && Entity.Model.Ator != null
-                            && Entity.Model.Ator.InState(StateName)
-                            && Entity.Model.Ator.GetCurrentAnimInfo() 
-                            != null)
+        // 静止时不读取移动动画信息；原条件首先检查移动状态。
+        if (!stillMoving)
+        {
+            return;
+        }
+        if (Entity.Model.Ator != null
+            && Entity.Model.Ator.InState(StateName)
+            && Entity.Model.Ator.GetCurrentAnimInfo() != null)
         {
             // 当前移动动画的归一化进度，用于跨过配置脚步点时触发一次音效。
             float time = Entity.Model.Ator.GetCurrentAnimInfo().NormalizedTime % 1;
@@ -273,13 +288,18 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
             {
                 _lastStepTimeIdx -= 1;
             }
-            if (_footStepsTimes != null
+            // 脚步点表与当前下标本身是否有效：表非空、下标非负且不越界。
+            bool footTimesValid = _footStepsTimes != null
                 && _footStepTimeIdx >= 0
-                && _footStepTimeIdx < _footStepsTimes.Length
-                && time >= _footStepsTimes[_footStepTimeIdx]
-                && _lastStepTimeIdx <= _footStepsTimes[_footStepTimeIdx])
+                && _footStepTimeIdx < _footStepsTimes.Length;
+            // 只有表和下标有效才读取脚步点；未接脚步配置的角色仍更新动画进度。
+            if (footTimesValid)
             {
-                FootSteps();
+                if (time >= _footStepsTimes[_footStepTimeIdx]
+                    && _lastStepTimeIdx <= _footStepsTimes[_footStepTimeIdx])
+                {
+                    FootSteps();
+                }
             }
 
             _lastStepTimeIdx = time;
@@ -287,87 +307,55 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     }
 
     /// <summary>
-        /// 播放默认动作动画：已在目标状态则直接返回；
-        /// 若当前处于后摇且静止，则先按后摇剩余时间设置定时器等待结束再切默认动画；
-        /// 否则直接播放，并按移动/静止、是否公共坐骑设置动画机速度与音效。
-        /// </summary>
-        /// <param name="preState">上一个动画机状态名。</param>
-        /// <returns>实际播放的动画机状态名。</returns>
-        public override string PlayAnim(string preState)
+    /// 播放默认动作动画：已在目标状态则直接返回；
+    /// 技能动作结束后直接恢复默认动作，并按移动/静止、是否公共坐骑设置动画机速度与音效。
+    /// </summary>
+    /// <param name="preState">上一个动画机状态名。</param>
+    /// <returns>实际播放的动画机状态名。</returns>
+    public override string PlayAnim(string preState)
+    {
+        if (Entity != null && (Entity.IsJump ||
+                               IsLandingAnimationPlaying()))
         {
-            if (Entity != null && (Entity.IsJump || 
-                                   IsLandingAnimationPlaying()))
+            return preState;
+        }
+        if (Entity.Model.Ator == null)
+        {
+            return preState;
+        }
+        if (Entity.Model.Ator.InState(StateName))
+        {
+            return StateName;
+        }
+        _lastStepTimeIdx = 0;
+        // 技能动作窗已结束；本项目未调度RO后摇回调，不能只返回状态名而实际不切动画。
+        Entity.IsHouyao = false;
+        // 基类完成剪辑装配和 Animator 切换后返回的实际状态名。
+        string result = base.PlayAnim(StateName);
+        if (Entity.IsMoving)
+        {
+            if (Entity.IsRidePubVehicle)
             {
-                return preState;
+                Entity.AtorSpeed = 1;
             }
-            killTimer();
-
-            if (Entity.Model.Ator == null)
+            else if (Entity.MoveComp != null && Entity.MoveComp.IsRunning)
             {
-                return preState;
-            }
-            if (Entity.Model.Ator.InState(StateName))
-            {
-                return StateName;
-            }
-            // 后摇剩余等待时长，单位为秒；大于零时本帧保持当前动作。
-            float tt = 0;
-            _lastStepTimeIdx = 0;
-            // 存在未播完的后摇时，先等待其后摇剩余时间再切到默认动画，避免动作生硬打断
-            if (Entity.IsHouyao && Entity.Model.Ator.IsLoaded && !Entity.IsMoving)
-            {
-                // 当前动画的播放信息，用于计算未播放完毕的后摇时间。
-                MAnimator.MAnimInfo info = Entity.Model.Ator.GetCurrentAnimInfo();
-                if (info != null)
-                {
-                    // 当前动作已播放的归一化进度。
-                    float t = info.NormalizedTime;
-                    if (t < 1)
-                    {
-                        tt = (1 - t) * info.Length / Entity.Model.Ator.Speed + HOU_YAO_INTERVAL;
-                    }
-                }
-            }
-            Entity.IsHouyao = false;
-            if (tt > 0)
-            {
-               // _skillAfterToken = MTimerMgr.singleton.SetTimer(tt, _onSkillAfterEnd);
-                return StateName;
+                Entity.AtorSpeed = Entity.AttrComp.RunAtorSpeed;
             }
             else
             {
-                // 基类完成剪辑装配和 Animator 切换后返回的实际状态名。
-                string result = base.PlayAnim(StateName);
-                if (Entity.IsMoving)
-                {
-                    if (Entity.IsRidePubVehicle)
-                    {
-                        Entity.AtorSpeed = 1;
-                    }
-                    else if (Entity.MoveComp != null && Entity.MoveComp.IsRunning)
-                    {
-                        Entity.AtorSpeed = Entity.AttrComp.RunAtorSpeed;
-                    }
-                    else
-                    {
-                        Entity.AtorSpeed = 1f;
-                    }
-                    if (MoveAudioLoop)
-                    {
-                        FootSteps();
-                    }
-                }
-                else
-                {
-                    Entity.AtorSpeed = 1;
-                }
-
-                return result;
+                Entity.AtorSpeed = 1f;
+            }
+            if (MoveAudioLoop)
+            {
+                FootSteps();
             }
         }
+        else
+        {
+            Entity.AtorSpeed = 1;
+        }
 
-    private void killTimer()
-    {
-        //throw new System.NotImplementedException();
+        return result;
     }
 }

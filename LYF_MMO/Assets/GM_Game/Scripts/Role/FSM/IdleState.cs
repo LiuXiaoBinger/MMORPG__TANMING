@@ -6,9 +6,10 @@ using UnityEngine;
 * Descrpiton:
 */
 
+/// <summary>待机状态：进入时把动作参数置为1并把 Movement 浮点归零。</summary>
 public class IdleState :RoleFSMStateBase
 {
-   
+
     public IdleState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)
     {
     }

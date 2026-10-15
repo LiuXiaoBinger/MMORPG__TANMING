@@ -102,7 +102,13 @@ public static class ConvertChatPrefabToTMP
         GameObject mainToggle = FindSceneObject("MainTogle");
         GameObject controls = FindSceneObject("ChatDemoControls");
 
-        if (chat == null || chatSetting == null || toggleGroup == null || settingButton == null || closeButton == null || mainToggle == null || controls == null)
+        // 聊天面板与聊天设置面板节点是否缺失。
+        bool isChatOrSettingMissing = chat == null || chatSetting == null;
+        // 开关分组与打开设置按钮节点是否缺失。
+        bool isToggleGroupOrSettingBtnMissing = toggleGroup == null || settingButton == null;
+        // 关闭按钮、主开关与演示控件节点是否缺失。
+        bool isCloseOrMainToggleOrControlsMissing = closeButton == null || mainToggle == null || controls == null;
+        if (isChatOrSettingMissing || isToggleGroupOrSettingBtnMissing || isCloseOrMainToggleOrControlsMissing)
         {
             Debug.LogError("无法配置 Chatseting：场景中缺少聊天设置所需对象。");
             return;
@@ -256,8 +262,12 @@ public static class ConvertChatPrefabToTMP
             if (component == null) continue;
             MonoScript script = MonoScript.FromMonoBehaviour(component);
             string typeName = script == null || script.GetClass() == null ? string.Empty : script.GetClass().FullName;
+            // 是否属于 Unity 原生 UGUI 或 TextMeshPro 命名空间。
+            bool isKnownUguiNamespace = typeName.StartsWith("UnityEngine.UI.") || typeName.StartsWith("TMPro.");
+            // 是否属于事件系统或画布缩放的原生组件类型。
+            bool isKnownNativeType = typeName == "UnityEngine.CanvasScaler" || typeName == "UnityEngine.EventSystems.EventSystem";
             // 保留 Unity 标准 UI 组件；删除第三方/项目自定义行为脚本。
-            if (typeName.StartsWith("UnityEngine.UI.") || typeName.StartsWith("TMPro.") || typeName == "UnityEngine.CanvasScaler" || typeName == "UnityEngine.EventSystems.EventSystem")
+            if (isKnownUguiNamespace || isKnownNativeType)
             {
                 continue;
             }

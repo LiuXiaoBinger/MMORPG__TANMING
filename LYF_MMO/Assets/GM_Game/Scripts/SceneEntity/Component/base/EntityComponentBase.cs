@@ -12,25 +12,19 @@ public abstract class EntityComponentBase : IEntityComponent
     /// <summary>本组件通过 <see cref="RegisterEvent"/> 订阅的宿主事件及其处理器列表，回收时据此批量解绑。</summary>
     private readonly Dictionary<MEventType, List<MEventHandler>> _registeredEvents =
         new Dictionary<MEventType, List<MEventHandler>>();
+
     /// <summary>标记组件是否已经挂载过宿主；对象池复用时避免重复触发 OnAttachToHost。</summary>
     private bool _attached;
+
     private bool _enabled = true; // 组件是否可用
+
     private bool _detached = true; // 组件是否被卸载（组件模式下，没有挂载到对象的组件都是无效的）
+
     /// <summary>组件是否启用。get 时要求同时满足 _enabled 且未被卸载；set 只控制开关 _enabled</summary>
     public virtual bool Enabled
     {
         get { return _enabled && !_detached; }
         set { _enabled = value; }
-    }
-    /// <summary>构造组件实例，绑定宿主实体。</summary>
-    /// <param name="owner">组件所属宿主对象，必须是 <see cref="MEntity"/> 或其子类，为空时抛出异常。</param>
-    protected EntityComponentBase(ROObject owner)
-    {
-        if (owner == null)
-        {
-            throw new ArgumentNullException("owner");
-        }
-        Entity = owner as MEntity;
     }
 
     /// <summary>组件所属实体，普通组件和专用组件均通过此引用访问实体。</summary>
@@ -42,14 +36,38 @@ public abstract class EntityComponentBase : IEntityComponent
     /// <summary>组件类型标识，由子类声明，用于组件容器按类型索引。</summary>
     public abstract EntityComponentType ComponentType { get; }
 
-    /// <summary>组件初始化，由组件容器在挂载后统一调用一次；子类按需重写。</summary>
-    public virtual void Initialize()
+    /// <summary>构造组件实例，绑定宿主实体。</summary>
+    /// <param name="owner">组件所属宿主对象，必须是 <see cref="MEntity"/> 或其子类，为空时抛出异常。</param>
+    protected EntityComponentBase(ROObject owner)
     {
+        if (owner == null)
+        {
+            throw new ArgumentNullException("owner");
+        }
+        Entity = owner as MEntity;
     }
 
     /// <summary>组件每帧更新，由组件容器按顺序驱动。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
     public virtual void Update(int deltaMilliseconds)
+    {
+    }
+
+    /// <summary>组件每帧更新入口，由实体容器按固定顺序驱动；子类按需覆写。</summary>
+    /// <param name="fDeltaT">距上一帧时间（秒）。</param>
+    public virtual void Update(float fDeltaT)
+    {
+        
+    }
+
+    /// <summary>帧后更新，由组件容器在 LateUpdate 阶段驱动，常用于动画表现刷新。</summary>
+    /// <param name="deltaTime">距上一帧的秒数。</param>
+    public virtual void LateUpdate(float deltaTime)
+    {
+    }
+
+    /// <summary>组件初始化，由组件容器在挂载后统一调用一次；子类按需重写。</summary>
+    public virtual void Initialize()
     {
     }
 
@@ -196,12 +214,6 @@ public abstract class EntityComponentBase : IEntityComponent
         EventSubscribe();
     }
 
-    /// <summary>帧后更新，由组件容器在 LateUpdate 阶段驱动，常用于动画表现刷新。</summary>
-    /// <param name="deltaTime">距上一帧的秒数。</param>
-    public virtual void LateUpdate(float deltaTime)
-    {
-    }
-
     /// <summary>组件挂载完成回调，在组件加入容器并完成初始化后触发。</summary>
     public virtual void Attached()
     {
@@ -212,9 +224,4 @@ public abstract class EntityComponentBase : IEntityComponent
 
     /// <summary>注销事件监听，与 EventSubscribe 成对，子类按需覆写</summary>
     protected virtual void EventUnsubscribe() { }
-
-    public virtual void Update(float fDeltaT)
-    {
-        
-    }
 }

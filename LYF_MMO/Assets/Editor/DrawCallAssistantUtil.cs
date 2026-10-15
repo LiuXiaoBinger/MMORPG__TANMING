@@ -555,7 +555,11 @@ public class AssetNode
             _colorAlpha = rawImage.color.a;
             _graphic = rawImage;
         }
-        if (_renderType != RenderTypeEnum.Non && _rect.width != 0 && _rect.height != 0 && _scale != Vector3.zero)//if(w==0||h==0) 不参与渲染,scala == 0 不参与渲染;
+        // 已识别出可渲染图形类型，且矩形宽高均不为零。
+        bool hasRenderTypeAndSize = _renderType != RenderTypeEnum.Non && _rect.width != 0 && _rect.height != 0;
+        // 缩放不为零才参与渲染。
+        bool hasNonZeroScale = _scale != Vector3.zero;
+        if (hasRenderTypeAndSize && hasNonZeroScale)//if(w==0||h==0) 不参与渲染,scala == 0 不参与渲染;
         {
             _isRender = true;
         }

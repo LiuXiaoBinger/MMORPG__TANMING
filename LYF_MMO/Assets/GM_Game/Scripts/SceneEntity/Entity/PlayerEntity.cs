@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
@@ -9,8 +10,14 @@ using UnityEngine;
 /// </summary>
 public sealed class PlayerEntity : RoleEntity
 {
+    /// <summary>RO 同名当前选中实体，点击、瞄准与技能自动选敌共用；离场和复用时清空。</summary>
+    public MEntity Target { get; set; }
+
     /// <summary>本地玩家上次生成的施法 UUID，零表示该实体尚未释放技能。</summary>
     private ulong _nextSkillUuid;
+
+    /// <summary>上次已上报的水平移动状态，用于发送松键后的最后位置。</summary>
+    private bool _isMoving;
 
     /// <summary>按 RO 规则生成本地玩家下一次施法 UUID，取值范围为 1 至 9999。</summary>
     public ulong NextSkillUUID
@@ -26,7 +33,36 @@ public sealed class PlayerEntity : RoleEntity
         }
     }
 
+    /// <summary>按 RO 同名发送入口上传当前位置、朝向、耗时和移动状态，并归零同步计时。</summary>
+    public void UpdateMove()
+    {
+        // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
+        if (MainCityMgr.Instance == null || !Model.IsLoaded || MoveComp.CostTime <= 0f)
+        {
+            return;
+        }
+        _face = Model.Rotation.eulerAngles.y;
+        _isMoving = IsMoving;
+        // 本时间段是否实际发生位移；跳跃与技能根运动也需要远端追赶最终坐标。
+        bool isMoved = Position != sysnOldPos;
+        sysnOldPos = Position;
+        // 本次位置上报的强类型消息：位置为米、耗时为秒，沿 RO Dx/Dy/Dz/Time 语义发送。
+        MoveOperationReq ptc = new MoveOperationReq();
+        ptc.Dx = sysnOldPos.x;
+        ptc.Dy = sysnOldPos.y;
+        ptc.Dz = sysnOldPos.z;
+        ptc.Face = _face;
+        ptc.Time = MoveComp.CostTime;
+        ptc.IsMoving = IsMoving;
+        ptc.IsMoved = isMoved || MoveComp.HasDirectionalInput;
+        MoveComp.CostTime = 0f;
+        NetSocketMgr.Client.SendData(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
+        _lastSyncTime = 0f;
+    }
+
+    /// <summary>移动朝向使用的主相机缓存；Single切场景销毁旧相机后重新获取。</summary>
     private Transform _mainCameraTransform = null;
+
     /// <summary>本地角色业务组件容器（背包、计数等）</summary>
     private readonly RoleComponentContainer _roleComponents;
 
@@ -66,10 +102,58 @@ public sealed class PlayerEntity : RoleEntity
         IsLocal = false;
         DirtyTracker = new ClientDirtyTracker();
         _roleComponents = new RoleComponentContainer(this);
+        // 直接沿用 MEntity 已有 RO 同步字段；玩家第一次上报从当前世界位置开始计时。
+        sysnOldPos = Position;
+        _lastSyncTime = 0f;
         CacheMainCameraTransform();
     }
+
+    /// <summary>
+    /// 场景世界更新时同时推进角色组件。
+    /// </summary>
+    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        base.Update(deltaMilliseconds);
+        UpdateRoleData(deltaMilliseconds);
+        if (!Model.IsLoaded || MainCityMgr.Instance == null)
+        {
+            return;
+        }
+        // 与 RO 一样，在本帧运动完成后比较上次位置，厘米以下变化不触发位置包。
+        Vector3 destPos = Position;
+        // 当前点相对上次上报点的三维位移，单位为米。
+        Vector3 sub = destPos - sysnOldPos;
+        // 世界 X 轴变化的整数厘米数。
+        int subX = (int)(sub.x * 100f);
+        // 世界 Y 轴变化的整数厘米数；用于同步本项目已有跳跃及落地位置。
+        int subY = (int)(sub.y * 100f);
+        // 世界 Z 轴变化的整数厘米数。
+        int subZ = (int)(sub.z * 100f);
+        // 当前模型水平朝向角，单位为度。
+        float ang = Model.Rotation.eulerAngles.y;
+        _lastSyncTime += deltaMilliseconds * 0.001f;
+        // 移动结算时间与同步间隔均满足上报节拍。
+        bool movementTimingValid = MoveComp.CostTime > 0f && _lastSyncTime > 0.1f;
+        // 移动状态标志发生变化。
+        bool moveStateChanged = _isMoving != IsMoving;
+        // 三维位置任一轴向上有整数厘米级位移。
+        bool positionShifted = Mathf.Abs(subX) > 0 || Mathf.Abs(subZ) > 0 || Mathf.Abs(subY) > 0;
+        // 水平朝向角相对上次上报偏转超过 1 度。
+        bool faceChanged = Mathf.Abs(ang - _face) > 1f;
+        // 姿态发生实质变化（状态标志、位置或朝向任一成立）。
+        bool poseChanged = moveStateChanged || positionShifted || faceChanged;
+        if (movementTimingValid && poseChanged)
+        {
+            _face = ang;
+            UpdateMove();
+        }
+    }
+
+    /// <summary>缓存当前活动场景中带MainCamera标签的相机变换。</summary>
     private void CacheMainCameraTransform()
     {
+        // 当前场景输出主相机；创角与主城各自持有独立实例。
         Camera mainCamera = Camera.main;
         if (mainCamera != null)
         {
@@ -77,14 +161,18 @@ public sealed class PlayerEntity : RoleEntity
         }
     }
 
-    /// <summary>
-    /// 本地玩家可以获取更随的相机
-    /// </summary>
-    /// <returns></returns>
+    /// <summary>获取移动朝向使用的主相机，旧场景相机销毁后更新缓存。</summary>
+    /// <returns>当前场景主相机的变换；场景尚无主相机时为空。</returns>
     public Transform GetMainCamera()
     {
+        // 玩家实体先于主城创建并跨场景存活，不能继续使用已卸载的创角相机。
+        if (_mainCameraTransform == null)
+        {
+            CacheMainCameraTransform();
+        }
         return _mainCameraTransform;
     }
+
     /// <summary>
     /// 实体世界创建后装载本地角色数据并初始化角色组件。
     /// 仅在本地玩家实体上调用一次。
@@ -121,8 +209,13 @@ public sealed class PlayerEntity : RoleEntity
     /// <returns>加载成功返回 true；非本地玩家、组件未初始化或回包失败返回 false</returns>
     public bool LoadRoleData(RoleKanpsackInfoRet result)
     {
-        if (!IsLocal || !_componentsInitialized || result == null ||
-            result.CmdCode != CmdCode.Succeed || result.RoleKanpsackInfo == null)
+        // 非本地玩家或业务组件尚未初始化，直接忽略回包。
+        bool notLocalOrUninitialized = !IsLocal || !_componentsInitialized;
+        // 回包无效：回包体为空、协议码非成功或背包信息缺失（内部短路保护空引用）。
+        bool resultInvalid = result == null ||
+            result.CmdCode != CmdCode.Succeed ||
+            result.RoleKanpsackInfo == null;
+        if (notLocalOrUninitialized || resultInvalid)
         {
             return false;
         }
@@ -161,16 +254,6 @@ public sealed class PlayerEntity : RoleEntity
             return;
         }
         _roleComponents.Update(deltaMilliseconds);
-    }
-
-    /// <summary>
-    /// 场景世界更新时同时推进角色组件。
-    /// </summary>
-    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        base.Update(deltaMilliseconds);
-        UpdateRoleData(deltaMilliseconds);
     }
 
     /// <summary>
@@ -293,6 +376,8 @@ public sealed class PlayerEntity : RoleEntity
     /// </summary>
     protected override void OnDestroying()
     {
+        MSkillTargetMgr.singleton.ResetTarget(null);
+        Target = null;
         DisposeRoleData();
         base.OnDestroying();
     }
@@ -306,15 +391,20 @@ public sealed class PlayerEntity : RoleEntity
     internal override void PrepareForReuse(ulong uid, EntityType entityType,
         int configId)
     {
+        Target = null;
         _componentsInitialized = false;
         _roleDataReady = false;
         _disposed = false;
         _addedToWorldNotified = false;
         IsLocal = false;
+        _isMoving = false;
         RoleInfo = null;
         _flags.Clear();
         DirtyTracker.ClearAll();
         base.PrepareForReuse(uid, entityType, configId);
+        // 基类已经清除朝向和上次位置，玩家恢复 0.1 秒同步计时起点。
+        sysnOldPos = Position;
+        _lastSyncTime = 0f;
     }
 
     /// <summary>

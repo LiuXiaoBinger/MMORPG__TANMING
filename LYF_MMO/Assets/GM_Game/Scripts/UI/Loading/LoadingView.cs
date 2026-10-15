@@ -13,23 +13,25 @@ using UnityEngine.UI;
 public class LoadingView : UIBase
 {
     [SerializeField] private TMP_Text _texTips;
+
     [SerializeField] private Slider _slider;
+
     [SerializeField] private TMP_Text _texPgrs;
+
     [SerializeField] private Image _imgPoint;
 
     private float _slideWidth;
-
-    private void Start() {
-        RectTransform slideTrans = _slider.transform as RectTransform;
-        _slideWidth = slideTrans.rect.width;
-        RefreshUI(0, "");
-    }
 
     private void OnEnable()
     {
         RefreshUI(0, "");
     }
 
+    private void Start() {
+        RectTransform slideTrans = _slider.transform as RectTransform;
+        _slideWidth = slideTrans.rect.width;
+        RefreshUI(0, "");
+    }
 
     /// <summary>
     /// 更新热更新UI

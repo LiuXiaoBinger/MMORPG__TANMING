@@ -9,8 +9,10 @@ public class ChatWindow : WindowBase
 {
     /// <summary>聊天消息条目父节点。</summary>
     [SerializeField, Header("消息展示框")] private Transform _content;
+
     /// <summary>聊天频道选择框。</summary>
     [SerializeField, Header("发送消息频道选择")] private TMP_Dropdown _dropdown;
+
     /// <summary>聊天文本输入框。</summary>
     [SerializeField, Header("发送消息的内容")] private TMP_InputField _iptChat;
 

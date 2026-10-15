@@ -40,6 +40,18 @@ public interface ROObject
     StateDefine CurrentState { get; }
 
     /// <summary>
+    /// 每帧逻辑更新
+    /// </summary>
+    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
+    void Update(int deltaMilliseconds);
+
+    /// <summary>
+    /// 帧末更新，驱动状态机动画刷新
+    /// </summary>
+    /// <param name="deltaSeconds">帧间隔秒数</param>
+    void LateUpdate(float deltaSeconds);
+
+    /// <summary>
     /// 添加事件监听器
     /// </summary>
     /// <param name="eventType">监听的事件类型</param>
@@ -73,18 +85,6 @@ public interface ROObject
 
     /// <summary>执行初始化流程，装配组件并进入 Active 状态</summary>
     void Initialize();
-
-    /// <summary>
-    /// 每帧逻辑更新
-    /// </summary>
-    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
-    void Update(int deltaMilliseconds);
-
-    /// <summary>
-    /// 帧末更新，驱动状态机动画刷新
-    /// </summary>
-    /// <param name="deltaSeconds">帧间隔秒数</param>
-    void LateUpdate(float deltaSeconds);
 
     /// <summary>进入睡眠状态，暂停逻辑更新</summary>
     void Sleep();

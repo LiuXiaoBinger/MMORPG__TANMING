@@ -15,29 +15,65 @@ using UnityEngine.InputSystem;
 /// <summary>本地主角的自由视角相机管理器，同时管理世界与UI相机之间的声音监听所有权。</summary>
 public class CameraMgr : MonoBehaviour
 {
+
     /// <summary>当前实际世界输出相机的声音监听器，三维角色声音必须以此位置计算衰减。</summary>
     private AudioListener _worldAudioListener;
+
+
     /// <summary>当前UI相机原有监听器，世界声音接管期间暂时禁用以保持唯一监听器。</summary>
     private AudioListener _uiAudioListener;
+
+
     /// <summary>接管前世界相机监听器的启用状态，释放时恢复用户原值。</summary>
     private bool _worldAudioListenerWasEnabled;
+
+
     /// <summary>接管前UI监听器的启用状态，世界相机销毁后恢复登录界面的声音。</summary>
     private bool _uiAudioListenerWasEnabled;
+
+
     /// <summary>世界监听器是否由本管理器创建，销毁时只移除本管理器新增的组件。</summary>
     private bool _createdWorldAudioListener;
+
+
     /// <summary>本管理器创建的世界监听器，切相机时暂禁保留，最终销毁管理器才移除。</summary>
     private readonly List<AudioListener> _ownedAudioListeners = new List<AudioListener>();
+
+
     [SerializeField] private float _yAxisSpeed = 0.1f;
+
     [SerializeField] private float _xAxisSpeed = 10f;
+
     [SerializeField] private float _delayTimer = 0.6f;
+
     /// <summary>当前本地主角模型根节点，用于角色属性窗口旋转展示。</summary>
     private Transform _roleMainTransform;
+
+
     /// <summary>当前相机注视节点，通常为主角模型下的 LookAtPos。</summary>
     private Transform _lookAtTransform;
+
+
     public static CameraMgr Instance;
+
     private CinemachineFreeLook _cinemachine;
 
     private Mouse _mouse;
+
+    #region 设置角色属性window视角
+
+    private float _oldOrbitesOffet;
+
+    private float _oldeulerAnglesY;
+
+    private float _oldcimeYaxis;
+
+    private RectTransform _roleAtttWindowRectTransform;
+
+    [HideInInspector]public bool _isOpenRoleAtttWindow;
+
+    //是否打开了背包背包window
+    private bool isOpenKnapsackWindow;
 
     private void Awake()
     {
@@ -46,6 +82,79 @@ public class CameraMgr : MonoBehaviour
         _mouse = Mouse.current;
         // SetOrbites(12);
     }
+
+
+    /// <summary>已有角色的世界相机重新启用时重新绑定监听器，首次启用仍等待角色初始化。</summary>
+    private void OnEnable()
+    {
+        if (_roleMainTransform != null)
+        {
+            BindAudioListener();
+        }
+    }
+
+
+    private void Update()
+    {
+        if(_isOpenRoleAtttWindow ==true)return;
+
+        //摄像机缩放功能
+        //1.获取到鼠标滚轮事件 
+        if (_mouse.scroll.y.ReadValue() != 0)
+        {
+            SetOrbites(_cinemachine.m_Orbits[0].m_Height - _mouse.scroll.y.ReadValue()*2 );
+        }
+
+
+        //摄像机旋转功能 替代Mouse Y
+        CameraRotation();
+
+    }
+
+
+    /// <summary>相机管理器临时停用时归还UI监听器，避免停用的世界相机长期占用声音位置。</summary>
+    private void OnDisable()
+    {
+        if (_uiAudioListener != null)
+        {
+            _uiAudioListener.enabled = _uiAudioListenerWasEnabled;
+        }
+        if (_worldAudioListener != null)
+        {
+            if (_createdWorldAudioListener)
+            {
+                // 临时停用只禁用自建监听器并保留所有权，同帧重新启用复用唯一原生组件。
+                _worldAudioListener.enabled = false;
+            }
+            else
+            {
+                _worldAudioListener.enabled = _worldAudioListenerWasEnabled;
+            }
+        }
+    }
+
+
+
+    /// <summary>相机场景销毁后解除声音监听接管，并清理属于自身的静态实例入口。</summary>
+    private void OnDestroy()
+    {
+        ReleaseAudioListener();
+        // index覆盖本管理器所有自建组件，旧相机场景已经销毁的项无需再次处理。
+        for (int index = 0; index < _ownedAudioListeners.Count; index++)
+        {
+            if (_ownedAudioListeners[index] != null)
+            {
+                _ownedAudioListeners[index].enabled = false;
+                Destroy(_ownedAudioListeners[index]);
+            }
+        }
+        _ownedAudioListeners.Clear();
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
 
     /// <summary>让自由视角相机跟随本地主角模型，不依赖旧 MainRoleCtrl。</summary>
     /// <param name="roleTransform">本地主角模型根节点。</param>
@@ -66,6 +175,8 @@ public class CameraMgr : MonoBehaviour
         SetOrbites(12);
         BindAudioListener();
     }
+
+
 
     /// <summary>将三维声音监听绑定到实际世界输出相机，避免远离角色的UI相机吞掉声音。</summary>
     private void BindAudioListener()
@@ -119,6 +230,8 @@ public class CameraMgr : MonoBehaviour
         _worldAudioListener.enabled = true;
     }
 
+
+
     /// <summary>退出世界相机时归还监听所有权，恢复UI和原有组件状态。</summary>
     private void ReleaseAudioListener()
     {
@@ -145,72 +258,6 @@ public class CameraMgr : MonoBehaviour
         _uiAudioListenerWasEnabled = false;
     }
 
-    /// <summary>相机场景销毁后解除声音监听接管，并清理属于自身的静态实例入口。</summary>
-    private void OnDestroy()
-    {
-        ReleaseAudioListener();
-        // index覆盖本管理器所有自建组件，旧相机场景已经销毁的项无需再次处理。
-        for (int index = 0; index < _ownedAudioListeners.Count; index++)
-        {
-            if (_ownedAudioListeners[index] != null)
-            {
-                _ownedAudioListeners[index].enabled = false;
-                Destroy(_ownedAudioListeners[index]);
-            }
-        }
-        _ownedAudioListeners.Clear();
-        if (Instance == this)
-        {
-            Instance = null;
-        }
-    }
-
-    /// <summary>相机管理器临时停用时归还UI监听器，避免停用的世界相机长期占用声音位置。</summary>
-    private void OnDisable()
-    {
-        if (_uiAudioListener != null)
-        {
-            _uiAudioListener.enabled = _uiAudioListenerWasEnabled;
-        }
-        if (_worldAudioListener != null)
-        {
-            if (_createdWorldAudioListener)
-            {
-                // 临时停用只禁用自建监听器并保留所有权，同帧重新启用复用唯一原生组件。
-                _worldAudioListener.enabled = false;
-            }
-            else
-            {
-                _worldAudioListener.enabled = _worldAudioListenerWasEnabled;
-            }
-        }
-    }
-
-    /// <summary>已有角色的世界相机重新启用时重新绑定监听器，首次启用仍等待角色初始化。</summary>
-    private void OnEnable()
-    {
-        if (_roleMainTransform != null)
-        {
-            BindAudioListener();
-        }
-    }
-
-    private void Update()
-    {
-        if(_isOpenRoleAtttWindow ==true)return;
-
-        //摄像机缩放功能
-        //1.获取到鼠标滚轮事件 
-        if (_mouse.scroll.y.ReadValue() != 0)
-        {
-            SetOrbites(_cinemachine.m_Orbits[0].m_Height - _mouse.scroll.y.ReadValue()*2 );
-        }
-
-
-        //摄像机旋转功能 替代Mouse Y
-        CameraRotation();
-
-    }
 
     /// <summary>
     /// 摄像机旋转功能
@@ -239,9 +286,6 @@ public class CameraMgr : MonoBehaviour
 
     }
 
-
- 
-
     /// <summary>
     /// 设置轨道数据
     /// </summary>
@@ -265,16 +309,6 @@ public class CameraMgr : MonoBehaviour
 
     }
 
-    #region 设置角色属性window视角
-
-    private float _oldOrbitesOffet;
-    private float _oldeulerAnglesY;
-    private float _oldcimeYaxis;
-    private RectTransform _roleAtttWindowRectTransform;
-    
-    [HideInInspector]public bool _isOpenRoleAtttWindow;
-    //是否打开了背包背包window
-    private bool isOpenKnapsackWindow;
     /// <summary>
     /// 设置角色属性window视角
     /// </summary>
@@ -317,6 +351,7 @@ public class CameraMgr : MonoBehaviour
             ToggleAngle(_oldOrbitesOffet, _oldeulerAnglesY, _oldcimeYaxis,new Vector3(0,1.17f),460);
         }
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -362,5 +397,4 @@ public class CameraMgr : MonoBehaviour
     }
     
     #endregion
-    
 }

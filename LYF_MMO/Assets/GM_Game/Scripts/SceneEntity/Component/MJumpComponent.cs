@@ -53,12 +53,6 @@ public sealed class MJumpComponent : EntityComponentBase
         _onJumpEnded = new MEventHandler(OnJumpEnded);
     }
 
-    /// <summary>初始化时尝试读取表现表并登记跳跃动画。</summary>
-    public override void Initialize()
-    {
-        TryPrepareJumpAnimations();
-    }
-
     /// <summary>
     /// 等待异步模型和动画器就绪；同时推进起跳、空中循环和落地动画的表现阶段。
     /// </summary>
@@ -70,8 +64,13 @@ public sealed class MJumpComponent : EntityComponentBase
             TryPrepareJumpAnimations();
         }
 
-        if (!_isPrepared || Entity == null || Entity.Model == null ||
-            Entity.Model.Ator == null)
+        // 跳跃动画尚未准备完成时本帧不推进表现阶段。
+        if (!_isPrepared)
+        {
+            return;
+        }
+        // 实体或其模型、Animator 组件缺失时本帧不推进表现阶段。
+        if (Entity == null || Entity.Model == null || Entity.Model.Ator == null)
         {
             return;
         }
@@ -128,6 +127,12 @@ public sealed class MJumpComponent : EntityComponentBase
                 }
             }
         }
+    }
+
+    /// <summary>初始化时尝试读取表现表并登记跳跃动画。</summary>
+    public override void Initialize()
+    {
+        TryPrepareJumpAnimations();
     }
 
     /// <summary>对象池回收时清空跳跃阶段和资源准备标记。</summary>
@@ -215,9 +220,18 @@ public sealed class MJumpComponent : EntityComponentBase
     /// <summary>读取表现表并登记跳跃三阶段动画，三段跳不重复读取或创建动画。</summary>
     private void TryPrepareJumpAnimations()
     {
-        if (Entity == null || !Entity.IsRole || Entity.IsRideVehicle ||
-            Entity.IsRidePubVehicle || Entity.Model == null ||
-            Entity.Model.Ator == null || Entity.AttrComp == null)
+        // 实体缺失或非角色对象时不登记跳跃动画。
+        if (Entity == null || !Entity.IsRole)
+        {
+            return;
+        }
+        // 骑乘坐骑（含公共坐骑）时不登记跳跃动画。
+        if (Entity.IsRideVehicle || Entity.IsRidePubVehicle)
+        {
+            return;
+        }
+        // 模型、Animator 或属性组件缺失时不登记跳跃动画。
+        if (Entity.Model == null || Entity.Model.Ator == null || Entity.AttrComp == null)
         {
             return;
         }
@@ -230,7 +244,14 @@ public sealed class MJumpComponent : EntityComponentBase
 
         // 当前职业对应的表现表，提供三阶段跳跃动画短名。
         PresentTable presentData = Entity.AttrComp.PresentDataView;
-        if (presentData == null || string.IsNullOrEmpty(presentData.JumpStartAnim) ||
+        // 角色表现表缺失时记录失败并退出。
+        if (presentData == null)
+        {
+            LogPrepareFailure("角色表现表缺少 JumpStartAnim、JumpLoopAnim 或 JumpEndAnim 配置。");
+            return;
+        }
+        // 三段跳跃动画短名任一为空时记录失败并退出。
+        if (string.IsNullOrEmpty(presentData.JumpStartAnim) ||
             string.IsNullOrEmpty(presentData.JumpLoopAnim) ||
             string.IsNullOrEmpty(presentData.JumpEndAnim))
         {
@@ -274,9 +295,13 @@ public sealed class MJumpComponent : EntityComponentBase
     /// <summary>在资源准备完成后尝试播放等待中的动画状态。</summary>
     private void TryPlayPendingState()
     {
-        if (string.IsNullOrEmpty(_pendingStateName) || Entity == null ||
-            Entity.Model == null || Entity.Model.Ator == null ||
-            Entity.CurrentState == StateDefine.kStateSkill)
+        // 没有待播状态名，或实体模型链路缺失时不请求播放。
+        if (string.IsNullOrEmpty(_pendingStateName) || Entity == null || Entity.Model == null)
+        {
+            return;
+        }
+        // Animator 缺失，或当前正处于技能状态时不请求播放。
+        if (Entity.Model.Ator == null || Entity.CurrentState == StateDefine.kStateSkill)
         {
             return;
         }

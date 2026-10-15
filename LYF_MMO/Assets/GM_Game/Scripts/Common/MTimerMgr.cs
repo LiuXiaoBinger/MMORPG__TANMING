@@ -12,35 +12,24 @@ public sealed class MTimerMgr
     /// <param name="args">本次施法 UUID 和具体表现指令，不允许通用弱类型载荷。</param>
     public delegate void TimerEventHandler(uint token, MSkillTimerArgs args);
 
-    /// <summary>待触发计时器，排序列表持有到触发或显式取消；同到期时刻保留注册顺序。</summary>
-    private sealed class MTimer
-    {
-        /// <summary>当前注册的非零票据，取消和查询均以该值定位。</summary>
-        public uint Token;
-        /// <summary>在本管理器时钟中的到期毫秒数。</summary>
-        public long TriggerTime;
-        /// <summary>登记时的管理器毫秒数，供 TimeDuration 查询。</summary>
-        public long RegisterTime;
-        /// <summary>到期时调用的主线程委托，取消后随条目一起解除引用。</summary>
-        public TimerEventHandler Handler;
-        /// <summary>施法身份与表现指令的不可变引用，随条目取消或触发后解除。</summary>
-        public MSkillTimerArgs Args;
-    }
-
     /// <summary>按到期时刻稳定排序的待触发列表；帧推进不创建快照或临时集合。</summary>
     private readonly List<MTimer> _timers = new List<MTimer>();
+
     /// <summary>最近分配票据，初始化不归零，防止跨初始化旧票据误杀新注册。</summary>
     private uint _token;
+
     /// <summary>已经推进的非负整数毫秒，与实体世界使用相同帧间隔来源。</summary>
     private long _elapsedTime;
 
     /// <summary>最近一次 Init 的会话版本，时钟重新归零并推进到相同毫秒也能拒绝旧程序运动。</summary>
     private ulong _sessionVersion;
+
     /// <summary>全局计时器初始化会话的只读身份，不参与计时排序或票据分配。</summary>
     public ulong SessionVersion { get { return _sessionVersion; } }
 
     /// <summary>暂停时不推进正延迟计时器；零秒同步回调沿 RO 原语义仍立即执行。</summary>
     public bool IsPause { get; set; }
+
     /// <summary>管理器运行累计毫秒数，初始化后从零开始。</summary>
     public long ElapsedTime { get { return _elapsedTime; } }
 
@@ -49,29 +38,13 @@ public sealed class MTimerMgr
     {
     }
 
-    /// <summary>清空旧计时器并启动新的全局时钟，返回初始化成功状态。</summary>
-    /// <returns>主线程初始化完成时返回 true。</returns>
-    public bool Init()
-    {
-        KillTimerAll();
-        unchecked { _sessionVersion++; }
-        _elapsedTime = 0;
-        IsPause = false;
-        return true;
-    }
-
-    /// <summary>客户端退出时解除全部技能委托与载荷引用并暂停。</summary>
-    public void Uninit()
-    {
-        KillTimerAll();
-        IsPause = true;
-    }
-
     /// <summary>按 RO 的秒参数推进整数毫秒，每个到期事件仅触发一次。</summary>
     /// <param name="fDeltaT">Global 从实体帧间隔毫秒换算的非负秒数。</param>
     public void Update(float fDeltaT)
     {
-        if (IsPause || float.IsNaN(fDeltaT) || float.IsInfinity(fDeltaT) || fDeltaT < 0f)
+        // 帧间隔为 NaN、无穷或负值时沿 RO 语义跳过本帧推进，避免污染累计时钟。
+        bool deltaTInvalid = float.IsNaN(fDeltaT) || float.IsInfinity(fDeltaT) || fDeltaT < 0f;
+        if (IsPause || deltaTInvalid)
         {
             return;
         }
@@ -93,6 +66,24 @@ public sealed class MTimerMgr
         }
     }
 
+    /// <summary>清空旧计时器并启动新的全局时钟，返回初始化成功状态。</summary>
+    /// <returns>主线程初始化完成时返回 true。</returns>
+    public bool Init()
+    {
+        KillTimerAll();
+        unchecked { _sessionVersion++; }
+        _elapsedTime = 0;
+        IsPause = false;
+        return true;
+    }
+
+    /// <summary>客户端退出时解除全部技能委托与载荷引用并暂停。</summary>
+    public void Uninit()
+    {
+        KillTimerAll();
+        IsPause = true;
+    }
+
     /// <summary>登记单次时间轴回调，非正延迟沿 RO 语义立即回调并返回零。</summary>
     /// <param name="interval">距当前管理器时钟的延迟秒数，正数换算为至少一毫秒。</param>
     /// <param name="handler">到期回调，必须在主线程登记。</param>
@@ -100,7 +91,11 @@ public sealed class MTimerMgr
     /// <returns>正延迟注册的非零票据；同步执行或无效登记返回零。</returns>
     public uint SetTimer(float interval, TimerEventHandler handler, MSkillTimerArgs args)
     {
-        if (handler == null || args == null || float.IsNaN(interval) || float.IsInfinity(interval))
+        // 回调或载荷为空，属于无效登记。
+        bool callbackInvalid = handler == null || args == null;
+        // 延迟秒数为 NaN 或无穷，无法换算成整数毫秒。
+        bool intervalInvalid = float.IsNaN(interval) || float.IsInfinity(interval);
+        if (callbackInvalid || intervalInvalid)
         {
             return 0;
         }
@@ -205,5 +200,24 @@ public sealed class MTimerMgr
     public void KillTimerAll()
     {
         _timers.Clear();
+    }
+
+    /// <summary>待触发计时器，排序列表持有到触发或显式取消；同到期时刻保留注册顺序。</summary>
+    private sealed class MTimer
+    {
+        /// <summary>当前注册的非零票据，取消和查询均以该值定位。</summary>
+        public uint Token;
+
+        /// <summary>在本管理器时钟中的到期毫秒数。</summary>
+        public long TriggerTime;
+
+        /// <summary>登记时的管理器毫秒数，供 TimeDuration 查询。</summary>
+        public long RegisterTime;
+
+        /// <summary>到期时调用的主线程委托，取消后随条目一起解除引用。</summary>
+        public TimerEventHandler Handler;
+
+        /// <summary>施法身份与表现指令的不可变引用，随条目取消或触发后解除。</summary>
+        public MSkillTimerArgs Args;
     }
 }

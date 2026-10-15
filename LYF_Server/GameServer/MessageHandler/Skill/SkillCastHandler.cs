@@ -18,8 +18,13 @@ public sealed class SkillCastHandler : IGameMessageHandler
     /// <param name="context">逻辑线程中的不可变网络命令和 Gate 会话上下文。</param>
     public void Handle(GameMessageHandlerContext context)
     {
-        if (context == null || context.Source != GameCommandSource.GateServer ||
-            context.Transport == null || context.Package == null)
+        // 上下文缺失或来源不是网关时直接丢弃该施法请求。
+        if (context == null || context.Source != GameCommandSource.GateServer)
+        {
+            return;
+        }
+        // 传输链路或协议包缺失时同样无法继续处理。
+        if (context.Transport == null || context.Package == null)
         {
             return;
         }
@@ -62,7 +67,8 @@ public sealed class SkillCastHandler : IGameMessageHandler
         {
             // 基础快照可能尚未装载；无权威角色时 MP 快照使用零而不解引用空对象。
             int currentMp = 0;
-            if (role.mainRoleInfo != null && role.mainRoleInfo.BaseInfo != null)
+            if (role.mainRoleInfo != null && 
+                role.mainRoleInfo.BaseInfo != null)
             {
                 currentMp = role.mainRoleInfo.BaseInfo.CurrMp;
             }
@@ -93,7 +99,13 @@ public sealed class SkillCastHandler : IGameMessageHandler
     /// <param name="result">成功或拒绝的强类型技能结果。</param>
     private static void SendResult(GameMessageHandlerContext context, SkillCastRet result)
     {
-        if (context == null || context.Transport == null || context.Package == null || result == null)
+        // 上下文、传输链路或协议包缺失时无法沿原路回包。
+        if (context == null || context.Transport == null || context.Package == null)
+        {
+            return;
+        }
+        // 结果对象缺失时没有可回送的内容。
+        if (result == null)
         {
             return;
         }

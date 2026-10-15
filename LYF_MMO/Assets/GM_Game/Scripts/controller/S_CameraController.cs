@@ -4,17 +4,27 @@ using UnityEngine;
     public class S_CameraController : MonoBehaviour
     {
         public GameObject character;
+
         public Transform cameraHolder;
+
         public float zoomSpeed = 0.5f;
+
         public float rotationSpeed = 3f;
+
         public float smoothTime = 0.3F;
+
         private float currentZoom = 0f;
+
         private float zoomMin = 0.5f;
+
         private float zoomMax = 3f;
+
         private Vector3 zoomVelocity = Vector3.zero;
+
         private Vector3 positionVelocity = Vector3.zero;
 
         private Vector3 initialRelativePosition;
+
         private float lastRotateHorizontal;
 
         private void Start()

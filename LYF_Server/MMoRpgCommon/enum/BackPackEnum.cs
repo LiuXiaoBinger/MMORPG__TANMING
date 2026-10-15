@@ -1,5 +1,8 @@
 ﻿
 
+/// <summary>
+/// 角色背包类别；四类可扩容背包相互独立，穿戴栏与虚拟物品栏不参与扩容聚合。
+/// </summary>
 public enum KnapsackType
 {
     RolePackPlain,//角色普通背包，不聚合其它背包

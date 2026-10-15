@@ -11,12 +11,17 @@ using UnityEngine.UI;
 public class MinMapWindow : WindowBase
 {
    [SerializeField,Header("小地图背景图片")]private Image _imgMinMap;
+
    [SerializeField,Header("小地图箭头图片")]private Image _imgArrow;
+
    /// <summary>当前本地玩家实体；模型异步加载完成后从实体中读取真实 Transform。</summary>
    private PlayerEntity _mainRole;
 
+
    private MinMapHelp _mapHelp;
+
    private float _mapsize;
+
    private void Start()
    {
       _mapsize=_imgMinMap.sprite.rect.width;
@@ -45,19 +50,23 @@ public class MinMapWindow : WindowBase
       }
    }
 
+
+
    /// <summary>由主界面控制器设置需要跟踪的本地玩家实体。</summary>
    /// <param name="role">场景世界持有的本地玩家；断线清理时可为空。</param>
    public void SetTrackedRole(PlayerEntity role)
    {
       _mainRole = role;
    }
-   
+
+
    public void OnPluseBtnClicked()
    {
       Debug.Log("OnPluseBtnClicked");
       _mapsize = Mathf.Clamp(_mapsize * 1.1f,512,2048);
       _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize,_mapsize);
    }
+
    public void OnDecBtnClicked()
    {
       Debug.Log("OnDecBtnClicked");

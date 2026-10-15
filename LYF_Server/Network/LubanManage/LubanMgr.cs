@@ -209,21 +209,46 @@ public class LubanMgr:Singleton<LubanMgr>
         {
             // 当前行描述一个技能在一个学习等级的唯一权威数值。
             SkillEffectInfo effect = effectList[index];
-            if (effect == null || effect.Id <= 0 || effect.Level <= 0 ||
-                effect.SkillId <= 0 || !_skillInfos.ContainsKey(effect.SkillId) ||
-                effect.TargetMode < 0 || effect.TargetMode > 3 ||
-                effect.CooldownMs < 0 || effect.CooldownGroupId < 0 ||
-                effect.GroupCooldownMs < 0 || effect.CastMs < 0 ||
-                effect.RecoveryMs < 0 || effect.MpCost < 0 ||
-                effect.CastMs > int.MaxValue - effect.RecoveryMs)
+            // 效果行必须存在，且效果 ID 与学习等级为正整数。
+            if (effect == null || effect.Id <= 0 || effect.Level <= 0)
+            {
+                throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
+            }
+            // 技能 ID 必须命中旧技能表索引，且目标模式不能为负。
+            if (effect.SkillId <= 0 || !_skillInfos.ContainsKey(effect.SkillId) ||
+                effect.TargetMode < 0)
+            {
+                throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
+            }
+            // 目标模式不得超过 3，冷却与分组冷却组 ID 不得为负。
+            if (effect.TargetMode > 3 || effect.CooldownMs < 0 || effect.CooldownGroupId < 0)
+            {
+                throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
+            }
+            // 分组冷却、施法时长与恢复时长均不得为负。
+            if (effect.GroupCooldownMs < 0 || effect.CastMs < 0 || effect.RecoveryMs < 0)
+            {
+                throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
+            }
+            // MP 消耗不得为负，且施法时长叠加恢复时长不得溢出 int 上限。
+            if (effect.MpCost < 0 || effect.CastMs > int.MaxValue - effect.RecoveryMs)
             {
                 throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
             }
 
-            if (effect.TargetMode == 0 &&
-                (effect.MinRangeCm != 0 || effect.MaxRangeCm != 0 || effect.RadiusCm != 0 ||
-                effect.MaxTargets != 0 || effect.HitCount != 0 || effect.HitIntervalMs != 0 ||
-                effect.DamagePermyriad != 0 || effect.FlatDamage != 0))
+            // 目标模式为无目标（0）时才需要校验命中数值是否误配。
+            bool isNoTargetMode = effect.TargetMode == 0;
+            // 射程类数值（最小射程/最大射程/半径）是否有任意一项非零。
+            bool hasRangeValues = effect.MinRangeCm != 0 || effect.MaxRangeCm != 0 ||
+                effect.RadiusCm != 0;
+            // 目标数量与命中节奏数值（目标数/命中次数/命中间隔）是否有任意一项非零。
+            bool hasTargetHitValues = effect.MaxTargets != 0 || effect.HitCount != 0 ||
+                effect.HitIntervalMs != 0;
+            // 伤害数值（万分比伤害/固定伤害）是否有任意一项非零。
+            bool hasDamageValues = effect.DamagePermyriad != 0 || effect.FlatDamage != 0;
+            // 上述命中数值任一非零即视为无目标技能误配。
+            bool hasAnyHitValue = hasRangeValues || hasTargetHitValues || hasDamageValues;
+            if (isNoTargetMode && hasAnyHitValue)
             {
                 throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);
             }

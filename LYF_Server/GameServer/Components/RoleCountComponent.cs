@@ -253,7 +253,13 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>把次数快照写入统一角色保存请求。</summary>
     public override bool Save(RoleDataFieldManager fieldManager, long saveVersion)
     {
-        if (Owner == null || !Owner.IsRoleDataReady() || !_needSave || fieldManager == null)
+        // 归属角色缺失或角色数据尚未准备好时无法保存。
+        if (Owner == null || !Owner.IsRoleDataReady())
+        {
+            return false;
+        }
+        // 没有待保存变更或字段管理器为空时跳过保存。
+        if (!_needSave || fieldManager == null)
         {
             return false;
         }

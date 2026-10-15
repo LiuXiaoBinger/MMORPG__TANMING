@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// 网络层全局常量：各服务监听地址/端口与协议号定义。
+/// </summary>
 public class NetDefine
 {
     public const string IPHost = "127.0.0.1";//本机IP
@@ -39,6 +42,10 @@ public class NetDefine
     public const ushort CMD_SkillCastStartCode = 11171;
     /// <summary>服务器正常结束或中断施法的表现结束通知协议号。</summary>
     public const ushort CMD_SkillCastEndCode = 11173;
+    /// <summary>Unity 按 RO UpdateMove 上报位置和朝向的请求协议号。</summary>
+    public const ushort CMD_MoveOperationCode = 11180;
+    /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>
+    public const ushort CMD_SyncMoveCode = 11181;
 }
 
 

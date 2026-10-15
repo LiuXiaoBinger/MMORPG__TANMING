@@ -6,14 +6,23 @@ using UnityEngine;
  */
 
 
+/// <summary>
+/// GameObject 与 Transform 的常用扩展方法集合。
+/// </summary>
 public static class GameObjectUtils {
 
 
+    /// <summary>设置游戏对象显隐的扩展方法。</summary>
+    /// <param name="go">目标游戏对象，为空时直接忽略。</param>
+    /// <param name="isActive">true 激活，false 隐藏。</param>
     public static void Show(this GameObject go, bool isActive = true) {
         if (go == null) return;
         go.SetActive(isActive);
 
     }
+    /// <summary>设置 Transform 所属游戏对象显隐的扩展方法。</summary>
+    /// <param name="trans">目标 Transform，为空时直接忽略。</param>
+    /// <param name="isActive">true 激活，false 隐藏。</param>
     public static void Show(this Transform trans, bool isActive = true) {
         if (trans == null) return;
         trans.gameObject.SetActive(isActive);

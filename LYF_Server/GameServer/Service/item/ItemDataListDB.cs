@@ -54,8 +54,14 @@ public sealed class ItemDataListDB
     public void ResetNeedSave(long acknowledgedVersion)
     {
         // 在途期间又发生变化时 dirtyVersion 会更大，旧 ACK 不能清除新脏数据。
-        if (_needSave && _changeGeneration == _savedGeneration &&
-            _savedVersion == acknowledgedVersion && _dirtyVersion <= acknowledgedVersion)
+        // 存在待持久化修改。
+        bool hasPendingSave = _needSave;
+        // 修改代次与已保存代次一致，没有在途新修改。
+        bool generationInSync = _changeGeneration == _savedGeneration;
+        // 已保存版本与脏版本都不超过本次确认版本，旧 ACK 不会误清新脏数据。
+        bool versionsAcked = _savedVersion == acknowledgedVersion &&
+            _dirtyVersion <= acknowledgedVersion;
+        if (hasPendingSave && generationInSync && versionsAcked)
         {
             _needSave = false;
         }

@@ -6,12 +6,6 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class EntityProjectileComponent : EntityComponentBase
 {
-    /// <summary>构造投射物组件。</summary>
-    /// <param name="owner">宿主实体。</param>
-    public EntityProjectileComponent(ROObject owner) : base(owner)
-    {
-    }
-
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Projectile"/>。</summary>
     public override EntityComponentType ComponentType
     {
@@ -32,6 +26,12 @@ public sealed class EntityProjectileComponent : EntityComponentBase
 
     /// <summary>已经经过的飞行时间（毫秒），由 Update 累计。</summary>
     public int ElapsedMilliseconds { get; private set; }
+
+    /// <summary>构造投射物组件。</summary>
+    /// <param name="owner">宿主实体。</param>
+    public EntityProjectileComponent(ROObject owner) : base(owner)
+    {
+    }
 
     /// <summary>每帧累计飞行时间，超过存活时长后把宿主标记为待销毁。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>

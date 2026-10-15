@@ -163,8 +163,14 @@ public static class YCombatIntegrationContractTests
             // 私有导出函数仅在反射测试边界访问，object[] 不进入业务数据或正式接口。
             MethodInfo readFx = typeof(SkillEditorAssetTools).GetMethod("ReadFx", BindingFlags.NonPublic | BindingFlags.Static);
             List<SkillRuntimeFxEvent> events = readFx.Invoke(null, new object[] { copy }) as List<SkillRuntimeFxEvent>;
-            if (events == null || events.Count < 2 || events[0].Frame != 10 || events[1].Frame != 10 ||
-                events[0].SourceEventIndex != 0 || events[1].SourceEventIndex != 1)
+            // 事件列表缺失或不足两条时，视为顺序校验失败。
+            if (events == null || events.Count < 2)
+                throw new InvalidOperationException("同帧事件没有保持原配置顺序。");
+            // 两条事件帧号均应为第 10 帧。
+            if (events[0].Frame != 10 || events[1].Frame != 10)
+                throw new InvalidOperationException("同帧事件没有保持原配置顺序。");
+            // 两条事件的源序号应保持原配置顺序。
+            if (events[0].SourceEventIndex != 0 || events[1].SourceEventIndex != 1)
                 throw new InvalidOperationException("同帧事件没有保持原配置顺序。");
             Pass("同帧稳定顺序");
         }
@@ -184,9 +190,17 @@ public static class YCombatIntegrationContractTests
             if (readFx == null) throw new InvalidOperationException("生产导出入口不存在。");
             // 强类型导出事件由实际轨道计算；object[] 仅为反射调用边界。
             List<SkillRuntimeFxEvent> events = readFx.Invoke(null, new object[] { copy }) as List<SkillRuntimeFxEvent>;
-            if (events == null || events.Count != 2 || events[0].Particle == null || events[1].Particle == null ||
-                events[0].PlacementKind != SkillFxPlacementKind.NamedSocket || string.IsNullOrEmpty(events[0].SocketPath) ||
-                events[1].PlacementKind != SkillFxPlacementKind.TargetTop || events[1].ForwardDistance != 10f)
+            // 事件列表缺失或数量不为两条时，视为导出不完整。
+            if (events == null || events.Count != 2)
+                throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
+            // 两条事件均必须携带粒子资源。
+            if (events[0].Particle == null || events[1].Particle == null)
+                throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
+            // 首条事件必须挂在命名字段且提供套接路径。
+            if (events[0].PlacementKind != SkillFxPlacementKind.NamedSocket || string.IsNullOrEmpty(events[0].SocketPath))
+                throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
+            // 次条事件必须落于目标头顶且前向距离为十米。
+            if (events[1].PlacementKind != SkillFxPlacementKind.TargetTop || events[1].ForwardDistance != 10f)
                 throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
             // 序列化访问第三方轨道结构，读取本次真实帧率、帧号和局部位置。
             SerializedObject serialized = new SerializedObject(copy.Config);

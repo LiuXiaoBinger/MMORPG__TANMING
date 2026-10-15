@@ -7,6 +7,7 @@ using System.Text;
 namespace Luban
 {
 
+    /// <summary>Luban 二进制反序列化错误码。</summary>
     public enum EDeserializeError
     {
         OK,
@@ -15,6 +16,7 @@ namespace Luban
         // UNMARSHAL_ERR,
     }
 
+    /// <summary>Luban 反序列化异常。</summary>
     public class SerializationException : Exception
     {
         public SerializationException() { }

@@ -29,10 +29,21 @@ public sealed class MSkillChargeData
     /// <returns>时间、曲线及当前支持字段全部合法时返回 true。</returns>
     public bool IsValid(float durationSeconds)
     {
-        if (!Finite(durationSeconds) || durationSeconds <= 0f || !Finite(At) || !Finite(End) ||
-            At < 0f || End < At || End > durationSeconds ||
-            CurveX != null || DistanceX != 0f || AimTarget || CurveZ == null ||
-            !Finite(DistanceZ) || DistanceZ < 0f || (AllowReverse && StopAtDistanceLimit))
+        // 动作时长必须为正有限秒数。
+        bool durationInvalid = !Finite(durationSeconds) || durationSeconds <= 0f;
+        // 起止秒数必须有限且非负。
+        bool timeInvalid = !Finite(At) || !Finite(End) || At < 0f;
+        // 结束不得早于开始，且不能越出动作窗口。
+        bool rangeInvalid = End < At || End > durationSeconds;
+        // 当前前向制作子集不接受横移曲线、横移距离或追目标开关。
+        bool unsupportedFeature = CurveX != null || DistanceX != 0f || AimTarget;
+        // 前向曲线必须存在，且距离上限有限非负。
+        bool forwardCurveInvalid = CurveZ == null || !Finite(DistanceZ) || DistanceZ < 0f;
+        // 回拉与停在距离上限不能同时启用。
+        bool reverseConflict = AllowReverse && StopAtDistanceLimit;
+        bool timeBad = durationInvalid || timeInvalid || rangeInvalid;
+        bool featureBad = unsupportedFeature || forwardCurveInvalid || reverseConflict;
+        if (timeBad || featureBad)
         {
             return false;
         }
@@ -47,10 +58,18 @@ public sealed class MSkillChargeData
         {
             // 当前累计比例关键帧；权重必须是有限非负值，不能产生不可解释的插值输入。
             Keyframe key = keys[index];
-            if (!Finite(key.time) || !Finite(key.value) || float.IsNaN(key.inTangent) ||
-                float.IsNaN(key.outTangent) || !Finite(key.inWeight) || !Finite(key.outWeight) ||
-                key.inWeight < 0f || key.outWeight < 0f || (int)key.weightedMode < 0 ||
-                (int)key.weightedMode > 3 || (index > 0 && key.time <= keys[index - 1].time))
+            // 时间、值与切线必须有限或非数，不能产生不可解释的插值。
+            bool valueInvalid = !Finite(key.time) || !Finite(key.value) ||
+                float.IsNaN(key.inTangent);
+            bool tangentInvalid = float.IsNaN(key.outTangent) ||
+                !Finite(key.inWeight) || !Finite(key.outWeight);
+            bool weightInvalid = key.inWeight < 0f || key.outWeight < 0f;
+            bool modeInvalid = (int)key.weightedMode < 0 ||
+                (int)key.weightedMode > 3;
+            // 相邻关键帧时间必须递增，index>0 守卫下标前移避免越界。
+            bool orderInvalid = index > 0 && key.time <= keys[index - 1].time;
+            bool keyBad = valueInvalid || tangentInvalid || weightInvalid;
+            if (keyBad || modeInvalid || orderInvalid)
             {
                 return false;
             }

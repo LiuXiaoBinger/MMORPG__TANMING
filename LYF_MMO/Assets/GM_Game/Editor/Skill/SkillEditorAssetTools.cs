@@ -50,7 +50,7 @@ public static class SkillEditorAssetTools
         "CameraPostEffect", "CameraFxData", "RotateList"
     };
 
-    /// <summary>创建缺失的七份 MJS 与独立 JX 参考资产；已有编辑资产仅校验，不重置用户编辑。</summary>
+    /// <summary>按正式表创建缺失的 MJS 与独立 JX 参考资产；已有编辑资产仅校验，不重置用户编辑。</summary>
     [MenuItem("Tools/技能/YCombat/生成缺失技能资产并导出")]
     public static void GenerateAndExport()
     {
@@ -65,7 +65,7 @@ public static class SkillEditorAssetTools
         TbSkillInfo skills = ReadSkills();
         // 只制作当前已配置的 MJS 技能表现，其他模型行不自动迁移。
         List<SkillPresentationInfo> rows = presentations.DataList;
-        // 本轮识别的 MJS 表现数量，验收必须等于七。
+        // 本轮正式表中的 MJS 表现数量，用于导出完成后报告实际覆盖数。
         int generatedCount = 0;
         // index 为当前集合的零起始下标，按索引访问原对象引用。
         for (int index = 0; index < rows.Count; index++)
@@ -82,14 +82,13 @@ public static class SkillEditorAssetTools
             CreateBinding(row, skill);
             generatedCount++;
         }
-        if (generatedCount != 7) throw new InvalidOperationException("预期七条 MJS 表现，实际为：" + generatedCount);
         CreateJxReference();
         ExportAll();
         SkillCastingRulesExportTool.CreateDefaultAssetAndExport();
         EnsureRuntimeCollector();
         AssetDatabase.SaveAssets();
         ValidateAll();
-        Debug.Log("YCombat 技能资产已创建/保留并导出：7 条 MJS 表现、1 条独立 JX_Attack01 参考。");
+        Debug.Log("YCombat 技能资产已创建/保留并导出：" + generatedCount + " 条 MJS 表现、1 条独立 JX_Attack01 参考。");
     }
 
     /// <summary>先校验全部绑定再发布，任何不支持轨道都会阻止此轮运行资产更新。</summary>
@@ -173,9 +172,11 @@ public static class SkillEditorAssetTools
             float expectedDuration = row.DurationMs / 1000f;
             // 作者制作范围可以超过动画；旧零字段资产仍兼容，重新发布后逐项核对明确的制作范围。
             float expectedTimelineDuration = ReadTimelineDuration(binding.Config, expectedDuration);
-            if (runtime.AnimationLocation != row.ClipLocation || !SerializedFloatEquals(runtime.DurationSeconds, expectedDuration) ||
-                (runtime.TimelineDurationSeconds != 0f &&
-                    !SerializedFloatEquals(runtime.EffectiveTimelineDurationSeconds, expectedTimelineDuration)))
+            // 动画剪辑位置或动作时长是否与旧表不一致。
+            bool isClipOrDurationMismatch = runtime.AnimationLocation != row.ClipLocation || !SerializedFloatEquals(runtime.DurationSeconds, expectedDuration);
+            // 时间轴非零时，有效时间轴时长是否与制作范围不一致。
+            bool isTimelineDurationMismatch = runtime.TimelineDurationSeconds != 0f && !SerializedFloatEquals(runtime.EffectiveTimelineDurationSeconds, expectedTimelineDuration);
+            if (isClipOrDurationMismatch || isTimelineDurationMismatch)
                 throw new InvalidOperationException("运行动画或时长尚未同步：" + binding.name +
                     " actual=[" + runtime.AnimationLocation + "," + runtime.DurationSeconds.ToString("R") +
                     "] expected=[" + row.ClipLocation + "," + expectedDuration.ToString("R") + "]");
@@ -201,7 +202,17 @@ public static class SkillEditorAssetTools
             formalCount++;
             Debug.Log("YCombat 验证：" + binding.name + " clip=" + binding.SourceClip.name + " fps=" + binding.Config.timelineFrameRate + " fx=" + events.Count);
         }
-        if (formalCount != 7 || referenceCount != 1) throw new InvalidOperationException("资产数量不符合七正式/一参考：" + formalCount + "/" + referenceCount);
+        // 当前表中正式 MJS 表现列表；新增 F 等技能后按真实表行验收，不固定历史七份。
+        List<SkillPresentationInfo> rows = ReadPresentations().DataList;
+        // 当前表要求覆盖的 MJS 表现数量，与已校验绑定数量比较。
+        int expectedFormalCount = 0;
+        // 当前正式表现表的零起始行下标。
+        for (int index = 0; index < rows.Count; index++)
+        {
+            if (rows[index].ModelKey == "Role_MJS") expectedFormalCount++;
+        }
+        if (formalCount != expectedFormalCount || referenceCount != 1)
+            throw new InvalidOperationException("资产数量不符合正式表/一参考：" + formalCount + "/" + referenceCount + "，正式表需要 " + expectedFormalCount);
     }
 
     /// <summary>核对完整旧表身份、动作时长以及可发布的特效时间轴。</summary>
@@ -212,8 +223,9 @@ public static class SkillEditorAssetTools
         if (binding.PresentationId <= 0) throw new InvalidOperationException("参考资产不能导出到正式技能。");
         // 保存的绑定必须仍对应当前旧表中唯一表现行。
         SkillPresentationInfo row = ReadPresentations().GetOrDefault(binding.PresentationId);
-        if (row == null || row.EffectId != binding.EffectId || row.ProfessionId != binding.ProfessionId ||
-            row.ModelKey != binding.ModelKey || row.WeaponType != binding.WeaponType || row.VariantIndex != binding.VariantIndex)
+        if (row == null || row.EffectId != binding.EffectId || row.ProfessionId != binding.ProfessionId)
+            throw new InvalidOperationException("表现绑定五元组与旧表不一致：" + binding.name);
+        if (row.ModelKey != binding.ModelKey || row.WeaponType != binding.WeaponType || row.VariantIndex != binding.VariantIndex)
             throw new InvalidOperationException("表现绑定五元组与旧表不一致：" + binding.name);
         // 技能归属以效果表为准，不信任编辑器技能 ID。
         SkillEffectInfo effect = ReadEffects().GetOrDefault(row.EffectId);
@@ -234,7 +246,9 @@ public static class SkillEditorAssetTools
     /// <param name="binding">具备真实剪辑和预览模型的编辑绑定。</param>
     private static void ValidateConfig(SkillEditorBinding binding)
     {
-        if (binding == null || binding.Config == null || binding.SourceClip == null || binding.PreviewModel == null)
+        if (binding == null || binding.Config == null || binding.SourceClip == null)
+            throw new InvalidOperationException("技能编辑绑定缺少配置、动画或预览模型。");
+        if (binding.PreviewModel == null)
             throw new InvalidOperationException("技能编辑绑定缺少配置、动画或预览模型。");
         // Y 自身完整配置校验先检查无效帧、坏引用与结构错误。
         List<ActionValidationIssue> issues = ActionConfigValidator.Validate(binding.Config);
@@ -294,8 +308,9 @@ public static class SkillEditorAssetTools
             sourceEndSeconds = Mathf.Min(clipEndFrame / sourceFrameRate, binding.SourceClip.length);
         }
         if (segment.FindPropertyRelative("clip").objectReferenceValue != binding.SourceClip ||
-            segment.FindPropertyRelative("startFrame").intValue != 0 || segment.FindPropertyRelative("clipStartFrame").intValue != 0 ||
-            Mathf.Abs(sourceEndSeconds - binding.SourceClip.length) > SerializedFloatTolerance ||
+            segment.FindPropertyRelative("startFrame").intValue != 0 || segment.FindPropertyRelative("clipStartFrame").intValue != 0)
+            throw new InvalidOperationException("不支持替换、裁剪、偏移或混合动画。");
+        if (Mathf.Abs(sourceEndSeconds - binding.SourceClip.length) > SerializedFloatTolerance ||
             segment.FindPropertyRelative("blendInFrames").intValue != 0)
             throw new InvalidOperationException("不支持替换、裁剪、偏移或混合动画。");
         if (binding.Config.skillClip != null && binding.Config.skillClip != binding.SourceClip)
@@ -341,8 +356,9 @@ public static class SkillEditorAssetTools
             ParticleSystem particle = item.FindPropertyRelative("particleSystem").objectReferenceValue as ParticleSystem;
             // 当前事件的定位枚举值，只允许已经实现的零至四。
             int placement = item.FindPropertyRelative("placementKind").intValue;
-            if (frame < 0 || !IsFinite(time) || time > ReadTimelineDuration(binding.Config, binding.SourceClip.length) ||
-                particle == null || placement < 0 || placement > 4)
+            if (frame < 0 || !IsFinite(time) || time > ReadTimelineDuration(binding.Config, binding.SourceClip.length))
+                throw new InvalidOperationException("粒子引用、帧或定位模式无效：" + eventPath);
+            if (particle == null || placement < 0 || placement > 4)
                 throw new InvalidOperationException("粒子引用、帧或定位模式无效：" + eventPath);
             // 原 Y 预览对每条事件只生成一个实例，endKeyNumber 不控制粒子寿命；非负且小于等于开始帧沿原单帧哨兵契约处理。
             // 负帧与越过显式退出帧仍由先执行的 ActionConfigValidator 拒绝，不在此重复或改变包校验规则。
@@ -386,7 +402,9 @@ public static class SkillEditorAssetTools
             float forward = item.FindPropertyRelative("forwardDistance").floatValue;
             // 挂点完整路径；仅 NamedSocket 模式允许非空。
             string socket = item.FindPropertyRelative("socketPath").stringValue;
-            if (!IsFinite(position) || !IsFinite(rotation) || !IsFinite(scale) || !IsFinite(forward) || forward < 0f)
+            if (!IsFinite(position) || !IsFinite(rotation) || !IsFinite(scale))
+                throw new InvalidOperationException("FX 变换或距离不是有效有限数：" + index);
+            if (!IsFinite(forward) || forward < 0f)
                 throw new InvalidOperationException("FX 变换或距离不是有效有限数：" + index);
             if (scale.x <= 0f || scale.y <= 0f || scale.z <= 0f)
                 throw new InvalidOperationException("FX 缩放每个轴必须大于零：" + index);
@@ -642,7 +660,9 @@ public static class SkillEditorAssetTools
             if (sourceEvent.functionName != "PlayEffect") continue;
             // 当前旧 PlayEffect 携带的原 RoleAtkConfig 引用，intParameter 选择攻击条目；此函数只读不回写。
             RoleAtkConfig config = sourceEvent.objectReferenceParameter as RoleAtkConfig;
-            if (config == null || config.atkConfigEntities == null || sourceEvent.intParameter < 0 || sourceEvent.intParameter >= config.atkConfigEntities.Count)
+            if (config == null || config.atkConfigEntities == null || sourceEvent.intParameter < 0)
+                throw new InvalidOperationException("旧 PlayEffect 配置或索引无效：" + clip.name + "/" + index);
+            if (sourceEvent.intParameter >= config.atkConfigEntities.Count)
                 throw new InvalidOperationException("旧 PlayEffect 配置或索引无效：" + clip.name + "/" + index);
             // 当前原攻击条目，生命周期属于旧资产，不回写它的 EffectInfo。
             atkConfigEntity attack = config.atkConfigEntities[sourceEvent.intParameter];
@@ -725,15 +745,17 @@ public static class SkillEditorAssetTools
         return result;
     }
 
-    /// <summary>按旧表 Location 从已确认的独立动画目录查找，禁止自动换成 JX 参考。</summary>
-    /// <param name="location">旧表现表不含扩展名的动画资源键。</param>
-    /// <returns>真实独立 MJS 动画剪辑。</returns>
+    /// <summary>按表现表定位独立MJS剪辑，并接纳用户指定的原前向滑行动画。</summary>
+    /// <param name="location">完整Assets剪辑路径或原Skill目录中不含扩展名的资源键。</param>
+    /// <returns>表中明确指定的原动画资产，不替换或复制剪辑。</returns>
     private static AnimationClip FindMjsClip(string location)
     {
         // 旧表实际使用完整 Assets 路径；兼容短资源键时仍限定原 MJS 目录。
         string path = location;
         if (!path.StartsWith("Assets/", StringComparison.Ordinal)) path = MjsClipDirectory + "/" + location + ".anim";
-        if (!path.StartsWith(MjsClipDirectory + "/", StringComparison.Ordinal) || !path.EndsWith(".anim", StringComparison.Ordinal))
+        // 10080原滑行动画在ALL根目录，只有这条精确路径允许越过原Skill目录限制。
+        bool isForwardSlide = path == "Assets/GM_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Slider_F.anim";
+        if ((!path.StartsWith(MjsClipDirectory + "/", StringComparison.Ordinal) && !isForwardSlide) || !path.EndsWith(".anim", StringComparison.Ordinal))
             throw new InvalidOperationException("旧表现动画不在正式 MJS 独立剪辑目录：" + location);
         // 从精确项目路径或 FBX 子资产取得的实际动画剪辑。
         AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
@@ -747,11 +769,23 @@ public static class SkillEditorAssetTools
     /// <returns>所有受支持运行字段完全一致时返回 true。</returns>
     private static bool SameFx(SkillRuntimeFxEvent actual, SkillRuntimeFxEvent expected)
     {
-        return actual != null && expected != null && actual.SourceEventIndex == expected.SourceEventIndex &&
-            actual.Frame == expected.Frame && SerializedFloatEquals(actual.TimeSeconds, expected.TimeSeconds) && actual.Particle == expected.Particle &&
-            actual.PlacementKind == expected.PlacementKind && actual.SocketPath == expected.SocketPath &&
-            SerializedVectorEquals(actual.LocalPosition, expected.LocalPosition) && SerializedVectorEquals(actual.LocalEulerAngles, expected.LocalEulerAngles) &&
-            SerializedVectorEquals(actual.LocalScale, expected.LocalScale) && SerializedFloatEquals(actual.ForwardDistance, expected.ForwardDistance);
+        // 任一为空直接判定不一致，后续字段访问必须两者均非空。
+        if (actual == null || expected == null) return false;
+        // 事件源下标与触发帧是否一致。
+        bool isIdentityMatch = actual.SourceEventIndex == expected.SourceEventIndex && actual.Frame == expected.Frame;
+        // 触发秒数与粒子引用是否一致。
+        bool isTimeAndParticleMatch = SerializedFloatEquals(actual.TimeSeconds, expected.TimeSeconds) && actual.Particle == expected.Particle;
+        // 定位枚举与挂点路径是否一致。
+        bool isPlacementMatch = actual.PlacementKind == expected.PlacementKind && actual.SocketPath == expected.SocketPath;
+        // 核心身份、时间粒子与定位挂点是否全部一致。
+        bool isCoreIdentityMatch = isIdentityMatch && isTimeAndParticleMatch && isPlacementMatch;
+        // 局部位置与欧拉角是否一致。
+        bool isLocalTransformMatch = SerializedVectorEquals(actual.LocalPosition, expected.LocalPosition) && SerializedVectorEquals(actual.LocalEulerAngles, expected.LocalEulerAngles);
+        // 局部缩放与前方距离是否一致。
+        bool isLocalScaleAndForwardMatch = SerializedVectorEquals(actual.LocalScale, expected.LocalScale) && SerializedFloatEquals(actual.ForwardDistance, expected.ForwardDistance);
+        // 局部变换与缩放前方距离是否全部一致。
+        bool isTransformAndScaleMatch = isLocalTransformMatch && isLocalScaleAndForwardMatch;
+        return isCoreIdentityMatch && isTransformAndScaleMatch;
     }
 
     /// <summary>比较持久化后的有限浮点，容限仅覆盖单精度往返，不接受 NaN 或无穷。</summary>

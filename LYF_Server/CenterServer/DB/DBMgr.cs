@@ -2,14 +2,26 @@
 using SqlSugar;
 using System.Collections.Concurrent;
 
+/// <summary>
+/// 中心服数据库管理器（进程级单例）。负责初始化 SqlSugar 客户端、按 CodeFirst 建库建表，
+/// 并维护一个网络线程投递、主线程单消费者顺序执行的角色写任务队列。
+/// </summary>
 public class DBMgr:Singleton<DBMgr>
 {
+    /// <summary>每次主循环最多消费的写任务数量上限，避免单次执行阻塞过久。</summary>
     private const int MaxTasksPerUpdate = 100;
+    /// <summary>网络线程与主线程之间共享的写任务无界队列，只入队不直接写库。</summary>
     private readonly ConcurrentQueue<CRoleWriteTask> _tasks = new ConcurrentQueue<CRoleWriteTask>();
+    /// <summary>全局共享的 SqlSugar 数据库客户端，InitDB 后在主循环写任务中复用。</summary>
     private SqlSugarClient _db;
 
+    /// <summary>
+    /// 初始化数据库连接并按 CodeFirst 创建库与全部业务表。
+    /// 连接串当前为本地开发库（localhost:3308/game_db），部署时需改为实际配置。
+    /// </summary>
+    /// <returns>可供各 Model 与写任务复用的 SqlSugar 客户端。</returns>
     public SqlSugarClient initDB()
-    { 
+    {
         ConnectionConfig connectionConfig =new ConnectionConfig()
         { 
             ConnectionString = "Server=localhost;Port=3308;DataBase=game_db;User=root;Password=123456",

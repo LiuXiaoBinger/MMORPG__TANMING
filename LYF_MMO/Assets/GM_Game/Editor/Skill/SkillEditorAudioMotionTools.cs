@@ -33,14 +33,20 @@ public static class SkillEditorAudioMotionTools
             float volume = item.FindPropertyRelative("baseVolume").floatValue;
             // 时间轴 FPS 决定帧到秒换算，不能采用音频采样率。
             float timeSeconds = frame / config.timelineFrameRate;
-            if (frame < 0 || !Finite(timeSeconds) || timeSeconds > durationSeconds || clip == null || !Finite(volume) || volume < 0f || volume > 1f)
+            if (frame < 0 || !Finite(timeSeconds) || timeSeconds > durationSeconds)
+                throw new InvalidOperationException("音效引用、帧或音量无效：" + config.name + "/" + index);
+            if (clip == null || !Finite(volume) || volume < 0f)
+                throw new InvalidOperationException("音效引用、帧或音量无效：" + config.name + "/" + index);
+            if (volume > 1f)
                 throw new InvalidOperationException("音效引用、帧或音量无效：" + config.name + "/" + index);
             // 结束帧是作者制作范围标记，现有声音预览始终从开始帧播放完整剪辑；导出保留相同语义，不截音或循环。
             int endFrame = item.FindPropertyRelative("endKeyNumber").intValue;
             if (item.FindPropertyRelative("particleSystem").objectReferenceValue != null ||
                 item.FindPropertyRelative("audioRandomize").boolValue ||
-                item.FindPropertyRelative("playbackSpeed").floatValue != 1f ||
-                item.FindPropertyRelative("customLifetime").floatValue != 0f ||
+                item.FindPropertyRelative("playbackSpeed").floatValue != 1f)
+                throw new InvalidOperationException("音效含未接入的混合粒子、随机音量音高、变速或自定义寿命参数：" + config.name +
+                    "/fxList[" + index + "]，音频 " + clip.name + "，开始帧 " + frame + "，结束帧 " + endFrame + "；当前正式音效只支持固定音量单次播放。");
+            if (item.FindPropertyRelative("customLifetime").floatValue != 0f ||
                 item.FindPropertyRelative("pitchVariation").floatValue != 0.1f ||
                 item.FindPropertyRelative("volumeVariation").floatValue != 0.05f)
                 throw new InvalidOperationException("音效含未接入的混合粒子、随机音量音高、变速或自定义寿命参数：" + config.name +
@@ -80,8 +86,11 @@ public static class SkillEditorAudioMotionTools
             }
             if (item.FindPropertyRelative("driveMode").intValue != 1)
                 throw new InvalidOperationException("位移驱动类型未接入：" + config.name + "/" + index);
-            if (!Finite(start) || !Finite(end) || !Finite(scale) || start < 0f || end <= start || start >= durationSeconds ||
-                item.FindPropertyRelative("endKeyNumber").intValue / config.timelineFrameRate > durationSeconds + 0.002f || scale < 0f)
+            if (!Finite(start) || !Finite(end) || !Finite(scale))
+                throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
+            if (start < 0f || end <= start || start >= durationSeconds)
+                throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
+            if (item.FindPropertyRelative("endKeyNumber").intValue / config.timelineFrameRate > durationSeconds + 0.002f || scale < 0f)
                 throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
             if (item.FindPropertyRelative("ignoreGravity").boolValue || item.FindPropertyRelative("ignoreActorCollision").boolValue)
                 throw new InvalidOperationException("根运动不能绕过当前角色的重力或碰撞：" + config.name + "/" + index);
@@ -124,21 +133,43 @@ public static class SkillEditorAudioMotionTools
             {
                 throw new InvalidOperationException("位移驱动类型未接入：" + config.name + "/" + index);
             }
+            // 空间、原点与目标索引必须保持前向自身中心的默认白名单。
             if (item.FindPropertyRelative("space").intValue != 0 ||
                 item.FindPropertyRelative("origin").intValue != 0 ||
-                item.FindPropertyRelative("target").intValue < 0 || item.FindPropertyRelative("target").intValue > 1 ||
+                item.FindPropertyRelative("target").intValue < 0)
+            {
+                throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
+            }
+            // 目标索引上限、逐帧转向与自定义方向必须保持默认。
+            if (item.FindPropertyRelative("target").intValue > 1 ||
                 item.FindPropertyRelative("resolveDirectionPerFrame").boolValue ||
-                item.FindPropertyRelative("customDirection").vector3Value != Vector3.forward ||
-                item.FindPropertyRelative("targetOffset").vector3Value != Vector3.zero ||
+                item.FindPropertyRelative("customDirection").vector3Value != Vector3.forward)
+            {
+                throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
+            }
+            // 目标偏移、偏移空间与到达即停开关必须保持默认。
+            if (item.FindPropertyRelative("targetOffset").vector3Value != Vector3.zero ||
                 item.FindPropertyRelative("offsetSpace").intValue != 1 ||
-                item.FindPropertyRelative("stopAtTargetOffset").boolValue ||
-                item.FindPropertyRelative("arriveTolerance").floatValue != 0.05f ||
+                item.FindPropertyRelative("stopAtTargetOffset").boolValue)
+            {
+                throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
+            }
+            // 到达容差、最小保持距离与竖直距离必须保持默认零值。
+            if (item.FindPropertyRelative("arriveTolerance").floatValue != 0.05f ||
                 item.FindPropertyRelative("minKeepDistance").floatValue != 0f ||
-                item.FindPropertyRelative("verticalDistance").floatValue != 0f ||
-                item.FindPropertyRelative("rootMotionScale").floatValue != 1f ||
+                item.FindPropertyRelative("verticalDistance").floatValue != 0f)
+            {
+                throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
+            }
+            // 根位移缩放、朝向对齐与忽略重力开关必须保持默认。
+            if (item.FindPropertyRelative("rootMotionScale").floatValue != 1f ||
                 item.FindPropertyRelative("alignFacing").boolValue ||
-                item.FindPropertyRelative("ignoreGravity").boolValue ||
-                item.FindPropertyRelative("ignoreActorCollision").boolValue ||
+                item.FindPropertyRelative("ignoreGravity").boolValue)
+            {
+                throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
+            }
+            // 忽略角色碰撞与非默认竖直曲线必须保持默认。
+            if (item.FindPropertyRelative("ignoreActorCollision").boolValue ||
                 !IsDefaultVerticalCurve(item.FindPropertyRelative("verticalCurve").animationCurveValue))
             {
                 throw new InvalidOperationException("程序位移当前仅支持前向、自身中心、固定方向及原重力碰撞；含未接入参数：" + config.name + "/moveSegmentList[" + index + "]");
@@ -209,10 +240,15 @@ public static class SkillEditorAudioMotionTools
             // rootIndex 遍历动画半开窗口，末点属于后续段。
             for (int rootIndex = 0; rootIndex < motion.Count; rootIndex++)
             {
-                if (charge[index].At < motion[rootIndex].EndSeconds && (charge[index].End > motion[rootIndex].StartSeconds ||
-                    (charge[index].At == charge[index].End && charge[index].At >= motion[rootIndex].StartSeconds)))
+                // 程序段起点早于动画窗口结束才可能重叠。
+                if (charge[index].At < motion[rootIndex].EndSeconds)
                 {
-                    throw new InvalidOperationException("程序位移不能与动画根运动窗口重叠。");
+                    // 终点晚于窗口开始构成重叠；零时长点落在窗口起点后也视为重叠。
+                    if (charge[index].End > motion[rootIndex].StartSeconds ||
+                        (charge[index].At == charge[index].End && charge[index].At >= motion[rootIndex].StartSeconds))
+                    {
+                        throw new InvalidOperationException("程序位移不能与动画根运动窗口重叠。");
+                    }
                 }
             }
         }
@@ -256,14 +292,22 @@ public static class SkillEditorAudioMotionTools
             MSkillChargeData expected = charge[index];
             // 正式发布的对应程序指令，任何未接入横移或瞄准数据都必须拒绝。
             MSkillChargeData actual = runtime.ChargeList[index];
-            if (actual == null || !actual.IsValid(runtime.DurationSeconds) || actual.At != expected.At ||
-                actual.End != expected.End || actual.DistanceZ != expected.DistanceZ || actual.AllowReverse != expected.AllowReverse ||
-                actual.StopAtDistanceLimit != expected.StopAtDistanceLimit || !CurvesEqual(actual.CurveZ, expected.CurveZ))
+            if (actual == null || !actual.IsValid(runtime.DurationSeconds) || actual.At != expected.At)
+            {
+                throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
+            }
+            if (actual.End != expected.End || actual.DistanceZ != expected.DistanceZ || actual.AllowReverse != expected.AllowReverse)
+            {
+                throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
+            }
+            if (actual.StopAtDistanceLimit != expected.StopAtDistanceLimit || !CurvesEqual(actual.CurveZ, expected.CurveZ))
             {
                 throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
             }
         }
-        if (runtime.AudioEvents == null || runtime.RootMotionSegments == null || runtime.AudioEvents.Count != audio.Count || runtime.RootMotionSegments.Count != motion.Count)
+        if (runtime.AudioEvents == null || runtime.RootMotionSegments == null || runtime.AudioEvents.Count != audio.Count)
+            throw new InvalidOperationException("音效或根运动尚未同步：" + binding.name);
+        if (runtime.RootMotionSegments.Count != motion.Count)
             throw new InvalidOperationException("音效或根运动尚未同步：" + binding.name);
         // 每条音效核对触发时间、资源身份、音量以及依赖。
         for (int index = 0; index < audio.Count; index++)
@@ -272,8 +316,9 @@ public static class SkillEditorAudioMotionTools
             SkillRuntimeAudioEvent expected = audio[index];
             // 运行资产保存的本条真实音效。
             SkillRuntimeAudioEvent actual = runtime.AudioEvents[index];
-            if (actual == null || actual.SourceEventIndex != expected.SourceEventIndex || actual.Frame != expected.Frame ||
-                actual.TimeSeconds != expected.TimeSeconds || actual.Clip != expected.Clip || actual.Volume != expected.Volume)
+            if (actual == null || actual.SourceEventIndex != expected.SourceEventIndex || actual.Frame != expected.Frame)
+                throw new InvalidOperationException("运行音效尚未同步：" + binding.name + "/" + index);
+            if (actual.TimeSeconds != expected.TimeSeconds || actual.Clip != expected.Clip || actual.Volume != expected.Volume)
                 throw new InvalidOperationException("运行音效尚未同步：" + binding.name + "/" + index);
             if (Array.IndexOf(dependencies, AssetDatabase.GetAssetPath(actual.Clip)) < 0)
                 throw new InvalidOperationException("运行资产缺少声音依赖：" + actual.Clip.name);
@@ -285,7 +330,9 @@ public static class SkillEditorAudioMotionTools
             SkillRuntimeRootMotionSegment expected = motion[index];
             // 已保存运行配置内的实际根运动区间。
             SkillRuntimeRootMotionSegment actual = runtime.RootMotionSegments[index];
-            if (actual == null || actual.StartSeconds != expected.StartSeconds || actual.EndSeconds != expected.EndSeconds || actual.Scale != expected.Scale)
+            if (actual == null || actual.StartSeconds != expected.StartSeconds || actual.EndSeconds != expected.EndSeconds)
+                throw new InvalidOperationException("运行根运动尚未同步：" + binding.name + "/" + index);
+            if (actual.Scale != expected.Scale)
                 throw new InvalidOperationException("运行根运动尚未同步：" + binding.name + "/" + index);
         }
     }
@@ -296,7 +343,11 @@ public static class SkillEditorAudioMotionTools
     /// <returns>曲线数据完全一致时返回 true。</returns>
     private static bool CurvesEqual(AnimationCurve left, AnimationCurve right)
     {
-        if (left == null || right == null || left.preWrapMode != right.preWrapMode || left.postWrapMode != right.postWrapMode)
+        if (left == null || right == null)
+        {
+            return false;
+        }
+        if (left.preWrapMode != right.preWrapMode || left.postWrapMode != right.postWrapMode)
         {
             return false;
         }

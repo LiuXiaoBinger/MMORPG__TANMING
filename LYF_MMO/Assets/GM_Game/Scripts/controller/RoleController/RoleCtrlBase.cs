@@ -13,32 +13,57 @@ using MMoRpgCommon.SceneEntity;
 * Descrpiton:
 */
 
+/// <summary>
+/// 角色表现控制器基类：持有 Animator、CharacterController、状态机与重力/移动辅助方法。
+/// 绑定场景实体（MEntity 且 Active）后，移动、重力与动画写入全部由实体组件链接管，
+/// 旧控制器 Update/OnAnimatorMove 直接返回，避免重复推进。
+/// </summary>
 public class RoleCtrlBase : MonoBehaviour
 {
+   /// <summary>角色动画器。</summary>
    protected Animator _animator;
+
+   /// <summary>角色 CharacterController，用于根运动和重力位移。</summary>
    protected  CharacterController _characterController;
+
+   /// <summary>当前角色动画状态。</summary>
    public RoleState  _roleState;
+
+   /// <summary>Animator 的 "Action" 整数参数哈希，避免运行时字符串查找。</summary>
    public int _actionId = Animator.StringToHash("Action");
-   
+
+   /// <summary>选中高亮管理组件，用于受击 HitFX。</summary>
    public HighlightManager _highlightManager;
+
    //当前角色选中对象
+   /// <summary>当前被选中/锁定的目标角色。</summary>
    public RoleCtrlBase _targetRole;
-  
+
    #region 角色基础信息
+   /// <summary>角色类型（主角/怪物/NPC/其他玩家）。</summary>
    public RoleType _roleType;
+
+   /// <summary>角色基础领域信息（生命、等级等）。</summary>
    protected RoleBaseInfo _roleBaseInfo;
+
+   /// <summary>根运动位移倍率，滑铲或特定攻击时放大。</summary>
    protected int _rootMotionSpeed = 1;
+
    #endregion
    #region 相机相关
 
+   /// <summary>相机跟随/注视点。</summary>
    [Header("相机跟随点")]public Transform LookAt;
 
+   /// <summary>绑定的场景实体世界对象；绑定且 Active 后旧控制器停止自行推进。</summary>
    private ROObject _entityobj=null;
 
    #endregion
-   
+
    //角色有限状态机
+   /// <summary>旧版角色动画有限状态机，未绑定场景实体时使用。</summary>
    protected RoleFSM _fsm;
+
    #region 速度相关
    //当前速度
    public Vector3 velocity { get; set; }
@@ -49,13 +74,14 @@ public class RoleCtrlBase : MonoBehaviour
       get { return new Vector3(velocity.x, 0, velocity.z); }
       set { velocity = new Vector3(value.x, velocity.y, value.z); }
    }
+
    //垂直速度
    public Vector3 verticalVelocity
    {
       get { return new Vector3(0,velocity.y,0); }
       set { velocity = new Vector3(velocity.x, value.y, velocity.z); }
    }
-   
+
    public float accelerationMultiplier { get; set; } = 1f;       // 加速度倍率
 
    public float gravityMultiplier { get; set; } = 1f;            // 重力倍率
@@ -66,17 +92,27 @@ public class RoleCtrlBase : MonoBehaviour
 
    public float decelerationMultiplier { get; set; } = 1f;       // 减速度倍率
 
-   public void SetROObject(ROObject obj)
-   {
-      if (_entityobj == null)
-      {
-         _entityobj = obj;
-      }
-   }
-   public ROObject GetROObject( )
-   {
-      return _entityobj;
-   }
+   #region 状态 动画 
+
+   int _atkindex = 30;
+
+   private IDisposable _obs;
+
+   #endregion
+   
+   
+   
+
+
+
+   #region 运动逻辑 主要让角色可以丝滑运动 
+
+   //上升或则下降的速度
+   protected float _verticalSpeed;
+
+   //需要到达的高度
+   protected float _verticalHeiht;
+
    #endregion
    private void Awake()
    {
@@ -86,7 +122,7 @@ public class RoleCtrlBase : MonoBehaviour
       _fsm = new RoleFSM(this,_animator);
       OnAwake();
    }
-   
+
    private void Start()
    {
       OnStart();
@@ -110,7 +146,20 @@ public class RoleCtrlBase : MonoBehaviour
       OnUpdate();
       //HandleController();
    }
-   
+
+   public void SetROObject(ROObject obj)
+   {
+      if (_entityobj == null)
+      {
+         _entityobj = obj;
+      }
+   }
+
+   public ROObject GetROObject( )
+   {
+      return _entityobj;
+   }
+
    protected virtual void OnAwake()
    {
       
@@ -120,12 +169,9 @@ public class RoleCtrlBase : MonoBehaviour
    {
       
    }
+
    protected virtual void OnUpdate() { }
 
-   #region 状态 动画 
-
-   int _atkindex = 30;
-   private IDisposable _obs;
    public void ChangeState(RoleState state)
    {
       MEntity entity = _entityobj as MEntity;
@@ -134,9 +180,13 @@ public class RoleCtrlBase : MonoBehaviour
          // 绑定场景实体后，新状态机拥有 Animator 唯一写入权；旧 FSM 仅供未绑定对象兼容。
          RouteStateToEntity(entity, state);
          // Jump、Slider 及未知旧状态没有对应的新状态机入口，路由后统一保持 Idle 语义。
-         if (state == RoleState.Idle || state == RoleState.Run ||
-             state == RoleState.FastRun || state == RoleState.Attck ||
-             state == RoleState.Hit)
+         // 空闲与奔跑状态直接写入新状态机。
+         bool isIdleOrRun = state == RoleState.Idle || state == RoleState.Run;
+         // 疾跑与攻击状态也直接写入新状态机。
+         bool isFastRunOrAttack = state == RoleState.FastRun || state == RoleState.Attck;
+         // 受击状态直接写入新状态机。
+         bool isHitState = state == RoleState.Hit;
+         if (isIdleOrRun || isFastRunOrAttack || isHitState)
          {
             _roleState = state;
          }
@@ -225,21 +275,6 @@ public class RoleCtrlBase : MonoBehaviour
          _highlightManager.HitFX(target);
       }
    }
-   #endregion
-   
-   
-   
-
-
-
-   #region 运动逻辑 主要让角色可以丝滑运动 
-
-   //上升或则下降的速度
-   protected float _verticalSpeed;
-   //需要到达的高度
-   protected float _verticalHeiht;
-   
-
 
    /// <summary>
    /// 检测是否在地面
@@ -284,6 +319,7 @@ public class RoleCtrlBase : MonoBehaviour
       }
 
    }
+
    /// <summary>
    /// 检测是否在地面
    /// </summary>
@@ -294,7 +330,7 @@ public class RoleCtrlBase : MonoBehaviour
       Vector3 pos = transform.position + new Vector3(0, 0.1f, 0);
       return Physics.CheckSphere(pos, 0.2f, 1 << LayerMask.NameToLayer("Geometry"));
    }
-   
+
    /// <summary>
    /// 施加重力，使玩家下落
    /// </summary>
@@ -322,6 +358,7 @@ public class RoleCtrlBase : MonoBehaviour
          verticalVelocity = new Vector3(0, speed, 0);
       }
    }
+
    // 将角色吸附到地面（防止悬空）
    public virtual void SnapToGround(float force)
    {
@@ -336,6 +373,7 @@ public class RoleCtrlBase : MonoBehaviour
          }*/
       }
    }
+
    /// <summary>
    /// 获取移动方向输入（带十字型死区判断）
    /// 如果在锁定时间内，则返回 Vector3.zero
@@ -360,6 +398,7 @@ public class RoleCtrlBase : MonoBehaviour
       else axis.y = 0f;
       return new Vector3(axis.x, 0, axis.y);
    }
+
    /// <summary>
    /// 将输入值按给定死区重新映射到 0-1
    /// </summary>
@@ -394,7 +433,7 @@ public class RoleCtrlBase : MonoBehaviour
       // 6. 返回最终的世界空间移动方向
       return direction;
    }
-   
+
    // 根据输入的方向平滑加速移动
    public virtual void Accelerate(Vector3 direction, float turningDrag, float acceleration, float topSpeed)
    {
@@ -429,7 +468,7 @@ public class RoleCtrlBase : MonoBehaviour
          lastVelocity = velocity + turningVelocity;
       }
    }
-   
+
    // 平滑减速，速度逐渐趋近于 0（水平速度减速）
    public virtual void Decelerate(float deceleration, Vector3 tagetSpeed )
    {
@@ -439,7 +478,7 @@ public class RoleCtrlBase : MonoBehaviour
       // 第三个参数是本帧允许的最大速度变化量
       lastVelocity = Vector3.MoveTowards(lastVelocity, tagetSpeed, delta);
    }
-   
+
    protected virtual void HandleController()
    {
       if (_characterController.enabled)
@@ -449,7 +488,7 @@ public class RoleCtrlBase : MonoBehaviour
       }
       transform.position += velocity * Time.deltaTime;
    }
-   
+
    protected virtual void FaceDirection(Vector3 direction, float currentRotationSpeed)
    {
       if (direction != Vector3.zero)
@@ -463,8 +502,7 @@ public class RoleCtrlBase : MonoBehaviour
          transform.rotation = Quaternion.RotateTowards(rotation,target,rotationDelta);
       }
    }
-   
-   
+
    #endregion
 
   
@@ -476,6 +514,6 @@ public class RoleCtrlBase : MonoBehaviour
       _roleBaseInfo =  baseInfo;
       
    }
-   
+
    public virtual bool UseSkill(SkillInfo skillInfo){return false;}
 }

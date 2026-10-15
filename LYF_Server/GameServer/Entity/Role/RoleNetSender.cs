@@ -50,9 +50,16 @@ public sealed class RoleNetSender
         }
 
         SaveRoleDataReq request = _role.SaveAllMoudle();
-        if (request == null ||
-            (request.ItemDataLists.Count == 0 && request.RoleCountInfoList.Count == 0 &&
-             !request.RoleCountSnapshot))
+        // 空保存请求直接忽略。
+        if (request == null)
+        {
+            return false;
+        }
+        // 既无物品列表、又无次数信息且未要求次数快照时视为空请求，避免无意义发包。
+        bool hasNoItemData = request.ItemDataLists.Count == 0;
+        bool hasNoCountInfo = request.RoleCountInfoList.Count == 0;
+        bool noCountSnapshot = !request.RoleCountSnapshot;
+        if (hasNoItemData && hasNoCountInfo && noCountSnapshot)
         {
             // RoleCountSnapshot 为 true 且列表为空表示清空次数表，不能被当成空请求丢弃。
             return false;
@@ -65,8 +72,13 @@ public sealed class RoleNetSender
 
     public void OnSaveRoleDataResult(SaveRoleDataRet result)
     {
-        if (result == null || _inFlightRequest == null || result.RoleId != _inFlightRequest.RoleId ||
-            result.Version != _inFlightRequest.Version)
+        // 回包为空或没有在途保存请求时直接忽略。
+        if (result == null || _inFlightRequest == null)
+        {
+            return;
+        }
+        // 回包角色或版本与在途请求不匹配时视为过期回包，直接忽略。
+        if (result.RoleId != _inFlightRequest.RoleId || result.Version != _inFlightRequest.Version)
         {
             return;
         }

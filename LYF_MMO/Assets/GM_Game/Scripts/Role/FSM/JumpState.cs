@@ -8,9 +8,10 @@ using UnityEngine;
 * Descrpiton:
 */
 
+/// <summary>跳跃状态：进入时把动作参数置为21，并用 UniRx 逐帧检测 Jump_Loop 标签后切到23过渡态，退出时释放订阅。</summary>
 public class JumpState : RoleFSMStateBase
 {
-    
+
     private IDisposable _obs;
 
     public JumpState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)

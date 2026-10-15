@@ -9,13 +9,36 @@ public class NpcShopWindow : WindowBase
 {
     /// <summary>窗口激活期间的帧事件，由商城控制器消费次数脏标记。</summary>
     public event Action FrameUpdated;
+
     [SerializeField, Header("NPC商店父组件")] private Transform _content;
 
     /// <summary>商品点击事件，由商城控制器处理。</summary>
     public event Action<ShopGoodsViewData> GoodsClicked;
 
     private readonly List<GameObject> _goodsObjects = new List<GameObject>();
+
     private int _listVersion;
+
+    /// <summary>窗口激活时通知商城控制器检查角色次数变化。</summary>
+    private void Update()
+    {
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+        Action handler = FrameUpdated;
+        if (handler != null)
+        {
+            handler.Invoke();
+        }
+    }
+
+    /// <summary>销毁窗口时清理事件引用。</summary>
+    private void OnDestroy()
+    {
+        FrameUpdated = null;
+        GoodsClicked = null;
+    }
 
     public override void ReFreshUI(object obj)
     {
@@ -80,26 +103,5 @@ public class NpcShopWindow : WindowBase
             }
         }
         _goodsObjects.Clear();
-    }
-
-    /// <summary>窗口激活时通知商城控制器检查角色次数变化。</summary>
-    private void Update()
-    {
-        if (!isActiveAndEnabled)
-        {
-            return;
-        }
-        Action handler = FrameUpdated;
-        if (handler != null)
-        {
-            handler.Invoke();
-        }
-    }
-
-    /// <summary>销毁窗口时清理事件引用。</summary>
-    private void OnDestroy()
-    {
-        FrameUpdated = null;
-        GoodsClicked = null;
     }
 }

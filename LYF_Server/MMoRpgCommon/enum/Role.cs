@@ -11,6 +11,9 @@ public enum RoleCountType
 }
 
 
+/// <summary>
+/// 角色数据模块分类；组件按模块注册脏标记与持久化范围，数值与参考服务器模块表保持一致。
+/// </summary>
 public enum RoleModuleType {
   kRoleModuleTypeNone = 0,
   kRoleModuleTypeBrief = 1,
@@ -75,6 +78,9 @@ public enum RoleModuleType {
   //RoleModuleType_INT_MAX_SENTINEL_DO_NOT_USE_ = google.protobuf.kint32max
 };
 
+/// <summary>
+/// 在线角色运行时状态位标记；位标记只由逻辑线程读写，用于重连、存档与场景切换流程。
+/// </summary>
 public enum RoleStateFlag
 {
     RSF_ISReconnecting,                 // [客户端连接已断开 -> 发起重连]

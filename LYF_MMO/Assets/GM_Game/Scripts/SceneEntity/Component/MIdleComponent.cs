@@ -29,15 +29,6 @@ public sealed class MIdleComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 初始化时尝试装配待机动画。
-    /// 角色模型通常在异步表现创建后才拥有 Animator，因此未就绪时由 Update 继续等待。
-    /// </summary>
-    public override void Initialize()
-    {
-        TryPrepareIdleAnimations();
-    }
-
-    /// <summary>
     /// 等待角色模型 Animator 就绪后装配两条 RO 风格待机动画。
     /// </summary>
     /// <param name="deltaMilliseconds">当前逻辑帧间隔，单位为毫秒；本组件只检测就绪状态，不使用该数值。</param>
@@ -48,6 +39,15 @@ public sealed class MIdleComponent : EntityComponentBase
             return;
         }
 
+        TryPrepareIdleAnimations();
+    }
+
+    /// <summary>
+    /// 初始化时尝试装配待机动画。
+    /// 角色模型通常在异步表现创建后才拥有 Animator，因此未就绪时由 Update 继续等待。
+    /// </summary>
+    public override void Initialize()
+    {
         TryPrepareIdleAnimations();
     }
 

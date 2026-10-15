@@ -9,13 +9,13 @@ using SqlSugar;
 public class RoleShopPurchaseTable
 {
     /// <summary>
-    /// 角色 ID，与 NpcID、ShopID 组成复合主键。
+    /// 角色 ID，与 ShopID 组成复合主键。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public int RoleID { get; set; }
 
     /// <summary>
-    /// 商店商品配置 ID，与 RoleID、NpcID 组成复合主键。
+    /// 商店商品配置 ID，与 RoleID 组成复合主键。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public int ShopID { get; set; }

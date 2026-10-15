@@ -5,7 +5,7 @@ using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
-/// <summary>技能界面控制器，负责快捷输入、施法协议和服务器 MP/CD 结果的展示。</summary>
+/// <summary>技能界面控制器，负责快捷输入与服务器MP/CD结果展示，施法发送交给RO模块链。</summary>
 public sealed class SkillCtrl : CtrlBase
 {
     /// <summary>技能列表窗口，仅接收控制器生成的视图数据。</summary>
@@ -52,6 +52,11 @@ public sealed class SkillCtrl : CtrlBase
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
         }
+        if (_roleCurrentWindow != null)
+        {
+            _roleCurrentWindow.AimButtonClicked += OnAimButton;
+        }
+        MSkillTargetMgr.singleton.TargetChanged += OnTargetChanged;
         RegisterInput();
     }
 
@@ -193,6 +198,8 @@ public sealed class SkillCtrl : CtrlBase
     {
         if (localRole == null)
         {
+            TouchObject.singleton.Clear();
+            OnTargetChanged(null);
             _skillsByKey.Clear();
             _skillViews.Clear();
             _skillViewRoleId = 0;
@@ -236,14 +243,17 @@ public sealed class SkillCtrl : CtrlBase
     /// <param name="localRole">当前场景世界中的本地主角。</param>
     private void ApplySkillCores(PlayerEntity localRole)
     {
-        if (localRole == null || localRole.Skill == null ||
-            localRole.BaseInfo == null ||
+        if (localRole == null || localRole.Skill == null)
+        {
+            return;
+        }
+        if (localRole.BaseInfo == null ||
             localRole.GetID() != _skillViewRoleId)
         {
             return;
         }
-        // 11080 重同步只删除失效技能，仍已学技能的预测与权威冷却不能清零。
-        HashSet<int> learnedSkillIds = new HashSet<int>();
+        // 已保存同角色的服务器列表，装配职责按RO归技能组件，控制器只转换已有视图快照。
+        List<RoleSkillInfo> skills = new List<RoleSkillInfo>(_skillViews.Count);
         for (int index = 0; index < _skillViews.Count; index++)
         {
             // 已学技能展示快照；零级技能只展示，不允许释放。
@@ -252,21 +262,12 @@ public sealed class SkillCtrl : CtrlBase
             {
                 continue;
             }
-            // 新效果/表现配置按 SkillId、学习等级和真实职业装配。
-            MSkillCore core = MSkillFactory.CreateCore(view.SkillId,
-                view.Level, localRole.BaseInfo.JobId);
-            if (core != null)
-            {
-                // 同等级同步可立即归还工厂核心，先保存主表 ID 用于本次快照去重。
-                int loadedSkillId = core.SkillId;
-                localRole.Skill.SetSkillCore(core);
-                learnedSkillIds.Add(loadedSkillId);
-            }
+            skills.Add(new RoleSkillInfo { SkillId = view.SkillId, Level = view.Level });
         }
-        localRole.Skill.RetainSkillCores(learnedSkillIds);
+        localRole.Skill.OnAttachSkill(skills);
     }
 
-    /// <summary>快捷键入口：选中已学技能后提交请求并立即开始预表现。</summary>
+    /// <summary>快捷键入口：选中已学技能，交给RO经典释放模块并刷新当前CD视图。</summary>
     /// <param name="key">输入系统上报的固定技能快捷键。</param>
     private void OnSkillKey(string key)
     {
@@ -284,53 +285,58 @@ public sealed class SkillCtrl : CtrlBase
         }
         // 本地玩家场景实体负责技能状态与预测 CD，旧 MainRoleCtrl 不参与施法。
         PlayerEntity localRole = GetLocalRole();
-        if (localRole == null || localRole.Skill == null ||
-            localRole.BaseInfo == null ||
+        if (localRole == null || localRole.Skill == null)
+        {
+            return;
+        }
+        if (localRole.BaseInfo == null ||
             localRole.GetID() != _skillViewRoleId)
         {
             return;
         }
-        RequestAuthoritativeCast(localRole, skillInfo.Id);
-    }
-
-    /// <summary>提交服务器施法请求，并以同一 UUID 启动本地预表现。</summary>
-    /// <param name="localRole">持有已学技能核心及当前 MP 的本地主角。</param>
-    /// <param name="skillId">已绑定快捷键的旧技能主表 ID。</param>
-    private void RequestAuthoritativeCast(PlayerEntity localRole, int skillId)
-    {
-        // 发包前按本地已学状态和可见资源作快速校验；服务器仍独立裁决。
-        float realtimeSeconds = Time.realtimeSinceStartup;
-        if (!localRole.Skill.CanStart(skillId, realtimeSeconds,
-            localRole.BaseInfo.CurrMp))
+        // 快捷键只选择已学核心，发送职责沿RO经典释放、交接与导航到达模块执行。
+        MSkillCore core = localRole.Skill.GetSkillCore(skillInfo.Id);
+        if (core == null)
         {
             return;
         }
-        // RO 的 NextSkillUUID 随本地玩家实体在 1 至 9999 内循环。
-        ulong skillUuid = localRole.NextSkillUUID;
-        if (NetSocketMgr.Client != null)
+        MSkillClassicsHandler.CastSkill(core, localRole.Position, 
+            GetTargetFilterSkill(core, localRole.Target));
+        RefreshSkillWindows();
+    }
+
+    /// <summary>沿 RO 同名入口优先沿用合格敌人，否则自动找敌；本项目无目标攻击只辅助选择与朝向。</summary>
+    /// <param name="skillCore">本次已学技能，只有主表 Type 一或二的攻击参与自动选敌。</param>
+    /// <param name="target">玩家当前选中实体，可为空或友方。</param>
+    /// <returns>最近合格敌人；无敌人或非攻击技能返回空，保留原无目标施法。</returns>
+    public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
+    {
+        // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
+        SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
+        if (skillInfo.Type != 1 && skillInfo.Type != 2)
         {
-            try
-            {
-                // 请求只携施法 UUID 与技能 ID，角色、等级、目标与扣费由服务器确定。
-                SkillCastReq request = new SkillCastReq
-                {
-                    SkillUuid = skillUuid,
-                    SkillId = skillId
-                };
-                NetSocketMgr.Client.SendData(NetDefine.CMD_SkillCastCode,
-                    request.ToByteString());
-            }
-            catch (Exception exception)
-            {
-                // 显式发送异常代表请求未提交，按 RO 不启动本次预表现。
-                Debug.LogError("技能施法请求发送失败：" + exception);
-                return;
-            }
+            return null;
         }
-        if (localRole.Skill.BeginPrediction(skillId, skillUuid,
-            Time.realtimeSinceStartup, localRole.BaseInfo.CurrMp))
+        if (MSkillTargetMgr.singleton.CanAttack(target))
         {
-            RefreshSkillWindows();
+            return target;
+        }
+        return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, null);
+    }
+
+    /// <summary>正式瞄准按钮和 Tab 统一交给 RO 同名切换方法。</summary>
+    private void OnAimButton()
+    {
+        MSkillTargetMgr.singleton.FindEnemyByAimBtn();
+    }
+
+    /// <summary>将选中实体交给现角色窗口，只更新目标文字，不发技能或伤害请求。</summary>
+    /// <param name="target">新选中的原实体，空值显示未选中。</param>
+    private void OnTargetChanged(MEntity target)
+    {
+        if (_roleCurrentWindow != null)
+        {
+            _roleCurrentWindow.UpdateTarget(target);
         }
     }
 
@@ -369,30 +375,25 @@ public sealed class SkillCtrl : CtrlBase
         {
             return;
         }
-        // 使用回包自带服务器时间相减，不把本地设备时钟当作权威时间。
-        float remainingCooldown = GetServerRemainingSeconds(
-            result.CooldownEndUnixMs, result.ServerTimeUnixMs);
-        float remainingGroupCooldown = GetServerRemainingSeconds(
-            result.GroupCooldownEndUnixMs, result.ServerTimeUnixMs);
         // 当前本地角色；断线或切图后不可把旧回包写入新角色。
         PlayerEntity localRole = GetLocalRole();
         if (localRole != null && localRole.Skill != null &&
-            localRole.GetID() == _skillViewRoleId &&
-            localRole.Skill.ApplyCastResult(result.SkillId,
-                result.SkillUuid, result.CmdCode == CmdCode.Succeed,
-                remainingCooldown,
-                remainingGroupCooldown, Time.realtimeSinceStartup, result.UsingTimes))
+            localRole.GetID() == _skillViewRoleId)
         {
-            localRole.ApplyAuthoritativeMp(result.CurrentMp);
-            if (_roleCurrentWindow != null && localRole.BaseInfo != null)
+            // 身份与快照角色一致后才把权威结果写入技能核心，同步失败则不刷新界面。
+            if (localRole.Skill.OnSkillCoreSync(result, Time.realtimeSinceStartup))
             {
-                _roleCurrentWindow.UpdateMp(localRole.BaseInfo.CurrMp,
-                    localRole.BaseInfo.MaxMp);
-            }
-            RefreshSkillWindows();
-            if (result.CmdCode != CmdCode.Succeed)
-            {
-                TipsMgr.Instance.ShowSystemTips(GetCastErrorText(result.CmdCode));
+                localRole.ApplyAuthoritativeMp(result.CurrentMp);
+                if (_roleCurrentWindow != null && localRole.BaseInfo != null)
+                {
+                    _roleCurrentWindow.UpdateMp(localRole.BaseInfo.CurrMp,
+                        localRole.BaseInfo.MaxMp);
+                }
+                RefreshSkillWindows();
+                if (result.CmdCode != CmdCode.Succeed)
+                {
+                    TipsMgr.Instance.ShowSystemTips(GetCastErrorText(result.CmdCode));
+                }
             }
         }
     }
@@ -413,15 +414,7 @@ public sealed class SkillCtrl : CtrlBase
         {
             return;
         }
-        // 服务器已学等级解析出的效果，客户端只据此选择匹配职业的表现。
-        MSkillCore core = MSkillFactory.CreateCoreByEffect(notice.SkillId,
-            notice.EffectId, caster.BaseInfo.JobId);
-        if (core != null)
-        {
-            // RO 远端按服务器成功释放的段号选动作；本地已播段由组件去重并只校正核心。
-            core.SelectPresentation(notice.UsingTimes, Time.realtimeSinceStartup);
-        }
-        caster.Skill.ApplyServerStart(core, notice.SkillUuid);
+        caster.Skill.OnSkillStart(notice);
     }
 
     /// <summary>服务器结束广播按同一 UUID 匹配当前或旧实例；自然结束保留事件尾段，打断立即注销并回池。</summary>
@@ -439,22 +432,8 @@ public sealed class SkillCtrl : CtrlBase
         if (caster != null && caster.Skill != null)
         {
             // 协议已有打断标志；自然结束保留时间轴尾段，真实打断立即注销此 UUID 的全部未触发指令。
-            caster.Skill.ApplyServerEnd(notice.SkillUuid, notice.Interrupted);
+            caster.Skill.OnSkillEnd(notice);
         }
-    }
-
-    /// <summary>根据服务器回包时间计算非负剩余 CD，单位从毫秒换算为秒。</summary>
-    /// <param name="endUnixMs">服务器声明的 CD 截止 Unix 毫秒。</param>
-    /// <param name="serverUnixMs">服务器生成本回包时的 Unix 毫秒。</param>
-    /// <returns>不依赖客户端墙上时钟的剩余冷却秒数。</returns>
-    private static float GetServerRemainingSeconds(long endUnixMs,
-        long serverUnixMs)
-    {
-        if (endUnixMs <= serverUnixMs || serverUnixMs <= 0)
-        {
-            return 0f;
-        }
-        return (endUnixMs - serverUnixMs) * 0.001f;
     }
 
     /// <summary>从统一场景世界取得当前本地主角。</summary>
@@ -567,6 +546,11 @@ public sealed class SkillCtrl : CtrlBase
     /// <summary>注销协议与输入，避免旧主界面处理新连接消息。</summary>
     public override void Dispose()
     {
+        MSkillTargetMgr.singleton.TargetChanged -= OnTargetChanged;
+        if (_roleCurrentWindow != null)
+        {
+            _roleCurrentWindow.AimButtonClicked -= OnAimButton;
+        }
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RoleSkillInfoCode,
             OnRoleSkillInfo);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SkillCastCode,

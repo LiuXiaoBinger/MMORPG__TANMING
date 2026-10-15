@@ -28,8 +28,11 @@ public sealed class ShopCtrl : CtrlBase
     /// <summary>商城窗口帧循环消费次数模块脏标记。</summary>
     private void OnShopWindowFrameUpdated()
     {
-        if (_shopWindow == null || !_shopWindow.isActiveAndEnabled ||
-            Global.Instance == null || Global.Instance.SceneWorld == null)
+        if (_shopWindow == null || !_shopWindow.isActiveAndEnabled)
+        {
+            return;
+        }
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
         {
             return;
         }

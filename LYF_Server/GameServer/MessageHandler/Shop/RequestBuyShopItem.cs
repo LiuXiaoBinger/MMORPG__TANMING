@@ -29,9 +29,22 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
     {
         #region 校验
 
+        // 上下文缺失、来源非网关或传输链路缺失时，无法回包，直接按无效会话拒绝。
         if (context == null || context.Source != GameCommandSource.GateServer ||
-            context.Transport == null || context.Package == null || context.Command == null ||
-            context.Command.Session == null || context.GateSession == null)
+            context.Transport == null)
+        {
+            SendResult(context, CmdCode.InvalidSession, "购买请求的网关会话无效");
+            return;
+        }
+        // 协议包与命令缺失会导致无法定位复合会话。
+        if (context.Package == null || context.Command == null ||
+            context.Command.Session == null)
+        {
+            SendResult(context, CmdCode.InvalidSession, "购买请求的网关会话无效");
+            return;
+        }
+        // 原网关会话缺失同样无法把结果送回客户端。
+        if (context.GateSession == null)
         {
             SendResult(context, CmdCode.InvalidSession, "购买请求的网关会话无效");
             return;
@@ -59,8 +72,14 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
         for (int index = 0; index < request.Items.Count; index++)
         {
             BuyShopItem item = request.Items[index];
-            if (item == null || item.GoodsId == 0 || item.BuyCount == 0 ||
-                item.BuyCount > MaxBuyCountPerItem)
+            // 商品项缺失或商品配置 ID 为零属于非法条目。
+            if (item == null || item.GoodsId == 0)
+            {
+                SendResult(context, CmdCode.InvalidQuantity, "商品购买数量无效");
+                return;
+            }
+            // 购买份数必须为正且不超过单项上限。
+            if (item.BuyCount == 0 || item.BuyCount > MaxBuyCountPerItem)
             {
                 SendResult(context, CmdCode.InvalidQuantity, "商品购买数量无效");
                 return;
@@ -69,8 +88,14 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
 
         OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
             context.Command.Session.GateSessionId, context.Command.Session.UnitySessionId);
-        if (role == null || role.State != OnlineRoleState.Online || role.mainRoleInfo == null ||
-            role.mainRoleInfo.BaseInfo == null)
+        // 在线角色缺失或角色不在线时无法完成购买结算。
+        if (role == null || role.State != OnlineRoleState.Online)
+        {
+            SendResult(context, CmdCode.InvalidSession, "角色会话无效或角色不在线");
+            return;
+        }
+        // 角色主信息或基础信息缺失时无法读取权威角色 ID。
+        if (role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
         {
             SendResult(context, CmdCode.InvalidSession, "角色会话无效或角色不在线");
             return;

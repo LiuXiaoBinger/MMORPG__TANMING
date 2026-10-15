@@ -6,16 +6,33 @@ public sealed class SkillRootMotionCollector : MonoBehaviour
 {
     /// <summary>产生根位移的实际原生动画器。</summary>
     private Animator _source;
+
     /// <summary>动画器所属模型，用于防止模型池复用时串用旧施法。</summary>
     private MModel _model;
+
     /// <summary>当前占用动作槽的普通技能，旧脱手实例不参与根移动。</summary>
     private MArtSkill _skill;
+
     /// <summary>等待移动组件消费的水平世界位移，单位米。</summary>
     private Vector3 _translation;
+
     /// <summary>绑定前的根运动开关，在模型解绑时恢复。</summary>
     private bool _savedApplyRootMotion;
+
     /// <summary>当前是否已绑定真实动画器。</summary>
     private bool _initialized;
+
+    /// <summary>动画器临时失活时丢弃未消费delta；保持绑定以便正常重新激活。</summary>
+    private void OnDisable()
+    {
+        _translation = Vector3.zero;
+    }
+
+    /// <summary>模型节点销毁后确保原生动画器开关及池引用均释放。</summary>
+    private void OnDestroy()
+    {
+        Unbind();
+    }
 
     /// <summary>绑定真实动画器并接管根位移；未声明技能窗口的动作保持原地。</summary>
     /// <param name="model">唯一管理该动画器的模型。</param>
@@ -71,7 +88,19 @@ public sealed class SkillRootMotionCollector : MonoBehaviour
     /// <summary>每次原生动画评估只采集声明窗口内的水平delta，忽略Y和根旋转。</summary>
     private void OnAnimatorMove()
     {
-        if (!_initialized || _source == null || _skill == null || !_skill.OwnsRootMotion(_model))
+        if (!_initialized)
+        {
+            _translation = Vector3.zero;
+            return;
+        }
+        // 动画来源或技能对象缺失时不采集根位移。
+        if (_source == null || _skill == null)
+        {
+            _translation = Vector3.zero;
+            return;
+        }
+        // 当前技能不再声明拥有根位移时不采集。
+        if (!_skill.OwnsRootMotion(_model))
         {
             _translation = Vector3.zero;
             return;
@@ -122,17 +151,5 @@ public sealed class SkillRootMotionCollector : MonoBehaviour
         _skill = null;
         _model = null;
         _source = null;
-    }
-
-    /// <summary>动画器临时失活时丢弃未消费delta；保持绑定以便正常重新激活。</summary>
-    private void OnDisable()
-    {
-        _translation = Vector3.zero;
-    }
-
-    /// <summary>模型节点销毁后确保原生动画器开关及池引用均释放。</summary>
-    private void OnDestroy()
-    {
-        Unbind();
     }
 }

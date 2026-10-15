@@ -1,16 +1,20 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TouchPhase = UnityEngine.TouchPhase;
 
 /// <summary>玩家输入控制器，负责采集 Input System 回调并转为实体输入事件。</summary>
 public class PlayerInputCtr : MonoBehaviour
 {
     /// <summary>当前场景中的输入控制器单例。</summary>
     public static PlayerInputCtr Instance;
+
     /// <summary>Input System 生成的玩家动作集合。</summary>
     public PlayerInput playerInput;
+
     /// <summary>技能快捷键字符通知。</summary>
     public event Action<string> SkillKeyEvent;
+
     /// <summary>主界面快捷键字符通知。</summary>
     public event Action<string> MainUIKeyHandler;
 
@@ -18,7 +22,7 @@ public class PlayerInputCtr : MonoBehaviour
     private const float MovementCheckIntervalSeconds = 0.033f;
 
     /// <summary>方向键从按下到允许停止的最短保持时间，单位为秒；用于完整走完动画混合过渡。</summary>
-    private const float MinimumMovementHoldSeconds = 0.15f;
+    private const float MinimumMovementHoldSeconds = 0.2f;
 
     /// <summary>自上次移动检查后累计的非缩放时间，禁用组件时清零。</summary>
     private float _movementCheckElapsedSeconds;
@@ -63,10 +67,60 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
+    /// <summary>用现有 Input System 采集鼠标按下松开与 Tab，Tab 和瞄准按钮走同一切换方法。</summary>
+    private void PollTargetSelection()
+    {
+        // 当前鼠标设备，桌面点击以左键的真实边沿为准。
+        Mouse mouse = Mouse.current;
+        if (mouse != null)
+        {
+            // 本帧屏幕像素位置，同时用于 UI 阻挡和世界射线检测。
+            Vector2 position = mouse.position.ReadValue();
+            if (mouse.leftButton.wasPressedThisFrame)
+            {
+                TouchObject.singleton.JudegeType(position, TouchPhase.Began);
+            }
+            if (mouse.leftButton.wasReleasedThisFrame)
+            {
+                TouchObject.singleton.JudegeType(position, TouchPhase.Ended);
+            }
+        }
+        // Tab 是桌面便捷入口，不修改已有技能字符和移动动作绑定。
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.tabKey.wasPressedThisFrame)
+        {
+            MSkillTargetMgr.singleton.FindEnemyByAimBtn();
+        }
+    }
+
+    /// <summary>初始化 Input System 并注册动作回调。</summary>
+    private void Awake()
+    {
+        Instance = this;
+        playerInput = new PlayerInput();
+        RegisterInputEvents();
+    }
+
+    /// <summary>启用 Input System 动作资产。</summary>
+    public void OnEnable()
+    {
+        // 新的组件启用周期不继承上次禁用前的取消时间，允许第一轮按键立即生效。
+        _lastMovementCanceledTime = -1d;
+        _movementInputCanceled = false;
+        ResetMovementInputState();
+        if (playerInput != null && playerInput.asset != null)
+        {
+            playerInput.asset.Enable();
+        }
+    }
+
     /// <summary>按固定时间间隔对账移动输入，补发持续移动或遗漏的停止事件。</summary>
     private void Update()
     {
         // 文本输入事件并不保证由 QueueStateEvent 或所有键盘布局产生，物理边沿作为统一技能入口的补充来源。
+        // 选择输入先检查目标有效性，技能快捷键使用同帧最新的当前目标。
+        MSkillTargetMgr.singleton.UpdateToCheckTarget();
+        PollTargetSelection();
         PollPhysicalSkillKeys();
         _movementCheckElapsedSeconds += Time.unscaledDeltaTime;
         if (_movementCheckElapsedSeconds < MovementCheckIntervalSeconds)
@@ -108,12 +162,35 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
-    /// <summary>初始化 Input System 并注册动作回调。</summary>
-    private void Awake()
+    /// <summary>禁用 Input System 动作资产。</summary>
+    public void OnDisable()
     {
-        Instance = this;
-        playerInput = new PlayerInput();
-        RegisterInputEvents();
+        // 禁用前先停止当前角色，防止切换场景或关闭组件后残留移动方向。
+        _movementInputCanceled = true;
+        TouchObject.singleton.Clear();
+        DispatchStopMovement();
+        ResetMovementInputState();
+        if (playerInput != null && playerInput.asset != null)
+        {
+            playerInput.asset.Disable();
+        }
+    }
+
+    /// <summary>销毁输入资产，避免控制器销毁后继续处理输入。</summary>
+    private void OnDestroy()
+    {
+        // 销毁前再次收敛角色状态；重复停止不会产生额外业务副作用。
+        _movementInputCanceled = true;
+        DispatchStopMovement();
+        ResetMovementInputState();
+        if (playerInput != null)
+        {
+            playerInput.Disable();
+        }
+        if (Keyboard.current != null)
+        {
+            Keyboard.current.onTextInput -= OnTextInput;
+        }
     }
 
     /// <summary>注册 Shift、Jump、Movement 和文本输入回调。</summary>
@@ -142,9 +219,12 @@ public class PlayerInputCtr : MonoBehaviour
     /// <param name="context">Input System 提供的移动动作阶段和二维输入值。</param>
     private void OnMovementChanged(InputAction.CallbackContext context)
     {
-        if (context.time < _lastMovementCanceledTime ||
-            (context.time <= _lastMovementCanceledTime &&
-             _movementInputCanceled && !context.started))
+        // 回调时间早于最近一次移动取消时间，属于取消之前的旧回调。
+        bool isBeforeCancelTime = context.time < _lastMovementCanceledTime;
+        // 与取消时间同戳、取消闸门仍开启且本次不是 Started 阶段，仍视为排队旧回调。
+        bool isSameStampLegacy = context.time <= _lastMovementCanceledTime &&
+            _movementInputCanceled && !context.started;
+        if (isBeforeCancelTime || isSameStampLegacy)
         {
             // 取消后可能仍有旧 Performed 回调排队；同时间戳只有新的 Started 才能开启下一轮输入。
             return;
@@ -285,8 +365,15 @@ public class PlayerInputCtr : MonoBehaviour
     {
         // 每帧读取当前键盘设备；设备不存在时测试输入和真实输入都不应抛异常。
         Keyboard keyboard = Keyboard.current;
-        if (keyboard == null || playerInput == null || playerInput.asset == null ||
-            !playerInput.asset.enabled)
+        if (keyboard == null)
+        {
+            return;
+        }
+        if (playerInput == null || playerInput.asset == null)
+        {
+            return;
+        }
+        if (!playerInput.asset.enabled)
         {
             return;
         }
@@ -347,9 +434,21 @@ public class PlayerInputCtr : MonoBehaviour
     /// <returns>属于技能快捷键时返回 true。</returns>
     private bool IsSkillKey(string key)
     {
-        return key == "Q" || key == "E" || key == "R" || key == "F" ||
-            key == "1" || key == "2" || key == "3" || key == "4" ||
-            key == "5" || key == "6" || key == "7" || key == "8" || key == "9";
+        // 字母快捷键分组 Q/E/R。
+        bool isLetterQer = key == "Q" || key == "E" || key == "R";
+        // 字母 F 与数字快捷键 1/2。
+        bool isLetterF12 = key == "F" || key == "1" || key == "2";
+        // 字母快捷键组合。
+        bool isLetterGroup = isLetterQer || isLetterF12;
+        // 数字快捷键 3/4/5。
+        bool isDigit345 = key == "3" || key == "4" || key == "5";
+        // 数字快捷键 6/7/8。
+        bool isDigit678 = key == "6" || key == "7" || key == "8";
+        // 数字快捷键 9。
+        bool isDigit9 = key == "9";
+        // 数字快捷键组合。
+        bool isDigitGroup = isDigit345 || isDigit678 || isDigit9;
+        return isLetterGroup || isDigitGroup;
     }
 
     /// <summary>把 Shift 的按住状态交给本地玩家移动组件，切换普通移动与跑步。</summary>
@@ -428,6 +527,7 @@ public class PlayerInputCtr : MonoBehaviour
         // 停止事件没有业务载荷，分发器不会创建或回收额外对象池参数。
         localRole.DispatchEvent(MEventType.MEvent_StopMove, null);
     }
+
     /// <summary>把文本字符封装为统一输入参数并发送给本地玩家实体。</summary>
     /// <param name="inputCharacter">本次输入字符。</param>
     private void DispatchTextInput(char inputCharacter)
@@ -454,48 +554,6 @@ public class PlayerInputCtr : MonoBehaviour
         return Global.Instance.SceneWorld.LocalRole;
     }
 
-    /// <summary>启用 Input System 动作资产。</summary>
-    public void OnEnable()
-    {
-        // 新的组件启用周期不继承上次禁用前的取消时间，允许第一轮按键立即生效。
-        _lastMovementCanceledTime = -1d;
-        _movementInputCanceled = false;
-        ResetMovementInputState();
-        if (playerInput != null && playerInput.asset != null)
-        {
-            playerInput.asset.Enable();
-        }
-    }
-
-    /// <summary>禁用 Input System 动作资产。</summary>
-    public void OnDisable()
-    {
-        // 禁用前先停止当前角色，防止切换场景或关闭组件后残留移动方向。
-        _movementInputCanceled = true;
-        DispatchStopMovement();
-        ResetMovementInputState();
-        if (playerInput != null && playerInput.asset != null)
-        {
-            playerInput.asset.Disable();
-        }
-    }
-
-    /// <summary>销毁输入资产，避免控制器销毁后继续处理输入。</summary>
-    private void OnDestroy()
-    {
-        // 销毁前再次收敛角色状态；重复停止不会产生额外业务副作用。
-        _movementInputCanceled = true;
-        DispatchStopMovement();
-        ResetMovementInputState();
-        if (playerInput != null)
-        {
-            playerInput.Disable();
-        }
-        if (Keyboard.current != null)
-        {
-            Keyboard.current.onTextInput -= OnTextInput;
-        }
-    }
     public virtual Vector3 GetMovementCameraDirection(Transform mainCameraTransform,
         Vector2 value, float deadzone)
     {
@@ -520,6 +578,7 @@ public class PlayerInputCtr : MonoBehaviour
         // 6. 返回最终的世界空间移动方向
         return direction;
     }
+
     /// <summary>
     /// 获取移动方向输入（带十字型死区判断）
     /// 如果在锁定时间内，则返回 Vector3.zero
@@ -543,6 +602,7 @@ public class PlayerInputCtr : MonoBehaviour
         else axis.y = 0f;
         return new Vector3(axis.x, 0, axis.y);
     }
+
     /// <summary>
     /// 将输入值按给定死区重新映射到 0-1
     /// </summary>

@@ -92,6 +92,7 @@ public sealed class ChangeReason
         set { _extraParamType = value; }
     }
 
+    // 以下为与上方属性重复的旧式 Get/Set 访问器，保留兼容历史调用。
     public ItemChangeReason GetMainReason() { return _mainReason; }
     public void SetMainReason(ItemChangeReason value) { _mainReason = value; }
     public ItemChangeReason GetSubReason() { return _subReason; }

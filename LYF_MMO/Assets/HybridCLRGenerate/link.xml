@@ -94,6 +94,7 @@
     <type fullname="EquipItemConfig" preserve="all" />
     <type fullname="ErrMsg" preserve="all" />
     <type fullname="ErrorInfo" preserve="all" />
+    <type fullname="ExitUtils" preserve="all" />
     <type fullname="GameServer" preserve="all" />
     <type fullname="GetServerListReq" preserve="all" />
     <type fullname="GetServerListRet" preserve="all" />
@@ -108,6 +109,7 @@
     <type fullname="LubanMgr" preserve="all" />
     <type fullname="MainRoleInfo" preserve="all" />
     <type fullname="MapKey64Value32" preserve="all" />
+    <type fullname="MoveOperationReq" preserve="all" />
     <type fullname="NetClient" preserve="all" />
     <type fullname="NpcParseInfo" preserve="all" />
     <type fullname="OpenKnapsackGridRet" preserve="all" />
@@ -132,6 +134,7 @@
     <type fullname="SkillCastStartNtf" preserve="all" />
     <type fullname="StartGameReq" preserve="all" />
     <type fullname="StartGameRet" preserve="all" />
+    <type fullname="SyncMoveNtf" preserve="all" />
     <type fullname="UpdateItem" preserve="all" />
     <type fullname="UpdateItemRet" preserve="all" />
     <type fullname="cfg.CountInfo" preserve="all" />
@@ -191,11 +194,14 @@
   <assembly fullname="Unity.TextMeshPro">
     <type fullname="TMPro.TMP_Dropdown" preserve="all" />
     <type fullname="TMPro.TMP_Dropdown/OptionData" preserve="all" />
+    <type fullname="TMPro.TMP_FontAsset" preserve="all" />
     <type fullname="TMPro.TMP_InputField" preserve="all" />
     <type fullname="TMPro.TMP_InputField/OnChangeEvent" preserve="all" />
     <type fullname="TMPro.TMP_InputField/SelectionEvent" preserve="all" />
     <type fullname="TMPro.TMP_InputField/SubmitEvent" preserve="all" />
     <type fullname="TMPro.TMP_Text" preserve="all" />
+    <type fullname="TMPro.TextAlignmentOptions" preserve="all" />
+    <type fullname="TMPro.TextMeshProUGUI" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.AnimationModule">
     <type fullname="UnityEngine.AnimationClip" preserve="all" />
@@ -215,12 +221,13 @@
   <assembly fullname="UnityEngine.AudioModule">
     <type fullname="UnityEngine.Audio.AudioMixer" preserve="all" />
     <type fullname="UnityEngine.AudioClip" preserve="all" />
+    <type fullname="UnityEngine.AudioListener" preserve="all" />
+    <type fullname="UnityEngine.AudioRolloffMode" preserve="all" />
     <type fullname="UnityEngine.AudioSource" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.CoreModule">
     <type fullname="UnityEngine.AnimationCurve" preserve="all" />
     <type fullname="UnityEngine.Application" preserve="all" />
-    <type fullname="UnityEngine.AsyncOperation" preserve="all" />
     <type fullname="UnityEngine.Behaviour" preserve="all" />
     <type fullname="UnityEngine.Bounds" preserve="all" />
     <type fullname="UnityEngine.Camera" preserve="all" />
@@ -259,6 +266,7 @@
     <type fullname="UnityEngine.HelpURLAttribute" preserve="all" />
     <type fullname="UnityEngine.HideInInspector" preserve="all" />
     <type fullname="UnityEngine.KeyCode" preserve="all" />
+    <type fullname="UnityEngine.Keyframe" preserve="all" />
     <type fullname="UnityEngine.LayerMask" preserve="all" />
     <type fullname="UnityEngine.Material" preserve="all" />
     <type fullname="UnityEngine.MaterialPropertyBlock" preserve="all" />
@@ -296,7 +304,6 @@
     <type fullname="UnityEngine.RuntimeInitializeOnLoadMethodAttribute" preserve="all" />
     <type fullname="UnityEngine.SceneManagement.LoadSceneMode" preserve="all" />
     <type fullname="UnityEngine.SceneManagement.Scene" preserve="all" />
-    <type fullname="UnityEngine.SceneManagement.SceneManager" preserve="all" />
     <type fullname="UnityEngine.ScriptableObject" preserve="all" />
     <type fullname="UnityEngine.Scripting.PreserveAttribute" preserve="all" />
     <type fullname="UnityEngine.SendMessageOptions" preserve="all" />
@@ -319,10 +326,12 @@
     <type fullname="UnityEngine.Vector4" preserve="all" />
     <type fullname="UnityEngine.WaitForEndOfFrame" preserve="all" />
     <type fullname="UnityEngine.WaitForSeconds" preserve="all" />
+    <type fullname="UnityEngine.WeightedMode" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.InputLegacyModule">
     <type fullname="UnityEngine.Input" preserve="all" />
     <type fullname="UnityEngine.Touch" preserve="all" />
+    <type fullname="UnityEngine.TouchPhase" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.JSONSerializeModule">
     <type fullname="UnityEngine.JsonUtility" preserve="all" />
@@ -343,10 +352,13 @@
     <type fullname="UnityEngine.CollisionFlags" preserve="all" />
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
     <type fullname="UnityEngine.Physics" preserve="all" />
+    <type fullname="UnityEngine.QueryTriggerInteraction" preserve="all" />
     <type fullname="UnityEngine.RaycastHit" preserve="all" />
     <type fullname="UnityEngine.Rigidbody" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UI">
+    <type fullname="UnityEngine.EventSystems.AbstractEventData" preserve="all" />
+    <type fullname="UnityEngine.EventSystems.BaseRaycaster" preserve="all" />
     <type fullname="UnityEngine.EventSystems.EventSystem" preserve="all" />
     <type fullname="UnityEngine.EventSystems.IBeginDragHandler" preserve="all" />
     <type fullname="UnityEngine.EventSystems.IDragHandler" preserve="all" />
@@ -358,6 +370,7 @@
     <type fullname="UnityEngine.EventSystems.IPointerExitHandler" preserve="all" />
     <type fullname="UnityEngine.EventSystems.IPointerUpHandler" preserve="all" />
     <type fullname="UnityEngine.EventSystems.PointerEventData" preserve="all" />
+    <type fullname="UnityEngine.EventSystems.RaycastResult" preserve="all" />
     <type fullname="UnityEngine.UI.Button" preserve="all" />
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="all" />
     <type fullname="UnityEngine.UI.Graphic" preserve="all" />
@@ -394,7 +407,6 @@
     <type fullname="YooAsset.ResourcePackage" preserve="all" />
     <type fullname="YooAsset.SceneOperationHandle" preserve="all" />
     <type fullname="YooAsset.SubAssetsOperationHandle" preserve="all" />
-    <type fullname="YooAsset.UnloadSceneOperation" preserve="all" />
     <type fullname="YooAsset.YooAssets" preserve="all" />
   </assembly>
   <assembly fullname="mscorlib">
@@ -441,6 +453,7 @@
     <type fullname="System.Diagnostics.DebuggerHiddenAttribute" preserve="all" />
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Exception" preserve="all" />
+    <type fullname="System.Func`2" preserve="all" />
     <type fullname="System.Func`3" preserve="all" />
     <type fullname="System.Globalization.CultureInfo" preserve="all" />
     <type fullname="System.Globalization.NumberStyles" preserve="all" />

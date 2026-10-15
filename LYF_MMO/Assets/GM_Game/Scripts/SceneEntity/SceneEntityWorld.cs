@@ -29,14 +29,53 @@ public sealed class SceneEntityWorld : IDisposable
     }
 
     /// <summary>
+    /// 每帧逻辑更新入口，先正向驱动所有实体 Update，再反向清理待销毁实体。
+    /// </summary>
+    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
+    public void Update(int deltaMilliseconds)
+    {
+        // 正向遍历驱动各实体逻辑更新
+        for (int index = 0; index < _order.Count; index++)
+        {
+            ROObject entity = _order[index];
+            entity.Update(deltaMilliseconds);
+        }
+
+        // 反向遍历清理 PendingDestroy 实体，避免遍历时修改列表
+        for (int index = _order.Count - 1; index >= 0; index--)
+        {
+            if (_order[index].LifecycleState == EntityLifecycleState.PendingDestroy)
+            {
+                Remove(_order[index].UID);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 帧末更新入口，驱动状态机动画刷新和模型表现。
+    /// </summary>
+    /// <param name="deltaMilliseconds">帧间隔毫秒数，内部转换为秒</param>
+    public void LateUpdate(int deltaMilliseconds)
+    {
+        float deltaSeconds = deltaMilliseconds * 0.001f;
+        for (int index = 0; index < _order.Count; index++)
+        {
+            _order[index].LateUpdate(deltaSeconds);
+        }
+    }
+
+    /// <summary>
     /// 将已构造好的实体加入世界并触发初始化。
     /// </summary>
     /// <param name="entity">待加入实体，UID 必须非零且不重复</param>
     /// <returns>加入成功返回 true；已释放、空实体或 UID 冲突返回 false</returns>
     public bool Add(ROObject entity)
     {
-        if (_disposed || entity == null || entity.UID == 0UL ||
-            _entities.ContainsKey(entity.UID))
+        // 实体无效：空实体、UID 为零或 UID 已被占用（内部短路保护空引用）。
+        bool entityInvalid = entity == null ||
+            entity.UID == 0UL ||
+            _entities.ContainsKey(entity.UID);
+        if (_disposed || entityInvalid)
         {
             return false;
         }
@@ -96,6 +135,23 @@ public sealed class SceneEntityWorld : IDisposable
         return entity;
     }
 
+    /// <summary>将当前世界的战斗实体引用复制到调用方容器，选择查询不直接修改世界顺序。</summary>
+    /// <param name="entities">调用方持有的快照容器，结果仍引用世界中的原实体。</param>
+    public void CopyEntities(List<MEntity> entities)
+    {
+        entities.Clear();
+        // 实体加入顺序索引，只读取当前世界的原对象。
+        for (int index = 0; index < _order.Count; index++)
+        {
+            // 非战斗场景对象不参与本轮目标选择。
+            MEntity entity = _order[index] as MEntity;
+            if (entity != null)
+            {
+                entities.Add(entity);
+            }
+        }
+    }
+
     /// <summary>
     /// 按 UID 尝试获取实体。
     /// </summary>
@@ -136,6 +192,17 @@ public sealed class SceneEntityWorld : IDisposable
             return false;
         }
 
+        // 在实体回池前取消当前目标，防止复用后原引用指向另一只怪物。
+        MEntity selected = entity as MEntity;
+        // 本地玩家就绪：全局实例、场景世界与本地角色均存在（内部短路保护空引用）。
+        bool localRoleReady = Global.Instance != null &&
+            Global.Instance.SceneWorld != null &&
+            Global.Instance.SceneWorld.LocalRole != null;
+        if (selected != null && localRoleReady &&
+            Global.Instance.SceneWorld.LocalRole.Target == selected)
+        {
+            MSkillTargetMgr.singleton.ResetTarget(null);
+        }
         _entities.Remove(uid);
         _order.Remove(entity);
         // 先执行实体自身销毁流程，再回收对象池
@@ -146,42 +213,6 @@ public sealed class SceneEntityWorld : IDisposable
             MEntityPool.Instance.Release(pooledEntity);
         }
         return true;
-    }
-
-    /// <summary>
-    /// 每帧逻辑更新入口，先正向驱动所有实体 Update，再反向清理待销毁实体。
-    /// </summary>
-    /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
-    public void Update(int deltaMilliseconds)
-    {
-        // 正向遍历驱动各实体逻辑更新
-        for (int index = 0; index < _order.Count; index++)
-        {
-            ROObject entity = _order[index];
-            entity.Update(deltaMilliseconds);
-        }
-
-        // 反向遍历清理 PendingDestroy 实体，避免遍历时修改列表
-        for (int index = _order.Count - 1; index >= 0; index--)
-        {
-            if (_order[index].LifecycleState == EntityLifecycleState.PendingDestroy)
-            {
-                Remove(_order[index].UID);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 帧末更新入口，驱动状态机动画刷新和模型表现。
-    /// </summary>
-    /// <param name="deltaMilliseconds">帧间隔毫秒数，内部转换为秒</param>
-    public void LateUpdate(int deltaMilliseconds)
-    {
-        float deltaSeconds = deltaMilliseconds * 0.001f;
-        for (int index = 0; index < _order.Count; index++)
-        {
-            _order[index].LateUpdate(deltaSeconds);
-        }
     }
 
     /// <summary>清空世界内所有实体，逐个销毁并回收对象池。</summary>

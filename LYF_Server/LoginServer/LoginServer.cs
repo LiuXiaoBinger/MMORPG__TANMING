@@ -11,8 +11,17 @@ using Message;
 
 namespace LoginServer
 {
+    /// <summary>
+    /// 登录服务器进程入口。登录服以客户端身份连接中心服（10110），同时以服务器身份监听 Unity
+    /// 登录请求（默认 10120）；负责账号注册/登录/选服的前置转发、登录频率限制、用户名邮箱校验，
+    /// 并通过 gRPC 调用独立验证码服务发送邮箱验证码。
+    /// </summary>
     internal class LoginApp
     {
+        /// <summary>
+        /// 进程主入口：连接中心服→监听 Unity 登录端口→注册登录类协议双向转发→初始化 gRPC 验证码客户端→休眠。
+        /// </summary>
+        /// <param name="args">命令行参数，当前未使用。</param>
         static void Main(string[] args)
         {
             

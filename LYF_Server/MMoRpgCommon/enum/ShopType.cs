@@ -20,6 +20,7 @@ public enum ShopType
     Activity = 3,
 }
 
+/// <summary>商店限购周期类型。</summary>
 public enum PurchaseLimitType
 {
     kPurchaseLimitTypeUnlimited = 0, // 不限购
@@ -27,9 +28,7 @@ public enum PurchaseLimitType
     kPurchaseLimitTypeWeek      = 2, // 每周
     kPurchaseLimitTypeForever   = 3, // 永久
 };
-/**
- * @brief  商店购买最终消耗类型
-*/
+/// <summary>商店购买最终消耗类型。</summary>
 public enum CostType
 {
     kCostDefault = 0,           //默认消耗

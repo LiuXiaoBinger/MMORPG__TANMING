@@ -79,8 +79,13 @@ public class ShopMgr : Singleton<ShopMgr>
         NetClient client = NetSocketMgr.Client;
         long connectionGeneration = NetSocketMgr.Instance.CurrentConnectionGeneration;
         PlayerEntity localRole = GetLocalRole();
-        if (  client == null || connectionGeneration <= 0 || shopTableId <= 0 ||
-            goodsId <= 0 || buyCount <= 0 || localRole == null || localRole.BaseInfo == null)
+        // 网络通道无效：客户端为空或连接代次尚未建立。
+        bool networkInvalid = client == null || connectionGeneration <= 0;
+        // 商店请求参数无效：商品表、商品编号、购买数量任一非正。
+        bool shopParamInvalid = shopTableId <= 0 || goodsId <= 0 || buyCount <= 0;
+        // 本地角色数据无效：角色为空或其基础信息未就绪。
+        bool roleInvalid = localRole == null || localRole.BaseInfo == null;
+        if (networkInvalid || shopParamInvalid || roleInvalid)
         {
             ShowPurchaseTip("购买参数无效或当前请求仍在处理中");
             return false;

@@ -40,6 +40,11 @@
         <Compile Include="Components\RoleCountComponent.cs" />
         <Compile Include="Components\RoleShopRecord.cs" />
         <Compile Include="Components\RoleSkillComponent.cs" />
+        <Compile Include="Components\ROSkillComponent.cs" />
+        <Compile Include="Components\ROMoveComponent.cs" />
+        <Compile Include="MessageHandler\Role\MoveOperationHandler.cs" />
+        <Compile Include="SceneEntity\ROSkillCore.cs" />
+        <Compile Include="SceneEntity\ROSkill.cs" />
         <Compile Include="Config\SkillCastingRulesCatalog.cs" />
         <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Skill\SkillCastingRules.cs">
           <Link>Config\SkillCastingRules.cs</Link>

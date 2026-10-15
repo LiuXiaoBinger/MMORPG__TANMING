@@ -7,12 +7,19 @@ using UnityEngine;
 * Descrpiton:
 */
 
+/// <summary>
+/// NPC 表现控制器：持有 NpcEntity 领域数据，负责走近检测并打开 NPC 对话窗口。
+/// </summary>
 public class NpcCtrl : RoleCtrlBase
 {
+    /// <summary>当前 NPC 对应的领域实体数据。</summary>
     private NpcEntity _npcEntity;
 
+    /// <summary>只读暴露 NPC 领域数据给对话窗口使用。</summary>
     public NpcEntity NpcData => _npcEntity;
 
+    /// <summary>注入 NPC 领域实体。</summary>
+    /// <param name="npcEntity">NPC 实体数据。</param>
     public void Initialize(NpcEntity npcEntity)
     {
         _npcEntity = npcEntity;

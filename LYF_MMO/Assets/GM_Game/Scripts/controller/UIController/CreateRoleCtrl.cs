@@ -62,8 +62,12 @@ public class CreateRoleCtrl : CtrlBase
 
         // 解析后的开始游戏结果，包含命令状态和完整本地角色信息。
         StartGameRet startGameResult = StartGameRet.Parser.ParseFrom(data.ToByteArray());
-        if (startGameResult == null || startGameResult.CmdCode != CmdCode.Succeed ||
-            startGameResult.MainRoleInfo == null ||
+        if (startGameResult == null || startGameResult.CmdCode != CmdCode.Succeed)
+        {
+            TipsMgr.Instance.ShowSystemTips("开始游戏失败");
+            return;
+        }
+        if (startGameResult.MainRoleInfo == null ||
             startGameResult.MainRoleInfo.BaseInfo == null)
         {
             TipsMgr.Instance.ShowSystemTips("开始游戏失败");
@@ -131,8 +135,11 @@ public class CreateRoleCtrl : CtrlBase
     /// <param name="localRole">已经完成 SceneWorld 创建和入世界生命周期的本地玩家实体。</param>
     private void OnLocalRoleLoadCompleted(PlayerEntity localRole)
     {
-        if (_isDisposed || localRole == null || localRole.RoleInfo == null ||
-            localRole.BaseInfo == null)
+        if (_isDisposed || localRole == null)
+        {
+            return;
+        }
+        if (localRole.RoleInfo == null || localRole.BaseInfo == null)
         {
             return;
         }
@@ -149,8 +156,11 @@ public class CreateRoleCtrl : CtrlBase
     /// <param name="localRole">已经可供主城场景读取的本地玩家实体。</param>
     private void CompleteStartGame(PlayerEntity localRole)
     {
-        if (_isDisposed || _isSceneTransitionPending || localRole == null ||
-            localRole.RoleInfo == null || localRole.BaseInfo == null)
+        if (_isDisposed || _isSceneTransitionPending || localRole == null)
+        {
+            return;
+        }
+        if (localRole.RoleInfo == null || localRole.BaseInfo == null)
         {
             return;
         }
@@ -207,14 +217,20 @@ public class CreateRoleCtrl : CtrlBase
         ulong requestedRoleUid, int requestedAccountId, int requestedRoleId,
         long requestedConnectionGeneration)
     {
-        if (_isDisposed || requestedGlobal == null || requestedWorld == null ||
-            requestedLocalRole == null || requestedConnectionGeneration <= 0)
+        if (_isDisposed || requestedGlobal == null || requestedWorld == null)
+        {
+            return false;
+        }
+        if (requestedLocalRole == null || requestedConnectionGeneration <= 0)
         {
             return false;
         }
         if (!ReferenceEquals(Global.Instance, requestedGlobal) ||
-            !ReferenceEquals(_subscribedGlobal, requestedGlobal) ||
-            !ReferenceEquals(requestedGlobal.SceneWorld, requestedWorld) ||
+            !ReferenceEquals(_subscribedGlobal, requestedGlobal))
+        {
+            return false;
+        }
+        if (!ReferenceEquals(requestedGlobal.SceneWorld, requestedWorld) ||
             NetSocketMgr.Instance.CurrentConnectionGeneration !=
             requestedConnectionGeneration)
         {
@@ -222,15 +238,21 @@ public class CreateRoleCtrl : CtrlBase
         }
         if (!ReferenceEquals(requestedWorld.LocalRole, requestedLocalRole) ||
             requestedLocalRole.UID != requestedRoleUid ||
-            requestedLocalRole.LifecycleState != EntityLifecycleState.Active ||
-            requestedLocalRole.RoleInfo == null ||
+            requestedLocalRole.LifecycleState != EntityLifecycleState.Active)
+        {
+            return false;
+        }
+        if (requestedLocalRole.RoleInfo == null ||
             requestedLocalRole.BaseInfo == null)
         {
             return false;
         }
         if (requestedLocalRole.RoleInfo.AccountId != requestedAccountId ||
-            requestedLocalRole.BaseInfo.RoleId != requestedRoleId ||
-            requestedGlobal.LoginInfo == null ||
+            requestedLocalRole.BaseInfo.RoleId != requestedRoleId)
+        {
+            return false;
+        }
+        if (requestedGlobal.LoginInfo == null ||
             requestedGlobal.LoginInfo.AccountId != requestedAccountId)
         {
             return false;
@@ -242,8 +264,11 @@ public class CreateRoleCtrl : CtrlBase
     /// <param name="roleId">玩家在选角界面选择的正数角色 ID。</param>
     private void OnStartGameBtnClicked(int roleId)
     {
-        if (_isDisposed || _isSceneTransitionPending || roleId <= 0 ||
-            NetSocketMgr.Client == null)
+        if (_isDisposed || _isSceneTransitionPending || roleId <= 0)
+        {
+            return;
+        }
+        if (NetSocketMgr.Client == null)
         {
             return;
         }
@@ -260,8 +285,11 @@ public class CreateRoleCtrl : CtrlBase
     /// <param name="jobId">玩家选择的职业配置 ID。</param>
     private void OnCreateRoleBtnClicked(string name,int jobId)
     {
-        if (_isDisposed || Global.Instance == null ||
-            Global.Instance.LoginInfo == null || NetSocketMgr.Client == null)
+        if (_isDisposed || Global.Instance == null)
+        {
+            return;
+        }
+        if (Global.Instance.LoginInfo == null || NetSocketMgr.Client == null)
         {
             return;
         }

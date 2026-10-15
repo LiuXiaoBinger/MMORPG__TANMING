@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+/// <summary>
+/// 网络封包/拆包工具：帧格式为 [2字节小端长度][1字节压缩标志][2字节小端CRC16][消息体]，
+/// 消息体大于 200 字节时使用 GZip 压缩；CRC16 查表校验失败返回 null。
+/// </summary>
 public class NetUtils : Singleton<NetUtils>
 {
 
