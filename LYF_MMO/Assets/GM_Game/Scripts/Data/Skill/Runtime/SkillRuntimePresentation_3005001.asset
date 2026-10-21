@@ -48,4 +48,4 @@ MonoBehaviour:
     TimeSeconds: 1.1333333
     Clip: {fileID: 8300000, guid: 4811e7203cf86e941a3d011a220e8d30, type: 3}
     Volume: 0.45
-  RootMotionSegments: []
+  ChargeList: []

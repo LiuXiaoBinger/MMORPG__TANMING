@@ -216,12 +216,8 @@ public sealed class MMoveComponent : EntityComponentBase
         }
         else
         {
-            // 远端与本地消费相同的动画根位移，技能禁止方向输入时仍须推进其自身位移。
+            // 远端与本地消费相同的程序位移，技能禁止方向输入时仍须推进其自身位移。
             UVEC3 frameMovement = UVEC3.zero;
-            if (Entity.Model.RootMotion != null)
-            {
-                frameMovement += Entity.Model.RootMotion.ConsumeDelta();
-            }
             // 实体普通容器已经求值的程序组件；移动组件不持有其生命周期或重复推进它。
             MDisplacementComponent displacementComp = Entity.DisplacementComp;
             if (displacementComp != null)
@@ -569,13 +565,8 @@ public sealed class MMoveComponent : EntityComponentBase
         // 本帧完整运动位移，水平与垂直只由移动组件合并并提交一次。
         UVEC3 frameMovement = horizontalVelocity * deltaSeconds;
         frameMovement.y = _verticalVelocity * deltaSeconds;
-        if (Entity.Model.RootMotion != null)
-        {
-            // 实际技能动画的水平delta与输入、重力只提交一次碰撞移动；不会放开MoveCasting。
-            frameMovement += Entity.Model.RootMotion.ConsumeDelta();
-        }
-        // RO 程序段与动画根窗口已禁止重叠，输入、根、程序和重力仍仅一次碰撞提交。
-        // 从实体读取当前普通组件，允许未装配位移的实体仍执行原输入及动画根移动。
+        // 输入、程序位移和重力只提交一次碰撞移动；不会放开MoveCasting。
+        // 从实体读取当前普通组件，允许未装配位移的实体仍执行原输入移动。
         MDisplacementComponent displacementComp = Entity.DisplacementComp;
         if (displacementComp != null)
         {

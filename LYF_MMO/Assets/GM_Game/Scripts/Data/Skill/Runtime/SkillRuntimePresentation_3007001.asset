@@ -50,4 +50,3 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 7b81b8674ac17da40a38a6eabad975f7, type: 3}
     Volume: 0.9
   ChargeList: []
-  RootMotionSegments: []

@@ -57,58 +57,7 @@ public static class SkillEditorAudioMotionTools
         return result;
     }
 
-    /// <summary>读取动画模式位移窗；水平方向取动画本身，重力和碰撞继续由角色组件处理。</summary>
-    /// <param name="config">作者资产，程序曲线模式由 ReadCharge 独立解释。</param>
-    /// <param name="durationSeconds">完整动作的运行时长上限，单位秒。</param>
-    /// <returns>按开始秒排序且互不重叠的动画位移段。</returns>
-    public static List<SkillRuntimeRootMotionSegment> ReadRootMotion(SkillConfigSO config, float durationSeconds)
-    {
-        // 原包类型仅在序列化边界读取，运行端使用具名领域类型。
-        SerializedObject serialized = new SerializedObject(config);
-        // 原 Y Move 轨道段列表；空列表表示动画留在原地。
-        SerializedProperty moves = serialized.FindProperty("moveSegmentList");
-        // 此次转换的位移窗口，不修改原作者段或程序专用参数。
-        List<SkillRuntimeRootMotionSegment> result = new List<SkillRuntimeRootMotionSegment>();
-        // 每条窗口的原列表下标，用于错误定位。
-        for (int index = 0; index < moves.arraySize; index++)
-        {
-            // 原序列化窗口，Animation 原枚举值是一。
-            SerializedProperty item = moves.GetArrayElementAtIndex(index);
-            // 位移开始秒，按作者明确 FPS 换算。
-            float start = item.FindPropertyRelative("keyNumber").intValue / config.timelineFrameRate;
-            // 原 Y 窗口包含末帧，运行半开区间延长一帧后夹到完整动作末尾。
-            float end = (Mathf.Max(item.FindPropertyRelative("keyNumber").intValue, item.FindPropertyRelative("endKeyNumber").intValue) + 1f) / config.timelineFrameRate;
-            // 水平动画位移倍率，零允许保持原地；禁止负值反向移动。
-            float scale = item.FindPropertyRelative("rootMotionScale").floatValue;
-            if (item.FindPropertyRelative("driveMode").intValue == 0)
-            {
-                continue;
-            }
-            if (item.FindPropertyRelative("driveMode").intValue != 1)
-                throw new InvalidOperationException("位移驱动类型未接入：" + config.name + "/" + index);
-            if (!Finite(start) || !Finite(end) || !Finite(scale))
-                throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
-            if (start < 0f || end <= start || start >= durationSeconds)
-                throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
-            if (item.FindPropertyRelative("endKeyNumber").intValue / config.timelineFrameRate > durationSeconds + 0.002f || scale < 0f)
-                throw new InvalidOperationException("根运动位移段时间或倍率无效：" + config.name + "/" + index);
-            if (item.FindPropertyRelative("ignoreGravity").boolValue || item.FindPropertyRelative("ignoreActorCollision").boolValue)
-                throw new InvalidOperationException("根运动不能绕过当前角色的重力或碰撞：" + config.name + "/" + index);
-            // Y MoveSolver 在 Animation 模式直接返回；curve、target、maxDistance、verticalDistance、alignFacing 等程序参数不执行，原值保留。
-            result.Add(new SkillRuntimeRootMotionSegment { StartSeconds = start, EndSeconds = Mathf.Min(end, durationSeconds), Scale = scale });
-        }
-        result.Sort(CompareRootMotion);
-        // 检查排序后相邻窗口，防止同一动画增量被两个位移段重复放大。
-        for (int index = 1; index < result.Count; index++)
-        {
-            if (result[index].StartSeconds < result[index - 1].EndSeconds)
-                throw new InvalidOperationException("根运动位移段不允许重叠：" + config.name);
-        }
-        ValidateMotionOverlap(result, ReadCharge(config, durationSeconds));
-        return result;
-    }
-
-    /// <summary>把 Y 前向 Self 程序段投影到 RO 同名 ChargeList；不新增作者字段或自动重导资产。</summary>
+    /// <summary>把 Y Self 程序段沿现有作者字段导出为 RO 同名 ChargeList，含前向曲线与可选横向曲线。</summary>
     /// <param name="config">原明确 FPS 的作者稿，非默认未接入参数会给出具体错误。</param>
     /// <param name="durationSeconds">原完整动作秒数，程序位移不能延长动作锁定窗口。</param>
     /// <returns>按开始秒排序的强类型程序位移指令，Program 结束帧直接换秒，不加动画窗口的一帧。</returns>
@@ -127,7 +76,9 @@ public static class SkillEditorAudioMotionTools
             SerializedProperty item = moves.GetArrayElementAtIndex(index);
             if (item.FindPropertyRelative("driveMode").intValue == 1)
             {
-                continue;
+                // 动画根运动采集已移除，遇到动画模式必须明确提示改造，不得静默不导出。
+                throw new InvalidOperationException("位移段仍为动画根运动模式，请改为程序曲线模式（driveMode=0）：" +
+                    config.name + "/moveSegmentList[" + index + "]");
             }
             if (item.FindPropertyRelative("driveMode").intValue != 0)
             {
@@ -194,13 +145,28 @@ public static class SkillEditorAudioMotionTools
             AnimationCurve runtimeCurve = new AnimationCurve(curve.keys);
             runtimeCurve.preWrapMode = curve.preWrapMode;
             runtimeCurve.postWrapMode = curve.postWrapMode;
-            // Y→RO 数据适配：仅导前向 Z，不伪造横移或瞄准目标。
+            // Y→RO 数据适配：前向走 Z 曲线与硬上限，横向按曲线与包络配对导出，不伪造瞄准目标。
+            // 作者横向累计比例曲线原对象；为空或无关键帧表示未制作横移。
+            AnimationCurve authorCurveX = item.FindPropertyRelative("curveX").animationCurveValue;
+            // 作者横向包络距离原值，单位米；与曲线同时非默认才发布横移。
+            float authorDistanceX = item.FindPropertyRelative("distanceX").floatValue;
+            // 当前段是否发布横移：曲线存在且有关键帧，同时包络非零。
+            bool hasLateral = authorCurveX != null && authorCurveX.length > 0 && authorDistanceX != 0f;
+            // 本次发布的 RO 程序位移指令；前向字段必填，横向字段仅在 hasLateral 时补齐。
             MSkillChargeData data = new MSkillChargeData
             {
                 At = startFrame / config.timelineFrameRate, End = endFrame / config.timelineFrameRate,
                 CurveZ = runtimeCurve, DistanceZ = item.FindPropertyRelative("maxDistance").floatValue,
                 AllowReverse = policy == 2, StopAtDistanceLimit = policy == 1
             };
+            if (hasLateral)
+            {
+                // 发布横向曲线独立副本，保留作者关键帧及原包围行为。
+                data.CurveX = new AnimationCurve(authorCurveX.keys);
+                data.CurveX.preWrapMode = authorCurveX.preWrapMode;
+                data.CurveX.postWrapMode = authorCurveX.postWrapMode;
+                data.DistanceX = authorDistanceX;
+            }
             if (!data.IsValid(durationSeconds))
             {
                 throw new InvalidOperationException("程序位移开始、结束、距离或曲线无效：" + config.name + "/" + index);
@@ -229,31 +195,6 @@ public static class SkillEditorAudioMotionTools
         return CurvesEqual(curve, defaults);
     }
 
-    /// <summary>拒绝程序段与动画根窗口同时推动，同端点的相邻区间允许连接。</summary>
-    /// <param name="motion">原动画半开水平窗口。</param>
-    /// <param name="charge">原程序累计曲线段。</param>
-    private static void ValidateMotionOverlap(List<SkillRuntimeRootMotionSegment> motion, List<MSkillChargeData> charge)
-    {
-        // index 遍历已校验的程序区间，零时长点也不能落在动画接管区间内。
-        for (int index = 0; index < charge.Count; index++)
-        {
-            // rootIndex 遍历动画半开窗口，末点属于后续段。
-            for (int rootIndex = 0; rootIndex < motion.Count; rootIndex++)
-            {
-                // 程序段起点早于动画窗口结束才可能重叠。
-                if (charge[index].At < motion[rootIndex].EndSeconds)
-                {
-                    // 终点晚于窗口开始构成重叠；零时长点落在窗口起点后也视为重叠。
-                    if (charge[index].End > motion[rootIndex].StartSeconds ||
-                        (charge[index].At == charge[index].End && charge[index].At >= motion[rootIndex].StartSeconds))
-                    {
-                        throw new InvalidOperationException("程序位移不能与动画根运动窗口重叠。");
-                    }
-                }
-            }
-        }
-    }
-
     /// <summary>按程序段开始秒排序，登记顺序与多段累计差量保持一致。</summary>
     /// <param name="left">第一条程序段。</param>
     /// <param name="right">第二条程序段。</param>
@@ -271,8 +212,6 @@ public static class SkillEditorAudioMotionTools
     {
         // 重新解析作者稿作为期望值，避免仅比较事件数量漏掉帧或声音换绑。
         List<SkillRuntimeAudioEvent> audio = ReadAudio(binding.Config, runtime.EffectiveTimelineDurationSeconds);
-        // 当前作者稿声明的真实动画位移窗口。
-        List<SkillRuntimeRootMotionSegment> motion = ReadRootMotion(binding.Config, runtime.DurationSeconds);
         // 当前作者程序轨道的正式投影；旧运行资产空引用兼容为零段。
         List<MSkillChargeData> charge = ReadCharge(binding.Config, runtime.DurationSeconds);
         // 已发布程序段数，不能把尚未导出的新内容误认为旧空资产兼容。
@@ -304,11 +243,19 @@ public static class SkillEditorAudioMotionTools
             {
                 throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
             }
+            // 横向曲线与包络同为可选项，两侧同为空引用视为一致。
+            bool lateralEqual = actual.CurveX == null && expected.CurveX == null;
+            if (actual.CurveX != null && expected.CurveX != null)
+            {
+                lateralEqual = CurvesEqual(actual.CurveX, expected.CurveX);
+            }
+            if (actual.DistanceX != expected.DistanceX || !lateralEqual)
+            {
+                throw new InvalidOperationException("程序位移尚未同步：" + binding.name + "/" + index);
+            }
         }
-        if (runtime.AudioEvents == null || runtime.RootMotionSegments == null || runtime.AudioEvents.Count != audio.Count)
-            throw new InvalidOperationException("音效或根运动尚未同步：" + binding.name);
-        if (runtime.RootMotionSegments.Count != motion.Count)
-            throw new InvalidOperationException("音效或根运动尚未同步：" + binding.name);
+        if (runtime.AudioEvents == null || runtime.AudioEvents.Count != audio.Count)
+            throw new InvalidOperationException("音效尚未同步：" + binding.name);
         // 每条音效核对触发时间、资源身份、音量以及依赖。
         for (int index = 0; index < audio.Count; index++)
         {
@@ -322,18 +269,6 @@ public static class SkillEditorAudioMotionTools
                 throw new InvalidOperationException("运行音效尚未同步：" + binding.name + "/" + index);
             if (Array.IndexOf(dependencies, AssetDatabase.GetAssetPath(actual.Clip)) < 0)
                 throw new InvalidOperationException("运行资产缺少声音依赖：" + actual.Clip.name);
-        }
-        // 窗口时间与倍率均逐项核对，不能把空列表视为发布成功。
-        for (int index = 0; index < motion.Count; index++)
-        {
-            // 作者稿计算出的期望根运动区间。
-            SkillRuntimeRootMotionSegment expected = motion[index];
-            // 已保存运行配置内的实际根运动区间。
-            SkillRuntimeRootMotionSegment actual = runtime.RootMotionSegments[index];
-            if (actual == null || actual.StartSeconds != expected.StartSeconds || actual.EndSeconds != expected.EndSeconds)
-                throw new InvalidOperationException("运行根运动尚未同步：" + binding.name + "/" + index);
-            if (actual.Scale != expected.Scale)
-                throw new InvalidOperationException("运行根运动尚未同步：" + binding.name + "/" + index);
         }
     }
 
@@ -380,15 +315,6 @@ public static class SkillEditorAudioMotionTools
         int order = left.TimeSeconds.CompareTo(right.TimeSeconds);
         if (order != 0) return order;
         return left.SourceEventIndex.CompareTo(right.SourceEventIndex);
-    }
-
-    /// <summary>按照位移开始秒排序，后续检查相邻窗口是否重叠。</summary>
-    /// <param name="left">第一条根运动窗口。</param>
-    /// <param name="right">第二条根运动窗口。</param>
-    /// <returns>标准升序比较结果。</returns>
-    private static int CompareRootMotion(SkillRuntimeRootMotionSegment left, SkillRuntimeRootMotionSegment right)
-    {
-        return left.StartSeconds.CompareTo(right.StartSeconds);
     }
 
     /// <summary>判断资产浮点数是否能安全参与动作时钟或音量计算。</summary>

@@ -1,3 +1,16 @@
+## 2026-10-21 RO配置曲线替代采集器：独立源码、资产与原生发布检查通过
+
+- 输入基线1e2e084，分支codex/feature-development；全部证据根_temp/ro-charge-only-20261021/review。WorkBuddy交付后由Codex独立运行；不把开发自报作为通过依据，源输入SHA256在提交前汇总核对。
+- prepare_review.py：按作者包→客户端→Editor依赖重建59/289/8份源码，后级使用本轮程序集，全部0错误、既有警告2/38/2。正式热更DLL未替换。
+- audit_assets.py：14资产48项全部通过；只允许位移字段及滑步描述变化，动画/音效/特效及其它制作内容逐项与基线保护。六作者Program合法默认字段已归一；3005001、3007001仍无位移。
+- audit_trajectory.py：174/174通过；核六技能120Hz全部16/236/300/372/380/80步有符号X/Z、零起点、窗口、作者与Runtime曲线和尺度一致、峰值覆盖。按Hermite评价与样本对照的最大误差约9.17e-7米，小于0.001毫米；3001002实际每轴238键，不能用步数加一猜键数。滑步前向终点4.999852847米。
+- verify_displacement.py：链接真实MSkillChargeData/MDisplacementComponent及事件类型，14断言通过；覆盖有符号X/Z、0/90度旋转、峰值后回拉、累计终点、同帧一次消费、结束、中断清理、迟到基线及旧仅Z。Unity数学/宿主/时钟是显式薄边界，非真实碰撞运行。
+- prepare_native.py/run_native.py：专用_temp工程覆盖180份当前正式只读输入；Unity2023.2.20f1c1真实编译导入、两原预检拒旧Animation模式、八表现Validate/ReadCharge/ValidatePublished、六表现Export/SaveAssets后再次比较、作者字节保护均通过，共58断言，native-exit.json真实退出0、native-charge-only-result.json pass=true。正式项目不是启动目标。
+- 审查子Agent ro_charge_review只读核对：Collector及旧窗口与GUID引用已移除，applyRootMotion=false；Charge/FX/Audio/中断收尾和MMove单次碰撞保持。末轮仅补两处失实中文说明和报告238键，未改变功能。最终输入冻结见final-input-verification.json，精确暂存清单stage-paths.json。
+- 真实失败和修复保留：首轮291源15错与零采样被拒；第二轮漏零起点/E的FPS/滑步旧倍率导致174项中14失败；第三轮原生发布因3001001 alignFacing退出1，六旧Animation未执行的Program参数须默认归一；两原预检须承接ReadCharge且保动作时长上限。均退原开发任务修改后重测，未由主代改业务。失败快照round-2-failure、round-3-failure，集中反馈pre-delivery-findings.md及rework-successor-*.json。
+- 未完成边界：正式Play、真实角色碰撞和双端同步未运行；未启停用户Play/服务、替正式DLL、改正式场景或预制体。时间轴Program移动预览未扩展，不宣称其支持两轴。后续正常加载后实测六技能正常完成/打断、贴墙及两端位移。
+- 逐项正式文件、临时证据与Git结果见 项目修改日志/2026-10-21-RO-CHARGE-ONLY-CHANGELOG.md；设计与复盘见 项目分析/RO_SKILL_MOTION_IMPLEMENTATION.md、项目分析/项目难点.md。
+
 ## 2026-10-21 Unity NPC待机误报：末稿代码检查通过，现场待复测
 
 - 冻结Editor.log中16:26:24和16:29:22每次进主城各一组：动作状态缺少真实动画配置Idle、表现表未配置待机。沿NpcEntity→PresentDataView→默认状态刷新及原生Controller绑定追踪，NPC无Role位故表现表为空；QuQu原生顶层Idle绑定真实Warrior@Idle.FBX。不是由堆栈附近的玩家绑定成功日志推定玩家出错。

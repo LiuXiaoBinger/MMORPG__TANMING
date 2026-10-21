@@ -28,6 +28,9 @@ public sealed class MDisplacementComponent : EntityComponentBase
     /// <summary>本段已计算的前向累计距离，单位米，Continue 时允许为负。</summary>
     private float _appliedDistance;
 
+    /// <summary>本段已计算的横向累计距离，单位米，可选横向曲线存在时生效。</summary>
+    private float _appliedDistanceX;
+
     /// <summary>等待本帧移动合并的一次水平世界差量，单位米，多个同 tick 段可累计。</summary>
     private Vector3 _translation;
 
@@ -130,6 +133,28 @@ public sealed class MDisplacementComponent : EntityComponentBase
         }
         _appliedDistance += deltaDistance;
         _translation += _direction * deltaDistance;
+        // 横向曲线可选：沿施法方向固定右向累计横向差量，回拉策略与前向一致。
+        if (_data != null && _data.CurveX != null && _data.DistanceX != 0f)
+        {
+            // 当前横向比例要求的米数，包络为有符号轨迹的尺度。
+            float targetLateral = _data.CurveX.Evaluate(progress) * _data.DistanceX;
+            if (float.IsNaN(targetLateral) || float.IsInfinity(targetLateral))
+            {
+                StopDisplacement();
+                Debug.LogError("技能程序位移横向曲线产生非有限距离，停止本段。");
+                return;
+            }
+            // 当前横向累计要求的米数增量，Clamp 与 Stop 不允许回拉。
+            float deltaLateral = targetLateral - _appliedDistanceX;
+            if (deltaLateral < 0f && !_data.AllowReverse)
+            {
+                deltaLateral = 0f;
+            }
+            _appliedDistanceX += deltaLateral;
+            // 施法方向固定右向：前向(0,0,1)对应世界右(1,0,0)。
+            Vector3 right = new Vector3(_direction.z, 0f, -_direction.x);
+            _translation += right * deltaLateral;
+        }
         // 本段是否已结束：进度到终值，或开启距离上限时已达到上限距离。
         bool segmentFinished = progress >= 1f ||
             (_data.StopAtDistanceLimit && _appliedDistance >= _data.DistanceZ);
@@ -212,6 +237,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _lastClockMilliseconds = MTimerMgr.singleton.ElapsedTime;
         _direction = Quaternion.Euler(0f, args.angle, 0f) * Vector3.forward;
         _appliedDistance = 0f;
+        _appliedDistanceX = 0f;
         _started = false;
         _loadedGameObject = null;
         if (Entity.Model != null && Entity.Model.IsLoaded)
@@ -264,6 +290,23 @@ public sealed class MDisplacementComponent : EntityComponentBase
             // Clamp 和 Stop 从不实际回拉，冷基线也不能留下负距离债务导致后续超过前向上限。
             _appliedDistance = 0f;
         }
+        // 横向冷基线与前向同源；未配置横向曲线时保持零。
+        if (_data.CurveX != null && _data.DistanceX != 0f)
+        {
+            // 当前横向累计比例对应的冷基线米数，有符号，沿用施法时已冻结的右向。
+            float baselineLateral = _data.CurveX.Evaluate(elapsedSeconds / durationSeconds) * _data.DistanceX;
+            if (float.IsNaN(baselineLateral) || float.IsInfinity(baselineLateral))
+            {
+                StopDisplacement();
+                Debug.LogError("技能程序位移冷加载横向基线产生非有限距离，停止本段。");
+                return;
+            }
+            _appliedDistanceX = baselineLateral;
+            if (!_data.AllowReverse && _appliedDistanceX < 0f)
+            {
+                _appliedDistanceX = 0f;
+            }
+        }
     }
 
     /// <summary>提交前再次校验当前动作归属并消费差量，重复调用返回零。</summary>
@@ -303,6 +346,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _fireGeneration = 0;
         _translation = Vector3.zero;
         _appliedDistance = 0f;
+        _appliedDistanceX = 0f;
         _started = false;
         _loadedGameObject = null;
         _startTimeMilliseconds = 0;

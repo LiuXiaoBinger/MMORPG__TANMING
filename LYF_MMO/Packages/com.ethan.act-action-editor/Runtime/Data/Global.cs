@@ -957,6 +957,12 @@ public class Global
         [Tooltip("Hard cap on cumulative horizontal distance. Zero produces no horizontal displacement.")]
         public float maxDistance = 0f;
 
+        [Tooltip("程序模式：段内归一化时间的有符号横向累计比例曲线；需与横移包络同时配置才产生横移。")]
+        public AnimationCurve curveX = new AnimationCurve();    // 程序模式横向累计比例曲线，可选
+
+        [Tooltip("程序模式：横向包络距离（米），与有符号曲线相乘得到实际横移；无横向曲线时必须为零，曲线可配零距离表示无横移。")]
+        public float distanceX = 0f;    // 程序模式横向包络距离，单位米
+
         [Header("Destination constraints")]
         [Tooltip("Program mode: offset added to the target position.")]
         public Vector3 targetOffset = Vector3.zero;

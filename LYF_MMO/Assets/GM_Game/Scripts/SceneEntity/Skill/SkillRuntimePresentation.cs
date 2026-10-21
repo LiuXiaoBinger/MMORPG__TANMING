@@ -38,9 +38,6 @@ public sealed class SkillRuntimePresentation : ScriptableObject
     /// <summary>编辑器音效轨道的单次三维声音，按触发秒数和作者序号排序。</summary>
     public List<SkillRuntimeAudioEvent> AudioEvents = new List<SkillRuntimeAudioEvent>();
 
-    /// <summary>RO 同名程序位移指令，默认空兼容旧资产；与动画根窗口禁止重叠。</summary>
+    /// <summary>RO 同名程序位移指令，默认空兼容旧资产；位移全部由程序段驱动。</summary>
     public List<MSkillChargeData> ChargeList = new List<MSkillChargeData>();
-
-    /// <summary>只消费实际动画水平根位移的半开时间窗口，不修改施法移动权限。</summary>
-    public List<SkillRuntimeRootMotionSegment> RootMotionSegments = new List<SkillRuntimeRootMotionSegment>();
 }

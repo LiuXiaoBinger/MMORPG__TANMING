@@ -1,5 +1,25 @@
 # RO 角色技能位移、根运动与接口实现
 
+## 2026-10-21 最新决定：只保留RO配置曲线位移（源码、配置与发布检查通过）
+
+用户本轮明确确认“改成RO方案，移除采集器依赖”。该决定替代下文历史方案中“保留动画根运动并另接Program”的范围；历史源码事实和过去验证仍保留其当时含义，不代表当前继续保留采集器。
+
+本次沿用现有`ChargeList→FireEvents/ECharge→charge→实体MDisplacementComponent.onStart/Update/onStop`，由`MMoveComponent`合并重力并统一碰撞。动画只播放姿态，模型明确`applyRootMotion=false`；删除运行采集器、根窗口类型、两处delta消费及制作导出支路，不重设计已有实体组件归属。
+
+六份旧动画位移窗口需要先用真实Avatar采样得到累计水平运动，再迁移作者Program及Runtime Charge配置；旧程序字段未执行，不能当真实位移。保原窗口含末帧的时长和滑步原倍率，不能只删字段导致动作丢位移。两份原空位移表现保持空；动画、FX、Audio、CD和其它制作轨道不变。有意义横移若不能由现有前向子集表达，必须记录真实证据后做必要最小适配，不能静默截断。
+
+Codex负责设计和最后独立验收，WorkBuddy本项目桌面任务执行；末稿三组编译0错、资产48项/轨迹174项/真实组件14断言及专用Unity原生发布58断言全部通过，正式Play仍待验。记录与逐项文件见`项目修改日志/2026-10-21-RO-CHARGE-ONLY-CHANGELOG.md`，证据`_temp/ro-charge-only-20261021`。
+
+本轮最小适配沿原作者`MoveSegment`增加可选`curveX/distanceX`，前向继续原`curve/maxDistance`；运行复用RO已有`CurveX/DistanceX/CurveZ/DistanceZ`，不增加第二个位移驱动。固定朝向的右向为`(direction.z,0,-direction.x)`，两轴累计差量相加后仍交原移动组件一次碰撞。六份实际采样根旋转均为零；3004001有约0.896米横移，3006001前向先到约4.400617米再回到3.791251米，因此不能只保最终Z距离。
+
+迁移的`DistanceZ`选正向峰值，曲线值为累计Z除以该尺度；使用原Continue允许回拉，不取消原前向硬上限。`DistanceX`选横向绝对包络，曲线可为负。滑步原倍率只乘进两轴距离一次，Program作者`rootMotionScale`恢复1；作者末帧按该稿自身FPS换算，E稿30FPS与其余120FPS不能混用。曲线须含真实零起点，旧根窗口含末帧的时间仍保持。第二轮曾在零起点、作者帧与发布参数检查失败，已退原开发任务修正；末稿完整采样点最大误差小于0.001毫米，作者与Runtime一致。3001002每轴实际238键，含真实零起点，不应直接以采样步数加一推断。
+
+移除`ReadRootMotion`时，原`Validate/ValidateConfig`中的调用必须替换`ReadCharge`，因为旧接口同时执行了程序段校验；直接删调用会让错误延迟到发布写入阶段。原生Unity专用工程已复现。六份旧Animation段原不使用的Program参数必须在各自迁移段内按现有默认值归一，不放松现有校验，也不改变其它制作内容。
+
+使用方式：六份现有作者稿的moveSegmentList已为Program，前向仍配置curve/maxDistance，可选横向配置curveX/distanceX；曲线值表示累计距离比例。沿现有技能导出入口生成Runtime.ChargeList，正常施法即通过ECharge派发，无需挂采集器。旧Animation模式会明确报错提示迁移；普通走跑跳仍由原移动组件负责。两处制作预检分别保旧表动作秒数和SourceClip.length上限，音效仍使用制作时间轴长度。
+
+本轮显式时间轴预览、Gizmo及通用MoveSolver不在范围，旧`SkillEditorRootMotionPreview`跳过Program段；不能将本次运行配置支持两轴说成时间轴移动预览也已支持。正式Play、真实碰撞和双端同步均须与隔离源码/发布结果分别说明。
+
 参考根：`F:/UnityPro/ro/Ro_cs422nb`。以下源码事实由只读参考 Agent 核对，所有引用行号是分析时真实源行号；后文记录本项目实际适配与验收，参考 RO 保持只读。
 
 ## 结论

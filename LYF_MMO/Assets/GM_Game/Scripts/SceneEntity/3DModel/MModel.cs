@@ -45,14 +45,8 @@ public sealed class MModel
     /// <summary>沿RO模型持有的声音组件，模型重置时停止全部声音。</summary>
     private readonly SoundComponent _sound = new SoundComponent();
 
-    /// <summary>实际Animator节点的根位移采集器，供实体移动组件消费。</summary>
-    private SkillRootMotionCollector _rootMotion;
-
     /// <summary>模型声音入口，普通动作按编辑器轨道自动派发。</summary>
     public SoundComponent Sound { get { return _sound; } }
-
-    /// <summary>实际动画器的水平根位移入口，模型未加载时为空。</summary>
-    public SkillRootMotionCollector RootMotion { get { return _rootMotion; } }
 
     /// <summary>仅保存调用时模型尚未加载的单次 GO 请求，按 RO 票据取消，不常驻订阅技能。</summary>
     private readonly Dictionary<int, Action<GameObject>> _loadGoCallbacks =
@@ -277,11 +271,6 @@ public sealed class MModel
         _isLoading = false;
         _isLoaded = false;
         _sound.Reset();
-        if (_rootMotion != null)
-        {
-            _rootMotion.Unbind();
-        }
-        _rootMotion = null;
         if (_mAtor != null)
         {
             MAnimatorPool.Instance.Release(_mAtor);
@@ -365,18 +354,14 @@ public sealed class MModel
             return;
         }
         _mObj.SetGameObject(gameObject);
-        // 模型中真正播放动画的原生组件；根运动采集必须位于同一节点。
+        // 模型中真正播放动画的原生组件；技能位移已全部改由程序Charge驱动。
         Animator animator = gameObject.GetComponentInChildren<Animator>(true);
         _mAtor = MAnimatorPool.Instance.Acquire(_originData.UseObjectAnimator);
         _mAtor.Init(this, _mObj, animator, _originData.ControllerLocation);
         if (animator != null)
         {
-            _rootMotion = animator.GetComponent<SkillRootMotionCollector>();
-            if (_rootMotion == null)
-            {
-                _rootMotion = animator.gameObject.AddComponent<SkillRootMotionCollector>();
-            }
-            _rootMotion.Init(this, animator);
+            // 原生动画器关闭根运动写入，位移只由移动组件按程序段提交。
+            animator.applyRootMotion = false;
         }
         _sound.Init(this);
         _isLoaded = true;

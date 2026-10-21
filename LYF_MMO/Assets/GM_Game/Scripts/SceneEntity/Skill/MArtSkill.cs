@@ -368,9 +368,9 @@ public class MArtSkill : MSkill
     /// <returns>全部事件可解释且按时间排序时返回 true。</returns>
     private static bool ValidateRuntimePresentation(SkillRuntimePresentation presentation)
     {
-        // 三类事件列表必须齐全，缺一不能校验派发。
+        // 两类事件列表必须齐全，缺一不能校验派发。
         bool presentationEventsMissing = presentation.FxEvents == null ||
-            presentation.AudioEvents == null || presentation.RootMotionSegments == null;
+            presentation.AudioEvents == null;
         bool presentationDurationInvalid =
             !IsFinite(presentation.EffectiveTimelineDurationSeconds) ||
             presentation.EffectiveTimelineDurationSeconds < presentation.DurationSeconds;
@@ -456,29 +456,10 @@ public class MArtSkill : MSkill
             previousSourceIndex = audioEvent.SourceEventIndex;
         }
         previousTime = 0f;
-        // index为非重叠水平根位移窗口的零起始下标。
-        for (int index = 0; index < presentation.RootMotionSegments.Count; index++)
-        {
-            // 半开窗口使用原动画秒数，不把Clip RootT曲线直接当世界米。
-            SkillRuntimeRootMotionSegment segment = presentation.RootMotionSegments[index];
-            // 半开窗口数据必须存在且起止秒数有限、不早于上一段。
-            if (segment == null) return false;
-            bool segmentTimeInvalid = !IsFinite(segment.StartSeconds) ||
-                !IsFinite(segment.EndSeconds) || segment.StartSeconds < previousTime;
-            bool segmentRangeInvalid = segment.EndSeconds <= segment.StartSeconds ||
-                segment.EndSeconds > presentation.DurationSeconds;
-            bool segmentScaleInvalid = !IsFinite(segment.Scale) || segment.Scale < 0f;
-            if (segmentTimeInvalid || segmentRangeInvalid || segmentScaleInvalid)
-            {
-                return false;
-            }
-            previousTime = segment.EndSeconds;
-        }
-        previousTime = 0f;
-        // index 按程序段开始秒顺序校验，不允许同段重复推动或与动画根窗口叠加。
+        // index 按程序段开始秒顺序校验，不允许同段重复推动。
         for (int index = 0; presentation.ChargeList != null && index < presentation.ChargeList.Count; index++)
         {
-            // 当前前向程序段，RO 尚未接入的横移和追目标字段必须在 IsValid 中拒绝。
+            // 当前两轴（前向加横向）程序段，仅未接入的追目标开关仍由 IsValid 拒绝。
             MSkillChargeData chargeData = presentation.ChargeList[index];
             // 段数据存在且通过自身范围校验，且开始时间不早于上一段。
             if (chargeData == null) return false;
@@ -492,21 +473,6 @@ public class MArtSkill : MSkill
                 return false;
             }
             previousTime = chargeData.End;
-            // rootIndex 遍历原动画水平窗口，点事件落在窗口内也属于双驱动冲突。
-            for (int rootIndex = 0; rootIndex < presentation.RootMotionSegments.Count; rootIndex++)
-            {
-                // 当前动画半开区间；其结束时刻可以作为下一个程序段的开始。
-                SkillRuntimeRootMotionSegment root = presentation.RootMotionSegments[rootIndex];
-                // 程序段起点落在动画窗口结束之前，才可能与窗口发生重叠。
-                bool startsBeforeWindowEnds = chargeData.At < root.EndSeconds;
-                // 程序段终点越过窗口起点，或瞬时段起点落在窗口起点上，均构成重叠。
-                bool overlapsWindow = chargeData.End > root.StartSeconds ||
-                    (chargeData.At == chargeData.End && chargeData.At >= root.StartSeconds);
-                if (startsBeforeWindowEnds && overlapsWindow)
-                {
-                    return false;
-                }
-            }
         }
         return true;
     }
@@ -636,11 +602,10 @@ public class MArtSkill : MSkill
         _eventsRegistered = false;
     }
 
-    /// <summary>退出动作槽时解除水平根位移并归还动画租约，声音和未来事件继续收尾，完成后可自然回池。</summary>
+    /// <summary>退出动作槽时停止程序位移并归还动画租约，声音和未来事件继续收尾，完成后可自然回池。</summary>
     public override void ReleaseAnimation()
     {
         StopCharge();
-        ReleaseRootMotion();
         _animationReleased = true;
         if (_animationModel != null)
         {
@@ -654,73 +619,10 @@ public class MArtSkill : MSkill
         }
     }
 
-    /// <summary>统一动画入口完成剪辑绑定后接管声明窗口内的真实水平根运动。</summary>
+    /// <summary>统一动画入口完成剪辑绑定；技能位移已由程序Charge驱动，不再接管根运动。</summary>
     public override void TriggerAnim()
     {
         base.TriggerAnim();
-        // 动画安装前即可登记当前所有者；真实采集由 OwnsRootMotion 的资源与剪辑就绪条件门控。
-        if (!IsActive) return;
-        if (_animationReleased) return;
-        if (_firer == null) return;
-        if (_firer.Skill == null) return;
-        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return;
-        if (_firer.Model == null) return;
-        if (_firer.Model.RootMotion == null) return;
-        if (_boundAnimator == null) return;
-        if (!ReferenceEquals(_boundAnimator, _firer.Model.Ator)) return;
-        _firer.Model.RootMotion.Bind(this);
-    }
-
-    /// <summary>确认该实例仍占用当前模型动作槽，防止旧技能列表和准备中剪辑产生位移。</summary>
-    /// <param name="model">请求消费位移的当前模型。</param>
-    /// <returns>当前技能、动画和模型全部属于本次施法时为true。</returns>
-    public bool OwnsRootMotion(MModel model)
-    {
-        // 本代施法仍占用动作槽且表现资产已就绪时才核对模型与动画器。
-        if (!IsActive) return false;
-        if (_animationReleased) return false;
-        if (_runtimePresentation == null) return false;
-        if (_firer == null) return false;
-        if (_firer.Skill == null) return false;
-        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return false;
-        if (!ReferenceEquals(_firer.Model, model)) return false;
-        if (model == null) return false;
-        if (model.Ator == null) return false;
-        if (!ReferenceEquals(_boundAnimator, model.Ator)) return false;
-        // 已安装的Skill槽必须属于本段，异步准备下一剪辑时停止旧段delta。
-        MAnimator.MAnimInfo animation = model.Ator.GetAnimInfo(MAnimator.STATE_SKILL);
-        return animation != null && animation.IsClipReady && animation.ReadyClipPath == _animationLocation;
-    }
-
-    /// <summary>按真实原动画时钟选择水平位移倍率，窗口采用含起点不含终点的语义。</summary>
-    /// <param name="seconds">当前原生动画的已播放秒数。</param>
-    /// <returns>当前窗口倍率，窗口外或无效时钟为零。</returns>
-    public float RootMotionScale(float seconds)
-    {
-        if (_runtimePresentation == null || !IsFinite(seconds))
-        {
-            return 0f;
-        }
-        // index为非重叠窗口的零起始下标。
-        for (int index = 0; index < _runtimePresentation.RootMotionSegments.Count; index++)
-        {
-            // 当前水平根位移窗口，结束时刻属于后续窗口而不是当前窗口。
-            SkillRuntimeRootMotionSegment segment = _runtimePresentation.RootMotionSegments[index];
-            if (seconds >= segment.StartSeconds && seconds < segment.EndSeconds)
-            {
-                return segment.Scale;
-            }
-        }
-        return 0f;
-    }
-
-    /// <summary>离开动作槽时解除自身的根位移，不影响下一段已完成的绑定。</summary>
-    private void ReleaseRootMotion()
-    {
-        if (_firer != null && _firer.Model != null && _firer.Model.RootMotion != null)
-        {
-            _firer.Model.RootMotion.Release(this);
-        }
     }
 
     /// <summary>清理已播完声音，限制并行声源的模型子节点数量。</summary>

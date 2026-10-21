@@ -238,8 +238,9 @@ public static class SkillEditorAssetTools
         // 粒子和声音允许按作者制作时间轴触发，动画与位移仍使用旧表完整动作时长。
         ReadFx(binding);
         SkillEditorAudioMotionTools.ReadAudio(binding.Config, ReadTimelineDuration(binding.Config, row.DurationMs / 1000f));
-        SkillEditorAudioMotionTools.ReadRootMotion(binding.Config, row.DurationMs / 1000f);
-
+        // 原根运动预检职责改由 ReadCharge 承接：发布前先验证程序位移段可解释，避免写部分字段后才报错。
+        // 时长上限沿用原接点的旧表动画时长，不是制作时间轴时长。
+        SkillEditorAudioMotionTools.ReadCharge(binding.Config, row.DurationMs / 1000f);
     }
 
     /// <summary>检查 Y 配置可准确落地的白名单，所有隐藏列表与未知字段同样受检。</summary>
@@ -318,7 +319,9 @@ public static class SkillEditorAssetTools
         ValidateZeroCurve(binding.Config.moveCurve);
         ReadFx(binding);
         SkillEditorAudioMotionTools.ReadAudio(binding.Config, ReadTimelineDuration(binding.Config, binding.SourceClip.length));
-        SkillEditorAudioMotionTools.ReadRootMotion(binding.Config, binding.SourceClip.length);
+        // 原根运动预检职责改由 ReadCharge 承接：普通动作同样不得配置未接入的程序位移段。
+        // 时长上限沿用原接点的原动画剪辑长度，不是制作时间轴时长。
+        SkillEditorAudioMotionTools.ReadCharge(binding.Config, binding.SourceClip.length);
     }
 
     /// <summary>为非技能普通动作复用相同字段与完整动画门禁，不要求技能表身份。</summary>
@@ -461,7 +464,6 @@ public static class SkillEditorAssetTools
         runtime.TimelineDurationSeconds = ReadTimelineDuration(binding.Config, runtime.DurationSeconds);
         runtime.FxEvents = ReadFx(binding);
         runtime.AudioEvents = SkillEditorAudioMotionTools.ReadAudio(binding.Config, runtime.TimelineDurationSeconds);
-        runtime.RootMotionSegments = SkillEditorAudioMotionTools.ReadRootMotion(binding.Config, runtime.DurationSeconds);
         runtime.ChargeList = SkillEditorAudioMotionTools.ReadCharge(binding.Config, runtime.DurationSeconds);
         EditorUtility.SetDirty(runtime);
         AssetDatabase.SaveAssetIfDirty(runtime);

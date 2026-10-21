@@ -18,8 +18,8 @@ public static class SkillEditorAudioMotionSetup
     /// <summary>普通动作对应的原完整剪辑文件名，不改原 Animator 资源。</summary>
     private static readonly string[] LocomotionClips = { "Anim_MJS_Walk.anim", "Anim_MJS_Run_F.anim", "Anim_JX_Jump_Start.anim", "Anim_JX_Jump_End.anim", "Anim_MJS_Walk_ZD.anim", "Anim_MJS_Run_F_ZD.anim" };
 
-    /// <summary>给七份现有作者稿追加声音，给无位移段的 Q2/Q3/E/F 加动画模式，并生成六份普通动作及其运行声音配置。</summary>
-    [MenuItem("Tools/技能/YCombat/编入RO音效与MJS根运动")]
+    /// <summary>给七份现有作者稿追加声音，位移段由程序曲线迁移承载，并生成六份普通动作及其运行声音配置。</summary>
+    [MenuItem("Tools/技能/YCombat/编入RO音效与程序位移")]
     public static void PrepareAndExport()
     {
         EnsureEditableAssets();
@@ -64,12 +64,7 @@ public static class SkillEditorAudioMotionSetup
                 AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_Charge.wav", 4, 0.35f);
                 AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_ReleaseImpact.wav", 9, 0.65f);
             }
-            // 第一批需要补充根位移的技能表现 ID。
-            bool isFirstRootMotionSkill = presentationId == 3001001 || presentationId == 3001002 || presentationId == 3001003;
-            // 第二批需要补充根位移的技能表现 ID。
-            bool isSecondRootMotionSkill = presentationId == 3004001 || presentationId == 3006001;
-            if (isFirstRootMotionSkill || isSecondRootMotionSkill)
-                AddRootMotionIfEmpty(binding.Config, binding.SourceClip);
+            // 第一批需要补充根位移的技能表现 ID 已改为程序曲线，不再自动补动画根段。
             EditorUtility.SetDirty(binding.Config);
             AssetDatabase.SaveAssetIfDirty(binding.Config);
         }
@@ -133,7 +128,7 @@ public static class SkillEditorAudioMotionSetup
             temporary.SourceClip = clip;
             temporary.PreviewModel = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GM_Game/Prefabs/Role/Role_MJS.prefab");
             SkillEditorAssetTools.ValidateAuthoring(temporary);
-            if (SkillEditorAudioMotionTools.ReadRootMotion(config, clip.length).Count != 0) throw new InvalidOperationException("走跑跳位移由原角色移动组件控制：" + config.name);
+            if (SkillEditorAudioMotionTools.ReadCharge(config, clip.length).Count != 0) throw new InvalidOperationException("走跑跳位移由原角色移动组件控制：" + config.name);
         }
         finally { UnityEngine.Object.DestroyImmediate(temporary); }
     }
@@ -333,29 +328,6 @@ public static class SkillEditorAudioMotionSetup
         item.FindPropertyRelative("baseVolume").floatValue = volume;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EnsureTrack(config, 2);
-    }
-
-    /// <summary>仅给没有位移段的动作添加全动画根运动，用户已编辑段完全保留。</summary>
-    /// <param name="config">原技能作者稿。</param>
-    /// <param name="clip">原完整动画，用于计算时间轴结束帧。</param>
-    private static void AddRootMotionIfEmpty(SkillConfigSO config, AnimationClip clip)
-    {
-        // 原位移段列表，已有非空时不扩展或改变用户运动窗口。
-        SerializedObject serialized = new SerializedObject(config);
-        // 所有 Move 轨道段，不依赖轨道当前显隐。
-        SerializedProperty moves = serialized.FindProperty("moveSegmentList");
-        if (moves.arraySize != 0) return;
-        moves.arraySize = 1;
-        // 新根运动窗口保留原 Y 类默认程序字段，这些字段在动画模式不执行。
-        SerializedProperty item = moves.GetArrayElementAtIndex(0);
-        item.FindPropertyRelative("keyNumber").intValue = 0;
-        item.FindPropertyRelative("endKeyNumber").intValue = Mathf.Max(0, Mathf.RoundToInt(clip.length * config.timelineFrameRate) - 1);
-        item.FindPropertyRelative("driveMode").intValue = 1;
-        item.FindPropertyRelative("rootMotionScale").floatValue = 1f;
-        item.FindPropertyRelative("ignoreGravity").boolValue = false;
-        item.FindPropertyRelative("ignoreActorCollision").boolValue = false;
-        serialized.ApplyModifiedPropertiesWithoutUndo();
-        EnsureTrack(config, 5);
     }
 
     /// <summary>显示原 Y 指定类型轨道，已有同类型行保留显示名和折叠状态。</summary>
