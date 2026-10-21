@@ -1,3 +1,20 @@
+# 2026-10-21 WorkBuddy Windows 网关：本机配置与使用说明
+
+- 用户要求拉取 Windows 仓库到 E 盘并配置，随后询问使用方式。已克隆到 E:/codex-workbuddy-gateway-windows，来源提交 e68e3bce8c7fd577b93191add90beb74481dc136。
+- 已 npm ci/build，安装 workbuddy-executor Skill，注册 agent-hub-windows/workbuddy-windows MCP，安装当前用户 Hub 计划任务，http://127.0.0.1:18492 健康检查通过。
+- 本机 .env 指向 E:/Program Files/WorkBuddy/WorkBuddy.exe、C:/Users/lyf/.workbuddy 与固定 Node 路径。其他 MCP 保留；CLI 将既有 node_repl 的空 args=[] 规范化为省略，实际启动参数仍为空。
+- Windows 专项95项中92通过，3项因当前用户无符号链接权限而 EPERM；未修改业务源码或开启系统开发者模式。临时目录改为项目 _temp 后首次出现的斜杠格式断言已通过使用标准 Windows 路径重跑消除。
+- 当前仅18492工作台端口在线，18491桌面连接端口未开启，worker服务尚未注册，未派发模型任务、未验证真实领取/执行/返工。首次使用需用户保存工作并从 WorkBuddy 托盘退出一次，再由网关启动并准备原生项目会话。
+- 文件清单与证据见 项目修改日志/2026-10-21-WORKBUDDY-GATEWAY-SETUP-CHANGELOG.md；未修改Unity客户端或服务端业务，本次无代码提交或推送。后续需区分平台在线与真实执行通过。
+
+# 2026-10-21 豆包外部子 Agent 调用约束验证
+
+- 已实际读取 LYFMMORGP 项目主页及其输入区域，项目 URL 为 https://www.doubao.com/chat/workspace/38435310952198914；执行环境菜单实际提供“工作任务 本地电脑”和“工作任务 云电脑”，已选择后者，页面显示项目名及“云电脑”。
+- 规则覆盖每次派发/返工的项目与工作模式确认、任务单、外部子 Agent 身份、本地落盘职责、云端/本地不同步边界、结果回收、测试反馈和功能分支集成。
+- 本次无业务源码或资源改动，不运行游戏编译；检查项目配置 TOML 可解析、八份交付文件引用和规则一致性、Git diff 空白错误与暂存文件范围，结果写本轮根日志。
+- 未启动云电脑开发任务，未验证云端目录/版本/仓库及产物取回；不把此前普通对话 4628 例通过当云电脑验收，不声称云端自动改本地文件。页面证据位于 _temp/doubao-background-browser/subagent-rules-20261021。
+- 修改清单及 Git 结果见项目修改日志/2026-10-21-DOUBAO-SUBAGENT-RULES-CHANGELOG.md。原有导航等测试待验事项保持。
+
 # 2026-10-21 点地专用测试/NPC初始化：独立PASS与暂存快照通过
 
 - 本次直接代码范围：MainCityMgr.Start调用已有NpcManager.Initialize；新增NavigationClickTest.cs/meta、NavigationClickTestMenu.cs/meta与Test.meta，共6路径。完整变更/累计导航用途见项目分析/导航代码文件清单与测试说明.md。

@@ -79,3 +79,16 @@ quality_gates = [
   "项目记录",        # 更新 Docs/AI 协作记录，并将变更日志/专题分析分别归档到项目修改日志/项目分析
 ]
 auto_fix_after_review = false            # 审查后必须由开发角色修复，审查员不代改
+
+[external_agents.doubao]
+# 项目流程声明，由主 Agent 通过网页执行；不代表注册了 Codex 原生子 Agent 或 MCP。
+role = "外部开发子 Agent"
+role_file = "AIconfig/agent/doubao_executor.md"
+project_name = "LYFMMORGP"
+project_url = "https://www.doubao.com/chat/workspace/38435310952198914"
+local_project_root = "D:/unitypro/LYFMMORGP"
+required_mode = "工作模式"
+required_environment = "云电脑"
+verify_before_each_dispatch = true       # 每次派发及返工均读取实际项目和模式状态
+dispatch_rule = "在当前豆包项目建立工作任务；返工沿用对应任务，提供失败证据；禁止以普通对话、本地电脑或其他项目替代"
+integration_rule = "云端与本地不自动同步；回收补丁或产物后由本地开发子Agent核对基线并落盘，主Agent组织审查测试，失败反馈豆包返工，统一提交推送功能分支"

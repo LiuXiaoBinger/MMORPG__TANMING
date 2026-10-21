@@ -1,3 +1,20 @@
+# 2026-10-21 WorkBuddy Windows 网关：本机配置与使用说明
+
+- 用户要求拉取 Windows 仓库到 E 盘并配置，随后询问使用方式。已克隆到 E:/codex-workbuddy-gateway-windows，来源提交 e68e3bce8c7fd577b93191add90beb74481dc136。
+- 已 npm ci/build，安装 workbuddy-executor Skill，注册 agent-hub-windows/workbuddy-windows MCP，安装当前用户 Hub 计划任务，http://127.0.0.1:18492 健康检查通过。
+- 本机 .env 指向 E:/Program Files/WorkBuddy/WorkBuddy.exe、C:/Users/lyf/.workbuddy 与固定 Node 路径。其他 MCP 保留；CLI 将既有 node_repl 的空 args=[] 规范化为省略，实际启动参数仍为空。
+- Windows 专项95项中92通过，3项因当前用户无符号链接权限而 EPERM；未修改业务源码或开启系统开发者模式。临时目录改为项目 _temp 后首次出现的斜杠格式断言已通过使用标准 Windows 路径重跑消除。
+- 当前仅18492工作台端口在线，18491桌面连接端口未开启，worker服务尚未注册，未派发模型任务、未验证真实领取/执行/返工。首次使用需用户保存工作并从 WorkBuddy 托盘退出一次，再由网关启动并准备原生项目会话。
+- 文件清单与证据见 项目修改日志/2026-10-21-WORKBUDDY-GATEWAY-SETUP-CHANGELOG.md；未修改Unity客户端或服务端业务，本次无代码提交或推送。后续需区分平台在线与真实执行通过。
+
+# 2026-10-21 豆包纳入外部开发子 Agent（协作约束）
+
+- 用户要求每次调用豆包均按子 Agent 委派，并使用当前项目的工作模式、云电脑。已写入 AGENTS、AIconfig/config.toml、workflow，新增 AIconfig/agent/doubao_executor.md；决策与测试同步记录，逐项清单见项目修改日志/2026-10-21-DOUBAO-SUBAGENT-RULES-CHANGELOG.md。
+- 已通过 Codex 内置浏览器进入 LYFMMORGP 项目主页 https://www.doubao.com/chat/workspace/38435310952198914，并在执行环境菜单明确选择“工作任务 云电脑”。后续每次派发和返工前确认项目与环境，新任务在项目内建立工作任务，返工沿原任务。
+- 豆包是外部开发子 Agent，不伪称 Codex 原生子 Agent；主 Agent 保持需求拆解、协调、验收和记录职责。云端产物回收后由本地开发子 Agent 核基线落盘，组织本地测试，失败再反馈豆包；不把云端与本地当自动同步。
+- 此次仅修改八份规则、角色、协作及日志文件，不改业务代码。此前普通网页代码实验 4628 例通过，不当作工作模式云电脑验收；本次未派发云电脑开发任务，云端目录、版本与产物回收仍待首次真实任务验证。
+- 验收和 Git 结果以本轮日志收尾记录为准；当前分支 codex/feature-development，仅暂存本轮八文件，其他已有业务和角色模板修改保留。
+
 # 2026-10-21 点地测试恢复、NPC修正与功能分支（当前）
 
 - 用户要求确认A*、检查无NPC、恢复可用点地测试，逐项列导航文件；新增约束：每次代码交付列文件写日志、检查后提交并推送，开发功能分支仅明确指示才合main。
