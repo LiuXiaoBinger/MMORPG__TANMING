@@ -97,7 +97,9 @@ WorkBuddy首轮额外写入旧临时工程`_temp/f-roll-slide-20261012/client/na
 
 ## Git
 
-本轮尚未暂存、提交或推送。完成对应检查后精确暂存本任务文件，中文提交并正常推送origin/codex/feature-development；不执行main合并、不强推。具体提交号和推送结果待实际执行后追加。
+实现提交：`d45df25ee1039bdffbf1ea180b4768ec99cee397`，中文说明“feat: 按RO配置曲线统一技能位移并移除采集器”；范围为基线1e2e084后的上述精确33路径。已检查暂存清单，无无关用户文件；正常git push成功，远端origin/codex/feature-development核同SHA。没有main合并或推送、没有强推。
+
+随后仅修改三份收尾记录：`Docs/AI/CURRENT_TASK.md`记录实际提交和原桌面任务accepted；`Docs/AI/TEST_REPORT.md`补Git/验收回执；`项目修改日志/2026-10-21-RO-CHARGE-ONLY-CHANGELOG.md`记录本节及临时集成产物。中文文档提交的身份以本文件所属Git提交为准，属于同一任务记录收尾；没有业务代码再改。
 
 ## 末稿独立验收（2026-10-21）
 
@@ -119,3 +121,12 @@ WorkBuddy首轮额外写入旧临时工程`_temp/f-roll-slide-20261012/client/na
 新增临时辅助逐项：review/complete_records.py汇总五份正式记录；review/rework-successor-5.json仅注释/报告勘误；review/final_inputs.py增加真实组件输入SHA核对。WorkBuddy本轮临时修正为workbuddy/fix_round3_assets.py、repair_round3_indent.py、round3-asset-fix.json、fix_round4_assets.py、round4-asset-fix.json；另有ChargeClipSampler.cs、clip-samples.json、compile_round3.py、verify_displacement_round3.py、development-report.md及各compile-*/displacement-runtime构建输入输出。完整本轮与旧采样目录临时文件清单单独保存review/temporary-file-manifest.json，仅作证据，不提交、不清理。
 
 根协作与专题五份文件已按末稿结论更新。完整正式逐文件清单见上表；沿用资源和目录.meta没有修改，仅删除两个类型对应.meta。Git提交和推送以随后实际回执为准，主统一集成，任何普通提交均不代表获准合入main。
+
+
+## Git后续记录与最终交接
+
+Hub末轮run-89e03f5a-bfed-49f9-a88d-c6094416fa59沿原会话完成，实际completed/review=accepted/holdsCapacity=false。验收接受依据是Codex独立检查和只读审查，保留正式Play、真实碰撞、双端同步和时间轴预览边界。接受请求review/accept-request.json，真实回执hub-accepted.json；实现推送与远端一致性git-code-push.json。
+
+集成临时新增逐项：review/stage_verified.py按冻结SHA只暂存33路径；staged-paths.json为实际清单；commit-message.txt为中文实现提交正文；record_git_result.py在真实推送后汇总三份记录；git-code-push.json为提交/推送/远端一致性；accept-request.json和hub-accepted.json为原任务验收；最终记录提交正文docs-commit-message.txt。所有这些均只保留_temp，不提交或清理。temporary-file-manifest.json已在收尾补充新增路径。
+
+下一步由正常加载后的正式现场验证六技能完成/打断、贴墙碰撞及双端同步。无需重新挂SkillRootMotionCollector；运行通过配置ChargeList。专题见`项目分析/RO_SKILL_MOTION_IMPLEMENTATION.md`，本次真实难点与失败取证见`项目分析/项目难点.md`。

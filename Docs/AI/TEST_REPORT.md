@@ -11,6 +11,8 @@
 - 未完成边界：正式Play、真实角色碰撞和双端同步未运行；未启停用户Play/服务、替正式DLL、改正式场景或预制体。时间轴Program移动预览未扩展，不宣称其支持两轴。后续正常加载后实测六技能正常完成/打断、贴墙及两端位移。
 - 逐项正式文件、临时证据与Git结果见 项目修改日志/2026-10-21-RO-CHARGE-ONLY-CHANGELOG.md；设计与复盘见 项目分析/RO_SKILL_MOTION_IMPLEMENTATION.md、项目分析/项目难点.md。
 
+- Git与验收回执：实现d45df25已推送origin/codex/feature-development，远端核SHA一致；Hub第五轮run-89e03f5a-bfed-49f9-a88d-c6094416fa59 completed/accepted/holdsCapacity=false。证据review/git-code-push.json、hub-accepted.json；随后仅三份收尾记录提交，无业务再改。
+
 ## 2026-10-21 Unity NPC待机误报：末稿代码检查通过，现场待复测
 
 - 冻结Editor.log中16:26:24和16:29:22每次进主城各一组：动作状态缺少真实动画配置Idle、表现表未配置待机。沿NpcEntity→PresentDataView→默认状态刷新及原生Controller绑定追踪，NPC无Role位故表现表为空；QuQu原生顶层Idle绑定真实Warrior@Idle.FBX。不是由堆栈附近的玩家绑定成功日志推定玩家出错。
