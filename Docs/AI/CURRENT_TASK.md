@@ -1,3 +1,11 @@
+## 2026-10-21 当前生效：豆包与WorkBuddy采用本项目桌面工作任务
+
+- 用户明确替换旧豆包网页调用：豆包只经E:/doubao-cli/doubao-windows.cmd调用官方桌面，工作任务使用local运行环境、LYFMMORGP项目ID38435310952198914及D:/unitypro/LYFMMORGP目录；新建和返工均显式传项目、目录及AskOnRisk权限，不使用网页、headless或project none。
+- WorkBuddy按workbuddy-executor Skill走现有Agent Hub／桌面网关，provider=workbuddy，workspace固定D:/unitypro/LYFMMORGP，创建或复用本项目原生工作会话；两者均使用工作模式，不派普通对话、其他项目或历史测试会话。
+- 主Agent继续负责委派、测试审查和验收，外部执行者可在授权范围直接改本地文件；仅交付补丁时由本地开发子Agent落盘。保存各自任务／会话编号，返工沿原任务，已受理超时恢复原轮次。
+- 已同步AGENTS、AIconfig总策略与流程、豆包角色和新增WorkBuddy角色，以及桌面CLI示例。旧网页云电脑和隔离实验段落保留为历史，本条为当前规则；本次不额外派发开发任务，不声称项目绑定任务已执行验收。
+- 本轮验证与逐项文件、提交推送结果见 项目修改日志/2026-10-21-DESKTOP-EXECUTOR-RULES-CHANGELOG.md；不改游戏业务代码或执行器源码，保留已有用户改动。
+
 # 2026-10-21 WorkBuddy Windows 网关：本机配置与使用说明
 
 - 用户要求拉取 Windows 仓库到 E 盘并配置，随后询问使用方式。已克隆到 E:/codex-workbuddy-gateway-windows，来源提交 e68e3bce8c7fd577b93191add90beb74481dc136。

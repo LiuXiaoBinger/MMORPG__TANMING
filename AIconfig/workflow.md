@@ -12,17 +12,18 @@
 | 游戏服务端工程师 | agent/game_server.md | 服务端实现 |
 | 测试工程师 | agent/tester.md | 编译、联调、回归和问题复现 |
 | 代码审查员 | agent/code_reviewer.md | 质检，不改码 |
-| 豆包外部开发子 Agent | agent/doubao_executor.md | 当前豆包项目的工作模式、云电脑执行开发任务 |
+| 豆包外部开发子 Agent | agent/doubao_executor.md | 桌面CLI在本项目的本地工作任务执行开发 |
+| WorkBuddy 外部开发执行者 | agent/workbuddy_executor.md | 桌面网关在本项目目录的工作会话执行开发 |
 
-## 豆包委派流程
+## 豆包与WorkBuddy桌面工作任务委派
 
-1. 豆包按外部开发子 Agent 调用，继承 `AGENTS.md` 与本次对应客户端或服务端角色约束；明确的豆包工作任务委派算外部子 Agent 委派，不伪称 Codex 原生子 Agent 注册。
-2. 每次派发及返工前，进入 `LYFMMORGP` 项目，选择 **工作模式 → 工作任务 → 云电脑**，读取页面确认项目和环境；已正确则确认，不重复切换。不能用普通对话、本地电脑或其他项目任务代替。
-3. 新任务在项目内建立工作任务，发送目标、任务标识、文件范围、当前分支与版本、必要上下文、验收步骤和交付要求；返工沿用同一任务，附真实失败证据。
-4. 云端目录与本地目录不自动等同；明确实际云端目录或仓库版本，豆包回传逐项变更、补丁或产物位置、检查结果和未解决项。本地开发子 Agent 核对基线并落盘，主 Agent 组织本地验收；失败再回传豆包修复。
-5. 主 Agent 统一记录、集成、提交和推送当前功能分支；不得用云端声称完成代替本地验收，不合入 `main`。入口不可用如实记录阻断，不退回普通对话或前台占用桌面。
+1. 两者均为外部开发执行者，继承 `AGENTS.md` 与对应开发角色约束；使用官方桌面的工作模式／工作任务，项目固定 `LYFMMORGP`、本地目录 `D:/unitypro/LYFMMORGP`，不派普通对话或其他项目。
+2. 豆包只经 `E:/doubao-cli/doubao-windows.cmd`，新建和返工明确传 `--runtime local --project 38435310952198914 --workspace D:/unitypro/LYFMMORGP --permission AskOnRisk`；从CLI项目列表及任务上下文核对本项目。桌面工作路径启用原生agent_mode，不传headless专用mode work，不走网页或云电脑网页入口。
+3. WorkBuddy按 `workbuddy-executor` Skill 优先经Agent Hub，传 `provider: workbuddy` 与本项目workspace；兼容直连也核对同目录原生工作会话的sessionId。不得使用网关源码目录或历史隔离测试会话。
+4. 任务单说明标识、开发角色、分支及基线、逐项文件范围、需求、验收和交付格式。保存豆包conversationId/runId或WorkBuddy Hub/task/session编号，返工沿原任务提供失败证据；已受理超时恢复原任务，不盲目重发。
+5. 授权的桌面开发执行者直接修改本地文件，主Agent核对真实差异、产物及测试；仅交付补丁时本地开发子Agent核对基线落盘。主Agent不代写业务代码，统一验收、记录、提交推送功能分支，不合main。入口不可用如实记录，不回退网页或普通对话。
 
-已核实项目主页：`https://www.doubao.com/chat/workspace/38435310952198914`。具体调度字段、环境及交付边界见 `agent/doubao_executor.md`。
+细则见 `AIconfig/agent/doubao_executor.md`、`AIconfig/agent/workbuddy_executor.md`；本段替换旧网页云电脑委派流程，历史实验不作当前入口。
 
 ## 标准执行流程
 1. **需求拆解**：产品经理明确目标、范围、验收标准和优先级
@@ -59,7 +60,7 @@
 - **一类一文件**：每个顶级类、接口、枚举和委托必须独立放置在一个同名源文件中；禁止通过聚合文件定义多个业务类型。
 - **主 Agent 边界**：主 Agent 只负责需求拆解、协调产品/策划、委派开发、组织测试审查、验收和更新记录，不直接修改客户端或服务端业务代码。
 - **代码委派**：涉及业务源代码的新增、删除、重构和修复，必须交由对应客户端或服务端开发 Agent 执行；主 Agent 只能修改协作配置和记录文档。
-- **强制创建子 Agent**：凡涉及客户端或服务端业务代码，主 Agent 必须先创建并委派对应开发子 Agent；豆包按照上述流程建立的项目工作任务属于明确的外部子 Agent 委派。外部补丁在本地的落盘仍由本地开发子 Agent 执行，不得以主 Agent 临时代改、直接补丁或自行提交替代委派流程。
+- **强制创建子 Agent**：凡涉及客户端或服务端业务代码，主 Agent 必须先创建并委派对应开发子 Agent；豆包或WorkBuddy按照上述流程建立的本项目桌面工作任务属于明确的外部开发委派，可在授权范围直接修改本地文件；仅交付补丁时由本地开发子Agent落盘，不得以主Agent临时代改替代委派。
 - 谁的问题谁修，审查员不代改
 - 协议变更必须先改 `LYF_Server/ProtoBuf/proto` 再生成代码和进入开发，禁止先写业务代码后补协议
 - 每个任务默认最多 3 轮审查；超出由主 agent 决策
