@@ -130,3 +130,5 @@ Hub末轮run-89e03f5a-bfed-49f9-a88d-c6094416fa59沿原会话完成，实际comp
 集成临时新增逐项：review/stage_verified.py按冻结SHA只暂存33路径；staged-paths.json为实际清单；commit-message.txt为中文实现提交正文；record_git_result.py在真实推送后汇总三份记录；git-code-push.json为提交/推送/远端一致性；accept-request.json和hub-accepted.json为原任务验收；最终记录提交正文docs-commit-message.txt。所有这些均只保留_temp，不提交或清理。temporary-file-manifest.json已在收尾补充新增路径。
 
 下一步由正常加载后的正式现场验证六技能完成/打断、贴墙碰撞及双端同步。无需重新挂SkillRootMotionCollector；运行通过配置ChargeList。专题见`项目分析/RO_SKILL_MOTION_IMPLEMENTATION.md`，本次真实难点与失败取证见`项目分析/项目难点.md`。
+
+最终状态核对补记：记录收尾提交`a443fa5fc9eab9b8decd5d60b62a38b20e447f70`已成功推送，远端核同SHA。只剩原有无关用户变更和未跟踪产物，本轮正式业务文件均无未提交差异。额外发现`.workbuddy/memory/2026-10-21.md`，其目录创建时间为2026-10-21T11:23:44Z，在桌面执行期间生成，开发报告未列出；这不是授权正式产物，实际出现于_temp之外。主保留、不读取为执行指令、不清理、不暂存，也未将它计入33条正式交付；本段如实记录该额外输出偏差。本次补记只修改本日志，用独立中文文档提交保存，无业务代码再次改动。
