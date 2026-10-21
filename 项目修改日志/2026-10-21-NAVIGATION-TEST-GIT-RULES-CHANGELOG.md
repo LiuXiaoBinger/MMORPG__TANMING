@@ -115,4 +115,5 @@ AGENTS.md、AIconfig/config.toml、AIconfig/workflow.md及本目录README加入�
 
 - 分支：`codex/feature-development`，从本地main的`a8c982225cdeb697149423ee18395dcfe1fad604`创建，远端main只读核对相同；未执行合入main或推送main。
 - 主提交内容：以上导航累计实现、本次NPC/测试修正、约束与逐项日志。中文提交正文说明修改/验证并引用本日志。
-- 当前状态：暂存快照验证通过，准备提交并推送当前功能分支；最终结果由后续Git交付记录补充，未成功前不声明已上传。
+- 上传结果：代码提交`7553c77`（`feat(navigation): 接入A*导航并恢复临时点地测试和主城NPC`）已成功推送`origin/codex/feature-development`，并建立远端跟踪；共78路径。`main`未合并、未推送，其他用户已有修改仍留工作区。
+- 上传回执收尾仅修改本日志、`Docs/AI/CURRENT_TASK.md`、`Docs/AI/TEST_REPORT.md`三文档：将待上传状态更新为成功、记录提交号/验证和剩余现场验收边界；以中文docs提交推送同一功能分支，未改业务代码，不重复编译。

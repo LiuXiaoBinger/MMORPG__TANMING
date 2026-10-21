@@ -6,6 +6,7 @@
 - 主仅暂存导航hunk和本任务相关文件，将Git index中的290源码及受控引用导入_temp/index/snapshot后编译0错误37警告，Editor4源码0错误1环境警告；不依赖未提交跳跃同步、协议或设置UI变化。完整工作区291与暂存290因SettingPanel未提交而不同，不累加；实际结果见index/client、index/editor。
 - 文档/约束补充AGENTS、AIconfig/config.toml及workflow、根日志README；最终Git路径清单写本轮日志。Git曾被08:00遗留0字节index.lock阻挡，确认无git/ssh进程后先备份至本轮_temp，再仅移除该锁完成暂存，没有改工作区内容。独立已完成PASS，后续暂存验证追加委派遇代理403余额不足，主执行原编译方式完成只读验收。
 - 无Unity MCP；没有现场Game/NPC/动画/碰撞或原生退出Play验收，不主动启停Play/服务、保存场景或替正式DLL。证据_temp/navigation-test-entry-20261021/{client,npc,review,index}；Git提交推送结果及文件清单见项目修改日志/2026-10-21-NAVIGATION-TEST-GIT-RULES-CHANGELOG.md。用户实际测试需正常重载后菜单临时开启。
+- Git代码提交7553c77已成功推送origin/codex/feature-development并建立跟踪；包含78个导航及协作文件，提交快照已独立于未提交内容编译通过。没有合main或推送main。本次仅追加上传结果的三文档收尾，不重复编译未变化代码。
 
 # 2026-10-21 导航业务与实测问题修正：源码及隔离回归通过，Unity现场待验
 

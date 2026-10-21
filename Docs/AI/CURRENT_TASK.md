@@ -5,7 +5,7 @@
 - NPC原管理器启用但正式未Initialize，唯一旧调用在inactive测试组件。实际配置1个4001 QuQu，坐标(60.32,19.16,95.36)，资源存在并采集；不添加Mock或修改场景/出生点。Global表和SceneWorld已先于主城加载完成。
 - 进入主城Play后，菜单“工具/导航/测试/启用点地导航（仅本次运行）”，Game点击空地即可测试，UI/实体/10像素以上拖动排除，WASD接管；关闭菜单或退出Play移除临时DontSave宿主。正式TouchObject/算法/地图本次不改，测试组件不保存正式场景/预制体。
 - 工作区双方291源0错38旧警告、Editor4源0错2环境警告；独立14审计/26薄边界PASS，3038冻结仅批准MainCityMgr变化，5新增文件完整。主另从Git暂存区导出源码及受控引用后编译：290源0错37警告、Editor4源0错1环境警告，证明上传的导航不依赖未提交跳跃同步和设置界面。此数字不同于完整工作区，不累加。
-- 已创建codex/feature-development，未合main。导航之前未提交，本次将导航公共格式/查询/制作工具/运行接入/地图副本与本轮测试一起提交；MMove/MainCity仅暂存导航hunk，保留跳跃协议、场景、正式DLL、UI及服务端整理等其他工作区改动。远端main只读核仍为a8c9822，功能分支远端尚不存在。Git结果见本轮日志最后记录。
+- 已创建codex/feature-development，代码提交7553c77已成功推送origin同名分支并建立跟踪，未合main。导航之前未提交，本次将导航公共格式/查询/制作工具/运行接入/地图副本与本轮测试一起提交；MMove/MainCity仅暂存导航hunk，保留跳跃协议、场景、正式DLL、UI及服务端整理等其他工作区改动。main仍为a8c9822；Git结果见本轮日志最后记录。
 - AGENTS、AIconfig/config.toml与workflow、修改日志README已补文件清单/中文提交/功能分支/推送规则；本次及累计文件清单见项目分析/导航代码文件清单与测试说明.md。
 - 无Unity MCP，未启停Play/服务、未保存场景/替DLL；实际NPC显示、点击、动画、碰撞和原生清理待正常重载后实测。证据_temp/navigation-test-entry-20261021；日志项目修改日志/2026-10-21-NAVIGATION-TEST-GIT-RULES-CHANGELOG.md。独立审查已完成，补充暂存复验委派随后代理余额403失败，主按既有编译流程完成只读暂存快照验证，未修改业务代码。
 
