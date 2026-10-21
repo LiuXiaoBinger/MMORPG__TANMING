@@ -1,3 +1,10 @@
+## 2026-10-21 当前生效：Codex主控、开发子Agent实现、失败退回复测
+
+- 主Agent固定为Codex，负责解读用户需求、设计开发逻辑、拆分和发布任务、最后测试与验收，并维护协作记录及统一集成；不直接代改客户端或服务端业务代码。
+- WorkBuddy明确作为本项目外部开发子Agent，与豆包一样可承担开发、修复和授权范围内的本地代码、资源、配置及产物修改；沿已配置的桌面工作模式，项目固定LYFMMORGP／D:/unitypro/LYFMMORGP，不改网页或其他项目。
+- 开发子Agent先自检交付；Codex最后核对实际文件并执行必要测试。未通过时将失败证据、复现步骤、预期结果退回原开发子Agent重新开发或修复，完成后Codex复测；不接手代写业务修复，未通过或受阻不标验收完成。
+- 已同步AGENTS、总策略、协作流程及两个桌面开发角色；本次仅写入约束，不派发业务任务。检查、逐项文件与提交推送记录见 项目修改日志/2026-10-21-CODEX-DEVELOPMENT-ROLES-CHANGELOG.md。
+
 ## 2026-10-21 当前生效：豆包与WorkBuddy采用本项目桌面工作任务
 
 - 用户明确替换旧豆包网页调用：豆包只经E:/doubao-cli/doubao-windows.cmd调用官方桌面，工作任务使用local运行环境、LYFMMORGP项目ID38435310952198914及D:/unitypro/LYFMMORGP目录；新建和返工均显式传项目、目录及AskOnRisk权限，不使用网页、headless或project none。

@@ -19,6 +19,8 @@ server_root = "LYF_Server"
 
 [codex]
 # ---------- 执行策略：决定主 agent 如何拆任务、调度子 agent ----------
+main_agent = "Codex"                    # 主控身份固定，开发任务交给对应开发子Agent
+main_responsibilities = ["解读需求", "设计开发逻辑", "拆分并发布任务", "最后测试验收", "失败退回原开发子Agent并复测", "协作记录与统一集成"]
 strategy = "plan-first"                  # plan-first：先规划再执行（推荐）
 think_granularity = "detailed"           # 思考粒度：detailed / balanced / fast
 max_planning_rounds = 3                  # 每项任务最多规划轮数
@@ -51,7 +53,8 @@ performance_rule = "Update、网络回调和高频逻辑避免无必要分配、
 version_control = "功能开发使用codex/feature-development，后续分支沿codex/前缀；仅用户明确要求才合入main。每次代码完成对应检查后提交任务相关文件和修改日志并推送功能分支；中文提交正文记录修改、验证和日志路径，回复报告提交号和推送结果，不混入无关用户改动、不强推"
 change_manifest_rule = "每次代码交付在回复和项目修改日志中逐项列新增、修改、移动、删除的文件及用途和具体变化；Unity meta可与对应文件合并列出，不用功能概括替代文件清单"
 one_type_per_file = true                 # 每个类、接口、枚举和委托必须独立使用一个源文件
-main_agent_boundary = "主 agent 只负责需求拆解、任务委派、结果验收和协作记录；业务代码必须由对应开发子 agent 修改"
+main_agent_boundary = "主Agent使用Codex，负责解读需求、设计开发逻辑、发布任务和最后测试验收；WorkBuddy与豆包均为外部开发子Agent，可在授权范围开发、修复及修改本地文件；业务代码不由主Agent代改"
+failed_test_rule = "开发子Agent先自检交付，Codex最后核对实际文件并执行必要测试；不通过时将失败证据、复现步骤和预期结果退回原开发子Agent重新开发或修复，再由Codex复测；未通过或受阻不得报告验收完成"
 
 forbidden = [
   "硬编码 IP / 端口 / 密钥到代码",
@@ -99,7 +102,7 @@ integration_rule = "核对授权本地文件实际差异并审查测试；仅交
 
 [external_agents.workbuddy]
 # 通过现有Agent Hub和官方桌面网关执行本项目工作任务。
-role = "外部开发执行者"
+role = "外部开发子 Agent"
 role_file = "AIconfig/agent/workbuddy_executor.md"
 project_name = "LYFMMORGP"
 local_project_root = "D:/unitypro/LYFMMORGP"
@@ -109,4 +112,4 @@ required_mode = "工作模式"
 required_environment = "本地电脑"
 skill = "workbuddy-executor"
 dispatch_rule = "显式传本项目workspace，创建或复用该目录的原生工作会话；返工沿原hub任务或直连taskId，不复用其他目录会话或普通对话"
-integration_rule = "主Agent核对本地实际差异和检查结果后验收、集成及提交推送功能分支，保留无关改动，不合main"
+integration_rule = "WorkBuddy按Codex任务单开发及修改授权本地文件，自检交付；Codex最后测试，不通过返回原任务重新开发或修复并复测，通过后统一集成及提交推送功能分支，保留无关改动，不合main"
