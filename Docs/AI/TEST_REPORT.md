@@ -1,3 +1,12 @@
+## 2026-10-21 Unity NPC待机误报：末稿代码检查通过，现场待复测
+
+- 冻结Editor.log中16:26:24和16:29:22每次进主城各一组：动作状态缺少真实动画配置Idle、表现表未配置待机。沿NpcEntity→PresentDataView→默认状态刷新及原生Controller绑定追踪，NPC无Role位故表现表为空；QuQu原生顶层Idle绑定真实Warrior@Idle.FBX。不是由堆栈附近的玩家绑定成功日志推定玩家出错。
+- WorkBuddy桌面原任务两轮，第二轮仅补shortStateHash用途注释；正式只改MActionComponent.cs，SHA256=35a7cf4aa5c558b09ac48d026cdcf573c84504b65b031dda44f28a964813d700。两条原始报错、玩家准备流程、NpcManager和资源均保持。
+- 主独立运行compile_client.py unity-idle-final：实际291源Rebuild，0错误38既有警告；无正式DLL替换。review/verify.py直接链接当前MActionComponent与既有接口/枚举，9项通过：NPC原生Idle、NPC缺Idle、玩家缺配置、玩家正常装配、NPC特殊状态失败回退、完整状态路径、缺Animator、怪物不绕过校验、玩家已安装剪辑。Unity及实体依赖为薄替身，非原生帧播放验收。
+- 修前源码强制Rebuild后同套开发5例恰有2项失败，分别NPC原生Idle和特殊状态回退，均复现两条错误；其余3项保持。开发两个工程共享obj/bin曾被缓存误导，正式证据均强制重建，主另用独立输出工程复测；未为夹具改业务。输入清单与编译后SHA一致，diff仅55行插入，新增代码规范及diff --check通过。
+- Unity UI实际看到3条错误，其中2条游戏Idle、1条MCP SkillSync网络错误。恢复连接只能注册实例，editor/state/read_console及对象查询因ping超时/断连失败；用户Escape停止电脑操作，之后未再发UI输入。保持Play暂停现场，未正式热更、重进主城或保存场景，整项运行验收尚未完成；不可把9项隔离通过写成现场0错误。
+- 证据：_temp/unity-idle-bug-20261021/editor-before.log、workbuddy/development-report.md和bounded-cases-*-r2.log、review/inputs.json、runtime.log、baseline-runtime.log、verification.json；全量编译_temp/navigation-test-entry-20261021/review/unity-idle-final。提交前基线7cbe5dd已推送功能分支，修复及回执见 项目修改日志/2026-10-21-CODE-BASELINE-UNITY-IDLE-FIX-CHANGELOG.md。
+
 ## 2026-10-21 当前生效：Codex主控、开发子Agent实现、失败退回复测
 
 - 主Agent固定为Codex，负责解读用户需求、设计开发逻辑、拆分和发布任务、最后测试与验收，并维护协作记录及统一集成；不直接代改客户端或服务端业务代码。

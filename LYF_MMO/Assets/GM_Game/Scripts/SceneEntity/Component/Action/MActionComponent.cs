@@ -238,6 +238,12 @@ using MMoRpgCommon.SceneEntity;
             string clipName = ResolveClipName(stateName);
             if (string.IsNullOrEmpty(clipName))
             {
+                // NPC 的表现来源是预制体自带 Controller，原生状态真实存在时无需表现表剪辑；
+                // 玩家与怪物等实体仍必须由表现表提供剪辑，缺少配置照常报错。
+                if (UsesPrefabControllerAnimation(Entity) && HasPrefabControllerState(stateName))
+                {
+                    return true;
+                }
                 Debug.LogError("动作状态缺少真实动画配置，已回退待机。状态=" + stateName);
                 return false;
             }
@@ -266,6 +272,11 @@ using MMoRpgCommon.SceneEntity;
             string fallbackClipName = ResolveClipName(fallbackStateName);
             if (string.IsNullOrEmpty(fallbackClipName))
             {
+                // NPC 预制体 Controller 自带真实待机状态时直接按原生状态回退，不再要求表现表待机剪辑。
+                if (UsesPrefabControllerAnimation(Entity) && HasPrefabControllerState(fallbackStateName))
+                {
+                    return;
+                }
                 Debug.LogError("动作回退失败：表现表未配置待机动画。状态=" + StateName);
                 return;
             }
@@ -278,6 +289,50 @@ using MMoRpgCommon.SceneEntity;
                 Debug.LogError("动作回退失败：待机动画未登记到 animInfo.txt。动画=" +
                     fallbackClipName);
             }
+        }
+
+        /// <summary>
+        /// 判断实体是否直接使用预制体自带的 Animator Controller 作为动作动画来源。
+        /// 当前只有 NPC 属于该类型：其预制体已配置真实待机状态，不经过表现表剪辑准备；
+        /// 玩家、怪物等实体仍必须由表现表和 animInfo 提供真实剪辑。
+        /// </summary>
+        /// <param name="entity">待判断的场景实体。</param>
+        /// <returns>true 表示该实体的动画由原生 Controller 提供。</returns>
+        private static bool UsesPrefabControllerAnimation(MEntity entity)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
+            return (entity.EntityType & EntityType.Npc) != EntityType.None;
+        }
+
+        /// <summary>
+        /// 校验实体当前绑定的原生 Controller 中确实存在目标逻辑状态。
+        /// 只有状态真实存在才允许跳过表现表剪辑准备，避免缺少动画的实体被静默放行。
+        /// </summary>
+        /// <param name="stateName">需要确认的 Animator 逻辑状态名。</param>
+        /// <returns>true 表示原生 Controller 已配置该状态。</returns>
+        private bool HasPrefabControllerState(string stateName)
+        {
+            if (Entity == null || Entity.Model == null || Entity.Model.Ator == null)
+            {
+                return false;
+            }
+            // 模型上实际播放动画的 Unity 组件，NPC 预制体的状态位于 Base Layer 顶层。
+            Animator animator = Entity.Model.Ator.UnityAnimator;
+            if (animator == null)
+            {
+                return false;
+            }
+            // 层 0 目标状态短名的哈希，用于向控制器查询该状态是否真实存在。
+            int shortStateHash = Animator.StringToHash(stateName);
+            if (animator.HasState(0, shortStateHash))
+            {
+                return true;
+            }
+            // 部分控制器以完整路径登记状态，补一次 Base Layer 全路径检查。
+            return animator.HasState(0, Animator.StringToHash("Base Layer." + stateName));
         }
 
         /// <summary>按 RO 的表现表字段映射解析常规动作状态使用的真实动画名。</summary>

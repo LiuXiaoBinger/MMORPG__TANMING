@@ -1,3 +1,12 @@
+## 2026-10-21 当前任务：先提交现有代码，再修Unity待机误报
+
+- 用户要求先提交、不得操作main；已有297项Git变更已由提交7cbe5dd保存并成功推送origin/codex/feature-development，完整347条原始增删路径见 项目修改日志/2026-10-21-CODE-BASELINE-UNITY-IDLE-FIX-CHANGELOG.md。排除本机设置、热更DLL和构建清单等已有本地产物。
+- Codex设计并委派WorkBuddy本项目桌面任务hub-698f6b1a-e4e9-4fb5-8234-f641c9cf3641；同会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0两轮，末轮run-510cc31f-6c6d-43c3-bc8b-401d33b3823b，desktop_queue。首轮漏局部变量注释已退回原任务补齐，主未代改业务。
+- 仅修改MActionComponent.cs：NPC预制体真实存在目标状态时允许原生动画，失败回退同理；保留玩家/其他实体表现表与已有装配路径，不改NpcManager、场景、预制体或表。
+- 主独立291源编译0错38既有警告，真实动作源码9项隔离回归通过；修前同套5项开发用例准确复现2项NPC错误。末稿SHA256=35a7cf4aa5c558b09ac48d026cdcf573c84504b65b031dda44f28a964813d700。代码检查通过，正式Play复测未完成。
+- 现场边界：Unity原处Play且暂停；连接MCP后实例注册成功，但命令ping超时/断连。用户按Escape停止电脑操作后未再操作UI；未启停Play、替换DLL或保存场景，不能声称现场错误已消失。后续正常加载末稿后重新进主城，核NPC4001待机及Console两条Idle错误不再新增。MCP SkillSync网络错误另属工具问题，不混作本次已修复游戏问题。
+- 证据_temp/unity-idle-bug-20261021/review和workbuddy、_temp/navigation-test-entry-20261021/review/unity-idle-final；逐项正式/临时文件、提交推送回执见上述根日志；项目复盘见 项目分析/项目难点.md 对应NPC动画条目。
+
 ## 2026-10-21 当前生效：Codex主控、开发子Agent实现、失败退回复测
 
 - 主Agent固定为Codex，负责解读用户需求、设计开发逻辑、拆分和发布任务、最后测试与验收，并维护协作记录及统一集成；不直接代改客户端或服务端业务代码。

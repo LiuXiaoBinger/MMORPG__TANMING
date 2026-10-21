@@ -368,5 +368,50 @@
 ## Git与后续
 
 - 分支codex/feature-development，仅提交推送该功能分支，不操作main。
-- 本次提交完成后再进入Idle缺配置故障诊断；源码修复由开发子Agent实施，失败证据退回原任务。
-- 提交号、上传结果与修复/验收结论将在本日志后续章节补充；此时仅为准备基线提交。
+- 基线提交7cbe5dd已成功创建并推送：origin/codex/feature-development由e1369cb快进到7cbe5dd。Git识别重命名后297项变更；以上保留完整原始增删路径。未提交main，也没有合并或强推。
+
+## Unity错误定位与开发
+
+- Unity现场Console两条游戏错误：Idle动作缺真实动画配置、回退缺待机；另有MCP SkillSync网络同步错误，不混作本次游戏错误。完整修前Editor.log冻结在_temp/unity-idle-bug-20261021/editor-before.log。
+- 原因：NPC无Role类型位，PresentDataView恒为空，但QuQu预制体本已绑定带真实Idle剪辑的Animator_NPC_QUQU.controller。公共动作校验只认表现表或已装配剪辑，误拒绝正常NPC原生来源，回退再次误报。
+- WorkBuddy作为官方桌面外部开发子Agent直接落盘业务修复；主Codex仅设计、派工、审查、独立测试与提交。任务hub-698f6b1a-e4e9-4fb5-8234-f641c9cf3641，项目LYFMMORGP、目录D:/unitypro/LYFMMORGP、基线7cbe5dd。原生sessionId=5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0；首轮run-5fece6f9-7401-42f7-a753-4e677003fbe0，末轮run-510cc31f-6c6d-43c3-bc8b-401d33b3823b，均desktop_queue。
+- 业务流程：正常已装配剪辑和表现表路径保持；仅缺配置分支中，NPC且当前原生Animator确实有目标状态才通过，失败回退同理。仅适配现有顶层NPC状态，不扩充表、资源或框架。
+- 首轮缺shortStateHash中文用途注释，Codex退回原任务补齐并重建复测；没有代改业务。开发的两个边界工程曾共用obj/bin导致修前缓存误显示通过，强制Rebuild后恢复预期两项失败；最终证据已排除缓存结果。
+
+## 本次修复逐项正式文件
+
+| 操作 | 文件 | 具体变化 |
+| --- | --- | --- |
+| 修改 | `LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/Action/MActionComponent.cs` | 两处缺配置分支增加NPC原生状态判定，新增NPC来源和原生状态查询两个私有函数，补具体中文注释；仅新增55行，原有逻辑及错误文本未删改；原.meta不变 |
+| 修改 | `Docs/AI/CURRENT_TASK.md` | 记录用户要求、基线提交、桌面派工两轮、实际单文件修复、独立验证与现场待验交接 |
+| 修改 | `Docs/AI/TEST_REPORT.md` | 记录真实错误、291源编译、9项回归、修前两失败对照、缓存排除及未完成现场验证 |
+| 修改 | `项目分析/项目难点.md` | 新增NPC原生动画与表现表校验冲突复盘，区分真实证据、角色贡献和验收边界 |
+| 新增后追加 | `项目修改日志/2026-10-21-CODE-BASELINE-UNITY-IDLE-FIX-CHANGELOG.md` | 基线逐路径清单、提交上传结果、当前修复逐项文件及测试/交接记录；本文件已随基线提交，修复阶段追加 |
+
+本轮没有正式文件移动或删除，没有新增Unity资源或.meta，不改NpcManager、场景、预制体或配置表。保留已有UserSettings、GM_Game.dll.bytes、yoo清单、VisualScripting生成桩和hfs临时产物，不混入提交。
+
+## 临时测试源码与证据（只在_temp，均不提交）
+
+- 新增_temp/unity-idle-bug-20261021/commit_baseline.py：基线白名单提交、排除本地产物及输出清单；baseline-manifest.json等为实际暂存证据。
+- 新增_temp/unity-idle-bug-20261021/workbuddy-request.json：本项目桌面任务完整需求、逐项授权、实际基线及验收要求。
+- WorkBuddy新增_temp/unity-idle-bug-20261021/workbuddy/read_xlsx.py：读取NPC、职业与表现配置定位真实来源。
+- WorkBuddy新增上述目录runtime/EntityBoundary.cs、UnityStubs.cs：实体/资源与Unity边界薄替身，不属于正式业务实现。
+- WorkBuddy新增runtime/IdleAnimationTests.cs、Program.cs：直接调用生产动作源码的5个回归用例及启动入口。
+- WorkBuddy新增runtime/IdleBoundary.csproj、IdleBoundaryBaseline.csproj：分别编译当前/修前生产动作源码；baseline/MActionComponent.before.cs为修前源码副本，不代改正式源。
+- Codex新增_temp/unity-idle-bug-20261021/review/Program.cs：复跑开发5例并补完整状态路径、缺Animator、怪物校验、玩家已安装剪辑，共9项。
+- Codex新增review/verify.py、生成IndependentIdleBoundary.csproj：直接链接正式动作源码、独立输出编译、修前强制Rebuild对照、输入SHA与差异规范审计。
+- 其余生成文件为上述目录内build/bin/obj、文本日志、SHA清单及结果JSON，不挂正式测试组件，不替DLL，不清理临时。
+
+## 主Agent独立检查结果
+
+- 当前实际291源Rebuild：0错误38既有警告，证据_temp/navigation-test-entry-20261021/review/unity-idle-final/build.log及compiled-inputs.json。
+- 9项运行回归通过：NPC原生Idle、NPC缺Idle、玩家缺配置、玩家正常装配、NPC缺其他状态回退、Base Layer完整路径、缺Animator、怪物不能绕过校验、玩家已装配剪辑保持。真实MActionComponent参与编译，Unity及实体依赖是薄替身；不能称正式Unity帧播放验收。
+- 修前源码强制重建后，5个开发用例准确失败2项NPC误报，其余3项通过；证据review/baseline-runtime.log。独立工程输入SHA全保持，生产diff仅插入，新增语法约束与diff --check通过。
+- 末稿SHA256=35a7cf4aa5c558b09ac48d026cdcf573c84504b65b031dda44f28a964813d700，证据review/verification.json、inputs.json、runtime.log。开发末轮报告workbuddy/development-report.md及bounded-cases-*-r2.log。
+
+## 未解决问题与下一步
+
+- 正式Play现场尚未完成修后复测：Unity原处运行且暂停；MCP连接后注册到LYF_MMO实例，但读取状态、Console和对象时ping超时或断连。用户按Escape停止电脑操作后没有再进行UI输入；未启停Play、替换热更DLL、保存正式场景或重进主城。
+- 后续正常加载末稿并重新进主城，确认NPC4001待机、玩家移动动画及两条Idle错误不再新增。当前结论为代码检查通过、运行验收待完成，不报告现场0错误。
+- MCP SkillSync网络错误不属本次业务修复；未擅改外部插件源码或安装更新。复盘见 项目分析/项目难点.md 的NPC动画条目。
+- 修复提交仅包含上表5个正式文件，提交/推送功能分支后追加实际回执。
