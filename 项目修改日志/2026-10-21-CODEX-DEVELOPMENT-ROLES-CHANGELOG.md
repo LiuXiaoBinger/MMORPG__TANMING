@@ -28,4 +28,7 @@ TOML解析、主控与开发角色一致性、原任务失败返工流程、角�
 
 ## Git
 
-分支codex/feature-development，仅提交上述10个正式文件的本轮变化；CURRENT_TASK与TEST_REPORT先前未提交的各39行历史保留工作区，其他角色／业务／资源不暂存。不合main、不强推；提交和推送结果在执行后补记。
+分支codex/feature-development，仅提交上述10个正式文件的本轮变化；CURRENT_TASK与TEST_REPORT先前未提交的各39行历史保留工作区，其他角色／业务／资源不暂存。不合main、不强推。
+
+- 规则提交02a5f91已成功推送origin/codex/feature-development，远端由567ea2b推进至02a5f91。
+- 本日志收尾仅补记真实提交与推送结果，单独提交推送；收尾提交号通过本文件Git历史与最终回复查询，不修改业务代码。
