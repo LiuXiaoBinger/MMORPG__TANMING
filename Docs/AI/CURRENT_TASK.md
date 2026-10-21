@@ -1,3 +1,12 @@
+## 2026-10-22 当前任务：RO两端寻路核查完成，豆包查找对比待连接
+
+- 用户要求核实RO客户端与服务器是否均寻路，并实际比较豆包最高模型/推理与当前Codex源码查找能力。本轮只做源码分析和实验记录，不改游戏代码、资源或场景，不扩展服务端导航。
+- 已查实RO客户端经MNavigationComponent→MNavigationMgr→SWIG→C++ MNavigation→Detour执行A*；服务器AI经AIMoveTo事件进入RONavigationComponent.StaticStart并实际PathFind，场景加载导航与碰撞数据。玩家上报移动另有合法点及速度/距离检查；跨地图路线另经WorldMap规划。LYF客户端已接纯C#算法，Common同源编译8源，服务端导航组件为空且正式移动直接保存/广播上报终点，尚未接RO同等运行寻路和移动结算。
+- 实验SEARCH-RO-NAV-20261022已冻结三题、同范围和15项证据标准；Codex初稿178.604秒、SHA256 84B3ADB8D062464879C24F4136EFDE0023D7201D185B3276F803437D6C763630。Codex已有项目先验且计时前读过部分RO源码，非盲测，不据此推广纯模型速度或能力差距；当前会话具体型号/推理未从运行元数据独立核实。
+- 豆包官方桌面进程存在，但9225连接available=false/fetch failed。未读到当前可用模型和最高配置，未派发、无conversationId/runId、无初稿，不算模型失败得分。已请求用户保存并托盘退出，等待确认后沿既有启动入口恢复；不强杀、不改用网页/headless或低配置代替。
+- 修改范围仅5文档：新增项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md及本轮根日志，更新项目分析/README.md和根CURRENT_TASK.md、TEST_REPORT.md。源码证据和原始实验材料在_temp/source-search-comparison-20261022，初稿保持冻结。
+- 下一步：确认退出后核本项目local环境、实际最高模型与max推理，派同题只读工作任务并保存真实配置/耗时；双方初稿冻结后回查15项评分。当前两端问题已核查，对比实验尚未完成。Git结果追记本轮根日志；不操作main，保留已有用户改动。
+
 ## 2026-10-21 当前任务：RO配置曲线替代采集器，独立检查通过
 
 - 用户确认“改成RO方案，移除采集器依赖”。六技能已按真实Avatar的完整120Hz有符号X/Z采样迁移为Program和ChargeList；两份原无位移表现保持空。模型明确applyRootMotion=false，删除采集器、旧根窗口类型与制作导出支路；保既有Charge事件、实体位移生命周期和MMoveComponent单次碰撞入口。

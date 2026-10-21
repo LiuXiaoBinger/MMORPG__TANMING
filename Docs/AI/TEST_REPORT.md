@@ -1,3 +1,12 @@
+## 2026-10-22 RO两端寻路与源码查找实验：源码核查完成，对比未运行
+
+- 分支codex/feature-development，基线1fbe5a2bca1135aa68dcc92da4dd79bdad459acb。只修改根分析、索引、协作和日志共5文档；没有业务、资源、场景变化，不运行游戏编译或启停Unity/服务器。
+- 直接核对RO客户端业务/管理器/SWIG边界、C++ MNavigation/MBaseHelperNav/Detour，以及服务器导航组件、AI事件、场景初始化和服务端编译宏、导航管理器加载、移动协议/校验和跨图规划。确认服务器存在实际PathFind调用，不将声明或客户端封装当作运行证据。
+- LYF直接核对客户端PathFind的cost+heuristic、管理器StreamingAssets加载、Common.csproj的8份同源Compile、服务端空NavigationComponent及EntityFactory装配、MoveOperationHandler→ROMoveComponent的正式终点保存/广播。限定GameServer/Common源码排除bin/obj后，运行导航查询/地图加载检索无命中；不将此静态结果当运行验收。
+- Codex初稿起止2026-10-22 07:33:48.4680837至07:36:47.0719779（UTC+8），178.604秒；冻结SHA256=84B3ADB8D062464879C24F4136EFDE0023D7201D185B3276F803437D6C763630。先验和计时前源码预读已披露，未取得当前会话精确运行模型元数据，不能称公平盲测或纯模型速度。
+- 豆包官方CLI本轮cdp status实际available=false/127.0.0.1:9225/fetch failed，进程存在。模型列表、最高配置、本项目工作任务均未确认，无原生任务和初稿；不输出比较分数或胜负。等待用户保存并托盘退出后重启恢复，不把阻断写成执行完成。
+- 文档校验：28处源码链接均存在且行号有效，4处专题引用齐全，Codex初稿哈希保持；git diff --check通过。正式专题为项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md，逐项文件和Git结果为项目修改日志/2026-10-22-NAVIGATION-SEARCH-COMPARISON-CHANGELOG.md。原始协议、初稿、计时和本轮检查证据在_temp/source-search-comparison-20261022；后续沿冻结题目续跑豆包。
+
 ## 2026-10-21 RO配置曲线替代采集器：独立源码、资产与原生发布检查通过
 
 - 输入基线1e2e084，分支codex/feature-development；全部证据根_temp/ro-charge-only-20261021/review。WorkBuddy交付后由Codex独立运行；不把开发自报作为通过依据，源输入SHA256在提交前汇总核对。
