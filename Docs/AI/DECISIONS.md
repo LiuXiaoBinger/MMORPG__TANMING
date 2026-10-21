@@ -1,4 +1,224 @@
+## 点地测试保留、正式NPC初始化和Git交付约束（2026-10-21）
+
+- 用户本次明确需要点击屏幕测试；保正式TouchObject不发地面导航，新增专用Editor Play测试组件及菜单临时启停，复用同一导航与碰撞链，不写入正式场景/预制体，不新增测试NPC。
+- 场景已有NpcManager且配置存在，真实遗漏是正式MainCityMgr.Start未初始化，最小调用原Initialize；不重写NPC加载、不轮询、不激活旧静态NPC替代实体。
+- 当前功能分支codex/feature-development；只有用户明确要求才合main。每次代码交付列新增/修改/移动/删除文件及用途并写根日志；检查后由主提交任务相关文件/日志、推送当前功能分支，中文提交正文记录内容、验证、日志路径。无关已有改动保留，不强推，提交推送失败如实报告。
+- 本轮首次上传之前未提交的导航实现，MMove/MainCity分离导航与已有跳跃同步hunk暂存；专门验证暂存版本可编译，不以全工作区编译替代提交快照编译。完整清单见项目分析/导航代码文件清单与测试说明.md。
+
+## 导航由NPC和任务等业务触发，正式不使用点地（2026-10-21）
+
+- 用户实测后明确游戏不需要点地导航。正式TouchObject不派发地面导航；点击NPC沿现有实体选择/导航/对话接入。显式目的点事件仍作为未来任务业务接口，本轮不实现任务系统或调试按钮。
+- 导航移动动画须沿现有默认动作与走跑槽位，把导航视为真实移动来源，不伪装方向输入。遇到死路先区分网格连通、路点消费及实际碰撞，按复现最小修正，不添加重试框架或擅改烘焙。
+- 本条取代下面点地作为正式入口的历史范围；前轮静态/隔离验证不能替代此次用户实测问题验收。
+
+## 运行导航沿RO上层，底层复用自有公共三角网（2026-10-21）
+
+- 用户要求开始写导航并尽量同RO命名。沿MNavigationComponent/MNavigationMgr/MNavigation及OnGetEvent、navigate、TryGetPath、TryGetNextStep、Interrupt、onCloseTarget职责接入，不复制SWIG/C++或整套外围框架。
+- 公共纯C#查询直接编入GM_Game和Common，保既有文件格式/原数据；精确XYZ邻接加有实证的毫米级共线重叠接缝，三角A*、漏斗及门户高度交点。完整可达才成功，不把部分路线当到达；不同高度不按XZ焊接。
+- Windows客户端从StreamingAssets/NavigationData读同份地图，场景成功加载时切换查询；导出工具保持，重导后同步副本。当前无目标技能原即时链保持，显式NeedTarget才追近；UseAfterAction=false不执行技能。协议、动态障碍、离网和服务器运行调度未扩。
+- 到达恢复RO原6米高度阈值，其内仍按水平范围。现有MEntity没有普通组件LateUpdate分发，只在Nav.Update沿现有Move之后调用同名逻辑，不改通用生命周期。源码专项与正式Unity/Player运行各自注明，不能把前者当后者完成。
+
+## 导航预览必须自绘，仅参考Surface外观（2026-10-20）
+
+- 当前显示取舍按用户行走参考图修正：不透画Greater后方层，蓝面写深度形成导航层遮挡；绘制边按精确XYZ去重，内部淡线/外轮廓深线。不能仅为“保范围”穿透所有楼层，也不能用空地可见代替障碍场景可读性验收。专用Editor线Shader只处理共面遮线，不改真实导航数据。
+
+- 用户明确“我让你自己照着画”，因此不能把“参考NavMeshSurface”解释为直接开启原生显示。预览从公共bytes文件读取，由自有Editor工具绘制可走面和清晰网格线，原生组件只作为外观参考。
+- 可暂时关闭原生显示防止重叠，结束预览恢复原设置；不得以开启原生证明自绘有效。保持数据/烘焙/移动范围，不擅加连通域或完整寻路功能。实际Scene可读性与文件保真分别验收。
+
+## 顶部关闭复用原关闭链，入口点击保持菜单（2026-10-20）
+
+- 用户要求检查并补顶部关闭功能、点击功能入口不折叠。只补实际空监听的背包/角色/技能3Button；背包/角色override先隐藏后走原镜头WindowAngle关闭分支，技能沿WindowBase，不造UI关闭框架。
+- 四入口删除自动收起，初始收起及手动箭头保持；本条取代历史入口点击自动收起的当前交互。已绑定窗口不重复改，常驻/流程界面不新造关闭按钮，遗弃资源不接入正式流程。
+- 当前Play旧override与新源码验证分开，原生克隆隐藏、生产方法专项和正式运行画面各注明边界，不强制停Play验收。日志项目修改日志/2026-10-20-UI-CLOSE-MENU-STAY-CHANGELOG.md。
+
+## 展开功能组按用户追加要求透明（2026-10-20）
+
+- 用户追加截图要求四入口的整组背景也透明，故仅将组底板及四入口Image的alpha设0，保留原组件、RGB、射线与交互；不删除对象或改业务。此追加需求取代前轮保持组背景的当前外观限定，历史验收不改写。
+- 纯资源以精确差分与一次原生隔离预览验收，不重复源码编译。专题项目分析/MAIN_FUNCTION_MENU_UI.md。
+
+## 功能开关复用RO收展箭头并透明显示（2026-10-20）
+
+- 用户截图只指开关，故仅该按钮底板alpha归零，保持原108×38射线区域；四入口和展开组背景不变。复用现有RO Common收展箭头，原Label对象改Image，View依据容器显隐旋转0/180度；不增加动画状态、框架或业务。
+- 现有MainCtrl事件保持，编译/静态接线/隔离预览与正式Play点击分开记录。当前Play未加载新字段时不强制启停或保存资源；正常重载后查看。专题项目分析/MAIN_FUNCTION_MENU_UI.md。
+
+## 主菜单图标使用RO同源资源（2026-10-20）
+
+- 用户明确使用RO图标，故四入口改用本项目已有、与RO原件逐字一致的CommonIcon四功能图标；不继续引用一梦江湖截图裁图，也不复制缺少的整套IconMain图集。具体名称与来源见项目分析/MAIN_FUNCTION_MENU_UI.md。
+- 正式只替四Sprite并保持比例，布局、中文与业务接线保持；旧裁图不删，源码不动、无须重编。当前预览与资源验收不扩大为正式运行点击验收。
+
+## 主界面左上收缩菜单沿原入口流程接入（2026-10-20）
+
+- 用户明确左上，默认只显示功能开关，展开背包/角色/技能/设置，点击入口自动收起。按正式布局避开底部HUD与右上小地图，不挪旧HUD，不新增UI管理层、动画状态或持久化。
+- View管理容器和提示，既有MainCtrl成对注册/释放按钮，四入口复用原窗口流程。裁图复用已有一梦江湖风格资源，原图保留，不为同一按钮复制整套外部UI框架。
+- 运行中旧程序集不具新字段时，正式Root按YAML精确修改，原生只导入/读取/克隆，不保存导致字段丢失；编译/接线/布局与正式运行点击分开记录，不为旧资源新增防御包装。专题项目分析/MAIN_FUNCTION_MENU_UI.md。
+
+## RO设置只取界面并沿本项目UI模式接入（2026-10-20）
+
+- 用户明确功能暂不写，故取RO正式Setting及四类页面布局，打开/关闭/切页/滚动属于必要展示交互，不新增设置数据、帧率音量应用或挂机通知业务。
+- 沿MainView/UIBase.windowDic/WindowType/WindowBase/既有MainCtrl接入；不复制RO Lua管理框架，不在UIRoot另造独立生命周期。正式控件与引用预制化，字体和视觉依赖按本项目适配。
+- 用户要求作为约束，已同步AGENTS.md、AIconfig/config.toml、workflow.md、agent/unity_client.md。专题项目分析/RO_SETTINGS_UI_INTEGRATION.md。
+- 正式交付采用UIRoot内展开布局与8张必要纹理，转换5 prefab/meta归档_temp保留失败证据，避免重复收集。原生隔离克隆验证沿原事件，正式Play入口与包端效果分开记录；模板选中外观不视为真实设置数据。
+
 # 项目设计决策
+
+## 先分离编辑器重复绘制，再决定游戏性能改动（2026-10-20）
+
+- 原生帧树确认Scene/Game双视图同时绘制，单Game可消除SceneView采样。保留原布局作可逆验证，不用Editor CPU帧时间倒数承诺Player帧率；镜头移动使前后均值仅观察非严格收益。
+- 已有静态批处理/LOD、业务更新较小，当前不批量修改资源/开Instancing或重构脚本。严格固定相机和独立Player热点确认后才针对贡献动代码，避免用静态总量代替实时采样。来源项目分析/MAIN_CITY_FPS_RUNTIME_20261020.md。
+
+## 落地期间新移动输入交还默认动画，不删除落地保护（2026-10-20）
+
+- 用户真实待机平移对应“无输入落地后再开始移动”，与落地瞬间已按方向不同。原保护挡住默认刷新且LateUpdate清标记，最小在MJump.Update现技能优先分支后判断落地中移动，先清表现再MarkTriggered，复用现Walk/Run选择。
+- 保静止完整落地、空中和技能优先，不改资源时长/移动速度、不增加状态/事件/协议。0.83333343秒为正式索引长度，专项时钟/动画播放为薄边界，不能称玩家端实测等待；正式热更运行需另验。
+
+## 跳跃协议AOT主包失配应配套重构建，不增加业务绕过（2026-10-19）
+
+- 真实895热更调用MoveOperationReq.set_JumpCount，但旧IL2CPP Metadata没有该方法，导致本地主角绑定catch销毁及入场/技能快照中断。根因为配套主包未生效，而非shared收集。
+- Network当前属于AOT，唯一热更为GM_Game；Build/BuildDll不会替旧GameAssembly新增方法。处理为完整Windows64 IL2CPP主包，先_temp隔离构建与接口验证，不把反射吞错、跳过出生上报或复制托管DLL当修复。
+- 源码编译、临时主包构建与正式登录画面分别记录；不发布、不覆盖旧Build、不自动登录/改账号。专题项目分析/PACKAGED_CHARACTER_MISSING_AOT_PROTOCOL.md。
+
+## 跳跃表现沿原移动包传当前段，不重复计算远端物理（2026-10-19）
+
+- 真实高度正常/动画Walk的故障证据表明原移动包缺跳跃状态。请求字段8/通知字段9新增JumpCount，0落地、1～3空中段；保原字段号/单位/消息号，服务器仅透传，不实现旧设计中的物理权威/确认/独立序号。
+- 本地段变化即时上报，普通移动节流保持。远端复用既有跳跃事件与组件，只改变动画状态；同段不重播，收到零段等影子抵达坐标再交接，防空中提前走路；不调用BeginJump重复重力。
+- 旧字节默认零可解析不代表旧服务能为新通知透传新段，需两客户端与游戏服配套更新。当前Play已加载旧程序集，所以编译/专项通过与实际双端生效分别记录。来源项目分析/JUMP_ANIMATION_SYNC.md。
+
+## 面试讲述按具体操作展开，不合并不同故障原因（2026-10-14）
+
+- 用户要求细化现有面试文档；本轮采用术语解释→一次具体操作→项目实际问题台账，每条写现象、时间顺序/检查路径、证据、根因、最小修正、实测范围及遗留，再给可直接复述的讲法。
+- 同样不能施法或特效异常不套单一结论。教学例子的数字标为假设；历史验证注明环境，本轮纯文档不宣称重跑或发布成功。仍以实际源码和专题最新纠正为准，旧方案需注明历史性质。
+- 统一入口项目分析/项目难点.md，原案例和模板保留；日志项目修改日志/2026-10-14-PROJECT-INTERVIEW-DETAIL-CHANGELOG.md。未添加协作规则或业务需求。
+
+## 面试材料按业务价值、因果和验证范围组织（2026-10-13）
+
+- 用户要求整个项目难点亮点有条理。项目分析/项目难点.md采用介绍→链路→亮点→案例→岗位追问/简历/不足的结构，保留原案例和持续维护约定；旧知识点总结不覆盖。
+- 亮点写解决了什么、如何实现与取舍；案例写现象、证据、根因、最小修正和实际验证边界。基于RO/Y编辑器/YooAsset/HybridCLR的集成明确参考来源，不把库能力全部归为自研，不把固定服务Tick说成锁步或声明未实现玩法。
+- 当前源码优先于历史设计中被覆盖的段落；引用最终修订和正式日志，历史测试标明本轮未重跑。日志项目修改日志/2026-10-13-PROJECT-INTERVIEW-SUMMARY-CHANGELOG.md。
+
+## 特别困难的问题持续沉淀为面试案例（2026-10-13）
+
+- 用户明确要求新增约束和项目难点文档。统一入口项目分析/项目难点.md；难实现、难复现、跨模块或多次排查与方案取舍的实际问题及时新增/更新独立条目，未解决先记录，不等全部解决才写。
+- 参与角色提供事实、主汇总背景、难点、证据与失败尝试、根因、方案取舍、关键文件、验证边界和遗留，并补面试讲述/追问。不能虚构个人贡献、收益或把隔离测试描述为上线验收；专题通过项目根相对路径引用。
+- 项目分析/面试点总结-2026-10-12.md继续作为既有知识点总结，难点入口用于问题解决过程的持续复盘。日志项目修改日志/2026-10-13-PROJECT-DIFFICULTIES-DOC-CHANGELOG.md。
+
+## Shader编译进程断连限定恢复，状态清除需实际通道验证（2026-10-13）
+
+- 内置Standard Surface在Compiler真实崩溃后留下旧错误状态。保存证据后只复位该Shader缓存/消息/错误，以CompilePass/SetPass和1118真包材质引用验证，不清Console制造通过，不删除整Library或绕过Shader，不引入业务重试/管理层。
+- 当前源与1118材质Forward验证可用、无新IPC，编译缓存命中为正常；不为增加编译次数构造无业务需求tuple、不冒称所有变体重编。临时包若目标programs0、无Forward不可据消息0计字节码通过，实际包材质检查独立记录。
+- 分析 项目分析/STANDARD_SURFACE_SHADER_COMPILER_IPC.md、SHADER_COMPILER_IPC_REVIEW.md，日志 项目修改日志/2026-10-13-STANDARD-SURFACE-SHADER-IPC-CHANGELOG.md及独立日志。
+
+## Shader变体保存到原正式收集目录，以实际画面对比验收（2026-10-13）
+
+- shared资源存在/Shader.isSupported不等于透明表现正确。用户两图白框/黑轮廓由真实源/包同条件渲染、43纹理RGBA一致与单Shader替换因果定位到unityshaders中的Shader执行结果；不盲关共享、不重写材质颜色、不全库Always Include。
+- 新集合165严格包含旧20，故直接同步正式collection/JSON并修SavePath即可，保原meta/GUID与根用户新资产，不增加合并框架或扩大Collector。临时43包两目标8图逐像素一致确认本轮修复；正式1071仍旧集合待新构建。
+- 模拟清单依赖/共享包名与实际构建不一致，原生验收加载依赖必须取真实AssetBundleManifest；仅修_temp夹具，不为测试改生产共享规则。Shader IPC构建错误与两目标视觉验收分别记录，不用Success标记抹除真实错误。
+- 分析 项目分析/SKILL_FX_APPEARANCE_SHADER_VARIANTS.md；日志 项目修改日志/2026-10-13-SKILL-FX-APPEARANCE-CHANGELOG.md。
+
+## 脚步判断保持短路、技能导出按正式表数量（2026-10-13）
+
+- 具名布尔分组不能提前执行受前置条件保护的访问。真实脚步空表异常证实，MDefaultActionComponent.OnUpdate恢复原顺序，保每表达式最多3项；以嵌套分支处理，不新增配置/多层门禁。旧重构复审等价结论对该方法修正。
+- 正式表Role_MJS已8份，生成/校验不能固定历史7份。生成沿原表遍历，校验对比当前表行数，专用验收覆盖实际Runtime；不扩大Collector或改强引用、加载/寿命机制。
+- 995实际包已覆盖当前8Runtime/8动画/12FX，不能把导出工具错误解释为此包漏收集；工具修复、临时构建、现包读取与最终Player运行分别据实记录。用户明确移动后直接核现995热更字节与实际IL，已证实旧DLL仍含同一脚步表访问缺陷；不再索取已有控制台堆栈，不改无关warning。编辑器重编不能替代正式热更DLL和资源包更新，本轮未发布。
+- 分析 项目分析/DEFAULT_ACTION_SHORT_CIRCUIT_RUNTIME_FIX.md、项目分析/SKILL_FX_PACKAGE_RUNTIME_DIAGNOSIS.md；日志 项目修改日志/2026-10-13-SKILL-FX-RUNTIME-ACCEPTANCE-CHANGELOG.md。
+
+## 选敌半径沿RO默认18米，独立于技能射程（2026-10-12）
+
+- 用户不要求经验式攻击距离×2，先核RO。普通FindEnemyBySkillBtn采用统一MaxChooseDistance，默认来自MaxChooseRange18米、副本可覆盖；UpRange独立决定射程/导航到达，等待阶段目标失效才按UpRange补选。
+- 当前只将MSkillTargetMgr常量30→18及范围注释校正，保原简化直线距离/包含18边界/同名接口；不扩配置框架/副本覆盖/导航追近/伤害/协议。F和轻功不参与、无敌保原无目标释放。下文30米为历史初次接入。
+- 来源和边界见项目分析/RO_TARGET_SELECTION_DISTANCE.md；日志项目修改日志/2026-10-12-RO-TARGET-RANGE-CHANGELOG.md，独立28项/编译审查通过。
+
+## RO 三种选敌沿现世界与无目标技能接入（2026-10-12）
+
+- 保TouchObject/JudegeType/setPlayerTarget、MSkillTargetMgr/FindEnemyByAimBtn/FindEnemyBySkillBtn/ResetTarget/UpdateToCheckTarget、MSkillTargetDefine/FindAllTarget/SortTargetByRng及SkillCtrl.GetTargetFilterSkill；只适配当前类型/输入/UI，不重命名既有类或移植自动战斗框架。
+- 本项目无RO UID碰撞体命名/选择层，射线改用模型层级定位原实体，不改名字。简化为30米直线距离、最近四敌循环；现世界/模型/实际HP筛有效目标，0/0未初始化不判死，移除回池前清目标；不加代次、队列、重试、确认等待。
+- 六技能TargetMode0且SkillCastReq无目标字段，客户端UID为本端allocator；先做目标与攻击朝向辅助，无敌保原释放，Type3/轻功不选敌。朝向仅原CanStart通过和提交成功/原离线路径后、BeginPrediction前应用。仅怪物体系为敌，其他玩家友；主城无生产刷怪，不插Mock或判玩家为敌演示。
+- 后续目标协议/伤害/刷怪须用户另提需求。分析项目分析/RO_TARGET_SELECTION_IMPLEMENTATION.md、项目分析/RO_TARGET_SELECTION_SERVER_BOUNDARY.md；日志项目修改日志/2026-10-12-RO-TARGET-SELECTION-CHANGELOG.md。
+
+## RO 移动同步只作正式链必要适配、灯光仅禁用（2026-10-12）
+
+- 沿RO UpdateMove/onSyncMoveEvent/LagSyncUpdate/OnMoveStart及既有字段，整数毫秒帧转换为CostTime秒累计；独立强类型proto字段代替当前工程未具备的RO位打包。客户端现跳跃/技能根实际位置变化纳入IsMoved，避免没有方向输入的位移不被远端追赶，不增加动作协议或等待/代次/重试。
+- 在线角色移动复用当前OnlineRole组件与逻辑队列/会话身份/同图100米广播，不建立第二场景世界、导航/物理权威或AOI生态，不把历史占位当实现。远端停止只停影子动画，不禁用承担既有技能位移的整个组件。
+- 用户强调“关闭不是删除”：仅主城实例54个实时点光组件enabled覆盖为false，保全部对象/60灯组件/原参数/共享prefab；不以禁父物体移除装饰，不改全局画质。性能结论区分实际灯光负载、全场景总网格、进城加载尖峰与待Profiler确认稳态瓶颈。
+- 对照与边界见 项目分析/RO_MOVE_SYNC_CLIENT.md、项目分析/RO_MOVE_SYNC_SERVER.md、项目分析/MAIN_CITY_PERFORMANCE.md；修改日志 项目修改日志/2026-10-12-RO-MOVE-CITY-CHANGELOG.md。
+
+## RO 技能组件沿参考职责接入当前释放链（2026-10-12）
+
+- 用户明确范围为当前技能释放链，外部系统列缺项；不移植完整 QTE/Buff/目标/墙体/命中伤害生态或添加空成功接口。
+- 客户端按 RO 同名装配/查询/停止/OnAttack→OnStart→FireSkill 与回包入口接正式链；保本项目当前已学等级核心、UUID/CD、表现尾段及已有动作池，未为字段名称增加独立 Mgr。效果查询不授予未学技能。
+- 服务器采用 ROSkillComponent 基类→RoleSkillComponent 角色扩展，适配既有 OnlineRole 容器，主核心承接实例、冷却和释放生命周期；不凭空创建第二个场景宿主或扩 World/AOI。历史 SceneEntity 占位与正式在线链明确区分。
+- 核心/单次施法以 ROSkillCore/ROSkill 强类型独立文件实现；CD 公开剩余毫秒、内部50ms Tick向上取整，结束不清合法 CD；EndSkill/Freeze 的 bool 适配现 Interrupted 协议。原 Type3/CanSlideCancel、MP/学习/组合及时钟保持。
+- 独立审查通过；对照与边界见 `项目分析/RO_SKILL_COMPONENT_PARITY.md`，修改见 `项目修改日志/2026-10-12-RO-SKILL-COMPONENTS-CHANGELOG.md`。
+
+## RO 技能发送沿原模块与空功能即时交接（2026-10-12，已完成）
+
+- 沿RO CastSkill → SetWaitSkill/DoCastSkill → MEvent_Navigation → OnGetEvent/closeTargetAfter → UpdateMove/OnAfterAction接入；导航属实体普通组件，Builder创建一次，NavComp从原容器查询。
+- 选目标/寻路/位置同步未实现，GetTargetFilterSkill返回null、Interrupt/UpdateMove保空，导航即时交接，不加等待/确认/队列/重试。正式发送保原SkillCastReq/UUID/BeginPrediction及Type3/CanSlideCancel、CD、跳跃、权威回包，不增目标/坐标协议。
+- 独立专项/审查PASS，正式联机/安装包待游戏回归；分析 `项目分析/RO_SKILL_SEND_MODULE_FLOW.md`，日志 `项目修改日志/2026-10-12-RO-SKILL-SEND-MODULES-CHANGELOG.md`。
+
+## 服务器计时保留不足毫秒的余量（2026-10-12）
+
+- 被动读取正式进程确认首F活动及CD等待Tick22，而LogicTick相隔16秒仍10。修GameGlobal.Update覆盖采样原点导致高速循环丢亚毫秒时间的实际故障，仅按已计入整毫秒前移采样原点；20Hz/原追赶逻辑与角色、技能、CD全部保持，无新增字段/时钟类型/等待/框架。
+- 不通过放开滑步自断或删除角色加载门闩掩盖时间停止；独立背包未加载实验不代表本次现场。真实主循环before/after与7项业务断言、服务端编译及独立审查通过，正式GameServer重新编译重启后回归，不自动中断用户当前游戏。
+- 分析`项目分析/SERVER_LOGIC_CLOCK_MS_REMAINDER.md`，日志`项目修改日志/2026-10-12-ROLL-STATEBLOCKED-FIX-CHANGELOG.md`，证据`_temp/roll-stateblocked-20261012/`。
+
+## F恢复特殊技能（2026-10-12，覆盖本地移动选择）
+
+- 用户最新要求“改回去吧，这个也算一个技能，但是是个特殊技能，特殊判断一下就行”。撤销前次7源本地接入，恢复SkillCastReq/预测/CurrentSkill/服务器同步/CD；保SceneMgr授权拼写修复。
+- 滑步按主表Type3，在活动技能期间直接读取旧技能CanSlideCancel==1作为特殊取消许可；普通新技能仍InteruptSkill。使用现成表语义，不强断CanSlideCancel0的技能、不改表；服务器Type3准入替代10080硬编码，原学习/职业/存活/MP/CD/目标及跳跃禁技能保持。
+- 新业务仅客户端CanSkill和服务器TryCast，约5米/原Timer残影/500ms CD/667ms动画、F最右/2攻击保持。分析`项目分析/F_ROLL_SLIDE_DESIGN.md`，日志`项目修改日志/2026-10-12-ROLL-SPECIAL-SKILL-CHANGELOG.md`。
+
+## F滑步属于本地移动（2026-10-12，覆盖旧普通技能请求设计）
+
+- 用户明确选择“作为移动动作，不走施法请求”。SkillCtrl按主表Type3调用MMoveComponent.TrySlide，移动组件持有SlideAction；复用原MArtSkill/MTimerMgr/根Collector，不入CurrentSkill、不建预测、不发SkillCastReq、不等确认、不扣MP。RO移动类原本仍受CanSkill限制，本次是用户指定玩法，不误称RO原样。
+- 原0.5秒CD共用已有SkillCD唯一记录，约667ms动作自然结束可再次按F；原F最右、2攻击、约5米配置及白残影保持。滑步期间普通水平输入不叠位移，结束恢复走跑；跳跃与滑步互斥且不抢正在施放的攻击。没有无敌、气力、输入缓存、自动连发、协议或同步扩展。
+- 用户另确认SceneMgr字段拼写非正在编辑并要求修正，只补声明末尾w；不改变场景流程。分析`项目分析/F_ROLL_SLIDE_DESIGN.md`，日志`项目修改日志/2026-10-12-ROLL-LOCAL-MOVE-CHANGELOG.md`。
+
+## 简单场景流程与禁止无用校验（2026-10-12，覆盖旧场景调度决策）
+
+- 用户明确恢复原项目Init/LoadSceneMode接口与Single加载完成回调。旧场景卸载、目标激活交给Unity/YooAsset；不再维护请求对象、代次、队列、手工卸载激活或默认业务根状态门禁。仅处理IsDone/Status、可空Loading和现创角禁用根启用。
+- 无用户要求或已复现故障，不添加多余校验、状态门禁、代次、队列、重试、确认等待、多层空值判断或异常包装；审查不得为假设情形强加机制。规则同步AGENTS.md及AIconfig，主只协调/验收与维护规则记录，业务由客户端子Agent修改。
+- 分析`项目分析/SCENE_SIMPLE_LOGIN_FLOW.md`，日志`项目修改日志/2026-10-12-SCENE-SIMPLE-FLOW-CHANGELOG.md`。
+
+## 场景提交识别已活动目标（2026-10-12）
+
+- 原生PlayMode已复现卸载旧场景后目标自动活动、再次SetActive返回false；Commit先比较目标与GetActiveScene，相等即沿原成功流程，未相等才原YooAsset激活，不新增重试/状态或重构卸载责任。实际provider提前Scene值正确，不因猜测修改第三方库。
+- 依据与验证见`项目分析/SCENE_ACTIVE_COMMIT_FIX.md`，修改日志`项目修改日志/2026-10-12-SCENE-ACTIVE-COMMIT-FIX-CHANGELOG.md`。
+
+## 残影按主表类别（2026-10-12）
+
+- 用户要求用Excel技能类别替代10080判断。主表SkillInfo.Type为1普攻/2技能/3滑行/4轻功，与MSkill.SkillType不同；FireEvents一次取已存在LubanMgr主表、Type3注册原残影，不增加核心缓存/初始化接口或分类框架。技能身份/绑定/权威准入仍沿已有配置，不扩大修改范围。日志 `项目修改日志/2026-10-12-SLIDE-CATEGORY-CHANGELOG.md`。
+
+## 翻滚最终最右位置（2026-10-12）
+
+- 用户明确纠正此前“最左”为整个技能栏最右，覆盖下文F/Q/E/1/2布局。仅移动F与Q/E/1/2及空槽/同级Inset七个X，不换输入键或技能身份；布局Q/E/1/2/空｜R｜3/4/5/6/F。
+- 约5米/原白残影/0.5秒CD保持。日志 `项目修改日志/2026-10-12-F-ROLL-RIGHT-CHANGELOG.md`，分析 `项目分析/F_ROLL_SLIDE_DESIGN.md`。
+
+## 翻滚追加参数与原特效（2026-10-12，覆盖首轮参数）
+
+- 用户明确完整滑步约5米，沿原完整Animation根窗口校准倍率1.458485，不改动画/叠加Charge。主表0.5秒/权威500ms低于667ms动作，使动作完成可重复按F；不增加自动连发/输入缓存。仅F/Q/E三个锚点位移形成F/Q/E/1/2，键绑定保持。
+- 原特效真实为旧MainRoleCtrl滑行时调用GhostEffect的白色网格残影，非粒子。以现FireEvents/MTimerMgr/InnerProcessTimer约30Hz快照调用原组件及四0.2参数；局部回调100为本地扩展非RO原值。冷过期样本不补，未就绪或离槽停止新影，无新轨道/通用层。
+- 原生明确复现失活再启顶点43749→0，最小CleanUp置两缓存null修复；原Shader只有目录收集无实际引用/加载，GraphicsSettings精确追加AlwaysIncluded唯一引用，保证Shader.Find资源依赖，不造加载管理器。分析 `项目分析/F_ROLL_SLIDE_DESIGN.md`，日志 `项目修改日志/2026-10-12-F-ROLL-REFINE-CHANGELOG.md`。
+
+## F翻滚滑步接入（2026-10-12）
+
+- 用户指定Anim_JX_Slider_F；使用项目现成10080滑行/Skill_330600和完整80帧120Hz原动画，不造新身份或翻滚状态。667ms动作窗、已有6秒CD、零MP无伤害，单Animation根窗口倍率1，ChargeList空，沿当前朝向及已有重力碰撞链。
+- 原F已核为专用模拟11080的10060，2未占用。模拟与真实回包共同接F/10080、2/旧10060；已有10080回包至少1级，原F10060仅改键保等级。真实数据缺行/通用绑定冲突没有依据，不增迁移管理层，不写活数据库。
+- 导出动画目录规则只新增用户指定精确路径例外；不开放整个ALL目录、不复制现成动画图标。跳跃限制继承，未要求的无敌/气力消耗积累/缓存/协议扩展不实现。原生独立约3.43米采样不是正式固定距离数值。分析 `项目分析/F_ROLL_SLIDE_DESIGN.md`，日志 `项目修改日志/2026-10-12-F-ROLL-SLIDE-CHANGELOG.md`。
+
+## 跳跃施法门禁（2026-10-12）
+
+- 用户要求跳跃禁止技能与普攻；使用现有Entity.IsJump在统一CanStart判定，真实输入在UUID/发包/预测前拒绝，直接BeginPrediction共用校验。起跳同步置位、下降接地清除，不新增状态/缓冲，落地仍需按原规则出招。
+- 不以动画当前名判断跳跃，不扩服务端协议；当前后端无真实跳跃状态源，本轮为客户端限制。设计与验收见 `项目分析/JUMP_SKILL_CAST_GATE.md` 和 `项目修改日志/2026-10-12-JUMP-CAST-BLOCK-CHANGELOG.md`。
+
+## 真气与气力初始化显示（2026-10-11）
+
+- 最新用户要求覆盖历史“无数据默认空”：创建界面时真气、气力均满；怒气继续未满暗。两资源仅以Prefab各1/3圆作为初始显示，不增加玩法状态或初始化管理层。
+- 后续UpdateTrueQi/UpdateStamina仍按外部真实点数更新，调用时非正上限显示空，不因初始满条改变接口边界。日志 `项目修改日志/2026-10-11-SKILL-HUD-RESOURCE-INITIAL-FULL-CHANGELOG.md`。
+
+## 中央技能圆盘嵌槽结构（2026-10-11）
+
+- 最新局部参考明确左右资源属于盘框内的窄凹槽，覆盖此前盘外悬浮弧方案。采用少数硬轮廓与宽灰阶倒角、暗内盘、向上剑扇浮雕和下方R；配本项目二游样式，原创几何素材，不复制参考游戏截图为正式资产。
+- 仍只做界面：真气/气力/怒气各自独立，正式无数据暗空，底HPMP和原R输入/CD保持。此次仅Prefab和透明图片，沿用原三显示接口，不为视觉扩大玩法或新增业务层。设计与验证见 `项目分析/SKILL_HUD_LAYOUT_AND_STYLE.md` 和 `项目修改日志/2026-10-11-SKILL-HUD-CENTER-INSET-CHANGELOG.md`。
 
 最新参考移植约束见本文件末节“参考移植忠实与简洁约束”：用户指定参考项目时以原结构/接口/时序为准，不自行扩展需求外机制。该要求已同步 AGENTS.md 与 AIconfig/workflow.md，并覆盖历史技能快照更新方案。
 
@@ -318,7 +538,40 @@
 # 技能 CD 与表现实例回收独立（2026-10-11，修复约束）
 
 - 用户反馈全部技能可无限释放，独立before已实际复现：10秒CD、0.5秒表现，0.61秒正常回池后CD=0，第二次快捷键成功发包；根因为Cease→Reload把未回包的正常收尾当成预表现失败。
+
 - 本条覆盖历史“预表现Cease调用Reload清单CD”的移植选择。角色CD由施放写入、倒计时、明确清场及权威结果决定，正常表现结束/归池/资源清理不能重置CD；不等确认不等于不受CD约束。
 - 最小删除两源清CD联动，不恢复确认队列、额外门禁或快照。RO原失败清理不能与本地正常早回池混用；必要兼容修正以已复现事实为依据。
 - 日志 `项目修改日志/2026-10-11-SKILL-CD-EARLY-RESET-CHANGELOG.md`，before/final证据 `_temp/skill-cd-early-reset-20261011/`。
+
+## 技能 HUD 参考布局与本项目样式（2026-10-11）
+
+- 用户要求参考武当HUD结构、采用本项目背包样式：左右分组、中央原R圆槽、下HP/MP；固定Q/E/R/F/1至6及原业务不变，右侧补齐视觉空格，不制造未接入的药品/能量功能。
+- 复用Common1圆角/真实白色圆片与原字体；SkillCoreWidget只是原SkillSlotWidget的独立外观Prefab，无新组件类型。窗口只做资源外观选择与同名锚点挂接，不扩输入/CD层。
+- 可视验收采用正式末稿Prefab复制品的Unity隔离渲染，样例文字/图标/CD不冒称服务器现场数据；正式运行及发布仍按原入口与构建流程。详见 `项目分析/SKILL_HUD_LAYOUT_AND_STYLE.md`。
+
+## 技能 HUD 视觉返工与怒气界面范围（2026-10-11，最新）
+
+- 用户要求去本HUD头像昵称职业与全部血蓝文字数值，保血蓝条；薄透明灰黑槽/细蓝白边代替厚蓝框，中央未满暗盘，满怒才青蓝环亮态。键/CD用项目现有无衬线字体，资源本体不改。
+- 用户明确怒气玩法后续接入，本轮仅强类型UpdateRage/SetRageFull显示接口，默认无数据不亮；不从CD/MP推怒气，不加施法门禁或服务端规则。窗口一个满态bool只供异步中央槽同步，普通槽无可选节点不受影响。
+- 当前原R仍按既有施法逻辑；亮态预览为隔离样例，不表示怒气系统已接入。正式视觉以本轮分析和 `项目修改日志/2026-10-11-SKILL-HUD-REFINE-CHANGELOG.md` 为准，覆盖上一版人物信息/厚框/常亮中心陈述。
+
+## 中央真气/气力与底HPMP区别（2026-10-11）
+
+- 用户明确是中央圆盘两侧另加真气、气力弧条，不能将底部生命法力长条改义。界面按左真气右气力，外弧青蓝/浅金区分，中央怒气亮态仍独立，不显示资源文字数值。
+- 只提供独立UpdateTrueQi/UpdateStamina显示入口，正式无数据默认空；不假借MP/运动/怒气、不实现领域积攒消耗或施法门禁。两条各三分之一圆填充由原生Image处理。
+- 原图集低分辨率厚环放大不合格，最小专用透明细环PNG/meta派生本项目白圆资源，保持原图集不改，不加绘图框架；实际视觉以 `项目修改日志/2026-10-11-SKILL-HUD-QI-STAMINA-CHANGELOG.md` 和当前分析为准。
+
+## 公共地图先导出已烘焙三角网（2026-10-20）
+
+- 用户最新明确参考NavMeshSurface，当前查看采用组件原生显示，取代以下所有自绘蓝面方案。窗口匹配并选中已加载Surface，管理showNavMesh/showOnlySelectedSurfaces原值恢复；移除自绘Mesh/Material/相机回调，仅asmdef追加现有Unity.AI.Navigation必要引用。画面来源是Surface资产，不冒充公共bytes；公共导出格式仍保持。真实同镜头原生入口对照通过，当前烘焙树冠/石顶内容未隐去或重烘焙；不加角色连通查询。记录项目修改日志/2026-10-20-NAVIGATION-PATHMESH-VIEW-CHANGELOG.md。
+
+- 真实主城返工后以本条为准：用户明确关注覆盖范围。同镜头原生/自写四态证实仅LessEqual会漏显地表遮住的导航面，且双开使蓝面叠浓。采用单次完整区域透明叠加并临时互斥原生开关，隐藏/关闭/重载恢复，不挪顶点或重烘焙。曾拟双色pass，但原生像素不支持，按真实证据简化；不为颜色精确复刻扩大需求。当前网格/文件三数组及修后覆盖验收通过；日志项目修改日志/2026-10-20-NAVIGATION-PREVIEW-SCENE-FIX-CHANGELOG.md。以下仅深度面及Handles选择均为历史。
+
+- 最新显示决策：用户指出仅线框无法直观辨认可走位置，改用缓存UInt32 Mesh和临时透明材质，在Scene相机onPostRender按LessEqual深度填充；取代以下Handles方案。实测生产回调前后遮挡与Game排除、数据保真和资源释放通过，主城最终合成未独立目检。表示指定Agent烘焙面，未做当前位置连通查询或移动接入；制作仍依赖Unity烘焙。日志项目修改日志/2026-10-20-NAVIGATION-WALKABLE-PREVIEW-CHANGELOG.md。
+
+- 后续用户要求Scene效果预览：从正式公共文件反读，缓存顶点和三角边索引，原生Handles画线；无需NavMeshData/空导航世界即可查看。首稿Mesh材质路线因最终合成验证不充分而简化，不为查看网格扩展截图框架。制作烘焙仍由Unity AI Navigation完成，本轮不冒称独立烘焙器。使用说明同项目分析/UNITY_NAVIGATION_EXPORT.md。
+
+- 用户明确不必跟RO，选择简单可控的自写工具。直接导出Unity已烘焙三角网，保留世界XYZ/原索引/区域/Agent/场景名；不重新按半径缩边，不依赖RONavigation，不升级.NET4.8。
+- 单一公共源NavigationData/<SceneName>.navmesh.bytes，Unity和服务端Common链接同份纯C#读取源码。因Unity三角化API全局，要求Boot/空导航世界后临时注册单资产并finally仅移除本实例，不自动切图或卸载用户数据。
+- 本轮边界为导出/两端读回；完整服务器导航、邻接/分块接缝、运行加载与移动后续另行接入。新Common更新Unity前须确定类型唯一归属。实际工具和验证见项目分析/UNITY_NAVIGATION_EXPORT.md。
 

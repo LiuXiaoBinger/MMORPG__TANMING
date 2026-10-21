@@ -61,6 +61,8 @@ public class SceneMgr : Singleton<SceneMgr>
             }
 
             _currentSceneType = sceneType;
+            // 沿RO场景加载入口先准备同名公共导航数据，再执行创建玩家等原业务回调。
+            MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
             // 目标场景根对象；创角业务根默认禁用，加载成功后才启用其场景脚本。
             GameObject[] roots = handle.SceneObject.GetRootGameObjects();
             // 根数组的零基索引；已启用的主城业务根保持现状。

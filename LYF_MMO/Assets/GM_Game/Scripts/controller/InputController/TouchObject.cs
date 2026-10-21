@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>沿 RO 点击选择职责，按下与松开命中同一实体才选择；不接点击寻路或自动普攻。</summary>
+/// <summary>沿RO点击入口选择角色或敌人，点击NPC时交给目标导航；空白地面不产生业务指令。</summary>
 public sealed class TouchObject
 {
     /// <summary>RO 同名点击入口，由现有玩家输入组件每帧采集鼠标驱动。</summary>
@@ -19,6 +20,8 @@ public sealed class TouchObject
     private EventSystem _eventSystem;
     /// <summary>鼠标按下命中的原实体引用，松开或禁用输入后清除。</summary>
     private MEntity _downEntity;
+    /// <summary>本次按下的屏幕像素坐标，用于区分拖动镜头与点击实体。</summary>
+    private Vector2 _lastPos;
 
     /// <summary>单例只处理选择输入，不挂载正式场景组件。</summary>
     private TouchObject() { }
@@ -34,8 +37,8 @@ public sealed class TouchObject
     /// <summary>RO 同名实体命中入口，适配本项目现有屏幕坐标与 Unity 点击阶段。</summary>
     /// <param name="position">点击的屏幕像素坐标。</param>
     /// <param name="phase">Began 记录按下对象，Ended 对账并选择。</param>
-    /// <param name="selectOnly">保留 RO 参数；本项目全部点击仅选择，不自动攻击。</param>
-    /// <returns>本次点击完成选择时为 true。</returns>
+    /// <param name="selectOnly">保留RO参数；角色点击仅选择，NPC点击导航交互，均不自动攻击。</param>
+    /// <returns>本次点击完成角色选择或提交NPC导航时为true。</returns>
     public bool JudegeType(Vector2 position, TouchPhase phase, bool selectOnly = true)
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -73,18 +76,37 @@ public sealed class TouchObject
             // 原实体快照的索引，查询不修改实体世界集合。
             for (int entityIndex = 0; entityIndex < _entities.Count; entityIndex++)
             {
-                // 当前候选只允许角色或怪物，NPC 和采集交互本轮不接。
+                // 当前候选沿现有实体模型定位，NPC独立于战斗目标筛选。
                 MEntity entity = _entities[entityIndex];
                 // 当前命中就是本地玩家自身，不能作为点击选择目标。
                 bool isSelfEntity = entity == Global.Instance.SceneWorld.LocalRole;
-                // 非角色实体，或角色但不属于敌人，都不参与点击选择。
-                bool isNonEnemyEntity = (!(entity is RoleEntity) &&
-                    !MSkillTargetDefine.IsEnemy(entity));
-                // 目标已不在世界或不可见存活。
-                bool isInvalidTarget = !MSkillTargetDefine.IsValidTarget(entity);
-                if (isSelfEntity || isNonEnemyEntity || isInvalidTarget)
+                if (isSelfEntity)
                 {
                     continue;
+                }
+                if (entity is NpcEntity)
+                {
+                    // NPC没有战斗死亡判定，点击只要求原世界实体活跃且模型可见。
+                    if (entity.LifecycleState != EntityLifecycleState.Active ||
+                        !entity.Model.IsLoaded || !entity.Model.Visible)
+                    {
+                        continue;
+                    }
+                    if (!entity.Model.GameObject.NativeObject.activeInHierarchy)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!(entity is RoleEntity) && !MSkillTargetDefine.IsEnemy(entity))
+                    {
+                        continue;
+                    }
+                    if (!MSkillTargetDefine.IsValidTarget(entity))
+                    {
+                        continue;
+                    }
                 }
                 if (hitTransform.IsChildOf(entity.Model.GameObject.Transform) &&
                     _hitEntityBuffer[hitIndex].distance < selectDistance)
@@ -97,19 +119,44 @@ public sealed class TouchObject
         if (phase == TouchPhase.Began)
         {
             _downEntity = selectEnt;
+            _lastPos = position;
             return false;
         }
         if (phase == TouchPhase.Ended)
         {
-            // 必须按下松开为同一实体，拖镜头经过角色不改变选择。
+            // 角色与敌人保持原按下松开同一实体的选择规则。
             bool sameEntity = selectEnt != null && selectEnt == _downEntity;
             _downEntity = null;
             if (sameEntity)
             {
+                if (selectEnt is NpcEntity)
+                {
+                    // 新增NPC交互仅接受10像素内的点击，拖动镜头不能发起导航。
+                    if ((position - _lastPos).sqrMagnitude > 100f)
+                    {
+                        return false;
+                    }
+                    return ClickNpc(selectEnt);
+                }
                 return setPlayerTarget(selectEnt, selectOnly);
             }
         }
         return false;
+    }
+
+    /// <summary>点击现有NPC时沿目标导航走进原对话距离，不改写战斗选择目标。</summary>
+    /// <param name="entity">当前点击的原NPC实体；通过基类读取世界坐标，避开NPC旧字符串位置字段。</param>
+    /// <returns>已提交本次NPC导航事件时为true。</returns>
+    private bool ClickNpc(MEntity entity)
+    {
+        // 只在同步派发期间借用事件；导航组件保存目标原引用，不保存池化载荷。
+        MNavigationEventArgs args = MNavigationEventArgs.Create(entity.Position);
+        args.NeedTarget = true;
+        args.Target = entity;
+        args.UpperRange = NpcCtrl.TalkDistance;
+        Global.Instance.SceneWorld.LocalRole.DispatchEvent(MEventType.MEvent_Navigation,
+            args);
+        return true;
     }
 
     /// <summary>检查点击位置上的 UI Graphic，包含本帧鼠标位置而不依赖旧指针缓存。</summary>

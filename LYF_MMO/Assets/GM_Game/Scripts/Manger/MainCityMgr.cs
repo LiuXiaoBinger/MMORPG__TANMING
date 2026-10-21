@@ -48,11 +48,13 @@ public class MainCityMgr : MonoBehaviour
       _localRoleLoadCompletedHandler = OnLocalRoleLoadCompleted;
    }
 
-   /// <summary>创建本地角色表现并通知服务端进入场景。</summary>
+   /// <summary>进入主城后创建本地角色表现，并按已加载的配置创建本城 NPC。</summary>
    private void Start()
    {
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
+      // 正式进城前 Global 已完成配置和实体世界初始化，复用同物体上的 NPC 管理器。
+      GetComponent<NpcManager>().Initialize();
    }
 
    /// <summary>每帧尝试补上延迟启用的 Global 事件订阅，兼容测试场景后启用 Global 的时序。</summary>

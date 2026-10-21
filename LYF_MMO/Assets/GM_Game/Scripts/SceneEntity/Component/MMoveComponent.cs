@@ -512,12 +512,30 @@ public sealed class MMoveComponent : EntityComponentBase
 
         // 当前模型的水平速度；跳跃和水平移动在此合成为一次 CharacterController.Move。
         UVEC3 horizontalVelocity = Entity.Model.lastVelocity;
+        // 本地导航与方向共用移动提交；不增加另一个更新循环或碰撞移动入口。
+        MNavigationComponent navComp = Entity.NavComp;
         // 技能动作按 MoveCasting 决定水平输入；禁止移动的技能即使在空中也不保留水平速度。
         if (!Entity.IsMovable &&
             (Entity.CurrentState == StateDefine.kStateSkill || !Entity.IsJump))
         {
             stopMove();
             horizontalVelocity = UVEC3.zero;
+        }
+        else if (navComp != null && navComp.IsNavigation)
+        {
+            // 路点推进使用当前走跑速度与本帧秒数，单位为米。
+            float speed = GetCurrentMoveSpeed();
+            // 当前路线按本帧预算得到的下一位置；高度仍由原重力和碰撞处理。
+            UVEC3 nextPos;
+            horizontalVelocity = UVEC3.zero;
+            if (deltaSeconds > 0f &&
+                navComp.TryGetNextStep(Entity.Position, speed * deltaSeconds, out nextPos))
+            {
+                horizontalVelocity = (nextPos - Entity.Position) / deltaSeconds;
+                horizontalVelocity.y = 0f;
+                MEntity.FaceDirectionSmooth(Entity, horizontalVelocity);
+            }
+            Entity.Model.lastVelocity = horizontalVelocity;
         }
         else if (_isMoving && _targetDir != UVEC3.zero)
         {
@@ -537,9 +555,9 @@ public sealed class MMoveComponent : EntityComponentBase
         }
         else
         {
-            // 没有方向输入时立即清理旧水平速度，避免松键后继续滑行。
+            // 方向和导航均已结束时收束动画，Interrupt(false)由后续正常移动帧接管。
+            stopMove();
             horizontalVelocity = UVEC3.zero;
-            Entity.Model.lastVelocity = UVEC3.zero;
         }
 
         UpdateVerticalMovement(deltaSeconds);
@@ -727,11 +745,17 @@ public sealed class MMoveComponent : EntityComponentBase
         {
             return;
         }
-        var args = e as MMoveEventArgs;
+        // 当前本地方向或远端同步的强类型载荷，仅在同步派发期间读取。
+        MMoveEventArgs args = (MMoveEventArgs)e;
         if (!Entity.IsPlayer)//不是玩家的话走sync逻辑
         {
             onSyncMoveEvent(args);
             return;
+        }
+        if (args.face.sqrMagnitude > 0.01f)
+        {
+            // 沿RO手动方向入口先打断路线，再由本次输入设置方向与移动动画。
+            Entity.NavComp.Interrupt(false);
         }
         // MoveCasting 只影响技能水平输入，其他动作保留原有空中方向控制。
         if (!Entity.IsMovable &&
@@ -806,7 +830,7 @@ public sealed class MMoveComponent : EntityComponentBase
 
     /// <summary>设置水平移动运行态，并在状态变化时刷新动画和派发移动事件。</summary>
     /// <param name="move">true 表示实体本帧需要持续水平移动；false 表示停止水平位移。</param>
-    private void SetMoving(bool move)
+    public void SetMoving(bool move)
     {
         if (_isMoving == move)
         {

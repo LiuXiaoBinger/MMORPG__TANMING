@@ -56,7 +56,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     {
         get
         {
-            // 默认动作是否应显示移动；本地主角以真实方向输入为准，避免落地运行态延迟造成 Idle 闪帧。
+            // 默认动作是否应显示移动；本地主角同时识别真实方向与有效导航，保留落地运行态判断。
             bool shouldPlayMovement = ShouldPlayMovementAnimation();
             // 射击姿态优先级高于战斗待机，战斗事件不能改写射击中的静止或移动表现。
             if (_defaultState == State.Shoot)
@@ -111,7 +111,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         }
     }
 
-    /// <summary>判断默认动作是否应播放移动动画；本地主角以方向输入为准，其他实体沿用同步移动状态。</summary>
+    /// <summary>判断默认动作是否应播放移动动画；本地主角识别方向或导航，其他实体沿用同步移动状态。</summary>
     /// <returns>true 表示默认状态应直接播放 Walk 或 Run；false 表示播放对应 Idle。</returns>
     private bool ShouldPlayMovementAnimation()
     {
@@ -121,9 +121,16 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         }
         if (Entity.IsPlayer && Entity.MoveComp != null)
         {
-            // 本地角色只有在方向输入仍存在且移动运行态仍为真时才播放 Walk/Run。
-            // 旧控制器可能只清理 IsMoving，两个条件同时满足可避免 Idle 逻辑残留为移动动画。
-            return Entity.MoveComp.HasDirectionalInput && Entity.MoveComp.IsMoving;
+            if (!Entity.MoveComp.IsMoving)
+            {
+                return false;
+            }
+            // 导航不会伪造按键保持；有效路线也应沿原走跑槽位播放移动动画。
+            if (Entity.NavComp != null && Entity.NavComp.IsNavigation)
+            {
+                return true;
+            }
+            return Entity.MoveComp.HasDirectionalInput;
         }
         return Entity.IsMoving;
     }

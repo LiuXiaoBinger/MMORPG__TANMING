@@ -41,6 +41,31 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Class1.cs"/>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigation.cs">
+            <Link>Navigation\MNavigation.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationTriangle.cs">
+            <Link>Navigation\MNavigationTriangle.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPortal.cs">
+            <Link>Navigation\MNavigationPortal.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationEdge.cs">
+            <Link>Navigation\MNavigationEdge.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPointComparer.cs">
+            <Link>Navigation\MNavigationPointComparer.cs</Link>
+        </Compile>
+        <!-- 公共导航格式直接链接客户端同份纯C#源码，避免两端复制后字段或文件版本不一致。 -->
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPoint.cs">
+            <Link>Navigation\MNavigationPoint.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapData.cs">
+            <Link>Navigation\MNavigationMapData.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapSerializer.cs">
+            <Link>Navigation\MNavigationMapSerializer.cs</Link>
+        </Compile>
         <Compile Include="EntityData\Entity\EntityBase.cs" />
         <Compile Include="EntityData\Entity\MainRoleEntity.cs" />
         <Compile Include="EntityData\Entity\MonsterEntity.cs" />
