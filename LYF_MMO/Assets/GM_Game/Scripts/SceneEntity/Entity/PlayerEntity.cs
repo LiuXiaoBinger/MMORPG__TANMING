@@ -19,6 +19,9 @@ public sealed class PlayerEntity : RoleEntity
     /// <summary>上次已上报的水平移动状态，用于发送松键后的最后位置。</summary>
     private bool _isMoving;
 
+    /// <summary>上次上报的跳跃段号；零表示落地，1 至 3 表示本轮滞空已起跳次数。</summary>
+    private int _jumpCount;
+
     /// <summary>按 RO 规则生成本地玩家下一次施法 UUID，取值范围为 1 至 9999。</summary>
     public ulong NextSkillUUID
     {
@@ -37,12 +40,18 @@ public sealed class PlayerEntity : RoleEntity
     public void UpdateMove()
     {
         // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
-        if (MainCityMgr.Instance == null || !Model.IsLoaded || MoveComp.CostTime <= 0f)
+        if (MainCityMgr.Instance == null || !Model.IsLoaded)
+        {
+            return;
+        }
+        // 普通移动保留原有正耗时发送规则；起跳或落地状态变化允许零耗时即时上报。
+        if (MoveComp.CostTime <= 0f && _jumpCount == MoveComp.JumpCount)
         {
             return;
         }
         _face = Model.Rotation.eulerAngles.y;
         _isMoving = IsMoving;
+        _jumpCount = MoveComp.JumpCount;
         // 本时间段是否实际发生位移；跳跃与技能根运动也需要远端追赶最终坐标。
         bool isMoved = Position != sysnOldPos;
         sysnOldPos = Position;
@@ -55,6 +64,7 @@ public sealed class PlayerEntity : RoleEntity
         ptc.Time = MoveComp.CostTime;
         ptc.IsMoving = IsMoving;
         ptc.IsMoved = isMoved || MoveComp.HasDirectionalInput;
+        ptc.JumpCount = _jumpCount;
         MoveComp.CostTime = 0f;
         NetSocketMgr.Client.SendData(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
         _lastSyncTime = 0f;
@@ -133,6 +143,12 @@ public sealed class PlayerEntity : RoleEntity
         // 当前模型水平朝向角，单位为度。
         float ang = Model.Rotation.eulerAngles.y;
         _lastSyncTime += deltaMilliseconds * 0.001f;
+        // 起跳、追加段和落地立即上报；即使尚无厘米位移或累计时间为零，也不能漏掉表现状态。
+        if (_jumpCount != MoveComp.JumpCount)
+        {
+            UpdateMove();
+            return;
+        }
         // 移动结算时间与同步间隔均满足上报节拍。
         bool movementTimingValid = MoveComp.CostTime > 0f && _lastSyncTime > 0.1f;
         // 移动状态标志发生变化。
@@ -398,6 +414,7 @@ public sealed class PlayerEntity : RoleEntity
         _addedToWorldNotified = false;
         IsLocal = false;
         _isMoving = false;
+        _jumpCount = 0;
         RoleInfo = null;
         _flags.Clear();
         DirtyTracker.ClearAll();

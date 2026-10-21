@@ -1,0 +1,25 @@
+# RO 目标选择流程
+
+## 点击实体
+
+参考MoonClient/Input/TouchObject.cs的JudegeType和setPlayerTarget：主相机ScreenPointToRay将点击屏幕坐标转为世界射线，Physics.RaycastNonAlloc在角色/NPC/怪物等选择层检测碰撞体。碰撞体name解析为ulong UID，经MEntityMgr.GetObject/GetEntity找场景实体。过滤不可见、不可选、出生状态等对象，按类型优先级挑选；按下与松开同一实体后检查MaxChooseDistance并写PlayerEntity.Target。
+
+非selectOnly点击同时派发MGlobalEvent_OnSelectTarget；UISkillController.onSelectTarget在IfAttckWhenSelect开启时调用OnSelectTarget验证活敌方对象，并AddCommonAttack。点击选中本身不等于已经请求伤害。
+
+## 瞄准按钮与自动选择
+
+- MSkillTargetMgr.FindEnemyByAimBtn：通过MSkillTargetDefine.FindAllTarget找敌方候选并按类型过滤；在当前候选前MaxChooseTab个对象中循环切下一个，没有匹配当前目标时选择列表首项。
+- FindEnemyBySkillBtn：按敌/友与额外条件取得候选，采用列表首项，写Player.Target并ResetTarget。
+- FindAllTarget：经MEntityMgr.GetOpponent筛候选，检查导航可达和敌方存活；按设置TAB_BY_RNG（导航路程，陷阱加权）或TAB_BY_HP（HP比例）排序。此处未核输入键位绑定，不把名含Tab直接当已确认键盘Tab。
+
+## 施法目标与展示
+
+UISkillController.GetTargetFilterSkill按技能NeedTarget/TargetType判断：自身技能选自己、队伍技能查队伍关系、复活类要求死亡友方角色；普通技能当前目标不符合敌友/实体条件时调用FindEnemyBySkillBtn，符合则沿用当前目标。技能事件携带Target，导航到施法范围后OnAfterAction发Target.UID及打击点。
+
+MSkillTargetMgr.UpdateToCheckTarget/ResetTarget维护目标有效性、距离、可见性和目标头像；MTargetFxComponent根据Entity.Target展示脚下选择特效。
+
+## 地面点与边界
+
+若用户的“地方目标”指地面选点：经典技能栏使用相机ScreenPointToRay加MNavigationMgr.TryRaycastTerrain取得地面位置，再根据具体技能释放交给CastPoint；普通TouchObject.ClickGround也用该接口，但用于点击地面寻路，不能混同地面技能释放。
+
+本轮仅源码分析，未运行RO场景或移植目标系统。本项目当前GetTargetFilterSkill为空目标接口，正式技能协议没有目标UID/打击点；RO上述完整能力不能计为本项目已接入。日志：项目修改日志/2026-10-13-RO-TARGET-SELECTION-ANALYSIS-CHANGELOG.md。

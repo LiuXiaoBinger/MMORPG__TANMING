@@ -13,6 +13,45 @@
 - 已同步AGENTS、AIconfig总策略与流程、豆包角色和新增WorkBuddy角色，以及桌面CLI示例。旧网页云电脑和隔离实验段落保留为历史，本条为当前规则；本次不额外派发开发任务，不声称项目绑定任务已执行验收。
 - 本轮验证与逐项文件、提交推送结果见 项目修改日志/2026-10-21-DESKTOP-EXECUTOR-RULES-CHANGELOG.md；不改游戏业务代码或执行器源码，保留已有用户改动。
 
+# 2026-10-21 豆包官方 Windows 桌面 CLI：真实两轮执行通过
+
+- 用户确认退出后，检查无豆包进程，再带回环调试参数启动原官方客户端；127.0.0.1:9225监听，cdp.available=true，本地runtime=READY，项目列表可读。未切换网页或headless。
+- 隔离任务DOUBAO-DESKTOP-WINDOWS-SMOKE-20261021使用project none、_temp/doubao-cli-20261021/live-smoke、no-skills和AskOnRisk。会话38448284654642434，首轮59244078475941122实际创建result.json初稿/7；主读盘确认后，同会话第二轮59243790148828162实际改为修改稿/11/已核对布尔true，两轮completed。
+- 主本机解析逐项核对通过、sessions read回读4条消息成功，未代写成果。SHA256=D5A29480EE9BC96FF90E3821B5CBEA17AAE1BA6973EDB51F8DBF9D3B3548112E；证据_temp/doubao-cli-20261021/final-verification.json及同目录两轮结果、原生回读。
+- E:/doubao-cli新增私有.env.windows、doubao-windows.cmd和start-doubao-windows.cmd，.git/info/exclude排除机器配置与.local-config；上游源码git status为空。以后普通启动无端口时，保存并托盘退出后用start入口启动，调用用doubao-windows.cmd。
+- 使用说明 项目分析/DOUBAO_CLI_WINDOWS.md，逐项变更 项目修改日志/2026-10-21-DOUBAO-CLI-WINDOWS-CHANGELOG.md。未改游戏业务代码、未注册豆包MCP或接入Agent Hub，无项目代码提交推送。
+- 上游status/cdp launch含macOS专用命令，Windows改用本机启动入口与cdp status；Goal版本探测为null，不证明客户端过旧。显式Goal、长期运行、开机恢复、附件和完整游戏开发未验。以下待退出记录为历史过程，已由本次结果解除。
+
+# 2026-10-21 豆包桌面 CLI：Windows 配置完成，待退出重启实测
+
+- 用户要求配置并验证官方豆包桌面接入，最新要求优先于旧网页云电脑试验路径。本轮不走网页或 headless，不上传游戏仓库。
+- 已克隆 Fullstop000/doubao-cli 到 E:/doubao-cli，基线6d7b1c66430db3bbc095a3d9c1cf15c7ce81f8e6、CLI0.20.0；npm ci成功。上游桌面只声明macOS支持，Windows核心协议仍待实际验证。
+- 新增私有 .env.windows、doubao-windows.cmd，忽略机器配置和.local-config；固定官方exe、现有User Data与127.0.0.1:9225。--version与profiles读取通过，无源码改动。
+- 当前豆包进程未带调试参数、9225/9226无监听，cdp status available=false。已请求用户保存后托盘退出，未强杀；收到退出确认后带回环参数重新启动，再测任务及同会话文件修改。不能把配置可读当执行通过。
+- 逐项文件及证据见 项目修改日志/2026-10-21-DOUBAO-CLI-WINDOWS-CHANGELOG.md；本轮无游戏业务代码修改或提交推送，原有用户改动保持。
+
+# 2026-10-21 豆包需求纠正：查找官方桌面客户端程序接入项目
+
+- 用户纠正：要的是类似WorkBuddy GitHub网关、调用豆包桌面客户端的方案，不是网页云电脑实验。已停止网页实验；仅打开LYFMMORGP项目并查看云电脑菜单，没有发送任何任务或生成云端产物。
+- GitHub检索并实际读取Fullstop000/doubao-cli的README与package.json：版本0.20.0，明确支持macOS原生Doubao/DoubaoWork桌面后端，提供会话创建/发送/等待/读取/停止、项目与local/cloud运行环境；桌面要求macOS，Linux/macOS另有headless，不可将headless当Windows桌面已接入。
+- Windows检索尚未确认现成可用移植。5201213/doubao-free-api虽描述桌面封装，其当前README主路径是网页Cookie加HTTP反代；dorakoo/doubao-studio是Windows自建Electron工作台驱动网页，不等同官方豆包桌面原生会话。
+- 本轮仅只读调查，未安装新项目、未改模型/MCP/业务代码，无提交推送。下一步如用户要求Windows接入，先核对官方桌面客户端和本机协议兼容性，再决定最小适配，不能宣称可直接安装跑通。
+
+# 2026-10-21 WorkBuddy 原生创建与同会话返工：真实通过
+
+- 用户确认已退出，网关启动原生WorkBuddy并开启仅回环18491。复核旧预留c6803bb8-cfc6-47f6-b5da-a423695645b7原生不存在后，使用原ID创建；调用使用正斜杠，返回规范化反斜杠导致严格路径比较报错，但只读workbuddy.db确认同ID/同目录已存在，随后ensure复用并标ready，未重复创建。
+- 服务标准安装Set-Acl报SeSecurityPrivilege。已核实data原DACL保护开启且只有本用户/SYSTEM/Administrators FullControl，保留原权限，按上游同参数手动登记persistent-service.json及当前用户worker计划任务；未修改网关源码、未提权、未扩大权限。当前serviceRunning=true/desktopRegistered=true。
+- 新任务hub-efab5b5e-f3cf-49d9-b8de-039e55980103，旧failed/DISPATCH_NOT_SENT保留不覆盖。第一轮run-a784aef1-91c3-4233-a49a-849d8879f793真实创建result.json（来源WorkBuddy桌面/阶段初稿/数值7），主读取符合后发同会话修改；第二轮run-9cdb1016-1135-422a-8468-6d3ff235773e完成（阶段修改稿/数值11/已核对布尔true）。两轮sessionId相同、runtimeSource均desktop_queue，最终completed/review=accepted/holdsCapacity=false。
+- 主仅派工、读文件与验收，没有代写测试成果。最终SHA256=2E2B84FD95C3FDA125C049C0ADF6BB6EBDB8FA34321B59943F42D49F6FF5B291，证据_temp/workbuddy-gateway-20261021/smoke-final-verification.json。服务状态写入曾短暂EPERM、由现有监督脚本自动重启，末次no_task心跳正常；不声称长期稳定、重启登录恢复或复杂业务通过。
+- 本轮修改协作两文件、安装日志及项目难点；新增本机服务注册/监督脚本/计划任务、两轮平台结果和_temp测试文件。完整清单见 项目修改日志/2026-10-21-WORKBUDDY-GATEWAY-SETUP-CHANGELOG.md；未修改业务源码，无代码提交推送。后续可在Codex经$workbuddy-executor指定真实业务目录派工，任务记录可在本机工作台查看。
+
+# 2026-10-21 WorkBuddy 网关真实派工实验：未发送，用户暂不退出桌面
+
+- 用户要求实际实验。按 workbuddy-executor Skill，经 Agent Hub 提交隔离目录创建 result.json 的任务 hub-b765b208-e02b-4885-b75a-629724499592，稳定键 gateway-local-smoke-20261021-01；实际工作目录 _temp/workbuddy-gateway-20261021/live-smoke。
+- 平台记录成功，随后 failed / DISPATCH_NOT_SENT，holdsCapacity=false，无执行轮次attemptId。错误明确为运行中的WorkBuddy没有网关回环端口，需要保存后从托盘退出一次。当前仅18492监听，18491未监听；未终止进程，未发送到原生模型，未生成成果，未执行同会话返工或验收。
+- 用户明确选择“暂时不退出”，故停止依赖桌面退出的连接测试，保留既有桌面与Hub。后续用户方便退出后先检查原预留工作区映射及失败任务状态，不盲目重复创建未知会话；本次已确认任务未发送。
+- 本次新增临时smoke-request.json与空测试目录；修改Docs/AI/CURRENT_TASK.md、Docs/AI/TEST_REPORT.md及 项目修改日志/2026-10-21-WORKBUDDY-GATEWAY-SETUP-CHANGELOG.md。未修改业务源码，无代码提交推送。
+
 # 2026-10-21 WorkBuddy Windows 网关：本机配置与使用说明
 
 - 用户要求拉取 Windows 仓库到 E 盘并配置，随后询问使用方式。已克隆到 E:/codex-workbuddy-gateway-windows，来源提交 e68e3bce8c7fd577b93191add90beb74481dc136。

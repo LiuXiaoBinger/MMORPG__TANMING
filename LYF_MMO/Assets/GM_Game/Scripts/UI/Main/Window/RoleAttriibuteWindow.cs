@@ -7,6 +7,13 @@ using UnityEngine;
 /// </summary>
 public class RoleAttriibuteWindow : WindowBase
 {
+    /// <summary>关闭角色属性，并沿I键关闭流程恢复打开前的角色镜头。</summary>
+    public override void CloseWindow()
+    {
+        base.CloseWindow();
+        CameraMgr.Instance.RoleAttrWindowAngle(this);
+    }
+
     [SerializeField, Header("穿戴装备父组件")] private Transform _content;
 
     private readonly Dictionary<EquipType, EquipSlotWidget> _equipSlots =

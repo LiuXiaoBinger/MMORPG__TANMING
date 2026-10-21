@@ -104,7 +104,8 @@ public class MainCityMgr : MonoBehaviour
       Vector3 face = Quaternion.Euler(0f, ptc.Face, 0f) * Vector3.forward;
       // 事件池负责本次同步载荷生命周期，分发结束自动归还。
       MMoveEventArgs moveArgs = MMoveEventArgs.Create(ptc.IsMoving,
-         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false);
+         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false,
+         ptc.JumpCount);
       role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
    }
 

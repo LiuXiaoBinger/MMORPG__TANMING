@@ -1,0 +1,1491 @@
+fileFormatVersion: 2
+guid: b61bb25cbd2e71e428516906056a327e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Common_Haircolor.png
+  - first:
+      213: 21300002
+    second: UI_Common_Haircolor_Selected.png
+  - first:
+      213: 21300004
+    second: UI_login_BG.png
+  - first:
+      213: 21300006
+    second: UI_login_Female.png
+  - first:
+      213: 21300008
+    second: UI_login_Male.png
+  - first:
+      213: 21300010
+    second: UI_role_Acolyte.png
+  - first:
+      213: 21300012
+    second: UI_role_Archer.png
+  - first:
+      213: 21300014
+    second: UI_Role_Arrow.png
+  - first:
+      213: 21300016
+    second: UI_Role_Beautifulpupil.png
+  - first:
+      213: 21300018
+    second: UI_Role_Boli.png
+  - first:
+      213: 21300020
+    second: UI_Role_Boli2.png
+  - first:
+      213: 21300022
+    second: UI_role_Btn_random.png
+  - first:
+      213: 21300024
+    second: UI_Role_Btn_random.png
+  - first:
+      213: 21300026
+    second: UI_Role_Btn_Sex.png
+  - first:
+      213: 21300028
+    second: UI_Role_Btn_weixin.png
+  - first:
+      213: 21300030
+    second: UI_Role_Btn_youke.png
+  - first:
+      213: 21300032
+    second: UI_Role_Class_1.png
+  - first:
+      213: 21300034
+    second: UI_Role_Class_Btn.png
+  - first:
+      213: 21300036
+    second: UI_Role_Class_Class_2.png
+  - first:
+      213: 21300038
+    second: UI_Role_Class_Class_3.png
+  - first:
+      213: 21300040
+    second: UI_Role_Class_Class_4.png
+  - first:
+      213: 21300042
+    second: UI_Role_Class_Class_5.png
+  - first:
+      213: 21300044
+    second: UI_Role_Class_Class_6.png
+  - first:
+      213: 21300046
+    second: UI_Role_Diandi1.png
+  - first:
+      213: 21300048
+    second: UI_Role_Diandi2.png
+  - first:
+      213: 21300050
+    second: UI_Role_Diandi3.png
+  - first:
+      213: 21300052
+    second: UI_Role_Dikuang.png
+  - first:
+      213: 21300054
+    second: UI_Role_Female.png
+  - first:
+      213: 21300056
+    second: UI_Role_Female2.png
+  - first:
+      213: 21300058
+    second: UI_Role_Flag.png
+  - first:
+      213: 21300060
+    second: UI_Role_Hairbeauty.png
+  - first:
+      213: 21300062
+    second: UI_Role_Head_bg.png
+  - first:
+      213: 21300064
+    second: UI_Role_Head_xuanzhong.png
+  - first:
+      213: 21300066
+    second: UI_Role_Headbg.png
+  - first:
+      213: 21300068
+    second: UI_role_headBG_1.png
+  - first:
+      213: 21300070
+    second: UI_role_headBG_2.png
+  - first:
+      213: 21300072
+    second: UI_role_headBG_3.png
+  - first:
+      213: 21300074
+    second: UI_Role_Huadong_01.png
+  - first:
+      213: 21300076
+    second: UI_Role_Huadong_02.png
+  - first:
+      213: 21300078
+    second: UI_Role_Icon_qq.png
+  - first:
+      213: 21300080
+    second: UI_Role_Icon_weixin.png
+  - first:
+      213: 21300082
+    second: UI_Role_Icon_youke.png
+  - first:
+      213: 21300084
+    second: UI_Role_Input.png
+  - first:
+      213: 21300086
+    second: UI_Role_Jiantou.png
+  - first:
+      213: 21300088
+    second: UI_role_Magician.png
+  - first:
+      213: 21300090
+    second: UI_Role_Male.png
+  - first:
+      213: 21300092
+    second: UI_Role_Male2.png
+  - first:
+      213: 21300094
+    second: UI_Role_Name_Button_Bi.png
+  - first:
+      213: 21300096
+    second: UI_Role_Name_Button_Xiehaole.png
+  - first:
+      213: 21300098
+    second: UI_Role_Name_Img_Bg.png
+  - first:
+      213: 21300100
+    second: UI_Role_Name_Img_Boy.png
+  - first:
+      213: 21300102
+    second: UI_Role_Name_Img_Girl.png
+  - first:
+      213: 21300104
+    second: UI_Role_Name_Img_PhotoBg.png
+  - first:
+      213: 21300106
+    second: UI_Role_Name_Img_Yuan.png
+  - first:
+      213: 21300108
+    second: UI_role_PropertyBG.png
+  - first:
+      213: 21300110
+    second: UI_Role_Shanchu.png
+  - first:
+      213: 21300112
+    second: UI_Role_Shanchu_Time.png
+  - first:
+      213: 21300114
+    second: UI_role_Swordman.png
+  - first:
+      213: 21300116
+    second: UI_role_Thief.png
+  - first:
+      213: 21300118
+    second: UI_Role_Tips.png
+  - first:
+      213: 21300120
+    second: UI_Role_Titlebg.png
+  - first:
+      213: 21300122
+    second: UI_Role_diwen.png
+  - first:
+      213: 21300124
+    second: UI_Role_mao_01.png
+  - first:
+      213: 21300126
+    second: UI_Role_Name_Img_Zhezhao.png
+  - first:
+      213: 21300128
+    second: UI_Role_Female00.png
+  - first:
+      213: 21300130
+    second: UI_Role_Male00.png
+  - first:
+      213: 21300132
+    second: UI_Role_Select_01.png
+  - first:
+      213: 21300134
+    second: UI_Role_Bg_Name_01.png
+  - first:
+      213: 21300136
+    second: UI_Role_Bg_Delete_01.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Common_Haircolor.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 15
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 5, z: 5, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2304834c69c7c0446af2eb0691508836
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Haircolor_Selected.png
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 56
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 16, y: 13, z: 17, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15c3f57b1c985aa43a2dd8ba2600b213
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_login_BG.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 0
+        width: 100
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd74c41f841167d47b6ab2ba1480ef11
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_login_Female.png
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 0
+        width: 51
+        height: 87
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d17f81a3d03035e4abaefcf0a8abd09a
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_login_Male.png
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 5
+        width: 51
+        height: 87
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5817e7d2dc340354da873c702b6e4ed7
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Acolyte.png
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 0
+        width: 107
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c2c2aadf4735e7419f53cc472172777
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Archer.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 93
+        width: 107
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ac1a50fe0923cd479831e312a2c84ef
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Beautifulpupil.png
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 88
+        width: 96
+        height: 96
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f855cdd00613fd4581dbc02c1c05954
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Bg_Delete_01.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 0
+        width: 65
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12e8a577217b7ee42a49a2a0a4063d75
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Bg_Name_01.png
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 0
+        width: 184
+        height: 69
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 89, y: 0, z: 53, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fa6a910411bc8e49a759dccfe73ae00
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Btn_random.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 52
+        width: 36
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c70881f200d9bd9429bff6f39208d55a
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Btn_Sex.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 65
+        width: 59
+        height: 182
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f21c83910a6753e4d8644a7a01579213
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Btn_weixin.png
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 5
+        width: 25
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e93959a829e0904bbfa1c0489f29164
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Btn_youke.png
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 125
+        width: 25
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96822cf1a97b6a94880273b0c6e3a65d
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Class_Btn.png
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 125
+        width: 62
+        height: 63
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 397ce67f34ea3ca408391fb385f6a730
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Diandi1.png
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 52
+        width: 34
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 418e7336e249e9f438788c9a336a5071
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_diwen.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 218
+        width: 264
+        height: 207
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62422080f1c092b4bb1558ac1ebc0964
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Female.png
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 0
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f386b43f8a8a17498219618e45a63b9
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Female00.png
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 70
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20db48bcb04534e4796fe29bfdf2a1c5
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Female2.png
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 70
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f61d82b03889fa4f8753835af0a8cad
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Hairbeauty.png
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 0
+        width: 96
+        height: 96
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9da0f4af4546d97408703ea6ae9e5b50
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Headbg.png
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 73
+        width: 78
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 21, y: 21, z: 19, w: 23}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6355dca1bd5305d4da9e7bc6f984d9bf
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_headBG_1.png
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 143
+        width: 90
+        height: 90
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd25a4503aa04c945aa94eb318ae3118
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_headBG_2.png
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 0
+        width: 90
+        height: 90
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 26, y: 24, z: 25, w: 24}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04866c5550a65f94a83516acb0d78f8a
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_headBG_3.png
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 0
+        width: 98
+        height: 98
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3813a309d6804f347b26fe73026a4082
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Head_bg.png
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 125
+        width: 16
+        height: 322
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2741313f91baae439b24c4235c53818
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Head_xuanzhong.png
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 0
+        width: 78
+        height: 78
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc1ed91fb452cb94fbfd69c13ad058b7
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Huadong_01.png
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 189
+        width: 18
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae339c583e1f5ba419a7b5b0a31c00d1
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Huadong_02.png
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 5
+        width: 17
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1da3f7430a855f4d86c414057d18636
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Icon_qq.png
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 189
+        width: 33
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 857c257c99afbe34685e24ac92ab2ef4
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Icon_weixin.png
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 226
+        width: 40
+        height: 38
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba9993962636e884483c23d88b962a11
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Icon_youke.png
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 185
+        width: 40
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c05841378a4a784a8b3c3b2b6e73f91
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Input.png
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 265
+        width: 36
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cdf0a90a8b4f1a428a506fc30a17803
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Jiantou.png
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 185
+        width: 38
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83338ba4f785dc34bbcb4a6afe3ab6f3
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Magician.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 426
+        width: 107
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9758620bc3c4e24d82ba701f3883f3f
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Male.png
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 79
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e241eb1a93870e94e9dfb721872868c4
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Male00.png
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 91
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a71b42728a463c468989313e4f32046
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Male2.png
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 99
+        width: 72
+        height: 72
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 081b11e1a42295442939a85de911e62e
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_mao_01.png
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 152
+        width: 122
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c19779816b37a0c4fbf7dc742332e2d2
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Button_Bi.png
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 99
+        width: 40
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55bf4a56c92b2a3448f86901ac62ab46
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 234
+        width: 598
+        height: 706
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3301bacc6f170142aa39677b501adf1
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_Boy.png
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 185
+        width: 17
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63524f36079d0b546bad188394ef68d7
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_Girl.png
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 185
+        width: 15
+        height: 19
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0491ebf4d93cd264e85c6282a67dcd6b
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_PhotoBg.png
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 426
+        width: 145
+        height: 163
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df49b3c5fe42a28458fcc916ad8e045a
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_Yuan.png
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 143
+        width: 48
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87cc33d77a2289c4ca22bdc51726d6b3
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Name_Img_Zhezhao.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 941
+        width: 290
+        height: 75
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b54ea6813753be9449d3a00b5195235c
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Select_01.png
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 97
+        width: 95
+        height: 95
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a0823b58bfbc043b0e0d4dacbf3c4e
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Shanchu.png
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 152
+        width: 53
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89f4153032f1f864992c5a7b97ef69db
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Shanchu_Time.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 551
+        width: 77
+        height: 77
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd9ec1c956b871043979d7199618277e
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Swordman.png
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 448
+        width: 107
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bda69642ff54644382cfb56600313fc
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_role_Thief.png
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 573
+        width: 107
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76adac8f79741a7439869ebc07f1c283
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Titlebg.png
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 196
+        width: 22
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb698a4860a6f544b44b6c5b9b0a839
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 3ad55989fadcadc4badc40d4da3defd5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Common_Haircolor.png: 21300000
+      UI_Common_Haircolor_Selected.png: 21300002
+      UI_Role_Beautifulpupil.png: 21300016
+      UI_Role_Bg_Delete_01.png: 21300136
+      UI_Role_Bg_Name_01.png: 21300134
+      UI_Role_Btn_Sex.png: 21300026
+      UI_Role_Btn_weixin.png: 21300028
+      UI_Role_Btn_youke.png: 21300030
+      UI_Role_Class_Btn.png: 21300034
+      UI_Role_Diandi1.png: 21300046
+      UI_Role_Female.png: 21300054
+      UI_Role_Female00.png: 21300128
+      UI_Role_Female2.png: 21300056
+      UI_Role_Hairbeauty.png: 21300060
+      UI_Role_Head_bg.png: 21300062
+      UI_Role_Head_xuanzhong.png: 21300064
+      UI_Role_Headbg.png: 21300066
+      UI_Role_Huadong_01.png: 21300074
+      UI_Role_Huadong_02.png: 21300076
+      UI_Role_Icon_qq.png: 21300078
+      UI_Role_Icon_weixin.png: 21300080
+      UI_Role_Icon_youke.png: 21300082
+      UI_Role_Input.png: 21300084
+      UI_Role_Jiantou.png: 21300086
+      UI_Role_Male.png: 21300090
+      UI_Role_Male00.png: 21300130
+      UI_Role_Male2.png: 21300092
+      UI_Role_Name_Button_Bi.png: 21300094
+      UI_Role_Name_Img_Bg.png: 21300098
+      UI_Role_Name_Img_Boy.png: 21300100
+      UI_Role_Name_Img_Girl.png: 21300102
+      UI_Role_Name_Img_PhotoBg.png: 21300104
+      UI_Role_Name_Img_Yuan.png: 21300106
+      UI_Role_Name_Img_Zhezhao.png: 21300126
+      UI_Role_Select_01.png: 21300132
+      UI_Role_Shanchu.png: 21300110
+      UI_Role_Shanchu_Time.png: 21300112
+      UI_Role_Titlebg.png: 21300120
+      UI_Role_diwen.png: 21300122
+      UI_Role_mao_01.png: 21300124
+      UI_login_BG.png: 21300004
+      UI_login_Female.png: 21300006
+      UI_login_Male.png: 21300008
+      UI_role_Acolyte.png: 21300010
+      UI_role_Archer.png: 21300012
+      UI_role_Btn_random.png: 21300022
+      UI_role_Magician.png: 21300088
+      UI_role_Swordman.png: 21300114
+      UI_role_Thief.png: 21300116
+      UI_role_headBG_1.png: 21300068
+      UI_role_headBG_2.png: 21300070
+      UI_role_headBG_3.png: 21300072
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

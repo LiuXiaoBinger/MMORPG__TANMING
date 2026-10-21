@@ -32,6 +32,13 @@ using UnityEngine.UI;
 /// </summary>
 public class KnapsackWindow : WindowBase
 {
+    /// <summary>关闭背包，并沿B键关闭流程更新背包状态及角色展示镜头。</summary>
+    public override void CloseWindow()
+    {
+        base.CloseWindow();
+        CameraMgr.Instance.KnapsackWindowAngle(this);
+    }
+
     /// <summary>窗口帧循环事件，由背包控制器消费当前页脏标记。</summary>
     public event Action FrameUpdated;
 

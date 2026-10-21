@@ -76,9 +76,14 @@ public class MainCtrl : CtrlBase
             CountUpdateSyncInfoHandle);
     }
 
-    /// <summary>注册 NPC 对话和聊天视图事件。</summary>
+    /// <summary>注册功能菜单、NPC对话和聊天视图事件。</summary>
     private void RegisterViewActions()
     {
+        _mainView.FunctionMenuButton.onClick.AddListener(OnFunctionMenuRequested);
+        _mainView.KnapsackButton.onClick.AddListener(OnKnapsackRequested);
+        _mainView.RoleButton.onClick.AddListener(OnRoleRequested);
+        _mainView.SkillButton.onClick.AddListener(OnSkillRequested);
+        _mainView.SettingButton.onClick.AddListener(OnSettingRequested);
         if (_mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
@@ -88,6 +93,36 @@ public class MainCtrl : CtrlBase
             _chatWindow.InputFocusChanged += OnChatInputFocusChanged;
             _chatWindow.SendRequested += OnChatSendRequested;
         }
+    }
+
+    /// <summary>切换左上入口组，展开和收起只修改视图展示。</summary>
+    private void OnFunctionMenuRequested()
+    {
+        _mainView.ToggleFunctionMenu();
+    }
+
+    /// <summary>点击背包时保持菜单展开，沿B键原流程切换背包及调整镜头。</summary>
+    private void OnKnapsackRequested()
+    {
+        MainUIKeyHandler("B");
+    }
+
+    /// <summary>点击角色时保持菜单展开，沿I键原流程切换属性及调整镜头。</summary>
+    private void OnRoleRequested()
+    {
+        MainUIKeyHandler("I");
+    }
+
+    /// <summary>点击技能时保持菜单展开，沿L键原流程切换技能窗口。</summary>
+    private void OnSkillRequested()
+    {
+        MainUIKeyHandler("L");
+    }
+
+    /// <summary>点击设置时保持菜单展开，切换既有设置窗口。</summary>
+    private void OnSettingRequested()
+    {
+        ShowMainWindow(WindowType.SettingPanel);
     }
 
     /// <summary>幂等注册主界面快捷键。</summary>
@@ -351,6 +386,11 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
+        _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
+        _mainView.KnapsackButton.onClick.RemoveListener(OnKnapsackRequested);
+        _mainView.RoleButton.onClick.RemoveListener(OnRoleRequested);
+        _mainView.SkillButton.onClick.RemoveListener(OnSkillRequested);
+        _mainView.SettingButton.onClick.RemoveListener(OnSettingRequested);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
         SocketDispatcher.Instance.RemoveEventHandler(

@@ -1,0 +1,1568 @@
+fileFormatVersion: 2
+guid: 75b3de1dc927f3a4ea29290a5bacfcbb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_common_qiehuanjineng02.png
+  - first:
+      213: 21300002
+    second: UI_main_skill_frame.png
+  - first:
+      213: 21300004
+    second: UI_Skill_Btn_Icon_Configure.png
+  - first:
+      213: 21300006
+    second: UI_Skill_Btn_icon_Recommend.png
+  - first:
+      213: 21300008
+    second: UI_Skill_Career_HeadFrame.png
+  - first:
+      213: 21300010
+    second: UI_Skill_Career_xinxitaitou.png
+  - first:
+      213: 21300012
+    second: UI_Skill_ConnectingLine.png
+  - first:
+      213: 21300014
+    second: UI_Skill_Icon_Bottom01.png
+  - first:
+      213: 21300016
+    second: UI_Skill_Icon_Bottom02.png
+  - first:
+      213: 21300018
+    second: UI_Skill_Judge_Confirm.png
+  - first:
+      213: 21300020
+    second: UI_Skill_NameBG.png
+  - first:
+      213: 21300022
+    second: UI_Skill_queren.png
+  - first:
+      213: 21300024
+    second: UI_Skill_Quxiao.png
+  - first:
+      213: 21300026
+    second: UI_Skill_Shools_00.png
+  - first:
+      213: 21300028
+    second: UI_Skill_Shools_01.png
+  - first:
+      213: 21300030
+    second: UI_Skill_Shools_02.png
+  - first:
+      213: 21300032
+    second: UI_Skill_Shools_03.png
+  - first:
+      213: 21300034
+    second: UI_Skill_Shools_04.png
+  - first:
+      213: 21300036
+    second: UI_Skill_Shools_Text.png
+  - first:
+      213: 21300038
+    second: UI_Skill_SkillSchool_01.png
+  - first:
+      213: 21300040
+    second: UI_Skill_SkillSchool_02.png
+  - first:
+      213: 21300042
+    second: UI_Skill_SkillSchool_03.png
+  - first:
+      213: 21300044
+    second: UI_Skill_SkillSchool_04.png
+  - first:
+      213: 21300046
+    second: UI_Skill_SkillSchool_B_01.png
+  - first:
+      213: 21300048
+    second: UI_Skill_SkillSchool_B_02.png
+  - first:
+      213: 21300050
+    second: UI_Skill_SkillSchool_B_03.png
+  - first:
+      213: 21300052
+    second: UI_Skill_SkillSchool_B_04.png
+  - first:
+      213: 21300054
+    second: UI_Skill_Tab_01.png
+  - first:
+      213: 21300056
+    second: UI_Skill_Tab_02.png
+  - first:
+      213: 21300058
+    second: UI_Skill_Text_Bottom01.png
+  - first:
+      213: 21300060
+    second: UI_SkillUI_FangyuBG.png
+  - first:
+      213: 21300062
+    second: UI_SkillUI_Qizhi_01.png
+  - first:
+      213: 21300064
+    second: UI_SkillUI_Qizhi_02.png
+  - first:
+      213: 21300066
+    second: UI_SkillUI_ShuchuBG.png
+  - first:
+      213: 21300068
+    second: UI_SkillUI_SkillBG.png
+  - first:
+      213: 21300070
+    second: UI_SkillUI_XiezuoBG.png
+  - first:
+      213: 21300072
+    second: UI_SkillUI_YifenpeiBG.png
+  - first:
+      213: 21300074
+    second: UI_SkillUI_SkillBG02.png
+  - first:
+      213: 21300076
+    second: UI_SkillUI_Btn_Play.png
+  - first:
+      213: 21300078
+    second: UI_Skill_Slider_01.png
+  - first:
+      213: 21300080
+    second: UI_Skill_Slider_02.png
+  - first:
+      213: 21300082
+    second: UI_Skill_Slider_03.png
+  - first:
+      213: 21300084
+    second: UI_Skill_Slider_04.png
+  - first:
+      213: 21300086
+    second: UI_Skill_Slider_BG.png
+  - first:
+      213: 21300088
+    second: UI_SkillUI_JobLvReward.png
+  - first:
+      213: 21300090
+    second: UI_Skill_Bg_qizhi_01.png
+  - first:
+      213: 21300092
+    second: UI_Skill_Image_jinengshunxu_01.png
+  - first:
+      213: 21300094
+    second: UI_Skill_Image_jinengshunxu_02.png
+  - first:
+      213: 21300096
+    second: UI_Skill_Bg_jiachengweizhi_01.png
+  - first:
+      213: 21300098
+    second: UI_Skill_Bg_Skillicon_01.png
+  - first:
+      213: 21300100
+    second: UI_Skill_Image_jiachengweizhi_01.png
+  - first:
+      213: 21300102
+    second: UI_Skill_Image_jiachengweizhi_02.png
+  - first:
+      213: 21300104
+    second: UI_Skill_Judge_Confirm .png
+  - first:
+      213: 21300106
+    second: UI_Skill_Btn_Change_01.png
+  - first:
+      213: 21300108
+    second: UI_Skill_Image_Jindutiao_01.png
+  - first:
+      213: 21300110
+    second: UI_SkillUI_Bg_Biaoti_01.png
+  - first:
+      213: 21300112
+    second: UI_SkillUI_Pic_jiantou2.png
+  - first:
+      213: 21300114
+    second: UI_SkillUI_Pic_Xingxing_01.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_common_qiehuanjineng02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 123
+        height: 107
+      alignment: 1
+      pivot: {x: 0, y: 107}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99114386bf42d9342b4180e9c5a870c7
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Bg_Biaoti_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 108
+        width: 961
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 42}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f86c76457569f824082e4a27078fa0c9
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Btn_Play.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 0
+        width: 44
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 44}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54d51a4a3b06a1241b7f85f2470ee2bf
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_FangyuBG.png
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 0
+        width: 67
+        height: 65
+      alignment: 1
+      pivot: {x: 0, y: 65}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0caea222d4fa4c45835487619727a61
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_JobLvReward.png
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 0
+        width: 30
+        height: 552
+      alignment: 1
+      pivot: {x: 0, y: 552}
+      border: {x: 14, y: 0, z: 14, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18b8b5500a623cb479721a3d25789d19
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Pic_jiantou2.png
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 0
+        width: 100
+        height: 74
+      alignment: 1
+      pivot: {x: 0, y: 74}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daa667e5b27603343a3cd98818737d85
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Pic_Xingxing_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 151
+        width: 332
+        height: 332
+      alignment: 1
+      pivot: {x: 0, y: 332}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca040d69704467f4cbf2ba0ba406da6d
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Qizhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 484
+        width: 162
+        height: 125
+      alignment: 1
+      pivot: {x: 0, y: 125}
+      border: {x: 0, y: 68, z: 0, w: 53}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bbf120d9fd72ef40833b89dbc23aa17
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_Qizhi_02.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 75
+        width: 151
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 0, y: 30, z: 0, w: 2}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3c2c639333abaf4da29841b768052d5
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_ShuchuBG.png
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 0
+        width: 69
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 67}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e368b854169aca949af961320fd2b4a2
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_SkillBG.png
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 0
+        width: 80
+        height: 82
+      alignment: 1
+      pivot: {x: 0, y: 82}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35a3319f247859742957d25a85e58695
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_SkillBG02.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 0
+        width: 39
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 40}
+      border: {x: 19, y: 21, z: 19, w: 19}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4331e9248d41ffe4a953186c3c64660e
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_XiezuoBG.png
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 0
+        width: 69
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 67}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b601cc4aff1c7554fbc0e4d46f83debd
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SkillUI_YifenpeiBG.png
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 0
+        width: 86
+        height: 88
+      alignment: 1
+      pivot: {x: 0, y: 88}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54aff9f9bf646364c969dbe98d2c2c1f
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Bg_jiachengweizhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 0
+        width: 126
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 67}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eee59e7086357c545b236fc92cf1f713
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Bg_qizhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 484
+        width: 223
+        height: 405
+      alignment: 1
+      pivot: {x: 0, y: 405}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70e68977dfbee9f47a7c8166b1b7a63a
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Bg_Skillicon_01.png
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 0
+        width: 86
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 86}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f5d29d58396e84c8c9d68152ae5757
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Btn_Change_01.png
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 0
+        width: 52
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 52}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92cc22a671c0c4746bdf428ed6627207
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Btn_Icon_Configure.png
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 45
+        width: 25
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1825d18ae574e9c4eaa22f78b98887fb
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Btn_icon_Recommend.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 41
+        width: 24
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 22}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cb3f3f8aa6ba4c429fe7c79dc478efc
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Career_HeadFrame.png
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 151
+        width: 331
+        height: 427
+      alignment: 1
+      pivot: {x: 0, y: 427}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3afb6ca022339d741a36354fe6b1a3ab
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Career_xinxitaitou.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 151
+        width: 222
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 59}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7576259b79e3344b916f5dd3e5356fd
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_ConnectingLine.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 45
+        width: 4
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 4}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ba270e4bdfd7fa418246957cc7be51c
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Icon_Bottom01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 610
+        width: 76
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 76}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e17bb39e378136d4aae887cbef6cfae8
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Icon_Bottom02.png
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 53
+        width: 56
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 53}
+      border: {x: 19, y: 18, z: 21, w: 21}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15794f4d29dc4df45b33bbc0a138be36
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Image_jiachengweizhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 64
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 22}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14c60250b662abe4b9c9e965805a06a9
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Image_jiachengweizhi_02.png
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 0
+        width: 8
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 33}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3f6687074e35fb489c3243e82872b8f
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Image_Jindutiao_01.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 50
+        width: 14
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 14}
+      border: {x: 6, y: 6, z: 6, w: 6}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda1b1fa9d91e3e4492a0fbcc1f034cb
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Image_jinengshunxu_01.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 211
+        width: 233
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 48}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fa26ff0af3f2204fad9bd0024d41f92
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Image_jinengshunxu_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 687
+        width: 149
+        height: 139
+      alignment: 1
+      pivot: {x: 0, y: 139}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a20a6246033d1204fa76ce3d834577ac
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Judge_Confirm .png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 890
+        width: 297
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 59}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28278349129959345b145713505f8c86
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Judge_Confirm.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 260
+        width: 59
+        height: 77
+      alignment: 1
+      pivot: {x: 0, y: 77}
+      border: {x: 0, y: 29, z: 0, w: 29}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bdc44e456c01d54589b4e29617feff0
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_NameBG.png
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 68
+        width: 61
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 36}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a72da477a800e374d99b276771885aa3
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_queren.png
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 260
+        width: 55
+        height: 81
+      alignment: 1
+      pivot: {x: 0, y: 81}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6194b821217bb9644bfd8baba517090a
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Quxiao.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 338
+        width: 55
+        height: 81
+      alignment: 1
+      pivot: {x: 0, y: 81}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdefeef96212ef74fab1231232ff1d71
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_00.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 553
+        width: 252
+        height: 420
+      alignment: 1
+      pivot: {x: 0, y: 420}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4abc37580254571468deba1b7148f349
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_01.png
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 579
+        width: 254
+        height: 422
+      alignment: 1
+      pivot: {x: 0, y: 422}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 672cae2c8de74ed4eac96b3296f1b838
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_02.png
+      rect:
+        serializedVersion: 2
+        x: 972
+        y: 553
+        width: 254
+        height: 422
+      alignment: 1
+      pivot: {x: 0, y: 422}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3adc9e727c88a0419a1cd5e53baebff
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_03.png
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 0
+        width: 254
+        height: 422
+      alignment: 1
+      pivot: {x: 0, y: 422}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 493d93dd0bcb5cc4480a65c7344394e0
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_04.png
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 423
+        width: 254
+        height: 422
+      alignment: 1
+      pivot: {x: 0, y: 422}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f3db45a7de72f8448fcb23ee5573276
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Shools_Text.png
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 423
+        width: 134
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 86}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbd713a999d1d6348b23daa77d214279
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_01.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 610
+        width: 37
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 40}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e28e06e2e824e1c45b72326f0bce180a
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_02.png
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 610
+        width: 37
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 40}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d55c0067b78e694aa1b846e65805b64
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_03.png
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 510
+        width: 37
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 40}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a674f61ce9c01474a9a3945d15a43a49
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_04.png
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 510
+        width: 37
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 40}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda601b1be5669a4994c4ebfb37c8191
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_B_01.png
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 342
+        width: 153
+        height: 160
+      alignment: 1
+      pivot: {x: 0, y: 160}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2e19c4e986a624784130de9ac9dc8f
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_B_02.png
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 846
+        width: 153
+        height: 160
+      alignment: 1
+      pivot: {x: 0, y: 160}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16fc53e1bfa934047b73d18fc21b2e1d
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_B_03.png
+      rect:
+        serializedVersion: 2
+        x: 1381
+        y: 846
+        width: 153
+        height: 160
+      alignment: 1
+      pivot: {x: 0, y: 160}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33ccb3d11d52404dbd5ecdc838e372e
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_SkillSchool_B_04.png
+      rect:
+        serializedVersion: 2
+        x: 1248
+        y: 0
+        width: 153
+        height: 160
+      alignment: 1
+      pivot: {x: 0, y: 160}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffcc8218ab94b224ea248da03a4f0221
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Slider_01.png
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 68
+        width: 3
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 1, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee0b6b1493082074db51abde6ae303ee
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Slider_02.png
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 68
+        width: 3
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 1, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a21e614d900e34f4fa7466edfe1b615f
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Slider_03.png
+      rect:
+        serializedVersion: 2
+        x: 957
+        y: 34
+        width: 3
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 1, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82cb7a66cdd76424280224e053cc932c
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Slider_04.png
+      rect:
+        serializedVersion: 2
+        x: 957
+        y: 67
+        width: 3
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 1, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23fe72206050bd14386b7c51b40b100c
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Slider_BG.png
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 64
+        width: 3
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 32}
+      border: {x: 1, y: 0, z: 1, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58374a390a83eac4aa423c0890d733a3
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Tab_01.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 420
+        width: 53
+        height: 43
+      alignment: 1
+      pivot: {x: 0, y: 43}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0fe814a5efa1647b7e670edde26b38
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Tab_02.png
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 464
+        width: 53
+        height: 43
+      alignment: 1
+      pivot: {x: 0, y: 43}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21a7530dacd80834c809c028925287dd
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Skill_Text_Bottom01.png
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 83
+        width: 50
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 24}
+      border: {x: 6, y: 5, z: 6, w: 5}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 457d62680da8bb34d975c00761ce227c
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 7c216e11f5487ad4fa0e240ecbc1a2e4
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_SkillUI_Bg_Biaoti_01.png: 21300110
+      UI_SkillUI_Btn_Play.png: 21300076
+      UI_SkillUI_FangyuBG.png: 21300060
+      UI_SkillUI_JobLvReward.png: 21300088
+      UI_SkillUI_Pic_Xingxing_01.png: 21300114
+      UI_SkillUI_Pic_jiantou2.png: 21300112
+      UI_SkillUI_Qizhi_01.png: 21300062
+      UI_SkillUI_Qizhi_02.png: 21300064
+      UI_SkillUI_ShuchuBG.png: 21300066
+      UI_SkillUI_SkillBG.png: 21300068
+      UI_SkillUI_SkillBG02.png: 21300074
+      UI_SkillUI_XiezuoBG.png: 21300070
+      UI_SkillUI_YifenpeiBG.png: 21300072
+      UI_Skill_Bg_Skillicon_01.png: 21300098
+      UI_Skill_Bg_jiachengweizhi_01.png: 21300096
+      UI_Skill_Bg_qizhi_01.png: 21300090
+      UI_Skill_Btn_Change_01.png: 21300106
+      UI_Skill_Btn_Icon_Configure.png: 21300004
+      UI_Skill_Btn_icon_Recommend.png: 21300006
+      UI_Skill_Career_HeadFrame.png: 21300008
+      UI_Skill_Career_xinxitaitou.png: 21300010
+      UI_Skill_ConnectingLine.png: 21300012
+      UI_Skill_Icon_Bottom01.png: 21300014
+      UI_Skill_Icon_Bottom02.png: 21300016
+      UI_Skill_Image_Jindutiao_01.png: 21300108
+      UI_Skill_Image_jiachengweizhi_01.png: 21300100
+      UI_Skill_Image_jiachengweizhi_02.png: 21300102
+      UI_Skill_Image_jinengshunxu_01.png: 21300092
+      UI_Skill_Image_jinengshunxu_02.png: 21300094
+      UI_Skill_Judge_Confirm .png: 21300104
+      UI_Skill_Judge_Confirm.png: 21300018
+      UI_Skill_NameBG.png: 21300020
+      UI_Skill_Quxiao.png: 21300024
+      UI_Skill_Shools_00.png: 21300026
+      UI_Skill_Shools_01.png: 21300028
+      UI_Skill_Shools_02.png: 21300030
+      UI_Skill_Shools_03.png: 21300032
+      UI_Skill_Shools_04.png: 21300034
+      UI_Skill_Shools_Text.png: 21300036
+      UI_Skill_SkillSchool_01.png: 21300038
+      UI_Skill_SkillSchool_02.png: 21300040
+      UI_Skill_SkillSchool_03.png: 21300042
+      UI_Skill_SkillSchool_04.png: 21300044
+      UI_Skill_SkillSchool_B_01.png: 21300046
+      UI_Skill_SkillSchool_B_02.png: 21300048
+      UI_Skill_SkillSchool_B_03.png: 21300050
+      UI_Skill_SkillSchool_B_04.png: 21300052
+      UI_Skill_Slider_01.png: 21300078
+      UI_Skill_Slider_02.png: 21300080
+      UI_Skill_Slider_03.png: 21300082
+      UI_Skill_Slider_04.png: 21300084
+      UI_Skill_Slider_BG.png: 21300086
+      UI_Skill_Tab_01.png: 21300054
+      UI_Skill_Tab_02.png: 21300056
+      UI_Skill_Text_Bottom01.png: 21300058
+      UI_Skill_queren.png: 21300022
+      UI_common_qiehuanjineng02.png: 21300000
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

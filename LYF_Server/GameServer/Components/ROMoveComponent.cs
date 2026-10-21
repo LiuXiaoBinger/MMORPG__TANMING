@@ -17,7 +17,7 @@ public sealed class ROMoveComponent : RoleComponentBase
     }
 
     /// <summary>按 RO 顺序更新上报位置和移动状态，再同步给现有附近角色。</summary>
-    /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）和移动标志。</param>
+    /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
         is_moving_ = action.IsMoving;
@@ -34,7 +34,9 @@ public sealed class ROMoveComponent : RoleComponentBase
             Face = action.Face,
             Time = action.Time,
             IsMoving = is_moving_,
-            IsMoved = action.IsMoved
+            IsMoved = action.IsMoved,
+            // 只转发本段跳跃姿势，不由坐标高度猜测动画，也不另做服务器跳跃物理。
+            JumpCount = action.JumpCount
         });
     }
 }

@@ -128,6 +128,9 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>服务器目标到达后是否维持移动动画，取自本次同步的移动状态。</summary>
     private bool keep_moving;
 
+    /// <summary>最新同步目标处的跳跃段号；收到零时，待影子到达目标坐标再交接落地表现。</summary>
+    private int _targetJumpCount;
+
     /// <summary>RO 影子跟随允许直接转向的角度阈值，单位为度。</summary>
     private const float MaxRotationAngle = 90f;
 
@@ -245,6 +248,7 @@ public sealed class MMoveComponent : EntityComponentBase
                 {
                     // 根位移已抵达停止包的位置时立即收束移动态，技能结束后恢复待机。
                     SetMoving(keep_moving);
+                    ApplySyncJumpState(_targetJumpCount);
                 }
                 _server_time = 0f;
             }
@@ -722,6 +726,7 @@ public sealed class MMoveComponent : EntityComponentBase
         CostTime = 0f;
         delay = 0.15f;
         keep_moving = false;
+        _targetJumpCount = 0;
         IsMoved = false;
         _server_time = 0f;
         _predictedTime = 0f;
@@ -858,6 +863,12 @@ public sealed class MMoveComponent : EntityComponentBase
     private void onSyncMoveEvent(MMoveEventArgs e)
     {
         keep_moving = e.keepMoving;
+        _targetJumpCount = e.jumpCount;
+        if (_targetJumpCount > 0)
+        {
+            // 只通知动画起跳，不调用本地 BeginJump，远端高度仍由服务器目标追赶。
+            ApplySyncJumpState(_targetJumpCount);
+        }
         _predictedPos = UVEC3.zero;
         _server_time = _predictedTime = 0f;
         IsMoved = e.moved;
@@ -912,6 +923,27 @@ public sealed class MMoveComponent : EntityComponentBase
             }
             // 本项目技能程序位移也由此组件消费，停止影子移动不能禁用整个组件。
             SetMoving(false);
+            ApplySyncJumpState(_targetJumpCount);
+        }
+    }
+
+    /// <summary>应用远端跳跃表现状态，仅派发既有动画事件，不积分重力或重置本地起跳速度。</summary>
+    /// <param name="jumpCount">同步段号；零在目标实际到达时应用，1 至 3 收到时立即应用。</param>
+    private void ApplySyncJumpState(int jumpCount)
+    {
+        if (JumpCount == jumpCount)
+        {
+            return;
+        }
+        JumpCount = jumpCount;
+        _isjump = jumpCount > 0;
+        if (_isjump)
+        {
+            DispatchEvent(MEventType.JumpStarted, null);
+        }
+        else
+        {
+            DispatchEvent(MEventType.JumpEnded, null);
         }
     }
 
@@ -930,7 +962,7 @@ public sealed class MMoveComponent : EntityComponentBase
             {
                 SetMoving(true);
             }
-            else if (!keep_moving)
+            else if (!keep_moving && !_isjump)
             {
                 return;
             }
@@ -953,6 +985,7 @@ public sealed class MMoveComponent : EntityComponentBase
                 Entity.Model.Forward = face;
             }
             SetMoving(keep_moving);
+            ApplySyncJumpState(_targetJumpCount);
             return;
         }
         // 本项目朝向由模型持有；仅水平转向，保持 RO 90/2 度阈值与 0.2 插值。

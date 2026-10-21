@@ -372,4 +372,5 @@ message SyncMoveNtf
   float time = 6;//本段移动耗时，单位秒，供远端插值
   bool is_moving = 7;//本段末帧是否仍处于主动移动状态
   bool is_moved = 8;//本段是否产生位置变化，供远端动画接入
+  int32 jump_count = 9;//移动者当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段
 }

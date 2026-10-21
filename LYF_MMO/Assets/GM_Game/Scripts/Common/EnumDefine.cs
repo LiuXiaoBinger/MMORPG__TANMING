@@ -16,7 +16,8 @@ public enum WindowType
     KnapsackWindow,//背包窗口
     TalkWindow ,//npc对话
     ShopWindow,//NPC商店窗口
-    RoleAttriibuteWindow//角色属性面板窗口
+    RoleAttriibuteWindow,//角色属性面板窗口
+    SettingPanel//设置界面窗口，仅展示设置页面
 }
 
 /// <summary>

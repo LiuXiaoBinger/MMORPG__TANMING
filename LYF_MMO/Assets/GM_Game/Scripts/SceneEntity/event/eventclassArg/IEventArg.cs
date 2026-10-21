@@ -108,6 +108,9 @@ public class MMoveEventArgs : IEventArg
     /// <summary>是否由本地 NPC 移动逻辑产生。</summary>
     public bool isLocalMove; //本地npc等才需要置位true
 
+    /// <summary>同步目标处的跳跃段号，零为落地，1 至 3 为本轮滞空的起跳次数。</summary>
+    public int jumpCount;
+
     /// <summary>对象池生命周期标记。</summary>
     public bool Deprecated { get; set; } = false;
 
@@ -118,10 +121,11 @@ public class MMoveEventArgs : IEventArg
     /// <param name="hasMoved">本次事件是否已经产生位移。</param>
     /// <param name="delaySeconds">移动生效前延迟秒数，非负值。</param>
     /// <param name="isLocalMovement">是否由本地输入或本地 NPC 逻辑产生。</param>
+    /// <param name="airborneJumpCount">同步目标的跳跃段号；本地输入和非跳跃移动默认使用零。</param>
     /// <returns>本次分发使用的池化移动参数，分发器完成派发后会自动回收。</returns>
     public static MMoveEventArgs Create(bool keepMoving, Vector3 targetPosition,
         Vector3 faceDirection, bool hasMoved, float delaySeconds,
-        bool isLocalMovement)
+        bool isLocalMovement, int airborneJumpCount = 0)
     {
         // 从移动参数专属对象池取得可复用实例，避免高频移动输入分配临时对象。
         MMoveEventArgs eventArgs = MEventPool<MMoveEventArgs>.GetEvent();
@@ -132,6 +136,7 @@ public class MMoveEventArgs : IEventArg
         eventArgs.moved = hasMoved;
         eventArgs.delay = delaySeconds;
         eventArgs.isLocalMove = isLocalMovement;
+        eventArgs.jumpCount = airborneJumpCount;
         return eventArgs;
     }
 
@@ -141,7 +146,7 @@ public class MMoveEventArgs : IEventArg
     {
         // 克隆也通过工厂取得独立池实例，监听器跨帧使用完成后必须自行调用 Recycle。
         MMoveEventArgs clone = Create(keepMoving, targetPos, face, moved, delay,
-            isLocalMove);
+            isLocalMove, jumpCount);
         return clone;
     }
 
@@ -161,5 +166,6 @@ public class MMoveEventArgs : IEventArg
         moved = false;
         delay = 0f;
         isLocalMove = false;
+        jumpCount = 0;
     }
 }

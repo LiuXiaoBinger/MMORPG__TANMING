@@ -82,6 +82,22 @@ public sealed class MJumpComponent : EntityComponentBase
             return;
         }
 
+        // 落地后才按方向也应立即交还移动动画，不能让已开始的落地阶段继续保护整条剪辑。
+        if (_isEnding && Entity.MoveComp != null && Entity.MoveComp.IsMoving)
+        {
+            // 本地同时确认方向输入，远端沿用同步移动态；不打断空中跳跃或重新播放落地声。
+            if (!Entity.IsPlayer || Entity.MoveComp.HasDirectionalInput)
+            {
+                ClearJumpPresentation();
+                if (Entity.Machine != null)
+                {
+                    Entity.Machine.ForceToDefault();
+                    Entity.Machine.MarkTriggered();
+                }
+                return;
+            }
+        }
+
         TryPlayPendingState();
 
         // 当前帧间隔换算为秒，用于推进起跳和落地动画阶段。
@@ -190,9 +206,21 @@ public sealed class MJumpComponent : EntityComponentBase
             return;
         }
 
-        // 方向键仍按住时直接交还默认状态；默认动作会按方向输入和 Shift 状态选择 Walk 或 Run。
-        if (Entity != null && Entity.MoveComp != null &&
-            Entity.MoveComp.HasDirectionalInput)
+        // 本地主角读方向输入，远端角色没有本地输入，读取本次落地目标携带的移动状态。
+        bool movingAfterLanding = false;
+        if (Entity != null && Entity.MoveComp != null)
+        {
+            if (Entity.IsPlayer)
+            {
+                movingAfterLanding = Entity.MoveComp.HasDirectionalInput;
+            }
+            else
+            {
+                movingAfterLanding = Entity.MoveComp.IsMoving;
+            }
+        }
+        // 仍在水平移动时直接交还默认动作，静止落地保留 Jump_End。
+        if (movingAfterLanding)
         {
             if (Entity.Model != null)
             {

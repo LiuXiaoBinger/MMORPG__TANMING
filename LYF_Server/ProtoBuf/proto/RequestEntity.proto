@@ -124,4 +124,5 @@ message MoveOperationReq
   float time = 5;//自上次上报累计的移动耗时，单位秒
   bool is_moving = 6;//本段末帧是否仍处于主动移动状态
   bool is_moved = 7;//本段是否产生位置变化，供远端动画接入
+  int32 jump_count = 8;//当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段；供远端动画使用
 }

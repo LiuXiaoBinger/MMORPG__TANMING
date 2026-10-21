@@ -1,0 +1,51 @@
+# 技能特效颜色与形状：Shader变体入包调查
+
+## 用户问题和范围
+
+用户明确技能特效颜色或形状不对。本轮不能用上一轮粒子引用非空结果证明画面正确。开发负责作者导出/资源入包链，播放链与实际源/包渲染由其他职责独立调查。
+
+## 真实证据
+
+用户本轮正在重新构建，构建自然完成后生成资源版本1071。不能将先前995的包或代码状态冒称当前1071。独立原生测试已在同相机和固定粒子种子下发现：Effect_Skill3的0.8/1.2秒源为橙红细光，1071包侧出现白色矩形；Effect_Skill04的1.2秒包侧颜色偏黑。其2203条基础元数据一致，所有Shader.isSupported为true，证明仅引用非空及支持标记不足以排除画面故障。控制实验及更精确的像素归因待独立测试完成。
+
+正式ShaderVariantCollectorSetting保存地址为`Assets/MyShaderVariants.shadervariants`，用户新收集出的根资产为77个Shader、165个变体；而正式Collector收集路径是`Assets/GM_Game/Shaders`，其中同名资产仍为2026-08-27旧17个Shader、20个变体。根新资产没有其他已收集资源GUID引用。
+
+主Agent Unity原生只读实际1071 Shader包取得 `COLLECTION_BEFORE source=17/20 root-new=77/165 package1071=17/20`。这直接证明新收集变体没有进入本次1071包。1071的unityshaders.bundle内容哈希仍为26c970663cecd022fc412170c2186735，与995相同。
+
+六正式特效Renderer静态引用共75次、65份独立非内建材质，其中64次引用所用Shader不在旧集合，新集合中均包含。示例攻击材质0_dc_008使用`ENABLE_DECAL ENABLE_GLOW ENABLE_UV_NOISE _ALPHA_BLEND`，根新集合含其ForwardBase(passType4)精确组合，旧集合没有对应Shader。完整明细`_temp/skill-fx-appearance-20261013/package/shader-variant-source-audit.json`。新的165按真实YAML的Shader GUID、fileID、passType及完整关键词（包含折行）完整覆盖旧20，`shader-variant-superset-proof.json`记录旧缺项为0。
+
+当前YooAsset1.5.7源码没有独立变体剪裁器，构建TaskBuilding调用Unity BuildPipeline.BuildAssetBundles；Shader及ShaderVariantCollection统一放unityshaders包。因此新集合缺入包是已证实流程故障，但不能只由它推断所有差色都来自缺变体，仍需修复前后实际渲染/贴图实验。
+
+## 最小修正
+
+仅将ShaderVariantCollectorSetting.SavePath改为原正式收集目录，并将用户新collection和JSON内容同步到原已收集的同名资产文件。meta和原GUID保持，根用户新文件继续保留，没有删除资源、整目录扩大收集或新增框架。新集合已经包含旧集合全部变体，因此直接同步等于并集，不额外设计合并管理器。
+
+当前1071资源输出保持，本轮验证构建放项目根`_temp/skill-fx-appearance-20261013`。正式部署/游戏运行和最终视觉结论以主Agent独立验收为准。
+
+## 属性核对边界
+
+只读完整序列化遍历稍后完成，526687字段、18489原始差异、6粒子根、66材质、未支持字段0。差异包含引用instanceID、编辑器状态、未启用曲线及材质已废旧属性/序列化列表重排；不能将原始差异数直接报告为业务错误。又准备按Shader公开定义属性名逐项核有效材质颜色、参数、关键词及Texture格式/UV的短脚本，以排除列表顺序噪声；真实纹理像素由独立测试另读。
+
+短脚本已由主Agent在Unity原生执行成功：66材质、1527有效属性逐项差异0。当前source和1071的有效材质字段一致，不能通过重写材质颜色或Particle参数“修复”不存在的字段差异；还需区分Shader实际执行变体和纹理像素内容。
+
+独立测试随后对43对纹理GPU回读RGBA逐像素核对完全一致；同源及同包各重复图48次均一致。保持包克隆全部其他资产，仅将Skill3的GroundCrack/Crack11bcg的`Shader Graphs/HS_Blend_CG`临时换成源Shader，白矩形消失，像素平均差由1.95485降到0.07428；Skill04的Smoke/Smoke27bcg同Shader替换差由0.58593降到0.21459。此因果实验把主要异常定位到包Shader执行结果，排除该批纹理RGBA遗漏及有效材质字段变化。修复后临时真实Shader包仍须实测。
+
+修改与最终验证记录见`项目修改日志/2026-10-13-SKILL-FX-APPEARANCE-CHANGELOG.md`。
+
+## 两张截图与 shared 专项复核（2026-10-13 续查）
+
+用户两张截图对应最明显的白色巨大矩形和黑色粗轮廓。正式1071的8份Runtime依赖闭包共36包，实际文件大小及MD5全部与正式清单一致；唯一名称为share的包是`share_assets_gm_game_audios_shared_skills_effects.bundle`，它保存技能共享音效。Shader由YooAsset专用`unityshaders.bundle`统一打包，不能只因为文件名不含shared就排除它的共享职责。HS_Blend_CG源资源仅一个GUID定义；这批有效材质与43对纹理内容已证明源/包一致，当前未发现这批贴图或材质漏入shared。证据`_temp/skill-fx-appearance-20261013/package/shared-1071-static-audit.json`。
+
+本轮临时真实43包已构建，unityshaders实际MD5变为`093936c2d20a6ef9518b6e51cc914694`，正式1071仍是`26c970663cecd022fc412170c2186735`。两者为不同构建输出；原1071没有被本轮重写、发布或安装。
+
+第一次after图像测试出现Runtime的Particle=null，原因已经定位为测试将SimulateBuild清单用于IncrementalBuild原生包：模拟3001001的DependIDs为空，真实原生AssetBundleManifest却明确存在Attack01/Skill01..04依赖；模拟规则还缺实际share音效包名。它是测试边界错误，不能作为正式shared漏包证据。修正仅在_temp的AllActualCollectionBoundary2中，按实际AssetBundleManifest加载全部43原生包，Runtime再按主资源路径取包；主Unity原生执行成功，写入真实依赖和24对图。程序集独立编译0错，不改正式业务或专用构建器。
+
+主对`review/native-20261013102847`初步分析24对中19对逐像素相同，目检Effect_Skill3后段白矩形和Effect_Skill04后段黑粗轮廓已消失。其余5对残差由独立审查继续判断，不能声称全部特效视觉完全一致。构建日志存在Shader Compiler IPC断连及Particles/Standard Surface错误；43包可加载不等于此错误已消除，应结合受影响Shader及残图独立核实。本节为阶段结果，最终验收由主汇总。
+
+末稿集合原生计数已由主Unity执行完成：正式1071为17 Shader/20变体，本轮临时43包为77/165，当前源集合为77/165。新集合确已进入临时真实unityshaders包，不再仅依据文件内容判断入包；原始响应`_temp/skill-fx-appearance-20261013/package/collection-after-unity-result.json`，文本`collection-native-after.txt`。正式1071仍为历史旧集合，正式客户端要得到此修正须正常重新构建/更新资源；本次没有发布正式1071。视觉残5对与编译器IPC仍以独立审查最终结果为准。
+
+## 两目标修后验收和剩余边界
+
+独立审查与主目检一致：截图对应Skill3/Skill04八个源/包对全部逐像素相同，源图与before同一画面，白框和黑色轮廓消失。六组共24对19一致；剩5为其它采样中的轻微差异，轮廓IoU均1，Attack01-t0超过5灰阶72像素，其余差≤5灰阶，不将这一结果写成全特效完全一致。48次同帧重复对全部一致。
+
+构建IPC记录不撤销：原生查询当前根默认材质是Standard Unlit而非Standard Surface；HS_Blend_CG包消息0，源三宏重复Warning。Standard Surface没在该包LoadAllAssets命中，这只能排除此前直接将其归为六FX根Shader的猜测，不能证明整个构建零IPC。两目标视觉修复已在临时实际包成立，正式版本更新及主城客户端现场仍待原流程验证。协作入口已更新，全部产物保留在_temp，无正式场景保存。

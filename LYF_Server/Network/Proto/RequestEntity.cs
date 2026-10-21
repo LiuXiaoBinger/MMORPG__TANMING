@@ -48,10 +48,10 @@ public static partial class RequestEntityReflection {
           "dBgGIAEoCEoECAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEo",
           "DRIRCglidXlfY291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hv",
           "cF9pZBgBIAEoDRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3Jv",
-          "bGVfaWQYBSABKA0idwoQTW92ZU9wZXJhdGlvblJlcRIKCgJkeBgBIAEoAhIK",
-          "CgJkeRgCIAEoAhIKCgJkehgDIAEoAhIMCgRmYWNlGAQgASgCEgwKBHRpbWUY",
-          "BSABKAISEQoJaXNfbW92aW5nGAYgASgIEhAKCGlzX21vdmVkGAcgASgIYgZw",
-          "cm90bzM="));
+          "bGVfaWQYBSABKA0iiwEKEE1vdmVPcGVyYXRpb25SZXESCgoCZHgYASABKAIS",
+          "CgoCZHkYAiABKAISCgoCZHoYAyABKAISDAoEZmFjZRgEIAEoAhIMCgR0aW1l",
+          "GAUgASgCEhEKCWlzX21vdmluZxgGIAEoCBIQCghpc19tb3ZlZBgHIAEoCBIS",
+          "CgpqdW1wX2NvdW50GAggASgFYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -71,7 +71,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null)
         }));
   }
   #endregion
@@ -4291,6 +4291,7 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     time_ = other.time_;
     isMoving_ = other.isMoving_;
     isMoved_ = other.isMoved_;
+    jumpCount_ = other.jumpCount_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -4405,6 +4406,21 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     }
   }
 
+  /// <summary>Field number for the "jump_count" field.</summary>
+  public const int JumpCountFieldNumber = 8;
+  private int jumpCount_;
+  /// <summary>
+  ///当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段；供远端动画使用
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int JumpCount {
+    get { return jumpCount_; }
+    set {
+      jumpCount_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -4427,6 +4443,7 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Time, other.Time)) return false;
     if (IsMoving != other.IsMoving) return false;
     if (IsMoved != other.IsMoved) return false;
+    if (JumpCount != other.JumpCount) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -4441,6 +4458,7 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     if (Time != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Time);
     if (IsMoving != false) hash ^= IsMoving.GetHashCode();
     if (IsMoved != false) hash ^= IsMoved.GetHashCode();
+    if (JumpCount != 0) hash ^= JumpCount.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -4487,6 +4505,10 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
       output.WriteRawTag(56);
       output.WriteBool(IsMoved);
     }
+    if (JumpCount != 0) {
+      output.WriteRawTag(64);
+      output.WriteInt32(JumpCount);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4525,6 +4547,10 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
       output.WriteRawTag(56);
       output.WriteBool(IsMoved);
     }
+    if (JumpCount != 0) {
+      output.WriteRawTag(64);
+      output.WriteInt32(JumpCount);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4555,6 +4581,9 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     }
     if (IsMoved != false) {
       size += 1 + 1;
+    }
+    if (JumpCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(JumpCount);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -4588,6 +4617,9 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
     }
     if (other.IsMoved != false) {
       IsMoved = other.IsMoved;
+    }
+    if (other.JumpCount != 0) {
+      JumpCount = other.JumpCount;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -4636,6 +4668,10 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
           IsMoved = input.ReadBool();
           break;
         }
+        case 64: {
+          JumpCount = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -4681,6 +4717,10 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
         }
         case 56: {
           IsMoved = input.ReadBool();
+          break;
+        }
+        case 64: {
+          JumpCount = input.ReadInt32();
           break;
         }
       }

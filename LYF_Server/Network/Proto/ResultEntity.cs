@@ -128,26 +128,26 @@ public static partial class ResultEntityReflection {
           "TWFwS2V5NjRWYWx1ZTMyEhMKC3VwZGF0ZV90aW1lGAIgASgDEiAKCWl0ZW1f",
           "bGlzdBgDIAMoCzINLlJvbGVJdGVtSW5mbyJKCg1VcGRhdGVJdGVtUmV0EhoK",
           "CGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIdCghJdGVtRGF0ZRgCIAEoCzIL",
-          "LlVwZGF0ZUl0ZW0igwEKC1N5bmNNb3ZlTnRmEg8KB3JvbGVfaWQYASABKAUS",
+          "LlVwZGF0ZUl0ZW0ilwEKC1N5bmNNb3ZlTnRmEg8KB3JvbGVfaWQYASABKAUS",
           "CgoCZHgYAiABKAISCgoCZHkYAyABKAISCgoCZHoYBCABKAISDAoEZmFjZRgF",
           "IAEoAhIMCgR0aW1lGAYgASgCEhEKCWlzX21vdmluZxgHIAEoCBIQCghpc19t",
-          "b3ZlZBgIIAEoCCq9BQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4",
-          "aXN0EAESDwoLU2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1Q",
-          "YXNzd29yZEVycm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVy",
-          "cm9yEAYSEQoNTmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAI",
-          "EhMKD1Bob25lTnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIK",
-          "DlVzZXJPZnRlbkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90",
-          "RXhpc3QQDRITCg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1",
-          "ZXN0EA8SFQoRTm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZv",
-          "dW5kEBESGAoUUHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMS",
-          "EgoOSW52YWxpZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJ",
-          "bnZhbGlkU2hvcBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZm",
-          "aWNpZW50SXRlbXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJ",
-          "dGVtTm90RXhpc3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RM",
-          "ZWFybmVkEBwSFgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNv",
-          "b2xkb3duEB4SFwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3Rh",
-          "dGVCbG9ja2VkECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhYgZwcm90",
-          "bzM="));
+          "b3ZlZBgIIAEoCBISCgpqdW1wX2NvdW50GAkgASgFKr0FCgdDbWRDb2RlEgsK",
+          "B1N1Y2NlZWQQABINCglBY2N0RXhpc3QQARIPCgtTZXJ2ZXJFcnJvchACEhAK",
+          "DEFjY3ROb3RFeGlzdBADEhEKDVBhc3N3b3JkRXJyb3IQBBIPCgtBY2N0RGlz",
+          "YWJsZRAFEhEKDVJlcVBhcmFtRXJyb3IQBhIRCg1OaWNrbmFtZUV4aXN0EAcS",
+          "EwoPVXNlck5hbWVJbGxlZ2FsEAgSEwoPUGhvbmVOdW1JbGxlZ2FsEAkSEwoP",
+          "UGFzc3dvcmRJbGxlZ2FsEAoSEgoOVXNlck9mdGVuTG9naW4QCxIPCgtWYXJp",
+          "ZnlFcnJvchAMEhAKDFJvbGVOb3RFeGlzdBANEhMKD0ZlYXR1cmVOb3RSZWFk",
+          "eRAOEhQKEER1cGxpY2F0ZVJlcXVlc3QQDxIVChFOb3RFbm91Z2hDdXJyZW5j",
+          "eRAQEhQKEFNob3BJdGVtTm90Rm91bmQQERIYChRQdXJjaGFzZUxpbWl0UmVh",
+          "Y2hlZBASEgsKB0JhZ0Z1bGwQExISCg5JbnZhbGlkU2Vzc2lvbhAUEhMKD0lu",
+          "dmFsaWRRdWFudGl0eRAVEg8KC0ludmFsaWRTaG9wEBYSFQoRVHJhbnNhY3Rp",
+          "b25GYWlsZWQQFxIVChFJbnN1ZmZpY2llbnRJdGVtcxAYEhkKFUluY29ycmVj",
+          "dEJhY2twYWNrVHlwZRAZEhAKDEl0ZW1Ob3RFeGlzdBAaEhEKDUl0ZW1Ob3RF",
+          "bm91Z2gQGxITCg9Ta2lsbE5vdExlYXJuZWQQHBIWChJTa2lsbENvbmZpZ01p",
+          "c3NpbmcQHRITCg9Ta2lsbE9uQ29vbGRvd24QHhIXChNTa2lsbEluc3VmZmlj",
+          "aWVudE1wEB8SFQoRU2tpbGxTdGF0ZUJsb2NrZWQQIBIaChZTa2lsbFRhcmdl",
+          "dFVuc3VwcG9ydGVkECFiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -186,7 +186,7 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::MapKey64Value32), global::MapKey64Value32.Parser, new[]{ "Key", "Val" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::UpdateItem), global::UpdateItem.Parser, new[]{ "DeleteList", "UpdateTime", "ItemList" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::UpdateItemRet), global::UpdateItemRet.Parser, new[]{ "CmdCode", "ItemDate" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SyncMoveNtf), global::SyncMoveNtf.Parser, new[]{ "RoleId", "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::SyncMoveNtf), global::SyncMoveNtf.Parser, new[]{ "RoleId", "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null)
         }));
   }
   #endregion
@@ -12612,6 +12612,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     time_ = other.time_;
     isMoving_ = other.isMoving_;
     isMoved_ = other.isMoved_;
+    jumpCount_ = other.jumpCount_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -12741,6 +12742,21 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     }
   }
 
+  /// <summary>Field number for the "jump_count" field.</summary>
+  public const int JumpCountFieldNumber = 9;
+  private int jumpCount_;
+  /// <summary>
+  ///移动者当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int JumpCount {
+    get { return jumpCount_; }
+    set {
+      jumpCount_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -12764,6 +12780,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Time, other.Time)) return false;
     if (IsMoving != other.IsMoving) return false;
     if (IsMoved != other.IsMoved) return false;
+    if (JumpCount != other.JumpCount) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -12779,6 +12796,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     if (Time != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Time);
     if (IsMoving != false) hash ^= IsMoving.GetHashCode();
     if (IsMoved != false) hash ^= IsMoved.GetHashCode();
+    if (JumpCount != 0) hash ^= JumpCount.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -12829,6 +12847,10 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
       output.WriteRawTag(64);
       output.WriteBool(IsMoved);
     }
+    if (JumpCount != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(JumpCount);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -12871,6 +12893,10 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
       output.WriteRawTag(64);
       output.WriteBool(IsMoved);
     }
+    if (JumpCount != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(JumpCount);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -12904,6 +12930,9 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     }
     if (IsMoved != false) {
       size += 1 + 1;
+    }
+    if (JumpCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(JumpCount);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -12940,6 +12969,9 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
     }
     if (other.IsMoved != false) {
       IsMoved = other.IsMoved;
+    }
+    if (other.JumpCount != 0) {
+      JumpCount = other.JumpCount;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -12992,6 +13024,10 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
           IsMoved = input.ReadBool();
           break;
         }
+        case 72: {
+          JumpCount = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -13041,6 +13077,10 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
         }
         case 64: {
           IsMoved = input.ReadBool();
+          break;
+        }
+        case 72: {
+          JumpCount = input.ReadInt32();
           break;
         }
       }
