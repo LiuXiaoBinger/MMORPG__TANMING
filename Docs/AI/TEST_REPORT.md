@@ -1,3 +1,17 @@
+## 2026-10-22 NPC文字绑定：编译与10项薄边界通过
+
+- 确认并修复TalkWindow.ReFreshUI未绑定真实NPC名称/对话；仅TalkWindow.cs与UIRoot.prefab两既有TMP引用，正文下划线显示换行。不改输入、NPC碰撞、导航或开窗生命周期。
+- WorkBuddy桌面Hub hub-1771073d-0d79-4fd4-89c1-a7e677b75cba：两轮只读预检纠正错误假设，首次开发后一次审查精简，最终平台round4已由Codex验收；豆包先行桌面CLI受阻且确认停止，不计开发失败轮。
+- Codex正式插件路径289源0错误，复跑真实源码薄边界10/0、编译输入557项保持，UIRoot逐块仅两引用变化、meta及9用户文件保持。
+- 尚无本轮Unity真实点击/面板显隐验证。用户未明确点击后是否导航；“完全不弹窗”的现场现象仍待确认，不能将文字缺陷修复当作全部现场问题已解决。保留原GM_Game.dll.bytes，运行需同版热更代码和UI资源包；未启停游戏/服务或保存场景。
+- 分支codex/npc-dialog-fix，基线14a0a88；本轮6文件逐项与Git回执见项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md，证据_temp/npc-dialog-20261022/codex-validation。
+
+## 2026-10-22 NPC点击无对话：验证准备
+
+- 用户反馈点击NPC无对话；先豆包官方桌面本项目只读定位（会话38448648846393602/run59391213363817218，第1轮），Codex沿路线核验后委派最小修复，最后复测。
+- 当前无Unity MCP工具及可见Unity/LYF_MMO进程，Editor.log为10月21日历史输入；没有现场复现或本轮测试通过结果。保留原9用户文件，不启停用户游戏、不替热更字节、不保存场景。
+- 本轮文件、事实与后续结果：项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md；证据_temp/npc-dialog-20261022。
+
 ## 2026-10-22 RO网络接口：提交推送回执
 
 - 最终代码、正式Network.dll及逐项记录提交`28c21e8811e5f2d9c68d3cdcbc26b5123a6d9366`，已成功推送origin/codex/network-kcp-development，远端SHA核对一致；未合main。49项最终文件精确提交，原9用户文件推送后SHA保持。WorkBuddy最终轮review=accepted；验证为五服务/289客户端0错、Socket122/0、入场8/0、薄边界54/0，现场及发布边界保持。

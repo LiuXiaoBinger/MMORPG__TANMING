@@ -11277,6 +11277,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45229e2bbb51ff41a3e2e1380443fcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _talkContent: {fileID: 5055306388014330071}
+  _talkTitle: {fileID: 2887947151108021491}
 --- !u!1 &892621962858417145
 GameObject:
   m_ObjectHideFlags: 0
