@@ -1,3 +1,12 @@
+## 2026-10-22 网络整体复审：编译/回归通过，传输边界仍开放
+
+- Codex重新实际执行本轮_temp副本compile_kcp.py、compile_client_plugin_path.py：Network/Gate/Game/Center均0错误（警告日志计数14/14/28/14，含重复），客户端289源引用正式Network插件0错误。run_loopback.py退出0、PASSED=90 FAILED=0；review/run_codex_final.py三项FIXED结果True、退出0。
+- 豆包两轮桌面只读检查后Codex复跑新探针：1186字节完整包Send=True、移动投递0；非实时登录11040走已认证UDP容器计数1。探针的无TCP Session使绑定回包空引用，是夹具边界，不作真实Gate登录故障。当前正常五实时协议都是小包，正常非实时业务走TCP。
+- doubao-transition真实TCP/KCP探针：人为阻塞TCP回调时后发KCP先完成；无屏障豆包400组反序0、Codex独立400组反序2。直接发送四字节标记且绕过正式客户端分流/完整启用过程，只证明跨通道投递允许反序，未验证真实绑定时的游戏故障或发生率。
+- Peer地址污染疑点未成立；本轮新多客户端探针没排空28字节绑定回执，不采用其“只到目标”判断。原90项目标路由回归另通过。未找到正式退出登录UI，Global.OnApplicationQuit明确Disconnect，不把LoginInfo清理判成退出泄漏。
+- 正式插件SHA256保持950846B969F8FF43B229A3769473FD18CEBFAC2B41650E0D8E043FD9A2F8ACF2；本轮新编译DLL哈希与它不同，未证明等价原因。客户端引用正式插件编译不等于该插件运行覆盖。写正式文档前tracked差分与baseline-user.patch完全相同，用户9份修改保留。
+- 证据_temp/network-kcp-audit-20261022/codex-validation.json、loopback-result.log、review/codex-final-result.log与三个新探针目录；正式专题项目分析/KCP_NETWORK_AUDIT_20261022.md。此次只增改6份记录，不改业务；三项发现未修复。无Unity双号、MP、正式切换/重连/实体早到、弱网端到端或打包运行验收，不能判全项目无Bug。
+
 ## 2026-10-22 Git回执
 
 - 业务提交21c95f0已推送并由ls-remote核对一致；暂存34路径排除全部9个原用户文件。全暂存上游KCP原文2处空格保留为第三方例外，排除上游该单文件后业务差异检查通过。
