@@ -1,3 +1,14 @@
+## 2026-10-22 续接完成：豆包Pro最高推理源码查找对比已验收
+
+- 用户已确认退出并授权启动，豆包官方桌面本项目local任务已完成，不再等待退出或连接。有效conversationId=38448622087397122、runId=59302623239101442；原生回读model key=5（豆包2.1 Pro）、effort=7（最高）、agentMode=1、runtime_type=2、项目38435310952198914、目录D:/unitypro/LYFMMORGP。
+- 双方冻结初稿按预设15项核心源码证据均15/15；这是覆盖得分，不是全文正确率。Codex把.bytes称碰撞数据不准；豆包DllImport、NavMeshSet读取和AI事件短代码有改写/错行号，另有玩家寻路措辞过宽。均回读真实源码列入正式报告；初稿不改。
+- 统一任务开始到文件落盘：Codex178.225秒（约2分58秒，36行），豆包1520.731秒（约25分21秒，624行）。非盲测：Codex有项目与RO预读优势，四入口有线索，输出长度不同，仅一轮三题；不推导纯模型速度倍率或普遍能力差距。Codex精确会话型号/推理未独立核实。
+- 初次.cmd多行提示被截断；同会话补发后披露已读本次分析Git提交，该轮作废保留证据。新有效会话从首条禁读旧答案/Git历史，声明遵守；未做系统调用级访问审计。连接断开不误记任务失败，最终原生completed和文件落盘均已核实。
+- RO两端有实际寻路，客户端/服务器均进入C++ Detour；玩家MoveGround另查位置和速度/距离，跨图为地图级BFS。LYF客户端纯C# A*已接，共享8源仅证明服务端可编译，空导航组件与正式移动保存/广播链未接RO同等运行导航。补充核查EntityWorld/Factory未找到常规new入口，仅限静态源码。
+- 本轮逐项仅修改5文档：项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md（结果及纠错）、项目分析/README.md（完成状态索引）、Docs/AI/CURRENT_TASK.md（交接）、Docs/AI/TEST_REPORT.md（验收）、项目修改日志/2026-10-22-NAVIGATION-SEARCH-COMPARISON-CHANGELOG.md（清单及Git）。没有业务/资源/场景改动，不启动Unity或服务。原用户改动保留。
+- 证据根_temp/source-search-comparison-20261022；final-score-verification.json记录15项及5类附加问题，frozen-answer-metadata.json记录哈希/时间；两初稿哈希保持。最终文档、暂存与推送回执见本轮根日志；统一在codex/feature-development提交推送，不操作main。
+- 本轮用户两项问题已完成；未完成项仅为未来业务需求或正式运行验证，不在本次范围。以下“待连接/未运行”为续接前历史状态，已由本条取代。
+
 ## 2026-10-22 当前任务：RO两端寻路核查完成，豆包查找对比待连接
 
 - 用户要求核实RO客户端与服务器是否均寻路，并实际比较豆包最高模型/推理与当前Codex源码查找能力。本轮只做源码分析和实验记录，不改游戏代码、资源或场景，不扩展服务端导航。

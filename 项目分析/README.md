@@ -4,7 +4,7 @@ RO游戏内帧率显示核查见 `项目分析/RO_FPS_DISPLAY.md`：区分Report
 
 # 项目分析
 
-`项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md` 核实RO客户端原生Detour A*、服务器AI寻路与地图加载、玩家移动检查和跨图规划，并对照LYF服务端目前仅同源编译、尚未运行接入的状态。另记录同题源码查找实验：Codex初稿已冻结，豆包桌面连接受阻，最高模型/推理及比较结果均未取得，不能据此宣称能力差距。
+`项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md` 核实RO客户端原生Detour A*、服务器AI寻路与地图加载、玩家移动检查和跨图规划，并对照LYF服务端目前仅同源编译、尚未运行接入的状态。同题实验已完成：豆包2.1 Pro＋最高推理的官方桌面local任务与当前Codex初稿，核心证据均15/15；统一落盘计时约25分21秒/2分58秒。报告列明双方初稿错误、污染轮次作废和Codex先验优势，不能据此推导通用能力或纯模型速度倍率。
 
 `项目分析/DOUBAO_CLI_WINDOWS.md` 记录豆包官方桌面CLI的Windows本机配置、启动方式、任务派发与同会话返工命令，以及隔离文件实验的真实通过结果和上游macOS专用功能边界。
 

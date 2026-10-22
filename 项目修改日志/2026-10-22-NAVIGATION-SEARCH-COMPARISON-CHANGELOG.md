@@ -47,3 +47,33 @@
 提交范围仅上述5文档；中文提交正文引用本日志。暂存清单逐项核对且`git diff --cached --check`通过，无业务代码或用户无关改动混入。
 
 主体提交`e352696b534f1da10e366fed8ec61f1d2c12e510`已成功推送`origin/codex/feature-development`，`git ls-remote --heads`回读远端同SHA。没有操作main或强制推送。本节仅追记已取得的提交/推送回执，另作中文文档收尾提交；最终收尾号和推送结果在交付回复报告。
+
+## 2026-10-22 续接：有效对比完成（取代前述待连接状态）
+
+用户确认已退出并可启动后恢复官方桌面连接，完成Pro最高推理的新会话。第一次多行.cmd提示截断、补发后发现Git报告污染，旧会话作废；没有用污染答案评分。新会话38448622087397122/run59302623239101442已原生completed，实际文件存在，模型key5/effort7、agentMode1、本项目local目录均回读确认。
+
+### 本次续接逐项文件
+
+| 操作 | 文件 | 用途与具体变化 |
+| --- | --- | --- |
+| 修改 | 项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md | 改正.bytes用途；补BFS和实体常规装配入口核查；把未运行章节换成配置、冻结初稿、15项评分、统一计时、双方错误、污染作废及公平性边界。 |
+| 修改 | 项目分析/README.md | 专题索引更新为已完成及结果限制。 |
+| 修改 | Docs/AI/CURRENT_TASK.md | 置顶本次完成状态、真实任务标识、文件清单和后续边界，保留历史。 |
+| 修改 | Docs/AI/TEST_REPORT.md | 置顶主Agent源码复核、配置回读、哈希保护、评分依据及未实测范围。 |
+| 修改 | 项目修改日志/2026-10-22-NAVIGATION-SEARCH-COMPARISON-CHANGELOG.md | 追加本次恢复过程、逐项变更、设计、验证与Git结果。 |
+
+无新增正式文件、移动或删除，无Unity资源或.meta变化。临时新增/更新均在_temp/source-search-comparison-20261022：豆包模型/项目/runtime与原生任务回执、有效/作废初稿及提示/计时、frozen-answer-metadata.json、read-doubao-settings.mjs、final_verify.py、update_final_docs.py、final-score-verification.json、final-document-check.json和Git回执；不提交、不未经确认清理。
+
+### 设计、验证与未解决边界
+
+- 保持预设核心证据覆盖口径，双方15/15；不把额外摘录不准确藏在满分后，也不在看到答案后改评分规则。5类已发现问题逐条列真实源码：Codex.bytes用途描述；豆包DllImport与条件、NavMeshSet摘录、AI事件摘录、玩家寻路全局性措辞。
+- 同一计时口径为开始至答案文件落盘：Codex178.225137秒/36行；豆包1520.731016秒/624行。冻结SHA256分别84B3ADB8D062464879C24F4136EFDE0023D7201D185B3276F803437D6C763630、7EC5B1A134B7096094FCD595DB073FE071D898B86EA55EE71180A493A3B6A200，复算保持。原178.604秒与连接断开时刻不再混用。
+- final_verify.py的15个关键源码断言及两初稿哈希/行数通过；附加错误真实代码行归档。RO两端寻路、玩家移动检查、跨图BFS与LYF共享编译/运行未接的结论成立。只做静态分析，未启动Unity/正式服务、未改业务代码，不重编译无变化业务；豆包旧DLL反射自报未复跑。
+- 非盲测、Codex开发与预读优势、四份入口线索、一轮三题、不同写作规模、Codex精确型号未独立核实均记录，不能报告通用能力排名或纯模型速度倍率。新豆包轮次声明未读旧答案，无系统调用级访问审计；这是实验边界，非业务待修问题。
+- 正式说明：项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md。此前“尚无答案/待退出”仅为历史，现已解除。当前用户两项问题均已完成；服务端导航开发和正式游戏运行不在本轮范围。
+
+### 本次Git范围与结果
+
+实际续接基线3c1a8e24f72ea350a83edab816da200e2063363f，业务相对原实验基线未由本轮修改。仅精确暂存上述5文档，在codex/feature-development中文提交并正常推送；保留已有DLL、字体、客户端Docs/AI、设置、Yoo及其他用户文件，不合入main，不强推。提交前执行文档引用/初稿保护、git diff --check及暂存清单检查；实际回执随后追加，最终回复报告提交号及推送状态。
+
+提交前实际检查通过：15项核心断言、两份冻结初稿哈希及行数、32处正式源码链接、前轮28处源文件哈希不变、本实验原生配置和completed、5文件修改范围及git diff --check。服务端EntityWorld/EntityFactory实例化、运行导航查询的限定rg检索均无命中（退出1表示未找到）。证据final-score-verification.json与final-document-check.json；另有临时verify_final_documents.py用于复核。

@@ -1,3 +1,14 @@
+## 2026-10-22 续接验收：有效豆包初稿、配置、评分与静态证据完成
+
+- 双方三题15项核心依据逐项回读，均15/15，实际源码行记录于_temp/source-search-comparison-20261022/final-score-verification.json；不把覆盖得分写成全文零错误。发现Codex数据用途称呼问题和豆包DllImport/NavMeshSet/AI事件摘录问题及玩家寻路概括过宽，正式报告列明真实代码。
+- 额外核对：MBaseDynamicObstacle.cpp:1144/1145/1169/1200确认NavMeshSet头、memcpy、header.params、tileHeader.tileRef；PINVOKE.cs:2466/2469/2479确认UNITY_IOS和完整EntryPoint；entity_common_tool.cpp:547/553/559确认构造事件和派发；world_map.cpp:692起queue/visited确为BFS。LYF服务源码未查到EntityWorld/Factory常规new入口，未做动态注入排除或运行调试。
+- 有效桌面原生配置回读：conversation38448622087397122，run59302623239101442，completed；key5=豆包2.1 Pro、effort7=最高，agentMode1/runtime_type2，本项目ID38435310952198914/本地目录D:/unitypro/LYFMMORGP。证据doubao-clean-native-settings.jsonl与doubao-clean-final-status.json。其他可见会话设置不能代替本次配置。
+- 首次多行.cmd被截断，初run取消；同会话完整补发后自报已读本次分析Git提交，整轮污染作废不评分。新会话完整首提示禁读Git/旧答案，声明遵守但无系统级文件访问审计。原生completed及实际文件已核实，中途CLI等待连接报错不视为模型失败。
+- 冻结SHA256：Codex 84B3ADB8D062464879C24F4136EFDE0023D7201D185B3276F803437D6C763630；豆包7EC5B1A134B7096094FCD595DB073FE071D898B86EA55EE71180A493A3B6A200。final_verify.py重新计算一致；初稿36/624行。统一开始至文件落盘178.225/1520.731秒，原Codex178.604秒为落盘后结束记录，已校正口径。
+- 非盲测、已有开发/预读优势、协作入口含线索、一轮三题、写作篇幅不同、Codex实际型号未独立核实，均已披露；不推导纯模型倍率。豆包自报旧Common DLL反射未独立复跑，不当作本轮重新编译或运行验收。
+- 只改5份根正式文档，未改业务/资源/场景，无需重编译未变化代码；未启动Unity/服务器。源码链接、文档清单、初稿保护及Git检查结果见本轮根日志和final-document-check.json。正式分析为项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md。
+- 以下“未运行/待连接”条目为历史快照，本轮有效任务与比较已完成；正式游戏运行和服务端导航开发未在本轮验收范围内。
+
 ## 2026-10-22 RO两端寻路与源码查找实验：源码核查完成，对比未运行
 
 - 分支codex/feature-development，基线1fbe5a2bca1135aa68dcc92da4dd79bdad459acb。只修改根分析、索引、协作和日志共5文档；没有业务、资源、场景变化，不运行游戏编译或启停Unity/服务器。
