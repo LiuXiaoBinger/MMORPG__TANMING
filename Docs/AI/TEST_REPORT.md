@@ -1,3 +1,10 @@
+## 2026-10-22 网络双通道方案：源码核验，未实施
+
+- 回读RO MSocket的Stream/Tcp与统一Send入口、UdpNetwork/KcpPeer的KCP API、BaseLink public OnRecv与公有继承；gateserver范围未找到UdpNetwork业务初始化引用，不推导为线上技能UDP。RO具体施法上行与预编译网络库/实际部署未完整验证。
+- 回读LYF NetServer/NetClient、NetUtils、GateServerApp、PlayerEntity.UpdateMove、MNavigationComponent施法前UpdateMove、移动/技能Handler及ROMoveComponent，确认当前TCP、完整终点采样、MP/CD权威及非服务器权威移动。
+- 豆包同会话第2轮已撤回无法链接误判、KCP原生不可靠模式、循环skill_uuid永久幂等三项表述；Codex核验关键文件，非独立重做全项目查找。
+- 本轮仅5文档，静态文档/差异校验与Git回执见项目修改日志/2026-10-22-NETWORK-TRANSPORT-DESIGN-CHANGELOG.md；未修改业务、协议、Network.dll或场景，无游戏编译或运行验收。弱网、跨通道创建实体顺序、绑定/重连和IL2CPP配套列为后续验收，不报告通过。
+
 ## 2026-10-22 规则验证：两模型各3轮的接手门槛
 
 - 核对同一问题豆包3轮、WorkBuddy3轮，各为首次1轮加返工2轮；未满必须沿原任务附真实证据返工，双方各3轮仍未通过才切Codex。先满模型转另一模型补充，提前解决停止。
