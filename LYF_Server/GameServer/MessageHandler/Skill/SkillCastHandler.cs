@@ -109,7 +109,7 @@ public sealed class SkillCastHandler : IGameMessageHandler
         {
             return;
         }
-        context.Transport.SendData(context.Package, NetDefine.CMD_SkillCastCode,
+        context.Transport.Send(context.Package, NetDefine.CMD_SkillCastCode,
             result.ToByteString());
     }
 }

@@ -1,3 +1,5 @@
+`项目分析/RO_NETWORK_INTERFACE_COMPARISON.md` 对照RO真实BaseLink、MNetClient及KCP重组后OnRecv链，记录本项目类型/文件迁移、Send与OnRecv签名、商城捕获连接例外和编译部署边界；以专题当前状态区分源码落盘与最终交付。
+
 `项目分析/KCP_NETWORK_AUDIT_20261022.md` 记录实现后的整体网络复审：跨通道顺序、完整包长和上行分流约定，区分真实Socket探针、正式流程未复现及Unity待验范围；不是全项目无Bug证明。
 
 `项目分析/KCP_NETWORK_IMPLEMENTATION.md` 记录本次TCP+KCP实际实现、绑定/分流/失效流程及测试边界。移动11180/11181和技能11170/11171/11173使用同一可靠有序KCP，其余业务及服务间保持TCP；隔离测试通过不等于真实Unity双号或发布验收。

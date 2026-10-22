@@ -16,11 +16,11 @@ public interface IContainer
     /// <summary>处理来自上游服务端的协议包。</summary>
     /// <param name="serverBase">接收该包的连接对象。</param>
     /// <param name="basePackage">已拆包并反序列化的协议包。</param>
-    void OnServerCommand(ServerBase serverBase, BasePackage basePackage);
+    void OnServerCommand(BaseLink serverBase, BasePackage basePackage);
 
     /// <summary>处理来自下游客户端的协议包。</summary>
     /// <param name="serverBase">接收该包的连接对象。</param>
     /// <param name="basePackage">已拆包并反序列化的协议包。</param>
-    void OnClientCommand(ServerBase serverBase, BasePackage basePackage);
+    void OnClientCommand(BaseLink serverBase, BasePackage basePackage);
 
 }

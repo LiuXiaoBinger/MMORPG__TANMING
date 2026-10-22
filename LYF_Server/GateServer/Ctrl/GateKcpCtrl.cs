@@ -17,7 +17,7 @@ public sealed class GateKcpCtrl : IContainer
     /// </summary>
     /// <param name="serverBase">接收请求的网关会话。</param>
     /// <param name="basePackage">携带绑定请求的协议包，协议号由命令表保证。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         // 把网关基类转为本会话类型，转换失败说明连接类型不符，直接忽略。
         Session session = serverBase as Session;
@@ -77,7 +77,7 @@ public sealed class GateKcpCtrl : IContainer
         }
 
         // 绑定参数必须经 TCP 下发；该协议不在实时集合内，钩子会保留原封包。
-        session.SendData(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
+        session.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public sealed class GateKcpCtrl : IContainer
     /// </summary>
     /// <param name="serverBase">收到回包的连接，本入口不使用。</param>
     /// <param name="basePackage">回包内容，本入口不使用。</param>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
     }
 }

@@ -153,7 +153,7 @@ public class MainCityMgr : MonoBehaviour
       }
 
       // 实时通道尚未就绪：本地主角按约定等待 KCP 启用，属于正常等待而非加载失败。
-      if (!NetSocketMgr.Instance.IsRealtimeReady)
+      if (!MNetClient.Instance.IsRealtimeReady)
       {
          return false;
       }
@@ -197,10 +197,10 @@ public class MainCityMgr : MonoBehaviour
       }
 
       // 移动与技能只走 KCP：确认本地主角信息后、发起模型加载前先请求绑定。
-      NetSocketMgr.Instance.RequestRealtimeBind();
+      MNetClient.Instance.RequestRealtimeBind();
       // 通道未就绪时不创建模型，由 Start/Update 的既有重入在下一次尝试；
       // 绑定失败会触发断线恢复并清理角色会话，因此角色不会带着不可用的通道进入可操作状态。
-      if (!NetSocketMgr.Instance.IsRealtimeReady)
+      if (!MNetClient.Instance.IsRealtimeReady)
       {
          return;
       }
@@ -519,7 +519,7 @@ public class MainCityMgr : MonoBehaviour
                // 沿用正式基础快照的下划线坐标格式（世界米），与移动上报写入的位置同一格式。
                request.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
                   spawnPosition.x, spawnPosition.y, spawnPosition.z);
-               NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
+               MNetClient.Instance.Send(NetDefine.CMD_EnterWroldCode, request.ToByteString());
                _enterWorldSent = true;
             }
             Debug.Log("角色表现绑定成功，角色 UID：" + requestedUID +

@@ -1,3 +1,11 @@
+## 2026-10-22 RO网络公共接口：源码与隔离验收完成
+
+- 沿RO真实接口职责改名ServerBase→BaseLink、NetSocketMgr→MNetClient，meta保原GUID；三个bool Send重载与公共OnRecv承接完整消息。客户端普通业务Send、TCP/KCP共用主线程派发；商城仍保捕获连接语义。五实时协议固定KCP，其余及Gate↔Game为TCP，不增框架。
+- WorkBuddy桌面实现与审查返工，Codex设计、独立检查、插件集成及Git。原Hub超时后原生审批已按用户新授权自动允许；原轮idle实查和service recover确认停止，Hub cancelled/holdsCapacity=false。沿同原生会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0登记限定收尾Hub hub-d6df4730-7ed9-4817-9d11-dc02bc773288，未重做原开发或清零问题轮次。
+- Codex独立五服务工程和289客户端源0错误；Socket/KCP122/0、入场8/0、客户端薄边界54/0。正式Network.dll已配套，引用正式插件路径编译289源0错误，插件SHA与最终构建一致。源码输入、33机械迁移语义、meta身份及9用户文件保护通过。
+- 不替用户GM_Game.dll.bytes；Unity双号、真实动画/MP、业务自动重连、实体早到、端到端弱网及IL2CPP/HybridCLR发布未验。运行需使用同版网络库与重新构建的热更程序集，不能把保留的旧字节当已部署。
+- 逐项文件、验证及提交回执见项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md，接口对照见项目分析/RO_NETWORK_INTERFACE_COMPARISON.md。
+
 ## 2026-10-22 当前授权：任务内权限自动同意
 
 - 用户明确长期授权：本项目已授权任务内的编译、测试、只读查找与允许范围文件操作所触发的工具权限，Agent自动同意，优先Allow/allow_once，不再要求用户在桌面找按钮或重复确认。该用户授权优先于Skill通用手动审批约定；保持原任务和真实审批身份，不扩大任务范围、重复派工或伪造回执。

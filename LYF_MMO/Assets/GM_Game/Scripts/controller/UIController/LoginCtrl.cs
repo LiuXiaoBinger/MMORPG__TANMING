@@ -107,7 +107,7 @@ public class LoginCtrl : CtrlBase
             TipsMgr.Instance.ShowSystemTips("请阅读并勾选用户协议");
             return;
         }
-        if (NetSocketMgr.Client == null)
+        if (MNetClient.Client == null)
         {
             TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
             return;
@@ -129,7 +129,7 @@ public class LoginCtrl : CtrlBase
             UserName = account,
             Password = password
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_LoginCode, request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_LoginCode, request.ToByteString());
     }
 
     /// <summary>校验并发送注册请求。</summary>
@@ -152,7 +152,7 @@ public class LoginCtrl : CtrlBase
             TipsMgr.Instance.ShowSystemTips("两次密码不一致");
             return;
         }
-        if (NetSocketMgr.Client == null)
+        if (MNetClient.Client == null)
         {
             TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
             return;
@@ -165,13 +165,13 @@ public class LoginCtrl : CtrlBase
             Varify = verifyCode,
             Password = password
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_RegistCode, request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_RegistCode, request.ToByteString());
     }
 
     /// <summary>请求最新服务器列表。</summary>
     private void OnServerListRequested()
     {
-        if (NetSocketMgr.Client == null)
+        if (MNetClient.Client == null)
         {
             TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
             return;
@@ -181,7 +181,7 @@ public class LoginCtrl : CtrlBase
         {
             ServerId = 0
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_GetServerListCode, request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_GetServerListCode, request.ToByteString());
     }
 
     /// <summary>连接用户选中的游戏服务器。</summary>
@@ -194,7 +194,7 @@ public class LoginCtrl : CtrlBase
             return;
         }
         _serverId = server.ServerId;
-        NetSocketMgr.Instance.ConnectServer(server.IpHost, server.Prot, OnConnSucced, OnConnFilded);
+        MNetClient.Instance.ConnectServer(server.IpHost, server.Prot, OnConnSucced, OnConnFilded);
     }
 
     /// <summary>提示游戏服务器连接失败。</summary>
@@ -206,7 +206,7 @@ public class LoginCtrl : CtrlBase
     /// <summary>连接成功后发送游戏服登录请求。</summary>
     private void OnConnSucced()
     {
-        if (NetSocketMgr.Client == null || Global.Instance.LoginInfo == null)
+        if (MNetClient.Client == null || Global.Instance.LoginInfo == null)
         {
             TipsMgr.Instance.ShowSystemTips("登录状态无效");
             return;
@@ -217,7 +217,7 @@ public class LoginCtrl : CtrlBase
             AccountId = Global.Instance.LoginInfo.AccountId,
             GameServerId = _serverId
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_LoginGameServerCode,
+        MNetClient.Instance.Send(NetDefine.CMD_LoginGameServerCode,
             request.ToByteString());
     }
 
@@ -229,7 +229,7 @@ public class LoginCtrl : CtrlBase
             TipsMgr.Instance.ShowSystemTips("邮箱不能为空");
             return;
         }
-        if (NetSocketMgr.Client == null)
+        if (MNetClient.Client == null)
         {
             TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
             return;
@@ -239,7 +239,7 @@ public class LoginCtrl : CtrlBase
         {
             Email = email
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_RegistVarifyCode, request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_RegistVarifyCode, request.ToByteString());
     }
 
     /// <summary>处理游戏服登录结果并进入角色场景。</summary>

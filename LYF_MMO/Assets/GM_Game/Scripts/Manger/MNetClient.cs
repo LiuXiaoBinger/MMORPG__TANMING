@@ -4,9 +4,10 @@ using Google.Protobuf;
 using UnityEngine;
 
 /// <summary>
-/// 客户端网络管理器，负责连接生命周期和主线程消息派发。
+/// 客户端网络管理器（对齐 RO 的 MNetClient）：负责连接生命周期、协议发送与主线程消息派发。
+/// 业务统一经 Send 上行；TCP 与 KCP 两路下行汇入同一个 OnRecv 后再进入业务分发。
 /// </summary>
-public class NetSocketMgr : Singleton<NetSocketMgr>
+public class MNetClient : Singleton<MNetClient>
 {
     /// <summary>Unity 主线程同步上下文。</summary>
     private SynchronizationContext _synchronizationContext;
@@ -27,6 +28,25 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     public static NetClient Client
     {
         get { return _client; }
+    }
+
+    /// <summary>
+    /// 业务公共上行入口（对齐 RO 的 MNetClient::Send）：按协议号与载荷交给当前连接。
+    /// 实时协议是否改走 KCP 由连接层按协议号分流，调用方不需要感知通道。
+    /// 需要把发送固定到某个已捕获连接与代次的业务（例如商城），继续使用自己捕获的连接发送，不受本入口影响。
+    /// </summary>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷字节串。</param>
+    /// <returns>本地提交结果：已交给通道返回 true，无连接或写出失败返回 false；不代表服务端业务处理完成。</returns>
+    public bool Send(int protoCode, ByteString data)
+    {
+        // 当前 TCP 连接，为空说明尚未连接或已断开。
+        NetClient client = _client;
+        if (client == null)
+        {
+            return false;
+        }
+        return client.Send(protoCode, data);
     }
 
     /// <summary>获取当前有效连接代次。</summary>
@@ -114,35 +134,74 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         client.StartConnect();
     }
 
-    /// <summary>把当前连接收到的消息投递到 Unity 主线程。</summary>
+    /// <summary>
+    /// TCP 下行接入：连接层已拆帧并反序列化，这里补上收包时刻的连接代次后汇入公共 OnRecv。
+    /// </summary>
+    /// <param name="sourceClient">消息所属的 TCP 连接。</param>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷字节串。</param>
     private void OnReceiveMsgHandle(NetClient sourceClient, int protoCode, ByteString data)
     {
-        if (!ReferenceEquals(_client, sourceClient))
-        {
-            return;
-        }
-
+        // 收到该包时所属的连接代次，用于隔离排队期间发生的断线重连。
         long receiveGeneration = CurrentConnectionGeneration;
-        if (receiveGeneration <= 0)
+        OnRecv(sourceClient, receiveGeneration, protoCode, data, false);
+    }
+
+    /// <summary>
+    /// 协议接收公共入口（对齐 RO 的 MNetClient 主线程派发）：TCP 与 KCP 两路下行在此汇合，
+    /// 统一完成归属校验、主线程投递与业务分发，不再各留一份实际派发逻辑。
+    /// </summary>
+    /// <param name="sourceClient">消息所属的 TCP 连接，注册回调时固定。</param>
+    /// <param name="sourceGeneration">消息所属的连接代次，注册回调时固定。</param>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷字节串。</param>
+    /// <param name="fromRealtime">是否来自 KCP 实时通道；决定沿用哪一路既有归属校验，以及绑定控制包是否由本路消费。</param>
+    private void OnRecv(NetClient sourceClient, long sourceGeneration, int protoCode, ByteString data,
+        bool fromRealtime)
+    {
+        // 只保留 TCP 原来源检查；KCP 路的归属检查仍在解析前与主线程执行前各一次。
+        if (!fromRealtime)
         {
-            return;
+            // TCP 原来源检查：旧连接的迟到回调不能进入业务层。
+            if (!ReferenceEquals(_client, sourceClient))
+            {
+                return;
+            }
+            if (sourceGeneration <= 0)
+            {
+                return;
+            }
         }
 
         PostToMainThread(() =>
         {
-            // 消息排队期间发生断线或重连时，旧连接回调不能进入业务层。
-            if (!ReferenceEquals(_client, sourceClient) ||
-                receiveGeneration != CurrentConnectionGeneration)
+            if (fromRealtime)
             {
-                return;
+                // KCP 主线程内再次按通道归属过滤：排队期间断线或重连时丢弃旧包。
+                if (!IsRealtimeOwner(sourceClient, sourceGeneration))
+                {
+                    return;
+                }
             }
-            // 绑定响应只由网络层消费，不进入业务协议分发。
-            if (protoCode == NetDefine.CMD_KcpBindCode)
+            else
+            {
+                // TCP 主线程内再次按来源与代次过滤：排队期间断线或重连时不投递。
+                if (!ReferenceEquals(_client, sourceClient))
+                {
+                    return;
+                }
+                if (sourceGeneration != CurrentConnectionGeneration)
+                {
+                    return;
+                }
+            }
+            // 绑定控制包只由 TCP 原路径消费，KCP 下行不处理绑定响应。
+            if (!fromRealtime && protoCode == NetDefine.CMD_KcpBindCode)
             {
                 HandleKcpBindResponse(data);
                 return;
             }
-            SocketDispatcher.Instance.DispatchEvent(protoCode, data, receiveGeneration);
+            SocketDispatcher.Instance.DispatchEvent(protoCode, data, sourceGeneration);
         });
     }
 
@@ -280,7 +339,7 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
 
         _realtimeBindRequested = true;
         // 绑定请求只带协议号，参数由服务端生成的会话号和令牌决定。
-        client.SendData(NetDefine.CMD_KcpBindCode, ByteString.Empty);
+        client.Send(NetDefine.CMD_KcpBindCode, ByteString.Empty);
     }
 
     /// <summary>
@@ -425,7 +484,7 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         payload.Conv = conv;
         // 放弃通知不带密钥，保持全零。
         payload.Token = new byte[KcpDefine.BindTokenBytes];
-        sourceClient.SendData(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
+        sourceClient.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
     }
 
     /// <summary>
@@ -469,7 +528,8 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     }
 
     /// <summary>
-    /// KCP 下行包投递：按登记时的连接与代次送到 Unity 主线程原分发入口。
+    /// KCP 下行薄接入：只做“载荷字节 → BasePackage”这一段 KCP 专属解析，
+    /// 解析成功后即汇入公共 OnRecv，主线程投递与业务分发由后者统一完成。
     /// </summary>
     /// <param name="sourceClient">通道所属连接，注册时固定。</param>
     /// <param name="sourceGeneration">通道所属连接代次，注册时固定。</param>
@@ -480,13 +540,13 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         {
             return;
         }
-        // 先按登记身份过滤，旧通道的包不解析也不排队。
+        // 解析前的第一次归属检查：旧通道的包不解析。
         if (!IsRealtimeOwner(sourceClient, sourceGeneration))
         {
             return;
         }
 
-        // 待解析出的下行协议包，解析成功后投递给原分发入口。
+        // 待解析出的下行协议包，解析成功后交给公共派发入口。
         BasePackage basePackage;
         try
         {
@@ -500,18 +560,10 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
             return;
         }
 
-        // 包内协议号，随数据一起投递到主线程。
+        // 解析出的协议号与载荷，随公共入口一起完成主线程派发。
         int protoCode = basePackage.ProtoCode;
         ByteString data = basePackage.Data;
-        PostToMainThread(() =>
-        {
-            // 排队期间发生断线或重连时，旧通道数据不能进入新角色的业务层。
-            if (!IsRealtimeOwner(sourceClient, sourceGeneration))
-            {
-                return;
-            }
-            SocketDispatcher.Instance.DispatchEvent(protoCode, data, sourceGeneration);
-        });
+        OnRecv(sourceClient, sourceGeneration, protoCode, data, true);
     }
 
     /// <summary>

@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 
 /// <summary>
-/// TCP 连接基类：统一负责异步接收、按 2 字节长度帧拆包、ProtoBuf 反序列化与发送封包。
+/// 连接基类（对齐 RO 的 BaseLink）：对外只保留两个协议公共入口——发送用 Send、接收用 OnRecv。
+/// TCP 按 2 字节长度帧拆包与 KCP 重组后的完整消息都进入同一处解析派发，负责 ProtoBuf 反序列化与发送封包。
 /// </summary>
-public class ServerBase
+public class BaseLink
 {
     /// <summary>本连接的客户端类型，决定消息如何分发。</summary>
     public ClientType _clientType;
@@ -90,8 +91,16 @@ public class ServerBase
         catch (Exception ex)
         {
             Disconnect();
+            // 通信异常对应的套接字错误码，用于日志定位；非套接字异常退回通用 HResult。
             SocketException se = ex as SocketException;
-            LogMsg.Info($"[ServerBase] OnReceiveCB failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error);
+            if (se != null)
+            {
+                LogMsg.Info($"[BaseLink] OnReceiveCB failed, socketErrorCode={(int)se.SocketErrorCode}", LogMsgType.Error);
+            }
+            else
+            {
+                LogMsg.Info($"[BaseLink] OnReceiveCB failed, socketErrorCode={ex.HResult}", LogMsgType.Error);
+            }
         }
     }
 
@@ -113,11 +122,12 @@ public class ServerBase
                 break;
             }
 
+            // 交由 NetUtils 校验帧头、CRC 并解压出的协议包字节；为空说明本帧无效，跳过。
             byte[] data = NetUtils.Instance.ParseData(_buffer, messageLength, parseOffset);
             if (data != null)
             {
-                BasePackage basePackage = BasePackage.Parser.ParseFrom(data);
-                HandleCommand(basePackage);
+                // TCP 与 KCP 共用同一解析派发入口；TCP 不改写包内原有会话字段。
+                OnRecv(data);
             }
             parseOffset += frameLength;
         }
@@ -131,6 +141,27 @@ public class ServerBase
             }
             _receiveLength = remainingLength;
         }
+    }
+
+    /// <summary>
+    /// 协议接收公共入口（对齐 RO 的 BaseLink::OnRecv）：把一条完整消息反序列化后交给 HandleCommand。
+    /// TCP 拆帧与 KCP 重组都汇入此处，同一条消息只解析一次。
+    /// </summary>
+    /// <param name="payload">BasePackage 的原始序列化字节。</param>
+    /// <param name="resetGateSessionId">
+    /// 是否清空包内由对端自填的网关会话号。KCP 上行传 true，沿用原 KCP 专属的包身份清理；
+    /// TCP 默认 false，内网已有封包的字段一律不由本入口改写。
+    /// </param>
+    public void OnRecv(byte[] payload, bool resetGateSessionId = false)
+    {
+        // 由协议字节反序列化出的业务封包。
+        BasePackage basePackage = BasePackage.Parser.ParseFrom(payload);
+        if (resetGateSessionId)
+        {
+            // 客户端自填的会话标识不可信，清空后由 HandleCommand 按当前绑定会话补入。
+            basePackage.GateSessionId = 0;
+        }
+        HandleCommand(basePackage);
     }
 
     /// <summary>子类实现：处理一个已拆包的协议包。</summary>
@@ -157,11 +188,14 @@ public class ServerBase
 
 
     /// <summary>
-    /// 发送数据
+    /// 发送一条协议包（对齐 RO 的 BaseLink::Send）。先按实时分流决定是否交给 KCP，
+    /// 未接管时按原单次 TCP 帧写出，不增加确认、重试或发送队列。
     /// </summary>
-    /// <param name="data"></param>
-
-    public void SendData(BasePackage basePackage, int protoCode = -1, ByteString data = null)
+    /// <param name="basePackage">待发送协议包。</param>
+    /// <param name="protoCode">非 -1 时覆盖封包协议号。</param>
+    /// <param name="data">非空时覆盖封包载荷。</param>
+    /// <returns>本地提交结果：KCP 已接管或 TCP 帧已提交写出返回 true，实时协议被丢弃、无可用 Socket 或发送异常返回 false；不代表帧已完整写出，也不代表对端已收到或业务处理完成。</returns>
+    public bool Send(BasePackage basePackage, int protoCode = -1, ByteString data = null)
     {
         try
         {
@@ -183,14 +217,14 @@ public class ServerBase
             RealtimeSendResult realtimeResult = TrySendRealtime(basePackage, payload);
             if (realtimeResult == RealtimeSendResult.Sent)
             {
-                return;
+                return true;
             }
             if (realtimeResult == RealtimeSendResult.Dropped)
             {
                 // 曾经启用的实时通道已失效：本条丢弃，禁止改投 TCP 造成重复执行或跨通道乱序。
-                LogMsg.Info("[ServerBase] 实时通道已失效，丢弃实时协议，protoCode=" +
+                LogMsg.Info("[BaseLink] 实时通道已失效，丢弃实时协议，protoCode=" +
                     basePackage.ProtoCode, LogMsgType.Warn);
-                return;
+                return false;
             }
 
             // 加协议头后的 TCP 发送帧，交给 Socket 写出。
@@ -201,16 +235,25 @@ public class ServerBase
                 Socket sendSocket = _socket;
                 if (sendSocket == null)
                 {
-                    return;
+                    return false;
                 }
                 sendSocket.Send(frame);
             }
+            return true;
         }
         catch (Exception ex)
         {
             // 识别出的 SocketException 记录系统错误码，其余异常记录 HResult。
             SocketException se = ex as SocketException;
-            LogMsg.Info($"[ServerBase] SendData failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error);
+            if (se != null)
+            {
+                LogMsg.Info($"[BaseLink] Send failed, socketErrorCode={(int)se.SocketErrorCode}", LogMsgType.Error);
+            }
+            else
+            {
+                LogMsg.Info($"[BaseLink] Send failed, socketErrorCode={ex.HResult}", LogMsgType.Error);
+            }
+            return false;
         }
     }
 
@@ -253,25 +296,48 @@ public class ServerBase
     }
 
 
-    public void SendData(int protoCode = -1, ByteString data = null)
+    /// <summary>
+    /// 按协议号与载荷发送，封包不携带显式会话字段。
+    /// </summary>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷。</param>
+    /// <returns>本地提交结果，语义同 Send(BasePackage,...)。</returns>
+    public bool Send(int protoCode = -1, ByteString data = null)
     {
+        // 本重载不带目标会话字段，新建空封包只填协议号与载荷。
         BasePackage basePackage = new BasePackage();
-        SendData(basePackage, protoCode, data);
+        return Send(basePackage, protoCode, data);
     }
-    public void SendData( int unitySessionID,int protoCode = -1, ByteString data = null)
+
+    /// <summary>
+    /// 指定目标会话后按协议号与载荷发送，供网关向指定 Unity 会话转发下行。
+    /// </summary>
+    /// <param name="unitySessionID">目标 Unity 会话号，写入封包 UnitySessionId。</param>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷。</param>
+    /// <returns>本地提交结果，语义同 Send(BasePackage,...)。</returns>
+    public bool Send( int unitySessionID,int protoCode = -1, ByteString data = null)
     {
+        // 新建空封包并写入目标会话号，使下游能定位到指定的 Unity 连接。
         BasePackage basePackage = new BasePackage();
         basePackage.UnitySessionId = unitySessionID;
-        SendData(basePackage, protoCode, data);
+        return Send(basePackage, protoCode, data);
     }
+
+    /// <summary>
+    /// 按原协议包回一条错误码，沿用项目既有错误响应格式。
+    /// </summary>
+    /// <param name="basePackage">请求对应的原协议包，用于确定回包目标。</param>
+    /// <param name="cmdCode">出错的命令码。</param>
     public void SendError(BasePackage basePackage, CmdCode cmdCode)
     {
 
+        // 错误响应载荷，只带命令码，沿用项目既有错误回包格式。
         ErrMsg errMsg = new ErrMsg()
         {
             CmdCode = cmdCode,
         };
-        SendData(basePackage, NetDefine.CMD_ErrCode, errMsg.ToByteString());
+        Send(basePackage, NetDefine.CMD_ErrCode, errMsg.ToByteString());
     }
 
 

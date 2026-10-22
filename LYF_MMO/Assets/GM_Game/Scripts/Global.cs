@@ -113,7 +113,7 @@ public class Global : MonoBehaviour {
         _package = YooAssets.GetPackage("DefaultPackage");
         // 资源包安装后一次补启动此前持有的表现资产，冷技能不再在 Update 中反复查询。
         SkillRuntimePresentationCache.NotifyResourcePackageReady();
-        NetSocketMgr.Instance.Init();
+        MNetClient.Instance.Init();
         PlayStateMgr.Instance.init();
         LubanMgr.Instance.Init();
         // 同步锁定本次进程施法权限，之后才允许动画门控开放角色；缺配置采用稳定禁止默认。
@@ -266,9 +266,9 @@ public class Global : MonoBehaviour {
 
         // 只有底层连接成功的真实回包才绑定连接代次；连接尝试或离线测试固定使用零代次。
         long connectionGeneration = 0;
-        if (NetSocketMgr.Instance.IsConnected)
+        if (MNetClient.Instance.IsConnected)
         {
-            connectionGeneration = NetSocketMgr.Instance.CurrentConnectionGeneration;
+            connectionGeneration = MNetClient.Instance.CurrentConnectionGeneration;
         }
 
         if (SceneWorld != null && IsSameLoadedRole(roleInfo))
@@ -311,7 +311,7 @@ public class Global : MonoBehaviour {
 
         // 只有绑定了真实网络代次的角色才校验连接一致性；零代次测试角色不依赖网络连接。
         long currentConnectionGeneration =
-            NetSocketMgr.Instance.CurrentConnectionGeneration;
+            MNetClient.Instance.CurrentConnectionGeneration;
         if (_localRoleConnectionGeneration > 0 &&
             currentConnectionGeneration != _localRoleConnectionGeneration)
         {
@@ -476,7 +476,7 @@ public class Global : MonoBehaviour {
     /// <summary>退出客户端时断开连接并清理角色运行时数据。</summary>
     private void OnApplicationQuit()
     {
-        NetSocketMgr.Instance.Disconnect();
+        MNetClient.Instance.Disconnect();
         ReleaseRuntimeResources();
     }
 

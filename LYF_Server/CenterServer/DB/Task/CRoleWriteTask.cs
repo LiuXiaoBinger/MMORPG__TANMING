@@ -15,7 +15,7 @@ public sealed class CRoleWriteTask
     // GameServer 提交的完整角色物品快照和版本。
     private readonly SaveRoleDataReq _request;
     // 用于向发起请求的 GameServer 回传事务结果。
-    private readonly ServerBase _serverBase;
+    private readonly BaseLink _serverBase;
     // 回包所需的网关和 Unity 会话信息副本，确保回包能沿原链路返回。
     private readonly BasePackage _basePackage;
 
@@ -25,7 +25,7 @@ public sealed class CRoleWriteTask
     /// <param name="request">GameServer 提交的保存请求，包含角色 ID、版本号和各背包物品快照。</param>
     /// <param name="serverBase">服务器基类，用于发送回包。</param>
     /// <param name="basePackage">原始请求的会话信息副本，为空时创建空包。</param>
-    public CRoleWriteTask(SaveRoleDataReq request, ServerBase serverBase, BasePackage basePackage)
+    public CRoleWriteTask(SaveRoleDataReq request, BaseLink serverBase, BasePackage basePackage)
     {
         _request = request;
         _serverBase = serverBase;
@@ -522,7 +522,7 @@ public sealed class CRoleWriteTask
         if (_serverBase != null)
         {
             // 通过原始会话链路发送回包，GameServer 收到后按版本号清理对应脏状态。
-            _serverBase.SendData(_basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
+            _serverBase.Send(_basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
         }
     }
 

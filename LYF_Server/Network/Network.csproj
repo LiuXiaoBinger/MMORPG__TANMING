@@ -107,7 +107,7 @@
     <Compile Include="Socket\com\IContainer.cs" />
     <Compile Include="Socket\com\NetDefine.cs" />
     <Compile Include="Socket\com\NetUtils.cs" />
-    <Compile Include="Socket\com\ServerBase.cs" />
+    <Compile Include="Socket\com\BaseLink.cs" />
     <Compile Include="Socket\com\Session.cs" />
     <Compile Include="Socket\com\SessionMgr.cs" />
     <Compile Include="Socket\NetClient.cs" />

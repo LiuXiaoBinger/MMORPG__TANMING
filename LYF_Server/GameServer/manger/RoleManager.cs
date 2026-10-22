@@ -301,7 +301,7 @@ public class RoleManager
     /// <summary>处理客户端进入世界请求，并同步附近在线角色。</summary>
     /// <param name="serverBase">接收请求的游戏服网络连接。</param>
     /// <param name="package">客户端请求数据包。</param>
-    public void HandleClientEnterWorld(ServerBase serverBase, BasePackage package)
+    public void HandleClientEnterWorld(BaseLink serverBase, BasePackage package)
     {
         // 解析前先校验传输对象，避免无效数据触发协议解析异常。
         if (serverBase == null || package == null || package.Data == null)
@@ -367,7 +367,7 @@ public class RoleManager
         // 会话校验通过后再转发中心服，避免伪造角色请求进入后续流程。
         if (serverBase._client != null)
         {
-            serverBase._client.SendData(package);
+            serverBase._client.Send(package);
         }
 
         // 进入世界后，先通知附近玩家，再将附近角色发送给当前玩家。
@@ -378,7 +378,7 @@ public class RoleManager
     /// <summary>处理客户端背包扩容请求，并将成功结果转发中心服持久化。</summary>
     /// <param name="serverBase">接收请求的游戏服网络连接。</param>
     /// <param name="package">客户端请求数据包。</param>
-    public void HandleClientOpenKnapsackGrid(ServerBase serverBase, BasePackage package)
+    public void HandleClientOpenKnapsackGrid(BaseLink serverBase, BasePackage package)
     {
         // 背包扩容在主线程完成校验和状态修改，成功后分别回客户端并通知中心服持久化。
         OpenKnapsackGridReq request = null;
@@ -410,7 +410,7 @@ public class RoleManager
         if (request == null || request.RoleId <= 0 || request.OpenGridCount <= 0)
         {
             result.CmdCode = CmdCode.ReqParamError;
-            serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
+            serverBase.Send(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
             return;
         }
 
@@ -419,14 +419,14 @@ public class RoleManager
         if (role == null || role.mainRoleInfo == null)
         {
             result.CmdCode = CmdCode.ReqParamError;
-            serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
+            serverBase.Send(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
             return;
         }
         // 基础信息缺失或角色 ID 与请求不符时按参数错误返回。
         if (role.mainRoleInfo.BaseInfo == null || role.mainRoleInfo.BaseInfo.RoleId != request.RoleId)
         {
             result.CmdCode = CmdCode.ReqParamError;
-            serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
+            serverBase.Send(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
             return;
         }
 
@@ -440,7 +440,7 @@ public class RoleManager
             result.CurrentOpenedGridCount = component.GetOpenedGridCount((KnapsackType)request.KnapsackType);
         }
 
-        serverBase.SendData(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
+        serverBase.Send(package, NetDefine.CMD_OpenKnapsackGridCode, result.ToByteString());
         if (result.CmdCode != CmdCode.Succeed || serverBase._client == null)
         {
             return;
@@ -457,7 +457,7 @@ public class RoleManager
             KnapsackType = request.KnapsackType,
             OpenedGridCount = result.CurrentOpenedGridCount
         };
-        serverBase._client.SendData(
+        serverBase._client.Send(
             persistencePackage,
             NetDefine.CMD_SyncKnapsackGridCountCode,
             persistenceRequest.ToByteString());
@@ -591,7 +591,7 @@ public class RoleManager
             Session session = SessionMgr.Instance.GetSession(role.GateSessionId);
             if (session != null)
             {
-                session.SendData(role.UnitySessionId, NetDefine.CMD_SyncotherOnlineCode,
+                session.Send(role.UnitySessionId, NetDefine.CMD_SyncotherOnlineCode,
                     currentRole.BaseInfo.ToByteString());
             }
         }
@@ -638,8 +638,8 @@ public class RoleManager
                 continue;
             }
 
-            // Session.SendData(int, ...) 每次创建独立 BasePackage，避免修改进入世界请求包。
-            targetSession.SendData(sessionRole.UnitySessionId, NetDefine.CMD_SyncotherOnlineCode,
+            // Session.Send(int, ...) 每次创建独立 BasePackage，避免修改进入世界请求包。
+            targetSession.Send(sessionRole.UnitySessionId, NetDefine.CMD_SyncotherOnlineCode,
                 role.mainRoleInfo.BaseInfo.ToByteString());
         }
     }

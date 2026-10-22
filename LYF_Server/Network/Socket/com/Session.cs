@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// 一条已建立的 TCP 会话：负责异步接收、拆包、按协议号分发命令，并在断开时回调宿主。
 /// </summary>
-public class Session : ServerBase
+public class Session : BaseLink
 {
     /// <summary>会话 ID，由 SessionMgr 分配。</summary>
     public int SessionID{get;set;}
@@ -168,21 +168,6 @@ public class Session : ServerBase
             return false;
         }
         return upstream._clientType == ClientType.GameServer;
-    }
-
-    /// <summary>
-    /// KCP 上行入口：复用原命令分发链，把已认证的协议包交给注册处理器。
-    /// </summary>
-    /// <param name="basePackage">从 KCP 载荷解析出的协议包。</param>
-    public void HandleRealtimePackage(BasePackage basePackage)
-    {
-        if (basePackage == null)
-        {
-            return;
-        }
-        // 客户端自填的会话标识不可信，清空后由 HandleCommand 按当前绑定会话补入。
-        basePackage.GateSessionId = 0;
-        HandleCommand(basePackage);
     }
 
     /// <summary>兼容历史调用名称，统一进入可重写的断开流程。</summary>

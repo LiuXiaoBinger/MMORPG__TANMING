@@ -1,3 +1,11 @@
+## 2026-10-22 RO公共接口：最终独立验证
+
+- 五服务工程Network/Gate/Game/Center/Login0错误；289客户端源默认临时新库及正式插件路径均0错误。实际警告计数服务14/14/28/14/16、客户端350，不作全部既有或本轮新增归因。
+- 主Agent真实Socket/KCP122/0、入场8/0、客户端薄边界54/0；最终证据_temp/network-ro-interface-20261022/codex-validation/final-verification.json。薄边界Unity/资源前置用桩，KCP回调专项反射调用真实方法，不冒称Unity画面或真实UDP下行。
+- 原测试53/1为主Agent过强预期，已只改测试为Disconnect旧代次失效，首日志保留；业务不加门禁。开发者自检126/52/8与主Agent数字分开记录，不能互相冒用。
+- 最终正式插件与主Agent新构建SHA一致，原9用户文件、meta身份、33机械迁移语义保持；输入与验证记录一致。关闭Socket及UDP10054清理告警仍有，未宣称长稳或运行日志零错误。
+- Unity双号、真实模型动画/MP、业务重连、实体早到、端到端弱网与IL2CPP/HybridCLR未验；未启停用户Unity/正式服务、保存场景或替用户热更字节。逐项文件及Git回执见项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md。
+
 ## 2026-10-22 自动审批规则与实际原生回执
 
 - AGENTS、AIconfig总策略/流程及两执行者角色同步自动同意、允许本次、用户授权优先和原任务范围要求；TOML解析、文字覆盖、Git差异及原用户文件保护另见本轮检查。

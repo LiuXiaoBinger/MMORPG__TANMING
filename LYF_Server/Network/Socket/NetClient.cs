@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// TCP 主动连接器：服务端之间互联（登录/网关/中心/游戏）时使用，支持异步连接与定时自动重连。
 /// </summary>
-public class NetClient : ServerBase
+public class NetClient : BaseLink
 {
 
     /// <summary>对端主机地址。</summary>

@@ -173,7 +173,7 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
                 Message = message ?? string.Empty
             }
         };
-        context.Transport.SendData(context.Package, NetDefine.CMD_BuyShopItemCode,
+        context.Transport.Send(context.Package, NetDefine.CMD_BuyShopItemCode,
             response.ToByteString());
     }
     /// <summary>购买失败时返还已经扣除的虚拟物品，保持本次购买在内存中的原子性。</summary>

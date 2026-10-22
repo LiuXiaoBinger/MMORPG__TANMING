@@ -1,3 +1,9 @@
+## 2026-10-22 RO公共接口对齐决策
+
+- 实际改名已有类型/文件，不留旧名空壳；保留protobuf与单连接对象签名差异，不为凑名拆MConnection/MSocket。RO的CKcpPeer不继承BaseLink，重组后的协议入口共用，不能据模块存在推导RO业务线上启用KCP。
+- BaseLink.OnRecv仅KCP上行传true清客户端自填GateSessionId，TCP内网字段保持原规则；MNetClient公共派发保持原解析前/主线程前两次归属过滤、绑定控制仅TCP消费。商城保捕获连接发送，Send返回本地提交bool，不代表对端收到或处理完成。
+- 首个ReleaseRealtimeClient独立用例预期过强，修测试为真实Disconnect，不加通道门禁；最终只保原正常流程。完整对照、设计取舍与验证见项目分析/RO_NETWORK_INTERFACE_COMPARISON.md及项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md。
+
 ## 2026-10-22 自动审批决策
 
 - 用户明确长期授权：本项目已授权任务内的编译、测试、只读查找与允许范围文件操作所触发的工具权限，Agent自动同意，优先Allow/allow_once，不再要求用户在桌面找按钮或重复确认。该用户授权优先于Skill通用手动审批约定；保持原任务和真实审批身份，不扩大任务范围、重复派工或伪造回执。

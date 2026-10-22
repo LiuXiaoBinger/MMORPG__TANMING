@@ -60,7 +60,7 @@ namespace LoginServer
                     PhoneNum = "13000000000",
                     Password = "12345"
                 };
-                client.SendData(NetDefine.CMD_RegistCode, req.ToByteString());
+                client.Send(NetDefine.CMD_RegistCode, req.ToByteString());
 
             }, null, 5000, Timeout.Infinite);*/
 

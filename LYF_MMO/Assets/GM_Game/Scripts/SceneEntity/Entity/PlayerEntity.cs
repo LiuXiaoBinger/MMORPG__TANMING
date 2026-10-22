@@ -66,7 +66,7 @@ public sealed class PlayerEntity : RoleEntity
         ptc.IsMoved = isMoved || MoveComp.HasDirectionalInput;
         ptc.JumpCount = _jumpCount;
         MoveComp.CostTime = 0f;
-        NetSocketMgr.Client.SendData(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
         _lastSyncTime = 0f;
     }
 

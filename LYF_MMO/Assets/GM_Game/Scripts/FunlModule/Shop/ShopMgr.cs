@@ -76,8 +76,8 @@ public class ShopMgr : Singleton<ShopMgr>
     /// </summary>
     public bool SendBuyRequest(int shopTableId, int goodsId, int buyCount)
     {
-        NetClient client = NetSocketMgr.Client;
-        long connectionGeneration = NetSocketMgr.Instance.CurrentConnectionGeneration;
+        NetClient client = MNetClient.Client;
+        long connectionGeneration = MNetClient.Instance.CurrentConnectionGeneration;
         PlayerEntity localRole = GetLocalRole();
         // 网络通道无效：客户端为空或连接代次尚未建立。
         bool networkInvalid = client == null || connectionGeneration <= 0;
@@ -132,7 +132,7 @@ public class ShopMgr : Singleton<ShopMgr>
             _isPurchasePending = true;
             _pendingGoodsId = goodsId;
             _pendingConnectionGeneration = connectionGeneration;
-            client.SendData(NetDefine.CMD_BuyShopItemCode, request.ToByteString());
+            client.Send(NetDefine.CMD_BuyShopItemCode, request.ToByteString());
             return true;
         }
         catch (Exception exception)

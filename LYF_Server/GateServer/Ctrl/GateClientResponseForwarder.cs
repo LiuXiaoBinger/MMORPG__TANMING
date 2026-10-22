@@ -30,7 +30,7 @@ public static class GateClientResponseForwarder
             if (ShouldForwardBusinessResult(package.ProtoCode))
             {
                 // 购买失败保留专用回包；扩容失败仍要同步权威格子数，不能替换为通用错误包。
-                session.SendData(package);
+                session.Send(package);
                 if (package.ProtoCode == NetDefine.CMD_OpenKnapsackGridCode)
                 {
                     // 扩容失败在保留权威格子数后，再通过统一错误码触发客户端 Tips。
@@ -44,7 +44,7 @@ public static class GateClientResponseForwarder
             return;
         }
 
-        session.SendData(package);
+        session.Send(package);
     }
 
     /// <summary>

@@ -2,6 +2,12 @@
 
 任务 NETWORK-KCP-IMPLEMENT-20261022，分支 codex/network-kcp-development，基线 756ca35。设计依据见 `项目分析/RO_NETWORK_TCP_KCP_DESIGN.md`；本文记录实际落地的代码结构与边界。
 
+## 2026-10-22 RO公共接口迁移（最终源码与网络插件已集成）
+
+当前源码已将ServerBase及文件实际改为BaseLink、NetSocketMgr及文件/meta实际改为MNetClient；SendData三个重载改为bool Send，公共BaseLink.OnRecv承接TCP拆帧和KCP重组，客户端MNetClient.OnRecv统一主线程派发。普通业务发送走MNetClient.Send，商城仍保留原捕获连接后发送的语义。下文旧名称用于历史过程，当前接口对照和最终状态查项目分析/RO_NETWORK_INTERFACE_COMPARISON.md及项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md。
+
+五实时协议固定KCP、其余及Gate↔Game为TCP，分流规则不因命名迁移改变。正式Network.dll已配套本轮构建，正式插件路径289源编译0错误；用户旧GM_Game.dll.bytes保留，实际运行仍需重新构建同版热更程序集。正式双号与发布边界查公共接口对照专题。
+
 ## 2026-10-22 当前策略：移动与技能固定 KCP
 
 本轮任务 `NETWORK-KCP-ONLY-20261022`，基线 `ab6252c`，沿用网络专用分支。用户明确要求移动等直接 KCP，下面的第三版“绑定前 TCP、绑定后切换”机制由本段取代；历史测试数字仅对应当时版本，本轮结果以 `项目修改日志/2026-10-22-KCP-ONLY-REALTIME-CHANGELOG.md` 为准。

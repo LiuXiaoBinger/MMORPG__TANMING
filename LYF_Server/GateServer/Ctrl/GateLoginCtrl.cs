@@ -14,7 +14,7 @@ public class GateLoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase">收到 Unity 请求的网关传输对象。</param>
     /// <param name="basePackage">携带原会话标识的请求协议包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         switch (basePackage.ProtoCode)
         {
@@ -33,11 +33,11 @@ public class GateLoginCtrl:IContainer
         }
     }
 
-    private void OnStartGameCodeHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnStartGameCodeHandle(BaseLink serverBase, BasePackage basePackage)
     {
         StartGameReq req = StartGameReq.Parser.ParseFrom(basePackage.Data);
         //发送数据到游戏服务器
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
@@ -46,32 +46,32 @@ public class GateLoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    private void OnCreateRoleHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnCreateRoleHandle(BaseLink serverBase, BasePackage basePackage)
     {
         CreateRoleReq req = CreateRoleReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
         //todo验证昵称合法
         
         //发送数据到游戏服务器
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
     
     /// <summary>
     /// 选服请求透传：解析请求后连同原会话一起转发给 GameServer，网关不做校验。
     /// </summary>
-    private void OnLoginGameServerHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnLoginGameServerHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginGameServerReq req = LoginGameServerReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
     /// <summary>
     /// GameServer 登录类结果回包入口：按 UnitySessionId 找回会话，经转发器校验错误码后回传 Unity。
     /// </summary>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);

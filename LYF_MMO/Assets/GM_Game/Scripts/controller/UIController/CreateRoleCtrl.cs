@@ -182,7 +182,7 @@ public class CreateRoleCtrl : CtrlBase
         int requestedRoleId = localRole.BaseInfo.RoleId;
         // 发起切场景时的网络连接代次，用于阻断断线或自动重连前的旧场景回调。
         long requestedConnectionGeneration =
-            NetSocketMgr.Instance.CurrentConnectionGeneration;
+            MNetClient.Instance.CurrentConnectionGeneration;
         SceneMgr.Instance.LoadSceneMode(SceneType.Scene_MainCity, () =>
         {
             // 无论回调是否仍有效，都先释放本控制器的场景切换占用状态。
@@ -231,7 +231,7 @@ public class CreateRoleCtrl : CtrlBase
             return false;
         }
         if (!ReferenceEquals(requestedGlobal.SceneWorld, requestedWorld) ||
-            NetSocketMgr.Instance.CurrentConnectionGeneration !=
+            MNetClient.Instance.CurrentConnectionGeneration !=
             requestedConnectionGeneration)
         {
             return false;
@@ -268,7 +268,7 @@ public class CreateRoleCtrl : CtrlBase
         {
             return;
         }
-        if (NetSocketMgr.Client == null)
+        if (MNetClient.Client == null)
         {
             return;
         }
@@ -277,7 +277,7 @@ public class CreateRoleCtrl : CtrlBase
         _lastCompletedRoleId = 0;
         // 发往服务器的开始游戏请求，只包含当前选中的角色 ID。
         StartGameReq request = new StartGameReq(){RoleId = roleId};
-        NetSocketMgr.Client.SendData(NetDefine.CMD_StartGameCode,request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_StartGameCode,request.ToByteString());
     }
 
     /// <summary>发送创建角色请求。</summary>
@@ -289,7 +289,7 @@ public class CreateRoleCtrl : CtrlBase
         {
             return;
         }
-        if (Global.Instance.LoginInfo == null || NetSocketMgr.Client == null)
+        if (Global.Instance.LoginInfo == null || MNetClient.Client == null)
         {
             return;
         }
@@ -301,7 +301,7 @@ public class CreateRoleCtrl : CtrlBase
             GameServerId = Global.Instance.LoginInfo.GameServer.ServerId,
             JobId = jobId
         };
-        NetSocketMgr.Client.SendData(NetDefine.CMD_CreateRoleCode,request.ToByteString());
+        MNetClient.Instance.Send(NetDefine.CMD_CreateRoleCode,request.ToByteString());
     }
 
     /// <summary>处理创建角色回包并刷新选角界面。</summary>

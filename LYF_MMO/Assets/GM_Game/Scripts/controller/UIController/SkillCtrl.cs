@@ -84,7 +84,7 @@ public sealed class SkillCtrl : CtrlBase
         // 11080 只接纳当前连接派发的回包，旧连接暂存数据不能跨会话装载。
         long dispatchGeneration = SocketDispatcher.Instance.CurrentDispatchGeneration;
         if (dispatchGeneration <= 0 || dispatchGeneration !=
-            NetSocketMgr.Instance.CurrentConnectionGeneration)
+            MNetClient.Instance.CurrentConnectionGeneration)
         {
             return;
         }
@@ -205,7 +205,7 @@ public sealed class SkillCtrl : CtrlBase
             _skillViewRoleId = 0;
             // LoadLocalRole 会先通知 null，再创建实体；同连接待应用回包在此保留。
             if (_pendingRoleSkillGeneration !=
-                NetSocketMgr.Instance.CurrentConnectionGeneration)
+                MNetClient.Instance.CurrentConnectionGeneration)
             {
                 _pendingRoleSkillInfos.Clear();
                 _pendingRoleSkillGeneration = 0;
@@ -217,7 +217,7 @@ public sealed class SkillCtrl : CtrlBase
         RoleSkillInfoRet pendingResult = null;
         bool hasMatchingPendingResult = _pendingRoleSkillGeneration > 0 &&
             _pendingRoleSkillGeneration ==
-            NetSocketMgr.Instance.CurrentConnectionGeneration &&
+            MNetClient.Instance.CurrentConnectionGeneration &&
             _pendingRoleSkillInfos.TryGetValue(localRole.GetID(),
                 out pendingResult);
         if (hasMatchingPendingResult)
@@ -363,9 +363,9 @@ public sealed class SkillCtrl : CtrlBase
     /// <param name="data">SkillCastRet 的 protobuf 消息体。</param>
     private void OnSkillCastResult(ByteString data)
     {
-        if (NetSocketMgr.Instance == null ||
+        if (MNetClient.Instance == null ||
             SocketDispatcher.Instance.CurrentDispatchGeneration !=
-            NetSocketMgr.Instance.CurrentConnectionGeneration)
+            MNetClient.Instance.CurrentConnectionGeneration)
         {
             return;
         }

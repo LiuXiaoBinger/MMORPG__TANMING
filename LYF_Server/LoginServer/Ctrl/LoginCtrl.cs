@@ -11,7 +11,7 @@ public class LoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase">中心服方向的连接对象。</param>
     /// <param name="basePackage">中心服回包协议。</param>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         switch (basePackage.ProtoCode)
@@ -43,7 +43,7 @@ public class LoginCtrl:IContainer
             return;
         }
         //把结果数据返回给unity
-        seesion.SendData(basePackage);
+        seesion.Send(basePackage);
     }
 
     private void OnGetServerListResultHandle(Session seesion, BasePackage basePackage)
@@ -56,7 +56,7 @@ public class LoginCtrl:IContainer
             return;
         }
         //把结果数据返回给unity
-        seesion.SendData(basePackage);
+        seesion.Send(basePackage);
     }
 
     private void OnLoginResultHandle(Session seesion, BasePackage basePackage)
@@ -69,7 +69,7 @@ public class LoginCtrl:IContainer
             return;
         }
         //把结果数据返回给unity
-        seesion.SendData(basePackage);
+        seesion.Send(basePackage);
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class LoginCtrl:IContainer
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
     /// <exception cref="NotImplementedException"></exception>
-    private void OnRegistResultHandle(ServerBase seesion, BasePackage basePackage)
+    private void OnRegistResultHandle(BaseLink seesion, BasePackage basePackage)
     {
         RegistRet ret = RegistRet.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnRegistResultHandle::" + ret.ToString());
@@ -88,7 +88,7 @@ public class LoginCtrl:IContainer
             return;
         }
         //把结果数据返回给unity
-        seesion.SendData(basePackage);
+        seesion.Send(basePackage);
     }
 
     /// <summary>IContainer 初始化回调，登录控制器无预加载资源，留空实现。</summary>
@@ -101,7 +101,7 @@ public class LoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase">收到 Unity 请求的登录服传输对象。</param>
     /// <param name="basePackage">上行请求协议包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
 
         switch (basePackage.ProtoCode)
@@ -129,11 +129,11 @@ public class LoginCtrl:IContainer
 
     }
 
-    private void OnRegistVarifyHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnRegistVarifyHandle(BaseLink serverBase, BasePackage basePackage)
     {
         RegistVarifyReq req = RegistVarifyReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        //serverBase._client.SendData(basePackage);
+        //serverBase._client.Send(basePackage);
         //发送邮箱账号给Varify服务器
 
         GRPCMgr.Instance.GetVarifyCodeAsync(req.Email);
@@ -142,20 +142,20 @@ public class LoginCtrl:IContainer
 
     
 
-    private void OnLoginGameServerHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnLoginGameServerHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginGameServerReq req = LoginGameServerReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
-    private void OnGetServerListHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnGetServerListHandle(BaseLink serverBase, BasePackage basePackage)
     {
        
         GetServerListReq req = GetServerListReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnGetServerListHandle::" + req.ToString());
     }
 
@@ -164,7 +164,7 @@ public class LoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    private void OnLoginHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnLoginHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginReq req = LoginReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
@@ -176,7 +176,7 @@ public class LoginCtrl:IContainer
         }
         
         DataUtils.Instance.AddLoginMilliseconds(req.UserName,DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         
         LogMsg.Info("OnLoginHandle::" + req.ToString());
     }
@@ -186,7 +186,7 @@ public class LoginCtrl:IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    private void OnRegistHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnRegistHandle(BaseLink serverBase, BasePackage basePackage)
     {
 
         RegistReq req = RegistReq.Parser.ParseFrom(basePackage.Data);
@@ -210,7 +210,7 @@ public class LoginCtrl:IContainer
         }
         //MD5密码加密
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnRegistHandle::" + req.ToString());
     }
         

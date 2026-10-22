@@ -16,7 +16,7 @@ public class GateRoleCtrl:IContainer
     /// </summary>
     /// <param name="serverBase">收到 Unity 请求的网关传输对象。</param>
     /// <param name="basePackage">携带原会话标识的请求协议包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         switch (basePackage.ProtoCode)
         {
@@ -36,40 +36,40 @@ public class GateRoleCtrl:IContainer
         }
     }
 
-    private void OnEnterWroldHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
     {
         EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
         //todo验证信息的合法性
         
         //发送给游戏逻辑服务器
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnEnterWroldHandle::" + req.ToString());
     }
 
     /// <summary>
     /// 网关不执行业务，只保留 Unity 会话信息并将请求转发给 GameServer。
     /// </summary>
-    private void OnOpenKnapsackGridHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnOpenKnapsackGridHandle(BaseLink serverBase, BasePackage basePackage)
     {
         if (serverBase == null || serverBase._client == null)
         {
             return;
         }
 
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
     }
 
     /// <summary>
     /// 网关只透传商城购买请求，保留 UnitySessionId 和 GateSessionId，禁止在此扣费或发货。
     /// </summary>
-    private static void OnBuyShopItemHandle(ServerBase serverBase, BasePackage basePackage)
+    private static void OnBuyShopItemHandle(BaseLink serverBase, BasePackage basePackage)
     {
         if (serverBase == null || serverBase._client == null || basePackage == null)
         {
             return;
         }
 
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class GateRoleCtrl:IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);

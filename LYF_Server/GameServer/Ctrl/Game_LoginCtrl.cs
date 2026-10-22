@@ -11,12 +11,12 @@ public class Game_LoginCtrl
     /// </summary>
     /// <param name="serverBase">接收该请求的 GameServer 传输对象，用于回连 CenterServer。</param>
     /// <param name="basePackage">客户端开始游戏协议包。</param>
-    public static void HandleClientStartGame(ServerBase serverBase, BasePackage basePackage)
+    public static void HandleClientStartGame(BaseLink serverBase, BasePackage basePackage)
     {
         // 开始游戏请求由逻辑线程转发给 CenterServer，角色初始化等待中心服结果。
         StartGameReq req = StartGameReq.Parser.ParseFrom(basePackage.Data);
         // 沿中心服连接原样转发协议包，不修改会话字段。
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
@@ -25,12 +25,12 @@ public class Game_LoginCtrl
     /// </summary>
     /// <param name="serverBase">接收该请求的 GameServer 传输对象。</param>
     /// <param name="basePackage">客户端创建角色协议包。</param>
-    public static void HandleClientCreateRole(ServerBase serverBase, BasePackage basePackage)
+    public static void HandleClientCreateRole(BaseLink serverBase, BasePackage basePackage)
     {
         // 创建角色数据由 CenterServer 持久化，GameServer 只负责转发请求。
         CreateRoleReq req = CreateRoleReq.Parser.ParseFrom(basePackage.Data);
         // 沿中心服连接原样转发协议包。
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
@@ -39,13 +39,13 @@ public class Game_LoginCtrl
     /// </summary>
     /// <param name="serverBase">接收该请求的 GameServer 传输对象。</param>
     /// <param name="basePackage">客户端登录游戏服协议包。</param>
-    public static void HandleClientLoginGameServer(ServerBase serverBase, BasePackage basePackage)
+    public static void HandleClientLoginGameServer(BaseLink serverBase, BasePackage basePackage)
     {
         // 登录 GameServer 请求沿原协议转发，结果仍通过同一网关会话返回客户端。
         LoginGameServerReq req = LoginGameServerReq.Parser.ParseFrom(basePackage.Data);
         // 历史实现曾在此覆写 UnitySessionId；当前由网关统一维护会话字段，此处不再改写。
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 

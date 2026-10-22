@@ -552,14 +552,18 @@ public sealed class UdpNetwork
         }
     }
 
-    /// <summary>把一条 KCP 载荷解析为 BasePackage 并交给会话原分发链。</summary>
+    /// <summary>
+    /// 把一条已重组的 KCP 消息交给连接基类的协议接收公共入口。
+    /// 解析与命令分发统一由 BaseLink.OnRecv 完成，本方法只保留 KCP 专属的坏包吞掉边界与包身份清理参数。
+    /// </summary>
+    /// <param name="session">消息所属的网关会话。</param>
+    /// <param name="message">KCP 按序重组出的完整消息字节。</param>
     private void DeliverPackage(Session session, byte[] message)
     {
         try
         {
-            // 由 KCP 载荷反序列化出的业务封包，交给会话原分发链。
-            BasePackage basePackage = BasePackage.Parser.ParseFrom(message);
-            session.HandleRealtimePackage(basePackage);
+            // 第二个参数为 true：保留原 KCP 上行清空客户端自填网关会话号的既有行为。
+            session.OnRecv(message, true);
         }
         catch (InvalidProtocolBufferException ex)
         {
@@ -773,7 +777,7 @@ public sealed class UdpNetwork
         payload.Token = new byte[KcpDefine.BindTokenBytes];
         payload.UdpPort = Port;
         // 该协议不在实时集合内，钩子会保留原 TCP 封包。
-        session.SendData(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
+        session.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
     }
 
     /// <summary>

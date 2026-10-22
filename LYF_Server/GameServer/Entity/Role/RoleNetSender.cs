@@ -118,7 +118,7 @@ public sealed class RoleNetSender
             GateSessionId = _role.GateSessionId,
             UnitySessionId = _role.UnitySessionId
         };
-        _centerClient.SendData(package, NetDefine.CMD_SaveRoleDataCode, _inFlightRequest.ToByteString());
+        _centerClient.Send(package, NetDefine.CMD_SaveRoleDataCode, _inFlightRequest.ToByteString());
         _inFlightMilliseconds = 0;
     }
 }

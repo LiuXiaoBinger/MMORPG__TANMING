@@ -394,13 +394,13 @@ public class MNavigationComponent : EntityComponentBase
         }
         // RO实体施法UUID在1至9999循环，请求与本地预表现共用这一笔身份。
         ulong skillUuid = localRole.NextSkillUUID;
-        if (NetSocketMgr.Client != null)
+        if (MNetClient.Client != null)
         {
             try
             {
                 // 沿原无目标协议，只发送UUID与主表ID，不扩导航或目标字段。
                 SkillCastReq request = new SkillCastReq { SkillUuid = skillUuid, SkillId = skillArgs.Identify };
-                NetSocketMgr.Client.SendData(NetDefine.CMD_SkillCastCode, request.ToByteString());
+                MNetClient.Instance.Send(NetDefine.CMD_SkillCastCode, request.ToByteString());
             }
             catch (Exception exception)
             {

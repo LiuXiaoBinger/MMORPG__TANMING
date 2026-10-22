@@ -32,7 +32,7 @@ public class CenterRoleCtrl:IContainer
     /// </summary>
     /// <param name="serverBase">当前网络服务器对象。</param>
     /// <param name="basePackage">包含协议号与 protobuf 数据的网络包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         switch (basePackage.ProtoCode)
         {
@@ -60,7 +60,7 @@ public class CenterRoleCtrl:IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    private void OnEnterWroldHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
     {
         EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnEnterWroldHandle::" + req.ToString());
@@ -68,30 +68,30 @@ public class CenterRoleCtrl:IContainer
         //返回角色的技能信息
         RoleSkillInfoRet ret= _centRoleModel.RoleSkillInfo(req);
         LogMsg.Info("OnEnterWroldHandle=>RoleSkillInfoRet::" + ret.ToString());
-        serverBase.SendData(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
+        serverBase.Send(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
     
         //返回角色背包数据
         RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
         LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
-        serverBase.SendData(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
+        serverBase.Send(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
 
     }
 
     /// <summary>
     /// 接收 GameServer 主循环确认后的格子数并写入数据库。
     /// </summary>
-    private void OnSyncKnapsackGridCountHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnSyncKnapsackGridCountHandle(BaseLink serverBase, BasePackage basePackage)
     {
         SyncKnapsackGridCountReq req = SyncKnapsackGridCountReq.Parser.ParseFrom(basePackage.Data);
         OpenKnapsackGridRet ret = _centRoleModel.SyncKnapsackGridCount(req);
-        serverBase.SendData(basePackage, NetDefine.CMD_SyncKnapsackGridCountCode, ret.ToByteString());
+        serverBase.Send(basePackage, NetDefine.CMD_SyncKnapsackGridCountCode, ret.ToByteString());
     }
 
     /// <summary>
     /// 接收 GameServer 转发的商城请求。
     /// 当前中心服没有完成货币扣除和物品发放，所以只返回功能未就绪，不写入购买记录。
     /// </summary>
-    private void OnBuyShopItemHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnBuyShopItemHandle(BaseLink serverBase, BasePackage basePackage)
     {
         BuyShopItemReq request;
         try
@@ -109,17 +109,17 @@ public class CenterRoleCtrl:IContainer
                     Message = "购买请求格式无效"
                 }
             };
-            serverBase.SendData(basePackage, NetDefine.CMD_BuyShopItemCode,
+            serverBase.Send(basePackage, NetDefine.CMD_BuyShopItemCode,
                 invalidResponse.ToByteString());
             return;
         }
 
         BuyShopItemRes response = _centRoleModel.ProcessShopPurchase(request);
-        serverBase.SendData(basePackage, NetDefine.CMD_BuyShopItemCode, response.ToByteString());
+        serverBase.Send(basePackage, NetDefine.CMD_BuyShopItemCode, response.ToByteString());
     }
 
     /// <summary>解析 GameServer 角色保存请求并投递数据库任务，网络线程不直接写库。</summary>
-    private static void OnSaveRoleDataHandle(ServerBase serverBase, BasePackage basePackage)
+    private static void OnSaveRoleDataHandle(BaseLink serverBase, BasePackage basePackage)
     {
         try
         {
@@ -134,7 +134,7 @@ public class CenterRoleCtrl:IContainer
                 CmdCode = CmdCode.ReqParamError,
                 Message = "角色保存请求格式无效"
             };
-            serverBase.SendData(basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
+            serverBase.Send(basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
         }
     }
 
@@ -142,7 +142,7 @@ public class CenterRoleCtrl:IContainer
     /// IContainer 客户端命令回调。角色持久化协议均由服务器间命令（OnServerCommand）处理，
     /// 中心服不直接接收 Unity 客户端命令，故此回调留空实现。
     /// </summary>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
 
     }

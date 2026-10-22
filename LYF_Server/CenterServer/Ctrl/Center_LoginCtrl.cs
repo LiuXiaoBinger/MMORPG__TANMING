@@ -27,7 +27,7 @@ public class Center_LoginCtrl : IContainer
     /// 处理客户端直接发送到中心服务器的命令。
     /// 当前登录流程中的请求由服务器间命令处理。
     /// </summary>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
     }
 
@@ -43,7 +43,7 @@ public class Center_LoginCtrl : IContainer
     /// </summary>
     /// <param name="serverBase">当前网络服务器。</param>
     /// <param name="basePackage">包含协议号和 protobuf 数据的网络包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         switch (basePackage.ProtoCode)
         {
@@ -81,62 +81,62 @@ public class Center_LoginCtrl : IContainer
     /// <summary>
     /// 处理进入游戏请求，返回主角色的完整属性信息。
     /// </summary>
-    private void OnStartGameCodeHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnStartGameCodeHandle(BaseLink serverBase, BasePackage basePackage)
     {
         StartGameReq req = StartGameReq.Parser.ParseFrom(basePackage.Data);
         
         LogMsg.Info("OnStartGameCodeHandle=>req::" + req.ToString());
         StartGameRet ret=_loginModle.StartGame(req);
         LogMsg.Info("OnStartGameCodeHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
 
     /// <summary>
     /// 处理创建角色请求。
     /// </summary>
-    private void OnCreateRoleHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnCreateRoleHandle(BaseLink serverBase, BasePackage basePackage)
     {
         CreateRoleReq req = CreateRoleReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnCreateRoleHandle=>req::" + req.ToString());
         CreateRoleRet ret=_loginModle.CreateRole(req);
         LogMsg.Info("OnCreateRoleHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
 
     /// <summary>
     /// 处理选择游戏服务器请求，并返回该账号已创建的角色信息。
     /// </summary>
-    private void OnLoginGameServerHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnLoginGameServerHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginGameServerReq req = LoginGameServerReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnLoginGameServerHandle=>req::" + req.ToString());
         LoginGameServerRet ret=_loginModle.LoginGameServer(req);
         LogMsg.Info("OnLoginGameServerHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
 
     /// <summary>
     /// 处理获取游戏服务器列表请求。
     /// </summary>
-    private void OnGetServerListHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnGetServerListHandle(BaseLink serverBase, BasePackage basePackage)
     {
         GetServerListReq req = GetServerListReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnGetServerListHandle=>req::" + req.ToString());
         GetServerListRet ret=_loginModle.GetServerList(req);
         LogMsg.Info("OnGetServerListHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
 
     /// <summary>
     /// 处理账号密码登录请求。
     /// </summary>
-    private void OnLoginHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnLoginHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginReq req = LoginReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnLoginHandle=>req::" + req.ToString());
         LoginRet ret=_loginModle.Login(req);
         LogMsg.Info("OnLoginHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
 
     /// <summary>
@@ -144,14 +144,14 @@ public class Center_LoginCtrl : IContainer
     /// </summary>
     /// <param name="serverBase"></param>
     /// <param name="basePackage"></param>
-    private void OnRegistHandle(ServerBase serverBase, BasePackage basePackage)
+    private void OnRegistHandle(BaseLink serverBase, BasePackage basePackage)
     {
 
         RegistReq req = RegistReq.Parser.ParseFrom(basePackage.Data);
         LogMsg.Info("OnRegistHandle=>req::" + req.ToString());
         RegistRet ret=_loginModle.RegistAccont(req);
         LogMsg.Info("OnRegistHandle=>ret::" + ret.ToString());
-        serverBase.SendData(basePackage,basePackage.ProtoCode,ret.ToByteString());
+        serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
     
     

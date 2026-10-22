@@ -45,7 +45,7 @@ public class GameGlobal:Singleton<GameGlobal>
     /// <summary>
     /// 网络线程只负责投递不可变命令信封，所有游戏业务在主循环中统一执行。
     /// </summary>
-    public void EnqueueGameCommand(GameCommandSource source, ServerBase transport, BasePackage basePackage)
+    public void EnqueueGameCommand(GameCommandSource source, BaseLink transport, BasePackage basePackage)
     {
         GameCommandDispatcher.Instance.Enqueue(GameCommand.From(source, transport, basePackage));
     }

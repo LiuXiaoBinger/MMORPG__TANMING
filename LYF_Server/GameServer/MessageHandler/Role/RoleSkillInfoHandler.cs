@@ -62,7 +62,7 @@ public sealed class RoleSkillInfoHandler : IGameMessageHandler
                 LogMsg.Info("技能列表回包缺少原 Gate 会话，角色=" + response.RoleId, LogMsgType.Error);
                 return;
             }
-            context.GateSession.SendData(context.Package);
+            context.GateSession.Send(context.Package);
 
             // 技能列表不写入 GameServer 本地数据库，只供当前在线生命周期使用。
             RoleSkillComponent skillComponent;

@@ -132,13 +132,13 @@ public sealed class ClientMessageManager : IContainer
     }
 
     /// <summary>Gate 网络回调只入队，不在 Socket 线程执行业务。</summary>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.GateServer, serverBase, basePackage);
     }
 
     /// <summary>CenterServer 回调统一进入客户端消息队列。</summary>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
         GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.CenterServer, serverBase, basePackage);
     }
@@ -285,7 +285,7 @@ public sealed class GameMessageHandlerContext
     /// <summary>
     /// 接收入站命令的网络传输对象，用于逻辑线程向来源服务回包；命令为空时为 <c>null</c>。
     /// </summary>
-    public ServerBase Transport { get; private set; }
+    public BaseLink Transport { get; private set; }
 
     /// <summary>
     /// 命令的来源服务标识，用于区分 GateServer、CenterServer 等处理路径。
@@ -342,7 +342,7 @@ public static class GameCenterResponseForwarder
         }
 
         // 转发发生在 GameServer 的后续业务解析前，避免本服状态校验阻断客户端错误结果。
-        context.GateSession.SendData(context.Package);
+        context.GateSession.Send(context.Package);
         return true;
     }
 

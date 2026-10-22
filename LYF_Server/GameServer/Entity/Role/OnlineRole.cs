@@ -121,7 +121,7 @@ public class OnlineRole
             return false;
         }
 
-        gateSession.SendData(UnitySessionId, protoCode, data);
+        gateSession.Send(UnitySessionId, protoCode, data);
         return true;
     }
 

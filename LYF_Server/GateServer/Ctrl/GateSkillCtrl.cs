@@ -9,20 +9,20 @@ public sealed class GateSkillCtrl : IContainer
     /// <summary>将客户端施法请求透传到 GameServer，保留网关与 Unity 会话。</summary>
     /// <param name="serverBase">收到 Unity 请求的网关传输对象。</param>
     /// <param name="basePackage">携带原会话标识和技能请求载荷的协议包。</param>
-    public void OnServerCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnServerCommand(BaseLink serverBase, BasePackage basePackage)
     {
         if (serverBase == null || serverBase._client == null || basePackage == null)
         {
             return;
         }
 
-        serverBase._client.SendData(basePackage);
+        serverBase._client.Send(basePackage);
     }
 
     /// <summary>校验并向原 Unity 会话转发权威施法结果与起止通知。</summary>
     /// <param name="serverBase">收到 GameServer 回包的网关传输对象。</param>
     /// <param name="basePackage">携带目标 Unity 会话标识的权威回包。</param>
-    public void OnClientCommand(ServerBase serverBase, BasePackage basePackage)
+    public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
         if (basePackage == null)
         {

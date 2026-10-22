@@ -24,14 +24,14 @@ public sealed class GameCommand
     public long Sequence { get; private set; }
 
     // 只读保存发送端，用于主线程执行业务后的转发或回包。
-    public ServerBase Transport { get; private set; }
+    public BaseLink Transport { get; private set; }
 
     private GameCommand(
         int commandCode,
         GameCommandSource source,
         GameCommandSession session,
         ByteString payload,
-        ServerBase transport)
+        BaseLink transport)
     {
         CommandCode = commandCode;
         Source = source;
@@ -47,7 +47,7 @@ public sealed class GameCommand
     /// </summary>
     public static GameCommand From(
         GameCommandSource source,
-        ServerBase transport,
+        BaseLink transport,
         BasePackage basePackage)
     {
         if (basePackage == null)

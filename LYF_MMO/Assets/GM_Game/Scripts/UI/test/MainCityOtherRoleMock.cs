@@ -94,7 +94,7 @@ public sealed class MainCityOtherRoleMock : MonoBehaviour
         // 使用与服务器 CMD_SyncotherOnlineCode 完全相同的强类型 Protobuf 载荷。
         RoleBaseInfo roleBaseInfo = CreateRoleBaseInfo();
         // 真实收包路径传入当前连接代次；测试未连接时仅提供正数临时代次，不伪造网络连接状态。
-        long dispatchGeneration = NetSocketMgr.Instance.CurrentConnectionGeneration;
+        long dispatchGeneration = MNetClient.Instance.CurrentConnectionGeneration;
         if (dispatchGeneration <= 0)
         {
             dispatchGeneration = TestDispatchGeneration;
