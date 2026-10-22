@@ -1,3 +1,7 @@
+## 2026-10-22 Git回执
+
+- 业务提交21c95f0已推送并由ls-remote核对一致；暂存34路径排除全部9个原用户文件。全暂存上游KCP原文2处空格保留为第三方例外，排除上游该单文件后业务差异检查通过。
+
 ## 2026-10-22 最终KCP集成验收（源码/隔离范围）
 
 - Codex最终实际执行compile_kcp.py：Network/GateServer/GameServer/CenterServer全部0错误，日志警告计数14/14/28/14，含重复输出。compile_client.py及compile_client_plugin_path.py均289源0错误，后者真实指向正式Plugins/Net/Network.dll。

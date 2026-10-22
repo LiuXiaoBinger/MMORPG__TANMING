@@ -296,3 +296,9 @@
 - 原用户9个路径的git二进制补丁与开工baseline-user-changes.patch归一换行后逐字一致（final-user-change-verification.json），所有用户基线文件均排除暂存；实际暂存恰为上表34路径。
 - 全暂存git diff --cached --check发现上游原文KCP.cs:603/994两处行尾空格。两行已与固定提交原文逐字核对，作为第三方原文例外保留，未为格式修改上游；排除该上游单文件后暂存差异检查通过。此前工作区diff --check不检查未跟踪新文件，因此不能当全暂存检查已通过。
 - Codex最终独立复跑完整90项及三探针退出0，17源token一致，正式/新build库SHA一致，插件仅集成产物。没有真实Unity双号和打包运行验收。
+
+## Git实际回执（2026-10-22）
+
+- 业务提交`21c95f06cbd09ad382ae32acf4f00fbb238d8159`：feat: 接入移动技能KCP双通道并修复绑定生命周期；范围上表34路径，基线756ca35。提交完成，中文正文含修改/验证/本日志路径。
+- `git push origin codex/network-kcp-development`成功，远端由756ca35前进至21c95f0；`git ls-remote`核远端SHA与该业务提交完全一致。未合main、未强推，9个用户原改动补丁保持。
+- 本次仅补录Git回执：修改本日志、Docs/AI/CURRENT_TASK.md及TEST_REPORT.md，不改业务或产物；单独docs提交后推送同一分支，最终回执另保留_temp/network-kcp-20261022/final-git-receipt.json并在交付回复报告。

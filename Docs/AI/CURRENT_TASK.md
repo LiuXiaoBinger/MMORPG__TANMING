@@ -1,3 +1,7 @@
+## 2026-10-22 Git回执
+
+- 业务提交21c95f0已成功推送codex/network-kcp-development，远端SHA核对一致；本轮仅补录回执，不改main。完整路径/验证/边界见根日志。
+
 ## 2026-10-22 当前交接：KCP第一版实现集成，待Unity现场联机
 
 - 分支codex/network-kcp-development，基线756ca35，不合main。移动11180/11181、技能11170/11171/11173同一可靠有序KCP，其他业务和Gate↔Game保持TCP。最终本任务文件34路径逐项见项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md；无移动删除、无Unity新脚本/meta。
