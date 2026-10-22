@@ -33,3 +33,7 @@
 ## 验证与Git
 
 TOML解析通过，两执行者规则键有效；AGENTS、总策略、流程及两角色共5处自动审批文字覆盖通过；9份原用户文件哈希保持；限定路径git diff --check通过（仅既有行尾转换提示）。精确提交及推送回执待补。当前分支codex/network-kcp-development，规则修改基线85cda92e75b89c39bf419501dbdcb383d23ffa61，不合main；保留用户已有9份文件和原任务源码。
+
+## Git回执
+
+规则主体提交bf76cc8de647fa6e0f5fa3eb4f3d6c147e5c4433已成功推送origin/codex/network-kcp-development；git ls-remote核对同SHA。提交仅上述10份规则/记录，原网络3项暂存移动保持、用户9文件保留，未合main。本段为回执补录，随后单独文档提交推送。
