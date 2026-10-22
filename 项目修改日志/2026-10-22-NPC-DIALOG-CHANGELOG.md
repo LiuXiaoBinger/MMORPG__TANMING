@@ -31,9 +31,11 @@
 
 无当前Unity现场连接/进程，Editor.log为历史，尚未实际看到点击后对话框渲染。保留用户GM_Game.dll.bytes及包版本，不替换正式热更、不打资源包；运行需要重新构建同版热更代码，并带上前一阶段UIRoot的两TMP引用资源。不能将源码/隔离通过写成用户当前运行包已修复。现场验收：已在原距离内点击NPC直接弹窗，远处点击按原流程走近后弹窗，显示QuQu与三段正文，关闭/重开和原商店按钮正常；本阶段没有新测试正式商店逻辑。
 
-### 本阶段Git范围
+### 本阶段Git范围与真实回执
 
-当前分支codex/npc-dialog-fix、实际基线32a7fa7740a032dd07df791d659aee78ebcd4f89；仅精确暂存上列5项，保留9用户文件和旧未跟踪产物，不合main、不强推。代码与记录检查通过后提交并推送同名功能分支；真实提交/推送回执在本日志末尾补录。
+当前分支codex/npc-dialog-fix、实际基线32a7fa7740a032dd07df791d659aee78ebcd4f89；精确暂存上列5项并通过git diff --cached --check。代码与记录提交`8d47e15ce9eb041959fbc81a2a6735adeae6a3ae`已正常推送origin/codex/npc-dialog-fix，ls-remote核对同一SHA；未合main、未强推。保留9用户文件和旧未跟踪产物，没有混入提交。
+
+本段及CURRENT_TASK、TEST_REPORT仅补真实Git回执，随后单独提交并推送；最终文档提交号在交付回复报告，避免日志自引用。不增加业务修改，不改变Unity显示与部署未验边界。
 
 ---
 

@@ -1,3 +1,8 @@
+## 2026-10-22 NPC开窗修复：提交推送回执
+
+- 本阶段5文件提交`8d47e15ce9eb041959fbc81a2a6735adeae6a3ae`已正常推送origin/codex/npc-dialog-fix，远端SHA核对一致；未合main。源码与隔离检查通过，真实Unity显示与热更部署仍未验；未把原用户修改混入暂存。
+- 本条仅补Git回执，不代表新增运行验证。逐项文件、结果和证据见项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md。
+
 ## 2026-10-22 NPC对话框反向引用：本阶段最终独立验证
 
 - 唯一业务修改MainCityMgr.BindMainRoleCompatibilityController增加sceneEntity.SetEntityCtrl(mainRoleController)与中文说明；原SetROObject和原导航/OpenTalk/UI流程保持。修复的是开窗参数为空，不改A*、移动或碰撞。
