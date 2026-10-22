@@ -1,3 +1,8 @@
+## 2026-10-22 RO网络接口：提交推送回执
+
+- 最终代码、正式Network.dll及逐项记录提交`28c21e8811e5f2d9c68d3cdcbc26b5123a6d9366`，已成功推送origin/codex/network-kcp-development，远端SHA核对一致；未合main。49项最终文件精确提交，原9用户文件推送后SHA保持。WorkBuddy最终轮review=accepted；验证为五服务/289客户端0错、Socket122/0、入场8/0、薄边界54/0，现场及发布边界保持。
+- 文件和证据入口：项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md。本条与日志是提交后的文档回执补录。
+
 ## 2026-10-22 RO网络公共接口：最终源码与隔离验收通过
 
 - 沿RO真实接口职责改名ServerBase→BaseLink、NetSocketMgr→MNetClient，meta保原GUID；三个bool Send重载与公共OnRecv承接完整消息。客户端普通业务Send、TCP/KCP共用主线程派发；商城仍保捕获连接语义。五实时协议固定KCP，其余及Gate↔Game为TCP，不增框架。

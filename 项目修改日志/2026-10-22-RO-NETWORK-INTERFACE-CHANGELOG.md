@@ -112,3 +112,9 @@
 - 未解决项仅为已披露现场边界：Unity双号、真实动画/MP、业务自动重连、实体早到、端到端弱网与打包未验；大包及上行协议范围旧问题未扩修。没有启停正式服务/Unity、保存场景或清理用户旧_temp。
 
 - 最终Hub round2/run-13fe5c71-36ed-4a91-a09a-543ad36986f6已由Codex按上述实测证据验收，review=accepted、holdsCapacity=false；回执_temp/network-ro-interface-20261022/hub-accept-result.json。
+
+## Git提交与推送回执
+
+- 业务与记录提交`28c21e8811e5f2d9c68d3cdcbc26b5123a6d9366`，49项最终文件（Git识别3项移动），推送origin/codex/network-kcp-development成功；git ls-remote与提交SHA精确一致，未合main。
+- 暂存检查52项增删路径与49最终文件＋3旧名删除完全一致，git diff --cached --check通过，无原用户9文件、旧未跟踪产物或_temp混入。推送后9文件SHA再次保持；规则主体bf76cc8与回执c65596a也已在本分支远端。
+- 本段及CURRENT_TASK、TEST_REPORT为后续回执补录，只修改这3份文档；中文文档提交后再次推送，最终回执见交付回复。
