@@ -54,6 +54,7 @@ message StartGameReq
 message EnterWroldReq
 {
 	int32 role_id =1;//角色id
+	string pos =2;//出生坐标，沿用 RoleBaseInfo.pos 的“X_Y_Z”下划线格式，单位米；旧客户端不携带时保持原位置
 }
 
 // 客户端请求释放已学技能。身份和等级由 GameServer 按复合会话及中心服技能快照解析。

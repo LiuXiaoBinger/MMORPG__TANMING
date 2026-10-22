@@ -76,15 +76,15 @@ public sealed class KcpClient
     /// <summary>最近一次发出保活的刻度。</summary>
     private long _lastKeepAliveTicks;
 
-    /// <summary>绑定期限刻度，超过后确定保持 TCP。</summary>
+    /// <summary>绑定期限刻度，超过后按初次绑定失败上报，由网络层走既有断线恢复。</summary>
     private long _bindDeadlineTicks;
 
     /// <summary>是否已收到网关的 UDP 地址证明回执，用于停止无谓重发。</summary>
     private int _pathAcked;
 
     /// <summary>
-    /// 是否曾经收到过启用确认。用于区分“初次绑定未成功”（可继续走 TCP）
-    /// 与“启用后失效”（实时协议必须丢弃，不能换通道重发）。
+    /// 是否曾经收到过启用确认。实时协议只走 KCP，本字段保留给生命周期判断使用：
+    /// 用于区分“从未启用”与“启用后失效”，两者都不得改投 TCP。
     /// </summary>
     private int _everEnabled;
 
@@ -94,7 +94,7 @@ public sealed class KcpClient
     /// <summary>网关经 TCP 确认启用后回调，由网络层记录状态，不直接切换业务。</summary>
     public Action OnBound;
 
-    /// <summary>初次绑定失败回调：本会话确定保持 TCP，不触发断线恢复。</summary>
+    /// <summary>初次绑定失败回调：网络层据此清理通道并走既有断线恢复，不保留 TCP 继续游戏。</summary>
     public Action OnBindFailed;
 
     /// <summary>运行期通道失效回调：由网络层触发现有 TCP 断线恢复。</summary>
@@ -224,8 +224,8 @@ public sealed class KcpClient
     }
 
     /// <summary>
-    /// 发送一条实时协议载荷。调用方需结合 HasBeenEnabled 判定失败语义：
-    /// 从未启用时保持 TCP，启用后失效时整条丢弃。
+    /// 发送一条实时协议载荷。实时协议只走 KCP：未就绪或写入失败由调用方整条丢弃，
+    /// 不得改投 TCP 造成跨通道乱序或重复执行。
     /// </summary>
     /// <param name="payload">BasePackage 序列化字节。</param>
     /// <returns>写入 KCP 通道成功时返回 true。</returns>
@@ -297,7 +297,7 @@ public sealed class KcpClient
     /// 统一的关闭入口：按原因只回调一次，避免重复走断线恢复。
     /// </summary>
     /// <param name="runtimeFailed">运行期失效，需要触发现有 TCP 断线恢复。</param>
-    /// <param name="bindFailed">初次绑定失败，本会话保持 TCP。</param>
+    /// <param name="bindFailed">初次绑定失败，由网络层清理通道并走既有断线恢复。</param>
     private void CloseInternal(bool runtimeFailed, bool bindFailed)
     {
         // 交换出的旧状态：仅旧态为绑定中或就绪时才需要回调结果通知。
@@ -333,7 +333,7 @@ public sealed class KcpClient
         }
         if (bindFailed)
         {
-            // 本地缓存的初次绑定失败回调，本会话确定保持 TCP。
+            // 本地缓存的初次绑定失败回调，由网络层清理通道并走既有断线恢复。
             Action bindFailure = OnBindFailed;
             if (bindFailure != null)
             {
@@ -474,7 +474,7 @@ public sealed class KcpClient
                 {
                     if (nowTicks > _bindDeadlineTicks)
                     {
-                        // 期限到仍未拿到 TCP 启用确认：本次会话确定保持 TCP，网关也不会挂接 Peer。
+                        // 期限到仍未拿到 TCP 启用确认：按初次绑定失败上报，网关侧待绑定条目同期限过期。
                         CloseInternal(false, true);
                         break;
                     }

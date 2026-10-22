@@ -16,14 +16,8 @@ public class Session : ServerBase
     /// <summary>会话 ID，由 SessionMgr 分配。</summary>
     public int SessionID{get;set;}
 
-    /// <summary>当前绑定的 KCP 会话；为空表示实时协议仍走 TCP。绑定由 UDP 线程写入，业务线程读取。</summary>
+    /// <summary>当前绑定的 KCP 会话；为空表示实时协议没有可用通道，只允许丢弃，不回退 TCP。绑定由 UDP 线程写入，业务线程读取。</summary>
     private volatile KcpPeer _realtimePeer;
-
-    /// <summary>
-    /// 本会话是否曾经启用过实时通道。启用后失效时，实时下行只能丢弃，
-    /// 不允许悄悄退回 TCP：客户端已按 KCP 的可靠有序语义消费，换通道会打乱顺序。
-    /// </summary>
-    private volatile bool _realtimeEverEnabled;
 
     /// <summary>断开回调，参数为会话 ID；由宿主投递到逻辑线程处理角色下线。</summary>
     private readonly Action<int> _onDisconnected;
@@ -105,22 +99,20 @@ public class Session : ServerBase
     public void AttachRealtimePeer(KcpPeer peer)
     {
         _realtimePeer = peer;
-        _realtimeEverEnabled = true;
     }
 
     /// <summary>
-    /// 解除 KCP 绑定并回到 TCP。只用于“客户端从未启用”的放弃路径，
-    /// 释放后实时协议与普通业务一起走 TCP。
+    /// 解除 KCP 绑定。实时协议不存在 TCP 兜底：解除后本条会话的实时下行只能丢弃，
+    /// 由客户端按现有断线恢复流程重建连接与通道。
     /// </summary>
     public void DetachRealtimePeer()
     {
         _realtimePeer = null;
-        _realtimeEverEnabled = false;
     }
 
     /// <summary>
-    /// 已启用的实时通道失效：解除绑定但保留“曾启用”标记，
-    /// 后续实时下行明确丢弃，等既有断线重连后由新会话重新绑定。
+    /// 已启用的实时通道失效：解除绑定，后续实时下行明确丢弃，
+    /// 等既有断线重连后由新会话重新绑定。
     /// </summary>
     public void InvalidateRealtimePeer()
     {
@@ -128,34 +120,54 @@ public class Session : ServerBase
     }
 
     /// <summary>
-    /// 实时协议分流：已绑定且属于实时集合时由 KCP 承载。
+    /// 实时协议分流：网关面向 Unity 的会话只允许 KCP 承载，游戏服内部链路仍走 TCP。
     /// </summary>
     /// <param name="basePackage">待发送协议包。</param>
     /// <param name="payload">已序列化的协议包字节。</param>
-    /// <returns>KCP 已接管返回 Sent；曾启用后失效返回 Dropped，禁止回退 TCP。</returns>
+    /// <returns>KCP 已接管返回 Sent；网关会话未绑定或写入失败返回 Dropped，不回退 TCP。</returns>
     protected override RealtimeSendResult TrySendRealtime(BasePackage basePackage, byte[] payload)
     {
         if (!KcpDefine.IsRealtimeProtocol(basePackage.ProtoCode))
         {
             return RealtimeSendResult.KeepTcp;
         }
-        // 本地缓存当前已挂接的 Peer，为空表示从未启用或已失效。
+        // 游戏服到网关的服务间链路不是玩家实时通道，必须继续走原 TCP 帧。
+        if (IsGameServerLink())
+        {
+            return RealtimeSendResult.KeepTcp;
+        }
+        // 本地缓存当前已挂接的 Peer，为空表示尚未绑定、绑定失败或已释放。
         KcpPeer peer = _realtimePeer;
         if (peer == null)
         {
-            // 从未启用：本会话按约定保持 TCP；曾启用后失效：明确丢弃，不换通道重发。
-            if (_realtimeEverEnabled)
-            {
-                return RealtimeSendResult.Dropped;
-            }
-            return RealtimeSendResult.KeepTcp;
+            // Unity 实时协议只走 KCP：没有通道时本条丢弃，禁止改投 TCP 造成跨通道乱序或重复执行。
+            LogMsg.Info("[Session] 实时通道未绑定，丢弃实时协议，SessionID=" + SessionID +
+                "，protoCode=" + basePackage.ProtoCode, LogMsgType.Warn);
+            return RealtimeSendResult.Dropped;
         }
         if (peer.Send(payload))
         {
             return RealtimeSendResult.Sent;
         }
-        // Peer 存在即意味着已启用过，写入失败只能丢弃。
+        // Peer 已挂接但本次写入失败，同样只能丢弃。
+        LogMsg.Info("[Session] 实时通道写入失败，丢弃实时协议，SessionID=" + SessionID +
+            "，protoCode=" + basePackage.ProtoCode, LogMsgType.Warn);
         return RealtimeSendResult.Dropped;
+    }
+
+    /// <summary>
+    /// 判断本会话是否为游戏服到网关的服务间连接：该链路不属于玩家实时通道，实时协议保持 TCP。
+    /// </summary>
+    /// <returns>上游连接器为 GameServer 类型时返回 true。</returns>
+    private bool IsGameServerLink()
+    {
+        // 上游连接器在 NetServer 创建会话时写入，为空表示本会话没有服务间上游。
+        NetClient upstream = _client;
+        if (upstream == null)
+        {
+            return false;
+        }
+        return upstream._clientType == ClientType.GameServer;
     }
 
     /// <summary>

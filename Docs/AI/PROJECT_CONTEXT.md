@@ -1,3 +1,9 @@
+## 2026-10-22 当前策略：移动与技能固定 KCP
+
+- 用户要求实时移动与技能直接 KCP，取代下方历史绑定前 TCP 回退机制；其他业务与 Gate↔Game 仍 TCP。专用分支 codex/network-kcp-development，不合 main。
+- 模型加载前完成绑定，失败走既有断线恢复；入场请求字段 pos=2 带出生坐标，服务器附近过滤前保存，取消入场对首移动跨通道顺序的依赖。不增加全局排序或消息队列。
+- 当前最终状态以 CURRENT_TASK、TEST_REPORT 和项目修改日志/2026-10-22-KCP-ONLY-REALTIME-CHANGELOG.md 为准；历史数字不作为本轮验收。正式 Unity 双号及打包仍未验。
+
 ## 2026-10-22 KCP网络第一版源码与隔离验收完成
 
 - 当前网络专用分支codex/network-kcp-development，起点756ca35。Unity↔Gate的11180/11181移动与11170/11171/11173技能走同一可靠有序KCP，其余业务及Gate↔Game仍TCP；没有改移动/伤害结算或服务器权威寻路。

@@ -1,3 +1,14 @@
+## 2026-10-22 固定 KCP：Codex独立源码与隔离验收通过，现场未验
+
+- 最终compile_kcp.py重建Network/Gate/Game/Center，均0错误；警告日志计数14/14/28/14含重复输出，属于既有警告。compile_client_plugin_path.py以正式插件路径编译289源，0错误；未替用户热更DLL。
+- run_loopback.py独立真实Socket回环PASSED=108 FAILED=0：Unity上行和Gate下行未绑定/绑定中/失败/就绪/释放/重连未绑定实时TCP零写入，普通业务TCP、服务间实时TCP、同通道保序及生命周期回归通过。WorkBuddy第二轮自检112/0单独归属开发自检，不冒作Codex复跑数字。
+- run_enterworld.py独立PASSED=8 FAILED=0：真实protobuf与RoleManager处理，出生坐标过滤前应用，距出生8米/距原点约107米的观察者收到广播与附近补发，不发首移动；不是正式Unity联机。
+- run_boundary.py独立PASSED=39 FAILED=0：链接真实MainCityMgr/NetSocketMgr，真实NetClient/KcpClient及TCP帧；Ready前不发起模型加载、Enabled后一次加载、拒绝/端口0启动失败/真实初次超时后清理与断开、Abandoned、实时TCP零写入。Unity、资源与实体前置为显式桩；Enabled由测试网关发送。旧代次只反射调用当前代次减1（本次为0）的释放入口，不当作真实旧连接回调与重连全链；只证明未发起加载，不宣称实际角色输入/画面已验。
+- 正式Network.dll与最终独立build/network/bin/Network.dll SHA相同；生成RequestEntity.cs与正式protoc输出逐字节一致。静态新增语法候选空，git diff --check通过（仅行尾转换提示）；9份用户原文件SHA与基线一致。
+- 日志中关闭Socket回调及UDP10054等清理告警保留，未宣称所有运行日志零错误或长稳通过。108/8脚本部分中文解码乱码，ASCII断言与退出码清晰，保留原证据。
+- 未验：正式Unity双号、动画/模型真实加载、MP扣费、自动重连、实体早到、端到端弱网与HybridCLR/IL2CPP；原_enterWorldSent跨重连尚待现场确认。持续拒绝会继续无法进入可玩状态；本轮不扩退避/提示、大包或协议白名单问题。
+- 证据_temp/network-kcp-only-20261022/codex-validation（build、三套result.log、final-verification.json）；逐项文件与Git状态见项目修改日志/2026-10-22-KCP-ONLY-REALTIME-CHANGELOG.md。未启停正式服务或Unity、未保存场景、未清_temp。
+
 ## 2026-10-22 网络整体复审：编译/回归通过，传输边界仍开放
 
 - Codex重新实际执行本轮_temp副本compile_kcp.py、compile_client_plugin_path.py：Network/Gate/Game/Center均0错误（警告日志计数14/14/28/14，含重复），客户端289源引用正式Network插件0错误。run_loopback.py退出0、PASSED=90 FAILED=0；review/run_codex_final.py三项FIXED结果True、退出0。

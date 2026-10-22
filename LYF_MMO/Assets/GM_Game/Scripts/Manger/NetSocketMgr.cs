@@ -41,7 +41,7 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     /// <summary>当前连接的主机地址，UDP 握手复用同一主机，避免另配地址。</summary>
     private string _serverHost;
 
-    /// <summary>当前连接的可靠 KCP 通道；为空表示实时协议仍走 TCP。</summary>
+    /// <summary>当前连接的可靠 KCP 通道；为空表示实时协议没有可用通道，此时实时上行直接丢弃。</summary>
     private KcpClient _realtimeClient;
 
     /// <summary>本次连接是否已发起绑定请求，避免重复握手。</summary>
@@ -54,6 +54,24 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     public bool IsConnected
     {
         get { return Volatile.Read(ref _isConnected) == 1; }
+    }
+
+    /// <summary>
+    /// 当前实时通道是否已经就绪（网关启用确认到达且本端已切换）。移动与技能只走 KCP，
+    /// 未就绪时业务不得开始，用于确认本地主角能否创建模型并上报实时协议。
+    /// </summary>
+    public bool IsRealtimeReady
+    {
+        get
+        {
+            // 本地缓存当前通道，避免两次读取之间被断线流程替换。
+            KcpClient realtimeClient = _realtimeClient;
+            if (realtimeClient == null)
+            {
+                return false;
+            }
+            return realtimeClient.IsReady;
+        }
     }
 
     /// <summary>初始化网络模块并连接登录服务器。</summary>
@@ -240,8 +258,8 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     }
 
     /// <summary>
-    /// 请求把移动与技能实时协议绑定到 KCP 通道；仅在角色进入世界后调用一次。
-    /// 服务端未启用或拒绝时本会话保持全 TCP，不阻塞原流程。
+    /// 请求把移动与技能实时协议绑定到 KCP 通道；在本地主角创建模型前调用。
+    /// 实时协议只走 KCP，绑定失败按现有断线流程恢复，不保持 TCP 继续游戏。
     /// </summary>
     public void RequestRealtimeBind()
     {
@@ -266,7 +284,8 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     }
 
     /// <summary>
-    /// 处理绑定响应：拿到参数后启动客户端 KCP，失败则保持 TCP。
+    /// 处理绑定响应：拿到参数后启动客户端 KCP，只有网关经 TCP 确认启用才算就绪。
+    /// 任何失败都清理通道并沿用既有断线恢复，不允许带着 TCP 继续游戏。
     /// </summary>
     /// <param name="data">绑定响应载荷，固定 25 字节。</param>
     private void HandleKcpBindResponse(ByteString data)
@@ -279,7 +298,14 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         KcpBindPayload payload = KcpBindPayload.Decode(data.ToByteArray());
         if (payload == null)
         {
-            Debug.LogWarning("KCP 绑定响应长度不合法，实时协议保持 TCP。");
+            Debug.LogWarning("KCP 绑定响应长度不合法，按绑定失败处理。");
+            FailRealtimeBind();
+            return;
+        }
+        // 当前 TCP 连接作为失败恢复的入口，后续释放与断开都以它为准。
+        NetClient client = _client;
+        if (client == null)
+        {
             return;
         }
         if (payload.Result == KcpBindResult.Enabled)
@@ -288,28 +314,24 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
             KcpClient enabledClient = _realtimeClient;
             if (enabledClient == null)
             {
+                FailRealtimeBind();
                 return;
             }
             if (!enabledClient.ConfirmEnabled(payload.Conv))
             {
-                Debug.LogWarning("KCP 启用确认与当前绑定不匹配，已忽略，实时协议保持 TCP。");
+                Debug.LogWarning("KCP 启用确认与当前绑定不匹配，按绑定失败处理。");
+                FailRealtimeBind();
             }
             return;
         }
         if (payload.Result != KcpBindResult.Granted)
         {
-            // 服务端明确拒绝时本会话不再重试，避免反复握手。
-            Debug.Log("KCP 通道未启用，实时协议保持 TCP，结果=" + payload.Result);
+            // 服务端明确拒绝（未启用、参数错误等）：实时协议没有可用通道，直接走断线恢复。
+            Debug.LogWarning("KCP 绑定被拒绝，结果=" + payload.Result + "，按现有断线流程恢复。");
+            FailRealtimeBind();
             return;
         }
         if (_realtimeClient != null)
-        {
-            return;
-        }
-
-        // 再次缓存当前 TCP 连接，防止进入启动流程期间连接被替换。
-        NetClient client = _client;
-        if (client == null)
         {
             return;
         }
@@ -325,11 +347,10 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
         realtimeClient.OnPackageReceived = message => HandleRealtimePackage(bindClient, bindGeneration, message);
         realtimeClient.OnBindFailed = () => HandleRealtimeBindFailed(bindClient, bindGeneration);
         realtimeClient.OnFailed = () => HandleRealtimeFailed(bindClient, bindGeneration);
-        // TCP 启用确认到达即锁定禁止回退：启用后零发送就释放通道引用时，实时协议也不得改投 TCP。
-        realtimeClient.OnBound = () => bindClient.MarkRealtimeEverEnabled();
         if (!realtimeClient.Start(_serverHost, payload.UdpPort, payload.Conv, payload.Token))
         {
-            Debug.LogWarning("KCP 客户端启动失败，实时协议保持 TCP。");
+            Debug.LogWarning("KCP 客户端启动失败，按现有断线流程恢复。");
+            FailRealtimeBind();
             return;
         }
 
@@ -339,7 +360,8 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
     }
 
     /// <summary>
-    /// 初次绑定失败：本次 TCP 会话确定保持 TCP，不触发断线恢复。
+    /// 初次绑定失败：本次 TCP 会话确定没有可用实时通道，清理本地通道、通知网关释放残留 Peer，
+    /// 再走既有断线恢复重建连接。绑定完成前不会创建本地主角，角色因此不可操作。
     /// </summary>
     /// <param name="sourceClient">发起绑定的连接。</param>
     /// <param name="sourceGeneration">发起绑定时的连接代次。</param>
@@ -351,16 +373,35 @@ public class NetSocketMgr : Singleton<NetSocketMgr>
             {
                 return;
             }
-            Debug.Log("KCP 初次绑定未完成，本次会话实时协议保持 TCP。");
-            // 本次被放弃的会话号，随放弃结果回传给网关用于清理。
-            uint abandonedConv = _realtimeBindConv;
-            if (_realtimeClient != null)
-            {
-                ReleaseRealtimeClient();
-            }
-            // 网关可能已按地址证明挂接了 Peer：经可靠 TCP 主动回传放弃结果，避免服务端残留单边通道。
-            SendRealtimeBindAbandoned(sourceClient, abandonedConv);
+            Debug.LogWarning("KCP 初次绑定未完成，按现有断线流程恢复。");
+            FailRealtimeBind();
         });
+    }
+
+    /// <summary>
+    /// 绑定失败的统一收尾：释放本端通道，经可靠 TCP 回传放弃结果，再触发现有断线恢复。
+    /// 可重复调用：通道已释放时只跳过回传放弃通知，但只要当前连接仍在，仍会再次断开该连接，
+    /// 因此重复调用表现为“继续走断线恢复”，不是空操作。
+    /// </summary>
+    private void FailRealtimeBind()
+    {
+        // 当前 TCP 连接，为重连入口；为空说明连接已断开，无需再次触发。
+        NetClient client = _client;
+        // 本次被放弃的会话号，随放弃结果回传给网关用于清理。
+        uint abandonedConv = _realtimeBindConv;
+        // 仅当本端确实持有通道时才需要回传放弃通知，避免未分配会话号时误发。
+        bool hasChannel = _realtimeClient != null || abandonedConv != 0u;
+        ReleaseRealtimeClient();
+        if (hasChannel)
+        {
+            SendRealtimeBindAbandoned(client, abandonedConv);
+        }
+        if (client == null)
+        {
+            return;
+        }
+        // 走底层既有断线恢复：断开后由 NetClient 的自动重连与新代次重新建链。
+        client.Disconnect();
     }
 
     /// <summary>

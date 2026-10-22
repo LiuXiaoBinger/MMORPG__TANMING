@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using System.Collections.Generic;
+using System.Globalization;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using SceneObject = ROObject;
@@ -151,6 +152,12 @@ public class MainCityMgr : MonoBehaviour
          return true;
       }
 
+      // 实时通道尚未就绪：本地主角按约定等待 KCP 启用，属于正常等待而非加载失败。
+      if (!NetSocketMgr.Instance.IsRealtimeReady)
+      {
+         return false;
+      }
+
       Debug.LogError("本地主角表现未能发起资源加载，角色 ID：" +
          localRole.BaseInfo.RoleId, this);
       return false;
@@ -185,6 +192,15 @@ public class MainCityMgr : MonoBehaviour
          return;
       }
       if (_localRoleCreateRequestedUid == localRole.UID)
+      {
+         return;
+      }
+
+      // 移动与技能只走 KCP：确认本地主角信息后、发起模型加载前先请求绑定。
+      NetSocketMgr.Instance.RequestRealtimeBind();
+      // 通道未就绪时不创建模型，由 Start/Update 的既有重入在下一次尝试；
+      // 绑定失败会触发断线恢复并清理角色会话，因此角色不会带着不可用的通道进入可操作状态。
+      if (!NetSocketMgr.Instance.IsRealtimeReady)
       {
          return;
       }
@@ -492,16 +508,18 @@ public class MainCityMgr : MonoBehaviour
             }
             if (roleType == RoleType.MainRole && !_enterWorldSent)
             {
-               // 本地模型已经就位；先同步出生坐标，避免服务器用空位置按原点过滤附近玩家。
-               // 模型异步加载期间移动组件自然累计的秒数由现有上报入口消费。
-               PlayerEntity localRole = (PlayerEntity)sceneEntity;
-               localRole.UpdateMove();
-               // 入场请求必须排在本次出生位置包之后，服务器据此收发同图百米内玩家。
+               // 模型已按出生点定位，出生坐标随这次 TCP 入场请求一起上报：
+               // 实时协议已改走 KCP，入场前的移动上报与入场请求没有先后保证，
+               // 服务器必须拿到出生坐标才能在附近过滤前写入角色位置。
+               // 本次入场使用的出生坐标，取已就位的本地主角实体位置（世界米）。
+               Vector3 spawnPosition = sceneEntity.Position;
+               // 本次 TCP 入场请求，携带角色 ID 与出生坐标，服务器在附近过滤前写入角色位置。
                EnterWroldReq request = new EnterWroldReq();
                request.RoleId = baseInfo.RoleId;
+               // 沿用正式基础快照的下划线坐标格式（世界米），与移动上报写入的位置同一格式。
+               request.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
+                  spawnPosition.x, spawnPosition.y, spawnPosition.z);
                NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
-               // 角色进入世界后再申请实时通道绑定，未启用时本会话继续使用 TCP。
-               NetSocketMgr.Instance.RequestRealtimeBind();
                _enterWorldSent = true;
             }
             Debug.Log("角色表现绑定成功，角色 UID：" + requestedUID +

@@ -349,6 +349,14 @@ public class RoleManager
             return;
         }
 
+        // 会话与角色校验通过后先落出生坐标：实时移动已改走 KCP，入场前的移动上报不再有先后保证，
+        // 必须在下面的附近广播与附近下发之前写入，否则会按原点筛玩家。
+        // 旧客户端不携带该字段时保持中心服已有位置，不做覆盖。
+        if (!string.IsNullOrEmpty(request.Pos))
+        {
+            currentRole.mainRoleInfo.BaseInfo.Pos = request.Pos;
+        }
+
         // 再次进入世界或切图前结束上一场景中的活动施法，CD 仍保持在线状态。
         RoleSkillComponent skillComponent;
         if (currentRole.TryGetComponent(out skillComponent))

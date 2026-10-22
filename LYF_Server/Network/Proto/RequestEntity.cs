@@ -33,25 +33,25 @@ public static partial class RequestEntityReflection {
           "dmVyUmVxEhIKCmFjY291bnRfaWQYASABKAUSFgoOZ2FtZV9zZXJ2ZXJfaWQY",
           "AiABKAUiXQoNQ3JlYXRlUm9sZVJlcRISCgphY2NvdW50X2lkGAEgASgFEhYK",
           "DmdhbWVfc2VydmVyX2lkGAIgASgFEhAKCG5pY2tuYW1lGAMgASgJEg4KBmpv",
-          "Yl9pZBgEIAEoBSIfCgxTdGFydEdhbWVSZXESDwoHcm9sZV9pZBgBIAEoBSIg",
-          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUiNAoMU2tpbGxDYXN0",
-          "UmVxEhIKCnNraWxsX3V1aWQYASABKAQSEAoIc2tpbGxfaWQYAiABKAUiVgoT",
-          "T3BlbktuYXBzYWNrR3JpZFJlcRIPCgdyb2xlX2lkGAEgASgFEhcKD29wZW5f",
-          "Z3JpZF9jb3VudBgCIAEoBRIVCg1rbmFwc2Fja190eXBlGAMgASgFIl0KGFN5",
-          "bmNLbmFwc2Fja0dyaWRDb3VudFJlcRIPCgdyb2xlX2lkGAEgASgFEhkKEW9w",
-          "ZW5lZF9ncmlkX2NvdW50GAIgASgFEhUKDWtuYXBzYWNrX3R5cGUYAyABKAUi",
-          "PgoMSXRlbURhdGFMaXN0EhAKCGJhZ190eXBlGAEgASgFEhwKBWl0ZW1zGAIg",
-          "AygLMg0uUm9sZUl0ZW1JbmZvIqwBCg9TYXZlUm9sZURhdGFSZXESDwoHcm9s",
-          "ZV9pZBgBIAEoBRIPCgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0",
-          "cxgDIAMoCzINLkl0ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlz",
-          "dBgFIAMoCzIOLlJvbGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hv",
-          "dBgGIAEoCEoECAQQBSIyCgtCdXlTaG9wSXRlbRIQCghnb29kc19pZBgBIAEo",
-          "DRIRCglidXlfY291bnQYAiABKA0iTwoOQnV5U2hvcEl0ZW1SZXESDwoHc2hv",
-          "cF9pZBgBIAEoDRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNob3BJdGVtEg8KB3Jv",
-          "bGVfaWQYBSABKA0iiwEKEE1vdmVPcGVyYXRpb25SZXESCgoCZHgYASABKAIS",
-          "CgoCZHkYAiABKAISCgoCZHoYAyABKAISDAoEZmFjZRgEIAEoAhIMCgR0aW1l",
-          "GAUgASgCEhEKCWlzX21vdmluZxgGIAEoCBIQCghpc19tb3ZlZBgHIAEoCBIS",
-          "CgpqdW1wX2NvdW50GAggASgFYgZwcm90bzM="));
+          "Yl9pZBgEIAEoBSIfCgxTdGFydEdhbWVSZXESDwoHcm9sZV9pZBgBIAEoBSIt",
+          "Cg1FbnRlcldyb2xkUmVxEg8KB3JvbGVfaWQYASABKAUSCwoDcG9zGAIgASgJ",
+          "IjQKDFNraWxsQ2FzdFJlcRISCgpza2lsbF91dWlkGAEgASgEEhAKCHNraWxs",
+          "X2lkGAIgASgFIlYKE09wZW5LbmFwc2Fja0dyaWRSZXESDwoHcm9sZV9pZBgB",
+          "IAEoBRIXCg9vcGVuX2dyaWRfY291bnQYAiABKAUSFQoNa25hcHNhY2tfdHlw",
+          "ZRgDIAEoBSJdChhTeW5jS25hcHNhY2tHcmlkQ291bnRSZXESDwoHcm9sZV9p",
+          "ZBgBIAEoBRIZChFvcGVuZWRfZ3JpZF9jb3VudBgCIAEoBRIVCg1rbmFwc2Fj",
+          "a190eXBlGAMgASgFIj4KDEl0ZW1EYXRhTGlzdBIQCghiYWdfdHlwZRgBIAEo",
+          "BRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyKsAQoPU2F2ZVJvbGVE",
+          "YXRhUmVxEg8KB3JvbGVfaWQYASABKAUSDwoHdmVyc2lvbhgCIAEoAxImCg9p",
+          "dGVtX2RhdGFfbGlzdHMYAyADKAsyDS5JdGVtRGF0YUxpc3QSLAoUcm9sZV9j",
+          "b3VudF9pbmZvX2xpc3QYBSADKAsyDi5Sb2xlQ291bnRJbmZvEhsKE3JvbGVf",
+          "Y291bnRfc25hcHNob3QYBiABKAhKBAgEEAUiMgoLQnV5U2hvcEl0ZW0SEAoI",
+          "Z29vZHNfaWQYASABKA0SEQoJYnV5X2NvdW50GAIgASgNIk8KDkJ1eVNob3BJ",
+          "dGVtUmVxEg8KB3Nob3BfaWQYASABKA0SGwoFaXRlbXMYAiADKAsyDC5CdXlT",
+          "aG9wSXRlbRIPCgdyb2xlX2lkGAUgASgNIosBChBNb3ZlT3BlcmF0aW9uUmVx",
+          "EgoKAmR4GAEgASgCEgoKAmR5GAIgASgCEgoKAmR6GAMgASgCEgwKBGZhY2UY",
+          "BCABKAISDAoEdGltZRgFIAEoAhIRCglpc19tb3ZpbmcYBiABKAgSEAoIaXNf",
+          "bW92ZWQYByABKAgSEgoKanVtcF9jb3VudBgIIAEoBWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -63,7 +63,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LoginGameServerReq), global::LoginGameServerReq.Parser, new[]{ "AccountId", "GameServerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CreateRoleReq), global::CreateRoleReq.Parser, new[]{ "AccountId", "GameServerId", "Nickname", "JobId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameReq), global::StartGameReq.Parser, new[]{ "RoleId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::EnterWroldReq), global::EnterWroldReq.Parser, new[]{ "RoleId", "Pos" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SkillCastReq), global::SkillCastReq.Parser, new[]{ "SkillUuid", "SkillId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
@@ -2176,6 +2176,7 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public EnterWroldReq(EnterWroldReq other) : this() {
     roleId_ = other.roleId_;
+    pos_ = other.pos_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -2200,6 +2201,21 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
     }
   }
 
+  /// <summary>Field number for the "pos" field.</summary>
+  public const int PosFieldNumber = 2;
+  private string pos_ = "";
+  /// <summary>
+  ///出生坐标，沿用 RoleBaseInfo.pos 的“X_Y_Z”下划线格式，单位米；旧客户端不携带时保持原位置
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Pos {
+    get { return pos_; }
+    set {
+      pos_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -2216,6 +2232,7 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
       return true;
     }
     if (RoleId != other.RoleId) return false;
+    if (Pos != other.Pos) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -2224,6 +2241,7 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
   public override int GetHashCode() {
     int hash = 1;
     if (RoleId != 0) hash ^= RoleId.GetHashCode();
+    if (Pos.Length != 0) hash ^= Pos.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -2246,6 +2264,10 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
       output.WriteRawTag(8);
       output.WriteInt32(RoleId);
     }
+    if (Pos.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Pos);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -2260,6 +2282,10 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
       output.WriteRawTag(8);
       output.WriteInt32(RoleId);
     }
+    if (Pos.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Pos);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -2272,6 +2298,9 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
     int size = 0;
     if (RoleId != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
+    }
+    if (Pos.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Pos);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -2287,6 +2316,9 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
     }
     if (other.RoleId != 0) {
       RoleId = other.RoleId;
+    }
+    if (other.Pos.Length != 0) {
+      Pos = other.Pos;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -2311,6 +2343,10 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
           RoleId = input.ReadInt32();
           break;
         }
+        case 18: {
+          Pos = input.ReadString();
+          break;
+        }
       }
     }
   #endif
@@ -2332,6 +2368,10 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
           break;
         case 8: {
           RoleId = input.ReadInt32();
+          break;
+        }
+        case 18: {
+          Pos = input.ReadString();
           break;
         }
       }

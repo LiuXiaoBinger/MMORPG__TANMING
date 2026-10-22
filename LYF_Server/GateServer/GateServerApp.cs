@@ -22,13 +22,13 @@ namespace GateServer
             NetServer server = new NetServer(client);
             server.StartServer(NetDefine.IPHost,NetDefine.GateServerPort);
 
-            // 实时通道：移动与技能走可靠 UDP（KCP），其余业务仍走上面的 TCP 监听。
+            // 实时通道：移动与技能只走可靠 UDP（KCP），其余业务仍走上面的 TCP 监听。
             // 本次运行的 UDP 网络实例，负责监听、认证与 KCP 会话路由。
             UdpNetwork udpNetwork = new UdpNetwork();
             if (!udpNetwork.Start(NetDefine.IPHost, KcpDefine.GateUdpPort))
             {
-                // 启动失败时仅告警：客户端绑定请求会收到不可用结果并保持全 TCP。
-                LogMsg.Info("KCP UDP 通道启动失败，本次运行实时协议保持 TCP", LogMsgType.Warn);
+                // 启动失败时仅告警：客户端绑定会被明确拒绝，并沿现有断线恢复流程重建连接。
+                LogMsg.Info("KCP UDP 通道启动失败，客户端实时绑定将被拒绝", LogMsgType.Warn);
             }
 
             GateLoginCtrl  gateLoginCtrl = new GateLoginCtrl();

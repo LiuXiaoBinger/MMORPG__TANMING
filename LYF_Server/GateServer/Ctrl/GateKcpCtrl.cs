@@ -1,7 +1,8 @@
 using Google.Protobuf;
 
 /// <summary>
-/// 网关 KCP 绑定入口：为已完成登录并进入世界的 TCP 会话下发会话号与短期令牌。
+/// 网关 KCP 绑定入口：为已完成登录的 TCP 会话下发会话号与短期令牌。
+/// 绑定由客户端在创建本地主角表现前发起，早于进入世界请求，因此不校验角色是否已进入世界。
 /// 只做参数分配，不校验角色权限，也不保存业务状态。
 /// </summary>
 public sealed class GateKcpCtrl : IContainer
@@ -39,11 +40,11 @@ public sealed class GateKcpCtrl : IContainer
             KcpBindPayload abandonRequest = KcpBindPayload.Decode(request);
             if (abandonRequest != null && abandonRequest.Result == KcpBindResult.Abandoned)
             {
-                // 取当前 UDP 网络实例：未启动时只做会话侧回退，不访问空引用。
+                // 取当前 UDP 网络实例：未启动时只清理会话侧引用，不访问空引用。
                 UdpNetwork abandonNetwork = UdpNetwork.Instance;
                 if (abandonNetwork != null)
                 {
-                    // 先释放待绑定条目与 Peer，再让会话回到 TCP，两侧最终都只保留 TCP。
+                    // 先释放待绑定条目与 Peer，再解除会话侧引用，两侧都不再保留实时通道。
                     abandonNetwork.ReleaseSession(session.SessionID);
                 }
                 session.DetachRealtimePeer();
@@ -52,13 +53,13 @@ public sealed class GateKcpCtrl : IContainer
             }
         }
 
-        // 当前 UDP 网络实例：为空表示网关未启动 KCP 监听，本会话只能保持全 TCP。
+        // 当前 UDP 网络实例：为空表示网关未启动 KCP 监听，本会话无法建立实时通道。
         UdpNetwork udpNetwork = UdpNetwork.Instance;
         // 待下发的绑定响应载荷，先置空，由分配结果填充或构造不可用响应。
         KcpBindPayload payload = null;
         if (udpNetwork == null)
         {
-            // 未启用 UDP 时明确回不可用，客户端本会话保持全 TCP。
+            // 未启用 UDP 时明确回不可用；客户端据此清理通道并沿现有断线恢复重建连接。
             payload = new KcpBindPayload();
             payload.Result = KcpBindResult.ServerUnavailable;
             payload.Token = new byte[KcpDefine.BindTokenBytes];
