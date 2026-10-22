@@ -1,3 +1,9 @@
+## 2026-10-22 规则验证：两模型各3轮的接手门槛
+
+- 核对同一问题豆包3轮、WorkBuddy3轮，各为首次1轮加返工2轮；未满必须沿原任务附真实证据返工，双方各3轮仍未通过才切Codex。先满模型转另一模型补充，提前解决停止。
+- 核对等待、状态查询、连接失败、自检和核验不计轮，新会话不清零、任务标识及失败证据留痕。用户明确提前接手优先，本条取代历史“不强求固定轮数”描述。
+- 本轮只做配置与文档静态验证，不实际运行两模型返工或游戏测试；结果与Git回执见 项目修改日志/2026-10-22-AGENT-FALLBACK-ROUND-LIMIT-CHANGELOG.md。
+
 ## 2026-10-22 规则验收：查找先豆包，Codex沿路线核验
 
 - 本轮按用户要求把“代码查找、参考项目查找与Bug定位先豆包，Codex沿路线核验，路线错误或证据不足再独立查找”同步到AGENTS.md、AIconfig/config.toml、AIconfig/workflow.md、AIconfig/agent/doubao_executor.md，并更新PROJECT_CONTEXT.md、DECISIONS.md、CURRENT_TASK.md。
