@@ -58,4 +58,8 @@ Unity↔Gate 的 11180/11181 移动和 11170/11171/11173 技能固定使用同�
 
 ## Git
 
-源码和隔离检查已通过，提交范围为上述18路径；基线ab6252c，当前仅待精确暂存、中文提交与推送codex/network-kcp-development。9份原用户修改及无关未跟踪产物不暂存，不合main。实际提交号、推送回执在操作后追加。
+源码和隔离检查已通过，实际暂存18路径与清单完全相同，git diff --cached --check通过，源码及插件哈希与最终验收记录一致。基线ab6252c；9份原用户修改及无关未跟踪产物未暂存，未合main。
+
+- 业务提交：`c9ee4d11237e8cffb983c8ff25abe5a8928a50a7`，中文标题“fix: 移动与技能固定使用KCP并提前完成绑定”；正文记录具体修改、验证边界及本日志路径。
+- 正常推送 `git push origin codex/network-kcp-development` 成功，远端由ab6252c快进至c9ee4d1；`git ls-remote`核对同一完整SHA，无强推或历史改写。
+- 回执收尾仅修改本日志、`Docs/AI/CURRENT_TASK.md`与`Docs/AI/TEST_REPORT.md`，沿同一功能分支另行提交推送；本轮业务与测试结果不变，不为了回执自引用循环提交。最终收尾提交号由交付回复和`_temp/network-kcp-only-20261022/git-receipt.json`记录。

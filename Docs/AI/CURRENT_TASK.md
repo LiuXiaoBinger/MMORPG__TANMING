@@ -5,7 +5,8 @@
 - WorkBuddy 官方桌面 Hub hub-f7470571-9db1-422c-983d-fa9061f1d06a，两轮均 completed，原会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0，第二轮run-9013f4af-d60f-4a3a-a533-745de3e68226，desktop_queue。Codex设计、独立复验和集成，没有代改业务源码。
 - Codex最终四服务工程0错误，正式Network.dll已配套且SHA与本轮构建一致；引用正式插件的客户端289源0错误。独立Socket108/0、入场8/0、真实客户端脚本薄边界39/0；原9份用户文件SHA保持。完整18路径和Git结果见项目修改日志/2026-10-22-KCP-ONLY-REALTIME-CHANGELOG.md；证据_temp/network-kcp-only-20261022/codex-validation。
 - 现场未验：Unity双号移动/技能、MP扣费、自动重连、TCP实体创建与KCP实时早到、弱网端到端和IL2CPP。未启停用户Unity/服务、未保存场景、未替用户GM_Game.dll.bytes；下次沿现场验证，不将隔离通过当上线。大包上限与协议入口范围旧问题未扩修。
-- 下一步：按根日志记录统一提交推送回执；使用同版服务端与客户端网络库，在正常热更加载后现场验证。UDP10141必须可用，TCP网关10140；UDP长期不可用时不会以TCP继续实时游戏。
+- Git集成：本轮18路径业务提交c9ee4d11237e8cffb983c8ff25abe5a8928a50a7已成功推送origin/codex/network-kcp-development，ls-remote核对一致；未合main。随后仅补三份文档回执，原9份用户文件保留。
+- 下一步：使用同版服务端与客户端网络库，在正常热更加载后现场验证。UDP10141必须可用，TCP网关10140；UDP长期不可用时不会以TCP继续实时游戏。
 
 ## 2026-10-22 当前交接：网络整体复审完成，三项发现仍开放
 

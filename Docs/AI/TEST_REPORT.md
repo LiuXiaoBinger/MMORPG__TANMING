@@ -1,5 +1,6 @@
 ## 2026-10-22 固定 KCP：Codex独立源码与隔离验收通过，现场未验
 
+- Git验收：18路径精确暂存、暂存空白检查通过；业务提交c9ee4d11237e8cffb983c8ff25abe5a8928a50a7推送origin/codex/network-kcp-development成功，ls-remote同SHA。未合main；补录回执仅改本文件、CURRENT_TASK和根修改日志，不重复声明运行测试。
 - 最终compile_kcp.py重建Network/Gate/Game/Center，均0错误；警告日志计数14/14/28/14含重复输出，属于既有警告。compile_client_plugin_path.py以正式插件路径编译289源，0错误；未替用户热更DLL。
 - run_loopback.py独立真实Socket回环PASSED=108 FAILED=0：Unity上行和Gate下行未绑定/绑定中/失败/就绪/释放/重连未绑定实时TCP零写入，普通业务TCP、服务间实时TCP、同通道保序及生命周期回归通过。WorkBuddy第二轮自检112/0单独归属开发自检，不冒作Codex复跑数字。
 - run_enterworld.py独立PASSED=8 FAILED=0：真实protobuf与RoleManager处理，出生坐标过滤前应用，距出生8米/距原点约107米的观察者收到广播与附近补发，不发首移动；不是正式Unity联机。
