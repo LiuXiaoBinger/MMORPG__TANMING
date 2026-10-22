@@ -1,3 +1,19 @@
+## 2026-10-22 NPC对话框反向引用：本阶段最终独立验证
+
+- 唯一业务修改MainCityMgr.BindMainRoleCompatibilityController增加sceneEntity.SetEntityCtrl(mainRoleController)与中文说明；原SetROObject和原导航/OpenTalk/UI流程保持。修复的是开窗参数为空，不改A*、移动或碰撞。
+- Codex正式Network.dll插件路径289源Rebuild：exit0、0错误、38警告；未逐条归因警告。557编译输入SHA零差异，见arrival-followup/codex-validation/build/client-plugin-path及compile-inputs-check.json。
+- Codex在独立输出目录重新抽取Git32a7fa7与当前真实绑定方法原文，配合真实MNavigationComponent/NpcCtrl复跑。修前24/0断言验证故障状态：近远到达均开窗0次、主角尚未创建完成；修后26/0验证已有/原流程新建控制器的双向同一引用、近远到达各调用TalkWindow一次且NpcEntity身份保持、停走、后续5帧不重复及过远提示。24与26不累计为功能通过数，修前通过代表成功复现故障。
+- 薄边界使用Unity/实体容器/模型位置推进/UI调用记录替身，不含真实窗口显隐或渲染；后续帧无重复只证明该到达入口不重复调用，不能当整个UI系统排除双触发。9项测试输入哈希保持，详见codex-validation/behavior/result.json与before/after/runtime.log。
+- 实际差异审计：业务仅一行绑定及注释、meta完整字节保持、无越界已跟踪修改、9用户文件SHA保持。没有改导航、NpcCtrl、TalkWindow或UIRoot，也没替用户热更字节。最终证据codex-validation/audit-final.json。
+- WorkBuddy本项目desktop_queue平台round2已由Codexaccepted；只读阶段“直接OpenTalk代表完整到达”“程序集字符串证明现场同版”两处过强说法已纠正，不作为验收依据。无Unity现场/发布验收，现有Editor.log历史不可作为本轮现场证据。
+- 逐项5文件与Git回执：项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md；完整临时证据根_temp/npc-dialog-20261022/arrival-followup。下一步加载同版代码及上一阶段UI资源，现场点击NPC观察对话框、文字和关闭/重开。
+
+## 2026-10-22 用户澄清：角色走过去但NPC对话不显示，继续定位
+
+- 用户确认点击NPC后角色会走过去，当前重点转为导航到达回调和窗口显隐。上一轮只修已确认文字绑定，不当作面板不弹的最终根因。
+- 沿豆包原本项目local会话38448648846393602续查，run59396782753161730；分支codex/npc-dialog-fix、基线32a7fa7。当前仍无Unity现场进程/MCP和新日志，尚无新复现/修复通过结论。
+- 同轮日志项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md；证据_temp/npc-dialog-20261022/arrival-followup；原9用户文件保持。
+
 ## 2026-10-22 NPC文字绑定修复：提交推送回执
 
 - 本轮6文件代码与记录提交`442fb623399a782a698fce3ae961e68211065e69`已推送origin/codex/npc-dialog-fix，远端SHA核对一致，未合main；9用户文件SHA保持。源码与隔离验收通过，完全不弹窗的现场现象仍待确认，同版热更程序集及UI资源尚未部署。
@@ -5090,3 +5106,5 @@ amespace、无 oreach（统一用 or 或数组 CopyTo 后按下标遍历）、
 - 已复现限制：技能IsActiveMovable=false且目标误差大于0.1米时，LagSyncUpdate不推进；当前五条MoveCasting配置均false。本轮仅确认行为，没有修复，不能把11项通过当作严格同步验收。
 - 技能开始广播未被客户端用于服务器时间对齐，方向来自远端当前模型；两端曲线独立播放。未跑真实Socket双客户端、Unity原生碰撞/画面、弱网、完整客户端或服务器构建及部署生效。数学/宿主/状态与发送为薄边界，未模拟网络和完整状态生命周期。
 - 正式记录：项目分析/NAVIGATION_CHARGE_NETWORK_SYNC_CHECK.md、项目分析/项目难点.md、Docs/AI/CURRENT_TASK.md、本文件及项目修改日志/2026-10-22-NAVIGATION-CHARGE-SYNC-CHECK-CHANGELOG.md。无业务/资源修改，下一步按专题进行正式双号对照。
+
+- 本阶段豆包run59396782753161730恢复返回task_unavailable，stop确认cancelled/stopped=true，未取得报告，不计模型失败轮。已沿本项目委派WorkBuddy桌面只读续查Hub hub-1284e335-707f-4b74-8252-b84d93defbce；仍未修改新业务或取得新验收结论。

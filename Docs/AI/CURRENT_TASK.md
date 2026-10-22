@@ -1,3 +1,17 @@
+## 2026-10-22 NPC对话框：补齐主角反向引用，源码与隔离验收通过
+
+- 用户明确关注点击NPC后对话框不显示；本阶段不修改寻路。确认MainCityMgr原流程只让MainRoleCtrl持有实体，未让实体SetEntityCtrl保存控制器；NpcCtrl.OpenTalk从到达回调收到null而提前返回。仅在BindMainRoleCompatibilityController原SetROObject之后补一行反向绑定及中文注释。
+- WorkBuddy桌面本项目Hub hub-1284e335-707f-4b74-8252-b84d93defbce，原生会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0；平台round1只读定位，round2首次开发run-5b6704c9-656f-4068-8df2-8df1c5985ad7，Codex核验后accepted/holdsCapacity=false。豆包先行原会话受task_unavailable阻断且确认停止，不计失败轮。
+- Codex独立289源编译0错误/38警告、557输入哈希保持；抽取真实主角绑定方法并编译真实导航/NpcCtrl，同夹具修前24项确认空引用不开窗、修后26项确认近远到达均调用开窗一次/同NPC数据/后续帧不重复与原过远提示。Unity、实体容器、位置推进与UI入口为薄替身，未验证真实渲染。
+- 本阶段5项文件：MainCityMgr.cs及根CURRENT_TASK、TEST_REPORT、项目分析/项目难点.md、项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md；逐项用途见日志。无新增/移动/删除正式文件，meta、导航、窗口/资源及原9用户文件保持。
+- 分支codex/npc-dialog-fix，基线32a7fa7，检查后精确提交推送，不合main。无Unity现场连接，GM_Game.dll.bytes保留用户修改，未替换热更/打资源包；需同版热更代码与上一阶段UI资源后现场确认对话框和文字。最终证据_temp/npc-dialog-20261022/arrival-followup/codex-validation。
+
+## 2026-10-22 用户澄清：角色走过去但NPC对话不显示，继续定位
+
+- 用户确认点击NPC后角色会走过去，当前重点转为导航到达回调和窗口显隐。上一轮只修已确认文字绑定，不当作面板不弹的最终根因。
+- 沿豆包原本项目local会话38448648846393602续查，run59396782753161730；分支codex/npc-dialog-fix、基线32a7fa7。当前仍无Unity现场进程/MCP和新日志，尚无新复现/修复通过结论。
+- 同轮日志项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md；证据_temp/npc-dialog-20261022/arrival-followup；原9用户文件保持。
+
 ## 2026-10-22 NPC文字绑定修复：提交推送回执
 
 - 本轮6文件代码与记录提交`442fb623399a782a698fce3ae961e68211065e69`已推送origin/codex/npc-dialog-fix，远端SHA核对一致，未合main；9用户文件SHA保持。源码与隔离验收通过，完全不弹窗的现场现象仍待确认，同版热更程序集及UI资源尚未部署。
@@ -3051,3 +3065,5 @@
 - 本轮当前生产方法隔离编译运行11项通过（含暂停追赶的行为复现）；不是业务修复验收或真实联机验收。证据_temp/navigation-root-sync-20261022/；现场双客户端、弱网、原生墙体与部署版本生效未验。没有因本轮检查启停Unity或服务。
 - 正式文件：新增项目分析/NAVIGATION_CHARGE_NETWORK_SYNC_CHECK.md及项目修改日志/2026-10-22-NAVIGATION-CHARGE-SYNC-CHECK-CHANGELOG.md；修改项目分析/项目难点.md、本文件、Docs/AI/TEST_REPORT.md。提交仅这五份文档，不混入用户已有改动。
 - 交接：按专题中的双账号用例观察导航/静止技能/墙体附近技能的坐标误差；用户要求修复后再明确最小范围并委派桌面开发子Agent，主Agent不代写业务。
+
+- 本阶段豆包run59396782753161730恢复返回task_unavailable，stop确认cancelled/stopped=true，未取得报告，不计模型失败轮。已沿本项目委派WorkBuddy桌面只读续查Hub hub-1284e335-707f-4b74-8252-b84d93defbce；仍未修改新业务或取得新验收结论。

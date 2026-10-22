@@ -1,4 +1,43 @@
-# NPC点击无对话：文字绑定修复与现场边界
+# NPC点击无对话：开窗引用与文字绑定修复
+
+## 最新阶段：对话框开窗参数为空，最小修复与验收
+
+用户先确认人物会走过去，随后强调关注的是点击NPC后没有对话框。本阶段不改导航算法或移动，只修开窗参数。MainCityMgr原绑定流程让MainRoleCtrl.SetROObject持有实体，却未让实体反向SetEntityCtrl持有控制器；到达回调NpcCtrl.OpenTalk(Entity.GetEntityCtrl())因此拿到null，提前提示“主角尚未创建完成”，不会进入既有ShowMainWindow。
+
+实际只在BindMainRoleCompatibilityController的SetROObject后增加sceneEntity.SetEntityCtrl(mainRoleController)及中文说明。沿原实体关联接口、原10米距离、MainCtrl/MainView/WindowBase对话窗口流程，不改全局入口或增加状态、门禁、重试。原GetEntityCtrl业务读取点只有导航到达，不因此增加移动、动画写入。
+
+### 本阶段逐项文件清单
+
+| 操作 | 项目根相对路径 | 用途与具体变化 |
+| --- | --- | --- |
+| 修改 | LYF_MMO/Assets/GM_Game/Scripts/Manger/MainCityMgr.cs | 主角初始化后补实体到同一MainRoleCtrl的反向引用，+1行绑定和+1行中文用途说明；既有正常流程保持。 |
+| 修改 | Docs/AI/CURRENT_TASK.md | 记录用户澄清、空引用根因、单文件范围、开发身份、验收及现场交接。 |
+| 修改 | Docs/AI/TEST_REPORT.md | 记录本阶段289源编译、修前24项故障复现/修后26项开窗调用验证、输入哈希与文件保护，区别UI替身和真实显示。 |
+| 修改 | 项目分析/项目难点.md | 更新NPC条目：双向引用遗漏、文字与开窗缺陷区分、失败推断纠正、最小方案、证据边界及面试讲述。 |
+| 修改 | 项目修改日志/2026-10-22-NPC-DIALOG-CHANGELOG.md | 本文追加本阶段逐项清单、设计、开发/核验、未解决事项与Git回执；下方文字修复为已提交历史阶段。 |
+
+本阶段无新增/移动/删除正式文件，无新meta或目录meta；MainCityMgr.cs.meta保持。导航、NpcCtrl、TalkWindow、UIRoot及上一阶段文字修复不变；原9用户修改保持。临时任务/测试/编译/报告全部位于_temp/npc-dialog-20261022/arrival-followup，不提交。
+
+### 外部任务与Codex独立核验
+
+- 豆包沿原local项目会话38448648846393602/run59396782753161730恢复返回task_unavailable，sessions stop确认cancelled/stopped=true；没有报告，不计模型失败轮，不改用网页或重复派工。
+- WorkBuddy本项目Hub hub-1284e335-707f-4b74-8252-b84d93defbce，原生会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0，desktop_queue。平台round1/run-b61ffdc5-c333-4ee2-a18f-c382480beff0只读定位；round2/run-5b6704c9-656f-4068-8df2-8df1c5985ad7首次开发，主Agent未代改业务。Codex独立核验后review=accepted/holdsCapacity=false。
+- 初轮17项薄边界中的非空用例只是直接OpenTalk，不能称完整到达；仅在程序集检出名字/提示字符串也不能证明运行加载同版方法。开发报告已纠正，本阶段改用真实绑定方法原文与完整到达入口组合；部署仍未验。
+- Codex正式插件路径Rebuild289源，0错误/38警告，未逐条归因警告；557源码/引用输入SHA保持。真实MainCityMgr绑定方法按Git32a7fa7和当前工作区原文分别抽取，编译真实MNavigationComponent和NpcCtrl，在独立目录复跑同夹具：修前24/0断言成功复现空引用/近远到达开窗0次，修后26/0验证近远到达各调用TalkWindow一次、NPC载荷身份、停走、后续5帧无重复与原过远提示；已有/原流程新建控制器均形成同一双向引用。修前数字为故障复现，不与修后累计。
+- Unity、实体容器、模型位置推进、UI入口是薄替身；没有真实渲染或完整窗口生命周期。后续帧次数检查仅覆盖该到达入口，不宣称整个UI系统无双触发。测试9项输入SHA保持，业务唯一绑定/中文注释差异、meta完整字节、原9用户文件及已跟踪修改范围审计通过。
+- 主Agent最终证据：_temp/npc-dialog-20261022/arrival-followup/codex-validation/build/client-plugin-path/result.json、compile-inputs-check.json、behavior/result.json、behavior/before/runtime.log、behavior/after/runtime.log、audit-final.json；平台验收回执在arrival-followup/hub-accept-result.json。
+
+### 未解决与部署交接
+
+无当前Unity现场连接/进程，Editor.log为历史，尚未实际看到点击后对话框渲染。保留用户GM_Game.dll.bytes及包版本，不替换正式热更、不打资源包；运行需要重新构建同版热更代码，并带上前一阶段UIRoot的两TMP引用资源。不能将源码/隔离通过写成用户当前运行包已修复。现场验收：已在原距离内点击NPC直接弹窗，远处点击按原流程走近后弹窗，显示QuQu与三段正文，关闭/重开和原商店按钮正常；本阶段没有新测试正式商店逻辑。
+
+### 本阶段Git范围
+
+当前分支codex/npc-dialog-fix、实际基线32a7fa7740a032dd07df791d659aee78ebcd4f89；仅精确暂存上列5项，保留9用户文件和旧未跟踪产物，不合main、不强推。代码与记录检查通过后提交并推送同名功能分支；真实提交/推送回执在本日志末尾补录。
+
+---
+
+## 历史阶段：文字绑定修复与现场边界
 
 ## 结论与范围
 
@@ -60,3 +99,10 @@ UIRoot已有正文tex_content与标题Image/Text (TMP)。只添加两引用与�
 - 本轮6文件提交`442fb623399a782a698fce3ae961e68211065e69`，正常推送origin/codex/npc-dialog-fix成功并建立上游，ls-remote与本地SHA一致。未合main、未强推；未创建PR。
 - 精确暂存6项与清单一致，git diff --cached --check通过，9用户文件推送后SHA保持。正式_temp、原用户热更字节、字体/设置/历史产物均未混入。
 - 本段及CURRENT_TASK/TEST_REPORT为提交后的3文档回执补录，随后单独提交并推送；最终文档SHA在交付回复报告，避免日志自引用。
+
+## 用户后续澄清：角色走过去后无对话
+
+- 用户回答此前问题：人物会过去，NPC对话没有显示。继续原问题，按实际反馈聚焦导航到达、OpenTalk与窗口显隐，不重复改碰撞或文字。不能据已有10项文字测试认定现场问题解决。
+- 新阶段起点32a7fa7740a032dd07df791d659aee78ebcd4f89，仍codex/npc-dialog-fix；原9用户修改冻结在_temp/npc-dialog-20261022/arrival-followup/baseline.json。豆包沿原本项目local会话续查run59396782753161730，当前仅受理，没有报告或新验收结论。
+
+- 本阶段豆包run59396782753161730恢复返回task_unavailable，stop确认cancelled/stopped=true，未取得报告，不计模型失败轮。已沿本项目委派WorkBuddy桌面只读续查Hub hub-1284e335-707f-4b74-8252-b84d93defbce；仍未修改新业务或取得新验收结论。

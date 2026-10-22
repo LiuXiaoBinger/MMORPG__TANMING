@@ -564,6 +564,8 @@ public class MainCityMgr : MonoBehaviour
       }
       mainRoleController.InitCtrl(RoleType.MainRole, baseInfo);
       mainRoleController.SetROObject(sceneEntity);
+      // 主角实体反向持有同一个控制器，导航到达时据此取主角实际位置判定对话距离并打开对话窗。
+      sceneEntity.SetEntityCtrl(mainRoleController);
    }
 
    /// <summary>按名称在模型层级中查找相机注视点，找不到时由调用方回退到模型根节点。</summary>
