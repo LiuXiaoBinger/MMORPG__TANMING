@@ -1,10 +1,12 @@
+`项目分析/KCP_NETWORK_IMPLEMENTATION.md` 记录本次TCP+KCP实际实现、绑定/分流/失效流程及测试边界。移动11180/11181和技能11170/11171/11173使用同一可靠有序KCP，其余业务及服务间保持TCP；隔离测试通过不等于真实Unity双号或发布验收。
+
 RO设置界面融合与现有UI模式约束见 `项目分析/RO_SETTINGS_UI_INTEGRATION.md`；本轮只集成页面与必要窗口交互，设置业务暂不接入。
 
 RO游戏内帧率显示核查见 `项目分析/RO_FPS_DISPLAY.md`：区分Reporter日志面板与临时FPS组件，说明统计方式和默认隐藏状态。
 
 # 项目分析
 
-`项目分析/RO_NETWORK_TCP_KCP_DESIGN.md` 为移动与技能走UDP、其他业务TCP的拟议方案：第一版采用可靠有序KCP，保留现有网关/游戏服职责；说明RO主游戏TCP与未接入证据的KCP源码、跨通道因果及移动权威边界。只有源码核验，尚未实施或弱网验收。
+`项目分析/RO_NETWORK_TCP_KCP_DESIGN.md` 为移动与技能走UDP、其他业务TCP的拟议方案：第一版采用可靠有序KCP，保留现有网关/游戏服职责；说明RO主游戏TCP与未接入证据的KCP源码、跨通道因果及移动权威边界。该文件为原方案轮源码核验；本次实现见KCP_NETWORK_IMPLEMENTATION.md，真实Unity双号及弱网端到端仍待验收。
 
 `项目分析/RO_NAVIGATION_CLIENT_SERVER_SEARCH_COMPARISON.md` 核实RO客户端原生Detour A*、服务器AI寻路与地图加载、玩家移动检查和跨图规划，并对照LYF服务端目前仅同源编译、尚未运行接入的状态。同题实验已完成：豆包2.1 Pro＋最高推理的官方桌面local任务与当前Codex初稿，核心证据均15/15；统一落盘计时约25分21秒/2分58秒。报告列明双方初稿错误、污染轮次作废和Codex先验优势，不能据此推导通用能力或纯模型速度倍率。
 

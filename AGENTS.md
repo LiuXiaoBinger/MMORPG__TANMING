@@ -53,6 +53,7 @@
 - 豆包通过 `E:/doubao-cli/doubao-windows.cmd` 调用官方桌面客户端，新建与返工明确传 `--runtime local --project 38435310952198914 --workspace D:/unitypro/LYFMMORGP --permission AskOnRisk`。通过CLI项目列表和返回任务上下文确认本项目及本地运行环境，不再使用网页、浏览器云电脑入口或headless。
 - 豆包桌面工作任务启用原生 `agent_mode`，不使用headless专用的 `--mode work`，也不将 `--mode goal` 当工作模式必需参数。保存 `conversationId` 和 `runId`，返工沿用本项目原会话；旧 `project none` 隔离实验仅保留为历史证据。
 - WorkBuddy 优先通过 Agent Hub（`provider: workbuddy`）派发，明确传 `workspace: D:/unitypro/LYFMMORGP`，由网关创建或复用该目录的原生工作会话；兼容直连也明确传同目录并核对真实 `sessionId`，不复用其他目录会话。调用遵循 `workbuddy-executor` Skill，细则见 `AIconfig/agent/workbuddy_executor.md`。
+- 用户已授权由Agent自行处理WorkBuddy未启用本地连接端口等客户端连接问题：先核对原任务是否执行中，优先通过网关正常退出并重启客户端，不再要求用户手动从托盘退出；保留原任务及会话，不重复派工，不强杀正在执行且状态不明的工作，不覆盖未保存成果。
 - Codex主Agent负责需求解读、开发逻辑设计、任务发布和最后测试验收；明确委派给两者的桌面工作任务视为外部开发子Agent委派，测试失败有明确方向时沿原任务返回开发子Agent修改并复验，确认两者无法解决时按失败回退由Codex接手。
 - 每次任务单记录任务标识、项目、目录、工作分支、实际基线、必要上下文、允许修改的逐项文件、具体要求、验收步骤和交付格式。返工沿对应任务提供真实失败证据；已受理但超时先恢复原任务，不盲目重发。
 - 桌面执行者可在授权范围直接修改本地文件；主Agent核对实际差异、产物和检查结果后验收，不能只凭“已完成”。仅交付补丁时由本地开发子Agent核对基线后落盘；交付逐项文件变化、产物位置、检查结果和未解决项。

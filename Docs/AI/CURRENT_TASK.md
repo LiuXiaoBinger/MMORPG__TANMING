@@ -1,4 +1,35 @@
-## 2026-10-22 当前任务：网络TCP与UDP/KCP方案完成，尚未实施
+## 2026-10-22 当前交接：KCP第一版实现集成，待Unity现场联机
+
+- 分支codex/network-kcp-development，基线756ca35，不合main。移动11180/11181、技能11170/11171/11173同一可靠有序KCP，其他业务和Gate↔Game保持TCP。最终本任务文件34路径逐项见项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md；无移动删除、无Unity新脚本/meta。
+- 真实修复：KCP实例串行与唯一消费者投递、TCP确认启用、UDP不明文回令牌、空闲保活与失效不回投TCP、旧回调归属核验；零首包即释放在OnBound记录曾启用；绑定完成锁内重核pending并Attach；Disconnect先释放绑定再Detach，独立固定交错已过。
+- 执行事实：WorkBuddy Hub hub-7e630e54-2ccc-469c-b3d4-e972acfc0d82、会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0，3轮交付；豆包会话38448538786202114，首轮59342789144677378因错误请求清_temp而官方停止，恢复59343046029300226完成；第2轮59346106520983042仅注释，第3轮59341734485564162 completed，为夹具异步连接完成等待；最终Codex实测90/0、三探针通过。连接等待/权限阻断恢复不计开发失败轮数。Codex不代改业务代码。
+- 正式插件已配套；保留原用户热更DLL、字体、布局、yoo等修改，未启动停止用户Unity/服务、保存场景或发布。后续现场验证使用TCP网关10140与UDP10141，服务与客户端需同版网络库；隔离默认端口21141不是正式服务端口。
+- 下一步仅剩现场运行与发布验收：真实双号移动/跳跃/技能位移和打断、五实时协议实际UDP、一次施法MP扣除、跨通道实体早到、Unity自动重连、弱网性能、HybridCLR/IL2CPP主包配套。当前无Unity MCP工具，未报告这些项通过；不为其自行扩功能。测试与提交推送回执见TEST_REPORT及根日志。
+
+## 2026-10-22 当前任务：豆包第1轮修复KCP两处实证缺口
+
+- 分支codex/network-kcp-development、基线756ca35，业务未提交推送、未合main。WorkBuddy已交付3轮；原Hub hub-7e630e54-2ccc-469c-b3d4-e972acfc0d82及会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0保留，最新attempt run-17f0279d-aac8-4e1b-a15e-535ee8d45c35 completed但未验收。
+- 已转豆包第1轮：conversation38448538786202114、run59342789144677378；项目38435310952198914、runtime local、workspace D:/unitypro/LYFMMORGP，最后状态running。任务_temp/network-kcp-20261022/doubao-round1-task.md；预期报告同目录doubao-round1-report.md，已受理等待不重复创建。
+- 最小修复：NetClient保存曾启用状态须覆盖零发送后清引用；UdpNetwork绑定完成与取消/断线沿既有同步边界串行，不能取消后重建或重挂Peer；GateKcpCtrl三目改if；修测试脚本UTF8读取。真实失败证据review/ROUND3_REVIEW.md与repro-result.log，不新增通用队列/代次框架。
+- Codex已实际复测四工程与客户端289源0错误，旧78项Socket通过；新增独立探针证明技能误写TCP14字节及Abandoned后引用分裂，尚未通过验收。豆包交付后复跑同一探针及新增回归，失败退原会话第2/3轮。
+- 正式Network.dll仍旧版，验收后由开发者配套更新并再次核依赖；GM_Game.dll.bytes、字体及布局等用户修改保留。Unity双客户端、MP扣除、跨通道早到、真实自动重连均不得冒称通过。最终文件清单与Git回执见项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md。
+
+## 2026-10-22 当前任务：KCP首轮未通过审查，原会话第2轮返工
+
+- 分支codex/network-kcp-development，实际基线756ca35；未合main，业务尚未提交或推送。WorkBuddy首轮run-3a581c50-63f9-4e7c-9710-9c4b4b3bb5cb已completed，runtimeSource=desktop_queue；19项回环仅开发自检，不能作为最终验收。
+- 原Hub任务hub-7e630e54-2ccc-469c-b3d4-e972acfc0d82已提交第2轮返工，保留会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0、本项目目录及授权范围。证据与完整要求：_temp/network-kcp-20261022/rework-round2.json、rework-round2-result.json。
+- 阻塞：KCP实例跨线程未同步；30秒空闲释放后客户端仍Ready；绑定Accept丢失导致单边启用；UDP绑定明文发送认证密钥；旧通道回调借用当前连接代次。要求原开发者最小修复并补并发、丢包/乱序/重复、初始阻断、运行期失效和旧会话测试，再由Codex复核实测。
+- 用户授权后续WorkBuddy连接端口问题由Agent自行核原任务状态、正常退出/重启并恢复原任务，不再要求用户托盘退出；AGENTS.md及AIconfig/agent/workbuddy_executor.md已同步。不得强杀执行状态不明的任务或覆盖未保存成果。
+- 首轮正式Network.dll未替换；修后需配套更新并重新验证客户端依赖。保留用户字体、GM_Game.dll.bytes、布局等改动。最终逐项清单、测试和Git回执统一在项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md。
+
+## 2026-10-22 当前任务：KCP网络改造已授权并派发（历史派发状态）
+
+- 用户明确采用KCP并要求专门开发分支；已从756ca35创建codex/network-kcp-development并推送设置上游，覆盖本任务旧固定功能分支要求，不操作main。其他工作区用户修改保留。
+- 实施范围沿项目分析/RO_NETWORK_TCP_KCP_DESIGN.md第一版：Unity↔Gate移动11180/11181、技能11170/11171/11173同一可靠有序KCP通道，其他业务和Gate↔Game继续TCP；接入认证绑定、明确就绪/回退及断线释放，不扩服务器权威移动或不可靠快照。
+- WorkBuddy桌面任务NETWORK-KCP-IMPLEMENT-20261022已通过Hub派发：hub-7e630e54-2ccc-469c-b3d4-e972acfc0d82，首轮attempt run-3a581c50-63f9-4e7c-9710-9c4b4b3bb5cb，会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0，workspace D:/unitypro/LYFMMORGP。当前仅submitted，不等于已执行或验收；沿原任务等待、返工，不重复派工。
+- 任务及基线证据_temp/network-kcp-20261022；开发先提交逐项文件/库版本计划，实际业务代码与自检由WorkBuddy实现，Codex最终核验和集成。日志项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md持续更新真实结果。
+
+## 2026-10-22 当前任务：网络TCP与UDP/KCP方案完成，尚未实施（历史方案轮）
 
 - 用户本轮只要求参考RO给方案。推荐第一版移动11180/11181与技能11170/11171/11173同一可靠有序KCP流，其余业务TCP；后续有实测需要再拆不可靠位置UDP。保留先UpdateMove再施法与现有本地预表现，披露内网TCP和客户端终点保存并未变成服务器权威移动。
 - 豆包官方桌面local只读任务NET-TRANSPORT-RO-DESIGN-20261022，会话38448607062546178，首轮59328209991283202、定向纠错59334090250597122均completed；Codex沿路线核验，纠正OnRecv继承、KCP无原生不可靠模式及循环UUID不能永久去重。没有WorkBuddy开发任务或业务修改。

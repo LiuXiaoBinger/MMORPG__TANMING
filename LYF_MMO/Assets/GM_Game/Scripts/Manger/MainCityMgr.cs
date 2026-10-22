@@ -500,6 +500,8 @@ public class MainCityMgr : MonoBehaviour
                EnterWroldReq request = new EnterWroldReq();
                request.RoleId = baseInfo.RoleId;
                NetSocketMgr.Client.SendData(NetDefine.CMD_EnterWroldCode, request.ToByteString());
+               // 角色进入世界后再申请实时通道绑定，未启用时本会话继续使用 TCP。
+               NetSocketMgr.Instance.RequestRealtimeBind();
                _enterWorldSent = true;
             }
             Debug.Log("角色表现绑定成功，角色 UID：" + requestedUID +

@@ -46,6 +46,8 @@ public class NetDefine
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>
     public const ushort CMD_SyncMoveCode = 11181;
+    /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
+    public const ushort CMD_KcpBindCode = 11190;
 }
 
 

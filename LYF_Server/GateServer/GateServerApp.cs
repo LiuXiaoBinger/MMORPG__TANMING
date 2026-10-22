@@ -21,6 +21,16 @@ namespace GateServer
             //网关服务器 开启服务器端
             NetServer server = new NetServer(client);
             server.StartServer(NetDefine.IPHost,NetDefine.GateServerPort);
+
+            // 实时通道：移动与技能走可靠 UDP（KCP），其余业务仍走上面的 TCP 监听。
+            // 本次运行的 UDP 网络实例，负责监听、认证与 KCP 会话路由。
+            UdpNetwork udpNetwork = new UdpNetwork();
+            if (!udpNetwork.Start(NetDefine.IPHost, KcpDefine.GateUdpPort))
+            {
+                // 启动失败时仅告警：客户端绑定请求会收到不可用结果并保持全 TCP。
+                LogMsg.Info("KCP UDP 通道启动失败，本次运行实时协议保持 TCP", LogMsgType.Warn);
+            }
+
             GateLoginCtrl  gateLoginCtrl = new GateLoginCtrl();
             //注册指令
             server.RegistCommand(NetDefine.CMD_LoginGameServerCode, gateLoginCtrl);//登录游戏服务器
@@ -57,6 +67,10 @@ namespace GateServer
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
+            // 绑定协议只在网关与客户端之间处理，不转发给游戏服。
+            // 绑定协议处理器实例，只在网关与客户端之间分配参数并回包。
+            GateKcpCtrl gateKcpCtrl = new GateKcpCtrl();
+            server.RegistCommand(NetDefine.CMD_KcpBindCode, gateKcpCtrl);
             // 网关系程不做业务，仅挂起等待网络事件。
             while (true)
             {

@@ -1,4 +1,36 @@
-## 2026-10-22 网络双通道方案：源码核验，未实施
+## 2026-10-22 最终KCP集成验收（源码/隔离范围）
+
+- Codex最终实际执行compile_kcp.py：Network/GateServer/GameServer/CenterServer全部0错误，日志警告计数14/14/28/14，含重复输出。compile_client.py及compile_client_plugin_path.py均289源0错误，后者真实指向正式Plugins/Net/Network.dll。
+- Codex运行run_loopback.py最终退出0，PASSED=90 FAILED=0；不是只采信开发自检。豆包此前两次连续90/0日志另存loopback-run1.log与loopback-run2.log。Codex早前89/1日志保留：AcceptSocket未等客户端OnConnSucceed是新增夹具时序缺口，退原任务三处补真实连接成功事件，未加业务重试/门禁，不改90个原断言。
+- Codex最终独立同步探针review/run_codex_final.py编译、运行退出0：零发送释放技能TCP0字节；真实Disconnect等待ReleaseSession表锁期间先Attach再放行，最终Peer字典和Session引用均空；原Enabled日志屏障下真实TCP Abandoned也均空。三条件均True。断开项使用现有同步对象反射固定交错及实际CompleteBind，不冒称UDP认证入口测试；另两项走真实Socket/正式GateKcpCtrl。
+- 最终正式Network.dll与本轮build字节一致，SHA256=950846B969F8FF43B229A3769473FD18CEBFAC2B41650E0D8E043FD9A2F8ACF2；主Agent仅集成已授权开发源码的编译产物，没有代改业务源码。旧插件备份_temp/network-kcp-20261022/plugin-backup。探针输入前后SHA相同。
+- 17份本轮业务源去注释后token与冻结快照完全一致；中文局部候选105→0，新增语法范围无foreach/namespace/三目违规，上游KCP两源与固定提交ZIP逐字一致。上游网络直连核验曾被10054重置，改用已存在固定提交归档核字节，不虚报网络查询成功。
+- 没有真实Unity双号、MP扣除、跨通道实体早到、Unity自动重连、弱网性能或HybridCLR/IL2CPP主包运行验收；无Unity MCP工具，未启停用户Unity/服务/保存场景。不能将隔离通过写成线上运行或性能收益。用户GM_Game.dll.bytes仍057685A6…基线，其余用户修改精确排除暂存。
+- 本次34路径最终清单、Git提交推送结果见项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md。测试脚本与日志留本_temp，不混入正式业务/资源；WorkBuddy原Hub交付3轮后保留未验收记录，最终修复由豆包本项目local第1～3轮实现。
+
+## 2026-10-22 KCP第三轮复验：78项通过，但两项独立真实复现阻塞
+
+- Codex实际运行compile_kcp.py：Network/GateServer/GameServer/CenterServer均0错误；日志警告计数分别14/14/28/14（含重复输出）。compile_client.py引用_temp新Network.dll，289源0错误。正式插件未替换，不代表Unity现场编译/运行通过。
+- run_loopback.py首次因Windows控制台GBK输出UnicodeEncodeError未进入测试；设置PYTHONIOENCODING=utf-8后重跑退出0，PASSED=78 FAILED=0（82条PASS含内部断言）。子进程UTF8被脚本按GBK读取导致中文乱码，已退豆包修脚本，不能将首次失败写成业务失败。
+- 审查独立真实Socket探针：启用KCP后零实时发送即按正式顺序清引用关闭，技能11170实际收到TCP14字节；利用既有Enabled日志同步屏障暂停UDP绑定，真实客户端超时后经真实TCP/正式GateKcpCtrl Abandoned清理，再恢复绑定，Peer字典为空但Session仍挂Peer。探针退出0仅表示两故障均复现。DLL前后SHA256保持2C105772143D313B3805D8C93E47198DAE2C2F79C05618A11A270AC102B61266，未修改生产输入。
+- 证据_temp/network-kcp-20261022/review/ROUND3_REVIEW.md、repro-result.log、build.log与独立探针工程；唯一消费者、绑定日志脱敏、旧代次真实接线、类型拆分定向核验通过；GateKcpCtrl新增三目违规待改。git diff --check通过，尚未业务提交推送。
+- WorkBuddy3轮结束仍未通过，按规则豆包第1轮正在原本项目local会话38448538786202114/run59342789144677378修复。交付后Codex复验，不以自报替测试。真实Unity双号、MP扣除、跨通道时序与自动重连仍未运行；不保存场景、不替用户热更DLL、不启动停止用户服务。
+
+## 2026-10-22 KCP网络改造：首轮审查未通过
+
+- WorkBuddy首轮桌面completed已核实，但开发自报Network/Gate/Unity编译0错及19项回环不等于Codex最终验收。正式插件仍旧版，尚未运行修后Unity双号或部署。
+- 只读审查核对KcpClient.Send/Input/Update/PeekSize/Recv与KcpPeer相同操作跨线程访问，UdpNetwork接收和更新线程还同时SnapshotDeliver；第三方KCP只保护段池。空闲清理30秒释放Peer与客户端持续Ready、单次UDP绑定Accept丢失后两端分流不同、UDP载荷含认证密钥均有源码证据。
+- 首轮顺序测试先等移动到达才发技能，错误令牌测试使用已绑定conv而命中未知conv；没有真正覆盖连续发送保序及待绑定错误密钥。后续必须补足真实Socket并发、丢包/乱序/重复、阻断/空闲/重绑定及旧通道隔离证据。
+- 已沿原Hub任务返工第2轮，未接手代改业务。审查误将一次构建输出至默认bin/obj，已记录且不作为_temp隔离构建证据，不暂存缓存、不擅自清理。
+- 完整证据与后续实测以_temp/network-kcp-20261022和项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md为准；未通过，不报告网络改造完成。
+
+## 2026-10-22 KCP网络改造：分支创建，等待开发交付（历史状态）
+
+- 实际基线756ca35；git switch -c codex/network-kcp-development成功，git push -u origin codex/network-kcp-development成功；没有提交main或合并操作。
+- 读取协作入口、既有双通道方案及已核验源码路线；WorkBuddy provider available，仅表示网关服务可达，不代表开发已完成。Hub任务hub-7e630e54-2ccc-469c-b3d4-e972acfc0d82首轮已派发，最终代码、编译、真实Socket弱网测试和Unity双号均未验收。
+- 原有工作区修改以_temp/network-kcp-20261022/baseline-dirty-paths.txt和baseline-user-changes.patch保留，原Network/GM_Game插件摘要在baseline-plugin-hashes.json；后续精确暂存本任务清单，不混入原用户文件。
+
+## 2026-10-22 网络双通道方案：源码核验，未实施（历史方案轮）
 
 - 回读RO MSocket的Stream/Tcp与统一Send入口、UdpNetwork/KcpPeer的KCP API、BaseLink public OnRecv与公有继承；gateserver范围未找到UdpNetwork业务初始化引用，不推导为线上技能UDP。RO具体施法上行与预编译网络库/实际部署未完整验证。
 - 回读LYF NetServer/NetClient、NetUtils、GateServerApp、PlayerEntity.UpdateMove、MNavigationComponent施法前UpdateMove、移动/技能Handler及ROMoveComponent，确认当前TCP、完整终点采样、MP/CD权威及非服务器权威移动。

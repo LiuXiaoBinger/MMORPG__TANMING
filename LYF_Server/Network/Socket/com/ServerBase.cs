@@ -32,6 +32,12 @@ public class ServerBase
     /// <summary>底层 Socket。</summary>
     protected Socket _socket;
 
+    /// <summary>
+    /// TCP 单帧写入锁。业务回包、转发线程与 UDP 绑定线程都可能对同一连接写帧，
+    /// 并发 Send 会交错截断帧，必须串行；锁内只做一次完整帧写入。
+    /// </summary>
+    private readonly object _sendSync = new object();
+
     /// <summary>连接状态。</summary>
     protected ConnState _connState;
 
@@ -169,11 +175,81 @@ public class ServerBase
                 basePackage.Data = data;
             }
 
-            LogMsg.Info($"{_socket.RemoteEndPoint}发送了数据::{basePackage.ToString()}");
+            LogMsg.Info($"{_socket.RemoteEndPoint}发送了数据::{DescribeSend(basePackage)}");
 
-            _socket.Send(NetUtils.Instance.MakeData(basePackage.ToByteArray()));
+            // 协议包序列化字节，同时供实时通道承载与 TCP 帧封装。
+            byte[] payload = basePackage.ToByteArray();
+            // 实时协议在通道就绪时改走 KCP，其余业务保持原 TCP 帧格式不变。
+            RealtimeSendResult realtimeResult = TrySendRealtime(basePackage, payload);
+            if (realtimeResult == RealtimeSendResult.Sent)
+            {
+                return;
+            }
+            if (realtimeResult == RealtimeSendResult.Dropped)
+            {
+                // 曾经启用的实时通道已失效：本条丢弃，禁止改投 TCP 造成重复执行或跨通道乱序。
+                LogMsg.Info("[ServerBase] 实时通道已失效，丢弃实时协议，protoCode=" +
+                    basePackage.ProtoCode, LogMsgType.Warn);
+                return;
+            }
+
+            // 加协议头后的 TCP 发送帧，交给 Socket 写出。
+            byte[] frame = NetUtils.Instance.MakeData(payload);
+            lock (_sendSync)
+            {
+                // 关闭与写入可能并发，取锁后重新确认 Socket 仍可用。
+                Socket sendSocket = _socket;
+                if (sendSocket == null)
+                {
+                    return;
+                }
+                sendSocket.Send(frame);
+            }
         }
-        catch (Exception ex) { SocketException se = ex as SocketException; LogMsg.Info($"[ServerBase] SendData failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error); }
+        catch (Exception ex)
+        {
+            // 识别出的 SocketException 记录系统错误码，其余异常记录 HResult。
+            SocketException se = ex as SocketException;
+            LogMsg.Info($"[ServerBase] SendData failed, socketErrorCode={(se != null ? (int)se.SocketErrorCode : ex.HResult)}", LogMsgType.Error);
+        }
+    }
+
+    /// <summary>
+    /// 传输分流钩子：子类在具备实时通道时接管发送。
+    /// 返回值必须区分“未启用”与“启用后失效”，后者不允许回退 TCP。
+    /// </summary>
+    /// <param name="basePackage">已填好协议号与载荷的协议包。</param>
+    /// <param name="payload">BasePackage 序列化字节，供 KCP 直接承载。</param>
+    /// <returns>实时通道发送结果；默认未接管，沿用 TCP。</returns>
+    protected virtual RealtimeSendResult TrySendRealtime(BasePackage basePackage, byte[] payload)
+    {
+        return RealtimeSendResult.KeepTcp;
+    }
+
+    /// <summary>
+    /// 生成发送日志正文。绑定协议携带认证密钥，日志只记录结果码与会话号，绝不输出载荷内容。
+    /// </summary>
+    /// <param name="basePackage">待发送的协议包。</param>
+    /// <returns>可安全写入日志的描述文本。</returns>
+    private static string DescribeSend(BasePackage basePackage)
+    {
+        if (basePackage.ProtoCode != NetDefine.CMD_KcpBindCode)
+        {
+            return basePackage.ToString();
+        }
+        if (basePackage.Data == null)
+        {
+            return "KCP 绑定响应::无载荷，令牌已省略";
+        }
+        // 由绑定响应数据解码出的载荷，用于只记录结果码与会话号。
+        KcpBindPayload payload = KcpBindPayload.Decode(basePackage.Data.ToByteArray());
+        if (payload == null)
+        {
+            return "KCP 绑定响应::载荷长度不合法，令牌已省略";
+        }
+        // conv 只是查表用的会话号，不是凭据；令牌与整体载荷一律不写日志。
+        return "KCP 绑定响应::result=" + (byte)payload.Result + " conv=" + payload.Conv +
+            " 令牌已省略";
     }
 
 

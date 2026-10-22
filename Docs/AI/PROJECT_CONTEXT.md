@@ -1,3 +1,26 @@
+## 2026-10-22 KCP网络第一版源码与隔离验收完成
+
+- 当前网络专用分支codex/network-kcp-development，起点756ca35。Unity↔Gate的11180/11181移动与11170/11171/11173技能走同一可靠有序KCP，其余业务及Gate↔Game仍TCP；没有改移动/伤害结算或服务器权威寻路。
+- WorkBuddy桌面3轮初版后由豆包本项目local任务补实证修复、注释与测试收尾。Codex核对实际diff并编译、真实Socket弱网回环与独立同步探针；正式Network.dll已配套，用户原有GM_Game.dll.bytes、字体/布局等保留。
+- 运行与发布边界：没有真实Unity双客户端联机、MP扣除链路、跨通道实体早到、Unity自动重连或HybridCLR/IL2CPP打包验收；隔离通过不等于正式联机或上线。最终文件清单、真实结果及Git回执见项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md；实现入口项目分析/KCP_NETWORK_IMPLEMENTATION.md。
+
+## 2026-10-22 当前进展：WorkBuddy三轮后转豆包限定修复
+
+- WorkBuddy同一KCP问题已实际交付3轮，最新run-17f0279d-aac8-4e1b-a15e-535ee8d45c35已completed、桌面原会话不变，尚未accept。Codex四服务工程及客户端289源编译0错误、真实Socket主套PASSED=78 FAILED=0，但独立探针确定复现两处遗漏，不能当最终验收通过。
+- 启用后零实时发送即释放，技能11170错误写TCP14字节；绑定完成与真实TCP Abandoned交错后，Peer字典已空但Session重挂死Peer。独立证据_temp/network-kcp-20261022/review/ROUND3_REVIEW.md；另须改GateKcpCtrl新增三目。
+- 已按各3轮规则转豆包第1轮：本项目local会话38448538786202114、run59342789144677378，当前running；限定修复、自检及同会话返工。Codex不代改业务、不重复派工，正式Network.dll尚未替换，业务尚未提交推送。
+
+## 2026-10-22 当前进展：KCP首轮返工与连接恢复授权
+
+- WorkBuddy桌面首轮实现已落盘但未通过审查；原Hub任务第2轮修KCP线程安全、空闲状态、握手丢包、UDP密钥暴露和旧通道回调隔离，并补专项测试。Codex不代改业务，正式DLL尚未替换，未报告验收或业务上传完成。
+- 用户已授权WorkBuddy端口连接异常由Agent自行正常退出/重启并恢复原任务，无需再询问托盘退出；必须先核原执行状态，不重复派工，不强杀未知任务，不覆盖未保存成果。AGENTS与WorkBuddy角色已同步。
+- 当前范围与文件清单见CURRENT_TASK及项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md，证据_temp/network-kcp-20261022。
+
+## 2026-10-22 当前生效：KCP网络专用开发分支
+
+- 用户已批准KCP改造并明确要求创建专用Git分支。本任务使用codex/network-kcp-development，起点756ca35，已推送同名远端并设置上游；该用户新授权优先于历史固定codex/feature-development要求。仍不合main，最终检查后由Codex统一提交推送。
+- 第一版实时移动/技能走KCP，其余业务TCP，Gate↔Game不变。WorkBuddy按桌面本项目任务开发，Codex最后核验；事实与进度以CURRENT_TASK、TEST_REPORT及项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md为准。
+
 ## 2026-10-22 当前生效：两模型各3轮后才回退GPT
 
 - 同一未解决问题豆包3轮、WorkBuddy3轮，各含首次1轮与返工2轮。先满3轮仍失败的模型交另一个在相同范围补充；双方各3轮仍未通过才由Codex独立接手，提前解决即停止。未满不能仅因失败或自报不能解决切GPT。
