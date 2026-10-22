@@ -4946,3 +4946,13 @@ amespace、无 oreach（统一用 or 或数组 CopyTo 后按下标遍历）、
 - 只读复核确认Unity进程仍在，当前无Unity MCP工具，配置的127.0.0.1:8082无监听；没有执行对象激活或原生显示恢复，没有新的场景实图。沿用此前inactive定位，不能将历史状态冒充最新实时读取。
 - 未修改业务、场景或资源；只补协作记录及项目修改日志。连接恢复后验收MainCityNavigation激活、原生网格实图、自绘隐藏，保持场景不保存。
 
+
+
+## 2026-10-22 寻路与技能配置位移网络同步专项检查
+
+- 当前源码只读追踪：本地A*导航/Charge位移→碰撞后坐标→11180→服务端保存和附近广播11181→远端已有实体移动事件；协议字段和角色范围逐项核对。
+- 执行_temp/navigation-root-sync-20261022/verify_sync.py。当前PlayerEntity.Update/UpdateMove、MMoveComponent.Update/onSyncMoveEvent/LagSyncUpdate方法原文及完整ROMoveComponent参加隔离编译运行，11项断言通过、零错误、1条抽取上下文未使用字段警告，输入哈希source-hashes.json、输出runtime.log。
+- 通过：无方向输入导航发包、停止发包、非普通移动的技能位置上报、服务端坐标保存和字段透传、默认远端追赶、技能禁止移动时暂停大误差追赶和默认态恢复、小误差直接吸附、同帧曲线/追赶互斥、曲线帧后剩余距离追赶。
+- 已复现限制：技能IsActiveMovable=false且目标误差大于0.1米时，LagSyncUpdate不推进；当前五条MoveCasting配置均false。本轮仅确认行为，没有修复，不能把11项通过当作严格同步验收。
+- 技能开始广播未被客户端用于服务器时间对齐，方向来自远端当前模型；两端曲线独立播放。未跑真实Socket双客户端、Unity原生碰撞/画面、弱网、完整客户端或服务器构建及部署生效。数学/宿主/状态与发送为薄边界，未模拟网络和完整状态生命周期。
+- 正式记录：项目分析/NAVIGATION_CHARGE_NETWORK_SYNC_CHECK.md、项目分析/项目难点.md、Docs/AI/CURRENT_TASK.md、本文件及项目修改日志/2026-10-22-NAVIGATION-CHARGE-SYNC-CHECK-CHANGELOG.md。无业务/资源修改，下一步按专题进行正式双号对照。
