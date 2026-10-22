@@ -4,6 +4,12 @@
 - 本轮仅修改9份协作文档与配置，没有业务代码、Unity资源、场景及.meta变动，没有启动新的豆包查找任务。逐项文件清单、验证与Git回执见 项目修改日志/2026-10-22-DOUBAO-FIRST-SEARCH-RULES-CHANGELOG.md。
 - 当前分支codex/feature-development，基线ec04ecb25a3532610edcfbf0cbc1eb791b014666；精确暂存本轮9文件，保留无关用户改动。下一次查找任务按新顺序执行，最终结论仍由Codex核验。
 
+## 2026-10-22 当前任务：固定额度节省分工与失败回退
+
+- 用户要求以后按“豆包查找定位、Codex核验、WorkBuddy开发、Codex验收”的流程工作，并规定两个模型仍无法解决时不再依赖它们，由Codex独立接手。
+- 已同步AGENTS、AIconfig总策略、执行流程、豆包角色、WorkBuddy角色及四份协作记录。本轮只修改约束和记录，不派发业务任务。
+- 有明确修正方向时沿原任务补充或返工；确认两者无法解决时由Codex接手业务实现及验证，记录失败证据，不循环重派或凑固定轮数。单次超时先查原任务，接手修改前确认原执行者结束或停止。基线93e556e，逐项10文件、已通过的TOML解析与差异检查及Git回执见 项目修改日志/2026-10-22-AGENT-QUOTA-FALLBACK-RULES-CHANGELOG.md。
+
 ## 2026-10-22 续接完成：豆包Pro最高推理源码查找对比已验收
 
 - 用户已确认退出并授权启动，豆包官方桌面本项目local任务已完成，不再等待退出或连接。有效conversationId=38448622087397122、runId=59302623239101442；原生回读model key=5（豆包2.1 Pro）、effort=7（最高）、agentMode=1、runtime_type=2、项目38435310952198914、目录D:/unitypro/LYFMMORGP。

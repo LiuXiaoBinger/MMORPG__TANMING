@@ -25,12 +25,14 @@ strategy = "plan-first"                  # plan-first：先规划再执行（推
 think_granularity = "detailed"           # 思考粒度：detailed / balanced / fast
 max_planning_rounds = 3                  # 每项任务最多规划轮数
 parallel_subagents = true                # 客户端、后端和测试可在边界清晰时并行
-allow_self_review = false                # 主 agent 不直接修改业务代码，只负责调度、验收和记录
-require_subagent_for_business_code = true # 涉及客户端或服务端业务代码时必须创建并委派给对应子 agent
+allow_self_review = false                # 默认由开发者自检、Codex验收；失败回退后也必须运行必要检查，不以自报替代验证
+require_subagent_for_business_code = true # 默认先委派；确认豆包与WorkBuddy无法解决时按agent_quota_workflow由Codex接手
 
 [agent_policy]
 # ---------- 子 agent 运行约束 ----------
 search_and_bug_lookup_rule = "代码查找、参考项目查找与Bug定位默认先派豆包本项目官方桌面只读工作任务，交付精简路线、路径行号、关键函数调用链、证据及未确认项，Bug附实际复现或日志；Codex不并行重复完整查找，先沿其路线读取真实文件并验证，错误或证据不足再独立查找并记录纠正，以减少Codex额度消耗；用户另有安排优先。查找不授权修复，最终验收及业务委派职责保持；入口不可用按既有规则记录，日常协作入口读取和约束记录维护无需再派查找任务"
+agent_quota_workflow = "Codex拆解需求、范围和验收；豆包查找定位，WorkBuddy按Codex核验路线开发和自检，Codex定向复核测试并统一记录提交。有明确修正方向沿原任务返工，确认两者无法解决时停止依赖，Codex独立查找、设计、编写或修复业务代码并验证，记录失败原因，不循环重派或凑固定轮数；单次等待超时先查原任务状态，接手修改前确认原执行者结束或停止。此回退为常规禁止主Agent改业务代码和强制委派的明确例外；用户明确安排优先"
+compact_handoff_rule = "任务单只写问题目标、允许范围、已知证据、验收条件并附任务标识/项目目录/分支/基线；报告仅结论、实际路径行号、必要调用链、检查命令及结果、未确认项和报告路径，详细源码及完整日志留文件。已确认结论引用路径和必要摘要，不重复背景或全量扫描；执行必要验收，通过后不无理由扩大或重复测试"
 require_scope_check = true               # 执行前先确认是否在自己职责范围内
 require_design_before_code = true        # 写代码前必须先输出简要设计
 max_edit_batch = 20                      # 单轮最多修改文件数
@@ -54,8 +56,8 @@ performance_rule = "Update、网络回调和高频逻辑避免无必要分配、
 version_control = "功能开发使用codex/feature-development，后续分支沿codex/前缀；仅用户明确要求才合入main。每次代码完成对应检查后提交任务相关文件和修改日志并推送功能分支；中文提交正文记录修改、验证和日志路径，回复报告提交号和推送结果，不混入无关用户改动、不强推"
 change_manifest_rule = "每次代码交付在回复和项目修改日志中逐项列新增、修改、移动、删除的文件及用途和具体变化；Unity meta可与对应文件合并列出，不用功能概括替代文件清单"
 one_type_per_file = true                 # 每个类、接口、枚举和委托必须独立使用一个源文件
-main_agent_boundary = "主Agent使用Codex，负责解读需求、设计开发逻辑、发布任务和最后测试验收；WorkBuddy与豆包均为外部开发子Agent，可在授权范围开发、修复及修改本地文件；业务代码不由主Agent代改"
-failed_test_rule = "开发子Agent先自检交付，Codex最后核对实际文件并执行必要测试；不通过时将失败证据、复现步骤和预期结果退回原开发子Agent重新开发或修复，再由Codex复测；未通过或受阻不得报告验收完成"
+main_agent_boundary = "主Agent使用Codex，负责需求、设计、发布任务和最后验收；默认豆包查找、WorkBuddy开发及自检，Codex不代改业务代码；确认两者无法解决时按agent_quota_workflow独立接手业务实现及验证"
+failed_test_rule = "开发子Agent先自检，Codex核对真实文件并必要测试；有明确修正方向将失败证据、复现步骤和预期结果退原任务返工复测，确认两者无法解决时按agent_quota_workflow由Codex接手；未通过或受阻不得报告验收完成"
 
 forbidden = [
   "硬编码 IP / 端口 / 密钥到代码",
@@ -68,7 +70,7 @@ forbidden = [
   "在同一个源文件中定义多个顶级类、接口、枚举或委托",
   "在项目代码中使用 foreach；集合遍历统一使用 for",
   "新增或修改业务代码缺少类型、接口、函数、字段、属性、常量、事件、参数或局部变量的具体中文注释",
-  "主 agent 直接修改客户端或服务端业务代码",
+  "未满足豆包与WorkBuddy无法解决的回退条件时，主agent直接代改客户端或服务端业务代码",
 ]
 
 [review]
