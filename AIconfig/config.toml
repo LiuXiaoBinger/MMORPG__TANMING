@@ -30,6 +30,7 @@ require_subagent_for_business_code = true # 涉及客户端或服务端业务代
 
 [agent_policy]
 # ---------- 子 agent 运行约束 ----------
+search_and_bug_lookup_rule = "代码查找、参考项目查找与Bug定位默认先派豆包本项目官方桌面只读工作任务，交付精简路线、路径行号、关键函数调用链、证据及未确认项，Bug附实际复现或日志；Codex不并行重复完整查找，先沿其路线读取真实文件并验证，错误或证据不足再独立查找并记录纠正，以减少Codex额度消耗；用户另有安排优先。查找不授权修复，最终验收及业务委派职责保持；入口不可用按既有规则记录，日常协作入口读取和约束记录维护无需再派查找任务"
 require_scope_check = true               # 执行前先确认是否在自己职责范围内
 require_design_before_code = true        # 写代码前必须先输出简要设计
 max_edit_batch = 20                      # 单轮最多修改文件数

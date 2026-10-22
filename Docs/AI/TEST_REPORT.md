@@ -1,3 +1,9 @@
+## 2026-10-22 规则验收：查找先豆包，Codex沿路线核验
+
+- 本轮按用户要求把“代码查找、参考项目查找与Bug定位先豆包，Codex沿路线核验，路线错误或证据不足再独立查找”同步到AGENTS.md、AIconfig/config.toml、AIconfig/workflow.md、AIconfig/agent/doubao_executor.md，并更新PROJECT_CONTEXT.md、DECISIONS.md、CURRENT_TASK.md。
+- 静态检查：上述规则文本均包含只读查找、路径/行号/调用链/证据交付、Codex最终核验、错误时独立查找、用户例外和超时恢复；配置键可由Python tomli解析，规则值为字符串。仅做配置与文档验证，没有派发本轮豆包业务查找任务，不能把本轮写规则报告成运行查找验收。
+- `git diff --check`通过；无业务代码、资源、场景或Unity `.meta`变动。提交前仅精确暂存本轮9文件并核对清单，提交和推送回执写入 `项目修改日志/2026-10-22-DOUBAO-FIRST-SEARCH-RULES-CHANGELOG.md`。
+
 ## 2026-10-22 续接验收：有效豆包初稿、配置、评分与静态证据完成
 
 - 双方三题15项核心依据逐项回读，均15/15，实际源码行记录于_temp/source-search-comparison-20261022/final-score-verification.json；不把覆盖得分写成全文零错误。发现Codex数据用途称呼问题和豆包DllImport/NavMeshSet/AI事件摘录问题及玩家寻路概括过宽，正式报告列明真实代码。
