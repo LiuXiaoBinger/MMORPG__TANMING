@@ -1,3 +1,26 @@
+## 2026-10-22 自动审批授权已生效，原网络任务继续
+
+- 用户明确长期授权：本项目已授权任务内的编译、测试、只读查找与允许范围文件操作所触发的工具权限，Agent自动同意，优先Allow/allow_once，不再要求用户在桌面找按钮或重复确认。该用户授权优先于Skill通用手动审批约定；保持原任务和真实审批身份，不扩大任务范围、重复派工或伪造回执。
+- 已通过WorkBuddy原生session:resolvePermission对已核对测试准备命令选择allow_once，返回accepted=true；原请求不再待办、剩余权限数0。证据_temp/network-ro-interface-20261022/permission-approval-result.json；未改桌面权限设置或伪造开发者回报。
+- 原网络接口任务保持既有源码和独立验证，原轮曾超时、Hub取消尚需核对结束；自动审批不等于已执行完成。确认原轮结束后按真实状态继续收尾、自检、复验与配套插件，不重复派工。
+- 本轮仅约束与协作记录，逐项10文件及Git结果见项目修改日志/2026-10-22-AUTO-PERMISSION-APPROVAL-CHANGELOG.md。
+
+## 2026-10-22 RO公共接口：源码已落盘，等待原生输入后收尾
+
+- 当前分支codex/network-kcp-development，基线85cda92。WorkBuddy原Hub hub-e4ae9fac-81d5-48de-94dc-07473d54cdd0的round2/run-b023d1e2-d2c4-4229-bd8e-11fdf687d4a3超时，未交付最终报告；原会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0。原生RPC只读实查返回waiting_input、目录匹配；不能仅凭running/旧数据库completed判断当前执行状态。取消请求已发但未确认结束，不重复派工或重启执行中任务。
+- 已落盘BaseLink、MNetClient真实改名及Send/OnRecv共用入口、必要调用点迁移。Codex独立五服务器工程/289客户端源0错误；Socket/KCP122/0、入场8/0、客户端薄边界54/0；当前输入哈希保持。33机械迁移无业务变化，23文件有BOM噪声待开发者恢复；meta GUID与设置保持，用户9文件哈希保持。
+- 最小收尾已准备在_temp/network-ro-interface-20261022/workbuddy-review-feedback.md，尚未派出：移除新增重复归属检查、简化Send局部流程并准确说明本地提交语义、补局部注释、恢复BOM。原ReleaseRealtimeClient测试过强预期已纠正，仅真实Disconnect旧代次失效为验收，不要求添加门禁。
+- 需要用户在原WorkBuddy会话处理原生权限或输入。技能明确该输入由用户处理；主Agent不代答权限、不改执行器状态、不冒充开发者回报。确认原轮结束后沿同Hub返工，自检后复测与正式插件配套。
+- 正式Network.dll尚未替换，GM_Game.dll.bytes及其余用户改动保留；尚未最终验收、提交或推送。完整逐项清单见项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md，接口对照见项目分析/RO_NETWORK_INTERFACE_COMPARISON.md。
+
+## 2026-10-22 当前任务：按RO对齐网络共用接口
+
+- 用户要求改造共用接口以便对照RO源码；保留五实时协议固定KCP、其他业务与Gate↔Game为TCP。分支codex/network-kcp-development，实际基线85cda92，不合main。
+- 豆包先行会话38448643828218882：首轮多行CLI仅传标题，确认停止后同会话恢复；恢复run59362003322259202及59355828999629826均遇task_unavailable/无报告，已确认cancelled，记录工具阻断不算开发失败轮。未取得查找成果，不宣称豆包完成。
+- Codex沿上一专题已核验来源回读RO BaseLink、ClientLink及UdpDataHandler→OnRecv实际链。WorkBuddy Hub hub-e4ae9fac-81d5-48de-94dc-07473d54cdd0预检round1已completed；主Agent修正其无条件清TCP会话字段与漏KCP排队归属过滤的示例，正式开发round2/run-b023d1e2-d2c4-4229-bd8e-11fdf687d4a3已running，仍原桌面会话5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0、desktop_queue。
+- 最小设计：实际类/文件ServerBase→BaseLink、NetSocketMgr→MNetClient（meta保留GUID），公共Send/OnRecv与调用点迁移。额外4个BaseLink真实类型引用已授权仅机械改名，见_temp/network-ro-interface-20261022/additional-type-references.md。Codex不代写业务，原用户9份文件保留。
+- 开发中尚未验收；根日志项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md。下方固定KCP验收为上一轮，不冒作本轮结果。
+
 ## 2026-10-22 当前交接：移动与技能固定 KCP，源码与隔离验收通过
 
 - 用户要求直接使用 KCP。本轮基线 ab6252c，分支 codex/network-kcp-development；五实时协议不再回退 TCP，其他业务和 Gate↔Game 仍 TCP，不合 main。

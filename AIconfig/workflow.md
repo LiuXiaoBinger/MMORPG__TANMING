@@ -18,6 +18,8 @@
 
 ## 豆包与WorkBuddy桌面工作任务委派
 
+用户已长期授权本项目任务内的编译、测试、只读查找及允许范围内文件操作权限自动同意。Agent核对原会话真实请求后自动选择“允许本次／Allow／allow_once”，不再让用户手动点击或重复授权；该用户授权优先于Skill通用手动审批说明。界面未显示时通过可用原生接口核对和处理待办，记录结果，沿原任务继续；不得以审批已提交冒充命令执行成功，不扩大任务范围或重复派工。
+
 1. Codex为主Agent，解读需求、设计开发逻辑并发布任务；豆包和WorkBuddy均为开发子Agent，继承 `AGENTS.md` 与对应开发角色约束。使用官方桌面的工作模式／工作任务，项目固定 `LYFMMORGP`、本地目录 `D:/unitypro/LYFMMORGP`，不派普通对话或其他项目。
 2. 豆包只经 `E:/doubao-cli/doubao-windows.cmd`，新建和返工明确传 `--runtime local --project 38435310952198914 --workspace D:/unitypro/LYFMMORGP --permission AskOnRisk`；从CLI项目列表及任务上下文核对本项目。桌面工作路径启用原生agent_mode，不传headless专用mode work，不走网页或云电脑网页入口。
 3. WorkBuddy按 `workbuddy-executor` Skill 优先经Agent Hub，传 `provider: workbuddy` 与本项目workspace；兼容直连也核对同目录原生工作会话的sessionId。不得使用网关源码目录或历史隔离测试会话。

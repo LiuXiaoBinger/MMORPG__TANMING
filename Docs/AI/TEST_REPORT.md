@@ -1,3 +1,23 @@
+## 2026-10-22 自动审批规则与实际原生回执
+
+- AGENTS、AIconfig总策略/流程及两执行者角色同步自动同意、允许本次、用户授权优先和原任务范围要求；TOML解析、文字覆盖、Git差异及原用户文件保护另见本轮检查。
+- WorkBuddy当前原生待办真实选择allow_once，返回accepted=true、originalRequestStillPending=false、remainingPermissionCount=0、isProcessing=true。不把权限回执当作命令完成或业务自检通过。
+- 本轮不修改客户端/服务端业务、场景、资源或插件，不重跑未变化业务编译。原网络任务中间测试与未验边界保留；对应日志项目修改日志/2026-10-22-AUTO-PERMISSION-APPROVAL-CHANGELOG.md。
+
+## 2026-10-22 RO公共接口：独立中间输入验证与阻塞
+
+- Network/Gate/Game/Center/Login五工程0错误；289客户端源引用本轮临时网络库0错误。警告日志计数分别14/14/28/14/16，客户端350条，不将全部警告归因本轮或宣称无警告。
+- 真实Socket/KCP122/0、入场8/0、客户端薄边界54/0；输入与source-inputs.json一致。客户端包含真实MNetClient/NetClient/KcpClient，资源和Unity前置为桩；KCP接收专项反射调真实回调，不冒称真实UDP下行或Unity联机。
+- 首版边界53/1为主Agent构造的ReleaseRealtimeClient同代次预期过强，基线不支持该要求；只改测试为真实Disconnect后旧包失效，复验54/0，保留首日志。关闭回调及UDP10054清理告警仍存在，入场部分中文解码有乱码，ASCII断言与退出码可核。
+- 审计：33机械迁移语义保持、meta GUID及导入设置保持、9用户文件哈希保持；23个BOM噪声及最小代码审查意见待WorkBuddy原任务收尾。正式插件未集成，因此这些结果不是最终交付验收。
+- WorkBuddy原生RPC确认waiting_input；原轮超时且取消未确认，未重复派工。证据与反馈在_temp/network-ro-interface-20261022；Unity双号、画面/MP、业务重连、端到端弱网、IL2CPP/HybridCLR打包未验，未启停用户Unity/服务或保存场景。
+
+## 2026-10-22 RO网络共用接口对齐：准备阶段
+
+- 已读取四入口、核对分支codex/network-kcp-development和基线85cda92，冻结原用户9份修改及未跟踪清单。豆包本项目local任务已受理，尚未交付。
+- 本轮尚未开发、编译或运行验收，下一步按真实RO接口确定范围，再由WorkBuddy实现、Codex独立验证。历史108/8/39不作为本轮已通过结果。
+- 本轮正式变更、后续文件清单及Git回执统一在项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md；临时证据_temp/network-ro-interface-20261022。
+
 ## 2026-10-22 固定 KCP：Codex独立源码与隔离验收通过，现场未验
 
 - Git验收：18路径精确暂存、暂存空白检查通过；业务提交c9ee4d11237e8cffb983c8ff25abe5a8928a50a7推送origin/codex/network-kcp-development成功，ls-remote同SHA。未合main；补录回执仅改本文件、CURRENT_TASK和根修改日志，不重复声明运行测试。

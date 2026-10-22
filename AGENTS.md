@@ -49,6 +49,7 @@
 
 ## 豆包与 WorkBuddy 桌面开发执行约束（2026-10-21）
 
+- 用户已明确长期授权：执行本项目已授权任务时，编译、测试、只读查找以及任务允许范围内文件操作所触发的工具权限审批，由Agent自动同意，优先选择“允许本次／Allow／allow_once”，不再要求用户寻找按钮或重复确认。此授权适用于WorkBuddy与豆包的本项目原生工作任务，优先于Skill中“原生权限必须用户手动处理”的通用约定；保持原任务、会话和实际请求身份，不伪造审批或执行回执。权限按钮未显示时先核对原生待办并通过可用的原生接口处理，记录真实结果；不为此重复派工或修改任务库冒称已解除。自动同意不扩大原任务的文件范围、业务需求和既有Git分支约束。
 - 豆包与 WorkBuddy 均作为本项目外部开发子 Agent，使用官方桌面客户端的**工作模式／工作任务**，项目固定为 `LYFMMORGP`，本地目录固定为 `D:/unitypro/LYFMMORGP`；不派到普通对话、其他项目、桥接器源码目录或历史测试目录。
 - 豆包通过 `E:/doubao-cli/doubao-windows.cmd` 调用官方桌面客户端，新建与返工明确传 `--runtime local --project 38435310952198914 --workspace D:/unitypro/LYFMMORGP --permission AskOnRisk`。通过CLI项目列表和返回任务上下文确认本项目及本地运行环境，不再使用网页、浏览器云电脑入口或headless。
 - 豆包桌面工作任务启用原生 `agent_mode`，不使用headless专用的 `--mode work`，也不将 `--mode goal` 当工作模式必需参数。保存 `conversationId` 和 `runId`，返工沿用本项目原会话；旧 `project none` 隔离实验仅保留为历史证据。
