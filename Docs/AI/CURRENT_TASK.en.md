@@ -2,6 +2,14 @@
 
 Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese developer history. This compact edition includes the current collaboration change and selected continuation records; request other historical IDs through the bounded translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [FILES][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel custom-component re-clean, 2026-10-23
+
+- User requested another cleanup of `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`. Work branch `codex/ui-script-cleanup`, baseline `61047f3`; the current dirty asset differs from the prior baseline, so preserve its actual contents rather than restore HEAD. Before-edit SHA-256: `807784a5c24f5349d4a1bda94cf8ae98fedfc8489cb13c92ef5c22f3b6e29b56`.
+- WorkBuddy Hub `hub-2e0ef91a-2b81-4889-a4f5-c6f0fcc0fc56`, round 1, run `run-13de9192-d571-4b80-9ec0-dae4d7882fc6`, native session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`, completed the bounded resource edit through `desktop_queue`: 58 custom components and their component-list entries removed, 78 old UGUI script references adapted, no override removal or reference clearing needed. Existing type/GUID evidence was reused without a whole-project scan.
+- Codex verified exact preservation outside those operations, unchanged meta and no dangling component references; actual Unity missing scripts dropped from 58 to zero, with all 57 nodes and valid type/counts unchanged. The only final diff against HEAD is the user's two existing layout lines; leave that diff unstaged. Resource cleanup therefore needs no new resource commit. Scoped record integration and bilingual synchronization are being finalized; actual Git receipts are in the changelog.
+- Source and handoff: `项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`; current backups/reports remain in `_temp/quicktask-reclean-20261023/`. No other asset or business implementation is authorized.
+- Chinese synchronization: one `qwen3:8b-light` request timed out after 45 seconds without a usable result or model file write; no retry. Original WorkBuddy Hub round 2 is limited to Chinese record synchronization, not a second resource-fix failure. Final bilingual review and Git receipts are in the changelog.
+
 ## [FILES][任务][CT-455] RO task UI archive and first-phase design, 2026-10-23
 
 - Final recheck result (2026-10-23, supersedes the in-progress bullets below): WorkBuddy completed Hub rounds 1–4 under `hub-76f99bd9-5cca-4148-b4bb-58a426e363d7`, native session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` (one lookup + three development executions; not four failed rounds). Across 22 edited prefabs, 586 invalid custom/extension components were removed, 726 legacy UI references were mapped to current UGUI, 75 invalid nested overrides were removed and ten references were cleared. `.meta` contents were preserved; newly tracked prefab/meta pairs retain their existing GUIDs. Exact per-file manifest: `项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`.

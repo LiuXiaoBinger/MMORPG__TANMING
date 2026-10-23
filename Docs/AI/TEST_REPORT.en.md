@@ -2,6 +2,13 @@
 
 Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_REPORT.md`. Historical pass counts are not fresh checks; unported IDs use the translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [VERIFY][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel re-clean verification, 2026-10-23
+
+- Codex confirmed no PrefabStage was open, synchronously imported the current QuickTaskPanel disk asset and measured 58 missing scripts, 57 nodes and 78 valid UGUI MonoBehaviours. Exact valid component type/count snapshot: `_temp/quicktask-reclean-20261023/unity-before.json`.
+- Codex independent `verify.mjs` passed: exactly 58 custom documents/component entries removed and 78 UGUI script mappings; every other byte and meta preserved, with no dangling component references. After SHA-256: `9f5624761c5827b7c0451446d2cb82326b1df1cfe5e9789a9983c852157bba6a`. Actual synchronous Unity import/load passed: missing=0, nodes=57, exact same valid component type/count snapshot (`unity-after.json`).
+- Final HEAD diff contains only the user's existing anchored-position/size lines, retained outside staging. No rendered interaction, client/server compilation or gameplay acceptance is claimed. Scope, synchronization and Git receipts: `项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`.
+- One `qwen3:8b-light` Chinese synchronization attempt timed out after 45 seconds, with no usable output/model file write. It was not retried; WorkBuddy round 2 synchronizes Chinese only. This is separate from the accepted resource checks and does not count as another resource-repair failure.
+
 ## [VERIFY][任务][TR-553] RO task UI archive verification, 2026-10-23
 
 - Final recheck acceptance (2026-10-23): all 38 actual Unity prefab assets load with zero missing components; valid component types/counts match the pre-adaptation snapshot exactly (`unity-before-adapt-types.json`, `unity-final-types.json`). Codex established all 15 legacy UI type mappings by matching all 726 imported components' persistent IDs to their YAML documents, then reading actual types/current MonoScript GUIDs (`unity-legacy-mapping.json`). This is runtime Editor type evidence, not field-name inference.

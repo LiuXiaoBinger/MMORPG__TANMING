@@ -4057,3 +4057,11 @@
 - Task 保全边界：用户已授权清理前保存当前编辑，但 Unity 以「缺失脚本不允许保存」拒绝保存；在拟定的场景另存步骤执行前 PrefabStage 已不存在（`isOpen:false`），磁盘文件仍与原始 296655 字节备份一致。Codex 与 WorkBuddy 均未关闭或丢弃该 stage，消失原因及未保存编辑是否保留都无法确认。Task 随后基于该保留磁盘基线完成清理（删除 82 个自定义组件、适配 64 条 UI 引用），不得宣称原未保存编辑现场已保存或已恢复。
 - 轮次与执行者身份：第 1 轮为只读扫描，第 2—4 轮为三次开发执行。豆包会话 `38448883626832642`、run `59485369211741442` 未产生任何工具执行与交付，已 cancelled/stopped，不计入有效轮次；本轮 `qwen3:8b-light` 单次 API 请求 60 秒超时、无输出、无落盘且未重试，因此由本 WorkBuddy 会话第 5 轮仅同步中文记录，不计为额外的资源修复失败。
 - 分支 `codex/ui-script-cleanup`，基线 `8966318`；Git 精确暂存、提交与推送待 Codex 执行，本轮不宣称已上传。无关脏改留在暂存范围之外；临时报告与备份保留在 `_temp/ui-recheck-20261023/`。
+
+## [FILES][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel 自定义组件再次清理，2026-10-23
+
+- 用户要求再次清理 `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`。工作分支 `codex/ui-script-cleanup`，基线 `61047f3`；当前脏资源与前次基线不同，按其真实内容处理而不还原 HEAD。改前 SHA-256：`807784a5c24f5349d4a1bda94cf8ae98fedfc8489cb13c92ef5c22f3b6e29b56`。
+- WorkBuddy Hub `hub-2e0ef91a-2b81-4889-a4f5-c6f0fcc0fc56` 第 1 轮，run `run-13de9192-d571-4b80-9ec0-dae4d7882fc6`，原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，来源 `desktop_queue`：删除 58 个自定义组件及其组件列表项，适配 78 条旧 UGUI 脚本引用，无需删除嵌套覆盖项或清零引用。沿用既有类型/GUID 证据，未做全项目扫描。
+- Codex 核验上述操作之外每个字节均保留、meta 未变、无悬挂组件引用；真实 Unity Missing Script 由 58 降至 0，57 个节点与有效类型/数量全部不变。相对 HEAD 的最终差异只剩用户原有的两行布局，保持未暂存，本次资源清理不再需要新的资源提交。局部记录集成与双语同步待收尾，Git 回执见 changelog。
+- 来源与交接：`项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`；当前备份与报告仍在 `_temp/quicktask-reclean-20261023/`。未授权改动其他资源或业务实现。
+- 中文同步：一次 `qwen3:8b-light` 请求 45 秒超时，无可用结果、无模型文件落盘，未重试。本 WorkBuddy Hub 第 2 轮仅做中文记录同步，不是第二次资源修复失败。最终双语复核与 Git 回执见 changelog。
