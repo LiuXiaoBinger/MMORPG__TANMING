@@ -1,5 +1,10 @@
 # File/code tasks and handoff — English agent edition
 
+## [FILES][协作][SKILL-USAGE-DISCLOSURE-20261024] Disclose skills and their concrete work on every task
+
+- Added the mandatory user-facing skill-disclosure rule in `AGENTS.md` and routed it in `Docs/AI/PROJECT_CONTEXT.en.md` `[DOCS-READ]`: disclose actual skills and concrete work at first use, during additions, and at final delivery; explicitly disclose no use, avoid false attribution, and attribute reported child-agent skills.
+- Documentation only; branch `codex/ui-script-cleanup`, baseline `62895f18c4fb127454cb64d0a69e1f3163df3df0`. Chinese delta synchronization/checking is delegated. Full manifest, executor identity, evidence and Git receipts: `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`. Preserve unrelated dirty changes.
+
 ## [FILES][协作][BILINGUAL-DELTA-CHECK-20261024] Delegate incremental bilingual checks
 
 - User requested delta-only bilingual checks by subagents. Updated `AGENTS.md`, `AIconfig/agent/qwen_executor.md` and `Docs/AI/PROJECT_CONTEXT.en.md` `[DOCS-READ]`: synchronize/check only added or modified sections and fields; preserve unchanged history; subagents report scope, issues, corrections and evidence. Codex reviews scope/diffs/evidence without repeating language checks; passed checks are not repeated unless relevant inputs change.

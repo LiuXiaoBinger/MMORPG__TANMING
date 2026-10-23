@@ -1,6 +1,11 @@
 # 项目代码与文件修改验证
 > 【双语记忆】本文件为开发人员中文版本，完整历史正文在此；Agent 默认读取对应的精简英文版 `Docs/AI/TEST_REPORT.en.md`。英文为精简工作记忆，旧编号尚未迁移的英文段落，按需由子 Agent 按编号补录（流程见 AGENTS.md 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 DOCS-READ/DOCS-ROUTES）。
 
+## [VERIFY][协作][SKILL-USAGE-DISCLOSURE-20261024] 增量技能披露指令校验
+
+- 验收范围仅限新增的 `AGENTS.md` 章节、新增的 `[DOCS-READ]` 条款，以及本编号的任务与验收记录；由子 Agent 同步中文并检查本次增量，Codex 只复核实际范围与提交的证据，不再重复双语检查。最终空白与范围校验、委派结果归入 `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`。
+- 无业务代码、Unity 资源或运行时行为改动；Unity/客户端/服务端构建均不适用。不得由本校验计划推断任务已完成。
+
 ## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] 增量文档校验
 
 - 校验范围仅限本次规则增量、`[DOCS-READ]` 同步，以及新增的 `[BILINGUAL-DELTA-CHECK-20261024]` 任务与验收记录；由子 Agent 执行中英同步与一致性检查，Codex 只复核实际差异与提交的证据，未改动的历史不在范围内。

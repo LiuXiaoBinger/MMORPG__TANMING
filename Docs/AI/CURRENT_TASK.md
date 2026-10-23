@@ -3,6 +3,11 @@
 
 > 查找、询问和方案正文已迁到 `Docs/AI/QUERY_TASKS.md`。以下保留项目代码/文件修改及其交接，旧记录不重新判定完成状态。
 
+## [FILES][协作][SKILL-USAGE-DISCLOSURE-20261024] 每次任务披露技能与实际工作
+
+- 在 `AGENTS.md` 中新增面向用户的强制技能披露规则，并在 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]` 中给出路由：首次使用时说明实际技能与具体工作，执行中新增技能时补充，最终交付时汇总实际完成的事项与结果；未使用技能要明确说明，禁止错误归属，并对子 Agent 回报的技能注明执行者。
+- 仅文档改动；分支 `codex/ui-script-cleanup`，基线 `62895f18c4fb127454cb64d0a69e1f3163df3df0`。中文增量同步与一致性检查为委派执行。完整清单、执行者身份、证据与 Git 回执见 `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`。保留无关的脏改动。
+
 ## [FILES][协作][BILINGUAL-DELTA-CHECK-20261024] 委派增量中英一致性检查
 
 - 用户要求中英一致性检查只覆盖修改部分，并交给子 Agent 执行。本次更新 `AGENTS.md`、`AIconfig/agent/qwen_executor.md` 和 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]`：只同步并检查新增或修改的段落与字段，保留未改动的历史，由子 Agent 交付检查范围、问题、修正结果与证据；Codex 只复核改动范围、差异与证据，不再重复逐项语言检查；相关输入未变时不重复已通过的检查。

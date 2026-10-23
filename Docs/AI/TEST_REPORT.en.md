@@ -1,5 +1,10 @@
 # Verification records — English agent edition
 
+## [VERIFY][协作][SKILL-USAGE-DISCLOSURE-20261024] Verify incremental skill-disclosure instructions
+
+- Acceptance scope: the new `AGENTS.md` section, the added `[DOCS-READ]` bullet and this ID's task/verification records only. A child agent synchronizes Chinese and checks this delta; Codex reviews actual scope and submitted evidence without repeating bilingual checking. Final whitespace/scope check and delegation outcome belong in `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`.
+- No business code, Unity resource or runtime behavior changes; Unity/client/server builds are not applicable. Do not infer completion from this verification plan.
+
 ## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] Incremental documentation verification
 
 - Verification scope is this task's rule delta, `[DOCS-READ]` synchronization and new `[BILINGUAL-DELTA-CHECK-20261024]` task/verification records. Subagents perform bilingual synchronization and consistency checks; Codex reviews actual diffs and submitted evidence only. Unchanged history is excluded.
