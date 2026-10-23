@@ -7941,10 +7941,6 @@ PrefabInstance:
       propertyPath: m_Text
       value: "\u53D1\u9001"
       objectReference: {fileID: 0}
-    - target: {fileID: 5604692037964523388, guid: 8d7e81e7c92b1a448bd0e5a919500239, type: 3}
-      propertyPath: LocalKey
-      value: 744946
-      objectReference: {fileID: 0}
     - target: {fileID: 6360310713568796913, guid: 8d7e81e7c92b1a448bd0e5a919500239, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8168,10 +8164,6 @@ PrefabInstance:
     - target: {fileID: 6583650217777126319, guid: 0db73fda6dd24694eb3714bae05e4eea, type: 3}
       propertyPath: m_Name
       value: AssistantBtn2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8478423819701761922, guid: 0db73fda6dd24694eb3714bae05e4eea, type: 3}
-      propertyPath: LocalKey
-      value: 1219150586
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6543104484644895233, guid: 0db73fda6dd24694eb3714bae05e4eea, type: 3}

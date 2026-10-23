@@ -2,6 +2,13 @@
 
 Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_REPORT.md`. Historical pass counts are not fresh checks; unported IDs use the translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [VERIFY][任务][TR-553] RO task UI archive verification, 2026-10-23
+
+- Final recheck acceptance (2026-10-23): all 38 actual Unity prefab assets load with zero missing components; valid component types/counts match the pre-adaptation snapshot exactly (`unity-before-adapt-types.json`, `unity-final-types.json`). Codex established all 15 legacy UI type mappings by matching all 726 imported components' persistent IDs to their YAML documents, then reading actual types/current MonoScript GUIDs (`unity-legacy-mapping.json`). This is runtime Editor type evidence, not field-name inference.
+- Independent strict preservation check passed: 22 edited files, 586 target components removed, 726 m_Script lines adapted, 75 removed invalid override items, ten cleared references, no unexpected document/property changes, preserved checked metadata. Evidence: `_temp/ui-recheck-20261023/codex-preservation-result.json`; developer round-4 checks also passed. No rendered UI interaction, client/server build or gameplay test was run. Previous in-progress checks below are historical stages.
+- Remaining boundary: Task's formerly dirty editing state disappeared before a scene-copy could be saved; its disk file remained unchanged until authorized cleanup. Preservation of those unsaved edits cannot be confirmed. Final Task uses the backed-up disk baseline, not a claimed recovered snapshot. UI-external effect prefabs are outside this cleanup. Exact scope, executor identities, file list and Git receipts: `项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`.
+- Chinese synchronization uses original WorkBuddy round 5 after one `qwen3:8b-light` request timed out at 60 seconds with no result/file write. The Qwen attempt is not counted as a WorkBuddy/Doubao development round. Actual bilingual review and final integration receipts are kept in the changelog.
+
 ## [VERIFY][协作][QWEN-MEM-20261023] Documentation/configuration acceptance
 
 - Scope: lightweight Qwen routing, one-attempt fallback, five English working editions, preservation of complete Chinese history, matching synchronized task IDs and current evidence. The task does not change game code/resources or gateway implementation.

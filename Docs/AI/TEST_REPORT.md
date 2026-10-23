@@ -6121,3 +6121,10 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - `token-budget/scripts/tokenop.py` 对123行样例输出47.57%压缩，保留错误、约束和下一步；按SHA恢复121-123行成功。
 - `repo-context-ledger/scripts/ledger.py --repo D:/unitypro/LYFMMORGP init --dry-run` 退出码0，输出77项创建、2项更新预览，明确 `Dry run only. No files were written.`。
 - `git diff --check` 通过；本轮没有业务代码或正式资源变化。证据：`_temp/skill-verify-20261023/`。
+
+## [VERIFY][任务][TR-553] 2026-10-23 RO 任务系统 UI 归档验证与 Task.prefab 重建静态检查
+
+- 最终复查验收（2026-10-23，优先于下方中间状态）：真实 Unity 中全部 38 个 UI prefab 资产加载缺失组件均为 0，有效组件类型/数量与适配前快照完全一致（`_temp/ui-recheck-20261023/unity-before-adapt-types.json`、`unity-final-types.json`）。Codex 通过把 726 个已导入组件的持久 ID 与 YAML 文档逐一对应，再读取真实类型与当前 MonoScript GUID，确立 15 个旧 UI 类型的映射（`unity-legacy-mapping.json`），属 Editor 运行时类型证据，不是字段名推断。
+- 独立严格保全核验通过：22 个文件、删除 586 个目标组件、适配 726 条 `m_Script` 行、移除 75 条无效覆盖项、10 条引用清零；无多余文档或属性变化，已校验的元数据保留。证据：`_temp/ui-recheck-20261023/codex-preservation-result.json`，开发侧第 4 轮自检亦通过。未执行渲染后的 UI 交互、客户端/服务端构建或玩法测试。
+- 剩余边界：Task 原先 dirty 编辑现场在可另存之前已消失，其磁盘文件在获授权清理前保持未变；那些未保存编辑是否保留无法确认，最终 Task 使用备份的磁盘基线，而非宣称已恢复的快照。UI 之外的特效 prefab 不在本次清理范围。范围、执行者身份、文件清单与 Git 凭证：`项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`。
+- 轮次身份补充：第 1 轮扫描、第 2—4 轮三次开发，不是 4 轮失败；豆包会话 `38448883626832642`、run `59485369211741442` 未实际交付且已 cancelled，不计有效轮次；`qwen3:8b-light` 单次 API 请求 60 秒超时、无输出、无落盘、未重试，故本 WorkBuddy 会话第 5 轮仅同步中文，不计为额外的资源修复失败。Git 精确暂存、提交与推送待 Codex 执行，不得声称已上传。
