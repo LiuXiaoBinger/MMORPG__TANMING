@@ -10,6 +10,11 @@
 - 根 `AGENTS.md` 与 `AIconfig` 承载以上例外，优先于旧的默认豆包查找规则和旧全中文要求；用户回复/业务注释仍中文；语言本身不保证固定 token/费用节省。
 - 不做玩法、资源、协议或网关重设计；分支 `codex/qwen-bilingual-memory`，基线 `446ff741867f5579b532b5079ecf1ef84ef99743`，main 不动；范围/证据/实际集成见 `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`。
 
+## [DECISION][协作][QWEN-LIGHT-20261023] Qwen 轻量模型精确标签（当前决策）
+
+- 根据用户后续指令，轻量任务唯一使用 `qwen3:8b-light`；请求必须传完整标签，不得静默替换 `qwen3:8b` 或 `qwen3:8b-cpu`。
+- 指定标签不可用时沿既有一次尝试规则转豆包或 WorkBuddy；不重复重试 Qwen，不无记录替换模型。
+
 ## [DECISION][协作][DOCS-20261023] 分类、主题标签与追溯
 
 - CURRENT_TASK只保留项目代码/文件修改状态；TEST_REPORT只保留相应验证；DECISIONS保留影响项目实现、文件组织或授权的决策。

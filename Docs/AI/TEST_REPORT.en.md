@@ -14,6 +14,14 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - No Unity/server build or runtime validation is required for these prose/policy changes; no game acceptance is inferred. Actual final check outputs and unresolved items: `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md` and `_temp/qwen-bilingual-memory-20261023/verification.json`.
 - Chinese counterpart: `Docs/AI/TEST_REPORT.md` `[QWEN-MEM-20261023]`.
 
+## [VERIFY][协作][QWEN-LIGHT-20261023] Exact model constraint verification
+
+- `http://127.0.0.1:11434/api/tags` returned `qwen3:8b-light`; the active TOML model field and lightweight role/config references now use the exact tag.
+- A Python/tomli assertion passed for `model=qwen3:8b-light`, one-attempt fallback, 4096 context and `think=false`; active policy files contain the exact tag and reject silent substitution.
+- This is a configuration/availability check only. No Unity/server build or gameplay validation was required; historical `qwen3:8b` smoke-test evidence remains historical.
+- A single bounded translation API request timed out after 90 seconds without output. This is a failed Qwen delivery, not a successful inference check; Chinese synchronization fell back to Doubao session `38448830092170754`, run `59467964748331266`, which completed. The timeout does not invalidate the registry/configuration check or establish gameplay acceptance.
+- Chinese counterpart: `Docs/AI/TEST_REPORT.md` `[QWEN-LIGHT-20261023]`.
+
 ## [VERIFY][NPC][协作][TR-005] Historical reference-binding validation, 2026-10-22
 
 - Recorded sole business change: add `sceneEntity.SetEntityCtrl(mainRoleController)` plus Chinese explanation in `MainCityMgr.BindMainRoleCompatibilityController`; preserve SetROObject, navigation, OpenTalk and UI flow.

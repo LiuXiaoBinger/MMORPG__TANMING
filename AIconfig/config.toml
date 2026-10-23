@@ -30,7 +30,7 @@ require_subagent_for_business_code = true # 默认先委派；确认豆包与Wor
 
 [agent_policy]
 # ---------- 子 agent 运行约束 ----------
-lightweight_dispatch_rule = "范围明确的代码查找、注释、少量文件小改动及中文记忆同步优先本地qwen3:8b；最多一次实际执行，连接不可用/输出不完整/自检或验收失败即转豆包查找或WorkBuddy修改，不多次返工、不套各7轮门槛，Qwen不计入两模型轮数。复杂任务直接按既有分工；本条优先于下方历史默认豆包查找规则"
+lightweight_dispatch_rule = "范围明确的代码查找、注释、少量文件小改动及中文记忆同步统一使用本地qwen3:8b-light，调用显式传完整模型名，不静默改用qwen3:8b或qwen3:8b-cpu；最多一次实际执行，连接不可用/输出不完整/自检或验收失败即转豆包查找或WorkBuddy修改，不多次返工、不套各7轮门槛，Qwen不计入两模型轮数。复杂任务直接按既有分工；本条优先于下方历史默认豆包查找规则"
 bilingual_memory_rule = "Agent默认只读Docs/AI五类.en.md英文版，先PROJECT_CONTEXT.en.md路由再按主题/编号读取单段；原名.md为开发人员中文版本，缺证据或核验翻译时才定向读取。Codex先更新英文验收事实，委派Qwen或其他外部子Agent据本次差异同步中文，验收同ID/路径/会话轮数/结果与未验边界；不同步不得报收尾完成。英文正文为全中文规则的授权例外，保留中文历史，不承诺固定token节省"
 historical_memory_rule = "英文先保留当前有效规则和必要续作事实，原名中文保留完整历史；缺少旧编号英文段时由其他子Agent按该唯一编号读取中文原段、补录同编号英文后供Codex读取。不要求首次分版全文重译，不假称所有历史已翻译，不全量加载中文文件"
 search_and_bug_lookup_rule = "代码及参考项目查找、Bug定位默认先派豆包本项目官方桌面只读工作任务，交付精简路径行号、调用链、证据、未确认项与复现信息；Codex不并行重复完整查找，只沿路线核验，路线错误或证据不足先退原任务补充，不直接转GPT独立解题；独立接手必须满足agent_quota_workflow的两模型各7轮门槛。用户明确要求优先，日常协作记录维护不递归派工"
@@ -133,7 +133,7 @@ project_name = "LYFMMORGP"
 local_project_root = "D:/unitypro/LYFMMORGP"
 transport = "ollama-local-api"
 endpoint = "http://127.0.0.1:11434"
-model = "qwen3:8b"
+model = "qwen3:8b-light"
 attempts_limit = 1 # 同一轻量任务只实际尝试一次，不反复返工。
 fallback_lookup = "doubao"
 fallback_edit = "workbuddy"

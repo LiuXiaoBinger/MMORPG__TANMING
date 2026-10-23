@@ -12,6 +12,14 @@ Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese develo
 - The five Chinese files were synchronized in Doubao session `38448830092170754`, run `59469831083523330`. Codex independently checked the resulting files: 1256 original historical sections retained, 18 selected English sections present, matching migrated/new IDs and tags, no duplicate IDs, and valid TOML/model/role references. This is documentation/configuration acceptance only; final native completion, Git receipts and any later synchronization are recorded in the changelog.
 - Source: user's 2026-10-23 instruction, actual files/API receipts, and the task changelog. Chinese counterpart uses `[QWEN-MEM-20261023]`.
 
+## [FILES][协作][QWEN-LIGHT-20261023] Switch lightweight dispatch to qwen3:8b-light
+
+- Updated active routing/configuration references to the exact Ollama model `qwen3:8b-light`; callers must pass the full tag and cannot silently use `qwen3:8b` or `qwen3:8b-cpu`.
+- Updated `AGENTS.md`, `AIconfig/config.toml`, `AIconfig/workflow.md`, `AIconfig/agent/qwen_executor.md` and the paired context/decision/task records. Historical CT-455 model evidence remains unchanged.
+- Local `/api/tags` check returned `qwen3:8b-light`; unavailable-tag behavior remains one attempt followed by Doubao/WorkBuddy fallback. No game code, resource or protocol files are in scope.
+- The bounded Chinese-translation request to `qwen3:8b-light` timed out after 90 seconds with no output; it was not retried and caused no Qwen file write. Doubao completed the Chinese synchronization in original local session `38448830092170754`, run `59467964748331266`; the Qwen attempt does not count toward either external model's seven rounds.
+- Chinese counterpart: `Docs/AI/CURRENT_TASK.md` `[QWEN-LIGHT-20261023]`.
+
 ## [FILES][NPC][协作][CT-005] Historical NPC dialog reference fix, 2026-10-22
 
 - Recorded cause: `MainCityMgr` bound the entity to `MainRoleCtrl` using `SetROObject`, but did not store the reverse controller reference on the entity. Arrival passed null to `NpcCtrl.OpenTalk`, causing an early return. The change added `sceneEntity.SetEntityCtrl(mainRoleController)` in `BindMainRoleCompatibilityController`; navigation was not changed.

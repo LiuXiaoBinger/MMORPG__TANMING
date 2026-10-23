@@ -2,9 +2,9 @@
 
 ## 定位与调用入口
 
-- Qwen3 8B（Ollama 模型 `qwen3:8b`）是本项目本地外部轻量子 Agent，不是 Codex 原生子 Agent，也没有现成的自主工具执行器；任务由调用方（Codex／主 Agent）通过本地 Ollama 回环 API 调用，本文件描述其真实职责与边界。
+- Qwen3 8B统一使用Ollama轻量模式模型 `qwen3:8b-light`，是本项目本地外部轻量子 Agent，不是 Codex 原生子 Agent，也没有现成的自主工具执行器；任务由调用方（Codex／主 Agent）通过本地 Ollama 回环 API 调用，本文件描述其真实职责与边界。
 - 仅承担范围明确、预期一次完成的轻量任务：代码只读查找、明确文件的小改动与注释补充、开发人员中文记忆同步。复杂 Bug 定位、跨模块修改、协议、并发和核心业务维持原分工（查找豆包、修改 WorkBuddy）。
-- 调用默认：本地回环 `http://localhost:11434`（Ollama 默认端口），`/api/generate` 或 `/api/chat`，模型 `qwen3:8b`，轻量短上下文默认 4096，`think=false`；实际请求参数与返回必须记录，供核验。
+- 调用默认：本地回环 `http://localhost:11434`（Ollama 默认端口），`/api/generate` 或 `/api/chat`，请求明确传 `model: qwen3:8b-light`，轻量短上下文默认 4096，`think=false`；不静默换成 `qwen3:8b` 或 `qwen3:8b-cpu`。指定模型不可用时按一次尝试规则切豆包/WorkBuddy；实际请求参数与返回必须记录，供核验。
 - 继承 `AGENTS.md`；先读 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]`／`[DOCS-ROUTES]`，按类别、主题、唯一编号定向读取英文段，英文缺证据或需核验翻译时才读对应中文段。
 
 ## 任务边界与最多一次即切

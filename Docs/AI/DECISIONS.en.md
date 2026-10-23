@@ -11,3 +11,9 @@ Default agent edition. Full historical Chinese decisions remain in `Docs/AI/DECI
 - Root `AGENTS.md` and `AIconfig` carry these overrides. They take precedence over older default-Doubao lookup rules and the old all-Chinese-prose instruction; user replies/business comments remain Chinese. Language alone does not guarantee fixed token/fee savings.
 - No gameplay, resource, protocol or gateway redesign. Branch `codex/qwen-bilingual-memory`; baseline `446ff741867f5579b532b5079ecf1ef84ef99743`; main remains untouched. Scope/evidence/actual integration: `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`.
 - Chinese counterpart: `Docs/AI/DECISIONS.md` `[QWEN-MEM-20261023]`.
+
+## [DECISION][协作][QWEN-LIGHT-20261023] Exact model tag for lightweight dispatch
+
+- The user's follow-up makes `qwen3:8b-light` the only active Qwen model for lightweight tasks. The request must carry the exact tag; `qwen3:8b` and `qwen3:8b-cpu` are historical/alternative tags, not silent fallbacks.
+- If the exact tag cannot be reached, apply the existing one-attempt handoff to Doubao or WorkBuddy. Do not retry Qwen or substitute a tag without recording and approval.
+- Chinese counterpart: `Docs/AI/DECISIONS.md` `[QWEN-LIGHT-20261023]`.

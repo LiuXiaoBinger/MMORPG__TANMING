@@ -64,3 +64,26 @@
 - 首次暂存遇到陈旧 `.git/index.lock`；只读确认无git.exe进程后，删除操作被自动审批拒绝（blocked by policy），未执行删除。改用可恢复的移动，将该锁保存在 `_temp/qwen-bilingual-memory-20261023/stale-index-20261023.lock`，随后暂存成功；无用户文件删除。
 - 功能提交 `7f59746`（父基线 `446ff741867f5579b532b5079ecf1ef84ef99743`），包含上述18项文档/配置及验收。`git push -u origin codex/qwen-bilingual-memory` 退出0，远端新分支建立并设置跟踪成功；未合main、未强推。
 - 本回执单独作docs补交并推送同分支；该补交仅更新本日志，最终补交号与推送结果由交付回复报告，不循环改写所有记忆入口。
+
+## qwen3:8b-light 增量
+
+- 用户后续要求将轻量模型切换为 `qwen3:8b-light`。更新 `AGENTS.md`、`AIconfig/config.toml`、`AIconfig/workflow.md`、`AIconfig/agent/qwen_executor.md`，并在 PROJECT_CONTEXT、CURRENT_TASK、DECISIONS、TEST_REPORT 的中英文版本新增 `[QWEN-LIGHT-20261023]` 当前约束、任务和验收记录。
+- 保留历史 CT-455 对 `qwen3:8b` 的实际测试描述，不改写历史证据；当前调用禁止静默改用 `qwen3:8b` 或 `qwen3:8b-cpu`，指定标签不可用时按一次尝试规则切换。
+- 本机 `http://127.0.0.1:11434/api/tags` 返回 `qwen3:8b-light`；Python/tomli 模型、回退、上下文和思考开关断言通过。未运行游戏或服务器构建。
+- 分支沿用 `codex/qwen-bilingual-memory`，本次基线 `acc234d9be294a18ab358c9df0f7266d2e3a90b5`；用户已有Unity及其他改动保留，不纳入提交。
+- 本增量逐项修改清单（无新增、移动、删除或.meta变化）：
+  - `AGENTS.md`：轻量模型改为完整light标签，禁止静默换标签。
+  - `AIconfig/config.toml`：更新轻量调度规则和external_agents.qwen.model。
+  - `AIconfig/workflow.md`：统一light标签和不可用时回退路径。
+  - `AIconfig/agent/qwen_executor.md`：明确API请求必须传light完整模型名。
+  - `Docs/AI/PROJECT_CONTEXT.en.md`：更新英文当前模型并新增精确标签约束段。
+  - `Docs/AI/PROJECT_CONTEXT.md`：同步中文当前模型和精确标签约束段。
+  - `Docs/AI/CURRENT_TASK.en.md`：新增英文增量范围和交接。
+  - `Docs/AI/CURRENT_TASK.md`：对应中文任务变化。
+  - `Docs/AI/DECISIONS.en.md`：新增英文模型选择决策。
+  - `Docs/AI/DECISIONS.md`：对应中文模型选择决策。
+  - `Docs/AI/TEST_REPORT.en.md`：记录英文标签可用性和配置断言结果及边界。
+  - `Docs/AI/TEST_REPORT.md`：对应中文验收记录。
+  - `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`：本增量范围、设计、逐项清单与真实验收/Git回执。
+- 原保留验证脚本重跑exit 0、errors=[]，旧历史仍完整，新增四对段落标签/编号一致；QUERY_TASKS双语历史没有变更。格式检查通过。
+- 中文同步实际尝试：调用 `qwen3:8b-light`、`think=false`、4096上下文，仅输入本次四段英文，90秒HTTP超时，无模型输出和token计数，不宣称Qwen已翻译或落盘。按一次失败切换，不重试Qwen；中文初稿沿豆包原项目local会话 `38448830092170754`、run `59467964748331266` 限定同步，原生返回completed，实际修改中文CURRENT_TASK/TEST_REPORT并核对另外两段，Codex已回读接受；英文补记相同失败与回退身份，中文同步完成。
