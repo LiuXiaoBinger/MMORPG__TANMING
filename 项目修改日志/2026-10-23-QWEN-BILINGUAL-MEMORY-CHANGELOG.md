@@ -87,3 +87,8 @@
   - `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`：本增量范围、设计、逐项清单与真实验收/Git回执。
 - 原保留验证脚本重跑exit 0、errors=[]，旧历史仍完整，新增四对段落标签/编号一致；QUERY_TASKS双语历史没有变更。格式检查通过。
 - 中文同步实际尝试：调用 `qwen3:8b-light`、`think=false`、4096上下文，仅输入本次四段英文，90秒HTTP超时，无模型输出和token计数，不宣称Qwen已翻译或落盘。按一次失败切换，不重试Qwen；中文初稿沿豆包原项目local会话 `38448830092170754`、run `59467964748331266` 限定同步，原生返回completed，实际修改中文CURRENT_TASK/TEST_REPORT并核对另外两段，Codex已回读接受；英文补记相同失败与回退身份，中文同步完成。
+
+### 本增量 Git 回执
+
+- 功能提交 `91701af`（完整提交号 `91701af4b9936b1aaa70d685231eb844af7b0a31`）包含本增量13项配置、角色和双语记忆文件；未纳入用户已有Unity及其他无关改动。
+- `git push origin codex/qwen-bilingual-memory` 退出0；远端 `refs/heads/codex/qwen-bilingual-memory` 已指向 `91701af4b9936b1aaa70d685231eb844af7b0a31`。未合并main、未强制推送。
