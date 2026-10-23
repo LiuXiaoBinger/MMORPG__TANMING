@@ -1,6 +1,17 @@
 # 代码与文件修改任务
+> 【双语记忆】本文件为开发人员中文版本，完整历史正文在此；Agent 默认读取对应的精简英文版 `Docs/AI/CURRENT_TASK.en.md`。英文为精简工作记忆，旧编号尚未迁移的英文段落，按需由子 Agent 按编号补录（流程见 AGENTS.md 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 DOCS-READ/DOCS-ROUTES）。
 
 > 查找、询问和方案正文已迁到 `Docs/AI/QUERY_TASKS.md`。以下保留项目代码/文件修改及其交接，旧记录不重新判定完成状态。
+
+## [FILES][协作][QWEN-MEM-20261023] 2026-10-23 Qwen 轻量委派与双语工作记忆（当前）
+
+- 范围：`AGENTS.md`、`AIconfig/config.toml`、`AIconfig/workflow.md`、豆包/WorkBuddy/Qwen 角色文件、五份 `.en.md` 记忆、对应中文记忆更新、修改日志 README 与本任务 changelog；逐项文件用途见 `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`。
+- 分支 `codex/qwen-bilingual-memory`，基线 `446ff741867f5579b532b5079ecf1ef84ef99743`；不改游戏业务、资源、协议、场景或网关实现，无关脏文件不混入集成。
+- Qwen 承担限定轻量查找/注释/小修改/中文同步，一次尝试后切豆包查找或 WorkBuddy 修改；复杂任务保留原流程。Codex 写已核验英文事实，中文由其他子 Agent 按同 ID 与证据更新。
+- 五份英文为精简工作记忆；中文完整历史保留，未迁移历史按需按编号翻译；文件变短本身不证明固定 token/费用节省。
+- 真实身份：Qwen 初稿失败且无文件写入；WorkBuddy Hub `hub-7d83b097-b15a-476e-bcaa-fe419f5ae9da` 未领取、取消且 `holdsCapacity=false`；豆包同项目本地会话 `38448830092170754`、角色文件完成 run `59464168910756610`（桌面所列 豆包 2.1 Pro）完成 Qwen 角色文件，Codex 独立回读接受；停滞/取消的传输轮次不计已验收交付。
+- 中文同步已完成并经独立核验：五份中文文件在豆包本地会话 `38448830092170754`、run `59469831083523330` 完成同步；Codex 独立回读核验：1256 个原始历史段保留、18 个英文段存在、迁移/新增编号与标签一致、无重复编号，TOML/模型/角色引用有效。
+- 边界：以上仅文档/配置验收，非 Unity 或业务验收；原生最终收尾、Git 回执及任何后续同步以 changelog 实际记录为准，不凭执行状态宣称集成或业务验收。
 
 ## [HANDOFF][协作][DOCS-20261023] 协作入口分类与标签整理
 
