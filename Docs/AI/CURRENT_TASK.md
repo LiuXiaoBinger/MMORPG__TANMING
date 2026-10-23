@@ -8,6 +8,12 @@
 - 在 `AGENTS.md` 中新增面向用户的强制技能披露规则，并在 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]` 中给出路由：首次使用时说明实际技能与具体工作，执行中新增技能时补充，最终交付时汇总实际完成的事项与结果；未使用技能要明确说明，禁止错误归属，并对子 Agent 回报的技能注明执行者。
 - 仅文档改动；分支 `codex/ui-script-cleanup`，基线 `62895f18c4fb127454cb64d0a69e1f3163df3df0`。中文增量同步与一致性检查为委派执行。完整清单、执行者身份、证据与 Git 回执见 `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`。保留无关的脏改动。
 
+## [FILES][协作][TASK-SUBAGENT-SKILL-UPDATE-20261024] 子 Agent 规则集中到项目 Skill
+
+- 用户要求把 `AGENTS.md` 中与技能重复的子 Agent 流程迁入项目本地技能，并新增三条规则：Asia/Shanghai 23:00（含）之后优先交由 WorkBuddy 承担；每次实际调用子 Agent 都记录真实使用的模型；上下文过长需要切换到新窗口继续执行前，先读取原有对话内容。
+- 已按上述要求更新 `.agents/skills/project-subagent-coordination/SKILL.md`，加入路由、实际模型记录与长上下文交接约定；`AGENTS.md` 精简为单一技能入口，同时保留项目授权、工作目录与通用仓库约束。
+- 技能仍仅限项目本地。精确变更文件清单、范围与验证见 `项目修改日志/2026-10-24-子Agent协作技能.md`。WorkBuddy Hub 任务 `hub-7f6e619f-6158-44c7-9a19-80d4cd2e777b`（run `run-34cfb2be-a0a4-416b-9e16-803c48433907`，会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`）已完成中文增量同步；实际模型未披露/无法确认，未推断。
+
 ## [FILES][协作][BILINGUAL-DELTA-CHECK-20261024] 委派增量中英一致性检查
 
 - 用户要求中英一致性检查只覆盖修改部分，并交给子 Agent 执行。本次更新 `AGENTS.md`、`AIconfig/agent/qwen_executor.md` 和 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]`：只同步并检查新增或修改的段落与字段，保留未改动的历史，由子 Agent 交付检查范围、问题、修正结果与证据；Codex 只复核改动范围、差异与证据，不再重复逐项语言检查；相关输入未变时不重复已通过的检查。
@@ -27,6 +33,14 @@
 - 豆包会话 `38448885557691394`、run `59493309331198466` 仅接收消息、无工具与交付，已确认 cancelled/stopped，不计有效查找轮次。WorkBuddy Hub `hub-bc16cc63-ee30-4867-9ef6-8e7c04db3e69`，原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`：第 1 轮只读定位 `run-c9b20c06-fa94-4d66-8aca-9778e93f8aed`；第 2 轮资源实施 `run-4aef2446-cf2a-4445-a493-a2f68eca3369`，已独立 accepted。两者分别是定位与实施阶段，不是失败轮次。
 - Codex 已核验静态保全与真实 Unity 导入（Missing Script=0、节点 57、Text 12→16），并完成独立渲染预览。PrefabStage 在编辑前核对时为 clean、导入时已不存在；未丢弃任何未保存现场。不宣称玩法/交互或客户端/服务端构建验收。changelog 与精确 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel文本与RO层级对齐.md`；证据与备份：`_temp/quicktask-text-20261023/`。双语同步与精确提交推送正在收尾。
 - 一次本地 `qwen3:8b-light` 中文同步请求 45 秒超时，无可用输出、无项目文件落盘，未重试。原 WorkBuddy Hub 第 3 轮仅限中文记录同步，与已 accepted 的资源修复相互独立。
+
+## [FILES][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel 自定义组件再次清理，2026-10-23
+
+- 用户要求再次清理 `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`。工作分支 `codex/ui-script-cleanup`，基线 `61047f3`；当前脏资源与前次基线不同，按其真实内容处理而不还原 HEAD。改前 SHA-256：`807784a5c24f5349d4a1bda94cf8ae98fedfc8489cb13c92ef5c22f3b6e29b56`。
+- WorkBuddy Hub `hub-2e0ef91a-2b81-4889-a4f5-c6f0fcc0fc56` 第 1 轮，run `run-13de9192-d571-4b80-9ec0-dae4d7882fc6`，原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，来源 `desktop_queue`：删除 58 个自定义组件及其组件列表项，适配 78 条旧 UGUI 脚本引用，无需删除嵌套覆盖项或清零引用。沿用既有类型/GUID 证据，未做全项目扫描。
+- Codex 核验上述操作之外每个字节均保留、meta 未变、无悬挂组件引用；真实 Unity Missing Script 由 58 降至 0，57 个节点与有效类型/数量全部不变。相对 HEAD 的最终差异只剩用户原有的两行布局，保持未暂存，本次资源清理不再需要新的资源提交。局部记录集成与双语同步待收尾，Git 回执见 changelog。
+- 来源与交接：`项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`；当前备份与报告仍在 `_temp/quicktask-reclean-20261023/`。未授权改动其他资源或业务实现。
+- 中文同步：一次 `qwen3:8b-light` 请求 45 秒超时，无可用结果、无模型文件落盘，未重试。本 WorkBuddy Hub 第 2 轮仅做中文记录同步，不是第二次资源修复失败。最终双语复核与 Git 回执见 changelog。
 
 ## [FILES][协作][QWEN-MEM-20261023] 2026-10-23 Qwen 轻量委派与双语工作记忆（当前）
 
@@ -4074,8 +4088,9 @@
 - 本轮只验证用户级 Skill，不修改客户端、服务端、资源、场景或协议；现有工作区修改保持不动。
 - `structured-context-compressor` 模板渲染成功；`token-budget` 完成 123 行输入压缩并生成可恢复归档；`repo-context-ledger` 的 `init --dry-run` 生成预览并确认未写入文件。
 - 证据目录：`_temp/skill-verify-20261023/`；修改日志：`项目修改日志/2026-10-23-SKILL-VERIFY-CHANGELOG.md`。
-
 ## [FILES][任务][CT-455] 2026-10-23 RO 任务系统 UI 归档与首阶段设计（含 Task.prefab 重建）
+
+> 中文对应同步；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[CT-455]`。仅同步协作记录，不改任何 Unity 资源、代码、配置、场景或 Git。
 
 - 最终复查结论（2026-10-23，优先于下方中间状态）：WorkBuddy 在 Hub `hub-76f99bd9-5cca-4148-b4bb-58a426e363d7`、原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` 共完成 1 轮只读扫描加 3 轮开发执行（第 2—4 轮），不是 4 轮失败。22 个改动 prefab 合计删除 586 个失效自定义/扩展组件、把 726 条旧 UI 引用映射为现有 UGUI、移除 75 条无效嵌套覆盖、10 条引用清零；`.meta` 内容保留，新增跟踪的 prefab/.meta 沿用原有 GUID。逐文件清单：`项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`。
 - Codex 在真实 Unity 中独立导入全部 38 个 UI prefab 并检查实际加载对象：每个 prefab 缺失脚本均为 0，有效组件类型/数量与适配前快照完全一致；对 22 个改动资产的逐文档严格保全核验全部通过（`_temp/ui-recheck-20261023/codex-preservation-result.json`），无多余文档或意外属性变化。本轮不宣称渲染交互或客户端/服务端构建通过。
@@ -4083,10 +4098,32 @@
 - 轮次与执行者身份：第 1 轮为只读扫描，第 2—4 轮为三次开发执行。豆包会话 `38448883626832642`、run `59485369211741442` 未产生任何工具执行与交付，已 cancelled/stopped，不计入有效轮次；本轮 `qwen3:8b-light` 单次 API 请求 60 秒超时、无输出、无落盘且未重试，因此由本 WorkBuddy 会话第 5 轮仅同步中文记录，不计为额外的资源修复失败。
 - 分支 `codex/ui-script-cleanup`，基线 `8966318`；Git 精确暂存、提交与推送待 Codex 执行，本轮不宣称已上传。无关脏改留在暂存范围之外；临时报告与备份保留在 `_temp/ui-recheck-20261023/`。
 
-## [FILES][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel 自定义组件再次清理，2026-10-23
+- 归档：添加 `LYF_MMO/Assets/artres/Resources/UI/Task/`（`Prefabs/` 与 `Atlas/` 子目录），含 RO 原始 `Task.prefab`、`QuickTaskPanel.prefab`、`TaskNavigation.prefab`、`Task.png` 及四个 `.meta`，8 个源/目标 SHA-256 对全部匹配；另添加 `项目分析/RO任务系统设计-2026-10-23.md`。未写客户端/服务端/协议/配置代码。
+- 归档 prefab 保留 RO GUID 但共享 UI/运行时依赖未解析或不兼容：三个 prefab 引用缺失的 MoonClient GUID `0a06b724a7ecc1948b8fd5525e4102e6` 与 RO 脚本 GUID `f70555f144d8491a825f0804e09c671c`；`TaskNavigation.prefab` 还把 RO 图集 GUID `033d40a6d2e4e5e478721454c119b631` 解析到本工程无关的 `UI/Atlas/Map.png`。归档资源仅作视觉参考，不可直接运行。
+- 修复：仅重建 `LYF_MMO/Assets/artres/Resources/UI/Task/Prefabs/Task.prefab` 并保留其 `.meta`；`QuickTaskPanel`、`TaskNavigation` 未改动。
+- 新预制体为 6 节点原生 UGUI 视觉壳（背景、标题、任务名、目标/进度、奖励），仅引用项目既有 UGUI Image/Text 与 `UI/Font/Common.TTF`，无 Lua、MoonClient、任务业务或按钮逻辑。
+- 验证：静态检查 6 GameObject/RectTransform、5 CanvasRenderer/MonoBehaviour，两个 RO GUID 零引用；Unity AssetImportWorker 已成功导入该资源且对应导入块无错误；场景/Canvas 实例化尚未验证。
+- 用户后续要求删除 `Assets/artres/Resources/UI` 下预制体的失效脚本。扫描 38 个 prefab 后，只有 4 个 GUID 无法在 `Assets`、`Packages`、`Library/PackageCache` 找到 `.meta`；仅在 `AdventureDiaryTask.prefab`、`DailyTask.prefab`、`ChatLine/FriendChatPrefab.prefab` 删除 10 个对应 MonoBehaviour 及其 GameObject 组件引用，未删 GameObject、`.meta`、有效脚本、图片或字体。
+- 修复后四个缺失 GUID 均为零引用，剩余 26 个唯一 `m_Script` GUID 均可解析；三个修改 prefab 的组件引用均指向已声明 YAML 对象。明细与边界见 `_temp/missing-script-cleanup-20261023/result.md`；尚未逐个在 Unity Inspector 中确认。
+- 豆包清理会话 `38448883626832642` 未产出文件后已取消；替代执行者因 403 余额不足未启动，故本次由 Codex 按已确认 GUID 清单执行受限机械回退。
+- 用户随后要求清理 `UI/Task`。当前磁盘上的 `QuickTaskPanel.prefab`、`Task.prefab`、`TaskNavigation.prefab` 共含 337 个失效脚本组件，且只使用 3 个在 `Assets`、`Packages`、`Library/PackageCache` 均无 `.meta` 的 GUID；已移除全部 337 个组件（含 `Task.prefab` 的 6 个 `stripped` 嵌套组件）及其 GameObject 组件引用。
+- 清理后三个 YAML 资产均为 0 个 `m_Script` 引用，且无悬挂 GameObject 组件引用；保留视觉节点、`.meta`、图片和字体。AssetImportWorker 存在三资产的 PreviewImporter 记录，尚未在 Inspector/运行界面逐项验证。报告：`_temp/missing-script-cleanup-task-20261023/result.md`。
+- 分支 `codex/qwen-bilingual-memory` 不符合 `codex/feature-development`，存在无关脏改动，未提交/推送。变更清单：`项目修改日志/2026-10-23-RO任务系统资源归档与设计.md`。
 
-- 用户要求再次清理 `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`。工作分支 `codex/ui-script-cleanup`，基线 `61047f3`；当前脏资源与前次基线不同，按其真实内容处理而不还原 HEAD。改前 SHA-256：`807784a5c24f5349d4a1bda94cf8ae98fedfc8489cb13c92ef5c22f3b6e29b56`。
-- WorkBuddy Hub `hub-2e0ef91a-2b81-4889-a4f5-c6f0fcc0fc56` 第 1 轮，run `run-13de9192-d571-4b80-9ec0-dae4d7882fc6`，原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，来源 `desktop_queue`：删除 58 个自定义组件及其组件列表项，适配 78 条旧 UGUI 脚本引用，无需删除嵌套覆盖项或清零引用。沿用既有类型/GUID 证据，未做全项目扫描。
-- Codex 核验上述操作之外每个字节均保留、meta 未变、无悬挂组件引用；真实 Unity Missing Script 由 58 降至 0，57 个节点与有效类型/数量全部不变。相对 HEAD 的最终差异只剩用户原有的两行布局，保持未暂存，本次资源清理不再需要新的资源提交。局部记录集成与双语同步待收尾，Git 回执见 changelog。
-- 来源与交接：`项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`；当前备份与报告仍在 `_temp/quicktask-reclean-20261023/`。未授权改动其他资源或业务实现。
-- 中文同步：一次 `qwen3:8b-light` 请求 45 秒超时，无可用结果、无模型文件落盘，未重试。本 WorkBuddy Hub 第 2 轮仅做中文记录同步，不是第二次资源修复失败。最终双语复核与 Git 回执见 changelog。
+
+## [FILES][协作][TASK-SUBAGENT-SKILL-20261024] 2026-10-24 项目本地子Agent协作技能
+
+> 中文对应同步；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[TASK-SUBAGENT-SKILL-20261024]`。仅同步协作记录，不改任何 Unity 资源、代码、配置、场景或 Git。
+
+- 新增 `.agents/skills/project-subagent-coordination/SKILL.md` 及其 `agents/openai.yaml`，作为项目本地 Codex 技能；未改动任何全局技能目录。
+- 该技能把有界轻量工作路由给 `qwen3:8b-light`；新建任务时若 UI 仍标记为夜间免费，则选择 WorkBuddy `Hy4 preview`，并显式请求豆包 `豆包 2.1 Pro`。同时沉淀了限定任务简报、七轮上限、原任务修复与 Codex 验收等约束。
+- 实现范围仅为文档/技能元数据。既有无关脏文件予以保留。验证与未决限制：`Docs/AI/TEST_REPORT.en.md` `[VERIFY-SUBAGENT-SKILL-20261024]`；变更清单：`项目修改日志/2026-10-24-子Agent协作技能.md`。
+
+## [FILES][协作][TASK-SUBAGENT-VISIBLE-WINDOW-20261024] 暴露子 Agent 执行窗口
+
+> 中文对应同步；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[TASK-SUBAGENT-VISIBLE-WINDOW-20261024]`。仅同步协作记录，不改任何 Unity 业务代码或运行时资源。
+
+- 用户要求每次派发子 Agent 时都暴露其运行窗口，使用户可以观察执行进度。
+- 更新 `.agents/skills/project-subagent-coordination/SKILL.md`，加入可见性工作流：派发前打开或选中原生桌面执行窗口；执行期间保持任务/状态条目可用；完成后保留结果条目；执行者没有实时操作窗口时明确说明限制。
+- 规则区分原生 WorkBuddy/Doubao 窗口、Hub 状态页以及 Qwen 的 Ollama 终端/状态输出；不得把状态页或模型自报信息呈现为实时操作视图。本次未修改项目业务代码或运行时资源。
+- 完整文件清单、验证结果和 UI 可用性未决边界见 `项目修改日志/2026-10-24-子Agent协作技能.md`。

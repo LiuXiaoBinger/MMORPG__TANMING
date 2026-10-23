@@ -903,3 +903,13 @@
 - KCP真实使用第三方可靠有序算法；仅正常小包回环通过不能放行。实例线程安全、两端一致启用/失效、绑定不在UDP暴露密钥、旧连接数据隔离属于本轮既有传输接入的必要验收，已退原开发任务最小修正，不扩展业务系统。
 - 用户明确授权以后WorkBuddy本地端口未启用等异常由Agent自行处理，不再要求用户托盘退出；优先网关正常关闭/重启，核原任务状态后保留原任务与会话恢复。不能强杀状态不明任务或覆盖未保存成果。
 - 记录路径：项目修改日志/2026-10-22-KCP-NETWORK-CHANGELOG.md；当前未验收、不替开发自检背书、不合main。
+## [DECISION][任务][DS-012] 2026-10-23 RO 任务系统首阶段有界设计与 Task.prefab 损坏处置
+
+> 中文对应同步；英文对应 `Docs/AI/DECISIONS.en.md` `[DS-012]`。仅同步协作记录，不改任何 Unity 资源、代码、配置、场景或 Git。
+
+- 参考 RO 拥有广泛的任务缓存、目标工厂、场景/实体触发器与特殊任务变体层级；在出现已证实需求前，LYFMMORGP 不复制该层级。
+- 首阶段限于剧情/支线任务，目标类型仅 `KillMonster`、`CollectItem`、`TalkNpc`；任务状态/进度/奖励由服务端权威；快照/upsert 与接取/放弃/领取请求；任务导航复用现有导航入口。每日/每周/活动/组队/虚拟任务及通用触发器脚本不在范围。
+- UI 集成必须走现有 `MainView` 子窗口注册、`WindowType`、`WindowBase`、`ShowMainWindow` 流程；归档 RO prefab 仅作视觉参考，不引入 RO Lua UI 管理器、`MoonClient.dll` 或并行 UI 生命周期。
+- 损坏处置：RO 原始 `Task.prefab` 因缺失 MoonClient GUID `0a06b724a7ecc1948b8fd5525e4102e6` 与 RO 脚本 GUID `f70555f144d8491a825f0804e09c671c` 损坏；仅重建 `LYF_MMO/Assets/artres/Resources/UI/Task/Prefabs/Task.prefab` 并保留 `.meta`，不改 `QuickTaskPanel`、`TaskNavigation`。
+- 新预制体为 6 节点原生 UGUI 视觉壳，仅引用项目既有 Image/Text/Common.TTF，无 Lua、MoonClient、任务业务或按钮逻辑；静态检查 6 GameObject/RectTransform、5 CanvasRenderer/MonoBehaviour、两 RO GUID 零引用；Unity AssetImportWorker 导入成功且对应导入块无错误；场景/Canvas 实例化尚未验证。
+- 证据与实施顺序：`项目分析/RO任务系统设计-2026-10-23.md`。本记录仅为设计/协作决策，不批准或实现代码/协议/schema 变更。分支 `codex/qwen-bilingual-memory` 不符合 `codex/feature-development`，存在无关脏改动，未提交/推送。

@@ -1,0 +1,1090 @@
+fileFormatVersion: 2
+guid: e804b88803f10c54ab75bf92cdd0510c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_ReBackActivity_BG01.png
+  - first:
+      213: 21300002
+    second: UI_ReBackActivity_BG02.png
+  - first:
+      213: 21300004
+    second: UI_ReBackActivity_BG03.png
+  - first:
+      213: 21300006
+    second: UI_ReBackActivity_BG04.png
+  - first:
+      213: 21300008
+    second: UI_ReBackActivity_mask.png
+  - first:
+      213: 21300010
+    second: UI_ReBackActivity_Toggle01.png
+  - first:
+      213: 21300012
+    second: UI_ReBackActivity_ToggleBG.png
+  - first:
+      213: 21300014
+    second: UI_ReBackActivity_BG05.png
+  - first:
+      213: 21300016
+    second: UI_ReBackActivity_BG06.png
+  - first:
+      213: 21300018
+    second: UI_ReBackActivity_BGLine.png
+  - first:
+      213: 21300020
+    second: UI_ReBackActivity_BG07.png
+  - first:
+      213: 21300022
+    second: UI_ReBackActivity_BG08.png
+  - first:
+      213: 21300024
+    second: UI_ReBackActivity_BG09.png
+  - first:
+      213: 21300026
+    second: UI_ReBackActivity_BG10.png
+  - first:
+      213: 21300028
+    second: UI_ReBackActivity_PicArrow.png
+  - first:
+      213: 21300030
+    second: UI_ReBackActivity_BG11.png
+  - first:
+      213: 21300032
+    second: UI_ReBackActivity_BG12.png
+  - first:
+      213: 21300034
+    second: UI_ReBackActivity_BG13.png
+  - first:
+      213: 21300036
+    second: UI_ReBackActivity_BG14.png
+  - first:
+      213: 21300038
+    second: UI_ReBackActivity_BG15.png
+  - first:
+      213: 21300040
+    second: UI_ReBackActivity_BG16.png
+  - first:
+      213: 21300042
+    second: UI_ReBackActivity_BG17.png
+  - first:
+      213: 21300044
+    second: UI_ReBackActivity_Pic01.png
+  - first:
+      213: 21300046
+    second: UI_ReBackActivity_Pic02.png
+  - first:
+      213: 21300048
+    second: UI_ReBackActivity_Pic03.png
+  - first:
+      213: 21300050
+    second: UI_ReBackActivity_Pic04.png
+  - first:
+      213: 21300052
+    second: UI_ReBackActivity_BG18.png
+  - first:
+      213: 21300054
+    second: UI_ReBackActivity_BG19.png
+  - first:
+      213: 21300056
+    second: UI_ReBackActivity_BG20.png
+  - first:
+      213: 21300058
+    second: UI_ReBackActivity_Pic05.png
+  - first:
+      213: 21300060
+    second: UI_ReBackActivity_Pic06.png
+  - first:
+      213: 21300062
+    second: UI_ReBackActivity_Pic07.png
+  - first:
+      213: 21300064
+    second: UI_ReBackActivity_Pic08.png
+  - first:
+      213: 21300066
+    second: UI_ReBackActivity_Pic09.png
+  - first:
+      213: 21300068
+    second: UI_ReBackActivity_Pic10.png
+  - first:
+      213: 21300070
+    second: UI_ReBackActivity_Btn01.png
+  - first:
+      213: 21300072
+    second: UI_ReBackActivity_BG21.png
+  - first:
+      213: 21300074
+    second: UI_ReBackActivity_Btn02.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 220
+        height: 133
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0f1fa7b48b32034ebed22b83a120da3
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 134
+        width: 213
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 403e53996019c9f4082c8fe61e46d50f
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG03.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 134
+        width: 126
+        height: 148
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55302db04d696e64a8d331fb624bd6ca
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG04.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 194
+        width: 8
+        height: 70
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 3, y: 0, z: 3, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f53a5d4337b8c3441a83e84ff2fd7718
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 265
+        width: 9
+        height: 173
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 4, y: 0, z: 4, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8eea4bf7bc8344b49b7f43d95faeabcc
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG06.png
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 194
+        width: 9
+        height: 6
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 2, z: 0, w: 2}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93a8e7c6afc35a41a9c5c107fa3f483
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG07.png
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 194
+        width: 173
+        height: 71
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93292b3a9887854e8f9abeb11116db2
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG08.png
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 266
+        width: 157
+        height: 77
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b561bd26de06a64790b6acc0738b70f
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG09.png
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 266
+        width: 27
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aefaec36cf8dbb4dbda3f3614dcec2d
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG10.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 0
+        width: 467
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 451, y: 0, z: 9, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d8b2c0bca1822c48b7bd23af271ed59
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG11.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 13
+        width: 36
+        height: 37
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 22, z: 20, w: 13}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88bf36d22a4161c45bc6151f0f0ca992
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG12.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 51
+        width: 29
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 13, z: 14, w: 14}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 618dd4adfc321ae48b81cd63e2417c77
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG13.png
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 13
+        width: 288
+        height: 86
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 230, y: 32, z: 40, w: 45}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50bde2cc3cb92594a8b51cfd8cd48ce5
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG14.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 439
+        width: 194
+        height: 229
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b5877cc68061ac42936bfa5fb1c9179
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG15.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 300
+        width: 225
+        height: 549
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60c2668e8c492d44695dc487f69d0f8b
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG16.png
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 80
+        width: 32
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 11, z: 15, w: 11}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69e45c5ab513a9c4292f776ca5613191
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG17.png
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 100
+        width: 195
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5642f51a8b20904f9b1a9245eefb411
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG18.png
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 145
+        width: 702
+        height: 98
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 345, y: 43, z: 342, w: 44}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc648ad6dddae544b8abd2b64c387ce3
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG19.png
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 0
+        width: 274
+        height: 109
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71ba3ed5f724b1b4eb29d9bf5a65ead0
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG20.png
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 0
+        width: 420
+        height: 242
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 212, y: 120, z: 202, w: 116}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 443df64fe1174a546bc6ec4f761e7983
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BG21.png
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 244
+        width: 329
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e541044e7960ff04a8810df36faab3ab
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_BGLine.png
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 51
+        width: 5
+        height: 3
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 1, y: 1, z: 1, w: 1}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6179fc37d98f21049a4138b956192a78
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Btn01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 850
+        width: 261
+        height: 76
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e2a12d77c533fa49a25ae12e01b3ce0
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Btn02.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 850
+        width: 273
+        height: 123
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52f627e86a9439440b3087c104b8dd3e
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_mask.png
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 100
+        width: 23
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 10, y: 10, z: 10, w: 6}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceaae0372eb53d24e96dbb549b5515aa
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic01.png
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 0
+        width: 246
+        height: 312
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69bb1f77344706a4e969ca7a36462b82
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic02.png
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 243
+        width: 219
+        height: 316
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60cfd780de2e64a4d99fc78cb4828421
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic03.png
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 244
+        width: 210
+        height: 300
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fd499899d73a0d4cb26edfe5836d026
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic04.png
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 293
+        width: 219
+        height: 287
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ea5fe381a332ea40a5ce1533537bd89
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic05.png
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 100
+        width: 41
+        height: 43
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c299a916dfb3d3d47ac4bd169ad621ab
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic06.png
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 100
+        width: 54
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55ed38ad19f286346b802b303fce4510
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic07.png
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 13
+        width: 110
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2c1ee7fd9ea66f409a8b573a00c06d2
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic08.png
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 545
+        width: 269
+        height: 101
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e0abbb1b6f2b504bb12142edcd5d0d1
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic09.png
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 560
+        width: 487
+        height: 459
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d16b22a3f06c55d41bffead52faffa50
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Pic10.png
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 63
+        width: 81
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f67bfb9993a0324c960f3cdf416b65c
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_PicArrow.png
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 201
+        width: 8
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e047cf436a4712949a051b372ed7ce86
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_Toggle01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 927
+        width: 206
+        height: 93
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5613734266e0fcd4c8a59da13456acc6
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_ReBackActivity_ToggleBG.png
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 927
+        width: 31
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 19, z: 11, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 657ffaa28fd0bfb40af4e33c245d1caf
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 028a90e92fffd4d4f90da138f4fa8fd4
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_ReBackActivity_BG01.png: 21300000
+      UI_ReBackActivity_BG02.png: 21300002
+      UI_ReBackActivity_BG03.png: 21300004
+      UI_ReBackActivity_BG04.png: 21300006
+      UI_ReBackActivity_BG05.png: 21300014
+      UI_ReBackActivity_BG06.png: 21300016
+      UI_ReBackActivity_BG07.png: 21300020
+      UI_ReBackActivity_BG08.png: 21300022
+      UI_ReBackActivity_BG09.png: 21300024
+      UI_ReBackActivity_BG10.png: 21300026
+      UI_ReBackActivity_BG11.png: 21300030
+      UI_ReBackActivity_BG12.png: 21300032
+      UI_ReBackActivity_BG13.png: 21300034
+      UI_ReBackActivity_BG14.png: 21300036
+      UI_ReBackActivity_BG15.png: 21300038
+      UI_ReBackActivity_BG16.png: 21300040
+      UI_ReBackActivity_BG17.png: 21300042
+      UI_ReBackActivity_BG18.png: 21300052
+      UI_ReBackActivity_BG19.png: 21300054
+      UI_ReBackActivity_BG20.png: 21300056
+      UI_ReBackActivity_BG21.png: 21300072
+      UI_ReBackActivity_BGLine.png: 21300018
+      UI_ReBackActivity_Btn01.png: 21300070
+      UI_ReBackActivity_Btn02.png: 21300074
+      UI_ReBackActivity_Pic01.png: 21300044
+      UI_ReBackActivity_Pic02.png: 21300046
+      UI_ReBackActivity_Pic03.png: 21300048
+      UI_ReBackActivity_Pic04.png: 21300050
+      UI_ReBackActivity_Pic05.png: 21300058
+      UI_ReBackActivity_Pic06.png: 21300060
+      UI_ReBackActivity_Pic07.png: 21300062
+      UI_ReBackActivity_Pic08.png: 21300064
+      UI_ReBackActivity_Pic09.png: 21300066
+      UI_ReBackActivity_Pic10.png: 21300068
+      UI_ReBackActivity_PicArrow.png: 21300028
+      UI_ReBackActivity_Toggle01.png: 21300010
+      UI_ReBackActivity_ToggleBG.png: 21300012
+      UI_ReBackActivity_mask.png: 21300008
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

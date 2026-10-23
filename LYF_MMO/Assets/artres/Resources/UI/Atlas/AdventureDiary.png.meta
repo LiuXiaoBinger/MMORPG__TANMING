@@ -1,0 +1,665 @@
+fileFormatVersion: 2
+guid: ced27067bd330804582a3ad0c1516379
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_AdventureDiary_BG01.png
+  - first:
+      213: 21300002
+    second: UI_AdventureDiary_BG02.png
+  - first:
+      213: 21300004
+    second: UI_AdventureDiary_Slider.png
+  - first:
+      213: 21300006
+    second: UI_AdventureDiary_Toggle01.png
+  - first:
+      213: 21300008
+    second: UI_AdventureDiary_Toggle02.png
+  - first:
+      213: 21300010
+    second: UI_AdventureDiary_BG03.png
+  - first:
+      213: 21300012
+    second: UI_AdventureDiary_bg04.png
+  - first:
+      213: 21300014
+    second: UI_AdventureDiary_Arrow.png
+  - first:
+      213: 21300016
+    second: UI_AdventureDiary_BtnGO.png
+  - first:
+      213: 21300018
+    second: UI_AdventureDiary_BG.png
+  - first:
+      213: 21300020
+    second: UI_AdventureDiary_Close.png
+  - first:
+      213: 21300022
+    second: UI_AdventureDiary_Mask01.png
+  - first:
+      213: 21300024
+    second: UI_AdventureDiary_Mask02.png
+  - first:
+      213: 21300026
+    second: UI_AdventureDiary_Mask03.png
+  - first:
+      213: 21300028
+    second: UI_AdventureDiary_Mask04.png
+  - first:
+      213: 21300030
+    second: UI_AdventureDiary_Mask05.png
+  - first:
+      213: 21300032
+    second: UI_AdventureDiary_Mask06.png
+  - first:
+      213: 21300034
+    second: UI_AdventureDiary_Mask07.png
+  - first:
+      213: 21300036
+    second: UI_AdventureDiary_Mask08.png
+  - first:
+      213: 21300038
+    second: UI_AdventureDiary_Pic01.png
+  - first:
+      213: 21300040
+    second: UI_AdventureDiary_Pic02.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Arrow.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 47
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c07b5a48ae0dc384fa76e0483f664e25
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_BG.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 56
+        width: 459
+        height: 168
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b83aacd8afacdc341b57a65491ef8b5b
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_BG01.png
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 0
+        width: 166
+        height: 146
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 78, y: 79, z: 71, w: 45}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd0184ad452f744eb38cabdafb99f9c
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_BG02.png
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 147
+        width: 94
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d748b9340b8e4e41952ea19e82874d1
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_BG03.png
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 33
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 0, z: 15, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4f93fd55cef2614dbcc83a41e9d0a34
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_bg04.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 0
+        width: 27
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 0, z: 12, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d23161a6d4772714081714ba14c4bc8d
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_BtnGO.png
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 207
+        width: 403
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e708455d4422c44ca6a3554c1568e33
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Close.png
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 0
+        width: 21
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce8dab57a0c59d0459a1213114df42e8
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 225
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2254d1d186ab24b4b93b49e1c87dce17
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask02.png
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 225
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7269eb958b9fd13409e8a6a33e025e6d
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask03.png
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 0
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e659bb73f8607c42aaa6d94945c1aad
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask04.png
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 254
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f62f9a05f3de914d9c3ffa0494c71c7
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask05.png
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 254
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cec63013ed99144faade689c100781b
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask06.png
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 471
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88ca8c88e8f5bde4399436d53f4bb8ef
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask07.png
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 471
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dc4852882a4e004fae60b7ece4b792e
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Mask08.png
+      rect:
+        serializedVersion: 2
+        x: 1069
+        y: 0
+        width: 204
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f42f81173b7924640b866ce8d2275b80
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Pic01.png
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 22
+        width: 141
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aceec3e748b87f64c97064edb62f7bbf
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Pic02.png
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 254
+        width: 30
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 0, z: 12, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7ffc2068350abd408ac039cf8849c96
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Slider.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 40
+        width: 15
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 5, y: 0, z: 5, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d57f0e51ed52c934fa1985c9131e475f
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Toggle01.png
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 294
+        width: 32
+        height: 94
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 0, z: 14, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2802bbf6599782445b134d999f01841a
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_AdventureDiary_Toggle02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 696
+        width: 272
+        height: 104
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d421634f4c943c14888595a053f0fe16
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: f0e9a3ff5a39b16499f43e8c027893fd
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_AdventureDiary_Arrow.png: 21300014
+      UI_AdventureDiary_BG.png: 21300018
+      UI_AdventureDiary_BG01.png: 21300000
+      UI_AdventureDiary_BG02.png: 21300002
+      UI_AdventureDiary_BG03.png: 21300010
+      UI_AdventureDiary_BtnGO.png: 21300016
+      UI_AdventureDiary_Close.png: 21300020
+      UI_AdventureDiary_Mask01.png: 21300022
+      UI_AdventureDiary_Mask02.png: 21300024
+      UI_AdventureDiary_Mask03.png: 21300026
+      UI_AdventureDiary_Mask04.png: 21300028
+      UI_AdventureDiary_Mask05.png: 21300030
+      UI_AdventureDiary_Mask06.png: 21300032
+      UI_AdventureDiary_Mask07.png: 21300034
+      UI_AdventureDiary_Mask08.png: 21300036
+      UI_AdventureDiary_Pic01.png: 21300038
+      UI_AdventureDiary_Pic02.png: 21300040
+      UI_AdventureDiary_Slider.png: 21300004
+      UI_AdventureDiary_Toggle01.png: 21300006
+      UI_AdventureDiary_Toggle02.png: 21300008
+      UI_AdventureDiary_bg04.png: 21300012
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

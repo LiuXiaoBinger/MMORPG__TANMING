@@ -6,6 +6,13 @@
 - 验收范围仅限新增的 `AGENTS.md` 章节、新增的 `[DOCS-READ]` 条款，以及本编号的任务与验收记录；由子 Agent 同步中文并检查本次增量，Codex 只复核实际范围与提交的证据，不再重复双语检查。最终空白与范围校验、委派结果归入 `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`。
 - 无业务代码、Unity 资源或运行时行为改动；Unity/客户端/服务端构建均不适用。不得由本校验计划推断任务已完成。
 
+## [VERIFY][协作][VERIFY-SUBAGENT-SKILL-UPDATE-20261024] 子 Agent 规则集中化验收
+
+- 已用三条新规则更新既有项目技能：Asia/Shanghai 23:00 后优先 WorkBuddy、逐次记录提供方与实际模型身份、长上下文交接前先读取此前对话；用户本轮明确指定的模型仍然优先。
+- `AGENTS.md` 现在对子 Agent 的路由、派工、返修、上下文交接与验收统一指向该技能；项目授权，以及宽泛的代码、文件、分支与文档约束仍保留在根目录。
+- `quick_validate.py` 在 Python UTF-8 模式下通过（输出 `Skill is valid!`）；已跟踪改动的 `git diff --check` 通过。内容复核确认只有一条模型优先级规则，且根目录到技能的路由一致。
+- 本指令性改动不适用 Unity/客户端/服务端构建。本轮创建了 WorkBuddy 文档同步任务，但 Agent Hub 的 `modelSelection=false`，未通过该任务选择或实测 `Hy4 preview`，也未新建豆包任务实测 `豆包 2.1 Pro`；本轮 WorkBuddy 实际模型未披露/无法确认。记录同步与剩余限制见 `项目修改日志/2026-10-24-子Agent协作技能.md`。
+
 ## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] 增量文档校验
 
 - 校验范围仅限本次规则增量、`[DOCS-READ]` 同步，以及新增的 `[BILINGUAL-DELTA-CHECK-20261024]` 任务与验收记录；由子 Agent 执行中英同步与一致性检查，Codex 只复核实际差异与提交的证据，未改动的历史不在范围内。
@@ -24,6 +31,13 @@
 - 独立预览场景渲染 `_temp/quicktask-text-20261023/after-preview.png` 已目视：五类文本均可见。最初 SceneView 截图为空，未作为验收证据。首次独立渲染记录到一次临时 RenderTexture 清理报错；在销毁前先清空临时相机目标后修复，复跑未新增报错（仍留一条早先记录）。预览场景已关闭，验证过程未保存任何正式场景或 prefab。未运行玩法、交互或客户端/服务端构建。
 - WorkBuddy Hub `hub-bc16cc63-ee30-4867-9ef6-8e7c04db3e69` 第 2 轮 `run-4aef2446-cf2a-4445-a493-a2f68eca3369` 依 Codex 证据 accepted。完整变更清单、先前豆包中断、语言同步与 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel文本与RO层级对齐.md`。保留无关的用户改动，只暂存本任务的资源新增与记录段。
 - 一次 `qwen3:8b-light` 同步请求 45 秒超时，无可用输出、无模型文件落盘，未重试。WorkBuddy 第 3 轮仅做中文同步，不是又一次修复失败。
+
+## [VERIFY][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel 再次清理验证，2026-10-23
+
+- Codex 确认 PrefabStage 未打开，同步导入当前 QuickTaskPanel 磁盘资源，测得 58 个 Missing Script、57 个节点、78 个有效 UGUI MonoBehaviour。有效组件类型/数量精确快照：`_temp/quicktask-reclean-20261023/unity-before.json`。
+- Codex 独立 `verify.mjs` 通过：恰好删除 58 个自定义文档/组件项与 78 条 UGUI 脚本映射；其余每个字节与 meta 均保留，无悬挂组件引用。改后 SHA-256：`9f5624761c5827b7c0451446d2cb82326b1df1cfe5e9789a9983c852157bba6a`。真实 Unity 同步导入/加载通过：missing=0、节点 57、有效组件类型/数量快照完全一致（`unity-after.json`）。
+- 相对 HEAD 的最终差异只含用户已有的锚点位置/尺寸两行，保留在暂存区之外。不宣称渲染交互、客户端或服务端编译、玩法验收。范围、同步与 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`。
+- 一次 `qwen3:8b-light` 中文同步尝试 45 秒超时，无可用输出与模型文件落盘，未重试；WorkBuddy 第 2 轮只同步中文。该事件与已通过的资源检查相互独立，不计为又一次资源修复失败。
 
 ## [VERIFY][协作][QWEN-MEM-20261023] 2026-10-23 文档/配置验收（当前，文档/配置核验通过，非业务验收）
 
@@ -6145,17 +6159,40 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - `token-budget/scripts/tokenop.py` 对123行样例输出47.57%压缩，保留错误、约束和下一步；按SHA恢复121-123行成功。
 - `repo-context-ledger/scripts/ledger.py --repo D:/unitypro/LYFMMORGP init --dry-run` 退出码0，输出77项创建、2项更新预览，明确 `Dry run only. No files were written.`。
 - `git diff --check` 通过；本轮没有业务代码或正式资源变化。证据：`_temp/skill-verify-20261023/`。
-
 ## [VERIFY][任务][TR-553] 2026-10-23 RO 任务系统 UI 归档验证与 Task.prefab 重建静态检查
+
+> 中文对应同步；英文对应 `Docs/AI/TEST_REPORT.en.md` `[TR-553]`。仅同步协作记录，不改任何 Unity 资源、代码、配置、场景或 Git。
 
 - 最终复查验收（2026-10-23，优先于下方中间状态）：真实 Unity 中全部 38 个 UI prefab 资产加载缺失组件均为 0，有效组件类型/数量与适配前快照完全一致（`_temp/ui-recheck-20261023/unity-before-adapt-types.json`、`unity-final-types.json`）。Codex 通过把 726 个已导入组件的持久 ID 与 YAML 文档逐一对应，再读取真实类型与当前 MonoScript GUID，确立 15 个旧 UI 类型的映射（`unity-legacy-mapping.json`），属 Editor 运行时类型证据，不是字段名推断。
 - 独立严格保全核验通过：22 个文件、删除 586 个目标组件、适配 726 条 `m_Script` 行、移除 75 条无效覆盖项、10 条引用清零；无多余文档或属性变化，已校验的元数据保留。证据：`_temp/ui-recheck-20261023/codex-preservation-result.json`，开发侧第 4 轮自检亦通过。未执行渲染后的 UI 交互、客户端/服务端构建或玩法测试。
 - 剩余边界：Task 原先 dirty 编辑现场在可另存之前已消失，其磁盘文件在获授权清理前保持未变；那些未保存编辑是否保留无法确认，最终 Task 使用备份的磁盘基线，而非宣称已恢复的快照。UI 之外的特效 prefab 不在本次清理范围。范围、执行者身份、文件清单与 Git 凭证：`项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`。
 - 轮次身份补充：第 1 轮扫描、第 2—4 轮三次开发，不是 4 轮失败；豆包会话 `38448883626832642`、run `59485369211741442` 未实际交付且已 cancelled，不计有效轮次；`qwen3:8b-light` 单次 API 请求 60 秒超时、无输出、无落盘、未重试，故本 WorkBuddy 会话第 5 轮仅同步中文，不计为额外的资源修复失败。Git 精确暂存、提交与推送待 Codex 执行，不得声称已上传。
 
-## [VERIFY][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel 再次清理验证，2026-10-23
+- 归档验证：`LYF_MMO/Assets/artres/Resources/UI/Task/` 下 8 个文件（`Task.prefab`、`QuickTaskPanel.prefab`、`TaskNavigation.prefab`、`Task.png` 及对应 `.meta`）SHA-256 对比全部通过。
+- 静态 GUID 审查：依赖共享图集/字体/TMP/材质/按钮/窗口资产及动画控制器、`MoonClient.dll`、TextMeshPro 运行时；目标工程仅部分包含匹配的共享 GUID，本检查不建立 prefab 可加载性。后续 GUID 解析对运行时兼容性失败：三个 prefab 引用缺失的 RO 脚本 GUID `0a06b724a7ecc1948b8fd5525e4102e6`（MoonClient）与 `f70555f144d8491a825f0804e09c671c`；`TaskNavigation.prefab` 把一个 RO 图集 GUID 静默绑定到本地 `UI/Atlas/Map.png`。当前 prefab 归档视为运行时无效。
+- `Task.prefab` 重建静态检查通过：对两个 RO 脚本 GUID 均零引用；全部 5 个脚本引用与 `UI/Prefabs/NoData.prefab` 使用的目标工程 UGUI Image/Text 引用相同，字体 GUID 解析到 `UI/Font/Common.TTF`；YAML 对象/组件计数与重建层级匹配（6 GameObject/RectTransform、5 CanvasRenderer/MonoBehaviour）。
+- UI 预制体失效脚本清理静态检查通过：38 个 prefab 中仅 4 个 GUID 在 `Assets`、`Packages`、`Library/PackageCache` 无 `.meta` 来源；从三个 prefab 删除 10 个对应组件。删除后四 GUID 零引用，剩余 26 个唯一 `m_Script` GUID 全部可解析，且三个修改 YAML 资产的 GameObject 组件引用均指向已声明对象。
+- 清理明细：`_temp/missing-script-cleanup-20261023/result.md`。未执行三个 prefab 的 Unity Inspector 逐项检查；`DailyTask.prefab` 有 AssetImportWorker 导入记录，`AdventureDiaryTask.prefab` 与 `FriendChatPrefab.prefab` 尚未发现本轮新导入记录。
+- `UI/Task` 的失效脚本清理静态检查通过：`QuickTaskPanel.prefab`、`Task.prefab`、`TaskNavigation.prefab` 共删除 337 个使用 3 个未解析 GUID 的组件，含 `Task.prefab` 中 6 个 `stripped` 嵌套组件。删除后三个 YAML 均无 `m_Script` 引用，且无悬挂 GameObject 组件引用；节点、`.meta`、图片、字体均未改。明细：`_temp/missing-script-cleanup-task-20261023/result.md`。
+- 三个任务 prefab 都有 AssetImportWorker PreviewImporter 导入记录，但未在 Unity Inspector/实际界面逐项验证，不能据此宣称视觉或交互功能可用。
+- Unity AssetImportWorker 已成功导入该资源且对应导入块无错误；场景/Canvas 实例化尚未验证。未执行 Unity 导入/场景测试、prefab 实例化、客户端/服务端编译、网络协议或玩法循环（本轮为归档与修复，属有意延后的验收阶段）。
+- 范围与源路径：`项目修改日志/2026-10-23-RO任务系统资源归档与设计.md`。分支 `codex/qwen-bilingual-memory` 不符合 `codex/feature-development`，存在无关脏改动，未提交/推送。
 
-- Codex 确认 PrefabStage 未打开，同步导入当前 QuickTaskPanel 磁盘资源，测得 58 个 Missing Script、57 个节点、78 个有效 UGUI MonoBehaviour。有效组件类型/数量精确快照：`_temp/quicktask-reclean-20261023/unity-before.json`。
-- Codex 独立 `verify.mjs` 通过：恰好删除 58 个自定义文档/组件项与 78 条 UGUI 脚本映射；其余每个字节与 meta 均保留，无悬挂组件引用。改后 SHA-256：`9f5624761c5827b7c0451446d2cb82326b1df1cfe5e9789a9983c852157bba6a`。真实 Unity 同步导入/加载通过：missing=0、节点 57、有效组件类型/数量快照完全一致（`unity-after.json`）。
-- 相对 HEAD 的最终差异只含用户已有的锚点位置/尺寸两行，保留在暂存区之外。不宣称渲染交互、客户端或服务端编译、玩法验收。范围、同步与 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel自定义脚本再次清理.md`。
-- 一次 `qwen3:8b-light` 中文同步尝试 45 秒超时，无可用输出与模型文件落盘，未重试；WorkBuddy 第 2 轮只同步中文。该事件与已通过的资源检查相互独立，不计为又一次资源修复失败。
+
+## [VERIFY][协作][VERIFY-SUBAGENT-SKILL-20261024] 2026-10-24 项目本地子Agent协作技能
+
+> 中文对应同步；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-SUBAGENT-SKILL-20261024]`。仅同步协作记录，不改任何 Unity 资源、代码、配置、场景或 Git。
+
+- `.agents/skills/project-subagent-coordination` 通过 `skill-creator` 校验器：frontmatter、命名与脚手架检查均通过。`agents/openai.yaml` 以 UTF-8 重新生成，接口元数据已复查。
+- 人工内容复查确认该技能把「建任务时的模型选择」与「禁止中途切换模型」区分开，并保留项目的范围、执行身份、修复轮数与最终验收约束。
+- 本项目仅为项目本地指令/元数据变更。不适用任何 Unity/客户端/服务端构建或运行时测试。既有无关工作区修改予以保留。
+- 未决：未创建 WorkBuddy UI 任务以实测选择 Hy4 preview，也未新建豆包任务；未来派发时的模型可用性仍取决于客户端菜单。中文记录同步与 Git 状态见变更清单。
+
+## [VERIFY][协作][VERIFY-SUBAGENT-VISIBLE-WINDOW-20261024] 子 Agent 可见性说明验收
+
+> 中文对应同步；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-SUBAGENT-VISIBLE-WINDOW-20261024]`。仅同步协作记录，不改任何 Unity 业务代码或运行时资源。
+
+- 添加可见性章节后，运行 `skill-creator/scripts/quick_validate.py .agents/skills/project-subagent-coordination` 通过，输出 `Skill is valid!`。
+- 文档与技能修改的 `git diff --check` 通过。人工复核确认：有可用原生执行窗口时必须使用；没有实时窗口时公开 Hub/任务/终端状态条目；禁止声称状态输出就是实时操作视图。
+- 本次为仅指令更新，未创建 WorkBuddy、Doubao 或 Qwen 真实任务，因此客户端窗口实际可用性和模型菜单行为仍未验证；不适用 Unity/客户端/服务端构建。
+- 变更日志与中英文同步状态见 `项目修改日志/2026-10-24-子Agent协作技能.md`。

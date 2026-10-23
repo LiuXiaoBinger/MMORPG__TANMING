@@ -1,0 +1,570 @@
+fileFormatVersion: 2
+guid: 4d6ea63b9b9783c4890d8ca2827814ea
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: ui_JobTask_BG.png
+  - first:
+      213: 21300002
+    second: ui_JobTask_Closed.png
+  - first:
+      213: 21300004
+    second: ui_JobTask_Frame01.png
+  - first:
+      213: 21300006
+    second: ui_JobTask_Image.png
+  - first:
+      213: 21300008
+    second: ui_JobTask_Image_Acolyte01.png
+  - first:
+      213: 21300010
+    second: ui_JobTask_Image_Archer.png
+  - first:
+      213: 21300012
+    second: ui_JobTask_Image_Mage01.png
+  - first:
+      213: 21300014
+    second: ui_JobTask_Image_Swordman01.png
+  - first:
+      213: 21300016
+    second: ui_JobTask_Image_Thiefr01.png
+  - first:
+      213: 21300018
+    second: ui_JobTask_Image_Trader01.png
+  - first:
+      213: 21300020
+    second: ui_JobTask_Image02.png
+  - first:
+      213: 21300022
+    second: UI_Garderobe_Cursor.png
+  - first:
+      213: 21300024
+    second: ui_JobTask_Btn01.png
+  - first:
+      213: 21300026
+    second: ui_JobTask_Image03.png
+  - first:
+      213: 21300028
+    second: ui_JobTask_Info.png
+  - first:
+      213: 21300030
+    second: ui_JobTask_Image_Acolyte_01.png
+  - first:
+      213: 21300032
+    second: ui_JobTask_Image_Acolyte_02.png
+  - first:
+      213: 21300034
+    second: ui_JobTask_Image_Archer_01.png
+  - first:
+      213: 21300036
+    second: ui_JobTask_Image_Archer_02.png
+  - first:
+      213: 21300038
+    second: ui_JobTask_Image_Figure_01.png
+  - first:
+      213: 21300040
+    second: ui_JobTask_Image_Mage_01.png
+  - first:
+      213: 21300042
+    second: ui_JobTask_Image_Mage_02.png
+  - first:
+      213: 21300044
+    second: ui_JobTask_Image_Sword_01.png
+  - first:
+      213: 21300046
+    second: ui_JobTask_Image_Sword_02.png
+  - first:
+      213: 21300048
+    second: ui_JobTask_Image_Thiefr_01.png
+  - first:
+      213: 21300050
+    second: ui_JobTask_Image_Thiefr_02.png
+  - first:
+      213: 21300052
+    second: ui_JobTask_Image_Trader_01.png
+  - first:
+      213: 21300054
+    second: ui_JobTask_Image_Trader_02.png
+  - first:
+      213: 21300056
+    second: ui_JobTask_Image_Acolyte_F.png
+  - first:
+      213: 21300058
+    second: ui_JobTask_Image_Acolyte_M.png
+  - first:
+      213: 21300060
+    second: ui_JobTask_Image_Archer_F.png
+  - first:
+      213: 21300062
+    second: ui_JobTask_Image_Archer_M.png
+  - first:
+      213: 21300064
+    second: ui_JobTask_Image_Mage_F.png
+  - first:
+      213: 21300066
+    second: ui_JobTask_Image_Mage_M.png
+  - first:
+      213: 21300068
+    second: ui_JobTask_Image_Sword_F.png
+  - first:
+      213: 21300070
+    second: ui_JobTask_Image_Sword_M.png
+  - first:
+      213: 21300072
+    second: ui_JobTask_Image_Thiefr_F.png
+  - first:
+      213: 21300074
+    second: ui_JobTask_Image_Thiefr_M.png
+  - first:
+      213: 21300076
+    second: ui_JobTask_Image_Trader_F.png
+  - first:
+      213: 21300078
+    second: ui_JobTask_Image_Trader_M.png
+  - first:
+      213: 21300080
+    second: ui_JobTask_Image_Magician_F.png
+  - first:
+      213: 21300082
+    second: ui_JobTask_Image_Magician_M.png
+  - first:
+      213: 21300084
+    second: ui_JobTask_Image_Merchant_F.png
+  - first:
+      213: 21300086
+    second: ui_JobTask_Image_Merchant_M.png
+  - first:
+      213: 21300088
+    second: ui_JobTask_Image_Swordman_F.png
+  - first:
+      213: 21300090
+    second: ui_JobTask_Image_Swordman_M.png
+  - first:
+      213: 21300092
+    second: ui_JobTask_Image_Thief_F.png
+  - first:
+      213: 21300094
+    second: ui_JobTask_Image_Thief_M.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Acolyte_F.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e136b49751897944b4a0f2a51dbeaae
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Acolyte_M.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca442cc9bcfea1e42bc4baa14bc8aa51
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Archer_F.png
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01edc484c1402ed41acb241285661e32
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Archer_M.png
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ebf06e483d501446a70341464789bd3
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Figure_01.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 0
+        width: 158
+        height: 93
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 74, z: 0, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7888cbaed5b0614ca20d94b06f3f41b
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Magician_F.png
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ac55e5f40f528348b872a3a260a4412
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Magician_M.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f827895243264054bbb8d97e8028809e
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Merchant_F.png
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 544ff4ee3626ae74b872de22faab7876
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Merchant_M.png
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7c2ae3d6c8b2f54d96057e8b0a2dca1
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Swordman_F.png
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59bf7fbd98db6f24c849a67e2be55dc8
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Swordman_M.png
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a097f1d7eeeefd540b847bb2bd0aebde
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Thief_F.png
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 471
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6edf5180190e153479d070b7cab0a5a8
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_JobTask_Image_Thief_M.png
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 0
+        width: 166
+        height: 470
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df5e1dc673cc3274d97f72ee009f06c4
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: ca7524a12e0e0544cac7fad6a75c25d5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      ui_JobTask_Image_Acolyte_F.png: 21300056
+      ui_JobTask_Image_Acolyte_M.png: 21300058
+      ui_JobTask_Image_Archer_F.png: 21300060
+      ui_JobTask_Image_Archer_M.png: 21300062
+      ui_JobTask_Image_Figure_01.png: 21300038
+      ui_JobTask_Image_Magician_F.png: 21300080
+      ui_JobTask_Image_Magician_M.png: 21300082
+      ui_JobTask_Image_Merchant_F.png: 21300084
+      ui_JobTask_Image_Merchant_M.png: 21300086
+      ui_JobTask_Image_Swordman_F.png: 21300088
+      ui_JobTask_Image_Swordman_M.png: 21300090
+      ui_JobTask_Image_Thief_F.png: 21300092
+      ui_JobTask_Image_Thief_M.png: 21300094
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

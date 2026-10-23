@@ -74,6 +74,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// Singleton<object>
 	// System.Action<DG.Tweening.Plugins.Options.PathOptions,object,UnityEngine.Quaternion,object>
 	// System.Action<GhostEffect.MeshInfo>
+	// System.Action<MNavigationPoint>
 	// System.Action<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Action<UnityEngine.CombineInstance>
 	// System.Action<UnityEngine.EventSystems.RaycastResult>
@@ -104,6 +105,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.ByReference<ushort>
 	// System.Collections.Generic.ArraySortHelper<GhostEffect.MeshInfo>
 	// System.Collections.Generic.ArraySortHelper<HighlightPlus.HighlightEffect.ModelMaterials>
+	// System.Collections.Generic.ArraySortHelper<MNavigationPoint>
 	// System.Collections.Generic.ArraySortHelper<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.ArraySortHelper<UnityEngine.CombineInstance>
 	// System.Collections.Generic.ArraySortHelper<UnityEngine.EventSystems.RaycastResult>
@@ -116,6 +118,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.ArraySortHelper<uint>
 	// System.Collections.Generic.Comparer<GhostEffect.MeshInfo>
 	// System.Collections.Generic.Comparer<HighlightPlus.HighlightEffect.ModelMaterials>
+	// System.Collections.Generic.Comparer<MNavigationPoint>
 	// System.Collections.Generic.Comparer<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.Comparer<UnityEngine.CombineInstance>
 	// System.Collections.Generic.Comparer<UnityEngine.EventSystems.RaycastResult>
@@ -127,6 +130,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Comparer<object>
 	// System.Collections.Generic.Comparer<uint>
 	// System.Collections.Generic.Dictionary.Enumerator<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary.Enumerator<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary.Enumerator<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary.Enumerator<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary.Enumerator<int,byte>
 	// System.Collections.Generic.Dictionary.Enumerator<int,int>
@@ -142,6 +147,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary.Enumerator<ulong,object>
 	// System.Collections.Generic.Dictionary.Enumerator<ulong,ulong>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<int,byte>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<int,int>
@@ -157,6 +164,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<ulong,object>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<ulong,ulong>
 	// System.Collections.Generic.Dictionary.KeyCollection<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary.KeyCollection<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary.KeyCollection<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary.KeyCollection<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary.KeyCollection<int,byte>
 	// System.Collections.Generic.Dictionary.KeyCollection<int,int>
@@ -172,6 +181,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary.KeyCollection<ulong,object>
 	// System.Collections.Generic.Dictionary.KeyCollection<ulong,ulong>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<int,byte>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<int,int>
@@ -187,6 +198,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<ulong,object>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<ulong,ulong>
 	// System.Collections.Generic.Dictionary.ValueCollection<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary.ValueCollection<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary.ValueCollection<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary.ValueCollection<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary.ValueCollection<int,byte>
 	// System.Collections.Generic.Dictionary.ValueCollection<int,int>
@@ -202,6 +215,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary.ValueCollection<ulong,object>
 	// System.Collections.Generic.Dictionary.ValueCollection<ulong,ulong>
 	// System.Collections.Generic.Dictionary<ActionStateKey,object>
+	// System.Collections.Generic.Dictionary<MNavigationPoint,int>
+	// System.Collections.Generic.Dictionary<MNavigationPoint,object>
 	// System.Collections.Generic.Dictionary<UnityEngine.Vector3,int>
 	// System.Collections.Generic.Dictionary<int,byte>
 	// System.Collections.Generic.Dictionary<int,int>
@@ -217,6 +232,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Dictionary<ulong,object>
 	// System.Collections.Generic.Dictionary<ulong,ulong>
 	// System.Collections.Generic.EqualityComparer<ActionStateKey>
+	// System.Collections.Generic.EqualityComparer<MNavigationPoint>
 	// System.Collections.Generic.EqualityComparer<UnityEngine.Vector3>
 	// System.Collections.Generic.EqualityComparer<byte>
 	// System.Collections.Generic.EqualityComparer<float>
@@ -234,7 +250,10 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.HashSetEqualityComparer<long>
 	// System.Collections.Generic.HashSetEqualityComparer<object>
 	// System.Collections.Generic.ICollection<GhostEffect.MeshInfo>
+	// System.Collections.Generic.ICollection<MNavigationPoint>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<ActionStateKey,object>>
+	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<MNavigationPoint,int>>
+	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<MNavigationPoint,object>>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<UnityEngine.Vector3,int>>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<int,byte>>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<int,int>>
@@ -261,6 +280,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.ICollection<uint>
 	// System.Collections.Generic.IComparer<GhostEffect.MeshInfo>
 	// System.Collections.Generic.IComparer<HighlightPlus.HighlightEffect.ModelMaterials>
+	// System.Collections.Generic.IComparer<MNavigationPoint>
 	// System.Collections.Generic.IComparer<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.IComparer<UnityEngine.CombineInstance>
 	// System.Collections.Generic.IComparer<UnityEngine.EventSystems.RaycastResult>
@@ -272,7 +292,10 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.IComparer<object>
 	// System.Collections.Generic.IComparer<uint>
 	// System.Collections.Generic.IEnumerable<GhostEffect.MeshInfo>
+	// System.Collections.Generic.IEnumerable<MNavigationPoint>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<ActionStateKey,object>>
+	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<MNavigationPoint,int>>
+	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<MNavigationPoint,object>>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<UnityEngine.Vector3,int>>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int,byte>>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int,int>>
@@ -298,7 +321,10 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.IEnumerable<object>
 	// System.Collections.Generic.IEnumerable<uint>
 	// System.Collections.Generic.IEnumerator<GhostEffect.MeshInfo>
+	// System.Collections.Generic.IEnumerator<MNavigationPoint>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<ActionStateKey,object>>
+	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<MNavigationPoint,int>>
+	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<MNavigationPoint,object>>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<UnityEngine.Vector3,int>>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int,byte>>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int,int>>
@@ -324,12 +350,14 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.IEnumerator<object>
 	// System.Collections.Generic.IEnumerator<uint>
 	// System.Collections.Generic.IEqualityComparer<ActionStateKey>
+	// System.Collections.Generic.IEqualityComparer<MNavigationPoint>
 	// System.Collections.Generic.IEqualityComparer<UnityEngine.Vector3>
 	// System.Collections.Generic.IEqualityComparer<int>
 	// System.Collections.Generic.IEqualityComparer<long>
 	// System.Collections.Generic.IEqualityComparer<object>
 	// System.Collections.Generic.IEqualityComparer<ulong>
 	// System.Collections.Generic.IList<GhostEffect.MeshInfo>
+	// System.Collections.Generic.IList<MNavigationPoint>
 	// System.Collections.Generic.IList<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.IList<UnityEngine.CombineInstance>
 	// System.Collections.Generic.IList<UnityEngine.EventSystems.RaycastResult>
@@ -346,6 +374,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.IReadOnlyList<int>
 	// System.Collections.Generic.IReadOnlyList<object>
 	// System.Collections.Generic.KeyValuePair<ActionStateKey,object>
+	// System.Collections.Generic.KeyValuePair<MNavigationPoint,int>
+	// System.Collections.Generic.KeyValuePair<MNavigationPoint,object>
 	// System.Collections.Generic.KeyValuePair<UnityEngine.Vector3,int>
 	// System.Collections.Generic.KeyValuePair<int,byte>
 	// System.Collections.Generic.KeyValuePair<int,int>
@@ -364,6 +394,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.LinkedList<object>
 	// System.Collections.Generic.LinkedListNode<object>
 	// System.Collections.Generic.List.Enumerator<GhostEffect.MeshInfo>
+	// System.Collections.Generic.List.Enumerator<MNavigationPoint>
 	// System.Collections.Generic.List.Enumerator<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.List.Enumerator<UnityEngine.CombineInstance>
 	// System.Collections.Generic.List.Enumerator<UnityEngine.EventSystems.RaycastResult>
@@ -375,6 +406,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.List.Enumerator<object>
 	// System.Collections.Generic.List.Enumerator<uint>
 	// System.Collections.Generic.List<GhostEffect.MeshInfo>
+	// System.Collections.Generic.List<MNavigationPoint>
 	// System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.List<UnityEngine.CombineInstance>
 	// System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>
@@ -387,6 +419,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.List<uint>
 	// System.Collections.Generic.ObjectComparer<GhostEffect.MeshInfo>
 	// System.Collections.Generic.ObjectComparer<HighlightPlus.HighlightEffect.ModelMaterials>
+	// System.Collections.Generic.ObjectComparer<MNavigationPoint>
 	// System.Collections.Generic.ObjectComparer<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.Generic.ObjectComparer<UnityEngine.CombineInstance>
 	// System.Collections.Generic.ObjectComparer<UnityEngine.EventSystems.RaycastResult>
@@ -398,6 +431,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.ObjectComparer<object>
 	// System.Collections.Generic.ObjectComparer<uint>
 	// System.Collections.Generic.ObjectEqualityComparer<ActionStateKey>
+	// System.Collections.Generic.ObjectEqualityComparer<MNavigationPoint>
 	// System.Collections.Generic.ObjectEqualityComparer<UnityEngine.Vector3>
 	// System.Collections.Generic.ObjectEqualityComparer<byte>
 	// System.Collections.Generic.ObjectEqualityComparer<float>
@@ -411,6 +445,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Stack<object>
 	// System.Collections.Generic.ValueListBuilder<int>
 	// System.Collections.ObjectModel.ReadOnlyCollection<GhostEffect.MeshInfo>
+	// System.Collections.ObjectModel.ReadOnlyCollection<MNavigationPoint>
 	// System.Collections.ObjectModel.ReadOnlyCollection<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Collections.ObjectModel.ReadOnlyCollection<UnityEngine.CombineInstance>
 	// System.Collections.ObjectModel.ReadOnlyCollection<UnityEngine.EventSystems.RaycastResult>
@@ -423,6 +458,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.ObjectModel.ReadOnlyCollection<uint>
 	// System.Comparison<GhostEffect.MeshInfo>
 	// System.Comparison<HighlightPlus.HighlightEffect.ModelMaterials>
+	// System.Comparison<MNavigationPoint>
 	// System.Comparison<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Comparison<UnityEngine.CombineInstance>
 	// System.Comparison<UnityEngine.EventSystems.RaycastResult>
@@ -445,6 +481,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Nullable<UnityEngine.Vector3>
 	// System.Nullable<int>
 	// System.Predicate<GhostEffect.MeshInfo>
+	// System.Predicate<MNavigationPoint>
 	// System.Predicate<System.Collections.Generic.KeyValuePair<long,int>>
 	// System.Predicate<UnityEngine.CombineInstance>
 	// System.Predicate<UnityEngine.EventSystems.RaycastResult>

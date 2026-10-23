@@ -1,0 +1,2100 @@
+fileFormatVersion: 2
+guid: c8a360010b9a6114e806868cb4c0aa02
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Activity_Mvp_Identification_Lucky.png
+  - first:
+      213: 21300002
+    second: UI_Activity_Mvp_Identification_Mvp.png
+  - first:
+      213: 21300004
+    second: UI_Activity_Mvp_Identification_Pinfen.png
+  - first:
+      213: 21300006
+    second: UI_BoliFind_Bg_dizuo.png
+  - first:
+      213: 21300008
+    second: UI_Common_Clear.png
+  - first:
+      213: 21300010
+    second: UI_Common_Go_01.png
+  - first:
+      213: 21300012
+    second: UI_Common_Identification_Hot.png
+  - first:
+      213: 21300014
+    second: ui_common_Lvup.png
+  - first:
+      213: 21300016
+    second: UI_Common_New.png
+  - first:
+      213: 21300018
+    second: UI_Common_New_1.png
+  - first:
+      213: 21300020
+    second: UI_Common_Taozhuangbiaoshi.png
+  - first:
+      213: 21300022
+    second: UI_Common_Tuijian.png
+  - first:
+      213: 21300024
+    second: UI_CommonIcon_BagTab_All_01.png
+  - first:
+      213: 21300026
+    second: UI_CommonIcon_BagTab_All_02.png
+  - first:
+      213: 21300028
+    second: UI_CommonIcon_VS_01.png
+  - first:
+      213: 21300030
+    second: UI_Commonicon_Yinzhang_01.png
+  - first:
+      213: 21300032
+    second: UI_Commonicon_Yinzhang_02.png
+  - first:
+      213: 21300034
+    second: UI_CommonIcon_Yinzhang_04.png
+  - first:
+      213: 21300036
+    second: UI_Cooking_Banner.png
+  - first:
+      213: 21300038
+    second: UI_Cooking_Failed.png
+  - first:
+      213: 21300040
+    second: UI_Cooking_Finish.png
+  - first:
+      213: 21300042
+    second: UI_Cooking_-Huolishike.png
+  - first:
+      213: 21300044
+    second: UI_Cooking_-jiaobanshike.png
+  - first:
+      213: 21300046
+    second: UI_Cooking_jingcaishike.png
+  - first:
+      213: 21300048
+    second: UI_Cooking_Start.png
+  - first:
+      213: 21300050
+    second: UI_Cooking_SuccessfuL.png
+  - first:
+      213: 21300052
+    second: UI_Cooking_Timeover.png
+  - first:
+      213: 21300054
+    second: UI_Cooking_Tips.png
+  - first:
+      213: 21300056
+    second: ui_DailyTask_MvpTittle.png
+  - first:
+      213: 21300058
+    second: UI_Delegate_Finished.png
+  - first:
+      213: 21300060
+    second: UI_Delegate_Tuijian.png
+  - first:
+      213: 21300062
+    second: UI_Envelope_Img_Kapian.png
+  - first:
+      213: 21300064
+    second: ui_FashionRating_Frame06.png
+  - first:
+      213: 21300066
+    second: ui_FashionRating_Image02.png
+  - first:
+      213: 21300068
+    second: UI_Flying_img_kapian.png
+  - first:
+      213: 21300070
+    second: UI_Garderobe_Meifa.png
+  - first:
+      213: 21300072
+    second: UI_Garderobe_Meitong.png
+  - first:
+      213: 21300074
+    second: UI_Garderobe_New.png
+  - first:
+      213: 21300076
+    second: UI_Garderobe_Tab_Beibu01.png
+  - first:
+      213: 21300078
+    second: UI_Garderobe_Tab_Beibu02.png
+  - first:
+      213: 21300080
+    second: UI_Garderobe_Tab_Casket.png
+  - first:
+      213: 21300082
+    second: UI_Garderobe_Tab_Fashion.png
+  - first:
+      213: 21300084
+    second: UI_Garderobe_Tab_Hold01.png
+  - first:
+      213: 21300086
+    second: UI_Garderobe_Tab_Hold02.png
+  - first:
+      213: 21300088
+    second: UI_Garderobe_Tab_Lianbu01.png
+  - first:
+      213: 21300090
+    second: UI_Garderobe_Tab_Lianbu02.png
+  - first:
+      213: 21300092
+    second: UI_Garderobe_Tab_Ornament.png
+  - first:
+      213: 21300094
+    second: UI_Garderobe_Tab_Toubu01.png
+  - first:
+      213: 21300096
+    second: UI_Garderobe_Tab_Toubu02.png
+  - first:
+      213: 21300098
+    second: UI_Garderobe_Tab_Whole01.png
+  - first:
+      213: 21300100
+    second: UI_Garderobe_Tab_Whole02.png
+  - first:
+      213: 21300102
+    second: UI_Garderobe_Tab_Wuqi01.png
+  - first:
+      213: 21300104
+    second: UI_Garderobe_Tab_Wuqi02.png
+  - first:
+      213: 21300106
+    second: UI_Garderobe_Tab_Zuibu01.png
+  - first:
+      213: 21300108
+    second: UI_Garderobe_Tab_Zuibu02.png
+  - first:
+      213: 21300110
+    second: UI_Guide_Biaoqing.png
+  - first:
+      213: 21300112
+    second: UI_Guide_BoliB.png
+  - first:
+      213: 21300114
+    second: UI_Guide_Daoju.png
+  - first:
+      213: 21300116
+    second: UI_Guide_gongneng.png
+  - first:
+      213: 21300118
+    second: UI_Guide_Juese.png
+  - first:
+      213: 21300120
+    second: UI_Guide_ModA.png
+  - first:
+      213: 21300122
+    second: UI_Guide_ModB.png
+  - first:
+      213: 21300124
+    second: UI_Guide_Xiangji.png
+  - first:
+      213: 21300126
+    second: UI_Guide_Zuoqi.png
+  - first:
+      213: 21300128
+    second: UI_Guide_Zuoxia.png
+  - first:
+      213: 21300130
+    second: UI_icon_item_BaseExpAlot.png
+  - first:
+      213: 21300132
+    second: UI_icon_item_JobExpAlot.png
+  - first:
+      213: 21300134
+    second: ui_JobPreview_Tittle1.png
+  - first:
+      213: 21300136
+    second: UI_Language_Meishuzi_01.png
+  - first:
+      213: 21300138
+    second: UI_Language_Meishuzi_02.png
+  - first:
+      213: 21300140
+    second: UI_Language_Meishuzi_03.png
+  - first:
+      213: 21300142
+    second: UI_Language_Yinzhang_01.png
+  - first:
+      213: 21300144
+    second: UI_Language_Yinzhang_02.png
+  - first:
+      213: 21300146
+    second: UI_Language_Yinzhang_04.png
+  - first:
+      213: 21300148
+    second: UI_Language_Yinzhang_05.png
+  - first:
+      213: 21300150
+    second: ui_Loading_BG.png
+  - first:
+      213: 21300152
+    second: UI_main_Arena_Free.png
+  - first:
+      213: 21300154
+    second: UI_main_Arena_Radom.png
+  - first:
+      213: 21300156
+    second: UI_main_skilloff .png
+  - first:
+      213: 21300158
+    second: UI_Mercenary_Yinzhang.png
+  - first:
+      213: 21300160
+    second: ui_Personal_Tittle.png
+  - first:
+      213: 21300162
+    second: UI_Postcard_Clear.png
+  - first:
+      213: 21300164
+    second: UI_PreyDungeon_Img_Tishi.png
+  - first:
+      213: 21300166
+    second: UI_RedEnvelope_Button_Qiang.png
+  - first:
+      213: 21300168
+    second: UI_RedEnvelope_Icon_pinHongbao.png
+  - first:
+      213: 21300170
+    second: UI_RedEnvelope_Icon_QiangHongbao.png
+  - first:
+      213: 21300172
+    second: UI_Role_Class_1.png
+  - first:
+      213: 21300174
+    second: UI_Role_Class_Class_2.png
+  - first:
+      213: 21300176
+    second: UI_Role_Class_Class_3.png
+  - first:
+      213: 21300178
+    second: UI_Role_Class_Class_4.png
+  - first:
+      213: 21300180
+    second: UI_Role_Class_Class_5.png
+  - first:
+      213: 21300182
+    second: UI_Role_Class_Class_6.png
+  - first:
+      213: 21300184
+    second: UI_Role_Flag.png
+  - first:
+      213: 21300186
+    second: UI_role_PropertyBG.png
+  - first:
+      213: 21300188
+    second: UI_Settlement_Button_Shouji.png
+  - first:
+      213: 21300190
+    second: UI_Settlement_Button_Xianshi.png
+  - first:
+      213: 21300192
+    second: UI_Settlement_Button_Yincang.png
+  - first:
+      213: 21300194
+    second: UI_Settlement_Button_Youxi.png
+  - first:
+      213: 21300196
+    second: UI_Settlement_FailShibai.png
+  - first:
+      213: 21300198
+    second: UI_Settlement_FailZhandou.png
+  - first:
+      213: 21300200
+    second: UI_Settlement_WinShengli.png
+  - first:
+      213: 21300202
+    second: UI_Settlement_WinZhandou.png
+  - first:
+      213: 21300204
+    second: UI_ShopDecoration_Decorate01.png
+  - first:
+      213: 21300206
+    second: UI_SmallGame_Txt_Good.png
+  - first:
+      213: 21300208
+    second: UI_SmallGame_Txt_Miss.png
+  - first:
+      213: 21300210
+    second: UI_SmallGame_Txt_Perfect.png
+  - first:
+      213: 21300212
+    second: UI_Theme_BtnExplore.png
+  - first:
+      213: 21300214
+    second: UI_Theme_BtnOrganizeteam.png
+  - first:
+      213: 21300216
+    second: UI_Theme_Settlement_Lose.png
+  - first:
+      213: 21300218
+    second: UI_Theme_Settlement_Lose_1.png
+  - first:
+      213: 21300220
+    second: UI_Theme_Settlement_Victory.png
+  - first:
+      213: 21300222
+    second: UI_Theme_Weiyuedu.png
+  - first:
+      213: 21300224
+    second: UI_Theme_Yiyuedu.png
+  - first:
+      213: 21300226
+    second: UI_ThemeArround_Img_Difficult.png
+  - first:
+      213: 21300228
+    second: UI_ThemeArround_Img_Lv.png
+  - first:
+      213: 21300230
+    second: UI_ThemeArround_Img_Lv_Cheng.png
+  - first:
+      213: 21300232
+    second: UI_ThemeArround_Img_Lv_Lan.png
+  - first:
+      213: 21300234
+    second: UI_ThemeArround_Img_Lv_Lv.png
+  - first:
+      213: 21300236
+    second: UI_ThemeArround_Img_Lv_Zi.png
+  - first:
+      213: 21300238
+    second: UI_ThemeArround_Img_Simple.png
+  - first:
+      213: 21300240
+    second: ui_Tower_Ward01.png
+  - first:
+      213: 21300242
+    second: ui_Tower_Ward02.png
+  - first:
+      213: 21300244
+    second: ui_Tower_Ward03.png
+  - first:
+      213: 21300246
+    second: UI_Turntable_Start.png
+  - first:
+      213: 21300248
+    second: UI_UiAnimation_AGIUP.png
+  - first:
+      213: 21300250
+    second: UI_UiAnimation_DEXUP.png
+  - first:
+      213: 21300252
+    second: UI_UiAnimation_INTUP.png
+  - first:
+      213: 21300254
+    second: UI_UiAnimation_LUKUP.png
+  - first:
+      213: 21300256
+    second: UI_UiAnimation_STRUP.png
+  - first:
+      213: 21300258
+    second: UI_UiAnimation_VITUP.png
+  - first:
+      213: 21300260
+    second: UI_Welfare_Button_Qidian.png
+  - first:
+      213: 21300262
+    second: UI_Welfare_Card-03.png
+  - first:
+      213: 21300264
+    second: UI_Commonicon_Yinzhang_03.png
+  - first:
+      213: 21300266
+    second: UI_MonthCard_title.png
+  - first:
+      213: 21300268
+    second: UI_MonthCard_YiJiHuo.png
+  - first:
+      213: 21300270
+    second: UI_Role_Agi.png
+  - first:
+      213: 21300272
+    second: UI_Role_Dex.png
+  - first:
+      213: 21300274
+    second: UI_Role_Int.png
+  - first:
+      213: 21300276
+    second: UI_Role_Luk.png
+  - first:
+      213: 21300278
+    second: UI_Role_Vit.png
+  - first:
+      213: 21300280
+    second: UI_Role_VitStr.png
+  - first:
+      213: 21300282
+    second: UI_Role_Str.png
+  - first:
+      213: 21300284
+    second: UI_TowerDefense_Word_Qiangdilaixi_01.png
+  - first:
+      213: 21300286
+    second: ui_Common_Party_Image05.png
+  - first:
+      213: 21300288
+    second: UI_Language_Yinzhang_06.png
+  - first:
+      213: 21300290
+    second: UI_Language_Yinzhang_07.png
+  - first:
+      213: 21300292
+    second: UI_Language_Yinzhang_03.png
+  - first:
+      213: 21300294
+    second: UI_Common_Btn_Text_01.png
+  - first:
+      213: 21300296
+    second: UI_Common_Btn_Text_02.png
+  - first:
+      213: 21300298
+    second: UI_Common_Btn_Text_03.png
+  - first:
+      213: 21300300
+    second: UI_Word_New.png
+  - first:
+      213: 21300302
+    second: UI_ActivityCheckIn_Title.png
+  - first:
+      213: 21300304
+    second: ui_Tower_Ward04.png
+  - first:
+      213: 21300306
+    second: ui_Tower_Ward05.png
+  - first:
+      213: 21300308
+    second: UI_RebateMonthCard_Title01.png
+  - first:
+      213: 21300310
+    second: UI_RebateMonthCard_Title02.png
+  - first:
+      213: 21300312
+    second: UI_MiaoStorage_Title.png
+  - first:
+      213: 21300314
+    second: UI_FirstRecharge_FontSprote_01.png
+  - first:
+      213: 21300316
+    second: UI_FirstRecharge_FontSprote_02.png
+  - first:
+      213: 21300318
+    second: UI_FirstRecharge_FontSprote_03.png
+  - first:
+      213: 21300320
+    second: UI_Language_Yinzhang_03.png.png
+  - first:
+      213: 21300322
+    second: UI_img_RainbowDeed_title.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_ActivityCheckIn_Title.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 299
+        height: 79
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7931a114e878652439ec3cfb6a8420bd
+      internalID: 21300302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Activity_Mvp_Identification_Lucky.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 0
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 861f9c06e5f69b14089cc57b43768c7a
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Activity_Mvp_Identification_Mvp.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 51
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e7924dd1bdb73c4daace1dbda2545da
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Activity_Mvp_Identification_Pinfen.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 50
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9f168d20726d74dafdec1c770ebdab
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_BoliFind_Bg_dizuo.png
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 80
+        width: 245
+        height: 88
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec727aae88d4e8a42bec46452de1b8c5
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Commonicon_Yinzhang_01.png
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 102
+        width: 138
+        height: 137
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1887d8a9e64ed64b95b2ea730c97537
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Commonicon_Yinzhang_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 169
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43009e6d1094c964584b834a857264ab
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Commonicon_Yinzhang_03.png
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 169
+        width: 137
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 443b22a459c66df41a04f89170e7eceb
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_CommonIcon_Yinzhang_04.png
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 0
+        width: 81
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce2517d8450e914d85b44e888a43cea
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Text_01.png
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 59
+        width: 232
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d698ca562d4b6f54e9cfa64e91f1213d
+      internalID: 21300294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Text_02.png
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 0
+        width: 203
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21b7d16647507644eab7302a3bbe00a2
+      internalID: 21300296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Btn_Text_03.png
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 22
+        width: 203
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83b96852e437b7f4abd50d894e891b14
+      internalID: 21300298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Go_01.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 240
+        width: 59
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7c1d555daa1add4e84589db378818ac
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Identification_Hot.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 131
+        width: 31
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e5703376f5a638439a87fd14cb4dd8d
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Common_Party_Image05.png
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 240
+        width: 329
+        height: 87
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a0a713e3ea192345a280a417a2525af
+      internalID: 21300286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Common_Taozhuangbiaoshi.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 262
+        width: 30
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25a33a3a58f26db4781020c3e00ff545
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_-Huolishike.png
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 44
+        width: 349
+        height: 159
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6524e2b98a47b614d9ac11a0e25f1163
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_-jiaobanshike.png
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 204
+        width: 349
+        height: 159
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f15adf0f92f3374f9f0633de66eed91
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Banner.png
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 0
+        width: 454
+        height: 111
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abc2f620d58a0fd40821daed935ba49f
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Failed.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 308
+        width: 261
+        height: 161
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4b78d1368486f34ead27f1f81b11d54
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Finish.png
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 112
+        width: 209
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1669636efad443840b92f1dc5ad902c4
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_jingcaishike.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 328
+        width: 224
+        height: 143
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce4981323a3b5bf47a7caeedbbe47121
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Start.png
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 0
+        width: 349
+        height: 159
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67757e5ab4a7c764ab2fb2810df4b2d1
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_SuccessfuL.png
+      rect:
+        serializedVersion: 2
+        x: 1739
+        y: 0
+        width: 271
+        height: 168
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6f48a8885f161545be0507a0e288699
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Timeover.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 470
+        width: 256
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3833bb2d7c77c434ba2ca9ded1591e86
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Cooking_Tips.png
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 112
+        width: 202
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db25ea5c04b1b6343a4a8d9af3ddad61
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Envelope_Img_Kapian.png
+      rect:
+        serializedVersion: 2
+        x: 1347
+        y: 160
+        width: 354
+        height: 295
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61a295fd31f237348a085a64cd66e8ce
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_FashionRating_Frame06.png
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 328
+        width: 174
+        height: 83
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d6cc6de968d4dd4185813df85e490ea
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_FashionRating_Image02.png
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 160
+        width: 20
+        height: 192
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b310f209655f07342b46707bedae1a38
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_FirstRecharge_FontSprote_01.png
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 353
+        width: 231
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac155540de78ce447ae887f17cfb126a
+      internalID: 21300314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_FirstRecharge_FontSprote_02.png
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 204
+        width: 85
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bc688bf3c9007d4ca895f61edada265
+      internalID: 21300316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_FirstRecharge_FontSprote_03.png
+      rect:
+        serializedVersion: 2
+        x: 1723
+        y: 169
+        width: 232
+        height: 85
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbdf255e32a19744bba3d98ef8175492
+      internalID: 21300318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_img_RainbowDeed_title.png
+      rect:
+        serializedVersion: 2
+        x: 1723
+        y: 255
+        width: 190
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4344184ef9b04e4eb1c37e9ec4dbf3f
+      internalID: 21300322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_01.png
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 168
+        width: 138
+        height: 137
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7afa7b0aa09c5b4ba39607d49a0e5b9
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_02.png
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 404
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13593e26f81f60846af908f079f45b09
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_03.png
+      rect:
+        serializedVersion: 2
+        x: 1841
+        y: 404
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b416b6731eda14a9cfe7f667d8b974
+      internalID: 21300292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_03.png.png
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 306
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d3fa12149f6d2944a44eb0655c70fcc
+      internalID: 21300320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_05.png
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 0
+        width: 80
+        height: 39
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb781dff95cb6324187f7bababa4da6e
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_06.png
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 306
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 412290b41489600439117ca60637ed7a
+      internalID: 21300288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Language_Yinzhang_07.png
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 364
+        width: 138
+        height: 138
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 276a0b5307883d34cb82f36739e0d739
+      internalID: 21300290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Loading_BG.png
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 172
+        width: 114
+        height: 114
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee87793f0a6e5c743afa4aaa5dee5b3d
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Mercenary_Yinzhang.png
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 364
+        width: 207
+        height: 207
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c8fa21559cd6764faffba1bd9f38eae
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_MiaoStorage_Title.png
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 445
+        width: 258
+        height: 113
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4e2b6e7f64f0104b902e4042f40f2f6
+      internalID: 21300312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_RebateMonthCard_Title01.png
+      rect:
+        serializedVersion: 2
+        x: 1914
+        y: 255
+        width: 133
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c85c859ba695ff49b4cab33f63cfe5e
+      internalID: 21300308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_RebateMonthCard_Title02.png
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 81
+        width: 141
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d955ed637f9e0ad4db9ef542d9e0b4af
+      internalID: 21300310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_RedEnvelope_Button_Qiang.png
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 412
+        width: 115
+        height: 118
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b45b2e91790a74a91df51416ae6756
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_RedEnvelope_Icon_pinHongbao.png
+      rect:
+        serializedVersion: 2
+        x: 1347
+        y: 112
+        width: 38
+        height: 37
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 016cff1e5fdce3543a2ed8dc915f6618
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_RedEnvelope_Icon_QiangHongbao.png
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 204
+        width: 36
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52dc95b2b3dd53445b1e2020b712ce37
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Agi.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 308
+        width: 36
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ccb4f79133bc0447ba9607ecaa729c2
+      internalID: 21300270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Dex.png
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 81
+        width: 40
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 081907ecd0fb3484aaea2d08bc9c6815
+      internalID: 21300272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Int.png
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 81
+        width: 31
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03e4c04e3854b644496d676dfe770924
+      internalID: 21300274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Luk.png
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 287
+        width: 39
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01c3b5932b703604bb0c5009814e2804
+      internalID: 21300276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Str.png
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 298
+        width: 36
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2d2666e55aa68a4e9be7d6c1e5f1a0e
+      internalID: 21300282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Role_Vit.png
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 287
+        width: 34
+        height: 15
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72731129448c75d429dd226be7846b01
+      internalID: 21300278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SmallGame_Txt_Good.png
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 503
+        width: 153
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a07bec6058737cb4cb642b9b1a698025
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SmallGame_Txt_Miss.png
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 142
+        width: 128
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328da8066f64dd34e950092357ed445e
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SmallGame_Txt_Perfect.png
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 472
+        width: 185
+        height: 48
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4b88b131f40ec047a1512434322db6d
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Settlement_Lose.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 530
+        width: 284
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ab553f637b169f4582e14a7c0517758
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Settlement_Victory.png
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 552
+        width: 341
+        height: 100
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbd1fbd2fcc60c848a01c8dd85434b43
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_TowerDefense_Word_Qiangdilaixi_01.png
+      rect:
+        serializedVersion: 2
+        x: 1268
+        y: 543
+        width: 559
+        height: 178
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc13f5991103a674cb06a9b8dbb57235
+      internalID: 21300284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Tower_Ward01.png
+      rect:
+        serializedVersion: 2
+        x: 1268
+        y: 456
+        width: 392
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41371981c74b4e74799d976d6a18aac0
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Tower_Ward02.png
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 559
+        width: 222
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b364ace130738004da23c54a29cdf726
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Tower_Ward04.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 576
+        width: 254
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c44169c90d95c644a8aac291dae81d10
+      internalID: 21300304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Tower_Ward05.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 645
+        width: 280
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e69a2117a5f22bd40b49f0b1516eb32f
+      internalID: 21300306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Turntable_Start.png
+      rect:
+        serializedVersion: 2
+        x: 1828
+        y: 543
+        width: 207
+        height: 207
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7987ae7e9350394d99f5a7c6612aa45
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Welfare_Card-03.png
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 552
+        width: 102
+        height: 102
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc21c71552ae14c42ab0d8616eeee587
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Word_New.png
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 172
+        width: 46
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927b1d25f1c250c4c88dd7fbfac5c386
+      internalID: 21300300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 042cfe79a4e95464b8c8bc87c35621aa
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_ActivityCheckIn_Title.png: 21300302
+      UI_Activity_Mvp_Identification_Lucky.png: 21300000
+      UI_Activity_Mvp_Identification_Mvp.png: 21300002
+      UI_Activity_Mvp_Identification_Pinfen.png: 21300004
+      UI_BoliFind_Bg_dizuo.png: 21300006
+      UI_CommonIcon_Yinzhang_04.png: 21300034
+      UI_Common_Btn_Text_01.png: 21300294
+      UI_Common_Btn_Text_02.png: 21300296
+      UI_Common_Btn_Text_03.png: 21300298
+      UI_Common_Go_01.png: 21300010
+      UI_Common_Identification_Hot.png: 21300012
+      UI_Common_Taozhuangbiaoshi.png: 21300020
+      UI_Commonicon_Yinzhang_01.png: 21300030
+      UI_Commonicon_Yinzhang_02.png: 21300032
+      UI_Commonicon_Yinzhang_03.png: 21300264
+      UI_Cooking_-Huolishike.png: 21300042
+      UI_Cooking_-jiaobanshike.png: 21300044
+      UI_Cooking_Banner.png: 21300036
+      UI_Cooking_Failed.png: 21300038
+      UI_Cooking_Finish.png: 21300040
+      UI_Cooking_Start.png: 21300048
+      UI_Cooking_SuccessfuL.png: 21300050
+      UI_Cooking_Timeover.png: 21300052
+      UI_Cooking_Tips.png: 21300054
+      UI_Cooking_jingcaishike.png: 21300046
+      UI_Envelope_Img_Kapian.png: 21300062
+      UI_FirstRecharge_FontSprote_01.png: 21300314
+      UI_FirstRecharge_FontSprote_02.png: 21300316
+      UI_FirstRecharge_FontSprote_03.png: 21300318
+      UI_Language_Yinzhang_01.png: 21300142
+      UI_Language_Yinzhang_02.png: 21300144
+      UI_Language_Yinzhang_03.png: 21300292
+      UI_Language_Yinzhang_03.png.png: 21300320
+      UI_Language_Yinzhang_05.png: 21300148
+      UI_Language_Yinzhang_06.png: 21300288
+      UI_Language_Yinzhang_07.png: 21300290
+      UI_Mercenary_Yinzhang.png: 21300158
+      UI_MiaoStorage_Title.png: 21300312
+      UI_RebateMonthCard_Title01.png: 21300308
+      UI_RebateMonthCard_Title02.png: 21300310
+      UI_RedEnvelope_Button_Qiang.png: 21300166
+      UI_RedEnvelope_Icon_QiangHongbao.png: 21300170
+      UI_RedEnvelope_Icon_pinHongbao.png: 21300168
+      UI_Role_Agi.png: 21300270
+      UI_Role_Dex.png: 21300272
+      UI_Role_Int.png: 21300274
+      UI_Role_Luk.png: 21300276
+      UI_Role_Str.png: 21300282
+      UI_Role_Vit.png: 21300278
+      UI_SmallGame_Txt_Good.png: 21300206
+      UI_SmallGame_Txt_Miss.png: 21300208
+      UI_SmallGame_Txt_Perfect.png: 21300210
+      UI_Theme_Settlement_Lose.png: 21300216
+      UI_Theme_Settlement_Victory.png: 21300220
+      UI_TowerDefense_Word_Qiangdilaixi_01.png: 21300284
+      UI_Turntable_Start.png: 21300246
+      UI_Welfare_Card-03.png: 21300262
+      UI_Word_New.png: 21300300
+      UI_img_RainbowDeed_title.png: 21300322
+      ui_Common_Party_Image05.png: 21300286
+      ui_FashionRating_Frame06.png: 21300064
+      ui_FashionRating_Image02.png: 21300066
+      ui_Loading_BG.png: 21300150
+      ui_Tower_Ward01.png: 21300240
+      ui_Tower_Ward02.png: 21300242
+      ui_Tower_Ward04.png: 21300304
+      ui_Tower_Ward05.png: 21300306
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

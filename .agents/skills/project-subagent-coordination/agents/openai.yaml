@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目子 Agent 协作"
+  short_description: "按本项目规则选择模型、派发并验收子 Agent 的开发与查找任务"
+  default_prompt: "请依据本项目子 Agent 协作规则准备明确模型、范围和验收条件的任务。"

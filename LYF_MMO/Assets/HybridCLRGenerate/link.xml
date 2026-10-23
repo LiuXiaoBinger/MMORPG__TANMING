@@ -81,6 +81,8 @@
     <type fullname="StateDefine" preserve="all" />
   </assembly>
   <assembly fullname="Network">
+    <type fullname="BaseLink" preserve="all" />
+    <type fullname="BasePackage" preserve="all" />
     <type fullname="BuyShopItem" preserve="all" />
     <type fullname="BuyShopItemReq" preserve="all" />
     <type fullname="BuyShopItemRes" preserve="all" />
@@ -100,6 +102,9 @@
     <type fullname="GetServerListRet" preserve="all" />
     <type fullname="ItemConfigBase" preserve="all" />
     <type fullname="Kanpsacktypecount" preserve="all" />
+    <type fullname="KcpBindPayload" preserve="all" />
+    <type fullname="KcpBindResult" preserve="all" />
+    <type fullname="KcpClient" preserve="all" />
     <type fullname="LogMsg" preserve="all" />
     <type fullname="LogMsgType" preserve="all" />
     <type fullname="LoginGameServerReq" preserve="all" />
@@ -125,7 +130,6 @@
     <type fullname="RoleKanpsackInfoRet" preserve="all" />
     <type fullname="RoleSkillInfo" preserve="all" />
     <type fullname="RoleSkillInfoRet" preserve="all" />
-    <type fullname="ServerBase" preserve="all" />
     <type fullname="ShopItemPurchaseCondition" preserve="all" />
     <type fullname="Singleton`1" preserve="all" />
     <type fullname="SkillCastEndNtf" preserve="all" />
@@ -155,6 +159,7 @@
     <type fullname="System.Collections.Generic.Stack`1" preserve="all" />
     <type fullname="System.ComponentModel.EditorBrowsableAttribute" preserve="all" />
     <type fullname="System.ComponentModel.EditorBrowsableState" preserve="all" />
+    <type fullname="System.IO.InvalidDataException" preserve="all" />
     <type fullname="System.Text.RegularExpressions.Regex" preserve="all" />
   </assembly>
   <assembly fullname="System.Core">
@@ -434,6 +439,7 @@
     <type fullname="System.Collections.Generic.ICollection`1" preserve="all" />
     <type fullname="System.Collections.Generic.IEnumerable`1" preserve="all" />
     <type fullname="System.Collections.Generic.IEnumerator`1" preserve="all" />
+    <type fullname="System.Collections.Generic.IEqualityComparer`1" preserve="all" />
     <type fullname="System.Collections.Generic.IList`1" preserve="all" />
     <type fullname="System.Collections.Generic.IReadOnlyCollection`1" preserve="all" />
     <type fullname="System.Collections.Generic.IReadOnlyDictionary`2" preserve="all" />
@@ -462,7 +468,12 @@
     <type fullname="System.IDisposable" preserve="all" />
     <type fullname="System.IEquatable`1" preserve="all" />
     <type fullname="System.IFormatProvider" preserve="all" />
+    <type fullname="System.IO.BinaryReader" preserve="all" />
+    <type fullname="System.IO.BinaryWriter" preserve="all" />
     <type fullname="System.IO.File" preserve="all" />
+    <type fullname="System.IO.FileStream" preserve="all" />
+    <type fullname="System.IO.Path" preserve="all" />
+    <type fullname="System.IO.Stream" preserve="all" />
     <type fullname="System.IObservable`1" preserve="all" />
     <type fullname="System.Int32" preserve="all" />
     <type fullname="System.Int64" preserve="all" />
@@ -495,6 +506,7 @@
     <type fullname="System.String" preserve="all" />
     <type fullname="System.StringComparison" preserve="all" />
     <type fullname="System.StringSplitOptions" preserve="all" />
+    <type fullname="System.Text.Encoding" preserve="all" />
     <type fullname="System.Text.StringBuilder" preserve="all" />
     <type fullname="System.Threading.Interlocked" preserve="all" />
     <type fullname="System.Threading.Monitor" preserve="all" />

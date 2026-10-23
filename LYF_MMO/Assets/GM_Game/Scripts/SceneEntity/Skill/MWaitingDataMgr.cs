@@ -27,7 +27,8 @@ public sealed class MWaitingDataMgr
         // 当前场景本地主角，导航组件通过实体普通组件生命周期挂载。
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
         // 本次技能指令在同步导航事件完成后随载荷归还，不保留跨帧引用。
-        MSkillEventArgs skillEvent = MSkillEventArgs.Create(skillCore.SkillId, castPoint, target);
+        MSkillEventArgs skillEvent = MSkillEventArgs.
+            Create(skillCore.SkillId, castPoint, target);
         player.NavComp.Interrupt(false);
         player.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(skillEvent));
     }

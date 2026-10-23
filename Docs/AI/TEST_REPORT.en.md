@@ -1,9 +1,23 @@
 # Verification records — English agent edition
 
+## [VERIFY][协作][VERIFY-SUBAGENT-VISIBLE-WINDOW-20261024] Validate child-agent visibility instructions
+
+- `skill-creator/scripts/quick_validate.py .agents/skills/project-subagent-coordination` passed with `Skill is valid!` after the visibility section was added.
+- `git diff --check` passed for the documentation and skill edits. Manual review confirms the workflow requires a native execution window when available, exposes a Hub/task/terminal status entry when no live window exists, and prohibits claiming that status output is a live operation view.
+- No external WorkBuddy, Doubao, or Qwen task was created for this instruction-only update, so actual client window availability and model-menu behavior remain unverified. Chinese delta synchronization was completed by collaboration subagent `/root/sync_visible_window_records`; its model label was not disclosed and is recorded as unknown in the changelog. No Unity/client/server build applies.
+- Changelog and bilingual synchronization status: `项目修改日志/2026-10-24-子Agent协作技能.md`.
+
 ## [VERIFY][协作][SKILL-USAGE-DISCLOSURE-20261024] Verify incremental skill-disclosure instructions
 
 - Acceptance scope: the new `AGENTS.md` section, the added `[DOCS-READ]` bullet and this ID's task/verification records only. A child agent synchronizes Chinese and checks this delta; Codex reviews actual scope and submitted evidence without repeating bilingual checking. Final whitespace/scope check and delegation outcome belong in `项目修改日志/2026-10-24-技能使用说明约束_CHANGELOG.md`.
 - No business code, Unity resource or runtime behavior changes; Unity/client/server builds are not applicable. Do not infer completion from this verification plan.
+
+## [VERIFY][协作][VERIFY-SUBAGENT-SKILL-UPDATE-20261024] Project child-agent rule centralization
+
+- Updated the existing project skill with the 23:00 Asia/Shanghai WorkBuddy preference, per-execution provider/model identity recording, and prior-conversation review before a long-context handoff to a new window. The user's explicit model choice remains first.
+- `AGENTS.md` now points to that skill for child-agent routing, assignment, repair, context handoff and acceptance. Project authorization and broad code, file, branch and documentation constraints remain at the root.
+- `quick_validate.py` passed with Python UTF-8 mode (`Skill is valid!`); `git diff --check` passed for tracked edits. Content review confirms a single model-priority rule and consistent AGENTS-to-skill routing.
+- No Unity/client/server build is relevant to this instruction-only change. WorkBuddy/Doubao menu availability is not verified by editing the instructions; record synchronization status and remaining limits in `项目修改日志/2026-10-24-子Agent协作技能.md`.
 
 ## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] Incremental documentation verification
 
@@ -39,6 +53,19 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Independent strict preservation check passed: 22 edited files, 586 target components removed, 726 m_Script lines adapted, 75 removed invalid override items, ten cleared references, no unexpected document/property changes, preserved checked metadata. Evidence: `_temp/ui-recheck-20261023/codex-preservation-result.json`; developer round-4 checks also passed. No rendered UI interaction, client/server build or gameplay test was run. Previous in-progress checks below are historical stages.
 - Remaining boundary: Task's formerly dirty editing state disappeared before a scene-copy could be saved; its disk file remained unchanged until authorized cleanup. Preservation of those unsaved edits cannot be confirmed. Final Task uses the backed-up disk baseline, not a claimed recovered snapshot. UI-external effect prefabs are outside this cleanup. Exact scope, executor identities, file list and Git receipts: `项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`.
 - Chinese synchronization uses original WorkBuddy round 5 after one `qwen3:8b-light` request timed out at 60 seconds with no result/file write. The Qwen attempt is not counted as a WorkBuddy/Doubao development round. Actual bilingual review and final integration receipts are kept in the changelog.
+
+- Current recheck supersedes historical scan claims: WorkBuddy scanned all 3160 references (including negative/DLL IDs) across 38 current prefabs. Codex checked 64 distinct GUID/fileID pairs in the actual Unity Editor: 26 resolve directly to concrete types and 38 pairs use GUIDs absent from AssetDatabase. Legacy UGUI is nevertheless import-compatible, demonstrated by native `UnityEngine.UI.*` components on AdventureDiaryTask; absent GUID metadata alone is not a deletion criterion for these UI references.
+- Round-2 cleanup: 504 custom/extension MonoBehaviour documents and 498 GameObject component entries removed in 17 prefabs (six stripped-owner documents lack component lists). WorkBuddy's byte-level check preserves other documents, GameObjects, transforms, all 17 meta hashes and formatting. Codex's settled Unity import/load check found missing-script count zero for all 17 assets; evidence `_temp/ui-recheck-20261023/unity-import-validation.json`. Initial immediately-after-import counts were transient and were not used as the final result.
+- Final acceptance is pending: ten remaining m_TargetGraphic references and eight stale nested override targets were identified after deletion. Hub round 3 is authorized to clear these references and adapt legacy UGUI. Task's dirty PrefabStage cannot currently save due to missing scripts; no disk overwrite or stage discard was performed. No client/server build or rendered UI test has been run. Chinese record synchronization is still pending; source manifest `项目修改日志/2026-10-23-UI失效自定义脚本复查清理.md`.
+
+- SHA-256 comparison passed for eight copied files: `Task.prefab`, `Task.prefab.meta`, `QuickTaskPanel.prefab`, `QuickTaskPanel.prefab.meta`, `TaskNavigation.prefab`, `TaskNavigation.prefab.meta`, `Task.png`, and `Task.png.meta` under `LYF_MMO/Assets/artres/Resources/UI/Task/`.
+- Static GUID review found dependencies on shared atlas/font/TMP/material/button/window assets plus an animation controller, `MoonClient.dll` and TextMeshPro runtime. The destination only partially contains matching shared GUIDs; this check does not establish prefab loadability.
+- A follow-up GUID resolution check failed for runtime compatibility: the three prefabs refer to missing MoonClient/RO script GUIDs and other missing RO assets; `TaskNavigation.prefab` silently binds one RO GUID to local `UI/Atlas/Map.png`. Treat the current prefab archive as invalid for runtime use.
+- `Task.prefab` repair static checks passed: no references remain to RO script GUIDs `0a06b724a7ecc1948b8fd5525e4102e6` or `f70555f144d8491a825f0804e09c671c`; all five script references are the same target-project UGUI Image/Text references used by `UI/Prefabs/NoData.prefab`, and its font GUID resolves to `UI/Font/Common.TTF`. YAML object/component counts matched the rebuilt hierarchy. Unity AssetImportWorker logged a successful PreviewImporter import of this GUID without an error in the import block. Scene/canvas instantiation remains unverified.
+- UI-prefab missing-script cleanup passed static verification: among 38 scanned prefabs, four GUIDs had no metadata under `Assets`, `Packages` or `Library/PackageCache`; 10 matching components were removed from three prefabs. The four GUIDs now have zero prefab references, all remaining 26 distinct `m_Script` GUIDs resolve, and all GameObject component references in the three edited YAML assets target declared objects. The cleanup report is `_temp/missing-script-cleanup-20261023/result.md`; Unity Inspector validation remains pending.
+- Task-prefab cleanup passed static verification: 337 components across `QuickTaskPanel.prefab`, `Task.prefab` and `TaskNavigation.prefab` used three GUIDs with no metadata under `Assets`, `Packages` or `Library/PackageCache`. After removal, all three YAML assets have zero `m_Script` references and no dangling GameObject component references. The report is `_temp/missing-script-cleanup-task-20261023/result.md`; AssetImportWorker PreviewImporter records exist, but Inspector/render validation remains pending.
+- No Unity scene test, prefab instantiation, client compilation, server compilation, network protocol or gameplay loop was executed. The user requested design and asset archiving without code, so those are intentionally deferred acceptance stages.
+- Supporting scope, source paths and external-executor status: `项目修改日志/2026-10-23-RO任务系统资源归档与设计.md`. Chinese counterpart was synchronized in Doubao session `38448814177418242`, run `59485117647267842`.
 
 ## [VERIFY][协作][QWEN-MEM-20261023] Documentation/configuration acceptance
 
@@ -76,3 +103,10 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Official plugin and final Codex build hashes matched; nine user files, meta identity and 33 mechanical migrations were preserved. Socket shutdown/UDP 10054 cleanup warnings remained; neither long-run stability nor error-free runtime logs were established.
 - Unverified: Unity dual clients, real model animation/MP, business reconnect, early entity arrival, end-to-end weak-network behavior and IL2CPP/HybridCLR. No user Unity/service lifecycle, scene save or hot-update byte replacement was performed.
 - Source: `Docs/AI/TEST_REPORT.md` `[TR-011]`; evidence: `_temp/network-ro-interface-20261022/codex-validation/final-verification.json`; manifest/Git: `项目修改日志/2026-10-22-RO-NETWORK-INTERFACE-CHANGELOG.md`.
+
+## [VERIFY][协作][VERIFY-SUBAGENT-SKILL-20261024] Project-local subagent coordination skill
+
+- The `skill-creator` validator passed for `.agents/skills/project-subagent-coordination`; frontmatter, naming and scaffold checks succeeded. `agents/openai.yaml` was regenerated in UTF-8 and its interface metadata reviewed.
+- Manual content review confirmed the skill differentiates task-creation model selection from prohibited mid-task switching and preserves the project's scope, execution identity, repair-round and final acceptance constraints.
+- This is a project-local instruction/metadata change only. No Unity/client/server build or runtime test applies. Existing unrelated worktree changes were preserved.
+- Unresolved: no WorkBuddy UI task was created to test selecting Hy4 preview, and no new Doubao task was created; model availability at a future dispatch remains subject to the client menu. Chinese record synchronization and Git status are tracked in the changelog.

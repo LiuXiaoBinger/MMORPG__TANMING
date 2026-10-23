@@ -1,0 +1,1086 @@
+fileFormatVersion: 2
+guid: c93fac504dc46e543b526e897b16f2cb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Common_Tuijian.png
+  - first:
+      213: 21300002
+    second: UI_Forge_Arrow.png
+  - first:
+      213: 21300004
+    second: UI_Forge_Bar.png
+  - first:
+      213: 21300006
+    second: UI_Forge_Btn01.png
+  - first:
+      213: 21300008
+    second: UI_Forge_Btn02.png
+  - first:
+      213: 21300010
+    second: UI_Forge_Fream.png
+  - first:
+      213: 21300012
+    second: UI_Forge_Fream02.png
+  - first:
+      213: 21300014
+    second: UI_Forge_Icon01.png
+  - first:
+      213: 21300016
+    second: UI_Forge_IconAdd.png
+  - first:
+      213: 21300018
+    second: UI_Forge_image01.png
+  - first:
+      213: 21300020
+    second: UI_Forge_image02.png
+  - first:
+      213: 21300022
+    second: UI_Forge_image03.png
+  - first:
+      213: 21300024
+    second: UI_Forge_image04.png
+  - first:
+      213: 21300026
+    second: UI_Forge_image05.png
+  - first:
+      213: 21300028
+    second: UI_Forge_image06.png
+  - first:
+      213: 21300030
+    second: UI_Forge_image07.png
+  - first:
+      213: 21300032
+    second: UI_Forge_image08.png
+  - first:
+      213: 21300034
+    second: UI_Forge_Img_NameBg.png
+  - first:
+      213: 21300036
+    second: ui_HandBook_Huawen1.png
+  - first:
+      213: 21300038
+    second: UI_icon_item_fangdajing.png
+  - first:
+      213: 21300040
+    second: UI_Forge_Arrow_Slider_JianTou.png
+  - first:
+      213: 21300042
+    second: UI_Forge_Dropdown_Bg.png
+  - first:
+      213: 21300044
+    second: UI_Forge_Dropdown_Input.png
+  - first:
+      213: 21300046
+    second: UI_Forge_Panel_List.png
+  - first:
+      213: 21300048
+    second: UI_Forge_Pic_ChengPinZhi.png
+  - first:
+      213: 21300050
+    second: UI_Forge_Pic_JiPinShuXing.png
+  - first:
+      213: 21300052
+    second: UI_Forge_Pic_LanPinZhi.png
+  - first:
+      213: 21300054
+    second: UI_Forge_Pic_RongLu.png
+  - first:
+      213: 21300056
+    second: UI_Forge_image09.png
+  - first:
+      213: 21300058
+    second: UI_Forge_Pic_Bg.png
+  - first:
+      213: 21300060
+    second: UI_Forge_Pic_CardItemPrefabBg.png
+  - first:
+      213: 21300062
+    second: UI_Forge_Pic_CardItemPrefabTitleBg.png
+  - first:
+      213: 21300064
+    second: UI_Forge_Pic_CardItemPrefabBgMask.png
+  - first:
+      213: 21300066
+    second: UI_Forge_Pic_CardItemPrefabkuang.png
+  - first:
+      213: 21300068
+    second: UI_Forge_Pic_CardItemPrefabshuxingBg.png
+  - first:
+      213: 21300070
+    second: UI_Forge_Select.png
+  - first:
+      213: 21300072
+    second: UI_Forge_Pic_Point.png
+  - first:
+      213: 21300074
+    second: UI_Forge_Pic_DuiBi.png
+  - first:
+      213: 21300076
+    second: UI_Forge_Pic_JiPin.png
+  - first:
+      213: 21300078
+    second: UI_Forge_image10.png
+  - first:
+      213: 21300080
+    second: UI_Forge_Panel_Listbg.png
+  - first:
+      213: 21300082
+    second: UI_Forge_Pic_Bg01.png
+  - first:
+      213: 21300084
+    second: UI_Forge_Btn_03.png
+  - first:
+      213: 21300086
+    second: UI_Forge_Pic_Bg02.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Forge_Arrow.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 21
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c54621be4b357c48911e0b29bec4fb1
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Arrow_Slider_JianTou.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 23
+        width: 7
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d30a792395d8a346b3434fca925409e
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Bar.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 38
+        width: 17
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5f8cff14ad19924b9f559a9c000b93b
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Btn01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 71
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6afd29bec1eb4d5419e31f330fcbe6c7
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Btn02.png
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 23
+        width: 20
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99b738ebcaed958469c3d608417e830f
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Btn_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 92
+        width: 53
+        height: 56
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbe7dd68998fdca44b08030119e59a6b
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Dropdown_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 44
+        width: 61
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 47, y: 10, z: 11, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e76ae32567309a44ba5b2a6ba9254260
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Dropdown_Input.png
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 0
+        width: 24
+        height: 25
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 11, z: 10, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d5251926d3d657469f5d545bfa4c007
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Fream.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 149
+        width: 246
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdfeb0770d84ef3428df31a5fef0586d
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Fream02.png
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 372
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f20812f236991984a8097e550ab4446c
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Icon01.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 77
+        width: 21
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 238b695ced86f0f43820a46e06b22c8d
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_IconAdd.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 98
+        width: 40
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 793b421e01296f54bbbbfdcfaa3a534b
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image01.png
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 0
+        width: 309
+        height: 309
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 136e0b18f14964742a3c149296e5d0f4
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image02.png
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 30
+        width: 182
+        height: 182
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293263d5689288d499eff1acf723b8a7
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 208
+        width: 192
+        height: 221
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981ec10a75e2fc34e9445a5b07ddc195
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image04.png
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 30
+        width: 99
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f1f60a7b44391c4a867bbc81185fd55
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image05.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 213
+        width: 62
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3955c6f488d84ba4aaff1a0c30a207fd
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image06.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 30
+        width: 31
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4da1b5175eb05349ab9279d69a53d8e
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image07.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 310
+        width: 410
+        height: 331
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aad8ef9f4c1ce5e44a999994cb7c63b8
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image08.png
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 0
+        width: 231
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9827feba98671340a12df839c05fb00
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image09.png
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 310
+        width: 283
+        height: 283
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0bc528e60a23f34f87b8092a865eab9
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_image10.png
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 47
+        width: 187
+        height: 188
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19209cf0227ef0648bc9143852a5aac1
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Img_NameBg.png
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 594
+        width: 364
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1942ad57ac85bbd4fa1de735cd7a3def
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Panel_List.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 78
+        width: 27
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 11, y: 13, z: 11, w: 13}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd321574242698440b25450fa4ffc4f2
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Panel_Listbg.png
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 276
+        width: 83
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 0, z: 66, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8da11bc88a1cf0438d36e978c69736f
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 236
+        width: 118
+        height: 113
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 33, y: 0, z: 32, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5b339bf316f5944ca8faebb26bdaf68
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_Bg01.png
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 213
+        width: 163
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db92336cf1f1a8348a46535f9bae3da3
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_Bg02.png
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 246
+        width: 55
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 28, y: 0, z: 26, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a2ef3119e584dc43b04a53ceb93c9ec
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_CardItemPrefabTitleBg.png
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 213
+        width: 16
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 4, z: 2, w: 35}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0337e3bedd72d454587d94bc8ee44168
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_ChengPinZhi.png
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 0
+        width: 11
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2baa20ba6f49024d8ffa19608596325
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_DuiBi.png
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 113
+        width: 37
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59f76289d9541114da4cd424c3aa6b17
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_JiPin.png
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 267
+        width: 36
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 102525633133e774bb7ef45b35eef241
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_LanPinZhi.png
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 77
+        width: 10
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1f461a064df2a243bbdeadd4cb40c35
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_Point.png
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 26
+        width: 12
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02adf8334b9cf9d438e11963a3481609
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Pic_RongLu.png
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 599
+        width: 342
+        height: 337
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cafbe66de04500f43b543b623c9585e7
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Forge_Select.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 937
+        width: 415
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 331c01bc2c17b6f48b3b27ad631a4335
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_HandBook_Huawen1.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 642
+        width: 256
+        height: 256
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a054be0dfdf5ef4aa1be36fc22e305a
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 7c4268f6bf9d3a0439539bec8dd5954d
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Forge_Arrow.png: 21300002
+      UI_Forge_Arrow_Slider_JianTou.png: 21300040
+      UI_Forge_Bar.png: 21300004
+      UI_Forge_Btn01.png: 21300006
+      UI_Forge_Btn02.png: 21300008
+      UI_Forge_Btn_03.png: 21300084
+      UI_Forge_Dropdown_Bg.png: 21300042
+      UI_Forge_Dropdown_Input.png: 21300044
+      UI_Forge_Fream.png: 21300010
+      UI_Forge_Fream02.png: 21300012
+      UI_Forge_Icon01.png: 21300014
+      UI_Forge_IconAdd.png: 21300016
+      UI_Forge_Img_NameBg.png: 21300034
+      UI_Forge_Panel_List.png: 21300046
+      UI_Forge_Panel_Listbg.png: 21300080
+      UI_Forge_Pic_Bg.png: 21300058
+      UI_Forge_Pic_Bg01.png: 21300082
+      UI_Forge_Pic_Bg02.png: 21300086
+      UI_Forge_Pic_CardItemPrefabTitleBg.png: 21300062
+      UI_Forge_Pic_ChengPinZhi.png: 21300048
+      UI_Forge_Pic_DuiBi.png: 21300074
+      UI_Forge_Pic_JiPin.png: 21300076
+      UI_Forge_Pic_LanPinZhi.png: 21300052
+      UI_Forge_Pic_Point.png: 21300072
+      UI_Forge_Pic_RongLu.png: 21300054
+      UI_Forge_Select.png: 21300070
+      UI_Forge_image01.png: 21300018
+      UI_Forge_image02.png: 21300020
+      UI_Forge_image03.png: 21300022
+      UI_Forge_image04.png: 21300024
+      UI_Forge_image05.png: 21300026
+      UI_Forge_image06.png: 21300028
+      UI_Forge_image07.png: 21300030
+      UI_Forge_image08.png: 21300032
+      UI_Forge_image09.png: 21300056
+      UI_Forge_image10.png: 21300078
+      ui_HandBook_Huawen1.png: 21300036
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

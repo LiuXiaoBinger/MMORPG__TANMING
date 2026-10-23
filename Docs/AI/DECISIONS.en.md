@@ -2,6 +2,13 @@
 
 Default agent edition. Full historical Chinese decisions remain in `Docs/AI/DECISIONS.md`; request a missing old ID through `PROJECT_CONTEXT.en.md` `[DOCS-READ]`. This edition does not erase or silently rewrite historical policy.
 
+## [DECISION][任务][DS-012] Adopt a bounded first-phase task system, 2026-10-23
+
+- Reference RO has a broad hierarchy of task caches, target factories, scene/entity triggers and special task variants. LYFMMORGP will not copy that hierarchy before a demonstrated requirement exists.
+- The planned first phase is restricted to story/side tasks with `KillMonster`, `CollectItem` and `TalkNpc` objectives; server-side task status/progress/reward authority; snapshot/upsert plus accept/abandon/claim requests; and task navigation through the existing navigation entry. Daily/weekly/activity/team/virtual tasks and generic trigger scripting are out of scope.
+- UI integration must use the existing `MainView` child-window registration, `WindowType`, `WindowBase` and `ShowMainWindow` flow. The archived RO prefabs are visual references only; no RO Lua UI manager, `MoonClient.dll`, or parallel UI lifecycle will be introduced.
+- Evidence and implementation order: `项目分析/RO任务系统设计-2026-10-23.md`. This is a design decision only; no code/protocol/schema change is approved or implemented by this record. Chinese counterpart was synchronized in Doubao session `38448814177418242`, run `59485117647267842`.
+
 ## [DECISION][协作][QWEN-MEM-20261023] Local light tasks and paired language editions
 
 - Authority: user's 2026-10-23 instruction. Qwen3 8B may perform lightweight lookup, comments, small bounded file changes and developer-facing Chinese synchronization. One attempt only; connection/incomplete-output/check failure hands lookup to Doubao or edits to WorkBuddy, with Doubao as appropriate alternative. No repeated Qwen rework; its attempt does not consume the receiving model's seven-round allowance.

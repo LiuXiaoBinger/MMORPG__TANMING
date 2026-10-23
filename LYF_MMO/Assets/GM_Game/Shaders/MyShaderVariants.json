@@ -1,6 +1,6 @@
 {
-    "ShaderTotalCount": 76,
-    "VariantTotalCount": 156,
+    "ShaderTotalCount": 77,
+    "VariantTotalCount": 165,
     "ShaderVariantInfos": [
         {
             "AssetPath": "Resources/unity_builtin_extra",
@@ -222,6 +222,86 @@
                     "PassType": 0,
                     "Keywords": [
                         ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Particles/Standard Surface",
+            "ShaderVariantCount": 9,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "EFFECT_BUMP",
+                        "LIGHTPROBE_SH",
+                        "_ALPHAPREMULTIPLY_ON",
+                        "_EMISSION",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "SHADOWS_SCREEN",
+                        "_EMISSION",
+                        "_METALLICGLOSSMAP",
+                        "_NORMALMAP"
+                    ]
+                },
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "DIRECTIONAL",
+                        "LIGHTPROBE_SH",
+                        "_ALPHABLEND_ON",
+                        "_FADING_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_ALPHAPREMULTIPLY_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "PROCEDURAL_INSTANCING_ON",
+                        "_METALLICGLOSSMAP"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ALPHABLEND_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_ALPHAPREMULTIPLY_ON"
+                    ]
+                },
+                {
+                    "PassType": 8,
+                    "Keywords": [
+                        "SHADOWS_DEPTH",
+                        "_METALLICGLOSSMAP"
                     ]
                 }
             ]

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MMORPG 功能完成度与开发优先级图解</title>
+<style>
+  @media print {
+    body { background: #fff !important; }
+    section, header { break-inside: avoid; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;">
+<div style="width:100%;box-sizing:border-box;background:#F7F7F5;color:#1A1B1C;font-family:'Microsoft YaHei','Segoe UI',sans-serif;font-size:14px;line-height:1.6;padding:24px 0;">
+  <div style="max-width:1080px;margin:0 auto;padding:0 20px;box-sizing:border-box;">
+
+    <!-- 页头 -->
+    <header style="border-bottom:2px solid #1A1B1C;padding-bottom:16px;margin-bottom:24px;">
+      <div style="font-size:12px;letter-spacing:2px;color:#5F6670;">项目静态盘点 · 2026-10-23</div>
+      <h1 style="font-size:28px;margin:6px 0 8px;">MMORPG 功能完成度与开发优先级</h1>
+      <div style="color:#5F6670;font-size:13px;">盘点范围：<code style="background:#ECECE8;padding:1px 6px;border-radius:4px;font-size:12px;">D:/unitypro/LYFMMORGP</code> ｜ 判定依据：现有源码、协议注册、配置与已有验证记录；只有界面/枚举/配置/测试替身而无业务闭环的，按未完成或部分完成处理。</div>
+    </header>
+
+    <!-- 核心结论 -->
+    <section style="background:#fff;border:1px solid #E4E3DD;border-radius:8px;padding:20px 22px;margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 14px;">核心结论</h2>
+      <p style="margin:0 0 16px;">项目已具备 <b>“登录进入主城 → 角色移动 → 技能表现 → 背包 / 商城基础链路”</b> 的客户端与服务端骨架，适合继续做<b>可玩的单地图战斗切片</b>。距离可持续运营的 MMORPG，最大缺口不是装饰性 UI，而是<b style="color:#A14E50;">服务端权威玩法闭环</b>。</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;">
+        <div style="flex:1 1 320px;background:#F0F5F2;border-left:4px solid #35705A;border-radius:4px;padding:12px 14px;">
+          <div style="font-weight:bold;color:#35705A;margin-bottom:6px;">已有的骨架（可复用）</div>
+          <div style="color:#1A1B1C;">登录创角选角入场 · KCP 移动同步 · 客户端 A* 导航 · 技能表现与位移 · NPC 对话交互 · 背包与商城购买协议 · YooAsset/HybridCLR/Luban 工具链</div>
+        </div>
+        <div style="flex:1 1 320px;background:#F7F0F0;border-left:4px solid #A14E50;border-radius:4px;padding:12px 14px;">
+          <div style="font-weight:bold;color:#A14E50;margin-bottom:6px;">最大的缺口（决定能否上线）</div>
+          <div style="color:#1A1B1C;">任务系统 · 装备成长 · 怪物战斗与掉落 · 组队副本 · 聊天服务 · 重连与弱网稳定性 —— 均缺服务端权威的可验证闭环</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 完成度统计 -->
+    <section style="margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 12px;">一、功能完成度总览（11 个模块）</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:0;height:34px;border-radius:6px;overflow:hidden;border:1px solid #E4E3DD;margin-bottom:6px;">
+        <div style="flex:6 1 0;background:#35705A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">已完成（基础）6 项</div>
+        <div style="flex:4 1 0;background:#9A6A2F;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">部分完成 4 项</div>
+        <div style="flex:1 1 0;background:#A14E50;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">未完成 1</div>
+      </div>
+      <div style="font-size:12px;color:#5F6670;margin-bottom:14px;">“已完成”均带限定（基础闭环 / 客户端查询 / 表现基础 / 工具基础），不等于发布级验收通过。</div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">登录、创角、选角、进入主城</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·基础闭环</span></div>
+          <div style="color:#5F6670;font-size:12px;">Login / Role Handler；<code>ClientMessageManager.cs:366-415</code></div>
+          <div style="color:#5F6670;font-size:12px;">入口走通，仍需正式双客户端回归与重连验收</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">客户端移动与实时同步</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·基础闭环</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>MoveOperationHandler.cs</code>；NETWORK_SYNC_CHECK 专题</div>
+          <div style="color:#5F6670;font-size:12px;">已有 KCP 实时通道与坐标广播；弱网、重连、跨通道时序是发布门槛</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">客户端导航</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·客户端查询</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>MNavigation.cs:4</code> 三角走廊 A*；Mgr / Serializer</div>
+          <div style="color:#5F6670;font-size:12px;">点击 NPC/任务可复用；服务端无运行时 A*，不能称服务端权威寻路</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">服务端导航</div>
+          <div><span style="display:inline-block;background:#A14E50;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">未完成</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>NavigationComponent.cs:5-9</code> 只有构造函数</div>
+          <div style="color:#5F6670;font-size:12px;">无路径查询、阻挡重算或服务端路线纠错</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">技能施放、连击、特效、音频、根运动</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·表现基础</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>SkillCastHandler.cs</code>；RO_SKILL_MOTION 专题</div>
+          <div style="color:#5F6670;font-size:12px;">表现与位移链路存在；伤害、抗性、死亡、掉落结算不完整</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">NPC 点击、导航到达、对话框</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·基础交互</span></div>
+          <div style="color:#5F6670;font-size:12px;">2026-10-22 NPC-DIALOG-CHANGELOG</div>
+          <div style="color:#5F6670;font-size:12px;">已修复主角反向引用与文本绑定；热更版本仍需现场确认</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">背包、物品存档、商城购买</div>
+          <div><span style="display:inline-block;background:#9A6A2F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">部分完成</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>Knapsack/</code>、<code>RequestBuyShopItem.cs:10-176</code>、<code>BagTransition.cs</code></div>
+          <div style="color:#5F6670;font-size:12px;">普通背包与商城购买有真实协议；物品使用、穿脱、属性刷新仍有 NotImplemented</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">装备穿脱与属性成长</div>
+          <div><span style="display:inline-block;background:#9A6A2F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">部分完成·未闭环</span></div>
+          <div style="color:#5F6670;font-size:12px;">客户端 <code>BagTransition.cs:486-546</code> 有流程；服务端 <code>:510-544</code> 返回 <b style="color:#A14E50;">NotImplemented</b></div>
+          <div style="color:#5F6670;font-size:12px;">缺服务端权威写入、属性重算、同步与持久化</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">小地图、基础 HUD、聊天窗口</div>
+          <div><span style="display:inline-block;background:#9A6A2F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">部分完成</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>MainCtrl.cs:351-362</code> 注明“聊天协议尚未接入”</div>
+          <div style="color:#5F6670;font-size:12px;">UI 可打开；聊天仅本地昵称与本地回显，不是多人聊天</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">设置界面</div>
+          <div><span style="display:inline-block;background:#9A6A2F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">部分完成</span></div>
+          <div style="color:#5F6670;font-size:12px;"><code>SettingPanel.cs:4-30</code></div>
+          <div style="color:#5F6670;font-size:12px;">仅切换页面显隐；音量、画质、按键、网络与保存无闭环</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(150px,1.1fr) 120px minmax(200px,1.4fr) minmax(200px,1.5fr);gap:10px;background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 12px;font-size:13px;align-items:center;">
+          <div style="font-weight:bold;">YooAsset、HybridCLR、Luban、导航导出</div>
+          <div><span style="display:inline-block;background:#35705A;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;white-space:nowrap;">已完成·工具基础</span></div>
+          <div style="color:#5F6670;font-size:12px;">UNITY_NAVIGATION_EXPORT 专题；构建与生成目录</div>
+          <div style="color:#5F6670;font-size:12px;">具备内容与热更管线；发布包需同版程序集/资源/网络库最终验收</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 六大缺口 -->
+    <section style="margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 12px;">二、六大明确缺口</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;">
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">① 任务系统</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：<code>MessageHandler/Task/.gitkeep</code> 空目录，无 Handler</div>
+          <div style="font-size:13px;color:#5F6670;">缺接取、追踪、目标进度、完成、提交、奖励、放弃与持久化协议。是 NPC 导航之后最直接的可玩内容，应列入第一批成长系统。</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">② 装备 / 物品使用 / 属性成长</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：服务端 BagWearItemTransition 返回 NotImplemented；<code>Equip/</code>、<code>Item/</code> 仅 .gitkeep</div>
+          <div style="font-size:13px;color:#5F6670;">缺穿脱协议、装备栏权威状态、属性重算、使用消耗、变化广播、存档与重登恢复。</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">③ 怪物战斗闭环</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：有怪物实体、目标选择与技能表现，无完整结算链</div>
+          <div style="font-size:13px;color:#5F6670;">缺“受击判定 → HP 扣减 → 死亡 → 经验/掉落 → 客户端刷新 → 持久化”。这条链路不打通，任务击杀与装备掉落都无法落地。</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">④ 多人社交与组队内容</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：无组队邀请/确认/队长/离队/同步协议</div>
+          <div style="font-size:13px;color:#5F6670;">公会、好友、邮件、排行榜、成就、拍卖、PVP、正式副本均无可验收闭环；枚举、UI、配置只能算预留。</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">⑤ 聊天服务</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：OnChatSendRequested 直接本地 AppendMessage 回显</div>
+          <div style="font-size:13px;color:#5F6670;">需频道、长度/频率限制、服务端广播、跨地图范围、离线/系统消息与客户端收包刷新。</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4E3DD;border-top:4px solid #A14E50;border-radius:6px;padding:14px;">
+          <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">⑥ 账号与运行稳定性</div>
+          <div style="font-size:12px;color:#A14E50;margin-bottom:6px;">现状：隔离回环通过 ≠ 真实联机验收</div>
+          <div style="font-size:13px;color:#5F6670;">缺断线重连、登录态恢复、重复登录处理、KCP/TCP 通道重建、场景切换、权威位置校验、异常包与限流。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 优先级路线图 -->
+    <section style="margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 12px;">三、开发优先级路线图</h2>
+
+      <!-- P0 -->
+      <div style="display:flex;flex-wrap:wrap;gap:0;border:1px solid #E4E3DD;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+        <div style="flex:0 0 130px;background:#A14E50;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 10px;box-sizing:border-box;">
+          <div style="font-size:26px;font-weight:bold;">P0</div>
+          <div style="font-size:13px;text-align:center;margin-top:4px;">先让核心切片<br>可长期测试</div>
+        </div>
+        <div style="flex:1 1 420px;background:#fff;padding:14px 16px;box-sizing:border-box;">
+          <ol style="margin:0;padding-left:20px;">
+            <li style="margin-bottom:6px;"><b>正式双客户端联机验收</b>：同地图互见、移动/技能 KCP、服务器坐标权威、断线重连、弱网、跨场景、热更程序集版本一致。</li>
+            <li style="margin-bottom:6px;"><b>战斗最小闭环</b>：服务端目标合法性、技能命中/伤害、HP/死亡、复活或回城、经验与最小掉落。</li>
+            <li><b>导航边界</b>：导航失败反馈、可达性检查、到达距离与障碍停止；暂不扩展服务端 A*，先做实位置校验与客户端路线失败处理。</li>
+          </ol>
+          <div style="margin-top:10px;background:#F7F0F0;border-left:3px solid #A14E50;border-radius:4px;padding:8px 12px;font-size:13px;">
+            <b>P0 完成标准</b>：两个打包 / 同版编辑器客户端在同一地图连续战斗 <b>30 分钟</b>；重连后位置、技能冷却、背包与角色状态一致；服务器日志能解释每一个被拒绝的移动、技能和掉落请求。
+          </div>
+        </div>
+      </div>
+
+      <!-- P1 -->
+      <div style="display:flex;flex-wrap:wrap;gap:0;border:1px solid #E4E3DD;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+        <div style="flex:0 0 130px;background:#4F6B9A;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 10px;box-sizing:border-box;">
+          <div style="font-size:26px;font-weight:bold;">P1</div>
+          <div style="font-size:13px;text-align:center;margin-top:4px;">任务驱动的<br>成长循环</div>
+        </div>
+        <div style="flex:1 1 420px;background:#fff;padding:14px 16px;box-sizing:border-box;">
+          <ol style="margin:0;padding-left:20px;">
+            <li style="margin-bottom:6px;"><b>任务系统</b>：接取、追踪、目标进度、NPC 提交、奖励、前置条件、放弃/失败、存档与重登恢复。</li>
+            <li style="margin-bottom:6px;"><b>装备和物品使用</b>：穿脱、属性重算、装备变化同步、消耗品、堆叠、背包容量与持久化。</li>
+            <li style="margin-bottom:6px;"><b>怪物掉落与奖励</b>：掉落表、拾取权、队伍归属、重复领取保护与任务事件通知。</li>
+            <li><b>组队和副本最小版本</b>：邀请/确认/离队、队伍状态、实例地图进入/退出、队伍战斗奖励。</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div style="display:flex;flex-wrap:wrap;gap:0;border:1px solid #E4E3DD;border-radius:8px;overflow:hidden;">
+        <div style="flex:0 0 130px;background:#5F6670;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 10px;box-sizing:border-box;">
+          <div style="font-size:26px;font-weight:bold;">P2</div>
+          <div style="font-size:13px;text-align:center;margin-top:4px;">社交与<br>运营能力</div>
+        </div>
+        <div style="flex:1 1 420px;background:#fff;padding:14px 16px;box-sizing:border-box;">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">公会</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">好友</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">邮件</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">排行榜</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">成就</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">拍卖行</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">PVP</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">组队匹配</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">活动日历</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">GM/运营后台</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">完整设置</span>
+            <span style="background:#F0F1F3;border:1px solid #E4E3DD;border-radius:4px;padding:3px 10px;font-size:13px;">数据统计</span>
+          </div>
+          <div style="font-size:13px;color:#5F6670;">这些系统依赖 P0/P1 的角色、物品、奖励与消息基础；过早开发会反复改协议。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- P1 目标闭环图 -->
+    <section style="margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 4px;">四、P1 完成后的核心玩法闭环（验收目标）</h2>
+      <div style="font-size:13px;color:#5F6670;margin-bottom:10px;">这条循环跑通，比继续增加 UI 页面更能证明项目进入 MMORPG 可玩阶段。</div>
+      <div style="background:#fff;border:1px solid #E4E3DD;border-radius:8px;padding:14px;">
+        <svg viewBox="0 0 920 380" width="100%" style="display:block;height:auto;" role="img" aria-label="玩家成长循环流程图">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#4F6B9A"></path>
+            </marker>
+            <marker id="arrLoop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#35705A"></path>
+            </marker>
+          </defs>
+          <!-- 上排节点 -->
+          <rect x="70" y="36" width="220" height="64" rx="8" fill="#EAF0F7" stroke="#4F6B9A" stroke-width="1.5"></rect>
+          <text x="180" y="64" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">① 接任务</text>
+          <text x="180" y="86" text-anchor="middle" font-size="12" fill="#5F6670">接取 · 追踪 · 前置条件</text>
+
+          <rect x="350" y="36" width="220" height="64" rx="8" fill="#EAF0F7" stroke="#4F6B9A" stroke-width="1.5"></rect>
+          <text x="460" y="64" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">② 导航到目标</text>
+          <text x="460" y="86" text-anchor="middle" font-size="12" fill="#5F6670">复用客户端 A* · NPC 指引</text>
+
+          <rect x="630" y="36" width="220" height="64" rx="8" fill="#F7F0F0" stroke="#A14E50" stroke-width="1.5"></rect>
+          <text x="740" y="64" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">③ 战斗</text>
+          <text x="740" y="86" text-anchor="middle" font-size="12" fill="#5F6670">服务端权威命中/伤害/死亡</text>
+
+          <!-- 上排箭头 -->
+          <line x1="290" y1="68" x2="346" y2="68" stroke="#4F6B9A" stroke-width="2" marker-end="url(#arr)"></line>
+          <line x1="570" y1="68" x2="626" y2="68" stroke="#4F6B9A" stroke-width="2" marker-end="url(#arr)"></line>
+
+          <!-- 右侧下行 -->
+          <path d="M740,100 L740,200 L740,246" fill="none" stroke="#4F6B9A" stroke-width="2" marker-end="url(#arr)"></path>
+
+          <!-- 下排节点（从右到左） -->
+          <rect x="630" y="250" width="220" height="64" rx="8" fill="#EAF0F7" stroke="#4F6B9A" stroke-width="1.5"></rect>
+          <text x="740" y="278" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">④ 获得掉落 / 经验</text>
+          <text x="740" y="300" text-anchor="middle" font-size="12" fill="#5F6670">掉落表 · 拾取权 · 归属</text>
+
+          <rect x="350" y="250" width="220" height="64" rx="8" fill="#EAF0F7" stroke="#4F6B9A" stroke-width="1.5"></rect>
+          <text x="460" y="278" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">⑤ 回 NPC 交任务</text>
+          <text x="460" y="300" text-anchor="middle" font-size="12" fill="#5F6670">目标进度结算 · 发奖</text>
+
+          <rect x="70" y="250" width="220" height="64" rx="8" fill="#EAF0F7" stroke="#4F6B9A" stroke-width="1.5"></rect>
+          <text x="180" y="278" text-anchor="middle" font-size="15" font-weight="bold" fill="#1A1B1C">⑥ 装备成长</text>
+          <text x="180" y="300" text-anchor="middle" font-size="12" fill="#5F6670">穿脱 · 属性重算 · 持久化</text>
+
+          <!-- 下排反向箭头 -->
+          <line x1="626" y1="282" x2="574" y2="282" stroke="#4F6B9A" stroke-width="2" marker-end="url(#arr)"></line>
+          <line x1="346" y1="282" x2="294" y2="282" stroke="#4F6B9A" stroke-width="2" marker-end="url(#arr)"></line>
+
+          <!-- 左侧回流 -->
+          <path d="M180,250 L180,170 L40,170 L40,68 L66,68" fill="none" stroke="#35705A" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrLoop)"></path>
+          <text x="48" y="160" text-anchor="middle" font-size="12" fill="#35705A" transform="rotate(-90 48 160)">成长后循环承接新任务</text>
+        </svg>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:#5F6670;margin-top:6px;padding-left:8px;">
+          <span><span style="display:inline-block;width:14px;height:8px;background:#F7F0F0;border:1px solid #A14E50;border-radius:2px;vertical-align:middle;"></span> 红色节点 = 依赖 P0 服务端权威战斗，当前最大断点</span>
+          <span><span style="display:inline-block;width:14px;height:0;border-top:2px dashed #35705A;vertical-align:middle;"></span> 绿色虚线 = 玩家成长循环回流</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 开发顺序 -->
+    <section style="margin-bottom:28px;">
+      <h2 style="font-size:17px;margin:0 0 12px;">五、开发顺序与边界</h2>
+      <div style="position:relative;padding-left:34px;">
+        <div style="position:absolute;left:12px;top:8px;bottom:8px;width:2px;background:#E4E3DD;"></div>
+
+        <div style="position:relative;margin-bottom:14px;">
+          <div style="position:absolute;left:-29px;top:2px;width:20px;height:20px;border-radius:50%;background:#A14E50;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;">1</div>
+          <div style="background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 14px;font-size:13px;"><b>固定并验收 P0 协议与服务端权威规则</b>。客户端导航只作输入表现，不把客户端路线当作服务器可信结果。</div>
+        </div>
+        <div style="position:relative;margin-bottom:14px;">
+          <div style="position:absolute;left:-29px;top:2px;width:20px;height:20px;border-radius:50%;background:#4F6B9A;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;">2</div>
+          <div style="background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 14px;font-size:13px;"><b>先做任务协议与服务端任务状态</b>，再接 NPC 对话/导航入口；任务奖励只调用已有背包事务，不复制物品写入逻辑。</div>
+        </div>
+        <div style="position:relative;margin-bottom:14px;">
+          <div style="position:absolute;left:-29px;top:2px;width:20px;height:20px;border-radius:50%;background:#4F6B9A;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;">3</div>
+          <div style="background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 14px;font-size:13px;"><b>任务击杀事件稳定后</b>，接装备/物品 Handler 与属性重算，再接掉落与奖励存档。</div>
+        </div>
+        <div style="position:relative;margin-bottom:14px;">
+          <div style="position:absolute;left:-29px;top:2px;width:20px;height:20px;border-radius:50%;background:#4F6B9A;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;">4</div>
+          <div style="background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 14px;font-size:13px;"><b>任务、战斗、背包、装备形成单人闭环后</b>，再设计组队副本与多人奖励归属。</div>
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute;left:-29px;top:2px;width:20px;height:20px;border-radius:50%;background:#5F6670;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;">5</div>
+          <div style="background:#fff;border:1px solid #E4E3DD;border-radius:6px;padding:10px 14px;font-size:13px;"><b>最后</b>接聊天、公会、邮件、排行榜与运营系统；每个系统补齐协议注册、Handler、客户端收发、存档与双客户端验收。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 盘点限制 -->
+    <section style="border-top:1px solid #E4E3DD;padding-top:14px;">
+      <h2 style="font-size:14px;margin:0 0 8px;color:#5F6670;">本次盘点的限制</h2>
+      <ul style="margin:0;padding-left:20px;font-size:12px;color:#5F6670;line-height:1.8;">
+        <li>静态盘点：仅依据源码、协议注册与已有专题报告，未修改业务代码，未把 UI 截图、配置表、枚举或隔离夹具当作完整功能。</li>
+        <li>未执行 Unity 现场画面、打包客户端双开、真实弱网、完整服务器部署或生产数据库验证，P0 运行稳定性仍需专项验收。</li>
+        <li>服务端是否需要运行时 A*，需按反作弊与移动权威方案单独决策；现状仅为“客户端 A*、服务端无运行时寻路”。</li>
+      </ul>
+      <div style="margin-top:14px;font-size:12px;color:#5F6670;">本图解为 <code>项目分析/MMORPG功能完成度与开发优先级.md</code> 的可视化版本，内容以该 Markdown 原文为准。</div>
+    </section>
+
+  </div>
+</div>
+</body>
+</html>

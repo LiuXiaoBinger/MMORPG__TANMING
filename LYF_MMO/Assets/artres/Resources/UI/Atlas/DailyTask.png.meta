@@ -1,0 +1,811 @@
+fileFormatVersion: 2
+guid: 7ba15f9b3e99ca94ab7553ce1abfdb32
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: ui_DailyTask_Arrowdawn.png
+  - first:
+      213: 21300002
+    second: ui_DailyTask_Boliemblem.png
+  - first:
+      213: 21300004
+    second: ui_DailyTask_BoliTittle.png
+  - first:
+      213: 21300006
+    second: ui_DailyTask_Bookmark.png
+  - first:
+      213: 21300008
+    second: ui_DailyTask_Close.png
+  - first:
+      213: 21300010
+    second: ui_DailyTask_EventBG.png
+  - first:
+      213: 21300012
+    second: ui_DailyTask_EventBG_1.png
+  - first:
+      213: 21300014
+    second: ui_DailyTask_EventIconBG.png
+  - first:
+      213: 21300016
+    second: ui_DailyTask_Finish.png
+  - first:
+      213: 21300018
+    second: UI_DailyTask_Img_Jiantou.png
+  - first:
+      213: 21300020
+    second: UI_DailyTask_Img_Mowuquzhu.png
+  - first:
+      213: 21300022
+    second: ui_DailyTask_MvpTittle.png
+  - first:
+      213: 21300024
+    second: ui_DailyTask_Paperclip.png
+  - first:
+      213: 21300026
+    second: ui_DailyTask_TaskBG.png
+  - first:
+      213: 21300028
+    second: UI_DailyTask_Title_Bg.png
+  - first:
+      213: 21300030
+    second: ui_Mvp_RankBg.png
+  - first:
+      213: 21300032
+    second: ui_Mvp_RankTittle.png
+  - first:
+      213: 21300034
+    second: ui_DailyTask_Img_Xiangqing.png
+  - first:
+      213: 21300036
+    second: ui_DailyTask_Paperclip_2.png
+  - first:
+      213: 21300038
+    second: ui_DailyTask_Jiangligaoguang.png
+  - first:
+      213: 21300040
+    second: ui_DailyTask_Jiangliqipao.png
+  - first:
+      213: 21300042
+    second: ui_DailyTask_Jiangliqipao_dise.png
+  - first:
+      213: 21300044
+    second: ui_DailyTask_Ditu1.png
+  - first:
+      213: 21300046
+    second: ui_DailyTask_Ditu2.png
+  - first:
+      213: 21300048
+    second: ui_DailyTask_Ditu3.png
+  - first:
+      213: 21300050
+    second: ui_DailyTask_Jiangliqipao2.png
+  - first:
+      213: 21300052
+    second: ui_DailyTask_PicBg.png
+  - first:
+      213: 21300054
+    second: UI_DailyTask_Icon_Daojishi_01.png.png
+  - first:
+      213: 21300056
+    second: UI_DailyTask_Icon_Huangguan_01.png
+  - first:
+      213: 21300058
+    second: UI_DailyTask_Image_MVP_01.png
+  - first:
+      213: 21300060
+    second: ui_DailyTask_Bg_01.png
+  - first:
+      213: 21300062
+    second: ui_DailyTask_Ditu4.png
+  - first:
+      213: 21300064
+    second: ui_DailyTask_Icon_Qifu.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ui_DailyTask_Arrowdawn.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 18
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90fe99abcd133614bb6fb0613dc3d6ba
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Bg_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 13
+        width: 337
+        height: 181
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc3f9a233cd9a8f44994d03b626afc01
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Boliemblem.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 195
+        width: 131
+        height: 134
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3861e9cf3a61a4049a25ad4422af1350
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_BoliTittle.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 330
+        width: 152
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22ed82b9dd21e884c917b9fcb736b3a1
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Bookmark.png
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 195
+        width: 214
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10834c4e54b2d2b4ab1c3e972a392b21
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Close.png
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 262
+        width: 66
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec8f24ddb1843b845964ac408a2dc2eb
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Ditu1.png
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 262
+        width: 202
+        height: 202
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f98d755a727ca0946b6ee6fa0b9f082b
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Ditu2.png
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 0
+        width: 78
+        height: 207
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d97d3e1bf96a044dab089e7fe0c94a8
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Ditu3.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 390
+        width: 73
+        height: 121
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea857b5bcbae030469081b29ac23ebbd
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Ditu4.png
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 208
+        width: 284
+        height: 146
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84effe53dae6a1949ac271adc4c14949
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_EventIconBG.png
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 208
+        width: 30
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dd61710204526848a0a015514607b18
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Finish.png
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 355
+        width: 136
+        height: 121
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73f532fa6fb7c84429840b7757ce43b3
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_DailyTask_Icon_Daojishi_01.png.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 330
+        width: 29
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81ecd87579895ee4db5b42b6b4c8ad20
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_DailyTask_Icon_Huangguan_01.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 359
+        width: 26
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4f2ea808489da04d94199f7c9ffea78
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Icon_Qifu.png
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 390
+        width: 110
+        height: 92
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 884bae1f3dec32b47900ba342860836a
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_DailyTask_Image_MVP_01.png
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 355
+        width: 197
+        height: 94
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c16e955e8e4c2a943bab70e379a6a4fa
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_DailyTask_Img_Jiantou.png
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 359
+        width: 18
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05bd61e622f23b9458c0b2c6549ff59f
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Img_Xiangqing.png
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 465
+        width: 30
+        height: 35
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3afb0329f7fda524aaca500cbe0a4234
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Jiangligaoguang.png
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 483
+        width: 65
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db3cee3744d87e34098067e9f3255c5e
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Jiangliqipao.png
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 0
+        width: 80
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51505b1d85592b84d93ce1423f5001a9
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Jiangliqipao_dise.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 0
+        width: 63
+        height: 67
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b032daf51800bf44da3a832d0446a778
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_Paperclip.png
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 68
+        width: 83
+        height: 65
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7046b84d0b879bd49bcbd9b22126923e
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_DailyTask_PicBg.png
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 100
+        width: 296
+        height: 195
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16984ee7651a2fb4684fabc67614285f
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_DailyTask_Title_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 465
+        width: 45
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 20, y: 20, z: 20, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a94549303d7b84a80869d6154d7307
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Mvp_RankBg.png
+      rect:
+        serializedVersion: 2
+        x: 984
+        y: 0
+        width: 2
+        height: 494
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 2, y: 6, z: 2, w: 6}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0690f42b7d9ccd49863c4d552569caa
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_Mvp_RankTittle.png
+      rect:
+        serializedVersion: 2
+        x: 737
+        y: 296
+        width: 235
+        height: 99
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 370b764cb84db7f4b9f6ba714d44d27d
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_DailyTask_Icon_Daojishi_01.png.png: 21300054
+      UI_DailyTask_Icon_Huangguan_01.png: 21300056
+      UI_DailyTask_Image_MVP_01.png: 21300058
+      UI_DailyTask_Img_Jiantou.png: 21300018
+      UI_DailyTask_Title_Bg.png: 21300028
+      ui_DailyTask_Arrowdawn.png: 21300000
+      ui_DailyTask_Bg_01.png: 21300060
+      ui_DailyTask_BoliTittle.png: 21300004
+      ui_DailyTask_Boliemblem.png: 21300002
+      ui_DailyTask_Bookmark.png: 21300006
+      ui_DailyTask_Close.png: 21300008
+      ui_DailyTask_Ditu1.png: 21300044
+      ui_DailyTask_Ditu2.png: 21300046
+      ui_DailyTask_Ditu3.png: 21300048
+      ui_DailyTask_Ditu4.png: 21300062
+      ui_DailyTask_EventIconBG.png: 21300014
+      ui_DailyTask_Finish.png: 21300016
+      ui_DailyTask_Icon_Qifu.png: 21300064
+      ui_DailyTask_Img_Xiangqing.png: 21300034
+      ui_DailyTask_Jiangligaoguang.png: 21300038
+      ui_DailyTask_Jiangliqipao.png: 21300040
+      ui_DailyTask_Jiangliqipao_dise.png: 21300042
+      ui_DailyTask_Paperclip.png: 21300024
+      ui_DailyTask_PicBg.png: 21300052
+      ui_Mvp_RankBg.png: 21300030
+      ui_Mvp_RankTittle.png: 21300032
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
