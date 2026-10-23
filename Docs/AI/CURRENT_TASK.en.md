@@ -2,6 +2,13 @@
 
 Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese developer history. This compact edition includes the current collaboration change and selected continuation records; request other historical IDs through the bounded translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [FILES][任务][TASK-SYSTEM-DESIGN-20261023] RO-aligned task-system design, 2026-10-23
+
+- User requested a task-system design only, without code. Added `项目分析/任务系统设计-RO对照与接入方案-2026-10-23.md` and its README entry. It defines the first release as a single-target QuestInfo-based task loop, server authority, state projection, persistence/transaction boundaries, protocol/UI/navigation roles, implementation stages and acceptance criteria.
+- The design corrects prior resource assumptions: current task prefabs in `LYF_MMO/Assets/artres/Resources/UI/Prefabs` are usable and QuickTaskPanel has the restored Text nodes; bind existing prefabs rather than rebuilding them. Existing server `QuestInfo` is one-target/one-reward and has no caller; task runtime, persistence, protocol, NPC interaction, death progression and client task control are not implemented.
+- Formal change-only records are in `Docs/AI/TEST_REPORT.*`, `Docs/AI/QUERY_TASKS.*` and `项目修改日志/2026-10-23-任务系统RO对照设计_CHANGELOG.md`; read-only evidence remains `_temp/task-system-design-20261023/`. No client/server code, protocol/config/database/resource or scene change is included. Subsequent implementation requires a new user request; the design is the handoff, not running gameplay.
+- One local `qwen3:8b-light` synchronization attempt timed out at 45 seconds without usable output or project-file writes; no retry. Original WorkBuddy Hub `hub-68136605-06c6-4feb-9ca3-571d7522b5a4` round2 is restricted to the three Chinese record sections, separate from accepted round1 lookup. Final synchronization/verification/Git receipts are centralized in the changelog.
+
 ## [FILES][任务][QUICKTASK-TEXT-20261023] Restore RO-style QuickTaskPanel text, 2026-10-23
 
 - User requested the screenshot's five text categories with RO-identical node names/hierarchy. On branch `codex/ui-script-cleanup`, baseline `e9f9a1b`, changed only `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`: added native UGUI Text to `TaskList/Viewport/TaskScrollView/Content/TaskTpl/Title/TitleText`, `Des/DesText`, `Deadline` itself and `Limit/LimitText`. Existing `Target/TargetText1..5`, including the user's enabled TargetText2, remain unchanged. No nodes were added, renamed or moved.

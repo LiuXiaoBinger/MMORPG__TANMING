@@ -1,6 +1,12 @@
 # 项目代码与文件修改验证
 > 【双语记忆】本文件为开发人员中文版本，完整历史正文在此；Agent 默认读取对应的精简英文版 `Docs/AI/TEST_REPORT.en.md`。英文为精简工作记忆，旧编号尚未迁移的英文段落，按需由子 Agent 按编号补录（流程见 AGENTS.md 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 DOCS-READ/DOCS-ROUTES）。
 
+## [VERIFY][任务][TASK-SYSTEM-DESIGN-20261023] RO 任务系统设计验证，2026-10-23
+
+- WorkBuddy 的只读证据报告已按真实路径做过独立抽样核对：RO 状态投影与完成判定的区分、目标物品背包重算、目标 UI 路径、本项目的 QuestInfo、OnlineRole 注册与存档边界、导航回调、MainView 注册以及可用预制体位置。设计对单目标 QuestInfo 与既有任务预制体的修正，都以该证据为依据。
+- 文档校验仅限于 Markdown 结构与引用、以及证据一致性。未运行任何 C# 源码改动、生成协议、配置、数据库迁移、Unity 导入与渲染、编译器、服务端与客户端连接、任务状态推进、奖励事务或玩法测试；以上均未宣称完成。
+- 这里描述的每一项代码、配置、数据库与协议改动，都需要后续由用户提出实现请求才能进行。设计证据、边界与执行者身份记录在 `项目修改日志/2026-10-23-任务系统RO对照设计_CHANGELOG.md`。
+
 ## [VERIFY][任务][QUICKTASK-TEXT-20261023] RO 风格任务文本验证，2026-10-23
 
 - Codex 独立 `node _temp/quicktask-text-20261023/verify.mjs` 通过：YAML 文档 243→247，恰好新增四个原生 Text 与四条 owner 记录，其余每个字节与 meta 均保留，无悬挂组件引用，原生字段与 RO 实文档一致。改前 SHA256 `d46af5362a807248f3535fcab1713ea72d0881872a4b1d338d1ab898b8ddf555`；改后 `cf1669113840623f18d8156bf758fc0c3e0cdee19f192f35885771ac8de03789`。

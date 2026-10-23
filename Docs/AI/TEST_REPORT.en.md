@@ -2,6 +2,12 @@
 
 Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_REPORT.md`. Historical pass counts are not fresh checks; unported IDs use the translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [VERIFY][任务][TASK-SYSTEM-DESIGN-20261023] RO task-system design verification, 2026-10-23
+
+- WorkBuddy read-only evidence report was independently sampled against actual paths: RO status projection/finish distinction, target-item bag recount, target UI paths, target project QuestInfo, OnlineRole registration/save boundary, navigation callback, MainView registration and usable prefab locations. The design's correction to single-target QuestInfo and existing task prefabs follows that evidence.
+- Document validation is limited to Markdown structure/references and evidence consistency. No C# source change, generated protocol, configuration, database migration, Unity import/render, compiler, server/client connection, task state progression, reward transaction or gameplay test ran; none is claimed.
+- The task needs a subsequent implementation request for every described code/config/database/protocol change. Design evidence/limits and executor identities are recorded in `项目修改日志/2026-10-23-任务系统RO对照设计_CHANGELOG.md`.
+
 ## [VERIFY][任务][QUICKTASK-TEXT-20261023] RO-style task text verification, 2026-10-23
 
 - Independent `node _temp/quicktask-text-20261023/verify.mjs` passed: 243→247 YAML documents, exactly four native Text additions and four owner entries, all other bytes/meta unchanged, no dangling component refs, native fields match actual RO source. Before SHA256 `d46af5362a807248f3535fcab1713ea72d0881872a4b1d338d1ab898b8ddf555`; after `cf1669113840623f18d8156bf758fc0c3e0cdee19f192f35885771ac8de03789`.

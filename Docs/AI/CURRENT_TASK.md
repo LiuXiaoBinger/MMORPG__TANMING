@@ -3,6 +3,13 @@
 
 > 查找、询问和方案正文已迁到 `Docs/AI/QUERY_TASKS.md`。以下保留项目代码/文件修改及其交接，旧记录不重新判定完成状态。
 
+## [FILES][任务][TASK-SYSTEM-DESIGN-20261023] 对齐 RO 的任务系统设计，2026-10-23
+
+- 用户只要求任务系统设计，不写代码。新增 `项目分析/任务系统设计-RO对照与接入方案-2026-10-23.md` 及其 README 条目。该文档把首期实现定义为基于 QuestInfo 的单目标任务闭环，并规定服务端权威、状态投影、持久化与事务边界、协议与 UI 及导航职责、实施阶段和验收标准。
+- 该设计纠正了先前的资源假设：`LYF_MMO/Assets/artres/Resources/UI/Prefabs` 下现有任务预制体可用，QuickTaskPanel 已补齐被恢复的 Text 节点；应绑定既有预制体，而不是重建它们。现有服务端 `QuestInfo` 是单目标单奖励且没有调用方；任务运行时、持久化、协议、NPC 交互、死亡推进与客户端任务控制均未实现。
+- 仅记录变更的正式记录放在 `Docs/AI/TEST_REPORT.*`、`Docs/AI/QUERY_TASKS.*` 和 `项目修改日志/2026-10-23-任务系统RO对照设计_CHANGELOG.md`；只读证据仍保留在 `_temp/task-system-design-20261023/`。本次不含客户端或服务端代码、协议、配置、数据库、资源或场景改动。后续实现需要用户重新提出要求；本设计是交接物，不代表可运行的玩法。
+- 本地 `qwen3:8b-light` 的一次同步尝试在 45 秒超时，没有可用输出，也没有写入任何项目文件；未再做重试。原始 WorkBuddy Hub `hub-68136605-06c6-4feb-9ca3-571d7522b5a4` 第 2 轮被限定为只补这三段中文记录，独立于已验收的第 1 轮查找。最终同步、核验与 Git 回执集中在上述修改日志中。
+
 ## [FILES][任务][QUICKTASK-TEXT-20261023] QuickTaskPanel 按 RO 恢复任务文本，2026-10-23
 
 - 用户要求按截图补齐五类文本，节点命名与层级须与 RO 一致。分支 `codex/ui-script-cleanup`，基线 `e9f9a1b`，仅改 `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`：给 `TaskList/Viewport/TaskScrollView/Content/TaskTpl/Title/TitleText`、`Des/DesText`、`Deadline` 自身、`Limit/LimitText` 各补一个原生 UGUI Text。既有 `Target/TargetText1..5`（含用户已启用的 TargetText2）保持不变；未新增、改名或移动任何节点。

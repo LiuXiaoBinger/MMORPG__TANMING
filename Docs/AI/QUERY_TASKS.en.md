@@ -2,6 +2,14 @@
 
 Default agent edition. `Docs/AI/QUERY_TASKS.md` preserves the complete Chinese query history. Query-only work updates this language pair; formal document outputs leave short file/verification references in the execution records. Missing historical IDs are translated by a subagent on demand under the route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [QUERY][任务][TASK-SYSTEM-DESIGN-20261023] RO task-system design evidence, 2026-10-23
+
+- User requested a task-system design for LYFMMORGP following RO, without implementation. Static evidence is in `_temp/task-system-design-20261023/lookup.md`; the formal design is `项目分析/任务系统设计-RO对照与接入方案-2026-10-23.md`. This query only established facts; it did not compile, run Unity/server, or validate gameplay.
+- RO: `Achievable` is a client projection of accepted task targets; `Finished` is server-authoritative. Reuse the separation of role task aggregate, static definitions, server target/reward authority, full+incremental sync, and a shared client data source for task window/quick tracking. Do not port Lua/MoonClient, its broad target/trigger hierarchy, or its client-trusted NPC/position reports.
+- Target project: server-side `#QuestInfo.xlsx` and generated `QuestInfo/TbQuestInfo` exist but have no business caller and only support one target/one reward. `UI/Prefabs` task resources are usable; the ten checked task prefabs have no old RO script GUIDs. `Task.prefab` and QuickTaskPanel should be bound, not rebuilt.
+- Gaps established by source inspection: no task role component, protocol, DB task table, save-proto field, handler, or client task Ctrl/window; server NPC interaction and kill/death progression are absent; `OnlineRole.GetItemCount` returns zero. Existing AddItem and versioned item/count save transaction are reusable boundaries, but task state and reward must enter the same transaction before duplicate-reward protection can be claimed.
+- Doubao conversation `38448850417874946`: runs `59504459316410370` and `59495837363055618` stopped with no tool delivery (the latter desktop navigation/closure error), so neither counts as a lookup round. WorkBuddy Hub `hub-68136605-06c6-4feb-9ca3-571d7522b5a4`, round1 `run-85f883ec-1130-4913-b0b4-95cba5373c14`, native session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`, performed the accepted read-only evidence lookup.
+
 ## [INDEX][协作][QUERY-INDEX] Query routing
 
 - Search level-two headings by existing topic tags, then read the selected record ID only, through the next level-two heading. For example: `rg -n '^## .*\[网络\]' Docs/AI/QUERY_TASKS.en.md`.
