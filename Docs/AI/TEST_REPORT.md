@@ -5123,3 +5123,8 @@ amespace、无 oreach（统一用 or 或数组 CopyTo 后按下标遍历）、
 - 正式记录：项目分析/NAVIGATION_CHARGE_NETWORK_SYNC_CHECK.md、项目分析/项目难点.md、Docs/AI/CURRENT_TASK.md、本文件及项目修改日志/2026-10-22-NAVIGATION-CHARGE-SYNC-CHECK-CHANGELOG.md。无业务/资源修改，下一步按专题进行正式双号对照。
 
 - 本阶段豆包run59396782753161730恢复返回task_unavailable，stop确认cancelled/stopped=true，未取得报告，不计模型失败轮。已沿本项目委派WorkBuddy桌面只读续查Hub hub-1284e335-707f-4b74-8252-b84d93defbce；仍未修改新业务或取得新验收结论。
+- 2026-10-23 MMORPG 功能盘点：
+  - 静态核对通过：已核查 `MNavigation` 客户端 A*、服务端 `NavigationComponent` 空壳、`ClientMessageManager` 协议注册、任务/装备/物品 Handler 目录、聊天本地回显、设置页面切换、商城 Handler 和装备服务端 `NotImplemented` 证据。
+  - 文档验收：盘点正文和修改日志已创建；执行文档存在性检查与 `git diff --check`，结果通过。
+  - 运行边界：本轮无业务代码修改，因此未执行 Unity/服务端编译、运行场景、双客户端、弱网或发布包测试；这些仍是 P0 专项验收项。
+  - 交接：下一步仅提交本轮四份文档，保留工作区用户改动和未跟踪临时文件，不使用 `git add .`，提交后推送当前功能分支。
