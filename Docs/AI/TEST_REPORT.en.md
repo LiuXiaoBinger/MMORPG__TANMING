@@ -1,5 +1,10 @@
 # Verification records — English agent edition
 
+## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] Incremental documentation verification
+
+- Verification scope is this task's rule delta, `[DOCS-READ]` synchronization and new `[BILINGUAL-DELTA-CHECK-20261024]` task/verification records. Subagents perform bilingual synchronization and consistency checks; Codex reviews actual diffs and submitted evidence only. Unchanged history is excluded.
+- No Unity import, build or gameplay test is needed for these documentation-only changes. Delegation results, whitespace/scope verification and unresolved items are recorded in `项目修改日志/2026-10-24-中英增量检查委派约束_CHANGELOG.md`; do not infer completion from this verification plan.
+
 Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_REPORT.md`. Historical pass counts are not fresh checks; unported IDs use the translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
 ## [VERIFY][任务][TASK-SYSTEM-DESIGN-20261023] RO task-system design verification, 2026-10-23

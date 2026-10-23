@@ -1,6 +1,11 @@
 # 项目代码与文件修改验证
 > 【双语记忆】本文件为开发人员中文版本，完整历史正文在此；Agent 默认读取对应的精简英文版 `Docs/AI/TEST_REPORT.en.md`。英文为精简工作记忆，旧编号尚未迁移的英文段落，按需由子 Agent 按编号补录（流程见 AGENTS.md 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 DOCS-READ/DOCS-ROUTES）。
 
+## [VERIFY][协作][BILINGUAL-DELTA-CHECK-20261024] 增量文档校验
+
+- 校验范围仅限本次规则增量、`[DOCS-READ]` 同步，以及新增的 `[BILINGUAL-DELTA-CHECK-20261024]` 任务与验收记录；由子 Agent 执行中英同步与一致性检查，Codex 只复核实际差异与提交的证据，未改动的历史不在范围内。
+- 这些纯文档改动无需 Unity 导入、构建或玩法测试。委派结果、空白与范围校验、未解决项记录在 `项目修改日志/2026-10-24-中英增量检查委派约束_CHANGELOG.md`；不得由本校验计划推断任务已完成。
+
 ## [VERIFY][任务][TASK-SYSTEM-DESIGN-20261023] RO 任务系统设计验证，2026-10-23
 
 - WorkBuddy 的只读证据报告已按真实路径做过独立抽样核对：RO 状态投影与完成判定的区分、目标物品背包重算、目标 UI 路径、本项目的 QuestInfo、OnlineRole 注册与存档边界、导航回调、MainView 注册以及可用预制体位置。设计对单目标 QuestInfo 与既有任务预制体的修正，都以该证据为依据。

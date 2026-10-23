@@ -1,5 +1,10 @@
 # File/code tasks and handoff — English agent edition
 
+## [FILES][协作][BILINGUAL-DELTA-CHECK-20261024] Delegate incremental bilingual checks
+
+- User requested delta-only bilingual checks by subagents. Updated `AGENTS.md`, `AIconfig/agent/qwen_executor.md` and `Docs/AI/PROJECT_CONTEXT.en.md` `[DOCS-READ]`: synchronize/check only added or modified sections and fields; preserve unchanged history; subagents report scope, issues, corrections and evidence. Codex reviews scope/diffs/evidence without repeating language checks; passed checks are not repeated unless relevant inputs change.
+- Documentation only, branch `codex/ui-script-cleanup`, baseline `dfb65e6238854242a113620d672e2bb6be7db019`. No game code or resources changed. Chinese synchronization and incremental verification are delegated; execution evidence and final Git receipts belong in `项目修改日志/2026-10-24-中英增量检查委派约束_CHANGELOG.md`.
+
 Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese developer history. This compact edition includes the current collaboration change and selected continuation records; request other historical IDs through the bounded translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
 ## [FILES][任务][TASK-SYSTEM-DESIGN-20261023] RO-aligned task-system design, 2026-10-23
