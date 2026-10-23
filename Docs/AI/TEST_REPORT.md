@@ -1,6 +1,14 @@
 # 项目代码与文件修改验证
 > 【双语记忆】本文件为开发人员中文版本，完整历史正文在此；Agent 默认读取对应的精简英文版 `Docs/AI/TEST_REPORT.en.md`。英文为精简工作记忆，旧编号尚未迁移的英文段落，按需由子 Agent 按编号补录（流程见 AGENTS.md 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 DOCS-READ/DOCS-ROUTES）。
 
+## [VERIFY][任务][QUICKTASK-TEXT-20261023] RO 风格任务文本验证，2026-10-23
+
+- Codex 独立 `node _temp/quicktask-text-20261023/verify.mjs` 通过：YAML 文档 243→247，恰好新增四个原生 Text 与四条 owner 记录，其余每个字节与 meta 均保留，无悬挂组件引用，原生字段与 RO 实文档一致。改前 SHA256 `d46af5362a807248f3535fcab1713ea72d0881872a4b1d338d1ab898b8ddf555`；改后 `cf1669113840623f18d8156bf758fc0c3e0cdee19f192f35885771ac8de03789`。
+- 真实 Unity 同步导入/加载通过：57 个节点、Missing Script=0、Text 12→16。五条原路径均解析到预期中文文案；Common 字体、白色 Title/Des/Deadline/Limit 与既有黄色 Target 均正确。未改动节点命名/父子/顺序/active/RectTransform。用户原有的 TargetText2 保持启用。
+- 独立预览场景渲染 `_temp/quicktask-text-20261023/after-preview.png` 已目视：五类文本均可见。最初 SceneView 截图为空，未作为验收证据。首次独立渲染记录到一次临时 RenderTexture 清理报错；在销毁前先清空临时相机目标后修复，复跑未新增报错（仍留一条早先记录）。预览场景已关闭，验证过程未保存任何正式场景或 prefab。未运行玩法、交互或客户端/服务端构建。
+- WorkBuddy Hub `hub-bc16cc63-ee30-4867-9ef6-8e7c04db3e69` 第 2 轮 `run-4aef2446-cf2a-4445-a493-a2f68eca3369` 依 Codex 证据 accepted。完整变更清单、先前豆包中断、语言同步与 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel文本与RO层级对齐.md`。保留无关的用户改动，只暂存本任务的资源新增与记录段。
+- 一次 `qwen3:8b-light` 同步请求 45 秒超时，无可用输出、无模型文件落盘，未重试。WorkBuddy 第 3 轮仅做中文同步，不是又一次修复失败。
+
 ## [VERIFY][协作][QWEN-MEM-20261023] 2026-10-23 文档/配置验收（当前，文档/配置核验通过，非业务验收）
 
 - 验收范围：Qwen 轻量路由、一次失败切换、五份英文工作记忆、完整中文历史保留、同步任务 ID 与当前证据一致；本任务不改游戏代码/资源或网关实现。

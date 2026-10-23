@@ -3,6 +3,14 @@
 
 > 查找、询问和方案正文已迁到 `Docs/AI/QUERY_TASKS.md`。以下保留项目代码/文件修改及其交接，旧记录不重新判定完成状态。
 
+## [FILES][任务][QUICKTASK-TEXT-20261023] QuickTaskPanel 按 RO 恢复任务文本，2026-10-23
+
+- 用户要求按截图补齐五类文本，节点命名与层级须与 RO 一致。分支 `codex/ui-script-cleanup`，基线 `e9f9a1b`，仅改 `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`：给 `TaskList/Viewport/TaskScrollView/Content/TaskTpl/Title/TitleText`、`Des/DesText`、`Deadline` 自身、`Limit/LimitText` 各补一个原生 UGUI Text。既有 `Target/TargetText1..5`（含用户已启用的 TargetText2）保持不变；未新增、改名或移动任何节点。
+- 保留 RO 原生文本/字体/颜色/布局字段：标题字号 16、BestFit1/Min14/Max16/MiddleLeft；其余三个字号 15、BestFit0/UpperLeft；沿用现有 Common.TTF。未恢复 RO 运行时或任务业务代码。meta 未变；除四个新增 Text 文档与四条组件列表项外，其余每个字节与真实改前镜像完全一致。
+- 豆包会话 `38448885557691394`、run `59493309331198466` 仅接收消息、无工具与交付，已确认 cancelled/stopped，不计有效查找轮次。WorkBuddy Hub `hub-bc16cc63-ee30-4867-9ef6-8e7c04db3e69`，原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`：第 1 轮只读定位 `run-c9b20c06-fa94-4d66-8aca-9778e93f8aed`；第 2 轮资源实施 `run-4aef2446-cf2a-4445-a493-a2f68eca3369`，已独立 accepted。两者分别是定位与实施阶段，不是失败轮次。
+- Codex 已核验静态保全与真实 Unity 导入（Missing Script=0、节点 57、Text 12→16），并完成独立渲染预览。PrefabStage 在编辑前核对时为 clean、导入时已不存在；未丢弃任何未保存现场。不宣称玩法/交互或客户端/服务端构建验收。changelog 与精确 Git 回执：`项目修改日志/2026-10-23-QuickTaskPanel文本与RO层级对齐.md`；证据与备份：`_temp/quicktask-text-20261023/`。双语同步与精确提交推送正在收尾。
+- 一次本地 `qwen3:8b-light` 中文同步请求 45 秒超时，无可用输出、无项目文件落盘，未重试。原 WorkBuddy Hub 第 3 轮仅限中文记录同步，与已 accepted 的资源修复相互独立。
+
 ## [FILES][协作][QWEN-MEM-20261023] 2026-10-23 Qwen 轻量委派与双语工作记忆（当前）
 
 - 范围：`AGENTS.md`、`AIconfig/config.toml`、`AIconfig/workflow.md`、豆包/WorkBuddy/Qwen 角色文件、五份 `.en.md` 记忆、对应中文记忆更新、修改日志 README 与本任务 changelog；逐项文件用途见 `项目修改日志/2026-10-23-QWEN-BILINGUAL-MEMORY-CHANGELOG.md`。

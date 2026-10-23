@@ -2,6 +2,14 @@
 
 Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_REPORT.md`. Historical pass counts are not fresh checks; unported IDs use the translation route in `PROJECT_CONTEXT.en.md` `[DOCS-READ]`.
 
+## [VERIFY][任务][QUICKTASK-TEXT-20261023] RO-style task text verification, 2026-10-23
+
+- Independent `node _temp/quicktask-text-20261023/verify.mjs` passed: 243→247 YAML documents, exactly four native Text additions and four owner entries, all other bytes/meta unchanged, no dangling component refs, native fields match actual RO source. Before SHA256 `d46af5362a807248f3535fcab1713ea72d0881872a4b1d338d1ab898b8ddf555`; after `cf1669113840623f18d8156bf758fc0c3e0cdee19f192f35885771ac8de03789`.
+- Actual Unity synchronous import/load passed: 57 nodes, zero missing scripts, Text12→16. The five original paths resolve to the expected Chinese labels; Common font, white Title/Des/Deadline/Limit and existing yellow Target are correct. No node naming/parent/order/active/RectTransform changes. Original TargetText2 remains enabled by the user.
+- Isolated preview-scene render `_temp/quicktask-text-20261023/after-preview.png` was visually inspected: all five categories display. Initial SceneView capture was blank and not acceptance evidence. First isolated render logged a temporary RenderTexture cleanup error; clearing the temporary camera target before disposal fixed it, and the rerun added no further errors (one prior entry remains). Preview scene was closed; no production scene/prefab save was performed by verification. No gameplay, interaction or client/server build was run.
+- WorkBuddy Hub `hub-bc16cc63-ee30-4867-9ef6-8e7c04db3e69` round2 `run-4aef2446-cf2a-4445-a493-a2f68eca3369` accepted using Codex evidence. Full change manifest, prior Doubao interruption, language synchronization and Git receipts: `项目修改日志/2026-10-23-QuickTaskPanel文本与RO层级对齐.md`. Preserve unrelated user changes and stage only this task's resource additions/record sections.
+- One `qwen3:8b-light` synchronization request timed out at 45 seconds with no usable output or model file writes; not retried. WorkBuddy round3 is Chinese synchronization only, not an additional repair failure.
+
 ## [VERIFY][任务][QUICKTASK-RECLEAN-20261023] QuickTaskPanel re-clean verification, 2026-10-23
 
 - Codex confirmed no PrefabStage was open, synchronously imported the current QuickTaskPanel disk asset and measured 58 missing scripts, 57 nodes and 78 valid UGUI MonoBehaviours. Exact valid component type/count snapshot: `_temp/quicktask-reclean-20261023/unity-before.json`.
