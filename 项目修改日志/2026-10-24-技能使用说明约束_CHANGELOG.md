@@ -30,5 +30,5 @@
 
 ## Git回执与未解决项
 
-- 提交、推送待验收后执行；不夹带工作区其他变更，不合入main。
-- 第1轮已完成委派执行与静态自检，Hub确认 `completed`、`holdsCapacity=false`、`runtimeSource=desktop_queue`。Codex核对报告及差异范围，接受其增量同步与检查结论，不重复双语逐项检查；模型未披露边界保留。技能路径疑问已用真实文件证据澄清，不改变已通过的中英增量。Git暂存、提交与推送回执待补录。
+- 主提交：`39d40a5`，8份文档净增61行；`git push origin codex/ui-script-cleanup`成功，远端由`62895f1`前进至`39d40a5`。本回执单独补录，不夹带工作区其他变更，不合入main。
+- 第1轮已完成委派执行与静态自检，Hub确认 `completed`、`holdsCapacity=false`、`runtimeSource=desktop_queue`。Codex核对报告及差异范围，接受其增量同步与检查结论，不重复双语逐项检查；模型未披露边界保留。技能路径疑问已用真实文件证据澄清，不改变已通过的中英增量。无阻止交付的未解决项。
