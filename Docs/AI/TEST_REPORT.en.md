@@ -15,6 +15,7 @@
 
 - Saved evidence `_temp/task-system-ui-20261024/final-verify-r6-result.txt` passed Task/QuickTaskPanel/UIRoot MissingScript and serialized-field checks, including all three MainView references, embedded prefab source paths, deadline text binding, readable description color, hidden debug nodes, fold-button binding, and wrapped task titles.
 - Saved evidence `_temp/task-system-ui-20261024/selftest-r6-result.txt` passed 28/28 assertions while `New Scene 1` was opened additively. It verified the formal UIRoot instance, default visibility (`QuickTaskPanel=true`, `TaskWindow=false`), two quick rows with deadline/no-deadline behavior, whole-window open, detail/target binding, list rebuild, listener disposal, fold/list-tab behavior, vertical-scroll configuration, and cleanup. The test objects and additive scene were closed without saving and the `Scene_Boot` asset file was unchanged; the evidence records `activeScene=Scene_Boot`, so a fully active New Scene run remains unverified.
+- The user's screenshots show `UIRoot(Clone)`, `UISELFTEST`, and `TEMP_EVENTSYSTEM_SELFTEST` under the `Scene_Boot` hierarchy. Although the saved `Scene_Boot.unity` asset is unchanged, the additive test did not isolate its temporary objects as requested. Keep 28/28 as self-check evidence only; it does not pass a Play run with `New Scene 1` active.
 - The current Codex retry did not obtain a new live run: Unity MCP reported a disconnected plugin session for hierarchy access, and `refresh_unity` timed out after 60 seconds. This is recorded as an environment boundary, not as a product failure or a new acceptance result.
 - Not covered by this acceptance: complete startup/login and server integration, mouse pointer raycast/occlusion, and real server-backed task actions. The known editor-only YooAsset exception occurs after task-window registration. WorkBuddy Hub `hub-6dda007e-eea2-4221-955f-0e15a75f0421` is `PROVIDER_BLOCKED`; no duplicate repair task was created.
 
@@ -22,13 +23,20 @@
 
 - Unity was found with the `New Scene 1` editor window and a responsive OS process. After selecting `LYF_MMO@47ea91c229a904f3` and sending a telemetry ping, Unity MCP still returned `ping not answered` for `mcpforunity://editor/state` and `read_console`; no fresh runtime assertion was counted.
 - Local compilation passed: `dotnet build GM_Game.csproj --no-restore --verbosity:minimal` returned 0 errors and 2 pre-existing dependency-version warnings. `Scene_Boot.unity` matches the Git HEAD blob exactly and has no task self-test marker on disk.
-- The saved WorkBuddy result remains 28/28 with the documented additive-load limitation (`activeScene=Scene_Boot`). A fully active independent New Scene play-mode run remains pending until the Unity MCP session answers.
+- The saved WorkBuddy result remains 28/28 with the documented additive-load limitation (`activeScene=Scene_Boot`); the screenshots also show test objects under the `Scene_Boot` hierarchy. A fully active independent New Scene play-mode run remains pending until the Unity MCP session answers.
+- In this continuation, the instance list still exposed `LYF_MMO@47ea91c229a904f3`; selecting it and rereading `mcpforunity://editor/state` again returned `ping not answered`. No scene operation or save was performed. The next Play run must first set `New Scene 1` active before creating test objects.
 
 ## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT] Pre-integration verification
 
 - Chinese delta synchronization for the wake retry was completed by `/root/sync_task_ui_records`; the changed Chinese sections passed `git diff --check`.
 - The final local client build passed with 0 errors and 2 pre-existing dependency-version warnings. The saved Unity evidence remains `FINAL ALL_PASS` and 28/28, with the additive-load and MCP-disconnection limits above.
 - The exact staging scope is limited to task scripts and metadata, `EnumDefine.cs`, `MainView.cs`, `MainCtrl.cs`, `UIRoot.prefab`, `Task.prefab`, `QuickTaskPanel.prefab`, the task analysis/difficulty log, the task changelog, and the four current-task/test-report language files. Unrelated user files and the untracked `New Scene 1` test scene remain unstaged.
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT-RESULT] Git integration receipt
+
+- Commit `ea6458f` (`feat: 接入任务系统 UI`) contains the 32-file task scope above.
+- `git push -u origin codex/task-system-ui` returned success and established the remote tracking branch.
+- Unrelated working-tree changes, `_temp/`, `.workbuddy/`, and the untracked `New Scene 1` test scene remain outside the commit.
 
 ## [VERIFY][协作][VERIFY-SUBAGENT-VISIBLE-WINDOW-20261024] Validate child-agent visibility instructions
 

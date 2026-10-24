@@ -6203,6 +6203,7 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 
 - WorkBuddy Step-5-Preview / `step-5-preview` 第 6 轮保存的 `_temp/task-system-ui-20261024/final-verify-r6-result.txt` 报告 `FINAL ALL_PASS`；`_temp/task-system-ui-20261024/selftest-r6-result.txt` 报告 28/28 通过、0 失败。核验覆盖正式 UIRoot 预嵌入、QuickTaskPanel 默认显示、TaskWindow 默认隐藏、TaskButton 开窗、Btn_Fold 折叠、截止时间/详情绑定、调试节点隐藏、标题换行及监听解绑。
 - 测试将 `LYF_MMO/Assets/GM_Game/Scenes/New Scene 1.unity` 以 additive 方式附加加载，`activeScene` 仍为 `Scene_Boot`，测试临时对象仅在内存中；结束时关闭附加场景且不保存，`Scene_Boot` 资产文件无改动。已有自检结果为隔离行为证据，不代表正式启动或联机验收。
+- 用户截图显示 `Scene_Boot` 层级下存在 `UIRoot(Clone)`、`UISELFTEST`、`TEMP_EVENTSYSTEM_SELFTEST`。尽管 `Scene_Boot.unity` 资产未保存修改，additive 自检并未按要求隔离测试对象；28/28 仅作自检证据，不能通过“New Scene 为活动场景”的 Play 验收。
 - Codex 本轮 Unity MCP 层级查询返回插件 session disconnected；脚本刷新等待编辑器就绪 60 秒后超时。此重试未获得新运行证据，不作为产品失败，也不覆盖已保存的 28 项自检结果。
 - 未覆盖完整启动/登录/服务端链路、真实鼠标射线遮挡，以及服务端接取、交付、放弃、奖励和导航行为；`MainView.InitView` 的已知编辑器态 YooAsset 异常发生在任务窗口注册之后。WorkBuddy Hub `hub-6dda007e-eea2-4221-955f-0e15a75f0421` 当前 `PROVIDER_BLOCKED`，本轮没有再唤醒或创建修复任务。
 - 对应过程与最终集成交接：`项目修改日志/2026-10-24-任务系统UI接入_CHANGELOG.md` 第十三节。Git 提交与推送尚未由本子任务执行。
@@ -6213,10 +6214,17 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 
 - Unity 进程窗口为 `LYFMMORGP - New Scene 1` 且操作系统层面响应；重选 `LYFMMORGP@47ea91c229a904f3` 并发送 telemetry ping 后，Unity MCP 的编辑器状态与 Console 仍返回 `ping not answered`，没有新的实时断言。
 - 本地 `dotnet build GM_Game.csproj --no-restore --verbosity:minimal` 通过，0 个错误、2 个既有依赖版本警告。`Scene_Boot.unity` 与 Git HEAD blob 完全一致，磁盘无任务自测标记。
-- WorkBuddy 保存的 28/28 结果仍为现有行为证据，且保留 `activeScene=Scene_Boot` 的 additive 加载限制；以 New Scene 为活动场景的独立 Play 验收仍待 Unity MCP 恢复响应。本次阻断属于工具环境边界，不判定为产品失败。
+- WorkBuddy 保存的 28/28 结果是自检证据，且 `activeScene=Scene_Boot` 与截图中的测试对象层级均表明它不满足独立场景要求；以 New Scene 为活动场景的 Play 验收仍待 Unity MCP 恢复响应。本次阻断属于工具环境边界，不判定为产品失败。
+- 本次继续重验时，实例列表仍列出 `LYF_MMO@47ea91c229a904f3`；重新选择后再次读取 `mcpforunity://editor/state` 仍返回 `ping not answered`。没有执行场景操作或保存；下次运行前需先将 `New Scene 1` 设为活动场景，再创建临时测试对象。
 
 ## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT] 集成前核验
 
 - `/root/sync_task_ui_records` 已完成唤醒重试段落的中文增量同步，修改范围为本任务对应段落，`git diff --check` 通过。
 - 本地 `GM_Game.csproj` 构建通过，0 个错误、2 个既有依赖版本警告；已保存 Unity 证据为 `FINAL ALL_PASS` 与 28/28，保留 additive 加载和 Unity MCP 断连边界。
 - 精确暂存范围仅包含任务脚本及 `.meta`、`EnumDefine.cs`、`MainView.cs`、`MainCtrl.cs`、`UIRoot.prefab`、`Task.prefab`、`QuickTaskPanel.prefab`、任务分析/难点与修改日志、四个当前任务/测试报告文件；无关用户改动及未跟踪 `New Scene 1` 测试场景保持不暂存。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT-RESULT] Git 集成回执
+
+- 提交 `ea6458f`（`feat: 接入任务系统 UI`）包含上述任务范围的 32 个文件。
+- `git push -u origin codex/task-system-ui` 返回成功，已建立远端跟踪分支。
+- 无关工作区改动、`_temp/`、`.workbuddy/` 与未跟踪 `New Scene 1` 测试场景均未进入提交。

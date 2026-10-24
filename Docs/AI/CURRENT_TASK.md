@@ -4116,14 +4116,21 @@
 
 - WorkBuddy Step-5-Preview 第 6 轮交付后，Hub `hub-6dda007e-eea2-4221-955f-0e15a75f0421` 当前为 `PROVIDER_BLOCKED`；没有重复唤醒或另派任务。最终结构/字段证据为 `FINAL ALL_PASS`，New Scene 1 自检为 28/28，任务 UI 范围已由 Codex 终验通过。
 - 任务 UI 已预先嵌入正式 `UIRoot.prefab`：QuickTaskPanel 默认显示，TaskWindow 默认隐藏；测试时将 `LYF_MMO/Assets/GM_Game/Scenes/New Scene 1.unity` 以 additive 方式附加加载，`activeScene` 仍为 `Scene_Boot`，测试临时对象只存在于内存。结束时关闭附加场景且不保存，`Scene_Boot` 资产文件无改动。
+- 用户截图显示编辑器层级 `Scene_Boot*` 下存在 `UIRoot(Clone)`、`UISELFTEST`、`TEMP_EVENTSYSTEM_SELFTEST`。因此，additive 加载 `New Scene 1` 的旧自检没有满足独立测试场景要求；28/28 仅保留为代码/自检证据，不作为 New Scene 活动场景 Play 验收。`Scene_Boot.unity` 提交资产未被保存修改，但后续不得在该场景层级创建测试对象。
 - Codex 本轮重试 Unity MCP 时收到 session disconnected，脚本刷新等待编辑器就绪 60 秒后超时；未取得新的实时播放结果。完整启动/登录/服务端链路、真实鼠标射线遮挡及服务端接取、交付、放弃、奖励、导航行为仍未覆盖；这些接口暂保持空壳。
-- 中文增量同步已完成；最终 Git 精确暂存、中文提交与推送由主 Agent 按任务范围执行，待本轮集成回执。
+- 中文增量同步、Git 精确暂存、中文提交与推送已完成；任务提交为 `ea6458f`，已推送 `origin/codex/task-system-ui`。
 
 ## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT] 集成前核验
 
 - `/root/sync_task_ui_records` 已完成唤醒重试段落的中文增量同步，修改范围 `CURRENT_TASK.md` 与 `TEST_REPORT.md`，`git diff --check` 通过。
 - 本地 `GM_Game.csproj` 构建为 0 个错误、2 个既有依赖版本警告；WorkBuddy 保存证据仍为 `FINAL ALL_PASS` 与 28/28，保留 additive 加载和 Unity MCP 断连边界。
-- 计划精确暂存任务脚本及 `.meta`、`EnumDefine.cs`、`MainView.cs`、`MainCtrl.cs`、三个任务 UI 预制体、任务分析/难点与修改日志、四个当前任务/测试报告文件；无关用户改动和未跟踪 `New Scene 1` 测试场景不纳入。
+- 已按计划精确暂存任务脚本及 `.meta`、`EnumDefine.cs`、`MainView.cs`、`MainCtrl.cs`、三个任务 UI 预制体、任务分析/难点与修改日志、四个当前任务/测试报告文件；无关用户改动和未跟踪 `New Scene 1` 测试场景未纳入。
+
+## [HANDOFF][任务][TASK-SYSTEM-UI-20261024-GIT-RESULT] Git 集成回执
+
+- 提交：`ea6458f`（`feat: 接入任务系统 UI`），包含本任务精确清单内的 32 个文件。
+- 推送：`git push -u origin codex/task-system-ui` 返回成功，远端已建立 `origin/codex/task-system-ui` 跟踪。
+- 暂存外改动仍保留，未跟踪 `New Scene 1` 测试场景、`.workbuddy/`、`_temp/` 与其他用户文件未提交。
 
 ## [VERIFY][任务][TASK-SYSTEM-UI-20261024-WAKE] 继续唤醒后的主 Agent 核验
 
@@ -4132,6 +4139,7 @@
 - Unity 进程 `LYFMMORGP - New Scene 1` 在操作系统层面仍响应；重选 Unity MCP 实例 `LYFMMORGP@47ea91c229a904f3` 并发送 telemetry ping 后，编辑器状态和 Console 仍返回 `ping not answered`，未取得新的实时层级或播放结果。
 - 本地执行 `dotnet build GM_Game.csproj --no-restore --verbosity:minimal` 通过，0 个错误、2 个既有依赖版本警告。`LYF_MMO/Assets/Boot/Scene_Boot.unity` 与 Git HEAD blob 逐字节一致，磁盘上未发现任务自测标记。
 - 本次唤醒重试属于工具环境边界，不判定为产品失败；WorkBuddy 保存的 28/28 New Scene 1 证据仍是现有行为证据，其 `activeScene=Scene_Boot` 限制保持不变。独立以 New Scene 为活动场景的实时 Play 验收仍待 Unity MCP 恢复响应。
+- 本次继续重验时，实例列表仍列出 `LYF_MMO@47ea91c229a904f3`；重新选择后再次读取 `mcpforunity://editor/state` 仍为 `ping not answered`。没有执行场景操作或保存。下次运行前必须先将 `New Scene 1` 设为活动场景，再创建临时对象；旧 28/28 结果不满足该验收条件。
 
 
 ## [FILES][协作][TASK-SUBAGENT-SKILL-20261024] 2026-10-24 项目本地子Agent协作技能

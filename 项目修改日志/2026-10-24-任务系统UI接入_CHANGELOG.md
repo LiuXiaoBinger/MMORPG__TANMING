@@ -341,4 +341,17 @@
   - 修改资源及其既有 `.meta`：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`、`LYF_MMO/Assets/artres/Resources/UI/Prefabs/Task.prefab`、`LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`。
   - 记录文件：`项目分析/项目难点.md`、`项目修改日志/2026-10-24-任务系统UI接入_CHANGELOG.md`、`Docs/AI/CURRENT_TASK.en.md`、`Docs/AI/CURRENT_TASK.md`、`Docs/AI/TEST_REPORT.en.md`、`Docs/AI/TEST_REPORT.md`。
 - 明确排除：字体资产、`UserSettings`、`yoo` 临时清单、`hfs/~temp.vfs`、`.workbuddy/`、`.agents/skills/token-monitor/`、无关查询/技能记录、未跟踪 `LYF_MMO/Assets/GM_Game/Scenes/New Scene 1.unity` 及 `.meta`、`_temp/` 全部中间证据。
-- 当前分支为 `codex/task-system-ui`；上述文件将在本节之后精确暂存，提交说明使用中文并包含验证结果与本日志路径，推送结果以 Git 终端回执为准。
+- 当前分支为 `codex/task-system-ui`；上述 32 个文件已精确暂存并按中文提交说明提交，推送结果在第十六节记录。
+
+## 十六、Git 提交与推送回执（2026-10-24）
+
+- 精确暂存的 32 个任务文件已提交，提交号：`ea6458f`，提交说明：`feat: 接入任务系统 UI`。
+- 执行 `git push -u origin codex/task-system-ui` 返回成功，远端已建立并跟踪 `origin/codex/task-system-ui`。
+- 本回执提交后，工作区中字体、UserSettings、Yoo manifest、`.workbuddy/`、`_temp/`、`hfs/~temp.vfs`、token-monitor 与未跟踪 `New Scene 1` 测试场景等无关内容仍保持原状，未被覆盖或提交。
+
+## 十七、用户场景边界纠正与 Unity MCP 重验（2026-10-24）
+
+- 用户截图中的 `Scene_Boot*` 层级显示 `UIRoot(Clone)`、`UISELFTEST`、`TEMP_EVENTSYSTEM_SELFTEST`。虽然 `Scene_Boot.unity` 磁盘文件与提交版本一致，截图证明先前 additive 打开 `New Scene 1` 的自检对象未满足隔离要求；28/28 保留为自检证据，不作为 New Scene 活动场景 Play 验收。
+- 本轮重新选择 Unity 实例 `LYF_MMO@47ea91c229a904f3` 后，`mcpforunity://editor/state` 再次返回 `Unity session not ready ... (ping not answered)`。未执行场景操作或保存。
+- 后续运行验证先激活 `New Scene 1` 再创建临时对象；Unity MCP 恢复前，该项保持未完成。任务 UI 资源仍预先保存在 `UIRoot.prefab`，不是通过运行时代码创建正式窗口或面板。
+- 本次只更新协作/验收记录，未修改业务代码、Unity 资源、场景资产或提交历史。
