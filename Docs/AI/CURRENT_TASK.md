@@ -4184,3 +4184,14 @@
 - 验证：编译 0 错误；预制体回读一致；`Task.prefab` 仅 +25 行，无整体重排。
 - 未验证：未在播放态实点叉号、未实际拖动窗口。拖动换算依赖嵌套 Canvas 的 scaleFactor=1 与根画布缩放一致。
 - 文件：`UIRoot.prefab`、`MainView.cs`、`QuickTaskPanel.prefab`、`Task.prefab`；日志 `项目修改日志/2026-10-24-功能菜单侧展与任务窗交互_CHANGELOG.md`。
+
+## [FILES][界面][CHATWINDOW-LAYOUT-20261024] 聊天窗下移避让快捷任务面板
+
+> 中文对应记录；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[CHATWINDOW-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- 播放态实测 `UIRoot/Canvas/MainView`（1920×1080，原点居中）：可见聊天面板 `BG` 占 y −322~308，而 `TypeGrp` 为 y 298~332、`Btn_Fold` y 290~340、`TaskList` y 128~298，聊天窗顶部压住页签行与整个任务列表区。
+- `UIRoot.prefab`：`Canvas/MainView/ChatWindow` 锚定位置 (299, −6.67) 改为 (299, −205)，即下移 198.33；锚点 (0, 0.5)、Pivot 与尺寸 530×630 不变。
+- 结果：聊天窗 y −520~110，距任务列表下沿（128）18，距画布下边界（−540）20，与页签行、折叠按钮均无重叠。
+- 验证：预制体回读与播放态实时回读一致；运行中的实例也同步位移，无需重启即可看到效果。
+- 未验证：未逐一排查画面底部其他 HUD 与新位置是否冲突；播放态实例的位移在退出播放态后回滚，以预制体为准。
+- 文件：`UIRoot.prefab`；日志 `项目修改日志/2026-10-24-聊天窗下移避让任务面板_CHANGELOG.md`。

@@ -6249,3 +6249,12 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - `Task.prefab`：`Img_Bg/BG/Img_TitleBg` 上存在 `WindowTitleDragHandle`，`_targetWindow` 指向 `TaskWindow` 实例自身，标题栏 `raycastTarget` 为 true。`UIRoot` 实例内叉号 `calls=1`、方法 `OnCloseButtonClick`、目标 `TaskWindow`、同一实例为 true。
 - Unity 强制刷新并请求编译，Console error 0。改动量：`Task.prefab` +25 行、`UIRoot.prefab` 4 行、`QuickTaskPanel.prefab` 6 行，无整体重排。
 - 未建立：未在播放态实点叉号、未实际拖动窗口；拖动换算依赖嵌套 Canvas 的 scaleFactor=1 与根 CanvasScaler 缩放一致。菜单展开仍为 `SetActive` 直接显示，未加滑动补间。
+
+## [VERIFY][界面][VERIFY-CHATWINDOW-LAYOUT-20261024] 聊天窗与快捷任务面板位置校验
+
+> 中文对应记录；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-CHATWINDOW-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- 改动前播放态回读：聊天 `BG` y −322~308，`TypeGrp` y 298~332、`Btn_Fold` y 290~340、`TaskList` y 128~298，重叠成立。
+- 改动后预制体回读：`ChatWindow.anchoredPosition` 为 (299, −205)。播放态按同一偏移应用后回读：聊天窗 y −520~110，距任务列表下沿 18，距画布下边界 20。
+- 未改动其他节点；X 偏移（299）与尺寸（530×630）保持不变，与屏幕左边缘的相对关系不变。
+- 未建立：未对新位置下画面底部其他 HUD 做视觉排查，也未检查聊天输入框/滚动区在屏幕底部是否被裁切。

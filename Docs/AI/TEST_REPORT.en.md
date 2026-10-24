@@ -165,3 +165,10 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - `Task.prefab`: `WindowTitleDragHandle` present on `Img_Bg/BG/Img_TitleBg`, `_targetWindow` points to the `TaskWindow` instance itself, title bar `raycastTarget` is true. Close button in the `UIRoot` instance reports calls=1, method `OnCloseButtonClick`, target `TaskWindow`, same instance true.
 - Unity forced refresh plus compile request produced 0 console errors. `Task.prefab` changed by +25 lines, `UIRoot.prefab` by 4, `QuickTaskPanel.prefab` by 6; no whole-file re-serialization.
 - Not established: no play-mode click on the close button and no real drag test; drag delta conversion assumes the nested canvas `scaleFactor` of 1 equals the root `CanvasScaler` factor of 1. Menu expansion is still an instant `SetActive`, no slide tween.
+
+## [VERIFY][界面][VERIFY-CHATWINDOW-LAYOUT-20261024] Chat window position against the quick task panel
+
+- Play-mode readback before the change: chat `BG` y -322..308 vs `TypeGrp` y 298..332, `Btn_Fold` y 290..340, `TaskList` y 128..298, confirming the reported overlap.
+- Prefab readback after the change: `ChatWindow.anchoredPosition` is (299, -205). Live play-mode readback after applying the same offset: chat y -520..110, gap to the task list bottom 18, gap to the canvas bottom 20.
+- No other node was moved; the X offset (299) and size (530x630) are unchanged, so the horizontal alignment with the left screen edge is preserved.
+- Not established: no visual pass over other bottom HUD elements at the new position, and no check of the chat input/scroll area for clipping at the screen bottom.

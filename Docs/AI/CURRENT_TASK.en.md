@@ -165,3 +165,12 @@ Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese develo
 - Verified: compile 0 errors; prefab readbacks match; `Task.prefab` diff is +25 lines with no re-serialization churn.
 - Not verified: no play-mode click on the close button and no actual drag. Drag scaling relies on the nested canvas `scaleFactor` of 1 matching the root CanvasScaler of 1.
 - Files: `UIRoot.prefab`, `MainView.cs`, `QuickTaskPanel.prefab`, `Task.prefab`; log `项目修改日志/2026-10-24-功能菜单侧展与任务窗交互_CHANGELOG.md`.
+
+## [FILES][界面][CHATWINDOW-LAYOUT-20261024] Chat window moved down to clear the quick task panel
+
+- Measured in play mode on `UIRoot/Canvas/MainView` (1920x1080, centered origin): visible chat `BG` occupied y -322..308 while `TypeGrp` is y 298..332, `Btn_Fold` y 290..340 and `TaskList` y 128..298, so the chat top covered the tab row and the whole list area.
+- `UIRoot.prefab`: `Canvas/MainView/ChatWindow` anchoredPosition (299, -6.67) changed to (299, -205), i.e. moved down 198.33; anchor (0, 0.5), pivot and size 530x630 unchanged.
+- Result: chat y -520..110, 18 units below the task list bottom (128) and 20 units above the canvas bottom (-540); no overlap with tabs or fold button.
+- Verified: prefab readback and a live play-mode readback both match; the running instance was also shifted so the change is visible without restarting.
+- Not verified: no review of whether other bottom HUD elements collide with the new chat position; the live instance offset rolls back when play mode ends and the prefab remains the source of truth.
+- Files: `UIRoot.prefab`; log `项目修改日志/2026-10-24-聊天窗下移避让任务面板_CHANGELOG.md`.
