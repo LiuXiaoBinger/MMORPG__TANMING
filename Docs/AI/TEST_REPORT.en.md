@@ -157,3 +157,11 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Behavior check on a temporary prefab instance: `InitWidget` then `SetFolded(true)` plus `DOTween.CompleteAll()` moves `TaskList.anchoredPosition.x` 152.10 to -127.90 (right edge -979.55, outside the -960 canvas edge); `SetFolded(false)` restores 152.10; the node stays active in both states.
 - Unity forced refresh plus compile request produced 0 console errors. The temporary instance was destroyed with `DestroyImmediate`; no asset or scene was saved.
 - Not established: an actual play-mode click and tween feel in `Scene_MainCity` (the active scene was `Scene_Boot`), and any visual review of the final placement on screen.
+
+## [VERIFY][界面][VERIFY-FUNCTIONMENU-LAYOUT-20261024] Function menu side expansion and task window drag
+
+- Prefab readback on `UIRoot.prefab`: arrow button x[-936,-828] y[405,443]; `FunctionMenuContent` x[-820,-476] y[378,470], its left edge 8px right of the arrow's right edge; entry centers at x -774/-692/-610/-528/-446, all at y 424.
+- Spacing readback after the extra 25 down-shift: tab row y[298,332], fold button y[290,340], task list y[128,298]; gap to the entry row bottom (382) is 50 canvas units.
+- `Task.prefab`: `WindowTitleDragHandle` present on `Img_Bg/BG/Img_TitleBg`, `_targetWindow` points to the `TaskWindow` instance itself, title bar `raycastTarget` is true. Close button in the `UIRoot` instance reports calls=1, method `OnCloseButtonClick`, target `TaskWindow`, same instance true.
+- Unity forced refresh plus compile request produced 0 console errors. `Task.prefab` changed by +25 lines, `UIRoot.prefab` by 4, `QuickTaskPanel.prefab` by 6; no whole-file re-serialization.
+- Not established: no play-mode click on the close button and no real drag test; drag delta conversion assumes the nested canvas `scaleFactor` of 1 equals the root `CanvasScaler` factor of 1. Menu expansion is still an instant `SetActive`, no slide tween.

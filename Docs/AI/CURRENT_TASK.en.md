@@ -153,3 +153,15 @@ Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese develo
 - Verified: compile 0 errors; prefab readback matches; `UIRoot.prefab` has no overrides on those three nodes; temporary instance fold -> 152.10 to -127.90 (fully left of the -960 canvas edge) -> back to 152.10 with the node still active.
 - Not verified: no play-mode click on `Scene_MainCity` (active scene was `Scene_Boot`); targets validated with `DOTween.CompleteAll()`. Pre-existing `TaskList`/`ChatWindow` overlap slightly increased and was left alone.
 - Files: `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`, `LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/Widget/QuickTaskPanelWidget.cs`; log `项目修改日志/2026-10-24-任务面板折叠与重合修正_CHANGELOG.md`.
+
+## [FILES][界面][FUNCTIONMENU-LAYOUT-20261024] Function menu side expansion, spacing and task window drag
+
+- Correction to the previous round: the side expansion the user meant is the function menu entry group (Knapsack/Role/Skill/Setting/Task), not the quick task list. The earlier quick-task-list horizontal fold is kept as chosen previously.
+- `UIRoot.prefab`: `FunctionMenuContent` anchoredPosition (0,-46) to (116,-46) so the entry group now sits 8px to the right of the arrow button inner edge; `FunctionMenuButton` (0,0) to (0,-73) so the arrow shares the row's vertical center. Resulting canvas boxes: arrow x[-936,-828] y[405,443], content x[-820,-476] y[378,470], entry centers x -774/-692/-610/-528/-446.
+- `MainView.SetFunctionMenuVisible`: arrow rotation changed from up/down (0 / 180) to left/right (90 expanded, -90 collapsed) to match the new direction; field comment updated.
+- `QuickTaskPanel.prefab`: `TypeGrp`, `TaskList` and nested `Btn_Fold` moved down another 25 (y -225.31 / -327.22 / -225.31), raising the gap below the menu row from 25 to 50 canvas units.
+- `Task.prefab`: enabled `m_RaycastTarget` on `Img_Bg/BG/Img_TitleBg` and added `WindowTitleDragHandle` on that node with `_targetWindow` set to the Task root. Added as a prefab-instance component override, so the shared `Panel_Common_Medium` base prefab is untouched. Same approach as `KnapsackWindow/BG/Line` and `RoleAttriibuteWindow/Line`.
+- Close button: chain was already complete (Btn_Close -> OnCloseButtonClick -> CloseRequested -> TaskCtrl -> CloseWindow). Verified binding in the `UIRoot` instance (calls=1, same instance). No code change.
+- Verified: compile 0 errors; prefab readbacks match; `Task.prefab` diff is +25 lines with no re-serialization churn.
+- Not verified: no play-mode click on the close button and no actual drag. Drag scaling relies on the nested canvas `scaleFactor` of 1 matching the root CanvasScaler of 1.
+- Files: `UIRoot.prefab`, `MainView.cs`, `QuickTaskPanel.prefab`, `Task.prefab`; log `项目修改日志/2026-10-24-功能菜单侧展与任务窗交互_CHANGELOG.md`.

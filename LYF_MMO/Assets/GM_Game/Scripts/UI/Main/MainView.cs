@@ -39,7 +39,7 @@ public class MainView : UIBase
    /// <summary>四个功能入口的容器，收起时整组隐藏且不接收点击。</summary>
    [SerializeField, Header("功能菜单内容")] private GameObject _functionMenuContent;
 
-   /// <summary>开关内的RO下箭头，收起时朝下，展开时绕Z轴旋转180度朝上。</summary>
+   /// <summary>开关内的箭头，收起时朝右提示可向右展开，展开时朝左提示可收回。</summary>
    [SerializeField, Header("功能菜单箭头")] private RectTransform _functionMenuArrow;
 
    /// <summary>功能菜单中的背包入口，复用B键的窗口与镜头流程。</summary>
@@ -88,11 +88,13 @@ public class MainView : UIBase
       _functionMenuContent.SetActive(visible);
       if (visible)
       {
-         _functionMenuArrow.localEulerAngles = new Vector3(0f, 0f, 180f);
+         // 入口组在箭头右侧展开后，箭头转为朝左，提示可以收回。
+         _functionMenuArrow.localEulerAngles = new Vector3(0f, 0f, 90f);
       }
       else
       {
-         _functionMenuArrow.localEulerAngles = Vector3.zero;
+         // 收起时箭头朝右，提示入口组会从右侧展开。
+         _functionMenuArrow.localEulerAngles = new Vector3(0f, 0f, -90f);
       }
    }
 

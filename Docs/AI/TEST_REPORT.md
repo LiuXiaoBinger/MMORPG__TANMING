@@ -6239,3 +6239,13 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - 临时实例行为校验：`InitWidget` 后 `SetFolded(true)` 并 `DOTween.CompleteAll()`，`TaskList.anchoredPosition.x` 由 152.10 变 −127.90（右边界 −979.55，已在画布左边界 −960 之外）；`SetFolded(false)` 回到 152.10；两种状态下节点均保持 active。
 - Unity 强制刷新并请求编译，Console error 0；临时实例用 `DestroyImmediate` 销毁，未保存任何资源或场景。
 - 未建立：`Scene_MainCity` 播放态实点折叠按钮与补间观感（活动场景为 `Scene_Boot`），以及最终上屏位置的人工视觉确认。
+
+## [VERIFY][界面][VERIFY-FUNCTIONMENU-LAYOUT-20261024] 功能菜单侧面展开与任务窗拖动
+
+> 中文对应记录；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-FUNCTIONMENU-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- `UIRoot.prefab` 回读：箭头按钮 x[−936,−828] y[405,443]；`FunctionMenuContent` x[−820,−476] y[378,470]，左边缘在箭头右边缘右侧 8 像素；五个入口中心 X 为 −774/−692/−610/−528/−446，Y 均为 424。
+- 再下移 25 后回读：页签行 y[298,332]、折叠按钮 y[290,340]、任务列表 y[128,298]；与入口行下沿 382 的间距为 50 画布单位。
+- `Task.prefab`：`Img_Bg/BG/Img_TitleBg` 上存在 `WindowTitleDragHandle`，`_targetWindow` 指向 `TaskWindow` 实例自身，标题栏 `raycastTarget` 为 true。`UIRoot` 实例内叉号 `calls=1`、方法 `OnCloseButtonClick`、目标 `TaskWindow`、同一实例为 true。
+- Unity 强制刷新并请求编译，Console error 0。改动量：`Task.prefab` +25 行、`UIRoot.prefab` 4 行、`QuickTaskPanel.prefab` 6 行，无整体重排。
+- 未建立：未在播放态实点叉号、未实际拖动窗口；拖动换算依赖嵌套 Canvas 的 scaleFactor=1 与根 CanvasScaler 缩放一致。菜单展开仍为 `SetActive` 直接显示，未加滑动补间。

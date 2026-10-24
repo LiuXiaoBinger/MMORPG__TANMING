@@ -4170,3 +4170,17 @@
 - 验证：编译 0 错误；预制体回读一致；`UIRoot.prefab` 对这三个节点无覆盖；临时实例折叠 x 152.10→−127.90（完全越过画布左边界 −960）→ 再展开回 152.10，节点保持 active。
 - 未验证：未在 `Scene_MainCity` 播放态实点折叠按钮（活动场景为 `Scene_Boot`），补间终值用 `DOTween.CompleteAll()` 校验；`TaskList` 与 `ChatWindow` 的既有重叠略增，未处理。
 - 文件：`LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`、`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/Widget/QuickTaskPanelWidget.cs`；日志 `项目修改日志/2026-10-24-任务面板折叠与重合修正_CHANGELOG.md`。
+
+## [FILES][界面][FUNCTIONMENU-LAYOUT-20261024] 功能菜单侧面展开、间距与任务窗拖动
+
+> 中文对应记录；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[FUNCTIONMENU-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- 更正上一轮理解：用户所说的“侧面展开”指功能菜单入口组（背包/角色/技能/设置/任务），不是快捷任务列表。上一轮按用户选择做的任务列表横向收起保留，未回退。
+- `UIRoot.prefab`：`FunctionMenuContent` 锚定位置 (0,−46)→(116,−46)，入口组落在箭头按钮右侧 8 像素；`FunctionMenuButton` (0,0)→(0,−73)，箭头与入口组同一行垂直居中。结果：箭头 x[−936,−828] y[405,443]，内容 x[−820,−476] y[378,470]，五个入口中心 X 为 −774/−692/−610/−528/−446。
+- `MainView.SetFunctionMenuVisible`：箭头由上下翻转（0/180）改为左右指示（展开 90 朝左、收起 −90 朝右），字段注释同步。
+- `QuickTaskPanel.prefab`：`TypeGrp`、`TaskList`、嵌套 `Btn_Fold` 再下移 25（−225.31 / −327.22 / −225.31），与菜单按钮下沿间距由 25 增至 50 画布单位。
+- `Task.prefab`：标题栏 `Img_Bg/BG/Img_TitleBg` 开启 `m_RaycastTarget`，并在该节点新增 `WindowTitleDragHandle`，`_targetWindow` 指向 Task 根节点。该节点属于共用基础预制体 `Panel_Common_Medium` 的实例，组件以实例新增形式写入，不改基础预制体；与 `KnapsackWindow/BG/Line`、`RoleAttriibuteWindow/Line` 同款方案。
+- 叉号关闭：链路本来完整（Btn_Close → OnCloseButtonClick → CloseRequested → TaskCtrl → CloseWindow），已在 `UIRoot` 实例内复核绑定（calls=1、目标同一实例），未改代码。
+- 验证：编译 0 错误；预制体回读一致；`Task.prefab` 仅 +25 行，无整体重排。
+- 未验证：未在播放态实点叉号、未实际拖动窗口。拖动换算依赖嵌套 Canvas 的 scaleFactor=1 与根画布缩放一致。
+- 文件：`UIRoot.prefab`、`MainView.cs`、`QuickTaskPanel.prefab`、`Task.prefab`；日志 `项目修改日志/2026-10-24-功能菜单侧展与任务窗交互_CHANGELOG.md`。
