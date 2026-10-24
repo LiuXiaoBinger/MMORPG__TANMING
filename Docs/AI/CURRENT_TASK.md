@@ -4158,3 +4158,15 @@
 - 更新 `.agents/skills/project-subagent-coordination/SKILL.md`，加入可见性工作流：派发前打开或选中原生桌面执行窗口；执行期间保持任务/状态条目可用；完成后保留结果条目；执行者没有实时操作窗口时明确说明限制。
 - 规则区分原生 WorkBuddy/Doubao 窗口、Hub 状态页以及 Qwen 的 Ollama 终端/状态输出；不得把状态页或模型自报信息呈现为实时操作视图。本次未修改项目业务代码或运行时资源。
 - 完整文件清单、验证结果和 UI 可用性未决边界见 `项目修改日志/2026-10-24-子Agent协作技能.md`。
+
+## [FILES][界面][QUICKTASK-LAYOUT-20261024] 任务面板折叠方式与功能菜单重合修正
+
+> 中文对应记录；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[QUICKTASK-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- 用户指出主界面功能菜单一行与快捷任务面板重合，要求折叠改成“侧面收缩（横向）”，不是上下收缩，并保留现有铅笔图标。
+- 实测 `UIRoot` 画布（1920×1080）：功能菜单按钮占 y 382~466；`TypeGrp` y 353~387、`Btn_Fold` y 345~395 越过了 382，且 `Btn_Fold` 横向 −692~−592 压住“设置”“任务”两个按钮。
+- `QuickTaskPanel.prefab`：`TypeGrp`、`TaskList` 与嵌套 `Btn_Fold` 实例覆盖三处同步下移 30（y −170.31→−200.31、−272.22→−302.22），下移后页签行与菜单下沿间距 25、折叠按钮 17。
+- `QuickTaskPanelWidget.cs`：新增 `using DG.Tweening`、常量 `FoldOffsetX = -280f` / `FoldDuration = 0.22f`、基准坐标 `_listBaseAnchoredX`、补间句柄 `_listTween` 与 `MoveTaskListSideways`；`SetFolded` 由 `SetActive(false)` 改为 `DOAnchorPosX` 横向滑出，页签行与折叠按钮保持原位；按钮旋转按用户要求保持不变。
+- 验证：编译 0 错误；预制体回读一致；`UIRoot.prefab` 对这三个节点无覆盖；临时实例折叠 x 152.10→−127.90（完全越过画布左边界 −960）→ 再展开回 152.10，节点保持 active。
+- 未验证：未在 `Scene_MainCity` 播放态实点折叠按钮（活动场景为 `Scene_Boot`），补间终值用 `DOTween.CompleteAll()` 校验；`TaskList` 与 `ChatWindow` 的既有重叠略增，未处理。
+- 文件：`LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`、`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/Widget/QuickTaskPanelWidget.cs`；日志 `项目修改日志/2026-10-24-任务面板折叠与重合修正_CHANGELOG.md`。

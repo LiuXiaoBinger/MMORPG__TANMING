@@ -6228,3 +6228,14 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - 提交 `ea6458f`（`feat: 接入任务系统 UI`）包含上述任务范围的 32 个文件。
 - `git push -u origin codex/task-system-ui` 返回成功，已建立远端跟踪分支。
 - 无关工作区改动、`_temp/`、`.workbuddy/` 与未跟踪 `New Scene 1` 测试场景均未进入提交。
+
+## [VERIFY][界面][VERIFY-QUICKTASK-LAYOUT-20261024] 任务面板折叠方式与重合修正
+
+> 中文对应记录；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-QUICKTASK-LAYOUT-20261024]`。仅同步本次新增段落。
+
+- 修改前在 `UIRoot` 画布实测：功能菜单按钮 y 382~466，`TypeGrp` y 353~387、`Btn_Fold` y 345~395，重叠成立。
+- 修改后用 `PrefabUtility.LoadPrefabContents` 回读：`TypeGrp (153.92, −200.31)`、`TaskList (152.10, −302.22)`、`Btn_Fold (318.44, −200.31)`；与菜单下沿间距分别为 25 与 17 画布单位。
+- `UIRoot.prefab` 中这三个 fileID 的引用计数为 0，嵌套预制体改动可透传到主界面实例。
+- 临时实例行为校验：`InitWidget` 后 `SetFolded(true)` 并 `DOTween.CompleteAll()`，`TaskList.anchoredPosition.x` 由 152.10 变 −127.90（右边界 −979.55，已在画布左边界 −960 之外）；`SetFolded(false)` 回到 152.10；两种状态下节点均保持 active。
+- Unity 强制刷新并请求编译，Console error 0；临时实例用 `DestroyImmediate` 销毁，未保存任何资源或场景。
+- 未建立：`Scene_MainCity` 播放态实点折叠按钮与补间观感（活动场景为 `Scene_Boot`），以及最终上屏位置的人工视觉确认。

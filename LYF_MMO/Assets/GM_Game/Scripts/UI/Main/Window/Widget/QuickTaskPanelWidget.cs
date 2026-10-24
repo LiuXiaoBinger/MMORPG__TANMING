@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
     [SerializeField] private QuickTaskItemWidget _taskTemplate;
     /// <summary>条目挂载父节点，绑定 TaskList/Viewport/TaskScrollView/Content。</summary>
     [SerializeField] private RectTransform _content;
-    /// <summary>任务列表根节点，折叠时整体隐藏、页签保留，绑定 TaskList。</summary>
+    /// <summary>任务列表根节点，折叠时整列横向左移出画布、页签保留，绑定 TaskList。</summary>
     [SerializeField] private RectTransform _taskListRoot;
     /// <summary>三个页签点击按钮，依次绑定 Type_1..3 的 Off 按钮（未选中态可点）。</summary>
     [SerializeField] private Button[] _pageButtons;
@@ -25,7 +26,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
     [SerializeField] private GameObject[] _pageOffNodes;
     /// <summary>
     /// 折叠按钮，绑定 QuickTaskPanel 根下正式新增的 Btn_Fold（复用 Btn_Small_02 项目视觉资源）。
-    /// 点击在折叠与展开之间切换：折叠隐藏任务列表、保留页签，按钮绕 Z 轴旋转 180 度指示状态。
+    /// 点击在折叠与展开之间切换：折叠把任务列表横向移出画布、保留页签，按钮绕 Z 轴旋转 180 度指示状态。
     /// </summary>
     [SerializeField] private Button _foldButton;
 
@@ -44,8 +45,16 @@ public class QuickTaskPanelWidget : MonoBehaviour
     private readonly List<QuickTaskItemWidget> _items = new List<QuickTaskItemWidget>();
     /// <summary>页签按钮事件是否已注册，避免重复订阅。</summary>
     private bool _pageButtonsRegistered;
-    /// <summary>当前是否处于折叠状态，折叠时只保留页签、隐藏任务列表。</summary>
+    /// <summary>当前是否处于折叠状态，折叠时任务列表横向移出画布、页签保留。</summary>
     private bool _isFolded;
+    /// <summary>任务列表收起时相对原位的横向位移量，负值表示向屏幕左侧移出，保证整列落到画布左边界之外。</summary>
+    private const float FoldOffsetX = -280f;
+    /// <summary>任务列表收起与展开的补间时长，单位秒。</summary>
+    private const float FoldDuration = 0.22f;
+    /// <summary>任务列表展开状态下的锚定 X 坐标，初始化时记录，收起与展开都以它为准。</summary>
+    private float _listBaseAnchoredX;
+    /// <summary>任务列表横向位移补间句柄，重复折叠时先终止上一条，避免位移叠加。</summary>
+    private Tweener _listTween;
 
     /// <summary>初始化模板与页签，由主界面视图调用一次。</summary>
     public void InitWidget()
@@ -53,6 +62,11 @@ public class QuickTaskPanelWidget : MonoBehaviour
         if (_taskTemplate != null)
         {
             _taskTemplate.gameObject.SetActive(false);
+        }
+        if (_taskListRoot != null)
+        {
+            // 记录任务列表展开态的原位横坐标，折叠位移始终相对该值计算。
+            _listBaseAnchoredX = _taskListRoot.anchoredPosition.x;
         }
         RegisterPageButtons();
         RegisterFoldButton();
@@ -108,20 +122,42 @@ public class QuickTaskPanelWidget : MonoBehaviour
         SyncPageTabs();
     }
 
-    /// <summary>设置面板折叠状态：折叠时隐藏任务列表、保留页签，展开时恢复并刷新。</summary>
+    /// <summary>设置面板折叠状态：折叠时任务列表横向滑出画布、页签保留，展开时滑回原位并刷新。</summary>
     /// <param name="folded">true 折叠，false 展开。</param>
     public void SetFolded(bool folded)
     {
         _isFolded = folded;
-        if (_taskListRoot != null)
-        {
-            _taskListRoot.gameObject.SetActive(folded == false);
-        }
+        MoveTaskListSideways(folded);
         RotateFoldButton();
         if (folded == false)
         {
             RefreshTrackedTasks();
         }
+    }
+
+    /// <summary>
+    /// 按折叠状态横向移动任务列表：收起时整列向左移出画布左边界，页签行与折叠按钮保持原位。
+    /// 收起不隐藏节点，展开时条目继续按当前追踪任务刷新。
+    /// </summary>
+    /// <param name="folded">true 收起，false 展开。</param>
+    private void MoveTaskListSideways(bool folded)
+    {
+        if (_taskListRoot == null)
+        {
+            return;
+        }
+        if (_listTween != null)
+        {
+            _listTween.Kill();
+            _listTween = null;
+        }
+        // 任务列表本次横向补间的目标 X 坐标，展开时回到初始化记录的锚定 X。
+        float targetX = _listBaseAnchoredX + FoldOffsetX;
+        if (folded == false)
+        {
+            targetX = _listBaseAnchoredX;
+        }
+        _listTween = _taskListRoot.DOAnchorPosX(targetX, FoldDuration).SetEase(Ease.OutQuad);
     }
 
     /// <summary>请求打开任务主窗口，供任务入口按钮调用，事件由任务控制器消费。</summary>

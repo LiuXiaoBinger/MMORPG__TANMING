@@ -148,3 +148,12 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Manual content review confirmed the skill differentiates task-creation model selection from prohibited mid-task switching and preserves the project's scope, execution identity, repair-round and final acceptance constraints.
 - This is a project-local instruction/metadata change only. No Unity/client/server build or runtime test applies. Existing unrelated worktree changes were preserved.
 - Unresolved: no WorkBuddy UI task was created to test selecting Hy4 preview, and no new Doubao task was created; model availability at a future dispatch remains subject to the client menu. Chinese record synchronization and Git status are tracked in the changelog.
+
+## [VERIFY][界面][VERIFY-QUICKTASK-LAYOUT-20261024] Quick task panel fold direction and overlap
+
+- Layout measured on the live `UIRoot` canvas before the change: function menu buttons y 382..466 vs `TypeGrp` y 353..387 and `Btn_Fold` y 345..395, confirming the reported overlap.
+- After the change, `PrefabUtility.LoadPrefabContents` readback gives `TypeGrp (153.92, -200.31)`, `TaskList (152.10, -302.22)`, `Btn_Fold (318.44, -200.31)`; gaps below the menu become 25 and 17 canvas units.
+- `UIRoot.prefab` contains 0 references to the three overridden fileIDs, so the nested prefab change propagates to the main view instance.
+- Behavior check on a temporary prefab instance: `InitWidget` then `SetFolded(true)` plus `DOTween.CompleteAll()` moves `TaskList.anchoredPosition.x` 152.10 to -127.90 (right edge -979.55, outside the -960 canvas edge); `SetFolded(false)` restores 152.10; the node stays active in both states.
+- Unity forced refresh plus compile request produced 0 console errors. The temporary instance was destroyed with `DestroyImmediate`; no asset or scene was saved.
+- Not established: an actual play-mode click and tween feel in `Scene_MainCity` (the active scene was `Scene_Boot`), and any visual review of the final placement on screen.

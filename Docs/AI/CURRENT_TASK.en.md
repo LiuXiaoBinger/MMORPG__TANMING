@@ -143,3 +143,13 @@ Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese develo
 - Added `.agents/skills/project-subagent-coordination/SKILL.md` and its `agents/openai.yaml` as a project-local Codex skill; no global skill directory was changed.
 - The skill routes bounded lightweight work to `qwen3:8b-light`, selects WorkBuddy `Hy4 preview` at new-task creation when the UI still marks it as night-free, and explicitly requests Doubao `豆包 2.1 Pro`. It also summarizes scoped task briefs, seven-round limits, original-task repair and Codex acceptance.
 - Implementation scope is documentation/skill metadata only. Existing unrelated dirty files were retained. Validation and unresolved limitations: `Docs/AI/TEST_REPORT.en.md` `[VERIFY-SUBAGENT-SKILL-20261024]`; manifest: `项目修改日志/2026-10-24-子Agent协作技能.md`.
+
+## [FILES][界面][QUICKTASK-LAYOUT-20261024] Quick task panel fold direction and menu overlap fix
+
+- User reported that the function menu row and the quick task panel overlapped, and asked for a sideways (horizontal) fold instead of the vertical one, keeping the existing pencil icon.
+- Measured on the live `UIRoot` canvas (1920x1080): function menu buttons occupy y 382..466; `TypeGrp` y 353..387 and `Btn_Fold` y 345..395 intruded past 382, and `Btn_Fold` x -692..-592 also covered the Setting and Task buttons.
+- `QuickTaskPanel.prefab`: `TypeGrp`, `TaskList` and the nested `Btn_Fold` instance override each moved down 30 (y -170.31 to -200.31, -272.22 to -302.22). Resulting gaps below the menu: tabs 25, fold button 17.
+- `QuickTaskPanelWidget.cs`: added `using DG.Tweening`, constants `FoldOffsetX = -280f` and `FoldDuration = 0.22f`, cached `_listBaseAnchoredX`, tween handle `_listTween`, and `MoveTaskListSideways`. `SetFolded` now slides `TaskList` horizontally via `DOAnchorPosX` instead of `SetActive(false)`; tabs and fold button stay in place. Button rotation kept unchanged as requested.
+- Verified: compile 0 errors; prefab readback matches; `UIRoot.prefab` has no overrides on those three nodes; temporary instance fold -> 152.10 to -127.90 (fully left of the -960 canvas edge) -> back to 152.10 with the node still active.
+- Not verified: no play-mode click on `Scene_MainCity` (active scene was `Scene_Boot`); targets validated with `DOTween.CompleteAll()`. Pre-existing `TaskList`/`ChatWindow` overlap slightly increased and was left alone.
+- Files: `LYF_MMO/Assets/artres/Resources/UI/Prefabs/QuickTaskPanel.prefab`, `LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/Widget/QuickTaskPanelWidget.cs`; log `项目修改日志/2026-10-24-任务面板折叠与重合修正_CHANGELOG.md`.
