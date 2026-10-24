@@ -4195,3 +4195,12 @@
 - 验证：预制体回读与播放态实时回读一致；运行中的实例也同步位移，无需重启即可看到效果。
 - 未验证：未逐一排查画面底部其他 HUD 与新位置是否冲突；播放态实例的位移在退出播放态后回滚，以预制体为准。
 - 文件：`UIRoot.prefab`；日志 `项目修改日志/2026-10-24-聊天窗下移避让任务面板_CHANGELOG.md`。
+
+## [FILES][协作][TOKEN-REPORT-RULE-20261024] 每任务 Token 用量报告规则
+
+> 中文对应记录；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[TOKEN-REPORT-RULE-20261024]`。仅同步本次新增段落。
+
+- 用户要求建立持久规则：每项任务交付时说明 Token/额度用在何处，并在可用时使用新安装的 token-monitor 技能。
+- 已更新 `AGENTS.md`、`AIconfig/workflow.md` 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]` 路由规则。要求分别报告项目上下文/规则、用户请求、工具调用输入/输出、子 Agent/WorkBuddy 工作，以及重复读取/返工/上下文压缩/验证。
+- 报告保留 `~` 估算标记，并区分本地日志测量值与订阅余额/重置时间；缺失维度应写为未测量，不得记作零。英文更新后委派中文同步和增量一致性检查。
+- 证据与精确文件清单：`项目修改日志/2026-10-24-token-usage-reporting_CHANGELOG.md`；本地原始输出保留于 `_temp/token-monitor-20261024/`。

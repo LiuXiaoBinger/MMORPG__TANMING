@@ -172,3 +172,11 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Prefab readback after the change: `ChatWindow.anchoredPosition` is (299, -205). Live play-mode readback after applying the same offset: chat y -520..110, gap to the task list bottom 18, gap to the canvas bottom 20.
 - No other node was moved; the X offset (299) and size (530x630) are unchanged, so the horizontal alignment with the left screen edge is preserved.
 - Not established: no visual pass over other bottom HUD elements at the new position, and no check of the chat input/scroll area for clipping at the screen bottom.
+
+## [VERIFY][协作][VERIFY-TOKEN-REPORT-20261024] Token usage reporting rule and local measurement
+
+- `npx -y @ryandemelo/token-monitor collect` completed successfully and stored the local database at `C:/Users/lyf/.token-monitor/token-monitor.sqlite`; the source summary reported Codex 60 files, 9,268 turns and 5,494 new records, with Codex totals marked experimental.
+- Latest post-collection 30-day local report measured 13 sessions, 5,212 turns, 88.5M input, 2.2M output, 587.4M cache-read, 87% cache hit and estimated cost `~$291.69`; activity share was thinking 67.9M (74.9%), coding 9.5M (10.5%), conversation 13.3M (14.6%). These aggregate window totals include prior sessions and are not this rule change's isolated usage, account quota or billing statements.
+- Context analysis measured a 31.8k-token session floor and reported tool-result carry as unmeasured because this source window does not persist it; no MCP calls were recorded by the monitor window. Coverage is Codex 9/30 days with a four-day gap. Displayed zero rework/tool-error metrics do not establish real-world absence where source coverage is incomplete.
+- The new rule requires future delivery reports to separate context/rules, user request, tool inputs/outputs, subagent/WorkBuddy, and repeated reads/rework/compaction/verification. Subscription remaining quota and reset time remain unmeasured without an account API.
+- A follow-up collection on 2026-10-24 found 19 new Codex records; the source remains experimental. Latest report output is retained in `_temp/token-monitor-20261024/report-trend-latest.txt`; Chinese synchronization and incremental consistency checking are delegated for this ID.

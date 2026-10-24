@@ -174,3 +174,10 @@ Default agent edition. `Docs/AI/CURRENT_TASK.md` retains complete Chinese develo
 - Verified: prefab readback and a live play-mode readback both match; the running instance was also shifted so the change is visible without restarting.
 - Not verified: no review of whether other bottom HUD elements collide with the new chat position; the live instance offset rolls back when play mode ends and the prefab remains the source of truth.
 - Files: `UIRoot.prefab`; log `项目修改日志/2026-10-24-聊天窗下移避让任务面板_CHANGELOG.md`.
+
+## [FILES][协作][TOKEN-REPORT-RULE-20261024] Per-task token usage reporting
+
+- User requested a durable rule that every task reports where token/credit usage went and uses the newly installed token-monitor skill.
+- Updated `AGENTS.md`, `AIconfig/workflow.md`, and the `[DOCS-READ]` routing rule in `Docs/AI/PROJECT_CONTEXT.en.md`. The required categories are context/project rules, user request, tool-call input/output, subagent/WorkBuddy work, and repeated reads/rework/compaction/verification.
+- The report must preserve `~` estimates and distinguish local log measurements from subscription balance/reset data. Missing dimensions are reported as unmeasured, never as zero. Chinese synchronization and delta checking are delegated after this English update.
+- Evidence and exact file manifest: `项目修改日志/2026-10-24-token-usage-reporting_CHANGELOG.md`; raw local output is retained under `_temp/token-monitor-20261024/`.
