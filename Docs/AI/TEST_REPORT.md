@@ -6268,3 +6268,14 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - 上下文分析测得 31.8k-token 的会话底数；由于来源时间窗未持久化工具结果携带量，该项报告为未测量；监控时间窗没有记录 MCP 调用。Codex 来源覆盖为 30 天中的 9 天，存在四天数据缺口，且 Codex 总量标注为实验性统计。报表在现有覆盖数据中显示返工/工具错误轮次为 0；该显示值不代表缺失时间段或实际全量活动中的真实零发生。
 - 新规则要求今后的交付报告区分上下文/规则、用户请求、工具输入/输出、子 Agent/WorkBuddy，以及重复读取/返工/上下文压缩/验证。没有账户 API 时，订阅剩余额度和重置时间保持未测量。
 - 2026-10-24 的后续 collect 新增 19 条 Codex 记录，来源仍标注为实验性统计；最新报告输出保存在 `_temp/token-monitor-20261024/report-trend-latest.txt`。本 ID 的中文同步和增量一致性检查由子 Agent 执行。
+
+## [VERIFY][界面][VERIFY-CHATWINDOW-COVER-20261024] 聊天窗覆盖任务区与自展开的校验边界
+
+> 中文对应记录；英文对应 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-CHATWINDOW-COVER-20261024]`。仅同步本次新增段落。
+
+- 静态通过：`UIRoot.prefab` YAML 文档数 5490（与 HEAD 相同）、重复 fileID 0、悬空 `{fileID}` 引用 64 处（与 HEAD 集合完全相同，均为嵌套预制体内部引用），说明本轮手改 YAML 未破坏引用结构。
+- 静态通过：回读 `ChatWindow`(299,−90 / 530×860)、`Img_BG01`(−27,0 / 480.38×860)、`Img_BG02` 与 `ChatLineGroup`(16.5,27.5 / 375.49×761)、`ChatSenderPanel`(238,40 / 456×58)、子控件 (33,−1)/(−58,3)/(79,0)/(166,3)、`BtnClose`(493,0)，与设计目标逐项一致；`startCollapsed=0`、`BG.m_IsActive=1`、`QuickChat.m_IsActive=0`。
+- 静态通过：`MainView` 子节点顺序为 … 8 `QuickTaskPanel` / 9 `RoleAttriibuteWindow` / 10 `ChatWindow` / 11 `KnapsackWindow` / 12 `SettingPanel` / 13 `TaskWindow`，聊天窗高于任务面板、低于任务主窗口。
+- 未测量：播放态实测。切到 `Scene_MainCity` 播放入口后 Unity 编辑器 MCP 通道中断，`mcp-for-unity` 侧日志显示插件每 45 秒 `Plugin registered` 后又被判 `Connection likely dead`，`execute_code` 全部超时返回空，直到本轮结束未恢复；因此「发送 / 接收 / 上下滚动」三项均属于未测量，不能记为通过。
+- 未测量：画面级观感。左侧整列 860 高是否压住底部 HUD（`RoleCurrtInfoWindow` 位于底部中央 x[−465,465] y[−515,−365]，与聊天窗横向重叠 69 像素，改动前即存在）未做截图确认。
+- 已知副作用：`SaveAsPrefabAsset` 保存时把 `QuickTaskPanel` 等嵌套实例的若干 `m_AnchoredPosition` 覆盖显式化写入 `m_Modifications`（值与原继承值相同），diff 因此有约 28 行噪声，不影响运行结果。

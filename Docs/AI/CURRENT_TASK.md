@@ -4204,3 +4204,17 @@
 - 已更新 `AGENTS.md`、`AIconfig/workflow.md` 与 `Docs/AI/PROJECT_CONTEXT.en.md` 的 `[DOCS-READ]` 路由规则。要求分别报告项目上下文/规则、用户请求、工具调用输入/输出、子 Agent/WorkBuddy 工作，以及重复读取/返工/上下文压缩/验证。
 - 报告保留 `~` 估算标记，并区分本地日志测量值与订阅余额/重置时间；缺失维度应写为未测量，不得记作零。英文更新后委派中文同步和增量一致性检查。
 - 证据与精确文件清单：`项目修改日志/2026-10-24-token-usage-reporting_CHANGELOG.md`；本地原始输出保留于 `_temp/token-monitor-20261024/`。
+
+## [FILES][界面][CHATWINDOW-COVER-20261024] 聊天窗自展开并覆盖快捷任务区
+
+> 中文对应记录；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[CHATWINDOW-COVER-20261024]`。仅同步本次新增段落。
+
+- 纠偏：可见聊天面板由 `Assets/artres/Resources/Scripts/Chat/ChatWindows.cs` + `ChatWindowCollapseController.cs` 驱动；`GM_Game` 的旧 `ChatWindow` 只挂在 inactive 的 `ChatWindow_遗弃` 上，不参与运行。`BtnSend` 由 `ChatWindows.Awake` 用代码绑定，预制体无 persistent call 属正常，上一轮「发送无回调」判断有误。
+- 「打不开」的真实原因：`ChatWindowCollapseController.startCollapsed = 1`，首帧即 `SetExpanded(false)` 隐藏 `BG`、只留 `QuickChat`。改为 `0`，并把 `BG.m_IsActive` 置 1、`QuickChat.m_IsActive` 置 0。
+- 「丑」的真实原因：`QuickTaskPanel` 在 `MainView` 子节点排 13、`ChatWindow` 排 9，任务面板画在聊天窗之上形成穿插。把 `QuickTaskPanel` 调到索引 8，`ChatWindow` 升到 10，`TaskWindow`(13) 仍在其上。
+- `Canvas/MainView/ChatWindow`：(299, −205)/530×630 → (299, −90)/530×860，画布矩形 x[−926, −396] y[−520, 340]，上沿压过 `Btn_Fold`/`TypeGrp`/`TaskList` 整块任务区，下沿距画布底 20，与功能菜单留 38。
+- 面板内部随高度重排：底板 480.38×860；消息区与视口 375.49×761（(16.5, 27.5)）；输入条收到 456×58（(238, 40)），子控件 `BtnVoice`(33,−1)/`InputMessage`(−58,3)/`BtnFace`(79,0)/`BtnSend`(166,3) 等距 8，不再伸出底板右沿；`BtnClose` 由 491.9998 校正到 493（贴底板右沿外侧），尺寸 30×128 不变。
+- 顺手修正 `TogProfession` 页签文案 `队伍` → `职业`（与 `TogTeam` 重名）。未动 `ChatLineGroupContent` 的 `VerticalLayoutGroup` 与锚点，`ChatWindows.ConfigureChatList()` 明确保留预制体原布局，避免影响消息行尺寸。
+- 验证：预制体 YAML 文档数 5490 与 HEAD 一致、无重复 fileID、悬空引用 64 处与 HEAD 完全相同（均为嵌套预制体内部引用）；回读节点矩形与目标值逐项一致；未改脚本。
+- 未验证：未做播放态实测。切到 `Scene_MainCity` 播放后 Unity 编辑器 MCP 通道断开（编辑器侧 `[WebSocket] Keep-alive failed`，插件每 45 秒重连但请求无法送达），发送/接收/滚动均未实测。
+- 文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`；日志 `项目修改日志/2026-10-24-聊天窗覆盖任务区与自展开_CHANGELOG.md`。
