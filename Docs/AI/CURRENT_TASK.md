@@ -4218,3 +4218,16 @@
 - 验证：预制体 YAML 文档数 5490 与 HEAD 一致、无重复 fileID、悬空引用 64 处与 HEAD 完全相同（均为嵌套预制体内部引用）；回读节点矩形与目标值逐项一致；未改脚本。
 - 未验证：未做播放态实测。切到 `Scene_MainCity` 播放后 Unity 编辑器 MCP 通道断开（编辑器侧 `[WebSocket] Keep-alive failed`，插件每 45 秒重连但请求无法送达），发送/接收/滚动均未实测。
 - 文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`；日志 `项目修改日志/2026-10-24-聊天窗覆盖任务区与自展开_CHANGELOG.md`。
+
+## [UI][任务][TASKTAB-20261024] 任务窗口页签交互 / 聊天默认收起 / 任务图标补齐
+
+> 对应英文段落见 `Docs/AI/CURRENT_TASK.en.md` `[TASKTAB-20261024]`。
+
+- 任务主窗口此前**没有任何页签**，页签只在左上角快捷面板。本次在 `TaskSelectPart` 顶部新增 `TabBar`(200×44) 与三个标准 `Toggle`：`Tab_MainLine`/`Tab_Daily`/`Tab_Activity`（62×38，中心 x=34/100/166，标签「主线/日常/活动」）。为让位，`Toggroup` 与 `Obj_Toggle` 高度 471.60→427.60、`Toggroup.anchoredPosition.y` 0.02→-21.98（anchor 为 0.5/0.5，高度减 44 后中心自然下移 22）。
+- `TaskWindow.cs` 新增 `_pageTabs`、`event Action<TaskPageFilter> PageChanged`、`RegisterPageTabs()`、`SyncPageTabs()`（`SetIsOnWithoutNotify` + `_syncingTabs` 抑制自激）、`IndexToPage()`；`InitWindow` 注册、`ReFreshUI` 同步选中态。`TaskCtrl` 订阅 `PageChanged`，复用 `TaskMgr.SetCurrentPage → TaskDataChanged → RefreshAll` 链路，与快捷面板共用同一页签状态。
+- 修重建残留：`DestroyRow()` 改为先 `SetParent(null,false)` 再 `Destroy`。原实现依赖帧末延迟销毁，同帧连续切页签会让旧行继续参与布局、出现跨页签内容叠加。
+- 快捷面板页签文案「任务/玩法/奇遇」统一为「主线/日常/活动」，与 `TaskPageFilter` 语义对齐。
+- 聊天窗改回进游戏默认收起：`startCollapsed` 0→1、`ChatWindow/BG` `m_IsActive` 1→0、`QuickChat` 0→1。此前"聊天打不开"的根因是手改 YAML 后 Unity 未重新导入，运行时仍是旧内存副本；手改预制体后必须 `ForceUpdate | ForceSynchronousImport` 再进播放模式。
+- 功能菜单 `TaskButton` 原先缺 `Icon`（其余四个入口都有）。图标取**项目内** `CommonIcon.png` 的 `UI_Commonicon_Icon_top_Task`（18×22），无需从 RO 项目取图；新增 `TaskButton/Icon`，参数对齐兄弟节点（anchor(0,1)/pivot(0.5,0.5)、pos(40,-29)、size(58,44)、preserveAspect、raycastTarget=false、index 0）。
+- 任务系统无服务端数据源（`TaskMgr.SetTasks` 全项目无调用点、无配置表）。为可验证页签，新增 `TaskDevSampleData.cs`，整体 `#if UNITY_EDITOR` 包裹、仅在三个页签均为空时注入一次共 9 条示例任务并打印 Warning；接正式协议时删掉 `TaskCtrl` 内 3 行调用即可。
+- 文件：`Task.prefab`、`TaskWindow.cs`、`TaskCtrl.cs`、`QuickTaskPanel.prefab`、`UIRoot.prefab`；新增 `TaskDevSampleData.cs`。日志 `项目修改日志/2026-10-24-任务页签交互与聊天默认收起_CHANGELOG.md`。

@@ -46,6 +46,8 @@ public class TaskWindow : WindowBase
     [SerializeField] private GameObject _startButtonRoot;
     /// <summary>取消（放弃任务）按钮根节点，绑定 TaskInfo/Image/Btn_Cancel，无可放弃任务时隐藏。</summary>
     [SerializeField] private GameObject _cancelButtonRoot;
+    /// <summary>页签按钮组，索引顺序固定为主线、日常、活动，与 TaskPageFilter 的枚举值一一对应。</summary>
+    [SerializeField, Header("页签按钮组（主线/日常/活动）")] private Toggle[] _pageTabs;
 
     /// <summary>请求关闭本窗口。</summary>
     public event Action CloseRequested;
@@ -59,6 +61,8 @@ public class TaskWindow : WindowBase
     public event Action<TaskViewData> GiveUpRequested;
     /// <summary>请求前往任务目标。</summary>
     public event Action<TaskViewData> NavigateRequested;
+    /// <summary>页签切换请求，参数为目标页签，由控制器写入 TaskMgr 后统一刷新。</summary>
+    public event Action<TaskPageFilter> PageChanged;
 
     /// <summary>当前窗口展示的任务数据序列，按页签筛选结果填充。</summary>
     private readonly List<TaskViewData> _pageTasks = new List<TaskViewData>();
@@ -68,11 +72,16 @@ public class TaskWindow : WindowBase
     private TaskParentItemWidget _parentItem;
     /// <summary>可接筛选开关事件是否已注册，避免重复订阅。</summary>
     private bool _toggleRegistered;
+    /// <summary>页签按钮事件是否已注册，避免重复订阅。</summary>
+    private bool _tabsRegistered;
+    /// <summary>是否正在程序化同步页签选中态，用于抑制同步过程产生的切换回调。</summary>
+    private bool _syncingTabs;
 
     /// <summary>注册筛选开关、隐藏列表模板并刷新一次内容。</summary>
     public override void InitWindow()
     {
         RegisterAcceptableToggle();
+        RegisterPageTabs();
         HideListTemplates();
         RefreshTaskList();
     }
@@ -82,6 +91,7 @@ public class TaskWindow : WindowBase
     public override void ReFreshUI(object obj)
     {
         RefreshTaskList();
+        SyncPageTabs();
     }
 
     /// <summary>按当前页签重新取任务集合并重建列表、详情与空态。</summary>
@@ -279,7 +289,7 @@ public class TaskWindow : WindowBase
         _childItems.Clear();
     }
 
-    /// <summary>销毁列表行节点，按项目正常运行态的对象销毁流程处理。</summary>
+    /// <summary>销毁列表行节点，先脱离父级再销毁，避免同一帧内连续重建时旧行仍参与布局。</summary>
     /// <param name="row">要销毁的条目节点。</param>
     private void DestroyRow(GameObject row)
     {
@@ -287,6 +297,8 @@ public class TaskWindow : WindowBase
         {
             return;
         }
+        // Object.Destroy 延迟到帧末执行，先摘下父级可让旧行立即退出列表布局，防止连续切换页签时叠加。
+        row.transform.SetParent(null, false);
         UnityEngine.Object.Destroy(row);
     }
 
@@ -520,5 +532,93 @@ public class TaskWindow : WindowBase
     private void OnAcceptableToggleChanged(bool isOn)
     {
         RefreshTaskList();
+    }
+
+    /// <summary>注册页签按钮的切换事件，只注册一次；索引与 TaskPageFilter 枚举值对应。</summary>
+    private void RegisterPageTabs()
+    {
+        if (_tabsRegistered)
+        {
+            return;
+        }
+        if (_pageTabs == null || _pageTabs.Length == 0)
+        {
+            return;
+        }
+        // 循环索引：按页签顺序逐个绑定并初始化选中态。
+        for (int i = 0; i < _pageTabs.Length; i++)
+        {
+            // 当前索引对应的页签按钮，允许留空跳过。
+            Toggle tab = _pageTabs[i];
+            if (tab == null)
+            {
+                continue;
+            }
+            // 该按钮对应的页签枚举值，索引 0/1/2 分别对应主线/日常/活动。
+            TaskPageFilter page = IndexToPage(i);
+            tab.onValueChanged.AddListener(isOn => OnPageTabValueChanged(page, isOn));
+        }
+        _tabsRegistered = true;
+        SyncPageTabs();
+    }
+
+    /// <summary>页签被点选时的回调：只在被选中时切换页签，取消选中不触发切换。</summary>
+    /// <param name="page">该按钮对应的页签。</param>
+    /// <param name="isOn">按钮当前是否选中。</param>
+    private void OnPageTabValueChanged(TaskPageFilter page, bool isOn)
+    {
+        if (_syncingTabs || isOn == false)
+        {
+            return;
+        }
+        if (TaskMgr.Instance != null && TaskMgr.Instance.GetCurrentPage() == page)
+        {
+            SyncPageTabs();
+            return;
+        }
+        if (PageChanged != null)
+        {
+            PageChanged.Invoke(page);
+        }
+        SyncPageTabs();
+    }
+
+    /// <summary>把页签按钮的选中态同步为 TaskMgr 当前的页签，同步期间不触发切换回调。</summary>
+    public void SyncPageTabs()
+    {
+        if (_pageTabs == null || _pageTabs.Length == 0)
+        {
+            return;
+        }
+        // 当前页签由数据层持有，界面只做镜像，避免窗口与快捷面板选中不一致。
+        TaskPageFilter current = TaskMgr.Instance == null ? TaskPageFilter.MainLine : TaskMgr.Instance.GetCurrentPage();
+        _syncingTabs = true;
+        // 循环索引：按页签顺序刷新选中态。
+        for (int i = 0; i < _pageTabs.Length; i++)
+        {
+            if (_pageTabs[i] == null)
+            {
+                continue;
+            }
+            _pageTabs[i].SetIsOnWithoutNotify(IndexToPage(i) == current);
+            _pageTabs[i].interactable = true;
+        }
+        _syncingTabs = false;
+    }
+
+    /// <summary>把页签按钮的索引换算成页签枚举，越界时回落主线。</summary>
+    /// <param name="index">页签按钮在组内的索引，0/1/2 对应主线/日常/活动。</param>
+    /// <returns>对应的页签枚举值。</returns>
+    private TaskPageFilter IndexToPage(int index)
+    {
+        if (index == 1)
+        {
+            return TaskPageFilter.Daily;
+        }
+        if (index == 2)
+        {
+            return TaskPageFilter.Activity;
+        }
+        return TaskPageFilter.MainLine;
     }
 }

@@ -189,3 +189,19 @@ Default agent edition. Full Chinese developer history remains in `Docs/AI/TEST_R
 - Not measured: play-mode behaviour. After entering `Scene_MainCity` play mode the Unity MCP bridge dropped; the `mcp-for-unity` log shows the plugin re-registering every 45 s and then being marked `Connection likely dead`, and every `execute_code` call timed out empty until the end of the round. Send, receive and vertical scrolling are therefore unmeasured, not passing.
 - Not measured: visual review. Whether the full-height left column clips the bottom HUD (`RoleCurrtInfoWindow` sits at bottom-centre x[−465,465] y[−515,−365] and already overlapped the chat rect by 69 units before this change) was not confirmed with a screenshot.
 - Known side effect: `SaveAsPrefabAsset` materialised several nested-instance `m_AnchoredPosition` overrides (same values as the inherited ones) into `m_Modifications`, adding roughly 28 lines of diff noise with no runtime effect.
+
+## [VERIFY][Task][VERIFY-TASKTAB-20261024] Play-mode verification of task tabs and collapsed chat
+
+- Environment: Unity editor play mode, full login chain `Scene_Boot → Scene_Login → Scene_CreateRole → Scene_MainCity`.
+- Login: account `weq` / password `1111`, server 「1区 五域大陆(新服)」, character 「剑修 Lv.1」, entered `Scene_MainCity` successfully.
+- Pass: chat is collapsed on entering the city (`BG.activeSelf=False`, `QuickChat.activeSelf=True`).
+- Pass: task window opens (`activeInHierarchy=True`) and all three tabs switch the page correctly (`GetCurrentPage()` MainLine↔Daily↔Activity), with the list rebuilt per page (mainline 4 / daily 3 / activity 2).
+- Pass: after three switches in the same frame `Content` holds 6 children (1 template + 1 parent + 4 children) with no cross-page residue.
+- Pass: list scrolling. With 20 stress rows injected, contentH=1178.1, viewportH=427.6, scrollable 750.5; bottom gives `verticalNormalizedPosition=0.000` and `contentY=750.5`, top gives `1.000` and `contentY=0.0`.
+- Pass: detail pane follows the selection (title, orange remaining time, objectives, description). A zoomed crop confirms the title is dark grey on the blue bar — readable but low contrast.
+- Pass: top-right X closes the window (`Btn_Close` → `TaskWindow.OnCloseButtonClick`, active True→False).
+- Pass: `TaskButton/Icon.sprite = UI_Commonicon_Icon_top_Task.png`; quick panel labels read 主线/日常/活动.
+- Not measured: title-bar dragging only confirmed the `WindowTitleDragHandle` component is present; no real mouse drag was performed.
+- Not measured: reward area content. `TaskViewData` has no reward detail fields and `TaskWindow` only toggles `_rewardItem` visibility without instantiating entries, so 完成奖励 is always empty. Pre-existing gap.
+- Not measured: resolution adaptation beyond 1080p.
+- Known side effect: `TaskDevSampleData` injects 9 sample tasks in the editor and logs a `[TaskDevSampleData]` warning; the file is excluded from builds.

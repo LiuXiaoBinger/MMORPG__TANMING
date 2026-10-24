@@ -45,6 +45,7 @@ public class TaskCtrl : CtrlBase
             _taskWindow.DeliverRequested += RequestDeliver;
             _taskWindow.GiveUpRequested += RequestGiveUp;
             _taskWindow.NavigateRequested += RequestNavigate;
+            _taskWindow.PageChanged += OnPageChanged;
         }
         if (_quickPanel != null)
         {
@@ -58,6 +59,10 @@ public class TaskCtrl : CtrlBase
         {
             TaskMgr.Instance.TaskDataChanged += OnTaskDataChanged;
         }
+#if UNITY_EDITOR
+        // 编辑器联调：任务服务端未接入前注入示例任务，便于验证页签切换、列表滚动与详情联动。
+        TaskDevSampleData.InjectIfEmpty();
+#endif
         _actionsRegistered = true;
     }
 
@@ -76,6 +81,7 @@ public class TaskCtrl : CtrlBase
             _taskWindow.DeliverRequested -= RequestDeliver;
             _taskWindow.GiveUpRequested -= RequestGiveUp;
             _taskWindow.NavigateRequested -= RequestNavigate;
+            _taskWindow.PageChanged -= OnPageChanged;
         }
         if (_quickPanel != null)
         {

@@ -6279,3 +6279,21 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - 未测量：播放态实测。切到 `Scene_MainCity` 播放入口后 Unity 编辑器 MCP 通道中断，`mcp-for-unity` 侧日志显示插件每 45 秒 `Plugin registered` 后又被判 `Connection likely dead`，`execute_code` 全部超时返回空，直到本轮结束未恢复；因此「发送 / 接收 / 上下滚动」三项均属于未测量，不能记为通过。
 - 未测量：画面级观感。左侧整列 860 高是否压住底部 HUD（`RoleCurrtInfoWindow` 位于底部中央 x[−465,465] y[−515,−365]，与聊天窗横向重叠 69 像素，改动前即存在）未做截图确认。
 - 已知副作用：`SaveAsPrefabAsset` 保存时把 `QuickTaskPanel` 等嵌套实例的若干 `m_AnchoredPosition` 覆盖显式化写入 `m_Modifications`（值与原继承值相同），diff 因此有约 28 行噪声，不影响运行结果。
+
+## [VERIFY][任务][VERIFY-TASKTAB-20261024] 任务页签与聊天收起实机验证
+
+> 对应英文段落见 `Docs/AI/TEST_REPORT.en.md` `[VERIFY-TASKTAB-20261024]`。
+
+- 环境：Unity 编辑器播放模式，`Scene_Boot → Scene_Login → Scene_CreateRole → Scene_MainCity` 全链路实登。
+- 登录：账号 `weq` / 密码 `1111`，选服「1区 五域大陆(新服)」，角色「剑修 Lv.1」点击进入游戏，进入 `Scene_MainCity` 成功。
+- 通过：进主城聊天默认收起（`BG.activeSelf=False`、`QuickChat.activeSelf=True`）。
+- 通过：任务窗口打开后 `TaskWindow.activeInHierarchy=True`，页签三档切换均正确改页（`GetCurrentPage()` MainLine↔Daily↔Activity），列表重建为对应页签任务集（主线 4 / 日常 3 / 活动 2）。
+- 通过：同帧连续切三次后 `Content` 子节点 6（模板 1 + 父条目 1 + 子条目 4），无跨页签残留。
+- 通过：列表滚动。压测注入 20 条后 contentH=1178.1、viewportH=427.6、可滚 750.5；置底 `verticalNormalizedPosition=0.000` 且 `contentY=750.5`，置顶 `1.000` 且 `contentY=0.0`。
+- 通过：详情区随选中任务更新（标题、橙色剩余时间、任务目标、任务描述正文）。放大截图确认标题栏文字为深灰字压在蓝底上，可读但对比度偏低。
+- 通过：右上角 X 关窗（`Btn_Close` → `TaskWindow.OnCloseButtonClick`，窗口 active True→False）。
+- 通过：`TaskButton/Icon.sprite = UI_Commonicon_Icon_top_Task.png`；快捷面板页签文案为 主线/日常/活动。
+- 未测量：标题栏拖拽仅确认 `WindowTitleDragHandle` 组件在位，未执行真实鼠标拖拽。
+- 未测量：奖励区内容。`TaskViewData` 无奖励明细字段、`TaskWindow` 只对 `_rewardItem` 做显隐而不实例化奖励项，"完成奖励"区域始终为空，属既有功能缺口。
+- 未测量：1080p 以外的分辨率适配。
+- 已知副作用：`TaskDevSampleData` 在编辑器下会注入 9 条示例任务，控制台有 `[TaskDevSampleData]` Warning；打包产物不含该文件。
