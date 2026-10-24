@@ -21,6 +21,15 @@ public class MainView : UIBase
    /// <summary>设置窗口，只承载RO设置界面与页签切换。</summary>
    [SerializeField, Header("设置窗口")] private SettingPanel _settingPanel;
 
+   /// <summary>任务主窗口，绑定 Task 预制体，由主界面持有生命周期。</summary>
+   [SerializeField, Header("任务窗口")] private TaskWindow _taskWindow;
+
+   /// <summary>快捷任务面板，绑定 QuickTaskPanel 预制体，常驻主界面。</summary>
+   [SerializeField, Header("快捷任务面板")] private QuickTaskPanelWidget _quickTaskPanel;
+
+   /// <summary>主界面任务入口，点击后切换任务窗口，事件由 MainCtrl 注册。</summary>
+   [SerializeField, Header("任务入口")] private Button _taskButton;
+
    /// <summary>左上功能菜单内的设置入口，点击事件由MainCtrl管理。</summary>
    [SerializeField, Header("设置入口")] private Button _settingButton;
 
@@ -56,6 +65,15 @@ public class MainView : UIBase
 
    /// <summary>供主控制器注册与注销技能入口事件。</summary>
    public Button SkillButton => _skillButton;
+
+   /// <summary>供主控制器注册与注销任务入口事件。</summary>
+   public Button TaskButton => _taskButton;
+
+   /// <summary>任务主窗口实例，供任务控制器绑定事件与刷新。</summary>
+   public TaskWindow TaskWindow => _taskWindow;
+
+   /// <summary>快捷任务面板实例，供任务控制器绑定事件与刷新。</summary>
+   public QuickTaskPanelWidget QuickTaskPanel => _quickTaskPanel;
 
    /// <summary>切换左上功能菜单，显隐状态直接取正式容器的当前状态。</summary>
    public void ToggleFunctionMenu()
@@ -119,7 +137,16 @@ public class MainView : UIBase
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;
+      windowDic[WindowType.TaskWindow] = _taskWindow;
       SetFunctionMenuVisible(false);
+      if (_taskWindow != null)
+      {
+         _taskWindow.InitWindow();
+      }
+      if (_quickTaskPanel != null)
+      {
+         _quickTaskPanel.InitWidget();
+      }
       _roleCurrInfoWindow.InitWindow();
    }
 }

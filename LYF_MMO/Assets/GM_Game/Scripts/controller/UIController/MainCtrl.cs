@@ -19,6 +19,8 @@ public class MainCtrl : CtrlBase
     private readonly KnapsackCtrl _knapsackCtrl;
     /// <summary>聊天窗口视图。</summary>
     private readonly ChatWindow _chatWindow;
+    /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
+    private readonly TaskCtrl _taskCtrl;
     /// <summary>主界面快捷键是否已注册。</summary>
     private bool _mainInputRegistered;
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
@@ -50,6 +52,7 @@ public class MainCtrl : CtrlBase
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
         _knapsackCtrl = new KnapsackCtrl(_mainView);
+        _taskCtrl = new TaskCtrl(_mainView);
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -84,6 +87,10 @@ public class MainCtrl : CtrlBase
         _mainView.RoleButton.onClick.AddListener(OnRoleRequested);
         _mainView.SkillButton.onClick.AddListener(OnSkillRequested);
         _mainView.SettingButton.onClick.AddListener(OnSettingRequested);
+        if (_mainView.TaskButton != null)
+        {
+            _mainView.TaskButton.onClick.AddListener(OnTaskRequested);
+        }
         if (_mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
@@ -123,6 +130,26 @@ public class MainCtrl : CtrlBase
     private void OnSettingRequested()
     {
         ShowMainWindow(WindowType.SettingPanel);
+    }
+
+    /// <summary>点击任务入口时经任务控制器联动展开快捷面板并切换任务窗口显隐。</summary>
+    private void OnTaskRequested()
+    {
+        if (_taskCtrl == null)
+        {
+            return;
+        }
+        _taskCtrl.RequestOpenTaskWindow();
+    }
+
+    /// <summary>供外部在登录后用服务端任务快照刷新任务界面。</summary>
+    public void RefreshTaskUI()
+    {
+        if (_taskCtrl == null)
+        {
+            return;
+        }
+        _taskCtrl.RefreshAll();
     }
 
     /// <summary>幂等注册主界面快捷键。</summary>
@@ -391,6 +418,10 @@ public class MainCtrl : CtrlBase
         _mainView.RoleButton.onClick.RemoveListener(OnRoleRequested);
         _mainView.SkillButton.onClick.RemoveListener(OnSkillRequested);
         _mainView.SettingButton.onClick.RemoveListener(OnSettingRequested);
+        if (_mainView != null && _mainView.TaskButton != null)
+        {
+            _mainView.TaskButton.onClick.RemoveListener(OnTaskRequested);
+        }
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
@@ -430,6 +461,10 @@ public class MainCtrl : CtrlBase
         if (_knapsackCtrl != null)
         {
             _knapsackCtrl.Dispose();
+        }
+        if (_taskCtrl != null)
+        {
+            _taskCtrl.Dispose();
         }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {

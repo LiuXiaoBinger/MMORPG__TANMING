@@ -17,7 +17,8 @@ public enum WindowType
     TalkWindow ,//npc对话
     ShopWindow,//NPC商店窗口
     RoleAttriibuteWindow,//角色属性面板窗口
-    SettingPanel//设置界面窗口，仅展示设置页面
+    SettingPanel,//设置界面窗口，仅展示设置页面
+    TaskWindow//任务窗口，展示任务详情、目标与奖励
 }
 
 /// <summary>

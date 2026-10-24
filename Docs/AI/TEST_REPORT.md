@@ -6196,3 +6196,27 @@ or 或数组 CopyTo 后按下标遍历）、无三目运算符 ?:（统一 if/el
 - 文档与技能修改的 `git diff --check` 通过。人工复核确认：有可用原生执行窗口时必须使用；没有实时窗口时公开 Hub/任务/终端状态条目；禁止声称状态输出就是实时操作视图。
 - 本次为仅指令更新，未创建 WorkBuddy、Doubao 或 Qwen 真实任务，因此客户端窗口实际可用性和模型菜单行为仍未验证；不适用 Unity/客户端/服务端构建。
 - 变更日志与中英文同步状态见 `项目修改日志/2026-10-24-子Agent协作技能.md`。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-FINAL] 任务系统 UI 第 6 轮最终证据与边界
+
+> 中文对应同步；英文对应 `Docs/AI/TEST_REPORT.en.md` `[TASK-SYSTEM-UI-20261024-FINAL]`。本段只记本轮增量验收，不改 Unity 资源、业务代码或 Git。
+
+- WorkBuddy Step-5-Preview / `step-5-preview` 第 6 轮保存的 `_temp/task-system-ui-20261024/final-verify-r6-result.txt` 报告 `FINAL ALL_PASS`；`_temp/task-system-ui-20261024/selftest-r6-result.txt` 报告 28/28 通过、0 失败。核验覆盖正式 UIRoot 预嵌入、QuickTaskPanel 默认显示、TaskWindow 默认隐藏、TaskButton 开窗、Btn_Fold 折叠、截止时间/详情绑定、调试节点隐藏、标题换行及监听解绑。
+- 测试将 `LYF_MMO/Assets/GM_Game/Scenes/New Scene 1.unity` 以 additive 方式附加加载，`activeScene` 仍为 `Scene_Boot`，测试临时对象仅在内存中；结束时关闭附加场景且不保存，`Scene_Boot` 资产文件无改动。已有自检结果为隔离行为证据，不代表正式启动或联机验收。
+- Codex 本轮 Unity MCP 层级查询返回插件 session disconnected；脚本刷新等待编辑器就绪 60 秒后超时。此重试未获得新运行证据，不作为产品失败，也不覆盖已保存的 28 项自检结果。
+- 未覆盖完整启动/登录/服务端链路、真实鼠标射线遮挡，以及服务端接取、交付、放弃、奖励和导航行为；`MainView.InitView` 的已知编辑器态 YooAsset 异常发生在任务窗口注册之后。WorkBuddy Hub `hub-6dda007e-eea2-4221-955f-0e15a75f0421` 当前 `PROVIDER_BLOCKED`，本轮没有再唤醒或创建修复任务。
+- 对应过程与最终集成交接：`项目修改日志/2026-10-24-任务系统UI接入_CHANGELOG.md` 第十三节。Git 提交与推送尚未由本子任务执行。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-WAKE] 继续唤醒后的主 Agent 核验
+
+> 中文对应同步；英文对应 `Docs/AI/TEST_REPORT.en.md` `[TASK-SYSTEM-UI-20261024-WAKE]`。本段仅记录本次环境重试，不新增产品验收结论。
+
+- Unity 进程窗口为 `LYFMMORGP - New Scene 1` 且操作系统层面响应；重选 `LYFMMORGP@47ea91c229a904f3` 并发送 telemetry ping 后，Unity MCP 的编辑器状态与 Console 仍返回 `ping not answered`，没有新的实时断言。
+- 本地 `dotnet build GM_Game.csproj --no-restore --verbosity:minimal` 通过，0 个错误、2 个既有依赖版本警告。`Scene_Boot.unity` 与 Git HEAD blob 完全一致，磁盘无任务自测标记。
+- WorkBuddy 保存的 28/28 结果仍为现有行为证据，且保留 `activeScene=Scene_Boot` 的 additive 加载限制；以 New Scene 为活动场景的独立 Play 验收仍待 Unity MCP 恢复响应。本次阻断属于工具环境边界，不判定为产品失败。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT] 集成前核验
+
+- `/root/sync_task_ui_records` 已完成唤醒重试段落的中文增量同步，修改范围为本任务对应段落，`git diff --check` 通过。
+- 本地 `GM_Game.csproj` 构建通过，0 个错误、2 个既有依赖版本警告；已保存 Unity 证据为 `FINAL ALL_PASS` 与 28/28，保留 additive 加载和 Unity MCP 断连边界。
+- 精确暂存范围仅包含任务脚本及 `.meta`、`EnumDefine.cs`、`MainView.cs`、`MainCtrl.cs`、`UIRoot.prefab`、`Task.prefab`、`QuickTaskPanel.prefab`、任务分析/难点与修改日志、四个当前任务/测试报告文件；无关用户改动及未跟踪 `New Scene 1` 测试场景保持不暂存。

@@ -4110,6 +4110,29 @@
 - 清理后三个 YAML 资产均为 0 个 `m_Script` 引用，且无悬挂 GameObject 组件引用；保留视觉节点、`.meta`、图片和字体。AssetImportWorker 存在三资产的 PreviewImporter 记录，尚未在 Inspector/运行界面逐项验证。报告：`_temp/missing-script-cleanup-task-20261023/result.md`。
 - 分支 `codex/qwen-bilingual-memory` 不符合 `codex/feature-development`，存在无关脏改动，未提交/推送。变更清单：`项目修改日志/2026-10-23-RO任务系统资源归档与设计.md`。
 
+## [FILES][任务][TASK-SYSTEM-UI-20261024] 任务系统 UI 接入与最终验收交接
+
+> 本段仅记录本轮最终状态；完整文件清单、执行过程与证据路径见 `项目修改日志/2026-10-24-任务系统UI接入_CHANGELOG.md` 第十三节。
+
+- WorkBuddy Step-5-Preview 第 6 轮交付后，Hub `hub-6dda007e-eea2-4221-955f-0e15a75f0421` 当前为 `PROVIDER_BLOCKED`；没有重复唤醒或另派任务。最终结构/字段证据为 `FINAL ALL_PASS`，New Scene 1 自检为 28/28，任务 UI 范围已由 Codex 终验通过。
+- 任务 UI 已预先嵌入正式 `UIRoot.prefab`：QuickTaskPanel 默认显示，TaskWindow 默认隐藏；测试时将 `LYF_MMO/Assets/GM_Game/Scenes/New Scene 1.unity` 以 additive 方式附加加载，`activeScene` 仍为 `Scene_Boot`，测试临时对象只存在于内存。结束时关闭附加场景且不保存，`Scene_Boot` 资产文件无改动。
+- Codex 本轮重试 Unity MCP 时收到 session disconnected，脚本刷新等待编辑器就绪 60 秒后超时；未取得新的实时播放结果。完整启动/登录/服务端链路、真实鼠标射线遮挡及服务端接取、交付、放弃、奖励、导航行为仍未覆盖；这些接口暂保持空壳。
+- 中文增量同步已完成；最终 Git 精确暂存、中文提交与推送由主 Agent 按任务范围执行，待本轮集成回执。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-GIT] 集成前核验
+
+- `/root/sync_task_ui_records` 已完成唤醒重试段落的中文增量同步，修改范围 `CURRENT_TASK.md` 与 `TEST_REPORT.md`，`git diff --check` 通过。
+- 本地 `GM_Game.csproj` 构建为 0 个错误、2 个既有依赖版本警告；WorkBuddy 保存证据仍为 `FINAL ALL_PASS` 与 28/28，保留 additive 加载和 Unity MCP 断连边界。
+- 计划精确暂存任务脚本及 `.meta`、`EnumDefine.cs`、`MainView.cs`、`MainCtrl.cs`、三个任务 UI 预制体、任务分析/难点与修改日志、四个当前任务/测试报告文件；无关用户改动和未跟踪 `New Scene 1` 测试场景不纳入。
+
+## [VERIFY][任务][TASK-SYSTEM-UI-20261024-WAKE] 继续唤醒后的主 Agent 核验
+
+> 中文对应同步；英文对应 `Docs/AI/CURRENT_TASK.en.md` `[TASK-SYSTEM-UI-20261024-WAKE]`。本段只记录本次唤醒重试，不改业务代码、Unity 资源或 Git。
+
+- Unity 进程 `LYFMMORGP - New Scene 1` 在操作系统层面仍响应；重选 Unity MCP 实例 `LYFMMORGP@47ea91c229a904f3` 并发送 telemetry ping 后，编辑器状态和 Console 仍返回 `ping not answered`，未取得新的实时层级或播放结果。
+- 本地执行 `dotnet build GM_Game.csproj --no-restore --verbosity:minimal` 通过，0 个错误、2 个既有依赖版本警告。`LYF_MMO/Assets/Boot/Scene_Boot.unity` 与 Git HEAD blob 逐字节一致，磁盘上未发现任务自测标记。
+- 本次唤醒重试属于工具环境边界，不判定为产品失败；WorkBuddy 保存的 28/28 New Scene 1 证据仍是现有行为证据，其 `activeScene=Scene_Boot` 限制保持不变。独立以 New Scene 为活动场景的实时 Play 验收仍待 Unity MCP 恢复响应。
+
 
 ## [FILES][协作][TASK-SUBAGENT-SKILL-20261024] 2026-10-24 项目本地子Agent协作技能
 
