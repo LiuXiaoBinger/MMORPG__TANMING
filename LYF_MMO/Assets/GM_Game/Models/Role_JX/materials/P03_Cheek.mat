@@ -141,7 +141,7 @@ Material:
     - _Cutoff: 0.5
     - _EMISSIVE: 0
     - _Farthest_Distance: 100
-    - _GI_Intensity: 0
+    - _GI_Intensity: 0.7
     - _HighColor_Power: 1
     - _Inverse_Clipping: 0
     - _Inverse_MatcapMask: 0
