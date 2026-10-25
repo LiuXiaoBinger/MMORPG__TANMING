@@ -235,7 +235,7 @@ Material:
     - _Color: {r: 0.9811321, g: 0.96724814, b: 0.96724814, a: 1}
     - _ColorShift: {r: 0, g: 0, b: 0, a: 1}
     - _Emissive_Color: {r: 0, g: 0, b: 0, a: 1}
-    - _HighColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
+    - _HighColor: {r: 0, g: 0, b: 0, a: 1}
     - _MatCapColor: {r: 0.254717, g: 0.254717, b: 0.254717, a: 1}
     - _Outline_Color: {r: 0, g: 0, b: 0, a: 1}
     - _RimLightColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
