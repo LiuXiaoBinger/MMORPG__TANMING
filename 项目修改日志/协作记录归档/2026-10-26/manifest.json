@@ -1,0 +1,74 @@
+[
+  {
+    "source": "Docs/AI/PROJECT_CONTEXT.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/PROJECT_CONTEXT.md",
+    "bytes": 124995,
+    "sha256": "0567e6c6e3c59d5f8b489ef853f4cbac43a4b7c43fb24d36b10fcbdc0bc8da51"
+  },
+  {
+    "source": "Docs/AI/PROJECT_CONTEXT.en.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/PROJECT_CONTEXT.en.md",
+    "bytes": 16657,
+    "sha256": "bfae2bd680c82b215e915daac23e33a409c4a889ef7b23860f85e3015272529e"
+  },
+  {
+    "source": "Docs/AI/CURRENT_TASK.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/CURRENT_TASK.md",
+    "bytes": 810963,
+    "sha256": "3201d58f0157881fb4ca7f79ec85fd989dd235d68adff792fb4d4b7a3d15800e"
+  },
+  {
+    "source": "Docs/AI/CURRENT_TASK.en.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/CURRENT_TASK.en.md",
+    "bytes": 57502,
+    "sha256": "0bcf9af33f5246b2a2da5d54e209c603cb2d08dfbad6799544b0c351c00a258e"
+  },
+  {
+    "source": "Docs/AI/TEST_REPORT.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/TEST_REPORT.md",
+    "bytes": 925011,
+    "sha256": "e4be996db9b346a4f64a97b0727cf83f281996eae70e34d60d6ed08028676fbc"
+  },
+  {
+    "source": "Docs/AI/TEST_REPORT.en.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/TEST_REPORT.en.md",
+    "bytes": 50359,
+    "sha256": "ee4b5a61e951fde2909486dacc74235a3ef6544cd4ebdc43580065fa7a0f76de"
+  },
+  {
+    "source": "Docs/AI/DECISIONS.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/DECISIONS.md",
+    "bytes": 114533,
+    "sha256": "bae2ba6bdf71de503c5e0419d13ff2b7045e352cc42a586ada60e3956144fb9a"
+  },
+  {
+    "source": "Docs/AI/DECISIONS.en.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/DECISIONS.en.md",
+    "bytes": 4205,
+    "sha256": "26d4734727c3f051f662e75aff1ccc257bd66667496b884d6f67380b5dc3b6d3"
+  },
+  {
+    "source": "Docs/AI/QUERY_TASKS.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/QUERY_TASKS.md",
+    "bytes": 112086,
+    "sha256": "e74be0ef5b23f7472c9f24fdbc060e4dceefbe92d1fe04df70ab3070b5d71013"
+  },
+  {
+    "source": "Docs/AI/QUERY_TASKS.en.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/Docs/AI/QUERY_TASKS.en.md",
+    "bytes": 8994,
+    "sha256": "ecd2dc0c710455717f18e29731b176a53cd3126e3c2eb95bd38887a8c9e63bad"
+  },
+  {
+    "source": "LYF_MMO/Docs/AI/CURRENT_TASK.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/LYF_MMO/Docs/AI/CURRENT_TASK.md",
+    "bytes": 12018,
+    "sha256": "6406d1b80bfdaa59d7f371b90f93d8f32be8fd6238b8907344c1d42e6d1fd563"
+  },
+  {
+    "source": "LYF_MMO/Docs/AI/TEST_REPORT.md",
+    "archive": "项目修改日志/协作记录归档/2026-10-26/LYF_MMO/Docs/AI/TEST_REPORT.md",
+    "bytes": 10849,
+    "sha256": "ee4e39ede21dbf7366bad85466c2fa7132c3f5ab49900f13675260b91ea51ce8"
+  }
+]
