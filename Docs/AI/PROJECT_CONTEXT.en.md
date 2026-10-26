@@ -4,7 +4,7 @@
 
 - Follow `AGENTS.md`. For a task with sufficient conversation context, read only this section and `[DOCS-ROUTES]`; do not scan old tasks, all five files, both languages, or archives.
 - When context is missing, search headings by topic/ID in the relevant English entry, then read only that section. If absent, search `项目修改日志/协作记录归档/2026-10-26/INDEX.md` and retrieve the exact archived section. A retained historical status is dated evidence, never proof of current state. Stable rules come from AGENTS and the relevant skill.
-- Before finishing, apply `.agents/skills/task-log-policy/SKILL.md`: decide whether new durable facts justify a write, then list actual log paths and contents, or state why no log is needed. No automatic record for a greeting, repeated status, or unchanged recheck.
+- After every task, apply `.agents/skills/task-log-policy/SKILL.md`: list proposed log paths, contents, reasons and unverified limits, then ask the developer whether to write them. Wait for explicit approval before updating formal task records; an existing explicit logging instruction remains valid without another question. Recommend no log for unchanged/repeated facts, but let the developer decide. Directly requested business/skill/rule edits proceed normally. Report written, awaiting approval, or declined accurately.
 - Codex writes English facts; a subagent synchronizes/checks only changed Chinese sections and reports scope/evidence. Preserve unchanged historical bytes in the archive. Report actual skills and observable token coverage under AGENTS.
 
 ## [STRUCTURE][协作][DOCS-ROUTES] Responsibilities and recovery
