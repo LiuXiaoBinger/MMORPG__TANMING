@@ -588,3 +588,14 @@ Unity 实例 `LYF_MMO@47ea91c229a904f3`，2023.2.20f1c1，Built-in。全部通�
 
 - 暂存复核：258 个文件 = 251 个验收资源/元文件 + 7 个批准记录文件。工作区场景在期间继续有后续保存变化，未被本集成写入；暂存场景固定为 904,144 字节原验收重建基线。
 - 格式检查边界：全量 `git diff --cached --check` 检出复制的 Unity YAML/.meta/原 Shader 固有空白；原始输出 `_temp/ro-first-dungeon-cached-check.txt`（分类：{'trailing whitespace.': 953, 'space before tab in indent.': 18}）。为保持源资源与用户工作区不变，未批量改写；新增局部 Shader 与 7 个正式记录的定向空白检查作为本次新增代码/文档检查。
+
+
+### Git 实际回执
+
+- 功能提交：`a91edee09628803e10a2cb25af656bb651a46de7`，258 个文件；仅本次 251 个资源/元文件与 7 个批准记录文件。
+- 功能分支：`codex/ro-first-dungeon-scene-20261026`；首次推送 exit 0，远端分支 SHA 与本地功能提交一致（`git ls-remote` 已核对）。
+- 工作区后续场景编辑、Role_MJS 与两份 LightingSettings 文件仍保留；当前场景未被 Git 集成程序写入。其他任务脏改动及未提交记录段未混入提交。
+- Git 集成脚本最初把索引生成器的 bytes 返回值再次 encode 导致 AttributeError；无工作区资源写入，随后完成缺失的索引暂存并核对 258 文件白名单、904,144 字节场景哈希。
+- 新增局部 Shader 与正式记录定向空白检查通过；复制资源原有空白如上披露，未为格式检查批量改写。未因本次文档回执重跑已过的资源验证。
+- 本段作为独立 docs 回执提交推送，不重复同步未变中英文入口；该回执提交号以本日志的 Git 历史定位，不自指自身哈希。
+- 收尾用量证据：`_temp/ro-first-dungeon-git-close-token-collect.txt` 与 `...-token-report.json`；Codex adapter 为实验性来源，2026-10-26 项目累计 input 1028388 / output 259213 / cacheRead 109286528，非本次任务独占。上下文与规则、需求、工具输入输出、协作、返工与验证无法精确分类；WorkBuddy 独立用量及订阅余额未采集、不可测。
