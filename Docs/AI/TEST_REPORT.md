@@ -32,3 +32,15 @@
 - 枚举与区间：`LimitSex`∈{0,1,2}、`AcceptType`∈{1,2,3}、`FinishType`∈{1,2}、`ShortcutShowType`∈{1,2,3}、`FindwayType`∈{1,2,3}、`AbandonType`∈{0,1,2}、`DestroyType`∈{1,2}、`TargetRunType`∈{1,2}、`TargetType`∈1~22、`Moment`∈1~4、`EventType`∈{1..19,22,24,25,26,27}、`Theme`∈{1,2,3}、`SourceType`∈{1,2}；三组等级区间均满足 `min ≤ max`（`max=0` 视为不限）。
 - 数据规模：章节 3、类型 11、任务 10、目标 12、触发器 5、奖励明细 13、条件 6、奇遇 2、目标库 4、掉落 3、场景交互 2、道具使用 2、飞鸽 2。
 - 未验证：未跑 Unity/服务端编译；未更新 `LYF_Server/Network/LubanManage/` 生成物；未进播放模式；怪物 ID 1001~1003 与场景坐标是占位值（`#NpcInfo` 仅 4001，无怪物表）；`TaskGuideNpcTable`/`TaskChangeJobTable`/`TaskEdenLevelTable`/`TaskCameraTarget` 未建表。以上均不得据此推断任务玩法可用。证据见 `项目修改日志/2026-10-25-RO任务系统分析与Luban任务表设计_CHANGELOG.md` 第二轮修订段。
+
+## [VERIFY][场景][RO-FIRST-DUNGEON-SCENE-20261026] RO 副本场景复制迁移验证
+
+- 执行者：WorkBuddy 桌面会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，模型 `deepseek-v4-flash`（全程未切换），在 hub `hub-0f37bdcc-e89f-4a17-8020-9f9c2024ade5` 下共 4 轮；最终被验收的 attempt 为 `run-b574c91b-5930-438a-837f-386f3e37afa7`。独立验收与 Git 分支操作由 Codex 完成。
+- Unity 实例 `LYF_MMO@47ea91c229a904f3`，2023.2.20f1c1，Built-in 管线。全部检查走附加场景加载 + 临时相机与临时灯光；未覆盖用户当时打开的 `Scene_Boot`，编辑器始终非 Play、非编译中。
+- 已通过：`ShaderUtil.ShaderHasError = False`、`isSupported = True`；10 个材质全部绑定 `LYF/Dungeon/ROVertexColorSafe`；场景根对象 1、Renderer 172，`nullMaterial / noShader / errorShader / nullMainTex / multiSlot` 全为 0；MonoBehaviour 0 组件 / 0 类型、Missing Script 0；新目录内无 `.cs` / `.dll` / `.asmdef`。
+- 实测数据：全帧洋红像素 0，原问题像素 (271,383) 由 `255,17,197` 变为 `71,66,65`；平均 RGB `63.0/63.2/63.6`，G−R = +0.1、G−B = −0.5，对照 R3 的 `31.6/51.3/30.7`（G−R = +19.7、G−B = +20.6）——这就是"偏绿"的量化含义。与 R3 截图差异 509,758 / 786,432 像素（64.8%），最大通道差 127，属亮度与色偏的整体变化，符合预期。
+- 落盘计数：251 文件 / 18,661,241 字节 / 17.80 MiB，与 `_temp/ro-first-dungeon-migration-manifest-r4.json` 一致（250 条 + 目录外同级 meta）。正式日志第 5 节 251 行表的字节合计重解析后仍为 18,661,241，完全对齐。
+- Console：仅两条历史 `sc_dungeon_duobiwanfa_water_001 ... Shader 'RO/Scene/Water' doesn't have _LightFactor`，是 R2 诊断阶段临时读写该属性的副作用；本轮新增错误 0，Console 未清空。`Could not load the file 'NiceIO'.` 为无关历史条目，未处理。
+- 未执行：未接 Boot / 配置表 / YooAsset 运行时加载，未做副本玩法、组队、阵营、服务端、打包或联调，未做完整客户端或服务端编译。源场景本身无碰撞、无灯光，未重建烘焙光；局部最简贴图着色不等于原 RO 完整渲染效果。
+- 记录期复核与漂移核实（2026-10-26，只读）：一次 Unity 编辑器保存把 `RODungeon_First.unity` 从 904,144 重新序列化为 946,305 字节（+42,161，mtime 22:39:09）。该迁移 Hub 之后的一轮只读核验（attempt `run-77bf2883-af7b-49c1-aba9-fefa6099f8b9`，是核验轮、不是第 5 轮迁移）把增量逐字节归因：新增 `Role_MJS` 预制体实例 +2,408、`SceneRoots` +133、170 个既有预制体实例 +40,907（Unity 2023 的 `serializedVersion: 3` 与显式 `m_AddedComponents`）、YAML 折行合并 −1,627、`LightmapSettings` / `NavMeshSettings` / `RenderSettings` +340，合计 +42,161。用 R1 剥离规则在 `_temp` 重建的旧基线精确为 904,144 字节（sha256 `fa99118e…`），当前文件 sha256 `55f9981e…`；展开折行后 170 个实例的修改项 0 缺失 / 0 多出 / 0 值变化，172 个 `addedObject` 全是既有 `LODGroup`。Unity 同时生成 `RODungeon_FirstSettings.lighting`（1,772 字节）与其 `.meta`（200 字节），故目录现为 **253 文件 / 18,705,374 字节**；本段早前写的 18,703,402 字节漏了这两个文件，此处更正。保存操作者无法从文件或日志判定，**不推定**——迁移脚本与本会话都没有 `SaveScene` 调用。集成验收基线仍是 251 文件 / 18,661,241 字节。详见正式日志第 5 节与第 12.1 节。
+- 证据：`_temp/ro-first-dungeon-final-review.md`、`_temp/ro-first-dungeon-migration-manifest-r4.json`、`_temp/ro-first-dungeon-final-r4.png`；R1 黑图、R2 洋红、R3 偏绿截图均保留。完整日志：`项目修改日志/2026-10-26-RO首个副本场景复制迁移_CHANGELOG.md`。

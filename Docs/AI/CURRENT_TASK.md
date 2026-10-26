@@ -31,3 +31,14 @@
 - 新增脚本：`_temp/xlsx_head.py`（批量导表结构）、`_temp/xlsx_filter.py`（按列筛选抽取真实样本）、`_temp/create_quest_tables_v2.py`（13 表建表，数据行用「列名→值」字典构造并按列序对齐）、`_temp/verify_quest_tables.py`（交叉引用与枚举校验）、`_temp/ro_tasktable_all_heads.txt`（RO 36 表结构导出 1553 行）。
 - 验证：Luban 实际生成通过（13 个 `tbquest*.bytes` + 13 个 `Quest*.cs` + 13 个 `TbQuest*.cs`，产物 `_temp/luban_check2/`，**未覆盖**项目 Codes/Tb）；`verify_quest_tables.py` **0 错误 0 警告**；`QuestInfo.cs` 字段数 55 与表头一致。踩坑：首轮 13 张全报"没有找到有效的表定义"，真因是**A 列必须是 `##var`/`##type`/`##` 标记列、字段从 B 列起**（第一版脚本对，第二版重写时漏了），修正后一次通过。
 - 未验证：未跑 Unity/服务端编译；`LYF_Server/Network/LubanManage/` 生成物未更新；未进播放模式；怪物 ID 1001~1003 与场景坐标为占位；`TaskGuideNpcTable/TaskChangeJobTable/TaskEdenLevelTable/TaskCameraTarget` 四类功能暂缓建表；未提交 Git。详见 `项目分析/RO任务系统源码分析与Luban任务表设计-2026-10-25.md`（本版重写）与 `项目修改日志/2026-10-25-RO任务系统分析与Luban任务表设计_CHANGELOG.md`（含第二轮修订段）。本轮未派子 Agent，中英记录由主 Agent 直写。
+
+## [FILES][场景][RO-FIRST-DUNGEON-SCENE-20261026] RO 副本场景复制迁入，2026-10-26
+
+- 用户要求把一个 RO 副本场景移入 LYFMMORGP 并去掉 RO 自定义脚本。按**复制而非移动**处理：源 `F:/UnityPro/ro/Ro_cs422nb/clientproj/Assets/artres/Resources/Scenes/sc_dungeon_duobiwanfa_001/sc_dungeon_duobiwanfa_001.unity` 保持只读、字节不变。选它的理由：它是真实的 `sc_dungeon_*` 独立实例场景，172 个 Renderer 的实际几何，且在同类候选中体积最小；先排除了 `sc_dungeon_shenggeshilian`（238 KB），那是 Cube 占位模板，不是副本。
+- 结果：`LYF_MMO/Assets/GM_Game/Scenes/RODungeon_First/RODungeon_First.unity` 及其依赖树，共 **251 个文件 / 18,661,241 字节 / 17.80 MiB**（目录内 250 = 98 资源 + 152 个 `.meta`，其中 54 个是目录 `.meta`；另加目录外同级 `RODungeon_First.meta`）。逐项表在正式日志里，此处不重复。
+- RO 脚本剥离：移除 7 个组件 / 2 个类型（`FxAnimationHelper` ×6，`MoonClient.dll` 内组件 ×1）；未复制任何 `.cs` / `.dll` / `.asmdef`。当前场景 MonoBehaviour 0、Missing Script 0；与项目既有资源的真实 GUID 冲突 0（迁移后扫描命中的 150 条是本任务自身文件）。
+- 四轮过程，失败全部保留：R1 相机落在 414 m `sc_blackbox` 包围盒外侧且 `lightmaps.Length = 0`，画面全黑；R2 的 `Shader.Find("Standard")` 实际命中项目自己的 `Replace/Standard.shader`，它把顶点色乘进 albedo，把 (255,0,255) 标记顶点暴露成一个洋红像素；R3 用 `step`/`lerp` 洋红阈值加 `normalize(normal)*0.5+0.5` 假光照，两点都被退回；R4 把本目录着色器收敛到只剩 `tex2D(_MainTex, uv) * _Color`。
+- 边界：这是资源复制加最小视觉适配，**不是可玩副本**。未接 Boot / 配置表 / YooAsset 运行时加载，未做副本玩法、组队、阵营、服务端、打包或联调。源场景本身无碰撞、无灯光，也未重建烘焙光，所以成品是明暗近似，不是还原原烘焙效果。未 stage / commit / push，Git 集成由主 Agent 完成。
+- 完整日志（范围、97 条源到目标映射、251 条逐项清单、逐轮失败、证据索引）：`项目修改日志/2026-10-26-RO首个副本场景复制迁移_CHANGELOG.md`。
+- 轮次与当前工作区边界（2026-10-26，本记录任务开工之后）：该迁移 Hub 之后又跑了一轮**只读漂移核验**（attempt `run-77bf2883-af7b-49c1-aba9-fefa6099f8b9`），是核验轮、不是第 5 轮迁移，迁移仍为 4 轮。该轮查明：一次 Unity 编辑器保存把目标场景从 904,144 重新序列化为 946,305 字节（+42,161，已逐字节归因），并新增 1 个 `Role_MJS` 角色预制体实例与 `RODungeon_FirstSettings.lighting`。因此目录现为 **253 文件 / 18,705,374 字节**，不是验收时的 251 / 18,661,241；副本几何本身未变（172 renderer、0 MonoBehaviour、0 Missing Script、0 灯、0 碰撞体）。
+- 集成范围仍以已验收的 **251 文件 / 18,661,241 字节**为准。主 Agent 只暂存该 R4 集合，场景通过 Git index 暂存 `_temp` 里用同一确定性规则重建的 904,144 字节版本（sha256 `fa99118e…`），不覆盖工作区当前这个已含角色实例的场景；角色实例与两个 lighting 文件都不进本次集成。本任务未 stage / commit / push。
