@@ -20,9 +20,9 @@ def build_index(repo_root):
     output_lines = [
         '# Collaboration record directory',
         '',
-        'Search this directory by topic or record ID, then read only the listed source line range.',
+        'At the start of every task, search this directory by topic/ID, then read only the listed source line range.',
         'Ranges are inclusive and include the section heading. Do not load all four source files.',
-        'After editing a source, regenerate this directory once with:',
+        'At the end of every task, after approved record writes, refresh this directory once (even without new logs):',
         '`python .agents/skills/task-log-policy/scripts/build_record_index.py`.',
         'Use `--check` to verify freshness; generation reads local files without sending their bodies into agent context.',
         'If a heading/range is stale, regenerate before reading. Historical status is not current status.',
