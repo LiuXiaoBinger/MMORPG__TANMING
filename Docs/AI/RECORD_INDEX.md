@@ -1,0 +1,53 @@
+# Collaboration record directory
+
+Search this directory by topic or record ID, then read only the listed source line range.
+Ranges are inclusive and include the section heading. Do not load all four source files.
+After editing a source, regenerate this directory once with:
+`python .agents/skills/task-log-policy/scripts/build_record_index.py`.
+Use `--check` to verify freshness; generation reads local files without sending their bodies into agent context.
+If a heading/range is stale, regenerate before reading. Historical status is not current status.
+
+## Docs/AI/CURRENT_TASK.en.md
+
+Source normalized SHA256: `b122adba4b8974a0f4f87c86ef76dfc8192249e4a47904a63e7d85a3a6aaf143`
+
+| Topic / record ID / title | Lines |
+|---|---|
+| [HANDOFF][协作][CONTEXT-CLEANUP-20261026] Current boundaries after archival | 3-10 |
+| [FILES][角色][ROLE-FACE-MATERIAL-20261025] Character face/material "washed out" fix, 2026-10-25 | 11-17 |
+| [FILES][角色][ROLE-FACE-LIGHT-20261025] Character face lighting fix, 2026-10-25 | 18-22 |
+| [FILES][Task][TASK-TABLE-DESIGN-20261025-R2] Quest table system expanded to 13 tables (revision 2), 2026-10-25 | 23-31 |
+
+## Docs/AI/TEST_REPORT.en.md
+
+Source normalized SHA256: `11b3f63faf6f6513d7ca76c520f90db120adccf22ca1a716b87fd136e5516341`
+
+| Topic / record ID / title | Lines |
+|---|---|
+| [VERIFY][协作][CONTEXT-CLEANUP-20261026] Documentation cleanup acceptance | 3-9 |
+| [VERIFY][角色][ROLE-FACE-MATERIAL-20261025] Character material washout fix verification | 10-16 |
+| [VERIFY][角色][ROLE-FACE-LIGHT-20261025] Character face lighting verification | 17-23 |
+| [VERIFY][Task][VERIFY-TASK-TABLE-20261025-R2] Generation and cross-reference checks for the 13 quest tables, 2026-10-25 | 24-32 |
+
+## Docs/AI/DECISIONS.en.md
+
+Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb333948e835262`
+
+| Topic / record ID / title | Lines |
+|---|---|
+| [DECISION][任务][DS-012] Adopt a bounded first-phase task system, 2026-10-23 | 3-8 |
+| [DECISION][协作][QWEN-MEM-20261023] Local light tasks and paired language editions | 9-17 |
+| [DECISION][协作][QWEN-LIGHT-20261023] Exact model tag for lightweight dispatch | 18-22 |
+
+## Docs/AI/QUERY_TASKS.en.md
+
+Source normalized SHA256: `fde65c5e5c73072e521c1a2512bc1c339a4b876ab92037c8dfd8156c92790569`
+
+| Topic / record ID / title | Lines |
+|---|---|
+| [INDEX][协作][QUERY-INDEX] Archive routing | 3-6 |
+
+## Older records
+
+Only if the topic/ID is absent above, search `项目修改日志/协作记录归档/2026-10-26/INDEX.md`.
+Read only the matching snapshot line range; do not load the full archive.
