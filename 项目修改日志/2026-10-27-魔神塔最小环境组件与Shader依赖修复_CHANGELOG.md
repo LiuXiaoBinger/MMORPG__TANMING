@@ -406,3 +406,11 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 - 未验证：WorkBuddy 侧独立额度不可测，本子会话只能声明未切换模型。
 - 验收与证据文件：`_temp/ro-lightmap-inspector-query-codex-accept.json`、`_temp/ro-lightmap-inspector-query-review.md`、`_temp/ro-lightmap-inspector-query-final.json`；原始报告中被否决的断言以验收记录为准。
 - Git：本子任务**未执行**任何 Git 操作；只集成这一次增量由主 Agent 负责。
+
+### 15.7 本次只读核验记录集成回执
+
+- 已提交并推送 `5a519b9aacc8298617a3361358c1ec3a44d4ae53`（`docs: 记录魔神塔柱子Lightmap显示差异核验`），分支 `codex/ro-first-dungeon-scene-20261026`；远端回执 `d994157..5a519b9`。
+- 精确纳入本日志追加、QUERY_TASKS.en.md/.md 本次新增段与对应索引，共 4 文件；未纳入其它工作区记录修改，未改业务和场景。原字节前缀、增量双语证据、暂存范围和差异格式检查通过；本次不重复运行此前 Unity 验证。
+- 本轮技能：主 Agent 用 project-subagent-coordination 派发及核验同步、workbuddy-executor 恢复原客户端/会话并接收交付、task-log-policy 按批准清单记录并维护索引、token-monitor 采集 collect/report。WorkBuddy 报告未加载技能。
+- 用量证据 `_temp/ro-lightmap-query-record-token-collect.txt` 与 `-token-report.json`：近 1 日 Codex 项目聚合跨 2026-10-26—27（activeDays=2/windowDays=1，实验性适配器）；输入 2053947、输出 397828、缓存读取 167766016。不代表本任务独立消耗、精确账单或账户剩余额度。上下文与项目规则、用户需求、工具调用输入输出、子 Agent/WorkBuddy 协作、重复读取/返工/压缩/验证五类在此统计中均无法独立拆分；WorkBuddy 独立积分与账户余额本地不可测。
+- 本节为推送后的集中回执，随后只提交本回执；不更改中英事实，不重跑通过的检查。最终回执提交号见本文件 Git 历史及交付回复。
