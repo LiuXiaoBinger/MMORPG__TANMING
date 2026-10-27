@@ -52,3 +52,13 @@
 - R1 (partial hardcoded Shader reset and reapply early return) failed review; R2 captures/restores all **27** typed globals and reuses the first snapshot while allowing explicit reapply.
 - Runtime `OnEnable` applies; `OnDisable` restores. Editor preview uses the component context menu "apply environment"; restore before saving because temporary renderer lightmap writes can dirty the scene.
 - No weather cycle / server protocol / postprocessing / UTS refactor. Source RO project stays read-only. Branch `codex/ro-first-dungeon-scene-20261026`; baseline `0b3c33806ef4637cede0667f425091d727301878`. Commit/push pending Codex integration. Full per-file manifest and evidence are in the approved changelog `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`.
+
+## [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode
+
+- `MEnvorimentSetting.cs` adds `ExecuteAlways` and corresponding Chinese lifecycle comments only (+13/−4 relative to baseline `d3981bc193f5b2e1d816eb1dbd33fd91ac58d578`).
+- Existing `ApplyLightmapData`, 937 bindings, two EXRs/probes and 27 typed-global snapshot/restore remain unchanged.
+- This replaces the earlier manual-context-menu requirement for normal edit-mode enable/scene load; explicit Apply is still available after changing config.
+- No rebake, new editor framework, per-frame rewrite, asset/import change or scene disk save.
+- Native WorkBuddy session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` used actual `requestModelId` `deepseek-v4.1-flash` as observed by Codex.
+- One implementation round including interruption recovery; the preceding minimal environment task remains two development rounds.
+- Commit/push pending Codex integration on `codex/ro-first-dungeon-scene-20261026`; Git receipt is kept only in the existing changelog.

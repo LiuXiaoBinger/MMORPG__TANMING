@@ -55,3 +55,14 @@
 - 源里处于非激活状态的两个对象各有 1 个空材质槽（`sc_fuben_002_002`、`sc_moshenta_shan_001`，`activeInHierarchy=False`），源本如此，不是本次丢失。
 - 未验证：未做正式游戏场景进出流程、未做角色光照接入、未做客户端完整编译与打包；`RO/Scene/AllInOne` 的源关键字配置决定静态建筑不消费动态场景色调/雾通道，本任务只证明烘焙光与云层响应，**不声称**已还原 RO 完整渲染效果。
 - 场景序列化与 HEAD 的差异已核实并记录，不掩饰：新增 679 条 stripped `MeshRenderer` 文档 + 1 个 `MonoBehaviour`，189 个预制体实例新增 359 条 `m_Materials.Array.size` 与 1 条 `m_StitchLightmapSeams` 覆盖，`m_FogColor` 改为黄昏 `(0.31461376,0.40945742,0.6603774)`，字节 +338,829。场景 YAML 的 `LightmapSettings` 文档未变——光图由组件应用时注入，不是落盘在场景里。属正常 Unity 序列化，未回改已验收场景。完整日志：`项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`。
+
+## [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] 当前 Mesh Renderer 已可见既有烘焙光
+
+- WorkBuddy 在连接中断之前实测通过：真实编译、编辑态自动应用、Disable 还原、Enable 自动应用，且应用前快照保持完整。
+- Codex 之后用普通 Connect 按钮恢复了原 Unity MCP 会话，独立观察到 maps 2、probes 符合预期、`_applied` True、`ExecuteAlways` True、`dirty` False、console errors 0。
+- 选中的 `sc_dungeon_moshenta_ta_002_b` 实际 `index 0`、scaleOffset `(0.2514144, 0.2514144, 0.2719581, 0.6459816)`、图为 `lm_sc_dungeon_moshenta_001_00_00.exr`；真实原生窗口截图中已展开其 Baked Lightmap 缩略图 / 索引 / UV。
+- Worker 当时的 partial 状态与纯黑 DockArea 截图作为历史失败保留；Codex 的实际截图补齐了那块缺失证据。
+- 场景磁盘 SHA 仍为 `92c2ce0db331ac918614e69a01c113efbf929c67aea9a42a94432e9f511422a9`，脚本 SHA 为 `54b4ece2b3fdbe6f08b7c9bc0de5f5a1fea2053e557fb7ad2705036654d44e37`。
+- 未做新的 Play 测试、未做正式切场景测试、未重烘。
+- 此前那次 Unity 重启的原因、以及更早未保存改动的存留情况均无法判定；本记录不声称早前内存中的改动全部存活，也不把重启归因于已证明的原因。
+- 当前 `dirty` False 只是点位观察，不构成"自动应用永远不标脏场景"的保证。

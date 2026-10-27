@@ -414,3 +414,101 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 - 本轮技能：主 Agent 用 project-subagent-coordination 派发及核验同步、workbuddy-executor 恢复原客户端/会话并接收交付、task-log-policy 按批准清单记录并维护索引、token-monitor 采集 collect/report。WorkBuddy 报告未加载技能。
 - 用量证据 `_temp/ro-lightmap-query-record-token-collect.txt` 与 `-token-report.json`：近 1 日 Codex 项目聚合跨 2026-10-26—27（activeDays=2/windowDays=1，实验性适配器）；输入 2053947、输出 397828、缓存读取 167766016。不代表本任务独立消耗、精确账单或账户剩余额度。上下文与项目规则、用户需求、工具调用输入输出、子 Agent/WorkBuddy 协作、重复读取/返工/压缩/验证五类在此统计中均无法独立拆分；WorkBuddy 独立积分与账户余额本地不可测。
 - 本节为推送后的集中回执，随后只提交本回执；不更改中英事实，不重跑通过的检查。最终回执提交号见本文件 Git 历史及交付回复。
+
+## 16. 编辑态自动消费现有烘焙光：最小修复记录（`RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027`）
+
+### 16.1 身份、轮次与授权
+
+- 任务编号 `RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027`，性质为**最小修复**：只解决"编辑态打开场景就能看到已复制的烘焙光"，不重烘、不搬整套烘焙工具链。
+- 执行：WorkBuddy 原生桌面会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，工作目录 `D:/unitypro/LYFMMORGP`；实际 `requestModelId` 为 `deepseek-v4.1-flash`，由 Codex 在原生会话侧独立观察确认，不按界面配置推断。
+- 轮次口径：本任务是**另一条任务线的第 1 轮实现**，中途发生连接中断，**在同一轮内续作**，不另算第 2 轮；本次记录同步不计轮次。上文第 1、2 节的魔神塔最小环境任务**仍然是 2 轮开发**，不因本条改成 3 轮。
+- 授权写入范围：优先且实际只改 `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment/MEnvorimentSetting.cs`；允许必要时新增 1 个最小 Editor 辅助脚本，**实际未新增**。场景、资源、ScriptableObject、预制体、Shader、Packages、ProjectSettings 全禁，实际均未动。
+- 记录授权：用户明确批准"记录，并同步中英文"。本轮只追加 5 个正式文件，`Docs/AI/RECORD_INDEX.md` 由主 Agent 最后机械生成，本子任务不改；不动 QUERY 两文件、不动 `项目分析/项目难点.md`、不回写此前历史段。
+
+### 16.2 用户需求与根因
+
+- 用户需求：**直接使用现成的烘焙结果**。既然 `lm_sc_dungeon_moshenta_001_00_00.exr` 等产物已经复制进项目、937 条绑定也已落进场景，编辑态打开场景就应该看到烘焙光，不必先点什么菜单。
+- 用户点名的具体文件 `lm_sc_dungeon_moshenta_001_00_00.exr` 之所以"没加到 Mesh Renderer"，不是它没被引用，而是**引用它的那次赋值从未在编辑态发生过**。
+- 根因（唯一）：组件 `MEnvorimentSetting` **没有 `[ExecuteAlways]`**，`OnEnable` 只在 Play 模式触发。编辑态从未跑过 `ApplyLightmapData`，于是 `LightmapSettings.lightmaps` 一直是 0、`renderer.lightmapIndex` 一直是 -1，Inspector 的 Baked Lightmap 区自然为空。烘焙数据与绑定本身都是好的。
+
+### 16.3 实际改动（1 个文件；`.meta` 未动）
+
+- `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment/MEnvorimentSetting.cs`：新增 `[ExecuteAlways]` 与对应的中文生命周期说明（类注释、`Restore` 全局量边界说明、`OnEnable` 注释各一处）。相对基线 `d3981bc193f5b2e1d816eb1dbd33fd91ac58d578` 为 **+13/−4**。
+- 成品：32,160 B，sha256 `54b4ece2b3fdbe6f08b7c9bc0de5f5a1fea2053e557fb7ad2705036654d44e37`；`.meta` 未改，GUID 与导入设置保持原样。
+- 逐项**未改**：`ApplyLightmapData` 的 937 条绑定写回逻辑；两张 EXR 与 LightProbes 的引用方式；27 个按类型（Color 16 / Vector 9 / Float 2）快照与还原通道；`_applied` 只拦首次快照的语义（之后显式 Apply 允许重写）；`ApplyEnvironment` 的调用顺序（快照 → 烘焙光 → 时间段 → 天气 → 场景色偏）。
+- 被取代的旧边界：第 4 节与第 15.5 节写的"编辑器预览需用组件右键『应用环境配置』"是当时的真实限制；本修复后**正常打开 / 启用场景即自动应用**，该手动步骤不再是必需。旧段落作为历史保留、不回写；改完配置后显式 Apply（ContextMenu）仍然可用。
+- **没有把 `00_00` 统一赋给所有物体**：两张图按 937 条绑定各自的 `index` 取图（`index 0` 用 `00_00`、`index 1` 用 `00_01`），分布 203 / 734，与源一致。
+- 明确没做：没有每帧 `Update` / `OnGUI` 重写 937 条；没有管理器、代次、队列、重试、所有权框架；没有新增 Editor 脚本；没有改资产导入设置；没有 `SaveScene`。
+
+### 16.4 WorkBuddy 侧实测（连接中断前，已通过）
+
+- 真实 Unity 编译通过，无 error。
+- **不点任何菜单**、打开场景后即 `LightmapSettings.lightmaps = 2`、`lightProbes = lm_lp_sc_dungeon_moshenta_001_00`、组件 `_applied = True`。
+- 图与索引对应正确：`map[0] = lm_sc_dungeon_moshenta_001_00_00.exr`（index 0，203 条）、`map[1] = lm_sc_dungeon_moshenta_001_00_01.exr`（index 1，734 条）——**不是把 `00_00` 覆盖给全部物体**。
+- 抽检 `sc_dungeon_moshenta_ta_002_b` 与柱子 `building_002 (1)`：`lightmapIndex` 与 `lightmapScaleOffset` 与绑定记录**逐值相等**；全量比对 `bindingMismatch = 0/937`。
+- Disable 后：`maps = 0`、937 条全部回到 `-1`、全局量回到应用前 `(0.6392, 0.6078, 0.5490)`；Enable 后自动重新应用，末态 `enabled + applied`。快照仍为应用前的 16 / 9 / 2。
+- 该轮副作用（推断，未隔离）：`[ExecuteAlways]` 在打开场景时写 937 条 `lightmapIndex`，会让场景被标脏。
+
+### 16.5 中断与截图缺口（历史失败，不掩饰）
+
+- 12:45:43 MCP 桥断连（code 1005）；12:45:50 编辑器重启为新进程 PID 40092，此后未再自连。未杀 Unity、未开第二实例、未改 MCP 或工程配置、未碰源 RO 编辑器（PID 70004）。
+- 候选截图 `_temp/ro-lightmap-editor-inspector-dock.png`（8,560 B）解码为 347×1367、99.99% 纯黑，**判为无效，不作为通过证据**。
+- 于是当时以 **status = partial** 交付：缺"当前 Inspector 的 Baked Lightmap 区可见"这一条眼见证据。旧 partial 原文保留，**不改写成 completed**。
+- 重启原因、以及"重启前未保存的内存改动是否全部存活"均无法从文件或日志判定，属未验证，不作推断。
+
+### 16.6 主 Agent 恢复与独立复核（当前事实）
+
+- 恢复方式：仅通过 UI `Window > MCP for Unity > Toggle MCP Window`，点现有 Connect，然后收起窗口；未改 EditorPrefs / config、未重启或另开 Editor、未保存、未切场景。
+- 现场实测：`maps = 2`、probes = `lm_lp_sc_dungeon_moshenta_001_00`、`_applied = True`、`ExecuteAlways = True`、`dirty = False`、console errors 0。
+- 选中 `sc_dungeon_moshenta_ta_002_b`：实际 `index = 0`、`scaleOffset = (0.2514144, 0.2514144, 0.2719581, 0.6459816)`、`mapPath = Assets/GM_Game/Scenes/RODungeon_Moshenta/Environment/lm_sc_dungeon_moshenta_001_00_00.exr`；已实际展开 Mesh Renderer 的 Baked Lightmap 缩略图并保存 `_temp/ro-lightmap-editor-codex-inspector.png`；验收记录 `_temp/ro-lightmap-editor-codex-accept.json`。
+- 结论：原 partial 缺的两块（当前截图、重启后会话状态）已由主 Agent 补齐；实现内容仍是"仅 `[ExecuteAlways]` 与注释"。
+
+### 16.7 已验 / 未验边界
+
+已验：真实编译；编辑态自动应用（无需菜单）；两张图按 index 正确分配；937 条绑定逐值一致；Disable 还原与 Enable 恢复；27 通道快照仍为应用前值；当前 Inspector 可见烘焙缩略图与索引。
+
+未验，且不声称：
+
+- 没有新的 Play 进入 / 退出与正式切场景测试；没有重烘（也不在范围）。
+- 断连前的会话内未补拍；现有截图是恢复后状态，不是断连前那一瞬。
+- 当前 `dirty = False` 只是**点位观察**，不能保证"自动应用永远不会把场景标脏"。
+- 重启原因未知；不声称此前未保存的内存改动全部存活。
+- 场景磁盘文件未保存（sha256 仍为 `92c2ce0db331ac918614e69a01c113efbf929c67aea9a42a94432e9f511422a9`），运行时注入状态不落盘。
+
+### 16.8 本轮记录范围（逐项，共 7 项；第 7 项待主 Agent 生成）
+
+| 序 | 路径（项目根相对） | 动作 | 用途 |
+|---|---|---|---|
+| 1 | `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment/MEnvorimentSetting.cs` | 修改（实现本体） | 新增 `[ExecuteAlways]` 与中文说明，编辑态自动应用 |
+| 2 | `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md` | 追加第 16 节 | 本任务的实现/验证/边界/Git 待集成说明 |
+| 3 | `Docs/AI/CURRENT_TASK.en.md` | 追加英文段 | 英文入口：代码与交接事实 |
+| 4 | `Docs/AI/CURRENT_TASK.md` | 追加中文段 | 中文入口：同一事实 |
+| 5 | `Docs/AI/TEST_REPORT.en.md` | 追加英文段 | 英文入口：验证事实 |
+| 6 | `Docs/AI/TEST_REPORT.md` | 追加中文段 | 中文入口：同一验证事实 |
+| 7 | `Docs/AI/RECORD_INDEX.md` | **待主 Agent 生成**（本子任务不改） | 索引按已暂存英文事实机械生成 |
+
+- 无新增业务文件、无删除、无移动；不混入其他工作区既有记录修改。
+- 5 份被追加文件的原始字节已备份到 `_temp/ro-lightmap-editor-record-before/`（保留项目根相对路径）+ 同目录 `_manifest.json`（hash / size）；追加后每份的**原前缀逐字节不变**。
+
+### 16.9 技能与用量
+
+- 主 Agent 本轮实际使用：`project-subagent-coordination`（派工与原轮续作验收）、`workbuddy-executor`（原生会话派工恢复、收取产物）、`unity-mcp-orchestrator`（当前真实 maps / index / path / console 查询）、`computer-use:computer-use`（用 sky 连接原 Unity、展开 Baked Lightmap 并保存窗口截图）、`task-log-policy`（按清单确认记录）、`token-monitor`（collect / report）。
+- WorkBuddy 本子会话**未加载任何技能**，如实记录，不冒称。
+- 用量证据：`_temp/ro-lightmap-editor-token-collect.txt`、`_temp/ro-lightmap-editor-token-report.json`。口径为**近 1 日、项目 `LYFMMORGP`、`days = 1`**，coverage 显示 `activeDays = 2 / windowDays = 1`、覆盖 2026-10-26 至 2026-10-27，适配器自注 experimental；**不是本任务账单，不是账户余额**。
+- 只取 `overall` 汇总：events 836、sessions 4、input 2,066,072、output 404,604、cacheRead 169,828,352、thinking 174,991、spend 2,470,676、costUsd 39.85（estimated）、cacheHitRatio 0.9880、rework 0、errorEvents 0。未扫描原始会话。
+- 五类（上下文与项目规则 / 用户需求 / 工具调用输入输出 / 外部协作 / 重复读取·返工·压缩·验证）在该统计里**均无法单独拆分**；WorkBuddy 独立积分与账户余额本地不可测，**不用 0 冒充**。
+
+### 16.10 Git 状态
+
+- 本子任务未执行 stage / commit / push（用户与主 Agent 均禁）。
+- 待主 Agent 在 `codex/ro-first-dungeon-scene-20261026` 上精确集成：只纳入 1 个 `.cs`、本日志本节、4 份双语入口的本次追加段，以及主 Agent 自己生成的索引；不得夹带工作区里其他任务的既有记录修改。
+- Git 回执由主 Agent 后续在本文件集中追加，本子任务**不预写提交号**。
+
+### 16.11 证据索引
+
+- `_temp/ro-lightmap-editor-review.md`、`_temp/ro-lightmap-editor-final.json`、`_temp/ro-lightmap-editor-final-manifest.json`（改动 1 / 新增 0 / 删除 0 + 9 个受保护文件 hash）
+- `_temp/ro-lightmap-editor-codex-accept.json`（主 Agent 验收）、`_temp/ro-lightmap-editor-codex-inspector.png`（真实 Inspector 截图）
+- `_temp/ro-lightmap-editor-inspector-dock.png`（历史无效图，8,560 B，纯黑，保留不删）
+- `_temp/ro-lightmap-editor-record-before/`（5 份原始字节 + `_manifest.json`）
+- `_temp/ro-lightmap-editor-record-sync-check.json`、`_temp/ro-lightmap-editor-record-final.json`
+- `_temp/ro-lightmap-editor-token-collect.txt`、`_temp/ro-lightmap-editor-token-report.json`

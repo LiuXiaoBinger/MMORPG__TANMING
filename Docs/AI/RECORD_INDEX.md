@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e3159efb9122a10343988fca72bc06886dbf85f01455d7a950ba70855cea7876`
+Source normalized SHA256: `376f55fa250be53c27ac57acdcaf7975a21bce4a46e5229b273ac965a12cfceb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -18,11 +18,12 @@ Source normalized SHA256: `e3159efb9122a10343988fca72bc06886dbf85f01455d7a950ba7
 | [FILES][角色][ROLE-FACE-LIGHT-20261025] Character face lighting fix, 2026-10-25 | 18-22 |
 | [FILES][Task][TASK-TABLE-DESIGN-20261025-R2] Quest table system expanded to 13 tables (revision 2), 2026-10-25 | 23-32 |
 | [FILES][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copied into the project, 2026-10-26 | 33-43 |
-| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] Fixed dusk environment on Moshenta | 44-54 |
+| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] Fixed dusk environment on Moshenta | 44-55 |
+| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode | 56-64 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `10fc1a36634ab8b1d1c7045980e73ea9c396ba303da625538836b8036c628acb`
+Source normalized SHA256: `db9953ed3af88509ea4426098d611786546602eb26300b2e7f07c999b9e5eea1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -31,7 +32,8 @@ Source normalized SHA256: `10fc1a36634ab8b1d1c7045980e73ea9c396ba303da625538836b
 | [VERIFY][角色][ROLE-FACE-LIGHT-20261025] Character face lighting verification | 17-23 |
 | [VERIFY][Task][VERIFY-TASK-TABLE-20261025-R2] Generation and cross-reference checks for the 13 quest tables, 2026-10-25 | 24-33 |
 | [VERIFY][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copy verification | 34-45 |
-| [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] Incremental environment acceptance | 46-56 |
+| [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] Incremental environment acceptance | 46-57 |
+| [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer | 58-67 |
 
 ## Docs/AI/DECISIONS.en.md
 

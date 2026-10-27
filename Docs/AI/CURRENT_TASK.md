@@ -54,3 +54,13 @@
 - R1（还原只硬写 9 个通道 + 重复应用被门禁挡住）未过验收；R2 改为按类型快照/还原**全部 27 个**全局通道，并让显式重复应用生效（首次快照只取一次）。
 - 运行期 `OnEnable` 自动应用、`OnDisable` 还原；编辑器预览用组件右键「应用环境配置」，**预览后不要保存**——逐渲染器写 lightmap 索引会让场景在下一帧被标脏。
 - 范围为最小适配：不做天气循环、昼夜过渡、雨雪雷电、服务端协议、后处理 / 相机 / 全局管理框架，不改 UTS 与角色 shader。源 RO 工程全程只读。分支 `codex/ro-first-dungeon-scene-20261026`，基线 `0b3c33806ef4637cede0667f425091d727301878`。**待主 Agent 精确暂存并提交推送**。逐项 41 文件清单、场景序列化真实差异与全部证据见 `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`。
+
+## [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] 编辑态自动消费现有 RO 烘焙光
+
+- `MEnvorimentSetting.cs` 仅新增 `[ExecuteAlways]` 与对应的中文生命周期注释（相对基线 `d3981bc193f5b2e1d816eb1dbd33fd91ac58d578` 为 +13/−4）。
+- 既有 `ApplyLightmapData`、937 条绑定、两张 EXR / LightProbes 与 27 个按类型快照还原通道全部未改。
+- 本修复取代此前"正常编辑态启用 / 打开场景需手动右键应用"的边界；改配置后显式 Apply 仍然可用。
+- 未重烘、未新增编辑器框架、未做每帧重写、未改资产导入设置、未保存场景到磁盘。
+- WorkBuddy 原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，实际 `requestModelId` 为 `deepseek-v4.1-flash`（由 Codex 观察确认）。
+- 本任务为 1 轮实现（含中断后同轮续作）；此前的魔神塔最小环境任务仍然是 2 轮开发。
+- 待 Codex 在 `codex/ro-first-dungeon-scene-20261026` 上集成，未提交未推送；Git 回执只写在既有正式日志里。

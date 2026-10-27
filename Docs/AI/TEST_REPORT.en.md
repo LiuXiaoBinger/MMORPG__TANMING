@@ -54,3 +54,14 @@
 - No formal game scene-entry/exit, character-lighting integration or build validation.
 - `RO/Scene/AllInOne` source keyword configuration does not consume dynamic scene tint/fog channels on the static buildings; baked lighting/cloud response is verified, full original rendering is not claimed.
 - Scene serialization differs from HEAD and is recorded, not hidden: +679 stripped `MeshRenderer` docs and +1 `MonoBehaviour`, 189 prefab instances gaining 359 `m_Materials.Array.size` and 1 `m_StitchLightmapSeams` overrides, `m_FogColor` changed to the dusk value, +338,829 bytes. The scene's `LightmapSettings` document is unchanged — lightmaps are injected by the component, not persisted in the scene. Full log: `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`.
+
+## [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer
+
+- WorkBuddy live tests before the connection loss verified compilation, edit-mode auto apply, Disable restoration and Enable auto apply, with prior snapshot intact.
+- Codex later restored the existing Unity MCP session via its normal Connect button and independently observed maps 2, expected probes, `_applied` True, `ExecuteAlways` True, `dirty` False and zero console errors.
+- Selected `sc_dungeon_moshenta_ta_002_b` uses index 0, scaleOffset `(0.2514144, 0.2514144, 0.2719581, 0.6459816)`, and `lm_sc_dungeon_moshenta_001_00_00.exr`; a real native-window screenshot shows its expanded Baked Lightmap thumbnail/index/UV.
+- Worker partial status and black DockArea screenshot remain historical failures; Codex's actual screenshot resolves that missing evidence.
+- Scene disk SHA remains `92c2ce0db331ac918614e69a01c113efbf929c67aea9a42a94432e9f511422a9`, script SHA `54b4ece2b3fdbe6f08b7c9bc0de5f5a1fea2053e557fb7ad2705036654d44e37`.
+- No new Play or formal scene-transition test/rebake.
+- The earlier Unity restart's cause and the fate of earlier unsaved changes cannot be determined; this record does not claim all earlier in-memory edits survived, and does not attribute the restart to a proven cause.
+- Current `dirty` False is a point-in-time observation, not a guarantee auto apply never dirties a scene.

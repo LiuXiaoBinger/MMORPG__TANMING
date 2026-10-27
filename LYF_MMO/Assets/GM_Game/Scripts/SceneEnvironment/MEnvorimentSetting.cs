@@ -5,14 +5,20 @@ using UnityEngine;
 /// 按源数据结构与调用顺序，把固定黄昏配置（主光方向、场景色、角色光、云草树环境色、
 /// 静态雾与散射参数）写入 RO 场景着色器使用的全局变量，并恢复烘焙 Lightmap 与 LightProbes。
 /// 仅覆盖本场景实际使用的通道：不含昼夜过渡、天气循环、雨雪雷电、后处理与相机控制。
-/// 源工程无 ExecuteAlways，本组件同样只在运行时 OnEnable 生效；
-/// 编辑器预览通过 Inspector 右键菜单「应用环境配置」显式触发。
+/// 与源工程唯一的生命周期差异：源工程只靠运行时 OnEnable 生效，本组件额外标记 [ExecuteAlways]，
+/// 让编辑器里打开场景、重新勾选组件、脚本重载后也自动应用同一套数据，不必先右键「应用环境配置」
+/// 才看得到烘焙光图；停用或离开时仍由 OnDisable 还原应用前状态。
+/// 自动应用只是一次性整批写入，不在 Update／OnGUI 里反复重写。
 ///
 /// 与源 ResetGlobalShaderVariable 的边界说明：源工程的 ResetGlobalShaderVariable 把全局量写死成
 /// 一套「引擎默认兜底值」，因为源客户端只有这一套全局环境系统，退出即回到默认。
 /// 本组件是挂在单个场景上的独立组件，若同样写死兜底值，会把其他场景已经设置好的全局环境量冲掉。
 /// 因此停用时改为还原「首次应用前实际捕获到的原值」：既不残留本场景数据，也不覆盖别人的数据。
 /// </summary>
+// 标记 [ExecuteAlways] 是本任务唯一的生命周期适配：Unity 在编辑器里也会调用它的
+// OnEnable／OnDisable，因此打开场景、重新勾选组件、脚本重载后会自动应用，取消勾选或关闭场景会自动还原。
+// 不加 Update／OnGUI，避免每帧重写 937 条渲染器绑定。
+[ExecuteAlways]
 public class MEnvorimentSetting : MonoBehaviour
 {
     /// <summary>
@@ -206,7 +212,8 @@ public class MEnvorimentSetting : MonoBehaviour
 
     /// <summary>
     /// 启用时按源组件顺序应用默认配置：先恢复烘焙光，再写天色与天气。
-    /// 运行时进入场景即生效。
+    /// 运行时进入场景即生效；由于类上标了 [ExecuteAlways]，编辑器里打开场景、重新勾选组件、
+    /// 脚本重载后同样会走到这里，因此编辑态不再需要手动点右键菜单。
     /// </summary>
     private void OnEnable()
     {
@@ -215,6 +222,7 @@ public class MEnvorimentSetting : MonoBehaviour
 
     /// <summary>
     /// 停用时还原应用前状态，避免把本场景的全局变量与场景级设置泄漏给其他场景。
+    /// 编辑器里取消勾选组件或关闭场景也走这里，是「停用即还原」的验证入口。
     /// </summary>
     private void OnDisable()
     {
@@ -222,7 +230,8 @@ public class MEnvorimentSetting : MonoBehaviour
     }
 
     /// <summary>
-    /// 应用默认环境配置。可在 Inspector 右键菜单手动触发，用于编辑器预览（源工程无 ExecuteAlways）。
+    /// 应用默认环境配置。编辑器里由 OnEnable 自动调用；也可在 Inspector 右键菜单手动触发，
+    /// 用于改完配置后立刻重写一遍（例如只调了雾色或云速）。
     /// 顺序与源 MEnvorimentSetting 一致：烘焙光 → 时间段 → 天气 → 场景色偏。
     /// 首次调用时取一次「应用前原值」快照；之后再次调用只按当前数据重新写入，
     /// 不再覆盖首次快照，因此改完配置再次点菜单能立即看到新结果，且停用时仍能还原到最初状态。
