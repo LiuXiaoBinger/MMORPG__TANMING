@@ -8,7 +8,6 @@ _SunColor("Sun Color of Clouds", Color) = (0.977612,0.9254484,0.882769,1)
 _CloudContrast("Cloud Contrast", Range(0.1,3) ) = 1
 _Bias("Cloud Density", Range(0.25,0.95) ) = 0.45
 _AlphaCutoff("Cloud Opacity", Range(1,0) ) = 1
-_ROCloudEnvorimentColor("Cloud Environment Color", Color) = (1,1,1,1)
 
 	}
 	

@@ -42,3 +42,15 @@
 - 完整日志（范围、97 条源到目标映射、251 条逐项清单、逐轮失败、证据索引）：`项目修改日志/2026-10-26-RO首个副本场景复制迁移_CHANGELOG.md`。
 - 轮次与当前工作区边界（2026-10-26，本记录任务开工之后）：该迁移 Hub 之后又跑了一轮**只读漂移核验**（attempt `run-77bf2883-af7b-49c1-aba9-fefa6099f8b9`），是核验轮、不是第 5 轮迁移，迁移仍为 4 轮。该轮查明：一次 Unity 编辑器保存把目标场景从 904,144 重新序列化为 946,305 字节（+42,161，已逐字节归因），并新增 1 个 `Role_MJS` 角色预制体实例与 `RODungeon_FirstSettings.lighting`。因此目录现为 **253 文件 / 18,705,374 字节**，不是验收时的 251 / 18,661,241；副本几何本身未变（172 renderer、0 MonoBehaviour、0 Missing Script、0 灯、0 碰撞体）。
 - 集成范围仍以已验收的 **251 文件 / 18,661,241 字节**为准。主 Agent 只暂存该 R4 集合，场景通过 Git index 暂存 `_temp` 里用同一确定性规则重建的 904,144 字节版本（sha256 `fa99118e…`），不覆盖工作区当前这个已含角色实例的场景；角色实例与两个 lighting 文件都不进本次集成。本任务未 stage / commit / push。
+
+## [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] 魔神塔黄昏环境已适配并挂载
+
+- 本任务由 WorkBuddy 在原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` 实现（开发 2 轮；本次记录同步不是第 3 轮实现）。两个原生轮次的**实际请求**模型均由 Codex 独立观察到 `requestModelId = deepseek-v4.1-flash`，不以界面配置显示的模型作为唯一证据。
+- 全局 `RO/Effect/AllInOne` 缺 `../Include/EffectCommon.cginc` 的报错，通过只补 `EffectCommon` / `SceneMap` / `ColorCorrect` 三个 `.cginc` 与全新 GUID 的 `.meta`（目录 `LYF_MMO/Assets/artres/Resources/Shader/RO/Include`）解决；**Shader 本体未改**，sha256 与源一致。
+- `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment` 下 8 个按源命名的强类型，由组件 `MEnvorimentSetting` 挂在场景根 `sc_dungeon_moshenta_001` 上，按源调用顺序写固定黄昏 / 烘焙光 / 天气全局量。未引入 `MoonClient` / `MoonSerializable` DLL，未移植 RO 管理器、事件与后处理框架。
+- 3 个烘焙二进制资源（2 张 EXR + LightProbes）与源**逐字节一致**；4 份 ScriptableObject 因类型 GUID 与字段裁剪必然重写，只能保证字段值与源一致，**不是**逐字节同源。
+- 渲染器绑定 **937/937** 重建成功（`index` 分布 203 条 0 / 734 条 1），与两张光照图和 LightProbes 一起持久化；679 条 stripped renderer 文档是保存时在场景里新物化的，否则 679 条引用无处落地。
+- 魔神塔局部云 Shader 退回源的**纯 global 颜色入口**（删掉上一轮临时加的 Properties 项），所以环境云色能真正控制云层观感。
+- R1（还原只硬写 9 个通道 + 重复应用被门禁挡住）未过验收；R2 改为按类型快照/还原**全部 27 个**全局通道，并让显式重复应用生效（首次快照只取一次）。
+- 运行期 `OnEnable` 自动应用、`OnDisable` 还原；编辑器预览用组件右键「应用环境配置」，**预览后不要保存**——逐渲染器写 lightmap 索引会让场景在下一帧被标脏。
+- 范围为最小适配：不做天气循环、昼夜过渡、雨雪雷电、服务端协议、后处理 / 相机 / 全局管理框架，不改 UTS 与角色 shader。源 RO 工程全程只读。分支 `codex/ro-first-dungeon-scene-20261026`，基线 `0b3c33806ef4637cede0667f425091d727301878`。**待主 Agent 精确暂存并提交推送**。逐项 41 文件清单、场景序列化真实差异与全部证据见 `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`。

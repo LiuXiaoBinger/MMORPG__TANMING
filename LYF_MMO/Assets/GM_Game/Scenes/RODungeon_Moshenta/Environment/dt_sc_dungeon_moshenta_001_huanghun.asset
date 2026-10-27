@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 912760a47ab9c664f9f8ff51439c0b53, type: 3}
+  m_Name: dt_sc_dungeon_moshenta_001_huanghun
+  m_EditorClassIdentifier: 
+  daytimeType: 4
+  mainLightDir: {x: 65, y: 135}
+  visLightDir: {x: 30, y: 135}
+  sceneColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  creatureLightData: {fileID: 11400000, guid: e3520e0df2b9bcf4faee736edbe58d7a, type: 2}
+  sunColor: {r: 1, g: 0.96, b: 0.84, a: 0.1}
+  shadowColor: {r: 0.18289427, g: 0.21775806, b: 0.2830189, a: 0.6156863}
+  cloudEnvorimentColor: {r: 1, g: 1, b: 1, a: 1}
+  grassEnvorimentColor: {r: 1, g: 1, b: 1, a: 1}
+  grassEnvorimentDarkColor: {r: 1, g: 1, b: 1, a: 1}
+  treeEnvorimentColor: {r: 1, g: 1, b: 1, a: 1}
+  terrainLightColor: {r: 1.7458056, g: 1.5230266, b: 1.3093542, a: 1}
+  terrainDarkColor: {r: 0.6466714, g: 0.68526065, b: 0.7924528, a: 1}
+  terrainThreshold: 0.25

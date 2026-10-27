@@ -44,3 +44,14 @@
 - 未执行：未接 Boot / 配置表 / YooAsset 运行时加载，未做副本玩法、组队、阵营、服务端、打包或联调，未做完整客户端或服务端编译。源场景本身无碰撞、无灯光，未重建烘焙光；局部最简贴图着色不等于原 RO 完整渲染效果。
 - 记录期复核与漂移核实（2026-10-26，只读）：一次 Unity 编辑器保存把 `RODungeon_First.unity` 从 904,144 重新序列化为 946,305 字节（+42,161，mtime 22:39:09）。该迁移 Hub 之后的一轮只读核验（attempt `run-77bf2883-af7b-49c1-aba9-fefa6099f8b9`，是核验轮、不是第 5 轮迁移）把增量逐字节归因：新增 `Role_MJS` 预制体实例 +2,408、`SceneRoots` +133、170 个既有预制体实例 +40,907（Unity 2023 的 `serializedVersion: 3` 与显式 `m_AddedComponents`）、YAML 折行合并 −1,627、`LightmapSettings` / `NavMeshSettings` / `RenderSettings` +340，合计 +42,161。用 R1 剥离规则在 `_temp` 重建的旧基线精确为 904,144 字节（sha256 `fa99118e…`），当前文件 sha256 `55f9981e…`；展开折行后 170 个实例的修改项 0 缺失 / 0 多出 / 0 值变化，172 个 `addedObject` 全是既有 `LODGroup`。Unity 同时生成 `RODungeon_FirstSettings.lighting`（1,772 字节）与其 `.meta`（200 字节），故目录现为 **253 文件 / 18,705,374 字节**；本段早前写的 18,703,402 字节漏了这两个文件，此处更正。保存操作者无法从文件或日志判定，**不推定**——迁移脚本与本会话都没有 `SaveScene` 调用。集成验收基线仍是 251 文件 / 18,661,241 字节。详见正式日志第 5 节与第 12.1 节。
 - 证据：`_temp/ro-first-dungeon-final-review.md`、`_temp/ro-first-dungeon-migration-manifest-r4.json`、`_temp/ro-first-dungeon-final-r4.png`；R1 黑图、R2 洋红、R3 偏绿截图均保留。完整日志：`项目修改日志/2026-10-26-RO首个副本场景复制迁移_CHANGELOG.md`。
+
+## [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] 环境组件增量验收
+
+- 执行者：WorkBuddy 原生桌面会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，同一会话原地续作（开发 2 轮；本次记录同步不是第 3 轮实现）。模型 `deepseek-v4.1-flash`，由 Codex 在两个原生轮次的实际请求里独立观察到 `requestModelId`，不以界面配置的模型作为唯一证据。验收与 Git 由 Codex 负责。
+- Codex 独立在 Unity 现场核对：Shader `supported=True`、`hasError=False`、`GetShaderMessages=0`；组件存在，937 条绑定 0 空引用；之后 Console 0 error。
+- WorkBuddy 证据：第 1 轮验过 Play 进入/退出与场景重载；2 张光照图与 LightProbes 能恢复，光照图开/关使建筑区 **25.25%** 像素差超过阈值 12；云色扰动确实改变云层画面（均值 `129.81/67.38/80.93` vs `129.81/129.62/129.42`，扰动后已恢复源默认白）。
+- 第 2 轮对 27 个通道与"源资产值 + 源公式"的独立复算对照（最大误差 5.4e-7）；改配置后再应用能更新云色 `(1,0.2,0.2,1)`；Restore 把 27 个通道**逐项精确**还原成应用前的哨兵值，收尾写回测试前状态后 0 差异。第 2 轮刻意不重跑未变的映射 / 像素 / Play 大测试。
+- 代码审查与 41 个文件的哈希全部通过（新增 39 + 修改 2 + 删除 0）；场景验收 sha256 `92c2ce0db331ac918614e69a01c113efbf929c67aea9a42a94432e9f511422a9`（10,017,238 B，与验收快照逐字节一致）。
+- 源里处于非激活状态的两个对象各有 1 个空材质槽（`sc_fuben_002_002`、`sc_moshenta_shan_001`，`activeInHierarchy=False`），源本如此，不是本次丢失。
+- 未验证：未做正式游戏场景进出流程、未做角色光照接入、未做客户端完整编译与打包；`RO/Scene/AllInOne` 的源关键字配置决定静态建筑不消费动态场景色调/雾通道，本任务只证明烘焙光与云层响应，**不声称**已还原 RO 完整渲染效果。
+- 场景序列化与 HEAD 的差异已核实并记录，不掩饰：新增 679 条 stripped `MeshRenderer` 文档 + 1 个 `MonoBehaviour`，189 个预制体实例新增 359 条 `m_Materials.Array.size` 与 1 条 `m_StitchLightmapSeams` 覆盖，`m_FogColor` 改为黄昏 `(0.31461376,0.40945742,0.6603774)`，字节 +338,829。场景 YAML 的 `LightmapSettings` 文档未变——光图由组件应用时注入，不是落盘在场景里。属正常 Unity 序列化，未回改已验收场景。完整日志：`项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`。

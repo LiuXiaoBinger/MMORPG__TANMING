@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9c29ac978432ac0676c52cf94d521da29a4d395f756d7648aade420063ada407`
+Source normalized SHA256: `8f56e500cc8f618cf2461ce1af6d213d12a1b5f0bb1dd7105b056d8e750cdc0d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -17,11 +17,12 @@ Source normalized SHA256: `9c29ac978432ac0676c52cf94d521da29a4d395f756d7648aade4
 | [FILES][角色][ROLE-FACE-MATERIAL-20261025] Character face/material "washed out" fix, 2026-10-25 | 11-17 |
 | [FILES][角色][ROLE-FACE-LIGHT-20261025] Character face lighting fix, 2026-10-25 | 18-22 |
 | [FILES][Task][TASK-TABLE-DESIGN-20261025-R2] Quest table system expanded to 13 tables (revision 2), 2026-10-25 | 23-32 |
-| [FILES][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copied into the project, 2026-10-26 | 33-42 |
+| [FILES][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copied into the project, 2026-10-26 | 33-43 |
+| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] Fixed dusk environment on Moshenta | 44-54 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4c5e71f96138c956efd1003c26bc174c340e675f8e27ccf191b47a450ec098f6`
+Source normalized SHA256: `10fc1a36634ab8b1d1c7045980e73ea9c396ba303da625538836b8036c628acb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -29,7 +30,8 @@ Source normalized SHA256: `4c5e71f96138c956efd1003c26bc174c340e675f8e27ccf191b47
 | [VERIFY][角色][ROLE-FACE-MATERIAL-20261025] Character material washout fix verification | 10-16 |
 | [VERIFY][角色][ROLE-FACE-LIGHT-20261025] Character face lighting verification | 17-23 |
 | [VERIFY][Task][VERIFY-TASK-TABLE-20261025-R2] Generation and cross-reference checks for the 13 quest tables, 2026-10-25 | 24-33 |
-| [VERIFY][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copy verification | 34-44 |
+| [VERIFY][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copy verification | 34-45 |
+| [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] Incremental environment acceptance | 46-56 |
 
 ## Docs/AI/DECISIONS.en.md
 

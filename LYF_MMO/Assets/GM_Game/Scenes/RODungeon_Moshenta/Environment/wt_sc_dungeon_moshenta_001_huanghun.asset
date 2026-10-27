@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a30b1cdf4db46459083de785bc58f3, type: 3}
+  m_Name: wt_sc_dungeon_moshenta_001_huanghun
+  m_EditorClassIdentifier: 
+  worldSize: 665
+  keepSceneColor: 1
+  sceneColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  fogColor: {r: 0.6242435, g: 0.708428, b: 0.7924528, a: 1}
+  fogBlendColor: {r: 0.67737633, g: 0.754706, b: 0.8113208, a: 1}
+  fogBlendStart: 80
+  fogBlendEnd: 100
+  enableDayTimeFog: 1
+  fogColorDusk: {r: 0.31461376, g: 0.40945742, b: 0.6603774, a: 1}
+  fogBlendColorDusk: {r: 0.31719473, g: 0.37138253, b: 0.6792453, a: 1}
+  fogBlendStartDusk: 50
+  fogBlendEndDusk: 40
+  hightFogStart: 5
+  hightFogExp: 15
+  camFogAffectHightFog: 0
+  scatterStart: 30
+  mieG: 0.85
+  rayleighDensity: 0.0015
+  mieDensity: 0.5
+  fogSpeed: {x: 0, y: 0}
+  cloudSpeed: {x: 0, y: 0}
+  cloudMaskColor: {r: 0.3254902, g: 0.3529412, b: 0.3529412, a: 1}
+  windDirection: {x: 1, y: 1}
+  windIntensity: 0
+  windFrequency: 0
