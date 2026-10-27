@@ -344,3 +344,65 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 
 - 最终口径校正：LightProbes 源资产为 `!u!258` Unity YAML 文本；三份烘焙资产逐字节同源仍成立，英文/中文 CURRENT_TASK 本次段落已由 WorkBuddy 定向改为“两张 EXR 与一份 YAML LightProbes”。单行可逆字节核查通过，历史不改；证据 `_temp/ro-environment-record-format-fix.json`。实现与验收输入均未改变。
 - Git 回执提交 `d5522434cfbfdb6ef8bb6454209d03f3f4d679de` 已成功推送（远端回执 `c03a0f5..d552243`）；上述格式文字校正随后独立提交推送，最终提交号见 Git 历史。
+
+## 15. 只读查询记录：柱子编辑态看不到烘焙光图（`RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027`）
+
+### 15.1 身份与轮次口径
+
+- 任务编号：`RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027`，性质为**只读核验**，无业务改动。
+- 提供方与执行：WorkBuddy 原生桌面会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，工作目录 `D:/unitypro/LYFMMORGP`；基线 `d994157079a22d28552a2cf68365f58c41a3a4be`，分支 `codex/ro-first-dungeon-scene-20261026`。分支与基线只引用主 Agent 提供的事实，本子任务不执行 Git 核对。
+- 实际模型：`deepseek-v4.1-flash`，由主 Agent 从原生会话侧独立读到的 `requestModelId` 观察确认；本子会话未切换模型。
+- 轮次口径：本查询是**纯调查 1 轮**，随后这一轮是**记录／中英同步子任务**，两者都**不算开发轮次**。上文第 1、2 节那样的旧环境组件开发**仍然是 2 轮**（第 1 轮实现 + 第 2 轮原地返修），不因本次记录改成 3 轮。
+- 调用链路事实：原生传输在本轮产物文件写完之后断开，没有成功的最终 RPC 回执；核心结论由主 Agent 从实际产物文件加独立核验接受，未重复派发调查。
+
+### 15.2 问题与「同一根柱子」的证据
+
+- 用户问题：RO 工程里柱子／道路的 Mesh Renderer 能看到 Lightmap 与阴影（截图 `C:/Users/lyf/AppData/Local/Temp/codex-clipboard-d9c208d6-e659-43ee-8598-bff1191b7307.png`：Lightmap Static、Scale In Lightmap `0.1`、Baked Lightmap Index `1`、Tiling `(0.04050754, 0.04050754)`、Offset `(0.3158843, 0.7874021)`、材质 `sc_moshenta_001_c`），本项目用同样材质却设不了。
+- 同对象定位（按坐标加预制体，不按名字猜）：`sc_dungeon_moshenta_building_002 (1)`，本地坐标 `(72.987, 79.1624, 589.11035)`，预制体实例 `150537529`，源预制体 GUID `e12c4a666ffc9f54dbb6f2ebc6fba78d`；坐标加预制体在源与目标各只唯一命中 1 个实例，无第二候选。
+- 绑定逐值对比如下，index 一致，差异只在 scaleOffset 第 7 位十进制的 float 序列化舍入（约 4e-9）。截图上的三个数值与源、目标两侧都对得上；该 scaleOffset 在源 937 条绑定里只出现 1 次，不存在把别的物体当成本柱子的情况。
+
+| 位置 | 渲染器 fileID | index | scaleOffset |
+|---|---|---|---|
+| 源 937 条绑定 | `117451335` | `1` | `(0.040507544, 0.040507544, 0.31588426, 0.7874021)` |
+| 本项目副本 | `150537531` | `1` | `(0.04050754, 0.04050754, 0.31588426, 0.7874021)` |
+
+### 15.3 当时的编辑器观察（历史观测，不是本子任务重新验证）
+
+- 主 Agent 同时对比 YAML 记录与实际编辑器，结论为：`scaleInLightmap=0.1`、`Receive GI=Lightmaps`、`LightmapSettings.lightmaps=0`、`renderer.lightmapIndex=-1`、环境组件 `_applied=False`、`Cast Shadows=Off`、`Receive Shadows=False`、场景 `dirty=True`。
+- 由此成立的判断只有一句：**旧烘焙绑定确实存在组件数据里，只是当前没有注入到编辑态的 `LightmapSettings`**。可编辑的烘焙设置（Contribute GI／Scale In Lightmap／Receive GI／Stitch Seams／Lightmap Parameters）与「Baked Lightmap 结果显示」是两件不同的事，后者是烘焙产物，不能像材质槽那样直接拖。
+- 本子任务**没有**重跑 Unity，上述数值只是记录转述，明确标注为「当时观察」。
+
+### 15.4 源美术链路与发布链路的差别
+
+- 源美术烘焙场景 `Assets/artres/_GameRes/Scenes/_Scenes/sc_dungeon_moshenta_001/sc_dungeon_moshenta_001.unity`：带 `LightingDataAsset`，同实例 `Cast Shadows=1`、`Receive Shadows=1`。
+- 源发布场景 `Assets/artres/Resources/Scenes/sc_dungeon_moshenta_001/sc_dungeon_moshenta_001.unity`：`m_LightingDataAsset={fileID: 0}`，同实例 `Cast Shadows=0`、`Receive Shadows=0`；本项目副本与发布场景一致（`0/0`、无 `LightingDataAsset`）。
+- 因此截图那套设置与**美术烘焙场景**一致；但仅凭图片**不能证明**当时打开的是哪条路径，记录里不写「已确证来自美术场景」。
+- 烘焙产物落在 `_GameRes/Scenes/_Scenes/_Lightmaps/sc_dungeon_moshenta_001/`，导出时由 `MSceneBakePanel` 复制成 `Resources/SceneEnviroData/` 下的 `lm_` 资产并清空发布场景光图；运行时由 `MEnvorimentSetting.ApplyLightmapData` 写回 `renderer.lightmapIndex`、`renderer.lightmapScaleOffset`、`LightmapSettings.lightmaps`、`LightmapSettings.lightProbes`。本项目是**直接消费这套已烘好的产物**，没有搬烘焙面板与导出链路，所以能「接收旧烘焙结果」，不能「改完再重新算光」。
+
+### 15.5 被否决的结论与仍属未验证的项
+
+原始只读报告里有几处不成立，按主 Agent 验收记录作废，只采信验收事实：
+
+- 「当前场景 0 盏 Light」→ 作废：主 Agent 实测为 **1 盏**。
+- 「看 Lightmap 时取消勾选组件 Enabled 就能还原」→ 不采纳：本组件没有 `ExecuteAlways`，停用不等于编辑态的还原回调；组件只有显式右键菜单「应用环境配置」这一条入口。
+- 「持久预览必须落盘序列化」→ 不作为结论：没有实现、没有授权，属推测。
+- 「`_Lightmaps` 里多出来的 EXR 是历史烘焙残留」→ 未证明，不写。
+
+仍未验证（本轮同样没有补）：
+
+- 没有 Apply 前后的 Inspector 截图；「Baked Lightmap 区不显示」仍是由 `lightmaps=0` 加 `lightmapIndex=-1` 推断，非眼见。
+- 没有重新烘焙，也没有验证重烘后画面与 937 条绑定是否要重算。
+- 没有打开 RO 编辑器实例，无法核对截图当时的 Unity 版本与打开路径。
+- 场景 `dirty=True`（用户未保存改动）按约束保留，未清除、未回滚旧快照、未保存。
+
+### 15.6 本次记录范围与额度证据
+
+- 本次只动 3 个正式文件、各追加独立段，既有字节不改：
+  - `项目修改日志/2026-10-27-魔神塔最小环境组件与Shader依赖修复_CHANGELOG.md`（本节）
+  - `Docs/AI/QUERY_TASKS.en.md`（新增 `## [QUERY][场景][RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027]`）
+  - `Docs/AI/QUERY_TASKS.md`（同编号中文段）
+- `Docs/AI/RECORD_INDEX.md` 由主 Agent 最后机械生成，本子任务不改；未改 cs／场景／资源／其它正式记录／`项目分析/项目难点.md`；未跑 Unity、未编译、未测试、未操作 Git／网关／模型配置、未重跑旧映射。
+- 额度证据路径：`_temp/ro-lightmap-inspector-query-token-collect.txt`、`_temp/ro-lightmap-inspector-query-token-report.json`。口径是**近 1 日、项目 `LYFMMORGP`、`days=1`、覆盖 2026-10-26 至 2026-10-27** 的聚合，adapter 自注 experimental；**不是本任务用量，不是账单，也不是账户余额**。本任务数字由主 Agent 稍后另行 collect／report，此处不重复。
+- 未验证：WorkBuddy 侧独立额度不可测，本子会话只能声明未切换模型。
+- 验收与证据文件：`_temp/ro-lightmap-inspector-query-codex-accept.json`、`_temp/ro-lightmap-inspector-query-review.md`、`_temp/ro-lightmap-inspector-query-final.json`；原始报告中被否决的断言以验收记录为准。
+- Git：本子任务**未执行**任何 Git 操作；只集成这一次增量由主 Agent 负责。

@@ -45,11 +45,12 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `fde65c5e5c73072e521c1a2512bc1c339a4b876ab92037c8dfd8156c92790569`
+Source normalized SHA256: `5f21ae36bfbdbb7326a12cd5248dc66c0d90b7aabcce77f8816d1110e8d686a6`
 
 | Topic / record ID / title | Lines |
 |---|---|
-| [INDEX][协作][QUERY-INDEX] Archive routing | 3-6 |
+| [INDEX][协作][QUERY-INDEX] Archive routing | 3-7 |
+| [QUERY][场景][RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027] Why the copied pillar has no visible baked lightmap in edit mode | 8-18 |
 
 ## Older records
 
