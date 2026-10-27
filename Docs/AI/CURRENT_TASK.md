@@ -48,7 +48,7 @@
 - 本任务由 WorkBuddy 在原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` 实现（开发 2 轮；本次记录同步不是第 3 轮实现）。两个原生轮次的**实际请求**模型均由 Codex 独立观察到 `requestModelId = deepseek-v4.1-flash`，不以界面配置显示的模型作为唯一证据。
 - 全局 `RO/Effect/AllInOne` 缺 `../Include/EffectCommon.cginc` 的报错，通过只补 `EffectCommon` / `SceneMap` / `ColorCorrect` 三个 `.cginc` 与全新 GUID 的 `.meta`（目录 `LYF_MMO/Assets/artres/Resources/Shader/RO/Include`）解决；**Shader 本体未改**，sha256 与源一致。
 - `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment` 下 8 个按源命名的强类型，由组件 `MEnvorimentSetting` 挂在场景根 `sc_dungeon_moshenta_001` 上，按源调用顺序写固定黄昏 / 烘焙光 / 天气全局量。未引入 `MoonClient` / `MoonSerializable` DLL，未移植 RO 管理器、事件与后处理框架。
-- 3 个烘焙二进制资源（2 张 EXR + LightProbes）与源**逐字节一致**；4 份 ScriptableObject 因类型 GUID 与字段裁剪必然重写，只能保证字段值与源一致，**不是**逐字节同源。
+- 3 份烘焙资产（2 张 EXR 贴图 + 1 份 YAML 格式的 LightProbes 资产）与源**逐字节一致**；4 份 ScriptableObject 因类型 GUID 与字段裁剪必然重写，只能保证字段值与源一致，**不是**逐字节同源。
 - 渲染器绑定 **937/937** 重建成功（`index` 分布 203 条 0 / 734 条 1），与两张光照图和 LightProbes 一起持久化；679 条 stripped renderer 文档是保存时在场景里新物化的，否则 679 条引用无处落地。
 - 魔神塔局部云 Shader 退回源的**纯 global 颜色入口**（删掉上一轮临时加的 Properties 项），所以环境云色能真正控制云层观感。
 - R1（还原只硬写 9 个通道 + 重复应用被门禁挡住）未过验收；R2 改为按类型快照/还原**全部 27 个**全局通道，并让显式重复应用生效（首次快照只取一次）。

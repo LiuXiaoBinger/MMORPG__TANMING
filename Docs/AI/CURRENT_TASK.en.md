@@ -46,7 +46,7 @@
 - WorkBuddy implemented this task in native session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` (two development rounds; record synchronization is not a third implementation round). Codex independently observed requestModelId `deepseek-v4.1-flash` in both native rounds; a configured UI model is not reported as sole evidence.
 - Global `RO/Effect/AllInOne` is repaired by adding only `EffectCommon` / `SceneMap` / `ColorCorrect.cginc` and fresh `.meta` GUIDs under `LYF_MMO/Assets/artres/Resources/Shader/RO/Include`; the shader body is unchanged.
 - Eight source-shaped types under `LYF_MMO/Assets/GM_Game/Scripts/SceneEnvironment` apply fixed dusk / lightmaps / weather globals through `MEnvorimentSetting` on the `sc_dungeon_moshenta_001` root.
-- Three baked binary assets are byte-identical to source; four ScriptableObjects rewrite script GUIDs and retain only required source fields.
+- Three baked assets (two EXR textures and one YAML LightProbes asset) are byte-identical to source. The four ScriptableObjects rewrite script GUIDs and retain only required source fields.
 - Renderer bindings **937/937** are rebuilt (203 index0, 734 index1), persisted with two maps and probes; 679 stripped renderer docs are newly materialized in the scene.
 - The local cloud shader returns to its source global-colour entry, so environment cloud colour controls appearance.
 - R1 (partial hardcoded Shader reset and reapply early return) failed review; R2 captures/restores all **27** typed globals and reuses the first snapshot while allowing explicit reapply.

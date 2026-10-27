@@ -341,3 +341,6 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 - 已成功推送 `origin/codex/ro-first-dungeon-scene-20261026`，远端回执 `0b3c338..c03a0f5`；未强制推送、未合并或推送主分支。
 - 本节仅补充真实 Git 回执，随后单独提交并推送回执文件；不改变实现或双语事实，不重复已通过测试。最终回执提交号见本文件 Git 历史及交付回复。
 - 目录机械重建已执行；工作区索引对应工作区全部既有源记录，提交索引对应本次提交的源记录，保留两者差异以免夹带其他任务。
+
+- 最终口径校正：LightProbes 源资产为 `!u!258` Unity YAML 文本；三份烘焙资产逐字节同源仍成立，英文/中文 CURRENT_TASK 本次段落已由 WorkBuddy 定向改为“两张 EXR 与一份 YAML LightProbes”。单行可逆字节核查通过，历史不改；证据 `_temp/ro-environment-record-format-fix.json`。实现与验收输入均未改变。
+- Git 回执提交 `d5522434cfbfdb6ef8bb6454209d03f3f4d679de` 已成功推送（远端回执 `c03a0f5..d552243`）；上述格式文字校正随后独立提交推送，最终提交号见 Git 历史。

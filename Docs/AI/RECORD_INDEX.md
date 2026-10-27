@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8f56e500cc8f618cf2461ce1af6d213d12a1b5f0bb1dd7105b056d8e750cdc0d`
+Source normalized SHA256: `e3159efb9122a10343988fca72bc06886dbf85f01455d7a950ba70855cea7876`
 
 | Topic / record ID / title | Lines |
 |---|---|
