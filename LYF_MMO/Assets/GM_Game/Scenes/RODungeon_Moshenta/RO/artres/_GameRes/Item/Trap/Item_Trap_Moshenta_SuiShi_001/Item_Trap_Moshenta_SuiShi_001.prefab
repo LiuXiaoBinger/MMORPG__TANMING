@@ -1,0 +1,3172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1603648949854311216
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1603648949853949712}
+  - component: {fileID: 1603648949857427440}
+  m_Layer: 0
+  m_Name: sc_dungeon_moshenta_building_003_e_frag_060
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1603648949853949712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603648949854311216}
+  m_LocalRotation: {x: 0.2705981, y: 0.65328145, z: 0.65328145, w: -0.2705981}
+  m_LocalPosition: {x: 0.3995982, y: -7.7257953, z: 43.33616}
+  m_LocalScale: {x: 1.4268734, y: 1.4268734, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146431}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &1603648949857427440
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603648949854311216}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ea51301c217d2284eaaceb3eefaa8820, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: 4300004, guid: 5a7a832609af7db499ac39465c7943e9, type: 3}
+  m_Bones:
+  - {fileID: 8120673587458146399}
+  - {fileID: 8120673587458146401}
+  - {fileID: 8120673587458146403}
+  - {fileID: 8120673587458146397}
+  - {fileID: 8120673587458146761}
+  - {fileID: 8120673587458146307}
+  - {fileID: 8120673587458146413}
+  - {fileID: 8120673587458146807}
+  - {fileID: 8120673587458146759}
+  - {fileID: 8120673587458146809}
+  - {fileID: 8120673587458146395}
+  - {fileID: 8120673587458146805}
+  - {fileID: 8120673587458146793}
+  - {fileID: 8120673587458146377}
+  - {fileID: 8120673587458146783}
+  - {fileID: 8120673587458146755}
+  - {fileID: 8120673587458146417}
+  - {fileID: 8120673587458146757}
+  - {fileID: 8120673587458146787}
+  - {fileID: 8120673587458146405}
+  - {fileID: 8120673587458146309}
+  - {fileID: 8120673587458146365}
+  - {fileID: 8120673587458146781}
+  - {fileID: 8120673587458146369}
+  - {fileID: 8120673587458146367}
+  - {fileID: 8120673587458146785}
+  - {fileID: 8120673587458146363}
+  - {fileID: 8120673587458146789}
+  - {fileID: 8120673587458146767}
+  - {fileID: 8120673587458146769}
+  - {fileID: 8120673587458146321}
+  - {fileID: 8120673587458146311}
+  - {fileID: 8120673587458146379}
+  - {fileID: 8120673587458146811}
+  - {fileID: 8120673587458146305}
+  - {fileID: 8120673587458146421}
+  - {fileID: 8120673587458146373}
+  - {fileID: 8120673587458146375}
+  - {fileID: 8120673587458146389}
+  - {fileID: 8120673587458146371}
+  - {fileID: 8120673587458146815}
+  - {fileID: 8120673587458146393}
+  - {fileID: 8120673587458146391}
+  - {fileID: 8120673587458146795}
+  - {fileID: 8120673587458146409}
+  - {fileID: 8120673587458146797}
+  - {fileID: 8120673587458146407}
+  - {fileID: 8120673587458146415}
+  - {fileID: 8120673587458146791}
+  - {fileID: 8120673587458146803}
+  - {fileID: 8120673587458146411}
+  - {fileID: 8120673587458146813}
+  - {fileID: 8120673587458146381}
+  - {fileID: 8120673587458146325}
+  - {fileID: 8120673587458146361}
+  - {fileID: 8120673587458146359}
+  - {fileID: 8120673587458146425}
+  - {fileID: 8120673587458146423}
+  - {fileID: 8120673587458146753}
+  - {fileID: 8120673587458146763}
+  - {fileID: 8120673587458146771}
+  - {fileID: 8120673587458146773}
+  - {fileID: 8120673587458146777}
+  - {fileID: 8120673587458146779}
+  - {fileID: 8120673587458146387}
+  - {fileID: 8120673587458146385}
+  - {fileID: 8120673587458146383}
+  - {fileID: 8120673587458146799}
+  - {fileID: 8120673587458146801}
+  - {fileID: 8120673587458146313}
+  - {fileID: 8120673587458146315}
+  - {fileID: 8120673587458146317}
+  - {fileID: 8120673587458146319}
+  - {fileID: 8120673587458146323}
+  - {fileID: 8120673587458146419}
+  - {fileID: 8120673587458146327}
+  - {fileID: 8120673587458146765}
+  - {fileID: 8120673587458146775}
+  - {fileID: 8120673587458146331}
+  - {fileID: 8120673587458146341}
+  - {fileID: 8120673587458146351}
+  - {fileID: 8120673587458146353}
+  - {fileID: 8120673587458146355}
+  - {fileID: 8120673587458146357}
+  - {fileID: 8120673587458146349}
+  - {fileID: 8120673587458146347}
+  - {fileID: 8120673587458146751}
+  - {fileID: 8120673587458146329}
+  - {fileID: 8120673587458146345}
+  - {fileID: 8120673587458146343}
+  - {fileID: 8120673587458146333}
+  - {fileID: 8120673587458146339}
+  - {fileID: 8120673587458146335}
+  - {fileID: 8120673587458146337}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 8120673587458146337}
+  m_AABB:
+    m_Center: {x: 13.012002, y: 9.228585, z: -10.390698}
+    m_Extent: {x: 14.435437, y: 13.116214, z: 10.529643}
+  m_DirtyAABB: 0
+--- !u!1 &8120673587457727489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146337}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_045
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727489}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.8951926, y: -10.534789, z: 1.1871318}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 44
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727491
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146339}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_044
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146339
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727491}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.9100165, y: -11.390231, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 43
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146341}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_043
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727493}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.910094, y: -13.149916, z: 0.3732952}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 42
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727495
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146343}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_042
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146343
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727495}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076323, y: -15.755492, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 41
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146345}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_041
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727497}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076216, y: -16.625908, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 40
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146347}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_040
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727499}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076295, y: -18.379087, z: 0.47347832}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 39
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146349}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_039
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146349
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727501}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.0778294, y: -19.683935, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 38
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146351}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_038
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727503}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.0762906, y: -20.138103, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 37
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146353}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_037
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727505}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.091013, y: -21.035164, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 36
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146355}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_036
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727507}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076383, y: -21.890558, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 35
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727509
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146357}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_035
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146357
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727509}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.091254, y: -22.78876, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 34
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146359}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_034
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727511}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.0762925, y: -23.64431, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 33
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146361}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_033
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727513}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076349, y: -24.533613, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 32
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146363}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_032
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727515}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.07638, y: -25.403913, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 31
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146365}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_031
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727517}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.0763187, y: -29.647556, z: 1.1843681}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 30
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727519
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146367}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_030
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146367
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727519}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.09113, y: -26.298038, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 29
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727521
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146369}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_029
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146369
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727521}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.0763226, y: -27.153503, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 28
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146371}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_028
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727523}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.910004, y: -23.644249, z: 0.49273765}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 27
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146373}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_027
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727525}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.9100976, y: -29.64762, z: 1.1871318}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 26
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146375}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_026
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727527}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.895289, y: -26.2981, z: 1.1871318}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 25
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727529
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146377}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_025
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727529}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.080923684, y: -32.41177, z: 0.5928128}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146379}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_024
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727531}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.9100986, y: -27.153564, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 23
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146381}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_023
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146381
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727533}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.397648, y: -22.00879, z: -0.28132793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146383}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_022
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727535}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.480429, y: -17.468418, z: -0.6650897}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 21
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146385}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_021
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727537}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 0.33681193, y: -17.242783, z: -0.15447974}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146387}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_020
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727539}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.4817524, y: -19.669815, z: -0.32511488}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146389}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_019
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727541}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.9100056, y: -25.221231, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146391}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_018
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727543}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 10.846683, y: -43.814373, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727545
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146393}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_017
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727545}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 8.687461, y: -37.492332, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146395}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_016
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146395
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727547}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.2130132, y: -33.430016, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146397}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_015
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727549}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -3.3701181, y: -33.430077, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146399}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_014
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727551}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -8.844532, y: -37.492313, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727553
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146401}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_013
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727553}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -11.003638, y: -43.814342, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146403}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_012
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727555}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -8.69122, y: -50.071854, z: -6.324722}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146405}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_011
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146405
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727557}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -3.3775618, y: -53.9299, z: -6.324722}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146407}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_010
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146407
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727559}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.1975129, y: -53.853653, z: -6.981223}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146409}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_009
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146409
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727561}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 8.687435, y: -50.136284, z: -5.8931785}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146411}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_008
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146411
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727563}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -5.534121, y: -47.779102, z: -19.323414}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727565
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146413}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_007
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146413
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727565}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -5.534121, y: -47.779102, z: -11.914808}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146415}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_006
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727567}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.3834553, y: -39.846024, z: -19.323414}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146417}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_005
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727569}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.3835206, y: -39.845963, z: -11.914808}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146419}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_004
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727571}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.10704, y: -17.690973, z: -2.7417724}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146421}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_003
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146421
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727573}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.1070724, y: -22.09722, z: -2.8923926}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146423}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_002
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727575}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.106981, y: -15.6686945, z: -1.7900553}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146425}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_001
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146425
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727577}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.4264036, y: -14.846674, z: -0.04630789}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727581
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146429}
+  m_Layer: 0
+  m_Name: Reference
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727581}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8120673587458146425}
+  - {fileID: 8120673587458146423}
+  - {fileID: 8120673587458146421}
+  - {fileID: 8120673587458146419}
+  - {fileID: 8120673587458146417}
+  - {fileID: 8120673587458146415}
+  - {fileID: 8120673587458146413}
+  - {fileID: 8120673587458146411}
+  - {fileID: 8120673587458146409}
+  - {fileID: 8120673587458146407}
+  - {fileID: 8120673587458146405}
+  - {fileID: 8120673587458146403}
+  - {fileID: 8120673587458146401}
+  - {fileID: 8120673587458146399}
+  - {fileID: 8120673587458146397}
+  - {fileID: 8120673587458146395}
+  - {fileID: 8120673587458146393}
+  - {fileID: 8120673587458146391}
+  - {fileID: 8120673587458146389}
+  - {fileID: 8120673587458146387}
+  - {fileID: 8120673587458146385}
+  - {fileID: 8120673587458146383}
+  - {fileID: 8120673587458146381}
+  - {fileID: 8120673587458146379}
+  - {fileID: 8120673587458146377}
+  - {fileID: 8120673587458146375}
+  - {fileID: 8120673587458146373}
+  - {fileID: 8120673587458146371}
+  - {fileID: 8120673587458146369}
+  - {fileID: 8120673587458146367}
+  - {fileID: 8120673587458146365}
+  - {fileID: 8120673587458146363}
+  - {fileID: 8120673587458146361}
+  - {fileID: 8120673587458146359}
+  - {fileID: 8120673587458146357}
+  - {fileID: 8120673587458146355}
+  - {fileID: 8120673587458146353}
+  - {fileID: 8120673587458146351}
+  - {fileID: 8120673587458146349}
+  - {fileID: 8120673587458146347}
+  - {fileID: 8120673587458146345}
+  - {fileID: 8120673587458146343}
+  - {fileID: 8120673587458146341}
+  - {fileID: 8120673587458146339}
+  - {fileID: 8120673587458146337}
+  - {fileID: 8120673587458146335}
+  - {fileID: 8120673587458146333}
+  - {fileID: 8120673587458146331}
+  - {fileID: 8120673587458146329}
+  - {fileID: 8120673587458146327}
+  - {fileID: 8120673587458146325}
+  - {fileID: 8120673587458146323}
+  - {fileID: 8120673587458146321}
+  - {fileID: 8120673587458146319}
+  - {fileID: 8120673587458146317}
+  - {fileID: 8120673587458146315}
+  - {fileID: 8120673587458146313}
+  - {fileID: 8120673587458146311}
+  - {fileID: 8120673587458146309}
+  - {fileID: 8120673587458146307}
+  - {fileID: 8120673587458146305}
+  - {fileID: 8120673587458146815}
+  - {fileID: 8120673587458146813}
+  - {fileID: 8120673587458146811}
+  - {fileID: 8120673587458146809}
+  - {fileID: 8120673587458146807}
+  - {fileID: 8120673587458146805}
+  - {fileID: 8120673587458146803}
+  - {fileID: 8120673587458146801}
+  - {fileID: 8120673587458146799}
+  - {fileID: 8120673587458146797}
+  - {fileID: 8120673587458146795}
+  - {fileID: 8120673587458146793}
+  - {fileID: 8120673587458146791}
+  - {fileID: 8120673587458146789}
+  - {fileID: 8120673587458146787}
+  - {fileID: 8120673587458146785}
+  - {fileID: 8120673587458146783}
+  - {fileID: 8120673587458146781}
+  - {fileID: 8120673587458146779}
+  - {fileID: 8120673587458146777}
+  - {fileID: 8120673587458146775}
+  - {fileID: 8120673587458146773}
+  - {fileID: 8120673587458146771}
+  - {fileID: 8120673587458146769}
+  - {fileID: 8120673587458146767}
+  - {fileID: 8120673587458146765}
+  - {fileID: 8120673587458146763}
+  - {fileID: 8120673587458146761}
+  - {fileID: 8120673587458146759}
+  - {fileID: 8120673587458146757}
+  - {fileID: 8120673587458146755}
+  - {fileID: 8120673587458146753}
+  - {fileID: 8120673587458146751}
+  m_Father: {fileID: 8120673587458146431}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146431}
+  - component: {fileID: 1603648949861736754}
+  m_Layer: 0
+  m_Name: Item_Trap_Moshenta_SuiShi_001
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727583}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8120673587458146429}
+  - {fileID: 1603648949853949712}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1603648949861736754
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727583}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 5a7a832609af7db499ac39465c7943e9, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &8120673587457727903
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146751}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_094
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146751
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727903}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.8093441, y: -16.986355, z: -3.2826319}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 93
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146753}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_093
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146753
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727905}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.4509094, y: -15.483077, z: -3.2778819}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 92
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146755}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_092
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146755
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727907}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 2.0320935, y: -30.955704, z: -2.6820729}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 91
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146757}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_091
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146757
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727909}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.9083562, y: -33.312065, z: -2.5819545}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 90
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146759}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_090
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727911}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -3.9953568, y: -32.268955, z: -2.5848045}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 89
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146761}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_089
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727913}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -3.338848, y: -34.35825, z: -2.5848045}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 88
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146763}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_088
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727915}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 2.6845448, y: -17.917227, z: -3.6537628}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 87
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146765}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_087
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146765
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727917}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.9496765, y: -13.916891, z: -5.5395584}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 86
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146767}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_086
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727919}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 4.418255, y: -28.018505, z: -2.5805295}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 85
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146769}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_085
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146769
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727921}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.7595311, y: -24.388773, z: -2.4757042}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 84
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727923
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146771}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_084
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727923}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -5.3962793, y: -19.218163, z: -2.5379949}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 83
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146773}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_083
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727925}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -4.138783, y: -21.76198, z: -2.331324}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 82
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727927
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146775}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_082
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727927}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.680858, y: -13.122972, z: -7.380509}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 81
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146777}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_081
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146777
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727929}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 3.7911043, y: -14.804585, z: -3.670064}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 80
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146779}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_080
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727931}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.6839995, y: -11.209817, z: -3.5875208}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 79
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727933
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146781}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_079
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146781
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727933}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.4673033, y: -26.14618, z: -2.6842966}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 78
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727935
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146783}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_078
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727935}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.23238604, y: -29.457436, z: -2.4773667}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 77
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146785}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_077
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727937}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -5.8421273, y: -24.574528, z: -4.9733295}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 76
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727939
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146787}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_076
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727939}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -4.7262244, y: -27.73091, z: -2.1690452}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 75
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146789}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_075
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727941}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -1.0954541, y: -24.389568, z: -2.663483}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 74
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146791}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_074
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146791
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727943}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.2549652, y: -44.64053, z: -19.44156}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 73
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727945
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146793}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_073
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146793
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727945}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.83718747, y: -45.41341, z: -15.668933}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 72
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727947
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146795}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_072
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146795
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727947}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 11.498043, y: -43.562798, z: 0.51743793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 71
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727949
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146797}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_071
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727949}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 9.022929, y: -49.762367, z: 0.51743793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 70
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146799}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_070
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146799
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727951}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.9647813, y: -18.409874, z: -3.0686848}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 69
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146801}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_069
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146801
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727953}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 2.3559299, y: -13.741516, z: -4.447217}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 68
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727955
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146803}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_068
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727955}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.700987, y: -42.889317, z: -18.679111}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 67
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146805}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_067
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727957}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 1.3414631, y: -42.698505, z: -15.701752}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 66
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146807}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_066
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727959}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -10.661125, y: -42.488983, z: 0.51743793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 65
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146809}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_065
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727961}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -8.5157795, y: -36.581245, z: 0.51743793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 64
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146811}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_064
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146811
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727963}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 0.85043323, y: -22.007689, z: -2.4773884}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 63
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146813}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_063
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727965}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -0.2946419, y: -43.835793, z: -23.092503}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 62
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727967
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146815}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_062
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727967}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 7.863315, y: -36.767094, z: 0.51743793}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 61
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146305}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_061
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146305
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727969}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.8321204, y: -23.186125, z: -2.5706408}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 60
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727971
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146307}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_060
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146307
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727971}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 0.3995982, y: -43.33616, z: -7.7257953}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 59
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146309}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_059
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727973}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.076257, y: -29.123068, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 58
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727975
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146311}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_058
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146311
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727975}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.910037, y: -29.123003, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 57
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727977
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146313}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_057
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146313
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727977}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.9188223, y: -21.051174, z: -0.19168134}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 56
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146315}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_056
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727979}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.2665179, y: -15.440075, z: -0.2302432}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 55
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146317}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_055
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727981}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 0.24853224, y: -14.721233, z: -0.10143019}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 54
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146319}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_054
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727983}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 4.6813574, y: -14.425214, z: -0.16814695}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 53
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146321}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_053
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727985}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 2.426213, y: -23.678492, z: -0.04134192}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 52
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146323}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_052
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727987}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.0579703, y: -18.743155, z: -0.04134192}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 51
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146325}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_051
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727989}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.0982149, y: -23.51434, z: -0.07852194}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 50
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146327}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_050
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146327
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727991}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.90997, y: -8.766163, z: 1.1843681}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 49
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146329}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_049
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146329
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727993}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -6.072289, y: -17.064386, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 48
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727995
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146331}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_048
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146331
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727995}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: -2.2467809, y: -20.102013, z: -0.1222441}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 47
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146333}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_047
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727997}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.924814, y: -11.88903, z: 1.1871102}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 46
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8120673587457727999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8120673587458146335}
+  m_Layer: 0
+  m_Name: T_sc_dungeon_moshenta_building_003_e_frag_046
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8120673587458146335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120673587457727999}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9238795, w: -0.38268355}
+  m_LocalPosition: {x: 5.9100633, y: -9.6366005, z: 0.76085705}
+  m_LocalScale: {x: 1.4268737, y: 1.4268737, z: 1.415}
+  m_Children: []
+  m_Father: {fileID: 8120673587458146429}
+  m_RootOrder: 45
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

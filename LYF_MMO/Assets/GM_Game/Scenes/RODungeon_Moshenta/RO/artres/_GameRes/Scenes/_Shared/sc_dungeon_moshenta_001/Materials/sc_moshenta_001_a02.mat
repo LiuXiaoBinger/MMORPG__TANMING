@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: sc_moshenta_001_a02
+  m_Shader: {fileID: 4800000, guid: 1d7073a26d0a0ed44b2a60ea062e6cba, type: 3}
+  m_ShaderKeywords: _GPUANIM_OFF _ZWRITE_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AnimTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MSETex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MSOETex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 9d2a051590528dc4f82cb6eb9081ae39, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AlphaMode: 0
+    - _Brightness: 0.9
+    - _BumpIntense: 1
+    - _Contrast: 0.95
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DstBlend: 0
+    - _Emission: 0
+    - _EmotionID: 0
+    - _Fade: 0
+    - _Flow: 0
+    - _FlowIntensity: 0.25
+    - _FlowOffset: -0.5
+    - _FlowSignX: 1
+    - _FlowSignY: -1
+    - _FogFactor: 1
+    - _FrameShift: 0
+    - _FresnelTense: 0.2
+    - _Gloss: 0
+    - _GpuAnim: 0
+    - _LMFactor: 1
+    - _LightFactor: 0
+    - _MSE: 0
+    - _MSOE: 0
+    - _Metallic: 0
+    - _Motion: 0
+    - _NORMALMAP: 0
+    - _Opacity: 1
+    - _PointLight: 0
+    - _SkillRim: 0
+    - _SkillRimPower: 0.2
+    - _Smoothness: 0
+    - _SnowFactor: 1
+    - _SpecIntense: 1
+    - _SpecularTense: 0.2
+    - _Speed: 0.4
+    - _SrcBlend: 1
+    - _Stencil: 0
+    - _Visibility: 1
+    - _WaveFactor: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    - _Diffuse: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _EmotionSize: {r: 1, g: 1, b: 0, a: 0}
+    - _Falloff: {r: -0.25, g: 0.5, b: 0, a: 0}
+    - _Offset: {r: 0, g: 1, b: 1, a: 30}
+    - _RimParams: {r: -0.93, g: -0.33, b: 9.49, a: 1.82}
+    - _SkillRimColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
