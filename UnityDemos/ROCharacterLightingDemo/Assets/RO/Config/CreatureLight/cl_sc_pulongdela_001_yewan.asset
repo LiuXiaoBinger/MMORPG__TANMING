@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 552c336522214b14183b30be4d24444e, type: 3}
+  m_Name: cl_sc_pulongdela_001_yewan
+  m_EditorClassIdentifier: 
+  mainLightColor: {r: 0.7154798, g: 0.7079922, b: 0.8113208, a: 0.6509804}
+  backLightColor: {r: 0.6051555, g: 0.5585173, b: 0.7264151, a: 0.7607843}
+  ambientColor: {r: 0.6392157, g: 0.6313726, b: 0.77254903, a: 0.48235294}
+  rimColor: {r: 0.8235294, g: 0.85882354, b: 0.99215686, a: 0.22352941}
+  reflectMap: {fileID: 8900000, guid: 564fd75e804da2e46babf53b494f35cb, type: 3}

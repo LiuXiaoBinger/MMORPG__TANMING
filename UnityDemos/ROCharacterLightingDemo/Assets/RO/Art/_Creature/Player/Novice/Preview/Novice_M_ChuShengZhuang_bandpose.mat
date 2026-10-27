@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Novice_M_ChuShengZhuang_bandpose
+  m_Shader: {fileID: 4800000, guid: a0434fb745b57ab448a2f508e13783ba, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex0:
+        m_Texture: {fileID: 2800000, guid: 67cc18aa6fe9f054c922dd6c31451854, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex1:
+        m_Texture: {fileID: 2800000, guid: 393fab57c9f3bc241bf74f10d0e30f94, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex4:
+        m_Texture: {fileID: 2800000, guid: 0083618acd9b97e488b8aaeb08bea4e1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex5:
+        m_Texture: {fileID: 2800000, guid: b56dd774182b9cd4ea82bfbdf04b941f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex6:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Alpha_Split: 0
+    - _Brightness: 1.39
+    - _Contrast: 0
+    - _EmotionID: 0
+    - _EmotionID2: 0
+    - _EmotionSize: 0.24
+    - _Fade: 0
+    - _FresnelTense: 0.2
+    - _SkillRim: 0
+    - _SkillRimPower: 0.2
+    - _SpecularTense: 0.2
+    - _Visibility: 1
+    m_Colors:
+    - _Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    - _EyeCD: {r: 0, g: 0, b: 0, a: 0}
+    - _EyeCH: {r: 0, g: 0, b: 0, a: 0}
+    - _EyeCL: {r: 0, g: 0, b: 0, a: 0}
+    - _EyeCM: {r: 0, g: 0, b: 0, a: 0}
+    - _Falloff: {r: -0.25, g: 0.5, b: 0, a: 0}
+    - _FalloffFace: {r: -0.25, g: 0.5, b: 0, a: 0}
+    - _HairCD: {r: 0, g: 0, b: 0, a: 0}
+    - _HairCH: {r: 0, g: 0, b: 0, a: 0}
+    - _HairCL: {r: 0, g: 0, b: 0, a: 0}
+    - _HairCM: {r: 0, g: 0, b: 0, a: 0}
+    - _HairSpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimParams: {r: 2, g: 1, b: 1, a: 20}
+    - _SkillRimColor: {r: 0.5, g: 0.75, b: 0.95, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
