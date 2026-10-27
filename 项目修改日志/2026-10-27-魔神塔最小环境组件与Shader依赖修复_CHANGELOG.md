@@ -332,3 +332,12 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 | 记录同步核查 | `_temp/ro-environment-record-sync-check.json` |
 | 本记录任务结果 | `_temp/ro-environment-record-final.json` |
 | 截图（全景/近景/Play/lightmap 开关/云色扰动） | `_temp/ro-environment-implement-*.png` |
+
+## 14. 主 Agent Git 集成实际回执
+
+- 集成分支：`codex/ro-first-dungeon-scene-20261026`，基线 `0b3c33806ef4637cede0667f425091d727301878`。
+- 实现与记录提交：`c03a0f50cf677839db1c01fa02da8e221a69c315`，中文说明 `feat: 挂载魔神塔最小环境并补齐RO特效Shader依赖`。
+- 精确暂存 48 项：本次清单 41 个程序/资源文件及 `.meta`，新增本日志，四份双语入口的本次追加段、难点本次追加段与由已暂存英文事实生成的索引；原工作区已有记录修改未混入提交。五个既有文件的原字节前缀保留，提交内容按基线加本次追加构造；实际核对差异为 0。
+- 已成功推送 `origin/codex/ro-first-dungeon-scene-20261026`，远端回执 `0b3c338..c03a0f5`；未强制推送、未合并或推送主分支。
+- 本节仅补充真实 Git 回执，随后单独提交并推送回执文件；不改变实现或双语事实，不重复已通过测试。最终回执提交号见本文件 Git 历史及交付回复。
+- 目录机械重建已执行；工作区索引对应工作区全部既有源记录，提交索引对应本次提交的源记录，保留两者差异以免夹带其他任务。
