@@ -512,3 +512,10 @@ Float 单独成组是必要的：后两者是标量，用 `SetGlobalVector` 写�
 - `_temp/ro-lightmap-editor-record-before/`（5 份原始字节 + `_manifest.json`）
 - `_temp/ro-lightmap-editor-record-sync-check.json`、`_temp/ro-lightmap-editor-record-final.json`
 - `_temp/ro-lightmap-editor-token-collect.txt`、`_temp/ro-lightmap-editor-token-report.json`
+
+### 本次编辑态自动应用修复 Git 实际回执
+
+- 实现及双语记录提交 `51d7fb107c5b500d021109222acf9501cfa523df`（`fix: 编辑态自动应用魔神塔已有烘焙光照`），分支 `codex/ro-first-dungeon-scene-20261026`，已推送；远端回执 `d3981bc..51d7fb1`。
+- 精确集成 7 文件：1 个 MEnvorimentSetting.cs，原日志本次追加，CURRENT_TASK.en.md/.md、TEST_REPORT.en.md/.md 本次新增段与对应索引。原有记录字节前缀保持，按 HEAD 加本次增量暂存，没有混入其它工作区改动。
+- 差异格式及代码/场景哈希检查通过；当前 Unity 真正使用已有 00_00.exr，原生 Inspector 的 Baked Lightmap 图、Index 0 与 UV 已截图验收（`_temp/ro-lightmap-editor-codex-inspector.png`）。没有为回执重复编译或测试。
+- 本节随后独立提交推送；最终回执提交号见本文件 Git 历史及交付回复，不重复更新中英入口。
