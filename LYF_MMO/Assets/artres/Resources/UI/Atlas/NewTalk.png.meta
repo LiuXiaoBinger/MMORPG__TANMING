@@ -1,0 +1,502 @@
+fileFormatVersion: 2
+guid: 12583315cd84d0c45b8db2f1f086503f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_NewTalk_Button_Xuanxiang.png
+  - first:
+      213: 21300002
+    second: UI_NewTalk_Button_XuanxiangBai.png
+  - first:
+      213: 21300004
+    second: UI_NewTalk_Button_XuanxiangLan.png
+  - first:
+      213: 21300006
+    second: UI_NewTalk_Img_Bg.png
+  - first:
+      213: 21300008
+    second: UI_NewTalk_Img_Jiantou.png
+  - first:
+      213: 21300010
+    second: UI_NewTalk_Img_TitleBgLan.png
+  - first:
+      213: 21300012
+    second: UI_NewTalk_Img_TitleBgLv.png
+  - first:
+      213: 21300014
+    second: UI_NewTalk_Button_Xuanxiang_01.png
+  - first:
+      213: 21300016
+    second: UI_NewTalk_Button_Xuanxiang_02.png
+  - first:
+      213: 21300018
+    second: UI_NewTalk_Btn_01.png
+  - first:
+      213: 21300020
+    second: UI_NewTalk_Btn_02.png
+  - first:
+      213: 21300022
+    second: UI_NewTalk_Pic_titleBg_01.png
+  - first:
+      213: 21300024
+    second: UI_NewTalk_Pic_titleBg_02.png
+  - first:
+      213: 21300026
+    second: UI_NewTalk_Pic_JianTou.png
+  - first:
+      213: 21300028
+    second: UI_NewTalk_Btn_03.png
+  - first:
+      213: 21300030
+    second: "\u7EC4578708\u62F7\u8D1D.png"
+  - first:
+      213: 21300032
+    second: UI_NewTalk_Pic_di.png
+  - first:
+      213: 21300034
+    second: UI_NewTalk_Pic_line.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_NewTalk_Btn_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 158
+        height: 90
+      alignment: 1
+      pivot: {x: 0, y: 90}
+      border: {x: 64, y: 0, z: 46, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fdfc2a3e63c6844abd8c59e1672d981
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Btn_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 91
+        width: 158
+        height: 90
+      alignment: 1
+      pivot: {x: 0, y: 90}
+      border: {x: 78, y: 0, z: 49, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8157ce663730fd42917fe61dddf39d0
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Button_Xuanxiang.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 182
+        width: 110
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 59}
+      border: {x: 54, y: 0, z: 54, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63d03745dfa377045b320be516b2eaf1
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Button_XuanxiangBai.png
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 182
+        width: 110
+        height: 57
+      alignment: 1
+      pivot: {x: 0, y: 57}
+      border: {x: 54, y: 0, z: 54, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11a0b6923f7bfef499cc4895a01da5a6
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Button_XuanxiangLan.png
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 0
+        width: 110
+        height: 57
+      alignment: 1
+      pivot: {x: 0, y: 57}
+      border: {x: 54, y: 0, z: 54, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deeb20dcf7d6f984387fefe2fd8f7fc1
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Button_Xuanxiang_01.png
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 58
+        width: 123
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 60}
+      border: {x: 42, y: 0, z: 79, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13b455fa550b2d64ab3b55b794ebcf52
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Button_Xuanxiang_02.png
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 124
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 54}
+      border: {x: 46, y: 0, z: 76, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74d36f01d8afcef48bef0413c5e7ffdc
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Img_Bg.png
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 119
+        width: 60
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 60}
+      border: {x: 28, y: 28, z: 28, w: 28}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01b472e62cb5e1845b1d4edd5442d0a4
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Img_Jiantou.png
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 119
+        width: 25
+        height: 20
+      alignment: 1
+      pivot: {x: 0, y: 20}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e96eace17bb96a4faef86cd28e94bc2
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Img_TitleBgLan.png
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 140
+        width: 117
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 51}
+      border: {x: 58, y: 0, z: 58, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e6621f387c17a34d8b49256d573e427
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Img_TitleBgLv.png
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 192
+        width: 117
+        height: 51
+      alignment: 1
+      pivot: {x: 0, y: 51}
+      border: {x: 58, y: 0, z: 58, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76650d0b88853184f8e437dfecc36aba
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Pic_di.png
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 0
+        width: 36
+        height: 166
+      alignment: 1
+      pivot: {x: 0, y: 167}
+      border: {x: 9, y: 0, z: 8, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b177186d6268abd4b9bc30e7a8624dea
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Pic_JianTou.png
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 55
+        width: 80
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 29}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ba6c79919423dd44ac55c7f97aaeb93
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_NewTalk_Pic_line.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 244
+        width: 284
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 12}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f88d202585414cd42b9453ea6b311903
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: b27e8f5c8b19cce4d993c2e5dc6002d5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_NewTalk_Btn_02.png: 21300020
+      UI_NewTalk_Btn_03.png: 21300028
+      UI_NewTalk_Button_Xuanxiang.png: 21300000
+      UI_NewTalk_Button_XuanxiangBai.png: 21300002
+      UI_NewTalk_Button_XuanxiangLan.png: 21300004
+      UI_NewTalk_Button_Xuanxiang_01.png: 21300014
+      UI_NewTalk_Button_Xuanxiang_02.png: 21300016
+      UI_NewTalk_Img_Bg.png: 21300006
+      UI_NewTalk_Img_Jiantou.png: 21300008
+      UI_NewTalk_Img_TitleBgLan.png: 21300010
+      UI_NewTalk_Img_TitleBgLv.png: 21300012
+      UI_NewTalk_Pic_JianTou.png: 21300026
+      UI_NewTalk_Pic_di.png: 21300032
+      UI_NewTalk_Pic_line.png: 21300034
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

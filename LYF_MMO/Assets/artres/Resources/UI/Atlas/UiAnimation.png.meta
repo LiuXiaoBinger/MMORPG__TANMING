@@ -1,0 +1,540 @@
+fileFormatVersion: 2
+guid: a70378daba474a54ca653ea5e5d2f834
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_UiAnimation_Img_Maze.png
+  - first:
+      213: 21300002
+    second: UI_UiAnimation_Fx_Ui_2022.png
+  - first:
+      213: 21300004
+    second: UI_UiAnimation_Fx_Ui_2023.png
+  - first:
+      213: 21300006
+    second: UI_UiAnimation_Fx_Ui_2024.png
+  - first:
+      213: 21300008
+    second: UI_UiAnimation_Fx_Ui_2025.png
+  - first:
+      213: 21300010
+    second: UI_UiAnimation_Fx_Ui_2026.png
+  - first:
+      213: 21300012
+    second: UI_UiAnimation_Fx_ps_01.png
+  - first:
+      213: 21300014
+    second: UI_UiAnimation_Fx_ps_02.png
+  - first:
+      213: 21300016
+    second: UI_UiAnimation_Fx_ps_03.png
+  - first:
+      213: 21300018
+    second: UI_UiAnimation_Fx_ps_04.png
+  - first:
+      213: 21300020
+    second: UI_UiAnimation_AGIUP.png
+  - first:
+      213: 21300022
+    second: UI_UiAnimation_DEXUP.png
+  - first:
+      213: 21300024
+    second: UI_UiAnimation_INTUP.png
+  - first:
+      213: 21300026
+    second: UI_UiAnimation_LUKUP.png
+  - first:
+      213: 21300028
+    second: UI_UiAnimation_STRUP.png
+  - first:
+      213: 21300030
+    second: UI_UiAnimation_VITUP.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_UiAnimation_AGIUP.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 206
+        width: 102
+        height: 23
+      alignment: 1
+      pivot: {x: 187, y: 38.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b38c87e131dd494e8d8a634edf46f2a
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_DEXUP.png
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 4
+        width: 106
+        height: 23
+      alignment: 1
+      pivot: {x: 81, y: 240.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce7e2eca78a91634392f3a6ddc3433fb
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_ps_01.png
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 183
+        width: 28
+        height: 27
+      alignment: 1
+      pivot: {x: 107, y: 59.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b4d5227351b89459088a6b3f8da1d9
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_ps_02.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 3
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 14, y: 241}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fd48afd01181a544897843c76b689a1
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_ps_03.png
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 125
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 106, y: 118}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c992bef965c05b842b5e92361f9738fc
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_ps_04.png
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 153
+        width: 27
+        height: 28
+      alignment: 1
+      pivot: {x: 106.5, y: 89}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 418b4e54bb8791842afd2dbd3d444ddc
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_Ui_2022.png
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 212
+        width: 44
+        height: 42
+      alignment: 1
+      pivot: {x: 110, y: 23}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f181386b9801e442ac94f4ab6ae2cc9
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_Ui_2023.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 29
+        width: 84
+        height: 108
+      alignment: 1
+      pivot: {x: 44, y: 173}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b965caf123811384fada149f6a2c5874
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_Ui_2024.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 148
+        width: 62
+        height: 62
+      alignment: 1
+      pivot: {x: 60, y: 77}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1aae89f110f526458e3c17d6c8df159
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_Ui_2025.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 103
+        width: 64
+        height: 26
+      alignment: 1
+      pivot: {x: 168, y: 140}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cee17a77d37905e43a9d6fb3931335b0
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Fx_Ui_2026.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 222
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 45, y: 18}
+      border: {x: 16, y: 16, z: 16, w: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a3ac2c4e26f17441847ed1ffd45f7de
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_Img_Maze.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 139
+        width: 25
+        height: 115
+      alignment: 1
+      pivot: {x: 14.5, y: 59.5}
+      border: {x: 6, y: 0, z: 6, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8d2eb2d692377b4d9501a609cf347ac
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_INTUP.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 156
+        width: 96
+        height: 23
+      alignment: 1
+      pivot: {x: 184, y: 88.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb9c9af8733d72c42952a797ec389b7c
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_LUKUP.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 231
+        width: 102
+        height: 23
+      alignment: 1
+      pivot: {x: 187, y: 13.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ee3b052c46cdb4f91e51cac3484857
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_STRUP.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 181
+        width: 98
+        height: 23
+      alignment: 1
+      pivot: {x: 185, y: 63.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b592ccd0de3fcf5499006263f127c0a8
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_UiAnimation_VITUP.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 131
+        width: 94
+        height: 23
+      alignment: 1
+      pivot: {x: 183, y: 113.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb7330958fbbbf49b20b75a45dcbc00
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_UiAnimation_AGIUP.png: 21300020
+      UI_UiAnimation_DEXUP.png: 21300022
+      UI_UiAnimation_Fx_Ui_2022.png: 21300002
+      UI_UiAnimation_Fx_Ui_2023.png: 21300004
+      UI_UiAnimation_Fx_Ui_2024.png: 21300006
+      UI_UiAnimation_Fx_Ui_2025.png: 21300008
+      UI_UiAnimation_Fx_Ui_2026.png: 21300010
+      UI_UiAnimation_Fx_ps_01.png: 21300012
+      UI_UiAnimation_Fx_ps_02.png: 21300014
+      UI_UiAnimation_Fx_ps_03.png: 21300016
+      UI_UiAnimation_Fx_ps_04.png: 21300018
+      UI_UiAnimation_INTUP.png: 21300024
+      UI_UiAnimation_Img_Maze.png: 21300000
+      UI_UiAnimation_LUKUP.png: 21300026
+      UI_UiAnimation_STRUP.png: 21300028
+      UI_UiAnimation_VITUP.png: 21300030
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

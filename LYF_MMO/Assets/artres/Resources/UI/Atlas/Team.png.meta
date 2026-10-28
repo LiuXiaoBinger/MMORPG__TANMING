@@ -1,0 +1,665 @@
+fileFormatVersion: 2
+guid: 4cfd6b5a722d59648b48f991764ee924
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Squad_icon.png
+  - first:
+      213: 21300002
+    second: UI_Team_BG01.png
+  - first:
+      213: 21300004
+    second: UI_Team_BG02.png
+  - first:
+      213: 21300006
+    second: UI_Team_gonghuiliebiaoBg.png
+  - first:
+      213: 21300008
+    second: UI_Team_gonghuixinxiBg.png
+  - first:
+      213: 21300010
+    second: UI_Team_gonghuixinxixiugai.png
+  - first:
+      213: 21300012
+    second: UI_Team_Iconshezhi.png
+  - first:
+      213: 21300014
+    second: UI_Team_Iconyaoqing.png
+  - first:
+      213: 21300016
+    second: UI_Team_Invite.png
+  - first:
+      213: 21300018
+    second: UI_Team_TitleIcon.png
+  - first:
+      213: 21300020
+    second: UI_Guild_Switch_News_Off.png
+  - first:
+      213: 21300022
+    second: UI_Guild_Switch_News_On.png
+  - first:
+      213: 21300024
+    second: UI_Guild_Tap.png
+  - first:
+      213: 21300026
+    second: UI_Guild_Img_ChengJiu.png
+  - first:
+      213: 21300028
+    second: UI_Guild_Img_GongHui.png
+  - first:
+      213: 21300030
+    second: UI_Guild_Img_MaoXian.png
+  - first:
+      213: 21300032
+    second: UI_Guild_Img_WuQi.png
+  - first:
+      213: 21300034
+    second: UI_Guild_Img_YiChu.png
+  - first:
+      213: 21300036
+    second: UI_Team_Bg_Icon_01.png
+  - first:
+      213: 21300038
+    second: UI_Team_Bg_Icon_02.png
+  - first:
+      213: 21300040
+    second: UI_Team_Bg_Normal_01.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Guild_Img_ChengJiu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a42cf63da8d3614db00bfce7191b544
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Img_GongHui.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 29
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da36d5413108387458709260e20e67da
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Img_MaoXian.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 58
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7972f9fcb6e34843a4c62c9294c5394
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Img_WuQi.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 87
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7324c2ee373af3b4e92f9e71d4b4be96
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Img_YiChu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 116
+        width: 28
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f14d87b9a1a8664e8be17d975223fe5
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Switch_News_Off.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 145
+        width: 16
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e5c4cc6223a75043b4e4372a2de453e
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Switch_News_On.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 162
+        width: 16
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c14bd1ef9ccaaab43ae1b508e04a9e09
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Guild_Tap.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 179
+        width: 228
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21db5d1a46be61444995df1b18b039ea
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Squad_icon.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 0
+        width: 54
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be435176a855d814fba51f1b0e93d643
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_BG01.png
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 145
+        width: 26
+        height: 28
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f86b2822326784fac47c892fee166b
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_BG02.png
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 0
+        width: 20
+        height: 132
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64c5e6fe0977873428f33804587c9f0a
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Bg_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 59
+        width: 23
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1adafed3b9dfd64b9b8a42aa97c448b
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Bg_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 83
+        width: 23
+        height: 23
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b5de1de8f8bf9742b7aaec76d3b3e51
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Bg_Normal_01.png
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 0
+        width: 678
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 20, z: 0, w: 37}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 507234ced4247ce40b401c65c51bbd3a
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_gonghuiliebiaoBg.png
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 65
+        width: 289
+        height: 434
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c7ca27f826b7b14fa97ed7bacd99ec5
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_gonghuixinxiBg.png
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 65
+        width: 348
+        height: 195
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d449c292b68076444b914500ca0183f5
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_gonghuixinxixiugai.png
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 107
+        width: 36
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e59a0737fe093dc4795d3d12644a7db3
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Iconshezhi.png
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 65
+        width: 60
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065b0ce641834a242bb93a07a573985d
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Iconyaoqing.png
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 65
+        width: 60
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f734a0b39004014aaf187a340813859
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_Invite.png
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 0
+        width: 62
+        height: 60
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b067f59b6e3b2143a563dca4fe979c9
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Team_TitleIcon.png
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 0
+        width: 52
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f3b176db385c234a84eaef9ef22609e
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 80effe0555e5c0b47ab896126f7a0f6a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Guild_Img_ChengJiu.png: 21300026
+      UI_Guild_Img_GongHui.png: 21300028
+      UI_Guild_Img_MaoXian.png: 21300030
+      UI_Guild_Img_WuQi.png: 21300032
+      UI_Guild_Img_YiChu.png: 21300034
+      UI_Guild_Switch_News_Off.png: 21300020
+      UI_Guild_Switch_News_On.png: 21300022
+      UI_Guild_Tap.png: 21300024
+      UI_Squad_icon.png: 21300000
+      UI_Team_BG01.png: 21300002
+      UI_Team_BG02.png: 21300004
+      UI_Team_Bg_Icon_01.png: 21300036
+      UI_Team_Bg_Icon_02.png: 21300038
+      UI_Team_Bg_Normal_01.png: 21300040
+      UI_Team_Iconshezhi.png: 21300012
+      UI_Team_Iconyaoqing.png: 21300014
+      UI_Team_Invite.png: 21300016
+      UI_Team_TitleIcon.png: 21300018
+      UI_Team_gonghuiliebiaoBg.png: 21300006
+      UI_Team_gonghuixinxiBg.png: 21300008
+      UI_Team_gonghuixinxixiugai.png: 21300010
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

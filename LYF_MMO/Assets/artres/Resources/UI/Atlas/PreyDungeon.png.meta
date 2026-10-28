@@ -1,0 +1,1155 @@
+fileFormatVersion: 2
+guid: 07c15f3a67c5ee5488235ce17f09ac47
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_PreyDungeon_Button_Jingying.png
+  - first:
+      213: 21300002
+    second: UI_PreyDungeon_Button_Putong.png
+  - first:
+      213: 21300004
+    second: UI_PreyDungeon_Img_Tiaodi.png
+  - first:
+      213: 21300006
+    second: UI_PreyDungeon_Img_TiaoHong.png
+  - first:
+      213: 21300008
+    second: UI_PreyDungeon_Img_TiaoHuang.png
+  - first:
+      213: 21300010
+    second: UI_PreyDungeon_Img_TiaoLv.png
+  - first:
+      213: 21300012
+    second: UI_PreyDungeon_Img_Time.png
+  - first:
+      213: 21300014
+    second: UI_PreyDungeon_Img_Timebg.png
+  - first:
+      213: 21300016
+    second: AUI_PreyDungeon_Img_ShuxingA.png
+  - first:
+      213: 21300018
+    second: UI_PreyDungeon_Img_Guangquan.png
+  - first:
+      213: 21300020
+    second: UI_PreyDungeon_Img_ShuxingD.png
+  - first:
+      213: 21300022
+    second: UI_PreyDungeon_Img_ShuxingI.png
+  - first:
+      213: 21300024
+    second: UI_PreyDungeon_Img_ShuxingS.png
+  - first:
+      213: 21300026
+    second: UI_PreyDungeon_Img_TizhiV.png
+  - first:
+      213: 21300028
+    second: UI_PreyDungeon_Img_XingyunL.png
+  - first:
+      213: 21300030
+    second: UI_PreyDungeon_Img_Zhuanpandi.png
+  - first:
+      213: 21300032
+    second: UI_PreyDungeon_Img_Zhuanpantiao.png
+  - first:
+      213: 21300034
+    second: UI_PreyDungeon_Button_Jianyu.png
+  - first:
+      213: 21300036
+    second: UI_PreyDungeon_Button_None.png
+  - first:
+      213: 21300038
+    second: UI_PreyDungeon_Button_Shejian.png
+  - first:
+      213: 21300040
+    second: UI_PreyDungeon_Img_Dian.png
+  - first:
+      213: 21300042
+    second: UI_PreyDungeon_Img_Guaiqwu.png
+  - first:
+      213: 21300044
+    second: UI_PreyDungeon_Img_Guaiwutishi.png
+  - first:
+      213: 21300046
+    second: UI_PreyDungeon_Img_Jingtizhi.png
+  - first:
+      213: 21300048
+    second: UI_PreyDungeon_Img_Jingtou.png
+  - first:
+      213: 21300050
+    second: UI_PreyDungeon_Img_Qizhi.png
+  - first:
+      213: 21300052
+    second: UI_PreyDungeon_Img_Shalou.png
+  - first:
+      213: 21300054
+    second: UI_PreyDungeon_Img_Tishi.png
+  - first:
+      213: 21300056
+    second: UI_PreyDungeon_Img_Tishibg.png
+  - first:
+      213: 21300058
+    second: UI_PreyDungeon_Img_Xian.png
+  - first:
+      213: 21300060
+    second: UI_PreyDungeon_Img_Xin.png
+  - first:
+      213: 21300062
+    second: UI_PreyDungeon_Img_Xinbg.png
+  - first:
+      213: 21300064
+    second: UI_PreyDungeon_Img_Xuetiaobg.png
+  - first:
+      213: 21300066
+    second: UI_PreyDungeon_Button_Zhaohuanguaiwu.png
+  - first:
+      213: 21300068
+    second: UI_PreyDungeon_Img_Jingying.png
+  - first:
+      213: 21300070
+    second: UI_PreyDungeon_Img_Putong.png
+  - first:
+      213: 21300072
+    second: UI_PreyDungeon_Img_Tuichutiyan.png
+  - first:
+      213: 21300074
+    second: UI_PreyDungeon_Img_JingshitishiBg.png
+  - first:
+      213: 21300076
+    second: UI_PreyDungeon_Img_Tanhao.png
+  - first:
+      213: 21300078
+    second: UI_PreyDungeon_Img_Goldcoin.png
+  - first:
+      213: 21300080
+    second: UI_PreyDungeon_Img_TiaoTX.png
+  - first:
+      213: 21300082
+    second: UI_PreyDungeon_Img_szbg_0.png
+  - first:
+      213: 21300084
+    second: UI_PreyDungeon_Img_szbg_1.png
+  - first:
+      213: 21300086
+    second: UI_PreyDungeon_button_sz_1.png
+  - first:
+      213: 21300088
+    second: UI_PreyDungeon_Img_TiaoJingshi.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AUI_PreyDungeon_Img_ShuxingA.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 24
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84310521bcc215f4abbf4e216b75f20b
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Button_Jianyu.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 27
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2245671136c892d4a9a9f0f8089405e6
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Button_None.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 108
+        width: 80
+        height: 80
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5014cc7e9a9574349a1afaa4bb3a9a3f
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Button_Shejian.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 124
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53423e0429d7ced4a9941d5daaf88310
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_button_sz_1.png
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 0
+        width: 54
+        height: 54
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13cb8c36ab887e8488a80630f14a81f8
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Button_Zhaohuanguaiwu.png
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 55
+        width: 175
+        height: 71
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ba6d074839bff445a38d208fd114922
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Dian.png
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 0
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7f14a804646c6c4e931540a1053e271
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Goldcoin.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 314
+        width: 66
+        height: 66
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abc0c0c0e790bf346bdac86c18b4cfb4
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Guaiqwu.png
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 127
+        width: 58
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6867b1ff2f8f49429d949bfca429ed0
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Guaiwutishi.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 381
+        width: 81
+        height: 68
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e11034a31e856f4bb52636e765c6f87
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Guangquan.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 314
+        width: 86
+        height: 85
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b36ca7a44082347b2f461ad56012b1
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Jingtou.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 127
+        width: 101
+        height: 167
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b27b5e2008716454da59b078e0a54d6c
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Jingying.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 450
+        width: 54
+        height: 55
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77ac11e09f13bc2429f2758d9ad71dc8
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Putong.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 0
+        width: 51
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b745e1d4ccd32e408315124c0051674
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Qizhi.png
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 0
+        width: 28
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38cc9ae6d56818a4b8575bb1afe83af2
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Shalou.png
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 0
+        width: 23
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff34083478eff7d4398c057b6660e722
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_ShuxingD.png
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 22
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5976aa60ff42aab47a88e2a85b849c34
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_ShuxingI.png
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 0
+        width: 9
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e644b5106b665945af7817e84795f8c
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_ShuxingS.png
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 28
+        width: 17
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d19d9bbc1d526642b5cfb2b53ccf6b2
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_szbg_0.png
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 0
+        width: 59
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 18, y: 10, z: 17, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5258a46686438ca499ad4f86ece23be5
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_szbg_1.png
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 450
+        width: 77
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 37, y: 0, z: 36, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80f4b3bf9fbdef943a1475ddcea4f02a
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Tanhao.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 400
+        width: 43
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ade62613b77166848b32f1f67588887c
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Tiaodi.png
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 400
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 10, y: 10, z: 10, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d95e77d07a3058418b1f00dc520e467
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TiaoHong.png
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 37
+        width: 12
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 4, y: 3, z: 4, w: 3}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcf8c17dac378e846a99fc19ecbf45a4
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TiaoHuang.png
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 37
+        width: 12
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 4, y: 3, z: 4, w: 3}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6114d5f34b2413b4083f3b8c2adf579c
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TiaoJingshi.png
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 427
+        width: 36
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 15, y: 15, z: 15, w: 15}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f8b3383ef099b846a8aba0993fadcb1
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TiaoLv.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 437
+        width: 12
+        height: 12
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 3, y: 5, z: 4, w: 4}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb747c7b74aa6ae48876c28c28b6248b
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TiaoTX.png
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 295
+        width: 90
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 751fad2545480a84197518925b20b810
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Time.png
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 464
+        width: 23
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8be96a595c9f1bf4a8c05289e4643115
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Timebg.png
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 464
+        width: 241
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ba88f3698a619e4d8dc24c0491eece4
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Tishibg.png
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 50
+        width: 300
+        height: 4
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 1, z: 0, w: 1}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca70edac84b8984aa4c70bc18be9505
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_TizhiV.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 400
+        width: 23
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4aeaabda346bb03498a2840fcb70c089
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Tuichutiyan.png
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 0
+        width: 32
+        height: 40
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934d52cdcdba1ca46b0bc2e6963834a0
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Xian.png
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 295
+        width: 34
+        height: 18
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58de20731d36d4b46b5fa6b2762374cc
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Xin.png
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 427
+        width: 39
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81e2e2a60cd8a6841950b08840a5b803
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Xinbg.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 0
+        width: 39
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 10, y: 7, z: 11, w: 7}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5961b03f1123e034da59590410fa3e5d
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_XingyunL.png
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 0
+        width: 16
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ab4046cafc66aa46ad24f39081ee0ac
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Xuetiaobg.png
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 35
+        width: 233
+        height: 13
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 6, z: 0, w: 6}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9e2547c89e59aa4cbb37d3940afacc2
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Zhuanpandi.png
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 49
+        width: 512
+        height: 388
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 74, y: 0, z: 2, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7224ce98e8f85694a92bd010f015e02a
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_PreyDungeon_Img_Zhuanpantiao.png
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 348
+        width: 103
+        height: 53
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 50, y: 0, z: 50, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a32b6f30bbeb9bf418eaae57e18a8211
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      AUI_PreyDungeon_Img_ShuxingA.png: 21300016
+      UI_PreyDungeon_Button_Jianyu.png: 21300034
+      UI_PreyDungeon_Button_None.png: 21300036
+      UI_PreyDungeon_Button_Shejian.png: 21300038
+      UI_PreyDungeon_Button_Zhaohuanguaiwu.png: 21300066
+      UI_PreyDungeon_Img_Dian.png: 21300040
+      UI_PreyDungeon_Img_Goldcoin.png: 21300078
+      UI_PreyDungeon_Img_Guaiqwu.png: 21300042
+      UI_PreyDungeon_Img_Guaiwutishi.png: 21300044
+      UI_PreyDungeon_Img_Guangquan.png: 21300018
+      UI_PreyDungeon_Img_Jingtou.png: 21300048
+      UI_PreyDungeon_Img_Jingying.png: 21300068
+      UI_PreyDungeon_Img_Putong.png: 21300070
+      UI_PreyDungeon_Img_Qizhi.png: 21300050
+      UI_PreyDungeon_Img_Shalou.png: 21300052
+      UI_PreyDungeon_Img_ShuxingD.png: 21300020
+      UI_PreyDungeon_Img_ShuxingI.png: 21300022
+      UI_PreyDungeon_Img_ShuxingS.png: 21300024
+      UI_PreyDungeon_Img_Tanhao.png: 21300076
+      UI_PreyDungeon_Img_TiaoHong.png: 21300006
+      UI_PreyDungeon_Img_TiaoHuang.png: 21300008
+      UI_PreyDungeon_Img_TiaoJingshi.png: 21300088
+      UI_PreyDungeon_Img_TiaoLv.png: 21300010
+      UI_PreyDungeon_Img_TiaoTX.png: 21300080
+      UI_PreyDungeon_Img_Tiaodi.png: 21300004
+      UI_PreyDungeon_Img_Time.png: 21300012
+      UI_PreyDungeon_Img_Timebg.png: 21300014
+      UI_PreyDungeon_Img_Tishibg.png: 21300056
+      UI_PreyDungeon_Img_TizhiV.png: 21300026
+      UI_PreyDungeon_Img_Tuichutiyan.png: 21300072
+      UI_PreyDungeon_Img_Xian.png: 21300058
+      UI_PreyDungeon_Img_Xin.png: 21300060
+      UI_PreyDungeon_Img_Xinbg.png: 21300062
+      UI_PreyDungeon_Img_XingyunL.png: 21300028
+      UI_PreyDungeon_Img_Xuetiaobg.png: 21300064
+      UI_PreyDungeon_Img_Zhuanpandi.png: 21300030
+      UI_PreyDungeon_Img_Zhuanpantiao.png: 21300032
+      UI_PreyDungeon_Img_szbg_0.png: 21300082
+      UI_PreyDungeon_Img_szbg_1.png: 21300084
+      UI_PreyDungeon_button_sz_1.png: 21300086
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,1011 @@
+fileFormatVersion: 2
+guid: b81d3b97009833a419b2b1edbf124198
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Theme_BGline.png
+  - first:
+      213: 21300002
+    second: UI_Theme_Book.png
+  - first:
+      213: 21300004
+    second: UI_Theme_Book_biaoqian.png
+  - first:
+      213: 21300006
+    second: UI_Theme_Book_dian.png
+  - first:
+      213: 21300008
+    second: UI_Theme_Book_kuang.png
+  - first:
+      213: 21300010
+    second: UI_Theme_Book_line.png
+  - first:
+      213: 21300012
+    second: UI_Theme_Book_zhe.png
+  - first:
+      213: 21300014
+    second: UI_Theme_BtnExplore.png
+  - first:
+      213: 21300016
+    second: UI_Theme_BtnOrganizeteam.png
+  - first:
+      213: 21300018
+    second: UI_Theme_BtnPage.png
+  - first:
+      213: 21300020
+    second: UI_Theme_Button_dianzan.png
+  - first:
+      213: 21300022
+    second: UI_Theme_Button_jiahaoyou.png
+  - first:
+      213: 21300024
+    second: UI_Theme_chapter.png
+  - first:
+      213: 21300026
+    second: UI_Theme_Fuben001.png
+  - first:
+      213: 21300028
+    second: UI_Theme_Fuben002.png
+  - first:
+      213: 21300030
+    second: UI_Theme_Fuben003.png
+  - first:
+      213: 21300032
+    second: UI_Theme_Fuben004.png
+  - first:
+      213: 21300034
+    second: UI_Theme_Huawen.png
+  - first:
+      213: 21300036
+    second: UI_Theme_Huawen2.png
+  - first:
+      213: 21300038
+    second: UI_Theme_Img_dibukuang.png
+  - first:
+      213: 21300040
+    second: UI_Theme_Img_kuang.png
+  - first:
+      213: 21300042
+    second: UI_Theme_Img_SettlementTuji.png
+  - first:
+      213: 21300044
+    second: UI_Theme_Img_SettlementXingyun.png
+  - first:
+      213: 21300046
+    second: UI_Theme_Img_SettlementYongwang.png
+  - first:
+      213: 21300048
+    second: UI_Theme_Img_SettlementZhiyuan.png
+  - first:
+      213: 21300050
+    second: UI_Theme_Settlement_Lose.png
+  - first:
+      213: 21300052
+    second: UI_Theme_Settlement_Victory.png
+  - first:
+      213: 21300054
+    second: UI_Theme_SettlementAixin.png
+  - first:
+      213: 21300056
+    second: UI_Theme_SettlementBG.png
+  - first:
+      213: 21300058
+    second: UI_Theme_SettlementBG_taren.png
+  - first:
+      213: 21300060
+    second: UI_Theme_SettlementBG_ziji.png
+  - first:
+      213: 21300062
+    second: UI_Theme_SettlementHaoyou.png
+  - first:
+      213: 21300064
+    second: UI_Theme_SettlementTuji.png
+  - first:
+      213: 21300066
+    second: UI_Theme_SettlementXingyun.png
+  - first:
+      213: 21300068
+    second: UI_Theme_SettlementYongwang.png
+  - first:
+      213: 21300070
+    second: UI_Theme_SettlementZan.png
+  - first:
+      213: 21300072
+    second: UI_Theme_SettlementZhiyuan.png
+  - first:
+      213: 21300074
+    second: UI_Theme_Suo.png
+  - first:
+      213: 21300076
+    second: UI_Theme_Weiyuedu.png
+  - first:
+      213: 21300078
+    second: UI_Theme_Xuanze.png
+  - first:
+      213: 21300080
+    second: UI_Theme_Yiyuedu.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Theme_BGline.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 13
+        width: 4
+        height: 410
+      alignment: 1
+      pivot: {x: 4, y: 806}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d8a60d16b18f9447a846e4b92cb58ec
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book.png
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 66
+        width: 130
+        height: 357
+      alignment: 1
+      pivot: {x: 73, y: 779.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352a8a304a7626449aafd365887cc9de
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book_biaoqian.png
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 32
+        width: 282
+        height: 58
+      alignment: 1
+      pivot: {x: 449, y: 963}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f27c2700498ac043aa533fdf2da1bab
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book_dian.png
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 81
+        width: 13
+        height: 16
+      alignment: 1
+      pivot: {x: 643.5, y: 935}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71ef2d80123875a4f81f01930c1fc7de
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book_kuang.png
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 6
+        width: 24
+        height: 24
+      alignment: 1
+      pivot: {x: 565, y: 1006}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daf249cab809bf640b25d5a1eda691e0
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book_line.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 6
+        width: 213
+        height: 5
+      alignment: 1
+      pivot: {x: 108.5, y: 1015.5}
+      border: {x: 114, y: 2, z: 96, w: 2}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d067da035f468b04b81867ada70f9ada
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Book_zhe.png
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 99
+        width: 301
+        height: 56
+      alignment: 1
+      pivot: {x: 507.5, y: 897}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b76659e965bb5b94b82b1ce98da18ec5
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_BtnPage.png
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 17
+        width: 66
+        height: 47
+      alignment: 1
+      pivot: {x: 143, y: 983.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05372747bba4e3247828049014f23eb2
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Button_dianzan.png
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 15
+        width: 49
+        height: 49
+      alignment: 1
+      pivot: {x: 83.5, y: 984.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ca6e6e203049c4eb108e6e2bf446e6
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Button_jiahaoyou.png
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 15
+        width: 49
+        height: 49
+      alignment: 1
+      pivot: {x: 32.5, y: 984.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4786e58b8a07f9419a547ce627f5174
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_chapter.png
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 4
+        width: 96
+        height: 26
+      alignment: 1
+      pivot: {x: 503, y: 1007}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e03d60559c1fc8544884d6974d981ce1
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Fuben001.png
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 198
+        width: 272
+        height: 266
+      alignment: 1
+      pivot: {x: 550, y: 693}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e39d05556dc5ca846926acc1f818e987
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Fuben002.png
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 488
+        width: 272
+        height: 266
+      alignment: 1
+      pivot: {x: 796, y: 403}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33e56a9f23627e945915c4028b912b2b
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Fuben003.png
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 756
+        width: 272
+        height: 266
+      alignment: 1
+      pivot: {x: 796, y: 135}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca13b88af9068484ea9b6e4f0d436bb1
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Fuben004.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 157
+        width: 272
+        height: 266
+      alignment: 1
+      pivot: {x: 276, y: 734}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaafd8b0f6c578f4eb832e72fe27c0d8
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Huawen.png
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 2
+        width: 300
+        height: 95
+      alignment: 1
+      pivot: {x: 809, y: 974.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 066e70740fa92da4b9ffb26d0f8d585a
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Huawen2.png
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 8
+        width: 78
+        height: 22
+      alignment: 1
+      pivot: {x: 618, y: 1005}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4043470a9d011894a9ff399f0aa6bbe9
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Img_dibukuang.png
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 10
+        width: 236
+        height: 3
+      alignment: 1
+      pivot: {x: 335, y: 1012.5}
+      border: {x: 0, y: 1, z: 0, w: 1}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 647d761d696d8484f8d51dd1d65c705f
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Img_SettlementTuji.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 751
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 978, y: 256}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d4d56e61c52c344b96746a8ac8050d7
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Img_SettlementXingyun.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 787
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 978, y: 220}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6be74b925c11ac44e97cacf6e9fe9f2a
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Img_SettlementYongwang.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 823
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 978, y: 184}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60da5cfe997509047b5670f0a5909aa9
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Img_SettlementZhiyuan.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 859
+        width: 34
+        height: 34
+      alignment: 1
+      pivot: {x: 978, y: 148}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff2c1545dc5d5a84ebd17aec001b49c6
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementAixin.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 895
+        width: 41
+        height: 41
+      alignment: 1
+      pivot: {x: 981.5, y: 108.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2e742cdd3b33dd43b4f4ec4c37db3f1
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementBG.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 425
+        width: 200
+        height: 597
+      alignment: 1
+      pivot: {x: 102, y: 300.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 110775f337df309438465cfd1a102fdf
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementBG_taren.png
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 466
+        width: 191
+        height: 556
+      alignment: 1
+      pivot: {x: 492.5, y: 280}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8cb69e4ef0319c4c90854fd7e1f9fa8
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementBG_ziji.png
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 466
+        width: 191
+        height: 556
+      alignment: 1
+      pivot: {x: 299.5, y: 280}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40830f83c9bd53a4ba3bc59f9c5938d6
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementHaoyou.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 938
+        width: 41
+        height: 41
+      alignment: 1
+      pivot: {x: 981.5, y: 65.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda7c92048b5f2f40b703ccf4c4342d4
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementTuji.png
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 92
+        width: 63
+        height: 63
+      alignment: 1
+      pivot: {x: 323.5, y: 900.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5707acfc53cf5ea4e85c25592fc0ca57
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementXingyun.png
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 27
+        width: 63
+        height: 63
+      alignment: 1
+      pivot: {x: 274.5, y: 965.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51716a08d58da4f4695e6a30b8fd0539
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementYongwang.png
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 92
+        width: 63
+        height: 63
+      alignment: 1
+      pivot: {x: 258.5, y: 900.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a52bcc516553bd34ab58d97d3618bb62
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementZan.png
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 981
+        width: 41
+        height: 41
+      alignment: 1
+      pivot: {x: 981.5, y: 22.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88680e655cfa3a940981e70fa3145d92
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_SettlementZhiyuan.png
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 15
+        width: 63
+        height: 63
+      alignment: 1
+      pivot: {x: 209.5, y: 977.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e127007262ea3d4419cf6d62295d09a9
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Suo.png
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 42
+        width: 43
+        height: 55
+      alignment: 1
+      pivot: {x: 613.5, y: 954.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43e0830608dbb5b4e84ff63b0d5bba6a
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Theme_Xuanze.png
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 80
+        width: 85
+        height: 75
+      alignment: 1
+      pivot: {x: 182.5, y: 906.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c5b5fd24395048459d01c14fb958f78
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Theme_BGline.png: 21300000
+      UI_Theme_Book.png: 21300002
+      UI_Theme_Book_biaoqian.png: 21300004
+      UI_Theme_Book_dian.png: 21300006
+      UI_Theme_Book_kuang.png: 21300008
+      UI_Theme_Book_line.png: 21300010
+      UI_Theme_Book_zhe.png: 21300012
+      UI_Theme_BtnPage.png: 21300018
+      UI_Theme_Button_dianzan.png: 21300020
+      UI_Theme_Button_jiahaoyou.png: 21300022
+      UI_Theme_Fuben001.png: 21300026
+      UI_Theme_Fuben002.png: 21300028
+      UI_Theme_Fuben003.png: 21300030
+      UI_Theme_Fuben004.png: 21300032
+      UI_Theme_Huawen.png: 21300034
+      UI_Theme_Huawen2.png: 21300036
+      UI_Theme_Img_SettlementTuji.png: 21300042
+      UI_Theme_Img_SettlementXingyun.png: 21300044
+      UI_Theme_Img_SettlementYongwang.png: 21300046
+      UI_Theme_Img_SettlementZhiyuan.png: 21300048
+      UI_Theme_Img_dibukuang.png: 21300038
+      UI_Theme_SettlementAixin.png: 21300054
+      UI_Theme_SettlementBG.png: 21300056
+      UI_Theme_SettlementBG_taren.png: 21300058
+      UI_Theme_SettlementBG_ziji.png: 21300060
+      UI_Theme_SettlementHaoyou.png: 21300062
+      UI_Theme_SettlementTuji.png: 21300064
+      UI_Theme_SettlementXingyun.png: 21300066
+      UI_Theme_SettlementYongwang.png: 21300068
+      UI_Theme_SettlementZan.png: 21300070
+      UI_Theme_SettlementZhiyuan.png: 21300072
+      UI_Theme_Suo.png: 21300074
+      UI_Theme_Xuanze.png: 21300078
+      UI_Theme_chapter.png: 21300024
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

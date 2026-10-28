@@ -27,6 +27,15 @@ public class MainView : UIBase
    /// <summary>快捷任务面板，绑定 QuickTaskPanel 预制体，常驻主界面。</summary>
    [SerializeField, Header("快捷任务面板")] private QuickTaskPanelWidget _quickTaskPanel;
 
+   /// <summary>日常任务窗口，绑定 DailyTask 预制体，独立于任务主窗口。</summary>
+   [SerializeField, Header("日常任务窗口")] private DailyTaskWindow _dailyTaskWindow;
+
+   /// <summary>主题副本选择窗口，内部持有 ThemeDungeonArround 预制体实例，默认隐藏。</summary>
+   [SerializeField, Header("主题副本窗口")] private ThemeDungeonArroundWindow _themeDungeonArroundWindow;
+
+   /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
+   [SerializeField, Header("日常入口")] private Button _dailyTaskButton;
+
    /// <summary>主界面任务入口，点击后切换任务窗口，事件由 MainCtrl 注册。</summary>
    [SerializeField, Header("任务入口")] private Button _taskButton;
 
@@ -74,6 +83,15 @@ public class MainView : UIBase
 
    /// <summary>快捷任务面板实例，供任务控制器绑定事件与刷新。</summary>
    public QuickTaskPanelWidget QuickTaskPanel => _quickTaskPanel;
+
+   /// <summary>日常任务窗口实例，供主控制器初始化与显隐。</summary>
+   public DailyTaskWindow DailyTaskWindow => _dailyTaskWindow;
+
+   /// <summary>主题副本选择窗口实例，供主控制器初始化与显隐。</summary>
+   public ThemeDungeonArroundWindow ThemeDungeonArroundWindow => _themeDungeonArroundWindow;
+
+   /// <summary>供主控制器注册与注销日常入口事件。</summary>
+   public Button DailyTaskButton => _dailyTaskButton;
 
    /// <summary>切换左上功能菜单，显隐状态直接取正式容器的当前状态。</summary>
    public void ToggleFunctionMenu()
@@ -140,10 +158,16 @@ public class MainView : UIBase
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;
       windowDic[WindowType.TaskWindow] = _taskWindow;
+      windowDic[WindowType.DailyTaskWindow] = _dailyTaskWindow;
+      windowDic[WindowType.ThemeDungeonArroundWindow] = _themeDungeonArroundWindow;
       SetFunctionMenuVisible(false);
       if (_taskWindow != null)
       {
          _taskWindow.InitWindow();
+      }
+      if (_dailyTaskWindow != null)
+      {
+         _dailyTaskWindow.InitWindow();
       }
       if (_quickTaskPanel != null)
       {
