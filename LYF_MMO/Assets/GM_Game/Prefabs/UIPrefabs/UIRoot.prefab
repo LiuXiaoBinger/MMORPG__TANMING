@@ -125032,7 +125032,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5100000000000000001}
     m_Modifications: []
-    m_SourcePrefab: {fileID: 100100000, guid: 6660df18b8eafb841a8e6768c309e79e, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6660df18b8eafb841a8e6768c309e79e, type: 3}
 --- !u!224 &3943980905731245043 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224147366970240666, guid: 6660df18b8eafb841a8e6768c309e79e, type: 3}
