@@ -168,6 +168,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
 
+        // RO 原版把预制体根的 localScale 存成 (0,0,0)，运行时由驱动脚本恢复为 1；
+        // 不恢复的话整块界面尺寸为零，任何控件都看不见。
+        _root.localScale = Vector3.one;
+
         _fontAsset = Resources.Load<TMP_FontAsset>(_fontResourcePath);
         _whiteSprite = MakeWhiteSprite();
 
