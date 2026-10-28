@@ -83,6 +83,52 @@ Shader "LYF/RoleMjsAlwaysLit"
             }
             ENDCG
         }
+
+        // 为相机深度纹理和阴影提供同一份角色几何，避免 AO 采到角色后方的场景深度。
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode"="ShadowCaster" }
+            Cull [_Cull]
+            ZWrite On
+            ZTest LEqual
+
+            CGPROGRAM
+            #pragma vertex vertShadow
+            #pragma fragment fragShadow
+            #pragma multi_compile_shadowcaster
+            #include "UnityCG.cginc"
+
+            sampler2D _MainTex; // 与颜色 Pass 共用的基础贴图，Alpha 用于匹配可见轮廓。
+            float4 _MainTex_ST; // 与颜色 Pass 共用的贴图缩放和偏移。
+            fixed4 _Color;     // 仅使用 Alpha，使深度裁剪与材质染色的透明度一致。
+            float _Cutoff;     // 与颜色 Pass 共用的裁剪阈值，负值保留完整不透明表面。
+
+            // 深度 Pass 的顶点插值数据，覆盖方向光/聚光灯与点光源阴影变体。
+            struct ShadowInterpolator
+            {
+                V2F_SHADOW_CASTER;      // Unity 定义的裁剪空间位置及点光源深度所需向量。
+                float2 uv : TEXCOORD1; // 基础贴图采样坐标，用于与颜色 Pass 一致的 Alpha 裁剪。
+            };
+
+            // v 是蒙皮后输入的顶点位置、法线与纹理坐标；输出供相机深度或阴影绘制使用。
+            ShadowInterpolator vertShadow(appdata_base v)
+            {
+                ShadowInterpolator o; // 当前顶点的深度位置与基础贴图坐标。
+                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+
+            // i 是当前片元的插值结果；丢弃与颜色 Pass 相同的像素后输出 Unity 标准阴影深度。
+            float4 fragShadow(ShadowInterpolator i) : SV_Target
+            {
+                half alpha = tex2D(_MainTex, i.uv).a * _Color.a; // 当前片元实际参与裁剪的透明度。
+                clip(alpha - _Cutoff);
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
+        }
     }
     FallBack Off
 }
