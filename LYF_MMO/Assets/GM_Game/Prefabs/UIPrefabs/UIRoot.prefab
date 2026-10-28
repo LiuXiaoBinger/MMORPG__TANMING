@@ -47695,7 +47695,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9372901361956168199}
+  - {fileID: 5100000000000000001}
   - {fileID: 7366212739728724399}
   - {fileID: 2941293653532037083}
   - {fileID: 5998223354146992010}
@@ -124979,7 +124979,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9372901361956168199}
+  - component: {fileID: 5100000000000000001}
   - component: {fileID: 1449312153845313194}
   m_Layer: 5
   m_Name: ThemeDungeonArroundWindow
@@ -124988,7 +124988,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!224 &9372901361956168199
+--- !u!224 &5100000000000000001
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125024,17 +125024,17 @@ MonoBehaviour:
   _textureResourceRoot: UI/Texture/
   _fontResourcePath: UI/Font/Common SDF
   _playerLevel: 50
---- !u!1001 &9941163220825974821
+--- !u!1001 &5100000000000000002
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 9372901361956168199}
+    m_TransformParent: {fileID: 5100000000000000001}
     m_Modifications: []
     m_SourcePrefab: {fileID: 100100000, guid: 6660df18b8eafb841a8e6768c309e79e, type: 3}
 --- !u!224 &3943980905731245043 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224147366970240666, guid: 6660df18b8eafb841a8e6768c309e79e, type: 3}
-  m_PrefabInstance: {fileID: 9941163220825974821}
+  m_PrefabInstance: {fileID: 5100000000000000002}
   m_PrefabAsset: {fileID: 0}
