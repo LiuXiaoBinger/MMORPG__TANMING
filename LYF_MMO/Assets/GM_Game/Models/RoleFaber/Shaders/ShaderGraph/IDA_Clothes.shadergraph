@@ -8157,7 +8157,7 @@
     "m_Guid": {
         "m_GuidSerialized": "654682b2-326d-468c-8a0e-f9c8b9c7492e"
     },
-    "m_Name": "RGBA Mask Map",
+    "m_Name": "RGBA Mask Map（RGBA 遮罩贴图）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "RGBA Mask Map",
     "m_DefaultReferenceName": "_RGBA_Mask_Map",
@@ -10077,7 +10077,7 @@
     "m_Guid": {
         "m_GuidSerialized": "099e583c-7109-42b9-ba9f-3c3b814a4118"
     },
-    "m_Name": "Normal Map",
+    "m_Name": "Normal Map（法线贴图）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Normal Map",
     "m_DefaultReferenceName": "_Normal_Map",
@@ -11760,7 +11760,7 @@
     "m_AlphaMode": 0,
     "m_RenderFace": 0,
     "m_AlphaClip": false,
-    "m_CustomEditorGUI": ""
+    "m_CustomEditorGUI": "ClothesLabelShaderGUI"
 }
 
 {
@@ -15183,7 +15183,7 @@
     "m_Guid": {
         "m_GuidSerialized": "a8d9a504-fa98-45fb-b11c-d8de039b8250"
     },
-    "m_Name": "Blood Mask",
+    "m_Name": "Blood Mask（血迹遮罩）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Blood Mask",
     "m_DefaultReferenceName": "_Blood_Mask",
@@ -15947,7 +15947,7 @@
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.CategoryData",
     "m_ObjectId": "8ca6538fadee4987add99b7c9886e34a",
-    "m_Name": "Maps",
+    "m_Name": "Maps（贴图）",
     "m_ChildObjectList": [
         {
             "m_Id": "a73dce4b2e28476090f9351de0b4226a"
@@ -16153,7 +16153,7 @@
     "m_Guid": {
         "m_GuidSerialized": "8b5cb93c-54b3-4214-a52a-709e60f6f90e"
     },
-    "m_Name": "Emission Map",
+    "m_Name": "Emission Map（自发光贴图）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Emission Map",
     "m_DefaultReferenceName": "_Emission_Map",
@@ -18969,7 +18969,7 @@
     "m_Guid": {
         "m_GuidSerialized": "c5bac430-80d9-4f2f-b901-e462dc4efd4e"
     },
-    "m_Name": "BaseColor Map",
+    "m_Name": "BaseColor Map（基础色贴图）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "BaseColor Map",
     "m_DefaultReferenceName": "_BaseColor_Map",
@@ -21062,7 +21062,7 @@
     "m_Guid": {
         "m_GuidSerialized": "981ba150-f738-4935-99be-230ae27cb964"
     },
-    "m_Name": "Microdetail Map",
+    "m_Name": "Microdetail Map（微细节贴图）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Microdetail Map",
     "m_DefaultReferenceName": "_Microdetail_Map",
@@ -21107,7 +21107,7 @@
     "m_Guid": {
         "m_GuidSerialized": "d0ff7f64-b47c-426b-8106-3e1215b7612d"
     },
-    "m_Name": "Dirt Mask",
+    "m_Name": "Dirt Mask（污渍遮罩）",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Dirt Mask",
     "m_DefaultReferenceName": "_Dirt_Mask",
