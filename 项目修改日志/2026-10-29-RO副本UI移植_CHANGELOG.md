@@ -516,3 +516,48 @@ Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPF
 - 「挑战模式」Theme_Challenge（324KB 预制体）仍未移植，中心牌只给提示。
 - 奖励区只有标题，没有真实道具列表；三个页签正文仍是占位文案。
 - 窗口 1704×852 居中，上下各 114px 黑边。
+
+---
+
+## 20. 左上功能菜单：图标对齐 RO 图集、文字换 TMP、默认收起（2026-10-29 18:5x）
+
+### 需求
+
+用户给出参考截图（一排 6 个图标：背包/角色/技能/设置/任务/日常），要求在 RO 项目里找这套图标放进左上功能菜单，并让这个菜单默认隐藏。
+
+### 查证结果：图标本来就在，但不该被拉伸
+
+- RO 主界面的功能按钮图标统一来自 **`IconMain` 图集**（`Common.CommonUIFunc.GetMainPanelAtlasAndIconByFuncId` 里写死 `return "IconMain", SystemIcon 去掉 .png + "_Main.png"`），灰白浮雕风、无底板。
+- 但 LYF 这排按钮用的是 **`CommonIcon` 图集里 `UI_Commonicon_Icon_top_*` 系列**（Bag / Role / Skil / Setting / Task），与用户截图逐像素一致（背包那个带眼睛的小机器人、牛角头盔、星球、齿轮、文件），第 6 个「日常」原本用 `UI_CommonIcon_Time_01`。
+- 也就是说图标引用一直在，问题出在两处：
+  1. `Icon` 的 `m_PreserveAspect = 0`，而源图只有 **19×22~25×20 px**，被硬拉到 58×44 → 横向拉宽 2.6 倍，看起来糊成一团；
+  2. `Label` 是遗留的 UGUI `Text`（Common.TTF、字号 20、BestFit），与项目「TMP 统一 Common SDF」的定稿不一致。
+
+### 改动（`Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`）
+
+- 6 个按钮的 `Label` 由 UGUI `Text` 换成 `TextMeshProUGUI`：字体 `UI/Font/Common SDF`、字号 20、居中、白色、`raycastTarget = false`；RectTransform 保持原位 `(40,-67)`、80×28。
+- `SettingButton` 下遗留的 `Text` 节点合并进统一的 `Label` 命名（删旧节点，其余 5 个本来就是 `Label`）。
+- 6 个 `Icon`：`m_PreserveAspect = 1`，RectTransform 恢复原尺寸 58×44、位置 `(40,-29)`，`raycastTarget = false`。
+- 「日常」图标由 `UI_CommonIcon_Time_01`（蓝环+箭头，语义更像"重置"）改为 **`UI_CommonIcon_Time`**（蓝边白盘时钟），与截图一致。
+- 校验：节点数 1390 / 2964 前后完全一致，UGUI Text 180 → 174、TMP 151 → 157，正好是这 6 处替换，无附带删除。
+
+### 默认隐藏
+
+- 预制体里 `FunctionMenuContent` 的 `m_IsActive: 0`（本轮之前就是），`MainView.InitView()` 里 `SetFunctionMenuVisible(false)` 再收一次；展开仍靠左上角箭头按钮 `FunctionMenuButton`。
+- 编辑器验证时临时激活渲染，验证后已销毁测试实例，场景保持未修改。
+
+### 实测
+
+用 `PrefabUtility.InstantiatePrefab` 临时实例化 UIRoot → 激活 MainView 与 FunctionMenuContent → 用 Canvas 自己的 `worldCamera` 渲染到 RenderTexture：
+
+| 项 | 结果 |
+| --- | --- |
+| 6 个图标 | 全部显示，比例正常不变形（source 20px 放大后仍可辨认） |
+| 6 个文字 | 背包/角色/技能/设置/任务/日常，字号统一 |
+| 图标与文字 | 图标中心 y=-29、文字中心 y=-67，无重叠无裁切 |
+| 默认状态 | `activeSelf = False` |
+
+### 坑
+
+- 同一场景里存在 3 个 `Main Camera` + 3 个 `UICamera`（多个场景对象残留），`Camera.allCameras` 取第一个 `UICamera` 可能不是 UIRoot Canvas 绑的那台，会渲染出登录界面。正确做法是取 **`Canvas.worldCamera`**。
+- `SaveAsPrefabAsset` 会重排 YAML 文档顺序，`git diff` 里会出现「`m_Text: 全部` 被替换成 `m_Sprite: top_Skil`」这种错位假象。判断是否误删不能看 diff，要比 **GameObject 总数 / 组件 guid 计数**。
