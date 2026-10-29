@@ -39,6 +39,9 @@ public class MainView : UIBase
    /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
    [SerializeField, Header("日常入口")] private Button _dailyTaskButton;
 
+   /// <summary>功能菜单中的副本入口，打开主题副本选择窗口。</summary>
+   [SerializeField, Header("副本入口")] private Button _themeDungeonButton;
+
    /// <summary>主界面任务入口，点击后切换任务窗口，事件由 MainCtrl 注册。</summary>
    [SerializeField, Header("任务入口")] private Button _taskButton;
 
@@ -95,6 +98,9 @@ public class MainView : UIBase
 
    /// <summary>供主控制器注册与注销日常入口事件。</summary>
    public Button DailyTaskButton => _dailyTaskButton;
+
+   /// <summary>供主控制器注册与注销副本入口事件。</summary>
+   public Button ThemeDungeonButton => _themeDungeonButton;
 
    /// <summary>切换左上功能菜单，显隐状态直接取正式容器的当前状态。</summary>
    public void ToggleFunctionMenu()

@@ -585,3 +585,48 @@ Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPF
 - `git diff --cached` 仅含 `UIRoot.prefab` 一个文件，无其他资源被连带修改。
 - 还原后字段值与 `cb22b6e`（第 20 节之前）一致。
 - 编辑器内显示效果未重新截图测量（未测量）。
+
+---
+
+## 22. 左上功能菜单新增「副本」入口（2026-10-29 21:xx）
+
+### 需求
+
+开发者要求补左上功能菜单里缺的「副本」图标/入口（此前菜单只有 背包/角色/技能/设置/任务/日常 六项，副本窗口 `ThemeDungeonArroundWindow` 虽已注册进 `windowDic`，但界面上没有任何按钮能打开它）。
+
+### 图标查证
+
+- 现有 6 个按钮的图标全部来自 `Atlas/CommonIcon.png` 的 `UI_Commonicon_Icon_top_*` 系列（灰白浮雕），该图集里**没有**副本类图标（`top_Achievement/Album/Bag/CapraFAQ/Carrier/Forging/Friend/Guild/GuildCrystal/LifeSkil/Mail/Role/Setting/Skil/Smelt/Task/Team/Transaction/Vehicle/WatchWar/youjian`）。
+- RO 主界面那套 `UI_Icon_*_Main.png`（`Atlas/IconMain.png`）也没有副本条目（只有贝宝/技能/设置/委托/图鉴/商城/活动/公会/竞技场/无尽塔等）。
+- 语义正确的副本图标在 `Atlas/Icon01.png`：**`UI_Icon_Migongfuben`（迷宫副本，128×128 森林插画）**，同图集还有 `UI_Icon_Maoxian`（冒险，波利+剑盾）、`UI_Icon_Yingxiongtiaozhan`（英雄挑战，头盔+皇冠）可备选。
+- 该图标是彩色插画，与现有 6 个灰白线描图标风格不同；这是 RO 原始资源本身的差异，未做调色处理。
+
+### 改动
+
+`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`
+- `MainView/FunctionMenuContent` 下新增第 7 个子节点 `ThemeDungeonButton`：位置 `x=498`（步长 82 延续）、`80×84`、pivot(0,1)，结构与 `DailyTaskButton` 完全一致（Image 底板 + Button + Icon + Label），透明底板 `raycastTarget=1` 保留点击热区。
+- `Icon`：`sprite = Icon01/UI_Icon_Migongfuben`（fileID 21300130）、`58×44`、`PreserveAspect=1`；`Label`：UGUI `Text`、Common.TTF、20 号、居中、内容「副本」。
+- `FunctionMenuContent` 宽度由 424 扩到 506，容纳第 7 个按钮。
+- `MainView` 组件序列化字段新增 `_themeDungeonButton`，指向新按钮的 Button 组件。
+
+`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/MainView.cs`
+- 新增 `[SerializeField, Header("副本入口")] private Button _themeDungeonButton;` 与 `public Button ThemeDungeonButton => _themeDungeonButton;`。
+
+`LYF_MMO/Assets/GM_Game/Scripts/controller/UIController/MainCtrl.cs`
+- `RegisterViewActions()` 注册、注销段 `RemoveViewActions()` 中分别 `AddListener/RemoveListener(OnThemeDungeonRequested)`。
+- 新增 `OnThemeDungeonRequested()` → `ShowMainWindow(WindowType.ThemeDungeonArroundWindow)`，复用 MainView 已注册的窗口实例。
+
+### 坑
+
+- **fileID 不能超过 int64 上限**：首次用 `9300000000000000001` 起始的 id，超过 9223372036854775807，Unity 导入直接报 `Duplicate identifier 9223372036854775807` 并判定文件损坏（整份预制体加载为 null）。改用 `8000000000000000xx` 段。
+- **图集内 sprite 的 localID 不能按「21300000 + 序号×2」推算**：按 meta 里 `spriteSheet` 顺序算出 `UI_Icon_Migongfuben` = 21300078，实际加载出来是 `UI_Icon_Tianpin`。正确做法是用 `AssetDatabase.LoadAllAssetRepresentationsAtPath` + `TryGetGUIDAndLocalFileIdentifier` 实测，得到 21300130。
+- 复制同级按钮子树时必须**显式列出全部 13 个对象 id**（GO/RT/CR/Image/Button + Icon 三项 + Label 三项）；靠 `m_Children` 递归收集会漏掉 GO 的兄弟组件，复制出来的文档内部引用对不上，文件里会混进半成品文档。
+- Unity 处于 Play 模式时不会自动编译改动的 .cs（本次实测：`AssetDatabase.Refresh` 后仍是旧程序集，`MainView` 找不到新字段）。需先 `EditorApplication.isPlaying = false` 再 `AssetDatabase.Refresh`，等待 `isCompiling` 归零。
+
+### 验证
+
+- 编辑器内导入 `UIRoot.prefab` 后读层级：`FunctionMenuContent` 子节点 7 个，依次 `KnapsackButton(6)/RoleButton(88)/SkillButton(170)/SettingButton(252)/TaskButton(334)/DailyTaskButton(416)/ThemeDungeonButton(498)`，`missingScript = 0`。
+- 新按钮：`Icon.sprite = UI_Icon_Migongfuben.png`、图标 `58×44`、`Label.text = "副本"`、Button 组件存在且 `targetGraphic` 有效。
+- `MainView` 反射读 `_themeDungeonButton`：值为 `Button/ThemeDungeonButton`，序列化引用正确。
+- 渲染截图（`_temp/func_menu_check.png`）：7 个按钮横排显示，副本图标为彩色森林，与左侧 6 个灰白图标风格不一致。
+- **点击行为未测量**（需登录进主城后实际点击）；`OnThemeDungeonRequested` 与既有 `OnDailyTaskRequested` 同构，风险面仅在 `ThemeDungeonArroundWindow` 的 `Show` 流程。

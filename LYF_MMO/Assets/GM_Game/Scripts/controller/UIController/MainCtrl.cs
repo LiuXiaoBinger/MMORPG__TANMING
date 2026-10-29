@@ -91,6 +91,14 @@ public class MainCtrl : CtrlBase
         {
             _mainView.TaskButton.onClick.AddListener(OnTaskRequested);
         }
+        if (_mainView.DailyTaskButton != null)
+        {
+            _mainView.DailyTaskButton.onClick.AddListener(OnDailyTaskRequested);
+        }
+        if (_mainView.ThemeDungeonButton != null)
+        {
+            _mainView.ThemeDungeonButton.onClick.AddListener(OnThemeDungeonRequested);
+        }
         if (_mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
@@ -140,6 +148,18 @@ public class MainCtrl : CtrlBase
             return;
         }
         _taskCtrl.RequestOpenTaskWindow();
+    }
+
+    /// <summary>点击日常入口时切换日常任务窗口显隐，日常面板独立于任务主窗口。</summary>
+    private void OnDailyTaskRequested()
+    {
+        ShowMainWindow(WindowType.DailyTaskWindow);
+    }
+
+    /// <summary>点击副本入口时打开主题副本选择窗口，窗口实例由 MainView 注册。</summary>
+    private void OnThemeDungeonRequested()
+    {
+        ShowMainWindow(WindowType.ThemeDungeonArroundWindow);
     }
 
     /// <summary>供外部在登录后用服务端任务快照刷新任务界面。</summary>
@@ -421,6 +441,14 @@ public class MainCtrl : CtrlBase
         if (_mainView != null && _mainView.TaskButton != null)
         {
             _mainView.TaskButton.onClick.RemoveListener(OnTaskRequested);
+        }
+        if (_mainView != null && _mainView.DailyTaskButton != null)
+        {
+            _mainView.DailyTaskButton.onClick.RemoveListener(OnDailyTaskRequested);
+        }
+        if (_mainView != null && _mainView.ThemeDungeonButton != null)
+        {
+            _mainView.ThemeDungeonButton.onClick.RemoveListener(OnThemeDungeonRequested);
         }
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
