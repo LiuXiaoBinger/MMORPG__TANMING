@@ -103,6 +103,12 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>挑战（进入副本）按钮。</summary>
     private Button _challengeBtn;
 
+    /// <summary>进入副本按钮上的副本名文本，随选中的副本实时刷新。</summary>
+    private TextMeshProUGUI _challengeName;
+
+    /// <summary>进入副本按钮的透明度分组，未选中任何副本时整体压暗。</summary>
+    private CanvasGroup _challengeGroup;
+
     /// <summary>详情区的确认按钮。</summary>
     private Button _confirmBtn;
 
@@ -178,6 +184,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _whiteSprite = MakeWhiteSprite();
 
         CacheNodes();
+        SetupChallengeButton();
         FixLostSpriteGraphics();
         LoadConfig();
         BuildCardVisuals();
@@ -307,6 +314,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             _challengeBtn = challenge.GetComponent<Button>();
         }
+        Transform challengeName = FindDeep(_root, "ChallengeName");
+        if (challengeName != null)
+        {
+            _challengeName = challengeName.GetComponent<TextMeshProUGUI>();
+        }
         Transform confirm = FindDeep(_root, "Button");
         if (confirm != null)
         {
@@ -342,6 +354,65 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
 
         AddButtonListeners();
+    }
+
+    /// <summary>
+    /// 配置「进入副本」按钮：解锁主题名的自动缩放，并挂一个透明度分组，
+    /// 供未选中任何副本时把整个按钮压暗。重复调用是安全的。
+    /// </summary>
+    private void SetupChallengeButton()
+    {
+        if (_challengeName != null)
+        {
+            // RO 原版把 overflow 设成裁切，长主题名会被直接切掉；改成按框自动缩放。
+            _challengeName.overflowMode = TextOverflowModes.Overflow;
+            _challengeName.enableAutoSizing = true;
+            _challengeName.fontSizeMin = 12f;
+            _challengeName.fontSizeMax = 28f;
+        }
+        if (_challengeBtn != null)
+        {
+            _challengeGroup = _challengeBtn.GetComponent<CanvasGroup>();
+            if (_challengeGroup == null)
+            {
+                _challengeGroup = _challengeBtn.gameObject.AddComponent<CanvasGroup>();
+            }
+        }
+        RefreshChallengeButton();
+    }
+
+    /// <summary>
+    /// 按当前选中状态刷新「进入副本」按钮：有选中就把副本名写上去并恢复正常亮度，
+    /// 没选中则显示占位提示并压暗。按钮始终可点，点了会给提示而不是静默无反应。
+    /// </summary>
+    private void RefreshChallengeButton()
+    {
+        bool ready = _selected >= 0 && _selected < _items.Length;
+        if (_challengeName != null)
+        {
+            if (ready)
+            {
+                _challengeName.text = _items[_selected].themeName;
+                _challengeName.color = Color.white;
+            }
+            else
+            {
+                _challengeName.text = "请选择副本";
+                _challengeName.color = ColDim;
+            }
+        }
+        if (_challengeGroup == null)
+        {
+            return;
+        }
+        if (ready)
+        {
+            _challengeGroup.alpha = 1f;
+        }
+        else
+        {
+            _challengeGroup.alpha = 0.4f;
+        }
     }
 
     /// <summary>给已缓存的按钮注册点击回调，未找到的按钮直接跳过。</summary>
@@ -573,6 +644,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     {
         if (_items.Length == 0)
         {
+            RefreshChallengeButton();
             return;
         }
         _page = Mathf.Clamp(page, 0, PageCount - 1);
@@ -600,6 +672,19 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             Select(_page * _slots.Count, false);
         }
+        else
+        {
+            // 翻页后原来选中的副本可能已经不在本页，继续留着会让「进入副本」按钮
+            // 显示上一页的副本名，所以自动改选本页第一个。
+            int first = _page * _slots.Count;
+            int last = first + _slots.Count - 1;
+            bool inPage = _selected >= first && _selected <= last && _selected < _items.Length;
+            if (!inPage)
+            {
+                Select(first, false);
+            }
+        }
+        RefreshChallengeButton();
     }
 
     /// <summary>
@@ -691,6 +776,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             _nameOfPanel.text = d.themeName;
         }
+        // 进入副本按钮上的名字跟着选中项走。
+        RefreshChallengeButton();
         if (fromClick)
         {
             SetStatus("已选中：" + d.themeName);
@@ -729,15 +816,24 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         ShowPage(_page + 1, false);
     }
 
-    /// <summary>挑战按钮回调，目前只做反馈，不发起进入副本的协议。</summary>
+    /// <summary>
+    /// 「进入副本」按钮回调。当前是空壳：只做选中与等级校验并给出反馈，
+    /// 真正的进入副本协议等服务器接口就绪后在这里发起。
+    /// </summary>
     private void OnChallengeClicked()
     {
-        if (_selected < 0)
+        if (_selected < 0 || _selected >= _items.Length)
         {
             SetStatus("请先选择一个副本");
             return;
         }
-        SetStatus("请求进入：" + _items[_selected].themeName);
+        ThemeDungeonEntry d = _items[_selected];
+        if (_playerLevel < d.chapterLevel)
+        {
+            SetStatus("等级不足，" + d.themeName + " 需要 Lv." + d.chapterLevel);
+            return;
+        }
+        SetStatus("进入副本：" + d.themeName + "（协议待接入）");
     }
 
     /// <summary>确认按钮回调，目前只做反馈，不发起进入副本的协议。</summary>
