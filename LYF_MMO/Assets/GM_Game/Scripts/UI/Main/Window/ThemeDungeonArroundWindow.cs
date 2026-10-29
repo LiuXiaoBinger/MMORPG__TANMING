@@ -167,6 +167,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
 
+        // 重复初始化时先清掉上一轮建的运行时节点，否则会一层层叠加。
+        ClearRuntimeNodes();
+
         // RO 原版把预制体根的 localScale 存成 (0,0,0)，运行时由驱动脚本恢复为 1；
         // 不恢复的话整块界面尺寸为零，任何控件都看不见。
         _root.localScale = Vector3.one;
@@ -231,6 +234,30 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             _playerLevel = (int)obj;
         }
         ShowPage(_page, false);
+    }
+
+    /// <summary>
+    /// 删掉本脚本运行时创建的所有 TD_ 前缀节点（详情面板、背景、书位装饰等），
+    /// 预制体自带的节点不受影响。重复调用 InitWindow 时用于避免节点叠加。
+    /// </summary>
+    private void ClearRuntimeNodes()
+    {
+        if (_root == null)
+        {
+            return;
+        }
+        Transform[] all = _root.GetComponentsInChildren<Transform>(true);
+        for (int i = all.Length - 1; i >= 0; i--)
+        {
+            if (all[i] == null || all[i] == _root)
+            {
+                continue;
+            }
+            if (all[i].name.StartsWith("TD_"))
+            {
+                DestroyImmediate(all[i].gameObject);
+            }
+        }
     }
 
     /// <summary>
@@ -502,20 +529,25 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         dim.raycastTarget = false;
         dim.rectTransform.SetSiblingIndex(2);
 
-        Image panel = NewImage("TD_InfoPanel", _root, -560f, -380f, 660f, 250f, new Color(0.04f, 0.05f, 0.07f, 0.78f));
+        // 描述文本一条就有 300 字左右，420x90 的框装不下（实测需要 1078x230），
+        // 会把字挤到面板外面，所以面板整体加宽加高，并把文字区放宽到 620。
+        Image panel = NewImage("TD_InfoPanel", _root, -500f, -380f, 820f, 280f, new Color(0.04f, 0.05f, 0.07f, 0.78f));
         panel.raycastTarget = false;
 
-        RectTransform bossRt = NewRect("TD_Boss", panel.transform, -245f, 8f, 150f, 200f);
+        RectTransform bossRt = NewRect("TD_Boss", panel.transform, -320f, 10f, 160f, 210f);
         _bossPic = bossRt.gameObject.AddComponent<RawImage>();
         _bossPic.raycastTarget = false;
         _bossPic.color = new Color(1f, 1f, 1f, 0f);
 
-        _infoTitle = NewText("TD_Title", panel.transform, 60f, 86f, 420f, 34f, 26f, ColGold, TextAlignmentOptions.MidlineLeft);
-        _infoChapter = NewText("TD_Chapter", panel.transform, 60f, 52f, 420f, 26f, 17f, ColText, TextAlignmentOptions.MidlineLeft);
-        _infoBoss = NewText("TD_BossName", panel.transform, 60f, 22f, 420f, 24f, 16f, ColDim, TextAlignmentOptions.MidlineLeft);
-        _detailText = NewText("TD_Desc", panel.transform, 60f, -58f, 420f, 90f, 14f, ColDim, TextAlignmentOptions.TopLeft);
+        _infoTitle = NewText("TD_Title", panel.transform, 70f, 102f, 620f, 34f, 26f, ColGold, TextAlignmentOptions.MidlineLeft);
+        _infoChapter = NewText("TD_Chapter", panel.transform, 70f, 68f, 620f, 26f, 17f, ColText, TextAlignmentOptions.MidlineLeft);
+        _infoBoss = NewText("TD_BossName", panel.transform, 70f, 38f, 620f, 24f, 16f, ColDim, TextAlignmentOptions.MidlineLeft);
+        _detailText = NewText("TD_Desc", panel.transform, 70f, -50f, 620f, 150f, 13f, ColDim, TextAlignmentOptions.TopLeft);
+        // 兜底：文本再长也只裁在框内，不会糊到面板外面去。
+        _detailText.overflowMode = TextOverflowModes.Truncate;
+        _detailText.lineSpacing = -8f;
 
-        _statusText = NewText("TD_Status", _root, 470f, -470f, 900f, 32f, 17f, ColGold, TextAlignmentOptions.MidlineRight);
+        _statusText = NewText("TD_Status", _root, 280f, -468f, 640f, 32f, 17f, ColGold, TextAlignmentOptions.MidlineRight);
         _statusText.text = string.Empty;
     }
 
