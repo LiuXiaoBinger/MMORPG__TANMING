@@ -175,6 +175,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _whiteSprite = MakeWhiteSprite();
 
         CacheNodes();
+        FixLostSpriteGraphics();
         LoadConfig();
         BuildCardVisuals();
         BuildDetailPanel();
@@ -366,6 +367,39 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
         _items = config.items;
+    }
+
+    /// <summary>
+    /// 清掉预制体里"sprite 引用丢失的白板"。
+    /// RO 原工程转过来时部分 Image 的 sprite 变成 null，Unity 遇到这种 Image 会画一整块纯白不透明矩形；
+    /// ScrollView 上那张 0x0 拉伸铺满全屏的白板就是它，本身还带 -28° 的 X 轴旋转，
+    /// 在主画布（Screen Space - Camera，透视投影）里会被投成斜着的梯形，把整个界面盖白。
+    /// 这里统一改成全透明，但保留 raycastTarget，滚动与点击区域不受影响。
+    /// </summary>
+    private void FixLostSpriteGraphics()
+    {
+        Image[] images = _root.GetComponentsInChildren<Image>(true);
+        int fixedCount = 0;
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image img = images[i];
+            if (img.sprite != null)
+            {
+                continue;
+            }
+            Color c = img.color;
+            if (c.a <= 0f)
+            {
+                continue;
+            }
+            c.a = 0f;
+            img.color = c;
+            fixedCount++;
+        }
+        if (fixedCount > 0)
+        {
+            Debug.Log("[主题副本] 已透明化丢图白板数量: " + fixedCount);
+        }
     }
 
     /// <summary>

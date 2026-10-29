@@ -169,6 +169,10 @@ public class MainView : UIBase
       {
          _dailyTaskWindow.InitWindow();
       }
+      if (_themeDungeonArroundWindow != null)
+      {
+         _themeDungeonArroundWindow.InitWindow();
+      }
       if (_quickTaskPanel != null)
       {
          _quickTaskPanel.InitWidget();
