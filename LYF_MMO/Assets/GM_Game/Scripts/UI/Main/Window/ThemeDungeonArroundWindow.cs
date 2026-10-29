@@ -5,9 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 主题副本选择窗口，挂载在 UIRoot / MainView 下的 ThemeDungeonArroundWindow 空对象上，
-/// 内部持有 ThemeDungeonArround 预制体实例（RO 原版美术），负责副本书位的配置填充、
-/// 上下翻页、选中高亮、右侧详情展示与关闭。
+/// 主题副本选择窗口，直接挂在 ThemeDungeonArround 预制体实例的根节点上（该实例挂在 UIRoot / MainView 下），
+/// 负责副本书位的配置填充、上下翻页、选中高亮、右侧详情展示与关闭。
 /// </summary>
 public sealed class ThemeDungeonArroundWindow : WindowBase
 {
@@ -164,7 +163,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _root = FindThemeDungeonRoot();
         if (_root == null)
         {
-            Debug.LogError("[主题副本] ThemeDungeonArroundWindow 下找不到 ThemeDungeonArround 子节点");
+            Debug.LogError("[主题副本] 窗口根节点上没有 RectTransform");
             return;
         }
 
@@ -215,10 +214,16 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 在自身子节点里找到 ThemeDungeonArround 预制体实例的根 RectTransform。
+    /// 取得界面根变换。脚本直接挂在 ThemeDungeonArround 预制体根上，根就是自身；
+    /// 若被挂到别的容器上，则向下找名为 ThemeDungeonArround 的子节点。
     /// </summary>
     private RectTransform FindThemeDungeonRoot()
     {
+        RectTransform self = transform as RectTransform;
+        if (self != null && transform.name == "ThemeDungeonArround")
+        {
+            return self;
+        }
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform child = transform.GetChild(i);
@@ -227,7 +232,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
                 return child as RectTransform;
             }
         }
-        return null;
+        return self;
     }
 
     /// <summary>
@@ -434,7 +439,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         Stretch(splashRt);
         _splash = splashRt.gameObject.AddComponent<RawImage>();
         _splash.raycastTarget = false;
-        _splash.color = new Color(1f, 1f, 1f, 1f);
+        // RawImage 在 texture 为空时会画出一个实心白块，这里先设为全透明，选中后再按贴图恢复。
+        _splash.color = new Color(1f, 1f, 1f, 0f);
         _splash.uvRect = new Rect(0f, 0f, 1f, 1f);
         splashRt.SetSiblingIndex(1);
 
@@ -449,6 +455,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         RectTransform bossRt = NewRect("TD_Boss", panel.transform, -245f, 8f, 150f, 200f);
         _bossPic = bossRt.gameObject.AddComponent<RawImage>();
         _bossPic.raycastTarget = false;
+        _bossPic.color = new Color(1f, 1f, 1f, 0f);
 
         _infoTitle = NewText("TD_Title", panel.transform, 60f, 86f, 420f, 34f, 26f, ColGold, TextAlignmentOptions.MidlineLeft);
         _infoChapter = NewText("TD_Chapter", panel.transform, 60f, 52f, 420f, 26f, 17f, ColText, TextAlignmentOptions.MidlineLeft);
@@ -570,8 +577,25 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         ThemeDungeonEntry d = _items[index];
         _splash.texture = LoadTexture(d.scenePic);
         ApplySplashCover();
+        // 贴图加载成功才显示，否则保持透明，避免整屏白块。
+        if (_splash.texture != null)
+        {
+            _splash.color = new Color(1f, 1f, 1f, 1f);
+        }
+        else
+        {
+            _splash.color = new Color(1f, 1f, 1f, 0f);
+        }
         _bossPic.texture = LoadTexture(d.painting);
         ApplyCoverUv(_bossPic, 0f, 0f);
+        if (_bossPic.texture != null)
+        {
+            _bossPic.color = new Color(1f, 1f, 1f, 1f);
+        }
+        else
+        {
+            _bossPic.color = new Color(1f, 1f, 1f, 0f);
+        }
 
         _infoTitle.text = d.themeName;
         _infoChapter.text = d.chapterText + " · Lv." + d.chapterLevel;

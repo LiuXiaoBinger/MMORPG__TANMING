@@ -30,7 +30,7 @@ public class MainView : UIBase
    /// <summary>日常任务窗口，绑定 DailyTask 预制体，独立于任务主窗口。</summary>
    [SerializeField, Header("日常任务窗口")] private DailyTaskWindow _dailyTaskWindow;
 
-   /// <summary>主题副本选择窗口，内部持有 ThemeDungeonArround 预制体实例，默认隐藏。</summary>
+   /// <summary>主题副本选择窗口，直接使用 ThemeDungeonArround 预制体实例作为窗口根。</summary>
    [SerializeField, Header("主题副本窗口")] private ThemeDungeonArroundWindow _themeDungeonArroundWindow;
 
    /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
