@@ -103,11 +103,31 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>挑战（进入副本）按钮。</summary>
     private Button _challengeBtn;
 
+    /// <summary>
+    /// 是否保留 RO 原版悬浮在书台中心的「挑战玩法」信息牌。
+    /// RO 的书台是 3D 环状布局，中心留空，那块牌子放着不挡任何东西；
+    /// LYF 把书位改成 2D 卡片后中心被占满，牌子会压在卡片上，所以默认关闭。
+    /// </summary>
+    private const bool ShowLegacyThemeBadge = false;
+
     /// <summary>进入副本按钮上的副本名文本，随选中的副本实时刷新。</summary>
     private TextMeshProUGUI _challengeName;
 
     /// <summary>进入副本按钮的透明度分组，未选中任何副本时整体压暗。</summary>
     private CanvasGroup _challengeGroup;
+
+    /// <summary>副本详情窗口（RO 的 Theme_Story），点书位翻开时打开。</summary>
+    private ThemeStoryWindow _storyWindow;
+
+    /// <summary>外部注入详情窗口，由主界面在初始化时调用。</summary>
+    public void SetStoryWindow(ThemeStoryWindow window)
+    {
+        _storyWindow = window;
+        if (_storyWindow != null)
+        {
+            _storyWindow.OnEnterDungeon = EnterDungeon;
+        }
+    }
 
     /// <summary>详情区的确认按钮。</summary>
     private Button _confirmBtn;
@@ -265,6 +285,16 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
                 DestroyImmediate(all[i].gameObject);
             }
         }
+
+        // 这些控件都是运行时建的，已经跟着节点一起销毁。引用必须同步清空：
+        // Unity 销毁过的对象做 != null 判断仍然为 true，留着会在下一次刷新时报空引用。
+        _splash = null;
+        _bossPic = null;
+        _infoTitle = null;
+        _infoChapter = null;
+        _infoBoss = null;
+        _detailText = null;
+        _statusText = null;
     }
 
     /// <summary>
@@ -372,11 +402,19 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
+            // RO 里这块是「挑战玩法」信息牌，不是主操作按钮；当前窗口只拿它显示
+            // 选中的副本名，点它不进入副本，避免玩家误触。真正的入口在右下角。
+            _challengeBtn.interactable = false;
             _challengeGroup = _challengeBtn.GetComponent<CanvasGroup>();
             if (_challengeGroup == null)
             {
                 _challengeGroup = _challengeBtn.gameObject.AddComponent<CanvasGroup>();
             }
+            // RO 的书台是 3D 环状，中心是空的，所以这块 207×200 的信息牌悬浮在中间不挡事。
+            // LYF 改成 2D 卡片布局后中心被书位占满，牌子会直接压在卡片上，实测截图确认
+            // 文字与卡片重叠成一片。副本名已经由右下角按钮的副标题和左下详情面板承担，
+            // 这里默认隐藏；若要恢复 RO 原样，把这个常量改成 true 即可。
+            _challengeBtn.gameObject.SetActive(ShowLegacyThemeBadge);
         }
         RefreshChallengeButton();
     }
@@ -388,6 +426,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     private void RefreshChallengeButton()
     {
         bool ready = _selected >= 0 && _selected < _items.Length;
+
+        // 中心的信息牌：只显示当前选中的副本名，不响应点击。
         if (_challengeName != null)
         {
             if (ready)
@@ -401,17 +441,16 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
                 _challengeName.color = ColDim;
             }
         }
-        if (_challengeGroup == null)
+        if (_challengeGroup != null)
         {
-            return;
-        }
-        if (ready)
-        {
-            _challengeGroup.alpha = 1f;
-        }
-        else
-        {
-            _challengeGroup.alpha = 0.4f;
+            if (ready)
+            {
+                _challengeGroup.alpha = 1f;
+            }
+            else
+            {
+                _challengeGroup.alpha = 0.4f;
+            }
         }
     }
 
@@ -432,7 +471,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
-            _challengeBtn.onClick.AddListener(OnChallengeClicked);
+            _challengeBtn.onClick.AddListener(EnterSelected);
         }
         if (_confirmBtn != null)
         {
@@ -457,7 +496,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
-            _challengeBtn.onClick.RemoveListener(OnChallengeClicked);
+            _challengeBtn.onClick.RemoveListener(EnterSelected);
         }
         if (_confirmBtn != null)
         {
@@ -784,14 +823,23 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
     }
 
-    /// <summary>书位点击回调，转换为按下标选中。</summary>
+    /// <summary>
+    /// 书位点击回调：第一次点击是选中，再点同一个已选中的书位就等于进入副本，
+    /// 对应 RO 里「点书翻开」这个动作，右下角的按钮只是把这件事说明白。
+    /// </summary>
     private void OnSlotClicked(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= _slots.Count)
         {
             return;
         }
-        Select(_slots[slotIndex].Index, true);
+        int index = _slots[slotIndex].Index;
+        if (index == _selected)
+        {
+            EnterSelected();
+            return;
+        }
+        Select(index, true);
     }
 
     /// <summary>上一页，已在第一页时给出提示。</summary>
@@ -817,10 +865,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 「进入副本」按钮回调。当前是空壳：只做选中与等级校验并给出反馈，
-    /// 真正的进入副本协议等服务器接口就绪后在这里发起。
+    /// 翻开选中的书：按 RO 的流程先打开 Theme_Story 详情页，
+    /// 由详情页右下角的「开始挑战」再真正发起进入。
+    /// 重复点击已选中的书位走这里，对应 RO 里点书翻开书的动作。
     /// </summary>
-    private void OnChallengeClicked()
+    private void EnterSelected()
     {
         if (_selected < 0 || _selected >= _items.Length)
         {
@@ -828,6 +877,25 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
         ThemeDungeonEntry d = _items[_selected];
+        if (_storyWindow == null)
+        {
+            SetStatus("详情界面未接入，" + d.themeName + " 无法打开");
+            return;
+        }
+        _storyWindow.Show(true, d);
+        SetStatus("翻开：" + d.themeName);
+    }
+
+    /// <summary>
+    /// 详情页确认进入副本。当前是空壳：只做等级校验并给出反馈，
+    /// 真正的进入副本协议等服务器接口就绪后在这里发起。
+    /// </summary>
+    private void EnterDungeon(ThemeDungeonEntry d)
+    {
+        if (d == null)
+        {
+            return;
+        }
         if (_playerLevel < d.chapterLevel)
         {
             SetStatus("等级不足，" + d.themeName + " 需要 Lv." + d.chapterLevel);

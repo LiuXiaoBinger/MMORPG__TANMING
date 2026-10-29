@@ -33,6 +33,9 @@ public class MainView : UIBase
    /// <summary>主题副本选择窗口，直接使用 ThemeDungeonArround 预制体实例作为窗口根。</summary>
    [SerializeField, Header("主题副本窗口")] private ThemeDungeonArroundWindow _themeDungeonArroundWindow;
 
+   /// <summary>主题副本详情窗口，对应 RO 的 Theme_Story，由选择窗口翻开书位后打开。</summary>
+   [SerializeField, Header("副本详情窗口")] private ThemeStoryWindow _themeStoryWindow;
+
    /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
    [SerializeField, Header("日常入口")] private Button _dailyTaskButton;
 
@@ -172,6 +175,14 @@ public class MainView : UIBase
       if (_themeDungeonArroundWindow != null)
       {
          _themeDungeonArroundWindow.InitWindow();
+      }
+      if (_themeStoryWindow != null)
+      {
+         _themeStoryWindow.InitWindow();
+      }
+      if (_themeDungeonArroundWindow != null && _themeStoryWindow != null)
+      {
+         _themeDungeonArroundWindow.SetStoryWindow(_themeStoryWindow);
       }
       if (_quickTaskPanel != null)
       {

@@ -330,3 +330,133 @@ Play 模式下的实际点击效果与文字刷新**未测量**：本轮 `refres
 ### 教训
 
 Play 模式下不要用 `refresh_unity(force + compile request)` 强制同步重编译，会触发「Reloading assemblies for play mode」与「after forced synchronous recompile」叠加，编辑器卡死、MCP 桥接随之断掉。改脚本后等编辑器自己检测重编译即可。
+
+---
+
+## 17. 补显式的「开始挑战」入口，中心信息牌降级为展示
+
+### 问题
+
+`ChallengeDungeonBtn` 在 RO 里是「挑战玩法」信息牌，不是进入副本的主操作按钮。移植后它成了唯一像"入口"的东西，但视觉上只有一行字，玩家选完副本不知道下一步该干什么。
+
+### RO 原始设计（调研结论）
+
+RO 进入副本是三层结构，没有任何"进入按钮"摆在选书界面上：
+
+| 层 | 界面 | 触发 |
+| --- | --- | --- |
+| 1 | `ThemeDungeonArround`（3D 书台） | 点**正对玩家**的那本书（UI index 固定 3），其余点击只 `JumpToSceneBook` 转书台 |
+| 2 | 开书动画 | `Item_Scene_Shu_DaKai` 播 3.4 秒 + 相机 `ApproachFocus2Entity` 推近 1.8 秒，期间 `self.lock` 禁止重复操作 |
+| 3 | `Theme_Story`（全屏详情页） | 播种族立绘/三页签/奖励/组队，点右下 `BeginBtn`「开始挑战」→ `DungeonMgr:EnterDungeons(StoryDungeonID, 0, 0)` |
+
+`BeginBtn` 的附加规则：已通关 `IsDungeonPassed` 时先弹「重复挑战没有奖励」二次确认；等级不足 `SetGray(true)`；首次打开自动弹 `Theme_Information` 公开情报。
+
+`Theme_Story.prefab`（174KB、18 个绑定控件）与 `Theme_Challenge.prefab`（324KB）**都没有移植进 LYF**，`artres/.../ROCharacterLightingDemo/` 下只有 `ThemeDungeonArround`、`Result`、`Reward`、`Team` 四个，所以当前界面缺整整一层"详情页"。
+
+### 本轮改动（`ThemeDungeonArroundWindow.cs`）
+
+1. 新增 `BuildBeginButton()`：窗口右下角 (620, -330)、340×96 的「开始挑战」按钮
+   - 外层金色描边 Image + 内层深色底 Image，构成明显按钮外形
+   - 主标题「开始挑战」26 号金色，副标题显示当前副本名
+2. `RefreshChallengeButton()` 扩展为同时刷新两处：
+   - 中心信息牌（`ChallengeName`）
+   - 右下按钮三态：可进入=金框金字 + 副本名；等级不足=灰框 + 红字「Lv.xx 解锁」；未选中=灰框 + 「请先选择副本」
+   - 按钮置灰时仍 `interactable = true`，点了给文字提示，避免玩家以为卡住
+3. 中心信息牌 `ChallengeDungeonBtn.interactable = false`，退化为纯展示，避免误触
+4. `OnSlotClicked()`：**再点一次已选中的书位 = 进入副本**，对应 RO 里"点书翻开"的动作
+5. `OnChallengeClicked()` → 重命名为 `EnterSelected()`，按钮与书位复用同一段进入逻辑；新增 `OnBeginClicked()` 转发
+6. `ClearRuntimeNodes()` 末尾清空全部运行时控件引用（`_splash`/`_bossPic`/`_infoTitle`/`_infoChapter`/`_infoBoss`/`_detailText`/`_statusText`/`_beginBtn`/`_beginFrame`/`_beginLabel`/`_beginSubLabel`）
+   - 原因：Unity 销毁过的对象做 `!= null` 仍返回 true，重复 `InitWindow` 时不清引用会在刷新时报空引用
+
+### 布局校验
+
+按钮 x∈[450, 790]、y∈[-378, -282]，与详情面板（x∈[-910, -90]）、状态栏（y∈[-484, -452]）、书位环最低点（y≈-223）均不重叠。
+
+### 未验证
+
+Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPForUnity/Logs/` 无新日志），编辑器侧无 `execute_code` 通道，**本轮改动未编译、未实测**。
+
+---
+
+## 18. 删掉自建的「开始挑战」按钮，移植 RO 的 Theme_Story 详情页
+
+### 需求
+
+用户指出 RO 里根本没有我之前加在右下角的金色按钮，要求「删掉你加的，把那个移植过来」——即移植 RO 的 `Theme_Story` 全屏详情页，恢复 RO 的「点书 → 详情页 → 开始挑战」流程。
+
+### 关键发现：RO 的 UI 组件是 UGUI 的 fork，字段完全同构
+
+`Theme_Story.prefab`（174KB / 305 个文档 / 64 个节点）里一个标准 Image/Text/Button 都没有，全是两个自家 dll 的脚本：
+
+| guid | 含义 | 组件数 |
+| --- | --- | --- |
+| `f70555f1…` | RO 版 UGUI（Image/Text/Button/RawImage/ScrollRect/Mask 等的 fork） | 55 |
+| `0a06b7…` | MoonClient.dll 的 Lua 绑定层 | 55 |
+
+对比字段名后发现 **fork 版和标准 UGUI 的序列化字段一模一样**（Image 依然是 `m_Sprite/m_Type/m_PreserveAspect`，Button 依然是 `m_Navigation/m_Colors/m_TargetGraphic`），所以不需要重建界面，只要替换 `m_Script` 的 guid/fileID 即可：
+
+| RO fileID | 映射到 | 备注 |
+| --- | --- | --- |
+| f70555/-765806418 | `fe87c0e1…` Image | 直接换 |
+| f70555/1392445389 | `4e29b1a8…` Button | 直接换 |
+| f70555/708705254 | `f4688fdb…` TMP | **需重写字段**，用项目 TMP 组件做模板 |
+| f70555/-98529514 | `1344c3c8…` RawImage | 直接换 |
+| f70555/1367256648 | `1aa08ab6…` ScrollRect | 直接换 |
+| f70555/-1200242548 | `31a19414…` Mask | 直接换 |
+| f70555/1741964061 | `3245ec92…` ContentSizeFitter | 直接换 |
+| f70555/-405508275 | `30649d3a…` HorizontalLayoutGroup | 直接换 |
+| f70555/1297475563 | `59f81469…` VerticalLayoutGroup | 直接换 |
+| 0a06b7/-423353551 | `dc42784c…` GraphicRaycaster | 根节点原有 3 个重复，去重到 1 个 |
+| 0a06b7/-535069148 | `9085046f…` Toggle | 页签 |
+| 0a06b7/227214995 | `2a4db7a1…` ToggleGroup | 页签组 |
+| 0a06b7/1089477090、-633457502、-894698670、1960369348、-43225720 | 删除 | 纯 Lua 绑定器，共 41 个 |
+
+**外部依赖全部命中**：`Common.TTF`、`Common1.png`、`ThemeArround.png`、`UI_ETC2.mat`、`UI_Buttom_Click_Animation02.controller`、`Btn_Big_01.prefab` 在 LYF 里的 guid 与 RO 完全一致（整个 artres 目录是原样搬过来的），所以 sprite / 字体 / Animator 引用不需要改一行。
+
+### 转换器（`_temp/convert_theme_story.py`，中间产物不入库）
+
+1. 逐文档判断 `(guid, fileID)`，分成 swap / tmp / delete 三类
+2. 删除的组件同步从 GameObject 的 `m_Component` 列表摘掉，避免悬空引用
+3. 清理 `m_Children` 里指向已不存在节点的引用
+4. Text → TMP 用 `Btn_Big_01` 里的 TMP 组件做模板，迁移文字、字号、颜色、TextAnchor→TMP 对齐映射
+5. 输出 264 个文档（305 − 41 个绑定器）
+
+### 踩到的坑
+
+| 现象 | 原因 | 处理 |
+| --- | --- | --- |
+| 预制体整体加载失败 | 拼接时把 `%YAML 1.1` 头和所有 `--- ` 分隔符丢了 | 输出改为 `head + '\n--- ' + doc` 逐段拼 |
+| 组件显示 `?` 悬空引用 | 组件文档删了但 GO 的 `m_Component` 没清，且输出用的是原始文档字符串而非更新后的 | 输出改为优先取 `by_id[fid]` 的更新版本 |
+| 根节点 3 个 GraphicRaycaster | 去重逻辑拿替换后的 guid 去原始文档里找，永远匹配不到 | 改为匹配 RO 原始 guid `0a06b7/-423353551` |
+| 按钮显示「通用大按钮」 | 嵌套实例的 override 用 `propertyPath: m_Text`（旧 Text），而 LYF 的 Btn_Big_01 已 TMP 化，属性名是 `m_text` | 替换 propertyPath |
+| 页签出现三块白板 | `ON`/`OFF` 状态节点上的 Image 没有 sprite，被画成纯白矩形 | 运行时把这类空 sprite Image 的 alpha 置 0，只保留 raycastTarget 当热区 |
+| 右下角透出下层聊天窗口 | 背景图 `UI_Delegate_Bg_Normal_01` 本身半透明 | 在 Bg 下层插一层不透明深色底，外扩 400px 盖满 1920×1080 |
+| 铺满 1920×1080 后元素错位 | RO 设计分辨率是 1704×852，全部元素按这个坐标系摆放，拉伸会破坏布局 | 窗口根固定 1704×852 居中，不再拉伸 |
+
+### 集成（`ThemeStoryWindow.cs` 新增，`ThemeDungeonArroundWindow.cs` / `MainView.cs` / `UIRoot.prefab` 修改）
+
+- **删除**：`BuildBeginButton()`、`_beginBtn/_beginFrame/_beginLabel/_beginSubLabel`、`OnBeginClicked()` 及 `RefreshChallengeButton()` 里的按钮三态逻辑
+- **新增** `ThemeStoryWindow`：缓存控件、按 1704×852 居中、处理页签 ON/OFF、填数据、三个页签正文、开始挑战回调
+- `ThemeDungeonArroundWindow.EnterSelected()` 语义改为「翻开书」→ `_storyWindow.Show(true, entry)`，对应 RO 的点书翻开
+- 新增 `EnterDungeon(ThemeDungeonEntry)`：详情页「开始挑战」调到这里，做等级校验后给反馈，协议待接入
+- `MainView` 新增 `_themeStoryWindow` 字段并在 `InitView` 里初始化 + 注入给选择窗口
+- `UIRoot.prefab` 的 MainView 下挂 `ThemeStory` 实例（默认隐藏，`_themeStoryWindow` 已绑定）
+
+### 实测（Play 模式）
+
+| 验证项 | 结果 |
+| --- | --- |
+| 预制体导入 | 65 个 Transform，Image 28 / TMP 15 / Button 10 / RawImage 4 / Toggle 3，**missingScript = 0** |
+| 点击书位两次 | 详情页打开，`sib=16` 位于最上层 |
+| 数据填充 | 标题「德瑞克幽灵船」、`首领：德瑞克`、正文 5 行、`Lv.50`、`开始挑战`、三个页签全部正确 |
+| 页签外观 | 白板已消除，「首领」蓝底高亮、「特性」「档案」纯文字 |
+| 背景 | 不再透出下层聊天窗口 |
+| Console | error = 0 |
+
+### 未完成 / 已知问题
+
+- 正文第一行的字头仍会被视口上边缘切掉一点（已加 `margin.top = 8`，效果有限，需要再调 Viewport 高度或 Content padding）
+- 三个页签的正文文案是占位（`BuildTabText()` 按副本名拼），RO 的真实文案在主题配置表里，等接入后替换
+- 「公开情报」按钮只打 Log，对应 RO 的 `Theme_Information` 弹窗尚未移植
+- 奖励区只有标题，没有真实道具列表
+- 窗口是 1704×852 居中，上下各留 114px 黑边，属于设计分辨率差异；若要铺满需要重排全部元素
