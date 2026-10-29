@@ -561,3 +561,27 @@ Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPF
 
 - 同一场景里存在 3 个 `Main Camera` + 3 个 `UICamera`（多个场景对象残留），`Camera.allCameras` 取第一个 `UICamera` 可能不是 UIRoot Canvas 绑的那台，会渲染出登录界面。正确做法是取 **`Canvas.worldCamera`**。
 - `SaveAsPrefabAsset` 会重排 YAML 文档顺序，`git diff` 里会出现「`m_Text: 全部` 被替换成 `m_Sprite: top_Skil`」这种错位假象。判断是否误删不能看 diff，要比 **GameObject 总数 / 组件 guid 计数**。
+
+---
+
+## 21. 回滚第 20 节：左上功能菜单恢复原状（2026-10-29 19:5x）
+
+### 原因
+
+开发者指出第 20 节属于超出任务范围的自作主张改动：本轮任务是「找副本相关的内容」，功能菜单不属于副本任务，不应在副本任务里被顺手重做。第 20 节的效果（图标保持比例后由 20px 源图缩到很小、文字改 TMP）也与开发者预期不符。
+
+### 处理
+
+- 反向提交 `51b17a5`，把 `Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab` 中功能菜单部分逐字段还原：
+  - 6 个 `Label` 由 `TextMeshProUGUI` 还原为原 UGUI `Text`（`m_text`/`m_fontAsset` → `m_Text`/`m_Font`）；
+  - 6 个 `Icon` 的 `m_PreserveAspect` 由 1 还原为 0（回到原有 58×44 显示尺寸）；
+  - 「日常」图标由 `UI_CommonIcon_Time` 还原为 `UI_CommonIcon_Time_01`；
+  - `SettingButton` 下的节点命名随组件还原同步恢复。
+- 第 20 节的记录保留（不删历史），以本节标注其已回滚。
+- 工作区里 `UIRoot.prefab` 另有 7000 余行未提交改动，全部是 `ThemeDungeonArroundWindow`/`ThemeStoryWindow` 运行时创建的 `TD_*` 节点被编辑器写回预制体（代码初始化时会先 `ClearRuntimeNodes()` 清掉再重建），不属于正式资产，已随本次 checkout 丢弃，备份在 `_temp/rollback_20261029/UIRoot.workspace.prefab`。
+
+### 验证
+
+- `git diff --cached` 仅含 `UIRoot.prefab` 一个文件，无其他资源被连带修改。
+- 还原后字段值与 `cb22b6e`（第 20 节之前）一致。
+- 编辑器内显示效果未重新截图测量（未测量）。
