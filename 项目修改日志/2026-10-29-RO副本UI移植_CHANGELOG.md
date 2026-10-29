@@ -460,3 +460,59 @@ Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPF
 - 「公开情报」按钮只打 Log，对应 RO 的 `Theme_Information` 弹窗尚未移植
 - 奖励区只有标题，没有真实道具列表
 - 窗口是 1704×852 居中，上下各留 114px 黑边，属于设计分辨率差异；若要铺满需要重排全部元素
+
+---
+
+## 19. 复查 RO 原版环形书台布局：恢复中心信息牌、修点击与详情页正文（2026-10-29 18:2x）
+
+### 起因
+
+用户反馈三点：①选择界面的布局「很怪」，并追问 RO 是不是也这样；②点书只「出现一次」，之后再点没反应；③中间的东西不见了。
+
+### 先查清了 RO 到底长什么样
+
+翻 RO 的 `ThemeDungeonArroundCtrl.lua`（864 行）与 `ThemeDungeonArround.prefab`（287 文档）：
+
+- 预制体里 8 个书位 `Item1..Item1 (7)` 是 **155×155 的透明热区**，坐标 (-415,62)、(-219,-94)、(-3.4,-158)、(230,-118)、(427,63)、(228,148.6)、(2,176)、(-219,149)，排成一个椭圆环；**书本本体是 3D 场景里的模型**，2D 层只有热区 + `NameBg/ChapterName/DungeonName/Lock` 四层文字。
+- 环心悬浮 `ChallengeDungeonBtn`（207×200，pos (3.2,73.4)），内容 `ChallengeInfo/Text`（挑战玩法）+ `ChallengeName`（当前主题名）。Lua 里它受 `IsSystemOpen(ThemeChallenge)` 与 `curThemeId ~= -1` 控制，点击打开 **Theme_Challenge（挑战模式）**，不是进副本。
+- 点击语义：`l_click(index)` 里 **只有 index==3（正前方那本）才 `OpenBook()` 打开 Theme_Story**，其余书位是 `JumpToSceneBook` 转盘 + `RefreshThemeDungeonInfos`。另有拖拽转盘（`l_drag` 按 `BookDragSpeed` 旋转 3D 书台）。
+
+结论：环就是我们已经在用的这套坐标，RO 看起来「不怪」是因为书本是 3D 模型、中心是空的。LYF 用 2D 缩略图替代 3D 书，观感必然不同，但可以靠「缩小封面 + 恢复中心牌 + 去掉自造面板」逼近。
+
+### 改动
+
+`ThemeDungeonArroundWindow.cs`
+- `ShowLegacyThemeBadge` **false → true**：恢复 RO 的中心「挑战玩法」信息牌，位置按 RO 的 y=73.4 放；实测 2D 封面比 3D 书占位更高，抬到 **y=100** 才刚好卡在上下两本书之间（上下各留 ~2px）。
+- 牌子背后加 `TD_BadgePlate`（214×90，黑 42%）：RO 底下是暗色 3D 桌面，LYF 底下是明亮场景大图，不加这层白字会糊。
+- 牌子点击由 `EnterSelected` 改为新的 `OnChallengeClicked()`：按 RO 语义提示「挑战模式：xxx（界面待移植）」，避免误开详情页；`interactable` 恢复 true。
+- 书位视觉改成 RO 的层级：`TD_NameBar`（复用预制体 `NameBg` 的 `UI_ThemeArround_Bg_Small_Name_01` 精灵）压条写章节 + 下面写副本名；封面 118→108、描边 126→116，未选中描边 alpha 归 0（RO 没有金框，只有选中态亮边）。
+- **删掉自造的左下详情板** `TD_InfoPanel`（820×280 黑色面板 + 首领立绘 + 标题/章节/首领/正文）与 `_bossPic/_infoTitle/_infoChapter/_infoBoss/_detailText` 五个字段：RO 这个界面没有详情板，信息由书位文字 + 中心牌 + 翻开后的 Theme_Story 承担；面板还会压住任务追踪和主界面 HUD。
+- 反馈行 `TD_Status` 从右下 (280,-468) 挪到页签圆点上方居中 (0,-252)。
+- **书位点击语义改为「单击即选中并翻开」**：RO 是「转到正前方 → 再点」，LYF 没有 3D 转盘，两步会让人以为第二下失灵；现在每次点击都会打开详情页。
+
+`ThemeStoryWindow.cs`
+- `SetupDescText()` 补 `alignment = TopLeft` + `enableAutoSizing = false`：RO 预制体里 `DesText` 的对齐是个无效值（读到 25613），导致长句既不左对齐也不换行，被 Mask 左右各切一半（用户截图里那段半截文字就是它）。
+
+### 实测（Play 模式，ScreenCapture 取 Game 视图）
+
+| 验证项 | 结果 |
+| --- | --- |
+| 中心信息牌 | 显示「挑战玩法 / 金字塔大冒险」，落在环形空位，与上方书位 gap 29px、与下方书位不重叠 |
+| 书位文字 | 8 个书位章节压条 + 副本名全部完整可读 |
+| 连续点击 | 依次点 `Item1` / `Item1 (6)` / `Item1 (2)`，每次都能打开详情页（修复前是「选中→再点才开」） |
+| 开始挑战 | 玩家 50 级点 Lv.70 副本 → 「等级不足，金字塔大冒险 需要 Lv.70」 |
+| 中心牌点击 | 「挑战模式：金字塔大冒险（界面待移植）」，不误开详情页 |
+| 详情页正文 | 完整换行可读，不再左右裁切 |
+| Console | error = 0 |
+
+### 排查经验（重要）
+
+- 之前那批「背景全白、左下详情板消失、中间文字叠成一团」的截图，**不是布局问题**：Play 模式下脚本被重编译 → 域重载 → 运行时状态（`_root`/`_sprite`/字段引用）全丢，但运行时创建的 `TD_*` 节点还在，于是界面变成「有节点没数据」的半残状态。判断方法：`_inited == false` 但 `TD_*` 节点存在。**改 .cs 必须先 Stop，再 Refresh/编译，最后重新 Play。**
+- 截图不要用 `camera.Render()` + 新建 RenderTexture 的写法：本工程 `UICamera.clearFlags = Depth`，不会清色，新 RT 里是未定义内容，容易拍出「背景是 3D 场景、UI 却缺块」的假象。用 `ScreenCapture.CaptureScreenshot(path)` 拍 Game 视图才准（会在帧末写盘，调用后等 1~2 秒再读文件）。
+
+### 仍未做
+
+- 拖拽转盘（RO 的 `l_drag` 旋转、`BookDragSpeed`）没做，LYF 只有上下翻页。
+- 「挑战模式」Theme_Challenge（324KB 预制体）仍未移植，中心牌只给提示。
+- 奖励区只有标题，没有真实道具列表；三个页签正文仍是占位文案。
+- 窗口 1704×852 居中，上下各 114px 黑边。

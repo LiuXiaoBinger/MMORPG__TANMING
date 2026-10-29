@@ -37,8 +37,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>红色，用于"未解锁"提示文本。</summary>
     private static readonly Color ColRed = new Color(1f, 0.42f, 0.38f, 1f);
 
-    /// <summary>书位未选中时的暗金边框色。</summary>
-    private static readonly Color ColFrameIdle = new Color(0.36f, 0.29f, 0.18f, 0.85f);
+    /// <summary>书位未选中时的描边色：RO 原版书位没有边框，这里直接透明，只留选中态金边。</summary>
+    private static readonly Color ColFrameIdle = new Color(0.36f, 0.29f, 0.18f, 0f);
 
     /// <summary>书位选中时的高亮边框色。</summary>
     private static readonly Color ColFrameOn = new Color(1f, 0.86f, 0.55f, 1f);
@@ -64,25 +64,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>白色 1x1 贴图生成的精灵，用于透明点击区与纯色底。</summary>
     private Sprite _whiteSprite;
 
-    /// <summary>底部详情区的副本大图。</summary>
+    /// <summary>全屏背景图，取当前选中副本的场景大图。</summary>
     private RawImage _splash;
 
-    /// <summary>首领立绘图。</summary>
-    private RawImage _bossPic;
-
-    /// <summary>详情标题（副本名）。</summary>
-    private TextMeshProUGUI _infoTitle;
-
-    /// <summary>详情章节行（章节 + 等级）。</summary>
-    private TextMeshProUGUI _infoChapter;
-
-    /// <summary>详情首领行。</summary>
-    private TextMeshProUGUI _infoBoss;
-
-    /// <summary>详情正文，显示章节背景文案。</summary>
-    private TextMeshProUGUI _detailText;
-
-    /// <summary>右下角操作反馈文本。</summary>
+    /// <summary>底部操作反馈文本。</summary>
     private TextMeshProUGUI _statusText;
 
     /// <summary>翻页按钮上的页码文本。</summary>
@@ -105,10 +90,13 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
     /// <summary>
     /// 是否保留 RO 原版悬浮在书台中心的「挑战玩法」信息牌。
-    /// RO 的书台是 3D 环状布局，中心留空，那块牌子放着不挡任何东西；
-    /// LYF 把书位改成 2D 卡片后中心被占满，牌子会压在卡片上，所以默认关闭。
+    /// RO 的 Lua（ThemeDungeonArroundCtrl:RefreshPage）里这块牌子只有在挑战系统开放、
+    /// 且当前主题不为空时才显示，所以它本来就是界面的常驻元素，这里保持显示。
     /// </summary>
-    private const bool ShowLegacyThemeBadge = false;
+    private const bool ShowLegacyThemeBadge = true;
+
+    /// <summary>RO 书位名字底条的精灵，从预制体的 NameBg 节点上取，保证和 RO 一致。</summary>
+    private Sprite _nameBarSprite;
 
     /// <summary>进入副本按钮上的副本名文本，随选中的副本实时刷新。</summary>
     private TextMeshProUGUI _challengeName;
@@ -207,10 +195,28 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         SetupChallengeButton();
         FixLostSpriteGraphics();
         LoadConfig();
+        CacheLegacySprites();
         BuildCardVisuals();
         BuildDetailPanel();
         ShowPage(0, true);
         _inited = true;
+    }
+
+    /// <summary>
+    /// 取预制体里 RO 自带的贴图，供运行时新建的节点复用，保证视觉和 RO 一致。
+    /// 必须在隐藏那些旧节点之前调用。
+    /// </summary>
+    private void CacheLegacySprites()
+    {
+        Transform bar = FindDeep(_root, "NameBg");
+        if (bar != null)
+        {
+            Image img = bar.GetComponent<Image>();
+            if (img != null)
+            {
+                _nameBarSprite = img.sprite;
+            }
+        }
     }
 
     /// <summary>
@@ -289,11 +295,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         // 这些控件都是运行时建的，已经跟着节点一起销毁。引用必须同步清空：
         // Unity 销毁过的对象做 != null 判断仍然为 true，留着会在下一次刷新时报空引用。
         _splash = null;
-        _bossPic = null;
-        _infoTitle = null;
-        _infoChapter = null;
-        _infoBoss = null;
-        _detailText = null;
         _statusText = null;
     }
 
@@ -402,19 +403,33 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
-            // RO 里这块是「挑战玩法」信息牌，不是主操作按钮；当前窗口只拿它显示
-            // 选中的副本名，点它不进入副本，避免玩家误触。真正的入口在右下角。
-            _challengeBtn.interactable = false;
+            // RO 里这块牌子是「挑战模式」入口（Theme_Challenge），不是进入当前副本的按钮。
+            // 挑战模式界面还没移植，所以只保留可点与提示，不做静默失效。
+            _challengeBtn.interactable = true;
             _challengeGroup = _challengeBtn.GetComponent<CanvasGroup>();
             if (_challengeGroup == null)
             {
                 _challengeGroup = _challengeBtn.gameObject.AddComponent<CanvasGroup>();
             }
-            // RO 的书台是 3D 环状，中心是空的，所以这块 207×200 的信息牌悬浮在中间不挡事。
-            // LYF 改成 2D 卡片布局后中心被书位占满，牌子会直接压在卡片上，实测截图确认
-            // 文字与卡片重叠成一片。副本名已经由右下角按钮的副标题和左下详情面板承担，
-            // 这里默认隐藏；若要恢复 RO 原样，把这个常量改成 true 即可。
             _challengeBtn.gameObject.SetActive(ShowLegacyThemeBadge);
+            // RO 的牌子挂在 y=73.4，正好落在 3D 书台的空心位置；LYF 的封面是 2D 矩形，
+            // 往上占得更多，实测把牌子抬到 100 才刚好卡在上下两本书之间（上下各留 ~2px）。
+            RectTransform badgeRt = _challengeBtn.transform as RectTransform;
+            if (badgeRt != null)
+            {
+                badgeRt.anchoredPosition = new Vector2(3.2f, 100f);
+            }
+            // 底下是明亮的场景大图，白字会糊，所以在副本名背后垫一层半透明暗色。
+            if (_challengeName != null)
+            {
+                Transform info = _challengeName.transform.parent;
+                if (info != null && info.Find("TD_BadgePlate") == null)
+                {
+                    Image plate = NewImage("TD_BadgePlate", info, 0f, -8f, 214f, 90f, new Color(0f, 0f, 0f, 0.42f));
+                    plate.raycastTarget = false;
+                    plate.transform.SetAsFirstSibling();
+                }
+            }
         }
         RefreshChallengeButton();
     }
@@ -471,7 +486,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
-            _challengeBtn.onClick.AddListener(EnterSelected);
+            _challengeBtn.onClick.AddListener(OnChallengeClicked);
         }
         if (_confirmBtn != null)
         {
@@ -496,7 +511,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (_challengeBtn != null)
         {
-            _challengeBtn.onClick.RemoveListener(EnterSelected);
+            _challengeBtn.onClick.RemoveListener(OnChallengeClicked);
         }
         if (_confirmBtn != null)
         {
@@ -588,20 +603,35 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             int captured = i;
             btn.onClick.AddListener(delegate { OnSlotClicked(captured); });
 
-            s.Frame = NewImage("TD_Frame", rt, 0f, 12f, 126f, 126f, ColFrameIdle);
+            // 选中描边画在封面下层，只有选中时才上色，未选中完全透明，避免 RO 原版没有的金框。
+            s.Frame = NewImage("TD_Frame", rt, 0f, 12f, 116f, 116f, ColFrameIdle);
             s.Frame.raycastTarget = false;
 
-            RectTransform thumbRt = NewRect("TD_Thumb", rt, 0f, 12f, 118f, 118f);
+            // RO 的书是 3D 立在书台上的，2D 缩略图不能太大，否则环心会被占满、中心信息牌没地方放。
+            RectTransform thumbRt = NewRect("TD_Thumb", rt, 0f, 12f, 108f, 108f);
             s.Thumb = thumbRt.gameObject.AddComponent<RawImage>();
             s.Thumb.raycastTarget = false;
             s.Thumb.color = Color.white;
 
-            s.Name = NewText("TD_Name", rt, 0f, -66f, 168f, 26f, 18f, ColGold, TextAlignmentOptions.Center);
-            s.Chapter = NewText("TD_Chapter", rt, 0f, -90f, 168f, 22f, 14f, ColDim, TextAlignmentOptions.Center);
+            // RO 的书位是「压条写章节 + 下面写副本名」（NameBg / ChapterName / DungeonName 三层），
+            // 这里照抄这套层级，只是把 3D 书皮换成了场景缩略图。
+            Image bar = NewImage("TD_NameBar", rt, 0f, -56f, 146f, 24f, Color.white);
+            bar.raycastTarget = false;
+            if (_nameBarSprite != null)
+            {
+                bar.sprite = _nameBarSprite;
+                bar.type = Image.Type.Sliced;
+            }
+            else
+            {
+                bar.color = new Color(0.06f, 0.05f, 0.03f, 0.85f);
+            }
+            s.Chapter = NewText("TD_Chapter", rt, 0f, -56f, 142f, 22f, 14f, ColText, TextAlignmentOptions.Center);
+            s.Name = NewText("TD_Name", rt, 0f, -80f, 164f, 26f, 18f, ColGold, TextAlignmentOptions.Center);
 
-            s.LockMask = NewImage("TD_LockMask", rt, 0f, 12f, 118f, 118f, new Color(0f, 0f, 0f, 0.62f));
+            s.LockMask = NewImage("TD_LockMask", rt, 0f, 12f, 108f, 108f, new Color(0f, 0f, 0f, 0.62f));
             s.LockMask.raycastTarget = false;
-            s.LockText = NewText("TD_LockText", s.LockMask.transform, 0f, 0f, 118f, 30f, 16f, ColRed, TextAlignmentOptions.Center);
+            s.LockText = NewText("TD_LockText", s.LockMask.transform, 0f, 0f, 108f, 30f, 16f, ColRed, TextAlignmentOptions.Center);
 
             Transform col = FindDirect(rt, "Collider");
             if (col != null)
@@ -621,7 +651,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 创建详情区：全屏场景大图、压暗层、左下详情板（首领立绘 + 标题 + 章节 + 首领 + 正文）与右下反馈文本。
+    /// 创建背景层与操作反馈文本。
+    /// RO 这个界面自己没有详情板：书位下方的章节条 + 副本名、中心的挑战信息牌、以及
+    /// 翻开后的 Theme_Story 才是它的信息结构，所以这里只补一张全屏背景和一个反馈行。
     /// </summary>
     private void BuildDetailPanel()
     {
@@ -639,25 +671,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         dim.raycastTarget = false;
         dim.rectTransform.SetSiblingIndex(2);
 
-        // 描述文本一条就有 300 字左右，420x90 的框装不下（实测需要 1078x230），
-        // 会把字挤到面板外面，所以面板整体加宽加高，并把文字区放宽到 620。
-        Image panel = NewImage("TD_InfoPanel", _root, -500f, -380f, 820f, 280f, new Color(0.04f, 0.05f, 0.07f, 0.78f));
-        panel.raycastTarget = false;
-
-        RectTransform bossRt = NewRect("TD_Boss", panel.transform, -320f, 10f, 160f, 210f);
-        _bossPic = bossRt.gameObject.AddComponent<RawImage>();
-        _bossPic.raycastTarget = false;
-        _bossPic.color = new Color(1f, 1f, 1f, 0f);
-
-        _infoTitle = NewText("TD_Title", panel.transform, 70f, 102f, 620f, 34f, 26f, ColGold, TextAlignmentOptions.MidlineLeft);
-        _infoChapter = NewText("TD_Chapter", panel.transform, 70f, 68f, 620f, 26f, 17f, ColText, TextAlignmentOptions.MidlineLeft);
-        _infoBoss = NewText("TD_BossName", panel.transform, 70f, 38f, 620f, 24f, 16f, ColDim, TextAlignmentOptions.MidlineLeft);
-        _detailText = NewText("TD_Desc", panel.transform, 70f, -50f, 620f, 150f, 13f, ColDim, TextAlignmentOptions.TopLeft);
-        // 兜底：文本再长也只裁在框内，不会糊到面板外面去。
-        _detailText.overflowMode = TextOverflowModes.Truncate;
-        _detailText.lineSpacing = -8f;
-
-        _statusText = NewText("TD_Status", _root, 280f, -468f, 640f, 32f, 17f, ColGold, TextAlignmentOptions.MidlineRight);
+        // 反馈行放在页签圆点上方居中，和 RO 的底部页码区同一区域，不会压到主界面 HUD。
+        _statusText = NewText("TD_Status", _root, 0f, -252f, 720f, 30f, 16f, ColGold, TextAlignmentOptions.Center);
         _statusText.text = string.Empty;
     }
 
@@ -795,21 +810,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             _splash.color = new Color(1f, 1f, 1f, 0f);
         }
-        _bossPic.texture = LoadTexture(d.painting);
-        ApplyCoverUv(_bossPic, 0f, 0f);
-        if (_bossPic.texture != null)
-        {
-            _bossPic.color = new Color(1f, 1f, 1f, 1f);
-        }
-        else
-        {
-            _bossPic.color = new Color(1f, 1f, 1f, 0f);
-        }
-
-        _infoTitle.text = d.themeName;
-        _infoChapter.text = d.chapterText + " · Lv." + d.chapterLevel;
-        _infoBoss.text = "首领：" + d.leaderName;
-        _detailText.text = d.chapterContent;
 
         if (_nameOfPanel != null)
         {
@@ -824,8 +824,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 书位点击回调：第一次点击是选中，再点同一个已选中的书位就等于进入副本，
-    /// 对应 RO 里「点书翻开」这个动作，右下角的按钮只是把这件事说明白。
+    /// 书位点击回调。RO 里点书位是「把这本书转到正前方」，转到正前方之后再点才翻开；
+    /// LYF 没有 3D 转盘，点一次就把选中与翻开一起做掉，避免玩家点第二下以为失灵。
     /// </summary>
     private void OnSlotClicked(int slotIndex)
     {
@@ -834,12 +834,12 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
         int index = _slots[slotIndex].Index;
-        if (index == _selected)
+        Select(index, true);
+        if (_selected != index)
         {
-            EnterSelected();
             return;
         }
-        Select(index, true);
+        EnterSelected();
     }
 
     /// <summary>上一页，已在第一页时给出提示。</summary>
@@ -913,6 +913,20 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             return;
         }
         SetStatus("确认：" + _items[_selected].themeName);
+    }
+
+    /// <summary>
+    /// 中心「挑战玩法」信息牌回调。RO 里它打开的是 Theme_Challenge（主题挑战模式），
+    /// 该界面还没移植，这里只给提示，避免点了没有任何反应。
+    /// </summary>
+    private void OnChallengeClicked()
+    {
+        if (_selected < 0 || _selected >= _items.Length)
+        {
+            SetStatus("请先选择一个副本");
+            return;
+        }
+        SetStatus("挑战模式：" + _items[_selected].themeName + "（界面待移植）");
     }
 
     /// <summary>关闭按钮回调，隐藏本窗口。</summary>

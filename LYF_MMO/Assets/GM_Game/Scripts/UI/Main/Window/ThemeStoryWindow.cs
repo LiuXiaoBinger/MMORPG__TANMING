@@ -234,6 +234,9 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         _descText.overflowMode = TextOverflowModes.Overflow;
         _descText.textWrappingMode = TextWrappingModes.Normal;
+        // RO 预制体里这段正文的对齐是个无效值，左对齐才能保证长句正常换行、不会被视口左右各切一半。
+        _descText.alignment = TextAlignmentOptions.TopLeft;
+        _descText.enableAutoSizing = false;
         // 正文第一行的字头会顶出视口被 Mask 切掉，留一点上边距。
         _descText.margin = new Vector4(2f, 8f, 2f, 2f);
         Transform content = _descText.transform.parent;
