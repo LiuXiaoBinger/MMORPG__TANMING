@@ -191,14 +191,33 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     public override void Show(bool isShow = true, object obj = null)
     {
         gameObject.Show(isShow);
-        if (isShow && !_inited)
+        if (isShow)
         {
-            InitWindow();
+            if (!_inited)
+            {
+                InitWindow();
+            }
+            // 主界面下所有窗口都是同级的平铺节点，渲染顺序就是兄弟顺序；
+            // 每次打开都提到同级最末，保证不会被聊天、背包、设置等窗口盖住。
+            BringToFront();
         }
         if (obj != null)
         {
             ReFreshUI(obj);
         }
+    }
+
+    /// <summary>
+    /// 把窗口节点移到同级最后一位，使它在 UGUI 里渲染在最上层。
+    /// </summary>
+    private void BringToFront()
+    {
+        Transform self = transform;
+        if (self.parent == null)
+        {
+            return;
+        }
+        self.SetAsLastSibling();
     }
 
     /// <summary>
