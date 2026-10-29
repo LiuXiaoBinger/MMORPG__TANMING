@@ -100,6 +100,7 @@ public sealed class ThemeStoryWindow : WindowBase
             return;
         }
         ApplyDesignRect();
+        NormalizeTextAlignment();
         CacheNodes();
         BindTabs();
         AddButtonListeners();
@@ -116,6 +117,25 @@ public sealed class ThemeStoryWindow : WindowBase
         _root.sizeDelta = DesignSize;
         _root.anchoredPosition = Vector2.zero;
         _root.localScale = Vector3.one;
+    }
+
+    /// <summary>
+    /// 从 RO 的 UGUI Text 转过来的 TMP 里，垂直对齐曾被写成 25612 / 51212 这种非法值（正确值是 256 / 512）。
+    /// 非法值不会报错，但会让文字整体横向偏移半个框宽，所以初始化时统一归一化一次。
+    /// </summary>
+    private void NormalizeTextAlignment()
+    {
+        TextMeshProUGUI[] texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+        int i = 0;
+        while (i < texts.Length)
+        {
+            int value = (int)texts[i].verticalAlignment;
+            if (value > 8192)
+            {
+                texts[i].verticalAlignment = (VerticalAlignmentOptions)(value / 100);
+            }
+            i++;
+        }
     }
 
     /// <summary>按名字缓存控件，找不到的留空并由调用处判空跳过。</summary>
@@ -234,11 +254,10 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         _descText.overflowMode = TextOverflowModes.Overflow;
         _descText.textWrappingMode = TextWrappingModes.Normal;
-        // RO 预制体里这段正文的对齐是个无效值，左对齐才能保证长句正常换行、不会被视口左右各切一半。
+        // 左对齐才能保证长句正常换行，不会被视口左右各切一半。
         _descText.alignment = TextAlignmentOptions.TopLeft;
         _descText.enableAutoSizing = false;
-        // 正文第一行的字头会顶出视口被 Mask 切掉，留一点上边距。
-        _descText.margin = new Vector4(2f, 8f, 2f, 2f);
+        _descText.margin = new Vector4(2f, 0f, 2f, 2f);
         Transform content = _descText.transform.parent;
         if (content == null)
         {
@@ -247,6 +266,9 @@ public sealed class ThemeStoryWindow : WindowBase
         VerticalLayoutGroup vlg = content.GetComponent<VerticalLayoutGroup>();
         if (vlg != null)
         {
+            // TMP 的行顶会略微高出 rect 顶边，靠 margin 留白会连同字头一起被视口的 Mask 裁掉，
+            // 所以改由内容容器留上边距，让整行落在视口内。
+            vlg.padding = new RectOffset(5, 5, 12, 5);
             vlg.childControlHeight = true;
             vlg.childControlWidth = true;
             vlg.childForceExpandHeight = false;
