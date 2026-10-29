@@ -630,3 +630,69 @@ Unity 重启后 MCP 插件未拉起服务（8082 端口无监听，`Library/MCPF
 - `MainView` 反射读 `_themeDungeonButton`：值为 `Button/ThemeDungeonButton`，序列化引用正确。
 - 渲染截图（`_temp/func_menu_check.png`）：7 个按钮横排显示，副本图标为彩色森林，与左侧 6 个灰白图标风格不一致。
 - **点击行为未测量**（需登录进主城后实际点击）；`OnThemeDungeonRequested` 与既有 `OnDailyTaskRequested` 同构，风险面仅在 `ThemeDungeonArroundWindow` 的 `Show` 流程。
+
+---
+
+## 23. 详情页文字整体横移半个框宽（TMP 垂直对齐非法值）—— 提交 b2df8ae
+
+### 现象
+
+开发者截图反馈详情页「布局不对、不美观」，肉眼可见三处：
+
+1. 选中页签「首领」不在蓝色底条上，而是偏到右边、底条停在它的左下方；
+2. 正文第一行贴着视口上沿，字头看起来被切；
+3. 左侧「北方异变之森 / Lv.30」压在角色手臂上，读不清。
+
+### 排查
+
+**第一步：确认布局数据是否被改坏。** 逐字段导出 RO `Theme_Story.prefab` 与 LYF `ThemeStory.prefab` 的节点树（anchoredPosition / sizeDelta / anchorMin / anchorMax / pivot），**17 个关键节点全部逐字节一致**，说明移植后的布局坐标就是 RO 原样，问题不在坐标。
+
+**第二步：量文字的实际渲染位置。** 运行时读 TMP：
+
+- `BossTog`（页签框）rect 中心屏幕 (1046, 768)，宽 137；
+- 其子 `ON/Text` 的 `textInfo.characterInfo[0].bottomLeft.x = 47.23`；
+- 该值相对 rect **中心**（不是左下角）解读，文字起点 = 中心 +47.23，加上字宽 43.5 → 文字中心 = 中心 +69；
+- 截图实测「首领」中心屏幕 x=1115，正是 rect 右缘 1115 —— 完全吻合。
+
+即：TMP 把「居中」算成了「从框中心起排」，横向凭空多出**半个框宽（68.5px）**。
+
+**第三步：定位根因。** 读序列化字段发现：
+
+```
+m_HorizontalAlignment: 2      ← 正确（Center）
+m_VerticalAlignment: 25612    ← 非法！合法值只有 256/512/1024/2048/4096/8192
+m_textAlignment: 65535        ← Converted 哨兵，表示以上面两个新字段为准
+```
+
+`25612 = 256 × 100 + 12`、`51212 = 512 × 100 + 12` —— 上一轮从 RO 的 UGUI `Text` 转 TMP 时，映射表把值多乘了 100 再加了 12。
+
+**TMP 遇到非法垂直对齐不报错**，但 `GenerateTextMesh` 里由 `m_VerticalAlignment` 推导的行/段落偏移会连带破坏水平居中计算。运行时实测：
+
+| 操作 | 字符 0 的 x |
+| --- | --- |
+| 原始（V=51212） | **+47.23**（错） |
+| 改 `verticalAlignment = Middle` 后 `ForceMeshUpdate` | **−21.27**（正确的居中起点） |
+| 再把 pivot 改成 (0,0.5) | +47.23（又错，证明与 pivot 无关） |
+
+一个非法值同时解释了「页签偏右 69px」「蓝底条与文字错位」「正文首行贴边」。
+
+### 改动
+
+`LYF_MMO/Assets/artres/Resources/UI/Prefabs/ROCharacterLightingDemo/ThemeStory.prefab`
+- 14 个 TMP 的 `m_VerticalAlignment`：`25612 → 256`（8 处）、`51212 → 512`（6 处）。全项目扫描确认只有这一个预制体存在越界值。
+
+`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/ThemeStoryWindow.cs`
+- 新增 `NormalizeTextAlignment()`，`InitWindow` 里在 `CacheNodes` 之前调用，把所有 `> 8192` 的垂直对齐按 `/100` 归一，防止后续再从 RO 转预制体时复现同样的静默错误。
+- `SetupDescText()`：文本 `margin.top` 8 → 0，改由内容容器 `VerticalLayoutGroup.padding.top = 12` 留白。TMP 的行顶会略高出 rect 顶边，用 margin 留白会连同字头一起被视口 `Mask` 裁掉，改用容器内边距让整行落在视口内。
+
+### 验证
+
+- 预制体重新导入：TMP 15 个、非法垂直对齐 0 个、`missingScript = 0`。
+- 运行时渲染截图（`_temp/story_fixed2.png`）：三个页签等距（canvas x = 86.2 / 277.7 / 469.3，间距 191.5），「首领」正好落在蓝色底条中心；正文 5 行完整可读，首行不再贴边；`首领：凯思利亚斯` 在蓝条内居中。
+- 屏幕坐标复核：`BossTog` 中心 (1046, 768)、`ON/Image` 中心 (1031, 741)，底条相对文字下移 27px、左偏 15px，与 RO 预制体原值（Image pos −14.7, −27）一致。
+
+### 遗留（不是布局问题）
+
+1. **左侧「副本名 + Lv」压在立绘上**：RO 里这两个文字的锚点就在 `Obj_Left/Title` 中心，位于 1024×1024 立绘矩形内部（相对立绘左上角约 21% / 28%）。RO 的 9 张立绘在该位置刚好是透明留白（预制体默认的 `Dungeons07Boss` 那张在左上角完全空白）；截图用的这张首领立绘角色手臂与法杖伸到了该区域，所以压住了。改坐标会偏离 RO 原版，可选方案：给文字加 TMP 描边、或按图配置名字偏移。
+2. **「通关奖励：」下方为空**：`Award/AwardScroll/Content` 里没有任何道具节点，RO 由 Lua 按配置表动态生成。需要等奖励配置表接入。
+3. **三个页签文案是占位**：`BuildTabText()` 按副本名拼，RO 真实文案在主题配置表。
