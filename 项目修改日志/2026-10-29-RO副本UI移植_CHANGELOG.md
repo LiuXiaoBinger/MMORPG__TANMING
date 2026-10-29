@@ -696,3 +696,46 @@ m_textAlignment: 65535        ← Converted 哨兵，表示以上面两个新字
 1. **左侧「副本名 + Lv」压在立绘上**：RO 里这两个文字的锚点就在 `Obj_Left/Title` 中心，位于 1024×1024 立绘矩形内部（相对立绘左上角约 21% / 28%）。RO 的 9 张立绘在该位置刚好是透明留白（预制体默认的 `Dungeons07Boss` 那张在左上角完全空白）；截图用的这张首领立绘角色手臂与法杖伸到了该区域，所以压住了。改坐标会偏离 RO 原版，可选方案：给文字加 TMP 描边、或按图配置名字偏移。
 2. **「通关奖励：」下方为空**：`Award/AwardScroll/Content` 里没有任何道具节点，RO 由 Lua 按配置表动态生成。需要等奖励配置表接入。
 3. **三个页签文案是占位**：`BuildTabText()` 按副本名拼，RO 真实文案在主题配置表。
+
+---
+
+## 24. 详情页正文下方的白色小箭头（DownArrow）补上真实行为
+
+### 它是什么
+
+`ThemeStory.prefab/Panel/DownArrow`，51×41、`localEulerAngles.z = 90`（精灵 `Common1/UI_Common_Arrow_Left_01` 旋转 90° 变成向下箭头）、`anchoredPosition.y = -133`，正好压在正文滚动区下沿。
+
+这是 RO 的**「正文还有没读完的内容，往下翻」提示按钮**，在 `Theme_StoryCtrl.lua` 里由两处 API 驱动：
+
+```lua
+self.panel.InformationScroll:SetScrollRectGameObjListener(nil, self.panel.DownArrow.gameObject, nil, nil)  -- 点箭头 = 翻页
+self.panel.InformationScroll:SetScrollRectDownAndUpState(nil, self.panel.DownArrow.gameObject)              -- 按滚动状态显隐
+```
+
+`AnnounceCtrl` / `Theme_InformationCtrl` 用的是同一套写法，属于 RO 里列表溢出时的通用提示。
+
+### 移植后的缺陷
+
+Lyf 里它是一张**常显的死图**：`m_IsActive = 1`、Button 的 `onClick` 持久监听数 = 0、没有任何显隐逻辑，所以正文只有 3 行（content 126 < viewport 223，根本不溢出）时也一直飘在那里。
+
+### 改动
+
+`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/ThemeStoryWindow.cs`
+- 新增 `_infoScroll`（`InformationScroll` 的 ScrollRect）与 `_downArrow` 两个缓存。
+- 新增 `SetupDownArrow()`：给箭头按钮挂 `OnDownArrowClicked`，给 ScrollRect 的 `onValueChanged` 挂 `OnDescScrolled`，并把箭头默认隐藏。
+- 新增 `RefreshDownArrow()`：`content.rect.height <= viewport.rect.height + 1` 或 `verticalNormalizedPosition <= 0.01`（已到底）时隐藏，否则显示。
+- 新增 `RefreshDownArrowNow()`：先 `LayoutRebuilder.ForceRebuildLayoutImmediate(content)` 再 `Canvas.ForceUpdateCanvases()`，然后判断显隐（正文换行后布局要到帧末才重建，不强制重建会拿到旧高度）。
+- 新增 `OnDownArrowClicked()`：按 `viewHeight / range` 往下翻一页，钳到 0 后刷新显隐。
+- `RefreshTabContent()` 末尾把滚动位置回到顶部（`verticalNormalizedPosition = 1`）并 `RefreshDownArrowNow()`，切页签时箭头会跟着新内容长度重新判断。
+- `Show()` 里窗口激活后再 `RefreshDownArrowNow()` 一次 —— 窗口隐藏时滚动区 rect 是 0，那时判断没有意义。
+
+### 验证（编辑器内实例化预制体，调私有方法实测）
+
+| 状态 | 箭头 activeSelf |
+| --- | --- |
+| 初始化 | false |
+| 正文「短文本」 | false |
+| 正文 40 行（contentH 1734 vs viewportH 223） | **true** |
+| 长文本滚到底（verticalNormalizedPosition = 0） | false |
+
+编译后反射确认 `SetupDownArrow / RefreshDownArrow / OnDownArrowClicked` 均已存在，Console error = 0。

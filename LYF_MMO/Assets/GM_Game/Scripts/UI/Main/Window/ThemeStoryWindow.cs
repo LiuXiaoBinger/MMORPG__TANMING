@@ -60,6 +60,12 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>描述滚动区，只在首领页签显示。</summary>
     private GameObject _descScroll;
 
+    /// <summary>正文的滚动组件，用来判断还有没有没读完的内容。</summary>
+    private ScrollRect _infoScroll;
+
+    /// <summary>正文下方的下翻箭头，内容没滚到底时才显示，点一下翻一页。</summary>
+    private GameObject _downArrow;
+
     /// <summary>已通关角标。</summary>
     private GameObject _passedImg;
 
@@ -194,7 +200,10 @@ public sealed class ThemeStoryWindow : WindowBase
         if (scroll != null)
         {
             _descScroll = scroll.gameObject;
+            _infoScroll = scroll.GetComponent<ScrollRect>();
         }
+        _downArrow = FindNode("DownArrow");
+        SetupDownArrow();
         _passedImg = FindNode("PassedImg");
         _effect = FindNode("Effect");
         _effect2 = FindNode("Effect2");
@@ -382,6 +391,95 @@ public sealed class ThemeStoryWindow : WindowBase
         }
     }
 
+    /// <summary>
+    /// RO 里正文下方那个白色小箭头只是「下面还有内容」的提示：正文没溢出时隐藏，
+    /// 滚到底也隐藏，点一下往下翻一页。移植过来时它是一张常显的死图，这里补上行为。
+    /// </summary>
+    private void SetupDownArrow()
+    {
+        if (_downArrow == null)
+        {
+            return;
+        }
+        Button btn = _downArrow.GetComponent<Button>();
+        if (btn != null)
+        {
+            btn.onClick.RemoveListener(OnDownArrowClicked);
+            btn.onClick.AddListener(OnDownArrowClicked);
+        }
+        if (_infoScroll != null)
+        {
+            _infoScroll.onValueChanged.RemoveListener(OnDescScrolled);
+            _infoScroll.onValueChanged.AddListener(OnDescScrolled);
+        }
+        _downArrow.SetActive(false);
+    }
+
+    /// <summary>滚动时刷新箭头显隐。</summary>
+    private void OnDescScrolled(Vector2 position)
+    {
+        RefreshDownArrow();
+    }
+
+    /// <summary>点箭头往下翻一页；已经到底就直接隐藏。</summary>
+    private void OnDownArrowClicked()
+    {
+        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
+        {
+            return;
+        }
+        float contentHeight = _infoScroll.content.rect.height;
+        float viewHeight = _infoScroll.viewport.rect.height;
+        float range = contentHeight - viewHeight;
+        if (range <= 1f)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        float page = viewHeight / range;
+        float target = _infoScroll.verticalNormalizedPosition - page;
+        if (target < 0f)
+        {
+            target = 0f;
+        }
+        _infoScroll.verticalNormalizedPosition = target;
+        RefreshDownArrow();
+    }
+
+    /// <summary>正文换行后布局要到帧末才重建，这里先强制重建再判断需不需要显示箭头。</summary>
+    private void RefreshDownArrowNow()
+    {
+        if (_infoScroll != null && _infoScroll.content != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_infoScroll.content);
+        }
+        Canvas.ForceUpdateCanvases();
+        RefreshDownArrow();
+    }
+
+    /// <summary>按滚动区实际尺寸决定箭头显隐：内容不溢出或已到底都隐藏。</summary>
+    private void RefreshDownArrow()
+    {
+        if (_downArrow == null)
+        {
+            return;
+        }
+        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        float contentHeight = _infoScroll.content.rect.height;
+        float viewHeight = _infoScroll.viewport.rect.height;
+        if (contentHeight <= viewHeight + 1f)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        // verticalNormalizedPosition：1 表示顶部，0 表示底部。
+        _downArrow.SetActive(_infoScroll.verticalNormalizedPosition > 0.01f);
+    }
+
     /// <summary>显示窗口并刷新为指定副本；传入空数据时只显示不刷新。</summary>
     public override void Show(bool isShow = true, object obj = null)
     {
@@ -399,6 +497,11 @@ public sealed class ThemeStoryWindow : WindowBase
             transform.SetAsLastSibling();
         }
         gameObject.Show(isShow);
+        if (isShow)
+        {
+            // 窗口刚激活时滚动区的 rect 才是有效值，这时才能判断正文有没有溢出。
+            RefreshDownArrowNow();
+        }
     }
 
     /// <summary>用副本数据刷新界面，并把页签重置到首领页。</summary>
@@ -518,6 +621,12 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             _rewardTitle.text = "通关奖励：";
         }
+        // 切页签换了正文，滚动位置要回到顶部，箭头按新内容的长度重新判断。
+        if (_infoScroll != null)
+        {
+            _infoScroll.verticalNormalizedPosition = 1f;
+        }
+        RefreshDownArrowNow();
     }
 
     /// <summary>拼出当前页签要显示的正文。真实文案等配置表接入后替换这里。</summary>
