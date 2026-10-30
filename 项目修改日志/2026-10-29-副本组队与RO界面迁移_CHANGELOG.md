@@ -229,4 +229,4 @@ Codex 原生子 Agent `/root/sync_entry_persistence` 已完成 CURRENT_TASK、TE
 
 分项边界：上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证没有独立 token 或占比；本轮原生子 Agent 独立用量未披露，未新增 WorkBuddy/豆包执行。账户剩余额度本地不可测。临时用量脚本生成命令曾因 PowerShell 引号失败，改为结构化写文件后成功，未改业务或伪造统计。
 
-实际提交与推送回执在执行后补至本段，不重复同步未变化的入口。
+业务与本轮记录提交 `9fba612`：`fix: 修复副本小地图引用并让主角跨场景永久常驻`，共 13 个文件（6 个业务文件、7 个记录/分析文件）。暂存仅包含本轮范围，四份双语入口及难点正文只取本轮追加段，保留其他用户改动；检查证据为 `_temp/dungeon-entry-20261030/staged-check.json`。`git push origin codex/feature-development` 退出码 0，远端回执 `d1d9658..9fba612 codex/feature-development -> codex/feature-development`。未合 main、未强推。本回执单独提交，不重复同步未变化的入口。
