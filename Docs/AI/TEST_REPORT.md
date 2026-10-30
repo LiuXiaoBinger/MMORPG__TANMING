@@ -99,3 +99,11 @@
 ## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 队伍 HUD 红线对齐
 
 - 保存的预制体与运行实例均使用 anchoredPosition=(148, -292)，此前为 (168, -320)。已将实际相机图像与用户红线参考对照检查；真实 EventSystem 射线点击成功打开并关闭组队窗口。证据：_temp/dungeon-entry-20261030/compact-team-redline.png。本轮仅检查位置调整；未执行 Player 构建或额外的场景/战斗回归。
+
+
+## [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 构建与冒烟通过，重启服务器后真实建队仍被拒绝
+
+- WorkBuddy 构建 Network/Game/Gate/Center/Login，错误数为 0。强制 Unity 导入后，TeamData/TeamCtrl 已加载，控制台错误数为 0；此前空控制台不能证明新脚本已导入。离线检查验证了 5 名成员显示、本人不在首位时的正确绑定、邀请/申请回调参数、序列化引用及 MissingScript=0。这些均为隔离检查，不是真实多人验证。
+- WorkBuddy 冒烟报告为 64 项检查/0 失败，Codex 独立重跑结果一致（root-smoke-review.txt）。已注册测试角色实际执行了 BaseInfo 地图/实例/出生点写入及离队清理。真实回环 RoleLeave 测试中，同实例观察者收到 20 字节，其他实例收到 0 字节；该结果未验证解码后的会话路由或所有广播类型。
+- 纠正报告中的过度结论：源码并未调用 HandleClientEnterWorld；其中重复挑战测试不是真实的重复 EnterWorld 测试。移动/技能/可见性消息的接收者覆盖，以及双客户端可见性/移动仍未验证。
+- 2026-10-30 重试：确认四个进程及所需端口均在运行；全新正常登录到达主城，真实 EventSystem TeamCreate 点击发出 11200。Game 发出 11210，网关发出 10001（本地时间 19:55:21，UnitySessionId=2）；客户端仍为 TeamId=0/members=0。不声称真实进入/返回成功或多人验收通过。证据：_temp/dungeon-multiplayer-20261030/server-retry/、root-live-review.json 和 root-business-inventory.json。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

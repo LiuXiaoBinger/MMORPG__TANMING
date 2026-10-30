@@ -98,3 +98,11 @@
 ## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment
 
 - Saved prefab and live instance use anchoredPosition=(148, -292), previously (168, -320). Actual camera image checked against the user red-line reference; real EventSystem raycast opened and closed the group window successfully. Evidence: _temp/dungeon-entry-20261030/compact-team-redline.png. This is a placement-only check; no Player build or additional scene/combat regression was run.
+
+
+## [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Build/smoke passed, live create rejected after server restart
+
+- WorkBuddy built Network/Game/Gate/Center/Login with 0 errors. Forced Unity import loaded TeamData/TeamCtrl and console errors were 0; an earlier empty console had not proved new scripts were imported. Offline checks verified 5 rendered members, correct non-first local member, invitation/application callback parameters, serialized refs and MissingScript=0. These are isolated checks, not live multiplayer.
+- WorkBuddy smoke reported 64 checks/0 failures, independently rerun by Codex with the same result (root-smoke-review.txt). Registered test roles exercised actual BaseInfo map/instance/spawn writes and leave cleanup. Real loopback RoleLeave test received 20 bytes for a same-instance observer and 0 for other instances. This does not verify decoded session routing or all broadcast types.
+- Corrected report overclaim: source does not invoke HandleClientEnterWorld; its repeated-challenge test is not a real repeat-EnterWorld test. Move/skill/presence packet recipient coverage and two-client visibility/movement remain unverified.
+- Retry on 2026-10-30: all four processes and required ports were confirmed live; fresh normal login reached the city and real EventSystem TeamCreate click sent 11200. Game emitted 11210; gate emitted 10001 (19:55:21 local time, UnitySessionId=2); client remained TeamId=0/members=0. No successful live entry/return or multiplayer acceptance is claimed. Evidence: _temp/dungeon-multiplayer-20261030/server-retry/, root-live-review.json and root-business-inventory.json. Full process: 项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md.

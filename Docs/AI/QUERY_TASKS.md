@@ -31,3 +31,11 @@
 - 只读参考源 F:/UnityPro/ro/Ro_cs422nb/clientproj/Assets/Scripts/Lua/UI/Ctrl/QuickPanelCtrl.lua 第 32-34 行，将同一个 QuickPanel 内容父节点下的 QuickTaskPanel/QuickTeamPanel 绑定到 ToggleTask/ToggleTeam；第 44 行默认选中任务。它是共享页签区域，不是上下堆叠的两块面板。
 - UI/Handler/QuickTeamPanelHandler.lua 第 35-37 行由 TeamCreate 直接调用 TeamMgr.RequestCreateTeam。迁移后的本地控制器现已沿用该入口顺序；独立的组队按钮仍打开正式组队窗口。
 - 源 UI 预制体：clientproj/Assets/artres/Resources/UI/Prefabs/QuickPanel.prefab；源哈希及剥离 26 个 MoonClient 组件的计数见 _temp/dungeon-team-20261030/quick-panel-copy.json。IsOn/IsOff 上的内置 UGUI 子 Button 在自定义脚本剥离后仍会保留，不能让它们拦截新父级页签处理器。交互成立的依据是真实射线检查，单靠 GUID 扫描或直接 Invoke 不足以证明。
+
+
+## [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 RO 组队接口、人数限制与实际网络路由
+
+- 本次实现前，服务端没有队伍协议/管理器及副本实例分配；此前的单人队伍与 Moshenta 加载均为客户端本地流程。当前可见性/移动/技能广播使用 RoleManager 在线角色和 IsNearbyRole（地图加 100m），不使用 EntityWorld.BuildSnapshots。初始世界分区方案已撤回。
+- RO ModuleMgr/TeamMgr.lua 中的接口为 RequestCreateTeam:43、InviteJoinTeam:81、AcceptTeamInvatation:165、LeaveTeam:315、BegInTeamByTeamId:413 和 SetCaptain:456。保留源码实际拼写 Invatation。ModuleData/TeamData.lua:63 设置 maxTeamNumber=5；此前按 UI 列数推断为 4 的结论错误。
+- CSV DungeonsTable 中 4060 行：NumbersLimit=3=5、SceneID=4060、LevelLimit=75=200、EnterType=3、TimeLimit=2=7200。ThemeDungeonTable 中 theme7 -> StoryDungeonID=4060 / TeamTargetID=2007。本项目保留已明确授权的单人模式，人数上限为 5，不重新按 RO 最低 3 人加锁。Moshenta 出生点为 132.97_58.89_60.95；当前主城默认出生点为 62.1493416_19.4139996_80.6689758。
+- 网络集成需要 proto 生成、NetDefine、Game 分发、Gate 上下行注册以及 GateClientResponseForwarder 通知解析，并确保服务端 bin 与客户端插件中的 Network.dll 匹配。仅增加 GateTeamCtrl 注册仍不能通过白名单。参考根目录 F:/UnityPro/ro/Ro_cs422nb 只读。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

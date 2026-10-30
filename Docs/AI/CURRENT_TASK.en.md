@@ -92,3 +92,11 @@
 ## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment
 
 - Moved QuickPanel.prefab QuickTeamWidget/All_TeamInfo from (168, -320) to (148, -292): 20 UI pixels left and 28 up, matching the user red-line reference. Only this prefab placement changed; no new resources/meta files. Live instance updated and real raycast group-window open/close passed. Evidence: _temp/dungeon-entry-20261030/compact-team-redline.png. Full log: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md.
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Server-authoritative multiplayer party, not accepted
+
+- WorkBuddy international / Deepseek-V4.1-Flash implemented 25 business/resource files in 7 development rounds after 2 read-only rounds. Hub hub-6cc3dc7f-720b-4c92-a92d-b6fc6fa887ca, native session 84446061-325c-4e67-88a9-a5a30850e32c; platform round 9 was development round 7. Existing user edits are preserved. Business files are uncommitted because live acceptance failed.
+- Added party protocols, TeamManager/TeamMessageHandler, gate forwarding registration, TeamData/TeamCtrl, 5-member formal/quick UI, invitation/application controls, authoritative map/instance positions, leave/return notices and scoped role broadcasts. RO names retain RequestCreateTeam, InviteJoinTeam, AcceptTeamInvatation, LeaveTeam, BegInTeamByTeamId and CaptainRequestEnterFBPtc. Local-player DDOL/previous camera/layout work was retained.
+- On the user's retry request, Codex observed all four servers absent, started Center 54056, Game 25152, Gate 87552, Login 100464, verified TCP 10110/10130/10140/10120 and UDP 10141, then logged in again through Boot and actual UI clicks. Creation still fails: 11200 reaches Game, 11210 reply becomes gate error 10001; client TeamId=0/members=0. GateClientResponseForwarder.TryReadResultCode lacks the four new notification cases. This file has not been fixed.
+- Next: repair that exact whitelist, rebuild/restart Gate, rerun live create/entry/leave, then complete multiplayer integration. Further business implementation remains subject to the executor choice after WorkBuddy reached its 7-round limit; the user requested restart/retest instead of choosing a new executor. Full process: 项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md.

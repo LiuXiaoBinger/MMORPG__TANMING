@@ -94,3 +94,11 @@
 ## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 队伍 HUD 红线对齐
 
 - 将 QuickPanel.prefab 的 QuickTeamWidget/All_TeamInfo 从 (168, -320) 移至 (148, -292)：向左 20 个 UI 像素、向上 28 个 UI 像素，与用户红线参考对齐。仅修改此预制体位置；无新增资源或 .meta 文件。已同步运行实例，真实射线点击打开/关闭组队窗口通过。证据：_temp/dungeon-entry-20261030/compact-team-redline.png。完整日志：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 服务器权威多人组队，尚未验收通过
+
+- WorkBuddy 国际版 / Deepseek-V4.1-Flash 在 2 轮只读调查后进行了 7 轮开发，实现涉及 25 个业务/资源文件。Hub 为 hub-6cc3dc7f-720b-4c92-a92d-b6fc6fa887ca，原生 session 为 84446061-325c-4e67-88a9-a5a30850e32c；平台第 9 轮即开发第 7 轮。已保留用户已有修改。真实验收失败，业务文件尚未提交。
+- 新增队伍协议、TeamManager/TeamMessageHandler、网关转发注册、TeamData/TeamCtrl、5 人正式/快捷队伍 UI、邀请/申请控件、权威地图/实例位置、离队/返回通知及按范围广播角色消息。沿用 RO 名称 RequestCreateTeam、InviteJoinTeam、AcceptTeamInvatation、LeaveTeam、BegInTeamByTeamId 和 CaptainRequestEnterFBPtc。本地玩家 DDOL、此前相机与布局工作均保留。
+- 按用户要求重试时，Codex 发现四服均已不在运行，随后启动 Center 54056、Game 25152、Gate 87552、Login 100464，确认 TCP 10110/10130/10140/10120 与 UDP 10141 监听，再通过 Boot 及真实 UI 点击重新登录。建队仍失败：11200 到达 Game，11210 回复在网关变为错误 10001；客户端 TeamId=0/members=0。GateClientResponseForwarder.TryReadResultCode 缺少四个新通知分支，该文件尚未修复。
+- 下一步：修复该白名单，重新构建并重启 Gate，重跑真实建队/进入/离队，再完成多人集成。WorkBuddy 已达到 7 轮开发上限，后续业务实现仍需确定执行者；用户本轮要求重启复测，尚未选择新执行者。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `42cb469a545b7e843c35b4ac6ca56d47f46a43251e38c7b7a32f0d6f60482ad2`
+Source normalized SHA256: `5a8ad4751aa9b8eb970d28123dfe7c483db4d00d58b8ed28541ed9de1c2098bb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -23,11 +23,12 @@ Source normalized SHA256: `42cb469a545b7e843c35b4ac6ca56d47f46a43251e38c7b7a32f0
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO team UI and local party entry | 67-74 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real-input repair and shared quick panel | 75-82 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 minimap lifetime, permanent player and camera follow-up | 83-91 |
-| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 92-94 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 92-96 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Server-authoritative multiplayer party, not accepted | 97-102 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4009d8200f1063e9b4307569ecdac3f293fca6f7825462b73f146f6c54bddb8c`
+Source normalized SHA256: `a678628bc223491b9527c5b2edb49afa22e4aa061728aab20271227b8791828c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -41,7 +42,8 @@ Source normalized SHA256: `4009d8200f1063e9b4307569ecdac3f293fca6f7825462b73f146
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] Team shells, local controller and map references | 70-77 |
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real logged-in pointer input | 78-86 |
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real scene entry and permanent object identity | 87-97 |
-| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 98-100 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 98-102 |
+| [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Build/smoke passed, live create rejected after server restart | 103-108 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -55,14 +57,15 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `f1e619669fc529c572731537f94743e43f1fc33b94d615f33f12de87b4213640`
+Source normalized SHA256: `d40bbcd6dee35369aa01da09c180146cc424bdec538594b25f56a2d468ec754d`
 
 | Topic / record ID / title | Lines |
 |---|---|
 | [INDEX][协作][QUERY-INDEX] Archive routing | 3-7 |
 | [QUERY][场景][RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027] Why the copied pillar has no visible baked lightmap in edit mode | 8-20 |
 | [QUERY][副本组队][DUNGEON-TEAM-20261029] RO map binding and real team UI sources | 21-28 |
-| [QUERY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 RO task/team quick panel ownership | 29-33 |
+| [QUERY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 RO task/team quick panel ownership | 29-35 |
+| [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 RO party interfaces, limits and actual network route | 36-41 |
 
 ## Older records
 
