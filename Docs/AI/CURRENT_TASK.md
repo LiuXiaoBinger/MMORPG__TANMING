@@ -64,3 +64,11 @@
 - WorkBuddy 原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0`，实际 `requestModelId` 为 `deepseek-v4.1-flash`（由 Codex 观察确认）。
 - 本任务为 1 轮实现（含中断后同轮续作）；此前的魔神塔最小环境任务仍然是 2 轮开发。
 - 待 Codex 在 `codex/ro-first-dungeon-scene-20261026` 上集成，未提交未推送；Git 回执只写在既有正式日志里。
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO 队伍 UI 与本地组队进入流程
+
+- 已批准范围：解锁全部 9 本主题书，保留章节与等级文案；移植 QuickTeamPanel、Team1/TeamMember 及 8 个关联 UI 壳。原有控件负责打开、关闭各壳，不使用调试 NavBar。本地单人建队、关闭重开保留队伍和离队已实现。联网匹配、邀请、招募及设置持久化尚未实现。
+- 仅 theme id 7（达纳托斯之战）在已有队伍后加载 Scene_DungeonMoshenta；创建队伍不会自动进入地图。其他书仍可浏览，不会误入该地图。正式成员数据来自 PlayerEntity；测试数据仅位于 _temp。
+- 实际执行：WorkBuddy 国际版，所选模型 Deepseek-V4.1-Flash，session 84446061-325c-4e67-88a9-a5a30850e32c，hub-f1dc56e4-6cda-487d-977c-31d362977923，共 7 轮。R3 产物无效；R4/R7 超期，其中 R7 在同一次执行内恢复过一次。豆包连接恢复失败，未派发任务。用户于 2026-10-30 明确授权 Codex 接手并写日志；最终修复与验收由 Codex 完成。
+- 完整 58 个业务文件清单、失败、验证及 Git 回执：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。真实账号登录、进入与移动、多人实例隔离仍按 TEST_REPORT 所述保留未验证或未实现边界。

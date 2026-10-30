@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `376f55fa250be53c27ac57acdcaf7975a21bce4a46e5229b273ac965a12cfceb`
+Source normalized SHA256: `71193babefb3dd658c0cea0b1545c0d4fb5a7193d9a4c37bec1041ff8d4883ec`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -19,11 +19,12 @@ Source normalized SHA256: `376f55fa250be53c27ac57acdcaf7975a21bce4a46e5229b273ac
 | [FILES][Task][TASK-TABLE-DESIGN-20261025-R2] Quest table system expanded to 13 tables (revision 2), 2026-10-25 | 23-32 |
 | [FILES][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copied into the project, 2026-10-26 | 33-43 |
 | [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] Fixed dusk environment on Moshenta | 44-55 |
-| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode | 56-64 |
+| [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode | 56-66 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO team UI and local party entry | 67-72 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `db9953ed3af88509ea4426098d611786546602eb26300b2e7f07c999b9e5eea1`
+Source normalized SHA256: `26b47b2c9a4d5102b425e0b92b5c0f2da27629aa3042cad535de9e17a329316e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -33,7 +34,8 @@ Source normalized SHA256: `db9953ed3af88509ea4426098d611786546602eb26300b2e7f07c
 | [VERIFY][Task][VERIFY-TASK-TABLE-20261025-R2] Generation and cross-reference checks for the 13 quest tables, 2026-10-25 | 24-33 |
 | [VERIFY][Scene][RO-FIRST-DUNGEON-SCENE-20261026] RO dungeon scene copy verification | 34-45 |
 | [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] Incremental environment acceptance | 46-57 |
-| [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer | 58-67 |
+| [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer | 58-69 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] Team shells, local controller and map references | 70-75 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -47,12 +49,13 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `5f21ae36bfbdbb7326a12cd5248dc66c0d90b7aabcce77f8816d1110e8d686a6`
+Source normalized SHA256: `df8f16d757d650a42fb82348d22992a88a20f7faf61b0bc62d207164439bec3a`
 
 | Topic / record ID / title | Lines |
 |---|---|
 | [INDEX][协作][QUERY-INDEX] Archive routing | 3-7 |
-| [QUERY][场景][RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027] Why the copied pillar has no visible baked lightmap in edit mode | 8-18 |
+| [QUERY][场景][RO-MOSHENTA-LIGHTMAP-INSPECTOR-QUERY-20261027] Why the copied pillar has no visible baked lightmap in edit mode | 8-20 |
+| [QUERY][副本组队][DUNGEON-TEAM-20261029] RO map binding and real team UI sources | 21-26 |
 
 ## Older records
 

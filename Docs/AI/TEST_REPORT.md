@@ -66,3 +66,11 @@
 - 未做新的 Play 测试、未做正式切场景测试、未重烘。
 - 此前那次 Unity 重启的原因、以及更早未保存改动的存留情况均无法判定；本记录不声称早前内存中的改动全部存活，也不把重启归因于已证明的原因。
 - 当前 `dirty` False 只是点位观察，不构成"自动应用永远不标脏场景"的保证。
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 队伍界面壳、本地控制器与地图引用
+
+- Codex 核验了实际预制体按钮回调：寻找、邀请、设置、目标、成员详情、申请、招募和成员菜单均正确打开；目标页可返回设置，子窗关闭返回正确。16 个 ROTeam 预制体及组合窗口的 Missing Script 均为 0；UIRoot 窗口引用未赋值字段为 0。仅临时实例为 EditMode 测试使用 EditorAndRuntime 回调；未将测试数据或实例保存到正式资源、场景。
+- 使用真实 PlayerEntity 类型的隔离控制器测试通过：未建队挑战会打开窗口，创建后绑定玩家昵称，关闭重开保留队伍，离队恢复空队伍状态，无关主题不会加载 Moshenta。这不是实际账号或联网运行。证据：_temp/dungeon-team-20261029/codex-ui-verification.txt 和 codex-controller-verification.txt；codex-team-members.png、codex-team-search.png、codex-quick-team.png 为隔离测试预览。
+- 附加场景检查：出生点已绑定至 (132.97, 58.89, 60.95)，MainCamera 数量为 1，碰撞器数量为 510，出生点导航采样=True。检查结束时编辑器不处于 Play 或编译状态。未发现 C# 编译错误。曾阻止预制体保存的 TeamInvite/Group/TextMesh 缺失组件已替换，保存结果=True。
+- 未运行：真实登录 -> 挑战 -> 地图 -> 键盘/点击移动、联网组队与实例隔离、Player 构建。完整过程与此前失败版本：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。

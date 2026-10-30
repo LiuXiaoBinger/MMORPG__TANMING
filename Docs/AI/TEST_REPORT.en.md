@@ -65,3 +65,11 @@
 - No new Play or formal scene-transition test/rebake.
 - The earlier Unity restart's cause and the fate of earlier unsaved changes cannot be determined; this record does not claim all earlier in-memory edits survived, and does not attribute the restart to a proven cause.
 - Current `dirty` False is a point-in-time observation, not a guarantee auto apply never dirties a scene.
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] Team shells, local controller and map references
+
+- Codex verified actual prefab button callbacks: search, invite, settings, target, member details, applications, recruitment and member menu open correctly; target returns to settings and child close returns correctly. 16 ROTeam prefabs and the combined window have 0 missing scripts; UIRoot window references have 0 unassigned fields. Temporary instances used EditorAndRuntime callbacks solely for EditMode testing; no fixture was saved to production assets/scenes.
+- A real-type isolated PlayerEntity/controller fixture passed: unteamed challenge opens the window, creation binds the player nickname, close/reopen retains the team, leave restores empty state, and unrelated themes do not load Moshenta. This is not a real account/network run. Evidence: _temp/dungeon-team-20261029/codex-ui-verification.txt and codex-controller-verification.txt; codex-team-members.png, codex-team-search.png, codex-quick-team.png are fixture previews.
+- Additive scene check: spawn linked at (132.97, 58.89, 60.95), 1 MainCamera, 510 colliders, navigation sample at spawn=True. Editor ended outside Play/compilation. No C# compilation errors were found. The missing TeamInvite/Group/TextMesh component that prevented prefab saving was replaced; save=True.
+- Not run: real login -> challenge -> map -> keyboard/click movement, online party/instance isolation, Player build. Full process and earlier failed versions: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md.

@@ -21,6 +21,8 @@ public class MainCtrl : CtrlBase
     private readonly ChatWindow _chatWindow;
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
+    /// <summary>主题副本建队子控制器，负责本地单人队伍状态与进入魔神塔的流程。</summary>
+    private readonly ThemeDungeonTeamCtrl _themeDungeonTeamCtrl;
     /// <summary>主界面快捷键是否已注册。</summary>
     private bool _mainInputRegistered;
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
@@ -53,6 +55,7 @@ public class MainCtrl : CtrlBase
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
         _knapsackCtrl = new KnapsackCtrl(_mainView);
         _taskCtrl = new TaskCtrl(_mainView);
+        _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -493,6 +496,10 @@ public class MainCtrl : CtrlBase
         if (_taskCtrl != null)
         {
             _taskCtrl.Dispose();
+        }
+        if (_themeDungeonTeamCtrl != null)
+        {
+            _themeDungeonTeamCtrl.Dispose();
         }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {

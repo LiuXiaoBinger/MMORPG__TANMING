@@ -62,3 +62,11 @@
 - Native WorkBuddy session `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` used actual `requestModelId` `deepseek-v4.1-flash` as observed by Codex.
 - One implementation round including interruption recovery; the preceding minimal environment task remains two development rounds.
 - Commit/push pending Codex integration on `codex/ro-first-dungeon-scene-20261026`; Git receipt is kept only in the existing changelog.
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO team UI and local party entry
+
+- Approved scope: unlock all 9 theme books while retaining chapter/level text; migrate QuickTeamPanel, Team1/TeamMember and 8 related UI shells. Original controls open/close shells; no debug NavBar. Local single-member creation, reopen retention and leave are implemented. Online matching/invites/recruitment/settings persistence remain unimplemented.
+- Only theme id 7 (达纳托斯之战) loads Scene_DungeonMoshenta after a team exists; creating a team does not enter automatically. Other books remain browsable and do not enter the wrong map. Production member data comes from PlayerEntity; fixtures exist only under _temp.
+- Execution: WorkBuddy international, selected Deepseek-V4.1-Flash, session 84446061-325c-4e67-88a9-a5a30850e32c, hub-f1dc56e4-6cda-487d-977c-31d362977923, 7 rounds. R3 had invalid artifacts; R4/R7 expired, including an in-attempt R7 resume. Doubao was not dispatched because connection recovery failed. The user explicitly authorized Codex takeover and logging on 2026-10-30; Codex completed the final repair and acceptance.
+- Full 58-file business manifest, failures, verification and Git receipts: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md. Live account login, entry/movement and multiplayer instance isolation remain unverified/unimplemented as specified in TEST_REPORT.

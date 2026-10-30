@@ -16,3 +16,11 @@
 - 主 Agent 实测为 **1 盏灯**，否掉了「当前场景 0 盏灯」的说法；也没有断言「持久预览必须靠落盘序列化」，没有断言「未被引用的 EXR 是历史残留」。
 - 实际 `requestModelId` 为 `deepseek-v4.1-flash`，在原生会话 `5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0` 中独立观察到。原生传输在产物文件写完后断开，核心结论由实际文件加独立核验接受，**没有**成功的最终 RPC 回执。
 - 未修改任何业务文件。证据：`_temp/ro-lightmap-inspector-query-codex-accept.json` 与 `_temp/ro-lightmap-inspector-query-review.md`；原报告中被否决的断言以验收记录为准。完整后续说明见本次环境任务修改日志。
+
+
+## [QUERY][副本组队][DUNGEON-TEAM-20261029] RO 地图绑定与真实队伍 UI 来源
+
+- RO 只读证据位于 F:/UnityPro/ro/Ro_cs422nb/config/Table/CSV/：ThemeDungeonTable.csv 第 9 行，theme 7 -> 剧情 4060 / 普通 4061 / 困难 4062 / TeamTargetID 2007；DungeonsTable.csv 第 404 行将 4060 映射至 SceneID 4060；SceneTable.csv 第 560 行将 4060 映射至 sc_dungeon_moshenta_001/sc_dungeon_moshenta_001，StartPos=132.97=58.89=60.95。本项目加载的场景为 LYF_MMO/Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001.unity。
+- UI 来源位于 clientproj/Assets/artres/Resources/UI/Prefabs/：QuickTeamPanel 是 HUD，Team1 是主窗外框，TeamMember 是其内容。ThemeDungeonTeam 是进本确认窗口，不是建队 UI。复制的 16 个 ROTeam 资源、依赖和精确源/目标清单见完整修改日志中的引用。
+- Unity 实际检查纠正了此前推断：内置 UGUI 程序集 GUID f70555f144d8491a825f0804e09c671c 即使 GUIDToAssetPath 为空，仍可解析 Image/Text。有效性以实际 Missing Script 数量为准，不能仅依据 Assets 范围内的 GUID 扫描。MoonClient 组件已剥离；一个旧 TeamInvite 标题组件确实缺失，现已替换。源 Team1 的内容初始为 inactive，移植的组合窗口需显式激活它。
+- 调查与失败证据保留在 _temp/dungeon-team-20261029/research.md 和 research-addendum.md；最终事实与边界：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。

@@ -16,3 +16,11 @@
 - Codex observed1Light, rejecting the worker's0Light claim; no claim that a persistent preview necessarily requires disk serialization, and no claim that unreferenced EXRs are historical leftovers.
 - Actual requestModelId deepseek-v4.1-flash independently observed in native session5af3d7d9-4c42-406d-a6c7-7a8949f0dcf0. Native transport disconnected after artifacts were written; core findings were accepted from real files plus independent checks, not a successful final RPC receipt.
 - No business files changed. Evidence:_temp/ro-lightmap-inspector-query-codex-accept.json and -review.md; source report's rejected claims are superseded by acceptance notes. Full follow-up in the existing changelog.
+
+
+## [QUERY][副本组队][DUNGEON-TEAM-20261029] RO map binding and real team UI sources
+
+- Read-only RO evidence under F:/UnityPro/ro/Ro_cs422nb/config/Table/CSV/: ThemeDungeonTable.csv line 9, theme 7 -> story 4060 / normal 4061 / hard 4062 / TeamTargetID 2007; DungeonsTable.csv line 404 maps 4060 -> SceneID 4060; SceneTable.csv line 560 maps 4060 -> sc_dungeon_moshenta_001/sc_dungeon_moshenta_001, StartPos=132.97=58.89=60.95. Our loaded scene is LYF_MMO/Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001.unity.
+- UI sources in clientproj/Assets/artres/Resources/UI/Prefabs/: QuickTeamPanel is the HUD, Team1 is the main frame, TeamMember is its content. ThemeDungeonTeam is an entry-confirmation window, not the team-creation UI. Sixteen copied ROTeam assets, their dependencies and exact source/target manifests are referenced by the full changelog.
+- Actual Unity inspection corrected an earlier inference: builtin UGUI assembly GUID f70555f144d8491a825f0804e09c671c can resolve Image/Text even when GUIDToAssetPath is empty. Missing-script counts, not an Assets-only GUID scan, determine validity. MoonClient components were stripped; one old TeamInvite title component was actually missing and replaced. Source Team1 content is initially inactive, requiring explicit activation in the migrated wrapper.
+- Research/failed evidence remains in _temp/dungeon-team-20261029/research.md and research-addendum.md; final facts and limits: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md.

@@ -20,7 +20,8 @@ public enum WindowType
     SettingPanel,//设置界面窗口，仅展示设置页面
     TaskWindow,//任务窗口，展示任务详情、目标与奖励
     DailyTaskWindow,//日常任务窗口，RO原版日常面板，仅呈现与关闭
-    ThemeDungeonArroundWindow//主题副本选择窗口，展示副本书位、翻页与详情
+    ThemeDungeonArroundWindow,//主题副本选择窗口，展示副本书位、翻页与详情
+    ThemeDungeonTeamCreateWindow//主题副本建队窗口，复制RO快捷队伍面板的建队与队伍成员展示
 }
 
 /// <summary>
@@ -64,7 +65,8 @@ public enum SceneType
     
     Scene_Login,//登录场景
     Scene_CreateRole,//创建角色场景
-    Scene_MainCity//主城
+    Scene_MainCity,//主城
+    Scene_DungeonMoshenta//魔神塔副本场景（资源位于 Scenes/RODungeon_Moshenta 子目录，地址由 SceneMgr 单独映射）
 }
 
 

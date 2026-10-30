@@ -19,7 +19,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>字体资源路径，运行时创建出来的 TMP 文本统一使用 Common SDF。</summary>
     [SerializeField, Header("字体资源路径")] private string _fontResourcePath = "UI/Font/Common SDF";
 
-    /// <summary>当前角色等级，用于判断书位是否解锁（仅本地演示用，未接角色数据）。</summary>
+    /// <summary>
+    /// 当前角色等级，仅保留为界面演示数据；主题副本入口的等级限制已取消，本值不再参与书位解锁判定。
+    /// </summary>
     [SerializeField, Header("当前角色等级")] private int _playerLevel = 50;
 
     /// <summary>运行时创建文本时使用的默认字号。</summary>
@@ -106,6 +108,12 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
     /// <summary>副本详情窗口（RO 的 Theme_Story），点书位翻开时打开。</summary>
     private ThemeStoryWindow _storyWindow;
+
+    /// <summary>
+    /// 详情页确认「挑战」后向主控制器发出的建队请求，载荷是本次选中的副本配置。
+    /// 本窗口只负责把选中项交出去，进入副本的场景切换全部由控制器执行，界面层不直接切场景。
+    /// </summary>
+    public System.Action<ThemeDungeonEntry> OnChallengeRequested;
 
     /// <summary>外部注入详情窗口，由主界面在初始化时调用。</summary>
     public void SetStoryWindow(ThemeStoryWindow window)
@@ -257,7 +265,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 用外部数据刷新窗口：整型参数按新的角色等级重算解锁状态。
+    /// 用外部数据刷新窗口：整型参数更新本演示等级并重绘书位。
+    /// 等级不再影响解锁状态，重绘只用于保证书位内容与选中态一致。
     /// </summary>
     /// <param name="obj">期望为 int 类型的角色等级。</param>
     public override void ReFreshUI(object obj)
@@ -742,28 +751,22 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 把一个副本条目的数据填到书位上：缩略图、名称、章节等级与锁定状态。
+    /// 把一个副本条目的数据填到书位上：缩略图、名称与章节等级文案。
+    /// 主题副本入口不再做等级限制，书位一律按已解锁展示，只保留章节与等级的文字说明。
     /// </summary>
+    /// <param name="s">当前页对应的书位控件，负责缩略图、名称和等级文案。</param>
+    /// <param name="d">该书位的主题副本配置，等级字段仅用于展示。</param>
     private void ApplySlot(Slot s, ThemeDungeonEntry d)
     {
-        bool locked = _playerLevel < d.chapterLevel;
         s.Thumb.texture = LoadTexture(d.scenePic);
         ApplyCoverUv(s.Thumb, 0f, 0f);
-        if (locked)
-        {
-            s.Thumb.color = new Color(0.45f, 0.45f, 0.45f, 1f);
-        }
-        else
-        {
-            s.Thumb.color = Color.white;
-        }
+        // 缩略图恒为原色，不再按等级压灰，保证所有主题副本外观一致。
+        s.Thumb.color = Color.white;
         s.Name.text = d.themeName;
+        // 章节与等级只作为信息展示，不参与解锁判定。
         s.Chapter.text = d.chapterText + " · Lv." + d.chapterLevel;
-        s.LockMask.gameObject.SetActive(locked);
-        if (locked)
-        {
-            s.LockText.text = "Lv." + d.chapterLevel + " 解锁";
-        }
+        // 锁定遮罩与「Lv.x 解锁」提示随等级限制一并停用，节点保留但不显示。
+        s.LockMask.gameObject.SetActive(false);
     }
 
     /// <summary>刷新所有书位的边框颜色，选中项为高亮金边，其余为暗金。</summary>
@@ -887,21 +890,21 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 详情页确认进入副本。当前是空壳：只做等级校验并给出反馈，
-    /// 真正的进入副本协议等服务器接口就绪后在这里发起。
+    /// 详情页确认挑战：主题副本入口不再校验等级，挑战先建队再由队伍入口进入。
+    /// 这里只把选中的副本配置交给控制器（由控制器打开建队窗），窗口自身不切换场景。
     /// </summary>
+    /// <param name="d">详情页当前展示并确认挑战的副本配置。</param>
     private void EnterDungeon(ThemeDungeonEntry d)
     {
         if (d == null)
         {
             return;
         }
-        if (_playerLevel < d.chapterLevel)
+        if (OnChallengeRequested != null)
         {
-            SetStatus("等级不足，" + d.themeName + " 需要 Lv." + d.chapterLevel);
+            OnChallengeRequested(d);
             return;
         }
-        SetStatus("进入副本：" + d.themeName + "（协议待接入）");
     }
 
     /// <summary>确认按钮回调，目前只做反馈，不发起进入副本的协议。</summary>

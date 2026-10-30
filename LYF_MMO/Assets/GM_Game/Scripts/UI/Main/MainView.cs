@@ -36,6 +36,12 @@ public class MainView : UIBase
    /// <summary>主题副本详情窗口，对应 RO 的 Theme_Story，由选择窗口翻开书位后打开。</summary>
    [SerializeField, Header("副本详情窗口")] private ThemeStoryWindow _themeStoryWindow;
 
+   /// <summary>主题副本建队窗口，复制 RO 快捷队伍面板的建队分支，由详情页挑战打开。</summary>
+   [SerializeField, Header("建队窗口")] private ThemeDungeonTeamCreateWindow _themeDungeonTeamCreateWindow;
+
+   /// <summary>主界面左侧常驻快捷队伍栏，复制 RO QuickTeamPanel 的原层级与布局。</summary>
+   [SerializeField, Header("快捷队伍栏")] private QuickTeamWidget _quickTeamWidget;
+
    /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
    [SerializeField, Header("日常入口")] private Button _dailyTaskButton;
 
@@ -95,6 +101,15 @@ public class MainView : UIBase
 
    /// <summary>主题副本选择窗口实例，供主控制器初始化与显隐。</summary>
    public ThemeDungeonArroundWindow ThemeDungeonArroundWindow => _themeDungeonArroundWindow;
+
+   /// <summary>主题副本详情窗口实例，供建队控制器在进入副本前收起。</summary>
+   public ThemeStoryWindow ThemeStoryWindow => _themeStoryWindow;
+
+   /// <summary>建队窗口实例，供建队控制器初始化、刷新与显隐。</summary>
+   public ThemeDungeonTeamCreateWindow ThemeDungeonTeamCreateWindow => _themeDungeonTeamCreateWindow;
+
+   /// <summary>快捷队伍栏实例，供建队控制器刷新成员信息。</summary>
+   public QuickTeamWidget QuickTeamWidget => _quickTeamWidget;
 
    /// <summary>供主控制器注册与注销日常入口事件。</summary>
    public Button DailyTaskButton => _dailyTaskButton;
@@ -169,6 +184,7 @@ public class MainView : UIBase
       windowDic[WindowType.TaskWindow] = _taskWindow;
       windowDic[WindowType.DailyTaskWindow] = _dailyTaskWindow;
       windowDic[WindowType.ThemeDungeonArroundWindow] = _themeDungeonArroundWindow;
+      windowDic[WindowType.ThemeDungeonTeamCreateWindow] = _themeDungeonTeamCreateWindow;
       SetFunctionMenuVisible(false);
       if (_taskWindow != null)
       {
@@ -186,6 +202,10 @@ public class MainView : UIBase
       {
          _themeStoryWindow.InitWindow();
       }
+      if (_themeDungeonTeamCreateWindow != null)
+      {
+         _themeDungeonTeamCreateWindow.InitWindow();
+      }
       if (_themeDungeonArroundWindow != null && _themeStoryWindow != null)
       {
          _themeDungeonArroundWindow.SetStoryWindow(_themeStoryWindow);
@@ -193,6 +213,11 @@ public class MainView : UIBase
       if (_quickTaskPanel != null)
       {
          _quickTaskPanel.InitWidget();
+      }
+      if (_quickTeamWidget != null)
+      {
+         // 快捷队伍栏常驻主界面，初始化只绑定一次按钮监听并复位为未建队展示。
+         _quickTeamWidget.InitWidget();
       }
       _roleCurrInfoWindow.InitWindow();
    }

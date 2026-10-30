@@ -33,6 +33,12 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>当前已经发起模型加载的本地主角 UID，防止异步完成前重复请求资源。</summary>
    private ulong _localRoleCreateRequestedUid;
 
+   /// <summary>
+   /// 本场景可选的本地主角出生点。魔神塔副本指向场景中的 RoleSpawnPoint（即 RO 的 StartPos），
+   /// 主城不配置该字段时继续使用原有硬编码出生坐标，未配置场景的流程保持不变。
+   /// </summary>
+   [SerializeField, Header("本地主角出生点（可选）")] private Transform _localRoleSpawnPoint;
+
    /// <summary>由测试组件首次创建的其他玩家 UID，按角色 ID 索引；真实网络同步同 ID 时会撤销该测试清理所有权。</summary>
    private readonly Dictionary<int, ulong> _testOtherRoleUids =
       new Dictionary<int, ulong>();
@@ -55,7 +61,11 @@ public class MainCityMgr : MonoBehaviour
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
       // 正式进城前 Global 已完成配置和实体世界初始化，复用同物体上的 NPC 管理器。
-      GetComponent<NpcManager>().Initialize();
+      // 保留工作区已有的可选 NPC 接入：魔神塔不配置城市 NPC 管理器。
+      if (TryGetComponent<NpcManager>(out NpcManager npcManager))
+      {
+         npcManager.Initialize();
+      }
    }
 
    /// <summary>每帧尝试补上延迟启用的 Global 事件订阅，兼容测试场景后启用 Global 的时序。</summary>
@@ -186,6 +196,12 @@ public class MainCityMgr : MonoBehaviour
       {
          Debug.LogError("本地主角表现创建失败：基础角色信息为空。", this);
          return;
+      }
+      // 切换场景后旧模型对象已随旧场景销毁，但 MModel 仍记录为已加载；
+      // 这里先回收这份失效状态，否则新场景不会重建本地主角表现。
+      if (localRole.Model.IsLoaded && !localRole.Model.GameObject.IsValid)
+      {
+         localRole.Model.Reset();
       }
       if (localRole.Model.IsLoaded || localRole.Model.IsLoading)
       {
@@ -468,7 +484,7 @@ public class MainCityMgr : MonoBehaviour
           {
             if (roleType == RoleType.MainRole)
             {
-               obj.transform.position = new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
+               obj.transform.position = ResolveMainRoleSpawnPosition();
             }
             else
             {
@@ -566,6 +582,20 @@ public class MainCityMgr : MonoBehaviour
       mainRoleController.SetROObject(sceneEntity);
       // 主角实体反向持有同一个控制器，导航到达时据此取主角实际位置判定对话距离并打开对话窗。
       sceneEntity.SetEntityCtrl(mainRoleController);
+   }
+
+   /// <summary>
+   /// 取本地主角的出生世界坐标：本场景配置了出生点时用该点的位置，
+   /// 未配置时沿用主城原有硬编码坐标，保证主城表现与改动前完全一致。
+   /// </summary>
+   /// <returns>本地主角出生使用的世界坐标。</returns>
+   private Vector3 ResolveMainRoleSpawnPosition()
+   {
+      if (_localRoleSpawnPoint != null)
+      {
+         return _localRoleSpawnPoint.position;
+      }
+      return new Vector3(62.1493416f, 19.4139996f, 80.6689758f);
    }
 
    /// <summary>按名称在模型层级中查找相机注视点，找不到时由调用方回退到模型根节点。</summary>
