@@ -93,3 +93,8 @@
 - Compact UI pointer checks passed task/team switching and folding/restoring; folded list right edge=-1.5501 screen pixels, fully outside the screen. Source tab/fold sizes are 40x64 / 34x34 and task viewport height=216. No test component or mock player was saved to production scenes/prefabs.
 - Evidence: _temp/dungeon-entry-20261030/permanent-actor-verification.json, map-lifecycle-verification.json, city-layout.png, permanent-dungeon.png; actual live main/UI cameras render the screenshots offscreen. Scripts compile, scoped diff checks pass, final console errors=0. A temporary layout builder used the wrong arrow-child component path and a verifier had a shadowed camera variable; both were corrected without production fallback logic. An interrupted/stopped Play session was restarted through normal UI; credentials were not written to project files or records.
 - Not run: Player build, multiplayer party/instance isolation, complete combat, controlled keyboard/click movement or camera-wall collision regression. Existing right-button/scroll camera logic is retained. Full changelog: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md.
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment
+
+- Saved prefab and live instance use anchoredPosition=(148, -292), previously (168, -320). Actual camera image checked against the user red-line reference; real EventSystem raycast opened and closed the group window successfully. Evidence: _temp/dungeon-entry-20261030/compact-team-redline.png. This is a placement-only check; no Player build or additional scene/combat regression was run.

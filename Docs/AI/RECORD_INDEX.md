@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f7c0d77f9a1b942ecf372b69274932a41f2e7ba5fd53a3bc496cd7b7ac070ce3`
+Source normalized SHA256: `42cb469a545b7e843c35b4ac6ca56d47f46a43251e38c7b7a32f0d6f60482ad2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -22,11 +22,12 @@ Source normalized SHA256: `f7c0d77f9a1b942ecf372b69274932a41f2e7ba5fd53a3bc496cd
 | [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode | 56-66 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO team UI and local party entry | 67-74 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real-input repair and shared quick panel | 75-82 |
-| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 minimap lifetime, permanent player and camera follow-up | 83-89 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 minimap lifetime, permanent player and camera follow-up | 83-91 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 92-94 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `381cfdf4c97468cae64bef916d0858bbdcfb9fe06354c42defd4dee481e5aec2`
+Source normalized SHA256: `4009d8200f1063e9b4307569ecdac3f293fca6f7825462b73f146f6c54bddb8c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -39,7 +40,8 @@ Source normalized SHA256: `381cfdf4c97468cae64bef916d0858bbdcfb9fe06354c42defd4d
 | [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer | 58-69 |
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] Team shells, local controller and map references | 70-77 |
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real logged-in pointer input | 78-86 |
-| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real scene entry and permanent object identity | 87-95 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real scene entry and permanent object identity | 87-97 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment | 98-100 |
 
 ## Docs/AI/DECISIONS.en.md
 

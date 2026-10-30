@@ -89,3 +89,8 @@
 - QuickPanel 两个分页按钮在任务内容顶部对齐，尺寸为 40x64；折叠按钮为 34x34，使用现有 RO 箭头；任务视口高度为 216 像素。保留原任务代码及其折叠行为。Moshenta 世界相机 depth=-1，先于 depth=0 的 UI 相机。清空其遗留 Mouse X/Mouse Y 轴名，与主城一致，避免与 CameraMgr 的右键输入争用；保留原有 Y=0.5 默认值，轨道配置与正常缩放配置一致。
 - 本轮修改六个业务文件，无新增资源或 .meta 文件；副本/队伍业务累计清单为 64 个文件。完整清单、早期失败方案与回执见 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。用户对 CameraMgr.cs、QuickTaskPanelWidget.cs 的改动仍排除在本次提交之外，未覆盖。
 - 最终真实流程 主城 -> Moshenta -> 主城 -> Moshenta 通过，四次快照的模型/Animator/控制器实例 ID 相同，且 modelScene 始终为 DontDestroyOnLoad。镜头跟随同一模型，HUD 正常绘制，主城小地图恢复、副本小地图隐藏，console errors=0。Editor 保持在 Moshenta 的 Play 状态，队伍为单人。多人隔离、Player 构建、完整战斗及受控移动回归仍未验证。
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 队伍 HUD 红线对齐
+
+- 将 QuickPanel.prefab 的 QuickTeamWidget/All_TeamInfo 从 (168, -320) 移至 (148, -292)：向左 20 个 UI 像素、向上 28 个 UI 像素，与用户红线参考对齐。仅修改此预制体位置；无新增资源或 .meta 文件。已同步运行实例，真实射线点击打开/关闭组队窗口通过。证据：_temp/dungeon-entry-20261030/compact-team-redline.png。完整日志：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。

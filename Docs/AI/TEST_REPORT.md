@@ -94,3 +94,8 @@
 - 紧凑 UI 的真实指针检查通过任务/队伍切换及折叠/恢复；折叠后列表右缘=-1.5501 屏幕像素，完全位于屏幕外。源分页/折叠按钮尺寸为 40x64 / 34x34，任务视口高度=216。未将测试组件或 Mock 主角保存到正式场景/预制体。
 - 证据：_temp/dungeon-entry-20261030/permanent-actor-verification.json、map-lifecycle-verification.json、city-layout.png、permanent-dungeon.png；截图由实际运行中的主/UI 相机离屏渲染。脚本编译通过，限定范围 diff 检查通过，最终 console errors=0。临时布局生成器曾使用错误的箭头子物体组件路径，验证器曾有相机变量遮蔽问题；均已纠正，未向正式业务添加兜底逻辑。被中断/停止的 Play 会话通过正常 UI 重新启动；未将凭据写入项目文件或记录。
 - 未执行：Player 构建、多人队伍/副本隔离、完整战斗、受控键盘/点击移动及镜头碰墙回归。保留现有右键/滚轮镜头逻辑。完整修改日志：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 队伍 HUD 红线对齐
+
+- 保存的预制体与运行实例均使用 anchoredPosition=(148, -292)，此前为 (168, -320)。已将实际相机图像与用户红线参考对照检查；真实 EventSystem 射线点击成功打开并关闭组队窗口。证据：_temp/dungeon-entry-20261030/compact-team-redline.png。本轮仅检查位置调整；未执行 Player 构建或额外的场景/战斗回归。

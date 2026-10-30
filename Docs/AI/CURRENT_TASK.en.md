@@ -87,3 +87,8 @@
 - QuickPanel's two tabs are aligned at the task-content top with 40x64 buttons; the fold button is 34x34 and uses the existing RO arrow; task viewport height is 216 pixels. Existing quest code and its fold behavior are preserved. Moshenta world-camera depth is -1 before UI depth 0. Its legacy Mouse X/Mouse Y axis names are cleared to match the city and avoid competing with CameraMgr's right-button input; the existing Y=0.5 default is retained and orbits match the normal zoom configuration.
 - Six business files modified, no new resource/meta files; cumulative dungeon/team business inventory is 64 files. Full manifest, earlier failed approaches and receipts: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md. User changes to CameraMgr.cs and QuickTaskPanelWidget.cs remain excluded from this commit.
 - Final live flow city -> Moshenta -> city -> Moshenta passed with identical model/Animator/controller instance IDs and modelScene=DontDestroyOnLoad throughout. Camera follows the same model, HUD renders, city minimap restores and dungeon minimap hides, console errors=0. Editor remains playing in Moshenta with the single-member team. Multiplayer isolation, Player build, full combat and controlled movement regression remain unverified.
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 Team HUD red-line alignment
+
+- Moved QuickPanel.prefab QuickTeamWidget/All_TeamInfo from (168, -320) to (148, -292): 20 UI pixels left and 28 up, matching the user red-line reference. Only this prefab placement changed; no new resources/meta files. Live instance updated and real raycast group-window open/close passed. Evidence: _temp/dungeon-entry-20261030/compact-team-redline.png. Full log: 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md.
