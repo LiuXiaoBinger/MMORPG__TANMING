@@ -181,3 +181,52 @@ Codex 原生子 Agent `/root/sync_team_repair` 已完成三份中文摘要同步
 token-monitor 的过去 1 天项目报告覆盖 3 个聊天、744 轮，输入 `1.5M`、输出 `390.2k`、缓存读取 `116.3M`、估算费用 `~$28.96`；Codex 适配器为实验性来源，不作为本任务精确账单或订阅余额。原始 collect/report 在 `_temp/dungeon-team-20261030/token-collect.txt`、`token-report.txt`。上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证没有独立 token/占比；本轮 Codex 子 Agent 独立用量未披露，无新增 WorkBuddy/豆包轮次。账户剩余额度本地不可测。
 
 业务与本轮记录提交 `5c68d65`：`fix: 修复队伍点击并接入RO任务队伍快捷切换`，共 19 个文件（10 个业务文件、9 个记录/分析文件）。提交前清单、哈希、增量同步和定向检查均通过，见 `_temp/dungeon-team-20261030/staged-check.json`。`git push origin codex/feature-development` 退出码 0，远端回执 `e26eb10..5c68d65 codex/feature-development -> codex/feature-development`；未合 main、未强推。此回执单独提交，不重复同步未变化的协作入口。其他用户改动仍保留在工作区。
+
+
+## 2026-10-30 入塔异常、主角永久常驻与镜头/快捷区优化
+
+沿用原 DUNGEON-TEAM-20261029 的 Codex 接手及日志写入授权；本轮继续处理用户实际进塔报错，并按后续明确要求优化 UI、主角始终留在 DontDestroyOnLoad、修复镜头。基线 d1d9658，分支 codex/feature-development。
+
+### 本轮逐项文件
+
+仅修改下列 6 个业务文件，无新增/移动/删除文件，.meta 无变化；累计队伍/副本业务清单 64 个文件。用户已有 CameraMgr.cs、QuickTaskPanelWidget.cs 等未提交改动保留，不混入本轮提交。
+
+| 操作 | 项目根相对路径 | 具体变化 |
+|---|---|---|
+| 修改 | `LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/MinMapWindow.cs` | 按 sceneLoaded 重新绑定；无辅助点隐藏，返回可用场景恢复，卸载间隙不访问旧对象。 |
+| 修改 | `LYF_MMO/Assets/GM_Game/Scripts/Common/Utils/MinMapHelp.cs` | 销毁时清理自身静态引用，避免常驻窗口拿到旧场景节点。 |
+| 修改 | `LYF_MMO/Assets/GM_Game/Scripts/Manger/SceneMgr.cs` | 玩法场景切换前停止旧导航和方向移动，沿既有加载接口切换。 |
+| 修改 | `LYF_MMO/Assets/GM_Game/Scripts/Manger/MainCityMgr.cs` | 首次创建主角即常驻；目标场景只更新同一模型/实体出生点及相机；共用原 TCP 入场上报。 |
+| 修改 | `LYF_MMO/Assets/artres/Resources/UI/Prefabs/ROCharacterLightingDemo/QuickPanel.prefab` | 页签对齐、折叠按钮缩小换原 RO 箭头、任务列表加高；保留任务业务脚本。 |
+| 修改 | `LYF_MMO/Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001.unity` | 世界相机 depth=-1；关闭旧输入轴，保留 Y=0.5 并对齐默认轨道，避免贴脸与覆盖 HUD。 |
+
+### 根因、方案与真实修正过程
+
+1. 原始报错是 MinMapWindow.Update:45 访问已销毁 MinMapHelp：UIRoot 常驻而主城辅助点随场景卸载。窗口改为订阅 sceneLoaded 重新绑定，无配置场景隐藏，隐藏时仍保留订阅，销毁时解除。辅助点 OnDestroy 只清理属于自己的静态入口。魔神塔没有小地图辅助点，本轮不伪造地图资源。
+2. 先验证了“临时放入 DontDestroyOnLoad、到目标场景后移入该场景”的复用方案，实例未重建；用户进一步明确要求始终常驻，最终删除移回场景的操作，首次创建即 DontDestroyOnLoad。之后只停止旧导航/移动、更新出生点及实体位置组件、重绑目标相机，不 Reset/SetGameObject 或重建控制器和 Animator。初始加载与迁移共用原入场协议发送函数，服务器字段和调用语义不扩展。
+3. 镜头贴脸时运行 Y=0，距离约 1.84m；文件原本已默认 Y=0.5，不能误归因为默认值。实际差异是副本还使用 Mouse X/Mouse Y 旧输入轴，与项目右键 Mouse 输入并行。最终按主城清空旧轴名，轨道对齐正常缩放；世界相机绘制深度由 0 改 -1，让 UI 深度 0 后画。验证后 Y=0.5、距离约 10.32m，UI 操作不再压低镜头。
+4. 页签列对齐任务内容顶部，按钮 40x64；折叠按钮 34x34、使用原 RO 收缩箭头，视口高 216；折叠后列表右边缘 -1.5501 屏幕像素，完全离屏。原任务脚本和数据不改。临时构建脚本一度取错箭头子组件路径，折叠验证脚本出现 camera 变量遮蔽编译错误，修正均限测试/构建脚本，不向业务添加重试或防御框架。
+5. EditMode 普通 MonoBehaviour 不自动执行运行时销毁回调，首次静态清理结果不能当运行时失败；隔离验证明确反射调用回调，再用真实登录场景往返验证实际生命周期。期间一次运行已停止，重新走正常登录/服务器/角色入口；用户凭据未写入项目文件或记录。
+
+### 验证、证据与边界
+
+- 隔离专用临时场景：首辅助点绑定、销毁旧引用后 Update、安全隐藏、显式销毁回调清静态、绑定新辅助点恢复均通过，测试场景关闭，不挂测试组件到正式资产。
+- 真实角色“主城 -> 魔神塔 -> 主城 -> 魔神塔”四份快照：模型 -6380022、Animator -6380026、MainRoleCtrl -6380952 均一致，modelScene 均为 DontDestroyOnLoad。角色 UID 未变，相机跟随原模型；入塔和回城均不重建主角。
+- 魔神塔出生点 (132.97,58.89,60.95)，2m 内导航采样 True；主城原出生附近导航采样在修改前后均为 False，未把既有主城导航问题写成已修复。回城小地图恢复，新进塔清理旧引用并隐藏，单人队伍保留。
+- 编译及定向检查通过；副本 HUD 正常，实际射线打开/关闭组队窗后 Y 仍 0.5，最终 Console Error=0，游戏保持在魔神塔运行且未暂停。
+- 证据：_temp/dungeon-entry-20261030/original-error.json、map-lifecycle-verification.json、permanent-actor-verification.json、city-layout.png、permanent-dungeon.png、business-inventory.json。截图为实际登录角色与主/UI 相机离屏渲染。
+- 未验证 Player 构建、多人副本隔离/联网组队、完整战斗、受控键鼠移动和镜头碰墙回归；保留现有右键/滚轮逻辑，不宣称新做避障系统。
+
+### 同步、技能、用量与 Git
+
+Codex 原生子 Agent `/root/sync_entry_persistence` 已完成 CURRENT_TASK、TEST_REPORT 两段中文同步与本轮增量一致性检查，结果通过；原字节前缀保留，英文输入未变化。提供方 OpenAI / Codex，实际模型标识未披露，子任务未使用技能。证据为 `_temp/dungeon-entry-20261030/sync-check.json`、`chinese-sections.json`；主 Agent 仅核对范围、哈希和检查证据。
+
+本轮实际技能：unity-mcp-orchestrator 定位异常、验证真实场景往返/原生实例身份/镜头/HUD及 UI 点击；karpathy-guidelines 仅适配现有加载、模型、相机配置，不增加迁移框架；project-subagent-coordination 管理记录同步；task-log-policy 沿用原队伍任务日志授权并维护目录；token-monitor 执行 collect/report 和当前对话压缩事件统计。
+
+主会话可观测窗口从 `2026-10-30T03:39:43.713Z` 开始，包含后续 UI/持久化/镜头的需求补充；截至 usage 事件 `2026-10-30T08:50:49.614Z`，74 个 last_token_usage 求和：input `26,622,949`（含 cached input `26,557,440`），output `83,389`（含 reasoning output `54,395`，不重复叠加）。后续收尾未纳入此快照。原始汇总为 `_temp/dungeon-entry-20261030/task-usage.json`。
+
+对话日志统计至 `2026-10-30T08:54:16.021Z`，**当前对话累计上下文压缩 1 次**，不按本任务计数；证据为 `_temp/dungeon-entry-20261030/conversation-compactions.json`。token-monitor 项目过去 1 天窗口覆盖 5 个聊天、674 轮，显示输入 `1.4M`、输出 `441.1k`、缓存读取 `128.6M`、估算费用 `~$31.71`。这是实验性适配器的跨聊天估算，不是本任务精确账单或订阅余额；原始报告在 `_temp/dungeon-entry-20261030/token-collect.txt`、`token-report.txt`。
+
+分项边界：上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证没有独立 token 或占比；本轮原生子 Agent 独立用量未披露，未新增 WorkBuddy/豆包执行。账户剩余额度本地不可测。临时用量脚本生成命令曾因 PowerShell 引号失败，改为结构化写文件后成功，未改业务或伪造统计。
+
+实际提交与推送回执在执行后补至本段，不重复同步未变化的入口。

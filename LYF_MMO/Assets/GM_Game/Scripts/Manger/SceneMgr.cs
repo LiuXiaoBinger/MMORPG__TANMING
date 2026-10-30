@@ -34,6 +34,7 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="callback">目标场景加载成功后执行一次的业务回调。</param>
     public void LoadSceneMode(SceneType sceneType, Action callback = null)
     {
+        PrepareLocalRoleForSceneChange(sceneType);
         // 本次场景加载句柄；Single模式自动卸载旧场景并激活目标场景。
         SceneOperationHandle handle = Global.Instance.YooPackage.LoadSceneAsync(
             ResolveSceneLocation(sceneType),
@@ -85,6 +86,29 @@ public class SceneMgr : Singleton<SceneMgr>
                 callback.Invoke();
             }
         });
+    }
+
+    /// <summary>玩法场景切换前停止旧路线和方向输入；原主角自首次创建起始终常驻。</summary>
+    /// <param name="sceneType">仅主城和魔神塔携带主角；登录与创角沿用原有角色清理流程。</param>
+    private static void PrepareLocalRoleForSceneChange(SceneType sceneType)
+    {
+        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_DungeonMoshenta)
+        {
+            return;
+        }
+        if (Global.Instance.SceneWorld == null)
+        {
+            return;
+        }
+        // 当前角色及其已加载模型，首次进城尚无模型时仍走原创建流程。
+        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+        if (localRole == null || !localRole.Model.IsLoaded || !localRole.Model.GameObject.IsValid)
+        {
+            return;
+        }
+        // 旧场景的路线与方向输入不应在目标场景继续推进。
+        localRole.NavComp.Interrupt();
+        localRole.MoveComp.StopHorizontalMovement();
     }
 
     /// <summary>

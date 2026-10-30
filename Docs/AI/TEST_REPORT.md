@@ -83,3 +83,14 @@
 - 证据：_temp/dungeon-team-20261030/final-real-ui-verification.json、real-team-verification.json、hud-task.png、hud-team.png、team-window.png。图片由实际运行中的主/UI 摄像机离屏渲染，排除头像 RenderTexture 摄像机。主脚本编译无错误。临时验证器曾引用不存在的 SceneWorld 类型，已通过反射修正；正式代码未受影响。
 - 直接 ScreenCapture 最初产生两条截图工具错误；清理该段 Console 历史前，已导出至 _temp/dungeon-team-20261030/capture-tool-errors.json。替代离屏截图成功，随后最终关闭窗口时 Console 错误为 0。未绕过截图工具禁止输出到项目外的限制；图片由临时摄像机渲染器写入项目根目录下的 _temp。
 - 未验证：真实魔神塔进塔/移动、多人联网/副本隔离、Player 构建。编译后因密码未保存，由用户重新进入主城；未收集或记录凭据。完整过程：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 真实场景往返与永久对象身份
+
+- 原始错误见 _temp/dungeon-entry-20261030/original-error.json：Single 场景加载后，MinMapWindow.Update 第 45 行访问已销毁的主城 MinMapHelp。Moshenta 没有 MinMapHelp。隔离的专用 EditMode 场景检查通过首次绑定、缓存辅助对象已销毁时更新、显式销毁回调清理、缺少辅助对象时隐藏、绑定新辅助对象并恢复显示。EditMode 不会自动派发普通 MonoBehaviour 生命周期回调，验证器显式调用这些回调；此处不声称进行了真实场景切换。
+- 真实账号通过现有登录/角色 UI，再通过正式挑战事件及已加载的主题 id7 / SceneMgr，执行 主城 -> Moshenta -> 主城 -> Moshenta。最终模型 ID -6380022、Animator ID -6380026、MainRoleCtrl ID -6380952 在四次快照中均保持相同，所有 modelScene 均为 DontDestroyOnLoad。用户澄清后，临时保留再 MoveGameObjectToScene 的方案已被替代，不是最终实现。
+- Moshenta 出生点=(132.97,58.89,60.95)，2m 内导航采样=True；相机跟随原模型，世界相机 depth=-1，UI 相机 depth=0。返回主城后小地图恢复；副本清除旧辅助对象及静态引用并隐藏小地图。受测主城出生点的既有导航采样在本轮修改前后均为 False；未修改主城导航，也未声称已修复。
+- 镜头诊断：运行时 Y 曾降至 0，镜头距离约 1.84m，而保存的场景原本就默认 Y=0.5。Moshenta 与主城不同，保留了遗留 Mouse X/Mouse Y 输入轴名，与右键镜头处理争用。清空轴名并对齐轨道默认值后，Y=0.5、距离约 10.32m；真实指针打开/关闭队伍窗口验证通过，Y 仍为 0.5。未覆盖用户的 CameraMgr 代码。
+- 紧凑 UI 的真实指针检查通过任务/队伍切换及折叠/恢复；折叠后列表右缘=-1.5501 屏幕像素，完全位于屏幕外。源分页/折叠按钮尺寸为 40x64 / 34x34，任务视口高度=216。未将测试组件或 Mock 主角保存到正式场景/预制体。
+- 证据：_temp/dungeon-entry-20261030/permanent-actor-verification.json、map-lifecycle-verification.json、city-layout.png、permanent-dungeon.png；截图由实际运行中的主/UI 相机离屏渲染。脚本编译通过，限定范围 diff 检查通过，最终 console errors=0。临时布局生成器曾使用错误的箭头子物体组件路径，验证器曾有相机变量遮蔽问题；均已纠正，未向正式业务添加兜底逻辑。被中断/停止的 Play 会话通过正常 UI 重新启动；未将凭据写入项目文件或记录。
+- 未执行：Player 构建、多人队伍/副本隔离、完整战斗、受控键盘/点击移动及镜头碰墙回归。保留现有右键/滚轮镜头逻辑。完整修改日志：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。

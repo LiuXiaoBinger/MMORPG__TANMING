@@ -80,3 +80,12 @@
 - 快捷“创建队伍”行现在直接请求创建本地单人队伍，与 RO QuickTeamPanelHandler.lua 一致。创建时绑定已登录的 PlayerEntity 并选中队伍页签。组队按钮打开正式窗口；关闭后重开保留成员状态，离队恢复空队伍状态。修正成员昵称/头像间距与创建按钮背景。
 - 本轮返修改动 10 个业务文件（6 个修改、4 个新增，新增项含两个 .meta 文件）；副本/组队业务文件清单累计 62 个。完整清单与回执：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。用户任务代码及其他待提交改动未纳入暂存。
 - 用户为验收重新登录后，真实登录主城 UI 流程通过。Editor 保持运行，窗口已关闭，当前选中单人队伍 HUD。联网组队、匹配/邀请效果、Player 构建及真实魔神塔进塔/移动仍不在本次已验证的 UI 流程范围内。
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 小地图生命周期、主角永久保留与镜头跟进
+
+- 修复已报告的 MinMapWindow.Update MissingReferenceException：常驻窗口在 sceneLoaded 时重新绑定 MinMapHelp，场景没有辅助对象时隐藏，隐藏期间仍保持订阅，以便进入配置了辅助对象的场景后恢复显示。MinMapHelp.OnDestroy 清除自身静态引用。未为副本虚构小地图图片或辅助对象。
+- 按用户澄清后的要求，本地主角的原生模型从首次创建起进入 DontDestroyOnLoad，并始终保留其中。SceneMgr 在加载游戏场景前停止旧导航及方向移动。MainCityMgr 将已有模型/实体移动至配置出生点，并按 UID 执行一次场景相机重新绑定；不重置或重建模型，也不将模型移回游戏场景。首次创建与复用共用现有 TCP 进入世界位置上报，协议不变。
+- QuickPanel 两个分页按钮在任务内容顶部对齐，尺寸为 40x64；折叠按钮为 34x34，使用现有 RO 箭头；任务视口高度为 216 像素。保留原任务代码及其折叠行为。Moshenta 世界相机 depth=-1，先于 depth=0 的 UI 相机。清空其遗留 Mouse X/Mouse Y 轴名，与主城一致，避免与 CameraMgr 的右键输入争用；保留原有 Y=0.5 默认值，轨道配置与正常缩放配置一致。
+- 本轮修改六个业务文件，无新增资源或 .meta 文件；副本/队伍业务累计清单为 64 个文件。完整清单、早期失败方案与回执见 项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。用户对 CameraMgr.cs、QuickTaskPanelWidget.cs 的改动仍排除在本次提交之外，未覆盖。
+- 最终真实流程 主城 -> Moshenta -> 主城 -> Moshenta 通过，四次快照的模型/Animator/控制器实例 ID 相同，且 modelScene 始终为 DontDestroyOnLoad。镜头跟随同一模型，HUD 正常绘制，主城小地图恢复、副本小地图隐藏，console errors=0。Editor 保持在 Moshenta 的 Play 状态，队伍为单人。多人隔离、Player 构建、完整战斗及受控移动回归仍未验证。

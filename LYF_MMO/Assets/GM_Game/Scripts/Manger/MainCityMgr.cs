@@ -30,7 +30,7 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>是否已经发送进入主城请求，避免异步补建模型时重复发送。</summary>
    private bool _enterWorldSent;
 
-   /// <summary>当前已经发起模型加载的本地主角 UID，防止异步完成前重复请求资源。</summary>
+   /// <summary>本场景已发起加载或已接管的主角 UID，避免重复加载及每帧重复定位。</summary>
    private ulong _localRoleCreateRequestedUid;
 
    /// <summary>
@@ -197,13 +197,17 @@ public class MainCityMgr : MonoBehaviour
          Debug.LogError("本地主角表现创建失败：基础角色信息为空。", this);
          return;
       }
-      // 切换场景后旧模型对象已随旧场景销毁，但 MModel 仍记录为已加载；
-      // 这里先回收这份失效状态，否则新场景不会重建本地主角表现。
-      if (localRole.Model.IsLoaded && !localRole.Model.GameObject.IsValid)
+      // 切场景沿用同一模型，只在本场景首次接管时迁移、定位并重新绑定相机。
+      if (localRole.Model.IsLoaded)
       {
-         localRole.Model.Reset();
+         if (_localRoleCreateRequestedUid != localRole.UID)
+         {
+            PlaceExistingLocalRole(localRole);
+            _localRoleCreateRequestedUid = localRole.UID;
+         }
+         return;
       }
-      if (localRole.Model.IsLoaded || localRole.Model.IsLoading)
+      if (localRole.Model.IsLoading)
       {
          return;
       }
@@ -226,6 +230,54 @@ public class MainCityMgr : MonoBehaviour
       Debug.Log("开始加载本地主角模型：" + prefabPath +
          "，角色 ID：" + localRole.BaseInfo.RoleId, this);
       CreateRole(RoleType.MainRole, localRole, prefabPath);
+   }
+
+   /// <summary>保持主角位于 DontDestroyOnLoad，只更新出生位置并让当前场景相机跟随原模型。</summary>
+   /// <param name="localRole">原有玩家实体，模型、控制器和动画实例保持不变。</param>
+   private void PlaceExistingLocalRole(PlayerEntity localRole)
+   {
+      // 自首次创建起常驻的原生模型，切场景不改变对象归属和实例身份。
+      GameObject roleObject = localRole.Model.GameObject.NativeObject;
+      // 目标场景出生世界坐标，与首次创建角色使用同一配置。
+      Vector3 spawnPosition = ResolveMainRoleSpawnPosition();
+      localRole.Position = spawnPosition;
+      // 同步实体位置组件，保留原模型当前朝向，不重新初始化动画或角色控制器。
+      EntityTransformComponent transformComponent;
+      localRole.Components.TryGet(EntityComponentType.Scene, out transformComponent);
+      transformComponent.Apply(new EntityTransformSnapshot
+      {
+         X = spawnPosition.x,
+         Y = spawnPosition.y,
+         Z = spawnPosition.z,
+         Yaw = roleObject.transform.eulerAngles.y
+      });
+      if (CameraMgr.Instance != null)
+      {
+         // 新场景相机使用原主角及其注视点，旧场景相机由 Unity 正常卸载。
+         Transform lookAtTransform = FindChildTransform(roleObject.transform, "LookAtPos");
+         CameraMgr.Instance.InitCamera(roleObject.transform, lookAtTransform);
+      }
+      NotifyEnterWorld(localRole, localRole.BaseInfo);
+   }
+
+   /// <summary>沿原 TCP 入场协议上报本场景出生点，新建与迁移角色共用同一发送入口。</summary>
+   /// <param name="sceneEntity">已经位于出生点的角色实体。</param>
+   /// <param name="baseInfo">服务器下发的角色基础信息，提供持久化角色 ID。</param>
+   private void NotifyEnterWorld(MEntity sceneEntity, RoleBaseInfo baseInfo)
+   {
+      if (_enterWorldSent)
+      {
+         return;
+      }
+      // 入场前的 KCP 位移与 TCP 请求不保证先后，入场请求仍携带出生世界坐标。
+      Vector3 spawnPosition = sceneEntity.Position;
+      // 本场景唯一一次入场请求，坐标沿用既有下划线格式和世界米单位。
+      EnterWroldReq request = new EnterWroldReq();
+      request.RoleId = baseInfo.RoleId;
+      request.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
+         spawnPosition.x, spawnPosition.y, spawnPosition.z);
+      MNetClient.Instance.Send(NetDefine.CMD_EnterWroldCode, request.ToByteString());
+      _enterWorldSent = true;
    }
 
    /// <summary>按职业配置选择本地主角模型资源路径。</summary>
@@ -505,6 +557,8 @@ public class MainCityMgr : MonoBehaviour
                RoleAnimatorControllerLocation, false);
             if (roleType == RoleType.MainRole)
             {
+               // 主角的生命周期归全局角色实体所有，场景卸载不再销毁模型、动画器和控制器。
+               DontDestroyOnLoad(obj);
                BindMainRoleCompatibilityController(obj, sceneEntity, baseInfo);
                // 主界面先于异步主角模型创建，在输入组件就绪后补齐技能和界面快捷键订阅。
                UIRoot.Instance.RegisterMainUIKeyHandler();
@@ -522,21 +576,9 @@ public class MainCityMgr : MonoBehaviour
                Transform lookAtTransform = FindChildTransform(obj.transform, "LookAtPos");
                CameraMgr.Instance.InitCamera(obj.transform, lookAtTransform);
             }
-            if (roleType == RoleType.MainRole && !_enterWorldSent)
+            if (roleType == RoleType.MainRole)
             {
-               // 模型已按出生点定位，出生坐标随这次 TCP 入场请求一起上报：
-               // 实时协议已改走 KCP，入场前的移动上报与入场请求没有先后保证，
-               // 服务器必须拿到出生坐标才能在附近过滤前写入角色位置。
-               // 本次入场使用的出生坐标，取已就位的本地主角实体位置（世界米）。
-               Vector3 spawnPosition = sceneEntity.Position;
-               // 本次 TCP 入场请求，携带角色 ID 与出生坐标，服务器在附近过滤前写入角色位置。
-               EnterWroldReq request = new EnterWroldReq();
-               request.RoleId = baseInfo.RoleId;
-               // 沿用正式基础快照的下划线坐标格式（世界米），与移动上报写入的位置同一格式。
-               request.Pos = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
-                  spawnPosition.x, spawnPosition.y, spawnPosition.z);
-               MNetClient.Instance.Send(NetDefine.CMD_EnterWroldCode, request.ToByteString());
-               _enterWorldSent = true;
+               NotifyEnterWorld(sceneEntity, baseInfo);
             }
             Debug.Log("角色表现绑定成功，角色 UID：" + requestedUID +
                "，资源路径：" + prefabPath, this);

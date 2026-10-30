@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `6e3785a12595f6d479572ab8c12e633ca9e2d37e446c216d6f2135727d7f2dd6`
+Source normalized SHA256: `f7c0d77f9a1b942ecf372b69274932a41f2e7ba5fd53a3bc496cd7b7ac070ce3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -21,11 +21,12 @@ Source normalized SHA256: `6e3785a12595f6d479572ab8c12e633ca9e2d37e446c216d6f213
 | [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-MIN-ENV-20261027] Fixed dusk environment on Moshenta | 44-55 |
 | [CODE][FILES][HANDOFF][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Automatically consume the existing RO bake in edit mode | 56-66 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] RO team UI and local party entry | 67-74 |
-| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real-input repair and shared quick panel | 75-80 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real-input repair and shared quick panel | 75-82 |
+| [CODE][FILES][HANDOFF][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 minimap lifetime, permanent player and camera follow-up | 83-89 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1280e64cacfa8e65bc26dd27d1706c0e44b32cc76ab16755c41704d780cd2774`
+Source normalized SHA256: `381cfdf4c97468cae64bef916d0858bbdcfb9fe06354c42defd4dee481e5aec2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -37,7 +38,8 @@ Source normalized SHA256: `1280e64cacfa8e65bc26dd27d1706c0e44b32cc76ab16755c4170
 | [VERIFY][场景][RO-MOSHENTA-MIN-ENV-20261027] Incremental environment acceptance | 46-57 |
 | [VERIFY][场景][RO-MOSHENTA-EDITOR-LIGHTMAP-APPLY-20261027] Existing bake visible in the current Mesh Renderer | 58-69 |
 | [VERIFY][副本组队][DUNGEON-TEAM-20261029] Team shells, local controller and map references | 70-77 |
-| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real logged-in pointer input | 78-84 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real logged-in pointer input | 78-86 |
+| [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 real scene entry and permanent object identity | 87-95 |
 
 ## Docs/AI/DECISIONS.en.md
 
