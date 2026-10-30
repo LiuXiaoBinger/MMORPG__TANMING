@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>
@@ -28,6 +29,12 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
 
     /// <summary>组队目标ID缺省值，对应 RO TeamData.autoPairTarget = 1000。</summary>
     private const int DefaultTeamTargetId = 1000;
+
+    /// <summary>
+    /// 邀请页"附近的人"可见距离上限（米）。
+    /// 与服务端 RoleManager.IsNearbyRole 的 100 米口径保持一致，避免界面列出服务器认为不可见的角色。
+    /// </summary>
+    private const float NearbyCandidateRangeMeters = 100f;
 
     /// <summary>职业头像所在图集的 Resources 路径，用于按职业取已有精灵。</summary>
     private const string ProfessionAtlasResourcePath = "UI/Atlas/Common";
@@ -91,6 +98,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.InviteRejected += OnInviteRejected;
             _teamWindow.ApplicationAgreed += OnApplicationAgreed;
             _teamWindow.ApplicationRejected += OnApplicationRejected;
+            _teamWindow.PageOpened += OnPageOpened;
         }
         if (_quickTeamWidget != null)
         {
@@ -235,6 +243,92 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     {
         _teamCtrl.AcceptTeamInvatation(TeamData.Instance.ApplyTeamId,
             TeamData.Instance.ApplyApplicantId, false);
+    }
+
+    /// <summary>打开或切换队伍界面后刷新邀请页附近候选，不做每帧轮询。</summary>
+    private void OnPageOpened()
+    {
+        RefreshInviteCandidates();
+    }
+
+    /// <summary>把当前场景真实附近的玩家交给队伍窗渲染成邀请候选行。</summary>
+    private void RefreshInviteCandidates()
+    {
+        if (_teamWindow == null)
+        {
+            return;
+        }
+        _teamWindow.SetInviteCandidates(CollectNearbyCandidates());
+    }
+
+    /// <summary>
+    /// 从当前场景世界收集可邀请的真实附近玩家，对应 RO TeamInviteCtrl:SetPanelByInfo 的候选来源，
+    /// 但本项目没有 RO 的 GetInvitationList 推荐协议，因此复用服务器已同步的真实远端角色实体，
+    /// 不引入 Mock、临时假角色或手输ID替代。
+    /// 过滤口径：排除本人、已离开或资料缺失的实体、同队成员、不同地图或不同实例、超出 100 米的角色。
+    /// </summary>
+    /// <returns>可邀请候选人列表，顺序与场景实体快照一致；无候选时返回空列表。</returns>
+    private static List<TeamMemberInfo> CollectNearbyCandidates()
+    {
+        // 本次要返回的候选列表，逐项填充后交给队伍窗渲染。
+        List<TeamMemberInfo> candidates = new List<TeamMemberInfo>();
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return candidates;
+        }
+        // 当前场景世界，其远端角色由服务器 CMD_SyncotherOnlineCode 同步下来，是唯一的真实候选来源。
+        SceneWorldSystem world = Global.Instance.SceneWorld;
+        // 本地主角实体，用它作为地图、实例与距离的比较基准。
+        PlayerEntity localRole = world.LocalRole;
+        if (localRole == null || localRole.BaseInfo == null)
+        {
+            return candidates;
+        }
+        // 本地主角的基础信息，代表本人所在的地图与实例。
+        RoleBaseInfo localInfo = localRole.BaseInfo;
+        // 场景实体快照，覆盖当前已进入世界的全部实体，已离开的角色不在其中。
+        List<MEntity> entities = new List<MEntity>();
+        world.CopyEntities(entities);
+        // index 为实体快照的零基下标，范围 [0, entities.Count)，逐个判断是否为可邀请候选。
+        for (int index = 0; index < entities.Count; index++)
+        {
+            // 当前快照实体；只有其他玩家角色才可能是候选，怪物与投射物直接排除。
+            RoleEntity candidate = entities[index] as RoleEntity;
+            if (candidate == null)
+            {
+                continue;
+            }
+            // 候选角色由服务器同步下来的基础资料，缺失或非法ID说明尚未就绪。
+            RoleBaseInfo info = candidate.BaseInfo;
+            if (info == null || info.RoleId <= 0 || info.RoleId == localInfo.RoleId)
+            {
+                continue;
+            }
+            // 不同地图或不同副本实例的角色互相不可见，不能作为候选。
+            if (info.MapId != localInfo.MapId || info.InstanceId != localInfo.InstanceId)
+            {
+                continue;
+            }
+            // 超出服务器可见距离的角色不算"附近的人"。
+            if ((candidate.Position - localRole.Position).sqrMagnitude >
+                NearbyCandidateRangeMeters * NearbyCandidateRangeMeters)
+            {
+                continue;
+            }
+            // 已在当前队伍中的成员不需要再邀请。
+            if (TeamData.Instance.FindMember((ulong)info.RoleId) != null)
+            {
+                continue;
+            }
+            // 单个候选项，只携带界面需要的真实角色ID、昵称、等级与职业。
+            TeamMemberInfo item = new TeamMemberInfo();
+            item.RoleId = (ulong)info.RoleId;
+            item.Nickname = info.Nickname;
+            item.Level = info.Level;
+            item.JobId = info.JobId;
+            candidates.Add(item);
+        }
+        return candidates;
     }
 
     /// <summary>收起副本相关界面并加载魔神塔场景，主角由新场景的主城管理器重建。</summary>
@@ -404,6 +498,8 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.SetPendingApplication(TeamData.Instance.HasApplication,
                 TeamData.Instance.ApplyApplicantName);
             ApplyMemberSprites(members, localRoleId);
+            // 队伍状态变化后一并刷新附近候选，入队或离队会改变同队过滤结果。
+            RefreshInviteCandidates();
         }
         if (_quickTeamWidget != null)
         {
@@ -586,6 +682,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.InviteRejected -= OnInviteRejected;
             _teamWindow.ApplicationAgreed -= OnApplicationAgreed;
             _teamWindow.ApplicationRejected -= OnApplicationRejected;
+            _teamWindow.PageOpened -= OnPageOpened;
         }
         if (_quickTeamWidget != null)
         {

@@ -40,6 +40,11 @@ public static class TeamAuthoritySmoke
             CheckRepeatEnterKeepsInstance();
             CheckSpawnCoordinates();
             CheckWireDeliveryByLoopbackSocket();
+            CheckMainCityLeaveKeepsVisibility();
+            CheckNonCaptainMainCityLeaveKeepsTeam();
+            CheckSoloMainCityLeaveDissolvesWithoutTeleport();
+            CheckDungeonLeaveBroadcastsLeaveAndReturns();
+            CheckOfflineInMainCityStillRemovesRole();
         }
         catch (Exception ex)
         {
@@ -388,6 +393,257 @@ public static class TeamAuthoritySmoke
             "同队成员实例一致");
         TeamManager.Instance.LeaveTeam(2102UL);
         TeamManager.Instance.LeaveTeam(2101UL);
+    }
+
+    /// <summary>
+    /// 验证主城普通场景主动离队只清队伍关系：不广播离开、不改写位置，离队后双方仍互为可见。
+    /// 这是"主城退队后队友再也看不到我"的定向回归，断言同时覆盖帧与服务器权威字段。
+    /// </summary>
+    private static void CheckMainCityLeaveKeepsVisibility()
+    {
+        // 离队者甲：角色ID 3001，队长，在主城原地离队，是本用例的观察对象。
+        OnlineRole leaver = NewRole(3001, "主城离队甲");
+        // 旁观者乙：角色ID 3002，与甲同处主城且相邻，用于验证不会收到甲的离开通知。
+        OnlineRole observer = NewRole(3002, "主城旁观乙");
+        // 回环链路：甲占 Unity 会话 1，乙占 Unity 会话 2，服务端写出的真实帧都在这条连接上。
+        LoopbackLink link = new LoopbackLink(true);
+        leaver.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        leaver.mainRoleInfo.BaseInfo.InstanceId = 0;
+        leaver.mainRoleInfo.BaseInfo.Pos = "10_0_10";
+        observer.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        observer.mainRoleInfo.BaseInfo.InstanceId = 0;
+        observer.mainRoleInfo.BaseInfo.Pos = "12_0_10";
+        leaver.GateSessionId = link.SessionId;
+        leaver.UnitySessionId = 1;
+        observer.GateSessionId = link.SessionId;
+        observer.UnitySessionId = 2;
+
+        // 先建队并让乙入队，确保离队分支确实有队伍关系可清。
+        // 甲建队得到的队伍ID，后续用它查队长与成员数，验证主城离队只清关系、不改写位置。
+        ulong teamId = TeamManager.Instance.RequestCreateTeam(leaver, 1000);
+        TeamManager.Instance.InviteJoinTeam(leaver, 3002UL);
+        TeamManager.Instance.AcceptTeamInvatation(observer, teamId, 3001UL, true);
+        // 离队前的位置快照，用于比对离队后坐标是否被改写。
+        string posBefore = leaver.mainRoleInfo.BaseInfo.Pos;
+        link.ClearFrames();
+
+        // 甲在主城主动离队：只应清队伍关系，不应广播离开，也不应被传送回出生点。
+        TeamManager.Instance.LeaveTeam(3001UL);
+        // 离队后窗口内收到的全部真实帧，用于负向断言"乙没有收到离开通知"。
+        List<DecodedFrame> frames = link.WaitWindow(800);
+        // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
+        Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 2), "主城离队后乙仍收到队伍状态刷新");
+        Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 2), "主城离队未向同场景观察者广播 RoleLeave");
+        Expect(TeamManager.Instance.GetTeamId(3001UL) == 0UL, "主城离队后甲不在队伍");
+        Expect(leaver.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "主城离队后地图未被改写");
+        Expect(leaver.mainRoleInfo.BaseInfo.InstanceId == 0, "主城离队后实例未被改写");
+        Expect(leaver.mainRoleInfo.BaseInfo.Pos == posBefore, "主城离队后坐标未被传送回出生点");
+        Expect(RoleManager.IsNearbyRole(observer, leaver.mainRoleInfo), "主城离队后乙仍与甲互为可见");
+
+        // 离队后甲继续出现与移动，乙仍应收件，证明可见链路没有被离队切断。
+        link.ClearFrames();
+        RoleManager.Instance.BroadcastRoleEnterWorldByRole(leaver);
+        // 甲重新出现后乙收到的出现通知帧，用于证明离队没有切断乙的可见链路。
+        List<DecodedFrame> appearFrames = link.WaitFrames(NetDefine.CMD_SyncotherOnlineCode, 2, 1200);
+        Expect(HasFrame(appearFrames, NetDefine.CMD_SyncotherOnlineCode, 2), "主城离队后乙仍能收到甲的出现通知");
+        link.ClearFrames();
+        RoleManager.Instance.SyncMove(leaver, new SyncMoveNtf());
+        // 甲移动后乙收到的移动同步帧，用于证明离队同样没有切断乙的移动收件链路。
+        List<DecodedFrame> moveFrames = link.WaitFrames(NetDefine.CMD_SyncMoveCode, 2, 1200);
+        Expect(HasFrame(moveFrames, NetDefine.CMD_SyncMoveCode, 2), "主城离队后乙仍能收到甲的移动同步");
+
+        // 队长离队后队长转给剩余首人，随后乙离队解散队伍。
+        Expect(TeamManager.Instance.GetCaptainId(teamId) == 3002UL, "主城队长离队后队长转给剩余成员");
+        TeamManager.Instance.LeaveTeam(3002UL);
+        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "主城末人离队后队伍解散");
+        link.Close();
+    }
+
+    /// <summary>验证非队长在主城离队同样不广播离开、不动位置，且队伍仍由队长保留。</summary>
+    private static void CheckNonCaptainMainCityLeaveKeepsTeam()
+    {
+        // 队长：角色ID 3301，离队分支中不参与，用于验证队伍在他名下继续存在。
+        OnlineRole captain = NewRole(3301, "留任队长");
+        // 非队长成员：角色ID 3302，本用例中主动离队。
+        OnlineRole member = NewRole(3302, "离队队员");
+        // 回环链路：队长占 Unity 会话 1，离队队员占会话 2，服务端写出的真实帧都在这条连接上。
+        LoopbackLink link = new LoopbackLink(true);
+        captain.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        captain.mainRoleInfo.BaseInfo.InstanceId = 0;
+        captain.mainRoleInfo.BaseInfo.Pos = "30_0_30";
+        member.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        member.mainRoleInfo.BaseInfo.InstanceId = 0;
+        member.mainRoleInfo.BaseInfo.Pos = "32_0_30";
+        captain.GateSessionId = link.SessionId;
+        captain.UnitySessionId = 1;
+        member.GateSessionId = link.SessionId;
+        member.UnitySessionId = 2;
+
+        // 队长建队得到的队伍ID，用于断言非队长离队后队伍仍在队长名下保留。
+        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
+        TeamManager.Instance.InviteJoinTeam(captain, 3302UL);
+        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 3301UL, true);
+        // 离队前的坐标快照，用于比对非队长离队是否被传送。
+        string posBefore = member.mainRoleInfo.BaseInfo.Pos;
+        link.ClearFrames();
+
+        TeamManager.Instance.LeaveTeam(3302UL);
+        // 非队长离队后窗口内的全部真实帧，用于负向断言"队长没有收到离开通知"。
+        List<DecodedFrame> frames = link.WaitWindow(800);
+        // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
+        Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 1), "非队长主城离队后队长仍收到队伍状态刷新");
+        Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 1), "非队长主城离队未向队长广播 RoleLeave");
+        Expect(member.mainRoleInfo.BaseInfo.Pos == posBefore, "非队长主城离队后坐标未被改写");
+        Expect(TeamManager.Instance.GetTeamId(3302UL) == 0UL, "非队长离队后不再有队伍");
+        Expect(TeamManager.Instance.GetMemberCount(teamId) == 1, "非队长离队后队伍仍保留队长");
+        Expect(TeamManager.Instance.GetCaptainId(teamId) == 3301UL, "非队长离队不改变队长");
+
+        TeamManager.Instance.LeaveTeam(3301UL);
+        link.Close();
+    }
+
+    /// <summary>验证主城单人成队后离队即解散，同样不广播离开、不传送回出生点。</summary>
+    private static void CheckSoloMainCityLeaveDissolvesWithoutTeleport()
+    {
+        // 单人角色：角色ID 3401，主城原地建队后离队，队伍应直接解散。
+        OnlineRole solo = NewRole(3401, "主城单人");
+        // 回环链路：单人角色占 Unity 会话 1，服务端写出的真实帧都在这条连接上。
+        LoopbackLink link = new LoopbackLink(true);
+        solo.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        solo.mainRoleInfo.BaseInfo.InstanceId = 0;
+        solo.mainRoleInfo.BaseInfo.Pos = "40_0_40";
+        solo.GateSessionId = link.SessionId;
+        solo.UnitySessionId = 1;
+        // 单人建队得到的队伍ID，用于断言末人离队后队伍成员数归零即解散。
+        ulong teamId = TeamManager.Instance.RequestCreateTeam(solo, 1000);
+        // 离队前的坐标快照，用于比对单人离队是否被传送。
+        string posBefore = solo.mainRoleInfo.BaseInfo.Pos;
+        link.ClearFrames();
+
+        TeamManager.Instance.LeaveTeam(3401UL);
+        // 单人离队后窗口内的全部真实帧，用于负向断言"本人也没有收到离开通知"。
+        List<DecodedFrame> frames = link.WaitWindow(800);
+        // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
+        Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 1), "主城单人离队后本人仍收到空队伍状态");
+        Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 1), "主城单人离队未向本人广播 RoleLeave");
+        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "主城单人离队后队伍解散");
+        Expect(solo.mainRoleInfo.BaseInfo.Pos == posBefore, "主城单人离队后坐标未被传送");
+        Expect(solo.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "主城单人离队后仍在主城");
+        link.Close();
+    }
+
+    /// <summary>
+    /// 验证副本内离队仍按旧实例广播离开、服务器赋主城出生点并通知回城，
+    /// 且回城后主城观察者能收到该角色的出现，不能因为修主城退队 bug 把副本分支一起关掉。
+    /// </summary>
+    private static void CheckDungeonLeaveBroadcastsLeaveAndReturns()
+    {
+        // 副本队长：角色ID 3101，留在副本实例内，是"旧实例观察者"。
+        OnlineRole captain = NewRole(3101, "副本队长");
+        // 副本队员：角色ID 3102，本用例中在副本内离队。
+        OnlineRole member = NewRole(3102, "副本离队队员");
+        // 主城观察者：角色ID 3103，守在主城出生点，用于验证回城后能收到出现通知。
+        OnlineRole cityObserver = NewRole(3103, "主城出生点观察者");
+        // 回环链路：队长、队员、主城观察者分别占 Unity 会话 1、2、3，三者的真实帧共用这条连接。
+        LoopbackLink link = new LoopbackLink(true);
+        captain.GateSessionId = link.SessionId;
+        captain.UnitySessionId = 1;
+        member.GateSessionId = link.SessionId;
+        member.UnitySessionId = 2;
+        cityObserver.GateSessionId = link.SessionId;
+        cityObserver.UnitySessionId = 3;
+        cityObserver.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        cityObserver.mainRoleInfo.BaseInfo.InstanceId = 0;
+        cityObserver.mainRoleInfo.BaseInfo.Pos = TeamManager.MainCitySpawnPos;
+
+        // 副本队长建队得到的队伍ID，用于组队入场并在断言里查成员与队长状态。
+        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
+        TeamManager.Instance.InviteJoinTeam(captain, 3102UL);
+        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 3101UL, true);
+        TeamManager.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
+        Expect(member.mainRoleInfo.BaseInfo.InstanceId != 0, "入场后队员实例非0");
+        link.ClearFrames();
+
+        // 队员在副本内离队：旧实例观察者必须收到离开，本人必须回城，主城观察者必须收到出现。
+        TeamManager.Instance.LeaveTeam(3102UL);
+        // 离队是一次同步调用，离开、回城与出现通知会在同一批写出；
+        // 先等离开帧，再补收一个窗口并把补收帧并入同一份列表，避免先出现的帧被前一次等待消费掉。
+        List<DecodedFrame> frames = link.WaitFrames(NetDefine.CMD_RoleLeaveCode, 1, 1500);
+        // 等待离开帧期间可能已经写出的回城与出现通知，补收后并入 frames，防止断言漏帧。
+        List<DecodedFrame> extraFrames = link.WaitWindow(400);
+        // index 为补收帧列表的零基下标，范围 [0, extraFrames.Count)，只用于合并两批帧。
+        for (int index = 0; index < extraFrames.Count; index++)
+        {
+            frames.Add(extraFrames[index]);
+        }
+        Expect(HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 1), "副本内离队向同实例观察者广播 RoleLeave");
+        Expect(HasFrame(frames, NetDefine.CMD_TeamEnterDungeonCode, 2), "副本内离队向本人下发回城通知");
+        Expect(HasFrame(frames, NetDefine.CMD_SyncotherOnlineCode, 3), "副本内离队后主城观察者收到出现通知");
+        Expect(member.mainRoleInfo.BaseInfo.InstanceId == 0, "副本内离队后实例归零");
+        Expect(member.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "副本内离队后回到主城地图");
+        Expect(member.mainRoleInfo.BaseInfo.Pos == TeamManager.MainCitySpawnPos, "副本内离队后赋主城出生点");
+
+        TeamManager.Instance.LeaveTeam(3101UL);
+        link.Close();
+    }
+
+    /// <summary>
+    /// 验证主城掉线清理仍会向观察者广播离开并复位位置，
+    /// 不能因为修主城主动退队 bug 把掉线的幽灵角色清理一起关掉。
+    /// </summary>
+    private static void CheckOfflineInMainCityStillRemovesRole()
+    {
+        // 掉线角色：角色ID 3201，主城内掉线，观察者应删掉他的远端模型。
+        OnlineRole offlineRole = NewRole(3201, "主城掉线甲");
+        // 旁观者：角色ID 3202，与掉线者同处主城且相邻。
+        OnlineRole observer = NewRole(3202, "主城旁观乙");
+        // 回环链路：掉线者占 Unity 会话 1，旁观者占会话 2，掉线清理写出的真实帧都在这条连接上。
+        LoopbackLink link = new LoopbackLink(true);
+        offlineRole.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        offlineRole.mainRoleInfo.BaseInfo.InstanceId = 0;
+        offlineRole.mainRoleInfo.BaseInfo.Pos = "20_0_20";
+        observer.mainRoleInfo.BaseInfo.MapId = TeamManager.MainCityMapId;
+        observer.mainRoleInfo.BaseInfo.InstanceId = 0;
+        observer.mainRoleInfo.BaseInfo.Pos = "22_0_20";
+        offlineRole.GateSessionId = link.SessionId;
+        offlineRole.UnitySessionId = 1;
+        observer.GateSessionId = link.SessionId;
+        observer.UnitySessionId = 2;
+
+        // 掉线者建队得到的队伍ID，用于断言掉线清理会把他从队伍索引里移除。
+        ulong teamId = TeamManager.Instance.RequestCreateTeam(offlineRole, 1000);
+        TeamManager.Instance.InviteJoinTeam(offlineRole, 3202UL);
+        TeamManager.Instance.AcceptTeamInvatation(observer, teamId, 3201UL, true);
+        link.ClearFrames();
+
+        TeamManager.Instance.OnRoleOffline(3201UL);
+        // 掉线清理后等到的离开通知帧，用于正向断言"掉线仍会让观察者删掉远端角色"。
+        List<DecodedFrame> frames = link.WaitFrames(NetDefine.CMD_RoleLeaveCode, 2, 1500);
+        Expect(HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 2), "主城掉线仍向观察者广播 RoleLeave");
+        Expect(TeamManager.Instance.GetTeamId(3201UL) == 0UL, "主城掉线后被清理出队伍");
+
+        TeamManager.Instance.LeaveTeam(3202UL);
+        link.Close();
+    }
+
+    /// <summary>判断已解码帧集合中是否存在指定协议号且发往指定 Unity 会话的帧。</summary>
+    /// <param name="frames">已解码帧列表，可能为空。</param>
+    /// <param name="protoCode">期望协议号，对应 NetDefine 的 CMD_* 常量。</param>
+    /// <param name="unitySessionId">期望目标 Unity 会话号。</param>
+    /// <returns>存在该帧返回 true。</returns>
+    private static bool HasFrame(List<DecodedFrame> frames, int protoCode, int unitySessionId)
+    {
+        // index 为帧列表零基下标，范围 [0, frames.Count)，只服务于本次线性查找。
+        for (int index = 0; index < frames.Count; index++)
+        {
+            // 当前帧，可能为空；协议号与目标会话同时匹配才算命中。
+            DecodedFrame frame = frames[index];
+            if (frame != null && frame.ProtoCode == protoCode && frame.UnitySessionId == unitySessionId)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>构造一名仅含基础信息的在线角色，并注册进 RoleManager 现有在线索引。</summary>

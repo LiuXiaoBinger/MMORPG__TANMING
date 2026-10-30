@@ -675,21 +675,33 @@ public sealed class TeamManager
     }
 
     /// <summary>
-    /// 把角色场景与实例恢复为主城公共状态，用于离队与掉线清理。
-    /// 顺序固定：先按旧位置广播离开，再改写 MapId/InstanceId/Pos，最后下发回城通知。
+    /// 离队后的场景与实例处理，按"角色当前是否真的身处副本实例"以及"本次是否掉线清理"分流。
+    /// 普通主城主动离队只清队伍关系；副本内退队才广播离开并回城；掉线一律广播离开并复位。
     /// </summary>
-    /// <param name="roleId">需要复位的角色ID。</param>
+    /// <param name="roleId">需要处理的角色ID。</param>
     /// <param name="notifySelf">是否向本人下发回城与空队伍状态；掉线时为 false，避免向失效会话发包。</param>
     private void ResetRoleInstance(ulong roleId, bool notifySelf)
     {
-        // 待复位的在线角色对象，为空说明角色已下线或数据不完整，直接放弃复位。
+        // 待处理的在线角色对象，为空说明角色已下线或数据不完整，直接放弃处理。
         OnlineRole role = RoleManager.Instance.GetOnlineRole((int)roleId);
         if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
         {
             return;
         }
-        // 改写字段前广播，此时附近过滤读到的仍是角色离开前的旧地图与旧实例。
-        // 掉线也必须执行，否则旧场景其他观察者会留下幽灵角色。
+        // 掉线清理走 notifySelf=false，必须无条件广播离开，否则旧场景观察者会留下幽灵角色。
+        bool offlineCleanup = !notifySelf;
+        // 角色当前是否真的身处副本实例：0 表示本来就在主城公共场景，离队不该改变他的位置。
+        bool inDungeonInstance = role.mainRoleInfo.BaseInfo.InstanceId != 0;
+        if (!offlineCleanup && !inDungeonInstance)
+        {
+            // 普通场景主动离队：只清队伍关系并下发空队伍状态。
+            // 不广播离开、不改写 MapId/InstanceId/Pos、不回城，
+            // 否则同场景的其他玩家会收到离开通知删掉该角色，而该角色并未重载场景、不会再广播出现，
+            // 表现为"退队后队友再也看不到我"。
+            SendEmptyTeamInfo(role);
+            return;
+        }
+        // 副本内退队或掉线：改写字段前广播，此时附近过滤读到的仍是角色离开前的旧地图与旧实例。
         RoleManager.Instance.BroadcastRoleLeave(role);
 
         // 离队后回到公共主城：实例归零、地图回到主城、出生点回到主城真实坐标，避免残留在副本视野。
@@ -711,9 +723,25 @@ public sealed class TeamManager
         backNotice.MapId = MainCityMapId;
         backNotice.Pos = MainCitySpawnPos;
         role.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, backNotice.ToByteString());
+        // 回城后按新的主城位置向主城观察者补发出现，否则只有本人收到附近列表、其他人仍看不到该角色。
+        RoleManager.Instance.BroadcastRoleEnterWorldByRole(role);
         // 回到主城后重新补发主城附近角色，客户端据此重建远端列表并保留本人。
         RoleManager.Instance.ResendNearbyRoles(role);
 
+        SendEmptyTeamInfo(role);
+    }
+
+    /// <summary>
+    /// 向本人下发空队伍状态，客户端据此清空队伍界面并判定已离队。
+    /// 主城退队、副本退队共用同一份下发内容，保证两条分支的队伍界面表现一致。
+    /// </summary>
+    /// <param name="role">接收空队伍状态的在线角色。</param>
+    private static void SendEmptyTeamInfo(OnlineRole role)
+    {
+        if (role == null)
+        {
+            return;
+        }
         // 空队伍状态：TeamId 与 CaptainId 都为 0，客户端据此清空队伍界面并判定已离队。
         TeamInfoNtf emptyNotice = new TeamInfoNtf();
         emptyNotice.TeamId = 0UL;

@@ -54,6 +54,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
 
     /// <summary>寻找队伍页的队伍ID输入框，输入要申请加入的队伍ID。</summary>
     [SerializeField] private InputField _searchTeamIdInput;
+
     /// <summary>寻找队伍页的申请行，显示当前待申请队伍。</summary>
     [SerializeField] private GameObject _searchRowRoot;
     /// <summary>寻找队伍页的申请按钮。</summary>
@@ -101,6 +102,8 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     public System.Action ApplicationAgreed;
     /// <summary>拒绝收到的入队申请。</summary>
     public System.Action ApplicationRejected;
+    /// <summary>打开或切换界面后请求控制器刷新数据，用于重建附近邀请候选行。</summary>
+    public System.Action PageOpened;
 
     /// <summary>成员卡上的昵称路径，相对成员卡根节点。</summary>
     private const string SlotNamePath = "BG2/GameObject/PlayerName";
@@ -111,8 +114,21 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <summary>成员卡上的职业图标路径，相对成员卡根节点。</summary>
     private const string SlotJobPath = "BG2/GameObject/Img_Job";
 
+    /// <summary>候选人行上的昵称路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 NameInfo/Name 一致。</summary>
+    private const string InviteRowNamePath = "NameInfo/Name";
+    /// <summary>候选人行上的等级路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 Lv 一致。</summary>
+    private const string InviteRowLevelPath = "Lv";
+    /// <summary>候选人行上的邀请按钮路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 BtnSmall_B 一致。</summary>
+    private const string InviteRowButtonPath = "BtnSmall_B";
+
     /// <summary>运行时复制出来的成员卡，下标与服务器成员顺序一致。</summary>
     private readonly List<GameObject> _memberSlots = new List<GameObject>();
+
+    /// <summary>邀请页候选人行，第一项是预制体原行模板，其余为按需复制的行。</summary>
+    private readonly List<GameObject> _inviteRows = new List<GameObject>();
+
+    /// <summary>每个候选人行当前绑定的真实角色ID，下标与 _inviteRows 一一对应。</summary>
+    private readonly List<ulong> _inviteRowRoleIds = new List<ulong>();
 
     /// <summary>当前显示的界面。</summary>
     private TeamPage _currentPage;
@@ -134,6 +150,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         SetMembers(null, 0UL, false);
         SetPendingInvitation(false, string.Empty, 0, 0, string.Empty);
         SetPendingApplication(false, string.Empty);
+        SetInviteCandidates(null);
         OpenPage(TeamPage.Members);
     }
 
@@ -144,11 +161,6 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         {
             _inviteConfirmButton.onClick.RemoveListener(OnInviteConfirmClicked);
             _inviteConfirmButton.onClick.AddListener(OnInviteConfirmClicked);
-        }
-        if (_inviteRowButton != null)
-        {
-            _inviteRowButton.onClick.RemoveListener(OnInviteRowClicked);
-            _inviteRowButton.onClick.AddListener(OnInviteRowClicked);
         }
         if (_searchApplyButton != null)
         {
@@ -303,6 +315,115 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         }
     }
 
+    /// <summary>
+    /// 按当前场景真实附近的玩家重建邀请页候选行，对应 RO TeamInviteCtrl:SetPanelByInfo。
+    /// 第一张行沿用预制体已序列化的行模板，其余按需复制同一行，行容器即原 ScrollRect 的 Content。
+    /// 没有候选时隐藏全部候选行，恢复该页原有的空态表现，不新建空态节点。
+    /// </summary>
+    /// <param name="candidates">控制器过滤后的真实附近玩家，为空或 null 表示没有候选人。</param>
+    public void SetInviteCandidates(IList<TeamMemberInfo> candidates)
+    {
+        if (_inviteRowRoot == null)
+        {
+            return;
+        }
+        // 本次需要显示的候选行数量，候选表为空时为零。
+        int count = 0;
+        if (candidates != null)
+        {
+            count = candidates.Count;
+        }
+        EnsureInviteRows(count);
+        // index 为候选行列表零基下标，既定位控件也作为候选表下标使用。
+        for (int index = 0; index < _inviteRows.Count; index++)
+        {
+            // 当前候选行，超出候选数量时隐藏。
+            GameObject row = _inviteRows[index];
+            if (row == null)
+            {
+                continue;
+            }
+            if (index >= count)
+            {
+                row.SetActive(false);
+                _inviteRowRoleIds[index] = 0UL;
+                continue;
+            }
+            row.SetActive(true);
+            ApplyCandidateToRow(row, candidates[index], index);
+        }
+    }
+
+    /// <summary>把单个真实候选玩家写入指定候选行，并记住该行的真实角色ID。</summary>
+    /// <param name="row">目标候选行。</param>
+    /// <param name="candidate">来自场景实体的真实候选玩家信息。</param>
+    /// <param name="index">候选行下标，0 表示预制体原行模板。</param>
+    private void ApplyCandidateToRow(GameObject row, TeamMemberInfo candidate, int index)
+    {
+        if (candidate == null)
+        {
+            return;
+        }
+        // 昵称文本：第一张行沿用预制体已序列化的引用，其余行按固定路径取同结构控件。
+        Text nameText = _inviteRowName;
+        if (index > 0)
+        {
+            nameText = FindChildComponent<Text>(row.transform, InviteRowNamePath);
+        }
+        // 等级文本：行模板上没有序列化引用，所有行统一按固定路径取控件。
+        Text levelText = FindChildComponent<Text>(row.transform, InviteRowLevelPath);
+        if (nameText != null)
+        {
+            nameText.text = candidate.Nickname;
+        }
+        if (levelText != null)
+        {
+            levelText.text = "Lv." + candidate.Level;
+        }
+        // 本行绑定的真实角色ID，点击邀请按钮时按行下标取出，不再依赖输入框。
+        _inviteRowRoleIds[index] = candidate.RoleId;
+    }
+
+    /// <summary>按需补齐候选行数量，复制行模板并挂到原行模板所在的 ScrollRect 内容节点下。</summary>
+    /// <param name="count">本次需要显示的候选行数量。</param>
+    private void EnsureInviteRows(int count)
+    {
+        // 第一张候选行就是预制体里的原行模板，先登记并绑定它的邀请按钮。
+        if (_inviteRows.Count == 0)
+        {
+            _inviteRows.Add(_inviteRowRoot);
+            _inviteRowRoleIds.Add(0UL);
+            BindInviteRowButton(_inviteRowButton, 0);
+        }
+        while (_inviteRows.Count < count)
+        {
+            // slot 为待创建候选行的 0 基行下标：0 号是预制体里的原行模板，这里直接取已有行数量作为新行下标。
+            int slot = _inviteRows.Count;
+            // 复制出来的候选行：挂到原行模板的父节点（ScrollRect 的 Content）下，命名带行下标后缀便于层级里区分。
+            GameObject copy = Instantiate(_inviteRowRoot, _inviteRowRoot.transform.parent);
+            copy.name = _inviteRowRoot.name + "_" + slot.ToString();
+            _inviteRows.Add(copy);
+            _inviteRowRoleIds.Add(0UL);
+            // 复制行的邀请按钮按固定路径取，绑定后回调携带自己的行下标。
+            Button copyButton = FindChildComponent<Button>(copy.transform, InviteRowButtonPath);
+            BindInviteRowButton(copyButton, slot);
+        }
+    }
+
+    /// <summary>给指定候选行的邀请按钮绑定按行下标回调，保证每行点击发出自己的真实角色ID。</summary>
+    /// <param name="button">候选行上的邀请按钮。</param>
+    /// <param name="slot">该行在候选行列表中的下标。</param>
+    private void BindInviteRowButton(Button button, int slot)
+    {
+        if (button == null)
+        {
+            return;
+        }
+        // 行下标的本地副本，供闭包安全捕获，避免所有行共用同一个循环变量。
+        int rowSlot = slot;
+        button.onClick.AddListener(delegate { OnInviteRowSlotClicked(rowSlot); });
+    }
+
     /// <summary>给指定成员卡设置职业头像，索引无效时跳过。</summary>
     /// <param name="index">成员卡下标。</param>
     /// <param name="jobSprite">职业头像精灵，为空时不做修改。</param>
@@ -441,6 +562,11 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
             }
         }
         _emptyState.SetActive(!_inTeam && page == TeamPage.Members);
+        // 切页后交给控制器刷新数据，候选行只在打开或切页时重建，不做每帧轮询。
+        if (PageOpened != null)
+        {
+            PageOpened();
+        }
     }
 
     /// <summary>关闭当前子窗口，返回打开它的界面；下一次关闭返回主窗。</summary>
@@ -551,16 +677,17 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         InviteRoleRequested?.Invoke(roleId);
     }
 
-    /// <summary>候选人行上的邀请按钮：对当前候选人行的角色发邀请。</summary>
-    private void OnInviteRowClicked()
+    /// <summary>候选人行上的邀请按钮：对该行已绑定的真实角色发邀请。</summary>
+    /// <param name="slot">被点击的候选行下标。</param>
+    private void OnInviteRowSlotClicked(int slot)
     {
-        // 候选人行尚未接入服务器检索，没有可邀请对象时不发请求。
-        if (_inviteRowRoot == null || !_inviteRowRoot.activeSelf)
+        // 行下标越界或该行当前未绑定角色时不发请求，避免向 0 号角色发邀请。
+        if (slot < 0 || slot >= _inviteRowRoleIds.Count)
         {
             return;
         }
-        // 候选人行复用的邀请输入框解析出的角色ID，为 0 表示无有效对象，不发请求。
-        ulong roleId = ParseId(_inviteInput);
+        // 该行绑定的真实角色ID，来自场景实体同步下来的远端角色资料。
+        ulong roleId = _inviteRowRoleIds[slot];
         if (roleId == 0UL)
         {
             return;
@@ -618,10 +745,6 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         if (_inviteConfirmButton != null)
         {
             _inviteConfirmButton.onClick.RemoveListener(OnInviteConfirmClicked);
-        }
-        if (_inviteRowButton != null)
-        {
-            _inviteRowButton.onClick.RemoveListener(OnInviteRowClicked);
         }
         if (_searchApplyButton != null)
         {
