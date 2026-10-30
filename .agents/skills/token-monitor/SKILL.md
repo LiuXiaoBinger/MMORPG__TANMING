@@ -51,18 +51,18 @@ Recommendations carry evidence (the worst sessions, by id and date) and a priced
 
 ## 每次任务的上下文压缩次数
 
-每次任务最终回复在用量报告中增加：`上下文压缩：本任务 N 次；本会话累计 M 次（统计截止时间）。`
+每次任务最终回复在用量报告中增加：`上下文压缩：当前对话累计 N 次（统计截止时间）。` 只报告这个对话从开始至今的累计次数，不报告“本任务次数”。
 
 - 从当前 Codex 原始会话 JSONL 的顶层 `type=compacted` 记录计数，一条记录计一次。不得按摘要文本、`replacement_history`、token 下降、窗口数或其他模型自报推算；此计数不区分自动与手动触发。
-- 本任务窗口从这项用户需求开始至本次统计截止；需求澄清、返修、自动续作与上下文恢复不重置任务起点。不同任务即使在同一聊天中，也分别统计。记录任务起始时间，不能把最近一次 `task_started` 无条件当成整个任务起点。
+- 同一对话中的新任务、澄清、返修、自动续作与上下文恢复均不重置计数。只统计当前对话，不合并其他对话或子 Agent 对话的压缩次数。
 - 使用配套脚本，只读取日志并输出计数、时间范围和覆盖边界，不输出会话正文：
 
 ```powershell
-python -X utf8 .agents/skills/token-monitor/scripts/count_context_compactions.py --session-file "当前会话JSONL绝对路径" --since "本任务起点ISO8601时间" --output "D:/unitypro/LYFMMORGP/_temp/本任务目录/context-compactions.json"
+python -X utf8 .agents/skills/token-monitor/scripts/count_context_compactions.py --session-file "当前对话JSONL绝对路径" --output "D:/unitypro/LYFMMORGP/_temp/本任务目录/context-compactions.json"
 ```
 
-- `--since` 无法确认时省略，脚本只给出会话累计，本任务写“不可测（缺少任务起点）”。日志起点晚于任务、日志缺失/损坏或格式未覆盖时，报告已观测次数及缺口，不把不完整计数写成总次数。跨会话续作应汇总本任务实际涉及的日志，确认不重复；无法完整覆盖时保留不可测边界。
-- 有明确任务起点、日志覆盖该窗口且确实没有压缩事件时，报告 `0 次`；没有证据时不得以 0 代替不可测。原始计数证据留在 `_temp/`，正式记录仍按项目日志授权规则处理。
+- 当前对话日志缺失、损坏或格式未覆盖时，报告已观测次数及缺口，不把不完整计数写成累计总次数。同一对话存在多个日志文件时仅汇总属于该对话的记录，并确认没有重复；无法完整覆盖时保留不可测边界。
+- 日志完整且确实没有压缩事件时，报告 `0 次`；没有证据时不得以 0 代替不可测。原始计数证据留在 `_temp/`，正式记录仍按项目日志授权规则处理。
 
 ## When the user wants more
 
