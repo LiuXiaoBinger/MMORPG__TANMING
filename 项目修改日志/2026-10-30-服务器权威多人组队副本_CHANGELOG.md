@@ -65,3 +65,7 @@ Codex实际使用：workbuddy-executor负责原生派工/恢复/返修，project
 主会话任务窗口 2026-10-30T09:49:53.778Z 至 2026-10-30T11:56:11.697Z，243个last_token_usage求和：输入40,892,100（含缓存40,701,056），输出59,836（含reasoning14,916）。不含后续收尾或外部WorkBuddy/子Agent独立用量。上下文与规则、用户需求、工具输入输出、协作、重复读取/返工/压缩/验证各类无独立token或占比，不用0代替未知；账户剩余额度本地不可测。collect/report原始输出token-collect-live-retry.txt、token-report-live-retry.txt及quota-live-retry.json均在本任务_temp；实验性跨会话费用估算不是本任务账单或余额。当前对话累计压缩2次，统计截止2026-10-30T11:56:37.984000+00:00，无覆盖缺口，证据compactions-live-retry.json。
 
 中文增量同步由 OpenAI / Codex 原生子 Agent /root/sync_approved_records 完成，实际模型版本未披露，未使用技能；仅检查三条新增中英段且原字节前缀保留，approved-sync-check.json passed=true/issues=[]。本次运行复核证据 server-retry/verified-retry.json 确认4进程、4个TCP监听、1个UDP监听。token-monitor近1天跨会话统计输入2.0M、输出495.8k、缓存166.1M、估算费用~$40.28（实验性适配器，非本任务账单）。
+
+## Git 实际回执
+
+授权记录提交 `3410752`（`docs: 记录多人副本开发与服务器重启复测结果`），共9个记录/分析文件；暂存只取本次追加段与按对应英文源生成的索引，既有用户记录前缀和25个业务文件均未暂存。增量检查证据 `_temp/dungeon-multiplayer-20261030/approved-staged-check.json` 通过；`git push origin codex/feature-development` 退出码0，远端回执 `637e2ec..3410752 codex/feature-development -> codex/feature-development`。本回执单独记录提交，不声称未验收业务已上传，不合main、不强推。
