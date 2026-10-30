@@ -180,4 +180,4 @@ Codex 原生子 Agent `/root/sync_team_repair` 已完成三份中文摘要同步
 
 token-monitor 的过去 1 天项目报告覆盖 3 个聊天、744 轮，输入 `1.5M`、输出 `390.2k`、缓存读取 `116.3M`、估算费用 `~$28.96`；Codex 适配器为实验性来源，不作为本任务精确账单或订阅余额。原始 collect/report 在 `_temp/dungeon-team-20261030/token-collect.txt`、`token-report.txt`。上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证没有独立 token/占比；本轮 Codex 子 Agent 独立用量未披露，无新增 WorkBuddy/豆包轮次。账户剩余额度本地不可测。
 
-代码提交与推送回执在实际执行后集中补至本段。
+业务与本轮记录提交 `5c68d65`：`fix: 修复队伍点击并接入RO任务队伍快捷切换`，共 19 个文件（10 个业务文件、9 个记录/分析文件）。提交前清单、哈希、增量同步和定向检查均通过，见 `_temp/dungeon-team-20261030/staged-check.json`。`git push origin codex/feature-development` 退出码 0，远端回执 `e26eb10..5c68d65 codex/feature-development -> codex/feature-development`；未合 main、未强推。此回执单独提交，不重复同步未变化的协作入口。其他用户改动仍保留在工作区。
