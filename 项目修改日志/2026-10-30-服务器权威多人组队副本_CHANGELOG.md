@@ -101,3 +101,7 @@ Codex实际使用：workbuddy-executor负责原生派工/恢复/返修，project
 最终用量快照：2026-10-30T09:49:53.778Z至2026-10-30T13:19:35.967Z，主会话375个last_token_usage求和，输入81,379,943（含缓存81,134,976），输出111,015（含reasoning31,849）。不含后续收尾、WorkBuddy/子Agent独立用量；五类活动分项无独立计数，账户余额本地不可测。collect/report已执行；近1天窗口4会话1011轮、输入2.0M/输出542.5k/缓存204.5M、估算~$47.93，实验性跨聊天统计非本任务账单。原始证据quota-final.json、token-collect-final.txt、token-report-final.txt。当前对话累计压缩2次，截止2026-10-30T13:20:20.233000+00:00，无覆盖缺口，见compactions-final.json。
 
 最终三条中文同步由 OpenAI / Codex 原生子 Agent /root/sync_approved_records 完成，具体模型版本未披露、未使用技能；仅本次新增段一致性检查passed=true/issues=[]，英文输入与原前缀保留，证据 final-sync-check.json / final-chinese-sections.json。用户原有未提交记录前缀和无关代码继续排除暂存。
+
+### 最终业务提交与推送回执
+
+业务与最终记录提交 `90b5047`：`feat: 开放服务器权威多人组队副本`，35个文件（26业务/资源+9记录），暂存范围及哈希/双语/差异检查见 `_temp/dungeon-multiplayer-20261030/final-staged-check.json`。代码资源在任务开始时均无用户未提交改动；记录只取本次追加段，既有用户改动保留。`git push origin codex/feature-development` 退出码0，远端回执 `b3b436d..90b5047 codex/feature-development -> codex/feature-development`。未合main、未强推；本回执单独提交，不重复核验输入未变的业务或双语事实。
