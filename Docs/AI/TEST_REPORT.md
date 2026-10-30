@@ -74,3 +74,12 @@
 - 使用真实 PlayerEntity 类型的隔离控制器测试通过：未建队挑战会打开窗口，创建后绑定玩家昵称，关闭重开保留队伍，离队恢复空队伍状态，无关主题不会加载 Moshenta。这不是实际账号或联网运行。证据：_temp/dungeon-team-20261029/codex-ui-verification.txt 和 codex-controller-verification.txt；codex-team-members.png、codex-team-search.png、codex-quick-team.png 为隔离测试预览。
 - 附加场景检查：出生点已绑定至 (132.97, 58.89, 60.95)，MainCamera 数量为 1，碰撞器数量为 510，出生点导航采样=True。检查结束时编辑器不处于 Play 或编译状态。未发现 C# 编译错误。曾阻止预制体保存的 TeamInvite/Group/TextMesh 缺失组件已替换，保存结果=True。
 - 未运行：真实登录 -> 挑战 -> 地图 -> 键盘/点击移动、联网组队与实例隔离、Player 构建。完整过程与此前失败版本：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。
+
+
+## [VERIFY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 真实登录指针输入返修验收
+
+- 先前仅用 Invoke 的测试不能证明鼠标交互：迁移的内部 Canvas 缺少 GraphicRaycaster；RO 页签图形还保留空子 Button，拦截了新挂接的父级页签处理器。最终预制体已修复两项问题；QuickPanel 与 ThemeDungeonTeamCreate 的 Missing Script 为 0，缺少射线检测器的 Canvas 为 0。UIRoot 的四个快捷/队伍引用均已赋值；未改动其无关 Canvas。
+- 使用真实已登录的 PlayerEntity，未使用 Mock 角色数据：通过 EventSystem.RaycastAll -> pointerClickHandler，验过任务/队伍切换、快捷一键创建、昵称与实际玩家一致、打开/关闭、重开保留成员、离队及窗口内创建。操作分隔在不同 Editor 帧执行，测试点位于实际控件内部。未向正式代码增加等待/重试或调试入口。
+- 证据：_temp/dungeon-team-20261030/final-real-ui-verification.json、real-team-verification.json、hud-task.png、hud-team.png、team-window.png。图片由实际运行中的主/UI 摄像机离屏渲染，排除头像 RenderTexture 摄像机。主脚本编译无错误。临时验证器曾引用不存在的 SceneWorld 类型，已通过反射修正；正式代码未受影响。
+- 直接 ScreenCapture 最初产生两条截图工具错误；清理该段 Console 历史前，已导出至 _temp/dungeon-team-20261030/capture-tool-errors.json。替代离屏截图成功，随后最终关闭窗口时 Console 错误为 0。未绕过截图工具禁止输出到项目外的限制；图片由临时摄像机渲染器写入项目根目录下的 _temp。
+- 未验证：真实魔神塔进塔/移动、多人联网/副本隔离、Player 构建。编译后因密码未保存，由用户重新进入主城；未收集或记录凭据。完整过程：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。

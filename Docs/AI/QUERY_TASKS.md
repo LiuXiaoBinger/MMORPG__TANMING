@@ -24,3 +24,10 @@
 - UI 来源位于 clientproj/Assets/artres/Resources/UI/Prefabs/：QuickTeamPanel 是 HUD，Team1 是主窗外框，TeamMember 是其内容。ThemeDungeonTeam 是进本确认窗口，不是建队 UI。复制的 16 个 ROTeam 资源、依赖和精确源/目标清单见完整修改日志中的引用。
 - Unity 实际检查纠正了此前推断：内置 UGUI 程序集 GUID f70555f144d8491a825f0804e09c671c 即使 GUIDToAssetPath 为空，仍可解析 Image/Text。有效性以实际 Missing Script 数量为准，不能仅依据 Assets 范围内的 GUID 扫描。MoonClient 组件已剥离；一个旧 TeamInvite 标题组件确实缺失，现已替换。源 Team1 的内容初始为 inactive，移植的组合窗口需显式激活它。
 - 调查与失败证据保留在 _temp/dungeon-team-20261029/research.md 和 research-addendum.md；最终事实与边界：项目修改日志/2026-10-29-副本组队与RO界面迁移_CHANGELOG.md。
+
+
+## [QUERY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 RO 任务/队伍快捷面板归属返修查证
+
+- 只读参考源 F:/UnityPro/ro/Ro_cs422nb/clientproj/Assets/Scripts/Lua/UI/Ctrl/QuickPanelCtrl.lua 第 32-34 行，将同一个 QuickPanel 内容父节点下的 QuickTaskPanel/QuickTeamPanel 绑定到 ToggleTask/ToggleTeam；第 44 行默认选中任务。它是共享页签区域，不是上下堆叠的两块面板。
+- UI/Handler/QuickTeamPanelHandler.lua 第 35-37 行由 TeamCreate 直接调用 TeamMgr.RequestCreateTeam。迁移后的本地控制器现已沿用该入口顺序；独立的组队按钮仍打开正式组队窗口。
+- 源 UI 预制体：clientproj/Assets/artres/Resources/UI/Prefabs/QuickPanel.prefab；源哈希及剥离 26 个 MoonClient 组件的计数见 _temp/dungeon-team-20261030/quick-panel-copy.json。IsOn/IsOff 上的内置 UGUI 子 Button 在自定义脚本剥离后仍会保留，不能让它们拦截新父级页签处理器。交互成立的依据是真实射线检查，单靠 GUID 扫描或直接 Invoke 不足以证明。

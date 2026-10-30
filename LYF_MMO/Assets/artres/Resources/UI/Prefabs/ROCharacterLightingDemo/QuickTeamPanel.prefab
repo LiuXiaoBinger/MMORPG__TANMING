@@ -5249,6 +5249,7 @@ GameObject:
   - component: {fileID: 2442931019718402040}
   - component: {fileID: 1745129748801769738}
   - component: {fileID: 510462501754843668}
+  - component: {fileID: 5858907744247283731}
   m_Layer: 5
   m_Name: QuickTeamPanel
   m_TagString: Untagged
@@ -5336,6 +5337,23 @@ MonoBehaviour:
   _inviteButton: {fileID: 8812715500932590287}
   _memberButton: {fileID: 8065237208931484291}
   _memberMenuButton: {fileID: 3077236626358622230}
+--- !u!114 &5858907744247283731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5848836246730536288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &5895586212044334585
 GameObject:
   m_ObjectHideFlags: 0

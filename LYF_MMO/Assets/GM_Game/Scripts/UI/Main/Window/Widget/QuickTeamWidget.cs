@@ -42,7 +42,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <summary>右侧援团按钮属于佣兵系统，保留原位置，本轮不执行该系统业务。</summary>
     [SerializeField, Header("援团按钮")] private Button _assistButton;
 
-    /// <summary>未建队分支里的「创建队伍」行，点击同样打开正式队伍窗口建队。</summary>
+    /// <summary>未建队分支里的「创建队伍」行，沿 RO 入口直接请求创建本地单人队伍。</summary>
     [SerializeField, Header("创建队伍行")] private Button _createButton;
 
     /// <summary>未建队分支里的寻找队伍行，打开原版寻找界面壳。</summary>
@@ -55,8 +55,11 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <summary>本人条目右侧箭头，打开成员快捷菜单壳。</summary>
     [SerializeField] private Button _memberMenuButton;
 
-    /// <summary>点击「组队」或「创建队伍」时触发，由队伍控制器打开正式队伍窗。</summary>
+    /// <summary>点击「组队」时触发，由队伍控制器打开正式队伍窗。</summary>
     public System.Action OpenTeamRequested;
+
+    /// <summary>点击快捷创建入口时触发，由控制器把本人加入本地单人队伍。</summary>
+    public System.Action CreateTeamRequested;
 
     /// <summary>请求打开已有的 RO 队伍关联界面，不执行联网操作。</summary>
     public System.Action<TeamPage> OpenPageRequested;
@@ -77,7 +80,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
         }
         if (_createButton != null)
         {
-            _createButton.onClick.AddListener(OnOpenTeamClicked);
+            _createButton.onClick.AddListener(OnCreateTeamClicked);
         }
         _searchButton.onClick.AddListener(OnSearchClicked);
         _summonButton.onClick.AddListener(OnSummonClicked);
@@ -172,13 +175,19 @@ public sealed class QuickTeamWidget : MonoBehaviour
         slider.value = clamped;
     }
 
-    /// <summary>「组队」与「创建队伍」共用回调，只把请求交给控制器。</summary>
+    /// <summary>组队按钮请求打开正式队伍窗口。</summary>
     private void OnOpenTeamClicked()
     {
         if (OpenTeamRequested != null)
         {
             OpenTeamRequested();
         }
+    }
+
+    /// <summary>把快捷创建请求交给控制器，控件不保存业务状态。</summary>
+    private void OnCreateTeamClicked()
+    {
+        CreateTeamRequested?.Invoke();
     }
 
     /// <summary>原预制体嵌套按钮的整数事件边界，只转发具名界面请求。</summary>
@@ -208,7 +217,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
         }
         if (_createButton != null)
         {
-            _createButton.onClick.RemoveListener(OnOpenTeamClicked);
+            _createButton.onClick.RemoveListener(OnCreateTeamClicked);
         }
         if (_searchButton != null) _searchButton.onClick.RemoveListener(OnSearchClicked);
         if (_summonButton != null) _summonButton.onClick.RemoveListener(OnSummonClicked);

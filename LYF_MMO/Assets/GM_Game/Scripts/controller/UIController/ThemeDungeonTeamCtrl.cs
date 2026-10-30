@@ -83,6 +83,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (_quickTeamWidget != null)
         {
             _quickTeamWidget.OpenTeamRequested += OnOpenTeamRequested;
+            _quickTeamWidget.CreateTeamRequested += OnCreateRequested;
             _quickTeamWidget.OpenPageRequested += OnOpenPageRequested;
         }
         RefreshViews();
@@ -162,6 +163,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _mpRatio = CalculateRatio(localRole.BaseInfo.CurrMp, localRole.BaseInfo.MaxMp);
         _teamCreated = true;
         RefreshViews();
+        _mainView.QuickPanel.ShowTeamPanel();
     }
 
     /// <summary>关闭队伍窗，队伍状态保留在控制器里，再次挑战仍是已建队。</summary>
@@ -323,6 +325,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (_quickTeamWidget != null)
         {
             _quickTeamWidget.OpenTeamRequested -= OnOpenTeamRequested;
+            _quickTeamWidget.CreateTeamRequested -= OnCreateRequested;
             _quickTeamWidget.OpenPageRequested -= OnOpenPageRequested;
         }
         _selectedEntry = null;

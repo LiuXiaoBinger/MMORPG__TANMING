@@ -42,6 +42,9 @@ public class MainView : UIBase
    /// <summary>主界面左侧常驻快捷队伍栏，复制 RO QuickTeamPanel 的原层级与布局。</summary>
    [SerializeField, Header("快捷队伍栏")] private QuickTeamWidget _quickTeamWidget;
 
+   /// <summary>RO 快捷区外层页签，只切换任务和队伍内容。</summary>
+   [SerializeField, Header("任务队伍快捷页签")] private QuickPanelWidget _quickPanel;
+
    /// <summary>功能菜单中的日常入口，打开日常任务窗口。</summary>
    [SerializeField, Header("日常入口")] private Button _dailyTaskButton;
 
@@ -110,6 +113,9 @@ public class MainView : UIBase
 
    /// <summary>快捷队伍栏实例，供建队控制器刷新成员信息。</summary>
    public QuickTeamWidget QuickTeamWidget => _quickTeamWidget;
+
+   /// <summary>任务/队伍快捷区，供建队成功后切换到本人成员行。</summary>
+   public QuickPanelWidget QuickPanel => _quickPanel;
 
    /// <summary>供主控制器注册与注销日常入口事件。</summary>
    public Button DailyTaskButton => _dailyTaskButton;
@@ -219,6 +225,7 @@ public class MainView : UIBase
          // 快捷队伍栏常驻主界面，初始化只绑定一次按钮监听并复位为未建队展示。
          _quickTeamWidget.InitWidget();
       }
+      _quickPanel.InitWidget();
       _roleCurrInfoWindow.InitWindow();
    }
 }
