@@ -67,6 +67,19 @@ namespace GateServer
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
+            // 队伍与副本入场：6 条上行原样转给游戏服，4 条下行按 Unity 会话回发。
+            // 网关只做会话寻址，队伍状态与实例分配全部由 GameServer 权威决定。
+            GateTeamCtrl gateTeamCtrl = new GateTeamCtrl();
+            server.RegistCommand(NetDefine.CMD_CreateTeamCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.CMD_InviteJoinTeamCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.CMD_AcceptTeamInvatationCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.CMD_LeaveTeamCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.CMD_BegInTeamByTeamIdCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.CMD_CaptainRequestEnterFBCode, gateTeamCtrl);
+            client.RegistCommand(NetDefine.CMD_TeamInfoCode, gateTeamCtrl);
+            client.RegistCommand(NetDefine.CMD_TeamInvatationCode, gateTeamCtrl);
+            client.RegistCommand(NetDefine.CMD_TeamEnterDungeonCode, gateTeamCtrl);
+            client.RegistCommand(NetDefine.CMD_RoleLeaveCode, gateTeamCtrl);
             // 绑定协议只在网关与客户端之间处理，不转发给游戏服。
             // 绑定协议处理器实例，只在网关与客户端之间分配参数并回包。
             GateKcpCtrl gateKcpCtrl = new GateKcpCtrl();

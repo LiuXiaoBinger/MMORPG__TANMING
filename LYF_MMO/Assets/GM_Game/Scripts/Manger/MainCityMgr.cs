@@ -21,6 +21,9 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>本主城实例持有的移动同步委托，场景销毁时解除注册。</summary>
    private OnActionHandler _syncMoveHandler;
 
+   /// <summary>角色离开视野通知处理器，仅销毁服务器指定远端角色。</summary>
+   private OnActionHandler _roleLeaveHandler;
+
    /// <summary>本地主角加载完成事件委托，用于在 Global 延迟创建角色后补建主角表现。</summary>
    private System.Action<PlayerEntity> _localRoleLoadCompletedHandler;
 
@@ -52,6 +55,8 @@ public class MainCityMgr : MonoBehaviour
          NetDefine.CMD_SyncotherOnlineCode, _syncOtherOnlineHandler);
       _syncMoveHandler = SyncMoveHandle;
       SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
+      _roleLeaveHandler = RoleLeaveHandle;
+      SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleLeaveCode, _roleLeaveHandler);
       _localRoleLoadCompletedHandler = OnLocalRoleLoadCompleted;
    }
 
@@ -80,6 +85,11 @@ public class MainCityMgr : MonoBehaviour
    {
       SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
       _syncMoveHandler = null;
+      if (_roleLeaveHandler != null)
+      {
+         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RoleLeaveCode, _roleLeaveHandler);
+         _roleLeaveHandler = null;
+      }
       if (_syncOtherOnlineHandler != null)
       {
          SocketDispatcher.Instance.RemoveEventHandler(
@@ -118,6 +128,30 @@ public class MainCityMgr : MonoBehaviour
          new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false,
          ptc.JumpCount);
       role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
+   }
+
+   /// <summary>处理服务器下发的角色离开视野通知，只销毁指定远端角色，保留本地主角。</summary>
+   /// <param name="data">RoleLeaveNtf 的 Protobuf 二进制消息体。</param>
+   private void RoleLeaveHandle(ByteString data)
+   {
+      // notice 为服务端下发的离开视野通知，只含角色ID与离开前的场景/实例，用于定位要销毁的远端角色。
+      RoleLeaveNtf notice = RoleLeaveNtf.Parser.ParseFrom(data);
+      if (notice == null)
+      {
+         return;
+      }
+      // 本地主角始终保留，服务器通知只用于清理其他玩家。
+      if (Global.Instance == null || Global.Instance.SceneWorld == null)
+      {
+         return;
+      }
+      // 当前场景世界的本地主角实体，用于和通知中的角色ID比对，防止误删自己。
+      PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+      if (localRole != null && (ulong)localRole.BaseInfo.RoleId == notice.RoleId)
+      {
+         return;
+      }
+      Global.Instance.SceneWorld.RemoveOtherRole((int)notice.RoleId);
    }
 
    /// <summary>订阅 Global 的本地主角加载完成事件，并立即处理已经存在的本地主角。</summary>

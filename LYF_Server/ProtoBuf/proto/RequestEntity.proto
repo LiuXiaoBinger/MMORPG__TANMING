@@ -127,3 +127,45 @@ message MoveOperationReq
   bool is_moved = 7;//本段是否产生位置变化，供远端动画接入
   int32 jump_count = 8;//当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段；供远端动画使用
 }
+
+// ===== 队伍协议（DUNGEON-MULTIPLAYER-20261030），命名沿用 RO TeamMgr.lua 原文 =====
+
+// 创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam(targetId)。
+message CreateTeamArg
+{
+	int32 target_id = 1;//组队目标ID，RO 缺省 1000 表示不限定目标
+}
+
+// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
+message InviteJoinTeamArg
+{
+	uint64 user_id = 1;//被邀请角色ID，RO 原字段为字符串 user_id
+}
+
+// 同意入队邀请，对应 RO TeamMgr.lua:165 AcceptTeamInvatation()。
+message AcceptTeamInvatationArg
+{
+	uint64 team_id = 1;//发出邀请的队伍ID
+	uint64 inviter_id = 2;//邀请人角色ID，用于校验邀请是否仍然有效
+	bool agree = 3;//是否同意，false 表示拒绝邀请并清除待确认记录
+}
+
+// 离队，对应 RO TeamMgr.lua:315 LeaveTeam()。
+message LeaveTeamArg
+{
+	uint64 role_id = 1;//离队角色ID，服务端以会话身份为准，此字段仅用于校验
+}
+
+// 申请加入指定队伍，对应 RO TeamMgr.lua:413 BegInTeamByTeamId(cTeamId)。
+message BegInTeamByTeamIdArg
+{
+	uint64 team_id = 1;//目标队伍ID
+}
+
+// 队长请求进入副本，对应 RO DungeonMgr.lua:1274 CaptainRequestEnterFBPtc 的 CaptainRequestEnterFBData。
+message CaptainRequestEnterFBArg
+{
+	int32 dungeon_id = 1;//副本配置ID，魔神塔为 4060
+	int32 chapter_id = 2;//章节ID，沿用 RO 字段
+	int32 dungeons_degree = 3;//副本难度，沿用 RO 字段
+}

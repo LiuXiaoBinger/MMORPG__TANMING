@@ -42,7 +42,7 @@ public static partial class ResultEntityReflection {
           "U3RhcnRHYW1lUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIlCg5t",
           "YWluX3JvbGVfaW5mbxgCIAEoCzINLk1haW5Sb2xlSW5mb0oECAMQBEoECAQQ",
           "BUoECAUQBlIab3BlbmVkX2tuYXBzYWNrX2dyaWRfY291bnRSF2thbnBzYWNr",
-          "X3R5cGVfY291bnRfbHN0IoIFCgxSb2xlQmFzZUluZm8SDwoHcm9sZV9pZBgB",
+          "X3R5cGVfY291bnRfbHN0IpcFCgxSb2xlQmFzZUluZm8SDwoHcm9sZV9pZBgB",
           "IAEoBRIQCghuaWNrbmFtZRgCIAEoCRINCgVsZXZlbBgDIAEoBRIPCgd4aXVf",
           "d2VpGAQgASgFEg4KBm1heF9ocBgFIAEoBRIPCgdjdXJyX2hwGAYgASgFEg4K",
           "Bm1heF9tcBgHIAEoBRIPCgdjdXJyX21wGAggASgFEg4KBmpvYl9pZBgJIAEo",
@@ -56,98 +56,111 @@ public static partial class ResultEntityReflection {
           "aW50GBcgASgFEhMKC2NyaXRfZGFtYWdlGBggASgCEhoKEmNyaXRfZGFtYWdl",
           "X3JlZHVjZRgZIAEoAhIVCg1oZWFsX3N0cmVuZ3RoGBogASgFEhIKCmhlYWxf",
           "Ym9udXMYGyABKAISDwoHemh1X3hpbhgcIAEoBRIQCghqaWFuX3JlbhgdIAEo",
-          "BRILCgNwb3MYHiABKAkSDgoGbWFwX2lkGB8gASgFIqABCgxNYWluUm9sZUlu",
-          "Zm8SIAoJYmFzZV9pbmZvGAEgASgLMg0uUm9sZUJhc2VJbmZvEhIKCmFjY291",
-          "bnRfaWQYAiABKAUSCwoDZXhwGAQgASgFEhYKDnNraWxsX3VwX3BvaW50GAUg",
-          "ASgFEhUKDWNhbWVyYV9vZmZzZXQYBiABKAkSEQoJc2VydmVyX2lkGAcgASgF",
-          "SgQIAxAEUgVtb25leSJqChBSb2xlU2tpbGxJbmZvUmV0EhoKCGNtZF9jb2Rl",
-          "GAEgASgOMgguQ21kQ29kZRIpChFyb2xlU2tpbGxJbmZvTGlzdBgCIAMoCzIO",
-          "LlJvbGVTa2lsbEluZm8SDwoHcm9sZV9pZBgDIAEoBSJCCg1Sb2xlU2tpbGxJ",
-          "bmZvEhAKCHNraWxsX2lkGAEgASgFEg0KBWxldmVsGAIgASgFEhAKCGJpbmRf",
-          "a2V5GAMgASgJIosCCgxTa2lsbENhc3RSZXQSGgoIY21kX2NvZGUYASABKA4y",
-          "CC5DbWRDb2RlEhIKCnNraWxsX3V1aWQYAiABKAQSEAoIc2tpbGxfaWQYAyAB",
-          "KAUSEQoJZWZmZWN0X2lkGAQgASgFEhsKE3NlcnZlcl90aW1lX3VuaXhfbXMY",
-          "BiABKAMSEgoKY3VycmVudF9tcBgHIAEoBRIcChRjb29sZG93bl9lbmRfdW5p",
-          "eF9tcxgIIAEoAxIiChpncm91cF9jb29sZG93bl9lbmRfdW5peF9tcxgJIAEo",
-          "AxIYChBjYXN0X2R1cmF0aW9uX21zGAogASgFEhMKC3VzaW5nX3RpbWVzGAsg",
-          "ASgFSgQIBRAGIrYBChFTa2lsbENhc3RTdGFydE50ZhIWCg5jYXN0ZXJfcm9s",
-          "ZV9pZBgBIAEoBRISCgpza2lsbF91dWlkGAIgASgEEhAKCHNraWxsX2lkGAMg",
-          "ASgFEhEKCWVmZmVjdF9pZBgEIAEoBRIhChlzdGFydF9zZXJ2ZXJfdGltZV91",
-          "bml4X21zGAUgASgDEhgKEGNhc3RfZHVyYXRpb25fbXMYBiABKAUSEwoLdXNp",
-          "bmdfdGltZXMYByABKAUihQEKD1NraWxsQ2FzdEVuZE50ZhIWCg5jYXN0ZXJf",
-          "cm9sZV9pZBgBIAEoBRISCgpza2lsbF91dWlkGAIgASgEEhAKCHNraWxsX2lk",
-          "GAMgASgFEh8KF2VuZF9zZXJ2ZXJfdGltZV91bml4X21zGAQgASgDEhMKC2lu",
-          "dGVycnVwdGVkGAUgASgIImAKE1JvbGVLYW5wc2Fja0luZm9SZXQSGgoIY21k",
-          "X2NvZGUYASABKA4yCC5DbWRDb2RlEi0KEnJvbGVfa2FucHNhY2tfaW5mbxgC",
-          "IAEoCzIRLlJvbGVLYW5wc2Fja0luZm8ijQMKEFJvbGVLYW5wc2Fja0luZm8S",
-          "MwoXa2FucHNhY2tfdHlwZV9jb3VudF9sc3QYASADKAsyEi5LYW5wc2Fja3R5",
-          "cGVjb3VudBImCg9yb2xlX3BhY2tfcGxhaW4YAiADKAsyDS5Sb2xlSXRlbUlu",
-          "Zm8SJgoPcm9sZV9wYWNrX2VxdWlwGAMgAygLMg0uUm9sZUl0ZW1JbmZvEigK",
-          "EXJvbGVfcGFja19jb25zdW1lGAQgAygLMg0uUm9sZUl0ZW1JbmZvEikKEnJv",
-          "bGVfcGFja19tYXRlcmlhbBgFIAMoCzINLlJvbGVJdGVtSW5mbxIsChVyb2xl",
-          "X2N1cnJ0X2VxdWlwX3BhY2sYBiADKAsyDS5Sb2xlSXRlbUluZm8SFAoMc2F2",
-          "ZV92ZXJzaW9uGAcgASgDEi0KFnJvbGVfdmlydHVhbF9pdGVtX3BhY2sYCCAD",
-          "KAsyDS5Sb2xlSXRlbUluZm8SLAoUcm9sZV9jb3VudF9pbmZvX2xpc3QYCSAD",
-          "KAsyDi5Sb2xlQ291bnRJbmZvIlwKDVJvbGVDb3VudEluZm8SDgoGYWN0aW9u",
-          "GAEgASgFEhEKCWNvdW50X2tleRgCIAEoBRINCgVjb3VudBgDIAEoAxIZChFs",
-          "YXN0X3JlZnJlc2hfdGltZRgEIAEoAyJoChdSb2xlU2hvcFB1cmNoYXNlSW5m",
-          "b1JldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSMQoScHVyY2hhc2Vf",
-          "aW5mb19saXN0GAIgAygLMhUuUm9sZVNob3BQdXJjaGFzZUluZm8iygEKFFJv",
-          "bGVTaG9wUHVyY2hhc2VJbmZvEg8KB3JvbGVfaWQYASABKAUSEAoIZ29vZHNf",
-          "aWQYAyABKAUSGwoTZGFpbHlfcHVyY2hhc2VfZGF0ZRgEIAEoCRIcChRkYWls",
-          "eV9wdXJjaGFzZV9jb3VudBgFIAEoBRIcChR0b3RhbF9wdXJjaGFzZV9jb3Vu",
-          "dBgGIAEoBRITCgtjcmVhdGVfZGF0ZRgHIAEoCRITCgt1cGRhdGVfZGF0ZRgI",
-          "IAEoCUoECAIQA1IGbnBjX2lkIjAKEUthbnBzYWNrdHlwZWNvdW50EgwKBHR5",
-          "cGUYASABKAUSDQoFY291bnQYAiABKAUiygIKDFJvbGVJdGVtSW5mbxIQCghp",
-          "dGVtX3VpZBgBIAEoAxINCgVjb3VudBgCIAEoBRIPCgdyb2xlX2lkGAMgASgF",
-          "EhQKDGl0ZW1fdHlwZV9pZBgEIAEoBRIQCghiYWdfdHlwZRgFIAEoBRIRCgli",
-          "YWdfaW5kZXgYBiABKAUSJgoKZXF1aXBfaW5mbxgHIAEoCzISLlJvbGVFcXVp",
-          "cEl0ZW1JbmZvEisKD2VxdWlwX2dlbmVfaW5mbxgIIAEoCzISLlJvbGVFcXVp",
-          "cEdlbmVJbmZvEhEKCWl0ZW1fc2lnbhgJIAEoBRISCgptb25leV90eXBlGAog",
-          "ASgFEhMKC3RvdGFsX3ByaWNlGAsgASgDEh0KFWNyZWF0ZV90aW1lX3V0Y190",
-          "aWNrcxgMIAEoAxIdChVleHBpcmVfdGltZV91dGNfdGlja3MYDSABKAMiZAoR",
-          "Um9sZUVxdWlwSXRlbUluZm8SEAoIaXRlbV91aWQYASABKAMSDwoHcm9sZV9p",
-          "ZBgCIAEoBRIYChBzdHJlbmd0aGVuX2xldmVsGAMgASgFEhIKCmVxdWlwX3R5",
-          "cGUYBCABKAUiqwEKEVJvbGVFcXVpcEdlbmVJbmZvEhAKCGl0ZW1fdWlkGAEg",
-          "ASgDEg8KB3JvbGVfaWQYAiABKAUSEAoIZ2VuZV9pZDAYAyABKAUSEAoIZ2Vu",
-          "ZV9pZDEYBCABKAUSEAoIZ2VuZV9pZDIYBSABKAUSEwoLZ2VuZV92YWx1ZTAY",
-          "BiABKAUSEwoLZ2VuZV92YWx1ZTEYByABKAUSEwoLZ2VuZV92YWx1ZTIYCCAB",
-          "KAUiewoPU2F2ZVJvbGVEYXRhUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21k",
-          "Q29kZRIPCgdyb2xlX2lkGAIgASgFEg8KB3ZlcnNpb24YAyABKAMSDwoHbWVz",
-          "c2FnZRgEIAEoCRIZChFwZXJzaXN0ZWRfdmVyc2lvbhgFIAEoAyJ8ChNPcGVu",
-          "S25hcHNhY2tHcmlkUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIP",
-          "Cgdyb2xlX2lkGAIgASgFEiEKGWN1cnJlbnRfb3BlbmVkX2dyaWRfY291bnQY",
-          "AyABKAUSFQoNa25hcHNhY2tfdHlwZRgEIAEoBSJPCg1Db3VudEl0ZW1JbmZv",
-          "EgwKBHR5cGUYASABKAMSCgoCaWQYAiABKAMSDQoFY291bnQYAyABKAUSFQoN",
-          "Y2RfdGltZV9zdGFtcBgEIAEoAyJQCg9HZXRDb3VudEluZm9SZXMSGgoIY21k",
-          "X2NvZGUYASABKA4yCC5DbWRDb2RlEiEKCWl0ZW1fbGlzdBgCIAMoCzIOLkNv",
-          "dW50SXRlbUluZm8iVAoTQ291bnRVcGRhdGVTeW5jSW5mbxIaCghjbWRfY29k",
-          "ZRgBIAEoDjIILkNtZENvZGUSIQoJaXRlbV9saXN0GAIgAygLMg4uQ291bnRJ",
-          "dGVtSW5mbyIrCg9NYXBLZXk2NFZhbHVlMzISCwoDa2V5GAEgASgEEgsKA3Zh",
-          "bBgCIAEoBSJqCgpVcGRhdGVJdGVtEiUKC2RlbGV0ZV9saXN0GAEgAygLMhAu",
-          "TWFwS2V5NjRWYWx1ZTMyEhMKC3VwZGF0ZV90aW1lGAIgASgDEiAKCWl0ZW1f",
-          "bGlzdBgDIAMoCzINLlJvbGVJdGVtSW5mbyJKCg1VcGRhdGVJdGVtUmV0EhoK",
-          "CGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIdCghJdGVtRGF0ZRgCIAEoCzIL",
-          "LlVwZGF0ZUl0ZW0ilwEKC1N5bmNNb3ZlTnRmEg8KB3JvbGVfaWQYASABKAUS",
-          "CgoCZHgYAiABKAISCgoCZHkYAyABKAISCgoCZHoYBCABKAISDAoEZmFjZRgF",
-          "IAEoAhIMCgR0aW1lGAYgASgCEhEKCWlzX21vdmluZxgHIAEoCBIQCghpc19t",
-          "b3ZlZBgIIAEoCBISCgpqdW1wX2NvdW50GAkgASgFKr0FCgdDbWRDb2RlEgsK",
-          "B1N1Y2NlZWQQABINCglBY2N0RXhpc3QQARIPCgtTZXJ2ZXJFcnJvchACEhAK",
-          "DEFjY3ROb3RFeGlzdBADEhEKDVBhc3N3b3JkRXJyb3IQBBIPCgtBY2N0RGlz",
-          "YWJsZRAFEhEKDVJlcVBhcmFtRXJyb3IQBhIRCg1OaWNrbmFtZUV4aXN0EAcS",
-          "EwoPVXNlck5hbWVJbGxlZ2FsEAgSEwoPUGhvbmVOdW1JbGxlZ2FsEAkSEwoP",
-          "UGFzc3dvcmRJbGxlZ2FsEAoSEgoOVXNlck9mdGVuTG9naW4QCxIPCgtWYXJp",
-          "ZnlFcnJvchAMEhAKDFJvbGVOb3RFeGlzdBANEhMKD0ZlYXR1cmVOb3RSZWFk",
-          "eRAOEhQKEER1cGxpY2F0ZVJlcXVlc3QQDxIVChFOb3RFbm91Z2hDdXJyZW5j",
-          "eRAQEhQKEFNob3BJdGVtTm90Rm91bmQQERIYChRQdXJjaGFzZUxpbWl0UmVh",
-          "Y2hlZBASEgsKB0JhZ0Z1bGwQExISCg5JbnZhbGlkU2Vzc2lvbhAUEhMKD0lu",
-          "dmFsaWRRdWFudGl0eRAVEg8KC0ludmFsaWRTaG9wEBYSFQoRVHJhbnNhY3Rp",
-          "b25GYWlsZWQQFxIVChFJbnN1ZmZpY2llbnRJdGVtcxAYEhkKFUluY29ycmVj",
-          "dEJhY2twYWNrVHlwZRAZEhAKDEl0ZW1Ob3RFeGlzdBAaEhEKDUl0ZW1Ob3RF",
-          "bm91Z2gQGxITCg9Ta2lsbE5vdExlYXJuZWQQHBIWChJTa2lsbENvbmZpZ01p",
-          "c3NpbmcQHRITCg9Ta2lsbE9uQ29vbGRvd24QHhIXChNTa2lsbEluc3VmZmlj",
-          "aWVudE1wEB8SFQoRU2tpbGxTdGF0ZUJsb2NrZWQQIBIaChZTa2lsbFRhcmdl",
-          "dFVuc3VwcG9ydGVkECFiBnByb3RvMw=="));
+          "BRILCgNwb3MYHiABKAkSDgoGbWFwX2lkGB8gASgFEhMKC2luc3RhbmNlX2lk",
+          "GCAgASgFIq4BCg5UZWFtTWVtYmVySW5mbxIPCgdyb2xlX2lkGAEgASgEEhAK",
+          "CG5pY2tuYW1lGAIgASgJEg0KBWxldmVsGAMgASgFEg4KBmpvYl9pZBgEIAEo",
+          "BRIQCghzY2VuZV9pZBgFIAEoBRITCgtpbnN0YW5jZV9pZBgGIAEoBRISCgpp",
+          "c19jYXB0YWluGAcgASgIEg8KB2N1cnJfaHAYCCABKAUSDgoGbWF4X2hwGAkg",
+          "ASgFImgKC1RlYW1JbmZvTnRmEg8KB3RlYW1faWQYASABKAQSEgoKY2FwdGFp",
+          "bl9pZBgCIAEoBBISCgptYXhfbWVtYmVyGAMgASgFEiAKB21lbWJlcnMYBCAD",
+          "KAsyDy5UZWFtTWVtYmVySW5mbyJiChFUZWFtSW52YXRhdGlvbk50ZhIPCgd0",
+          "ZWFtX2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiABKAQSFAoMaW52aXRlcl9u",
+          "YW1lGAMgASgJEhIKCmNhcHRhaW5faWQYBCABKAQifgoTVGVhbUVudGVyRHVu",
+          "Z2Vvbk50ZhIPCgd0ZWFtX2lkGAEgASgEEhIKCmR1bmdlb25faWQYAiABKAUS",
+          "EAoIc2NlbmVfaWQYAyABKAUSEwoLaW5zdGFuY2VfaWQYBCABKAQSDgoGbWFw",
+          "X2lkGAUgASgFEgsKA3BvcxgGIAEoCSJGCgxSb2xlTGVhdmVOdGYSDwoHcm9s",
+          "ZV9pZBgBIAEoBBIQCghzY2VuZV9pZBgCIAEoBRITCgtpbnN0YW5jZV9pZBgD",
+          "IAEoBCKgAQoMTWFpblJvbGVJbmZvEiAKCWJhc2VfaW5mbxgBIAEoCzINLlJv",
+          "bGVCYXNlSW5mbxISCgphY2NvdW50X2lkGAIgASgFEgsKA2V4cBgEIAEoBRIW",
+          "Cg5za2lsbF91cF9wb2ludBgFIAEoBRIVCg1jYW1lcmFfb2Zmc2V0GAYgASgJ",
+          "EhEKCXNlcnZlcl9pZBgHIAEoBUoECAMQBFIFbW9uZXkiagoQUm9sZVNraWxs",
+          "SW5mb1JldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUSKQoRcm9sZVNr",
+          "aWxsSW5mb0xpc3QYAiADKAsyDi5Sb2xlU2tpbGxJbmZvEg8KB3JvbGVfaWQY",
+          "AyABKAUiQgoNUm9sZVNraWxsSW5mbxIQCghza2lsbF9pZBgBIAEoBRINCgVs",
+          "ZXZlbBgCIAEoBRIQCghiaW5kX2tleRgDIAEoCSKLAgoMU2tpbGxDYXN0UmV0",
+          "EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRISCgpza2lsbF91dWlkGAIg",
+          "ASgEEhAKCHNraWxsX2lkGAMgASgFEhEKCWVmZmVjdF9pZBgEIAEoBRIbChNz",
+          "ZXJ2ZXJfdGltZV91bml4X21zGAYgASgDEhIKCmN1cnJlbnRfbXAYByABKAUS",
+          "HAoUY29vbGRvd25fZW5kX3VuaXhfbXMYCCABKAMSIgoaZ3JvdXBfY29vbGRv",
+          "d25fZW5kX3VuaXhfbXMYCSABKAMSGAoQY2FzdF9kdXJhdGlvbl9tcxgKIAEo",
+          "BRITCgt1c2luZ190aW1lcxgLIAEoBUoECAUQBiK2AQoRU2tpbGxDYXN0U3Rh",
+          "cnROdGYSFgoOY2FzdGVyX3JvbGVfaWQYASABKAUSEgoKc2tpbGxfdXVpZBgC",
+          "IAEoBBIQCghza2lsbF9pZBgDIAEoBRIRCgllZmZlY3RfaWQYBCABKAUSIQoZ",
+          "c3RhcnRfc2VydmVyX3RpbWVfdW5peF9tcxgFIAEoAxIYChBjYXN0X2R1cmF0",
+          "aW9uX21zGAYgASgFEhMKC3VzaW5nX3RpbWVzGAcgASgFIoUBCg9Ta2lsbENh",
+          "c3RFbmROdGYSFgoOY2FzdGVyX3JvbGVfaWQYASABKAUSEgoKc2tpbGxfdXVp",
+          "ZBgCIAEoBBIQCghza2lsbF9pZBgDIAEoBRIfChdlbmRfc2VydmVyX3RpbWVf",
+          "dW5peF9tcxgEIAEoAxITCgtpbnRlcnJ1cHRlZBgFIAEoCCJgChNSb2xlS2Fu",
+          "cHNhY2tJbmZvUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRItChJy",
+          "b2xlX2thbnBzYWNrX2luZm8YAiABKAsyES5Sb2xlS2FucHNhY2tJbmZvIo0D",
+          "ChBSb2xlS2FucHNhY2tJbmZvEjMKF2thbnBzYWNrX3R5cGVfY291bnRfbHN0",
+          "GAEgAygLMhIuS2FucHNhY2t0eXBlY291bnQSJgoPcm9sZV9wYWNrX3BsYWlu",
+          "GAIgAygLMg0uUm9sZUl0ZW1JbmZvEiYKD3JvbGVfcGFja19lcXVpcBgDIAMo",
+          "CzINLlJvbGVJdGVtSW5mbxIoChFyb2xlX3BhY2tfY29uc3VtZRgEIAMoCzIN",
+          "LlJvbGVJdGVtSW5mbxIpChJyb2xlX3BhY2tfbWF0ZXJpYWwYBSADKAsyDS5S",
+          "b2xlSXRlbUluZm8SLAoVcm9sZV9jdXJydF9lcXVpcF9wYWNrGAYgAygLMg0u",
+          "Um9sZUl0ZW1JbmZvEhQKDHNhdmVfdmVyc2lvbhgHIAEoAxItChZyb2xlX3Zp",
+          "cnR1YWxfaXRlbV9wYWNrGAggAygLMg0uUm9sZUl0ZW1JbmZvEiwKFHJvbGVf",
+          "Y291bnRfaW5mb19saXN0GAkgAygLMg4uUm9sZUNvdW50SW5mbyJcCg1Sb2xl",
+          "Q291bnRJbmZvEg4KBmFjdGlvbhgBIAEoBRIRCgljb3VudF9rZXkYAiABKAUS",
+          "DQoFY291bnQYAyABKAMSGQoRbGFzdF9yZWZyZXNoX3RpbWUYBCABKAMiaAoX",
+          "Um9sZVNob3BQdXJjaGFzZUluZm9SZXQSGgoIY21kX2NvZGUYASABKA4yCC5D",
+          "bWRDb2RlEjEKEnB1cmNoYXNlX2luZm9fbGlzdBgCIAMoCzIVLlJvbGVTaG9w",
+          "UHVyY2hhc2VJbmZvIsoBChRSb2xlU2hvcFB1cmNoYXNlSW5mbxIPCgdyb2xl",
+          "X2lkGAEgASgFEhAKCGdvb2RzX2lkGAMgASgFEhsKE2RhaWx5X3B1cmNoYXNl",
+          "X2RhdGUYBCABKAkSHAoUZGFpbHlfcHVyY2hhc2VfY291bnQYBSABKAUSHAoU",
+          "dG90YWxfcHVyY2hhc2VfY291bnQYBiABKAUSEwoLY3JlYXRlX2RhdGUYByAB",
+          "KAkSEwoLdXBkYXRlX2RhdGUYCCABKAlKBAgCEANSBm5wY19pZCIwChFLYW5w",
+          "c2Fja3R5cGVjb3VudBIMCgR0eXBlGAEgASgFEg0KBWNvdW50GAIgASgFIsoC",
+          "CgxSb2xlSXRlbUluZm8SEAoIaXRlbV91aWQYASABKAMSDQoFY291bnQYAiAB",
+          "KAUSDwoHcm9sZV9pZBgDIAEoBRIUCgxpdGVtX3R5cGVfaWQYBCABKAUSEAoI",
+          "YmFnX3R5cGUYBSABKAUSEQoJYmFnX2luZGV4GAYgASgFEiYKCmVxdWlwX2lu",
+          "Zm8YByABKAsyEi5Sb2xlRXF1aXBJdGVtSW5mbxIrCg9lcXVpcF9nZW5lX2lu",
+          "Zm8YCCABKAsyEi5Sb2xlRXF1aXBHZW5lSW5mbxIRCglpdGVtX3NpZ24YCSAB",
+          "KAUSEgoKbW9uZXlfdHlwZRgKIAEoBRITCgt0b3RhbF9wcmljZRgLIAEoAxId",
+          "ChVjcmVhdGVfdGltZV91dGNfdGlja3MYDCABKAMSHQoVZXhwaXJlX3RpbWVf",
+          "dXRjX3RpY2tzGA0gASgDImQKEVJvbGVFcXVpcEl0ZW1JbmZvEhAKCGl0ZW1f",
+          "dWlkGAEgASgDEg8KB3JvbGVfaWQYAiABKAUSGAoQc3RyZW5ndGhlbl9sZXZl",
+          "bBgDIAEoBRISCgplcXVpcF90eXBlGAQgASgFIqsBChFSb2xlRXF1aXBHZW5l",
+          "SW5mbxIQCghpdGVtX3VpZBgBIAEoAxIPCgdyb2xlX2lkGAIgASgFEhAKCGdl",
+          "bmVfaWQwGAMgASgFEhAKCGdlbmVfaWQxGAQgASgFEhAKCGdlbmVfaWQyGAUg",
+          "ASgFEhMKC2dlbmVfdmFsdWUwGAYgASgFEhMKC2dlbmVfdmFsdWUxGAcgASgF",
+          "EhMKC2dlbmVfdmFsdWUyGAggASgFInsKD1NhdmVSb2xlRGF0YVJldBIaCghj",
+          "bWRfY29kZRgBIAEoDjIILkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIPCgd2",
+          "ZXJzaW9uGAMgASgDEg8KB21lc3NhZ2UYBCABKAkSGQoRcGVyc2lzdGVkX3Zl",
+          "cnNpb24YBSABKAMifAoTT3BlbktuYXBzYWNrR3JpZFJldBIaCghjbWRfY29k",
+          "ZRgBIAEoDjIILkNtZENvZGUSDwoHcm9sZV9pZBgCIAEoBRIhChljdXJyZW50",
+          "X29wZW5lZF9ncmlkX2NvdW50GAMgASgFEhUKDWtuYXBzYWNrX3R5cGUYBCAB",
+          "KAUiTwoNQ291bnRJdGVtSW5mbxIMCgR0eXBlGAEgASgDEgoKAmlkGAIgASgD",
+          "Eg0KBWNvdW50GAMgASgFEhUKDWNkX3RpbWVfc3RhbXAYBCABKAMiUAoPR2V0",
+          "Q291bnRJbmZvUmVzEhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIhCglp",
+          "dGVtX2xpc3QYAiADKAsyDi5Db3VudEl0ZW1JbmZvIlQKE0NvdW50VXBkYXRl",
+          "U3luY0luZm8SGgoIY21kX2NvZGUYASABKA4yCC5DbWRDb2RlEiEKCWl0ZW1f",
+          "bGlzdBgCIAMoCzIOLkNvdW50SXRlbUluZm8iKwoPTWFwS2V5NjRWYWx1ZTMy",
+          "EgsKA2tleRgBIAEoBBILCgN2YWwYAiABKAUiagoKVXBkYXRlSXRlbRIlCgtk",
+          "ZWxldGVfbGlzdBgBIAMoCzIQLk1hcEtleTY0VmFsdWUzMhITCgt1cGRhdGVf",
+          "dGltZRgCIAEoAxIgCglpdGVtX2xpc3QYAyADKAsyDS5Sb2xlSXRlbUluZm8i",
+          "SgoNVXBkYXRlSXRlbVJldBIaCghjbWRfY29kZRgBIAEoDjIILkNtZENvZGUS",
+          "HQoISXRlbURhdGUYAiABKAsyCy5VcGRhdGVJdGVtIpcBCgtTeW5jTW92ZU50",
+          "ZhIPCgdyb2xlX2lkGAEgASgFEgoKAmR4GAIgASgCEgoKAmR5GAMgASgCEgoK",
+          "AmR6GAQgASgCEgwKBGZhY2UYBSABKAISDAoEdGltZRgGIAEoAhIRCglpc19t",
+          "b3ZpbmcYByABKAgSEAoIaXNfbW92ZWQYCCABKAgSEgoKanVtcF9jb3VudBgJ",
+          "IAEoBSq9BQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4aXN0EAES",
+          "DwoLU2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1QYXNzd29y",
+          "ZEVycm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVycm9yEAYS",
+          "EQoNTmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAIEhMKD1Bo",
+          "b25lTnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIKDlVzZXJP",
+          "ZnRlbkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90RXhpc3QQ",
+          "DRITCg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1ZXN0EA8S",
+          "FQoRTm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZvdW5kEBES",
+          "GAoUUHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMSEgoOSW52",
+          "YWxpZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJbnZhbGlk",
+          "U2hvcBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZmaWNpZW50",
+          "SXRlbXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJdGVtTm90",
+          "RXhpc3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RMZWFybmVk",
+          "EBwSFgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNvb2xkb3du",
+          "EB4SFwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3RhdGVCbG9j",
+          "a2VkECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -162,7 +175,12 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LoginGameServerRet), global::LoginGameServerRet.Parser, new[]{ "CmdCode", "CreateRoleInfo" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CreateRoleRet), global::CreateRoleRet.Parser, new[]{ "CmdCode", "RoleId", "Nickname", "JobId", "Level" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StartGameRet), global::StartGameRet.Parser, new[]{ "CmdCode", "MainRoleInfo" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleBaseInfo), global::RoleBaseInfo.Parser, new[]{ "RoleId", "Nickname", "Level", "XiuWei", "MaxHp", "CurrHp", "MaxMp", "CurrMp", "JobId", "AtkExternalMin", "AtkExternalMax", "AtkInternalMin", "AtkInternalMax", "DefExternal", "DefExternalDelta", "DefInternal", "DefInternalDelta", "HitPoint", "BlockPoint", "ZhenJi", "WuGu", "CritPoint", "CritResistPoint", "CritDamage", "CritDamageReduce", "HealStrength", "HealBonus", "ZhuXin", "JianRen", "Pos", "MapId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleBaseInfo), global::RoleBaseInfo.Parser, new[]{ "RoleId", "Nickname", "Level", "XiuWei", "MaxHp", "CurrHp", "MaxMp", "CurrMp", "JobId", "AtkExternalMin", "AtkExternalMax", "AtkInternalMin", "AtkInternalMax", "DefExternal", "DefExternalDelta", "DefInternal", "DefInternalDelta", "HitPoint", "BlockPoint", "ZhenJi", "WuGu", "CritPoint", "CritResistPoint", "CritDamage", "CritDamageReduce", "HealStrength", "HealBonus", "ZhuXin", "JianRen", "Pos", "MapId", "InstanceId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::TeamMemberInfo), global::TeamMemberInfo.Parser, new[]{ "RoleId", "Nickname", "Level", "JobId", "SceneId", "InstanceId", "IsCaptain", "CurrHp", "MaxHp" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::TeamInfoNtf), global::TeamInfoNtf.Parser, new[]{ "TeamId", "CaptainId", "MaxMember", "Members" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::TeamInvatationNtf), global::TeamInvatationNtf.Parser, new[]{ "TeamId", "InviterId", "InviterName", "CaptainId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::TeamEnterDungeonNtf), global::TeamEnterDungeonNtf.Parser, new[]{ "TeamId", "DungeonId", "SceneId", "InstanceId", "MapId", "Pos" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleLeaveNtf), global::RoleLeaveNtf.Parser, new[]{ "RoleId", "SceneId", "InstanceId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MainRoleInfo), global::MainRoleInfo.Parser, new[]{ "BaseInfo", "AccountId", "Exp", "SkillUpPoint", "CameraOffset", "ServerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfoRet), global::RoleSkillInfoRet.Parser, new[]{ "CmdCode", "RoleSkillInfoList", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleSkillInfo), global::RoleSkillInfo.Parser, new[]{ "SkillId", "Level", "BindKey" }, null, null, null, null),
@@ -335,7 +353,6 @@ public enum CmdCode {
 #endregion
 
 #region Messages
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RegistVarifyRet : pb::IMessage<RegistVarifyRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -526,11 +543,7 @@ public sealed partial class RegistVarifyRet : pb::IMessage<RegistVarifyRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -553,11 +566,7 @@ public sealed partial class RegistVarifyRet : pb::IMessage<RegistVarifyRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -576,7 +585,6 @@ public sealed partial class RegistVarifyRet : pb::IMessage<RegistVarifyRet>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class ErrMsg : pb::IMessage<ErrMsg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -735,11 +743,7 @@ public sealed partial class ErrMsg : pb::IMessage<ErrMsg>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -758,11 +762,7 @@ public sealed partial class ErrMsg : pb::IMessage<ErrMsg>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -780,7 +780,6 @@ public sealed partial class ErrMsg : pb::IMessage<ErrMsg>
 /// <summary>
 /// 业务响应的结构化错误信息，客户端以 code 判断结果，message 仅用于诊断显示。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class ErrorInfo : pb::IMessage<ErrorInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -971,11 +970,7 @@ public sealed partial class ErrorInfo : pb::IMessage<ErrorInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -998,11 +993,7 @@ public sealed partial class ErrorInfo : pb::IMessage<ErrorInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1024,7 +1015,6 @@ public sealed partial class ErrorInfo : pb::IMessage<ErrorInfo>
 /// <summary>
 /// 商城购买响应。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class BuyShopItemRes : pb::IMessage<BuyShopItemRes>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1186,11 +1176,7 @@ public sealed partial class BuyShopItemRes : pb::IMessage<BuyShopItemRes>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1212,11 +1198,7 @@ public sealed partial class BuyShopItemRes : pb::IMessage<BuyShopItemRes>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1234,7 +1216,6 @@ public sealed partial class BuyShopItemRes : pb::IMessage<BuyShopItemRes>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RegistRet : pb::IMessage<RegistRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1393,11 +1374,7 @@ public sealed partial class RegistRet : pb::IMessage<RegistRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1416,11 +1393,7 @@ public sealed partial class RegistRet : pb::IMessage<RegistRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1435,7 +1408,6 @@ public sealed partial class RegistRet : pb::IMessage<RegistRet>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class LoginRet : pb::IMessage<LoginRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1661,11 +1633,7 @@ public sealed partial class LoginRet : pb::IMessage<LoginRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1695,11 +1663,7 @@ public sealed partial class LoginRet : pb::IMessage<LoginRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1725,7 +1689,6 @@ public sealed partial class LoginRet : pb::IMessage<LoginRet>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class GameServer : pb::IMessage<GameServer>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2044,11 +2007,7 @@ public sealed partial class GameServer : pb::IMessage<GameServer>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2087,11 +2046,7 @@ public sealed partial class GameServer : pb::IMessage<GameServer>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2126,7 +2081,6 @@ public sealed partial class GameServer : pb::IMessage<GameServer>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class GetServerListRet : pb::IMessage<GetServerListRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2306,11 +2260,7 @@ public sealed partial class GetServerListRet : pb::IMessage<GetServerListRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2333,11 +2283,7 @@ public sealed partial class GetServerListRet : pb::IMessage<GetServerListRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2356,7 +2302,6 @@ public sealed partial class GetServerListRet : pb::IMessage<GetServerListRet>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class LoginGameServerRet : pb::IMessage<LoginGameServerRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2550,11 +2495,7 @@ public sealed partial class LoginGameServerRet : pb::IMessage<LoginGameServerRet
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2580,11 +2521,7 @@ public sealed partial class LoginGameServerRet : pb::IMessage<LoginGameServerRet
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2606,7 +2543,6 @@ public sealed partial class LoginGameServerRet : pb::IMessage<LoginGameServerRet
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CreateRoleRet : pb::IMessage<CreateRoleRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2893,11 +2829,7 @@ public sealed partial class CreateRoleRet : pb::IMessage<CreateRoleRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2932,11 +2864,7 @@ public sealed partial class CreateRoleRet : pb::IMessage<CreateRoleRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2967,7 +2895,6 @@ public sealed partial class CreateRoleRet : pb::IMessage<CreateRoleRet>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class StartGameRet : pb::IMessage<StartGameRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3161,11 +3088,7 @@ public sealed partial class StartGameRet : pb::IMessage<StartGameRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -3191,11 +3114,7 @@ public sealed partial class StartGameRet : pb::IMessage<StartGameRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -3220,7 +3139,6 @@ public sealed partial class StartGameRet : pb::IMessage<StartGameRet>
 /// <summary>
 /// 所有角色共用的基础属性，对应 RoleBaseArrtTable。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3286,6 +3204,7 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     jianRen_ = other.jianRen_;
     pos_ = other.pos_;
     mapId_ = other.mapId_;
+    instanceId_ = other.instanceId_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -3760,6 +3679,21 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     }
   }
 
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 32;
+  private int instanceId_;
+  /// <summary>
+  ///副本实例ID，0 表示公共场景；同一地图内不同队伍分属不同实例
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -3806,6 +3740,7 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     if (JianRen != other.JianRen) return false;
     if (Pos != other.Pos) return false;
     if (MapId != other.MapId) return false;
+    if (InstanceId != other.InstanceId) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -3844,6 +3779,7 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     if (JianRen != 0) hash ^= JianRen.GetHashCode();
     if (Pos.Length != 0) hash ^= Pos.GetHashCode();
     if (MapId != 0) hash ^= MapId.GetHashCode();
+    if (InstanceId != 0) hash ^= InstanceId.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -3986,6 +3922,10 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
       output.WriteRawTag(248, 1);
       output.WriteInt32(MapId);
     }
+    if (InstanceId != 0) {
+      output.WriteRawTag(128, 2);
+      output.WriteInt32(InstanceId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4120,6 +4060,10 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
       output.WriteRawTag(248, 1);
       output.WriteInt32(MapId);
     }
+    if (InstanceId != 0) {
+      output.WriteRawTag(128, 2);
+      output.WriteInt32(InstanceId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4222,6 +4166,9 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     }
     if (MapId != 0) {
       size += 2 + pb::CodedOutputStream.ComputeInt32Size(MapId);
+    }
+    if (InstanceId != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeInt32Size(InstanceId);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -4328,6 +4275,9 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
     if (other.MapId != 0) {
       MapId = other.MapId;
     }
+    if (other.InstanceId != 0) {
+      InstanceId = other.InstanceId;
+    }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -4339,11 +4289,7 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -4471,6 +4417,10 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
           MapId = input.ReadInt32();
           break;
         }
+        case 256: {
+          InstanceId = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -4482,11 +4432,7 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -4614,6 +4560,1814 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
           MapId = input.ReadInt32();
           break;
         }
+        case 256: {
+          InstanceId = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 队伍成员基础信息，对应 RO TeamData.memberList 的单条记录。
+/// </summary>
+public sealed partial class TeamMemberInfo : pb::IMessage<TeamMemberInfo>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<TeamMemberInfo> _parser = new pb::MessageParser<TeamMemberInfo>(() => new TeamMemberInfo());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<TeamMemberInfo> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[12]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamMemberInfo() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamMemberInfo(TeamMemberInfo other) : this() {
+    roleId_ = other.roleId_;
+    nickname_ = other.nickname_;
+    level_ = other.level_;
+    jobId_ = other.jobId_;
+    sceneId_ = other.sceneId_;
+    instanceId_ = other.instanceId_;
+    isCaptain_ = other.isCaptain_;
+    currHp_ = other.currHp_;
+    maxHp_ = other.maxHp_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamMemberInfo Clone() {
+    return new TeamMemberInfo(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private ulong roleId_;
+  /// <summary>
+  ///成员角色ID，服务端唯一身份
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "nickname" field.</summary>
+  public const int NicknameFieldNumber = 2;
+  private string nickname_ = "";
+  /// <summary>
+  ///成员昵称，用于队伍窗口显示
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Nickname {
+    get { return nickname_; }
+    set {
+      nickname_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "level" field.</summary>
+  public const int LevelFieldNumber = 3;
+  private int level_;
+  /// <summary>
+  ///成员等级
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Level {
+    get { return level_; }
+    set {
+      level_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "job_id" field.</summary>
+  public const int JobIdFieldNumber = 4;
+  private int jobId_;
+  /// <summary>
+  ///职业ID，用于头像与职业图标
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int JobId {
+    get { return jobId_; }
+    set {
+      jobId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "scene_id" field.</summary>
+  public const int SceneIdFieldNumber = 5;
+  private int sceneId_;
+  /// <summary>
+  ///成员当前场景ID，对应 RO memberList.sceneId
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SceneId {
+    get { return sceneId_; }
+    set {
+      sceneId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 6;
+  private int instanceId_;
+  /// <summary>
+  ///成员当前副本实例ID，0 表示不在副本
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "is_captain" field.</summary>
+  public const int IsCaptainFieldNumber = 7;
+  private bool isCaptain_;
+  /// <summary>
+  ///是否队长，与 TeamInfoNtf.captain_id 保持同一人
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool IsCaptain {
+    get { return isCaptain_; }
+    set {
+      isCaptain_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "curr_hp" field.</summary>
+  public const int CurrHpFieldNumber = 8;
+  private int currHp_;
+  /// <summary>
+  ///当前生命值，用于队伍窗口血条
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CurrHp {
+    get { return currHp_; }
+    set {
+      currHp_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "max_hp" field.</summary>
+  public const int MaxHpFieldNumber = 9;
+  private int maxHp_;
+  /// <summary>
+  ///最大生命值，0 表示未知
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int MaxHp {
+    get { return maxHp_; }
+    set {
+      maxHp_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as TeamMemberInfo);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(TeamMemberInfo other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (Nickname != other.Nickname) return false;
+    if (Level != other.Level) return false;
+    if (JobId != other.JobId) return false;
+    if (SceneId != other.SceneId) return false;
+    if (InstanceId != other.InstanceId) return false;
+    if (IsCaptain != other.IsCaptain) return false;
+    if (CurrHp != other.CurrHp) return false;
+    if (MaxHp != other.MaxHp) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0UL) hash ^= RoleId.GetHashCode();
+    if (Nickname.Length != 0) hash ^= Nickname.GetHashCode();
+    if (Level != 0) hash ^= Level.GetHashCode();
+    if (JobId != 0) hash ^= JobId.GetHashCode();
+    if (SceneId != 0) hash ^= SceneId.GetHashCode();
+    if (InstanceId != 0) hash ^= InstanceId.GetHashCode();
+    if (IsCaptain != false) hash ^= IsCaptain.GetHashCode();
+    if (CurrHp != 0) hash ^= CurrHp.GetHashCode();
+    if (MaxHp != 0) hash ^= MaxHp.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(RoleId);
+    }
+    if (Nickname.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Nickname);
+    }
+    if (Level != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(Level);
+    }
+    if (JobId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(JobId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(InstanceId);
+    }
+    if (IsCaptain != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(IsCaptain);
+    }
+    if (CurrHp != 0) {
+      output.WriteRawTag(64);
+      output.WriteInt32(CurrHp);
+    }
+    if (MaxHp != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(MaxHp);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(RoleId);
+    }
+    if (Nickname.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Nickname);
+    }
+    if (Level != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(Level);
+    }
+    if (JobId != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(JobId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(InstanceId);
+    }
+    if (IsCaptain != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(IsCaptain);
+    }
+    if (CurrHp != 0) {
+      output.WriteRawTag(64);
+      output.WriteInt32(CurrHp);
+    }
+    if (MaxHp != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(MaxHp);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoleId);
+    }
+    if (Nickname.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Nickname);
+    }
+    if (Level != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Level);
+    }
+    if (JobId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(JobId);
+    }
+    if (SceneId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SceneId);
+    }
+    if (InstanceId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(InstanceId);
+    }
+    if (IsCaptain != false) {
+      size += 1 + 1;
+    }
+    if (CurrHp != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrHp);
+    }
+    if (MaxHp != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxHp);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(TeamMemberInfo other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0UL) {
+      RoleId = other.RoleId;
+    }
+    if (other.Nickname.Length != 0) {
+      Nickname = other.Nickname;
+    }
+    if (other.Level != 0) {
+      Level = other.Level;
+    }
+    if (other.JobId != 0) {
+      JobId = other.JobId;
+    }
+    if (other.SceneId != 0) {
+      SceneId = other.SceneId;
+    }
+    if (other.InstanceId != 0) {
+      InstanceId = other.InstanceId;
+    }
+    if (other.IsCaptain != false) {
+      IsCaptain = other.IsCaptain;
+    }
+    if (other.CurrHp != 0) {
+      CurrHp = other.CurrHp;
+    }
+    if (other.MaxHp != 0) {
+      MaxHp = other.MaxHp;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          Nickname = input.ReadString();
+          break;
+        }
+        case 24: {
+          Level = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          JobId = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          InstanceId = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          IsCaptain = input.ReadBool();
+          break;
+        }
+        case 64: {
+          CurrHp = input.ReadInt32();
+          break;
+        }
+        case 72: {
+          MaxHp = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          Nickname = input.ReadString();
+          break;
+        }
+        case 24: {
+          Level = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          JobId = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          InstanceId = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          IsCaptain = input.ReadBool();
+          break;
+        }
+        case 64: {
+          CurrHp = input.ReadInt32();
+          break;
+        }
+        case 72: {
+          MaxHp = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 队伍完整状态，服务端每次队伍变更后整包下发。
+/// </summary>
+public sealed partial class TeamInfoNtf : pb::IMessage<TeamInfoNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<TeamInfoNtf> _parser = new pb::MessageParser<TeamInfoNtf>(() => new TeamInfoNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<TeamInfoNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[13]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInfoNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInfoNtf(TeamInfoNtf other) : this() {
+    teamId_ = other.teamId_;
+    captainId_ = other.captainId_;
+    maxMember_ = other.maxMember_;
+    members_ = other.members_.Clone();
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInfoNtf Clone() {
+    return new TeamInfoNtf(this);
+  }
+
+  /// <summary>Field number for the "team_id" field.</summary>
+  public const int TeamIdFieldNumber = 1;
+  private ulong teamId_;
+  /// <summary>
+  ///队伍ID，0 表示已不在任何队伍
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong TeamId {
+    get { return teamId_; }
+    set {
+      teamId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "captain_id" field.</summary>
+  public const int CaptainIdFieldNumber = 2;
+  private ulong captainId_;
+  /// <summary>
+  ///队长角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong CaptainId {
+    get { return captainId_; }
+    set {
+      captainId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "max_member" field.</summary>
+  public const int MaxMemberFieldNumber = 3;
+  private int maxMember_;
+  /// <summary>
+  ///队伍人数上限，对应 RO TeamData.maxTeamNumber
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int MaxMember {
+    get { return maxMember_; }
+    set {
+      maxMember_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "members" field.</summary>
+  public const int MembersFieldNumber = 4;
+  private static readonly pb::FieldCodec<global::TeamMemberInfo> _repeated_members_codec
+      = pb::FieldCodec.ForMessage(34, global::TeamMemberInfo.Parser);
+  private readonly pbc::RepeatedField<global::TeamMemberInfo> members_ = new pbc::RepeatedField<global::TeamMemberInfo>();
+  /// <summary>
+  ///当前成员列表，含队长
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::TeamMemberInfo> Members {
+    get { return members_; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as TeamInfoNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(TeamInfoNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (TeamId != other.TeamId) return false;
+    if (CaptainId != other.CaptainId) return false;
+    if (MaxMember != other.MaxMember) return false;
+    if(!members_.Equals(other.members_)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (TeamId != 0UL) hash ^= TeamId.GetHashCode();
+    if (CaptainId != 0UL) hash ^= CaptainId.GetHashCode();
+    if (MaxMember != 0) hash ^= MaxMember.GetHashCode();
+    hash ^= members_.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (CaptainId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(CaptainId);
+    }
+    if (MaxMember != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(MaxMember);
+    }
+    members_.WriteTo(output, _repeated_members_codec);
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (CaptainId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(CaptainId);
+    }
+    if (MaxMember != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(MaxMember);
+    }
+    members_.WriteTo(ref output, _repeated_members_codec);
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (TeamId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TeamId);
+    }
+    if (CaptainId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(CaptainId);
+    }
+    if (MaxMember != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxMember);
+    }
+    size += members_.CalculateSize(_repeated_members_codec);
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(TeamInfoNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.TeamId != 0UL) {
+      TeamId = other.TeamId;
+    }
+    if (other.CaptainId != 0UL) {
+      CaptainId = other.CaptainId;
+    }
+    if (other.MaxMember != 0) {
+      MaxMember = other.MaxMember;
+    }
+    members_.Add(other.members_);
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          CaptainId = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          MaxMember = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          members_.AddEntriesFrom(input, _repeated_members_codec);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          CaptainId = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          MaxMember = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          members_.AddEntriesFrom(ref input, _repeated_members_codec);
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 邀请入队通知，对应 RO TeamInvatationData。
+/// </summary>
+public sealed partial class TeamInvatationNtf : pb::IMessage<TeamInvatationNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<TeamInvatationNtf> _parser = new pb::MessageParser<TeamInvatationNtf>(() => new TeamInvatationNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<TeamInvatationNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[14]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInvatationNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInvatationNtf(TeamInvatationNtf other) : this() {
+    teamId_ = other.teamId_;
+    inviterId_ = other.inviterId_;
+    inviterName_ = other.inviterName_;
+    captainId_ = other.captainId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamInvatationNtf Clone() {
+    return new TeamInvatationNtf(this);
+  }
+
+  /// <summary>Field number for the "team_id" field.</summary>
+  public const int TeamIdFieldNumber = 1;
+  private ulong teamId_;
+  /// <summary>
+  ///发出邀请的队伍ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong TeamId {
+    get { return teamId_; }
+    set {
+      teamId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "inviter_id" field.</summary>
+  public const int InviterIdFieldNumber = 2;
+  private ulong inviterId_;
+  /// <summary>
+  ///邀请人角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong InviterId {
+    get { return inviterId_; }
+    set {
+      inviterId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "inviter_name" field.</summary>
+  public const int InviterNameFieldNumber = 3;
+  private string inviterName_ = "";
+  /// <summary>
+  ///邀请人昵称，用于邀请弹窗
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string InviterName {
+    get { return inviterName_; }
+    set {
+      inviterName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "captain_id" field.</summary>
+  public const int CaptainIdFieldNumber = 4;
+  private ulong captainId_;
+  /// <summary>
+  ///该队队长角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong CaptainId {
+    get { return captainId_; }
+    set {
+      captainId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as TeamInvatationNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(TeamInvatationNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (TeamId != other.TeamId) return false;
+    if (InviterId != other.InviterId) return false;
+    if (InviterName != other.InviterName) return false;
+    if (CaptainId != other.CaptainId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (TeamId != 0UL) hash ^= TeamId.GetHashCode();
+    if (InviterId != 0UL) hash ^= InviterId.GetHashCode();
+    if (InviterName.Length != 0) hash ^= InviterName.GetHashCode();
+    if (CaptainId != 0UL) hash ^= CaptainId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (InviterId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(InviterId);
+    }
+    if (InviterName.Length != 0) {
+      output.WriteRawTag(26);
+      output.WriteString(InviterName);
+    }
+    if (CaptainId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(CaptainId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (InviterId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(InviterId);
+    }
+    if (InviterName.Length != 0) {
+      output.WriteRawTag(26);
+      output.WriteString(InviterName);
+    }
+    if (CaptainId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(CaptainId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (TeamId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TeamId);
+    }
+    if (InviterId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(InviterId);
+    }
+    if (InviterName.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(InviterName);
+    }
+    if (CaptainId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(CaptainId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(TeamInvatationNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.TeamId != 0UL) {
+      TeamId = other.TeamId;
+    }
+    if (other.InviterId != 0UL) {
+      InviterId = other.InviterId;
+    }
+    if (other.InviterName.Length != 0) {
+      InviterName = other.InviterName;
+    }
+    if (other.CaptainId != 0UL) {
+      CaptainId = other.CaptainId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          InviterId = input.ReadUInt64();
+          break;
+        }
+        case 26: {
+          InviterName = input.ReadString();
+          break;
+        }
+        case 32: {
+          CaptainId = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          InviterId = input.ReadUInt64();
+          break;
+        }
+        case 26: {
+          InviterName = input.ReadString();
+          break;
+        }
+        case 32: {
+          CaptainId = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 队长请求进入副本的回执，携带服务端分配的实例，成员据此加载场景。
+/// </summary>
+public sealed partial class TeamEnterDungeonNtf : pb::IMessage<TeamEnterDungeonNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<TeamEnterDungeonNtf> _parser = new pb::MessageParser<TeamEnterDungeonNtf>(() => new TeamEnterDungeonNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<TeamEnterDungeonNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[15]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamEnterDungeonNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamEnterDungeonNtf(TeamEnterDungeonNtf other) : this() {
+    teamId_ = other.teamId_;
+    dungeonId_ = other.dungeonId_;
+    sceneId_ = other.sceneId_;
+    instanceId_ = other.instanceId_;
+    mapId_ = other.mapId_;
+    pos_ = other.pos_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public TeamEnterDungeonNtf Clone() {
+    return new TeamEnterDungeonNtf(this);
+  }
+
+  /// <summary>Field number for the "team_id" field.</summary>
+  public const int TeamIdFieldNumber = 1;
+  private ulong teamId_;
+  /// <summary>
+  ///发起挑战的队伍ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong TeamId {
+    get { return teamId_; }
+    set {
+      teamId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dungeon_id" field.</summary>
+  public const int DungeonIdFieldNumber = 2;
+  private int dungeonId_;
+  /// <summary>
+  ///副本配置ID，魔神塔为 4060
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonId {
+    get { return dungeonId_; }
+    set {
+      dungeonId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "scene_id" field.</summary>
+  public const int SceneIdFieldNumber = 3;
+  private int sceneId_;
+  /// <summary>
+  ///目标场景ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SceneId {
+    get { return sceneId_; }
+    set {
+      sceneId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 4;
+  private ulong instanceId_;
+  /// <summary>
+  ///服务端分配的副本实例ID，必为非0
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "map_id" field.</summary>
+  public const int MapIdFieldNumber = 5;
+  private int mapId_;
+  /// <summary>
+  ///该实例对应的地图ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int MapId {
+    get { return mapId_; }
+    set {
+      mapId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "pos" field.</summary>
+  public const int PosFieldNumber = 6;
+  private string pos_ = "";
+  /// <summary>
+  ///出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Pos {
+    get { return pos_; }
+    set {
+      pos_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as TeamEnterDungeonNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(TeamEnterDungeonNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (TeamId != other.TeamId) return false;
+    if (DungeonId != other.DungeonId) return false;
+    if (SceneId != other.SceneId) return false;
+    if (InstanceId != other.InstanceId) return false;
+    if (MapId != other.MapId) return false;
+    if (Pos != other.Pos) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (TeamId != 0UL) hash ^= TeamId.GetHashCode();
+    if (DungeonId != 0) hash ^= DungeonId.GetHashCode();
+    if (SceneId != 0) hash ^= SceneId.GetHashCode();
+    if (InstanceId != 0UL) hash ^= InstanceId.GetHashCode();
+    if (MapId != 0) hash ^= MapId.GetHashCode();
+    if (Pos.Length != 0) hash ^= Pos.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (DungeonId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(DungeonId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(InstanceId);
+    }
+    if (MapId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(MapId);
+    }
+    if (Pos.Length != 0) {
+      output.WriteRawTag(50);
+      output.WriteString(Pos);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (TeamId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(TeamId);
+    }
+    if (DungeonId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(DungeonId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(InstanceId);
+    }
+    if (MapId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(MapId);
+    }
+    if (Pos.Length != 0) {
+      output.WriteRawTag(50);
+      output.WriteString(Pos);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (TeamId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TeamId);
+    }
+    if (DungeonId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonId);
+    }
+    if (SceneId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(InstanceId);
+    }
+    if (MapId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MapId);
+    }
+    if (Pos.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Pos);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(TeamEnterDungeonNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.TeamId != 0UL) {
+      TeamId = other.TeamId;
+    }
+    if (other.DungeonId != 0) {
+      DungeonId = other.DungeonId;
+    }
+    if (other.SceneId != 0) {
+      SceneId = other.SceneId;
+    }
+    if (other.InstanceId != 0UL) {
+      InstanceId = other.InstanceId;
+    }
+    if (other.MapId != 0) {
+      MapId = other.MapId;
+    }
+    if (other.Pos.Length != 0) {
+      Pos = other.Pos;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          DungeonId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 40: {
+          MapId = input.ReadInt32();
+          break;
+        }
+        case 50: {
+          Pos = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          TeamId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          DungeonId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+        case 40: {
+          MapId = input.ReadInt32();
+          break;
+        }
+        case 50: {
+          Pos = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 角色离开视野或实例的下行通知，客户端据此删除远端角色。
+/// </summary>
+public sealed partial class RoleLeaveNtf : pb::IMessage<RoleLeaveNtf>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<RoleLeaveNtf> _parser = new pb::MessageParser<RoleLeaveNtf>(() => new RoleLeaveNtf());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<RoleLeaveNtf> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[16]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleLeaveNtf() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleLeaveNtf(RoleLeaveNtf other) : this() {
+    roleId_ = other.roleId_;
+    sceneId_ = other.sceneId_;
+    instanceId_ = other.instanceId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleLeaveNtf Clone() {
+    return new RoleLeaveNtf(this);
+  }
+
+  /// <summary>Field number for the "role_id" field.</summary>
+  public const int RoleIdFieldNumber = 1;
+  private ulong roleId_;
+  /// <summary>
+  ///离开的角色ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong RoleId {
+    get { return roleId_; }
+    set {
+      roleId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "scene_id" field.</summary>
+  public const int SceneIdFieldNumber = 2;
+  private int sceneId_;
+  /// <summary>
+  ///离开前所在场景ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SceneId {
+    get { return sceneId_; }
+    set {
+      sceneId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "instance_id" field.</summary>
+  public const int InstanceIdFieldNumber = 3;
+  private ulong instanceId_;
+  /// <summary>
+  ///离开前所在实例ID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong InstanceId {
+    get { return instanceId_; }
+    set {
+      instanceId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as RoleLeaveNtf);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(RoleLeaveNtf other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RoleId != other.RoleId) return false;
+    if (SceneId != other.SceneId) return false;
+    if (InstanceId != other.InstanceId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RoleId != 0UL) hash ^= RoleId.GetHashCode();
+    if (SceneId != 0) hash ^= SceneId.GetHashCode();
+    if (InstanceId != 0UL) hash ^= InstanceId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RoleId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(RoleId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(24);
+      output.WriteUInt64(InstanceId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RoleId != 0UL) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(RoleId);
+    }
+    if (SceneId != 0) {
+      output.WriteRawTag(16);
+      output.WriteInt32(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      output.WriteRawTag(24);
+      output.WriteUInt64(InstanceId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RoleId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoleId);
+    }
+    if (SceneId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SceneId);
+    }
+    if (InstanceId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(InstanceId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(RoleLeaveNtf other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RoleId != 0UL) {
+      RoleId = other.RoleId;
+    }
+    if (other.SceneId != 0) {
+      SceneId = other.SceneId;
+    }
+    if (other.InstanceId != 0UL) {
+      InstanceId = other.InstanceId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          RoleId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          RoleId = input.ReadUInt64();
+          break;
+        }
+        case 16: {
+          SceneId = input.ReadInt32();
+          break;
+        }
+        case 24: {
+          InstanceId = input.ReadUInt64();
+          break;
+        }
       }
     }
   }
@@ -4624,7 +6378,6 @@ public sealed partial class RoleBaseInfo : pb::IMessage<RoleBaseInfo>
 /// <summary>
 /// 主角色专有信息，由基础属性与账号、成长、服务器信息组成。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class MainRoleInfo : pb::IMessage<MainRoleInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -4639,7 +6392,7 @@ public sealed partial class MainRoleInfo : pb::IMessage<MainRoleInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[12]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[17]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4946,11 +6699,7 @@ public sealed partial class MainRoleInfo : pb::IMessage<MainRoleInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -4992,11 +6741,7 @@ public sealed partial class MainRoleInfo : pb::IMessage<MainRoleInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5037,7 +6782,6 @@ public sealed partial class MainRoleInfo : pb::IMessage<MainRoleInfo>
 /// <summary>
 ///返回的角色所有技能信息数据
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5052,7 +6796,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[13]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[18]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5246,11 +6990,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5277,11 +7017,7 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5307,7 +7043,6 @@ public sealed partial class RoleSkillInfoRet : pb::IMessage<RoleSkillInfoRet>
 /// <summary>
 ///技能信息数据
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5322,7 +7057,7 @@ public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[14]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[19]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -5521,11 +7256,7 @@ public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5552,11 +7283,7 @@ public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5582,7 +7309,6 @@ public sealed partial class RoleSkillInfo : pb::IMessage<RoleSkillInfo>
 /// <summary>
 /// 施法请求结果；失败时也返回原施法 UUID 及当前权威 MP/CD。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5597,7 +7323,7 @@ public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[15]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[20]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6029,11 +7755,7 @@ public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -6088,11 +7810,7 @@ public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -6146,7 +7864,6 @@ public sealed partial class SkillCastRet : pb::IMessage<SkillCastRet>
 /// <summary>
 /// 服务器确认施法后给本人和同地图附近角色的表现通知，不表示命中或伤害。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -6161,7 +7878,7 @@ public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[16]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[21]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6497,11 +8214,7 @@ public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -6544,11 +8257,7 @@ public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -6590,7 +8299,6 @@ public sealed partial class SkillCastStartNtf : pb::IMessage<SkillCastStartNtf>
 /// <summary>
 /// 服务器正常结束或中断施法的表现通知；本期没有命中广播。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -6605,7 +8313,7 @@ public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[17]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[22]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -6877,11 +8585,7 @@ public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -6916,11 +8620,7 @@ public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -6954,7 +8654,6 @@ public sealed partial class SkillCastEndNtf : pb::IMessage<SkillCastEndNtf>
 /// <summary>
 ///返回的角色背包信息
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -6969,7 +8668,7 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[18]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[23]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -7148,11 +8847,7 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -7178,11 +8873,7 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -7207,7 +8898,6 @@ public sealed partial class RoleKanpsackInfoRet : pb::IMessage<RoleKanpsackInfoR
 /// <summary>
 /// 角色背包完整信息，包含物品背包、装备栏、容量、货币和持久化版本。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -7222,7 +8912,7 @@ public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[19]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[24]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -7534,11 +9224,7 @@ public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -7589,11 +9275,7 @@ public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -7643,7 +9325,6 @@ public sealed partial class RoleKanpsackInfo : pb::IMessage<RoleKanpsackInfo>
 /// <summary>
 /// 角色商城和副本次数的通用登录与持久化快照。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -7658,7 +9339,7 @@ public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[20]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[25]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -7898,11 +9579,7 @@ public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -7933,11 +9610,7 @@ public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -7967,7 +9640,6 @@ public sealed partial class RoleCountInfo : pb::IMessage<RoleCountInfo>
 /// <summary>
 /// 角色登录进入世界时返回的商城购买次数记录。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurchaseInfoRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -7982,7 +9654,7 @@ public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurch
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[21]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[26]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8147,11 +9819,7 @@ public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurch
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -8174,11 +9842,7 @@ public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurch
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -8200,7 +9864,6 @@ public sealed partial class RoleShopPurchaseInfoRet : pb::IMessage<RoleShopPurch
 /// <summary>
 /// 一条角色商城商品购买次数记录，对应 RoleShopPurchaseTable。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchaseInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -8215,7 +9878,7 @@ public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchase
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[22]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[27]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8551,11 +10214,7 @@ public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchase
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -8598,11 +10257,7 @@ public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchase
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -8641,7 +10296,6 @@ public sealed partial class RoleShopPurchaseInfo : pb::IMessage<RoleShopPurchase
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -8656,7 +10310,7 @@ public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[23]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[28]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -8832,11 +10486,7 @@ public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -8859,11 +10509,7 @@ public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -8882,7 +10528,6 @@ public sealed partial class Kanpsacktypecount : pb::IMessage<Kanpsacktypecount>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -8897,7 +10542,7 @@ public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[24]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[29]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9431,11 +11076,7 @@ public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -9508,11 +11149,7 @@ public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -9581,7 +11218,6 @@ public sealed partial class RoleItemInfo : pb::IMessage<RoleItemInfo>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -9596,7 +11232,7 @@ public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[25]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[30]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -9836,11 +11472,7 @@ public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -9871,11 +11503,7 @@ public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -9902,7 +11530,6 @@ public sealed partial class RoleEquipItemInfo : pb::IMessage<RoleEquipItemInfo>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -9917,7 +11544,7 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[26]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[31]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10285,11 +11912,7 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -10336,11 +11959,7 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -10386,7 +12005,6 @@ public sealed partial class RoleEquipGeneInfo : pb::IMessage<RoleEquipGeneInfo>
 /// <summary>
 /// CenterServer 在数据库事务提交后返回的角色物品保存确认。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -10401,7 +12019,7 @@ public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[27]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[32]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -10673,11 +12291,7 @@ public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -10712,11 +12326,7 @@ public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -10750,7 +12360,6 @@ public sealed partial class SaveRoleDataRet : pb::IMessage<SaveRoleDataRet>
 /// <summary>
 /// 背包开格子结果。无论成功或失败，都会返回服务器当前已开启的数量。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -10765,7 +12374,7 @@ public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridR
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[28]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[33]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -11005,11 +12614,7 @@ public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridR
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -11040,11 +12645,7 @@ public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridR
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -11074,7 +12675,6 @@ public sealed partial class OpenKnapsackGridRet : pb::IMessage<OpenKnapsackGridR
 /// <summary>
 /// 一般表示什么物品数量变化
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -11089,7 +12689,7 @@ public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[29]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[34]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -11317,11 +12917,7 @@ public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -11352,11 +12948,7 @@ public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -11386,7 +12978,6 @@ public sealed partial class CountItemInfo : pb::IMessage<CountItemInfo>
 /// <summary>
 ///通知客户端数量变化
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -11401,7 +12992,7 @@ public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[30]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[35]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -11560,11 +13151,7 @@ public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -11587,11 +13174,7 @@ public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -11610,7 +13193,6 @@ public sealed partial class GetCountInfoRes : pb::IMessage<GetCountInfoRes>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -11625,7 +13207,7 @@ public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncIn
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[31]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[36]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -11784,11 +13366,7 @@ public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncIn
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -11811,11 +13389,7 @@ public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncIn
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -11834,7 +13408,6 @@ public sealed partial class CountUpdateSyncInfo : pb::IMessage<CountUpdateSyncIn
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -11849,7 +13422,7 @@ public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[32]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[37]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -12019,11 +13592,7 @@ public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -12046,11 +13615,7 @@ public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -12069,7 +13634,6 @@ public sealed partial class MapKey64Value32 : pb::IMessage<MapKey64Value32>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -12084,7 +13648,7 @@ public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[33]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[38]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -12264,11 +13828,7 @@ public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -12295,11 +13855,7 @@ public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -12322,7 +13878,6 @@ public sealed partial class UpdateItem : pb::IMessage<UpdateItem>
 
 }
 
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -12337,7 +13892,7 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[34]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[39]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -12510,11 +14065,7 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -12540,11 +14091,7 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -12569,7 +14116,6 @@ public sealed partial class UpdateItemRet : pb::IMessage<UpdateItemRet>
 /// <summary>
 /// 服务器向现有附近角色转发的 RO 移动状态，本人按本地移动继续执行。
 /// </summary>
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -12584,7 +14130,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[35]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[40]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -12984,11 +14530,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -13039,11 +14581,7 @@ public sealed partial class SyncMoveNtf : pb::IMessage<SyncMoveNtf>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
+      switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;

@@ -5323,6 +5323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _notInTeamRoot: {fileID: 2209713226647910016}
   _inTeamRoot: {fileID: 628245350767165925}
+  _memberListRoot: {fileID: 6570927483319446810}
+  _memberSlotTemplate: {fileID: 4694237626107122108}
+  _addSlot: {fileID: 3721501689202495816}
   _memberName: {fileID: 2500036995192418198}
   _memberLevel: {fileID: 5273420677047286852}
   _captainMark: {fileID: 2823288061464816075}

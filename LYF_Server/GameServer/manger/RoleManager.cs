@@ -352,7 +352,8 @@ public class RoleManager
         // 会话与角色校验通过后先落出生坐标：实时移动已改走 KCP，入场前的移动上报不再有先后保证，
         // 必须在下面的附近广播与附近下发之前写入，否则会按原点筛玩家。
         // 旧客户端不携带该字段时保持中心服已有位置，不做覆盖。
-        if (!string.IsNullOrEmpty(request.Pos))
+        // 已在副本实例内的角色以服务器分配的出生点为准，客户端上报位置不得覆写。
+        if (!string.IsNullOrEmpty(request.Pos) && currentRole.mainRoleInfo.BaseInfo.InstanceId == 0)
         {
             currentRole.mainRoleInfo.BaseInfo.Pos = request.Pos;
         }
@@ -576,6 +577,68 @@ public class RoleManager
         }
     }
 
+    /// <summary>
+    /// 向角色离开前的真实观察者广播离开通知。
+    /// 必须在改写该角色的 MapId/InstanceId/Pos 之前调用，否则附近过滤会用新位置算范围。
+    /// 收件人来自现有在线角色索引，按同地图、同实例、100 米过滤，不限于同一队伍。
+    /// </summary>
+    /// <param name="leavingRole">即将离开当前场景位置的在线角色。</param>
+    public void BroadcastRoleLeave(OnlineRole leavingRole)
+    {
+        if (leavingRole == null || leavingRole.mainRoleInfo == null ||
+            leavingRole.mainRoleInfo.BaseInfo == null)
+        {
+            return;
+        }
+        // 离开者的基础信息，此时 MapId/InstanceId 仍是离开前的旧值，是本次过滤与通知内容的依据。
+        RoleBaseInfo leavingInfo = leavingRole.mainRoleInfo.BaseInfo;
+        // 离开通知：携带角色ID与离开前的场景、实例，客户端据此删除对应远端模型。
+        RoleLeaveNtf notice = new RoleLeaveNtf();
+        notice.RoleId = (ulong)leavingInfo.RoleId;
+        notice.SceneId = leavingInfo.MapId;
+        notice.InstanceId = (ulong)leavingInfo.InstanceId;
+        // 已序列化的通知字节，整轮广播复用同一份，避免每个观察者重复序列化。
+        ByteString payload = notice.ToByteString();
+
+        // 使用现有索引的引用快照，与移动、技能广播保持同一份收件人来源。
+        // onlineRoles 是遍历用的副本，避免广播过程中索引被并发修改。
+        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        // index 为快照列表的零基下标，范围 [0, onlineRoles.Count)，仅用于本次广播。
+        for (int index = 0; index < onlineRoles.Count; index++)
+        {
+            // 当前候选收件人；跳过自己、空项与已离线的角色，再按附近规则过滤。
+            OnlineRole observer = onlineRoles[index];
+            if (observer == null || observer == leavingRole ||
+                observer.State != OnlineRoleState.Online)
+            {
+                continue;
+            }
+            if (!IsNearbyRole(observer, leavingRole.mainRoleInfo))
+            {
+                continue;
+            }
+            observer.SendToClient(NetDefine.CMD_RoleLeaveCode, payload);
+        }
+    }
+
+    /// <summary>把指定角色的出现通知按当前权威位置补发给同场景附近角色。</summary>
+    /// <param name="role">刚切换到新地图或新实例的在线角色。</param>
+    public void BroadcastRoleEnterWorldByRole(OnlineRole role)
+    {
+        if (role == null || role.mainRoleInfo == null)
+        {
+            return;
+        }
+        BroadcastRoleEnterWorld(role.mainRoleInfo);
+    }
+
+    /// <summary>把当前场景附近的其他角色补发给指定角色，用于切场景后重建远端列表。</summary>
+    /// <param name="role">需要接收附近角色列表的在线角色。</param>
+    public void ResendNearbyRoles(OnlineRole role)
+    {
+        SendNearbyRoles(role);
+    }
+
     private void BroadcastRoleEnterWorld(MainRoleInfo currentRole)
     {
         // 广播范围限定为同地图且距离不超过 100 的在线角色。
@@ -644,7 +707,14 @@ public class RoleManager
         }
     }
 
-    private static bool IsNearbyRole(OnlineRole role, MainRoleInfo currentRole)
+    /// <summary>
+    /// 判断两个在线角色是否处于同一地图、同一副本实例且相距不超过 100 米。
+    /// 四个广播方法与进入世界补发都以此为准，公开为静态以便独立进程验证收件人范围。
+    /// </summary>
+    /// <param name="role">候选收件人角色。</param>
+    /// <param name="currentRole">事件来源角色的主角色信息。</param>
+    /// <returns>应收到该广播返回 true。</returns>
+    public static bool IsNearbyRole(OnlineRole role, MainRoleInfo currentRole)
     {
         // 先过滤空对象和地图，再计算三维距离，避免无效坐标触发异常。
         // 角色一侧的主角色快照或基础信息缺失时按不邻近处理。
@@ -659,6 +729,11 @@ public class RoleManager
         }
 
         if (role.mainRoleInfo.BaseInfo.MapId != currentRole.BaseInfo.MapId)
+        {
+            return false;
+        }
+        // 同一地图内不同队伍分属不同副本实例，实例不同即互相不可见。
+        if (role.mainRoleInfo.BaseInfo.InstanceId != currentRole.BaseInfo.InstanceId)
         {
             return false;
         }

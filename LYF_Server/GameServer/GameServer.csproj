@@ -43,6 +43,8 @@
         <Compile Include="Components\ROSkillComponent.cs" />
         <Compile Include="Components\ROMoveComponent.cs" />
         <Compile Include="MessageHandler\Role\MoveOperationHandler.cs" />
+        <Compile Include="MessageHandler\Team\TeamMessageHandler.cs" />
+        <Compile Include="manger\TeamManager.cs" />
         <Compile Include="SceneEntity\Skill\ROSkillCore.cs" />
         <Compile Include="SceneEntity\Skill\ROSkill.cs" />
         <Compile Include="Config\SkillCastingRulesCatalog.cs" />

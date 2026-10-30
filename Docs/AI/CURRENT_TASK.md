@@ -102,3 +102,11 @@
 - 新增队伍协议、TeamManager/TeamMessageHandler、网关转发注册、TeamData/TeamCtrl、5 人正式/快捷队伍 UI、邀请/申请控件、权威地图/实例位置、离队/返回通知及按范围广播角色消息。沿用 RO 名称 RequestCreateTeam、InviteJoinTeam、AcceptTeamInvatation、LeaveTeam、BegInTeamByTeamId 和 CaptainRequestEnterFBPtc。本地玩家 DDOL、此前相机与布局工作均保留。
 - 按用户要求重试时，Codex 发现四服均已不在运行，随后启动 Center 54056、Game 25152、Gate 87552、Login 100464，确认 TCP 10110/10130/10140/10120 与 UDP 10141 监听，再通过 Boot 及真实 UI 点击重新登录。建队仍失败：11200 到达 Game，11210 回复在网关变为错误 10001；客户端 TeamId=0/members=0。GateClientResponseForwarder.TryReadResultCode 缺少四个新通知分支，该文件尚未修复。
 - 下一步：修复该白名单，重新构建并重启 Gate，重跑真实建队/进入/离队，再完成多人集成。WorkBuddy 已达到 7 轮开发上限，后续业务实现仍需确定执行者；用户本轮要求重启复测，尚未选择新执行者。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 经授权续作后的最终范围交付
+
+- 用户明确授权 WorkBuddy 超过默认 7 轮上限继续执行。沿用原 Hub/session/model：平台第 10–14 轮对应派工编号的实现/验证第 8–12 轮（第 9/11 轮为协议测试，第 12 轮仅补注释）。等待、恢复及只读工作不计为业务重写轮次。
+- 最终业务清单为 26 个文件：原 25 个加 GateClientResponseForwarder.cs。该文件新增的四个通知解析分支现已通过既有白名单；未知或畸形消息仍被拒绝。InviteJoinTeam 现与接受邀请/申请流程一致，拒绝已进入实例的队伍。基于 RO 的组队、5 人 UI 及服务器权威魔神塔进入/离队已达到本次验证范围。
+- 真实正常登录及 EventSystem 点击通过建队 -> 书本 7/详情挑战 -> 魔神塔 -> 离队 -> 主城：TeamId2/members1 变为 0/0；model/Animator/controller 的 ID 始终相同且位于 DDOL，相机跟随，小地图隐藏/恢复，错误数为 0。旧 Game/Gate 进程退出后，Codex 恢复最终服务器运行状态：Center54056、Game85224、Gate102264、Login100464；已确认 Gate->Game 的 TCP 连接为 established。最终重新登录/建队通过，TeamId1/members1；编辑器仍在主城 Play，保留该队伍。
+- 37 项隔离多人协议检查、64 项权威冒烟检查和 13 项白名单检查通过；13 个文件的纯注释修改经 Roslyn 核对为 token 等价。两个真实 Unity 客户端与已绑定末端客户端的 KCP 投递仍未验证。完整清单、失败历史与 Git 回执：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

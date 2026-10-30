@@ -69,3 +69,35 @@ Codex实际使用：workbuddy-executor负责原生派工/恢复/返修，project
 ## Git 实际回执
 
 授权记录提交 `3410752`（`docs: 记录多人副本开发与服务器重启复测结果`），共9个记录/分析文件；暂存只取本次追加段与按对应英文源生成的索引，既有用户记录前缀和25个业务文件均未暂存。增量检查证据 `_temp/dungeon-multiplayer-20261030/approved-staged-check.json` 通过；`git push origin codex/feature-development` 退出码0，远端回执 `637e2ec..3410752 codex/feature-development -> codex/feature-development`。本回执单独记录提交，不声称未验收业务已上传，不合main、不强推。
+
+
+## 最终交付更新（原失败记录保留，不把历史当当前状态）
+
+用户明确授权 WorkBuddy 超过七轮继续定向返修。平台10–14对应原派工编号8–12，其中第9/11为协议验证，第12为仅注释；仍沿原Hub/session/Deepseek-V4.1-Flash，不重置之前的失败或把等待/恢复计成开发。
+
+### 新增修改范围与当前行为
+
+最终26个业务文件：上方25项仍是本任务完整改动，另修改 `LYF_Server/GateServer/Ctrl/GateClientResponseForwarder.cs`，在既有白名单中分别解析 TeamInfoNtf、TeamInvatationNtf、TeamEnterDungeonNtf、RoleLeaveNtf 并返回Succeed，未知和畸形协议继续拒绝。TeamManager.InviteJoinTeam 增加已开副本实例不登记邀请，与同意/申请入口一致。13个手写源文件另补具体中文注释，Roslyn证明执行token完全相同（包括曾误改的判空块已恢复），没有借注释重构。最终哈希与逐项清单见 `_temp/dungeon-multiplayer-20261030/final-business-inventory.json`/`.md`，无移动删除。
+
+### 最终验收与真实边界
+
+- 网关13项检查通过：4个正常通知接受、未知码拒绝、4个畸形载荷拒绝。第一次尝试读到被运行进程锁住的旧EXE导致失败，停Gate后重编并重启才通过，不隐去失败。
+- Codex实际从Boot正常登录，经真实EventSystem按钮建队，队伍ID2/1人；展开正式功能菜单、书7详情挑战进入魔神塔，再从正式队伍窗离队回主城，队伍归0/0。model=-6969560、Animator=-6969564、controller=-6970490三处相同且始终DontDestroyOnLoad，镜头跟随、地图显隐正常，Console Error=0。证据 `root-live-single-pass.json`；不是单独调用EnterMoshenta冒称点击。
+- 64项权威Smoke通过；37项多人协议集成通过并由Codex独立复跑。测试进程注册真实在线角色/会话，真实HandleClientEnterWorld加主城写位置控制用例，不再使用允许instance=0的弱断言。A队2人非0同实例/地图/位置一致，B队隔离，已开实例的邀请/同意/申请入口均拒绝且无半加入。
+- 解码真实BasePackage：11181移动到Unity32；11171/11173施法到31本人和32观察者；11100角色出现、11213离开到32；异实例33/异地图34均0帧。正式GateTeamCtrl将11210和11213分别投递不同Unity回环会话，不串包。
+- 保留第9轮35项4失败、第10轮错误修断言的证据。测试最初将Game→Gate服务间Session构造成null上游玩家会话，因未绑KCP被Dropped；随后把正向断言改成TCP=0是错误结论。第11轮用ClientType.GameServer非空上游恢复正式IsGameServerLink→KeepTcp分支，所有正向通知实际收帧。未绑玩家实时协议不落TCP仅是独立负向用例，不能替代服务间正向验证。
+- 最后一轮注释原生执行完成后未回传正式报告，平台过期；Codex确认原生completed/isProcessing=false/activeSessions=[]，用官方service recover释放停止的过期lease，taskCompleted=false，不伪造WorkBuddy回执。独立运行原Roslyn工具得到13文件token等价、diff0/syntaxError0；Game/Gate隔离输出编译0错误，Unity compiling=false/errors0。其证据均实际落盘，不依赖缺失自报。
+- 最终旧Game63992/Gate98952在复查时已退出，不能沿旧PID宣称在线；原因未证实，不猜测。Codex分别重新启动Game85224、Gate102264，保留Center54056/Login100464，确认10110/10120/10130/10140 TCP、10141 UDP及Gate→Game Established连接。随后新Boot登录和建队通过，最终Editor保持主城、TeamId1/1成员；本轮没有新增自动重连功能。
+- 未联调两台真实Unity客户端及绑定后的KCP末端多人收包，未做Player构建、完整战斗/奖励或压力测试。当前范围的服务器队伍/实例、客户端UI、单客户端真实场景链和隔离协议验证已通过，不冒称全部网络场景上线验收。
+
+### 轮次和证据
+
+平台10/开发8 attempt run-fcb23ac4-381a-4a02-92bb-868339934f35：白名单；平台11/验证9 run-455333a8-f900-4b80-92fc-affca0175187：35项4失败；平台12/开发验证10 run-83ac9f78-bcd9-4a0a-bffe-efb34b6c5e5f：邀请入口修复及错误测试结论；平台13/验证11 run-f5d750c4-193f-42d4-a431-9f1b4bcaecdb：正确37项通过；平台14/注释12 run-2e9670ad-46a1-4923-af74-861df33eb2fe：13文件仅注释，未回报而由主Agent实际验收。WorkBuddy仍自报未使用技能。连接唤醒/同claim恢复不增轮数。
+
+主要证据均在 `_temp/dungeon-multiplayer-20261030/`：gate-whitelist-retry/whitelist-test.log、mpverify/mp-verify-r11.log、root-mp-verify-r11.log、smoke-log-r10.txt、root-live-single-pass.json、root-comment-token-check.txt、final-game-build.log、final-gate-build.log。注释快照/Roslyn工具由WorkBuddy放在 `_temp/comment-before`、`_temp/comment-tokencheck`，临时编译旧证据在 `_temp/comment-build`；均保留不清理，未散入正式源码。
+
+正式记录继续沿已批准清单：三类双语入口追加最终状态、难点追加验证结论、目录更新；保留先前失败段，不直接重写为成功。26项业务和本次追加记录在检查通过后统一提交推送功能分支，后续只追加真实Git回执。
+
+最终用量快照：2026-10-30T09:49:53.778Z至2026-10-30T13:19:35.967Z，主会话375个last_token_usage求和，输入81,379,943（含缓存81,134,976），输出111,015（含reasoning31,849）。不含后续收尾、WorkBuddy/子Agent独立用量；五类活动分项无独立计数，账户余额本地不可测。collect/report已执行；近1天窗口4会话1011轮、输入2.0M/输出542.5k/缓存204.5M、估算~$47.93，实验性跨聊天统计非本任务账单。原始证据quota-final.json、token-collect-final.txt、token-report-final.txt。当前对话累计压缩2次，截止2026-10-30T13:20:20.233000+00:00，无覆盖缺口，见compactions-final.json。
+
+最终三条中文同步由 OpenAI / Codex 原生子 Agent /root/sync_approved_records 完成，具体模型版本未披露、未使用技能；仅本次新增段一致性检查passed=true/issues=[]，英文输入与原前缀保留，证据 final-sync-check.json / final-chinese-sections.json。用户原有未提交记录前缀和无关代码继续排除暂存。

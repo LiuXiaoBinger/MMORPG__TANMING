@@ -39,6 +39,7 @@
     <Compile Include="Ctrl\GateRoleCtrl.cs" />
     <Compile Include="Ctrl\GateSkillCtrl.cs" />
     <Compile Include="Ctrl\GateMoveCtrl.cs" />
+        <Compile Include="Ctrl\GateTeamCtrl.cs" />
         <Compile Include="Ctrl\GateKcpCtrl.cs" />
         <Compile Include="GateServerApp.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>

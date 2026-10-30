@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 主题副本队伍控制器。本轮按用户决定只做本地单人队伍：保存队伍状态、驱动正式队伍窗口与主界面快捷队伍栏，
-/// 并在已有队伍时由详情页「开始挑战」进入魔神塔。不接入联网组队、匹配、邀请与助战。
+/// 主题副本队伍控制器。队伍状态全部来自服务器通知，本控制器只做协议转发与界面刷新，
+/// 并在收到入场通知后加载魔神塔场景，不在本地伪造队伍或场景切换。
 /// </summary>
 public sealed class ThemeDungeonTeamCtrl : CtrlBase
 {
@@ -13,6 +13,21 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// 本轮只把这一条绑定到魔神塔场景，其余八本不误进魔神塔。
     /// </summary>
     private const int MoshentaThemeDungeonId = 7;
+
+    /// <summary>魔神塔在服务器 DungeonsTable 中的副本配置ID，theme=7 映射到 4060。</summary>
+    private const int ServerDungeonId4060 = 4060;
+
+    /// <summary>魔神塔场景在服务器 SceneTable 中的场景ID，与副本配置一致为 4060。</summary>
+    private const int ServerSceneId4060 = 4060;
+
+    /// <summary>
+    /// 服务器下发回城通知时使用的场景ID，取值对应客户端 SceneType.Scene_MainCity 的枚举序号 2，
+    /// 与服务端 TeamManager.MainCitySceneId 保持同一约定。
+    /// </summary>
+    private const int MainCitySceneId = 2;
+
+    /// <summary>组队目标ID缺省值，对应 RO TeamData.autoPairTarget = 1000。</summary>
+    private const int DefaultTeamTargetId = 1000;
 
     /// <summary>职业头像所在图集的 Resources 路径，用于按职业取已有精灵。</summary>
     private const string ProfessionAtlasResourcePath = "UI/Atlas/Common";
@@ -29,20 +44,11 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>主界面左侧常驻快捷队伍栏，来自主界面序列化的正式引用。</summary>
     private readonly QuickTeamWidget _quickTeamWidget;
 
+    /// <summary>队伍协议控制器，收发服务器队伍与入场协议，是本控制器的权威来源。</summary>
+    private readonly TeamCtrl _teamCtrl;
+
     /// <summary>按职业编号缓存的头像精灵，避免每次刷新都重新查图集。</summary>
     private readonly Dictionary<int, Sprite> _jobSprites = new Dictionary<int, Sprite>();
-
-    /// <summary>本地单人队伍是否已经建立，关闭窗口后仍然保留。</summary>
-    private bool _teamCreated;
-
-    /// <summary>建队时记录的当前真实角色昵称。</summary>
-    private string _memberName = string.Empty;
-
-    /// <summary>建队时记录的当前真实角色等级。</summary>
-    private int _memberLevel;
-
-    /// <summary>建队时记录的当前真实角色职业编号。</summary>
-    private int _memberJobId;
 
     /// <summary>当前生命比例，供队伍窗与快捷栏显示血条。</summary>
     private float _hpRatio;
@@ -79,6 +85,12 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.CreateRequested += OnCreateRequested;
             _teamWindow.CloseRequested += OnCloseRequested;
             _teamWindow.LeaveRequested += OnLeaveRequested;
+            _teamWindow.InviteRoleRequested += OnInviteRoleRequested;
+            _teamWindow.ApplyTeamRequested += OnApplyTeamRequested;
+            _teamWindow.InviteAgreed += OnInviteAgreed;
+            _teamWindow.InviteRejected += OnInviteRejected;
+            _teamWindow.ApplicationAgreed += OnApplicationAgreed;
+            _teamWindow.ApplicationRejected += OnApplicationRejected;
         }
         if (_quickTeamWidget != null)
         {
@@ -86,11 +98,16 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _quickTeamWidget.CreateTeamRequested += OnCreateRequested;
             _quickTeamWidget.OpenPageRequested += OnOpenPageRequested;
         }
+        // 队伍状态全部来自服务器通知，控制器只做界面转发。
+        _teamCtrl = new TeamCtrl(view);
+        _teamCtrl.TeamInfoReceived += OnTeamInfoReceived;
+        _teamCtrl.InvitationReceived += OnInvitationReceived;
+        _teamCtrl.EnterDungeonReceived += OnEnterDungeonReceived;
         RefreshViews();
     }
 
     /// <summary>
-    /// 详情页「开始挑战」：已有队伍直接进入魔神塔，没有队伍先打开正式队伍窗建队。
+    /// 详情页「开始挑战」：已有队伍直接向服务器申请进入魔神塔，没有队伍先打开正式队伍窗建队。
     /// 建队不会自动进图，必须再点一次开始挑战。
     /// </summary>
     /// <param name="entry">详情页当前确认挑战的副本配置。</param>
@@ -101,9 +118,15 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             return;
         }
         _selectedEntry = entry;
-        if (_teamCreated && entry.id == MoshentaThemeDungeonId)
+        // 只开放已授权的魔神塔，其余主题本不走服务器入场。
+        if (entry.id != MoshentaThemeDungeonId)
         {
-            EnterMoshenta();
+            return;
+        }
+        if (TeamData.Instance.IsInTeam)
+        {
+            // 已有队伍时由队长向服务器申请入场，收到入场通知后才加载场景。
+            _teamCtrl.CaptainRequestEnterFBPtc(ServerDungeonId4060);
             return;
         }
         OpenTeamWindow();
@@ -140,33 +163,24 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _teamWindow.OpenPage(page);
     }
 
-    /// <summary>
-    /// 创建本地单人队伍。业务只使用当前真实角色数据，主角未进入场景世界时不做任何占位建队。
-    /// </summary>
+    /// <summary>向服务器请求建队，成员列表以服务器回包为准。</summary>
     private void OnCreateRequested()
     {
-        if (_teamCreated)
+        if (TeamData.Instance.IsInTeam)
         {
             return;
         }
-        // 本地场景世界中的当前真实玩家，作为单人队伍唯一成员。
-        PlayerEntity localRole = ResolveLocalRole();
-        if (localRole == null || localRole.BaseInfo == null)
+        if (!_teamCtrl.RequestCreateTeam(DefaultTeamTargetId))
         {
-            // 正式业务只用真实角色；主角未就绪时不建队，也不写任何测试或占位数据。
             return;
         }
-        _memberName = localRole.BaseInfo.Nickname;
-        _memberLevel = localRole.BaseInfo.Level;
-        _memberJobId = localRole.BaseInfo.JobId;
-        _hpRatio = CalculateRatio(localRole.BaseInfo.CurrHp, localRole.BaseInfo.MaxHp);
-        _mpRatio = CalculateRatio(localRole.BaseInfo.CurrMp, localRole.BaseInfo.MaxMp);
-        _teamCreated = true;
-        RefreshViews();
-        _mainView.QuickPanel.ShowTeamPanel();
+        if (_mainView.QuickPanel != null)
+        {
+            _mainView.QuickPanel.ShowTeamPanel();
+        }
     }
 
-    /// <summary>关闭队伍窗，队伍状态保留在控制器里，再次挑战仍是已建队。</summary>
+    /// <summary>关闭队伍窗，队伍状态保留在服务器与缓存里，再次挑战仍是已建队。</summary>
     private void OnCloseRequested()
     {
         if (_teamWindow != null)
@@ -175,13 +189,52 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         }
     }
 
-    /// <summary>离开本地单人队伍，恢复快捷栏和正式窗口的未建队展示。</summary>
+    /// <summary>向服务器请求离队，界面在收到空 TeamInfoNtf 后复位。</summary>
     private void OnLeaveRequested()
     {
-        _teamCreated = false;
-        _memberName = string.Empty;
-        _memberLevel = 0;
-        RefreshViews();
+        _teamCtrl.LeaveTeam();
+    }
+
+    /// <summary>邀请页提交的角色ID转成邀请协议。</summary>
+    /// <param name="roleId">被邀请角色ID。</param>
+    private void OnInviteRoleRequested(ulong roleId)
+    {
+        _teamCtrl.InviteJoinTeam(roleId, 0);
+    }
+
+    /// <summary>寻找队伍页提交的队伍ID转成申请协议。</summary>
+    /// <param name="teamId">目标队伍ID。</param>
+    private void OnApplyTeamRequested(ulong teamId)
+    {
+        _teamCtrl.BegInTeamByTeamId(teamId);
+    }
+
+    /// <summary>同意收到的入队邀请。</summary>
+    private void OnInviteAgreed()
+    {
+        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.InviteTeamId,
+            TeamData.Instance.InviteInviterId, true);
+    }
+
+    /// <summary>拒绝收到的入队邀请。</summary>
+    private void OnInviteRejected()
+    {
+        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.InviteTeamId,
+            TeamData.Instance.InviteInviterId, false);
+    }
+
+    /// <summary>同意收到的入队申请。</summary>
+    private void OnApplicationAgreed()
+    {
+        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.ApplyTeamId,
+            TeamData.Instance.ApplyApplicantId, true);
+    }
+
+    /// <summary>拒绝收到的入队申请。</summary>
+    private void OnApplicationRejected()
+    {
+        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.ApplyTeamId,
+            TeamData.Instance.ApplyApplicantId, false);
     }
 
     /// <summary>收起副本相关界面并加载魔神塔场景，主角由新场景的主城管理器重建。</summary>
@@ -210,15 +263,133 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         SceneMgr.Instance.LoadSceneMode(SceneType.Scene_DungeonMoshenta);
     }
 
-    /// <summary>把控制器保存的队伍状态同步到正式队伍窗与主界面快捷队伍栏。</summary>
-    private void RefreshViews()
+    /// <summary>收到服务器队伍状态后刷新界面，并按本人真实角色ID定位自己的成员数据。</summary>
+    /// <param name="inTeam">服务器确认是否仍在队伍中。</param>
+    private void OnTeamInfoReceived(bool inTeam)
     {
-        // 当前职业对应的现有图集头像。
-        Sprite jobSprite = ResolveJobSprite(_memberJobId);
+        // 本地主角角色ID，队伍成员里只有这一项代表本人。
+        ulong localRoleId = ResolveLocalRoleId();
+        TeamData.Instance.SetLocalRoleId(localRoleId);
+        // 本人成员信息，服务器成员表里按角色ID查找，不依赖下发顺序。
+        TeamMemberInfo self = TeamData.Instance.FindMember(localRoleId);
+        if (self != null)
+        {
+            _hpRatio = CalculateRatio(self.CurrHp, self.MaxHp);
+            _mpRatio = _hpRatio;
+        }
+        RefreshViews();
+    }
+
+    /// <summary>收到邀请或申请通知后刷新界面，并把对应界面直接展示给玩家。</summary>
+    private void OnInvitationReceived()
+    {
+        RefreshViews();
+        if (_teamWindow == null)
+        {
+            return;
+        }
+        // 队长收到申请时打开申请列表，被邀请人收到邀请时打开邀请确认页。
+        if (TeamData.Instance.HasApplication)
+        {
+            _teamWindow.OpenPage(TeamPage.Applications);
+            return;
+        }
+        if (TeamData.Instance.HasInvitation)
+        {
+            _teamWindow.OpenPage(TeamPage.Recruitment);
+        }
+    }
+
+    /// <summary>
+    /// 收到服务器场景通知后才切换场景：魔神塔加载副本场景，主城则回城主城场景。
+    /// 先把服务器权威的地图、实例与出生点写回本地角色，保证进入后过滤与移动同步一致。
+    /// </summary>
+    /// <param name="notice">服务器下发的入场或回城通知。</param>
+    private void OnEnterDungeonReceived(TeamEnterDungeonNtf notice)
+    {
+        if (notice == null)
+        {
+            return;
+        }
+        // 先同步服务器权威位置，客户端不自行推测地图与实例。
+        ApplyAuthoritativePosition(notice);
+        // 魔神塔：关闭副本界面并加载魔神塔场景。
+        if (notice.SceneId == ServerSceneId4060)
+        {
+            EnterMoshenta();
+            return;
+        }
+        // 主城：离队回城，只有确实不在主城时才重新加载，避免无故重载。
+        if (notice.SceneId == MainCitySceneId)
+        {
+            ReturnToMainCity();
+        }
+    }
+
+    /// <summary>把服务器通知的地图、实例与出生点写回本地主角，保持本地权威一致。</summary>
+    /// <param name="notice">携带目标地图、实例与出生点的场景通知。</param>
+    private static void ApplyAuthoritativePosition(TeamEnterDungeonNtf notice)
+    {
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return;
+        }
+        // 当前场景世界的本地主角实体，是权威位置的回写对象；为空说明主角尚未就绪。
+        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+        if (localRole == null || localRole.BaseInfo == null)
+        {
+            return;
+        }
+        // 克隆后回写，保持 PlayerEntity 的 BaseInfo 深拷贝约定。
+        RoleBaseInfo updated = localRole.BaseInfo.Clone();
+        updated.MapId = notice.MapId;
+        // 协议里的实例ID是无符号 64 位，角色基础信息用 32 位整数保存，取低位即可满足本项目实例量级。
+        updated.InstanceId = (int)notice.InstanceId;
+        updated.Pos = notice.Pos;
+        localRole.UpdateBaseInfo(updated);
+    }
+
+    /// <summary>离队回城：收起副本与队伍界面并切回主城，已在本场景时不重复加载。</summary>
+    private void ReturnToMainCity()
+    {
+        if (_mainView.ThemeDungeonArroundWindow != null)
+        {
+            _mainView.ThemeDungeonArroundWindow.CloseWindow();
+        }
         if (_teamWindow != null)
         {
-            _teamWindow.SetTeamCreated(_teamCreated, _memberName, _memberLevel);
-            _teamWindow.SetProfessionSprite(jobSprite);
+            _teamWindow.CloseWindow();
+        }
+        if (SceneMgr.Instance == null)
+        {
+            return;
+        }
+        // 已经在主城时只清队伍界面，不做多余的场景重载。
+        if (SceneMgr.Instance._currentSceneType == SceneType.Scene_MainCity)
+        {
+            return;
+        }
+        SceneMgr.Instance.LoadSceneMode(SceneType.Scene_MainCity);
+    }
+
+    /// <summary>把服务器队伍状态同步到正式队伍窗与主界面快捷队伍栏。</summary>
+    private void RefreshViews()
+    {
+        // 本地主角角色ID，用于在成员表里定位本人。
+        ulong localRoleId = ResolveLocalRoleId();
+        // 队伍是否成立完全由服务器状态决定。
+        bool inTeam = TeamData.Instance.IsInTeam;
+        // 当前服务器下发的成员表，界面按它的顺序逐行渲染。
+        IList<TeamMemberInfo> members = TeamData.Instance.Members;
+        // 只有队长可以继续邀请，未满员时显示邀请空位。
+        bool canInvite = TeamData.Instance.IsCaptain(localRoleId) &&
+            members.Count < TeamData.Instance.MaxMember;
+        // 队伍显示名沿用队长昵称，未取得时退回固定文案。
+        string teamName = ResolveTeamName(members);
+        if (_teamWindow != null)
+        {
+            _teamWindow.SetTeamState(inTeam, teamName);
+            _teamWindow.SetMembers(members, localRoleId, inTeam && canInvite);
             if (_selectedEntry != null)
             {
                 _teamWindow.SetTargetName(_selectedEntry.themeName);
@@ -227,24 +398,112 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             {
                 _teamWindow.SetTargetName(string.Empty);
             }
+            _teamWindow.SetPendingInvitation(TeamData.Instance.HasInvitation,
+                TeamData.Instance.InviteInviterName, members.Count, TeamData.Instance.MaxMember,
+                string.Empty);
+            _teamWindow.SetPendingApplication(TeamData.Instance.HasApplication,
+                TeamData.Instance.ApplyApplicantName);
+            ApplyMemberSprites(members, localRoleId);
         }
         if (_quickTeamWidget != null)
         {
-            _quickTeamWidget.SetTeamState(_teamCreated, _memberName, _memberLevel, _hpRatio,
-                _mpRatio);
-            _quickTeamWidget.SetProfessionSprite(jobSprite);
+            _quickTeamWidget.SetTeamState(inTeam, members, localRoleId, _hpRatio, _mpRatio);
+            ApplyQuickMemberSprites(members, localRoleId);
         }
     }
 
-    /// <summary>取当前场景世界中的本地主角，未进入世界时返回空。</summary>
-    /// <returns>本地玩家实体；全局或场景世界未就绪时返回 null。</returns>
-    private PlayerEntity ResolveLocalRole()
+    /// <summary>按队长昵称生成队伍显示名，取不到时返回固定文案。</summary>
+    /// <param name="members">服务器下发的成员表。</param>
+    /// <returns>队伍显示名。</returns>
+    private static string ResolveTeamName(IList<TeamMemberInfo> members)
+    {
+        // index 为成员表零基下标，范围 [0, members.Count)，逐个找带队长标记的成员。
+        for (int index = 0; index < members.Count; index++)
+        {
+            // 当前成员项，可能为空；只有 IsCaptain 为真的那一项提供队名。
+            TeamMemberInfo member = members[index];
+            if (member != null && member.IsCaptain)
+            {
+                return member.Nickname + "的队伍";
+            }
+        }
+        return "我的队伍";
+    }
+
+    /// <summary>把每个成员行的职业头像按职业编号填进正式队伍窗。</summary>
+    /// <param name="members">服务器下发的成员表。</param>
+    /// <param name="localRoleId">本地主角角色ID。</param>
+    private void ApplyMemberSprites(IList<TeamMemberInfo> members, ulong localRoleId)
+    {
+        if (_teamWindow == null)
+        {
+            return;
+        }
+        // index 为成员表零基下标，同时作为队伍窗成员行的行号使用。
+        for (int index = 0; index < members.Count; index++)
+        {
+            // 当前成员项，可能为空；为空的槽位保留预制体默认图，不设头像。
+            TeamMemberInfo member = members[index];
+            if (member == null)
+            {
+                continue;
+            }
+            // 只有本人所在的成员卡换成真实职业头像，其余成员保留预制体默认图。
+            if (localRoleId == 0UL || member.RoleId != localRoleId)
+            {
+                continue;
+            }
+            _teamWindow.SetMemberJobSprite(index, ResolveJobSprite(member.JobId));
+        }
+    }
+
+    /// <summary>把本人职业头像填进快捷队伍栏的本人行。</summary>
+    /// <param name="members">服务器下发的成员表。</param>
+    /// <param name="localRoleId">本地主角角色ID。</param>
+    private void ApplyQuickMemberSprites(IList<TeamMemberInfo> members, ulong localRoleId)
+    {
+        if (_quickTeamWidget == null)
+        {
+            return;
+        }
+        // index 为成员表零基下标，同时作为快捷队伍栏成员行的行号使用。
+        for (int index = 0; index < members.Count; index++)
+        {
+            // 当前成员项，可能为空；为空的槽位保留快捷栏预制体默认图。
+            TeamMemberInfo member = members[index];
+            if (member == null)
+            {
+                continue;
+            }
+            if (localRoleId == 0UL || member.RoleId != localRoleId)
+            {
+                continue;
+            }
+            _quickTeamWidget.SetMemberJobSprite(index, ResolveJobSprite(member.JobId));
+        }
+    }
+
+    /// <summary>取当前场景世界中的本地主角角色ID，未进入世界时返回 0。</summary>
+    /// <returns>本地主角角色ID；全局或场景世界未就绪时返回 0。</returns>
+    private static ulong ResolveLocalRoleId()
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null)
         {
-            return null;
+            return 0UL;
         }
-        return Global.Instance.SceneWorld.LocalRole;
+        // 当前场景世界的本地主角实体，用于取角色ID；为空说明尚未进入世界。
+        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+        if (localRole == null)
+        {
+            return 0UL;
+        }
+        // 主角实体ID，非正数代表实体尚未分配ID，与"未就绪"同样返回 0。
+        int roleId = localRole.GetID();
+        if (roleId <= 0)
+        {
+            return 0UL;
+        }
+        return (ulong)roleId;
     }
 
     /// <summary>按职业编号从已有图集取职业头像精灵，取不到时返回空并由控件保留默认图。</summary>
@@ -321,12 +580,25 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.CreateRequested -= OnCreateRequested;
             _teamWindow.CloseRequested -= OnCloseRequested;
             _teamWindow.LeaveRequested -= OnLeaveRequested;
+            _teamWindow.InviteRoleRequested -= OnInviteRoleRequested;
+            _teamWindow.ApplyTeamRequested -= OnApplyTeamRequested;
+            _teamWindow.InviteAgreed -= OnInviteAgreed;
+            _teamWindow.InviteRejected -= OnInviteRejected;
+            _teamWindow.ApplicationAgreed -= OnApplicationAgreed;
+            _teamWindow.ApplicationRejected -= OnApplicationRejected;
         }
         if (_quickTeamWidget != null)
         {
             _quickTeamWidget.OpenTeamRequested -= OnOpenTeamRequested;
             _quickTeamWidget.CreateTeamRequested -= OnCreateRequested;
             _quickTeamWidget.OpenPageRequested -= OnOpenPageRequested;
+        }
+        if (_teamCtrl != null)
+        {
+            _teamCtrl.TeamInfoReceived -= OnTeamInfoReceived;
+            _teamCtrl.InvitationReceived -= OnInvitationReceived;
+            _teamCtrl.EnterDungeonReceived -= OnEnterDungeonReceived;
+            _teamCtrl.Dispose();
         }
         _selectedEntry = null;
     }

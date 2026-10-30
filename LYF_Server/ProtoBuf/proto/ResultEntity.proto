@@ -150,6 +150,53 @@ message RoleBaseInfo{
 	// 位置信息
 	string pos = 30;             //地图位置
 	int32 map_id = 31;           //地图ID
+	int32 instance_id = 32;      //副本实例ID，0 表示公共场景；同一地图内不同队伍分属不同实例
+}
+
+// 队伍成员基础信息，对应 RO TeamData.memberList 的单条记录。
+message TeamMemberInfo{
+	uint64 role_id = 1;      //成员角色ID，服务端唯一身份
+	string nickname = 2;     //成员昵称，用于队伍窗口显示
+	int32 level = 3;         //成员等级
+	int32 job_id = 4;        //职业ID，用于头像与职业图标
+	int32 scene_id = 5;      //成员当前场景ID，对应 RO memberList.sceneId
+	int32 instance_id = 6;   //成员当前副本实例ID，0 表示不在副本
+	bool is_captain = 7;     //是否队长，与 TeamInfoNtf.captain_id 保持同一人
+	int32 curr_hp = 8;       //当前生命值，用于队伍窗口血条
+	int32 max_hp = 9;        //最大生命值，0 表示未知
+}
+
+// 队伍完整状态，服务端每次队伍变更后整包下发。
+message TeamInfoNtf{
+	uint64 team_id = 1;                    //队伍ID，0 表示已不在任何队伍
+	uint64 captain_id = 2;                 //队长角色ID
+	int32 max_member = 3;                  //队伍人数上限，对应 RO TeamData.maxTeamNumber
+	repeated TeamMemberInfo members = 4;   //当前成员列表，含队长
+}
+
+// 邀请入队通知，对应 RO TeamInvatationData。
+message TeamInvatationNtf{
+	uint64 team_id = 1;        //发出邀请的队伍ID
+	uint64 inviter_id = 2;     //邀请人角色ID
+	string inviter_name = 3;   //邀请人昵称，用于邀请弹窗
+	uint64 captain_id = 4;     //该队队长角色ID
+}
+
+// 队长请求进入副本的回执，携带服务端分配的实例，成员据此加载场景。
+message TeamEnterDungeonNtf{
+	uint64 team_id = 1;        //发起挑战的队伍ID
+	int32 dungeon_id = 2;      //副本配置ID，魔神塔为 4060
+	int32 scene_id = 3;        //目标场景ID
+	uint64 instance_id = 4;    //服务端分配的副本实例ID，必为非0
+	int32 map_id = 5;          //该实例对应的地图ID
+	string pos = 6;            //出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
+}
+
+// 角色离开视野或实例的下行通知，客户端据此删除远端角色。
+message RoleLeaveNtf{
+	uint64 role_id = 1;        //离开的角色ID
+	int32 scene_id = 2;        //离开前所在场景ID
+	uint64 instance_id = 3;    //离开前所在实例ID
 }
 
 // 主角色专有信息，由基础属性与账号、成长、服务器信息组成。

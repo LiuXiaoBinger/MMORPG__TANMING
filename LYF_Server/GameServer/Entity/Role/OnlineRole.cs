@@ -296,6 +296,9 @@ public class OnlineRole
             skillComponent.InterruptActiveCast(true);
         }
         State = OnlineRoleState.Offline;
+        // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。
+        // 此时会话已不可用，队伍清理内部不向本人发包，只通知仍在线的队友。
+        TeamManager.Instance.OnRoleOffline((ulong)GetID());
         _saveRoleDataTimer.Stop();
         _roleNetSender.SendRoleDataToDB();
     }

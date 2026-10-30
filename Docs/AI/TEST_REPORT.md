@@ -107,3 +107,13 @@
 - WorkBuddy 冒烟报告为 64 项检查/0 失败，Codex 独立重跑结果一致（root-smoke-review.txt）。已注册测试角色实际执行了 BaseInfo 地图/实例/出生点写入及离队清理。真实回环 RoleLeave 测试中，同实例观察者收到 20 字节，其他实例收到 0 字节；该结果未验证解码后的会话路由或所有广播类型。
 - 纠正报告中的过度结论：源码并未调用 HandleClientEnterWorld；其中重复挑战测试不是真实的重复 EnterWorld 测试。移动/技能/可见性消息的接收者覆盖，以及双客户端可见性/移动仍未验证。
 - 2026-10-30 重试：确认四个进程及所需端口均在运行；全新正常登录到达主城，真实 EventSystem TeamCreate 点击发出 11200。Game 发出 11210，网关发出 10001（本地时间 19:55:21，UnitySessionId=2）；客户端仍为 TeamId=0/members=0。不声称真实进入/返回成功或多人验收通过。证据：_temp/dungeon-multiplayer-20261030/server-retry/、root-live-review.json 和 root-business-inventory.json。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 最终真实场景流程与解码后的多人协议检查
+
+- 网关白名单回归：4 个有效通知成功，未知消息码及 4 个畸形载荷被拒绝；13 项检查/0 失败。真实 UI 建队不再收到网关 error10001。真实单客户端建队/挑战/离队/返回通过，原生 model/Animator/controller 的 ID 保持相同；证据为 _temp/dungeon-multiplayer-20261030/ 下的 root-live-single-pass.json。
+- 37 项解码后的协议检查通过，并由 Codex 独立重跑。实际调用 HandleClientEnterWorld，加上主城阳性对照，现已证明该方法确实执行；副本实例/地图/出生点仍由服务器权威决定。双成员队伍共享非零实例，另一队伍被隔离；邀请/接受邀请/申请均一致拒绝已进入实例的队伍。
+- 服务链路阳性抓包：move11181->Unity32；skill-start11171/end11173->Unity31（本人）、32（观察者）；presence11100/leave11213->Unity32；其他实例 33/其他地图 34 均收到 0 帧。GateTeamCtrl 将 team11210 和 leave11213 路由至不同的真实回环 Unity 会话，没有交叉投递。这些是进程内使用真实 Socket/Session 的隔离测试，不是两个已登录的 Unity 客户端。
+- 保留失败轮次：最初的接收断言失败；随后第 10 轮错误断言移动/技能的 TCP=0。第 11 轮修正了测试数据：服务链路具有非空 NetClient(ClientType.GameServer)，因此 Session.IsGameServerLink 保持 TCP；只有未绑定的玩家链路丢弃实时包。玩家阴性用例不能替代服务链路阳性投递。
+- 最终注释检查：13 个文件 token 等价，diff0/syntaxError0；最新 Game/Gate 编译至隔离的 _temp 输出，错误数为 0；Unity compiling=false/errors0。仅补注释的平台第 14 轮原生执行结束但未返回报告；Codex 独立核验快照/Roslyn/构建产物，并通过官方接口释放已停止且过期的租约（taskCompleted=false），未伪造执行者完成回执。注释 token 相同，无需重复行为测试。
+- Codex 重启已退出的 Game/Gate 后，最终正常登录通过主城/建队（TeamId1/members1）。当前端口/进程独立检查，未按旧 PID 推断。证据：root-mp-verify-r11.log、root-comment-token-check.txt、final-game-build.log、final-gate-build.log、gate-whitelist-retry/ 和 mpverify/service-link-verification-r11.md。未运行：两个真实 Unity 客户端、已绑定末端客户端的 KCP 多人投递、Player 构建/完整战斗。完整记录：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

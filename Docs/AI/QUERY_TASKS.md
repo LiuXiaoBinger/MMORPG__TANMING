@@ -39,3 +39,10 @@
 - RO ModuleMgr/TeamMgr.lua 中的接口为 RequestCreateTeam:43、InviteJoinTeam:81、AcceptTeamInvatation:165、LeaveTeam:315、BegInTeamByTeamId:413 和 SetCaptain:456。保留源码实际拼写 Invatation。ModuleData/TeamData.lua:63 设置 maxTeamNumber=5；此前按 UI 列数推断为 4 的结论错误。
 - CSV DungeonsTable 中 4060 行：NumbersLimit=3=5、SceneID=4060、LevelLimit=75=200、EnterType=3、TimeLimit=2=7200。ThemeDungeonTable 中 theme7 -> StoryDungeonID=4060 / TeamTargetID=2007。本项目保留已明确授权的单人模式，人数上限为 5，不重新按 RO 最低 3 人加锁。Moshenta 出生点为 132.97_58.89_60.95；当前主城默认出生点为 62.1493416_19.4139996_80.6689758。
 - 网络集成需要 proto 生成、NetDefine、Game 分发、Gate 上下行注册以及 GateClientResponseForwarder 通知解析，并确保服务端 bin 与客户端插件中的 Network.dll 匹配。仅增加 GateTeamCtrl 注册仍不能通过白名单。参考根目录 F:/UnityPro/ro/Ro_cs422nb 只读。完整过程：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 服务链路、玩家 KCP 与网关通知约定
+
+- Gate 注册与 GateClientResponseForwarder 解析是两个独立的集成点。新增的 team11210/invitation11211/entry11212/leave11213 现分别解析具体 protobuf 并返回 Succeed；默认拒绝与畸形载荷拒绝规则保持不变。主 Agent 正常登录验证已证明修复后的 11200->11210 可到达 UI。
+- Network/Socket/com/Session.cs 中 TrySendRealtime 在玩家 KCP 之前明确检查 IsGameServerLink。ClientType.GameServer 的非空上游 NetClient 会为 Game->Gate 服务链路保持 TCP；上游为空且没有绑定 peer 的玩家 Session 则丢弃实时包。将前者错误建模为 Session(dict,null)，导致了误导性的测试失败和第 10 轮错误断言。修正后的真实抓包验证了实际 RoleManager 观察者过滤及目标 UnitySessionId。
+- 服务器存活证据必须区分监听端口、已建立的 Gate->Game 连接，以及后来退出的旧子进程。Codex 最终在真实 bin/Debug 目录启动 Game85224 和 Gate102264，保留此前由主 Agent 启动的 Center54056/Login100464，确认上游连接后，正常登录/建队通过。未增加自动重连功能。完整证据与边界：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。

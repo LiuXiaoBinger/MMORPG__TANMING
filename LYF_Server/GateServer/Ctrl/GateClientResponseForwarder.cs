@@ -123,6 +123,26 @@ public static class GateClientResponseForwarder
                     // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
                     SyncMoveNtf.Parser.ParseFrom(package.Data);
                     return true;
+                case NetDefine.CMD_TeamInfoCode:
+                    // 队伍状态是服务端主动下发的权威快照，无业务错误码，验证协议后原样转发。
+                    TeamInfoNtf.Parser.ParseFrom(package.Data);
+                    resultCode = CmdCode.Succeed;
+                    return true;
+                case NetDefine.CMD_TeamInvatationCode:
+                    // 邀请/申请通知同时承载两种语义，网关只校验格式，不解释收件人身份。
+                    TeamInvatationNtf.Parser.ParseFrom(package.Data);
+                    resultCode = CmdCode.Succeed;
+                    return true;
+                case NetDefine.CMD_TeamEnterDungeonCode:
+                    // 副本入场与回城通知携带实例、场景与出生点，必须完整交给客户端。
+                    TeamEnterDungeonNtf.Parser.ParseFrom(package.Data);
+                    resultCode = CmdCode.Succeed;
+                    return true;
+                case NetDefine.CMD_RoleLeaveCode:
+                    // 角色离开视野通知用于删除远端模型，无错误码，验证协议后原样转发。
+                    RoleLeaveNtf.Parser.ParseFrom(package.Data);
+                    resultCode = CmdCode.Succeed;
+                    return true;
                 default:
                     return false;
             }

@@ -48,6 +48,26 @@ public class NetDefine
     public const ushort CMD_SyncMoveCode = 11181;
     /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
     public const ushort CMD_KcpBindCode = 11190;
+    /// <summary>创建队伍请求，对应 RO TeamMgr.lua RequestCreateTeam。</summary>
+    public const ushort CMD_CreateTeamCode = 11200;
+    /// <summary>邀请他人入队请求，对应 RO TeamMgr.lua InviteJoinTeam。</summary>
+    public const ushort CMD_InviteJoinTeamCode = 11201;
+    /// <summary>同意入队邀请请求，对应 RO TeamMgr.lua AcceptTeamInvatation。</summary>
+    public const ushort CMD_AcceptTeamInvatationCode = 11202;
+    /// <summary>离队请求，对应 RO TeamMgr.lua LeaveTeam。</summary>
+    public const ushort CMD_LeaveTeamCode = 11203;
+    /// <summary>按队伍ID申请加入请求，对应 RO TeamMgr.lua BegInTeamByTeamId。</summary>
+    public const ushort CMD_BegInTeamByTeamIdCode = 11204;
+    /// <summary>队长请求进入副本，对应 RO DungeonMgr CaptainRequestEnterFBPtc。</summary>
+    public const ushort CMD_CaptainRequestEnterFBCode = 11205;
+    /// <summary>服务端下发队伍完整状态，客户端据此刷新队伍窗口。</summary>
+    public const ushort CMD_TeamInfoCode = 11210;
+    /// <summary>服务端下发邀请入队通知，对应 RO TeamInvatationData。</summary>
+    public const ushort CMD_TeamInvatationCode = 11211;
+    /// <summary>服务端下发副本入场通知，携带实例ID、场景与出生点。</summary>
+    public const ushort CMD_TeamEnterDungeonCode = 11212;
+    /// <summary>服务端下发角色离开视野通知，客户端据此删除远端角色。</summary>
+    public const ushort CMD_RoleLeaveCode = 11213;
 }
 
 
