@@ -114,7 +114,11 @@ Codex 使用 karpathy-guidelines 控制范围；project-subagent-coordination �
 
 ## Git 集成
 
-仅提交本任务代码、资源、批准记录；保留无关用户改动，不合 main、不强推。提交与推送回执待实际执行后补充。
+仅提交本任务代码、资源、批准记录；保留无关用户改动，不合 main、不强推。
+
+- 业务与已批准记录提交：`39470de`，`feat: 接入RO队伍界面与本地单人副本流程`，共 67 个文件（58 个业务文件、9 个记录/分析文件）。六份双语入口与难点文档仅提交本任务追加段，未混入用户原有未提交记录；完整逐项暂存核对为 `_temp/dungeon-team-20261029/staged-task-check.json`。
+- 推送命令：`git push origin codex/feature-development`，退出码 0；远端回执 `fbaa3d9..39470de codex/feature-development -> codex/feature-development`。未合入 `main`，未强制推送。
+- 本段 Git 回执后续单独提交；不为回执重复更新双语入口或变更已通过的业务验收输入。工作区仍保留任务前的用户修改及未跟踪资源，不把整个工作区报告为干净。
 
 ## 已批准记录同步与用量观测
 
