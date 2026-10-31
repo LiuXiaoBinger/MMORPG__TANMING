@@ -126,16 +126,33 @@ public sealed class TeamManager
 
     /// <summary>
     /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
-    /// 只登记待确认邀请，被邀请人同意后才真正入队。
+    /// 只登记待确认邀请，被邀请人同意后才真正入队；不关心失败原因的既有调用沿用布尔返回。
     /// </summary>
     /// <param name="inviterRole">发起邀请的在世角色，必须是某队成员。</param>
     /// <param name="targetRoleId">被邀请角色ID。</param>
     /// <returns>邀请登记成功返回 true；无队伍、队伍已满、目标已在队伍中或队伍已开副本实例返回 false。</returns>
     public bool InviteJoinTeam(OnlineRole inviterRole, ulong targetRoleId)
     {
+        // 本次调用不关心失败原因，失败码直接丢弃。
+        CmdCode ignoredCode;
+        return InviteJoinTeam(inviterRole, targetRoleId, out ignoredCode);
+    }
+
+    /// <summary>
+    /// 邀请他人入队并带回失败原因，供协议处理器把原来的静默拒绝变成玩家可见提示。
+    /// </summary>
+    /// <param name="inviterRole">发起邀请的在世角色，必须是某队成员。</param>
+    /// <param name="targetRoleId">被邀请角色ID。</param>
+    /// <param name="errorCode">失败原因；成功或无需提示时为 Succeed。</param>
+    /// <returns>邀请登记成功返回 true。</returns>
+    public bool InviteJoinTeam(OnlineRole inviterRole, ulong targetRoleId, out CmdCode errorCode)
+    {
+        errorCode = CmdCode.Succeed;
         if (inviterRole == null || inviterRole.mainRoleInfo == null ||
             inviterRole.mainRoleInfo.BaseInfo == null)
         {
+            // 会话里的角色资料不完整，属于连接身份问题而非队伍业务问题。
+            errorCode = CmdCode.InvalidSession;
             return false;
         }
         // 邀请人的权威角色ID，取自会话校验过的 BaseInfo，客户端无法替换。
@@ -145,28 +162,38 @@ public sealed class TeamManager
         // 邀请人必须已在队伍中。
         if (!_roleTeam.TryGetValue(inviterId, out teamId))
         {
+            // 邀请人自己不在队伍里，没有任何队伍可以邀请别人加入。
+            errorCode = CmdCode.ReqParamError;
             return false;
         }
         // 邀请人所在队伍状态，用于校验人数上限与实例占用；取不到说明队伍已解散，属异常残留。
         Team team;
         if (!_teams.TryGetValue(teamId, out team))
         {
+            // 角色索引残留但队伍实体已不存在，按无效请求处理。
+            errorCode = CmdCode.ReqParamError;
             return false;
         }
         // 队伍已满时不再登记邀请。
         if (team.Members.Count >= MaxMember)
         {
+            // 通用错误协议暂无"队伍已满"专用码，用服务端拒绝占同一提示位。
+            errorCode = CmdCode.ServerError;
             return false;
         }
         // 队伍已分配副本实例时拒绝登记邀请：与 AcceptTeamInvatation、BegInTeamByTeamId
         // 对已开实例队伍的拒绝保持一致，避免出现"可邀请但同意必失败"的两入口不一致。
         if (team.InstanceId != 0UL)
         {
+            // 队伍已进入副本实例，同一提示位回执，避免玩家点了邀请却毫无反应。
+            errorCode = CmdCode.ServerError;
             return false;
         }
         // 目标已在队伍中时无需邀请。
         if (_roleTeam.ContainsKey(targetRoleId))
         {
+            // 对方已有队伍：这是本次"邀请发不出去"的直接原因，必须回执而不是静默丢弃。
+            errorCode = CmdCode.ServerError;
             return false;
         }
 
@@ -189,19 +216,40 @@ public sealed class TeamManager
         }
         return true;
     }
-
     /// <summary>
     /// 同意入队邀请，对应 RO TeamMgr.lua:165 AcceptTeamInvatation()。
-    /// 校验队伍ID与邀请人一致后把角色加入队伍。
+    /// 校验队伍ID与邀请人一致后把角色加入队伍；不关心失败原因的既有调用沿用布尔返回。
     /// </summary>
     /// <param name="role">同意邀请的在世角色。</param>
     /// <param name="teamId">邀请中的队伍ID。</param>
     /// <param name="inviterId">邀请人角色ID，用于确认邀请未被替换。</param>
+    /// <param name="agree">true 同意入队，false 拒绝邀请或申请。</param>
     /// <returns>入队成功返回 true；邀请不存在、队伍已满或角色已在队伍中返回 false。</returns>
     public bool AcceptTeamInvatation(OnlineRole role, ulong teamId, ulong inviterId, bool agree)
     {
+        // 本次调用不关心失败原因，失败码直接丢弃。
+        CmdCode ignoredCode;
+        return AcceptTeamInvatation(role, teamId, inviterId, agree, out ignoredCode);
+    }
+
+    /// <summary>
+    /// 同意或拒绝入队邀请并带回失败原因，供协议处理器回执玩家可见提示。
+    /// 拒绝本身是正常业务结果，不产生失败原因。
+    /// </summary>
+    /// <param name="role">同意或拒绝的在世角色。</param>
+    /// <param name="teamId">邀请中的队伍ID。</param>
+    /// <param name="inviterId">邀请人角色ID；审批申请时传申请人角色ID。</param>
+    /// <param name="agree">true 同意入队，false 拒绝邀请或申请。</param>
+    /// <param name="errorCode">失败原因；成功、拒绝等正常结果时为 Succeed。</param>
+    /// <returns>入队成功返回 true。</returns>
+    public bool AcceptTeamInvatation(OnlineRole role, ulong teamId, ulong inviterId, bool agree,
+        out CmdCode errorCode)
+    {
+        errorCode = CmdCode.Succeed;
         if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
         {
+            // 会话里的角色资料不完整，属于连接身份问题而非队伍业务问题。
+            errorCode = CmdCode.InvalidSession;
             return false;
         }
         // 请求者的权威角色ID，用于判断其是否就是该队队长（只有队长可以审批他人申请）。
@@ -218,29 +266,40 @@ public sealed class TeamManager
             if (!_teams.TryGetValue(teamId, out applicantTeam))
             {
                 _applications.Remove(applicationKey);
+                // 申请引用的队伍已不存在，属于失效申请。
+                errorCode = CmdCode.ReqParamError;
                 return false;
             }
             // 只有该队队长可以审批申请，其他成员的身份不具备审批权。
             if (applicantTeam.CaptainId != roleId)
             {
+                // 非队长提交审批，属于越权请求。
+                errorCode = CmdCode.ReqParamError;
                 return false;
             }
             _applications.Remove(applicationKey);
             if (!agree)
             {
+                // 拒绝申请是正常业务结果，不回错误码。
                 return false;
             }
             if (applicantTeam.Members.Count >= MaxMember)
             {
+                // 队伍已满，通用错误协议暂无专用码，用服务端拒绝占同一提示位。
+                errorCode = CmdCode.ServerError;
                 return false;
             }
             if (_roleTeam.ContainsKey(applicantId))
             {
+                // 申请人已经加入其它队伍，不能再批准入队。
+                errorCode = CmdCode.ServerError;
                 return false;
             }
             // 已开出副本实例的队伍不再接受申请入队，避免新成员只有队伍实例而没有一致的 BaseInfo 场景状态。
             if (applicantTeam.InstanceId != 0UL)
             {
+                // 队伍已进入副本实例，同一提示位回执。
+                errorCode = CmdCode.ServerError;
                 return false;
             }
             applicantTeam.Members.Add(applicantId);
@@ -252,6 +311,8 @@ public sealed class TeamManager
         // 已在队伍中的角色不能再接受邀请。
         if (_roleTeam.ContainsKey(roleId))
         {
+            // 自己已有队伍：这是"点加入没反应"在服务端的直接原因，必须回执。
+            errorCode = CmdCode.ServerError;
             return false;
         }
         // 邀请分支的待确认键："队伍ID_本人角色ID"，与 InviteJoinTeam 登记邀请时写入的键格式一致。
@@ -261,6 +322,7 @@ public sealed class TeamManager
         {
             _invitations.Remove(key);
             _applications.Remove(key);
+            // 拒绝邀请是正常业务结果，不回错误码。
             return false;
         }
         // 服务端登记的邀请人角色ID，用于和请求携带的 inviterId 比对，防止顶替他人邀请。
@@ -268,27 +330,37 @@ public sealed class TeamManager
         // 没有待确认邀请时拒绝，避免绕过邀请直接入队。
         if (!_invitations.TryGetValue(key, out recordedInviter))
         {
+            // 邀请已失效（可能已被处理或过期），必须告诉玩家而不是静默丢弃。
+            errorCode = CmdCode.ReqParamError;
             return false;
         }
         // 邀请人必须与请求携带的一致。
         if (recordedInviter != inviterId)
         {
+            // 请求携带的邀请人与服务端登记不一致，属于失效或伪造的邀请。
+            errorCode = CmdCode.ReqParamError;
             return false;
         }
         // 邀请所属队伍状态，用于校验人数上限与实例占用。
         Team team;
         if (!_teams.TryGetValue(teamId, out team))
         {
+            // 邀请引用的队伍已解散。
+            errorCode = CmdCode.ReqParamError;
             return false;
         }
         // 队伍已满时拒绝入队。
         if (team.Members.Count >= MaxMember)
         {
+            // 队伍已满，同一提示位回执。
+            errorCode = CmdCode.ServerError;
             return false;
         }
         // 已开出副本实例的队伍不再接受邀请入队，与申请入口保持一致，避免两条入队路径行为不同。
         if (team.InstanceId != 0UL)
         {
+            // 队伍已进入副本实例，同一提示位回执。
+            errorCode = CmdCode.ServerError;
             return false;
         }
 
@@ -298,7 +370,6 @@ public sealed class TeamManager
         NotifyTeamInfo(team);
         return true;
     }
-
     /// <summary>
     /// 申请加入指定队伍，对应 RO TeamMgr.lua:413 BegInTeamByTeamId(cTeamId)。
     /// 本阶段按"申请即入队"的最短流程处理，不引入额外审批队列。

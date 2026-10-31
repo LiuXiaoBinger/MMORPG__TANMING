@@ -137,6 +137,9 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <summary>本地是否已在队伍中，仅控制成员区与空态展示。</summary>
     private bool _inTeam;
 
+    /// <summary>当前是否存在真实待处理邀请，邀请确认页只在这个值为真时允许显示。</summary>
+    private bool _hasPendingInvitation;
+
     /// <summary>绑定按钮事件，初始化为未建队的主界面。</summary>
     public override void InitWindow()
     {
@@ -489,6 +492,9 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         {
             _offerRejectButton.interactable = hasInvitation;
         }
+        // 本页面的显隐与真实待处理邀请保持一致：没有邀请时整页隐藏，邀请被同意或拒绝后随状态一起收起。
+        _hasPendingInvitation = hasInvitation;
+        _offerRoot.SetActive(hasInvitation && _currentPage == TeamPage.Recruitment);
     }
 
     /// <summary>刷新申请列表页内容，没有申请时显示原版空态。</summary>
@@ -547,6 +553,12 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <param name="page">本次打开的队伍界面。</param>
     public void OpenPage(TeamPage page)
     {
+        // 邀请确认页就是待处理邀请的展示载体，没有真实邀请时不允许打开，
+        // 否则会露出只有占位昵称与占位等级的假邀请框，且没有数据来源能让它消失。
+        if (page == TeamPage.Recruitment && !_hasPendingInvitation)
+        {
+            page = TeamPage.Members;
+        }
         _returnPage = _currentPage;
         _currentPage = page;
         // 成员和申请列表共用原队伍主窗外框，其余界面使用自身原外框。

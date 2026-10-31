@@ -133,3 +133,13 @@
 - 最终清理保持所有权行为不变；删除未使用的 LoadMoshentaScene 包装，从原 EnterMoshenta 移除本地 `_selectedEntry` 门禁。源码检查确认，无须事先选择 UI，scene4060 通知即可到达原有场景加载路径。最终 C# 编译错误0；Codex Console 错误0。热更新字节数667136/SHA256 063c97e09e6f17f0cc44c87f06c47d5d01c8165eae741b4af762ebc64d0e7f63；元数据中存在当前所有者，未使用包装及 TeamFlow 诊断均已移除。
 - 较早的光照调查证实了 EXR/探针的交付与应用，但 Shader 剥离仍是假设。广泛保留 Custom 触发长时间编译；r2 收窄/构建包并未证明 Player 画面恢复。最初声称 DLL 中没有 TeamFlow，是 UTF-16 对齐导致的假阴性，已在 r2 纠正。随后用户暂缓光照；恢复本任务改动的设置，保留此前输出，未声称黑屏已恢复。
 - 未执行：实际同包双客户端登录/邀请/UI/入场；Player 画面/副本一致性；最终新增 Bundle 或 Player 构建。用户选择自行验收。旧95/37测试未重跑，也未作为本任务多人联机证明。完整记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+
+## [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 正式预制体邀请回放与双接收方链路校验
+
+- WorkBuddy 第5轮编译 GameServer（0错误/10警告）、GateServer（0/0）、GM_Game 离线程序集（0/40），随后 TeamAuthoritySmoke 的108项断言全部通过（既有95项+新增13项）。这些属于隔离测试，不等同于 Player 验证。第6轮复用未变化的编译输入，补充定向证据。
+- 在 Unity 临时附加场景中，使用真实预制体/Window/Widget/TeamData/SocketDispatcher 和真实按钮回放：38项断言，37项通过、1项失败。隐藏窗口收到邀请后可见并显示真实邀请者姓名；加入和 X 均隐藏邀请；无待处理邀请时不能打开假邀请；1至2成员快照展示两个带姓名且 RoleId 正确的卡片/行。旧行为对照复现窗口不可见和邀请残留。唯一失败为快捷行完整矩形因既有 VerticalLayoutGroup.spacing=-4.18 交叠4.18px；昵称矩形间距为34.78px。这不是几何全通过测试，未修改布局。其他状态文字边界仍可能交叠，不能把昵称结果推广至所有文字。证据：_temp/dungeon-player-regression-20261031/evidence/r6/ui-behavior-r6-v2.txt。
+- 临时对象/场景已移除；dispatcher/cache、场景数量1至1、原始干净 Scene_Boot 和两个预制体哈希均已恢复/保留；UI 测试未发送数据包。加入提交在无连接时 transport 返回 false，因此仅证明 UI 关闭与事件接线，不能证明真实网络加入成功。
+- TeamWireCheck 19/19通过：真实 TeamManager/OnlineRole 回环分别为 UnitySessionId7001/7002 捕获完整双成员 TeamInfoNtf，其非零 TeamId/CaptainId 相同，RoleId 为4001/4002。真实 GameCommand/TeamMessageHandler 与 GateClientResponseForwarder 将 CMD_ErrCode 路由至7003并保留 ReqParamError；畸形对照负载产生 ServerError。证据：evidence/r6/teamwire/teamwire-r6.log。客户端/服务端 Network.dll 的64个消息及8个枚举在字段编号/类型/枚举值上完全一致；未修改协议 DLL。
+- Build/BuildDll 仅刷新变化的 GM_Game bytes；其余三个复制的 AOT bytes 哈希保持不变。新 AnswerInvitation 与 _hasPendingInvitation 元数据均存在；前缀804ca786095b1bd8，667136字节。最终 Editor console 错误0，停止播放并就绪，Scene_Boot 干净。Codex 核对9个清单哈希、实际范围内差异、现有路由与关键测试证据；限定范围的 git diff --check 通过。输入未变化且先前已通过，未重复完整构建/复测。
+- 仍未验证：真实同包双 Player 邀请/UI 及共同进入副本。邀请清理可解释面板残留，不能解释有效 TeamInfo 后成员缺失；隔离成员链路当前显示正确。既有队伍可以拒绝邀请，但无现场 trace 证明该分支造成用户截图现象。错误文案仍为通用提示；光照搁置。完整记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

@@ -143,6 +143,11 @@ public static class GateClientResponseForwarder
                     RoleLeaveNtf.Parser.ParseFrom(package.Data);
                     resultCode = CmdCode.Succeed;
                     return true;
+                case NetDefine.CMD_ErrCode:
+                    // 游戏服已按通用错误协议回执，网关只校验解析并把原错误码交给客户端提示，
+                    // 否则会被当成无法解析的回包改写成 ServerError，丢掉真实失败原因。
+                    resultCode = ErrMsg.Parser.ParseFrom(package.Data).CmdCode;
+                    return true;
                 default:
                     return false;
             }

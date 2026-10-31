@@ -127,3 +127,12 @@
 - `GM_Game.dll.bytes` 已本地刷新（SHA256 前缀063c97e09e6f17f0）；其中已混有未提交的用户工作，不纳入本次范围内的提交。仅提交两个源码及获批记录增量，不暂存无关源码/资源。用户须重新生成/发布一致的热更新包或重新构建，再检查同包双客户端流程。
 - Game/Gate 临时诊断已恢复至任务开始前字节；GraphicsSettings 恢复至任务开始前/HEAD；MyShaderVariants 恢复至任务开始前的 eafd3281 前缀，保留其既有用户差异。最终轮次未新增光照修复、Bundle 构建、服务端重启，也未声称完成真实双客户端验证。
 - 完整文件清单、实际尝试、失败和 Git 回执：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。光照已暂缓；实际双客户端 UI/入场由用户自行验证。
+
+
+## [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Player 验证失败后的邀请可见性续修
+
+- 延续 DUNGEON-PLAYER-REGRESSION-20261031；用户反馈组队 UI 未变、点击加入后邀请仍保留，以及一方看不到邀请。国内 WorkBuddy deepseek-v4.1-flash，session c8cc03df-f534-45e5-8b00-b9a10e6819d7，完成开发第5/6轮；中间只读调查和崩溃/端口恢复不重置轮数。第5轮 attempt run-63954cd2-fbcd-46f7-9511-1b522712e59e；第6轮 run-eb1d477c-0952-4ecb-b213-02b3fb083dad。
+- ThemeDungeonTeamCtrl 收到邀请/申请时，先打开其持有的窗口再选择对应页；应答后刷新/关闭邀请页。ThemeDungeonTeamCreateWindow 仅在真实待处理邀请存在时展示邀请；QuickTeamWidget 的召集入口接入现有邀请玩家页。正式 ThemeDungeonTeamCreate.prefab 隐藏无业务支持的 Lv.999 占位。不新增 UI 管理器，不自动切换队伍。
+- TeamManager 通过现有 CmdCode 重载报告失败；TeamMessageHandler 返回 CMD_ErrCode；GateServerApp 注册该消息，GateClientResponseForwarder 解析并转发。失败沿用现有通用提示，尚未提供精确组队文案。TeamAuthoritySmoke 新增13项断言。本次提交范围为这9个源码/预制体/测试文件；GM_Game.dll.bytes 已在本地刷新（前缀804ca786095b1bd8，667136字节），但混有用户既有工作，不纳入 Git。
+- 电脑崩溃后，9个源码/预制体/测试文件哈希全部与第5轮清单一致。Unity 已重启至 Scene_Boot，停止播放并就绪。第6轮只修改 GM_Game.dll.bytes。UI 回放、回环与协议一致性证据见 VERIFY 记录；真实同包双 Player 验证仍由用户执行。未重启服务器，未新建 bundle/Player 包、发布或处理光照。原队列保持 needs_review，等待用户验收。
+- 完整文件清单、第6轮已纠正的范围偏差、证据及 Git 回执见：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md，第5/6轮续修。不能凭截图推断存在两支独立单人队伍，也不能在没有现场 trace 时认定 B 从未加入。

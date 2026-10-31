@@ -45,6 +45,7 @@ public static class TeamAuthoritySmoke
             CheckSoloMainCityLeaveDissolvesWithoutTeleport();
             CheckDungeonLeaveBroadcastsLeaveAndReturns();
             CheckOfflineInMainCityStillRemovesRole();
+            CheckRejectedTeamRequestsReportReason();
         }
         catch (Exception ex)
         {
@@ -644,6 +645,75 @@ public static class TeamAuthoritySmoke
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// 验证邀请与接受在被拒绝时都会带回具体失败原因，供协议层回执玩家可见提示。
+    /// 旧代码在这两条路径上只有布尔 false，没有任何原因通道，客户端因此表现为点了没反应。
+    /// </summary>
+    private static void CheckRejectedTeamRequestsReportReason()
+    {
+        // 甲队队长：角色ID 4001，建出甲队作为被邀请的目标队伍。
+        OnlineRole captainA = NewRole(4001, "甲队队长");
+        // 乙队队长：角色ID 4002，用来构造"对方已经在别的队伍里"这一真实故障前提。
+        OnlineRole captainB = NewRole(4002, "乙队队长");
+        // 甲队队员：角色ID 4003，用来先让甲队正常入队一次，证明成功路径不产生失败原因。
+        OnlineRole memberA = NewRole(4003, "甲队队员");
+        // 无队伍角色：角色ID 4004，用来验证邀请失效时的失败原因。
+        OnlineRole outsider = NewRole(4004, "无队伍角色");
+
+        // 甲队队伍ID，后续邀请与接受都以它为目标。
+        ulong teamA = TeamManager.Instance.RequestCreateTeam(captainA, 1000);
+        Expect(teamA != 0UL, "原因回执用例：甲队建队成功");
+        // 乙队队伍ID，用来让乙队队长处于"已在队伍中"的状态。
+        ulong teamB = TeamManager.Instance.RequestCreateTeam(captainB, 1000);
+        Expect(teamB != 0UL, "原因回执用例：乙队建队成功");
+
+        // 正常路径：甲队邀请队员并同意，成功时不得产生失败原因。
+        // inviteMemberCode 为邀请登记的失败原因，成功时必须是 Succeed。
+        CmdCode inviteMemberCode;
+        Expect(TeamManager.Instance.InviteJoinTeam(captainA, 4003UL, out inviteMemberCode),
+            "原因回执用例：甲队邀请队员登记成功");
+        // acceptMemberCode 为入队的失败原因，成功时必须是 Succeed。
+        CmdCode acceptMemberCode;
+        Expect(TeamManager.Instance.AcceptTeamInvatation(memberA, teamA, 4001UL, true, out acceptMemberCode),
+            "原因回执用例：甲队队员入队成功");
+        Expect(acceptMemberCode == CmdCode.Succeed, "原因回执用例：正常入队不产生失败原因");
+        Expect(TeamManager.Instance.GetMemberCount(teamA) == 2, "原因回执用例：正常入队后甲队为2人");
+
+        // 关键场景一：邀请一个已经在别的队伍里的角色，必须给出失败原因。
+        // inviteBusyCode 为该次邀请的失败原因，用于断言不再静默。
+        CmdCode inviteBusyCode;
+        bool invitedBusy = TeamManager.Instance.InviteJoinTeam(captainA, 4002UL, out inviteBusyCode);
+        Expect(!invitedBusy, "原因回执用例：对方已在队伍中时邀请被拒绝");
+        Expect(inviteBusyCode != CmdCode.Succeed, "原因回执用例：邀请被拒绝时带回失败原因");
+
+        // 关键场景二：自己已在队伍中时接受他人邀请，必须给出失败原因。
+        // acceptBusyCode 为该次接受的失败原因，对应"点加入没反应"的服务端分支。
+        CmdCode acceptBusyCode;
+        bool acceptedBusy = TeamManager.Instance.AcceptTeamInvatation(captainB, teamA, 4001UL, true,
+            out acceptBusyCode);
+        Expect(!acceptedBusy, "原因回执用例：自己已在队伍中时接受邀请被拒绝");
+        Expect(acceptBusyCode != CmdCode.Succeed, "原因回执用例：接受被拒绝时带回失败原因");
+
+        // 关键场景三：没有任何待确认邀请时接受，必须给出失败原因而不是静默返回。
+        // acceptExpiredCode 为该次接受的失败原因，用来覆盖邀请已失效分支。
+        CmdCode acceptExpiredCode;
+        bool acceptedExpired = TeamManager.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, true,
+            out acceptExpiredCode);
+        Expect(!acceptedExpired, "原因回执用例：不存在的邀请不能入队");
+        Expect(acceptExpiredCode != CmdCode.Succeed, "原因回执用例：邀请失效时带回失败原因");
+
+        // 拒绝邀请属于正常业务结果，不得产生失败原因，避免客户端误报错误提示。
+        // rejectInviteCode 为拒绝邀请的返回原因，必须是 Succeed。
+        CmdCode rejectInviteCode;
+        TeamManager.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, false, out rejectInviteCode);
+        Expect(rejectInviteCode == CmdCode.Succeed, "原因回执用例：拒绝邀请不产生失败原因");
+
+        // 清理：解散两个临时队伍，避免影响后续用例。
+        TeamManager.Instance.LeaveTeam(4003UL);
+        TeamManager.Instance.LeaveTeam(4001UL);
+        TeamManager.Instance.LeaveTeam(4002UL);
     }
 
     /// <summary>构造一名仅含基础信息的在线角色，并注册进 RoleManager 现有在线索引。</summary>

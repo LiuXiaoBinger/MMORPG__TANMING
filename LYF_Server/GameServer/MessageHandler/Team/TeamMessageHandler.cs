@@ -97,14 +97,29 @@ public sealed class TeamMessageHandler : IGameMessageHandler
         {
             // arg 为邀请入队请求体，UserId 是被邀请角色ID，邀请人身份取自 role。
             InviteJoinTeamArg arg = InviteJoinTeamArg.Parser.ParseFrom(data);
-            TeamManager.Instance.InviteJoinTeam(role, arg.UserId);
+            // errorCode 为邀请被拒绝的具体原因，Succeed 表示没有业务错误（含正常登记成功）。
+            CmdCode errorCode;
+            // invited 为邀请是否已登记；为 false 且带失败原因时必须回执，避免客户端静默无反应。
+            bool invited = TeamManager.Instance.InviteJoinTeam(role, arg.UserId, out errorCode);
+            if (!invited && errorCode != CmdCode.Succeed)
+            {
+                SendTeamError(role, errorCode);
+            }
             return;
         }
         if (protoCode == NetDefine.CMD_AcceptTeamInvatationCode)
         {
             // arg 为同意/拒绝请求体：TeamId 定位队伍、InviterId 区分邀请与申请来源、Agree 是最终选择。
             AcceptTeamInvatationArg arg = AcceptTeamInvatationArg.Parser.ParseFrom(data);
-            TeamManager.Instance.AcceptTeamInvatation(role, arg.TeamId, arg.InviterId, arg.Agree);
+            // errorCode 为入队被拒绝的具体原因，Succeed 表示没有业务错误（含拒绝邀请这类正常结果）。
+            CmdCode errorCode;
+            // joined 为是否真的入队；为 false 且带失败原因时回执，替代原来的静默失败。
+            bool joined = TeamManager.Instance.AcceptTeamInvatation(role, arg.TeamId, arg.InviterId,
+                arg.Agree, out errorCode);
+            if (!joined && errorCode != CmdCode.Succeed)
+            {
+                SendTeamError(role, errorCode);
+            }
             return;
         }
         if (protoCode == NetDefine.CMD_LeaveTeamCode)
@@ -134,5 +149,23 @@ public sealed class TeamMessageHandler : IGameMessageHandler
             CaptainRequestEnterFBArg arg = CaptainRequestEnterFBArg.Parser.ParseFrom(data);
             TeamManager.Instance.CaptainRequestEnterFBPtc(role, arg.DungeonId);
         }
+    }
+
+    /// <summary>
+    /// 用项目既有的通用错误协议把队伍请求的业务失败原因回给请求者。
+    /// 客户端 NetErrorMsgMgr 已注册 CMD_ErrCode 并翻译成系统提示，这里只补上服务端回执。
+    /// </summary>
+    /// <param name="role">本次请求的权威在线角色，也是错误回执的接收人。</param>
+    /// <param name="errorCode">失败原因，必须不是 Succeed。</param>
+    private static void SendTeamError(OnlineRole role, CmdCode errorCode)
+    {
+        if (role == null)
+        {
+            return;
+        }
+        // 错误回执载荷，沿用项目既有错误包结构，只带命令码。
+        ErrMsg errMsg = new ErrMsg();
+        errMsg.CmdCode = errorCode;
+        role.SendToClient(NetDefine.CMD_ErrCode, errMsg.ToByteString());
     }
 }

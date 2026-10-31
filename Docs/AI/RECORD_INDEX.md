@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f794a3800517a3f235e2eef8e809fc75cd9ef97a5efa7d5ab83a394a5307279a`
+Source normalized SHA256: `a98117f1981a271e030a9ba3c7e893a158b2824bcdf169c13152bde258f10475`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -27,11 +27,12 @@ Source normalized SHA256: `f794a3800517a3f235e2eef8e809fc75cd9ef97a5efa7d5ab83a3
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Server-authoritative multiplayer party, not accepted | 97-104 |
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Final scoped delivery after authorized WorkBuddy extension | 105-112 |
 | [CODE][FILES][HANDOFF][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Nearby invitations and city leave visibility | 113-120 |
-| [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Party refresh and member entry; lighting deferred | 121-127 |
+| [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Party refresh and member entry; lighting deferred | 121-129 |
+| [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-136 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `9609df1432dd4bf61a45eef39837a35312391e6ffa7a7248257d8ab52dbf69cd`
+Source normalized SHA256: `b52ab55314003c2710404b3e9ae9d64cd8b7f0b01c67110f3d43d3efc5412f54`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -49,7 +50,8 @@ Source normalized SHA256: `9609df1432dd4bf61a45eef39837a35312391e6ffa7a7248257d8
 | [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Build/smoke passed, live create rejected after server restart | 103-110 |
 | [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Final real scene flow and decoded multiplayer protocol checks | 111-120 |
 | [VERIFY][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Protocol regressions and actual candidate collector | 121-128 |
-| [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Callback lifecycle regression and server-notification entry path | 129-134 |
+| [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Callback lifecycle regression and server-notification entry path | 129-136 |
+| [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-144 |
 
 ## Docs/AI/DECISIONS.en.md
 

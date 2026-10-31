@@ -217,32 +217,55 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _teamCtrl.BegInTeamByTeamId(teamId);
     }
 
-    /// <summary>同意收到的入队邀请。</summary>
+    /// <summary>同意收到的入队邀请，提交后立即收起邀请确认页。</summary>
     private void OnInviteAgreed()
     {
-        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.InviteTeamId,
-            TeamData.Instance.InviteInviterId, true);
+        AnswerInvitation(true);
     }
 
-    /// <summary>拒绝收到的入队邀请。</summary>
+    /// <summary>拒绝收到的入队邀请，提交后立即收起邀请确认页。</summary>
     private void OnInviteRejected()
     {
-        _teamCtrl.AcceptTeamInvatation(TeamData.Instance.InviteTeamId,
-            TeamData.Instance.InviteInviterId, false);
+        AnswerInvitation(false);
     }
 
-    /// <summary>同意收到的入队申请。</summary>
+    /// <summary>
+    /// 提交邀请的同意或拒绝，并在提交后收起邀请确认页回到成员页。
+    /// 待处理邀请由 AcceptTeamInvatation 在发包前清除，因此这里刷新一次界面即可让浮窗
+    /// 随真实邀请状态一起消失；没有待处理邀请时不发包，也不保留任何残余邀请界面。
+    /// </summary>
+    /// <param name="agree">true 同意入队，false 拒绝邀请。</param>
+    private void AnswerInvitation(bool agree)
+    {
+        // 待处理邀请的队伍ID，0 表示当前没有可回答的邀请。
+        ulong teamId = TeamData.Instance.InviteTeamId;
+        // 待处理邀请的邀请人角色ID，跟随队伍ID一起提交，用于服务端核对邀请未被替换。
+        ulong inviterId = TeamData.Instance.InviteInviterId;
+        if (teamId != 0UL)
+        {
+            _teamCtrl.AcceptTeamInvatation(teamId, inviterId, agree);
+        }
+        RefreshViews();
+        if (_teamWindow != null)
+        {
+            _teamWindow.OpenPage(TeamPage.Members);
+        }
+    }
+
+    /// <summary>同意收到的入队申请，提交后按服务器回包刷新申请行与成员列表。</summary>
     private void OnApplicationAgreed()
     {
         _teamCtrl.AcceptTeamInvatation(TeamData.Instance.ApplyTeamId,
             TeamData.Instance.ApplyApplicantId, true);
+        RefreshViews();
     }
 
-    /// <summary>拒绝收到的入队申请。</summary>
+    /// <summary>拒绝收到的入队申请，提交后立即隐藏申请行。</summary>
     private void OnApplicationRejected()
     {
         _teamCtrl.AcceptTeamInvatation(TeamData.Instance.ApplyTeamId,
             TeamData.Instance.ApplyApplicantId, false);
+        RefreshViews();
     }
 
     /// <summary>打开或切换队伍界面后刷新邀请页附近候选，不做每帧轮询。</summary>
@@ -374,7 +397,11 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         RefreshViews();
     }
 
-    /// <summary>收到邀请或申请通知后刷新界面，并把对应界面直接展示给玩家。</summary>
+    /// <summary>
+    /// 收到邀请或申请通知后刷新界面，并把队伍窗打开到对应页。
+    /// 邀请与申请都是服务器主动下发的待处理事项，队伍窗默认是关闭的，
+    /// 只切页不打开窗口时玩家屏幕上不会出现任何东西，表现为"对方收不到邀请"。
+    /// </summary>
     private void OnInvitationReceived()
     {
         RefreshViews();
@@ -382,16 +409,23 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         {
             return;
         }
-        // 队长收到申请时打开申请列表，被邀请人收到邀请时打开邀请确认页。
-        if (TeamData.Instance.HasApplication)
+        // 本次通知是否带有待处理申请；只有队长会收到申请。
+        bool hasApplication = TeamData.Instance.HasApplication;
+        // 本次通知是否带有待处理邀请；只有被邀请人会收到邀请。
+        bool hasInvitation = TeamData.Instance.HasInvitation;
+        if (!hasApplication && !hasInvitation)
+        {
+            return;
+        }
+        // 先走既有的打开入口让窗口可见并复位到成员页，再按待处理事项切到目标页。
+        OpenTeamWindow();
+        if (hasApplication)
         {
             _teamWindow.OpenPage(TeamPage.Applications);
             return;
         }
-        if (TeamData.Instance.HasInvitation)
-        {
-            _teamWindow.OpenPage(TeamPage.Recruitment);
-        }
+        // 邀请确认页只由真实邀请驱动，页面显隐同时受窗口内的待处理邀请状态约束。
+        _teamWindow.OpenPage(TeamPage.Recruitment);
     }
 
     /// <summary>

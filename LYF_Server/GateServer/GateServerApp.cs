@@ -80,6 +80,8 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_TeamInvatationCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamEnterDungeonCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_RoleLeaveCode, gateTeamCtrl);
+            // 队伍请求失败时游戏服回的是通用错误协议，必须注册同一入口才能转给客户端提示。
+            client.RegistCommand(NetDefine.CMD_ErrCode, gateTeamCtrl);
             // 绑定协议只在网关与客户端之间处理，不转发给游戏服。
             // 绑定协议处理器实例，只在网关与客户端之间分配参数并回包。
             GateKcpCtrl gateKcpCtrl = new GateKcpCtrl();

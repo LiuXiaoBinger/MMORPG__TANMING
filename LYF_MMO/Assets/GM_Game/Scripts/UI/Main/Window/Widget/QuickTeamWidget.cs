@@ -381,8 +381,8 @@ public sealed class QuickTeamWidget : MonoBehaviour
     private void OnSearchClicked() { OpenPageRequested?.Invoke(TeamPage.Search); }
     /// <summary>打开邀请玩家界面壳。</summary>
     private void OnInviteClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
-    /// <summary>打开招募界面壳，保留原召集按钮。</summary>
-    private void OnSummonClicked() { OpenPageRequested?.Invoke(TeamPage.Recruitment); }
+    /// <summary>召集按钮进入已有的邀请玩家页，不再复用收到邀请的确认页，避免无邀请时弹出空邀请框。</summary>
+    private void OnSummonClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
     /// <summary>打开本人详情界面壳。</summary>
     private void OnMemberClicked() { OpenPageRequested?.Invoke(TeamPage.MemberDetails); }
     /// <summary>打开原成员快捷菜单。</summary>
