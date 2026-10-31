@@ -411,3 +411,7 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 这次仅整理既有证据：SceneMgr.cs与SVC/JSON没有新改动，不重跑Unity、构建或视觉试验。已确认的LOD入口修复与待验的黑墙/变体假设分开表述，不声称整个魔神塔已验收。暂存按HEAD只纳入本次替换及新增段，其他工作区差异保留。差异和证据检查结果保存在_temp/dungeon-lighting-resume-20261031/black-scene-difficulty-correction/；实际Git回执后补。
 
 本次task-log-policy落实澄清后的记录授权，token-monitor执行collect/report；原始报告在_temp/dungeon-lighting-resume-20261031/black-scene-difficulty-correction/token-collect.txt、token-report.json，report为24小时项目跨会话汇总，含~估算费用，不能当作本次费用或订阅余额。原始主会话实验性计数窗口2026-10-31T13:39:42.136Z至2026-10-31T13:41:09.159Z：输入528371（含缓存523136）、输出5895；不含随后操作和未完成回复。上下文与项目规则、用户需求、工具输入输出、重复读取/返工/压缩/验证不可分别计量；子Agent/WorkBuddy协作用量未记录，账户剩余额度不可测。证据usage.json。上下文压缩：当前对话累计2次，截至2026-10-31T13:41:22.802000+00:00，来源为当前主会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。
+
+### 魔神塔难点主题纠正提交与推送回执
+
+203501b（docs: 纠正难点主题并说明魔神塔全黑的分层原因与修复）已推送origin/codex/feature-development，远端由4cf4379推进至203501b。仅2份文档，48行新增/33行删除；删除为本Agent误写启动缓存难点的替换范围，旧有R7/R9条目与其他用户改动保留。实际代码赋值、既有包校验结果、日志旧前缀与git diff --cached --check均核验通过，本次未修改业务或运行构建。证据：_temp/dungeon-lighting-resume-20261031/black-scene-difficulty-correction/checks.json。本节只补真实回执，后续回执提交最终号以交付回复为准。
