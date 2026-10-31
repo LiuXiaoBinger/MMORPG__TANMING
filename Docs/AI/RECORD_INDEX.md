@@ -65,7 +65,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `389725990aedcf94e11c52661c1fbd48117167a40513f20d66cbfd40065b2d1c`
+Source normalized SHA256: `eedcfc8a650dd3dba50b9683a4548258193c0ea3a3a2d470a8c48fc18d751101`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -74,7 +74,8 @@ Source normalized SHA256: `389725990aedcf94e11c52661c1fbd48117167a40513f20d66cbf
 | [QUERY][副本组队][DUNGEON-TEAM-20261029] RO map binding and real team UI sources | 21-28 |
 | [QUERY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 RO task/team quick panel ownership | 29-35 |
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 RO party interfaces, limits and actual network route | 36-43 |
-| [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Service link versus player KCP and gate notification contract | 44-48 |
+| [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Service link versus player KCP and gate notification contract | 44-50 |
+| [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-58 |
 
 ## Older records
 

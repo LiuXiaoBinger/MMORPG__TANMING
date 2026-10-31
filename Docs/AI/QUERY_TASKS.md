@@ -46,3 +46,13 @@
 - Gate 注册与 GateClientResponseForwarder 解析是两个独立的集成点。新增的 team11210/invitation11211/entry11212/leave11213 现分别解析具体 protobuf 并返回 Succeed；默认拒绝与畸形载荷拒绝规则保持不变。主 Agent 正常登录验证已证明修复后的 11200->11210 可到达 UI。
 - Network/Socket/com/Session.cs 中 TrySendRealtime 在玩家 KCP 之前明确检查 IsGameServerLink。ClientType.GameServer 的非空上游 NetClient 会为 Game->Gate 服务链路保持 TCP；上游为空且没有绑定 peer 的玩家 Session 则丢弃实时包。将前者错误建模为 Session(dict,null)，导致了误导性的测试失败和第 10 轮错误断言。修正后的真实抓包验证了实际 RoleManager 观察者过滤及目标 UnitySessionId。
 - 服务器存活证据必须区分监听端口、已建立的 Gate->Game 连接，以及后来退出的旧子进程。Codex 最终在真实 bin/Debug 目录启动 Game85224 和 Gate102264，保留此前由主 Agent 启动的 Center54056/Login100464，确认上游连接后，正常登录/建队通过。未增加自动重连功能。完整证据与边界：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 已确认当前打包场景的光照贴图绑定存在
+
+- 延续 DUNGEON-PLAYER-REGRESSION-20261031：用户报告原生 Editor 加载时显示 Baked Lightmap，而 bundle 加载时未显示。国内 WorkBuddy 使用 deepseek-v4.1-flash 进行只读调查，session 为 c8cc03df-f534-45e5-8b00-b9a10e6819d7，attempt 为 run-1de7d949-d94f-4db3-a99d-c1944ae94b13；未新增实现轮次，原开发轮数仍为 6。其最初采样的是 Scene_Login，不能证明 Moshenta 的状态。随后用户进入 Moshenta，由 Codex 执行现场验收探针。
+- 实际运行的 DefaultPackage 为 HostPlayMode/HostPlayModeImpl，版本为 2026-10-31-997，存在一个匹配的 streamed scene bundle，活动场景为 sc_dungeon_moshenta_001。LightmapSettings 有 2 张非空的 1024x1024 光照贴图和 1919 个探针；唯一活动的 MEnvorimentSetting 报告 _applied=true，其默认光照贴图 SO 存在。预期的 937 个 Renderer 引用全部存活，937 个实际索引及 UV scaleOffset 均与配置值匹配，937 个引用均能解析到非空颜色贴图。1 个 Renderer 报告静态合批；仅此不能证明最终渲染画面正确。
+- 截图中准确对应的网格 sc_dungeon_moshenta_ta_002_b 当前 index 为 0，scaleOffset 为 (0.2514144,0.2514144,0.2719581,0.6459816)，与截图一致。该对象是运行时场景对象，其材质没有 AssetDatabase 路径。采样当时，Editor 选中的是 DontDestroyOnLoad 中的 Role_MJS(Clone)，并非该网格；这仅是当时观察，不能证明用户此前选错了对象。
+- 更正：OnEnable/ApplyLightmapData 日志不能证明 937 次赋值成功，本次新的现场逐项比对才提供此证据。场景 YAML 中的 stripped prefab 引用属于正常序列化，不能据此认定 bundle 引用损坏。已有光照贴图可以来自 Unity 烘焙，即使该导入的 RO 场景通过环境组件而非自身的 LightingDataAsset 应用贴图。若修改序列化场景数据，仍须更新对应 bundle；不能声称仅刷新 DLL 即可更新场景数据。材质 shaderKeywords 中缺少 LIGHTMAP_ON，不能据此认定 shader 变体被剥离。
+- 当前 997 版本未复现绑定丢失。本次探针未解决最初报告的 Inspector 区段缺失、旧包状态、最终全黑或偏暗渲染，以及独立 Player 的表现；仍待用户澄清当前可见症状。本次未修改代码、资源或配置，未重新烘焙、编译、切换场景或构建。没有已证实的故障前，不应添加按路径查找 Renderer 的回退逻辑或修改 shader 设置。
+- 证据：_temp/dungeon-player-regression-20261031/lightmap-binding/evidence/root-live-package-probe.txt、root-live-binding-comparison.txt、root-live-package-mode.txt；worker 的 investigation.md 为初步调查，其中与 root-review.md 及本条目冲突的内容以后两者更正为准。完整获批跟进记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

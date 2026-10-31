@@ -144,3 +144,48 @@ OpenAI Codex 原生子Agent `/root/sync_team_repair` 完成 CURRENT_TASK/TEST_RE
 代码与获批记录已提交d86d7b0并成功推送origin/codex/feature-development，远端范围bb19dc9..d86d7b0。共16文件：9个源码/预制体/测试文件、两组中英协作入口、原日志新增段、难点新增段与索引。暂存检查通过，仅包含本轮差异；旧用户文档前缀、其他资源/源码和混合GM_Game.dll.bytes未混入。工作区索引按当前全部记录生成，提交索引按暂存英文源机械生成，避免带入用户旧文档差异。
 
 本回执后续单独提交推送，不自引用其尚未生成的提交号。没有发布新资源/Player、没有重启服务。用户实际验证需更新客户端代码资源并让Game/Gate使用本次源码；原队列仍为needs_review等待用户真实双开验收。
+
+
+## [MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 打包模式网格烘焙绑定只读调查（已获写入授权）
+
+用户补充：编辑器直读场景时网格Inspector有Baked Lightmap，使用打包数据则没有。本轮重新调查烘焙绑定，不沿用先前Shader变体推测。国内版WorkBuddy deepseek-v4.1-flash、原session c8cc03df-f534-45e5-8b00-b9a10e6819d7、attempt run-1de7d949-d94f-4db3-a99d-c1944ae94b13，只读调查不计开发轮，原累计开发轮仍6。基线f2aa896，分支codex/feature-development。
+
+### 现场结果与纠正
+
+WorkBuddy在Scene_Login只读到缓存bundle内MLightmapData：两张BC6H1024x1024光图与1919探针，生成探针但未取得魔神塔实际引用。用户随后明确已进入打包模式魔神塔，Codex运行只读探针并独立逐绑定比较：
+
+- 实际DefaultPackage为HostPlayMode / HostPlayModeImpl，版本2026-10-31-997，恰好一个魔神塔streamed scene bundle与当前场景路径对应。
+- LightmapSettings.lightmaps=2，两张图非空；lightProbes.count=1919；唯一活动MEnvorimentSetting的_applied=true、defaultLightmapData非空。
+- 第0组937条Renderer引用全部存活，937条实际索引与配置一致、937条UV缩放偏移与配置一致、937条索引都能解析到非空光图；1个Renderer处于静态合批，不能由属性匹配泛化为最终着色已验。
+- 截图同名网格sc_dungeon_moshenta_ta_002_b实际index=0，scaleOffset=(0.2514144,0.2514144,0.2719581,0.6459816)，与截图完全相同；它是当前场景对象，材质AssetDatabase路径为空。采样时Selection为DontDestroyOnLoad下Role_MJS(Clone)，不是该网格；不推断用户先前选错。
+
+因此当前997版本未复现“绑定丢失”，尚不能判断之前缺少Inspector展示的具体原因，也不能把绑定存在等同画面/Player渲染通过。已询问用户当前是Inspector少Baked Lightmap、画面仍异常，还是已正常；等待澄清不代表默认已正常。
+
+纠正旧报告：调用ApplyLightmapData不证明937条全成功；stripped预制体引用是正常场景序列化形式，不证明包引用损坏；光图仍可能源于Unity烘焙，此处只是使用RO数据组件回填。改场景序列化路径/静态标记后仍需更新对应bundle，不能声称刷新DLL即可更新包中场景；材质keywords没有LIGHTMAP_ON也不等于变体被剥离。未实施路径回查、延时重试、Shader设置或新的烘焙方案。
+
+### 文件清单与验证边界
+
+本轮没有新增、修改、移动或删除业务代码、资源、.meta、配置、协议或场景；没有编译、构建、烘焙、切换场景/Play、重启服务器。仅在_temp保留探针和原始证据。正式获批记录逐项如下：
+
+| 操作 | 文件 | 内容 |
+|---|---|---|
+| 追加 | Docs/AI/QUERY_TASKS.en.md | 英文只读事实、937项现场比较、版本与未验证边界 |
+| 追加 | Docs/AI/QUERY_TASKS.md | 同编号中文增量，由原生子Agent同步/核验 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 本轮完整调查、纠正、文件、验证与Git回执 |
+| 追加 | 项目分析/项目难点.md | 数据资源存在、绑定存在与实际渲染的证据层级 |
+| 机械更新 | Docs/AI/RECORD_INDEX.md | 定位本轮新记录，提交时排除用户旧正文差异 |
+
+证据根_temp/dungeon-player-regression-20261031/lightmap-binding/：investigation.md、root-review.md、probe/、evidence/root-live-package-probe.txt、root-live-binding-comparison.txt、root-live-package-mode.txt。WorkBuddy原报告中已被纠正的推断保留为历史，以上现场证据与Codex验收边界优先。
+
+未验证：用户早先出现问题的包版本与时刻、Inspector当时的实际对象/显示、当前或Player全黑/偏暗成因；没有拿本次数据证明画面恢复。后续应依用户当前症状定向复现，不盲改光照代码。原队列仍needs_review，不替用户声明画面验收通过。
+
+使用技能：project-subagent-coordination安排原任务只读调查及验收；workbuddy-executor复用国内DeepSeek4.1原会话；unity-mcp-orchestrator核对现场并执行只读比较；task-log-policy收到明确写入授权后追加记录；token-monitor运行collect/report及原始会话统计。WorkBuddy自报未使用额外技能。中文同步与Git回执随后补记，不混入其他用户改动。
+
+
+### 烘焙绑定调查：同步与统计回执
+
+OpenAI Codex原生子Agent /root/sync_lightmap_binding 完成QUERY_TASKS本编号中文增量同步与一致性核验；仅检查新增段，英文精确匹配指定suffix、两份旧字节前缀保留。实际模型未披露、未使用技能。证据lightmap-binding/approved-records/sync-check.json。
+
+已运行token-monitor collect/report。实验性主会话计数窗口2026-10-31 16:46:41–17:45:10（UTC+8，涵盖本调查两次用户回合）：输入12942853（缓存12902528），输出21292（含推理9428）。上下文与项目规则、用户需求、工具调用输入输出、子Agent/WorkBuddy协作、重复读取/返工/压缩/验证五类精确拆分不可测；外部模型token/账户余额/账单本地不可测。跨会话24小时report及其~估算费用不作本任务费用或订阅额度。
+
+同一对话原日志4个顶层compacted事件，重启续文件0个，无重复且session_meta同ID01a18812-07f0-7013-83ac-b52ba43f90f8；当前对话累计4次，截至2026-10-31 17:46:07。原始统计保留_temp/dungeon-player-regression-20261031/lightmap-binding/collect-live.txt、report-live.txt、usage-live.json、compactions-live.json；旧文件计数证据为原任务context-compactions-r6.json。只记录汇总与覆盖边界，不写提示词/凭证/私密会话正文。
