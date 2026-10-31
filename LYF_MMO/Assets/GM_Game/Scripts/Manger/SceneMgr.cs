@@ -68,6 +68,9 @@ public class SceneMgr : Singleton<SceneMgr>
                 return;
             }
 
+            // 沿用RO桌面档位(VeryHigh)的运行时Shader上限500，排除仅用于编辑模式的LOD600；
+            // 本项目未迁移RO画质档位入口，此处仅做全局一次性接入，不按场景还原。
+            Shader.globalMaximumLOD = 500;
             _currentSceneType = sceneType;
             // 沿RO场景加载入口先准备同名公共导航数据，再执行创建玩家等原业务回调。
             MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
