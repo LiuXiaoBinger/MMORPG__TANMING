@@ -73,3 +73,10 @@ OpenAI Codex 原生子Agent `/root/sync_team_repair` 完成 CURRENT_TASK/TEST_RE
 本地主会话实验统计窗口2026-10-31 11:07:23–13:18:20 UTC+8：输入45399475（缓存读取45285504），输出90645（含推理52489）。来源为原始token_count累计差值，包含本任务调查、返工、等待及文档阶段，不代表账户计费或剩余额度。按上下文与项目规则、用户需求、工具输入输出、WorkBuddy/原生子Agent协作、重复读取/返工/压缩/验证五组的精确拆分均不可测；外部模型token与账户余额不可测。
 
 已运行token-monitor collect/report，原始输出留 `_temp/dungeon-player-regression-20261031/collect-delivery.txt`、`report-delivery.txt`、`task-usage.json`；24小时跨会话汇总不冒充本任务统计。当前对话累计压缩3次，截至2026-10-31 13:18:50 UTC+8，见 `compactions-delivery.json`，不与子Agent会话相加。
+
+
+## Git实际回执
+
+代码与获批记录提交 `1e92da7`，已成功推送 `origin/codex/feature-development`（远端范围 `919fbf3..1e92da7`）。暂存9个文件：两个客户端源码、完整日志、四份中英协作入口、难点条目与索引。暂存差异空白检查通过；仅追加本次记录段，旧用户文档改动未混入。
+
+`GM_Game.dll.bytes` 仍只在本地刷新并保持未暂存，因包含其他未提交用户源码对应的混合构建内容；MyShaderVariants仍保留任务前用户diff，其他原用户改动未覆盖或提交。此次没有推送新的Player或下载服资源，也没有声称实际双端通过。后续仅追加本回执的提交以Git历史定位，不作自引用哈希。
