@@ -56,3 +56,10 @@
 - 更正：OnEnable/ApplyLightmapData 日志不能证明 937 次赋值成功，本次新的现场逐项比对才提供此证据。场景 YAML 中的 stripped prefab 引用属于正常序列化，不能据此认定 bundle 引用损坏。已有光照贴图可以来自 Unity 烘焙，即使该导入的 RO 场景通过环境组件而非自身的 LightingDataAsset 应用贴图。若修改序列化场景数据，仍须更新对应 bundle；不能声称仅刷新 DLL 即可更新场景数据。材质 shaderKeywords 中缺少 LIGHTMAP_ON，不能据此认定 shader 变体被剥离。
 - 当前 997 版本未复现绑定丢失。本次探针未解决最初报告的 Inspector 区段缺失、旧包状态、最终全黑或偏暗渲染，以及独立 Player 的表现；仍待用户澄清当前可见症状。本次未修改代码、资源或配置，未重新烘焙、编译、切换场景或构建。没有已证实的故障前，不应添加按路径查找 Renderer 的回退逻辑或修改 shader 设置。
 - 证据：_temp/dungeon-player-regression-20261031/lightmap-binding/evidence/root-live-package-probe.txt、root-live-binding-comparison.txt、root-live-package-mode.txt；worker 的 investigation.md 为初步调查，其中与 root-review.md 及本条目冲突的内容以后两者更正为准。完整获批跟进记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+## [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 缺的是 RO 运行时 LOD 选择，不是渲染器绑定
+
+- 用户澄清打包模式渲染仍全黑。既有 937/937 绑定匹配只作为证据保留，不等同于渲染正确。bundle 与 AssetDatabase 版本、以及 LOD600/599/400/300 的对照，把主要渲染故障定位到被选中的 LOD600 路径。shader 注释把 600 标为编辑/系统光照；RO 运行时画质取值为 100/200/300/400/500，不含 600，桌面默认 500。本项目缺少 Shader.globalMaximumLOD 赋值，一直停留在 int.MaxValue。
+- 参考路径：clientcode/CSProject/MoonClient/Utility/QualityGrade/MQualityGrade.cs:78-80；clientcode/CSProject/MoonSerializable/Utility/QualityGrade/MQualityGradeConditionChecker.cs:114-121；clientproj/Assets/artres/Resources/QualityConfig/MQualityParamsToAndroid.asset。MGame 初始化与 MScene 场景加载入口会应用该画质设置。本项目的定向适配落在既有 SceneMgr 加载成功入口，不引入 RO 的完整画质体系。
+- 已纠正的说法：QualitySettings.maximumLODLevel 影响的是 Mesh LODGroup，不是 shader 的 SubShader LOD；shader 属性名与 Pass 元数据一致不能证明源码版本完全相同；材质关键字缺少 LIGHTMAP_ON 与现有对照都不能直接枚举被剥离的 bundle 变体，剥离仍属推断。剩余暗区同样未证明是未烘焙几何。不要基于上述说法重启 AlwaysIncludedShaders/SVC 重建、重新烘焙、按路径查渲染器的回退或方向光绕行。
+- 源码修复 876b4c8 已推送；当前内存内 globalLOD 500 可恢复采样地面。包内 DLL 刷新与重新进场、Player、其他场景与剩余暗区仍未验证。完整证据：_temp/dungeon-player-regression-20261031/lightmap-binding/shading/investigation-supplement.md；_temp/dungeon-lighting-resume-20261031/root-runtime-verification.txt。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。更早的待定/暂缓条目仍属历史；本次窄范围跟进不代表组队/副本整体功能已验收。

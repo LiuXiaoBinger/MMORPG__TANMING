@@ -143,3 +143,10 @@
 - TeamWireCheck 19/19通过：真实 TeamManager/OnlineRole 回环分别为 UnitySessionId7001/7002 捕获完整双成员 TeamInfoNtf，其非零 TeamId/CaptainId 相同，RoleId 为4001/4002。真实 GameCommand/TeamMessageHandler 与 GateClientResponseForwarder 将 CMD_ErrCode 路由至7003并保留 ReqParamError；畸形对照负载产生 ServerError。证据：evidence/r6/teamwire/teamwire-r6.log。客户端/服务端 Network.dll 的64个消息及8个枚举在字段编号/类型/枚举值上完全一致；未修改协议 DLL。
 - Build/BuildDll 仅刷新变化的 GM_Game bytes；其余三个复制的 AOT bytes 哈希保持不变。新 AnswerInvitation 与 _hasPendingInvitation 元数据均存在；前缀804ca786095b1bd8，667136字节。最终 Editor console 错误0，停止播放并就绪，Scene_Boot 干净。Codex 核对9个清单哈希、实际范围内差异、现有路由与关键测试证据；限定范围的 git diff --check 通过。输入未变化且先前已通过，未重复完整构建/复测。
 - 仍未验证：真实同包双 Player 邀请/UI 及共同进入副本。邀请清理可解释面板残留，不能解释有效 TeamInfo 后成员缺失；隔离成员链路当前显示正确。既有队伍可以拒绝邀请，但无现场 trace 证明该分支造成用户截图现象。错误文案仍为通用提示；光照搁置。完整记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+## [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 源码编译与现场运行时 LOD 对照
+
+- WorkBuddy 第7轮编译了真实的 LYF_MMO/GM_Game.csproj，输出与中间目录全部重定向到 _temp/dungeon-lighting-resume-20261031/build：0 个错误；增量编译 2 条程序集冲突警告。这是 dotnet 源码编译，不是 HybridCLR CompileDll，也不是包体部署。正式 GM_Game.dll.bytes 未被覆盖。Codex 已核对实际三行源码差异、git diff --check 与已保存的编译结果；输入未变且先前已通过的项未重复构建。
+- Codex 在当前 HostPlayMode 魔神塔的对照使用同一主相机、640x360 RenderTexture 与未改动场景：globalLOD 2147483647 时 meanLum 0.00502、暗像素 96.95%；globalLOD 500 时 meanLum 0.10378、暗像素 48.49%。地面变为可见。Camera.targetTexture 已恢复，globalLOD 500 有意保留在 Play 中生效。证据：_temp/dungeon-lighting-resume-20261031/root-runtime-verification.txt、root-before.png、root-after500.png。
+- WorkBuddy 的窄范围对照只改了两个真实 bundle shader 实例：逐 shader 500 时 meanLum 0.10407，基线 0.00527；其余 15 个 shader 的 maximumLOD 无漂移；两个 shader 的上限均已复原。600/599/400 对照隔离出有问题的 LOD600 路径；500 实际选中 LOD400。证据：_temp/dungeon-player-regression-20261031/lightmap-binding/shading/evidence-shader-lod-supplement.txt 与 investigation-supplement.md。
+- 这些结果支持“修复漏迁的运行时 LOD 入口，并恢复当前采样视角的地面”，但不能证明变体被剥离、整场景渲染正确、包内 DLL 刷新成功、真实重新进场与独立 Player、同包双端流程，也不能证明对其他高档 shader 无影响。本次授权的文档跟进未重复任何编译/渲染/UI/协议套件。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

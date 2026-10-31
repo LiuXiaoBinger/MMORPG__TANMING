@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a98117f1981a271e030a9ba3c7e893a158b2824bcdf169c13152bde258f10475`
+Source normalized SHA256: `9370649fed0e4e1bcf66fa7612bd2cce8638107aeada4f18c26c84a18dd48888`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -28,11 +28,12 @@ Source normalized SHA256: `a98117f1981a271e030a9ba3c7e893a158b2824bcdf169c13152b
 | [CODE][FILES][HANDOFF][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Final scoped delivery after authorized WorkBuddy extension | 105-112 |
 | [CODE][FILES][HANDOFF][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Nearby invitations and city leave visibility | 113-120 |
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Party refresh and member entry; lighting deferred | 121-129 |
-| [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-136 |
+| [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-138 |
+| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-145 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b52ab55314003c2710404b3e9ae9d64cd8b7f0b01c67110f3d43d3efc5412f54`
+Source normalized SHA256: `662faa7c192df48cec0e8b9f7e9db98e78cee657b94e62547856f4f4f7eb94e2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -51,7 +52,8 @@ Source normalized SHA256: `b52ab55314003c2710404b3e9ae9d64cd8b7f0b01c67110f3d43d
 | [VERIFY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Final real scene flow and decoded multiplayer protocol checks | 111-120 |
 | [VERIFY][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Protocol regressions and actual candidate collector | 121-128 |
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Callback lifecycle regression and server-notification entry path | 129-136 |
-| [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-144 |
+| [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-146 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-152 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -65,7 +67,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `eedcfc8a650dd3dba50b9683a4548258193c0ea3a3a2d470a8c48fc18d751101`
+Source normalized SHA256: `2f9eac509e79601e15f76c07c7b3dfd09ac023328074309d0f9b4b0b670e90de`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -75,7 +77,8 @@ Source normalized SHA256: `eedcfc8a650dd3dba50b9683a4548258193c0ea3a3a2d470a8c48
 | [QUERY][副本组队][DUNGEON-TEAM-20261029] 2026-10-30 RO task/team quick panel ownership | 29-35 |
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 RO party interfaces, limits and actual network route | 36-43 |
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Service link versus player KCP and gate notification contract | 44-50 |
-| [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-58 |
+| [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-60 |
+| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-66 |
 
 ## Older records
 

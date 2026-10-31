@@ -189,3 +189,59 @@ OpenAI Codex原生子Agent /root/sync_lightmap_binding 完成QUERY_TASKS本编�
 已运行token-monitor collect/report。实验性主会话计数窗口2026-10-31 16:46:41–17:45:10（UTC+8，涵盖本调查两次用户回合）：输入12942853（缓存12902528），输出21292（含推理9428）。上下文与项目规则、用户需求、工具调用输入输出、子Agent/WorkBuddy协作、重复读取/返工/压缩/验证五类精确拆分不可测；外部模型token/账户余额/账单本地不可测。跨会话24小时report及其~估算费用不作本任务费用或订阅额度。
 
 同一对话原日志4个顶层compacted事件，重启续文件0个，无重复且session_meta同ID01a18812-07f0-7013-83ac-b52ba43f90f8；当前对话累计4次，截至2026-10-31 17:46:07。原始统计保留_temp/dungeon-player-regression-20261031/lightmap-binding/collect-live.txt、report-live.txt、usage-live.json、compactions-live.json；旧文件计数证据为原任务context-compactions-r6.json。只记录汇总与覆盖边界，不写提示词/凭证/私密会话正文。
+
+
+## [DUNGEON-PLAYER-REGRESSION-20261031-R7] 魔神塔运行时 Shader LOD 入口补齐及获批记录
+
+### 授权、身份与修改思路
+
+用户在当前续作聊天明确选择“写入”，批准本节及 CURRENT_TASK、TEST_REPORT、QUERY_TASKS 中英新增段、项目难点和索引。业务修复已于876b4c8提交并推送codex/feature-development，本轮仅补写获批记录，不再次修改业务或构建。完整过程继续集中本日志，不新建第二份修改流水。
+
+国内版WorkBuddy deepseek-v4.1-flash，原session c8cc03df-f534-45e5-8b00-b9a10e6819d7；只读调查attempt run-b3181b1e-cb7c-4674-920e-d1f0c0f49188及run-2c114cae-7337-43ad-ad98-46a505075831不计开发轮；第7开发轮attempt run-6e3a0147-9de0-4512-b19d-4a9e16c252b9完成单文件实现。Codex核对实际差异、编译证据和一次必要现场对照后验收；WorkBuddy自报未使用技能。国内客户端启动恢复仅处理连接，不新建重复任务，不增加开发轮。
+
+此前937条网格索引/UV正确不能推出实际渲染正确。进一步调查发现RO的MQualityGrade.cs:78-80将画质GlobalMaximumLOD写入Shader.globalMaximumLOD；MoonSerializable/Utility/QualityGrade/MQualityGradeConditionChecker.cs:114-121在桌面返回VeryHigh；MQualityParamsToAndroid.asset的grade4为500。本项目漏迁此运行时入口，globalMaximumLOD仍为2147483647，因此命中Shader注释中的“编辑模式”LOD600。沿用现有SceneMgr场景成功回调补500即可；它实际选择LOD400，不新增画质系统、配置表或场景状态包装。
+
+RO参考根F:/UnityPro/ro/Ro_cs422nb，只读路径：clientcode/CSProject/MoonClient/Utility/QualityGrade/MQualityGrade.cs；clientcode/CSProject/MoonSerializable/Utility/QualityGrade/MQualityGradeConditionChecker.cs；clientproj/Assets/artres/Resources/QualityConfig/MQualityParamsToAndroid.asset。问题复盘见项目分析/项目难点.md的同编号新增条目。
+
+### 逐项文件清单
+
+| 操作 | 项目根相对路径 | 本轮事实 |
+|---|---|---|
+| 已提交修改 | LYF_MMO/Assets/GM_Game/Scripts/Manger/SceneMgr.cs | 成功加载分支、业务回调前新增Shader.globalMaximumLOD=500和两行中文注释，净增3行；876b4c8已推送 |
+| 追加 | Docs/AI/CURRENT_TASK.en.md | 修复、真实身份/第7轮、提交及包内DLL待更新边界 |
+| 追加 | Docs/AI/CURRENT_TASK.md | 由子Agent同步同编号中文增量并核验 |
+| 追加 | Docs/AI/TEST_REPORT.en.md | 编译、实际光照对照及未验证范围 |
+| 追加 | Docs/AI/TEST_REPORT.md | 由子Agent同步同编号中文增量并核验 |
+| 追加 | Docs/AI/QUERY_TASKS.en.md | RO原运行时入口、遗漏原因、旧推断纠正 |
+| 追加 | Docs/AI/QUERY_TASKS.md | 由子Agent同步同编号中文增量并核验 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 本节完整范围、思路、验证、未解决项、后续同步与Git回执 |
+| 追加 | 项目分析/项目难点.md | 同编号问题证据、失败尝试、取舍与面试复盘 |
+| 机械生成 | Docs/AI/RECORD_INDEX.md | 标题、行号和源摘要；提交投影仅含本轮增量，既有其他任务正文不纳入 |
+
+本次没有业务文件新增/移动/删除，没有.meta变更。GM_Game.dll.bytes未覆盖，仍为667136字节、SHA256前缀804ca786095b1bd8，混有用户既有功能。GraphicsSettings、MyShaderVariants、正式Shader/材质/场景/预制体均未修改。所有探针、截图、编译中间件与记录备份放在_temp/dungeon-lighting-resume-20261031/；补充调查保留_temp/dungeon-player-regression-20261031/lightmap-binding/shading/，不作为正式日志。
+
+### 验证、真实效果与纠正
+
+- WorkBuddy通过真实LYF_MMO/GM_Game.csproj进行dotnet编译，输出和中间目录全部重定向到_temp：0错误，增量结果2个程序集冲突警告；这是源码编译，不是HybridCLR CompileDll或包部署。Codex检查真实3行差异、git diff --check和保存的编译结果，不重复成功且输入未变的构建。
+- Codex在当前HostPlayMode魔神塔、同一主相机640x360视角对照：原LOD2147483647的meanLum=0.00502、暗像素96.95%；应用500后meanLum=0.10378、暗像素48.49%，地面恢复可见。camera.targetTexture已恢复，当前Play的globalMaximumLOD有意保持500。该内存验收不等于新源码已进入包内DLL。
+- WorkBuddy只限制两个真实bundle Shader为500时meanLum=0.10407，基线0.00527；其余15个Shader的maximumLOD无漂移。600黑、599/400亮的判别组定位到600路径，两个Shader的临时限制均已还原。没有通过调灯光、改材质亮度或重新烘焙取代定位。
+- QualitySettings.maximumLODLevel控制Mesh LODGroup，不控制SubShader选择；属性名及Pass一致不证明源码版本完全一致；未直接枚举bundle变体，不能将“变体裁剪”写成已证根因；剩余黑区不能无证据称为烘焙未覆盖。这些调查中的错误/过强推断以本节和新增QUERY段纠正，旧证据保留。
+
+证据：_temp/dungeon-lighting-resume-20261031/report-r7.md、file-manifest-r7.json、build/dotnet-build-gm_game.log、root-runtime-verification.txt、root-before.png、root-after500.png；补充报告lightmap-binding/shading/investigation-supplement.md及evidence-shader-lod-supplement.txt。
+
+### 未解决事项与交付边界
+
+包内热更DLL尚未更新，必须生成/发布一致的热更代码后验证实际重新进场与Player；本轮未BuildPlayer、未构建资源包、未重烘焙、未重启服务或切场景/Play。当前同视角仍约48%暗像素，其成因未取证；其他场景/Shader是否依赖LOD600未实测。不能报告整个场景、组队双开或副本完整挑战流程已全部验收。876b4c8已真实推送；获批记录的同步/增量隔离/Git回执随后集中补在本节。
+
+
+### 本轮获批同步、统计与源码回执
+
+国内版WorkBuddy deepseek-v4.1-flash，原session c8cc03df-f534-45e5-8b00-b9a10e6819d7、日志同步claim attempt run-e0a9bdcf-7a8a-4394-891a-c2c77b85cad4，追加3份中文入口并完成3组新增段一致性检查；不增加开发轮，累计仍7。33项检查最终PASS/0失败，旧中文前缀与基线sha一致，英文新增suffix未变。初版校验脚本误切片产生25项假失败，修正后通过，事实文本未为迁就测试而改写；原过程保留approved-logs/sync-report.md。主Agent核对实际写入范围、旧前缀及检查证据，不重复逐项双语翻译验收。
+
+本轮使用技能：task-log-policy沿用用户明确“写入”授权；project-subagent-coordination与workbuddy-executor派发/验收原会话中文同步；token-budget限定新增段和回报范围；token-monitor完成collect/report、原始会话统计和压缩事件计数。WorkBuddy自报未使用任何技能。此文档收尾未改业务、未编译、未运行Unity验证。
+
+本轮日志确认后的主会话实验统计窗口2026-10-31T10:27:36.985Z至2026-10-31T10:32:20.906Z（UTC）：输入2231895，其中缓存2220672，输出8187。上下文与项目规则、用户需求、工具调用输入输出、子Agent/WorkBuddy协作、重复读取/返工/压缩/验证五类精确拆分均不可测；外部WorkBuddy token、账户剩余额度和精确账单本地不可测。24小时report为跨会话汇总，含~估算费用，未当作本任务费用或订阅余额。原始输出仅_temp/dungeon-lighting-resume-20261031/token-collect-logapproval.txt、token-report-logapproval.txt、approved-logs/usage.json。
+
+上下文压缩：当前对话累计0次，截至2026-10-31T10:32:33.402000+00:00（UTC）；来源为当前对话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，覆盖无缺口，不合并旧聊天或外部Agent会话。证据approved-logs/context-compactions.json。
+
+源码提交876b4c8已于上一回合真实推送origin/codex/feature-development；本轮记录按基线字节前缀隔离，仅暂存新增段及由暂存英文生成的索引，排除既有其他任务改动。记录提交/推送结果在执行后补记本日志，不预报成功。

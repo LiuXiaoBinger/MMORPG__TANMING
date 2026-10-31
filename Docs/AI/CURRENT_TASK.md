@@ -136,3 +136,11 @@
 - TeamManager 通过现有 CmdCode 重载报告失败；TeamMessageHandler 返回 CMD_ErrCode；GateServerApp 注册该消息，GateClientResponseForwarder 解析并转发。失败沿用现有通用提示，尚未提供精确组队文案。TeamAuthoritySmoke 新增13项断言。本次提交范围为这9个源码/预制体/测试文件；GM_Game.dll.bytes 已在本地刷新（前缀804ca786095b1bd8，667136字节），但混有用户既有工作，不纳入 Git。
 - 电脑崩溃后，9个源码/预制体/测试文件哈希全部与第5轮清单一致。Unity 已重启至 Scene_Boot，停止播放并就绪。第6轮只修改 GM_Game.dll.bytes。UI 回放、回环与协议一致性证据见 VERIFY 记录；真实同包双 Player 验证仍由用户执行。未重启服务器，未新建 bundle/Player 包、发布或处理光照。原队列保持 needs_review，等待用户验收。
 - 完整文件清单、第6轮已纠正的范围偏差、证据及 Git 回执见：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md，第5/6轮续修。不能凭截图推断存在两支独立单人队伍，也不能在没有现场 trace 时认定 B 从未加入。
+
+## [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 恢复 RO 运行时 Shader LOD 入口
+
+- 接续打包版魔神塔黑屏报告；本条目取代此前针对该窄范围修复的“现象待定/光照暂缓”交接。源码提交 876b4c8 已推送到 codex/feature-development。SceneMgr.cs 现在在场景加载成功后、既有业务回调之前设置 Shader.globalMaximumLOD=500；恰好一处赋值与两行中文注释，未引入画质体系，未改资源。
+- RO 侧 MQualityGrade.cs:78-80 应用 GlobalMaximumLOD；MoonSerializable/Utility/QualityGrade/MQualityGradeConditionChecker.cs:114-121 在桌面平台默认为 VeryHigh；MQualityParamsToAndroid.asset 第4档设为 500。本项目此前漏迁该运行时入口，取值为 int.MaxValue 时命中了 shader 中仅用于编辑的 LOD600。当前 500 实际选中 LOD400。精确源码路径与证据见完整日志。
+- 国内版 WorkBuddy deepseek-v4.1-flash，session c8cc03df-f534-45e5-8b00-b9a10e6819d7；只读 attempt run-b3181b1e-cb7c-4674-920e-d1f0c0f49188 与 run-2c114cae-7337-43ad-ad98-46a505075831 未增加开发轮次。第7开发轮 attempt run-6e3a0147-9de0-4512-b19d-4a9e16c252b9 交付修复；Codex 已接受该定向源码与现场 LOD 对照。WorkBuddy 报告未使用技能。
+- 现有打包场景含 937 条有效光照贴图绑定、2 张光照图与 1919 个探针；不需要绑定恢复补丁。Codex 已在当前 Play 会话应用 500 并恢复相机渲染目标；这是内存内验收改动，不能证明新源码已载入包内。
+- GM_Game.dll.bytes 保持不变，混有先前用户工作（前缀 804ca786095b1bd8，667136 字节）。需更新热更 DLL/包后再验证真实重新进场与 Player。剩余暗区（采样像素约 48%）与其他场景对 LOD600 的依赖未验证。未重新烘焙、未构建 bundle/Player、未追加 UI 或服务端改动。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md；证据：_temp/dungeon-lighting-resume-20261031/。
