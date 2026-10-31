@@ -33,7 +33,7 @@ Source normalized SHA256: `9370649fed0e4e1bcf66fa7612bd2cce8638107aeada4f18c26c8
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `662faa7c192df48cec0e8b9f7e9db98e78cee657b94e62547856f4f4f7eb94e2`
+Source normalized SHA256: `a4ec1523e9cf67fc65fd3f2d8624a265e155fbda438a337ab6b154eedea7a3db`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -53,7 +53,8 @@ Source normalized SHA256: `662faa7c192df48cec0e8b9f7e9db98e78cee657b94e62547856f
 | [VERIFY][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Protocol regressions and actual candidate collector | 121-128 |
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Callback lifecycle regression and server-notification entry path | 129-136 |
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-146 |
-| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-152 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-154 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-161 |
 
 ## Docs/AI/DECISIONS.en.md
 

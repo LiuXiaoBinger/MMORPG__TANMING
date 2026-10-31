@@ -150,3 +150,12 @@
 - Codex 在当前 HostPlayMode 魔神塔的对照使用同一主相机、640x360 RenderTexture 与未改动场景：globalLOD 2147483647 时 meanLum 0.00502、暗像素 96.95%；globalLOD 500 时 meanLum 0.10378、暗像素 48.49%。地面变为可见。Camera.targetTexture 已恢复，globalLOD 500 有意保留在 Play 中生效。证据：_temp/dungeon-lighting-resume-20261031/root-runtime-verification.txt、root-before.png、root-after500.png。
 - WorkBuddy 的窄范围对照只改了两个真实 bundle shader 实例：逐 shader 500 时 meanLum 0.10407，基线 0.00527；其余 15 个 shader 的 maximumLOD 无漂移；两个 shader 的上限均已复原。600/599/400 对照隔离出有问题的 LOD600 路径；500 实际选中 LOD400。证据：_temp/dungeon-player-regression-20261031/lightmap-binding/shading/evidence-shader-lod-supplement.txt 与 investigation-supplement.md。
 - 这些结果支持“修复漏迁的运行时 LOD 入口，并恢复当前采样视角的地面”，但不能证明变体被剥离、整场景渲染正确、包内 DLL 刷新成功、真实重新进场与独立 Player、同包双端流程，也不能证明对其他高档 shader 无影响。本次授权的文档跟进未重复任何编译/渲染/UI/协议套件。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+
+## [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 光照剔除候选未验收与编译负载缓解
+
+- WorkBuddy 第8轮将 LYF_MMO/ProjectSettings/GraphicsSettings.asset 的 m_LightmapStripping: 0（Automatic）改为1（Custom），原有 m_LightmapKeep* 值仍为1。这是工作区内未验收的候选，不纳入本次文档提交。SVC 中缺少 LIGHTMAP_ON 条目不能证明最终 bundle 丢失该变体；Custom 包渲染尚未验证此诊断或修复。临时报告中更强的根因断言不作为已接受的证据。
+- Editor.log 显示 YooAsset BuildRunner/TaskBuilding/BuildAssetBundles，以及一批 Shader 的完整变体数577536、内建剔除后72192、脚本剔除后15792，随后 starting compilation。截图显示多个 Unity Shader Compiler 进程繁忙。这能证明当时正在编译，但不能证明构建由谁发起、是否已经结束，或负载是否仅由 Custom 导致。MCP ping 未获响应；Codex 在此次恢复中没有另行发起构建。
+- 用户报告严重卡顿后，Codex 将观察到的全部32个 UnityShaderCompiler 进程设为 Idle、ProcessorAffinity=3；读回验证32个进程共用同样的2个逻辑核心，机器共有32个逻辑核心。这是临时进程调度，不是项目设置。一项 Unity 编辑器优先级调整返回 Access denied。未结束 Unity；编译进程限速不等于现有构建已取消。
+- 国内版 WorkBuddy 会话769bac42-7f9c-4a2b-86a3-1c835f892974（deepseek-v4.1-flash），任务 DUNGEON-PLAYER-REGRESSION-20261031-SHADER-IDENTITY-FRESH，恢复 attempt run-ef355d9b-300b-4869-ad82-0573bade6274，收到 session:cancel。首次响应仍为 working/isProcessing=true，后续原生读回为 completed/isProcessing=false，并有一项 cancelled 工具调用。这确认原生执行已停止，不能据此确认队列已验收或 Unity 编译已停止。恢复和取消不增加开发轮，累计第8轮仍未验收。
+- 仍未验证：卡顿是否完全恢复、新构建 bundle 的渲染、实际重新进入副本与独立 Player。本次获准跟进仅写记录，不恢复 WorkBuddy、不重新构建、不重新烘焙、不更改运行时 Shader。证据：_temp/dungeon-lighting-resume-20261031/black-fix-r8/report-r8.md、r8-connection-resume.txt、pause-native-for-cpu.txt、approved-cpu-records/；完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

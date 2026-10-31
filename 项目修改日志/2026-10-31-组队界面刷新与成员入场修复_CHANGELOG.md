@@ -250,3 +250,45 @@ RO参考根F:/UnityPro/ro/Ro_cs422nb，只读路径：clientcode/CSProject/MoonC
 ### 第7轮获批记录提交与推送回执
 
 2026-10-31：获批记录提交ea3eb17（docs: 记录魔神塔运行时Shader档位修复与验证边界），9份文件、124行新增/6行删除；删除项仅为机械索引的源摘要及行号替换。git diff --cached --check通过，已真实推送origin/codex/feature-development，远端由876b4c8推进至ea3eb17。本轮追加之外的旧工作区字节前缀保留，暂存投影及索引隔离证据为_temp/dungeon-lighting-resume-20261031/approved-logs/stage-evidence.json。中文同步与关键事实输入未变，不重复同步/编译/运行验收。本小节只补Git回执，随后的回执提交号以最终交付为准。
+
+
+## [DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 第8轮候选未验收、Shader 编译高负载与紧急限速
+
+### 授权与本次文件范围
+
+开发者明确在交互弹窗选择“写入”，批准记录 Custom 候选未验收、YooAsset Shader 编译负载、进程限速与 WorkBuddy 停止。本次仅补正式记录，不恢复开发或编译，不将此前候选修复写成已完成。
+
+| 操作 | 项目根相对路径 | 具体内容 |
+|---|---|---|
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 本节完整事实、验证边界、协作与后续 Git 回执 |
+| 追加 | Docs/AI/TEST_REPORT.en.md | R8-CPU 英文验证及未完成项 |
+| 追加 | Docs/AI/TEST_REPORT.md | 由子 Agent 同步、核验同编号中文新增段 |
+| 机械更新 | Docs/AI/RECORD_INDEX.md | 标题、定位行段和源哈希；暂存时排除其他任务正文 |
+
+本次无业务代码、资源、.meta、配置新增/修改/移动/删除。此前 WorkBuddy 的 LYF_MMO/ProjectSettings/GraphicsSettings.asset 一行候选 m_LightmapStripping: 0→1 保留在工作区，keep* 原已全1；本次仅记录，不提交该未验收配置或其他 SVC/DLL 改动。
+
+### 真实现象与处理
+
+- WorkBuddy 第8开发轮的 Custom 对照包未完成渲染验证，黑墙修复未通过。SVC 缺 LIGHTMAP_ON 不能直接证明最终包缺变体，Automatic 自动剔除目前仍是待验证推断；临时 report-r8.md 的“硬证据/确定根因”措辞不作为验收结论。
+- 恢复时 Editor.log 显示 YooAsset BuildRunner/TaskBuilding/BuildAssetBundles 正在执行，一批 Shader 完整变体577536，内建剔除后72192，脚本剔除后15792，随后 starting compilation。用户截图显示多个 Unity Shader Compiler 高占用，并报告电脑将卡死。日志不能证明构建发起者、已经完成，或单凭 Custom 设置造成全部负载；本次 Codex 恢复没有另发构建。
+- Codex 将32个 UnityShaderCompiler 的 PriorityClass 设为 Idle、ProcessorAffinity 设为3；随后读回32个均限制在相同2个逻辑核心，机器共32个逻辑核心。此为当前进程临时调度，不是项目永久配置，也不等于构建已取消。一项 Unity 编辑器优先级修改返回“拒绝访问”；未结束 Unity，未重启编辑器，未继续 Computer Use。
+- 原国内版 WorkBuddy deepseek-v4.1-flash，新会话769bac42-7f9c-4a2b-86a3-1c835f892974；队列 DUNGEON-PLAYER-REGRESSION-20261031-SHADER-IDENTITY-FRESH，恢复 attempt run-ef355d9b-300b-4869-ad82-0573bade6274。发 session:cancel 后首次仍 working/isProcessing=true，后续原生读回 completed/isProcessing=false，末次工具为cancelled，确认原生执行停止。不能据此宣称队列验收通过或 Unity 构建停止。恢复/取消不增加开发轮，逻辑任务累计仍第8轮，未验收。
+
+### 验证与续作边界
+
+已验证的是32个编译进程的调度限制与 WorkBuddy 原生停止回执；卡顿是否完全消退、新包黑墙渲染、实际重新进副本、Player 均未验证。原有编译可能继续，不能因为日志暂时不变化就声称构建结束。后续先确认现有构建真实状态，再在用户允许继续时完成新包 Shader 的渲染对照，不引用 AD 替换实验冒充正式包成功，不在业务加载中动态换 Shader。
+
+临时证据：_temp/dungeon-lighting-resume-20261031/black-fix-r8/report-r8.md、r8-connection-resume.txt、pause-native-for-cpu.txt、approved-cpu-records/。旧报告与本次验收不一致之处保留旧原文，以本节明确纠正为准；原始桌面工具回执仍在当前 Codex 会话 JSONL。正式记录不复制会话正文或领取凭证。
+
+本次使用 task-log-policy 沿用明确批准，project-subagent-coordination 安排中文新增段同步和一致性检查，token-monitor 采集本地用量与原始压缩事件。本次只写文档，不调用 WorkBuddy 继续执行、不编译、不烘焙、不做 Unity 运行测试；当前分支 codex/feature-development，开始 HEAD d025012。同步、用量与实际 Git 结果在后续小节集中补记。
+
+
+### 本轮同步、统计与提交范围
+
+OpenAI Codex 原生子 Agent /root/sync_cpu_records（实际模型未披露）完成 TEST_REPORT.md 的本编号中文新增段同步和48项增量一致性检查，PASS/0失败；未使用额外技能，未调用 WorkBuddy/Unity 或操作 Git。英文指定suffix与两版旧字节前缀保持一致，检查证据：_temp/dungeon-lighting-resume-20261031/approved-cpu-records/sync-evidence.json、chinese-suffix.md。主 Agent 核对实际文件范围、前缀哈希和检查回执，不重复逐项翻译检查。
+
+本次已执行 token-monitor collect/report，原始输出仅在 approved-cpu-records/token-collect.txt、token-report.json；report 是24小时跨5个会话的项目汇总，费用含~估算，不作为本次任务费用或账户余额。当前主会话原始实验性计数窗口 2026-10-31T11:50:19.038Z 至 2026-10-31T11:52:28.846Z：输入673113（含缓存657152），输出5705。统计覆盖至该采样，不含随后执行或未完成回复。上下文与项目规则、用户需求、工具调用输入输出、子 Agent/WorkBuddy 协作、重复读取/返工/压缩/验证五类分别均不可精确拆分；外部模型用量、订阅剩余额度与精确账单本地不可测。统计证据：approved-cpu-records/usage.json。
+
+上下文压缩：当前对话累计1次，截至2026-10-31T11:52:10.550000+00:00；来源为当前会话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，无覆盖缺口；不合并子 Agent 或旧对话。证据：approved-cpu-records/compactions.json。
+
+Git 仅隔离本次获批追加及其索引投影；工作区原有 TEST_REPORT、其他英文入口、SVC、DLL 与候选 GraphicsSettings 差异不纳入。实际提交与推送回执随后补在本日志，不提前声明成功。
