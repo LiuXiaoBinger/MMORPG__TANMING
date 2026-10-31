@@ -1,6 +1,6 @@
 {
-    "ShaderTotalCount": 77,
-    "VariantTotalCount": 165,
+    "ShaderTotalCount": 78,
+    "VariantTotalCount": 166,
     "ShaderVariantInfos": [
         {
             "AssetPath": "Resources/unity_builtin_extra",
@@ -1724,6 +1724,19 @@
                     "PassType": 0,
                     "Keywords": [
                         ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Assets/GM_Game/Scenes/RODungeon_First/RO/artres/Resources/Shader/RO/Scene/ROScene.shader",
+            "ShaderName": "RO/Scene/AllInOne",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 4,
+                    "Keywords": [
+                        "LIGHTMAP_ON"
                     ]
                 }
             ]
