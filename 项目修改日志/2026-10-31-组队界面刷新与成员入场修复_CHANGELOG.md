@@ -292,3 +292,8 @@ OpenAI Codex 原生子 Agent /root/sync_cpu_records（实际模型未披露）�
 上下文压缩：当前对话累计1次，截至2026-10-31T11:52:10.550000+00:00；来源为当前会话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，无覆盖缺口；不合并子 Agent 或旧对话。证据：approved-cpu-records/compactions.json。
 
 Git 仅隔离本次获批追加及其索引投影；工作区原有 TEST_REPORT、其他英文入口、SVC、DLL 与候选 GraphicsSettings 差异不纳入。实际提交与推送回执随后补在本日志，不提前声明成功。
+
+
+### 第8轮高负载获批记录提交与推送回执
+
+2026-10-31：本轮文档提交2cf75c1（docs: 记录魔神塔未验候选与Shader编译限速），仅4份文件、63行新增/2行删除；删除仅为索引源哈希及行段替换。git diff --cached --check通过，已真实推送origin/codex/feature-development，远端由d025012推进至2cf75c1。暂存投影与前缀保留证据：_temp/dungeon-lighting-resume-20261031/approved-cpu-records/stage-evidence.json。未提交候选GraphicsSettings或其他任务改动；没有恢复WorkBuddy或触发编译。此小节只补真实Git回执，随后回执提交的最终号以交付回复为准。
