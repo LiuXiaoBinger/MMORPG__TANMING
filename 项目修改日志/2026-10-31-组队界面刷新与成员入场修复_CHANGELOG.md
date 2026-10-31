@@ -397,3 +397,17 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 ### 启动缓存难点记录提交与推送回执
 
 0771e07（docs: 记录Unity启动版本缓存覆盖失败的恢复过程）已推送origin/codex/feature-development，远端由b96ad78推进至0771e07。仅本次2份文档、69行新增；旧正文前缀和基于HEAD的新增段暂存投影检查、git diff --cached --check、索引新鲜度检查均通过。既有用户改动未纳入。证据：_temp/unity-startup-io1224-20261031/difficulty-record/checks.json。此节只补已发生的Git回执，回执提交号以最终交付为准。
+
+
+## [MOSHENTA-BLACK-RENDERING-20261031] 按澄清纠正难点主题为魔神塔场景全黑
+
+开发者澄清要求解释并记录的是魔神塔全黑，而非启动缓存异常。Codex将自己刚误加的UNITY-STARTUP-CACHE-IO1224-20261031难点正文替换为本专题，原有R7与R9历史条目和其他用户内容保持原样；此前启动缓存操作事实与Git历史未伪造成未发生。本次以澄清后的主题为准，不新增TEST_REPORT或其他未授权入口记录。
+
+| 操作 | 项目根相对路径 | 具体变化 |
+|---|---|---|
+| 替换本Agent误加条目 | 项目分析/项目难点.md | 改为魔神塔全黑专题：运行时LOD漏迁、937条绑定证据、500实际选400、成像对照、SVC光图收集缺口、实际修改与新包核验、未解决黑墙及收集器后续边界，附面试讲述 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 记录主题纠正、实际文档范围、校验与Git回执 |
+
+这次仅整理既有证据：SceneMgr.cs与SVC/JSON没有新改动，不重跑Unity、构建或视觉试验。已确认的LOD入口修复与待验的黑墙/变体假设分开表述，不声称整个魔神塔已验收。暂存按HEAD只纳入本次替换及新增段，其他工作区差异保留。差异和证据检查结果保存在_temp/dungeon-lighting-resume-20261031/black-scene-difficulty-correction/；实际Git回执后补。
+
+本次task-log-policy落实澄清后的记录授权，token-monitor执行collect/report；原始报告在_temp/dungeon-lighting-resume-20261031/black-scene-difficulty-correction/token-collect.txt、token-report.json，report为24小时项目跨会话汇总，含~估算费用，不能当作本次费用或订阅余额。原始主会话实验性计数窗口2026-10-31T13:39:42.136Z至2026-10-31T13:41:09.159Z：输入528371（含缓存523136）、输出5895；不含随后操作和未完成回复。上下文与项目规则、用户需求、工具输入输出、重复读取/返工/压缩/验证不可分别计量；子Agent/WorkBuddy协作用量未记录，账户剩余额度不可测。证据usage.json。上下文压缩：当前对话累计2次，截至2026-10-31T13:41:22.802000+00:00，来源为当前主会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。
