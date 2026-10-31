@@ -30,4 +30,6 @@ unity-mcp-orchestrator用于运行现场和资源导入核验；karpathy-guideli
 
 ## Git
 
-分支codex/feature-development，基线4822eaa。仅暂存本轮场景修复与获准新增日志段，其他既有改动不提交。提交/推送回执将在实际执行后补入。
+分支codex/feature-development，基线4822eaa。仅暂存本轮场景修复与获准新增日志段，其他既有改动不提交。修复与获准记录提交dacb203（8个文件），已成功推送origin/codex/feature-development，远端回执4822eaa..dacb203。此后仅补记本回执与用量摘要，不改变已验收资源。
+
+用量统计窗口：2026-10-31北京时间22:03:52至22:14:59，当前会话原始累计差值为输入4,898,706（含缓存读取4,807,552）、输出34,782 token。输入含重复上下文，不能视为新增正文或账户扣费。token-monitor Codex适配器为实验性；上下文与项目规则、用户需求、工具输入输出、重复读取/返工/验证的独立归因未记录/不可测；本轮未调用子Agent/WorkBuddy，其独立token数未记录/不可测。collect/report已执行，report是1天项目窗口，不能冒充本任务统计。上下文压缩截至22:13:27累计3次，来源context-compactions.json所列当前会话顶层compacted事件；订阅剩余额度本地日志不可测。
