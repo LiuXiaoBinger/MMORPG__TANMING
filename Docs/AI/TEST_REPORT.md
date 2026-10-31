@@ -117,3 +117,11 @@
 - 保留失败轮次：最初的接收断言失败；随后第 10 轮错误断言移动/技能的 TCP=0。第 11 轮修正了测试数据：服务链路具有非空 NetClient(ClientType.GameServer)，因此 Session.IsGameServerLink 保持 TCP；只有未绑定的玩家链路丢弃实时包。玩家阴性用例不能替代服务链路阳性投递。
 - 最终注释检查：13 个文件 token 等价，diff0/syntaxError0；最新 Game/Gate 编译至隔离的 _temp 输出，错误数为 0；Unity compiling=false/errors0。仅补注释的平台第 14 轮原生执行结束但未返回报告；Codex 独立核验快照/Roslyn/构建产物，并通过官方接口释放已停止且过期的租约（taskCompleted=false），未伪造执行者完成回执。注释 token 相同，无需重复行为测试。
 - Codex 重启已退出的 Game/Gate 后，最终正常登录通过主城/建队（TeamId1/members1）。当前端口/进程独立检查，未按旧 PID 推断。证据：root-mp-verify-r11.log、root-comment-token-check.txt、final-game-build.log、final-gate-build.log、gate-whitelist-retry/ 和 mpverify/service-link-verification-r11.md。未运行：两个真实 Unity 客户端、已绑定末端客户端的 KCP 多人投递、Player 构建/完整战斗。完整记录：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [VERIFY][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 协议回归与实际候选人收集器
+
+- WorkBuddy 构建服务端/客户端均为 0 错误。同一组 95 项经帧解码的回环断言：基线失败 6 项，修复后失败 0 项；Codex 独立重跑修复版为 95/95。覆盖主城队长/成员/单人退队、地图/副本/位置保持不变、观察者在场可见性/移动、副本退队/返回及离线移除。服务链路使用非空 GameServer NetClient。证据：`_temp/team-nearby-leave-20261031/smoke/smoke-baseline-utf8.log`、`smoke/smoke-fixed-utf8.log`、`root-smoke.log`。
+- WorkBuddy 隔离 UI 验过 0/1/3 行，EventSystem 指针点击分发返回对应行的正确 RoleId。Codex 使用隔离的真实 SceneWorldSystem/PlayerEntity/RoleEntity 实例调用实际 `CollectNearbyCandidates`：排除自身、同队、不同地图/副本、缺少信息、距离 >100m 及已移除实体；保留附近与恰好 100m 的实体。测试夹具修正了对 Global 字段/属性的假设及 Int32 InstanceId 类型，正式代码未改动。证据为同一证据根目录下的 `root-filter-test.cs`、`root-filter-result.json`。临时对象/队伍状态已恢复，未保存场景/预制体测试组件。
+- round2 仅补注释；四个文件去除注释并归一化后的源码均保持一致，工作者提供的词法 token 证明在两个编辑文件中均匹配。验收后 Unity Console 错误为 0；未因仅注释改动重复执行行为测试。
+- 构建夹具最初选到了旧服务端 EXE；最终断言前，修复测试 EXE 的哈希已与新构建的服务端一致。随后 Codex 构建常规 GameServer 输出为 0 错误，启动四个服务并确认 Gate-to-Game Established。未完成两个已登录 Unity 客户端联调、截图或 Player 构建验证。完整记录：项目修改日志/2026-10-31-附近邀请与主城退队可见性修复_CHANGELOG.md。

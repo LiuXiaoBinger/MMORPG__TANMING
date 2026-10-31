@@ -110,3 +110,11 @@
 - 最终业务清单为 26 个文件：原 25 个加 GateClientResponseForwarder.cs。该文件新增的四个通知解析分支现已通过既有白名单；未知或畸形消息仍被拒绝。InviteJoinTeam 现与接受邀请/申请流程一致，拒绝已进入实例的队伍。基于 RO 的组队、5 人 UI 及服务器权威魔神塔进入/离队已达到本次验证范围。
 - 真实正常登录及 EventSystem 点击通过建队 -> 书本 7/详情挑战 -> 魔神塔 -> 离队 -> 主城：TeamId2/members1 变为 0/0；model/Animator/controller 的 ID 始终相同且位于 DDOL，相机跟随，小地图隐藏/恢复，错误数为 0。旧 Game/Gate 进程退出后，Codex 恢复最终服务器运行状态：Center54056、Game85224、Gate102264、Login100464；已确认 Gate->Game 的 TCP 连接为 established。最终重新登录/建队通过，TeamId1/members1；编辑器仍在主城 Play，保留该队伍。
 - 37 项隔离多人协议检查、64 项权威冒烟检查和 13 项白名单检查通过；13 个文件的纯注释修改经 Roslyn 核对为 token 等价。两个真实 Unity 客户端与已绑定末端客户端的 KCP 投递仍未验证。完整清单、失败历史与 Git 回执：项目修改日志/2026-10-30-服务器权威多人组队副本_CHANGELOG.md。
+
+
+## [CODE][FILES][HANDOFF][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 附近邀请与主城退队可见性
+
+- 代码提交 `70bf5e8` 已推送至 `codex/feature-development`。四个文件：`TeamManager.cs` 在普通主城退队时保留地图/副本/位置及在场可见性；`ThemeDungeonTeamCtrl.cs` 收集真实场景候选人；`ThemeDungeonTeamCreateWindow.cs` 使用可复用邀请行展示；`TeamAuthoritySmoke.cs` 增加回归。完整路径与证据：项目修改日志/2026-10-31-附近邀请与主城退队可见性修复_CHANGELOG.md。
+- 执行者为国内 WorkBuddy `hy4-preview`，session `1e4790ff-fc7c-4469-8482-a786b5b1d71e`；round1 `run-4a826143-0bee-4750-8a84-ac3714e1b4a2` 实现并自测，round2 `run-384376be-c9cb-45a6-ab9a-065d68155e51` 仅补中文注释。Codex 验收了实际产物。国际版 Flash 因额度阻断而取消，未执行业务开发，不计为开发轮次。
+- Codex 于 2026-10-31 02:07 UTC+8 启动全部四个服务，并确认 Gate-to-Game TCP Established。这是历史观察，不保证服务当前仍存活。UI 预制体未改动：复用既有序列化行模板与 ScrollRect；未新增查询协议。
+- 仍未验证：两个已登录客户端的邀请、退队和移动；Player 构建/热更新打包。中英文正式记录正按开发者明确批准写入，保留既有历史条目。
