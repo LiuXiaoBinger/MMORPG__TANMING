@@ -393,3 +393,7 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 分析正文引用_temp/unity-startup-io1224-20261031/cache-recovery.json和startup-verification.json等原始证据。根因只确认到映射文件无法覆盖，映射占用来源及复发问题未解决，不把启动恢复写成Shader黑墙或Player已通过。先前业务代码、资源、配置和其他记录的工作区差异保留，不纳入此次提交。索引按项目要求机械刷新，未新增英文入口正文。实际提交与推送结果据回执补记。
 
 本次使用task-log-policy落实开发者明确记录授权，token-monitor已执行collect/report。原始统计位于_temp/unity-startup-io1224-20261031/difficulty-record/token-collect.txt、token-report.json；report是24小时跨会话项目汇总，含~估算费用，不等于本次任务费用或订阅余额。主会话原始实验性计数窗口2026-10-31T13:35:46.817Z至2026-10-31T13:36:39.549Z：输入322343（含缓存318976）、输出3921，不含随后操作和未完成回复。上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证不可单独拆分；子Agent/WorkBuddy协作用量未记录，账户剩余额度本地不可测。证据usage.json。上下文压缩：当前对话累计2次，截至2026-10-31T13:36:54.466000+00:00，来源为当前主会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。
+
+### 启动缓存难点记录提交与推送回执
+
+0771e07（docs: 记录Unity启动版本缓存覆盖失败的恢复过程）已推送origin/codex/feature-development，远端由b96ad78推进至0771e07。仅本次2份文档、69行新增；旧正文前缀和基于HEAD的新增段暂存投影检查、git diff --cached --check、索引新鲜度检查均通过。既有用户改动未纳入。证据：_temp/unity-startup-io1224-20261031/difficulty-record/checks.json。此节只补已发生的Git回执，回执提交号以最终交付为准。
