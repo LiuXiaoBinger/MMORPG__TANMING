@@ -379,3 +379,17 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 ### 本轮记录提交与推送回执
 
 1fa8af6（docs: 记录魔神塔光图变体补丁与新包验证边界）已推送origin/codex/feature-development，远端由2f32663推进至1fa8af6。只含本轮7份文档，94行新增/4行删除；删除仅索引源哈希与行段替换。6份正文的暂存投影等于HEAD加获批新增段，中英增量字段、旧字节前缀、git diff --cached --check与索引新鲜度检查均通过；证据为_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records/stage-evidence.json及sync-evidence.json。用户既有记录、QUERY_TASKS、业务资源与配置差异未纳入。本小节仅补真实Git回执，后续回执提交号以交付回复为准。
+
+
+## [UNITY-STARTUP-CACHE-IO1224-20261031] 按开发者要求补充启动缓存故障难点记录
+
+开发者在本次恢复后明确要求解释处理过程并记录到项目难点，本节记录这次文档修改，不补写此前拒绝的TEST_REPORT清单。Codex直接完成，无子Agent/WorkBuddy；没有重跑Unity启动、构建或修改业务代码。
+
+| 操作 | 项目根相对路径 | 具体变化 |
+|---|---|---|
+| 追加 | 项目分析/项目难点.md | 独立记录启动缓存覆盖的Win32 IO1224、调用链、占用查询未命中、单文件备份/移出/重建过程、1285到登录场景的验证和未解决边界，附面试讲述与追问 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 本次文档范围、证据引用、检查及Git回执 |
+
+分析正文引用_temp/unity-startup-io1224-20261031/cache-recovery.json和startup-verification.json等原始证据。根因只确认到映射文件无法覆盖，映射占用来源及复发问题未解决，不把启动恢复写成Shader黑墙或Player已通过。先前业务代码、资源、配置和其他记录的工作区差异保留，不纳入此次提交。索引按项目要求机械刷新，未新增英文入口正文。实际提交与推送结果据回执补记。
+
+本次使用task-log-policy落实开发者明确记录授权，token-monitor已执行collect/report。原始统计位于_temp/unity-startup-io1224-20261031/difficulty-record/token-collect.txt、token-report.json；report是24小时跨会话项目汇总，含~估算费用，不等于本次任务费用或订阅余额。主会话原始实验性计数窗口2026-10-31T13:35:46.817Z至2026-10-31T13:36:39.549Z：输入322343（含缓存318976）、输出3921，不含随后操作和未完成回复。上下文与规则、用户需求、工具输入输出、重复读取/返工/压缩/验证不可单独拆分；子Agent/WorkBuddy协作用量未记录，账户剩余额度本地不可测。证据usage.json。上下文压缩：当前对话累计2次，截至2026-10-31T13:36:54.466000+00:00，来源为当前主会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。
