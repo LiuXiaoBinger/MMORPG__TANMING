@@ -81,3 +81,10 @@ RO `TeamInviteCtrl.lua:SetPanelByInfo/ExportItem` 使用 `AchieveTpl`、`NameInf
 ## 中文同步与范围检查回执
 
 OpenAI Codex 原生子 Agent /root/sync_team_repair 完成两组中英增量同步和一致性检查，运行时未披露具体模型，本子任务未使用技能。两份英文精确等于原字节前缀加授权 suffix，两份中文保留原字节前缀；仅检查本任务新增段，未检查或翻译旧历史，结果通过且无差异。证据：_temp/team-nearby-leave-20261031/approved-records/chinese-sections.json、sync-check.json。暂存仅取本任务追加段和新日志；索引按暂存源记录生成，工作区其他历史改动保留。
+
+
+## 文档提交与推送回执
+
+批准的 7 个记录文件已提交为 `f895abf`，并成功推送 `origin/codex/feature-development`（`70bf5e8..f895abf`）。Git 暂存范围检查和空白检查通过，工作区索引 `--check` 通过；未提交其他既有文档改动。回执补记只追加本日志，提交号以 Git 历史定位，避免自引用。
+
+文档补录轮本地实验日志窗口：2026-10-31 08:47:48–08:51:22 UTC+8；输入 1404319（缓存读取 1232512），输出 10666（含推理 2671）。仅当前主会话；规则、需求、工具、协作与重复读取/返工/验证的分类用量不能精确拆分，原生子 Agent 用量和账户余额不可测。已 collect/report，证据 `_temp/team-nearby-leave-20261031/approved-records/collect.txt`、`report.txt`、`usage.json`；本对话累计压缩 3 次，截至 2026-10-31 08:51:34 UTC+8，见同目录 `compactions.json`。本轮仅文档验证，无业务改动或游戏测试重跑。
