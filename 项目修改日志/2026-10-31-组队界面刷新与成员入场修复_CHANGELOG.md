@@ -322,3 +322,8 @@ Git 仅隔离本次获批追加及其索引投影；工作区原有 TEST_REPORT�
 Codex主Agent直接同步并检查本次中英新增段的16项共享关键字段及3份文件旧字节前缀，PASS；没有子Agent参与。范围与证据见_temp/dungeon-lighting-resume-20261031/collection-inspection/approved-records/sync-evidence.json。记录保留收集缺口与最终包变体/黑墙根因之间的证据边界，不把失败离屏测试写成通过。
 
 已运行token-monitor collect/report，原始输出在该approved-records目录的token-collect.txt、token-report.json。report为24小时项目跨会话汇总，包含~估算费用，不能作为本任务费用或订阅余额。原始主会话实验性计数窗口2026-10-31T12:50:32.263Z至2026-10-31T12:54:32.984Z：输入361855（含缓存357888）、输出4336；统计不含随后操作和未完成回复。上下文与项目规则、用户需求、工具输入输出、子Agent/WorkBuddy协作、重复读取/返工/压缩/验证五类无法独立拆分；本次未调用子Agent/WorkBuddy，其用量未记录，账户余额本地不可测。证据usage.json。上下文压缩：当前对话累计1次，截至2026-10-31T12:54:47.473000+00:00，来源为当前会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。
+
+
+### 收集检查记录提交与推送回执
+
+2026-10-31：938d33b（docs: 记录魔神塔烘焙变体收集缺口与旧包证据）已推送origin/codex/feature-development，远端由d17950a推进至938d33b。仅4份文档，48行新增/2行删除；删除仅机械索引哈希与行段替换。git diff --cached --check通过，双语字段及旧前缀核验通过；暂存投影证据为_temp/dungeon-lighting-resume-20261031/collection-inspection/approved-records/stage-evidence.json。既有配置、SVC、DLL及其他任务差异未纳入；没有构建或实施收集修复。本小节仅追加真实Git回执，随后回执提交最终号以交付回复为准。
