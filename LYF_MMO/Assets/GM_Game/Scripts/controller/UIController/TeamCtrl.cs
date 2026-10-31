@@ -19,6 +19,9 @@ public sealed class TeamCtrl : CtrlBase
     /// <summary>是否已经注册协议，避免重复注册。</summary>
     private bool _registered;
 
+    /// <summary>当前实际持有三条队伍下行协议的控制器实例，用于接管前先注销旧实例。</summary>
+    private static TeamCtrl _activeInstance;
+
     /// <summary>构造队伍协议控制器并立即注册下行协议。</summary>
     /// <param name="view">所属界面视图，仅用于满足 CtrlBase 分层。</param>
     public TeamCtrl(UIBase view) : base(view)
@@ -37,9 +40,17 @@ public sealed class TeamCtrl : CtrlBase
         {
             return;
         }
+        // 分发器的 AddEventHandler 先注册者优先，已存在则静默忽略。
+        // 主界面重建会新建本控制器，旧实例若不注销，队伍通知会一直投给已销毁的旧实例，
+        // 表现为双方队伍界面不刷新、收到入场通知也不切场景。这里在注册前接管所有权。
+        if (_activeInstance != null && _activeInstance != this)
+        {
+            _activeInstance.UnregisterHandlers();
+        }
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        _activeInstance = this;
         _registered = true;
     }
 
@@ -57,6 +68,11 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        if (_activeInstance == this)
+        {
+            // 只有仍由本实例持有时才清空静态标记，避免误清后来接管的实例。
+            _activeInstance = null;
+        }
         _registered = false;
     }
 

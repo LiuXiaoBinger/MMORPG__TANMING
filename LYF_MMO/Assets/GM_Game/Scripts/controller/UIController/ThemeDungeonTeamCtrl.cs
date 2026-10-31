@@ -331,13 +331,13 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         return candidates;
     }
 
-    /// <summary>收起副本相关界面并加载魔神塔场景，主角由新场景的主城管理器重建。</summary>
+    /// <summary>
+    /// 收起副本相关界面并加载魔神塔场景，主角由新场景的主城管理器重建。
+    /// 本方法只由服务器 4060 入场通知调用：服务器已确认整队入场，
+    /// 被邀请的队员未打开过副本详情页，因此不能用界面选中项作为入场前提。
+    /// </summary>
     private void EnterMoshenta()
     {
-        if (_selectedEntry == null || _selectedEntry.id != MoshentaThemeDungeonId)
-        {
-            return;
-        }
         if (_mainView.ThemeStoryWindow != null)
         {
             _mainView.ThemeStoryWindow.CloseWindow();

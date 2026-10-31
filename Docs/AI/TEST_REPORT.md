@@ -125,3 +125,11 @@
 - WorkBuddy 隔离 UI 验过 0/1/3 行，EventSystem 指针点击分发返回对应行的正确 RoleId。Codex 使用隔离的真实 SceneWorldSystem/PlayerEntity/RoleEntity 实例调用实际 `CollectNearbyCandidates`：排除自身、同队、不同地图/副本、缺少信息、距离 >100m 及已移除实体；保留附近与恰好 100m 的实体。测试夹具修正了对 Global 字段/属性的假设及 Int32 InstanceId 类型，正式代码未改动。证据为同一证据根目录下的 `root-filter-test.cs`、`root-filter-result.json`。临时对象/队伍状态已恢复，未保存场景/预制体测试组件。
 - round2 仅补注释；四个文件去除注释并归一化后的源码均保持一致，工作者提供的词法 token 证明在两个编辑文件中均匹配。验收后 Unity Console 错误为 0；未因仅注释改动重复执行行为测试。
 - 构建夹具最初选到了旧服务端 EXE；最终断言前，修复测试 EXE 的哈希已与新构建的服务端一致。随后 Codex 构建常规 GameServer 输出为 0 错误，启动四个服务并确认 Gate-to-Game Established。未完成两个已登录 Unity 客户端联调、截图或 Player 构建验证。完整记录：项目修改日志/2026-10-31-附近邀请与主城退队可见性修复_CHANGELOG.md。
+
+
+## [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 回调生命周期回归与服务端通知入场路径
+
+- Codex 在 Editor 内存中使用实际 SocketDispatcher/TeamCtrl 实例和真实序列化 TeamInfoNtf 执行检查：三个回调均转移到新控制器；释放旧控制器保留新回调；依次收到单人、双人快照时，当前接收者触发两次且 IsInTeam 保持 true；释放当前控制器移除全部三个回调。四项全部通过，原有 dispatcher/TeamData 状态在 finally 中恢复。证据：`_temp/dungeon-player-regression-20261031/root-team-regression.cs` 和 `root-team-regression-result.json`。这是隔离代码路径检查，不是真实 A/B Player 测试。
+- 最终清理保持所有权行为不变；删除未使用的 LoadMoshentaScene 包装，从原 EnterMoshenta 移除本地 `_selectedEntry` 门禁。源码检查确认，无须事先选择 UI，scene4060 通知即可到达原有场景加载路径。最终 C# 编译错误0；Codex Console 错误0。热更新字节数667136/SHA256 063c97e09e6f17f0cc44c87f06c47d5d01c8165eae741b4af762ebc64d0e7f63；元数据中存在当前所有者，未使用包装及 TeamFlow 诊断均已移除。
+- 较早的光照调查证实了 EXR/探针的交付与应用，但 Shader 剥离仍是假设。广泛保留 Custom 触发长时间编译；r2 收窄/构建包并未证明 Player 画面恢复。最初声称 DLL 中没有 TeamFlow，是 UTF-16 对齐导致的假阴性，已在 r2 纠正。随后用户暂缓光照；恢复本任务改动的设置，保留此前输出，未声称黑屏已恢复。
+- 未执行：实际同包双客户端登录/邀请/UI/入场；Player 画面/副本一致性；最终新增 Bundle 或 Player 构建。用户选择自行验收。旧95/37测试未重跑，也未作为本任务多人联机证明。完整记录：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

@@ -118,3 +118,12 @@
 - 执行者为国内 WorkBuddy `hy4-preview`，session `1e4790ff-fc7c-4469-8482-a786b5b1d71e`；round1 `run-4a826143-0bee-4750-8a84-ac3714e1b4a2` 实现并自测，round2 `run-384376be-c9cb-45a6-ab9a-065d68155e51` 仅补中文注释。Codex 验收了实际产物。国际版 Flash 因额度阻断而取消，未执行业务开发，不计为开发轮次。
 - Codex 于 2026-10-31 02:07 UTC+8 启动全部四个服务，并确认 Gate-to-Game TCP Established。这是历史观察，不保证服务当前仍存活。UI 预制体未改动：复用既有序列化行模板与 ScrollRect；未新增查询协议。
 - 仍未验证：两个已登录客户端的邀请、退队和移动；Player 构建/热更新打包。中英文正式记录正按开发者明确批准写入，保留既有历史条目。
+
+
+## [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 组队刷新与成员入场；光照暂缓
+
+- 最终源码改动：`TeamCtrl.cs` 将旧控制器的三个分发回调移交新所有者，并安全释放所有权；`ThemeDungeonTeamCtrl.cs` 移除服务端确认进入魔神塔时的本地已选副本门禁。未改 UI 预制体/协议；保留原有 EnterMoshenta 接口。
+- 国内 WorkBuddy `deepseek-v4.1-flash`，session `c8cc03df-f534-45e5-8b00-b9a10e6819d7`：先调查，再执行开发 rounds1/2 的光照/诊断，未取得端到端成功；用户明确暂缓光照，选择自行使用同一 Player 的两份副本验收。Round3 修复两处客户端缺陷；round4 清理诊断/无用包装并刷新热更新程序集。队列聚焦任务 `DUNGEON-PLAYER-REGRESSION-20261031-TEAM-FOCUS` 保留逻辑开发轮次；调查不计为开发轮。
+- `GM_Game.dll.bytes` 已本地刷新（SHA256 前缀063c97e09e6f17f0）；其中已混有未提交的用户工作，不纳入本次范围内的提交。仅提交两个源码及获批记录增量，不暂存无关源码/资源。用户须重新生成/发布一致的热更新包或重新构建，再检查同包双客户端流程。
+- Game/Gate 临时诊断已恢复至任务开始前字节；GraphicsSettings 恢复至任务开始前/HEAD；MyShaderVariants 恢复至任务开始前的 eafd3281 前缀，保留其既有用户差异。最终轮次未新增光照修复、Bundle 构建、服务端重启，也未声称完成真实双客户端验证。
+- 完整文件清单、实际尝试、失败和 Git 回执：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。光照已暂缓；实际双客户端 UI/入场由用户自行验证。
