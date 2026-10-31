@@ -144,3 +144,10 @@
 - 国内版 WorkBuddy deepseek-v4.1-flash，session c8cc03df-f534-45e5-8b00-b9a10e6819d7；只读 attempt run-b3181b1e-cb7c-4674-920e-d1f0c0f49188 与 run-2c114cae-7337-43ad-ad98-46a505075831 未增加开发轮次。第7开发轮 attempt run-6e3a0147-9de0-4512-b19d-4a9e16c252b9 交付修复；Codex 已接受该定向源码与现场 LOD 对照。WorkBuddy 报告未使用技能。
 - 现有打包场景含 937 条有效光照贴图绑定、2 张光照图与 1919 个探针；不需要绑定恢复补丁。Codex 已在当前 Play 会话应用 500 并恢复相机渲染目标；这是内存内验收改动，不能证明新源码已载入包内。
 - GM_Game.dll.bytes 保持不变，混有先前用户工作（前缀 804ca786095b1bd8，667136 字节）。需更新热更 DLL/包后再验证真实重新进场与 Player。剩余暗区（采样像素约 48%）与其他场景对 LOD600 的依赖未验证。未重新烘焙、未构建 bundle/Player、未追加 UI 或服务端改动。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md；证据：_temp/dungeon-lighting-resume-20261031/。
+
+## [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 显式补齐烘焙变体，新包待开发者验证
+
+- Codex直接给材质实际引用的First版RO/Scene/AllInOne（GUID515a03f53d5fd384ea44e8267b4c8920）补入ForwardBase/passType4 + LIGHTMAP_ON，文件为Assets/GM_Game/Shaders/MyShaderVariants.shadervariants。工作区变体由182增至183；配套MyShaderVariants.json改为实际82个Shader/183个变体，避免使用收集器无关的全局计数。本轮未在运行时加载中换Shader，未改收集器、重烘焙或构建Player。
+- 原生YooAsset增量构建2026-10-31-1266-lm与2026-10-31-1266-lm-final均成功；最终包包含修正后的JSON，其Shader包与首次成功构建一致。新Shader FileHash为3eef2ed242d6b0a354f3cedb4d8e8604；实际包内SVC含目标变体。这证明新输入和新包存在，不等于黑墙已经恢复。
+- 交付时HostPlayMode服务器http://192.168.9.1:8080/仍返回2026-10-31-1221；验证前须将资源根目录指向LYF_MMO/Bundles/StandaloneWindows64/DefaultPackage/2026-10-31-1266-lm-final，本轮未发布到服务器。黑墙画面、重新进场和Player未验证；待开发者确认本包有效，再修改收集流程覆盖运行时LOD400和已绑定光图的条件。
+- 用户明确不开子Agent，由Codex直接实现、核验并同步本段，未调用WorkBuddy。保留用户既有改动；本次沿用此前已存在的Custom GraphicsSettings候选而未修改，该候选仍未验收，因此本构建不能单独区分SVC和该设置的影响。完整清单、Git回执及证据：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md；_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/。

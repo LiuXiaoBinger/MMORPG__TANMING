@@ -159,3 +159,10 @@
 - 用户报告严重卡顿后，Codex 将观察到的全部32个 UnityShaderCompiler 进程设为 Idle、ProcessorAffinity=3；读回验证32个进程共用同样的2个逻辑核心，机器共有32个逻辑核心。这是临时进程调度，不是项目设置。一项 Unity 编辑器优先级调整返回 Access denied。未结束 Unity；编译进程限速不等于现有构建已取消。
 - 国内版 WorkBuddy 会话769bac42-7f9c-4a2b-86a3-1c835f892974（deepseek-v4.1-flash），任务 DUNGEON-PLAYER-REGRESSION-20261031-SHADER-IDENTITY-FRESH，恢复 attempt run-ef355d9b-300b-4869-ad82-0573bade6274，收到 session:cancel。首次响应仍为 working/isProcessing=true，后续原生读回为 completed/isProcessing=false，并有一项 cancelled 工具调用。这确认原生执行已停止，不能据此确认队列已验收或 Unity 编译已停止。恢复和取消不增加开发轮，累计第8轮仍未验收。
 - 仍未验证：卡顿是否完全恢复、新构建 bundle 的渲染、实际重新进入副本与独立 Player。本次获准跟进仅写记录，不恢复 WorkBuddy、不重新构建、不重新烘焙、不更改运行时 Shader。证据：_temp/dungeon-lighting-resume-20261031/black-fix-r8/report-r8.md、r8-connection-resume.txt、pause-native-for-cpu.txt、approved-cpu-records/；完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+## [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 新Shader包与序列化SVC核验通过，画面待验收
+
+- 两次原生增量构建均返回Success=true，最终版本2026-10-31-1266-lm-final。Shader SHA256从fd6da1d88e21592d9bb2f93731fcc477f8292151088c4a7696dfa5ab0f6e8df4变为5c1e9712fdb5038ac898154187d5f8c9066b6905534c9aa6f48bca1da9980b38；大小从1986839增至20943010字节，FileHash为3eef2ed242d6b0a354f3cedb4d8e8604，FileCRC为ec9ed307。MD5、CRC、大小、二进制清单MD5与hash文件、JSON和version文件的一致性均通过。CRC按YooAsset小端字节输出核验；最初按普通十六进制整数比较是校验脚本错误，已修正，未改包。
+- 直接加载最终哈希包：1份SVC、183个变体；SVC与Shader的AssetDatabase路径均为空，RO/Scene/AllInOne supported=true，Contains(ForwardBase LIGHTMAP_ON)=true；序列化记录为passType4/keywords LIGHTMAP_ON。首次ShaderVariant构造函数因编译包缺编辑器snippet而拒绝，后通过结构体字段赋值及序列化条目完成核验；两种探测都不能证明最终墙面成像。
+- 首次构建仍出现既有ShaderGraph PBRDeferredFragment错误，但原生构建最终成功；未修复这些无关Shader。此前GraphicsSettings Custom候选与本任务基线逐字节相同，仍未验收；本次构建不能单独区分SVC和GraphicsSettings的影响。原匿名delayCall一直排队，Codex仅移除已识别的本轮回调后调用一次，避免重复执行；后续最终增量构建仅包含JSON计数修正，日志没有新增Shader编译。
+- 交付时服务器版本仍为2026-10-31-1221；未发布、自动进副本或测试Player。黑墙、重新进场、Player及后续LOD400+光图收集流程待验证。按用户不开子Agent要求，由Codex完成本次定向核验和中英同步。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/final-build-result.json、package-verification.json、bundled-svc-probe.txt；完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。

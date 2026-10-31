@@ -327,3 +327,51 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 ### 收集检查记录提交与推送回执
 
 2026-10-31：938d33b（docs: 记录魔神塔烘焙变体收集缺口与旧包证据）已推送origin/codex/feature-development，远端由d17950a推进至938d33b。仅4份文档，48行新增/2行删除；删除仅机械索引哈希与行段替换。git diff --cached --check通过，双语字段及旧前缀核验通过；暂存投影证据为_temp/dungeon-lighting-resume-20261031/collection-inspection/approved-records/stage-evidence.json。既有配置、SVC、DLL及其他任务差异未纳入；没有构建或实施收集修复。本小节仅追加真实Git回执，随后回执提交最终号以交付回复为准。
+
+## [DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 获批记录：显式光图变体与新Shader包，待开发者验证黑墙
+
+用户已批准本清单写入；Codex按用户不开子Agent的要求直接同步中英文，未恢复WorkBuddy。记录范围是本轮SVC补丁、原生构建和包内核验，不包含此前明确不写入的其他清单。
+
+### 文件清单与实现取舍
+
+| 操作 | 项目根相对路径 | 用途及具体变化 |
+|---|---|---|
+| 修改 | LYF_MMO/Assets/GM_Game/Shaders/MyShaderVariants.shadervariants | First版AllInOne新增ForwardBase/passType4 + LIGHTMAP_ON；工作区182→183变体，保留用户其他收集结果 |
+| 修改 | LYF_MMO/Assets/GM_Game/Shaders/MyShaderVariants.json | 同步目标条目；总数取实际SVC的82个Shader/183个变体，不使用编辑器全局收集统计 |
+| 追加 | Docs/AI/CURRENT_TASK.en.md | 同编号英文交接、最终目录及未验收边界 |
+| 追加 | Docs/AI/CURRENT_TASK.md | Codex直接同步本编号中文交接 |
+| 追加 | Docs/AI/TEST_REPORT.en.md | 构建/包内证据、失败探测的纠正和待验证项 |
+| 追加 | Docs/AI/TEST_REPORT.md | Codex直接同步本编号中文验收事实 |
+| 追加 | 项目分析/项目难点.md | 区分收集输入、包内条目、服务器版本和最终成像；保留失败与面试复盘 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 完整文件清单、验证、Git回执和证据入口 |
+| 机械更新 | Docs/AI/RECORD_INDEX.md | 本轮新增英文标题、行段和源哈希；暂存投影不混入旧工作区差异 |
+
+正式资源的.meta未修改；无新增/移动/删除正式业务文件。临时脚本、构建回执、基线备份与统计均集中在_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/及父级prepare-lightmap-build.py，不提交临时产物或被忽略的Bundles目录。
+
+目标Shader路径为Assets/GM_Game/Scenes/RODungeon_First/RO/artres/Resources/Shader/RO/Scene/ROScene.shader，GUID515a03f53d5fd384ea44e8267b4c8920。先手动补一个明确烘焙条件供开发者验证；不在加载时替换Shader、不改收集器、不重烘焙、不自动进副本、不构建Player。此前GraphicsSettings Custom候选本轮未改，与基线字节一致，仍未验收；本包不能单独隔离SVC与该设置的影响。
+
+### 构建与包内核验
+
+原匿名delayCall排队未触发；识别到其程序集mcp-codedom-98566383e0dc470084cc27c5c677e1f6后，仅移除该回调再调用一次。原生YooAsset增量构建2026-10-31-1266-lm返回Success=true。发现YooAsset Extract的展示总数85/205取自全局收集状态而非本SVC，修正为实际82/183后，第二次增量构建2026-10-31-1266-lm-final同样成功；第二次无新增Shader编译，最终Shader包与首次成功包一致。两次均保留缓存，未ForceRebuild。
+
+- 最终目录：LYF_MMO/Bundles/StandaloneWindows64/DefaultPackage/2026-10-31-1266-lm-final。
+- Shader SHA256：fd6da1d88e21592d9bb2f93731fcc477f8292151088c4a7696dfa5ab0f6e8df4 → 5c1e9712fdb5038ac898154187d5f8c9066b6905534c9aa6f48bca1da9980b38。
+- FileHash/实际文件名：3eef2ed242d6b0a354f3cedb4d8e8604 / 3eef2ed242d6b0a354f3cedb4d8e8604.bundle；大小1986839→20943010字节，FileCRC ec9ed307。MD5、CRC、大小、二进制清单MD5/hash文件、JSON版本与version文件一致性七项全通过。初次CRC用整数十六进制比较失败，查明YooAsset使用小端字节输出，修正核验脚本后通过，未改包。
+- 直接加载最终哈希包，得到1份SVC、183个变体；SVC和Shader的AssetDatabase路径均为空，目标RO/Scene/AllInOne supported=true、Contains(ForwardBase LIGHTMAP_ON)=true，序列化passType4/keywords LIGHTMAP_ON。首次构造ShaderVariant因编译包无编辑器snippet而抛错；后使用结构体字段赋值及序列化检查，不将该API限制误报为包缺变体。
+- 首次编译仍见既有ShaderGraph PBRDeferredFragment错误，但原生构建最终成功；没有修复无关ShaderGraph，也不能据成功回执宣称这些Shader正确。
+
+证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/build-result.json、final-build-result.json、package-verification.json、bundled-svc-probe.txt、baseline.json、start-incremental.cs.txt、verify-package.py、probe-bundled-svc.cs.txt、stage-isolated-assets.py。日志正文只保留摘要，不复制源码、私密会话或完整工具输出。
+
+### Git与后续边界
+
+业务补丁2f32663（fix: 补齐魔神塔Shader光图变体供验证）已推送origin/codex/feature-development。该提交只含2个资源、20行新增/2行删除；暂存以HEAD为基础隔离新增条目，JSON为78/166，与提交版SVC对应。工作区既有额外收集结果仍保留为82/183，未混入提交；包由实际工作区构建，不能将提交版计数与本包计数混淆。git diff --cached --check及提交版JSON计数核验通过。原有用户修改和其他文档差异保持原样。
+
+交付时http://192.168.9.1:8080/PackageManifest_DefaultPackage.version仍返回2026-10-31-1221；本轮未修改HFS映射或发布新包，已明确告知开发者验证前将根目录指向最终目录。新包内含变体不等于黑墙已修复，原黑墙画面、重新进场和Player均待开发者验证；验证有效后再修改收集流程，覆盖运行时LOD400与已绑定光图条件。
+
+本轮日志同步仅覆盖上述同编号新增段，由Codex直接完成；旧字节前缀、关键共享字段及暂存投影证据保存于_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records/。本次使用task-log-policy落实已批准清单、token-monitor采集统计；本次只写文档，不重跑Unity构建或视觉验证。文档提交与推送回执在后续小节据真实结果补记。
+
+### 本次获批记录的统计与校验
+
+本次token-monitor已执行collect/report，原始项目报告位于_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records-token-collect.txt、approved-records-token-report.json；报告为24小时项目跨会话汇总，费用含~估算，不能作为本次任务费用或订阅余额。当前主会话原始实验性计数窗口2026-10-31T13:24:20.395Z至2026-10-31T13:26:19.843Z：输入733423（含缓存716800），输出8567；不含随后操作与未完成回复。上下文与项目规则、用户需求、工具调用输入输出、重复读取/返工/压缩/验证均不可独立拆分；本次子Agent/WorkBuddy协作未记录，账户剩余额度本地不可测。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records/usage.json。
+
+上下文压缩：当前对话累计2次，截至2026-10-31T13:26:01.944000+00:00；来源为当前主会话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，无覆盖缺口，不合并其他会话。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records-compactions.json。中英本次新增段共享字段检查及6份正文旧字节前缀检查PASS；见approved-records/sync-evidence.json。首次覆盖写入CURRENT_TASK.md遇到Invalid argument，改为追加后完成，旧字节前缀核验通过；没有删除或覆盖旧内容。

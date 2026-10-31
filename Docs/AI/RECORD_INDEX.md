@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9370649fed0e4e1bcf66fa7612bd2cce8638107aeada4f18c26c84a18dd48888`
+Source normalized SHA256: `bdf2a9c0d95b5d62054294bc731f21276bb67dd6051c05be19e2467806277dc0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -29,11 +29,12 @@ Source normalized SHA256: `9370649fed0e4e1bcf66fa7612bd2cce8638107aeada4f18c26c8
 | [CODE][FILES][HANDOFF][副本组队][TEAM-NEARBY-LEAVE-20261031] 2026-10-31 Nearby invitations and city leave visibility | 113-120 |
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Party refresh and member entry; lighting deferred | 121-129 |
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-138 |
-| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-145 |
+| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-146 |
+| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Explicit baked variant and fresh package ready for developer validation | 147-152 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a4ec1523e9cf67fc65fd3f2d8624a265e155fbda438a337ab6b154eedea7a3db`
+Source normalized SHA256: `90354542cd3757ce0566acba106dd55bc48fb2f31f0707ea924e0e08b6cd1120`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -54,7 +55,8 @@ Source normalized SHA256: `a4ec1523e9cf67fc65fd3f2d8624a265e155fbda438a337ab6b15
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Callback lifecycle regression and server-notification entry path | 129-136 |
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-146 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-154 |
-| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-161 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-162 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Fresh shader package and serialized SVC verified; visual acceptance pending | 163-168 |
 
 ## Docs/AI/DECISIONS.en.md
 
