@@ -245,3 +245,8 @@ RO参考根F:/UnityPro/ro/Ro_cs422nb，只读路径：clientcode/CSProject/MoonC
 上下文压缩：当前对话累计0次，截至2026-10-31T10:32:33.402000+00:00（UTC）；来源为当前对话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，覆盖无缺口，不合并旧聊天或外部Agent会话。证据approved-logs/context-compactions.json。
 
 源码提交876b4c8已于上一回合真实推送origin/codex/feature-development；本轮记录按基线字节前缀隔离，仅暂存新增段及由暂存英文生成的索引，排除既有其他任务改动。记录提交/推送结果在执行后补记本日志，不预报成功。
+
+
+### 第7轮获批记录提交与推送回执
+
+2026-10-31：获批记录提交ea3eb17（docs: 记录魔神塔运行时Shader档位修复与验证边界），9份文件、124行新增/6行删除；删除项仅为机械索引的源摘要及行号替换。git diff --cached --check通过，已真实推送origin/codex/feature-development，远端由876b4c8推进至ea3eb17。本轮追加之外的旧工作区字节前缀保留，暂存投影及索引隔离证据为_temp/dungeon-lighting-resume-20261031/approved-logs/stage-evidence.json。中文同步与关键事实输入未变，不重复同步/编译/运行验收。本小节只补Git回执，随后的回执提交号以最终交付为准。
