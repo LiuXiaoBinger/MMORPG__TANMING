@@ -151,3 +151,11 @@
 - 原生YooAsset增量构建2026-10-31-1266-lm与2026-10-31-1266-lm-final均成功；最终包包含修正后的JSON，其Shader包与首次成功构建一致。新Shader FileHash为3eef2ed242d6b0a354f3cedb4d8e8604；实际包内SVC含目标变体。这证明新输入和新包存在，不等于黑墙已经恢复。
 - 交付时HostPlayMode服务器http://192.168.9.1:8080/仍返回2026-10-31-1221；验证前须将资源根目录指向LYF_MMO/Bundles/StandaloneWindows64/DefaultPackage/2026-10-31-1266-lm-final，本轮未发布到服务器。黑墙画面、重新进场和Player未验证；待开发者确认本包有效，再修改收集流程覆盖运行时LOD400和已绑定光图的条件。
 - 用户明确不开子Agent，由Codex直接实现、核验并同步本段，未调用WorkBuddy。保留用户既有改动；本次沿用此前已存在的Custom GraphicsSettings候选而未修改，该候选仍未验收，因此本构建不能单独区分SVC和该设置的影响。完整清单、Git回执及证据：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md；_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/。
+
+
+## [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] 魔神塔相机避障
+
+- 给副本 FreeLook Camera 添加主城同配置 CinemachineCollider：Geometry 掩码128、开启 AvoidObstacles、PullCameraForward、半径0.1、最小目标距离0.1、缓动3.9、遮挡缓动0。
+- 通过场景内 Prefab 覆盖，将337个 Default、非 Trigger、带 MeshRenderer 的环境 MeshCollider 节点改为 Geometry；不改共享模型或预制体。主角保持 Default。检测 Default 的候选误撞主角，已弃用。
+- 已验当前运行现场及场景源：12方向中3个有墙方向拉近、9个无遮挡方向不变，轴值恢复。未构建资源包、重新进场、验证 Player 或主城移动；HostPlayMode 可能仍加载旧场景包。
+- Codex直接执行，未使用子Agent/WorkBuddy；既有场景12增/12删用户改动保留且未暂存。完整清单及证据：项目修改日志/2026-10-31-魔神塔相机避障配置修复_CHANGELOG.md；_temp/dungeon-camera-collision-20261031/。

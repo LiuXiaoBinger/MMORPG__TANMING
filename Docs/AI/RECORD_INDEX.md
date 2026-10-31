@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `bdf2a9c0d95b5d62054294bc731f21276bb67dd6051c05be19e2467806277dc0`
+Source normalized SHA256: `f4bd9e591e9ed9f2aec25f7d74d4ebad4cac0991d811e9369c8b3857a1708926`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -30,11 +30,12 @@ Source normalized SHA256: `bdf2a9c0d95b5d62054294bc731f21276bb67dd6051c05be19e24
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031] 2026-10-31 Party refresh and member entry; lighting deferred | 121-129 |
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-138 |
 | [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-146 |
-| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Explicit baked variant and fresh package ready for developer validation | 147-152 |
+| [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Explicit baked variant and fresh package ready for developer validation | 147-154 |
+| [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance | 155-160 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `90354542cd3757ce0566acba106dd55bc48fb2f31f0707ea924e0e08b6cd1120`
+Source normalized SHA256: `6091948e53a78e353bf90d45e195347d5d55013da3a8bcf2c413d73b9156a234`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -56,7 +57,8 @@ Source normalized SHA256: `90354542cd3757ce0566acba106dd55bc48fb2f31f0707ea924e0
 | [VERIFY][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Real prefab invitation replay and two-recipient wire checks | 137-146 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-154 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-162 |
-| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Fresh shader package and serialized SVC verified; visual acceptance pending | 163-168 |
+| [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Fresh shader package and serialized SVC verified; visual acceptance pending | 163-170 |
+| [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] Scoped scene and live acceptance | 171-175 |
 
 ## Docs/AI/DECISIONS.en.md
 

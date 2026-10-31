@@ -166,3 +166,10 @@
 - 直接加载最终哈希包：1份SVC、183个变体；SVC与Shader的AssetDatabase路径均为空，RO/Scene/AllInOne supported=true，Contains(ForwardBase LIGHTMAP_ON)=true；序列化记录为passType4/keywords LIGHTMAP_ON。首次ShaderVariant构造函数因编译包缺编辑器snippet而拒绝，后通过结构体字段赋值及序列化条目完成核验；两种探测都不能证明最终墙面成像。
 - 首次构建仍出现既有ShaderGraph PBRDeferredFragment错误，但原生构建最终成功；未修复这些无关Shader。此前GraphicsSettings Custom候选与本任务基线逐字节相同，仍未验收；本次构建不能单独区分SVC和GraphicsSettings的影响。原匿名delayCall一直排队，Codex仅移除已识别的本轮回调后调用一次，避免重复执行；后续最终增量构建仅包含JSON计数修正，日志没有新增Shader编译。
 - 交付时服务器版本仍为2026-10-31-1221；未发布、自动进副本或测试Player。黑墙、重新进场、Player及后续LOD400+光图收集流程待验证。按用户不开子Agent要求，由Codex完成本次定向核验和中英同步。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/final-build-result.json、package-verification.json、bundled-svc-probe.txt；完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+
+## [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] 场景与现场定向验收
+
+- 通过：现场12方向、同帧切换扩展开关对照；遮挡3/3从6.0476拉近至4.5694或3.9962，无遮挡9/9不变，axesRestored=True。最终Geometry掩码排除Default主角。早期Default候选距离缩至约0.3329，判定失败并弃用。
+- 通过：场景AssetDatabase导入、控制台error查询无条目、YAML fileID唯一、源文件/暂存版本在扩展及层覆盖之外分别与任务基线/HEAD一致、meta不变、暂存差异空白检查；用户原有修改未混入。
+- 未验证：新场景包、重新进场、独立Player、主城移动回归。未构建、未中断Play。证据：_temp/dungeon-camera-collision-20261031/acceptance.json、live-geometry-obstacle-probe.txt、scene-patch-verification.json。完整日志：项目修改日志/2026-10-31-魔神塔相机避障配置修复_CHANGELOG.md。

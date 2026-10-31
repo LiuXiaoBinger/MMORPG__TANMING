@@ -150,3 +150,11 @@
 - Native YooAsset incremental builds2026-10-31-1266-lm and2026-10-31-1266-lm-final both succeeded. The final package includes the corrected JSON; its shader bundle is unchanged from the first successful build. New shader FileHash3eef2ed242d6b0a354f3cedb4d8e8604; actual bundle SVC contains the requested variant. This proves the new input/package, not black-wall recovery.
 - At handoff the HostPlayMode server http://192.168.9.1:8080/ still returned2026-10-31-1221. Point its root to LYF_MMO/Bundles/StandaloneWindows64/DefaultPackage/2026-10-31-1266-lm-final before testing. No server publication was performed. Black-wall output, re-entry and Player remain unverified; change collection to cover runtime LOD400 and bound lightmaps only after the developer confirms this package works.
 - User explicitly requested no subagents; Codex implemented, verified and synchronized this section directly, without WorkBuddy. Existing user changes were preserved; the pre-existing Custom GraphicsSettings candidate was used unchanged and remains unaccepted, so this build does not isolate SVC versus that setting. Full file list, Git receipts and evidence: 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md; _temp/dungeon-lighting-resume-20261031/lightmap-variant-build/.
+
+
+## [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance
+
+- Added the city's CinemachineCollider configuration to the dungeon FreeLook Camera: Geometry mask128, AvoidObstacles enabled, PullCameraForward, radius0.1, minimum target distance0.1, damping3.9 and occluded damping0.
+- Changed337 Default non-trigger environment MeshCollider/MeshRenderer nodes to Geometry through scene-local prefab overrides; no shared model/prefab edits. Player remains Default. Default-mask trial hit the player and was rejected.
+- Live current scene and saved source verified;12 angles:3 blocked directions shortened,9 open directions unchanged, axes restored. No resource build, re-entry, Player or city movement regression. HostPlayMode may still reload the old packaged scene.
+- Codex worked directly without subagents/WorkBuddy. Existing12+/12- user scene changes remain unstaged. Full manifest/evidence: 项目修改日志/2026-10-31-魔神塔相机避障配置修复_CHANGELOG.md; _temp/dungeon-camera-collision-20261031/.
