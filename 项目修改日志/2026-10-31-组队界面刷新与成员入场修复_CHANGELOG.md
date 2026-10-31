@@ -297,3 +297,28 @@ Git 仅隔离本次获批追加及其索引投影；工作区原有 TEST_REPORT�
 ### 第8轮高负载获批记录提交与推送回执
 
 2026-10-31：本轮文档提交2cf75c1（docs: 记录魔神塔未验候选与Shader编译限速），仅4份文件、63行新增/2行删除；删除仅为索引源哈希及行段替换。git diff --cached --check通过，已真实推送origin/codex/feature-development，远端由d025012推进至2cf75c1。暂存投影与前缀保留证据：_temp/dungeon-lighting-resume-20261031/approved-cpu-records/stage-evidence.json。未提交候选GraphicsSettings或其他任务改动；没有恢复WorkBuddy或触发编译。此小节只补真实Git回执，随后回执提交的最终号以交付回复为准。
+
+
+## [DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 获批记录收集缺口与旧Shader包证据
+
+用户批准将本次检查写入QUERY_TASKS中英记录并刷新索引，明确不开子Agent；Codex亲自同步两版，覆盖本次新增段，不复核未变历史。本节为同一获批调查的文件清单和验证回执，不恢复WorkBuddy、构建或业务开发。
+
+| 操作 | 项目根相对路径 | 具体内容 |
+|---|---|---|
+| 追加 | Docs/AI/QUERY_TASKS.en.md | 收集球无光图/LOD600、SVC缺LIGHTMAP_ON、实际构建输入与旧包哈希、无效离屏对照及未验证边界 |
+| 追加 | Docs/AI/QUERY_TASKS.md | Codex按用户不开子Agent要求直接同步同编号中文事实 |
+| 追加 | 项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md | 本轮清单、纠错、检查与Git回执 |
+| 机械更新 | Docs/AI/RECORD_INDEX.md | 新编号定位、行段和源哈希；提交投影不混入既有任务正文 |
+
+关键更正：SVC确实参与unityshaders.bundle构建，不能以没有C#引用判断未接入。收集场景0光图、球体lightmapIndex=-1、globalMaximumLOD=2147483647选LOD600，不能覆盖实际运行500所选LOD400的烘焙条件；目标AllInOne的SVC缺LIGHTMAP_ON是收集缺口，不是最终包裁剪的直接证明。997/1221清单Shader包FileHash均为e947160e072ada0ef09d4d259ca3ddd0、1986839字节，现包SHA256仍为fd6da1d88e21592d9bb2f93731fcc477f8292151088c4a7696dfa5ab0f6e8df4；14:33旧包尚未包含20:43保存的新SVC。两版保留源码/包内Shader均黑的离屏失败实验与阳性光图对照缺失，不将它用于定根因。材质引用与必要纹理存在，地形隐藏_MainTex为空不算缺图，a02的Monster引用与RO原材质一致。
+
+本轮只记录，不修改SVC、GraphicsSettings、Shader、材质或场景；未打开子Agent、未编译/构建/重烘焙/运行验证。临时调查证据仍在_temp/dungeon-lighting-resume-20261031/collection-inspection/。本轮正式记录的旧字节前缀与双语关键字段检查结果保留于该目录approved-records/。黑墙根因及修复、新包渲染、重新进场、Player均未验证。
+
+本次task-log-policy沿用明确批准；token-monitor统计本轮用量及压缩事件。用户“不开子Agent”优先于默认子Agent同步要求，实际执行者为Codex。当前分支codex/feature-development，开始HEAD d17950a；本轮提交与推送结果随后据实补记，不纳入其他任务既有改动。
+
+
+### 本轮记录的增量检查与统计
+
+Codex主Agent直接同步并检查本次中英新增段的16项共享关键字段及3份文件旧字节前缀，PASS；没有子Agent参与。范围与证据见_temp/dungeon-lighting-resume-20261031/collection-inspection/approved-records/sync-evidence.json。记录保留收集缺口与最终包变体/黑墙根因之间的证据边界，不把失败离屏测试写成通过。
+
+已运行token-monitor collect/report，原始输出在该approved-records目录的token-collect.txt、token-report.json。report为24小时项目跨会话汇总，包含~估算费用，不能作为本任务费用或订阅余额。原始主会话实验性计数窗口2026-10-31T12:50:32.263Z至2026-10-31T12:54:32.984Z：输入361855（含缓存357888）、输出4336；统计不含随后操作和未完成回复。上下文与项目规则、用户需求、工具输入输出、子Agent/WorkBuddy协作、重复读取/返工/压缩/验证五类无法独立拆分；本次未调用子Agent/WorkBuddy，其用量未记录，账户余额本地不可测。证据usage.json。上下文压缩：当前对话累计1次，截至2026-10-31T12:54:47.473000+00:00，来源为当前会话原始JSONL顶层compacted事件，无覆盖缺口；证据compactions.json。

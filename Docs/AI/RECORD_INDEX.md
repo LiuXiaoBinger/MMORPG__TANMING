@@ -68,7 +68,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `2f9eac509e79601e15f76c07c7b3dfd09ac023328074309d0f9b4b0b670e90de`
+Source normalized SHA256: `6639c55754f7b5126399856c58ed26ecb3ee0636dc776ab6ee6bb0390ad733a3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -79,7 +79,8 @@ Source normalized SHA256: `2f9eac509e79601e15f76c07c7b3dfd09ac023328074309d0f9b4
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 RO party interfaces, limits and actual network route | 36-43 |
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Service link versus player KCP and gate notification contract | 44-50 |
 | [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-60 |
-| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-66 |
+| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-68 |
+| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 2026-10-31 Collector misses the baked runtime condition; existing shader bundle unchanged | 69-76 |
 
 ## Older records
 
