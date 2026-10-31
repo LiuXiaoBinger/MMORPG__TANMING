@@ -375,3 +375,7 @@ Codex主Agent直接同步并检查本次中英新增段的16项共享关键字�
 本次token-monitor已执行collect/report，原始项目报告位于_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records-token-collect.txt、approved-records-token-report.json；报告为24小时项目跨会话汇总，费用含~估算，不能作为本次任务费用或订阅余额。当前主会话原始实验性计数窗口2026-10-31T13:24:20.395Z至2026-10-31T13:26:19.843Z：输入733423（含缓存716800），输出8567；不含随后操作与未完成回复。上下文与项目规则、用户需求、工具调用输入输出、重复读取/返工/压缩/验证均不可独立拆分；本次子Agent/WorkBuddy协作未记录，账户剩余额度本地不可测。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records/usage.json。
 
 上下文压缩：当前对话累计2次，截至2026-10-31T13:26:01.944000+00:00；来源为当前主会话01a1916a-f553-7670-a41a-691d9a35f5f9原始JSONL顶层compacted事件，无覆盖缺口，不合并其他会话。证据：_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records-compactions.json。中英本次新增段共享字段检查及6份正文旧字节前缀检查PASS；见approved-records/sync-evidence.json。首次覆盖写入CURRENT_TASK.md遇到Invalid argument，改为追加后完成，旧字节前缀核验通过；没有删除或覆盖旧内容。
+
+### 本轮记录提交与推送回执
+
+1fa8af6（docs: 记录魔神塔光图变体补丁与新包验证边界）已推送origin/codex/feature-development，远端由2f32663推进至1fa8af6。只含本轮7份文档，94行新增/4行删除；删除仅索引源哈希与行段替换。6份正文的暂存投影等于HEAD加获批新增段，中英增量字段、旧字节前缀、git diff --cached --check与索引新鲜度检查均通过；证据为_temp/dungeon-lighting-resume-20261031/lightmap-variant-build/approved-records/stage-evidence.json及sync-evidence.json。用户既有记录、QUERY_TASKS、业务资源与配置差异未纳入。本小节仅补真实Git回执，后续回执提交号以交付回复为准。
