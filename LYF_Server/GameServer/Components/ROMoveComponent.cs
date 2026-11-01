@@ -21,6 +21,16 @@ public sealed class ROMoveComponent : RoleComponentBase
     public void OnMoveStart(MoveOperationReq action)
     {
         is_moving_ = action.IsMoving;
+        // 主动移动必须先打断不可带动作移动的状态（吟唱），对应 RO ActionStateComponent::Move。
+        if (is_moving_)
+        {
+            // state_machine 是本角色的状态机组件；取不到说明角色尚未装配状态机，直接跳过打断。
+            StateMachineComponent state_machine;
+            if (Owner.TryGetComponent(out state_machine))
+            {
+                state_machine.OnMove();
+            }
+        }
         // 复用正式基础快照的下划线坐标格式，使进入世界和技能附近广播读取同一位置。
         Owner.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture,
             "{0}_{1}_{2}", action.Dx, action.Dy, action.Dz);

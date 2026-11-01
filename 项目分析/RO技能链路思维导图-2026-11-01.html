@@ -158,6 +158,7 @@
     <span>行号已于 <b>2026-11-01</b> 按当前源码二次核对（首次整理时存在整体漂移）</span>
     <span>源码复核摘要：接口签名按当前源码更正为 <b>GetReplaceSkillCoreOnClientRequest</b>（五参）；连招字段 <b>skill_combo_id_</b> 位于 <b>ROSingingArgs</b>；状态数为 <b>36</b>；吟唱距离检查<b>逐帧</b>执行；状态令牌读取链为 <b>ActionToken → Token()</b></span>
     <span>源码复核：更新关键引用行号与状态令牌读取链；补充事件派发器语义、本项目接入边界</span>
+    <span>接入更新：LYF_Server 已移植<b>状态机内核</b>、<b>吟唱流程</b>、<b>状态互斥切换</b>，事件改为<b>对象池</b>取用；四服实网烟测通过（11170 先于 11171，两者均在 CastMs 2167ms 后到达）</span>
   </div>
 </header>
 
@@ -972,57 +973,105 @@ const tree = {
         loc:'LYF_Server/GameServer · 本节描述本项目，不是 RO',
         steps:[
           '①~⑦ 是 RO 原工程链路，⑧ 是 RO 派发器内部语义；<b>本节是本项目的实际接入，两者不要混读</b>',
-          '本项目没有搬运 RO 的状态互斥等待，也没有搬运吟唱时长；技能在事件派发的<b>同一帧</b>内完成结算',
-          '协议 SkillCastReq 目前只有 SkillId 与 SkillUuid，<b>没有 target，也没有 cast_point</b>',
-          '派发器由 OnlineRole 持有，一个角色一份；没有全局派发器，也没有实体 UUID 路由'
+          '已把 RO 的<b>状态互斥切换</b>、<b>状态机内核</b>、<b>吟唱流程</b>移植进来，并把事件改为<b>对象池</b>取用',
+          '状态机里真实注册了<b>三个状态</b>：默认态、吟唱态、技能动作态，链路是 <code>default → singing → skill → default</code>；技能动作<b>不再是状态机外的旁路</b>',
+          '协议 SkillCastReq 仍然只有 SkillId 与 SkillUuid，<b>没有 target，也没有 cast_point</b>；吟唱事件里这两个字段保持 RO 的零值默认',
+          '派发器由 OnlineRole 持有，一个角色一份；没有全局派发器，也没有实体 UUID 路由',
+          '状态互斥表用 RO 原 CSV（StateExclusionTable.csv）以嵌入资源落地，<b>没有重编号、没有自造矩阵</b>'
         ],
-        note:'判断「某个 RO 行为本项目有没有」时，以本节为准；RO 侧的状态机、吟唱、排队重试都属于<b>未移植</b>，不能按 RO 的时序去理解本项目。'
+        note:'判断「某个 RO 行为本项目有没有」时，以本节为准：状态机、吟唱、互斥、事件池<b>已移植</b>；距离检查、连招表、延迟派发仍<b>未移植</b>。'
       },
       c:[
-        { k:'server', t:'本项目实际链路（5 跳，全同步）',
-          d:{ sig:'OnCall → ROClientFireSkillArgs → RoleSingingComponent → ROSingingArgs → RoleSkillComponent.TryCast',
-            loc:'SkillCastHandler.cs / RoleSingingComponent.cs / RoleSkillComponent.cs', up:'GateServer 转发 CMD_SkillCastCode',
+        { k:'server', t:'本项目实际链路（含互斥、吟唱与技能动作态）',
+          d:{ sig:'OnCall → 非提交校验 → 池取 ROClientFireSkillArgs → TransferStateByFunc → 回调重查角色 → DispatcherEvent → RoleSingingComponent → SingingComponent → 到期 FireSkill 派发 ROAttackActionArgs → 状态机切 kStateSkill → ROSkillComponent.OnStart 一次性提交',
+            loc:'SkillCastHandler.cs / StateMutexManager.cs / RoleSingingComponent.cs / SingingComponent.cs / ROSkillComponent.cs', up:'GateServer 转发 CMD_SkillCastCode',
             steps:[
-              '<b>SkillCastHandler.OnCall</b>：解析协议与会话，构造 ROClientFireSkillArgs（target_=0、cast_point_ 全零），交给角色派发器',
-              '<b>RoleSingingComponent.OnClientFireSkillRequest</b>：监听 kActionClienFireSkill，逐字段转成 ROSingingArgs 再派发',
-              '<b>RoleSkillComponent.OnSingingRequest</b>：监听 kActionSinging，还原 SkillCastReq 后调用既有 TryCast',
-              '<b>TryCast</b>：原有 MP / CD / UUID / 学习等级校验，一行未改',
-              '<b>回包与广播</b>：先 Owner.SendToClient(CMD_SkillCastCode, SkillCastRet)，成功后 RoleManager.BroadcastSkillStart 发 CMD_SkillCastStartCode'
+              '<b>SkillCastHandler.OnCall</b>：解析协议与会话后先做<b>非提交校验</b>（未学/配置缺失/冷却/MP 不足/状态不允许），失败立刻回 SkillCastRet，<b>不派发事件、不读条、不扣蓝</b>',
+              '<b>StateMutexManager.TransferStateByFunc</b>：按 kStateTransitionRequestSinging 查互斥表，必要时先退旧状态；事件由请求持有引用跨帧保活',
+              '<b>最终回调</b>：必须用 <code>RoleManager.GetOnlineRole(role_uid)</code> 重查角色，失败按 CmdCode 回拒绝包；成功才 DispatcherEvent',
+              '<b>RoleSingingComponent</b>：监听 kActionClienFireSkill，能立刻吟唱就直接派发 ROSingingArgs，否则入 10 条队列由 LateUpdate 重试',
+              '<b>SingingComponent</b>：按 CastMs 逐帧读条，到期 <code>FireSkill</code> 池取 ROAttackActionArgs 派发 kActionSkill',
+              '<b>ROSkillComponent 是真实状态</b>：kActionSkill 由状态机交给它，<code>OnGetEvent</code> 再跑一次同一份非提交校验，<code>OnStart</code> 一次性提交 MP/CD 并建立动作实例，<code>OnUpdate</code> 到期 <code>Finish</code>，状态机随即回默认态',
+              '技能动作期间由 <code>StateMachineComponent.StateUpdate</code> 独占推进；<code>ROSkillComponent.Update</code> 检测到自己是当前状态就直接返回，避免同帧推进两次'
             ],
-            fail:['入口阶段失败：ReqParamError / InvalidSession / SkillStateBlocked','业务阶段失败：TryCast 的返回码原样回包，且不广播开始表现'],
-            note:'回包先于开始广播，顺序由同一方法内的两次调用保证；两帧都经真实网关会话写出。'}},
-        { k:'server', t:'接入点：OnlineRole.GetEventDispatcher',
-          d:{ sig:'public ROEventDispatcher GetEventDispatcher()',
-            loc:'LYF_Server/GameServer/Entity/Role/OnlineRole.cs', up:'入口与两个组件共用',
+            fail:['入口阶段失败：ReqParamError / InvalidSession / 未学 / 配置缺失 / 冷却 / MP 不足 / 互斥拒绝码',
+              '吟唱被打断（移动、死亡、离线、销毁）与队列丢弃（队满、超时）：用现有 <code>SkillCastRet</code> 回终态，回带原 SkillId/SkillUuid，<b>不发开始表现、不扣蓝</b>',
+              '技能态拒绝（OnGetEvent 未通过或状态机不接受事件）：同样回 SkillCastRet 终态，请求不会悬挂'],
+            note:'回包先于开始广播，顺序由 <code>OnStart</code> 内的两次调用保证；<code>SkillCastEndNtf</code> 由技能态 <code>OnFinished</code>（自然结束）或 <code>OnStop</code>（中断）发出，两条路径互斥且各只发一次。'}},
+        { k:'server', t:'事件对象池：ROEventPool + 显式引用计数',
+          d:{ sig:'ROEventPool&lt;T&gt;.Get() / Release()，ROEvent.AddRef() / Release()',
+            loc:'GameServer/Event/ROEvent.cs · ROEventPool.cs · ROEventDispatcher.cs', up:'热路径不再 new 事件',
             steps:[
-              'OnlineRole 持有 readonly ROEventDispatcher，随角色创建、随 Dispose 释放',
-              'InitSerializes 注册 RoleSkillComponent 与 RoleSingingComponent，两者在 Initialize 里登记监听',
-              'Dispose 先释放组件（各自解除监听），再调 _eventDispatcher.UnInit() 清空剩余回调引用',
-              '命名与 RO 的 GetEventDispatcher 一致，但作用域是「单个在线角色」而非实体世界'
+              'RO 的 <code>NEW_OBJECT</code> 在正式构建里就是 <code>new</code>，靠 shared_ptr 自定义删除器回收；C# 没有 shared_ptr，因此用显式引用计数补上',
+              '<code>OnGetFromPool</code>：置 Max、<code>++static_token_</code>、ref_count_=1、调 Reset()；Reset 没回填 event_type_ 就打错误日志（对应 RO 的同一处校验）',
+              '<code>Release()</code> 归零才 Recycle，回 <code>ROEventPool&lt;T&gt;</code> 的空闲栈；池上限 128，超出直接丢弃',
+              '派发器改成 <code>AddRef → try/finally Release</code>；单监听走快路径不建快照，多监听用缓冲池里的 List 代替 <code>ToArray()</code>',
+              '异步持有（互斥请求跨帧）由 StateTransferComponent 自己 AddRef/Release，保证事件不会在回调前被复用',
+              '入栈权收在 <code>ROEvent.TryEnterPool()</code>：只有 <code>ref_count_</code> 恰好为 0 才置成池内哨兵 <code>-1</code> 并入栈；活跃实例与已入池实例一律拒绝，<b>一次归还只入栈一次</b>，不另建“已在池中”的账本',
+              '回调路径统一 <code>try/finally</code> 释放持有的引用：回调抛异常也要归还，否则池化事件被这条异常路径永久占住；这里只释放，不捕获也不包装业务异常',
+              '池是<b>真单例</b>（私有构造 + Instance），正式代码里<b>没有任何计数、清空或读取引用计数的测试入口</b>',
+              '<code>Release()</code> 在引用<b>归零当帧</b>就 <code>Reset()</code> 清业务引用，再压回空闲栈；池里等待的实例不保留任何业务对象',
+              '下一次 <code>OnGetFromPool</code> 再换发新 token；嵌套派发与异步持有期间计数大于零，不重置也不提前复用'
             ],
-            note:'项目里另有 <code>SceneEntity/World/EntityWorld.cs</code> 的 uid→实体字典，但它在生产链路没有调用方；本次<b>没有</b>改用它，也没有另建注册表。'}},
-        { k:'server', t:'与 RO 的边界：明确未移植的部分',
-          d:{ sig:'本次移植范围 = 事件基类 + 事件类型 + 派发器 + 监听者生命周期',
+            note:'<b>分配口径</b>：用 <code>GC.GetAllocatedBytesForCurrentThread</code>（单线程、缓存委托，暖机 2000 次后每项各测 20000 次）实测：直接 <code>new</code> <b>800000 字节 / 新建 20000 个</b>；池化 <code>Get / 派发 / 归还</code> <b>0 字节 / 新建 0 个</b>，派发回调 22000 次，首末实例同一=True。该结论只覆盖<b>单事件类型</b>的取用、派发与归还，不向整条施法链外推零 GC。'}},
+        { k:'server', t:'状态机内核：ActionStateComponent + StateMachineComponent',
+          d:{ sig:'TransferToState(args,next) / TryTransferToState / CanAction / Update',
+            loc:'Components/base/ActionStateComponent.cs · Components/StateMachineComponent.cs · Components/State/DefaultActionComponent.cs', up:'对应 state_machine_component.cpp / action_state_component.h',
+            steps:[
+              '<code>ActionStateComponent&lt;T&gt;</code>：IsPermitted / Stop / Finish / StateUpdate / OnActionEvent（成功才记 token_），钩子 OnGetEvent、OnStart、OnUpdate、PreUpdate、OnStop、OnFinished、AfterFinish',
+              '<code>StateMachineComponent.TransferToState</code>：当前态 <code>Stop(next,args)</code> → 换引用 → <code>next.OnGetPermission(args)</code>',
+              '<code>Update</code>：先 <code>StateUpdate</code>，<code>IsFinished</code> 则回默认态；<code>OnMove</code> 由 ROMoveComponent 在开始移动时调用，允许移动就放行、允许打断就 Stop',
+              '<code>OnlineRole.InitSerializes</code> 按顺序注册默认态、吟唱态、技能动作态三份状态组件；技能动作态就是 <code>RoleSkillComponent</code> 自己，不再另建旁路监听',
+              '<code>IsPermitted</code> <b>没有搬</b> RO <code>CommonStateTypeTool</code> 的 16×16 静态许可矩阵：本项目只注册默认态、吟唱态、技能动作态三个状态，许可退化为“<b>已结束即放行、未结束看 <code>CanActiveInterrupt</code></b>”的最小规则，<b>不等价于 RO 的全量许可表</b>',
+              '这三个状态是<b>实际注册</b>的：默认态、吟唱态、技能动作态各自是一份状态组件，技能动作态由 <code>RoleSkillComponent</code> 自己承担，不是状态机之外的旁路',
+              'StateDefine 复用 <code>MMoRpgCommon/enum/StateDefine.cs</code>（RO 完整 16 项），<b>本次接入没有新增也没有修改该文件</b>'
+            ],
+            note:'非泛型基类 <code>ActionStateComponent</code> 存在的唯一目的，是让状态机不依赖具体事件类型就能 Stop/StateUpdate。'}},
+        { k:'server', t:'吟唱与请求队列：SingingComponent / RoleSingingComponent',
+          d:{ sig:'OnStart 读 CastMs → OnUpdate 逐帧累计 → 到期 Finish → OnFinished 派发 kActionSkill',
+            loc:'Components/SingingComponent.cs · Components/RoleSingingComponent.cs', up:'对应 singing_component.cpp / role_singing_component.cpp',
+            steps:[
+              '<code>OnStart</code>：duration_ 归零，<code>ResolveSkillCore(skill_id_)</code> 取 CastMs 作为 interval_；interval_ 不大于 0 时直接 <code>Finish()</code> 不读条',
+              '<code>OnUpdate</code>：duration_ 累加 delta，达到 interval_ 即 Finish；<code>PreUpdate</code> 在血量归零或离线时 <code>Stop(kStateDefault)</code>',
+              '<code>OnFinished → FireSkill</code>：池取 <code>ROAttackActionArgs</code>，派发 kActionSkill，finally 立即 Release',
+              '<code>OnStop</code> 只清 <code>start_singing_/core_</code>（RO 原语义）；"被打断的请求必须回终态"由 <code>RoleSingingComponent</code> 覆写实现，项目协议不塞进 RO 纯逻辑',
+              '<code>RoleSingingComponent</code>：REQUEST_LIST_SIZE=10、REQUEST_LIST_OVER_TIME=300ms，队列空且 <code>machine.CanAction(kStateSinging)</code> 才直接派发，否则入队等 <code>LateUpdate</code>',
+              '队满、超时、吟唱事件被状态机拒绝：都由 <code>RoleSingingComponent</code> 用 <code>SkillCastRet</code> 回终态，被丢弃的请求不会静默消失',
+              '吟唱不另造定时器：项目已有 <code>CTimerMgr</code>，但吟唱按 RO 的 OnUpdate 逐帧推进，与逻辑帧 50ms 对齐'
+            ],
+            note:'吟唱期间不扣蓝：MP 与 CD 在技能动作态 <code>OnStart</code> 一次性提交，拒绝与中断都不消耗。'}},
+        { k:'server', t:'状态互斥：StateMutexDef + StateMutexManager + StateTransferComponent',
+          d:{ sig:'TransferStateByFunc(role, type, notify, evt, callback, out token)',
+            loc:'StateMutex/StateMutexDef.cs · StateMutexManager.cs · StateExclusionTable.cs · Components/StateTransferComponent.cs', up:'对应 state_mutex_manager.cpp / state_mutex_def.h',
+            steps:[
+              '<code>StateTransitionType</code> 照抄 RO 0..38 全量原名原值，含 <code>kStateTransitionRequestSinging=35</code>、<code>kUnrealDeath=14</code>、<code>kStateMaxCount</code>、<code>kUseItemLimit=500</code>',
+              '<code>StateExclusionTable</code> 直接解析 RO 的 <code>StateExclusionTable.csv</code>（嵌入资源，退回 Config 目录），吟唱列实测 0 禁止 16 / 1 直接 19 / 2 先退旧 1 / -1 未配置 2',
+              '<code>PreTransferState</code> 收集 value==2 且当前确实处于该态的源状态，全部 Leave 成功后才 EnterState；<code>CancelTransferState</code> 之后回调永不触发',
+              '<code>StateTransferComponent</code>：AddNewRequest 自增 serial 并 AddRef 持有事件，同步 Leave 后若全部源状态已不在该态就立刻 EnterState，异步场景由 OnLeaveState 推进',
+              '生产注册表当前为空：没有注册任何 IStateInterface，因此 <code>PreTransferState</code> 不做退旧，<code>CheckState</code> 按未配置即时放行，与迁移前行为一致'
+            ],
+            note:'互斥表不是自造矩阵：3×3 常量表、重编号枚举都在这次接入中被删除，改为忠实读 RO 的 CSV。'}},
+        { k:'server', t:'与 RO 的边界：仍未移植的部分',
+          d:{ sig:'接入范围 = 状态机内核 + 吟唱 + 互斥 + 事件对象池',
             loc:'对照 rogamelibs/core/event 与 rogamelibs/entity/action', up:'范围判定',
             steps:[
-              '<b>未移植</b>状态互斥等待（STATE_MUTEX_MGR / TransferStateByFunc / 旧状态退出回调）',
-              '<b>未移植</b>吟唱时长与吟唱中每帧距离复查（本项目没有吟唱阶段）',
-              '<b>未移植</b>request_list_ 300ms 排队重试与双队列上限',
+              '<b>未移植</b>吟唱中每帧目标距离复查（IsTargetLegal）：协议没有 target，本项目无目标技能',
+              '<b>未移植</b>连招表校验与技能替换（GetReplaceSkillCoreOnClientRequest）',
               '<b>未移植</b>延迟派发（DispatcherEvent(delay)）、own/ClearOthersEntry/ClearZombieEvent、event_lock_ 重入锁',
-              '<b>已保留</b>同步派发、按类型分表、重复注册即替换、解除即失效、宿主销毁 UnInit 清空'
+              '<b>已保留</b>同步派发、按类型分表、重复注册即替换、解除即失效、宿主销毁 UnInit 清空',
+              '<b>已移植</b>状态互斥申请/取消、旧状态退出回调、吟唱读条与请求队列、事件池化与引用计数'
             ],
-            fail:['把 RO 的「异步退旧状态 → 再派发」当成已移植，会误判本项目的时序与失败点'],
-            note:'派发器用快照 + <code>for</code> 遍历替代 RO 的 while + 惰性 erase：本轮不纳入新注册条目，已引用条目的解除/替换立即可见。'}},
-        { k:'server', t:'验证方式：环回网关通道',
-          d:{ sig:'EventDispatcherSmoke 用例九 / 用例十',
-            loc:'LYF_Server/Tests/EventDispatcherSmoke.cs（不进入正式工程）', up:'回包是否真的送达',
+            fail:['把「状态互斥已移植」理解成「退旧状态一定异步」会误判回调时机：本项目 Leave 同步，ProcessRequest 尾部会直接 EnterState'],
+            note:'派发器用快照 + <code>for</code> 遍历替代 RO 的 while + 惰性 erase：接入实现不纳入新注册条目，已引用条目的解除/替换立即可见。'}},
+        { k:'server', t:'验证方式：四服实网 + 环回 + 单测',
+          d:{ sig:'FourServerSkillSmoke / EventDispatcherSmoke / StateMutexSmoke / SingingStateSmoke / EventPoolSmoke',
+            loc:'LYF_Server/Tests（不进入正式工程）· _temp/server-state-singing-pool-20261101/tests', up:'回包是否真的送达',
             steps:[
-              '在本机环回端口建一对真实 TCP 连接，一端作为会话出口，另一端按两字节长度头读帧',
-              '会话的上游连接器类型设为 GameServer，使实时协议保持 TCP 帧，与游戏服→网关拓扑一致',
-              '构造合法复合会话后走 SkillCastHandler.OnCall，断言客户端收到 SkillCastRet(Succeed) 与 SkillCastStartNtf',
-              '拒绝分支（冷却中二次释放）断言只回一帧结果、不再扣蓝、不发开始通知'
+              '<b>四服实网</b>：真实登录服 → 选服 → 网关 → 开始游戏 → 进入世界 → 绑定 KCP → 发 11170；实测帧序 <code>11170@2223ms → 11171@2224ms → 11173@2907ms</code>，即结果先于开始、两者都在 CastMs=2167ms（44 帧）之后，结束跨度 683ms（动作配置 700ms，允许一帧 50ms 误差）；同轮发未学技能 99999，44ms 即回拒绝、不扣蓝也不发开始。checks=42 / failures=0',
+              '<b>环回网关</b>：本机环回 TCP 建会话，上游连接器设为 GameServer 使实时协议保持 TCP，走 SkillCastHandler.OnCall 断言两帧内容与顺序，并断言移动中断、队满、超时三种终态回包各恰好一条',
+              '<b>单测</b>：事件池复用/令牌/引用计数/累计分配实测、互斥表真实取值与四种分支、吟唱起止与打断、<code>default → singing → skill → default</code> 三态链、队列上限与 LateUpdate 出队'
             ],
-            note:'这是<b>协议级送达验证</b>，不是完整登录实网验收：没有经过 LoginServer 与 GateServer 的真实登录，也没有 Unity 客户端表现。'}}
+            note:'上述数字来自四服实网烟测留档（checks=42 / failures=0，日志在 _temp/server-state-singing-pool-20261101）。烟测结束时按绝对 exe 路径停止 Center / Game / Gate / Login 四服，停止时刻 2026-11-01T16:49:53Z，PID 依次 884284 / 68796 / 7600 / 80308；停后剩余进程 0、TCP 监听 0、UDP 端点 0（TCP 10110/10120/10130/10140、UDP <b>10141</b>），并以 2026-11-01T17:18:13Z 的正确端口复查复核过一次。'}}
       ]
     }
   ]

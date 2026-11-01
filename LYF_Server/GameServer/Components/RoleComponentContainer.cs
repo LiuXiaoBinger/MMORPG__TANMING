@@ -45,6 +45,18 @@ public sealed class RoleComponentContainer
     public void AfterAddedToRole() { for (int i = 0; i < _orderedComponents.Count; i++) { RoleComponentBase value = _orderedComponents[i]; Invoke(value, "AfterAddedToRole", delegate { value.AfterAddedToRole(); }); } }
     /// <summary>更新全部组件。</summary>
     public void Update(int deltaMilliseconds) { for (int i = 0; i < _orderedComponents.Count; i++) { RoleComponentBase value = _orderedComponents[i]; Invoke(value, "Update", delegate { value.Update(deltaMilliseconds); }); } }
+    /// <summary>后置更新全部组件：在同一帧所有 Update 之后按注册顺序执行，对应 RO 的 LateUpdate 阶段。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，原样传给每个组件。</param>
+    public void LateUpdate(int deltaMilliseconds)
+    {
+        // i 是注册顺序下标，从零到组件数减一，保证后置更新与 Update 阶段顺序一致。
+        for (int i = 0; i < _orderedComponents.Count; i++)
+        {
+            // value 是本轮要后置更新的组件；i 是注册顺序下标，保证与 Update 阶段保持同一顺序。
+            RoleComponentBase value = _orderedComponents[i];
+            Invoke(value, "LateUpdate", delegate { value.LateUpdate(deltaMilliseconds); });
+        }
+    }
     /// <summary>统一收集全部组件脏数据。</summary>
     public bool Save(RoleDataFieldManager fields, long version)
     {

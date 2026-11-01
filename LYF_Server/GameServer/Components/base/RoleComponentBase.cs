@@ -40,6 +40,12 @@ public abstract class RoleComponentBase
     public virtual void AfterAddedToRole() { }
     /// <summary>固定帧更新。</summary>
     public virtual void Update(int deltaMilliseconds) { }
+    /// <summary>
+    /// 固定帧后置更新：在同一逻辑帧内所有组件的 Update 之后执行。
+    /// 对应 RO 实体 Update 之后单独驱动的 LateUpdate 阶段（如 RoleSingingComponent::LateUpdate）。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，与同一帧 Update 收到的是同一跨度。</param>
+    public virtual void LateUpdate(int deltaMilliseconds) { }
     /// <summary>释放组件资源。</summary>
     public virtual void Dispose() { Owner = null; }
 

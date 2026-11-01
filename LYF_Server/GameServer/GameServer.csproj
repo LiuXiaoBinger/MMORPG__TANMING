@@ -35,6 +35,11 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Components\base\RoleComponentBase.cs" />
+        <Compile Include="Components\base\ActionStateComponent.cs" />
+        <Compile Include="Components\StateMachineComponent.cs" />
+        <Compile Include="Components\State\DefaultActionComponent.cs" />
+        <Compile Include="Components\SingingComponent.cs" />
+        <Compile Include="Components\StateTransferComponent.cs" />
         <Compile Include="Components\RoItemComponent.cs" />
         <Compile Include="Components\RoleComponentContainer.cs" />
         <Compile Include="Components\RoleCountComponent.cs" />
@@ -49,6 +54,10 @@
         <Compile Include="SceneEntity\Skill\ROSkillCore.cs" />
         <Compile Include="SceneEntity\Skill\ROSkill.cs" />
         <Compile Include="Config\SkillCastingRulesCatalog.cs" />
+        <Compile Include="StateMutex\StateMutexDef.cs" />
+        <Compile Include="StateMutex\StateMutexManager.cs" />
+        <Compile Include="StateMutex\StateExclusionTable.cs" />
+        <Compile Include="StateMutex\State\IStateInterface.cs" />
         <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Skill\SkillCastingRules.cs">
           <Link>Config\SkillCastingRules.cs</Link>
         </Compile>
@@ -61,6 +70,7 @@
         <Compile Include="Ctrl\Game_LoginCtrl.cs" />
         <Compile Include="Event\ROEvent.cs" />
         <Compile Include="Event\ROEventDispatcher.cs" />
+        <Compile Include="Event\ROEventPool.cs" />
         <Compile Include="Entity\Role\OnlineRole.cs" />
         <Compile Include="Entity\Role\RoleDataFieldManager.cs" />
         <Compile Include="Entity\Role\RoleNetSender.cs" />
@@ -193,6 +203,8 @@
       <Content Include="Config\SkillCastingRules.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <!-- 状态互斥表：原样取自参考工程 config/Table/CSV/StateExclusionTable.csv，随程序集嵌入。 -->
+      <EmbeddedResource Include="Config\StateExclusionTable.csv" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

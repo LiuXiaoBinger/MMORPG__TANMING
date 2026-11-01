@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using cfg;
 
-/// <summary>对应 RO 服务器技能释放组件；以既有 OnlineRole 生命周期驱动核心、施法、冷却和权威通知。</summary>
-public abstract class ROSkillComponent : RoleComponentBase
+/// <summary>
+/// 对应 RO 服务器技能释放组件；以既有 OnlineRole 生命周期驱动核心、施法、冷却和权威通知。
+/// 同时承接 ActionStateComponent&lt;ROAttackActionArgs&gt;，与 RO 的 ROSkillComponent 一致：
+/// 它是状态机里真实注册的技能动作状态 kStateSkill，由吟唱状态派发的 kActionSkill 事件驱动，
+/// 完整链路是 default → singing → skill → default。
+/// </summary>
+public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs>
 {
     /// <summary>一个服务器逻辑帧的毫秒数，与 GameGlobal 的 20Hz 固定帧一致。</summary>
     private const int LogicFrameMilliseconds = 50;
@@ -25,9 +30,32 @@ public abstract class ROSkillComponent : RoleComponentBase
     /// <summary>最近成功施法的等级效果 ID，零表示本次在线生命周期尚未释放技能。</summary>
     private int last_used_skill_effect_id_;
 
+    /// <summary>
+    /// 非提交校验通过后暂存的提交数据；进入技能态时用它一次性扣蓝、写冷却并建立动作实例，
+    /// 保证校验与提交之间不重复读配置、不重复计时。
+    /// </summary>
+    private PreparedCast prepared_cast_;
+    /// <summary>
+    /// 进入技能态前生成的明确拒绝结果；状态机不接受事件时用它回终态，避免客户端请求悬挂。
+    /// </summary>
+    private SkillCastRet pending_reject_;
+
+    /// <summary>非提交校验通过后暂存的提交数据，只在本次进入技能态时消费一次。</summary>
+    private sealed class PreparedCast
+    {
+        /// <summary>本次请求的稳定技能主表 ID。</summary>
+        public int skill_id_;
+        /// <summary>本次请求的客户端施法标识。</summary>
+        public ulong skill_uuid_;
+        /// <summary>按中心服学习等级解析出的技能核心。</summary>
+        public ROSkillCore core_;
+        /// <summary>本次等级对应的只读效果配置行。</summary>
+        public SkillEffectInfo effect_;
+    }
+
     /// <summary>为一个在线角色创建技能运行时组件。</summary>
     /// <param name="owner">拥有中心服角色快照和网关会话的在线角色。</param>
-    protected ROSkillComponent(OnlineRole owner) : base(owner)
+    protected ROSkillComponent(OnlineRole owner) : base(owner, StateDefine.kStateSkill)
     {
         // 角色开放前同步装载一次编辑器导出的权限，不依赖客户端异步表现资产。
         SkillCastingRulesCatalog.Initialize();
@@ -63,6 +91,23 @@ public abstract class ROSkillComponent : RoleComponentBase
             skill_core_list_.Add(skill_effect_data.Id, core);
         }
         return core;
+    }
+
+    /// <summary>
+    /// 按稳定技能 ID 解析并装载本次释放的等级核心；未学习或配置缺失时为空。
+    /// 吟唱状态用它取 CastMs 作为读条时长，与 RO 的 GetSkillCoreCheckReplace 职责对应。
+    /// </summary>
+    /// <param name="skill_id">服务端请求使用的稳定技能主表 ID。</param>
+    /// <returns>已装载的等级核心，未学习或配置缺失时为空。</returns>
+    public ROSkillCore ResolveSkillCore(int skill_id)
+    {
+        // 学习等级只能来自中心服，客户端不能指定等级或效果 ID。
+        int learned_level = GetLearnedLevel(skill_id);
+        if (learned_level <= 0)
+        {
+            return null;
+        }
+        return CheckAndAttachSkillCore(skill_id, learned_level);
     }
 
     /// <summary>查询已经装载的主动技能核心，查询本身不装载新配置。</summary>
@@ -108,6 +153,142 @@ public abstract class ROSkillComponent : RoleComponentBase
 
     /// <summary>当前存在且仍在释放的动作技能时为 true。</summary>
     public bool IsCasting() { return skill_ != null && skill_.Casting(); }
+
+    /// <summary>技能动作态由 kActionSkill 事件驱动，对应 RO 把该事件绑定到 ROSkillComponent。</summary>
+    protected override ROEventDefine? ActionEventType
+    {
+        get { return ROEventDefine.kActionSkill; }
+    }
+
+    /// <summary>
+    /// 进入技能态前的校验，对应 action_state_component.h 的 OnGetEvent：
+    /// 复用 PrepareCast 完成全部非提交校验，并把提交数据留给 OnStart 一次性消费。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    /// <param name="last_state">切换前状态机所处的状态。</param>
+    protected override bool OnGetEvent(ROAttackActionArgs args, StateDefine last_state)
+    {
+        prepared_cast_ = null;
+        pending_reject_ = null;
+        if (args == null)
+        {
+            return false;
+        }
+        return PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_);
+    }
+
+    /// <summary>
+    /// 动作事件入口：状态机不接受本事件时，把 OnGetEvent 生成的明确拒绝结果回给客户端，
+    /// 保证同一请求一定有终态回包，不会因为没进入技能态而悬挂。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    /// <returns>状态机切换成功返回 true。</returns>
+    public override bool OnActionEvent(ROEvent args)
+    {
+        prepared_cast_ = null;
+        pending_reject_ = null;
+        // accepted 是状态机对本事件的处理结果：true 表示已进入技能态，由 OnStart 继续结算。
+        bool accepted = base.OnActionEvent(args);
+        if (accepted)
+        {
+            return true;
+        }
+        if (pending_reject_ != null)
+        {
+            SkillCastReply.Send(Owner, pending_reject_);
+            pending_reject_ = null;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 进入技能态：用 OnGetEvent 暂存的提交数据一次性扣蓝、写冷却并建立动作实例。
+    /// 结果先回客户端再广播开始表现，与改造前的回包顺序保持一致。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    protected override void OnStart(ROAttackActionArgs args)
+    {
+        // prepared 是 OnGetEvent 暂存的提交数据，取出后立刻清字段，避免下一帧重复提交同一请求。
+        PreparedCast prepared = prepared_cast_;
+        prepared_cast_ = null;
+        // result 是提交后要回给客户端的权威结果，失败与成功都走这一份。
+        SkillCastRet result;
+        // start_notice 只在成功时由 CommitCast 生成，用于向附近角色广播开始表现。
+        SkillCastStartNtf start_notice;
+        // 吟唱已经占用施法段，技能态只结算动作段时长。
+        if (!CommitCast(prepared, true, out result, out start_notice))
+        {
+            SkillCastReply.Send(Owner, result);
+            Finish();
+            return;
+        }
+        SkillCastReply.Send(Owner, result);
+        if (start_notice != null)
+        {
+            RoleManager.Instance.BroadcastSkillStart(Owner, start_notice);
+        }
+    }
+
+    /// <summary>
+    /// 每帧前置检查：角色缺失、离线或血量归零时按中断收尾，
+    /// 结束通知带中断标记，已扣 MP/CD 不退还。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    protected override void PreUpdate(int deltaMilliseconds)
+    {
+        if (IsFinished())
+        {
+            return;
+        }
+        if (CanKeepCasting())
+        {
+            return;
+        }
+        Stop(StateDefine.kStateDefault, null);
+    }
+
+    /// <summary>技能动作逐帧推进，到期后自然结束，由状态机把当前态切回默认态。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    protected override void OnUpdate(int deltaMilliseconds)
+    {
+        if (!IsCasting())
+        {
+            Finish();
+            return;
+        }
+        if (!skill_.Update(deltaMilliseconds))
+        {
+            Finish();
+        }
+    }
+
+    /// <summary>自然结束：广播一次非中断结束通知，已扣 MP/CD 不退还。</summary>
+    protected override void OnFinished()
+    {
+        EndSkill(false);
+    }
+
+    /// <summary>被打断（移动、死亡、离线、销毁）：广播一次带中断标记的结束通知。</summary>
+    /// <param name="next">即将进入的状态。</param>
+    /// <param name="args">触发停止的事件。</param>
+    protected override void OnStop(StateDefine next, ROEvent args)
+    {
+        EndSkill(true);
+    }
+
+    /// <summary>角色与角色数据可用且血量大于零时技能动作可以继续。</summary>
+    private bool CanKeepCasting()
+    {
+        if (Owner == null || Owner.mainRoleInfo == null || Owner.mainRoleInfo.BaseInfo == null)
+        {
+            return false;
+        }
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        {
+            return false;
+        }
+        return Owner.State == OnlineRoleState.Online;
+    }
 
     /// <summary>检查当前动作是否可由该核心接管，并检查单技能及公共组冷却。</summary>
     /// <param name="core">已经装载的主动技能核心。</param>
@@ -251,25 +432,74 @@ public abstract class ROSkillComponent : RoleComponentBase
     public bool TryCast(SkillCastReq request, out SkillCastRet result,
         out SkillCastStartNtf startNotice)
     {
+        return TryCast(request, false, out result, out startNotice);
+    }
+
+    /// <summary>
+    /// 兼容直调入口：非提交校验、一次性提交 MP/CD 与建立动作实例在同一调用内完成。
+    /// 正式客户端链路不经过这里，而是由状态机把 kActionSkill 事件交给本组件，
+    /// 走 OnGetEvent/OnStart 的同一条 PrepareCast + CommitCast 路径；
+    /// 本重载只保留给既有直调调用方，不参与正式事件链。
+    /// </summary>
+    /// <param name="request">只携 RO 式技能 UUID 和稳定技能 ID 的请求。</param>
+    /// <param name="singingCommitted">
+    /// true 表示施法段已由吟唱占用，本次只计算动作段时长；
+    /// false 表示同步直调入口，沿用施法加后摇的合计时长。
+    /// </param>
+    /// <param name="result">成功或拒绝时均携带权威 MP/CD 的响应。</param>
+    /// <param name="startNotice">成功时生成的表现开始通知；拒绝时为空。</param>
+    /// <returns>MP/CD 已同时提交并以请求 UUID 建立活动施法时返回 true。</returns>
+    public bool TryCast(SkillCastReq request, bool singingCommitted, out SkillCastRet result,
+        out SkillCastStartNtf startNotice)
+    {
         startNotice = null;
-        // UTC 只供客户端对时；CD 和施法结束判断始终使用单调逻辑 Tick。
-        long serverUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        // 当前逻辑 Tick 在网络队列消费阶段保持不变，同帧请求按队列顺序结算。
-        long nowTick = GameGlobal.Instance.LogicTick;
-        result = new SkillCastRet
-        {
-            CmdCode = CmdCode.ReqParamError,
-            ServerTimeUnixMs = serverUnixMilliseconds,
-            CurrentMp = GetCurrentMp()
-        };
         if (request == null)
+        {
+            result = SkillCastReply.Build(Owner, 0, 0UL, CmdCode.ReqParamError);
+            return false;
+        }
+        // prepared 是直调路径下校验通过后的提交数据，被拒绝时为空、不会进入提交。
+        PreparedCast prepared;
+        if (!PrepareCast(request.SkillId, request.SkillUuid, out prepared, out result))
         {
             return false;
         }
+        return CommitCast(prepared, singingCommitted, out result, out startNotice);
+    }
 
-        result.SkillUuid = request.SkillUuid;
-        result.SkillId = request.SkillId;
-        if (request.SkillUuid == 0UL || request.SkillId <= 0)
+    /// <summary>
+    /// 客户端入口的非提交校验：未学、配置缺失、冷却、MP 不足、状态不允许等条件在这里尽早拒绝，
+    /// 调用方据此直接回包，不派发事件、不进入读条、不扣 MP 与 CD。
+    /// </summary>
+    /// <param name="skill_id">请求的稳定技能主表 ID。</param>
+    /// <param name="skill_uuid">请求携带的客户端施法标识。</param>
+    /// <param name="result">失败时的明确拒绝结果，回带原技能标识与权威 MP。</param>
+    /// <returns>全部校验通过返回 true。</returns>
+    public bool CheckCastRequest(int skill_id, ulong skill_uuid, out SkillCastRet result)
+    {
+        // prepared 是校验通过后暂存的提交数据；被拒绝时保持为空，调用方不会消费到半份数据。
+        PreparedCast prepared;
+        return PrepareCast(skill_id, skill_uuid, out prepared, out result);
+    }
+
+    /// <summary>
+    /// 非提交校验：把一次施法请求的全部拒绝条件走完，但不扣 MP、不写冷却、不建立动作实例。
+    /// 客户端入口与技能态进入前共用这一份判定，不另建第二套通用校验层。
+    /// </summary>
+    /// <param name="skill_id">请求的稳定技能主表 ID。</param>
+    /// <param name="skill_uuid">请求携带的客户端施法标识。</param>
+    /// <param name="prepared">校验通过时的提交数据；失败时为空。</param>
+    /// <param name="result">失败时的明确拒绝结果，回带原技能标识与权威 MP。</param>
+    /// <returns>全部校验通过返回 true。</returns>
+    private bool PrepareCast(int skill_id, ulong skill_uuid, out PreparedCast prepared,
+        out SkillCastRet result)
+    {
+        prepared = null;
+        // UTC 只供客户端对时；CD 和施法结束判断始终使用单调逻辑 Tick。
+        long server_unix_ms = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        result = SkillCastReply.Build(Owner, skill_id, skill_uuid, CmdCode.ReqParamError);
+        result.ServerTimeUnixMs = server_unix_ms;
+        if (skill_uuid == 0UL || skill_id <= 0)
         {
             return false;
         }
@@ -300,21 +530,21 @@ public abstract class ROSkillComponent : RoleComponentBase
             InterruptActiveCast(false);
         }
         // 主表类别决定滑行取消规则；普通技能继续使用编辑器导出的互断名单。
-        SkillInfo skillDefinition = LubanMgr.Instance.GetSkillInfoById(request.SkillId);
-        if (!CheckDoSkill(skillDefinition, request.SkillUuid))
+        SkillInfo skill_definition = LubanMgr.Instance.GetSkillInfoById(skill_id);
+        if (!CheckDoSkill(skill_definition, skill_uuid))
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
 
         // 学习等级只能来自中心服 11080；客户端不能指定等级或效果 ID。
-        int learnedLevel = GetLearnedLevel(request.SkillId);
-        if (learnedLevel <= 0)
+        int learned_level = GetLearnedLevel(skill_id);
+        if (learned_level <= 0)
         {
             return Reject(result, CmdCode.SkillNotLearned);
         }
 
         // 主表只用于技能身份与取消权限，CD、MP 和伤害数值仍读取当前等级效果表。
-        ROSkillCore core = CheckAndAttachSkillCore(request.SkillId, learnedLevel);
+        ROSkillCore core = CheckAndAttachSkillCore(skill_id, learned_level);
         if (core == null)
         {
             return Reject(result, CmdCode.SkillConfigMissing);
@@ -322,111 +552,187 @@ public abstract class ROSkillComponent : RoleComponentBase
         // 本次请求只使用服务端学习等级解析并装载的核心效果。
         SkillEffectInfo effect = core.GetEffect();
         result.EffectId = core.SkillEffectID();
-        // 滑行按主表类别接入，仍走完整学习、职业、MP 和 CD 校验，不开放轻功类型。
         // 技能所属职业与当前角色职业不符时拒绝释放。
-        if (skillDefinition.JobId != Owner.mainRoleInfo.BaseInfo.JobId)
+        if (skill_definition.JobId != Owner.mainRoleInfo.BaseInfo.JobId)
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
         // 技能类型不属于近战、远程、召唤三类合法类型时拒绝释放。
-        if (skillDefinition.Type != 1 && skillDefinition.Type != 2 && skillDefinition.Type != 3)
+        if (skill_definition.Type != 1 && skill_definition.Type != 2 && skill_definition.Type != 3)
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
         // 无目标规则和冷却由同一释放组件验证，拒绝码沿用原协议。
-        CmdCode canSkillReason;
-        if (!CanSkill(core, out canSkillReason))
+        CmdCode can_skill_reason;
+        if (!CanSkill(core, out can_skill_reason))
         {
-            FillCooldownSnapshot(result, effect.CooldownGroupId, serverUnixMilliseconds);
-            return Reject(result, canSkillReason);
+            FillCooldownSnapshot(result, effect.CooldownGroupId, server_unix_ms);
+            return Reject(result, can_skill_reason);
         }
 
         // 拒绝结果也包含当前技能与公共组的剩余 CD 快照。
-        FillCooldownSnapshot(result, effect.CooldownGroupId, serverUnixMilliseconds);
+        FillCooldownSnapshot(result, effect.CooldownGroupId, server_unix_ms);
         if (result.CurrentMp < effect.MpCost)
         {
+            return Reject(result, CmdCode.SkillInsufficientMp);
+        }
+
+        prepared = new PreparedCast();
+        prepared.skill_id_ = skill_id;
+        prepared.skill_uuid_ = skill_uuid;
+        prepared.core_ = core;
+        prepared.effect_ = effect;
+        return true;
+    }
+
+    /// <summary>
+    /// 一次性提交：扣蓝、写单技能与公共组冷却、建立动作实例，并生成权威结果与开始通知。
+    /// 校验已在 PrepareCast 完成，这里只补一次提交瞬间的权威数据复核。
+    /// </summary>
+    /// <param name="prepared">非提交校验产出的提交数据。</param>
+    /// <param name="singing_committed">true 表示施法段已由吟唱占用，只结算动作段时长。</param>
+    /// <param name="result">成功结果，或提交瞬间复核失败时的拒绝结果。</param>
+    /// <param name="start_notice">成功时的开始表现通知，失败时为空。</param>
+    /// <returns>MP/CD 已提交并建立动作实例时返回 true。</returns>
+    private bool CommitCast(PreparedCast prepared, bool singing_committed,
+        out SkillCastRet result, out SkillCastStartNtf start_notice)
+    {
+        start_notice = null;
+        if (prepared == null)
+        {
+            result = SkillCastReply.Build(Owner, 0, 0UL, CmdCode.ReqParamError);
+            return false;
+        }
+        // 提交瞬间重新采样 UTC 与逻辑 Tick，结果与开始通知使用同一份时间。
+        long server_unix_ms = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // now_tick 是当前逻辑帧的毫秒计数值，作为冷却与动作到期的统一时间基准。
+        long now_tick = GameGlobal.Instance.LogicTick;
+        result = SkillCastReply.Build(Owner, prepared.skill_id_, prepared.skill_uuid_,
+            CmdCode.ReqParamError);
+        result.ServerTimeUnixMs = server_unix_ms;
+        result.EffectId = prepared.core_.SkillEffectID();
+        // 吟唱期间角色可能离线、阵亡或被扣蓝，提交前必须用权威内存值再核一次。
+        if (Owner == null || Owner.mainRoleInfo == null || Owner.mainRoleInfo.BaseInfo == null)
+        {
+            return Reject(result, CmdCode.SkillStateBlocked);
+        }
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        {
+            return Reject(result, CmdCode.SkillStateBlocked);
+        }
+        if (result.CurrentMp < prepared.effect_.MpCost)
+        {
+            FillCooldownSnapshot(result, prepared.effect_.CooldownGroupId, server_unix_ms);
             return Reject(result, CmdCode.SkillInsufficientMp);
         }
 
         if (IsCasting())
         {
             // 新技能的全部拒绝条件已验证；只有真正可提交的请求才能中断旧 UUID。
-            // 先发旧技能 End，再由处理器回结果和发新技能 Start；已扣的 MP/CD 不退还。
+            // 先发旧技能 End，再由本方法回结果和发新技能 Start；已扣的 MP/CD 不退还。
             InterruptActiveCast(true);
         }
 
         // 当前职业模型与默认武器的表现列表，对应 RO GetUsingTimes 的动作列表取模。
-        List<SkillPresentationInfo> presentations = FindPresentations(effect.Id);
+        List<SkillPresentationInfo> presentations = FindPresentations(prepared.effect_.Id);
         // 只有全部校验通过后才推进；拒绝请求不能消耗下一段动作。
-        int usingTimes = CheckUsingTimes(request.SkillId, nowTick, presentations.Count);
+        int using_times = CheckUsingTimes(prepared.skill_id_, now_tick, presentations.Count);
         // 单动作技能沿用施法与后摇；多动作技能按本段状态时间结束占用，动画长度独立保留。
-        int castDurationMilliseconds = effect.CastMs + effect.RecoveryMs;
-        if (presentations.Count > 1)
+        // 吟唱已占用施法段时，这里只剩动作段，不能把 CastMs 再算一遍。
+        int cast_duration_ms = prepared.effect_.RecoveryMs;
+        if (!singing_committed)
+        {
+            cast_duration_ms = prepared.effect_.CastMs + prepared.effect_.RecoveryMs;
+        }
+        // use_presentation 表示是否存在多段表现配置，只有多段时才需要按下标挑选。
+        bool use_presentation = presentations.Count > 1;
+        if (singing_committed && presentations.Count > 0)
+        {
+            use_presentation = true;
+        }
+        if (use_presentation)
         {
             // 本次选中的表现段保留原配置引用；零状态时间兼容旧行，仍按完整动画时长结束。
-            SkillPresentationInfo selectedPresentation = presentations[usingTimes];
-            castDurationMilliseconds = selectedPresentation.DurationMs;
-            if (selectedPresentation.SkillStateTimeMs > 0)
+            SkillPresentationInfo selected = presentations[using_times];
+            cast_duration_ms = selected.DurationMs;
+            if (selected.SkillStateTimeMs > 0)
             {
-                castDurationMilliseconds = selectedPresentation.SkillStateTimeMs;
+                cast_duration_ms = selected.SkillStateTimeMs;
             }
         }
 
         // 所有拒绝条件已结束；同一逻辑线程内一次性提交 MP、单技能 CD 与组 CD。
-        Owner.mainRoleInfo.BaseInfo.CurrMp -= effect.MpCost;
-        result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;
-        SetSkillCoolDown(request.SkillId, effect.CooldownMs);
-        if (effect.CooldownGroupId > 0)
+        Owner.mainRoleInfo.BaseInfo.CurrMp -= prepared.effect_.MpCost;
+        SetSkillCoolDown(prepared.skill_id_, prepared.effect_.CooldownMs);
+        if (prepared.effect_.CooldownGroupId > 0)
         {
-            SetSkillGroupCoolDown(effect.CooldownGroupId, effect.GroupCooldownMs);
+            SetSkillGroupCoolDown(prepared.effect_.CooldownGroupId, prepared.effect_.GroupCooldownMs);
         }
 
-        FireSkill(core, request.SkillUuid, castDurationMilliseconds, usingTimes);
+        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times);
 
         result.CmdCode = CmdCode.Succeed;
-        result.CastDurationMs = castDurationMilliseconds;
-        result.UsingTimes = usingTimes;
-        FillCooldownSnapshot(result, effect.CooldownGroupId, serverUnixMilliseconds);
-        startNotice = new SkillCastStartNtf
+        result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;
+        result.CastDurationMs = cast_duration_ms;
+        result.UsingTimes = using_times;
+        FillCooldownSnapshot(result, prepared.effect_.CooldownGroupId, server_unix_ms);
+        start_notice = new SkillCastStartNtf
         {
             CasterRoleId = (int)Owner.GetID(),
-            SkillUuid = skill_.GetSkillUUID(),
-            SkillId = request.SkillId,
-            EffectId = effect.Id,
-            StartServerTimeUnixMs = serverUnixMilliseconds,
-            CastDurationMs = castDurationMilliseconds,
-            UsingTimes = usingTimes
+            SkillUuid = prepared.skill_uuid_,
+            SkillId = prepared.skill_id_,
+            EffectId = prepared.effect_.Id,
+            StartServerTimeUnixMs = server_unix_ms,
+            CastDurationMs = cast_duration_ms,
+            UsingTimes = using_times
         };
         return true;
     }
 
-    /// <summary>固定帧到期后广播正常结束；角色死亡或离线时停止当前动作。</summary>
+    /// <summary>
+    /// 组件容器每帧调用。技能态是状态机当前状态时，动作推进统一由 StateMachineComponent.StateUpdate 驱动，
+    /// 这里必须直接返回，否则同一逻辑帧会推进两次动作。
+    /// 冷却不在这里推进：单技能冷却与公共组冷却都记在单调逻辑 Tick 上，由全局 Tick 决定何时到期，
+    /// 本方法只承担未进入状态机的兼容直调路径。
+    /// </summary>
     /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，当前结束判断使用全局 Tick。</param>
     public override void Update(int deltaMilliseconds)
     {
+        if (IsDrivenByStateMachine())
+        {
+            return;
+        }
         if (!IsCasting())
         {
             return;
         }
-        // 归属角色或主角色信息缺失时停止当前动作。
-        if (Owner == null || Owner.mainRoleInfo == null)
+        // 归属角色、主角色信息、血量或在线状态不满足时停止当前动作。
+        if (!CanKeepCasting())
         {
             StopAll();
             return;
         }
-        // 基础信息缺失、血量已空或角色已离线时停止当前动作。
-        if (Owner.mainRoleInfo.BaseInfo == null || Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 ||
-            Owner.State != OnlineRoleState.Online)
-        {
-            StopAll();
-            return;
-        }
-        OnUpdate(deltaMilliseconds);
+        OnSkillActionUpdate(deltaMilliseconds);
     }
 
-    /// <summary>对应 RO 当前技能动作推进；自然到期通过同一 SkillCease 收尾。</summary>
+    /// <summary>本组件当前是否是状态机的活动状态，即推进是否已由状态机接管。</summary>
+    private bool IsDrivenByStateMachine()
+    {
+        // machine 是本角色的状态机；空表示角色未装配状态机，只能走兼容直调路径。
+        StateMachineComponent machine = GetStateMachine();
+        if (machine == null)
+        {
+            return false;
+        }
+        return ReferenceEquals(machine.GetCurrent(), this);
+    }
+
+    /// <summary>
+    /// 对应 RO 当前技能动作推进；自然到期通过同一 SkillCease 收尾。
+    /// 仅用于未进入状态机的兼容直调路径，避免与 ActionStateComponent 的每帧状态钩子重复推进。
+    /// </summary>
     /// <param name="delta_time">固定逻辑帧的毫秒跨度。</param>
-    protected void OnUpdate(int delta_time)
+    protected void OnSkillActionUpdate(int delta_time)
     {
         if (!skill_.Update(delta_time))
         {
@@ -614,16 +920,6 @@ public abstract class ROSkillComponent : RoleComponentBase
     /// <returns>当前非负法力值；角色快照尚未就绪时为零。</returns>
     private int GetCurrentMp()
     {
-        // 归属角色或主角色信息缺失时按零法力处理。
-        if (Owner == null || Owner.mainRoleInfo == null)
-        {
-            return 0;
-        }
-        // 基础信息缺失或法力值为负时按零法力处理。
-        if (Owner.mainRoleInfo.BaseInfo == null || Owner.mainRoleInfo.BaseInfo.CurrMp < 0)
-        {
-            return 0;
-        }
-        return Owner.mainRoleInfo.BaseInfo.CurrMp;
+        return SkillCastReply.ReadMp(Owner);
     }
 }

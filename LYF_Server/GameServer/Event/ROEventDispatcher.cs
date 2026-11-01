@@ -46,6 +46,13 @@ public sealed class ROEventDispatcher
         new Dictionary<ROEventDefine, List<ROEventListenerEntry>>();
 
     /// <summary>
+    /// 派发快照缓冲池；派发是多监听时才需要快照，用池化缓冲避免每次派发都产生一个数组。
+    /// 嵌套派发会各自借走一块，因此缓冲池深度等于最大嵌套层数。
+    /// </summary>
+    private readonly Stack<List<ROEventListenerEntry>> snapshot_pool_ =
+        new Stack<List<ROEventListenerEntry>>();
+
+    /// <summary>
     /// 注册事件监听；同一监听者对同一事件重复注册时替换原回调，不叠加调用。
     /// </summary>
     /// <param name="event_type">监听的事件类型。</param>
@@ -125,35 +132,96 @@ public sealed class ROEventDispatcher
     /// 派发前复制一份登记快照，因此本轮不纳入派发开始后新注册的条目；
     /// 已被快照引用的条目若在本轮内被解除或替换，回调置空或换新后立即可见。
     /// 同类型事件在回调中再次派发时，嵌套那次同样按当前表重新取快照。
+    /// 派发期间派发器自己持有一个引用（对应 RO 传 SPType 引用形参的语义），
+    /// 因此回调里提前 Release 调用方引用也不会让事件在派发途中被回收。
     /// </summary>
-    /// <param name="evt">待派发的事件对象，为空时直接返回。</param>
+    /// <param name="evt">待派发的事件对象，为空或已归还对象池时直接返回。</param>
     public void DispatcherEvent(ROEvent evt)
     {
         if (evt == null)
         {
             return;
         }
-
-        ROEventDefine event_type = evt.GetEventType();
-        List<ROEventListenerEntry> it_listener;
-        if (!hash_sp_event_handler_.TryGetValue(event_type, out it_listener))
+        // 已归还对象池的事件引用计数为零，AddRef 会拒绝，这里直接不派发。
+        if (!evt.AddRef())
         {
             return;
         }
-
-        // 快照只固定本轮开始时的登记顺序与条目引用，不复制回调内容。
-        ROEventListenerEntry[] snapshot = it_listener.ToArray();
-        // 当前遍历到的快照下标，范围为零到快照长度减一。
-        for (int index = 0; index < snapshot.Length; index++)
+        try
         {
-            // 本轮取出的登记引用；回调被置空说明它在本轮内被解除，直接跳过。
-            ROEventListenerEntry entry_ptr = snapshot[index];
-            if (entry_ptr.callback == null)
+            // event_type 是本次派发的事件类型，也是监听表 hash_sp_event_handler_ 的键，取一次复用。
+            ROEventDefine event_type = evt.GetEventType();
+            // it_listener 是该类型当前的登记列表（按登记顺序），为 null 说明没人监听，直接返回。
+            List<ROEventListenerEntry> it_listener;
+            if (!hash_sp_event_handler_.TryGetValue(event_type, out it_listener))
             {
-                continue;
+                return;
             }
-            entry_ptr.callback(evt);
+
+            // 单监听快路径：最常见的情况是一条登记，直接调用，不复制快照、不占缓冲。
+            if (it_listener.Count == 1)
+            {
+                // single_entry 是唯一一条登记，直接取本地变量调用，省掉快照复制与池缓冲。
+                ROEventListenerEntry single_entry = it_listener[0];
+                if (single_entry.callback != null)
+                {
+                    single_entry.callback(evt);
+                }
+                return;
+            }
+
+            // 多监听：从复用缓冲池取一块快照缓冲，只固定本轮开始时的登记顺序与条目引用。
+            List<ROEventListenerEntry> snapshot = RentSnapshotBuffer();
+            try
+            {
+                snapshot.AddRange(it_listener);
+                // 当前遍历到的快照下标，范围为零到快照长度减一。
+                for (int index = 0; index < snapshot.Count; index++)
+                {
+                    // 本轮取出的登记引用；回调被置空说明它在本轮内被解除，直接跳过。
+                    ROEventListenerEntry entry_ptr = snapshot[index];
+                    if (entry_ptr.callback == null)
+                    {
+                        continue;
+                    }
+                    entry_ptr.callback(evt);
+                }
+            }
+            finally
+            {
+                ReturnSnapshotBuffer(snapshot);
+            }
         }
+        finally
+        {
+            evt.Release();
+        }
+    }
+
+    /// <summary>取一块空的快照缓冲；缓冲池为空时新建，嵌套派发各自独占一块。</summary>
+    /// <returns>已清空的登记缓冲列表。</returns>
+    private List<ROEventListenerEntry> RentSnapshotBuffer()
+    {
+        if (snapshot_pool_.Count == 0)
+        {
+            return new List<ROEventListenerEntry>();
+        }
+        // buffer 是从池里取出、即将复用的本层派发快照，必须先清空上一轮的登记引用。
+        List<ROEventListenerEntry> buffer = snapshot_pool_.Pop();
+        buffer.Clear();
+        return buffer;
+    }
+
+    /// <summary>归还快照缓冲并清空内容，断开对已解除登记的引用。</summary>
+    /// <param name="buffer">本轮派发用过的登记缓冲列表。</param>
+    private void ReturnSnapshotBuffer(List<ROEventListenerEntry> buffer)
+    {
+        if (buffer == null)
+        {
+            return;
+        }
+        buffer.Clear();
+        snapshot_pool_.Push(buffer);
     }
 
     /// <summary>

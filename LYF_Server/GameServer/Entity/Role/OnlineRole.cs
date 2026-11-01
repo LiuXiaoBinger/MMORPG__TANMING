@@ -139,12 +139,27 @@ public class OnlineRole
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
         _components.SetComponent(new RoleShopRecord(this));
-        // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放。
-        _components.SetComponent(new RoleSkillComponent(this));
-        // 施法请求组件只做事件转换，与技能组件同属当前在线角色的技能链路。
-        _components.SetComponent(new RoleSingingComponent(this));
+        // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放；
+        // 该组件同时是状态机里的技能动作状态，由吟唱结束派发的 kActionSkill 事件驱动。
+        RoleSkillComponent skill_component = new RoleSkillComponent(this);
+        _components.SetComponent(skill_component);
+        // 施法请求组件同时是状态机里的吟唱状态，与技能组件同属当前在线角色的技能链路。
+        RoleSingingComponent singing_component = new RoleSingingComponent(this);
+        _components.SetComponent(singing_component);
         // 移动上报沿用当前在线角色的正式组件容器，不使用未绑定世界的历史占位组件。
         _components.SetComponent(new ROMoveComponent(this));
+        // 状态机注册本项目真实存在的三个状态：默认态、吟唱态与技能动作态。
+        // 三者构成 default → singing → skill → default 的完整闭环，技能动作不再是状态机外的旁路。
+        StateMachineComponent state_machine = new StateMachineComponent(this);
+        // default_state 是状态机的默认态实例，同时是初始当前态，其他状态结束都回到它。
+        DefaultActionComponent default_state = new DefaultActionComponent(this);
+        state_machine.RegisterState(default_state);
+        state_machine.RegisterState(singing_component);
+        state_machine.RegisterState(skill_component);
+        state_machine.SetDefaultState(default_state);
+        _components.SetComponent(state_machine);
+        // 状态互斥切换组件只承载"先退旧状态"的异步请求，不参与每帧表现。
+        _components.SetComponent(new StateTransferComponent(this));
         _components.Initialize();
         _componentsInitialized = true;
     }
@@ -164,9 +179,12 @@ public class OnlineRole
    
 
     /// <summary>角色固定帧更新和组件更新均只在逻辑线程执行。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，由 GameGlobal 固定帧统一给出。</param>
     public void Update(int deltaMilliseconds)
     {
         _components.Update(deltaMilliseconds);
+        // 后置阶段对应 RO 的 LateUpdate：吟唱请求队列在技能动作推进之后再取队首重试。
+        _components.LateUpdate(deltaMilliseconds);
         _roleNetSender.Update(deltaMilliseconds);
         _perSecondElapsedMilliseconds += deltaMilliseconds;
         if (_perSecondElapsedMilliseconds >= 1000)
@@ -298,6 +316,12 @@ public class OnlineRole
         if (TryGetComponent(out skillComponent))
         {
             skillComponent.InterruptActiveCast(true);
+        }
+        // 离线同时强制回到默认态，避免重连后仍停留在吟唱状态。
+        StateMachineComponent state_machine;
+        if (TryGetComponent(out state_machine))
+        {
+            state_machine.ForceToDefaultState(true);
         }
         State = OnlineRoleState.Offline;
         // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。

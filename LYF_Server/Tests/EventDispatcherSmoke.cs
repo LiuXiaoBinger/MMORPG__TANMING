@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using Google.Protobuf;
 
 /// <summary>
@@ -12,6 +13,15 @@ using Google.Protobuf;
 /// </summary>
 public static class EventDispatcherSmoke
 {
+    /// <summary>
+    /// GameGlobal.LogicTick 的自动属性后备字段。技能动作期限按逻辑 Tick 判定，
+    /// 独立测试进程不跑 GameGlobal.Update，只能用反射推进这一计时基准；
+    /// 边界仅限本测试进程，正式代码不含任何测试入口。
+    /// </summary>
+    private static readonly FieldInfo LogicTickField =
+        typeof(GameGlobal).GetField("<LogicTick>k__BackingField",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+
     /// <summary>记录回调次数的探针监听者，实现监听身份接口以获得独立登记。</summary>
     private sealed class ProbeListener : IROEventListener
     {
@@ -53,6 +63,7 @@ public static class EventDispatcherSmoke
     {
         try
         {
+            // result 是本轮用例的返回码：非零立即向上返回，失败用例不会被后续用例掩盖。
             int result = CheckRegisterAndDispatch();
             if (result != 0)
             {
@@ -94,6 +105,21 @@ public static class EventDispatcherSmoke
                 return result;
             }
             result = CheckEventDrivesRealSkillCast();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckMoveInterruptRepliesTerminal();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckQueueFullRepliesTerminal();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckQueueTimeoutRepliesTerminal();
             if (result != 0)
             {
                 return result;
@@ -271,23 +297,69 @@ public static class EventDispatcherSmoke
         return 0;
     }
 
-    /// <summary>用例八：角色 Dispose 清理派发器，施法请求组件释放后不再转发事件。</summary>
+    /// <summary>
+    /// 用例八：角色 Dispose 清理派发器，施法请求组件释放后不再转发事件。
+    /// 角色按正式登录后的组件装配顺序构建（状态机 + 技能组件 + 施法请求组件），
+    /// 用真实的客户端施法事件驱动，断言的是"请求事件被转发为吟唱事件"这条链路，
+    /// 而不是脱离状态机后的空派发——否则无法证明组件解除监听的时机正确。
+    /// </summary>
     private static int CheckRoleDisposeAndComponentUnregister()
     {
+        // 吟唱开始要读技能效果表，与正式进程一样先加载配置。
+        LubanMgr.Instance.Init();
+
+        // role 是在线角色本体，组件装配、事件派发与销毁都作用在它身上。
         OnlineRole role = new OnlineRole();
+        role.mainRoleInfo = new MainRoleInfo();
+        role.mainRoleInfo.BaseInfo = new RoleBaseInfo();
+        role.mainRoleInfo.BaseInfo.RoleId = 910002;
+        role.mainRoleInfo.BaseInfo.JobId = 1;
+        role.mainRoleInfo.BaseInfo.CurrHp = 1000;
+        role.mainRoleInfo.BaseInfo.MaxHp = 1000;
+        role.mainRoleInfo.BaseInfo.CurrMp = 500;
+        role.mainRoleInfo.BaseInfo.MaxMp = 500;
+        role.InitSerializes();
+        role.InitializeSaveVersion(0L);
+        role.CompleteRoleDataLoad();
+
+        // skill_component 是角色的技能组件，用来装载中心服学习快照；取不到说明装配顺序有问题。
+        RoleSkillComponent skill_component;
+        if (!role.TryGetComponent(out skill_component))
+        {
+            return Fail("角色未注册技能组件");
+        }
+        // learned_skills 是中心服技能列表回包，这里只放一条 10010 一级技能作为施法前置。
+        RoleSkillInfoRet learned_skills = new RoleSkillInfoRet();
+        learned_skills.CmdCode = CmdCode.Succeed;
+        // learned_row 是列表中的一条学习记录，技能 ID 与等级必须与技能主表一致。
+        RoleSkillInfo learned_row = new RoleSkillInfo();
+        learned_row.SkillId = 10010;
+        learned_row.Level = 1;
+        learned_skills.RoleSkillInfoList.Add(learned_row);
+        if (!skill_component.LoadLearnedSkills(learned_skills))
+        {
+            return Fail("技能装载失败，无法驱动吟唱");
+        }
+
+        // singing_probe 挂在 kActionSinging 上，统计请求事件有没有被转发成吟唱事件。
         ProbeListener singing_probe = new ProbeListener();
         role.GetEventDispatcher().AddEventListener(ROEventDefine.kActionSinging, singing_probe, singing_probe.OnEvent);
 
-        RoleSingingComponent singing_component = new RoleSingingComponent(role);
-        singing_component.Initialize();
-        role.GetEventDispatcher().DispatcherEvent(new ROClientFireSkillArgs());
+        // 未释放时：请求事件必须被转发为一次吟唱事件。
+        DispatchClientFireSkill(role, 10010, 1UL);
         if (singing_probe.count_ != 1)
         {
             return Fail("施法请求组件未把事件转发为吟唱事件，次数 " + singing_probe.count_);
         }
 
+        // singing_component 是施法请求组件，本用例要手动释放它来验证解除监听。
+        RoleSingingComponent singing_component;
+        if (!role.TryGetComponent(out singing_component))
+        {
+            return Fail("角色未注册施法请求组件");
+        }
         singing_component.Dispose();
-        role.GetEventDispatcher().DispatcherEvent(new ROClientFireSkillArgs());
+        DispatchClientFireSkill(role, 10010, 2UL);
         if (singing_probe.count_ != 1)
         {
             return Fail("施法请求组件释放后仍转发事件，次数 " + singing_probe.count_);
@@ -317,7 +389,9 @@ public static class EventDispatcherSmoke
         using (LoopbackGate gate = new LoopbackGate())
         {
             // 待验证的在线角色，装配顺序与正式登录后的角色一致。
-            OnlineRole role = CreateCastingRole(gate, 910001);
+            int role_id = 910001;
+            // role 是按本机环回会话装配出来的施法角色，回包会写到本用例可读的一端。
+            OnlineRole role = CreateCastingRole(gate, role_id);
             if (role == null)
             {
                 return Fail("在线角色装配失败");
@@ -326,11 +400,14 @@ public static class EventDispatcherSmoke
             // 首次施法前的权威 MP，主表配置为 500，成功一次扣 20。
             int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
 
+            // cast_result 是入口调用返回码，非零表示命令构造或会话解析失败。
             int cast_result = InvokeSkillCastHandler(gate, role, 10010, 7UL);
             if (cast_result != 0)
             {
                 return cast_result;
             }
+            // 入口现在先进入吟唱：必须显式推进逻辑帧，读到 CastMs 后才会派发攻击动作并回包。
+            AdvanceLogicFrames(role, SingingFramesFor10010);
 
             // 第一帧必须是权威结果：成功、回带技能标识、MP 已扣、冷却已下发。
             BasePackage result_package;
@@ -342,6 +419,7 @@ public static class EventDispatcherSmoke
             {
                 return Fail("第一帧应为施法结果，实际协议号 " + result_package.ProtoCode);
             }
+            // ret 是第一帧解析出的施法结果，用于断言成功码、回带标识与权威 MP。
             SkillCastRet ret = SkillCastRet.Parser.ParseFrom(result_package.Data);
             if (ret.CmdCode != CmdCode.Succeed)
             {
@@ -374,6 +452,7 @@ public static class EventDispatcherSmoke
             {
                 return Fail("第二帧应为开始通知，实际协议号 " + start_package.ProtoCode);
             }
+            // start_notice 是第二帧解析出的开始表现通知，用于断言回包顺序与施法者身份。
             SkillCastStartNtf start_notice = SkillCastStartNtf.Parser.ParseFrom(start_package.Data);
             if (start_notice.SkillId != 10010)
             {
@@ -388,12 +467,13 @@ public static class EventDispatcherSmoke
                 return Fail("开始通知施法者应为 " + role.GetID() + "，实际 " + start_notice.CasterRoleId);
             }
 
-            // 拒绝分支：同一技能立即二次释放，由既有冷却校验拒绝，不进入开始表现。
+            // 拒绝分支：同一技能立即二次释放，由既有冷却校验在入口直接拒绝。
             int reject_result = InvokeSkillCastHandler(gate, role, 10010, 8UL);
             if (reject_result != 0)
             {
                 return reject_result;
             }
+            // 入口非提交校验必须尽早拒绝：不派发事件、不读条，因此这里不再推进任何逻辑帧。
             BasePackage reject_package;
             if (!gate.TryReadFrame(out reject_package, 2000))
             {
@@ -403,6 +483,7 @@ public static class EventDispatcherSmoke
             {
                 return Fail("拒绝分支第一帧应为施法结果，实际协议号 " + reject_package.ProtoCode);
             }
+            // reject_ret 是拒绝分支的施法结果，用于断言不扣蓝且回带本次施法标识。
             SkillCastRet reject_ret = SkillCastRet.Parser.ParseFrom(reject_package.Data);
             if (reject_ret.CmdCode == CmdCode.Succeed)
             {
@@ -430,7 +511,292 @@ public static class EventDispatcherSmoke
 
             // 角色释放后派发器清空，避免残留回调引用。
             role.Dispose();
+            RoleManager.Instance.RemoveOnlineRole(role_id);
             return 0;
+        }
+    }
+
+    /// <summary>
+    /// 用例十：吟唱中主动移动打断，客户端必须收到一条明确的终态结果，
+    /// 回带原技能标识与施法标识，不扣蓝、不发开始表现，也不重复终结同一请求。
+    /// </summary>
+    private static int CheckMoveInterruptRepliesTerminal()
+    {
+        LubanMgr.Instance.Init();
+        // gate 是本用例的环回网关通道，提供真实会话并承载服务端真实写出的协议帧。
+        using (LoopbackGate gate = new LoopbackGate())
+        {
+            // role_id 是本用例独占的角色 ID，避免与其它用例的在线索引互相冲突。
+            int role_id = 910003;
+            // role 是装配完成并已加入在线索引的施法角色。
+            OnlineRole role = CreateCastingRole(gate, role_id);
+            if (role == null)
+            {
+                return Fail("在线角色装配失败");
+            }
+            // initial_mp 是进入吟唱前的权威 MP，被打断后必须保持不变。
+            int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
+
+            // 进入吟唱，此时客户端还没有任何回包。
+            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 21UL);
+            if (enter_result != 0)
+            {
+                return enter_result;
+            }
+            // pending_package 用于确认吟唱期间不应提前回包，读到帧即判失败。
+            BasePackage pending_package;
+            if (gate.TryReadFrame(out pending_package, 300))
+            {
+                return Fail("吟唱期间不应提前回包，实际收到协议号 " + pending_package.ProtoCode);
+            }
+
+            // 移动打断吟唱：状态机 Stop 吟唱态，必须立刻给出终态。
+            ROMoveComponent move_component;
+            if (!role.TryGetComponent(out move_component))
+            {
+                return Fail("角色未注册移动组件");
+            }
+            // move_request 是构造的移动上报，IsMoving 为真代表玩家主动移动。
+            MoveOperationReq move_request = new MoveOperationReq();
+            move_request.IsMoving = true;
+            move_request.Dx = 1f;
+            move_request.Dy = 0f;
+            move_request.Dz = 2f;
+            move_component.OnMoveStart(move_request);
+
+            // terminal_package 是吟唱被打断后应立刻收到的终态回包。
+            BasePackage terminal_package;
+            if (!gate.TryReadFrame(out terminal_package, 2000))
+            {
+                return Fail("吟唱被打断后未收到终态回包");
+            }
+            if (terminal_package.ProtoCode != NetDefine.CMD_SkillCastCode)
+            {
+                return Fail("吟唱被打断的第一帧应为施法结果，实际协议号 " + terminal_package.ProtoCode);
+            }
+            // terminal 是终态结果，用于断言非成功码且回带原技能标识与施法标识。
+            SkillCastRet terminal = SkillCastRet.Parser.ParseFrom(terminal_package.Data);
+            if (terminal.CmdCode == CmdCode.Succeed)
+            {
+                return Fail("被打断的吟唱不应回成功结果");
+            }
+            if (terminal.SkillUuid != 21UL || terminal.SkillId != 10010)
+            {
+                return Fail("终态结果应回带原技能标识与施法标识，实际 " +
+                    terminal.SkillId + "/" + terminal.SkillUuid);
+            }
+            if (terminal.CurrentMp != initial_mp)
+            {
+                return Fail("被打断的吟唱不应扣蓝，回包 MP " + terminal.CurrentMp);
+            }
+            if (role.mainRoleInfo.BaseInfo.CurrMp != initial_mp)
+            {
+                return Fail("被打断的吟唱改动了角色 MP，实际 " + role.mainRoleInfo.BaseInfo.CurrMp);
+            }
+
+            // 同一请求只终结一次，且不得产生开始或结束表现帧。
+            BasePackage extra_package;
+            if (gate.TryReadFrame(out extra_package, 300))
+            {
+                return Fail("被打断的吟唱不应再发任何表现帧，实际协议号 " + extra_package.ProtoCode);
+            }
+
+            role.Dispose();
+            RoleManager.Instance.RemoveOnlineRole(role_id);
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// 用例十一：吟唱期间请求队列达到上限后，被丢弃的请求必须收到明确终态，
+    /// 而不是静默消失；同时不得扣蓝、不得发开始表现。
+    /// </summary>
+    private static int CheckQueueFullRepliesTerminal()
+    {
+        LubanMgr.Instance.Init();
+        // gate 是本用例的环回网关通道，队列满的终态要写到这条真实连接上。
+        using (LoopbackGate gate = new LoopbackGate())
+        {
+            // role_id 是本用例独占的角色 ID，队列满用例单独占一个。
+            int role_id = 910004;
+            // role 是装配完成并已加入在线索引的施法角色。
+            OnlineRole role = CreateCastingRole(gate, role_id);
+            if (role == null)
+            {
+                return Fail("在线角色装配失败");
+            }
+            // initial_mp 是入队前的权威 MP，队列满丢弃请求不应扣蓝。
+            int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
+
+            // enter_result 是首个请求的入口返回码，非零直接返回。
+            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 31UL);
+            if (enter_result != 0)
+            {
+                return enter_result;
+            }
+
+            // 队列上限为 10：先塞满 10 个请求，第 11 个会被丢弃。
+            for (int index = 0; index < 10; index++)
+            {
+                // queued_result 是本次入队请求的入口返回码，队列未满时应为 0。
+                int queued_result = InvokeSkillCastHandler(gate, role, 10010, (ulong)(40 + index));
+                if (queued_result != 0)
+                {
+                    return queued_result;
+                }
+            }
+            // overflow_result 是第 11 个请求的入口返回码，入口本身仍然放行。
+            int overflow_result = InvokeSkillCastHandler(gate, role, 10010, 60UL);
+            if (overflow_result != 0)
+            {
+                return overflow_result;
+            }
+
+            // full_package 是被丢弃请求应立刻收到的终态回包。
+            BasePackage full_package;
+            if (!gate.TryReadFrame(out full_package, 2000))
+            {
+                return Fail("队列满被丢弃的请求未收到终态回包");
+            }
+            if (full_package.ProtoCode != NetDefine.CMD_SkillCastCode)
+            {
+                return Fail("队列满的终态应为施法结果，实际协议号 " + full_package.ProtoCode);
+            }
+            // full_ret 是队列满的终态结果，用于断言非成功码且回带被丢弃请求的施法标识。
+            SkillCastRet full_ret = SkillCastRet.Parser.ParseFrom(full_package.Data);
+            if (full_ret.CmdCode == CmdCode.Succeed)
+            {
+                return Fail("队列满被丢弃的请求不应回成功结果");
+            }
+            if (full_ret.SkillUuid != 60UL)
+            {
+                return Fail("队列满的终态应回带被丢弃请求的施法标识 60，实际 " + full_ret.SkillUuid);
+            }
+            if (role.mainRoleInfo.BaseInfo.CurrMp != initial_mp)
+            {
+                return Fail("队列满不应扣蓝，实际 MP " + role.mainRoleInfo.BaseInfo.CurrMp);
+            }
+
+            role.Dispose();
+            RoleManager.Instance.RemoveOnlineRole(role_id);
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// 用例十二：队列中的请求超过等待上限后被清理，必须收到明确终态，
+    /// 而不是一直悬挂到客户端超时。
+    /// </summary>
+    private static int CheckQueueTimeoutRepliesTerminal()
+    {
+        LubanMgr.Instance.Init();
+        // gate 是本用例的环回网关通道，超时清理的终态要写到这条真实连接上。
+        using (LoopbackGate gate = new LoopbackGate())
+        {
+            // role_id 是本用例独占的角色 ID，超时清理用例单独占一个。
+            int role_id = 910005;
+            // role 是装配完成并已加入在线索引的施法角色。
+            OnlineRole role = CreateCastingRole(gate, role_id);
+            if (role == null)
+            {
+                return Fail("在线角色装配失败");
+            }
+            // initial_mp 是超时前的权威 MP，超时清理同样不应扣蓝。
+            int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
+
+            // enter_result 是首个请求的入口返回码，非零直接返回。
+            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 71UL);
+            if (enter_result != 0)
+            {
+                return enter_result;
+            }
+            // 第二个请求在吟唱期间入队，随后超过队列等待上限被清理。
+            int queued_result = InvokeSkillCastHandler(gate, role, 10010, 72UL);
+            if (queued_result != 0)
+            {
+                return queued_result;
+            }
+            // 队列超时使用真实 UTC 毫秒判定，这里必须真实等待超过上限再推进一帧。
+            System.Threading.Thread.Sleep(QueueTimeoutWaitMilliseconds);
+            AdvanceLogicFrames(role, 1);
+
+            // timeout_package 是超时请求被清理后应收到的终态回包。
+            BasePackage timeout_package;
+            if (!gate.TryReadFrame(out timeout_package, 2000))
+            {
+                return Fail("超时被清理的请求未收到终态回包");
+            }
+            if (timeout_package.ProtoCode != NetDefine.CMD_SkillCastCode)
+            {
+                return Fail("超时终态应为施法结果，实际协议号 " + timeout_package.ProtoCode);
+            }
+            // timeout_ret 是超时终态结果，用于断言非成功码且回带超时请求的施法标识。
+            SkillCastRet timeout_ret = SkillCastRet.Parser.ParseFrom(timeout_package.Data);
+            if (timeout_ret.CmdCode == CmdCode.Succeed)
+            {
+                return Fail("超时被清理的请求不应回成功结果");
+            }
+            if (timeout_ret.SkillUuid != 72UL)
+            {
+                return Fail("超时终态应回带超时请求的施法标识 72，实际 " + timeout_ret.SkillUuid);
+            }
+            if (role.mainRoleInfo.BaseInfo.CurrMp != initial_mp)
+            {
+                return Fail("超时清理不应扣蓝，实际 MP " + role.mainRoleInfo.BaseInfo.CurrMp);
+            }
+
+            role.Dispose();
+            RoleManager.Instance.RemoveOnlineRole(role_id);
+            return 0;
+        }
+    }
+
+    /// <summary>队列等待上限 300 毫秒，测试需要真实等待超过它才能触发清理。</summary>
+    private const int QueueTimeoutWaitMilliseconds = 360;
+
+    /// <summary>技能 10010 的 CastMs 为 2167 毫秒，按 50 毫秒一帧换算成 44 帧。</summary>
+    private const int SingingFramesFor10010 = 44;
+
+    /// <summary>
+    /// 按固定帧推进角色逻辑，驱动吟唱状态、技能动作态与后置阶段。
+    /// 顺序与 GameGlobal.Update 一致：先推进逻辑 Tick，再驱动一帧角色逻辑。
+    /// </summary>
+    /// <param name="role">目标在线角色。</param>
+    /// <param name="frames">要推进的逻辑帧数量。</param>
+    private static void AdvanceLogicFrames(OnlineRole role, int frames)
+    {
+        // index 是本次推进的帧序号，从 0 数到 frames-1，每轮只推进一帧。
+        for (int index = 0; index < frames; index++)
+        {
+            // next_tick 是下一逻辑帧的 Tick，先写回 GameGlobal 再驱动角色，顺序与正式帧一致。
+            long next_tick = GameGlobal.Instance.LogicTick + 1L;
+            LogicTickField.SetValue(GameGlobal.Instance, next_tick);
+            role.Update(50);
+        }
+    }
+
+    /// <summary>
+    /// 按互斥校验通过后的真实事件格式派发一次客户端施法请求。
+    /// 事件来自对象池并在派发后立即释放，与 SkillCastHandler 的持有方式一致。
+    /// </summary>
+    /// <param name="role">目标在线角色。</param>
+    /// <param name="skill_id">技能主表 ID。</param>
+    /// <param name="skill_uuid">本次施法标识。</param>
+    private static void DispatchClientFireSkill(OnlineRole role, int skill_id, ulong skill_uuid)
+    {
+        // args 是从对象池取出的施法事件，finally 里立即归还，与 SkillCastHandler 的持有方式一致。
+        ROClientFireSkillArgs args = ROEventPool<ROClientFireSkillArgs>.Instance.Get();
+        try
+        {
+            args.skill_id_ = skill_id;
+            args.skill_uuid_ = skill_uuid;
+            args.target_ = 0UL;
+            args.cast_point_ = new ROVector3(0f, 0f, 0f);
+            role.GetEventDispatcher().DispatcherEvent(args);
+        }
+        finally
+        {
+            args.Release();
         }
     }
 
