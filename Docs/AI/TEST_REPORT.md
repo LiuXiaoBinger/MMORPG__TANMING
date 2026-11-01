@@ -173,3 +173,14 @@
 - 通过：现场12方向、同帧切换扩展开关对照；遮挡3/3从6.0476拉近至4.5694或3.9962，无遮挡9/9不变，axesRestored=True。最终Geometry掩码排除Default主角。早期Default候选距离缩至约0.3329，判定失败并弃用。
 - 通过：场景AssetDatabase导入、控制台error查询无条目、YAML fileID唯一、源文件/暂存版本在扩展及层覆盖之外分别与任务基线/HEAD一致、meta不变、暂存差异空白检查；用户原有修改未混入。
 - 未验证：新场景包、重新进场、独立Player、主城移动回归。未构建、未中断Play。证据：_temp/dungeon-camera-collision-20261031/acceptance.json、live-geometry-obstacle-probe.txt、scene-patch-verification.json。完整日志：项目修改日志/2026-10-31-魔神塔相机避障配置修复_CHANGELOG.md。
+
+
+## [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] 服务端事件与协议验收
+
+- 通过：旧式 .NET Framework 4.8 GameServer.csproj 的显式编译清单已包含全部 3 个新增生产源文件。dotnet build GameServer.csproj --no-incremental -v:m 产生 0 个错误 / 14 个既有警告；直接调用 MSBuild.exe 与 dotnet msbuild 被 WorkBuddy 的命令策略拦截，成功构建使用的是 dotnet build。证据：_temp/server-entity-event-20261101/build-gameserver-r3.log。生产 bin/obj 仍在旧式默认目录且未纳入 Git；临时测试工程、输出与证据都在 _temp 下。
+- 通过：EventDispatcherSmoke 的 9 个用例覆盖同事件送达、被不同回调替换、派发中解除、同类型嵌套派发、不同角色派发器隔离、UnInit/销毁与真实施法。环回 TCP 用例以已登记的复合会话进入 SkillCastHandler.OnCall，先收到成功结果再收到开始（技能 10010 / UUID 7 / MP 500 → 480 / CD 已填充），随后 UUID 8 收到拒绝且 MP 仍为 480、300 毫秒内无开始。实际捕获的拒绝码是 SkillStateBlocked(32)，不是已证实的冷却拒绝。证据：任务目录下 tests/smoke1-r3-utf8.log。
+- 通过：SkillRoleSnapshotSmoke 拒绝角色 A 的迟到列表并装载角色 B 的有效列表。Codex 独立各运行一次两个测试可执行文件，均 exit 0：任务目录下 codex-runtime-acceptance.json、EventDispatcherSmoke-codex.raw.log、SkillRoleSnapshotSmoke-codex.raw.log。测试在保留开发者既有改动的本地工作区进行，不是干净克隆或部署测试。
+- 通过：四个运行中的服务接受真实 TCP 非法会话施法探针并返回 InvalidSession。WorkBuddy 按可执行文件路径停止 Center/Login/Game/Gate 的 PID 58592/59492/65580/64468。Codex 于 2026-11-01 18:38:02 +08:00 终检为 0 个项目服务进程、10110/10120/10130/10140 上 0 个监听。证据：tests/probe-r3-utf8.log、codex-servers-final.json。
+- 通过：最终 HTML 的 JavaScript/结构检查与 Codex 的 Edge headless 渲染均无页面错误；本项目边界面板已渲染。证据：mindmap-render.json、mindmap-overview.png、mindmap-project-boundary.png。
+- 未验证：完整 Login/Gate 认证后的实网成功施法、Unity 表现、真实多角色广播可见性与性能。环回 TCP 送达不等于完整登录验收。状态互斥等待与真实吟唱时长/打断行为本次移植未实现。
+- 执行者：国际版 WorkBuddy deepseek-v4.1-flash，Hub hub-de717361-5b83-4381-872e-03f678bafd41，会话 df323eca-beff-41fc-a54a-840e40ff96d5，6 个真实轮次；Codex 完成最终验收。完整清单、失败历史、Git 回执与精确路径：项目修改日志/2026-11-01-服务器实体事件与OnCall移植_CHANGELOG.md。

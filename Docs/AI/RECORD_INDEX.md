@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f4bd9e591e9ed9f2aec25f7d74d4ebad4cac0991d811e9369c8b3857a1708926`
+Source normalized SHA256: `f0a1db6e3d2cf5ae3b4dd73666bcd8ac1559d86381068fbf2d6625aa3d889ef7`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -31,11 +31,12 @@ Source normalized SHA256: `f4bd9e591e9ed9f2aec25f7d74d4ebad4cac0991d811e9369c8b3
 | [CODE][FILES][HANDOFF][组队][DUNGEON-PLAYER-REGRESSION-20261031-R6] 2026-10-31 Invitation visibility follow-up after failed Player verification | 130-138 |
 | [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-146 |
 | [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Explicit baked variant and fresh package ready for developer validation | 147-154 |
-| [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance | 155-160 |
+| [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance | 155-162 |
+| [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO entity events and OnCall entry | 163-170 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6091948e53a78e353bf90d45e195347d5d55013da3a8bcf2c413d73b9156a234`
+Source normalized SHA256: `62799a2a217f59757044869e5dad8b044c9e5d3e358569578c338d820f550081`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -58,7 +59,8 @@ Source normalized SHA256: `6091948e53a78e353bf90d45e195347d5d55013da3a8bcf2c413d
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Source compile and live runtime LOD comparison | 147-154 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-162 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Fresh shader package and serialized SVC verified; visual acceptance pending | 163-170 |
-| [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] Scoped scene and live acceptance | 171-175 |
+| [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] Scoped scene and live acceptance | 171-177 |
+| [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] Server event and protocol acceptance | 178-186 |
 
 ## Docs/AI/DECISIONS.en.md
 

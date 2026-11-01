@@ -159,3 +159,13 @@
 - 通过场景内 Prefab 覆盖，将337个 Default、非 Trigger、带 MeshRenderer 的环境 MeshCollider 节点改为 Geometry；不改共享模型或预制体。主角保持 Default。检测 Default 的候选误撞主角，已弃用。
 - 已验当前运行现场及场景源：12方向中3个有墙方向拉近、9个无遮挡方向不变，轴值恢复。未构建资源包、重新进场、验证 Player 或主城移动；HostPlayMode 可能仍加载旧场景包。
 - Codex直接执行，未使用子Agent/WorkBuddy；既有场景12增/12删用户改动保留且未暂存。完整清单及证据：项目修改日志/2026-10-31-魔神塔相机避障配置修复_CHANGELOG.md；_temp/dungeon-camera-collision-20261031/。
+
+
+## [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO 实体事件与 OnCall 入口
+
+- 已在 codex/feature-development 实现并推送代码提交 021b076bfc2a28f053c9ee8ca84f1a37eecd7513。完整 24 文件实现清单与获准的日志续写：项目修改日志/2026-11-01-服务器实体事件与OnCall移植_CHANGELOG.md。
+- 实际链路：ClientMessageManager → SkillCastHandler.OnCall → ROClientFireSkillArgs → 每个 OnlineRole.GetEventDispatcher() → RoleSingingComponent.OnClientFireSkillRequest → ROSingingArgs → RoleSkillComponent.OnSingingRequest → 未改动的 ROSkillComponent.TryCast，先回包再广播开始表现。OnlineRole 持有监听注册与销毁。既有 EntityWorld 有 UID 查找但未接入本条生产施法链路，未新增注册表。
+- 沿用 RO 命名与文件分组：Event/ROEvent.cs 归组枚举/基类/向量/参数类型；Event/ROEventDispatcher.cs 归组强类型监听标识、登记条目与派发器。保留 kActionClienFireSkill 拼写。以 C# 引用/GC 替代 C++ 手工引用计数，以保留引用的监听快照替代迭代器维护机制。共用 IGameMessageHandler 入口、全部 14 个实现、调用点与快照回归均已改为 OnCall；CanHandle 与内部 RoleManager.HandleX 方法保持不变。
+- 已按参考工程 F:/UnityPro/ro/Ro_cs422nb 更新 项目分析/RO技能链路思维导图-2026-11-01.html：更正接口签名、连招字段、36 个注册状态、逐帧吟唱检查、令牌读取点与关键源码行号；补充派发器语义与本项目接入边界分支（69 节点 / 9 主干）。
+- 国际版 WorkBuddy deepseek-v4.1-flash，Hub hub-de717361-5b83-4381-872e-03f678bafd41，原生会话 df323eca-beff-41fc-a54a-840e40ff96d5：共 6 个真实轮次（1 轮调查、2 轮实现/返修、1 轮回报契约修正、2 轮 HTML 页首修正）；Codex 已验收实际产物。第 3 轮产物因日志路径缺少 tests/ 一级被拒收，已在第 4 轮修正；第 5 轮页首笔误已在第 6 轮修正。细节与证据：_temp/server-entity-event-20261101/。
+- 边界：派发是同步且当前即时执行。RO 的状态互斥等待、真实吟唱时长/打断状态、请求队列、对象池与延迟派发均未移植。当前 SkillCastReq 只含技能 ID 与 UUID，事件 target/cast_point 保持为零。完整登录实网成功施法、Unity 表现、真实多角色可见性与性能仍未验证。测试后已停止本项目四个服务器。
