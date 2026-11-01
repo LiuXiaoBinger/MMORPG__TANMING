@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理创建角色协议，根据消息来源区分客户端请求和中心服回包。</summary>
 public sealed class CreateRoleHandler : IGameMessageHandler
 {
@@ -40,15 +38,8 @@ public sealed class CreateRoleHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            CreateRoleReq.Parser.ParseFrom(context.Package.Data);
-            Game_LoginCtrl.HandleClientCreateRole(context.Transport, context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("创建角色请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        CreateRoleReq.Parser.ParseFrom(context.Package.Data);
+        Game_LoginCtrl.HandleClientCreateRole(context.Transport, context.Package);
     }
 
     private static void HandleCenterResult(GameMessageHandlerContext context)

@@ -157,15 +157,8 @@ public class ShopMgr : Singleton<ShopMgr>
         }
 
         int goodsId = _pendingGoodsId;
-        BuyShopItemRes response = null;
-        try
-        {
-            response = BuyShopItemRes.Parser.ParseFrom(data);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError("解析商城购买结果失败：" + exception.Message);
-        }
+        // 当前购买请求的结果，后续根据业务错误码提示玩家。
+        BuyShopItemRes response = BuyShopItemRes.Parser.ParseFrom(data);
 
         bool success = false;
         string message = "商城购买结果无效";

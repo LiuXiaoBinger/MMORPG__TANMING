@@ -30,21 +30,8 @@ public sealed class SkillCastHandler : IGameMessageHandler
         }
 
         // 格式错误也返回专用结果，使客户端能够获知请求失败。
-        SkillCastReq request;
-        try
-        {
-            request = SkillCastReq.Parser.ParseFrom(context.Package.Data);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("客户端施法请求解析失败: " + ex.Message, LogMsgType.Error);
-            SendResult(context, new SkillCastRet
-            {
-                CmdCode = CmdCode.ReqParamError,
-                ServerTimeUnixMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-            });
-            return;
-        }
+        // 客户端施法参数，解析后交给技能组件执行权威校验。
+        SkillCastReq request = SkillCastReq.Parser.ParseFrom(context.Package.Data);
 
         // 角色 ID 从 Gate/Unity 复合会话反查，请求本身不含可伪造的角色 ID。
         OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(

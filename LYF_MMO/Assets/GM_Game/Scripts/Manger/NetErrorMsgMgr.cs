@@ -1,5 +1,4 @@
 using Google.Protobuf;
-using System;
 using UnityEngine;
 
 /**
@@ -35,17 +34,8 @@ public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
             return;
         }
 
-        ErrMsg errMsg;
-        try
-        {
-            errMsg = ErrMsg.Parser.ParseFrom(data);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning($"解析通用错误码消息失败：{exception.Message}");
-            TipsMgr.Instance.ShowSystemTips("请求失败，请稍后重试");
-            return;
-        }
+        // 服务器下发的通用错误码，用于选择对应的界面提示。
+        ErrMsg errMsg = ErrMsg.Parser.ParseFrom(data);
 
         switch (errMsg.CmdCode)
         {

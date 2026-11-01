@@ -69,15 +69,7 @@ public sealed class TeamMessageHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            HandleByCode(context.Package.ProtoCode, context.Package.Data, role);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            // ex 为 Protobuf 解析异常，只记录不向客户端回错误码，避免畸形包引发额外往返。
-            LogMsg.Info("队伍请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        HandleByCode(context.Package.ProtoCode, context.Package.Data, role);
     }
 
     /// <summary>按协议号执行具体队伍操作。</summary>

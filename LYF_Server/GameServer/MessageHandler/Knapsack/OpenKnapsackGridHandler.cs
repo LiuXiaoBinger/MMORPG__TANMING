@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理客户端背包开格子请求。</summary>
 public sealed class OpenKnapsackGridHandler : IGameMessageHandler
 {
@@ -23,14 +21,7 @@ public sealed class OpenKnapsackGridHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            OpenKnapsackGridReq.Parser.ParseFrom(context.Package.Data);
-            RoleManager.Instance.HandleClientOpenKnapsackGrid(context.Transport, context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("背包开格子请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        OpenKnapsackGridReq.Parser.ParseFrom(context.Package.Data);
+        RoleManager.Instance.HandleClientOpenKnapsackGrid(context.Transport, context.Package);
     }
 }

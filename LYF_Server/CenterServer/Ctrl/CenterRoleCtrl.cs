@@ -93,26 +93,8 @@ public class CenterRoleCtrl:IContainer
     /// </summary>
     private void OnBuyShopItemHandle(BaseLink serverBase, BasePackage basePackage)
     {
-        BuyShopItemReq request;
-        try
-        {
-            request = BuyShopItemReq.Parser.ParseFrom(basePackage.Data);
-        }
-        catch (Google.Protobuf.InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("中心服商城购买请求解析失败: " + ex.Message, LogMsgType.Error);
-            BuyShopItemRes invalidResponse = new BuyShopItemRes
-            {
-                Error = new ErrorInfo
-                {
-                    Code = CmdCode.InvalidQuantity,
-                    Message = "购买请求格式无效"
-                }
-            };
-            serverBase.Send(basePackage, NetDefine.CMD_BuyShopItemCode,
-                invalidResponse.ToByteString());
-            return;
-        }
+        // 游戏服转发的商城购买参数，交给中心服处理购买业务。
+        BuyShopItemReq request = BuyShopItemReq.Parser.ParseFrom(basePackage.Data);
 
         BuyShopItemRes response = _centRoleModel.ProcessShopPurchase(request);
         serverBase.Send(basePackage, NetDefine.CMD_BuyShopItemCode, response.ToByteString());
@@ -121,21 +103,9 @@ public class CenterRoleCtrl:IContainer
     /// <summary>解析 GameServer 角色保存请求并投递数据库任务，网络线程不直接写库。</summary>
     private static void OnSaveRoleDataHandle(BaseLink serverBase, BasePackage basePackage)
     {
-        try
-        {
-            SaveRoleDataReq request = SaveRoleDataReq.Parser.ParseFrom(basePackage.Data);
-            DBMgr.Instance.PushTask(new CRoleWriteTask(request, serverBase, basePackage));
-        }
-        catch (Google.Protobuf.InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("角色保存请求解析失败: " + ex.Message, LogMsgType.Error);
-            SaveRoleDataRet result = new SaveRoleDataRet
-            {
-                CmdCode = CmdCode.ReqParamError,
-                Message = "角色保存请求格式无效"
-            };
-            serverBase.Send(basePackage, NetDefine.CMD_SaveRoleDataCode, result.ToByteString());
-        }
+        // 游戏服提交的角色保存数据，由数据库任务在工作线程中持久化。
+        SaveRoleDataReq request = SaveRoleDataReq.Parser.ParseFrom(basePackage.Data);
+        DBMgr.Instance.PushTask(new CRoleWriteTask(request, serverBase, basePackage));
     }
 
     /// <summary>

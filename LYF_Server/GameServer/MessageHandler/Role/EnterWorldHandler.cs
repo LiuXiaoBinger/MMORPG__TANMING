@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理客户端进入世界请求。</summary>
 public sealed class EnterWorldHandler : IGameMessageHandler
 {
@@ -23,14 +21,7 @@ public sealed class EnterWorldHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            EnterWroldReq.Parser.ParseFrom(context.Package.Data);
-            RoleManager.Instance.HandleClientEnterWorld(context.Transport, context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("进入世界请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        EnterWroldReq.Parser.ParseFrom(context.Package.Data);
+        RoleManager.Instance.HandleClientEnterWorld(context.Transport, context.Package);
     }
 }

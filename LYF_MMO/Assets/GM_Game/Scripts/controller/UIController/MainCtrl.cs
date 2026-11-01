@@ -263,16 +263,8 @@ public class MainCtrl : CtrlBase
     /// <summary>接收服务器物品增量并交给角色背包组件更新客户端模型。</summary>
     private void UpdateItemInfoHandle(ByteString data)
     {
-        UpdateItemRet result;
-        try
-        {
-            result = UpdateItemRet.Parser.ParseFrom(data);
-        }
-        catch (System.Exception exception)
-        {
-            UnityEngine.Debug.LogError("解析物品增量回包失败：" + exception.Message);
-            return;
-        }
+        // 本次物品增量回包，成功后更新当前角色的背包数据。
+        UpdateItemRet result = UpdateItemRet.Parser.ParseFrom(data);
 
         if (result == null || result.CmdCode != CmdCode.Succeed || result.ItemDate == null)
         {
@@ -299,16 +291,8 @@ public class MainCtrl : CtrlBase
     /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
     private void CountUpdateSyncInfoHandle(ByteString data)
     {
-        CountUpdateSyncInfo result;
-        try
-        {
-            result = CountUpdateSyncInfo.Parser.ParseFrom(data);
-        }
-        catch (System.Exception exception)
-        {
-            UnityEngine.Debug.LogError("解析次数同步回包失败：" + exception.Message);
-            return;
-        }
+        // 服务器推送的次数增量，用于同步当前角色的次数组件。
+        CountUpdateSyncInfo result = CountUpdateSyncInfo.Parser.ParseFrom(data);
         if (result == null)
         {
             return;

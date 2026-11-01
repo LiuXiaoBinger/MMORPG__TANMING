@@ -309,15 +309,8 @@ public class RoleManager
             return;
         }
 
-        EnterWroldReq request;
-        try
-        {
-            request = EnterWroldReq.Parser.ParseFrom(package.Data);
-        }
-        catch (InvalidProtocolBufferException)
-        {
-            return;
-        }
+        // 当前会话提交的进入世界参数，用于校验角色并同步附近玩家。
+        EnterWroldReq request = EnterWroldReq.Parser.ParseFrom(package.Data);
 
         if (request == null)
         {
@@ -382,17 +375,11 @@ public class RoleManager
     public void HandleClientOpenKnapsackGrid(BaseLink serverBase, BasePackage package)
     {
         // 背包扩容在主线程完成校验和状态修改，成功后分别回客户端并通知中心服持久化。
+        // 本次扩容参数；协议包或载荷缺失时保持为空，沿用下方业务处理。
         OpenKnapsackGridReq request = null;
         if (package != null && package.Data != null)
         {
-            try
-            {
-                request = OpenKnapsackGridReq.Parser.ParseFrom(package.Data);
-            }
-            catch (InvalidProtocolBufferException)
-            {
-                request = null;
-            }
+            request = OpenKnapsackGridReq.Parser.ParseFrom(package.Data);
         }
 
         if (serverBase == null || package == null)

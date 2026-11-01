@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Google.Protobuf;
-
 /// <summary>处理 CenterServer 返回的角色背包信息。</summary>
 public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
 {
@@ -30,68 +28,69 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
             LogMsg.Info("角色背包信息回包为空", LogMsgType.Error);
             return;
         }
-        try
+        // 中心服返回的背包与次数数据，是本次在线角色初始化的权威来源。
+        RoleKanpsackInfoRet result = RoleKanpsackInfoRet.Parser.ParseFrom(context.Package.Data);
+        if (result == null || result.CmdCode != CmdCode.Succeed || result.RoleKanpsackInfo == null)
         {
-            RoleKanpsackInfoRet result = RoleKanpsackInfoRet.Parser.ParseFrom(context.Package.Data);
-            if (result == null || result.CmdCode != CmdCode.Succeed || result.RoleKanpsackInfo == null)
-            {
-                LogMsg.Info("角色背包信息回包不完整，暂不解除角色数据加载门闩", LogMsgType.Error);
-                return;
-            }
-
-            OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
-                context.Package.GateSessionId, context.Package.UnitySessionId);
-            if (role == null)
-            {
-                LogMsg.Info("角色背包信息找不到对应在线角色", LogMsgType.Error);
-                return;
-            }
-
-            // 登录回包携带中心服权威角色版本，先建立本地保存版本基线。
-            if (!role.InitializeSaveVersion(result.RoleKanpsackInfo.SaveVersion))
-            {
-                return;
-            }
-
-            RoItemComponent itemComponent = role.GetComponent<RoItemComponent>();
-            if (itemComponent != null)
-            {
-                // 回包已经由统一入口转发客户端，GameServer 同时装载权威运行时背包。
-                itemComponent.LoadKnapsack(result);
-            }
-
-            // 次数数据与背包数据同包返回，交给次数组件恢复运行时状态。
-            RoleCountComponent countComponent;
-            if (role.TryGetComponent(out countComponent))
-            {
-                List<RoleCountItemInfo> values = new List<RoleCountItemInfo>();
-                List<RoleCountInfo> countInfos =
-                    new List<RoleCountInfo>(result.RoleKanpsackInfo.RoleCountInfoList);
-                for (int i = 0; i < countInfos.Count; i++)
-                {
-                    RoleCountInfo info = countInfos[i];
-                    DateTime refreshTime = DateTime.MinValue;
-                    if (info.LastRefreshTime > 0L)
-                    {
-                        refreshTime = new DateTime(info.LastRefreshTime, DateTimeKind.Utc).ToLocalTime();
-                    }
-                    values.Add(new RoleCountItemInfo(info.Action, info.CountKey, info.Count)
-                    {
-                        LastRefreshDate = refreshTime
-                    });
-                }
-                countComponent.Load(values);
-            }
-
-            // 两个组件都从同一份中心服回包完成装载后，才允许业务修改和延迟保存。
-            if (itemComponent == null || countComponent == null || !role.CompleteRoleDataLoad())
-            {
-                LogMsg.Info("角色背包或次数组件未完成初始化，继续保持角色数据加载门闩", LogMsgType.Error);
-            }
+            LogMsg.Info("角色背包信息回包不完整，暂不解除角色数据加载门闩", LogMsgType.Error);
+            return;
         }
-        catch (InvalidProtocolBufferException ex)
+
+        // 回包复合会话对应的在线角色，后续只更新该角色的运行时组件。
+        OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
+            context.Package.GateSessionId, context.Package.UnitySessionId);
+        if (role == null)
         {
-            LogMsg.Info("角色背包信息解析失败: " + ex.Message, LogMsgType.Error);
+            LogMsg.Info("角色背包信息找不到对应在线角色", LogMsgType.Error);
+            return;
+        }
+
+        // 登录回包携带中心服权威角色版本，先建立本地保存版本基线。
+        if (!role.InitializeSaveVersion(result.RoleKanpsackInfo.SaveVersion))
+        {
+            return;
+        }
+
+        // 当前角色的物品组件，负责装载中心服背包快照。
+        RoItemComponent itemComponent = role.GetComponent<RoItemComponent>();
+        if (itemComponent != null)
+        {
+            // 回包已经由统一入口转发客户端，GameServer 同时装载权威运行时背包。
+            itemComponent.LoadKnapsack(result);
+        }
+
+        // 次数数据与背包数据同包返回，交给次数组件恢复运行时状态。
+        RoleCountComponent countComponent;
+        if (role.TryGetComponent(out countComponent))
+        {
+            // 转换后的次数记录，全部构造完成后一次交给次数组件。
+            List<RoleCountItemInfo> values = new List<RoleCountItemInfo>();
+            // 本次回包中的次数记录快照，按索引读取并保留原记录引用。
+            List<RoleCountInfo> countInfos =
+                new List<RoleCountInfo>(result.RoleKanpsackInfo.RoleCountInfoList);
+            // i 为本次次数快照的索引，范围为 0 到记录数量减一。
+            for (int i = 0; i < countInfos.Count; i++)
+            {
+                // 当前次数记录，包含次数键、数量和上次刷新时间。
+                RoleCountInfo info = countInfos[i];
+                // 组件使用的本地刷新时间；服务端未提供时保持 DateTime.MinValue。
+                DateTime refreshTime = DateTime.MinValue;
+                if (info.LastRefreshTime > 0L)
+                {
+                    refreshTime = new DateTime(info.LastRefreshTime, DateTimeKind.Utc).ToLocalTime();
+                }
+                values.Add(new RoleCountItemInfo(info.Action, info.CountKey, info.Count)
+                {
+                    LastRefreshDate = refreshTime
+                });
+            }
+            countComponent.Load(values);
+        }
+
+        // 两个组件都从同一份中心服回包完成装载后，才允许业务修改和延迟保存。
+        if (itemComponent == null || countComponent == null || !role.CompleteRoleDataLoad())
+        {
+            LogMsg.Info("角色背包或次数组件未完成初始化，继续保持角色数据加载门闩", LogMsgType.Error);
         }
     }
 }

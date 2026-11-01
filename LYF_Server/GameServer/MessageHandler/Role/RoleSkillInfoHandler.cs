@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理 CenterServer 返回的角色技能信息。</summary>
 public sealed class RoleSkillInfoHandler : IGameMessageHandler
 {
@@ -43,38 +41,32 @@ public sealed class RoleSkillInfoHandler : IGameMessageHandler
         }
 
         // 11080 注册为 Internal，必须先核对角色身份，禁止旧角色回包泄漏到复用会话。
-        try
+        // 中心服回包的持久角色 ID 和复合会话角色缺一不可。
+        RoleSkillInfoRet response = RoleSkillInfoRet.Parser.ParseFrom(context.Package.Data);
+        // 回包复合会话对应的在线角色，用于核对角色 ID 并装载已学技能。
+        OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
+            context.Package.GateSessionId, context.Package.UnitySessionId);
+        if (!IsMatchingRole(role, response))
         {
-            // 中心服回包的持久角色 ID 和复合会话角色缺一不可。
-            RoleSkillInfoRet response = RoleSkillInfoRet.Parser.ParseFrom(context.Package.Data);
-            OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
-                context.Package.GateSessionId, context.Package.UnitySessionId);
-            if (!IsMatchingRole(role, response))
-            {
-                LogMsg.Info("拒绝技能列表回包：中心服角色与当前复合会话角色不一致，回包角色=" +
-                    response.RoleId, LogMsgType.Error);
-                return;
-            }
-
-            // 列表无效时仍向正确角色转发原结果，客户端由 Gate 处理具体错误码。
-            if (context.GateSession == null)
-            {
-                LogMsg.Info("技能列表回包缺少原 Gate 会话，角色=" + response.RoleId, LogMsgType.Error);
-                return;
-            }
-            context.GateSession.Send(context.Package);
-
-            // 技能列表不写入 GameServer 本地数据库，只供当前在线生命周期使用。
-            RoleSkillComponent skillComponent;
-            if (!role.TryGetComponent(out skillComponent) ||
-                !skillComponent.LoadLearnedSkills(response))
-            {
-                LogMsg.Info("中心服技能列表装载失败，角色=" + role.GetID(), LogMsgType.Error);
-            }
+            LogMsg.Info("拒绝技能列表回包：中心服角色与当前复合会话角色不一致，回包角色=" +
+                response.RoleId, LogMsgType.Error);
+            return;
         }
-        catch (InvalidProtocolBufferException ex)
+
+        // 列表无效时仍向正确角色转发原结果，客户端由 Gate 处理具体错误码。
+        if (context.GateSession == null)
         {
-            LogMsg.Info("中心服技能列表解析失败: " + ex.Message, LogMsgType.Error);
+            LogMsg.Info("技能列表回包缺少原 Gate 会话，角色=" + response.RoleId, LogMsgType.Error);
+            return;
+        }
+        context.GateSession.Send(context.Package);
+
+        // 技能列表不写入 GameServer 本地数据库，只供当前在线生命周期使用。
+        RoleSkillComponent skillComponent;
+        if (!role.TryGetComponent(out skillComponent) ||
+            !skillComponent.LoadLearnedSkills(response))
+        {
+            LogMsg.Info("中心服技能列表装载失败，角色=" + role.GetID(), LogMsgType.Error);
         }
     }
 }

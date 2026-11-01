@@ -136,16 +136,7 @@ public sealed class SkillCtrl : CtrlBase
         {
             return false;
         }
-        try
-        {
-            result = RoleSkillInfoRet.Parser.ParseFrom(data);
-        }
-        catch (InvalidProtocolBufferException exception)
-        {
-            // 协议边界的解码异常，不能让坏包中断技能窗口刷新链。
-            Debug.LogWarning("技能列表回包解析失败：" + exception.Message);
-            return false;
-        }
+        result = RoleSkillInfoRet.Parser.ParseFrom(data);
         if (result == null || result.CmdCode != CmdCode.Succeed ||
             result.RoleId <= 0)
         {

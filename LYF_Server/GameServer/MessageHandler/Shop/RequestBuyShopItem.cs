@@ -50,17 +50,8 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
             return;
         }
 
-        BuyShopItemReq request;
-        try
-        {
-            request = BuyShopItemReq.Parser.ParseFrom(context.Package.Data);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("商城购买请求协议解析失败: " + ex.Message, LogMsgType.Error);
-            SendResult(context, CmdCode.InvalidQuantity, "购买请求格式无效");
-            return;
-        }
+        // 客户端购买的商品和数量，解析后进入现有购买校验流程。
+        BuyShopItemReq request = BuyShopItemReq.Parser.ParseFrom(context.Package.Data);
 
         if (request.Items == null || request.Items.Count == 0 || request.Items.Count > MaxItemCount)
         {

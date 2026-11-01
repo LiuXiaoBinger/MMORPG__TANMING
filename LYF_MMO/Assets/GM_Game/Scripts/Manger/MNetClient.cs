@@ -547,18 +547,7 @@ public class MNetClient : Singleton<MNetClient>
         }
 
         // 待解析出的下行协议包，解析成功后交给公共派发入口。
-        BasePackage basePackage;
-        try
-        {
-            basePackage = BasePackage.Parser.ParseFrom(message);
-        }
-        catch (InvalidProtocolBufferException exception)
-        {
-            // 反序列化失败的异常对象，仅记录其消息，不影响通道。
-            // 单条坏包只丢弃，不断开已认证的可靠通道。
-            Debug.LogWarning("KCP 下行包解析失败：" + exception.Message);
-            return;
-        }
+        BasePackage basePackage = BasePackage.Parser.ParseFrom(message);
 
         // 解析出的协议号与载荷，随公共入口一起完成主线程派发。
         int protoCode = basePackage.ProtoCode;

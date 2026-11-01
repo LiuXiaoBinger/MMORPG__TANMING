@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理登录游戏服协议，根据消息来源区分客户端请求和中心服回包。</summary>
 public sealed class LoginGameServerHandler : IGameMessageHandler
 {
@@ -41,15 +39,8 @@ public sealed class LoginGameServerHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            LoginGameServerReq.Parser.ParseFrom(context.Package.Data);
-            Game_LoginCtrl.HandleClientLoginGameServer(context.Transport, context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("登录游戏服请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        LoginGameServerReq.Parser.ParseFrom(context.Package.Data);
+        Game_LoginCtrl.HandleClientLoginGameServer(context.Transport, context.Package);
     }
 
     /// <summary>CenterServer 回包已由统一入口转给网关，本处理器不重复解析或转发。</summary>

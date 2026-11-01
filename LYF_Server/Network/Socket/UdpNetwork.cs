@@ -554,22 +554,14 @@ public sealed class UdpNetwork
 
     /// <summary>
     /// 把一条已重组的 KCP 消息交给连接基类的协议接收公共入口。
-    /// 解析与命令分发统一由 BaseLink.OnRecv 完成，本方法只保留 KCP 专属的坏包吞掉边界与包身份清理参数。
+    /// 解析与命令分发统一由 BaseLink.OnRecv 完成，并清空客户端自填的网关会话号。
     /// </summary>
     /// <param name="session">消息所属的网关会话。</param>
     /// <param name="message">KCP 按序重组出的完整消息字节。</param>
     private void DeliverPackage(Session session, byte[] message)
     {
-        try
-        {
-            // 第二个参数为 true：保留原 KCP 上行清空客户端自填网关会话号的既有行为。
-            session.OnRecv(message, true);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            // 协议解析失败只丢弃本条，不断开已经认证的可靠通道。
-            LogMsg.Info("[UdpNetwork] KCP 载荷解析失败：" + ex.Message, LogMsgType.Warn);
-        }
+        // 第二个参数为 true：保留原 KCP 上行清空客户端自填网关会话号的既有行为。
+        session.OnRecv(message, true);
     }
 
     /// <summary>

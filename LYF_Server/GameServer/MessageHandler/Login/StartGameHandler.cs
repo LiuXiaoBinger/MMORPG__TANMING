@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>处理开始游戏协议，根据消息来源区分客户端请求和中心服回包。</summary>
 public sealed class StartGameHandler : IGameMessageHandler
 {
@@ -40,15 +38,8 @@ public sealed class StartGameHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            StartGameReq.Parser.ParseFrom(context.Package.Data);
-            Game_LoginCtrl.HandleClientStartGame(context.Transport, context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("开始游戏请求协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        StartGameReq.Parser.ParseFrom(context.Package.Data);
+        Game_LoginCtrl.HandleClientStartGame(context.Transport, context.Package);
     }
 
     private static void HandleCenterResult(GameMessageHandlerContext context)
@@ -59,13 +50,6 @@ public sealed class StartGameHandler : IGameMessageHandler
             return;
         }
 
-        try
-        {
-            Game_LoginCtrl.HandleCenterStartGame(context.Package);
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("开始游戏结果协议解析失败: " + ex.Message, LogMsgType.Error);
-        }
+        Game_LoginCtrl.HandleCenterStartGame(context.Package);
     }
 }

@@ -1,5 +1,3 @@
-using Google.Protobuf;
-
 /// <summary>
 /// GateServer 面向 Unity 的回包校验与转发入口。
 /// 所有来自 GameServer 的客户端可见回包均在网关解析错误码，失败时统一发送 CMD_ErrCode。
@@ -20,7 +18,7 @@ public static class GateClientResponseForwarder
         CmdCode resultCode;
         if (!TryReadResultCode(package, out resultCode))
         {
-            // 协议无法解析时不把不可信载荷交给客户端，使用统一错误协议通知客户端。
+            // 未注册的回包或缺少必要业务字段时，使用统一错误协议通知客户端。
             session.SendError(package, CmdCode.ServerError);
             return;
         }
@@ -53,110 +51,103 @@ public static class GateClientResponseForwarder
     private static bool TryReadResultCode(BasePackage package, out CmdCode resultCode)
     {
         resultCode = CmdCode.Succeed;
-        try
+        switch (package.ProtoCode)
         {
-            switch (package.ProtoCode)
-            {
-                case NetDefine.CMD_LoginGameServerCode:
-                    resultCode = LoginGameServerRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_CreateRoleCode:
-                    resultCode = CreateRoleRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_StartGameCode:
-                    StartGameRet startGameResult = StartGameRet.Parser.ParseFrom(package.Data);
-                    if (startGameResult.CmdCode == CmdCode.Succeed &&
-                        (startGameResult.MainRoleInfo == null || startGameResult.MainRoleInfo.BaseInfo == null))
-                    {
-                        return false;
-                    }
-
-                    resultCode = startGameResult.CmdCode;
-                    return true;
-                case NetDefine.CMD_RoleSkillInfoCode:
-                    resultCode = RoleSkillInfoRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_RoleKnapsackInfoCode:
-                    resultCode = RoleKanpsackInfoRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_RoleShopPurchaseInfoCode:
-                    resultCode = RoleShopPurchaseInfoRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_OpenKnapsackGridCode:
-                    resultCode = OpenKnapsackGridRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_BuyShopItemCode:
-                    BuyShopItemRes purchaseResult = BuyShopItemRes.Parser.ParseFrom(package.Data);
-                    // 购买响应缺少错误对象时按服务器错误处理，避免使用未初始化的结果码。
-                    if (purchaseResult.Error == null)
-                    {
-                        resultCode = CmdCode.ServerError;
-                    }
-                    else
-                    {
-                        resultCode = purchaseResult.Error.Code;
-                    }
-                    return true;
-                case NetDefine.CMD_SyncRoleEnterWorldCode:
-                case NetDefine.CMD_SyncotherOnlineCode:
-                    RoleBaseInfo.Parser.ParseFrom(package.Data);
-                    resultCode = CmdCode.Succeed;
-                    return true;
-                case NetDefine.CMD_SC_UpdateItemInfoCode:
-                    resultCode = UpdateItemRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_CountUpdateSyncInfoCode:
-                    // 次数同步是服务端主动通知，仍需验证 protobuf 后原样转发给客户端。
-                    resultCode = CountUpdateSyncInfo.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_SkillCastCode:
-                    // 拒绝结果也携带权威 MP/CD，不能转换成只有错误码的通用包。
-                    resultCode = SkillCastRet.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                case NetDefine.CMD_SkillCastStartCode:
-                    SkillCastStartNtf.Parser.ParseFrom(package.Data);
-                    return true;
-                case NetDefine.CMD_SkillCastEndCode:
-                    SkillCastEndNtf.Parser.ParseFrom(package.Data);
-                    return true;
-                case NetDefine.CMD_SyncMoveCode:
-                    // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
-                    SyncMoveNtf.Parser.ParseFrom(package.Data);
-                    return true;
-                case NetDefine.CMD_TeamInfoCode:
-                    // 队伍状态是服务端主动下发的权威快照，无业务错误码，验证协议后原样转发。
-                    TeamInfoNtf.Parser.ParseFrom(package.Data);
-                    resultCode = CmdCode.Succeed;
-                    return true;
-                case NetDefine.CMD_TeamInvatationCode:
-                    // 邀请/申请通知同时承载两种语义，网关只校验格式，不解释收件人身份。
-                    TeamInvatationNtf.Parser.ParseFrom(package.Data);
-                    resultCode = CmdCode.Succeed;
-                    return true;
-                case NetDefine.CMD_TeamEnterDungeonCode:
-                    // 副本入场与回城通知携带实例、场景与出生点，必须完整交给客户端。
-                    TeamEnterDungeonNtf.Parser.ParseFrom(package.Data);
-                    resultCode = CmdCode.Succeed;
-                    return true;
-                case NetDefine.CMD_RoleLeaveCode:
-                    // 角色离开视野通知用于删除远端模型，无错误码，验证协议后原样转发。
-                    RoleLeaveNtf.Parser.ParseFrom(package.Data);
-                    resultCode = CmdCode.Succeed;
-                    return true;
-                case NetDefine.CMD_ErrCode:
-                    // 游戏服已按通用错误协议回执，网关只校验解析并把原错误码交给客户端提示，
-                    // 否则会被当成无法解析的回包改写成 ServerError，丢掉真实失败原因。
-                    resultCode = ErrMsg.Parser.ParseFrom(package.Data).CmdCode;
-                    return true;
-                default:
+            case NetDefine.CMD_LoginGameServerCode:
+                resultCode = LoginGameServerRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_CreateRoleCode:
+                resultCode = CreateRoleRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_StartGameCode:
+                // 开始游戏回包，成功时必须携带可供客户端初始化的主角数据。
+                StartGameRet startGameResult = StartGameRet.Parser.ParseFrom(package.Data);
+                if (startGameResult.CmdCode == CmdCode.Succeed &&
+                    (startGameResult.MainRoleInfo == null || startGameResult.MainRoleInfo.BaseInfo == null))
+                {
                     return false;
-            }
-        }
-        catch (InvalidProtocolBufferException ex)
-        {
-            LogMsg.Info("网关回包协议解析失败，命令=" + package.ProtoCode + "，原因=" + ex.Message,
-                LogMsgType.Error);
-            return false;
+                }
+
+                resultCode = startGameResult.CmdCode;
+                return true;
+            case NetDefine.CMD_RoleSkillInfoCode:
+                resultCode = RoleSkillInfoRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_RoleKnapsackInfoCode:
+                resultCode = RoleKanpsackInfoRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_RoleShopPurchaseInfoCode:
+                resultCode = RoleShopPurchaseInfoRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_OpenKnapsackGridCode:
+                resultCode = OpenKnapsackGridRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_BuyShopItemCode:
+                // 商城购买回包，业务错误码来自其中的 Error 字段。
+                BuyShopItemRes purchaseResult = BuyShopItemRes.Parser.ParseFrom(package.Data);
+                // 购买响应缺少错误对象时按服务器错误处理，避免使用未初始化的结果码。
+                if (purchaseResult.Error == null)
+                {
+                    resultCode = CmdCode.ServerError;
+                }
+                else
+                {
+                    resultCode = purchaseResult.Error.Code;
+                }
+                return true;
+            case NetDefine.CMD_SyncRoleEnterWorldCode:
+            case NetDefine.CMD_SyncotherOnlineCode:
+                RoleBaseInfo.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
+            case NetDefine.CMD_SC_UpdateItemInfoCode:
+                resultCode = UpdateItemRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_CountUpdateSyncInfoCode:
+                // 次数同步是服务端主动通知，仍需验证 protobuf 后原样转发给客户端。
+                resultCode = CountUpdateSyncInfo.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_SkillCastCode:
+                // 拒绝结果也携带权威 MP/CD，不能转换成只有错误码的通用包。
+                resultCode = SkillCastRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_SkillCastStartCode:
+                SkillCastStartNtf.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.CMD_SkillCastEndCode:
+                SkillCastEndNtf.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.CMD_SyncMoveCode:
+                // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
+                SyncMoveNtf.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.CMD_TeamInfoCode:
+                // 队伍状态是服务端主动下发的权威快照，无业务错误码，验证协议后原样转发。
+                TeamInfoNtf.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
+            case NetDefine.CMD_TeamInvatationCode:
+                // 邀请/申请通知同时承载两种语义，网关只校验格式，不解释收件人身份。
+                TeamInvatationNtf.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
+            case NetDefine.CMD_TeamEnterDungeonCode:
+                // 副本入场与回城通知携带实例、场景与出生点，必须完整交给客户端。
+                TeamEnterDungeonNtf.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
+            case NetDefine.CMD_RoleLeaveCode:
+                // 角色离开视野通知用于删除远端模型，无错误码，验证协议后原样转发。
+                RoleLeaveNtf.Parser.ParseFrom(package.Data);
+                resultCode = CmdCode.Succeed;
+                return true;
+            case NetDefine.CMD_ErrCode:
+                // 游戏服已按通用错误协议回执，网关只校验解析并把原错误码交给客户端提示，
+                // 否则会被当成无法解析的回包改写成 ServerError，丢掉真实失败原因。
+                resultCode = ErrMsg.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            default:
+                return false;
         }
     }
 
