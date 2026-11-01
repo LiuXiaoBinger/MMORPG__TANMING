@@ -1,0 +1,326 @@
+fileFormatVersion: 2
+guid: 687b9088d7d8eb14b86a7af3daad6b00
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: sc_moshenta_dimian_a002
+    100004: sc_moshenta_dimian_a003
+    100006: sc_moshenta_dimian_a004
+    100008: sc_moshenta_dimian_a005
+    100010: sc_moshenta_dimian_a006
+    100012: sc_moshenta_dimian_a007
+    100014: sc_moshenta_dimian_a008
+    100016: sc_moshenta_dimian_a009
+    100018: sc_moshenta_dimian_a010
+    100020: sc_moshenta_dimian_a011
+    100022: sc_moshenta_dimian_a012
+    100024: sc_moshenta_dimian_a013
+    100026: sc_moshenta_dimian_a014
+    100028: sc_moshenta_dimian_a015
+    100030: sc_moshenta_dimian_a016
+    100032: sc_moshenta_dimian_a017
+    100034: sc_moshenta_dimian_a018
+    100036: sc_moshenta_dimian_a019
+    100038: sc_moshenta_dimian_a020
+    100040: sc_moshenta_dimian_a021
+    100042: sc_moshenta_dimian_a022
+    100044: sc_moshenta_dimian_a023
+    100046: sc_moshenta_dimian_a024
+    100048: sc_moshenta_dimian_a025
+    100050: sc_moshenta_dimian_a026
+    100052: sc_moshenta_dimian_a027
+    100054: sc_moshenta_dimian_a028
+    100056: sc_moshenta_dimian_a029
+    100058: sc_moshenta_dimian_a030
+    100060: sc_moshenta_dimian_a031
+    100062: sc_moshenta_dimian_a032
+    100064: sc_moshenta_dimian_a033
+    100066: sc_moshenta_dimian_a034
+    100068: sc_moshenta_dimian_a035
+    100070: sc_moshenta_dimian_a036
+    100072: sc_moshenta_dimian_a036 1
+    100074: sc_moshenta_dimian_a037
+    100076: sc_moshenta_dimian_a038
+    100078: sc_moshenta_dimian_a039
+    100080: sc_moshenta_dimian_a040
+    100082: sc_moshenta_dimian_a040 1
+    100084: sc_moshenta_dimian_a041
+    100086: sc_moshenta_dimian_a042
+    400000: //RootNode
+    400002: sc_moshenta_dimian_a002
+    400004: sc_moshenta_dimian_a003
+    400006: sc_moshenta_dimian_a004
+    400008: sc_moshenta_dimian_a005
+    400010: sc_moshenta_dimian_a006
+    400012: sc_moshenta_dimian_a007
+    400014: sc_moshenta_dimian_a008
+    400016: sc_moshenta_dimian_a009
+    400018: sc_moshenta_dimian_a010
+    400020: sc_moshenta_dimian_a011
+    400022: sc_moshenta_dimian_a012
+    400024: sc_moshenta_dimian_a013
+    400026: sc_moshenta_dimian_a014
+    400028: sc_moshenta_dimian_a015
+    400030: sc_moshenta_dimian_a016
+    400032: sc_moshenta_dimian_a017
+    400034: sc_moshenta_dimian_a018
+    400036: sc_moshenta_dimian_a019
+    400038: sc_moshenta_dimian_a020
+    400040: sc_moshenta_dimian_a021
+    400042: sc_moshenta_dimian_a022
+    400044: sc_moshenta_dimian_a023
+    400046: sc_moshenta_dimian_a024
+    400048: sc_moshenta_dimian_a025
+    400050: sc_moshenta_dimian_a026
+    400052: sc_moshenta_dimian_a027
+    400054: sc_moshenta_dimian_a028
+    400056: sc_moshenta_dimian_a029
+    400058: sc_moshenta_dimian_a030
+    400060: sc_moshenta_dimian_a031
+    400062: sc_moshenta_dimian_a032
+    400064: sc_moshenta_dimian_a033
+    400066: sc_moshenta_dimian_a034
+    400068: sc_moshenta_dimian_a035
+    400070: sc_moshenta_dimian_a036
+    400072: sc_moshenta_dimian_a036 1
+    400074: sc_moshenta_dimian_a037
+    400076: sc_moshenta_dimian_a038
+    400078: sc_moshenta_dimian_a039
+    400080: sc_moshenta_dimian_a040
+    400082: sc_moshenta_dimian_a040 1
+    400084: sc_moshenta_dimian_a041
+    400086: sc_moshenta_dimian_a042
+    2100000: sc_moshenta_002_b
+    2100002: sc_moshenta_002_d
+    2100004: sc_moshenta_002_c
+    2300000: sc_moshenta_dimian_a002
+    2300002: sc_moshenta_dimian_a003
+    2300004: sc_moshenta_dimian_a004
+    2300006: sc_moshenta_dimian_a005
+    2300008: sc_moshenta_dimian_a006
+    2300010: sc_moshenta_dimian_a007
+    2300012: sc_moshenta_dimian_a008
+    2300014: sc_moshenta_dimian_a009
+    2300016: sc_moshenta_dimian_a010
+    2300018: sc_moshenta_dimian_a011
+    2300020: sc_moshenta_dimian_a012
+    2300022: sc_moshenta_dimian_a013
+    2300024: sc_moshenta_dimian_a014
+    2300026: sc_moshenta_dimian_a015
+    2300028: sc_moshenta_dimian_a016
+    2300030: sc_moshenta_dimian_a017
+    2300032: sc_moshenta_dimian_a018
+    2300034: sc_moshenta_dimian_a019
+    2300036: sc_moshenta_dimian_a020
+    2300038: sc_moshenta_dimian_a021
+    2300040: sc_moshenta_dimian_a022
+    2300042: sc_moshenta_dimian_a023
+    2300044: sc_moshenta_dimian_a024
+    2300046: sc_moshenta_dimian_a025
+    2300048: sc_moshenta_dimian_a026
+    2300050: sc_moshenta_dimian_a027
+    2300052: sc_moshenta_dimian_a028
+    2300054: sc_moshenta_dimian_a029
+    2300056: sc_moshenta_dimian_a030
+    2300058: sc_moshenta_dimian_a031
+    2300060: sc_moshenta_dimian_a032
+    2300062: sc_moshenta_dimian_a033
+    2300064: sc_moshenta_dimian_a034
+    2300066: sc_moshenta_dimian_a035
+    2300068: sc_moshenta_dimian_a036
+    2300070: sc_moshenta_dimian_a036 1
+    2300072: sc_moshenta_dimian_a037
+    2300074: sc_moshenta_dimian_a038
+    2300076: sc_moshenta_dimian_a039
+    2300078: sc_moshenta_dimian_a040
+    2300080: sc_moshenta_dimian_a040 1
+    2300082: sc_moshenta_dimian_a041
+    2300084: sc_moshenta_dimian_a042
+    3300000: sc_moshenta_dimian_a002
+    3300002: sc_moshenta_dimian_a003
+    3300004: sc_moshenta_dimian_a004
+    3300006: sc_moshenta_dimian_a005
+    3300008: sc_moshenta_dimian_a006
+    3300010: sc_moshenta_dimian_a007
+    3300012: sc_moshenta_dimian_a008
+    3300014: sc_moshenta_dimian_a009
+    3300016: sc_moshenta_dimian_a010
+    3300018: sc_moshenta_dimian_a011
+    3300020: sc_moshenta_dimian_a012
+    3300022: sc_moshenta_dimian_a013
+    3300024: sc_moshenta_dimian_a014
+    3300026: sc_moshenta_dimian_a015
+    3300028: sc_moshenta_dimian_a016
+    3300030: sc_moshenta_dimian_a017
+    3300032: sc_moshenta_dimian_a018
+    3300034: sc_moshenta_dimian_a019
+    3300036: sc_moshenta_dimian_a020
+    3300038: sc_moshenta_dimian_a021
+    3300040: sc_moshenta_dimian_a022
+    3300042: sc_moshenta_dimian_a023
+    3300044: sc_moshenta_dimian_a024
+    3300046: sc_moshenta_dimian_a025
+    3300048: sc_moshenta_dimian_a026
+    3300050: sc_moshenta_dimian_a027
+    3300052: sc_moshenta_dimian_a028
+    3300054: sc_moshenta_dimian_a029
+    3300056: sc_moshenta_dimian_a030
+    3300058: sc_moshenta_dimian_a031
+    3300060: sc_moshenta_dimian_a032
+    3300062: sc_moshenta_dimian_a033
+    3300064: sc_moshenta_dimian_a034
+    3300066: sc_moshenta_dimian_a035
+    3300068: sc_moshenta_dimian_a036
+    3300070: sc_moshenta_dimian_a036 1
+    3300072: sc_moshenta_dimian_a037
+    3300074: sc_moshenta_dimian_a038
+    3300076: sc_moshenta_dimian_a039
+    3300078: sc_moshenta_dimian_a040
+    3300080: sc_moshenta_dimian_a040 1
+    3300082: sc_moshenta_dimian_a041
+    3300084: sc_moshenta_dimian_a042
+    4300000: sc_moshenta_dimian_a002
+    4300002: sc_moshenta_dimian_a003
+    4300004: sc_moshenta_dimian_a004
+    4300006: sc_moshenta_dimian_a005
+    4300008: sc_moshenta_dimian_a006
+    4300010: sc_moshenta_dimian_a007
+    4300012: sc_moshenta_dimian_a008
+    4300014: sc_moshenta_dimian_a009
+    4300016: sc_moshenta_dimian_a010
+    4300018: sc_moshenta_dimian_a011
+    4300020: sc_moshenta_dimian_a012
+    4300022: sc_moshenta_dimian_a013
+    4300024: sc_moshenta_dimian_a014
+    4300026: sc_moshenta_dimian_a015
+    4300028: sc_moshenta_dimian_a016
+    4300030: sc_moshenta_dimian_a017
+    4300032: sc_moshenta_dimian_a018
+    4300034: sc_moshenta_dimian_a019
+    4300036: sc_moshenta_dimian_a020
+    4300038: sc_moshenta_dimian_a021
+    4300040: sc_moshenta_dimian_a022
+    4300042: sc_moshenta_dimian_a023
+    4300044: sc_moshenta_dimian_a024
+    4300046: sc_moshenta_dimian_a025
+    4300048: sc_moshenta_dimian_a026
+    4300050: sc_moshenta_dimian_a027
+    4300052: sc_moshenta_dimian_a028
+    4300054: sc_moshenta_dimian_a035
+    4300056: sc_moshenta_dimian_a034
+    4300058: sc_moshenta_dimian_a031
+    4300060: sc_moshenta_dimian_a036
+    4300062: sc_moshenta_dimian_a032
+    4300064: sc_moshenta_dimian_a033
+    4300066: sc_moshenta_dimian_a029
+    4300068: sc_moshenta_dimian_a030
+    4300070: sc_moshenta_dimian_a036
+    4300072: sc_moshenta_dimian_a037
+    4300074: sc_moshenta_dimian_a038
+    4300076: sc_moshenta_dimian_a039
+    4300078: sc_moshenta_dimian_a040
+    4300080: sc_moshenta_dimian_a040
+    4300082: sc_moshenta_dimian_a041
+    4300084: sc_moshenta_dimian_a042
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sc_moshenta_002_b
+    second: {fileID: 2100000, guid: 4490487f01a3c4446b49aea53e2ef764, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sc_moshenta_002_c
+    second: {fileID: 2100000, guid: 069850fe4c508974baf517091b818ced, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sc_moshenta_002_d
+    second: {fileID: 2100000, guid: 9fe23cb912e7fbe46b3fc15f854ac3c6, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 1
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

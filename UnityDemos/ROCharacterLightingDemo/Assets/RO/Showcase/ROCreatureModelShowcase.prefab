@@ -2057,352 +2057,1366 @@ MonoBehaviour:
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: b407acad3aa37104980a3b5f37e66b68, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.40000004
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1131
+        prefab: {fileID: 4438550092719820848, guid: 6fb49456af7c94a4e845a803e7320e42, type: 3}
+        startTime: 0.43333337
+        duration: 1
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 97c3be3f70b787344945a151c7a07ec2, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: c28471bfee0a4f74c9847e2e4e28d1fb, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 409853e7537903342958e1395328859f, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: aaf5f7a55cb84764d9d2ce4a755b76ea, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: ae16ad3a8c8a24047b0d74f6c8895731, type: 2}
+      effects: []
     - displayName: "\u8C22\u5E55\u4F20\u9001"
       clip: {fileID: 7400000, guid: 8b60fe989c959514abd7890ddf003c5d, type: 2}
+      effects:
+      - effectId: 104
+        prefab: {fileID: 1967469495793422, guid: 7a89155fcb09fe444bd2def7237a7142, type: 3}
+        startTime: 2.2
+        duration: 2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 2.5, y: 2.5, z: 2.5}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 2.5, y: 2.5, z: 2.5}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u60B2\u54C0\u6216\u6B23\u559C"
       clip: {fileID: 7400000, guid: 22ba0038fbb4433428e27b5b51c5c290, type: 2}
+      effects:
+      - effectId: 1129
+        prefab: {fileID: 1910486018020082418, guid: b575d5dcadde2d046aa5197ed5607a3f, type: 3}
+        startTime: 0
+        duration: 4
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 4, z: 1}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1072
+        prefab: {fileID: 1289351634830120, guid: 78ded6cceef160c41bdd9ac52754c16b, type: 3}
+        startTime: 4
+        duration: 2.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u54C0\u6B4C\xB7\u541F"
       clip: {fileID: 7400000, guid: 8206cbaffc7a23e4eb2f0bbee17027e3, type: 2}
+      effects:
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1095
+        prefab: {fileID: 1456503787009892, guid: ddcc052d54a752d478f2bb9152fafc14, type: 3}
+        startTime: 0
+        duration: 3.8333337
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1135
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.8333337
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 10, y: 1, z: 3}
+        warningDuration: 3.83
+        warningInitialRatio: 0
+      - effectId: 1135
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.8333337
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 90
+        shaderParameters: {x: 10, y: 1, z: 3}
+        warningDuration: 3.83
+        warningInitialRatio: 0
+      - effectId: 1135
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.8333337
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 180
+        shaderParameters: {x: 10, y: 1, z: 3}
+        warningDuration: 3.83
+        warningInitialRatio: 0
+      - effectId: 1135
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.8333337
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 270
+        shaderParameters: {x: 10, y: 1, z: 3}
+        warningDuration: 3.83
+        warningInitialRatio: 0
+      - effectId: 1134
+        prefab: {fileID: 6262192495990058906, guid: a48bdec208644f549b8378d7c296fd96, type: 3}
+        startTime: 3.9333336
+        duration: 1.5
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u51B2\u950B"
       clip: {fileID: 7400000, guid: 3695cc7db65a2f3418121fa61fe96e40, type: 2}
+      effects: []
     - displayName: "\u8BE1\u8BC8\u628A\u620F"
       clip: {fileID: 7400000, guid: a54beff630dbcdf44b36d178b0f78d1a, type: 2}
+      effects:
+      - effectId: 342
+        prefab: {fileID: 1894527561831196, guid: f38ed4e386f56b245a2837e9e3583f8a, type: 3}
+        startTime: 0
+        duration: 4
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 4, y: 1, z: 360}
+        warningDuration: 4
+        warningInitialRatio: 0
+      - effectId: 1095
+        prefab: {fileID: 1456503787009892, guid: ddcc052d54a752d478f2bb9152fafc14, type: 3}
+        startTime: 0
+        duration: 4.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 4.3333335
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 151
+        prefab: {fileID: 7550961079760744161, guid: c1115e1313c615240ac6974a33ea981f, type: 3}
+        startTime: 4.5
+        duration: 1.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u5149\u4E0E\u6C89\u9ED8"
       clip: {fileID: 7400000, guid: 57bcd62c8f0948e42a5b53e452ffb891, type: 2}
+      effects:
+      - effectId: 1072
+        prefab: {fileID: 1289351634830120, guid: 78ded6cceef160c41bdd9ac52754c16b, type: 3}
+        startTime: 0.99999994
+        duration: 2.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u6280\u80FD\u541F\u5531"
       clip: {fileID: 7400000, guid: ad85a3321e25f634cb44cfa0777308d3, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u6076\u7075"
     prefab: {fileID: 5696914567531764700, guid: 213d532c9e7f07d4fb1e3dba46f6bad1, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: 0074a9f3f52332d42862634ca0e33240, type: 2}
+      effects: []
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 35a8e9c4a22582448b3a19ea86fc901a, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 8c351d3b9e43864488b70ba7ddd172f9, type: 2}
+      effects: []
     - displayName: "\u6495\u54AC"
       clip: {fileID: 7400000, guid: 3af721252f764484290dd06f71614183, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 73262815b63cf15479bc3461160b989c, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 0d6a7640635829d49975062236673d39, type: 2}
+      effects: []
     - displayName: SiWangHuaErZi
       clip: {fileID: 7400000, guid: 446f27e9f79a8874e885c6224946ad09, type: 2}
+      effects: []
     - displayName: Skill ChongFeng01
       clip: {fileID: 7400000, guid: 63374cd833cd11e4d8c92671b89fd560, type: 2}
+      effects: []
     - displayName: "\u51B2\u950B"
       clip: {fileID: 7400000, guid: ca47339a27f861c4a951879816e74899, type: 2}
+      effects:
+      - effectId: 1061
+        prefab: {fileID: 1727551657855504, guid: 492b6ddb2c2106a4bbef50af85e3c635, type: 3}
+        startTime: 0
+        duration: 0.5
+        targetBased: 0
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.5
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: Skill ChongFeng03
       clip: {fileID: 7400000, guid: 0bc051dc319b0574aa4255493b39fe04, type: 2}
+      effects: []
     - displayName: "\u6280\u80FD\u541F\u5531"
       clip: {fileID: 7400000, guid: c1d0fa9a5bc4b4643af21acbfd58f702, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u8FBE\u7EB3\u6258\u65AF\u7684\u7EDD\u671B"
     prefab: {fileID: 3334272445328876848, guid: efd971c6e2eb7a745b856506f25dfd5d, type: 3}
     animations:
     - displayName: "\u7194\u5CA9\u7206\u53D1"
       clip: {fileID: 7400000, guid: 5aa85464c1d8aa64cbd79f6972e8407f, type: 2}
+      effects:
+      - effectId: 32
+        prefab: {fileID: 1366976581589350, guid: 657516aad6bea2c4e96a4636637a1730, type: 3}
+        startTime: 0.06666667
+        duration: 2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 24
+        prefab: {fileID: 1138140486170428, guid: e483131ca2a3e4d429e9141e968555be, type: 3}
+        startTime: 0.5666667
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 53bc93f7e164846439f131e0e66f5cc2, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: aebdb945466bd51408cb2c80451c486d, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: ad0980902d45314408180672d4f0e860, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 630d9c5ece0a66a44a3bea81d7414928, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 9cc0a8f422a85984c94549d21b246071, type: 2}
+      effects: []
     - displayName: "\u8C22\u5E55\u4F20\u9001"
       clip: {fileID: 7400000, guid: fdd4757baaf15de44b1191003615a170, type: 2}
+      effects:
+      - effectId: 104
+        prefab: {fileID: 1967469495793422, guid: 7a89155fcb09fe444bd2def7237a7142, type: 3}
+        startTime: 2.6666667
+        duration: 2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 2.5, y: 2.5, z: 2.5}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 2.5, y: 2.5, z: 2.5}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: Skill Release 01
       clip: {fileID: 7400000, guid: 2a551cca8eef55843883c8439b5244f8, type: 2}
+      effects: []
     - displayName: "\u7194\u5CA9\u5410\u606F"
       clip: {fileID: 7400000, guid: b214004947434d74d998fe9fd1194a3a, type: 2}
+      effects:
+      - effectId: 343
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.0000002
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 90
+        shaderParameters: {x: 8, y: 1, z: 1.5}
+        warningDuration: 3
+        warningInitialRatio: 0
+      - effectId: 343
+        prefab: {fileID: 1347214974346354, guid: c17a7db2843f345448053cfcd121f434, type: 3}
+        startTime: 0
+        duration: 3.0000002
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 270
+        shaderParameters: {x: 8, y: 1, z: 1.5}
+        warningDuration: 3
+        warningInitialRatio: 0
+      - effectId: 24
+        prefab: {fileID: 1138140486170428, guid: e483131ca2a3e4d429e9141e968555be, type: 3}
+        startTime: 3.0000002
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 24
+        prefab: {fileID: 1138140486170428, guid: e483131ca2a3e4d429e9141e968555be, type: 3}
+        startTime: 3.0000002
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 24
+        prefab: {fileID: 1138140486170428, guid: e483131ca2a3e4d429e9141e968555be, type: 3}
+        startTime: 3.0000002
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: Skill Release 03
       clip: {fileID: 7400000, guid: cac463c9dcec0524eb49b64c4db9e24b, type: 2}
+      effects: []
     - displayName: "\u6280\u80FD\u541F\u5531"
       clip: {fileID: 7400000, guid: 48424d7d098e48a4d892027285b21d8e, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u7C73\u6D1B\u65AF"
     prefab: {fileID: 9053935071058911429, guid: 3e5bf4dec68d9c0409862b36829d182d, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: 2dbc5003bd8b52a4aaa0fd8d894431d6, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.70000005
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 2977d23d2ebdb3c4c82dc8cc713fbfca, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 4e3875194455db24ab9452b5d9d59b9a, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: bfa9ae1ce5dd0454191933ba0ab7979c, type: 2}
+      effects: []
     - displayName: Release
       clip: {fileID: 7400000, guid: f5cc5cd1e2074cf43ac25bed7dcecd8a, type: 2}
+      effects:
+      - effectId: 24
+        prefab: {fileID: 1138140486170428, guid: e483131ca2a3e4d429e9141e968555be, type: 3}
+        startTime: 1.3333334
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 233
+        prefab: {fileID: 1379515069514240, guid: 757f707588411da4d9fb1cc6cde6fd5c, type: 3}
+        startTime: 1.3333334
+        duration: 1.5
+        targetBased: 1
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 7d9d3ba62c5ae9940b6e2425b9e19966, type: 2}
+      effects: []
     - displayName: "\u541F\u5531"
       clip: {fileID: 7400000, guid: 1a8ebbfe9e1d25d4387a51d3ac548c33, type: 2}
+      effects: []
     - displayName: "\u5927\u5730\u4E4B\u51FB"
       clip: {fileID: 7400000, guid: 5db60aecbb0989f4c878db55688e504a, type: 2}
+      effects:
+      - effectId: 1056
+        prefab: {fileID: 1341404833832380, guid: 17707cf08e6d27346b8b5a88c45f0c9a, type: 3}
+        startTime: 1.5000001
+        duration: 1.3
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 1}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     defaultAnimation: 3
   - displayName: "\u68A6\u7F57\u514B\u7684\u9B54\u6CD5\u5E08"
     prefab: {fileID: 7524490823141078102, guid: d33d134ce866d5846b103366a5d40427, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: bb4497d42eaa9d34191898e167136bfd, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.4666667
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 282ff7a3c11dcd749bbf87e811c80224, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 77c264b5a14654f4f916aa784914d277, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 98fa04a6b75854d44883ed07644dabf8, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 26b5054d448c2f44b93b99feefabe048, type: 2}
+      effects: []
     - displayName: "\u7075\u9B42\u6269\u6563"
       clip: {fileID: 7400000, guid: 25599fbcf96aff24aa53022e8b32675a, type: 2}
+      effects:
+      - effectId: 761
+        prefab: {fileID: 1058716289982588, guid: 75eaeed2e81466b488c1f28fa7eee0e2, type: 3}
+        startTime: 0
+        duration: 3.5000002
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 2.5, z: 0.5}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 4.0000005
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1062
+        prefab: {fileID: 2990768005095655694, guid: 59ecdc74b9cd19340aa23ededdb27261, type: 3}
+        startTime: 4.0000005
+        duration: 1.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: Skill LingHunAnJi
       clip: {fileID: 7400000, guid: 16e3c8db6a972594e9a7956882387bbd, type: 2}
+      effects: []
     - displayName: Skill MoFaFanShang
       clip: {fileID: 7400000, guid: 0ef07cc47ac0605499dba319ddfc7200, type: 2}
+      effects: []
     defaultAnimation: 3
   - displayName: "\u9B54\u795E\u7684\u5F71\u5B50\uFF081\uFF09"
     prefab: {fileID: 5138631315612683144, guid: af2ab3831bc9a864083869a71be1398e, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: 72af98c062e36af498ea6a69bf07492f, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.4666667
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1057
+        prefab: {fileID: 1313515714827840604, guid: e464aefac870229459c4605f73270b22, type: 3}
+        startTime: 0.49999997
+        duration: 1.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 80829dc0f45030245b757dce05ad26aa, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: a9e3de0ed6c7fa44a8861818e76bcb72, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 39f8f8efff54aba43a8f317ef2f821fc, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: f5277c52c1947394197836d6549fbbb7, type: 2}
+      effects: []
     - displayName: "\u7A7F\u523A\u653B\u51FB"
       clip: {fileID: 7400000, guid: fefd156f4dd505845aaaf241ad1c16b1, type: 2}
+      effects:
+      - effectId: 1058
+        prefab: {fileID: 7451322073435167304, guid: 43a8ff6693238554d996fa44273a372b, type: 3}
+        startTime: 0.6666667
+        duration: 0.45
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.70000005
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 7bfbeaca42702324285ecc9b8ee829eb, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u9B54\u795E\u7684\u5F71\u5B50\uFF082\uFF09"
     prefab: {fileID: 3259887319085699789, guid: 783ae65098ae0604ea55b4e8840a9f6d, type: 3}
     animations:
     - displayName: "\u666E\u901A\u653B\u51FB"
       clip: {fileID: 7400000, guid: faa6682018151274ba684ae9c37725e9, type: 2}
+      effects: []
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 4f5644805bf25be4fb50a2084c324be8, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 5fe06b639fce2af48b6fa8b9a07f82e5, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 82434a584ab2d224a863a950aa802fc2, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 30d0b7bcf780de8499bc71d16d63ffe9, type: 2}
+      effects: []
     - displayName: "\u7075\u9B42\u75DB\u51FB"
       clip: {fileID: 7400000, guid: cc647ab16c5bb1f49aeb7d70cd1348b3, type: 2}
+      effects:
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.3
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.53333336
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.6666667
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.8
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.9333334
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 39b4ca211639ed4419412421bf663823, type: 2}
+      effects: []
     - displayName: Singing 01
       clip: {fileID: 7400000, guid: b5159f419780795479f2731eac647590, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u5357\u74DC\u9B42"
     prefab: {fileID: 5192989906969586738, guid: a5f04aaa47e7b0049b4cd5363856c25a, type: 3}
     animations:
     - displayName: "\u666E\u901A\u653B\u51FB"
       clip: {fileID: 7400000, guid: 4db8be72a52956e47907fb995969fc1a, type: 2}
+      effects: []
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: d3ffb788a605b604a8426b42ce4305b0, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 638fe04fae7064c45b0f29854391a9b8, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: bcaeeb210dbe49249825b709b48ed22e, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 3dd9af9225ab3d247a43088008348ccb, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 887ae407ee2386044bdc55c6aec4d867, type: 2}
+      effects: []
     - displayName: "\u5357\u74DC\u70B8\u5F39"
       clip: {fileID: 7400000, guid: a8e085bb73ac30c4da216705945e89de, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u6B7B\u4EA1\u4E4B\u4E66"
     prefab: {fileID: 9216267403143943392, guid: c750a289f6ed10d46b75910abfc3c022, type: 3}
     animations:
     - displayName: "\u666E\u901A\u653B\u51FB"
       clip: {fileID: 7400000, guid: 5b51607213f046049bfc745f6d71f68a, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.26666668
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 092a960f5f906524ba0da0983459271a, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 902eefff2c415c34fab24268c3af7cbd, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 895ece5c97df23a4785377023a4799d4, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 53393bce1064f2b47a1495fd4983a57a, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 9d87d816c1263c24883dc4974fb12363, type: 2}
+      effects: []
     - displayName: Skill ZuZhou
       clip: {fileID: 7400000, guid: ef1a2b767cf8d4b49a1f148cc728ef76, type: 2}
+      effects:
+      - effectId: 1059
+        prefab: {fileID: 4784503931017909598, guid: b16c60fe028ba1948b1c19a88e1ab380, type: 3}
+        startTime: 0.43333337
+        duration: 2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: ZuZhou
       clip: {fileID: 7400000, guid: e736375829de8c3469025e0a27c58f79, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u4EA1\u7075\u5DEB\u5E08"
     prefab: {fileID: 5789062359131375705, guid: 8556c6507633cc7438e2429a006cf61c, type: 3}
     animations:
     - displayName: "\u666E\u901A\u653B\u51FB"
       clip: {fileID: 7400000, guid: 10d7b2d4c8b342d448eec03b982d2d10, type: 2}
+      effects: []
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: f6ba4c8daf608bb459eea2fd7c27dec3, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: b79b46f6a590b064e9ed496dc488c7dd, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: e53f63fb7042ad541a652bf71d4c69bf, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: cfe9b14ea40cc3f47b94060d65fbf15c, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: f06b507ca33bbf445a1a28cd63f0ff3d, type: 2}
+      effects: []
     - displayName: Skill DianKuang Release
       clip: {fileID: 7400000, guid: efb4d54b3270e6d4b90372269481cfe9, type: 2}
+      effects: []
     - displayName: Skill DianKuang Singing
       clip: {fileID: 7400000, guid: 8c78a30b700397d43b917fab39e9ce80, type: 2}
+      effects: []
     - displayName: Skill FuHuaLingYu
       clip: {fileID: 7400000, guid: 00d20d64c005fa54e97f44a9a5505117, type: 2}
+      effects: []
     - displayName: Skill Release
       clip: {fileID: 7400000, guid: a28bf798a73ace8428f1b68343f36b5e, type: 2}
+      effects: []
     - displayName: "\u6280\u80FD\u541F\u5531"
       clip: {fileID: 7400000, guid: 4f42a6be69e7a7947a09e485d6148bc1, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u4EA1\u7075\u6218\u4FD8"
     prefab: {fileID: 8889264118994447206, guid: d6d5aba4c8de4fd4abd72f03de6c3bb4, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: 9e79e0997d4822842a6debaa93b2a26b, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.5
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 52256f9cc1250d04cb8c6c83b36a972f, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 57fe89b010ae40343bfd8fcb12fa6cf9, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: e95c9be139194cf4582b05e516881248, type: 2}
+      effects: []
     - displayName: Death Loop
       clip: {fileID: 7400000, guid: 9eafaac89778a094b812c54e959139cf, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 6949076c371133640aad9c59240d3424, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 00ccedf02c6686b4ba8abffbe9ce46c4, type: 2}
+      effects: []
     - displayName: Skill HuanShu
       clip: {fileID: 7400000, guid: f54cd6ff324e01d46871238e3016c01f, type: 2}
+      effects: []
     - displayName: Skill WangYu
       clip: {fileID: 7400000, guid: 827e75f8f3798394a9b493ca1c75a8e1, type: 2}
+      effects: []
     defaultAnimation: 5
   - displayName: "\u68A6\u7F57\u514B\u7684\u90AA\u9AB8\u5F13\u7BAD\u624B"
     prefab: {fileID: 1667175309511353439, guid: 46ab3ad5fdc96654c81b788f82459757, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: bb9fb9de1408fc849b66813ea1ace9d8, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.40000004
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 387
+        prefab: {fileID: 1167534269370646, guid: cf95464f83138c6408eb82bfc1678f0d, type: 3}
+        startTime: 0.40000004
+        duration: 0.3
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0.5, z: 1}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 46e0b5238b118f14a942aac9577d9a0f, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 337faa9f874266a448ca0f9b72178c99, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 9fb3ee9de47f8774cb0adc83abf4b515, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 19d0ea046668d604b9b03790d40188e6, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 58efbb30f6c9e764caf970bcdff511c7, type: 2}
+      effects: []
     - displayName: Skill ChuanYunJian
       clip: {fileID: 7400000, guid: faf97e86843294543ac18162d36e8967, type: 2}
+      effects: []
     - displayName: Skill RanXueJian
       clip: {fileID: 7400000, guid: 667e9a5bddb6b384aa10ac0717af0b74, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u68A6\u7F57\u514B\u7684\u90AA\u9AB8\u517D\u4EBA"
     prefab: {fileID: 8139329171483040253, guid: 1442a5c6773923745afaffeac94b9f0f, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: ad5a4f7c113aae844bedde2d9c88125d, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.33333334
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 9086ef1dcea37514a9326b8aa09d6dcc, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: ffd8c44b09bfff44781e73b799d82ab9, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: 25fcbca2a197aef45b473d4abe0b289c, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: d6b384ed93a3f6342bcfa98cb4405a06, type: 2}
+      effects: []
     defaultAnimation: 3
   - displayName: "\u68A6\u7F57\u514B\u7684\u90AA\u9AB8\u58EB\u5175"
     prefab: {fileID: 2202273814685450130, guid: 64fc6463d24c9f54a824e6b12e8b054e, type: 3}
     animations:
     - displayName: "\u666E\u653B"
       clip: {fileID: 7400000, guid: 59cabe07048c3c04c835e8f82605db80, type: 2}
+      effects:
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 0.3666667
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: 77783ac0d79d61d43b2ae4dbab3245ef, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 455df23a0a726c346b391bab27634a71, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 6ed45c561c9b7d846892a6bce0f69448, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: b5afc4ff76e823a44972cdd871c9ca9a, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 61b0b6e21b5082a4db049b7c05f6e6f0, type: 2}
+      effects: []
     defaultAnimation: 4
   - displayName: "\u8FBE\u7EB3\u6258\u65AF\u7684\u618E\u6068"
     prefab: {fileID: 32368503923787581, guid: ff0769a1503aeb348b96f8b460784121, type: 3}
     animations:
     - displayName: "\u6068\xB7\u91CD\u9524"
       clip: {fileID: 7400000, guid: 4881f859b8c6d5a4eb66975ab7b59e7f, type: 2}
+      effects:
+      - effectId: 189
+        prefab: {fileID: 1793520928942798, guid: f6132f2daeb2d0644b65bab0ed248795, type: 3}
+        startTime: 0.70000005
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1132
+        prefab: {fileID: 7024996730827897434, guid: fcefb02c09abbaa4a9470e777da1f892, type: 3}
+        startTime: 0.8333334
+        duration: 1
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: d12907c40d7e2e54381c0366debb4c9b, type: 2}
+      effects: []
     - displayName: "\u51FA\u573A"
       clip: {fileID: 7400000, guid: 007464498e1578747a6fb51a68235ac4, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 21016d6f7280c144390265fb098fef72, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: a6f1ff501919990439442abe88b5f411, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: bff8034266052974ba9aaa47d6cfe92f, type: 2}
+      effects: []
     - displayName: "\u8C22\u5E55\u4F20\u9001"
       clip: {fileID: 7400000, guid: 6f1f1a83e70adfb4ab58d7206623e85f, type: 2}
+      effects:
+      - effectId: 104
+        prefab: {fileID: 1967469495793422, guid: 7a89155fcb09fe444bd2def7237a7142, type: 3}
+        startTime: 3.266667
+        duration: 2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 2.5, y: 2.5, z: 2.5}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 2.5, y: 2.5, z: 2.5}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u9ED1\u6697\u6D8C\u52A8"
       clip: {fileID: 7400000, guid: bdd0d4d9843ede340b3da34fd0cabd0b, type: 2}
+      effects:
+      - effectId: 1076
+        prefab: {fileID: 1401969160998116, guid: 4a6c505afff40b547ab0ec87e3c23172, type: 3}
+        startTime: 0.66666675
+        duration: 1
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u51DD\u89C6"
       clip: {fileID: 7400000, guid: 06438ed6a741bbd4da284e5e51b22b4a, type: 2}
+      effects:
+      - effectId: 1103
+        prefab: {fileID: 7790283065279945631, guid: a9dd166cf56cb3743942875c500f033d, type: 3}
+        startTime: 0.33333334
+        duration: 1
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u618E\u6068\u4E4B\u9524"
       clip: {fileID: 7400000, guid: e7b9220ade39ddc479cae4866b230566, type: 2}
+      effects:
+      - effectId: 1079
+        prefab: {fileID: 1740214674173658, guid: 5a00a07633f44dd44a4bbbb4ac603ade, type: 3}
+        startTime: 0.6
+        duration: 5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 1}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1080
+        prefab: {fileID: 1471204638935820, guid: ed2ada912f29a19479d7852c55f8d7b8, type: 3}
+        startTime: 0.7
+        duration: 2
+        targetBased: 1
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1080
+        prefab: {fileID: 1471204638935820, guid: ed2ada912f29a19479d7852c55f8d7b8, type: 3}
+        startTime: 1.3666667
+        duration: 2
+        targetBased: 1
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1081
+        prefab: {fileID: 1744088019112324, guid: 8df353310453af44999e39d0c5736812, type: 3}
+        startTime: 3.1333334
+        duration: 2
+        targetBased: 1
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     defaultAnimation: 4
   - displayName: "\u8FBE\u7EB3\u6258\u65AF\uFF08NPC\uFF09"
     prefab: {fileID: 2230476017627244076, guid: 76a95625823b7de478b4bd02b5afd248, type: 3}
     animations:
     - displayName: "\u53D7\u51FB"
       clip: {fileID: 7400000, guid: b8805e382bfc9014f803366d38447053, type: 2}
+      effects: []
     - displayName: "\u6B7B\u4EA1"
       clip: {fileID: 7400000, guid: 1a44e80e0e4101148848bfaa447989be, type: 2}
+      effects: []
     - displayName: "\u766B\u72C2"
       clip: {fileID: 7400000, guid: 40b83abfee1bbde4386c7e574c448a43, type: 2}
+      effects: []
     - displayName: "\u766B\u72C2\u91CA\u653E"
       clip: {fileID: 7400000, guid: 9f6b91eb68c1887489e28ec91440de8a, type: 2}
+      effects:
+      - effectId: 1067
+        prefab: {fileID: 1713842475666128, guid: e7b4f1f1de2eda94ebec783f03ffaada, type: 3}
+        startTime: 2.1666667
+        duration: 3.5000002
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0.5, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 80010
+        prefab: {fileID: 1328208299150110, guid: 07e52523c218ee145999336ab233b1bc, type: 3}
+        startTime: 7
+        duration: 1
+        targetBased: 1
+        followPosition: 1
+        followRotation: 1
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 1, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1068
+        prefab: {fileID: 2072194788536520361, guid: 75863cc0ae1763e4782717fddfcd8283, type: 3}
+        startTime: 7
+        duration: 2.7
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u56DE\u5F52\u672C\u4F53 1"
       clip: {fileID: 7400000, guid: f67683a6c3d69c748af631c3b4efe69b, type: 2}
+      effects: []
     - displayName: "\u56DE\u5F52\u672C\u4F53 2"
       clip: {fileID: 7400000, guid: 691d3146da8e41c4c9351d615e78f5c1, type: 2}
+      effects:
+      - effectId: 600
+        prefab: {fileID: 1457445608707238, guid: 5addcfcc33ec13c4ca028cc7eab87883, type: 3}
+        startTime: 0
+        duration: 2.2
+        targetBased: 1
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     - displayName: "\u56DE\u5F52\u672C\u4F53 3"
       clip: {fileID: 7400000, guid: 58b8c955a804acd40ae6f81a8e7be23b, type: 2}
+      effects: []
     - displayName: "\u5F85\u673A"
       clip: {fileID: 7400000, guid: f498798345cd62f4eb61c74efd80bec4, type: 2}
+      effects: []
     - displayName: "\u8DD1\u6B65"
       clip: {fileID: 7400000, guid: 5fa8415836ba19743bd49f25b77e4251, type: 2}
+      effects: []
     - displayName: "\u865A\u5F31\u4E0B\u8DEA 1"
       clip: {fileID: 7400000, guid: b293722d3f4cd434b9e6b72ebe62b3a2, type: 2}
+      effects: []
     - displayName: "\u865A\u5F31\u4E0B\u8DEA 2"
       clip: {fileID: 7400000, guid: 817cf4f6748ab1d4eb8280982b34bbf7, type: 2}
+      effects: []
     - displayName: "\u865A\u5F31\u4E0B\u8DEA 3"
       clip: {fileID: 7400000, guid: ebc03fe81ac08dd49a97662547721a57, type: 2}
+      effects:
+      - effectId: 600
+        prefab: {fileID: 1457445608707238, guid: 5addcfcc33ec13c4ca028cc7eab87883, type: 3}
+        startTime: 0
+        duration: 2.2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1125
+        prefab: {fileID: 490775338847334750, guid: 9cc25f99ce3f9e74e89a5c8c0cfc6736, type: 3}
+        startTime: 0
+        duration: 4.5
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: -1}
+        yaw: 180
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
+      - effectId: 1126
+        prefab: {fileID: 3858950755259020559, guid: 4b84a0022b8604b4588cac95f7998ac9, type: 3}
+        startTime: 2.0000002
+        duration: 2.2
+        targetBased: 0
+        followPosition: 0
+        followRotation: 0
+        scale: {x: 1, y: 1, z: 1}
+        offset: {x: 0, y: 0, z: 0}
+        yaw: 0
+        shaderParameters: {x: 1, y: 1, z: 1}
+        warningDuration: 0
+        warningInitialRatio: 0
     defaultAnimation: 7
   modelRoot: {fileID: 2990492592369936357}
   cameraTarget: {fileID: 867908192380340326}
   orbitCamera: {fileID: 5399980224169951773}
+  framingDistanceMultiplier: 3.6
   modelButtons:
   - {fileID: 9186876481676846558}
   - {fileID: 3244039026717286303}

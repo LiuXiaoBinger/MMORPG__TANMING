@@ -10,4 +10,7 @@ public sealed class ROCreatureAnimationDefinition
 
     /// <summary>原版 RO 动画片段，使用对应模型的骨骼路径。</summary>
     public AnimationClip clip;
+
+    /// <summary>按触发秒数排序的原技能特效事件；待机等无特效动作保持空数组。</summary>
+    public ROCreatureEffectDefinition[] effects = Array.Empty<ROCreatureEffectDefinition>();
 }
