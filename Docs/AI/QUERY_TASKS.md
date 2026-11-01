@@ -73,3 +73,13 @@
 - 版本2026-10-31-997和2026-10-31-1221记录着相同Shader包：FileHash e947160e072ada0ef09d4d259ca3ddd0、1986839字节。当前OutputCache的SHA256为fd6da1d88e21592d9bb2f93731fcc477f8292151088c4a7696dfa5ab0f6e8df4，与此前样本相同；本地mtime为14:33:06，而当前SVC保存于20:43:39。最新收集结果尚未进入这个现有包；这不等于已经确定用户早先Player加载了哪个版本。
 - 实际球体材质的Shader和必要主纹理/地形纹理均可解析，Shader支持为true、ShaderHasError为false。Terrain的_MainTex为空是源码声明的隐藏Never Used属性，Control和四张Splat贴图齐全。sc_moshenta_001_a02使用RO/Creature/Monster，其GUID与RO参考原材质相同，不判为意外替换。
 - 临时合成光图实验未获得源Shader正确响应光图的阳性对照：源/包内Shader的lightmap-on结果均为0，Unlit可见性对照meanLum为0.131919，不能据此证明包内变体被裁。新增叠加场景被未保存的Untitled场景阻止，未保存该场景。临时对象和bundle均已移除，LOD、光图与测试过的着色全局量已还原；场景数1到1，七个收集球保留。未改正式代码/资源/配置，未构建、重烘焙或实施运行时修复。黑墙根因/修复、新包渲染、重新进场和Player仍未验证。证据：_temp/dungeon-lighting-resume-20261031/collection-inspection/inspection-evidence.json及其渲染子目录。完整日志：项目修改日志/2026-10-31-组队界面刷新与成员入场修复_CHANGELOG.md。
+
+## [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO 副本编辑器入口与数据链路，2026-11-02
+
+- 授权：开发者已明确批准本次分析及双语查询入口。仅做源码/XML 静态核对；未启动 RO 编辑器、未编译、未保存、未导出、未运行游戏。
+- 来源根目录：`F:/UnityPro/ro/Ro_cs422nb`。Unity 菜单：`clientproj/Assets/artres/Editor/TreeEditor/TreeEditor.cs:42` 中的 `TreeEditor/OpenSceneEditor`；`clientproj/Assets/artres/Editor/SceneEditor/SceneEditor.cs:587` 中的 `ROTools/OpenSceneEditor`。`TreeEditor.cs:51` 的 `TreeEditor/OpenSkillEditor` 是独立的技能页面。
+- 编辑模块：`clientproj/Assets/artres/Editor/SceneEditor/` 包含波次、怪物/随机/继承生成、NPC/采集物/墙体节点、触发区域/分组、场景 AI 事件及巡逻路径。`NodeEditor/SceneWave/MSceneWaveNode.cs:503` 起提供事件前置条件与延迟创建波次的配置。已检查菜单和源码，未在 Unity 中实际操作这些功能。
+- 魔神塔数据：`config/Assets/Resources/SceneDatas/RO_DaNaTuoSiZhiZhan_EZ.txt`、`RO_DaNaTuoSiZhiZhan_H.txt`、`RO_DaNaTuoSiZhiZhan_HH.txt` 是 XML `MSceneEditorConfig` 文件，包含 `data`、`dataEx`、`canvas`。每份均有 63 个 `MSceneWaveData` 元素及 35 个 `MSceneTriggerObjectData` 元素；这些是配置记录数，不是怪物总数，也不代表必然有 63 波纯战斗。
+- 保存/导出：源码中 `clientproj/Assets/artres/Editor/SceneEditor/SceneMgr.cs:845` 先检查数据，在满足 `SceneDatas/` 路径条件时，将 `serverData` 导出为 `PbLocal.MSSceneData`，将 `clientData` 导出为 `PbLocal.MCSceneData`，之后保存编辑器 XML。客户端字节数据使用 `SceneDatasForClient`。
+- 依赖与边界：需要 Odin/Sirenix、`NodeEditorFramework`、`MoonClient`、`MoonCommonLib`、`PbLocal.Xml`、表格及配置资源。该编辑器尚未移植到 `ROCharacterLightingDemo`；此前的场景/模型/动作/特效迁移未包含它。本次不声称已通过运行时验收。
+- 完整分析：`项目分析/RO副本编辑器入口与数据链路-2026-11-02.md`。仅同步/检查本编号的中文段，保留全部既有记录。

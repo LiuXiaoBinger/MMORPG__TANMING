@@ -74,7 +74,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `6639c55754f7b5126399856c58ed26ecb3ee0636dc776ab6ee6bb0390ad733a3`
+Source normalized SHA256: `2c96fa40a608493a679b865ccc1774c5bab893c6dc163c91c31a68a9759ca2c6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -86,7 +86,8 @@ Source normalized SHA256: `6639c55754f7b5126399856c58ed26ecb3ee0636dc776ab6ee6bb
 | [QUERY][副本组队][DUNGEON-MULTIPLAYER-20261030] 2026-10-30 Service link versus player KCP and gate notification contract | 44-50 |
 | [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-60 |
 | [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-68 |
-| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 2026-10-31 Collector misses the baked runtime condition; existing shader bundle unchanged | 69-76 |
+| [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 2026-10-31 Collector misses the baked runtime condition; existing shader bundle unchanged | 69-78 |
+| [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO dungeon editor entry points and data route, 2026-11-02 | 79-87 |
 
 ## Older records
 
