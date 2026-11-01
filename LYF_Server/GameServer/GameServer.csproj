@@ -40,6 +40,7 @@
         <Compile Include="Components\RoleCountComponent.cs" />
         <Compile Include="Components\RoleShopRecord.cs" />
         <Compile Include="Components\RoleSkillComponent.cs" />
+        <Compile Include="Components\RoleSingingComponent.cs" />
         <Compile Include="Components\ROSkillComponent.cs" />
         <Compile Include="Components\ROMoveComponent.cs" />
         <Compile Include="MessageHandler\Role\MoveOperationHandler.cs" />
@@ -58,6 +59,8 @@
           <Link>Config\SkillCastingRulesValidation.cs</Link>
         </Compile>
         <Compile Include="Ctrl\Game_LoginCtrl.cs" />
+        <Compile Include="Event\ROEvent.cs" />
+        <Compile Include="Event\ROEventDispatcher.cs" />
         <Compile Include="Entity\Role\OnlineRole.cs" />
         <Compile Include="Entity\Role\RoleDataFieldManager.cs" />
         <Compile Include="Entity\Role\RoleNetSender.cs" />

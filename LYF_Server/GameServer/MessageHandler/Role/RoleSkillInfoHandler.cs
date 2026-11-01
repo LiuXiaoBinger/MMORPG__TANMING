@@ -34,7 +34,7 @@ public sealed class RoleSkillInfoHandler : IGameMessageHandler
 
     /// <summary>核对中心服角色身份后，按原会话转发并装载权威技能列表。</summary>
     /// <param name="context">保留原 Gate 与 Unity 会话标识的中心服回包上下文。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         if (context == null || context.Source != GameCommandSource.CenterServer || context.Package == null)
         {

@@ -16,7 +16,7 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
 
     /// <summary>装载角色背包和次数数据，并在完整装载后解除保存门闩。</summary>
     /// <param name="context">中心服消息上下文。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 上下文缺失或来源不是中心服时丢弃该回包。
         if (context == null || context.Source != GameCommandSource.CenterServer)

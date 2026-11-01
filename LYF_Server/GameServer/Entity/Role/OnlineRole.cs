@@ -64,6 +64,8 @@ public class OnlineRole
 
     // 角色持久化组件容器，按注册顺序装载背包/次数/商店/技能等模块。
     private readonly RoleComponentContainer _components;
+    // 角色级实体事件派发器，随角色创建与释放，承载技能请求与吟唱事件。
+    private readonly ROEventDispatcher _eventDispatcher = new ROEventDispatcher();
     // 角色级保存定时器，置位后由 UpdatePerSecond 触发组包发送。
     private readonly SaveRoleDataTimer _saveRoleDataTimer;
     // 角色数据发送器，负责把脏字段组包并发往 CenterServer 并处理 ACK 重试。
@@ -139,6 +141,8 @@ public class OnlineRole
         _components.SetComponent(new RoleShopRecord(this));
         // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放。
         _components.SetComponent(new RoleSkillComponent(this));
+        // 施法请求组件只做事件转换，与技能组件同属当前在线角色的技能链路。
+        _components.SetComponent(new RoleSingingComponent(this));
         // 移动上报沿用当前在线角色的正式组件容器，不使用未绑定世界的历史占位组件。
         _components.SetComponent(new ROMoveComponent(this));
         _components.Initialize();
@@ -309,11 +313,13 @@ public class OnlineRole
         return !_roleNetSender.HasInFlightRequest() && !_components.NeedSave();
     }
 
-    /// <summary>角色下线时按组件注册逆序释放资源。</summary>
+    /// <summary>角色下线时按组件注册逆序释放资源，并清理事件派发器持有的回调引用。</summary>
     public void Dispose()
     {
         _saveRoleDataTimer.Stop();
         _components.Dispose();
+        // 组件释放后清空派发器，防止已释放组件仍被后续派发回调。
+        _eventDispatcher.UnInit();
     }
 
     /// <summary>获取角色 ID；角色基础数据尚未装载时返回 0。</summary>
@@ -422,6 +428,15 @@ public class OnlineRole
     public void SetComponent<T>(T component) where T : RoleComponentBase
     {
         _components.SetComponent(component);
+    }
+
+    /// <summary>
+    /// 取角色实体事件派发器，命名与 RO 的 GetEventDispatcher 保持一致。
+    /// 每个在线角色独立一份，派发只在当前角色内进行。
+    /// </summary>
+    public ROEventDispatcher GetEventDispatcher()
+    {
+        return _eventDispatcher;
     }
 
     /// <summary>

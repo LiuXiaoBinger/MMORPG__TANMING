@@ -66,7 +66,7 @@ public static class SkillRoleSnapshotSmoke
             }
             // 处理器必须在装载列表之前拒绝旧角色身份。
             RoleSkillInfoHandler handler = new RoleSkillInfoHandler();
-            handler.Handle(CreateContext(staleResponse));
+            handler.OnCall(CreateContext(staleResponse));
             if (skillComponent.SkillsLoaded)
             {
                 return Fail("迟到的角色 A 技能列表被装载给角色 B");

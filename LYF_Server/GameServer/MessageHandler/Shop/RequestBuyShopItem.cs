@@ -25,7 +25,7 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
 
     /// <summary>校验商城购买请求，并在逻辑线程完成虚拟物品扣除与商品发放。</summary>
     /// <param name="context">当前消息及网络会话上下文。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         #region 校验
 

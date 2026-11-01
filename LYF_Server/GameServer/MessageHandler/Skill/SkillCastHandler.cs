@@ -14,9 +14,9 @@ public sealed class SkillCastHandler : IGameMessageHandler
             commandCode == NetDefine.CMD_SkillCastCode;
     }
 
-    /// <summary>从会话解析角色，先回权威结果，再广播一次施法开始。</summary>
+    /// <summary>从会话解析角色并构造客户端施法事件，交由角色派发器驱动后续释放流程。</summary>
     /// <param name="context">逻辑线程中的不可变网络命令和 Gate 会话上下文。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 上下文缺失或来源不是网关时直接丢弃该施法请求。
         if (context == null || context.Source != GameCommandSource.GateServer)
@@ -83,15 +83,14 @@ public sealed class SkillCastHandler : IGameMessageHandler
             return;
         }
 
-        // 成功时开始通知沿用客户端技能 UUID；MP/CD 仍由服务端结算。
-        SkillCastRet result;
-        SkillCastStartNtf startNotice;
-        bool accepted = skillComponent.TryCast(request, out result, out startNotice);
-        SendResult(context, result);
-        if (accepted && startNotice != null)
-        {
-            RoleManager.Instance.BroadcastSkillStart(role, startNotice);
-        }
+        // 构造客户端施法事件并交给角色派发器；释放校验、回包与广播由技能组件在事件链中完成。
+        ROClientFireSkillArgs args = new ROClientFireSkillArgs();
+        args.skill_id_ = request.SkillId;
+        args.skill_uuid_ = request.SkillUuid;
+        // 现有协议只携带技能 ID 与单次施法标识，目标与施法点保持 RO 字段的零值默认。
+        args.target_ = 0UL;
+        args.cast_point_ = new ROVector3(0f, 0f, 0f);
+        role.GetEventDispatcher().DispatcherEvent(args);
     }
 
     /// <summary>沿原 Gate 链路返回含权威 MP/CD 的专用施法结果。</summary>

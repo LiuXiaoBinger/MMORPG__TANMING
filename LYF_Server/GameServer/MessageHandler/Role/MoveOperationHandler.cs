@@ -11,7 +11,7 @@ public sealed class MoveOperationHandler : IGameMessageHandler
 
     /// <summary>从原复合会话查找角色，调用已装配的正式移动组件。</summary>
     /// <param name="context">逻辑队列提供的原网关/Unity 会话和协议包。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 角色身份从现有会话索引取得，上报不携带可替换的角色 ID。
         OnlineRole pRole = RoleManager.Instance.GetOnlineRoleBySession(

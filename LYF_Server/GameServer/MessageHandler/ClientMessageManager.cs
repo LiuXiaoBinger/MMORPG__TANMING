@@ -185,7 +185,7 @@ public sealed class ClientMessageManager : IContainer
             GameCenterResponseForwarder.TryForwardToGate(context);
         }
 
-        registration.Handler.Handle(context);
+        registration.Handler.OnCall(context);
     }
 }
 
@@ -217,7 +217,7 @@ public interface IGameMessageHandler
     bool CanHandle(GameCommandSource source, ushort commandCode);
 
     /// <summary>在 GameServer 逻辑线程中处理已经入队的命令。</summary>
-    void Handle(GameMessageHandlerContext context);
+    void OnCall(GameMessageHandlerContext context);
 }
 
 /// <summary>

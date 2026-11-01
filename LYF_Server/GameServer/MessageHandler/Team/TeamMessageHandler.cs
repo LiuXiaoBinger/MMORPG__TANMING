@@ -45,7 +45,7 @@ public sealed class TeamMessageHandler : IGameMessageHandler
 
     /// <summary>按协议号分派到 TeamManager 的对应操作。</summary>
     /// <param name="context">逻辑队列提供的网关会话与协议包。</param>
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 上下文缺失或来源不是网关时直接丢弃，避免后续解引用空对象。
         if (context == null || context.Source != GameCommandSource.GateServer)

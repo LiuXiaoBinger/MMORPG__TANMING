@@ -8,7 +8,7 @@ public sealed class EnterWorldHandler : IGameMessageHandler
         return source == GameCommandSource.GateServer && commandCode == NetDefine.CMD_EnterWroldCode;
     }
 
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 上下文缺失或来源不是网关时直接丢弃，避免后续解引用空对象。
         if (context == null || context.Source != GameCommandSource.GateServer)

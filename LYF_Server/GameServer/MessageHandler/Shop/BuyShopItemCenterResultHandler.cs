@@ -10,7 +10,7 @@ public sealed class BuyShopItemCenterResultHandler : IGameMessageHandler
             commandCode == NetDefine.CMD_BuyShopItemCode;
     }
 
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         // 商城结果已在统一入口转发，保留 Handler 作为该协议的领域注册点。
     }

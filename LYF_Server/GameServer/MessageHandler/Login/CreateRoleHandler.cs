@@ -9,7 +9,7 @@ public sealed class CreateRoleHandler : IGameMessageHandler
             (source == GameCommandSource.GateServer || source == GameCommandSource.CenterServer);
     }
 
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         if (context == null || context.Package == null)
         {

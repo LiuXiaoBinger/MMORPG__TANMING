@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RO 技能释放 → 命中判定 · 函数级思维导图</title>
+<style>
+  :root{
+    --bg:#FAF9F6; --panel:#FFFFFF; --ink:#2C2C2A; --ink2:#5B6470; --ink3:#8A929C;
+    --line:#E4E1D9; --line2:#EFEDE6;
+    --client:#3E7BFA; --server:#D9821A; --state:#8257E6; --skill:#CF4A45;
+    --hit:#B4468C; --data:#2E9E6B; --net:#1899A8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-serif;
+    font-size:14px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  code,.mono{font-family:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace}
+
+  /* ---------- 头部 ---------- */
+  header{padding:34px 40px 20px;border-bottom:1px solid var(--line);background:#fff}
+  h1{margin:0 0 8px;font-size:25px;font-weight:700;letter-spacing:.2px}
+  .sub{color:var(--ink2);font-size:13.5px;margin:0}
+  .sub b{color:var(--ink);font-weight:600}
+  .meta{margin-top:14px;display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;color:var(--ink3)}
+  .meta span b{color:var(--ink2);font-weight:600}
+
+  /* ---------- 步骤条 ---------- */
+  .strip{display:flex;gap:0;padding:16px 40px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+  .chip{
+    flex:0 0 auto;display:flex;align-items:center;gap:8px;
+    padding:8px 15px 8px 11px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;font-size:13px;color:var(--ink2);white-space:nowrap;
+    transition:.16s;margin-right:9px;
+  }
+  .chip:hover{border-color:#c9c5ba;color:var(--ink);transform:translateY(-1px)}
+  .chip .n{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
+    font-size:11.5px;font-weight:700;color:#fff;background:var(--ink3)}
+  .chip.on{background:#F3F1EA;border-color:#cfcabd;color:var(--ink);font-weight:600}
+
+  /* ---------- 工具条 ---------- */
+  .toolbar{display:flex;align-items:center;gap:10px;padding:12px 40px;background:#fff;
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px;
+    font-size:12.5px;color:var(--ink2);cursor:pointer;font-family:inherit;transition:.15s}
+  .btn:hover{border-color:#c9c5ba;color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+
+  /* 端过滤 segmented */
+  .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+  .seg button{
+    border:0;background:transparent;padding:6px 13px;font-size:12.5px;color:var(--ink2);
+    cursor:pointer;font-family:inherit;border-right:1px solid var(--line2);transition:.15s
+  }
+  .seg button:last-child{border-right:0}
+  .seg button:hover{background:#F7F5EF;color:var(--ink)}
+  .seg button.on{background:#F0EDE4;color:var(--ink);font-weight:600}
+  .seg button .dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:0px}
+  input[type=search]{
+    border:1px solid var(--line);border-radius:7px;padding:7px 11px;font-size:13px;
+    font-family:inherit;color:var(--ink);width:230px;outline:none;background:#fff
+  }
+  input[type=search]:focus{border-color:#a9b6cc;box-shadow:0 0 0 3px rgba(62,123,250,.08)}
+  .legend{display:flex;gap:13px;margin-left:auto;flex-wrap:wrap;font-size:12px;color:var(--ink2)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:1px}
+
+  /* ---------- 主体 ---------- */
+  .main{display:flex;align-items:flex-start;gap:0;min-height:600px}
+  .mapwrap{flex:1 1 auto;min-width:0;overflow:auto;height:calc(100vh - 235px);min-height:520px;
+    background:
+      radial-gradient(circle at 1px 1px, #E8E5DC 1px, transparent 0) 0 0/22px 22px,
+      var(--bg);
+    padding:22px 10px 40px 26px}
+  svg{display:block;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+
+  /* ---------- 详情面板 ---------- */
+  aside{
+    flex:0 0 430px;width:430px;border-left:1px solid var(--line);background:#fff;
+    height:calc(100vh - 235px);min-height:520px;overflow-y:auto;padding:22px 24px 60px;
+    position:sticky;top:57px
+  }
+  aside::-webkit-scrollbar,.mapwrap::-webkit-scrollbar{width:9px;height:9px}
+  aside::-webkit-scrollbar-thumb,.mapwrap::-webkit-scrollbar-thumb{background:#DAD6CC;border-radius:5px}
+  aside::-webkit-scrollbar-track,.mapwrap::-webkit-scrollbar-track{background:transparent}
+
+  .crumb{font-size:11.5px;color:var(--ink3);margin-bottom:9px;line-height:1.5}
+  .crumb span{color:#b9b4a8}
+  .ptitle{font-size:18px;font-weight:700;line-height:1.4;margin:0 0 5px;word-break:break-word}
+  .pkind{display:inline-block;font-size:11px;padding:2px 9px;border-radius:5px;font-weight:600;margin-bottom:14px;margin-right:6px}
+  .pside{display:inline-block;font-size:11px;padding:2px 9px;border-radius:5px;font-weight:700;
+    margin-bottom:14px;margin-right:6px;color:#fff}
+  .pside.c{background:#3E7BFA}
+  .pside.s{background:#D9821A}
+  .pside.b{background:#6B7280}
+
+  .sigbox{background:#F7F5EF;border:1px solid #E8E4D9;border-radius:8px;padding:11px 13px;
+    margin-bottom:14px;font-size:12px;line-height:1.7;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+  .sigbox .lbl{display:block;font-size:10.5px;letter-spacing:.6px;color:var(--ink3);
+    text-transform:uppercase;margin-bottom:5px;font-family:inherit}
+  .sigbox code{color:#8A3A2E}
+
+  .sec-h{font-size:11px;letter-spacing:1.1px;color:var(--ink3);text-transform:uppercase;
+    margin:20px 0 9px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .sec-h::after{content:"";flex:1;height:1px;background:var(--line2)}
+
+  ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;position:relative;padding-left:27px;margin-bottom:9px;font-size:13px;line-height:1.62;color:#3A3F45}
+  ol.steps li::before{
+    content:counter(s);position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:5px;
+    background:#F0EDE4;color:var(--ink2);font-size:10.5px;font-weight:700;display:grid;place-items:center
+  }
+  ul.plain{margin:0;padding-left:17px;font-size:13px;color:#3A3F45}
+  ul.plain li{margin-bottom:7px;line-height:1.6}
+  ul.fail{list-style:none;margin:0;padding:0}
+  ul.fail li{font-size:12.5px;line-height:1.6;margin-bottom:7px;padding-left:15px;position:relative;color:#4A4F55}
+  ul.fail li::before{content:"→";position:absolute;left:0;color:#C9A227;font-weight:700}
+
+  .note{border-left:3px solid #E3C05A;background:#FDF9EC;padding:10px 13px;border-radius:0 7px 7px 0;
+    font-size:12.5px;line-height:1.65;color:#5b4d1e;margin-top:14px}
+  .note b{color:#3f3510}
+  .note.danger{border-color:#D9534F;background:#FDF1F0;color:#7a2b28}
+  .note.danger b{color:#5c1d1b}
+
+  .kw{background:#EFEDE6;border-radius:4px;padding:1px 5px;font-size:12px;font-family:"Cascadia Code",Consolas,monospace;color:#7a4a2a}
+  .empty{color:var(--ink3);font-size:13px;padding:40px 0;text-align:center}
+
+  /* ---------- 底部表格 ---------- */
+  .foot{padding:36px 40px 70px;background:#fff;border-top:1px solid var(--line)}
+  .foot h2{font-size:18px;margin:0 0 6px;font-weight:700}
+  .foot p.lead{color:var(--ink2);font-size:13px;margin:0 0 18px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:34px}
+  th{text-align:left;font-weight:600;color:var(--ink2);background:#F7F5EF;
+    padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:9px 11px;border-bottom:1px solid var(--line2);vertical-align:top;line-height:1.6}
+  td code{font-size:11.7px;background:#F5F3EC;padding:1px 5px;border-radius:4px;color:#7a4a2a}
+  tr:hover td{background:#FBFAF6}
+  .tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:4px;font-weight:600;white-space:nowrap}
+
+  @media (max-width:1100px){
+    .main{flex-direction:column}
+    aside{flex:none;width:100%;height:auto;position:static;border-left:none;border-top:1px solid var(--line)}
+    .mapwrap{width:100%;height:60vh}
+    header,.strip,.toolbar,.foot{padding-left:20px;padding-right:20px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>RO 技能释放 → 命中判定 · 函数级全链路</h1>
+  <p class="sub">从客户端按下技能键，到服务端算出「打到了谁」。每个节点左侧的 <b style="color:#3E7BFA">客</b> / <b style="color:#D9821A">服</b> 标记，说明这段代码跑在哪一端。</p>
+  <div class="meta">
+    <span>参考工程 <b>F:/UnityPro/ro/Ro_cs422nb</b></span>
+    <span>下文路径均相对该目录</span>
+    <span>行号已于 <b>2026-11-01</b> 按当前源码二次核对（首次整理时存在整体漂移）</span>
+    <span>源码复核摘要：接口签名按当前源码更正为 <b>GetReplaceSkillCoreOnClientRequest</b>（五参）；连招字段 <b>skill_combo_id_</b> 位于 <b>ROSingingArgs</b>；状态数为 <b>36</b>；吟唱距离检查<b>逐帧</b>执行；状态令牌读取链为 <b>ActionToken → Token()</b></span>
+    <span>源码复核：更新关键引用行号与状态令牌读取链；补充事件派发器语义、本项目接入边界</span>
+  </div>
+</header>
+
+<div class="strip" id="strip"></div>
+
+<div class="toolbar">
+  <button class="btn" id="btnExpand">全部展开</button>
+  <button class="btn" id="btnCollapse">折叠到主干</button>
+  <div class="seg" id="sideSeg">
+    <button data-side="all" class="on">两端</button>
+    <button data-side="client"><i class="dot" style="background:#3E7BFA"></i>仅客户端</button>
+    <button data-side="server"><i class="dot" style="background:#D9821A"></i>仅服务端</button>
+  </div>
+  <input type="search" id="search" placeholder="搜索函数名 / 文件名，如 Boom、IsInRange">
+  <div class="legend">
+    <span><i style="background:#3E7BFA"></i>客 = 客户端</span>
+    <span><i style="background:#D9821A"></i>服 = 服务端</span>
+    <span><i style="background:#8257E6"></i>状态机</span>
+    <span><i style="background:#CF4A45"></i>技能执行</span>
+    <span><i style="background:#B4468C"></i>命中判定</span>
+    <span><i style="background:#2E9E6B"></i>数值 / 下发</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="mapwrap" id="mapwrap">
+    <svg id="map"></svg>
+  </div>
+  <aside id="detail">
+    <div class="empty">点击左侧任意节点查看详情</div>
+  </aside>
+</div>
+
+<div class="foot">
+  <h2>时序索引：一次施法的 9 跳</h2>
+  <p class="lead">按执行先后排列。同一行里，「触发」是上一跳的出口，「函数」是本跳入口。</p>
+  <table>
+    <thead><tr><th style="width:34px">#</th><th style="width:150px">阶段</th><th style="width:230px">触发</th><th>入口函数 · 位置</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="tag" style="background:#EEF3FF;color:#17408F">客户端</span></td><td>按下技能键</td><td><code>MSkillComponent.CanSkill</code> · Skill/MSkillComponent.cs:239</td></tr>
+      <tr><td>2</td><td><span class="tag" style="background:#EEF3FF;color:#17408F">客户端</span></td><td>预检通过</td><td><code>MNavigationComponent</code> 组包 → <code>RpcC2G_SingingRequest</code>(1128747757) · :337</td></tr>
+      <tr><td>3</td><td><span class="tag" style="background:#FFF4E5;color:#8A4B00">入口</span></td><td>收到 RPC</td><td><code>RpcC2G_SingingRequest::OnCall</code> · roserver/.../rpcc2g_singingrequest.cpp:25</td></tr>
+      <tr><td>4</td><td><span class="tag" style="background:#FFF4E5;color:#8A4B00">入口</span></td><td>异步退旧状态完成</td><td><code>RoleSingingComponent::OnClientFireSkillRequest</code> · role_singing_component.cpp:65</td></tr>
+      <tr><td>5</td><td><span class="tag" style="background:#F4EFFE;color:#5B2BA8">状态机</span></td><td><code>kActionSinging</code> 派发</td><td><code>ActionStateComponent::OnActionEvent</code> → <code>TryTransferToState</code> · action_state_component.h:171</td></tr>
+      <tr><td>6</td><td><span class="tag" style="background:#F4EFFE;color:#5B2BA8">吟唱</span></td><td>状态切换</td><td><code>SingingComponent::OnStart</code> · singing_component.cpp:422</td></tr>
+      <tr><td>7</td><td><span class="tag" style="background:#FDEDEC;color:#8E2B27">技能</span></td><td>吟唱结束 <code>FireSkill</code></td><td><code>ROSkillComponent::OnStart</code> → <code>ROArtSkill::FireEvents</code> 排定时器 · art_skill.cpp:326</td></tr>
+      <tr><td>8</td><td><span class="tag" style="background:#FBEDF4;color:#7A2A58">判定</span></td><td>定时器到点</td><td><code>ROSkill::OnResult</code> → <code>ROArtSkill::InnerResult</code> · art_skill.cpp:509</td></tr>
+      <tr><td>9</td><td><span class="tag" style="background:#E9F7EF;color:#1A6444">数值</span></td><td>目标列表产出</td><td><code>DamageCalculatorUtil::CalculateDamage</code> → Lua · damage_calculator.cpp:273</td></tr>
+    </tbody>
+  </table>
+
+  <h2>七个坑（按踩到概率排序）</h2>
+  <p class="lead">这些是代码里真实存在、且排查时最容易误判的点。</p>
+  <table>
+    <thead><tr><th style="width:34px">#</th><th style="width:250px">现象</th><th>根因</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>按了技能，既没开始也没报错</td><td><code>OnActionEvent</code> 五步里除 <code>OnGetEvent</code> 的几处外，失败全是静默 <code>return</code>，不发 <code>SkillEnd</code>。客户端只能等 2 秒预表现超时自己回滚。</td></tr>
+      <tr><td>2</td><td>「技能距离明明够，却放不出来」</td><td>入口 <code>CheckDoSkill</code> 与客户端 <code>CanSkill</code> 都<b>不查施法距离</b>；距离在 <code>OnGetEvent</code> 的 <code>IsSingingTargetInSkillRange</code> 查第一次，之后<b>每帧</b>在 <code>SingingComponent::OnUpdate</code>（singing_component.cpp:619）复查（:651 <code>IsTargetLegal</code> → <code>DistanceCheck</code>），<b>不是定时器</b>。</td></tr>
+      <tr><td>3</td><td>玩家卡在「不能动、也不能放技能」</td><td>状态互斥切换是异步的，且<b>没有超时保护</b>：<code>begin_time</code> 无人读、<code>EnterStateType::kTimeOut</code> 零使用。某个旧状态永不退出，请求就永远留在 <code>state_request_transfer_map_</code>。</td></tr>
+      <tr><td>4</td><td>回调里以为技能还没开始，结果已经开始了</td><td>旧状态列表为空时 <code>TransferStateByFunc</code> <b>当场同步调回调</b>，整条链在同一个调用栈里跑完。</td></tr>
+      <tr><td>5</td><td>眩晕/钓鱼时技能被放行到下一层</td><td><code>CheckDoSkill</code> 只对 <code>kStateSkill</code>（查连招表）和 <code>kStateSinging</code> 拦截，其他不可打断状态直接 <code>return true</code>，真正拦住它们的是状态许可矩阵 <code>CanAction</code>。</td></tr>
+      <tr><td>6</td><td>坐标偏移 / 施法点在千里之外</td><td><code>common</code> 把 x/y/z 各塞进 5 位十进制，隐含假设每个分量在 <b>0~999.99</b>。负坐标或跨度超 1000 米会整段串位。</td></tr>
+      <tr><td>7</td><td>以为客户端也算了命中</td><td><code>MSkillCore.cs:866 IsInAttckField</code> 长得跟服务端 <code>IsInRange</code> 一模一样，但<b>全工程零调用点</b>，是死代码。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+/* ============================================================
+   主题色
+   ============================================================ */
+const K = {
+  root:   {s:'#2C2C2A', f:'#2C2C2A', t:'#FFFFFF', name:'总览'},
+  client: {s:'#3E7BFA', f:'#EEF3FF', t:'#17408F', name:'客户端'},
+  server: {s:'#D9821A', f:'#FFF4E5', t:'#8A4B00', name:'服务端入口'},
+  state:  {s:'#8257E6', f:'#F4EFFE', t:'#5B2BA8', name:'状态机 / 吟唱'},
+  skill:  {s:'#CF4A45', f:'#FDEDEC', t:'#8E2B27', name:'技能执行'},
+  hit:    {s:'#B4468C', f:'#FBEDF4', t:'#7A2A58', name:'命中判定'},
+  data:   {s:'#2E9E6B', f:'#E9F7EF', t:'#1A6444', name:'数值 / 下发'}
+};
+
+/* ============================================================
+   数据树
+   ============================================================ */
+const tree = {
+  k:'root', t:'技能释放 → 命中判定',
+  d:{
+    loc:'全链路 · 9 跳',
+    steps:[
+      '客户端只上报三样东西：技能效果 id、目标 uuid、施法点。判定、结算、广播全在服务端。',
+      '服务端把「开火」这步做成异步：先退掉坐骑/变身/采集等旧状态，退干净了才真正开始施法。',
+      '施法开始后进入吟唱（kStateSinging），吟唱结束才切到技能态（kStateSkill）。',
+      '技能态按技能表 ResultList[i].At 排毫秒定时器，到点才做命中判定。',
+      '命中判定分两条路：非飞行道具当场做范围检索；飞行道具等子弹飞过去做线段扫掠。',
+      '几何命中之后还有一层数值判定（命中率/闪避），MISS 不扣血不飘字。',
+      '最后服务端把 target_list 和伤害结果推给客户端，客户端只负责播表现。'
+    ],
+    note:'整条链的判定权 100% 在服务端。客户端唯一称得上「判定」的只有施法准入 CanSkill，且它不校验施法距离。'
+  },
+  c:[
+    /* ---------------- ① 客户端 ---------------- */
+    {
+      k:'client', t:'① 客户端：预检 + 组包 + 预表现',
+      d:{
+        loc:'clientcode/CSProject/MoonClient',
+        steps:[
+          'CanSkill 做 12 项准入检查，任意一项失败本地直接拒绝，连包都不发。',
+          'CheckWall 挡隔墙；CorrectSyncPos 把施法点收敛到 2 位小数。',
+          '把 uuid + 施法点压进一个 uint64 的 common 字段，只发 3 个字段。',
+          '不等回包先播动画（预表现），2 秒没确认就回滚。',
+          '服务器确认后用 time_scale 和 time_elapsed 对齐动画进度，并扣一个 RTT 校准 CD。'
+        ],
+        note:'客户端不做任何命中判定，也不读 RPC 回包的 result 字段。'
+      },
+      c:[
+        { k:'client', t:'MSkillComponent.CanSkill',
+          d:{ sig:'public bool CanSkill(MSkillCore core, MEntity target, bool is_ignore_target = false)',
+            loc:'Skill/MSkillComponent.cs:239', up:'按下技能键 / UI 按钮',
+            steps:[
+              '状态机自身能否行动（不在施法中、不在受击中）',
+              '载具限制：某些技能只能在战斗载具上用或只能不用',
+              '是否已死亡',
+              '打断白名单：正在施法时，这个新技能能不能打断当前技能',
+              'CheckScene：技能表的 LimitScene / LimitSceneType 与当前场景是否匹配',
+              '自身 CD 与技能组 CD 是否都已转好',
+              '武器类型 / 副武器类型是否匹配',
+              'QTE 状态是否满足',
+              '目标合法性：存活、阵营、实体类型，并排除陷阱与采集物',
+              '四个 AttrSpecialNo* 开关（禁技能 / 禁普攻 / 禁移动 / 禁道具）',
+              'CostConfirm：HP、SP、能量、箭矢数量是否够',
+              'Lua 侧 ConfirmScriptCheck 二次确认（可脚本化的特殊条件）'
+            ],
+            fail:['任意一项 false → 本地直接拒绝，不发包，UI 播错误提示'],
+            note:'<b>不校验施法距离。</b>同样，服务端入口的 CheckDoSkill 也不查。距离第一次被检查是在状态机 OnGetEvent 里。'}},
+        { k:'client', t:'MAirWallMgr.CheckWall',
+          d:{ sig:'bool CheckWall(Vector3 from, Vector3 to, bool checkHeight)',
+            loc:'Skill/MNavigationComponent.cs:303 / :316', up:'CanSkill 通过之后',
+            steps:[
+              '有目标的技能检查「自己 → 目标」这条线是否穿过空气墙',
+              '无目标的技能检查「自己 → 施法点」这条线',
+              '返回 false 时直接中断，连包都不发'
+            ],
+            note:'所以「隔墙点技能完全没反应」是预期行为，不是服务端拒绝。'}},
+        { k:'client', t:'MPlayer.CorrectSyncPos',
+          d:{ sig:'static void CorrectSyncPos(ref Vector3 pos, int decimals)',
+            loc:'Skill/MNavigationComponent.cs:335', up:'CheckWall 通过后',
+            steps:[
+              '把施法点四舍五入到 2 位小数',
+              '目的：与服务端 common 解包的精度（0.01 米）保持一致，避免两端算出的落点差一点点'
+            ]}},
+        { k:'client', t:'MNavigationComponent 组包 common',
+          d:{ sig:'Common = uuid; *=100000; += x*100; *=100000; += y*100; *=100000; += z*100',
+            loc:'Skill/MNavigationComponent.cs:337-344', up:'施法点收敛之后',
+            steps:[
+              'skill_uuid = Player.NextSkillUUID（1~9999 循环自增）',
+              'Common = uuid，然后连续三次「乘 100000 再加一个坐标分量」',
+              '每个坐标分量 = (v + 0.005) * 100 取整，即 5 位十进制、精度 0.01 米',
+              '最终只发 3 个字段：skill_id（实际是 skill_effect_id）、target、common'
+            ],
+            fail:['坐标为负或单分量 ≥ 1000 → 整段串位，服务端解出乱七八糟的施法点'],
+            note:'<b>隐含假设：世界坐标非负且单场景跨度小于 1000 米。</b>这是移植时最该先改掉的设计，建议直接拆成三个 float 字段或独立 message。'}},
+        { k:'client', t:'MSkill 预表现 + 超时回滚',
+          d:{ sig:'args.Performance = true  →  失败时 Cease() + _skillCore.Reload()',
+            loc:'Skill/MSkill.cs:376 / 失败日志 :279', up:'包发出之后立刻执行',
+            steps:[
+              '不等服务端回包，先把动画播出去、CD 先跑起来',
+              '收到 SkillStartInfo 后用 skill_uuid 认领这次预表现，按 time_scale / time_elapsed 对齐动画进度',
+              '2 秒内收不到确认 → Cease + Reload 回滚动画与 CD，并打日志 Performance fails!',
+              '服务端推 SyncSkillEndNotify 时，reason 决定是否继续回滚'
+            ],
+            note:'这就是「动画已经挥出去、伤害数字还没出现」的来源：网络往返，不是客户端在本地算伤害。'}},
+        { k:'client', t:'MSkillCore.SetTimer 扣 RTT',
+          d:{ sig:'CoolTime = cool_down - MServerTimeMgr.DelaySeconds * 2',
+            loc:'Skill/MSkillCore.cs:734 / :736', up:'服务端确认技能开始后',
+            steps:[
+              '以服务端下发的 cool_down 为准重设 CD',
+              '减去 DelaySeconds * 2（一个往返），让本地 CD 不因为网络延迟而显得更长',
+              '组 CD 用同样的方式校准'
+            ]}},
+        { k:'client', t:'Process_RpcC2G_SingingRequest.OnReply',
+          d:{ sig:'public static void OnReply(SingingArg oArg, SingingRes oRes)',
+            loc:'Network/protocol/process/action/process_rpcc2g_singingrequest.cs:12', up:'RPC 回包到达',
+            steps:[
+              '只做一件事：把 PlayerEntity.IsMovable 复位为 true、IsWaitingForServer 置回',
+              'oRes.result 完全没被读取 —— 失败与否靠后续推送判断'
+            ],
+            note:'这也是为什么服务端在 <code>OnCall</code> 里返回错误码在客户端看不到效果：客户端根本没消费它。'}}
+      ]
+    },
+
+    /* ---------------- ② 服务端入口 ---------------- */
+    {
+      k:'server', t:'② 服务端入口：协议 + 状态互斥',
+      d:{
+        loc:'roserver/gameserver/protocol/action/rpcc2g_singingrequest.cpp',
+        steps:[
+          'OnCall 找到 Role，构造 ROClientFireSkillArgs，但不直接派发',
+          '先过 TransferStateByFunc：把坐骑、变身、采集等需要「用代码退出」的旧状态退掉',
+          '旧状态列表为空 → 当场同步派发；非空 → 入队，等 LeaveState 回调',
+          '全部退出后才把事件派到实体自己的分发器上'
+        ],
+        note:'这一步是整个链路里唯一的异步点，也是最容易出「按了没反应」的地方。'
+      },
+      c:[
+        { k:'server', t:'RpcC2G_SingingRequest::OnCall',
+          d:{ sig:'void OnCall(const SingingArg &roArg, SingingRes &roRes)',
+            loc:'rpcc2g_singingrequest.cpp:25（协议号 1128747757）', up:'客户端 RPC 到达',
+            steps:[
+              'RoleManager::FindBySession(m_sessionID) 找 Role，找不到回 ERR_ROLE_NOTEXIST',
+              'role->GetGameRole() 拿到 RORole 实体',
+              'NEW_OBJECT(ROClientFireSkillArgs)（:80），填 skill_id_ / target_（:82-83）、cast_point_（:86-88）、skill_uuid_（:89）',
+              'common 逆序解包：先 %100000 取 z，再取 y、x，余数即 skill_uuid',
+              '把事件交给 STATE_MUTEX_MGR->TransferStateByFunc（:98），而不是直接派发'
+            ],
+            note:'<code>SingingArg.skill_id</code> 字段名骗人，实际填的是 <b>skill_effect_id</b>（SkillEffectTable.Id），不是 SkillTable 的技能 id。'}},
+        { k:'server', t:'STATE_MUTEX_MGR->TransferStateByFunc',
+          d:{ sig:'ErrorCode TransferStateByFunc(ROObject* entity, StateTransitionType type, bool is_notify, const StateMutexCB& cb)',
+            loc:'state_mutex/state_mutex_manager.cpp:288（声明在 .h:42）', up:'OnCall :98',
+            steps:[
+              '非 role 直接回调 ERR_FAILED',
+              'PreTransferState（:207）先做 CheckState + 收集需要代码退出的旧状态，存进 from_state_type_list',
+              '旧状态列表为空 → 当场 cb(ERR_SUCCESS) 返回（同步！）',
+              '非空 → StateTransferComponent::AddNewRequest 入队，立刻返回 ERR_SUCCESS',
+              '真正结果只通过 cb 的参数给出'
+            ],
+            fail:['CheckState 命中禁止项 → cb(ERR_CHECK_STATE_FAIL)，并按 is_notify 广播 RONetEventRoleCheckStateFail'],
+            note:'<b>不要依赖返回值做逻辑。</b>头文件原话：「状态异步切换，注意不要依赖于这个函数的返回值」。返回成功只代表「请求已入队」。'}},
+        { k:'server', t:'StateMutexManager::CheckState',
+          d:{ sig:'ErrorCode CheckState(ROObject* entity, StateTransitionType type, bool is_notify, bool is_check_code_transition)',
+            loc:'state_mutex_manager.cpp:172', up:'PreTransferState :209',
+            steps:[
+              '遍历全部 36 个已注册状态（state_mutex_manager.cpp 共 36 处 RegisterState(NEW_OBJECT(...))），对每个状态查状态互斥表 StateExclusionTable 的 [from][to] 格',
+              '表值 -1（未配置）= 不检查，放行',
+              '表值 0（禁止）→ 直接返回该状态的错误码',
+              '表值 1（可直接切）/ 3（客户端处理）→ 跳过',
+              '表值 2（需代码特殊处理）且当前确实处于该状态 → 记入 from_state_type_list',
+              'is_check_code_transition=false 时（PreTransferState 传的就是 false）不把禁止项当失败，只做事后校验'
+            ]}},
+        { k:'server', t:'StateTransferComponent::AddNewRequest',
+          d:{ sig:'uint32_t AddNewRequest(const TransferRequestInfo & req)',
+            loc:'state_transfer_component.cpp:69', up:'TransferStateByFunc 判定需要退旧状态',
+            steps:[
+              '自增 serial_id 作为 key，把请求存进 state_request_transfer_map_',
+              '在 state_type_serial_id_map_ 里按 from 状态类型建反向索引（一个状态可能对应多个等待中的请求）',
+              '立刻调 ProcessRequest（:115）开始退第一个旧状态'
+            ]}},
+        { k:'server', t:'ProcessRequest → LeaveState → OnLeaveState', st:'ProcessRequest → OnLeaveState',
+          d:{ sig:'bool ProcessRequest(const TransferRequestInfo&) / void OnLeaveState(StateTransitionType)',
+            loc:'state_transfer_component.cpp:115 / :29（EnterState :139）', up:'AddNewRequest 内部',
+            steps:[
+              'ProcessRequest 对列表里每个旧状态调 STATE_MUTEX_MGR->LeaveState',
+              'LeaveState 只让状态组件「开始退出」（下坐骑要播动画），不保证立刻完成',
+              '组件退出干净后调 ROEntityUtility::SendLeaveStateEvent',
+              'OnLeaveState 检查该 serial 下所有旧状态是否都已退出',
+              '全部退出 → EnterState(kNormal) → 执行回调；被拒 → EnterState(kFail) 带 ERR_CHECK_STATE_FAIL 回调'
+            ],
+            fail:['某个旧状态永远不退出 → 请求一直留在 map 里，回调永不触发，玩家卡住'],
+            note:'<b>没有超时保护。</b><code>begin_time</code> 记了但没人读，<code>EnterStateType::kTimeOut</code> 定义了但零使用。这是「卡在不能动也不能放技能」的根因。'}},
+        { k:'server', t:'回调派发 ROClientFireSkillArgs',
+          d:{ sig:'obj->GetEventDispatcher().DispatcherEvent(noconst_sp_evt)',
+            loc:'rpcc2g_singingrequest.cpp:111（GET_ENTITY 在 :105）', up:'EnterState 执行回调',
+            steps:[
+              'GET_ENTITY(role_uid) 重新取实体（异步期间实体可能已销毁）',
+              'obj 为空 → 什么都不做，这次施法静默丢失',
+              'lambda 按值捕获是 const 语义，先拷贝一份 sp_evt 再派发（DispatcherEvent 要非 const 引用）',
+              '派发到 <b>实体自己</b>的 ROEventDispatcher，全工程唯一监听者是 RoleSingingComponent'
+            ],
+            note:'DispatcherEvent 是同步的：拿事件类型查表，就地遍历回调，不入队、不跨线程、不过网络。'}}
+      ]
+    },
+
+    /* ---------------- ③ 施法请求组件 ---------------- */
+    {
+      k:'server', t:'③ 施法请求组件：拦截 + 排队',
+      d:{
+        loc:'rogamelibs/entity/action/ExtendAction/role_singing_component.cpp',
+        steps:[
+          '解析技能核（处理 buff 替换）',
+          '三项硬拦截：没学、uuid 越界、uuid 重复',
+          '能放就派发 ROsingArgs；不能放就进 300ms 队列等机会',
+          '队列不是「丢弃型」，而是每帧重试，这是连招手感的来源'
+        ],
+        note:'300ms 这个数字就是「按早了也能接上」的容忍窗口。'
+      },
+      c:[
+        { k:'server', t:'RoleSingingComponent::OnClientFireSkillRequest', st:'OnClientFireSkillRequest',
+          d:{ sig:'void OnClientFireSkillRequest(SPType<ROEvent>& args)',
+            loc:'role_singing_component.cpp:65（监听注册在 :49，移除在 :59）', up:'kActionClienFireSkill 事件',
+            steps:[
+              'RO_DYNAMIC_CAST 转成 ROClientFireSkillArgs',
+              'GetReplaceSkillCoreOnClientRequest(skill_id_, skill_uuid_, combo_id, now_time, &origin_skill_core) 解析技能核（5 参，回传连招 ID 与原始技能核，role_singing_component.cpp:87-89）',
+              '三项拦截：LearnTotalTimes() <= 0 / uuid > 10000 / 同 uuid 已存在',
+              '分支：request_list_ 为空 <b>且</b> CheckDoSkill(skill) 通过 → 立刻构造 ROsingArgs 派发',
+              '否则塞进 request_list_，由 LateUpdate 每帧尝试出队'
+            ],
+            fail:['未学 / id 不存在 → Illegal_Skill_Id','uuid 超 10000 或重复 → Illegal_Skill_UUID','统一走 ROEntityUtility::SkillEnd 告知客户端'],
+            note:'复活道具技能（<code>is_revive_item_skill_ = true</code>）会跳过这三项检查，直接进队列。'}},
+        { k:'server', t:'ROSkillComponent::CheckDoSkill',
+          d:{ sig:'bool ROSkillComponent::CheckDoSkill(ROSkillCore *core)',
+            loc:'skill_component.cpp:1333', up:'OnClientFireSkillRequest:135 / OnGetEvent 第 4 项',
+            steps:[
+              'core 非空（否则打日志「传入的 skillcore 为空」）',
+              'core->IsCooledDown()：自身 CD 与技能组 CD 都必须满足 ROIsZeroNumber（|x| < EPSINON 浮点容差）',
+              'core->GetEffect() 非空（SkillEffectTable 行存在）',
+              '战斗载具限制：OnlyNoVehicle 不能在载具上 / OnlyInVehicle 必须在载具上',
+              '状态机 current 非空',
+              '当前状态能不能被打断：CanActiveInterrupt 为 false 时，如果正在放技能，查<b>新技能</b> SkillTable.InteruptSkill 列表里有没有当前技能 id'
+            ],
+            fail:['任意一项 false → 返回 false，<b>不告诉原因</b>（只返回 bool）','在 OnClientFireSkillRequest 里失败 = 入队等 300ms，不是硬拒绝'],
+            note:'<b>这是粗筛，不是合法性判定。</b>它只回答「此刻行不行」。眩晕、攀爬、钓鱼这些状态在这里是被放行的（CanActiveInterrupt 默认 false，但两个 if 都不命中就 return true），真正拦住它们的是状态许可矩阵。<br><br>另外 <code>else if (... == kStateSinging || ... == kStateSkill)</code> 里的 <code>kStateSkill</code> 是死条件，上面那个 if 已经把它吃掉了。'}},
+        { k:'server', t:'GetSkillCoreCheckReplace',
+          d:{ sig:'ROSkillCore* GetSkillCoreCheckReplace(int32_t skill_effect_id, uint64_t skill_uuid, int32_t combo_id = 0, ROSkillCore** origin_skill_core = nullptr)',
+            loc:'component/skill_component.h:94 · 实现 skill_component.cpp:1066', up:'OnGetEvent / OnStart 等内部复核点',
+            steps:[
+              '按 skill_effect_id + skill_uuid 找到本次施法的技能实例',
+              '如果这个技能被 buff 替换过，换成原技能的效果 id',
+              '同时带出 origin_skill_core，后续判定用原始技能数据',
+              '第三参是 <b>combo_id</b>，第四参才是 origin_skill_core；后两个都有默认值，所以三参调用合法'
+            ],
+            fail:['解析不到 → 返回 nullptr，上层直接 SkillEnd(Illegal_Skill_Id)'],
+            note:'<b>更正：</b>原图把签名写成三参 <code>(skill_id, uuid, ROSkillCore** origin)</code>，实际是 <b>4 参、后两个带默认值</b>，且首参名是 <code>skill_effect_id</code> 不是 skill_id。因此 <code>singing_component.cpp:307 / :445</code> 的三参调用 <code>GetSkillCoreCheckReplace(skill_id_, skill_uuid_, skill_combo_id_)</code> 传的第三参是 <b>combo_id</b>，不是 origin。<br><br><b>不要全局改名：</b>只有 <code>role_singing_component.cpp:87 / :221</code> 用的是另一个函数 <code>GetReplaceSkillCoreOnClientRequest</code>，见下一条。'}},
+        { k:'server', t:'GetReplaceSkillCoreOnClientRequest',
+          d:{ sig:'ROSkillCore* GetReplaceSkillCoreOnClientRequest(int32_t skill_effect_id, uint64_t skill_uuid, int32_t& combo_id, uint64_t time_stamp, ROSkillCore** origin_skill_core = nullptr)',
+            loc:'component/skill_component.h:88 · 实现 skill_component.cpp:1014', up:'role_singing_component.cpp:87（首次请求）/ :221（出队重试）',
+            steps:[
+              '比 GetSkillCoreCheckReplace 多一个 time_stamp，用于连招窗口判定',
+              'combo_id 是<b>出参</b>，函数把算出的连招 id 写回给调用方',
+              '只有客户端施法请求这条链用得到它（名字里的 OnClientRequest 就是这个意思）'
+            ],
+            fail:['解析不到 → 返回 nullptr，调用方 SkillEnd(Illegal_Skill_Id)'],
+            note:'两个函数<b>并存且不可互换</b>：客户端请求链走 5 参版拿 combo_id；状态机/技能态内部复核走 4 参版，第三参直接喂上一次算好的 combo_id。把 4 参版「统一改名」成 5 参版会直接编译失败。'}},
+        { k:'server', t:'request_list_ 排队 + LateUpdate 出队',
+          d:{ sig:'void RoleSingingComponent::LateUpdate(int32_t delta_time)',
+            loc:'role_singing_component.cpp:205', up:'每帧',
+            steps:[
+              '队列非空时逐帧取队首，重新跑 CheckDoSkill',
+              '通过 → 派发 ROsingArgs，本次请求消费掉',
+              '不通过 → 检查入队时长，超过 300ms 丢弃并 SkillEnd(Over_Time)',
+              '出队时 CheckDoSkill 过了但 CanAction(kStateSinging) 失败 → 清空整个队列，逐个 SkillEnd(Illegal_State)'
+            ],
+            note:'「清空整个队列」这个行为很容易被忽略：一个状态异常会让后续所有排队请求一起失败。'}},
+        { k:'server', t:'派发 ROsingArgs（kActionSinging）',
+          d:{ sig:'NEW_OBJECT(ROSingingArgs) → DispatcherEvent(sp_evt)',
+            loc:'role_singing_component.cpp:137-146', up:'CheckDoSkill 通过',
+            steps:[
+              '打包 skill_id_ / target_ / cast_point_ / skill_uuid_ / firer_snapshot_',
+              '派发到同一个实体的事件分发器',
+              '唯一监听者：SingingComponent（OnEnterScene :214 注册 kActionSinging 于 :217；OnLeaveScene :223 移除于 :225）'
+            ],
+            note:'<b>更正：</b>RO 原工程的 <code>ROSingingArgs</code> 类定义在 <code>core/event/event.h:716</code>，<b>确实有</b> <code>int32_t skill_combo_id_{ 0 }</code>（<code>:733</code>），<code>Reset()</code>（<code>:725</code>）也会把它清 0。所以连招 ID 是 RO 事件自带的字段，不是本地后加的。'}}
+      ]
+    },
+
+    /* ---------------- ④ 状态机 / 吟唱 ---------------- */
+    {
+      k:'state', t:'④ 状态机：抢状态 + 吟唱',
+      d:{
+        loc:'rogamelibs/entity/action/',
+        steps:[
+          'OnActionEvent 不做业务，只把事件交给状态机去抢',
+          '抢之前两道关：状态许可矩阵 CanAction → 组件自己的 OnGetEvent（9 项校验）',
+          '抢成功：先 Stop 旧状态（这就是连招打断的实现点），再 OnStart 新状态',
+          '吟唱 OnStart 里算落点、拍快照、锁移动'
+        ],
+        note:'注意短路求值：CanAction 失败时 OnGetEvent 根本不执行，也就不会发 SkillEnd。'
+      },
+      c:[
+        { k:'state', t:'ActionStateComponent::OnActionEvent',
+          d:{ sig:'virtual void OnActionEvent(SPType<ROEvent>& args)',
+            loc:'action_state_component.h:171', up:'kActionSinging 事件（SingingComponent 无自己的实现）',
+            steps:[
+              'GetROObject() 取宿主，空则 return（防御）',
+              'ROEntityUtility::ValidEntity(entity, true)：<b>true = 不检查死亡</b>，只查 IsDeprecated',
+              'ROEntityUtility::GetCurrScene(entity) 非空（必须在场景内）',
+              'GET_COMPONENT(entity, StateMachineComponent) 非空',
+              'machine->TryTransferToState(args, this) —— 全部实质逻辑在这里',
+              'token_ = args->GetToken()（action_state_component.h:197 赋值；源头是 ROEvent 的 static_token_ 自增，core/event/event.h:521 / :534）',
+              '这个副本会被读：StateMachineComponent::ActionToken()（state_machine_component.h:38）→ IStateTransform::Token() → 本组件 :135 的 Token()'
+            ],
+            fail:['前 4 步任一失败 → 直接 return，<b>不发任何 SkillEnd</b>','TryTransferToState 返回 false → 同样 return，技能静默失败'],
+            note:'客户端此时既收不到技能开始也收不到结束，只能等预表现 2 秒超时自己回滚。排查「按了技能毫无反应」时这一层最容易漏。<br><br><b>更正（此前两版都写错了）：</b><code>Token()</code> 既不是没有实现，也不是没有调用点。调用链是 <code>StateMachineComponent::ActionToken()</code>（<code>state_machine_component.h:38</code>，<code>return current_->Token();</code>）→ <code>IStateTransform::Token()</code> → <code>action_state_component.h:135</code> 的 <code>Token()</code>；并且这两个接口经 SWIG 导出到脚本侧（<code>rogamelibs/csproxy/ro_corelib_wrap.cxx:68534</code> <code>CSharp_ROGameLibs_IStateTransform_Token</code>、<code>:68760</code> <code>CSharp_ROGameLibs_StateMachineComponent_ActionToken</code>）。<b>证据边界</b>：只能确认在 <code>rogamelibs/roserver</code> 的 C++ 源码内除 ActionToken 外没有其它读取点，不能断言「全工程无人使用」——脚本侧调用不在本次核对范围内。<br><br>另外要区分<b>两种令牌</b>：<code>ROEvent::token_</code> 由 <code>static_token_</code> 自增分配，是延迟派发的记账键（<code>event_dispatcher.cpp:254</code> 用它做 <code>timer_handler_</code> 的 key）；<code>ActionStateComponent::token_</code> 只是本次激活事件的令牌副本，用于状态侧对齐「这次激活对应哪个事件」。'}},
+        { k:'state', t:'StateMachineComponent::TryTransferToState', st:'TryTransferToState',
+          d:{ sig:'bool TryTransferToState(SPType<ROEvent>& args, IStateTransform* next)',
+            loc:'state_machine_component.cpp:62', up:'OnActionEvent 第 5 步',
+            steps:[
+              'CanAction(next->SelfState())：当前状态让不让位给 kStateSinging（:93）',
+              'next->OnGetEvent(args, current_->SelfState())：目标组件的 9 项二次校验',
+              '两者都过 → TransferToState(args, next) 真正切换，返回 true'
+            ],
+            fail:['CanAction 失败 → 短路，OnGetEvent 不执行，不发 SkillEnd','OnGetEvent 失败 → 内部按具体 reason 发 SkillEnd'],
+            note:'<code>||</code> 短路顺序决定了「谁先拒绝就谁负责报错」。'}},
+        { k:'state', t:'CanAction / StatePermitted 状态许可矩阵',
+          d:{ sig:'bool IsPermitted(StateDefine next) { if (IsFinished()) return true; return CanActiveInterrupt(next) || StatePermitted(self, next); }',
+            loc:'state_machine_component.cpp:93 · 矩阵在 rocommongamelibs/battle/state_machine_define.cpp', up:'TryTransferToState 第一个条件',
+            steps:[
+              'IsFinished() 为 true → 直接放行，矩阵形同虚设（同帧多次派发时的时序窗口）',
+              '否则看 CanActiveInterrupt(next)（各状态自己重写，如 Stun 返回 next==kStateSinging）',
+              '再否则查 15×15 静态布尔矩阵 StatePermitted[from][to]',
+              '可以进吟唱的状态：Default / Skill / Special / BeHit / Fishing / Dance / SceneTriggerObject',
+              '不能进吟唱的状态：Singing / Stun / Dead / FearRun / Climbing / Collect / Born / DoubleActionClip'
+            ],
+            note:'<b>Skill → Singing 是 true</b>：所以「放技能时能不能接下一个」不是矩阵挡的，而是 CheckDoSkill 用 InteruptSkill 连招表挡的。<br><b>Fishing → Singing 也是 true</b>，读起来像配置疏漏，值得跟策划确认。'}},
+        { k:'state', t:'SingingComponent::OnGetEvent',
+          d:{ sig:'bool SingingComponent::OnGetEvent(SPType<ROEvent>& args, StateDefine last_state) const',
+            loc:'singing_component.cpp:273', up:'TryTransferToState 第二个条件',
+            steps:[
+              '转型 ROsingArgs 成功 + firer / entity / sceneObject / skill 组件齐全（只打日志）',
+              'GetSkillCoreCheckReplace 能解析出 core → 失败 Illegal_Skill_Id',
+              'core->GetSkillData() 存在 → 失败 Illegal_Skill_Id',
+              '<b>CheckDoSkill 再查一遍</b> → 失败 Illegal_State（中间隔着事件派发，CD/状态可能已变）',
+              '需要目标时目标还存在 → 失败只 return（这几十毫秒内目标死了属正常）',
+              'IsSingingTargetInSkillRange(firer, target, core) → 失败 KSkillEndReason_Distance',
+              '目标身上有 ROSkillComponent → 失败只打日志',
+              'cast_point 合法：nav->IsPtValid，且 x<0 || z<0 直接判非法；方向型技能（IgnoreCheckCastPoint）跳过',
+              'skill_comp->CanSkill(core, target, cast_point, reason) → 失败按具体 reason 发 SkillEnd'
+            ],
+            note:'<b>第 6 项说明服务端在吟唱启动时确实查了一次施法距离。</b>准确说法是：入口 CheckDoSkill 不查 → 吟唱启动查一次 → 吟唱中<b>每帧</b>复查（<code>SingingComponent::OnUpdate</code> :619 → :651 <code>IsTargetLegal</code>），目标失效或出圈直接 <code>Stop()</code>。<b>没有 100ms 定时器。</b>'}},
+        { k:'state', t:'IsSingingTargetInSkillRange',
+          d:{ sig:'bool IsSingingTargetInSkillRange(ROObject* firer, ROObject* target, ROSkillCore* core)',
+            loc:'utility/entity_common_tool.cpp:660 附近', up:'OnGetEvent 第 6 项 / 吟唱中轮询',
+            steps:[
+              '取技能表的 singing_far / singing_low 作为距离上下限',
+              '容差：0.1 米 + 两个移动步长',
+              'PVE 还要加上怪物自身半径',
+              '超出上限 → 中断施法（KSkillEndReason_Distance）'
+            ],
+            note:'<code>lost_range_</code> 默认 20 米，指的是「目标跑出多远就断」，与技能实际射程是两套数值。'}},
+        { k:'state', t:'TransferToState（连招打断在这里）',
+          d:{ sig:'void TransferToState(SPType<ROEvent>& args, IStateTransform* next)',
+            loc:'state_machine_component.cpp:72', up:'TryTransferToState 全部校验通过',
+            steps:[
+              'current_->Stop(next->SelfState(), args.get()) —— 旧状态收尾，事件指针会传进去',
+              'previous_ = current_; current_ = next',
+              'current_->OnGetPermission(args) → is_finished_=false + OnStart(args)',
+              'change_state_ = true',
+              'sync_comp->SyncIncreament() 标记需要同步给客户端'
+            ],
+            note:'旧状态是 <code>kStateSkill</code> 时，Stop 会走到 <code>ROSkillComponent::OnStop</code>（skill_component.cpp:569）执行 <code>EndSkill(KSkillEndReason_Stop)</code>。<b>连招的「打断上一个技能」发生在这里，不在 CheckDoSkill 里。</b>'}},
+        { k:'state', t:'SingingComponent::OnStart',
+          d:{ sig:'void SingingComponent::OnStart(SPType<ROEvent>& args)',
+            loc:'singing_component.cpp:422', up:'OnGetPermission 内部同步调用',
+            steps:[
+              'SetSkillUUID + GetSkillCoreCheckReplace，取 skill_pb_uuid',
+              '有目标且是角色 → 发 AttackEventArgs 把目标加进仇恨列表',
+              '算 cast_point：需要目标时用 target->GetCastPoint(firer 位置)（吃体型），否则用客户端传的点',
+              'nav->TrySetHeight 贴地（IgnoreCheckCastPoint 时跳过）',
+              'firer_snapshot_ = GenerateSnapshot(firer) —— 后续判定要用施法瞬间的属性快照',
+              '发 ROActionMoveStop 停移动',
+              'movesinging() ? 0 : 1 设置 change_move_，加 ATTR_SPECIAL_STATE_NO_MOVE 锁住移动',
+              'duration_ = 0，之后每帧 OnUpdate 累加'
+            ],
+            note:'快照的意义：吟唱过程中属性变化（被加 buff）不影响这次施法的结算，保证和服务端一致可重算。'}},
+        { k:'state', t:'OnFinished / FireSkill 转技能态',
+          d:{ sig:'void OnFinished()  →  void FireSkill()',
+            loc:'singing_component.cpp:682 / :690', up:'duration_ ≥ FloatSingingTime()',
+            steps:[
+              'OnUpdate 每帧累加 duration_，达到 FloatSingingTime() 调 Finish()',
+              'Finish → OnFinished',
+              'OnFinished 解除 ATTR_SPECIAL_STATE_NO_MOVE 等施法期限制',
+              'FireSkill 构造 ROAttackActionArgs 并派发（事件类型 kActionSkill）'
+            ],
+            note:'从这里开始就是「技能」而不是「吟唱」了，状态从 kStateSinging 切到 kStateSkill。'}}
+      ]
+    },
+
+    /* ---------------- ⑤ 技能执行 ---------------- */
+    {
+      k:'skill', t:'⑤ 技能执行：排定时器',
+      d:{
+        loc:'rogamelibs/entity/skill/ + component/skill_component.cpp',
+        steps:[
+          'kActionSkill 派发到 ROSkillComponent，状态机切到 kStateSkill',
+          'OnStart 算攻速 time_scale，它会影响所有结算段的延迟',
+          'Execute → FireEvents 为每个 ResultList[i] 起一个毫秒定时器',
+          '定时器到点才进入判定，不是按键瞬间、也不是动画打击帧'
+        ],
+        note:'判定时刻是策划在技能表里配的参数，不是美术动画帧。改手感不用改代码。'
+      },
+      c:[
+        { k:'skill', t:'ROSkillComponent::OnActionEvent',
+          d:{ sig:'void ROSkillComponent::OnActionEvent(SPType<ROEvent>& args)',
+            loc:'skill_component.cpp（kActionSkill 监听注册在 :269，移除在 :224/:287；OnActionEvent 具体行号未逐条核对）', up:'kActionSkill 事件',
+            steps:[
+              '同样是 ActionStateComponent 模板基类，走 TryTransferToState 抢 kStateSkill',
+              '这里会再跑一遍 CanSkill（含 IsDead / 武器 / 场景 / 消耗），失败按 reason 发 SkillEnd',
+              '抢成功 → ROSkillComponent::OnStart'
+            ]}},
+        { k:'skill', t:'ROSkillComponent::OnStart',
+          d:{ sig:'void ROSkillComponent::OnStart(SPType<ROEvent>& args)',
+            loc:'skill_component.cpp:454', up:'状态机切到 kStateSkill',
+            steps:[
+              '从事件里取 soul / target / action / skill_core',
+              '算攻速 time_scale（受攻速属性影响）',
+              '调 FireSkill(soul, target, action, time_scale)'
+            ],
+            note:'time_scale 会乘到每一个结算段的 <code>at</code> 上，所以攻速越高，命中判定来得越早。'}},
+        { k:'skill', t:'FireSkill → ROSkill::Execute',
+          d:{ sig:'void ROSkillComponent::FireSkill(...)  →  void ROSkill::Execute()',
+            loc:'skill_component.cpp:1820 → skill.cpp:743', up:'OnStart 内部',
+            steps:[
+              '创建/复用 ROSkill 实例并挂到实体上',
+              'Execute 里做技能级初始化：算总时长、记录施法朝向',
+              '调 FireEvents() 开始排结算定时器',
+              '同时（或稍后）广播 SkillStartInfo 给周围玩家'
+            ]}},
+        { k:'skill', t:'ROArtSkill::FireEvents',
+          d:{ sig:'void ROArtSkill::FireEvents()',
+            loc:'art_skill.cpp:326（delay 计算在 :367）', up:'ROSkill::Execute',
+            steps:[
+              '先做概率抽取：needprob() 为 true 且这一段没被抽中 → 记进 no_result_index_ 并跳过',
+              '为每个 ResultList[i] 算 delay = ROGAMELIBS_TO_INT_TIME(at * time_scale_) + 1（毫秒）',
+              'SetTimer(delay, SkillsValidCheckArgs → TIMER_BIND_CALLBACK(ROSkill, OnResult, this), i, firer_uuid)',
+              '同一个循环还排了 aieventlist / mobunitlist / chargelist / 电视公告等其他时间轴'
+            ],
+            note:'<b>+1 毫秒</b>是为了避开 0 延迟，保证定时器至少跨一帧，不会在同一个 tick 里重入。'}},
+        { k:'skill', t:'ROSkill::OnResult',
+          d:{ sig:'bool ROSkill::OnResult(IArgs *args, void *param)',
+            loc:'skill.cpp:830', up:'定时器到点',
+            steps:[
+              '从参数里取 result_index 和 firer_uuid',
+              '校验施法者还在、技能实例还是同一个（防止延迟执行时角色已死）',
+              '调虚函数 Result(index)，实际分派到 ROArtSkill'
+            ],
+            fail:['施法者已失效 → 直接丢弃这次结算']}}
+      ]
+    },
+
+    /* ---------------- ⑥ 命中判定 ---------------- */
+    {
+      k:'hit', t:'⑥ 命中判定：几何命中',
+      d:{
+        loc:'rogamelibs/entity/skill/skill_utility.cpp + utility/math/collision_detection.cpp',
+        steps:[
+          'InnerResult 四步：组参数 → 找目标 → 过滤 → 多目标拆分',
+          '非飞行道具：当场做圆/扇形/矩形检索',
+          '飞行道具：只生成子弹，等子弹飞过去做线段扫掠',
+          '目标侧不是一个点，是一组受击圆'
+        ],
+        note:'「打到」的精确时刻：非飞行道具 = 技能表 At 那个毫秒；飞行道具 = 子弹第一次扫掠到目标受击圆的那一帧。'
+      },
+      c:[
+        { k:'hit', t:'ROArtSkill::InnerResult',
+          d:{ sig:'void ROArtSkill::InnerResult(const PbLocal::MSkillResultData& data)',
+            loc:'art_skill.cpp:509', up:'ROSkill::Result(index)',
+            steps:[
+              'SkillResultArgs args; GetSkillResultArgs(this, data, args) —— 组结算参数',
+              'GetSkillResultTarget(args) —— 检索并填 target_list',
+              'FilterSkillResultTargetsByBlockMobMonster(args) —— 剔除被阻挡 / 不可选的怪',
+              'SkillResultMultiTarget(args) —— 多目标拆分与 AOE 人数',
+              'if (data.longattackeffect()) → Project(data, target) 生成子弹（不算命中）',
+              'else → 直接走 SkillResult 结算'
+            ],
+            note:'注意顺序：<b>先找目标，再决定是子弹还是直接结算</b>。飞行道具虽然也找了目标，但那个列表只是给子弹一个追踪指向，不是命中列表。'}},
+        { k:'hit', t:'GetSkillResultArgs / GetSkillResultRangeArgs', st:'GetSkillResultArgs / RangeArgs',
+          d:{ sig:'void GetSkillResultArgs(ROSkill*, const MSkillResultData&, SkillResultArgs&)  /  void GetSkillResultRangeArgs(..., TargetScope&)',
+            loc:'skill_utility.cpp:1119 / :1159', up:'InnerResult 第 1 步',
+            steps:[
+              '从 MSkillResultData 取 TargetType / RangeType / RangeFar / RangeLow / Scope / AngleShift / OffsetX·Z',
+              'TargetScope 的中心：施法点，或有目标时取目标位置',
+              '朝向 = skill_forward 再旋转 AngleShift（扇形方向就靠这个偏）',
+              'OffsetX / OffsetZ 让判定圈相对中心平移（可以把判定放到身前几米）',
+              'Damage / LoopResult / LoopResultCycle / DamageSign 一并填进 args，供结算用'
+            ]}},
+        { k:'hit', t:'GetSkillResultTarget → Scene::GetEnemies',
+          d:{ sig:'void GetSkillResultTarget(SkillResultArgs&)  →  Scene::GetEnemies(...)',
+            loc:'skill_utility.cpp:807 → scene/scene_base.cpp:917', up:'InnerResult 第 2 步',
+            steps:[
+              '按 TargetType 分派：Opponent / DeadFriend / Team / SelfMob 各有专门的检索函数',
+              'GetEnemies 先按阵营取候选（敌对），再过视野校验',
+              '对每个候选调 CollisonDetection::IsInRange 做几何过滤',
+              '命中的实体 push 进 args.target_list'
+            ],
+            note:'检索是「先粗筛阵营 + 视野，再逐个精确几何判定」，不是全场景暴力遍历。'}},
+        { k:'hit', t:'CollisonDetection::IsInRange',
+          d:{ sig:'bool IsInRange(const TargetScope& scope, const ROObject* entity)  /  (scope, position, radius)',
+            loc:'utility/math/collision_detection.cpp:79 / :121', up:'GetEnemies 内部',
+            steps:[
+              '圆 / 扇形：distance < range_far + 半径 且 distance >= range_low - 半径，且 夹角 * 2 <= scope',
+              '矩形 / 十字矩形：走 UtilMath::IsInRect',
+              '<b>角度要 ×2 比较</b>：配置里的 Scope 是半角，别当成全角',
+              '目标侧不是一个点：AttributeComponent::ForeachAttackCollision 遍历多个受击圆，任一个命中即算命中'
+            ],
+            note:'半径会「膨胀」判定范围：range_far + 目标圆半径，所以贴身站的时候实际射程比表里大一个身位。'}},
+        { k:'hit', t:'FilterSkillResultTargetsByBlockMobMonster', st:'FilterBlockMobMonster',
+          d:{ sig:'void FilterSkillResultTargetsByBlockMobMonster(SkillResultArgs&)',
+            loc:'skill_utility.cpp（InnerResult 第 3 步调用）', up:'目标列表产出之后',
+            steps:[
+              '剔除处于「阻挡/不可选」状态的怪物',
+              '处理某些怪物的特殊规则（如不可被 AOE 波及）',
+              '原地修改 args.target_list'
+            ],
+            note:'所以「明明站在范围里却没被打到」，除了距离还要看这一层过滤。'}},
+        { k:'hit', t:'SkillResultMultiTarget',
+          d:{ sig:'void ROSkillUtility::SkillResultMultiTarget(const SkillResultArgs& args)',
+            loc:'skill_utility.cpp:1391', up:'InnerResult 第 4 步',
+            steps:[
+              '把 target_list 拆成多次单目标结算',
+              'AOE 人数用于围攻加成（影响命中率公式里的 Flee_Num）',
+              '逐目标进入 SkillResultDamage'
+            ]}},
+        { k:'hit', t:'ROArtSkill::Project（发射子弹）',
+          d:{ sig:'void ROArtSkill::Project(const PbLocal::MSkillResultData& data, uint64_t target_uuid = INVALID_UUID)',
+            loc:'art_skill.cpp:35（调用点 :519 / :524）', up:'longattackeffect() 为 true',
+            steps:[
+              '按子弹配置创建 RealBullet（真实弹道）或 UnrealBullet（虚拟弹道）',
+              '设置起点、方向、速度、半径（可走 RadiusCurve 曲线）、穿透次数 BoomCount',
+              '把技能实例和 result_index 绑到子弹上，命中时反查结算段',
+              '注册到子弹管理器，开始每 tick 推进'
+            ],
+            note:'这一步<b>不产生任何命中</b>，只是把判定推迟到子弹飞行过程。'}},
+        { k:'hit', t:'RealBullet::DoUpdate（线段扫掠）',
+          d:{ sig:'bool RealBullet::DoUpdate(int64_t delta_time)',
+            loc:'entity/bullet/real_bullet.cpp:76', up:'子弹 1ms 定时器每 tick',
+            steps:[
+              '记录 last_position，按速度积分出 position_',
+              'GetEnemies(last_position, position_, radius, ...) —— 用的是<b>线段</b>不是点',
+              '逐个 IsLineIntersectEntity 判断线段与目标受击圆是否相交',
+              '半径 = 子弹 radius（可走曲线） + 目标圆半径，所以高速子弹不会穿模',
+              'checkobstacle() 为真时 CheckObstacle 判撞墙（:112），撞墙就停在墙面',
+              '相交 → Boom(target)；到 BoomCount 上限 / UseBoomDistance / TotalTime 超时 → 销毁'
+            ],
+            note:'<b>这是移植时最容易写错的地方</b>：只在子弹位置做点检测，高速投射物会直接穿过目标。必须做线段扫掠。'}},
+        { k:'hit', t:'IsLineIntersectEntity / IsLineIntersectCircle', st:'IsLineIntersectEntity / Circle',
+          d:{ sig:'bool IsLineIntersectCircle(Scene*, const Vector3& start, const Vector3& end, float radius, const Vector3& bound_center, float bound_radius, float* distance, bool check_connect)',
+            loc:'collision_detection.cpp:273 / :189', up:'RealBullet::DoUpdate',
+            steps:[
+              'IsLineIntersectEntity 遍历目标的每个受击圆，任一相交即返回 true',
+              'IsLineIntersectCircle 做线段与圆的解析求交，输出最近交点距离',
+              'distance 出参用于取「最先撞到的那个目标」',
+              'check_connect 控制端点相接算不算相交'
+            ]}},
+        { k:'hit', t:'ROBullet::Boom → BulletResult',
+          d:{ sig:'void ROBullet::Boom(ROObject *target)  →  ROSkillUtility::BulletResult(firer, target, skill, result_index, forward, position)',
+            loc:'bullet.cpp:213 / :220（BulletResult 在 skill_utility.cpp:617）', up:'线段相交',
+            steps:[
+              '有目标 → BulletResult(..., target_skill_comp->GetCastPoint(firer))',
+              '无目标（虚拟弹道落地）→ BulletResult(..., position) 按落点做范围判定',
+              'BulletResult 内部：需要范围时先 GetSkillResultTarget（:647），再 SkillResult（:650）',
+              '穿透类子弹累加 trigger_times_ 后继续飞',
+              '同时广播 BulletBoom 给邻居'
+            ],
+            note:'注意 :226 那个分支：<b>target 传 nullptr、位置传子弹当前位置</b>，走的是「落点范围判定」，不是「单体命中」。'}},
+        { k:'hit', t:'UnrealBullet（虚拟弹道）',
+          d:{ sig:'（位于 entity/bullet/unreal_bullet.cpp）',
+            loc:'unreal_bullet.cpp:65', up:'配置为虚拟弹道的技能',
+            steps:[
+              '不逐帧做碰撞检测，只按时间插值飞到目标点',
+              '到达目标点直接 Boom(nullptr)，用落点做范围判定',
+              'Bounce 反弹另行处理'
+            ],
+            note:'虚拟弹道的手感更「可控」，代价是视觉与判定不完全一致（会打在目标身后一点点）。'}}
+      ]
+    },
+
+    /* ---------------- ⑦ 数值 / 下发 ---------------- */
+    {
+      k:'data', t:'⑦ 数值层 + 结果下发',
+      d:{
+        loc:'rogamelibs/battle/ + roserver/exe/gsconf/lua_script/',
+        steps:[
+          '几何命中之后还有一层：命中率 / 闪避判定',
+          '这一层在 Lua 里，可热更，不改 C++',
+          'MISS 同样不扣血、不飘伤害数字、不击退',
+          '结果通过三条推送下发给客户端'
+        ],
+        note:'一次攻击要过两道关：几何命中 + 数值命中。日志里要分清是「打偏」还是「被闪避」。'
+      },
+      c:[
+        { k:'data', t:'DamageCalculatorUtil::CalculateDamage',
+          d:{ sig:'DamageResult CalculateDamage(ROObject* caster, ...)',
+            loc:'battle/damage_calculator.cpp:273', up:'SkillResultDamage',
+            steps:[
+              '组装 caster_snapshot（吟唱时拍的那份）、target、damage_info、args',
+              '把计算整体交给 Lua：damage_calculator 脚本',
+              '拿回 DamageResult（含 type + 数值）写回目标',
+              'type 决定后续表现：MISS / BLOCK / CRIT / NORMAL'
+            ]}},
+        { k:'data', t:'Lua 命中率判定',
+          d:{ sig:'DamageCalculator.IsCommonSkillNotMiss(:238) / IsPhysicalSkillNotMiss(:284)',
+            loc:'roserver/exe/gsconf/lua_script/damage_calculator.lua', up:'CalculateDamage 内部',
+            steps:[
+              '普攻走 IsCommonSkillNotMiss，物理技能走 IsPhysicalSkillNotMiss',
+              '命中率 = (hit_base - flee_base * (1 - (围攻数 - 2) * 0.3)) / 100',
+              'clamp 到 [0.05, 1]，即最低 5% 命中、最高必中',
+              'PVP 另有一套补正（hit_base * 1.05 + hit_dex * 0.5）',
+              '睡眠 / 麻痹 / 眩晕状态直接必中',
+              '判定失败 → damage_result:SetType(DAMAGE_TYPE_MISS)'
+            ],
+            note:'围攻数越多，目标越难闪避 —— 这个系数就是「群殴必中」的来源。'}},
+        { k:'data', t:'DamageResult::IsResultHit',
+          d:{ sig:'bool DamageResult::IsResultHit() const',
+            loc:'battle/damage_def.cpp:652', up:'伤害计算完之后各处判定',
+            steps:[
+              'type == DAMAGE_TYPE_MISS 时返回 false',
+              '上层据此跳过扣血、飘字、击退、受击动画的伤害部分',
+              '注意：受击动画的播放不一定被跳过，取决于调用点'
+            ],
+            note:'所以「被打到有动作但没掉血」通常是 MISS，不是伤害丢失。'}},
+        { k:'data', t:'SkillStartInfo 下发',
+          d:{ sig:'PtcG2C / SkillStartInfo{firer, target, skill_uuid, cast_point, time_scale, using_times, skill_effect_id, attr_type, time_elapsed, anim, no_result_index[]}',
+            loc:'服务端推 → 客户端 OnSkillStart（Skill/MSkill.cs:943 附近）', up:'ROSkill::Execute',
+            steps:[
+              '客户端用 skill_uuid 认领本地那次预表现',
+              '用 time_scale + time_elapsed 把动画进度对齐到服务端时间轴',
+              'no_result_index[] 告诉客户端哪几段被概率抽掉了（不用等特效）',
+              '收到即取消 2 秒超时回滚'
+            ]}},
+        { k:'data', t:'RONetEventSkillResultTarget',
+          d:{ sig:'{firer, skill_uuid, result_index, target_list}',
+            loc:'服务端广播 → 客户端 MArtSkill.PlayMultiTargetFx（:987）', up:'每次结算产出 target_list 后',
+            steps:[
+              '服务端把这一段实际命中的目标 uuid 列表原样下发',
+              '客户端给每个 uuid 排一个多目标特效定时器',
+              '<b>这是「客户端不做判定」最直接的证据</b>：如果客户端自己算命中，它不需要服务端告诉它打了谁'
+            ]}},
+        { k:'data', t:'RONetEventDamageResult',
+          d:{ sig:'{目标, 伤害数值, damage_type, ...}',
+            loc:'客户端处理在 LibNetwork/MGamelibNetEventListener.cs:714 / :733', up:'伤害结算完成',
+            steps:[
+              '客户端按 damage_type 走不同表现分支',
+              'DAMAGE_TYPE_MISS → 直接 return，连受击特效都不播',
+              '有伤害 → 飘字、受击动画、音效'
+            ],
+            note:'想区分「打空」和「闪避」，客户端得自己用 Boom 事件 + 是否收到受伤害来推断 —— 这是玩家最容易误判为「伤害丢失」的地方。'}},
+        { k:'data', t:'BulletAppear / Boom / Destroy 广播',
+          d:{ sig:'三个网络事件，向邻居广播',
+            loc:'bullet.cpp:235 / :265 / :281', up:'子弹生命周期各阶段',
+            steps:[
+              'Appear：子弹生成，附近客户端创建本地子弹表现',
+              'Boom(target_uuid)：命中，播放爆炸特效并吸附到目标',
+              'Destroy：子弹消失',
+              '客户端子弹只做位移积分 + 每 150ms 一次位置回拉，没有任何碰撞代码'
+            ]}},
+        { k:'data', t:'PtcG2C_SyncSkillEndNotify',
+          d:{ sig:'{firer, skill_uuid, reason}',
+            loc:'协议类型号 1195586841 · SkillEndReason 共 23 种（common_skill_define.h:51）', up:'技能结束 / 被打断 / 超时',
+            steps:[
+              'reason 是 23 种枚举之一：Over_Time / Illegal_State / Distance / Stop / Cost …',
+              '客户端预表现期间收到 → 回滚 CD 与动画',
+              '也是排查「技能为什么没放出去」唯一可靠的客户端侧线索'
+            ],
+            note:'建议在客户端把 reason 打到日志里，比看 Performance fails! 有用得多。'}}
+      ]
+    },
+    /* ---------------- ⑧ 事件分发器 ---------------- */
+    {
+      k:'server', t:'⑧ 事件分发器：ROEventDispatcher 语义',
+      d:{
+        loc:'rogamelibs/core/event/event_dispatcher.h:20 · .cpp:117 / :170',
+        steps:[
+          '两级表：事件类型 → (监听者指针 → 回调条目)，即 unordered_map&lt;uint32_t, map&lt;const void*, Entry*&gt;&gt;',
+          '监听身份就是那个 const void* 指针；<b>同一个指针重复注册 = 替换</b>（:136 命中则先 DELETE_OBJECT 旧条目再换新）',
+          'RemoveEventListener（:149）只按 (事件类型, 监听者指针) 定位，不比对回调内容；删完把条目指针置空，<b>不当场从 map 里摘除</b>',
+          'DispatcherEvent（:170）同步执行：查表 → 就地遍历 → 调回调；不入队、不跨线程、不过网络',
+          '空条目（指针已被置空）在下一次派发的维护分支里惰性 erase（:219），另有 ClearZombieEvent 每 60 秒兜底（:56）',
+          '派发只认事件类型：一个类型下所有监听者都会被调用，没有任何「谁该收到」的过滤'
+        ],
+        note:'<b>event_lock_ 是重入保护，不是线程锁。</b>它是 set&lt;uint32_t&gt;：第一次进入某类型的派发时 emplace 成功 → 走「遍历 + 维护」分支；同类型事件在回调里<b>嵌套派发</b>时 emplace 失败 → 只触发回调、<b>不动迭代器</b>（:227 注释写明「为了不破坏迭代器」），锁由最外层那次负责释放。'
+      },
+      c:[
+        { k:'server', t:'AddEventListener：重复注册即替换',
+          d:{ sig:'void AddEventListener(ROEventDefine event_type, const void* obj, const ROSPListenerCallback& callback, bool own = true)',
+            loc:'event_dispatcher.cpp:117', up:'组件 Initialize / 进入场景时注册',
+            steps:[
+              'hash_sp_event_handler_[event_type] 取到该类型的监听表',
+              '按 obj 指针 find：没找到就 emplace 新条目',
+              '找到了 → 先 DELETE_OBJECT 旧条目（delete 后指针置空），再用新条目覆盖',
+              'own 标记这个监听是不是宿主自己的：own=false 的条目会被 ClearOthersEntry 清掉'
+            ],
+            fail:['没有任何失败返回：注册永远「成功」，重复注册不报错，只会静默替换掉上一个回调'],
+            note:'这就是「改完代码发现新逻辑没生效、老逻辑还在跑」的常见原因之一 —— 两个地方注册了同一监听者，后注册的把先注册的顶掉。'}},
+        { k:'server', t:'RemoveEventListener：只置空、不摘表',
+          d:{ sig:'void RemoveEventListener(ROEventDefine event_type, const void* obj, const ROSPListenerCallback& callback)',
+            loc:'event_dispatcher.cpp:149', up:'组件 UnInit / 状态退出时移除',
+            steps:[
+              '按事件类型找表，找不到直接 return（静默）',
+              '按 obj 指针找条目，找不到直接 return（静默）',
+              'DELETE_OBJECT 条目 → delete 并把 map 里的指针置空',
+              '条目本身留在 map 里，等下一次派发的维护分支（:219）或 ClearZombieEvent 才真正 erase'
+            ],
+            fail:['callback 参数只用于调试上报，不参与匹配：传错回调也能删掉条目'],
+            note:'「删了但表还在长」是这套设计的代价：删除是 O(log n) 置空，回收是摊还的。也正因此<b>在回调里删自己</b>是安全的 —— 本次派发已经拿到 entry_ptr，置空不会打断遍历。'}},
+        { k:'server', t:'DispatcherEvent：同步 + 重入',
+          d:{ sig:'void DispatcherEvent(SPType<ROEvent>& sp_event)',
+            loc:'event_dispatcher.cpp:170', up:'技能链路各派发点',
+            steps:[
+              '按 evt->GetEventType() 查表，没有监听者直接 return',
+              'event_lock_.emplace(类型)：true = 最外层，false = 嵌套',
+              '最外层：while 遍历，回调非空就调，回调为空就 erase（边遍历边维护）',
+              '遍历结束 event_lock_.erase(类型) 释放重入标记',
+              '嵌套：range-for 遍历整个 map 只调回调，不 erase、不碰锁'
+            ],
+            fail:['类型下没有监听者 → 事件被静默丢弃，不报错、不日志（除非开 PROPERTY_DEBUG）'],
+            note:'<b>回调里改监听表要小心：</b>最外层用 while + 迭代器，std::map 的 insert 不使迭代器失效，能安全跑完；但嵌套分支用的是 range-for，此时若另一个回调删了条目，置空安全、erase 不安全。<b>移植到别的语言时，「遍历期间允许替换/删除」这条必须显式实现</b>，否则会漏调或重复调。'}},
+        { k:'server', t:'UnInit / ClearOthersEntry / 延迟派发',
+          d:{ sig:'void UnInit() / void ClearOthersEntry() / HTIMER DispatcherEvent(int64_t delay, SPType<ROEvent>& evt)',
+            loc:'event_dispatcher.cpp:29 / :96 / :242', up:'宿主销毁 / 换场景 / 需要延后一拍',
+            steps:[
+              'UnInit：逐条 DELETE_OBJECT + erase，清空 hash_sp_event_handler_；再把 timer_handler_ 里的定时器全部 KillTimer 并清表',
+              'ClearOthersEntry：只删 is_own == false 的条目，保留宿主自己注册的',
+              '延迟派发：SetTimer 包一层，timer_handler_[evt->GetToken()] = token 记账',
+              '到点 OnLaterDispatcherSpEvent（:258）先从记账表 erase，再走同步 DispatcherEvent'
+            ],
+            fail:['UnInit 之后仍在派发 → 表已清空，事件静默丢弃；不崩，也不会有任何提示'],
+            note:'<b>UnInit 是「连定时器一起收」的。</b>只清监听表不清 timer_handler_，宿主销毁后延迟事件还会打到已析构对象上 —— 这是 C++ 侧最容易漏的一步，移植时必须成对实现。'}}
+      ]
+    },
+    /* ---------------- ⑨ 本项目接入边界 ---------------- */
+    {
+      k:'server', t:'⑨ 本项目接入边界：LYF_Server 实际落地',
+      d:{
+        loc:'LYF_Server/GameServer · 本节描述本项目，不是 RO',
+        steps:[
+          '①~⑦ 是 RO 原工程链路，⑧ 是 RO 派发器内部语义；<b>本节是本项目的实际接入，两者不要混读</b>',
+          '本项目没有搬运 RO 的状态互斥等待，也没有搬运吟唱时长；技能在事件派发的<b>同一帧</b>内完成结算',
+          '协议 SkillCastReq 目前只有 SkillId 与 SkillUuid，<b>没有 target，也没有 cast_point</b>',
+          '派发器由 OnlineRole 持有，一个角色一份；没有全局派发器，也没有实体 UUID 路由'
+        ],
+        note:'判断「某个 RO 行为本项目有没有」时，以本节为准；RO 侧的状态机、吟唱、排队重试都属于<b>未移植</b>，不能按 RO 的时序去理解本项目。'
+      },
+      c:[
+        { k:'server', t:'本项目实际链路（5 跳，全同步）',
+          d:{ sig:'OnCall → ROClientFireSkillArgs → RoleSingingComponent → ROSingingArgs → RoleSkillComponent.TryCast',
+            loc:'SkillCastHandler.cs / RoleSingingComponent.cs / RoleSkillComponent.cs', up:'GateServer 转发 CMD_SkillCastCode',
+            steps:[
+              '<b>SkillCastHandler.OnCall</b>：解析协议与会话，构造 ROClientFireSkillArgs（target_=0、cast_point_ 全零），交给角色派发器',
+              '<b>RoleSingingComponent.OnClientFireSkillRequest</b>：监听 kActionClienFireSkill，逐字段转成 ROSingingArgs 再派发',
+              '<b>RoleSkillComponent.OnSingingRequest</b>：监听 kActionSinging，还原 SkillCastReq 后调用既有 TryCast',
+              '<b>TryCast</b>：原有 MP / CD / UUID / 学习等级校验，一行未改',
+              '<b>回包与广播</b>：先 Owner.SendToClient(CMD_SkillCastCode, SkillCastRet)，成功后 RoleManager.BroadcastSkillStart 发 CMD_SkillCastStartCode'
+            ],
+            fail:['入口阶段失败：ReqParamError / InvalidSession / SkillStateBlocked','业务阶段失败：TryCast 的返回码原样回包，且不广播开始表现'],
+            note:'回包先于开始广播，顺序由同一方法内的两次调用保证；两帧都经真实网关会话写出。'}},
+        { k:'server', t:'接入点：OnlineRole.GetEventDispatcher',
+          d:{ sig:'public ROEventDispatcher GetEventDispatcher()',
+            loc:'LYF_Server/GameServer/Entity/Role/OnlineRole.cs', up:'入口与两个组件共用',
+            steps:[
+              'OnlineRole 持有 readonly ROEventDispatcher，随角色创建、随 Dispose 释放',
+              'InitSerializes 注册 RoleSkillComponent 与 RoleSingingComponent，两者在 Initialize 里登记监听',
+              'Dispose 先释放组件（各自解除监听），再调 _eventDispatcher.UnInit() 清空剩余回调引用',
+              '命名与 RO 的 GetEventDispatcher 一致，但作用域是「单个在线角色」而非实体世界'
+            ],
+            note:'项目里另有 <code>SceneEntity/World/EntityWorld.cs</code> 的 uid→实体字典，但它在生产链路没有调用方；本次<b>没有</b>改用它，也没有另建注册表。'}},
+        { k:'server', t:'与 RO 的边界：明确未移植的部分',
+          d:{ sig:'本次移植范围 = 事件基类 + 事件类型 + 派发器 + 监听者生命周期',
+            loc:'对照 rogamelibs/core/event 与 rogamelibs/entity/action', up:'范围判定',
+            steps:[
+              '<b>未移植</b>状态互斥等待（STATE_MUTEX_MGR / TransferStateByFunc / 旧状态退出回调）',
+              '<b>未移植</b>吟唱时长与吟唱中每帧距离复查（本项目没有吟唱阶段）',
+              '<b>未移植</b>request_list_ 300ms 排队重试与双队列上限',
+              '<b>未移植</b>延迟派发（DispatcherEvent(delay)）、own/ClearOthersEntry/ClearZombieEvent、event_lock_ 重入锁',
+              '<b>已保留</b>同步派发、按类型分表、重复注册即替换、解除即失效、宿主销毁 UnInit 清空'
+            ],
+            fail:['把 RO 的「异步退旧状态 → 再派发」当成已移植，会误判本项目的时序与失败点'],
+            note:'派发器用快照 + <code>for</code> 遍历替代 RO 的 while + 惰性 erase：本轮不纳入新注册条目，已引用条目的解除/替换立即可见。'}},
+        { k:'server', t:'验证方式：环回网关通道',
+          d:{ sig:'EventDispatcherSmoke 用例九 / 用例十',
+            loc:'LYF_Server/Tests/EventDispatcherSmoke.cs（不进入正式工程）', up:'回包是否真的送达',
+            steps:[
+              '在本机环回端口建一对真实 TCP 连接，一端作为会话出口，另一端按两字节长度头读帧',
+              '会话的上游连接器类型设为 GameServer，使实时协议保持 TCP 帧，与游戏服→网关拓扑一致',
+              '构造合法复合会话后走 SkillCastHandler.OnCall，断言客户端收到 SkillCastRet(Succeed) 与 SkillCastStartNtf',
+              '拒绝分支（冷却中二次释放）断言只回一帧结果、不再扣蓝、不发开始通知'
+            ],
+            note:'这是<b>协议级送达验证</b>，不是完整登录实网验收：没有经过 LoginServer 与 GateServer 的真实登录，也没有 Unity 客户端表现。'}}
+      ]
+    }
+  ]
+};
+
+/* ============================================================
+   端归属：①是客户端，②~⑦全在服务端；子节点继承父节点
+   ============================================================ */
+tree.side = 'both';
+tree.c.forEach(function(c, i){ c.side = (i === 0) ? 'client' : 'server'; });
+
+/* ============================================================
+   布局
+   ============================================================ */
+const COL = 384, ROW = 33, PAD_L = 26, PAD_T = 26, NODE_H = 27, MAXW = 344;
+const svg = document.getElementById('map');
+const wrap = document.getElementById('mapwrap');
+const detailEl = document.getElementById('detail');
+
+const measureCtx = document.createElement('canvas').getContext('2d');
+function textW(str, size, bold){
+  measureCtx.font = (bold?'600 ':'') + size + 'px "Segoe UI","Microsoft YaHei",sans-serif';
+  return measureCtx.measureText(str).width;
+}
+
+// 放不下就缩字号，缩到 10.5px 还放不下才省略
+function fitLabel(str, avail, fs, bold){
+  if(textW(str, fs, bold) <= avail) return {label:str, fs:fs, w:textW(str,fs,bold)};
+  let s = fs;
+  while(s > 10.5){
+    s -= 0.5;
+    const w = textW(str, s, bold);
+    if(w <= avail) return {label:str, fs:s, w:w};
+  }
+  let lo = 0, hi = str.length;
+  while(lo < hi){
+    const mid = Math.ceil((lo+hi)/2);
+    if(textW(str.slice(0,mid) + '…', s, bold) <= avail) lo = mid; else hi = mid - 1;
+  }
+  const lab = str.slice(0, lo) + '…';
+  return {label:lab, fs:s, w:textW(lab, s, bold)};
+}
+
+let selected = null;
+let sideFilter = 'all';          // all / client / server
+const nodeMap = {};
+
+function prepare(n, depth, parent){
+  n.depth = depth; n.parent = parent; n.id = n.id || ('n' + (Object.keys(nodeMap).length+1));
+  nodeMap[n.id] = n;
+  const isRoot = n.k === 'root';
+  const isCat = depth === 1;
+  n.fs = isRoot ? 15 : (isCat ? 13.5 : 13);
+  n.bold = isRoot || isCat;
+  n.hasKids = !!(n.c && n.c.length);
+  n.side = n.side || (parent ? parent.side : 'both');   // 客 / 服，子节点继承父节点
+  const badgeW = (n.side === 'both') ? 0 : 20;          // 左侧 客/服 标记占的宽度
+  const pad = (n.hasKids ? 40 : 26) + badgeW;
+  const maxw = isRoot ? 260 : MAXW;
+  const fit = fitLabel(n.st || n.t, maxw - pad, n.fs, n.bold);
+  n.label = fit.label;
+  n.fs = fit.fs;
+  n.tw = fit.w;
+  n.w = Math.max(isRoot ? 170 : 118, Math.ceil(fit.w) + pad);
+  if(n.c) n.c.forEach(c => prepare(c, depth+1, n));
+}
+
+function layout(n){
+  n.x = PAD_L + n.depth * COL;
+  if(!n.c || n.collapsed){
+    n.y = layout._y + NODE_H/2;
+    layout._y += ROW;
+    return;
+  }
+  n.c.forEach(layout);
+  // 根节点与第一条主干对齐：首屏就能看到起点，不用先往上滚
+  n.y = (n === tree) ? n.c[0].y : (n.c[0].y + n.c[n.c.length-1].y) / 2;
+}
+
+function render(){
+  layout._y = PAD_T;
+  layout(tree);
+  const W = PAD_L*2 + (maxDepth(tree)+1) * COL;
+  const H = layout._y + PAD_T;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+
+  // 连线
+  (function links(n){
+    if(!n.c || n.collapsed) return;
+    n.c.forEach(c => {
+      const x1 = n.x + n.w, y1 = n.y, x2 = c.x, y2 = c.y;
+      const mx = x1 + (x2 - x1) * 0.48;
+      const p = document.createElementNS(NS,'path');
+      p.setAttribute('d', 'M'+x1+' '+y1+' C'+mx+' '+y1+', '+mx+' '+y2+', '+x2+' '+y2);
+      p.setAttribute('fill','none');
+      p.setAttribute('stroke', K[c.k].s);
+      p.setAttribute('stroke-width','1.6');
+      p.setAttribute('stroke-opacity','0.30');
+      p.setAttribute('stroke-linecap','round');
+      svg.appendChild(p);
+      links(c);
+    });
+  })(tree);
+
+  // 跨端分隔线：①（客户端）与其后所有服务端主干之间的分界
+  if(!tree.collapsed && tree.c && tree.c.length > 1){
+    const yb = tree.c[1].y - ROW / 2 - 1;
+    const ln = document.createElementNS(NS,'line');
+    ln.setAttribute('x1', 100); ln.setAttribute('x2', W - 40);
+    ln.setAttribute('y1', yb); ln.setAttribute('y2', yb);
+    ln.setAttribute('stroke', '#A8B4C6');
+    ln.setAttribute('stroke-width','1.3');
+    ln.setAttribute('stroke-dasharray','5 5');
+    svg.appendChild(ln);
+
+    const lb = document.createElementNS(NS,'text');
+    lb.setAttribute('x', 30); lb.setAttribute('y', yb + 3.6);
+    lb.setAttribute('font-size','10');
+    lb.setAttribute('font-weight','600');
+    lb.setAttribute('fill','#7C8794');
+    lb.textContent = '客 ⇄ 服';
+    svg.appendChild(lb);
+  }
+
+  // 节点
+  (function draw(n){    const g = document.createElementNS(NS,'g');
+    g.setAttribute('class','node');
+    g.style.cursor = 'pointer';
+
+    const r = document.createElementNS(NS,'rect');
+    r.setAttribute('x', n.x); r.setAttribute('y', n.y - NODE_H/2);
+    r.setAttribute('width', n.w); r.setAttribute('height', NODE_H);
+    r.setAttribute('rx', 7);
+    r.setAttribute('fill', K[n.k].f);
+    r.setAttribute('stroke', K[n.k].s);
+    r.setAttribute('stroke-width', selected === n.id ? 2.4 : 1.2);
+    r.setAttribute('stroke-opacity', selected === n.id ? 1 : 0.55);
+    if(selected === n.id){ r.setAttribute('filter','drop-shadow(0 2px 5px rgba(0,0,0,.13))'); }
+    g.appendChild(r);
+
+    if(n.k === 'root'){
+      r.setAttribute('fill', K.root.f);
+      r.setAttribute('stroke', K.root.f);
+    }
+
+    // 客 / 服 标记：明确这段代码跑在客户端还是服务端
+    if(n.side !== 'both'){
+      const isC = n.side === 'client';
+      const br = document.createElementNS(NS,'rect');
+      br.setAttribute('x', n.x + 6); br.setAttribute('y', n.y - 8);
+      br.setAttribute('width', 15); br.setAttribute('height', 16);
+      br.setAttribute('rx', 4);
+      br.setAttribute('fill', isC ? '#3E7BFA' : '#D9821A');
+      g.appendChild(br);
+      const bt = document.createElementNS(NS,'text');
+      bt.setAttribute('x', n.x + 13.5); bt.setAttribute('y', n.y + 4);
+      bt.setAttribute('text-anchor','middle');
+      bt.setAttribute('font-size','10');
+      bt.setAttribute('font-weight','700');
+      bt.setAttribute('fill','#FFFFFF');
+      bt.textContent = isC ? '客' : '服';
+      g.appendChild(bt);
+    }
+    const tx = n.x + 12 + (n.side === 'both' ? 0 : 20);
+
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x', tx);
+    t.setAttribute('y', n.y + 4.6);
+    t.setAttribute('font-size', n.fs);
+    t.setAttribute('font-weight', n.bold ? '600' : '400');
+    t.setAttribute('fill', n.k === 'root' ? '#fff' : K[n.k].t);
+    t.textContent = n.label || n.t;
+    if(n.label && n.label !== n.t){
+      const ti = document.createElementNS(NS,'title');
+      ti.textContent = n.t;
+      g.appendChild(ti);
+    }
+    g.appendChild(t);
+
+    if(n.hasKids){
+      const bx = n.x + n.w - 14;
+      const badge = document.createElementNS(NS,'g');
+      badge.style.cursor = 'pointer';
+      const c1 = document.createElementNS(NS,'circle');
+      c1.setAttribute('cx', bx); c1.setAttribute('cy', n.y); c1.setAttribute('r', 7.5);
+      c1.setAttribute('fill', '#fff'); c1.setAttribute('stroke', K[n.k].s);
+      c1.setAttribute('stroke-opacity','0.5'); c1.setAttribute('stroke-width','1.1');
+      badge.appendChild(c1);
+      const s1 = document.createElementNS(NS,'text');
+      s1.setAttribute('x', bx); s1.setAttribute('y', n.y + 3.6);
+      s1.setAttribute('text-anchor','middle');
+      s1.setAttribute('font-size','11');
+      s1.setAttribute('font-weight','700');
+      s1.setAttribute('fill', K[n.k].s);
+      s1.textContent = n.collapsed ? '+' : '−';
+      badge.appendChild(s1);
+      badge.addEventListener('click', ev => {
+        ev.stopPropagation();
+        n.collapsed = !n.collapsed;
+        render();
+      });
+      g.appendChild(badge);
+    }
+
+    g.addEventListener('click', () => { selected = n.id; render(); showDetail(n); });
+    svg.appendChild(g);
+
+    // 端过滤：不属于当前过滤端的节点淡出
+    if(sideFilter !== 'all' && n.side !== 'both' && n.side !== sideFilter) g.style.opacity = 0.12;
+    if(n.c && !n.c.collapsed) n.c.forEach(draw);
+  })(tree);
+
+  // 地图区高度跟随内容：避免宽屏下留出大片空白把底部表格推走
+  const vh = (typeof window !== 'undefined' && window.innerHeight) ? window.innerHeight : 900;
+  const avail = Math.max(440, vh - 235);
+  const boxH = Math.min(H + 42, avail);
+  wrap.style.height = boxH + 'px';
+  if(detailEl && detailEl.style && (typeof window === 'undefined' || window.innerWidth > 1100)){
+    detailEl.style.height = boxH + 'px';
+  }
+}
+
+function maxDepth(n){
+  let m = n.depth;
+  if(n.c && !n.collapsed) n.c.forEach(c => m = Math.max(m, maxDepth(c)));
+  return m;
+}
+
+/* ============================================================
+   详情面板
+   ============================================================ */
+function kindTag(k){
+  const c = K[k];
+  return '<span class="pkind" style="background:'+c.f+';color:'+c.t+'">'+c.name+'</span>';
+}
+
+function showDetail(n){
+  const d = n.d || {};
+  let h = '';
+
+  // 面包屑
+  const chain = [];
+  let p = n;
+  while(p){ chain.unshift(p.t); p = p.parent; }
+  h += '<div class="crumb">' + chain.join(' <span>›</span> ') + '</div>';
+  h += '<h2 class="ptitle">' + n.t + '</h2>';
+
+  // 运行端：客户端 / 服务端 / 跨两端
+  const sideTxt = n.side === 'client' ? '客户端' : (n.side === 'server' ? '服务端' : '跨两端');
+  const sideCls = n.side === 'client' ? 'c' : (n.side === 'server' ? 's' : 'b');
+  h += '<span class="pside ' + sideCls + '">' + sideTxt + '</span>';
+  h += kindTag(n.k);
+
+  if(d.sig){
+    h += '<div class="sigbox"><span class="lbl">函数签名</span><code>' + esc(d.sig) + '</code></div>';
+  }
+  if(d.loc){
+    h += '<div class="sigbox"><span class="lbl">位置</span><code>' + esc(d.loc) + '</code></div>';
+  }
+  if(d.up){
+    h += '<div class="sigbox"><span class="lbl">上一跳 / 触发者</span><code>' + esc(d.up) + '</code></div>';
+  }
+
+  if(d.steps && d.steps.length){
+    h += '<div class="sec-h">里面做了什么</div><ol class="steps">';
+    d.steps.forEach(s => h += '<li>' + s + '</li>');
+    h += '</ol>';
+  }
+  if(d.fail && d.fail.length){
+    h += '<div class="sec-h">失败 / 分支</div><ul class="fail">';
+    d.fail.forEach(s => h += '<li>' + s + '</li>');
+    h += '</ul>';
+  }
+  if(d.note){
+    const danger = /不要|没有超时|死代码|最容易|坑|静默|不会|串位/.test(d.note);
+    h += '<div class="note' + (danger?' danger':'') + '">' + d.note + '</div>';
+  }
+  if(!d.sig && !d.steps && !d.note){
+    h += '<div class="empty">这个节点还没有补充详情</div>';
+  }
+
+  detailEl.innerHTML = h;
+  detailEl.scrollTop = 0;
+  // 高亮对应步骤条
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  const cat = catOf(n);
+  if(cat){
+    const chip = document.querySelector('.chip[data-id="'+cat.id+'"]');
+    if(chip) chip.classList.add('on');
+  }
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function catOf(n){ let p = n; while(p && p.depth !== 1) p = p.parent; return p; }
+
+/* ============================================================
+   步骤条
+   ============================================================ */
+prepare(tree, 0, null);   // 先给节点分配 id，步骤条要用
+
+const strip = document.getElementById('strip');
+tree.c.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'chip';
+  b.dataset.id = c.id;
+  b.innerHTML = '<span class="n">' + (i+1) + '</span>' + c.t.replace(/^[①②③④⑤⑥⑦]\s*/, '');
+  b.addEventListener('click', () => {
+    c.collapsed = false;
+    selected = c.id;
+    render(); showDetail(c);
+    const y = c.y - 120;
+    wrap.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
+  });
+  strip.appendChild(b);
+});
+
+/* ============================================================
+   工具条
+   ============================================================ */
+document.getElementById('btnExpand').addEventListener('click', () => {
+  (function walk(n){ n.collapsed = false; if(n.c) n.c.forEach(walk); })(tree);
+  render();
+});
+document.getElementById('btnCollapse').addEventListener('click', () => {
+  (function walk(n, d){ if(d >= 1) n.collapsed = true; if(n.c) n.c.forEach(c => walk(c, d+1)); })(tree, 0);
+  tree.collapsed = false;
+  render();
+});
+
+// 端过滤：两端 / 仅客户端 / 仅服务端
+document.querySelectorAll('#sideSeg button').forEach(function(b){
+  b.addEventListener('click', function(){
+    sideFilter = b.dataset.side;
+    document.querySelectorAll('#sideSeg button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    render();
+  });
+});
+
+const searchEl = document.getElementById('search');
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.trim().toLowerCase();
+  if(!q){ render(); return; }
+  // 展开所有，再高亮匹配
+  (function walk(n){ n.collapsed = false; if(n.c) n.c.forEach(walk); })(tree);
+  render();
+  const hits = [];
+  (function walk(n){
+    const hay = (n.t + ' ' + (n.d && (n.d.sig||'') + ' ' + (n.d.loc||'') + ' ' + ((n.d.steps||[]).join(' ')))).toLowerCase();
+    if(hay.indexOf(q) >= 0) hits.push(n);
+    if(n.c) n.c.forEach(walk);
+  })(tree);
+
+  const hitIds = new Set(hits.map(h => h.id));
+  // 祖先也保留
+  hits.forEach(h => { let p = h.parent; while(p){ hitIds.add(p.id); p = p.parent; } });
+
+  [...svg.querySelectorAll('g.node')].forEach(() => {});
+  // 重新渲染后按顺序给 g 打标（节点按先序遍历加入）
+  const order = [];
+  (function walk(n){ order.push(n); if(n.c) n.c.forEach(walk); })(tree);
+  const gs = [...svg.querySelectorAll('g.node')];
+  svg.querySelectorAll('g.node').forEach((g, i) => {
+    const n = order[i];
+    if(!n) return;
+    if(!hitIds.has(n.id)) g.style.opacity = 0.18;
+    else if(hits.indexOf(n) >= 0){
+      g.style.opacity = 1;
+      const r = g.querySelector('rect');
+      if(r) r.setAttribute('stroke-width', 2.6);
+    } else g.style.opacity = 0.65;
+    if(sideFilter !== 'all' && n.side !== 'both' && n.side !== sideFilter) g.style.opacity = 0.12;
+  });
+
+  if(hits.length){
+    showDetail(hits[0]);
+    selected = hits[0].id;
+  }
+});
+
+/* ============================================================
+   启动
+   ============================================================ */
+prepare(tree, 0, null);
+render();
+showDetail(tree);
+selected = tree.id;
+render();
+
+// 窗口尺寸变化时重排（折叠状态与选中项都保留）
+if(typeof window !== 'undefined' && window.addEventListener){
+  let rt = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){ render(); }, 160);
+  });
+}
+</script>
+</body>
+</html>

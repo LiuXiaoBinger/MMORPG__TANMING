@@ -9,7 +9,7 @@ public sealed class SyncKnapsackGridCountHandler : IGameMessageHandler
             commandCode == NetDefine.CMD_SyncKnapsackGridCountCode;
     }
 
-    public void Handle(GameMessageHandlerContext context)
+    public void OnCall(GameMessageHandlerContext context)
     {
         if (context == null || context.Source != GameCommandSource.CenterServer || context.Package == null)
         {
