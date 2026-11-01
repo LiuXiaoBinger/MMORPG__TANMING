@@ -138,3 +138,18 @@ Codex在开发阶段使用 workbuddy-executor（国际版派工/回执/返修）
 - 证据：`_temp/server-entity-event-20261101/logging/bilingual-sync-report.json`、`CURRENT_TASK.zh.append.md`、`TEST_REPORT.zh.append.md`、`codex-record-scope-check.json`（后三者同logging目录）。
 - 双语新增段不包含本轮Git回执重复流水；Git提交与推送仅续记在本完整日志。现有工作区其它任务记录和业务修改继续保留，提交仅取本编号新增段。工作区索引与提交索引分别按各自源文件生成，避免把未获本任务授权的旧任务正文混入本次提交。
 - 本次只维护记录，未重跑编译、测试或启停四服；代码输入与原验收边界未改变。
+
+
+### 获准记录提交与推送回执
+
+- 记录提交：`5085145d7dd341aea5c1f19fce1f0831a7034827`，`docs: 记录服务器事件与OnCall移植验收`；范围为本日志、CURRENT_TASK/TEST_REPORT双语本编号新增段及RECORD_INDEX，共6文件。
+- 实际推送：`021b076..5085145` → `origin/codex/feature-development`，exit0；证据 `_temp/server-entity-event-20261101/logging/git-docs-commit.log`、`git-docs-push.log`（同目录）。未合main、未强推。
+- 中文同步Hub任务已由Codex实际内容验收 accepted，证据 `_temp/server-entity-event-20261101/logging/hub-sync-accepted.json`。
+- 本次回执补记只修改本日志，不改变已核验的双语正文或索引源，不重复同步/检查历史。补记自身提交由本文件Git历史与 `_temp/server-entity-event-20261101/logging/git-final-verification.json` 定位，避免为记录自身提交号循环追加流水。
+
+### 获准记录收尾用量与压缩统计
+
+- 可观测窗口：2026-11-01T19:32:57.863000+08:00 至 2026-11-01T19:47:12.338000+08:00；本对话原始token_count累计差值，实验性来源保留估算标记：新增输入~87803、缓存输入~2921088、输出~22100 tokens。本窗口只覆盖“写入”确认后的记录收尾，不把前一阶段用量重复相加。
+- 上下文与项目规则、用户需求、工具调用输入输出、重复读取/返工/验证的真实token无法独立分摊；WorkBuddy本次中文同步1轮，token未披露；账户剩余额度本地不可测，不将未知写成0。
+- 上下文压缩：当前对话累计0次；来源当前对话原始JSONL顶层compacted事件，完整覆盖至2026-11-01T11:48:00.535000+00:00，覆盖缺口[]。不重置计数、不合并WorkBuddy会话。
+- 原始与汇总证据：`_temp/server-entity-event-20261101/logging/token-collect-final.txt`、`token-report-final.json`、`token-session-final.json`、`context-compactions.json`（后三者同目录）。仅保存本项目所需汇总、窗口与边界，不复制提示词/源码/外部模型私密数据到正式记录。
