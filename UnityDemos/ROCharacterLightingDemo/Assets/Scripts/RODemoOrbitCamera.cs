@@ -29,6 +29,9 @@ public class RODemoOrbitCamera : MonoBehaviour
     /// <summary>鼠标拖动的旋转速度（度/帧轴值），仅 Play 模式使用。</summary>
     public float rotateSpeed = 4f;
 
+    /// <summary>旋转使用的鼠标键：0 为左键，1 为右键；既有场景默认保留左键。</summary>
+    public int rotationMouseButton = 0;
+
     /// <summary>滚轮缩放系数（米/轴值），仅 Play 模式使用。</summary>
     public float zoomSpeed = 0.6f;
 
@@ -59,8 +62,8 @@ public class RODemoOrbitCamera : MonoBehaviour
             return;
         }
 
-        // 按住鼠标左键拖动改变水平角与俯仰角
-        if (Input.GetMouseButton(0))
+        // 按住场景指定的鼠标键拖动，改变水平角与俯仰角。
+        if (Input.GetMouseButton(rotationMouseButton))
         {
             yaw += Input.GetAxis("Mouse X") * rotateSpeed;
             pitch -= Input.GetAxis("Mouse Y") * rotateSpeed;

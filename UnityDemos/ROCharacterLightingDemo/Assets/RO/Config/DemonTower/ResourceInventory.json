@@ -5575,10 +5575,10 @@
     },
     {
       "path": "Assets/RO/Art/_Creature/Monster/Monster_SiWangZhiShu/Anims/Monster_SiWangZhiShu_BeHit.FBX",
-      "purpose": "模型网格、骨骼或动画",
+      "purpose": "修复 Dummy005 非有限缩放关键帧和切线的动画",
       "source": "F:\\UnityPro\\ro\\Ro_cs422nb\\clientproj\\Assets\\artres\\_Creature\\Monster\\Monster_SiWangZhiShu\\Anims\\Monster_SiWangZhiShu_BeHit.FBX",
       "bytes": 71648,
-      "sha256": "19b3bbd7deb3b5b194fac943056b7e6ac2a33ace5c8ad0cd8712640ed76f1655"
+      "sha256": "077eefc4f5f7cedbbd7a62273ef6695364949cef8912eac66b17c3c80d901368"
     },
     {
       "path": "Assets/RO/Art/_Creature/Monster/Monster_SiWangZhiShu/Anims/Monster_SiWangZhiShu_Born.FBX.meta",
@@ -15872,8 +15872,344 @@
     },
     {
       "path": "Assets/RO/Config/DemonTower/ResourceInventory.json",
-      "purpose": "副本资源目录和逐项文件清单",
+      "purpose": "模型展示资源及对应元数据",
       "source": ""
+    },
+    {
+      "path": "Assets/RO/Art/Resources/Prefabs/RO_MoshentaLighting.prefab",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 1534,
+      "sha256": "8d0696dae5e46a64cc89cad38e8143a80f3111e8f4f508ae01d007c673de09a4"
+    },
+    {
+      "path": "Assets/RO/Art/Resources/Prefabs/RO_MoshentaLighting.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 161,
+      "sha256": "fe2d6c8207e9f14c88afffb82f4bf811eb019c331a7e8b2905eea677252aebf0"
+    },
+    {
+      "path": "Assets/RO/Config/Ambient/gi_sc_dungeon_moshenta_001_huanghun.asset",
+      "purpose": "魔神塔黄昏的 RO 原版环境或角色光照参数",
+      "bytes": 717,
+      "sha256": "732ce5621c707a7fd96d5f898d4db5a68a968cf543931b1d26dc9a6c417c9b68"
+    },
+    {
+      "path": "Assets/RO/Config/Ambient/gi_sc_dungeon_moshenta_001_huanghun.asset.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 189,
+      "sha256": "a3bf170f1655a15a44765732af233c10835b3ed4c252aa563b6958120281cc1d"
+    },
+    {
+      "path": "Assets/RO/Config/CreatureLight/cl_sc_dungeon_moshenta_001_huanghun.asset",
+      "purpose": "魔神塔黄昏的 RO 原版环境或角色光照参数",
+      "bytes": 794,
+      "sha256": "600f88f387c5da37907a3366099926d3a43a06727f0378b333f572ec25f9b7dd"
+    },
+    {
+      "path": "Assets/RO/Config/CreatureLight/cl_sc_dungeon_moshenta_001_huanghun.asset.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 189,
+      "sha256": "bc0b49c09d1f59de7d13ed685a0e51445ab6773245c9e890150eeea93e064cdd"
+    },
+    {
+      "path": "Assets/RO/Config/DayTime/dt_sc_dungeon_moshenta_001_huanghun.asset",
+      "purpose": "魔神塔黄昏的 RO 原版环境或角色光照参数",
+      "bytes": 1642,
+      "sha256": "84124125fdc55d5146657c211cddf4230a67aa289bbb1682d594e00cf733179e"
+    },
+    {
+      "path": "Assets/RO/Config/DayTime/dt_sc_dungeon_moshenta_001_huanghun.asset.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 189,
+      "sha256": "60fcb55a29b6f381d1314c99913a3f41d13622d70cf4a90f841d58064643a821"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 180,
+      "sha256": "0b37f6b0907731a544c11a4404a727ef76b467f081f2fc84d9c5c280e1676f6a"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureAnimationDefinition.cs",
+      "purpose": "模型展示配置、动画播放与相机交互脚本",
+      "bytes": 460,
+      "sha256": "bbf0a5c36348ed0b8ca5a2efbdb0e5cf71aaac8dc128f5e3a86d68dbd6d201f5"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureAnimationDefinition.cs.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 62,
+      "sha256": "177777274189101342c0fc3f4b410eb554ec373891db8b6e88e16531bce1a7cb"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureModelDefinition.cs",
+      "purpose": "模型展示配置、动画播放与相机交互脚本",
+      "bytes": 729,
+      "sha256": "aee19abba48f0e37bf2c44c7a3d6048c6343d00cdd1948c036f74191e9d11b3f"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureModelDefinition.cs.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 62,
+      "sha256": "d8414664a2f39561bfa8292400ba97b818370641775759d62d36fead1e92d986"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureModelShowcase.cs",
+      "purpose": "模型展示配置、动画播放与相机交互脚本",
+      "bytes": 7717,
+      "sha256": "c8dde25f517455cf138843f7a5557890469d3107fff1bd4b7e98c6c19f390b14"
+    },
+    {
+      "path": "Assets/RO/Scripts/Showcase/ROCreatureModelShowcase.cs.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 62,
+      "sha256": "74427cf53f970fc5d71faf17826ec7a195c7b80ba845be856a7e8dc686044846"
+    },
+    {
+      "path": "Assets/RO/Showcase.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 180,
+      "sha256": "23e3bc835ef4c30dee1f451f8822dcb48006636c2707d74f260758e75a316286"
+    },
+    {
+      "path": "Assets/RO/Showcase/Common.TTF",
+      "purpose": "沿用 RO 字体的展示界面字体资源",
+      "bytes": 2499348,
+      "sha256": "7ebf464c629ce12e11180798f810202eb043ceaa083d8b5827a507bec24e4f45"
+    },
+    {
+      "path": "Assets/RO/Showcase/Common.TTF.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 517,
+      "sha256": "5496b44d3ef668639d73f62633d2e747ee8561276be3dee32c75400de8b69cb1"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 172,
+      "sha256": "54ba1096a72a95325ec0d3512df246ca90cd284fdf3babcbd6e1fb020359ea0a"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_BeiAi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5498,
+      "sha256": "7be734c8950e6b9fa1f7e2557bd1b6bde0f94eac0cd807689b83df1c53c58e77"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_BeiAi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "c473b1f4ae49f614db9b4994cbe1f4623e86fdd69c5499d8e433a061633f9fe3"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_ELing.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5498,
+      "sha256": "bd2fb252c48e94ef26028d8b58109488fc464d1465a96adcc7201165340bfe7e"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_ELing.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "7f8d1ddd41c7a238f56644b7e60a2deb1008dcf833245f429b0be7a4a80ba4a9"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_JueWang.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5539,
+      "sha256": "d309b56150c7796ff05adb18bce3e3735627fb587027ef1720d1badc9faab277"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_JueWang.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "9aa782c0fc55ad04e6540600d3f7c1f54b9b99ca50fc868d8beb83face6d833e"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MiLuoSi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5500,
+      "sha256": "c859e0f6d96b2cbb2fea88a8e51b87afa20795e317e0b41a0d66ffc9a89358d5"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MiLuoSi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "9083edf68cbb83c7a55fdd07847a06dc171b9532e4af64104669463a732dcdd5"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoFaShi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5695,
+      "sha256": "f6715b3f7b2e89767343b1f310d10055bfe6f5c53cf31c68357ef9c7157a6901"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoFaShi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "a772b75870c8b7db7e022b6eb1aba47d3ec195135e7afdc20949c77ec11ca625"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoShenYingZi01.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5549,
+      "sha256": "04b9b8cf941e90e9ef0e33aaf76296cb39ccb4a99bbab9f3331a5891da3ec051"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoShenYingZi01.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "7927f47fcd0672b5f90ae8db543c91494588e778e9b07fff2a99a83aad0f99a0"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoShenYingZi02.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5547,
+      "sha256": "43a538902d9cfbb0d257e7860b7692a1312eced40181d29cfc6b99c26dd206ec"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_MoShenYingZi02.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "256cc90984b9c3a7655e45b4528a507475dce79ea825ac51f8fab21d12797620"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_NanGuaHun.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5502,
+      "sha256": "bb1686789f622923d7f5230ccdcb6669dd7834a4a3b91a09675c63c102c86f61"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_NanGuaHun.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "7bcc45fcca1ec9e52b6aa530a7b8e710fd514f1edb67ff12b9e42c1fde7fe5d2"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_SiWangZhiShu.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5505,
+      "sha256": "1bcfdc7e97bf1f8e82b706112677b45bdd07f98b108015166efc8040c400f0ab"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_SiWangZhiShu.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "c2a0e6514902490e60d96723c6ae15c35852b423a7873c4fabb19b798e8c6f98"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_WangLingWuShi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5506,
+      "sha256": "3e9fc44f379f7753dea1299457edc0a601bf4c601e8d1ca6289b421e3cd49963"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_WangLingWuShi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "595f5170a938de9f4262c6da706f2c3917439e2bb1b81712f356b6549ca92064"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiFuLu.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5503,
+      "sha256": "7756ef60ded88d649288b8680a790941911b3d762a9d2c765f648b291c1fc493"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiFuLu.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "cd007b076e9c468025993ae07f33b2aae83fbf74fb0e70adc1f249a8f78786b0"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiGongJianShou.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5507,
+      "sha256": "ab618e7b6d86860e74b4e69eaa76f38615d353d71d5b4a00ff64c7bf0fb3a030"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiGongJianShou.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "c180854c6acd06bcf9a7b78109ada556944270316f3ac01be2c8021c9d553e4d"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiShouRen.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5506,
+      "sha256": "e965a16c3c000298f7affb61837079efb3fa0d56a9aa55dd39c0160d06faa299"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiShouRen.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "45356fa90a1e570194848fd5511131e4da7ffc77eda041579ad1843d4cebc7d2"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiZhanShi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5506,
+      "sha256": "14e8a942a43d1de42a9e122bfa4714c70cdc79a9ae43464a88c8607d83ac183f"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_XieHaiZhanShi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "fbed6fab7ad8b9f013a7cb27dc6853fa7adbe48eee32cbb110074f341a19f59c"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_ZengHen.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5527,
+      "sha256": "72203c6c9e02568d4a2922345d962886a1d27ff1be4d8fe6b8e0b676ac1dbd1d"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/Monster_ZengHen.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "11b0aaf9d11f75baf23c4a56d1e846005a2d774c0f6216575b59d48cee74b896"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/NPC_M_DaNaTuoSi.prefab",
+      "purpose": "保留原生 FBX 优化蒙皮的独立展示模型",
+      "bytes": 5542,
+      "sha256": "818643d0c0319a0dfdc8756fd2580a7c01a7a421786e1bd3e01351a430d2c234"
+    },
+    {
+      "path": "Assets/RO/Showcase/Models/NPC_M_DaNaTuoSi.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "d8337a1fa520f54535babab616d82e428a234216f60298d70ed88f18f8f190b6"
+    },
+    {
+      "path": "Assets/RO/Showcase/ROCreatureModelShowcase.prefab",
+      "purpose": "保存模型按钮、动作按钮、相机及原版环境引用的展示界面",
+      "bytes": 237628,
+      "sha256": "96555f6ea5ffd5e873c788e208cf52dddc0a29d4c893799340ee89bdffd027f5"
+    },
+    {
+      "path": "Assets/RO/Showcase/ROCreatureModelShowcase.prefab.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 154,
+      "sha256": "8f4c4fa5b189374282d864bbbd163f9a9bf28298fb2a647598e9d727d1dcf52b"
+    },
+    {
+      "path": "Assets/Scenes/ROCreatureModelShowcase.unity",
+      "purpose": "可直接运行的独立模型展示场景",
+      "bytes": 6031,
+      "sha256": "1e446d28ff265c08866078c1724d79c0a7de761574e9e2ce31bf6c9e38c1c64d"
+    },
+    {
+      "path": "Assets/Scenes/ROCreatureModelShowcase.unity.meta",
+      "purpose": "模型展示资源及对应元数据",
+      "bytes": 155,
+      "sha256": "43ab56cdc30e1c4b057dd1d869b6a6a0e4bd1fa68605f0a4e641712ac1eb3c22"
+    },
+    {
+      "path": "Assets/Scripts/RODemoOrbitCamera.cs",
+      "purpose": "模型展示配置、动画播放与相机交互脚本",
+      "bytes": 3638,
+      "sha256": "de2047c60bf54ef53fc3e69ada4cf3dde1f3fcea257ff34d4df99fa256364ff9"
     }
   ],
   "shader_include_path_changes": [
@@ -15923,5 +16259,129 @@
     "source_missing_mesh_prefab": "Assets/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ShouRenQiuZhang_DunJi.prefab",
     "source_missing_reference_guid_count": 6,
     "scope": "资源导入和预制体加载；未验证原工程游戏脚本驱动的完整技能时序。"
-  }
+  },
+  "showcase": {
+    "scene": "Assets/Scenes/ROCreatureModelShowcase.unity",
+    "prefab": "Assets/RO/Showcase/ROCreatureModelShowcase.prefab",
+    "models": 16,
+    "animation_buttons_validated": 142,
+    "models_with_actual_skin_motion": 16,
+    "rotation_mouse_button": 1,
+    "default_npc_animation": "待机",
+    "lighting": "原版 RO MEnvorimentSetting；展示场景默认原版普隆德拉白天，魔神塔黄昏配置另存为预制体。",
+    "animation_adaptation": "原游戏预制体不能独立初始化优化 Animator；展示件保留嵌套原始 FBX 实例的优化数据，再复用 RO 材质和附属粒子。",
+    "interaction_verification": "隔离 Play 模式调用真实 UI 按钮事件；未操作桌面鼠标验证。"
+  },
+  "animation_nan_fix": {
+    "path": "D:\\unitypro\\LYFMMORGP\\UnityDemos\\ROCharacterLightingDemo\\Assets\\RO\\Art\\_Creature\\Monster\\Monster_SiWangZhiShu\\Anims\\Monster_SiWangZhiShu_BeHit.FBX",
+    "source_sha256": "19b3bbd7deb3b5b194fac943056b7e6ac2a33ace5c8ad0cd8712640ed76f1655",
+    "result_sha256": "077eefc4f5f7cedbbd7a62273ef6695364949cef8912eac66b17c3c80d901368",
+    "dummy_default_scale": [
+      9.999999747378752e-05,
+      9.999999747378752e-05,
+      9.999999747378752e-05
+    ],
+    "changed_values": [
+      {
+        "curve_id": 2130121488,
+        "axis": "d|X",
+        "field": "KeyValueFloat",
+        "index": 0,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130121488,
+        "axis": "d|X",
+        "field": "KeyValueFloat",
+        "index": 1,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130121488,
+        "axis": "d|X",
+        "field": "KeyAttrDataFloat",
+        "index": 1,
+        "before": "nan",
+        "after": 0.0
+      },
+      {
+        "curve_id": 2130121488,
+        "axis": "d|X",
+        "field": "KeyAttrDataFloat",
+        "index": 4,
+        "before": "nan",
+        "after": 0.0
+      },
+      {
+        "curve_id": 2130125968,
+        "axis": "d|Y",
+        "field": "KeyValueFloat",
+        "index": 0,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130125968,
+        "axis": "d|Y",
+        "field": "KeyValueFloat",
+        "index": 1,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130125968,
+        "axis": "d|Y",
+        "field": "KeyAttrDataFloat",
+        "index": 1,
+        "before": "nan",
+        "after": 0.0
+      },
+      {
+        "curve_id": 2130125968,
+        "axis": "d|Y",
+        "field": "KeyAttrDataFloat",
+        "index": 4,
+        "before": "nan",
+        "after": 0.0
+      },
+      {
+        "curve_id": 2130124528,
+        "axis": "d|Z",
+        "field": "KeyValueFloat",
+        "index": 0,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130124528,
+        "axis": "d|Z",
+        "field": "KeyValueFloat",
+        "index": 1,
+        "before": "inf",
+        "after": 9.999999747378752e-05
+      },
+      {
+        "curve_id": 2130124528,
+        "axis": "d|Z",
+        "field": "KeyAttrDataFloat",
+        "index": 1,
+        "before": "nan",
+        "after": 0.0
+      },
+      {
+        "curve_id": 2130124528,
+        "axis": "d|Z",
+        "field": "KeyAttrDataFloat",
+        "index": 4,
+        "before": "nan",
+        "after": 0.0
+      }
+    ],
+    "fbx_version": 7400,
+    "before_bytes": 71648,
+    "after_bytes": 71648
+  },
+  "lighting_prefab": "Assets/RO/Art/Resources/Prefabs/RO_MoshentaLighting.prefab"
 }
