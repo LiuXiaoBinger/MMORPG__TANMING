@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<MSkillData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>Monster_XiWang_HuiGui</Name>
+  <ClipName>Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_HuiGuiBenTi_02</ClipName>
+  <CastType>ESkillCastType_None</CastType>
+  <SingingFx>0</SingingFx>
+  <SingingFxOffsetX>0</SingingFxOffsetX>
+  <SingingFxOffsetY>0</SingingFxOffsetY>
+  <SingingFxOffsetZ>0</SingingFxOffsetZ>
+  <UseEagle>false</UseEagle>
+  <EagleData>
+    <SkillEffectId>0</SkillEffectId>
+    <At>0</At>
+    <Index>0</Index>
+  </EagleData>
+  <SingingAudio />
+  <SingingInterruptedAudio />
+  <Time>5.533</Time>
+  <AnimationLength>5.533334</AnimationLength>
+  <SkillStateTime>5.533</SkillStateTime>
+  <TypeToken>0</TypeToken>
+  <MoveSinging>false</MoveSinging>
+  <MoveCasting>false</MoveCasting>
+  <ResultCommonData>
+    <NeedProb>false</NeedProb>
+    <ProbMinCount>0</ProbMinCount>
+    <ProbMaxCount>0</ProbMaxCount>
+    <ProbWeightList />
+  </ResultCommonData>
+  <ResultList />
+  <ChargeList />
+  <MobUnitList />
+  <AIEventList />
+  <BuffList />
+  <WarningList />
+  <FxList>
+    <MSkillFxData>
+      <Type>ESkillFxType_TargetBased</Type>
+      <Follow>false</Follow>
+      <At>0</At>
+      <End>0</End>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <Fx>600</Fx>
+      <WarningTime>0</WarningTime>
+      <ScaleX>0</ScaleX>
+      <ScaleY>0</ScaleY>
+      <ScaleZ>0</ScaleZ>
+      <OffsetX>0</OffsetX>
+      <OffsetY>0</OffsetY>
+      <OffsetZ>0</OffsetZ>
+      <TargetOffsetX>0</TargetOffsetX>
+      <TargetOffsetY>0</TargetOffsetY>
+      <TargetOffsetZ>0</TargetOffsetZ>
+      <OffsetFace>0</OffsetFace>
+      <StickToGround>false</StickToGround>
+      <DestroyDelay>0</DestroyDelay>
+      <Index>0</Index>
+      <AttrFxList />
+      <FxShowToType>ShowToSkillFirer</FxShowToType>
+      <UseHeightPercent>false</UseHeightPercent>
+      <HeightPercent>0</HeightPercent>
+    </MSkillFxData>
+  </FxList>
+  <SingingFxList />
+  <AudioList />
+  <ShakeList />
+  <SkillBarList />
+  <SkillClips />
+  <MountSkillClips />
+  <SingingClips />
+  <MountSingingClips />
+  <CameraTurnBack>0</CameraTurnBack>
+  <CameraPostEffect>
+    <UseCameraEffect>false</UseCameraEffect>
+    <EveryOne>false</EveryOne>
+    <Range>0</Range>
+    <At>0</At>
+    <End>0</End>
+    <EffectType>CameraEffectType_RadialBlur</EffectType>
+    <Args0>0</Args0>
+    <Args1>0</Args1>
+    <Index>0</Index>
+  </CameraPostEffect>
+  <ChangeColorList />
+  <Index>0</Index>
+  <UseBarrow>false</UseBarrow>
+  <BarrowData>
+    <At>0</At>
+    <End>0</End>
+    <Bone />
+    <OffsetPoint />
+    <Clip />
+  </BarrowData>
+  <CombineSkillList />
+  <EnemyFxList />
+  <TVNoticeData>
+    <At>0</At>
+    <IsInSinging>false</IsInSinging>
+    <SingleAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </SingleAnnounceData>
+    <ContinuousAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </ContinuousAnnounceData>
+  </TVNoticeData>
+  <UseTVNotice>false</UseTVNotice>
+  <channellingData>
+    <loop_anim_info>
+      <at>0</at>
+    </loop_anim_info>
+  </channellingData>
+  <CameraFxData />
+  <RotateList />
+  <UUID>8393183996149760</UUID>
+  <AnimList />
+</MSkillData>

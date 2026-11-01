@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Fx_Normal_Caution_Fan2
+  m_Shader: {fileID: 4800000, guid: b56062a6828c1de43a3712377a72fe3d, type: 3}
+  m_ShaderKeywords: _FLOW_MANUAL _SHAPE_FAN
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Decal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BaseToggle: 0
+    - _Blinn: 0
+    - _CenterOffset: 0.517
+    - _DstBlend: 10
+    - _FadeCo: 2.87
+    - _Flow: 1
+    - _LimitFadeRange: 0
+    - _Opacity: 0.852
+    - _Progress: 0
+    - _Progress2: 0
+    - _Shape: 2
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Border: {r: 1, g: 0.143002, b: 0.04411763, a: 0.447}
+    - _CauColor: {r: 0.50735295, g: 0.1582262, b: 0.078341275, a: 0.934}
+    - _Color: {r: 0.9411765, g: 0.24283494, b: 0.12456748, a: 0.453}
+    - _Params: {r: 1, g: 0, b: 90, a: 1.25}
+    - _ParamsEx: {r: 1, g: 0, b: 4, a: 0.15}
+    - _ParamsFlow: {r: 1, g: 5, b: 1, a: 0.98}

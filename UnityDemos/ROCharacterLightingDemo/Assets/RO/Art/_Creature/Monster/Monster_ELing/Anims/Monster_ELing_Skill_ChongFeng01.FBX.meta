@@ -1,0 +1,262 @@
+fileFormatVersion: 2
+guid: 26ad7ae42a8decf45bb21317b28487f8
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Bip001
+    100002: Bip001 Head
+    100004: Bip001 Neck
+    100006: Bip001 Pelvis
+    100008: Bip001 Spine
+    100010: Bip001 Spine1
+    100012: ChangBian_01
+    100014: ChangBian_02
+    100016: ChangBian_03
+    100018: ChangBian_04
+    100020: DouPeng_F_01
+    100022: DouPeng_F_02
+    100024: DouPeng_L_01
+    100026: DouPeng_L_02
+    100028: DouPeng_L_03
+    100030: DouPeng_L_04
+    100032: DouPeng_R_01
+    100034: DouPeng_R_02
+    100036: DouPeng_R_03
+    100038: DouPeng_R_04
+    100040: Head
+    100042: L_Arm_1
+    100044: L_Arm_2
+    100046: L_Finger_1
+    100048: L_Finger_2
+    100050: L_Finger_3
+    100052: L_Finger_4
+    100054: L_Finger_5
+    100056: L_Finger_6
+    100058: L_Foot
+    100060: L_Hand
+    100062: L_Leg_1
+    100064: L_Leg_2
+    100066: L_Toe
+    100068: //RootNode
+    100070: PiFa_L_01
+    100072: PiFa_L_02
+    100074: PiFa_L_03
+    100076: PiFa_R_01
+    100078: PiFa_R_02
+    100080: PiFa_R_03
+    100082: PiFeng_01
+    100084: PiFeng_02
+    100086: PiFeng_03
+    100088: PiFeng_04
+    100090: QunBai_B_01
+    100092: QunBai_B_02
+    100094: QunBai_B_03
+    100096: QunBai_F_01
+    100098: QunBai_F_02
+    100100: QunBai_L_01
+    100102: QunBai_L_02
+    100104: QunBai_L_03
+    100106: QunBai_R_01
+    100108: QunBai_R_02
+    100110: QunBai_R_03
+    100112: R_Arm_1
+    100114: R_Arm_2
+    100116: R_Finger_1
+    100118: R_Finger_2
+    100120: R_Finger_3
+    100122: R_Finger_4
+    100124: R_Finger_5
+    100126: R_Finger_6
+    100128: R_Foot
+    100130: R_Hand
+    100132: R_Leg_1
+    100134: R_Leg_2
+    100136: R_Toe
+    100138: Zui
+    400000: Bip001
+    400002: Bip001 Head
+    400004: Bip001 Neck
+    400006: Bip001 Pelvis
+    400008: Bip001 Spine
+    400010: Bip001 Spine1
+    400012: ChangBian_01
+    400014: ChangBian_02
+    400016: ChangBian_03
+    400018: ChangBian_04
+    400020: DouPeng_F_01
+    400022: DouPeng_F_02
+    400024: DouPeng_L_01
+    400026: DouPeng_L_02
+    400028: DouPeng_L_03
+    400030: DouPeng_L_04
+    400032: DouPeng_R_01
+    400034: DouPeng_R_02
+    400036: DouPeng_R_03
+    400038: DouPeng_R_04
+    400040: Head
+    400042: L_Arm_1
+    400044: L_Arm_2
+    400046: L_Finger_1
+    400048: L_Finger_2
+    400050: L_Finger_3
+    400052: L_Finger_4
+    400054: L_Finger_5
+    400056: L_Finger_6
+    400058: L_Foot
+    400060: L_Hand
+    400062: L_Leg_1
+    400064: L_Leg_2
+    400066: L_Toe
+    400068: //RootNode
+    400070: PiFa_L_01
+    400072: PiFa_L_02
+    400074: PiFa_L_03
+    400076: PiFa_R_01
+    400078: PiFa_R_02
+    400080: PiFa_R_03
+    400082: PiFeng_01
+    400084: PiFeng_02
+    400086: PiFeng_03
+    400088: PiFeng_04
+    400090: QunBai_B_01
+    400092: QunBai_B_02
+    400094: QunBai_B_03
+    400096: QunBai_F_01
+    400098: QunBai_F_02
+    400100: QunBai_L_01
+    400102: QunBai_L_02
+    400104: QunBai_L_03
+    400106: QunBai_R_01
+    400108: QunBai_R_02
+    400110: QunBai_R_03
+    400112: R_Arm_1
+    400114: R_Arm_2
+    400116: R_Finger_1
+    400118: R_Finger_2
+    400120: R_Finger_3
+    400122: R_Finger_4
+    400124: R_Finger_5
+    400126: R_Finger_6
+    400128: R_Foot
+    400130: R_Hand
+    400132: R_Leg_1
+    400134: R_Leg_2
+    400136: R_Toe
+    400138: Zui
+    7400000: Take 001
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 11
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 2
+    tangentImportMode: 2
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 2
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 1
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: dfa36c5d9c95a6f4c8aa793e1bdb5fbe,
+    type: 3}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
