@@ -62,3 +62,11 @@ karpathy-guidelines限定最小修复与修复前失败/修复后通过；projec
 ## 中文同步验收
 
 Codex原生文档子Agent `/root/zero_singing_records`（具体模型未披露）仅同步本编号CURRENT_TASK与TEST_REPORT两段中文，基线字节前缀完整保留，增量一致性pass。主Agent核对实际文件范围、证据及最终中文SHA256，不重复逐项中英检查。证据：`_temp/skill-zero-singing-fix-20261102/record-sync-check.json`。子Agent实际使用token-monitor完成其本地collect/report，用量不并入主会话，未运行业务测试或Git。
+
+## 文档提交推送回执
+
+获批7个记录文件的提交为 `5fda5bb6dd83a7d2b86cbc8f71898032cdc966f0`，已推送 `origin/codex/feature-development`，ls-remote验证同一SHA；提交范围不含业务文件和原有未提交段落。证据：`_temp/skill-zero-singing-fix-20261102/git-records-commit.txt`、`git-records-push.txt`。本段回执单独追加到本日志后提交，不重复更新协作入口。
+
+最终记录阶段主会话统计窗口截至 2026-11-02T12:49:05.173Z：输入~4999696，其中缓存~4910464、非缓存~89232；输出~33064。累计压缩4次，来源两份同一主对话日志，统计截止2026-11-02T12:49:49.939Z。分项与计费覆盖限制同上。
+
+文档子Agent单独报告截至20:47:50（UTC+8）：输入~272,483（缓存~254,208）、输出~6,174；该用量不与主会话混计。其token-monitor还完成原始压缩事件计数，子对话压缩0次不并入主对话累计。
