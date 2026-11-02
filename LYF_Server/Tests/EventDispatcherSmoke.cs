@@ -406,8 +406,7 @@ public static class EventDispatcherSmoke
             {
                 return cast_result;
             }
-            // 入口现在先进入吟唱：必须显式推进逻辑帧，读到 CastMs 后才会派发攻击动作并回包。
-            AdvanceLogicFrames(role, SingingFramesFor10010);
+            // 普攻走 RO 零吟唱分支：不推进逻辑帧也必须立即收到成功结果与开始通知。
 
             // 第一帧必须是权威结果：成功、回带技能标识、MP 已扣、冷却已下发。
             BasePackage result_package;
@@ -509,6 +508,52 @@ public static class EventDispatcherSmoke
                 return Fail("拒绝分支不应发出开始通知，实际收到协议号 " + extra_package.ProtoCode);
             }
 
+            // index 表示紧接第一段之后的第二、三段普攻；每段在部署表的 700 毫秒边界立即续发。
+            for (int index = 1; index <= 2; index++)
+            {
+                AdvanceLogicFrames(role, 14);
+                // end_package 必须是上一动作自然结束的通知，不能仍在等待错误的吟唱计时。
+                BasePackage end_package;
+                if (!gate.TryReadFrame(out end_package, 2000) || end_package.ProtoCode != NetDefine.CMD_SkillCastEndCode)
+                {
+                    return Fail("连续普攻未在 700 毫秒后收到动作结束通知");
+                }
+                // next_uuid 是本次接续请求的唯一施法标识，避开上面的被拒绝请求 8。
+                ulong next_uuid = (ulong)(8 + index);
+                if (InvokeSkillCastHandler(gate, role, 10010, next_uuid) != 0)
+                {
+                    return Fail("连续普攻的真实 OnCall 入口调用失败");
+                }
+                // next_package 不推进帧就应收到本次成功结果，证明不再进入 300 毫秒等待队列。
+                BasePackage next_package;
+                if (!gate.TryReadFrame(out next_package, 2000) || next_package.ProtoCode != NetDefine.CMD_SkillCastCode)
+                {
+                    return Fail("连续普攻没有立即收到权威结果");
+                }
+                // next_ret 核对成功、原 UUID、权威连段和只扣一次蓝的结果。
+                SkillCastRet next_ret = SkillCastRet.Parser.ParseFrom(next_package.Data);
+                if (next_ret.CmdCode != CmdCode.Succeed || next_ret.SkillUuid != next_uuid || next_ret.UsingTimes != index)
+                {
+                    return Fail("连续普攻被错误拒绝或连段不正确，实际 " + next_ret.CmdCode);
+                }
+                if (next_ret.CastDurationMs != 700 || next_ret.CurrentMp != initial_mp - 20 * (index + 1))
+                {
+                    return Fail("连续普攻的动作时长或 MP 扣除不正确");
+                }
+                // next_start_package 必须紧随本次结果，保持结果先于开始表现的协议顺序。
+                BasePackage next_start_package;
+                if (!gate.TryReadFrame(out next_start_package, 2000) || next_start_package.ProtoCode != NetDefine.CMD_SkillCastStartCode)
+                {
+                    return Fail("连续普攻没有紧随权威结果发送开始通知");
+                }
+                // next_start 用请求 UUID 排除延迟到达的旧开始通知。
+                SkillCastStartNtf next_start = SkillCastStartNtf.Parser.ParseFrom(next_start_package.Data);
+                if (next_start.SkillUuid != next_uuid)
+                {
+                    return Fail("连续普攻开始通知的 UUID 不匹配");
+                }
+            }
+
             // 角色释放后派发器清空，避免残留回调引用。
             role.Dispose();
             RoleManager.Instance.RemoveOnlineRole(role_id);
@@ -537,12 +582,8 @@ public static class EventDispatcherSmoke
             // initial_mp 是进入吟唱前的权威 MP，被打断后必须保持不变。
             int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
 
-            // 进入吟唱，此时客户端还没有任何回包。
-            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 21UL);
-            if (enter_result != 0)
-            {
-                return enter_result;
-            }
+            // 正式普攻没有读条；本用例用测试夹具准备合成吟唱，只验证打断或队列的终态回包。
+            SingingStateFixture.Start(role, 10010, 21UL);
             // pending_package 用于确认吟唱期间不应提前回包，读到帧即判失败。
             BasePackage pending_package;
             if (gate.TryReadFrame(out pending_package, 300))
@@ -628,12 +669,8 @@ public static class EventDispatcherSmoke
             // initial_mp 是入队前的权威 MP，队列满丢弃请求不应扣蓝。
             int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
 
-            // enter_result 是首个请求的入口返回码，非零直接返回。
-            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 31UL);
-            if (enter_result != 0)
-            {
-                return enter_result;
-            }
+            // 正式普攻没有读条；本用例用测试夹具准备合成吟唱，只验证打断或队列的终态回包。
+            SingingStateFixture.Start(role, 10010, 31UL);
 
             // 队列上限为 10：先塞满 10 个请求，第 11 个会被丢弃。
             for (int index = 0; index < 10; index++)
@@ -704,12 +741,8 @@ public static class EventDispatcherSmoke
             // initial_mp 是超时前的权威 MP，超时清理同样不应扣蓝。
             int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
 
-            // enter_result 是首个请求的入口返回码，非零直接返回。
-            int enter_result = InvokeSkillCastHandler(gate, role, 10010, 71UL);
-            if (enter_result != 0)
-            {
-                return enter_result;
-            }
+            // 正式普攻没有读条；本用例用测试夹具准备合成吟唱，只验证打断或队列的终态回包。
+            SingingStateFixture.Start(role, 10010, 71UL);
             // 第二个请求在吟唱期间入队，随后超过队列等待上限被清理。
             int queued_result = InvokeSkillCastHandler(gate, role, 10010, 72UL);
             if (queued_result != 0)
@@ -753,9 +786,6 @@ public static class EventDispatcherSmoke
 
     /// <summary>队列等待上限 300 毫秒，测试需要真实等待超过它才能触发清理。</summary>
     private const int QueueTimeoutWaitMilliseconds = 360;
-
-    /// <summary>技能 10010 的 CastMs 为 2167 毫秒，按 50 毫秒一帧换算成 44 帧。</summary>
-    private const int SingingFramesFor10010 = 44;
 
     /// <summary>
     /// 按固定帧推进角色逻辑，驱动吟唱状态、技能动作态与后置阶段。

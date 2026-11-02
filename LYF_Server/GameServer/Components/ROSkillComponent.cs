@@ -446,8 +446,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// </summary>
     /// <param name="request">只携 RO 式技能 UUID 和稳定技能 ID 的请求。</param>
     /// <param name="singingCommitted">
-    /// true 表示施法段已由吟唱占用，本次只计算动作段时长；
-    /// false 表示同步直调入口，沿用施法加后摇的合计时长。
+    /// true 表示按吟唱事件链的动作规则选择表现状态时长，零吟唱也适用；
+    /// false 保留同步直调入口的单动作时长规则。无表现配置时两者均使用 CastMs 加 RecoveryMs。
     /// </param>
     /// <param name="result">成功或拒绝时均携带权威 MP/CD 的响应。</param>
     /// <param name="startNotice">成功时生成的表现开始通知；拒绝时为空。</param>
@@ -759,7 +759,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// 校验已在 PrepareCast 完成，这里只补一次提交瞬间的权威数据复核。
     /// </summary>
     /// <param name="prepared">非提交校验产出的提交数据。</param>
-    /// <param name="singing_committed">true 表示施法段已由吟唱占用，只结算动作段时长。</param>
+    /// <param name="singing_committed">true 表示经吟唱事件链进入动作，零吟唱也走该路径；动作优先采用表现状态时长。</param>
     /// <param name="result">成功结果，或提交瞬间复核失败时的拒绝结果。</param>
     /// <param name="start_notice">成功时的开始表现通知，失败时为空。</param>
     /// <returns>MP/CD 已提交并建立动作实例时返回 true。</returns>
@@ -806,13 +806,9 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         List<SkillPresentationInfo> presentations = FindPresentations(prepared.effect_.Id);
         // 只有全部校验通过后才推进；拒绝请求不能消耗下一段动作。
         int using_times = CheckUsingTimes(prepared.skill_id_, now_tick, presentations.Count);
-        // 单动作技能沿用施法与后摇；多动作技能按本段状态时间结束占用，动画长度独立保留。
-        // 吟唱已占用施法段时，这里只剩动作段，不能把 CastMs 再算一遍。
-        int cast_duration_ms = prepared.effect_.RecoveryMs;
-        if (!singing_committed)
-        {
-            cast_duration_ms = prepared.effect_.CastMs + prepared.effect_.RecoveryMs;
-        }
+        // 无表现行时仍用 CastMs 与 RecoveryMs 作为动作占用，不能因走过零吟唱入口而漏算动作。
+        // 存在表现行时由下方选定段的状态时长覆盖；吟唱时间始终独立于这段动作时间。
+        int cast_duration_ms = prepared.effect_.CastMs + prepared.effect_.RecoveryMs;
         // use_presentation 表示是否存在多段表现配置，只有多段时才需要按下标挑选。
         bool use_presentation = presentations.Count > 1;
         if (singing_committed && presentations.Count > 0)

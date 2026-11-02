@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 /// <summary>
-/// 吟唱与技能动作状态测试：覆盖读条开始与到期、吟唱到期后真正进入技能动作态、
+/// 吟唱与技能动作状态测试：先验证正式技能零吟唱与连续施法，再覆盖合成读条到期、
 /// 未学技能不读条、主动移动打断、死亡打断、角色销毁打断，以及吟唱期间的请求队列上限与后置帧出队。
 /// 断言的是状态机真实链路 default → singing → skill → default，而不是只看"回没回默认态"。
 /// 独立进程运行，不进入正式服务工程。
 /// </summary>
 public static class SingingStateSmoke
 {
-    /// <summary>技能 10010 的权威施法时长，取自 SkillEffectInfo.CastMs。</summary>
-    private const int SkillCastMilliseconds = 2167;
+    /// <summary>合成读条夹具的时长，单位毫秒，不来自正式技能的 CastMs。</summary>
+    private const int SkillCastMilliseconds = SingingStateFixture.DurationMilliseconds;
 
     /// <summary>一个逻辑帧的毫秒数。</summary>
     private const int FrameMilliseconds = 50;
@@ -72,7 +73,17 @@ public static class SingingStateSmoke
             }
 
             // result 承接当前用例返回码，非零即该用例断言失败，后面用例不再执行。
-            int result = CheckSingingStartsAndFinishes();
+            int result = CheckNonSingingSkillSequence();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckNoPresentationKeepsActionTime();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckSingingStartsAndFinishes();
             if (result != 0)
             {
                 return result;
@@ -113,7 +124,7 @@ public static class SingingStateSmoke
     }
 
     /// <summary>
-    /// 用例一：派发施法请求后进入吟唱；推进到 CastMs 后吟唱自然结束并真正切入技能动作态，
+    /// 合成吟唱用例：由测试夹具准备正时长读条；到期后自然结束并真正切入技能动作态，
     /// 动作存活期间保持技能态且动作实例唯一，动作到期后回到默认态，全程只扣一次蓝。
     /// </summary>
     private static int CheckSingingStartsAndFinishes()
@@ -134,7 +145,7 @@ public static class SingingStateSmoke
 
         // initial_mp 是进入吟唱前的权威 MP 值（角色初始 500），作为全程只扣一次蓝的基线。
         int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
-        RequestCast(role, 10010, 1UL);
+        SingingStateFixture.Start(role, 10010, 1UL);
 
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
@@ -142,7 +153,7 @@ public static class SingingStateSmoke
         }
         if (ReadSingingInterval(singing) != SkillCastMilliseconds)
         {
-            return Fail("吟唱时长应取 CastMs=" + SkillCastMilliseconds + "，实际 " + ReadSingingInterval(singing));
+            return Fail("合成吟唱时长应为 " + SkillCastMilliseconds + "，实际 " + ReadSingingInterval(singing));
         }
         if (!singing.IsStartSinging())
         {
@@ -154,7 +165,7 @@ public static class SingingStateSmoke
         Advance(role, frames_to_finish - 1);
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
-            return Fail("未到 CastMs 前吟唱不应结束");
+            return Fail("未到合成吟唱期限前不应结束");
         }
         if (role.mainRoleInfo.BaseInfo.CurrMp != initial_mp)
         {
@@ -279,7 +290,7 @@ public static class SingingStateSmoke
         }
         // initial_mp 是移动打断前的 MP 基线，被打断的吟唱不允许扣蓝。
         int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
-        RequestCast(role, 10010, 3UL);
+        SingingStateFixture.Start(role, 10010, 3UL);
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
             return Fail("移动用例前置失败：未进入吟唱");
@@ -332,7 +343,7 @@ public static class SingingStateSmoke
         }
         // initial_mp 是死亡打断前的 MP 基线，被打断的吟唱不允许扣蓝。
         int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
-        RequestCast(role, 10010, 4UL);
+        SingingStateFixture.Start(role, 10010, 4UL);
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
             return Fail("死亡用例前置失败：未进入吟唱");
@@ -372,7 +383,7 @@ public static class SingingStateSmoke
         {
             return Fail("角色未注册吟唱组件或状态机");
         }
-        RequestCast(role, 10010, 10UL);
+        SingingStateFixture.Start(role, 10010, 10UL);
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
             return Fail("队列用例前置失败：未进入吟唱");
@@ -400,7 +411,7 @@ public static class SingingStateSmoke
             return Fail("技能动作占用期间队首不应出队，实际剩余 " + ReadRequestCount(singing));
         }
 
-        // 继续推进到动作结束：后置帧取队首，开始下一次吟唱。
+        // 继续推进到动作结束：后置帧取队首，正式普攻按零吟唱立即进入技能动作。
         int waited = 0;
         while (ReadRequestCount(singing) != 9 && waited < MaxWaitFrames)
         {
@@ -411,9 +422,9 @@ public static class SingingStateSmoke
         {
             return Fail("技能动作结束后后置帧应取出一个请求，实际剩余 " + ReadRequestCount(singing));
         }
-        if (machine.GetCurrentState() != StateDefine.kStateSinging)
+        if (machine.GetCurrentState() != StateDefine.kStateSkill)
         {
-            return Fail("队首请求应在后置帧开始新的吟唱，实际 " + machine.GetCurrentState());
+            return Fail("队首非吟唱请求应立即进入技能动作，实际 " + machine.GetCurrentState());
         }
         role.Dispose();
         return 0;
@@ -432,7 +443,7 @@ public static class SingingStateSmoke
         {
             return Fail("角色未注册吟唱组件或状态机");
         }
-        RequestCast(role, 10010, 200UL);
+        SingingStateFixture.Start(role, 10010, 200UL);
         if (machine.GetCurrentState() != StateDefine.kStateSinging)
         {
             return Fail("销毁用例前置失败：未进入吟唱");
@@ -450,6 +461,143 @@ public static class SingingStateSmoke
         // 销毁后派发器已 UnInit，再次派发不得触发任何回调或异常。
         RequestCast(role, 10010, 201UL);
         return 0;
+    }
+
+    /// <summary>
+    /// 正式数据回归：连续三次普攻按三段各 700 毫秒结束，再依次接续其余非吟唱技能。
+    /// 每次请求当帧就建立动作并扣一次 MP/CD；动作结束前保持占用，到期即可施放下一技能。
+    /// 时长取当前部署表的独立已核实值，避免沿用被测实现计算出的错误吟唱时间作为预期。
+    /// </summary>
+    private static int CheckNonSingingSkillSequence()
+    {
+        // role 是本用例独立角色，初始 MP 足够覆盖完整技能序列，不接入真实数据库或在线玩家。
+        OnlineRole role = CreateRole(910107);
+        try
+        {
+            // skills 持有学习列表、动作实例及权威 MP/CD 提交逻辑。
+            RoleSkillComponent skills;
+            role.TryGetComponent(out skills);
+            // singing 用于检查真实入口没有创建读条或等待队列。
+            RoleSingingComponent singing;
+            role.TryGetComponent(out singing);
+            // machine 用于核验动作结束前后的状态，而不是只检查施法返回值。
+            StateMachineComponent machine;
+            role.TryGetComponent(out machine);
+            // ids 前三项验证普攻连段，其余项验证不同技能结束后的接续施放。
+            int[] ids = { 10010, 10010, 10010, 10040, 10050, 10060, 10070, 10080 };
+            // durations 为当前部署表现表的动作占用毫秒数，不含任何额外吟唱时间。
+            int[] durations = { 700, 700, 700, 3100, 3433, 3167, 1133, 667 };
+            // learned 是本测试角色的技能快照，重复的普攻只登记一次。
+            RoleSkillInfoRet learned = new RoleSkillInfoRet { CmdCode = CmdCode.Succeed };
+            learned.RoleSkillInfoList.Add(new RoleSkillInfo { SkillId = 10010, Level = 1 });
+            // index 遍历普攻以外的技能，补齐本测试角色的学习等级。
+            for (int index = 3; index < ids.Length; index++)
+            {
+                learned.RoleSkillInfoList.Add(new RoleSkillInfo { SkillId = ids[index], Level = 1 });
+            }
+            skills.LoadLearnedSkills(learned);
+            role.mainRoleInfo.BaseInfo.CurrMp = 10000;
+            role.mainRoleInfo.BaseInfo.MaxMp = 10000;
+            // index 按玩家的连续按键顺序推进，下一项紧接上一动作的自然结束帧。
+            for (int index = 0; index < ids.Length; index++)
+            {
+                // initialMp 记录本次请求前的权威 MP，以区分一次扣除与重复结算。
+                int initialMp = role.mainRoleInfo.BaseInfo.CurrMp;
+                // core 读取本次技能的 MP 消耗，测试不改变配置中的技能费用。
+                ROSkillCore core = skills.ResolveSkillCore(ids[index]);
+                RequestCast(role, ids[index], (ulong)(300 + index));
+                if (ReadSingingInterval(singing) != 0 || singing.IsStartSinging() || !singing.IsFinished())
+                {
+                    return Fail("非吟唱技能不得等待 CastMs，技能 " + ids[index]);
+                }
+                if (ReadRequestCount(singing) != 0 || machine.GetCurrentState() != StateDefine.kStateSkill)
+                {
+                    return Fail("非吟唱技能应当帧进入动作，不能排队，技能 " + ids[index]);
+                }
+                // active 是本次当帧建立的动作，UUID 必须匹配请求，拒绝请求不能残留旧动作。
+                ROSkill active = skills.CurrentSkill();
+                if (active == null || active.GetSkillUUID() != (ulong)(300 + index))
+                {
+                    return Fail("接续施法没有建立对应动作，技能 " + ids[index]);
+                }
+                if (index < 3 && active.GetUsingTimes() != index)
+                {
+                    return Fail("连续普攻未依次使用第 0、1、2 段动作");
+                }
+                if (role.mainRoleInfo.BaseInfo.CurrMp != initialMp - core.GetEffect().MpCost)
+                {
+                    return Fail("非吟唱技能必须当帧且仅扣一次 MP，技能 " + ids[index]);
+                }
+                // frames 按服务端 50 毫秒一帧向上取整，覆盖非整帧动作的结束边界。
+                int frames = (durations[index] + FrameMilliseconds - 1) / FrameMilliseconds;
+                Advance(role, frames - 1);
+                if (!ReferenceEquals(skills.CurrentSkill(), active))
+                {
+                    return Fail("动作不能早于配置的结束帧释放，技能 " + ids[index]);
+                }
+                Advance(role, 1);
+                if (skills.CurrentSkill() != null || machine.GetCurrentState() != StateDefine.kStateDefault)
+                {
+                    return Fail("动作到期仍被额外占用，技能 " + ids[index]);
+                }
+                if (role.mainRoleInfo.BaseInfo.CurrMp != initialMp - core.GetEffect().MpCost)
+                {
+                    return Fail("动作结束重复扣除 MP，技能 " + ids[index]);
+                }
+            }
+            return 0;
+        }
+        finally
+        {
+            role.Dispose();
+        }
+    }
+
+    /// <summary>没有模型表现行时，零吟唱仍保留 CastMs 加 RecoveryMs 的原有动作占用。</summary>
+    private static int CheckNoPresentationKeepsActionTime()
+    {
+        // presentations 是本测试进程内的配置索引，临时清空以覆盖现有的无表现回退分支。
+        Dictionary<int, cfg.SkillPresentationInfo> presentations = LubanMgr.Instance.GetSkillPresentationInfos();
+        // rows 保留原配置对象引用，finally 原样恢复，绝不写入正式表文件。
+        List<cfg.SkillPresentationInfo> rows = new List<cfg.SkillPresentationInfo>(presentations.Values);
+        // role 只用于本次无表现配置用例，不与其他角色共享技能动作。
+        OnlineRole role = CreateRole(910108);
+        try
+        {
+            presentations.Clear();
+            // skills 提供正在执行的动作，判断是否过早结束或重复延长。
+            RoleSkillComponent skills;
+            role.TryGetComponent(out skills);
+            // effect 提供既有无表现分支的动作与后摇时长，单位毫秒。
+            cfg.SkillEffectInfo effect = skills.ResolveSkillCore(10010).GetEffect();
+            // frames 是完整动作加后摇所需的逻辑帧数，向上取整到 50 毫秒。
+            int frames = (effect.CastMs + effect.RecoveryMs + FrameMilliseconds - 1) / FrameMilliseconds;
+            RequestCast(role, 10010, 400UL);
+            if (skills.CurrentSkill() == null)
+            {
+                return Fail("无表现行的非吟唱技能也必须当帧建立动作");
+            }
+            Advance(role, frames - 1);
+            if (skills.CurrentSkill() == null)
+            {
+                return Fail("无表现行不能漏算 CastMs 动作时长");
+            }
+            Advance(role, 1);
+            if (skills.CurrentSkill() != null)
+            {
+                return Fail("无表现行动作到期后不能再次占用吟唱时间");
+            }
+            return 0;
+        }
+        finally
+        {
+            // index 依次恢复本进程的原配置引用，避免影响后面的吟唱状态测试。
+            for (int index = 0; index < rows.Count; index++)
+            {
+                presentations.Add(rows[index].Id, rows[index]);
+            }
+            role.Dispose();
+        }
     }
 
     /// <summary>构造一个已装载技能列表的在线角色，不加入在线索引，避免影响附近广播。</summary>

@@ -1,5 +1,4 @@
 using System;
-using cfg;
 
 /// <summary>
 /// 吟唱状态组件，对应参考工程 rogamelibs/entity/action/singing_component.h/.cpp。
@@ -19,7 +18,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
     /// <summary>已累计的吟唱毫秒数，由 OnUpdate 逐帧累加。</summary>
     protected int duration_;
 
-    /// <summary>本次吟唱需要的总毫秒数，取技能效果表的 CastMs。</summary>
+    /// <summary>本次真正需要的吟唱毫秒数；与技能动作时长 CastMs 无关。</summary>
     protected int interval_;
 
     /// <summary>本次吟唱是否真的读过条；零时长技能直接结束，标记为 false。</summary>
@@ -47,7 +46,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
     }
 
     /// <summary>
-    /// 进入吟唱：解析技能核心并取 CastMs 作为读条时长，
+    /// 进入吟唱：解析技能核心并通过 GetSingingTime 取得真正的读条时长，
     /// 对应 singing_component.cpp 的 OnStart（:422-617）。
     /// 零时长技能不读条，直接 Finish，与 RO 的 else 分支一致。
     /// </summary>
@@ -82,14 +81,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
             return;
         }
         skill_effect_id_ = core_.SkillEffectID();
-        // effect 是该技能的主表效果行，读条时长 CastMs 从这里取，为空时按零读条处理。
-        SkillEffectInfo effect = core_.GetEffect();
-        // 缺效果行时按零读条处理，随后的分支会直接结束吟唱。
-        interval_ = 0;
-        if (effect != null)
-        {
-            interval_ = effect.CastMs;
-        }
+        interval_ = GetSingingTime(core_);
         if (interval_ <= 0)
         {
             // 零吟唱技能没有读条阶段，直接进入攻击动作。
@@ -121,7 +113,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
     }
 
     /// <summary>
-    /// 逐帧累加吟唱时长，达到 CastMs 后自然结束，
+    /// 逐帧累加真实吟唱时长，达到 interval_ 后自然结束，
     /// 对应 singing_component.cpp 的 OnUpdate（:619-661）。
     /// </summary>
     /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
@@ -160,6 +152,18 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
     #endregion
 
     #region 查询与判定
+    /// <summary>
+    /// 返回真正的吟唱毫秒数，对应 RO 的 GetSingingTime。
+    /// RO 从 FixSingingTime 与 FloatSingingTime 计算读条；本项目当前没有这两项配置，
+    /// 已接入的技能均为非吟唱技能，因此返回零。CastMs 是动作时长，不能用来代替吟唱。
+    /// </summary>
+    /// <param name="skillcore">已解析的技能核心；当前配置没有独立吟唱时长，所有核心均按零处理。</param>
+    /// <returns>当前技能的吟唱毫秒数，现阶段固定为零。</returns>
+    protected int GetSingingTime(ROSkillCore skillcore)
+    {
+        return 0;
+    }
+
     /// <summary>本次吟唱是否真的读过条。</summary>
     public bool IsStartSinging()
     {
