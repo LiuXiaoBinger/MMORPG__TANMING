@@ -169,3 +169,11 @@
 - 已按参考工程 F:/UnityPro/ro/Ro_cs422nb 更新 项目分析/RO技能链路思维导图-2026-11-01.html：更正接口签名、连招字段、36 个注册状态、逐帧吟唱检查、令牌读取点与关键源码行号；补充派发器语义与本项目接入边界分支（69 节点 / 9 主干）。
 - 国际版 WorkBuddy deepseek-v4.1-flash，Hub hub-de717361-5b83-4381-872e-03f678bafd41，原生会话 df323eca-beff-41fc-a54a-840e40ff96d5：共 6 个真实轮次（1 轮调查、2 轮实现/返修、1 轮回报契约修正、2 轮 HTML 页首修正）；Codex 已验收实际产物。第 3 轮产物因日志路径缺少 tests/ 一级被拒收，已在第 4 轮修正；第 5 轮页首笔误已在第 6 轮修正。细节与证据：_temp/server-entity-event-20261101/。
 - 边界：派发是同步且当前即时执行。RO 的状态互斥等待、真实吟唱时长/打断状态、请求队列、对象池与延迟派发均未移植。当前 SkillCastReq 只含技能 ID 与 UUID，事件 target/cast_point 保持为零。完整登录实网成功施法、Unity 表现、真实多角色可见性与性能仍未验证。测试后已停止本项目四个服务器。
+
+
+## [CODE][FILES][HANDOFF][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] RO 客户端施法前状态互斥门口
+
+- 新增客户端 StateExclusionManager、MExlusionStates/MExlusionStatesCode 与 StateExclusionTable，保留 RO 命名与“枚举集中在一个文件”的分布。Global 在角色可用前装载互斥表；MNavigationComponent.OnAfterAction 在原有 CanStart、发包与本地预表现之前调用 GetIsCanChangeState(State_AJ_Singing, false)。被拒绝直接返回，既不发送施法请求也不启动预测；原有技能准入、协议与服务端逻辑未改。
+- 共新增 14 个文件（含 Unity 元数据），修改 2 个业务源文件。资源为 RO 原 CSV 的逐字节副本（10133 字节，SHA256 57b7fda1147f065a52ddabd6bb00d7bc04db4a696fd4e9fe24f9613649dd27bf）；解析第三列 Concatenate，跳过原表头与状态码说明行，保留原始 StateId 拼写与全部列。状态收集列表复用。采集、攀爬、吟唱、钓鱼、跳舞五个来源已接入；通用 Special 缺 RO 的 SpecialType 细分，故意不当作单人动作处理。载具、变身等本项目没有来源的玩法仍未实现。
+- 国内版 WorkBuddy deepseek-v4.1-flash，任务 client-state-exclusion-domestic-20261102，会话 46168831-5453-4dcb-aacc-3d540babbcb5：代码 2 轮。第 1 轮加入枚举名校验并改写 CSV 两行名称，被退回；第 2 轮恢复逐字节原表，移除通用 Special 映射与额外的目标默认态放行。Codex 已对照实际源码并运行隔离烟测。随后的第 3 轮仅做记录同步，不是又一个代码轮。
+- 开发者已批准另立的 RO 查询记录与本开发清单。未做实机抓包与玩法验收；缺失玩法的状态来源只能在真实来源存在时接入。完整清单、验证、失败证据与 Git 回执：项目修改日志/2026-11-02-客户端RO状态互斥移植_CHANGELOG.md。证据：_temp/client-state-exclusion-20261102/。

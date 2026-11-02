@@ -157,6 +157,12 @@ public class MNavigationComponent : EntityComponentBase
         PlayerEntity localRole = Entity as PlayerEntity;
         // 原施法输入时钟，单位为不缩放秒；保留统一跳跃、特殊滑步、MP与CD许可。
         float realtimeSeconds = Time.realtimeSinceStartup;
+        // RO 同位置的施法前大状态互斥：采集中、攀爬中、跳舞中等状态不允许切入吟唱，直接放弃本次请求。
+        // showErrorTips 传 false，与 RO OnAfterAction 一致，被拒绝时不弹提示，不发包也不启动预表现。
+        if (!StateExclusionManager.singleton.GetIsCanChangeState(MExlusionStates.State_AJ_Singing, false))
+        {
+            return;
+        }
         if (!localRole.Skill.
                 CanStart(skillArgs.Identify, realtimeSeconds,
                     localRole.BaseInfo.CurrMp))

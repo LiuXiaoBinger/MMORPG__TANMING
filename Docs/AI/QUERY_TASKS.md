@@ -83,3 +83,13 @@
 - 保存/导出：源码中 `clientproj/Assets/artres/Editor/SceneEditor/SceneMgr.cs:845` 先检查数据，在满足 `SceneDatas/` 路径条件时，将 `serverData` 导出为 `PbLocal.MSSceneData`，将 `clientData` 导出为 `PbLocal.MCSceneData`，之后保存编辑器 XML。客户端字节数据使用 `SceneDatasForClient`。
 - 依赖与边界：需要 Odin/Sirenix、`NodeEditorFramework`、`MoonClient`、`MoonCommonLib`、`PbLocal.Xml`、表格及配置资源。该编辑器尚未移植到 `ROCharacterLightingDemo`；此前的场景/模型/动作/特效迁移未包含它。本次不声称已通过运行时验收。
 - 完整分析：`项目分析/RO副本编辑器入口与数据链路-2026-11-02.md`。仅同步/检查本编号的中文段，保留全部既有记录。
+
+
+## [QUERY][技能][互斥][RO-CLIENT-CAST-CHECK-20261102] RO 客户端/服务端施法校验链路
+
+- 授权：开发者已批准的查询记录。仅对 `F:/UnityPro/ro/Ro_cs422nb` 做只读核对；未构建 RO、未启动编辑器、未做联网测试。
+- 客户端 `clientcode/CSProject/MoonClient/Skill/MNavigationComponent.cs:307` 是到达目标后的施法回调入口；它在 `Entity.Skill.CanSkill(...)`（同文件 344 行）之前先调用 `StateExclusionManager.singleton.GetIsCanChangeState(MExlusionStates.State_AJ_Singing, false)`。判定失败直接返回，不发送 `RpcC2G_SingingRequest`；发送成功（`MNetClient.singleton.Send(info)`，同文件 437 行）后立即进入本地吟唱/技能预表现，不等待服务端权威确认。
+- `clientcode/CSProject/MoonClient/StateExclusion/StateExclusionManager.cs:346` 的 `GetIsCanChangeState` 每次重算玩家当前大状态列表，再读 `StateExclusionTable.RowData.Concatenate[targetState]`。第二个参数是 `showErrorTips`，所以传 `false` 只表示不弹提示，不是关闭校验。真正开关是 `StateExclusionClientCheck`，本次核对所见快照里 `config/Table/CSV/GlobalTableSystem.csv:579` 配置为 `1`（该行含义为“是否开启前端检测(0关闭1开启)”）。矩阵值 2 在正常客户端调用下放行，退旧状态与最终结果仍由服务端处理。
+- 客户端不只这一处判定：`clientcode/CSProject/MoonClient/Skill/MSkillComponent.cs:272` 的 `CanSkill` 另外校验动作许可（面向吟唱、搬运/死亡、技能互断等），并继续覆盖场景、冷却、武器/QTE、目标、Buff 限制、消耗与脚本确认；导航侧 `MNavigationComponent.cs:573` 一带还有距离处理。因此“客户端从不做距离校验”的说法不准确。
+- 服务端 `roserver/gameserver/protocol/action/rpcc2g_singingrequest.cpp:98` 通过 `STATE_MUTEX_MGR->TransferStateByFunc` 请求状态迁移，只有该迁移的成功回调才派发 `ROClientFireSkillArgs`；`rogamelibs/entity/action/singing_component.cpp:273` 的 `OnGetEvent` 校验进入条件（`CheckDoSkill` 在 324 行、目标范围在 345 行、`CanSkill` 在 414 行），`OnUpdate`（619 行）在 651 行再次校验目标合法性。服务端是多条独立校验、多阶段复查，而不是每侧固定一次判定。
+- 既有思维导图中“客户端 `CanSkill` 是唯一准入”的说法漏掉了它前面的 `StateExclusionManager` 判定；本次查询未修改该 HTML。后续客户端移植是另行提出的需求，本文只记录源码事实，不代表该移植已实现或已通过运行时验收。

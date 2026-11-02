@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f0a1db6e3d2cf5ae3b4dd73666bcd8ac1559d86381068fbf2d6625aa3d889ef7`
+Source normalized SHA256: `5adef4982d33b126114a2dc1c4f5b4d37525904c9669565c345a9cedce617248`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -32,11 +32,12 @@ Source normalized SHA256: `f0a1db6e3d2cf5ae3b4dd73666bcd8ac1559d86381068fbf2d662
 | [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Restore the RO runtime shader LOD entry | 139-146 |
 | [CODE][FILES][HANDOFF][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Explicit baked variant and fresh package ready for developer validation | 147-154 |
 | [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance | 155-162 |
-| [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO entity events and OnCall entry | 163-170 |
+| [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO entity events and OnCall entry | 163-172 |
+| [CODE][FILES][HANDOFF][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] RO client casting exclusion gate | 173-178 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `62799a2a217f59757044869e5dad8b044c9e5d3e358569578c338d820f550081`
+Source normalized SHA256: `0c35d9fe4455d1bb6cdbafcd5fc6dd85f137d94771949fab68be96239baa3f63`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -60,7 +61,8 @@ Source normalized SHA256: `62799a2a217f59757044869e5dad8b044c9e5d3e358569578c338
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-CPU] 2026-10-31 Unverified lightmap stripping candidate and compiler load mitigation | 155-162 |
 | [VERIFY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R9-SVC] 2026-10-31 Fresh shader package and serialized SVC verified; visual acceptance pending | 163-170 |
 | [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] Scoped scene and live acceptance | 171-177 |
-| [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] Server event and protocol acceptance | 178-186 |
+| [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] Server event and protocol acceptance | 178-188 |
+| [VERIFY][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] Client exclusion validation | 189-195 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -74,7 +76,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `2c96fa40a608493a679b865ccc1774c5bab893c6dc163c91c31a68a9759ca2c6`
+Source normalized SHA256: `64c3a32f12af42ce37bd906981b1b6df1d0559f91fcad9af0e89842a73e71272`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -87,7 +89,8 @@ Source normalized SHA256: `2c96fa40a608493a679b865ccc1774c5bab893c6dc163c91c31a6
 | [QUERY][场景][MOSHENTA-BUNDLE-LIGHTMAP-BINDING-20261031] 2026-10-31 Live packaged-scene lightmap bindings are present | 51-60 |
 | [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-68 |
 | [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 2026-10-31 Collector misses the baked runtime condition; existing shader bundle unchanged | 69-78 |
-| [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO dungeon editor entry points and data route, 2026-11-02 | 79-87 |
+| [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO dungeon editor entry points and data route, 2026-11-02 | 79-89 |
+| [QUERY][技能][互斥][RO-CLIENT-CAST-CHECK-20261102] RO client/server casting checks | 90-97 |
 
 ## Older records
 

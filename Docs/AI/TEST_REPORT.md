@@ -184,3 +184,12 @@
 - 通过：最终 HTML 的 JavaScript/结构检查与 Codex 的 Edge headless 渲染均无页面错误；本项目边界面板已渲染。证据：mindmap-render.json、mindmap-overview.png、mindmap-project-boundary.png。
 - 未验证：完整 Login/Gate 认证后的实网成功施法、Unity 表现、真实多角色广播可见性与性能。环回 TCP 送达不等于完整登录验收。状态互斥等待与真实吟唱时长/打断行为本次移植未实现。
 - 执行者：国际版 WorkBuddy deepseek-v4.1-flash，Hub hub-de717361-5b83-4381-872e-03f678bafd41，会话 df323eca-beff-41fc-a54a-840e40ff96d5，6 个真实轮次；Codex 完成最终验收。完整清单、失败历史、Git 回执与精确路径：项目修改日志/2026-11-01-服务器实体事件与OnCall移植_CHANGELOG.md。
+
+
+## [VERIFY][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] 客户端互斥判定验收
+
+- 通过：真实 GM_Game 与 LYF.SkillAuthoring.ContractTests.Editor 重建退出码 0；报告告警数 626/1734 含既有依赖告警，因此不声称存在干净的告警基线。程序集内可查到新增生产/测试类型；Unity 生成的工程文件不纳入提交。
+- 通过：WorkBuddy 隔离 harness 直接编译 3 个生产源文件与真实 StateDefine，只替换 Unity/全局角色环境。它报告 50 条断言，并可选择输出矩阵 dump；Codex 独立运行同一 harness 但不带该可选参数：49 通过/0 失败，退出码 0（codex-smoke.log）。该差异是一条输出路径断言，不是缺少领域测试。发包/预测门口是源码顺序断言，不是观测到的网络流量。
+- 通过：原 CSV 字节一致，38 行×38 列，1444/1444 个 Concatenate 值相同。两个原始 StateId 拼写与枚举名不同，已按要求保留；原表自带的逐状态列在 (25,36)/(36,25) 与 Concatenate 不同，故保留但不消费。代码 0/-1 拒绝，1/3 放行，2 放行除非 ingnoreOneLeaveOneEnter=true。已接来源：采集/攀爬/吟唱/钓鱼/跳舞；无当前状态时放行。复用列表避免每次调用重复收集分配；全链路零 GC 未测量。
+- 失败/修正：第一轮 Unity Resources 装载找到了资源，但新增的行名校验拒绝了原表第 24 行。第 2 轮移除该检查并按未改动的源格式解析；编译与隔离验证通过。修复后未做 Unity 玩法验证与抓包，也未调用 Editor 的 Run 入口。未启动任何四服。
+- 范围、证据与真实执行者身份见 项目修改日志/2026-11-02-客户端RO状态互斥移植_CHANGELOG.md；_temp/client-state-exclusion-20261102/csv-identity.json、matrix-dump.tsv、codex-smoke.log、development-report.md、query-sync-check.md。已批准的 RO 查询双语检查通过，其后输入未再变化。

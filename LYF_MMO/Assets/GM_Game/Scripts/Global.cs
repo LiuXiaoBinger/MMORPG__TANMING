@@ -90,6 +90,8 @@ public class Global : MonoBehaviour {
         LubanMgr.Instance.Init();
         // 同步锁定本次进程施法权限，之后才允许动画门控开放角色；缺配置采用稳定禁止默认。
         SkillCastingRulesCatalog.Initialize();
+        // 同步装载客户端大状态互斥表，保证角色开放前矩阵已就绪，施法门口不会读到半张表。
+        StateExclusionManager.singleton.Initialize();
         BeginAnimationPreload();
     }
 
