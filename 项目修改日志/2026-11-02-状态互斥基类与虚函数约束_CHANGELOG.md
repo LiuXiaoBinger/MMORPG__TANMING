@@ -68,7 +68,7 @@ dotnet build _temp/state-interface-virtual-20261102/tests/StateMutexSmoke/StateM
 
 ## Git 回执
 
-待本任务增量记录完成后，主 Agent 仅暂存本任务三个源/规则文件的变化和上述获准记录，提交并正常推送到 `codex/feature-development`。不合并 main、不强推、不包含已有用户修改。实际提交与推送回执在完成后追加。
+主 Agent 已仅暂存本任务三个源/规则文件的变化和上述六个获准记录/索引，共九个文件；原有 AGENTS、Docs 和其他代码改动保留在工作区。已提交并正常推送 `codex/feature-development`，不合并 main、不强推。
 
 ## 最终记录检查与用量快照
 
@@ -77,3 +77,10 @@ dotnet build _temp/state-interface-virtual-20261102/tests/StateMutexSmoke/StateM
 - 分类：上下文与项目规则、用户需求、工具调用输入输出、重复读取/返工/压缩/验证，各自token数均未记录/不可测。协作：Qwen代码调用1282输入/533输出，文档调用1259输入/1203输出（未通过，未落盘）；WorkBuddy和独立Codex文档子对话用量未记录/不可测。豆包未派发业务任务，其token未记录/不可测。账户剩余额度本地日志不可测。
 - 上下文压缩：当前对话累计 3 次，截止 2026-11-02T10:22:37.929Z（UTC），来源同一对话两份原始Codex日志顶层compacted事件，按时间与载荷哈希去重，损坏行0。不合并子Agent或WorkBuddy对话。统计不含该截止时间之后的Git回执和最终回复。
 - 用量与压缩来源明细：`_temp/state-interface-virtual-20261102/token-and-context-final.json`、`token-collect.txt`、`token-report.json`、`compactions-current-part.json`。日志仅保留汇总数字，不复制私密会话正文。
+
+## 已完成 Git 回执
+
+- 主提交：`65deb227a9149b9a726e1ae6d83487558b945301`，中文说明「refactor: 状态互斥契约改用RO虚函数基类」，范围为上述9个文件。
+- 推送退出码0，远端回执 `3e9a4c4..65deb22`；ls-remote已核对主提交。原始输出：`_temp/state-interface-virtual-20261102/git-commit.txt`、`git-push.txt`。
+- 主提交后的业务源码与已验工作区一致（换行规范化比较）；基类等于WorkBuddy原产物加Qwen返回值修正，测试源码未在最终编译后变化。
+- 本段回执单独文档提交；最终文档提交和远端哈希核验保存在 `_temp/state-interface-virtual-20261102/git-receipt.json` 并在交付回复报告，避免为记录自身提交号无限追加提交。
