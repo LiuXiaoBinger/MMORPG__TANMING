@@ -199,3 +199,10 @@
 - Codex 将当前 `LYF_Server/GameServer/GameServer.csproj` 重建至 `_temp/state-interface-virtual-20261102/gameserver-out/`：退出码 0，14 警告 / 0 错误。专用 net48 StateMutexSmoke 工程编译为 0 警告 / 0 错误，随后测试可执行文件返回 0，并输出 `StateMutexSmoke: all cases passed`。测试编译仓库中的实际测试源码，并引用本次新构建的生产程序集；测试专用子类未注册到生产环境。
 - 覆盖构造固定状态编号、Check/Leave 默认 false、虚函数重写派发、原始表格/空生产注册、禁止/直接/先退出旧状态再进入的转换、退出失败、取消、销毁及回调异常后的事件释放。最终命令和结果见 `_temp/state-interface-virtual-20261102/codex-build-GameServer.log`、`codex-build-StateMutexSmoke.log`、`codex-StateMutexSmoke.log`。输出出现既有 SkillCastingRules 默认策略警告；本次不能证明完整技能配置集成已通过。
 - WorkBuddy 早期向既有生产输出目录构建时遇到文件锁定，产生 4 错误 / 38 警告；改用临时输出目录解决了该构建限制。其早期冒烟通过发生在后续临时 GetType 错误之前，不作为最终验收。已保留原生 429、确认 idle、官方取消回执（`remoteStopped=false`）、本地 Qwen 的 1 次修正及 Codex 最终验证；停止证据为原生 429 与 idle，不能把该取消回执作为停止证明。本任务未启动任何服务器，未触动既有服务器进程。未做实网、Unity 运行时或干净检出测试。完整记录见 `项目修改日志/2026-11-02-状态互斥基类与虚函数约束_CHANGELOG.md`。
+
+## [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] 零吟唱回归与环回验收
+
+- Codex 将 `LYF_Server/GameServer/GameServer.csproj` 重新构建到 `_temp/skill-zero-singing-fix-20261102/before-out/` 和 `after-out/`，中间路径也位于该任务目录内。GameServer 最终构建为 0 错误、14 个既有警告。`SingingStateSmoke`、`EventDispatcherSmoke`、`EventPoolSmoke`、`StateMutexSmoke`、`SkillAuthoritySmoke` 各自均为 0 错误/0 警告，并使用修复后的程序集运行通过。证据为该目录下的 `verification.json`、`build-after.log`、`build-*.log` 和 `run-*.log`。
+- 新增连续施法回归对修复前程序集执行时以 `非吟唱技能不得等待 CastMs，技能 10010` 失败，修复后通过。覆盖三段普通攻击 700/700/700 毫秒，随后技能 10040/10050/10060/10070/10080 分别为 3100/3433/3167/1133/667 毫秒；每次均立即开始，动作占用保持至最后一次 50 毫秒逻辑帧推进，随后允许下一个技能，并且只扣除一次 MP。独立的无表现配置测试保留 `CastMs + RecoveryMs` 动作占用。
+- 真实环回 TCP 验证 `OnCall`：无须推进逻辑帧，即先收到成功结果、再收到 Start；每段 700 毫秒普通攻击动作结束后，下一个请求立即成功，UUID、段数、时长和 MP 均符合预期。既有拒绝、合成吟唱的打断/排队终态回包、事件池和状态互斥检查均通过。非网络状态测试有意不提供网关，因此会输出发送失败诊断；这不代表在线玩家传输故障。
+- 初始临时测试工程存在一个未使用且缺失的 `Grpc.Core` 引用，并遗漏规则副本；随后移除该引用，补入部署表/规则副本。测试配置补全后，基线回归仍失败，修复后的构建则通过。新增环回接续和无表现配置覆盖后，仅重跑了修改过的测试。本次未操作 Unity，未进行四服登录测试、生产部署或干净检出验收。正吟唱使用 `SingingStateFixture`，不代表真实生产配置路径。源 Excel/部署表的 500/700 毫秒差异仍未解决。完整记录与 Git 回执见 `项目修改日志/2026-11-02-非吟唱技能接续施法修复_CHANGELOG.md`。

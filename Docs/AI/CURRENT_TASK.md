@@ -183,3 +183,10 @@
 - 用户已批准修改及记录。`LYF_Server/GameServer/StateMutex/State/IStateInterface.cs` 现改为与 RO 一致的抽象类：构造函数保存只读 `type_`，非虚 `new GetType()` 采用 C# 名称隐藏，虚函数 `Check`/`Leave` 默认返回 false，`GetErrorCode` 为抽象函数。`LYF_Server/Tests/StateMutexSmoke.cs` 的探测状态通过构造函数传入编号，并测试基类默认行为及重写派发。`AGENTS.md` 规定新增或修改的业务抽象默认采用基类及 virtual/override，仅有具体理由的特殊情况允许接口；不批量转换既有接口。
 - RO `rogamelibs/state_mutex/state/i_state_interface.h:10-25` 是 C++ 类。具体状态类位于 `climb_collect_fish_state.h` 等文件，并在 `state_mutex_manager.cpp:29` 注册。`state_mutex_def.h:7` 的 `STATE_MUTEX_MGR` 仅取得管理器。本项目生产注册仍为空；测试子类不能证明真实玩法状态已迁移。本次未新增这些玩法源文件。
 - 国内 WorkBuddy `deepseek-v4.1-flash` 第 1 轮，任务 `state-interface-virtual-domestic-20261102`，会话 `46168831-5453-4dcb-aacc-3d540babbcb5`，attempt `run-c94f33ce-4ce9-4ffc-95f9-51a5bb0b7bcb` 在交付前因原生 429 中断，遗留了一处临时错误的 GetType 返回值。豆包因 CDP/窗口错误不可用；Ollama `qwen3:8b-light` 提供 1 次限定范围修正，由 Codex 核验并应用。未声称 WorkBuddy 已成功交付并通过验收。完整文件清单、失败证据、验证与 Git 回执见 `项目修改日志/2026-11-02-状态互斥基类与虚函数约束_CHANGELOG.md`。
+
+## [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] 恢复零吟唱技能入口
+
+- 在 WorkBuddy 已知的 DeepSeek 限流和豆包连接不可用后，用户授权 Codex 直接实现，随后明确批准本次记录。本次修复未由外部模型执行。RO `rogamelibs/entity/action/singing_component.cpp:555-615/878-894` 将真实吟唱（`FixSingingTime` + `FloatSingingTime`）与技能动作时长分开，吟唱时间为零时立即调用 `Finish()`。
+- `SingingComponent.GetSingingTime(ROSkillCore)` 现在对本项目当前非吟唱技能返回零，这些技能的配置结构没有独立吟唱字段；`OnStart` 保留 RO 事件路径，不再将 `CastMs` 作为吟唱延迟。`ROSkillComponent.CommitCast` 在没有表现配置时仍以 `CastMs + RecoveryMs` 回退计算动作时长；正常事件路径仍由配置的表现状态时间控制。互斥、MP/CD 校验和池化事件继续沿用。本次未新增真实正吟唱配置，也未实现 RO 的 Buff/属性计算。
+- 修改两个业务文件和两个冒烟测试文件，新增 `LYF_Server/Tests/SingingStateFixture.cs`。夹具仅在测试内合成一个已经开始的 2000 毫秒吟唱状态，使打断/排队测试不再将普通攻击认作吟唱技能。真实零吟唱与连续施法路径分别验证。完整文件清单见 `项目修改日志/2026-11-02-非吟唱技能接续施法修复_CHANGELOG.md`。
+- 代码提交 `7c3b9e9711bb9bf6470bcf2147167f1f4a04467d` 已推送到 `codex/feature-development`，并与远端一致。本次未操作桌面/Unity，未替换生产二进制、修改数据库/表格或重启服务器。验收时既有四服进程快照未变，这些进程当时尚未加载修复；后续用户是否自行重启未核验。Excel 首段普通攻击状态 500 毫秒与部署表 700 毫秒的差异保持不变。不得由隔离测试推断已在线部署或已完成完整登录验收。

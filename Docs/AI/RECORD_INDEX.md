@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `53254e55c1ca325ae5109f3bc4a44d6e8fe64837370e4c72290f124324c8a7a2`
+Source normalized SHA256: `f42d1baf1a93011bffd13c262c4e42e8610d7aee68d145c731857d116d872158`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -34,11 +34,12 @@ Source normalized SHA256: `53254e55c1ca325ae5109f3bc4a44d6e8fe64837370e4c72290f1
 | [CODE][FILES][HANDOFF][相机][MOSHENTA-CAMERA-COLLISION-20261031] Moshenta camera obstacle avoidance | 155-162 |
 | [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO entity events and OnCall entry | 163-172 |
 | [CODE][FILES][HANDOFF][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] RO client casting exclusion gate | 173-180 |
-| [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state base class | 181-185 |
+| [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state base class | 181-187 |
+| [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-193 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1a802baad01d7a1a2fb8e0e8457c84b8cfc8fe1dc5c193bcee480e097810544d`
+Source normalized SHA256: `2011b47445269c42663bdace8af0b89f8d25ef9bc9053e74836f7c4dc7921066`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -64,7 +65,8 @@ Source normalized SHA256: `1a802baad01d7a1a2fb8e0e8457c84b8cfc8fe1dc5c193bcee480
 | [VERIFY][相机][MOSHENTA-CAMERA-COLLISION-20261031] Scoped scene and live acceptance | 171-177 |
 | [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] Server event and protocol acceptance | 178-188 |
 | [VERIFY][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] Client exclusion validation | 189-197 |
-| [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state contract validation | 198-202 |
+| [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state contract validation | 198-204 |
+| [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-210 |
 
 ## Docs/AI/DECISIONS.en.md
 
