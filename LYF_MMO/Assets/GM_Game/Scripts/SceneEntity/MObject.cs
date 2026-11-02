@@ -8,6 +8,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public abstract class MObject : ROObject
 {
+
+    #region 字段与属性
     /// <summary>普通实体组件容器，管理可按类型查询的组件集合</summary>
     private readonly EntityComponentContainer _components = new EntityComponentContainer();
 
@@ -55,7 +57,9 @@ public abstract class MObject : ROObject
     {
         get { return (EntityType & EntityType.Role) != EntityType.None; }
     }
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>
     /// 基础构造函数，初始化身份信息和生命周期状态。
     /// </summary>
@@ -108,12 +112,6 @@ public abstract class MObject : ROObject
         _components.LateUpdate(deltaSeconds);
     }
 
-    /// <summary>关联 Unity 表现控制器（由派生类实现）</summary>
-    public abstract void SetEntityCtrl(RoleCtrlBase ctrl);
-
-    /// <summary>获取表现控制器（由派生类实现）</summary>
-    public abstract RoleCtrlBase GetEntityCtrl();
-
     /// <summary>
     /// 添加事件监听器
     /// </summary>
@@ -137,20 +135,34 @@ public abstract class MObject : ROObject
     }
 
     /// <summary>
-    /// 派发事件到所有监听器
+    /// 执行初始化流程，装配组件并进入 Active 状态。
+    /// 仅在 Created 状态下有效，重复调用直接忽略。
     /// </summary>
-    /// <param name="eventType">事件类型</param>
-    /// <param name="eventArgs">具名强类型事件参数，无载荷时传 null</param>
-    public virtual void DispatchEvent(MEventType eventType, IEventArg eventArgs)
+    public virtual void Initialize()
     {
-        _eventDispatcher.DispatchEvent(eventType, eventArgs);
+        if (LifecycleState != EntityLifecycleState.Created)
+        {
+            return;
+        }
+
+        OnBeforeInitialize();
+        _components.Initialize();
+        LifecycleState = EntityLifecycleState.Active;
+        DispatchEvent(MEventType.Initialized, null);
+    }
+    #endregion
+
+    #region 事件回调
+    /// <summary>初始化前回调，派生类可在此追加额外组件</summary>
+    protected virtual void OnBeforeInitialize()
+    {
     }
 
-    /// <summary>清空所有事件监听</summary>
-    public virtual void ClearEventListeners()
+    /// <summary>派发销毁事件后执行，派生实体在这里释放专用组件。</summary>
+    protected virtual void OnDestroying()
     {
-        _eventDispatcher.ClearEventListeners();
     }
+    #endregion
 
     /// <summary>
     /// 添加普通组件。专用快捷组件必须由 MComponentMgr 单独管理。
@@ -175,6 +187,30 @@ public abstract class MObject : ROObject
         _components.Add(component);
     }
 
+    /// <summary>
+    /// 立即销毁实体，执行完整清理流程：
+    /// 派发销毁事件 → 关闭普通组件 → 派生类清理专用组件 → 标记 Destroyed → 广播销毁完成 → 清空事件监听
+    /// </summary>
+    public virtual void Destroy()
+    {
+        if (LifecycleState == EntityLifecycleState.Destroyed)
+        {
+            return;
+        }
+
+        DispatchEvent(MEventType.Destroying, null);
+        // 普通组件先结束，此时仍可访问实体模型和四个专用组件完成表现清理。
+        _components.Shutdown();
+        OnDestroying();
+        LifecycleState = EntityLifecycleState.Destroyed;
+        DispatchEvent(MEventType.Destroyed, null);
+        ClearEventListeners();
+    }
+
+    #region 查询与判定
+    /// <summary>获取表现控制器（由派生类实现）</summary>
+    public abstract RoleCtrlBase GetEntityCtrl();
+
     /// <summary>按组件类型查询普通组件容器中已挂载的组件实例。</summary>
     /// <typeparam name="T">要查询的组件类型。</typeparam>
     /// <returns>命中的组件实例；未挂载返回 null。</returns>
@@ -182,27 +218,26 @@ public abstract class MObject : ROObject
     {
         return Components.GetMComponentByT<T>();
     }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>关联 Unity 表现控制器（由派生类实现）</summary>
+    public abstract void SetEntityCtrl(RoleCtrlBase ctrl);
 
     /// <summary>
-    /// 执行初始化流程，装配组件并进入 Active 状态。
-    /// 仅在 Created 状态下有效，重复调用直接忽略。
+    /// 派发事件到所有监听器
     /// </summary>
-    public virtual void Initialize()
+    /// <param name="eventType">事件类型</param>
+    /// <param name="eventArgs">具名强类型事件参数，无载荷时传 null</param>
+    public virtual void DispatchEvent(MEventType eventType, IEventArg eventArgs)
     {
-        if (LifecycleState != EntityLifecycleState.Created)
-        {
-            return;
-        }
-
-        OnBeforeInitialize();
-        _components.Initialize();
-        LifecycleState = EntityLifecycleState.Active;
-        DispatchEvent(MEventType.Initialized, null);
+        _eventDispatcher.DispatchEvent(eventType, eventArgs);
     }
 
-    /// <summary>初始化前回调，派生类可在此追加额外组件</summary>
-    protected virtual void OnBeforeInitialize()
+    /// <summary>清空所有事件监听</summary>
+    public virtual void ClearEventListeners()
     {
+        _eventDispatcher.ClearEventListeners();
     }
 
     /// <summary>进入睡眠状态，暂停逻辑更新并广播 Sleep 事件</summary>
@@ -258,31 +293,6 @@ public abstract class MObject : ROObject
     }
 
     /// <summary>
-    /// 立即销毁实体，执行完整清理流程：
-    /// 派发销毁事件 → 关闭普通组件 → 派生类清理专用组件 → 标记 Destroyed → 广播销毁完成 → 清空事件监听
-    /// </summary>
-    public virtual void Destroy()
-    {
-        if (LifecycleState == EntityLifecycleState.Destroyed)
-        {
-            return;
-        }
-
-        DispatchEvent(MEventType.Destroying, null);
-        // 普通组件先结束，此时仍可访问实体模型和四个专用组件完成表现清理。
-        _components.Shutdown();
-        OnDestroying();
-        LifecycleState = EntityLifecycleState.Destroyed;
-        DispatchEvent(MEventType.Destroyed, null);
-        ClearEventListeners();
-    }
-
-    /// <summary>派发销毁事件后执行，派生实体在这里释放专用组件。</summary>
-    protected virtual void OnDestroying()
-    {
-    }
-
-    /// <summary>
     /// 实体池取出对象时重新写入身份和基础生命周期，恢复 Created 状态。
     /// 仅允许对已 Destroyed 的实体调用，防止误复用活跃对象。
     /// </summary>
@@ -310,4 +320,5 @@ public abstract class MObject : ROObject
         AtorSpeed = 1f;
         LifecycleState = EntityLifecycleState.Created;
     }
+    #endregion
 }

@@ -7,6 +7,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class EntityAttributesComponent : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>最大生命值。</summary>
     public int MaxHp { get; private set; }
 
@@ -18,12 +20,6 @@ public sealed class EntityAttributesComponent : EntityComponentBase
 
     /// <summary>当前魔法值，不会超过 MaxMp。</summary>
     public int CurrentMp { get; private set; }
-
-    /// <summary>构造属性组件。</summary>
-    /// <param name="owner">宿主实体。</param>
-    public EntityAttributesComponent(ROObject owner) : base(owner)
-    {
-    }
 
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Attributes"/>。</summary>
     public override EntityComponentType ComponentType
@@ -66,8 +62,33 @@ public sealed class EntityAttributesComponent : EntityComponentBase
         return 1;
     } }
 
-    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
-    public override void Attached()
+    /// <summary>当前生效外观表现表（无视图外观时回退真实外观）。</summary>
+    public PresentTable PresentDataView
+    {
+        get
+        {
+            if (Entity.IsRole)
+            {
+                RoleEntity role = Entity as RoleEntity;
+                if (role != null)
+                {
+                    //职业id
+                    int Jobid = role.BaseInfo.JobId;
+                    ProfessionInfo professionInfo= LubanMgr.Instance.GetProfessionInfoById(Jobid);
+                    PresentTable presentTable = LubanMgr.Instance.GetPresentTableById(professionInfo.PresentTableID);
+                    return presentTable;
+                }
+            }
+
+            return null;
+        }
+    }
+    #endregion
+
+    #region 构造、初始化与事件注册
+    /// <summary>构造属性组件。</summary>
+    /// <param name="owner">宿主实体。</param>
+    public EntityAttributesComponent(ROObject owner) : base(owner)
     {
     }
 
@@ -79,6 +100,22 @@ public sealed class EntityAttributesComponent : EntityComponentBase
     protected override void EventUnsubscribe()
     {
         
+    }
+
+    /// <summary>对象池回收时清零全部属性。</summary>
+    public override void Shutdown()
+    {
+        MaxHp = 0;
+        CurrentHp = 0;
+        MaxMp = 0;
+        CurrentMp = 0;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
+    public override void Attached()
+    {
     }
 
     /// <summary>一次性应用一组 HP/MP 属性，自动做范围钳制，并按变化情况派发事件。</summary>
@@ -118,36 +155,5 @@ public sealed class EntityAttributesComponent : EntityComponentBase
             DispatchEvent(MEventType.AttributesChanged, null);
         }
     }
-
-    /// <summary>对象池回收时清零全部属性。</summary>
-    public override void Shutdown()
-    {
-        MaxHp = 0;
-        CurrentHp = 0;
-        MaxMp = 0;
-        CurrentMp = 0;
-    }
-    
-    
-    /// <summary>当前生效外观表现表（无视图外观时回退真实外观）。</summary>
-    public PresentTable PresentDataView
-    {
-        get
-        {
-            if (Entity.IsRole)
-            {
-                RoleEntity role = Entity as RoleEntity;
-                if (role != null)
-                {
-                    //职业id
-                    int Jobid = role.BaseInfo.JobId;
-                    ProfessionInfo professionInfo= LubanMgr.Instance.GetProfessionInfoById(Jobid);
-                    PresentTable presentTable = LubanMgr.Instance.GetPresentTableById(professionInfo.PresentTableID);
-                    return presentTable;
-                }
-            }
-
-            return null;
-        }
-    }
+    #endregion
 }

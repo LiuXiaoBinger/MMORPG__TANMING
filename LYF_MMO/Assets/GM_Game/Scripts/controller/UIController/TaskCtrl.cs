@@ -7,14 +7,22 @@ using System;
 /// </summary>
 public class TaskCtrl : CtrlBase
 {
+
+    #region 字段
     /// <summary>主界面视图，持有任务窗口与快捷面板。</summary>
     private readonly MainView _mainView;
+
     /// <summary>任务主窗口，绑定 Task.prefab。</summary>
     private readonly TaskWindow _taskWindow;
+
     /// <summary>快捷任务面板，绑定 QuickTaskPanel.prefab。</summary>
     private readonly QuickTaskPanelWidget _quickPanel;
+
     /// <summary>界面事件是否已注册，避免重复订阅。</summary>
     private bool _actionsRegistered;
+
+    #region 构造、初始化与事件注册
+    #endregion
 
     /// <summary>创建任务控制器并注册任务界面事件。</summary>
     /// <param name="view">主界面视图实例。</param>
@@ -95,69 +103,16 @@ public class TaskCtrl : CtrlBase
         {
             TaskMgr.Instance.TaskDataChanged -= OnTaskDataChanged;
         }
+
+    #region 交互响应
+    #endregion
         _actionsRegistered = false;
-    }
-
-    /// <summary>切换任务主窗口显隐，关闭时只隐藏窗口不清理任务数据。</summary>
-    public void OpenTaskWindow()
-    {
-        if (_taskWindow == null)
-        {
-            return;
-        }
-        if (_taskWindow.gameObject.activeSelf)
-        {
-            _taskWindow.CloseWindow();
-            return;
-        }
-        ShowMainWindow(WindowType.TaskWindow);
-    }
-
-    /// <summary>任务入口请求打开任务窗口：先经快捷面板事件联动展开折叠，再切换窗口显隐。</summary>
-    public void RequestOpenTaskWindow()
-    {
-        if (_quickPanel != null)
-        {
-            _quickPanel.RequestOpenTaskWindow();
-        }
-        OpenTaskWindow();
-    }
-
-    /// <summary>快捷面板请求打开任务窗口时联动展开折叠列表，保证任务条目可见。</summary>
-    private void OnQuickPanelOpenTaskWindow()
-    {
-        if (_quickPanel != null)
-        {
-            _quickPanel.SetFolded(false);
-        }
     }
 
     /// <summary>任务数据变化后同时刷新主窗口与快捷面板，两者共用同一份数据。</summary>
     private void OnTaskDataChanged()
     {
         RefreshAll();
-    }
-
-    /// <summary>刷新任务主窗口与快捷面板。</summary>
-    public void RefreshAll()
-    {
-        if (_taskWindow != null)
-        {
-            _taskWindow.RefreshTaskList();
-        }
-        if (_quickPanel != null)
-        {
-            _quickPanel.RefreshTrackedTasks();
-        }
-    }
-
-    /// <summary>关闭任务主窗口请求，只隐藏窗口不改变业务状态。</summary>
-    private void OnTaskWindowCloseRequested()
-    {
-        if (_taskWindow != null)
-        {
-            _taskWindow.CloseWindow();
-        }
     }
 
     /// <summary>选中任务时切换追踪，主窗口与快捷面板共用同一追踪标识。</summary>
@@ -181,9 +136,43 @@ public class TaskCtrl : CtrlBase
     {
         if (TaskMgr.Instance == null)
         {
+
+    #region 事件回调
+    #endregion
             return;
         }
         TaskMgr.Instance.SetCurrentPage(page);
+    }
+
+    /// <summary>快捷面板请求打开任务窗口时联动展开折叠列表，保证任务条目可见。</summary>
+    private void OnQuickPanelOpenTaskWindow()
+    {
+        if (_quickPanel != null)
+        {
+            _quickPanel.SetFolded(false);
+        }
+    }
+
+    /// <summary>关闭任务主窗口请求，只隐藏窗口不改变业务状态。</summary>
+    private void OnTaskWindowCloseRequested()
+
+    #region 网络请求与消息
+    #endregion
+    {
+        if (_taskWindow != null)
+        {
+            _taskWindow.CloseWindow();
+        }
+    }
+
+    /// <summary>任务入口请求打开任务窗口：先经快捷面板事件联动展开折叠，再切换窗口显隐。</summary>
+    public void RequestOpenTaskWindow()
+    {
+        if (_quickPanel != null)
+        {
+            _quickPanel.RequestOpenTaskWindow();
+        }
+        OpenTaskWindow();
     }
 
     /// <summary>
@@ -211,7 +200,7 @@ public class TaskCtrl : CtrlBase
     public void RequestGiveUp(TaskViewData data)
     {
     }
-
+    #endregion
     /// <summary>
     /// 任务导航请求边界：需沿现有导航模块前往目标，且到达不自动完成任务。
     /// 当前未接入任务导航回调，方法保留为具名接口。
@@ -219,5 +208,33 @@ public class TaskCtrl : CtrlBase
     /// <param name="data">需要导航到的任务展示数据。</param>
     public void RequestNavigate(TaskViewData data)
     {
+    }
+
+    /// <summary>切换任务主窗口显隐，关闭时只隐藏窗口不清理任务数据。</summary>
+    public void OpenTaskWindow()
+    {
+        if (_taskWindow == null)
+        {
+            return;
+        }
+        if (_taskWindow.gameObject.activeSelf)
+        {
+            _taskWindow.CloseWindow();
+            return;
+        }
+        ShowMainWindow(WindowType.TaskWindow);
+    }
+
+    /// <summary>刷新任务主窗口与快捷面板。</summary>
+    public void RefreshAll()
+    {
+        if (_taskWindow != null)
+        {
+            _taskWindow.RefreshTaskList();
+        }
+        if (_quickPanel != null)
+        {
+            _quickPanel.RefreshTrackedTasks();
+        }
     }
 }

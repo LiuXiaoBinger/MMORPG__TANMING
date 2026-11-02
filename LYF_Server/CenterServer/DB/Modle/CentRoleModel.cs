@@ -1,6 +1,5 @@
 ﻿
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +13,10 @@ using SqlSugar;
 /// </summary>
 public class CentRoleModel
 {
+
+    #region 字段与构造
     // 背包 UI 至少需要 9x9 个格子；旧角色没有记录时使用该兼容容量。
     private const int DefaultOpenedKnapsackGridCount = 81;
-
 
     /// <summary>共享数据库客户端，由 CenterApp 注入，全进程复用。</summary>
     private SqlSugarClient _db = null;
@@ -29,20 +29,9 @@ public class CentRoleModel
     {
         _db = db;
     }
+    #endregion
 
-    /// <summary>处理中心服商城购买请求。</summary>
-    public BuyShopItemRes ProcessShopPurchase(BuyShopItemReq request)
-    {
-        return new BuyShopItemRes
-        {
-            Error = new ErrorInfo
-            {
-                Code = CmdCode.FeatureNotReady,
-                Message = "商城购买事务尚未接入"
-            }
-        };
-    }
-
+    #region 背包格数同步与物品登记
     /// <summary>
     /// 将 GameServer 已验证的背包格子总数持久化。
     /// roleKnapsackcount 是 byte 字段，因此此处再次校验范围，避免异常数据写入数据库。
@@ -100,54 +89,48 @@ public class CentRoleModel
     }
 
     /// <summary>
-    /// 查询指定持久角色的技能列表，并在成功或失败回包中保留该角色 ID。
+    /// 将物品放入对应的独立背包；普通背包不聚合其它背包的物品。
     /// </summary>
-    /// <param name="req">GameServer 已校验会话后转发的进入世界请求，携带持久角色 ID。</param>
-    /// <returns>包含原角色 ID、查询结果码及技能等级明细的回包。</returns>
-    public RoleSkillInfoRet RoleSkillInfo(EnterWroldReq req)
+    private static void AddItemToPack(RoleKanpsackInfo ret, KnapsackType packType, RoleItemInfo itemInfo)
     {
-        // 角色 ID 必须来自中心服处理的请求，供 GameServer 抵御复合会话复用后的迟到回包。
-        RoleSkillInfoRet ret = new RoleSkillInfoRet { RoleId = req.RoleId };
-        ret.CmdCode = CmdCode.Succeed;
-        // 本次角色查询结果的每一行对应已持久化的学习等级和快捷键。
-        List< RoleSkillTable> roleSkillList = _db.Queryable<RoleSkillTable>().Where(v => v.RoleID == req.RoleId).ToList();
-        if (roleSkillList != null && roleSkillList.Count > 0)
+        switch (packType)
         {
-            // 持久技能行的索引，逐行保留等级与绑定，仅规范本次 F/2 功能对应两项。
-            for (int i = 0; i < roleSkillList.Count; i++)
-            {
-                // 单条角色技能的 ID/等级来自数据库，不使用客户端提供的效果或数值。
-                RoleSkillInfo roleSkillInfo = new RoleSkillInfo()
-                {
-                    SkillId =  roleSkillList[i].SkillID,
-                    Level =  roleSkillList[i].SkillLevel,
-                    BindKey = roleSkillList[i].Bindkey
-                };
-                // F 固定使用已接入的滑行，旧 F 斩天剑移至 2；只规范回包，不覆盖数据库键位。
-                if (roleSkillInfo.SkillId == 10080)
-                {
-                    roleSkillInfo.BindKey = "F";
-                    if (roleSkillInfo.Level <= 0)
-                    {
-                        roleSkillInfo.Level = 1;
-                    }
-                }
-                else if (roleSkillInfo.SkillId == 10060 &&
-                    string.Equals(roleSkillInfo.BindKey, "F", StringComparison.OrdinalIgnoreCase))
-                {
-                    roleSkillInfo.BindKey = "2";
-                }
-                ret.RoleSkillInfoList.Add(roleSkillInfo);
-            }
+            case KnapsackType.RolePackPlain:
+                ret.RolePackPlain.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackEquip:
+                ret.RolePackEquip.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackConsume:
+                ret.RolePackConsume.Add(itemInfo);
+                break;
+            case KnapsackType.RolePackMaterial:
+                ret.RolePackMaterial.Add(itemInfo);
+                break;
+            case KnapsackType.RoleCurrtEquipPack:
+                ret.RoleCurrtEquipPack.Add(itemInfo);
+                break;
+            case KnapsackType.RoleVirtualItemPack:
+                // 虚拟物品单独返回，不进入普通背包，也不参与普通背包格子展示。
+                ret.RoleVirtualItemPack.Add(itemInfo);
+                break;
         }
-        else
-        {
-            ret.CmdCode = CmdCode.RoleNotExist;
-        }
-        
-        return ret;
     }
 
+    /// <summary>
+    /// 写入对应包裹的已开格子容量。该 Count 不是物品数量。
+    /// </summary>
+    private static void AddPackCount(RoleKanpsackInfo ret, KnapsackType packType, int openedGridCount)
+    {
+        ret.KanpsackTypeCountLst.Add(new Kanpsacktypecount
+        {
+            Type = (int)packType,
+            Count = openedGridCount
+        });
+    }
+    #endregion
+
+    #region 查询与判定
     /// <summary>查询角色商城购买次数，在进入世界时同步给 GameServer。</summary>
     public RoleShopPurchaseInfoRet GetRoleShopPurchaseInfo(EnterWroldReq req)
     {
@@ -196,6 +179,126 @@ public class CentRoleModel
             ret.PurchaseInfoList.Clear();
         }
 
+        return ret;
+    }
+
+    /// <summary>将数据库刷新时间转换为协议 UTC ticks。</summary>
+    private static long GetUtcTicks(DateTime value)
+    {
+        if (value == DateTime.MinValue)
+        {
+            return 0L;
+        }
+        return value.ToUniversalTime().Ticks;
+    }
+
+    private static bool IsPersistedKnapsackType(KnapsackType type)
+    {
+        // 是否为普通包裹或装备包裹类型。
+        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
+        // 是否为消耗品包裹或材料包裹类型。
+        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        return isPlainOrEquip || isConsumeOrMaterial;
+    }
+
+    private static KnapsackType[] GetPersistedKnapsackTypes()
+    {
+        return new[]
+        {
+            KnapsackType.RolePackPlain,
+            KnapsackType.RolePackEquip,
+            KnapsackType.RolePackConsume,
+            KnapsackType.RolePackMaterial
+        };
+    }
+
+    /// <summary>旧普通背包记录是分类容量补齐时的最低值。</summary>
+    private static int GetLegacyFallback(List<RoleKnapsackTable> rows)
+    {
+        RoleKnapsackTable oldAll = null;
+        if (rows != null)
+        {
+            oldAll = rows.FirstOrDefault(v => v.roleKnapsack == (byte)KnapsackType.RolePackPlain);
+        }
+        if (oldAll == null)
+        {
+            return DefaultOpenedKnapsackGridCount;
+        }
+        return System.Math.Max(DefaultOpenedKnapsackGridCount, (int)oldAll.roleKnapsackcount);
+    }
+
+    /// <summary>已有分类保留自身与旧普通背包中的较大容量，缺失分类继承旧普通背包。</summary>
+    private static int GetMigratedGridCount(RoleKnapsackTable row, int legacyFallback)
+    {
+        if (row == null)
+        {
+            return legacyFallback;
+        }
+        return System.Math.Max(legacyFallback,
+            System.Math.Max(DefaultOpenedKnapsackGridCount, (int)row.roleKnapsackcount));
+    }
+
+    /// <summary>处理中心服商城购买请求。</summary>
+    public BuyShopItemRes ProcessShopPurchase(BuyShopItemReq request)
+    {
+        return new BuyShopItemRes
+        {
+            Error = new ErrorInfo
+            {
+                Code = CmdCode.FeatureNotReady,
+                Message = "商城购买事务尚未接入"
+            }
+        };
+    }
+    #endregion
+
+    #region 登录数据组装
+    /// <summary>
+    /// 查询指定持久角色的技能列表，并在成功或失败回包中保留该角色 ID。
+    /// </summary>
+    /// <param name="req">GameServer 已校验会话后转发的进入世界请求，携带持久角色 ID。</param>
+    /// <returns>包含原角色 ID、查询结果码及技能等级明细的回包。</returns>
+    public RoleSkillInfoRet RoleSkillInfo(EnterWroldReq req)
+    {
+        // 角色 ID 必须来自中心服处理的请求，供 GameServer 抵御复合会话复用后的迟到回包。
+        RoleSkillInfoRet ret = new RoleSkillInfoRet { RoleId = req.RoleId };
+        ret.CmdCode = CmdCode.Succeed;
+        // 本次角色查询结果的每一行对应已持久化的学习等级和快捷键。
+        List< RoleSkillTable> roleSkillList = _db.Queryable<RoleSkillTable>().Where(v => v.RoleID == req.RoleId).ToList();
+        if (roleSkillList != null && roleSkillList.Count > 0)
+        {
+            // 持久技能行的索引，逐行保留等级与绑定，仅规范本次 F/2 功能对应两项。
+            for (int i = 0; i < roleSkillList.Count; i++)
+            {
+                // 单条角色技能的 ID/等级来自数据库，不使用客户端提供的效果或数值。
+                RoleSkillInfo roleSkillInfo = new RoleSkillInfo()
+                {
+                    SkillId =  roleSkillList[i].SkillID,
+                    Level =  roleSkillList[i].SkillLevel,
+                    BindKey = roleSkillList[i].Bindkey
+                };
+                // F 固定使用已接入的滑行，旧 F 斩天剑移至 2；只规范回包，不覆盖数据库键位。
+                if (roleSkillInfo.SkillId == 10080)
+                {
+                    roleSkillInfo.BindKey = "F";
+                    if (roleSkillInfo.Level <= 0)
+                    {
+                        roleSkillInfo.Level = 1;
+                    }
+                }
+                else if (roleSkillInfo.SkillId == 10060 &&
+                    string.Equals(roleSkillInfo.BindKey, "F", StringComparison.OrdinalIgnoreCase))
+                {
+                    roleSkillInfo.BindKey = "2";
+                }
+                ret.RoleSkillInfoList.Add(roleSkillInfo);
+            }
+        }
+        else
+        {
+            ret.CmdCode = CmdCode.RoleNotExist;
+        }
+        
         return ret;
     }
 
@@ -347,103 +450,6 @@ public class CentRoleModel
         return ret;
     }
 
-    /// <summary>将数据库刷新时间转换为协议 UTC ticks。</summary>
-    private static long GetUtcTicks(DateTime value)
-    {
-        if (value == DateTime.MinValue)
-        {
-            return 0L;
-        }
-        return value.ToUniversalTime().Ticks;
-    }
-
-    /// <summary>
-    /// 将物品放入对应的独立背包；普通背包不聚合其它背包的物品。
-    /// </summary>
-    private static void AddItemToPack(RoleKanpsackInfo ret, KnapsackType packType, RoleItemInfo itemInfo)
-    {
-        switch (packType)
-        {
-            case KnapsackType.RolePackPlain:
-                ret.RolePackPlain.Add(itemInfo);
-                break;
-            case KnapsackType.RolePackEquip:
-                ret.RolePackEquip.Add(itemInfo);
-                break;
-            case KnapsackType.RolePackConsume:
-                ret.RolePackConsume.Add(itemInfo);
-                break;
-            case KnapsackType.RolePackMaterial:
-                ret.RolePackMaterial.Add(itemInfo);
-                break;
-            case KnapsackType.RoleCurrtEquipPack:
-                ret.RoleCurrtEquipPack.Add(itemInfo);
-                break;
-            case KnapsackType.RoleVirtualItemPack:
-                // 虚拟物品单独返回，不进入普通背包，也不参与普通背包格子展示。
-                ret.RoleVirtualItemPack.Add(itemInfo);
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 写入对应包裹的已开格子容量。该 Count 不是物品数量。
-    /// </summary>
-    private static void AddPackCount(RoleKanpsackInfo ret, KnapsackType packType, int openedGridCount)
-    {
-        ret.KanpsackTypeCountLst.Add(new Kanpsacktypecount
-        {
-            Type = (int)packType,
-            Count = openedGridCount
-        });
-    }
-
-    private static bool IsPersistedKnapsackType(KnapsackType type)
-    {
-        // 是否为普通包裹或装备包裹类型。
-        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
-        // 是否为消耗品包裹或材料包裹类型。
-        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
-        return isPlainOrEquip || isConsumeOrMaterial;
-    }
-
-    private static KnapsackType[] GetPersistedKnapsackTypes()
-    {
-        return new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
-    }
-
-    /// <summary>旧普通背包记录是分类容量补齐时的最低值。</summary>
-    private static int GetLegacyFallback(List<RoleKnapsackTable> rows)
-    {
-        RoleKnapsackTable oldAll = null;
-        if (rows != null)
-        {
-            oldAll = rows.FirstOrDefault(v => v.roleKnapsack == (byte)KnapsackType.RolePackPlain);
-        }
-        if (oldAll == null)
-        {
-            return DefaultOpenedKnapsackGridCount;
-        }
-        return System.Math.Max(DefaultOpenedKnapsackGridCount, (int)oldAll.roleKnapsackcount);
-    }
-
-    /// <summary>已有分类保留自身与旧普通背包中的较大容量，缺失分类继承旧普通背包。</summary>
-    private static int GetMigratedGridCount(RoleKnapsackTable row, int legacyFallback)
-    {
-        if (row == null)
-        {
-            return legacyFallback;
-        }
-        return System.Math.Max(legacyFallback,
-            System.Math.Max(DefaultOpenedKnapsackGridCount, (int)row.roleKnapsackcount));
-    }
-
     /// <summary>查询旧角色时补齐四类可扩容背包，穿戴栏不创建容量记录。</summary>
     private void EnsureMissingKnapsackRows(int roleId, List<RoleKnapsackTable> rows, int legacyFallback)
     {
@@ -475,4 +481,5 @@ public class CentRoleModel
             _db.Insertable(missingRows).ExecuteCommand();
         }
     }
+    #endregion
 }

@@ -4,23 +4,6 @@
 /// </summary>
 public sealed class SaveRoleDataTimer : ITimer
 {
-    /// <summary>角色保存周期，单位为毫秒。</summary>
-    private const int SaveIntervalMilliseconds = 60000;
-
-    /// <summary>所属在线角色。</summary>
-    private OnlineRole _role;
-    /// <summary>在 CTimerMgr 中注册的定时器句柄。</summary>
-    private long _timerHandle = CTimerMgr.InvalidTimer;
-    /// <summary>是否已经到达保存时间。</summary>
-    private bool _needSave;
-
-    /// <summary>绑定定时器所属角色。</summary>
-    /// <param name="role">在线角色。</param>
-    public void SetRole(OnlineRole role)
-    {
-        _role = role;
-    }
-
     /// <summary>向公共定时器管理器注册无限循环保存定时器。</summary>
     public void Start()
     {
@@ -38,6 +21,25 @@ public sealed class SaveRoleDataTimer : ITimer
             0,
             SaveIntervalMilliseconds,
             CTimerMgr.InfiniteRepeatCount);
+    }
+
+    /// <summary>角色保存周期，单位为毫秒。</summary>
+    private const int SaveIntervalMilliseconds = 60000;
+
+    /// <summary>所属在线角色。</summary>
+    private OnlineRole _role;
+
+    /// <summary>在 CTimerMgr 中注册的定时器句柄。</summary>
+    private long _timerHandle = CTimerMgr.InvalidTimer;
+
+    /// <summary>是否已经到达保存时间。</summary>
+    private bool _needSave;
+
+    /// <summary>绑定定时器所属角色。</summary>
+    /// <param name="role">在线角色。</param>
+    public void SetRole(OnlineRole role)
+    {
+        _role = role;
     }
 
     /// <summary>取消定时器并清除待保存标记。</summary>

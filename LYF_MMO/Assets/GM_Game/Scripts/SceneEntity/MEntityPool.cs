@@ -9,17 +9,17 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MEntityPool
 {
+    /// <summary>私有构造函数，禁止外部直接实例化，强制使用 Instance 单例访问</summary>
+    private MEntityPool()
+    {
+    }
+
     /// <summary>单例实例（懒汉式，首次访问时初始化）</summary>
     private static readonly MEntityPool _instance = new MEntityPool();
 
     /// <summary>按实体运行时类型分桶的空闲队列，键为具体类型，值为可复用实体队列</summary>
     private readonly Dictionary<Type, Queue<MEntity>> _pools =
         new Dictionary<Type, Queue<MEntity>>();
-
-    /// <summary>私有构造函数，禁止外部直接实例化，强制使用 Instance 单例访问</summary>
-    private MEntityPool()
-    {
-    }
 
     /// <summary>实体池全局单例入口</summary>
     public static MEntityPool Instance

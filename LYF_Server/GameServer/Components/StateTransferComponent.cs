@@ -64,11 +64,80 @@ public sealed class StateTransferComponent : RoleComponentBase
     private readonly Dictionary<StateTransitionType, HashSet<ulong>> state_type_serial_id_map_ =
         new Dictionary<StateTransitionType, HashSet<ulong>>();
 
+    #region 构造与初始化
     /// <summary>创建状态切换组件。</summary>
     /// <param name="owner">组件所属的在线角色。</param>
     public StateTransferComponent(OnlineRole owner)
         : base(owner)
     {
+    }
+
+    /// <summary>
+    /// 组件释放时取消全部挂起请求并释放事件引用，避免角色销毁后仍持有池化事件。
+    /// </summary>
+    public override void Dispose()
+    {
+        // serial_ids 是全部挂起请求序号的键快照：移除会改动映射，不能在遍历原键集时删。
+        List<ulong> serial_ids = new List<ulong>(state_request_transfer_map_.Keys);
+        // index 是请求序号快照下标，逐个取消并释放事件引用，避免边遍历边删原映射。
+        for (int index = 0; index < serial_ids.Count; index++)
+        {
+            RemoveRequest(serial_ids[index]);
+        }
+        state_request_transfer_map_.Clear();
+        state_type_serial_id_map_.Clear();
+        base.Dispose();
+    }
+    #endregion
+
+    #region 离开状态回调与请求登记
+    /// <summary>
+    /// 某个源状态已经离开时回调：该请求的所有源状态都离开后进入新状态，
+    /// 对应 state_transfer_component.cpp 的 OnLeaveState。
+    /// </summary>
+    /// <param name="state_type">刚刚离开的源状态。</param>
+    public void OnLeaveState(StateTransitionType state_type)
+    {
+        if (state_request_transfer_map_.Count == 0)
+        {
+            return;
+        }
+        // serial_ids 是等待该源状态离开的请求序号集合，没有登记说明本次离开与切换无关。
+        HashSet<ulong> serial_ids;
+        if (!state_type_serial_id_map_.TryGetValue(state_type, out serial_ids))
+        {
+            return;
+        }
+        // 复制一份序号快照：进入新状态会修改映射，不能在遍历原集合时改动它。
+        List<ulong> serial_id_snapshot = new List<ulong>(serial_ids);
+        // index 是请求序号快照下标，从零到快照长度减一，遍历期间不改动原集合。
+        for (int index = 0; index < serial_id_snapshot.Count; index++)
+        {
+            // req 是本轮待判定的切换请求；快照下标 index 只用于按下标取序号。
+            TransferRequestInfo req;
+            if (!state_request_transfer_map_.TryGetValue(serial_id_snapshot[index], out req))
+            {
+                LogMsg.Info("状态切换请求丢失，序号=" + serial_id_snapshot[index], LogMsgType.Error);
+                continue;
+            }
+            // all_left 记录该请求的全部源状态是否都已离开；只要还有一个没离开就继续等。
+            bool all_left = true;
+            // wait_types 是源状态集合的成员快照，集合没有下标，先取快照再按下标遍历。
+            List<StateTransitionType> wait_types = new List<StateTransitionType>(req.from_state_type_list_);
+            // wait_index 是源状态快照下标，一旦发现还有源状态未离开就提前跳出。
+            for (int wait_index = 0; wait_index < wait_types.Count; wait_index++)
+            {
+                if (StateMutexManager.Instance.IsInState(Owner, wait_types[wait_index]))
+                {
+                    all_left = false;
+                    break;
+                }
+            }
+            if (all_left)
+            {
+                EnterState(req, EnterStateType.kNormal);
+            }
+        }
     }
 
     /// <summary>
@@ -117,7 +186,9 @@ public sealed class StateTransferComponent : RoleComponentBase
         ProcessRequest(req);
         return new_serial_id;
     }
+    #endregion
 
+    #region 移除与回收
     /// <summary>
     /// 移除请求并释放它持有的事件引用；移除后回调不再触发，
     /// 对应 state_transfer_component.cpp 的 RemoveRequest。
@@ -136,6 +207,20 @@ public sealed class StateTransferComponent : RoleComponentBase
         return true;
     }
 
+    /// <summary>释放请求持有的事件引用；空引用直接忽略。</summary>
+    /// <param name="req">待释放的请求。</param>
+    private static void ReleaseHeldEvent(TransferRequestInfo req)
+    {
+        if (req == null || req.held_event_ == null)
+        {
+            return;
+        }
+        req.held_event_.Release();
+        req.held_event_ = null;
+    }
+    #endregion
+
+    #region 转移流程处理
     /// <summary>
     /// 把请求从两张索引表里摘掉并清空回调，但不释放事件引用。
     /// 供 EnterState 在回调执行完之后再释放，避免回调里用到已被回收的池化事件。
@@ -172,55 +257,6 @@ public sealed class StateTransferComponent : RoleComponentBase
         state_request_transfer_map_.Remove(serial_id);
         req.call_back_func_ = null;
         return req;
-    }
-
-    /// <summary>
-    /// 某个源状态已经离开时回调：该请求的所有源状态都离开后进入新状态，
-    /// 对应 state_transfer_component.cpp 的 OnLeaveState。
-    /// </summary>
-    /// <param name="state_type">刚刚离开的源状态。</param>
-    public void OnLeaveState(StateTransitionType state_type)
-    {
-        if (state_request_transfer_map_.Count == 0)
-        {
-            return;
-        }
-        // serial_ids 是等待该源状态离开的请求序号集合，没有登记说明本次离开与切换无关。
-        HashSet<ulong> serial_ids;
-        if (!state_type_serial_id_map_.TryGetValue(state_type, out serial_ids))
-        {
-            return;
-        }
-        // 复制一份序号快照：进入新状态会修改映射，不能在遍历原集合时改动它。
-        List<ulong> serial_id_snapshot = new List<ulong>(serial_ids);
-        // index 是请求序号快照下标，从零到快照长度减一，遍历期间不改动原集合。
-        for (int index = 0; index < serial_id_snapshot.Count; index++)
-        {
-            // req 是本轮待判定的切换请求；快照下标 index 只用于按下标取序号。
-            TransferRequestInfo req;
-            if (!state_request_transfer_map_.TryGetValue(serial_id_snapshot[index], out req))
-            {
-                LogMsg.Info("状态切换请求丢失，序号=" + serial_id_snapshot[index], LogMsgType.Error);
-                continue;
-            }
-            // all_left 记录该请求的全部源状态是否都已离开；只要还有一个没离开就继续等。
-            bool all_left = true;
-            // wait_types 是源状态集合的成员快照，集合没有下标，先取快照再按下标遍历。
-            List<StateTransitionType> wait_types = new List<StateTransitionType>(req.from_state_type_list_);
-            // wait_index 是源状态快照下标，一旦发现还有源状态未离开就提前跳出。
-            for (int wait_index = 0; wait_index < wait_types.Count; wait_index++)
-            {
-                if (StateMutexManager.Instance.IsInState(Owner, wait_types[wait_index]))
-                {
-                    all_left = false;
-                    break;
-                }
-            }
-            if (all_left)
-            {
-                EnterState(req, EnterStateType.kNormal);
-            }
-        }
     }
 
     /// <summary>
@@ -313,33 +349,5 @@ public sealed class StateTransferComponent : RoleComponentBase
             ReleaseHeldEvent(req);
         }
     }
-
-    /// <summary>释放请求持有的事件引用；空引用直接忽略。</summary>
-    /// <param name="req">待释放的请求。</param>
-    private static void ReleaseHeldEvent(TransferRequestInfo req)
-    {
-        if (req == null || req.held_event_ == null)
-        {
-            return;
-        }
-        req.held_event_.Release();
-        req.held_event_ = null;
-    }
-
-    /// <summary>
-    /// 组件释放时取消全部挂起请求并释放事件引用，避免角色销毁后仍持有池化事件。
-    /// </summary>
-    public override void Dispose()
-    {
-        // serial_ids 是全部挂起请求序号的键快照：移除会改动映射，不能在遍历原键集时删。
-        List<ulong> serial_ids = new List<ulong>(state_request_transfer_map_.Keys);
-        // index 是请求序号快照下标，逐个取消并释放事件引用，避免边遍历边删原映射。
-        for (int index = 0; index < serial_ids.Count; index++)
-        {
-            RemoveRequest(serial_ids[index]);
-        }
-        state_request_transfer_map_.Clear();
-        state_type_serial_id_map_.Clear();
-        base.Dispose();
-    }
+    #endregion
 }

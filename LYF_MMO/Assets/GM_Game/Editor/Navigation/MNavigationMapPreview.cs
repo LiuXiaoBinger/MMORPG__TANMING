@@ -8,6 +8,8 @@ using UnityEngine.Rendering;
 /// <summary>反读公共地图文件，在当前Scene相机自绘浅蓝可走面和三角边线，不调用原生导航绘制。</summary>
 public sealed class MNavigationMapPreview
 {
+
+    #region 字段与属性
     /// <summary>仅用于预览期间暂停原生蓝面，避免两份网格叠色；隐藏时恢复。</summary>
     private static readonly PropertyInfo _showNavMeshProperty = typeof(NavMeshVisualizationSettings).GetProperty("showNavMesh", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -49,7 +51,9 @@ public sealed class MNavigationMapPreview
 
     /// <summary>是否已缓存公共文件并将自绘指令接入Scene相机。</summary>
     public bool IsVisible => _mesh != null;
+    #endregion
 
+    #region 界面显示与开关
     /// <summary>读取公共bytes并向当前Scene相机添加自绘指令；保持用户当前近景镜头。</summary>
     /// <param name="filePath">项目根NavigationData内所选地图的公共网格绝对路径。</param>
     /// <returns>本次从磁盘实际读取的网格，供窗口显示数量及来源。</returns>
@@ -107,6 +111,57 @@ public sealed class MNavigationMapPreview
         return mapData;
     }
 
+    /// <summary>移除Scene自绘、销毁临时网格材质并恢复原生开关；不保存或修改地图。</summary>
+    public void Hide()
+    {
+        AssemblyReloadEvents.beforeAssemblyReload -= Hide;
+        if (_commands != null)
+        {
+            if (_camera != null)
+            {
+                _camera.RemoveCommandBuffer(CameraEvent.BeforeImageEffects, _commands);
+            }
+            _commands.Release();
+            _commands = null;
+        }
+        if (_camera != null)
+        {
+            _camera.depthTextureMode = _previousDepthTextureMode;
+        }
+        _camera = null;
+        if (_mesh != null)
+        {
+            Object.DestroyImmediate(_mesh);
+            _mesh = null;
+        }
+        if (_lineMesh != null)
+        {
+            Object.DestroyImmediate(_lineMesh);
+            _lineMesh = null;
+        }
+        if (_materials != null)
+        {
+            for (int materialIndex = 0; materialIndex < _materials.Length; materialIndex++)
+            {
+                Object.DestroyImmediate(_materials[materialIndex]);
+            }
+            _materials = null;
+        }
+        if (_terrainHeights != null)
+        {
+            Object.DestroyImmediate(_terrainHeights);
+            _terrainHeights = null;
+        }
+        if (_restoreShowNavMesh)
+        {
+            _showNavMeshProperty.SetValue(null, _previousShowNavMesh, null);
+            _restoreShowNavMesh = false;
+        }
+        SceneView.RepaintAll();
+    }
+    #endregion
+
+    #region 创建与添加
     /// <summary>创建面或线的透明预览材质，仅对实际Terrain遮挡点允许有界贴地显示。</summary>
     /// <param name="color">面或边线的RGB及透明度，保留地表纹理并区分内部线和外轮廓。</param>
     /// <param name="writeDepth">蓝面写入深度遮住后方导航层，边线只读深度。</param>
@@ -247,6 +302,7 @@ public sealed class MNavigationMapPreview
         edgeCounts.TryGetValue(edgeKey, out count);
         edgeCounts[edgeKey] = count + 1;
     }
+    #endregion
 
     /// <summary>用户主动定位时将Scene镜头移到公共文件包围盒，不改场景内相机。</summary>
     public void Frame()
@@ -258,54 +314,5 @@ public sealed class MNavigationMapPreview
             sceneView = EditorWindow.GetWindow<SceneView>();
         }
         sceneView.Frame(_bounds, true);
-    }
-
-    /// <summary>移除Scene自绘、销毁临时网格材质并恢复原生开关；不保存或修改地图。</summary>
-    public void Hide()
-    {
-        AssemblyReloadEvents.beforeAssemblyReload -= Hide;
-        if (_commands != null)
-        {
-            if (_camera != null)
-            {
-                _camera.RemoveCommandBuffer(CameraEvent.BeforeImageEffects, _commands);
-            }
-            _commands.Release();
-            _commands = null;
-        }
-        if (_camera != null)
-        {
-            _camera.depthTextureMode = _previousDepthTextureMode;
-        }
-        _camera = null;
-        if (_mesh != null)
-        {
-            Object.DestroyImmediate(_mesh);
-            _mesh = null;
-        }
-        if (_lineMesh != null)
-        {
-            Object.DestroyImmediate(_lineMesh);
-            _lineMesh = null;
-        }
-        if (_materials != null)
-        {
-            for (int materialIndex = 0; materialIndex < _materials.Length; materialIndex++)
-            {
-                Object.DestroyImmediate(_materials[materialIndex]);
-            }
-            _materials = null;
-        }
-        if (_terrainHeights != null)
-        {
-            Object.DestroyImmediate(_terrainHeights);
-            _terrainHeights = null;
-        }
-        if (_restoreShowNavMesh)
-        {
-            _showNavMeshProperty.SetValue(null, _previousShowNavMesh, null);
-            _restoreShowNavMesh = false;
-        }
-        SceneView.RepaintAll();
     }
 }

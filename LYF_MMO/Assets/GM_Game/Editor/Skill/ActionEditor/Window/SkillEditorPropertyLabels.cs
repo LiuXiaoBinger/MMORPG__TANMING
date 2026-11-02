@@ -604,60 +604,7 @@ public static class SkillEditorPropertyLabels
         { "Facing angle must be between 0 and 360.", "朝向角必须在 0 至 360 度之间。" },
     };
 
-    /// <summary>获取指定字段的当前语言名称，未知扩展字段保持调用方提供的真实显示名称。</summary>
-    /// <param name="fieldName">实际序列化字段名，保持原拼写。</param>
-    /// <param name="englishFallback">未知字段的 Unity 原显示名称。</param>
-    /// <returns>框架显示标签；不会改写用户字段值。</returns>
-    public static string Label(string fieldName, string englishFallback)
-    {
-        // 当前字段的只读中英文案，查询失败时保留外部扩展名称。
-        LabelEntry entry;
-        if (Labels.TryGetValue(fieldName, out entry)) return SkillEditorLocalization.Text(entry.English, entry.Chinese);
-        return englishFallback;
-    }
-
-    /// <summary>获取序列化字段的双语标签与工具提示，数组元素只翻译固定的“元素”前缀。</summary>
-    /// <param name="property">Unity 原属性游标，不修改其名称或数据。</param>
-    /// <returns>本次绘制使用的标签；语言切换后重新计算。</returns>
-    public static GUIContent Content(SerializedProperty property)
-    {
-        // 标签查原字段名，提示先使用原声明内容，保留原用途、空间和范围语义。
-        string label = Label(property.name, property.displayName);
-        // 同名字段的不同上下文仍使用各自声明 Tooltip，而不按名称粗略覆盖。
-        string tooltip = property.tooltip;
-        // 元数据边界只读取字段属性，不读取弱类型领域值。
-        FieldInfo field = ResolveField(property);
-        if (string.IsNullOrEmpty(tooltip) && field != null)
-        {
-            // Unity Tooltip 元数据不参与资产保存。
-            TooltipAttribute attribute = field.GetCustomAttribute<TooltipAttribute>();
-            if (attribute != null) tooltip = attribute.tooltip;
-        }
-        if (!string.IsNullOrEmpty(tooltip)) tooltip = FrameworkText(tooltip);
-        else
-        {
-            // 没有原提示时才使用新增的双语字段说明。
-            LabelEntry entry;
-            if (Labels.TryGetValue(property.name, out entry)) tooltip = SkillEditorLocalization.Text(entry.EnglishTooltip, entry.ChineseTooltip);
-        }
-        if (property.name.StartsWith("data[", StringComparison.Ordinal)) label = SkillEditorLocalization.Text("Element ", "元素 ") + property.name.Substring(4);
-        return new GUIContent(label, tooltip);
-    }
-
-    /// <summary>按照 Unity 原 enumNames 的顺序生成显示选项，非连续枚举仍写回原 enumValueIndex。</summary>
-    /// <param name="property">枚举属性，原 intValue 和索引均由 Unity 管理。</param>
-    /// <returns>每个原枚举选项对应的当前语言文案。</returns>
-    public static GUIContent[] EnumLabels(SerializedProperty property)
-    {
-        // Unity 提供的声明选项顺序，不按枚举数值重新排序。
-        string[] names = property.enumNames;
-        // 当前语言显示数组，不作为业务数据或序列化载荷。
-        GUIContent[] labels = new GUIContent[names.Length];
-        // 枚举声明项的零起始显示索引。
-        for (int index = 0; index < names.Length; index++) labels[index] = new GUIContent(EnumText(names[index], property.name));
-        return labels;
-    }
-
+    #region 界面刷新
     /// <summary>绘制枚举显示；Flags 使用真实位值切换，普通枚举沿用 Unity 原索引。</summary>
     /// <param name="property">本次可编辑的枚举属性，只有用户选择菜单项才写数据。</param>
     /// <param name="label">已翻译的字段标签及提示。</param>
@@ -675,127 +622,6 @@ public static class SkillEditorPropertyLabels
         // 显示索引独立于枚举数值，例如 Uncancellable=99 仍保留其原值。
         int selected = EditorGUILayout.Popup(label, property.enumValueIndex, EnumLabels(property));
         if (EditorGUI.EndChangeCheck()) property.enumValueIndex = selected;
-    }
-
-    /// <summary>按原声明类型定位 Flags 元数据，支持嵌套列表路径并保持 propertyPath 不变。</summary>
-    /// <param name="property">Unity 原始属性路径，Array.data 段仅用于类型导航。</param>
-    /// <returns>最后一个字段的声明类型，未知第三方结构返回 null。</returns>
-    private static Type ResolveFieldType(SerializedProperty property)
-    {
-        // 仅获取 Unity 对象的类型信息；这是序列化元数据边界，不读取弱类型业务载荷。
-        Type current = property.serializedObject.targetObject.GetType();
-        // 原属性路径的分段快照，不更改字段或对象本身。
-        string[] segments = property.propertyPath.Split('.');
-        // 当前导航段的零起始索引。
-        for (int index = 0; index < segments.Length; index++)
-        {
-            if (segments[index] == "Array")
-            {
-                if (current.IsArray) current = current.GetElementType();
-                else if (current.IsGenericType) current = current.GetGenericArguments()[0];
-                else return null;
-                index++;
-                continue;
-            }
-            // 当前字段可能在基类中声明，按继承链查找相同原名称。
-            Type declaring = current;
-            // 反射字段仅用于类型定位，不获取或传递其业务值。
-            FieldInfo field = null;
-            while (declaring != null && field == null)
-            {
-                field = declaring.GetField(segments[index], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                declaring = declaring.BaseType;
-            }
-            if (field == null) return null;
-            current = field.FieldType;
-        }
-        return current;
-    }
-
-    /// <summary>查询原属性对应字段的声明元数据，列表元素导航不修改列表。</summary>
-    /// <param name="property">Unity 原属性路径。</param>
-    /// <returns>原字段元数据；未知结构返回空。</returns>
-    private static FieldInfo ResolveField(SerializedProperty property)
-    {
-        // 反射与序列化元数据边界，仅读取类型与属性声明。
-        Type current = property.serializedObject.targetObject.GetType();
-        // 属性路径的导航分段快照，字段名称原样使用。
-        string[] segments = property.propertyPath.Split('.');
-        // 最后一次匹配的声明字段，用于读取 Unity 属性特性。
-        FieldInfo result = null;
-        for (/* 当前原属性路径分段的零起始索引，Array 段会同时跳过下一 data[n] 段。 */ int index = 0; index < segments.Length; index++)
-        {
-            if (segments[index] == "Array")
-            {
-                if (current.IsArray) current = current.GetElementType();
-                else if (current.IsGenericType) current = current.GetGenericArguments()[0];
-                else return null;
-                index++;
-                continue;
-            }
-            // 按继承链寻找当前原字段，不读取其领域值。
-            Type declaring = current;
-            result = null;
-            while (declaring != null && result == null)
-            {
-                result = declaring.GetField(segments[index], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                declaring = declaring.BaseType;
-            }
-            if (result == null) return null;
-            current = result.FieldType;
-        }
-        return result;
-    }
-
-    /// <summary>翻译已知框架提示，保留未知异常及用户自定义说明。</summary>
-    /// <param name="message">原框架完整文案。</param>
-    /// <returns>当前语言的只读显示文案。</returns>
-    public static string FrameworkText(string message)
-    {
-        if (string.IsNullOrEmpty(message)) return message;
-        // 已知完整英文说明对应的中文，避免按子字符串误改用户内容。
-        string chinese;
-        if (FrameworkChinese.TryGetValue(message, out chinese)) return SkillEditorLocalization.Text(message, chinese);
-        return message;
-    }
-
-    /// <summary>只翻译验证结果显示，不改错误码、轨道定位或原错误对象。</summary>
-    /// <param name="message">验证器原消息，包含可能的事件索引或声明类型名。</param>
-    /// <returns>保留原动态数据的双语显示。</returns>
-    public static string ValidationMessage(string message)
-    {
-        if (string.IsNullOrEmpty(message)) return message;
-        // 两类已知动态模板仍保留原事件索引或接口声明名称。
-        const string overlapPrefix = "Conflicts with overlapping AdjustMotion event ";
-        if (message.StartsWith(overlapPrefix, StringComparison.Ordinal) && message.EndsWith(".", StringComparison.Ordinal))
-            return SkillEditorLocalization.Text(message, "与重叠的朝向调整事件 " + message.Substring(overlapPrefix.Length, message.Length - overlapPrefix.Length - 1) + " 冲突。");
-        // 该模板仅翻译框架外壳，尖括号内的真实 C# 类型名保持原样。
-        const string handlerPrefix = "No IActionEventHandler<";
-        const /* 原处理器缺失诊断的固定后缀，用于只翻译框架模板并保留动态类型名称。 */ string handlerSuffix = "> is registered.";
-        if (message.StartsWith(handlerPrefix, StringComparison.Ordinal) && message.EndsWith(handlerSuffix, StringComparison.Ordinal))
-            return SkillEditorLocalization.Text(message, "尚未注册 IActionEventHandler<" + message.Substring(handlerPrefix.Length, message.Length - handlerPrefix.Length - handlerSuffix.Length) + ">。");
-        return FrameworkText(message);
-    }
-
-    /// <summary>翻译宿主规则导出的稳定错误模板，原技能 ID 和未知异常保持原样。</summary>
-    /// <param name="message">宿主原异常文本。</param>
-    /// <returns>当前语言错误显示。</returns>
-    public static string HostMessage(string message)
-    {
-        if (string.IsNullOrEmpty(message)) return message;
-        switch (message)
-        {
-            case "请退出运行模式后编辑和导出施法规则。规则在启动前同步装载。": return SkillEditorLocalization.Text("Exit Play Mode before editing or exporting casting rules. Rules are loaded before startup.", message);
-            case "运行中不能导出权限，防止界面显示已修改但本次进程仍使用旧规则。": return SkillEditorLocalization.Text("Casting rules cannot be exported during Play Mode because the running process still uses its loaded rules.", message);
-            case "未找到正式 tbskillinfo.bytes，拒绝导出无法验证的技能权限。": return SkillEditorLocalization.Text("The formal tbskillinfo.bytes was not found; casting rules cannot be validated or exported.", message);
-        }
-        // 原错误前缀数组只识别框架模板，后缀用户数据不参与翻译。
-        string[] chinesePrefixes = { "权限技能不在旧主表中：", "InteruptSkill 引用不存在的旧技能：" };
-        // 与中文前缀一一对应的英文框架说明。
-        string[] englishPrefixes = { "Casting-rule skill is missing from the original table: ", "InteruptSkill refers to an unknown original skill: " };
-        for (/* 当前双语宿主提示前缀的零起始索引，两组前缀使用同一索引对应。 */ int index = 0; index < chinesePrefixes.Length; index++)
-            if (message.StartsWith(chinesePrefixes[index], StringComparison.Ordinal)) return SkillEditorLocalization.Text(englishPrefixes[index], chinesePrefixes[index]) + message.Substring(chinesePrefixes[index].Length);
-        return FrameworkText(message);
     }
 
     /// <summary>Flags 菜单只切换实际声明的位，保留复合值、非连续位和未声明的原始位。</summary>
@@ -1077,6 +903,185 @@ public static class SkillEditorPropertyLabels
         }
         DrawLeaf(property, Content(property), null, true);
     }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>按原声明类型定位 Flags 元数据，支持嵌套列表路径并保持 propertyPath 不变。</summary>
+    /// <param name="property">Unity 原始属性路径，Array.data 段仅用于类型导航。</param>
+    /// <returns>最后一个字段的声明类型，未知第三方结构返回 null。</returns>
+    private static Type ResolveFieldType(SerializedProperty property)
+    {
+        // 仅获取 Unity 对象的类型信息；这是序列化元数据边界，不读取弱类型业务载荷。
+        Type current = property.serializedObject.targetObject.GetType();
+        // 原属性路径的分段快照，不更改字段或对象本身。
+        string[] segments = property.propertyPath.Split('.');
+        // 当前导航段的零起始索引。
+        for (int index = 0; index < segments.Length; index++)
+        {
+            if (segments[index] == "Array")
+            {
+                if (current.IsArray) current = current.GetElementType();
+                else if (current.IsGenericType) current = current.GetGenericArguments()[0];
+                else return null;
+                index++;
+                continue;
+            }
+            // 当前字段可能在基类中声明，按继承链查找相同原名称。
+            Type declaring = current;
+            // 反射字段仅用于类型定位，不获取或传递其业务值。
+            FieldInfo field = null;
+            while (declaring != null && field == null)
+            {
+                field = declaring.GetField(segments[index], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                declaring = declaring.BaseType;
+            }
+            if (field == null) return null;
+            current = field.FieldType;
+        }
+        return current;
+    }
+
+    /// <summary>查询原属性对应字段的声明元数据，列表元素导航不修改列表。</summary>
+    /// <param name="property">Unity 原属性路径。</param>
+    /// <returns>原字段元数据；未知结构返回空。</returns>
+    private static FieldInfo ResolveField(SerializedProperty property)
+    {
+        // 反射与序列化元数据边界，仅读取类型与属性声明。
+        Type current = property.serializedObject.targetObject.GetType();
+        // 属性路径的导航分段快照，字段名称原样使用。
+        string[] segments = property.propertyPath.Split('.');
+        // 最后一次匹配的声明字段，用于读取 Unity 属性特性。
+        FieldInfo result = null;
+        for (/* 当前原属性路径分段的零起始索引，Array 段会同时跳过下一 data[n] 段。 */ int index = 0; index < segments.Length; index++)
+        {
+            if (segments[index] == "Array")
+            {
+                if (current.IsArray) current = current.GetElementType();
+                else if (current.IsGenericType) current = current.GetGenericArguments()[0];
+                else return null;
+                index++;
+                continue;
+            }
+            // 按继承链寻找当前原字段，不读取其领域值。
+            Type declaring = current;
+            result = null;
+            while (declaring != null && result == null)
+            {
+                result = declaring.GetField(segments[index], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                declaring = declaring.BaseType;
+            }
+            if (result == null) return null;
+            current = result.FieldType;
+        }
+        return result;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>获取指定字段的当前语言名称，未知扩展字段保持调用方提供的真实显示名称。</summary>
+    /// <param name="fieldName">实际序列化字段名，保持原拼写。</param>
+    /// <param name="englishFallback">未知字段的 Unity 原显示名称。</param>
+    /// <returns>框架显示标签；不会改写用户字段值。</returns>
+    public static string Label(string fieldName, string englishFallback)
+    {
+        // 当前字段的只读中英文案，查询失败时保留外部扩展名称。
+        LabelEntry entry;
+        if (Labels.TryGetValue(fieldName, out entry)) return SkillEditorLocalization.Text(entry.English, entry.Chinese);
+        return englishFallback;
+    }
+
+    /// <summary>获取序列化字段的双语标签与工具提示，数组元素只翻译固定的“元素”前缀。</summary>
+    /// <param name="property">Unity 原属性游标，不修改其名称或数据。</param>
+    /// <returns>本次绘制使用的标签；语言切换后重新计算。</returns>
+    public static GUIContent Content(SerializedProperty property)
+    {
+        // 标签查原字段名，提示先使用原声明内容，保留原用途、空间和范围语义。
+        string label = Label(property.name, property.displayName);
+        // 同名字段的不同上下文仍使用各自声明 Tooltip，而不按名称粗略覆盖。
+        string tooltip = property.tooltip;
+        // 元数据边界只读取字段属性，不读取弱类型领域值。
+        FieldInfo field = ResolveField(property);
+        if (string.IsNullOrEmpty(tooltip) && field != null)
+        {
+            // Unity Tooltip 元数据不参与资产保存。
+            TooltipAttribute attribute = field.GetCustomAttribute<TooltipAttribute>();
+            if (attribute != null) tooltip = attribute.tooltip;
+        }
+        if (!string.IsNullOrEmpty(tooltip)) tooltip = FrameworkText(tooltip);
+        else
+        {
+            // 没有原提示时才使用新增的双语字段说明。
+            LabelEntry entry;
+            if (Labels.TryGetValue(property.name, out entry)) tooltip = SkillEditorLocalization.Text(entry.EnglishTooltip, entry.ChineseTooltip);
+        }
+        if (property.name.StartsWith("data[", StringComparison.Ordinal)) label = SkillEditorLocalization.Text("Element ", "元素 ") + property.name.Substring(4);
+        return new GUIContent(label, tooltip);
+    }
+
+    /// <summary>按照 Unity 原 enumNames 的顺序生成显示选项，非连续枚举仍写回原 enumValueIndex。</summary>
+    /// <param name="property">枚举属性，原 intValue 和索引均由 Unity 管理。</param>
+    /// <returns>每个原枚举选项对应的当前语言文案。</returns>
+    public static GUIContent[] EnumLabels(SerializedProperty property)
+    {
+        // Unity 提供的声明选项顺序，不按枚举数值重新排序。
+        string[] names = property.enumNames;
+        // 当前语言显示数组，不作为业务数据或序列化载荷。
+        GUIContent[] labels = new GUIContent[names.Length];
+        // 枚举声明项的零起始显示索引。
+        for (int index = 0; index < names.Length; index++) labels[index] = new GUIContent(EnumText(names[index], property.name));
+        return labels;
+    }
+
+    /// <summary>翻译已知框架提示，保留未知异常及用户自定义说明。</summary>
+    /// <param name="message">原框架完整文案。</param>
+    /// <returns>当前语言的只读显示文案。</returns>
+    public static string FrameworkText(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return message;
+        // 已知完整英文说明对应的中文，避免按子字符串误改用户内容。
+        string chinese;
+        if (FrameworkChinese.TryGetValue(message, out chinese)) return SkillEditorLocalization.Text(message, chinese);
+        return message;
+    }
+
+    /// <summary>只翻译验证结果显示，不改错误码、轨道定位或原错误对象。</summary>
+    /// <param name="message">验证器原消息，包含可能的事件索引或声明类型名。</param>
+    /// <returns>保留原动态数据的双语显示。</returns>
+    public static string ValidationMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return message;
+        // 两类已知动态模板仍保留原事件索引或接口声明名称。
+        const string overlapPrefix = "Conflicts with overlapping AdjustMotion event ";
+        if (message.StartsWith(overlapPrefix, StringComparison.Ordinal) && message.EndsWith(".", StringComparison.Ordinal))
+            return SkillEditorLocalization.Text(message, "与重叠的朝向调整事件 " + message.Substring(overlapPrefix.Length, message.Length - overlapPrefix.Length - 1) + " 冲突。");
+        // 该模板仅翻译框架外壳，尖括号内的真实 C# 类型名保持原样。
+        const string handlerPrefix = "No IActionEventHandler<";
+        const /* 原处理器缺失诊断的固定后缀，用于只翻译框架模板并保留动态类型名称。 */ string handlerSuffix = "> is registered.";
+        if (message.StartsWith(handlerPrefix, StringComparison.Ordinal) && message.EndsWith(handlerSuffix, StringComparison.Ordinal))
+            return SkillEditorLocalization.Text(message, "尚未注册 IActionEventHandler<" + message.Substring(handlerPrefix.Length, message.Length - handlerPrefix.Length - handlerSuffix.Length) + ">。");
+        return FrameworkText(message);
+    }
+
+    /// <summary>翻译宿主规则导出的稳定错误模板，原技能 ID 和未知异常保持原样。</summary>
+    /// <param name="message">宿主原异常文本。</param>
+    /// <returns>当前语言错误显示。</returns>
+    public static string HostMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return message;
+        switch (message)
+        {
+            case "请退出运行模式后编辑和导出施法规则。规则在启动前同步装载。": return SkillEditorLocalization.Text("Exit Play Mode before editing or exporting casting rules. Rules are loaded before startup.", message);
+            case "运行中不能导出权限，防止界面显示已修改但本次进程仍使用旧规则。": return SkillEditorLocalization.Text("Casting rules cannot be exported during Play Mode because the running process still uses its loaded rules.", message);
+            case "未找到正式 tbskillinfo.bytes，拒绝导出无法验证的技能权限。": return SkillEditorLocalization.Text("The formal tbskillinfo.bytes was not found; casting rules cannot be validated or exported.", message);
+        }
+        // 原错误前缀数组只识别框架模板，后缀用户数据不参与翻译。
+        string[] chinesePrefixes = { "权限技能不在旧主表中：", "InteruptSkill 引用不存在的旧技能：" };
+        // 与中文前缀一一对应的英文框架说明。
+        string[] englishPrefixes = { "Casting-rule skill is missing from the original table: ", "InteruptSkill refers to an unknown original skill: " };
+        for (/* 当前双语宿主提示前缀的零起始索引，两组前缀使用同一索引对应。 */ int index = 0; index < chinesePrefixes.Length; index++)
+            if (message.StartsWith(chinesePrefixes[index], StringComparison.Ordinal)) return SkillEditorLocalization.Text(englishPrefixes[index], chinesePrefixes[index]) + message.Substring(chinesePrefixes[index].Length);
+        return FrameworkText(message);
+    }
 
     /// <summary>翻译枚举框架名称；物理按键字符和未知扩展标识保持原样。</summary>
     /// <param name="name">枚举原声明名称，不修改该名称或值。</param>
@@ -1227,4 +1232,5 @@ public static class SkillEditorPropertyLabels
             default: return name;
         }
     }
+    #endregion
 }

@@ -9,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class SkillSlotWidget : MonoBehaviour
 {
+
+    #region 字段
     /// <summary>技能图标。</summary>
     [SerializeField, Header("技能图标")] private Image _imgIcon;
 
@@ -38,21 +40,12 @@ public class SkillSlotWidget : MonoBehaviour
 
     /// <summary>当前技能配置的完整 CD 秒数，作为遮罩填充比例的基准。</summary>
     private float _cooldownDuration;
+    #endregion
 
     /// <summary>组件销毁时释放冷却订阅。</summary>
     private void OnDestroy()
     {
         DisposeCooldown();
-    }
-
-    /// <summary>设置技能槽固定快捷键。</summary>
-    public void SetKey(string key)
-    {
-        _skillKey = key;
-        if (_texKey != null)
-        {
-            _texKey.SetText(key);
-        }
     }
 
     /// <summary>使用技能展示数据刷新当前槽位。</summary>
@@ -84,6 +77,27 @@ public class SkillSlotWidget : MonoBehaviour
         if (skill.RemainingCooldown > 0f)
         {
             StartCooldown(skill.RemainingCooldown);
+        }
+    }
+
+    /// <summary>释放旧冷却订阅，避免重绑后重复刷新。</summary>
+    private void DisposeCooldown()
+    {
+        if (_cooldownSubscription != null)
+        {
+            _cooldownSubscription.Dispose();
+            _cooldownSubscription = null;
+        }
+    }
+
+    #region 核心逻辑
+    /// <summary>设置技能槽固定快捷键。</summary>
+    public void SetKey(string key)
+    {
+        _skillKey = key;
+        if (_texKey != null)
+        {
+            _texKey.SetText(key);
         }
     }
 
@@ -223,14 +237,5 @@ public class SkillSlotWidget : MonoBehaviour
             _texCD.text = string.Empty;
         }
     }
-
-    /// <summary>释放旧冷却订阅，避免重绑后重复刷新。</summary>
-    private void DisposeCooldown()
-    {
-        if (_cooldownSubscription != null)
-        {
-            _cooldownSubscription.Dispose();
-            _cooldownSubscription = null;
-        }
-    }
+    #endregion
 }

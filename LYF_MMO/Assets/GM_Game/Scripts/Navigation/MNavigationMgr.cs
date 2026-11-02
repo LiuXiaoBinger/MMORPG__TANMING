@@ -5,17 +5,20 @@ using UnityEngine;
 /// <summary>沿RO管理器入口读取当前地图公共三角网，并在Unity与纯C#查询间转换坐标。</summary>
 public sealed class MNavigationMgr
 {
-    /// <summary>当前进程唯一的地图查询入口，切换地图时替换查询实例。</summary>
-    public static readonly MNavigationMgr singleton = new MNavigationMgr();
-    /// <summary>沿RO路径查询使用的最近面搜索半盒，XYZ分别为4、8、4米。</summary>
-    private readonly MNavigationPoint _halfExtents = new MNavigationPoint(4f, 8f, 4f);
-    /// <summary>纯C#查询返回的临时路点，主线程同步查询期间复用。</summary>
-    private readonly List<MNavigationPoint> _pathPoints = new List<MNavigationPoint>();
-    /// <summary>当前已加载地图的查询器；创角等没有数据的场景为空。</summary>
-    private MNavigation _cppNav;
-
     /// <summary>管理器仅由同名单例持有，不新建场景对象或独立更新循环。</summary>
     private MNavigationMgr() { }
+
+    /// <summary>当前进程唯一的地图查询入口，切换地图时替换查询实例。</summary>
+    public static readonly MNavigationMgr singleton = new MNavigationMgr();
+
+    /// <summary>沿RO路径查询使用的最近面搜索半盒，XYZ分别为4、8、4米。</summary>
+    private readonly MNavigationPoint _halfExtents = new MNavigationPoint(4f, 8f, 4f);
+
+    /// <summary>纯C#查询返回的临时路点，主线程同步查询期间复用。</summary>
+    private readonly List<MNavigationPoint> _pathPoints = new List<MNavigationPoint>();
+
+    /// <summary>当前已加载地图的查询器；创角等没有数据的场景为空。</summary>
+    private MNavigation _cppNav;
 
     /// <summary>场景成功加载后读取同名文件；Windows Player从StreamingAssets随包数据读取。</summary>
     /// <param name="sceneName">已成功加载的Unity场景名称。</param>

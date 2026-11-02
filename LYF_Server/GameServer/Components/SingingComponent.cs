@@ -8,6 +8,8 @@ using cfg;
 /// </summary>
 public class SingingComponent : ActionStateComponent<ROSingingArgs>
 {
+
+    #region 字段与属性
     /// <summary>本次吟唱要释放的技能主表 ID。</summary>
     protected int skill_id_;
 
@@ -29,62 +31,19 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
     /// <summary>本次吟唱解析出的技能等级核心，结束后置空。</summary>
     protected ROSkillCore core_;
 
-    /// <summary>创建吟唱状态组件。</summary>
-    /// <param name="owner">状态机所属的在线角色。</param>
-    public SingingComponent(OnlineRole owner)
-        : base(owner, StateDefine.kStateSinging)
-    {
-    }
-
     /// <summary>吟唱状态由 kActionSinging 事件驱动，对应 RO 把该事件绑定到 SingingComponent。</summary>
     protected override ROEventDefine? ActionEventType
     {
         get { return ROEventDefine.kActionSinging; }
     }
+    #endregion
 
-    /// <summary>本次吟唱是否真的读过条。</summary>
-    public bool IsStartSinging()
+    #region 构造与初始化
+    /// <summary>创建吟唱状态组件。</summary>
+    /// <param name="owner">状态机所属的在线角色。</param>
+    public SingingComponent(OnlineRole owner)
+        : base(owner, StateDefine.kStateSinging)
     {
-        return start_singing_;
-    }
-
-    /// <summary>
-    /// 吟唱能否被打断进入目标状态，对应 singing_component.cpp 的 CanActiveInterrupt。
-    /// 移动、死亡等目标一律放行；但新的吟唱请求不允许打断当前吟唱
-    /// （RO 互斥表 State_AJ_StateSinging × State_AJ_StateSinging 为 -1 未配置，
-    /// 由 RoleSingingComponent 的请求队列延后到本次吟唱结束后再执行）。
-    /// </summary>
-    /// <param name="state">即将进入的目标状态。</param>
-    public override bool CanActiveInterrupt(StateDefine state)
-    {
-        return state != StateDefine.kStateSinging;
-    }
-
-    /// <summary>
-    /// 吟唱期间不允许带动作移动，必须先打断吟唱，对应 singing_component.cpp 的 CanActiveMove。
-    /// </summary>
-    public override bool CanActiveMove()
-    {
-        return false;
-    }
-
-    /// <summary>
-    /// 状态机切换前的校验，对应 singing_component.cpp 的 OnGetEvent（:273-420）。
-    /// 本项目只校验事件载荷与角色可用性，目标/Buff/仇恨校验未移植。
-    /// </summary>
-    /// <param name="args">触发切换的吟唱事件。</param>
-    /// <param name="last_state">切换前状态机所处的状态。</param>
-    protected override bool OnGetEvent(ROSingingArgs args, StateDefine last_state)
-    {
-        if (args == null || args.skill_id_ <= 0 || args.skill_uuid_ == 0UL)
-        {
-            return false;
-        }
-        if (Owner == null || Owner.State != OnlineRoleState.Online || !Owner.IsRoleDataReady())
-        {
-            return false;
-        }
-        return true;
     }
 
     /// <summary>
@@ -139,6 +98,27 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
         }
         start_singing_ = true;
     }
+    #endregion
+
+    #region 事件回调
+    /// <summary>
+    /// 状态机切换前的校验，对应 singing_component.cpp 的 OnGetEvent（:273-420）。
+    /// 本项目只校验事件载荷与角色可用性，目标/Buff/仇恨校验未移植。
+    /// </summary>
+    /// <param name="args">触发切换的吟唱事件。</param>
+    /// <param name="last_state">切换前状态机所处的状态。</param>
+    protected override bool OnGetEvent(ROSingingArgs args, StateDefine last_state)
+    {
+        if (args == null || args.skill_id_ <= 0 || args.skill_uuid_ == 0UL)
+        {
+            return false;
+        }
+        if (Owner == null || Owner.State != OnlineRoleState.Online || !Owner.IsRoleDataReady())
+        {
+            return false;
+        }
+        return true;
+    }
 
     /// <summary>
     /// 逐帧累加吟唱时长，达到 CastMs 后自然结束，
@@ -153,24 +133,6 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
             return;
         }
         Finish();
-    }
-
-    /// <summary>
-    /// 每帧前置检查：角色离线、数据未就绪或血量归零时立即打断吟唱，
-    /// 对应 RO 在 OnUpdate 开头做的合法性校验。
-    /// </summary>
-    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
-    protected override void PreUpdate(int deltaMilliseconds)
-    {
-        if (Owner == null || Owner.mainRoleInfo == null || Owner.mainRoleInfo.BaseInfo == null)
-        {
-            Stop(StateDefine.kStateDefault, null);
-            return;
-        }
-        if (Owner.State != OnlineRoleState.Online || Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
-        {
-            Stop(StateDefine.kStateDefault, null);
-        }
     }
 
     /// <summary>
@@ -194,6 +156,71 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
         FireSkill();
         core_ = null;
         start_singing_ = false;
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>本次吟唱是否真的读过条。</summary>
+    public bool IsStartSinging()
+    {
+        return start_singing_;
+    }
+
+    /// <summary>
+    /// 吟唱能否被打断进入目标状态，对应 singing_component.cpp 的 CanActiveInterrupt。
+    /// 移动、死亡等目标一律放行；但新的吟唱请求不允许打断当前吟唱
+    /// （RO 互斥表 State_AJ_StateSinging × State_AJ_StateSinging 为 -1 未配置，
+    /// 由 RoleSingingComponent 的请求队列延后到本次吟唱结束后再执行）。
+    /// </summary>
+    /// <param name="state">即将进入的目标状态。</param>
+    public override bool CanActiveInterrupt(StateDefine state)
+    {
+        return state != StateDefine.kStateSinging;
+    }
+
+    /// <summary>
+    /// 吟唱期间不允许带动作移动，必须先打断吟唱，对应 singing_component.cpp 的 CanActiveMove。
+    /// </summary>
+    public override bool CanActiveMove()
+    {
+        return false;
+    }
+
+    /// <summary>取本角色身上的技能组件；未注册时为空。</summary>
+    /// <returns>角色技能组件，未注册返回空。</returns>
+    protected ROSkillComponent GetSkillComponent()
+    {
+        if (Owner == null)
+        {
+            return null;
+        }
+        // skill_component 接收角色身上的技能组件实现，用来把基础类型转成本工程的具体实现。
+        RoleSkillComponent skill_component;
+        if (Owner.TryGetComponent(out skill_component))
+        {
+            return skill_component;
+        }
+        return null;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>
+    /// 每帧前置检查：角色离线、数据未就绪或血量归零时立即打断吟唱，
+    /// 对应 RO 在 OnUpdate 开头做的合法性校验。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    protected override void PreUpdate(int deltaMilliseconds)
+    {
+        if (Owner == null || Owner.mainRoleInfo == null || Owner.mainRoleInfo.BaseInfo == null)
+        {
+            Stop(StateDefine.kStateDefault, null);
+            return;
+        }
+        if (Owner.State != OnlineRoleState.Online || Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        {
+            Stop(StateDefine.kStateDefault, null);
+        }
     }
 
     /// <summary>
@@ -222,21 +249,5 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
             args.Release();
         }
     }
-
-    /// <summary>取本角色身上的技能组件；未注册时为空。</summary>
-    /// <returns>角色技能组件，未注册返回空。</returns>
-    protected ROSkillComponent GetSkillComponent()
-    {
-        if (Owner == null)
-        {
-            return null;
-        }
-        // skill_component 接收角色身上的技能组件实现，用来把基础类型转成本工程的具体实现。
-        RoleSkillComponent skill_component;
-        if (Owner.TryGetComponent(out skill_component))
-        {
-            return skill_component;
-        }
-        return null;
-    }
+    #endregion
 }

@@ -24,6 +24,7 @@ public sealed class UdpNetwork
         public long CreatedTicks;
     }
 
+    #region 字段与属性
     /// <summary>监听 Socket，绑定后由接收线程阻塞读取。</summary>
     private Socket _socket;
 
@@ -68,7 +69,9 @@ public sealed class UdpNetwork
     {
         get { return _running; }
     }
+    #endregion
 
+    #region 通道启动与停机
     /// <summary>
     /// 启动 UDP 监听并开启接收与更新线程。
     /// </summary>
@@ -154,273 +157,9 @@ public sealed class UdpNetwork
             _pending.Clear();
         }
     }
+    #endregion
 
-    /// <summary>
-    /// 为已登录并在线的 TCP 会话分配绑定参数。
-    /// </summary>
-    /// <param name="session">已经确认在线角色的网关 TCP 会话。</param>
-    /// <param name="payload">输出的绑定响应，含 conv、令牌与 UDP 端口。</param>
-    /// <returns>通道不可用或会话无效时返回对应结果码。</returns>
-    public KcpBindResult TryAllocateBinding(Session session, out KcpBindPayload payload)
-    {
-        payload = null;
-        if (session == null)
-        {
-            return KcpBindResult.SessionNotReady;
-        }
-        if (!_running)
-        {
-            return KcpBindResult.ServerUnavailable;
-        }
-
-        // 本次分配的随机会话号，随机冲突时会重新生成。
-        uint conv = KcpAuth.CreateRandomConv();
-        // 本次绑定下发的 16 字节随机令牌，既是握手证明也是数据报 HMAC 密钥。
-        byte[] token = KcpAuth.CreateRandomBytes(KcpDefine.BindTokenBytes);
-        // 随机 conv 需在两张表中都不冲突，冲突时重新生成。
-        int attempt = 0;
-        while (true)
-        {
-            // 标记随机 conv 是否已被现有 Peer 占用，占用则进入下一轮重试。
-            bool convTaken;
-            lock (_sync)
-            {
-                convTaken = _peersByConv.ContainsKey(conv);
-                if (!convTaken)
-                {
-                    // 同一会话重复绑定先释放旧 Peer，重登后不复用旧连接。
-                    ReleaseSessionLocked(session.SessionID);
-                    // 新登记的待绑定条目：登记会话、令牌与创建时刻，等待 UDP 绑定请求。
-                    PendingBind pending = new PendingBind();
-                    pending.Session = session;
-                    pending.Token = token;
-                    pending.CreatedTicks = DateTime.UtcNow.Ticks;
-                    _pending[conv] = pending;
-                }
-            }
-            if (!convTaken)
-            {
-                break;
-            }
-            attempt++;
-            // 冲突重试次数有限，避免异常情况下无限循环。
-            if (attempt >= 8)
-            {
-                return KcpBindResult.ServerUnavailable;
-            }
-            conv = KcpAuth.CreateRandomConv();
-        }
-
-        payload = new KcpBindPayload();
-        payload.Result = KcpBindResult.Granted;
-        payload.Conv = conv;
-        payload.Token = token;
-        payload.UdpPort = Port;
-        // 重新绑定期间旧通道立即失效：新启用确认到达前，实时下行不得继续写入已作废的 Peer。
-        session.InvalidateRealtimePeer();
-        return KcpBindResult.Granted;
-    }
-
-    /// <summary>
-    /// 释放指定 TCP 会话的 KCP 绑定，TCP 断开、退出角色或重绑时调用。
-    /// </summary>
-    /// <param name="sessionId">网关 TCP 会话 ID。</param>
-    public void ReleaseSession(int sessionId)
-    {
-        lock (_sync)
-        {
-            ReleaseSessionLocked(sessionId);
-        }
-    }
-
-    /// <summary>在持锁状态下释放会话绑定与其待绑定条目。</summary>
-    private void ReleaseSessionLocked(int sessionId)
-    {
-        // 按会话取出的已绑定 Peer，命中后从两张表摘除并清空归属。
-        KcpPeer peer;
-        if (_peersBySession.TryGetValue(sessionId, out peer))
-        {
-            _peersBySession.Remove(sessionId);
-            _peersByConv.Remove(peer.Conv);
-            peer.OwnerSession = null;
-        }
-
-        // 待绑定条目同样属于该会话，一并清理避免旧令牌被复用。
-        // pendingConvs：遍历时收集出来、待删除的本会话 conv 列表，避免边遍历边改字典。
-        List<uint> pendingConvs = new List<uint>();
-        // convKeys：当前待绑定表的键快照，先复制键再逐项比对归属。
-        List<uint> convKeys = new List<uint>(_pending.Keys);
-        // index：键快照遍历下标，逐项取出待绑定键。
-        for (int index = 0; index < convKeys.Count; index++)
-        {
-            // 当前待绑定键，与待删除列表逐项比对。
-            uint key = convKeys[index];
-            // 该键对应的待绑定条目，用于判断是否属于被释放会话。
-            PendingBind item = _pending[key];
-            if (item.Session != null)
-            {
-                if (item.Session.SessionID == sessionId)
-                {
-                    pendingConvs.Add(key);
-                }
-            }
-        }
-        // index：待删除 conv 列表遍历下标，逐个从待绑定表移除。
-        for (int index = 0; index < pendingConvs.Count; index++)
-        {
-            _pending.Remove(pendingConvs[index]);
-        }
-    }
-
-    /// <summary>
-    /// 查询指定会话当前可用的 Peer。
-    /// </summary>
-    /// <param name="sessionId">网关 TCP 会话 ID。</param>
-    /// <returns>已绑定的 Peer；未绑定返回 null。</returns>
-    public KcpPeer GetPeerOfSession(int sessionId)
-    {
-        lock (_sync)
-        {
-            // 按会话查到的 Peer，命中即返回，未命中返回 null。
-            KcpPeer peer;
-            if (_peersBySession.TryGetValue(sessionId, out peer))
-            {
-                return peer;
-            }
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// 把 KCP 协议段封装为数据报并发往 Peer 的远端地址。
-    /// </summary>
-    /// <param name="peer">目标 Peer。</param>
-    /// <param name="buffer">KCP 段缓冲。</param>
-    /// <param name="length">段字节数。</param>
-    public void SendPeerSegment(KcpPeer peer, byte[] buffer, int length)
-    {
-        if (peer == null || buffer == null)
-        {
-            return;
-        }
-        if (length <= 0)
-        {
-            return;
-        }
-        SendDatagram(peer.Remote, KcpDefine.DatagramTypeKcpData, peer.Conv, peer.Token,
-            buffer, 0, length);
-    }
-
-    /// <summary>
-    /// 封装并发送一条数据报。
-    /// </summary>
-    private void SendDatagram(IPEndPoint remote, byte type, uint conv, byte[] token,
-        byte[] payload, int offset, int length)
-    {
-        // 取一次 Socket 引用，期间停止置空则直接放弃本次发送。
-        Socket socket = _socket;
-        if (socket == null || remote == null)
-        {
-            return;
-        }
-        // 数据报总长受 MTU 约束，超限说明上游分段错误，直接丢弃而不是分片发送。
-        int totalLength = KcpDefine.DatagramHeaderBytes + length;
-        if (totalLength > KcpDefine.MaxDatagramBytes)
-        {
-            LogMsg.Info("[UdpNetwork] 数据报超过上限，已丢弃，长度=" + totalLength, LogMsgType.Warn);
-            return;
-        }
-
-        // 封装后的待发送字节缓冲，长度为头部加载荷。
-        byte[] buffer = new byte[totalLength];
-        // KcpDatagram.Write 返回实际写入字节数，非正表示封装失败。
-        int written = KcpDatagram.Write(buffer, type, conv, token, payload, offset, length);
-        if (written <= 0)
-        {
-            return;
-        }
-        try
-        {
-            lock (_sendSync)
-            {
-                // 关闭与发送可能并发，取锁后重新确认 Socket 仍可用。
-                Socket sendSocket = _socket;
-                if (sendSocket == null)
-                {
-                    return;
-                }
-                sendSocket.SendTo(buffer, 0, written, SocketFlags.None, remote);
-            }
-        }
-        catch (Exception ex)
-        {
-            // 识别出的 SocketException 单独记录错误码，其余异常只记录消息。
-            SocketException socketException = ex as SocketException;
-            if (socketException == null)
-            {
-                LogMsg.Info("[UdpNetwork] 发送失败：" + ex.Message, LogMsgType.Error);
-            }
-            else
-            {
-                LogMsg.Info("[UdpNetwork] 发送失败，socketErrorCode=" +
-                    (int)socketException.SocketErrorCode, LogMsgType.Error);
-            }
-        }
-    }
-
-    /// <summary>接收线程：阻塞读取数据报并交给分发逻辑。</summary>
-    private void ReceiveLoop()
-    {
-        // 接收缓冲：1200 预算外加 64 字节冗余，容纳略大的异常报文。
-        byte[] buffer = new byte[KcpDefine.MaxDatagramBytes + 64];
-        EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
-        while (_running)
-        {
-            // 每轮取一次当前 Socket，停止置空则退出循环。
-            Socket socket = _socket;
-            if (socket == null)
-            {
-                break;
-            }
-            try
-            {
-                // 本次实际收到的数据报字节数，<=0 跳过继续等待。
-                int length = socket.ReceiveFrom(buffer, ref remote);
-                if (length <= 0)
-                {
-                    continue;
-                }
-                // 发送方地址，仅在认证通过后作为该 Peer 的合法远端。
-                IPEndPoint source = remote as IPEndPoint;
-                HandleDatagram(buffer, length, source);
-            }
-            catch (ObjectDisposedException)
-            {
-                // 正常停止时 Socket 已关闭，退出接收循环。
-                break;
-            }
-            catch (SocketException ex)
-            {
-                // 系统级 Socket 错误：停止状态退出，运行期记录错误码后继续接收。
-                if (!_running)
-                {
-                    break;
-                }
-                LogMsg.Info("[UdpNetwork] 接收失败，socketErrorCode=" +
-                    (int)ex.SocketErrorCode, LogMsgType.Warn);
-            }
-            catch (Exception ex)
-            {
-                // 其他未预期异常：停止状态退出，运行期记录后继续，不让接收线程整体退出。
-                if (!_running)
-                {
-                    break;
-                }
-                LogMsg.Info("[UdpNetwork] 接收异常：" + ex.Message, LogMsgType.Error);
-            }
-        }
-    }
-
+    #region 数据报接收与绑定握手
     /// <summary>更新线程：定期驱动所有 Peer 的重传与发送队列，并清理空闲 Peer。</summary>
     private void UpdateLoop()
     {
@@ -455,113 +194,6 @@ public sealed class UdpNetwork
                 Thread.Sleep(KcpDefine.UpdateIntervalMilliseconds);
             }
         }
-    }
-
-    /// <summary>清理空闲超时 Peer 与过期待绑定条目。</summary>
-    private void CleanupIdlePeers()
-    {
-        // 当前 UTC 刻度，作为本次空闲判定的基准时间。
-        long nowTicks = DateTime.UtcNow.Ticks;
-        // 空闲超时刻度跨度：毫秒换算为 100ns 刻度（毫秒×10000）。
-        long idleTicks = KcpDefine.PeerIdleTimeoutMilliseconds * 10000L;
-        // 本次判定为空闲、待释放的会话 ID 列表，锁外统一释放。
-        List<int> expiredSessions = new List<int>();
-        lock (_sync)
-        {
-            // 会话到 Peer 表的键快照，锁内逐键判定空闲。
-            List<int> sessionKeys = new List<int>(_peersBySession.Keys);
-            for (int index = 0; index < sessionKeys.Count; index++)
-            {
-                // 当前待判定的会话键。
-                int key = sessionKeys[index];
-                // 该会话对应的 Peer，用于读取最后活动时间。
-                KcpPeer peer = _peersBySession[key];
-                if (nowTicks - peer.LastActiveTicks > idleTicks)
-                {
-                    expiredSessions.Add(key);
-                }
-            }
-            // 待绑定表键快照，用于清理超过有效期的登记。
-            List<uint> convKeys = new List<uint>(_pending.Keys);
-            for (int index = 0; index < convKeys.Count; index++)
-            {
-                // 当前待判定的待绑定键。
-                uint key = convKeys[index];
-                // 该键对应的待绑定条目，用于比较创建时刻。
-                PendingBind item = _pending[key];
-                if (nowTicks - item.CreatedTicks > PendingLifetimeTicks)
-                {
-                    _pending.Remove(key);
-                }
-            }
-        }
-
-        for (int index = 0; index < expiredSessions.Count; index++)
-        {
-            // 本次待释放的会话 ID。
-            int sessionId = expiredSessions[index];
-            ReleaseSession(sessionId);
-            // 按 ID 取回的网关会话，用于通知其实时 Peer 已失效。
-            Session session = SessionMgr.Instance.GetSession(sessionId);
-            if (session != null)
-            {
-                // 已启用后失效：保留“曾启用”标记，让实时下行明确丢弃而不是悄悄退回 TCP。
-                session.InvalidateRealtimePeer();
-            }
-            // 不再向客户端补发 TCP 提示：运行期失效按约定由客户端静默检测后走既有断线恢复，
-            // 避免在这里把已启用的实时协议悄悄退回 TCP。
-            LogMsg.Info("KCP 会话空闲超时，已解除绑定，SessionID=" + sessionId, LogMsgType.Warn);
-        }
-    }
-
-    /// <summary>
-    /// 取出某 Peer 已完整按序到达的消息并交给所属会话。
-    /// 接收线程与更新线程都会调用本方法，因此必须先取得该 Peer 的投递权：
-    /// 同一 Peer 只允许一个线程取包并回调，回调在通道锁与投递权之外不会重入，
-    /// 从而保证业务回调按 KCP 序号严格串行，不会出现先取出的包后交付。
-    /// </summary>
-    private void SnapshotDeliver(KcpPeer peer)
-    {
-        if (!peer.TryBeginDelivery())
-        {
-            // 已有线程在投递，由它把当前可读消息按序交付完；新到消息留到下一次更新周期。
-            return;
-        }
-        try
-        {
-            while (true)
-            {
-                // TryReceive 输出的一条已重组消息，未取到则退出投递循环。
-                byte[] message;
-                if (!peer.TryReceive(out message))
-                {
-                    return;
-                }
-                // 消息归属的会话，为空说明已解绑，停止继续投递。
-                Session session = peer.OwnerSession;
-                if (session == null)
-                {
-                    return;
-                }
-                DeliverPackage(session, message);
-            }
-        }
-        finally
-        {
-            peer.EndDelivery();
-        }
-    }
-
-    /// <summary>
-    /// 把一条已重组的 KCP 消息交给连接基类的协议接收公共入口。
-    /// 解析与命令分发统一由 BaseLink.OnRecv 完成，并清空客户端自填的网关会话号。
-    /// </summary>
-    /// <param name="session">消息所属的网关会话。</param>
-    /// <param name="message">KCP 按序重组出的完整消息字节。</param>
-    private void DeliverPackage(Session session, byte[] message)
-    {
-        // 第二个参数为 true：保留原 KCP 上行清空客户端自填网关会话号的既有行为。
-        session.OnRecv(message, true);
     }
 
     /// <summary>
@@ -749,29 +381,6 @@ public sealed class UdpNetwork
         SendDatagram(source, KcpDefine.DatagramTypeBindAccept, conv, pending.Token, null, 0, 0);
         LogMsg.Info("KCP 绑定成功，SessionID=" + session.SessionID);
     }
-
-    /// <summary>
-    /// 通过已建立的 TCP 会话告知客户端“通道已启用”。该消息不携带认证密钥。
-    /// </summary>
-    /// <param name="session">目标网关会话，为空时跳过。</param>
-    /// <param name="conv">本次启用的会话号，客户端据此核对是否为自己等待的绑定。</param>
-    private void SendEnabledConfirmation(Session session, uint conv)
-    {
-        if (session == null)
-        {
-            return;
-        }
-        // 启用确认响应载荷：携带结果码与 conv，令牌保持全零。
-        KcpBindPayload payload = new KcpBindPayload();
-        payload.Result = KcpBindResult.Enabled;
-        payload.Conv = conv;
-        // 启用确认不重复下发密钥，令牌保持全零。
-        payload.Token = new byte[KcpDefine.BindTokenBytes];
-        payload.UdpPort = Port;
-        // 该协议不在实时集合内，钩子会保留原 TCP 封包。
-        session.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
-    }
-
     /// <summary>
     /// 处理 KCP 数据报：认证通过后送入通道，并把认证后的源地址作为当前远端。
     /// </summary>
@@ -802,4 +411,409 @@ public sealed class UdpNetwork
         // 输入后立即尝试交付，避免等待下一次更新线程造成额外延迟。
         SnapshotDeliver(peer);
     }
+    #endregion
+
+    #region 数据报发送
+    /// <summary>
+    /// 把 KCP 协议段封装为数据报并发往 Peer 的远端地址。
+    /// </summary>
+    /// <param name="peer">目标 Peer。</param>
+    /// <param name="buffer">KCP 段缓冲。</param>
+    /// <param name="length">段字节数。</param>
+    public void SendPeerSegment(KcpPeer peer, byte[] buffer, int length)
+    {
+        if (peer == null || buffer == null)
+        {
+            return;
+        }
+        if (length <= 0)
+        {
+            return;
+        }
+        SendDatagram(peer.Remote, KcpDefine.DatagramTypeKcpData, peer.Conv, peer.Token,
+            buffer, 0, length);
+    }
+
+    /// <summary>
+    /// 封装并发送一条数据报。
+    /// </summary>
+    private void SendDatagram(IPEndPoint remote, byte type, uint conv, byte[] token,
+        byte[] payload, int offset, int length)
+    {
+        // 取一次 Socket 引用，期间停止置空则直接放弃本次发送。
+        Socket socket = _socket;
+        if (socket == null || remote == null)
+        {
+            return;
+        }
+        // 数据报总长受 MTU 约束，超限说明上游分段错误，直接丢弃而不是分片发送。
+        int totalLength = KcpDefine.DatagramHeaderBytes + length;
+        if (totalLength > KcpDefine.MaxDatagramBytes)
+        {
+            LogMsg.Info("[UdpNetwork] 数据报超过上限，已丢弃，长度=" + totalLength, LogMsgType.Warn);
+            return;
+        }
+
+        // 封装后的待发送字节缓冲，长度为头部加载荷。
+        byte[] buffer = new byte[totalLength];
+        // KcpDatagram.Write 返回实际写入字节数，非正表示封装失败。
+        int written = KcpDatagram.Write(buffer, type, conv, token, payload, offset, length);
+        if (written <= 0)
+        {
+            return;
+        }
+        try
+        {
+            lock (_sendSync)
+            {
+                // 关闭与发送可能并发，取锁后重新确认 Socket 仍可用。
+                Socket sendSocket = _socket;
+                if (sendSocket == null)
+                {
+                    return;
+                }
+                sendSocket.SendTo(buffer, 0, written, SocketFlags.None, remote);
+            }
+        }
+        catch (Exception ex)
+        {
+            // 识别出的 SocketException 单独记录错误码，其余异常只记录消息。
+            SocketException socketException = ex as SocketException;
+            if (socketException == null)
+            {
+                LogMsg.Info("[UdpNetwork] 发送失败：" + ex.Message, LogMsgType.Error);
+            }
+            else
+            {
+                LogMsg.Info("[UdpNetwork] 发送失败，socketErrorCode=" +
+                    (int)socketException.SocketErrorCode, LogMsgType.Error);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 通过已建立的 TCP 会话告知客户端“通道已启用”。该消息不携带认证密钥。
+    /// </summary>
+    /// <param name="session">目标网关会话，为空时跳过。</param>
+    /// <param name="conv">本次启用的会话号，客户端据此核对是否为自己等待的绑定。</param>
+    private void SendEnabledConfirmation(Session session, uint conv)
+    {
+        if (session == null)
+        {
+            return;
+        }
+        // 启用确认响应载荷：携带结果码与 conv，令牌保持全零。
+        KcpBindPayload payload = new KcpBindPayload();
+        payload.Result = KcpBindResult.Enabled;
+        payload.Conv = conv;
+        // 启用确认不重复下发密钥，令牌保持全零。
+        payload.Token = new byte[KcpDefine.BindTokenBytes];
+        payload.UdpPort = Port;
+        // 该协议不在实时集合内，钩子会保留原 TCP 封包。
+        session.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
+    }
+    #endregion
+
+    #region 会话解绑与回收
+    /// <summary>
+    /// 释放指定 TCP 会话的 KCP 绑定，TCP 断开、退出角色或重绑时调用。
+    /// </summary>
+    /// <param name="sessionId">网关 TCP 会话 ID。</param>
+    public void ReleaseSession(int sessionId)
+    {
+        lock (_sync)
+        {
+            ReleaseSessionLocked(sessionId);
+        }
+    }
+
+    /// <summary>在持锁状态下释放会话绑定与其待绑定条目。</summary>
+    private void ReleaseSessionLocked(int sessionId)
+    {
+        // 按会话取出的已绑定 Peer，命中后从两张表摘除并清空归属。
+        KcpPeer peer;
+        if (_peersBySession.TryGetValue(sessionId, out peer))
+        {
+            _peersBySession.Remove(sessionId);
+            _peersByConv.Remove(peer.Conv);
+            peer.OwnerSession = null;
+        }
+
+        // 待绑定条目同样属于该会话，一并清理避免旧令牌被复用。
+        // pendingConvs：遍历时收集出来、待删除的本会话 conv 列表，避免边遍历边改字典。
+        List<uint> pendingConvs = new List<uint>();
+        // convKeys：当前待绑定表的键快照，先复制键再逐项比对归属。
+        List<uint> convKeys = new List<uint>(_pending.Keys);
+        // index：键快照遍历下标，逐项取出待绑定键。
+        for (int index = 0; index < convKeys.Count; index++)
+        {
+            // 当前待绑定键，与待删除列表逐项比对。
+            uint key = convKeys[index];
+            // 该键对应的待绑定条目，用于判断是否属于被释放会话。
+            PendingBind item = _pending[key];
+            if (item.Session != null)
+            {
+                if (item.Session.SessionID == sessionId)
+                {
+                    pendingConvs.Add(key);
+                }
+            }
+        }
+        // index：待删除 conv 列表遍历下标，逐个从待绑定表移除。
+        for (int index = 0; index < pendingConvs.Count; index++)
+        {
+            _pending.Remove(pendingConvs[index]);
+        }
+    }
+    #endregion
+
+    #region 绑定分配与查询
+    /// <summary>
+    /// 为已登录并在线的 TCP 会话分配绑定参数。
+    /// </summary>
+    /// <param name="session">已经确认在线角色的网关 TCP 会话。</param>
+    /// <param name="payload">输出的绑定响应，含 conv、令牌与 UDP 端口。</param>
+    /// <returns>通道不可用或会话无效时返回对应结果码。</returns>
+    public KcpBindResult TryAllocateBinding(Session session, out KcpBindPayload payload)
+    {
+        payload = null;
+        if (session == null)
+        {
+            return KcpBindResult.SessionNotReady;
+        }
+        if (!_running)
+        {
+            return KcpBindResult.ServerUnavailable;
+        }
+
+        // 本次分配的随机会话号，随机冲突时会重新生成。
+        uint conv = KcpAuth.CreateRandomConv();
+        // 本次绑定下发的 16 字节随机令牌，既是握手证明也是数据报 HMAC 密钥。
+        byte[] token = KcpAuth.CreateRandomBytes(KcpDefine.BindTokenBytes);
+        // 随机 conv 需在两张表中都不冲突，冲突时重新生成。
+        int attempt = 0;
+        while (true)
+        {
+            // 标记随机 conv 是否已被现有 Peer 占用，占用则进入下一轮重试。
+            bool convTaken;
+            lock (_sync)
+            {
+                convTaken = _peersByConv.ContainsKey(conv);
+                if (!convTaken)
+                {
+                    // 同一会话重复绑定先释放旧 Peer，重登后不复用旧连接。
+                    ReleaseSessionLocked(session.SessionID);
+                    // 新登记的待绑定条目：登记会话、令牌与创建时刻，等待 UDP 绑定请求。
+                    PendingBind pending = new PendingBind();
+                    pending.Session = session;
+                    pending.Token = token;
+                    pending.CreatedTicks = DateTime.UtcNow.Ticks;
+                    _pending[conv] = pending;
+                }
+            }
+            if (!convTaken)
+            {
+                break;
+            }
+            attempt++;
+            // 冲突重试次数有限，避免异常情况下无限循环。
+            if (attempt >= 8)
+            {
+                return KcpBindResult.ServerUnavailable;
+            }
+            conv = KcpAuth.CreateRandomConv();
+        }
+
+        payload = new KcpBindPayload();
+        payload.Result = KcpBindResult.Granted;
+        payload.Conv = conv;
+        payload.Token = token;
+        payload.UdpPort = Port;
+        // 重新绑定期间旧通道立即失效：新启用确认到达前，实时下行不得继续写入已作废的 Peer。
+        session.InvalidateRealtimePeer();
+        return KcpBindResult.Granted;
+    }
+
+    /// <summary>
+    /// 查询指定会话当前可用的 Peer。
+    /// </summary>
+    /// <param name="sessionId">网关 TCP 会话 ID。</param>
+    /// <returns>已绑定的 Peer；未绑定返回 null。</returns>
+    public KcpPeer GetPeerOfSession(int sessionId)
+    {
+        lock (_sync)
+        {
+            // 按会话查到的 Peer，命中即返回，未命中返回 null。
+            KcpPeer peer;
+            if (_peersBySession.TryGetValue(sessionId, out peer))
+            {
+                return peer;
+            }
+            return null;
+        }
+    }
+    #endregion
+
+    #region 接收循环、空闲清理与消息投递
+    /// <summary>接收线程：阻塞读取数据报并交给分发逻辑。</summary>
+    private void ReceiveLoop()
+    {
+        // 接收缓冲：1200 预算外加 64 字节冗余，容纳略大的异常报文。
+        byte[] buffer = new byte[KcpDefine.MaxDatagramBytes + 64];
+        EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
+        while (_running)
+        {
+            // 每轮取一次当前 Socket，停止置空则退出循环。
+            Socket socket = _socket;
+            if (socket == null)
+            {
+                break;
+            }
+            try
+            {
+                // 本次实际收到的数据报字节数，<=0 跳过继续等待。
+                int length = socket.ReceiveFrom(buffer, ref remote);
+                if (length <= 0)
+                {
+                    continue;
+                }
+                // 发送方地址，仅在认证通过后作为该 Peer 的合法远端。
+                IPEndPoint source = remote as IPEndPoint;
+                HandleDatagram(buffer, length, source);
+            }
+            catch (ObjectDisposedException)
+            {
+                // 正常停止时 Socket 已关闭，退出接收循环。
+                break;
+            }
+            catch (SocketException ex)
+            {
+                // 系统级 Socket 错误：停止状态退出，运行期记录错误码后继续接收。
+                if (!_running)
+                {
+                    break;
+                }
+                LogMsg.Info("[UdpNetwork] 接收失败，socketErrorCode=" +
+                    (int)ex.SocketErrorCode, LogMsgType.Warn);
+            }
+            catch (Exception ex)
+            {
+                // 其他未预期异常：停止状态退出，运行期记录后继续，不让接收线程整体退出。
+                if (!_running)
+                {
+                    break;
+                }
+                LogMsg.Info("[UdpNetwork] 接收异常：" + ex.Message, LogMsgType.Error);
+            }
+        }
+    }
+
+    /// <summary>清理空闲超时 Peer 与过期待绑定条目。</summary>
+    private void CleanupIdlePeers()
+    {
+        // 当前 UTC 刻度，作为本次空闲判定的基准时间。
+        long nowTicks = DateTime.UtcNow.Ticks;
+        // 空闲超时刻度跨度：毫秒换算为 100ns 刻度（毫秒×10000）。
+        long idleTicks = KcpDefine.PeerIdleTimeoutMilliseconds * 10000L;
+        // 本次判定为空闲、待释放的会话 ID 列表，锁外统一释放。
+        List<int> expiredSessions = new List<int>();
+        lock (_sync)
+        {
+            // 会话到 Peer 表的键快照，锁内逐键判定空闲。
+            List<int> sessionKeys = new List<int>(_peersBySession.Keys);
+            for (int index = 0; index < sessionKeys.Count; index++)
+            {
+                // 当前待判定的会话键。
+                int key = sessionKeys[index];
+                // 该会话对应的 Peer，用于读取最后活动时间。
+                KcpPeer peer = _peersBySession[key];
+                if (nowTicks - peer.LastActiveTicks > idleTicks)
+                {
+                    expiredSessions.Add(key);
+                }
+            }
+            // 待绑定表键快照，用于清理超过有效期的登记。
+            List<uint> convKeys = new List<uint>(_pending.Keys);
+            for (int index = 0; index < convKeys.Count; index++)
+            {
+                // 当前待判定的待绑定键。
+                uint key = convKeys[index];
+                // 该键对应的待绑定条目，用于比较创建时刻。
+                PendingBind item = _pending[key];
+                if (nowTicks - item.CreatedTicks > PendingLifetimeTicks)
+                {
+                    _pending.Remove(key);
+                }
+            }
+        }
+
+        for (int index = 0; index < expiredSessions.Count; index++)
+        {
+            // 本次待释放的会话 ID。
+            int sessionId = expiredSessions[index];
+            ReleaseSession(sessionId);
+            // 按 ID 取回的网关会话，用于通知其实时 Peer 已失效。
+            Session session = SessionMgr.Instance.GetSession(sessionId);
+            if (session != null)
+            {
+                // 已启用后失效：保留“曾启用”标记，让实时下行明确丢弃而不是悄悄退回 TCP。
+                session.InvalidateRealtimePeer();
+            }
+            // 不再向客户端补发 TCP 提示：运行期失效按约定由客户端静默检测后走既有断线恢复，
+            // 避免在这里把已启用的实时协议悄悄退回 TCP。
+            LogMsg.Info("KCP 会话空闲超时，已解除绑定，SessionID=" + sessionId, LogMsgType.Warn);
+        }
+    }
+
+    /// <summary>
+    /// 取出某 Peer 已完整按序到达的消息并交给所属会话。
+    /// 接收线程与更新线程都会调用本方法，因此必须先取得该 Peer 的投递权：
+    /// 同一 Peer 只允许一个线程取包并回调，回调在通道锁与投递权之外不会重入，
+    /// 从而保证业务回调按 KCP 序号严格串行，不会出现先取出的包后交付。
+    /// </summary>
+    private void SnapshotDeliver(KcpPeer peer)
+    {
+        if (!peer.TryBeginDelivery())
+        {
+            // 已有线程在投递，由它把当前可读消息按序交付完；新到消息留到下一次更新周期。
+            return;
+        }
+        try
+        {
+            while (true)
+            {
+                // TryReceive 输出的一条已重组消息，未取到则退出投递循环。
+                byte[] message;
+                if (!peer.TryReceive(out message))
+                {
+                    return;
+                }
+                // 消息归属的会话，为空说明已解绑，停止继续投递。
+                Session session = peer.OwnerSession;
+                if (session == null)
+                {
+                    return;
+                }
+                DeliverPackage(session, message);
+            }
+        }
+        finally
+        {
+            peer.EndDelivery();
+        }
+    }
+
+    /// <summary>
+    /// 把一条已重组的 KCP 消息交给连接基类的协议接收公共入口。
+    /// 解析与命令分发统一由 BaseLink.OnRecv 完成，并清空客户端自填的网关会话号。
+    /// </summary>
+    /// <param name="session">消息所属的网关会话。</param>
+    /// <param name="message">KCP 按序重组出的完整消息字节。</param>
+    private void DeliverPackage(Session session, byte[] message)
+    {
+        // 第二个参数为 true：保留原 KCP 上行清空客户端自填网关会话号的既有行为。
+        session.OnRecv(message, true);
+    }
+    #endregion
+
 }

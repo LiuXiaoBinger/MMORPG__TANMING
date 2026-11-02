@@ -23,31 +23,31 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         /// <summary>组合技待机。</summary>
         Combo = 5, //组合技
     }
+
+    #region 字段与属性
     /// <summary>移动状态变化事件处理器，用于监听移动和战斗状态切换。</summary>
     private readonly MEventHandler _onMoveChanged;
+
     /// <summary>进入战斗事件处理器，负责把实体默认待机切换为战斗待机。</summary>
     private readonly MEventHandler _onCombatStarted;
+
     /// <summary>退出战斗事件处理器，负责把实体默认待机恢复为普通待机。</summary>
     private readonly MEventHandler _onCombatEnded;
+
     /// <summary>当前默认动作子状态。</summary>
     private State _defaultState = State.Normal;
+
     /// <summary>跑步脚步声触发的动画归一化时间点表。</summary>
     private float[] _footStepsTimes;
+
     /// <summary>当前应触发的脚步声时间点下标。</summary>
     private int _footStepTimeIdx = 0;
+
     /// <summary>上一帧记录的动画归一化时间，用于检测动画回绕。</summary>
     private float _lastStepTimeIdx = 0;
+
     /// <summary>获取或设置移动音效是否循环播放。</summary>
     public bool MoveAudioLoop { get; set; } = false;
-    /// <summary>构造函数，初始化默认状态并注册移动事件回调。</summary>
-    /// <param name="owner">宿主场景实体对象。</param>
-    public MDefaultActionComponent(ROObject owner) : base(owner)
-    {
-        _selfState = StateDefine.kStateDefault;
-        _onMoveChanged = new MEventHandler(OnMoveChanged);
-        _onCombatStarted = new MEventHandler(OnCombatStarted);
-        _onCombatEnded = new MEventHandler(OnCombatEnded);
-    }
 
     /// <summary>
     /// 根据战斗状态、移动状态和 Shift 走跑输入选择 Animator 槽位；静止时返回对应待机槽位。
@@ -110,47 +110,17 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
             }
         }
     }
+    #endregion
 
-    /// <summary>判断默认动作是否应播放移动动画；本地主角识别方向或导航，其他实体沿用同步移动状态。</summary>
-    /// <returns>true 表示默认状态应直接播放 Walk 或 Run；false 表示播放对应 Idle。</returns>
-    private bool ShouldPlayMovementAnimation()
+    #region 构造与事件注册与注销
+    /// <summary>构造函数，初始化默认状态并注册移动事件回调。</summary>
+    /// <param name="owner">宿主场景实体对象。</param>
+    public MDefaultActionComponent(ROObject owner) : base(owner)
     {
-        if (Entity == null)
-        {
-            return false;
-        }
-        if (Entity.IsPlayer && Entity.MoveComp != null)
-        {
-            if (!Entity.MoveComp.IsMoving)
-            {
-                return false;
-            }
-            // 导航不会伪造按键保持；有效路线也应沿原走跑槽位播放移动动画。
-            if (Entity.NavComp != null && Entity.NavComp.IsNavigation)
-            {
-                return true;
-            }
-            return Entity.MoveComp.HasDirectionalInput;
-        }
-        return Entity.IsMoving;
-    }
-
-    /// <summary>判断跳跃表现组件是否正在播放落地动画，避免默认动作在同帧覆盖 Jump_End。</summary>
-    /// <returns>true 表示落地动画尚未完成，当前帧必须保持跳跃表现。</returns>
-    private bool IsLandingAnimationPlaying()
-    {
-        if (Entity == null || Entity.Components == null)
-        {
-            return false;
-        }
-
-        // 当前实体的跳跃表现组件；未注册跳跃组件的实体不需要落地动画保护。
-        MJumpComponent jumpComponent;
-        if (!Entity.Components.TryGet(EntityComponentType.Jump, out jumpComponent))
-        {
-            return false;
-        }
-        return jumpComponent.IsLandingAnimationPlaying;
+        _selfState = StateDefine.kStateDefault;
+        _onMoveChanged = new MEventHandler(OnMoveChanged);
+        _onCombatStarted = new MEventHandler(OnCombatStarted);
+        _onCombatEnded = new MEventHandler(OnCombatEnded);
     }
 
     /// <summary>
@@ -163,6 +133,27 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         RegisterEvent(MEventType.MoveStopped, _onMoveChanged);
         RegisterEvent(MEventType.CombatStarted, _onCombatStarted);
         RegisterEvent(MEventType.CombatEnded, _onCombatEnded);
+    }
+
+    protected override void EventSubscribe()
+    {
+    }
+
+    protected override void EventUnsubscribe()
+    {
+    }
+    #endregion
+
+    /// <summary>
+    /// 当前状态确实是默认动作时才请求状态机重播动画，防止战斗事件覆盖技能、受击等特殊状态。
+    /// </summary>
+    private void RefreshDefaultAnimation()
+    {
+        if (Entity != null && Entity.Machine != null && 
+            Entity.Machine.CurrentState == this)
+        {
+            Entity.Machine.MarkTriggered();
+        }
     }
 
     /// <summary>
@@ -178,6 +169,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         RefreshDefaultAnimation();
     }
 
+    #region 事件回调
     /// <summary>
     /// 处理进入战斗事件。
     /// 仅更新实体的默认待机标记；特殊状态仍由状态机的当前组件控制，不会被本组件抢占。
@@ -209,50 +201,6 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         RefreshDefaultAnimation();
     }
 
-    /// <summary>
-    /// 当前状态确实是默认动作时才请求状态机重播动画，防止战斗事件覆盖技能、受击等特殊状态。
-    /// </summary>
-    private void RefreshDefaultAnimation()
-    {
-        if (Entity != null && Entity.Machine != null && 
-            Entity.Machine.CurrentState == this)
-        {
-            Entity.Machine.MarkTriggered();
-        }
-    }
-    protected override void EventSubscribe()
-    {
-    }
-
-    protected override void EventUnsubscribe()
-    {
-    }
-
-    /// <summary>
-    /// 播放一次脚步声：移动中且动画机有效时播放移动音效，并前进到下一个脚步声时间点。
-    /// </summary>
-    private void FootSteps()
-    {
-        // 任一前置条件不满足即跳过本次脚步检查；按原 || 短路顺序逐组早退。
-        if (Entity == null || !Entity.IsMoving || Entity.Model == null)
-        {
-            return;
-        }
-        if (Entity.Model.Ator == null || Entity.Model.Ator.Speed <= 0 ||
-            Entity.Model.Ator.GetCurrentAnimInfo() == null)
-        {
-            return;
-        }
-        if (_footStepsTimes == null || _footStepsTimes.Length == 0)
-        {
-            return;
-        }
-
-        // 当前项目尚未接入脚步音效，仅维护动画归一化进度和下一个触发下标。
-        _footStepTimeIdx++;
-        _footStepTimeIdx %= _footStepsTimes.Length;
-        _lastStepTimeIdx = Entity.Model.Ator.GetCurrentAnimInfo().NormalizedTime % 1;
-    }
     /// <summary>
     /// 逐帧更新：移动且处于跑步模式时同步动画机速度到属性跑速；
     /// 非循环移动音效模式下，根据当前动画归一化时间是否越过脚步声时间点来触发 FootSteps。
@@ -312,6 +260,76 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
             _lastStepTimeIdx = time;
         }
     }
+    #endregion
+
+    /// <summary>判断跳跃表现组件是否正在播放落地动画，避免默认动作在同帧覆盖 Jump_End。</summary>
+    /// <returns>true 表示落地动画尚未完成，当前帧必须保持跳跃表现。</returns>
+    private bool IsLandingAnimationPlaying()
+    {
+        if (Entity == null || Entity.Components == null)
+        {
+            return false;
+        }
+
+        // 当前实体的跳跃表现组件；未注册跳跃组件的实体不需要落地动画保护。
+        MJumpComponent jumpComponent;
+        if (!Entity.Components.TryGet(EntityComponentType.Jump, out jumpComponent))
+        {
+            return false;
+        }
+        return jumpComponent.IsLandingAnimationPlaying;
+    }
+
+    #region 核心逻辑
+    /// <summary>判断默认动作是否应播放移动动画；本地主角识别方向或导航，其他实体沿用同步移动状态。</summary>
+    /// <returns>true 表示默认状态应直接播放 Walk 或 Run；false 表示播放对应 Idle。</returns>
+    private bool ShouldPlayMovementAnimation()
+    {
+        if (Entity == null)
+        {
+            return false;
+        }
+        if (Entity.IsPlayer && Entity.MoveComp != null)
+        {
+            if (!Entity.MoveComp.IsMoving)
+            {
+                return false;
+            }
+            // 导航不会伪造按键保持；有效路线也应沿原走跑槽位播放移动动画。
+            if (Entity.NavComp != null && Entity.NavComp.IsNavigation)
+            {
+                return true;
+            }
+            return Entity.MoveComp.HasDirectionalInput;
+        }
+        return Entity.IsMoving;
+    }
+
+    /// <summary>
+    /// 播放一次脚步声：移动中且动画机有效时播放移动音效，并前进到下一个脚步声时间点。
+    /// </summary>
+    private void FootSteps()
+    {
+        // 任一前置条件不满足即跳过本次脚步检查；按原 || 短路顺序逐组早退。
+        if (Entity == null || !Entity.IsMoving || Entity.Model == null)
+        {
+            return;
+        }
+        if (Entity.Model.Ator == null || Entity.Model.Ator.Speed <= 0 ||
+            Entity.Model.Ator.GetCurrentAnimInfo() == null)
+        {
+            return;
+        }
+        if (_footStepsTimes == null || _footStepsTimes.Length == 0)
+        {
+            return;
+        }
+
+        // 当前项目尚未接入脚步音效，仅维护动画归一化进度和下一个触发下标。
+        _footStepTimeIdx++;
+        _footStepTimeIdx %= _footStepsTimes.Length;
+        _lastStepTimeIdx = Entity.Model.Ator.GetCurrentAnimInfo().NormalizedTime % 1;
+    }
 
     /// <summary>
     /// 播放默认动作动画：已在目标状态则直接返回；
@@ -365,4 +383,5 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
 
         return result;
     }
+    #endregion
 }

@@ -15,6 +15,7 @@ public sealed class EntityComponentContainer
     /// <summary>按注册顺序排列的组件列表，用于 Initialize/Update/LateUpdate 顺序驱动。</summary>
     private readonly List<EntityComponentBase> _ordered = new List<EntityComponentBase>();
 
+    #region 生命周期
     /// <summary>按注册顺序推进其余普通组件，位移已由移动前阶段推进，不能再次更新。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
     public void Update(int deltaMilliseconds)
@@ -44,6 +45,52 @@ public sealed class EntityComponentContainer
         }
     }
 
+    /// <summary>按注册顺序依次调用每个组件的 Initialize。</summary>
+    public void Initialize()
+    {
+        for (int index = 0; index < _ordered.Count; index++)
+        {
+            EntityComponentBase component = _ordered[index];
+            Invoke(component, "Initialize", delegate { component.Initialize(); });
+        }
+    }
+
+    /// <summary>逆序销毁所有组件，统一交由组件池回收，最后清空容器。</summary>
+    public void Shutdown()
+    {
+        // 逆序释放，与注册顺序相反，保证后挂载的组件先销毁
+        for (int index = _ordered.Count - 1; index >= 0; index--)
+        {
+            EntityComponentBase component = _ordered[index];
+            // 统一交给组件池执行 Shutdown、状态重置和宿主解绑，避免生命周期重复调用。
+            MComponentMgr.Instance.ReleaseComponent(component);
+        }
+        _ordered.Clear();
+        _components.Clear();
+    }
+    #endregion
+
+    /// <summary>移动提交前推进容器内的程序位移组件，其初始化和回收仍属于普通组件生命周期。</summary>
+    /// <param name="deltaMilliseconds">本帧间隔，单位毫秒；由实体更新入口调用一次。</param>
+    public void UpdateBeforeMovement(int deltaMilliseconds)
+    {
+        // 容器按独立类型键持有的原位移实例；不创建每帧闭包或临时集合。
+        EntityComponentBase displacement;
+        if (!_components.TryGetValue(EntityComponentType.Displacement, out displacement))
+        {
+            return;
+        }
+        try
+        {
+            displacement.Update(deltaMilliseconds);
+        }
+        // 当前位移组件的推进异常，隔离后允许原输入移动与其它组件继续更新。
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogError("实体组件生命周期失败: " + displacement.GetType().Name + ".Update，" + exception);
+        }
+    }
+
     /// <summary>向容器注册一个组件，同类型组件不允许重复注册。</summary>
     /// <param name="component">要注册的组件实例，为空时抛出异常。</param>
     /// <exception cref="ArgumentNullException">component 为空时抛出。</exception>
@@ -62,6 +109,7 @@ public sealed class EntityComponentContainer
         _ordered.Add(component);
     }
 
+    #region 查询与判定
     /// <summary>判断指定类型的组件是否已注册。</summary>
     /// <param name="type">组件类型标识。</param>
     /// <returns>已注册返回 true，否则返回 false。</returns>
@@ -133,51 +181,7 @@ public sealed class EntityComponentContainer
         component = null;
         return false;
     }
-
-    /// <summary>按注册顺序依次调用每个组件的 Initialize。</summary>
-    public void Initialize()
-    {
-        for (int index = 0; index < _ordered.Count; index++)
-        {
-            EntityComponentBase component = _ordered[index];
-            Invoke(component, "Initialize", delegate { component.Initialize(); });
-        }
-    }
-
-    /// <summary>移动提交前推进容器内的程序位移组件，其初始化和回收仍属于普通组件生命周期。</summary>
-    /// <param name="deltaMilliseconds">本帧间隔，单位毫秒；由实体更新入口调用一次。</param>
-    public void UpdateBeforeMovement(int deltaMilliseconds)
-    {
-        // 容器按独立类型键持有的原位移实例；不创建每帧闭包或临时集合。
-        EntityComponentBase displacement;
-        if (!_components.TryGetValue(EntityComponentType.Displacement, out displacement))
-        {
-            return;
-        }
-        try
-        {
-            displacement.Update(deltaMilliseconds);
-        }
-        // 当前位移组件的推进异常，隔离后允许原输入移动与其它组件继续更新。
-        catch (Exception exception)
-        {
-            UnityEngine.Debug.LogError("实体组件生命周期失败: " + displacement.GetType().Name + ".Update，" + exception);
-        }
-    }
-
-    /// <summary>逆序销毁所有组件，统一交由组件池回收，最后清空容器。</summary>
-    public void Shutdown()
-    {
-        // 逆序释放，与注册顺序相反，保证后挂载的组件先销毁
-        for (int index = _ordered.Count - 1; index >= 0; index--)
-        {
-            EntityComponentBase component = _ordered[index];
-            // 统一交给组件池执行 Shutdown、状态重置和宿主解绑，避免生命周期重复调用。
-            MComponentMgr.Instance.ReleaseComponent(component);
-        }
-        _ordered.Clear();
-        _components.Clear();
-    }
+    #endregion
 
     /// <summary>包装单个组件生命周期调用，捕获异常并打印日志，避免单个组件崩溃阻断其他组件。</summary>
     /// <param name="component">正在执行生命周期的组件。</param>

@@ -7,6 +7,11 @@ using UnityEngine;
 /// </summary>
 public class RoleAttriibuteWindow : WindowBase
 {
+    private void Start()
+    {
+        InitializeEquipSlots();
+    }
+
     /// <summary>关闭角色属性，并沿I键关闭流程恢复打开前的角色镜头。</summary>
     public override void CloseWindow()
     {
@@ -18,11 +23,6 @@ public class RoleAttriibuteWindow : WindowBase
 
     private readonly Dictionary<EquipType, EquipSlotWidget> _equipSlots =
         new Dictionary<EquipType, EquipSlotWidget>();
-
-    private void Start()
-    {
-        InitializeEquipSlots();
-    }
 
     public override void ReFreshUI(object obj)
     {

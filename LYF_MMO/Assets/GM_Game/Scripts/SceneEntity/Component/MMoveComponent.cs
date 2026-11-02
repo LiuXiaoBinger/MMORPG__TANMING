@@ -9,6 +9,8 @@ using UVEC3 = UnityEngine.Vector3;
 /// </summary>
 public sealed class MMoveComponent : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>单次起跳采用的初始向上速度，单位为米/秒。</summary>
     private const float JumpUpwardSpeed = 10f;
 
@@ -177,7 +179,9 @@ public sealed class MMoveComponent : EntityComponentBase
 
     /// <summary>停止移动事件（MEvent_StopMove）处理器</summary>
     private MEventHandler _onStopMoveEvent;
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>构造移动组件。</summary>
     /// <param name="owner">宿主实体。</param>
     public MMoveComponent(ROObject owner) : base(owner)
@@ -255,33 +259,91 @@ public sealed class MMoveComponent : EntityComponentBase
         }
     }
 
-    /// <summary>应用 Shift 走跑模式；地面默认动作会重评估动画，空中保留模式供落地恢复。</summary>
-    /// <param name="isRunning">true 表示使用跑步速度和跑步动画；false 表示使用普通移动。</param>
-    public void SetRunning(bool isRunning)
+    /// <summary>
+    /// 注册本组件关心的全部事件：移动 / 停止移动 / 传送带 / 携带物 / 骑乘 / 换装 / 武器切换等。
+    /// </summary>
+    protected override void EventSubscribe()
     {
-        if (_isRunning == isRunning)
-        {
-            return;
-        }
+        RegisterEvent(MEventType.MEvent_Move, _onMoveEvent);
+        RegisterEvent(MEventType.MEvent_StopMove, _onStopMoveEvent);
+        //RegisterEvent(MEventType.MEvent_EnterWall, _onEnterWall);
 
-        _isRunning = isRunning;
-        // 宿主缺失、跳跃中或未处于移动态时不刷新走跑动画；保持原 || 短路顺序。
-        if (Entity == null || Entity.IsJump || !Entity.IsMoving)
-        {
-            return;
-        }
-        if (Entity.Machine == null)
-        {
-            return;
-        }
-
-        // 当前默认动作负责走跑动画；仅处于默认状态时请求本帧重新评估动画。
-        if (Entity.Machine.CurrentState == Entity.Machine.DefaultState)
-        {
-            Entity.Machine.MarkTriggered();
-        }
+        //RegisterEvent(MEventType.MEvent_CarryItem, _onCarryItemEvent);
+        //RegisterEvent(MEventType.MEvent_RideVehicle, _onPrepairAnimEvent);
+        //RegisterEvent(MEventType.MEvent_UnRideVehicle, _onPrepairAnimEvent);
+        //RegisterEvent(MEventType.MEvent_OnFashionChange, _onPrepairAnimEvent);
+        //RegisterEvent(MEventType.MEvent_ReloadBattleRideAnimation, _onReloadBattleRideAnimation);
+        //RegisterEvent(MEventType.MEvent_EntityWeaponTypeChanged, _onPrepairAnimEvent);
     }
 
+    /// <summary>反注册 EventSubscribe 中注册的全部事件。</summary>
+    protected override void EventUnsubscribe()
+    {
+        RemoveEventListener(MEventType.MEvent_Move, _onMoveEvent);
+        RemoveEventListener(MEventType.MEvent_StopMove, _onStopMoveEvent);
+        //RemoveEventListener(MEventType.MEvent_EnterWall, _onEnterWall);
+
+        //RemoveEventListener(MEventType.MEvent_CarryItem, _onCarryItemEvent);
+        //RemoveEventListener(MEventType.MEvent_RideVehicle, _onPrepairAnimEvent);
+        //RemoveEventListener(MEventType.MEvent_UnRideVehicle, _onPrepairAnimEvent);
+       // RemoveEventListener(MEventType.MEvent_OnFashionChange, _onPrepairAnimEvent);
+        //RemoveEventListener(MEventType.MEvent_ReloadBattleRideAnimation, _onReloadBattleRideAnimation);
+        //RemoveEventListener(MEventType.MEvent_EntityWeaponTypeChanged, _onPrepairAnimEvent);
+    }
+
+    /// <summary>对象池回收时重置移动状态和目标快照，保证下次复用时干净。</summary>
+    public override void Shutdown()
+    {
+        IsMoving = false; _elapsedMilliseconds = 0; _interpolationMilliseconds = 150;
+        _isjump = false;
+        JumpCount = 0;
+        _verticalVelocity = GroundStickSpeed;
+        _airborneElapsedSeconds = 0f;
+        _groundedStateInitialized = false;
+        _isRunning = false;
+        _hasDirectionalInput = false;
+        CostTime = 0f;
+        delay = 0.15f;
+        keep_moving = false;
+        _targetJumpCount = 0;
+        IsMoved = false;
+        _server_time = 0f;
+        _predictedTime = 0f;
+        _predictedPos = UVEC3.zero;
+        _syncToTargetDir = UVEC3.zero;
+        _syncToTargetDist = 0f;
+        _runSpeed = 0f;
+        _toTargetQuat = Quaternion.identity;
+        _target.X = 0f; _target.Y = 0f; _target.Z = 0f; _target.Yaw = 0f;
+    }
+    #endregion
+
+    /// <summary>根据当前跳跃阶段推进垂直速度与重力。</summary>
+    /// <param name="deltaSeconds">当前逻辑帧间隔，单位为秒且不小于零。</param>
+    private void UpdateVerticalMovement(float deltaSeconds)
+    {
+        if (_isjump)
+        {
+            _airborneElapsedSeconds += deltaSeconds;
+            // 上升使用较缓重力，下落使用较强重力，保证起跳清晰且落地利落。
+            float gravity = FallingGravity;
+            if (_verticalVelocity > 0f)
+            {
+                gravity = RisingGravity;
+            }
+            _verticalVelocity -= gravity * deltaSeconds;
+            if (_verticalVelocity < -MaximumFallingSpeed)
+            {
+                _verticalVelocity = -MaximumFallingSpeed;
+            }
+            return;
+        }
+
+        // 非跳跃状态仍施加轻微向下速度，使 CharacterController 持续贴住地面。
+        _verticalVelocity = GroundStickSpeed;
+    }
+
+    #region 查询与判定
     /// <summary>
     /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；技能状态即使 MoveCasting 为 true 也禁止主动起跳。
     /// </summary>
@@ -313,6 +375,47 @@ public sealed class MMoveComponent : EntityComponentBase
         }
 
         return BeginJump(nextJumpCount);
+    }
+
+    /// <summary>根据 Shift 跑步状态读取当前水平移动速度。</summary>
+    /// <returns>当前移动速度，单位为米/秒；未按 Shift 时为普通移动速度。</returns>
+    private float GetCurrentMoveSpeed()
+    {
+        if (_isRunning)
+        {
+            return PlayStateMgr.Instance.stats.runningTopSpeed;
+        }
+
+        return PlayStateMgr.Instance.stats.topSpeed;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>应用 Shift 走跑模式；地面默认动作会重评估动画，空中保留模式供落地恢复。</summary>
+    /// <param name="isRunning">true 表示使用跑步速度和跑步动画；false 表示使用普通移动。</param>
+    public void SetRunning(bool isRunning)
+    {
+        if (_isRunning == isRunning)
+        {
+            return;
+        }
+
+        _isRunning = isRunning;
+        // 宿主缺失、跳跃中或未处于移动态时不刷新走跑动画；保持原 || 短路顺序。
+        if (Entity == null || Entity.IsJump || !Entity.IsMoving)
+        {
+            return;
+        }
+        if (Entity.Machine == null)
+        {
+            return;
+        }
+
+        // 当前默认动作负责走跑动画；仅处于默认状态时请求本帧重新评估动画。
+        if (Entity.Machine.CurrentState == Entity.Machine.DefaultState)
+        {
+            Entity.Machine.MarkTriggered();
+        }
     }
 
     /// <summary>
@@ -351,38 +454,6 @@ public sealed class MMoveComponent : EntityComponentBase
         _verticalVelocity = GroundStickSpeed;
         _airborneElapsedSeconds = 0f;
         DispatchEvent(MEventType.JumpEnded, null);
-    }
-
-    /// <summary>
-    /// 注册本组件关心的全部事件：移动 / 停止移动 / 传送带 / 携带物 / 骑乘 / 换装 / 武器切换等。
-    /// </summary>
-    protected override void EventSubscribe()
-    {
-        RegisterEvent(MEventType.MEvent_Move, _onMoveEvent);
-        RegisterEvent(MEventType.MEvent_StopMove, _onStopMoveEvent);
-        //RegisterEvent(MEventType.MEvent_EnterWall, _onEnterWall);
-
-        //RegisterEvent(MEventType.MEvent_CarryItem, _onCarryItemEvent);
-        //RegisterEvent(MEventType.MEvent_RideVehicle, _onPrepairAnimEvent);
-        //RegisterEvent(MEventType.MEvent_UnRideVehicle, _onPrepairAnimEvent);
-        //RegisterEvent(MEventType.MEvent_OnFashionChange, _onPrepairAnimEvent);
-        //RegisterEvent(MEventType.MEvent_ReloadBattleRideAnimation, _onReloadBattleRideAnimation);
-        //RegisterEvent(MEventType.MEvent_EntityWeaponTypeChanged, _onPrepairAnimEvent);
-    }
-
-    /// <summary>反注册 EventSubscribe 中注册的全部事件。</summary>
-    protected override void EventUnsubscribe()
-    {
-        RemoveEventListener(MEventType.MEvent_Move, _onMoveEvent);
-        RemoveEventListener(MEventType.MEvent_StopMove, _onStopMoveEvent);
-        //RemoveEventListener(MEventType.MEvent_EnterWall, _onEnterWall);
-
-        //RemoveEventListener(MEventType.MEvent_CarryItem, _onCarryItemEvent);
-        //RemoveEventListener(MEventType.MEvent_RideVehicle, _onPrepairAnimEvent);
-        //RemoveEventListener(MEventType.MEvent_UnRideVehicle, _onPrepairAnimEvent);
-       // RemoveEventListener(MEventType.MEvent_OnFashionChange, _onPrepairAnimEvent);
-        //RemoveEventListener(MEventType.MEvent_ReloadBattleRideAnimation, _onReloadBattleRideAnimation);
-        //RemoveEventListener(MEventType.MEvent_EntityWeaponTypeChanged, _onPrepairAnimEvent);
     }
 
     /// <summary>设置新的移动目标并启动插值，首次进入移动状态时派发 MoveStarted 事件。</summary>
@@ -630,43 +701,6 @@ public sealed class MMoveComponent : EntityComponentBase
         
     }
 
-    /// <summary>根据当前跳跃阶段推进垂直速度与重力。</summary>
-    /// <param name="deltaSeconds">当前逻辑帧间隔，单位为秒且不小于零。</param>
-    private void UpdateVerticalMovement(float deltaSeconds)
-    {
-        if (_isjump)
-        {
-            _airborneElapsedSeconds += deltaSeconds;
-            // 上升使用较缓重力，下落使用较强重力，保证起跳清晰且落地利落。
-            float gravity = FallingGravity;
-            if (_verticalVelocity > 0f)
-            {
-                gravity = RisingGravity;
-            }
-            _verticalVelocity -= gravity * deltaSeconds;
-            if (_verticalVelocity < -MaximumFallingSpeed)
-            {
-                _verticalVelocity = -MaximumFallingSpeed;
-            }
-            return;
-        }
-
-        // 非跳跃状态仍施加轻微向下速度，使 CharacterController 持续贴住地面。
-        _verticalVelocity = GroundStickSpeed;
-    }
-
-    /// <summary>根据 Shift 跑步状态读取当前水平移动速度。</summary>
-    /// <returns>当前移动速度，单位为米/秒；未按 Shift 时为普通移动速度。</returns>
-    private float GetCurrentMoveSpeed()
-    {
-        if (_isRunning)
-        {
-            return PlayStateMgr.Instance.stats.runningTopSpeed;
-        }
-
-        return PlayStateMgr.Instance.stats.topSpeed;
-    }
-
     /// <summary>供技能状态开始时立即停止水平移动，保留跳跃垂直速度和落地流程。</summary>
     public void StopHorizontalMovement()
     {
@@ -701,32 +735,6 @@ public sealed class MMoveComponent : EntityComponentBase
             // 这条路径覆盖快速点按、状态切换期间提前清理 _isMoving 等竞态。
             Entity.Machine.MarkTriggered();
         }
-    }
-
-    /// <summary>对象池回收时重置移动状态和目标快照，保证下次复用时干净。</summary>
-    public override void Shutdown()
-    {
-        IsMoving = false; _elapsedMilliseconds = 0; _interpolationMilliseconds = 150;
-        _isjump = false;
-        JumpCount = 0;
-        _verticalVelocity = GroundStickSpeed;
-        _airborneElapsedSeconds = 0f;
-        _groundedStateInitialized = false;
-        _isRunning = false;
-        _hasDirectionalInput = false;
-        CostTime = 0f;
-        delay = 0.15f;
-        keep_moving = false;
-        _targetJumpCount = 0;
-        IsMoved = false;
-        _server_time = 0f;
-        _predictedTime = 0f;
-        _predictedPos = UVEC3.zero;
-        _syncToTargetDir = UVEC3.zero;
-        _syncToTargetDist = 0f;
-        _runSpeed = 0f;
-        _toTargetQuat = Quaternion.identity;
-        _target.X = 0f; _target.Y = 0f; _target.Z = 0f; _target.Yaw = 0f;
     }
 
     /// <summary>
@@ -993,4 +1001,5 @@ public sealed class MMoveComponent : EntityComponentBase
         UVEC3 end = Entity.Position + _syncToTargetDir * _runSpeed * deltaTime;
         Entity.Position = end;
     }
+    #endregion
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 /// <summary>客户端进程内只装载一次的施法权限索引；在角色开放前同步完成，资源迟到不改变当前规则。</summary>
 public static class SkillCastingRulesCatalog
 {
+
+    #region 字段与常量
     /// <summary>同步 Resources 配置键；正式 JSON 位于 Data/Skill/Resources 下。</summary>
     private const string ResourceName = "SkillCastingRules";
 
@@ -13,7 +15,9 @@ public static class SkillCastingRulesCatalog
 
     /// <summary>首次装载尝试已完成，包括缺文件或解析失败；失败默认不会被异步资源替换。</summary>
     private static bool _initialized;
+    #endregion
 
+    #region 配置读取与解析
     /// <summary>同步读取完整配置并一次建立索引；无效配置明确报警并保持稳定禁止策略。</summary>
     public static void Initialize()
     {
@@ -58,7 +62,9 @@ public static class SkillCastingRulesCatalog
             Resources.UnloadAsset(asset);
         }
     }
+    #endregion
 
+    #region 业务逻辑：施法规则查询
     /// <summary>查询新技能是否可打断旧技能，方向与 RO InteruptSkill 一致。</summary>
     /// <param name="newSkillId">当前准备释放的新技能主表 ID。</param>
     /// <param name="activeSkillId">正占用动作槽的旧技能主表 ID。</param>
@@ -82,4 +88,5 @@ public static class SkillCastingRulesCatalog
         SkillCastingRules rule;
         return _rules.TryGetValue(skillId, out rule) && rule.MoveCasting;
     }
+    #endregion
 }

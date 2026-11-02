@@ -14,8 +14,10 @@ public sealed class CRoleWriteTask
 {
     // GameServer 提交的完整角色物品快照和版本。
     private readonly SaveRoleDataReq _request;
+
     // 用于向发起请求的 GameServer 回传事务结果。
     private readonly BaseLink _serverBase;
+
     // 回包所需的网关和 Unity 会话信息副本，确保回包能沿原链路返回。
     private readonly BasePackage _basePackage;
 
@@ -40,6 +42,160 @@ public sealed class CRoleWriteTask
         }
     }
 
+    /// <summary>
+    /// 判断背包类型值是否在合法枚举范围内。
+    /// </summary>
+    /// <param name="value">背包类型整数值。</param>
+    /// <returns>在角色可持久化背包类型范围内返回 true，包括虚拟物品背包。</returns>
+    private static bool IsValidBagType(int value)
+    {
+        return value >= (int)KnapsackType.RolePackPlain && value <= (int)KnapsackType.RoleVirtualItemPack;
+    }
+
+    #region 数据读写
+    /// <summary>
+    /// 将请求中的物品快照以"删旧写新"方式写入数据库。
+    /// 删除顺序：先删装备词条、再删装备、最后按背包类型删物品主表；
+    /// 插入顺序：先插物品主表、再插装备、最后插装备词条，保证外键依赖顺序。
+    /// 所有操作在 Execute 开启的事务内执行。
+    /// </summary>
+    /// <param name="db">SqlSugar 数据库客户端。</param>
+    /// <param name="itemDataLists">请求携带的各背包物品快照列表。</param>
+    private void SaveItemDataLists(SqlSugarClient db, IEnumerable<ItemDataList> itemDataLists)
+    {
+        List<ItemDataList> dataLists = itemDataLists.ToList();
+        List<int> bagTypes = dataLists.Select(v => v.BagType).ToList();
+
+        // 查询本次涉及背包类型中已有的旧物品 UID，用于级联删除装备和词条。
+        List<long> oldItemUids = db.Queryable<ItemTable>()
+            .Where(v => v.RoleID == _request.RoleId && bagTypes.Contains(v.BagType))
+            .Select(v => v.ItemUID)
+            .ToList();
+
+        // 删旧阶段一：先删除装备词条表（依赖装备 UID）。
+        if (oldItemUids.Count > 0)
+        {
+            db.Deleteable<EquipXLGeneTable>()
+                .Where(v => v.RoleID == _request.RoleId && 
+                            oldItemUids.Contains(v.ItemUID))
+                .ExecuteCommand();
+            // 删旧阶段二：删除装备表。
+            db.Deleteable<EquipTable>()
+                .Where(v => v.RoleID == _request.RoleId && oldItemUids.Contains(v.ItemUID))
+                .ExecuteCommand();
+        }
+
+        // 删旧阶段三：按背包类型删除物品主表的全部旧记录。
+        foreach (int bagType in bagTypes)
+        {
+            db.Deleteable<ItemTable>()
+                .Where(v => v.RoleID == _request.RoleId && v.BagType == bagType)
+                .ExecuteCommand();
+        }
+
+        // 写新阶段：将协议快照转换为三张表的实体列表，统一批量插入。
+        DateTime now = DateTime.Now;
+        List<ItemTable> items = new List<ItemTable>();
+        List<EquipTable> equips = new List<EquipTable>();
+        List<EquipXLGeneTable> genes = new List<EquipXLGeneTable>();
+        foreach (RoleItemInfo item in dataLists.SelectMany(v => v.Items))
+        {
+            DateTime? expireDate = null;
+            if (item.ExpireTimeUtcTicks > 0)
+            {
+                expireDate = FromUtcTicks(item.ExpireTimeUtcTicks, now);
+            }
+            // 物品主表实体：包含基础属性、位置、绑定、价格和时间字段。
+            items.Add(new ItemTable
+            {
+                ItemUID = item.ItemUid,
+                RoleID = item.RoleId,
+                ItemTypeID = item.ItemTypeId,
+                BagType = item.BagType,
+                BagIndex = item.BagIndex,
+                count = item.Count,
+                ItemSign = item.ItemSign,
+                MoneyType = item.MoneyType,
+                TotalPrice = item.TotalPrice,
+                // 创建时间按 UTC Ticks 转本地时间，非法值回退到当前时间。
+                CreateDate = FromUtcTicks(item.CreateTimeUtcTicks, now),
+                // 过期时间为 0 时表示永不过期，存 null。
+                ExpireDate = expireDate,
+                UpdateDate = now
+            });
+
+            // 装备扩展表：仅当物品携带装备信息时插入。
+            if (item.EquipInfo != null)
+            {
+                equips.Add(new EquipTable
+                {
+                    ItemUID = item.ItemUid,
+                    RoleID = item.RoleId,
+                    EquipType = item.EquipInfo.EquipType,
+                    StrengthenLevel = item.EquipInfo.StrengthenLevel
+                });
+            }
+
+            // 装备词条表：仅当物品携带词条信息时插入，三个词条槽位分别存储 ID 和数值。
+            if (item.EquipGeneInfo != null)
+            {
+                genes.Add(new EquipXLGeneTable
+                {
+                    ItemUID = item.ItemUid,
+                    RoleID = item.RoleId,
+                    GeneID0 = item.EquipGeneInfo.GeneId0,
+                    GeneID1 = item.EquipGeneInfo.GeneId1,
+                    GeneID2 = item.EquipGeneInfo.GeneId2,
+                    GeneValue0 = item.EquipGeneInfo.GeneValue0,
+                    GeneValue1 = item.EquipGeneInfo.GeneValue1,
+                    GeneValue2 = item.EquipGeneInfo.GeneValue2
+                });
+            }
+        }
+
+        // 批量插入三张表，空列表跳过避免无意义 SQL。
+        if (items.Count > 0)
+        {
+            db.Insertable(items).ExecuteCommand();
+        }
+        if (equips.Count > 0)
+        {
+            db.Insertable(equips).ExecuteCommand();
+        }
+        if (genes.Count > 0)
+        {
+            db.Insertable(genes).ExecuteCommand();
+        }
+    }
+
+    /// <summary>覆盖保存角色商城、副本次数快照。</summary>
+    private void SaveRoleCountData(SqlSugarClient db, int roleId, long version, IEnumerable<RoleCountInfo> counts)
+    {
+        // 空次数列表是合法的完整快照，删除旧记录后不插入新行即可完成清库。
+        List<RoleCountInfo> list = new List<RoleCountInfo>();
+        if (counts != null)
+        {
+            list = counts.ToList();
+        }
+        db.Deleteable<RoleCountTable>().Where(v => v.RoleId == roleId).ExecuteCommand();
+        DateTime now = DateTime.Now;
+        List<RoleCountTable> rows = new List<RoleCountTable>();
+        foreach (RoleCountInfo value in list)
+        {
+            // 空对象或动作 ID 不合法的次数记录直接跳过。
+            if (value == null || value.Action <= 0) continue;
+            // 计数键不合法或数量为负的次数记录直接跳过。
+            if (value.CountKey <= 0 || value.Count < 0) continue;
+            DateTime refresh = DateTime.MinValue;
+            if (value.LastRefreshTime > 0) refresh = new DateTime(value.LastRefreshTime, DateTimeKind.Utc).ToLocalTime();
+            rows.Add(new RoleCountTable { RoleId = roleId, Action = value.Action, CountKey = value.CountKey,
+                Count = value.Count, LastRefreshTime = refresh, Version = version, CreateDate = now, UpdateDate = now });
+        }
+        if (rows.Count > 0) db.Insertable(rows).ExecuteCommand();
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>
     /// 执行数据库写任务的主入口，在 CenterServer 逻辑线程调用。
     /// 流程：参数校验 → 开启事务 → 查询角色 → 版本三分支校验（同版本幂等/过期拒绝/新版本写入）
@@ -228,147 +384,6 @@ public sealed class CRoleWriteTask
 
     }
 
-    /// <summary>
-    /// 将请求中的物品快照以"删旧写新"方式写入数据库。
-    /// 删除顺序：先删装备词条、再删装备、最后按背包类型删物品主表；
-    /// 插入顺序：先插物品主表、再插装备、最后插装备词条，保证外键依赖顺序。
-    /// 所有操作在 Execute 开启的事务内执行。
-    /// </summary>
-    /// <param name="db">SqlSugar 数据库客户端。</param>
-    /// <param name="itemDataLists">请求携带的各背包物品快照列表。</param>
-    private void SaveItemDataLists(SqlSugarClient db, IEnumerable<ItemDataList> itemDataLists)
-    {
-        List<ItemDataList> dataLists = itemDataLists.ToList();
-        List<int> bagTypes = dataLists.Select(v => v.BagType).ToList();
-
-        // 查询本次涉及背包类型中已有的旧物品 UID，用于级联删除装备和词条。
-        List<long> oldItemUids = db.Queryable<ItemTable>()
-            .Where(v => v.RoleID == _request.RoleId && bagTypes.Contains(v.BagType))
-            .Select(v => v.ItemUID)
-            .ToList();
-
-        // 删旧阶段一：先删除装备词条表（依赖装备 UID）。
-        if (oldItemUids.Count > 0)
-        {
-            db.Deleteable<EquipXLGeneTable>()
-                .Where(v => v.RoleID == _request.RoleId && 
-                            oldItemUids.Contains(v.ItemUID))
-                .ExecuteCommand();
-            // 删旧阶段二：删除装备表。
-            db.Deleteable<EquipTable>()
-                .Where(v => v.RoleID == _request.RoleId && oldItemUids.Contains(v.ItemUID))
-                .ExecuteCommand();
-        }
-
-        // 删旧阶段三：按背包类型删除物品主表的全部旧记录。
-        foreach (int bagType in bagTypes)
-        {
-            db.Deleteable<ItemTable>()
-                .Where(v => v.RoleID == _request.RoleId && v.BagType == bagType)
-                .ExecuteCommand();
-        }
-
-        // 写新阶段：将协议快照转换为三张表的实体列表，统一批量插入。
-        DateTime now = DateTime.Now;
-        List<ItemTable> items = new List<ItemTable>();
-        List<EquipTable> equips = new List<EquipTable>();
-        List<EquipXLGeneTable> genes = new List<EquipXLGeneTable>();
-        foreach (RoleItemInfo item in dataLists.SelectMany(v => v.Items))
-        {
-            DateTime? expireDate = null;
-            if (item.ExpireTimeUtcTicks > 0)
-            {
-                expireDate = FromUtcTicks(item.ExpireTimeUtcTicks, now);
-            }
-            // 物品主表实体：包含基础属性、位置、绑定、价格和时间字段。
-            items.Add(new ItemTable
-            {
-                ItemUID = item.ItemUid,
-                RoleID = item.RoleId,
-                ItemTypeID = item.ItemTypeId,
-                BagType = item.BagType,
-                BagIndex = item.BagIndex,
-                count = item.Count,
-                ItemSign = item.ItemSign,
-                MoneyType = item.MoneyType,
-                TotalPrice = item.TotalPrice,
-                // 创建时间按 UTC Ticks 转本地时间，非法值回退到当前时间。
-                CreateDate = FromUtcTicks(item.CreateTimeUtcTicks, now),
-                // 过期时间为 0 时表示永不过期，存 null。
-                ExpireDate = expireDate,
-                UpdateDate = now
-            });
-
-            // 装备扩展表：仅当物品携带装备信息时插入。
-            if (item.EquipInfo != null)
-            {
-                equips.Add(new EquipTable
-                {
-                    ItemUID = item.ItemUid,
-                    RoleID = item.RoleId,
-                    EquipType = item.EquipInfo.EquipType,
-                    StrengthenLevel = item.EquipInfo.StrengthenLevel
-                });
-            }
-
-            // 装备词条表：仅当物品携带词条信息时插入，三个词条槽位分别存储 ID 和数值。
-            if (item.EquipGeneInfo != null)
-            {
-                genes.Add(new EquipXLGeneTable
-                {
-                    ItemUID = item.ItemUid,
-                    RoleID = item.RoleId,
-                    GeneID0 = item.EquipGeneInfo.GeneId0,
-                    GeneID1 = item.EquipGeneInfo.GeneId1,
-                    GeneID2 = item.EquipGeneInfo.GeneId2,
-                    GeneValue0 = item.EquipGeneInfo.GeneValue0,
-                    GeneValue1 = item.EquipGeneInfo.GeneValue1,
-                    GeneValue2 = item.EquipGeneInfo.GeneValue2
-                });
-            }
-        }
-
-        // 批量插入三张表，空列表跳过避免无意义 SQL。
-        if (items.Count > 0)
-        {
-            db.Insertable(items).ExecuteCommand();
-        }
-        if (equips.Count > 0)
-        {
-            db.Insertable(equips).ExecuteCommand();
-        }
-        if (genes.Count > 0)
-        {
-            db.Insertable(genes).ExecuteCommand();
-        }
-    }
-
-    /// <summary>覆盖保存角色商城、副本次数快照。</summary>
-    private void SaveRoleCountData(SqlSugarClient db, int roleId, long version, IEnumerable<RoleCountInfo> counts)
-    {
-        // 空次数列表是合法的完整快照，删除旧记录后不插入新行即可完成清库。
-        List<RoleCountInfo> list = new List<RoleCountInfo>();
-        if (counts != null)
-        {
-            list = counts.ToList();
-        }
-        db.Deleteable<RoleCountTable>().Where(v => v.RoleId == roleId).ExecuteCommand();
-        DateTime now = DateTime.Now;
-        List<RoleCountTable> rows = new List<RoleCountTable>();
-        foreach (RoleCountInfo value in list)
-        {
-            // 空对象或动作 ID 不合法的次数记录直接跳过。
-            if (value == null || value.Action <= 0) continue;
-            // 计数键不合法或数量为负的次数记录直接跳过。
-            if (value.CountKey <= 0 || value.Count < 0) continue;
-            DateTime refresh = DateTime.MinValue;
-            if (value.LastRefreshTime > 0) refresh = new DateTime(value.LastRefreshTime, DateTimeKind.Utc).ToLocalTime();
-            rows.Add(new RoleCountTable { RoleId = roleId, Action = value.Action, CountKey = value.CountKey,
-                Count = value.Count, LastRefreshTime = refresh, Version = version, CreateDate = now, UpdateDate = now });
-        }
-        if (rows.Count > 0) db.Insertable(rows).ExecuteCommand();
-    }
-
     /// <summary>比较同版本角色次数快照，空列表代表清空。</summary>
     private bool RoleCountSnapshotMatches(SqlSugarClient db, IEnumerable<RoleCountInfo> counts)
     {
@@ -527,16 +542,6 @@ public sealed class CRoleWriteTask
     }
 
     /// <summary>
-    /// 判断背包类型值是否在合法枚举范围内。
-    /// </summary>
-    /// <param name="value">背包类型整数值。</param>
-    /// <returns>在角色可持久化背包类型范围内返回 true，包括虚拟物品背包。</returns>
-    private static bool IsValidBagType(int value)
-    {
-        return value >= (int)KnapsackType.RolePackPlain && value <= (int)KnapsackType.RoleVirtualItemPack;
-    }
-
-    /// <summary>
     /// 将 UTC Ticks 转换为本地时间，非法值或 0 时回退到指定默认时间。
     /// </summary>
     /// <param name="ticks">UTC 时间刻度数。</param>
@@ -557,4 +562,5 @@ public sealed class CRoleWriteTask
         }
         return new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
     }
+    #endregion
 }

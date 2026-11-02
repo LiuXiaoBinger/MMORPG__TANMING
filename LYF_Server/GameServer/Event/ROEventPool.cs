@@ -9,6 +9,13 @@ using System.Collections.Generic;
 /// <typeparam name="T">池化的事件类型，必须继承 ROEvent 并提供无参构造。</typeparam>
 public sealed class ROEventPool<T> where T : ROEvent, new()
 {
+    /// <summary>
+    /// 私有构造：对象池只允许通过 Instance 取用，避免业务侧 new 出第二份池导致实例散落。
+    /// </summary>
+    private ROEventPool()
+    {
+    }
+
     /// <summary>单类型空闲实例上限；超出部分交给垃圾回收，避免长尾占用。</summary>
     private const int MaxIdleCount = 128;
 
@@ -17,13 +24,6 @@ public sealed class ROEventPool<T> where T : ROEvent, new()
 
     /// <summary>空闲实例栈，后进先出以提升缓存命中。</summary>
     private readonly Stack<T> idle_stack_ = new Stack<T>();
-
-    /// <summary>
-    /// 私有构造：对象池只允许通过 Instance 取用，避免业务侧 new 出第二份池导致实例散落。
-    /// </summary>
-    private ROEventPool()
-    {
-    }
 
     /// <summary>获取该事件类型的唯一对象池实例。</summary>
     public static ROEventPool<T> Instance

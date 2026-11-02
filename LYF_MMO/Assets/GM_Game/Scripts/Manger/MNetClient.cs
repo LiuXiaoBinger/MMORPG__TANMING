@@ -9,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public class MNetClient : Singleton<MNetClient>
 {
+
+    #region 字段与属性
     /// <summary>Unity 主线程同步上下文。</summary>
     private SynchronizationContext _synchronizationContext;
 
@@ -28,25 +30,6 @@ public class MNetClient : Singleton<MNetClient>
     public static NetClient Client
     {
         get { return _client; }
-    }
-
-    /// <summary>
-    /// 业务公共上行入口（对齐 RO 的 MNetClient::Send）：按协议号与载荷交给当前连接。
-    /// 实时协议是否改走 KCP 由连接层按协议号分流，调用方不需要感知通道。
-    /// 需要把发送固定到某个已捕获连接与代次的业务（例如商城），继续使用自己捕获的连接发送，不受本入口影响。
-    /// </summary>
-    /// <param name="protoCode">协议号。</param>
-    /// <param name="data">协议载荷字节串。</param>
-    /// <returns>本地提交结果：已交给通道返回 true，无连接或写出失败返回 false；不代表服务端业务处理完成。</returns>
-    public bool Send(int protoCode, ByteString data)
-    {
-        // 当前 TCP 连接，为空说明尚未连接或已断开。
-        NetClient client = _client;
-        if (client == null)
-        {
-            return false;
-        }
-        return client.Send(protoCode, data);
     }
 
     /// <summary>获取当前有效连接代次。</summary>
@@ -93,6 +76,7 @@ public class MNetClient : Singleton<MNetClient>
             return realtimeClient.IsReady;
         }
     }
+    #endregion
 
     /// <summary>初始化网络模块并连接登录服务器。</summary>
     public void Init()
@@ -110,30 +94,7 @@ public class MNetClient : Singleton<MNetClient>
         ConnectServer(NetDefine.IPHost, NetDefine.LoginServerPort);
     }
 
-    /// <summary>切换到指定服务器，并为新连接分配独立代次。</summary>
-    public void ConnectServer(string host, int port, Action connSucced = null,
-        Action connFail = null)
-    {
-        Disconnect();
-        Volatile.Write(ref _isConnected, 0);
-
-        long connectionGeneration = Interlocked.Increment(ref _connectionGenerationSeed);
-        NetClient client = new NetClient(host, port, ClientType.Unity);
-        _client = client;
-        // UDP 握手与 TCP 使用同一主机，端口由服务端绑定响应下发。
-        _serverHost = host;
-        Volatile.Write(ref _pendingConnectionGeneration, connectionGeneration);
-        Volatile.Write(ref _activeConnectionGeneration, 0);
-
-        client.OnReceiveMsg += (protoCode, data) =>
-            OnReceiveMsgHandle(client, protoCode, data);
-        client.OnConnSucceed += () =>
-            OnConnectionSucceeded(client, connSucced);
-        client.OnConnFailed += () =>
-            OnConnectionFailed(client, connFail);
-        client.StartConnect();
-    }
-
+    #region 事件回调
     /// <summary>
     /// TCP 下行接入：连接层已拆帧并反序列化，这里补上收包时刻的连接代次后汇入公共 OnRecv。
     /// </summary>
@@ -295,53 +256,6 @@ public class MNetClient : Singleton<MNetClient>
         });
     }
 
-    /// <summary>断开当前客户端，并立即让当前连接代次失效。</summary>
-    public void Disconnect()
-    {
-        // 先释放 UDP 通道，旧会话的实时数据不能落到后续连接。
-        ReleaseRealtimeClient();
-        NetClient disconnectedClient = _client;
-        long disconnectedGeneration = Interlocked.Exchange(ref _activeConnectionGeneration, 0);
-        Volatile.Write(ref _pendingConnectionGeneration, 0);
-        Volatile.Write(ref _isConnected, 0);
-        _client = null;
-
-        ShopMgr.Instance.HandleDisconnected(disconnectedGeneration);
-        ClearSceneWorld();
-        if (disconnectedClient != null)
-        {
-            // 先移除当前引用，底层断开回调便不会误清理后续新连接状态。
-            disconnectedClient._isNeedReconn = false;
-            disconnectedClient.Disconnect();
-        }
-    }
-
-    /// <summary>
-    /// 请求把移动与技能实时协议绑定到 KCP 通道；在本地主角创建模型前调用。
-    /// 实时协议只走 KCP，绑定失败按现有断线流程恢复，不保持 TCP 继续游戏。
-    /// </summary>
-    public void RequestRealtimeBind()
-    {
-        if (!IsConnected)
-        {
-            return;
-        }
-        if (_realtimeBindRequested)
-        {
-            return;
-        }
-        // 本地缓存当前 TCP 连接，为空说明未连接，直接不发绑定请求。
-        NetClient client = _client;
-        if (client == null)
-        {
-            return;
-        }
-
-        _realtimeBindRequested = true;
-        // 绑定请求只带协议号，参数由服务端生成的会话号和令牌决定。
-        client.Send(NetDefine.CMD_KcpBindCode, ByteString.Empty);
-    }
-
     /// <summary>
     /// 处理绑定响应：拿到参数后启动客户端 KCP，只有网关经 TCP 确认启用才算就绪。
     /// 任何失败都清理通道并沿用既有断线恢复，不允许带着 TCP 继续游戏。
@@ -438,56 +352,6 @@ public class MNetClient : Singleton<MNetClient>
     }
 
     /// <summary>
-    /// 绑定失败的统一收尾：释放本端通道，经可靠 TCP 回传放弃结果，再触发现有断线恢复。
-    /// 可重复调用：通道已释放时只跳过回传放弃通知，但只要当前连接仍在，仍会再次断开该连接，
-    /// 因此重复调用表现为“继续走断线恢复”，不是空操作。
-    /// </summary>
-    private void FailRealtimeBind()
-    {
-        // 当前 TCP 连接，为重连入口；为空说明连接已断开，无需再次触发。
-        NetClient client = _client;
-        // 本次被放弃的会话号，随放弃结果回传给网关用于清理。
-        uint abandonedConv = _realtimeBindConv;
-        // 仅当本端确实持有通道时才需要回传放弃通知，避免未分配会话号时误发。
-        bool hasChannel = _realtimeClient != null || abandonedConv != 0u;
-        ReleaseRealtimeClient();
-        if (hasChannel)
-        {
-            SendRealtimeBindAbandoned(client, abandonedConv);
-        }
-        if (client == null)
-        {
-            return;
-        }
-        // 走底层既有断线恢复：断开后由 NetClient 的自动重连与新代次重新建链。
-        client.Disconnect();
-    }
-
-    /// <summary>
-    /// 经可靠 TCP 告知网关本次绑定已放弃；载荷只带结果码与会话号，不携带令牌。
-    /// </summary>
-    /// <param name="sourceClient">发送放弃通知的 TCP 连接。</param>
-    /// <param name="conv">被放弃的会话号，为零表示没有实际发起过绑定。</param>
-    private void SendRealtimeBindAbandoned(NetClient sourceClient, uint conv)
-    {
-        if (sourceClient == null)
-        {
-            return;
-        }
-        if (conv == 0u)
-        {
-            return;
-        }
-        // 放弃通知载荷：只填结果码与会话号，令牌保持全零。
-        KcpBindPayload payload = new KcpBindPayload();
-        payload.Result = KcpBindResult.Abandoned;
-        payload.Conv = conv;
-        // 放弃通知不带密钥，保持全零。
-        payload.Token = new byte[KcpDefine.BindTokenBytes];
-        sourceClient.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
-    }
-
-    /// <summary>
     /// 运行期通道失效：不把已发出的实时协议改投 TCP，直接复用既有 TCP 断线恢复流程。
     /// </summary>
     /// <param name="sourceClient">通道所属连接。</param>
@@ -506,25 +370,6 @@ public class MNetClient : Singleton<MNetClient>
             // 走底层既有断线恢复：连接断开后由 NetClient 的自动重连与新代次重新建链。
             sourceClient.Disconnect();
         });
-    }
-
-    /// <summary>
-    /// 判断回调是否仍属于当前连接与当前代次；旧通道或旧连接的回调一律忽略。
-    /// </summary>
-    /// <param name="sourceClient">回调登记时的连接。</param>
-    /// <param name="sourceGeneration">回调登记时的连接代次。</param>
-    /// <returns>仍属于当前连接且代次一致时返回 true。</returns>
-    private bool IsRealtimeOwner(NetClient sourceClient, long sourceGeneration)
-    {
-        if (!ReferenceEquals(_client, sourceClient))
-        {
-            return false;
-        }
-        if (sourceGeneration <= 0)
-        {
-            return false;
-        }
-        return sourceGeneration == CurrentConnectionGeneration;
     }
 
     /// <summary>
@@ -554,7 +399,94 @@ public class MNetClient : Singleton<MNetClient>
         ByteString data = basePackage.Data;
         OnRecv(sourceClient, sourceGeneration, protoCode, data, true);
     }
+    #endregion
 
+    #region 网络请求与消息
+    /// <summary>
+    /// 业务公共上行入口（对齐 RO 的 MNetClient::Send）：按协议号与载荷交给当前连接。
+    /// 实时协议是否改走 KCP 由连接层按协议号分流，调用方不需要感知通道。
+    /// 需要把发送固定到某个已捕获连接与代次的业务（例如商城），继续使用自己捕获的连接发送，不受本入口影响。
+    /// </summary>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">协议载荷字节串。</param>
+    /// <returns>本地提交结果：已交给通道返回 true，无连接或写出失败返回 false；不代表服务端业务处理完成。</returns>
+    public bool Send(int protoCode, ByteString data)
+    {
+        // 当前 TCP 连接，为空说明尚未连接或已断开。
+        NetClient client = _client;
+        if (client == null)
+        {
+            return false;
+        }
+        return client.Send(protoCode, data);
+    }
+
+    /// <summary>
+    /// 请求把移动与技能实时协议绑定到 KCP 通道；在本地主角创建模型前调用。
+    /// 实时协议只走 KCP，绑定失败按现有断线流程恢复，不保持 TCP 继续游戏。
+    /// </summary>
+    public void RequestRealtimeBind()
+    {
+        if (!IsConnected)
+        {
+            return;
+        }
+        if (_realtimeBindRequested)
+        {
+            return;
+        }
+        // 本地缓存当前 TCP 连接，为空说明未连接，直接不发绑定请求。
+        NetClient client = _client;
+        if (client == null)
+        {
+            return;
+        }
+
+        _realtimeBindRequested = true;
+        // 绑定请求只带协议号，参数由服务端生成的会话号和令牌决定。
+        client.Send(NetDefine.CMD_KcpBindCode, ByteString.Empty);
+    }
+
+    /// <summary>
+    /// 经可靠 TCP 告知网关本次绑定已放弃；载荷只带结果码与会话号，不携带令牌。
+    /// </summary>
+    /// <param name="sourceClient">发送放弃通知的 TCP 连接。</param>
+    /// <param name="conv">被放弃的会话号，为零表示没有实际发起过绑定。</param>
+    private void SendRealtimeBindAbandoned(NetClient sourceClient, uint conv)
+    {
+        if (sourceClient == null)
+        {
+            return;
+        }
+        if (conv == 0u)
+        {
+            return;
+        }
+        // 放弃通知载荷：只填结果码与会话号，令牌保持全零。
+        KcpBindPayload payload = new KcpBindPayload();
+        payload.Result = KcpBindResult.Abandoned;
+        payload.Conv = conv;
+        // 放弃通知不带密钥，保持全零。
+        payload.Token = new byte[KcpDefine.BindTokenBytes];
+        sourceClient.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
+    }
+
+    /// <summary>在 Unity 主线程执行网络生命周期或消息回调。</summary>
+    private void PostToMainThread(Action action)
+    {
+        if (action == null)
+        {
+            return;
+        }
+        if (_synchronizationContext == null)
+        {
+            return;
+        }
+        _synchronizationContext.Post(_ => action.Invoke(), null);
+    }
+    #endregion
+
+    #region 移除与回收
     /// <summary>
     /// 仅当通道仍属于失败代次时释放。自动重连可能已建立新代次的新通道，
     /// 旧连接的失败回调若直接释放，会把正在使用的新 KCP 关掉。
@@ -594,20 +526,99 @@ public class MNetClient : Singleton<MNetClient>
             realtimeClient.Close();
         }
     }
+    #endregion
 
-    /// <summary>在 Unity 主线程执行网络生命周期或消息回调。</summary>
-    private void PostToMainThread(Action action)
+    /// <summary>
+    /// 判断回调是否仍属于当前连接与当前代次；旧通道或旧连接的回调一律忽略。
+    /// </summary>
+    /// <param name="sourceClient">回调登记时的连接。</param>
+    /// <param name="sourceGeneration">回调登记时的连接代次。</param>
+    /// <returns>仍属于当前连接且代次一致时返回 true。</returns>
+    private bool IsRealtimeOwner(NetClient sourceClient, long sourceGeneration)
     {
-        if (action == null)
+        if (!ReferenceEquals(_client, sourceClient))
         {
-            return;
+            return false;
         }
-        if (_synchronizationContext == null)
+        if (sourceGeneration <= 0)
         {
-            return;
+            return false;
         }
-        _synchronizationContext.Post(_ => action.Invoke(), null);
+        return sourceGeneration == CurrentConnectionGeneration;
     }
+
+    #region 核心逻辑
+    /// <summary>切换到指定服务器，并为新连接分配独立代次。</summary>
+    public void ConnectServer(string host, int port, Action connSucced = null,
+        Action connFail = null)
+    {
+        Disconnect();
+        Volatile.Write(ref _isConnected, 0);
+
+        long connectionGeneration = Interlocked.Increment(ref _connectionGenerationSeed);
+        NetClient client = new NetClient(host, port, ClientType.Unity);
+        _client = client;
+        // UDP 握手与 TCP 使用同一主机，端口由服务端绑定响应下发。
+        _serverHost = host;
+        Volatile.Write(ref _pendingConnectionGeneration, connectionGeneration);
+        Volatile.Write(ref _activeConnectionGeneration, 0);
+
+        client.OnReceiveMsg += (protoCode, data) =>
+            OnReceiveMsgHandle(client, protoCode, data);
+        client.OnConnSucceed += () =>
+            OnConnectionSucceeded(client, connSucced);
+        client.OnConnFailed += () =>
+            OnConnectionFailed(client, connFail);
+        client.StartConnect();
+    }
+
+    /// <summary>断开当前客户端，并立即让当前连接代次失效。</summary>
+    public void Disconnect()
+    {
+        // 先释放 UDP 通道，旧会话的实时数据不能落到后续连接。
+        ReleaseRealtimeClient();
+        NetClient disconnectedClient = _client;
+        long disconnectedGeneration = Interlocked.Exchange(ref _activeConnectionGeneration, 0);
+        Volatile.Write(ref _pendingConnectionGeneration, 0);
+        Volatile.Write(ref _isConnected, 0);
+        _client = null;
+
+        ShopMgr.Instance.HandleDisconnected(disconnectedGeneration);
+        ClearSceneWorld();
+        if (disconnectedClient != null)
+        {
+            // 先移除当前引用，底层断开回调便不会误清理后续新连接状态。
+            disconnectedClient._isNeedReconn = false;
+            disconnectedClient.Disconnect();
+        }
+    }
+
+    /// <summary>
+    /// 绑定失败的统一收尾：释放本端通道，经可靠 TCP 回传放弃结果，再触发现有断线恢复。
+    /// 可重复调用：通道已释放时只跳过回传放弃通知，但只要当前连接仍在，仍会再次断开该连接，
+    /// 因此重复调用表现为“继续走断线恢复”，不是空操作。
+    /// </summary>
+    private void FailRealtimeBind()
+    {
+        // 当前 TCP 连接，为重连入口；为空说明连接已断开，无需再次触发。
+        NetClient client = _client;
+        // 本次被放弃的会话号，随放弃结果回传给网关用于清理。
+        uint abandonedConv = _realtimeBindConv;
+        // 仅当本端确实持有通道时才需要回传放弃通知，避免未分配会话号时误发。
+        bool hasChannel = _realtimeClient != null || abandonedConv != 0u;
+        ReleaseRealtimeClient();
+        if (hasChannel)
+        {
+            SendRealtimeBindAbandoned(client, abandonedConv);
+        }
+        if (client == null)
+        {
+            return;
+        }
+        // 走底层既有断线恢复：断开后由 NetClient 的自动重连与新代次重新建链。
+        client.Disconnect();
+    }
+
     /// <summary>清理当前连接对应的客户端角色运行时数据。</summary>
     private static void ClearSceneWorld()
     {
@@ -632,4 +643,5 @@ public class MNetClient : Singleton<MNetClient>
         }
         global.ClearLocalRoleSession(failedConnectionGeneration);
     }
+    #endregion
 }

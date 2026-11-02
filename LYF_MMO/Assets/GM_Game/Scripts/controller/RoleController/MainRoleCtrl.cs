@@ -16,34 +16,26 @@ using UnityEngine.InputSystem.Utilities;
 /// </summary>
 public class MainRoleCtrl : RoleCtrlBase
 {
+
+   #region 字段
    // 用于锁定移动方向的时间戳（当前时间小于此值时，禁止移动输入）
    protected float m_movementDirectionUnlockTime;
 
    /// <summary>角色输入组件，用于读取移动与技能按键。</summary>
    private PlayerInputCtr _inputCtrl;
+
    /// <summary>主相机变换缓存，用于把屏幕输入换算为世界朝向。</summary>
    private Transform _mainCameraTransform;
+
    /// <summary>移动速度，普通为10、加速为18。</summary>
    private float _moveSpeed = 10;
+
    /// <summary>旋转速度（历史字段，旧移动路径使用）。</summary>
    private float _rotationSpeed = 10000;
 
    /// <summary>挂在主角模型上的残影组件，滑铲时生成鬼影。</summary>
    private GhostEffect _ghostEffect;
-
-   protected override void OnAwake()
-   {
-      Global.Instance.roleCtrlBase = this;
-      
-      _inputCtrl = GetComponent<PlayerInputCtr>();
-      _ghostEffect = GetComponent<GhostEffect>();
-      
-      
-      CacheMainCameraTransform();
-      RegistKeyEventHandle();
-      
-      
-   }
+   #endregion
 
    protected override void OnStart()
    {
@@ -58,12 +50,56 @@ public class MainRoleCtrl : RoleCtrlBase
          UIRoot.Instance.RegisterMainUIKeyHandler();
       }
    }
-   
+
+   #region 事件回调
+   protected override void OnAwake()
+   {
+      Global.Instance.roleCtrlBase = this;
+      
+      _inputCtrl = GetComponent<PlayerInputCtr>();
+      _ghostEffect = GetComponent<GhostEffect>();
+      
+      CacheMainCameraTransform();
+      RegistKeyEventHandle();
+      
+   }
+
+   protected override void OnUpdate()
+   {
+      if (_roleState == RoleState.Slider)
+      {
+         _ghostEffect.CreateGhostEffectObject(Color.white,0.2f,
+            0.2f,0.2f,0.2f);
+      }
+     // PlayerMovement();
+   }
+   #endregion
+
+   // ReSharper disable Unity.PerformanceAnalysis
+   private Vector3 GetCameraRelativeDirection(Vector3 direction)
+   {
+      if (_mainCameraTransform == null)
+      {
+         CacheMainCameraTransform();
+      }
+
+      if (_mainCameraTransform == null)
+      {
+         return direction;
+      }
+
+      Vector3 forward = Vector3.ProjectOnPlane(_mainCameraTransform.forward, Vector3.up).normalized;
+      Vector3 right = Vector3.ProjectOnPlane(_mainCameraTransform.right, Vector3.up).normalized;
+      return right * direction.x + forward * direction.z;
+   }
+
+   #region 核心逻辑
    private void RegistKeyEventHandle()
    {
      // _inputCtrl.ShiftPressedEvent += ShifKeyIsPress;
       //_inputCtrl.SkillKeyEvent += SkillKeyEvent;
    }
+
    /// <summary>
    /// 角色释放技能
    /// </summary>
@@ -92,18 +128,6 @@ public class MainRoleCtrl : RoleCtrlBase
       }
    }
 
-   protected override void OnUpdate()
-   {
-      if (_roleState == RoleState.Slider)
-      {
-         _ghostEffect.CreateGhostEffectObject(Color.white,0.2f,
-            0.2f,0.2f,0.2f);
-      }
-     // PlayerMovement();
-   }
-
-   
-
    private void PlayerMovement()
    {
       if(_roleState == RoleState.Attck)return;
@@ -128,7 +152,6 @@ public class MainRoleCtrl : RoleCtrlBase
             }
          }
          
-
          Accelerate(targetPos,_moveSpeed);
          
          FaceDirectionSmooth(lastVelocity);
@@ -150,24 +173,6 @@ public class MainRoleCtrl : RoleCtrlBase
          }
       }
    }
-   
-   // ReSharper disable Unity.PerformanceAnalysis
-   private Vector3 GetCameraRelativeDirection(Vector3 direction)
-   {
-      if (_mainCameraTransform == null)
-      {
-         CacheMainCameraTransform();
-      }
-
-      if (_mainCameraTransform == null)
-      {
-         return direction;
-      }
-
-      Vector3 forward = Vector3.ProjectOnPlane(_mainCameraTransform.forward, Vector3.up).normalized;
-      Vector3 right = Vector3.ProjectOnPlane(_mainCameraTransform.right, Vector3.up).normalized;
-      return right * direction.x + forward * direction.z;
-   }
 
    private void CacheMainCameraTransform()
    {
@@ -177,7 +182,7 @@ public class MainRoleCtrl : RoleCtrlBase
          _mainCameraTransform = mainCamera.transform;
       }
    }
-   
+
    /// <summary>
    /// 在指定方向上平滑移动玩家（加速度控制）
    /// </summary>
@@ -205,6 +210,7 @@ public class MainRoleCtrl : RoleCtrlBase
         
       Accelerate(direction, turningDrag, finalAcceleration, topSpeed);
    }
+
    /// <summary>
    /// 平滑地改变玩家水平角度 参数是水平速度
    /// </summary>
@@ -213,6 +219,7 @@ public class MainRoleCtrl : RoleCtrlBase
    {
       FaceDirection(direction, PlayStateMgr.Instance.stats.rotationSpeed);
    }
+
    /// <summary>
    /// 技能相关按键事件
    /// </summary>
@@ -256,6 +263,6 @@ public class MainRoleCtrl : RoleCtrlBase
             break;
       }
    }
+   #endregion
 
-   
 }

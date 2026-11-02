@@ -4,6 +4,8 @@ using MMoRpgCommon.SceneEntity;
 /// <summary>实体普通程序位移组件；容器在移动提交前计算水平差量，由 MMoveComponent 合并重力和碰撞。</summary>
 public sealed class MDisplacementComponent : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>当前段及尚未提交差量所属的原技能对象。</summary>
     private MSkill _owner;
 
@@ -42,7 +44,9 @@ public sealed class MDisplacementComponent : EntityComponentBase
 
     /// <summary>普通容器中的独立位移身份，不能与输入移动组件共用类型键。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Displacement; } }
+    #endregion
 
+    #region 构造与初始化
     /// <summary>由组件管理器创建实体位移组件，宿主绑定与复用由基类统一管理。</summary>
     /// <param name="owner">创建时的宿主实体；池复用时会重新绑定新实体。</param>
     public MDisplacementComponent(ROObject owner) : base(owner)
@@ -175,6 +179,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
     {
         StopDisplacement();
     }
+    #endregion
 
     /// <summary>直接卸载或对象池解绑时立即清运动和模型引用，不等待下一帧消费。</summary>
     public override void OnDetachFromHost()
@@ -183,6 +188,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
         base.OnDetachFromHost();
     }
 
+    #region 核心逻辑
     /// <summary>沿 RO 开始入口接管一条已经到期的指令，同 owner 多段先完成前段差量再切换。</summary>
     /// <param name="args">计时回调冻结的技能身份、原点、方向及冷登记基线。</param>
     /// <returns>身份仍占用当前动作槽且数据有效时返回 true。</returns>
@@ -353,4 +359,5 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _lastClockMilliseconds = 0;
         _direction = Vector3.zero;
     }
+    #endregion
 }

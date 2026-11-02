@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class BuyDialog : MonoBehaviour
 {
+
+   #region 字段
    [SerializeField, Header("商品图标")] private Image _productIcon;
 
    [SerializeField, Header("商品名称")] private TMP_Text _productName;
@@ -38,7 +40,9 @@ public class BuyDialog : MonoBehaviour
    private string _currencyName;
 
    private bool _isRefreshingQuantity;
+   #endregion
 
+   #region 生命周期
    private void Awake()
    {
       BindQuantityEvents();
@@ -84,7 +88,101 @@ public class BuyDialog : MonoBehaviour
    {
       Initialize(onClosed, _ => onConfirm?.Invoke(), "未命名商品", 0, 0, "货币", 1);
    }
+   #endregion
 
+   public void CloseDialog()
+    {
+       Destroy(gameObject);
+    }
+
+   #region 界面刷新
+   private void RefreshQuantityUI()
+   {
+      if (_quantityInput != null)
+      {
+         _isRefreshingQuantity = true;
+         _quantityInput.SetTextWithoutNotify(_quantity.ToString());
+         _isRefreshingQuantity = false;
+      }
+
+      RefreshTotalPrice();
+      RefreshQuantityButtons();
+   }
+
+   private void RefreshTotalPrice()
+   {
+      if (_currencyText != null)
+      {
+         long totalPrice = (long)_unitPrice * _quantity;
+         string category = _currencyType <= 0 ? "未知" : _currencyType.ToString();
+         _currencyText.text = $"货币类别 {category} · {_currencyName} {totalPrice}";
+      }
+   }
+
+   private void RefreshQuantityButtons()
+   {
+      if (_decreaseButton != null)
+      {
+         _decreaseButton.interactable = _quantity > 1;
+      }
+
+      if (_increaseButton != null)
+      {
+         _increaseButton.interactable = _quantity < _maxQuantity;
+      }
+   }
+   #endregion
+
+   #region 交互响应
+   //点击购买
+    public void OnConfirmButtonClick()
+    {
+      if (_quantity < 1)
+      {
+         return;
+      }
+
+      // 购买是否成功由服务端校验，客户端只提交请求并关闭确认弹窗。
+      Action<int> onConfirm = _onConfirm;
+      int quantity = _quantity;
+      CloseDialog();
+      onConfirm?.Invoke(quantity);
+   }
+
+   private void OnDecreaseButtonClick()
+   {
+      ApplyQuantity(_quantity - 1);
+   }
+
+   private void OnIncreaseButtonClick()
+   {
+      ApplyQuantity(_quantity + 1);
+   }
+
+   private void OnQuantityInputChanged(string value)
+   {
+      if (_isRefreshingQuantity || !int.TryParse(value, out int quantity))
+      {
+         return;
+      }
+
+      _quantity = Mathf.Clamp(quantity, 1, _maxQuantity);
+      RefreshTotalPrice();
+      RefreshQuantityButtons();
+   }
+
+   private void OnQuantityInputEndEdit(string value)
+   {
+      if (!int.TryParse(value, out int quantity))
+      {
+         quantity = _quantity;
+      }
+
+      ApplyQuantity(quantity);
+   }
+   #endregion
+
+   #region 核心逻辑
    /// <summary>
    /// 设置商品图标；加载失败时保留预制体默认图。
    /// </summary>
@@ -109,26 +207,6 @@ public class BuyDialog : MonoBehaviour
 
       _currencyIcon.sprite = sprite;
       _currencyIcon.gameObject.SetActive(sprite != null);
-   }
-
-   public void CloseDialog()
-    {
-       Destroy(gameObject);
-    }
-
-   //点击购买
-    public void OnConfirmButtonClick()
-    {
-      if (_quantity < 1)
-      {
-         return;
-      }
-
-      // 购买是否成功由服务端校验，客户端只提交请求并关闭确认弹窗。
-      Action<int> onConfirm = _onConfirm;
-      int quantity = _quantity;
-      CloseDialog();
-      onConfirm?.Invoke(quantity);
    }
 
    private void BindQuantityEvents()
@@ -173,77 +251,10 @@ public class BuyDialog : MonoBehaviour
       }
    }
 
-   private void OnDecreaseButtonClick()
-   {
-      ApplyQuantity(_quantity - 1);
-   }
-
-   private void OnIncreaseButtonClick()
-   {
-      ApplyQuantity(_quantity + 1);
-   }
-
-   private void OnQuantityInputChanged(string value)
-   {
-      if (_isRefreshingQuantity || !int.TryParse(value, out int quantity))
-      {
-         return;
-      }
-
-      _quantity = Mathf.Clamp(quantity, 1, _maxQuantity);
-      RefreshTotalPrice();
-      RefreshQuantityButtons();
-   }
-
-   private void OnQuantityInputEndEdit(string value)
-   {
-      if (!int.TryParse(value, out int quantity))
-      {
-         quantity = _quantity;
-      }
-
-      ApplyQuantity(quantity);
-   }
-
    private void ApplyQuantity(int quantity)
    {
       _quantity = Mathf.Clamp(quantity, 1, _maxQuantity);
       RefreshQuantityUI();
    }
-
-   private void RefreshQuantityUI()
-   {
-      if (_quantityInput != null)
-      {
-         _isRefreshingQuantity = true;
-         _quantityInput.SetTextWithoutNotify(_quantity.ToString());
-         _isRefreshingQuantity = false;
-      }
-
-      RefreshTotalPrice();
-      RefreshQuantityButtons();
-   }
-
-   private void RefreshTotalPrice()
-   {
-      if (_currencyText != null)
-      {
-         long totalPrice = (long)_unitPrice * _quantity;
-         string category = _currencyType <= 0 ? "未知" : _currencyType.ToString();
-         _currencyText.text = $"货币类别 {category} · {_currencyName} {totalPrice}";
-      }
-   }
-
-   private void RefreshQuantityButtons()
-   {
-      if (_decreaseButton != null)
-      {
-         _decreaseButton.interactable = _quantity > 1;
-      }
-
-      if (_increaseButton != null)
-      {
-         _increaseButton.interactable = _quantity < _maxQuantity;
-      }
-   }
+   #endregion
 }

@@ -6,6 +6,7 @@ public abstract class RoleComponentBase
     /// <summary>组件所属客户端角色。</summary>
     protected PlayerEntity Owner { get; private set; }
 
+    #region 构造与初始化
     /// <summary>创建组件并绑定所属角色。</summary>
     protected RoleComponentBase(PlayerEntity owner)
     {
@@ -26,6 +27,14 @@ public abstract class RoleComponentBase
     {
     }
 
+    /// <summary>释放组件资源并解除角色引用。</summary>
+    public virtual void Dispose()
+    {
+        Owner = null;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>全部角色快照装载完成后的回调。</summary>
     public virtual void AfterLoad()
     {
@@ -34,12 +43,6 @@ public abstract class RoleComponentBase
     /// <summary>角色加入客户端角色世界后的回调。</summary>
     public virtual void AfterAddedToWorld()
     {
-    }
-
-    /// <summary>释放组件资源并解除角色引用。</summary>
-    public virtual void Dispose()
-    {
-        Owner = null;
     }
 
     /// <summary>记录组件变化，统一交给角色级脏标记聚合器。</summary>
@@ -52,4 +55,5 @@ public abstract class RoleComponentBase
         }
         Owner.DirtyTracker.Mark(module, fullRefresh, slotIndex, context);
     }
+    #endregion
 }

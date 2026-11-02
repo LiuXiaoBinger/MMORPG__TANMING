@@ -11,44 +11,73 @@ using MMoRpgCommon.SceneEntity;
     /// </summary>
     public abstract class MActionComponent : EntityComponentBase, IMStateTransform
     {
+
+        #region 字段与属性
         /// <summary>动作状态归入同步类别，但由状态机专用池独立管理。</summary>
         public override EntityComponentType ComponentType
         {
             get { return EntityComponentType.Sync; }
         }
+
         /// <summary>获取或设置该状态是否已废弃（废弃后状态机不再选用）。</summary>
         public bool Deprecated { get; set; }
+
         /// <summary>获取是否为“预表现”状态（正式生效前的前置表现阶段），默认 false。</summary>
         public virtual bool IsPreperformance { get { return false; } }
 
         /// <summary>当前实体所处的状态定义，默认为默认状态。</summary>
         protected StateDefine _selfState = StateDefine.kStateDefault;
+
         /// <summary>当前状态是否已结束（true 表示空闲/未激活）。</summary>
         protected bool _isFinished = true;
+
         /// <summary>状态转移令牌，用于标识本次状态切换的唯一编号。</summary>
         protected long _token = 0;
+
         protected bool _isOverrideSuccess = true;  // 是否成功OverrideAnim，失败调用idle动作
+
         protected IEventArg _evt; //切状态的时候暂存的evt数据
+
         /// <summary>动作事件处理回调，注册后用于监听状态转移消息。</summary>
         protected MEventHandler _onActionEvent;
+
         /// <summary>动作结束事件回调，收到结束事件时自动触发 Finish() 正常结束本状态。</summary>
         private readonly MEventHandler _onFinishEvent;
 
         /// <summary>获取该状态是否需要与服务端做预测同步，默认 true。TODO: 后续接入 syncMode 配置。</summary>
         public virtual bool SyncPredicted { get { return true; } }
+
         /// <summary>获取当前组件对应的状态定义。</summary>
         public StateDefine SelfState { get { return _selfState; } }
+
         /// <summary>获取当前动作状态是否已结束。</summary>
         public bool IsFinished { get { return _isFinished; } }
+
         /// <summary>获取动作播放速度倍率，默认 1 倍速。</summary>
         public virtual float Speed { get { return 1f; } }
+
         /// <summary>获取当前状态下实体所在的碰撞层，默认使用实体默认层。</summary>
         public virtual int CollisionLayer { get { return Entity.DefaultLayer; } }
+
         /// <summary>获取是否使用运动曲线驱动位移，默认 false。</summary>
         public virtual bool IsUsingCurve { get { return false; } }
+
         /// <summary>获取该状态对应的动画机状态名（子类必须实现）。</summary>
         public abstract string StateName { get; }
 
+        /// <summary>获取该状态下实体是否仍可移动，默认 true。</summary>
+        //是否可以移动
+        public virtual bool IsActiveMovable  { get { return true; } }
+
+        /// <summary>获取是否可以被主动打断（如收到移动指令时停止），默认 false。</summary>
+        //是否可以主动打断该状态
+        public virtual bool IsActiveInterrupt  { get { return false; } }
+
+        /// <summary>获取转移到该状态时是否需要保留战斗坐骑显示（子类必须实现）。</summary>
+        public abstract bool WithBattleVehicle { get; }
+        #endregion
+
+        #region 构造、初始化与事件注册
         /// <summary>构造函数，初始化动作事件处理器。</summary>
         public MActionComponent(ROObject owner) : base(owner)
         {
@@ -88,16 +117,6 @@ using MMoRpgCommon.SceneEntity;
             RegisterEvent(eventType, _onFinishEvent);
         }
 
-        /// <summary>
-        /// 从宿主实体摘除时的回调，重置结束标记并调用基类清理。
-        /// </summary>
-        public override void OnDetachFromHost()
-        {
-            _isFinished = true;
-            _evt = null;
-            base.OnDetachFromHost();
-        }
-
         /// <summary>对象池回收时清理动作令牌和临时事件。</summary>
         public override void Shutdown()
         {
@@ -106,6 +125,22 @@ using MMoRpgCommon.SceneEntity;
             _evt = null;
             _isOverrideSuccess = true;
             base.Shutdown();
+        }
+
+        /// <summary>状态开始执行时的回调钩子，子类可选覆写。</summary>
+        //状态开始执行
+        protected virtual void OnStart() { }
+        #endregion
+
+        #region 事件回调
+        /// <summary>
+        /// 从宿主实体摘除时的回调，重置结束标记并调用基类清理。
+        /// </summary>
+        public override void OnDetachFromHost()
+        {
+            _isFinished = true;
+            _evt = null;
+            base.OnDetachFromHost();
         }
 
         /// <summary>
@@ -124,6 +159,168 @@ using MMoRpgCommon.SceneEntity;
             OnStart();
         }
 
+        /// <summary>
+        /// 状态转移消息监听器：调用子类 OnGetEvent 判定是否可切入本状态，
+        /// 允许则暂存事件并驱动状态机转移到本状态，否则强制回到默认状态。
+        /// </summary>
+        /// <param name="e">触发状态转移的事件参数。</param>
+        //状态转移消息监听
+        protected void OnActionEvent(IEventArg e)
+        {
+            IMStateTransform last = Entity.Machine.CurrentState;
+
+            if (OnGetEvent(e, last.SelfState))
+            {
+                _evt = e;
+                Entity.Machine.TransferToState(this);
+                _evt = null;
+            }
+            else
+            {
+                Entity.Machine.ForceToDefault();
+            }
+        }
+
+        /// <summary>
+        /// 动作结束事件回调：收到结束事件时调用 Finish() 正常结束当前状态。
+        /// </summary>
+        /// <param name="eventArg">触发事件的参数。</param>
+        private void OnFinishEvent(IEventArg eventArg)
+        {
+            Finish();
+        }
+
+        /// <summary>状态转移判定钩子：子类实现是否接受事件 e 切入本状态。</summary>
+        /// <param name="e">触发事件参数。</param>
+        /// <param name="last">上一个状态定义。</param>
+        /// <returns>true 表示允许转移到本状态。</returns>
+        //状态转移判定
+        protected abstract bool OnGetEvent(IEventArg e, StateDefine last);
+
+        /// <summary>状态持续期间逐帧回调。</summary>
+        /// <param name="deltaTime">距上一帧时间（秒）。</param>
+        //状态持续中的update
+        protected virtual void OnUpdate(float deltaTime) { }
+
+        /// <summary>状态正常播放结束后的回调钩子。</summary>
+        //状态正常结束后回调
+        protected virtual void OnFinished() { }
+
+        /// <summary>状态被强制停止后的回调钩子。</summary>
+        /// <param name="selfTrans">是否由自身状态转移触发。</param>
+        //状态强制结束后回调
+        protected virtual void OnStop(bool selfTrans = false) { }
+        #endregion
+
+        #region 查询与判定
+        /// <summary>
+        /// 校验实体当前绑定的原生 Controller 中确实存在目标逻辑状态。
+        /// 只有状态真实存在才允许跳过表现表剪辑准备，避免缺少动画的实体被静默放行。
+        /// </summary>
+        /// <param name="stateName">需要确认的 Animator 逻辑状态名。</param>
+        /// <returns>true 表示原生 Controller 已配置该状态。</returns>
+        private bool HasPrefabControllerState(string stateName)
+        {
+            if (Entity == null || Entity.Model == null || Entity.Model.Ator == null)
+            {
+                return false;
+            }
+            // 模型上实际播放动画的 Unity 组件，NPC 预制体的状态位于 Base Layer 顶层。
+            Animator animator = Entity.Model.Ator.UnityAnimator;
+            if (animator == null)
+            {
+                return false;
+            }
+            // 层 0 目标状态短名的哈希，用于向控制器查询该状态是否真实存在。
+            int shortStateHash = Animator.StringToHash(stateName);
+            if (animator.HasState(0, shortStateHash))
+            {
+                return true;
+            }
+            // 部分控制器以完整路径登记状态，补一次 Base Layer 全路径检查。
+            return animator.HasState(0, Animator.StringToHash("Base Layer." + stateName));
+        }
+
+        /// <summary>按 RO 的表现表字段映射解析常规动作状态使用的真实动画名。</summary>
+        /// <param name="stateName">Animator 中稳定的状态槽名称。</param>
+        /// <returns>表现表动画短名或完整 Location；当前状态没有通用字段时返回空字符串。</returns>
+        private string ResolveClipName(string stateName)
+        {
+            if (Entity == null || Entity.AttrComp == null)
+            {
+                return string.Empty;
+            }
+
+            // 当前实体职业或外观对应的表现表，字段值由动画索引解析为 YooAsset Location。
+            PresentTable presentData = Entity.AttrComp.PresentDataView;
+            if (presentData == null)
+            {
+                return string.Empty;
+            }
+
+            if (stateName == MAnimator.STATE_IDLE)
+            {
+                return presentData.IdleAnim;
+            }
+            if (stateName == MAnimator.STATE_FIDLE)
+            {
+                return presentData.IdleFAnim;
+            }
+            if (stateName == MAnimator.STATE_ZD_MOVE_WALK)
+            {
+                return presentData.WalkFAnim;
+            }
+            if (stateName == MAnimator.STATE_ZD_MOVE_RUN)
+            {
+                return presentData.RunFAnim;
+            }
+            if (stateName == MAnimator.STATE_NONZD_MOVE_WALK)
+            {
+                return presentData.WalkAnim;
+            }
+            if (stateName == MAnimator.STATE_NONZD_MOVE_RUN)
+            {
+                return presentData.RunAnim;
+            }
+            if (stateName == MAnimator.STATE_BEHIT)
+            {
+                return presentData.BeHitAnim;
+            }
+            if (stateName == MAnimator.STATE_STUN)
+            {
+                return presentData.StunAnim;
+            }
+            if (stateName == MAnimator.STATE_SINGING)
+            {
+                return presentData.SingingAnim;
+            }
+            if (stateName == MAnimator.STATE_DEAD)
+            {
+                return presentData.DeadAnim;
+            }
+            if (stateName == MAnimator.STATE_BORN)
+            {
+                return presentData.BornAnim;
+            }
+            if (stateName == MAnimator.STATE_SPECIAL)
+            {
+                // Special 状态使用表现表中的休闲动作；该字段为空时再使用 NPC 欢迎动作。
+                if (!string.IsNullOrEmpty(presentData.FreeStyleAnim))
+                {
+                    return presentData.FreeStyleAnim;
+                }
+                if (!string.IsNullOrEmpty(presentData.OpenAnim))
+                {
+                    return presentData.OpenAnim;
+                }
+                // 未配置特殊动作属于无效状态请求，返回空值并由 PlayAnim 统一回退 Idle。
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+        #endregion
+
+        #region 核心逻辑
         /// <summary>
         /// 强制停止当前状态。
         /// </summary>
@@ -307,178 +504,6 @@ using MMoRpgCommon.SceneEntity;
             return (entity.EntityType & EntityType.Npc) != EntityType.None;
         }
 
-        /// <summary>
-        /// 校验实体当前绑定的原生 Controller 中确实存在目标逻辑状态。
-        /// 只有状态真实存在才允许跳过表现表剪辑准备，避免缺少动画的实体被静默放行。
-        /// </summary>
-        /// <param name="stateName">需要确认的 Animator 逻辑状态名。</param>
-        /// <returns>true 表示原生 Controller 已配置该状态。</returns>
-        private bool HasPrefabControllerState(string stateName)
-        {
-            if (Entity == null || Entity.Model == null || Entity.Model.Ator == null)
-            {
-                return false;
-            }
-            // 模型上实际播放动画的 Unity 组件，NPC 预制体的状态位于 Base Layer 顶层。
-            Animator animator = Entity.Model.Ator.UnityAnimator;
-            if (animator == null)
-            {
-                return false;
-            }
-            // 层 0 目标状态短名的哈希，用于向控制器查询该状态是否真实存在。
-            int shortStateHash = Animator.StringToHash(stateName);
-            if (animator.HasState(0, shortStateHash))
-            {
-                return true;
-            }
-            // 部分控制器以完整路径登记状态，补一次 Base Layer 全路径检查。
-            return animator.HasState(0, Animator.StringToHash("Base Layer." + stateName));
-        }
-
-        /// <summary>按 RO 的表现表字段映射解析常规动作状态使用的真实动画名。</summary>
-        /// <param name="stateName">Animator 中稳定的状态槽名称。</param>
-        /// <returns>表现表动画短名或完整 Location；当前状态没有通用字段时返回空字符串。</returns>
-        private string ResolveClipName(string stateName)
-        {
-            if (Entity == null || Entity.AttrComp == null)
-            {
-                return string.Empty;
-            }
-
-            // 当前实体职业或外观对应的表现表，字段值由动画索引解析为 YooAsset Location。
-            PresentTable presentData = Entity.AttrComp.PresentDataView;
-            if (presentData == null)
-            {
-                return string.Empty;
-            }
-
-            if (stateName == MAnimator.STATE_IDLE)
-            {
-                return presentData.IdleAnim;
-            }
-            if (stateName == MAnimator.STATE_FIDLE)
-            {
-                return presentData.IdleFAnim;
-            }
-            if (stateName == MAnimator.STATE_ZD_MOVE_WALK)
-            {
-                return presentData.WalkFAnim;
-            }
-            if (stateName == MAnimator.STATE_ZD_MOVE_RUN)
-            {
-                return presentData.RunFAnim;
-            }
-            if (stateName == MAnimator.STATE_NONZD_MOVE_WALK)
-            {
-                return presentData.WalkAnim;
-            }
-            if (stateName == MAnimator.STATE_NONZD_MOVE_RUN)
-            {
-                return presentData.RunAnim;
-            }
-            if (stateName == MAnimator.STATE_BEHIT)
-            {
-                return presentData.BeHitAnim;
-            }
-            if (stateName == MAnimator.STATE_STUN)
-            {
-                return presentData.StunAnim;
-            }
-            if (stateName == MAnimator.STATE_SINGING)
-            {
-                return presentData.SingingAnim;
-            }
-            if (stateName == MAnimator.STATE_DEAD)
-            {
-                return presentData.DeadAnim;
-            }
-            if (stateName == MAnimator.STATE_BORN)
-            {
-                return presentData.BornAnim;
-            }
-            if (stateName == MAnimator.STATE_SPECIAL)
-            {
-                // Special 状态使用表现表中的休闲动作；该字段为空时再使用 NPC 欢迎动作。
-                if (!string.IsNullOrEmpty(presentData.FreeStyleAnim))
-                {
-                    return presentData.FreeStyleAnim;
-                }
-                if (!string.IsNullOrEmpty(presentData.OpenAnim))
-                {
-                    return presentData.OpenAnim;
-                }
-                // 未配置特殊动作属于无效状态请求，返回空值并由 PlayAnim 统一回退 Idle。
-                return string.Empty;
-            }
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// 状态转移消息监听器：调用子类 OnGetEvent 判定是否可切入本状态，
-        /// 允许则暂存事件并驱动状态机转移到本状态，否则强制回到默认状态。
-        /// </summary>
-        /// <param name="e">触发状态转移的事件参数。</param>
-        //状态转移消息监听
-        protected void OnActionEvent(IEventArg e)
-        {
-            IMStateTransform last = Entity.Machine.CurrentState;
-
-            if (OnGetEvent(e, last.SelfState))
-            {
-                _evt = e;
-                Entity.Machine.TransferToState(this);
-                _evt = null;
-            }
-            else
-            {
-                Entity.Machine.ForceToDefault();
-            }
-        }
-
-        /// <summary>
-        /// 动作结束事件回调：收到结束事件时调用 Finish() 正常结束当前状态。
-        /// </summary>
-        /// <param name="eventArg">触发事件的参数。</param>
-        private void OnFinishEvent(IEventArg eventArg)
-        {
-            Finish();
-        }
-        /// <summary>获取该状态下实体是否仍可移动，默认 true。</summary>
-        //是否可以移动
-        public virtual bool IsActiveMovable  { get { return true; } }
-
-        /// <summary>获取是否可以被主动打断（如收到移动指令时停止），默认 false。</summary>
-        //是否可以主动打断该状态
-        public virtual bool IsActiveInterrupt  { get { return false; } }
-
-        /// <summary>获取转移到该状态时是否需要保留战斗坐骑显示（子类必须实现）。</summary>
-        public abstract bool WithBattleVehicle { get; }
-
-        /// <summary>状态转移判定钩子：子类实现是否接受事件 e 切入本状态。</summary>
-        /// <param name="e">触发事件参数。</param>
-        /// <param name="last">上一个状态定义。</param>
-        /// <returns>true 表示允许转移到本状态。</returns>
-        //状态转移判定
-        protected abstract bool OnGetEvent(IEventArg e, StateDefine last);
-
-        /// <summary>状态开始执行时的回调钩子，子类可选覆写。</summary>
-        //状态开始执行
-        protected virtual void OnStart() { }
-
-        /// <summary>状态持续期间逐帧回调。</summary>
-        /// <param name="deltaTime">距上一帧时间（秒）。</param>
-        //状态持续中的update
-        protected virtual void OnUpdate(float deltaTime) { }
-
-        /// <summary>状态正常播放结束后的回调钩子。</summary>
-        //状态正常结束后回调
-        protected virtual void OnFinished() { }
-
-        /// <summary>状态被强制停止后的回调钩子。</summary>
-        /// <param name="selfTrans">是否由自身状态转移触发。</param>
-        //状态强制结束后回调
-        protected virtual void OnStop(bool selfTrans = false) { }
-
         /// <summary>状态结束后的统一回调，调用顺序在 OnStop/OnFinished 之后。</summary>
         /// <param name="selfTrans">是否由自身状态转移触发。</param>
         //状态结束后回调，顺序在onstop和onfinish后面
@@ -507,6 +532,6 @@ using MMoRpgCommon.SceneEntity;
                 Stop();
             }
         }
-
+        #endregion
 
     }

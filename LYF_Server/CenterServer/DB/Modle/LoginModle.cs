@@ -23,199 +23,7 @@ public class LoginModle
         _db = db;
     }
 
-    /// <summary>
-    /// 账号密码登录。校验账号存在、密码一致、账号未禁用，并回传上次登录的游戏服务器信息。
-    /// </summary>
-    /// <param name="req">客户端账号密码请求。</param>
-    /// <returns>登录结果码及账号 ID、上次登录服务器信息。</returns>
-    internal LoginRet Login(LoginReq req)
-    {
-        LoginRet ret = new LoginRet();
-
-        AccoutTable table = _db.Queryable<AccoutTable>().Where(v => v.UserName == req.UserName).First();
-        if (table == null)
-        {
-            ret.CmdCode = CmdCode.AcctNotExist; //账号不存在
-        }
-        else
-        {
-            if (table.Passwrod == req.Password)
-            {
-                if (table.State != 1)
-                {
-                    //账号禁用的
-                    ret.CmdCode = CmdCode.AcctDisable;
-
-                }
-                else
-                {
-                    //todo 判断账号是否已经登录
-                    //登录成功
-                    GameServerTable gameServer = _db.Queryable<GameServerTable>()
-                        .Where(v => v.Id == table.LastLoginServerId).First();
-                    if (gameServer != null)
-                    {
-                        ret.GameServer = new GameServer()
-                        {
-                            ServerId = gameServer.Id,
-                            ServerName = gameServer.ServerName,
-                            RunState = gameServer.RunState,
-                            IsNew = gameServer.IsNew,
-                            IpHost = gameServer.IpHost,
-                            Prot = gameServer.Port
-                        };
-                    }
-
-                    ret.CmdCode = CmdCode.Succeed;
-                    ret.AccountId = table.Id;
-
-                }
-            }
-            else
-            {
-                ret.CmdCode = CmdCode.PasswordError;
-            }
-
-        }
-
-        return ret;
-    }
-
-    /// <summary>
-    /// 账号注册。校验用户名不重复、邮箱验证码一致，通过后写入账号表并默认绑定首次登录服务器 1。
-    /// </summary>
-    /// <param name="req">注册请求，携带用户名、邮箱、密码与验证码。</param>
-    internal RegistRet RegistAccont(RegistReq req)
-    {
-        RegistRet ret = new RegistRet();
-        ret.CmdCode = CmdCode.Succeed;
-        //1.判断是否已经注册
-        List<AccoutTable> list = _db.Queryable<AccoutTable>().Where((v) => v.UserName == req.UserName).ToList();
-        if (list.Count > 0)
-        {
-            ret.CmdCode = CmdCode.AcctExist;
-        }
-        else
-        {
-            string Varify = RedisMgr.Instance.GetValue("code_" + req.Email);
-            //判断验证码
-            if (string.IsNullOrEmpty(Varify) && req.Varify.Equals(Varify))
-            {
-                AccoutTable accout = new AccoutTable()
-                {
-                    UserName = req.UserName,
-                    Email = req.Email,
-                    Passwrod = req.Password,
-                    LastLoginServerId = 1,
-                    CreateDate = DateTime.Now,
-                    UpdateDate = DateTime.Now
-
-                };
-                int id = _db.Insertable(accout).ExecuteCommand(); //返回的id小于等于0插入失败
-                if (id <= 0)
-                {
-                    ret.CmdCode = CmdCode.ServerError;
-                }
-            }
-            else
-            {
-                ret.CmdCode = CmdCode.VarifyError;
-            }
-
-        }
-
-        return ret;
-    }
-
-    /// <summary>
-    /// 获取游戏服务器列表。req.ServerId 为 0 时返回全部服务器，否则按请求参数错误处理。
-    /// </summary>
-    /// <param name="req">服务器列表请求，ServerId=0 表示拉取全部。</param>
-    /// <returns>服务器列表回包，含每个服务器的名称、状态、新服标记与地址端口。</returns>
-    internal GetServerListRet GetServerList(GetServerListReq req)
-    {
-        GetServerListRet ret = new GetServerListRet();
-        if (req.ServerId == 0)
-        {
-            List<GameServerTable> listTable = _db.Queryable<GameServerTable>().ToList();
-            if (listTable != null && listTable.Count > 0)
-            {
-                List<GameServerTable> tableSnapshot = new List<GameServerTable>(listTable);
-                for (int index = 0; index < tableSnapshot.Count; index++)
-                {
-                    GameServerTable table = tableSnapshot[index];
-                    GameServer gameServer = new GameServer()
-                    {
-                        ServerId = table.Id,
-                        ServerName = table.ServerName,
-                        RunState = table.RunState,
-                        IsNew = table.IsNew,
-                        IpHost = table.IpHost,
-                        Prot = table.Port
-                    };
-                    ret.GameServers.Add(gameServer);
-                }
-            }
-        }
-        else
-        {
-            ret.CmdCode = CmdCode.ServerError;
-        }
-
-        return ret;
-    }
-
-    /// <summary>
-    /// 选服登录。校验账号与目标服务器存在后，更新账号最近登录服务器，并回传该账号已创建的角色概要。
-    /// </summary>
-    /// <param name="req">选服请求，携带账号 ID 与目标游戏服务器 ID。</param>
-    /// <returns>结果码及已创建角色的角色 ID、昵称、职业、等级概要。</returns>
-    internal LoginGameServerRet LoginGameServer(LoginGameServerReq req)
-    {
-        LoginGameServerRet ret = new LoginGameServerRet();
-
-        AccoutTable accountTable = _db.Queryable<AccoutTable>().
-            Where(v => v.Id == req.AccountId).First();
-        if (accountTable != null)
-        {
-
-            GameServerTable gameServerTable =
-                _db.Queryable<GameServerTable>().Where(v => v.Id == req.GameServerId).First();
-            if (gameServerTable != null)
-            {
-
-                accountTable.LastLoginServerId = req.GameServerId;
-                if (_db.Updateable(accountTable).ExecuteCommand() > 0)
-                {
-                    //查询角色表， 当前用户是否已经创建了角色， 如果没有创建，那么返回默认数据
-                    RoleTable roleTable = _db.Queryable<RoleTable>().Where(v => v.AccountID == req.AccountId).First();
-                    if (roleTable != null)
-                    {
-                        ret.CreateRoleInfo = new CreateRoleRet();
-                        ret.CreateRoleInfo.RoleId = roleTable.Id;
-                        ret.CreateRoleInfo.Nickname = roleTable.Nickname;
-                        ret.CreateRoleInfo.JobId = roleTable.JobID;
-                        ret.CreateRoleInfo.Level = roleTable.Level;
-                    }
-                }
-                else
-                {
-                    ret.CmdCode = CmdCode.ServerError; //服务端发送错误
-                }
-            }
-            else
-            {
-                ret.CmdCode = CmdCode.ReqParamError; //请求参数错误
-            }
-        }
-        else
-        {
-            ret.CmdCode = CmdCode.AcctNotExist; //账户不存在
-        }
-
-        return ret;
-    }
-
+    #region 创建与添加
     /// <summary>
     /// 创建角色请求处理。校验昵称在目标服务器唯一、职业配置存在，随后写入角色主表、
     /// 按职业表写入基础属性、创建初始技能、四类 81 格背包与虚拟铜币物品。
@@ -432,6 +240,243 @@ public class LoginModle
 
             _db.Insertable(listRoleSkillTables).ExecuteCommand();
         }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>
+    /// 获取游戏服务器列表。req.ServerId 为 0 时返回全部服务器，否则按请求参数错误处理。
+    /// </summary>
+    /// <param name="req">服务器列表请求，ServerId=0 表示拉取全部。</param>
+    /// <returns>服务器列表回包，含每个服务器的名称、状态、新服标记与地址端口。</returns>
+    internal GetServerListRet GetServerList(GetServerListReq req)
+    {
+        GetServerListRet ret = new GetServerListRet();
+        if (req.ServerId == 0)
+        {
+            List<GameServerTable> listTable = _db.Queryable<GameServerTable>().ToList();
+            if (listTable != null && listTable.Count > 0)
+            {
+                List<GameServerTable> tableSnapshot = new List<GameServerTable>(listTable);
+                for (int index = 0; index < tableSnapshot.Count; index++)
+                {
+                    GameServerTable table = tableSnapshot[index];
+                    GameServer gameServer = new GameServer()
+                    {
+                        ServerId = table.Id,
+                        ServerName = table.ServerName,
+                        RunState = table.RunState,
+                        IsNew = table.IsNew,
+                        IpHost = table.IpHost,
+                        Prot = table.Port
+                    };
+                    ret.GameServers.Add(gameServer);
+                }
+            }
+        }
+        else
+        {
+            ret.CmdCode = CmdCode.ServerError;
+        }
+
+        return ret;
+    }
+
+    // 注意：以下四个私有方法（GetPersistedKnapsackTypes / GetLegacyFallback /
+    // GetMigratedGridCount / EnsureMissingKnapsackRows）为旧版背包分类迁移逻辑的残留副本，
+    // 当前 LoginModle 内无任何调用者（实际背包读取由 CentRoleModel 同名方法负责），
+    // 经全局搜索确认属于死代码。本次仅加注释不删除，详见《项目分析/废代码分析报告-服务端-分服与测试.md》。
+    private static KnapsackType[] GetPersistedKnapsackTypes()
+    {
+        return new[]
+        {
+            KnapsackType.RolePackPlain,
+            KnapsackType.RolePackEquip,
+            KnapsackType.RolePackConsume,
+            KnapsackType.RolePackMaterial
+        };
+    }
+
+    /// <summary>旧角色只有普通背包记录时，以其容量作为所有分类的迁移下限。</summary>
+    private static int GetLegacyFallback(List<RoleKnapsackTable> rows)
+    {
+        RoleKnapsackTable oldAll = null;
+        if (rows != null)
+        {
+            oldAll = rows.FirstOrDefault(v => v.roleKnapsack == (byte)KnapsackType.RolePackPlain);
+        }
+        if (oldAll == null)
+        {
+            return 81;
+        }
+        return Math.Max(81, (int)oldAll.roleKnapsackcount);
+    }
+
+    /// <summary>分类记录存在时保留更大容量；不存在时继承旧普通背包容量。</summary>
+    private static int GetMigratedGridCount(RoleKnapsackTable row, int legacyFallback)
+    {
+        if (row == null)
+        {
+            return legacyFallback;
+        }
+        return Math.Max(legacyFallback, Math.Max(81, (int)row.roleKnapsackcount));
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>
+    /// 账号密码登录。校验账号存在、密码一致、账号未禁用，并回传上次登录的游戏服务器信息。
+    /// </summary>
+    /// <param name="req">客户端账号密码请求。</param>
+    /// <returns>登录结果码及账号 ID、上次登录服务器信息。</returns>
+    internal LoginRet Login(LoginReq req)
+    {
+        LoginRet ret = new LoginRet();
+
+        AccoutTable table = _db.Queryable<AccoutTable>().Where(v => v.UserName == req.UserName).First();
+        if (table == null)
+        {
+            ret.CmdCode = CmdCode.AcctNotExist; //账号不存在
+        }
+        else
+        {
+            if (table.Passwrod == req.Password)
+            {
+                if (table.State != 1)
+                {
+                    //账号禁用的
+                    ret.CmdCode = CmdCode.AcctDisable;
+
+                }
+                else
+                {
+                    //todo 判断账号是否已经登录
+                    //登录成功
+                    GameServerTable gameServer = _db.Queryable<GameServerTable>()
+                        .Where(v => v.Id == table.LastLoginServerId).First();
+                    if (gameServer != null)
+                    {
+                        ret.GameServer = new GameServer()
+                        {
+                            ServerId = gameServer.Id,
+                            ServerName = gameServer.ServerName,
+                            RunState = gameServer.RunState,
+                            IsNew = gameServer.IsNew,
+                            IpHost = gameServer.IpHost,
+                            Prot = gameServer.Port
+                        };
+                    }
+
+                    ret.CmdCode = CmdCode.Succeed;
+                    ret.AccountId = table.Id;
+
+                }
+            }
+            else
+            {
+                ret.CmdCode = CmdCode.PasswordError;
+            }
+
+        }
+
+        return ret;
+    }
+
+    /// <summary>
+    /// 账号注册。校验用户名不重复、邮箱验证码一致，通过后写入账号表并默认绑定首次登录服务器 1。
+    /// </summary>
+    /// <param name="req">注册请求，携带用户名、邮箱、密码与验证码。</param>
+    internal RegistRet RegistAccont(RegistReq req)
+    {
+        RegistRet ret = new RegistRet();
+        ret.CmdCode = CmdCode.Succeed;
+        //1.判断是否已经注册
+        List<AccoutTable> list = _db.Queryable<AccoutTable>().Where((v) => v.UserName == req.UserName).ToList();
+        if (list.Count > 0)
+        {
+            ret.CmdCode = CmdCode.AcctExist;
+        }
+        else
+        {
+            string Varify = RedisMgr.Instance.GetValue("code_" + req.Email);
+            //判断验证码
+            if (string.IsNullOrEmpty(Varify) && req.Varify.Equals(Varify))
+            {
+                AccoutTable accout = new AccoutTable()
+                {
+                    UserName = req.UserName,
+                    Email = req.Email,
+                    Passwrod = req.Password,
+                    LastLoginServerId = 1,
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now
+
+                };
+                int id = _db.Insertable(accout).ExecuteCommand(); //返回的id小于等于0插入失败
+                if (id <= 0)
+                {
+                    ret.CmdCode = CmdCode.ServerError;
+                }
+            }
+            else
+            {
+                ret.CmdCode = CmdCode.VarifyError;
+            }
+
+        }
+
+        return ret;
+    }
+
+    /// <summary>
+    /// 选服登录。校验账号与目标服务器存在后，更新账号最近登录服务器，并回传该账号已创建的角色概要。
+    /// </summary>
+    /// <param name="req">选服请求，携带账号 ID 与目标游戏服务器 ID。</param>
+    /// <returns>结果码及已创建角色的角色 ID、昵称、职业、等级概要。</returns>
+    internal LoginGameServerRet LoginGameServer(LoginGameServerReq req)
+    {
+        LoginGameServerRet ret = new LoginGameServerRet();
+
+        AccoutTable accountTable = _db.Queryable<AccoutTable>().
+            Where(v => v.Id == req.AccountId).First();
+        if (accountTable != null)
+        {
+
+            GameServerTable gameServerTable =
+                _db.Queryable<GameServerTable>().Where(v => v.Id == req.GameServerId).First();
+            if (gameServerTable != null)
+            {
+
+                accountTable.LastLoginServerId = req.GameServerId;
+                if (_db.Updateable(accountTable).ExecuteCommand() > 0)
+                {
+                    //查询角色表， 当前用户是否已经创建了角色， 如果没有创建，那么返回默认数据
+                    RoleTable roleTable = _db.Queryable<RoleTable>().Where(v => v.AccountID == req.AccountId).First();
+                    if (roleTable != null)
+                    {
+                        ret.CreateRoleInfo = new CreateRoleRet();
+                        ret.CreateRoleInfo.RoleId = roleTable.Id;
+                        ret.CreateRoleInfo.Nickname = roleTable.Nickname;
+                        ret.CreateRoleInfo.JobId = roleTable.JobID;
+                        ret.CreateRoleInfo.Level = roleTable.Level;
+                    }
+                }
+                else
+                {
+                    ret.CmdCode = CmdCode.ServerError; //服务端发送错误
+                }
+            }
+            else
+            {
+                ret.CmdCode = CmdCode.ReqParamError; //请求参数错误
+            }
+        }
+        else
+        {
+            ret.CmdCode = CmdCode.AcctNotExist; //账户不存在
+        }
+
+        return ret;
+    }
 
     /// <summary>
     /// 开始游戏。按角色 ID 联查角色主表与基础属性表，回传主角色完整信息（账号、经验、技能点、
@@ -514,46 +559,6 @@ public class LoginModle
         return ret;
     }
 
-    // 注意：以下四个私有方法（GetPersistedKnapsackTypes / GetLegacyFallback /
-    // GetMigratedGridCount / EnsureMissingKnapsackRows）为旧版背包分类迁移逻辑的残留副本，
-    // 当前 LoginModle 内无任何调用者（实际背包读取由 CentRoleModel 同名方法负责），
-    // 经全局搜索确认属于死代码。本次仅加注释不删除，详见《项目分析/废代码分析报告-服务端-分服与测试.md》。
-    private static KnapsackType[] GetPersistedKnapsackTypes()
-    {
-        return new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
-    }
-
-    /// <summary>旧角色只有普通背包记录时，以其容量作为所有分类的迁移下限。</summary>
-    private static int GetLegacyFallback(List<RoleKnapsackTable> rows)
-    {
-        RoleKnapsackTable oldAll = null;
-        if (rows != null)
-        {
-            oldAll = rows.FirstOrDefault(v => v.roleKnapsack == (byte)KnapsackType.RolePackPlain);
-        }
-        if (oldAll == null)
-        {
-            return 81;
-        }
-        return Math.Max(81, (int)oldAll.roleKnapsackcount);
-    }
-
-    /// <summary>分类记录存在时保留更大容量；不存在时继承旧普通背包容量。</summary>
-    private static int GetMigratedGridCount(RoleKnapsackTable row, int legacyFallback)
-    {
-        if (row == null)
-        {
-            return legacyFallback;
-        }
-        return Math.Max(legacyFallback, Math.Max(81, (int)row.roleKnapsackcount));
-    }
-
     /// <summary>首次读取旧角色时补齐缺失分类记录，后续扩容可直接按类型更新。</summary>
     private void EnsureMissingKnapsackRows(int roleId, List<RoleKnapsackTable> rows, int legacyFallback)
     {
@@ -585,5 +590,5 @@ public class LoginModle
             _db.Insertable(missingRows).ExecuteCommand();
         }
     }
+    #endregion
 }
-

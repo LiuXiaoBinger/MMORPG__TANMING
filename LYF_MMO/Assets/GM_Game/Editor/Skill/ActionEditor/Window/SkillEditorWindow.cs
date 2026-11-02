@@ -330,6 +330,7 @@ public partial class SkillEditorWindow : EditorWindow
     bool _showBoneOffsetsPreview; // Inspector中偏移数据折叠
     #endregion
 
+    #region 窗口打开与事件注册
     [MenuItem("Tools/ACT Action Editor/Open Editor")]
     /// <summary>通过保留的固定菜单身份打开技能窗口，显示标题使用个人语言。</summary>
     static void Open()
@@ -373,6 +374,8 @@ public partial class SkillEditorWindow : EditorWindow
         CleanPreviewFx(); DestroyPreviewInstance(); DestroyPreviewAudioSource();
         if(AnimationMode.InAnimationMode()) AnimationMode.StopAnimationMode();
     }
+    #endregion
+    #region 编辑器事件响应
     /// <summary>更新标题和本地轨道显示缓存，不加载配置、提交编辑、产生Undo或重置预览时钟。</summary>
     void OnEditorLanguageChanged()
     {
@@ -435,6 +438,7 @@ public partial class SkillEditorWindow : EditorWindow
         Repaint();
         SceneView.RepaintAll();
     }
+    #endregion
 
     #region 主GUI
     /// <summary>返回工具栏下方的窗口内容矩形，高度限制为非负值，单位窗口像素。</summary>

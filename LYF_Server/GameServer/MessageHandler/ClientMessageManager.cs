@@ -9,6 +9,7 @@ using System.Threading;
 
 public sealed class ClientMessageManager : IContainer
 {
+    #region 字段与常量
     private static readonly ClientMessageManager _instance = new ClientMessageManager();
     private const int MaxPendingCommands = 10000;
     private const int MaxCommandsPerUpdate = 3000;
@@ -18,7 +19,9 @@ public sealed class ClientMessageManager : IContainer
     private readonly Dictionary<GameMessageHandlerKey, GameMessageRegistration> _handlers =
         new Dictionary<GameMessageHandlerKey, GameMessageRegistration>();
     private int _pendingCount;
+    #endregion
 
+    #region 单例与初始化
     /// <summary>客户端消息管理器单例。</summary>
     public static ClientMessageManager Instance
     {
@@ -31,12 +34,6 @@ public sealed class ClientMessageManager : IContainer
 
     public void OnInit()
     {
-    }
-
-    /// <summary>当前客户端命令积压量。</summary>
-    public int PendingCommandCount
-    {
-        get { return _pendingCount; }
     }
 
     /// <summary>
@@ -81,6 +78,14 @@ public sealed class ClientMessageManager : IContainer
 
         _handlers.Add(key, new GameMessageRegistration(handler, centerRoute));
         return true;
+    }
+    #endregion
+
+    #region 命令队列与分发
+    /// <summary>当前客户端命令积压量。</summary>
+    public int PendingCommandCount
+    {
+        get { return _pendingCount; }
     }
 
     /// <summary>总消息队列消费后，在逻辑线程投递到客户端消息队列。</summary>
@@ -187,6 +192,7 @@ public sealed class ClientMessageManager : IContainer
 
         registration.Handler.OnCall(context);
     }
+    #endregion
 }
 
 // ============================================================

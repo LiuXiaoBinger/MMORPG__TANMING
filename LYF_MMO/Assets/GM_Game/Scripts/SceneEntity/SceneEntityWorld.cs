@@ -9,6 +9,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class SceneEntityWorld : IDisposable
 {
+
+    #region 字段与属性
     /// <summary>按 UID 索引的实体字典，用于 O(1) 查找</summary>
     private readonly Dictionary<ulong, ROObject> _entities =
         new Dictionary<ulong, ROObject>();
@@ -27,7 +29,9 @@ public sealed class SceneEntityWorld : IDisposable
     {
         get { return _entities.Count; }
     }
+    #endregion
 
+    #region 生命周期
     /// <summary>
     /// 每帧逻辑更新入口，先正向驱动所有实体 Update，再反向清理待销毁实体。
     /// </summary>
@@ -64,6 +68,19 @@ public sealed class SceneEntityWorld : IDisposable
         }
     }
 
+    /// <summary>释放世界资源，清理全部实体并标记已释放。</summary>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+        Clear();
+        _disposed = true;
+    }
+    #endregion
+
+    #region 创建与添加
     /// <summary>
     /// 将已构造好的实体加入世界并触发初始化。
     /// </summary>
@@ -134,51 +151,9 @@ public sealed class SceneEntityWorld : IDisposable
         }
         return entity;
     }
+    #endregion
 
-    /// <summary>将当前世界的战斗实体引用复制到调用方容器，选择查询不直接修改世界顺序。</summary>
-    /// <param name="entities">调用方持有的快照容器，结果仍引用世界中的原实体。</param>
-    public void CopyEntities(List<MEntity> entities)
-    {
-        entities.Clear();
-        // 实体加入顺序索引，只读取当前世界的原对象。
-        for (int index = 0; index < _order.Count; index++)
-        {
-            // 非战斗场景对象不参与本轮目标选择。
-            MEntity entity = _order[index] as MEntity;
-            if (entity != null)
-            {
-                entities.Add(entity);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 按 UID 尝试获取实体。
-    /// </summary>
-    /// <param name="uid">目标实体 UID</param>
-    /// <param name="entity">找到的实体引用，未找到时为 null</param>
-    /// <returns>存在返回 true，不存在返回 false</returns>
-    public bool TryGet(ulong uid, out ROObject entity)
-    {
-        return _entities.TryGetValue(uid, out entity);
-    }
-
-    /// <summary>
-    /// 按 UID 获取实体并强制类型转换为目标类型。
-    /// </summary>
-    /// <typeparam name="T">目标实体类型</typeparam>
-    /// <param name="uid">目标实体 UID</param>
-    /// <returns>类型匹配的实体实例；不存在或类型不符返回 null</returns>
-    public T Get<T>(ulong uid) where T : class, ROObject
-    {
-        ROObject entity;
-        if (!_entities.TryGetValue(uid, out entity))
-        {
-            return null;
-        }
-        return entity as T;
-    }
-
+    #region 移除与回收
     /// <summary>
     /// 按 UID 移除实体，执行销毁并回收进对象池。
     /// </summary>
@@ -215,6 +190,69 @@ public sealed class SceneEntityWorld : IDisposable
         return true;
     }
 
+    /// <summary>清理 Builder 已创建但未能加入世界的实体，保证各级对象池闭环。</summary>
+    private static void ReleaseUnmanagedEntity(ROObject entity)
+    {
+        if (entity == null)
+        {
+            return;
+        }
+        entity.Destroy();
+        MEntity pooledEntity = entity as MEntity;
+        if (pooledEntity != null)
+        {
+            MEntityPool.Instance.Release(pooledEntity);
+        }
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>
+    /// 按 UID 尝试获取实体。
+    /// </summary>
+    /// <param name="uid">目标实体 UID</param>
+    /// <param name="entity">找到的实体引用，未找到时为 null</param>
+    /// <returns>存在返回 true，不存在返回 false</returns>
+    public bool TryGet(ulong uid, out ROObject entity)
+    {
+        return _entities.TryGetValue(uid, out entity);
+    }
+
+    /// <summary>
+    /// 按 UID 获取实体并强制类型转换为目标类型。
+    /// </summary>
+    /// <typeparam name="T">目标实体类型</typeparam>
+    /// <param name="uid">目标实体 UID</param>
+    /// <returns>类型匹配的实体实例；不存在或类型不符返回 null</returns>
+    public T Get<T>(ulong uid) where T : class, ROObject
+    {
+        ROObject entity;
+        if (!_entities.TryGetValue(uid, out entity))
+        {
+            return null;
+        }
+        return entity as T;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>将当前世界的战斗实体引用复制到调用方容器，选择查询不直接修改世界顺序。</summary>
+    /// <param name="entities">调用方持有的快照容器，结果仍引用世界中的原实体。</param>
+    public void CopyEntities(List<MEntity> entities)
+    {
+        entities.Clear();
+        // 实体加入顺序索引，只读取当前世界的原对象。
+        for (int index = 0; index < _order.Count; index++)
+        {
+            // 非战斗场景对象不参与本轮目标选择。
+            MEntity entity = _order[index] as MEntity;
+            if (entity != null)
+            {
+                entities.Add(entity);
+            }
+        }
+    }
+
     /// <summary>清空世界内所有实体，逐个销毁并回收对象池。</summary>
     public void Clear()
     {
@@ -233,17 +271,6 @@ public sealed class SceneEntityWorld : IDisposable
         _entities.Clear();
     }
 
-    /// <summary>释放世界资源，清理全部实体并标记已释放。</summary>
-    public void Dispose()
-    {
-        if (_disposed)
-        {
-            return;
-        }
-        Clear();
-        _disposed = true;
-    }
-
     /// <summary>
     /// 分配下一个有效 UID，跳过 0 和已被占用的值。
     /// </summary>
@@ -258,19 +285,5 @@ public sealed class SceneEntityWorld : IDisposable
         _nextUid++;
         return uid;
     }
-
-    /// <summary>清理 Builder 已创建但未能加入世界的实体，保证各级对象池闭环。</summary>
-    private static void ReleaseUnmanagedEntity(ROObject entity)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-        entity.Destroy();
-        MEntity pooledEntity = entity as MEntity;
-        if (pooledEntity != null)
-        {
-            MEntityPool.Instance.Release(pooledEntity);
-        }
-    }
+    #endregion
 }

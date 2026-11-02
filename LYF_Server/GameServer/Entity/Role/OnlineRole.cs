@@ -1,5 +1,4 @@
 
-
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
@@ -10,6 +9,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public class OnlineRole
 {
+
+    #region 场景实体绑定
     /// <summary>与场景 PlayerEntity 的运行时绑定；OnlineRole 本身仍然只是持久角色数据根。</summary>
     private ulong _sceneUid;
 
@@ -40,6 +41,7 @@ public class OnlineRole
     {
         _sceneUid = 0UL;
     }
+    #endregion
 
     /// <summary>模块时间记录：记录模块最近修改时间与上次落库时间。</summary>
     public struct ModuleTime
@@ -57,74 +59,48 @@ public class OnlineRole
         }
     }
     
+    #region 字段与常量
     // 按模块 ID 记录最近修改时间（Unix 秒），用于模块级脏数据版本跟踪。
     private Dictionary<int,ModuleTime>  _module_modify_time = new Dictionary<int, ModuleTime>();
+
     // 好友关系表（好友 uid -> 好友度），当前未接入好友业务，预留字段。
     private Dictionary<UInt64, int> _friends = new Dictionary<ulong, int>();
 
     // 角色持久化组件容器，按注册顺序装载背包/次数/商店/技能等模块。
     private readonly RoleComponentContainer _components;
+
     // 角色级实体事件派发器，随角色创建与释放，承载技能请求与吟唱事件。
     private readonly ROEventDispatcher _eventDispatcher = new ROEventDispatcher();
+
     // 角色级保存定时器，置位后由 UpdatePerSecond 触发组包发送。
     private readonly SaveRoleDataTimer _saveRoleDataTimer;
+
     // 角色数据发送器，负责把脏字段组包并发往 CenterServer 并处理 ACK 重试。
     private readonly RoleNetSender _roleNetSender;
+
     // 组件是否已完成首次初始化，防止重复创建组件。
     private bool _componentsInitialized;
+
     /// <summary>中心服角色数据是否已经完成完整装载。</summary>
     private bool _roleDataLoaded;
+
     /// <summary>是否已经接收并记录中心服权威保存版本。</summary>
     private bool _saveVersionInitialized;
+
     /// <summary>角色每秒计时累计值，达到一秒后触发保存定时器消费。</summary>
     private int _perSecondElapsedMilliseconds;
+
     /// <summary>角色级持久化版本，所有组件共用且每次新快照递增。</summary>
     private long _saveVersion;
+    #endregion
 
+    #region 构造与初始化
     public OnlineRole()
     {
         _components = new RoleComponentContainer(this);
         _saveRoleDataTimer = new SaveRoleDataTimer();
         _saveRoleDataTimer.SetRole(this);
         _roleNetSender = new RoleNetSender(this);
-    }
-
-    /// <summary>
-    /// 向当前角色对应的本端 Unity 客户端发送协议数据。
-    /// </summary>
-    /// <param name="protoCode">需要发送的协议号，必须大于零。</param>
-    /// <param name="data">协议序列化后的数据；无协议体时允许为空。</param>
-    /// <returns>成功提交到网关会话时返回 true；参数或会话无效时返回 false。</returns>
-    public bool SendToClient(int protoCode, ByteString data)
-    {
-        if (protoCode <= 0)
-        {
-            LogMsg.Info("角色客户端发送失败：协议号无效，协议号=" + protoCode, LogMsgType.Error);
-            return false;
-        }
-
-        if (GateSessionId <= 0)
-        {
-            LogMsg.Info("角色客户端发送失败：网关会话 ID 无效，角色=" + GetID(), LogMsgType.Error);
-            return false;
-        }
-
-        if (UnitySessionId <= 0)
-        {
-            LogMsg.Info("角色客户端发送失败：Unity 会话 ID 无效，角色=" + GetID(), LogMsgType.Error);
-            return false;
-        }
-
-        Session gateSession = SessionMgr.Instance.GetSession(GateSessionId);
-        if (gateSession == null)
-        {
-            LogMsg.Info("角色客户端发送失败：找不到网关会话，角色=" + GetID() +
-                "，网关会话=" + GateSessionId, LogMsgType.Error);
-            return false;
-        }
-
-        gateSession.Send(UnitySessionId, protoCode, data);
-        return true;
     }
 
     /// <summary>按固定顺序创建角色组件，并完成首次初始化。</summary>
@@ -134,7 +110,6 @@ public class OnlineRole
         {
             return;
         }
-
 
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
@@ -176,8 +151,22 @@ public class OnlineRole
         _components.AfterAddedToRole();
     }
 
-   
+    /// <summary>在背包和次数数据全部装载后解除保存门闩并启动保存定时器。</summary>
+    /// <returns>首次完成加载时返回 true；条件不满足或重复调用时返回 false。</returns>
+    public bool CompleteRoleDataLoad()
+    {
+        if (_roleDataLoaded || !_componentsInitialized || !_saveVersionInitialized)
+        {
+            return false;
+        }
 
+        _roleDataLoaded = true;
+        _saveRoleDataTimer.Start();
+        return true;
+    }
+    #endregion
+
+    #region 生命周期：更新与销毁
     /// <summary>角色固定帧更新和组件更新均只在逻辑线程执行。</summary>
     /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，由 GameGlobal 固定帧统一给出。</param>
     public void Update(int deltaMilliseconds)
@@ -207,6 +196,86 @@ public class OnlineRole
         }
     }
 
+    /// <summary>进入离线保存阶段；角色仍保留在角色索引中，以便接收 ACK 和执行重试。</summary>
+    public void BeginOffline()
+    {
+        // 离线先中断当前施法，防止旧会话的结束事件作用于重连后的角色。
+        RoleSkillComponent skillComponent;
+        if (TryGetComponent(out skillComponent))
+        {
+            skillComponent.InterruptActiveCast(true);
+        }
+        // 离线同时强制回到默认态，避免重连后仍停留在吟唱状态。
+        StateMachineComponent state_machine;
+        if (TryGetComponent(out state_machine))
+        {
+            state_machine.ForceToDefaultState(true);
+        }
+        State = OnlineRoleState.Offline;
+        // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。
+        // 此时会话已不可用，队伍清理内部不向本人发包，只通知仍在线的队友。
+        TeamManager.Instance.OnRoleOffline((ulong)GetID());
+        _saveRoleDataTimer.Stop();
+        _roleNetSender.SendRoleDataToDB();
+    }
+
+    /// <summary>没有脏数据且没有在途请求时，角色才允许从内存中最终释放。</summary>
+    public bool CanDispose()
+    {
+        return !_roleNetSender.HasInFlightRequest() && !_components.NeedSave();
+    }
+
+    /// <summary>角色下线时按组件注册逆序释放资源，并清理事件派发器持有的回调引用。</summary>
+    public void Dispose()
+    {
+        _saveRoleDataTimer.Stop();
+        _components.Dispose();
+        // 组件释放后清空派发器，防止已释放组件仍被后续派发回调。
+        _eventDispatcher.UnInit();
+    }
+    #endregion
+
+    #region 客户端消息下发
+    /// <summary>
+    /// 向当前角色对应的本端 Unity 客户端发送协议数据。
+    /// </summary>
+    /// <param name="protoCode">需要发送的协议号，必须大于零。</param>
+    /// <param name="data">协议序列化后的数据；无协议体时允许为空。</param>
+    /// <returns>成功提交到网关会话时返回 true；参数或会话无效时返回 false。</returns>
+    public bool SendToClient(int protoCode, ByteString data)
+    {
+        if (protoCode <= 0)
+        {
+            LogMsg.Info("角色客户端发送失败：协议号无效，协议号=" + protoCode, LogMsgType.Error);
+            return false;
+        }
+
+        if (GateSessionId <= 0)
+        {
+            LogMsg.Info("角色客户端发送失败：网关会话 ID 无效，角色=" + GetID(), LogMsgType.Error);
+            return false;
+        }
+
+        if (UnitySessionId <= 0)
+        {
+            LogMsg.Info("角色客户端发送失败：Unity 会话 ID 无效，角色=" + GetID(), LogMsgType.Error);
+            return false;
+        }
+
+        Session gateSession = SessionMgr.Instance.GetSession(GateSessionId);
+        if (gateSession == null)
+        {
+            LogMsg.Info("角色客户端发送失败：找不到网关会话，角色=" + GetID() +
+                "，网关会话=" + GateSessionId, LogMsgType.Error);
+            return false;
+        }
+
+        gateSession.Send(UnitySessionId, protoCode, data);
+        return true;
+    }
+    #endregion
+
+    #region 存档与版本
     /// <summary>按组件注册顺序收集脏字段，对齐参考项目的 SaveAllMoudle。</summary>
     public SaveRoleDataReq SaveAllMoudle()
     {
@@ -272,20 +341,6 @@ public class OnlineRole
         return true;
     }
 
-    /// <summary>在背包和次数数据全部装载后解除保存门闩并启动保存定时器。</summary>
-    /// <returns>首次完成加载时返回 true；条件不满足或重复调用时返回 false。</returns>
-    public bool CompleteRoleDataLoad()
-    {
-        if (_roleDataLoaded || !_componentsInitialized || !_saveVersionInitialized)
-        {
-            return false;
-        }
-
-        _roleDataLoaded = true;
-        _saveRoleDataTimer.Start();
-        return true;
-    }
-
     /// <summary>判断角色是否已经完成中心服数据装载并允许业务修改。</summary>
     /// <returns>数据已就绪返回 true，否则返回 false。</returns>
     public bool IsRoleDataReady()
@@ -307,59 +362,15 @@ public class OnlineRole
     {
         _roleNetSender.OnSaveRoleDataResult(result);
     }
+    #endregion
 
-    /// <summary>进入离线保存阶段；角色仍保留在角色索引中，以便接收 ACK 和执行重试。</summary>
-    public void BeginOffline()
-    {
-        // 离线先中断当前施法，防止旧会话的结束事件作用于重连后的角色。
-        RoleSkillComponent skillComponent;
-        if (TryGetComponent(out skillComponent))
-        {
-            skillComponent.InterruptActiveCast(true);
-        }
-        // 离线同时强制回到默认态，避免重连后仍停留在吟唱状态。
-        StateMachineComponent state_machine;
-        if (TryGetComponent(out state_machine))
-        {
-            state_machine.ForceToDefaultState(true);
-        }
-        State = OnlineRoleState.Offline;
-        // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。
-        // 此时会话已不可用，队伍清理内部不向本人发包，只通知仍在线的队友。
-        TeamManager.Instance.OnRoleOffline((ulong)GetID());
-        _saveRoleDataTimer.Stop();
-        _roleNetSender.SendRoleDataToDB();
-    }
-
-    /// <summary>没有脏数据且没有在途请求时，角色才允许从内存中最终释放。</summary>
-    public bool CanDispose()
-    {
-        return !_roleNetSender.HasInFlightRequest() && !_components.NeedSave();
-    }
-
-    /// <summary>角色下线时按组件注册逆序释放资源，并清理事件派发器持有的回调引用。</summary>
-    public void Dispose()
-    {
-        _saveRoleDataTimer.Stop();
-        _components.Dispose();
-        // 组件释放后清空派发器，防止已释放组件仍被后续派发回调。
-        _eventDispatcher.UnInit();
-    }
-
-    /// <summary>获取角色 ID；角色基础数据尚未装载时返回 0。</summary>
-    public uint GetID()
-    {
-        if (mainRoleInfo != null && mainRoleInfo.BaseInfo != null)
-        {
-            return (uint)mainRoleInfo.BaseInfo.RoleId;
-        }
-        return 0;
-    }
     #region 成员变量
     // Unity 客户端在网关侧的会话 ID，用于向指定客户端回包。
     public int UnitySessionId;
+
     // GameServer 与 GateServer 连接的会话 ID，用于定位网关连接。
     public int GateSessionId;
+
     // 中心服返回的角色快照，进入世界和附近广播使用该数据。
     public MainRoleInfo mainRoleInfo;
 
@@ -371,12 +382,10 @@ public class OnlineRole
 
     // 角色运行时开关表，保存/重连等状态标志按位记录。
     private Dictionary<RoleStateFlag, bool> _flags;
+    #endregion
     // 背包明细和容量由 RoItemComponent/BagTransition 管理。
 
-
-    #endregion
-
-
+    #region 物品操作
     /// <summary>
     /// 查询角色持有某物品的数量；当前背包计数逻辑尚未接入，固定返回 0。
     /// </summary>
@@ -432,55 +441,6 @@ public class OnlineRole
         idipParam = default;
         return null;
     }
-    
-    
-    
-    
-    /// <summary>获取角色组件，未注册时返回 null。</summary>
-    public T GetComponent<T>() where T : RoleComponentBase
-    {
-        return _components.GetComponent<T>();
-    }
-
-    /// <summary>尝试获取角色组件，成功时输出组件引用。</summary>
-    public bool TryGetComponent<T>(out T component) where T : RoleComponentBase
-    {
-        return _components.TryGetComponent(out component);
-    }
-
-    /// <summary>向角色注册组件。</summary>
-    public void SetComponent<T>(T component) where T : RoleComponentBase
-    {
-        _components.SetComponent(component);
-    }
-
-    /// <summary>
-    /// 取角色实体事件派发器，命名与 RO 的 GetEventDispatcher 保持一致。
-    /// 每个在线角色独立一份，派发只在当前角色内进行。
-    /// </summary>
-    public ROEventDispatcher GetEventDispatcher()
-    {
-        return _eventDispatcher;
-    }
-
-    /// <summary>
-    /// 记录指定模块的最近修改时间为当前 UTC 秒，供模块级脏数据版本跟踪。
-    /// </summary>
-    /// <param name="module">发生变更的业务模块。</param>
-    public void SetModifyTime(RoleModuleType module)
-    {
-        
-        if (_module_modify_time.ContainsKey((int)module))
-        {
-            var moduleTime = _module_modify_time[(int)module];
-            moduleTime.modify_time =
-                DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        }
-        else
-        {
-            _module_modify_time.Add((int)module, new ModuleTime(DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
-        }
-    }
 
     /// <summary>
     /// 校验角色是否持有足够数量的物品；虚拟货币不足与物品不足返回不同错误码。
@@ -511,22 +471,6 @@ public class OnlineRole
         return CmdCode.Succeed;
     }
 
-    /// <summary>读取角色开关标志，未记录时按 false 处理。</summary>
-    public bool GetFlag(RoleStateFlag e)
-    {
-        if (_flags.ContainsKey(e))
-        {
-            return _flags[e];
-        }
-        return false;
-    }
-
-    /// <summary>写入或更新角色开关标志。</summary>
-    public void SetFlag(RoleStateFlag e, bool flag)
-    {
-        _flags[e] = flag;
-    }
-
     /// <summary>
     /// 扣除物品的统一入口；一级货币（钻石）禁止在此直接扣除。
     /// </summary>
@@ -554,4 +498,81 @@ public class OnlineRole
         }
         return CmdCode.ItemNotExist;
     }
+    #endregion
+
+    #region 组件、事件与标识访问
+    /// <summary>获取角色组件，未注册时返回 null。</summary>
+    public T GetComponent<T>() where T : RoleComponentBase
+    {
+        return _components.GetComponent<T>();
+    }
+
+    /// <summary>尝试获取角色组件，成功时输出组件引用。</summary>
+    public bool TryGetComponent<T>(out T component) where T : RoleComponentBase
+    {
+        return _components.TryGetComponent(out component);
+    }
+
+    /// <summary>向角色注册组件。</summary>
+    public void SetComponent<T>(T component) where T : RoleComponentBase
+    {
+        _components.SetComponent(component);
+    }
+
+    /// <summary>
+    /// 取角色实体事件派发器，命名与 RO 的 GetEventDispatcher 保持一致。
+    /// 每个在线角色独立一份，派发只在当前角色内进行。
+    /// </summary>
+    public ROEventDispatcher GetEventDispatcher()
+    {
+        return _eventDispatcher;
+    }
+
+    /// <summary>获取角色 ID；角色基础数据尚未装载时返回 0。</summary>
+    public uint GetID()
+    {
+        if (mainRoleInfo != null && mainRoleInfo.BaseInfo != null)
+        {
+            return (uint)mainRoleInfo.BaseInfo.RoleId;
+        }
+        return 0;
+    }
+    #endregion
+
+    #region 模块修改时间与状态标记
+    /// <summary>
+    /// 记录指定模块的最近修改时间为当前 UTC 秒，供模块级脏数据版本跟踪。
+    /// </summary>
+    /// <param name="module">发生变更的业务模块。</param>
+    public void SetModifyTime(RoleModuleType module)
+    {
+        
+        if (_module_modify_time.ContainsKey((int)module))
+        {
+            var moduleTime = _module_modify_time[(int)module];
+            moduleTime.modify_time =
+                DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+        else
+        {
+            _module_modify_time.Add((int)module, new ModuleTime(DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
+        }
+    }
+
+    /// <summary>读取角色开关标志，未记录时按 false 处理。</summary>
+    public bool GetFlag(RoleStateFlag e)
+    {
+        if (_flags.ContainsKey(e))
+        {
+            return _flags[e];
+        }
+        return false;
+    }
+
+    /// <summary>写入或更新角色开关标志。</summary>
+    public void SetFlag(RoleStateFlag e, bool flag)
+    {
+        _flags[e] = flag;
+    }
+    #endregion
 }

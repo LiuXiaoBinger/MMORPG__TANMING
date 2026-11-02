@@ -17,6 +17,20 @@ public sealed class MObjectPool<T> : IObjectPool
     private readonly HashSet<T> _set = new HashSet<T>();
 #endif
 
+    /// <summary>以 RO 创建委托形式指定实例构造与生命周期钩子。</summary>
+    /// <param name="creator">空闲栈耗尽时创建实例的回调。</param>
+    /// <param name="actionOnGet">借出后执行的可选初始化回调。</param>
+    /// <param name="actionOnRelease">归还前执行的可选清理回调。</param>
+    /// <param name="actionOnDestroy">清空闲置实例时执行的可选销毁回调。</param>
+    public MObjectPool(CreateObj creator, UnityAction<T> actionOnGet,
+        UnityAction<T> actionOnRelease, UnityAction<T> actionOnDestroy = null)
+    {
+        _creator = creator;
+        _actionOnGet = actionOnGet;
+        _actionOnRelease = actionOnRelease;
+        _actionOnDestroy = actionOnDestroy;
+    }
+
     /// <summary>空闲栈耗尽时使用的必需实例构造回调。</summary>
     private readonly CreateObj _creator;
 
@@ -37,20 +51,6 @@ public sealed class MObjectPool<T> : IObjectPool
 
     /// <summary>当前可供再次借用的实例数。</summary>
     public int countInactive { get { return _stack.Count; } }
-
-    /// <summary>以 RO 创建委托形式指定实例构造与生命周期钩子。</summary>
-    /// <param name="creator">空闲栈耗尽时创建实例的回调。</param>
-    /// <param name="actionOnGet">借出后执行的可选初始化回调。</param>
-    /// <param name="actionOnRelease">归还前执行的可选清理回调。</param>
-    /// <param name="actionOnDestroy">清空闲置实例时执行的可选销毁回调。</param>
-    public MObjectPool(CreateObj creator, UnityAction<T> actionOnGet,
-        UnityAction<T> actionOnRelease, UnityAction<T> actionOnDestroy = null)
-    {
-        _creator = creator;
-        _actionOnGet = actionOnGet;
-        _actionOnRelease = actionOnRelease;
-        _actionOnDestroy = actionOnDestroy;
-    }
 
     /// <summary>借出一个实例，新建仅发生在空闲栈为空时。</summary>
     /// <returns>由调用方独占至 Release 的实例。</returns>

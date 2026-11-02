@@ -12,6 +12,8 @@ using YooAsset;
 /// </summary>
 public class test : MonoBehaviour
 {
+
+    #region 字段
     /// <summary>测试场景使用的 YooAsset 默认资源包名称，必须与资源收集配置中的包名一致。</summary>
     private const string DefaultPackageName = "DefaultPackage";
 
@@ -43,7 +45,9 @@ public class test : MonoBehaviour
 
     /// <summary>是否已经提交过本次模拟角色包，避免测试组件重复驱动同一主角创建。</summary>
     private bool _mockRolePacketSubmitted;
+    #endregion
 
+    #region 测试环境初始化与数据装配
     /// <summary>Unity 场景加载时启动一次资源包初始化流程。</summary>
     private void Awake()
     {
@@ -56,6 +60,208 @@ public class test : MonoBehaviour
         StartCoroutine(InitializeYooAsset());
     }
 
+    /// <summary>等待模拟角色与正式主界面就绪后，经 protobuf 正式解析入口装载全学技能包。</summary>
+    /// <returns>逐帧等待角色、主界面和模型资源完成初始化。</returns>
+    private IEnumerator LoadMockLearnedSkills()
+    {
+        // 提交结果可能表示待处理，必须等场景世界真正创建本地主角。
+        PlayerEntity role = null;
+        while (true)
+        {
+            // 全局场景世界或本地主角尚未创建时继续等待。
+            if (Global.Instance == null || Global.Instance.SceneWorld == null ||
+                Global.Instance.SceneWorld.LocalRole == null)
+            {
+                yield return null;
+                continue;
+            }
+            // 主城管理器或主界面根节点尚未就绪时继续等待。
+            if (MainCityMgr.Instance == null || UIRoot.Instance == null)
+            {
+                yield return null;
+                continue;
+            }
+            break;
+        }
+        role = Global.Instance.SceneWorld.LocalRole;
+        MainCityMgr.Instance.EnsureLocalRolePresentation(role);
+        if (UIRoot.Instance.MainCtrl == null)
+        {
+            UIRoot.Instance.InitMainCtrl();
+        }
+        if (UIRoot.Instance.MainCtrl == null)
+        {
+            Debug.LogError("测试场景正式主界面未能初始化，模拟全学技能包未装载。", this);
+            yield break;
+        }
+        UIRoot.Instance.MainCtrl.ShowView();
+        UIRoot.Instance.MainCtrl.RegisterMainInput();
+
+        // 原技能表全部条目构成本地模拟回包的已学列表，无表现的剩余条目不占快捷键。
+        List<cfg.SkillInfo> skills = new List<cfg.SkillInfo>(LubanMgr.Instance.GetSkillInfos().Values);
+        skills.Sort((left, right) => left.Id.CompareTo(right.Id));
+        // 六项有正式表现的技能；10060由原F移到2，10080滑行使用F。
+        int[] animatedSkillIds = { 10010, 10040, 10050, 10060, 10070, 10080 };
+        // 与技能 ID 索引一一对应，模拟11080后由正式控制器统一更新输入和图标。
+        string[] bindKeys = { "Q", "E", "R", "2", "1", "F" };
+        // 本地模拟的 11080 回复包只描述等级和键位，正式控制器负责装载核心与界面。
+        RoleSkillInfoRet response = new RoleSkillInfoRet();
+        response.CmdCode = CmdCode.Succeed;
+        response.RoleId = role.GetID();
+        for (int skillIndex = 0; skillIndex < skills.Count; skillIndex++)
+        {
+            // 未配置战斗表现的技能保留一级已学状态，但不占用战斗快捷键。
+            string bindKey = string.Empty;
+            for (int keyIndex = 0; keyIndex < animatedSkillIds.Length; keyIndex++)
+            {
+                if (skills[skillIndex].Id == animatedSkillIds[keyIndex])
+                {
+                    bindKey = bindKeys[keyIndex];
+                }
+            }
+            response.RoleSkillInfoList.Add(new RoleSkillInfo
+            {
+                SkillId = skills[skillIndex].Id,
+                Level = 1,
+                BindKey = bindKey
+            });
+        }
+
+        // 序列化边界使用 protobuf 强类型消息，正式解析入口复用线上回包校验。
+        ByteString payload = response.ToByteString();
+        if (!UIRoot.Instance.MainCtrl.LoadSkillResponse(payload))
+        {
+            Debug.LogError("模拟全学技能回包未被正式控制器接纳，角色 ID：" + response.RoleId, this);
+            yield break;
+        }
+        // 旧模型动画事件接收器在此测试场景会访问缺失的网络战斗对象，仅在运行态关闭组件。
+        while (true)
+        {
+            // 模型尚未加载完成时继续等待。
+            if (role.Model == null || !role.Model.IsLoaded)
+            {
+                yield return null;
+                continue;
+            }
+            // 模型游戏对象或其原生对象尚未就绪时继续等待。
+            if (role.Model.GameObject == null || role.Model.GameObject.NativeObject == null)
+            {
+                yield return null;
+                continue;
+            }
+            break;
+        }
+        RoleAnimaBehaviour[] receivers = role.Model.GameObject.NativeObject.GetComponentsInChildren<RoleAnimaBehaviour>(true);
+        for (int index = 0; index < receivers.Length; index++)
+        {
+            if (receivers[index] != null)
+            {
+                receivers[index].enabled = false;
+            }
+        }
+        Debug.Log("测试角色动画事件接收组件已禁用，数量：" + receivers.Length, this);
+        Debug.Log("模拟全学技能回包已装载，技能数量：" + response.RoleSkillInfoList.Count + "，可手动按 Q/E/R/F/1 播放技能动画。", this);
+    }
+
+    /// <summary>
+    /// 构造与开始游戏回包一致的强类型主角数据，字段值仅用于测试场景。
+    /// </summary>
+    /// <returns>可交给 Global.SubmitLocalRoleLoad 的完整主角数据。</returns>
+    private MainRoleInfo CreateMockMainRolePacket()
+    {
+        // 待提交给正式 Global 角色加载入口的强类型主角数据。
+        MainRoleInfo mockRolePacket = new MainRoleInfo();
+        mockRolePacket.AccountId = _mockAccountId;
+        mockRolePacket.Exp = 0;
+        mockRolePacket.SkillUpPoint = 0;
+        mockRolePacket.ServerId = 1;
+        mockRolePacket.BaseInfo = new RoleBaseInfo();
+        mockRolePacket.BaseInfo.RoleId = _mockRoleId;
+        // 测试角色有足够生存值与法力值，正式本地施法仍会执行 MP 和状态检查。
+        mockRolePacket.BaseInfo.MaxHp = 1000;
+        mockRolePacket.BaseInfo.CurrHp = 1000;
+        mockRolePacket.BaseInfo.MaxMp = 1000;
+        mockRolePacket.BaseInfo.CurrMp = 1000;
+        // 测试主角固定使用 MJS 职业，正式 MainCityMgr 会据此选择 Role_MJS 预制体。
+        mockRolePacket.BaseInfo.JobId = (int)RoleJobtype.MJS;
+        if (string.IsNullOrEmpty(_mockRoleNickname))
+        {
+            mockRolePacket.BaseInfo.Nickname = "测试主角";
+        }
+        else
+        {
+            mockRolePacket.BaseInfo.Nickname = _mockRoleNickname;
+        }
+        return mockRolePacket;
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>
+    /// 复用已存在的默认资源包；仅在 YooAssets 尚未初始化或资源包不存在时执行必要创建。
+    /// </summary>
+    /// <returns>可用于默认包初始化的资源包；发生异常时返回空引用。</returns>
+    private ResourcePackage GetOrCreateDefaultPackage()
+    {
+        // 尝试读取已有资源包；YooAssets 未初始化时该 API 会抛出异常。
+        ResourcePackage package;
+        try
+        {
+            package = YooAssets.TryGetPackage(DefaultPackageName);
+        }
+        // 异常对象仅用于判定资源系统尚不可访问，并输出首次初始化失败原因。
+        catch (Exception)
+        {
+            try
+            {
+                YooAssets.Initialize();
+                package = YooAssets.TryGetPackage(DefaultPackageName);
+            }
+            // 异常对象记录 YooAssets 驱动器创建失败等不可恢复错误。
+            catch (Exception exception)
+            {
+                Debug.LogError("YooAssets 初始化失败：" + exception.Message, this);
+                return null;
+            }
+        }
+
+        if (package != null)
+        {
+            return package;
+        }
+
+        try
+        {
+            return YooAssets.CreatePackage(DefaultPackageName);
+        }
+        // 异常对象记录默认资源包创建失败的具体原因。
+        catch (Exception exception)
+        {
+            Debug.LogError("DefaultPackage 创建失败：" + exception.Message, this);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 生成编辑器模拟清单并返回构建结果路径。
+    /// </summary>
+    /// <returns>模拟构建返回的清单路径；构建异常时返回空字符串。</returns>
+    private string GetSimulateManifestFilePath()
+    {
+        try
+        {
+            return EditorSimulateModeHelper.SimulateBuild(DefaultPackageName);
+        }
+        // 异常对象记录资源收集配置无效等模拟构建失败原因。
+        catch (Exception exception)
+        {
+            Debug.LogError("YooAsset 编辑器模拟构建失败：" + exception.Message, this);
+            return string.Empty;
+        }
+    }
+    #endregion
+
+    #region 模拟场景初始化
     /// <summary>
     /// 获取或创建默认资源包，完成编辑器模拟模式初始化后启用场景 Global。
     /// </summary>
@@ -205,204 +411,6 @@ public class test : MonoBehaviour
         StartCoroutine(LoadMockLearnedSkills());
     }
 
-    /// <summary>等待模拟角色与正式主界面就绪后，经 protobuf 正式解析入口装载全学技能包。</summary>
-    /// <returns>逐帧等待角色、主界面和模型资源完成初始化。</returns>
-    private IEnumerator LoadMockLearnedSkills()
-    {
-        // 提交结果可能表示待处理，必须等场景世界真正创建本地主角。
-        PlayerEntity role = null;
-        while (true)
-        {
-            // 全局场景世界或本地主角尚未创建时继续等待。
-            if (Global.Instance == null || Global.Instance.SceneWorld == null ||
-                Global.Instance.SceneWorld.LocalRole == null)
-            {
-                yield return null;
-                continue;
-            }
-            // 主城管理器或主界面根节点尚未就绪时继续等待。
-            if (MainCityMgr.Instance == null || UIRoot.Instance == null)
-            {
-                yield return null;
-                continue;
-            }
-            break;
-        }
-        role = Global.Instance.SceneWorld.LocalRole;
-        MainCityMgr.Instance.EnsureLocalRolePresentation(role);
-        if (UIRoot.Instance.MainCtrl == null)
-        {
-            UIRoot.Instance.InitMainCtrl();
-        }
-        if (UIRoot.Instance.MainCtrl == null)
-        {
-            Debug.LogError("测试场景正式主界面未能初始化，模拟全学技能包未装载。", this);
-            yield break;
-        }
-        UIRoot.Instance.MainCtrl.ShowView();
-        UIRoot.Instance.MainCtrl.RegisterMainInput();
-
-        // 原技能表全部条目构成本地模拟回包的已学列表，无表现的剩余条目不占快捷键。
-        List<cfg.SkillInfo> skills = new List<cfg.SkillInfo>(LubanMgr.Instance.GetSkillInfos().Values);
-        skills.Sort((left, right) => left.Id.CompareTo(right.Id));
-        // 六项有正式表现的技能；10060由原F移到2，10080滑行使用F。
-        int[] animatedSkillIds = { 10010, 10040, 10050, 10060, 10070, 10080 };
-        // 与技能 ID 索引一一对应，模拟11080后由正式控制器统一更新输入和图标。
-        string[] bindKeys = { "Q", "E", "R", "2", "1", "F" };
-        // 本地模拟的 11080 回复包只描述等级和键位，正式控制器负责装载核心与界面。
-        RoleSkillInfoRet response = new RoleSkillInfoRet();
-        response.CmdCode = CmdCode.Succeed;
-        response.RoleId = role.GetID();
-        for (int skillIndex = 0; skillIndex < skills.Count; skillIndex++)
-        {
-            // 未配置战斗表现的技能保留一级已学状态，但不占用战斗快捷键。
-            string bindKey = string.Empty;
-            for (int keyIndex = 0; keyIndex < animatedSkillIds.Length; keyIndex++)
-            {
-                if (skills[skillIndex].Id == animatedSkillIds[keyIndex])
-                {
-                    bindKey = bindKeys[keyIndex];
-                }
-            }
-            response.RoleSkillInfoList.Add(new RoleSkillInfo
-            {
-                SkillId = skills[skillIndex].Id,
-                Level = 1,
-                BindKey = bindKey
-            });
-        }
-
-        // 序列化边界使用 protobuf 强类型消息，正式解析入口复用线上回包校验。
-        ByteString payload = response.ToByteString();
-        if (!UIRoot.Instance.MainCtrl.LoadSkillResponse(payload))
-        {
-            Debug.LogError("模拟全学技能回包未被正式控制器接纳，角色 ID：" + response.RoleId, this);
-            yield break;
-        }
-        // 旧模型动画事件接收器在此测试场景会访问缺失的网络战斗对象，仅在运行态关闭组件。
-        while (true)
-        {
-            // 模型尚未加载完成时继续等待。
-            if (role.Model == null || !role.Model.IsLoaded)
-            {
-                yield return null;
-                continue;
-            }
-            // 模型游戏对象或其原生对象尚未就绪时继续等待。
-            if (role.Model.GameObject == null || role.Model.GameObject.NativeObject == null)
-            {
-                yield return null;
-                continue;
-            }
-            break;
-        }
-        RoleAnimaBehaviour[] receivers = role.Model.GameObject.NativeObject.GetComponentsInChildren<RoleAnimaBehaviour>(true);
-        for (int index = 0; index < receivers.Length; index++)
-        {
-            if (receivers[index] != null)
-            {
-                receivers[index].enabled = false;
-            }
-        }
-        Debug.Log("测试角色动画事件接收组件已禁用，数量：" + receivers.Length, this);
-        Debug.Log("模拟全学技能回包已装载，技能数量：" + response.RoleSkillInfoList.Count + "，可手动按 Q/E/R/F/1 播放技能动画。", this);
-    }
-
-    /// <summary>
-    /// 构造与开始游戏回包一致的强类型主角数据，字段值仅用于测试场景。
-    /// </summary>
-    /// <returns>可交给 Global.SubmitLocalRoleLoad 的完整主角数据。</returns>
-    private MainRoleInfo CreateMockMainRolePacket()
-    {
-        // 待提交给正式 Global 角色加载入口的强类型主角数据。
-        MainRoleInfo mockRolePacket = new MainRoleInfo();
-        mockRolePacket.AccountId = _mockAccountId;
-        mockRolePacket.Exp = 0;
-        mockRolePacket.SkillUpPoint = 0;
-        mockRolePacket.ServerId = 1;
-        mockRolePacket.BaseInfo = new RoleBaseInfo();
-        mockRolePacket.BaseInfo.RoleId = _mockRoleId;
-        // 测试角色有足够生存值与法力值，正式本地施法仍会执行 MP 和状态检查。
-        mockRolePacket.BaseInfo.MaxHp = 1000;
-        mockRolePacket.BaseInfo.CurrHp = 1000;
-        mockRolePacket.BaseInfo.MaxMp = 1000;
-        mockRolePacket.BaseInfo.CurrMp = 1000;
-        // 测试主角固定使用 MJS 职业，正式 MainCityMgr 会据此选择 Role_MJS 预制体。
-        mockRolePacket.BaseInfo.JobId = (int)RoleJobtype.MJS;
-        if (string.IsNullOrEmpty(_mockRoleNickname))
-        {
-            mockRolePacket.BaseInfo.Nickname = "测试主角";
-        }
-        else
-        {
-            mockRolePacket.BaseInfo.Nickname = _mockRoleNickname;
-        }
-        return mockRolePacket;
-    }
-
-    /// <summary>
-    /// 复用已存在的默认资源包；仅在 YooAssets 尚未初始化或资源包不存在时执行必要创建。
-    /// </summary>
-    /// <returns>可用于默认包初始化的资源包；发生异常时返回空引用。</returns>
-    private ResourcePackage GetOrCreateDefaultPackage()
-    {
-        // 尝试读取已有资源包；YooAssets 未初始化时该 API 会抛出异常。
-        ResourcePackage package;
-        try
-        {
-            package = YooAssets.TryGetPackage(DefaultPackageName);
-        }
-        // 异常对象仅用于判定资源系统尚不可访问，并输出首次初始化失败原因。
-        catch (Exception)
-        {
-            try
-            {
-                YooAssets.Initialize();
-                package = YooAssets.TryGetPackage(DefaultPackageName);
-            }
-            // 异常对象记录 YooAssets 驱动器创建失败等不可恢复错误。
-            catch (Exception exception)
-            {
-                Debug.LogError("YooAssets 初始化失败：" + exception.Message, this);
-                return null;
-            }
-        }
-
-        if (package != null)
-        {
-            return package;
-        }
-
-        try
-        {
-            return YooAssets.CreatePackage(DefaultPackageName);
-        }
-        // 异常对象记录默认资源包创建失败的具体原因。
-        catch (Exception exception)
-        {
-            Debug.LogError("DefaultPackage 创建失败：" + exception.Message, this);
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// 生成编辑器模拟清单并返回构建结果路径。
-    /// </summary>
-    /// <returns>模拟构建返回的清单路径；构建异常时返回空字符串。</returns>
-    private string GetSimulateManifestFilePath()
-    {
-        try
-        {
-            return EditorSimulateModeHelper.SimulateBuild(DefaultPackageName);
-        }
-        // 异常对象记录资源收集配置无效等模拟构建失败原因。
-        catch (Exception exception)
-        {
-            Debug.LogError("YooAsset 编辑器模拟构建失败：" + exception.Message, this);
-            return string.Empty;
-        }
-    }
-
     /// <summary>
     /// 在资源包成功初始化后启用场景内预置的 Global，确保其 Awake 可读取 DefaultPackage。
     /// </summary>
@@ -428,4 +436,5 @@ public class test : MonoBehaviour
 
         _sceneGlobal.gameObject.SetActive(true);
     }
+    #endregion
 }

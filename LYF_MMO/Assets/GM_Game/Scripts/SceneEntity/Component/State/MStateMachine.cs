@@ -8,6 +8,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MStateMachine : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>动作状态容器，按 StateDefine 和类型双向索引已注册状态。</summary>
     private readonly MActionStateContainer _states = new MActionStateContainer();
 
@@ -52,7 +54,9 @@ public sealed class MStateMachine : EntityComponentBase
 
     /// <summary>动作状态容器，外部可按类型或 StateDefine 查询状态。</summary>
     public MActionStateContainer States { get { return _states; } }
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>构造状态机组件。</summary>
     /// <param name="owner">宿主实体。</param>
     public MStateMachine(ROObject owner) : base(owner) { }
@@ -208,20 +212,64 @@ public sealed class MStateMachine : EntityComponentBase
         }
     }
 
-    /// <summary>把指定状态设为默认状态，并同时设为当前/上一个状态，立即获取权限。</summary>
-    /// <param name="state">默认状态实例，为空时清空全部状态引用。</param>
-    public void SetDefaultState(IMStateTransform state)
+    protected override void EventSubscribe()
     {
-        if (state == null)
-        {
-            _default = null; _current = null; _previous = null; return;
-        }
-        _default = state; 
-        _current = state; 
-        _previous = state; 
-        _current.OnGetPermission();
+       
     }
 
+    protected override void EventUnsubscribe()
+    {
+        
+    }
+
+    /// <summary>
+    /// 状态机销毁：停止当前状态，清空容器并释放全部动作状态，
+    /// 重置内部引用和标记，等待对象池回收。
+    /// </summary>
+    public override void Shutdown()
+    {
+        if (_current != null) _current.Stop(false);
+        // 容器 Clear 会把所有动作状态（含 Skill）归还动作池
+        _states.Clear(Entity); 
+        _current = null; 
+        _default = null;
+        _previous = null;
+        _isTriggered = false; 
+        _preState = null; 
+        _registered = false;
+    }
+    #endregion
+
+    /// <summary>动作状态内部统一使用秒，实体入口仍使用毫秒。</summary>
+    /// <param name="deltaSeconds">距上一帧的秒数。</param>
+    public void UpdateSeconds(float deltaSeconds)
+    {
+        if (_current == null) return;
+        _current.StateUpdate(deltaSeconds);
+        // 当前状态已完成且不是默认状态时，自动切回默认状态
+        if (_current.IsFinished && _current != _default) TransferToState(_default);
+    }
+
+    #region 事件回调
+    /// <summary>从宿主实体卸载时清空实体对状态机的快捷引用。</summary>
+    public override void OnDetachFromHost()
+    {
+        MEntity entity = Entity;
+        if (entity != null) entity.SetMachineComponent(null);
+        base.OnDetachFromHost();
+    }
+
+    /// <summary>挂载到新宿主实体时设置实体对状态机的快捷引用。</summary>
+    /// <param name="hostObj">新挂载的宿主对象。</param>
+    public override void OnAttachToHost(ROObject hostObj)
+    {
+        MEntity entity = hostObj as MEntity;
+        if (entity != null) entity.SetMachineComponent(this);
+        base.OnAttachToHost(hostObj);
+    }
+    #endregion
+
+    #region 查询与判定
     /// <summary>查询当前状态是否允许释放技能：可打断状态或允许转到吟唱状态时返回 true。</summary>
     /// <returns>允许释放技能返回 true。</returns>
     public bool CanSkill()
@@ -237,6 +285,22 @@ public sealed class MStateMachine : EntityComponentBase
     {
         if (_current == null) return false;
         return CommonStateTypeTool.StatePermitted(_current.SelfState, nextState);
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>把指定状态设为默认状态，并同时设为当前/上一个状态，立即获取权限。</summary>
+    /// <param name="state">默认状态实例，为空时清空全部状态引用。</param>
+    public void SetDefaultState(IMStateTransform state)
+    {
+        if (state == null)
+        {
+            _default = null; _current = null; _previous = null; return;
+        }
+        _default = state; 
+        _current = state; 
+        _previous = state; 
+        _current.OnGetPermission();
     }
 
     /// <summary>按状态枚举切换到对应状态，先查状态实例再做权限校验。</summary>
@@ -297,26 +361,6 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>完成当前状态，通常由状态内部在动画播完后调用。</summary>
     public void Finish() { if (_current != null) _current.Finish(); }
 
-    /// <summary>动作状态内部统一使用秒，实体入口仍使用毫秒。</summary>
-    /// <param name="deltaSeconds">距上一帧的秒数。</param>
-    public void UpdateSeconds(float deltaSeconds)
-    {
-        if (_current == null) return;
-        _current.StateUpdate(deltaSeconds);
-        // 当前状态已完成且不是默认状态时，自动切回默认状态
-        if (_current.IsFinished && _current != _default) TransferToState(_default);
-    }
-
-    protected override void EventSubscribe()
-    {
-       
-    }
-
-    protected override void EventUnsubscribe()
-    {
-        
-    }
-
     /// <summary>标记本帧需要在 LateUpdate 播放动画。</summary>
     public void MarkTriggered() { _isTriggered = true; }
 
@@ -326,38 +370,5 @@ public sealed class MStateMachine : EntityComponentBase
     {
         if (Entity != null) Entity.AtorSpeed = speed;
     }
-
-    /// <summary>
-    /// 状态机销毁：停止当前状态，清空容器并释放全部动作状态，
-    /// 重置内部引用和标记，等待对象池回收。
-    /// </summary>
-    public override void Shutdown()
-    {
-        if (_current != null) _current.Stop(false);
-        // 容器 Clear 会把所有动作状态（含 Skill）归还动作池
-        _states.Clear(Entity); 
-        _current = null; 
-        _default = null;
-        _previous = null;
-        _isTriggered = false; 
-        _preState = null; 
-        _registered = false;
-    }
-
-    /// <summary>从宿主实体卸载时清空实体对状态机的快捷引用。</summary>
-    public override void OnDetachFromHost()
-    {
-        MEntity entity = Entity;
-        if (entity != null) entity.SetMachineComponent(null);
-        base.OnDetachFromHost();
-    }
-
-    /// <summary>挂载到新宿主实体时设置实体对状态机的快捷引用。</summary>
-    /// <param name="hostObj">新挂载的宿主对象。</param>
-    public override void OnAttachToHost(ROObject hostObj)
-    {
-        MEntity entity = hostObj as MEntity;
-        if (entity != null) entity.SetMachineComponent(this);
-        base.OnAttachToHost(hostObj);
-    }
+    #endregion
 }

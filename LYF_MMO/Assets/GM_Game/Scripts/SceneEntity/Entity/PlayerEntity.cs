@@ -10,6 +10,8 @@ using UnityEngine;
 /// </summary>
 public sealed class PlayerEntity : RoleEntity
 {
+
+    #region 字段与属性
     /// <summary>RO 同名当前选中实体，点击、瞄准与技能自动选敌共用；离场和复用时清空。</summary>
     public MEntity Target { get; set; }
 
@@ -34,40 +36,6 @@ public sealed class PlayerEntity : RoleEntity
             }
             return _nextSkillUuid;
         }
-    }
-
-    /// <summary>按 RO 同名发送入口上传当前位置、朝向、耗时和移动状态，并归零同步计时。</summary>
-    public void UpdateMove()
-    {
-        // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
-        if (MainCityMgr.Instance == null || !Model.IsLoaded)
-        {
-            return;
-        }
-        // 普通移动保留原有正耗时发送规则；起跳或落地状态变化允许零耗时即时上报。
-        if (MoveComp.CostTime <= 0f && _jumpCount == MoveComp.JumpCount)
-        {
-            return;
-        }
-        _face = Model.Rotation.eulerAngles.y;
-        _isMoving = IsMoving;
-        _jumpCount = MoveComp.JumpCount;
-        // 本时间段是否实际发生位移；跳跃与技能根运动也需要远端追赶最终坐标。
-        bool isMoved = Position != sysnOldPos;
-        sysnOldPos = Position;
-        // 本次位置上报的强类型消息：位置为米、耗时为秒，沿 RO Dx/Dy/Dz/Time 语义发送。
-        MoveOperationReq ptc = new MoveOperationReq();
-        ptc.Dx = sysnOldPos.x;
-        ptc.Dy = sysnOldPos.y;
-        ptc.Dz = sysnOldPos.z;
-        ptc.Face = _face;
-        ptc.Time = MoveComp.CostTime;
-        ptc.IsMoving = IsMoving;
-        ptc.IsMoved = isMoved || MoveComp.HasDirectionalInput;
-        ptc.JumpCount = _jumpCount;
-        MoveComp.CostTime = 0f;
-        MNetClient.Instance.Send(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
-        _lastSyncTime = 0f;
     }
 
     /// <summary>移动朝向使用的主相机缓存；Single切场景销毁旧相机后重新获取。</summary>
@@ -100,7 +68,9 @@ public sealed class PlayerEntity : RoleEntity
 
     /// <summary>是否为本地玩家（true 表示当前登录账号的角色）</summary>
     public bool IsLocal { get; private set; }
+    #endregion
 
+    #region 构造与初始化
     /// <summary>
     /// 由实体 Builder 创建场景玩家。
     /// </summary>
@@ -166,97 +136,47 @@ public sealed class PlayerEntity : RoleEntity
         }
     }
 
-    /// <summary>缓存当前活动场景中带MainCamera标签的相机变换。</summary>
-    private void CacheMainCameraTransform()
+    /// <summary>释放角色数据并销毁实体。</summary>
+    public void Dispose()
     {
-        // 当前场景输出主相机；创角与主城各自持有独立实例。
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            _mainCameraTransform = mainCamera.transform;
-        }
+        DisposeRoleData();
+        Destroy();
     }
+    #endregion
 
-    /// <summary>获取移动朝向使用的主相机，旧场景相机销毁后更新缓存。</summary>
-    /// <returns>当前场景主相机的变换；场景尚无主相机时为空。</returns>
-    public Transform GetMainCamera()
+    #region 界面刷新、事件回调等
+    /// <summary>按 RO 同名发送入口上传当前位置、朝向、耗时和移动状态，并归零同步计时。</summary>
+    public void UpdateMove()
     {
-        // 玩家实体先于主城创建并跨场景存活，不能继续使用已卸载的创角相机。
-        if (_mainCameraTransform == null)
-        {
-            CacheMainCameraTransform();
-        }
-        return _mainCameraTransform;
-    }
-
-    /// <summary>
-    /// 实体世界创建后装载本地角色数据并初始化角色组件。
-    /// 仅在本地玩家实体上调用一次。
-    /// </summary>
-    /// <param name="roleInfo">从服务器获取的完整角色信息</param>
-    public void InitializeLocalRole(MainRoleInfo roleInfo)
-    {
-        IsLocal = true;
-        SetRoleInfo(roleInfo);
-        InitializeRoleComponents();
-    }
-
-    /// <summary>
-    /// 初始化本地角色业务组件（背包、计数等）。
-    /// 仅初始化一次，重复调用直接忽略。
-    /// </summary>
-    private void InitializeRoleComponents()
-    {
-        if (!IsLocal || _componentsInitialized)
+        // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
+        if (MainCityMgr.Instance == null || !Model.IsLoaded)
         {
             return;
         }
-        // 注册本地角色业务组件
-        _roleComponents.SetComponent(new RoleCountComponent(this));
-        _roleComponents.SetComponent(new RoItemComponent(this));
-        _roleComponents.Initialize();
-        _componentsInitialized = true;
-    }
-
-    /// <summary>
-    /// 从服务器背包回包加载角色数据到本地组件。
-    /// </summary>
-    /// <param name="result">背包信息回包结果</param>
-    /// <returns>加载成功返回 true；非本地玩家、组件未初始化或回包失败返回 false</returns>
-    public bool LoadRoleData(RoleKanpsackInfoRet result)
-    {
-        // 非本地玩家或业务组件尚未初始化，直接忽略回包。
-        bool notLocalOrUninitialized = !IsLocal || !_componentsInitialized;
-        // 回包无效：回包体为空、协议码非成功或背包信息缺失（内部短路保护空引用）。
-        bool resultInvalid = result == null ||
-            result.CmdCode != CmdCode.Succeed ||
-            result.RoleKanpsackInfo == null;
-        if (notLocalOrUninitialized || resultInvalid)
-        {
-            return false;
-        }
-        // 加载背包数据
-        RoItemComponent itemComponent = GetRoleComponent<RoItemComponent>();
-        RoleCountComponent countComponent = GetRoleComponent<RoleCountComponent>();
-        itemComponent.LoadKnapsack(result);
-        countComponent.Load(result.RoleKanpsackInfo.RoleCountInfoList);
-        _roleDataReady = true;
-        _roleComponents.AfterLoad();
-        return true;
-    }
-
-    /// <summary>
-    /// 实体加入世界后通知角色组件执行"入场后"逻辑。
-    /// 仅通知一次，重复调用直接忽略。
-    /// </summary>
-    public void AfterAddedToWorld()
-    {
-        if (_addedToWorldNotified || !_componentsInitialized || _disposed)
+        // 普通移动保留原有正耗时发送规则；起跳或落地状态变化允许零耗时即时上报。
+        if (MoveComp.CostTime <= 0f && _jumpCount == MoveComp.JumpCount)
         {
             return;
         }
-        _roleComponents.AfterAddedToWorld();
-        _addedToWorldNotified = true;
+        _face = Model.Rotation.eulerAngles.y;
+        _isMoving = IsMoving;
+        _jumpCount = MoveComp.JumpCount;
+        // 本时间段是否实际发生位移；跳跃与技能根运动也需要远端追赶最终坐标。
+        bool isMoved = Position != sysnOldPos;
+        sysnOldPos = Position;
+        // 本次位置上报的强类型消息：位置为米、耗时为秒，沿 RO Dx/Dy/Dz/Time 语义发送。
+        MoveOperationReq ptc = new MoveOperationReq();
+        ptc.Dx = sysnOldPos.x;
+        ptc.Dy = sysnOldPos.y;
+        ptc.Dz = sysnOldPos.z;
+        ptc.Face = _face;
+        ptc.Time = MoveComp.CostTime;
+        ptc.IsMoving = IsMoving;
+        ptc.IsMoved = isMoved || MoveComp.HasDirectionalInput;
+        ptc.JumpCount = _jumpCount;
+        MoveComp.CostTime = 0f;
+        MNetClient.Instance.Send(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
+        _lastSyncTime = 0f;
     }
 
     /// <summary>
@@ -271,6 +191,71 @@ public sealed class PlayerEntity : RoleEntity
         }
         _roleComponents.Update(deltaMilliseconds);
     }
+
+    /// <summary>
+    /// 更新角色基础同步信息（重写以同步到 RoleInfo）。
+    /// </summary>
+    /// <param name="baseInfo">角色基础信息，null 时直接忽略</param>
+    public override void UpdateBaseInfo(RoleBaseInfo baseInfo)
+    {
+        if (baseInfo == null)
+        {
+            return;
+        }
+        if (RoleInfo == null)
+        {
+            RoleInfo = new MainRoleInfo();
+        }
+        RoleInfo.BaseInfo = baseInfo.Clone();
+        base.UpdateBaseInfo(baseInfo);
+    }
+
+    /// <summary>
+    /// 销毁前释放本地角色数据
+    /// </summary>
+    protected override void OnDestroying()
+    {
+        MSkillTargetMgr.singleton.ResetTarget(null);
+        Target = null;
+        DisposeRoleData();
+        base.OnDestroying();
+    }
+
+    /// <summary>
+    /// 向背包添加物品
+    /// </summary>
+    /// <param name="itemId">物品 ID</param>
+    /// <param name="itemCount">添加数量</param>
+    /// <param name="reason">变更原因</param>
+    /// <param name="itemSign">物品标识</param>
+    /// <param name="moneyType">货币类型</param>
+    /// <param name="price">价格</param>
+    /// <param name="notifyNow">是否立即通知 UI 刷新</param>
+    /// <param name="idipParam">输出参数，变更后的物品参数</param>
+    /// <returns>添加的物品实例，失败返回 null</returns>
+    public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason,
+        ItemSign itemSign, int moneyType, long price, bool notifyNow,
+        out IdipParam idipParam)
+    {
+        idipParam = default;
+        if (!IsRoleDataReady())
+        {
+            return null;
+        }
+        RoItemComponent itemComponent;
+        if (!TryGetRoleComponent(out itemComponent))
+        {
+            return null;
+        }
+        UpdateType updateType = UpdateType.eUT_Normal;
+        if (notifyNow)
+        {
+            updateType = UpdateType.eUT_Update_All;
+        }
+        return itemComponent.AddItem(itemId, itemCount, reason, itemSign,
+            moneyType, price, updateType, idipParam);
+    }
+    #endregion
 
     /// <summary>
     /// 释放本地角色数据资源，清空组件、脏标记和状态标记。
@@ -293,11 +278,17 @@ public sealed class PlayerEntity : RoleEntity
         _disposed = true;
     }
 
-    /// <summary>释放角色数据并销毁实体。</summary>
-    public void Dispose()
+    #region 查询与判定
+    /// <summary>获取移动朝向使用的主相机，旧场景相机销毁后更新缓存。</summary>
+    /// <returns>当前场景主相机的变换；场景尚无主相机时为空。</returns>
+    public Transform GetMainCamera()
     {
-        DisposeRoleData();
-        Destroy();
+        // 玩家实体先于主城创建并跨场景存活，不能继续使用已卸载的创角相机。
+        if (_mainCameraTransform == null)
+        {
+            CacheMainCameraTransform();
+        }
+        return _mainCameraTransform;
     }
 
     /// <summary>
@@ -320,108 +311,6 @@ public sealed class PlayerEntity : RoleEntity
     public bool IsRoleDataReady()
     {
         return _roleDataReady;
-    }
-
-    /// <summary>
-    /// 设置本地玩家完整角色信息（深拷贝）。
-    /// </summary>
-    /// <param name="roleInfo">完整角色信息，null 时清空</param>
-    public void SetRoleInfo(MainRoleInfo roleInfo)
-    {
-        if (roleInfo == null)
-        {
-            RoleInfo = null;
-            base.UpdateBaseInfo(null);
-            return;
-        }
-        // 深拷贝，防止外部引用被意外修改
-        RoleInfo = roleInfo.Clone();
-        base.UpdateBaseInfo(RoleInfo.BaseInfo);
-    }
-
-    /// <summary>
-    /// 更新角色基础同步信息（重写以同步到 RoleInfo）。
-    /// </summary>
-    /// <param name="baseInfo">角色基础信息，null 时直接忽略</param>
-    public override void UpdateBaseInfo(RoleBaseInfo baseInfo)
-    {
-        if (baseInfo == null)
-        {
-            return;
-        }
-        if (RoleInfo == null)
-        {
-            RoleInfo = new MainRoleInfo();
-        }
-        RoleInfo.BaseInfo = baseInfo.Clone();
-        base.UpdateBaseInfo(baseInfo);
-    }
-
-    /// <summary>应用服务器确认的当前 MP，并同步角色基础数据与属性组件。</summary>
-    /// <param name="currentMp">服务器声明的当前 MP，单位为整数点数。</param>
-    /// <returns>角色基础数据存在并完成同步时返回 true。</returns>
-    public bool ApplyAuthoritativeMp(int currentMp)
-    {
-        if (BaseInfo == null)
-        {
-            return false;
-        }
-        // 服务器回包可能暂时超出客户端旧上限，先按本地可见范围钳制。
-        if (currentMp < 0)
-        {
-            currentMp = 0;
-        }
-        if (currentMp > BaseInfo.MaxMp)
-        {
-            currentMp = BaseInfo.MaxMp;
-        }
-        // 克隆后回写，保持 BaseInfo 与 RoleInfo 的深拷贝约定。
-        RoleBaseInfo updatedInfo = BaseInfo.Clone();
-        updatedInfo.CurrMp = currentMp;
-        UpdateBaseInfo(updatedInfo);
-        if (AttrComp != null)
-        {
-            AttrComp.Apply(updatedInfo.MaxHp, updatedInfo.CurrHp,
-                updatedInfo.MaxMp, updatedInfo.CurrMp);
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// 销毁前释放本地角色数据
-    /// </summary>
-    protected override void OnDestroying()
-    {
-        MSkillTargetMgr.singleton.ResetTarget(null);
-        Target = null;
-        DisposeRoleData();
-        base.OnDestroying();
-    }
-
-    /// <summary>
-    /// 对象池复用时重置本地玩家全部运行时状态。
-    /// </summary>
-    /// <param name="uid">新的运行时 UID</param>
-    /// <param name="entityType">新的实体类型</param>
-    /// <param name="configId">新的配置表 ID</param>
-    internal override void PrepareForReuse(ulong uid, EntityType entityType,
-        int configId)
-    {
-        Target = null;
-        _componentsInitialized = false;
-        _roleDataReady = false;
-        _disposed = false;
-        _addedToWorldNotified = false;
-        IsLocal = false;
-        _isMoving = false;
-        _jumpCount = 0;
-        RoleInfo = null;
-        _flags.Clear();
-        DirtyTracker.ClearAll();
-        base.PrepareForReuse(uid, entityType, configId);
-        // 基类已经清除朝向和上次位置，玩家恢复 0.1 秒同步计时起点。
-        sysnOldPos = Position;
-        _lastSyncTime = 0f;
     }
 
     /// <summary>
@@ -482,41 +371,6 @@ public sealed class PlayerEntity : RoleEntity
     }
 
     /// <summary>
-    /// 向背包添加物品
-    /// </summary>
-    /// <param name="itemId">物品 ID</param>
-    /// <param name="itemCount">添加数量</param>
-    /// <param name="reason">变更原因</param>
-    /// <param name="itemSign">物品标识</param>
-    /// <param name="moneyType">货币类型</param>
-    /// <param name="price">价格</param>
-    /// <param name="notifyNow">是否立即通知 UI 刷新</param>
-    /// <param name="idipParam">输出参数，变更后的物品参数</param>
-    /// <returns>添加的物品实例，失败返回 null</returns>
-    public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason,
-        ItemSign itemSign, int moneyType, long price, bool notifyNow,
-        out IdipParam idipParam)
-    {
-        idipParam = default;
-        if (!IsRoleDataReady())
-        {
-            return null;
-        }
-        RoItemComponent itemComponent;
-        if (!TryGetRoleComponent(out itemComponent))
-        {
-            return null;
-        }
-        UpdateType updateType = UpdateType.eUT_Normal;
-        if (notifyNow)
-        {
-            updateType = UpdateType.eUT_Update_All;
-        }
-        return itemComponent.AddItem(itemId, itemCount, reason, itemSign,
-            moneyType, price, updateType, idipParam);
-    }
-
-    /// <summary>
     /// 检查指定物品数量是否足够
     /// </summary>
     /// <param name="itemId">物品 ID</param>
@@ -543,6 +397,177 @@ public sealed class PlayerEntity : RoleEntity
             return CmdCode.NotEnoughCurrency;
         }
         return CmdCode.InsufficientItems;
+    }
+
+    /// <summary>
+    /// 获取角色状态标记值
+    /// </summary>
+    /// <param name="flag">状态标记枚举</param>
+    /// <returns>标记值，未设置过返回 false</returns>
+    public bool GetFlag(RoleStateFlag flag)
+    {
+        bool value;
+        if (_flags.TryGetValue(flag, out value))
+        {
+            return value;
+        }
+        return false;
+    }
+    #endregion
+
+    /// <summary>
+    /// 从服务器背包回包加载角色数据到本地组件。
+    /// </summary>
+    /// <param name="result">背包信息回包结果</param>
+    /// <returns>加载成功返回 true；非本地玩家、组件未初始化或回包失败返回 false</returns>
+    public bool LoadRoleData(RoleKanpsackInfoRet result)
+    {
+        // 非本地玩家或业务组件尚未初始化，直接忽略回包。
+        bool notLocalOrUninitialized = !IsLocal || !_componentsInitialized;
+        // 回包无效：回包体为空、协议码非成功或背包信息缺失（内部短路保护空引用）。
+        bool resultInvalid = result == null ||
+            result.CmdCode != CmdCode.Succeed ||
+            result.RoleKanpsackInfo == null;
+        if (notLocalOrUninitialized || resultInvalid)
+        {
+            return false;
+        }
+        // 加载背包数据
+        RoItemComponent itemComponent = GetRoleComponent<RoItemComponent>();
+        RoleCountComponent countComponent = GetRoleComponent<RoleCountComponent>();
+        itemComponent.LoadKnapsack(result);
+        countComponent.Load(result.RoleKanpsackInfo.RoleCountInfoList);
+        _roleDataReady = true;
+        _roleComponents.AfterLoad();
+        return true;
+    }
+
+    #region 核心逻辑
+    /// <summary>缓存当前活动场景中带MainCamera标签的相机变换。</summary>
+    private void CacheMainCameraTransform()
+    {
+        // 当前场景输出主相机；创角与主城各自持有独立实例。
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            _mainCameraTransform = mainCamera.transform;
+        }
+    }
+
+    /// <summary>
+    /// 实体世界创建后装载本地角色数据并初始化角色组件。
+    /// 仅在本地玩家实体上调用一次。
+    /// </summary>
+    /// <param name="roleInfo">从服务器获取的完整角色信息</param>
+    public void InitializeLocalRole(MainRoleInfo roleInfo)
+    {
+        IsLocal = true;
+        SetRoleInfo(roleInfo);
+        InitializeRoleComponents();
+    }
+
+    /// <summary>
+    /// 初始化本地角色业务组件（背包、计数等）。
+    /// 仅初始化一次，重复调用直接忽略。
+    /// </summary>
+    private void InitializeRoleComponents()
+    {
+        if (!IsLocal || _componentsInitialized)
+        {
+            return;
+        }
+        // 注册本地角色业务组件
+        _roleComponents.SetComponent(new RoleCountComponent(this));
+        _roleComponents.SetComponent(new RoItemComponent(this));
+        _roleComponents.Initialize();
+        _componentsInitialized = true;
+    }
+
+    /// <summary>
+    /// 实体加入世界后通知角色组件执行"入场后"逻辑。
+    /// 仅通知一次，重复调用直接忽略。
+    /// </summary>
+    public void AfterAddedToWorld()
+    {
+        if (_addedToWorldNotified || !_componentsInitialized || _disposed)
+        {
+            return;
+        }
+        _roleComponents.AfterAddedToWorld();
+        _addedToWorldNotified = true;
+    }
+
+    /// <summary>
+    /// 设置本地玩家完整角色信息（深拷贝）。
+    /// </summary>
+    /// <param name="roleInfo">完整角色信息，null 时清空</param>
+    public void SetRoleInfo(MainRoleInfo roleInfo)
+    {
+        if (roleInfo == null)
+        {
+            RoleInfo = null;
+            base.UpdateBaseInfo(null);
+            return;
+        }
+        // 深拷贝，防止外部引用被意外修改
+        RoleInfo = roleInfo.Clone();
+        base.UpdateBaseInfo(RoleInfo.BaseInfo);
+    }
+
+    /// <summary>应用服务器确认的当前 MP，并同步角色基础数据与属性组件。</summary>
+    /// <param name="currentMp">服务器声明的当前 MP，单位为整数点数。</param>
+    /// <returns>角色基础数据存在并完成同步时返回 true。</returns>
+    public bool ApplyAuthoritativeMp(int currentMp)
+    {
+        if (BaseInfo == null)
+        {
+            return false;
+        }
+        // 服务器回包可能暂时超出客户端旧上限，先按本地可见范围钳制。
+        if (currentMp < 0)
+        {
+            currentMp = 0;
+        }
+        if (currentMp > BaseInfo.MaxMp)
+        {
+            currentMp = BaseInfo.MaxMp;
+        }
+        // 克隆后回写，保持 BaseInfo 与 RoleInfo 的深拷贝约定。
+        RoleBaseInfo updatedInfo = BaseInfo.Clone();
+        updatedInfo.CurrMp = currentMp;
+        UpdateBaseInfo(updatedInfo);
+        if (AttrComp != null)
+        {
+            AttrComp.Apply(updatedInfo.MaxHp, updatedInfo.CurrHp,
+                updatedInfo.MaxMp, updatedInfo.CurrMp);
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 对象池复用时重置本地玩家全部运行时状态。
+    /// </summary>
+    /// <param name="uid">新的运行时 UID</param>
+    /// <param name="entityType">新的实体类型</param>
+    /// <param name="configId">新的配置表 ID</param>
+    internal override void PrepareForReuse(ulong uid, EntityType entityType,
+        int configId)
+    {
+        Target = null;
+        _componentsInitialized = false;
+        _roleDataReady = false;
+        _disposed = false;
+        _addedToWorldNotified = false;
+        IsLocal = false;
+        _isMoving = false;
+        _jumpCount = 0;
+        RoleInfo = null;
+        _flags.Clear();
+        DirtyTracker.ClearAll();
+        base.PrepareForReuse(uid, entityType, configId);
+        // 基类已经清除朝向和上次位置，玩家恢复 0.1 秒同步计时起点。
+        sysnOldPos = Position;
+        _lastSyncTime = 0f;
     }
 
     /// <summary>
@@ -574,21 +599,6 @@ public sealed class PlayerEntity : RoleEntity
     }
 
     /// <summary>
-    /// 获取角色状态标记值
-    /// </summary>
-    /// <param name="flag">状态标记枚举</param>
-    /// <returns>标记值，未设置过返回 false</returns>
-    public bool GetFlag(RoleStateFlag flag)
-    {
-        bool value;
-        if (_flags.TryGetValue(flag, out value))
-        {
-            return value;
-        }
-        return false;
-    }
-
-    /// <summary>
     /// 设置角色状态标记值
     /// </summary>
     /// <param name="flag">状态标记枚举</param>
@@ -597,4 +607,5 @@ public sealed class PlayerEntity : RoleEntity
     {
         _flags[flag] = value;
     }
+    #endregion
 }

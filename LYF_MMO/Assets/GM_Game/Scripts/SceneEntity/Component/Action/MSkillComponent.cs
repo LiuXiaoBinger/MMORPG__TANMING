@@ -9,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public sealed class MSkillComponent : MBasicActionComponent
 {
+
+    #region 字段与常量
     /// <summary>实体当前已学习/可用的技能 ID 集合。</summary>
     private readonly HashSet<int> _learnedSkillIds = new HashSet<int>();
 
@@ -39,7 +41,9 @@ public sealed class MSkillComponent : MBasicActionComponent
 
     /// <summary>本实体最后一次本地施法 UUID，用于防止旧段回包覆盖更新的 MP。</summary>
     private ulong _latestSkillUuid;
+    #endregion
 
+    #region 属性
     /// <summary>组件类型为技能快捷组件，不进入普通组件集合。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Skill; } }
 
@@ -76,11 +80,66 @@ public sealed class MSkillComponent : MBasicActionComponent
     {
         get { return _skill != null && _skill.IsPredicted; }
     }
+    #endregion
 
+    #region 构造与初始化
     /// <summary>构造函数，初始化技能状态定义。</summary>
     /// <param name="owner">宿主场景实体对象。</param>
     public MSkillComponent(ROObject owner) : base(owner) { _selfState = StateDefine.kStateSkill; }
 
+    /// <summary>同步事件切入技能状态后读取载荷并创建本次动画表现。</summary>
+    protected override void OnStart()
+    {
+        base.OnStart();
+        // 本次开始事件参数由分发器在当前调用栈结束后回收，不能保存其实例。
+        SkillStartedEventArgs eventArgs = _evt as SkillStartedEventArgs;
+        if (eventArgs == null)
+        {
+            Finish();
+            return;
+        }
+        // RO开始入口只解析当前等级核心，技能载体借出及Fire由FireSkill承担。
+        MSkillCore core = GetSkill(eventArgs.SkillId, eventArgs.Level);
+        FireSkill(core, eventArgs);
+    }
+
+    /// <summary>注册技能开始和完成事件；开始事件先按 UUID 去重，再交给动作状态机。</summary>
+    protected override void RegisterActionEvents()
+    {
+        RegisterEvent(MEventType.SkillStarted, new MEventHandler(OnSkillStartedEvent));
+        RegisterFinishEvent(MEventType.SkillFinished);
+    }
+
+    /// <summary>本技能状态没有额外的实体事件订阅。</summary>
+    protected override void EventSubscribe()
+    {
+        
+    }
+
+    /// <summary>本技能状态没有额外的实体事件注销。</summary>
+    protected override void EventUnsubscribe()
+    {
+        
+    }
+
+    /// <summary>对象池回收时清空技能集合并调用基类清理。</summary>
+    public override void Shutdown()
+    {
+        ClearSkillCores();
+        stop = false;
+        base.Shutdown();
+    }
+
+    /// <summary>RO同名宿主摘除入口，立即结束仍存活技能并解除全部核心与冷却持有。</summary>
+    public override void OnDetachFromHost()
+    {
+        ClearSkillCores();
+        stop = false;
+        base.OnDetachFromHost();
+    }
+    #endregion
+
+    #region 更新
     /// <summary>实体常驻毫秒入口，只桥接一次 RO 秒更新，施法不依赖服务器确认。</summary>
     /// <param name="deltaMilliseconds">实体本帧更新间隔，单位为毫秒；仅转换技能帧时钟，冷却仍沿不缩放时钟。</param>
     public override void Update(int deltaMilliseconds)
@@ -137,7 +196,58 @@ public sealed class MSkillComponent : MBasicActionComponent
             }
         }
     }
+    #endregion
 
+    #region 技能装载
+    /// <summary>RO同名装配服务器已学列表，只持有每个技能当前等级；保留原CD及旧施法持有权。</summary>
+    /// <param name="skills">11080已学技能项或控制器保存的同角色列表，零级项只用于显示。</param>
+    public void OnAttachSkill(IList<RoleSkillInfo> skills)
+    {
+        // 本次有效已学主表ID集合，用来删除本轮回包已失效的技能。
+        HashSet<int> skillIds = new HashSet<int>();
+        // i为服务器列表的零起始下标，每个技能只装配当前学习等级。
+        for (int i = 0; i < skills.Count; i++)
+        {
+            // 当前协议技能项，等级大于零才进入施法核心。
+            RoleSkillInfo info = skills[i];
+            if (info.Level <= 0)
+            {
+                continue;
+            }
+            if (CheckAndAttackSkillCore(info.SkillId, info.Level) != null)
+            {
+                skillIds.Add(info.SkillId);
+            }
+        }
+        RetainSkillCores(skillIds);
+    }
+
+    /// <summary>RO同名按主表与当前学习等级装配核心，职业沿角色真实基础数据解析。</summary>
+    /// <param name="skillId">服务器已学技能的主表ID。</param>
+    /// <param name="lv">服务器同步的当前正数技能等级。</param>
+    public void AttachSkillInfo(int skillId, int lv)
+    {
+        // 角色基础信息提供本技能当前职业，不从动作资源推测职业。
+        RoleEntity role = Entity as RoleEntity;
+        if (role == null || role.BaseInfo == null || lv <= 0)
+        {
+            return;
+        }
+        // 同等级重复同步直接沿用已装配核心，保留施法身份和CD。
+        if (HasSkillCore(skillId, lv))
+        {
+            return;
+        }
+        // 工厂初始持有权交给SetSkillCore，旧实例独立持有原等级核心直到回池。
+        MSkillCore core = MSkillFactory.CreateCore(skillId, lv, role.BaseInfo.JobId);
+        if (core != null)
+        {
+            SetSkillCore(core);
+        }
+    }
+    #endregion
+
+    #region 施法状态与停止
     /// <summary>RO同名UUID去重查询，当前主技能和独立存活列表共用一次施法身份。</summary>
     /// <param name="skillUuid">请求和服务器广播共用的非零施法UUID。</param>
     /// <returns>该施法仍有存活表现实例时返回真。</returns>
@@ -194,53 +304,22 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
     }
 
-    /// <summary>RO同名装配服务器已学列表，只持有每个技能当前等级；保留原CD及旧施法持有权。</summary>
-    /// <param name="skills">11080已学技能项或控制器保存的同角色列表，零级项只用于显示。</param>
-    public void OnAttachSkill(IList<RoleSkillInfo> skills)
+    /// <summary>RO 技能结束通知，只解除原实例引用；具体技能在回调后自行清理并归还工厂。</summary>
+    /// <param name="skill">正在 Cease 的原实例，不能按技能 ID 猜测或解除其他 UUID。</param>
+    public void OnSkillEnd(MSkill skill)
     {
-        // 本次有效已学主表ID集合，用来删除本轮回包已失效的技能。
-        HashSet<int> skillIds = new HashSet<int>();
-        // i为服务器列表的零起始下标，每个技能只装配当前学习等级。
-        for (int i = 0; i < skills.Count; i++)
+        if (skill == null) return;
+        _skills.Remove(skill);
+        if (!ReferenceEquals(_skill, skill)) return;
+        _skill = null;
+        if (Entity != null && Entity.Machine != null && Entity.Machine.CurrentState == this)
         {
-            // 当前协议技能项，等级大于零才进入施法核心。
-            RoleSkillInfo info = skills[i];
-            if (info.Level <= 0)
-            {
-                continue;
-            }
-            if (CheckAndAttackSkillCore(info.SkillId, info.Level) != null)
-            {
-                skillIds.Add(info.SkillId);
-            }
-        }
-        RetainSkillCores(skillIds);
-    }
-
-    /// <summary>RO同名按主表与当前学习等级装配核心，职业沿角色真实基础数据解析。</summary>
-    /// <param name="skillId">服务器已学技能的主表ID。</param>
-    /// <param name="lv">服务器同步的当前正数技能等级。</param>
-    public void AttachSkillInfo(int skillId, int lv)
-    {
-        // 角色基础信息提供本技能当前职业，不从动作资源推测职业。
-        RoleEntity role = Entity as RoleEntity;
-        if (role == null || role.BaseInfo == null || lv <= 0)
-        {
-            return;
-        }
-        // 同等级重复同步直接沿用已装配核心，保留施法身份和CD。
-        if (HasSkillCore(skillId, lv))
-        {
-            return;
-        }
-        // 工厂初始持有权交给SetSkillCore，旧实例独立持有原等级核心直到回池。
-        MSkillCore core = MSkillFactory.CreateCore(skillId, lv, role.BaseInfo.JobId);
-        if (core != null)
-        {
-            SetSkillCore(core);
+            Entity.Machine.ForceToDefault();
         }
     }
+    #endregion
 
+    #region 技能数据与核心
     /// <summary>RO同名获取指定等级核心，未装配时先按当前角色职业装配再返回。</summary>
     /// <param name="skillId">需要装配的技能主表ID。</param>
     /// <param name="skillLv">调用方提供的当前正数学习等级。</param>
@@ -452,6 +531,33 @@ public sealed class MSkillComponent : MBasicActionComponent
         ClearGroupCd();
     }
 
+    /// <summary>按非零施法 UUID 查找当前段或已退出动作槽的旧段。</summary>
+    /// <param name="skillUuid">客户端请求与服务器通知共同携带的 UUID。</param>
+    /// <returns>匹配的独立表现实例，已回收或未知 UUID 返回空。</returns>
+    public MSkill GetSkill(ulong skillUuid)
+    {
+        if (skillUuid == 0)
+        {
+            return null;
+        }
+        if (_skill != null && _skill.IsActive &&
+            _skill.SkillUuid == skillUuid)
+        {
+            return _skill;
+        }
+        // 按索引查找 UUID 对应的独立旧施法实例。
+        for (int index = 0; index < _skills.Count; index++)
+        {
+            if (_skills[index].SkillUuid == skillUuid)
+            {
+                return _skills[index];
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region 冷却与施法判定
     /// <summary>RO 同名单技能剩余冷却查询，使用当前本机不缩放时钟。</summary>
     /// <param name="skill_id">技能主表正数 ID，不是效果 ID 或公共组 ID。</param>
     /// <returns>未登记或已到期时为零，否则为非负剩余秒数。</returns>
@@ -592,20 +698,6 @@ public sealed class MSkillComponent : MBasicActionComponent
         SkillCDDic.Clear();
     }
 
-    /// <summary>RO 技能结束通知，只解除原实例引用；具体技能在回调后自行清理并归还工厂。</summary>
-    /// <param name="skill">正在 Cease 的原实例，不能按技能 ID 猜测或解除其他 UUID。</param>
-    public void OnSkillEnd(MSkill skill)
-    {
-        if (skill == null) return;
-        _skills.Remove(skill);
-        if (!ReferenceEquals(_skill, skill)) return;
-        _skill = null;
-        if (Entity != null && Entity.Machine != null && Entity.Machine.CurrentState == this)
-        {
-            Entity.Machine.ForceToDefault();
-        }
-    }
-
     /// <summary>按 RO 规则先读单技能 CD，其结束后再读服务器同步的组 CD。</summary>
     /// <param name="skillId">旧技能主表 ID。</param>
     /// <param name="realtimeSeconds">本机不受时间缩放影响的秒数。</param>
@@ -679,7 +771,9 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
         return SkillCastingRulesCatalog.CanInterrupt(skillId, _skill.SkillId);
     }
+    #endregion
 
+    #region 事件回调
     /// <summary>技能事件转移使用同一 RO 互断规则，避免输入校验通过但状态矩阵拒绝自转移。</summary>
     /// <param name="eventArg">强类型技能开始载荷，非技能载荷不能切入。</param>
     /// <param name="last">之前的状态枚举，技能权限读取实体真实当前状态。</param>
@@ -705,6 +799,55 @@ public sealed class MSkillComponent : MBasicActionComponent
         return core != null && core.EffectId == skill_event.EffectId && CanSkill(core.SkillId);
     }
 
+    /// <summary>在状态转移前拦截重复施法，避免自转移时把当前新技能移入旧实例列表。</summary>
+    /// <param name="eventArg">本次技能开始事件的临时载荷，由事件分发器在回调结束后回收。</param>
+    private void OnSkillStartedEvent(IEventArg eventArg)
+    {
+        // 当前事件的强类型施法参数；其他载荷仍交由原动作入口处理。
+        SkillStartedEventArgs skillEvent = eventArg as SkillStartedEventArgs;
+        if (skillEvent != null && IsAlreadyCasting(skillEvent.SkillUuid))
+        {
+            return;
+        }
+        if (!OnAttack(skillEvent))
+        {
+            // 无效或不许可的新技能不能经过基类拒绝回默认路径，避免误停当前施法。
+            return;
+        }
+        _onActionEvent.Invoke(eventArg);
+    }
+
+    /// <summary>RO同名服务器开始入口，按真实职业和效果装配，再确认预表现或启动远端动作。</summary>
+    /// <param name="data">服务器开始广播，本项目协议提供技能、效果、UUID和段号。</param>
+    /// <returns>广播确认了已有实例或成功创建远端表现时为真。</returns>
+    public bool OnSkillStart(SkillCastStartNtf data)
+    {
+        // 施法者真实角色基础数据，职业决定表现表中的模型及默认武器动作。
+        RoleEntity role = Entity as RoleEntity;
+        if (role == null || role.BaseInfo == null)
+        {
+            return false;
+        }
+        // 按广播效果借出的核心，由ApplyServerStart消费初始持有权。
+        MSkillCore core = MSkillFactory.CreateCoreByEffect(data.SkillId, data.EffectId,
+            role.BaseInfo.JobId);
+        if (core != null)
+        {
+            core.SelectPresentation(data.UsingTimes, Time.realtimeSinceStartup);
+        }
+        return ApplyServerStart(core, data.SkillUuid);
+    }
+
+    /// <summary>RO同名服务器结束入口，按UUID结束原实例；自然结束保留时间轴事件和声音尾段。</summary>
+    /// <param name="data">服务器结束广播，Interrupted为真表示立即清理该次施法。</param>
+    /// <returns>匹配当前主技能或独立列表的原实例时为真。</returns>
+    public bool OnSkillEnd(SkillCastEndNtf data)
+    {
+        return ApplyServerEnd(data.SkillUuid, data.Interrupted);
+    }
+    #endregion
+
+    #region 预测与服务同步
     /// <summary>建立本地预测冷却；有真实动画配置时同步触发技能动作状态。</summary>
     /// <param name="skillId">要释放的已学技能 ID。</param>
     /// <param name="skillUuid">客户端生成并由服务器原样回传的非零施法 UUID。</param>
@@ -819,35 +962,6 @@ public sealed class MSkillComponent : MBasicActionComponent
             return 0f;
         }
         return (endUnixMs - serverUnixMs) * 0.001f;
-    }
-
-    /// <summary>RO同名服务器开始入口，按真实职业和效果装配，再确认预表现或启动远端动作。</summary>
-    /// <param name="data">服务器开始广播，本项目协议提供技能、效果、UUID和段号。</param>
-    /// <returns>广播确认了已有实例或成功创建远端表现时为真。</returns>
-    public bool OnSkillStart(SkillCastStartNtf data)
-    {
-        // 施法者真实角色基础数据，职业决定表现表中的模型及默认武器动作。
-        RoleEntity role = Entity as RoleEntity;
-        if (role == null || role.BaseInfo == null)
-        {
-            return false;
-        }
-        // 按广播效果借出的核心，由ApplyServerStart消费初始持有权。
-        MSkillCore core = MSkillFactory.CreateCoreByEffect(data.SkillId, data.EffectId,
-            role.BaseInfo.JobId);
-        if (core != null)
-        {
-            core.SelectPresentation(data.UsingTimes, Time.realtimeSinceStartup);
-        }
-        return ApplyServerStart(core, data.SkillUuid);
-    }
-
-    /// <summary>RO同名服务器结束入口，按UUID结束原实例；自然结束保留时间轴事件和声音尾段。</summary>
-    /// <param name="data">服务器结束广播，Interrupted为真表示立即清理该次施法。</param>
-    /// <returns>匹配当前主技能或独立列表的原实例时为真。</returns>
-    public bool OnSkillEnd(SkillCastEndNtf data)
-    {
-        return ApplyServerEnd(data.SkillUuid, data.Interrupted);
     }
 
     /// <summary>收到开始广播后按同一 UUID 确认本地预表现，远端才启动新表现。</summary>
@@ -979,73 +1093,9 @@ public sealed class MSkillComponent : MBasicActionComponent
         _skill.Cease(true);
         return true;
     }
+    #endregion
 
-    /// <summary>按非零施法 UUID 查找当前段或已退出动作槽的旧段。</summary>
-    /// <param name="skillUuid">客户端请求与服务器通知共同携带的 UUID。</param>
-    /// <returns>匹配的独立表现实例，已回收或未知 UUID 返回空。</returns>
-    public MSkill GetSkill(ulong skillUuid)
-    {
-        if (skillUuid == 0)
-        {
-            return null;
-        }
-        if (_skill != null && _skill.IsActive &&
-            _skill.SkillUuid == skillUuid)
-        {
-            return _skill;
-        }
-        // 按索引查找 UUID 对应的独立旧施法实例。
-        for (int index = 0; index < _skills.Count; index++)
-        {
-            if (_skills[index].SkillUuid == skillUuid)
-            {
-                return _skills[index];
-            }
-        }
-        return null;
-    }
-
-    /// <summary>注册技能开始和完成事件；开始事件先按 UUID 去重，再交给动作状态机。</summary>
-    protected override void RegisterActionEvents()
-    {
-        RegisterEvent(MEventType.SkillStarted, new MEventHandler(OnSkillStartedEvent));
-        RegisterFinishEvent(MEventType.SkillFinished);
-    }
-
-    /// <summary>在状态转移前拦截重复施法，避免自转移时把当前新技能移入旧实例列表。</summary>
-    /// <param name="eventArg">本次技能开始事件的临时载荷，由事件分发器在回调结束后回收。</param>
-    private void OnSkillStartedEvent(IEventArg eventArg)
-    {
-        // 当前事件的强类型施法参数；其他载荷仍交由原动作入口处理。
-        SkillStartedEventArgs skillEvent = eventArg as SkillStartedEventArgs;
-        if (skillEvent != null && IsAlreadyCasting(skillEvent.SkillUuid))
-        {
-            return;
-        }
-        if (!OnAttack(skillEvent))
-        {
-            // 无效或不许可的新技能不能经过基类拒绝回默认路径，避免误停当前施法。
-            return;
-        }
-        _onActionEvent.Invoke(eventArg);
-    }
-
-    /// <summary>同步事件切入技能状态后读取载荷并创建本次动画表现。</summary>
-    protected override void OnStart()
-    {
-        base.OnStart();
-        // 本次开始事件参数由分发器在当前调用栈结束后回收，不能保存其实例。
-        SkillStartedEventArgs eventArgs = _evt as SkillStartedEventArgs;
-        if (eventArgs == null)
-        {
-            Finish();
-            return;
-        }
-        // RO开始入口只解析当前等级核心，技能载体借出及Fire由FireSkill承担。
-        MSkillCore core = GetSkill(eventArgs.SkillId, eventArgs.Level);
-        FireSkill(core, eventArgs);
-    }
-
+    #region 技能表现与动作状态
     /// <summary>RO同名主技能启动入口，按UUID去重、移交旧实例，再借出并启动本次技能载体。</summary>
     /// <param name="newOne">开始事件对应的当前已装配等级核心。</param>
     /// <param name="args">同步事件中的施法UUID、释放点、目标与预测标志，禁止跨帧保存。</param>
@@ -1157,32 +1207,5 @@ public sealed class MSkillComponent : MBasicActionComponent
     {
         OnSkillAutoEnd();
     }
-
-    /// <summary>对象池回收时清空技能集合并调用基类清理。</summary>
-    public override void Shutdown()
-    {
-        ClearSkillCores();
-        stop = false;
-        base.Shutdown();
-    }
-
-    /// <summary>RO同名宿主摘除入口，立即结束仍存活技能并解除全部核心与冷却持有。</summary>
-    public override void OnDetachFromHost()
-    {
-        ClearSkillCores();
-        stop = false;
-        base.OnDetachFromHost();
-    }
-
-    /// <summary>本技能状态没有额外的实体事件订阅。</summary>
-    protected override void EventSubscribe()
-    {
-        
-    }
-
-    /// <summary>本技能状态没有额外的实体事件注销。</summary>
-    protected override void EventUnsubscribe()
-    {
-        
-    }
+    #endregion
 }

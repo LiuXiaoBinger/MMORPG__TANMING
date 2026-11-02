@@ -7,14 +7,26 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class RoleSkillComponent : ROSkillComponent
 {
-    /// <summary>中心服装载的稳定技能 ID 到学习等级；零级表示尚未学习。</summary>
-    private Dictionary<int, int> skill_map_ = new Dictionary<int, int>();
-    /// <summary>当前在线生命周期是否已成功接收完整中心服学习快照。</summary>
-    private bool skills_loaded_;
 
+    #region 构造与初始化
     /// <summary>为现有在线角色容器创建唯一技能释放组件，不另建场景宿主。</summary>
     /// <param name="owner">持有权威角色快照及网关会话的在线角色。</param>
     public RoleSkillComponent(OnlineRole owner) : base(owner) { }
+
+    /// <summary>由基类解除状态机驱动事件监听并结束活动技能，最后释放角色学习快照。</summary>
+    public override void Dispose()
+    {
+        base.Dispose();
+        skill_map_.Clear();
+        skills_loaded_ = false;
+    }
+    #endregion
+
+    /// <summary>中心服装载的稳定技能 ID 到学习等级；零级表示尚未学习。</summary>
+    private Dictionary<int, int> skill_map_ = new Dictionary<int, int>();
+
+    /// <summary>当前在线生命周期是否已成功接收完整中心服学习快照。</summary>
+    private bool skills_loaded_;
 
     /// <summary>完整中心服学习快照已装载后允许释放校验。</summary>
     public override bool SkillsLoaded { get { return skills_loaded_; } }
@@ -64,13 +76,5 @@ public sealed class RoleSkillComponent : ROSkillComponent
             return level;
         }
         return 0;
-    }
-
-    /// <summary>由基类解除状态机驱动事件监听并结束活动技能，最后释放角色学习快照。</summary>
-    public override void Dispose()
-    {
-        base.Dispose();
-        skill_map_.Clear();
-        skills_loaded_ = false;
     }
 }

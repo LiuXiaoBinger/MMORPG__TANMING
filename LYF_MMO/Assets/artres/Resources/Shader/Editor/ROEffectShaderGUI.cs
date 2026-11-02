@@ -57,217 +57,109 @@ public class ROEffectShaderGUI : ShaderGUI
         RT = 4
     }
 
+    #region 字段
     MaterialProperty worldUVToggle = null;
+
     MaterialProperty hdrToggle = null;
+
     MaterialProperty customDataToggle = null;
+
     MaterialProperty multiColorToggle = null;
+
     MaterialProperty blackLessToggle = null;
+
     MaterialProperty tintColor = null;
+
     MaterialProperty ColorA = null;
+
     MaterialProperty ColorB = null;
+
     MaterialProperty Multiple = null;
 
     MaterialProperty bumpStrength = null;
 
     MaterialProperty mainTex = null;
+
     MaterialProperty mainColor = null;
 
     MaterialProperty maskType = null;
+
     MaterialProperty maskColor = null;
+
     MaterialProperty maskTex = null;
+
     MaterialProperty maskChannel = null;
 
     MaterialProperty strength = null;
+
     MaterialProperty cutoff = null;
+
     MaterialProperty hardFade = null;
+
     MaterialProperty edgeColor = null;
+
     MaterialProperty edgeWidth = null;
 
     MaterialProperty hue = null;
+
     MaterialProperty saturate = null;
+
     MaterialProperty luminance = null;
+
     MaterialProperty contrast = null;
 
     MaterialProperty scrollType = null;
+
     MaterialProperty scrollMain = null;
+
     MaterialProperty scrollMask = null;
+
     MaterialProperty scrollMain2 = null;
+
     MaterialProperty scrollMask2 = null;
 
     MaterialProperty msk2Toggle = null;
+
     MaterialProperty msk2Tex = null;
+
     MaterialProperty msk2Channel = null;
+
     MaterialProperty msk2Strength = null;
 
     MaterialProperty lifeCtrlByAlpha = null;
+
     MaterialProperty preserveVertAlpha = null;
 
     MaterialProperty rimToggle = null;
+
     MaterialProperty rimColor = null;
+
     MaterialProperty rimPower = null;
+
     MaterialProperty rimScatter = null;
 
     MaterialProperty fog = null;
+
     MaterialProperty cull = null;
+
     MaterialProperty blendMode = null;
+
     MaterialProperty srcBlend = null;
+
     MaterialProperty dstBlend = null;
+
     MaterialProperty zwrite = null;
+
     MaterialProperty ztest = null;
 
     MaterialEditor m_MaterialEditor;
+
     Material m_Material;
 
     ShaderMode shaderMode;
+    #endregion
 
-    public void FindProperties(Material material, MaterialProperty[] props)
-    {
-        if(material.HasProperty("_WorldUV"))
-            worldUVToggle = FindProperty("_WorldUV", props);
-
-        if(material.HasProperty("_HDR"))
-            hdrToggle = FindProperty("_HDR", props);
-
-        if(material.HasProperty("_CustomData"))
-            customDataToggle = FindProperty("_CustomData",props);
-
-        if(material.HasProperty("_SecondColor"))
-            multiColorToggle = FindProperty("_SecondColor", props);
-
-        if(material.HasProperty("_BlackLess"))
-            blackLessToggle = FindProperty("_BlackLess",props);
-
-        if (material.HasProperty("_TintColor"))
-            tintColor = FindProperty("_TintColor", props);
-
-        if (material.HasProperty("_ColorA"))
-            ColorA = FindProperty("_ColorA", props);
-
-        if (material.HasProperty("_ColorB"))
-            ColorB = FindProperty("_ColorB", props);
-
-        if(material.HasProperty("_Multiple"))
-            Multiple = FindProperty("_Multiple",props);
-
-        if (material.HasProperty("_MainTex"))
-            mainTex = FindProperty("_MainTex", props);
-
-        if (material.HasProperty("_MainColor"))
-            mainColor = FindProperty("_MainColor", props);
-
-        if (material.HasProperty("_BumpStrength"))
-            bumpStrength = FindProperty("_BumpStrength", props);
-
-
-        if (material.HasProperty("_SecondType"))
-            maskType = FindProperty("_SecondType", props);
-
-        if (material.HasProperty("_MaskChannel"))
-            maskChannel = FindProperty("_MaskChannel", props);
-
-        if (material.HasProperty("_MaskTex"))
-            maskTex = FindProperty("_MaskTex", props);
-
-        if (material.HasProperty("_MaskColor"))
-            maskColor = FindProperty("_MaskColor", props);
-
-        if (material.HasProperty("_Strength"))
-            strength = FindProperty("_Strength", props);
-
-
-        if (material.HasProperty("_ThirdMap"))
-            msk2Toggle = FindProperty("_ThirdMap", props);
-
-        if (material.HasProperty("_Msk2Tex"))
-            msk2Tex = FindProperty("_Msk2Tex", props);
-
-        if (material.HasProperty("_Msk2Channel"))
-            msk2Channel = FindProperty("_Msk2Channel", props);
-
-        if (material.HasProperty("_Msk2Strength"))
-            msk2Strength = FindProperty("_Msk2Strength", props);
-
-        if (material.HasProperty("_Cutoff"))
-            cutoff = FindProperty("_Cutoff", props);
-
-        if (material.HasProperty("_HardFade"))
-            hardFade = FindProperty("_HardFade", props);
-
-        if (material.HasProperty("_EdgeColor"))
-            edgeColor = FindProperty("_EdgeColor", props);
-
-        if (material.HasProperty("_EdgeWidth"))
-            edgeWidth = FindProperty("_EdgeWidth", props);
-
-
-        if (material.HasProperty("_Hue"))
-            hue = FindProperty("_Hue", props);
-
-        if (material.HasProperty("_Saturate"))
-            saturate = FindProperty("_Saturate", props);
-
-        if (material.HasProperty("_Luminance"))
-            luminance = FindProperty("_Luminance", props);
-
-        if (material.HasProperty("_Contrast"))
-            contrast = FindProperty("_Contrast", props);
-
-
-        if (material.HasProperty("_ScrollType"))
-            scrollType = FindProperty("_ScrollType", props);
-
-        if (material.HasProperty("_ScrollMain"))
-            scrollMain = FindProperty("_ScrollMain", props);
-
-        if (material.HasProperty("_ScrollMask"))
-            scrollMask = FindProperty("_ScrollMask", props);
-
-        if (material.HasProperty("_ScrollMain2"))
-            scrollMain2 = FindProperty("_ScrollMain2", props);
-
-        if (material.HasProperty("_ScrollMask2"))
-            scrollMask2 = FindProperty("_ScrollMask2", props);
-
-        if (material.HasProperty("_VertColorAlphaIsLifeTime"))
-            lifeCtrlByAlpha = FindProperty("_VertColorAlphaIsLifeTime", props);
-
-        if (material.HasProperty("_PreserveVertAlpha"))
-            preserveVertAlpha = FindProperty("_PreserveVertAlpha", props);
-
-        if (material.HasProperty("_Rim"))
-            rimToggle = FindProperty("_Rim", props);
-
-        if (material.HasProperty("_RimColor"))
-            rimColor = FindProperty("_RimColor", props);
-
-        if (material.HasProperty("_RimPower"))
-            rimPower = FindProperty("_RimPower", props);
-
-        if (material.HasProperty("_RimScatter"))
-            rimScatter = FindProperty("_RimScatter", props);
-
-        if (material.HasProperty("_Fog"))
-            fog = FindProperty("_Fog", props);
-
-        if (material.HasProperty("_Cull"))
-            cull = FindProperty("_Cull", props);
-
-        if (material.HasProperty("_Mode"))
-            blendMode = FindProperty("_Mode", props);
-
-        if (material.HasProperty("_SrcBlend"))
-            srcBlend = FindProperty("_SrcBlend", props);
-
-        if (material.HasProperty("_DstBlend"))
-            dstBlend = FindProperty("_DstBlend", props);
-
-        if (material.HasProperty("_ZWrite"))
-            zwrite = FindProperty("_ZWrite", props);
-
-        if (material.HasProperty("_ZTest"))
-            ztest = FindProperty("_ZTest", props);
-    }
-
+    #region 属性面板绘制
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
     {
         m_MaterialEditor = materialEditor;
@@ -354,6 +246,152 @@ public class ROEffectShaderGUI : ShaderGUI
         QueneField();
     }
 
+    public void FindProperties(Material material, MaterialProperty[] props)
+    {
+        if(material.HasProperty("_WorldUV"))
+            worldUVToggle = FindProperty("_WorldUV", props);
+
+        if(material.HasProperty("_HDR"))
+            hdrToggle = FindProperty("_HDR", props);
+
+        if(material.HasProperty("_CustomData"))
+            customDataToggle = FindProperty("_CustomData",props);
+
+        if(material.HasProperty("_SecondColor"))
+            multiColorToggle = FindProperty("_SecondColor", props);
+
+        if(material.HasProperty("_BlackLess"))
+            blackLessToggle = FindProperty("_BlackLess",props);
+
+        if (material.HasProperty("_TintColor"))
+            tintColor = FindProperty("_TintColor", props);
+
+        if (material.HasProperty("_ColorA"))
+            ColorA = FindProperty("_ColorA", props);
+
+        if (material.HasProperty("_ColorB"))
+            ColorB = FindProperty("_ColorB", props);
+
+        if(material.HasProperty("_Multiple"))
+            Multiple = FindProperty("_Multiple",props);
+
+        if (material.HasProperty("_MainTex"))
+            mainTex = FindProperty("_MainTex", props);
+
+        if (material.HasProperty("_MainColor"))
+            mainColor = FindProperty("_MainColor", props);
+
+        if (material.HasProperty("_BumpStrength"))
+            bumpStrength = FindProperty("_BumpStrength", props);
+
+        if (material.HasProperty("_SecondType"))
+            maskType = FindProperty("_SecondType", props);
+
+        if (material.HasProperty("_MaskChannel"))
+            maskChannel = FindProperty("_MaskChannel", props);
+
+        if (material.HasProperty("_MaskTex"))
+            maskTex = FindProperty("_MaskTex", props);
+
+        if (material.HasProperty("_MaskColor"))
+            maskColor = FindProperty("_MaskColor", props);
+
+        if (material.HasProperty("_Strength"))
+            strength = FindProperty("_Strength", props);
+
+        if (material.HasProperty("_ThirdMap"))
+            msk2Toggle = FindProperty("_ThirdMap", props);
+
+        if (material.HasProperty("_Msk2Tex"))
+            msk2Tex = FindProperty("_Msk2Tex", props);
+
+        if (material.HasProperty("_Msk2Channel"))
+            msk2Channel = FindProperty("_Msk2Channel", props);
+
+        if (material.HasProperty("_Msk2Strength"))
+            msk2Strength = FindProperty("_Msk2Strength", props);
+
+        if (material.HasProperty("_Cutoff"))
+            cutoff = FindProperty("_Cutoff", props);
+
+        if (material.HasProperty("_HardFade"))
+            hardFade = FindProperty("_HardFade", props);
+
+        if (material.HasProperty("_EdgeColor"))
+            edgeColor = FindProperty("_EdgeColor", props);
+
+        if (material.HasProperty("_EdgeWidth"))
+            edgeWidth = FindProperty("_EdgeWidth", props);
+
+        if (material.HasProperty("_Hue"))
+            hue = FindProperty("_Hue", props);
+
+        if (material.HasProperty("_Saturate"))
+            saturate = FindProperty("_Saturate", props);
+
+        if (material.HasProperty("_Luminance"))
+            luminance = FindProperty("_Luminance", props);
+
+        if (material.HasProperty("_Contrast"))
+            contrast = FindProperty("_Contrast", props);
+
+        if (material.HasProperty("_ScrollType"))
+            scrollType = FindProperty("_ScrollType", props);
+
+        if (material.HasProperty("_ScrollMain"))
+            scrollMain = FindProperty("_ScrollMain", props);
+
+        if (material.HasProperty("_ScrollMask"))
+            scrollMask = FindProperty("_ScrollMask", props);
+
+        if (material.HasProperty("_ScrollMain2"))
+            scrollMain2 = FindProperty("_ScrollMain2", props);
+
+        if (material.HasProperty("_ScrollMask2"))
+            scrollMask2 = FindProperty("_ScrollMask2", props);
+
+        if (material.HasProperty("_VertColorAlphaIsLifeTime"))
+            lifeCtrlByAlpha = FindProperty("_VertColorAlphaIsLifeTime", props);
+
+        if (material.HasProperty("_PreserveVertAlpha"))
+            preserveVertAlpha = FindProperty("_PreserveVertAlpha", props);
+
+        if (material.HasProperty("_Rim"))
+            rimToggle = FindProperty("_Rim", props);
+
+        if (material.HasProperty("_RimColor"))
+            rimColor = FindProperty("_RimColor", props);
+
+        if (material.HasProperty("_RimPower"))
+            rimPower = FindProperty("_RimPower", props);
+
+        if (material.HasProperty("_RimScatter"))
+            rimScatter = FindProperty("_RimScatter", props);
+
+        if (material.HasProperty("_Fog"))
+            fog = FindProperty("_Fog", props);
+
+        if (material.HasProperty("_Cull"))
+            cull = FindProperty("_Cull", props);
+
+        if (material.HasProperty("_Mode"))
+            blendMode = FindProperty("_Mode", props);
+
+        if (material.HasProperty("_SrcBlend"))
+            srcBlend = FindProperty("_SrcBlend", props);
+
+        if (material.HasProperty("_DstBlend"))
+            dstBlend = FindProperty("_DstBlend", props);
+
+        if (material.HasProperty("_ZWrite"))
+            zwrite = FindProperty("_ZWrite", props);
+
+        if (material.HasProperty("_ZTest"))
+            ztest = FindProperty("_ZTest", props);
+    }
+    #endregion
+
+    #region 材质属性字段绘制
     void MaskField()
     {
         if (maskType == null) return;
@@ -531,7 +569,6 @@ public class ROEffectShaderGUI : ShaderGUI
             }
         }
     }
-
 
     void RimField()
     {
@@ -722,4 +759,5 @@ public class ROEffectShaderGUI : ShaderGUI
     {
         m_MaterialEditor.RenderQueueField();
     }
+    #endregion
 }

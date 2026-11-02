@@ -10,20 +10,29 @@ using UnityEngine.UI;
 /// </summary>
 public class TaskParentItemWidget : MonoBehaviour
 {
+
+    #region 字段、事件与属性
     /// <summary>选中态标题文本，绑定 TogL/ON/Text。</summary>
     [SerializeField] private Text _titleOnText;
+
     /// <summary>未选中态标题文本，绑定 TogL/Off/Text。</summary>
     [SerializeField] private Text _titleOffText;
+
     /// <summary>选中态整节点，绑定 TogL/ON，选中时显示、未选中时隐藏。</summary>
     [SerializeField] private GameObject _onNode;
+
     /// <summary>未选中态整节点，绑定 TogL/Off，未选中时显示、选中时隐藏。</summary>
     [SerializeField] private GameObject _offNode;
+
     /// <summary>选中态箭头节点，绑定 TogL/ON/Arror，折叠时绕 Z 轴旋转 180 度。</summary>
     [SerializeField] private RectTransform _arrowOn;
+
     /// <summary>未选中态箭头节点，绑定 TogL/Off/Arror，折叠时绕 Z 轴旋转 180 度。</summary>
     [SerializeField] private RectTransform _arrowOff;
+
     /// <summary>选中态按钮，绑定 TogL/ON，点击切换展开折叠。</summary>
     [SerializeField] private Button _onButton;
+
     /// <summary>未选中态按钮，绑定 TogL/Off，点击切换展开折叠。</summary>
     [SerializeField] private Button _offButton;
 
@@ -32,10 +41,15 @@ public class TaskParentItemWidget : MonoBehaviour
 
     /// <summary>挂接在本分组下的子条目控件列表，折叠时统一隐藏。</summary>
     private readonly List<TaskChildItemWidget> _children = new List<TaskChildItemWidget>();
+
     /// <summary>当前是否展开，初始为展开，保证列表生成后条目默认可见。</summary>
     private bool _expanded = true;
+
     /// <summary>按钮事件是否已注册，避免重复订阅。</summary>
     private bool _registered;
+
+    #region 核心逻辑
+    #endregion
 
     /// <summary>注册选中态与未选中态按钮的点击事件，只注册一次。</summary>
     public void InitWidget()
@@ -112,12 +126,6 @@ public class TaskParentItemWidget : MonoBehaviour
         }
     }
 
-    /// <summary>点击任意态按钮都在展开与折叠之间切换。</summary>
-    private void OnButtonClick()
-    {
-        SetExpanded(_expanded == false);
-    }
-
     /// <summary>按展开状态刷新全部子条目显隐，已销毁的条目跳过。</summary>
     private void ApplyChildrenVisible()
     {
@@ -154,6 +162,13 @@ public class TaskParentItemWidget : MonoBehaviour
         if (_arrowOff != null)
         {
             _arrowOff.localEulerAngles = targetAngle;
+    #endregion
         }
+    }
+
+    /// <summary>点击任意态按钮都在展开与折叠之间切换。</summary>
+    private void OnButtonClick()
+    {
+        SetExpanded(_expanded == false);
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 /// <summary>RO 风格 Animator 封装，统一承担播放、参数缓存和对象池重置。</summary>
 public class MAnimator
 {
+
+    #region 字段与属性
     // 普通待机
     /// <summary>待机动画状态名。</summary>
     public const string STATE_IDLE = "Idle";
@@ -179,7 +181,9 @@ public class MAnimator
         get { if (_animator != null) return _animator.cullingMode; return AnimatorCullingMode.CullUpdateTransforms; }
         set { if (_animator != null) _animator.cullingMode = value; }
     }
+    #endregion
 
+    #region 初始化与事件注册
     /// <summary>
     /// 逐帧更新，同步播放速度到 Animator。
     /// </summary>
@@ -223,6 +227,36 @@ public class MAnimator
         }
     }
 
+    /// <summary>将覆盖键登记到指定混合树，列表内已存在时不重复添加。</summary>
+    /// <param name="blendTreeKey">Animator 中的混合树逻辑状态名。</param>
+    /// <param name="animKey">参与混合树的 AnimatorOverrideController 覆盖键。</param>
+    private void RegisterBlendTreeKey(string blendTreeKey, string animKey)
+    {
+        // 目标混合树当前登记的覆盖键列表。
+        List<string> blendAnimKeys;
+        if (!_blendTreeDict.TryGetValue(blendTreeKey, out blendAnimKeys))
+        {
+            blendAnimKeys = new List<string>();
+            _blendTreeDict.Add(blendTreeKey, blendAnimKeys);
+        }
+
+        if (blendAnimKeys.IndexOf(animKey) < 0)
+        {
+            blendAnimKeys.Add(animKey);
+        }
+    }
+
+    /// <summary>
+    /// 完全重置，释放所有资源并清空参数缓存。
+    /// 由对象池调用，确保下一次复用时是干净状态。
+    /// </summary>
+    public virtual void Reset()
+    {
+        ResetInternal(true);
+    }
+    #endregion
+
+    #region 事件回调
     /// <summary>只接受当前初始化会话的异步结果，旧实体回调统一释放租约。</summary>
     private void OnControllerLoaded(int loadSession, MAnimatorControllerAssetLease lease)
     {
@@ -257,6 +291,544 @@ public class MAnimator
         BindController(lease.Controller);
     }
 
+    /// <summary>准备中剪辑成功提升为 ready 后，当前状态按保存的归一化进度续播。</summary>
+    /// <param name="animInfo">已经完成 Controller 应用和两阶段提升的动画绑定信息。</param>
+    private void OnPreparedClipPromoted(MAnimInfo animInfo)
+    {
+        if (_currentState == animInfo.StateKey)
+        {
+            PlayCurrent();
+        }
+    }
+
+    /// <summary>关键动画加载成功或失败后移除其准备标记。</summary>
+    /// <param name="animKey">已经结束本轮准备的 AnimatorOverrideController 覆盖键。</param>
+    private void OnClipPreparationFinished(string animKey)
+    {
+        _preLoadAnimInfos.Remove(animKey);
+        if (animKey != STATE_SKILL ||
+            string.IsNullOrEmpty(_supersededSkillReleaseLocation))
+        {
+            return;
+        }
+        // 加载或安装失败会留下旧 ready；成功时新剪辑已接管槽位，旧请求直接失效。
+        MAnimInfo skillInfo;
+        if (_animInfos.TryGetValue(STATE_SKILL, out skillInfo) &&
+            skillInfo != null &&
+            skillInfo.ClipPath == _supersededSkillReleaseLocation)
+        {
+            _pendingSkillReleaseLocation = _supersededSkillReleaseLocation;
+        }
+        _supersededSkillReleaseLocation = string.Empty;
+        TryReleasePendingSkillAnim();
+    }
+    #endregion
+
+    #region 移除与回收
+    /// <summary>
+    /// 释放指定状态的真实剪辑覆盖及其异步等待者，恢复 Controller 原始占位剪辑。
+    /// 只接受仍绑定预期 Location 的状态，避免旧技能结束回调清除新技能动画。
+    /// </summary>
+    /// <param name="key">需要释放的 Animator 覆盖槽位名。</param>
+    /// <param name="expectedClipLocation">本次施法安装的完整剪辑 Location。</param>
+    /// <returns>找到并释放对应剪辑绑定时返回 true。</returns>
+    public bool ReleaseAnim(string key, string expectedClipLocation)
+    {
+        // 当前槽位的动画绑定，可能已经被下一次施法替换。
+        MAnimInfo info;
+        // 释放键或预期剪辑位置为空时不执行释放。
+        if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(expectedClipLocation))
+        {
+            return false;
+        }
+        // 当前槽位没有登记动画绑定，或绑定对象为空时不执行释放。
+        if (!_animInfos.TryGetValue(key, out info) || info == null)
+        {
+            return false;
+        }
+        // 现有绑定仍指向其他剪辑位置时不执行释放。
+        if (info.ClipPath != expectedClipLocation)
+        {
+            return false;
+        }
+
+        // 原始占位剪辑在释放后重新交给 Controller，避免其仍引用已释放的资源。
+        AnimationClip originalClip = FindOriginalClip(info.OverrideKey);
+        if (_overrideController != null && originalClip != null)
+        {
+            _overrideController[originalClip] = originalClip;
+        }
+        // 释放前保存逻辑状态名，Reset 会清空动画信息的键。
+        string stateKey = info.StateKey;
+        RemoveBlendTreeKey(stateKey, key);
+        info.Reset();
+        _animInfos.Remove(key);
+        _preLoadAnimInfos.Remove(key);
+        if (_currentState == stateKey)
+        {
+            _currentState = string.Empty;
+        }
+        return true;
+    }
+
+    /// <summary>在 Skill 动画完全退出后归还真实剪辑，避免过渡期间切回占位动作。</summary>
+    /// <param name="expectedClipLocation">本次施法占用的真实剪辑 Location，后续技能不会被旧请求释放。</param>
+    public void ReleaseSkillAnimAfterExit(string expectedClipLocation)
+    {
+        if (string.IsNullOrEmpty(expectedClipLocation))
+        {
+            return;
+        }
+        // 只接受仍占用 Skill 槽位的施法，忽略上一轮动画晚到的结束请求。
+        MAnimInfo skillInfo;
+        if (!_animInfos.TryGetValue(STATE_SKILL, out skillInfo) ||
+            skillInfo == null || skillInfo.ClipPath != expectedClipLocation)
+        {
+            return;
+        }
+        _pendingSkillReleaseLocation = expectedClipLocation;
+        TryReleasePendingSkillAnim();
+    }
+
+    /// <summary>从旧混合树移除覆盖键；列表清空后同时删除无效的树映射。</summary>
+    /// <param name="blendTreeKey">覆盖键此前所属的逻辑状态名；普通状态不会存在对应列表。</param>
+    /// <param name="animKey">需要迁移或移除的覆盖键。</param>
+    private void RemoveBlendTreeKey(string blendTreeKey, string animKey)
+    {
+        // 旧混合树登记的覆盖键列表，不存在表示该键此前属于普通状态。
+        List<string> blendAnimKeys;
+        if (!_blendTreeDict.TryGetValue(blendTreeKey, out blendAnimKeys))
+        {
+            return;
+        }
+
+        blendAnimKeys.Remove(animKey);
+        if (blendAnimKeys.Count == 0)
+        {
+            _blendTreeDict.Remove(blendTreeKey);
+        }
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>
+    /// 尝试播放原生 Animator 状态，状态不存在时返回 false。
+    /// </summary>
+    /// <param name="stateName">目标动画状态名。</param>
+    /// <param name="layer">动画层索引。</param>
+    /// <param name="normalizedTime">归一化播放时间。</param>
+    /// <returns>true 表示原生状态存在并已播放。</returns>
+    private bool TryPlayNativeState(string stateName, int layer, float normalizedTime)
+    {
+        if (!HasNativeState(stateName, layer))
+        {
+            return false;
+        }
+        // 嵌套 Jump 状态机需要使用完整路径，避免短名称无法解析到子状态机。
+        string nativeStatePath = GetNativeStatePath(stateName, layer);
+        if (string.IsNullOrEmpty(nativeStatePath))
+        {
+            return false;
+        }
+        _animator.Play(nativeStatePath, layer, normalizedTime);
+        return true;
+    }
+
+    /// <summary>尝试把已加载剪辑写入当前 Controller 的同名覆盖槽位。</summary>
+    /// <param name="animInfo">仍处于 preparing 阶段的动画绑定信息。</param>
+    /// <param name="preparedClip">已经由共享 ClipInfo 完成加载的候选剪辑。</param>
+    /// <returns>Controller 未绑定时返回 Pending，写入成功返回 Applied，确定性失败返回 Failed。</returns>
+    private PreparedClipApplyResult TryApplyPreparedClip(MAnimInfo animInfo,
+        AnimationClip preparedClip)
+    {
+        if (animInfo == null || preparedClip == null)
+        {
+            return PreparedClipApplyResult.Failed;
+        }
+        if (_animator == null || _controller == null)
+        {
+            return PreparedClipApplyResult.Pending;
+        }
+
+        // 已完成加载的目标剪辑在基础控制器中对应的原始剪辑。
+        AnimationClip originalClip = FindOriginalClip(animInfo.OverrideKey);
+        if (originalClip == null)
+        {
+            string warningKey = _controller.name + "|" + animInfo.OverrideKey;
+            if (!_missingOverrideSlotWarnings.Contains(warningKey))
+            {
+                _missingOverrideSlotWarnings.Add(warningKey);
+                Debug.LogWarning("Animator Controller 缺少动画覆盖槽位，剪辑保持旧版本。" +
+                    "Controller=" + _controller.name + "，槽位=" + animInfo.OverrideKey);
+            }
+            return PreparedClipApplyResult.Failed;
+        }
+
+        if (_overrideController == null)
+        {
+            _overrideController = new AnimatorOverrideController(_controller);
+            _animator.runtimeAnimatorController = _overrideController;
+        }
+
+        try
+        {
+            _overrideController[originalClip] = preparedClip;
+        }
+        // 当前异常只表示候选剪辑应用失败，旧 ready 剪辑及其共享引用必须继续保留。
+        catch (System.Exception exception)
+        {
+            Debug.LogError("动画剪辑写入覆盖槽位失败，剪辑保持旧版本。槽位=" +
+                animInfo.OverrideKey + "，" + exception);
+            return PreparedClipApplyResult.Failed;
+        }
+        return PreparedClipApplyResult.Applied;
+    }
+
+    /// <summary>Controller 确定加载失败时释放全部 preparing 引用并完成关键预加载标记收尾。</summary>
+    private void CancelPreparingClips()
+    {
+        // 动画信息快照保证释放回调期间原字典保持可遍历。
+        List<MAnimInfo> infos = new List<MAnimInfo>(_animInfos.Values);
+        for (int index = 0; index < infos.Count; index++)
+        {
+            // 当前需要取消 preparing 阶段的动画绑定信息。
+            MAnimInfo info = infos[index];
+            if (info != null)
+            {
+                info.CancelPreparingClip();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 检查 Animator 中是否存在指定名称的状态节点。
+    /// 同时尝试短名、Base Layer 全路径和 Jump 子状态机全路径。
+    /// </summary>
+    /// <param name="stateName">动画状态名。</param>
+    /// <param name="layer">动画层索引。</param>
+    /// <returns>true 表示状态节点存在。</returns>
+    private bool HasNativeState(string stateName, int layer)
+    {
+        string nativeStatePath = GetNativeStatePath(stateName, layer);
+        return !string.IsNullOrEmpty(nativeStatePath);
+    }
+
+    /// <summary>
+    /// 按当前 Controller 解析可播放的状态路径。
+    /// MAnimator.controller 的待机、移动、跳跃状态均位于对应的嵌套子状态机，
+    /// 必须使用完整路径，不能把子状态机名称误当成状态路径。
+    /// </summary>
+    /// <param name="stateName">逻辑状态名，例如 Jump_Start。</param>
+    /// <param name="layer">Animator 层索引，通常为 0。</param>
+    /// <returns>Unity 可识别的状态路径；不存在时返回空字符串。</returns>
+    private string GetNativeStatePath(string stateName, int layer)
+    {
+        if (_animator == null || string.IsNullOrEmpty(stateName))
+        {
+            return string.Empty;
+        }
+
+        // 当前项目的正式 MAnimator Controller 使用 Idle 子状态机。
+        string nestedStatePath = GetFormalNestedStatePath(stateName);
+        if (!string.IsNullOrEmpty(nestedStatePath) &&
+            _animator.HasState(layer, Animator.StringToHash(nestedStatePath)))
+        {
+            return nestedStatePath;
+        }
+
+        // 直接状态短名称兼容其他正式 Controller 中的普通状态。
+        int shortHash = Animator.StringToHash(stateName);
+        if (_animator.HasState(layer, shortHash))
+        {
+            return stateName;
+        }
+
+        // Base Layer 全路径兼容 Unity 对状态哈希的完整路径要求。
+        string baseLayerPath = "Base Layer." + stateName;
+        int fullHash = Animator.StringToHash(baseLayerPath);
+        if (_animator.HasState(layer, fullHash))
+        {
+            return baseLayerPath;
+        }
+
+        // 跳跃状态位于独立 Jump 子状态机，使用三级全路径定位。
+        string jumpStatePath = "Base Layer.Jump." + stateName;
+        int jumpHash = Animator.StringToHash(jumpStatePath);
+        if (_animator.HasState(layer, jumpHash))
+        {
+            return jumpStatePath;
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// 将逻辑状态映射到正式 MAnimator Controller 的嵌套状态路径。
+    /// 当前控制器把 Idle、Move 和 Jump 分别作为子状态机，路径必须与资源层级一致。
+    /// </summary>
+    /// <param name="stateName">逻辑动画状态名。</param>
+    /// <returns>正式控制器中的完整状态路径；未映射状态返回空字符串。</returns>
+    private string GetFormalNestedStatePath(string stateName)
+    {
+        if (stateName == STATE_IDLE)
+        {
+            return "Base Layer.Idle.Idle";
+        }
+        if (stateName == STATE_FIDLE)
+        {
+            return "Base Layer.Idle.FIdle";
+        }
+        if (stateName == STATE_CARRY_IDLE)
+        {
+            return "Base Layer.Idle.CarryIdle";
+        }
+        if (stateName == STATE_SELFY_IDLE)
+        {
+            return "Base Layer.Idle.SelfyIdle";
+        }
+        if (stateName == STATE_SHOOT_IDLE)
+        {
+            return "Base Layer.Idle.ShootIdle";
+        }
+        if (stateName == STATE_ZD_MOVE_WALK)
+        {
+            return "Base Layer.Move.ZdMoveWalk";
+        }
+        if (stateName == STATE_ZD_MOVE_RUN)
+        {
+            return "Base Layer.Move.ZdMoveRun";
+        }
+        if (stateName == STATE_NONZD_MOVE_WALK)
+        {
+            return "Base Layer.Move.NonZdMoveWalk";
+        }
+        if (stateName == STATE_NONZD_MOVE_RUN)
+        {
+            return "Base Layer.Move.NonZdMoveRun";
+        }
+        if (stateName == STATE_JUMP_START)
+        {
+            return "Base Layer.Jump.Jump_Start";
+        }
+        if (stateName == STATE_JUMP_LOOP)
+        {
+            return "Base Layer.Jump.Jump_Loop";
+        }
+        if (stateName == STATE_JUMP_END)
+        {
+            return "Base Layer.Jump.Jump_End";
+        }
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// 写入目标状态的归一化时间并检查全部剪辑是否就绪。
+    /// 普通状态只检查自身；混合树状态要求登记的所有覆盖键都存在且完成准备。
+    /// </summary>
+    /// <param name="stateName">准备播放的普通状态名或混合树状态名。</param>
+    /// <param name="normalizedTime">本次播放使用的归一化起点，通常位于 0 到 1。</param>
+    /// <returns>目标状态全部剪辑均可播放时返回 true。</returns>
+    private bool IsClipReady(string stateName, float normalizedTime)
+    {
+        // 混合树状态下参与门控的全部覆盖键，列表已在 OverrideAnim 中保持去重。
+        List<string> blendAnimKeys;
+        if (_blendTreeDict.TryGetValue(stateName, out blendAnimKeys))
+        {
+            if (blendAnimKeys.Count == 0)
+            {
+                return false;
+            }
+
+            // 全部混合树子剪辑的聚合就绪结果；即使某项未就绪也继续写入其他项的播放起点。
+            bool areAllClipsReady = true;
+            for (int index = 0; index < blendAnimKeys.Count; index++)
+            {
+                // 当前混合树子剪辑对应的覆盖键。
+                string animKey = blendAnimKeys[index];
+                // 当前混合树子剪辑的异步绑定信息。
+                MAnimInfo blendAnimInfo;
+                if (!_animInfos.TryGetValue(animKey, out blendAnimInfo) ||
+                    blendAnimInfo == null)
+                {
+                    return false;
+                }
+
+                blendAnimInfo.NormalizedTime = normalizedTime;
+                if (!blendAnimInfo.IsClipReady)
+                {
+                    areAllClipsReady = false;
+                }
+            }
+            return areAllClipsReady;
+        }
+
+        // 普通状态对应的单条动画绑定信息。
+        MAnimInfo animInfo;
+        if (!_animInfos.TryGetValue(stateName, out animInfo) || animInfo == null)
+        {
+            return false;
+        }
+
+        animInfo.NormalizedTime = normalizedTime;
+        return animInfo.IsClipReady;
+    }
+
+    /// <summary>
+    /// 获取当前动画状态的信息，包括归一化时间。
+    /// 如果该状态尚未登记，自动创建并加入映射表。
+    /// </summary>
+    /// <returns>当前动画状态的嵌套动画信息对象。</returns>
+    public virtual MAnimInfo GetCurrentAnimInfo()
+    {
+        if (string.IsNullOrEmpty(_currentState)) return null;
+        // 当前逻辑状态对应的动画绑定信息。
+        MAnimInfo info = GetAnimInfo(_currentState);
+        if (info == null)
+        {
+            info = new MAnimInfo();
+            info.Init(this, _currentState, _currentState);
+            _animInfos.Add(_currentState, info);
+        }
+        if (_animator != null)
+        {
+            // Unity Animator 当前状态快照，用于续播时恢复归一化进度。
+            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName(_currentState))
+            {
+                info.NormalizedTime = stateInfo.normalizedTime;
+            }
+        }
+        return info;
+    }
+
+    /// <summary>
+    /// 根据 key 获取已登记的动画信息。
+    /// </summary>
+    /// <param name="key">逻辑动画 key。</param>
+    /// <returns>对应的嵌套动画信息，不存在返回 null。</returns>
+    public virtual MAnimInfo GetAnimInfo(string key)
+    {
+        // 普通状态或直接覆盖键对应的动画绑定信息。
+        MAnimInfo info;
+        if (_animInfos.TryGetValue(key, out info))
+        {
+            return info;
+        }
+
+        // 混合树状态对应的去重覆盖键列表，查询语义与 RO 一致，返回首条子动画信息。
+        List<string> blendAnimKeys;
+        if (_blendTreeDict.TryGetValue(key, out blendAnimKeys) &&
+            blendAnimKeys.Count > 0)
+        {
+            // 混合树第一条覆盖键，用于时长、循环和当前播放进度等代表性查询。
+            string firstAnimKey = blendAnimKeys[0];
+            if (_animInfos.TryGetValue(firstAnimKey, out info))
+            {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>当前动画不再使用 Skill 槽位时，归还待释放剪辑及其资源租约。</summary>
+    private void TryReleasePendingSkillAnim()
+    {
+        if (string.IsNullOrEmpty(_pendingSkillReleaseLocation))
+        {
+            return;
+        }
+        if (!string.IsNullOrEmpty(_supersededSkillReleaseLocation))
+        {
+            // 新剪辑仍在准备时不可清理同槽旧 ready，等待成功或失败回调决定归属。
+            return;
+        }
+        if (_animator != null && _animator.enabled)
+        {
+            // 释放资源必须读取原生采样状态；最新请求已是Idle时，过渡源仍可能在使用Skill剪辑。
+            // 当前仍采样Skill或尚在过渡时保留真实剪辑，避免退出途中回退到空占位动作而下沉。
+            if (_animator.GetCurrentAnimatorStateInfo(0).IsName(STATE_SKILL) ||
+                _animator.IsInTransition(0))
+            {
+                return;
+            }
+        }
+        // 本次待释放的技能剪辑路径，先清除挂起状态以避免释放回调重复进入。
+        string expectedClipLocation = _pendingSkillReleaseLocation;
+        _pendingSkillReleaseLocation = string.Empty;
+        ReleaseAnim(STATE_SKILL, expectedClipLocation);
+    }
+
+    /// <summary>
+    /// 获取缓存的 Float 参数值。
+    /// </summary>
+    /// <param name="parameterName">参数名。</param>
+    /// <returns>缓存的参数值，不存在返回 0。</returns>
+    public virtual float GetFloat(string parameterName)
+    {
+        float value;
+        if (_floatParameters.TryGetValue(parameterName, out value)) return value;
+        return 0f;
+    }
+
+    /// <summary>
+    /// 获取缓存的 Int 参数值。
+    /// </summary>
+    /// <param name="parameterName">参数名。</param>
+    /// <returns>缓存的参数值，不存在返回 0。</returns>
+    public virtual int GetInteger(string parameterName)
+    {
+        int value;
+        if (_intParameters.TryGetValue(parameterName, out value)) return value;
+        return 0;
+    }
+
+    /// <summary>
+    /// 获取缓存的 Bool 参数值。
+    /// </summary>
+    /// <param name="parameterName">参数名。</param>
+    /// <returns>缓存的参数值，不存在返回 false。</returns>
+    public virtual bool GetBool(string parameterName)
+    {
+        bool value;
+        if (_boolParameters.TryGetValue(parameterName, out value)) return value;
+        return false;
+    }
+
+    /// <summary>
+    /// 在当前 Controller 的动画片段列表中按名称查找原始片段。
+    /// 用于 OverrideController 替换时定位原始片段。
+    /// </summary>
+    /// <param name="key">要查找的片段名称。</param>
+    /// <returns>找到的 AnimationClip，未找到返回 null。</returns>
+    protected virtual AnimationClip FindOriginalClip(string key)
+    {
+        if (_controller == null || _controller.animationClips == null) return null;
+        AnimationClip[] clips = _controller.animationClips;
+        for (int index = 0; index < clips.Length; index++)
+        {
+            if (clips[index] != null && clips[index].name == key)
+                return clips[index];
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 判断当前 Controller 是否提供指定覆盖槽位。
+    /// Controller 尚未绑定时返回 false，调用方应继续等待而不是记录资源错误。
+    /// </summary>
+    /// <param name="overrideKey">AnimatorOverrideController 中的原始剪辑名称。</param>
+    /// <returns>槽位存在返回 true；Controller 未绑定或槽位不存在返回 false。</returns>
+    public bool HasOverrideSlot(string overrideKey)
+    {
+        if (_controller == null || string.IsNullOrEmpty(overrideKey))
+        {
+            return false;
+        }
+        return FindOriginalClip(overrideKey) != null;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>绑定 Controller 并重放缓存参数及当前逻辑动作。</summary>
     private void BindController(RuntimeAnimatorController controller)
     {
@@ -436,29 +1008,6 @@ public class MAnimator
         return _currentState == stateName;
     }
 
-    /// <summary>
-    /// 尝试播放原生 Animator 状态，状态不存在时返回 false。
-    /// </summary>
-    /// <param name="stateName">目标动画状态名。</param>
-    /// <param name="layer">动画层索引。</param>
-    /// <param name="normalizedTime">归一化播放时间。</param>
-    /// <returns>true 表示原生状态存在并已播放。</returns>
-    private bool TryPlayNativeState(string stateName, int layer, float normalizedTime)
-    {
-        if (!HasNativeState(stateName, layer))
-        {
-            return false;
-        }
-        // 嵌套 Jump 状态机需要使用完整路径，避免短名称无法解析到子状态机。
-        string nativeStatePath = GetNativeStatePath(stateName, layer);
-        if (string.IsNullOrEmpty(nativeStatePath))
-        {
-            return false;
-        }
-        _animator.Play(nativeStatePath, layer, normalizedTime);
-        return true;
-    }
-
     /// <summary>将已加载的动作片段重新应用到新绑定的 Controller。</summary>
     private void ApplyOverrideClips()
     {
@@ -501,66 +1050,6 @@ public class MAnimator
         }
     }
 
-    /// <summary>尝试把已加载剪辑写入当前 Controller 的同名覆盖槽位。</summary>
-    /// <param name="animInfo">仍处于 preparing 阶段的动画绑定信息。</param>
-    /// <param name="preparedClip">已经由共享 ClipInfo 完成加载的候选剪辑。</param>
-    /// <returns>Controller 未绑定时返回 Pending，写入成功返回 Applied，确定性失败返回 Failed。</returns>
-    private PreparedClipApplyResult TryApplyPreparedClip(MAnimInfo animInfo,
-        AnimationClip preparedClip)
-    {
-        if (animInfo == null || preparedClip == null)
-        {
-            return PreparedClipApplyResult.Failed;
-        }
-        if (_animator == null || _controller == null)
-        {
-            return PreparedClipApplyResult.Pending;
-        }
-
-        // 已完成加载的目标剪辑在基础控制器中对应的原始剪辑。
-        AnimationClip originalClip = FindOriginalClip(animInfo.OverrideKey);
-        if (originalClip == null)
-        {
-            string warningKey = _controller.name + "|" + animInfo.OverrideKey;
-            if (!_missingOverrideSlotWarnings.Contains(warningKey))
-            {
-                _missingOverrideSlotWarnings.Add(warningKey);
-                Debug.LogWarning("Animator Controller 缺少动画覆盖槽位，剪辑保持旧版本。" +
-                    "Controller=" + _controller.name + "，槽位=" + animInfo.OverrideKey);
-            }
-            return PreparedClipApplyResult.Failed;
-        }
-
-        if (_overrideController == null)
-        {
-            _overrideController = new AnimatorOverrideController(_controller);
-            _animator.runtimeAnimatorController = _overrideController;
-        }
-
-        try
-        {
-            _overrideController[originalClip] = preparedClip;
-        }
-        // 当前异常只表示候选剪辑应用失败，旧 ready 剪辑及其共享引用必须继续保留。
-        catch (System.Exception exception)
-        {
-            Debug.LogError("动画剪辑写入覆盖槽位失败，剪辑保持旧版本。槽位=" +
-                animInfo.OverrideKey + "，" + exception);
-            return PreparedClipApplyResult.Failed;
-        }
-        return PreparedClipApplyResult.Applied;
-    }
-
-    /// <summary>准备中剪辑成功提升为 ready 后，当前状态按保存的归一化进度续播。</summary>
-    /// <param name="animInfo">已经完成 Controller 应用和两阶段提升的动画绑定信息。</param>
-    private void OnPreparedClipPromoted(MAnimInfo animInfo)
-    {
-        if (_currentState == animInfo.StateKey)
-        {
-            PlayCurrent();
-        }
-    }
-
     /// <summary>Controller 绑定完成后重试全部已加载完成但仍等待槽位应用的剪辑。</summary>
     private void RetryPreparingClips()
     {
@@ -577,143 +1066,6 @@ public class MAnimator
         }
     }
 
-    /// <summary>Controller 确定加载失败时释放全部 preparing 引用并完成关键预加载标记收尾。</summary>
-    private void CancelPreparingClips()
-    {
-        // 动画信息快照保证释放回调期间原字典保持可遍历。
-        List<MAnimInfo> infos = new List<MAnimInfo>(_animInfos.Values);
-        for (int index = 0; index < infos.Count; index++)
-        {
-            // 当前需要取消 preparing 阶段的动画绑定信息。
-            MAnimInfo info = infos[index];
-            if (info != null)
-            {
-                info.CancelPreparingClip();
-            }
-        }
-    }
-
-    /// <summary>
-    /// 检查 Animator 中是否存在指定名称的状态节点。
-    /// 同时尝试短名、Base Layer 全路径和 Jump 子状态机全路径。
-    /// </summary>
-    /// <param name="stateName">动画状态名。</param>
-    /// <param name="layer">动画层索引。</param>
-    /// <returns>true 表示状态节点存在。</returns>
-    private bool HasNativeState(string stateName, int layer)
-    {
-        string nativeStatePath = GetNativeStatePath(stateName, layer);
-        return !string.IsNullOrEmpty(nativeStatePath);
-    }
-
-    /// <summary>
-    /// 按当前 Controller 解析可播放的状态路径。
-    /// MAnimator.controller 的待机、移动、跳跃状态均位于对应的嵌套子状态机，
-    /// 必须使用完整路径，不能把子状态机名称误当成状态路径。
-    /// </summary>
-    /// <param name="stateName">逻辑状态名，例如 Jump_Start。</param>
-    /// <param name="layer">Animator 层索引，通常为 0。</param>
-    /// <returns>Unity 可识别的状态路径；不存在时返回空字符串。</returns>
-    private string GetNativeStatePath(string stateName, int layer)
-    {
-        if (_animator == null || string.IsNullOrEmpty(stateName))
-        {
-            return string.Empty;
-        }
-
-        // 当前项目的正式 MAnimator Controller 使用 Idle 子状态机。
-        string nestedStatePath = GetFormalNestedStatePath(stateName);
-        if (!string.IsNullOrEmpty(nestedStatePath) &&
-            _animator.HasState(layer, Animator.StringToHash(nestedStatePath)))
-        {
-            return nestedStatePath;
-        }
-
-        // 直接状态短名称兼容其他正式 Controller 中的普通状态。
-        int shortHash = Animator.StringToHash(stateName);
-        if (_animator.HasState(layer, shortHash))
-        {
-            return stateName;
-        }
-
-        // Base Layer 全路径兼容 Unity 对状态哈希的完整路径要求。
-        string baseLayerPath = "Base Layer." + stateName;
-        int fullHash = Animator.StringToHash(baseLayerPath);
-        if (_animator.HasState(layer, fullHash))
-        {
-            return baseLayerPath;
-        }
-
-        // 跳跃状态位于独立 Jump 子状态机，使用三级全路径定位。
-        string jumpStatePath = "Base Layer.Jump." + stateName;
-        int jumpHash = Animator.StringToHash(jumpStatePath);
-        if (_animator.HasState(layer, jumpHash))
-        {
-            return jumpStatePath;
-        }
-
-        return string.Empty;
-    }
-
-    /// <summary>
-    /// 将逻辑状态映射到正式 MAnimator Controller 的嵌套状态路径。
-    /// 当前控制器把 Idle、Move 和 Jump 分别作为子状态机，路径必须与资源层级一致。
-    /// </summary>
-    /// <param name="stateName">逻辑动画状态名。</param>
-    /// <returns>正式控制器中的完整状态路径；未映射状态返回空字符串。</returns>
-    private string GetFormalNestedStatePath(string stateName)
-    {
-        if (stateName == STATE_IDLE)
-        {
-            return "Base Layer.Idle.Idle";
-        }
-        if (stateName == STATE_FIDLE)
-        {
-            return "Base Layer.Idle.FIdle";
-        }
-        if (stateName == STATE_CARRY_IDLE)
-        {
-            return "Base Layer.Idle.CarryIdle";
-        }
-        if (stateName == STATE_SELFY_IDLE)
-        {
-            return "Base Layer.Idle.SelfyIdle";
-        }
-        if (stateName == STATE_SHOOT_IDLE)
-        {
-            return "Base Layer.Idle.ShootIdle";
-        }
-        if (stateName == STATE_ZD_MOVE_WALK)
-        {
-            return "Base Layer.Move.ZdMoveWalk";
-        }
-        if (stateName == STATE_ZD_MOVE_RUN)
-        {
-            return "Base Layer.Move.ZdMoveRun";
-        }
-        if (stateName == STATE_NONZD_MOVE_WALK)
-        {
-            return "Base Layer.Move.NonZdMoveWalk";
-        }
-        if (stateName == STATE_NONZD_MOVE_RUN)
-        {
-            return "Base Layer.Move.NonZdMoveRun";
-        }
-        if (stateName == STATE_JUMP_START)
-        {
-            return "Base Layer.Jump.Jump_Start";
-        }
-        if (stateName == STATE_JUMP_LOOP)
-        {
-            return "Base Layer.Jump.Jump_Loop";
-        }
-        if (stateName == STATE_JUMP_END)
-        {
-            return "Base Layer.Jump.Jump_End";
-        }
-        return string.Empty;
-    }
-
     /// <summary>重新绑定 Animator 并应用缓存参数，用于 Controller 切换后恢复状态。</summary>
     public virtual void Rebind()
     {
@@ -721,58 +1073,6 @@ public class MAnimator
         _animator.Rebind();
         _animator.Update(0f);
         ApplyCachedParameters();
-    }
-
-    /// <summary>
-    /// 写入目标状态的归一化时间并检查全部剪辑是否就绪。
-    /// 普通状态只检查自身；混合树状态要求登记的所有覆盖键都存在且完成准备。
-    /// </summary>
-    /// <param name="stateName">准备播放的普通状态名或混合树状态名。</param>
-    /// <param name="normalizedTime">本次播放使用的归一化起点，通常位于 0 到 1。</param>
-    /// <returns>目标状态全部剪辑均可播放时返回 true。</returns>
-    private bool IsClipReady(string stateName, float normalizedTime)
-    {
-        // 混合树状态下参与门控的全部覆盖键，列表已在 OverrideAnim 中保持去重。
-        List<string> blendAnimKeys;
-        if (_blendTreeDict.TryGetValue(stateName, out blendAnimKeys))
-        {
-            if (blendAnimKeys.Count == 0)
-            {
-                return false;
-            }
-
-            // 全部混合树子剪辑的聚合就绪结果；即使某项未就绪也继续写入其他项的播放起点。
-            bool areAllClipsReady = true;
-            for (int index = 0; index < blendAnimKeys.Count; index++)
-            {
-                // 当前混合树子剪辑对应的覆盖键。
-                string animKey = blendAnimKeys[index];
-                // 当前混合树子剪辑的异步绑定信息。
-                MAnimInfo blendAnimInfo;
-                if (!_animInfos.TryGetValue(animKey, out blendAnimInfo) ||
-                    blendAnimInfo == null)
-                {
-                    return false;
-                }
-
-                blendAnimInfo.NormalizedTime = normalizedTime;
-                if (!blendAnimInfo.IsClipReady)
-                {
-                    areAllClipsReady = false;
-                }
-            }
-            return areAllClipsReady;
-        }
-
-        // 普通状态对应的单条动画绑定信息。
-        MAnimInfo animInfo;
-        if (!_animInfos.TryGetValue(stateName, out animInfo) || animInfo == null)
-        {
-            return false;
-        }
-
-        animInfo.NormalizedTime = normalizedTime;
-        return animInfo.IsClipReady;
     }
 
     /// <summary>只读检查普通状态或混合树的全部剪辑是否就绪，不改写任何归一化播放进度。</summary>
@@ -811,34 +1111,6 @@ public class MAnimator
             return false;
         }
         return animInfo.IsClipReady;
-    }
-
-    /// <summary>
-    /// 获取当前动画状态的信息，包括归一化时间。
-    /// 如果该状态尚未登记，自动创建并加入映射表。
-    /// </summary>
-    /// <returns>当前动画状态的嵌套动画信息对象。</returns>
-    public virtual MAnimInfo GetCurrentAnimInfo()
-    {
-        if (string.IsNullOrEmpty(_currentState)) return null;
-        // 当前逻辑状态对应的动画绑定信息。
-        MAnimInfo info = GetAnimInfo(_currentState);
-        if (info == null)
-        {
-            info = new MAnimInfo();
-            info.Init(this, _currentState, _currentState);
-            _animInfos.Add(_currentState, info);
-        }
-        if (_animator != null)
-        {
-            // Unity Animator 当前状态快照，用于续播时恢复归一化进度。
-            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName(_currentState))
-            {
-                info.NormalizedTime = stateInfo.normalizedTime;
-            }
-        }
-        return info;
     }
 
     /// <summary>
@@ -929,166 +1201,6 @@ public class MAnimator
         return info;
     }
 
-    /// <summary>
-    /// 根据 key 获取已登记的动画信息。
-    /// </summary>
-    /// <param name="key">逻辑动画 key。</param>
-    /// <returns>对应的嵌套动画信息，不存在返回 null。</returns>
-    public virtual MAnimInfo GetAnimInfo(string key)
-    {
-        // 普通状态或直接覆盖键对应的动画绑定信息。
-        MAnimInfo info;
-        if (_animInfos.TryGetValue(key, out info))
-        {
-            return info;
-        }
-
-        // 混合树状态对应的去重覆盖键列表，查询语义与 RO 一致，返回首条子动画信息。
-        List<string> blendAnimKeys;
-        if (_blendTreeDict.TryGetValue(key, out blendAnimKeys) &&
-            blendAnimKeys.Count > 0)
-        {
-            // 混合树第一条覆盖键，用于时长、循环和当前播放进度等代表性查询。
-            string firstAnimKey = blendAnimKeys[0];
-            if (_animInfos.TryGetValue(firstAnimKey, out info))
-            {
-                return info;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// 释放指定状态的真实剪辑覆盖及其异步等待者，恢复 Controller 原始占位剪辑。
-    /// 只接受仍绑定预期 Location 的状态，避免旧技能结束回调清除新技能动画。
-    /// </summary>
-    /// <param name="key">需要释放的 Animator 覆盖槽位名。</param>
-    /// <param name="expectedClipLocation">本次施法安装的完整剪辑 Location。</param>
-    /// <returns>找到并释放对应剪辑绑定时返回 true。</returns>
-    public bool ReleaseAnim(string key, string expectedClipLocation)
-    {
-        // 当前槽位的动画绑定，可能已经被下一次施法替换。
-        MAnimInfo info;
-        // 释放键或预期剪辑位置为空时不执行释放。
-        if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(expectedClipLocation))
-        {
-            return false;
-        }
-        // 当前槽位没有登记动画绑定，或绑定对象为空时不执行释放。
-        if (!_animInfos.TryGetValue(key, out info) || info == null)
-        {
-            return false;
-        }
-        // 现有绑定仍指向其他剪辑位置时不执行释放。
-        if (info.ClipPath != expectedClipLocation)
-        {
-            return false;
-        }
-
-        // 原始占位剪辑在释放后重新交给 Controller，避免其仍引用已释放的资源。
-        AnimationClip originalClip = FindOriginalClip(info.OverrideKey);
-        if (_overrideController != null && originalClip != null)
-        {
-            _overrideController[originalClip] = originalClip;
-        }
-        // 释放前保存逻辑状态名，Reset 会清空动画信息的键。
-        string stateKey = info.StateKey;
-        RemoveBlendTreeKey(stateKey, key);
-        info.Reset();
-        _animInfos.Remove(key);
-        _preLoadAnimInfos.Remove(key);
-        if (_currentState == stateKey)
-        {
-            _currentState = string.Empty;
-        }
-        return true;
-    }
-
-    /// <summary>在 Skill 动画完全退出后归还真实剪辑，避免过渡期间切回占位动作。</summary>
-    /// <param name="expectedClipLocation">本次施法占用的真实剪辑 Location，后续技能不会被旧请求释放。</param>
-    public void ReleaseSkillAnimAfterExit(string expectedClipLocation)
-    {
-        if (string.IsNullOrEmpty(expectedClipLocation))
-        {
-            return;
-        }
-        // 只接受仍占用 Skill 槽位的施法，忽略上一轮动画晚到的结束请求。
-        MAnimInfo skillInfo;
-        if (!_animInfos.TryGetValue(STATE_SKILL, out skillInfo) ||
-            skillInfo == null || skillInfo.ClipPath != expectedClipLocation)
-        {
-            return;
-        }
-        _pendingSkillReleaseLocation = expectedClipLocation;
-        TryReleasePendingSkillAnim();
-    }
-
-    /// <summary>当前动画不再使用 Skill 槽位时，归还待释放剪辑及其资源租约。</summary>
-    private void TryReleasePendingSkillAnim()
-    {
-        if (string.IsNullOrEmpty(_pendingSkillReleaseLocation))
-        {
-            return;
-        }
-        if (!string.IsNullOrEmpty(_supersededSkillReleaseLocation))
-        {
-            // 新剪辑仍在准备时不可清理同槽旧 ready，等待成功或失败回调决定归属。
-            return;
-        }
-        if (_animator != null && _animator.enabled)
-        {
-            // 释放资源必须读取原生采样状态；最新请求已是Idle时，过渡源仍可能在使用Skill剪辑。
-            // 当前仍采样Skill或尚在过渡时保留真实剪辑，避免退出途中回退到空占位动作而下沉。
-            if (_animator.GetCurrentAnimatorStateInfo(0).IsName(STATE_SKILL) ||
-                _animator.IsInTransition(0))
-            {
-                return;
-            }
-        }
-        // 本次待释放的技能剪辑路径，先清除挂起状态以避免释放回调重复进入。
-        string expectedClipLocation = _pendingSkillReleaseLocation;
-        _pendingSkillReleaseLocation = string.Empty;
-        ReleaseAnim(STATE_SKILL, expectedClipLocation);
-    }
-
-    /// <summary>将覆盖键登记到指定混合树，列表内已存在时不重复添加。</summary>
-    /// <param name="blendTreeKey">Animator 中的混合树逻辑状态名。</param>
-    /// <param name="animKey">参与混合树的 AnimatorOverrideController 覆盖键。</param>
-    private void RegisterBlendTreeKey(string blendTreeKey, string animKey)
-    {
-        // 目标混合树当前登记的覆盖键列表。
-        List<string> blendAnimKeys;
-        if (!_blendTreeDict.TryGetValue(blendTreeKey, out blendAnimKeys))
-        {
-            blendAnimKeys = new List<string>();
-            _blendTreeDict.Add(blendTreeKey, blendAnimKeys);
-        }
-
-        if (blendAnimKeys.IndexOf(animKey) < 0)
-        {
-            blendAnimKeys.Add(animKey);
-        }
-    }
-
-    /// <summary>从旧混合树移除覆盖键；列表清空后同时删除无效的树映射。</summary>
-    /// <param name="blendTreeKey">覆盖键此前所属的逻辑状态名；普通状态不会存在对应列表。</param>
-    /// <param name="animKey">需要迁移或移除的覆盖键。</param>
-    private void RemoveBlendTreeKey(string blendTreeKey, string animKey)
-    {
-        // 旧混合树登记的覆盖键列表，不存在表示该键此前属于普通状态。
-        List<string> blendAnimKeys;
-        if (!_blendTreeDict.TryGetValue(blendTreeKey, out blendAnimKeys))
-        {
-            return;
-        }
-
-        blendAnimKeys.Remove(animKey);
-        if (blendAnimKeys.Count == 0)
-        {
-            _blendTreeDict.Remove(blendTreeKey);
-        }
-    }
-
     /// <summary>判断覆盖键是否属于必须跟踪准备完成状态的常驻待机或移动动画。</summary>
     /// <param name="animKey">AnimatorOverrideController 覆盖键。</param>
     /// <returns>常驻待机、移动或跳跃状态之一返回 true。</returns>
@@ -1106,28 +1218,6 @@ public class MAnimator
         return isIdleLikeState || isMoveLikeState || isJumpLikeState;
     }
 
-    /// <summary>关键动画加载成功或失败后移除其准备标记。</summary>
-    /// <param name="animKey">已经结束本轮准备的 AnimatorOverrideController 覆盖键。</param>
-    private void OnClipPreparationFinished(string animKey)
-    {
-        _preLoadAnimInfos.Remove(animKey);
-        if (animKey != STATE_SKILL ||
-            string.IsNullOrEmpty(_supersededSkillReleaseLocation))
-        {
-            return;
-        }
-        // 加载或安装失败会留下旧 ready；成功时新剪辑已接管槽位，旧请求直接失效。
-        MAnimInfo skillInfo;
-        if (_animInfos.TryGetValue(STATE_SKILL, out skillInfo) &&
-            skillInfo != null &&
-            skillInfo.ClipPath == _supersededSkillReleaseLocation)
-        {
-            _pendingSkillReleaseLocation = _supersededSkillReleaseLocation;
-        }
-        _supersededSkillReleaseLocation = string.Empty;
-        TryReleasePendingSkillAnim();
-    }
-
     /// <summary>
     /// 设置 Float 类型 Animator 参数，同时缓存到本地字典，对象池复用时重放。
     /// </summary>
@@ -1137,18 +1227,6 @@ public class MAnimator
     {
         _floatParameters[parameterName] = value;
         if (_animator != null && _animator.isActiveAndEnabled) _animator.SetFloat(parameterName, value);
-    }
-
-    /// <summary>
-    /// 获取缓存的 Float 参数值。
-    /// </summary>
-    /// <param name="parameterName">参数名。</param>
-    /// <returns>缓存的参数值，不存在返回 0。</returns>
-    public virtual float GetFloat(string parameterName)
-    {
-        float value;
-        if (_floatParameters.TryGetValue(parameterName, out value)) return value;
-        return 0f;
     }
 
     /// <summary>
@@ -1163,18 +1241,6 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 获取缓存的 Int 参数值。
-    /// </summary>
-    /// <param name="parameterName">参数名。</param>
-    /// <returns>缓存的参数值，不存在返回 0。</returns>
-    public virtual int GetInteger(string parameterName)
-    {
-        int value;
-        if (_intParameters.TryGetValue(parameterName, out value)) return value;
-        return 0;
-    }
-
-    /// <summary>
     /// 设置 Bool 类型 Animator 参数，同时缓存到本地字典。
     /// </summary>
     /// <param name="parameterName">参数名。</param>
@@ -1183,27 +1249,6 @@ public class MAnimator
     {
         _boolParameters[parameterName] = value;
         if (_animator != null && _animator.isActiveAndEnabled) _animator.SetBool(parameterName, value);
-    }
-
-    /// <summary>
-    /// 获取缓存的 Bool 参数值。
-    /// </summary>
-    /// <param name="parameterName">参数名。</param>
-    /// <returns>缓存的参数值，不存在返回 false。</returns>
-    public virtual bool GetBool(string parameterName)
-    {
-        bool value;
-        if (_boolParameters.TryGetValue(parameterName, out value)) return value;
-        return false;
-    }
-
-    /// <summary>
-    /// 完全重置，释放所有资源并清空参数缓存。
-    /// 由对象池调用，确保下一次复用时是干净状态。
-    /// </summary>
-    public virtual void Reset()
-    {
-        ResetInternal(true);
     }
 
     /// <summary>
@@ -1256,39 +1301,6 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 在当前 Controller 的动画片段列表中按名称查找原始片段。
-    /// 用于 OverrideController 替换时定位原始片段。
-    /// </summary>
-    /// <param name="key">要查找的片段名称。</param>
-    /// <returns>找到的 AnimationClip，未找到返回 null。</returns>
-    protected virtual AnimationClip FindOriginalClip(string key)
-    {
-        if (_controller == null || _controller.animationClips == null) return null;
-        AnimationClip[] clips = _controller.animationClips;
-        for (int index = 0; index < clips.Length; index++)
-        {
-            if (clips[index] != null && clips[index].name == key)
-                return clips[index];
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// 判断当前 Controller 是否提供指定覆盖槽位。
-    /// Controller 尚未绑定时返回 false，调用方应继续等待而不是记录资源错误。
-    /// </summary>
-    /// <param name="overrideKey">AnimatorOverrideController 中的原始剪辑名称。</param>
-    /// <returns>槽位存在返回 true；Controller 未绑定或槽位不存在返回 false。</returns>
-    public bool HasOverrideSlot(string overrideKey)
-    {
-        if (_controller == null || string.IsNullOrEmpty(overrideKey))
-        {
-            return false;
-        }
-        return FindOriginalClip(overrideKey) != null;
-    }
-
-    /// <summary>
     /// 将缓存的 Float/Int/Bool 参数全部重新应用到 Animator。
     /// 在 Controller 重新绑定后调用，恢复参数状态。
     /// </summary>
@@ -1315,6 +1327,7 @@ public class MAnimator
             _animator.SetBool(key, _boolParameters[key]);
         }
     }
+    #endregion
 
     /// <summary>准备中剪辑尝试写入当前 Controller 后的处理结果。</summary>
     private enum PreparedClipApplyResult

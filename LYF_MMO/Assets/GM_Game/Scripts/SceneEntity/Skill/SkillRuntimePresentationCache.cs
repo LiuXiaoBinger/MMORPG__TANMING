@@ -39,41 +39,7 @@ public static class SkillRuntimePresentationCache
             new List<Action<SkillRuntimePresentation>>();
     }
 
-    /// <summary>为技能核心或粒子实例持有一个表现资产引用，并按需开始异步加载。</summary>
-    /// <param name="presentationId">Luban 表现行的正数主键。</param>
-    public static void Retain(int presentationId)
-    {
-        if (presentationId <= 0)
-        {
-            return;
-        }
-        // 当前表现行的共享加载记录；相同技能的不同实体共用此句柄。
-        Entry entry;
-        if (!Entries.TryGetValue(presentationId, out entry))
-        {
-            entry = new Entry();
-            entry.PresentationId = presentationId;
-            Entries.Add(presentationId, entry);
-        }
-        entry.OwnerCount++;
-        BeginLoad(entry);
-    }
-
-    /// <summary>取得已完全加载的表现资产；尚未就绪时由本次施法等待原表现行。</summary>
-    /// <param name="presentationId">已由技能核心持有的表现行主键。</param>
-    /// <returns>加载成功且身份正确的资产，否则为空。</returns>
-    public static SkillRuntimePresentation GetReady(int presentationId)
-    {
-        // 查询只返回缓存资产；施法等待通过可取消的一次性就绪监听完成。
-        Entry entry;
-        if (presentationId <= 0 || !Entries.TryGetValue(presentationId, out entry))
-        {
-            return null;
-        }
-        BeginLoad(entry);
-        return entry.Asset;
-    }
-
+    #region 事件注册与注销
     /// <summary>登记一次资源就绪通知；已有终态时同步交付，失败以空资产通知调用方停止等待。</summary>
     /// <param name="presentationId">本次施法已锁定且由核心持有的正数表现行主键。</param>
     /// <param name="listener">一次性强类型回调；调用方负责捕获施法身份并在取消时解除。</param>
@@ -106,7 +72,9 @@ public static class SkillRuntimePresentationCache
             entry.ReadyListeners.Remove(listener);
         }
     }
+    #endregion
 
+    #region 网络请求与消息
     /// <summary>Global 安装资源包后补启动此前持有的记录；生命周期通知不依赖逐帧技能轮询。</summary>
     public static void NotifyResourcePackageReady()
     {
@@ -149,6 +117,7 @@ public static class SkillRuntimePresentationCache
             }
         }
     }
+    #endregion
 
     /// <summary>解除一个核心或粒子实例的持有，最后持有者归还 YooAsset 句柄。</summary>
     /// <param name="presentationId">此前已 Retain 的表现行主键。</param>
@@ -173,6 +142,42 @@ public static class SkillRuntimePresentationCache
             entry.Handle.Release();
             entry.Handle = null;
         }
+    }
+
+    /// <summary>取得已完全加载的表现资产；尚未就绪时由本次施法等待原表现行。</summary>
+    /// <param name="presentationId">已由技能核心持有的表现行主键。</param>
+    /// <returns>加载成功且身份正确的资产，否则为空。</returns>
+    public static SkillRuntimePresentation GetReady(int presentationId)
+    {
+        // 查询只返回缓存资产；施法等待通过可取消的一次性就绪监听完成。
+        Entry entry;
+        if (presentationId <= 0 || !Entries.TryGetValue(presentationId, out entry))
+        {
+            return null;
+        }
+        BeginLoad(entry);
+        return entry.Asset;
+    }
+
+    #region 核心逻辑
+    /// <summary>为技能核心或粒子实例持有一个表现资产引用，并按需开始异步加载。</summary>
+    /// <param name="presentationId">Luban 表现行的正数主键。</param>
+    public static void Retain(int presentationId)
+    {
+        if (presentationId <= 0)
+        {
+            return;
+        }
+        // 当前表现行的共享加载记录；相同技能的不同实体共用此句柄。
+        Entry entry;
+        if (!Entries.TryGetValue(presentationId, out entry))
+        {
+            entry = new Entry();
+            entry.PresentationId = presentationId;
+            Entries.Add(presentationId, entry);
+        }
+        entry.OwnerCount++;
+        BeginLoad(entry);
     }
 
     /// <summary>首次可访问 YooAsset 时加载导出资产，失败时记录错误且不启动其他特效来源。</summary>
@@ -228,4 +233,5 @@ public static class SkillRuntimePresentationCache
             NotifyReady(entry);
         };
     }
+    #endregion
 }

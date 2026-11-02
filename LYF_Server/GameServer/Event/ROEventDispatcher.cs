@@ -52,6 +52,7 @@ public sealed class ROEventDispatcher
     private readonly Stack<List<ROEventListenerEntry>> snapshot_pool_ =
         new Stack<List<ROEventListenerEntry>>();
 
+    #region 初始化与事件注册
     /// <summary>
     /// 注册事件监听；同一监听者对同一事件重复注册时替换原回调，不叠加调用。
     /// </summary>
@@ -127,6 +128,31 @@ public sealed class ROEventDispatcher
         }
     }
 
+    /// <summary>
+    /// 宿主销毁时清空全部监听登记，释放对回调目标的引用。
+    /// 对应 RO 的 UnInit；销毁后再次派发不会触发任何回调。
+    /// </summary>
+    public void UnInit()
+    {
+        // 先取事件类型快照，再按索引遍历，避免遍历字典本身。
+        List<ROEventDefine> event_types = new List<ROEventDefine>(hash_sp_event_handler_.Keys);
+        // 当前处理的事件类型下标，范围为零到事件类型数量减一。
+        for (int type_index = 0; type_index < event_types.Count; type_index++)
+        {
+            // 该事件类型下的监听登记列表。
+            List<ROEventListenerEntry> it_listener = hash_sp_event_handler_[event_types[type_index]];
+            // 当前清理的登记下标，先把回调置空再整表清空，彻底断开对回调目标的引用。
+            for (int index = 0; index < it_listener.Count; index++)
+            {
+                it_listener[index].callback = null;
+            }
+            it_listener.Clear();
+        }
+        hash_sp_event_handler_.Clear();
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>
     /// 同步派发事件：按事件类型取出监听登记并就地回调，不入队、不跨线程。
     /// 派发前复制一份登记快照，因此本轮不纳入派发开始后新注册的条目；
@@ -223,27 +249,5 @@ public sealed class ROEventDispatcher
         buffer.Clear();
         snapshot_pool_.Push(buffer);
     }
-
-    /// <summary>
-    /// 宿主销毁时清空全部监听登记，释放对回调目标的引用。
-    /// 对应 RO 的 UnInit；销毁后再次派发不会触发任何回调。
-    /// </summary>
-    public void UnInit()
-    {
-        // 先取事件类型快照，再按索引遍历，避免遍历字典本身。
-        List<ROEventDefine> event_types = new List<ROEventDefine>(hash_sp_event_handler_.Keys);
-        // 当前处理的事件类型下标，范围为零到事件类型数量减一。
-        for (int type_index = 0; type_index < event_types.Count; type_index++)
-        {
-            // 该事件类型下的监听登记列表。
-            List<ROEventListenerEntry> it_listener = hash_sp_event_handler_[event_types[type_index]];
-            // 当前清理的登记下标，先把回调置空再整表清空，彻底断开对回调目标的引用。
-            for (int index = 0; index < it_listener.Count; index++)
-            {
-                it_listener[index].callback = null;
-            }
-            it_listener.Clear();
-        }
-        hash_sp_event_handler_.Clear();
-    }
+    #endregion
 }

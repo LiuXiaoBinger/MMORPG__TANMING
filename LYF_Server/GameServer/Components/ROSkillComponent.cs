@@ -10,6 +10,8 @@ using cfg;
 /// </summary>
 public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs>
 {
+
+    #region 字段与属性
     /// <summary>一个服务器逻辑帧的毫秒数，与 GameGlobal 的 20Hz 固定帧一致。</summary>
     private const int LogicFrameMilliseconds = 50;
     /// <summary>RO 服务端 SkillComboTime 默认窗口，超过六秒后从第零段重新开始。</summary>
@@ -53,6 +55,17 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         public SkillEffectInfo effect_;
     }
 
+    /// <summary>角色扩展确认中心服学习快照已完整装载后才允许施法。</summary>
+    public abstract bool SkillsLoaded { get; }
+
+    /// <summary>技能动作态由 kActionSkill 事件驱动，对应 RO 把该事件绑定到 ROSkillComponent。</summary>
+    protected override ROEventDefine? ActionEventType
+    {
+        get { return ROEventDefine.kActionSkill; }
+    }
+    #endregion
+
+    #region 构造、初始化与事件注册
     /// <summary>为一个在线角色创建技能运行时组件。</summary>
     /// <param name="owner">拥有中心服角色快照和网关会话的在线角色。</param>
     protected ROSkillComponent(OnlineRole owner) : base(owner, StateDefine.kStateSkill)
@@ -61,9 +74,160 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         SkillCastingRulesCatalog.Initialize();
     }
 
-    /// <summary>角色扩展确认中心服学习快照已完整装载后才允许施法。</summary>
-    public abstract bool SkillsLoaded { get; }
+    /// <summary>
+    /// 进入技能态：用 OnGetEvent 暂存的提交数据一次性扣蓝、写冷却并建立动作实例。
+    /// 结果先回客户端再广播开始表现，与改造前的回包顺序保持一致。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    protected override void OnStart(ROAttackActionArgs args)
+    {
+        // prepared 是 OnGetEvent 暂存的提交数据，取出后立刻清字段，避免下一帧重复提交同一请求。
+        PreparedCast prepared = prepared_cast_;
+        prepared_cast_ = null;
+        // result 是提交后要回给客户端的权威结果，失败与成功都走这一份。
+        SkillCastRet result;
+        // start_notice 只在成功时由 CommitCast 生成，用于向附近角色广播开始表现。
+        SkillCastStartNtf start_notice;
+        // 吟唱已经占用施法段，技能态只结算动作段时长。
+        if (!CommitCast(prepared, true, out result, out start_notice))
+        {
+            SkillCastReply.Send(Owner, result);
+            Finish();
+            return;
+        }
+        SkillCastReply.Send(Owner, result);
+        if (start_notice != null)
+        {
+            RoleManager.Instance.BroadcastSkillStart(Owner, start_notice);
+        }
+    }
 
+    /// <summary>
+    /// 组件容器每帧调用。技能态是状态机当前状态时，动作推进统一由 StateMachineComponent.StateUpdate 驱动，
+    /// 这里必须直接返回，否则同一逻辑帧会推进两次动作。
+    /// 冷却不在这里推进：单技能冷却与公共组冷却都记在单调逻辑 Tick 上，由全局 Tick 决定何时到期，
+    /// 本方法只承担未进入状态机的兼容直调路径。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，当前结束判断使用全局 Tick。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        if (IsDrivenByStateMachine())
+        {
+            return;
+        }
+        if (!IsCasting())
+        {
+            return;
+        }
+        // 归属角色、主角色信息、血量或在线状态不满足时停止当前动作。
+        if (!CanKeepCasting())
+        {
+            StopAll();
+            return;
+        }
+        OnSkillActionUpdate(deltaMilliseconds);
+    }
+
+    /// <summary>释放在线角色专属缓存；离线重连后的 CD 不从数据库恢复。</summary>
+    public override void Dispose()
+    {
+        InterruptActiveCast(true);
+        skill_cd_.Clear();
+        skill_cd_group_cd_.Clear();
+        using_times_.Clear();
+        last_use_time_.Clear();
+        skill_core_list_.Clear();
+        last_used_skill_effect_id_ = 0;
+        base.Dispose();
+    }
+    #endregion
+
+    #region 事件回调
+    /// <summary>
+    /// 进入技能态前的校验，对应 action_state_component.h 的 OnGetEvent：
+    /// 复用 PrepareCast 完成全部非提交校验，并把提交数据留给 OnStart 一次性消费。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    /// <param name="last_state">切换前状态机所处的状态。</param>
+    protected override bool OnGetEvent(ROAttackActionArgs args, StateDefine last_state)
+    {
+        prepared_cast_ = null;
+        pending_reject_ = null;
+        if (args == null)
+        {
+            return false;
+        }
+        return PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_);
+    }
+
+    /// <summary>
+    /// 动作事件入口：状态机不接受本事件时，把 OnGetEvent 生成的明确拒绝结果回给客户端，
+    /// 保证同一请求一定有终态回包，不会因为没进入技能态而悬挂。
+    /// </summary>
+    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
+    /// <returns>状态机切换成功返回 true。</returns>
+    public override bool OnActionEvent(ROEvent args)
+    {
+        prepared_cast_ = null;
+        pending_reject_ = null;
+        // accepted 是状态机对本事件的处理结果：true 表示已进入技能态，由 OnStart 继续结算。
+        bool accepted = base.OnActionEvent(args);
+        if (accepted)
+        {
+            return true;
+        }
+        if (pending_reject_ != null)
+        {
+            SkillCastReply.Send(Owner, pending_reject_);
+            pending_reject_ = null;
+        }
+        return false;
+    }
+
+    /// <summary>技能动作逐帧推进，到期后自然结束，由状态机把当前态切回默认态。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    protected override void OnUpdate(int deltaMilliseconds)
+    {
+        if (!IsCasting())
+        {
+            Finish();
+            return;
+        }
+        if (!skill_.Update(deltaMilliseconds))
+        {
+            Finish();
+        }
+    }
+
+    /// <summary>自然结束：广播一次非中断结束通知，已扣 MP/CD 不退还。</summary>
+    protected override void OnFinished()
+    {
+        EndSkill(false);
+    }
+
+    /// <summary>被打断（移动、死亡、离线、销毁）：广播一次带中断标记的结束通知。</summary>
+    /// <param name="next">即将进入的状态。</param>
+    /// <param name="args">触发停止的事件。</param>
+    protected override void OnStop(StateDefine next, ROEvent args)
+    {
+        EndSkill(true);
+    }
+
+    /// <summary>
+    /// 对应 RO 当前技能动作推进；自然到期通过同一 SkillCease 收尾。
+    /// 仅用于未进入状态机的兼容直调路径，避免与 ActionStateComponent 的每帧状态钩子重复推进。
+    /// </summary>
+    /// <param name="delta_time">固定逻辑帧的毫秒跨度。</param>
+    protected void OnSkillActionUpdate(int delta_time)
+    {
+        if (!skill_.Update(delta_time))
+        {
+            SkillCease(skill_);
+        }
+    }
+    #endregion
+
+    #region 查询与判定
     /// <summary>由角色扩展提供中心服装载的权威学习等级。</summary>
     /// <param name="skill_id">待查询的稳定主表技能 ID。</param>
     /// <returns>正数为已学等级，零表示尚未学习。</returns>
@@ -136,9 +300,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         return GetSkillCore(effect.Id);
     }
 
-    /// <summary>返回当前正在占用动作的技能实例，结束后为空。</summary>
-    public ROSkill CurrentSkill() { return skill_; }
-
     /// <summary>按本次施法 UUID 查询当前活动技能，不保存已经结束的施法历史。</summary>
     /// <param name="skill_uuid">待查询的客户端施法 UUID。</param>
     /// <returns>UUID 与当前活动技能一致时返回原实例，否则为空。</returns>
@@ -153,128 +314,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
 
     /// <summary>当前存在且仍在释放的动作技能时为 true。</summary>
     public bool IsCasting() { return skill_ != null && skill_.Casting(); }
-
-    /// <summary>技能动作态由 kActionSkill 事件驱动，对应 RO 把该事件绑定到 ROSkillComponent。</summary>
-    protected override ROEventDefine? ActionEventType
-    {
-        get { return ROEventDefine.kActionSkill; }
-    }
-
-    /// <summary>
-    /// 进入技能态前的校验，对应 action_state_component.h 的 OnGetEvent：
-    /// 复用 PrepareCast 完成全部非提交校验，并把提交数据留给 OnStart 一次性消费。
-    /// </summary>
-    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
-    /// <param name="last_state">切换前状态机所处的状态。</param>
-    protected override bool OnGetEvent(ROAttackActionArgs args, StateDefine last_state)
-    {
-        prepared_cast_ = null;
-        pending_reject_ = null;
-        if (args == null)
-        {
-            return false;
-        }
-        return PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_);
-    }
-
-    /// <summary>
-    /// 动作事件入口：状态机不接受本事件时，把 OnGetEvent 生成的明确拒绝结果回给客户端，
-    /// 保证同一请求一定有终态回包，不会因为没进入技能态而悬挂。
-    /// </summary>
-    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
-    /// <returns>状态机切换成功返回 true。</returns>
-    public override bool OnActionEvent(ROEvent args)
-    {
-        prepared_cast_ = null;
-        pending_reject_ = null;
-        // accepted 是状态机对本事件的处理结果：true 表示已进入技能态，由 OnStart 继续结算。
-        bool accepted = base.OnActionEvent(args);
-        if (accepted)
-        {
-            return true;
-        }
-        if (pending_reject_ != null)
-        {
-            SkillCastReply.Send(Owner, pending_reject_);
-            pending_reject_ = null;
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// 进入技能态：用 OnGetEvent 暂存的提交数据一次性扣蓝、写冷却并建立动作实例。
-    /// 结果先回客户端再广播开始表现，与改造前的回包顺序保持一致。
-    /// </summary>
-    /// <param name="args">吟唱状态派发的攻击动作事件。</param>
-    protected override void OnStart(ROAttackActionArgs args)
-    {
-        // prepared 是 OnGetEvent 暂存的提交数据，取出后立刻清字段，避免下一帧重复提交同一请求。
-        PreparedCast prepared = prepared_cast_;
-        prepared_cast_ = null;
-        // result 是提交后要回给客户端的权威结果，失败与成功都走这一份。
-        SkillCastRet result;
-        // start_notice 只在成功时由 CommitCast 生成，用于向附近角色广播开始表现。
-        SkillCastStartNtf start_notice;
-        // 吟唱已经占用施法段，技能态只结算动作段时长。
-        if (!CommitCast(prepared, true, out result, out start_notice))
-        {
-            SkillCastReply.Send(Owner, result);
-            Finish();
-            return;
-        }
-        SkillCastReply.Send(Owner, result);
-        if (start_notice != null)
-        {
-            RoleManager.Instance.BroadcastSkillStart(Owner, start_notice);
-        }
-    }
-
-    /// <summary>
-    /// 每帧前置检查：角色缺失、离线或血量归零时按中断收尾，
-    /// 结束通知带中断标记，已扣 MP/CD 不退还。
-    /// </summary>
-    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
-    protected override void PreUpdate(int deltaMilliseconds)
-    {
-        if (IsFinished())
-        {
-            return;
-        }
-        if (CanKeepCasting())
-        {
-            return;
-        }
-        Stop(StateDefine.kStateDefault, null);
-    }
-
-    /// <summary>技能动作逐帧推进，到期后自然结束，由状态机把当前态切回默认态。</summary>
-    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
-    protected override void OnUpdate(int deltaMilliseconds)
-    {
-        if (!IsCasting())
-        {
-            Finish();
-            return;
-        }
-        if (!skill_.Update(deltaMilliseconds))
-        {
-            Finish();
-        }
-    }
-
-    /// <summary>自然结束：广播一次非中断结束通知，已扣 MP/CD 不退还。</summary>
-    protected override void OnFinished()
-    {
-        EndSkill(false);
-    }
-
-    /// <summary>被打断（移动、死亡、离线、销毁）：广播一次带中断标记的结束通知。</summary>
-    /// <param name="next">即将进入的状态。</param>
-    /// <param name="args">触发停止的事件。</param>
-    protected override void OnStop(StateDefine next, ROEvent args)
-    {
-        EndSkill(true);
-    }
 
     /// <summary>角色与角色数据可用且血量大于零时技能动作可以继续。</summary>
     private bool CanKeepCasting()
@@ -358,33 +397,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         return true;
     }
 
-    /// <summary>按已提交的权威数据建立唯一当前动作实例；本期仅释放表现，不执行命中伤害。</summary>
-    /// <param name="core">本次已装载的技能等级核心。</param>
-    /// <param name="skill_uuid">客户端本次施法 UUID。</param>
-    /// <param name="duration_ms">当前表现段占用动作的毫秒数。</param>
-    /// <param name="using_times">权威选定的零起始表现段下标。</param>
-    private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times)
-    {
-        // 向上取整为固定帧期限；零时长也留一帧，保持 Start 先于 End 的原顺序。
-        long end_tick = CalculateEndTick(GameGlobal.Instance.LogicTick, duration_ms);
-        if (end_tick == GameGlobal.Instance.LogicTick)
-        {
-            end_tick++;
-        }
-        skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
-        last_used_skill_effect_id_ = core.SkillEffectID();
-    }
-
     /// <summary>返回最近一次成功施法的等级效果 ID，尚未施法时为零。</summary>
     public int GetLastSkillEffectId() { return last_used_skill_effect_id_; }
-
-    /// <summary>写入单技能的剩余冷却，归零只影响该稳定技能，不结束动作。</summary>
-    /// <param name="skill_id">稳定技能主表 ID，同一技能的不同等级共用冷却。</param>
-    /// <param name="cool_down">剩余冷却毫秒数，零表示清除。</param>
-    public void SetSkillCoolDown(int skill_id, int cool_down)
-    {
-        skill_cd_[skill_id] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
-    }
 
     /// <summary>返回单技能当前剩余冷却毫秒数，已到期或没有记录时为零。</summary>
     /// <param name="skill_id">稳定技能主表 ID。</param>
@@ -397,17 +411,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             return (int)((end_tick - GameGlobal.Instance.LogicTick) * LogicFrameMilliseconds);
         }
         return 0;
-    }
-
-    /// <summary>写入一个已有公共组的剩余冷却，零号表示无公共组。</summary>
-    /// <param name="skill_cd_group">正数公共组 ID，零不登记。</param>
-    /// <param name="cool_down">本组剩余冷却，单位毫秒。</param>
-    public void SetSkillGroupCoolDown(int skill_cd_group, int cool_down)
-    {
-        if (skill_cd_group > 0)
-        {
-            skill_cd_group_cd_[skill_cd_group] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
-        }
     }
 
     /// <summary>返回当前公共组剩余冷却毫秒数，零号或到期时为零。</summary>
@@ -482,6 +485,116 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         return PrepareCast(skill_id, skill_uuid, out prepared, out result);
     }
 
+    /// <summary>本组件当前是否是状态机的活动状态，即推进是否已由状态机接管。</summary>
+    private bool IsDrivenByStateMachine()
+    {
+        // machine 是本角色的状态机；空表示角色未装配状态机，只能走兼容直调路径。
+        StateMachineComponent machine = GetStateMachine();
+        if (machine == null)
+        {
+            return false;
+        }
+        return ReferenceEquals(machine.GetCurrent(), this);
+    }
+
+    /// <summary>按 RO 六秒窗口推进成功使用次数，并返回当前动作列表的零起始下标。</summary>
+    /// <param name="skillId">角色已学习的稳定技能 ID，各技能独立计数。</param>
+    /// <param name="nowTick">本次成功施法的单调逻辑 Tick，每 Tick 为 50 毫秒。</param>
+    /// <param name="presentationCount">当前职业模型默认武器的动作数量，零表示无表现。</param>
+    /// <returns>首次或超过窗口为零，否则按动作数量循环。</returns>
+    private int CheckUsingTimes(int skillId, long nowTick, int presentationCount)
+    {
+        // 首次使用必须从零开始，不依赖服务器运行时间是否已经超过六秒。
+        int usingTimes = 0;
+        // 上次成功施法 Tick；没有记录时不会进入递增分支。
+        long lastUseTick;
+        if (last_use_time_.TryGetValue(skillId, out lastUseTick) &&
+            (nowTick - lastUseTick) * LogicFrameMilliseconds <= SkillComboMilliseconds &&
+            presentationCount > 0)
+        {
+            using_times_.TryGetValue(skillId, out usingTimes);
+            usingTimes = (usingTimes + 1) % presentationCount;
+        }
+        using_times_[skillId] = usingTimes;
+        last_use_time_[skillId] = nowTick;
+        return usingTimes;
+    }
+
+    /// <summary>收集当前职业模型默认武器的动作，按 VariantIndex 对齐客户端段数。</summary>
+    /// <param name="effectId">本次已学等级解析出的效果配置 ID。</param>
+    /// <returns>排序后的表现行快照，未配置时为空，不修改原配置集合。</returns>
+    private List<SkillPresentationInfo> FindPresentations(int effectId)
+    {
+        // 只读候选列表，行对象仍指向 Luban 原始配置。
+        List<SkillPresentationInfo> result = new List<SkillPresentationInfo>();
+        // 本项目尚未接入武器表现属性，与客户端一样使用默认武器零。
+        ProfessionInfo profession = LubanMgr.Instance.GetProfessionInfoById(
+            Owner.mainRoleInfo.BaseInfo.JobId);
+        if (profession == null)
+        {
+            return result;
+        }
+        // 职业表现表提供当前模型资源键。
+        PresentTable present = LubanMgr.Instance.GetPresentTableById(profession.PresentTableID);
+        // 技能表现配置的只读索引，缺表时保持无表现技能的原施法时长。
+        Dictionary<int, SkillPresentationInfo> presentations = LubanMgr.Instance.GetSkillPresentationInfos();
+        if (present == null || string.IsNullOrEmpty(present.Prefab) || presentations == null)
+        {
+            return result;
+        }
+        // 字典行快照供索引遍历，不复制或修改原始行内容。
+        List<SkillPresentationInfo> rows = new List<SkillPresentationInfo>(presentations.Values);
+        // 候选行下标，范围为零到表现行数量减一。
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 必须同时匹配效果、职业、模型和默认武器才参与该技能动作轮换。
+            SkillPresentationInfo row = rows[index];
+            // 行对象非空且效果、职业与目标配置一致后才继续比对表现字段。
+            bool baseMatch = row != null && row.EffectId == effectId && row.ProfessionId == profession.Id;
+            if (baseMatch)
+            {
+                // 模型前缀、默认武器类型与变体下标满足轮换条件。
+                bool presentationMatch = row.ModelKey == present.Prefab && row.WeaponType == 0 && row.VariantIndex >= 0;
+                if (presentationMatch)
+                {
+                    result.Add(row);
+                }
+            }
+        }
+        result.Sort(ComparePresentationOrder);
+        return result;
+    }
+
+    /// <summary>按配置动作变体顺序排序，使客户端与服务端使用相同的列表下标。</summary>
+    /// <param name="left">左侧候选表现配置。</param>
+    /// <param name="right">右侧候选表现配置。</param>
+    /// <returns>左行变体小于右行时返回负数，相同时为零。</returns>
+    private static int ComparePresentationOrder(SkillPresentationInfo left, SkillPresentationInfo right)
+    {
+        return left.VariantIndex.CompareTo(right.VariantIndex);
+    }
+
+    /// <summary>把毫秒持续时间向上取整为服务端逻辑帧截止 Tick。</summary>
+    /// <param name="nowTick">开始时的单调逻辑 Tick。</param>
+    /// <param name="durationMilliseconds">非负持续时间，单位毫秒。</param>
+    /// <returns>可再次释放或结束施法的逻辑 Tick。</returns>
+    private static long CalculateEndTick(long nowTick, int durationMilliseconds)
+    {
+        // 向上取整可避免不足 50ms 的 CD 被错误当作零帧。
+        long durationTicks = ((long)durationMilliseconds + LogicFrameMilliseconds - 1L) /
+            LogicFrameMilliseconds;
+        return nowTick + durationTicks;
+    }
+
+    /// <summary>读取在线角色的权威内存 MP，不把客户端上报值作为来源。</summary>
+    /// <returns>当前非负法力值；角色快照尚未就绪时为零。</returns>
+    private int GetCurrentMp()
+    {
+        return SkillCastReply.ReadMp(Owner);
+    }
+    #endregion
+
+    #region 施法准备、执行与冷却
     /// <summary>
     /// 非提交校验：把一次施法请求的全部拒绝条件走完，但不扣 MP、不写冷却、不建立动作实例。
     /// 客户端入口与技能态进入前共用这一份判定，不另建第二套通用校验层。
@@ -583,6 +696,62 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         prepared.core_ = core;
         prepared.effect_ = effect;
         return true;
+    }
+    /// <summary>返回当前正在占用动作的技能实例，结束后为空。</summary>
+    public ROSkill CurrentSkill() { return skill_; }
+
+    /// <summary>
+    /// 每帧前置检查：角色缺失、离线或血量归零时按中断收尾，
+    /// 结束通知带中断标记，已扣 MP/CD 不退还。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    protected override void PreUpdate(int deltaMilliseconds)
+    {
+        if (IsFinished())
+        {
+            return;
+        }
+        if (CanKeepCasting())
+        {
+            return;
+        }
+        Stop(StateDefine.kStateDefault, null);
+    }
+
+    /// <summary>按已提交的权威数据建立唯一当前动作实例；本期仅释放表现，不执行命中伤害。</summary>
+    /// <param name="core">本次已装载的技能等级核心。</param>
+    /// <param name="skill_uuid">客户端本次施法 UUID。</param>
+    /// <param name="duration_ms">当前表现段占用动作的毫秒数。</param>
+    /// <param name="using_times">权威选定的零起始表现段下标。</param>
+    private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times)
+    {
+        // 向上取整为固定帧期限；零时长也留一帧，保持 Start 先于 End 的原顺序。
+        long end_tick = CalculateEndTick(GameGlobal.Instance.LogicTick, duration_ms);
+        if (end_tick == GameGlobal.Instance.LogicTick)
+        {
+            end_tick++;
+        }
+        skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
+        last_used_skill_effect_id_ = core.SkillEffectID();
+    }
+
+    /// <summary>写入单技能的剩余冷却，归零只影响该稳定技能，不结束动作。</summary>
+    /// <param name="skill_id">稳定技能主表 ID，同一技能的不同等级共用冷却。</param>
+    /// <param name="cool_down">剩余冷却毫秒数，零表示清除。</param>
+    public void SetSkillCoolDown(int skill_id, int cool_down)
+    {
+        skill_cd_[skill_id] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
+    }
+
+    /// <summary>写入一个已有公共组的剩余冷却，零号表示无公共组。</summary>
+    /// <param name="skill_cd_group">正数公共组 ID，零不登记。</param>
+    /// <param name="cool_down">本组剩余冷却，单位毫秒。</param>
+    public void SetSkillGroupCoolDown(int skill_cd_group, int cool_down)
+    {
+        if (skill_cd_group > 0)
+        {
+            skill_cd_group_cd_[skill_cd_group] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
+        }
     }
 
     /// <summary>
@@ -689,57 +858,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         return true;
     }
 
-    /// <summary>
-    /// 组件容器每帧调用。技能态是状态机当前状态时，动作推进统一由 StateMachineComponent.StateUpdate 驱动，
-    /// 这里必须直接返回，否则同一逻辑帧会推进两次动作。
-    /// 冷却不在这里推进：单技能冷却与公共组冷却都记在单调逻辑 Tick 上，由全局 Tick 决定何时到期，
-    /// 本方法只承担未进入状态机的兼容直调路径。
-    /// </summary>
-    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，当前结束判断使用全局 Tick。</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        if (IsDrivenByStateMachine())
-        {
-            return;
-        }
-        if (!IsCasting())
-        {
-            return;
-        }
-        // 归属角色、主角色信息、血量或在线状态不满足时停止当前动作。
-        if (!CanKeepCasting())
-        {
-            StopAll();
-            return;
-        }
-        OnSkillActionUpdate(deltaMilliseconds);
-    }
-
-    /// <summary>本组件当前是否是状态机的活动状态，即推进是否已由状态机接管。</summary>
-    private bool IsDrivenByStateMachine()
-    {
-        // machine 是本角色的状态机；空表示角色未装配状态机，只能走兼容直调路径。
-        StateMachineComponent machine = GetStateMachine();
-        if (machine == null)
-        {
-            return false;
-        }
-        return ReferenceEquals(machine.GetCurrent(), this);
-    }
-
-    /// <summary>
-    /// 对应 RO 当前技能动作推进；自然到期通过同一 SkillCease 收尾。
-    /// 仅用于未进入状态机的兼容直调路径，避免与 ActionStateComponent 的每帧状态钩子重复推进。
-    /// </summary>
-    /// <param name="delta_time">固定逻辑帧的毫秒跨度。</param>
-    protected void OnSkillActionUpdate(int delta_time)
-    {
-        if (!skill_.Update(delta_time))
-        {
-            SkillCease(skill_);
-        }
-    }
-
     /// <summary>保留原离线、切图和网络调用接口，结束逻辑统一交给 RO EndSkill。</summary>
     /// <param name="interrupted">非自然结束为 true，已扣 MP/CD 不退还。</param>
     public void InterruptActiveCast(bool interrupted) { EndSkill(interrupted); }
@@ -781,19 +899,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <summary>对应 RO 死亡与离线的停止入口，终止当前动作并保留已经提交的 MP/CD。</summary>
     public void StopAll() { EndSkill(true); }
 
-    /// <summary>释放在线角色专属缓存；离线重连后的 CD 不从数据库恢复。</summary>
-    public override void Dispose()
-    {
-        InterruptActiveCast(true);
-        skill_cd_.Clear();
-        skill_cd_group_cd_.Clear();
-        using_times_.Clear();
-        last_use_time_.Clear();
-        skill_core_list_.Clear();
-        last_used_skill_effect_id_ = 0;
-        base.Dispose();
-    }
-
     /// <summary>生成本次施法的拒绝结果，不保存跨施法历史状态。</summary>
     /// <param name="result">待填写结果码的权威响应。</param>
     /// <param name="code">具体业务拒绝原因。</param>
@@ -802,83 +907,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     {
         result.CmdCode = code;
         return false;
-    }
-
-    /// <summary>按 RO 六秒窗口推进成功使用次数，并返回当前动作列表的零起始下标。</summary>
-    /// <param name="skillId">角色已学习的稳定技能 ID，各技能独立计数。</param>
-    /// <param name="nowTick">本次成功施法的单调逻辑 Tick，每 Tick 为 50 毫秒。</param>
-    /// <param name="presentationCount">当前职业模型默认武器的动作数量，零表示无表现。</param>
-    /// <returns>首次或超过窗口为零，否则按动作数量循环。</returns>
-    private int CheckUsingTimes(int skillId, long nowTick, int presentationCount)
-    {
-        // 首次使用必须从零开始，不依赖服务器运行时间是否已经超过六秒。
-        int usingTimes = 0;
-        // 上次成功施法 Tick；没有记录时不会进入递增分支。
-        long lastUseTick;
-        if (last_use_time_.TryGetValue(skillId, out lastUseTick) &&
-            (nowTick - lastUseTick) * LogicFrameMilliseconds <= SkillComboMilliseconds &&
-            presentationCount > 0)
-        {
-            using_times_.TryGetValue(skillId, out usingTimes);
-            usingTimes = (usingTimes + 1) % presentationCount;
-        }
-        using_times_[skillId] = usingTimes;
-        last_use_time_[skillId] = nowTick;
-        return usingTimes;
-    }
-
-    /// <summary>收集当前职业模型默认武器的动作，按 VariantIndex 对齐客户端段数。</summary>
-    /// <param name="effectId">本次已学等级解析出的效果配置 ID。</param>
-    /// <returns>排序后的表现行快照，未配置时为空，不修改原配置集合。</returns>
-    private List<SkillPresentationInfo> FindPresentations(int effectId)
-    {
-        // 只读候选列表，行对象仍指向 Luban 原始配置。
-        List<SkillPresentationInfo> result = new List<SkillPresentationInfo>();
-        // 本项目尚未接入武器表现属性，与客户端一样使用默认武器零。
-        ProfessionInfo profession = LubanMgr.Instance.GetProfessionInfoById(
-            Owner.mainRoleInfo.BaseInfo.JobId);
-        if (profession == null)
-        {
-            return result;
-        }
-        // 职业表现表提供当前模型资源键。
-        PresentTable present = LubanMgr.Instance.GetPresentTableById(profession.PresentTableID);
-        // 技能表现配置的只读索引，缺表时保持无表现技能的原施法时长。
-        Dictionary<int, SkillPresentationInfo> presentations = LubanMgr.Instance.GetSkillPresentationInfos();
-        if (present == null || string.IsNullOrEmpty(present.Prefab) || presentations == null)
-        {
-            return result;
-        }
-        // 字典行快照供索引遍历，不复制或修改原始行内容。
-        List<SkillPresentationInfo> rows = new List<SkillPresentationInfo>(presentations.Values);
-        // 候选行下标，范围为零到表现行数量减一。
-        for (int index = 0; index < rows.Count; index++)
-        {
-            // 必须同时匹配效果、职业、模型和默认武器才参与该技能动作轮换。
-            SkillPresentationInfo row = rows[index];
-            // 行对象非空且效果、职业与目标配置一致后才继续比对表现字段。
-            bool baseMatch = row != null && row.EffectId == effectId && row.ProfessionId == profession.Id;
-            if (baseMatch)
-            {
-                // 模型前缀、默认武器类型与变体下标满足轮换条件。
-                bool presentationMatch = row.ModelKey == present.Prefab && row.WeaponType == 0 && row.VariantIndex >= 0;
-                if (presentationMatch)
-                {
-                    result.Add(row);
-                }
-            }
-        }
-        result.Sort(ComparePresentationOrder);
-        return result;
-    }
-
-    /// <summary>按配置动作变体顺序排序，使客户端与服务端使用相同的列表下标。</summary>
-    /// <param name="left">左侧候选表现配置。</param>
-    /// <param name="right">右侧候选表现配置。</param>
-    /// <returns>左行变体小于右行时返回负数，相同时为零。</returns>
-    private static int ComparePresentationOrder(SkillPresentationInfo left, SkillPresentationInfo right)
-    {
-        return left.VariantIndex.CompareTo(right.VariantIndex);
     }
 
     /// <summary>按角色技能和公共组的剩余逻辑 Tick 生成 UTC 毫秒结束时间。</summary>
@@ -903,23 +931,5 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             result.GroupCooldownEndUnixMs = serverUnixMilliseconds + group_cool_down;
         }
     }
-
-    /// <summary>把毫秒持续时间向上取整为服务端逻辑帧截止 Tick。</summary>
-    /// <param name="nowTick">开始时的单调逻辑 Tick。</param>
-    /// <param name="durationMilliseconds">非负持续时间，单位毫秒。</param>
-    /// <returns>可再次释放或结束施法的逻辑 Tick。</returns>
-    private static long CalculateEndTick(long nowTick, int durationMilliseconds)
-    {
-        // 向上取整可避免不足 50ms 的 CD 被错误当作零帧。
-        long durationTicks = ((long)durationMilliseconds + LogicFrameMilliseconds - 1L) /
-            LogicFrameMilliseconds;
-        return nowTick + durationTicks;
-    }
-
-    /// <summary>读取在线角色的权威内存 MP，不把客户端上报值作为来源。</summary>
-    /// <returns>当前非负法力值；角色快照尚未就绪时为零。</returns>
-    private int GetCurrentMp()
-    {
-        return SkillCastReply.ReadMp(Owner);
-    }
+    #endregion
 }

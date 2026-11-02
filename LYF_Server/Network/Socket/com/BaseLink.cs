@@ -6,13 +6,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-
 /// <summary>
 /// 连接基类（对齐 RO 的 BaseLink）：对外只保留两个协议公共入口——发送用 Send、接收用 OnRecv。
 /// TCP 按 2 字节长度帧拆包与 KCP 重组后的完整消息都进入同一处解析派发，负责 ProtoBuf 反序列化与发送封包。
 /// </summary>
 public class BaseLink
 {
+
+    #region 字段
     /// <summary>本连接的客户端类型，决定消息如何分发。</summary>
     public ClientType _clientType;
 
@@ -24,9 +25,12 @@ public class BaseLink
 
     // TCP 单次接收可能只有 4KB，保留半包并支持协议允许的最大帧。
     private const int FrameHeaderSize = 2;
+
     private const int MaxFrameLength = ushort.MaxValue;
+
     /// <summary>接收累积缓存，长度为帧头 + 最大帧。</summary>
     private readonly byte[] _buffer = new byte[FrameHeaderSize + MaxFrameLength];
+
     /// <summary>缓存中当前已累积的字节数。</summary>
     private int _receiveLength;
 
@@ -44,28 +48,9 @@ public class BaseLink
 
     /// <summary>本连接所属的上游连接器引用，可为 null。</summary>
     public NetClient _client;
+    #endregion
 
-    /// <summary>
-    /// 开始接收服务端发来的数据
-    /// </summary>
-    protected void BeginReceive()
-    {
-        if (_socket == null)
-        {
-            return;
-        }
-
-        int availableLength = _buffer.Length - _receiveLength;
-        if (availableLength <= 0)
-        {
-            Disconnect();
-            LogMsg.Info("网络接收缓存已满，丢弃异常连接", LogMsgType.Error);
-            return;
-        }
-
-        _socket.BeginReceive(_buffer, _receiveLength, availableLength, SocketFlags.None, OnReceiveCB, null);
-    }
-
+    #region 事件回调
     /// <summary>
     /// 处理服务端发来的数据
     /// </summary>
@@ -104,45 +89,6 @@ public class BaseLink
         }
     }
 
-    /// <summary>从累积缓存中提取完整帧，半包保留到下一次 Socket 接收。</summary>
-    private void ProcessReceiveBuffer()
-    {
-        int parseOffset = 0;
-        while (_receiveLength - parseOffset >= FrameHeaderSize)
-        {
-            ushort messageLength = BitConverter.ToUInt16(_buffer, parseOffset);
-            if (messageLength < 3)
-            {
-                throw new InvalidOperationException("网络消息长度小于协议头和校验字段。");
-            }
-
-            int frameLength = FrameHeaderSize + messageLength;
-            if (_receiveLength - parseOffset < frameLength)
-            {
-                break;
-            }
-
-            // 交由 NetUtils 校验帧头、CRC 并解压出的协议包字节；为空说明本帧无效，跳过。
-            byte[] data = NetUtils.Instance.ParseData(_buffer, messageLength, parseOffset);
-            if (data != null)
-            {
-                // TCP 与 KCP 共用同一解析派发入口；TCP 不改写包内原有会话字段。
-                OnRecv(data);
-            }
-            parseOffset += frameLength;
-        }
-
-        if (parseOffset > 0)
-        {
-            int remainingLength = _receiveLength - parseOffset;
-            if (remainingLength > 0)
-            {
-                Buffer.BlockCopy(_buffer, parseOffset, _buffer, 0, remainingLength);
-            }
-            _receiveLength = remainingLength;
-        }
-    }
-
     /// <summary>
     /// 协议接收公共入口（对齐 RO 的 BaseLink::OnRecv）：把一条完整消息反序列化后交给 HandleCommand。
     /// TCP 拆帧与 KCP 重组都汇入此处，同一条消息只解析一次。
@@ -169,24 +115,9 @@ public class BaseLink
     {
 
     }
+    #endregion
 
-    /// <summary>断开连接并清理 Socket 与缓存。</summary>
-    public virtual void Disconnect()
-    {
-
-        _connState = ConnState.Disconnected;
-
-        if (_socket != null)
-        {
-            _socket.Close();
-            _socket = null;
-        }
-
-        _receiveLength = 0;
-
-    }
-
-
+    #region 网络请求与消息
     /// <summary>
     /// 发送一条协议包（对齐 RO 的 BaseLink::Send）。先按实时分流决定是否交给 KCP，
     /// 未接管时按原单次 TCP 帧写出，不增加确认、重试或发送队列。
@@ -258,45 +189,6 @@ public class BaseLink
     }
 
     /// <summary>
-    /// 传输分流钩子：子类在具备实时通道时接管发送。
-    /// 返回值必须区分“未启用”与“启用后失效”，后者不允许回退 TCP。
-    /// </summary>
-    /// <param name="basePackage">已填好协议号与载荷的协议包。</param>
-    /// <param name="payload">BasePackage 序列化字节，供 KCP 直接承载。</param>
-    /// <returns>实时通道发送结果；默认未接管，沿用 TCP。</returns>
-    protected virtual RealtimeSendResult TrySendRealtime(BasePackage basePackage, byte[] payload)
-    {
-        return RealtimeSendResult.KeepTcp;
-    }
-
-    /// <summary>
-    /// 生成发送日志正文。绑定协议携带认证密钥，日志只记录结果码与会话号，绝不输出载荷内容。
-    /// </summary>
-    /// <param name="basePackage">待发送的协议包。</param>
-    /// <returns>可安全写入日志的描述文本。</returns>
-    private static string DescribeSend(BasePackage basePackage)
-    {
-        if (basePackage.ProtoCode != NetDefine.CMD_KcpBindCode)
-        {
-            return basePackage.ToString();
-        }
-        if (basePackage.Data == null)
-        {
-            return "KCP 绑定响应::无载荷，令牌已省略";
-        }
-        // 由绑定响应数据解码出的载荷，用于只记录结果码与会话号。
-        KcpBindPayload payload = KcpBindPayload.Decode(basePackage.Data.ToByteArray());
-        if (payload == null)
-        {
-            return "KCP 绑定响应::载荷长度不合法，令牌已省略";
-        }
-        // conv 只是查表用的会话号，不是凭据；令牌与整体载荷一律不写日志。
-        return "KCP 绑定响应::result=" + (byte)payload.Result + " conv=" + payload.Conv +
-            " 令牌已省略";
-    }
-
-
-    /// <summary>
     /// 按协议号与载荷发送，封包不携带显式会话字段。
     /// </summary>
     /// <param name="protoCode">协议号。</param>
@@ -339,6 +231,122 @@ public class BaseLink
         };
         Send(basePackage, NetDefine.CMD_ErrCode, errMsg.ToByteString());
     }
+    #endregion
 
+    /// <summary>
+    /// 传输分流钩子：子类在具备实时通道时接管发送。
+    /// 返回值必须区分“未启用”与“启用后失效”，后者不允许回退 TCP。
+    /// </summary>
+    /// <param name="basePackage">已填好协议号与载荷的协议包。</param>
+    /// <param name="payload">BasePackage 序列化字节，供 KCP 直接承载。</param>
+    /// <returns>实时通道发送结果；默认未接管，沿用 TCP。</returns>
+    protected virtual RealtimeSendResult TrySendRealtime(BasePackage basePackage, byte[] payload)
+    {
+        return RealtimeSendResult.KeepTcp;
+    }
+
+    #region 核心逻辑
+    /// <summary>
+    /// 开始接收服务端发来的数据
+    /// </summary>
+    protected void BeginReceive()
+    {
+        if (_socket == null)
+        {
+            return;
+        }
+
+        int availableLength = _buffer.Length - _receiveLength;
+        if (availableLength <= 0)
+        {
+            Disconnect();
+            LogMsg.Info("网络接收缓存已满，丢弃异常连接", LogMsgType.Error);
+            return;
+        }
+
+        _socket.BeginReceive(_buffer, _receiveLength, availableLength, SocketFlags.None, OnReceiveCB, null);
+    }
+
+    /// <summary>从累积缓存中提取完整帧，半包保留到下一次 Socket 接收。</summary>
+    private void ProcessReceiveBuffer()
+    {
+        int parseOffset = 0;
+        while (_receiveLength - parseOffset >= FrameHeaderSize)
+        {
+            ushort messageLength = BitConverter.ToUInt16(_buffer, parseOffset);
+            if (messageLength < 3)
+            {
+                throw new InvalidOperationException("网络消息长度小于协议头和校验字段。");
+            }
+
+            int frameLength = FrameHeaderSize + messageLength;
+            if (_receiveLength - parseOffset < frameLength)
+            {
+                break;
+            }
+
+            // 交由 NetUtils 校验帧头、CRC 并解压出的协议包字节；为空说明本帧无效，跳过。
+            byte[] data = NetUtils.Instance.ParseData(_buffer, messageLength, parseOffset);
+            if (data != null)
+            {
+                // TCP 与 KCP 共用同一解析派发入口；TCP 不改写包内原有会话字段。
+                OnRecv(data);
+            }
+            parseOffset += frameLength;
+        }
+
+        if (parseOffset > 0)
+        {
+            int remainingLength = _receiveLength - parseOffset;
+            if (remainingLength > 0)
+            {
+                Buffer.BlockCopy(_buffer, parseOffset, _buffer, 0, remainingLength);
+            }
+            _receiveLength = remainingLength;
+        }
+    }
+
+    /// <summary>断开连接并清理 Socket 与缓存。</summary>
+    public virtual void Disconnect()
+    {
+
+        _connState = ConnState.Disconnected;
+
+        if (_socket != null)
+        {
+            _socket.Close();
+            _socket = null;
+        }
+
+        _receiveLength = 0;
+
+    }
+
+    /// <summary>
+    /// 生成发送日志正文。绑定协议携带认证密钥，日志只记录结果码与会话号，绝不输出载荷内容。
+    /// </summary>
+    /// <param name="basePackage">待发送的协议包。</param>
+    /// <returns>可安全写入日志的描述文本。</returns>
+    private static string DescribeSend(BasePackage basePackage)
+    {
+        if (basePackage.ProtoCode != NetDefine.CMD_KcpBindCode)
+        {
+            return basePackage.ToString();
+        }
+        if (basePackage.Data == null)
+        {
+            return "KCP 绑定响应::无载荷，令牌已省略";
+        }
+        // 由绑定响应数据解码出的载荷，用于只记录结果码与会话号。
+        KcpBindPayload payload = KcpBindPayload.Decode(basePackage.Data.ToByteArray());
+        if (payload == null)
+        {
+            return "KCP 绑定响应::载荷长度不合法，令牌已省略";
+        }
+        // conv 只是查表用的会话号，不是凭据；令牌与整体载荷一律不写日志。
+        return "KCP 绑定响应::result=" + (byte)payload.Result + " conv=" + payload.Conv +
+            " 令牌已省略";
+    }
+    #endregion
 
 }

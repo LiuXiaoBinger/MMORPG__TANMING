@@ -6,9 +6,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class EntityComponentMarker : EntityComponentBase
 {
-    /// <summary>占位组件对外声明的类型标识。</summary>
-    private readonly EntityComponentType _componentType;
 
+    #region 构造与事件注册与注销
     /// <summary>构造占位组件。</summary>
     /// <param name="owner">宿主实体。</param>
     /// <param name="componentType">对外声明的组件类型。</param>
@@ -16,17 +15,6 @@ public sealed class EntityComponentMarker : EntityComponentBase
         : base(owner)
     {
         _componentType = componentType;
-    }
-
-    /// <summary>组件类型标识，由构造时传入。</summary>
-    public override EntityComponentType ComponentType
-    {
-        get { return _componentType; }
-    }
-
-    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
-    public override void Attached()
-    {
     }
 
     protected override void EventSubscribe()
@@ -37,5 +25,20 @@ public sealed class EntityComponentMarker : EntityComponentBase
     protected override void EventUnsubscribe()
     {
         
+    }
+    #endregion
+
+    /// <summary>占位组件对外声明的类型标识。</summary>
+    private readonly EntityComponentType _componentType;
+
+    /// <summary>组件类型标识，由构造时传入。</summary>
+    public override EntityComponentType ComponentType
+    {
+        get { return _componentType; }
+    }
+
+    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
+    public override void Attached()
+    {
     }
 }

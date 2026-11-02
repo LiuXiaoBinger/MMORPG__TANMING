@@ -7,18 +7,24 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MActionStateContainer
 {
+
+    #region 字段与属性
     /// <summary>按状态枚举索引的主字典，用于状态机按 StateDefine 直接查找。</summary>
     private readonly Dictionary<StateDefine, MActionComponent> _states =
         new Dictionary<StateDefine, MActionComponent>();
+
     /// <summary>按 (StateDefine, EntityType) 复合键索引的辅助字典，支持按实体类型细分状态。</summary>
     private readonly Dictionary<ActionStateKey, MActionComponent> _keyStates =
         new Dictionary<ActionStateKey, MActionComponent>();
+
     /// <summary>按注册顺序排列的状态列表，用于 Clear 时逆序回收。</summary>
     private readonly List<MActionComponent> _ordered = new List<MActionComponent>();
 
     /// <summary>已注册状态总数。</summary>
     public int Count { get { return _ordered.Count; } }
+    #endregion
 
+    #region 初始化与事件注册
     /// <summary>注册一个动作状态到主字典、复合键字典和顺序列表。</summary>
     /// <param name="state">要注册的动作状态实例。</param>
     /// <returns>注册成功返回 true，参数为空或同 StateDefine 已注册返回 false。</returns>
@@ -41,6 +47,16 @@ public sealed class MActionStateContainer
         return true;
     }
 
+    /// <summary>仅清空内部索引，不回收动作状态实例（用于外部已自行管理生命周期的场景）。</summary>
+    public void Reset()
+    {
+        _ordered.Clear();
+        _states.Clear();
+        _keyStates.Clear();
+    }
+    #endregion
+
+    #region 查询与判定
     /// <summary>按状态枚举尝试获取动作状态。</summary>
     /// <param name="state">目标状态枚举。</param>
     /// <param name="component">输出参数，成功时为动作状态实例。</param>
@@ -71,6 +87,7 @@ public sealed class MActionStateContainer
     {
         return _keyStates.TryGetValue(key, out component);
     }
+    #endregion
 
     /// <summary>逆序释放全部已注册动作状态到动作池，并清空三套索引。</summary>
     /// <param name="owner">宿主实体，用于回收时的上下文（当前未直接使用）。</param>
@@ -81,14 +98,6 @@ public sealed class MActionStateContainer
         {
             MComponentMgr.Instance.ReleaseActionState(_ordered[index]);
         }
-        _ordered.Clear();
-        _states.Clear();
-        _keyStates.Clear();
-    }
-
-    /// <summary>仅清空内部索引，不回收动作状态实例（用于外部已自行管理生命周期的场景）。</summary>
-    public void Reset()
-    {
         _ordered.Clear();
         _states.Clear();
         _keyStates.Clear();

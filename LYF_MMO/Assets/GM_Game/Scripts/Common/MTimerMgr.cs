@@ -4,6 +4,8 @@ using UnityEngine;
 /// <summary>客户端主线程时间轴计时器，保留 RO 接口名称与毫秒时钟，使用强类型技能参数。</summary>
 public sealed class MTimerMgr
 {
+
+    #region 字段与属性
     /// <summary>全局唯一计时器，由 Global 每帧推进一次，不按角色或技能数量重复推进。</summary>
     public static readonly MTimerMgr singleton = new MTimerMgr();
 
@@ -32,7 +34,9 @@ public sealed class MTimerMgr
 
     /// <summary>管理器运行累计毫秒数，初始化后从零开始。</summary>
     public long ElapsedTime { get { return _elapsedTime; } }
+    #endregion
 
+    #region 构造与初始化
     /// <summary>只允许创建 singleton 时构造管理器，避免角色或技能另建时钟产生重复推进。</summary>
     private MTimerMgr()
     {
@@ -76,7 +80,40 @@ public sealed class MTimerMgr
         IsPause = false;
         return true;
     }
+    #endregion
 
+    /// <summary>生成未被在用条目占据的非零票据，包含 uint 回绕保护。</summary>
+    /// <returns>可用于取消和查询的新票据。</returns>
+    private uint CreateToken()
+    {
+        do
+        {
+            unchecked { _token++; }
+            if (_token == 0)
+            {
+                _token = 1;
+            }
+        } while (FindTimer(_token) >= 0);
+        return _token;
+    }
+
+    /// <summary>按票据定位仍待触发的条目，不接收零秒同步回调票据。</summary>
+    /// <param name="token">要查询或取消的非零票据。</param>
+    /// <returns>列表中的零起始位置；不存在时返回 -1。</returns>
+    private int FindTimer(uint token)
+    {
+        // index 按稳定列表次序查找，取消不触发任何回调。
+        for (int index = 0; index < _timers.Count; index++)
+        {
+            if (_timers[index].Token == token)
+            {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    #region 核心逻辑
     /// <summary>客户端退出时解除全部技能委托与载荷引用并暂停。</summary>
     public void Uninit()
     {
@@ -125,37 +162,6 @@ public sealed class MTimerMgr
         return timer.Token;
     }
 
-    /// <summary>生成未被在用条目占据的非零票据，包含 uint 回绕保护。</summary>
-    /// <returns>可用于取消和查询的新票据。</returns>
-    private uint CreateToken()
-    {
-        do
-        {
-            unchecked { _token++; }
-            if (_token == 0)
-            {
-                _token = 1;
-            }
-        } while (FindTimer(_token) >= 0);
-        return _token;
-    }
-
-    /// <summary>按票据定位仍待触发的条目，不接收零秒同步回调票据。</summary>
-    /// <param name="token">要查询或取消的非零票据。</param>
-    /// <returns>列表中的零起始位置；不存在时返回 -1。</returns>
-    private int FindTimer(uint token)
-    {
-        // index 按稳定列表次序查找，取消不触发任何回调。
-        for (int index = 0; index < _timers.Count; index++)
-        {
-            if (_timers[index].Token == token)
-            {
-                return index;
-            }
-        }
-        return -1;
-    }
-
     /// <summary>查询票据距离到期的剩余秒数，触发或取消后返回零。</summary>
     /// <param name="token">正延迟登记返回的票据。</param>
     /// <returns>尚未触发时的剩余秒数。</returns>
@@ -201,6 +207,7 @@ public sealed class MTimerMgr
     {
         _timers.Clear();
     }
+    #endregion
 
     /// <summary>待触发计时器，排序列表持有到触发或显式取消；同到期时刻保留注册顺序。</summary>
     private sealed class MTimer

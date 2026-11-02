@@ -9,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public class ShopMgr : Singleton<ShopMgr>
 {
+
+    #region 字段、事件与属性
     /// <summary>商城购买结果事件，参数依次为是否成功、商品编号和提示文本。</summary>
     public event Action<bool, int, string> PurchaseCompleted;
 
@@ -20,57 +22,88 @@ public class ShopMgr : Singleton<ShopMgr>
 
     /// <summary>发出当前购买请求时的连接代次。</summary>
     private long _pendingConnectionGeneration;
+    #endregion
 
-    /// <summary>返回当前是否存在有效的购买等待状态。</summary>
-    public bool IsPurchasePending()
-    {
-        return _isPurchasePending;
-    }
-
+    #region 初始化与购买提示
     /// <summary>商城数据由角色组件统一维护，此入口保留给网络模块。</summary>
     public void Init()
     {
     }
 
-    /// <summary>判断指定商品是否不限制购买次数。</summary>
-    public bool IsUnlimitedPurchase(int goodsId)
+    /// <summary>显示商城购买校验提示。</summary>
+    private static void ShowPurchaseTip(string message)
     {
-        cfg.CountInfo countInfo = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, goodsId);
-        return countInfo == null || countInfo.Limit <= 0;
+        if (TipsMgr.Instance != null)
+        {
+            TipsMgr.Instance.ShowSystemTips(message);
+        }
+    }
+    #endregion
+
+    #region 事件回调
+    /// <summary>解析购买结果状态并通知商城控制器，不读取购买物品数据。</summary>
+    public void HandleResponse(ByteString data)
+    {
+        long responseGeneration = SocketDispatcher.Instance.CurrentDispatchGeneration;
+        if (!_isPurchasePending || _pendingConnectionGeneration <= 0 ||
+            responseGeneration != _pendingConnectionGeneration)
+        {
+            // 协议没有请求号，只接受当前购买请求所在连接代次的回包。
+            Debug.LogWarning("丢弃无对应购买请求或连接代次不匹配的商城回包。");
+            return;
+        }
+
+        int goodsId = _pendingGoodsId;
+        // 当前购买请求的结果，后续根据业务错误码提示玩家。
+        BuyShopItemRes response = BuyShopItemRes.Parser.ParseFrom(data);
+
+        bool success = false;
+        string message = "商城购买结果无效";
+        if (response != null && response.Error != null)
+        {
+            success = response.Error.Code == CmdCode.Succeed;
+            message = response.Error.Message;
+            if (success)
+            {
+            }
+            if (string.IsNullOrEmpty(message))
+            {
+                if (success)
+                {
+                    message = "购买成功";
+                }
+                else
+                {
+                    message = "购买失败：" + response.Error.Code;
+                }
+            }
+        }
+
+        // 先清理在途状态，随后事件回调可以安全发起下一次购买。
+        ClearPendingRequest();
+
+        if (PurchaseCompleted != null)
+        {
+            PurchaseCompleted.Invoke(success, goodsId, message);
+        }
     }
 
-    /// <summary>获取指定商品当前剩余可购买次数。</summary>
-    public int GetRemainingPurchaseCount(int goodsId)
+    /// <summary>清理指定断开连接代次关联的商城状态。</summary>
+    public void HandleDisconnected(long connectionGeneration)
     {
-        cfg.CountInfo countInfo = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, goodsId);
-        if (countInfo == null || countInfo.Limit <= 0)
+        if (connectionGeneration <= 0)
         {
-            return int.MaxValue;
+            return;
         }
-        PlayerEntity localRole = GetLocalRole();
-        if (localRole == null)
+        if (_isPurchasePending && _pendingConnectionGeneration == connectionGeneration)
         {
-            return 0;
+            ClearPendingRequest();
         }
 
-        RoleCountComponent countComponent;
-        if (!localRole.TryGetComponent(out countComponent))
-        {
-            return 0;
-        }
-
-        long remainingCount = countComponent.GetLeftCount(RoleCountAction.ShopPurchase, goodsId);
-        if (remainingCount <= 0L)
-        {
-            return 0;
-        }
-        if (remainingCount > int.MaxValue)
-        {
-            return int.MaxValue;
-        }
-        return (int)remainingCount;
     }
+    #endregion
 
+    #region 购买请求发送与状态清理
     /// <summary>
     /// 发送购买请求。协议没有请求号，因此同一时间只允许一个请求在途。
     /// </summary>
@@ -144,65 +177,59 @@ public class ShopMgr : Singleton<ShopMgr>
         }
     }
 
-    /// <summary>解析购买结果状态并通知商城控制器，不读取购买物品数据。</summary>
-    public void HandleResponse(ByteString data)
+    /// <summary>清除当前购买等待状态。</summary>
+    private void ClearPendingRequest()
     {
-        long responseGeneration = SocketDispatcher.Instance.CurrentDispatchGeneration;
-        if (!_isPurchasePending || _pendingConnectionGeneration <= 0 ||
-            responseGeneration != _pendingConnectionGeneration)
-        {
-            // 协议没有请求号，只接受当前购买请求所在连接代次的回包。
-            Debug.LogWarning("丢弃无对应购买请求或连接代次不匹配的商城回包。");
-            return;
-        }
+        _isPurchasePending = false;
+        _pendingGoodsId = 0;
+        _pendingConnectionGeneration = 0;
+    }
+    #endregion
 
-        int goodsId = _pendingGoodsId;
-        // 当前购买请求的结果，后续根据业务错误码提示玩家。
-        BuyShopItemRes response = BuyShopItemRes.Parser.ParseFrom(data);
-
-        bool success = false;
-        string message = "商城购买结果无效";
-        if (response != null && response.Error != null)
-        {
-            success = response.Error.Code == CmdCode.Succeed;
-            message = response.Error.Message;
-            if (success)
-            {
-            }
-            if (string.IsNullOrEmpty(message))
-            {
-                if (success)
-                {
-                    message = "购买成功";
-                }
-                else
-                {
-                    message = "购买失败：" + response.Error.Code;
-                }
-            }
-        }
-
-        // 先清理在途状态，随后事件回调可以安全发起下一次购买。
-        ClearPendingRequest();
-
-        if (PurchaseCompleted != null)
-        {
-            PurchaseCompleted.Invoke(success, goodsId, message);
-        }
+    #region 查询与判定
+    /// <summary>返回当前是否存在有效的购买等待状态。</summary>
+    public bool IsPurchasePending()
+    {
+        return _isPurchasePending;
     }
 
-    /// <summary>清理指定断开连接代次关联的商城状态。</summary>
-    public void HandleDisconnected(long connectionGeneration)
+    /// <summary>判断指定商品是否不限制购买次数。</summary>
+    public bool IsUnlimitedPurchase(int goodsId)
     {
-        if (connectionGeneration <= 0)
+        cfg.CountInfo countInfo = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, goodsId);
+        return countInfo == null || countInfo.Limit <= 0;
+    }
+
+    /// <summary>获取指定商品当前剩余可购买次数。</summary>
+    public int GetRemainingPurchaseCount(int goodsId)
+    {
+        cfg.CountInfo countInfo = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, goodsId);
+        if (countInfo == null || countInfo.Limit <= 0)
         {
-            return;
+            return int.MaxValue;
         }
-        if (_isPurchasePending && _pendingConnectionGeneration == connectionGeneration)
+        PlayerEntity localRole = GetLocalRole();
+        if (localRole == null)
         {
-            ClearPendingRequest();
+            return 0;
         }
 
+        RoleCountComponent countComponent;
+        if (!localRole.TryGetComponent(out countComponent))
+        {
+            return 0;
+        }
+
+        long remainingCount = countComponent.GetLeftCount(RoleCountAction.ShopPurchase, goodsId);
+        if (remainingCount <= 0L)
+        {
+            return 0;
+        }
+        if (remainingCount > int.MaxValue)
+        {
+            return int.MaxValue;
+        }
+        return (int)remainingCount;
     }
 
     /// <summary>获取当前登录角色，避免商城管理器自行缓存角色数据。</summary>
@@ -271,21 +298,6 @@ public class ShopMgr : Singleton<ShopMgr>
         }
         return true;
     }
+    #endregion
 
-    /// <summary>显示商城购买校验提示。</summary>
-    private static void ShowPurchaseTip(string message)
-    {
-        if (TipsMgr.Instance != null)
-        {
-            TipsMgr.Instance.ShowSystemTips(message);
-        }
-    }
-
-    /// <summary>清除当前购买等待状态。</summary>
-    private void ClearPendingRequest()
-    {
-        _isPurchasePending = false;
-        _pendingGoodsId = 0;
-        _pendingConnectionGeneration = 0;
-    }
 }

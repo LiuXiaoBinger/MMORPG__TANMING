@@ -5,6 +5,8 @@ using YooAsset;
 /// <summary>沿RO模型声音组件持有三维声音实例；普通动作按编辑声音轨道播放，不依赖技能协议。</summary>
 public sealed class SoundComponent
 {
+
+    #region 字段
     /// <summary>MJS普通动作导出资产的固定资源地址。</summary>
     private const string LocomotionLocation = "Assets/GM_Game/Scripts/Data/Skill/Runtime/SkillRuntimeLocomotionConfig_MJS.asset";
 
@@ -31,7 +33,9 @@ public sealed class SoundComponent
 
     /// <summary>当前动作是否已经播放，首次动作从零开始消费声音。</summary>
     private bool _hasAction;
+    #endregion
 
+    #region 生命周期
     /// <summary>从实际播放剪辑的时钟派发普通动作音效；技能动画不匹配这些配置。</summary>
     public void Update()
     {
@@ -95,6 +99,59 @@ public sealed class SoundComponent
         BeginLoad(_entry);
     }
 
+    /// <summary>动作和模型销毁时停止全部声音，归还共享普通动作配置。</summary>
+    public void Reset()
+    {
+        // index从尾部遍历所有并行声音，保证每个实例均停止后才解除资产依赖。
+        for (int index = _sources.Count - 1; index >= 0; index--)
+        {
+            StopSource(_sources[index]);
+        }
+        _sources.Clear();
+        ClearAction();
+        if (_entry != null)
+        {
+            _entry.Owners--;
+            if (_entry.Owners == 0)
+            {
+                if (ReferenceEquals(_sharedEntry, _entry))
+                {
+                    _sharedEntry = null;
+                }
+                if (_entry.Handle != null && _entry.Completed)
+                {
+                    _entry.Handle.Release();
+                    _entry.Handle = null;
+                }
+                _entry.Config = null;
+            }
+        }
+        _entry = null;
+        _host = null;
+    }
+    #endregion
+
+    /// <summary>按已安装剪辑完整路径匹配普通动作，避免通过名称猜测角色职业。</summary>
+    /// <param name="location">当前实际已就绪剪辑的资源地址。</param>
+    /// <returns>匹配的普通动作，没有匹配返回空。</returns>
+    private SkillRuntimeLocomotionAction ResolveAction(string location)
+    {
+        if (string.IsNullOrEmpty(location))
+        {
+            return null;
+        }
+        // 已加载的普通、战斗走跑与跳跃动作配置，路径必须与原角色表现表相同。
+        SkillRuntimeLocomotionConfig config = _entry.Config;
+        if (config.Walk != null && config.Walk.AnimationLocation == location) return config.Walk;
+        if (config.Run != null && config.Run.AnimationLocation == location) return config.Run;
+        if (config.BattleWalk != null && config.BattleWalk.AnimationLocation == location) return config.BattleWalk;
+        if (config.BattleRun != null && config.BattleRun.AnimationLocation == location) return config.BattleRun;
+        if (config.JumpStart != null && config.JumpStart.AnimationLocation == location) return config.JumpStart;
+        if (config.JumpEnd != null && config.JumpEnd.AnimationLocation == location) return config.JumpEnd;
+        return null;
+    }
+
+    #region 核心逻辑
     /// <summary>RO状态触发入口，用于移动中落地直接切回走跑时仍播放落地声音。</summary>
     /// <param name="stateName">本次物理动作状态，只支持Jump_End即时落地触发。</param>
     public void Play(string stateName)
@@ -136,37 +193,6 @@ public sealed class SoundComponent
                 PlayEvent(audioEvent);
             }
         }
-    }
-
-    /// <summary>动作和模型销毁时停止全部声音，归还共享普通动作配置。</summary>
-    public void Reset()
-    {
-        // index从尾部遍历所有并行声音，保证每个实例均停止后才解除资产依赖。
-        for (int index = _sources.Count - 1; index >= 0; index--)
-        {
-            StopSource(_sources[index]);
-        }
-        _sources.Clear();
-        ClearAction();
-        if (_entry != null)
-        {
-            _entry.Owners--;
-            if (_entry.Owners == 0)
-            {
-                if (ReferenceEquals(_sharedEntry, _entry))
-                {
-                    _sharedEntry = null;
-                }
-                if (_entry.Handle != null && _entry.Completed)
-                {
-                    _entry.Handle.Release();
-                    _entry.Handle = null;
-                }
-                _entry.Config = null;
-            }
-        }
-        _entry = null;
-        _host = null;
     }
 
     /// <summary>创建跟随模型的单次三维声源；调用方持有音频配置到实例停止。</summary>
@@ -265,26 +291,6 @@ public sealed class SoundComponent
         };
     }
 
-    /// <summary>按已安装剪辑完整路径匹配普通动作，避免通过名称猜测角色职业。</summary>
-    /// <param name="location">当前实际已就绪剪辑的资源地址。</param>
-    /// <returns>匹配的普通动作，没有匹配返回空。</returns>
-    private SkillRuntimeLocomotionAction ResolveAction(string location)
-    {
-        if (string.IsNullOrEmpty(location))
-        {
-            return null;
-        }
-        // 已加载的普通、战斗走跑与跳跃动作配置，路径必须与原角色表现表相同。
-        SkillRuntimeLocomotionConfig config = _entry.Config;
-        if (config.Walk != null && config.Walk.AnimationLocation == location) return config.Walk;
-        if (config.Run != null && config.Run.AnimationLocation == location) return config.Run;
-        if (config.BattleWalk != null && config.BattleWalk.AnimationLocation == location) return config.BattleWalk;
-        if (config.BattleRun != null && config.BattleRun.AnimationLocation == location) return config.BattleRun;
-        if (config.JumpStart != null && config.JumpStart.AnimationLocation == location) return config.JumpStart;
-        if (config.JumpEnd != null && config.JumpEnd.AnimationLocation == location) return config.JumpEnd;
-        return null;
-    }
-
     /// <summary>执行当前动作所有已到时刻事件，跨多帧仍保持同一轨道顺序。</summary>
     /// <param name="action">实际剪辑对应的普通动作配置。</param>
     /// <param name="seconds">本次动作时钟，单位秒。</param>
@@ -351,6 +357,7 @@ public sealed class SoundComponent
         _previousSeconds = 0f;
         _hasAction = false;
     }
+    #endregion
 
     /// <summary>普通动作加载记录的生命周期独立于模型，迟到回调只操作该记录。</summary>
     private sealed class LocomotionCacheEntry

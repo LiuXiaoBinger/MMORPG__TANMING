@@ -7,20 +7,39 @@ using System.Collections.Generic;
 /// </summary>
 public class RoItemContainer
 {
+
+    #region 字段与属性
     public const int InvalidItemPos = -1;
 
     // 按实例 UID 保存容器内物品；外部只能通过事务接口修改，避免绕过脏标记。
     private readonly Dictionary<long, ItemBase> _items = new Dictionary<long, ItemBase>();
+
     // 容器当前已开启的格子数，扩容由 RoItemComponent 统一校验。
     private int _containerSize;
 
-    /// <summary>返回只读物品视图；增删改必须经过 RoItemComponent 的事务入口。</summary>
-    public IReadOnlyDictionary<long, ItemBase> GetItemMap() { return _items; }
+    public KnapsackType ContainerType { get; private set; }
+
+    public OnlineRole Role { get; private set; }
+
+    /// <summary>只读物品视图，禁止业务模块直接写入容器字典。</summary>
+    public IReadOnlyDictionary<long, ItemBase> Items { get { return _items; } }
+
+    public int ContainerSize { get { return _containerSize; } }
+    #endregion
+
     public RoItemContainer(KnapsackType containerType, OnlineRole role)
     {
         ContainerType = containerType;
         Role = role;
     }
+
+    public virtual void OnEnterScene() { }
+
+    #region 事件回调
+    public virtual void OnSwapEnd() { }
+
+    public virtual void OnSyncLibs() { }
+    #endregion
 
     /// <summary>按背包类型创建对应容器。未覆盖的类型使用通用背包容器。</summary>
     public static RoItemContainer Create(KnapsackType type, OnlineRole role)
@@ -44,11 +63,9 @@ public class RoItemContainer
         }
     }
 
-    public KnapsackType ContainerType { get; private set; }
-    public OnlineRole Role { get; private set; }
-    /// <summary>只读物品视图，禁止业务模块直接写入容器字典。</summary>
-    public IReadOnlyDictionary<long, ItemBase> Items { get { return _items; } }
-    public int ContainerSize { get { return _containerSize; } }
+    #region 查询与判定
+    /// <summary>返回只读物品视图；增删改必须经过 RoItemComponent 的事务入口。</summary>
+    public IReadOnlyDictionary<long, ItemBase> GetItemMap() { return _items; }
 
     /// <summary>按位置查找物品实例索引；找不到时返回 0。</summary>
     public virtual long GetItemUIDByPos(int pos)
@@ -105,100 +122,9 @@ public class RoItemContainer
         return item != null && _items.ContainsKey(item.GetItemUID());
     }
 
-    /// <summary>将物品放入容器并更新容器类型和位置。</summary>
-    public virtual bool SwapIn(ItemBase item, int pos = InvalidItemPos)
-    {
-        if (!CheckIn(item, pos))
-        {
-            return false;
-        }
-
-        int targetPos;
-        if (pos == InvalidItemPos)
-        {
-            targetPos = GetEmptyPos(item);
-        }
-        else
-        {
-            targetPos = pos;
-        }
-        if (targetPos == InvalidItemPos)
-        {
-            return false;
-        }
-
-        int roleId = 0;
-        if (Role != null && Role.mainRoleInfo != null && Role.mainRoleInfo.BaseInfo != null)
-        {
-            roleId = Role.mainRoleInfo.BaseInfo.RoleId;
-        }
-        item.SetLocation(roleId, (int)ContainerType, targetPos);
-        _items[item.GetItemUID()] = item;
-        AfterSwapIn(item);
-        return true;
-    }
-
-    /// <summary>按物品 ID 移出物品。</summary>
-    public virtual ItemBase SwapOutByUID(long itemUid)
-    {
-        if (itemUid <= 0 || !_items.TryGetValue(itemUid, out ItemBase item) || !CheckOut(item))
-        {
-            return null;
-        }
-
-        BeforeSwapOut(item);
-        _items.Remove(itemUid);
-        AfterSwapOut(item);
-        return item;
-    }
-
-    /// <summary>按容器位置移出物品。</summary>
-    public virtual ItemBase SwapOutByPos(int pos)
-    {
-        ItemBase item = GetItemByPos(pos);
-        if (item == null)
-        {
-            return null;
-        }
-        return SwapOutByUID(item.GetItemUID());
-    }
-
-    public virtual void OnSwapEnd() { }
-    public virtual void SetContainerSize(int size) { _containerSize = Math.Max(0, size); }
     public virtual int GetContainerSize() { return _containerSize; }
 
-    /// <summary>仅用于登录快照重载，调用方负责确保当前没有正在执行的背包事务。</summary>
-    public void Clear()
-    {
-        _items.Clear();
-    }
-
-    /// <summary>按配置 ID 和位置重新整理物品，保持容器位置连续。</summary>
-    public virtual void SortOutBag()
-    {
-        List<ItemBase> sorted = new List<ItemBase>(_items.Values);
-        sorted.Sort((left, right) =>
-        {
-            int result = left.GetItemID().CompareTo(right.GetItemID());
-            if (result != 0)
-            {
-                return result;
-            }
-            return left.GetBagIndex().CompareTo(right.GetBagIndex());
-        });
-
-        for (int index = 0; index < sorted.Count; index++)
-        {
-            sorted[index].SetBagIndex(index);
-        }
-    }
-
-    public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason) { }
-    public virtual void OnSyncLibs() { }
-    public virtual void AfterInitGameRole() { }
-    public virtual void OnEnterScene() { }
     public virtual void CheckItemTimeEffect() { }
-    public virtual void Reconnect() { }
 
     public virtual bool IsFull()
     {
@@ -206,6 +132,7 @@ public class RoItemContainer
     }
 
     public virtual void CalcContainerAttr() { }
+
     public virtual ItemBase GetItemByUid(long uid)
     {
         if (uid <= 0)
@@ -264,28 +191,6 @@ public class RoItemContainer
         return count;
     }
 
-    /// <summary>修改物品堆叠数量，数量小于等于零时移除物品。</summary>
-    public virtual bool ModifyCount(long itemUid, long addCount, int averagePrice = 0)
-    {
-        ItemBase item = GetItemByUid(itemUid);
-        if (item == null || item.GetItemCount() + addCount < 0 || item.GetItemCount() + addCount > int.MaxValue)
-        {
-            return false;
-        }
-
-        if (!item.TryChangeCount(addCount))
-        {
-            return false;
-        }
-        if (item.GetItemCount() == 0)
-        {
-            _items.Remove(itemUid);
-        }
-
-        ContainerOnItemChange(item, ItemChangeReason.ITEM_REASON_MOVE_ITEM);
-        return true;
-    }
-
     protected virtual int GetEmptyPos(ItemBase item)
     {
         if (_containerSize <= 0)
@@ -304,10 +209,6 @@ public class RoItemContainer
         return InvalidItemPos;
     }
 
-    protected virtual void AfterSwapIn(ItemBase item) { }
-    protected virtual void AfterSwapOut(ItemBase item) { }
-    protected virtual void BeforeSwapOut(ItemBase item) { }
-
     /// <summary>
     /// 获取容器还有多少空格子
     /// </summary>
@@ -317,7 +218,6 @@ public class RoItemContainer
         return _containerSize - _items.Count;
     }
 
-  
     /// <summary>
     /// 查找同 ID 且仍有空余堆叠空间的物品。
     /// </summary>
@@ -364,8 +264,130 @@ public class RoItemContainer
 
         return result;
     }
-}
+    #endregion
 
+    #region 核心逻辑
+    /// <summary>将物品放入容器并更新容器类型和位置。</summary>
+    public virtual bool SwapIn(ItemBase item, int pos = InvalidItemPos)
+    {
+        if (!CheckIn(item, pos))
+        {
+            return false;
+        }
+
+        int targetPos;
+        if (pos == InvalidItemPos)
+        {
+            targetPos = GetEmptyPos(item);
+        }
+        else
+        {
+            targetPos = pos;
+        }
+        if (targetPos == InvalidItemPos)
+        {
+            return false;
+        }
+
+        int roleId = 0;
+        if (Role != null && Role.mainRoleInfo != null && Role.mainRoleInfo.BaseInfo != null)
+        {
+            roleId = Role.mainRoleInfo.BaseInfo.RoleId;
+        }
+        item.SetLocation(roleId, (int)ContainerType, targetPos);
+        _items[item.GetItemUID()] = item;
+        AfterSwapIn(item);
+        return true;
+    }
+
+    /// <summary>按物品 ID 移出物品。</summary>
+    public virtual ItemBase SwapOutByUID(long itemUid)
+    {
+        if (itemUid <= 0 || !_items.TryGetValue(itemUid, out ItemBase item) || !CheckOut(item))
+        {
+            return null;
+        }
+
+        BeforeSwapOut(item);
+        _items.Remove(itemUid);
+        AfterSwapOut(item);
+        return item;
+    }
+
+    /// <summary>按容器位置移出物品。</summary>
+    public virtual ItemBase SwapOutByPos(int pos)
+    {
+        ItemBase item = GetItemByPos(pos);
+        if (item == null)
+        {
+            return null;
+        }
+        return SwapOutByUID(item.GetItemUID());
+    }
+
+    public virtual void SetContainerSize(int size) { _containerSize = Math.Max(0, size); }
+
+    /// <summary>仅用于登录快照重载，调用方负责确保当前没有正在执行的背包事务。</summary>
+    public void Clear()
+    {
+        _items.Clear();
+    }
+
+    /// <summary>按配置 ID 和位置重新整理物品，保持容器位置连续。</summary>
+    public virtual void SortOutBag()
+    {
+        List<ItemBase> sorted = new List<ItemBase>(_items.Values);
+        sorted.Sort((left, right) =>
+        {
+            int result = left.GetItemID().CompareTo(right.GetItemID());
+            if (result != 0)
+            {
+                return result;
+            }
+            return left.GetBagIndex().CompareTo(right.GetBagIndex());
+        });
+
+        for (int index = 0; index < sorted.Count; index++)
+        {
+            sorted[index].SetBagIndex(index);
+        }
+    }
+
+    public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason) { }
+
+    public virtual void AfterInitGameRole() { }
+
+    public virtual void Reconnect() { }
+
+    /// <summary>修改物品堆叠数量，数量小于等于零时移除物品。</summary>
+    public virtual bool ModifyCount(long itemUid, long addCount, int averagePrice = 0)
+    {
+        ItemBase item = GetItemByUid(itemUid);
+        if (item == null || item.GetItemCount() + addCount < 0 || item.GetItemCount() + addCount > int.MaxValue)
+        {
+            return false;
+        }
+
+        if (!item.TryChangeCount(addCount))
+        {
+            return false;
+        }
+        if (item.GetItemCount() == 0)
+        {
+            _items.Remove(itemUid);
+        }
+
+        ContainerOnItemChange(item, ItemChangeReason.ITEM_REASON_MOVE_ITEM);
+        return true;
+    }
+
+    protected virtual void AfterSwapIn(ItemBase item) { }
+
+    protected virtual void AfterSwapOut(ItemBase item) { }
+
+    protected virtual void BeforeSwapOut(ItemBase item) { }
+    #endregion
+}
 
 // ============================================================
 // 背包容器类
@@ -415,11 +437,11 @@ public class Warehouse : RoItemContainer
 /// <summary>快捷栏容器。当前仅保存快捷栏物品，映射关系待协议模型接入。</summary>
 public class ShortCutBag : RoItemContainer
 {
-    // 快捷栏槽位到物品实例 UID 的映射。
-    private readonly Dictionary<ulong, ulong> _shortcutMap = new Dictionary<ulong, ulong>();
-
     public ShortCutBag(KnapsackType type, OnlineRole role) : 
         base(type, role) { }
+
+    // 快捷栏槽位到物品实例 UID 的映射。
+    private readonly Dictionary<ulong, ulong> _shortcutMap = new Dictionary<ulong, ulong>();
 
     public ItemBase GetShortCutItemByUid(long uid)
     {
@@ -435,46 +457,30 @@ public class ShortCutBag : RoItemContainer
 class MoneyBag : RoItemContainer
 {
    
+    public  static readonly int kVigourRedPointId = 92;
+
     public MoneyBag(KnapsackType type, OnlineRole role) :
 base(type, role) { }
 
-
-    //当道具进入容器
-    public virtual void AfterSwapIn(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
-    {
-        
-    }
-    //当道具移除容器
-    public virtual void AfterSwapOut(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
-    {
-        
-    }
-    //当道具发生改变
-    public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason)
-    {
-        
-    }
-
-    public virtual Int64 CountItem(int item_id, ItemBind enum_bind)
-    {
-        return 0;
-    }
-    
+    #region 事件回调
     //当经验值发生变化
     private void OnExpChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
+
     //当职业经验值发生变化
     private void OnJobExpChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
+
     //当元气值发生变化
     private void OnVitalityChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
+
     //当通信证经验值发生变化
     private void OnPassCheckExpChange(ItemBase item, ItemChangeReason reason)
     {
@@ -495,15 +501,39 @@ base(type, role) { }
         
     }
 
+    void OnResearchLevelChange(int old_level, int new_level)
+    {
+        
+    }
+    #endregion
+
     void SendMonsterResearchPointsToRank(int score)
     {
         
     }
 
-    void OnResearchLevelChange(int old_level, int new_level)
+    public virtual Int64 CountItem(int item_id, ItemBind enum_bind)
+    {
+        return 0;
+    }
+
+    #region 核心逻辑
+    //当道具进入容器
+    public virtual void AfterSwapIn(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
     {
         
     }
-    
-    public  static readonly int kVigourRedPointId = 92;
+
+    //当道具移除容器
+    public virtual void AfterSwapOut(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
+    {
+        
+    }
+
+    //当道具发生改变
+    public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason)
+    {
+        
+    }
+    #endregion
 };

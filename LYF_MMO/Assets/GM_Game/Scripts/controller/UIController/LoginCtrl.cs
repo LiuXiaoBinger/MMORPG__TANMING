@@ -7,8 +7,11 @@ using UnityEngine;
 /// </summary>
 public class LoginCtrl : CtrlBase
 {
+
+    #region 字段
     /// <summary>本地保存的用户协议键。</summary>
     private const string AgreementKey = "Agreement";
+
     /// <summary>本地保存的账号键。</summary>
     private const string AccountKey = "Account";
 
@@ -20,7 +23,9 @@ public class LoginCtrl : CtrlBase
 
     /// <summary>服务器协议对象映射，仅由控制器保存连接所需字段。</summary>
     private readonly Dictionary<int, GameServer> _gameServers = new Dictionary<int, GameServer>();
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>创建登录控制器并恢复本地登录状态。</summary>
     public LoginCtrl(UIBase view) : base(view)
     {
@@ -58,6 +63,62 @@ public class LoginCtrl : CtrlBase
             OnServerConfirmed);
     }
 
+    /// <summary>注销登录协议和视图事件。</summary>
+    public override void Dispose()
+    {
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_RegistCode, OnRegistHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_LoginCode, OnLoginHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_GetServerListCode, OnGetServerListHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_LoginGameServerCode, OnLoginGameServerHandle);
+        if (_loginview != null)
+        {
+            _loginview.ClearActions();
+        }
+        _gameServers.Clear();
+    }
+    #endregion
+
+    #region 交互响应
+    /// <summary>连接用户选中的游戏服务器。</summary>
+    private void OnGameServerBtnClicked(int serverId)
+    {
+        GameServer server;
+        if (!_gameServers.TryGetValue(serverId, out server) || server == null)
+        {
+            TipsMgr.Instance.ShowSystemTips("服务器信息已失效，请重新选择");
+            return;
+        }
+        _serverId = server.ServerId;
+        MNetClient.Instance.ConnectServer(server.IpHost, server.Prot, OnConnSucced, OnConnFilded);
+    }
+
+    /// <summary>校验邮箱并发送验证码请求。</summary>
+    private void OnVerifyCodeBtnClicked(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            TipsMgr.Instance.ShowSystemTips("邮箱不能为空");
+            return;
+        }
+        if (MNetClient.Client == null)
+        {
+            TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
+            return;
+        }
+
+        RegistVarifyReq request = new RegistVarifyReq
+        {
+            Email = email
+        };
+        MNetClient.Instance.Send(NetDefine.CMD_RegistVarifyCode, request.ToByteString());
+    }
+    #endregion
+
+    #region 事件回调
     /// <summary>显示注册窗口。</summary>
     private void OnRegisterWindowRequested()
     {
@@ -184,19 +245,6 @@ public class LoginCtrl : CtrlBase
         MNetClient.Instance.Send(NetDefine.CMD_GetServerListCode, request.ToByteString());
     }
 
-    /// <summary>连接用户选中的游戏服务器。</summary>
-    private void OnGameServerBtnClicked(int serverId)
-    {
-        GameServer server;
-        if (!_gameServers.TryGetValue(serverId, out server) || server == null)
-        {
-            TipsMgr.Instance.ShowSystemTips("服务器信息已失效，请重新选择");
-            return;
-        }
-        _serverId = server.ServerId;
-        MNetClient.Instance.ConnectServer(server.IpHost, server.Prot, OnConnSucced, OnConnFilded);
-    }
-
     /// <summary>提示游戏服务器连接失败。</summary>
     private void OnConnFilded()
     {
@@ -219,27 +267,6 @@ public class LoginCtrl : CtrlBase
         };
         MNetClient.Instance.Send(NetDefine.CMD_LoginGameServerCode,
             request.ToByteString());
-    }
-
-    /// <summary>校验邮箱并发送验证码请求。</summary>
-    private void OnVerifyCodeBtnClicked(string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            TipsMgr.Instance.ShowSystemTips("邮箱不能为空");
-            return;
-        }
-        if (MNetClient.Client == null)
-        {
-            TipsMgr.Instance.ShowSystemTips("登录服务器尚未连接");
-            return;
-        }
-
-        RegistVarifyReq request = new RegistVarifyReq
-        {
-            Email = email
-        };
-        MNetClient.Instance.Send(NetDefine.CMD_RegistVarifyCode, request.ToByteString());
     }
 
     /// <summary>处理游戏服登录结果并进入角色场景。</summary>
@@ -327,6 +354,7 @@ public class LoginCtrl : CtrlBase
         }
         TipsMgr.Instance.ShowSystemTips("注册失败");
     }
+    #endregion
 
     /// <summary>把服务器协议对象转换为不含网络类型的展示数据。</summary>
     private GameServerViewData CreateServerViewData(GameServer gameServer)
@@ -338,23 +366,5 @@ public class LoginCtrl : CtrlBase
         }
         return new GameServerViewData(gameServer.ServerId, gameServer.ServerName,
             gameServer.RunState, isNew);
-    }
-
-    /// <summary>注销登录协议和视图事件。</summary>
-    public override void Dispose()
-    {
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_RegistCode, OnRegistHandle);
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_LoginCode, OnLoginHandle);
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_GetServerListCode, OnGetServerListHandle);
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_LoginGameServerCode, OnLoginGameServerHandle);
-        if (_loginview != null)
-        {
-            _loginview.ClearActions();
-        }
-        _gameServers.Clear();
     }
 }

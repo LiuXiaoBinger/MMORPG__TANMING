@@ -13,6 +13,8 @@ public partial class SkillEditorWindow
     public bool telegraph; 
     /// <summary>index：对应原列表的零起始下标；start：作者触发帧；end：仅显示分行使用的末帧，包含旁注宽度，绝不写回作者区间。</summary>
     public int index, start, end; }
+
+    #region 字段
     /// <summary>视觉效果及预警的统一帧区间显示快照。</summary>
     readonly List<EffectSpan> effectSpans = new List<EffectSpan>();
     /// <summary>合并效果条目下标到显示行号的缓存。</summary>
@@ -26,6 +28,7 @@ public partial class SkillEditorWindow
 
     /// <summary>每条共享特效显示行的像素高度，保留四行文字及下沿独立播放估算条。</summary>
     private const float EffectTimelineLaneHeight = 76f;
+    #endregion
 
     /// <summary>资源自然单轮的只读保守估算；不用于正式时长、作者END或预览清理。</summary>
     private struct EffectDurationInfo
@@ -44,15 +47,105 @@ public partial class SkillEditorWindow
         public bool EmissionStartUnknown;
     }
 
+    #region 字段
     /// <summary>按原粒子资源身份缓存单轮参数估算；项目资源变更或窗口关闭时清空。</summary>
     private readonly Dictionary<ParticleSystem, EffectDurationInfo> _effectDurationCache = new Dictionary<ParticleSystem, EffectDurationInfo>();
 
-    /// <summary>释放资源只读估算缓存；不改原粒子、作者字段或正在播放的副本。</summary>
-    private void ClearEffectDurationCache()
-    {
-        _effectDurationCache.Clear();
+    /// <summary>位移原事件下标到显示行号的映射。</summary>
+    readonly Dictionary<int,int> motionLanes=new Dictionary<int,int>();
+
+    /// <summary>朝向原事件下标到显示行号的映射。</summary>
+    readonly Dictionary<int,int> facingLanes=new Dictionary<int,int>();
+
+    /// <summary>showAdvanced：属性面板是否显示完整高级创作字段，不改变配置内容。；showValidation：是否展开原配置验证结果，不触发资产保存。</summary>
+    bool showAdvanced,showValidation;
+    #endregion
+
+    #region 界面显示与开关
+    /// <summary>显示本地化运动事件菜单，点击后的原事件类型和参数不变。</summary>
+    void ShowMotionAddMenu(){
+        // 菜单只承载展示文字，点击仍执行原业务回调。
+        var menu=new GenericMenu();
+        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Displacement", "位移")),false,AddMoveSegmentHere);
+        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Allow target tracking", "允许跟踪目标")),false,()=>AddFacingWindow(true));
+        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Lock facing / planted feet", "锁定朝向 / 固定站姿")),false,()=>AddFacingWindow(false));menu.ShowAsContext();
     }
 
+    /// <summary>显示本地化技能工具菜单，备份和迁移仍使用原明确操作入口。</summary>
+    void ShowActionTools(){
+        // 菜单只承载展示文字，点击仍执行原业务回调。
+        var menu=new GenericMenu();
+        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Show advanced properties", "显示高级属性")),showAdvanced,()=>showAdvanced=!showAdvanced);
+        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Actor settings", "角色设置")),false,()=>{selType=SelType.Enemy;selIdx=-1;});
+        menu.AddSeparator("");menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Restore backup", "恢复备份")),false,RestoreCurrentConfig);
+        if(configFile!=null&&ActionConfigMigrationService.NeedsMigration(configFile))menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Upgrade schema with backup", "备份并升级结构")),false,MigrateCurrentConfig);
+        if(animSegments.Count>=2)menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Arrange animation clips", "排列动画剪辑")),false,ShowOptimizeMenu);
+        menu.ShowAsContext();
+    }
+    #endregion
+
+    #region 界面刷新
+    /// <param name="rect">本次绘制的窗口像素范围，不写入配置。</param>
+    /// <summary>把普通效果和预警共享到同一组视觉行，原两列表和类型保持独立。</summary>
+    void DrawUnifiedEffectTrack(Rect rect)
+    {
+        UnifiedEffectHeight(); 
+        // 共享效果轨道需要的非重叠显示行数。
+        int count=LaneCount(effectCombinedLanes);
+        GetDef(Global.TrackType.Fx).drawLanes(rect,effectVisualLanes,count);
+        GetDef(Global.TrackType.Warning).drawLanes(rect,effectTelegraphLanes,count);
+    }
+
+    /// <summary>显示预警事件的本地化视觉/音频属性页，原序列化字段身份保持。</summary>
+    /// <param name="index">预警原列表中的零起始下标。</param>
+    void DrawTelegraphInspector(int index)
+    {
+        if(_serializedConfig==null || index<0 || index>=warningCueList.Count) return;
+        _serializedConfig.Update();
+        // 原预警集合与本次选中元素，不使用翻译标签查找字段。
+        var list=_serializedConfig.FindProperty("warningCueList");
+        // 选中事件的原序列化属性。
+        var item=list.GetArrayElementAtIndex(index);
+        EditorGUILayout.LabelField(SkillEditorLocalization.Text("Effect / Telegraph", "特效 / 预警"),EditorStyles.boldLabel);
+        if(GUILayout.Button(SkillEditorLocalization.Text("Remove", "移除"))) { list.DeleteArrayElementAtIndex(index); ApplyInspectorProperties(); selType=SelType.None; selIdx=-1; return; }
+        CollisionFields(item,"keyNumber","endKeyNumber");
+        telegraphPage=GUILayout.Toolbar(telegraphPage,new[]{SkillEditorLocalization.Text("Visual", "视觉"),SkillEditorLocalization.Text("Audio", "音频")});
+        if(telegraphPage==0) {
+            EditorGUILayout.PropertyField(item.FindPropertyRelative("warningVfx"),new GUIContent(SkillEditorLocalization.Text("Visual effect", "视觉特效")));
+            if(item.FindPropertyRelative("warningVfx").objectReferenceValue!=null) CollisionFields(item,"vfxOffset","vfxRotation","vfxScale");
+        } else EditorGUILayout.PropertyField(item.FindPropertyRelative("warningSound"),new GUIContent(SkillEditorLocalization.Text("Audio clip", "音频剪辑")));
+        ApplyInspectorProperties();
+    }
+
+    /// <summary>绘制位移与朝向子轨道的当前语言说明。</summary>
+    /// <param name="rect">运动轨道在时间轴内的像素区域。</param>
+    void DrawUnifiedMotionTrack(Rect rect){
+        // 运动子轨道的当前绘制纵坐标，单位为窗口像素。
+        float y=rect.y;
+        GUI.Label(new Rect(rect.x+6,y+1,160,16),SkillEditorLocalization.Text("Displacement", "位移"),EditorStyles.miniLabel);y+=18;
+        // 原事件分配的位移与朝向lane数量，语言只影响说明文字。
+        int movementCount=LaneCount(motionLanes),turnCount=LaneCount(facingLanes);
+        GetDef(Global.TrackType.Move).drawLanes(new Rect(rect.x,y,rect.width,TRACK_HEIGHT*movementCount),motionLanes,movementCount);
+        y+=TRACK_HEIGHT*movementCount;
+        GUI.Label(new Rect(rect.x+6,y+1,260,16),SkillEditorLocalization.Text("Facing / target tracking", "朝向 / 目标跟踪"),EditorStyles.miniLabel);y+=18;
+        GetDef(Global.TrackType.AdjustMotion).drawLanes(new Rect(rect.x,y,rect.width,TRACK_HEIGHT*turnCount),facingLanes,turnCount);
+    }
+    #endregion
+
+    #region 创建与添加
+    /// <param name="allowed">新朝向窗口是否允许跟踪目标，假表示锁定朝向。</param>
+    /// <summary>创建允许跟踪或锁定朝向的窗口，依据角色类别选择默认目标。</summary>
+    void AddFacingWindow(bool allowed){PushUndo();adjustMotionList.Add(new Global.AdjustMotionSegment {
+        keyNumber=frameSelectIndex,endKeyNumber=frameSelectIndex+10,allowTurning=allowed,
+        targetKind=ownerType==Global.SkillOwnerType.Enemy?Global.MoveTargetKind.Player:Global.MoveTargetKind.LockedTarget });
+        selType=SelType.AdjustMotion;selIdx=adjustMotionList.Count-1;
+    }
+
+    /// <summary>在播放头创建十五帧镜头提示并选中；Scene 预览不驱动正式镜头。</summary>
+    void AddCameraHere(){PushUndo();cameraCues.Add(new ActionCameraCue {keyNumber=frameSelectIndex,endKeyNumber=frameSelectIndex+15});selType=SelType.Camera;selIdx=cameraCues.Count-1;}
+    #endregion
+
+    #region 查询与数据读写
     /// <summary>按实际生成源根内的activeSelf祖先链判断活跃；Prefab资产未入场景不使用activeInHierarchy。</summary>
     /// <param name="particle">源资源中的候选粒子组件，只读其节点及祖先的激活配置。</param>
     /// <param name="sourceRoot">本技能Instantiate的particleSystem.gameObject根，原资源外祖先不随副本生成。</param>
@@ -69,54 +162,6 @@ public partial class SkillEditorWindow
             current = current.parent;
         }
         return false;
-    }
-
-    /// <summary>首次读取原活跃粒子参数后缓存，复用预览保守算法而不逐GUI递归层级。</summary>
-    /// <param name="particle">原粒子资源根，仅读取模块与子系统，不实例化或Simulate。</param>
-    /// <returns>未应用事件倍率和自定义截断的单轮保守估算及源循环标记。</returns>
-    private EffectDurationInfo ReadEffectDuration(ParticleSystem particle)
-    {
-        // 资源身份对应的缓存值，空资源保持未指定状态。
-        EffectDurationInfo info;
-        if (particle == null) return new EffectDurationInfo();
-        if (_effectDurationCache.TryGetValue(particle, out info)) return info;
-        // 最大缓存数量限制频繁切换配置产生的窗口引用积累。
-        if (_effectDurationCache.Count >= 64) _effectDurationCache.Clear();
-        info = new EffectDurationInfo();
-        // 与现有预览范围相同，只查活跃子节点，不激活源预制体中的失活部分。
-        ParticleSystem[] particles = particle.GetComponentsInChildren<ParticleSystem>(true);
-        // 与SpawnPreviewFx实际Instantiate相同的源根，子节点之外的资源祖先不参与副本活跃判断。
-        Transform sourceRoot = particle.transform;
-        // 每次资源读取复用路径集合，避免子发射器相互引用递归不止。
-        HashSet<ParticleSystem> visited = new HashSet<ParticleSystem>();
-        // 失活祖先下的子发射器可能自身activeSelf为真，先将这些节点放入只读拒绝集合。
-        // 完整子粒子快照的零起始下标，只检查相对生成根的激活路径。
-        for (int inactiveIndex = 0; inactiveIndex < particles.Length; inactiveIndex++)
-        {
-            if (!IsEffectParticleActive(particles[inactiveIndex], sourceRoot)) visited.Add(particles[inactiveIndex]);
-        }
-        // 原粒子数组的零起始下标，资源参数只读且不修改循环标记。
-        for (int index = 0; index < particles.Length; index++)
-        {
-            // 当前活跃粒子的原组件引用，用于单轮参数估算。
-            ParticleSystem current = particles[index];
-            if (!IsEffectParticleActive(current, sourceRoot)) continue;
-            info.HasParticles = true;
-            if (current.main.loop) info.SourceLoops = true;
-            info.EstimatedSeconds = Mathf.Max(info.EstimatedSeconds, GetPreviewParticleDuration(current, visited));
-            // 当前独立粒子在自身时钟中的预计首发秒数；特殊发射条件不伪造精准起点。
-            float emissionStart;
-            // 该系统是否存在尚不能仅由常量参数定位的发射条件。
-            bool unknown;
-            if (TryReadEffectEmissionStart(current, out emissionStart, out unknown))
-            {
-                if (!info.HasEmissionStart || emissionStart < info.EstimatedStartSeconds) info.EstimatedStartSeconds = emissionStart;
-                info.HasEmissionStart = true;
-            }
-            info.EmissionStartUnknown |= unknown;
-        }
-        _effectDurationCache.Add(particle, info);
-        return info;
     }
 
     /// <summary>读取单常量或上下界相同的双常量；真正随机范围和曲线不能当作可定位的固定参数。</summary>
@@ -208,6 +253,78 @@ public partial class SkillEditorWindow
             if (firstFrame > tailFrame) firstFrame = -1;
         }
         return true;
+    }
+
+    /// <param name="list">可按下标访问的原事件列表，编辑对象仍为原引用。</param>
+    /// <param name="field">当前待检查的原字段名，不使用翻译字符串作为筛选键。</param>
+    /// <summary>按原字段名决定基础属性页的可见项，高级页可查看其余完整创作字段。</summary>
+    static bool IsEssentialField(string list,string field){
+        // 当前基础视图允许的原字段名称集合。
+        string fields=list switch {
+            "attackList" or "phase2AttackList"=>"keyNumber endKeyNumber damageMode tickInterval damageRatio impactLevel isReWrite shapeType parameter1 parameter2 offset unblockable unparryable interactionTag",
+            "fxList" or "phase2FxList"=>"keyNumber particleSystem socketPath placementKind forwardDistance audioClip offset rotation scale followCharacter baseVolume customLifetime",
+            "moveSegmentList"=>"keyNumber endKeyNumber driveMode rootMotionScale space target resolveDirectionPerFrame curve maxDistance alignFacing",
+            "animSegments"=>"clip startFrame clipStartFrame clipEndFrame blendInFrames",
+            "jumpList"=>"beginKey endKey nextSkill triggerCommandId triggerKey autoTrigger requiredEnergy energyCost fadeDuration",
+            "projectileList"=>"keyNumber endKeyNumber prefab firePoint spawnOffset speed lifetime damageRatio autoAim shotCount spreadAngle",
+            _=>null };
+        return fields==null || (" "+fields+" ").Contains(" "+field+" ");
+    }
+
+    /// <summary>首次读取原活跃粒子参数后缓存，复用预览保守算法而不逐GUI递归层级。</summary>
+    /// <param name="particle">原粒子资源根，仅读取模块与子系统，不实例化或Simulate。</param>
+    /// <returns>未应用事件倍率和自定义截断的单轮保守估算及源循环标记。</returns>
+    private EffectDurationInfo ReadEffectDuration(ParticleSystem particle)
+    {
+        // 资源身份对应的缓存值，空资源保持未指定状态。
+        EffectDurationInfo info;
+        if (particle == null) return new EffectDurationInfo();
+        if (_effectDurationCache.TryGetValue(particle, out info)) return info;
+        // 最大缓存数量限制频繁切换配置产生的窗口引用积累。
+        if (_effectDurationCache.Count >= 64) _effectDurationCache.Clear();
+        info = new EffectDurationInfo();
+        // 与现有预览范围相同，只查活跃子节点，不激活源预制体中的失活部分。
+        ParticleSystem[] particles = particle.GetComponentsInChildren<ParticleSystem>(true);
+        // 与SpawnPreviewFx实际Instantiate相同的源根，子节点之外的资源祖先不参与副本活跃判断。
+        Transform sourceRoot = particle.transform;
+        // 每次资源读取复用路径集合，避免子发射器相互引用递归不止。
+        HashSet<ParticleSystem> visited = new HashSet<ParticleSystem>();
+        // 失活祖先下的子发射器可能自身activeSelf为真，先将这些节点放入只读拒绝集合。
+        // 完整子粒子快照的零起始下标，只检查相对生成根的激活路径。
+        for (int inactiveIndex = 0; inactiveIndex < particles.Length; inactiveIndex++)
+        {
+            if (!IsEffectParticleActive(particles[inactiveIndex], sourceRoot)) visited.Add(particles[inactiveIndex]);
+        }
+        // 原粒子数组的零起始下标，资源参数只读且不修改循环标记。
+        for (int index = 0; index < particles.Length; index++)
+        {
+            // 当前活跃粒子的原组件引用，用于单轮参数估算。
+            ParticleSystem current = particles[index];
+            if (!IsEffectParticleActive(current, sourceRoot)) continue;
+            info.HasParticles = true;
+            if (current.main.loop) info.SourceLoops = true;
+            info.EstimatedSeconds = Mathf.Max(info.EstimatedSeconds, GetPreviewParticleDuration(current, visited));
+            // 当前独立粒子在自身时钟中的预计首发秒数；特殊发射条件不伪造精准起点。
+            float emissionStart;
+            // 该系统是否存在尚不能仅由常量参数定位的发射条件。
+            bool unknown;
+            if (TryReadEffectEmissionStart(current, out emissionStart, out unknown))
+            {
+                if (!info.HasEmissionStart || emissionStart < info.EstimatedStartSeconds) info.EstimatedStartSeconds = emissionStart;
+                info.HasEmissionStart = true;
+            }
+            info.EmissionStartUnknown |= unknown;
+        }
+        _effectDurationCache.Add(particle, info);
+        return info;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>释放资源只读估算缓存；不改原粒子、作者字段或正在播放的副本。</summary>
+    private void ClearEffectDurationCache()
+    {
+        _effectDurationCache.Clear();
     }
 
     /// <summary>显示独立特效的绝对预计首发与估算尾端，明确参数估算不能代表首个可见像素。</summary>
@@ -314,42 +431,7 @@ public partial class SkillEditorWindow
         }
         return EffectTimelineLaneHeight*LaneCount(effectCombinedLanes);
     }
-    /// <param name="rect">本次绘制的窗口像素范围，不写入配置。</param>
-    /// <summary>把普通效果和预警共享到同一组视觉行，原两列表和类型保持独立。</summary>
-    void DrawUnifiedEffectTrack(Rect rect)
-    {
-        UnifiedEffectHeight(); 
-        // 共享效果轨道需要的非重叠显示行数。
-        int count=LaneCount(effectCombinedLanes);
-        GetDef(Global.TrackType.Fx).drawLanes(rect,effectVisualLanes,count);
-        GetDef(Global.TrackType.Warning).drawLanes(rect,effectTelegraphLanes,count);
-    }
-    /// <summary>显示预警事件的本地化视觉/音频属性页，原序列化字段身份保持。</summary>
-    /// <param name="index">预警原列表中的零起始下标。</param>
-    void DrawTelegraphInspector(int index)
-    {
-        if(_serializedConfig==null || index<0 || index>=warningCueList.Count) return;
-        _serializedConfig.Update();
-        // 原预警集合与本次选中元素，不使用翻译标签查找字段。
-        var list=_serializedConfig.FindProperty("warningCueList");
-        // 选中事件的原序列化属性。
-        var item=list.GetArrayElementAtIndex(index);
-        EditorGUILayout.LabelField(SkillEditorLocalization.Text("Effect / Telegraph", "特效 / 预警"),EditorStyles.boldLabel);
-        if(GUILayout.Button(SkillEditorLocalization.Text("Remove", "移除"))) { list.DeleteArrayElementAtIndex(index); ApplyInspectorProperties(); selType=SelType.None; selIdx=-1; return; }
-        CollisionFields(item,"keyNumber","endKeyNumber");
-        telegraphPage=GUILayout.Toolbar(telegraphPage,new[]{SkillEditorLocalization.Text("Visual", "视觉"),SkillEditorLocalization.Text("Audio", "音频")});
-        if(telegraphPage==0) {
-            EditorGUILayout.PropertyField(item.FindPropertyRelative("warningVfx"),new GUIContent(SkillEditorLocalization.Text("Visual effect", "视觉特效")));
-            if(item.FindPropertyRelative("warningVfx").objectReferenceValue!=null) CollisionFields(item,"vfxOffset","vfxRotation","vfxScale");
-        } else EditorGUILayout.PropertyField(item.FindPropertyRelative("warningSound"),new GUIContent(SkillEditorLocalization.Text("Audio clip", "音频剪辑")));
-        ApplyInspectorProperties();
-    }
-    /// <summary>位移原事件下标到显示行号的映射。</summary>
-    readonly Dictionary<int,int> motionLanes=new Dictionary<int,int>();
-    /// <summary>朝向原事件下标到显示行号的映射。</summary>
-    readonly Dictionary<int,int> facingLanes=new Dictionary<int,int>();
-    /// <summary>showAdvanced：属性面板是否显示完整高级创作字段，不改变配置内容。；showValidation：是否展开原配置验证结果，不触发资产保存。</summary>
-    bool showAdvanced,showValidation;
+
     /// <summary>将已知原序列化列表名映射为属性页标题，不改列表键。</summary>
     /// <param name="list">原事件集合的序列化字段名。</param>
     /// <returns>当前语言的属性页标题。</returns>
@@ -357,6 +439,7 @@ public partial class SkillEditorWindow
         "animSegments"=>SkillEditorLocalization.Text("Animation", "动画"), "fxList"=>SkillEditorLocalization.Text("Effect", "特效"), "cameraCues"=>SkillEditorLocalization.Text("Camera", "镜头"), "moveSegmentList"=>SkillEditorLocalization.Text("Motion / Displacement", "运动 / 位移"),
         "adjustMotionList"=>SkillEditorLocalization.Text("Motion / Facing", "运动 / 朝向"), "attackList"=>SkillEditorLocalization.Text("Collision", "碰撞判定"), "jumpList"=>SkillEditorLocalization.Text("Transition", "技能衔接"), "interactionWindows"=>SkillEditorLocalization.Text("Interaction", "交互"),
         "warningCueList"=>SkillEditorLocalization.Text("Effect / Telegraph", "特效 / 预警"), "cancelList"=>SkillEditorLocalization.Text("Cancel", "取消"), "hitFxList"=>SkillEditorLocalization.Text("Hit Effect", "命中特效"), "trailToggleList"=>SkillEditorLocalization.Text("Trail", "刀光"), _=>ObjectNames.NicifyVariableName(list) };
+
     /// <summary>显示字段标题，已知字段使用具体中文单位说明，其余由统一标签表处理。</summary>
     /// <param name="name">原字段名，只作为显示映射查找键。</param>
     /// <param name="fallback">第三方默认显示标题，不修改其数据路径。</param>
@@ -367,21 +450,7 @@ public partial class SkillEditorWindow
         "skillCD"=>SkillEditorLocalization.Text("Cooldown", "冷却"), "particleSystem"=>SkillEditorLocalization.Text("Visual effect", "视觉特效"), "socketPath"=>SkillEditorLocalization.Text("Socket path", "挂点路径"), "placementKind"=>SkillEditorLocalization.Text("Placement kind", "定位方式"), "forwardDistance"=>SkillEditorLocalization.Text("Forward distance (m)", "前方距离（米）"), "audioClip"=>SkillEditorLocalization.Text("Audio clip", "音频剪辑"), "followCharacter"=>SkillEditorLocalization.Text("Follow actor", "跟随角色"),
         "allowTurning"=>SkillEditorLocalization.Text("Allow target tracking", "允许跟踪目标"), "targetKind"=>SkillEditorLocalization.Text("Tracking target", "跟踪目标"), "rotationSpeed"=>SkillEditorLocalization.Text("Turn speed (deg/s)", "转向速度（度/秒）"),
         "maxDistance"=>SkillEditorLocalization.Text("Distance limit", "距离上限"), "space"=>SkillEditorLocalization.Text("Direction", "方向"), "isReWrite"=>SkillEditorLocalization.Text("Override hit shape", "覆盖命中形状"), "collisionName"=>SkillEditorLocalization.Text("Name", "名称"), "collisionRotation"=>SkillEditorLocalization.Text("Rotation", "旋转"), "responseMode"=>SkillEditorLocalization.Text("On contact", "接触响应"), "contactSignal"=>SkillEditorLocalization.Text("Signal", "信号"), "damageMode"=>SkillEditorLocalization.Text("Detection", "检测方式"), "damageRatio"=>SkillEditorLocalization.Text("Damage multiplier", "伤害倍率"), "parameter1"=>SkillEditorLocalization.Text("Radius / length", "半径 / 长度"), "parameter2"=>SkillEditorLocalization.Text("Width", "宽度"), _=>SkillEditorPropertyLabels.Label(name,fallback) };
-    /// <param name="list">可按下标访问的原事件列表，编辑对象仍为原引用。</param>
-    /// <param name="field">当前待检查的原字段名，不使用翻译字符串作为筛选键。</param>
-    /// <summary>按原字段名决定基础属性页的可见项，高级页可查看其余完整创作字段。</summary>
-    static bool IsEssentialField(string list,string field){
-        // 当前基础视图允许的原字段名称集合。
-        string fields=list switch {
-            "attackList" or "phase2AttackList"=>"keyNumber endKeyNumber damageMode tickInterval damageRatio impactLevel isReWrite shapeType parameter1 parameter2 offset unblockable unparryable interactionTag",
-            "fxList" or "phase2FxList"=>"keyNumber particleSystem socketPath placementKind forwardDistance audioClip offset rotation scale followCharacter baseVolume customLifetime",
-            "moveSegmentList"=>"keyNumber endKeyNumber driveMode rootMotionScale space target resolveDirectionPerFrame curve maxDistance alignFacing",
-            "animSegments"=>"clip startFrame clipStartFrame clipEndFrame blendInFrames",
-            "jumpList"=>"beginKey endKey nextSkill triggerCommandId triggerKey autoTrigger requiredEnergy energyCost fadeDuration",
-            "projectileList"=>"keyNumber endKeyNumber prefab firePoint spawnOffset speed lifetime damageRatio autoAim shotCount spreadAngle",
-            _=>null };
-        return fields==null || (" "+fields+" ").Contains(" "+field+" ");
-    }
+
     /// <param name="lanes">原事件下标到非重叠显示行号的映射。</param>
     /// <summary>从事件行号求轨道需要的显示行数，空集合至少留一行作为编辑入口。</summary>
     int LaneCount(Dictionary<int,int> lanes){
@@ -393,51 +462,12 @@ public partial class SkillEditorWindow
         for(int index=0;index<values.Count;index++)count=Mathf.Max(count,values[index]+1);
         return count;
     }
+
     /// <summary>分别分配位移与朝向行号，计算二者合并显示的轨道像素高度。</summary>
     float MotionTrackHeight(){
         AssignLanes(motionLanes,moveSegmentList,/* 当前原位移段引用。 */ m=>m.keyNumber,/* 当前原位移段引用。 */ m=>SegEnd(m.keyNumber,m.endKeyNumber));
         AssignLanes(facingLanes,adjustMotionList,/* 当前原位移段引用。 */ m=>m.keyNumber,/* 当前原位移段引用。 */ m=>SegEnd(m.keyNumber,m.endKeyNumber));
         return 36+TRACK_HEIGHT*(LaneCount(motionLanes)+LaneCount(facingLanes));
     }
-    /// <summary>绘制位移与朝向子轨道的当前语言说明。</summary>
-    /// <param name="rect">运动轨道在时间轴内的像素区域。</param>
-    void DrawUnifiedMotionTrack(Rect rect){
-        // 运动子轨道的当前绘制纵坐标，单位为窗口像素。
-        float y=rect.y;
-        GUI.Label(new Rect(rect.x+6,y+1,160,16),SkillEditorLocalization.Text("Displacement", "位移"),EditorStyles.miniLabel);y+=18;
-        // 原事件分配的位移与朝向lane数量，语言只影响说明文字。
-        int movementCount=LaneCount(motionLanes),turnCount=LaneCount(facingLanes);
-        GetDef(Global.TrackType.Move).drawLanes(new Rect(rect.x,y,rect.width,TRACK_HEIGHT*movementCount),motionLanes,movementCount);
-        y+=TRACK_HEIGHT*movementCount;
-        GUI.Label(new Rect(rect.x+6,y+1,260,16),SkillEditorLocalization.Text("Facing / target tracking", "朝向 / 目标跟踪"),EditorStyles.miniLabel);y+=18;
-        GetDef(Global.TrackType.AdjustMotion).drawLanes(new Rect(rect.x,y,rect.width,TRACK_HEIGHT*turnCount),facingLanes,turnCount);
-    }
-    /// <summary>显示本地化运动事件菜单，点击后的原事件类型和参数不变。</summary>
-    void ShowMotionAddMenu(){
-        // 菜单只承载展示文字，点击仍执行原业务回调。
-        var menu=new GenericMenu();
-        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Displacement", "位移")),false,AddMoveSegmentHere);
-        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Allow target tracking", "允许跟踪目标")),false,()=>AddFacingWindow(true));
-        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Lock facing / planted feet", "锁定朝向 / 固定站姿")),false,()=>AddFacingWindow(false));menu.ShowAsContext();
-    }
-    /// <param name="allowed">新朝向窗口是否允许跟踪目标，假表示锁定朝向。</param>
-    /// <summary>创建允许跟踪或锁定朝向的窗口，依据角色类别选择默认目标。</summary>
-    void AddFacingWindow(bool allowed){PushUndo();adjustMotionList.Add(new Global.AdjustMotionSegment {
-        keyNumber=frameSelectIndex,endKeyNumber=frameSelectIndex+10,allowTurning=allowed,
-        targetKind=ownerType==Global.SkillOwnerType.Enemy?Global.MoveTargetKind.Player:Global.MoveTargetKind.LockedTarget });
-        selType=SelType.AdjustMotion;selIdx=adjustMotionList.Count-1;
-    }
-    /// <summary>在播放头创建十五帧镜头提示并选中；Scene 预览不驱动正式镜头。</summary>
-    void AddCameraHere(){PushUndo();cameraCues.Add(new ActionCameraCue {keyNumber=frameSelectIndex,endKeyNumber=frameSelectIndex+15});selType=SelType.Camera;selIdx=cameraCues.Count-1;}
-    /// <summary>显示本地化技能工具菜单，备份和迁移仍使用原明确操作入口。</summary>
-    void ShowActionTools(){
-        // 菜单只承载展示文字，点击仍执行原业务回调。
-        var menu=new GenericMenu();
-        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Show advanced properties", "显示高级属性")),showAdvanced,()=>showAdvanced=!showAdvanced);
-        menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Actor settings", "角色设置")),false,()=>{selType=SelType.Enemy;selIdx=-1;});
-        menu.AddSeparator("");menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Restore backup", "恢复备份")),false,RestoreCurrentConfig);
-        if(configFile!=null&&ActionConfigMigrationService.NeedsMigration(configFile))menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Upgrade schema with backup", "备份并升级结构")),false,MigrateCurrentConfig);
-        if(animSegments.Count>=2)menu.AddItem(new GUIContent(SkillEditorLocalization.Text("Arrange animation clips", "排列动画剪辑")),false,ShowOptimizeMenu);
-        menu.ShowAsContext();
-    }
+    #endregion
 }

@@ -13,10 +13,42 @@ public sealed class ClientDirtyTracker
     /// <summary>按模块保存脏状态。</summary>
     private readonly Dictionary<ClientDirtyModule, DirtyState> _states =
         new Dictionary<ClientDirtyModule, DirtyState>();
+
     /// <summary>按背包类型分别保存页面脏状态。</summary>
     private readonly Dictionary<KnapsackType, DirtyState> _knapsackStates =
         new Dictionary<KnapsackType, DirtyState>();
 
+    #region 查询与判定
+    /// <summary>读取模块脏状态但不清除，便于控制器决定是否消费。</summary>
+    public bool TryGet(ClientDirtyModule module, out ClientDirtySnapshot snapshot)
+    {
+        DirtyState state;
+        if (!_states.TryGetValue(module, out state))
+        {
+            snapshot = null;
+            return false;
+        }
+        List<int> slots = new List<int>(state.Slots);
+        snapshot = new ClientDirtySnapshot(state.FullRefresh, slots, state.Context);
+        return true;
+    }
+
+    /// <summary>读取指定背包页脏状态但不清除。</summary>
+    public bool TryGetKnapsack(KnapsackType bagType, out ClientDirtySnapshot snapshot)
+    {
+        DirtyState state;
+        if (!_knapsackStates.TryGetValue(bagType, out state))
+        {
+            snapshot = null;
+            return false;
+        }
+        snapshot = new ClientDirtySnapshot(state.FullRefresh,
+            new List<int>(state.Slots), state.Context);
+        return true;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>标记模块发生变化，可附带一个或多个受影响格位。</summary>
     public void Mark(ClientDirtyModule module, bool fullRefresh, int slotIndex,
         ClientChangeContext context)
@@ -49,20 +81,6 @@ public sealed class ClientDirtyTracker
         }
     }
 
-    /// <summary>读取模块脏状态但不清除，便于控制器决定是否消费。</summary>
-    public bool TryGet(ClientDirtyModule module, out ClientDirtySnapshot snapshot)
-    {
-        DirtyState state;
-        if (!_states.TryGetValue(module, out state))
-        {
-            snapshot = null;
-            return false;
-        }
-        List<int> slots = new List<int>(state.Slots);
-        snapshot = new ClientDirtySnapshot(state.FullRefresh, slots, state.Context);
-        return true;
-    }
-
     /// <summary>按独立背包页标记变化，避免不同页互相触发刷新。</summary>
     public void MarkKnapsack(KnapsackType bagType, bool fullRefresh, int slotIndex,
         ClientChangeContext context)
@@ -83,20 +101,6 @@ public sealed class ClientDirtyTracker
         {
             state.Context = context;
         }
-    }
-
-    /// <summary>读取指定背包页脏状态但不清除。</summary>
-    public bool TryGetKnapsack(KnapsackType bagType, out ClientDirtySnapshot snapshot)
-    {
-        DirtyState state;
-        if (!_knapsackStates.TryGetValue(bagType, out state))
-        {
-            snapshot = null;
-            return false;
-        }
-        snapshot = new ClientDirtySnapshot(state.FullRefresh,
-            new List<int>(state.Slots), state.Context);
-        return true;
     }
 
     /// <summary>消费指定背包页脏状态。</summary>
@@ -121,7 +125,5 @@ public sealed class ClientDirtyTracker
         _states.Clear();
         _knapsackStates.Clear();
     }
+    #endregion
 }
-
-
-

@@ -6,12 +6,16 @@ using System.Web.Script.Serialization;
 /// <summary>游戏服同步读取客户端编辑器导出的同源施法权限；首次装载后只读，不在请求中热更新。</summary>
 public static class SkillCastingRulesCatalog
 {
+
+    #region 字段与常量
     /// <summary>各技能主表 ID 对应的互断/移动权限，JSON 无效或缺失时为空。</summary>
     private static readonly Dictionary<int, SkillCastingRules> _rules = new Dictionary<int, SkillCastingRules>();
 
     /// <summary>首次同步装载已完成，包括采用稳定禁止默认值的失败分支。</summary>
     private static bool _initialized;
+    #endregion
 
+    #region 配置读取与解析
     /// <summary>读取与游戏服一起部署的正式 JSON；缺文件时明确采用稳定禁止默认，不读取开发目录。</summary>
     public static void Initialize()
     {
@@ -54,7 +58,9 @@ public static class SkillCastingRulesCatalog
             LogMsg.Info("技能施法规则读取失败，采用稳定禁止策略：" + exception.Message, LogMsgType.Error);
         }
     }
+    #endregion
 
+    #region 业务逻辑：施法打断判定
     /// <summary>判断新技能能否打断正在施放的旧技能，沿用 RO 的新技能名单方向。</summary>
     /// <param name="newSkillId">经过学习/职业/冷却/MP 校验的新技能主表 ID。</param>
     /// <param name="activeSkillId">游戏服当前活动施法的旧技能主表 ID。</param>
@@ -66,4 +72,5 @@ public static class SkillCastingRulesCatalog
         SkillCastingRules rule;
         return _rules.TryGetValue(newSkillId, out rule) && rule.InteruptSkill.Contains(activeSkillId);
     }
+    #endregion
 }

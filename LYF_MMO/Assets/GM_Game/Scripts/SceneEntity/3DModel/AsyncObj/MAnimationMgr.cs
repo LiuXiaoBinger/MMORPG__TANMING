@@ -12,11 +12,14 @@ using YooAsset;
 /// </summary>
 public sealed class MAnimationMgr
 {
+
+    #region 字段与属性
     /// <summary>RO 命名风格的单例访问入口。</summary>
     public static MAnimationMgr singleton
     {
         get { return _singleton; }
     }
+
     /// <summary>动画剪辑完成加载后的强类型回调。</summary>
     /// <param name="clipInfo">本次加载对应的共享剪辑信息；加载失败时其 Clip 为 null。</param>
     public delegate void LoadClipCallback(ClipInfo clipInfo);
@@ -75,19 +78,12 @@ public sealed class MAnimationMgr
     /// <summary>动画索引加载会话版本；反初始化后到达的旧回调不得改写新生命周期状态。</summary>
     private int _preloadVersion;
 
-    /// <summary>私有构造函数，禁止外部重复创建管理器。</summary>
-    private MAnimationMgr()
-    {
-    }
-
-
-
-
     /// <summary>当前项目 PascalCase 风格的单例访问入口。</summary>
     public static MAnimationMgr Instance
     {
         get { return _singleton; }
     }
+    #endregion
 
     /// <summary>
     /// 单条共享动画剪辑信息。
@@ -385,6 +381,11 @@ public sealed class MAnimationMgr
         }
     }
 
+    /// <summary>私有构造函数，禁止外部重复创建管理器。</summary>
+    private MAnimationMgr()
+    {
+    }
+
     /// <summary>
     /// 当前动画索引是否已经成功加载完成。
     /// 为 false 时拒绝短名解析，仅允许当前资源包可验证的完整 YooAsset Location。
@@ -394,49 +395,92 @@ public sealed class MAnimationMgr
         get { return _isPreloaded; }
     }
 
+    #region 事件注册与注销
     /// <summary>
-    /// 异步加载并解析 RO 格式的动画索引文本。
-    /// 同一时刻的重复调用会共用一个 YooAsset TextAsset 加载请求，所有调用方在完成后收到相同结果。
+    /// 登记动画配置短名与 YooAsset Location 的关系。
+    /// 同名重复登记会覆盖旧映射，但不会销毁仍被实体引用的旧 ClipInfo。
     /// </summary>
-    /// <param name="callback">预加载结果回调；传入 null 表示调用方只触发加载不接收结果。</param>
-    public void Preload(PreloadCallback callback)
+    /// <param name="clipName">配置或表现表中的动画短名，不能为空。</param>
+    /// <param name="clipPath">YooAsset 动画资源 Location，不能为空。</param>
+    /// <param name="length">可选配置时长，单位秒；未知时为零。</param>
+    /// <param name="isLooping">可选配置循环标记；加载后会被资源实际值覆盖。</param>
+    /// <returns>登记成功返回 true；参数非法返回 false。</returns>
+    public bool RegisterClipPath(string clipName, string clipPath, float length,
+        bool isLooping)
     {
-        if (_isPreloaded)
+        if (string.IsNullOrEmpty(clipName) || string.IsNullOrEmpty(clipPath))
         {
-            if (callback != null)
+            return false;
+        }
+
+        _nameToPathDict[clipName] = clipPath;
+        ClipInfo clipInfo;
+        if (!_clipInfoDict.TryGetValue(clipPath, out clipInfo))
+        {
+            clipInfo = new ClipInfo(this, clipPath, length, isLooping);
+            _clipInfoDict.Add(clipPath, clipInfo);
+        }
+        else
+        {
+            // 索引文本重新加载时只刷新尚未加载资源的静态元数据，不影响正在使用的实际剪辑属性。
+            clipInfo.UpdateConfigInfo(length, isLooping);
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 登记没有预设时长的动画短名与资源 Location。
+    /// 运行时资源成功加载后会自动填充时长和循环标记。
+    /// </summary>
+    /// <param name="clipName">配置或表现表中的动画短名。</param>
+    /// <param name="clipPath">YooAsset 动画资源 Location。</param>
+    /// <returns>登记成功返回 true；参数非法返回 false。</returns>
+    public bool RegisterClipPath(string clipName, string clipPath)
+    {
+        return RegisterClipPath(clipName, clipPath, 0f, false);
+    }
+    #endregion
+
+    #region 界面刷新、事件回调等
+    /// <summary>
+    /// 执行一次空闲剪辑 LRU 周期检查。
+    /// 该入口可由全局帧循环驱动；同时 Retain/Release 时也会惰性触发，确保没有额外驱动时仍能回收。
+    /// </summary>
+    public void UpdateCache()
+    {
+        // Unity 启动后的实时时间不受游戏时间缩放影响，适合作为资源缓存周期时钟。
+        float currentTimestamp = Time.realtimeSinceStartup;
+        if (currentTimestamp < _nextRecycleTimestamp)
+        {
+            return;
+        }
+
+        _nextRecycleTimestamp = currentTimestamp + IdleCacheRecycleInterval;
+        if (_idleClipPathList.Count < IdleCacheCapacity)
+        {
+            return;
+        }
+
+        // 达到容量阈值时最多释放 32 条最久未使用剪辑，保留 RO 的分批释放策略。
+        int releasedCount = 0;
+        while (releasedCount < IdleCacheReleaseCount &&
+            _idleClipPathList.First != null)
+        {
+            // LRU 队头永远是最久未使用的空闲剪辑。
+            LinkedListNode<string> idleNode = _idleClipPathList.First;
+            // 被淘汰剪辑的完整 YooAsset Location。
+            string clipPath = idleNode.Value;
+            _idleClipPathList.RemoveFirst();
+            _idleClipNodeDict.Remove(clipPath);
+
+            // 资源信息可能被手动登记逻辑替换，找不到时只移除失效 LRU 节点。
+            ClipInfo clipInfo;
+            if (_clipInfoDict.TryGetValue(clipPath, out clipInfo))
             {
-                callback(true);
+                clipInfo.ReleaseIdleClip();
             }
-            return;
+            releasedCount++;
         }
-
-        if (callback != null)
-        {
-            _preloadCallbacks.Add(callback);
-        }
-
-        if (_isPreloading)
-        {
-            return;
-        }
-
-        if (Global.Instance == null || Global.Instance.YooPackage == null ||
-            !Global.Instance.YooPackage.CheckLocationValid(AnimInfoLocation))
-        {
-            Debug.LogError("动画索引文本地址无效：" + AnimInfoLocation);
-            NotifyPreloadCallbacks(false);
-            return;
-        }
-
-        _isPreloading = true;
-        _preloadVersion++;
-        // 当前动画索引加载会话编号，用于过滤退出或重新初始化后的旧回调。
-        int preloadVersion = _preloadVersion;
-        // 动画索引必须经 YooAsset 加载，不能使用 Resources.Load 绕开热更新资源包。
-        _preloadHandle =
-            Global.Instance.YooPackage.LoadAssetAsync<TextAsset>(AnimInfoLocation);
-        _preloadHandle.Completed += handle =>
-            OnAnimInfoLoadCompleted(preloadVersion, handle);
     }
 
     /// <summary>
@@ -508,79 +552,7 @@ public sealed class MAnimationMgr
             }
         }
     }
-
-    /// <summary>
-    /// 解析二维 JSON 并以完整成功为前提替换短名索引。
-    /// 已存在的 ClipInfo 不会被清空，确保预加载之后仍被实体引用的剪辑生命周期完整。
-    /// </summary>
-    /// <param name="animInfoText">RO 格式动画索引文本，每条结构为 [Location, 时长秒, 是否循环]。</param>
-    /// <returns>所有条目均合法且至少包含一条动画记录时返回 true。</returns>
-    private bool ApplyAnimInfoText(string animInfoText)
-    {
-        // 解析出的强类型动画配置行，全部成功后才写入运行时映射。
-        List<AnimationConfigEntry> entries;
-        if (!TryParseAnimInfo(animInfoText, out entries))
-        {
-            Debug.LogError("动画索引文本不是合法二维 JSON：" + AnimInfoLocation);
-            return false;
-        }
-
-        if (entries.Count == 0)
-        {
-            Debug.LogError("动画索引文本不包含任何动作：" + AnimInfoLocation);
-            return false;
-        }
-
-        _nameToPathDict.Clear();
-        for (int index = 0; index < entries.Count; index++)
-        {
-            // 当前二维 JSON 行的完整 Location、时长和循环属性。
-            AnimationConfigEntry entry = entries[index];
-            // 短名由实际 Unity 资源文件名去除 .anim 后缀得到，匹配表现表中的 clipName。
-            string clipName = GetClipNameFromPath(entry.ClipPath);
-            if (string.IsNullOrEmpty(clipName) ||
-                !RegisterClipPath(clipName, entry.ClipPath, entry.Length,
-                    entry.IsLooping))
-            {
-                Debug.LogError("动画索引条目无效：" + entry.ClipPath);
-                _nameToPathDict.Clear();
-                return false;
-            }
-        }
-
-        Debug.Log("动画索引加载完成，数量：" + entries.Count);
-        return true;
-    }
-
-    /// <summary>
-    /// 从完整 YooAsset Location 得到不含扩展名的动画短名。
-    /// </summary>
-    /// <param name="clipPath">Unity 工程内的完整动画资源 Location。</param>
-    /// <returns>不带 .anim 扩展名的文件短名；路径非法时返回空字符串。</returns>
-    private string GetClipNameFromPath(string clipPath)
-    {
-        if (string.IsNullOrEmpty(clipPath))
-        {
-            return string.Empty;
-        }
-
-        // 最后一个正斜杠后是资源文件名；YooAsset Location 固定使用正斜杠。
-        int separatorIndex = clipPath.LastIndexOf('/');
-        // 仅移除文件名部分的最后一个扩展名，目录名中的点不参与判断。
-        int extensionIndex = clipPath.LastIndexOf('.');
-        if (extensionIndex <= separatorIndex)
-        {
-            extensionIndex = clipPath.Length;
-        }
-
-        int nameStartIndex = separatorIndex + 1;
-        if (nameStartIndex >= extensionIndex)
-        {
-            return string.Empty;
-        }
-
-        return clipPath.Substring(nameStartIndex, extensionIndex - nameStartIndex);
-    }
+    #endregion
 
     /// <summary>
     /// 将引用归零的已加载剪辑放入 LRU 队尾，并按周期检查是否需要批量淘汰。
@@ -618,124 +590,35 @@ public sealed class MAnimationMgr
         _idleClipPathList.Remove(idleNode);
     }
 
+    #region 查询与判定
     /// <summary>
-    /// 执行一次空闲剪辑 LRU 周期检查。
-    /// 该入口可由全局帧循环驱动；同时 Retain/Release 时也会惰性触发，确保没有额外驱动时仍能回收。
+    /// 从完整 YooAsset Location 得到不含扩展名的动画短名。
     /// </summary>
-    public void UpdateCache()
+    /// <param name="clipPath">Unity 工程内的完整动画资源 Location。</param>
+    /// <returns>不带 .anim 扩展名的文件短名；路径非法时返回空字符串。</returns>
+    private string GetClipNameFromPath(string clipPath)
     {
-        // Unity 启动后的实时时间不受游戏时间缩放影响，适合作为资源缓存周期时钟。
-        float currentTimestamp = Time.realtimeSinceStartup;
-        if (currentTimestamp < _nextRecycleTimestamp)
+        if (string.IsNullOrEmpty(clipPath))
         {
-            return;
+            return string.Empty;
         }
 
-        _nextRecycleTimestamp = currentTimestamp + IdleCacheRecycleInterval;
-        if (_idleClipPathList.Count < IdleCacheCapacity)
+        // 最后一个正斜杠后是资源文件名；YooAsset Location 固定使用正斜杠。
+        int separatorIndex = clipPath.LastIndexOf('/');
+        // 仅移除文件名部分的最后一个扩展名，目录名中的点不参与判断。
+        int extensionIndex = clipPath.LastIndexOf('.');
+        if (extensionIndex <= separatorIndex)
         {
-            return;
+            extensionIndex = clipPath.Length;
         }
 
-        // 达到容量阈值时最多释放 32 条最久未使用剪辑，保留 RO 的分批释放策略。
-        int releasedCount = 0;
-        while (releasedCount < IdleCacheReleaseCount &&
-            _idleClipPathList.First != null)
+        int nameStartIndex = separatorIndex + 1;
+        if (nameStartIndex >= extensionIndex)
         {
-            // LRU 队头永远是最久未使用的空闲剪辑。
-            LinkedListNode<string> idleNode = _idleClipPathList.First;
-            // 被淘汰剪辑的完整 YooAsset Location。
-            string clipPath = idleNode.Value;
-            _idleClipPathList.RemoveFirst();
-            _idleClipNodeDict.Remove(clipPath);
-
-            // 资源信息可能被手动登记逻辑替换，找不到时只移除失效 LRU 节点。
-            ClipInfo clipInfo;
-            if (_clipInfoDict.TryGetValue(clipPath, out clipInfo))
-            {
-                clipInfo.ReleaseIdleClip();
-            }
-            releasedCount++;
-        }
-    }
-
-    /// <summary>
-    /// 结束动画资源管理器当前生命周期，归还索引及全部剪辑句柄并清空回调、引用和 LRU 状态。
-    /// 单例对象本身继续存在，后续新的 Global 生命周期可再次调用 Preload 建立索引。
-    /// </summary>
-    public void Uninit()
-    {
-        _preloadVersion++;
-        _isPreloading = false;
-        _isPreloaded = false;
-        _preloadCallbacks.Clear();
-        if (_preloadHandle != null)
-        {
-            _preloadHandle.Release();
-        }
-        _preloadHandle = null;
-
-        // 共享剪辑快照用于在清空字典前逐项释放可能仍在加载或被缓存的 YooAsset 句柄。
-        List<ClipInfo> clipInfos = new List<ClipInfo>(_clipInfoDict.Values);
-        for (int index = 0; index < clipInfos.Count; index++)
-        {
-            // 当前待结束生命周期的共享剪辑信息。
-            ClipInfo clipInfo = clipInfos[index];
-            if (clipInfo != null)
-            {
-                clipInfo.ClearClip();
-            }
+            return string.Empty;
         }
 
-        _clipInfoDict.Clear();
-        _nameToPathDict.Clear();
-        _idleClipPathList.Clear();
-        _idleClipNodeDict.Clear();
-        _nextRecycleTimestamp = 0f;
-    }
-
-    /// <summary>
-    /// 登记动画配置短名与 YooAsset Location 的关系。
-    /// 同名重复登记会覆盖旧映射，但不会销毁仍被实体引用的旧 ClipInfo。
-    /// </summary>
-    /// <param name="clipName">配置或表现表中的动画短名，不能为空。</param>
-    /// <param name="clipPath">YooAsset 动画资源 Location，不能为空。</param>
-    /// <param name="length">可选配置时长，单位秒；未知时为零。</param>
-    /// <param name="isLooping">可选配置循环标记；加载后会被资源实际值覆盖。</param>
-    /// <returns>登记成功返回 true；参数非法返回 false。</returns>
-    public bool RegisterClipPath(string clipName, string clipPath, float length,
-        bool isLooping)
-    {
-        if (string.IsNullOrEmpty(clipName) || string.IsNullOrEmpty(clipPath))
-        {
-            return false;
-        }
-
-        _nameToPathDict[clipName] = clipPath;
-        ClipInfo clipInfo;
-        if (!_clipInfoDict.TryGetValue(clipPath, out clipInfo))
-        {
-            clipInfo = new ClipInfo(this, clipPath, length, isLooping);
-            _clipInfoDict.Add(clipPath, clipInfo);
-        }
-        else
-        {
-            // 索引文本重新加载时只刷新尚未加载资源的静态元数据，不影响正在使用的实际剪辑属性。
-            clipInfo.UpdateConfigInfo(length, isLooping);
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// 登记没有预设时长的动画短名与资源 Location。
-    /// 运行时资源成功加载后会自动填充时长和循环标记。
-    /// </summary>
-    /// <param name="clipName">配置或表现表中的动画短名。</param>
-    /// <param name="clipPath">YooAsset 动画资源 Location。</param>
-    /// <returns>登记成功返回 true；参数非法返回 false。</returns>
-    public bool RegisterClipPath(string clipName, string clipPath)
-    {
-        return RegisterClipPath(clipName, clipPath, 0f, false);
+        return clipPath.Substring(nameStartIndex, extensionIndex - nameStartIndex);
     }
 
     /// <summary>
@@ -892,6 +775,132 @@ public sealed class MAnimationMgr
             }
         }
     }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>
+    /// 异步加载并解析 RO 格式的动画索引文本。
+    /// 同一时刻的重复调用会共用一个 YooAsset TextAsset 加载请求，所有调用方在完成后收到相同结果。
+    /// </summary>
+    /// <param name="callback">预加载结果回调；传入 null 表示调用方只触发加载不接收结果。</param>
+    public void Preload(PreloadCallback callback)
+    {
+        if (_isPreloaded)
+        {
+            if (callback != null)
+            {
+                callback(true);
+            }
+            return;
+        }
+
+        if (callback != null)
+        {
+            _preloadCallbacks.Add(callback);
+        }
+
+        if (_isPreloading)
+        {
+            return;
+        }
+
+        if (Global.Instance == null || Global.Instance.YooPackage == null ||
+            !Global.Instance.YooPackage.CheckLocationValid(AnimInfoLocation))
+        {
+            Debug.LogError("动画索引文本地址无效：" + AnimInfoLocation);
+            NotifyPreloadCallbacks(false);
+            return;
+        }
+
+        _isPreloading = true;
+        _preloadVersion++;
+        // 当前动画索引加载会话编号，用于过滤退出或重新初始化后的旧回调。
+        int preloadVersion = _preloadVersion;
+        // 动画索引必须经 YooAsset 加载，不能使用 Resources.Load 绕开热更新资源包。
+        _preloadHandle =
+            Global.Instance.YooPackage.LoadAssetAsync<TextAsset>(AnimInfoLocation);
+        _preloadHandle.Completed += handle =>
+            OnAnimInfoLoadCompleted(preloadVersion, handle);
+    }
+
+    /// <summary>
+    /// 解析二维 JSON 并以完整成功为前提替换短名索引。
+    /// 已存在的 ClipInfo 不会被清空，确保预加载之后仍被实体引用的剪辑生命周期完整。
+    /// </summary>
+    /// <param name="animInfoText">RO 格式动画索引文本，每条结构为 [Location, 时长秒, 是否循环]。</param>
+    /// <returns>所有条目均合法且至少包含一条动画记录时返回 true。</returns>
+    private bool ApplyAnimInfoText(string animInfoText)
+    {
+        // 解析出的强类型动画配置行，全部成功后才写入运行时映射。
+        List<AnimationConfigEntry> entries;
+        if (!TryParseAnimInfo(animInfoText, out entries))
+        {
+            Debug.LogError("动画索引文本不是合法二维 JSON：" + AnimInfoLocation);
+            return false;
+        }
+
+        if (entries.Count == 0)
+        {
+            Debug.LogError("动画索引文本不包含任何动作：" + AnimInfoLocation);
+            return false;
+        }
+
+        _nameToPathDict.Clear();
+        for (int index = 0; index < entries.Count; index++)
+        {
+            // 当前二维 JSON 行的完整 Location、时长和循环属性。
+            AnimationConfigEntry entry = entries[index];
+            // 短名由实际 Unity 资源文件名去除 .anim 后缀得到，匹配表现表中的 clipName。
+            string clipName = GetClipNameFromPath(entry.ClipPath);
+            if (string.IsNullOrEmpty(clipName) ||
+                !RegisterClipPath(clipName, entry.ClipPath, entry.Length,
+                    entry.IsLooping))
+            {
+                Debug.LogError("动画索引条目无效：" + entry.ClipPath);
+                _nameToPathDict.Clear();
+                return false;
+            }
+        }
+
+        Debug.Log("动画索引加载完成，数量：" + entries.Count);
+        return true;
+    }
+
+    /// <summary>
+    /// 结束动画资源管理器当前生命周期，归还索引及全部剪辑句柄并清空回调、引用和 LRU 状态。
+    /// 单例对象本身继续存在，后续新的 Global 生命周期可再次调用 Preload 建立索引。
+    /// </summary>
+    public void Uninit()
+    {
+        _preloadVersion++;
+        _isPreloading = false;
+        _isPreloaded = false;
+        _preloadCallbacks.Clear();
+        if (_preloadHandle != null)
+        {
+            _preloadHandle.Release();
+        }
+        _preloadHandle = null;
+
+        // 共享剪辑快照用于在清空字典前逐项释放可能仍在加载或被缓存的 YooAsset 句柄。
+        List<ClipInfo> clipInfos = new List<ClipInfo>(_clipInfoDict.Values);
+        for (int index = 0; index < clipInfos.Count; index++)
+        {
+            // 当前待结束生命周期的共享剪辑信息。
+            ClipInfo clipInfo = clipInfos[index];
+            if (clipInfo != null)
+            {
+                clipInfo.ClearClip();
+            }
+        }
+
+        _clipInfoDict.Clear();
+        _nameToPathDict.Clear();
+        _idleClipPathList.Clear();
+        _idleClipNodeDict.Clear();
+        _nextRecycleTimestamp = 0f;
+    }
+    #endregion
 
     /// <summary>
     /// 单条动画索引的强类型数据。

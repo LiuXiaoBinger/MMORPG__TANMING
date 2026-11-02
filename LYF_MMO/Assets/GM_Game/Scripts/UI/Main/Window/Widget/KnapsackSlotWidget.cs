@@ -8,39 +8,26 @@ public class KnapsackSlotWidget : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler,
     IPointerDownHandler, IPointerUpHandler, IDropHandler
 {
+
+    #region 字段
     [SerializeField, Header("物品图标")] private Image _imgIcon;
+
     [SerializeField, Header("物品数量")] private TMP_Text _texCount;
+
     [SerializeField, Header("鼠标进入效果")] private Image _imgEnter;
+
     [SerializeField, Header("物品特效")] private Image _imgFx;
 
     /// <summary>当前格子显示的物品数量。</summary>
     private int _count;
+
     /// <summary>兼容旧资源记录的图标名称。</summary>
     private string _spriteName;
 
     private int _itemTypeId;
+    #endregion
 
-    private static string GetIconName(int itemTypeId)
-    {
-        // 这两张现有资源使用小写文件名，其余物品图标均为 Item_ 前缀。
-        if (itemTypeId == 2003 || itemTypeId == 2005)
-        {
-            return $"item_{itemTypeId}";
-        }
-        return $"Item_{itemTypeId}";
-    }
-
-    /// <summary>清空格子显示并隐藏所有状态图片。</summary>
-    public void Clear()
-    {
-        _count = 0;
-        _itemTypeId = 0;
-        _imgIcon.gameObject.Show(false);
-        _texCount.gameObject.Show(false);
-        _imgEnter.gameObject.Show(false);
-        _imgFx.gameObject.Show(false);
-    }
-
+    #region 界面刷新
     /// <summary>
     /// 使用控制器生成的物品展示数据刷新格子。
     /// </summary>
@@ -97,7 +84,9 @@ public class KnapsackSlotWidget : MonoBehaviour,
         _texCount.gameObject.Show();
         _texCount.SetText($"{_count}");
     }
+    #endregion
 
+    #region 交互响应
     /// <summary>鼠标进入格子时显示选中效果和物品提示。</summary>
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -114,7 +103,9 @@ public class KnapsackSlotWidget : MonoBehaviour,
         _imgEnter.gameObject.Show(false);
         TipsMgr.Instance.CloseItemTips();
     }
+    #endregion
 
+    #region 事件回调
     /// <summary>记录指针按下事件，当前由拖拽组件处理具体行为。</summary>
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -138,5 +129,27 @@ public class KnapsackSlotWidget : MonoBehaviour,
         {
             // TODO: 将背包位置交换请求提交给服务器。
         }
+    }
+    #endregion
+
+    private static string GetIconName(int itemTypeId)
+    {
+        // 这两张现有资源使用小写文件名，其余物品图标均为 Item_ 前缀。
+        if (itemTypeId == 2003 || itemTypeId == 2005)
+        {
+            return $"item_{itemTypeId}";
+        }
+        return $"Item_{itemTypeId}";
+    }
+
+    /// <summary>清空格子显示并隐藏所有状态图片。</summary>
+    public void Clear()
+    {
+        _count = 0;
+        _itemTypeId = 0;
+        _imgIcon.gameObject.Show(false);
+        _texCount.gameObject.Show(false);
+        _imgEnter.gameObject.Show(false);
+        _imgFx.gameObject.Show(false);
     }
 }

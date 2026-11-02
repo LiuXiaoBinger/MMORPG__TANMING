@@ -14,69 +14,98 @@ public class TaskWindow : WindowBase
 {
     /// <summary>任务标题文本，绑定 TaskInfo/Task/TaskName。</summary>
     [SerializeField] private Text _taskName;
+
     /// <summary>任务类型文本，绑定 TaskInfo/Task/TaskTypeTxt。</summary>
     [SerializeField] private Text _taskTypeText;
+
     /// <summary>任务提示文本（剩余时间等），绑定 TaskInfo/Task/TextTips。</summary>
     [SerializeField] private Text _taskTipText;
+
     /// <summary>任务描述文本，绑定 Content/DescTitle/TargetDesc，显示任务的真实描述内容。</summary>
     [SerializeField] private Text _targetDesc;
+
     /// <summary>目标行文本，依次绑定 Content/TargetTips/Target1..5/Txt，首期只用第一行。</summary>
     [SerializeField] private Text[] _targetTexts;
+
     /// <summary>截止时间行根节点，无时限时隐藏，绑定 Content/Deadline。</summary>
     [SerializeField] private GameObject _deadline;
+
     /// <summary>奖励区域根节点，无奖励或任务未选中时隐藏，绑定 TaskInfo/FinishInfo。</summary>
     [SerializeField] private GameObject _rewardRoot;
+
     /// <summary>奖励条目模板根节点，绑定 FinishInfo/Reward/Viewport/RewardList/RewardItem。</summary>
     [SerializeField] private GameObject _rewardItem;
+
     /// <summary>奖励图标，绑定 RewardItem/ItemIcon。</summary>
     [SerializeField] private Image _rewardIcon;
+
     /// <summary>没有任务数据时的空态根节点，绑定 Task_Empty。</summary>
     [SerializeField] private GameObject _emptyRoot;
+
     /// <summary>可接任务筛选开关，绑定 TaskSelectPart/CanAccpetToggle，首期无可接数据源，只触发刷新。</summary>
     [SerializeField] private Toggle _acceptableToggle;
+
     /// <summary>任务列表滚动内容节点，克隆条目挂载父节点，绑定 TaskSelectPart/Toggroup/Obj_Toggle/Viewport/Content。</summary>
     [SerializeField] private RectTransform _listContent;
+
     /// <summary>列表模板容器根节点，运行时整体隐藏，绑定 Content/Templent。</summary>
     [SerializeField] private GameObject _listTemplateRoot;
+
     /// <summary>分组父条目模板，绑定 Templent/TaskParentItem。</summary>
     [SerializeField] private TaskParentItemWidget _parentTemplate;
+
     /// <summary>任务子条目模板，绑定 Templent/TaskChildItem。</summary>
     [SerializeField] private TaskChildItemWidget _childTemplate;
+
     /// <summary>开始（前往目标）按钮根节点，绑定 TaskInfo/Image/Btn_Start，无选中任务时隐藏。</summary>
     [SerializeField] private GameObject _startButtonRoot;
+
     /// <summary>取消（放弃任务）按钮根节点，绑定 TaskInfo/Image/Btn_Cancel，无可放弃任务时隐藏。</summary>
     [SerializeField] private GameObject _cancelButtonRoot;
+
     /// <summary>页签按钮组，索引顺序固定为主线、日常、活动，与 TaskPageFilter 的枚举值一一对应。</summary>
     [SerializeField, Header("页签按钮组（主线/日常/活动）")] private Toggle[] _pageTabs;
 
     /// <summary>请求关闭本窗口。</summary>
     public event Action CloseRequested;
+
     /// <summary>选中某个任务，参数为被选中的任务数据。</summary>
     public event Action<TaskViewData> TaskSelected;
+
     /// <summary>请求接取任务。</summary>
     public event Action<TaskViewData> AcceptRequested;
+
     /// <summary>请求交付任务。</summary>
     public event Action<TaskViewData> DeliverRequested;
+
     /// <summary>请求放弃任务。</summary>
     public event Action<TaskViewData> GiveUpRequested;
+
     /// <summary>请求前往任务目标。</summary>
     public event Action<TaskViewData> NavigateRequested;
+
     /// <summary>页签切换请求，参数为目标页签，由控制器写入 TaskMgr 后统一刷新。</summary>
     public event Action<TaskPageFilter> PageChanged;
 
     /// <summary>当前窗口展示的任务数据序列，按页签筛选结果填充。</summary>
     private readonly List<TaskViewData> _pageTasks = new List<TaskViewData>();
+
     /// <summary>已克隆的任务子条目控件，按列表顺序持有，重建时统一解绑销毁。</summary>
     private readonly List<TaskChildItemWidget> _childItems = new List<TaskChildItemWidget>();
+
     /// <summary>当前列表的分组父条目控件，每次重建时替换。</summary>
     private TaskParentItemWidget _parentItem;
+
     /// <summary>可接筛选开关事件是否已注册，避免重复订阅。</summary>
     private bool _toggleRegistered;
+
     /// <summary>页签按钮事件是否已注册，避免重复订阅。</summary>
     private bool _tabsRegistered;
+
     /// <summary>是否正在程序化同步页签选中态，用于抑制同步过程产生的切换回调。</summary>
     private bool _syncingTabs;
 
+    #region 初始化
     /// <summary>注册筛选开关、隐藏列表模板并刷新一次内容。</summary>
     public override void InitWindow()
     {
@@ -94,27 +123,60 @@ public class TaskWindow : WindowBase
         SyncPageTabs();
     }
 
-    /// <summary>按当前页签重新取任务集合并重建列表、详情与空态。</summary>
-    public void RefreshTaskList()
+    #region 事件注册
+    #endregion
+
+    /// <summary>注册可接筛选开关的切换事件，只注册一次。</summary>
+    private void RegisterAcceptableToggle()
     {
-        if (TaskMgr.Instance == null)
+        if (_toggleRegistered)
         {
             return;
         }
-        _pageTasks.Clear();
-        // 当前页签下筛选出的任务列表，作为本窗口列表与详情的数据源。
-        List<TaskViewData> tasks = TaskMgr.Instance.GetPageTasks(TaskMgr.Instance.GetCurrentPage());
-        // 循环索引：按筛选顺序把任务写入本页任务序列。
-        for (int i = 0; i < tasks.Count; i++)
+        if (_acceptableToggle == null)
         {
-            _pageTasks.Add(tasks[i]);
+            return;
         }
-        RebuildTaskList();
-        // 当前应展示详情的任务，为空表示本页无任务，走空态。
-        TaskViewData current = PickCurrentTask();
-        ApplySelection(current);
-        ShowDetail(current);
-        UpdateActionButtons(current);
+        _acceptableToggle.onValueChanged.AddListener(OnAcceptableToggleChanged);
+        _toggleRegistered = true;
+    }
+
+    /// <summary>可接筛选开关回调：首期没有可接任务数据源，只按当前页签重新刷新，不伪造筛选结果。</summary>
+    /// <param name="isOn">开关是否选中。</param>
+    private void OnAcceptableToggleChanged(bool isOn)
+    {
+        RefreshTaskList();
+    }
+
+    /// <summary>注册页签按钮的切换事件，只注册一次；索引与 TaskPageFilter 枚举值对应。</summary>
+    private void RegisterPageTabs()
+    {
+        if (_tabsRegistered)
+        {
+            return;
+        }
+        if (_pageTabs == null || _pageTabs.Length == 0)
+        {
+            return;
+        }
+        // 循环索引：按页签顺序逐个绑定并初始化选中态。
+        for (int i = 0; i < _pageTabs.Length; i++)
+        {
+            // 当前索引对应的页签按钮，允许留空跳过。
+            Toggle tab = _pageTabs[i];
+            if (tab == null)
+            {
+                continue;
+            }
+            // 该按钮对应的页签枚举值，索引 0/1/2 分别对应主线/日常/活动。
+            TaskPageFilter page = IndexToPage(i);
+            tab.onValueChanged.AddListener(isOn => OnPageTabValueChanged(page, isOn));
+        }
+        _tabsRegistered = true;
+
+    #region 按钮响应
+    #endregion
+        SyncPageTabs();
     }
 
     /// <summary>Inspector 入口：请求关闭任务窗口。</summary>
@@ -186,9 +248,35 @@ public class TaskWindow : WindowBase
             return;
         }
         if (AcceptRequested != null)
+
+    #region 列表构建与刷新
+    #endregion
         {
             AcceptRequested.Invoke(data);
         }
+    }
+
+    /// <summary>按当前页签重新取任务集合并重建列表、详情与空态。</summary>
+    public void RefreshTaskList()
+    {
+        if (TaskMgr.Instance == null)
+        {
+            return;
+        }
+        _pageTasks.Clear();
+        // 当前页签下筛选出的任务列表，作为本窗口列表与详情的数据源。
+        List<TaskViewData> tasks = TaskMgr.Instance.GetPageTasks(TaskMgr.Instance.GetCurrentPage());
+        // 循环索引：按筛选顺序把任务写入本页任务序列。
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            _pageTasks.Add(tasks[i]);
+        }
+        RebuildTaskList();
+        // 当前应展示详情的任务，为空表示本页无任务，走空态。
+        TaskViewData current = PickCurrentTask();
+        ApplySelection(current);
+        ShowDetail(current);
+        UpdateActionButtons(current);
     }
 
     /// <summary>隐藏列表模板容器，克隆条目在容器外独立生成，不受模板隐藏影响。</summary>
@@ -252,20 +340,6 @@ public class TaskWindow : WindowBase
         _parentItem.BindChildren(BuildChildSnapshot());
     }
 
-    /// <summary>拷贝当前子条目列表，避免分组父条目持有重建期变化的活列表。</summary>
-    /// <returns>当前子条目控件的只读快照列表。</returns>
-    private List<TaskChildItemWidget> BuildChildSnapshot()
-    {
-        // 拷贝出的子条目快照列表，供分组父条目持有，避免活列表在重建期变化。
-        List<TaskChildItemWidget> snapshot = new List<TaskChildItemWidget>();
-        // 循环索引：按当前列表顺序拷贝子条目引用。
-        for (int i = 0; i < _childItems.Count; i++)
-        {
-            snapshot.Add(_childItems[i]);
-        }
-        return snapshot;
-    }
-
     /// <summary>销毁全部克隆条目并解绑事件，防止重建后残留订阅。</summary>
     private void ClearTaskList()
     {
@@ -295,6 +369,9 @@ public class TaskWindow : WindowBase
     {
         if (row == null)
         {
+
+    #region 条目交互与选中
+    #endregion
             return;
         }
         // Object.Destroy 延迟到帧末执行，先摘下父级可让旧行立即退出列表布局，防止连续切换页签时叠加。
@@ -377,6 +454,9 @@ public class TaskWindow : WindowBase
         TaskViewData tracked = TaskMgr.Instance.GetTrackedTask();
         if (tracked != null && tracked.Page == TaskMgr.Instance.GetCurrentPage())
         {
+
+    #region 详情展示
+    #endregion
             return tracked;
         }
         if (_pageTasks.Count > 0)
@@ -384,22 +464,6 @@ public class TaskWindow : WindowBase
             return _pageTasks[0];
         }
         return null;
-    }
-
-    /// <summary>把页签枚举转换成分组父条目标题文本。</summary>
-    /// <param name="page">目标页签。</param>
-    /// <returns>页签对应的中文标题。</returns>
-    private string PageToTitle(TaskPageFilter page)
-    {
-        if (page == TaskPageFilter.MainLine)
-        {
-            return "主线任务";
-        }
-        if (page == TaskPageFilter.Daily)
-        {
-            return "日常任务";
-        }
-        return "活动任务";
     }
 
     /// <summary>把任务数据写入详情控件，数据为空时清空文本并进入空态。</summary>
@@ -501,6 +565,9 @@ public class TaskWindow : WindowBase
     }
 
     /// <summary>写入文本控件，控件未绑定时跳过。</summary>
+
+    #region 页签同步与页面映射
+    #endregion
     /// <param name="target">目标文本控件。</param>
     /// <param name="content">要写入的文本。</param>
     private void SetText(Text target, string content)
@@ -512,75 +579,20 @@ public class TaskWindow : WindowBase
         target.text = content;
     }
 
-    /// <summary>注册可接筛选开关的切换事件，只注册一次。</summary>
-    private void RegisterAcceptableToggle()
+    /// <summary>把页签枚举转换成分组父条目标题文本。</summary>
+    /// <param name="page">目标页签。</param>
+    /// <returns>页签对应的中文标题。</returns>
+    private string PageToTitle(TaskPageFilter page)
     {
-        if (_toggleRegistered)
+        if (page == TaskPageFilter.MainLine)
         {
-            return;
+            return "主线任务";
         }
-        if (_acceptableToggle == null)
+        if (page == TaskPageFilter.Daily)
         {
-            return;
+            return "日常任务";
         }
-        _acceptableToggle.onValueChanged.AddListener(OnAcceptableToggleChanged);
-        _toggleRegistered = true;
-    }
-
-    /// <summary>可接筛选开关回调：首期没有可接任务数据源，只按当前页签重新刷新，不伪造筛选结果。</summary>
-    /// <param name="isOn">开关是否选中。</param>
-    private void OnAcceptableToggleChanged(bool isOn)
-    {
-        RefreshTaskList();
-    }
-
-    /// <summary>注册页签按钮的切换事件，只注册一次；索引与 TaskPageFilter 枚举值对应。</summary>
-    private void RegisterPageTabs()
-    {
-        if (_tabsRegistered)
-        {
-            return;
-        }
-        if (_pageTabs == null || _pageTabs.Length == 0)
-        {
-            return;
-        }
-        // 循环索引：按页签顺序逐个绑定并初始化选中态。
-        for (int i = 0; i < _pageTabs.Length; i++)
-        {
-            // 当前索引对应的页签按钮，允许留空跳过。
-            Toggle tab = _pageTabs[i];
-            if (tab == null)
-            {
-                continue;
-            }
-            // 该按钮对应的页签枚举值，索引 0/1/2 分别对应主线/日常/活动。
-            TaskPageFilter page = IndexToPage(i);
-            tab.onValueChanged.AddListener(isOn => OnPageTabValueChanged(page, isOn));
-        }
-        _tabsRegistered = true;
-        SyncPageTabs();
-    }
-
-    /// <summary>页签被点选时的回调：只在被选中时切换页签，取消选中不触发切换。</summary>
-    /// <param name="page">该按钮对应的页签。</param>
-    /// <param name="isOn">按钮当前是否选中。</param>
-    private void OnPageTabValueChanged(TaskPageFilter page, bool isOn)
-    {
-        if (_syncingTabs || isOn == false)
-        {
-            return;
-        }
-        if (TaskMgr.Instance != null && TaskMgr.Instance.GetCurrentPage() == page)
-        {
-            SyncPageTabs();
-            return;
-        }
-        if (PageChanged != null)
-        {
-            PageChanged.Invoke(page);
-        }
-        SyncPageTabs();
+        return "活动任务";
     }
 
     /// <summary>把页签按钮的选中态同步为 TaskMgr 当前的页签，同步期间不触发切换回调。</summary>
@@ -609,6 +621,7 @@ public class TaskWindow : WindowBase
     /// <summary>把页签按钮的索引换算成页签枚举，越界时回落主线。</summary>
     /// <param name="index">页签按钮在组内的索引，0/1/2 对应主线/日常/活动。</param>
     /// <returns>对应的页签枚举值。</returns>
+    #endregion
     private TaskPageFilter IndexToPage(int index)
     {
         if (index == 1)
@@ -620,5 +633,40 @@ public class TaskWindow : WindowBase
             return TaskPageFilter.Activity;
         }
         return TaskPageFilter.MainLine;
+    }
+
+    /// <summary>拷贝当前子条目列表，避免分组父条目持有重建期变化的活列表。</summary>
+    /// <returns>当前子条目控件的只读快照列表。</returns>
+    private List<TaskChildItemWidget> BuildChildSnapshot()
+    {
+        // 拷贝出的子条目快照列表，供分组父条目持有，避免活列表在重建期变化。
+        List<TaskChildItemWidget> snapshot = new List<TaskChildItemWidget>();
+        // 循环索引：按当前列表顺序拷贝子条目引用。
+        for (int i = 0; i < _childItems.Count; i++)
+        {
+            snapshot.Add(_childItems[i]);
+        }
+        return snapshot;
+    }
+
+    /// <summary>页签被点选时的回调：只在被选中时切换页签，取消选中不触发切换。</summary>
+    /// <param name="page">该按钮对应的页签。</param>
+    /// <param name="isOn">按钮当前是否选中。</param>
+    private void OnPageTabValueChanged(TaskPageFilter page, bool isOn)
+    {
+        if (_syncingTabs || isOn == false)
+        {
+            return;
+        }
+        if (TaskMgr.Instance != null && TaskMgr.Instance.GetCurrentPage() == page)
+        {
+            SyncPageTabs();
+            return;
+        }
+        if (PageChanged != null)
+        {
+            PageChanged.Invoke(page);
+        }
+        SyncPageTabs();
     }
 }

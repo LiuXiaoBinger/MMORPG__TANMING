@@ -6,6 +6,8 @@ using TouchPhase = UnityEngine.TouchPhase;
 /// <summary>玩家输入控制器，负责采集 Input System 回调并转为实体输入事件。</summary>
 public class PlayerInputCtr : MonoBehaviour
 {
+
+    #region 字段、事件与属性
     /// <summary>当前场景中的输入控制器单例。</summary>
     public static PlayerInputCtr Instance;
 
@@ -66,33 +68,9 @@ public class PlayerInputCtr : MonoBehaviour
             return playerInput.player.Movement.ReadValue<Vector2>();
         }
     }
+    #endregion
 
-    /// <summary>用现有 Input System 采集鼠标按下松开与 Tab，Tab 和瞄准按钮走同一切换方法。</summary>
-    private void PollTargetSelection()
-    {
-        // 当前鼠标设备，桌面点击以左键的真实边沿为准。
-        Mouse mouse = Mouse.current;
-        if (mouse != null)
-        {
-            // 本帧屏幕像素位置，同时用于 UI 阻挡和世界射线检测。
-            Vector2 position = mouse.position.ReadValue();
-            if (mouse.leftButton.wasPressedThisFrame)
-            {
-                TouchObject.singleton.JudegeType(position, TouchPhase.Began);
-            }
-            if (mouse.leftButton.wasReleasedThisFrame)
-            {
-                TouchObject.singleton.JudegeType(position, TouchPhase.Ended);
-            }
-        }
-        // Tab 是桌面便捷入口，不修改已有技能字符和移动动作绑定。
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.tabKey.wasPressedThisFrame)
-        {
-            MSkillTargetMgr.singleton.FindEnemyByAimBtn();
-        }
-    }
-
+    #region 初始化与事件注册
     /// <summary>初始化 Input System 并注册动作回调。</summary>
     private void Awake()
     {
@@ -214,6 +192,7 @@ public class PlayerInputCtr : MonoBehaviour
             Keyboard.current.onTextInput += OnTextInput;
         }
     }
+    #endregion
 
     /// <summary>处理移动开始或方向变化，立即把最新非零输入派发给本地角色。</summary>
     /// <param name="context">Input System 提供的移动动作阶段和二维输入值。</param>
@@ -254,6 +233,7 @@ public class PlayerInputCtr : MonoBehaviour
         DispatchMovement(_latestMovementInput);
     }
 
+    #region 事件回调
     /// <summary>处理移动取消，立即清除输入缓存并停止本地角色水平移动。</summary>
     /// <param name="context">Input System 提供的取消阶段信息；当前逻辑不读取其中的零向量。</param>
     private void OnMovementCanceled(InputAction.CallbackContext context)
@@ -262,6 +242,127 @@ public class PlayerInputCtr : MonoBehaviour
         _lastMovementCanceledTime = context.time;
         ScheduleMovementStop();
     }
+
+    /// <summary>按下跳跃键时直接请求本地玩家移动组件开始下一段跳跃。</summary>
+    /// <param name="context">Input System 提供的本次跳跃按键阶段信息。</param>
+    private void OnJumpStarted(InputAction.CallbackContext context)
+    {
+        // 跳跃只在按下沿执行；松开按键不再连接旧角色控制器或结束跳跃。
+        PlayerEntity localRole = GetLocalRole();
+        if (localRole == null || localRole.MoveComp == null)
+        {
+            return;
+        }
+
+        localRole.MoveComp.TryJump();
+    }
+
+    /// <summary>处理原始文本输入并转发实体事件及快捷键通知。</summary>
+    /// <param name="inputCharacter">Input System 产生的字符。</param>
+    private void OnTextInput(char inputCharacter)
+    {
+        if (playerInput == null || !playerInput.asset.enabled)
+        {
+            return;
+        }
+
+        DispatchTextInput(inputCharacter);
+        // 将文本字符转为大写字符串，用于技能和界面快捷键匹配。
+        string key = inputCharacter.ToString().ToUpperInvariant();
+        if (IsSkillKey(key))
+        {
+            DispatchSkillShortcut(key);
+        }
+        else if (key == "L" || key == "B" || key == "I")
+        {
+            MainUIKeyHandler?.Invoke(key);
+        }
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>判断字符是否为技能快捷键。</summary>
+    /// <param name="key">转为大写后的单字符字符串。</param>
+    /// <returns>属于技能快捷键时返回 true。</returns>
+    private bool IsSkillKey(string key)
+    {
+        // 字母快捷键分组 Q/E/R。
+        bool isLetterQer = key == "Q" || key == "E" || key == "R";
+        // 字母 F 与数字快捷键 1/2。
+        bool isLetterF12 = key == "F" || key == "1" || key == "2";
+        // 字母快捷键组合。
+        bool isLetterGroup = isLetterQer || isLetterF12;
+        // 数字快捷键 3/4/5。
+        bool isDigit345 = key == "3" || key == "4" || key == "5";
+        // 数字快捷键 6/7/8。
+        bool isDigit678 = key == "6" || key == "7" || key == "8";
+        // 数字快捷键 9。
+        bool isDigit9 = key == "9";
+        // 数字快捷键组合。
+        bool isDigitGroup = isDigit345 || isDigit678 || isDigit9;
+        return isLetterGroup || isDigitGroup;
+    }
+
+    /// <summary>获取场景中的本地玩家实体。</summary>
+    /// <returns>本地玩家实体；场景未准备好时返回 null。</returns>
+    private PlayerEntity GetLocalRole()
+    {
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return null;
+        }
+        return Global.Instance.SceneWorld.LocalRole;
+    }
+
+    public virtual Vector3 GetMovementCameraDirection(Transform mainCameraTransform,
+        Vector2 value, float deadzone)
+    {
+        // 1. 获取移动方向（通常是玩家输入的水平/垂直方向，比如 WSAD 或摇杆）
+        Vector3 direction = GetMovementDirection(value, deadzone);
+
+        // 2. 如果有输入（不是零向量）
+        if (direction.sqrMagnitude > 0)
+        {
+            // 3. 构建一个旋转：根据摄像机的 Y 轴角度（水平朝向）
+            // Quaternion.AngleAxis(angle, axis) 表示绕某个轴旋转一个角度
+            Quaternion rotation = Quaternion.AngleAxis(
+                mainCameraTransform.eulerAngles.y, Vector3.up);
+
+            // 4. 把原始输入方向旋转到摄像机的朝向下
+            direction = rotation * direction;
+
+            // 5. 归一化，保持方向向量的长度为 1（只保留方向）
+            direction = direction.normalized;
+        }
+
+        // 6. 返回最终的世界空间移动方向
+        return direction;
+    }
+
+    /// <summary>
+    /// 获取移动方向输入（带十字型死区判断）
+    /// 如果在锁定时间内，则返回 Vector3.zero
+    /// </summary>
+    public virtual Vector3 GetMovementDirection(Vector2 value, float deadzone)
+    {
+        //if (Time.time < m_movementDirectionUnlockTime) return Vector3.zero;
+        return GetAxisWithCrossDeadZone(value,deadzone);
+    }
+
+    /// <summary>
+    /// 根据十字形死区修正输入值（Input System 默认是圆形死区）
+    /// </summary>
+    /// <param name="axis">输入轴</param>
+    public virtual Vector3 GetAxisWithCrossDeadZone(Vector2 axis, float deadzone)
+    {
+        //Debug.Log("axis " + axis.ToString());
+        if (Mathf.Abs(axis.x) > deadzone) axis.x = RemapToDeadzone(axis.x, deadzone);
+        else axis.x = 0f;
+        if (Mathf.Abs(axis.y) > deadzone) axis.y = RemapToDeadzone(axis.y, deadzone);
+        else axis.y = 0f;
+        return new Vector3(axis.x, 0, axis.y);
+    }
+    #endregion
 
     /// <summary>读取移动动作的实时按压状态，按键已经释放时不返回 Input System 中残留的向量缓存。</summary>
     /// <returns>仍保持按压时的二维移动向量；动作未启用或已经取消时返回零向量。</returns>
@@ -273,6 +374,33 @@ public class PlayerInputCtr : MonoBehaviour
         }
 
         return playerInput.player.Movement.ReadValue<Vector2>();
+    }
+
+    #region 核心逻辑
+    /// <summary>用现有 Input System 采集鼠标按下松开与 Tab，Tab 和瞄准按钮走同一切换方法。</summary>
+    private void PollTargetSelection()
+    {
+        // 当前鼠标设备，桌面点击以左键的真实边沿为准。
+        Mouse mouse = Mouse.current;
+        if (mouse != null)
+        {
+            // 本帧屏幕像素位置，同时用于 UI 阻挡和世界射线检测。
+            Vector2 position = mouse.position.ReadValue();
+            if (mouse.leftButton.wasPressedThisFrame)
+            {
+                TouchObject.singleton.JudegeType(position, TouchPhase.Began);
+            }
+            if (mouse.leftButton.wasReleasedThisFrame)
+            {
+                TouchObject.singleton.JudegeType(position, TouchPhase.Ended);
+            }
+        }
+        // Tab 是桌面便捷入口，不修改已有技能字符和移动动作绑定。
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.tabKey.wasPressedThisFrame)
+        {
+            MSkillTargetMgr.singleton.FindEnemyByAimBtn();
+        }
     }
 
     /// <summary>清除移动输入保持状态和周期累计时间，避免旧输入在后续帧重新启动移动。</summary>
@@ -322,42 +450,6 @@ public class PlayerInputCtr : MonoBehaviour
     {
         ResetMovementInputState();
         DispatchStopMovement();
-    }
-
-    /// <summary>按下跳跃键时直接请求本地玩家移动组件开始下一段跳跃。</summary>
-    /// <param name="context">Input System 提供的本次跳跃按键阶段信息。</param>
-    private void OnJumpStarted(InputAction.CallbackContext context)
-    {
-        // 跳跃只在按下沿执行；松开按键不再连接旧角色控制器或结束跳跃。
-        PlayerEntity localRole = GetLocalRole();
-        if (localRole == null || localRole.MoveComp == null)
-        {
-            return;
-        }
-
-        localRole.MoveComp.TryJump();
-    }
-
-    /// <summary>处理原始文本输入并转发实体事件及快捷键通知。</summary>
-    /// <param name="inputCharacter">Input System 产生的字符。</param>
-    private void OnTextInput(char inputCharacter)
-    {
-        if (playerInput == null || !playerInput.asset.enabled)
-        {
-            return;
-        }
-
-        DispatchTextInput(inputCharacter);
-        // 将文本字符转为大写字符串，用于技能和界面快捷键匹配。
-        string key = inputCharacter.ToString().ToUpperInvariant();
-        if (IsSkillKey(key))
-        {
-            DispatchSkillShortcut(key);
-        }
-        else if (key == "L" || key == "B" || key == "I")
-        {
-            MainUIKeyHandler?.Invoke(key);
-        }
     }
 
     /// <summary>读取 Q/E/R/F/数字键的物理按下边沿并派发技能快捷键。</summary>
@@ -427,28 +519,6 @@ public class PlayerInputCtr : MonoBehaviour
         {
             SkillKeyEvent.Invoke(skillKey);
         }
-    }
-
-    /// <summary>判断字符是否为技能快捷键。</summary>
-    /// <param name="key">转为大写后的单字符字符串。</param>
-    /// <returns>属于技能快捷键时返回 true。</returns>
-    private bool IsSkillKey(string key)
-    {
-        // 字母快捷键分组 Q/E/R。
-        bool isLetterQer = key == "Q" || key == "E" || key == "R";
-        // 字母 F 与数字快捷键 1/2。
-        bool isLetterF12 = key == "F" || key == "1" || key == "2";
-        // 字母快捷键组合。
-        bool isLetterGroup = isLetterQer || isLetterF12;
-        // 数字快捷键 3/4/5。
-        bool isDigit345 = key == "3" || key == "4" || key == "5";
-        // 数字快捷键 6/7/8。
-        bool isDigit678 = key == "6" || key == "7" || key == "8";
-        // 数字快捷键 9。
-        bool isDigit9 = key == "9";
-        // 数字快捷键组合。
-        bool isDigitGroup = isDigit345 || isDigit678 || isDigit9;
-        return isLetterGroup || isDigitGroup;
     }
 
     /// <summary>把 Shift 的按住状态交给本地玩家移动组件，切换普通移动与跑步。</summary>
@@ -543,66 +613,6 @@ public class PlayerInputCtr : MonoBehaviour
         EntityInputEventBridge.DispatchInput(localRole, eventArgs);
     }
 
-    /// <summary>获取场景中的本地玩家实体。</summary>
-    /// <returns>本地玩家实体；场景未准备好时返回 null。</returns>
-    private PlayerEntity GetLocalRole()
-    {
-        if (Global.Instance == null || Global.Instance.SceneWorld == null)
-        {
-            return null;
-        }
-        return Global.Instance.SceneWorld.LocalRole;
-    }
-
-    public virtual Vector3 GetMovementCameraDirection(Transform mainCameraTransform,
-        Vector2 value, float deadzone)
-    {
-        // 1. 获取移动方向（通常是玩家输入的水平/垂直方向，比如 WSAD 或摇杆）
-        Vector3 direction = GetMovementDirection(value, deadzone);
-
-        // 2. 如果有输入（不是零向量）
-        if (direction.sqrMagnitude > 0)
-        {
-            // 3. 构建一个旋转：根据摄像机的 Y 轴角度（水平朝向）
-            // Quaternion.AngleAxis(angle, axis) 表示绕某个轴旋转一个角度
-            Quaternion rotation = Quaternion.AngleAxis(
-                mainCameraTransform.eulerAngles.y, Vector3.up);
-
-            // 4. 把原始输入方向旋转到摄像机的朝向下
-            direction = rotation * direction;
-
-            // 5. 归一化，保持方向向量的长度为 1（只保留方向）
-            direction = direction.normalized;
-        }
-
-        // 6. 返回最终的世界空间移动方向
-        return direction;
-    }
-
-    /// <summary>
-    /// 获取移动方向输入（带十字型死区判断）
-    /// 如果在锁定时间内，则返回 Vector3.zero
-    /// </summary>
-    public virtual Vector3 GetMovementDirection(Vector2 value, float deadzone)
-    {
-        //if (Time.time < m_movementDirectionUnlockTime) return Vector3.zero;
-        return GetAxisWithCrossDeadZone(value,deadzone);
-    }
-
-    /// <summary>
-    /// 根据十字形死区修正输入值（Input System 默认是圆形死区）
-    /// </summary>
-    /// <param name="axis">输入轴</param>
-    public virtual Vector3 GetAxisWithCrossDeadZone(Vector2 axis, float deadzone)
-    {
-        //Debug.Log("axis " + axis.ToString());
-        if (Mathf.Abs(axis.x) > deadzone) axis.x = RemapToDeadzone(axis.x, deadzone);
-        else axis.x = 0f;
-        if (Mathf.Abs(axis.y) > deadzone) axis.y = RemapToDeadzone(axis.y, deadzone);
-        else axis.y = 0f;
-        return new Vector3(axis.x, 0, axis.y);
-    }
-
     /// <summary>
     /// 将输入值按给定死区重新映射到 0-1
     /// </summary>
@@ -617,4 +627,5 @@ public class PlayerInputCtr : MonoBehaviour
         }
         return (value - offset) / (1f - deadzone);
     }
+    #endregion
 }

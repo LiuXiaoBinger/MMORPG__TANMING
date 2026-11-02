@@ -7,39 +7,40 @@ using UnityEngine;
 /// </summary>
 public class MainCtrl : CtrlBase
 {
+
+    #region 字段
     /// <summary>主界面视图集合。</summary>
     private readonly MainView _mainView;
+
     /// <summary>商城子控制器。</summary>
     private readonly ShopCtrl _shopCtrl;
+
     /// <summary>技能子控制器。</summary>
     private readonly SkillCtrl _skillCtrl;
+
     /// <summary>角色信息子控制器。</summary>
     private readonly RoleInfoCtrl _roleInfoCtrl;
+
     /// <summary>背包角色组件与背包窗口之间的控制器。</summary>
     private readonly KnapsackCtrl _knapsackCtrl;
+
     /// <summary>聊天窗口视图。</summary>
     private readonly ChatWindow _chatWindow;
+
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
+
     /// <summary>主题副本建队子控制器，负责本地单人队伍状态与进入魔神塔的流程。</summary>
     private readonly ThemeDungeonTeamCtrl _themeDungeonTeamCtrl;
+
     /// <summary>主界面快捷键是否已注册。</summary>
     private bool _mainInputRegistered;
+
     /// <summary>当前对话关联的 NPC，仅由控制器保存领域对象。</summary>
     private NpcEntity _currentTalkNpc;
+    #endregion
 
-    /// <summary>将技能协议回包交给正式 11080 解析和当前角色装载链。</summary>
-    /// <param name="payload">已序列化的 RoleSkillInfoRet protobuf 消息体。</param>
-    /// <returns>协议有效且回包角色与本地主角匹配时返回 true。</returns>
-    public bool LoadSkillResponse(ByteString payload)
-    {
-        if (_skillCtrl == null)
-        {
-            return false;
-        }
-        return _skillCtrl.ApplyRoleSkillInfoPayload(payload);
-    }
-
+    #region 构造、初始化与事件注册
     /// <summary>创建主界面控制器并组合各业务子控制器。</summary>
     public MainCtrl(UIBase view) : base(view)
     {
@@ -113,68 +114,6 @@ public class MainCtrl : CtrlBase
         }
     }
 
-    /// <summary>切换左上入口组，展开和收起只修改视图展示。</summary>
-    private void OnFunctionMenuRequested()
-    {
-        _mainView.ToggleFunctionMenu();
-    }
-
-    /// <summary>点击背包时保持菜单展开，沿B键原流程切换背包及调整镜头。</summary>
-    private void OnKnapsackRequested()
-    {
-        MainUIKeyHandler("B");
-    }
-
-    /// <summary>点击角色时保持菜单展开，沿I键原流程切换属性及调整镜头。</summary>
-    private void OnRoleRequested()
-    {
-        MainUIKeyHandler("I");
-    }
-
-    /// <summary>点击技能时保持菜单展开，沿L键原流程切换技能窗口。</summary>
-    private void OnSkillRequested()
-    {
-        MainUIKeyHandler("L");
-    }
-
-    /// <summary>点击设置时保持菜单展开，切换既有设置窗口。</summary>
-    private void OnSettingRequested()
-    {
-        ShowMainWindow(WindowType.SettingPanel);
-    }
-
-    /// <summary>点击任务入口时经任务控制器联动展开快捷面板并切换任务窗口显隐。</summary>
-    private void OnTaskRequested()
-    {
-        if (_taskCtrl == null)
-        {
-            return;
-        }
-        _taskCtrl.RequestOpenTaskWindow();
-    }
-
-    /// <summary>点击日常入口时切换日常任务窗口显隐，日常面板独立于任务主窗口。</summary>
-    private void OnDailyTaskRequested()
-    {
-        ShowMainWindow(WindowType.DailyTaskWindow);
-    }
-
-    /// <summary>点击副本入口时打开主题副本选择窗口，窗口实例由 MainView 注册。</summary>
-    private void OnThemeDungeonRequested()
-    {
-        ShowMainWindow(WindowType.ThemeDungeonArroundWindow);
-    }
-
-    /// <summary>供外部在登录后用服务端任务快照刷新任务界面。</summary>
-    public void RefreshTaskUI()
-    {
-        if (_taskCtrl == null)
-        {
-            return;
-        }
-        _taskCtrl.RefreshAll();
-    }
-
     /// <summary>幂等注册主界面快捷键。</summary>
     public void RegisterMainInput()
     {
@@ -187,234 +126,6 @@ public class MainCtrl : CtrlBase
         }
         PlayerInputCtr.Instance.MainUIKeyHandler += MainUIKeyHandler;
         _mainInputRegistered = true;
-    }
-
-    /// <summary>商城窗口先由商城控制器准备数据，其余窗口沿用基础流程。</summary>
-    public override void ShowMainWindow(WindowType windowType, object obj = null)
-    {
-        if (windowType == WindowType.TalkWindow)
-        {
-            _currentTalkNpc = obj as NpcEntity;
-            NpcTalkViewData viewData = CreateNpcTalkViewData(_currentTalkNpc);
-            base.ShowMainWindow(windowType, viewData);
-            return;
-        }
-        if (windowType == WindowType.ShopWindow)
-        {
-            _shopCtrl.OpenNpcShop(obj as NpcEntity);
-            return;
-        }
-        base.ShowMainWindow(windowType, obj);
-    }
-
-    /// <summary>处理 NPC 对话窗口发出的商城请求。</summary>
-    private void OnShopRequested()
-    {
-        if (_currentTalkNpc == null)
-        {
-            TipsMgr.Instance.ShowSystemTips("当前没有可交互的 NPC");
-            return;
-        }
-        _shopCtrl.OpenNpcShop(_currentTalkNpc);
-    }
-
-    /// <summary>在主角创建完成后把跟踪对象交给小地图 View。</summary>
-    private void BindTrackedRole()
-    {
-        if (_mainView == null || _mainView.MinMapWindow == null || Global.Instance == null)
-        {
-            return;
-        }
-        // 小地图直接跟踪场景世界中的本地玩家实体，不再依赖旧 MainRoleCtrl。
-        PlayerEntity localRole = null;
-        if (Global.Instance.SceneWorld != null)
-        {
-            localRole = Global.Instance.SceneWorld.LocalRole;
-        }
-        _mainView.MinMapWindow.SetTrackedRole(localRole);
-    }
-
-    /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
-    private void OnLocalRoleChanged(PlayerEntity role)
-    {
-        if (_knapsackCtrl != null)
-        {
-            _knapsackCtrl.BindRole(role);
-        }
-        BindTrackedRole();
-    }
-
-    /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>
-    private NpcTalkViewData CreateNpcTalkViewData(NpcEntity npcEntity)
-    {
-        if (npcEntity == null)
-        {
-            return null;
-        }
-        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk);
-    }
-
-    /// <summary>把商城购买回包交给商城模型解析。</summary>
-    private void BuyShopItemHandle(ByteString data)
-    {
-        ShopMgr.Instance.HandleResponse(data);
-    }
-
-    /// <summary>接收服务器物品增量并交给角色背包组件更新客户端模型。</summary>
-    private void UpdateItemInfoHandle(ByteString data)
-    {
-        // 本次物品增量回包，成功后更新当前角色的背包数据。
-        UpdateItemRet result = UpdateItemRet.Parser.ParseFrom(data);
-
-        if (result == null || result.CmdCode != CmdCode.Succeed || result.ItemDate == null)
-        {
-            return;
-        }
-
-        PlayerEntity localRole = null;
-        if (Global.Instance != null && Global.Instance.SceneWorld != null)
-        {
-            localRole = Global.Instance.SceneWorld.LocalRole;
-        }
-        if (localRole == null)
-        {
-            return;
-        }
-
-        RoItemComponent itemComponent;
-        if (localRole.TryGetComponent(out itemComponent))
-        {
-            itemComponent.ApplyServerItemDelta(result.ItemDate);
-        }
-    }
-
-    /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
-    private void CountUpdateSyncInfoHandle(ByteString data)
-    {
-        // 服务器推送的次数增量，用于同步当前角色的次数组件。
-        CountUpdateSyncInfo result = CountUpdateSyncInfo.Parser.ParseFrom(data);
-        if (result == null)
-        {
-            return;
-        }
-        PlayerEntity localRole = null;
-        if (Global.Instance != null && Global.Instance.SceneWorld != null)
-        {
-            localRole = Global.Instance.SceneWorld.LocalRole;
-        }
-        if (localRole == null)
-        {
-            return;
-        }
-        RoleCountComponent countComponent;
-        if (localRole.TryGetComponent(out countComponent))
-        {
-            countComponent.ApplyServerSync(result);
-        }
-    }
-
-    /// <summary>分发角色背包快照到背包、商城和角色信息模块。</summary>
-    private void RoleKnapsackInfoHandle(ByteString data)
-    {
-        RoleKanpsackInfoRet result = RoleKanpsackInfoRet.Parser.ParseFrom(data);
-        if (result == null || result.CmdCode != CmdCode.Succeed ||
-            result.RoleKanpsackInfo == null)
-        {
-            return;
-        }
-
-        // 服务端返回的背包完整快照，用于刷新角色背包和装备界面。
-        RoleKanpsackInfo info = result.RoleKanpsackInfo;
-        // 当前场景中的本地玩家；Global 或 SceneWorld 已清理时保持为空并忽略旧回包。
-        PlayerEntity localRole = null;
-        if (Global.Instance != null && Global.Instance.SceneWorld != null)
-        {
-            localRole = Global.Instance.SceneWorld.LocalRole;
-        }
-        if (localRole == null || !localRole.LoadRoleData(result))
-        {
-            return;
-        }
-        _knapsackCtrl.BindRole(localRole);
-        _roleInfoCtrl.RefreshEquipment(info);
-        _roleInfoCtrl.RefreshCurrentRole();
-    }
-
-    /// <summary>使用服务端返回的容量刷新对应背包分类。</summary>
-    private void OpenKnapsackGridHandle(ByteString data)
-    {
-        OpenKnapsackGridRet result = OpenKnapsackGridRet.Parser.ParseFrom(data);
-        if (result == null || result.CmdCode != CmdCode.Succeed)
-        {
-            return;
-        }
-
-        // 接收扩容结果的本地玩家背包组件。
-        RoItemComponent itemComponent;
-        // 当前场景中的本地玩家；启动门控未开放或断线清理后保持为空。
-        PlayerEntity localRole = null;
-        if (Global.Instance != null && Global.Instance.SceneWorld != null)
-        {
-            localRole = Global.Instance.SceneWorld.LocalRole;
-        }
-        if (localRole != null && localRole.TryGetComponent(out itemComponent))
-        {
-            itemComponent.SetOpenedGridCount((KnapsackType)result.KnapsackType,
-                result.CurrentOpenedGridCount);
-        }
-    }
-
-    /// <summary>聊天输入期间暂停角色输入。</summary>
-    private void OnChatInputFocusChanged(bool focused)
-    {
-        if (PlayerInputCtr.Instance == null)
-        {
-            return;
-        }
-        if (focused)
-        {
-            PlayerInputCtr.Instance.OnDisable();
-        }
-        else
-        {
-            PlayerInputCtr.Instance.OnEnable();
-        }
-    }
-
-    /// <summary>校验聊天文本并协调本地回显。</summary>
-    private void OnChatSendRequested(string channel, string message)
-    {
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            TipsMgr.Instance.ShowSystemTips("请输入聊天内容");
-            return;
-        }
-        if (_chatWindow != null)
-        {
-            // 当前聊天协议尚未接入，暂由控制器提供本地昵称和回显。
-            _chatWindow.AppendMessage(channel, "昵称:小米", message);
-        }
-    }
-
-    /// <summary>处理主界面快捷键。</summary>
-    public void MainUIKeyHandler(string key)
-    {
-        switch (key)
-        {
-            case "L":
-                ShowMainWindow(WindowType.SkillInfoWindow);
-                break;
-            case "B":
-                ShowMainWindow(WindowType.KnapsackWindow);
-                CameraMgr.Instance.KnapsackWindowAngle(
-                    _mainView.GetWindow(WindowType.KnapsackWindow));
-                break;
-            case "I":
-                ShowMainWindow(WindowType.RoleAttriibuteWindow);
-                CameraMgr.Instance.RoleAttrWindowAngle(
-                    _mainView.GetWindow(WindowType.RoleAttriibuteWindow));
-                break;
-        }
     }
 
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
@@ -491,4 +202,317 @@ public class MainCtrl : CtrlBase
         }
         _currentTalkNpc = null;
     }
+    #endregion
+
+    #region 界面显示与开关
+    /// <summary>商城窗口先由商城控制器准备数据，其余窗口沿用基础流程。</summary>
+    public override void ShowMainWindow(WindowType windowType, object obj = null)
+    {
+        if (windowType == WindowType.TalkWindow)
+        {
+            _currentTalkNpc = obj as NpcEntity;
+            NpcTalkViewData viewData = CreateNpcTalkViewData(_currentTalkNpc);
+            base.ShowMainWindow(windowType, viewData);
+            return;
+        }
+        if (windowType == WindowType.ShopWindow)
+        {
+            _shopCtrl.OpenNpcShop(obj as NpcEntity);
+            return;
+        }
+        base.ShowMainWindow(windowType, obj);
+    }
+
+    /// <summary>使用服务端返回的容量刷新对应背包分类。</summary>
+    private void OpenKnapsackGridHandle(ByteString data)
+    {
+        OpenKnapsackGridRet result = OpenKnapsackGridRet.Parser.ParseFrom(data);
+        if (result == null || result.CmdCode != CmdCode.Succeed)
+        {
+            return;
+        }
+
+        // 接收扩容结果的本地玩家背包组件。
+        RoItemComponent itemComponent;
+        // 当前场景中的本地玩家；启动门控未开放或断线清理后保持为空。
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        if (localRole != null && localRole.TryGetComponent(out itemComponent))
+        {
+            itemComponent.SetOpenedGridCount((KnapsackType)result.KnapsackType,
+                result.CurrentOpenedGridCount);
+        }
+    }
+    #endregion
+
+    #region 界面刷新
+    /// <summary>供外部在登录后用服务端任务快照刷新任务界面。</summary>
+    public void RefreshTaskUI()
+    {
+        if (_taskCtrl == null)
+        {
+            return;
+        }
+        _taskCtrl.RefreshAll();
+    }
+
+    /// <summary>接收服务器物品增量并交给角色背包组件更新客户端模型。</summary>
+    private void UpdateItemInfoHandle(ByteString data)
+    {
+        // 本次物品增量回包，成功后更新当前角色的背包数据。
+        UpdateItemRet result = UpdateItemRet.Parser.ParseFrom(data);
+
+        if (result == null || result.CmdCode != CmdCode.Succeed || result.ItemDate == null)
+        {
+            return;
+        }
+
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        if (localRole == null)
+        {
+            return;
+        }
+
+        RoItemComponent itemComponent;
+        if (localRole.TryGetComponent(out itemComponent))
+        {
+            itemComponent.ApplyServerItemDelta(result.ItemDate);
+        }
+    }
+    #endregion
+
+    #region 交互响应
+    /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
+    private void OnLocalRoleChanged(PlayerEntity role)
+    {
+        if (_knapsackCtrl != null)
+        {
+            _knapsackCtrl.BindRole(role);
+        }
+        BindTrackedRole();
+    }
+
+    /// <summary>聊天输入期间暂停角色输入。</summary>
+    private void OnChatInputFocusChanged(bool focused)
+    {
+        if (PlayerInputCtr.Instance == null)
+        {
+            return;
+        }
+        if (focused)
+        {
+            PlayerInputCtr.Instance.OnDisable();
+        }
+        else
+        {
+            PlayerInputCtr.Instance.OnEnable();
+        }
+    }
+    #endregion
+
+    #region 事件回调、创建与添加等
+    /// <summary>切换左上入口组，展开和收起只修改视图展示。</summary>
+    private void OnFunctionMenuRequested()
+    {
+        _mainView.ToggleFunctionMenu();
+    }
+
+    /// <summary>点击背包时保持菜单展开，沿B键原流程切换背包及调整镜头。</summary>
+    private void OnKnapsackRequested()
+    {
+        MainUIKeyHandler("B");
+    }
+
+    /// <summary>点击角色时保持菜单展开，沿I键原流程切换属性及调整镜头。</summary>
+    private void OnRoleRequested()
+    {
+        MainUIKeyHandler("I");
+    }
+
+    /// <summary>点击技能时保持菜单展开，沿L键原流程切换技能窗口。</summary>
+    private void OnSkillRequested()
+    {
+        MainUIKeyHandler("L");
+    }
+
+    /// <summary>点击设置时保持菜单展开，切换既有设置窗口。</summary>
+    private void OnSettingRequested()
+    {
+        ShowMainWindow(WindowType.SettingPanel);
+    }
+
+    /// <summary>点击任务入口时经任务控制器联动展开快捷面板并切换任务窗口显隐。</summary>
+    private void OnTaskRequested()
+    {
+        if (_taskCtrl == null)
+        {
+            return;
+        }
+        _taskCtrl.RequestOpenTaskWindow();
+    }
+
+    /// <summary>点击日常入口时切换日常任务窗口显隐，日常面板独立于任务主窗口。</summary>
+    private void OnDailyTaskRequested()
+    {
+        ShowMainWindow(WindowType.DailyTaskWindow);
+    }
+
+    /// <summary>点击副本入口时打开主题副本选择窗口，窗口实例由 MainView 注册。</summary>
+    private void OnThemeDungeonRequested()
+    {
+        ShowMainWindow(WindowType.ThemeDungeonArroundWindow);
+    }
+
+    /// <summary>处理 NPC 对话窗口发出的商城请求。</summary>
+    private void OnShopRequested()
+    {
+        if (_currentTalkNpc == null)
+        {
+            TipsMgr.Instance.ShowSystemTips("当前没有可交互的 NPC");
+            return;
+        }
+        _shopCtrl.OpenNpcShop(_currentTalkNpc);
+    }
+
+    /// <summary>校验聊天文本并协调本地回显。</summary>
+    private void OnChatSendRequested(string channel, string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            TipsMgr.Instance.ShowSystemTips("请输入聊天内容");
+            return;
+        }
+        if (_chatWindow != null)
+        {
+            // 当前聊天协议尚未接入，暂由控制器提供本地昵称和回显。
+            _chatWindow.AppendMessage(channel, "昵称:小米", message);
+        }
+    }
+
+    /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>
+    private NpcTalkViewData CreateNpcTalkViewData(NpcEntity npcEntity)
+    {
+        if (npcEntity == null)
+        {
+            return null;
+        }
+        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk);
+    }
+
+    /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
+    private void CountUpdateSyncInfoHandle(ByteString data)
+    {
+        // 服务器推送的次数增量，用于同步当前角色的次数组件。
+        CountUpdateSyncInfo result = CountUpdateSyncInfo.Parser.ParseFrom(data);
+        if (result == null)
+        {
+            return;
+        }
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        if (localRole == null)
+        {
+            return;
+        }
+        RoleCountComponent countComponent;
+        if (localRole.TryGetComponent(out countComponent))
+        {
+            countComponent.ApplyServerSync(result);
+        }
+    }
+
+    /// <summary>将技能协议回包交给正式 11080 解析和当前角色装载链。</summary>
+    /// <param name="payload">已序列化的 RoleSkillInfoRet protobuf 消息体。</param>
+    /// <returns>协议有效且回包角色与本地主角匹配时返回 true。</returns>
+    public bool LoadSkillResponse(ByteString payload)
+    {
+        if (_skillCtrl == null)
+        {
+            return false;
+        }
+        return _skillCtrl.ApplyRoleSkillInfoPayload(payload);
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>在主角创建完成后把跟踪对象交给小地图 View。</summary>
+    private void BindTrackedRole()
+    {
+        if (_mainView == null || _mainView.MinMapWindow == null || Global.Instance == null)
+        {
+            return;
+        }
+        // 小地图直接跟踪场景世界中的本地玩家实体，不再依赖旧 MainRoleCtrl。
+        PlayerEntity localRole = null;
+        if (Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        _mainView.MinMapWindow.SetTrackedRole(localRole);
+    }
+
+    /// <summary>把商城购买回包交给商城模型解析。</summary>
+    private void BuyShopItemHandle(ByteString data)
+    {
+        ShopMgr.Instance.HandleResponse(data);
+    }
+
+    /// <summary>分发角色背包快照到背包、商城和角色信息模块。</summary>
+    private void RoleKnapsackInfoHandle(ByteString data)
+    {
+        RoleKanpsackInfoRet result = RoleKanpsackInfoRet.Parser.ParseFrom(data);
+        if (result == null || result.CmdCode != CmdCode.Succeed ||
+            result.RoleKanpsackInfo == null)
+        {
+            return;
+        }
+
+        // 服务端返回的背包完整快照，用于刷新角色背包和装备界面。
+        RoleKanpsackInfo info = result.RoleKanpsackInfo;
+        // 当前场景中的本地玩家；Global 或 SceneWorld 已清理时保持为空并忽略旧回包。
+        PlayerEntity localRole = null;
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        {
+            localRole = Global.Instance.SceneWorld.LocalRole;
+        }
+        if (localRole == null || !localRole.LoadRoleData(result))
+        {
+            return;
+        }
+        _knapsackCtrl.BindRole(localRole);
+        _roleInfoCtrl.RefreshEquipment(info);
+        _roleInfoCtrl.RefreshCurrentRole();
+    }
+
+    /// <summary>处理主界面快捷键。</summary>
+    public void MainUIKeyHandler(string key)
+    {
+        switch (key)
+        {
+            case "L":
+                ShowMainWindow(WindowType.SkillInfoWindow);
+                break;
+            case "B":
+                ShowMainWindow(WindowType.KnapsackWindow);
+                CameraMgr.Instance.KnapsackWindowAngle(
+                    _mainView.GetWindow(WindowType.KnapsackWindow));
+                break;
+            case "I":
+                ShowMainWindow(WindowType.RoleAttriibuteWindow);
+                CameraMgr.Instance.RoleAttrWindowAngle(
+                    _mainView.GetWindow(WindowType.RoleAttriibuteWindow));
+                break;
+        }
+    }
+    #endregion
 }

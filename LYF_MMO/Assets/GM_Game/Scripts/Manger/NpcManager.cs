@@ -9,30 +9,25 @@ using UnityEngine;
 public class NpcManager : MonoBehaviour
 {
 
+    #region 字段
     [SerializeField, Header("NPC 实例父节点，可为空")] private Transform _npcRoot;
-
-
 
     private readonly Dictionary<int, NpcEntity> _npcEntities =
         new Dictionary<int, NpcEntity>();
 
-
     private bool _initialized;
-
 
     private bool _destroyed;
 
-
     private int _lifecycleVersion;
 
-
+    #region 生命周期
+    #endregion
 
     private void Awake()
     {
         // NPC 仍由现有场景入口显式调用 Initialize，避免改变场景加载时序。
     }
-
-
 
     /// <summary>管理器销毁时按实体 ID 从统一世界移除 NPC，并使未完成异步请求失效。</summary>
     private void OnDestroy()
@@ -61,8 +56,6 @@ public class NpcManager : MonoBehaviour
         }
     }
 
-
-
     public void Initialize()
     {
         if (_initialized || _destroyed)
@@ -89,19 +82,11 @@ public class NpcManager : MonoBehaviour
         for (int index = 0; index < npcInfoSnapshot.Count; index++)
         {
             CreateNpc(npcInfoSnapshot[index]);
+
+    #region NPC 生成与移除
+    #endregion
         }
     }
-
-
-
-    public NpcEntity GetNpc(int npcId)
-    {
-        NpcEntity entity;
-        _npcEntities.TryGetValue(npcId, out entity);
-        return entity;
-    }
-
-
 
     private void CreateNpc(NpcParseInfo info)
     {
@@ -143,76 +128,6 @@ public class NpcManager : MonoBehaviour
                 spawnPosition, npcObject);
         });
     }
-
-
-
-    /// <summary>写入 NPC 配置字段，保留现有对话、商店和地图业务读取方式。</summary>
-    private static void ApplyEntityConfig(NpcEntity entity, NpcParseInfo info)
-    {
-        entity.NpcId = info.ID;
-        entity.NpcID = info.ID;
-        entity.NpcType = info.Type;
-        entity.MapID = info.MapID;
-        entity.MapId = info.MapID;
-        entity.ShopId = info.ShopId;
-        entity.Position = info.Position.ToString();
-
-        entity.Name = string.Empty;
-        if (info.Name != null)
-        {
-            entity.Name = info.Name;
-        }
-        entity.PrefabPath = string.Empty;
-        if (info.PrefabPath != null)
-        {
-            entity.PrefabPath = info.PrefabPath;
-        }
-        entity.Think = string.Empty;
-        if (info.Think != null)
-        {
-            entity.Think = info.Think;
-        }
-        entity.Talk = string.Empty;
-        if (info.Talk != null)
-        {
-            entity.Talk = info.Talk;
-        }
-    }
-
-
-
-    private Vector3 ResolveSpawnPosition(NpcParseInfo info)
-    {
-        Vector3 spawnPosition = new Vector3(
-            info.Position.X, info.Position.Y, info.Position.Z);
-        if (spawnPosition == Vector3.zero)
-        {
-            // 坐标未配置时使用管理器所在位置，避免 NPC 在场景原点掉出地图。
-            spawnPosition = transform.position;
-        }
-        return spawnPosition;
-    }
-
-
-
-    private static void ApplyEntityTransform(NpcEntity entity,
-        Vector3 spawnPosition, float rotationY)
-    {
-        EntityTransformComponent transformComponent;
-        if (!entity.Components.TryGet(EntityComponentType.Scene, out transformComponent))
-        {
-            return;
-        }
-        transformComponent.Apply(new EntityTransformSnapshot
-        {
-            X = spawnPosition.x,
-            Y = spawnPosition.y,
-            Z = spawnPosition.z,
-            Yaw = rotationY
-        });
-    }
-
-
 
     /// <summary>异步完成时同时校验管理器生命周期、实体 ID 和世界内对象身份。</summary>
     private void HandleNpcLoaded(NpcParseInfo info, NpcEntity entity,
@@ -264,7 +179,42 @@ public class NpcManager : MonoBehaviour
         entity.Model.SetGameObject(npcObject, string.Empty, false);
     }
 
+    private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)
+    {
+        NpcEntity entity;
+        if (!_npcEntities.TryGetValue(npcId, out entity) ||
+            !ReferenceEquals(entity, expectedEntity))
+        {
+            return;
+        }
+        _npcEntities.Remove(npcId);
+        if (Global.Instance != null && Global.Instance.SceneWorld != null)
 
+    #region 查询与判定
+    #endregion
+        {
+            Global.Instance.SceneWorld.RemoveEntity(entity.UID);
+        }
+    }
+
+    public NpcEntity GetNpc(int npcId)
+    {
+        NpcEntity entity;
+        _npcEntities.TryGetValue(npcId, out entity);
+        return entity;
+    }
+
+    private Vector3 ResolveSpawnPosition(NpcParseInfo info)
+    {
+        Vector3 spawnPosition = new Vector3(
+            info.Position.X, info.Position.Y, info.Position.Z);
+        if (spawnPosition == Vector3.zero)
+        {
+            // 坐标未配置时使用管理器所在位置，避免 NPC 在场景原点掉出地图。
+            spawnPosition = transform.position;
+        }
+        return spawnPosition;
+    }
 
     private bool IsCurrentRequest(int npcId, NpcEntity entity,
         ulong requestUID, int requestVersion)
@@ -290,6 +240,9 @@ public class NpcManager : MonoBehaviour
             return false;
         }
         ROObject worldEntity;
+
+    #region NPC 实体配置与位置应用
+    #endregion
         if (!Global.Instance.SceneWorld.TryGetEntity(requestUID, out worldEntity))
         {
             return false;
@@ -297,22 +250,55 @@ public class NpcManager : MonoBehaviour
         return ReferenceEquals(worldEntity, entity);
     }
 
-
-
-    private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)
+    /// <summary>写入 NPC 配置字段，保留现有对话、商店和地图业务读取方式。</summary>
+    private static void ApplyEntityConfig(NpcEntity entity, NpcParseInfo info)
     {
-        NpcEntity entity;
-        if (!_npcEntities.TryGetValue(npcId, out entity) ||
-            !ReferenceEquals(entity, expectedEntity))
+        entity.NpcId = info.ID;
+        entity.NpcID = info.ID;
+        entity.NpcType = info.Type;
+        entity.MapID = info.MapID;
+        entity.MapId = info.MapID;
+        entity.ShopId = info.ShopId;
+        entity.Position = info.Position.ToString();
+
+        entity.Name = string.Empty;
+        if (info.Name != null)
         {
-            return;
+            entity.Name = info.Name;
         }
-        _npcEntities.Remove(npcId);
-        if (Global.Instance != null && Global.Instance.SceneWorld != null)
+        entity.PrefabPath = string.Empty;
+        if (info.PrefabPath != null)
         {
-            Global.Instance.SceneWorld.RemoveEntity(entity.UID);
+            entity.PrefabPath = info.PrefabPath;
+        }
+        entity.Think = string.Empty;
+        if (info.Think != null)
+        {
+            entity.Think = info.Think;
+        }
+        entity.Talk = string.Empty;
+        if (info.Talk != null)
+        {
+            entity.Talk = info.Talk;
         }
     }
 
-}
+    private static void ApplyEntityTransform(NpcEntity entity,
+        Vector3 spawnPosition, float rotationY)
+    {
+        EntityTransformComponent transformComponent;
+        if (!entity.Components.TryGet(EntityComponentType.Scene, out transformComponent))
+        {
+            return;
+        }
+    #endregion
+        transformComponent.Apply(new EntityTransformSnapshot
+        {
+            X = spawnPosition.x,
+            Y = spawnPosition.y,
+            Z = spawnPosition.z,
+            Yaw = rotationY
+        });
+    }
 
+}

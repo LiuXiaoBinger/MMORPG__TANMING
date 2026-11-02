@@ -8,6 +8,8 @@ using SceneObject = ROObject;
 /// <summary>主城角色表现管理器，负责把角色模型转换为 Unity 表现对象。</summary>
 public class MainCityMgr : MonoBehaviour
 {
+
+    #region 字段与常量
    /// <summary>正式角色统一使用的 RO 动画控制器 YooAsset Location，包含待机、四移动和常规动作同名槽位。</summary>
    private const string RoleAnimatorControllerLocation =
       "Assets/artres/Resources/Controller/MAnimator.controller";
@@ -45,7 +47,9 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>由测试组件首次创建的其他玩家 UID，按角色 ID 索引；真实网络同步同 ID 时会撤销该测试清理所有权。</summary>
    private readonly Dictionary<int, ulong> _testOtherRoleUids =
       new Dictionary<int, ulong>();
+    #endregion
 
+    #region 生命周期
    /// <summary>注册主城网络消息。</summary>
    private void Awake()
    {
@@ -108,52 +112,9 @@ public class MainCityMgr : MonoBehaviour
          Instance = null;
       }
    }
+    #endregion
 
-   /// <summary>把服务器移动通知转换为 RO 移动事件，交由既有远端角色组件追赶目标。</summary>
-   /// <param name="data">11181 移动通知的 Protobuf 二进制消息体。</param>
-   private void SyncMoveHandle(ByteString data)
-   {
-      // 服务端协议中的角色 ID 使用持久化 ID，位置为世界米、Time 为秒。
-      SyncMoveNtf ptc = SyncMoveNtf.Parser.ParseFrom(data);
-      // 当前主城世界已存在的角色；移动消息不负责创建额外实体或缓存等待队列。
-      RoleEntity role;
-      if (!Global.Instance.SceneWorld.TryGetRole(ptc.RoleId, out role) || role.IsPlayer)
-      {
-         return;
-      }
-      // Y 轴角度转换成水平单位朝向，沿用 RO 移动事件的 face 字段。
-      Vector3 face = Quaternion.Euler(0f, ptc.Face, 0f) * Vector3.forward;
-      // 事件池负责本次同步载荷生命周期，分发结束自动归还。
-      MMoveEventArgs moveArgs = MMoveEventArgs.Create(ptc.IsMoving,
-         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false,
-         ptc.JumpCount);
-      role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
-   }
-
-   /// <summary>处理服务器下发的角色离开视野通知，只销毁指定远端角色，保留本地主角。</summary>
-   /// <param name="data">RoleLeaveNtf 的 Protobuf 二进制消息体。</param>
-   private void RoleLeaveHandle(ByteString data)
-   {
-      // notice 为服务端下发的离开视野通知，只含角色ID与离开前的场景/实例，用于定位要销毁的远端角色。
-      RoleLeaveNtf notice = RoleLeaveNtf.Parser.ParseFrom(data);
-      if (notice == null)
-      {
-         return;
-      }
-      // 本地主角始终保留，服务器通知只用于清理其他玩家。
-      if (Global.Instance == null || Global.Instance.SceneWorld == null)
-      {
-         return;
-      }
-      // 当前场景世界的本地主角实体，用于和通知中的角色ID比对，防止误删自己。
-      PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
-      if (localRole != null && (ulong)localRole.BaseInfo.RoleId == notice.RoleId)
-      {
-         return;
-      }
-      Global.Instance.SceneWorld.RemoveOtherRole((int)notice.RoleId);
-   }
-
+    #region 本地角色装载
    /// <summary>订阅 Global 的本地主角加载完成事件，并立即处理已经存在的本地主角。</summary>
    private void TrySubscribeLocalRoleLoad()
    {
@@ -325,6 +286,53 @@ public class MainCityMgr : MonoBehaviour
       }
       return "Role/Role_JX";
    }
+    #endregion
+
+    #region 其他玩家同步
+   /// <summary>把服务器移动通知转换为 RO 移动事件，交由既有远端角色组件追赶目标。</summary>
+   /// <param name="data">11181 移动通知的 Protobuf 二进制消息体。</param>
+   private void SyncMoveHandle(ByteString data)
+   {
+      // 服务端协议中的角色 ID 使用持久化 ID，位置为世界米、Time 为秒。
+      SyncMoveNtf ptc = SyncMoveNtf.Parser.ParseFrom(data);
+      // 当前主城世界已存在的角色；移动消息不负责创建额外实体或缓存等待队列。
+      RoleEntity role;
+      if (!Global.Instance.SceneWorld.TryGetRole(ptc.RoleId, out role) || role.IsPlayer)
+      {
+         return;
+      }
+      // Y 轴角度转换成水平单位朝向，沿用 RO 移动事件的 face 字段。
+      Vector3 face = Quaternion.Euler(0f, ptc.Face, 0f) * Vector3.forward;
+      // 事件池负责本次同步载荷生命周期，分发结束自动归还。
+      MMoveEventArgs moveArgs = MMoveEventArgs.Create(ptc.IsMoving,
+         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false,
+         ptc.JumpCount);
+      role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
+   }
+
+   /// <summary>处理服务器下发的角色离开视野通知，只销毁指定远端角色，保留本地主角。</summary>
+   /// <param name="data">RoleLeaveNtf 的 Protobuf 二进制消息体。</param>
+   private void RoleLeaveHandle(ByteString data)
+   {
+      // notice 为服务端下发的离开视野通知，只含角色ID与离开前的场景/实例，用于定位要销毁的远端角色。
+      RoleLeaveNtf notice = RoleLeaveNtf.Parser.ParseFrom(data);
+      if (notice == null)
+      {
+         return;
+      }
+      // 本地主角始终保留，服务器通知只用于清理其他玩家。
+      if (Global.Instance == null || Global.Instance.SceneWorld == null)
+      {
+         return;
+      }
+      // 当前场景世界的本地主角实体，用于和通知中的角色ID比对，防止误删自己。
+      PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+      if (localRole != null && (ulong)localRole.BaseInfo.RoleId == notice.RoleId)
+      {
+         return;
+      }
+      Global.Instance.SceneWorld.RemoveOtherRole((int)notice.RoleId);
+   }
 
    /// <summary>处理其他玩家同步消息并更新角色世界模型。</summary>
    private void SyncotherOnlineHandle(ByteString data)
@@ -470,7 +478,9 @@ public class MainCityMgr : MonoBehaviour
       }
       return otherRole;
    }
+    #endregion
 
+    #region 角色创建与绑定
    /// <summary>异步加载角色预制体并初始化表现控制器。</summary>
    /// <param name="roleType">决定本地出生、初次入场或远端同步表现的角色类别。</param>
    /// <param name="role">当前主城世界已创建且持有本次模型的角色实体。</param>
@@ -718,4 +728,5 @@ public class MainCityMgr : MonoBehaviour
          UnityEngine.Object.Destroy(roleObject);
       }
    }
+    #endregion
 }

@@ -6,67 +6,43 @@ using MMoRpgCommon.SceneEntity;
 public sealed class SceneWorldSystem
 {
 
+    #region 字段、事件与属性
     public event Action<PlayerEntity> LocalRoleChanged;
 
-
     private readonly SceneEntityWorld _entityWorld;
-
 
     private readonly Dictionary<int, RoleEntity> _otherRoles =
         new Dictionary<int, RoleEntity>();
 
-
     private readonly List<RoleEntity> _otherRoleOrder = new List<RoleEntity>();
 
-
-
     public PlayerEntity LocalRole { get; private set; }
+    #endregion
 
-
-
+    #region 构造与初始化
     public SceneWorldSystem()
     {
         _entityWorld = new SceneEntityWorld();
     }
-
-
 
     public void Update(int deltaMilliseconds)
     {
         _entityWorld.Update(deltaMilliseconds);
     }
 
-
-
     public void LateUpdate(int deltaMilliseconds)
     {
         _entityWorld.LateUpdate(deltaMilliseconds);
     }
 
-
-
-    /// <summary>创建本地玩家实体并直接加入统一实体世界。</summary>
-    public PlayerEntity LoadLocalRole(MainRoleInfo roleInfo)
+    public void Dispose()
     {
         Clear();
-        if (roleInfo == null || roleInfo.BaseInfo == null)
-        {
-            return null;
-        }
-        LocalRole = _entityWorld.Create(EntityType.Player, 0) as PlayerEntity;
-        if (LocalRole == null)
-        {
-            return null;
-        }
-        LocalRole.InitializeLocalRole(roleInfo);
-        // 角色组件必须先完成入世界生命周期，再向界面和控制器公布本地玩家。
-        LocalRole.AfterAddedToWorld();
-        LocalRoleChanged?.Invoke(LocalRole);
-        return LocalRole;
+        _entityWorld.Dispose();
     }
+    #endregion
 
-
-
+    #region 创建与添加
     /// <summary>创建或更新其他角色实体。</summary>
     public RoleEntity AddOrUpdateOtherRole(RoleBaseInfo baseInfo)
     {
@@ -95,15 +71,18 @@ public sealed class SceneWorldSystem
         return role;
     }
 
-
-
-    public bool TryGetRole(int roleId, out RoleEntity role)
+    public ROObject CreateEntity(EntityType entityType, int configId)
     {
-        return _otherRoles.TryGetValue(roleId, out role);
+        return _entityWorld.Create(entityType, configId);
     }
 
+    public ROObject CreateProjectile(ProjectileType projectileType, int configId)
+    {
+        return _entityWorld.CreateProjectile(projectileType, configId);
+    }
+    #endregion
 
-
+    #region 移除与回收
     public bool RemoveOtherRole(int roleId)
     {
         RoleEntity role;
@@ -117,36 +96,16 @@ public sealed class SceneWorldSystem
         return true;
     }
 
-
-
-    public void Clear()
+    public bool RemoveEntity(ulong uid)
     {
-        _otherRoles.Clear();
-        _otherRoleOrder.Clear();
-        if (LocalRole != null)
-        {
-            LocalRole.DisposeRoleData();
-        }
-        _entityWorld.Clear();
-        LocalRole = null;
-        LocalRoleChanged?.Invoke(null);
+        return _entityWorld.Remove(uid);
     }
+    #endregion
 
-
-
-    public void Dispose()
+    #region 查询与判定
+    public bool TryGetRole(int roleId, out RoleEntity role)
     {
-        Clear();
-        _entityWorld.Dispose();
-    }
-
-
-
-    /// <summary>复制统一世界的战斗实体引用供点击射线与目标查询使用。</summary>
-    /// <param name="entities">由调用方持有的快照列表，每次调用清空旧内容。</param>
-    public void CopyEntities(List<MEntity> entities)
-    {
-        _entityWorld.CopyEntities(entities);
+        return _otherRoles.TryGetValue(roleId, out role);
     }
 
     /// <summary>沿 RO 获取敌友候选；当前怪物为敌方，其他角色为友方，不假设玩家阵营。</summary>
@@ -181,27 +140,48 @@ public sealed class SceneWorldSystem
     {
         return _entityWorld.TryGet(uid, out entity);
     }
+    #endregion
 
-
-
-    public ROObject CreateEntity(EntityType entityType, int configId)
+    /// <summary>创建本地玩家实体并直接加入统一实体世界。</summary>
+    public PlayerEntity LoadLocalRole(MainRoleInfo roleInfo)
     {
-        return _entityWorld.Create(entityType, configId);
+        Clear();
+        if (roleInfo == null || roleInfo.BaseInfo == null)
+        {
+            return null;
+        }
+        LocalRole = _entityWorld.Create(EntityType.Player, 0) as PlayerEntity;
+        if (LocalRole == null)
+        {
+            return null;
+        }
+        LocalRole.InitializeLocalRole(roleInfo);
+        // 角色组件必须先完成入世界生命周期，再向界面和控制器公布本地玩家。
+        LocalRole.AfterAddedToWorld();
+        LocalRoleChanged?.Invoke(LocalRole);
+        return LocalRole;
     }
 
-
-
-    public ROObject CreateProjectile(ProjectileType projectileType, int configId)
+    #region 核心逻辑
+    public void Clear()
     {
-        return _entityWorld.CreateProjectile(projectileType, configId);
+        _otherRoles.Clear();
+        _otherRoleOrder.Clear();
+        if (LocalRole != null)
+        {
+            LocalRole.DisposeRoleData();
+        }
+        _entityWorld.Clear();
+        LocalRole = null;
+        LocalRoleChanged?.Invoke(null);
     }
 
-
-
-    public bool RemoveEntity(ulong uid)
+    /// <summary>复制统一世界的战斗实体引用供点击射线与目标查询使用。</summary>
+    /// <param name="entities">由调用方持有的快照列表，每次调用清空旧内容。</param>
+    public void CopyEntities(List<MEntity> entities)
     {
-        return _entityWorld.Remove(uid);
+        _entityWorld.CopyEntities(entities);
     }
+    #endregion
 
 }
-

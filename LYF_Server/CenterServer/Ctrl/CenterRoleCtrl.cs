@@ -1,6 +1,5 @@
 ﻿
 
-
 using Google.Protobuf;
 
 /// <summary>
@@ -13,6 +12,7 @@ public class CenterRoleCtrl:IContainer
     // 登录与角色业务的数据访问层。
     private CentRoleModel _centRoleModel = null;
 
+    #region 构造与初始化
     /// <summary>
     /// 创建角色持久化控制器。
     /// </summary>
@@ -27,6 +27,31 @@ public class CenterRoleCtrl:IContainer
     {
 
     }
+    #endregion
+
+    /// <summary>
+    /// 角色请求进入游戏世界
+    /// </summary>
+    /// <param name="serverBase"></param>
+    /// <param name="basePackage"></param>
+    private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
+    {
+        EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
+        LogMsg.Info("OnEnterWroldHandle::" + req.ToString());
+        
+        //返回角色的技能信息
+        RoleSkillInfoRet ret= _centRoleModel.RoleSkillInfo(req);
+        LogMsg.Info("OnEnterWroldHandle=>RoleSkillInfoRet::" + ret.ToString());
+        serverBase.Send(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
+    
+        //返回角色背包数据
+        RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
+        LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
+        serverBase.Send(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
+
+    }
+
+    #region 事件回调
     /// <summary>
     /// 中心服务器作为服务器，接收 GameServer 转发的角色协议包并按协议号分发。
     /// </summary>
@@ -53,28 +78,6 @@ public class CenterRoleCtrl:IContainer
             default:
                 break;
         }
-    }
-
-    /// <summary>
-    /// 角色请求进入游戏世界
-    /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
-    private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
-    {
-        EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
-        LogMsg.Info("OnEnterWroldHandle::" + req.ToString());
-        
-        //返回角色的技能信息
-        RoleSkillInfoRet ret= _centRoleModel.RoleSkillInfo(req);
-        LogMsg.Info("OnEnterWroldHandle=>RoleSkillInfoRet::" + ret.ToString());
-        serverBase.Send(basePackage,NetDefine.CMD_RoleSkillInfoCode,ret.ToByteString());
-    
-        //返回角色背包数据
-        RoleKanpsackInfoRet  kanpsackInfoRet =_centRoleModel.RoleKanpaskInfo(req);
-        LogMsg.Info("OnEnterWroldHandle=>RoleKanpsackInfoRet::" + kanpsackInfoRet.ToString());
-        serverBase.Send(basePackage,NetDefine.CMD_RoleKnapsackInfoCode,kanpsackInfoRet.ToByteString());
-
     }
 
     /// <summary>
@@ -116,4 +119,5 @@ public class CenterRoleCtrl:IContainer
     {
 
     }
+    #endregion
 }

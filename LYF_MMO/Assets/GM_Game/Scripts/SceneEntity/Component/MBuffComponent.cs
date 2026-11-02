@@ -10,13 +10,33 @@ public sealed class MBuffComponent : EntityComponentBase
     /// <summary>当前生效 Buff 表，键为 Buff 配置 ID，值为 Buff 等级。</summary>
     private readonly Dictionary<int, int> _buffLevels = new Dictionary<int, int>();
 
+    /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Buff"/>。</summary>
+    public override EntityComponentType ComponentType { get { return EntityComponentType.Buff; } }
+
+    #region 构造、初始化与事件注册
     /// <summary>构造 Buff 组件。</summary>
     /// <param name="owner">宿主实体。</param>
     public MBuffComponent(ROObject owner) : base(owner) { }
 
-    /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Buff"/>。</summary>
-    public override EntityComponentType ComponentType { get { return EntityComponentType.Buff; } }
+    /// <summary>对象池回收时清空全部 Buff 记录。</summary>
+    public override void Shutdown() { _buffLevels.Clear(); }
 
+    protected override void EventSubscribe()
+    {
+        
+    }
+
+    protected override void EventUnsubscribe()
+    {
+        
+    }
+    #endregion
+
+    /// <summary>移除指定 Buff。</summary>
+    /// <param name="buffId">Buff 配置 ID。</param>
+    public void RemoveBuff(int buffId) { _buffLevels.Remove(buffId); }
+
+    #region 查询与判定
     /// <summary>查询实体是否已拥有指定 Buff。</summary>
     /// <param name="buffId">Buff 配置 ID。</param>
     /// <returns>已拥有返回 true，否则返回 false。</returns>
@@ -31,6 +51,7 @@ public sealed class MBuffComponent : EntityComponentBase
         if (_buffLevels.TryGetValue(buffId, out level)) return level;
         return 0;
     }
+    #endregion
 
     /// <summary>设置或更新 Buff 等级，ID 或等级非正时视为移除。</summary>
     /// <param name="buffId">Buff 配置 ID。</param>
@@ -39,22 +60,5 @@ public sealed class MBuffComponent : EntityComponentBase
     {
         if (buffId <= 0 || level <= 0) { _buffLevels.Remove(buffId); return; }
         _buffLevels[buffId] = level;
-    }
-
-    /// <summary>移除指定 Buff。</summary>
-    /// <param name="buffId">Buff 配置 ID。</param>
-    public void RemoveBuff(int buffId) { _buffLevels.Remove(buffId); }
-
-    /// <summary>对象池回收时清空全部 Buff 记录。</summary>
-    public override void Shutdown() { _buffLevels.Clear(); }
-
-    protected override void EventSubscribe()
-    {
-        
-    }
-
-    protected override void EventUnsubscribe()
-    {
-        
     }
 }

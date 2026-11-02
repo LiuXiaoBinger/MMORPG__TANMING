@@ -10,6 +10,8 @@ using TMPro;
 /// </summary>
 public sealed class ThemeDungeonArroundWindow : WindowBase
 {
+
+    #region 字段
     /// <summary>配置文件在 Resources 下的路径，指向 theme_dungeon.json。</summary>
     [SerializeField, Header("配置资源路径")] private string _configResourcePath = "UI/Prefabs/ROCharacterLightingDemo/ThemeDungeon/theme_dungeon";
 
@@ -115,21 +117,12 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     public System.Action<ThemeDungeonEntry> OnChallengeRequested;
 
-    /// <summary>外部注入详情窗口，由主界面在初始化时调用。</summary>
-    public void SetStoryWindow(ThemeStoryWindow window)
-    {
-        _storyWindow = window;
-        if (_storyWindow != null)
-        {
-            _storyWindow.OnEnterDungeon = EnterDungeon;
-        }
-    }
-
     /// <summary>详情区的确认按钮。</summary>
     private Button _confirmBtn;
 
     /// <summary>是否已经完成初始化，避免重复绑定按钮监听。</summary>
     private bool _inited;
+    #endregion
 
     /// <summary>
     /// 单个书位需要的控件引用：整块点击区、选中边框、缩略图、副本名、章节行、锁定遮罩与提示。
@@ -164,6 +157,30 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         public Slot(Transform t)
         {
             Root = t as RectTransform;
+        }
+    }
+
+    #region 初始化、外部注入与事件注册
+    /// <summary>外部注入详情窗口，由主界面在初始化时调用。</summary>
+    public void SetStoryWindow(ThemeStoryWindow window)
+    {
+        _storyWindow = window;
+        if (_storyWindow != null)
+        {
+            _storyWindow.OnEnterDungeon = EnterDungeon;
+        }
+    }
+
+    /// <summary>总页数，书位为 0 时按 1 页处理。</summary>
+    private int PageCount
+    {
+        get
+        {
+            if (_slots.Count <= 0)
+            {
+                return 1;
+            }
+            return Mathf.Max(1, Mathf.CeilToInt(_items.Length / (float)_slots.Count));
         }
     }
 
@@ -210,23 +227,81 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _inited = true;
     }
 
-    /// <summary>
-    /// 取预制体里 RO 自带的贴图，供运行时新建的节点复用，保证视觉和 RO 一致。
-    /// 必须在隐藏那些旧节点之前调用。
-    /// </summary>
-    private void CacheLegacySprites()
+    /// <summary>给已缓存的按钮注册点击回调，未找到的按钮直接跳过。</summary>
+    private void AddButtonListeners()
     {
-        Transform bar = FindDeep(_root, "NameBg");
-        if (bar != null)
+        if (_upBtn != null)
         {
-            Image img = bar.GetComponent<Image>();
-            if (img != null)
-            {
-                _nameBarSprite = img.sprite;
-            }
+            _upBtn.onClick.AddListener(PrevPage);
+        }
+        if (_downBtn != null)
+        {
+            _downBtn.onClick.AddListener(NextPage);
+        }
+        if (_closeBtn != null)
+        {
+            _closeBtn.onClick.AddListener(OnCloseClicked);
+        }
+        if (_challengeBtn != null)
+        {
+            _challengeBtn.onClick.AddListener(OnChallengeClicked);
+        }
+        if (_confirmBtn != null)
+        {
+            _confirmBtn.onClick.AddListener(OnConfirmClicked);
         }
     }
 
+    /// <summary>移除已注册的点击回调，供重复初始化时调用。</summary>
+    private void RemoveButtonListeners()
+    {
+        if (_upBtn != null)
+        {
+            _upBtn.onClick.RemoveListener(PrevPage);
+        }
+        if (_downBtn != null)
+        {
+            _downBtn.onClick.RemoveListener(NextPage);
+        }
+        if (_closeBtn != null)
+        {
+            _closeBtn.onClick.RemoveListener(OnCloseClicked);
+        }
+        if (_challengeBtn != null)
+        {
+            _challengeBtn.onClick.RemoveListener(OnChallengeClicked);
+        }
+        if (_confirmBtn != null)
+        {
+            _confirmBtn.onClick.RemoveListener(OnConfirmClicked);
+        }
+    }
+    #endregion
+
+    #region 配置读取与解析
+    /// <summary>
+    /// 读取并解析主题副本配置，失败时置为空数组并打印错误。
+    /// </summary>
+    private void LoadConfig()
+    {
+        TextAsset asset = Resources.Load<TextAsset>(_configResourcePath);
+        if (asset == null)
+        {
+            Debug.LogError("[主题副本] 找不到配置文件: " + _configResourcePath);
+            _items = new ThemeDungeonEntry[0];
+            return;
+        }
+        ThemeDungeonConfig config = JsonUtility.FromJson<ThemeDungeonConfig>(asset.text);
+        if (config == null || config.items == null)
+        {
+            _items = new ThemeDungeonEntry[0];
+            return;
+        }
+        _items = config.items;
+    }
+    #endregion
+
+    #region 界面显示与刷新
     /// <summary>
     /// 显示或隐藏窗口，隐藏时不销毁运行时创建的节点，再次打开直接复用。
     /// </summary>
@@ -265,6 +340,58 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
+    /// 显示指定页并刷新书位内容。
+    /// </summary>
+    /// <param name="page">目标页码，会被夹在合法范围内。</param>
+    /// <param name="selectFirst">true 时自动选中本页第一个书位。</param>
+    private void ShowPage(int page, bool selectFirst)
+    {
+        if (_items.Length == 0)
+        {
+            RefreshChallengeButton();
+            return;
+        }
+        _page = Mathf.Clamp(page, 0, PageCount - 1);
+
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            int index = _page * _slots.Count + i;
+            Slot s = _slots[i];
+            if (index >= _items.Length)
+            {
+                s.Root.gameObject.SetActive(false);
+                continue;
+            }
+            s.Root.gameObject.SetActive(true);
+            s.Index = index;
+            ApplySlot(s, _items[index]);
+        }
+
+        UpdateFrames();
+        if (_pageText != null)
+        {
+            _pageText.text = (_page + 1) + " / " + PageCount;
+        }
+        if (selectFirst)
+        {
+            Select(_page * _slots.Count, false);
+        }
+        else
+        {
+            // 翻页后原来选中的副本可能已经不在本页，继续留着会让「进入副本」按钮
+            // 显示上一页的副本名，所以自动改选本页第一个。
+            int first = _page * _slots.Count;
+            int last = first + _slots.Count - 1;
+            bool inPage = _selected >= first && _selected <= last && _selected < _items.Length;
+            if (!inPage)
+            {
+                Select(first, false);
+            }
+        }
+        RefreshChallengeButton();
+    }
+
+    /// <summary>
     /// 用外部数据刷新窗口：整型参数更新本演示等级并重绘书位。
     /// 等级不再影响解锁状态，重绘只用于保证书位内容与选中态一致。
     /// </summary>
@@ -276,6 +403,266 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             _playerLevel = (int)obj;
         }
         ShowPage(_page, false);
+    }
+
+    /// <summary>
+    /// 按当前选中状态刷新「进入副本」按钮：有选中就把副本名写上去并恢复正常亮度，
+    /// 没选中则显示占位提示并压暗。按钮始终可点，点了会给提示而不是静默无反应。
+    /// </summary>
+    private void RefreshChallengeButton()
+    {
+        bool ready = _selected >= 0 && _selected < _items.Length;
+
+        // 中心的信息牌：只显示当前选中的副本名，不响应点击。
+        if (_challengeName != null)
+        {
+            if (ready)
+            {
+                _challengeName.text = _items[_selected].themeName;
+                _challengeName.color = Color.white;
+            }
+            else
+            {
+                _challengeName.text = "请选择副本";
+                _challengeName.color = ColDim;
+            }
+        }
+        if (_challengeGroup != null)
+        {
+            if (ready)
+            {
+                _challengeGroup.alpha = 1f;
+            }
+            else
+            {
+                _challengeGroup.alpha = 0.4f;
+            }
+        }
+    }
+
+    /// <summary>刷新所有书位的边框颜色，选中项为高亮金边，其余为暗金。</summary>
+    private void UpdateFrames()
+    {
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            Slot s = _slots[i];
+            bool on = s.Index == _selected;
+            if (on)
+            {
+                s.Frame.color = ColFrameOn;
+            }
+            else
+            {
+                s.Frame.color = ColFrameIdle;
+            }
+        }
+    }
+    #endregion
+
+    #region 交互响应
+    /// <summary>
+    /// 书位点击回调。RO 里点书位是「把这本书转到正前方」，转到正前方之后再点才翻开；
+    /// LYF 没有 3D 转盘，点一次就把选中与翻开一起做掉，避免玩家点第二下以为失灵。
+    /// </summary>
+    private void OnSlotClicked(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= _slots.Count)
+        {
+            return;
+        }
+        int index = _slots[slotIndex].Index;
+        Select(index, true);
+        if (_selected != index)
+        {
+            return;
+        }
+        EnterSelected();
+    }
+
+    /// <summary>确认按钮回调，目前只做反馈，不发起进入副本的协议。</summary>
+    private void OnConfirmClicked()
+    {
+        if (_selected < 0)
+        {
+            SetStatus("请先选择一个副本");
+            return;
+        }
+        SetStatus("确认：" + _items[_selected].themeName);
+    }
+
+    /// <summary>
+    /// 中心「挑战玩法」信息牌回调。RO 里它打开的是 Theme_Challenge（主题挑战模式），
+    /// 该界面还没移植，这里只给提示，避免点了没有任何反应。
+    /// </summary>
+    private void OnChallengeClicked()
+    {
+        if (_selected < 0 || _selected >= _items.Length)
+        {
+            SetStatus("请先选择一个副本");
+            return;
+        }
+        SetStatus("挑战模式：" + _items[_selected].themeName + "（界面待移植）");
+    }
+
+    /// <summary>关闭按钮回调，隐藏本窗口。</summary>
+    private void OnCloseClicked()
+    {
+        CloseWindow();
+    }
+    #endregion
+
+    #region 创建与添加
+    /// <summary>创建一个居中锚点的 RectTransform 子节点。</summary>
+    private RectTransform NewRect(string name, Transform parent, float x, float y, float w, float h)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.transform as RectTransform;
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(x, y);
+        rt.sizeDelta = new Vector2(w, h);
+        return rt;
+    }
+
+    /// <summary>创建一个纯色 Image 子节点。</summary>
+    private Image NewImage(string name, Transform parent, float x, float y, float w, float h, Color c)
+    {
+        RectTransform rt = NewRect(name, parent, x, y, w, h);
+        Image img = rt.gameObject.AddComponent<Image>();
+        img.sprite = _whiteSprite;
+        img.color = c;
+        return img;
+    }
+
+    /// <summary>创建一个 TextMeshProUGUI 子节点，字体统一使用 Common SDF。</summary>
+    private TextMeshProUGUI NewText(string name, Transform parent, float x, float y, float w, float h,
+        float fontSize, Color color, TextAlignmentOptions align)
+    {
+        RectTransform rt = NewRect(name, parent, x, y, w, h);
+        TextMeshProUGUI t = rt.gameObject.AddComponent<TextMeshProUGUI>();
+        if (_fontAsset != null)
+        {
+            t.font = _fontAsset;
+        }
+        if (fontSize > 0f)
+        {
+            t.fontSize = fontSize;
+        }
+        else
+        {
+            t.fontSize = DefaultFontSize;
+        }
+        t.color = color;
+        t.alignment = align;
+        t.raycastTarget = false;
+        t.text = string.Empty;
+        return t;
+    }
+    #endregion
+
+    #region 查询与数据读写
+    /// <summary>
+    /// 取得界面根变换。脚本直接挂在 ThemeDungeonArround 预制体根上，根就是自身；
+    /// 若被挂到别的容器上，则向下找名为 ThemeDungeonArround 的子节点。
+    /// </summary>
+    private RectTransform FindThemeDungeonRoot()
+    {
+        RectTransform self = transform as RectTransform;
+        if (self != null && transform.name == "ThemeDungeonArround")
+        {
+            return self;
+        }
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child.name == "ThemeDungeonArround")
+            {
+                return child as RectTransform;
+            }
+        }
+        return self;
+    }
+
+    /// <summary>
+    /// 深度优先查找指定名称的子节点。
+    /// </summary>
+    private static Transform FindDeep(Transform root, string name)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform c = root.GetChild(i);
+            if (c.name == name)
+            {
+                return c;
+            }
+            Transform r = FindDeep(c, name);
+            if (r != null)
+            {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>只在直接子节点里查找指定名称的节点。</summary>
+    private static Transform FindDirect(Transform root, string name)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform c = root.GetChild(i);
+            if (c.name == name)
+            {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 按 Resources 相对路径加载贴图，自动去掉扩展名。
+    /// </summary>
+    private Texture LoadTexture(string relative)
+    {
+        if (string.IsNullOrEmpty(relative))
+        {
+            return null;
+        }
+        string p = relative.Replace("\\", "/");
+        int dot = p.LastIndexOf('.');
+        if (dot > p.LastIndexOf('/'))
+        {
+            p = p.Substring(0, dot);
+        }
+        return Resources.Load<Texture2D>(_textureResourceRoot + p);
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>
+    /// 取预制体里 RO 自带的贴图，供运行时新建的节点复用，保证视觉和 RO 一致。
+    /// 必须在隐藏那些旧节点之前调用。
+    /// </summary>
+    private void CacheLegacySprites()
+    {
+        Transform bar = FindDeep(_root, "NameBg");
+        if (bar != null)
+        {
+            Image img = bar.GetComponent<Image>();
+            if (img != null)
+            {
+                _nameBarSprite = img.sprite;
+            }
+        }
     }
 
     /// <summary>
@@ -305,28 +692,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         // Unity 销毁过的对象做 != null 判断仍然为 true，留着会在下一次刷新时报空引用。
         _splash = null;
         _statusText = null;
-    }
-
-    /// <summary>
-    /// 取得界面根变换。脚本直接挂在 ThemeDungeonArround 预制体根上，根就是自身；
-    /// 若被挂到别的容器上，则向下找名为 ThemeDungeonArround 的子节点。
-    /// </summary>
-    private RectTransform FindThemeDungeonRoot()
-    {
-        RectTransform self = transform as RectTransform;
-        if (self != null && transform.name == "ThemeDungeonArround")
-        {
-            return self;
-        }
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Transform child = transform.GetChild(i);
-            if (child.name == "ThemeDungeonArround")
-            {
-                return child as RectTransform;
-            }
-        }
-        return self;
     }
 
     /// <summary>
@@ -441,112 +806,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             }
         }
         RefreshChallengeButton();
-    }
-
-    /// <summary>
-    /// 按当前选中状态刷新「进入副本」按钮：有选中就把副本名写上去并恢复正常亮度，
-    /// 没选中则显示占位提示并压暗。按钮始终可点，点了会给提示而不是静默无反应。
-    /// </summary>
-    private void RefreshChallengeButton()
-    {
-        bool ready = _selected >= 0 && _selected < _items.Length;
-
-        // 中心的信息牌：只显示当前选中的副本名，不响应点击。
-        if (_challengeName != null)
-        {
-            if (ready)
-            {
-                _challengeName.text = _items[_selected].themeName;
-                _challengeName.color = Color.white;
-            }
-            else
-            {
-                _challengeName.text = "请选择副本";
-                _challengeName.color = ColDim;
-            }
-        }
-        if (_challengeGroup != null)
-        {
-            if (ready)
-            {
-                _challengeGroup.alpha = 1f;
-            }
-            else
-            {
-                _challengeGroup.alpha = 0.4f;
-            }
-        }
-    }
-
-    /// <summary>给已缓存的按钮注册点击回调，未找到的按钮直接跳过。</summary>
-    private void AddButtonListeners()
-    {
-        if (_upBtn != null)
-        {
-            _upBtn.onClick.AddListener(PrevPage);
-        }
-        if (_downBtn != null)
-        {
-            _downBtn.onClick.AddListener(NextPage);
-        }
-        if (_closeBtn != null)
-        {
-            _closeBtn.onClick.AddListener(OnCloseClicked);
-        }
-        if (_challengeBtn != null)
-        {
-            _challengeBtn.onClick.AddListener(OnChallengeClicked);
-        }
-        if (_confirmBtn != null)
-        {
-            _confirmBtn.onClick.AddListener(OnConfirmClicked);
-        }
-    }
-
-    /// <summary>移除已注册的点击回调，供重复初始化时调用。</summary>
-    private void RemoveButtonListeners()
-    {
-        if (_upBtn != null)
-        {
-            _upBtn.onClick.RemoveListener(PrevPage);
-        }
-        if (_downBtn != null)
-        {
-            _downBtn.onClick.RemoveListener(NextPage);
-        }
-        if (_closeBtn != null)
-        {
-            _closeBtn.onClick.RemoveListener(OnCloseClicked);
-        }
-        if (_challengeBtn != null)
-        {
-            _challengeBtn.onClick.RemoveListener(OnChallengeClicked);
-        }
-        if (_confirmBtn != null)
-        {
-            _confirmBtn.onClick.RemoveListener(OnConfirmClicked);
-        }
-    }
-
-    /// <summary>
-    /// 读取并解析主题副本配置，失败时置为空数组并打印错误。
-    /// </summary>
-    private void LoadConfig()
-    {
-        TextAsset asset = Resources.Load<TextAsset>(_configResourcePath);
-        if (asset == null)
-        {
-            Debug.LogError("[主题副本] 找不到配置文件: " + _configResourcePath);
-            _items = new ThemeDungeonEntry[0];
-            return;
-        }
-        ThemeDungeonConfig config = JsonUtility.FromJson<ThemeDungeonConfig>(asset.text);
-        if (config == null || config.items == null)
-        {
-            _items = new ThemeDungeonEntry[0];
-            return;
-        }
-        _items = config.items;
     }
 
     /// <summary>
@@ -685,71 +944,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _statusText.text = string.Empty;
     }
 
-    /// <summary>总页数，书位为 0 时按 1 页处理。</summary>
-    private int PageCount
-    {
-        get
-        {
-            if (_slots.Count <= 0)
-            {
-                return 1;
-            }
-            return Mathf.Max(1, Mathf.CeilToInt(_items.Length / (float)_slots.Count));
-        }
-    }
-
-    /// <summary>
-    /// 显示指定页并刷新书位内容。
-    /// </summary>
-    /// <param name="page">目标页码，会被夹在合法范围内。</param>
-    /// <param name="selectFirst">true 时自动选中本页第一个书位。</param>
-    private void ShowPage(int page, bool selectFirst)
-    {
-        if (_items.Length == 0)
-        {
-            RefreshChallengeButton();
-            return;
-        }
-        _page = Mathf.Clamp(page, 0, PageCount - 1);
-
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            int index = _page * _slots.Count + i;
-            Slot s = _slots[i];
-            if (index >= _items.Length)
-            {
-                s.Root.gameObject.SetActive(false);
-                continue;
-            }
-            s.Root.gameObject.SetActive(true);
-            s.Index = index;
-            ApplySlot(s, _items[index]);
-        }
-
-        UpdateFrames();
-        if (_pageText != null)
-        {
-            _pageText.text = (_page + 1) + " / " + PageCount;
-        }
-        if (selectFirst)
-        {
-            Select(_page * _slots.Count, false);
-        }
-        else
-        {
-            // 翻页后原来选中的副本可能已经不在本页，继续留着会让「进入副本」按钮
-            // 显示上一页的副本名，所以自动改选本页第一个。
-            int first = _page * _slots.Count;
-            int last = first + _slots.Count - 1;
-            bool inPage = _selected >= first && _selected <= last && _selected < _items.Length;
-            if (!inPage)
-            {
-                Select(first, false);
-            }
-        }
-        RefreshChallengeButton();
-    }
-
     /// <summary>
     /// 把一个副本条目的数据填到书位上：缩略图、名称与章节等级文案。
     /// 主题副本入口不再做等级限制，书位一律按已解锁展示，只保留章节与等级的文字说明。
@@ -767,24 +961,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         s.Chapter.text = d.chapterText + " · Lv." + d.chapterLevel;
         // 锁定遮罩与「Lv.x 解锁」提示随等级限制一并停用，节点保留但不显示。
         s.LockMask.gameObject.SetActive(false);
-    }
-
-    /// <summary>刷新所有书位的边框颜色，选中项为高亮金边，其余为暗金。</summary>
-    private void UpdateFrames()
-    {
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            Slot s = _slots[i];
-            bool on = s.Index == _selected;
-            if (on)
-            {
-                s.Frame.color = ColFrameOn;
-            }
-            else
-            {
-                s.Frame.color = ColFrameIdle;
-            }
-        }
     }
 
     /// <summary>
@@ -824,25 +1000,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             SetStatus("已选中：" + d.themeName);
         }
-    }
-
-    /// <summary>
-    /// 书位点击回调。RO 里点书位是「把这本书转到正前方」，转到正前方之后再点才翻开；
-    /// LYF 没有 3D 转盘，点一次就把选中与翻开一起做掉，避免玩家点第二下以为失灵。
-    /// </summary>
-    private void OnSlotClicked(int slotIndex)
-    {
-        if (slotIndex < 0 || slotIndex >= _slots.Count)
-        {
-            return;
-        }
-        int index = _slots[slotIndex].Index;
-        Select(index, true);
-        if (_selected != index)
-        {
-            return;
-        }
-        EnterSelected();
     }
 
     /// <summary>上一页，已在第一页时给出提示。</summary>
@@ -907,37 +1064,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
     }
 
-    /// <summary>确认按钮回调，目前只做反馈，不发起进入副本的协议。</summary>
-    private void OnConfirmClicked()
-    {
-        if (_selected < 0)
-        {
-            SetStatus("请先选择一个副本");
-            return;
-        }
-        SetStatus("确认：" + _items[_selected].themeName);
-    }
-
-    /// <summary>
-    /// 中心「挑战玩法」信息牌回调。RO 里它打开的是 Theme_Challenge（主题挑战模式），
-    /// 该界面还没移植，这里只给提示，避免点了没有任何反应。
-    /// </summary>
-    private void OnChallengeClicked()
-    {
-        if (_selected < 0 || _selected >= _items.Length)
-        {
-            SetStatus("请先选择一个副本");
-            return;
-        }
-        SetStatus("挑战模式：" + _items[_selected].themeName + "（界面待移植）");
-    }
-
-    /// <summary>关闭按钮回调，隐藏本窗口。</summary>
-    private void OnCloseClicked()
-    {
-        CloseWindow();
-    }
-
     /// <summary>在右下角显示一行操作反馈文本。</summary>
     private void SetStatus(string msg)
     {
@@ -945,24 +1071,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             _statusText.text = msg;
         }
-    }
-
-    /// <summary>
-    /// 按 Resources 相对路径加载贴图，自动去掉扩展名。
-    /// </summary>
-    private Texture LoadTexture(string relative)
-    {
-        if (string.IsNullOrEmpty(relative))
-        {
-            return null;
-        }
-        string p = relative.Replace("\\", "/");
-        int dot = p.LastIndexOf('.');
-        if (dot > p.LastIndexOf('/'))
-        {
-            p = p.Substring(0, dot);
-        }
-        return Resources.Load<Texture2D>(_textureResourceRoot + p);
     }
 
     /// <summary>
@@ -987,98 +1095,6 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         ApplyCoverUv(_splash, (float)Screen.width, (float)Screen.height);
     }
 
-    /// <summary>
-    /// 深度优先查找指定名称的子节点。
-    /// </summary>
-    private static Transform FindDeep(Transform root, string name)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform c = root.GetChild(i);
-            if (c.name == name)
-            {
-                return c;
-            }
-            Transform r = FindDeep(c, name);
-            if (r != null)
-            {
-                return r;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>只在直接子节点里查找指定名称的节点。</summary>
-    private static Transform FindDirect(Transform root, string name)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform c = root.GetChild(i);
-            if (c.name == name)
-            {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>创建一个居中锚点的 RectTransform 子节点。</summary>
-    private RectTransform NewRect(string name, Transform parent, float x, float y, float w, float h)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        RectTransform rt = go.transform as RectTransform;
-        rt.anchorMin = new Vector2(0.5f, 0.5f);
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(x, y);
-        rt.sizeDelta = new Vector2(w, h);
-        return rt;
-    }
-
-    /// <summary>创建一个纯色 Image 子节点。</summary>
-    private Image NewImage(string name, Transform parent, float x, float y, float w, float h, Color c)
-    {
-        RectTransform rt = NewRect(name, parent, x, y, w, h);
-        Image img = rt.gameObject.AddComponent<Image>();
-        img.sprite = _whiteSprite;
-        img.color = c;
-        return img;
-    }
-
-    /// <summary>创建一个 TextMeshProUGUI 子节点，字体统一使用 Common SDF。</summary>
-    private TextMeshProUGUI NewText(string name, Transform parent, float x, float y, float w, float h,
-        float fontSize, Color color, TextAlignmentOptions align)
-    {
-        RectTransform rt = NewRect(name, parent, x, y, w, h);
-        TextMeshProUGUI t = rt.gameObject.AddComponent<TextMeshProUGUI>();
-        if (_fontAsset != null)
-        {
-            t.font = _fontAsset;
-        }
-        if (fontSize > 0f)
-        {
-            t.fontSize = fontSize;
-        }
-        else
-        {
-            t.fontSize = DefaultFontSize;
-        }
-        t.color = color;
-        t.alignment = align;
-        t.raycastTarget = false;
-        t.text = string.Empty;
-        return t;
-    }
-
     /// <summary>把 RectTransform 拉伸到铺满父节点。</summary>
     private static void Stretch(RectTransform rt)
     {
@@ -1097,4 +1113,5 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         tex.Apply();
         return Sprite.Create(tex, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 100f);
     }
+    #endregion
 }

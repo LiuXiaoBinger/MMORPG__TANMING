@@ -9,6 +9,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MJumpComponent : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>本组件使用独立类型，避免覆盖待机表现组件的唯一索引。</summary>
     public override EntityComponentType ComponentType
     {
@@ -44,7 +46,9 @@ public sealed class MJumpComponent : EntityComponentBase
 
     /// <summary>跳跃结束事件处理器，由移动组件的 IsJump 状态变化触发。</summary>
     private readonly MEventHandler _onJumpEnded;
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>创建跳跃表现组件并固定事件处理器实例。</summary>
     /// <param name="owner">组件所属的场景实体。</param>
     public MJumpComponent(ROObject owner) : base(owner)
@@ -176,7 +180,9 @@ public sealed class MJumpComponent : EntityComponentBase
         RemoveEventListener(MEventType.JumpStarted, _onJumpStarted);
         RemoveEventListener(MEventType.JumpEnded, _onJumpEnded);
     }
+    #endregion
 
+    #region 事件回调
     /// <summary>收到起跳事件后从起跳动画开始进入空中表现阶段。</summary>
     /// <param name="eventArg">跳跃事件载荷；当前跳跃表现不需要额外数据。</param>
     private void OnJumpStarted(IEventArg eventArg)
@@ -244,7 +250,9 @@ public sealed class MJumpComponent : EntityComponentBase
         _pendingStateName = MAnimator.STATE_JUMP_END;
         TryPlayPendingState();
     }
+    #endregion
 
+    #region 查询与判定
     /// <summary>读取表现表并登记跳跃三阶段动画，三段跳不重复读取或创建动画。</summary>
     private void TryPrepareJumpAnimations()
     {
@@ -342,15 +350,6 @@ public sealed class MJumpComponent : EntityComponentBase
         }
     }
 
-    /// <summary>技能接管动画时清除旧跳跃表现阶段，不触碰移动组件的垂直速度与接地状态。</summary>
-    private void ClearJumpPresentation()
-    {
-        _isJumping = false;
-        _isEnding = false;
-        _phaseElapsedSeconds = 0f;
-        _pendingStateName = string.Empty;
-    }
-
     /// <summary>获取阶段动画时长，资源元数据无效时使用 0.2 秒保护值。</summary>
     /// <param name="animInfo">动画绑定信息，可为空。</param>
     /// <returns>动画时长，单位为秒。</returns>
@@ -361,6 +360,17 @@ public sealed class MJumpComponent : EntityComponentBase
             return animInfo.Length;
         }
         return 0.2f;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>技能接管动画时清除旧跳跃表现阶段，不触碰移动组件的垂直速度与接地状态。</summary>
+    private void ClearJumpPresentation()
+    {
+        _isJumping = false;
+        _isEnding = false;
+        _phaseElapsedSeconds = 0f;
+        _pendingStateName = string.Empty;
     }
 
     /// <summary>记录一次动画配置错误，避免模型未就绪时每帧刷屏。</summary>
@@ -375,4 +385,5 @@ public sealed class MJumpComponent : EntityComponentBase
         UnityEngine.Debug.LogWarning("角色跳跃动画装配等待或失败，实体UID=" +
             Entity.UID + "，原因=" + failureReason);
     }
+    #endregion
 }

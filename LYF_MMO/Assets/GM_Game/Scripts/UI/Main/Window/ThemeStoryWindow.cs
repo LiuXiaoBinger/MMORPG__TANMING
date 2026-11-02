@@ -9,6 +9,8 @@ using TMPro;
 /// </summary>
 public sealed class ThemeStoryWindow : WindowBase
 {
+
+    #region 字段
     /// <summary>首领页签下标。</summary>
     private const int TabBoss = 0;
 
@@ -92,7 +94,9 @@ public sealed class ThemeStoryWindow : WindowBase
 
     /// <summary>点击「开始挑战」时触发，参数为当前展示的副本。</summary>
     public System.Action<ThemeDungeonEntry> OnEnterDungeon;
+    #endregion
 
+    #region 初始化与事件注册
     /// <summary>缓存控件、绑定事件，并把窗口按 RO 设计尺寸居中。重复调用安全。</summary>
     public override void InitWindow()
     {
@@ -114,6 +118,271 @@ public sealed class ThemeStoryWindow : WindowBase
         gameObject.Show(false);
     }
 
+    /// <summary>给关闭、开始挑战、公开情报三个按钮注册回调。</summary>
+    private void AddButtonListeners()
+    {
+        if (_closeBtn != null)
+        {
+            _closeBtn.onClick.RemoveListener(OnCloseClicked);
+            _closeBtn.onClick.AddListener(OnCloseClicked);
+        }
+        if (_beginBtn != null)
+        {
+            _beginBtn.onClick.RemoveListener(OnBeginClicked);
+            _beginBtn.onClick.AddListener(OnBeginClicked);
+        }
+        if (_infoBtn != null)
+        {
+            _infoBtn.onClick.RemoveListener(OnInfoClicked);
+            _infoBtn.onClick.AddListener(OnInfoClicked);
+        }
+    }
+    #endregion
+
+    #region 界面显示与开关
+    /// <summary>
+    /// RO 的页签状态节点上挂了一个没有 sprite 的 Image，Unity 会把它画成纯白方块。
+    /// 这里只保留它的点击热区，颜色置全透明，避免白板盖住页签文字。
+    /// </summary>
+    private static void HideBlankSprite(Transform t)
+    {
+        if (t == null)
+        {
+            return;
+        }
+        Image img = t.GetComponent<Image>();
+        if (img == null)
+        {
+            return;
+        }
+        if (img.sprite != null)
+        {
+            return;
+        }
+        img.color = new Color(1f, 1f, 1f, 0f);
+        img.raycastTarget = true;
+    }
+
+    /// <summary>显示窗口并刷新为指定副本；传入空数据时只显示不刷新。</summary>
+    public override void Show(bool isShow = true, object obj = null)
+    {
+        if (!_inited)
+        {
+            InitWindow();
+        }
+        if (isShow)
+        {
+            ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
+            if (entry != null)
+            {
+                ReFreshUI(entry);
+            }
+            transform.SetAsLastSibling();
+        }
+        gameObject.Show(isShow);
+        if (isShow)
+        {
+            // 窗口刚激活时滚动区的 rect 才是有效值，这时才能判断正文有没有溢出。
+            RefreshDownArrowNow();
+        }
+    }
+    #endregion
+
+    #region 界面刷新
+    /// <summary>正文换行后布局要到帧末才重建，这里先强制重建再判断需不需要显示箭头。</summary>
+    private void RefreshDownArrowNow()
+    {
+        if (_infoScroll != null && _infoScroll.content != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_infoScroll.content);
+        }
+        Canvas.ForceUpdateCanvases();
+        RefreshDownArrow();
+    }
+
+    /// <summary>按滚动区实际尺寸决定箭头显隐：内容不溢出或已到底都隐藏。</summary>
+    private void RefreshDownArrow()
+    {
+        if (_downArrow == null)
+        {
+            return;
+        }
+        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        float contentHeight = _infoScroll.content.rect.height;
+        float viewHeight = _infoScroll.viewport.rect.height;
+        if (contentHeight <= viewHeight + 1f)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        // verticalNormalizedPosition：1 表示顶部，0 表示底部。
+        _downArrow.SetActive(_infoScroll.verticalNormalizedPosition > 0.01f);
+    }
+
+    /// <summary>用副本数据刷新界面，并把页签重置到首领页。</summary>
+    public override void ReFreshUI(object obj)
+    {
+        ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
+        if (entry == null)
+        {
+            return;
+        }
+        _entry = entry;
+        if (_titleText != null)
+        {
+            _titleText.text = entry.themeName;
+        }
+        if (_nameText != null)
+        {
+            _nameText.text = entry.themeName;
+        }
+        if (_lvText != null)
+        {
+            _lvText.text = "Lv." + entry.chapterLevel;
+        }
+        ApplyBossPic(entry.painting);
+        ApplyPassedState();
+        SwitchTab(TabBoss);
+    }
+
+    /// <summary>按当前页签与副本数据刷新正文标题和内容。</summary>
+    private void RefreshTabContent()
+    {
+        if (_entry == null)
+        {
+            return;
+        }
+        if (_bossNameText != null)
+        {
+            if (_tab == TabBoss)
+            {
+                _bossNameText.text = "首领：" + _entry.leaderName;
+            }
+            else if (_tab == TabSpecial)
+            {
+                _bossNameText.text = "副本特性";
+            }
+            else
+            {
+                _bossNameText.text = "背景档案";
+            }
+        }
+        if (_descText != null)
+        {
+            _descText.text = BuildTabText();
+        }
+        if (_rewardTitle != null)
+        {
+            _rewardTitle.text = "通关奖励：";
+        }
+        // 切页签换了正文，滚动位置要回到顶部，箭头按新内容的长度重新判断。
+        if (_infoScroll != null)
+        {
+            _infoScroll.verticalNormalizedPosition = 1f;
+        }
+        RefreshDownArrowNow();
+    }
+    #endregion
+
+    #region 交互与事件响应
+    /// <summary>点箭头往下翻一页；已经到底就直接隐藏。</summary>
+    private void OnDownArrowClicked()
+    {
+        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
+        {
+            return;
+        }
+        float contentHeight = _infoScroll.content.rect.height;
+        float viewHeight = _infoScroll.viewport.rect.height;
+        float range = contentHeight - viewHeight;
+        if (range <= 1f)
+        {
+            _downArrow.SetActive(false);
+            return;
+        }
+        float page = viewHeight / range;
+        float target = _infoScroll.verticalNormalizedPosition - page;
+        if (target < 0f)
+        {
+            target = 0f;
+        }
+        _infoScroll.verticalNormalizedPosition = target;
+        RefreshDownArrow();
+    }
+
+    /// <summary>关闭按钮回调。</summary>
+    private void OnCloseClicked()
+    {
+        CloseWindow();
+    }
+
+    /// <summary>「开始挑战」回调：等级校验通过后交给外部发起进入流程。</summary>
+    private void OnBeginClicked()
+    {
+        if (_entry == null)
+        {
+            return;
+        }
+        if (OnEnterDungeon != null)
+        {
+            OnEnterDungeon(_entry);
+        }
+    }
+
+    /// <summary>「公开情报」回调，对应 RO 里的 Theme_Information 弹窗，当前只做占位提示。</summary>
+    private void OnInfoClicked()
+    {
+        Debug.Log("[ThemeStory] 公开情报按钮点击，等待接入 Theme_Information");
+    }
+
+    /// <summary>滚动时刷新箭头显隐。</summary>
+    private void OnDescScrolled(Vector2 position)
+    {
+        RefreshDownArrow();
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>按名字找深层子节点。</summary>
+    private static Transform FindDeep(Transform root, string name)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+        Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        int i = 0;
+        while (i < all.Length)
+        {
+            if (all[i].name == name)
+            {
+                return all[i];
+            }
+            i++;
+        }
+        return null;
+    }
+
+    /// <summary>按名字找节点并返回 GameObject。</summary>
+    private GameObject FindNode(string name)
+    {
+        Transform t = FindDeep(_root, name);
+        return t == null ? null : t.gameObject;
+    }
+
+    /// <summary>按名字找 TMP 文本。</summary>
+    private TextMeshProUGUI FindText(string name)
+    {
+        Transform t = FindDeep(_root, name);
+        return t == null ? null : t.GetComponent<TextMeshProUGUI>();
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>按 RO 的 1704×852 设计尺寸居中摆放，避免铺满 1920×1080 时元素被拉伸错位。</summary>
     private void ApplyDesignRect()
     {
@@ -349,49 +618,6 @@ public sealed class ThemeStoryWindow : WindowBase
     }
 
     /// <summary>
-    /// RO 的页签状态节点上挂了一个没有 sprite 的 Image，Unity 会把它画成纯白方块。
-    /// 这里只保留它的点击热区，颜色置全透明，避免白板盖住页签文字。
-    /// </summary>
-    private static void HideBlankSprite(Transform t)
-    {
-        if (t == null)
-        {
-            return;
-        }
-        Image img = t.GetComponent<Image>();
-        if (img == null)
-        {
-            return;
-        }
-        if (img.sprite != null)
-        {
-            return;
-        }
-        img.color = new Color(1f, 1f, 1f, 0f);
-        img.raycastTarget = true;
-    }
-
-    /// <summary>给关闭、开始挑战、公开情报三个按钮注册回调。</summary>
-    private void AddButtonListeners()
-    {
-        if (_closeBtn != null)
-        {
-            _closeBtn.onClick.RemoveListener(OnCloseClicked);
-            _closeBtn.onClick.AddListener(OnCloseClicked);
-        }
-        if (_beginBtn != null)
-        {
-            _beginBtn.onClick.RemoveListener(OnBeginClicked);
-            _beginBtn.onClick.AddListener(OnBeginClicked);
-        }
-        if (_infoBtn != null)
-        {
-            _infoBtn.onClick.RemoveListener(OnInfoClicked);
-            _infoBtn.onClick.AddListener(OnInfoClicked);
-        }
-    }
-
-    /// <summary>
     /// RO 里正文下方那个白色小箭头只是「下面还有内容」的提示：正文没溢出时隐藏，
     /// 滚到底也隐藏，点一下往下翻一页。移植过来时它是一张常显的死图，这里补上行为。
     /// </summary>
@@ -413,121 +639,6 @@ public sealed class ThemeStoryWindow : WindowBase
             _infoScroll.onValueChanged.AddListener(OnDescScrolled);
         }
         _downArrow.SetActive(false);
-    }
-
-    /// <summary>滚动时刷新箭头显隐。</summary>
-    private void OnDescScrolled(Vector2 position)
-    {
-        RefreshDownArrow();
-    }
-
-    /// <summary>点箭头往下翻一页；已经到底就直接隐藏。</summary>
-    private void OnDownArrowClicked()
-    {
-        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
-        {
-            return;
-        }
-        float contentHeight = _infoScroll.content.rect.height;
-        float viewHeight = _infoScroll.viewport.rect.height;
-        float range = contentHeight - viewHeight;
-        if (range <= 1f)
-        {
-            _downArrow.SetActive(false);
-            return;
-        }
-        float page = viewHeight / range;
-        float target = _infoScroll.verticalNormalizedPosition - page;
-        if (target < 0f)
-        {
-            target = 0f;
-        }
-        _infoScroll.verticalNormalizedPosition = target;
-        RefreshDownArrow();
-    }
-
-    /// <summary>正文换行后布局要到帧末才重建，这里先强制重建再判断需不需要显示箭头。</summary>
-    private void RefreshDownArrowNow()
-    {
-        if (_infoScroll != null && _infoScroll.content != null)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_infoScroll.content);
-        }
-        Canvas.ForceUpdateCanvases();
-        RefreshDownArrow();
-    }
-
-    /// <summary>按滚动区实际尺寸决定箭头显隐：内容不溢出或已到底都隐藏。</summary>
-    private void RefreshDownArrow()
-    {
-        if (_downArrow == null)
-        {
-            return;
-        }
-        if (_infoScroll == null || _infoScroll.content == null || _infoScroll.viewport == null)
-        {
-            _downArrow.SetActive(false);
-            return;
-        }
-        float contentHeight = _infoScroll.content.rect.height;
-        float viewHeight = _infoScroll.viewport.rect.height;
-        if (contentHeight <= viewHeight + 1f)
-        {
-            _downArrow.SetActive(false);
-            return;
-        }
-        // verticalNormalizedPosition：1 表示顶部，0 表示底部。
-        _downArrow.SetActive(_infoScroll.verticalNormalizedPosition > 0.01f);
-    }
-
-    /// <summary>显示窗口并刷新为指定副本；传入空数据时只显示不刷新。</summary>
-    public override void Show(bool isShow = true, object obj = null)
-    {
-        if (!_inited)
-        {
-            InitWindow();
-        }
-        if (isShow)
-        {
-            ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
-            if (entry != null)
-            {
-                ReFreshUI(entry);
-            }
-            transform.SetAsLastSibling();
-        }
-        gameObject.Show(isShow);
-        if (isShow)
-        {
-            // 窗口刚激活时滚动区的 rect 才是有效值，这时才能判断正文有没有溢出。
-            RefreshDownArrowNow();
-        }
-    }
-
-    /// <summary>用副本数据刷新界面，并把页签重置到首领页。</summary>
-    public override void ReFreshUI(object obj)
-    {
-        ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
-        if (entry == null)
-        {
-            return;
-        }
-        _entry = entry;
-        if (_titleText != null)
-        {
-            _titleText.text = entry.themeName;
-        }
-        if (_nameText != null)
-        {
-            _nameText.text = entry.themeName;
-        }
-        if (_lvText != null)
-        {
-            _lvText.text = "Lv." + entry.chapterLevel;
-        }
-        ApplyBossPic(entry.painting);
-        ApplyPassedState();
-        SwitchTab(TabBoss);
     }
 
     /// <summary>加载首领立绘，路径为空或加载失败时保留预制体自带的图。</summary>
@@ -591,44 +702,6 @@ public sealed class ThemeStoryWindow : WindowBase
         RefreshTabContent();
     }
 
-    /// <summary>按当前页签与副本数据刷新正文标题和内容。</summary>
-    private void RefreshTabContent()
-    {
-        if (_entry == null)
-        {
-            return;
-        }
-        if (_bossNameText != null)
-        {
-            if (_tab == TabBoss)
-            {
-                _bossNameText.text = "首领：" + _entry.leaderName;
-            }
-            else if (_tab == TabSpecial)
-            {
-                _bossNameText.text = "副本特性";
-            }
-            else
-            {
-                _bossNameText.text = "背景档案";
-            }
-        }
-        if (_descText != null)
-        {
-            _descText.text = BuildTabText();
-        }
-        if (_rewardTitle != null)
-        {
-            _rewardTitle.text = "通关奖励：";
-        }
-        // 切页签换了正文，滚动位置要回到顶部，箭头按新内容的长度重新判断。
-        if (_infoScroll != null)
-        {
-            _infoScroll.verticalNormalizedPosition = 1f;
-        }
-        RefreshDownArrowNow();
-    }
-
     /// <summary>拼出当前页签要显示的正文。真实文案等配置表接入后替换这里。</summary>
     private string BuildTabText()
     {
@@ -651,63 +724,5 @@ public sealed class ThemeStoryWindow : WindowBase
             + "玩家需要依次清理章节内的封锁，才能解锁首领所在的区域。\n"
             + "通关后可以在奖励界面领取对应的主题材料与外观。";
     }
-
-    /// <summary>关闭按钮回调。</summary>
-    private void OnCloseClicked()
-    {
-        CloseWindow();
-    }
-
-    /// <summary>「开始挑战」回调：等级校验通过后交给外部发起进入流程。</summary>
-    private void OnBeginClicked()
-    {
-        if (_entry == null)
-        {
-            return;
-        }
-        if (OnEnterDungeon != null)
-        {
-            OnEnterDungeon(_entry);
-        }
-    }
-
-    /// <summary>「公开情报」回调，对应 RO 里的 Theme_Information 弹窗，当前只做占位提示。</summary>
-    private void OnInfoClicked()
-    {
-        Debug.Log("[ThemeStory] 公开情报按钮点击，等待接入 Theme_Information");
-    }
-
-    /// <summary>按名字找深层子节点。</summary>
-    private static Transform FindDeep(Transform root, string name)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-        Transform[] all = root.GetComponentsInChildren<Transform>(true);
-        int i = 0;
-        while (i < all.Length)
-        {
-            if (all[i].name == name)
-            {
-                return all[i];
-            }
-            i++;
-        }
-        return null;
-    }
-
-    /// <summary>按名字找节点并返回 GameObject。</summary>
-    private GameObject FindNode(string name)
-    {
-        Transform t = FindDeep(_root, name);
-        return t == null ? null : t.gameObject;
-    }
-
-    /// <summary>按名字找 TMP 文本。</summary>
-    private TextMeshProUGUI FindText(string name)
-    {
-        Transform t = FindDeep(_root, name);
-        return t == null ? null : t.GetComponent<TextMeshProUGUI>();
-    }
+    #endregion
 }

@@ -6,20 +6,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-
 /// <summary>
 /// TCP 主动连接器：服务端之间互联（登录/网关/中心/游戏）时使用，支持异步连接与定时自动重连。
 /// </summary>
 public class NetClient : BaseLink
 {
 
+    #region 字段与属性
     /// <summary>对端主机地址。</summary>
     private string _host;
+
     /// <summary>对端端口。</summary>
     private int _port;
 
     /// <summary>断线后的重连定时器。</summary>
     private Timer _reconnectTimer;
+
     /// <summary>是否需要自动重连。</summary>
     public bool _isNeedReconn = true;
 
@@ -35,8 +37,11 @@ public class NetClient : BaseLink
 
     /// <summary>连接服务端成功回调。</summary>
     public Action OnConnSucceed;
+
     /// <summary>连接服务端失败回调。</summary>
     public Action OnConnFailed;
+    #endregion
+
     /// <summary>构造客户端连接器。</summary>
     /// <param name="ip">对端主机地址。</param>
     /// <param name="port">对端端口。</param>
@@ -49,30 +54,7 @@ public class NetClient : BaseLink
         _connState = ConnState.Disconnected;
     }
 
-    /// <summary>
-    /// 开始连接服务端
-    /// </summary>
-    public void StartConnect()
-    {
-        try
-        {
-            if (_connState != ConnState.Disconnected) { return; }
-
-            if (_socket == null)
-            {
-                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            }
-
-            //开始连接服务端
-            _socket.BeginConnect(_host, _port, OnConnectCB, null);
-        }
-        catch (Exception ex)
-        {
-            Disconnect();
-            LogMsg.Info("[NetClient] socket connect failed, socketErrorCode=" + GetSocketErrorCode(ex), LogMsgType.Error);
-        }
-    }
-
+    #region 事件回调
     /// <summary>
     /// 连接服务端成功
     /// </summary>
@@ -96,29 +78,6 @@ public class NetClient : BaseLink
         }
     }
 
-    /// <summary>获取连接异常对应的套接字错误码。</summary>
-    private static int GetSocketErrorCode(Exception exception)
-    {
-        SocketException socketException = exception as SocketException;
-        if (socketException != null)
-        {
-            return (int)socketException.SocketErrorCode;
-        }
-
-        return exception.HResult;
-    }
-
-    /// <summary>
-    /// 注册指令
-    /// </summary>
-    /// <param name="cmd"></param>
-    /// <param name="container"></param>
-    public void RegistCommand(int cmd, IContainer container)
-    {
-        _cmdDic.Add(cmd, container);
-    }
-
-
     protected override void HandleCommand(BasePackage basePackage)
     {
 
@@ -138,25 +97,20 @@ public class NetClient : BaseLink
 
         container.OnClientCommand(this, basePackage);
 
-
     }
+    #endregion
 
-    /// <summary>
-    /// 断开连接
-    /// </summary>
-    public override void Disconnect()
+    #region 查询与判定
+    /// <summary>获取连接异常对应的套接字错误码。</summary>
+    private static int GetSocketErrorCode(Exception exception)
     {
-        // 断开同时释放即时通道，旧绑定不能在新连接上继续发送。
-        // 断开前缓存当前实时通道引用，清空字段后关闭旧通道。
-        KcpClient realtimeClient = RealtimeClient;
-        RealtimeClient = null;
-        if (realtimeClient != null)
+        SocketException socketException = exception as SocketException;
+        if (socketException != null)
         {
-            realtimeClient.Close();
+            return (int)socketException.SocketErrorCode;
         }
-        OnConnFailed?.Invoke();
-        SetReconnectTimer();
-        base.Disconnect();
+
+        return exception.HResult;
     }
 
     /// <summary>
@@ -194,7 +148,60 @@ public class NetClient : BaseLink
             basePackage.ProtoCode, LogMsgType.Warn);
         return RealtimeSendResult.Dropped;
     }
+    #endregion
 
+    #region 核心逻辑
+    /// <summary>
+    /// 开始连接服务端
+    /// </summary>
+    public void StartConnect()
+    {
+        try
+        {
+            if (_connState != ConnState.Disconnected) { return; }
+
+            if (_socket == null)
+            {
+                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            }
+
+            //开始连接服务端
+            _socket.BeginConnect(_host, _port, OnConnectCB, null);
+        }
+        catch (Exception ex)
+        {
+            Disconnect();
+            LogMsg.Info("[NetClient] socket connect failed, socketErrorCode=" + GetSocketErrorCode(ex), LogMsgType.Error);
+        }
+    }
+
+    /// <summary>
+    /// 注册指令
+    /// </summary>
+    /// <param name="cmd"></param>
+    /// <param name="container"></param>
+    public void RegistCommand(int cmd, IContainer container)
+    {
+        _cmdDic.Add(cmd, container);
+    }
+
+    /// <summary>
+    /// 断开连接
+    /// </summary>
+    public override void Disconnect()
+    {
+        // 断开同时释放即时通道，旧绑定不能在新连接上继续发送。
+        // 断开前缓存当前实时通道引用，清空字段后关闭旧通道。
+        KcpClient realtimeClient = RealtimeClient;
+        RealtimeClient = null;
+        if (realtimeClient != null)
+        {
+            realtimeClient.Close();
+        }
+        OnConnFailed?.Invoke();
+        SetReconnectTimer();
+        base.Disconnect();
+    }
 
     /// <summary>
     /// 设置重连时间
@@ -220,4 +227,5 @@ public class NetClient : BaseLink
             StartConnect();
         }
     }
+    #endregion
 }

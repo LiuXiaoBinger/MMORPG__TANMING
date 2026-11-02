@@ -4,6 +4,8 @@
 /// </summary>
 public sealed class MSkillCore
 {
+
+    #region 字段与属性
     /// <summary>RO 本地动作轮换间隔超过十秒时重新使用第一段。</summary>
     private const float ComboResetSeconds = 10f;
 
@@ -67,6 +69,33 @@ public sealed class MSkillCore
     /// <summary>字典和存活施法实例合计持有数；为零时由工厂归还。</summary>
     private int _ownerCount;
 
+    /// <summary>是否配置多段武器动作，用于本地次数轮换和每段动作解锁窗口。</summary>
+    public bool HasMultiplePresentations { get { return _presentations.Count > 1; } }
+
+    /// <summary>本地或服务器最近选择的动作序号，从零开始。</summary>
+    public int UsingTimes { get { return System.Math.Max(0, _usingTimes); } }
+
+    /// <summary>当前动作段的表现表主键，核心尚无表现段时为零。</summary>
+    public int PresentationId
+    {
+        get
+        {
+            if (_presentations.Count == 0)
+            {
+                return 0;
+            }
+            return _presentations[UsingTimes].PresentationId;
+        }
+    }
+
+    /// <summary>是否有可由动画索引解析的真实技能剪辑配置。</summary>
+    public bool HasPresentation
+    {
+        get { return !string.IsNullOrEmpty(AnimationLocation) && AnimationDurationSeconds > 0f; }
+    }
+    #endregion
+
+    #region 构造与初始化
     /// <summary>建立空的可复用核心，动作段容器在多次租借间复用。</summary>
     public MSkillCore()
     {
@@ -123,44 +152,6 @@ public sealed class MSkillCore
         _ownerCount = 1;
     }
 
-    /// <summary>将已学核心的 CD 接到实体组件唯一记录；等级更换继续使用同技能原记录，不复制倒计时。</summary>
-    /// <param name="owner">持有本核心的技能组件，不能跨实体共享。</param>
-    public void BindCooldown(MSkillComponent owner)
-    {
-        // 独立核心装配前的剩余秒数，仅在组件尚无该技能记录时移交。
-        float remainingSeconds = GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
-        _cooldownOwner = owner;
-        if (owner != null && !owner.SkillCDDic.ContainsKey(SkillId) && remainingSeconds > 0f)
-        {
-            owner.SetSkillCD(SkillId, remainingSeconds);
-        }
-        _cooldownEndRealtime = 0f;
-    }
-
-    /// <summary>施法实例持有核心直到其 UUID 生命周期结束。</summary>
-    public void Retain()
-    {
-        if (_ownerCount <= 0)
-        {
-            throw new System.InvalidOperationException("已归还的技能核心不能再次持有。");
-        }
-        _ownerCount++;
-    }
-
-    /// <summary>解除字典或施法实例的一个持有，最后持有者触发工厂回池。</summary>
-    public void Release()
-    {
-        if (_ownerCount <= 0)
-        {
-            throw new System.InvalidOperationException("技能核心重复归还。");
-        }
-        _ownerCount--;
-        if (_ownerCount == 0)
-        {
-            MSkillFactory.ReleaseCore(this);
-        }
-    }
-
     /// <summary>最终归还时清除动作段及最近施法身份，旧施法引用已全部解除。</summary>
     public void Reset()
     {
@@ -192,48 +183,23 @@ public sealed class MSkillCore
         _usingTimes = -1;
         _fireRealtime = 0f;
     }
+    #endregion
 
-    /// <summary>是否配置多段武器动作，用于本地次数轮换和每段动作解锁窗口。</summary>
-    public bool HasMultiplePresentations { get { return _presentations.Count > 1; } }
-
-    /// <summary>本地或服务器最近选择的动作序号，从零开始。</summary>
-    public int UsingTimes { get { return System.Math.Max(0, _usingTimes); } }
-
-    /// <summary>当前动作段的表现表主键，核心尚无表现段时为零。</summary>
-    public int PresentationId
+    /// <summary>解除字典或施法实例的一个持有，最后持有者触发工厂回池。</summary>
+    public void Release()
     {
-        get
+        if (_ownerCount <= 0)
         {
-            if (_presentations.Count == 0)
-            {
-                return 0;
-            }
-            return _presentations[UsingTimes].PresentationId;
+            throw new System.InvalidOperationException("技能核心重复归还。");
+        }
+        _ownerCount--;
+        if (_ownerCount == 0)
+        {
+            MSkillFactory.ReleaseCore(this);
         }
     }
 
-    /// <summary>等级配置更新时继承冷却、最近施法及已应用结果身份，旧回包不能覆盖更新一次施法。</summary>
-    /// <param name="previous">更新前仍在同一角色上的技能核心。</param>
-    public void AdoptRuntimeState(MSkillCore previous)
-    {
-        if (previous == null || previous.SkillId != SkillId)
-        {
-            return;
-        }
-        _cooldownEndRealtime = UnityEngine.Time.realtimeSinceStartup +
-            previous.GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
-        _latestSkillUuid = previous._latestSkillUuid;
-        _latestResultUuid = previous._latestResultUuid;
-        _usingTimes = previous._usingTimes;
-        _fireRealtime = previous._fireRealtime;
-    }
-
-    /// <summary>是否有可由动画索引解析的真实技能剪辑配置。</summary>
-    public bool HasPresentation
-    {
-        get { return !string.IsNullOrEmpty(AnimationLocation) && AnimationDurationSeconds > 0f; }
-    }
-
+    #region 查询与判定
     /// <summary>查询在给定本机时间和法力值下能否发起技能请求。</summary>
     /// <param name="realtimeSeconds">本机不受时间缩放影响的时间，单位为秒。</param>
     /// <param name="currentMp">角色当前已知法力值，非负整数；最终由服务器校验。</param>
@@ -275,6 +241,56 @@ public sealed class MSkillCore
             return 0f;
         }
         return remainingSeconds;
+    }
+
+    /// <summary>判断结果是否属于本核心最后发起的一段，用于防止旧回包覆盖更新的 MP/CD。</summary>
+    /// <param name="skillUuid">待比较的非零施法 UUID。</param>
+    /// <returns>UUID 与最近施法一致时返回 true。</returns>
+    public bool IsLatestCast(ulong skillUuid)
+    {
+        return skillUuid != 0 && skillUuid == _latestSkillUuid;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>将已学核心的 CD 接到实体组件唯一记录；等级更换继续使用同技能原记录，不复制倒计时。</summary>
+    /// <param name="owner">持有本核心的技能组件，不能跨实体共享。</param>
+    public void BindCooldown(MSkillComponent owner)
+    {
+        // 独立核心装配前的剩余秒数，仅在组件尚无该技能记录时移交。
+        float remainingSeconds = GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
+        _cooldownOwner = owner;
+        if (owner != null && !owner.SkillCDDic.ContainsKey(SkillId) && remainingSeconds > 0f)
+        {
+            owner.SetSkillCD(SkillId, remainingSeconds);
+        }
+        _cooldownEndRealtime = 0f;
+    }
+
+    /// <summary>施法实例持有核心直到其 UUID 生命周期结束。</summary>
+    public void Retain()
+    {
+        if (_ownerCount <= 0)
+        {
+            throw new System.InvalidOperationException("已归还的技能核心不能再次持有。");
+        }
+        _ownerCount++;
+    }
+
+    /// <summary>等级配置更新时继承冷却、最近施法及已应用结果身份，旧回包不能覆盖更新一次施法。</summary>
+    /// <param name="previous">更新前仍在同一角色上的技能核心。</param>
+    public void AdoptRuntimeState(MSkillCore previous)
+    {
+        if (previous == null || previous.SkillId != SkillId)
+        {
+            return;
+        }
+        _cooldownEndRealtime = UnityEngine.Time.realtimeSinceStartup +
+            previous.GetRemainingCooldown(UnityEngine.Time.realtimeSinceStartup);
+        _latestSkillUuid = previous._latestSkillUuid;
+        _latestResultUuid = previous._latestResultUuid;
+        _usingTimes = previous._usingTimes;
+        _fireRealtime = previous._fireRealtime;
     }
 
     /// <summary>本地请求后立即设置预测 CD 并选动作，使用次数不等待服务器回包推进。</summary>
@@ -346,14 +362,6 @@ public sealed class MSkillCore
         return true;
     }
 
-    /// <summary>判断结果是否属于本核心最后发起的一段，用于防止旧回包覆盖更新的 MP/CD。</summary>
-    /// <param name="skillUuid">待比较的非零施法 UUID。</param>
-    /// <returns>UUID 与最近施法一致时返回 true。</returns>
-    public bool IsLatestCast(ulong skillUuid)
-    {
-        return skillUuid != 0 && skillUuid == _latestSkillUuid;
-    }
-
     /// <summary>应用当前权威冷却到唯一 CD 记录，直接供施法校验和正式 UI 查询。</summary>
     /// <param name="remainingCooldownSeconds">服务器给出的非负剩余冷却秒数。</param>
     /// <param name="realtimeSeconds">应用同步时的本机不受时间缩放影响的秒数。</param>
@@ -371,4 +379,5 @@ public sealed class MSkillCore
         }
         _cooldownEndRealtime = realtimeSeconds + remainingCooldownSeconds;
     }
+    #endregion
 }

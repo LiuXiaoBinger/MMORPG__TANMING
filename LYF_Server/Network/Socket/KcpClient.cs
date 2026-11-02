@@ -12,6 +12,8 @@ using KcpProject;
 /// </summary>
 public sealed class KcpClient
 {
+
+    #region 字段与属性
     /// <summary>通道状态：未开始。</summary>
     private const int StateIdle = 0;
 
@@ -119,25 +121,9 @@ public sealed class KcpClient
     /// 旧连接的失败回调据此判断是否仍应释放本通道，避免误关重连后新建的通道。
     /// </summary>
     public long OwnerGeneration { get; set; }
+    #endregion
 
-    /// <summary>
-    /// 判断一次连接失败通知是否应释放本通道：只有通知代次与通道建立代次一致才释放。
-    /// </summary>
-    /// <param name="failedGeneration">失败通知携带的连接代次。</param>
-    /// <returns>属于同一次连接、可以释放时返回 true。</returns>
-    public bool ShouldReleaseOnFailure(long failedGeneration)
-    {
-        if (OwnerGeneration <= 0)
-        {
-            return false;
-        }
-        if (failedGeneration <= 0)
-        {
-            return false;
-        }
-        return OwnerGeneration == failedGeneration;
-    }
-
+    #region 通道启动与关闭
     /// <summary>
     /// 发起绑定：创建 UDP Socket、发出首个绑定请求并启动驱动线程。
     /// </summary>
@@ -224,68 +210,6 @@ public sealed class KcpClient
     }
 
     /// <summary>
-    /// 发送一条实时协议载荷。实时协议只走 KCP：未就绪或写入失败由调用方整条丢弃，
-    /// 不得改投 TCP 造成跨通道乱序或重复执行。
-    /// </summary>
-    /// <param name="payload">BasePackage 序列化字节。</param>
-    /// <returns>写入 KCP 通道成功时返回 true。</returns>
-    public bool Send(byte[] payload)
-    {
-        if (payload == null)
-        {
-            return false;
-        }
-        if (payload.Length == 0)
-        {
-            return false;
-        }
-        // 绑定未完成时不写入通道，避免实时协议在两条连接上混发。
-        if (Volatile.Read(ref _state) != StateReady)
-        {
-            return false;
-        }
-        lock (_sync)
-        {
-            KCP channel = _channel;
-            if (channel == null)
-            {
-                return false;
-            }
-            // 通道写入返回值：非负表示已送入发送队列，负值为协议错误。
-            int result = channel.Send(payload, 0, payload.Length);
-            return result >= 0;
-        }
-    }
-
-    /// <summary>
-    /// 接收网关经 TCP 下发的启用确认；只有本次绑定的 conv 且仍在等待时才生效。
-    /// </summary>
-    /// <param name="conv">确认携带的会话号。</param>
-    /// <returns>确认被接受并切换到可用状态时返回 true。</returns>
-    public bool ConfirmEnabled(uint conv)
-    {
-        if (conv != _conv)
-        {
-            return false;
-        }
-        // 用 CAS 保证并发重复确认只切换一次。
-        int previous = Interlocked.CompareExchange(ref _state, StateReady, StateBinding);
-        if (previous != StateBinding)
-        {
-            return false;
-        }
-        Volatile.Write(ref _lastInboundTicks, DateTime.UtcNow.Ticks);
-        Volatile.Write(ref _everEnabled, 1);
-        // 本地缓存的启用成功回调，确认生效后在锁外触发，避免回调内重入状态切换。
-        Action bound = OnBound;
-        if (bound != null)
-        {
-            bound.Invoke();
-        }
-        return true;
-    }
-
-    /// <summary>
     /// 关闭通道并释放线程与 Socket；TCP 断开或重连时调用，不触发失败回调。
     /// </summary>
     public void Close()
@@ -341,122 +265,9 @@ public sealed class KcpClient
             }
         }
     }
+    #endregion
 
-    /// <summary>KCP 输出回调：把待发送段封装为数据报写回 UDP。</summary>
-    /// <param name="buffer">KCP 段缓冲。</param>
-    /// <param name="length">段字节数。</param>
-    private void OnKcpOutput(byte[] buffer, int length)
-    {
-        SendDatagram(KcpDefine.DatagramTypeKcpData, buffer, length);
-    }
-
-    /// <summary>发出一次绑定请求：载荷为空，唯一证明是对空载荷计算的认证码。</summary>
-    /// <param name="nowTicks">本次发送时刻刻度。</param>
-    private void SendBindRequest(long nowTicks)
-    {
-        SendDatagram(KcpDefine.DatagramTypeBindRequest, null, 0);
-        Volatile.Write(ref _lastBindRequestTicks, nowTicks);
-    }
-
-    /// <summary>发出一次保活；网关回执用于刷新本端入向活动时间。</summary>
-    /// <param name="nowTicks">本次发送时刻刻度。</param>
-    private void SendKeepAlive(long nowTicks)
-    {
-        SendDatagram(KcpDefine.DatagramTypeKeepAlive, null, 0);
-        Volatile.Write(ref _lastKeepAliveTicks, nowTicks);
-    }
-
-    /// <summary>封装并发送一条数据报。</summary>
-    /// <param name="type">数据报类型。</param>
-    /// <param name="payload">载荷，可为 null。</param>
-    /// <param name="length">载荷字节数。</param>
-    private void SendDatagram(byte type, byte[] payload, int length)
-    {
-        lock (_sendSync)
-        {
-            // 取一次当前 Socket 引用，停止置空则放弃本次发送。
-            Socket socket = _socket;
-            // 取一次当前令牌引用，作为本次数据报的 HMAC 密钥。
-            byte[] token = _token;
-            if (socket == null || token == null)
-            {
-                return;
-            }
-            // KcpDatagram.Write 返回实际写入字节数，非正表示封装失败。
-            int written = KcpDatagram.Write(_sendBuffer, type, _conv, token, payload, 0, length);
-            if (written <= 0)
-            {
-                return;
-            }
-            try
-            {
-                socket.Send(_sendBuffer, 0, written, SocketFlags.None);
-            }
-            catch (Exception ex)
-            {
-                // 识别出的 SocketException 单独记录错误码，其余异常只记录消息。
-                SocketException socketException = ex as SocketException;
-                if (socketException == null)
-                {
-                    LogMsg.Info("[KcpClient] 发送失败：" + ex.Message, LogMsgType.Error);
-                }
-                else
-                {
-                    LogMsg.Info("[KcpClient] 发送失败，socketErrorCode=" +
-                        (int)socketException.SocketErrorCode, LogMsgType.Error);
-                }
-            }
-        }
-    }
-
-    /// <summary>接收线程：读取数据报、校验认证并按类型送入通道或记录活动。</summary>
-    private void ReceiveLoop()
-    {
-        while (Volatile.Read(ref _state) == StateBinding || Volatile.Read(ref _state) == StateReady)
-        {
-            // 每轮取一次当前 Socket，停止置空则退出接收循环。
-            Socket socket = _socket;
-            if (socket == null)
-            {
-                break;
-            }
-            try
-            {
-                // 本次实际收到的数据报字节数，<=0 跳过继续等待。
-                int length = socket.Receive(_datagramBuffer, 0, _datagramBuffer.Length, SocketFlags.None);
-                if (length <= 0)
-                {
-                    continue;
-                }
-                HandleDatagram(_datagramBuffer, length);
-            }
-            catch (ObjectDisposedException)
-            {
-                // 正常关闭时 Socket 已释放，退出接收循环。
-                break;
-            }
-            catch (SocketException ex)
-            {
-                // 系统级 Socket 错误：已关闭则退出，运行期记录错误码后继续。
-                if (Volatile.Read(ref _state) == StateClosed)
-                {
-                    break;
-                }
-                LogMsg.Info("[KcpClient] 接收失败，socketErrorCode=" +
-                    (int)ex.SocketErrorCode, LogMsgType.Warn);
-            }
-            catch (Exception ex)
-            {
-                // 其他未预期异常：已关闭则退出，运行期记录后继续。
-                if (Volatile.Read(ref _state) == StateClosed)
-                {
-                    break;
-                }
-                LogMsg.Info("[KcpClient] 接收异常：" + ex.Message, LogMsgType.Error);
-            }
-        }
-    }
-
+    #region 收发循环与消息交付
     /// <summary>
     /// 更新线程：驱动重传、绑定期限与保活，并在就绪后按序交付消息。
     /// </summary>
@@ -531,6 +342,53 @@ public sealed class KcpClient
         }
     }
 
+    /// <summary>接收线程：读取数据报、校验认证并按类型送入通道或记录活动。</summary>
+    private void ReceiveLoop()
+    {
+        while (Volatile.Read(ref _state) == StateBinding || Volatile.Read(ref _state) == StateReady)
+        {
+            // 每轮取一次当前 Socket，停止置空则退出接收循环。
+            Socket socket = _socket;
+            if (socket == null)
+            {
+                break;
+            }
+            try
+            {
+                // 本次实际收到的数据报字节数，<=0 跳过继续等待。
+                int length = socket.Receive(_datagramBuffer, 0, _datagramBuffer.Length, SocketFlags.None);
+                if (length <= 0)
+                {
+                    continue;
+                }
+                HandleDatagram(_datagramBuffer, length);
+            }
+            catch (ObjectDisposedException)
+            {
+                // 正常关闭时 Socket 已释放，退出接收循环。
+                break;
+            }
+            catch (SocketException ex)
+            {
+                // 系统级 Socket 错误：已关闭则退出，运行期记录错误码后继续。
+                if (Volatile.Read(ref _state) == StateClosed)
+                {
+                    break;
+                }
+                LogMsg.Info("[KcpClient] 接收失败，socketErrorCode=" +
+                    (int)ex.SocketErrorCode, LogMsgType.Warn);
+            }
+            catch (Exception ex)
+            {
+                // 其他未预期异常：已关闭则退出，运行期记录后继续。
+                if (Volatile.Read(ref _state) == StateClosed)
+                {
+                    break;
+                }
+                LogMsg.Info("[KcpClient] 接收异常：" + ex.Message, LogMsgType.Error);
+            }
+        }
+    }
     /// <summary>取出所有已完整到达的协议包并回调业务层；回调在通道锁外执行。</summary>
     private void DeliverPackages()
     {
@@ -581,6 +439,16 @@ public sealed class KcpClient
                 handler.Invoke(message);
             }
         }
+    }
+    #endregion
+
+    #region 数据报收发与保活发送
+    /// <summary>KCP 输出回调：把待发送段封装为数据报写回 UDP。</summary>
+    /// <param name="buffer">KCP 段缓冲。</param>
+    /// <param name="length">段字节数。</param>
+    private void OnKcpOutput(byte[] buffer, int length)
+    {
+        SendDatagram(KcpDefine.DatagramTypeKcpData, buffer, length);
     }
 
     /// <summary>处理一条收到的数据报。</summary>
@@ -643,4 +511,147 @@ public sealed class KcpClient
             }
         }
     }
+
+    /// <summary>
+    /// 发送一条实时协议载荷。实时协议只走 KCP：未就绪或写入失败由调用方整条丢弃，
+    /// 不得改投 TCP 造成跨通道乱序或重复执行。
+    /// </summary>
+    /// <param name="payload">BasePackage 序列化字节。</param>
+    /// <returns>写入 KCP 通道成功时返回 true。</returns>
+    public bool Send(byte[] payload)
+    {
+        if (payload == null)
+        {
+            return false;
+        }
+        if (payload.Length == 0)
+        {
+            return false;
+        }
+        // 绑定未完成时不写入通道，避免实时协议在两条连接上混发。
+        if (Volatile.Read(ref _state) != StateReady)
+        {
+            return false;
+        }
+        lock (_sync)
+        {
+            KCP channel = _channel;
+            if (channel == null)
+            {
+                return false;
+            }
+            // 通道写入返回值：非负表示已送入发送队列，负值为协议错误。
+            int result = channel.Send(payload, 0, payload.Length);
+            return result >= 0;
+        }
+    }
+
+    /// <summary>发出一次绑定请求：载荷为空，唯一证明是对空载荷计算的认证码。</summary>
+    /// <param name="nowTicks">本次发送时刻刻度。</param>
+    private void SendBindRequest(long nowTicks)
+    {
+        SendDatagram(KcpDefine.DatagramTypeBindRequest, null, 0);
+        Volatile.Write(ref _lastBindRequestTicks, nowTicks);
+    }
+
+    /// <summary>发出一次保活；网关回执用于刷新本端入向活动时间。</summary>
+    /// <param name="nowTicks">本次发送时刻刻度。</param>
+    private void SendKeepAlive(long nowTicks)
+    {
+        SendDatagram(KcpDefine.DatagramTypeKeepAlive, null, 0);
+        Volatile.Write(ref _lastKeepAliveTicks, nowTicks);
+    }
+
+    /// <summary>封装并发送一条数据报。</summary>
+    /// <param name="type">数据报类型。</param>
+    /// <param name="payload">载荷，可为 null。</param>
+    /// <param name="length">载荷字节数。</param>
+    private void SendDatagram(byte type, byte[] payload, int length)
+    {
+        lock (_sendSync)
+        {
+            // 取一次当前 Socket 引用，停止置空则放弃本次发送。
+            Socket socket = _socket;
+            // 取一次当前令牌引用，作为本次数据报的 HMAC 密钥。
+            byte[] token = _token;
+            if (socket == null || token == null)
+            {
+                return;
+            }
+            // KcpDatagram.Write 返回实际写入字节数，非正表示封装失败。
+            int written = KcpDatagram.Write(_sendBuffer, type, _conv, token, payload, 0, length);
+            if (written <= 0)
+            {
+                return;
+            }
+            try
+            {
+                socket.Send(_sendBuffer, 0, written, SocketFlags.None);
+            }
+            catch (Exception ex)
+            {
+                // 识别出的 SocketException 单独记录错误码，其余异常只记录消息。
+                SocketException socketException = ex as SocketException;
+                if (socketException == null)
+                {
+                    LogMsg.Info("[KcpClient] 发送失败：" + ex.Message, LogMsgType.Error);
+                }
+                else
+                {
+                    LogMsg.Info("[KcpClient] 发送失败，socketErrorCode=" +
+                        (int)socketException.SocketErrorCode, LogMsgType.Error);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region 启用确认与代次判定
+    /// <summary>
+    /// 判断一次连接失败通知是否应释放本通道：只有通知代次与通道建立代次一致才释放。
+    /// </summary>
+    /// <param name="failedGeneration">失败通知携带的连接代次。</param>
+    /// <returns>属于同一次连接、可以释放时返回 true。</returns>
+    public bool ShouldReleaseOnFailure(long failedGeneration)
+    {
+        if (OwnerGeneration <= 0)
+        {
+            return false;
+        }
+        if (failedGeneration <= 0)
+        {
+            return false;
+        }
+        return OwnerGeneration == failedGeneration;
+    }
+
+    /// <summary>
+    /// 接收网关经 TCP 下发的启用确认；只有本次绑定的 conv 且仍在等待时才生效。
+    /// </summary>
+    /// <param name="conv">确认携带的会话号。</param>
+    /// <returns>确认被接受并切换到可用状态时返回 true。</returns>
+    public bool ConfirmEnabled(uint conv)
+    {
+        if (conv != _conv)
+        {
+            return false;
+        }
+        // 用 CAS 保证并发重复确认只切换一次。
+        int previous = Interlocked.CompareExchange(ref _state, StateReady, StateBinding);
+        if (previous != StateBinding)
+        {
+            return false;
+        }
+        Volatile.Write(ref _lastInboundTicks, DateTime.UtcNow.Ticks);
+        Volatile.Write(ref _everEnabled, 1);
+        // 本地缓存的启用成功回调，确认生效后在锁外触发，避免回调内重入状态切换。
+        Action bound = OnBound;
+        if (bound != null)
+        {
+            bound.Invoke();
+        }
+        return true;
+    }
+    #endregion
+
 }

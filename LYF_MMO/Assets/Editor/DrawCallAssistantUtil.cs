@@ -11,44 +11,52 @@ using UnityEngine.UI;
 /// </summary>
 public class DrawCallAssistantUtil : EditorWindow
 {
+
+    #region 字段
     //全部节点;
     private static List<AssetNode> _assetNodeList = new List<AssetNode>();
+
     //z值不为0的的全部节点;
     private static List<AssetNode> _zValueList = new List<AssetNode>();
+
     //存在旋转的节点;
     private static List<AssetNode> _rotNodeList = new List<AssetNode>();
+
     //alpha 为0的节点;
     private static List<AssetNode> _colorAlphaList = new List<AssetNode>();
+
     //根canvas;
     private static Canvas _canvas = null;
+
     //分析对象;
     private static GameObject _target = null;
+
     //选中节点;
     private static AssetNode _curSelectNode = null;
+
     //Disable和DeActive是否包含;
     private static bool _incluedDisable = true;
+
     //合批次数;
     private static int _drawCall = 0;
+
     //节点分层;
     private static Dictionary<int, List<AssetNode>> _renderLayerDict = new Dictionary<int, List<AssetNode>>();
+
     //合批结果;
     private static Dictionary<int, List<AssetNode>> _batchDict = new Dictionary<int, List<AssetNode>>();
+
     //图集引用;
     private static Dictionary<string, int> _atlasRefDict = new Dictionary<string, int>();
+
     //滑动区域;
     private static Vector2 _scrollPosition;
+
     //最大深度;
     private static int _mostDepth = 0;
+    #endregion
 
-    [MenuItem("GameObject/UGUI DrawCall小助手", false, 0)]
-    public static void StartAssistant()
-    {
-        OnInit();
-        _incluedDisable = true;
-        var window = GetWindow<DrawCallAssistantUtil>(false, "DrawCall小助手");
-        window.Show();
-    }
-
+    #region 生命周期
     void OnGUI()
     {
         Color previousContentColor = GUI.contentColor;
@@ -225,6 +233,7 @@ public class DrawCallAssistantUtil : EditorWindow
         GUI.skin.button.normal.textColor = previousButtonColor;
         GUI.skin.toggle.normal.textColor = previousToggleColor;
     }
+
     /// <summary>
     /// 初始化;
     /// </summary>
@@ -243,6 +252,25 @@ public class DrawCallAssistantUtil : EditorWindow
         _atlasRefDict.Clear();
         _mostDepth = 0;
     }
+    #endregion
+
+    /// <summary>
+    /// 画出组件矩阵;
+    /// </summary>
+    private void DrawRect()
+    {
+        for (int i = 0; i < _assetNodeList.Count; i++)
+        {
+            AssetNode node = _assetNodeList[i];
+            Rect rect = node.TransRect;
+            Debug.DrawLine(new Vector3(rect.xMax, rect.yMax, 0), new Vector3(rect.xMin, rect.yMax, 0), Color.red);
+            Debug.DrawLine(new Vector3(rect.xMax, rect.yMax, 0), new Vector3(rect.xMax, rect.yMin, 0), Color.red);
+            Debug.DrawLine(new Vector3(rect.xMin, rect.yMin, 0), new Vector3(rect.xMin, rect.yMax, 0), Color.red);
+            Debug.DrawLine(new Vector3(rect.xMin, rect.yMin, 0), new Vector3(rect.xMax, rect.yMin, 0), Color.red);
+        }
+    }
+
+    #region 查询与判定
     /// <summary>
     /// 查找canvas;
     /// </summary>
@@ -278,23 +306,7 @@ public class DrawCallAssistantUtil : EditorWindow
             }
         }
     }
-    /// <summary>
-    /// 创建节点;
-    /// </summary>
-    /// <param name="go"></param>
-    private static void RecursiveCreateNode(GameObject go)
-    {
-        if (!_incluedDisable && go.activeSelf == false)
-            return;
-        foreach (Transform child in go.transform)
-        {
-            if (!_incluedDisable && child.gameObject.activeSelf == false)
-                continue;
-            AssetNode childNode = new AssetNode(child.gameObject);
-            _assetNodeList.Add(childNode);
-            RecursiveCreateNode(child.gameObject);
-        }
-    }
+
     /// <summary>
     /// 找出不符合规定的节点;
     /// </summary>
@@ -339,6 +351,36 @@ public class DrawCallAssistantUtil : EditorWindow
         }
         _assetNodeList = renderList;
     }
+    #endregion
+
+    #region 核心逻辑
+    [MenuItem("GameObject/UGUI DrawCall小助手", false, 0)]
+    public static void StartAssistant()
+    {
+        OnInit();
+        _incluedDisable = true;
+        var window = GetWindow<DrawCallAssistantUtil>(false, "DrawCall小助手");
+        window.Show();
+    }
+
+    /// <summary>
+    /// 创建节点;
+    /// </summary>
+    /// <param name="go"></param>
+    private static void RecursiveCreateNode(GameObject go)
+    {
+        if (!_incluedDisable && go.activeSelf == false)
+            return;
+        foreach (Transform child in go.transform)
+        {
+            if (!_incluedDisable && child.gameObject.activeSelf == false)
+                continue;
+            AssetNode childNode = new AssetNode(child.gameObject);
+            _assetNodeList.Add(childNode);
+            RecursiveCreateNode(child.gameObject);
+        }
+    }
+
     /// <summary>
     /// 重叠检测,进行分层;
     /// </summary>
@@ -374,6 +416,7 @@ public class DrawCallAssistantUtil : EditorWindow
             _renderLayerDict[layer].Add(node);
         }
     }
+
     /// <summary>
     /// 同层合批;
     /// </summary>
@@ -416,21 +459,7 @@ public class DrawCallAssistantUtil : EditorWindow
         }
         return RecursiveCombineBatch(batch, remainNode);
     }
-    /// <summary>
-    /// 画出组件矩阵;
-    /// </summary>
-    private void DrawRect()
-    {
-        for (int i = 0; i < _assetNodeList.Count; i++)
-        {
-            AssetNode node = _assetNodeList[i];
-            Rect rect = node.TransRect;
-            Debug.DrawLine(new Vector3(rect.xMax, rect.yMax, 0), new Vector3(rect.xMin, rect.yMax, 0), Color.red);
-            Debug.DrawLine(new Vector3(rect.xMax, rect.yMax, 0), new Vector3(rect.xMax, rect.yMin, 0), Color.red);
-            Debug.DrawLine(new Vector3(rect.xMin, rect.yMin, 0), new Vector3(rect.xMin, rect.yMax, 0), Color.red);
-            Debug.DrawLine(new Vector3(rect.xMin, rect.yMin, 0), new Vector3(rect.xMax, rect.yMin, 0), Color.red);
-        }
-    }
+    #endregion
 }
 
 /// <summary>
@@ -438,51 +467,6 @@ public class DrawCallAssistantUtil : EditorWindow
 /// </summary>
 public class AssetNode
 {
-    private string _name;                 //节点名字;
-    private string _localpath;            //hierarchy路径;
-    private int _localDepth;              //hierarchy层级深度;
-    private GameObject _go;
-    private RenderTypeEnum _renderType;   //参与渲染的组件类型;
-    private Material _material;           //材质;
-    private string _matName;              //材质名;
-    private Graphic _graphic;
-
-    private bool _isRender;               //是否参与渲染;
-
-    private int _renderLayer;             //渲染时所在的层数;
-    private int _drawCallBatch;           //渲染时所在的批次;
-
-    private Vector3 _position;             //postion;
-    private Vector3 _scale;                //scale;
-    private Quaternion _rotation;          //rotation
-    private Rect _rect;                //大小;
-    private float _colorAlpha;               //颜色的alpha值;
-
-    private Color _color;                  //显示颜色;
-
-    public string Name { get { return _name; } }
-    public string LoaclPath { get { return _localpath; } }
-    public int LocalDepth { get { return _localDepth; } }
-    public GameObject gameObject { get { return _go; } }
-    public RenderTypeEnum RenderType { get { return _renderType; } }
-    public Material material { get { return _material; } }
-    public string MatName { get { return _matName; } }
-    public Graphic graphic { get { return _graphic; } }
-
-    public bool IsRender { get { return _isRender; } }
-
-    public int RenderLayer { get { return _renderLayer; } set { _renderLayer = value; } }
-    public int DrawCallBatch { get { return _drawCallBatch; } set { _drawCallBatch = value; } }
-
-    public Vector3 Position { get { return _position; } }
-    public Vector3 Scale { get { return _scale; } }
-    public Quaternion Rotation { get { return _rotation; } }
-
-    public Rect TransRect { get { return _rect; } }
-    public float ColorAlpha { get { return _colorAlpha; } }
-
-    public Color ColorValue { get { return _color; } set { _color = value; } }
-
     public AssetNode(GameObject go)
     {
         _go = go;
@@ -564,6 +548,75 @@ public class AssetNode
             _isRender = true;
         }
     }
+
+    private string _name;                 //节点名字;
+
+    private string _localpath;            //hierarchy路径;
+
+    private int _localDepth;              //hierarchy层级深度;
+
+    private GameObject _go;
+
+    private RenderTypeEnum _renderType;   //参与渲染的组件类型;
+
+    private Material _material;           //材质;
+
+    private string _matName;              //材质名;
+
+    private Graphic _graphic;
+
+    private bool _isRender;               //是否参与渲染;
+
+    private int _renderLayer;             //渲染时所在的层数;
+
+    private int _drawCallBatch;           //渲染时所在的批次;
+
+    private Vector3 _position;             //postion;
+
+    private Vector3 _scale;                //scale;
+
+    private Quaternion _rotation;          //rotation
+
+    private Rect _rect;                //大小;
+
+    private float _colorAlpha;               //颜色的alpha值;
+
+    private Color _color;                  //显示颜色;
+
+    public string Name { get { return _name; } }
+
+    public string LoaclPath { get { return _localpath; } }
+
+    public int LocalDepth { get { return _localDepth; } }
+
+    public GameObject gameObject { get { return _go; } }
+
+    public RenderTypeEnum RenderType { get { return _renderType; } }
+
+    public Material material { get { return _material; } }
+
+    public string MatName { get { return _matName; } }
+
+    public Graphic graphic { get { return _graphic; } }
+
+    public bool IsRender { get { return _isRender; } }
+
+    public int RenderLayer { get { return _renderLayer; } set { _renderLayer = value; } }
+
+    public int DrawCallBatch { get { return _drawCallBatch; } set { _drawCallBatch = value; } }
+
+    public Vector3 Position { get { return _position; } }
+
+    public Vector3 Scale { get { return _scale; } }
+
+    public Quaternion Rotation { get { return _rotation; } }
+
+    public Rect TransRect { get { return _rect; } }
+
+    public float ColorAlpha { get { return _colorAlpha; } }
+
+    public Color ColorValue { get { return _color; } set { _color = value; } }
+
     /// <summary>
     /// 获取结构路径;
     /// </summary>

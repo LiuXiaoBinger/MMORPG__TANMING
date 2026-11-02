@@ -4,20 +4,34 @@ using UnityEngine.UI;
 /// <summary>沿用 RO QuickPanel 页签，让任务与队伍快捷内容共用左侧同一区域。</summary>
 public sealed class QuickPanelWidget : MonoBehaviour
 {
+    /// <summary>销毁主界面时释放本控件添加的按钮监听。</summary>
+    private void OnDestroy()
+    {
+        _taskButton.onClick.RemoveListener(ShowTaskPanel);
+        _teamButton.onClick.RemoveListener(ShowTeamPanel);
+    }
+
     /// <summary>RO 原任务页签按钮。</summary>
     [SerializeField] private Button _taskButton;
+
     /// <summary>RO 原队伍页签按钮。</summary>
     [SerializeField] private Button _teamButton;
+
     /// <summary>既有任务内容，保留任务/玩法/奇遇子页签。</summary>
     [SerializeField] private GameObject _taskContent;
+
     /// <summary>既有队伍内容，展示创建入口或本人成员行。</summary>
     [SerializeField] private GameObject _teamContent;
+
     /// <summary>任务页签选中图形。</summary>
     [SerializeField] private GameObject _taskOn;
+
     /// <summary>任务页签未选中图形。</summary>
     [SerializeField] private GameObject _taskOff;
+
     /// <summary>队伍页签选中图形。</summary>
     [SerializeField] private GameObject _teamOn;
+
     /// <summary>队伍页签未选中图形。</summary>
     [SerializeField] private GameObject _teamOff;
 
@@ -53,12 +67,5 @@ public sealed class QuickPanelWidget : MonoBehaviour
         _taskOff.SetActive(showTeam);
         _teamOn.SetActive(showTeam);
         _teamOff.SetActive(!showTeam);
-    }
-
-    /// <summary>销毁主界面时释放本控件添加的按钮监听。</summary>
-    private void OnDestroy()
-    {
-        _taskButton.onClick.RemoveListener(ShowTaskPanel);
-        _teamButton.onClick.RemoveListener(ShowTeamPanel);
     }
 }

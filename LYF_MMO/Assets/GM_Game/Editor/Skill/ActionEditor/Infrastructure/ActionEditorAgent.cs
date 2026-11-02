@@ -86,6 +86,92 @@ namespace Ethan.ActionEditor.Editor
             public List<Change> changes = new List<Change>();
         }
 
+        #region 创建与添加
+        /// <summary>从明确的动画资源创建一个新单段草稿；校验失败时销毁临时配置，不覆盖旧文件。</summary>
+        /// <param name="request">强类型自动化请求；所有资源与操作范围由调用者显式指定。</param>
+        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
+        static void CreateAction(Request request, Result result)
+        {
+            // 调用者请求的新草稿目标路径，须经过 Assets 范围及文件存在性校验。
+            string path = request.outputAssetPath;
+            if (!ActionEditorSettings.TryNormalizeAssetDirectory(path, out var /* 检查后统一使用斜杠的 Assets 路径，拒绝遍历与非法段后才进入创建流程。 */ normalized) ||
+                !normalized.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("outputAssetPath must be a new .asset file below Assets without path traversal.");
+            if (File.Exists(normalized) || File.Exists(normalized + ".meta") || Directory.Exists(normalized) ||
+                AssetDatabase.LoadMainAssetAtPath(normalized) != null)
+                throw new IOException("Destination exists. Choose a new action path; existing assets are never overwritten.");
+            // 指定文件内的真实动画剪辑快照，过滤 Unity 自动生成的预览剪辑。
+            var clips = AssetDatabase.LoadAllAssetsAtPath(request.animationAssetPath ?? string.Empty)
+                .OfType<AnimationClip>().Where(/* 指定动画文件内的候选剪辑原引用，按预览名称过滤或精确剪辑名称匹配。 */ c => !c.name.StartsWith("__preview__", StringComparison.Ordinal)).ToArray();
+            // 调用者指定的唯一来源剪辑；存在多剪辑歧义或名称不匹配时为 null。
+            var clip = string.IsNullOrEmpty(request.animationClipName)
+                ? (clips.Length == 1 ? clips[0] : null)
+                : clips.SingleOrDefault(/* 指定动画文件内的候选剪辑原引用，按预览名称过滤或精确剪辑名称匹配。 */ c => c.name == request.animationClipName);
+            if (clip == null || clip.legacy || clip.length <= 0)
+                throw new ArgumentException("Provide a non-Legacy, non-empty clip. For a model containing multiple clips, specify animationClipName.");
+            if (request.exitFrame < -1) throw new ArgumentException("exitFrame must be -1 (derive), 0, or positive.");
+            // 当前显式资源路径加载或创建的技能编辑对象，不扩展修改其他配置。
+            var config = ScriptableObject.CreateInstance<SkillConfigSO>();
+            // 新配置是否已写为正式资产；false 时 finally 销毁临时 ScriptableObject。
+            bool persisted = false;
+            try
+            {
+                config.SetActionEditorSchemaVersion(ActionConfigMigrationService.CurrentSchemaVersion);
+                config.InitializeExplicitTiming();
+                config.skillName = string.IsNullOrWhiteSpace(request.displayName) ? Path.GetFileNameWithoutExtension(normalized) : request.displayName;
+                config.animSegments.Add(new Global.AnimClipSegment { clip = clip, startFrame = 0 });
+                config.exitFrame = request.exitFrame == -1 ? Math.Max(1, ActionTiming.Duration(config, config.animSegments[0])) : request.exitFrame;
+                AddIssues(result, normalized, ActionConfigValidator.Validate(config));
+                if (result.issues.Any(/* 新草稿配置验证的单条诊断，有 Error 时不会创建持久化资源。 */ i => i.severity == "Error")) return;
+                ActionConfigMigrationService.EnsureAssetDirectory(Path.GetDirectoryName(normalized).Replace('\\', '/'));
+                AssetDatabase.CreateAsset(config, normalized);
+                persisted = true;
+                AssetDatabase.SaveAssetIfDirty(config);
+                result.createdAssetPath = normalized;
+            }
+            finally { if (!persisted) UnityEngine.Object.DestroyImmediate(config); }
+        }
+
+        /// <summary>记录本次操作与实际 Unity 版本，通过保留的 Runtime 程序集获取嵌入包版本。</summary>
+        /// <param name="operation">当前自动化请求的稳定操作标识，写入结果上下文便于调用者匹配。</param>
+        static Result NewResult(string operation)
+        {
+            // Runtime 继续位于嵌入包中；编辑器移入 Assets 后通过运行类型读取包版本。
+            var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(SkillConfigSO).Assembly);
+            return new Result { operation = operation, unityVersion = Application.unityVersion,
+                packageVersion = package == null ? "unknown" : package.version };
+        }
+
+        /// <summary>将原验证器的事件定位与严重程度复制到自动化结果，不修改验证对象。</summary>
+        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
+        /// <param name="path">本条诊断所属的明确资源路径；请求级错误可为空，不用于扩大资源查找。</param>
+        /// <param name="issues">原配置验证器产生的诊断序列，将复制轨道与事件定位。</param>
+        static void AddIssues(Result result, string path, IEnumerable<ActionValidationIssue> issues)
+        {
+            // 本次复制的原验证诊断，保留代码、严重程度、轨道与零起始事件索引。
+            foreach (var issue in issues)
+                result.issues.Add(new Issue { assetPath = path, code = issue.Code, severity = issue.Severity.ToString(),
+                    track = issue.Track, eventIndex = issue.EventIndex, message = issue.Message });
+        }
+
+        /// <summary>追加一条稳定错误码诊断并设置失败状态；无事件定位时索引为 -1。</summary>
+        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
+        /// <param name="code">本次失败的稳定错误码，供工具调用方判断失败种类。</param>
+        /// <param name="message">具体失败原因，仅用于返回诊断，不写入技能配置。</param>
+        /// <param name="path">本条诊断所属的明确资源路径；请求级错误可为空，不用于扩大资源查找。</param>
+        static void AddError(Result result, string code, string message, string path = null)
+        {
+            result.success = false;
+            result.issues.Add(new Issue { code = code, severity = "Error", message = message, assetPath = path, eventIndex = -1 });
+        }
+        #endregion
+
+        /// <summary>只查询 Assets 下符合 Unity 过滤器的资源，按路径去重排序后返回。</summary>
+        /// <param name="filter">Unity AssetDatabase 类型或名称过滤表达式，只在 Assets 范围查询。</param>
+        static string[] FindAssets(string filter) => AssetDatabase.FindAssets(filter, new[] { "Assets" })
+            .Select(AssetDatabase.GUIDToAssetPath).Distinct().OrderBy(/* 待排序的规范资源路径，按 Ordinal 顺序返回稳定清单。 */ p => p, StringComparer.Ordinal).ToArray();
+
+        #region 核心逻辑
         /// <summary>在 Unity 主线程分派显式编辑请求，把预期失败收集为强类型诊断结果。</summary>
         /// <param name="request">强类型自动化请求；所有资源与操作范围由调用者显式指定。</param>
         public static Result Execute(Request request)
@@ -187,89 +273,6 @@ namespace Ethan.ActionEditor.Editor
             return result;
         }
 
-        /// <summary>从明确的动画资源创建一个新单段草稿；校验失败时销毁临时配置，不覆盖旧文件。</summary>
-        /// <param name="request">强类型自动化请求；所有资源与操作范围由调用者显式指定。</param>
-        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
-        static void CreateAction(Request request, Result result)
-        {
-            // 调用者请求的新草稿目标路径，须经过 Assets 范围及文件存在性校验。
-            string path = request.outputAssetPath;
-            if (!ActionEditorSettings.TryNormalizeAssetDirectory(path, out var /* 检查后统一使用斜杠的 Assets 路径，拒绝遍历与非法段后才进入创建流程。 */ normalized) ||
-                !normalized.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException("outputAssetPath must be a new .asset file below Assets without path traversal.");
-            if (File.Exists(normalized) || File.Exists(normalized + ".meta") || Directory.Exists(normalized) ||
-                AssetDatabase.LoadMainAssetAtPath(normalized) != null)
-                throw new IOException("Destination exists. Choose a new action path; existing assets are never overwritten.");
-            // 指定文件内的真实动画剪辑快照，过滤 Unity 自动生成的预览剪辑。
-            var clips = AssetDatabase.LoadAllAssetsAtPath(request.animationAssetPath ?? string.Empty)
-                .OfType<AnimationClip>().Where(/* 指定动画文件内的候选剪辑原引用，按预览名称过滤或精确剪辑名称匹配。 */ c => !c.name.StartsWith("__preview__", StringComparison.Ordinal)).ToArray();
-            // 调用者指定的唯一来源剪辑；存在多剪辑歧义或名称不匹配时为 null。
-            var clip = string.IsNullOrEmpty(request.animationClipName)
-                ? (clips.Length == 1 ? clips[0] : null)
-                : clips.SingleOrDefault(/* 指定动画文件内的候选剪辑原引用，按预览名称过滤或精确剪辑名称匹配。 */ c => c.name == request.animationClipName);
-            if (clip == null || clip.legacy || clip.length <= 0)
-                throw new ArgumentException("Provide a non-Legacy, non-empty clip. For a model containing multiple clips, specify animationClipName.");
-            if (request.exitFrame < -1) throw new ArgumentException("exitFrame must be -1 (derive), 0, or positive.");
-            // 当前显式资源路径加载或创建的技能编辑对象，不扩展修改其他配置。
-            var config = ScriptableObject.CreateInstance<SkillConfigSO>();
-            // 新配置是否已写为正式资产；false 时 finally 销毁临时 ScriptableObject。
-            bool persisted = false;
-            try
-            {
-                config.SetActionEditorSchemaVersion(ActionConfigMigrationService.CurrentSchemaVersion);
-                config.InitializeExplicitTiming();
-                config.skillName = string.IsNullOrWhiteSpace(request.displayName) ? Path.GetFileNameWithoutExtension(normalized) : request.displayName;
-                config.animSegments.Add(new Global.AnimClipSegment { clip = clip, startFrame = 0 });
-                config.exitFrame = request.exitFrame == -1 ? Math.Max(1, ActionTiming.Duration(config, config.animSegments[0])) : request.exitFrame;
-                AddIssues(result, normalized, ActionConfigValidator.Validate(config));
-                if (result.issues.Any(/* 新草稿配置验证的单条诊断，有 Error 时不会创建持久化资源。 */ i => i.severity == "Error")) return;
-                ActionConfigMigrationService.EnsureAssetDirectory(Path.GetDirectoryName(normalized).Replace('\\', '/'));
-                AssetDatabase.CreateAsset(config, normalized);
-                persisted = true;
-                AssetDatabase.SaveAssetIfDirty(config);
-                result.createdAssetPath = normalized;
-            }
-            finally { if (!persisted) UnityEngine.Object.DestroyImmediate(config); }
-        }
-
-        /// <summary>只查询 Assets 下符合 Unity 过滤器的资源，按路径去重排序后返回。</summary>
-        /// <param name="filter">Unity AssetDatabase 类型或名称过滤表达式，只在 Assets 范围查询。</param>
-        static string[] FindAssets(string filter) => AssetDatabase.FindAssets(filter, new[] { "Assets" })
-            .Select(AssetDatabase.GUIDToAssetPath).Distinct().OrderBy(/* 待排序的规范资源路径，按 Ordinal 顺序返回稳定清单。 */ p => p, StringComparer.Ordinal).ToArray();
-
-        /// <summary>记录本次操作与实际 Unity 版本，通过保留的 Runtime 程序集获取嵌入包版本。</summary>
-        /// <param name="operation">当前自动化请求的稳定操作标识，写入结果上下文便于调用者匹配。</param>
-        static Result NewResult(string operation)
-        {
-            // Runtime 继续位于嵌入包中；编辑器移入 Assets 后通过运行类型读取包版本。
-            var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(SkillConfigSO).Assembly);
-            return new Result { operation = operation, unityVersion = Application.unityVersion,
-                packageVersion = package == null ? "unknown" : package.version };
-        }
-
-        /// <summary>将原验证器的事件定位与严重程度复制到自动化结果，不修改验证对象。</summary>
-        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
-        /// <param name="path">本条诊断所属的明确资源路径；请求级错误可为空，不用于扩大资源查找。</param>
-        /// <param name="issues">原配置验证器产生的诊断序列，将复制轨道与事件定位。</param>
-        static void AddIssues(Result result, string path, IEnumerable<ActionValidationIssue> issues)
-        {
-            // 本次复制的原验证诊断，保留代码、严重程度、轨道与零起始事件索引。
-            foreach (var issue in issues)
-                result.issues.Add(new Issue { assetPath = path, code = issue.Code, severity = issue.Severity.ToString(),
-                    track = issue.Track, eventIndex = issue.EventIndex, message = issue.Message });
-        }
-
-        /// <summary>追加一条稳定错误码诊断并设置失败状态；无事件定位时索引为 -1。</summary>
-        /// <param name="result">本次调用累计的强类型结果，只在编辑器请求生命周期内使用。</param>
-        /// <param name="code">本次失败的稳定错误码，供工具调用方判断失败种类。</param>
-        /// <param name="message">具体失败原因，仅用于返回诊断，不写入技能配置。</param>
-        /// <param name="path">本条诊断所属的明确资源路径；请求级错误可为空，不用于扩大资源查找。</param>
-        static void AddError(Result result, string code, string message, string path = null)
-        {
-            result.success = false;
-            result.issues.Add(new Issue { code = code, severity = "Error", message = message, assetPath = path, eventIndex = -1 });
-        }
-
         /// <summary>保留原 Y 批处理入口；先独占新结果文件再执行请求，避免重复执行产生未报告的编辑。</summary>
         public static void RunFromCommandLine()
         {
@@ -317,5 +320,6 @@ namespace Ethan.ActionEditor.Editor
             if (index < 0 || index + 1 >= args.Length) throw new ArgumentException("Missing argument " + key);
             return args[index + 1];
         }
+        #endregion
     }
 }

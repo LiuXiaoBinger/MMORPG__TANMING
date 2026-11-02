@@ -9,24 +9,35 @@ using UnityEngine.UI;
 /// </summary>
 public class TaskChildItemWidget : MonoBehaviour
 {
+
+    #region 字段、事件与属性
     /// <summary>选中态标题文本，绑定 TogS/ON/Text。</summary>
     [SerializeField] private Text _titleOnText;
+
     /// <summary>未选中态标题文本，绑定 TogS/Off/Text。</summary>
     [SerializeField] private Text _titleOffText;
+
     /// <summary>任务类型文本，绑定 TogS/TaskType/Text。</summary>
     [SerializeField] private Text _typeText;
+
     /// <summary>选中态整节点，绑定 TogS/ON，选中时显示、未选中时隐藏。</summary>
     [SerializeField] private GameObject _onNode;
+
     /// <summary>未选中态整节点，绑定 TogS/Off，未选中时显示、选中时隐藏。</summary>
     [SerializeField] private GameObject _offNode;
+
     /// <summary>进行中标记节点，绑定 TogS/ON/Doing，任务处于已接取进行中状态时显示。</summary>
     [SerializeField] private GameObject _doingNode;
+
     /// <summary>选中态锁标记节点，绑定 TogS/ON/Lock，首期任务默认已解锁，始终隐藏。</summary>
     [SerializeField] private GameObject _lockOnNode;
+
     /// <summary>未选中态锁标记节点，绑定 TogS/Off/Lock，首期任务默认已解锁，始终隐藏。</summary>
     [SerializeField] private GameObject _lockOffNode;
+
     /// <summary>选中态按钮，绑定 TogS/ON，点击抛出选中事件。</summary>
     [SerializeField] private Button _onButton;
+
     /// <summary>未选中态按钮，绑定 TogS/Off，点击抛出选中事件。</summary>
     [SerializeField] private Button _offButton;
 
@@ -35,6 +46,9 @@ public class TaskChildItemWidget : MonoBehaviour
 
     /// <summary>本条目当前绑定的任务展示数据，未绑定时为空。</summary>
     public TaskViewData Data { get; private set; }
+
+    #region 核心逻辑
+    #endregion
 
     /// <summary>注册选中态与未选中态按钮的点击事件，只注册一次。</summary>
     public void InitWidget()
@@ -88,19 +102,6 @@ public class TaskChildItemWidget : MonoBehaviour
         }
     }
 
-    /// <summary>点击任意态按钮都抛出本条目的选中事件。</summary>
-    private void OnButtonClick()
-    {
-        if (Data == null)
-        {
-            return;
-        }
-        if (ItemClicked != null)
-        {
-            ItemClicked.Invoke(Data);
-        }
-    }
-
     /// <summary>写入文本控件，控件未绑定时跳过。</summary>
     /// <param name="target">目标文本控件。</param>
     /// <param name="content">要写入的文本。</param>
@@ -122,6 +123,20 @@ public class TaskChildItemWidget : MonoBehaviour
         {
             return;
         }
+    #endregion
         node.SetActive(visible);
+    }
+
+    /// <summary>点击任意态按钮都抛出本条目的选中事件。</summary>
+    private void OnButtonClick()
+    {
+        if (Data == null)
+        {
+            return;
+        }
+        if (ItemClicked != null)
+        {
+            ItemClicked.Invoke(Data);
+        }
     }
 }

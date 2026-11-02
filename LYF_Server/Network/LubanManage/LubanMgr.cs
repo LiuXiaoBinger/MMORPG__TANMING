@@ -7,31 +7,53 @@ using cfg;
 
 public class LubanMgr:Singleton<LubanMgr>
 {
+
+    #region 字段与常量
     private Dictionary<int, SkillInfo> _skillInfos;
+
     /// <summary>按稳定效果 ID 索引的技能等级效果表，启动后只读。</summary>
     private Dictionary<int, SkillEffectInfo> _skillEffectInfos;
+
     /// <summary>技能 ID 到学习等级再到效果的双层索引，启动时检查组合键唯一。</summary>
     private Dictionary<int, Dictionary<int, SkillEffectInfo>> _skillEffectsByLevel;
+
     /// <summary>按表现配置 ID 索引的技能动画资源表，供客户端选择变体。</summary>
     private Dictionary<int, SkillPresentationInfo> _skillPresentationInfos;
+
     private Dictionary<int, ItemInfo> _itemInfos;
+
     private Dictionary<int, EquipInfo> _equipInfos;
+
     private Dictionary<int, ItemConfigBase> _itemConfigInfos;
+
     private Dictionary<int, KnapsackInfo> _knapsackInfos;
+
     private Dictionary<int, Gene> _geneInfos;
+
     private Dictionary<int, NpcParseInfo> _npcInfos;
+
     private Dictionary<int, ProfessionInfo> _professionInfos;
+
     private Dictionary<int, QuestInfo> _questInfos;
+
     private Dictionary<int, RoleLevelInfo> _roleLevelInfos;
+
     private Dictionary<int, RoleLevelAttributeInfo> _roleLevelAttributeInfos;
+
     // 按表现配置 ID 索引的角色表现表，初始化后供运行时查询模型、动画和碰撞参数。
     private Dictionary<int, PresentTable> _presentTables;
+
     private Dictionary<int, ShopTable> _shopTables;
+
     private Dictionary<int, ShopItemInfo> _shopItemInfos;
+
     private Dictionary<int, CountInfo> _countInfos;
+
     // 外层按商店主表 ID 分组，内层按商店商品配置 ID 索引。
     private Dictionary<int, Dictionary<int, ShopItemParseInfo>> _shopItemParseInfos;
+    #endregion
 
+    #region 初始化
     /// <summary>
     /// 从 Luban 二进制配置文件加载并缓存运行时所需的全部配置表。
     /// </summary>
@@ -71,7 +93,9 @@ public class LubanMgr:Singleton<LubanMgr>
 
         //PrintTableData(tables);
     }
+    #endregion
 
+    #region 配置读取与解析
     /// <summary>
     /// 输出所有 Luban 表的数据，便于启动时检查配置是否正确加载。
     /// </summary>
@@ -193,9 +217,6 @@ public class LubanMgr:Singleton<LubanMgr>
         return shopItemInfos;
     }
 
-
-    #region 技能相关
-
     /// <summary>建立等级效果索引并验证服务器权威技能参数。</summary>
     /// <param name="effectList">Luban 装载的全部技能等级效果。</param>
     /// <returns>按技能 ID 与正整数等级查找效果的索引。</returns>
@@ -271,6 +292,50 @@ public class LubanMgr:Singleton<LubanMgr>
         return effectsBySkill;
     }
 
+    /// <summary>
+    /// 将普通物品和武器配置汇总为统一的物品配置集合。
+    /// 同一个配置 ID 只能属于一个物品大类，否则商城无法仅凭 ItemId 判断商品类型。
+    /// </summary>
+    private static Dictionary<int, ItemConfigBase> CreateItemConfigInfos(
+        Dictionary<int, ItemInfo> itemInfos,
+        Dictionary<int, EquipInfo> equipInfos)
+    {
+        Dictionary<int, ItemConfigBase> itemConfigInfos = new Dictionary<int, ItemConfigBase>();
+
+        if (itemInfos != null)
+        {
+            foreach (ItemInfo itemInfo in itemInfos.Values)
+            {
+                AddItemConfig(itemConfigInfos, new NormalItemConfig(itemInfo));
+            }
+        }
+
+        if (equipInfos != null)
+        {
+            foreach (EquipInfo equipInfo in equipInfos.Values)
+            {
+                AddItemConfig(itemConfigInfos, new EquipItemConfig(equipInfo));
+            }
+        }
+
+        return itemConfigInfos;
+    }
+
+    private static void AddItemConfig(Dictionary<int, ItemConfigBase> itemConfigInfos, ItemConfigBase itemConfig)
+    {
+        if (itemConfigInfos.TryGetValue(itemConfig.ItemId, out ItemConfigBase existingConfig))
+        {
+            LogMsg.Info(
+                $"物品配置 ID 重复：{itemConfig.ItemId}。已使用后加入的配置类型 {itemConfig.ItemMainType} 覆盖 {existingConfig.ItemMainType}。",
+                LogMsgType.Warn);
+        }
+
+        // 装备表在普通物品表之后加入，因此同 ID 时装备配置优先，避免商城把武器识别成普通物品。
+        itemConfigInfos[itemConfig.ItemId] = itemConfig;
+    }
+    #endregion
+
+    #region 技能相关
     /// <summary>按技能 ID 和角色已学等级读取唯一权威效果。</summary>
     /// <param name="skillId">旧 SkillInfo.Id 中的稳定技能 ID。</param>
     /// <param name="level">角色数据库保存的正整数学习等级。</param>
@@ -324,6 +389,7 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
+
     /// <summary>
     /// 按职业 ID 获取该职业的旧技能定义快照。
     /// </summary>
@@ -352,53 +418,9 @@ public class LubanMgr:Singleton<LubanMgr>
 
         return jobSkillInfos;
     }
-
     #endregion
 
     #region 物品相关
-
-    /// <summary>
-    /// 将普通物品和武器配置汇总为统一的物品配置集合。
-    /// 同一个配置 ID 只能属于一个物品大类，否则商城无法仅凭 ItemId 判断商品类型。
-    /// </summary>
-    private static Dictionary<int, ItemConfigBase> CreateItemConfigInfos(
-        Dictionary<int, ItemInfo> itemInfos,
-        Dictionary<int, EquipInfo> equipInfos)
-    {
-        Dictionary<int, ItemConfigBase> itemConfigInfos = new Dictionary<int, ItemConfigBase>();
-
-        if (itemInfos != null)
-        {
-            foreach (ItemInfo itemInfo in itemInfos.Values)
-            {
-                AddItemConfig(itemConfigInfos, new NormalItemConfig(itemInfo));
-            }
-        }
-
-        if (equipInfos != null)
-        {
-            foreach (EquipInfo equipInfo in equipInfos.Values)
-            {
-                AddItemConfig(itemConfigInfos, new EquipItemConfig(equipInfo));
-            }
-        }
-
-        return itemConfigInfos;
-    }
-
-    private static void AddItemConfig(Dictionary<int, ItemConfigBase> itemConfigInfos, ItemConfigBase itemConfig)
-    {
-        if (itemConfigInfos.TryGetValue(itemConfig.ItemId, out ItemConfigBase existingConfig))
-        {
-            LogMsg.Info(
-                $"物品配置 ID 重复：{itemConfig.ItemId}。已使用后加入的配置类型 {itemConfig.ItemMainType} 覆盖 {existingConfig.ItemMainType}。",
-                LogMsgType.Warn);
-        }
-
-        // 装备表在普通物品表之后加入，因此同 ID 时装备配置优先，避免商城把武器识别成普通物品。
-        itemConfigInfos[itemConfig.ItemId] = itemConfig;
-    }
-
     public Dictionary<int, ItemInfo> GetItemInfos()
     {
         return _itemInfos;
@@ -442,11 +464,9 @@ public class LubanMgr:Singleton<LubanMgr>
     {
         return _itemConfigInfos;
     }
-
     #endregion
 
     #region 背包相关
-
     /// <summary>
     /// 获取背包类型配置表。
     /// </summary>
@@ -464,11 +484,9 @@ public class LubanMgr:Singleton<LubanMgr>
             ? info
             : null;
     }
-
     #endregion
 
     #region 装备相关
-
     public Dictionary<int, EquipInfo> GetEquipInfos()
     {
         return _equipInfos;
@@ -482,11 +500,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region 基因相关
-
     public Dictionary<int, Gene> GetGeneInfos()
     {
         return _geneInfos;
@@ -500,11 +516,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region NPC 相关
-
     public Dictionary<int, NpcParseInfo> GetNpcInfos()
     {
         return _npcInfos;
@@ -518,11 +532,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region 职业相关
-
     public Dictionary<int, ProfessionInfo> GetProfessionInfos()
     {
         return _professionInfos;
@@ -536,11 +548,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region 任务相关
-
     public Dictionary<int, QuestInfo> GetQuestInfos()
     {
         return _questInfos;
@@ -554,11 +564,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region 角色等级相关
-
     public Dictionary<int, RoleLevelInfo> GetRoleLevelInfos()
     {
         return _roleLevelInfos;
@@ -586,11 +594,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
     #region 表现相关
-
     /// <summary>
     /// 获取全部角色表现配置，返回值为表现配置 ID 到配置对象的索引集合。
     /// </summary>
@@ -615,10 +621,6 @@ public class LubanMgr:Singleton<LubanMgr>
         return null;
     }
 
-    #endregion
-
-    #region 商店相关
-
     /// <summary>按行为和业务 ID 查找次数配置。</summary>
     public CountInfo GetCountInfo(RoleCountAction action, int key)
     {
@@ -629,7 +631,9 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
+    #endregion
 
+    #region 商店相关
     /// <summary>
     /// 获取商店主表。NPC 通过 NpcParseInfo.ShopId 关联此表。
     /// </summary>
@@ -738,7 +742,6 @@ public class LubanMgr:Singleton<LubanMgr>
         }
         return null;
     }
-
     #endregion
 
 }

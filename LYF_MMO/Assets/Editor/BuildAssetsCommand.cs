@@ -16,7 +16,7 @@ namespace HybridCLR.Editor {
 
         public static string AssetBundleSourceDataTempDir => $"{HybridCLRBuildCacheDir}/AssetBundleSourceData";
 
-
+        #region 查询与判定
         public static string GetAssetBundleOutputDirByTarget(BuildTarget target) {
             return $"{AssetBundleOutputDir}/{target}";
         }
@@ -24,7 +24,9 @@ namespace HybridCLR.Editor {
         public static string GetAssetBundleTempDirByTarget(BuildTarget target) {
             return $"{AssetBundleSourceDataTempDir}/{target}";
         }
+        #endregion
 
+        #region 核心逻辑
         public static string ToRelativeAssetPath(string s) {
             return s.Substring(s.IndexOf("Assets/"));
         }
@@ -76,7 +78,6 @@ namespace HybridCLR.Editor {
             CopyHotUpdateAssembliesToStreamingAssets();
         }
 
-
         //[MenuItem("HybridCLR/Build/BuildAssetbundle")]
         public static void BuildSceneAssetBundleActiveBuildTargetExcludeAOT() {
             BuildAssetBundleByTarget(EditorUserBuildSettings.activeBuildTarget);
@@ -125,5 +126,6 @@ namespace HybridCLR.Editor {
                 AssetDatabase.CopyAsset(srcAb, dstAb);
             }
         }
+        #endregion
     }
 }

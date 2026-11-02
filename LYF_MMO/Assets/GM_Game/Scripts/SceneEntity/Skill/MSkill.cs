@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public abstract class MSkill
 {
+
+    #region 字段与属性
     /// <summary>RO 正式技能在表现范围之后的最大生命周期宽限秒数，不是客户端施法门禁。</summary>
     private const float ServerEndGraceSeconds = 10f;
 
@@ -132,7 +134,9 @@ public abstract class MSkill
     {
         get { return _core; }
     }
+    #endregion
 
+    #region 构造与初始化
     /// <summary>构造池内技能实例并绑定强类型时间轴回调，后续 Fire 重用该委托。</summary>
     protected MSkill()
     {
@@ -159,10 +163,130 @@ public abstract class MSkill
             (!_animationReleased || !IsPresentationFinished);
     }
 
+    /// <summary>当前技能被拒绝、打断或正常结束时清理本次施法引用。</summary>
+    public void Reset()
+    {
+        // 先推进实例代次，同 UUID 重入也不能让旧回调或旧注册批次接管新生命周期。
+        unchecked { _fireGeneration++; }
+        // 必须先取消尚未触发回调，再清理资产和施法身份，防止池复用后旧事件串入新施法。
+        KillTimerAll();
+        // 子类先解除本次施法的表现引用；已触发粒子按自身寿命销毁，不再依赖池实例。
+        OnReset();
+        // 动画释放必须发生在核心引用解除前，旧实例不再触及后续借出的核心。
+        if (_boundAnimator != null && _core != null)
+        {
+            // Skill 状态尚在退出过渡时保留真实剪辑，避免立即换回占位动作造成姿态跳变。
+            ReleaseAnimation();
+        }
+        if (_core != null)
+        {
+            _core.Release();
+        }
+        _core = null;
+        _firer = null;
+        _boundAnimator = null;
+        _animationModel = null;
+        _animationLocation = null;
+        _runtimePresentationId = 0;
+        _runtimePresentationDurationSeconds = 0f;
+        _runtimePresentation = null;
+        _elapsedSeconds = 0f;
+        _durationSeconds = 0f;
+        _skillStateTimeSeconds = 0f;
+        _startedTimerMilliseconds = 0;
+        _timerSessionVersion = 0;
+        _skillForward = Vector3.zero;
+        _execute = false;
+        _animationReleased = false;
+        SkillUuid = 0;
+        SkillId = 0;
+        UsingTimes = 0;
+        TargetUid = 0;
+        CastPoint = Vector3.zero;
+        IsPredicted = false;
+        HasServerEnded = false;
+        IsActive = false;
+    }
+    #endregion
+
+    #region 事件回调
+    /// <summary>归还或重新借用前清理具体技能持有的表现资源。</summary>
+    protected virtual void OnReset()
+    {
+    }
+
+    /// <summary>RO 时间轴统一入口，先解除已触发票据，再按锁定 UUID 校验本次施法身份。</summary>
+    /// <param name="token">到期的单次票据，零表示同步补发。</param>
+    /// <param name="args">注册时捕获的具名强类型技能事件载荷。</param>
+    protected void OnProcessTimer(uint token, MSkillTimerArgs args)
+    {
+        if (token != 0)
+        {
+            _tokens.Remove(token);
+        }
+        // 仅存活施法且参数完整时才按 UUID 与代次分发事件。
+        if (!IsActive) return;
+        if (_firer == null) return;
+        if (args == null) return;
+        if (args.SkillUuid != SkillUuid) return;
+        if (args.FireGeneration != _fireGeneration) return;
+        InnerProcessTimer(args.Id, args);
+    }
+    #endregion
+
+    /// <summary>按 RO 记录正延迟票据；零票据已同步执行，无需纳入取消列表。</summary>
+    /// <param name="token">MTimerMgr.SetTimer 返回的单次票据，零表示同步事件。</param>
+    protected void AddedTimerToken(uint token)
+    {
+        if (token != 0)
+        {
+            _tokens.Add(token);
+        }
+    }
+
+    #region 移除与回收
+    /// <summary>本段退出动作状态时归还动画槽租约，保留未完表现及原 UUID，完成后无需回包也可回池。</summary>
+    public abstract void ReleaseAnimation();
+
+    /// <summary>由具体技能子类归还自身类型的对象池，调用前必须完成 Reset。</summary>
+    public abstract void Recycle();
+    #endregion
+
+    #region 查询与判定
     /// <summary>RO 同名动作解锁判断，仅表示当前动作窗结束，独立于技能制作尾段及服务器生命周期。</summary>
     /// <returns>本次活动技能已运行到动作状态解锁秒数时为真。</returns>
     public abstract bool IsEnd();
 
+    /// <summary>RO 实例存活上限：累计技能时钟超过表现范围加预表现两秒或正式十秒宽限时兜底，暂停时不积分。</summary>
+    /// <returns>实例仍活动且超过其最大生命周期时为真，不承担确认等待、CD回滚或施法阻断。</returns>
+    private bool IsLifetimeOverdue()
+    {
+        // 未来制作事件可以晚于动画，宽限不能在该事件之前清除其计时器。
+        float presentationSeconds = _durationSeconds;
+        if (_runtimePresentation != null)
+        {
+            presentationSeconds = Mathf.Max(presentationSeconds, _runtimePresentation.EffectiveTimelineDurationSeconds);
+            // 单次声音可能长于十秒宽限，实际完整音尾也计入兜底起点，避免合法长音提前被切掉。
+            for (int index = 0; index < _runtimePresentation.AudioEvents.Count; index++)
+            {
+                // 已校验并锁定的声音事件，完整剪辑尾部不依赖作者结束帧标记。
+                SkillRuntimeAudioEvent audioEvent = _runtimePresentation.AudioEvents[index];
+                presentationSeconds = Mathf.Max(presentationSeconds, audioEvent.TimeSeconds + audioEvent.Clip.length);
+            }
+        }
+        // 实例预表现身份仅选择 RO 原有存活宽限，不创建额外结果事务或确认定时器。
+        float graceSeconds = ServerEndGraceSeconds;
+        if (IsPredicted) graceSeconds = PerformanceGraceSeconds;
+        return IsActive && SkillUuid != 0 && _elapsedSeconds > presentationSeconds + graceSeconds;
+    }
+
+    /// <summary>按组合技能内的子技能编号查找实例；普通技能返回自身。</summary>
+    /// <param name="skillNum">组合技能内从零起的子技能编号。</param>
+    /// <returns>编号对应的技能实例，找不到时返回空。</returns>
+    public abstract MSkill GetSkill(int skillNum);
+    #endregion
+
+    #region 核心逻辑
     /// <summary>按 RO 启动一次技能逻辑，锁定施法数据后执行 Start；动画由动作状态统一触发。</summary>
     /// <param name="core">已按技能 ID 与等级解析的技能配置核心。</param>
     /// <param name="firer">拥有本次技能动作的场景实体。</param>
@@ -308,29 +432,6 @@ public abstract class MSkill
         return true;
     }
 
-    /// <summary>RO 实例存活上限：累计技能时钟超过表现范围加预表现两秒或正式十秒宽限时兜底，暂停时不积分。</summary>
-    /// <returns>实例仍活动且超过其最大生命周期时为真，不承担确认等待、CD回滚或施法阻断。</returns>
-    private bool IsLifetimeOverdue()
-    {
-        // 未来制作事件可以晚于动画，宽限不能在该事件之前清除其计时器。
-        float presentationSeconds = _durationSeconds;
-        if (_runtimePresentation != null)
-        {
-            presentationSeconds = Mathf.Max(presentationSeconds, _runtimePresentation.EffectiveTimelineDurationSeconds);
-            // 单次声音可能长于十秒宽限，实际完整音尾也计入兜底起点，避免合法长音提前被切掉。
-            for (int index = 0; index < _runtimePresentation.AudioEvents.Count; index++)
-            {
-                // 已校验并锁定的声音事件，完整剪辑尾部不依赖作者结束帧标记。
-                SkillRuntimeAudioEvent audioEvent = _runtimePresentation.AudioEvents[index];
-                presentationSeconds = Mathf.Max(presentationSeconds, audioEvent.TimeSeconds + audioEvent.Clip.length);
-            }
-        }
-        // 实例预表现身份仅选择 RO 原有存活宽限，不创建额外结果事务或确认定时器。
-        float graceSeconds = ServerEndGraceSeconds;
-        if (IsPredicted) graceSeconds = PerformanceGraceSeconds;
-        return IsActive && SkillUuid != 0 && _elapsedSeconds > presentationSeconds + graceSeconds;
-    }
-
     /// <summary>记录服务器自然结束，仅解除预测身份；动画槽由技能组件释放，计时器继续直到表现收尾。</summary>
     public void MarkServerEnded()
     {
@@ -342,66 +443,6 @@ public abstract class MSkill
         IsPredicted = false;
     }
 
-    /// <summary>当前技能被拒绝、打断或正常结束时清理本次施法引用。</summary>
-    public void Reset()
-    {
-        // 先推进实例代次，同 UUID 重入也不能让旧回调或旧注册批次接管新生命周期。
-        unchecked { _fireGeneration++; }
-        // 必须先取消尚未触发回调，再清理资产和施法身份，防止池复用后旧事件串入新施法。
-        KillTimerAll();
-        // 子类先解除本次施法的表现引用；已触发粒子按自身寿命销毁，不再依赖池实例。
-        OnReset();
-        // 动画释放必须发生在核心引用解除前，旧实例不再触及后续借出的核心。
-        if (_boundAnimator != null && _core != null)
-        {
-            // Skill 状态尚在退出过渡时保留真实剪辑，避免立即换回占位动作造成姿态跳变。
-            ReleaseAnimation();
-        }
-        if (_core != null)
-        {
-            _core.Release();
-        }
-        _core = null;
-        _firer = null;
-        _boundAnimator = null;
-        _animationModel = null;
-        _animationLocation = null;
-        _runtimePresentationId = 0;
-        _runtimePresentationDurationSeconds = 0f;
-        _runtimePresentation = null;
-        _elapsedSeconds = 0f;
-        _durationSeconds = 0f;
-        _skillStateTimeSeconds = 0f;
-        _startedTimerMilliseconds = 0;
-        _timerSessionVersion = 0;
-        _skillForward = Vector3.zero;
-        _execute = false;
-        _animationReleased = false;
-        SkillUuid = 0;
-        SkillId = 0;
-        UsingTimes = 0;
-        TargetUid = 0;
-        CastPoint = Vector3.zero;
-        IsPredicted = false;
-        HasServerEnded = false;
-        IsActive = false;
-    }
-
-    /// <summary>归还或重新借用前清理具体技能持有的表现资源。</summary>
-    protected virtual void OnReset()
-    {
-    }
-
-    /// <summary>按 RO 记录正延迟票据；零票据已同步执行，无需纳入取消列表。</summary>
-    /// <param name="token">MTimerMgr.SetTimer 返回的单次票据，零表示同步事件。</param>
-    protected void AddedTimerToken(uint token)
-    {
-        if (token != 0)
-        {
-            _tokens.Add(token);
-        }
-    }
-
     /// <summary>按 RO 注销本次施法的全部待触发事件，不影响同角色下一段或其他角色计时器。</summary>
     protected virtual void KillTimerAll()
     {
@@ -411,24 +452,6 @@ public abstract class MSkill
             MTimerMgr.singleton.KillTimer(_tokens[index]);
         }
         _tokens.Clear();
-    }
-
-    /// <summary>RO 时间轴统一入口，先解除已触发票据，再按锁定 UUID 校验本次施法身份。</summary>
-    /// <param name="token">到期的单次票据，零表示同步补发。</param>
-    /// <param name="args">注册时捕获的具名强类型技能事件载荷。</param>
-    protected void OnProcessTimer(uint token, MSkillTimerArgs args)
-    {
-        if (token != 0)
-        {
-            _tokens.Remove(token);
-        }
-        // 仅存活施法且参数完整时才按 UUID 与代次分发事件。
-        if (!IsActive) return;
-        if (_firer == null) return;
-        if (args == null) return;
-        if (args.SkillUuid != SkillUuid) return;
-        if (args.FireGeneration != _fireGeneration) return;
-        InnerProcessTimer(args.Id, args);
     }
 
     /// <summary>RO 子技能时间轴分发扩展点；基类不解释任何具体表现事件。</summary>
@@ -490,15 +513,5 @@ public abstract class MSkill
             _boundAnimator.CrossFade(MAnimator.STATE_SKILL, 0.1f);
         }
     }
-
-    /// <summary>本段退出动作状态时归还动画槽租约，保留未完表现及原 UUID，完成后无需回包也可回池。</summary>
-    public abstract void ReleaseAnimation();
-
-    /// <summary>按组合技能内的子技能编号查找实例；普通技能返回自身。</summary>
-    /// <param name="skillNum">组合技能内从零起的子技能编号。</param>
-    /// <returns>编号对应的技能实例，找不到时返回空。</returns>
-    public abstract MSkill GetSkill(int skillNum);
-
-    /// <summary>由具体技能子类归还自身类型的对象池，调用前必须完成 Reset。</summary>
-    public abstract void Recycle();
+    #endregion
 }

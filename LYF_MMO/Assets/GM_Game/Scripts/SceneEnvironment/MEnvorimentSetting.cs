@@ -21,6 +21,8 @@ using UnityEngine;
 [ExecuteAlways]
 public class MEnvorimentSetting : MonoBehaviour
 {
+
+    #region 字段
     /// <summary>
     /// 渲染器烘焙光分组。每个元素对应一套烘焙方案，
     /// 由 MLightmapData.lightmapIndex 选中其中一组；元素内部的绑定逐条记录渲染器与光照图 UV 变换。
@@ -209,7 +211,9 @@ public class MEnvorimentSetting : MonoBehaviour
 
     /// <summary>首次应用前的 Float 通道原值，与 FloatChannelIDs 按下标一一对应</summary>
     private float[] _prevFloats = new float[0];
+    #endregion
 
+    #region 生命周期
     /// <summary>
     /// 启用时按源组件顺序应用默认配置：先恢复烘焙光，再写天色与天气。
     /// 运行时进入场景即生效；由于类上标了 [ExecuteAlways]，编辑器里打开场景、重新勾选组件、
@@ -228,7 +232,35 @@ public class MEnvorimentSetting : MonoBehaviour
     {
         RestoreEnvironment();
     }
+    #endregion
 
+    /// <summary>
+    /// 取当前光照数据指向的那一组渲染器绑定；下标无效或数据缺失时返回空。
+    /// </summary>
+    private MLightmapIndex GetLightmapGroup()
+    {
+        if (defaultLightmapData == null)
+        {
+            return null;
+        }
+        if (lightmapIndex == null)
+        {
+            return null;
+        }
+        // 光照数据指定的分组下标，索引 lightmapIndex 数组；越界即视为无有效烘焙方案
+        int groupIndex = defaultLightmapData.lightmapIndex;
+        if (groupIndex < 0)
+        {
+            return null;
+        }
+        if (groupIndex >= lightmapIndex.Length)
+        {
+            return null;
+        }
+        return lightmapIndex[groupIndex];
+    }
+
+    #region 核心逻辑
     /// <summary>
     /// 应用默认环境配置。编辑器里由 OnEnable 自动调用；也可在 Inspector 右键菜单手动触发，
     /// 用于改完配置后立刻重写一遍（例如只调了雾色或云速）。
@@ -355,32 +387,6 @@ public class MEnvorimentSetting : MonoBehaviour
             renderer.lightmapIndex = _prevRendererIndices[i];
             renderer.lightmapScaleOffset = _prevScaleOffsets[i];
         }
-    }
-
-    /// <summary>
-    /// 取当前光照数据指向的那一组渲染器绑定；下标无效或数据缺失时返回空。
-    /// </summary>
-    private MLightmapIndex GetLightmapGroup()
-    {
-        if (defaultLightmapData == null)
-        {
-            return null;
-        }
-        if (lightmapIndex == null)
-        {
-            return null;
-        }
-        // 光照数据指定的分组下标，索引 lightmapIndex 数组；越界即视为无有效烘焙方案
-        int groupIndex = defaultLightmapData.lightmapIndex;
-        if (groupIndex < 0)
-        {
-            return null;
-        }
-        if (groupIndex >= lightmapIndex.Length)
-        {
-            return null;
-        }
-        return lightmapIndex[groupIndex];
     }
 
     /// <summary>
@@ -692,4 +698,5 @@ public class MEnvorimentSetting : MonoBehaviour
             }
         }
     }
+    #endregion
 }

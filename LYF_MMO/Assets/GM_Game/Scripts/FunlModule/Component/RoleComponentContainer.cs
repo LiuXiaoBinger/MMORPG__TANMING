@@ -12,6 +12,7 @@ public sealed class RoleComponentContainer
     private readonly List<RoleComponentBase> _orderedComponents =
         new List<RoleComponentBase>();
 
+    #region 构造与初始化
     /// <summary>创建角色组件容器。</summary>
     public RoleComponentContainer(PlayerEntity owner)
     {
@@ -27,23 +28,26 @@ public sealed class RoleComponentContainer
         InvokeAll("Update", component => component.Update(deltaMilliseconds));
     }
 
-    /// <summary>注册组件，同一具体类型只能注册一次。</summary>
-    public void SetComponent<T>(T component) where T : RoleComponentBase
+    /// <summary>初始化全部组件。</summary>
+    public void Initialize()
     {
-        if (component == null)
-        {
-            throw new ArgumentNullException("component");
-        }
-
-        Type type = typeof(T);
-        if (_components.ContainsKey(type))
-        {
-            throw new InvalidOperationException("角色组件重复注册: " + type.Name);
-        }
-        _components.Add(type, component);
-        _orderedComponents.Add(component);
+        InvokeAll("Initialize", component => component.Initialize());
     }
 
+    /// <summary>按注册逆序释放全部组件。</summary>
+    public void Dispose()
+    {
+        for (int index = _orderedComponents.Count - 1; index >= 0; index--)
+        {
+            RoleComponentBase component = _orderedComponents[index];
+            Invoke(component, "Dispose", component.Dispose);
+        }
+        _orderedComponents.Clear();
+        _components.Clear();
+    }
+    #endregion
+
+    #region 查询与判定
     /// <summary>获取已经注册的组件。</summary>
     public T GetComponent<T>() where T : RoleComponentBase
     {
@@ -67,11 +71,24 @@ public sealed class RoleComponentContainer
         component = null;
         return false;
     }
+    #endregion
 
-    /// <summary>初始化全部组件。</summary>
-    public void Initialize()
+    #region 核心逻辑
+    /// <summary>注册组件，同一具体类型只能注册一次。</summary>
+    public void SetComponent<T>(T component) where T : RoleComponentBase
     {
-        InvokeAll("Initialize", component => component.Initialize());
+        if (component == null)
+        {
+            throw new ArgumentNullException("component");
+        }
+
+        Type type = typeof(T);
+        if (_components.ContainsKey(type))
+        {
+            throw new InvalidOperationException("角色组件重复注册: " + type.Name);
+        }
+        _components.Add(type, component);
+        _orderedComponents.Add(component);
     }
 
     /// <summary>通知全部组件完成角色快照装载。</summary>
@@ -84,18 +101,6 @@ public sealed class RoleComponentContainer
     public void AfterAddedToWorld()
     {
         InvokeAll("AfterAddedToWorld", component => component.AfterAddedToWorld());
-    }
-
-    /// <summary>按注册逆序释放全部组件。</summary>
-    public void Dispose()
-    {
-        for (int index = _orderedComponents.Count - 1; index >= 0; index--)
-        {
-            RoleComponentBase component = _orderedComponents[index];
-            Invoke(component, "Dispose", component.Dispose);
-        }
-        _orderedComponents.Clear();
-        _components.Clear();
     }
 
     /// <summary>按注册顺序执行组件生命周期函数。</summary>
@@ -121,4 +126,5 @@ public sealed class RoleComponentContainer
                 name + "，" + exception, LogMsgType.Error);
         }
     }
+    #endregion
 }

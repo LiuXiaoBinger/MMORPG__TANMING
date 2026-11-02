@@ -9,49 +9,10 @@ namespace GameServer.SceneEntity
     {
         private readonly Dictionary<EntityComponentType, EntityComponentBase> _components =
             new Dictionary<EntityComponentType, EntityComponentBase>();
+
         private readonly List<EntityComponentBase> _ordered = new List<EntityComponentBase>();
 
-        public void Add(EntityComponentBase component)
-        {
-            if (component == null)
-            {
-                throw new ArgumentNullException("component");
-            }
-            if (_components.ContainsKey(component.ComponentType))
-            {
-                throw new InvalidOperationException("实体组件重复注册: " + component.ComponentType);
-            }
-            _components.Add(component.ComponentType, component);
-            _ordered.Add(component);
-        }
-
-        public bool Contains(EntityComponentType type)
-        {
-            return _components.ContainsKey(type);
-        }
-
-        public T Get<T>(EntityComponentType type) where T : EntityComponentBase
-        {
-            EntityComponentBase component;
-            if (!_components.TryGetValue(type, out component))
-            {
-                throw new KeyNotFoundException("实体组件未注册: " + type);
-            }
-            return (T)component;
-        }
-
-        public bool TryGet<T>(EntityComponentType type, out T component) where T : EntityComponentBase
-        {
-            EntityComponentBase value;
-            if (_components.TryGetValue(type, out value))
-            {
-                component = value as T;
-                return component != null;
-            }
-            component = null;
-            return false;
-        }
-
+        #region 生命周期
         public void Initialize()
         {
             for (int i = 0; i < _ordered.Count; i++)
@@ -80,6 +41,50 @@ namespace GameServer.SceneEntity
             _ordered.Clear();
             _components.Clear();
         }
+        #endregion
+
+        public void Add(EntityComponentBase component)
+        {
+            if (component == null)
+            {
+                throw new ArgumentNullException("component");
+            }
+            if (_components.ContainsKey(component.ComponentType))
+            {
+                throw new InvalidOperationException("实体组件重复注册: " + component.ComponentType);
+            }
+            _components.Add(component.ComponentType, component);
+            _ordered.Add(component);
+        }
+
+        #region 查询与判定
+        public bool Contains(EntityComponentType type)
+        {
+            return _components.ContainsKey(type);
+        }
+
+        public T Get<T>(EntityComponentType type) where T : EntityComponentBase
+        {
+            EntityComponentBase component;
+            if (!_components.TryGetValue(type, out component))
+            {
+                throw new KeyNotFoundException("实体组件未注册: " + type);
+            }
+            return (T)component;
+        }
+
+        public bool TryGet<T>(EntityComponentType type, out T component) where T : EntityComponentBase
+        {
+            EntityComponentBase value;
+            if (_components.TryGetValue(type, out value))
+            {
+                component = value as T;
+                return component != null;
+            }
+            component = null;
+            return false;
+        }
+        #endregion
 
         private static void Invoke(EntityComponentBase component, string method, Action action)
         {

@@ -10,22 +10,35 @@ using UnityEngine.UI;
 /// </summary>
 public class KnapsackWindowMockServer : MonoBehaviour
 {
+
+    #region 字段
     [SerializeField, Header("背包窗口")] private KnapsackWindow _knapsackWindow;
+
     [SerializeField, Header("启动时模拟服务器回包")] private bool _simulateOnStart = true;
+
     [SerializeField, Header("模拟回包延迟秒"), Min(0f)] private float _delaySeconds = 0.2f;
+
     [SerializeField, Header("每个独立包裹的模拟物品数"), Min(0)] private int _itemsPerPack = 12;
+
     [SerializeField, Header("模拟开格子按钮")] private Button _btnAddMockItem;
+
     [SerializeField, Header("点击时扩容的包裹")] private KnapsackType _addItemPack = KnapsackType.RolePackPlain;
+
     [SerializeField, Header("每次点击增加格子数（当前 9 列，默认一整行）"), Min(1)] private int _addItemCountPerClick = 9;
 
     private RoleKanpsackInfoRet _mockResponse;
+
     /// <summary>测试专用客户端角色，不写入正式角色世界。</summary>
     private PlayerEntity _clientRole;
+
     /// <summary>测试专用实体世界，由世界统一分配玩家 UID。</summary>
     private SceneEntityWorld _testWorld;
+
     /// <summary>测试专用背包控制器，验证正式组件到窗口的数据流。</summary>
     private KnapsackCtrl _knapsackCtrl;
+    #endregion
 
+    #region 生命周期
     private void Awake()
     {
         if (_btnAddMockItem == null)
@@ -93,6 +106,7 @@ public class KnapsackWindowMockServer : MonoBehaviour
 
         SendMockResponse();
     }
+    #endregion
 
     [ContextMenu("模拟服务器背包回包")]
     public void SendMockResponse()
@@ -108,6 +122,7 @@ public class KnapsackWindowMockServer : MonoBehaviour
         _clientRole.LoadRoleData(_mockResponse);
     }
 
+    #region 创建与添加
     /// <summary>
     /// 供测试按钮和 Inspector 右键菜单调用：模拟服务器确认当前包裹新增一整行容量。
     /// </summary>
@@ -130,38 +145,6 @@ public class KnapsackWindowMockServer : MonoBehaviour
         int currentCount = itemComponent.GetOpenedGridCount(_addItemPack);
         itemComponent.SetOpenedGridCount(_addItemPack,
             currentCount + Mathf.Max(1, _addItemCountPerClick));
-    }
-
-    /// <summary>创建测试角色并把背包控制器绑定到角色物品组件。</summary>
-    private void EnsureTestRole()
-    {
-        if (_clientRole != null)
-        {
-            return;
-        }
-
-        MainRoleInfo roleInfo = new MainRoleInfo
-        {
-            BaseInfo = new RoleBaseInfo
-            {
-                RoleId = 1,
-                Nickname = "背包测试角色"
-            }
-        };
-        if (_testWorld == null)
-        {
-            _testWorld = new SceneEntityWorld();
-        }
-        _clientRole = _testWorld.Create(EntityType.Player, 0) as PlayerEntity;
-        if (_clientRole == null)
-        {
-            Debug.LogError("KnapsackWindowMockServer: 创建测试玩家实体失败。", this);
-            return;
-        }
-        _clientRole.InitializeLocalRole(roleInfo);
-        _clientRole.AfterAddedToWorld();
-        _knapsackCtrl = new KnapsackCtrl(_knapsackWindow);
-        _knapsackCtrl.BindRole(_clientRole);
     }
 
     private RoleKanpsackInfoRet CreateMockResponse()
@@ -188,31 +171,6 @@ public class KnapsackWindowMockServer : MonoBehaviour
         AddPackCount(info, KnapsackType.RoleCurrtEquipPack, GetInitialCapacity(info.RoleCurrtEquipPack));
 
         return response;
-    }
-
-    private static int[] GetMockItemTypeIds(KnapsackType type)
-    {
-        switch (type)
-        {
-            case KnapsackType.RolePackConsume:
-                return new[] { 2003, 2005, 2401 };
-            case KnapsackType.RolePackMaterial:
-                return new[] { 2501, 2601, 2701 };
-            case KnapsackType.RoleCurrtEquipPack:
-                return new[] { 2202 };
-            default:
-                return new[] { 2001, 2201, 2301 };
-        }
-    }
-
-    private void PopulatePack(RoleKanpsackInfo response, KnapsackType type, int[] itemTypeIds)
-    {
-        for (int bagIndex = 0; bagIndex < _itemsPerPack; bagIndex++)
-        {
-            int itemTypeId = itemTypeIds[bagIndex % itemTypeIds.Length];
-            int count = bagIndex % 99 + 1;
-            AddItemToPack(response, CreateItem(type, bagIndex, itemTypeId, count));
-        }
     }
 
     private static void AddItemToPack(RoleKanpsackInfo response, RoleItemInfo item)
@@ -261,6 +219,33 @@ public class KnapsackWindowMockServer : MonoBehaviour
             Count = count
         });
     }
+    #endregion
+
+    private void PopulatePack(RoleKanpsackInfo response, KnapsackType type, int[] itemTypeIds)
+    {
+        for (int bagIndex = 0; bagIndex < _itemsPerPack; bagIndex++)
+        {
+            int itemTypeId = itemTypeIds[bagIndex % itemTypeIds.Length];
+            int count = bagIndex % 99 + 1;
+            AddItemToPack(response, CreateItem(type, bagIndex, itemTypeId, count));
+        }
+    }
+
+    #region 查询与判定
+    private static int[] GetMockItemTypeIds(KnapsackType type)
+    {
+        switch (type)
+        {
+            case KnapsackType.RolePackConsume:
+                return new[] { 2003, 2005, 2401 };
+            case KnapsackType.RolePackMaterial:
+                return new[] { 2501, 2601, 2701 };
+            case KnapsackType.RoleCurrtEquipPack:
+                return new[] { 2202 };
+            default:
+                return new[] { 2001, 2201, 2301 };
+        }
+    }
 
     /// <summary>
     /// Mock 容量至少为 81，且不得小于已生成物品占用的最高格子位置。
@@ -274,6 +259,39 @@ public class KnapsackWindowMockServer : MonoBehaviour
         }
 
         return capacity;
+    }
+    #endregion
+
+    /// <summary>创建测试角色并把背包控制器绑定到角色物品组件。</summary>
+    private void EnsureTestRole()
+    {
+        if (_clientRole != null)
+        {
+            return;
+        }
+
+        MainRoleInfo roleInfo = new MainRoleInfo
+        {
+            BaseInfo = new RoleBaseInfo
+            {
+                RoleId = 1,
+                Nickname = "背包测试角色"
+            }
+        };
+        if (_testWorld == null)
+        {
+            _testWorld = new SceneEntityWorld();
+        }
+        _clientRole = _testWorld.Create(EntityType.Player, 0) as PlayerEntity;
+        if (_clientRole == null)
+        {
+            Debug.LogError("KnapsackWindowMockServer: 创建测试玩家实体失败。", this);
+            return;
+        }
+        _clientRole.InitializeLocalRole(roleInfo);
+        _clientRole.AfterAddedToWorld();
+        _knapsackCtrl = new KnapsackCtrl(_knapsackWindow);
+        _knapsackCtrl.BindRole(_clientRole);
     }
 
 }

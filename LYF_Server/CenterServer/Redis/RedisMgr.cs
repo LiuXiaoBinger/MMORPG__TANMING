@@ -11,6 +11,7 @@ public class RedisMgr : Singleton<RedisMgr>
 {
     /// <summary>Redis 连接多路复用器，Init 成功后持有，Close 时置空。</summary>
     private ConnectionMultiplexer _connection;
+
     /// <summary>默认数据库操作对象，由连接复用得到，所有读写经此对象发出。</summary>
     private IDatabase _database;
 
@@ -59,6 +60,21 @@ public class RedisMgr : Singleton<RedisMgr>
         _database = _connection.GetDatabase();
     }
 
+    /// <summary>关闭并释放 Redis 连接，置空连接与数据库对象。</summary>
+    public void Close()
+    {
+        if (_connection == null)
+        {
+            return;
+        }
+
+        _connection.Close();
+        _connection.Dispose();
+        _connection = null;
+        _database = null;
+    }
+
+    #region 查询与判定
     /// <summary>同步读取字符串键，存在时通过 out 参数返回值，键不存在或异常返回 false。</summary>
     /// <param name="key">Redis 键，非空。</param>
     /// <param name="value">输出读取到的字符串值，失败时为 null。</param>
@@ -105,6 +121,19 @@ public class RedisMgr : Singleton<RedisMgr>
         }
     }
 
+    /// <summary>取当前数据库操作对象，未初始化时抛 InvalidOperationException。</summary>
+    private IDatabase GetDatabase()
+    {
+        if (_database == null)
+        {
+            throw new InvalidOperationException("Call RedisMgr.Instance.Init() before using Redis.");
+        }
+
+        return _database;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>写入字符串键，可选过期时间；失败返回 false。</summary>
     public bool Set(string key, string value, TimeSpan? expiry = null)
     {
@@ -271,31 +300,6 @@ public class RedisMgr : Singleton<RedisMgr>
         }
     }
 
-    /// <summary>关闭并释放 Redis 连接，置空连接与数据库对象。</summary>
-    public void Close()
-    {
-        if (_connection == null)
-        {
-            return;
-        }
-
-        _connection.Close();
-        _connection.Dispose();
-        _connection = null;
-        _database = null;
-    }
-
-    /// <summary>取当前数据库操作对象，未初始化时抛 InvalidOperationException。</summary>
-    private IDatabase GetDatabase()
-    {
-        if (_database == null)
-        {
-            throw new InvalidOperationException("Call RedisMgr.Instance.Init() before using Redis.");
-        }
-
-        return _database;
-    }
-
     /// <summary>校验键非空，空键抛 ArgumentException。</summary>
     private static string ValidateKey(string key)
     {
@@ -306,4 +310,5 @@ public class RedisMgr : Singleton<RedisMgr>
 
         return key;
     }
+    #endregion
 }

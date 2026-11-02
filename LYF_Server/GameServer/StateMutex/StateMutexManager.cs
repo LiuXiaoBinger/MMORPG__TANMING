@@ -8,12 +8,17 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class StateMutexManager : Singleton<StateMutexManager>
 {
+
+    #region 字段与常量
     /// <summary>已注册的互斥状态，下标即 StateTransitionType 数值；未注册保持空。</summary>
     private readonly IStateInterface[] states_ =
         new IStateInterface[(int)StateTransitionType.kStateMaxCount];
 
     /// <summary>是否已经完成初始化，避免重复装载表与重复注册。</summary>
     private bool initialized_;
+
+    #region 构造、初始化与注册
+    #endregion
 
     /// <summary>创建状态互斥管理器；真正的注册在 Init 中完成。</summary>
     public StateMutexManager()
@@ -76,6 +81,9 @@ public sealed class StateMutexManager : Singleton<StateMutexManager>
             return false;
         }
         states_[(int)type] = state;
+
+    #region 业务逻辑：互斥判定与状态转移
+    #endregion
         return true;
     }
 
@@ -376,6 +384,9 @@ public sealed class StateMutexManager : Singleton<StateMutexManager>
             if (state.Check(role) && !state.Leave(role))
             {
                 return false;
+
+    #region 查询
+    #endregion
             }
         }
         return true;
@@ -404,7 +415,7 @@ public sealed class StateMutexManager : Singleton<StateMutexManager>
         }
         return states.Count > 0;
     }
-
+    #endregion
     /// <summary>取状态下标对应的 RO 原始状态名，供日志定位。</summary>
     /// <param name="type">状态标识。</param>
     public string GetStateName(StateTransitionType type)

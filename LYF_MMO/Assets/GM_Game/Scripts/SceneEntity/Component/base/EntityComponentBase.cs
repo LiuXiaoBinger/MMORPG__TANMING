@@ -9,6 +9,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public abstract class EntityComponentBase : IEntityComponent
 {
+
+    #region 字段与属性
     /// <summary>本组件通过 <see cref="RegisterEvent"/> 订阅的宿主事件及其处理器列表，回收时据此批量解绑。</summary>
     private readonly Dictionary<MEventType, List<MEventHandler>> _registeredEvents =
         new Dictionary<MEventType, List<MEventHandler>>();
@@ -35,7 +37,9 @@ public abstract class EntityComponentBase : IEntityComponent
 
     /// <summary>组件类型标识，由子类声明，用于组件容器按类型索引。</summary>
     public abstract EntityComponentType ComponentType { get; }
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>构造组件实例，绑定宿主实体。</summary>
     /// <param name="owner">组件所属宿主对象，必须是 <see cref="MEntity"/> 或其子类，为空时抛出异常。</param>
     protected EntityComponentBase(ROObject owner)
@@ -113,6 +117,58 @@ public abstract class EntityComponentBase : IEntityComponent
         RemoveRegisteredEvent(eventType, handler);
     }
 
+    /// <summary>注册对宿主事件的监听，子类按需覆写。在挂接到宿主后调用</summary>
+    protected virtual void EventSubscribe() { }
+
+    /// <summary>注销事件监听，与 EventSubscribe 成对，子类按需覆写</summary>
+    protected virtual void EventUnsubscribe() { }
+    #endregion
+
+    #region 事件回调
+    /// <summary>组件从宿主实体卸载时回调，子类用于释放与宿主相关的运行时引用。</summary>
+    public virtual void OnDetachFromHost()
+    {
+        _enabled = true;
+        _detached = true;
+        EventUnsubscribe();
+    }
+
+    /// <summary>组件挂载到宿主实体时回调，子类用于初始化宿主相关状态。</summary>
+    /// <param name="hostObj">新挂载的宿主对象。</param>
+    public virtual void OnAttachToHost(ROObject hostObj)
+    {
+        Entity = hostObj as MEntity;
+        _detached = false;
+        EventSubscribe();
+    }
+    #endregion
+
+    /// <summary>从内部事件记录表中移除指定处理器，列表清空后删除对应键。</summary>
+    /// <param name="eventType">宿主事件类型。</param>
+    /// <param name="handler">要移除的事件回调处理器。</param>
+    private void RemoveRegisteredEvent(MEventType eventType, MEventHandler handler)
+    {
+        List<MEventHandler> handlers;
+        if (!_registeredEvents.TryGetValue(eventType, out handlers))
+        {
+            return;
+        }
+        // 反向遍历删除，避免下标错位
+        for (int index = handlers.Count - 1; index >= 0; index--)
+        {
+            if (handlers[index] == handler)
+            {
+                handlers.RemoveAt(index);
+                break;
+            }
+        }
+        if (handlers.Count == 0)
+        {
+            _registeredEvents.Remove(eventType);
+        }
+    }
+
+    #region 核心逻辑
     /// <summary>通过宿主实体向上派发事件。</summary>
     /// <param name="eventType">要派发的事件类型。</param>
     /// <param name="eventArgs">强类型事件载荷，无载荷事件传 null。</param>
@@ -172,56 +228,9 @@ public abstract class EntityComponentBase : IEntityComponent
         Entity = null;
     }
 
-    /// <summary>从内部事件记录表中移除指定处理器，列表清空后删除对应键。</summary>
-    /// <param name="eventType">宿主事件类型。</param>
-    /// <param name="handler">要移除的事件回调处理器。</param>
-    private void RemoveRegisteredEvent(MEventType eventType, MEventHandler handler)
-    {
-        List<MEventHandler> handlers;
-        if (!_registeredEvents.TryGetValue(eventType, out handlers))
-        {
-            return;
-        }
-        // 反向遍历删除，避免下标错位
-        for (int index = handlers.Count - 1; index >= 0; index--)
-        {
-            if (handlers[index] == handler)
-            {
-                handlers.RemoveAt(index);
-                break;
-            }
-        }
-        if (handlers.Count == 0)
-        {
-            _registeredEvents.Remove(eventType);
-        }
-    }
-
-    /// <summary>组件从宿主实体卸载时回调，子类用于释放与宿主相关的运行时引用。</summary>
-    public virtual void OnDetachFromHost()
-    {
-        _enabled = true;
-        _detached = true;
-        EventUnsubscribe();
-    }
-
-    /// <summary>组件挂载到宿主实体时回调，子类用于初始化宿主相关状态。</summary>
-    /// <param name="hostObj">新挂载的宿主对象。</param>
-    public virtual void OnAttachToHost(ROObject hostObj)
-    {
-        Entity = hostObj as MEntity;
-        _detached = false;
-        EventSubscribe();
-    }
-
     /// <summary>组件挂载完成回调，在组件加入容器并完成初始化后触发。</summary>
     public virtual void Attached()
     {
     }
-
-    /// <summary>注册对宿主事件的监听，子类按需覆写。在挂接到宿主后调用</summary>
-    protected virtual void EventSubscribe() { }
-
-    /// <summary>注销事件监听，与 EventSubscribe 成对，子类按需覆写</summary>
-    protected virtual void EventUnsubscribe() { }
+    #endregion
 }

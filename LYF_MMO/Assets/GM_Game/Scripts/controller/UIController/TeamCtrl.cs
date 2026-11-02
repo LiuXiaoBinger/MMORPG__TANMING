@@ -7,6 +7,8 @@ using Google.Protobuf;
 /// </summary>
 public sealed class TeamCtrl : CtrlBase
 {
+
+    #region 字段、事件与属性
     /// <summary>队伍状态变化回调，参数为是否仍在队伍中。</summary>
     public event Action<bool> TeamInfoReceived;
 
@@ -21,7 +23,9 @@ public sealed class TeamCtrl : CtrlBase
 
     /// <summary>当前实际持有三条队伍下行协议的控制器实例，用于接管前先注销旧实例。</summary>
     private static TeamCtrl _activeInstance;
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>构造队伍协议控制器并立即注册下行协议。</summary>
     /// <param name="view">所属界面视图，仅用于满足 CtrlBase 分层。</param>
     public TeamCtrl(UIBase view) : base(view)
@@ -76,6 +80,58 @@ public sealed class TeamCtrl : CtrlBase
         _registered = false;
     }
 
+    /// <summary>释放时注销协议并清空事件订阅。</summary>
+    public override void Dispose()
+    {
+        UnregisterHandlers();
+        TeamInfoReceived = null;
+        InvitationReceived = null;
+        EnterDungeonReceived = null;
+    }
+    #endregion
+
+    /// <summary>处理服务器确认的副本入场通知，客户端据此才加载场景。</summary>
+    /// <param name="data">TeamEnterDungeonNtf 二进制消息体。</param>
+    private void OnEnterDungeon(ByteString data)
+    {
+        // 入场确认通知：携带场景ID、实例号与出生点，客户端收到后才允许加载副本场景。
+        TeamEnterDungeonNtf notice = TeamEnterDungeonNtf.Parser.ParseFrom(data);
+        if (EnterDungeonReceived != null)
+        {
+            EnterDungeonReceived(notice);
+        }
+    }
+
+    #region 事件回调
+    /// <summary>处理服务器下发的整包队伍状态。</summary>
+    /// <param name="data">TeamInfoNtf 二进制消息体。</param>
+    private void OnTeamInfo(ByteString data)
+    {
+        // 整包队伍快照：队伍ID、队长、成员列表与实例号都在这里，是客户端队伍状态的唯一权威来源。
+        TeamInfoNtf notice = TeamInfoNtf.Parser.ParseFrom(data);
+        TeamData.Instance.SetLocalRoleId(ResolveLocalRoleId());
+        TeamData.Instance.ApplyTeamInfo(notice);
+        if (TeamInfoReceived != null)
+        {
+            TeamInfoReceived(TeamData.Instance.IsInTeam);
+        }
+    }
+
+    /// <summary>处理服务器下发的邀请或申请通知。</summary>
+    /// <param name="data">TeamInvatationNtf 二进制消息体。</param>
+    private void OnInvatation(ByteString data)
+    {
+        // 邀请或申请通知：写入 TeamData 的待处理槽位后，由界面决定展示同意/拒绝入口。
+        TeamInvatationNtf notice = TeamInvatationNtf.Parser.ParseFrom(data);
+        TeamData.Instance.ApplyNotice(notice, ResolveLocalRoleId());
+        if (InvitationReceived != null)
+        {
+            InvitationReceived();
+        }
+    }
+    #endregion
+
+    #region 网络请求与消息
     /// <summary>
     /// 请求创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam(targetId)。
     /// </summary>
@@ -89,6 +145,44 @@ public sealed class TeamCtrl : CtrlBase
         return Send(NetDefine.CMD_CreateTeamCode, arg.ToByteString());
     }
 
+    /// <summary>统一发送入口，未连接时返回 false 且不抛异常。</summary>
+    /// <param name="protoCode">协议号。</param>
+    /// <param name="data">已序列化的协议体。</param>
+    /// <returns>成功提交到网络层返回 true。</returns>
+    private static bool Send(int protoCode, ByteString data)
+    {
+        if (MNetClient.Instance == null)
+        {
+            return false;
+        }
+        return MNetClient.Instance.Send(protoCode, data);
+    }
+    #endregion
+
+    /// <summary>取当前场景世界中的本地主角角色ID，未进入世界时返回 0。</summary>
+    /// <returns>本地主角角色ID；场景世界或本地主角未就绪时返回 0。</returns>
+    private static ulong ResolveLocalRoleId()
+    {
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return 0UL;
+        }
+        // 当前场景世界中的本地主角实体，为空说明客户端尚未进入世界，此时无法确定队伍身份。
+        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
+        if (localRole == null)
+        {
+            return 0UL;
+        }
+        // 主角实体ID，非正数代表实体尚未分配ID，与"未就绪"同样返回 0。
+        int roleId = localRole.GetID();
+        if (roleId <= 0)
+        {
+            return 0UL;
+        }
+        return (ulong)roleId;
+    }
+
+    #region 核心逻辑
     /// <summary>
     /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
     /// 等级仅用于界面校验提示，服务端以会话身份为准。
@@ -186,88 +280,5 @@ public sealed class TeamCtrl : CtrlBase
         arg.DungeonsDegree = 0;
         return Send(NetDefine.CMD_CaptainRequestEnterFBCode, arg.ToByteString());
     }
-
-    /// <summary>处理服务器下发的整包队伍状态。</summary>
-    /// <param name="data">TeamInfoNtf 二进制消息体。</param>
-    private void OnTeamInfo(ByteString data)
-    {
-        // 整包队伍快照：队伍ID、队长、成员列表与实例号都在这里，是客户端队伍状态的唯一权威来源。
-        TeamInfoNtf notice = TeamInfoNtf.Parser.ParseFrom(data);
-        TeamData.Instance.SetLocalRoleId(ResolveLocalRoleId());
-        TeamData.Instance.ApplyTeamInfo(notice);
-        if (TeamInfoReceived != null)
-        {
-            TeamInfoReceived(TeamData.Instance.IsInTeam);
-        }
-    }
-
-    /// <summary>处理服务器下发的邀请或申请通知。</summary>
-    /// <param name="data">TeamInvatationNtf 二进制消息体。</param>
-    private void OnInvatation(ByteString data)
-    {
-        // 邀请或申请通知：写入 TeamData 的待处理槽位后，由界面决定展示同意/拒绝入口。
-        TeamInvatationNtf notice = TeamInvatationNtf.Parser.ParseFrom(data);
-        TeamData.Instance.ApplyNotice(notice, ResolveLocalRoleId());
-        if (InvitationReceived != null)
-        {
-            InvitationReceived();
-        }
-    }
-
-    /// <summary>处理服务器确认的副本入场通知，客户端据此才加载场景。</summary>
-    /// <param name="data">TeamEnterDungeonNtf 二进制消息体。</param>
-    private void OnEnterDungeon(ByteString data)
-    {
-        // 入场确认通知：携带场景ID、实例号与出生点，客户端收到后才允许加载副本场景。
-        TeamEnterDungeonNtf notice = TeamEnterDungeonNtf.Parser.ParseFrom(data);
-        if (EnterDungeonReceived != null)
-        {
-            EnterDungeonReceived(notice);
-        }
-    }
-
-    /// <summary>取当前场景世界中的本地主角角色ID，未进入世界时返回 0。</summary>
-    /// <returns>本地主角角色ID；场景世界或本地主角未就绪时返回 0。</returns>
-    private static ulong ResolveLocalRoleId()
-    {
-        if (Global.Instance == null || Global.Instance.SceneWorld == null)
-        {
-            return 0UL;
-        }
-        // 当前场景世界中的本地主角实体，为空说明客户端尚未进入世界，此时无法确定队伍身份。
-        PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
-        if (localRole == null)
-        {
-            return 0UL;
-        }
-        // 主角实体ID，非正数代表实体尚未分配ID，与"未就绪"同样返回 0。
-        int roleId = localRole.GetID();
-        if (roleId <= 0)
-        {
-            return 0UL;
-        }
-        return (ulong)roleId;
-    }
-
-    /// <summary>统一发送入口，未连接时返回 false 且不抛异常。</summary>
-    /// <param name="protoCode">协议号。</param>
-    /// <param name="data">已序列化的协议体。</param>
-    /// <returns>成功提交到网络层返回 true。</returns>
-    private static bool Send(int protoCode, ByteString data)
-    {
-        if (MNetClient.Instance == null)
-        {
-            return false;
-        }
-        return MNetClient.Instance.Send(protoCode, data);
-    }
-
-    /// <summary>释放时注销协议并清空事件订阅。</summary>
-    public override void Dispose()
-    {
-        UnregisterHandlers();
-        TeamInfoReceived = null;
-        InvitationReceived = null;
-        EnterDungeonReceived = null;
-    }
+    #endregion
 }

@@ -6,20 +6,11 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class EntityTransformComponent : EntityComponentBase
 {
+
+    #region 构造与事件注册与注销
     /// <summary>构造位置组件。</summary>
     /// <param name="owner">宿主实体。</param>
     public EntityTransformComponent(ROObject owner) : base(owner)
-    {
-    }
-
-    /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Scene"/>。</summary>
-    public override EntityComponentType ComponentType
-    {
-        get { return EntityComponentType.Scene; }
-    }
-
-    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
-    public override void Attached()
     {
     }
 
@@ -31,6 +22,18 @@ public sealed class EntityTransformComponent : EntityComponentBase
     protected override void EventUnsubscribe()
     {
        
+    }
+    #endregion
+
+    /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Scene"/>。</summary>
+    public override EntityComponentType ComponentType
+    {
+        get { return EntityComponentType.Scene; }
+    }
+
+    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
+    public override void Attached()
+    {
     }
 
     /// <summary>把变换快照一次性写入宿主实体 Transform，并派发 TransformChanged 事件。</summary>

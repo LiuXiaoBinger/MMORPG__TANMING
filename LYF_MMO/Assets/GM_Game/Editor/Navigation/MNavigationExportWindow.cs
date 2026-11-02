@@ -6,6 +6,8 @@ using UnityEngine.AI;
 /// <summary>主城与副本共用的地图导航导出窗口，选择场景及其烘焙资产后生成一份公共文件。</summary>
 public sealed class MNavigationExportWindow : EditorWindow
 {
+
+    #region 字段
     /// <summary>仅用于命名和标识地图的场景资产；导出过程不会打开或保存该场景。</summary>
     [SerializeField] private SceneAsset _sceneAsset;
 
@@ -23,14 +25,9 @@ public sealed class MNavigationExportWindow : EditorWindow
 
     /// <summary>保存窗口纵向滚动位置，窄窗口或原有较矮窗口也能访问底部预览按钮。</summary>
     private Vector2 _scrollPosition;
+    #endregion
 
-    /// <summary>从Unity菜单打开所有地图复用的导出窗口。</summary>
-    [MenuItem("工具/导航/导出公共地图网格")]
-    public static void OpenWindow()
-    {
-        GetWindow<MNavigationExportWindow>("公共导航导出");
-    }
-
+    #region 生命周期
     /// <summary>绘制来源选择和导出按钮；数据始终写入项目根NavigationData目录。</summary>
     private void OnGUI()
     {
@@ -93,6 +90,21 @@ public sealed class MNavigationExportWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
+    /// <summary>窗口关闭或域重载时清理自绘缓存，并恢复预览前的原生显示开关。</summary>
+    private void OnDisable()
+    {
+        _preview.Hide();
+    }
+    #endregion
+
+    #region 界面显示与开关
+    /// <summary>从Unity菜单打开所有地图复用的导出窗口。</summary>
+    [MenuItem("工具/导航/导出公共地图网格")]
+    public static void OpenWindow()
+    {
+        GetWindow<MNavigationExportWindow>("公共导航导出");
+    }
+
     /// <summary>按场景名反读已导出的公共文件，不加载烘焙资产或修改导航世界。</summary>
     private void ShowSelectedMap()
     {
@@ -107,12 +119,7 @@ public sealed class MNavigationExportWindow : EditorWindow
         MNavigationMapData mapData = _preview.Show(filePath);
         _previewResult = "自绘来源：" + filePath + "\n顶点：" + mapData.Vertices.Length + "，三角形：" + mapData.Areas.Length + "\nAgentTypeID：" + mapData.AgentTypeID;
     }
-
-    /// <summary>窗口关闭或域重载时清理自绘缓存，并恢复预览前的原生显示开关。</summary>
-    private void OnDisable()
-    {
-        _preview.Hide();
-    }
+    #endregion
 
     /// <summary>取得所选地图导出文件的绝对路径，主城和副本分别按场景名保存。</summary>
     private string GetOutputPath()

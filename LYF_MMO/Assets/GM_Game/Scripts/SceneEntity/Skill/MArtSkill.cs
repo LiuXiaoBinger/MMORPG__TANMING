@@ -5,6 +5,8 @@ using UnityEngine;
 /// <summary>RO普通技能表现载体，派发粒子、声音、程序位移及原滑行残影回调，按窗口接管水平根位移。</summary>
 public class MArtSkill : MSkill
 {
+
+    #region 字段与属性
     /// <summary>本次表现轨道校验失败后为 true，直到归还；阻止每帧重复报错。</summary>
     private bool _runtimePresentationInvalid;
 
@@ -49,7 +51,9 @@ public class MArtSkill : MSkill
             return eventsRegisteredAndBaseFinished && fxTokensEmpty && audioListEmpty;
         }
     }
+    #endregion
 
+    #region 生命周期
     /// <summary>沿 RO 的 Start 入口只注册 timeline，到期表现由 OnProcessTimer 交付。</summary>
     protected override void Start()
     {
@@ -66,11 +70,9 @@ public class MArtSkill : MSkill
         PruneAudio();
         return base.Update(deltaSeconds);
     }
+    #endregion
 
-    /// <summary>RO 同名动作结束实现，使用本次 Fire 冻结的技能状态窗口，连击不会被制作尾段拖住。</summary>
-    /// <returns>当前动作达到解锁时长时为真。</returns>
-    public override bool IsEnd() { return IsSkillStateFinished; }
-
+    #region 事件回调
     /// <summary>原锁定表现行完成加载后回到 FireEvents，不重选连击段。</summary>
     /// <param name="presentation">加载终态资产，空值表示失败。</param>
     /// <param name="fireGeneration">订阅时的施法代次，取消及池复用后失效。</param>
@@ -90,6 +92,76 @@ public class MArtSkill : MSkill
         FireEvents();
     }
 
+    /// <summary>归还时解除根位移并停止声音，清除轨道进度；粒子仍由独立租约保持到尾迹结束。</summary>
+    protected override void OnReset()
+    {
+        SkillRuntimePresentationCache.RemoveReadyListener(_runtimePresentationId, _presentationReady);
+        _presentationReady = null;
+        if (_loadGoModel != null)
+        {
+            // index 覆盖本次已到期但尚未加载的 GO 票据，取消不会触及其他施法。
+            for (int index = 0; index < _skillFxTokens.Count; index++)
+            {
+                _loadGoModel.RemoveLoadGoCallback(_skillFxTokens[index]);
+            }
+        }
+        _skillFxTokens.Clear();
+        _loadGoModel = null;
+        ReleaseAnimation();
+        StopAudio();
+        _runtimePresentationInvalid = false;
+        _eventsRegistered = false;
+    }
+    #endregion
+
+    #region 移除与回收
+    /// <summary>退出动作槽时停止程序位移并归还动画租约，声音和未来事件继续收尾，完成后可自然回池。</summary>
+    public override void ReleaseAnimation()
+    {
+        StopCharge();
+        _animationReleased = true;
+        if (_animationModel != null)
+        {
+            _animationModel.ReleaseSkillAnimation(this);
+            _animationModel = null;
+        }
+        if (_boundAnimator != null)
+        {
+            _boundAnimator.ReleaseSkillAnimAfterExit(_animationLocation);
+            _boundAnimator = null;
+        }
+    }
+
+    /// <summary>清理结束后将普通技能实例归还其具体类型对象池。</summary>
+    public override void Recycle()
+    {
+        MCommonObjectPool<MArtSkill>.Release(this);
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>RO 同名动作结束实现，使用本次 Fire 冻结的技能状态窗口，连击不会被制作尾段拖住。</summary>
+    /// <returns>当前动作达到解锁时长时为真。</returns>
+    public override bool IsEnd() { return IsSkillStateFinished; }
+
+    /// <summary>检查粒子时间和坐标标量可参与有限范围内的运算。</summary>
+    /// <param name="value">待检查的秒数、距离或缩放分量。</param>
+    /// <returns>既非无穷也非非数时返回 true。</returns>
+    private static bool IsFinite(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
+    /// <summary>普通技能没有组合子节点，按 RO 的普通技能行为返回自身。</summary>
+    /// <param name="skillNum">调用方请求的组合内子技能序号，普通技能不使用。</param>
+    /// <returns>当前普通技能实例。</returns>
+    public override MSkill GetSkill(int skillNum)
+    {
+        return this;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>把本次粒子、声音、程序位移和原滑行残影采样一次登记到MTimerMgr。</summary>
     protected virtual void FireEvents() // 注册各种 timeline 回调。
     {
@@ -477,14 +549,6 @@ public class MArtSkill : MSkill
         return true;
     }
 
-    /// <summary>检查粒子时间和坐标标量可参与有限范围内的运算。</summary>
-    /// <param name="value">待检查的秒数、距离或缩放分量。</param>
-    /// <returns>既非无穷也非非数时返回 true。</returns>
-    private static bool IsFinite(float value)
-    {
-        return !float.IsNaN(value) && !float.IsInfinity(value);
-    }
-
     /// <summary>用单次施法锁定的资源生成一条粒子，并为其保留到销毁时的资产租约。</summary>
     /// <param name="fxEvent">需要立即执行的粒子事件。</param>
     /// <returns>粒子已成功生成返回 true；完整模型仍缺挂点时报告配置错误并返回 false，不阻塞后续指令。</returns>
@@ -581,44 +645,6 @@ public class MArtSkill : MSkill
         return true;
     }
 
-    /// <summary>归还时解除根位移并停止声音，清除轨道进度；粒子仍由独立租约保持到尾迹结束。</summary>
-    protected override void OnReset()
-    {
-        SkillRuntimePresentationCache.RemoveReadyListener(_runtimePresentationId, _presentationReady);
-        _presentationReady = null;
-        if (_loadGoModel != null)
-        {
-            // index 覆盖本次已到期但尚未加载的 GO 票据，取消不会触及其他施法。
-            for (int index = 0; index < _skillFxTokens.Count; index++)
-            {
-                _loadGoModel.RemoveLoadGoCallback(_skillFxTokens[index]);
-            }
-        }
-        _skillFxTokens.Clear();
-        _loadGoModel = null;
-        ReleaseAnimation();
-        StopAudio();
-        _runtimePresentationInvalid = false;
-        _eventsRegistered = false;
-    }
-
-    /// <summary>退出动作槽时停止程序位移并归还动画租约，声音和未来事件继续收尾，完成后可自然回池。</summary>
-    public override void ReleaseAnimation()
-    {
-        StopCharge();
-        _animationReleased = true;
-        if (_animationModel != null)
-        {
-            _animationModel.ReleaseSkillAnimation(this);
-            _animationModel = null;
-        }
-        if (_boundAnimator != null)
-        {
-            _boundAnimator.ReleaseSkillAnimAfterExit(_animationLocation);
-            _boundAnimator = null;
-        }
-    }
-
     /// <summary>统一动画入口完成剪辑绑定；技能位移已由程序Charge驱动，不再接管根运动。</summary>
     public override void TriggerAnim()
     {
@@ -649,20 +675,7 @@ public class MArtSkill : MSkill
         }
         _audioList.Clear();
     }
-
-    /// <summary>普通技能没有组合子节点，按 RO 的普通技能行为返回自身。</summary>
-    /// <param name="skillNum">调用方请求的组合内子技能序号，普通技能不使用。</param>
-    /// <returns>当前普通技能实例。</returns>
-    public override MSkill GetSkill(int skillNum)
-    {
-        return this;
-    }
-
-    /// <summary>清理结束后将普通技能实例归还其具体类型对象池。</summary>
-    public override void Recycle()
-    {
-        MCommonObjectPool<MArtSkill>.Release(this);
-    }
+    #endregion
 
     /// <summary>RO粒子、声音、位移回调身份，以及本项目恢复的滑行残影采样编号。</summary>
     protected enum EArtsSkillTimerCb

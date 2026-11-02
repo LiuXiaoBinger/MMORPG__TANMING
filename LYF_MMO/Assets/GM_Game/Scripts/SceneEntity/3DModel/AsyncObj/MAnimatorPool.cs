@@ -6,15 +6,17 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class MAnimatorPool
 {
-    /// <summary>全局单例实例。</summary>
-    private static readonly MAnimatorPool _instance = new MAnimatorPool();
-    /// <summary>完整 MAnimator 对象队列。</summary>
-    private readonly Queue<MAnimator> _animators = new Queue<MAnimator>();
-    /// <summary>简化版 MObjectAnimator 对象队列。</summary>
-    private readonly Queue<MObjectAnimator> _objectAnimators = new Queue<MObjectAnimator>();
-
     /// <summary>私有构造函数，禁止外部 new。</summary>
     private MAnimatorPool() { }
+
+    /// <summary>全局单例实例。</summary>
+    private static readonly MAnimatorPool _instance = new MAnimatorPool();
+
+    /// <summary>完整 MAnimator 对象队列。</summary>
+    private readonly Queue<MAnimator> _animators = new Queue<MAnimator>();
+
+    /// <summary>简化版 MObjectAnimator 对象队列。</summary>
+    private readonly Queue<MObjectAnimator> _objectAnimators = new Queue<MObjectAnimator>();
 
     /// <summary>获取 MAnimatorPool 全局单例。</summary>
     public static MAnimatorPool Instance { get { return _instance; } }

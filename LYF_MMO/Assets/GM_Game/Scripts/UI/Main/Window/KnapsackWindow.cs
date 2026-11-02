@@ -32,13 +32,8 @@ using UnityEngine.UI;
 /// </summary>
 public class KnapsackWindow : WindowBase
 {
-    /// <summary>关闭背包，并沿B键关闭流程更新背包状态及角色展示镜头。</summary>
-    public override void CloseWindow()
-    {
-        base.CloseWindow();
-        CameraMgr.Instance.KnapsackWindowAngle(this);
-    }
 
+    #region 字段、事件与属性
     /// <summary>窗口帧循环事件，由背包控制器消费当前页脏标记。</summary>
     public event Action FrameUpdated;
 
@@ -158,11 +153,13 @@ public class KnapsackWindow : WindowBase
     {
         get { return _currtType; }
     }
+    #endregion
 
     // ============================================================
     // 五、生命周期
     // ============================================================
 
+    #region 生命周期
     private void Awake()
     {
         // 首次初始化：注册事件、回收模板、计算布局、刷新列表
@@ -203,35 +200,18 @@ public class KnapsackWindow : WindowBase
         CategorySelected = null;
         FrameUpdated = null;
     }
+    #endregion
 
     // ============================================================
     // 四、外部接口：接收服务器数据
     // ============================================================
 
-    /// <summary>
-    /// 接收控制器生成的当前页展示数据。
-    /// </summary>
-    /// <param name="items">当前分类的格子展示数据。</param>
-    /// <param name="openedSlotCount">当前分类已经开启的格子数量。</param>
-    /// <param name="scrollToNewest">新增物品时是否定位到列表底部。</param>
-    public void Render(IReadOnlyList<KnapsackSlotViewData> items,
-        int openedSlotCount, bool scrollToNewest)
+    #region 界面显示与刷新
+    /// <summary>关闭背包，并沿B键关闭流程更新背包状态及角色展示镜头。</summary>
+    public override void CloseWindow()
     {
-        EnsureInitialized();
-        _displayItemsBySlot.Clear();
-        if (items != null)
-        {
-            for (int index = 0; index < items.Count; index++)
-            {
-                KnapsackSlotViewData item = items[index];
-                if (item != null)
-                {
-                    _displayItemsBySlot[item.SlotIndex] = item;
-                }
-            }
-        }
-        _openedSlotCount = Mathf.Max(0, openedSlotCount);
-        RefreshCurrentType(scrollToNewest);
+        base.CloseWindow();
+        CameraMgr.Instance.KnapsackWindowAngle(this);
     }
 
     /// <summary>只更新一个逻辑格子的展示数据，保持滚动位置和其他格子不变。</summary>
@@ -289,6 +269,327 @@ public class KnapsackWindow : WindowBase
     // ============================================================
     // 六、初始化
     // ============================================================
+
+    /// <summary>
+    /// 刷新当前分类的完整流程：
+    /// 1. 获取当前分类的物品列表
+    /// 2. 计算列数、逻辑格子总数、可见行数
+    /// 3. 确保可见格子数量足够（不够就创建，多了就回收）
+    /// 4. 更新 Content 高度（撑起滚动范围）
+    /// 5. 仅在明确要求时滚动到底部，普通刷新保持当前位置
+    /// 6. 刷新可见格子的数据绑定
+    /// </summary>
+    /// <param name="scrollToNewest">true=明确要求定位到底部，false=保持当前位置</param>
+    private void RefreshCurrentType(bool scrollToNewest = false)
+    {
+        if (_slotTemplate == null || _content == null)
+        {
+            return;
+        }
+
+        // 2. 计算布局参数
+        _columnCount = GetColumnCount(_gridLayout);           // 列数
+        _virtualSlotCount = GetVirtualSlotCount(); // 组件确认的已开格子总数
+        _visibleRowCount = GetVisibleRowCount();               // 可视行数
+
+        // 3. 500 件物品只会创建首屏加缓冲行的 Slot，剩余物品由 Content 高度表示。
+        EnsureVisibleSlotCount();
+
+        // 4. 更新 Content 高度，让 ScrollRect 知道总共有多少可滚动内容
+        UpdateContentHeight(_virtualSlotCount);
+
+        // 5. 滚动定位
+        if (scrollToNewest)
+        {
+            ResetScrollToBottom();  // 有新物品时滚到底部
+        }
+        // 6. 把可见格子绑定到对应物品数据
+        RefreshVisibleSlots(true);
+
+    }
+
+    // ============================================================
+    // 十一、布局计算工具方法
+    // ============================================================
+
+    /// <summary>
+    /// 刷新可见格子的数据绑定。
+    /// 核心优化：如果首行号没变，直接 return，不做任何更新。
+    /// </summary>
+    /// <param name="forceRefresh">true=强制刷新（切换分类/新数据时），false=只在行号变化时刷新</param>
+    private void RefreshVisibleSlots(bool forceRefresh)
+    {
+        if (_activeSlots.Count == 0 || _gridLayout == null)
+        {
+            return;
+        }
+
+        // 计算当前滚动位置对应的第一行是第几行
+        int firstVisibleRow = GetFirstVisibleRow();
+
+        // 首行没变 → 可见格子绑定的数据也没变，什么都不做
+        if (!forceRefresh && firstVisibleRow == _firstVisibleRow)
+        {
+            return;
+        }
+
+        _firstVisibleRow = firstVisibleRow;
+
+        // 将对象池第一个格子映射为当前首行的第一个逻辑格子。
+        // 比如首行是第 3 行、5 列，那么第一个活跃格子对应逻辑索引 15。
+        int firstVirtualIndex = firstVisibleRow * _columnCount;
+
+        // 遍历所有活跃格子，依次绑定到 firstVirtualIndex, +1, +2, ...
+        for (int poolIndex = 0; poolIndex < _activeSlots.Count; poolIndex++)
+        {
+            int virtualIndex = firstVirtualIndex + poolIndex;
+            BindSlot(_activeSlots[poolIndex], virtualIndex, false);
+        }
+    }
+
+    /// <summary>
+    /// 根据逻辑格子总数设置 Content 的高度。
+    /// 这是虚拟列表能滚动的关键：Content 很高（比如 500 格的高度），
+    /// 但实际只有 25 个格子对象挂在上面。
+    /// </summary>
+    private void UpdateContentHeight(int slotCount)
+    {
+        if (!(_content is RectTransform contentRect) || _scrollRect == null || _scrollRect.viewport == null)
+        {
+            return;
+        }
+
+        if (_gridLayout == null)
+        {
+            return;
+        }
+
+        // 计算总行数
+        int columnCount = GetColumnCount(_gridLayout);
+        int rowCount = Mathf.Max(1, Mathf.CeilToInt((float)slotCount / columnCount));
+
+        // 总高度 = 上下边距 + 行数 * 格子高度 + (行数-1) * 行间距
+        float requiredHeight = _gridLayout.padding.top + _gridLayout.padding.bottom
+            + rowCount * _gridLayout.cellSize.y
+            + Mathf.Max(0, rowCount - 1) * _gridLayout.spacing.y;
+
+        // Content 的锚点和横向宽度由预制体固定。虚拟列表只改变高度，避免破坏原有布局。
+        // 高度至少为视口高度，避免内容太少时 ScrollRect 无法滚动
+        contentRect.SetSizeWithCurrentAnchors(
+            RectTransform.Axis.Vertical,
+            Mathf.Max(requiredHeight, _scrollRect.viewport.rect.height));
+    }
+    #endregion
+
+    /// <summary>
+    /// ScrollRect 滚动时回调。只更新可见 Slot 绑定的数据，不创建新对象。
+    /// </summary>
+    private void OnScrollChanged(Vector2 _)
+    {
+        // ScrollRect 发生位移时，只更新那一小组可见 Slot 绑定的数据。
+        RefreshVisibleSlots(false);
+    }
+
+    /// <summary>
+    /// 回收格子：清空数据、隐藏、压入对象池栈顶。
+    /// </summary>
+    private void ReleaseSlot(KnapsackSlotWidget slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        slot.Clear();
+        slot.gameObject.SetActive(false);
+        _slotPool.Push(slot);
+    }
+
+    // ============================================================
+    // 十三、滚动刷新：虚拟列表的核心
+    // ============================================================
+
+    #region 查询与判定
+    /// <summary>
+    /// 计算默认最小格子数。默认背包容量为 81 格，避免旧服务器未返回容量时界面缩小。
+    /// </summary>
+    private int GetMinimumSlotCount()
+    {
+        return Mathf.Max(81, _minimumSlotCount);
+    }
+
+    /// <summary>
+    /// 计算逻辑格子总数（用于设置 Content 高度）。
+    /// 把物品数向上取整到完整行，比如 12 个物品 5 列 → 15 格（3 整行）。
+    /// 这样最后一行不会出现"缺几格显示成白色空洞"的问题。
+    /// </summary>
+    private int GetVirtualSlotCount()
+    {
+        int highestOccupiedSlotCount = GetHighestOccupiedSlotCount();
+        return Mathf.Max(GetMinimumSlotCount(), _openedSlotCount,
+            highestOccupiedSlotCount);
+    }
+
+    /// <summary>
+    /// 背包位置由 BagIndex 决定，不应依赖服务器列表的排列顺序。
+    /// </summary>
+    private int GetHighestOccupiedSlotCount()
+    {
+        int highestSlotCount = 0;
+        List<KnapsackSlotViewData> itemList =
+            new List<KnapsackSlotViewData>(_displayItemsBySlot.Values);
+        for (int index = 0; index < itemList.Count; index++)
+        {
+            KnapsackSlotViewData item = itemList[index];
+            if (item != null)
+            {
+                highestSlotCount = Mathf.Max(highestSlotCount, item.SlotIndex + 1);
+            }
+        }
+
+        return highestSlotCount;
+    }
+
+    /// <summary>
+    /// 计算列数：
+    /// - 如果 GridLayoutGroup 设了固定列数，直接用
+    /// - 否则按视口宽度动态计算（能放几列放几列）
+    /// </summary>
+    private int GetColumnCount(GridLayoutGroup grid)
+    {
+        if (grid == null)
+        {
+            return 1;
+        }
+
+        // 固定列数模式：直接用配置的 constraintCount
+        if (grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
+        {
+            return Mathf.Max(1, grid.constraintCount);
+        }
+
+        // 灵活列数模式：按视口宽度计算
+        float availableWidth =
+            _scrollRect.viewport.rect.width
+            - grid.padding.left - grid.padding.right;
+        float columnWidth = grid.cellSize.x + grid.spacing.x;
+        if (columnWidth <= 0f)
+        {
+            return 1;
+        }
+        return Mathf.Max(1, Mathf.FloorToInt((availableWidth + grid.spacing.x) / columnWidth));
+    }
+
+    /// <summary>
+    /// 计算视口内能显示的行数（视口高度 ÷ 每行高度，向上取整）。
+    /// </summary>
+    private int GetVisibleRowCount()
+    {
+        if (_gridLayout == null || _scrollRect == null || _scrollRect.viewport == null)
+        {
+            return 1;
+        }
+
+        float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
+        if (rowHeight <= 0f)
+        {
+            return 1;
+        }
+        return Mathf.Max(1, Mathf.CeilToInt(
+            _scrollRect.viewport.rect.height / rowHeight));
+    }
+
+    // ============================================================
+    // 十二、格子对象池：获取/回收
+    // ============================================================
+
+    /// <summary>
+    /// 从对象池取一个格子，池为空时才 Instantiate 新对象。
+    /// 取出来后挂到 Content 下，排到活跃列表末尾，并设置为忽略布局。
+    /// </summary>
+    private KnapsackSlotWidget GetSlot()
+    {
+        // 优先复用隐藏格子，只有对象池为空时才实例化新对象。
+        KnapsackSlotWidget slot;
+        if (_slotPool.Count > 0)
+        {
+            slot = _slotPool.Pop();
+        }
+        else
+        {
+            slot = Instantiate(_slotTemplate, _content);
+        }
+
+        slot.transform.SetParent(_content, false);
+        slot.transform.SetSiblingIndex(_activeSlots.Count);  // 保持层级顺序
+        PrepareSlotForVirtualLayout(slot);
+        return slot;
+    }
+
+    /// <summary>
+    /// 根据 Content 的当前位置计算第一行是第几行。
+    ///
+    /// 原理：Content 的 anchoredPosition.y 就是向上滚动了多少像素。
+    /// 除以每行高度 = 滚动了多少行，向下取整 = 当前第一行的行号。
+    ///
+    /// 比如每行 100px，Content 向上滚了 250px → 2.5 行 → 第一行是第 2 行。
+    /// </summary>
+    private int GetFirstVisibleRow()
+    {
+        if (!(_content is RectTransform contentRect) || _gridLayout == null)
+        {
+            return 0;
+        }
+
+        float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
+
+        // 总行数（用于限制首行最大值，避免滚到空白区域）
+        int rowCount = Mathf.CeilToInt((float)_virtualSlotCount / _columnCount);
+        int maxFirstRow = Mathf.Max(0, rowCount - _visibleRowCount);
+
+        // 核心公式：滚动距离 ÷ 行高 = 当前首行
+        int firstRow = 0;
+        if (rowHeight > 0f)
+        {
+            firstRow = Mathf.FloorToInt(
+                Mathf.Max(0f, contentRect.anchoredPosition.y) / rowHeight);
+        }
+
+        // 限制在合法范围内
+        return Mathf.Clamp(firstRow, 0, maxFirstRow);
+    }
+    #endregion
+
+    // ============================================================
+    // 十四、格子绑定：位置计算 + 数据填充
+    // ============================================================
+
+    #region 核心逻辑
+    /// <summary>
+    /// 接收控制器生成的当前页展示数据。
+    /// </summary>
+    /// <param name="items">当前分类的格子展示数据。</param>
+    /// <param name="openedSlotCount">当前分类已经开启的格子数量。</param>
+    /// <param name="scrollToNewest">新增物品时是否定位到列表底部。</param>
+    public void Render(IReadOnlyList<KnapsackSlotViewData> items,
+        int openedSlotCount, bool scrollToNewest)
+    {
+        EnsureInitialized();
+        _displayItemsBySlot.Clear();
+        if (items != null)
+        {
+            for (int index = 0; index < items.Count; index++)
+            {
+                KnapsackSlotViewData item = items[index];
+                if (item != null)
+                {
+                    _displayItemsBySlot[item.SlotIndex] = item;
+                }
+            }
+        }
+        _openedSlotCount = Mathf.Max(0, openedSlotCount);
+        RefreshCurrentType(scrollToNewest);
+    }
 
     /// <summary>
     /// 一次性初始化：只执行一次，由 _initialized 标记保护。
@@ -440,164 +741,6 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     /// <summary>
-    /// 刷新当前分类的完整流程：
-    /// 1. 获取当前分类的物品列表
-    /// 2. 计算列数、逻辑格子总数、可见行数
-    /// 3. 确保可见格子数量足够（不够就创建，多了就回收）
-    /// 4. 更新 Content 高度（撑起滚动范围）
-    /// 5. 仅在明确要求时滚动到底部，普通刷新保持当前位置
-    /// 6. 刷新可见格子的数据绑定
-    /// </summary>
-    /// <param name="scrollToNewest">true=明确要求定位到底部，false=保持当前位置</param>
-    private void RefreshCurrentType(bool scrollToNewest = false)
-    {
-        if (_slotTemplate == null || _content == null)
-        {
-            return;
-        }
-
-        // 2. 计算布局参数
-        _columnCount = GetColumnCount(_gridLayout);           // 列数
-        _virtualSlotCount = GetVirtualSlotCount(); // 组件确认的已开格子总数
-        _visibleRowCount = GetVisibleRowCount();               // 可视行数
-
-        // 3. 500 件物品只会创建首屏加缓冲行的 Slot，剩余物品由 Content 高度表示。
-        EnsureVisibleSlotCount();
-
-        // 4. 更新 Content 高度，让 ScrollRect 知道总共有多少可滚动内容
-        UpdateContentHeight(_virtualSlotCount);
-
-        // 5. 滚动定位
-        if (scrollToNewest)
-        {
-            ResetScrollToBottom();  // 有新物品时滚到底部
-        }
-        // 6. 把可见格子绑定到对应物品数据
-        RefreshVisibleSlots(true);
-
-    }
-
-    // ============================================================
-    // 十一、布局计算工具方法
-    // ============================================================
-
-    /// <summary>
-    /// 计算默认最小格子数。默认背包容量为 81 格，避免旧服务器未返回容量时界面缩小。
-    /// </summary>
-    private int GetMinimumSlotCount()
-    {
-        return Mathf.Max(81, _minimumSlotCount);
-    }
-
-    /// <summary>
-    /// 计算逻辑格子总数（用于设置 Content 高度）。
-    /// 把物品数向上取整到完整行，比如 12 个物品 5 列 → 15 格（3 整行）。
-    /// 这样最后一行不会出现"缺几格显示成白色空洞"的问题。
-    /// </summary>
-    private int GetVirtualSlotCount()
-    {
-        int highestOccupiedSlotCount = GetHighestOccupiedSlotCount();
-        return Mathf.Max(GetMinimumSlotCount(), _openedSlotCount,
-            highestOccupiedSlotCount);
-    }
-
-    /// <summary>
-    /// 背包位置由 BagIndex 决定，不应依赖服务器列表的排列顺序。
-    /// </summary>
-    private int GetHighestOccupiedSlotCount()
-    {
-        int highestSlotCount = 0;
-        List<KnapsackSlotViewData> itemList =
-            new List<KnapsackSlotViewData>(_displayItemsBySlot.Values);
-        for (int index = 0; index < itemList.Count; index++)
-        {
-            KnapsackSlotViewData item = itemList[index];
-            if (item != null)
-            {
-                highestSlotCount = Mathf.Max(highestSlotCount, item.SlotIndex + 1);
-            }
-        }
-
-        return highestSlotCount;
-    }
-
-    /// <summary>
-    /// 计算列数：
-    /// - 如果 GridLayoutGroup 设了固定列数，直接用
-    /// - 否则按视口宽度动态计算（能放几列放几列）
-    /// </summary>
-    private int GetColumnCount(GridLayoutGroup grid)
-    {
-        if (grid == null)
-        {
-            return 1;
-        }
-
-        // 固定列数模式：直接用配置的 constraintCount
-        if (grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
-        {
-            return Mathf.Max(1, grid.constraintCount);
-        }
-
-        // 灵活列数模式：按视口宽度计算
-        float availableWidth =
-            _scrollRect.viewport.rect.width
-            - grid.padding.left - grid.padding.right;
-        float columnWidth = grid.cellSize.x + grid.spacing.x;
-        if (columnWidth <= 0f)
-        {
-            return 1;
-        }
-        return Mathf.Max(1, Mathf.FloorToInt((availableWidth + grid.spacing.x) / columnWidth));
-    }
-
-    /// <summary>
-    /// 计算视口内能显示的行数（视口高度 ÷ 每行高度，向上取整）。
-    /// </summary>
-    private int GetVisibleRowCount()
-    {
-        if (_gridLayout == null || _scrollRect == null || _scrollRect.viewport == null)
-        {
-            return 1;
-        }
-
-        float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
-        if (rowHeight <= 0f)
-        {
-            return 1;
-        }
-        return Mathf.Max(1, Mathf.CeilToInt(
-            _scrollRect.viewport.rect.height / rowHeight));
-    }
-
-    // ============================================================
-    // 十二、格子对象池：获取/回收
-    // ============================================================
-
-    /// <summary>
-    /// 从对象池取一个格子，池为空时才 Instantiate 新对象。
-    /// 取出来后挂到 Content 下，排到活跃列表末尾，并设置为忽略布局。
-    /// </summary>
-    private KnapsackSlotWidget GetSlot()
-    {
-        // 优先复用隐藏格子，只有对象池为空时才实例化新对象。
-        KnapsackSlotWidget slot;
-        if (_slotPool.Count > 0)
-        {
-            slot = _slotPool.Pop();
-        }
-        else
-        {
-            slot = Instantiate(_slotTemplate, _content);
-        }
-
-        slot.transform.SetParent(_content, false);
-        slot.transform.SetSiblingIndex(_activeSlots.Count);  // 保持层级顺序
-        PrepareSlotForVirtualLayout(slot);
-        return slot;
-    }
-
-    /// <summary>
     /// 给格子添加 LayoutElement 并设置 ignoreLayout = true。
     /// 这样 GridLayoutGroup 不会自动排版这个格子，位置由 BindSlot 手动计算。
     /// </summary>
@@ -644,106 +787,6 @@ public class KnapsackWindow : WindowBase
             _activeSlots.RemoveAt(lastIndex);
         }
     }
-
-    /// <summary>
-    /// 回收格子：清空数据、隐藏、压入对象池栈顶。
-    /// </summary>
-    private void ReleaseSlot(KnapsackSlotWidget slot)
-    {
-        if (slot == null)
-        {
-            return;
-        }
-
-        slot.Clear();
-        slot.gameObject.SetActive(false);
-        _slotPool.Push(slot);
-    }
-
-    // ============================================================
-    // 十三、滚动刷新：虚拟列表的核心
-    // ============================================================
-
-    /// <summary>
-    /// ScrollRect 滚动时回调。只更新可见 Slot 绑定的数据，不创建新对象。
-    /// </summary>
-    private void OnScrollChanged(Vector2 _)
-    {
-        // ScrollRect 发生位移时，只更新那一小组可见 Slot 绑定的数据。
-        RefreshVisibleSlots(false);
-    }
-
-    /// <summary>
-    /// 刷新可见格子的数据绑定。
-    /// 核心优化：如果首行号没变，直接 return，不做任何更新。
-    /// </summary>
-    /// <param name="forceRefresh">true=强制刷新（切换分类/新数据时），false=只在行号变化时刷新</param>
-    private void RefreshVisibleSlots(bool forceRefresh)
-    {
-        if (_activeSlots.Count == 0 || _gridLayout == null)
-        {
-            return;
-        }
-
-        // 计算当前滚动位置对应的第一行是第几行
-        int firstVisibleRow = GetFirstVisibleRow();
-
-        // 首行没变 → 可见格子绑定的数据也没变，什么都不做
-        if (!forceRefresh && firstVisibleRow == _firstVisibleRow)
-        {
-            return;
-        }
-
-        _firstVisibleRow = firstVisibleRow;
-
-        // 将对象池第一个格子映射为当前首行的第一个逻辑格子。
-        // 比如首行是第 3 行、5 列，那么第一个活跃格子对应逻辑索引 15。
-        int firstVirtualIndex = firstVisibleRow * _columnCount;
-
-        // 遍历所有活跃格子，依次绑定到 firstVirtualIndex, +1, +2, ...
-        for (int poolIndex = 0; poolIndex < _activeSlots.Count; poolIndex++)
-        {
-            int virtualIndex = firstVirtualIndex + poolIndex;
-            BindSlot(_activeSlots[poolIndex], virtualIndex, false);
-        }
-    }
-
-    /// <summary>
-    /// 根据 Content 的当前位置计算第一行是第几行。
-    ///
-    /// 原理：Content 的 anchoredPosition.y 就是向上滚动了多少像素。
-    /// 除以每行高度 = 滚动了多少行，向下取整 = 当前第一行的行号。
-    ///
-    /// 比如每行 100px，Content 向上滚了 250px → 2.5 行 → 第一行是第 2 行。
-    /// </summary>
-    private int GetFirstVisibleRow()
-    {
-        if (!(_content is RectTransform contentRect) || _gridLayout == null)
-        {
-            return 0;
-        }
-
-        float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
-
-        // 总行数（用于限制首行最大值，避免滚到空白区域）
-        int rowCount = Mathf.CeilToInt((float)_virtualSlotCount / _columnCount);
-        int maxFirstRow = Mathf.Max(0, rowCount - _visibleRowCount);
-
-        // 核心公式：滚动距离 ÷ 行高 = 当前首行
-        int firstRow = 0;
-        if (rowHeight > 0f)
-        {
-            firstRow = Mathf.FloorToInt(
-                Mathf.Max(0f, contentRect.anchoredPosition.y) / rowHeight);
-        }
-
-        // 限制在合法范围内
-        return Mathf.Clamp(firstRow, 0, maxFirstRow);
-    }
-
-    // ============================================================
-    // 十四、格子绑定：位置计算 + 数据填充
-    // ============================================================
 
     /// <summary>
     /// 把一个格子绑定到指定逻辑索引：
@@ -810,39 +853,6 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     /// <summary>
-    /// 根据逻辑格子总数设置 Content 的高度。
-    /// 这是虚拟列表能滚动的关键：Content 很高（比如 500 格的高度），
-    /// 但实际只有 25 个格子对象挂在上面。
-    /// </summary>
-    private void UpdateContentHeight(int slotCount)
-    {
-        if (!(_content is RectTransform contentRect) || _scrollRect == null || _scrollRect.viewport == null)
-        {
-            return;
-        }
-
-        if (_gridLayout == null)
-        {
-            return;
-        }
-
-        // 计算总行数
-        int columnCount = GetColumnCount(_gridLayout);
-        int rowCount = Mathf.Max(1, Mathf.CeilToInt((float)slotCount / columnCount));
-
-        // 总高度 = 上下边距 + 行数 * 格子高度 + (行数-1) * 行间距
-        float requiredHeight = _gridLayout.padding.top + _gridLayout.padding.bottom
-            + rowCount * _gridLayout.cellSize.y
-            + Mathf.Max(0, rowCount - 1) * _gridLayout.spacing.y;
-
-        // Content 的锚点和横向宽度由预制体固定。虚拟列表只改变高度，避免破坏原有布局。
-        // 高度至少为视口高度，避免内容太少时 ScrollRect 无法滚动
-        contentRect.SetSizeWithCurrentAnchors(
-            RectTransform.Axis.Vertical,
-            Mathf.Max(requiredHeight, _scrollRect.viewport.rect.height));
-    }
-
-    /// <summary>
     /// 切换背包页签时把滚动位置重置到顶部。
     /// verticalNormalizedPosition = 1 表示顶部，0 表示底部。
     /// </summary>
@@ -873,4 +883,5 @@ public class KnapsackWindow : WindowBase
 
         _firstVisibleRow = -1;
     }
+    #endregion
 }

@@ -17,18 +17,26 @@ public class RoleManager
         get { return _instance; }
     }
 
-    private RoleManager()
-    {
-    }
+    #region 字段与常量
     /// <summary>主线程维护的角色 ID 到在线角色索引；网络线程只能通过 GameCommand 投递请求。</summary>
     private readonly Dictionary<int, OnlineRole> m_onlineRoleMap = new Dictionary<int, OnlineRole>();
+
     /// <summary>复合会话键到角色 ID 的索引，用于校验客户端会话归属。</summary>
     private readonly Dictionary<long, int> m_roleIdBySessionMap = new Dictionary<long, int>();
+
     /// <summary>重连时暂存的新角色，待旧实例完成保存后再激活。</summary>
     private readonly Dictionary<int, OnlineRole> m_pendingRoleMap = new Dictionary<int, OnlineRole>();
+
     /// <summary>待激活重连角色的原 EnterWorld 请求，激活后只重放一次。</summary>
     private readonly Dictionary<int, PendingEnterWorldRequest> _pendingEnterWorldRequests =
         new Dictionary<int, PendingEnterWorldRequest>();
+    #endregion
+
+    private RoleManager()
+    {
+
+    #region 初始化与更新
+    }
 
     /// <summary>初始化角色管理器。</summary>
     public void OnInit()
@@ -68,6 +76,8 @@ public class RoleManager
             }
         }
 
+    #region 角色进入与移除
+    #endregion
         ProcessPendingRoles();
     }
 
@@ -135,37 +145,6 @@ public class RoleManager
         }
 
         ActivateOnlineRole(roleID, onlineRole);
-    }
-
-    /// <summary>按角色 ID 获取在线角色实例。</summary>
-    /// <param name="roleID">角色 ID。</param>
-    /// <returns>在线角色实例；角色不存在时返回 null。</returns>
-    public OnlineRole GetOnlineRole(int roleID)
-    {
-        // 角色 ID 索引只在逻辑线程访问，找不到角色时返回 null。
-        OnlineRole onlineRole;
-        if (m_onlineRoleMap.TryGetValue(roleID, out onlineRole))
-        {
-            return onlineRole;
-        }
-
-        return null;
-    }
-
-    /// <summary>按网关会话和 Unity 会话获取在线角色实例。</summary>
-    /// <param name="gateSessionID">网关连接会话 ID。</param>
-    /// <param name="unitySessionID">客户端 Unity 会话 ID。</param>
-    /// <returns>绑定到指定会话的在线角色；未找到时返回 null。</returns>
-    public OnlineRole GetOnlineRoleBySession(int gateSessionID, int unitySessionID)
-    {
-        // 先查会话索引再查角色索引，避免遍历所有在线角色。
-        int roleID;
-        if (m_roleIdBySessionMap.TryGetValue(CreateSessionKey(gateSessionID, unitySessionID), out roleID))
-        {
-            return GetOnlineRole(roleID);
-        }
-
-        return null;
     }
 
     /// <summary>移除在线角色；有未完成持久化时保留实例等待 ACK。</summary>
@@ -285,12 +264,49 @@ public class RoleManager
         onlineRole.InitSerializes();
         onlineRole.AfterLoad();
         onlineRole.State = OnlineRoleState.Online;
+
+    #region 查询
+    #endregion
         m_onlineRoleMap[roleID] = onlineRole;
         m_roleIdBySessionMap[CreateSessionKey(onlineRole.GateSessionId, onlineRole.UnitySessionId)] = roleID;
         onlineRole.AfterAddedToRole();
     }
 
+    /// <summary>按角色 ID 获取在线角色实例。</summary>
+    /// <param name="roleID">角色 ID。</param>
+    /// <returns>在线角色实例；角色不存在时返回 null。</returns>
+    public OnlineRole GetOnlineRole(int roleID)
+    {
+        // 角色 ID 索引只在逻辑线程访问，找不到角色时返回 null。
+        OnlineRole onlineRole;
+        if (m_onlineRoleMap.TryGetValue(roleID, out onlineRole))
+        {
+            return onlineRole;
+        }
+
+        return null;
+    }
+
+    /// <summary>按网关会话和 Unity 会话获取在线角色实例。</summary>
+    /// <param name="gateSessionID">网关连接会话 ID。</param>
+    /// <param name="unitySessionID">客户端 Unity 会话 ID。</param>
+    /// <returns>绑定到指定会话的在线角色；未找到时返回 null。</returns>
+    public OnlineRole GetOnlineRoleBySession(int gateSessionID, int unitySessionID)
+    {
+        // 先查会话索引再查角色索引，避免遍历所有在线角色。
+        int roleID;
+        if (m_roleIdBySessionMap.TryGetValue(CreateSessionKey(gateSessionID, unitySessionID), out roleID))
+        {
+            return GetOnlineRole(roleID);
+        }
+
+        return null;
+    }
+
     /// <summary>获取在线角色索引快照，快照中的角色对象仍为可修改的原引用。</summary>
+
+    #region 客户端消息处理
+    #endregion
     /// <returns>角色 ID 到在线角色实例的字典副本。</returns>
     public Dictionary<int, OnlineRole> GetOnlineRoleMap()
     {
@@ -476,6 +492,9 @@ public class RoleManager
         if (package == null || package.Data == null)
         {
             return;
+
+    #region 广播与同步
+    #endregion
         }
 
         OpenKnapsackGridRet result = OpenKnapsackGridRet.Parser.ParseFrom(package.Data);
@@ -719,6 +738,7 @@ public class RoleManager
         {
             return false;
         }
+    #endregion
         // 同一地图内不同队伍分属不同副本实例，实例不同即互相不可见。
         if (role.mainRoleInfo.BaseInfo.InstanceId != currentRole.BaseInfo.InstanceId)
         {

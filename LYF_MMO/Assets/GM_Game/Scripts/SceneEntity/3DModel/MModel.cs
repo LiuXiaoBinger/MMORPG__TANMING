@@ -9,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public sealed class MModel
 {
+
+    #region 字段与属性
     /// <summary>内部封装的 Unity GameObject 包装器，负责变换和层级管理。</summary>
     private readonly MGameObject _mObj = new MGameObject();
 
@@ -144,7 +146,9 @@ public sealed class MModel
         get { return _characterController != null && _characterController.enabled &&
             (_characterController.collisionFlags & CollisionFlags.Sides) != 0; }
     }
+    #endregion
 
+    #region 生命周期
     /// <summary>
     /// 逐帧更新驱动，转发到 Animator 封装的 Update。
     /// </summary>
@@ -166,6 +170,63 @@ public sealed class MModel
     public void LateUpdate(float deltaSeconds)
     {
     }
+
+    /// <summary>
+    /// 回收 Animator 和 GameObject，异步回调使用的会话号同时失效。
+    /// 对象池复用时调用，确保旧资源被正确释放。
+    /// </summary>
+    public void Reset()
+    {
+        ResetNativeModel();
+        _loadGoCallbacks.Clear();
+        _loadGoOrder.Clear();
+        _skillAnimation = null;
+    }
+    #endregion
+
+    /// <summary>沿 RO 接口申请一次模型 GO 回调；已加载同步执行并返回零，否则返回可取消票据。</summary>
+    /// <param name="callback">拿到完整模型时执行的具体操作，载荷是本模型原生 GameObject。</param>
+    /// <returns>冷模型等待票据；零表示已同步执行或未提供回调。</returns>
+    public int AddLoadGoCallback(Action<GameObject> callback)
+    {
+        if (callback == null)
+        {
+            return 0;
+        }
+        if (_isLoaded)
+        {
+            callback(_mObj.NativeObject);
+            return 0;
+        }
+        do
+        {
+            unchecked { _loadGoToken++; }
+        } while (_loadGoToken == 0 || _loadGoCallbacks.ContainsKey(_loadGoToken));
+        _loadGoCallbacks.Add(_loadGoToken, callback);
+        _loadGoOrder.Add(_loadGoToken);
+        return _loadGoToken;
+    }
+
+    #region 移除与回收
+    /// <summary>沿 RO 接口取消尚未交付的模型 GO 操作，不影响其他施法。</summary>
+    /// <param name="token">AddLoadGoCallback 返回的非零等待票据。</param>
+    /// <returns>仍在等待且已移除时为 true。</returns>
+    public bool RemoveLoadGoCallback(int token)
+    {
+        _loadGoOrder.Remove(token);
+        return _loadGoCallbacks.Remove(token);
+    }
+
+    /// <summary>技能退出动作槽时解除自己的动画归属，不影响已接管模型的新动作。</summary>
+    /// <param name="skill">请求解除归属的原技能实例。</param>
+    public void ReleaseSkillAnimation(MSkill skill)
+    {
+        if (ReferenceEquals(_skillAnimation, skill))
+        {
+            _skillAnimation = null;
+        }
+    }
+    #endregion
 
     /// <summary>
     /// 异步加载模型预制体。
@@ -205,6 +266,7 @@ public sealed class MModel
         });
     }
 
+    #region 核心逻辑
     /// <summary>
     /// 绑定外部已实例化 GameObject，适合场景预制体和测试资源。
     /// 不会触发异步加载，直接完成初始化。
@@ -252,18 +314,6 @@ public sealed class MModel
         Position += movement;
     }
 
-    /// <summary>
-    /// 回收 Animator 和 GameObject，异步回调使用的会话号同时失效。
-    /// 对象池复用时调用，确保旧资源被正确释放。
-    /// </summary>
-    public void Reset()
-    {
-        ResetNativeModel();
-        _loadGoCallbacks.Clear();
-        _loadGoOrder.Clear();
-        _skillAnimation = null;
-    }
-
     /// <summary>同一模型重新加载时只释放旧原生对象；已到期 GO 请求及当前动画归属等待新对象。</summary>
     private void ResetNativeModel()
     {
@@ -282,53 +332,11 @@ public sealed class MModel
         _visible = true;
     }
 
-    /// <summary>沿 RO 接口申请一次模型 GO 回调；已加载同步执行并返回零，否则返回可取消票据。</summary>
-    /// <param name="callback">拿到完整模型时执行的具体操作，载荷是本模型原生 GameObject。</param>
-    /// <returns>冷模型等待票据；零表示已同步执行或未提供回调。</returns>
-    public int AddLoadGoCallback(Action<GameObject> callback)
-    {
-        if (callback == null)
-        {
-            return 0;
-        }
-        if (_isLoaded)
-        {
-            callback(_mObj.NativeObject);
-            return 0;
-        }
-        do
-        {
-            unchecked { _loadGoToken++; }
-        } while (_loadGoToken == 0 || _loadGoCallbacks.ContainsKey(_loadGoToken));
-        _loadGoCallbacks.Add(_loadGoToken, callback);
-        _loadGoOrder.Add(_loadGoToken);
-        return _loadGoToken;
-    }
-
-    /// <summary>沿 RO 接口取消尚未交付的模型 GO 操作，不影响其他施法。</summary>
-    /// <param name="token">AddLoadGoCallback 返回的非零等待票据。</param>
-    /// <returns>仍在等待且已移除时为 true。</returns>
-    public bool RemoveLoadGoCallback(int token)
-    {
-        _loadGoOrder.Remove(token);
-        return _loadGoCallbacks.Remove(token);
-    }
-
     /// <summary>登记统一技能动画的当前所有者，模型迟到时只恢复这个动作。</summary>
     /// <param name="skill">仍占用当前技能动作槽的实例。</param>
     public void BindSkillAnimation(MSkill skill)
     {
         _skillAnimation = skill;
-    }
-
-    /// <summary>技能退出动作槽时解除自己的动画归属，不影响已接管模型的新动作。</summary>
-    /// <param name="skill">请求解除归属的原技能实例。</param>
-    public void ReleaseSkillAnimation(MSkill skill)
-    {
-        if (ReferenceEquals(_skillAnimation, skill))
-        {
-            _skillAnimation = null;
-        }
     }
 
     /// <summary>
@@ -405,4 +413,5 @@ public sealed class MModel
             }
         }
     }
+    #endregion
 }

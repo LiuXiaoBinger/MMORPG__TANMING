@@ -8,6 +8,8 @@ using Google.Protobuf;
 /// </summary>
 public sealed class TeamManager
 {
+
+    #region 字段
     /// <summary>单例实例，全局只保留一份队伍状态。</summary>
     private static readonly TeamManager _instance = new TeamManager();
 
@@ -61,6 +63,7 @@ public sealed class TeamManager
 
     /// <summary>副本实例ID自增序列，从 1 开始，0 保留表示公共场景。</summary>
     private ulong _nextInstanceId = 1UL;
+    #endregion
 
     /// <summary>队伍状态，保存成员、队长与当前副本实例。</summary>
     private sealed class Team
@@ -88,6 +91,19 @@ public sealed class TeamManager
     {
     }
 
+    /// <summary>
+    /// 角色掉线时的队伍清理入口，由 RoleManager 下线流程调用。
+    /// 行为与主动离队一致，保证掉线不会留下僵尸成员。
+    /// </summary>
+    /// <param name="roleId">掉线角色ID。</param>
+    public void OnRoleOffline(ulong roleId)
+    {
+        LeaveTeamInternal(roleId, false);
+        // 掉线角色未确认的邀请一并清除，避免邀请残留。
+        RemoveInvitationsOfRole(roleId);
+    }
+
+    #region 网络请求与消息
     /// <summary>
     /// 创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam。
     /// 创建者自动成为队长，队伍人数为 1。
@@ -124,6 +140,197 @@ public sealed class TeamManager
         return team.TeamId;
     }
 
+    /// <summary>向队伍全部在线成员整包下发队伍状态。</summary>
+    /// <param name="team">发生变化的队伍。</param>
+    private void NotifyTeamInfo(Team team)
+    {
+        if (team == null)
+        {
+            return;
+        }
+        // 本次要整包下发的队伍状态快照，成员信息按 team.Members 顺序逐项填充。
+        TeamInfoNtf notice = new TeamInfoNtf();
+        notice.TeamId = team.TeamId;
+        notice.CaptainId = team.CaptainId;
+        notice.MaxMember = MaxMember;
+        // index 为成员表零基下标，范围 [0, team.Members.Count)，按入队顺序生成成员项。
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            // 当前成员的权威角色ID，用于填成员项与查询在线对象。
+            ulong memberId = team.Members[index];
+            // 单个成员的下行信息项，昵称/等级/血量等取自在线对象，不在线时只保留ID与实例。
+            TeamMemberInfo memberInfo = new TeamMemberInfo();
+            memberInfo.RoleId = memberId;
+            memberInfo.IsCaptain = memberId == team.CaptainId;
+            memberInfo.InstanceId = (int)team.InstanceId;
+            // 当前成员的在线角色对象，用来补昵称/等级/血量等展示字段；为空说明已掉线，只发基础项。
+            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)memberId);
+            if (memberRole != null && memberRole.mainRoleInfo != null &&
+                memberRole.mainRoleInfo.BaseInfo != null)
+            {
+                // 该成员的角色基础信息，是昵称、等级、职业、场景与血量的唯一来源。
+                RoleBaseInfo baseInfo = memberRole.mainRoleInfo.BaseInfo;
+                memberInfo.Nickname = baseInfo.Nickname;
+                memberInfo.Level = baseInfo.Level;
+                memberInfo.JobId = baseInfo.JobId;
+                // 本项目以 MapId 作为场景标识，对应 RO memberList.sceneId。
+                memberInfo.SceneId = baseInfo.MapId;
+                memberInfo.CurrHp = baseInfo.CurrHp;
+                memberInfo.MaxHp = baseInfo.MaxHp;
+            }
+            notice.Members.Add(memberInfo);
+        }
+
+        // 已序列化的队伍状态字节，全队复用同一份，保证各成员看到同一版本快照。
+        ByteString payload = notice.ToByteString();
+        // index 为成员表零基下标，逐个下发同一份 payload。
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            // 当前成员的在线角色对象，作为接收方；为空说明已掉线，跳过下发。
+            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            if (memberRole == null)
+            {
+                continue;
+            }
+            memberRole.SendToClient(NetDefine.CMD_TeamInfoCode, payload);
+        }
+    }
+
+    /// <summary>
+    /// 向本人下发空队伍状态，客户端据此清空队伍界面并判定已离队。
+    /// 主城退队、副本退队共用同一份下发内容，保证两条分支的队伍界面表现一致。
+    /// </summary>
+    /// <param name="role">接收空队伍状态的在线角色。</param>
+    private static void SendEmptyTeamInfo(OnlineRole role)
+    {
+        if (role == null)
+        {
+            return;
+        }
+        // 空队伍状态：TeamId 与 CaptainId 都为 0，客户端据此清空队伍界面并判定已离队。
+        TeamInfoNtf emptyNotice = new TeamInfoNtf();
+        emptyNotice.TeamId = 0UL;
+        emptyNotice.CaptainId = 0UL;
+        emptyNotice.MaxMember = MaxMember;
+        role.SendToClient(NetDefine.CMD_TeamInfoCode, emptyNotice.ToByteString());
+    }
+    #endregion
+
+    #region 移除与回收
+    /// <summary>回收副本实例，当前实例只记录在队伍上，清空即回收。</summary>
+    /// <param name="instanceId">待回收的实例ID。</param>
+    private void ReleaseInstance(ulong instanceId)
+    {
+        // 实例状态保存在 Team.InstanceId 上，队伍解散时随队伍一并释放。
+        LogMsg.Info("副本实例回收: " + instanceId.ToString());
+    }
+
+    /// <summary>清除某队伍登记的全部待确认邀请。</summary>
+    /// <param name="teamId">需要清理邀请的队伍ID。</param>
+    private void RemoveTeamInvitations(ulong teamId)
+    {
+        // 目标队伍的键前缀"队伍ID_"，用来匹配所有以该队伍ID开头的邀请键。
+        string prefix = teamId.ToString() + "_";
+        // 邀请键快照：遍历期间会删除元素，先复制一份键列表避免边遍历边改集合。
+        List<string> keys = new List<string>(_invitations.Keys);
+        // index 为键快照的零基下标，范围 [0, keys.Count)，仅用于本次清理。
+        for (int index = 0; index < keys.Count; index++)
+        {
+            if (keys[index].StartsWith(prefix, StringComparison.Ordinal))
+            {
+                _invitations.Remove(keys[index]);
+            }
+        }
+    }
+
+    /// <summary>清除某角色作为被邀请人的全部待确认邀请。</summary>
+    /// <param name="roleId">掉线或被清理的角色ID。</param>
+    private void RemoveInvitationsOfRole(ulong roleId)
+    {
+        // 被邀请角色ID的键后缀"_角色ID"，用来匹配所有以该角色ID结尾的邀请键。
+        string suffix = "_" + roleId.ToString();
+        // 邀请键快照：遍历期间会删除元素，先复制一份键列表避免边遍历边改集合。
+        List<string> keys = new List<string>(_invitations.Keys);
+        // index 为键快照的零基下标，范围 [0, keys.Count)，仅用于本次清理。
+        for (int index = 0; index < keys.Count; index++)
+        {
+            if (keys[index].EndsWith(suffix, StringComparison.Ordinal))
+            {
+                _invitations.Remove(keys[index]);
+            }
+        }
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>
+    /// 返回角色所在副本实例ID，供 RoleManager 的附近过滤使用。
+    /// </summary>
+    /// <param name="roleId">待查询的角色ID。</param>
+    /// <returns>所在队伍实例ID；不在队伍或不在副本时返回 0。</returns>
+    public ulong GetInstanceId(ulong roleId)
+    {
+        // 角色所在队伍ID，由 _roleTeam 反查；反查失败说明不在队伍中，实例按 0（公共场景）处理。
+        ulong teamId;
+        if (!_roleTeam.TryGetValue(roleId, out teamId))
+        {
+            return 0UL;
+        }
+        // 队伍状态，实例号只记录在队伍上；取不到说明队伍已解散，同样按公共场景处理。
+        Team team;
+        if (!_teams.TryGetValue(teamId, out team))
+        {
+            return 0UL;
+        }
+        return team.InstanceId;
+    }
+
+    /// <summary>返回队伍当前成员数量，用于容量校验与状态查询。</summary>
+    /// <param name="teamId">待查询的队伍ID。</param>
+    /// <returns>成员数量；队伍不存在时返回 0。</returns>
+    public int GetMemberCount(ulong teamId)
+    {
+        // 待查询队伍的状态；取不到说明队伍ID无效或已解散，成员数按 0 返回。
+        Team team;
+        if (!_teams.TryGetValue(teamId, out team))
+        {
+            return 0;
+        }
+        return team.Members.Count;
+    }
+
+    /// <summary>返回队伍队长角色ID，用于身份校验与断言。</summary>
+    /// <param name="teamId">待查询的队伍ID。</param>
+    /// <returns>队长角色ID；队伍不存在时返回 0。</returns>
+    public ulong GetCaptainId(ulong teamId)
+    {
+        // 待查询队伍的状态；取不到说明队伍ID无效或已解散，队长ID按 0 返回。
+        Team team;
+        if (!_teams.TryGetValue(teamId, out team))
+        {
+            return 0UL;
+        }
+        return team.CaptainId;
+    }
+
+    /// <summary>
+    /// 返回角色所在队伍ID。
+    /// </summary>
+    /// <param name="roleId">待查询的角色ID。</param>
+    /// <returns>队伍ID；不在队伍时返回 0。</returns>
+    public ulong GetTeamId(ulong roleId)
+    {
+        // 角色所在队伍ID，由 _roleTeam 反查；反查失败说明不在队伍中，按 0 返回。
+        ulong teamId;
+        if (!_roleTeam.TryGetValue(roleId, out teamId))
+        {
+            return 0UL;
+        }
+        return teamId;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>
     /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
     /// 只登记待确认邀请，被邀请人同意后才真正入队；不关心失败原因的既有调用沿用布尔返回。
@@ -216,6 +423,7 @@ public sealed class TeamManager
         }
         return true;
     }
+
     /// <summary>
     /// 同意入队邀请，对应 RO TeamMgr.lua:165 AcceptTeamInvatation()。
     /// 校验队伍ID与邀请人一致后把角色加入队伍；不关心失败原因的既有调用沿用布尔返回。
@@ -370,6 +578,7 @@ public sealed class TeamManager
         NotifyTeamInfo(team);
         return true;
     }
+
     /// <summary>
     /// 申请加入指定队伍，对应 RO TeamMgr.lua:413 BegInTeamByTeamId(cTeamId)。
     /// 本阶段按"申请即入队"的最短流程处理，不引入额外审批队列。
@@ -483,18 +692,6 @@ public sealed class TeamManager
         }
         NotifyTeamInfo(team);
         return true;
-    }
-
-    /// <summary>
-    /// 角色掉线时的队伍清理入口，由 RoleManager 下线流程调用。
-    /// 行为与主动离队一致，保证掉线不会留下僵尸成员。
-    /// </summary>
-    /// <param name="roleId">掉线角色ID。</param>
-    public void OnRoleOffline(ulong roleId)
-    {
-        LeaveTeamInternal(roleId, false);
-        // 掉线角色未确认的邀请一并清除，避免邀请残留。
-        RemoveInvitationsOfRole(roleId);
     }
 
     /// <summary>
@@ -624,128 +821,6 @@ public sealed class TeamManager
     }
 
     /// <summary>
-    /// 返回角色所在副本实例ID，供 RoleManager 的附近过滤使用。
-    /// </summary>
-    /// <param name="roleId">待查询的角色ID。</param>
-    /// <returns>所在队伍实例ID；不在队伍或不在副本时返回 0。</returns>
-    public ulong GetInstanceId(ulong roleId)
-    {
-        // 角色所在队伍ID，由 _roleTeam 反查；反查失败说明不在队伍中，实例按 0（公共场景）处理。
-        ulong teamId;
-        if (!_roleTeam.TryGetValue(roleId, out teamId))
-        {
-            return 0UL;
-        }
-        // 队伍状态，实例号只记录在队伍上；取不到说明队伍已解散，同样按公共场景处理。
-        Team team;
-        if (!_teams.TryGetValue(teamId, out team))
-        {
-            return 0UL;
-        }
-        return team.InstanceId;
-    }
-
-    /// <summary>返回队伍当前成员数量，用于容量校验与状态查询。</summary>
-    /// <param name="teamId">待查询的队伍ID。</param>
-    /// <returns>成员数量；队伍不存在时返回 0。</returns>
-    public int GetMemberCount(ulong teamId)
-    {
-        // 待查询队伍的状态；取不到说明队伍ID无效或已解散，成员数按 0 返回。
-        Team team;
-        if (!_teams.TryGetValue(teamId, out team))
-        {
-            return 0;
-        }
-        return team.Members.Count;
-    }
-
-    /// <summary>返回队伍队长角色ID，用于身份校验与断言。</summary>
-    /// <param name="teamId">待查询的队伍ID。</param>
-    /// <returns>队长角色ID；队伍不存在时返回 0。</returns>
-    public ulong GetCaptainId(ulong teamId)
-    {
-        // 待查询队伍的状态；取不到说明队伍ID无效或已解散，队长ID按 0 返回。
-        Team team;
-        if (!_teams.TryGetValue(teamId, out team))
-        {
-            return 0UL;
-        }
-        return team.CaptainId;
-    }
-
-    /// <summary>
-    /// 返回角色所在队伍ID。
-    /// </summary>
-    /// <param name="roleId">待查询的角色ID。</param>
-    /// <returns>队伍ID；不在队伍时返回 0。</returns>
-    public ulong GetTeamId(ulong roleId)
-    {
-        // 角色所在队伍ID，由 _roleTeam 反查；反查失败说明不在队伍中，按 0 返回。
-        ulong teamId;
-        if (!_roleTeam.TryGetValue(roleId, out teamId))
-        {
-            return 0UL;
-        }
-        return teamId;
-    }
-
-    /// <summary>向队伍全部在线成员整包下发队伍状态。</summary>
-    /// <param name="team">发生变化的队伍。</param>
-    private void NotifyTeamInfo(Team team)
-    {
-        if (team == null)
-        {
-            return;
-        }
-        // 本次要整包下发的队伍状态快照，成员信息按 team.Members 顺序逐项填充。
-        TeamInfoNtf notice = new TeamInfoNtf();
-        notice.TeamId = team.TeamId;
-        notice.CaptainId = team.CaptainId;
-        notice.MaxMember = MaxMember;
-        // index 为成员表零基下标，范围 [0, team.Members.Count)，按入队顺序生成成员项。
-        for (int index = 0; index < team.Members.Count; index++)
-        {
-            // 当前成员的权威角色ID，用于填成员项与查询在线对象。
-            ulong memberId = team.Members[index];
-            // 单个成员的下行信息项，昵称/等级/血量等取自在线对象，不在线时只保留ID与实例。
-            TeamMemberInfo memberInfo = new TeamMemberInfo();
-            memberInfo.RoleId = memberId;
-            memberInfo.IsCaptain = memberId == team.CaptainId;
-            memberInfo.InstanceId = (int)team.InstanceId;
-            // 当前成员的在线角色对象，用来补昵称/等级/血量等展示字段；为空说明已掉线，只发基础项。
-            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)memberId);
-            if (memberRole != null && memberRole.mainRoleInfo != null &&
-                memberRole.mainRoleInfo.BaseInfo != null)
-            {
-                // 该成员的角色基础信息，是昵称、等级、职业、场景与血量的唯一来源。
-                RoleBaseInfo baseInfo = memberRole.mainRoleInfo.BaseInfo;
-                memberInfo.Nickname = baseInfo.Nickname;
-                memberInfo.Level = baseInfo.Level;
-                memberInfo.JobId = baseInfo.JobId;
-                // 本项目以 MapId 作为场景标识，对应 RO memberList.sceneId。
-                memberInfo.SceneId = baseInfo.MapId;
-                memberInfo.CurrHp = baseInfo.CurrHp;
-                memberInfo.MaxHp = baseInfo.MaxHp;
-            }
-            notice.Members.Add(memberInfo);
-        }
-
-        // 已序列化的队伍状态字节，全队复用同一份，保证各成员看到同一版本快照。
-        ByteString payload = notice.ToByteString();
-        // index 为成员表零基下标，逐个下发同一份 payload。
-        for (int index = 0; index < team.Members.Count; index++)
-        {
-            // 当前成员的在线角色对象，作为接收方；为空说明已掉线，跳过下发。
-            OnlineRole memberRole = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
-            if (memberRole == null)
-            {
-                continue;
-            }
-            memberRole.SendToClient(NetDefine.CMD_TeamInfoCode, payload);
-        }
-    }
-
-    /// <summary>
     /// 离队后的场景与实例处理，按"角色当前是否真的身处副本实例"以及"本次是否掉线清理"分流。
     /// 普通主城主动离队只清队伍关系；副本内退队才广播离开并回城；掉线一律广播离开并复位。
     /// </summary>
@@ -801,67 +876,5 @@ public sealed class TeamManager
 
         SendEmptyTeamInfo(role);
     }
-
-    /// <summary>
-    /// 向本人下发空队伍状态，客户端据此清空队伍界面并判定已离队。
-    /// 主城退队、副本退队共用同一份下发内容，保证两条分支的队伍界面表现一致。
-    /// </summary>
-    /// <param name="role">接收空队伍状态的在线角色。</param>
-    private static void SendEmptyTeamInfo(OnlineRole role)
-    {
-        if (role == null)
-        {
-            return;
-        }
-        // 空队伍状态：TeamId 与 CaptainId 都为 0，客户端据此清空队伍界面并判定已离队。
-        TeamInfoNtf emptyNotice = new TeamInfoNtf();
-        emptyNotice.TeamId = 0UL;
-        emptyNotice.CaptainId = 0UL;
-        emptyNotice.MaxMember = MaxMember;
-        role.SendToClient(NetDefine.CMD_TeamInfoCode, emptyNotice.ToByteString());
-    }
-
-    /// <summary>回收副本实例，当前实例只记录在队伍上，清空即回收。</summary>
-    /// <param name="instanceId">待回收的实例ID。</param>
-    private void ReleaseInstance(ulong instanceId)
-    {
-        // 实例状态保存在 Team.InstanceId 上，队伍解散时随队伍一并释放。
-        LogMsg.Info("副本实例回收: " + instanceId.ToString());
-    }
-
-    /// <summary>清除某队伍登记的全部待确认邀请。</summary>
-    /// <param name="teamId">需要清理邀请的队伍ID。</param>
-    private void RemoveTeamInvitations(ulong teamId)
-    {
-        // 目标队伍的键前缀"队伍ID_"，用来匹配所有以该队伍ID开头的邀请键。
-        string prefix = teamId.ToString() + "_";
-        // 邀请键快照：遍历期间会删除元素，先复制一份键列表避免边遍历边改集合。
-        List<string> keys = new List<string>(_invitations.Keys);
-        // index 为键快照的零基下标，范围 [0, keys.Count)，仅用于本次清理。
-        for (int index = 0; index < keys.Count; index++)
-        {
-            if (keys[index].StartsWith(prefix, StringComparison.Ordinal))
-            {
-                _invitations.Remove(keys[index]);
-            }
-        }
-    }
-
-    /// <summary>清除某角色作为被邀请人的全部待确认邀请。</summary>
-    /// <param name="roleId">掉线或被清理的角色ID。</param>
-    private void RemoveInvitationsOfRole(ulong roleId)
-    {
-        // 被邀请角色ID的键后缀"_角色ID"，用来匹配所有以该角色ID结尾的邀请键。
-        string suffix = "_" + roleId.ToString();
-        // 邀请键快照：遍历期间会删除元素，先复制一份键列表避免边遍历边改集合。
-        List<string> keys = new List<string>(_invitations.Keys);
-        // index 为键快照的零基下标，范围 [0, keys.Count)，仅用于本次清理。
-        for (int index = 0; index < keys.Count; index++)
-        {
-            if (keys[index].EndsWith(suffix, StringComparison.Ordinal))
-            {
-                _invitations.Remove(keys[index]);
-            }
-        }
-    }
+    #endregion
 }

@@ -8,11 +8,22 @@ namespace GameServer.SceneEntity
     public sealed class EntityWorld
     {
         private readonly Dictionary<ulong, ROObject> _entities = new Dictionary<ulong, ROObject>();
+
         private readonly List<ulong> _pendingDestroy = new List<ulong>();
 
         public int Count
         {
             get { return _entities.Count; }
+        }
+
+        public void Update(int deltaMilliseconds)
+        {
+            List<ROObject> snapshot = new List<ROObject>(_entities.Values);
+            for (int i = 0; i < snapshot.Count; i++)
+            {
+                snapshot[i].Update(deltaMilliseconds);
+            }
+            ProcessPendingDestroy();
         }
 
         public bool Add(ROObject entity)
@@ -24,21 +35,6 @@ namespace GameServer.SceneEntity
             _entities.Add(entity.UID, entity);
             entity.Initialize();
             return true;
-        }
-
-        public bool TryGet(ulong uid, out ROObject entity)
-        {
-            return _entities.TryGetValue(uid, out entity);
-        }
-
-        public T Get<T>(ulong uid) where T : ROObject
-        {
-            ROObject entity;
-            if (!_entities.TryGetValue(uid, out entity))
-            {
-                return null;
-            }
-            return entity as T;
         }
 
         public bool Remove(ulong uid)
@@ -53,6 +49,24 @@ namespace GameServer.SceneEntity
             return true;
         }
 
+        #region 查询与判定
+        public bool TryGet(ulong uid, out ROObject entity)
+        {
+            return _entities.TryGetValue(uid, out entity);
+        }
+
+        public T Get<T>(ulong uid) where T : ROObject
+        {
+            ROObject entity;
+            if (!_entities.TryGetValue(uid, out entity))
+            {
+                return null;
+            }
+            return entity as T;
+        }
+        #endregion
+
+        #region 核心逻辑
         public void MarkForDestroy(ulong uid)
         {
             ROObject entity;
@@ -65,16 +79,6 @@ namespace GameServer.SceneEntity
             {
                 _pendingDestroy.Add(uid);
             }
-        }
-
-        public void Update(int deltaMilliseconds)
-        {
-            List<ROObject> snapshot = new List<ROObject>(_entities.Values);
-            for (int i = 0; i < snapshot.Count; i++)
-            {
-                snapshot[i].Update(deltaMilliseconds);
-            }
-            ProcessPendingDestroy();
         }
 
         public List<EntitySnapshot> BuildSnapshots()
@@ -111,13 +115,6 @@ namespace GameServer.SceneEntity
                 Remove(pending[i]);
             }
         }
+        #endregion
     }
 }
-
-
-
-
-
-
-
-

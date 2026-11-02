@@ -6,8 +6,34 @@ namespace GameServer.SceneEntity
     /// <summary>参考项目 ROObject 的服务端纯逻辑对应物，不依赖 Unity GameObject。</summary>
     public abstract class ROObject
     {
+
+        #region 字段与属性
         private readonly EntityComponentContainer _components = new EntityComponentContainer();
 
+        public ulong UID { get; private set; }
+
+        public EntityType EntityType { get; private set; }
+
+        public EntityLifecycleState LifecycleState { get; private set; }
+
+        public int ConfigId { get; private set; }
+
+        public int MapId { get; set; }
+
+        public EntityTransformSnapshot Transform { get; private set; }
+
+        public int MaxHp { get; set; }
+
+        public int CurrentHp { get; set; }
+
+        public int MaxMp { get; set; }
+
+        public int CurrentMp { get; set; }
+
+        public EntityComponentContainer Components { get { return _components; } }
+        #endregion
+
+        #region 构造与初始化
         protected ROObject(ulong uid, EntityType entityType, int configId)
         {
             if (uid == 0UL)
@@ -19,27 +45,6 @@ namespace GameServer.SceneEntity
             ConfigId = configId;
             LifecycleState = EntityLifecycleState.Created;
             Transform = new EntityTransformSnapshot();
-        }
-
-        public ulong UID { get; private set; }
-        public EntityType EntityType { get; private set; }
-        public EntityLifecycleState LifecycleState { get; private set; }
-        public int ConfigId { get; private set; }
-        public int MapId { get; set; }
-        public EntityTransformSnapshot Transform { get; private set; }
-        public int MaxHp { get; set; }
-        public int CurrentHp { get; set; }
-        public int MaxMp { get; set; }
-        public int CurrentMp { get; set; }
-        public EntityComponentContainer Components { get { return _components; } }
-
-        public void AddComponent(EntityComponentBase component)
-        {
-            if (LifecycleState != EntityLifecycleState.Created)
-            {
-                throw new InvalidOperationException("实体初始化后不能再挂载组件");
-            }
-            _components.Add(component);
         }
 
         public void Initialize()
@@ -60,7 +65,28 @@ namespace GameServer.SceneEntity
             }
             _components.Update(deltaMilliseconds);
         }
+        #endregion
 
+        public void AddComponent(EntityComponentBase component)
+        {
+            if (LifecycleState != EntityLifecycleState.Created)
+            {
+                throw new InvalidOperationException("实体初始化后不能再挂载组件");
+            }
+            _components.Add(component);
+        }
+
+        public void Destroy()
+        {
+            if (LifecycleState == EntityLifecycleState.Destroyed)
+            {
+                return;
+            }
+            _components.Shutdown();
+            LifecycleState = EntityLifecycleState.Destroyed;
+        }
+
+        #region 核心逻辑
         public void Sleep()
         {
             if (LifecycleState == EntityLifecycleState.Active)
@@ -104,23 +130,6 @@ namespace GameServer.SceneEntity
             snapshot.CurrentMp = CurrentMp;
             return snapshot;
         }
-
-        public void Destroy()
-        {
-            if (LifecycleState == EntityLifecycleState.Destroyed)
-            {
-                return;
-            }
-            _components.Shutdown();
-            LifecycleState = EntityLifecycleState.Destroyed;
-        }
+        #endregion
     }
 }
-
-
-
-
-
-
-
-

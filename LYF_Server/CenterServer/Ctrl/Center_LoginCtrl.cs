@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf;
 
-
 /// <summary>
 /// 中心服务器处理登录模块的相关逻辑
 /// </summary>
@@ -14,6 +13,7 @@ public class Center_LoginCtrl : IContainer
     // 登录与角色业务的数据访问层。
     private LoginModle _loginModle = null;
 
+    #region 构造与初始化
     /// <summary>
     /// 创建登录控制器。
     /// </summary>
@@ -24,17 +24,19 @@ public class Center_LoginCtrl : IContainer
     }
 
     /// <summary>
+    /// 控制器初始化入口。
+    /// </summary>
+    public void OnInit()
+    {
+    }
+    #endregion
+
+    #region 事件回调
+    /// <summary>
     /// 处理客户端直接发送到中心服务器的命令。
     /// 当前登录流程中的请求由服务器间命令处理。
     /// </summary>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
-    {
-    }
-
-    /// <summary>
-    /// 控制器初始化入口。
-    /// </summary>
-    public void OnInit()
     {
     }
 
@@ -74,7 +76,6 @@ public class Center_LoginCtrl : IContainer
             default:
                 break;
         }
-
 
     }
 
@@ -153,6 +154,6 @@ public class Center_LoginCtrl : IContainer
         LogMsg.Info("OnRegistHandle=>ret::" + ret.ToString());
         serverBase.Send(basePackage,basePackage.ProtoCode,ret.ToByteString());
     }
-    
+    #endregion
     
 }

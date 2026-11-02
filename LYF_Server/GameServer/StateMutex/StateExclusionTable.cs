@@ -10,6 +10,8 @@ using System.Reflection;
 /// </summary>
 public sealed class StateExclusionTable
 {
+
+    #region 字段与常量
     /// <summary>状态列之前的固定列数：StateId、State_Name、Concatenate。</summary>
     private const int StateColumnOffset = 3;
 
@@ -31,25 +33,8 @@ public sealed class StateExclusionTable
     /// <summary>是否已完成装载。</summary>
     private bool loaded_;
 
-    /// <summary>构造空表；未装载前所有取值都按未配置处理。</summary>
-    private StateExclusionTable()
-    {
-        // max_count 取 StateTransitionType 的哨兵值 kStateMaxCount，等价 RO 的 EStateTransitionType 总数，
-        // 是矩阵的行列宽（当前 36），决定 values_ 与 names_ 的分配长度，构造后不再变化。
-        int max_count = (int)StateTransitionType.kStateMaxCount;
-        values_ = new int[max_count, max_count];
-        names_ = new string[max_count];
-        // from 是矩阵行下标（源状态），范围零到 kStateMaxCount 减一。
-        for (int from = 0; from < max_count; from++)
-        {
-            names_[from] = from.ToString(CultureInfo.InvariantCulture);
-            // to 是矩阵列下标（目标状态），范围零到 kStateMaxCount 减一。
-            for (int to = 0; to < max_count; to++)
-            {
-                values_[from, to] = (int)StateValueType.kMutexStateNone;
-            }
-        }
-    }
+    #region 构造与属性
+    #endregion
 
     /// <summary>状态互斥表的唯一实例。</summary>
     public static StateExclusionTable Instance
@@ -67,6 +52,29 @@ public sealed class StateExclusionTable
     public int StateCount
     {
         get { return state_count_; }
+    }
+
+    /// <summary>构造空表；未装载前所有取值都按未配置处理。</summary>
+    private StateExclusionTable()
+    {
+        // max_count 取 StateTransitionType 的哨兵值 kStateMaxCount，等价 RO 的 EStateTransitionType 总数，
+        // 是矩阵的行列宽（当前 36），决定 values_ 与 names_ 的分配长度，构造后不再变化。
+        int max_count = (int)StateTransitionType.kStateMaxCount;
+        values_ = new int[max_count, max_count];
+        names_ = new string[max_count];
+        // from 是矩阵行下标（源状态），范围零到 kStateMaxCount 减一。
+        for (int from = 0; from < max_count; from++)
+        {
+            names_[from] = from.ToString(CultureInfo.InvariantCulture);
+            // to 是矩阵列下标（目标状态），范围零到 kStateMaxCount 减一。
+            for (int to = 0; to < max_count; to++)
+            {
+                values_[from, to] = (int)StateValueType.kMutexStateNone;
+            }
+
+    #region 配置读取与解析
+    #endregion
+        }
     }
 
     /// <summary>
@@ -94,38 +102,6 @@ public sealed class StateExclusionTable
         }
         loaded_ = true;
         return true;
-    }
-
-    /// <summary>查询从 from 状态切换到 to 状态的互斥取值。</summary>
-    /// <param name="from">源状态。</param>
-    /// <param name="to">目标状态。</param>
-    /// <returns>互斥表单元格取值；越界或未装载时按未配置处理。</returns>
-    public StateValueType GetStateValue(StateTransitionType from, StateTransitionType to)
-    {
-        if (!IsInRange(from) || !IsInRange(to))
-        {
-            return StateValueType.kMutexStateNone;
-        }
-        return (StateValueType)values_[(int)from, (int)to];
-    }
-
-    /// <summary>取状态下标对应的 RO 原始状态名，供日志与自检使用。</summary>
-    /// <param name="type">状态标识。</param>
-    /// <returns>StateId 列原文；越界时返回下标字符串。</returns>
-    public string GetStateName(StateTransitionType type)
-    {
-        if (!IsInRange(type))
-        {
-            return ((int)type).ToString(CultureInfo.InvariantCulture);
-        }
-        return names_[(int)type];
-    }
-
-    /// <summary>判断状态下标是否落在互斥矩阵范围内。</summary>
-    /// <param name="type">状态标识。</param>
-    private static bool IsInRange(StateTransitionType type)
-    {
-        return (int)type >= 0 && (int)type < (int)StateTransitionType.kStateMaxCount;
     }
 
     /// <summary>读取嵌入资源文本；资源不存在时退回运行目录下的同名文件。</summary>
@@ -267,8 +243,43 @@ public sealed class StateExclusionTable
                 {
                     value = parsed;
                 }
+
+    #region 业务逻辑：状态查询
+    #endregion
             }
             values_[state_index, column] = value;
         }
+    }
+
+    /// <summary>查询从 from 状态切换到 to 状态的互斥取值。</summary>
+    /// <param name="from">源状态。</param>
+    /// <param name="to">目标状态。</param>
+    /// <returns>互斥表单元格取值；越界或未装载时按未配置处理。</returns>
+    public StateValueType GetStateValue(StateTransitionType from, StateTransitionType to)
+    {
+        if (!IsInRange(from) || !IsInRange(to))
+        {
+            return StateValueType.kMutexStateNone;
+        }
+        return (StateValueType)values_[(int)from, (int)to];
+    }
+
+    /// <summary>取状态下标对应的 RO 原始状态名，供日志与自检使用。</summary>
+    /// <param name="type">状态标识。</param>
+    /// <returns>StateId 列原文；越界时返回下标字符串。</returns>
+    public string GetStateName(StateTransitionType type)
+    {
+        if (!IsInRange(type))
+        {
+            return ((int)type).ToString(CultureInfo.InvariantCulture);
+        }
+        return names_[(int)type];
+    }
+    #endregion
+    /// <summary>判断状态下标是否落在互斥矩阵范围内。</summary>
+    /// <param name="type">状态标识。</param>
+    private static bool IsInRange(StateTransitionType type)
+    {
+        return (int)type >= 0 && (int)type < (int)StateTransitionType.kStateMaxCount;
     }
 }

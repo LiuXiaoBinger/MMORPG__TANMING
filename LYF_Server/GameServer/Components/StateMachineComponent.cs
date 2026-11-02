@@ -7,6 +7,8 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class StateMachineComponent : RoleComponentBase
 {
+
+    #region 字段
     /// <summary>状态标识到状态组件的映射，同一状态只能注册一次。</summary>
     private readonly Dictionary<StateDefine, ActionStateComponent> states_ =
         new Dictionary<StateDefine, ActionStateComponent>();
@@ -19,7 +21,9 @@ public sealed class StateMachineComponent : RoleComponentBase
 
     /// <summary>上一个状态，仅用于查询，不参与切换逻辑。</summary>
     private ActionStateComponent previous_;
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>创建角色状态机。</summary>
     /// <param name="owner">状态机所属的在线角色。</param>
     public StateMachineComponent(OnlineRole owner)
@@ -47,6 +51,61 @@ public sealed class StateMachineComponent : RoleComponentBase
         return true;
     }
 
+    /// <summary>驱动当前状态推进，并在自然结束后回到默认态。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        if (current_ == null)
+        {
+            return;
+        }
+        current_.StateUpdate(deltaMilliseconds);
+        if (!current_.IsFinished())
+        {
+            return;
+        }
+        TransferToState(null, default_);
+    }
+
+    /// <summary>释放时停止当前动作并清空状态表。</summary>
+    public override void Dispose()
+    {
+        if (current_ != null)
+        {
+            current_.Stop(StateDefine.kStateDefault, null);
+        }
+        states_.Clear();
+        default_ = null;
+        current_ = null;
+        previous_ = null;
+        base.Dispose();
+    }
+    #endregion
+
+    /// <summary>
+    /// 主动移动请求入口，对应 action_state_component.h 的 Move：
+    /// 允许带动作移动就直接放行，否则在可打断时先停止当前动作。
+    /// </summary>
+    /// <returns>允许本次移动返回 true。</returns>
+    public bool OnMove()
+    {
+        if (current_ == null)
+        {
+            return true;
+        }
+        if (current_.CanActiveMove())
+        {
+            return true;
+        }
+        if (current_.CanActiveInterrupt(StateDefine.kStateDefault))
+        {
+            current_.Stop(StateDefine.kStateDefault, null);
+            return true;
+        }
+        return false;
+    }
+
+    #region 查询与判定
     /// <summary>按状态标识取状态组件。</summary>
     /// <param name="state">状态标识。</param>
     /// <returns>已注册的状态组件，未注册返回空。</returns>
@@ -87,6 +146,46 @@ public sealed class StateMachineComponent : RoleComponentBase
         return current_.SelfState();
     }
 
+    /// <summary>
+    /// 尝试切换到目标状态：先做许可判定与事件校验，通过后才真正切换，
+    /// 对应 state_machine_component.cpp 的 TryTransferToState。
+    /// </summary>
+    /// <param name="args">触发切换的事件。</param>
+    /// <param name="next">目标状态组件。</param>
+    /// <returns>切换成功返回 true。</returns>
+    public bool TryTransferToState(ROEvent args, ActionStateComponent next)
+    {
+        if (next == null)
+        {
+            return false;
+        }
+        if (!CanAction(next.SelfState()))
+        {
+            return false;
+        }
+        if (!next.CanEnter(args))
+        {
+            return false;
+        }
+        TransferToState(args, next);
+        return true;
+    }
+
+    /// <summary>
+    /// 判断当前状态是否允许进入目标状态，对应 state_machine_component.cpp 的 CanAction。
+    /// </summary>
+    /// <param name="state">目标状态标识。</param>
+    public bool CanAction(StateDefine state)
+    {
+        if (current_ == null)
+        {
+            return true;
+        }
+        return current_.IsPermitted(state);
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>当前状态的事件令牌，对应 RO 的 ActionToken。</summary>
     public ulong ActionToken()
     {
@@ -133,31 +232,6 @@ public sealed class StateMachineComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 尝试切换到目标状态：先做许可判定与事件校验，通过后才真正切换，
-    /// 对应 state_machine_component.cpp 的 TryTransferToState。
-    /// </summary>
-    /// <param name="args">触发切换的事件。</param>
-    /// <param name="next">目标状态组件。</param>
-    /// <returns>切换成功返回 true。</returns>
-    public bool TryTransferToState(ROEvent args, ActionStateComponent next)
-    {
-        if (next == null)
-        {
-            return false;
-        }
-        if (!CanAction(next.SelfState()))
-        {
-            return false;
-        }
-        if (!next.CanEnter(args))
-        {
-            return false;
-        }
-        TransferToState(args, next);
-        return true;
-    }
-
-    /// <summary>
     /// 真正执行切换：当前态 Stop → 换引用 → 新状态 OnGetPermission，
     /// 顺序与 state_machine_component.cpp:72-83 一致。
     /// </summary>
@@ -177,70 +251,5 @@ public sealed class StateMachineComponent : RoleComponentBase
         current_ = next;
         current_.OnGetPermission(args);
     }
-
-    /// <summary>
-    /// 判断当前状态是否允许进入目标状态，对应 state_machine_component.cpp 的 CanAction。
-    /// </summary>
-    /// <param name="state">目标状态标识。</param>
-    public bool CanAction(StateDefine state)
-    {
-        if (current_ == null)
-        {
-            return true;
-        }
-        return current_.IsPermitted(state);
-    }
-
-    /// <summary>
-    /// 主动移动请求入口，对应 action_state_component.h 的 Move：
-    /// 允许带动作移动就直接放行，否则在可打断时先停止当前动作。
-    /// </summary>
-    /// <returns>允许本次移动返回 true。</returns>
-    public bool OnMove()
-    {
-        if (current_ == null)
-        {
-            return true;
-        }
-        if (current_.CanActiveMove())
-        {
-            return true;
-        }
-        if (current_.CanActiveInterrupt(StateDefine.kStateDefault))
-        {
-            current_.Stop(StateDefine.kStateDefault, null);
-            return true;
-        }
-        return false;
-    }
-
-    /// <summary>驱动当前状态推进，并在自然结束后回到默认态。</summary>
-    /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        if (current_ == null)
-        {
-            return;
-        }
-        current_.StateUpdate(deltaMilliseconds);
-        if (!current_.IsFinished())
-        {
-            return;
-        }
-        TransferToState(null, default_);
-    }
-
-    /// <summary>释放时停止当前动作并清空状态表。</summary>
-    public override void Dispose()
-    {
-        if (current_ != null)
-        {
-            current_.Stop(StateDefine.kStateDefault, null);
-        }
-        states_.Clear();
-        default_ = null;
-        current_ = null;
-        previous_ = null;
-        base.Dispose();
-    }
+    #endregion
 }

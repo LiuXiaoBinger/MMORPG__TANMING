@@ -94,26 +94,132 @@ public sealed class CTimerMgr
         }
     }
 
+    #region 字段与属性
     /// <summary>进程内唯一的定时器管理器实例。</summary>
     private static readonly CTimerMgr _instance = new CTimerMgr();
+
     /// <summary>当前所有已注册的定时器条目。</summary>
     private readonly Dictionary<long, TimerEntry> _timerEntries =
         new Dictionary<long, TimerEntry>();
+
     /// <summary>本次 Update 到期的条目缓存，重复使用以避免热路径分配。</summary>
     private readonly List<TimerEntry> _dueEntries = new List<TimerEntry>();
+
     /// <summary>下一个待分配的定时器句柄。</summary>
     private long _nextHandle;
-
-    private CTimerMgr()
-    {
-    }
 
     /// <summary>获取进程内唯一的定时器管理器。</summary>
     public static CTimerMgr Instance
     {
         get { return _instance; }
     }
+    #endregion
 
+    #region 构造与初始化
+    private CTimerMgr()
+    {
+    }
+
+    /// <summary>
+    /// 推进所有定时器。
+    /// 每个定时器每次 Update 最多触发一次，超出的间隔不补发，避免掉帧时回调风暴。
+    /// </summary>
+    /// <param name="deltaMilliseconds">本次逻辑帧经过的毫秒数。</param>
+    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
+    public void Update(int deltaMilliseconds)
+    {
+        if (deltaMilliseconds <= 0 || _timerEntries.Count == 0)
+        {
+            return;
+        }
+
+        _dueEntries.Clear();
+        foreach (TimerEntry entry in _timerEntries.Values)
+        {
+            if (!entry.Advance(deltaMilliseconds))
+            {
+                continue;
+            }
+
+            _dueEntries.Add(entry);
+        }
+
+        foreach (TimerEntry entry in _dueEntries)
+        {
+            if (!_timerEntries.ContainsKey(entry.Handle))
+            {
+                continue;
+            }
+
+            try
+            {
+                entry.Invoke();
+            }
+            catch (Exception exception)
+            {
+                Trace.TraceError("定时器回调异常，句柄=" + entry.Handle + "，异常=" + exception);
+            }
+
+            if (entry.RemoveAfterCallback)
+            {
+                _timerEntries.Remove(entry.Handle);
+            }
+        }
+
+        _dueEntries.Clear();
+    }
+    #endregion
+
+    /// <summary>生成不重复的正数句柄。</summary>
+    private long CreateHandle()
+    {
+        if (_nextHandle == long.MaxValue)
+        {
+            _nextHandle = 1L;
+        }
+        else
+        {
+            _nextHandle++;
+        }
+
+        while (_timerEntries.ContainsKey(_nextHandle))
+        {
+            if (_nextHandle == long.MaxValue)
+            {
+                _nextHandle = 1L;
+            }
+            else
+            {
+                _nextHandle++;
+            }
+        }
+
+        return _nextHandle;
+    }
+
+    #region 查询与判定
+    /// <summary>查询距离下一次触发的毫秒数，句柄无效时返回零。</summary>
+    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
+    public int GetTimeLeft(long handle)
+    {
+        TimerEntry entry;
+        if (!_timerEntries.TryGetValue(handle, out entry))
+        {
+            return 0;
+        }
+
+        return entry.RemainingMilliseconds;
+    }
+
+    /// <summary>判断定时器句柄当前是否仍处于注册状态。</summary>
+    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
+    public bool IsActive(long handle)
+    {
+        return handle != InvalidTimer && _timerEntries.ContainsKey(handle);
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>
     /// 注册一个定时器。
     /// </summary>
@@ -170,106 +276,11 @@ public sealed class CTimerMgr
         _timerEntries.Remove(handle);
     }
 
-    /// <summary>查询距离下一次触发的毫秒数，句柄无效时返回零。</summary>
-    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
-    public int GetTimeLeft(long handle)
-    {
-        TimerEntry entry;
-        if (!_timerEntries.TryGetValue(handle, out entry))
-        {
-            return 0;
-        }
-
-        return entry.RemainingMilliseconds;
-    }
-
-    /// <summary>判断定时器句柄当前是否仍处于注册状态。</summary>
-    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
-    public bool IsActive(long handle)
-    {
-        return handle != InvalidTimer && _timerEntries.ContainsKey(handle);
-    }
-
-    /// <summary>
-    /// 推进所有定时器。
-    /// 每个定时器每次 Update 最多触发一次，超出的间隔不补发，避免掉帧时回调风暴。
-    /// </summary>
-    /// <param name="deltaMilliseconds">本次逻辑帧经过的毫秒数。</param>
-    /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
-    public void Update(int deltaMilliseconds)
-    {
-        if (deltaMilliseconds <= 0 || _timerEntries.Count == 0)
-        {
-            return;
-        }
-
-        _dueEntries.Clear();
-        foreach (TimerEntry entry in _timerEntries.Values)
-        {
-            if (!entry.Advance(deltaMilliseconds))
-            {
-                continue;
-            }
-
-            _dueEntries.Add(entry);
-        }
-
-        foreach (TimerEntry entry in _dueEntries)
-        {
-            if (!_timerEntries.ContainsKey(entry.Handle))
-            {
-                continue;
-            }
-
-            try
-            {
-                entry.Invoke();
-            }
-            catch (Exception exception)
-            {
-                Trace.TraceError("定时器回调异常，句柄=" + entry.Handle + "，异常=" + exception);
-            }
-
-            if (entry.RemoveAfterCallback)
-            {
-                _timerEntries.Remove(entry.Handle);
-            }
-        }
-
-        _dueEntries.Clear();
-    }
-
     /// <summary>清理全部定时器，服务器退出时调用。</summary>
     /// <remarks>该接口只能在 GameServer 逻辑线程调用。</remarks>
     public void Clear()
     {
         _timerEntries.Clear();
     }
-
-    /// <summary>生成不重复的正数句柄。</summary>
-    private long CreateHandle()
-    {
-        if (_nextHandle == long.MaxValue)
-        {
-            _nextHandle = 1L;
-        }
-        else
-        {
-            _nextHandle++;
-        }
-
-        while (_timerEntries.ContainsKey(_nextHandle))
-        {
-            if (_nextHandle == long.MaxValue)
-            {
-                _nextHandle = 1L;
-            }
-            else
-            {
-                _nextHandle++;
-            }
-        }
-
-        return _nextHandle;
-    }
+    #endregion
 }

@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
 public enum ChatChannel
 {
     // 世界频道：默认的公开聊天频道。
@@ -52,91 +51,141 @@ public sealed class ChatMessage
 /// </summary>
 public sealed class ChatWindows : MonoBehaviour
 {
+
+    #region 字段、事件与属性
     // 最多保留并显示多少条消息。超过时会删除最早的一条。
     [SerializeField] private int maxVisibleMessages = 1000;
+
     // 本地玩家发送消息时显示的名字。
     [SerializeField] private string localPlayerName = "You";
+
     // 是否允许在输入框内按 Enter / 小键盘 Enter 发送消息。
     [SerializeField] private bool submitWithReturn = true;
+
     [SerializeField] private ChatChannel currentChannel = ChatChannel.World;
 
     // 聊天消息的数据列表。这里的内容可供其他脚本读取。
     private readonly List<ChatMessage> messages = new List<ChatMessage>();
+
     // 以下引用必须从 Chat 预制体 Inspector 拖拽赋值，避免运行时依赖对象名称。
     [Header("Chat UI References")]
     [SerializeField] private TMP_InputField inputField;
+
     [SerializeField] private InputField legacyInputField;
+
     [SerializeField] private Button sendButton;
+
     [SerializeField] private RectTransform content;
+
     [SerializeField] private ScrollRect scrollRect;
+
     // 消息行模板由预制体 Inspector 外部拖拽赋值，避免运行时按名称查找。
     [SerializeField] private RectTransform otherMessageTemplate;
+
     [SerializeField] private RectTransform playerMessageTemplate;
+
     [SerializeField] private RectTransform systemMessageTemplate;
+
     [SerializeField] private int pooledMessageRows = 30;
+
     private readonly List<Toggle> channelToggles = new List<Toggle>();
+
     private readonly Dictionary<ChatChannel, Toggle> channelToggleMap = new Dictionary<ChatChannel, Toggle>();
+
     private readonly List<RectTransform> pooledOtherRows = new List<RectTransform>();
+
     private readonly List<RectTransform> pooledPlayerRows = new List<RectTransform>();
+
     private readonly List<RectTransform> pooledSystemRows = new List<RectTransform>();
+
     private readonly List<ChatMessage> visibleMessages = new List<ChatMessage>();
+
     // 记录设置面板 Toggle 的最后一次状态。用于兜底同步嵌套预制体中的 Toggle 事件。
     private readonly bool[] channelVisibilityStates = new bool[Enum.GetValues(typeof(ChatChannel)).Length];
+
     private readonly bool[] channelVisibilityStateInitialized = new bool[Enum.GetValues(typeof(ChatChannel)).Length];
+
     private bool poolRefreshInProgress;
+
     private int systemPoolIndex;
+
     // 每个频道各自保存未读消息数量，切换频道时不会互相覆盖。
     private readonly int[] unreadMessageCounts = new int[Enum.GetValues(typeof(ChatChannel)).Length];
+
     // 预制体中的“新消息提示”节点及其文字、按钮。
     [SerializeField] private RectTransform newMessageHint;
+
     [SerializeField] private TMP_Text newMessageHintText;
+
     [SerializeField] private Text legacyNewMessageHintText;
+
     [SerializeField] private Button newMessageHintButton;
+
     [SerializeField] private Button settingButton;
+
     [SerializeField] private GameObject chatSettingPanel;
+
     [Header("Input Mode")]
     [SerializeField] private Button voiceButton;
+
     [SerializeField] private Button keyboardButton;
+
     [SerializeField] private GameObject textInputPanel;
+
     [SerializeField] private GameObject audioPanel;
+
     [Header("Channel Tabs")]
     [SerializeField] private Toggle worldChannelTab;
+
     [SerializeField] private Toggle guildChannelTab;
+
     [SerializeField] private Toggle teamChannelTab;
+
     [SerializeField] private Toggle nearbyChannelTab;
+
     [SerializeField] private Toggle privateChannelTab;
+
     [SerializeField] private Toggle watchChannelTab;
+
     [SerializeField] private Toggle professionChannelTab;
+
     [SerializeField] private Toggle systemChannelTab;
+
     [Header("Channel Visibility Settings")]
     [SerializeField] private Toggle worldVisibilityToggle;
+
     [SerializeField] private Toggle guildVisibilityToggle;
+
     [SerializeField] private Toggle teamVisibilityToggle;
+
     [SerializeField] private Toggle nearbyVisibilityToggle;
+
     [SerializeField] private Toggle systemVisibilityToggle;
+
     // 小于该值时认为滚动条已经到达底部，避免浮点误差导致提示无法清除。
     private const float BottomScrollThreshold = 0.01f;
+
     private const string ChannelVisibilityPreferencePrefix = "Chat.ChannelVisible.";
+
     // 记录上一帧 Enter 是否按下，避免长按时连续发送。
     private bool returnWasPressed;
 
     // 对外只读地提供消息列表，外部脚本不能直接增删该列表。
     public IReadOnlyList<ChatMessage> Messages => messages;
+
     public ChatChannel CurrentChannel => currentChannel;
+
     // 本地玩家消息发送后触发，可在其他脚本中订阅并发送给服务器。
     public event Action<ChatMessage> MessageSent;
+
     // 接收到外部消息后触发，可供其他系统监听。
     public event Action<ChatMessage> MessageReceived;
+
     // 聊天设置修改频道可见性后触发，供折叠聊天入口同步未读角标。
     public event Action<ChatChannel, bool> ChannelVisibilityChanged;
+    #endregion
 
-    /// <summary>返回频道标签是否在聊天设置中处于启用状态。</summary>
-    public bool IsChannelTabVisible(ChatChannel channel)
-    {
-        Toggle tab = GetChannelTab(channel);
-        return tab != null && tab.gameObject.activeSelf;
-    }
-
+    #region 生命周期
     private void Awake()
     {
         // 缓存预制体中的 UI 引用，并为消息列表补全必要的布局组件。
@@ -216,7 +265,6 @@ public sealed class ChatWindows : MonoBehaviour
             keyboardButton.onClick.RemoveListener(ShowTextInput);
         }
 
-
     }
 
     private void Update()
@@ -240,186 +288,40 @@ public sealed class ChatWindows : MonoBehaviour
 
         returnWasPressed = returnPressed;
     }
+    #endregion
 
-    public void SendInputMessage()
+    #region 界面显示与刷新
+    private void HidePooledRows()
     {
-        // 没有找到输入框时无法发送。
-        if (inputField == null && legacyInputField == null)
+        foreach (RectTransform row in pooledOtherRows)
         {
-            return;
+            if (row != null) row.gameObject.SetActive(false);
         }
 
-        // 去掉首尾空白，空消息不发送。
-        string text = GetInputText();
-        text = text == null ? string.Empty : text.Trim();
-        if (text.Length == 0)
+        foreach (RectTransform row in pooledPlayerRows)
         {
-            return;
+            if (row != null) row.gameObject.SetActive(false);
         }
 
-        // 生成本地消息后清空输入框，并继续保持输入焦点。
-        SendLocalMessage(text);
-        SetInputText(string.Empty);
+        foreach (RectTransform row in pooledSystemRows)
+        {
+            if (row != null) row.gameObject.SetActive(false);
+        }
+    }
+
+    private void ShowVoiceInput()
+    {
+        SetVoiceInputMode(true);
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    private void ShowTextInput()
+    {
+        SetVoiceInputMode(false);
         ActivateInputField();
-    }
-
-    public void SendLocalMessage(string text)
-    {
-        // 供其他脚本直接调用，用于发送本地玩家消息。
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return;
-        }
-
-        // 本地消息默认发送到世界频道。
-        ChatMessage message = new ChatMessage
-        {
-            Channel = currentChannel,
-            Sender = localPlayerName,
-            Text = text.Trim(),
-            IsLocalPlayer = true,
-            SentAt = DateTime.Now
-        };
-
-        // 同时写入数据列表、创建 UI，并通知外部订阅者。
-        AddMessage(message, true);
-        MessageSent?.Invoke(message);
-    }
-
-    public void ReceiveMessage(string sender, string text, ChatChannel channel = ChatChannel.World)
-    {
-        // 供网络层或其他脚本调用，用于显示收到的消息。
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return;
-        }
-
-        // 收到的消息默认不是本地玩家发送的。
-        ChatMessage message = new ChatMessage
-        {
-            Channel = channel,
-            Sender = sender ?? string.Empty,
-            Text = text.Trim(),
-            IsLocalPlayer = false,
-            SentAt = DateTime.Now
-        };
-
-        AddMessage(message, false);
-        MessageReceived?.Invoke(message);
-    }
-
-    public void ReceiveVoiceMessage(string sender, string text, AudioClip voiceClip, ChatChannel channel = ChatChannel.World)
-    {
-        if (string.IsNullOrWhiteSpace(text) && voiceClip == null)
-        {
-            return;
-        }
-
-        ChatMessage message = new ChatMessage
-        {
-            Channel = channel,
-            Sender = sender ?? string.Empty,
-            Text = text == null ? string.Empty : text.Trim(),
-            IsLocalPlayer = false,
-            HasVoice = voiceClip != null,
-            VoiceClip = voiceClip,
-            SentAt = DateTime.Now
-        };
-
-        AddMessage(message, false);
-        MessageReceived?.Invoke(message);
-    }
-
-    public void AddSystemMessage(string text)
-    {
-        // 系统消息只是 ReceiveMessage 的快捷写法。
-        ReceiveMessage("System", text, ChatChannel.System);
-    }
-
-    public void SelectChannel(ChatChannel channel)
-    {
-        if (currentChannel == channel)
-        {
-            SetSelectedChannelToggle(channel);
-            RefreshVisibleMessages(true);
-            return;
-        }
-
-        currentChannel = channel;
-        SetSelectedChannelToggle(channel);
-        RefreshVisibleMessages(true);
-    }
-
-    public void ClearMessages()
-    {
-        // 同时清除数据列表和消息对象池中的 UI。
-        messages.Clear();
-        Array.Clear(unreadMessageCounts, 0, unreadMessageCounts.Length);
-        if (content == null)
-        {
-            return;
-        }
-
-        HidePooledRows();
-        content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0f);
-        UpdateNewMessageHint();
-    }
-
-    private void AddMessage(ChatMessage message, bool scrollToBottom)
-    {
-        // 先存储消息数据。
-        messages.Add(message);
-        // 数据超过上限时，始终删除最早的消息和对应的第一行 UI。
-        while (messages.Count > Mathf.Max(1, maxVisibleMessages))
-        {
-            messages.RemoveAt(0);
-        }
-
-        // 本地发送才滚动到底部；他人和系统消息保持用户当前滚动位置。
-        if (message.Channel == currentChannel && content != null && scrollRect != null)
-        {
-            float previousPosition = scrollRect.verticalNormalizedPosition;
-            
-            bool wasAtBottom = IsAtBottom();//判断当前滚动条是否到底部
-            if (!scrollToBottom && !wasAtBottom)
-            {
-                IncrementUnreadCount(message.Channel);
-            }
-            else
-            {
-                RefreshVisibleMessages(scrollToBottom, previousPosition);
-            }
-           
-        }
-        else if (!message.IsLocalPlayer)
-        {
-            // 非当前频道的消息不会刷新列表，但必须保留到该频道自己的未读计数中。
-            IncrementUnreadCount(message.Channel);
-        }
-
-        UpdateNewMessageHint();
-    }
-
-    private IEnumerator ScrollToLatestMessage()
-    {
-        yield return null;
-        Canvas.ForceUpdateCanvases();
-        scrollRect.verticalNormalizedPosition = 0f;
-        RefreshPoolForScroll();
-        ClearUnreadCount(currentChannel);
-        UpdateNewMessageHint();
-    }
-
-    private IEnumerator RestoreScrollPosition(float normalizedPosition)
-    {
-        yield return null;
-        scrollRect.verticalNormalizedPosition = Mathf.Clamp01(normalizedPosition);
-        RefreshPoolForScroll();
-        if (IsAtBottom())
-        {
-            ClearUnreadCount(currentChannel);
-        }
-        UpdateNewMessageHint();
     }
 
     private void RefreshVisibleMessages(bool scrollToBottom)
@@ -453,16 +355,6 @@ public sealed class ChatWindows : MonoBehaviour
         {
             StartCoroutine(RestoreScrollPosition(previousPosition));
         }
-    }
-
-    private void OnScrollChanged(Vector2 _)
-    {
-        RefreshPoolForScroll();
-        if (IsAtBottom())
-        {
-            ClearUnreadCount(currentChannel);
-        }
-        UpdateNewMessageHint();
     }
 
     private void RefreshPoolForScroll()
@@ -516,6 +408,437 @@ public sealed class ChatWindows : MonoBehaviour
         poolRefreshInProgress = false;
     }
 
+    private void SynchronizeChannelVisibilitySettings()
+    {
+        SynchronizeChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
+        SynchronizeChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
+        SynchronizeChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
+        SynchronizeChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
+        SynchronizeChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
+    }
+
+    private void SynchronizeChannelVisibilitySetting(Toggle visibilityToggle, ChatChannel channel)
+    {
+        if (visibilityToggle == null)
+        {
+            return;
+        }
+
+        int index = (int)channel;
+        if (!channelVisibilityStateInitialized[index] || channelVisibilityStates[index] != visibilityToggle.isOn)
+        {
+            ApplyChannelVisibility(channel, visibilityToggle.isOn, true);
+        }
+    }
+
+    private static void UpdateChannelToggleGraphic(Toggle toggle)
+    {
+        if (toggle == null || toggle.graphic == null)
+        {
+            return;
+        }
+
+        toggle.graphic.gameObject.SetActive(toggle.isOn);
+        toggle.graphic.enabled = true;
+    }
+
+    /// <summary>根据当前频道的未读数更新提示节点的显示和文案。</summary>
+    private void UpdateNewMessageHint()
+    {
+        if (newMessageHint == null)
+        {
+            return;
+        }
+
+        int index = (int)currentChannel;
+        int unreadCount = index >= 0 && index < unreadMessageCounts.Length
+            ? unreadMessageCounts[index]
+            : 0;
+        bool shouldShow = unreadCount > 0 && !IsAtBottom();
+        newMessageHint.gameObject.SetActive(shouldShow);
+        if (shouldShow && newMessageHintText != null)
+        {
+            newMessageHintText.text = unreadCount + "条新消息↓";
+        }
+        if (shouldShow && legacyNewMessageHintText != null)
+        {
+            legacyNewMessageHintText.text = unreadCount + "条新消息↓";
+        }
+    }
+    #endregion
+
+    #region 交互响应与网络请求与消息
+    private void OnScrollChanged(Vector2 _)
+    {
+        RefreshPoolForScroll();
+        if (IsAtBottom())
+        {
+            ClearUnreadCount(currentChannel);
+        }
+        UpdateNewMessageHint();
+    }
+
+    private void OnChannelVisibilityChanged(ChatChannel channel, bool isVisible)
+    {
+        ApplyChannelVisibility(channel, isVisible, true);
+    }
+
+    /// <summary>点击提示后滚到当前频道底部，并清除当前频道未读数。</summary>
+    private void OnNewMessageHintClicked()
+    {
+        if (scrollRect == null)
+        {
+            return;
+        }
+
+        ClearUnreadCount(currentChannel);
+        StartCoroutine(ScrollToLatestMessage());
+    }
+
+    private void SubmitOnEndEdit(string _)
+    {
+        // onEndEdit 也可能由失焦触发，因此仍需确认是当前输入框且按下了 Enter。
+        if (!submitWithReturn || EventSystem.current == null)
+        {
+            return;
+        }
+
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
+        GameObject inputObject = inputField != null ? inputField.gameObject : legacyInputField != null ? legacyInputField.gameObject : null;
+        if (selected == inputObject && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+        {
+            SendInputMessage();
+        }
+    }
+
+    private void SubmitOnLegacyEndEdit(string _)
+    {
+        SubmitOnEndEdit(_);
+    }
+
+    public void SendInputMessage()
+    {
+        // 没有找到输入框时无法发送。
+        if (inputField == null && legacyInputField == null)
+        {
+            return;
+        }
+
+        // 去掉首尾空白，空消息不发送。
+        string text = GetInputText();
+        text = text == null ? string.Empty : text.Trim();
+        if (text.Length == 0)
+        {
+            return;
+        }
+
+        // 生成本地消息后清空输入框，并继续保持输入焦点。
+        SendLocalMessage(text);
+        SetInputText(string.Empty);
+        ActivateInputField();
+    }
+
+    public void SendLocalMessage(string text)
+    {
+        // 供其他脚本直接调用，用于发送本地玩家消息。
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return;
+        }
+
+        // 本地消息默认发送到世界频道。
+        ChatMessage message = new ChatMessage
+        {
+            Channel = currentChannel,
+            Sender = localPlayerName,
+            Text = text.Trim(),
+            IsLocalPlayer = true,
+            SentAt = DateTime.Now
+        };
+
+        // 同时写入数据列表、创建 UI，并通知外部订阅者。
+        AddMessage(message, true);
+        MessageSent?.Invoke(message);
+    }
+    #endregion
+
+    #region 创建与移除
+    public void AddSystemMessage(string text)
+    {
+        // 系统消息只是 ReceiveMessage 的快捷写法。
+        ReceiveMessage("System", text, ChatChannel.System);
+    }
+
+    private void AddMessage(ChatMessage message, bool scrollToBottom)
+    {
+        // 先存储消息数据。
+        messages.Add(message);
+        // 数据超过上限时，始终删除最早的消息和对应的第一行 UI。
+        while (messages.Count > Mathf.Max(1, maxVisibleMessages))
+        {
+            messages.RemoveAt(0);
+        }
+
+        // 本地发送才滚动到底部；他人和系统消息保持用户当前滚动位置。
+        if (message.Channel == currentChannel && content != null && scrollRect != null)
+        {
+            float previousPosition = scrollRect.verticalNormalizedPosition;
+            
+            bool wasAtBottom = IsAtBottom();//判断当前滚动条是否到底部
+            if (!scrollToBottom && !wasAtBottom)
+            {
+                IncrementUnreadCount(message.Channel);
+            }
+            else
+            {
+                RefreshVisibleMessages(scrollToBottom, previousPosition);
+            }
+           
+        }
+        else if (!message.IsLocalPlayer)
+        {
+            // 非当前频道的消息不会刷新列表，但必须保留到该频道自己的未读计数中。
+            IncrementUnreadCount(message.Channel);
+        }
+
+        UpdateNewMessageHint();
+    }
+
+    private bool RemoveUnusedPoolRow(List<RectTransform> pool, int required)
+    {
+        if (pool.Count <= required)
+        {
+            return false;
+        }
+
+        int last = pool.Count - 1;
+        RectTransform row = pool[last];
+        pool.RemoveAt(last);
+        if (row != null) Destroy(row.gameObject);
+        return true;
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>返回频道标签是否在聊天设置中处于启用状态。</summary>
+    public bool IsChannelTabVisible(ChatChannel channel)
+    {
+        Toggle tab = GetChannelTab(channel);
+        return tab != null && tab.gameObject.activeSelf;
+    }
+
+    private static string GetChannelVisibilityPreferenceKey(ChatChannel channel)
+    {
+        return ChannelVisibilityPreferencePrefix + channel;
+    }
+
+    private Toggle GetChannelTab(ChatChannel channel)
+    {
+        switch (channel)
+        {
+            case ChatChannel.World: return worldChannelTab;
+            case ChatChannel.Team: return teamChannelTab;
+            case ChatChannel.Guild: return guildChannelTab;
+            case ChatChannel.Nearby: return nearbyChannelTab;
+            case ChatChannel.Private: return privateChannelTab;
+            case ChatChannel.Watch: return watchChannelTab;
+            case ChatChannel.Profession: return professionChannelTab;
+            case ChatChannel.System: return systemChannelTab;
+            default: return null;
+        }
+    }
+
+    private bool TryGetFirstVisibleChannel(out ChatChannel channel)
+    {
+        foreach (ChatChannel candidate in Enum.GetValues(typeof(ChatChannel)))
+        {
+            Toggle tab = GetChannelTab(candidate);
+            if (tab != null && tab.gameObject.activeSelf)
+            {
+                channel = candidate;
+                return true;
+            }
+        }
+
+        channel = currentChannel;
+        return false;
+    }
+
+    /// <summary>判断当前滚动条是否已经位于底部。</summary>
+    private bool IsAtBottom()
+    {
+        return scrollRect == null || scrollRect.verticalNormalizedPosition <= 
+            BottomScrollThreshold;
+    }
+
+    private TMP_Text FindTMPText(Transform root, string objectName)
+    {
+        // 包括未激活的子物体一起查找，便于使用隐藏的模板节点。
+        foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
+        {
+            if (text.name == objectName)
+            {
+                return text;
+            }
+        }
+
+        return null;
+    }
+
+    private Text FindLegacyText(Transform root, string objectName)
+    {
+        foreach (Text text in root.GetComponentsInChildren<Text>(true))
+        {
+            if (text.name == objectName)
+            {
+                return text;
+            }
+        }
+
+        return null;
+    }
+
+    private Transform FindNamedTransform(Transform root, string objectName)
+    {
+        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == objectName)
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private string GetInputText()
+    {
+        return inputField != null ? inputField.text : legacyInputField != null ? legacyInputField.text : string.Empty;
+    }
+
+    private bool IsInputFocused()
+    {
+        return (inputField != null && inputField.isFocused) || (legacyInputField != null && legacyInputField.isFocused);
+    }
+
+    private T FindComponent<T>(string objectName) where T : Component
+    {
+        // 先按名称找到节点，再从该节点获取指定类型的组件。
+        RectTransform target = FindTransform(objectName);
+        return target == null ? null : target.GetComponent<T>();
+    }
+
+    private RectTransform FindTransform(string objectName)
+    {
+        // 在当前对象及其所有子节点中，按名称查找 RectTransform；true 表示包含未激活节点。
+        foreach (RectTransform rectTransform in GetComponentsInChildren<RectTransform>(true))
+        {
+            if (rectTransform.name == objectName)
+            {
+                return rectTransform;
+            }
+        }
+
+        return null;
+    }
+    #endregion
+
+    #region 核心逻辑
+    public void ReceiveMessage(string sender, string text, ChatChannel channel = ChatChannel.World)
+    {
+        // 供网络层或其他脚本调用，用于显示收到的消息。
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return;
+        }
+
+        // 收到的消息默认不是本地玩家发送的。
+        ChatMessage message = new ChatMessage
+        {
+            Channel = channel,
+            Sender = sender ?? string.Empty,
+            Text = text.Trim(),
+            IsLocalPlayer = false,
+            SentAt = DateTime.Now
+        };
+
+        AddMessage(message, false);
+        MessageReceived?.Invoke(message);
+    }
+
+    public void ReceiveVoiceMessage(string sender, string text, AudioClip voiceClip, ChatChannel channel = ChatChannel.World)
+    {
+        if (string.IsNullOrWhiteSpace(text) && voiceClip == null)
+        {
+            return;
+        }
+
+        ChatMessage message = new ChatMessage
+        {
+            Channel = channel,
+            Sender = sender ?? string.Empty,
+            Text = text == null ? string.Empty : text.Trim(),
+            IsLocalPlayer = false,
+            HasVoice = voiceClip != null,
+            VoiceClip = voiceClip,
+            SentAt = DateTime.Now
+        };
+
+        AddMessage(message, false);
+        MessageReceived?.Invoke(message);
+    }
+
+    public void SelectChannel(ChatChannel channel)
+    {
+        if (currentChannel == channel)
+        {
+            SetSelectedChannelToggle(channel);
+            RefreshVisibleMessages(true);
+            return;
+        }
+
+        currentChannel = channel;
+        SetSelectedChannelToggle(channel);
+        RefreshVisibleMessages(true);
+    }
+
+    public void ClearMessages()
+    {
+        // 同时清除数据列表和消息对象池中的 UI。
+        messages.Clear();
+        Array.Clear(unreadMessageCounts, 0, unreadMessageCounts.Length);
+        if (content == null)
+        {
+            return;
+        }
+
+        HidePooledRows();
+        content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0f);
+        UpdateNewMessageHint();
+    }
+
+    private IEnumerator ScrollToLatestMessage()
+    {
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        scrollRect.verticalNormalizedPosition = 0f;
+        RefreshPoolForScroll();
+        ClearUnreadCount(currentChannel);
+        UpdateNewMessageHint();
+    }
+
+    private IEnumerator RestoreScrollPosition(float normalizedPosition)
+    {
+        yield return null;
+        scrollRect.verticalNormalizedPosition = Mathf.Clamp01(normalizedPosition);
+        RefreshPoolForScroll();
+        if (IsAtBottom())
+        {
+            ClearUnreadCount(currentChannel);
+        }
+        UpdateNewMessageHint();
+    }
+
     private void EnsurePoolRows(List<RectTransform> pool, RectTransform template, int required)
     {
         if (template == null)
@@ -545,38 +868,6 @@ public sealed class ChatWindows : MonoBehaviour
             if (RemoveUnusedPoolRow(pooledPlayerRows, playerRequired)) continue;
             if (RemoveUnusedPoolRow(pooledSystemRows, systemRequired)) continue;
             break;
-        }
-    }
-
-    private bool RemoveUnusedPoolRow(List<RectTransform> pool, int required)
-    {
-        if (pool.Count <= required)
-        {
-            return false;
-        }
-
-        int last = pool.Count - 1;
-        RectTransform row = pool[last];
-        pool.RemoveAt(last);
-        if (row != null) Destroy(row.gameObject);
-        return true;
-    }
-
-    private void HidePooledRows()
-    {
-        foreach (RectTransform row in pooledOtherRows)
-        {
-            if (row != null) row.gameObject.SetActive(false);
-        }
-
-        foreach (RectTransform row in pooledPlayerRows)
-        {
-            if (row != null) row.gameObject.SetActive(false);
-        }
-
-        foreach (RectTransform row in pooledSystemRows)
-        {
-            if (row != null) row.gameObject.SetActive(false);
         }
     }
 
@@ -630,21 +921,6 @@ public sealed class ChatWindows : MonoBehaviour
         {
             chatSettingPanel.SetActive(!chatSettingPanel.activeSelf);
         }
-    }
-
-    private void ShowVoiceInput()
-    {
-        SetVoiceInputMode(true);
-        if (EventSystem.current != null)
-        {
-            EventSystem.current.SetSelectedGameObject(null);
-        }
-    }
-
-    private void ShowTextInput()
-    {
-        SetVoiceInputMode(false);
-        ActivateInputField();
     }
 
     private void SetVoiceInputMode(bool showVoiceInput)
@@ -741,8 +1017,6 @@ public sealed class ChatWindows : MonoBehaviour
         }
     }
 
-
-
     private void BindChannelToggles()
     {
         channelToggles.Clear();
@@ -804,34 +1078,6 @@ public sealed class ChatWindows : MonoBehaviour
         capturedToggle.onValueChanged.AddListener(isOn => OnChannelVisibilityChanged(channel, isOn));
     }
 
-    private void OnChannelVisibilityChanged(ChatChannel channel, bool isVisible)
-    {
-        ApplyChannelVisibility(channel, isVisible, true);
-    }
-
-    private void SynchronizeChannelVisibilitySettings()
-    {
-        SynchronizeChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
-        SynchronizeChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
-        SynchronizeChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
-        SynchronizeChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
-        SynchronizeChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
-    }
-
-    private void SynchronizeChannelVisibilitySetting(Toggle visibilityToggle, ChatChannel channel)
-    {
-        if (visibilityToggle == null)
-        {
-            return;
-        }
-
-        int index = (int)channel;
-        if (!channelVisibilityStateInitialized[index] || channelVisibilityStates[index] != visibilityToggle.isOn)
-        {
-            ApplyChannelVisibility(channel, visibilityToggle.isOn, true);
-        }
-    }
-
     private void ApplyChannelVisibility(ChatChannel channel, bool isVisible, bool savePreference)
     {
         int index = (int)channel;
@@ -852,11 +1098,6 @@ public sealed class ChatWindows : MonoBehaviour
         ChannelVisibilityChanged?.Invoke(channel, isVisible);
     }
 
-    private static string GetChannelVisibilityPreferenceKey(ChatChannel channel)
-    {
-        return ChannelVisibilityPreferencePrefix + channel;
-    }
-
     private void SetChannelTabVisible(ChatChannel channel, bool visible)
     {
         Toggle tab = GetChannelTab(channel);
@@ -874,38 +1115,6 @@ public sealed class ChatWindows : MonoBehaviour
                 SelectChannel(fallback);
             }
         }
-    }
-
-    private Toggle GetChannelTab(ChatChannel channel)
-    {
-        switch (channel)
-        {
-            case ChatChannel.World: return worldChannelTab;
-            case ChatChannel.Team: return teamChannelTab;
-            case ChatChannel.Guild: return guildChannelTab;
-            case ChatChannel.Nearby: return nearbyChannelTab;
-            case ChatChannel.Private: return privateChannelTab;
-            case ChatChannel.Watch: return watchChannelTab;
-            case ChatChannel.Profession: return professionChannelTab;
-            case ChatChannel.System: return systemChannelTab;
-            default: return null;
-        }
-    }
-
-    private bool TryGetFirstVisibleChannel(out ChatChannel channel)
-    {
-        foreach (ChatChannel candidate in Enum.GetValues(typeof(ChatChannel)))
-        {
-            Toggle tab = GetChannelTab(candidate);
-            if (tab != null && tab.gameObject.activeSelf)
-            {
-                channel = candidate;
-                return true;
-            }
-        }
-
-        channel = currentChannel;
-        return false;
     }
 
     private void SetSelectedChannelToggle(ChatChannel channel)
@@ -935,17 +1144,6 @@ public sealed class ChatWindows : MonoBehaviour
         toggle.graphic.gameObject.SetActive(toggle.isOn);
         toggle.graphic.raycastTarget = false;
         UpdateChannelToggleGraphic(toggle);
-    }
-
-    private static void UpdateChannelToggleGraphic(Toggle toggle)
-    {
-        if (toggle == null || toggle.graphic == null)
-        {
-            return;
-        }
-
-        toggle.graphic.gameObject.SetActive(toggle.isOn);
-        toggle.graphic.enabled = true;
     }
 
     private void SetTemplateText(Transform row, ChatMessage message)
@@ -1031,13 +1229,6 @@ public sealed class ChatWindows : MonoBehaviour
         }
     }
 
-    /// <summary>判断当前滚动条是否已经位于底部。</summary>
-    private bool IsAtBottom()
-    {
-        return scrollRect == null || scrollRect.verticalNormalizedPosition <= 
-            BottomScrollThreshold;
-    }
-
     /// <summary>增加指定频道的未读数量，并限制为非负值。</summary>
     private void IncrementUnreadCount(ChatChannel channel)
     {
@@ -1058,108 +1249,6 @@ public sealed class ChatWindows : MonoBehaviour
         }
     }
 
-    /// <summary>根据当前频道的未读数更新提示节点的显示和文案。</summary>
-    private void UpdateNewMessageHint()
-    {
-        if (newMessageHint == null)
-        {
-            return;
-        }
-
-        int index = (int)currentChannel;
-        int unreadCount = index >= 0 && index < unreadMessageCounts.Length
-            ? unreadMessageCounts[index]
-            : 0;
-        bool shouldShow = unreadCount > 0 && !IsAtBottom();
-        newMessageHint.gameObject.SetActive(shouldShow);
-        if (shouldShow && newMessageHintText != null)
-        {
-            newMessageHintText.text = unreadCount + "条新消息↓";
-        }
-        if (shouldShow && legacyNewMessageHintText != null)
-        {
-            legacyNewMessageHintText.text = unreadCount + "条新消息↓";
-        }
-    }
-
-    /// <summary>点击提示后滚到当前频道底部，并清除当前频道未读数。</summary>
-    private void OnNewMessageHintClicked()
-    {
-        if (scrollRect == null)
-        {
-            return;
-        }
-
-        ClearUnreadCount(currentChannel);
-        StartCoroutine(ScrollToLatestMessage());
-    }
-
-    private TMP_Text FindTMPText(Transform root, string objectName)
-    {
-        // 包括未激活的子物体一起查找，便于使用隐藏的模板节点。
-        foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
-        {
-            if (text.name == objectName)
-            {
-                return text;
-            }
-        }
-
-        return null;
-    }
-
-    private Text FindLegacyText(Transform root, string objectName)
-    {
-        foreach (Text text in root.GetComponentsInChildren<Text>(true))
-        {
-            if (text.name == objectName)
-            {
-                return text;
-            }
-        }
-
-        return null;
-    }
-
-    private Transform FindNamedTransform(Transform root, string objectName)
-    {
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
-        {
-            if (child.name == objectName)
-            {
-                return child;
-            }
-        }
-
-        return null;
-    }
-
-    private void SubmitOnEndEdit(string _)
-    {
-        // onEndEdit 也可能由失焦触发，因此仍需确认是当前输入框且按下了 Enter。
-        if (!submitWithReturn || EventSystem.current == null)
-        {
-            return;
-        }
-
-        GameObject selected = EventSystem.current.currentSelectedGameObject;
-        GameObject inputObject = inputField != null ? inputField.gameObject : legacyInputField != null ? legacyInputField.gameObject : null;
-        if (selected == inputObject && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
-        {
-            SendInputMessage();
-        }
-    }
-
-    private void SubmitOnLegacyEndEdit(string _)
-    {
-        SubmitOnEndEdit(_);
-    }
-
-    private string GetInputText()
-    {
-        return inputField != null ? inputField.text : legacyInputField != null ? legacyInputField.text : string.Empty;
-    }
-
     private void SetInputText(string value)
     {
         if (inputField != null) inputField.text = value;
@@ -1170,11 +1259,6 @@ public sealed class ChatWindows : MonoBehaviour
     {
         if (inputField != null) inputField.ActivateInputField();
         else if (legacyInputField != null) legacyInputField.ActivateInputField();
-    }
-
-    private bool IsInputFocused()
-    {
-        return (inputField != null && inputField.isFocused) || (legacyInputField != null && legacyInputField.isFocused);
     }
 
     private string FormatMessage(ChatMessage message)
@@ -1188,25 +1272,5 @@ public sealed class ChatWindows : MonoBehaviour
         string channel = message.Channel.ToString();
         return "[" + channel + "] " + message.Sender + ": " + message.Text;
     }
-
-    private T FindComponent<T>(string objectName) where T : Component
-    {
-        // 先按名称找到节点，再从该节点获取指定类型的组件。
-        RectTransform target = FindTransform(objectName);
-        return target == null ? null : target.GetComponent<T>();
-    }
-
-    private RectTransform FindTransform(string objectName)
-    {
-        // 在当前对象及其所有子节点中，按名称查找 RectTransform；true 表示包含未激活节点。
-        foreach (RectTransform rectTransform in GetComponentsInChildren<RectTransform>(true))
-        {
-            if (rectTransform.name == objectName)
-            {
-                return rectTransform;
-            }
-        }
-
-        return null;
-    }
+    #endregion
 }

@@ -6,6 +6,12 @@
 /// </summary>
 public class LoginCtrl:IContainer
 {
+    /// <summary>IContainer 初始化回调，登录控制器无预加载资源，留空实现。</summary>
+    public void OnInit()
+    {
+    }
+
+    #region 事件回调
     /// <summary>
     /// 登录服务器作为客户端，收到中心服务器发来的处理结果数据，按协议号分发回传 Unity。
     /// </summary>
@@ -31,7 +37,6 @@ public class LoginCtrl:IContainer
             
         }
     }
-   
 
     private void OnLoginGameServerResultHandle(Session seesion, BasePackage basePackage)
     {
@@ -91,11 +96,6 @@ public class LoginCtrl:IContainer
         seesion.Send(basePackage);
     }
 
-    /// <summary>IContainer 初始化回调，登录控制器无预加载资源，留空实现。</summary>
-    public void OnInit()
-    {
-    }
-
     /// <summary>
     /// 登录服务器作为服务器，接收 Unity 上行请求并按协议号分发到验证码、注册、登录、列表、选服处理。
     /// </summary>
@@ -126,7 +126,6 @@ public class LoginCtrl:IContainer
                 break;
         }
 
-
     }
 
     private void OnRegistVarifyHandle(BaseLink serverBase, BasePackage basePackage)
@@ -139,8 +138,6 @@ public class LoginCtrl:IContainer
         GRPCMgr.Instance.GetVarifyCodeAsync(req.Email);
         LogMsg.Info("OnRegistVarifyHandle::" + req.ToString());
     }
-
-    
 
     private void OnLoginGameServerHandle(BaseLink serverBase, BasePackage basePackage)
     {
@@ -213,5 +210,6 @@ public class LoginCtrl:IContainer
         serverBase._client.Send(basePackage);
         LogMsg.Info("OnRegistHandle::" + req.ToString());
     }
+    #endregion
         
 }

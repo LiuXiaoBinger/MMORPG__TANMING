@@ -7,6 +7,8 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class TeamData
 {
+
+    #region 字段、事件与属性
     /// <summary>单例，全局只保留一份队伍状态。</summary>
     private static readonly TeamData _instance = new TeamData();
 
@@ -126,14 +128,9 @@ public sealed class TeamData
     {
         get { return _applyTeamId != 0UL; }
     }
+    #endregion
 
-    /// <summary>写入本地主角角色ID，供邀请与申请的来源判定使用。</summary>
-    /// <param name="roleId">本地主角角色ID，0 表示未知。</param>
-    public void SetLocalRoleId(ulong roleId)
-    {
-        _localRoleId = roleId;
-    }
-
+    #region 查询与判定
     /// <summary>按索引取成员信息，越界时返回 null。</summary>
     /// <param name="index">成员在服务器下发顺序中的零基下标。</param>
     /// <returns>成员信息；下标无效时返回 null。</returns>
@@ -175,6 +172,15 @@ public sealed class TeamData
     public bool IsCaptain(ulong roleId)
     {
         return CaptainId != 0UL && CaptainId == roleId;
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>写入本地主角角色ID，供邀请与申请的来源判定使用。</summary>
+    /// <param name="roleId">本地主角角色ID，0 表示未知。</param>
+    public void SetLocalRoleId(ulong roleId)
+    {
+        _localRoleId = roleId;
     }
 
     /// <summary>用服务器下发的整包队伍状态覆盖本地缓存。</summary>
@@ -267,4 +273,5 @@ public sealed class TeamData
             InvitationChanged();
         }
     }
+    #endregion
 }

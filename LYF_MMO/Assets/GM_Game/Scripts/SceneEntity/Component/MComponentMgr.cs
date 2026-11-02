@@ -9,22 +9,22 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class MComponentMgr
 {
+
+    #region 字段与属性
     /// <summary>全局单例实例。</summary>
     private static readonly MComponentMgr _instance = new MComponentMgr();
+
     /// <summary>普通实体组件对象池，键为组件实际类型，值为可复用组件队列。</summary>
     private readonly Dictionary<Type, Queue<EntityComponentBase>> _componentPool =
         new Dictionary<Type, Queue<EntityComponentBase>>();
+
     /// <summary>动作状态专用对象池，键为动作状态类型，值为可复用动作状态队列。</summary>
     private readonly Dictionary<Type, Queue<MActionComponent>> _actionStatePool =
         new Dictionary<Type, Queue<MActionComponent>>();
+
     /// <summary>按实体类型登记的附加组件类型表，由 Builder/注册流程配置，创建实体时批量追加。</summary>
     private readonly Dictionary<EntityType, List<Type>> _extraComponentTypes =
         new Dictionary<EntityType, List<Type>>();
-
-    /// <summary>私有构造，禁止外部 new，强制走 <see cref="Instance"/> 单例。</summary>
-    private MComponentMgr()
-    {
-    }
 
     /// <summary>组件管理器单例访问入口。</summary>
     public static MComponentMgr Instance
@@ -37,7 +37,78 @@ public sealed class MComponentMgr
     {
         get { return _instance; }
     }
+    #endregion
 
+    #region 构造与事件注册与注销
+    /// <summary>私有构造，禁止外部 new，强制走 <see cref="Instance"/> 单例。</summary>
+    private MComponentMgr()
+    {
+    }
+
+    /// <summary>登记某类实体需要追加的附加组件类型，Builder 或启动流程在创建实体前调用。</summary>
+    /// <param name="entityType">实体类型标识。</param>
+    /// <param name="componentTypes">要追加的组件类型数组，自动去重并校验是否继承 <see cref="EntityComponentBase"/>。</param>
+    public void RegisterExtraComponents(EntityType entityType, params Type[] componentTypes)
+    {
+        List<Type> types;
+        if (!_extraComponentTypes.TryGetValue(entityType, out types))
+        {
+            types = new List<Type>();
+            _extraComponentTypes.Add(entityType, types);
+        }
+        if (componentTypes == null)
+        {
+            return;
+        }
+        for (int index = 0; index < componentTypes.Length; index++)
+        {
+            Type type = componentTypes[index];
+            if (type != null && typeof(EntityComponentBase).IsAssignableFrom(type) &&
+                !types.Contains(type))
+            {
+                types.Add(type);
+            }
+        }
+    }
+    #endregion
+
+    #region 界面刷新
+    /// <summary>依次更新实体四个专用组件。</summary>
+    /// <param name="entity">宿主实体。</param>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
+    public void UpdateSpecialComponents(MEntity entity, int deltaMilliseconds)
+    {
+        if (entity == null)
+        {
+            return;
+        }
+        UpdateComponent(entity.MoveComp, deltaMilliseconds);
+        UpdateComponent(entity.Buff, deltaMilliseconds);
+        UpdateComponent(entity.Skill, deltaMilliseconds);
+        UpdateComponent(entity.Machine, deltaMilliseconds);
+    }
+
+    /// <summary>安全调用单个专用组件的 Update，捕获异常避免阻断其他组件。</summary>
+    /// <param name="component">待更新组件，为空直接跳过。</param>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
+    private static void UpdateComponent(EntityComponentBase component, int deltaMilliseconds)
+    {
+        if (component == null)
+        {
+            return;
+        }
+        try
+        {
+            component.Update(deltaMilliseconds);
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogError("实体专用组件更新失败: " + component.GetType().Name + "，" + exception);
+        }
+    }
+    #endregion
+
+    #region 创建与添加
     /// <summary>创建普通组件并挂接到宿主的普通组件容器。</summary>
     /// <typeparam name="T">组件类型，必须继承 <see cref="EntityComponentBase"/>。</typeparam>
     /// <param name="owner">宿主对象，通常为 <see cref="MEntity"/>。</param>
@@ -128,36 +199,9 @@ public sealed class MComponentMgr
             }
         }
     }
+    #endregion
 
-    /// <summary>依次初始化实体四个专用组件：Move、Buff、Skill、Machine。</summary>
-    /// <param name="entity">宿主实体，为空时直接返回。</param>
-    public void InitializeSpecialComponents(MEntity entity)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-        InitializeComponent(entity.MoveComp);
-        InitializeComponent(entity.Buff);
-        InitializeComponent(entity.Skill);
-        InitializeComponent(entity.Machine);
-    }
-
-    /// <summary>依次更新实体四个专用组件。</summary>
-    /// <param name="entity">宿主实体。</param>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
-    public void UpdateSpecialComponents(MEntity entity, int deltaMilliseconds)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-        UpdateComponent(entity.MoveComp, deltaMilliseconds);
-        UpdateComponent(entity.Buff, deltaMilliseconds);
-        UpdateComponent(entity.Skill, deltaMilliseconds);
-        UpdateComponent(entity.Machine, deltaMilliseconds);
-    }
-
+    #region 移除与回收
     /// <summary>回收实体四个专用组件，并清空实体快捷引用。</summary>
     /// <param name="entity">宿主实体，为空时直接返回。</param>
     public void ReleaseSpecialComponents(MEntity entity)
@@ -184,41 +228,6 @@ public sealed class MComponentMgr
     public void ReleaseComponent(EntityComponentBase component)
     {
         ReleaseComponent(component, true);
-    }
-
-    /// <summary>从动作状态池获取状态，状态始终由 MStateMachine 独立持有。</summary>
-    /// <param name="stateType">动作状态类型。</param>
-    /// <param name="owner">宿主对象。</param>
-    /// <returns>可复用或新建并已重新绑定宿主的动作状态实例，参数非法时返回 null。</returns>
-    public MActionComponent AcquireActionState(Type stateType, ROObject owner)
-    {
-        if (stateType == null || owner == null || !typeof(MActionComponent).IsAssignableFrom(stateType))
-        {
-            return null;
-        }
-        Queue<MActionComponent> queue;
-        MActionComponent state = null;
-        // 优先从对象池取出，没有可用实例再反射新建
-        if (_actionStatePool.TryGetValue(stateType, out queue) && queue.Count > 0)
-        {
-            state = queue.Dequeue();
-        }
-        else
-        {
-            try
-            {
-                state = Activator.CreateInstance(stateType, owner) as MActionComponent;
-            }
-            catch (Exception exception)
-            {
-                UnityEngine.Debug.LogError("动作状态创建失败: " + stateType.Name + "，" + exception);
-            }
-        }
-        if (state != null)
-        {
-            state.RebindOwner(owner);
-        }
-        return state;
     }
 
     /// <summary>动作状态停止后清理并回收到专用状态池。</summary>
@@ -276,34 +285,57 @@ public sealed class MComponentMgr
         }
         queue.Enqueue(component);
     }
+    #endregion
 
-    /// <summary>登记某类实体需要追加的附加组件类型，Builder 或启动流程在创建实体前调用。</summary>
-    /// <param name="entityType">实体类型标识。</param>
-    /// <param name="componentTypes">要追加的组件类型数组，自动去重并校验是否继承 <see cref="EntityComponentBase"/>。</param>
-    public void RegisterExtraComponents(EntityType entityType, params Type[] componentTypes)
+    #region 核心逻辑
+    /// <summary>依次初始化实体四个专用组件：Move、Buff、Skill、Machine。</summary>
+    /// <param name="entity">宿主实体，为空时直接返回。</param>
+    public void InitializeSpecialComponents(MEntity entity)
     {
-        List<Type> types;
-        if (!_extraComponentTypes.TryGetValue(entityType, out types))
-        {
-            types = new List<Type>();
-            _extraComponentTypes.Add(entityType, types);
-        }
-        if (componentTypes == null)
+        if (entity == null)
         {
             return;
         }
-        for (int index = 0; index < componentTypes.Length; index++)
-        {
-            Type type = componentTypes[index];
-            if (type != null && typeof(EntityComponentBase).IsAssignableFrom(type) &&
-                !types.Contains(type))
-            {
-                types.Add(type);
-            }
-        }
+        InitializeComponent(entity.MoveComp);
+        InitializeComponent(entity.Buff);
+        InitializeComponent(entity.Skill);
+        InitializeComponent(entity.Machine);
     }
 
-    
+    /// <summary>从动作状态池获取状态，状态始终由 MStateMachine 独立持有。</summary>
+    /// <param name="stateType">动作状态类型。</param>
+    /// <param name="owner">宿主对象。</param>
+    /// <returns>可复用或新建并已重新绑定宿主的动作状态实例，参数非法时返回 null。</returns>
+    public MActionComponent AcquireActionState(Type stateType, ROObject owner)
+    {
+        if (stateType == null || owner == null || !typeof(MActionComponent).IsAssignableFrom(stateType))
+        {
+            return null;
+        }
+        Queue<MActionComponent> queue;
+        MActionComponent state = null;
+        // 优先从对象池取出，没有可用实例再反射新建
+        if (_actionStatePool.TryGetValue(stateType, out queue) && queue.Count > 0)
+        {
+            state = queue.Dequeue();
+        }
+        else
+        {
+            try
+            {
+                state = Activator.CreateInstance(stateType, owner) as MActionComponent;
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogError("动作状态创建失败: " + stateType.Name + "，" + exception);
+            }
+        }
+        if (state != null)
+        {
+            state.RebindOwner(owner);
+        }
+        return state;
+    }
 
     /// <summary>从普通组件池取出一个可复用组件，池中无可用实例时反射新建。</summary>
     /// <param name="owner">宿主对象，用于构造新组件。</param>
@@ -350,24 +382,6 @@ public sealed class MComponentMgr
             UnityEngine.Debug.LogError("实体专用组件初始化失败: " + component.GetType().Name + "，" + exception);
         }
     }
-
-    /// <summary>安全调用单个专用组件的 Update，捕获异常避免阻断其他组件。</summary>
-    /// <param name="component">待更新组件，为空直接跳过。</param>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
-    private static void UpdateComponent(EntityComponentBase component, int deltaMilliseconds)
-    {
-        if (component == null)
-        {
-            return;
-        }
-        try
-        {
-            component.Update(deltaMilliseconds);
-        }
-        catch (Exception exception)
-        {
-            UnityEngine.Debug.LogError("实体专用组件更新失败: " + component.GetType().Name + "，" + exception);
-        }
-    }
+    #endregion
 
 }

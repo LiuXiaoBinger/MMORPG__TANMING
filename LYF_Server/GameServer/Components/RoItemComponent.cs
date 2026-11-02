@@ -9,21 +9,33 @@ using Google.Protobuf;
 /// </summary>
 public class RoItemComponent : RoleComponentBase
 {
+
+    #region 字段
     // 四类可扩容背包的最小初始容量。
     private const int MinOpenedGridCount = 81;
+
     // 数据库存储为 byte 时允许的最大容量。
     private const int MaxOpenedGridCount = byte.MaxValue;
+
     // 仅保存四类可扩容背包的权威容量。
     private readonly Dictionary<KnapsackType, int> _openedGridCounts =
         new Dictionary<KnapsackType, int>();
+
     // 每个真实容器对应一个延迟持久化状态对象。
     private Dictionary<KnapsackType, ItemDataListDB> _itemDataLists;
+
     // 角色物品内存状态的单调递增版本，每次物品变更自增，用于 CenterServer 幂等与 ACK 对齐。
     //需要同步给客户端的道具id
     private Dictionary<long,ChangeReason> _need_update_item;
-    
+
     // 需要延时删除的道具id vector
     private Dictionary<long,ChangeReason> _delay_del_item_map;
+
+    // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
+    private Dictionary<KnapsackType, RoItemContainer> _itemContainers;
+    #endregion
+
+    #region 构造与初始化
     /// <summary>
     /// 构造角色物品组件。
     /// </summary>
@@ -32,9 +44,6 @@ public class RoItemComponent : RoleComponentBase
         : base(owner)
     {
     }
-
-    // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
-    private Dictionary<KnapsackType, RoItemContainer> _itemContainers;
 
     /// <summary>
     /// 初始化组件，创建五类背包容器与对应的持久化状态对象，并为四类可扩容背包设置默认 81 格容量。
@@ -73,315 +82,6 @@ public class RoItemComponent : RoleComponentBase
         }
     }
 
-    public override RoleModuleType GetModuleId()
-    {
-        return RoleModuleType.kRoleModuleTypeItemComponent;
-    }
-
-    /// <summary>获取虚拟物品背包中的指定物品数量。</summary>
-    /// <param name="itemId">虚拟物品配置 ID，也就是商城配置中的 CurrencyItemId 值。</param>
-    /// <returns>虚拟物品总数量。</returns>
-    public long GetVirtualItemCount(int itemId)
-    {
-        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
-        if (container == null || !IsConfiguredVirtualItem(itemId))
-        {
-            return 0L;
-        }
-
-        return container.CountItem(itemId, ItemBind.kItemBindNo);
-    }
-
-    /// <summary>增加虚拟物品；虚拟物品没有容量限制但仍通过普通物品脏数据链路保存。</summary>
-    /// <param name="itemId">虚拟物品配置 ID。</param>
-    /// <param name="count">增加数量。</param>
-    /// <returns>成功返回 true。</returns>
-    public bool GiveVirtualItem(int itemId, long count)
-    {
-        if (!IsConfiguredVirtualItem(itemId) || count <= 0 || count > int.MaxValue)
-        {
-            return false;
-        }
-
-        ItemBase item = AddItem(itemId, (int)count, new ChangeReason(ItemChangeReason.ITEM_REASON_NONE),
-            ItemSign.IsNoSign, 0, 0L, UpdateType.eUT_Normal, new IdipParam());
-        return item != null;
-    }
-
-    /// <summary>扣除虚拟物品；余额不足时不修改任何物品实例。</summary>
-    /// <param name="itemId">虚拟物品配置 ID。</param>
-    /// <param name="count">扣除数量。</param>
-    /// <returns>成功返回 true，余额不足或参数非法返回 false。</returns>
-    public bool TakeVirtualItem(int itemId, long count)
-    {
-        if (!IsConfiguredVirtualItem(itemId) || count <= 0)
-        {
-            return false;
-        }
-
-        long remaining = count;
-        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
-        if (container == null || GetVirtualItemCount(itemId) < count)
-        {
-            return false;
-        }
-
-        List<ItemBase> itemSnapshot = new List<ItemBase>(container.GetItemMap().Values);
-        List<ItemBase> stacks = new List<ItemBase>();
-        for (int index = 0; index < itemSnapshot.Count; index++)
-        {
-            ItemBase item = itemSnapshot[index];
-            if (item.GetItemID() == itemId)
-            {
-                stacks.Add(item);
-            }
-        }
-
-        for (int index = 0; index < stacks.Count; index++)
-        {
-            ItemBase item = stacks[index];
-            if (remaining <= 0)
-            {
-                break;
-            }
-
-            int takeCount = (int)Math.Min((long)item.GetItemCount(), remaining);
-            if (DeleteItem(item.GetItemUID(), takeCount,
-                new ChangeReason(ItemChangeReason.ITEM_REASON_NONE), UpdateType.eUT_Normal))
-            {
-                remaining -= takeCount;
-            }
-        }
-
-        return remaining == 0;
-    }
-
-    /// <summary>按背包类型获取容器；组件尚未初始化或类型不存在时返回 null。</summary>
-    /// <param name="type">背包类型。</param>
-    /// <returns>对应容器实例，未初始化或未知类型返回 null。</returns>
-    public RoItemContainer GetContainer(KnapsackType type)
-    {
-        if (_itemContainers == null)
-        {
-            return null;
-        }
-
-        RoItemContainer container;
-        if (_itemContainers.TryGetValue(type, out container))
-        {
-            return container;
-        }
-        return null;
-    }
-
-    /// <summary>获取指定可扩容背包的已开启格子数。</summary>
-    /// <param name="type">背包类型，应为四类可扩容背包之一。</param>
-    /// <returns>已开启格子数；未记录时回退到容器当前容量。</returns>
-    public int GetOpenedGridCount(KnapsackType type)
-    {
-        int count;
-        if (_openedGridCounts.TryGetValue(type, out count))
-        {
-            return count;
-        }
-
-        RoItemContainer container = GetContainer(type);
-        if (container == null)
-        {
-            return 0;
-        }
-        return container.GetContainerSize();
-    }
-
-    /// <summary>更新扩容容量，统一校验类型和 81-255 范围。</summary>
-    /// <param name="type">背包类型，必须为可扩容类型。</param>
-    /// <param name="count">目标格子数，范围 [81, 255]。</param>
-    /// <returns>设置成功返回 true，类型不合法或越界返回 false。</returns>
-    public bool SetOpenedGridCount(KnapsackType type, int count)
-    {
-        if (!IsExpandableType(type) || count < MinOpenedGridCount || count > MaxOpenedGridCount)
-        {
-            return false;
-        }
-        return ApplyOpenedGridCount(type, count);
-    }
-
-    /// <summary>加载中心服容量，低于最小值时按 81 格兼容。</summary>
-    /// <param name="type">背包类型。</param>
-    /// <param name="count">中心服存储的格子数，0 或负数视为无效。</param>
-    /// <returns>加载成功返回 true。</returns>
-    public bool LoadOpenedGridCount(KnapsackType type, int count)
-    {
-        if (!IsExpandableType(type) || count <= 0 || count > MaxOpenedGridCount)
-        {
-            return false;
-        }
-        return ApplyOpenedGridCount(type, Math.Max(MinOpenedGridCount, count));
-    }
-
-    /// <summary>统一写入容量字典并同步对应容器。</summary>
-    /// <param name="type">背包类型。</param>
-    /// <param name="count">目标格子数。</param>
-    /// <returns>成功返回 true；类型不可扩容、容器为空或越界返回 false。</returns>
-    private bool ApplyOpenedGridCount(KnapsackType type, int count)
-    {
-        RoItemContainer container = GetContainer(type);
-        // 类型不可扩容或容器尚未创建时拒绝写入。
-        if (!IsExpandableType(type) || container == null)
-        {
-            return false;
-        }
-        // 目标格子数小于最小或大于最大合法范围时拒绝写入。
-        if (count < MinOpenedGridCount || count > MaxOpenedGridCount)
-        {
-            return false;
-        }
-        container.SetContainerSize(count);
-        _openedGridCounts[type] = count;
-        return true;
-    }
-
-    /// <summary>判断是否为四类可扩容背包。</summary>
-    /// <param name="type">待判断的背包类型。</param>
-    /// <returns>可扩容返回 true，穿戴栏等返回 false。</returns>
-    private static bool IsExpandableType(KnapsackType type)
-    {
-        // 是否为普通包裹或装备包裹类型。
-        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
-        // 是否为消耗品包裹或材料包裹类型。
-        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
-        return isPlainOrEquip || isConsumeOrMaterial;
-    }
-
-    /// <summary>获取四类可扩容背包的类型数组，用于批量初始化与遍历。</summary>
-    /// <returns>包含四类可扩容背包类型的新数组。</returns>
-    private static KnapsackType[] GetExpandableTypes()
-    {
-        return new[]
-        {
-            KnapsackType.RolePackPlain,
-            KnapsackType.RolePackEquip,
-            KnapsackType.RolePackConsume,
-            KnapsackType.RolePackMaterial
-        };
-    }
-
-    /// <summary>返回容器只读视图，供服务层查询而不替换组件内部字典。</summary>
-    /// <returns>背包类型到容器的只读字典。</returns>
-    public IReadOnlyDictionary<KnapsackType, RoItemContainer> GetContainers()
-    {
-        return _itemContainers;
-    }
-
-    /// <summary>
-    /// 从中心服登录回包装载角色全部背包数据：先恢复各背包容量，再清空容器，
-    /// 按 UID 去重后逐类装入物品，最后恢复保存版本并重置所有持久化状态为干净。
-    /// </summary>
-    /// <param name="ret">中心服返回的角色背包信息回包。</param>
-    public void LoadKnapsack(RoleKanpsackInfoRet ret)
-    {
-        // 回包为空或命令码非成功时直接放弃装载。
-        if (ret == null || ret.CmdCode != CmdCode.Succeed)
-        {
-            return;
-        }
-        // 背包数据为空或容器字典未初始化时直接放弃装载。
-        if (ret.RoleKanpsackInfo == null || _itemContainers == null)
-        {
-            return;
-        }
-
-        RoleKanpsackInfo info = ret.RoleKanpsackInfo;
-
-        // 先恢复每类背包的已开启容量。
-        for (int index = 0; index < info.KanpsackTypeCountLst.Count; index++)
-        {
-            Kanpsacktypecount packCount = info.KanpsackTypeCountLst[index];
-            LoadOpenedGridCount((KnapsackType)packCount.Type, packCount.Count);
-        }
-
-        // 清空所有容器内存状态，准备全量装载。
-        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
-        for (int index = 0; index < containerSnapshot.Count; index++)
-        {
-            RoItemContainer container = containerSnapshot[index];
-            container.Clear();
-        }
-
-        // role_pack_plain 仅包含普通背包；各分类列表独立装入对应真实容器，UID 去重用于防御异常重复数据。
-        HashSet<long> loadedItemUids = new HashSet<long>();
-        LoadItems(info.RolePackPlain, loadedItemUids);
-        LoadItems(info.RolePackEquip, loadedItemUids);
-        LoadItems(info.RolePackConsume, loadedItemUids);
-        LoadItems(info.RolePackMaterial, loadedItemUids);
-        LoadItems(info.RoleCurrtEquipPack, loadedItemUids);
-        LoadItems(info.RoleVirtualItemPack, loadedItemUids);
-
-        // 恢复中心服已持久化的物品版本号，作为本地变更版本的起点。
-        // 装载完成后所有容器视为干净状态，等待后续变更触发脏标记。
-        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
-        for (int index = 0; index < dataListSnapshot.Count; index++)
-        {
-            ItemDataListDB itemDataList = dataListSnapshot[index];
-            itemDataList.ResetLoadedState();
-        }
-    }
-
-    /// <summary>组件装载完成后的回调，当前无额外逻辑。</summary>
-    public override void AfterLoad()
-    {
-        
-    }
-
-    /// <summary>组件被添加到角色后的回调，当前无额外逻辑。</summary>
-    public override void AfterAddedToRole()
-    {
-        
-    }
-    /// <summary>
-    /// 获取背包容器还有多少空格子
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="page_num">如果是仓库看看是哪一页</param>
-    /// <returns></returns>
-    public int GetLeftSpace(KnapsackType type, int page_num=1)
-    {
-        var container = GetContainerByType(type,page_num);
-        return container!=null ? container.GetLeftSpace() : 0;
-    }
-
-    /// <summary>
-    /// 通过类型获取容器基类
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="pageNum"></param>
-    /// <returns></returns>
-    public RoItemContainer GetContainerByType(KnapsackType type, int pageNum =1)
-    {
-        RoItemContainer ret = null;
-        if (_itemContainers.ContainsKey(type))
-        {
-            //todo 后面可能有仓库
-            ret =  _itemContainers[type];
-            //
-        }
-        return ret;
-    }
-    /// <summary>
-    /// 获取该物品最大堆叠数量
-    /// </summary>
-    /// <param name="item_id"></param>
-    /// <returns></returns>
-    public int MaxOverlap(int item_id)
-    {
-        ItemConfigBase itemData = LubanMgr.Instance.GetItemConfigById(item_id);
-        if (itemData==null)
-        {
-            LogMsg.Info($"item cannot found in item table item id is [{item_id}]");
-            return 1;
-        }
-        return itemData.MaxStackCount>1 ? itemData.MaxStackCount : 1;
-    }
     /// <summary>组件每帧更新，当前物品组件无需逐帧逻辑。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数。</param>
     public override void Update(int deltaMilliseconds)
@@ -395,56 +95,51 @@ public class RoItemComponent : RoleComponentBase
         _itemContainers?.Clear();
         _itemDataLists?.Clear();
     }
+    #endregion
+
+    #region 事件回调、网络请求与消息等
+    /// <summary>
+    /// 所有物品增删改入口最终都通过此函数设置对应 ItemDataListDB 的脏状态。
+    /// 内部自增变更版本并按 sizeDelta 区分新增/删除/修改。
+    /// </summary>
+    /// <param name="item">发生变更的物品实例。</param>
+    /// <param name="reason">变更原因。</param>
+    /// <param name="updateType">更新类型。</param>
+    /// <param name="sizeDelta">实例数量变化：1 新增、-1 删除、0 修改。</param>
+    public void OnItemChange(ItemBase item, ChangeReason reason, 
+        UpdateType updateType, 
+        int sizeDelta = 0)
+    {
+        if (item == null || Owner == null)
+        {
+            return;
+        }
+
+        long version = Owner.GetSaveVersion();
+        MarkDataListChanged((KnapsackType)item.GetBagType(), 
+            version, sizeDelta, false);
+        _need_update_item[item.GetItemUID()] = reason;
+    }
 
     /// <summary>
-    /// 统计指定配置物品 ID 在背包中的总数量。
-    /// 默认只统计非绑定物品，找到第一个非空容器即可提前返回；
-    /// calc_all_container 为 true 时遍历全部容器累加。
+    /// CenterServer 保存成功 ACK 回调，按确认版本清除对应脏状态。
+    /// 在途期间又发生变化时 dirtyVersion 会更大，旧 ACK 不会清除新脏数据。
     /// </summary>
-    /// <param name="itemId">配置物品 ID，必须为 int 且大于 0。</param>
-    /// <param name="calc_bind_item">预留参数，当前实现固定统计非绑定物品。</param>
-    /// <param name="calc_all_container">是否遍历全部容器累加；false 时找到即停。</param>
-    /// <returns>物品总数量，超过 int.MaxValue 时截断为 int.MaxValue。</returns>
-    public int GetItemNum(int itemId, ItemBind calc_bind_item = ItemBind.kItemBindNo, bool calc_all_container = false)
+    /// <param name="version">CenterServer 确认已持久化的版本号。</param>
+    public override void OnSaveAcknowledged(long version)
     {
-        if (!(itemId is int configuredItemId) || 
-            configuredItemId <= 0 || _itemContainers == null)
+        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
+        for (int index = 0; index < dataListSnapshot.Count; index++)
         {
-            return 0;
+            ItemDataListDB itemDataList = dataListSnapshot[index];
+            itemDataList.ResetNeedSave(version);
         }
+    }
 
-        RoItemContainer Itemcontainer = GetDefineContiner(itemId);
-        if (Itemcontainer == null)
-        {
-            return -1;
-        }
-        
-        ItemBind enum_bind = calc_bind_item ==ItemBind.kItemBindIs ? ItemBind.kItemBindIs : ItemBind.kItemBindNo;
-
-        if (!calc_all_container) //> 只统计默认容器
-        {
-            return (int)Itemcontainer.CountItem(itemId, calc_bind_item);
-        }
-        
-        long total = 0;
-        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
-        for (int index = 0; index < containerSnapshot.Count; index++)
-        {
-            RoItemContainer container = containerSnapshot[index];
-            // 当前固定统计非绑定物品（kItemBindNo）。
-            total += container.CountItem(configuredItemId, calc_bind_item);
-            // 非全容器模式下，只要找到数量就提前终止遍历。
-            if (!calc_all_container && total > 0)
-            {
-                break;
-            }
-        }
-
-        if (total > int.MaxValue)
-        {
-            return int.MaxValue;
-        }
-        return (int)total;
+    /// <summary>发送本次背包事务累积的物品增量。</summary>
+    public void NotifyItemChanges()
+    {
+        Ntf2ClientItemChange();
     }
 
     /// <summary>
@@ -591,6 +286,64 @@ public class RoItemComponent : RoleComponentBase
         return lastAdded;
     }
 
+    /// <summary>
+    /// 从协议物品信息重建内存物品实例，支持普通物品与装备（含强化等级和词条）。
+    /// 创建时间与过期时间按 UTC Ticks 恢复，非法值跳过。
+    /// </summary>
+    /// <param name="itemInfo">中心服返回的单条物品协议信息。</param>
+    /// <returns>重建后的物品实例；字段非法返回 null。</returns>
+    private static ItemBase CreateLoadedItem(RoleItemInfo itemInfo)
+    {
+        if (itemInfo.ItemTypeId <= 0 || itemInfo.Count <= 0 || itemInfo.BagIndex < 0)
+        {
+            return null;
+        }
+
+        ItemBase item;
+        // 携带装备信息时重建为 EquipBase，包含强化等级和词条。
+        if (itemInfo.EquipInfo != null)
+        {
+            EquipBase equip = EquipBase.CreateEquipForRestore();
+            equip.EquipType = itemInfo.EquipInfo.EquipType;
+            equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            // 词条信息可能为空，按存在性恢复三个词条槽位。
+            if (itemInfo.EquipGeneInfo != null)
+            {
+                equip.GeneID0 = itemInfo.EquipGeneInfo.GeneId0;
+                equip.GeneID1 = itemInfo.EquipGeneInfo.GeneId1;
+                equip.GeneID2 = itemInfo.EquipGeneInfo.GeneId2;
+                equip.GeneValue0 = itemInfo.EquipGeneInfo.GeneValue0;
+                equip.GeneValue1 = itemInfo.EquipGeneInfo.GeneValue1;
+                equip.GeneValue2 = itemInfo.EquipGeneInfo.GeneValue2;
+            }
+            item = equip;
+        }
+        else
+        {
+            item = ItemBase.CreateForRestore();
+        }
+
+        item.SetItemUID(itemInfo.ItemUid);
+        item.SetItemID(itemInfo.ItemTypeId);
+        item.SetItemCount(itemInfo.Count);
+        item.SetItemSign(itemInfo.ItemSign);
+        item.SetPrice(itemInfo.MoneyType, itemInfo.TotalPrice);
+        item.SetLocation(itemInfo.RoleId, itemInfo.BagType, itemInfo.BagIndex);
+        // 创建时间按 UTC Ticks 恢复，0 或超出范围视为未设置。
+        if (itemInfo.CreateTimeUtcTicks > 0 && itemInfo.CreateTimeUtcTicks <= DateTime.MaxValue.Ticks)
+        {
+            item.SetCreateTime(new DateTime(itemInfo.CreateTimeUtcTicks, DateTimeKind.Utc));
+        }
+        // 过期时间按 UTC Ticks 恢复。
+        if (itemInfo.ExpireTimeUtcTicks > 0 && itemInfo.ExpireTimeUtcTicks <= DateTime.MaxValue.Ticks)
+        {
+            item.SetExpireTime(new DateTime(itemInfo.ExpireTimeUtcTicks, DateTimeKind.Utc));
+        }
+        return item;
+    }
+    #endregion
+
+    #region 移除与回收
     /// <summary>删除指定实例的全部或部分数量，并统一触发延迟持久化脏标记。</summary>
     /// <param name="itemUid">物品实例 UID。</param>
     /// <param name="count">删除数量；等于当前数量时移除整个实例。</param>
@@ -688,6 +441,641 @@ public class RoItemComponent : RoleComponentBase
         }
         return true;
     }
+    #endregion
+
+    #region 查询与判定
+    public override RoleModuleType GetModuleId()
+    {
+        return RoleModuleType.kRoleModuleTypeItemComponent;
+    }
+
+    /// <summary>获取虚拟物品背包中的指定物品数量。</summary>
+    /// <param name="itemId">虚拟物品配置 ID，也就是商城配置中的 CurrencyItemId 值。</param>
+    /// <returns>虚拟物品总数量。</returns>
+    public long GetVirtualItemCount(int itemId)
+    {
+        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
+        if (container == null || !IsConfiguredVirtualItem(itemId))
+        {
+            return 0L;
+        }
+
+        return container.CountItem(itemId, ItemBind.kItemBindNo);
+    }
+
+    /// <summary>按背包类型获取容器；组件尚未初始化或类型不存在时返回 null。</summary>
+    /// <param name="type">背包类型。</param>
+    /// <returns>对应容器实例，未初始化或未知类型返回 null。</returns>
+    public RoItemContainer GetContainer(KnapsackType type)
+    {
+        if (_itemContainers == null)
+        {
+            return null;
+        }
+
+        RoItemContainer container;
+        if (_itemContainers.TryGetValue(type, out container))
+        {
+            return container;
+        }
+        return null;
+    }
+
+    /// <summary>获取指定可扩容背包的已开启格子数。</summary>
+    /// <param name="type">背包类型，应为四类可扩容背包之一。</param>
+    /// <returns>已开启格子数；未记录时回退到容器当前容量。</returns>
+    public int GetOpenedGridCount(KnapsackType type)
+    {
+        int count;
+        if (_openedGridCounts.TryGetValue(type, out count))
+        {
+            return count;
+        }
+
+        RoItemContainer container = GetContainer(type);
+        if (container == null)
+        {
+            return 0;
+        }
+        return container.GetContainerSize();
+    }
+
+    /// <summary>判断是否为四类可扩容背包。</summary>
+    /// <param name="type">待判断的背包类型。</param>
+    /// <returns>可扩容返回 true，穿戴栏等返回 false。</returns>
+    private static bool IsExpandableType(KnapsackType type)
+    {
+        // 是否为普通包裹或装备包裹类型。
+        bool isPlainOrEquip = type == KnapsackType.RolePackPlain || type == KnapsackType.RolePackEquip;
+        // 是否为消耗品包裹或材料包裹类型。
+        bool isConsumeOrMaterial = type == KnapsackType.RolePackConsume || type == KnapsackType.RolePackMaterial;
+        return isPlainOrEquip || isConsumeOrMaterial;
+    }
+
+    /// <summary>获取四类可扩容背包的类型数组，用于批量初始化与遍历。</summary>
+    /// <returns>包含四类可扩容背包类型的新数组。</returns>
+    private static KnapsackType[] GetExpandableTypes()
+    {
+        return new[]
+        {
+            KnapsackType.RolePackPlain,
+            KnapsackType.RolePackEquip,
+            KnapsackType.RolePackConsume,
+            KnapsackType.RolePackMaterial
+        };
+    }
+
+    /// <summary>返回容器只读视图，供服务层查询而不替换组件内部字典。</summary>
+    /// <returns>背包类型到容器的只读字典。</returns>
+    public IReadOnlyDictionary<KnapsackType, RoItemContainer> GetContainers()
+    {
+        return _itemContainers;
+    }
+
+    /// <summary>
+    /// 获取背包容器还有多少空格子
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="page_num">如果是仓库看看是哪一页</param>
+    /// <returns></returns>
+    public int GetLeftSpace(KnapsackType type, int page_num=1)
+    {
+        var container = GetContainerByType(type,page_num);
+        return container!=null ? container.GetLeftSpace() : 0;
+    }
+
+    /// <summary>
+    /// 通过类型获取容器基类
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="pageNum"></param>
+    /// <returns></returns>
+    public RoItemContainer GetContainerByType(KnapsackType type, int pageNum =1)
+    {
+        RoItemContainer ret = null;
+        if (_itemContainers.ContainsKey(type))
+        {
+            //todo 后面可能有仓库
+            ret =  _itemContainers[type];
+            //
+        }
+        return ret;
+    }
+
+    /// <summary>
+    /// 统计指定配置物品 ID 在背包中的总数量。
+    /// 默认只统计非绑定物品，找到第一个非空容器即可提前返回；
+    /// calc_all_container 为 true 时遍历全部容器累加。
+    /// </summary>
+    /// <param name="itemId">配置物品 ID，必须为 int 且大于 0。</param>
+    /// <param name="calc_bind_item">预留参数，当前实现固定统计非绑定物品。</param>
+    /// <param name="calc_all_container">是否遍历全部容器累加；false 时找到即停。</param>
+    /// <returns>物品总数量，超过 int.MaxValue 时截断为 int.MaxValue。</returns>
+    public int GetItemNum(int itemId, ItemBind calc_bind_item = ItemBind.kItemBindNo, bool calc_all_container = false)
+    {
+        if (!(itemId is int configuredItemId) || 
+            configuredItemId <= 0 || _itemContainers == null)
+        {
+            return 0;
+        }
+
+        RoItemContainer Itemcontainer = GetDefineContiner(itemId);
+        if (Itemcontainer == null)
+        {
+            return -1;
+        }
+        
+        ItemBind enum_bind = calc_bind_item ==ItemBind.kItemBindIs ? ItemBind.kItemBindIs : ItemBind.kItemBindNo;
+
+        if (!calc_all_container) //> 只统计默认容器
+        {
+            return (int)Itemcontainer.CountItem(itemId, calc_bind_item);
+        }
+        
+        long total = 0;
+        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+        for (int index = 0; index < containerSnapshot.Count; index++)
+        {
+            RoItemContainer container = containerSnapshot[index];
+            // 当前固定统计非绑定物品（kItemBindNo）。
+            total += container.CountItem(configuredItemId, calc_bind_item);
+            // 非全容器模式下，只要找到数量就提前终止遍历。
+            if (!calc_all_container && total > 0)
+            {
+                break;
+            }
+        }
+
+        if (total > int.MaxValue)
+        {
+            return int.MaxValue;
+        }
+        return (int)total;
+    }
+
+    /// <summary>获取虚拟物品背包快照，供商城购买结果同步余额。</summary>
+    public List<RoleItemInfo> GetVirtualItemSnapshot()
+    {
+        List<RoleItemInfo> result = new List<RoleItemInfo>();
+        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
+        if (container == null)
+        {
+            return result;
+        }
+        List<ItemBase> items = new List<ItemBase>(container.GetItemMap().Values);
+        for (int index = 0; index < items.Count; index++)
+        {
+            result.Add(ToRoleItemInfo(items[index]));
+        }
+        return result;
+    }
+
+    public ItemDataListDB GetItemDataListDB(int getBagType)
+    {
+        if (_itemDataLists.ContainsKey((KnapsackType)getBagType))
+        {
+            return _itemDataLists[(KnapsackType)getBagType];
+        }
+        return null;
+    }
+
+    //通过UID得到指定道具
+    private ItemBase GetItemByUID(long itemUid)
+    {
+        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+        for (int index = 0; index < containerSnapshot.Count; index++)
+        {
+            RoItemContainer container = containerSnapshot[index];
+            if (container == null)
+            {
+                continue;
+            }
+
+            var item = container.GetItemByUid(itemUid);
+            if (item != null)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 根据物品配置 ID 确定其所属的背包容器。
+    /// 配置中 PackType 决定物品应放入的背包类型。
+    /// </summary>
+    /// <param name="itemId">配置物品 ID。</param>
+    /// <returns>对应容器实例；配置缺失或类型未注册返回 null。</returns>
+    private RoItemContainer GetDefineContiner(int itemId)
+    {
+        RoItemContainer ret = null;
+        ItemConfigBase item_data = LubanMgr.Instance.GetItemConfigById(itemId);
+        
+        if (item_data != null)
+        {
+            if (_itemContainers.ContainsKey(item_data.PackType))
+            {
+                ret =  _itemContainers[item_data.PackType];
+            }
+        }
+        return ret;
+    }
+
+    /// <summary>
+    /// 校验虚拟物品是否同时满足公共编号范围和 Luban 配置分类。
+    /// 公共层只负责编号段判断，GameServer 在实际增减前必须确认配置存在且属于虚拟物品背包。
+    /// </summary>
+    /// <param name="itemId">待校验的物品配置 ID。</param>
+    /// <returns>配置存在、主类型为货币且背包类型为虚拟物品背包时返回 true。</returns>
+    private static bool IsConfiguredVirtualItem(int itemId)
+    {
+        if (!ItemDesc.IsLegalVirtualItem(itemId))
+        {
+            return false;
+        }
+
+        ItemConfigBase itemConfig = LubanMgr.Instance.GetItemConfigById(itemId);
+        if (itemConfig == null)
+        {
+            return false;
+        }
+
+        return itemConfig.ItemMainType == ItemMainType.ItemType_Money &&
+            itemConfig.PackType == KnapsackType.RoleVirtualItemPack;
+    }
+
+    /// <summary>
+    /// 遍历全部背包容器，按 UID 查找物品所在容器。
+    /// </summary>
+    /// <param name="itemUid">物品实例 UID。</param>
+    /// <returns>包含该物品的容器；未找到或未初始化返回 null。</returns>
+    private RoItemContainer FindContainer(long itemUid)
+    {
+        if (_itemContainers == null)
+        {
+            return null;
+        }
+        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+        for (int index = 0; index < containerSnapshot.Count; index++)
+        {
+            RoItemContainer container = containerSnapshot[index];
+            if (container.GetItemByUid(itemUid) != null)
+            {
+                return container;
+            }
+        }
+        return null;
+    }
+
+    // 获取将要扣除的物品实例列表。
+    public List<ItemBase> GetItemForReduce(int descItemId, ItemBind descBindOptionForTake ,int container_type = -1)
+    {
+        KeyValuePair<List<ItemBase>, List<ItemBase>> items = GetItemsByTID(descItemId,
+            container_type);
+        if (descBindOptionForTake == ItemBind.kItemBindIs)
+        {
+            //>> 如果是扣绑定, 把非绑定的接到后面
+            items.Key.AddRange(items.Value);
+            return items.Key;
+        }
+        return items.Value;
+    }
+
+    /// <summary>
+    /// 获取容器中指定物品的绑定和非绑定实例。
+    /// </summary>
+    /// <param name="itemId">物品配置 ID。</param>
+    /// <param name="containerType">-1 使用默认容器，-2 遍历所有容器，其它值指定容器类型。</param>
+    /// <returns>Key 为绑定物品列表，Value 为非绑定物品列表。</returns>
+    public KeyValuePair<List<ItemBase>, List<ItemBase>> GetItemsByTID(int itemId, int containerType = -1)
+    {
+        List<ItemBase> bindItems = new List<ItemBase>();
+        List<ItemBase> unbindItems = new List<ItemBase>();
+        List<RoItemContainer> containers = new List<RoItemContainer>();
+
+        if (containerType == -1)
+        {
+            RoItemContainer container = GetDefineContiner(itemId);
+            if (container != null)
+            {
+                containers.Add(container);
+            }
+        }
+        else if (containerType == -2)
+        {
+            if (_itemContainers != null)
+            {
+                List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+                for (int index = 0; index < containerSnapshot.Count; index++)
+                {
+                    RoItemContainer container = containerSnapshot[index];
+                    if (container != null)
+                    {
+                        containers.Add(container);
+                    }
+                }
+            }
+        }
+        else
+        {
+            RoItemContainer container = GetContainer((KnapsackType)containerType);
+            if (container != null)
+            {
+                containers.Add(container);
+            }
+        }
+
+        for (int index = 0; index < containers.Count; index++)
+        {
+            RoItemContainer container = containers[index];
+            if (container == null || container.GetItemMap() == null)
+            {
+                continue;
+            }
+
+            // 原实现从按 UID 排序的 map 尾部向前遍历，这里显式按 UID 倒序保持扣除顺序。
+            List<ItemBase> containerItems = new List<ItemBase>(container.GetItemMap().Values);
+            containerItems.Sort((left, right) =>
+            {
+                if (left == null)
+                {
+                    return 1;
+                }
+                if (right == null)
+                {
+                    return -1;
+                }
+                return right.GetItemUID().CompareTo(left.GetItemUID());
+            });
+
+            for (int itemIndex = 0; itemIndex < containerItems.Count; itemIndex++)
+            {
+                ItemBase item = containerItems[itemIndex];
+                if (item == null || item.GetItemID() != itemId)
+                {
+                    continue;
+                }
+
+                if (item.IsBind() == ItemBind.kItemBindIs)
+                {
+                    bindItems.Add(item);
+                }
+                else
+                {
+                    unbindItems.Add(item);
+                }
+            }
+        }
+
+        return new KeyValuePair<List<ItemBase>, List<ItemBase>>(bindItems, unbindItems);
+    }
+    #endregion
+
+    #region 数据读写
+    /// <summary>加载中心服容量，低于最小值时按 81 格兼容。</summary>
+    /// <param name="type">背包类型。</param>
+    /// <param name="count">中心服存储的格子数，0 或负数视为无效。</param>
+    /// <returns>加载成功返回 true。</returns>
+    public bool LoadOpenedGridCount(KnapsackType type, int count)
+    {
+        if (!IsExpandableType(type) || count <= 0 || count > MaxOpenedGridCount)
+        {
+            return false;
+        }
+        return ApplyOpenedGridCount(type, Math.Max(MinOpenedGridCount, count));
+    }
+
+    /// <summary>
+    /// 从中心服登录回包装载角色全部背包数据：先恢复各背包容量，再清空容器，
+    /// 按 UID 去重后逐类装入物品，最后恢复保存版本并重置所有持久化状态为干净。
+    /// </summary>
+    /// <param name="ret">中心服返回的角色背包信息回包。</param>
+    public void LoadKnapsack(RoleKanpsackInfoRet ret)
+    {
+        // 回包为空或命令码非成功时直接放弃装载。
+        if (ret == null || ret.CmdCode != CmdCode.Succeed)
+        {
+            return;
+        }
+        // 背包数据为空或容器字典未初始化时直接放弃装载。
+        if (ret.RoleKanpsackInfo == null || _itemContainers == null)
+        {
+            return;
+        }
+
+        RoleKanpsackInfo info = ret.RoleKanpsackInfo;
+
+        // 先恢复每类背包的已开启容量。
+        for (int index = 0; index < info.KanpsackTypeCountLst.Count; index++)
+        {
+            Kanpsacktypecount packCount = info.KanpsackTypeCountLst[index];
+            LoadOpenedGridCount((KnapsackType)packCount.Type, packCount.Count);
+        }
+
+        // 清空所有容器内存状态，准备全量装载。
+        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
+        for (int index = 0; index < containerSnapshot.Count; index++)
+        {
+            RoItemContainer container = containerSnapshot[index];
+            container.Clear();
+        }
+
+        // role_pack_plain 仅包含普通背包；各分类列表独立装入对应真实容器，UID 去重用于防御异常重复数据。
+        HashSet<long> loadedItemUids = new HashSet<long>();
+        LoadItems(info.RolePackPlain, loadedItemUids);
+        LoadItems(info.RolePackEquip, loadedItemUids);
+        LoadItems(info.RolePackConsume, loadedItemUids);
+        LoadItems(info.RolePackMaterial, loadedItemUids);
+        LoadItems(info.RoleCurrtEquipPack, loadedItemUids);
+        LoadItems(info.RoleVirtualItemPack, loadedItemUids);
+
+        // 恢复中心服已持久化的物品版本号，作为本地变更版本的起点。
+        // 装载完成后所有容器视为干净状态，等待后续变更触发脏标记。
+        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
+        for (int index = 0; index < dataListSnapshot.Count; index++)
+        {
+            ItemDataListDB itemDataList = dataListSnapshot[index];
+            itemDataList.ResetLoadedState();
+        }
+    }
+
+    /// <summary>
+    /// 将所有脏容器的完整快照写入字段管理器，由调用方组装为保存请求发送 CenterServer。
+    /// 脏版本高于传入 saveVersion 的容器会跳过，避免覆盖更新的本地变更。
+    /// </summary>
+    /// <param name="fieldManager">角色数据字段管理器，用于写入序列化后的物品列表。</param>
+    /// <param name="saveVersion">本次保存对应的角色数据版本。</param>
+    /// <returns>至少一个容器成功写入返回 true。</returns>
+    public override bool Save(RoleDataFieldManager fieldManager, long saveVersion)
+    {
+        bool saved = false;
+        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
+        for (int index = 0; index < dataListSnapshot.Count; index++)
+        {
+            ItemDataListDB itemDataList = dataListSnapshot[index];
+            saved |= itemDataList.Save2Db(fieldManager, saveVersion);
+        }
+        return saved;
+    }
+
+    /// <summary>
+    /// 将一组协议物品信息装载到对应背包容器，按 UID 全局去重避免重复装载。
+    /// 装载失败的物品会从去重集合移除并记录错误日志。
+    /// </summary>
+    /// <param name="itemInfos">某类背包的物品信息列表。</param>
+    /// <param name="loadedItemUids">全局已装载 UID 集合，用于跨背包去重。</param>
+    private void LoadItems(IEnumerable<RoleItemInfo> itemInfos, HashSet<long> loadedItemUids)
+    {
+        List<RoleItemInfo> itemSnapshot = new List<RoleItemInfo>(itemInfos);
+        for (int index = 0; index < itemSnapshot.Count; index++)
+        {
+            RoleItemInfo itemInfo = itemSnapshot[index];
+            // UID 非法或已在其他背包中装载过则跳过。
+            if (itemInfo == null || itemInfo.ItemUid <= 0 || !loadedItemUids.Add(itemInfo.ItemUid))
+            {
+                continue;
+            }
+
+            RoItemContainer container = GetContainer((KnapsackType)itemInfo.BagType);
+            ItemBase item = CreateLoadedItem(itemInfo);
+            if (container == null || item == null || !container.SwapIn(item, itemInfo.BagIndex))
+            {
+                // 装载失败时回退去重标记，便于后续排查。
+                loadedItemUids.Remove(itemInfo.ItemUid);
+                LogMsg.Info("角色背包物品装载失败，ItemUID=" + itemInfo.ItemUid, LogMsgType.Error);
+            }
+        }
+    }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>增加虚拟物品；虚拟物品没有容量限制但仍通过普通物品脏数据链路保存。</summary>
+    /// <param name="itemId">虚拟物品配置 ID。</param>
+    /// <param name="count">增加数量。</param>
+    /// <returns>成功返回 true。</returns>
+    public bool GiveVirtualItem(int itemId, long count)
+    {
+        if (!IsConfiguredVirtualItem(itemId) || count <= 0 || count > int.MaxValue)
+        {
+            return false;
+        }
+
+        ItemBase item = AddItem(itemId, (int)count, new ChangeReason(ItemChangeReason.ITEM_REASON_NONE),
+            ItemSign.IsNoSign, 0, 0L, UpdateType.eUT_Normal, new IdipParam());
+        return item != null;
+    }
+
+    /// <summary>扣除虚拟物品；余额不足时不修改任何物品实例。</summary>
+    /// <param name="itemId">虚拟物品配置 ID。</param>
+    /// <param name="count">扣除数量。</param>
+    /// <returns>成功返回 true，余额不足或参数非法返回 false。</returns>
+    public bool TakeVirtualItem(int itemId, long count)
+    {
+        if (!IsConfiguredVirtualItem(itemId) || count <= 0)
+        {
+            return false;
+        }
+
+        long remaining = count;
+        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
+        if (container == null || GetVirtualItemCount(itemId) < count)
+        {
+            return false;
+        }
+
+        List<ItemBase> itemSnapshot = new List<ItemBase>(container.GetItemMap().Values);
+        List<ItemBase> stacks = new List<ItemBase>();
+        for (int index = 0; index < itemSnapshot.Count; index++)
+        {
+            ItemBase item = itemSnapshot[index];
+            if (item.GetItemID() == itemId)
+            {
+                stacks.Add(item);
+            }
+        }
+
+        for (int index = 0; index < stacks.Count; index++)
+        {
+            ItemBase item = stacks[index];
+            if (remaining <= 0)
+            {
+                break;
+            }
+
+            int takeCount = (int)Math.Min((long)item.GetItemCount(), remaining);
+            if (DeleteItem(item.GetItemUID(), takeCount,
+                new ChangeReason(ItemChangeReason.ITEM_REASON_NONE), UpdateType.eUT_Normal))
+            {
+                remaining -= takeCount;
+            }
+        }
+
+        return remaining == 0;
+    }
+
+    /// <summary>更新扩容容量，统一校验类型和 81-255 范围。</summary>
+    /// <param name="type">背包类型，必须为可扩容类型。</param>
+    /// <param name="count">目标格子数，范围 [81, 255]。</param>
+    /// <returns>设置成功返回 true，类型不合法或越界返回 false。</returns>
+    public bool SetOpenedGridCount(KnapsackType type, int count)
+    {
+        if (!IsExpandableType(type) || count < MinOpenedGridCount || count > MaxOpenedGridCount)
+        {
+            return false;
+        }
+        return ApplyOpenedGridCount(type, count);
+    }
+
+    /// <summary>统一写入容量字典并同步对应容器。</summary>
+    /// <param name="type">背包类型。</param>
+    /// <param name="count">目标格子数。</param>
+    /// <returns>成功返回 true；类型不可扩容、容器为空或越界返回 false。</returns>
+    private bool ApplyOpenedGridCount(KnapsackType type, int count)
+    {
+        RoItemContainer container = GetContainer(type);
+        // 类型不可扩容或容器尚未创建时拒绝写入。
+        if (!IsExpandableType(type) || container == null)
+        {
+            return false;
+        }
+        // 目标格子数小于最小或大于最大合法范围时拒绝写入。
+        if (count < MinOpenedGridCount || count > MaxOpenedGridCount)
+        {
+            return false;
+        }
+        container.SetContainerSize(count);
+        _openedGridCounts[type] = count;
+        return true;
+    }
+
+    /// <summary>组件装载完成后的回调，当前无额外逻辑。</summary>
+    public override void AfterLoad()
+    {
+        
+    }
+
+    /// <summary>组件被添加到角色后的回调，当前无额外逻辑。</summary>
+    public override void AfterAddedToRole()
+    {
+        
+    }
+
+    /// <summary>
+    /// 获取该物品最大堆叠数量
+    /// </summary>
+    /// <param name="item_id"></param>
+    /// <returns></returns>
+    public int MaxOverlap(int item_id)
+    {
+        ItemConfigBase itemData = LubanMgr.Instance.GetItemConfigById(item_id);
+        if (itemData==null)
+        {
+            LogMsg.Info($"item cannot found in item table item id is [{item_id}]");
+            return 1;
+        }
+        return itemData.MaxStackCount>1 ? itemData.MaxStackCount : 1;
+    }
 
     private void Ntf2ClientItemChange()
     {
@@ -717,29 +1105,6 @@ public class RoItemComponent : RoleComponentBase
         _need_update_item.Clear();
     }
 
-    /// <summary>发送本次背包事务累积的物品增量。</summary>
-    public void NotifyItemChanges()
-    {
-        Ntf2ClientItemChange();
-    }
-
-    /// <summary>获取虚拟物品背包快照，供商城购买结果同步余额。</summary>
-    public List<RoleItemInfo> GetVirtualItemSnapshot()
-    {
-        List<RoleItemInfo> result = new List<RoleItemInfo>();
-        RoItemContainer container = GetContainer(KnapsackType.RoleVirtualItemPack);
-        if (container == null)
-        {
-            return result;
-        }
-        List<ItemBase> items = new List<ItemBase>(container.GetItemMap().Values);
-        for (int index = 0; index < items.Count; index++)
-        {
-            result.Add(ToRoleItemInfo(items[index]));
-        }
-        return result;
-    }
-
     /// <summary>将运行时物品转换为客户端增量协议结构。</summary>
     private static RoleItemInfo ToRoleItemInfo(ItemBase item)
     {
@@ -762,15 +1127,6 @@ public class RoItemComponent : RoleComponentBase
         return value.ToUniversalTime().Ticks;
     }
 
-    public ItemDataListDB GetItemDataListDB(int getBagType)
-    {
-        if (_itemDataLists.ContainsKey((KnapsackType)getBagType))
-        {
-            return _itemDataLists[(KnapsackType)getBagType];
-        }
-        return null;
-    }
-
     /// <summary>
     /// 通知任务模块
     /// </summary>
@@ -780,28 +1136,6 @@ public class RoItemComponent : RoleComponentBase
     private void NtfTaskModleItemChange(ItemBase item, int i)
     {
         
-    }
-
-    //通过UID得到指定道具
-    private ItemBase GetItemByUID(long itemUid)
-    {
-        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
-        for (int index = 0; index < containerSnapshot.Count; index++)
-        {
-            RoItemContainer container = containerSnapshot[index];
-            if (container == null)
-            {
-                continue;
-            }
-
-            var item = container.GetItemByUid(itemUid);
-            if (item != null)
-            {
-                return item;
-            }
-        }
-
-        return null;
     }
 
     /// <summary>按增量修改物品数量，数量归零时转为删除实例。</summary>
@@ -911,29 +1245,6 @@ public class RoItemComponent : RoleComponentBase
         return true;
     }
 
-    /// <summary>
-    /// 所有物品增删改入口最终都通过此函数设置对应 ItemDataListDB 的脏状态。
-    /// 内部自增变更版本并按 sizeDelta 区分新增/删除/修改。
-    /// </summary>
-    /// <param name="item">发生变更的物品实例。</param>
-    /// <param name="reason">变更原因。</param>
-    /// <param name="updateType">更新类型。</param>
-    /// <param name="sizeDelta">实例数量变化：1 新增、-1 删除、0 修改。</param>
-    public void OnItemChange(ItemBase item, ChangeReason reason, 
-        UpdateType updateType, 
-        int sizeDelta = 0)
-    {
-        if (item == null || Owner == null)
-        {
-            return;
-        }
-
-        long version = Owner.GetSaveVersion();
-        MarkDataListChanged((KnapsackType)item.GetBagType(), 
-            version, sizeDelta, false);
-        _need_update_item[item.GetItemUID()] = reason;
-    }
-
     /// <summary>判断是否存在任意背包容器需要持久化保存。</summary>
     /// <returns>任一容器有脏数据返回 true；全部干净或未初始化返回 false。</returns>
     public override bool NeedSave()
@@ -952,192 +1263,6 @@ public class RoItemComponent : RoleComponentBase
             }
         }
         return false;
-    }
-    
-    /// <summary>
-    /// 将所有脏容器的完整快照写入字段管理器，由调用方组装为保存请求发送 CenterServer。
-    /// 脏版本高于传入 saveVersion 的容器会跳过，避免覆盖更新的本地变更。
-    /// </summary>
-    /// <param name="fieldManager">角色数据字段管理器，用于写入序列化后的物品列表。</param>
-    /// <param name="saveVersion">本次保存对应的角色数据版本。</param>
-    /// <returns>至少一个容器成功写入返回 true。</returns>
-    public override bool Save(RoleDataFieldManager fieldManager, long saveVersion)
-    {
-        bool saved = false;
-        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
-        for (int index = 0; index < dataListSnapshot.Count; index++)
-        {
-            ItemDataListDB itemDataList = dataListSnapshot[index];
-            saved |= itemDataList.Save2Db(fieldManager, saveVersion);
-        }
-        return saved;
-    }
-
-    /// <summary>
-    /// CenterServer 保存成功 ACK 回调，按确认版本清除对应脏状态。
-    /// 在途期间又发生变化时 dirtyVersion 会更大，旧 ACK 不会清除新脏数据。
-    /// </summary>
-    /// <param name="version">CenterServer 确认已持久化的版本号。</param>
-    public override void OnSaveAcknowledged(long version)
-    {
-        List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
-        for (int index = 0; index < dataListSnapshot.Count; index++)
-        {
-            ItemDataListDB itemDataList = dataListSnapshot[index];
-            itemDataList.ResetNeedSave(version);
-        }
-    }
-
-    /// <summary>
-    /// 根据物品配置 ID 确定其所属的背包容器。
-    /// 配置中 PackType 决定物品应放入的背包类型。
-    /// </summary>
-    /// <param name="itemId">配置物品 ID。</param>
-    /// <returns>对应容器实例；配置缺失或类型未注册返回 null。</returns>
-    private RoItemContainer GetDefineContiner(int itemId)
-    {
-        RoItemContainer ret = null;
-        ItemConfigBase item_data = LubanMgr.Instance.GetItemConfigById(itemId);
-        
-        if (item_data != null)
-        {
-            if (_itemContainers.ContainsKey(item_data.PackType))
-            {
-                ret =  _itemContainers[item_data.PackType];
-            }
-        }
-        return ret;
-    }
-
-    /// <summary>
-    /// 校验虚拟物品是否同时满足公共编号范围和 Luban 配置分类。
-    /// 公共层只负责编号段判断，GameServer 在实际增减前必须确认配置存在且属于虚拟物品背包。
-    /// </summary>
-    /// <param name="itemId">待校验的物品配置 ID。</param>
-    /// <returns>配置存在、主类型为货币且背包类型为虚拟物品背包时返回 true。</returns>
-    private static bool IsConfiguredVirtualItem(int itemId)
-    {
-        if (!ItemDesc.IsLegalVirtualItem(itemId))
-        {
-            return false;
-        }
-
-        ItemConfigBase itemConfig = LubanMgr.Instance.GetItemConfigById(itemId);
-        if (itemConfig == null)
-        {
-            return false;
-        }
-
-        return itemConfig.ItemMainType == ItemMainType.ItemType_Money &&
-            itemConfig.PackType == KnapsackType.RoleVirtualItemPack;
-    }
-
-    /// <summary>
-    /// 将一组协议物品信息装载到对应背包容器，按 UID 全局去重避免重复装载。
-    /// 装载失败的物品会从去重集合移除并记录错误日志。
-    /// </summary>
-    /// <param name="itemInfos">某类背包的物品信息列表。</param>
-    /// <param name="loadedItemUids">全局已装载 UID 集合，用于跨背包去重。</param>
-    private void LoadItems(IEnumerable<RoleItemInfo> itemInfos, HashSet<long> loadedItemUids)
-    {
-        List<RoleItemInfo> itemSnapshot = new List<RoleItemInfo>(itemInfos);
-        for (int index = 0; index < itemSnapshot.Count; index++)
-        {
-            RoleItemInfo itemInfo = itemSnapshot[index];
-            // UID 非法或已在其他背包中装载过则跳过。
-            if (itemInfo == null || itemInfo.ItemUid <= 0 || !loadedItemUids.Add(itemInfo.ItemUid))
-            {
-                continue;
-            }
-
-            RoItemContainer container = GetContainer((KnapsackType)itemInfo.BagType);
-            ItemBase item = CreateLoadedItem(itemInfo);
-            if (container == null || item == null || !container.SwapIn(item, itemInfo.BagIndex))
-            {
-                // 装载失败时回退去重标记，便于后续排查。
-                loadedItemUids.Remove(itemInfo.ItemUid);
-                LogMsg.Info("角色背包物品装载失败，ItemUID=" + itemInfo.ItemUid, LogMsgType.Error);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 从协议物品信息重建内存物品实例，支持普通物品与装备（含强化等级和词条）。
-    /// 创建时间与过期时间按 UTC Ticks 恢复，非法值跳过。
-    /// </summary>
-    /// <param name="itemInfo">中心服返回的单条物品协议信息。</param>
-    /// <returns>重建后的物品实例；字段非法返回 null。</returns>
-    private static ItemBase CreateLoadedItem(RoleItemInfo itemInfo)
-    {
-        if (itemInfo.ItemTypeId <= 0 || itemInfo.Count <= 0 || itemInfo.BagIndex < 0)
-        {
-            return null;
-        }
-
-        ItemBase item;
-        // 携带装备信息时重建为 EquipBase，包含强化等级和词条。
-        if (itemInfo.EquipInfo != null)
-        {
-            EquipBase equip = EquipBase.CreateEquipForRestore();
-            equip.EquipType = itemInfo.EquipInfo.EquipType;
-            equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
-            // 词条信息可能为空，按存在性恢复三个词条槽位。
-            if (itemInfo.EquipGeneInfo != null)
-            {
-                equip.GeneID0 = itemInfo.EquipGeneInfo.GeneId0;
-                equip.GeneID1 = itemInfo.EquipGeneInfo.GeneId1;
-                equip.GeneID2 = itemInfo.EquipGeneInfo.GeneId2;
-                equip.GeneValue0 = itemInfo.EquipGeneInfo.GeneValue0;
-                equip.GeneValue1 = itemInfo.EquipGeneInfo.GeneValue1;
-                equip.GeneValue2 = itemInfo.EquipGeneInfo.GeneValue2;
-            }
-            item = equip;
-        }
-        else
-        {
-            item = ItemBase.CreateForRestore();
-        }
-
-        item.SetItemUID(itemInfo.ItemUid);
-        item.SetItemID(itemInfo.ItemTypeId);
-        item.SetItemCount(itemInfo.Count);
-        item.SetItemSign(itemInfo.ItemSign);
-        item.SetPrice(itemInfo.MoneyType, itemInfo.TotalPrice);
-        item.SetLocation(itemInfo.RoleId, itemInfo.BagType, itemInfo.BagIndex);
-        // 创建时间按 UTC Ticks 恢复，0 或超出范围视为未设置。
-        if (itemInfo.CreateTimeUtcTicks > 0 && itemInfo.CreateTimeUtcTicks <= DateTime.MaxValue.Ticks)
-        {
-            item.SetCreateTime(new DateTime(itemInfo.CreateTimeUtcTicks, DateTimeKind.Utc));
-        }
-        // 过期时间按 UTC Ticks 恢复。
-        if (itemInfo.ExpireTimeUtcTicks > 0 && itemInfo.ExpireTimeUtcTicks <= DateTime.MaxValue.Ticks)
-        {
-            item.SetExpireTime(new DateTime(itemInfo.ExpireTimeUtcTicks, DateTimeKind.Utc));
-        }
-        return item;
-    }
-
-    /// <summary>
-    /// 遍历全部背包容器，按 UID 查找物品所在容器。
-    /// </summary>
-    /// <param name="itemUid">物品实例 UID。</param>
-    /// <returns>包含该物品的容器；未找到或未初始化返回 null。</returns>
-    private RoItemContainer FindContainer(long itemUid)
-    {
-        if (_itemContainers == null)
-        {
-            return null;
-        }
-        List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
-        for (int index = 0; index < containerSnapshot.Count; index++)
-        {
-            RoItemContainer container = containerSnapshot[index];
-            if (container.GetItemByUid(itemUid) != null)
-            {
-                return container;
-            }
-        }
-        return null;
     }
 
     /// <summary>
@@ -1274,106 +1399,5 @@ public class RoItemComponent : RoleComponentBase
         //LogicPointManager::Instance()->OnReduceItem(role_, item_id, count);
         return CmdCode.Succeed;
     }
-
-    // 获取将要扣除的物品实例列表。
-    public List<ItemBase> GetItemForReduce(int descItemId, ItemBind descBindOptionForTake ,int container_type = -1)
-    {
-        KeyValuePair<List<ItemBase>, List<ItemBase>> items = GetItemsByTID(descItemId,
-            container_type);
-        if (descBindOptionForTake == ItemBind.kItemBindIs)
-        {
-            //>> 如果是扣绑定, 把非绑定的接到后面
-            items.Key.AddRange(items.Value);
-            return items.Key;
-        }
-        return items.Value;
-    }
-    /// <summary>
-    /// 获取容器中指定物品的绑定和非绑定实例。
-    /// </summary>
-    /// <param name="itemId">物品配置 ID。</param>
-    /// <param name="containerType">-1 使用默认容器，-2 遍历所有容器，其它值指定容器类型。</param>
-    /// <returns>Key 为绑定物品列表，Value 为非绑定物品列表。</returns>
-    public KeyValuePair<List<ItemBase>, List<ItemBase>> GetItemsByTID(int itemId, int containerType = -1)
-    {
-        List<ItemBase> bindItems = new List<ItemBase>();
-        List<ItemBase> unbindItems = new List<ItemBase>();
-        List<RoItemContainer> containers = new List<RoItemContainer>();
-
-        if (containerType == -1)
-        {
-            RoItemContainer container = GetDefineContiner(itemId);
-            if (container != null)
-            {
-                containers.Add(container);
-            }
-        }
-        else if (containerType == -2)
-        {
-            if (_itemContainers != null)
-            {
-                List<RoItemContainer> containerSnapshot = new List<RoItemContainer>(_itemContainers.Values);
-                for (int index = 0; index < containerSnapshot.Count; index++)
-                {
-                    RoItemContainer container = containerSnapshot[index];
-                    if (container != null)
-                    {
-                        containers.Add(container);
-                    }
-                }
-            }
-        }
-        else
-        {
-            RoItemContainer container = GetContainer((KnapsackType)containerType);
-            if (container != null)
-            {
-                containers.Add(container);
-            }
-        }
-
-        for (int index = 0; index < containers.Count; index++)
-        {
-            RoItemContainer container = containers[index];
-            if (container == null || container.GetItemMap() == null)
-            {
-                continue;
-            }
-
-            // 原实现从按 UID 排序的 map 尾部向前遍历，这里显式按 UID 倒序保持扣除顺序。
-            List<ItemBase> containerItems = new List<ItemBase>(container.GetItemMap().Values);
-            containerItems.Sort((left, right) =>
-            {
-                if (left == null)
-                {
-                    return 1;
-                }
-                if (right == null)
-                {
-                    return -1;
-                }
-                return right.GetItemUID().CompareTo(left.GetItemUID());
-            });
-
-            for (int itemIndex = 0; itemIndex < containerItems.Count; itemIndex++)
-            {
-                ItemBase item = containerItems[itemIndex];
-                if (item == null || item.GetItemID() != itemId)
-                {
-                    continue;
-                }
-
-                if (item.IsBind() == ItemBind.kItemBindIs)
-                {
-                    bindItems.Add(item);
-                }
-                else
-                {
-                    unbindItems.Add(item);
-                }
-            }
-        }
-
-        return new KeyValuePair<List<ItemBase>, List<ItemBase>>(bindItems, unbindItems);
-    }
+    #endregion
 }

@@ -10,9 +10,11 @@ public sealed class ShopCtrl : CtrlBase
 {
     /// <summary>商城窗口视图。</summary>
     private readonly NpcShopWindow _shopWindow;
+
     /// <summary>当前正在浏览商店的 NPC。</summary>
     private NpcEntity _currentNpc;
 
+    #region 构造与初始化
     /// <summary>创建商城控制器并注册视图和模型事件。</summary>
     public ShopCtrl(MainView mainView) : base(mainView)
     {
@@ -25,52 +27,19 @@ public sealed class ShopCtrl : CtrlBase
         ShopMgr.Instance.PurchaseCompleted += OnPurchaseCompleted;
     }
 
-    /// <summary>商城窗口帧循环消费次数模块脏标记。</summary>
-    private void OnShopWindowFrameUpdated()
+    /// <summary>注销商城窗口和模型事件。</summary>
+    public override void Dispose()
     {
-        if (_shopWindow == null || !_shopWindow.isActiveAndEnabled)
-        {
-            return;
-        }
-        if (Global.Instance == null || Global.Instance.SceneWorld == null)
-        {
-            return;
-        }
-        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
-        if (role == null || role.DirtyTracker == null)
-        {
-            return;
-        }
-        ClientDirtySnapshot snapshot;
-        if (!role.DirtyTracker.TryGet(ClientDirtyModule.RoleCount, out snapshot))
-        {
-            return;
-        }
-        RefreshShopWindow();
-        role.DirtyTracker.Clear(ClientDirtyModule.RoleCount);
-    }
-
-    /// <summary>打开指定 NPC 的商店并生成展示数据。</summary>
-    public void OpenNpcShop(NpcEntity npcEntity)
-    {
-        _currentNpc = npcEntity;
-        RefreshShopWindow();
+        ShopMgr.Instance.PurchaseCompleted -= OnPurchaseCompleted;
         if (_shopWindow != null)
         {
-            _shopWindow.Show(true);
+            _shopWindow.GoodsClicked -= OnGoodsClicked;
+            _shopWindow.FrameUpdated -= OnShopWindowFrameUpdated;
         }
     }
+    #endregion
 
-    /// <summary>重新生成当前 NPC 商店的展示数据。</summary>
-    private void RefreshShopWindow()
-    {
-        if (_shopWindow == null)
-        {
-            return;
-        }
-        _shopWindow.ReFreshUI(BuildGoodsViewData(_currentNpc));
-    }
-
+    #region 商品展示数据构建与商店界面
     /// <summary>把配置和角色次数状态转换为商城展示模型。</summary>
     private List<ShopGoodsViewData> BuildGoodsViewData(NpcEntity npcEntity)
     {
@@ -129,6 +98,27 @@ public sealed class ShopCtrl : CtrlBase
         return result;
     }
 
+    /// <summary>打开指定 NPC 的商店并生成展示数据。</summary>
+    public void OpenNpcShop(NpcEntity npcEntity)
+    {
+        _currentNpc = npcEntity;
+        RefreshShopWindow();
+        if (_shopWindow != null)
+        {
+            _shopWindow.Show(true);
+        }
+    }
+
+    /// <summary>重新生成当前 NPC 商店的展示数据。</summary>
+    private void RefreshShopWindow()
+    {
+        if (_shopWindow == null)
+        {
+            return;
+        }
+        _shopWindow.ReFreshUI(BuildGoodsViewData(_currentNpc));
+    }
+
     /// <summary>处理商品点击并打开购买确认弹窗。</summary>
     private void OnGoodsClicked(ShopGoodsViewData goods)
     {
@@ -151,6 +141,33 @@ public sealed class ShopCtrl : CtrlBase
             goods.Price, goods.CurrencyItemId, goods.CurrencyName, goods.CurrencyIconPath,
             goods.MaxPurchaseCount, buyCount => OnBuyConfirmed(goods, buyCount));
     }
+    #endregion
+
+    #region 事件回调
+    /// <summary>商城窗口帧循环消费次数模块脏标记。</summary>
+    private void OnShopWindowFrameUpdated()
+    {
+        if (_shopWindow == null || !_shopWindow.isActiveAndEnabled)
+        {
+            return;
+        }
+        if (Global.Instance == null || Global.Instance.SceneWorld == null)
+        {
+            return;
+        }
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
+        if (role == null || role.DirtyTracker == null)
+        {
+            return;
+        }
+        ClientDirtySnapshot snapshot;
+        if (!role.DirtyTracker.TryGet(ClientDirtyModule.RoleCount, out snapshot))
+        {
+            return;
+        }
+        RefreshShopWindow();
+        role.DirtyTracker.Clear(ClientDirtyModule.RoleCount);
+    }
 
     /// <summary>把弹窗确认数量提交给商城模型。</summary>
     private void OnBuyConfirmed(ShopGoodsViewData goods, int buyCount)
@@ -165,15 +182,5 @@ public sealed class ShopCtrl : CtrlBase
         // 商城模型只传递购买状态和提示文本，控制器负责界面提示和刷新。
         TipsMgr.Instance.ShowSystemTips(message);
     }
-
-    /// <summary>注销商城窗口和模型事件。</summary>
-    public override void Dispose()
-    {
-        ShopMgr.Instance.PurchaseCompleted -= OnPurchaseCompleted;
-        if (_shopWindow != null)
-        {
-            _shopWindow.GoodsClicked -= OnGoodsClicked;
-            _shopWindow.FrameUpdated -= OnShopWindowFrameUpdated;
-        }
-    }
+    #endregion
 }

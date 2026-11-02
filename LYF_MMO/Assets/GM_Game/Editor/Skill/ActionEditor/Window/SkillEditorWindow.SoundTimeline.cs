@@ -6,125 +6,25 @@ using UnityEngine;
 /// <summary>声音独立轨道的真实长度波形及音频采样点选择；仅影响制作界面，不把完整长度写成事件区间。</summary>
 public partial class SkillEditorWindow
 {
+
+    #region 字段
     /// <summary>当前窗口的真实音频包络缓存，关闭窗口或资源变化后释放。</summary>
     private readonly Dictionary<AudioClip, SkillEditorAudioWaveform> _soundWaveforms = new Dictionary<AudioClip, SkillEditorAudioWaveform>();
+
     /// <summary>声音显示行的已占用区间末尾帧，使用音频真实长度而非点事件结束帧。</summary>
     private readonly List<float> _soundLaneEnds = new List<float>();
+
     /// <summary>Alt 点选的原声音事件引用；用引用身份防止插入或删除事件后选点串到另一声音。</summary>
     private Global.FxAndSound _soundAlignmentEvent;
+
     /// <summary>Alt 点选时的真实音频身份，替换音频后原选点不继续生效。</summary>
     private AudioClip _soundAlignmentClip;
+
     /// <summary>所选音频采样点距声音开始的秒数，编辑窗口非持久状态。</summary>
     private float _soundAlignmentSeconds;
+    #endregion
 
-    /// <summary>清空只读波形会话缓存并释放选点；导入更新及窗口关闭时不留下旧声音的峰值。</summary>
-    private void ClearSoundWaveforms()
-    {
-        _soundWaveforms.Clear();
-        // 同一项目变更及窗口关闭链清除特效只读估算，防止重导后显示旧资源时长。
-        ClearEffectDurationCache();
-        // 同GUID重导声音或特效后，下一次重绘重新计算预览尾帧；原技能END不变。
-        _previewEndFrameCache=-1;
-        _soundAlignmentEvent = null;
-        _soundAlignmentClip = null;
-        Repaint();
-    }
-
-    /// <summary>按真实音频身份读取或复用包络缓存，读取失败同样缓存以避免每帧刷错误。</summary>
-    /// <param name="clip">原声音引用；空引用没有可缓存的 PCM。</param>
-    /// <returns>当前声音的真实包络，空音频返回空引用。</returns>
-    private SkillEditorAudioWaveform GetSoundWaveform(AudioClip clip)
-    {
-        if (clip == null) return null;
-        // 当前音频会话缓存，不使用文件名推测声音身份。
-        SkillEditorAudioWaveform waveform;
-        if (_soundWaveforms.TryGetValue(clip, out waveform))
-        {
-            if (waveform.Samples == clip.samples && waveform.Frequency == clip.frequency && waveform.Channels == clip.channels && waveform.LoadState == clip.loadState)
-                return waveform;
-            _soundWaveforms.Remove(clip);
-        }
-        // 窗口最多缓存六十四个已访问声音，限制频繁切配置后的缓存积累。
-        if (_soundWaveforms.Count >= 64) _soundWaveforms.Clear();
-        waveform = SkillEditorAudioWaveform.Read(clip);
-        _soundWaveforms.Add(clip, waveform);
-        return waveform;
-    }
-
-    /// <summary>计算音频完整显示末尾，以真实 PCM 时长换算当前配置 FPS；不改变技能 END 或原末帧。</summary>
-    /// <param name="effect">原声音事件，只读其开始帧与音频完整长度。</param>
-    /// <returns>纯显示使用的末尾帧，空音频仍有一个可选帧。</returns>
-    private float SoundDisplayEnd(Global.FxAndSound effect)
-    {
-        if (effect == null) return 0f;
-        if (effect.audioClip == null) return effect.keyNumber + 1f;
-        if (effect.audioClip.length <= 0f) return effect.keyNumber + 1f;
-        return effect.keyNumber + effect.audioClip.length * GetPreviewFrameRate();
-    }
-
-    /// <summary>完整声音所需的水平滚动范围；隐藏声音轨道时不额外撑开视口。</summary>
-    /// <returns>声音可见时的纯显示末尾帧，绝不参与 GetTotalFrames 或技能状态时长。</returns>
-    private int SoundTimelineDisplayEnd()
-    {
-        // 读取本轮实际制作行布局，只检查声音显示状态，不改原布局资产。
-        List<TrkInfo> tracks = BuildTracks();
-        // 声音轨道是否展开；旧布局恢复显示的临时制作行也参与此判断。
-        bool visible = false;
-        // 当前显示轨道的零基下标。
-        for (int trackIndex = 0; trackIndex < tracks.Count; trackIndex++)
-        {
-            if (tracks[trackIndex].def.type == Global.TrackType.Sound && tracks[trackIndex].expanded)
-            {
-                visible = true;
-                break;
-            }
-        }
-        if (!visible) return 0;
-        // 本轮所有可见声音的最大真实显示末尾，单位当前时间轴帧。
-        float maximum = 0f;
-        // 原共享列表零基下标，筛选后仍保持原事件身份。
-        for (int index = 0; index < fxAndSoundList.Count; index++)
-        {
-            if (BuiltinTrackRegistry.IsVisibleInSoundTrack(fxAndSoundList[index])) maximum = Mathf.Max(maximum, SoundDisplayEnd(fxAndSoundList[index]));
-        }
-        return Mathf.CeilToInt(maximum);
-    }
-
-    /// <summary>按照声音真实显示长度分配独立行，让长声音和后续声音重叠时仍可分别拖动。</summary>
-    /// <param name="lanes">注册表复用的原事件下标到显示行号字典，本函数只更新显示映射。</param>
-    /// <returns>同一个显示字典，事件及结束帧均保持原值。</returns>
-    private Dictionary<int, int> AssignSoundTimelineLanes(Dictionary<int, int> lanes)
-    {
-        lanes.Clear();
-        _soundLaneEnds.Clear();
-        // 原粒子与声音列表的零基下标，用该下标保持选择、复制和删除一致。
-        for (int index = 0; index < fxAndSoundList.Count; index++)
-        {
-            // 当前原事件引用，只有声音占用本轨道显示行。
-            Global.FxAndSound effect = fxAndSoundList[index];
-            if (!BuiltinTrackRegistry.IsVisibleInSoundTrack(effect)) continue;
-            // 当前事件分配的行号，负一表示暂未找到空行。
-            int assigned = -1;
-            // 当前声音行的零基下标，只接受不与既有显示包络重叠的行。
-            for (int lane = 0; lane < _soundLaneEnds.Count; lane++)
-            {
-                if (_soundLaneEnds[lane] <= effect.keyNumber)
-                {
-                    assigned = lane;
-                    _soundLaneEnds[lane] = SoundDisplayEnd(effect);
-                    break;
-                }
-            }
-            if (assigned < 0)
-            {
-                assigned = _soundLaneEnds.Count;
-                _soundLaneEnds.Add(SoundDisplayEnd(effect));
-            }
-            lanes[index] = assigned;
-        }
-        return lanes;
-    }
-
+    #region 界面刷新
     /// <summary>绘制完整声音块、真实包络、触发边界及选点；拖动沿原公共事务，不增加音频裁剪字段。</summary>
     /// <param name="row">滚动内容空间的轨道行区域，横坐标零点为配置第零帧。</param>
     /// <param name="lanes">原共享列表下标到显示行号的只读映射。</param>
@@ -242,6 +142,29 @@ public partial class SkillEditorWindow
         }
         if (GUILayout.Button(SkillEditorLocalization.Text("Refresh waveform / reset picked point", "刷新波形／清除选点"))) ClearSoundWaveforms();
     }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>按真实音频身份读取或复用包络缓存，读取失败同样缓存以避免每帧刷错误。</summary>
+    /// <param name="clip">原声音引用；空引用没有可缓存的 PCM。</param>
+    /// <returns>当前声音的真实包络，空音频返回空引用。</returns>
+    private SkillEditorAudioWaveform GetSoundWaveform(AudioClip clip)
+    {
+        if (clip == null) return null;
+        // 当前音频会话缓存，不使用文件名推测声音身份。
+        SkillEditorAudioWaveform waveform;
+        if (_soundWaveforms.TryGetValue(clip, out waveform))
+        {
+            if (waveform.Samples == clip.samples && waveform.Frequency == clip.frequency && waveform.Channels == clip.channels && waveform.LoadState == clip.loadState)
+                return waveform;
+            _soundWaveforms.Remove(clip);
+        }
+        // 窗口最多缓存六十四个已访问声音，限制频繁切配置后的缓存积累。
+        if (_soundWaveforms.Count >= 64) _soundWaveforms.Clear();
+        waveform = SkillEditorAudioWaveform.Read(clip);
+        _soundWaveforms.Add(clip, waveform);
+        return waveform;
+    }
 
     /// <summary>返回选中声音要对齐的源音频时点：有效 Alt 选点优先，否则采用真实 PCM 主峰。</summary>
     /// <param name="effect">要对齐的原声音事件，资源替换后旧选点自动失效。</param>
@@ -263,4 +186,94 @@ public partial class SkillEditorWindow
         seconds = waveform.PeakSeconds;
         return true;
     }
+    #endregion
+
+    #region 核心逻辑
+    /// <summary>清空只读波形会话缓存并释放选点；导入更新及窗口关闭时不留下旧声音的峰值。</summary>
+    private void ClearSoundWaveforms()
+    {
+        _soundWaveforms.Clear();
+        // 同一项目变更及窗口关闭链清除特效只读估算，防止重导后显示旧资源时长。
+        ClearEffectDurationCache();
+        // 同GUID重导声音或特效后，下一次重绘重新计算预览尾帧；原技能END不变。
+        _previewEndFrameCache=-1;
+        _soundAlignmentEvent = null;
+        _soundAlignmentClip = null;
+        Repaint();
+    }
+
+    /// <summary>计算音频完整显示末尾，以真实 PCM 时长换算当前配置 FPS；不改变技能 END 或原末帧。</summary>
+    /// <param name="effect">原声音事件，只读其开始帧与音频完整长度。</param>
+    /// <returns>纯显示使用的末尾帧，空音频仍有一个可选帧。</returns>
+    private float SoundDisplayEnd(Global.FxAndSound effect)
+    {
+        if (effect == null) return 0f;
+        if (effect.audioClip == null) return effect.keyNumber + 1f;
+        if (effect.audioClip.length <= 0f) return effect.keyNumber + 1f;
+        return effect.keyNumber + effect.audioClip.length * GetPreviewFrameRate();
+    }
+
+    /// <summary>完整声音所需的水平滚动范围；隐藏声音轨道时不额外撑开视口。</summary>
+    /// <returns>声音可见时的纯显示末尾帧，绝不参与 GetTotalFrames 或技能状态时长。</returns>
+    private int SoundTimelineDisplayEnd()
+    {
+        // 读取本轮实际制作行布局，只检查声音显示状态，不改原布局资产。
+        List<TrkInfo> tracks = BuildTracks();
+        // 声音轨道是否展开；旧布局恢复显示的临时制作行也参与此判断。
+        bool visible = false;
+        // 当前显示轨道的零基下标。
+        for (int trackIndex = 0; trackIndex < tracks.Count; trackIndex++)
+        {
+            if (tracks[trackIndex].def.type == Global.TrackType.Sound && tracks[trackIndex].expanded)
+            {
+                visible = true;
+                break;
+            }
+        }
+        if (!visible) return 0;
+        // 本轮所有可见声音的最大真实显示末尾，单位当前时间轴帧。
+        float maximum = 0f;
+        // 原共享列表零基下标，筛选后仍保持原事件身份。
+        for (int index = 0; index < fxAndSoundList.Count; index++)
+        {
+            if (BuiltinTrackRegistry.IsVisibleInSoundTrack(fxAndSoundList[index])) maximum = Mathf.Max(maximum, SoundDisplayEnd(fxAndSoundList[index]));
+        }
+        return Mathf.CeilToInt(maximum);
+    }
+
+    /// <summary>按照声音真实显示长度分配独立行，让长声音和后续声音重叠时仍可分别拖动。</summary>
+    /// <param name="lanes">注册表复用的原事件下标到显示行号字典，本函数只更新显示映射。</param>
+    /// <returns>同一个显示字典，事件及结束帧均保持原值。</returns>
+    private Dictionary<int, int> AssignSoundTimelineLanes(Dictionary<int, int> lanes)
+    {
+        lanes.Clear();
+        _soundLaneEnds.Clear();
+        // 原粒子与声音列表的零基下标，用该下标保持选择、复制和删除一致。
+        for (int index = 0; index < fxAndSoundList.Count; index++)
+        {
+            // 当前原事件引用，只有声音占用本轨道显示行。
+            Global.FxAndSound effect = fxAndSoundList[index];
+            if (!BuiltinTrackRegistry.IsVisibleInSoundTrack(effect)) continue;
+            // 当前事件分配的行号，负一表示暂未找到空行。
+            int assigned = -1;
+            // 当前声音行的零基下标，只接受不与既有显示包络重叠的行。
+            for (int lane = 0; lane < _soundLaneEnds.Count; lane++)
+            {
+                if (_soundLaneEnds[lane] <= effect.keyNumber)
+                {
+                    assigned = lane;
+                    _soundLaneEnds[lane] = SoundDisplayEnd(effect);
+                    break;
+                }
+            }
+            if (assigned < 0)
+            {
+                assigned = _soundLaneEnds.Count;
+                _soundLaneEnds.Add(SoundDisplayEnd(effect));
+            }
+            lanes[index] = assigned;
+        }
+        return lanes;
+    }
+    #endregion
 }

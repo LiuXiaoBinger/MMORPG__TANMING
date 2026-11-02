@@ -6,6 +6,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class EntityProjectileComponent : EntityComponentBase
 {
+
+    #region 字段与属性
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Projectile"/>。</summary>
     public override EntityComponentType ComponentType
     {
@@ -26,7 +28,9 @@ public sealed class EntityProjectileComponent : EntityComponentBase
 
     /// <summary>已经经过的飞行时间（毫秒），由 Update 累计。</summary>
     public int ElapsedMilliseconds { get; private set; }
+    #endregion
 
+    #region 构造、初始化与事件注册
     /// <summary>构造投射物组件。</summary>
     /// <param name="owner">宿主实体。</param>
     public EntityProjectileComponent(ROObject owner) : base(owner)
@@ -49,11 +53,6 @@ public sealed class EntityProjectileComponent : EntityComponentBase
         }
     }
 
-    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
-    public override void Attached()
-    {
-    }
-
     protected override void EventSubscribe()
     {
         
@@ -73,9 +72,10 @@ public sealed class EntityProjectileComponent : EntityComponentBase
         LifetimeMilliseconds = 0;
         ElapsedMilliseconds = 0;
     }
+    #endregion
+
+    /// <summary>挂载完成回调，当前无额外初始化逻辑。</summary>
+    public override void Attached()
+    {
+    }
 }
-
-
-
-
-

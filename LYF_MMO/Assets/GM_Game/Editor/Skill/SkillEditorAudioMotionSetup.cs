@@ -7,16 +7,145 @@ using Ethan.ActionEditor;
 /// <summary>显式制作 MJS 技能及普通动作的声音和动画位移轨道，保留原粒子、用户位移段和资产身份。</summary>
 public static class SkillEditorAudioMotionSetup
 {
+
+    #region 字段
     /// <summary>MJS 角色的 RO 解码声音根目录；Movement、Jump 和 Skills 子目录及文件名标明动作用途。</summary>
     private const string AudioDirectory = "Assets/GM_Game/Audios/Characters/MJS/";
+
     /// <summary>当前正式角色普通动作的真实动画资源目录。</summary>
     private const string CommonAnimationDirectory = "Assets/GM_Game/Animas/Role/MJS/Common/ALL/";
+
     /// <summary>七个已有表现行，不新增主技能或表格记录。</summary>
     private static readonly int[] PresentationIds = { 3001001, 3001002, 3001003, 3004001, 3005001, 3006001, 3007001 };
+
     /// <summary>六个普通动作作者文件后缀，包含战斗持剑走跑，不作为服务器技能 ID。</summary>
     private static readonly string[] LocomotionNames = { "Walk", "Run", "JumpStart", "JumpEnd", "BattleWalk", "BattleRun" };
+
     /// <summary>普通动作对应的原完整剪辑文件名，不改原 Animator 资源。</summary>
     private static readonly string[] LocomotionClips = { "Anim_MJS_Walk.anim", "Anim_MJS_Run_F.anim", "Anim_JX_Jump_Start.anim", "Anim_JX_Jump_End.anim", "Anim_MJS_Walk_ZD.anim", "Anim_MJS_Run_F_ZD.anim" };
+    #endregion
+
+    #region 音频与移动技能配置装配导出
+    /// <summary>迁移上一版自动制作的声音初值；用户已调整音量时保留原事件，已迁移时不重复追加。</summary>
+    /// <param name="config">本次更新的原作者对象，粒子和位移列表不参与修改。</param>
+    /// <param name="oldFileName">上一版自动稿声音在分类根目录下的相对路径，仅用于定位旧默认事件。</param>
+    /// <param name="oldFrame">上一版默认触发帧，使用作者时间轴帧率。</param>
+    /// <param name="oldVolume">上一版默认音量，只有仍等于此值才迁移，范围零至一。</param>
+    /// <param name="fileName">本版声音在分类根目录下的相对路径，真实引用由 Unity 资源数据库解析。</param>
+    /// <param name="frame">本版默认触发帧，使用作者时间轴帧率。</param>
+    /// <param name="volume">本版默认音量，范围零至一，不修改原波形。</param>
+    private static void UpdateInitialAudio(SkillConfigSO config, string oldFileName, int oldFrame, float oldVolume, string fileName, int frame, float volume)
+    {
+        // 旧声音资源仍保留，只作为精确识别上一版初稿的引用。
+        AudioClip previousClip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + oldFileName);
+        // 新资源引用必须真实存在，禁止手写序列化身份。
+        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
+        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
+        // 原 Y 作者对象的序列化适配边界，仅更新声音的资源、时点和音量。
+        SerializedObject serialized = new SerializedObject(config);
+        // 原声音和粒子混合列表，引用类型对象由 Unity 序列化接口维护。
+        SerializedProperty effects = serialized.FindProperty("fxList");
+        // 逐条寻找上一版精确资源和时点，不改变排序和其他事件。
+        for (int index = 0; index < effects.arraySize; index++)
+        {
+            // 当前候选事件，只允许 contentKind=2 的单次音效被迁移。
+            SerializedProperty item = effects.GetArrayElementAtIndex(index);
+            if (item.FindPropertyRelative("contentKind").intValue != 2 || item.FindPropertyRelative("audioClip").objectReferenceValue != previousClip || item.FindPropertyRelative("keyNumber").intValue != oldFrame) continue;
+            if (!Mathf.Approximately(item.FindPropertyRelative("baseVolume").floatValue, oldVolume)) return;
+            item.FindPropertyRelative("audioClip").objectReferenceValue = clip;
+            item.FindPropertyRelative("keyNumber").intValue = frame;
+            item.FindPropertyRelative("baseVolume").floatValue = volume;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return;
+        }
+        AddAudio(config, fileName, frame, volume);
+    }
+
+    /// <summary>追加固定音量单次声音，重复执行时同一帧同一声音不会再次插入。</summary>
+    /// <param name="config">接收新增声音的原作者对象。</param>
+    /// <param name="fileName">真实 RO 样本在 MJS 角色声音根目录下的英文相对资源路径。</param>
+    /// <param name="frame">明确的时间轴触发帧，零起始。</param>
+    /// <param name="volume">制作时固定音量，范围零至一。</param>
+    private static void AddAudio(SkillConfigSO config, string fileName, int frame, float volume)
+    {
+        // Unity 解析实际音频身份，禁止猜测 GUID 或 fileID。
+        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
+        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
+        // 原 Y 声音事件列表，通过序列化边界保留所有已有事件引用。
+        SerializedObject serialized = new SerializedObject(config);
+        // 当前粒子与声音混合列表，新增时只扩展尾部。
+        SerializedProperty effects = serialized.FindProperty("fxList");
+        // 幂等检查索引，不重排或覆盖已有粒子/声音。
+        for (int index = 0; index < effects.arraySize; index++)
+        {
+            // 已有事件，资源和帧同时相等即保留其原音量及其他用户参数。
+            SerializedProperty existing = effects.GetArrayElementAtIndex(index);
+            if (existing.FindPropertyRelative("contentKind").intValue == 2 && existing.FindPropertyRelative("audioClip").objectReferenceValue == clip && existing.FindPropertyRelative("keyNumber").intValue == frame) return;
+        }
+        effects.arraySize++;
+        // Unity 扩展数组可能复制前一项，因此逐项初始化声音结构，不能继承前一粒子的资源和变换。
+        SerializedProperty item = effects.GetArrayElementAtIndex(effects.arraySize - 1);
+        item.FindPropertyRelative("contentKind").intValue = 2;
+        item.FindPropertyRelative("keyNumber").intValue = frame;
+        item.FindPropertyRelative("endKeyNumber").intValue = 0;
+        item.FindPropertyRelative("particleSystem").objectReferenceValue = null;
+        item.FindPropertyRelative("audioClip").objectReferenceValue = clip;
+        item.FindPropertyRelative("offset").vector3Value = Vector3.zero;
+        item.FindPropertyRelative("socketPath").stringValue = "";
+        item.FindPropertyRelative("placementKind").intValue = 0;
+        item.FindPropertyRelative("forwardDistance").floatValue = 0f;
+        item.FindPropertyRelative("followCharacter").boolValue = true;
+        item.FindPropertyRelative("rotation").vector3Value = Vector3.zero;
+        item.FindPropertyRelative("scale").vector3Value = Vector3.one;
+        item.FindPropertyRelative("playbackSpeed").floatValue = 1f;
+        item.FindPropertyRelative("useWorldSpace").boolValue = false;
+        item.FindPropertyRelative("customLifetime").floatValue = 0f;
+        item.FindPropertyRelative("audioRandomize").boolValue = false;
+        item.FindPropertyRelative("pitchVariation").floatValue = 0.1f;
+        item.FindPropertyRelative("volumeVariation").floatValue = 0.05f;
+        item.FindPropertyRelative("baseVolume").floatValue = volume;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EnsureTrack(config, 2);
+    }
+
+    /// <summary>将六份普通动作稿单独发布，不改变技能表身份或原角色预制体。</summary>
+    [MenuItem("Tools/技能/YCombat/导出MJS走跑跳声音")]
+    public static void ExportLocomotion()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("请在非运行模式发布普通动作。");
+        // 固定路径由运行缓存加载，与七技能表现共享原 Runtime collector。
+        string path = SkillEditorAssetTools.RuntimeDirectory + "/SkillRuntimeLocomotionConfig_MJS.asset";
+        // 已存在时修改同一运行配置，保留 GUID 和依赖引用。
+        SkillRuntimeLocomotionConfig runtime = AssetDatabase.LoadAssetAtPath<SkillRuntimeLocomotionConfig>(path);
+        if (runtime != null && EditorUtility.IsDirty(runtime)) throw new InvalidOperationException("普通动作运行配置存在未保存修改，未覆盖：" + path);
+        // 先转换六份作者稿，任何稿件无效时不修改当前运行资产。
+        List<SkillRuntimeLocomotionAction> actions = new List<SkillRuntimeLocomotionAction>();
+        // Walk/Run/JumpStart/JumpEnd 的稳定顺序与配置字段对应。
+        for (int index = 0; index < LocomotionNames.Length; index++)
+        {
+            // 已通过 Unity 加载的普通动作作者稿。
+            SkillConfigSO config = AssetDatabase.LoadAssetAtPath<SkillConfigSO>(LocomotionAuthoringPath(index));
+            if (config == null || EditorUtility.IsDirty(config)) throw new InvalidOperationException("普通动作缺失或存在未保存修改：" + LocomotionNames[index]);
+            // 每份普通动作仍沿用原完整动画，不能静默丢弃裁剪、混合或其他制作轨道。
+            AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(CommonAnimationDirectory + LocomotionClips[index]);
+            ValidateLocomotion(config, clip);
+            actions.Add(new SkillRuntimeLocomotionAction { AnimationLocation = AssetDatabase.GetAssetPath(clip), DurationSeconds = clip.length, AudioEvents = SkillEditorAudioMotionTools.ReadAudio(config, clip.length) });
+        }
+        if (runtime == null)
+        {
+            runtime = ScriptableObject.CreateInstance<SkillRuntimeLocomotionConfig>();
+            AssetDatabase.CreateAsset(runtime, path);
+        }
+        Undo.RecordObject(runtime, "发布普通动作声音");
+        runtime.Walk = actions[0];
+        runtime.Run = actions[1];
+        runtime.JumpStart = actions[2];
+        runtime.JumpEnd = actions[3];
+        runtime.BattleWalk = actions[4];
+        runtime.BattleRun = actions[5];
+        EditorUtility.SetDirty(runtime);
+        AssetDatabase.SaveAssetIfDirty(runtime);
+    }
 
     /// <summary>给七份现有作者稿追加声音，位移段由程序曲线迁移承载，并生成六份普通动作及其运行声音配置。</summary>
     [MenuItem("Tools/技能/YCombat/编入RO音效与程序位移")]
@@ -73,45 +202,6 @@ public static class SkillEditorAudioMotionSetup
         ExportLocomotion();
         SkillEditorAssetTools.ValidateAll();
         Debug.Log("已编入 RO 声音：七份技能作者稿与运行表现、走路/跑步/起跳/落地动作；已有粒子与用户位移段保留。");
-    }
-
-    /// <summary>将六份普通动作稿单独发布，不改变技能表身份或原角色预制体。</summary>
-    [MenuItem("Tools/技能/YCombat/导出MJS走跑跳声音")]
-    public static void ExportLocomotion()
-    {
-        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("请在非运行模式发布普通动作。");
-        // 固定路径由运行缓存加载，与七技能表现共享原 Runtime collector。
-        string path = SkillEditorAssetTools.RuntimeDirectory + "/SkillRuntimeLocomotionConfig_MJS.asset";
-        // 已存在时修改同一运行配置，保留 GUID 和依赖引用。
-        SkillRuntimeLocomotionConfig runtime = AssetDatabase.LoadAssetAtPath<SkillRuntimeLocomotionConfig>(path);
-        if (runtime != null && EditorUtility.IsDirty(runtime)) throw new InvalidOperationException("普通动作运行配置存在未保存修改，未覆盖：" + path);
-        // 先转换六份作者稿，任何稿件无效时不修改当前运行资产。
-        List<SkillRuntimeLocomotionAction> actions = new List<SkillRuntimeLocomotionAction>();
-        // Walk/Run/JumpStart/JumpEnd 的稳定顺序与配置字段对应。
-        for (int index = 0; index < LocomotionNames.Length; index++)
-        {
-            // 已通过 Unity 加载的普通动作作者稿。
-            SkillConfigSO config = AssetDatabase.LoadAssetAtPath<SkillConfigSO>(LocomotionAuthoringPath(index));
-            if (config == null || EditorUtility.IsDirty(config)) throw new InvalidOperationException("普通动作缺失或存在未保存修改：" + LocomotionNames[index]);
-            // 每份普通动作仍沿用原完整动画，不能静默丢弃裁剪、混合或其他制作轨道。
-            AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(CommonAnimationDirectory + LocomotionClips[index]);
-            ValidateLocomotion(config, clip);
-            actions.Add(new SkillRuntimeLocomotionAction { AnimationLocation = AssetDatabase.GetAssetPath(clip), DurationSeconds = clip.length, AudioEvents = SkillEditorAudioMotionTools.ReadAudio(config, clip.length) });
-        }
-        if (runtime == null)
-        {
-            runtime = ScriptableObject.CreateInstance<SkillRuntimeLocomotionConfig>();
-            AssetDatabase.CreateAsset(runtime, path);
-        }
-        Undo.RecordObject(runtime, "发布普通动作声音");
-        runtime.Walk = actions[0];
-        runtime.Run = actions[1];
-        runtime.JumpStart = actions[2];
-        runtime.JumpEnd = actions[3];
-        runtime.BattleWalk = actions[4];
-        runtime.BattleRun = actions[5];
-        EditorUtility.SetDirty(runtime);
-        AssetDatabase.SaveAssetIfDirty(runtime);
     }
 
     /// <summary>发布前复用正式单动画与字段白名单校验，避免普通动作静默忽略未接入轨道。</summary>
@@ -248,88 +338,6 @@ public static class SkillEditorAudioMotionSetup
         if (locomotion != null && EditorUtility.IsDirty(locomotion)) throw new InvalidOperationException("普通动作运行配置存在未保存修改，未覆盖。");
     }
 
-    /// <summary>迁移上一版自动制作的声音初值；用户已调整音量时保留原事件，已迁移时不重复追加。</summary>
-    /// <param name="config">本次更新的原作者对象，粒子和位移列表不参与修改。</param>
-    /// <param name="oldFileName">上一版自动稿声音在分类根目录下的相对路径，仅用于定位旧默认事件。</param>
-    /// <param name="oldFrame">上一版默认触发帧，使用作者时间轴帧率。</param>
-    /// <param name="oldVolume">上一版默认音量，只有仍等于此值才迁移，范围零至一。</param>
-    /// <param name="fileName">本版声音在分类根目录下的相对路径，真实引用由 Unity 资源数据库解析。</param>
-    /// <param name="frame">本版默认触发帧，使用作者时间轴帧率。</param>
-    /// <param name="volume">本版默认音量，范围零至一，不修改原波形。</param>
-    private static void UpdateInitialAudio(SkillConfigSO config, string oldFileName, int oldFrame, float oldVolume, string fileName, int frame, float volume)
-    {
-        // 旧声音资源仍保留，只作为精确识别上一版初稿的引用。
-        AudioClip previousClip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + oldFileName);
-        // 新资源引用必须真实存在，禁止手写序列化身份。
-        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
-        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
-        // 原 Y 作者对象的序列化适配边界，仅更新声音的资源、时点和音量。
-        SerializedObject serialized = new SerializedObject(config);
-        // 原声音和粒子混合列表，引用类型对象由 Unity 序列化接口维护。
-        SerializedProperty effects = serialized.FindProperty("fxList");
-        // 逐条寻找上一版精确资源和时点，不改变排序和其他事件。
-        for (int index = 0; index < effects.arraySize; index++)
-        {
-            // 当前候选事件，只允许 contentKind=2 的单次音效被迁移。
-            SerializedProperty item = effects.GetArrayElementAtIndex(index);
-            if (item.FindPropertyRelative("contentKind").intValue != 2 || item.FindPropertyRelative("audioClip").objectReferenceValue != previousClip || item.FindPropertyRelative("keyNumber").intValue != oldFrame) continue;
-            if (!Mathf.Approximately(item.FindPropertyRelative("baseVolume").floatValue, oldVolume)) return;
-            item.FindPropertyRelative("audioClip").objectReferenceValue = clip;
-            item.FindPropertyRelative("keyNumber").intValue = frame;
-            item.FindPropertyRelative("baseVolume").floatValue = volume;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            return;
-        }
-        AddAudio(config, fileName, frame, volume);
-    }
-
-    /// <summary>追加固定音量单次声音，重复执行时同一帧同一声音不会再次插入。</summary>
-    /// <param name="config">接收新增声音的原作者对象。</param>
-    /// <param name="fileName">真实 RO 样本在 MJS 角色声音根目录下的英文相对资源路径。</param>
-    /// <param name="frame">明确的时间轴触发帧，零起始。</param>
-    /// <param name="volume">制作时固定音量，范围零至一。</param>
-    private static void AddAudio(SkillConfigSO config, string fileName, int frame, float volume)
-    {
-        // Unity 解析实际音频身份，禁止猜测 GUID 或 fileID。
-        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
-        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
-        // 原 Y 声音事件列表，通过序列化边界保留所有已有事件引用。
-        SerializedObject serialized = new SerializedObject(config);
-        // 当前粒子与声音混合列表，新增时只扩展尾部。
-        SerializedProperty effects = serialized.FindProperty("fxList");
-        // 幂等检查索引，不重排或覆盖已有粒子/声音。
-        for (int index = 0; index < effects.arraySize; index++)
-        {
-            // 已有事件，资源和帧同时相等即保留其原音量及其他用户参数。
-            SerializedProperty existing = effects.GetArrayElementAtIndex(index);
-            if (existing.FindPropertyRelative("contentKind").intValue == 2 && existing.FindPropertyRelative("audioClip").objectReferenceValue == clip && existing.FindPropertyRelative("keyNumber").intValue == frame) return;
-        }
-        effects.arraySize++;
-        // Unity 扩展数组可能复制前一项，因此逐项初始化声音结构，不能继承前一粒子的资源和变换。
-        SerializedProperty item = effects.GetArrayElementAtIndex(effects.arraySize - 1);
-        item.FindPropertyRelative("contentKind").intValue = 2;
-        item.FindPropertyRelative("keyNumber").intValue = frame;
-        item.FindPropertyRelative("endKeyNumber").intValue = 0;
-        item.FindPropertyRelative("particleSystem").objectReferenceValue = null;
-        item.FindPropertyRelative("audioClip").objectReferenceValue = clip;
-        item.FindPropertyRelative("offset").vector3Value = Vector3.zero;
-        item.FindPropertyRelative("socketPath").stringValue = "";
-        item.FindPropertyRelative("placementKind").intValue = 0;
-        item.FindPropertyRelative("forwardDistance").floatValue = 0f;
-        item.FindPropertyRelative("followCharacter").boolValue = true;
-        item.FindPropertyRelative("rotation").vector3Value = Vector3.zero;
-        item.FindPropertyRelative("scale").vector3Value = Vector3.one;
-        item.FindPropertyRelative("playbackSpeed").floatValue = 1f;
-        item.FindPropertyRelative("useWorldSpace").boolValue = false;
-        item.FindPropertyRelative("customLifetime").floatValue = 0f;
-        item.FindPropertyRelative("audioRandomize").boolValue = false;
-        item.FindPropertyRelative("pitchVariation").floatValue = 0.1f;
-        item.FindPropertyRelative("volumeVariation").floatValue = 0.05f;
-        item.FindPropertyRelative("baseVolume").floatValue = volume;
-        serialized.ApplyModifiedPropertiesWithoutUndo();
-        EnsureTrack(config, 2);
-    }
-
     /// <summary>显示原 Y 指定类型轨道，已有同类型行保留显示名和折叠状态。</summary>
     /// <param name="config">当前作者稿。</param>
     /// <param name="type">原 TrackType 固定数值，零动画、二特效声音、五位移。</param>
@@ -382,4 +390,5 @@ public static class SkillEditorAudioMotionSetup
     {
         return SkillEditorAssetTools.AuthoringDirectory + "/SkillConfigSO_MJS_" + LocomotionNames[index] + ".asset";
     }
+    #endregion
 }

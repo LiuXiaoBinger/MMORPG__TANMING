@@ -26,108 +26,19 @@ public partial class SkillEditorWindow
         /// <summary>修改盒体旋转。</summary>
         /* 旋转编辑手柄。 */ Rotate
     }
+
+    #region 字段与属性
     /// <summary>当前判定页，仅属于窗口导航状态。</summary>
     CollisionPage collisionPage;
+
     /// <summary>当前场景手柄模式，原默认值为尺寸编辑。</summary>
     CollisionHandleMode collisionHandleMode = CollisionHandleMode.Resize;
+
     /// <summary>反馈页内的视觉／音效／冲击索引。</summary>
     int collisionFeedbackPage;
+
     /// <summary>是否显示原 Scene 编辑手柄，默认开启。</summary>
     bool editCollisionInScene = true;
-
-    /// <summary>验证骨骼属于原预览角色层级并返回真实相对路径。</summary>
-    /// <param name="bone">待绑定或复制路径的真实骨骼引用。</param>
-    /// <param name="path">输出真实相对骨骼路径，用户层级名原样保留。</param>
-    bool TryGetBonePath(Transform bone, out string path)
-    {
-        path = null;
-        if (bone == null || previewModel == null) return false;
-        // 用于聚焦或路径计算的原角色根节点。
-        var root = previewModel.transform;
-        if (bone != root && !bone.IsChildOf(root))
-        {
-            // 原有效预览角色，不新建或替换预览对象。
-            var effective = GetEffectivePreviewModel();
-            if (effective == null) return false;
-            root = effective.transform;
-            if (bone != root && !bone.IsChildOf(root)) return false;
-        }
-        path = AnimationUtility.CalculateTransformPath(bone, root);
-        return true;
-    }
-
-    /// <summary>通过原创作事务绑定原骨骼路径，不修改路径名称。</summary>
-    /// <param name="collision">配置列表中的原攻击判定引用。</param>
-    /// <param name="bone">待绑定或复制路径的真实骨骼引用。</param>
-    void BindCollisionBone(Global.Attack collision, Transform bone)
-    {
-        if (collision == null || !TryGetBonePath(bone, out var /* 原资产相对路径或骨骼层级路径，不翻译其字符串身份。 */ path)) return;
-        RunAuthoringOperation(SkillEditorLocalization.Text("Bind Action Bone", "绑定行为骨骼"), () => {
-            _trackBoneRef = bone;
-            collision.trackBonePath = path;
-        });
-    }
-
-    /// <summary>检查已打开编辑器的预览根节点是否一致，再复制真实骨骼路径。</summary>
-    /// <param name="command">Unity 原层级菜单上下文，属于编辑器适配边界。</param>
-    [MenuItem("GameObject/ACT Action Editor/Copy Bone Path", false, 49)]
-    static void CopySelectedBonePath(MenuCommand command)
-    {
-        // 菜单上下文对应的原场景骨骼对象，用于计算相对路径。
-        var selected = command.context as GameObject;
-        // 当前上下文对象优先，否则读取层级选择；不改变实际骨骼身份。
-        Transform bone = Selection.activeTransform;
-        if (selected != null) bone = selected.transform;
-        // 已经确认的真实骨骼路径，多个窗口不一致时拒绝复制。
-        string result = null;
-        // 活动窗口快照可按索引访问，仍保留各窗口原引用。
-        SkillEditorWindow[] editors = Resources.FindObjectsOfTypeAll<SkillEditorWindow>();
-        // 遍历原可索引集合的零起始位置，仍访问原对象引用。
-        for (int editorIndex = 0; editorIndex < editors.Length; editorIndex++)
-        {
-            // 当前窗口用于确认预览根节点路径的一致性。
-            SkillEditorWindow editor = editors[editorIndex];
-            if (!editor.TryGetBonePath(bone, out var /* 原资产相对路径或骨骼层级路径，不翻译其字符串身份。 */ path)) continue;
-            if (result != null && result != path)
-            {
-                EditorUtility.DisplayDialog(SkillEditorLocalization.Text("Copy Bone Path", "复制骨骼路径"), SkillEditorLocalization.Text("Multiple action editors use different Preview actor roots. Copy the path from the intended editor's Tracking bone controls.", "多个编辑器使用不同的预览角色根节点；请在目标编辑器的跟踪骨骼控件中复制路径。"), SkillEditorLocalization.Text("OK", "确定"));
-                return;
-            }
-            result = path;
-        }
-        if (result == null)
-        {
-            EditorUtility.DisplayDialog(SkillEditorLocalization.Text("Copy Bone Path", "复制骨骼路径"), SkillEditorLocalization.Text("Open ACT Action Editor, assign Preview actor, then select a bone inside that actor's hierarchy.", "打开 ACT 技能编辑器并指定预览角色，再选择该角色层级内的骨骼。"), SkillEditorLocalization.Text("OK", "确定"));
-            return;
-        }
-        EditorGUIUtility.systemCopyBuffer = result;
-    }
-
-    /// <summary>显示盒体与球体菜单，回调仍使用原形状数值。</summary>
-    void ShowCollisionAddMenu()
-    {
-        // 当次 GUI 上下文菜单，标签不写入资产。
-        var menu = new GenericMenu();
-        menu.AddItem(SkillEditorLocalization.Content("Box", "盒体"), false, () => AddCollision(1));
-        menu.AddItem(SkillEditorLocalization.Content("Sphere", "球体"), false, () => AddCollision(0));
-        menu.ShowAsContext();
-    }
-
-    /// <summary>在当前帧创建原默认判定，默认数据名称保持英文原值。</summary>
-    /// <param name="shape">原判定形状值，0 为球体，1 为盒体。</param>
-    void AddCollision(int shape)
-    {
-        // 新数据默认名称沿用原英文；切换语言不能改变持久化默认值。
-        string defaultName = "Sphere";
-        if (shape == 1) defaultName = "Box";
-        PushUndo();
-        atkList.Add(new Global.Attack { keyNumber = frameSelectIndex, endKeyNumber = frameSelectIndex + 5,
-            isReWrite = true, shapeType = shape, parameter1 = 1f, parameter2 = 1f,
-            boxHeight = 2f, offset = new Vector3(0, 1, 1), autoAim = false,
-            collisionName = defaultName });
-        selType = SelType.Attack; selIdx = atkList.Count - 1; collisionPage = CollisionPage.Shape;
-        SceneView.RepaintAll();
-    }
 
     /// <summary>当前原攻击判定引用，包含基础或第二阶段列表，非法选择返回空。</summary>
     Global.Attack SelectedCollision
@@ -140,19 +51,17 @@ public partial class SkillEditorWindow
             return null;
         }
     }
+    #endregion
 
-    /// <summary>按原字段名访问判定或流程嵌套属性，交由统一创作绘制入口。</summary>
-    /// <param name="item">原嵌套判定或流程节点的序列化游标。</param>
-    /// <param name="names">原字段名称顺序数组，不作为显示文案。</param>
-    void CollisionFields(SerializedProperty item, params string[] names)
+    #region 碰撞编辑面板与添加
+    /// <summary>显示盒体与球体菜单，回调仍使用原形状数值。</summary>
+    void ShowCollisionAddMenu()
     {
-        // 字段名称按原顺序定位，不翻译 propertyPath 或领域属性。
-        for (int index = 0; index < names.Length; index++)
-        {
-            // 当前原字段缓存，嵌套显示仍走统一创作绘制链。
-            SerializedProperty p = item.FindPropertyRelative(names[index]);
-            if (p != null) DrawAuthoringProperty(p);
-        }
+        // 当次 GUI 上下文菜单，标签不写入资产。
+        var menu = new GenericMenu();
+        menu.AddItem(SkillEditorLocalization.Content("Box", "盒体"), false, () => AddCollision(1));
+        menu.AddItem(SkillEditorLocalization.Content("Sphere", "球体"), false, () => AddCollision(0));
+        menu.ShowAsContext();
     }
 
     /// <summary>显示判定形状、响应和反馈三页，页签索引与原功能保持一致。</summary>
@@ -260,6 +169,106 @@ public partial class SkillEditorWindow
         if (collisionPage == CollisionPage.Shape && SelectedCollision?.useBoneTracking == true) DrawSelectedAuthoringTools(listName, index);
     }
 
+    /// <summary>在当前帧创建原默认判定，默认数据名称保持英文原值。</summary>
+    /// <param name="shape">原判定形状值，0 为球体，1 为盒体。</param>
+    void AddCollision(int shape)
+    {
+        // 新数据默认名称沿用原英文；切换语言不能改变持久化默认值。
+        string defaultName = "Sphere";
+        if (shape == 1) defaultName = "Box";
+        PushUndo();
+        atkList.Add(new Global.Attack { keyNumber = frameSelectIndex, endKeyNumber = frameSelectIndex + 5,
+            isReWrite = true, shapeType = shape, parameter1 = 1f, parameter2 = 1f,
+            boxHeight = 2f, offset = new Vector3(0, 1, 1), autoAim = false,
+            collisionName = defaultName });
+        selType = SelType.Attack; selIdx = atkList.Count - 1; collisionPage = CollisionPage.Shape;
+        SceneView.RepaintAll();
+    }
+
+    /// <summary>验证骨骼属于原预览角色层级并返回真实相对路径。</summary>
+    /// <param name="bone">待绑定或复制路径的真实骨骼引用。</param>
+    /// <param name="path">输出真实相对骨骼路径，用户层级名原样保留。</param>
+    bool TryGetBonePath(Transform bone, out string path)
+    {
+        path = null;
+        if (bone == null || previewModel == null) return false;
+        // 用于聚焦或路径计算的原角色根节点。
+        var root = previewModel.transform;
+        if (bone != root && !bone.IsChildOf(root))
+        {
+            // 原有效预览角色，不新建或替换预览对象。
+            var effective = GetEffectivePreviewModel();
+            if (effective == null) return false;
+            root = effective.transform;
+            if (bone != root && !bone.IsChildOf(root)) return false;
+        }
+        path = AnimationUtility.CalculateTransformPath(bone, root);
+        return true;
+    }
+    #endregion
+
+    #region 碰撞选择与骨骼绑定
+    /// <summary>通过原创作事务绑定原骨骼路径，不修改路径名称。</summary>
+    /// <param name="collision">配置列表中的原攻击判定引用。</param>
+    /// <param name="bone">待绑定或复制路径的真实骨骼引用。</param>
+    void BindCollisionBone(Global.Attack collision, Transform bone)
+    {
+        if (collision == null || !TryGetBonePath(bone, out var /* 原资产相对路径或骨骼层级路径，不翻译其字符串身份。 */ path)) return;
+        RunAuthoringOperation(SkillEditorLocalization.Text("Bind Action Bone", "绑定行为骨骼"), () => {
+            _trackBoneRef = bone;
+            collision.trackBonePath = path;
+        });
+    }
+
+    /// <summary>检查已打开编辑器的预览根节点是否一致，再复制真实骨骼路径。</summary>
+    /// <param name="command">Unity 原层级菜单上下文，属于编辑器适配边界。</param>
+    [MenuItem("GameObject/ACT Action Editor/Copy Bone Path", false, 49)]
+    static void CopySelectedBonePath(MenuCommand command)
+    {
+        // 菜单上下文对应的原场景骨骼对象，用于计算相对路径。
+        var selected = command.context as GameObject;
+        // 当前上下文对象优先，否则读取层级选择；不改变实际骨骼身份。
+        Transform bone = Selection.activeTransform;
+        if (selected != null) bone = selected.transform;
+        // 已经确认的真实骨骼路径，多个窗口不一致时拒绝复制。
+        string result = null;
+        // 活动窗口快照可按索引访问，仍保留各窗口原引用。
+        SkillEditorWindow[] editors = Resources.FindObjectsOfTypeAll<SkillEditorWindow>();
+        // 遍历原可索引集合的零起始位置，仍访问原对象引用。
+        for (int editorIndex = 0; editorIndex < editors.Length; editorIndex++)
+        {
+            // 当前窗口用于确认预览根节点路径的一致性。
+            SkillEditorWindow editor = editors[editorIndex];
+            if (!editor.TryGetBonePath(bone, out var /* 原资产相对路径或骨骼层级路径，不翻译其字符串身份。 */ path)) continue;
+            if (result != null && result != path)
+            {
+                EditorUtility.DisplayDialog(SkillEditorLocalization.Text("Copy Bone Path", "复制骨骼路径"), SkillEditorLocalization.Text("Multiple action editors use different Preview actor roots. Copy the path from the intended editor's Tracking bone controls.", "多个编辑器使用不同的预览角色根节点；请在目标编辑器的跟踪骨骼控件中复制路径。"), SkillEditorLocalization.Text("OK", "确定"));
+                return;
+            }
+            result = path;
+        }
+        if (result == null)
+        {
+            EditorUtility.DisplayDialog(SkillEditorLocalization.Text("Copy Bone Path", "复制骨骼路径"), SkillEditorLocalization.Text("Open ACT Action Editor, assign Preview actor, then select a bone inside that actor's hierarchy.", "打开 ACT 技能编辑器并指定预览角色，再选择该角色层级内的骨骼。"), SkillEditorLocalization.Text("OK", "确定"));
+            return;
+        }
+        EditorGUIUtility.systemCopyBuffer = result;
+    }
+
+    /// <summary>按原字段名访问判定或流程嵌套属性，交由统一创作绘制入口。</summary>
+    /// <param name="item">原嵌套判定或流程节点的序列化游标。</param>
+    /// <param name="names">原字段名称顺序数组，不作为显示文案。</param>
+    void CollisionFields(SerializedProperty item, params string[] names)
+    {
+        // 字段名称按原顺序定位，不翻译 propertyPath 或领域属性。
+        for (int index = 0; index < names.Length; index++)
+        {
+            // 当前原字段缓存，嵌套显示仍走统一创作绘制链。
+            SerializedProperty p = item.FindPropertyRelative(names[index]);
+            if (p != null) DrawAuthoringProperty(p);
+        }
+    }
+
     /// <summary>按原世界几何中心与尺寸聚焦场景视图。</summary>
     void FrameSelectedCollision()
     {
@@ -280,4 +289,5 @@ public partial class SkillEditorWindow
         scene.Frame(new Bounds(center, Vector3.one * Mathf.Max(size, 1f)), false);
         scene.Repaint();
     }
+    #endregion
 }

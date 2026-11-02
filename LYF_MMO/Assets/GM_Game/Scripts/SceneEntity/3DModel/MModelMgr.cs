@@ -7,15 +7,16 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class MModelMgr
 {
-    /// <summary>全局单例实例。</summary>
-    private static readonly MModelMgr _instance = new MModelMgr();
-    /// <summary>空闲 MModel 对象栈。</summary>
-    private readonly Stack<MModel> _pool = new Stack<MModel>();
-
     /// <summary>私有构造函数，禁止外部 new。</summary>
     private MModelMgr()
     {
     }
+
+    /// <summary>全局单例实例。</summary>
+    private static readonly MModelMgr _instance = new MModelMgr();
+
+    /// <summary>空闲 MModel 对象栈。</summary>
+    private readonly Stack<MModel> _pool = new Stack<MModel>();
 
     /// <summary>获取 MModelMgr 全局单例。</summary>
     public static MModelMgr Instance

@@ -9,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class QuickTeamWidget : MonoBehaviour
 {
+
+    #region 字段
     /// <summary>未建队分支根节点，对应 RO 的 NotInTeamPanel，内含「创建队伍」「寻找队伍」两行。</summary>
     [SerializeField, Header("未建队分支")] private GameObject _notInTeamRoot;
 
@@ -59,21 +61,28 @@ public sealed class QuickTeamWidget : MonoBehaviour
 
     /// <summary>原版邀请空位按钮，打开邀请界面壳。</summary>
     [SerializeField] private Button _inviteButton;
+
     /// <summary>原版本人条目按钮，打开队员详情壳。</summary>
     [SerializeField] private Button _memberButton;
+
     /// <summary>本人条目右侧箭头，打开成员快捷菜单壳。</summary>
     [SerializeField] private Button _memberMenuButton;
 
     /// <summary>成员行上的名字路径，相对成员行根节点。</summary>
     private const string SlotNamePath = "Name";
+
     /// <summary>成员行上的等级路径，相对成员行根节点。</summary>
     private const string SlotLevelPath = "Level";
+
     /// <summary>成员行上的职业头像路径，相对成员行根节点。</summary>
     private const string SlotJobPath = "ProfessionImage";
+
     /// <summary>成员行上的生命条路径，相对成员行根节点。</summary>
     private const string SlotHpPath = "SliderHP";
+
     /// <summary>成员行上的法力条路径，相对成员行根节点。</summary>
     private const string SlotMpPath = "SliderMP";
+
     /// <summary>成员行上的队长标记路径，相对成员行根节点。</summary>
     private const string SlotCaptainPath = "ImageCaptain";
 
@@ -91,7 +100,120 @@ public sealed class QuickTeamWidget : MonoBehaviour
 
     /// <summary>是否已完成控件绑定，避免重复初始化叠加监听。</summary>
     private bool _inited;
+    #endregion
 
+    #region 初始化与事件注册
+    /// <summary>移除已绑定的按钮监听，供重复初始化与销毁复用。</summary>
+    private void RemoveListeners()
+    {
+        if (_groupButton != null)
+        {
+            _groupButton.onClick.RemoveListener(OnOpenTeamClicked);
+        }
+        if (_createButton != null)
+        {
+            _createButton.onClick.RemoveListener(OnCreateTeamClicked);
+        }
+        if (_searchButton != null) _searchButton.onClick.RemoveListener(OnSearchClicked);
+        if (_summonButton != null) _summonButton.onClick.RemoveListener(OnSummonClicked);
+        if (_inviteButton != null) _inviteButton.onClick.RemoveListener(OnInviteClicked);
+        if (_memberButton != null) _memberButton.onClick.RemoveListener(OnMemberClicked);
+        if (_memberMenuButton != null) _memberMenuButton.onClick.RemoveListener(OnMemberMenuClicked);
+    }
+
+    /// <summary>销毁时注销监听，避免控件对象残留回调。</summary>
+    private void OnDestroy()
+    {
+        RemoveListeners();
+    }
+    #endregion
+
+    /// <summary>原预制体嵌套按钮的整数事件边界，只转发具名界面请求。</summary>
+    /// <param name="pageIndex">预制体保存的 TeamPage 编号。</param>
+    public void ShowPage(int pageIndex)
+    {
+        OpenPageRequested?.Invoke((TeamPage)pageIndex);
+    }
+
+    #region 交互响应
+    /// <summary>组队按钮请求打开正式队伍窗口。</summary>
+    private void OnOpenTeamClicked()
+    {
+        if (OpenTeamRequested != null)
+        {
+            OpenTeamRequested();
+        }
+    }
+
+    /// <summary>把快捷创建请求交给控制器，控件不保存业务状态。</summary>
+    private void OnCreateTeamClicked()
+    {
+        CreateTeamRequested?.Invoke();
+    }
+
+    /// <summary>打开寻找队伍界面壳。</summary>
+    private void OnSearchClicked() { OpenPageRequested?.Invoke(TeamPage.Search); }
+
+    /// <summary>打开邀请玩家界面壳。</summary>
+    private void OnInviteClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
+
+    /// <summary>召集按钮进入已有的邀请玩家页，不再复用收到邀请的确认页，避免无邀请时弹出空邀请框。</summary>
+    private void OnSummonClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
+
+    /// <summary>打开本人详情界面壳。</summary>
+    private void OnMemberClicked() { OpenPageRequested?.Invoke(TeamPage.MemberDetails); }
+
+    /// <summary>打开原成员快捷菜单。</summary>
+    private void OnMemberMenuClicked() { OpenPageRequested?.Invoke(TeamPage.MemberActions); }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>取服务器下发的队伍人数上限，未收到时按 RO 缺省的 5 人处理。</summary>
+    /// <returns>队伍人数上限。</returns>
+    private static int ResolveMaxMember()
+    {
+        // 服务器未下发上限时按 5 人处理，与服务端 TeamManager.MaxMember 保持一致。
+        int maxMember = TeamData.Instance.MaxMember;
+        if (maxMember <= 0)
+        {
+            return 5;
+        }
+        return maxMember;
+    }
+
+    /// <summary>按固定相对路径查找子节点上的指定组件，找不到时返回空。</summary>
+    /// <typeparam name="T">期望的组件类型。</typeparam>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对路径。</param>
+    /// <returns>找到的组件；路径不存在时返回 null。</returns>
+    private static T FindChildComponent<T>(Transform root, string path) where T : Component
+    {
+        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
+        Transform child = root.Find(path);
+        if (child == null)
+        {
+            return null;
+        }
+        return child.GetComponent<T>();
+    }
+
+    /// <summary>按固定相对路径查找子节点，找不到时返回空。</summary>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对路径。</param>
+    /// <returns>找到的节点；路径不存在时返回 null。</returns>
+    private static GameObject FindChildObject(Transform root, string path)
+    {
+        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
+        Transform child = root.Find(path);
+        if (child == null)
+        {
+            return null;
+        }
+        return child.gameObject;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>绑定按钮监听并把快捷栏复位为未建队状态。</summary>
     public void InitWidget()
     {
@@ -174,19 +296,6 @@ public sealed class QuickTeamWidget : MonoBehaviour
             // 邀请空位始终排在所有成员行之后，保持原版从上到下的排列顺序。
             _addSlot.transform.SetAsLastSibling();
         }
-    }
-
-    /// <summary>取服务器下发的队伍人数上限，未收到时按 RO 缺省的 5 人处理。</summary>
-    /// <returns>队伍人数上限。</returns>
-    private static int ResolveMaxMember()
-    {
-        // 服务器未下发上限时按 5 人处理，与服务端 TeamManager.MaxMember 保持一致。
-        int maxMember = TeamData.Instance.MaxMember;
-        if (maxMember <= 0)
-        {
-            return 5;
-        }
-        return maxMember;
     }
 
     /// <summary>按需补齐成员行数量，复制模板并插到邀请空位之前。</summary>
@@ -323,92 +432,5 @@ public sealed class QuickTeamWidget : MonoBehaviour
         }
         slider.value = clamped;
     }
-
-    /// <summary>按固定相对路径查找子节点上的指定组件，找不到时返回空。</summary>
-    /// <typeparam name="T">期望的组件类型。</typeparam>
-    /// <param name="root">查找起点。</param>
-    /// <param name="path">相对路径。</param>
-    /// <returns>找到的组件；路径不存在时返回 null。</returns>
-    private static T FindChildComponent<T>(Transform root, string path) where T : Component
-    {
-        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
-        Transform child = root.Find(path);
-        if (child == null)
-        {
-            return null;
-        }
-        return child.GetComponent<T>();
-    }
-
-    /// <summary>按固定相对路径查找子节点，找不到时返回空。</summary>
-    /// <param name="root">查找起点。</param>
-    /// <param name="path">相对路径。</param>
-    /// <returns>找到的节点；路径不存在时返回 null。</returns>
-    private static GameObject FindChildObject(Transform root, string path)
-    {
-        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
-        Transform child = root.Find(path);
-        if (child == null)
-        {
-            return null;
-        }
-        return child.gameObject;
-    }
-
-    /// <summary>组队按钮请求打开正式队伍窗口。</summary>
-    private void OnOpenTeamClicked()
-    {
-        if (OpenTeamRequested != null)
-        {
-            OpenTeamRequested();
-        }
-    }
-
-    /// <summary>把快捷创建请求交给控制器，控件不保存业务状态。</summary>
-    private void OnCreateTeamClicked()
-    {
-        CreateTeamRequested?.Invoke();
-    }
-
-    /// <summary>原预制体嵌套按钮的整数事件边界，只转发具名界面请求。</summary>
-    /// <param name="pageIndex">预制体保存的 TeamPage 编号。</param>
-    public void ShowPage(int pageIndex)
-    {
-        OpenPageRequested?.Invoke((TeamPage)pageIndex);
-    }
-
-    /// <summary>打开寻找队伍界面壳。</summary>
-    private void OnSearchClicked() { OpenPageRequested?.Invoke(TeamPage.Search); }
-    /// <summary>打开邀请玩家界面壳。</summary>
-    private void OnInviteClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
-    /// <summary>召集按钮进入已有的邀请玩家页，不再复用收到邀请的确认页，避免无邀请时弹出空邀请框。</summary>
-    private void OnSummonClicked() { OpenPageRequested?.Invoke(TeamPage.Invite); }
-    /// <summary>打开本人详情界面壳。</summary>
-    private void OnMemberClicked() { OpenPageRequested?.Invoke(TeamPage.MemberDetails); }
-    /// <summary>打开原成员快捷菜单。</summary>
-    private void OnMemberMenuClicked() { OpenPageRequested?.Invoke(TeamPage.MemberActions); }
-
-    /// <summary>移除已绑定的按钮监听，供重复初始化与销毁复用。</summary>
-    private void RemoveListeners()
-    {
-        if (_groupButton != null)
-        {
-            _groupButton.onClick.RemoveListener(OnOpenTeamClicked);
-        }
-        if (_createButton != null)
-        {
-            _createButton.onClick.RemoveListener(OnCreateTeamClicked);
-        }
-        if (_searchButton != null) _searchButton.onClick.RemoveListener(OnSearchClicked);
-        if (_summonButton != null) _summonButton.onClick.RemoveListener(OnSummonClicked);
-        if (_inviteButton != null) _inviteButton.onClick.RemoveListener(OnInviteClicked);
-        if (_memberButton != null) _memberButton.onClick.RemoveListener(OnMemberClicked);
-        if (_memberMenuButton != null) _memberMenuButton.onClick.RemoveListener(OnMemberMenuClicked);
-    }
-
-    /// <summary>销毁时注销监听，避免控件对象残留回调。</summary>
-    private void OnDestroy()
-    {
-        RemoveListeners();
-    }
+    #endregion
 }

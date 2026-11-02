@@ -20,6 +20,8 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public class RoleCtrlBase : MonoBehaviour
 {
+
+   #region 组件与目标引用
    /// <summary>角色动画器。</summary>
    protected Animator _animator;
 
@@ -38,6 +40,7 @@ public class RoleCtrlBase : MonoBehaviour
    //当前角色选中对象
    /// <summary>当前被选中/锁定的目标角色。</summary>
    public RoleCtrlBase _targetRole;
+   #endregion
 
    #region 角色基础信息
    /// <summary>角色类型（主角/怪物/NPC/其他玩家）。</summary>
@@ -48,16 +51,14 @@ public class RoleCtrlBase : MonoBehaviour
 
    /// <summary>根运动位移倍率，滑铲或特定攻击时放大。</summary>
    protected int _rootMotionSpeed = 1;
-
    #endregion
-   #region 相机相关
 
+   #region 相机相关
    /// <summary>相机跟随/注视点。</summary>
    [Header("相机跟随点")]public Transform LookAt;
 
    /// <summary>绑定的场景实体世界对象；绑定且 Active 后旧控制器停止自行推进。</summary>
    private ROObject _entityobj=null;
-
    #endregion
 
    //角色有限状态机
@@ -91,29 +92,23 @@ public class RoleCtrlBase : MonoBehaviour
    public float turningDragMultiplier { get; set; } = 1f;        // 转向阻力倍率
 
    public float decelerationMultiplier { get; set; } = 1f;       // 减速度倍率
+   #endregion
 
-   #region 状态 动画 
-
+   #region 状态 动画
    int _atkindex = 30;
 
    private IDisposable _obs;
-
    #endregion
-   
-   
-   
 
-
-
-   #region 运动逻辑 主要让角色可以丝滑运动 
-
+   #region 运动逻辑 主要让角色可以丝滑运动
    //上升或则下降的速度
    protected float _verticalSpeed;
 
    //需要到达的高度
    protected float _verticalHeiht;
-
    #endregion
+
+   #region 生命周期与初始化
    private void Awake()
    {
       _animator = GetComponent<Animator>();
@@ -128,6 +123,22 @@ public class RoleCtrlBase : MonoBehaviour
       OnStart();
    }
 
+   protected virtual void OnAwake()
+   {
+      
+   }
+   protected virtual void OnStart()
+   {
+      
+   }
+   public void InitCtrl(RoleType roleType, RoleBaseInfo baseInfo)
+   {
+      //todo
+      _roleType = roleType;
+      _roleBaseInfo =  baseInfo;
+      
+   }
+   protected virtual void OnUpdate() { }
    private void Update()
    {
       // 已绑定新场景实体时，移动、重力和动画全部由实体组件链驱动；旧控制器禁止重复推进。
@@ -146,7 +157,9 @@ public class RoleCtrlBase : MonoBehaviour
       OnUpdate();
       //HandleController();
    }
+   #endregion
 
+   #region 实体绑定与状态切换
    public void SetROObject(ROObject obj)
    {
       if (_entityobj == null)
@@ -159,18 +172,6 @@ public class RoleCtrlBase : MonoBehaviour
    {
       return _entityobj;
    }
-
-   protected virtual void OnAwake()
-   {
-      
-   }
-
-   protected virtual void OnStart()
-   {
-      
-   }
-
-   protected virtual void OnUpdate() { }
 
    public void ChangeState(RoleState state)
    {
@@ -230,7 +231,9 @@ public class RoleCtrlBase : MonoBehaviour
          entity.Machine.ForceToDefault();
       }
    }
+   #endregion
 
+   #region 动画驱动与技能表现
    /// <summary>
    /// 跟运动动画回调函数
    /// </summary>
@@ -268,6 +271,7 @@ public class RoleCtrlBase : MonoBehaviour
       }
    }
 
+   public virtual bool UseSkill(SkillInfo skillInfo){return false;}
    public void HitFx(Transform target)
    {
       if (target != null)
@@ -275,7 +279,9 @@ public class RoleCtrlBase : MonoBehaviour
          _highlightManager.HitFX(target);
       }
    }
+   #endregion
 
+   #region 地面检测与重力
    /// <summary>
    /// 检测是否在地面
    /// </summary>
@@ -298,7 +304,6 @@ public class RoleCtrlBase : MonoBehaviour
         
       }
 
-
       //过渡的值
       //_verticalSpeed -= Mathf.Abs(_verticalSpeed) * Time.deltaTime * 1.5f;
       verticalVelocity -= new Vector3(0,Mathf.Abs(verticalVelocity.y) * Time.deltaTime * 1.5f,0);
@@ -308,7 +313,6 @@ public class RoleCtrlBase : MonoBehaviour
       //}
 
       _characterController.Move(transform.up * (Time.deltaTime * verticalVelocity.y));
-
 
       //检测是否在地面
       if (CheckShereGround())
@@ -373,7 +377,9 @@ public class RoleCtrlBase : MonoBehaviour
          }*/
       }
    }
+   #endregion
 
+   #region 输入与移动计算
    /// <summary>
    /// 获取移动方向输入（带十字型死区判断）
    /// 如果在锁定时间内，则返回 Vector3.zero
@@ -502,18 +508,6 @@ public class RoleCtrlBase : MonoBehaviour
          transform.rotation = Quaternion.RotateTowards(rotation,target,rotationDelta);
       }
    }
-
    #endregion
 
-  
-
-   public void InitCtrl(RoleType roleType, RoleBaseInfo baseInfo)
-   {
-      //todo
-      _roleType = roleType;
-      _roleBaseInfo =  baseInfo;
-      
-   }
-
-   public virtual bool UseSkill(SkillInfo skillInfo){return false;}
 }

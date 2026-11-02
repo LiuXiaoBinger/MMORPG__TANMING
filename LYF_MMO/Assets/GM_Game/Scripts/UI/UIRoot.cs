@@ -16,6 +16,8 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class UIRoot : MonoBehaviour
 {
+
+   #region 字段
    /// <summary>跨场景 UI 根单例，Awake 赋值并 DontDestroyOnLoad。</summary>
    public static UIRoot Instance;
 
@@ -38,7 +40,9 @@ public class UIRoot : MonoBehaviour
    [SerializeField, Header("点击特效")] private ParticleSystem _clichFX;
 
    [SerializeField, Header("画布")]  public Canvas _canvas;
+   #endregion
 
+   #region 初始化与事件注册
    private void Awake()
    {
       Instance = this;
@@ -90,6 +94,25 @@ public class UIRoot : MonoBehaviour
       }
    }
 
+   /// <summary>
+   /// 注册主城ui相关事件
+   /// </summary>
+   public void RegisterMainUIKeyHandler()
+   {
+      if (MainCtrl != null)
+      {
+         MainCtrl.RegisterMainInput();
+      }
+   }
+   #endregion
+
+   public Camera GetUICamera()
+   {
+      if(_canvas!=null) return _canvas.worldCamera;
+      return null;
+   }
+
+   #region 核心逻辑
    private void InitCtrl()
    {
        if (_loginview != null)
@@ -119,27 +142,11 @@ public class UIRoot : MonoBehaviour
       }
    }
 
-   /// <summary>
-   /// 注册主城ui相关事件
-   /// </summary>
-   public void RegisterMainUIKeyHandler()
-   {
-      if (MainCtrl != null)
-      {
-         MainCtrl.RegisterMainInput();
-      }
-   }
-
-   public Camera GetUICamera()
-   {
-      if(_canvas!=null) return _canvas.worldCamera;
-      return null;
-   }
-
    public Vector2 ScreenPointToviewPoint(Vector2 screenPoint)
    {
       Vector2 pos;
       RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, screenPoint, _canvas.worldCamera, out pos);
       return pos;
    }
+   #endregion
 }

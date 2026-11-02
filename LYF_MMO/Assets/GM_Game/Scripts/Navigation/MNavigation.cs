@@ -4,28 +4,41 @@ using System.Collections.Generic;
 /// <summary>共用地图的纯C#导航查询；沿用RO的PathFind/TrySetHeight入口，提供三角走廊A*与共享边路点。</summary>
 public sealed class MNavigation
 {
+
+    #region 字段
     /// <summary>世界单位中的接缝浮点误差上限，只连接近似共线且高度一致的边。</summary>
     private const float SeamTolerance = 0.001f;
+
     /// <summary>接缝候选边空间桶宽度，单位为世界米，不改变网格几何。</summary>
     private const float CellSize = 8f;
+
     /// <summary>当前地图的三角形和有向连接，地图切换时由管理器替换整个查询对象。</summary>
     private readonly MNavigationTriangle[] _triangles;
+
     /// <summary>A*各三角形从起点累计的路径代价。</summary>
     private readonly float[] _costs;
+
     /// <summary>A*各三角形的总代价g+h，供二叉堆排序。</summary>
     private readonly float[] _scores;
+
     /// <summary>本次查询首次进入各三角形的门户位置，沿RO按此位置累计路程，避免长细面的重心绕路代价。</summary>
     private readonly MNavigationPoint[] _positions;
+
     /// <summary>到达三角形的上一个三角形编号，-1表示未建立前驱。</summary>
     private readonly int[] _parents;
+
     /// <summary>各三角形前驱到自身所穿过的共享边。</summary>
     private readonly MNavigationPortal[] _parentPortals;
+
     /// <summary>已出开放表并完成扩展的三角形标记。</summary>
     private readonly bool[] _closed;
+
     /// <summary>三角形在开放堆中的下标，-1表示当前不在堆内。</summary>
     private readonly int[] _heapIndices;
+
     /// <summary>当前同步查询的最小代价堆，不跨线程并发使用同一查询对象。</summary>
     private readonly List<int> _openList = new List<int>();
+    #endregion
 
     /// <summary>从公共地图创建运行查询，只在加载地图时构建邻接。</summary>
     /// <param name="mapData">已由公共读取器读取的世界坐标网格。</param>
@@ -60,6 +73,135 @@ public sealed class MNavigation
         _heapIndices = new int[_triangles.Length];
     }
 
+    #region 界面显示与开关
+    /// <summary>水平落在面内时按重心恢复高度，否则找三条边上的最近三维位置。</summary>
+    /// <param name="point">待吸附世界坐标。</param>
+    /// <param name="triangle">候选导航三角形。</param>
+    private static MNavigationPoint ClosestPoint(MNavigationPoint point, MNavigationTriangle triangle)
+    {
+        // 面积比是XZ重心权重，保留斜面Y而非简单取重心高度。
+        float denominator = Area(triangle.A, triangle.B, triangle.C);
+        if (Math.Abs(denominator) > 0.000001f)
+        {
+            float a = Area(point, triangle.B, triangle.C) / denominator;
+            float b = Area(triangle.A, point, triangle.C) / denominator;
+            float c = 1f - a - b;
+            if (a >= 0f && b >= 0f && c >= 0f)
+            {
+                return new MNavigationPoint(point.X, triangle.A.Y * a + triangle.B.Y * b + triangle.C.Y * c, point.Z);
+            }
+        }
+        // 水平外点或退化面按三维线段投影选最近边。
+        MNavigationPoint closest = ClosestEdge(point, triangle.A, triangle.B);
+        MNavigationPoint candidate = ClosestEdge(point, triangle.B, triangle.C);
+        if (DistanceSquared(point, candidate) < DistanceSquared(point, closest))
+        {
+            closest = candidate;
+        }
+        candidate = ClosestEdge(point, triangle.C, triangle.A);
+        if (DistanceSquared(point, candidate) < DistanceSquared(point, closest))
+        {
+            closest = candidate;
+        }
+        return closest;
+    }
+
+    /// <summary>取得三维线段上的最近点。</summary>
+    /// <param name="point">待投影世界坐标。</param>
+    /// <param name="a">线段起点。</param>
+    /// <param name="b">线段终点。</param>
+    private static MNavigationPoint ClosestEdge(MNavigationPoint point, MNavigationPoint a, MNavigationPoint b)
+    {
+        // 三维投影参数限制在线段闭区间。
+        float lengthSquared = DistanceSquared(a, b);
+        if (lengthSquared == 0f)
+        {
+            return a;
+        }
+        float t = ((point.X - a.X) * (b.X - a.X) + (point.Y - a.Y) * (b.Y - a.Y) + (point.Z - a.Z) * (b.Z - a.Z)) / lengthSquared;
+        return Lerp(a, b, Math.Max(0f, Math.Min(1f, t)));
+    }
+    #endregion
+
+    #region 创建与添加
+    /// <summary>向开放堆插入三角形或上浮其已降低的代价。</summary>
+    /// <param name="triangle">代价刚被更新的三角形编号。</param>
+    private void PushOrUpdate(int triangle)
+    {
+        // 已在堆中的面直接降低键值，新面追加到末端。
+        int index = _heapIndices[triangle];
+        if (index < 0)
+        {
+            index = _openList.Count;
+            _openList.Add(triangle);
+            _heapIndices[triangle] = index;
+        }
+        while (index > 0)
+        {
+            // 二叉堆父结点下标。
+            int parent = (index - 1) / 2;
+            if (_scores[_openList[parent]] <= _scores[triangle])
+            {
+                break;
+            }
+            _openList[index] = _openList[parent];
+            _heapIndices[_openList[index]] = index;
+            index = parent;
+        }
+        _openList[index] = triangle;
+        _heapIndices[triangle] = index;
+    }
+
+    /// <summary>追加路点并去除连续重复端点，保留高度不同的点。</summary>
+    /// <param name="path">当前输出路点。</param>
+    /// <param name="point">新共享边交点或目的点。</param>
+    private static void AddPoint(List<MNavigationPoint> path, MNavigationPoint point)
+    {
+        if (DistanceSquared(path[path.Count - 1], point) > 0.00000001f)
+        {
+            path.Add(point);
+        }
+    }
+    #endregion
+
+    /// <summary>取出总代价最小的三角形并向下恢复开放堆。</summary>
+    private int PopFirst()
+    {
+        // 保存堆顶和用于补位的末尾三角形编号。
+        int result = _openList[0];
+        int last = _openList[_openList.Count - 1];
+        _openList.RemoveAt(_openList.Count - 1);
+        _heapIndices[result] = -1;
+        if (_openList.Count == 0)
+        {
+            return result;
+        }
+        int index = 0;
+        while (index * 2 + 1 < _openList.Count)
+        {
+            // 在左右孩子中选择代价较小的一项。
+            int child = index * 2 + 1;
+            if (child + 1 < _openList.Count)
+            {
+                if (_scores[_openList[child + 1]] < _scores[_openList[child]])
+                {
+                    child++;
+                }
+            }
+            if (_scores[last] <= _scores[_openList[child]])
+            {
+                break;
+            }
+            _openList[index] = _openList[child];
+            _heapIndices[_openList[index]] = index;
+            index = child;
+        }
+        _openList[index] = last;
+        _heapIndices[last] = index;
+        return result;
+    }
+
+    #region 查询与判定
     /// <summary>把世界点吸附到搜索半盒内的最近导航面，按三维距离保留最近高度层。</summary>
     /// <param name="point">输入世界点；成功时改为网格上的最近三维位置。</param>
     /// <param name="halfExtents">XYZ搜索盒半尺寸，单位为世界米。</param>
@@ -75,6 +217,189 @@ public sealed class MNavigation
         return true;
     }
 
+    /// <summary>取得完全相同世界坐标的唯一编号。</summary>
+    /// <param name="vertices">本地图初始化期间的顶点字典。</param>
+    /// <param name="point">原三角网的世界坐标。</param>
+    private static int GetVertex(Dictionary<MNavigationPoint, int> vertices, MNavigationPoint point)
+    {
+        // 首次出现时使用字典现有数量作为连续编号。
+        int index;
+        if (!vertices.TryGetValue(point, out index))
+        {
+            index = vertices.Count;
+            vertices.Add(point, index);
+        }
+        return index;
+    }
+
+    /// <summary>连接浮点误差内共线且高度一致的正长度重叠边，涵盖分块T形接缝。</summary>
+    /// <param name="first">当前边界边。</param>
+    /// <param name="second">同一空间桶中的另一条边界边。</param>
+    private void TryConnectSeam(MNavigationEdge first, MNavigationEdge second)
+    {
+        if (first.Triangle == second.Triangle)
+        {
+            return;
+        }
+        // 第一边水平长度和第二边两端在其直线上的投影参数。
+        float dx = first.B.X - first.A.X;
+        float dz = first.B.Z - first.A.Z;
+        float lengthSquared = dx * dx + dz * dz;
+        if (lengthSquared < SeamTolerance * SeamTolerance)
+        {
+            return;
+        }
+        float t0 = ((second.A.X - first.A.X) * dx + (second.A.Z - first.A.Z) * dz) / lengthSquared;
+        float t1 = ((second.B.X - first.A.X) * dx + (second.B.Z - first.A.Z) * dz) / lengthSquared;
+        // 两端垂线偏差必须均小于毫米级误差，不能跨过障碍缺口。
+        float cross0 = (second.A.X - first.A.X) * dz - (second.A.Z - first.A.Z) * dx;
+        float cross1 = (second.B.X - first.A.X) * dz - (second.B.Z - first.A.Z) * dx;
+        float toleranceSquared = SeamTolerance * SeamTolerance * lengthSquared;
+        if (cross0 * cross0 > toleranceSquared || cross1 * cross1 > toleranceSquared)
+        {
+            return;
+        }
+        // 正长度重叠区间；仅点接触不能让角色穿过。
+        float from = Math.Max(0f, Math.Min(t0, t1));
+        float to = Math.Min(1f, Math.Max(t0, t1));
+        if ((to - from) * Math.Sqrt(lengthSquared) <= SeamTolerance)
+        {
+            return;
+        }
+        // 双方重叠端点高度均需吻合，避免连接同XZ的桥上下层。
+        MNavigationPoint a = Lerp(first.A, first.B, from);
+        MNavigationPoint b = Lerp(first.A, first.B, to);
+        float secondAHeight = second.A.Y + (second.B.Y - second.A.Y) * ((from - t0) / (t1 - t0));
+        float secondBHeight = second.A.Y + (second.B.Y - second.A.Y) * ((to - t0) / (t1 - t0));
+        if (Math.Abs(a.Y - secondAHeight) > SeamTolerance || Math.Abs(b.Y - secondBHeight) > SeamTolerance)
+        {
+            return;
+        }
+        // 两个三角形须位于公共边的两侧，拒绝重叠面或同侧贴边误连。
+        float sideFirst = Area(first.A, first.B, _triangles[first.Triangle].Center);
+        float sideSecond = Area(first.A, first.B, _triangles[second.Triangle].Center);
+        if (sideFirst * sideSecond >= 0f)
+        {
+            return;
+        }
+        Connect(first, second, a, b);
+    }
+
+    /// <summary>在搜索半盒内找三维距离最近的三角投影。</summary>
+    /// <param name="point">待定位的世界坐标。</param>
+    /// <param name="halfExtents">各轴允许的最大坐标偏差。</param>
+    /// <param name="closest">成功时的世界导航面位置。</param>
+    private int FindNearestTriangle(MNavigationPoint point, MNavigationPoint halfExtents, out MNavigationPoint closest)
+    {
+        closest = point;
+        // 当前最近面的编号及平方距离，避免每面进行开方。
+        int nearest = -1;
+        float bestDistance = float.MaxValue;
+        for (int i = 0; i < _triangles.Length; i++)
+        {
+            // 当前面及水平投影后的真实面高度。
+            MNavigationTriangle triangle = _triangles[i];
+            if (triangle.MaxX < point.X - halfExtents.X || triangle.MinX > point.X + halfExtents.X)
+            {
+                continue;
+            }
+            if (triangle.MaxZ < point.Z - halfExtents.Z || triangle.MinZ > point.Z + halfExtents.Z)
+            {
+                continue;
+            }
+            if (triangle.MaxY < point.Y - halfExtents.Y || triangle.MinY > point.Y + halfExtents.Y)
+            {
+                continue;
+            }
+            MNavigationPoint candidate = ClosestPoint(point, triangle);
+            if (Math.Abs(candidate.X - point.X) > halfExtents.X || Math.Abs(candidate.Z - point.Z) > halfExtents.Z)
+            {
+                continue;
+            }
+            if (Math.Abs(candidate.Y - point.Y) > halfExtents.Y)
+            {
+                continue;
+            }
+            float distance = DistanceSquared(point, candidate);
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                nearest = i;
+                closest = candidate;
+            }
+        }
+        return nearest;
+    }
+
+    /// <summary>沿RO直线路点职责用标准门户漏斗提取走廊转角，不生成样条或边中点锯齿。</summary>
+    /// <param name="left">按走向排序的每个门户左端点。</param>
+    /// <param name="right">按走向排序的每个门户右端点。</param>
+    /// <param name="corners">输出起点、必要转角和终点。</param>
+    /// <param name="indices">每个转角对应的门户编号。</param>
+    private static void FindCorners(List<MNavigationPoint> left, List<MNavigationPoint> right, List<MNavigationPoint> corners, List<int> indices)
+    {
+        // 当前漏斗顶点以及左右约束射线的端点和门户编号。
+        MNavigationPoint apex = left[0];
+        MNavigationPoint portalLeft = apex;
+        MNavigationPoint portalRight = apex;
+        int apexIndex = 0;
+        int leftIndex = 0;
+        int rightIndex = 0;
+        corners.Add(apex);
+        indices.Add(0);
+        for (int i = 1; i < left.Count; i++)
+        {
+            // 新门户两端用于收窄当前可见范围。
+            MNavigationPoint nextLeft = left[i];
+            MNavigationPoint nextRight = right[i];
+            if (Area(apex, portalRight, nextRight) <= 0f)
+            {
+                if (SameHorizontal(apex, portalRight) || Area(apex, portalLeft, nextRight) > 0f)
+                {
+                    portalRight = nextRight;
+                    rightIndex = i;
+                }
+                else
+                {
+                    corners.Add(portalLeft);
+                    indices.Add(leftIndex);
+                    apex = portalLeft;
+                    apexIndex = leftIndex;
+                    portalLeft = apex;
+                    portalRight = apex;
+                    leftIndex = apexIndex;
+                    rightIndex = apexIndex;
+                    i = apexIndex;
+                    continue;
+                }
+            }
+            if (Area(apex, portalLeft, nextLeft) >= 0f)
+            {
+                if (SameHorizontal(apex, portalLeft) || Area(apex, portalRight, nextLeft) < 0f)
+                {
+                    portalLeft = nextLeft;
+                    leftIndex = i;
+                }
+                else
+                {
+                    corners.Add(portalRight);
+                    indices.Add(rightIndex);
+                    apex = portalRight;
+                    apexIndex = rightIndex;
+                    portalLeft = apex;
+                    portalRight = apex;
+                    leftIndex = apexIndex;
+                    rightIndex = apexIndex;
+                    i = apexIndex;
+                }
+            }
+        }
+        corners.Add(left[left.Count - 1]);
+        indices.Add(left.Count - 1);
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>同步查找完整可达路线；输出保留跨共享边交点，不把不可达目标强行追加到路线。</summary>
     /// <param name="start_pos">角色当前位置，保留高度用于选择所在层。</param>
     /// <param name="end_pos">请求目标位置，按搜索半盒吸附到最近导航面。</param>
@@ -258,21 +583,6 @@ public sealed class MNavigation
         }
     }
 
-    /// <summary>取得完全相同世界坐标的唯一编号。</summary>
-    /// <param name="vertices">本地图初始化期间的顶点字典。</param>
-    /// <param name="point">原三角网的世界坐标。</param>
-    private static int GetVertex(Dictionary<MNavigationPoint, int> vertices, MNavigationPoint point)
-    {
-        // 首次出现时使用字典现有数量作为连续编号。
-        int index;
-        if (!vertices.TryGetValue(point, out index))
-        {
-            index = vertices.Count;
-            vertices.Add(point, index);
-        }
-        return index;
-    }
-
     /// <summary>在两面建立双向共享边。</summary>
     /// <param name="first">第一侧三角边。</param>
     /// <param name="second">第二侧三角边。</param>
@@ -282,218 +592,6 @@ public sealed class MNavigation
     {
         _triangles[first.Triangle].Portals.Add(new MNavigationPortal { Triangle = second.Triangle, A = a, B = b });
         _triangles[second.Triangle].Portals.Add(new MNavigationPortal { Triangle = first.Triangle, A = a, B = b });
-    }
-
-    /// <summary>连接浮点误差内共线且高度一致的正长度重叠边，涵盖分块T形接缝。</summary>
-    /// <param name="first">当前边界边。</param>
-    /// <param name="second">同一空间桶中的另一条边界边。</param>
-    private void TryConnectSeam(MNavigationEdge first, MNavigationEdge second)
-    {
-        if (first.Triangle == second.Triangle)
-        {
-            return;
-        }
-        // 第一边水平长度和第二边两端在其直线上的投影参数。
-        float dx = first.B.X - first.A.X;
-        float dz = first.B.Z - first.A.Z;
-        float lengthSquared = dx * dx + dz * dz;
-        if (lengthSquared < SeamTolerance * SeamTolerance)
-        {
-            return;
-        }
-        float t0 = ((second.A.X - first.A.X) * dx + (second.A.Z - first.A.Z) * dz) / lengthSquared;
-        float t1 = ((second.B.X - first.A.X) * dx + (second.B.Z - first.A.Z) * dz) / lengthSquared;
-        // 两端垂线偏差必须均小于毫米级误差，不能跨过障碍缺口。
-        float cross0 = (second.A.X - first.A.X) * dz - (second.A.Z - first.A.Z) * dx;
-        float cross1 = (second.B.X - first.A.X) * dz - (second.B.Z - first.A.Z) * dx;
-        float toleranceSquared = SeamTolerance * SeamTolerance * lengthSquared;
-        if (cross0 * cross0 > toleranceSquared || cross1 * cross1 > toleranceSquared)
-        {
-            return;
-        }
-        // 正长度重叠区间；仅点接触不能让角色穿过。
-        float from = Math.Max(0f, Math.Min(t0, t1));
-        float to = Math.Min(1f, Math.Max(t0, t1));
-        if ((to - from) * Math.Sqrt(lengthSquared) <= SeamTolerance)
-        {
-            return;
-        }
-        // 双方重叠端点高度均需吻合，避免连接同XZ的桥上下层。
-        MNavigationPoint a = Lerp(first.A, first.B, from);
-        MNavigationPoint b = Lerp(first.A, first.B, to);
-        float secondAHeight = second.A.Y + (second.B.Y - second.A.Y) * ((from - t0) / (t1 - t0));
-        float secondBHeight = second.A.Y + (second.B.Y - second.A.Y) * ((to - t0) / (t1 - t0));
-        if (Math.Abs(a.Y - secondAHeight) > SeamTolerance || Math.Abs(b.Y - secondBHeight) > SeamTolerance)
-        {
-            return;
-        }
-        // 两个三角形须位于公共边的两侧，拒绝重叠面或同侧贴边误连。
-        float sideFirst = Area(first.A, first.B, _triangles[first.Triangle].Center);
-        float sideSecond = Area(first.A, first.B, _triangles[second.Triangle].Center);
-        if (sideFirst * sideSecond >= 0f)
-        {
-            return;
-        }
-        Connect(first, second, a, b);
-    }
-
-    /// <summary>在搜索半盒内找三维距离最近的三角投影。</summary>
-    /// <param name="point">待定位的世界坐标。</param>
-    /// <param name="halfExtents">各轴允许的最大坐标偏差。</param>
-    /// <param name="closest">成功时的世界导航面位置。</param>
-    private int FindNearestTriangle(MNavigationPoint point, MNavigationPoint halfExtents, out MNavigationPoint closest)
-    {
-        closest = point;
-        // 当前最近面的编号及平方距离，避免每面进行开方。
-        int nearest = -1;
-        float bestDistance = float.MaxValue;
-        for (int i = 0; i < _triangles.Length; i++)
-        {
-            // 当前面及水平投影后的真实面高度。
-            MNavigationTriangle triangle = _triangles[i];
-            if (triangle.MaxX < point.X - halfExtents.X || triangle.MinX > point.X + halfExtents.X)
-            {
-                continue;
-            }
-            if (triangle.MaxZ < point.Z - halfExtents.Z || triangle.MinZ > point.Z + halfExtents.Z)
-            {
-                continue;
-            }
-            if (triangle.MaxY < point.Y - halfExtents.Y || triangle.MinY > point.Y + halfExtents.Y)
-            {
-                continue;
-            }
-            MNavigationPoint candidate = ClosestPoint(point, triangle);
-            if (Math.Abs(candidate.X - point.X) > halfExtents.X || Math.Abs(candidate.Z - point.Z) > halfExtents.Z)
-            {
-                continue;
-            }
-            if (Math.Abs(candidate.Y - point.Y) > halfExtents.Y)
-            {
-                continue;
-            }
-            float distance = DistanceSquared(point, candidate);
-            if (distance < bestDistance)
-            {
-                bestDistance = distance;
-                nearest = i;
-                closest = candidate;
-            }
-        }
-        return nearest;
-    }
-
-    /// <summary>水平落在面内时按重心恢复高度，否则找三条边上的最近三维位置。</summary>
-    /// <param name="point">待吸附世界坐标。</param>
-    /// <param name="triangle">候选导航三角形。</param>
-    private static MNavigationPoint ClosestPoint(MNavigationPoint point, MNavigationTriangle triangle)
-    {
-        // 面积比是XZ重心权重，保留斜面Y而非简单取重心高度。
-        float denominator = Area(triangle.A, triangle.B, triangle.C);
-        if (Math.Abs(denominator) > 0.000001f)
-        {
-            float a = Area(point, triangle.B, triangle.C) / denominator;
-            float b = Area(triangle.A, point, triangle.C) / denominator;
-            float c = 1f - a - b;
-            if (a >= 0f && b >= 0f && c >= 0f)
-            {
-                return new MNavigationPoint(point.X, triangle.A.Y * a + triangle.B.Y * b + triangle.C.Y * c, point.Z);
-            }
-        }
-        // 水平外点或退化面按三维线段投影选最近边。
-        MNavigationPoint closest = ClosestEdge(point, triangle.A, triangle.B);
-        MNavigationPoint candidate = ClosestEdge(point, triangle.B, triangle.C);
-        if (DistanceSquared(point, candidate) < DistanceSquared(point, closest))
-        {
-            closest = candidate;
-        }
-        candidate = ClosestEdge(point, triangle.C, triangle.A);
-        if (DistanceSquared(point, candidate) < DistanceSquared(point, closest))
-        {
-            closest = candidate;
-        }
-        return closest;
-    }
-
-    /// <summary>取得三维线段上的最近点。</summary>
-    /// <param name="point">待投影世界坐标。</param>
-    /// <param name="a">线段起点。</param>
-    /// <param name="b">线段终点。</param>
-    private static MNavigationPoint ClosestEdge(MNavigationPoint point, MNavigationPoint a, MNavigationPoint b)
-    {
-        // 三维投影参数限制在线段闭区间。
-        float lengthSquared = DistanceSquared(a, b);
-        if (lengthSquared == 0f)
-        {
-            return a;
-        }
-        float t = ((point.X - a.X) * (b.X - a.X) + (point.Y - a.Y) * (b.Y - a.Y) + (point.Z - a.Z) * (b.Z - a.Z)) / lengthSquared;
-        return Lerp(a, b, Math.Max(0f, Math.Min(1f, t)));
-    }
-
-    /// <summary>向开放堆插入三角形或上浮其已降低的代价。</summary>
-    /// <param name="triangle">代价刚被更新的三角形编号。</param>
-    private void PushOrUpdate(int triangle)
-    {
-        // 已在堆中的面直接降低键值，新面追加到末端。
-        int index = _heapIndices[triangle];
-        if (index < 0)
-        {
-            index = _openList.Count;
-            _openList.Add(triangle);
-            _heapIndices[triangle] = index;
-        }
-        while (index > 0)
-        {
-            // 二叉堆父结点下标。
-            int parent = (index - 1) / 2;
-            if (_scores[_openList[parent]] <= _scores[triangle])
-            {
-                break;
-            }
-            _openList[index] = _openList[parent];
-            _heapIndices[_openList[index]] = index;
-            index = parent;
-        }
-        _openList[index] = triangle;
-        _heapIndices[triangle] = index;
-    }
-
-    /// <summary>取出总代价最小的三角形并向下恢复开放堆。</summary>
-    private int PopFirst()
-    {
-        // 保存堆顶和用于补位的末尾三角形编号。
-        int result = _openList[0];
-        int last = _openList[_openList.Count - 1];
-        _openList.RemoveAt(_openList.Count - 1);
-        _heapIndices[result] = -1;
-        if (_openList.Count == 0)
-        {
-            return result;
-        }
-        int index = 0;
-        while (index * 2 + 1 < _openList.Count)
-        {
-            // 在左右孩子中选择代价较小的一项。
-            int child = index * 2 + 1;
-            if (child + 1 < _openList.Count)
-            {
-                if (_scores[_openList[child + 1]] < _scores[_openList[child]])
-                {
-                    child++;
-                }
-            }
-            if (_scores[last] <= _scores[_openList[child]])
-            {
-                break;
-            }
-            _openList[index] = _openList[child];
-            _heapIndices[_openList[index]] = index;
-            index = child;
-        }
-        _openList[index] = last;
-        _heapIndices[last] = index;
-        return result;
     }
 
     /// <summary>从A*前驱恢复走廊，漏斗提取转角后补齐各共享边交点高度。</summary>
@@ -557,73 +655,6 @@ public sealed class MNavigation
         AddPoint(path, end);
     }
 
-    /// <summary>沿RO直线路点职责用标准门户漏斗提取走廊转角，不生成样条或边中点锯齿。</summary>
-    /// <param name="left">按走向排序的每个门户左端点。</param>
-    /// <param name="right">按走向排序的每个门户右端点。</param>
-    /// <param name="corners">输出起点、必要转角和终点。</param>
-    /// <param name="indices">每个转角对应的门户编号。</param>
-    private static void FindCorners(List<MNavigationPoint> left, List<MNavigationPoint> right, List<MNavigationPoint> corners, List<int> indices)
-    {
-        // 当前漏斗顶点以及左右约束射线的端点和门户编号。
-        MNavigationPoint apex = left[0];
-        MNavigationPoint portalLeft = apex;
-        MNavigationPoint portalRight = apex;
-        int apexIndex = 0;
-        int leftIndex = 0;
-        int rightIndex = 0;
-        corners.Add(apex);
-        indices.Add(0);
-        for (int i = 1; i < left.Count; i++)
-        {
-            // 新门户两端用于收窄当前可见范围。
-            MNavigationPoint nextLeft = left[i];
-            MNavigationPoint nextRight = right[i];
-            if (Area(apex, portalRight, nextRight) <= 0f)
-            {
-                if (SameHorizontal(apex, portalRight) || Area(apex, portalLeft, nextRight) > 0f)
-                {
-                    portalRight = nextRight;
-                    rightIndex = i;
-                }
-                else
-                {
-                    corners.Add(portalLeft);
-                    indices.Add(leftIndex);
-                    apex = portalLeft;
-                    apexIndex = leftIndex;
-                    portalLeft = apex;
-                    portalRight = apex;
-                    leftIndex = apexIndex;
-                    rightIndex = apexIndex;
-                    i = apexIndex;
-                    continue;
-                }
-            }
-            if (Area(apex, portalLeft, nextLeft) >= 0f)
-            {
-                if (SameHorizontal(apex, portalLeft) || Area(apex, portalRight, nextLeft) < 0f)
-                {
-                    portalLeft = nextLeft;
-                    leftIndex = i;
-                }
-                else
-                {
-                    corners.Add(portalRight);
-                    indices.Add(rightIndex);
-                    apex = portalRight;
-                    apexIndex = rightIndex;
-                    portalLeft = apex;
-                    portalRight = apex;
-                    leftIndex = apexIndex;
-                    rightIndex = apexIndex;
-                    i = apexIndex;
-                }
-            }
-        }
-        corners.Add(left[left.Count - 1]);
-        indices.Add(left.Count - 1);
-    }
-
     /// <summary>计算直线段与共享边的水平交点，并沿共享边插值实际导航高度。</summary>
     /// <param name="from">本段漏斗转角起点。</param>
     /// <param name="to">本段漏斗转角终点。</param>
@@ -647,17 +678,6 @@ public sealed class MNavigation
         }
         float t = ((a.X - from.X) * dz - (a.Z - from.Z) * dx) / denominator;
         return Lerp(a, b, Math.Max(0f, Math.Min(1f, t)));
-    }
-
-    /// <summary>追加路点并去除连续重复端点，保留高度不同的点。</summary>
-    /// <param name="path">当前输出路点。</param>
-    /// <param name="point">新共享边交点或目的点。</param>
-    private static void AddPoint(List<MNavigationPoint> path, MNavigationPoint point)
-    {
-        if (DistanceSquared(path[path.Count - 1], point) > 0.00000001f)
-        {
-            path.Add(point);
-        }
     }
 
     /// <summary>判断水平端点是否重合，作为漏斗零宽门户判断。</summary>
@@ -701,4 +721,5 @@ public sealed class MNavigation
     {
         return (float)Math.Sqrt(DistanceSquared(a, b));
     }
+    #endregion
 }

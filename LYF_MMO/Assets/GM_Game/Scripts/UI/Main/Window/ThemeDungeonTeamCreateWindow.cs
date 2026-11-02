@@ -8,47 +8,68 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class ThemeDungeonTeamCreateWindow : WindowBase
 {
+
+    #region 字段
     /// <summary>未建队时显示的创建按钮。</summary>
     [SerializeField] private GameObject _notInTeamRoot;
+
     /// <summary>成员卡容器，成员卡与邀请空位都是它的子节点。</summary>
     [SerializeField] private GameObject _memberRoot;
+
     /// <summary>成员卡模板，同时作为第一张成员卡使用。</summary>
     [SerializeField] private GameObject _memberSlotTemplate;
+
     /// <summary>成员卡末尾的邀请空位，未满员且本人是队长时显示。</summary>
     [SerializeField] private GameObject _inviteSlot;
+
     /// <summary>成员卡上的真实昵称。</summary>
     [SerializeField] private Text _memberName;
+
     /// <summary>成员卡上的真实等级。</summary>
     [SerializeField] private Text _memberLevel;
+
     /// <summary>成员卡上的队长标记。</summary>
     [SerializeField] private GameObject _captainMark;
+
     /// <summary>成员卡原有的职业图标。</summary>
     [SerializeField] private Image _professionImage;
+
     /// <summary>随当前玩家昵称更新的队伍名称。</summary>
     [SerializeField] private Text _teamName;
+
     /// <summary>从副本详情选择的队伍目标。</summary>
     [SerializeField] private Text _targetName;
+
     /// <summary>原版未建队空态，属于主窗内容。</summary>
     [SerializeField] private GameObject _emptyState;
+
     /// <summary>创建队伍的按钮。</summary>
     [SerializeField] private Button _createButton;
+
     /// <summary>正式队伍主窗关闭按钮。</summary>
     [SerializeField] private Button _closeButton;
+
     /// <summary>原版离队按钮，未建队时不可操作。</summary>
     [SerializeField] private Button _leaveButton;
+
     /// <summary>按 TeamPage 编号保存的界面引用，全部来自预制体。</summary>
     [SerializeField] private GameObject[] _pages;
+
     /// <summary>主窗外框，独立子窗口显示时收起。</summary>
     [SerializeField] private GameObject _mainContent;
 
     /// <summary>邀请玩家页的目标输入框，输入被邀请角色ID。</summary>
     [SerializeField] private InputField _inviteInput;
+
     /// <summary>邀请玩家页的确认按钮，提交邀请请求。</summary>
     [SerializeField] private Button _inviteConfirmButton;
+
     /// <summary>邀请玩家页的候选人行，显示当前可邀请对象。</summary>
     [SerializeField] private GameObject _inviteRowRoot;
+
     /// <summary>候选人行上的昵称文本。</summary>
     [SerializeField] private Text _inviteRowName;
+
     /// <summary>候选人行上的邀请按钮。</summary>
     [SerializeField] private Button _inviteRowButton;
 
@@ -57,67 +78,91 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
 
     /// <summary>寻找队伍页的申请行，显示当前待申请队伍。</summary>
     [SerializeField] private GameObject _searchRowRoot;
+
     /// <summary>寻找队伍页的申请按钮。</summary>
     [SerializeField] private Button _searchApplyButton;
 
     /// <summary>申请列表页的申请行，显示当前申请人。</summary>
     [SerializeField] private GameObject _applyRowRoot;
+
     /// <summary>申请行上的申请人昵称。</summary>
     [SerializeField] private Text _applyName;
+
     /// <summary>申请行上的同意入队按钮。</summary>
     [SerializeField] private Button _applyAgreeButton;
+
     /// <summary>申请行上的忽略按钮，用于拒绝申请。</summary>
     [SerializeField] private Button _applyRejectButton;
 
     /// <summary>队伍邀请页，服务器把邀请下发给本人时显示。</summary>
     [SerializeField] private GameObject _offerRoot;
+
     /// <summary>邀请页上的邀请人昵称。</summary>
     [SerializeField] private Text _offerInviterName;
+
     /// <summary>邀请页上的说明文本。</summary>
     [SerializeField] private Text _offerInfo;
+
     /// <summary>邀请页上的队伍人数文本。</summary>
     [SerializeField] private Text _offerMemberCount;
+
     /// <summary>邀请页上的目标文本。</summary>
     [SerializeField] private Text _offerTarget;
+
     /// <summary>邀请页上的加入按钮，等价同意邀请。</summary>
     [SerializeField] private Button _offerAgreeButton;
+
     /// <summary>邀请页上的关闭按钮，等价拒绝邀请。</summary>
     [SerializeField] private Button _offerRejectButton;
 
     /// <summary>创建队伍请求，由控制器处理。</summary>
     public System.Action CreateRequested;
+
     /// <summary>关闭整个队伍窗口的请求。</summary>
     public System.Action CloseRequested;
+
     /// <summary>离开队伍，由控制器清除服务器队伍关系。</summary>
     public System.Action LeaveRequested;
+
     /// <summary>邀请指定角色入队，参数为被邀请角色ID。</summary>
     public System.Action<ulong> InviteRoleRequested;
+
     /// <summary>申请加入指定队伍，参数为目标队伍ID。</summary>
     public System.Action<ulong> ApplyTeamRequested;
+
     /// <summary>同意收到的入队邀请。</summary>
     public System.Action InviteAgreed;
+
     /// <summary>拒绝收到的入队邀请。</summary>
     public System.Action InviteRejected;
+
     /// <summary>同意收到的入队申请。</summary>
     public System.Action ApplicationAgreed;
+
     /// <summary>拒绝收到的入队申请。</summary>
     public System.Action ApplicationRejected;
+
     /// <summary>打开或切换界面后请求控制器刷新数据，用于重建附近邀请候选行。</summary>
     public System.Action PageOpened;
 
     /// <summary>成员卡上的昵称路径，相对成员卡根节点。</summary>
     private const string SlotNamePath = "BG2/GameObject/PlayerName";
+
     /// <summary>成员卡上的等级路径，相对成员卡根节点。</summary>
     private const string SlotLevelPath = "BG2/Lv";
+
     /// <summary>成员卡上的队长标记路径，相对成员卡根节点。</summary>
     private const string SlotCaptainPath = "BG2/Flag/LeadFlag";
+
     /// <summary>成员卡上的职业图标路径，相对成员卡根节点。</summary>
     private const string SlotJobPath = "BG2/GameObject/Img_Job";
 
     /// <summary>候选人行上的昵称路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 NameInfo/Name 一致。</summary>
     private const string InviteRowNamePath = "NameInfo/Name";
+
     /// <summary>候选人行上的等级路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 Lv 一致。</summary>
     private const string InviteRowLevelPath = "Lv";
+
     /// <summary>候选人行上的邀请按钮路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 BtnSmall_B 一致。</summary>
     private const string InviteRowButtonPath = "BtnSmall_B";
 
@@ -132,14 +177,18 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
 
     /// <summary>当前显示的界面。</summary>
     private TeamPage _currentPage;
+
     /// <summary>进入子窗口前的界面，仅用于关闭后返回。</summary>
     private TeamPage _returnPage;
+
     /// <summary>本地是否已在队伍中，仅控制成员区与空态展示。</summary>
     private bool _inTeam;
 
     /// <summary>当前是否存在真实待处理邀请，邀请确认页只在这个值为真时允许显示。</summary>
     private bool _hasPendingInvitation;
+    #endregion
 
+    #region 生命周期
     /// <summary>绑定按钮事件，初始化为未建队的主界面。</summary>
     public override void InitWindow()
     {
@@ -157,6 +206,230 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         OpenPage(TeamPage.Members);
     }
 
+    /// <summary>销毁时解除本窗口添加的按钮监听。</summary>
+    private void OnDestroy()
+    {
+        if (_createButton != null)
+        {
+            _createButton.onClick.RemoveListener(OnCreateClicked);
+        }
+        if (_closeButton != null)
+        {
+            _closeButton.onClick.RemoveListener(OnCloseClicked);
+        }
+        if (_inviteConfirmButton != null)
+        {
+            _inviteConfirmButton.onClick.RemoveListener(OnInviteConfirmClicked);
+        }
+        if (_searchApplyButton != null)
+        {
+            _searchApplyButton.onClick.RemoveListener(OnSearchApplyClicked);
+        }
+        if (_applyAgreeButton != null)
+        {
+            _applyAgreeButton.onClick.RemoveListener(OnApplyAgreeClicked);
+        }
+        if (_applyRejectButton != null)
+        {
+            _applyRejectButton.onClick.RemoveListener(OnApplyRejectClicked);
+        }
+        if (_offerAgreeButton != null)
+        {
+            _offerAgreeButton.onClick.RemoveListener(OnOfferAgreeClicked);
+        }
+        if (_offerRejectButton != null)
+        {
+            _offerRejectButton.onClick.RemoveListener(OnOfferRejectClicked);
+        }
+    }
+    #endregion
+
+    #region 界面显示与开关
+    /// <summary>Unity 持久按钮事件的整数参数边界，转换为具名界面编号。</summary>
+    /// <param name="pageIndex">预制体保存的 TeamPage 编号。</param>
+    public void ShowPage(int pageIndex)
+    {
+        OpenPage((TeamPage)pageIndex);
+    }
+
+    /// <summary>显示指定界面；独立窗口保持原始布局，不拉伸到成员内容框。</summary>
+    /// <param name="page">本次打开的队伍界面。</param>
+    public void OpenPage(TeamPage page)
+    {
+        // 邀请确认页就是待处理邀请的展示载体，没有真实邀请时不允许打开，
+        // 否则会露出只有占位昵称与占位等级的假邀请框，且没有数据来源能让它消失。
+        if (page == TeamPage.Recruitment && !_hasPendingInvitation)
+        {
+            page = TeamPage.Members;
+        }
+        _returnPage = _currentPage;
+        _currentPage = page;
+        // 成员和申请列表共用原队伍主窗外框，其余界面使用自身原外框。
+        bool showMainFrame = page == TeamPage.Members || page == TeamPage.Applications;
+        _mainContent.SetActive(showMainFrame);
+        // 数组与具名界面编号一致，只切换显示，不创建控件。
+        // pageIndex 为界面数组零基下标，与 TeamPage 枚举值一一对应，用于判断当前应显示哪一个。
+        for (int pageIndex = 0; pageIndex < _pages.Length; pageIndex++)
+        {
+            if (_pages[pageIndex] != null)
+            {
+                _pages[pageIndex].SetActive(pageIndex == (int)page);
+            }
+        }
+        _emptyState.SetActive(!_inTeam && page == TeamPage.Members);
+        // 切页后交给控制器刷新数据，候选行只在打开或切页时重建，不做每帧轮询。
+        if (PageOpened != null)
+        {
+            PageOpened();
+        }
+    }
+
+    /// <summary>关闭当前子窗口，返回打开它的界面；下一次关闭返回主窗。</summary>
+    public void ClosePage()
+    {
+        // 保存返回目标，OpenPage 会更新当前层来源。
+        TeamPage target = _returnPage;
+        OpenPage(target);
+        _returnPage = TeamPage.Members;
+    }
+
+    /// <summary>原有返回按钮的兼容入口，回到队伍主界面。</summary>
+    public void HidePages()
+    {
+        OpenPage(TeamPage.Members);
+        _returnPage = TeamPage.Members;
+    }
+    #endregion
+
+    #region 交互响应
+    /// <summary>把创建请求交给控制器。</summary>
+    private void OnCreateClicked()
+    {
+        CreateRequested?.Invoke();
+    }
+
+    /// <summary>把关闭请求交给控制器。</summary>
+    private void OnCloseClicked()
+    {
+        CloseRequested?.Invoke();
+    }
+
+    /// <summary>邀请页确认按钮：按输入框里的角色ID发出邀请。</summary>
+    private void OnInviteConfirmClicked()
+    {
+        // 邀请页输入框解析出的角色ID，为 0 表示输入为空或非法，直接忽略本次点击。
+        ulong roleId = ParseId(_inviteInput);
+        if (roleId == 0UL)
+        {
+            return;
+        }
+        InviteRoleRequested?.Invoke(roleId);
+    }
+
+    /// <summary>候选人行上的邀请按钮：对该行已绑定的真实角色发邀请。</summary>
+    /// <param name="slot">被点击的候选行下标。</param>
+    private void OnInviteRowSlotClicked(int slot)
+    {
+        // 行下标越界或该行当前未绑定角色时不发请求，避免向 0 号角色发邀请。
+        if (slot < 0 || slot >= _inviteRowRoleIds.Count)
+        {
+            return;
+        }
+        // 该行绑定的真实角色ID，来自场景实体同步下来的远端角色资料。
+        ulong roleId = _inviteRowRoleIds[slot];
+        if (roleId == 0UL)
+        {
+            return;
+        }
+        InviteRoleRequested?.Invoke(roleId);
+    }
+
+    /// <summary>寻找队伍页的申请按钮：按输入框里的队伍ID申请加入。</summary>
+    private void OnSearchApplyClicked()
+    {
+        // 寻找队伍页输入框解析出的队伍ID，为 0 表示输入为空或非法，直接忽略本次点击。
+        ulong teamId = ParseId(_searchTeamIdInput);
+        if (teamId == 0UL)
+        {
+            return;
+        }
+        ApplyTeamRequested?.Invoke(teamId);
+    }
+
+    /// <summary>申请行同意按钮。</summary>
+    private void OnApplyAgreeClicked()
+    {
+        ApplicationAgreed?.Invoke();
+    }
+
+    /// <summary>申请行忽略按钮，等价拒绝申请。</summary>
+    private void OnApplyRejectClicked()
+    {
+        ApplicationRejected?.Invoke();
+    }
+
+    /// <summary>邀请确认页加入按钮，等价同意邀请。</summary>
+    private void OnOfferAgreeClicked()
+    {
+        InviteAgreed?.Invoke();
+    }
+
+    /// <summary>邀请确认页关闭按钮，等价拒绝邀请。</summary>
+    private void OnOfferRejectClicked()
+    {
+        InviteRejected?.Invoke();
+    }
+    #endregion
+
+    #region 网络请求与消息
+    /// <summary>寻找界面的创建入口，提交请求后回到正式队伍主窗。</summary>
+    public void RequestCreateTeam()
+    {
+        CreateRequested?.Invoke();
+        HidePages();
+    }
+
+    /// <summary>原版离队按钮只请求控制器退出队伍。</summary>
+    public void RequestLeaveTeam()
+    {
+        LeaveRequested?.Invoke();
+    }
+    #endregion
+
+    #region 查询与判定
+    /// <summary>按固定相对路径查找子节点上的指定组件，找不到时返回空。</summary>
+    /// <typeparam name="T">期望的组件类型。</typeparam>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对路径。</param>
+    /// <returns>找到的组件；路径不存在时返回 null。</returns>
+    private static T FindChildComponent<T>(Transform root, string path) where T : Component
+    {
+        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
+        Transform child = root.Find(path);
+        if (child == null)
+        {
+            return null;
+        }
+        return child.GetComponent<T>();
+    }
+
+    /// <summary>按固定相对路径查找子节点，找不到时返回空。</summary>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对路径。</param>
+    /// <returns>找到的节点；路径不存在时返回 null。</returns>
+    private static GameObject FindChildObject(Transform root, string path)
+    {
+        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
+        Transform child = root.Find(path);
+        if (child == null)
+        {
+            return null;
+        }
+        return child.gameObject;
+    }
+    #endregion
+
+    #region 核心逻辑
     /// <summary>绑定邀请、申请与邀请确认页上的正式按钮，事件都转成控制器可用的语义请求。</summary>
     private void BindInteractableButtons()
     {
@@ -542,92 +815,6 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         }
     }
 
-    /// <summary>Unity 持久按钮事件的整数参数边界，转换为具名界面编号。</summary>
-    /// <param name="pageIndex">预制体保存的 TeamPage 编号。</param>
-    public void ShowPage(int pageIndex)
-    {
-        OpenPage((TeamPage)pageIndex);
-    }
-
-    /// <summary>显示指定界面；独立窗口保持原始布局，不拉伸到成员内容框。</summary>
-    /// <param name="page">本次打开的队伍界面。</param>
-    public void OpenPage(TeamPage page)
-    {
-        // 邀请确认页就是待处理邀请的展示载体，没有真实邀请时不允许打开，
-        // 否则会露出只有占位昵称与占位等级的假邀请框，且没有数据来源能让它消失。
-        if (page == TeamPage.Recruitment && !_hasPendingInvitation)
-        {
-            page = TeamPage.Members;
-        }
-        _returnPage = _currentPage;
-        _currentPage = page;
-        // 成员和申请列表共用原队伍主窗外框，其余界面使用自身原外框。
-        bool showMainFrame = page == TeamPage.Members || page == TeamPage.Applications;
-        _mainContent.SetActive(showMainFrame);
-        // 数组与具名界面编号一致，只切换显示，不创建控件。
-        // pageIndex 为界面数组零基下标，与 TeamPage 枚举值一一对应，用于判断当前应显示哪一个。
-        for (int pageIndex = 0; pageIndex < _pages.Length; pageIndex++)
-        {
-            if (_pages[pageIndex] != null)
-            {
-                _pages[pageIndex].SetActive(pageIndex == (int)page);
-            }
-        }
-        _emptyState.SetActive(!_inTeam && page == TeamPage.Members);
-        // 切页后交给控制器刷新数据，候选行只在打开或切页时重建，不做每帧轮询。
-        if (PageOpened != null)
-        {
-            PageOpened();
-        }
-    }
-
-    /// <summary>关闭当前子窗口，返回打开它的界面；下一次关闭返回主窗。</summary>
-    public void ClosePage()
-    {
-        // 保存返回目标，OpenPage 会更新当前层来源。
-        TeamPage target = _returnPage;
-        OpenPage(target);
-        _returnPage = TeamPage.Members;
-    }
-
-    /// <summary>原有返回按钮的兼容入口，回到队伍主界面。</summary>
-    public void HidePages()
-    {
-        OpenPage(TeamPage.Members);
-        _returnPage = TeamPage.Members;
-    }
-
-    /// <summary>按固定相对路径查找子节点上的指定组件，找不到时返回空。</summary>
-    /// <typeparam name="T">期望的组件类型。</typeparam>
-    /// <param name="root">查找起点。</param>
-    /// <param name="path">相对路径。</param>
-    /// <returns>找到的组件；路径不存在时返回 null。</returns>
-    private static T FindChildComponent<T>(Transform root, string path) where T : Component
-    {
-        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
-        Transform child = root.Find(path);
-        if (child == null)
-        {
-            return null;
-        }
-        return child.GetComponent<T>();
-    }
-
-    /// <summary>按固定相对路径查找子节点，找不到时返回空。</summary>
-    /// <param name="root">查找起点。</param>
-    /// <param name="path">相对路径。</param>
-    /// <returns>找到的节点；路径不存在时返回 null。</returns>
-    private static GameObject FindChildObject(Transform root, string path)
-    {
-        // 按相对路径找到的子节点，找不到时由调用方按空值处理。
-        Transform child = root.Find(path);
-        if (child == null)
-        {
-            return null;
-        }
-        return child.gameObject;
-    }
-
     /// <summary>把输入框里的数字解析为角色或队伍ID，非法输入返回 0。</summary>
     /// <param name="input">输入框引用，可为空。</param>
     /// <returns>解析出的ID；输入为空或非数字时返回 0。</returns>
@@ -651,132 +838,5 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         }
         return parsed;
     }
-
-    /// <summary>把创建请求交给控制器。</summary>
-    private void OnCreateClicked()
-    {
-        CreateRequested?.Invoke();
-    }
-
-    /// <summary>寻找界面的创建入口，提交请求后回到正式队伍主窗。</summary>
-    public void RequestCreateTeam()
-    {
-        CreateRequested?.Invoke();
-        HidePages();
-    }
-
-    /// <summary>原版离队按钮只请求控制器退出队伍。</summary>
-    public void RequestLeaveTeam()
-    {
-        LeaveRequested?.Invoke();
-    }
-
-    /// <summary>把关闭请求交给控制器。</summary>
-    private void OnCloseClicked()
-    {
-        CloseRequested?.Invoke();
-    }
-
-    /// <summary>邀请页确认按钮：按输入框里的角色ID发出邀请。</summary>
-    private void OnInviteConfirmClicked()
-    {
-        // 邀请页输入框解析出的角色ID，为 0 表示输入为空或非法，直接忽略本次点击。
-        ulong roleId = ParseId(_inviteInput);
-        if (roleId == 0UL)
-        {
-            return;
-        }
-        InviteRoleRequested?.Invoke(roleId);
-    }
-
-    /// <summary>候选人行上的邀请按钮：对该行已绑定的真实角色发邀请。</summary>
-    /// <param name="slot">被点击的候选行下标。</param>
-    private void OnInviteRowSlotClicked(int slot)
-    {
-        // 行下标越界或该行当前未绑定角色时不发请求，避免向 0 号角色发邀请。
-        if (slot < 0 || slot >= _inviteRowRoleIds.Count)
-        {
-            return;
-        }
-        // 该行绑定的真实角色ID，来自场景实体同步下来的远端角色资料。
-        ulong roleId = _inviteRowRoleIds[slot];
-        if (roleId == 0UL)
-        {
-            return;
-        }
-        InviteRoleRequested?.Invoke(roleId);
-    }
-
-    /// <summary>寻找队伍页的申请按钮：按输入框里的队伍ID申请加入。</summary>
-    private void OnSearchApplyClicked()
-    {
-        // 寻找队伍页输入框解析出的队伍ID，为 0 表示输入为空或非法，直接忽略本次点击。
-        ulong teamId = ParseId(_searchTeamIdInput);
-        if (teamId == 0UL)
-        {
-            return;
-        }
-        ApplyTeamRequested?.Invoke(teamId);
-    }
-
-    /// <summary>申请行同意按钮。</summary>
-    private void OnApplyAgreeClicked()
-    {
-        ApplicationAgreed?.Invoke();
-    }
-
-    /// <summary>申请行忽略按钮，等价拒绝申请。</summary>
-    private void OnApplyRejectClicked()
-    {
-        ApplicationRejected?.Invoke();
-    }
-
-    /// <summary>邀请确认页加入按钮，等价同意邀请。</summary>
-    private void OnOfferAgreeClicked()
-    {
-        InviteAgreed?.Invoke();
-    }
-
-    /// <summary>邀请确认页关闭按钮，等价拒绝邀请。</summary>
-    private void OnOfferRejectClicked()
-    {
-        InviteRejected?.Invoke();
-    }
-
-    /// <summary>销毁时解除本窗口添加的按钮监听。</summary>
-    private void OnDestroy()
-    {
-        if (_createButton != null)
-        {
-            _createButton.onClick.RemoveListener(OnCreateClicked);
-        }
-        if (_closeButton != null)
-        {
-            _closeButton.onClick.RemoveListener(OnCloseClicked);
-        }
-        if (_inviteConfirmButton != null)
-        {
-            _inviteConfirmButton.onClick.RemoveListener(OnInviteConfirmClicked);
-        }
-        if (_searchApplyButton != null)
-        {
-            _searchApplyButton.onClick.RemoveListener(OnSearchApplyClicked);
-        }
-        if (_applyAgreeButton != null)
-        {
-            _applyAgreeButton.onClick.RemoveListener(OnApplyAgreeClicked);
-        }
-        if (_applyRejectButton != null)
-        {
-            _applyRejectButton.onClick.RemoveListener(OnApplyRejectClicked);
-        }
-        if (_offerAgreeButton != null)
-        {
-            _offerAgreeButton.onClick.RemoveListener(OnOfferAgreeClicked);
-        }
-        if (_offerRejectButton != null)
-        {
-            _offerRejectButton.onClick.RemoveListener(OnOfferRejectClicked);
-        }
-    }
+    #endregion
 }
