@@ -177,3 +177,9 @@
 - 共新增 14 个文件（含 Unity 元数据），修改 2 个业务源文件。资源为 RO 原 CSV 的逐字节副本（10133 字节，SHA256 57b7fda1147f065a52ddabd6bb00d7bc04db4a696fd4e9fe24f9613649dd27bf）；解析第三列 Concatenate，跳过原表头与状态码说明行，保留原始 StateId 拼写与全部列。状态收集列表复用。采集、攀爬、吟唱、钓鱼、跳舞五个来源已接入；通用 Special 缺 RO 的 SpecialType 细分，故意不当作单人动作处理。载具、变身等本项目没有来源的玩法仍未实现。
 - 国内版 WorkBuddy deepseek-v4.1-flash，任务 client-state-exclusion-domestic-20261102，会话 46168831-5453-4dcb-aacc-3d540babbcb5：代码 2 轮。第 1 轮加入枚举名校验并改写 CSV 两行名称，被退回；第 2 轮恢复逐字节原表，移除通用 Special 映射与额外的目标默认态放行。Codex 已对照实际源码并运行隔离烟测。随后的第 3 轮仅做记录同步，不是又一个代码轮。
 - 开发者已批准另立的 RO 查询记录与本开发清单。未做实机抓包与玩法验收；缺失玩法的状态来源只能在真实来源存在时接入。完整清单、验证、失败证据与 Git 回执：项目修改日志/2026-11-02-客户端RO状态互斥移植_CHANGELOG.md。证据：_temp/client-state-exclusion-20261102/。
+
+## [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] 状态抽象基类与虚函数
+
+- 用户已批准修改及记录。`LYF_Server/GameServer/StateMutex/State/IStateInterface.cs` 现改为与 RO 一致的抽象类：构造函数保存只读 `type_`，非虚 `new GetType()` 采用 C# 名称隐藏，虚函数 `Check`/`Leave` 默认返回 false，`GetErrorCode` 为抽象函数。`LYF_Server/Tests/StateMutexSmoke.cs` 的探测状态通过构造函数传入编号，并测试基类默认行为及重写派发。`AGENTS.md` 规定新增或修改的业务抽象默认采用基类及 virtual/override，仅有具体理由的特殊情况允许接口；不批量转换既有接口。
+- RO `rogamelibs/state_mutex/state/i_state_interface.h:10-25` 是 C++ 类。具体状态类位于 `climb_collect_fish_state.h` 等文件，并在 `state_mutex_manager.cpp:29` 注册。`state_mutex_def.h:7` 的 `STATE_MUTEX_MGR` 仅取得管理器。本项目生产注册仍为空；测试子类不能证明真实玩法状态已迁移。本次未新增这些玩法源文件。
+- 国内 WorkBuddy `deepseek-v4.1-flash` 第 1 轮，任务 `state-interface-virtual-domestic-20261102`，会话 `46168831-5453-4dcb-aacc-3d540babbcb5`，attempt `run-c94f33ce-4ce9-4ffc-95f9-51a5bb0b7bcb` 在交付前因原生 429 中断，遗留了一处临时错误的 GetType 返回值。豆包因 CDP/窗口错误不可用；Ollama `qwen3:8b-light` 提供 1 次限定范围修正，由 Codex 核验并应用。未声称 WorkBuddy 已成功交付并通过验收。完整文件清单、失败证据、验证与 Git 回执见 `项目修改日志/2026-11-02-状态互斥基类与虚函数约束_CHANGELOG.md`。

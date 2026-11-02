@@ -67,12 +67,13 @@ public static class StateMutexSmoke
         return count;
     }
 
-    /// <summary>可配置的测试互斥状态，只在本测试进程内使用。</summary>
+    /// <summary>
+    /// 可配置的测试互斥状态，只在本测试进程内使用。
+    /// 继承正式抽象基类 IStateInterface：状态标识由构造交给基类保存，
+    /// 本类只重写 Check/Leave/GetErrorCode，与生产状态子类的写法一致。
+    /// </summary>
     private sealed class ProbeState : IStateInterface
     {
-        /// <summary>本状态对应的互斥状态标识。</summary>
-        public StateTransitionType type_;
-
         /// <summary>Check 返回值，模拟角色是否处于本状态。</summary>
         public bool in_state_;
 
@@ -88,22 +89,28 @@ public static class StateMutexSmoke
         /// <summary>Leave 被调用的次数。</summary>
         public int leave_count_;
 
-        /// <summary>返回本状态标识。</summary>
-        public StateTransitionType GetType()
+        /// <summary>
+        /// 构造探针状态，把本状态要模拟的互斥状态标识交给基类保存。
+        /// 改为构造传参后不再保留可随意改写的 type_ 字段，避免实例注册后标识还能被改掉、
+        /// 导致注册表下标与状态自述不一致。
+        /// </summary>
+        /// <param name="type">本探针状态模拟的互斥状态标识。</param>
+        public ProbeState(StateTransitionType type) : base(type)
         {
-            return type_;
         }
 
-        /// <summary>返回当前是否处于本状态。</summary>
-        /// <param name="role">待检查的在线角色。</param>
-        public bool Check(OnlineRole role)
+        /// <summary>返回当前是否处于本状态，取值来自 in_state_。</summary>
+        /// <param name="role">待检查的在线角色，本探针不使用。</param>
+        /// <returns>in_state_ 为 true 时返回 true。</returns>
+        public override bool Check(OnlineRole role)
         {
             return in_state_;
         }
 
-        /// <summary>离开本状态。</summary>
-        /// <param name="role">待离开状态的在线角色。</param>
-        public bool Leave(OnlineRole role)
+        /// <summary>离开本状态，累加调用次数并按配置决定是否清掉 in_state_。</summary>
+        /// <param name="role">待离开状态的在线角色，本探针不使用。</param>
+        /// <returns>leave_result_ 的取值。</returns>
+        public override bool Leave(OnlineRole role)
         {
             leave_count_++;
             if (leave_result_ && leave_clears_state_)
@@ -113,8 +120,34 @@ public static class StateMutexSmoke
             return leave_result_;
         }
 
-        /// <summary>返回拒绝时使用的错误码。</summary>
-        public CmdCode GetErrorCode()
+        /// <summary>返回拒绝时使用的错误码，取值来自 error_。</summary>
+        /// <returns>error_ 的取值。</returns>
+        public override CmdCode GetErrorCode()
+        {
+            return error_;
+        }
+    }
+
+    /// <summary>
+    /// 只实现 GetErrorCode、不重写 Check/Leave 的派生状态，用于验证基类默认实现。
+    /// 基类的 Check/Leave 默认返回 false，表示本状态不做判定、也不提供离开动作。
+    /// </summary>
+    private sealed class DefaultBehaviourState : IStateInterface
+    {
+        /// <summary>本状态拒绝切换时回的错误码。</summary>
+        private readonly CmdCode error_;
+
+        /// <summary>构造默认行为状态，把状态标识与错误码固定下来。</summary>
+        /// <param name="type">本状态对应的互斥状态标识。</param>
+        /// <param name="error">拒绝切换时回的错误码。</param>
+        public DefaultBehaviourState(StateTransitionType type, CmdCode error) : base(type)
+        {
+            error_ = error;
+        }
+
+        /// <summary>返回构造时给定的错误码。</summary>
+        /// <returns>拒绝切换时使用的错误码。</returns>
+        public override CmdCode GetErrorCode()
         {
             return error_;
         }
@@ -133,7 +166,12 @@ public static class StateMutexSmoke
                 return Fail("状态互斥表装载失败");
             }
             // result 承接当前用例返回码，非零即该用例失败，后续用例不再执行。
-            int result = CheckRealTableValues();
+            int result = CheckBaseContract();
+            if (result != 0)
+            {
+                return result;
+            }
+            result = CheckRealTableValues();
             if (result != 0)
             {
                 return result;
@@ -186,6 +224,59 @@ public static class StateMutexSmoke
             Console.WriteLine("StateMutexSmoke 异常: " + ex);
             return 1;
         }
+    }
+
+    /// <summary>
+    /// 用例零：抽象基类的继承契约。
+    /// 覆盖三件事：状态标识由构造交给基类保存、基类 Check/Leave 默认返回 false、
+    /// 经基类引用调用时 override 会派发到派生实现。不涉及互斥表与管理器。
+    /// </summary>
+    private static int CheckBaseContract()
+    {
+        // probe 是构造时就带上状态标识的探针态，用来确认标识由基类保存，而不是派生类上可改写的字段。
+        ProbeState probe = new ProbeState(StateTransitionType.kSingleAction);
+        if (probe.GetType() != StateTransitionType.kSingleAction)
+        {
+            return Fail("基类构造未保存状态标识，实际 " + probe.GetType());
+        }
+        // base_ref 是以基类类型持有的同一实例，用来验证 GetType 经基类引用读回一致。
+        IStateInterface base_ref = probe;
+        if (base_ref.GetType() != StateTransitionType.kSingleAction)
+        {
+            return Fail("基类引用读回的状态标识不一致，实际 " + base_ref.GetType());
+        }
+
+        // default_state 只实现 GetErrorCode，用来验证基类 Check/Leave 的默认实现。
+        DefaultBehaviourState default_state = new DefaultBehaviourState(
+            StateTransitionType.kCollectionAction, CmdCode.SkillStateBlocked);
+        if (default_state.Check(null))
+        {
+            return Fail("基类 Check 默认应返回 false");
+        }
+        if (default_state.Leave(null))
+        {
+            return Fail("基类 Leave 默认应返回 false");
+        }
+        if (default_state.GetErrorCode() != CmdCode.SkillStateBlocked)
+        {
+            return Fail("派生状态未返回自己的错误码，实际 " + default_state.GetErrorCode());
+        }
+
+        // 经基类引用调用 Check/Leave，必须派发到 ProbeState 的 override。
+        probe.in_state_ = true;
+        if (!base_ref.Check(null))
+        {
+            return Fail("基类引用调用 Check 未派发到派生实现");
+        }
+        if (!base_ref.Leave(null))
+        {
+            return Fail("基类引用调用 Leave 未派发到派生实现");
+        }
+        if (probe.leave_count_ != 1)
+        {
+            return Fail("派生 Leave 应被调用一次，实际 " + probe.leave_count_);
+        }
+        return 0;
     }
 
     /// <summary>用例一：互斥表必须是 RO 原始数据的直接结果，吟唱列取值逐条对上。</summary>
@@ -292,8 +383,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // dance 是本用例伪造的跳舞态，真实表里「跳舞 → 吟唱」为 0 禁止。
-        ProbeState dance = new ProbeState();
-        dance.type_ = StateTransitionType.kStateTransitionDance;
+        ProbeState dance = new ProbeState(StateTransitionType.kStateTransitionDance);
         dance.in_state_ = true;
         if (!manager.RegisterState(dance))
         {
@@ -343,8 +433,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // collection 是本用例伪造的采集类状态，真实表里它对吟唱是 1 直接切换。
-        ProbeState collection = new ProbeState();
-        collection.type_ = StateTransitionType.kSingleAction;
+        ProbeState collection = new ProbeState(StateTransitionType.kSingleAction);
         collection.in_state_ = true;
         manager.RegisterState(collection);
 
@@ -387,8 +476,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // single_action 是本用例伪造的自动采集态，真实表里它对吟唱是 2 先退旧状态。
-        ProbeState single_action = new ProbeState();
-        single_action.type_ = StateTransitionType.kStateTransitionAutoCollect;
+        ProbeState single_action = new ProbeState(StateTransitionType.kStateTransitionAutoCollect);
         single_action.in_state_ = true;
         manager.RegisterState(single_action);
 
@@ -441,8 +529,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // single_action 是 leave_result_ 为假的探针态，用来模拟旧状态离开失败。
-        ProbeState single_action = new ProbeState();
-        single_action.type_ = StateTransitionType.kStateTransitionAutoCollect;
+        ProbeState single_action = new ProbeState(StateTransitionType.kStateTransitionAutoCollect);
         single_action.in_state_ = true;
         single_action.leave_result_ = false;
         manager.RegisterState(single_action);
@@ -482,8 +569,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // single_action 是 leave_clears_state_ 为假的探针态，使请求长期挂起以验证取消。
-        ProbeState single_action = new ProbeState();
-        single_action.type_ = StateTransitionType.kStateTransitionAutoCollect;
+        ProbeState single_action = new ProbeState(StateTransitionType.kStateTransitionAutoCollect);
         single_action.in_state_ = true;
         // 离开成功但仍处于该状态：请求会一直等待 OnLeaveState，用于验证取消语义。
         single_action.leave_clears_state_ = false;
@@ -531,8 +617,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // single_action 是 leave_clears_state_ 为假的探针态，让请求挂起并持有事件引用。
-        ProbeState single_action = new ProbeState();
-        single_action.type_ = StateTransitionType.kStateTransitionAutoCollect;
+        ProbeState single_action = new ProbeState(StateTransitionType.kStateTransitionAutoCollect);
         single_action.in_state_ = true;
         single_action.leave_clears_state_ = false;
         manager.RegisterState(single_action);
@@ -590,8 +675,7 @@ public static class StateMutexSmoke
         manager.Init();
 
         // single_action 是本用例的自动采集探针态，让挂起请求先持有一份事件引用。
-        ProbeState single_action = new ProbeState();
-        single_action.type_ = StateTransitionType.kStateTransitionAutoCollect;
+        ProbeState single_action = new ProbeState(StateTransitionType.kStateTransitionAutoCollect);
         single_action.in_state_ = true;
         manager.RegisterState(single_action);
 

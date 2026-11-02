@@ -193,3 +193,9 @@
 - 通过：原 CSV 字节一致，38 行×38 列，1444/1444 个 Concatenate 值相同。两个原始 StateId 拼写与枚举名不同，已按要求保留；原表自带的逐状态列在 (25,36)/(36,25) 与 Concatenate 不同，故保留但不消费。代码 0/-1 拒绝，1/3 放行，2 放行除非 ingnoreOneLeaveOneEnter=true。已接来源：采集/攀爬/吟唱/钓鱼/跳舞；无当前状态时放行。复用列表避免每次调用重复收集分配；全链路零 GC 未测量。
 - 失败/修正：第一轮 Unity Resources 装载找到了资源，但新增的行名校验拒绝了原表第 24 行。第 2 轮移除该检查并按未改动的源格式解析；编译与隔离验证通过。修复后未做 Unity 玩法验证与抓包，也未调用 Editor 的 Run 入口。未启动任何四服。
 - 范围、证据与真实执行者身份见 项目修改日志/2026-11-02-客户端RO状态互斥移植_CHANGELOG.md；_temp/client-state-exclusion-20261102/csv-identity.json、matrix-dump.tsv、codex-smoke.log、development-report.md、query-sync-check.md。已批准的 RO 查询双语检查通过，其后输入未再变化。
+
+## [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] 状态虚函数契约验收
+
+- Codex 将当前 `LYF_Server/GameServer/GameServer.csproj` 重建至 `_temp/state-interface-virtual-20261102/gameserver-out/`：退出码 0，14 警告 / 0 错误。专用 net48 StateMutexSmoke 工程编译为 0 警告 / 0 错误，随后测试可执行文件返回 0，并输出 `StateMutexSmoke: all cases passed`。测试编译仓库中的实际测试源码，并引用本次新构建的生产程序集；测试专用子类未注册到生产环境。
+- 覆盖构造固定状态编号、Check/Leave 默认 false、虚函数重写派发、原始表格/空生产注册、禁止/直接/先退出旧状态再进入的转换、退出失败、取消、销毁及回调异常后的事件释放。最终命令和结果见 `_temp/state-interface-virtual-20261102/codex-build-GameServer.log`、`codex-build-StateMutexSmoke.log`、`codex-StateMutexSmoke.log`。输出出现既有 SkillCastingRules 默认策略警告；本次不能证明完整技能配置集成已通过。
+- WorkBuddy 早期向既有生产输出目录构建时遇到文件锁定，产生 4 错误 / 38 警告；改用临时输出目录解决了该构建限制。其早期冒烟通过发生在后续临时 GetType 错误之前，不作为最终验收。已保留原生 429、确认 idle、官方取消回执（`remoteStopped=false`）、本地 Qwen 的 1 次修正及 Codex 最终验证；停止证据为原生 429 与 idle，不能把该取消回执作为停止证明。本任务未启动任何服务器，未触动既有服务器进程。未做实网、Unity 运行时或干净检出测试。完整记录见 `项目修改日志/2026-11-02-状态互斥基类与虚函数约束_CHANGELOG.md`。
