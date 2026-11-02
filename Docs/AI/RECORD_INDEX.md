@@ -78,7 +78,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `64c3a32f12af42ce37bd906981b1b6df1d0559f91fcad9af0e89842a73e71272`
+Source normalized SHA256: `ec1b227257be1f3a13bbaf901968475cfcb5347b007c737c2be1a3c43c1f2378`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -92,7 +92,8 @@ Source normalized SHA256: `64c3a32f12af42ce37bd906981b1b6df1d0559f91fcad9af0e898
 | [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R7] 2026-10-31 Missing RO runtime LOD selection, not missing renderer bindings | 61-68 |
 | [QUERY][场景][DUNGEON-PLAYER-REGRESSION-20261031-R8-COLLECT] 2026-10-31 Collector misses the baked runtime condition; existing shader bundle unchanged | 69-78 |
 | [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO dungeon editor entry points and data route, 2026-11-02 | 79-89 |
-| [QUERY][技能][互斥][RO-CLIENT-CAST-CHECK-20261102] RO client/server casting checks | 90-97 |
+| [QUERY][技能][互斥][RO-CLIENT-CAST-CHECK-20261102] RO client/server casting checks | 90-99 |
+| [QUERY][技能][吟唱][SKILL-FALSE-SINGING-20261102] Non-singing skills delayed by an extra server singing phase | 100-107 |
 
 ## Older records
 
