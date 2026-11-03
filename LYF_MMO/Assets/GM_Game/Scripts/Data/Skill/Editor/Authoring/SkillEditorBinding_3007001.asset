@@ -23,6 +23,8 @@ MonoBehaviour:
   PreviewModel: {fileID: 8115728581419920701, guid: d76aa3412cb81bd4598ec4a0db60d14f, type: 3}
   SourceClip: {fileID: 7400000, guid: 7adc89ad98f23d1448004a1e1f42e3cd, type: 2}
   SkillStateTimeMs: 1133
+  CollisionAtTarget: 1
+  CollisionForwardDistance: 10
   FxSources:
   - SourceEventIndex: 0
     OriginalTimeSeconds: 0.12649965

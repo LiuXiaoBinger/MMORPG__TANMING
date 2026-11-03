@@ -16,6 +16,7 @@ MonoBehaviour:
   SkillId: 10050
   AnimationLocation: Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Skill02.anim
   DurationSeconds: 3.433
+  TimelineDurationSeconds: 3.4333334
   FxEvents:
   - SourceEventIndex: 0
     Frame: 63
@@ -49,3 +50,56 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 4811e7203cf86e941a3d011a220e8d30, type: 3}
     Volume: 0.45
   ChargeList: []
+  Collisions:
+  - StartFrame: 63
+    EndFrame: 77
+    FrameRate: 120
+    Shape: 1
+    Radius: 3
+    BoxSize: {x: 3, y: 2.5, z: 3}
+    Rotation: {x: 0, y: 0, z: 0}
+    Offsets:
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    RepeatFrames: 0
+    AtTarget: 0
+    ForwardDistance: 0
+  - StartFrame: 136
+    EndFrame: 150
+    FrameRate: 120
+    Shape: 1
+    Radius: 3
+    BoxSize: {x: 3, y: 2.5, z: 3}
+    Rotation: {x: 0, y: 0, z: 0}
+    Offsets:
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    - {x: 0, y: 1.1, z: 1.7}
+    RepeatFrames: 0
+    AtTarget: 0
+    ForwardDistance: 0

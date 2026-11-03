@@ -74,6 +74,13 @@ public class SceneMgr : Singleton<SceneMgr>
             _currentSceneType = sceneType;
             // 先读取与场景同名的导航文件，之后业务回调才可以查询路线。
             MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
+            if (sceneType == SceneType.Scene_DungeonMoshenta)
+            {
+                // 出生根属于当前副本场景，Single 切走时自动注销该副本的实体。
+                GameObject dungeonRoot = new GameObject("[RO 副本实体]");
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(dungeonRoot, handle.SceneObject);
+                dungeonRoot.AddComponent<MSceneDungeon>();
+            }
             // 目标场景根对象；创角业务根默认禁用，加载成功后才启用其场景脚本。
             GameObject[] roots = handle.SceneObject.GetRootGameObjects();
             // 根数组的零基索引；已启用的主城业务根保持现状。

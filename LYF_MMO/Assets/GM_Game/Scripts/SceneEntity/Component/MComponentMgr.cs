@@ -197,12 +197,10 @@ public sealed class MComponentMgr
         }
         if (entity.AttrComp == null)
         {
-            // 兼容路径：实体没有属性快捷引用时，补借属性组件并设置引用。
-            EntityAttributesComponent AttCom = TakeComponent(entity, typeof(EntityAttributesComponent)) as EntityAttributesComponent;
-            if (AttCom != null)
-            {
-                entity.SetAttComponent(AttCom);
-            }
+            // Builder 已装配并绑定属性组件，快捷引用必须指向同一个容器成员。
+            // 再借一个组件会绕过容器生命周期，副本反复进出后可能读到其他实体的旧属性。
+            EntityAttributesComponent attributes = entity.Components.GetMComponentByT<EntityAttributesComponent>(EntityComponentType.Attributes);
+            entity.SetAttComponent(attributes);
         }
     }
     #endregion

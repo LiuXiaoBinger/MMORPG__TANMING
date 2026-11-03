@@ -436,8 +436,8 @@ using MMoRpgCommon.SceneEntity;
             string clipName = ResolveClipName(stateName);
             if (string.IsNullOrEmpty(clipName))
             {
-                // NPC 的表现来源是预制体自带 Controller，原生状态真实存在时无需表现表剪辑；
-                // 玩家与怪物等实体仍必须由表现表提供剪辑，缺少配置照常报错。
+                // NPC 和怪物可使用预制体 Controller 的真实动作状态；
+                // 角色仍使用职业表现表，缺少配置照常报错。
                 if (UsesPrefabControllerAnimation(Entity) && HasPrefabControllerState(stateName))
                 {
                     return true;
@@ -491,8 +491,8 @@ using MMoRpgCommon.SceneEntity;
 
         /// <summary>
         /// 判断实体是否直接使用预制体自带的 Animator Controller 作为动作动画来源。
-        /// 当前只有 NPC 属于该类型：其预制体已配置真实待机状态，不经过表现表剪辑准备；
-        /// 玩家、怪物等实体仍必须由表现表和 animInfo 提供真实剪辑。
+        /// NPC 和怪物可以由预制体提供真实动作；仍检查目标状态存在，不替换缺失剪辑。
+        /// 玩家继续由职业表现表和 animInfo 提供剪辑。
         /// </summary>
         /// <param name="entity">待判断的场景实体。</param>
         /// <returns>true 表示该实体的动画由原生 Controller 提供。</returns>
@@ -502,7 +502,7 @@ using MMoRpgCommon.SceneEntity;
             {
                 return false;
             }
-            return (entity.EntityType & EntityType.Npc) != EntityType.None;
+            return (entity.EntityType & EntityType.Npc) != EntityType.None || entity is MonsterEntity;
         }
 
         /// <summary>状态结束后的统一回调，调用顺序在 OnStop/OnFinished 之后。</summary>

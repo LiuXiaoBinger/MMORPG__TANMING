@@ -44,4 +44,7 @@ public sealed class SkillRuntimePresentation : ScriptableObject
 
     /// <summary>由程序计算的位移段；空列表表示此资源没有额外位移指令。</summary>
     public List<MSkillChargeData> ChargeList = new List<MSkillChargeData>();
+
+    /// <summary>编辑器导出的真实碰撞窗口，仅供客户端命中受击表现。</summary>
+    public List<SkillRuntimeCollision> Collisions = new List<SkillRuntimeCollision>();
 }

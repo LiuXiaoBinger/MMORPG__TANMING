@@ -11,6 +11,8 @@ public class MArtSkill : MSkill
 {
 
     #region 字段与属性
+    /// <summary>本次施法的碰撞记录，跟随技能池生命周期清空。</summary>
+    private readonly MSkillCollision _collision = new MSkillCollision();
     /// <summary>本次表现轨道校验失败后为 true，直到归还；阻止每帧重复报错。</summary>
     private bool _runtimePresentationInvalid;
 
@@ -72,6 +74,8 @@ public class MArtSkill : MSkill
     {
         // 先解除本帧已经播完的声源，基类再根据动作槽、剩余表现和 RO 生命周期判断存活。
         PruneAudio();
+        if (_runtimePresentation != null && !_animationReleased)
+            _collision.Update(_firer, _runtimePresentation, TimelineElapsedSeconds, TargetUid);
         return base.Update(deltaSeconds);
     }
     #endregion
@@ -99,6 +103,7 @@ public class MArtSkill : MSkill
     /// <summary>归还时取消位移、等待回调和声音；已经生成的粒子由自身组件持有资源，直到尾迹结束。</summary>
     protected override void OnReset()
     {
+        _collision.Reset();
         SkillRuntimePresentationCache.RemoveReadyListener(_runtimePresentationId, _presentationReady);
         _presentationReady = null;
         if (_loadGoModel != null)

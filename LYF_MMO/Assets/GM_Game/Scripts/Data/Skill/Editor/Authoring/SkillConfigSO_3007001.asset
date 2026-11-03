@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63be86e5a5c2bfd4a8f571387edbfe20, type: 3}
   m_Name: SkillConfigSO_3007001
   m_EditorClassIdentifier: 
+  TypeToken: 0
+  CombineSkillList: 
   RotateList: []
   MobUnitList: []
   AIEventList: []
@@ -87,7 +89,111 @@ MonoBehaviour:
     displayName: 
     expanded: 1
   jumpList: []
-  attackList: []
+  attackList:
+  - collisionName: "\u6B63\u5F0F\u547D\u4E2D 1"
+    responseMode: 0
+    contactSignal: 
+    boxHeight: 2.5
+    collisionRotation: {x: 0, y: 0, z: 0}
+    unblockable: 0
+    unparryable: 0
+    interactionTag: 
+    keyNumber: 4
+    endKeyNumber: 8
+    isReWrite: 0
+    shapeType: 1
+    parameter1: 5
+    parameter2: 5
+    offset: {x: 0, y: 1.1, z: 0}
+    damageRatio: 0
+    knockbackForce: 0
+    autoAim: 0
+    damageMode: 0
+    tickInterval: 0
+    enableHitPause: 0
+    hitPauseDuration: 0
+    enableCameraShake: 0
+    cameraShakeDuration: 0
+    cameraShakeAmplitude: 0
+    cameraShakeFrequency: 0
+    enableChromaticAberration: 0
+    chromaticAberrationDuration: 0
+    chromaticAberrationIntensity: 0
+    impactLevel: 0
+    toughnessDamage: 0
+    enemyAttackType: 0
+    causePlayerStagger: 0
+    energyDeltaOnHit: 0
+    requestSlowPromptOnHit: 0
+    slowPromptRequiredEnergy: 0
+    requestGlowPromptOnHit: 0
+    hitVfx: {fileID: 0}
+    hitVfxOffset: {x: 0, y: 0, z: 0}
+    hitVfxRotation: {x: 0, y: 0, z: 0}
+    hitVfxScale: {x: 0, y: 0, z: 0}
+    hitVfxPlaybackSpeed: 0
+    hitVfxFollowTarget: 0
+    hitVfxUseAttackerRotation: 0
+    hitSound: {fileID: 0}
+    hitSoundVolume: 0
+    hitSoundRandomize: 0
+    hitSoundPitchVariation: 0
+    hitSoundVolumeVariation: 0
+    useBoneTracking: 0
+    boneOffsets: []
+    trackBonePath: 
+  - collisionName: "\u6B63\u5F0F\u547D\u4E2D 2"
+    responseMode: 0
+    contactSignal: 
+    boxHeight: 2.5
+    collisionRotation: {x: 0, y: 0, z: 0}
+    unblockable: 0
+    unparryable: 0
+    interactionTag: 
+    keyNumber: 13
+    endKeyNumber: 17
+    isReWrite: 0
+    shapeType: 1
+    parameter1: 5
+    parameter2: 5
+    offset: {x: 0, y: 1.1, z: 0}
+    damageRatio: 0
+    knockbackForce: 0
+    autoAim: 0
+    damageMode: 0
+    tickInterval: 0
+    enableHitPause: 0
+    hitPauseDuration: 0
+    enableCameraShake: 0
+    cameraShakeDuration: 0
+    cameraShakeAmplitude: 0
+    cameraShakeFrequency: 0
+    enableChromaticAberration: 0
+    chromaticAberrationDuration: 0
+    chromaticAberrationIntensity: 0
+    impactLevel: 0
+    toughnessDamage: 0
+    enemyAttackType: 0
+    causePlayerStagger: 0
+    energyDeltaOnHit: 0
+    requestSlowPromptOnHit: 0
+    slowPromptRequiredEnergy: 0
+    requestGlowPromptOnHit: 0
+    hitVfx: {fileID: 0}
+    hitVfxOffset: {x: 0, y: 0, z: 0}
+    hitVfxRotation: {x: 0, y: 0, z: 0}
+    hitVfxScale: {x: 0, y: 0, z: 0}
+    hitVfxPlaybackSpeed: 0
+    hitVfxFollowTarget: 0
+    hitVfxUseAttackerRotation: 0
+    hitSound: {fileID: 0}
+    hitSoundVolume: 0
+    hitSoundRandomize: 0
+    hitSoundPitchVariation: 0
+    hitSoundVolumeVariation: 0
+    useBoneTracking: 0
+    boneOffsets: []
+    trackBonePath: 
   cameraCues: []
   fxList:
   - contentKind: 1

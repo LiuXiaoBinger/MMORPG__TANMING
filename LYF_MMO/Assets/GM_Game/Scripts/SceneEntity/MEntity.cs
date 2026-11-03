@@ -557,6 +557,8 @@ public abstract class MEntity : MSceneObject
         sysnOldPos = new UnityEngine.Vector3(-1f, -1f, -1f);
 
         // 重置动作和组件引用
+        // 属性快捷引用随实体一起复用时必须解绑旧组件，下一轮指向新装配的容器成员。
+        AttrComp = null;
         BattleIdle = false;
         IsMixToDefaultAction = true;
         MoveComp = null;

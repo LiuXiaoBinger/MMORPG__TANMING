@@ -37,6 +37,12 @@ public sealed class SkillEditorBinding : ScriptableObject
     /// <summary>旧技能状态窗口的毫秒值，仅供核对；不由编辑器时间轴改写。</summary>
     public int SkillStateTimeMs;
 
+    /// <summary>目标落点攻击使用选中实体为碰撞原点；普通近战仍相对施法者。</summary>
+    public bool CollisionAtTarget;
+
+    /// <summary>目标落点攻击未选中目标时的前方距离，单位米，与该技能特效配置保持一致。</summary>
+    public float CollisionForwardDistance;
+
     /// <summary>原剪辑事件的来源与量化参考，编辑后仍可查看原始时间。</summary>
     public List<SkillEditorFxSource> FxSources = new List<SkillEditorFxSource>();
 }

@@ -36,14 +36,16 @@ public static class SkillEditorAssetTools
         "m_Script", "m_Name", "m_ObjectHideFlags", "m_EditorHideFlags", "m_CorrespondingSourceObject",
         "m_PrefabInstance", "m_PrefabAsset", "m_GameObject", "m_Enabled", "m_EditorClassIdentifier", "actionEditorSchemaVersion",
         "timingVersion", "timelineFrameRate", "skillID", "skillName", "skillDescription", "skillType",
-        "previewModelName", "ownerType", "skillCD", "animSegments", "skillClip", "tracks", "fxList", "moveCurve", "moveSegmentList"
+        "previewModelName", "ownerType", "skillCD", "animSegments", "skillClip", "tracks", "fxList", "moveCurve", "moveSegmentList", "attackList"
     };
 
     /// <summary>本游戏没有对应运行处理器的字段；必须保持此包版本的初始值，隐藏轨道也检查。</summary>
     private static readonly HashSet<string> DefaultOnlyFields = new HashSet<string>
     {
+        // 普通表现导出不消费组合技能入口；本次包新增字段需保持默认值。
+        "TypeToken", "CombineSkillList",
         "phases", "flowNodes", "cancelPriority", "energyCostOnActivate", "defaultEnergyGainOnHit", "exitFrame",
-        "totalMoveDistance", "jumpList", "attackList", "cameraCues", "cancelList",
+        "totalMoveDistance", "jumpList", "cameraCues", "cancelList",
         "projectileList", "hitFxList", "interactionWindows", "moveCancelFrame", "warningCueList",
         "superArmorList", "adjustMotionList", "trailToggleList", "isSuperArmorSkill", "phase2AttackList",
         "phase2FxList", "phase2RangeMultiplier",
@@ -766,6 +768,7 @@ public static class SkillEditorAssetTools
         runtime.FxEvents = ReadFx(binding);
         runtime.AudioEvents = SkillEditorAudioMotionTools.ReadAudio(binding.Config, runtime.TimelineDurationSeconds);
         runtime.ChargeList = SkillEditorAudioMotionTools.ReadCharge(binding.Config, runtime.DurationSeconds);
+        runtime.Collisions = SkillEditorCollisionTools.Read(binding);
         EditorUtility.SetDirty(runtime);
         AssetDatabase.SaveAssetIfDirty(runtime);
     }

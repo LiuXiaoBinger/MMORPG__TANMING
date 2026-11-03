@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `bf5df7abc895ad1ed4389a1092e75cb43cae0776c6cee4c0701622a379338263`
+Source normalized SHA256: `41a0498a72d33e84dcf60e15681a8d9f9e0d20c59ec44ae74f2bc8a35fedc8d8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -37,11 +37,12 @@ Source normalized SHA256: `bf5df7abc895ad1ed4389a1092e75cb43cae0776c6cee4c070162
 | [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state base class | 181-187 |
 | [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-195 |
 | [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-202 |
-| [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-208 |
+| [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-209 |
+| [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-216 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `97067855bce137edc7def6bb3be44abf4eeb35d648b82a36831415d32f5dc1e9`
+Source normalized SHA256: `0ed3c29864b4f5c00335bba962caeafd63804dc38ba476cd17e4fe5accafb632`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -70,7 +71,8 @@ Source normalized SHA256: `97067855bce137edc7def6bb3be44abf4eeb35d648b82a3683141
 | [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state contract validation | 198-204 |
 | [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-212 |
 | [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
-| [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-226 |
+| [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
+| [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-234 |
 
 ## Docs/AI/DECISIONS.en.md
 
