@@ -23,13 +23,13 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <summary>成员行模板，同时作为第一行成员使用。</summary>
     [SerializeField, Header("成员行模板")] private GameObject _memberSlotTemplate;
 
-    /// <summary>成员行末尾的邀请空位行，未满员且本人是队长时显示。</summary>
+    /// <summary>成员行末尾的邀请空位；当前有队伍且人数未满就显示，本控件没有额外检查队长身份。</summary>
     [SerializeField, Header("邀请空位行")] private GameObject _addSlot;
 
-    /// <summary>成员名字文本，取当前真实角色昵称。</summary>
+    /// <summary>模板第一行的成员名字控件，填入服务器列表首项昵称。</summary>
     [SerializeField, Header("成员名")] private TMP_Text _memberName;
 
-    /// <summary>成员等级文本，取当前真实角色等级。</summary>
+    /// <summary>模板第一行的成员等级控件，填入服务器列表首项等级。</summary>
     [SerializeField, Header("成员等级")] private TMP_Text _memberLevel;
 
     /// <summary>队长标记，只有队长所在行显示。</summary>
@@ -38,19 +38,19 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <summary>职业头像，按成员职业切换已有图集精灵。</summary>
     [SerializeField, Header("职业头像")] private Image _professionImage;
 
-    /// <summary>生命条，按成员血量比例设置滑条值。</summary>
+    /// <summary>模板第一行生命条；本人行用传入比例，其他成员当前按满值显示。</summary>
     [SerializeField, Header("生命条")] private Slider _hpSlider;
 
-    /// <summary>法力条，按成员法力比例设置滑条值。</summary>
+    /// <summary>模板第一行法力条；本人行用传入比例，其他成员当前按满值显示。</summary>
     [SerializeField, Header("法力条")] private Slider _mpSlider;
 
     /// <summary>右侧「组队」按钮，点击打开 RO 正式队伍窗口。</summary>
     [SerializeField, Header("组队按钮")] private Button _groupButton;
 
-    /// <summary>右侧召集按钮，只打开原版招募界面壳，不发送联网招募。</summary>
+    /// <summary>右侧召集按钮，当前转发到邀请玩家页，不在控件中发送联网招募。</summary>
     [SerializeField, Header("召集按钮")] private Button _summonButton;
 
-    /// <summary>右侧援团按钮属于佣兵系统，保留原位置，本轮不执行该系统业务。</summary>
+    /// <summary>援团按钮保留布局位置，初始化时置为不可点击，当前未接佣兵业务。</summary>
     [SerializeField, Header("援团按钮")] private Button _assistButton;
 
     /// <summary>未建队分支里的「创建队伍」行，沿 RO 入口直接请求创建队伍。</summary>
@@ -86,7 +86,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <summary>成员行上的队长标记路径，相对成员行根节点。</summary>
     private const string SlotCaptainPath = "ImageCaptain";
 
-    /// <summary>运行时复制出来的成员行，下标与服务器成员顺序一致。</summary>
+    /// <summary>按服务器顺序保存的成员行引用，第一项是预制体原模板，其余为按需复制实例。</summary>
     private readonly List<GameObject> _memberSlots = new List<GameObject>();
 
     /// <summary>点击「组队」时触发，由队伍控制器打开正式队伍窗。</summary>
@@ -234,7 +234,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
         _inviteButton.onClick.AddListener(OnInviteClicked);
         _memberButton.onClick.AddListener(OnMemberClicked);
         _memberMenuButton.onClick.AddListener(OnMemberMenuClicked);
-        // 援团属于佣兵系统，本轮只迁移队伍分支，保持原位且不执行该系统业务。
+        // 当前只启用队伍相关入口，援团按钮保持不可点击。
         SetInteractable(_summonButton, true);
         SetInteractable(_assistButton, false);
         SetInteractable(_searchButton, true);
@@ -336,10 +336,15 @@ public sealed class QuickTeamWidget : MonoBehaviour
         }
         // 第一行沿用预制体已序列化的引用，其余行按固定路径取同结构控件。
         TMP_Text nameText = _memberName;
+        // 当前行等级控件，非第一行会从克隆节点查找。
         TMP_Text levelText = _memberLevel;
+        // 当前行职业头像，图片资源由外部 SetMemberJobSprite 设置。
         Image jobImage = _professionImage;
+        // 当前行生命条，只在本人行使用实时比例。
         Slider hpSlider = _hpSlider;
+        // 当前行法力条，非本人行当前显示满值。
         Slider mpSlider = _mpSlider;
+        // 当前行队长标记，直接使用成员 IsCaptain 字段。
         GameObject captainMark = _captainMark;
         if (index > 0)
         {

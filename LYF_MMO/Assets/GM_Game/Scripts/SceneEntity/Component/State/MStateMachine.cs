@@ -1,10 +1,9 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// RO 风格实体动作状态机，负责状态注册、切换、更新和动画延迟刷新。
-/// 状态以 <see cref="StateDefine"/> 为主键存放在 <see cref="MActionStateContainer"/> 中，
-/// 切换前通过 <see cref="CommonStateTypeTool.StatePermitted"/> 校验权限，
-/// 动作结束或被打断后自动回默认状态。
+/// 管理一个实体当前执行的动作状态，负责注册、切换、逐帧更新和帧末播放动画。
+/// 按枚举切换时查询许可表；直接传入状态实例的重载由调用方先判断许可。
+/// 当前状态标记完成后，更新流程把它切回默认状态。
 /// </summary>
 public sealed class MStateMachine : EntityComponentBase
 {
@@ -16,13 +15,13 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>当前激活状态。</summary>
     private IMStateTransform _current;
 
-    /// <summary>默认状态（通常是 Idle），动作结束后自动回退到这里。</summary>
+    /// <summary>默认状态（通常是 Idle），当前动作结束后自动回退到这里。</summary>
     private IMStateTransform _default;
 
-    /// <summary>上一个激活状态，用于动画切换和 StateChanged 事件参数。</summary>
+    /// <summary>上一个激活状态；当前 StateChanged 派发代码被注释掉，不会发送通知。</summary>
     private IMStateTransform _previous;
 
-    /// <summary>标记本帧是否已经触发过动画播放，避免同一帧多次 PlayAnim。</summary>
+    /// <summary>是否有待刷新的状态动画；LateUpdate 成功播放后清除。</summary>
     private bool _isTriggered;
 
     /// <summary>上一次播放的动画状态名，供 <see cref="IMStateTransform.PlayAnim"/> 做去重切换。</summary>
@@ -71,6 +70,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>
     /// 每帧更新当前状态；状态标记为完成后自动切换到默认状态。
     /// </summary>
+    /// <param name="fDeltaT">本帧经过的秒数。</param>
     public override void Update(float fDeltaT)
     {
         _current.StateUpdate(fDeltaT);
@@ -118,19 +118,20 @@ public sealed class MStateMachine : EntityComponentBase
 
     /// <summary>
     /// 按实体类型注册默认动作状态列表。
-    /// 集合类/陷阱/投射物/傀儡/鹰等无普通动作的实体只注册默认状态；
-    /// NPC 只注册特殊状态；普通怪物和玩家类额外注册各类动作；
+    /// 所有实体先注册默认状态和已有技能状态；
+    /// 采集物、陷阱、投射物、Dummy 和鹰到此结束，NPC 另加特殊状态；
     /// 玩家类再额外注册攀爬、采集、钓鱼、跳舞等生活动作。
     /// </summary>
     private void RegisterDefaultStates()
     {
+        // 当前状态机的宿主实体。
         MEntity entity = Entity;
         if (entity == null) return;
         // 所有实体都必须有默认 Idle 状态
         RegisterState(typeof(MDefaultActionComponent));
         // Skill 是实体快捷组件也是动作状态，由状态容器持有并在状态机销毁时唯一回收。
         RegisterExistingState(entity.Skill);
-        // 集合物、陷阱、投射物、傀儡、鹰等无普通动作，只保留默认状态
+        // 采集物、陷阱、投射物、Dummy、鹰保留上面已注册的默认状态和技能状态
         // 集合类与陷阱类实体不注册普通动作。
         bool isStaticTriggerEntity =
             (entity.EntityType & EntityType.Collection) != EntityType.None ||
@@ -182,6 +183,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <param name="stateType">动作状态组件类型。</param>
     private void RegisterState(System.Type stateType)
     {
+        // 从状态专用池借出的目标类型实例。
         MActionComponent state = MComponentMgr.Instance.AcquireActionState(stateType, Entity);
         if (state == null) return;
         state.Initialize();
@@ -212,11 +214,13 @@ public sealed class MStateMachine : EntityComponentBase
         }
     }
 
+    /// <summary>状态事件由各动作组件订阅，状态机本身不增加订阅。</summary>
     protected override void EventSubscribe()
     {
        
     }
 
+    /// <summary>状态机没有独立事件订阅，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
         
@@ -254,6 +258,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <summary>从宿主实体卸载时清空实体对状态机的快捷引用。</summary>
     public override void OnDetachFromHost()
     {
+        // 当前状态机的宿主实体。
         MEntity entity = Entity;
         if (entity != null) entity.SetMachineComponent(null);
         base.OnDetachFromHost();
@@ -263,6 +268,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <param name="hostObj">新挂载的宿主对象。</param>
     public override void OnAttachToHost(ROObject hostObj)
     {
+        // 新宿主，用于设置实体上的 Machine 快捷引用。
         MEntity entity = hostObj as MEntity;
         if (entity != null) entity.SetMachineComponent(this);
         base.OnAttachToHost(hostObj);
@@ -308,6 +314,7 @@ public sealed class MStateMachine : EntityComponentBase
     /// <returns>切换成功返回 true，状态不存在或不允许切换返回 false。</returns>
     public bool TransferToState(StateDefine state)
     {
+        // 状态容器中已登记的目标状态实例。
         MActionComponent next = _states.Get(state);
         if (next == null || !CanTransfer(state))
         {
@@ -319,9 +326,8 @@ public sealed class MStateMachine : EntityComponentBase
     }
 
     /// <summary>
-    /// 执行状态切换：停止当前状态（不立即完成，除非切回自身），
-    /// 把当前状态记为 previous，把目标状态设为 current 并获取权限，
-    /// 状态真正变化时派发 <see cref="MEventType.StateChanged"/> 事件。
+    /// 直接切换到指定实例：停止旧状态，保存前后引用，再让新状态开始。
+    /// 此重载不查许可表；StateChanged 通知目前被注释掉，不会派发。
     /// </summary>
     /// <param name="next">目标状态接口，为空直接忽略。</param>
     public void TransferToState(IMStateTransform next)
@@ -332,8 +338,9 @@ public sealed class MStateMachine : EntityComponentBase
             ForceToDefault();
             return;
         }
+        // 为下方暂未启用的状态变更通知保留切换前枚举。
         StateDefine previousState = State;
-        // 停止旧状态；切回自身时 isStop=false 表示不做完整停止流程
+        // 停止旧状态但不先切默认状态；第二个参数告诉旧状态是否正在切回自身
         if (_current != null) 
             _current.Stop(false, next == _current);
         _previous = _current; 
@@ -355,7 +362,7 @@ public sealed class MStateMachine : EntityComponentBase
         if (_default != null && _current != _default) TransferToState(_default);
     }
 
-    /// <summary>停止当前状态，不做完成流程。</summary>
+    /// <summary>调用当前状态的 Stop，按该状态的默认规则中断并处理回默认状态。</summary>
     public void Stop() { if (_current != null) _current.Stop(); }
 
     /// <summary>完成当前状态，通常由状态内部在动画播完后调用。</summary>

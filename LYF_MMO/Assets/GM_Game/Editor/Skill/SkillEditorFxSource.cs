@@ -1,6 +1,6 @@
 using System;
 
-/// <summary>旧剪辑事件的只读来源记录，帮助策划核对整数帧量化产生的时间差。</summary>
+/// <summary>保存从旧动画事件读取的特效来源和原始触发时间，便于核对换算成整数帧后的时间偏差。</summary>
 [Serializable]
 public sealed class SkillEditorFxSource
 {

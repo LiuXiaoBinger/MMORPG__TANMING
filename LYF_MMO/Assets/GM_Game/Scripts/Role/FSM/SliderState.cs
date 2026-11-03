@@ -16,12 +16,13 @@ public class SliderState : RoleFSMStateBase
     /// <summary>进入滑铲状态的 Time.time，用于校验延迟后是否仍处于滑铲。</summary>
     private float _enteredAt;
     
+    /// <summary>保存 roleCtrl 所属控制器和 animator 动画组件，供进入、退出状态时使用。</summary>
     public SliderState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)
     {
     }
 
     /// <summary>
-    /// 进入状态
+    /// 播放动作 41，并登记 0.3 秒后的回调；仍处于本次滑铲时切回待机。
     /// </summary>
     public override void OnEnter()
     {
@@ -38,7 +39,7 @@ public class SliderState : RoleFSMStateBase
         });
     }
     /// <summary>
-    /// 退出状态
+    /// 取消尚未执行的自动退出回调并清空引用。
     /// </summary>
     public override void OnExit()
     {

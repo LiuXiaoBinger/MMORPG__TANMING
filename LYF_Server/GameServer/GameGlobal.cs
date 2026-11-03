@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 /// <summary>
 /// GameServer 进程级主循环与逻辑时间基准。
-/// 网络线程只把包复制成不可变 GameCommand 入队；本类在主循环消费队列，
+/// 网络线程把包的协议号、会话和不可变消息体封装成 GameCommand 入队；本类在主循环消费队列，
 /// 并按 50ms（20Hz）固定步长驱动各业务管理器 Update，所有游戏状态只在该线程修改。
 /// </summary>
 public class GameGlobal:Singleton<GameGlobal>
@@ -43,7 +43,7 @@ public class GameGlobal:Singleton<GameGlobal>
     }
 
     /// <summary>
-    /// 网络线程只负责投递不可变命令信封，所有游戏业务在主循环中统一执行。
+    /// 网络线程只投递消息记录，所有游戏业务在主循环中统一执行。
     /// </summary>
     public void EnqueueGameCommand(GameCommandSource source, BaseLink transport, BasePackage basePackage)
     {
@@ -122,8 +122,10 @@ public class GameGlobal:Singleton<GameGlobal>
     /// </summary>
     public int ProcessNetMessage()
     {
+        // 先把跨线程队列中的消息转交给逻辑线程自己的待处理队列。
         int count = GameCommandDispatcher.Instance.DispatchPending();
         ClientMessageManager.Instance.ProcessPendingCommands();
+        // 网络线程上报的已断开网关编号，随后统一处理其在线角色。
         int gateSessionId;
         while (_disconnectedGateSessions.TryDequeue(out gateSessionId))
         {

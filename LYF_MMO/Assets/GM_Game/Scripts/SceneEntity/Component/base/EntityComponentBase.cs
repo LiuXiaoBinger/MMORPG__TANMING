@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 场景实体组件基类，独立于角色背包等业务组件。
-/// 普通实体组件统一继承本类，由 <see cref="MComponentMgr"/> 从组件池取出/回收，
-/// 通过宿主实体 <see cref="MEntity"/> 完成事件订阅、派发与生命周期回调。
+/// 场景实体组件的共用基类，保存宿主、启用状态和本组件登记的事件订阅。
+/// 组件池借出时重新绑定宿主，归还前解绑事件并清空宿主引用。
 /// </summary>
 public abstract class EntityComponentBase : IEntityComponent
 {
@@ -70,7 +69,7 @@ public abstract class EntityComponentBase : IEntityComponent
     {
     }
 
-    /// <summary>组件初始化，由组件容器在挂载后统一调用一次；子类按需重写。</summary>
+    /// <summary>组件初始化入口；调用时机由宿主的组件装配与初始化流程决定。</summary>
     public virtual void Initialize()
     {
     }
@@ -80,7 +79,7 @@ public abstract class EntityComponentBase : IEntityComponent
     {
     }
 
-    /// <summary>按参考 MComponent.RegisterEvent 订阅宿主事件，并记录以便回收时解绑。</summary>
+    /// <summary>订阅宿主事件，并把成功的订阅记下来，供回收时统一解绑。</summary>
     /// <param name="eventType">宿主事件类型。</param>
     /// <param name="handler">事件回调处理器。</param>
     protected void RegisterEvent(MEventType eventType, MEventHandler handler)
@@ -95,6 +94,7 @@ public abstract class EntityComponentBase : IEntityComponent
         }
 
         // 首次订阅该类型事件时新建处理器列表，避免字典缺少键
+        // 此事件在本组件登记过的处理器列表。
         List<MEventHandler> handlers;
         if (!_registeredEvents.TryGetValue(eventType, out handlers))
         {
@@ -148,6 +148,7 @@ public abstract class EntityComponentBase : IEntityComponent
     /// <param name="handler">要移除的事件回调处理器。</param>
     private void RemoveRegisteredEvent(MEventType eventType, MEventHandler handler)
     {
+        // 此事件在本组件登记过的处理器列表。
         List<MEventHandler> handlers;
         if (!_registeredEvents.TryGetValue(eventType, out handlers))
         {
@@ -216,7 +217,9 @@ public abstract class EntityComponentBase : IEntityComponent
             List<MEventType> eventTypes = new List<MEventType>(_registeredEvents.Keys);
             for (int typeIndex = 0; typeIndex < eventTypes.Count; typeIndex++)
             {
+                // 本轮要解绑的事件类型。
                 MEventType eventType = eventTypes[typeIndex];
+                // 本组件为该事件登记的处理器，反向逐个解除。
                 List<MEventHandler> handlers = _registeredEvents[eventType];
                 for (int handlerIndex = handlers.Count - 1; handlerIndex >= 0; handlerIndex--)
                 {

@@ -13,7 +13,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>
     /// 魔神塔在主题副本配置里的编号。RO 侧链路为 ThemeDungeonTable 第 7 条（达纳托斯之战）
     /// 指向 DungeonsTable 的 4060，再由 SceneTable 指向 sc_dungeon_moshenta_001；
-    /// 本轮只把这一条绑定到魔神塔场景，其余八本不误进魔神塔。
+    /// 当前只接入这一条副本的入场请求，其他条目不发起魔神塔入场。
     /// </summary>
     private const int MoshentaThemeDungeonId = 7;
 
@@ -59,10 +59,10 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>按职业编号缓存的头像精灵，避免每次刷新都重新查图集。</summary>
     private readonly Dictionary<int, Sprite> _jobSprites = new Dictionary<int, Sprite>();
 
-    /// <summary>当前生命比例，供队伍窗与快捷栏显示血条。</summary>
+    /// <summary>服务器最近一次队伍通知中本人的生命比例，传给快捷队伍栏。</summary>
     private float _hpRatio;
 
-    /// <summary>当前法力比例，供快捷栏显示蓝条。</summary>
+    /// <summary>快捷栏使用的法力条比例；当前由 _hpRatio 赋值，并非真实法力数据。</summary>
     private float _mpRatio;
 
     /// <summary>本次挑战选中的副本配置，由副本选择窗的挑战事件传入。</summary>
@@ -71,7 +71,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>是否已经读取过职业头像图集，避免重复加载。</summary>
     private bool _jobAtlasLoaded;
 
-    /// <summary>已加载的职业头像精灵，按精灵名索引。</summary>
+    /// <summary>从图集加载的全部职业头像，查询时逐项比较精灵名。</summary>
     private Sprite[] _jobAtlasSprites = new Sprite[0];
     #endregion
 
@@ -227,7 +227,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     #endregion
 
     /// <summary>
-    /// 收到服务器场景通知后才切换场景：魔神塔加载副本场景，主城则回城主城场景。
+    /// 收到服务器场景通知后再切场景：4060 加载魔神塔，2 切回主城。
     /// 先把服务器权威的地图、实例与出生点写回本地角色，保证进入后过滤与移动同步一致。
     /// </summary>
     /// <param name="notice">服务器下发的入场或回城通知。</param>
@@ -265,7 +265,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             return;
         }
         _selectedEntry = entry;
-        // 只开放已授权的魔神塔，其余主题本不走服务器入场。
+        // 目前只接入魔神塔，其他主题副本不发送入场请求。
         if (entry.id != MoshentaThemeDungeonId)
         {
             return;
@@ -285,7 +285,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         OpenTeamWindow();
     }
 
-    /// <summary>从快捷栏打开已迁移的 RO 界面壳，只处理界面导航。</summary>
+    /// <summary>从快捷栏打开队伍窗口并切到指定页；不在这里执行对应页面的业务。</summary>
     /// <param name="page">快捷栏按钮对应的队伍界面。</param>
     private void OnOpenPageRequested(TeamPage page)
     {
@@ -385,6 +385,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (self != null)
         {
             _hpRatio = CalculateRatio(self.CurrHp, self.MaxHp);
+            // 当前没有从队伍通知读取法力比例，快捷栏暂时复用生命比例。
             _mpRatio = _hpRatio;
         }
         RefreshViews();
@@ -647,7 +648,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         SceneMgr.Instance.LoadSceneMode(SceneType.Scene_DungeonMoshenta);
     }
 
-    /// <summary>把服务器通知的地图、实例与出生点写回本地主角，保持本地权威一致。</summary>
+    /// <summary>把服务器通知的地图、实例与出生点写回本地主角，后续场景加载使用这份数据。</summary>
     /// <param name="notice">携带目标地图、实例与出生点的场景通知。</param>
     private static void ApplyAuthoritativePosition(TeamEnterDungeonNtf notice)
     {
@@ -664,7 +665,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         // 克隆后回写，保持 PlayerEntity 的 BaseInfo 深拷贝约定。
         RoleBaseInfo updated = localRole.BaseInfo.Clone();
         updated.MapId = notice.MapId;
-        // 协议里的实例ID是无符号 64 位，角色基础信息用 32 位整数保存，取低位即可满足本项目实例量级。
+        // 协议里的实例ID是无符号 64 位，角色基础信息用 32 位整数保存，这里直接强制转换为 int；本方法没有检查是否超出 int 范围。
         updated.InstanceId = (int)notice.InstanceId;
         updated.Pos = notice.Pos;
         localRole.UpdateBaseInfo(updated);
@@ -693,7 +694,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         SceneMgr.Instance.LoadSceneMode(SceneType.Scene_MainCity);
     }
 
-    /// <summary>把每个成员行的职业头像按职业编号填进正式队伍窗。</summary>
+    /// <summary>只把本人成员行的职业头像替换成对应职业精灵，其他成员保留默认头像。</summary>
     /// <param name="members">服务器下发的成员表。</param>
     /// <param name="localRoleId">本地主角角色ID。</param>
     private void ApplyMemberSprites(IList<TeamMemberInfo> members, ulong localRoleId)

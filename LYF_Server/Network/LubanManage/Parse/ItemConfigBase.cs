@@ -7,7 +7,7 @@ using cfg;
 /// </summary>
 public abstract class ItemConfigBase
 {
-    /// <summary>道具唯一ID</summary>
+    /// <summary>道具配置ID；区别于每件物品的实例UID</summary>
     public int ItemId { get; private set; }
 
     /// <summary>道具主类型（消耗品/武器/装备等）</summary>
@@ -106,12 +106,11 @@ public abstract class ItemConfigBase
     }
 
     /// <summary>
-    /// 规范化校验道具主类型，只允许指定合法类型，非法值返回降级兜底类型
-    /// 当前仅校验：消耗品、武器，其他类型直接使用fallback兜底
+    /// 把配置中的整数直接转成物品大类枚举；当前不检查枚举范围，也未使用 fallback。
     /// </summary>
     /// <param name="value">原始表格读取的int数值</param>
-    /// <param name="fallback">校验失败时返回的兜底类型</param>
-    /// <returns>校验过后安全的ItemMainType</returns>
+    /// <param name="fallback">历史保留参数，当前未使用。</param>
+    /// <returns>保留原始整数值的枚举结果。</returns>
     protected static ItemMainType NormalizeMainType(int value, ItemMainType fallback)
     {
         return (ItemMainType)value;
@@ -144,7 +143,7 @@ public abstract class ItemConfigBase
     /// <param name="primary">第一优先级字符串</param>
     /// <param name="secondary">第二优先级字符串</param>
     /// <param name="fallback">兜底返回值，允许传入空字符串</param>
-    /// <returns>不为空的字符串</returns>
+    /// <returns>首个非空候选值；都为空时原样返回 fallback，因此结果仍可能为空。</returns>
     protected static string GetFirstNonEmpty(string primary, string secondary, string fallback)
     {
         if (!string.IsNullOrEmpty(primary))

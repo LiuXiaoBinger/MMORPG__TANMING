@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 实体对象池单例。
-/// 按具体运行时类型缓存已销毁实体，复用时重新写入 UID 并联通组件池和模型池。
-/// 避免频繁创建销毁实体带来的 GC 开销，提升场景实体切换性能。
+/// 缓存已经销毁的实体对象，下一次按同一 C# 类型取出复用。
+/// 取出时重新设置身份与组件状态；池为空才调用传入的创建函数。
 /// </summary>
 public sealed class MEntityPool
 {
@@ -14,7 +13,7 @@ public sealed class MEntityPool
     {
     }
 
-    /// <summary>单例实例（懒汉式，首次访问时初始化）</summary>
+    /// <summary>随类型初始化创建的全局实体池实例</summary>
     private static readonly MEntityPool _instance = new MEntityPool();
 
     /// <summary>按实体运行时类型分桶的空闲队列，键为具体类型，值为可复用实体队列</summary>
@@ -46,9 +45,11 @@ public sealed class MEntityPool
         }
 
         // 先尝试从池中取出已销毁的同类型实体复用
+        // 当前实体 C# 类型对应的空闲队列。
         Queue<MEntity> queue;
         if (_pools.TryGetValue(typeof(T), out queue) && queue.Count > 0)
         {
+            // 从空闲队列取出的旧对象，重置后代表这次的新实体。
             T reused = queue.Dequeue() as T;
             if (reused != null)
             {
@@ -75,7 +76,9 @@ public sealed class MEntityPool
         }
 
         // 按实际运行时类型分桶，保证复用类型严格匹配
+        // 使用具体派生类型分组，避免把 Boss、玩家等对象混用。
         Type type = entity.GetType();
+        // 当前实体 C# 类型对应的空闲队列。
         Queue<MEntity> queue;
         if (!_pools.TryGetValue(type, out queue))
         {

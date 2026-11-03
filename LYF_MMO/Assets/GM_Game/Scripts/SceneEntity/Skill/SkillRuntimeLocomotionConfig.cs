@@ -1,6 +1,9 @@
 using UnityEngine;
 
-/// <summary>MJS普通动作的编辑器导出声音配置，与服务器技能表无关。</summary>
+/// <summary>
+/// 保存普通移动和跳跃动作的声音配置，分别提供走、跑、战斗走跑、起跳与落地轨道。
+/// 这些动作不是技能释放，不使用服务器技能表。
+/// </summary>
 public sealed class SkillRuntimeLocomotionConfig : ScriptableObject
 {
     /// <summary>行走动画及随步点循环触发的声音轨道。</summary>

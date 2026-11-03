@@ -1,6 +1,6 @@
 ﻿namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>原 Y 内置轨道名称与序列化列表的映射；隐藏界面不移除既有事件数据。</summary>
+    /// <summary>把内置轨道对应到技能配置中的事件列表，并决定轨道所属分组和显示方式；隐藏轨道不删除数据。</summary>
     internal static class BuiltinTrackRegistry
     {
         /// <summary>将验证器的原轨道标识映射到配置列表字段名，未知扩展返回空。</summary>

@@ -15,7 +15,7 @@ public class RoleFSMStateBase
    protected  Animator _animator;
    /// <summary>状态所属的角色表现控制器，用于读取当前动作参数ID等共享数据。</summary>
    protected RoleCtrlBase _roleCtrl;
-   /// <summary>构造时注入 Animator 与控制器引用。</summary>
+   /// <summary>保存 animator 动画组件与 roleCtrl 控制器，所有具体状态复用这些引用。</summary>
    /// <param name="roleCtrl">所属角色表现控制器。</param>
    /// <param name="animator">驱动角色动画的 Animator。</param>
    public RoleFSMStateBase(RoleCtrlBase roleCtrl, Animator animator)
@@ -24,14 +24,14 @@ public class RoleFSMStateBase
       _animator = animator;
    }
    /// <summary>
-   /// 进入状态
+   /// 切入状态时调用；基类不修改动画，具体状态自行实现。
    /// </summary>
    public virtual void OnEnter()
    {
       
    }
    /// <summary>
-   /// 退出状态
+   /// 离开状态时调用；具体状态可在此取消计时器或事件订阅。
    /// </summary>
    public virtual void OnExit()
    {

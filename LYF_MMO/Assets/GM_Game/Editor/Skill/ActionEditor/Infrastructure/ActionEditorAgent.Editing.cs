@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>保留 Y 编辑器的主线程自动化接口，用于显式资源查询、校验和带撤销的编辑；不驱动本项目角色战斗。</summary>
+    /// <summary>实现自动化字段编辑：先读取配置快照，在副本上修改和检查，通过后再把结果写回原资产。</summary>
     public static partial class ActionEditorAgent
     {
         /// <summary>Unity 序列化叶字段的强类型传输描述；按 kind 选择有效值槽，引用以 GUID 与局部文件 ID 表达。</summary>

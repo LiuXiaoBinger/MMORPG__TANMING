@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 客户端场景实体世界，独立于角色业务数据和 Unity 表现控制器。
-/// 负责实体的 UID 分配、注册索引、帧驱动更新和对象池回收闭环。
-/// 是场景中所有实体的唯一管理入口。
+/// 保存当前场景实体的 UID 索引和更新顺序。
+/// 创建时分配 UID、加入索引并初始化；每帧更新后统一移除待销毁实体，再归还实体池。
 /// </summary>
 public sealed class SceneEntityWorld : IDisposable
 {
@@ -41,6 +40,7 @@ public sealed class SceneEntityWorld : IDisposable
         // 正向遍历驱动各实体逻辑更新
         for (int index = 0; index < _order.Count; index++)
         {
+            // 当前登记位置上的实体原引用。
             ROObject entity = _order[index];
             entity.Update(deltaMilliseconds);
         }
@@ -61,6 +61,7 @@ public sealed class SceneEntityWorld : IDisposable
     /// <param name="deltaMilliseconds">帧间隔毫秒数，内部转换为秒</param>
     public void LateUpdate(int deltaMilliseconds)
     {
+        // 实体的帧末接口使用秒，世界入口使用毫秒。
         float deltaSeconds = deltaMilliseconds * 0.001f;
         for (int index = 0; index < _order.Count; index++)
         {
@@ -114,7 +115,9 @@ public sealed class SceneEntityWorld : IDisposable
     /// <returns>创建并加入成功的实体；工厂返回空或加入失败时返回 null</returns>
     public ROObject Create(EntityType entityType, int configId)
     {
+        // 本世界中尚未占用的运行时身份。
         ulong uid = AllocateUid();
+        // 已完成构建器装配、尚未登记到世界的实体。
         ROObject entity = SceneEntityFactory.Build(entityType, uid, configId);
         if (entity == null)
         {
@@ -137,7 +140,9 @@ public sealed class SceneEntityWorld : IDisposable
     /// <returns>创建并加入成功的投射物实体；工厂返回空或加入失败时返回 null</returns>
     public ROObject CreateProjectile(ProjectileType projectileType, int configId)
     {
+        // 本世界中尚未占用的运行时身份。
         ulong uid = AllocateUid();
+        // 已装配的投射物实体，加入失败时也需要清理。
         ROObject entity = SceneEntityFactory.BuildProjectile(projectileType, uid,
             configId);
         if (entity == null)
@@ -161,6 +166,7 @@ public sealed class SceneEntityWorld : IDisposable
     /// <returns>存在并成功移除返回 true；不存在返回 false</returns>
     public bool Remove(ulong uid)
     {
+        // UID 对应的实体原引用。
         ROObject entity;
         if (!_entities.TryGetValue(uid, out entity))
         {
@@ -182,6 +188,7 @@ public sealed class SceneEntityWorld : IDisposable
         _order.Remove(entity);
         // 先执行实体自身销毁流程，再回收对象池
         entity.Destroy();
+        // 只有 MEntity 及其派生类型进入本项目实体对象池。
         MEntity pooledEntity = entity as MEntity;
         if (pooledEntity != null)
         {
@@ -191,6 +198,7 @@ public sealed class SceneEntityWorld : IDisposable
     }
 
     /// <summary>清理 Builder 已创建但未能加入世界的实体，保证各级对象池闭环。</summary>
+    /// <param name="entity">已经构建但未成功登记到世界的实体。</param>
     private static void ReleaseUnmanagedEntity(ROObject entity)
     {
         if (entity == null)
@@ -198,6 +206,7 @@ public sealed class SceneEntityWorld : IDisposable
             return;
         }
         entity.Destroy();
+        // 只有 MEntity 及其派生类型进入本项目实体对象池。
         MEntity pooledEntity = entity as MEntity;
         if (pooledEntity != null)
         {
@@ -226,6 +235,7 @@ public sealed class SceneEntityWorld : IDisposable
     /// <returns>类型匹配的实体实例；不存在或类型不符返回 null</returns>
     public T Get<T>(ulong uid) where T : class, ROObject
     {
+        // UID 对应的实体原引用。
         ROObject entity;
         if (!_entities.TryGetValue(uid, out entity))
         {
@@ -236,7 +246,7 @@ public sealed class SceneEntityWorld : IDisposable
     #endregion
 
     #region 核心逻辑
-    /// <summary>将当前世界的战斗实体引用复制到调用方容器，选择查询不直接修改世界顺序。</summary>
+    /// <summary>把世界中所有 MEntity 引用复制到调用方列表，不筛选战斗能力或实体类别。</summary>
     /// <param name="entities">调用方持有的快照容器，结果仍引用世界中的原实体。</param>
     public void CopyEntities(List<MEntity> entities)
     {
@@ -244,7 +254,7 @@ public sealed class SceneEntityWorld : IDisposable
         // 实体加入顺序索引，只读取当前世界的原对象。
         for (int index = 0; index < _order.Count; index++)
         {
-            // 非战斗场景对象不参与本轮目标选择。
+            // 仅保留能转换为 MEntity 的对象；结果仍指向世界中的原实体。
             MEntity entity = _order[index] as MEntity;
             if (entity != null)
             {
@@ -259,9 +269,11 @@ public sealed class SceneEntityWorld : IDisposable
         // 反向遍历逐个销毁回收
         for (int index = _order.Count - 1; index >= 0; index--)
         {
+            // 当前登记位置上的实体原引用。
             ROObject entity = _order[index];
             entity.Destroy();
-            MEntity pooledEntity = entity as MEntity;
+            // 只有 MEntity 及其派生类型进入本项目实体对象池。
+        MEntity pooledEntity = entity as MEntity;
             if (pooledEntity != null)
             {
                 MEntityPool.Instance.Release(pooledEntity);
@@ -281,6 +293,7 @@ public sealed class SceneEntityWorld : IDisposable
         {
             _nextUid++;
         }
+        // 返回本次选中的 UID，并推进下一次分配起点。
         ulong uid = _nextUid;
         _nextUid++;
         return uid;

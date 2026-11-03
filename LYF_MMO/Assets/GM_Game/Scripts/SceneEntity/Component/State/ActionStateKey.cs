@@ -1,7 +1,10 @@
 using System;
 using MMoRpgCommon.SceneEntity;
 
-/// <summary>动作状态索引键，保留状态定义和实体类别用于扩展差异化状态表。</summary>
+/// <summary>
+/// 把动作状态枚举和实体类别组合成字典键。
+/// 两个字段都相同时才视为同一个键，供状态容器按类别查找。
+/// </summary>
 public struct ActionStateKey : IEquatable<ActionStateKey>
 {
     /// <summary>状态枚举。</summary>

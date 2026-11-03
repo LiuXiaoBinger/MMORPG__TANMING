@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 飞行物 Builder，按 ProjectileType 选择对应的投射物子类。
-/// 根据投射物类型不同，创建动画投射物、目标追踪投射物、环形投射物或矩形投射物。
+/// 按投射物类别创建对应实体，再添加位置和投射物数据组件。
+/// 子类只区分类别；轨迹、碰撞和伤害不在这个构建器中计算。
 /// </summary>
 public sealed class ProjectileEntityBuilder : EntityBuilder
 {
@@ -28,8 +28,9 @@ public sealed class ProjectileEntityBuilder : EntityBuilder
     /// <returns>已装配完组件的投射物实体实例。</returns>
     public override ROObject Build(ulong uid, int configId)
     {
+        // 本次构建得到的实体；具体子类由下面的类型分支决定。
         ProjectileEntity entity;
-        // 动画型或虚幻动画型投射物：使用动画表现
+        // Anim 与 Unreal 共用动画投射物实体类别
         if (_projectileType == ProjectileType.Anim || _projectileType == ProjectileType.Unreal)
         {
             entity = MEntityPool.Instance.Acquire(uid, EntityType.Projectile,
@@ -38,7 +39,7 @@ public sealed class ProjectileEntityBuilder : EntityBuilder
                     return new AnimProjectileEntity(id, config);
                 });
         }
-        // 目标型投射物：追踪指定目标位置
+        // 两种目标型投射物共用目标投射物实体类别
         else if (_projectileType == ProjectileType.UnrealTarget || _projectileType == ProjectileType.RealTarget)
         {
             entity = MEntityPool.Instance.Acquire(uid, EntityType.Projectile,
@@ -47,7 +48,7 @@ public sealed class ProjectileEntityBuilder : EntityBuilder
                     return new TargetProjectileEntity(id, config);
                 });
         }
-        // 环形投射物：范围伤害环形区域
+        // RealRing 使用环形投射物实体类别
         else if (_projectileType == ProjectileType.RealRing)
         {
             entity = MEntityPool.Instance.Acquire(uid, EntityType.Projectile,
@@ -56,7 +57,7 @@ public sealed class ProjectileEntityBuilder : EntityBuilder
                     return new RingProjectileEntity(id, config);
                 });
         }
-        // 默认矩形投射物：直线飞行范围伤害
+        // 其余值使用矩形投射物实体类别
         else
         {
             entity = MEntityPool.Instance.Acquire(uid, EntityType.Projectile,

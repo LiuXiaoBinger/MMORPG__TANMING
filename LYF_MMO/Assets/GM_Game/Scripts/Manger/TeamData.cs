@@ -54,7 +54,7 @@ public sealed class TeamData
     /// <summary>当前队长角色ID，0 表示无队伍。</summary>
     public ulong CaptainId { get; private set; }
 
-    /// <summary>服务器下发的队伍人数上限，未收到时按 5 处理。</summary>
+    /// <summary>服务器下发的队伍人数上限；尚未收到时保留 int 默认值 0。</summary>
     public int MaxMember { get; private set; }
 
     /// <summary>本地主角角色ID，0 表示尚未取得。</summary>
@@ -75,7 +75,7 @@ public sealed class TeamData
         get { return _members.Count; }
     }
 
-    /// <summary>只读成员列表，供界面按服务器顺序渲染。</summary>
+    /// <summary>返回内部成员列表供界面按服务器顺序读取；接口本身可写，调用方不应修改服务器同步数据。</summary>
     public IList<TeamMemberInfo> Members
     {
         get { return _members; }
@@ -265,7 +265,7 @@ public sealed class TeamData
         ApplyTeamInfo(new TeamInfoNtf());
     }
 
-    /// <summary>统一抛出待处理通知变化事件，避免各分支重复判空。</summary>
+    /// <summary>通知界面重新读取待处理邀请和申请。</summary>
     private void RaiseInvitationChanged()
     {
         if (InvitationChanged != null)

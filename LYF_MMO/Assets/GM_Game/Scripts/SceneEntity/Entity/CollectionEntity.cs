@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 采集物实体，对应参考项目 CollectionBuilder。
-/// 场景中可被玩家采集的资源点（矿石、草药、木材等）。
+/// 场景采集物的数据对象，记录采集物编号并沿用实体的模型与组件生命周期。
+/// 具体采集交互不在本类实现。
 /// </summary>
 public sealed class CollectionEntity : MEntity
 {

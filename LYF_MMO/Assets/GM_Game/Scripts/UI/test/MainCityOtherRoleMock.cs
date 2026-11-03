@@ -27,7 +27,7 @@ public sealed class MainCityOtherRoleMock : MonoBehaviour
     [SerializeField, Header("角色昵称")]
     private string _nickname = "主城模拟玩家";
 
-    /// <summary>模拟角色职业编号，对应 RoleBaseInfo.JobId；当前默认值 1 为项目已有剑修职业编号。</summary>
+    /// <summary>模拟角色职业编号，原样写入 RoleBaseInfo.JobId，角色模型选择由正式同步流程处理。</summary>
     [SerializeField, Header("职业编号")]
     private int _jobId = 1;
 
@@ -64,7 +64,7 @@ public sealed class MainCityOtherRoleMock : MonoBehaviour
 
     /// <summary>
     /// 通过正式协议号模拟服务器通知其他玩家上线。
-    /// 可从 Inspector 组件菜单手动调用，用于验证首次创建和重复角色 ID 不重复实例化。
+    /// 可从 Inspector 菜单手动调用；同一组件成功后不再发包，验证重复角色 ID 需要其他测试来源再次投递。
     /// </summary>
     [ContextMenu("模拟其他玩家进入主城")]
     public void SimulateOtherRoleOnline()
@@ -106,6 +106,7 @@ public sealed class MainCityOtherRoleMock : MonoBehaviour
 
         // 分发器没有返回值，测试只查询正式世界结果确认同步是否已经落地，不参与角色创建或删除。
         SceneWorldSystem sceneWorld = Global.Instance.SceneWorld;
+        // 在正式世界按持久化角色 ID 查询到的同步结果。
         RoleEntity syncedRole;
         if (!sceneWorld.TryGetRole(_roleId, out syncedRole) || syncedRole == null)
         {

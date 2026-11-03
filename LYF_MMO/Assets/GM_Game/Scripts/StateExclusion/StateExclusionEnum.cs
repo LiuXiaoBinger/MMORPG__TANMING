@@ -1,7 +1,7 @@
 /// <summary>
 /// RO 客户端大状态互斥的状态枚举，数值即 <c>StateExclusionTable</c> 的行下标与列下标。
 /// 与 RO <c>MoonClient/StateExclusion/StateExclusionEnum.cs</c> 的 <c>MExlusionStates</c> 保持同名同序，
-/// 新增状态只能插在 <see cref="State_Last"/> 之前，否则整张互斥矩阵的行列会错位。
+/// 非负状态值必须与配置表的行列顺序一致；新增状态需同时更新表，并保持 State_Last 等于状态数。
 /// </summary>
 public enum MExlusionStates
 {
@@ -11,7 +11,7 @@ public enum MExlusionStates
     /// <summary>未持有任何大状态，等价于默认态；连续状态列表中不会出现。</summary>
     State_None_State = -2,
 
-    /// <summary>默认状态；作为参数时表示“切回无大状态”，不需要任何状态互斥判定。</summary>
+    /// <summary>默认状态标识，不是有效矩阵下标；是否允许切换由调用入口和当前状态列表决定。</summary>
     State_Default_State = -1,
 
     /// <summary>主动变身，下标 0。</summary>

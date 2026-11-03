@@ -2,7 +2,7 @@ using Google.Protobuf;
 
 /// <summary>
 /// 队伍协议处理器，对应 RO TeamMgr.lua 的请求分支。
-/// 角色身份一律从网关复合会话取得，客户端载荷只作业务参数。
+/// 角色身份一律从网关复合会话取得，客户端载荷只作业务参数或身份一致性核对。
 /// </summary>
 public sealed class TeamMessageHandler : IGameMessageHandler
 {
@@ -58,7 +58,7 @@ public sealed class TeamMessageHandler : IGameMessageHandler
             return;
         }
 
-        // 角色身份从现有会话索引取得，请求不携带可替换的角色ID。
+        // 执行对象从会话索引取得；即使请求含有角色ID，也不能用它替换当前会话角色。
         // role 为网关复合会话解析出的在线角色，是本请求唯一的权威身份，为 null 说明会话已失效。
         OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(
             context.Package.GateSessionId, context.Package.UnitySessionId);
@@ -80,7 +80,7 @@ public sealed class TeamMessageHandler : IGameMessageHandler
     {
         if (protoCode == NetDefine.CMD_CreateTeamCode)
         {
-            // arg 为创建队伍请求体，只用到 TargetId（组队目标），创建者身份取自 role。
+            // arg 为创建队伍请求体；TargetId 传入管理器后当前未使用，创建者身份取自 role。
             CreateTeamArg arg = CreateTeamArg.Parser.ParseFrom(data);
             TeamManager.Instance.RequestCreateTeam(role, arg.TargetId);
             return;
@@ -137,7 +137,7 @@ public sealed class TeamMessageHandler : IGameMessageHandler
         }
         if (protoCode == NetDefine.CMD_CaptainRequestEnterFBCode)
         {
-            // arg 为队长进副本请求体，DungeonId 为副本配置ID；章节与难度由服务端按配置决定，不从包内读取。
+            // arg 为队长进副本请求体，DungeonId 为副本配置ID；当前只支持魔神塔，未读取请求中的章节和难度。
             CaptainRequestEnterFBArg arg = CaptainRequestEnterFBArg.Parser.ParseFrom(data);
             TeamManager.Instance.CaptainRequestEnterFBPtc(role, arg.DungeonId);
         }

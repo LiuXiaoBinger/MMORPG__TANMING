@@ -136,7 +136,7 @@ public static class SkillAuthoritySmoke
         }
     }
 
-    /// <summary>创建满足在线和角色数据就绪门槛的最小测试角色。</summary>
+    /// <summary>创建已完成组件初始化和角色数据装载标记的最小测试角色。</summary>
     /// <returns>已初始化组件、生命值和法力值的在线角色。</returns>
     private static OnlineRole CreateReadyRole()
     {

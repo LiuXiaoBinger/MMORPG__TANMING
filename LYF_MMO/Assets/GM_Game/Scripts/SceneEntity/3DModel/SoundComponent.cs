@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
-/// <summary>沿RO模型声音组件持有三维声音实例；普通动作按编辑声音轨道播放，不依赖技能协议。</summary>
+/// <summary>
+/// 管理模型上的三维声音实例，并按普通走跑、跳跃动画的时间轴播放音效。
+/// 普通动作声音按完整动画资源路径匹配，技能声音可复用本类的静态播放与停止方法。
+/// </summary>
 public sealed class SoundComponent
 {
 
@@ -84,7 +87,7 @@ public sealed class SoundComponent
         _previousSeconds = seconds;
     }
 
-    /// <summary>绑定模型并持有普通动作声音配置，配置冷加载不会捕获实体池对象。</summary>
+    /// <summary>绑定模型并持有普通动作声音配置，异步加载回调只持有共享记录，不引用可被回池的实体。</summary>
     /// <param name="host">管理该组件生命周期的模型。</param>
     public void Init(MModel host)
     {
@@ -152,7 +155,7 @@ public sealed class SoundComponent
     }
 
     #region 核心逻辑
-    /// <summary>RO状态触发入口，用于移动中落地直接切回走跑时仍播放落地声音。</summary>
+    /// <summary>落地声音补播入口：角色落地后直接继续走跑时，补播配置中零秒触发的声音。</summary>
     /// <param name="stateName">本次物理动作状态，只支持Jump_End即时落地触发。</param>
     public void Play(string stateName)
     {
@@ -223,7 +226,7 @@ public sealed class SoundComponent
         // 声源使用独立子节点，使同一时刻多条技能声音可以并行播放。
         GameObject soundObject = new GameObject("SkillAudio_" + audioEvent.Clip.name);
         soundObject.transform.SetParent(host.GameObject.Transform, false);
-        // 三维声源随模型移动，最大距离之外不会成为全场景声音。
+        // 创建随模型移动的三维声源，设置 1 至 25 的距离衰减范围。
         AudioSource source = soundObject.AddComponent<AudioSource>();
         source.playOnAwake = false;
         source.loop = false;

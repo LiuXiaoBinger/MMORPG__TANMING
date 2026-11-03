@@ -24,15 +24,17 @@ namespace MMoRpgCommon.SceneEntity
         /// <summary>当前法力值。</summary>
         public int CurrentMp { get; set; }
 
+        /// <summary>为新实体建立位置对象，并设置为尚未初始化的 Created 阶段。</summary>
         public SceneEntityData()
         {
             Transform = new EntityTransformSnapshot();
             LifecycleState = EntityLifecycleState.Created;
         }
 
-        /// <summary>复制为不可变边界之外的独立快照，避免同步时引用运行时对象。</summary>
+        /// <summary>复制基础状态和位置；返回的数据仍可修改，但不会共享原对象的位置引用。</summary>
         public EntitySnapshot ToSnapshot()
         {
+            // 单独复制位置数据，防止快照持有可变的运行时位置。
             EntityTransformSnapshot transform = new EntityTransformSnapshot();
             transform.X = Transform.X;
             transform.Y = Transform.Y;

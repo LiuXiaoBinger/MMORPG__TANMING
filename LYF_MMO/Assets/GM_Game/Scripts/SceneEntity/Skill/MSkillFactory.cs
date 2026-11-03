@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using cfg;
 
 /// <summary>
-/// 将 Luban 的技能效果和职业表现表装配成客户端长期使用的技能核心。
-/// 配置查找仅在技能列表同步或服务器开始广播时执行，不进入逐帧状态更新。
+/// 把技能效果配置与职业动作配置组合成可复用的 MSkillCore。
+/// 同时负责借出和归还单次施法、动作段关联的核心，以及冷却记录。
 /// </summary>
 public sealed class MSkillFactory
 {
-    /// <summary>RO 同名工厂实例，冷却记录的借出归还沿用 singleton 调用；原静态技能接口保持可用。</summary>
+    /// <summary>冷却记录的工厂入口；技能核心和施法实例仍通过本类静态方法创建。</summary>
     public static readonly MSkillFactory singleton = new MSkillFactory();
 
     /// <summary>仅创建一个冷却记录工厂入口，池仍由 MCommonObjectPool 统一持有。</summary>
@@ -69,6 +69,7 @@ public sealed class MSkillFactory
         {
             return null;
         }
+        // 服务器广播效果 ID 对应的配置行，随后核对所属技能。
         SkillEffectInfo effect;
         // TryGetValue 带 out 赋值，必须在 effects 非空后单独调用以保持原短路与赋值次数。
         if (!effects.TryGetValue(effectId, out effect))
@@ -97,6 +98,7 @@ public sealed class MSkillFactory
         }
         // 原技能行与职业行共同保证本次效果属于施法者当前职业。
         SkillInfo skill = LubanMgr.Instance.GetSkillInfoById(skillId);
+        // 施法职业的配置，提供职业归属与模型表现表编号。
         ProfessionInfo profession = LubanMgr.Instance.GetProfessionInfoById(
             professionId);
         if (skill == null || profession == null || skill.JobId != professionId)
@@ -107,7 +109,7 @@ public sealed class MSkillFactory
         // 表现配置可以缺失；此时仍保留权威效果配置，客户端不预播动画。
         List<MSkillData> presentations = FindPresentations(effect.Id,
             profession);
-        // 第一段提供旧接口的默认表现；释放时由核心按 RO 的使用次数选择段号。
+        // 第一段提供默认动画；每次释放时由核心按使用次数轮换动作段。
         string clipLocation = string.Empty;
         // 尚无表现行时保持零时长，不伪造动画。
         float animationDurationSeconds = 0f;
@@ -127,7 +129,7 @@ public sealed class MSkillFactory
         return core;
     }
 
-    /// <summary>按效果、职业和模型名装配默认武器的动作列表，按变体序号对应 RO 的武器动作数据。</summary>
+    /// <summary>筛出效果、职业和模型都匹配的默认武器动作，并按 VariantIndex 排序。</summary>
     /// <param name="effectId">当前等级效果配置 ID。</param>
     /// <param name="profession">施法角色职业配置，用于验证其表现表和模型资源。</param>
     /// <returns>从第零段起排序的动作列表，未配置时返回空列表。</returns>

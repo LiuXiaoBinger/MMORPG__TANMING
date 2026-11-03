@@ -2,9 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// 有关程序集的一般信息由以下
-// 控制。更改这些特性值可修改
-// 与程序集关联的信息。
+// 下列特性保存程序集名称、产品、版权等元信息，供构建结果和运行时读取。
 [assembly: AssemblyTitle("LoginServer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]

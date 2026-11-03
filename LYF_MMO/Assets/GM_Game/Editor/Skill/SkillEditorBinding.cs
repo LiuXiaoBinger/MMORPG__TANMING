@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>将 Y 编辑资产明确绑定到旧表现行；编辑器程序集隔离包内和游戏的同名 Global。</summary>
+/// <summary>记录编辑器技能草稿对应哪条技能表现配置，以及导出时需要的原动画、模型和特效来源。</summary>
 public sealed class SkillEditorBinding : ScriptableObject
 {
     /// <summary>旧表现表唯一行 ID；独立 JX 参考资产为零，不允许发布到游戏。</summary>

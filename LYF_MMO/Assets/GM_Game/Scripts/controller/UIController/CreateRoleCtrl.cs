@@ -22,10 +22,10 @@ public class CreateRoleCtrl : CtrlBase
     /// <summary>是否正在切换主城场景，防止重复成功回包并发触发多次场景加载。</summary>
     private bool _isSceneTransitionPending;
 
-    /// <summary>最近一次完成主城切换的登录账号 ID，用于识别已加载角色的重复回包。</summary>
+    /// <summary>最近一次发起主城切换的账号 ID，用于忽略同一角色的重复完成通知；发起加载前即赋值。</summary>
     private int _lastCompletedAccountId;
 
-    /// <summary>最近一次完成主城切换的角色 ID，用于识别同账号同角色的重复回包。</summary>
+    /// <summary>最近一次发起主城切换的角色 ID，与账号 ID 一起识别重复通知。</summary>
     private int _lastCompletedRoleId;
     #endregion
 
@@ -152,7 +152,7 @@ public class CreateRoleCtrl : CtrlBase
     #endregion
 
     #region 角色加载回调与开局校验
-    /// <summary>接收 Global 在动画门控后真正创建成功的本地玩家，并继续开始游戏流程。</summary>
+    /// <summary>Global 等动画索引就绪并创建本地角色后，通知这里继续加载主城。</summary>
     /// <param name="localRole">已经完成 SceneWorld 创建和入世界生命周期的本地玩家实体。</param>
     private void OnLocalRoleLoadCompleted(PlayerEntity localRole)
     {
@@ -195,15 +195,15 @@ public class CreateRoleCtrl : CtrlBase
         }
     }
 
-    /// <summary>校验异步场景回调仍属于当前 Global、连接代次和同一个本地玩家实例。</summary>
+    /// <summary>校验异步场景回调仍属于当前 Global、连接编号和同一个本地玩家实例。</summary>
     /// <param name="requestedGlobal">发起切场景时订阅的 Global 生命周期实例。</param>
     /// <param name="requestedWorld">发起切场景时持有该玩家的 SceneWorld 实例。</param>
     /// <param name="requestedLocalRole">发起切场景时实际入世界的玩家实例。</param>
     /// <param name="requestedRoleUid">发起切场景时玩家实体的运行时唯一 UID。</param>
     /// <param name="requestedAccountId">发起切场景时玩家所属的正数账号 ID。</param>
     /// <param name="requestedRoleId">发起切场景时玩家所属的正数角色 ID。</param>
-    /// <param name="requestedConnectionGeneration">发起切场景时的正数网络连接代次。</param>
-    /// <returns>全部生命周期身份仍一致且角色仍为当前本地玩家时返回 true。</returns>
+    /// <param name="requestedConnectionGeneration">发起切场景时的正数网络连接编号。</param>
+    /// <returns>Global、世界、连接和角色都仍与发起时相同，且角色保持活动时返回 true。</returns>
     private bool IsCurrentStartGameTransition(Global requestedGlobal,
         SceneWorldSystem requestedWorld, PlayerEntity requestedLocalRole,
         ulong requestedRoleUid, int requestedAccountId, int requestedRoleId,
@@ -254,7 +254,7 @@ public class CreateRoleCtrl : CtrlBase
     #endregion
 
     #region 开局流程
-    /// <summary>处理开始游戏回包，把成功角色数据提交给 Global 的动画启动门控。</summary>
+    /// <summary>处理开始游戏回包，把角色数据交给 Global；动画索引未就绪时由 Global 暂存。</summary>
     /// <param name="data">服务器返回的 StartGameRet Protobuf 字节数据。</param>
     private void StartGame(ByteString data)
     {
@@ -284,7 +284,7 @@ public class CreateRoleCtrl : CtrlBase
             return;
         }
 
-        // 当前 Global 返回的提交状态，用于明确区分立即加载、排队、重复回包和拒绝。
+        // 当前 Global 返回的提交状态，用于区分角色已创建、等待资源、相同角色已存在和数据被拒绝。
         Global.LocalRoleLoadSubmitResult submitResult =
             _subscribedGlobal.SubmitLocalRoleLoad(startGameResult.MainRoleInfo);
         if (submitResult == Global.LocalRoleLoadSubmitResult.Rejected)
@@ -334,7 +334,7 @@ public class CreateRoleCtrl : CtrlBase
         int requestedAccountId = localRole.RoleInfo.AccountId;
         // 发起切场景时的角色 ID，用于阻断同账号换角色后的旧场景回调。
         int requestedRoleId = localRole.BaseInfo.RoleId;
-        // 发起切场景时的网络连接代次，用于阻断断线或自动重连前的旧场景回调。
+        // 发起切场景时的网络连接编号，用于阻断断线或自动重连前的旧场景回调。
         long requestedConnectionGeneration =
             MNetClient.Instance.CurrentConnectionGeneration;
         SceneMgr.Instance.LoadSceneMode(SceneType.Scene_MainCity, () =>

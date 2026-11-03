@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 /// </summary>
 public class NetServer
 {
-    // 连接断开时由宿主业务线程接收网关会话 ID，执行角色下线保存。
+    // 连接断开时收到本地 SessionID；回调本身不切线程，GameServer 宿主把它投递到逻辑队列后处理下线。
     public Action<int> OnSessionDisconnected { get; set; }
     /// <summary>监听 Socket。</summary>
     private Socket _socket;
@@ -44,7 +44,7 @@ public class NetServer
 
         Console.WriteLine("服务器开启成功：" + endPoint.ToString());
 
-        //设置Socket最大连接数
+        // 待应用接收的连接请求队列长度设为 100；这不是在线会话总数上限。
         _socket.Listen(100);
 
 
@@ -89,6 +89,7 @@ public class NetServer
 
     }
 
+    /// <summary>为监听端收到的协议登记处理器；新 Session 共用这张协议表。</summary>
     public void RegistCommand(int cmd, IContainer container)
     {
         _cmdDic.Add(cmd, container);

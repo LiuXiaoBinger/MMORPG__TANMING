@@ -1,12 +1,12 @@
-/// <summary>参考 RO 为单一具体类型提供全局共享的借还入口。</summary>
-/// <typeparam name="T">具有公开无参构造函数的池化引用类型。</typeparam>
+/// <summary>为每一种 T 共用一个对象池；借出和归还时不自动重置对象字段。</summary>
+/// <typeparam name="T">可通过公开无参构造函数创建的类。</typeparam>
 public static class MCommonObjectPool<T> where T : class, new()
 {
     /// <summary>该具体类型的唯一对象池，生命周期随客户端进程。</summary>
     private static readonly MObjectPool<T> s_pool = new MObjectPool<T>(Create, null, null);
 
     /// <summary>空闲栈耗尽时构造指定类型的新实例。</summary>
-    /// <returns>尚未借出的池化引用类型实例。</returns>
+    /// <returns>刚创建、尚未交给调用方的对象。</returns>
     private static T Create()
     {
         return new T();
@@ -25,7 +25,7 @@ public static class MCommonObjectPool<T> where T : class, new()
     {
         if (toRelease == null)
         {
-            // 本项目未接入 RO MDebug，以 Unity 日志承接通用对象池错误。
+            // 空对象不能放回池中，记录错误后结束归还。
             UnityEngine.Debug.LogError("归还的池对象为空。");
             return;
         }

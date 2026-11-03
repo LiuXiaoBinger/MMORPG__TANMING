@@ -138,7 +138,7 @@ public sealed class MGameObject
             _entityObject.name = _name;
         }
         _entityObject.layer = _layer;
-        // 按缓存标记恢复各项变换数据
+        // 仅应用已写入的缓存；世界变换先写，本地变换后写，后者在两者都有值时生效
         if (_hasWorldPosition) _transform.position = _position;
         if (_hasWorldRotation) _transform.rotation = _rotation;
         if (_hasLocalPosition) _transform.localPosition = _localPosition;
@@ -155,6 +155,7 @@ public sealed class MGameObject
     public void CaptureNativeTransform(GameObject nativeObject)
     {
         if (nativeObject == null) return;
+        // 外部对象已有的变换，绑定前复制到包装器缓存。
         Transform nativeTransform = nativeObject.transform;
         _position = nativeTransform.position;
         _rotation = nativeTransform.rotation;
@@ -174,6 +175,7 @@ public sealed class MGameObject
     {
         if (_transform != null)
         {
+            // 新父节点；为空时把对象放回场景根层级。
             Transform parentTransform = null;
             if (parent != null)
             {

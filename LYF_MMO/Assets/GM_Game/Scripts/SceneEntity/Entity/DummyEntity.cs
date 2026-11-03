@@ -1,9 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// Dummy 训练或占位实体。
-/// 用于战斗训练假人、场景占位对象和测试替身。
-/// EagleEntity 等飞行召唤物继承自本类。
+/// Dummy 类场景对象的基础实体，也供鹰实体复用初始化流程。
+/// 本类只确定实体类别，没有训练、攻击或测试行为。
 /// </summary>
 public class DummyEntity : MEntity
 {

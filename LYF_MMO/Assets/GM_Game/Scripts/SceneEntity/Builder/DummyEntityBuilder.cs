@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// Dummy Builder，使用怪物公共组件但保留 Dummy 实体类别。
-/// Dummy 通常用于场景摆设、训练假人等非战斗 NPC，不挂载完整战斗组件。
+/// 创建或复用 Dummy 实体，只添加公共组件和 Dummy 标记。
+/// 虽然继承怪物构建器，这里没有调用怪物整套组件的装配方法。
 /// </summary>
 public sealed class DummyEntityBuilder : MonsterEntityBuilder
 {

@@ -22,7 +22,9 @@ public class Loginview : UIBase
     #endregion
 
     #region 事件注册与注销
-    /// <summary>注册登录窗口的用户操作。</summary>
+    /// <summary>把登录和打开注册页的操作交给控制器。</summary>
+    /// <param name="loginHandler">依次接收账号、密码、记住账号开关和协议勾选状态。</param>
+    /// <param name="registerWindowHandler">切换到注册窗口的回调。</param>
     public void RegisterLoginActions(Action<string, string, bool, bool> loginHandler,
         Action registerWindowHandler)
     {
@@ -30,7 +32,9 @@ public class Loginview : UIBase
         _loginWindow.RegisterRequested = registerWindowHandler;
     }
 
-    /// <summary>注册注册窗口的用户操作。</summary>
+    /// <summary>把注册表单和返回登录页操作交给控制器。</summary>
+    /// <param name="registerHandler">依次接收账号、邮箱、验证码、密码和确认密码。</param>
+    /// <param name="backHandler">返回登录窗口的回调。</param>
     public void RegisterRegistrationActions(Action<string, string, string, string, string> registerHandler,
         Action backHandler)
     {
@@ -38,7 +42,10 @@ public class Loginview : UIBase
         _registWindow.BackRequested = backHandler;
     }
 
-    /// <summary>注册服务器窗口的用户操作。</summary>
+    /// <summary>设置服务器列表的打开、关闭和确认选择回调。</summary>
+    /// <param name="serverListHandler">打开完整服务器列表。</param>
+    /// <param name="closeListHandler">关闭服务器列表。</param>
+    /// <param name="confirmHandler">接收确认选择的服务器编号。</param>
     public void RegisterServerActions(Action serverListHandler, Action closeListHandler,
         Action<int> confirmHandler)
     {
@@ -59,19 +66,19 @@ public class Loginview : UIBase
         windowDic.Add(WindowType.ServerListWindow, _serverListWindow);
     }
 
-    /// <summary>注册当前服务器点击事件。</summary>
+    /// <summary>设置当前服务器按钮回调 handler，参数为正数服务器编号。</summary>
     public void RegisGameServerBtnClicked(Action<int> handler)
     {
         _gameServerWindow.gameServerBtnClickedAction = handler;
     }
 
-    /// <summary>注册验证码请求事件。</summary>
+    /// <summary>设置验证码按钮回调 handler，参数为用户输入的邮箱地址。</summary>
     public void RegisVerifyCodeBtnClicked(Action<string> handler)
     {
         _registWindow.verifyCodeBtnClickedAction = handler;
     }
 
-    /// <summary>显示控制器读取到的本地登录状态。</summary>
+    /// <summary>显示 agreementAccepted 对应的协议勾选状态及 account 账号；账号非空时勾选记住账号。</summary>
     public void SetSavedLoginState(bool agreementAccepted, string account)
     {
         _loginWindow.SetSavedState(agreementAccepted, account);

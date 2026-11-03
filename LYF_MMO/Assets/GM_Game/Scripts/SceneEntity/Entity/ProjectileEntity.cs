@@ -1,9 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 飞行物实体基类，对应参考项目 ROBullet。
-/// 所有投射物实体的根类，负责弹道飞行、碰撞检测和生命周期。
-/// 具体弹道形态（直线、追踪、环形、矩形）由派生类区分。
+/// 各类投射物共用的实体基类，统一使用 Projectile 实体类别。
+/// 当前只复用 MEntity 的生命周期；本类不实现弹道、碰撞或伤害。
 /// </summary>
 public class ProjectileEntity : MEntity
 {

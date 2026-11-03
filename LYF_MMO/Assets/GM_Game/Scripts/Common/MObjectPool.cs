@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-/// <summary>沿用 RO 通用池，通过创建委托与借还回调复用实例。</summary>
+/// <summary>保存暂时不用的对象，下一次借用时优先复用；可在借出、归还和清空时执行回调。</summary>
 /// <typeparam name="T">由创建委托构造的池元素类型；通用池边界不限制元素的构造方式。</typeparam>
 public sealed class MObjectPool<T> : IObjectPool
 {
-    /// <summary>RO 风格的实例构造回调，返回本池独占的新引用。</summary>
+    /// <summary>池中没有空闲对象时调用，负责创建一个新对象。</summary>
     /// <returns>新构造且尚未借出的池元素。</returns>
     public delegate T CreateObj();
 
@@ -17,7 +17,7 @@ public sealed class MObjectPool<T> : IObjectPool
     private readonly HashSet<T> _set = new HashSet<T>();
 #endif
 
-    /// <summary>以 RO 创建委托形式指定实例构造与生命周期钩子。</summary>
+    /// <summary>保存创建对象的方法，以及借出、归还和清空对象时要执行的方法。</summary>
     /// <param name="creator">空闲栈耗尽时创建实例的回调。</param>
     /// <param name="actionOnGet">借出后执行的可选初始化回调。</param>
     /// <param name="actionOnRelease">归还前执行的可选清理回调。</param>
@@ -46,7 +46,7 @@ public sealed class MObjectPool<T> : IObjectPool
     /// <summary>本池累计创建的实例数；与 RO 一致，Clear 不重置该计数。</summary>
     public int countAll { get; private set; }
 
-    /// <summary>累计创建数与当前空闲数之差，沿用 RO 的统计口径。</summary>
+    /// <summary>累计创建数减去当前空闲数；Clear 后不代表实际借出对象数。</summary>
     public int countActive { get { return countAll - countInactive; } }
 
     /// <summary>当前可供再次借用的实例数。</summary>
@@ -77,14 +77,14 @@ public sealed class MObjectPool<T> : IObjectPool
         return element;
     }
 
-    /// <summary>执行归还回调并压入空闲栈，调试检查沿用 RO 条件。</summary>
+    /// <summary>先执行归还回调，再存入空闲栈；WINDOWS 与 DEBUG 同时启用时检查重复归还。</summary>
     /// <param name="element">本次归还的池元素。</param>
     public void Release(T element)
     {
 #if WINDOWS && DEBUG
         if (_set.Contains(element))
         {
-            // 本项目未接入 RO MDebug，以 Unity 日志承接通用池调试错误。
+            // 同一个对象已在空闲集合中，不能再次入栈。
             UnityEngine.Debug.LogError("对象池元素重复归还。");
             return;
         }

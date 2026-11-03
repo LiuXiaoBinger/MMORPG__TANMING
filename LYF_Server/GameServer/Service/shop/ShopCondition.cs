@@ -2,7 +2,7 @@
 using Google.Protobuf.Collections;
 
 /// <summary>
-/// 购买前置条件校验：依次做合法性、限购资格、货币与背包容量校验，校验失败即返回对应错误码。
+/// 购买前检查限购次数、货币和背包空间；合法性入口目前恒通过，且其返回值未被处理。
 /// </summary>
 public class ShopCondition
 {
@@ -50,7 +50,7 @@ public class ShopCondition
         return CmdCode.Succeed;
     }
 
-    /// <summary>逐商品校验货币是否足够、背包是否有空间，并试扣货币。</summary>
+    /// <summary>逐商品累计待发物品与价格清单，只检查持有数量和背包空间，不实际扣款。</summary>
     private CmdCode CheckCostAndBagCapcity(OnlineRole role, BuyShopItemReq
         request, CostType realCostType)
     {
@@ -80,12 +80,12 @@ public class ShopCondition
 
             total_cost.Add(new ItemDesc(const_info.buy_cost.money_type,
                 const_info.buy_cost.cost_money));
-            //判断💰够不够
+            // 这里只检查余额；价格清单当前按每种商品的一份单价加入，未乘购买数量。
             code = ItemTransition.TryTakeItem(role, total_cost);
             if (code != CmdCode.Succeed) return code;
 
             // 背包容量
-            //需要将 物品
+            // 按配置背包分类；下面的调用未传分组键，仍使用容量检查的默认背包参数。
             Dictionary<KnapsackType, List < ItemDesc >> thingsByKnapsackType = ItemTransition.ClassifyItemsByBagType(things_to_buy);
             foreach (var item in thingsByKnapsackType)
             {

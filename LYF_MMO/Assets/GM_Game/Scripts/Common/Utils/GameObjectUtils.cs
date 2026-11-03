@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /**
- * Title:GameObject��չ
+ * Title: GameObject 扩展方法
  * Description:
  */
 
@@ -29,12 +29,12 @@ public static class GameObjectUtils {
 
     }
     /// <summary>
-    /// GameObject 设置父组件
+    /// 将对象放到指定父节点下，设置局部位置、局部角度，并把局部缩放恢复为 1。
     /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="parent"></param>
-    /// <param name="pos"></param>
-    /// <param name="angle"></param>
+    /// <param name="obj">要移动到父节点下的对象。</param>
+    /// <param name="parent">新的父节点；对象或父节点为空时不处理。</param>
+    /// <param name="pos">相对父节点的位置，默认位于父节点原点。</param>
+    /// <param name="angle">相对父节点的欧拉角，单位为度。</param>
     public static void SetParent(this GameObject obj, Transform parent, Vector3 pos = default, Vector3 angle = default)
     {
         if(obj == null||parent==null) return;
@@ -44,14 +44,15 @@ public static class GameObjectUtils {
         obj.transform.localScale = Vector3.one;
     }
     /// <summary>
-    /// 水平朝向目标
+    /// 只改变水平朝向，让对象面向目标，不向上或向下倾斜。
     /// </summary>
-    /// <param name="trans"></param>
-    /// <param name="lookTarget"></param>
+    /// <param name="trans">需要转向的对象节点。</param>
+    /// <param name="lookTarget">面向的目标节点；任一节点为空时不处理。</param>
     public static void LookAtTarget(this Transform trans, Transform lookTarget)
     {
         if (lookTarget == null||trans==null) return;
        
+        // 从当前对象指向目标的方向；下面去掉高度差，仅保留水平分量。
         Vector3 dir = (lookTarget.position - trans.position).normalized;
         dir.y = 0;
         trans.rotation = Quaternion.LookRotation(dir);

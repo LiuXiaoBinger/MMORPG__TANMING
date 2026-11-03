@@ -88,7 +88,7 @@ public static class SkillRoleSnapshotSmoke
             {
                 return Fail("角色 B 的有效列表未通过角色归属判定");
             }
-            // 实际网关会话由四服联调覆盖，此处只验证有效快照能进入 B 的权威组件。
+            // 本用例不建立实际网关连接；这里只验证 B 的有效技能列表能装入组件，完整网络流程需另行联调。
             if (!skillComponent.LoadLearnedSkills(currentResponse) || !skillComponent.SkillsLoaded)
             {
                 return Fail("角色 B 的有效技能列表未装载");

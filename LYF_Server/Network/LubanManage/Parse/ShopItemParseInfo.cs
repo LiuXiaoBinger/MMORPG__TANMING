@@ -81,6 +81,7 @@ public sealed class ShopItemParseInfo
         };
     }
 
+    /// <summary>读取每份商品数量、折扣、价格变化和单一主货币价格；只接收正的货币ID与单价。</summary>
     private static ShopItemBuyCost CreateCost(ShopItemInfo shopItemInfo)
     {
         ShopItemBuyCost cost = new ShopItemBuyCost();
@@ -101,6 +102,7 @@ public sealed class ShopItemParseInfo
         return cost;
     }
 
+    /// <summary>把分隔符连接的价格文本解析为四个整数；缺项或无效数字保持为 0，多出的项忽略。</summary>
     private static int[] ParsePriceChange(string priceChangeText)
     {
         int[] priceChanges = new int[4];
@@ -156,6 +158,7 @@ public sealed class ShopItemEnvironmentCondition
     /// </summary>
     public string EndTime { get; private set; }
 
+    /// <summary>保存商品环境限制，空的起止时间转为空字符串；本对象只存配置，不执行购买校验。</summary>
     public ShopItemEnvironmentCondition(
         bool isUnlocked,
         int jobLimit,
@@ -180,7 +183,7 @@ public sealed class ShopItemEnvironmentCondition
 public sealed class ShopItemPurchaseCondition
 {
     /// <summary>
-    /// 限购类型：0 不限购，1 每日限购，2 永久限购。
+    /// 次数记录的业务分类，取自 CountInfo.Action；刷新周期由次数配置单独决定。
     /// </summary>
     public RoleCountAction Action { get; private set; }
 
@@ -197,6 +200,7 @@ public sealed class ShopItemPurchaseCondition
         get { return Limit <= 0; }
     }
 
+    /// <summary>从次数配置读取业务分类和上限；无配置时按不限购处理。</summary>
     public ShopItemPurchaseCondition(CountInfo config)
     {
         if (config == null)

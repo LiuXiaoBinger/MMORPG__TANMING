@@ -1,9 +1,11 @@
 using MMoRpgCommon.SceneEntity;
 namespace GameServer.SceneEntity
 {
-    /// <summary>参考项目 LifeTimeComponent 的自动销毁组件。</summary>
+    /// <summary>标记实体装配了存活时长组件；当前只保存组件类别和所属实体，尚无独立的存活时长处理。</summary>
     public sealed class LifetimeComponent : RuntimeEntityComponent
     {
+        /// <summary>把此组件绑定到所属场景实体，并登记固定的组件类别。</summary>
+        /// <param name="owner">拥有此组件的场景实体，释放组件时解除引用。</param>
         public LifetimeComponent(ROObject owner) : base(owner, EntityComponentType.Lifetime) { }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>窗口独占的时间轴声音预览；每个事件拥有独立声源，暂停和定位不操作正式角色。</summary>
+/// <summary>在编辑窗口中试听时间轴上的声音；每个声音事件使用独立 AudioSource，播放、暂停和跳帧只影响预览对象。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>隐藏声音父对象，随关闭窗口、停止预览或进入游戏统一销毁。</summary>

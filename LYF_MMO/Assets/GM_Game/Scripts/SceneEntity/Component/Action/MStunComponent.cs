@@ -1,7 +1,6 @@
 /// <summary>
-/// 眩晕动作状态组件。
-/// 实体被眩晕控制时播放眩晕动画，眩晕状态下不可移动。
-/// 监听眩晕开始事件切入本状态。
+/// 把 StunStarted 事件接入眩晕状态，使用眩晕动画并禁止正常移动。
+/// 本类不记录眩晕持续时间。
 /// </summary>
 public sealed class MStunComponent : MBasicActionComponent
 {
@@ -17,11 +16,13 @@ public sealed class MStunComponent : MBasicActionComponent
 
     /// <summary>注册眩晕开始事件：收到眩晕触发消息时切入眩晕状态。</summary>
     protected override void RegisterActionEvents() { RegisterActionEvent(MEventType.StunStarted); }
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

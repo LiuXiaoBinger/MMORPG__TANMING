@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /**
-* Title:
-* Descrpiton:
+* 其他玩家的旧表现控制器，目前不增加基类以外的行为。
 */
 
 /// <summary>

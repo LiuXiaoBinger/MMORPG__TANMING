@@ -2,19 +2,22 @@ syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用pro
 
 import "ResultEntity.proto";
 
+// 各服务之间传递的外层消息包；业务消息放在 data 中，两层会话编号保留返回路径。
 message BasePackage{
-	int32 proto_code = 1;//协议码
-	int32 unity_session_id=2;//unity端的sessionID.
-	int32 gate_session_id =3;//gated端连接gameserver使用
-	bytes data = 10;//数据
+	int32 proto_code = 1;//决定消息交给哪个协议处理器的编号
+	int32 unity_session_id=2;//客户端在网关上的会话编号，用于回包
+	int32 gate_session_id =3;//网关连接游戏服的会话编号，与客户端编号共同定位连接
+	bytes data = 10;//由 proto_code 指定类型的 protobuf 消息字节
 }
+// 申请发送注册邮箱验证码。
 message RegistVarifyReq{
 	string email = 2;//邮箱
 }
 
+// 提交用户名、邮箱、验证码和密码完成注册。
 message RegistReq{
 	string user_name =1;//用户名
-	string email=2;//手机号
+	string email=2;//注册邮箱
 	string varify=3;//验证码
 	string password =4;//密码；
 }
@@ -27,18 +30,18 @@ message LoginReq{
 
 //获取服务器列表
 message GetServerListReq{
-	int32 server_id=1;//
+	int32 server_id=1;//查询服务器列表时附带的服务器编号
 }
 
 //登录游戏服务器
 message LoginGameServerReq{
-	int32 account_id = 1;//
-	int32 game_server_id=2;//
+	int32 account_id = 1;//当前登录账号编号
+	int32 game_server_id=2;//选择的游戏服编号
 }
 
 //创建角色请求数据
 message CreateRoleReq{
-	int32 account_id = 1;//
+	int32 account_id = 1;//当前登录账号编号
 	int32 game_server_id=2;//所属的服务器
 	string nickname =3;//昵称
 	int32 job_id=4;//职业
@@ -50,7 +53,7 @@ message StartGameReq
 	int32 role_id =1;//角色id
 }
 
-//那个角色进入世界
+// 已选择的角色请求进入世界，并可附带出生位置。
 message EnterWroldReq
 {
 	int32 role_id =1;//角色id

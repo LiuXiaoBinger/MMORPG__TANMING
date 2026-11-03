@@ -16,6 +16,7 @@ public sealed class RoleInfoCtrl : CtrlBase
     private readonly SkillInfoWindow _skillWindow;
 
     /// <summary>创建角色信息控制器并初始化当前角色显示。</summary>
+    /// <param name="mainView">提供状态栏、装备窗口和技能标题的主界面。</param>
     public RoleInfoCtrl(MainView mainView) : base(mainView)
     {
         _roleCurrentWindow = mainView.RoleCurrentWindow;
@@ -32,33 +33,41 @@ public sealed class RoleInfoCtrl : CtrlBase
         {
             return;
         }
+        // 当前场景里的本地角色，信息窗口不持有跨角色缓存。
         PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
         if (localRole == null)
         {
             return;
         }
+        // 已装载的完整角色数据，生命、法力、职业和等级取 BaseInfo。
         MainRoleInfo roleInfo = localRole.RoleInfo;
         if (roleInfo == null || roleInfo.BaseInfo == null)
         {
             return;
         }
 
+        // 职业名称优先取名称列表；未知编号直接显示其数字。
         string jobName = roleInfo.BaseInfo.JobId.ToString();
         if (roleInfo.BaseInfo.JobId >= 0 &&
             roleInfo.BaseInfo.JobId < ConstDefine.RoleJobName.Count)
         {
             jobName = ConstDefine.RoleJobName[roleInfo.BaseInfo.JobId];
         }
+        // 当前仅为职业 1 配置头像路径，其他职业传空路径。
         string headIconPath = string.Empty;
         if (roleInfo.BaseInfo.JobId == 1)
         {
             headIconPath = "Icon/head_jianxiu";
         }
 
+        // 生命条使用裁剪到 0～1 的比例。
         float hpRatio = CalculateRatio(roleInfo.BaseInfo.CurrHp, roleInfo.BaseInfo.MaxHp);
+        // 法力条使用裁剪到 0～1 的比例。
         float mpRatio = CalculateRatio(roleInfo.BaseInfo.CurrMp, roleInfo.BaseInfo.MaxMp);
+        // 生命正文同时显示当前值、上限和整数百分比。
         string hpText = roleInfo.BaseInfo.CurrHp + "/" + roleInfo.BaseInfo.MaxHp + " " +
             (hpRatio * 100f).ToString("F0") + "%";
+        // 法力正文同时显示当前值、上限和整数百分比。
         string mpText = roleInfo.BaseInfo.CurrMp + "/" + roleInfo.BaseInfo.MaxMp + " " +
             (mpRatio * 100f).ToString("F0") + "%";
         _roleCurrentWindow.UpdateRoleInfo(new RoleCurrentViewData(roleInfo.BaseInfo.Nickname,
@@ -71,6 +80,7 @@ public sealed class RoleInfoCtrl : CtrlBase
     }
 
     /// <summary>把当前穿戴背包转换成装备槽展示列表。</summary>
+    /// <param name="knapsackInfo">服务端背包快照，只读取其中的当前穿戴装备列表。</param>
     public void RefreshEquipment(RoleKanpsackInfo knapsackInfo)
     {
         if (_roleAttributeWindow == null || knapsackInfo == null)
@@ -78,6 +88,7 @@ public sealed class RoleInfoCtrl : CtrlBase
             return;
         }
 
+        // 只收录能确定装备部位的条目，交给窗口按部位显示。
         List<EquipmentViewData> equipments = new List<EquipmentViewData>();
         for (int index = 0; index < knapsackInfo.RoleCurrtEquipPack.Count; index++)
         {
@@ -92,6 +103,8 @@ public sealed class RoleInfoCtrl : CtrlBase
     }
 
     /// <summary>计算并约束角色属性比例。</summary>
+    /// <param name="currentValue">当前生命或法力。</param>
+    /// <param name="maximumValue">对应上限；不为正时返回 0。</param>
     private static float CalculateRatio(float currentValue, float maximumValue)
     {
         if (maximumValue <= 0f)
@@ -102,6 +115,8 @@ public sealed class RoleInfoCtrl : CtrlBase
     }
 
     /// <summary>将协议装备数据和 Luban 配置合成为装备展示数据。</summary>
+    /// <param name="roleItem">一件当前穿戴装备的协议数据。</param>
+    /// <param name="viewData">成功时返回装备部位、名称、图标和强化等级，失败为空。</param>
     private static bool TryBuildEquipmentViewData(RoleItemInfo roleItem,
         out EquipmentViewData viewData)
     {
@@ -111,8 +126,11 @@ public sealed class RoleInfoCtrl : CtrlBase
             return false;
         }
 
+        // 配置提供显示名称、图标，以及协议未提供有效部位时的备用部位。
         EquipInfo equipConfig = LubanMgr.Instance.GetEquipInfoById(roleItem.ItemTypeId);
+        // 最终使用的装备部位编号，优先采用协议中的有效枚举值。
         int equipTypeValue = 0;
+        // 是否已从协议或配置中取得可识别的装备部位。
         bool hasValidEquipType = false;
         if (roleItem.EquipInfo != null &&
             Enum.IsDefined(typeof(EquipType), roleItem.EquipInfo.EquipType))
@@ -131,13 +149,16 @@ public sealed class RoleInfoCtrl : CtrlBase
             return false;
         }
 
+        // 配置缺失时使用物品编号作为显示名。
         string name = roleItem.ItemTypeId.ToString();
+        // 配置缺失时按物品编号拼接历史图标路径。
         string iconPath = "Icon/Item/Item_" + roleItem.ItemTypeId;
         if (equipConfig != null)
         {
             name = equipConfig.EquipName;
             iconPath = equipConfig.Icon;
         }
+        // 强化等级来自协议装备附加数据，未携带时显示 0。
         int strengthenLevel = 0;
         if (roleItem.EquipInfo != null)
         {

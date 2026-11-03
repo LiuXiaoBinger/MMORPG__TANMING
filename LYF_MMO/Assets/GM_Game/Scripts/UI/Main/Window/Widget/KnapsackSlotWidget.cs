@@ -10,12 +10,16 @@ public class KnapsackSlotWidget : MonoBehaviour,
 {
 
     #region 字段
+    /// <summary>当前格子物品图标；数量不大于零时隐藏。</summary>
     [SerializeField, Header("物品图标")] private Image _imgIcon;
 
+    /// <summary>显示当前堆叠数量的文本。</summary>
     [SerializeField, Header("物品数量")] private TMP_Text _texCount;
 
+    /// <summary>有物品时鼠标悬停显示的格子高亮。</summary>
     [SerializeField, Header("鼠标进入效果")] private Image _imgEnter;
 
+    /// <summary>物品效果图片，本组件清空时隐藏，当前刷新没有开启它。</summary>
     [SerializeField, Header("物品特效")] private Image _imgFx;
 
     /// <summary>当前格子显示的物品数量。</summary>
@@ -24,6 +28,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
     /// <summary>兼容旧资源记录的图标名称。</summary>
     private string _spriteName;
 
+    /// <summary>当前物品类型编号，图标回调只在编号仍一致时写入。</summary>
     private int _itemTypeId;
     #endregion
 
@@ -55,7 +60,9 @@ public class KnapsackSlotWidget : MonoBehaviour,
             return;
         }
 
+        // 本次请求所属物品类型，不是背包格号或物品唯一 ID。
         int requestedItemTypeId = _itemTypeId;
+        // 优先用展示数据路径，未提供时按既有物品图标命名规则拼接。
         string iconPath = itemData.IconPath;
         if (string.IsNullOrWhiteSpace(iconPath))
         {
@@ -106,17 +113,17 @@ public class KnapsackSlotWidget : MonoBehaviour,
     #endregion
 
     #region 事件回调
-    /// <summary>记录指针按下事件，当前由拖拽组件处理具体行为。</summary>
+    /// <summary>Unity 指针按下接口的空实现；本方法不记录状态。</summary>
     public void OnPointerDown(PointerEventData eventData)
     {
     }
 
-    /// <summary>记录指针抬起事件，当前由拖拽组件处理具体行为。</summary>
+    /// <summary>Unity 指针抬起接口的空实现；本方法不记录状态。</summary>
     public void OnPointerUp(PointerEventData eventData)
     {
     }
 
-    /// <summary>接收拖拽放下事件，后续由背包控制器提交移动请求。</summary>
+    /// <summary>识别背包拖拽来源；交换位置仍是 TODO，当前不会提交移动请求。</summary>
     public void OnDrop(PointerEventData eventData)
     {
         if (eventData.pointerDrag == null)
@@ -124,6 +131,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
             return;
         }
 
+        // 被拖动对象上的类型标记，用于判断它是否来自背包。
         UIDragWidget uiDragWidget = eventData.pointerDrag.GetComponent<UIDragWidget>();
         if (uiDragWidget != null && uiDragWidget._dragType == DragType.KanpsackSlot)
         {
@@ -132,6 +140,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
     }
     #endregion
 
+    /// <summary>为 itemTypeId 生成现有资源文件名；2003 和 2005 使用小写 item_，其他使用 Item_。</summary>
     private static string GetIconName(int itemTypeId)
     {
         // 这两张现有资源使用小写文件名，其余物品图标均为 Item_ 前缀。

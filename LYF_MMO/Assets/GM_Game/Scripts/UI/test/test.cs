@@ -17,7 +17,7 @@ public class test : MonoBehaviour
     /// <summary>测试场景使用的 YooAsset 默认资源包名称，必须与资源收集配置中的包名一致。</summary>
     private const string DefaultPackageName = "DefaultPackage";
 
-    /// <summary>场景中预置且默认禁用的全局组件；资源包就绪后才启用，避免其 Awake 提前读取 YooAsset。</summary>
+    /// <summary>测试场景预置 Global 所在对象应初始不激活；资源包就绪后激活该对象，让 Awake 再读取 YooAsset。</summary>
     [SerializeField]
     private Global _sceneGlobal;
 
@@ -40,7 +40,7 @@ public class test : MonoBehaviour
     /// <summary>本对象生命周期内是否已启动初始化协程，防止重复创建资源包或重复启用 Global。</summary>
     private bool _hasStarted;
 
-    /// <summary>是否已经发起过 NPC 初始化；用于阻止场景重复加载时重复创建 NPC。</summary>
+    /// <summary>本测试组件是否已发起 NPC 初始化，限制本组件生命周期内只调用一次。</summary>
     private bool _npcInitializationStarted;
 
     /// <summary>是否已经提交过本次模拟角色包，避免测试组件重复驱动同一主角创建。</summary>
@@ -151,6 +151,7 @@ public class test : MonoBehaviour
             }
             break;
         }
+        // 测试角色模型上的旧动画事件接收器，逐个禁用以避开缺少的旧网络对象。
         RoleAnimaBehaviour[] receivers = role.Model.GameObject.NativeObject.GetComponentsInChildren<RoleAnimaBehaviour>(true);
         for (int index = 0; index < receivers.Length; index++)
         {
@@ -209,7 +210,7 @@ public class test : MonoBehaviour
         {
             package = YooAssets.TryGetPackage(DefaultPackageName);
         }
-        // 异常对象仅用于判定资源系统尚不可访问，并输出首次初始化失败原因。
+        // 初次读取包失败时尝试初始化 YooAssets；这一层没有输出原异常。
         catch (Exception)
         {
             try

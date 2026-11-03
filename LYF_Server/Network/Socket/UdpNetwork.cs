@@ -76,7 +76,7 @@ public sealed class UdpNetwork
     /// 启动 UDP 监听并开启接收与更新线程。
     /// </summary>
     /// <param name="ip">监听地址，与 TCP 网关同机部署时使用相同主机。</param>
-    /// <param name="port">监听端口，默认取 KcpDefine.GateUdpPort。</param>
+    /// <param name="port">调用方指定的监听端口；传 0 时由系统分配。</param>
     /// <returns>启动成功返回 true；端口占用等异常返回 false。</returns>
     public bool Start(string ip, int port)
     {
@@ -329,7 +329,7 @@ public sealed class UdpNetwork
     /// <param name="pending">接收线程持锁时取出的待绑定快照。</param>
     /// <param name="conv">会话号，同时作为路由键。</param>
     /// <param name="source">客户端 UDP 来源地址，作为认证后的唯一远端。</param>
-    /// <param name="session">快照对应的网关会话，方法内先判空再使用。</param>
+    /// 网关会话从 pending.Session 读取。
     private void CompleteBind(PendingBind pending, uint conv, IPEndPoint source)
     {
         // 快照中登记的网关会话，为空说明已解绑，直接放弃完成。
@@ -382,7 +382,7 @@ public sealed class UdpNetwork
         LogMsg.Info("KCP 绑定成功，SessionID=" + session.SessionID);
     }
     /// <summary>
-    /// 处理 KCP 数据报：认证通过后送入通道，并把认证后的源地址作为当前远端。
+    /// 处理KCP数据报：按conv查找会话，通过令牌认证后送入通道；此入口不更新绑定的远端地址。
     /// </summary>
     private void HandleKcpData(byte[] buffer, uint conv, int payloadOffset, int payloadLength)
     {
@@ -590,7 +590,7 @@ public sealed class UdpNetwork
         uint conv = KcpAuth.CreateRandomConv();
         // 本次绑定下发的 16 字节随机令牌，既是握手证明也是数据报 HMAC 密钥。
         byte[] token = KcpAuth.CreateRandomBytes(KcpDefine.BindTokenBytes);
-        // 随机 conv 需在两张表中都不冲突，冲突时重新生成。
+        // 当前只检查已绑定Peer表中的conv冲突；待绑定表没有在此参与查重。
         int attempt = 0;
         while (true)
         {
@@ -756,7 +756,7 @@ public sealed class UdpNetwork
             Session session = SessionMgr.Instance.GetSession(sessionId);
             if (session != null)
             {
-                // 已启用后失效：保留“曾启用”标记，让实时下行明确丢弃而不是悄悄退回 TCP。
+                // 清空会话的Peer引用，后续实时下行因无可用通道而丢弃。
                 session.InvalidateRealtimePeer();
             }
             // 不再向客户端补发 TCP 提示：运行期失效按约定由客户端静默检测后走既有断线恢复，
@@ -768,7 +768,7 @@ public sealed class UdpNetwork
     /// <summary>
     /// 取出某 Peer 已完整按序到达的消息并交给所属会话。
     /// 接收线程与更新线程都会调用本方法，因此必须先取得该 Peer 的投递权：
-    /// 同一 Peer 只允许一个线程取包并回调，回调在通道锁与投递权之外不会重入，
+    /// 同一Peer只允许一个线程取包并回调；执行回调时已释放通道锁，但仍持有投递权，
     /// 从而保证业务回调按 KCP 序号严格串行，不会出现先取出的包后交付。
     /// </summary>
     private void SnapshotDeliver(KcpPeer peer)

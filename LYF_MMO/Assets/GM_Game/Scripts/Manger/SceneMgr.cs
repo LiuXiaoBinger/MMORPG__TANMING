@@ -3,7 +3,7 @@ using UniRx;
 using UnityEngine;
 using YooAsset;
 
-/// <summary>沿项目原流程加载单个场景，显示进度并在成功后执行业务回调。</summary>
+/// <summary>加载目标场景时显示进度；成功后更新当前场景、读取导航数据、启用业务根节点，再调用回调。</summary>
 public class SceneMgr : Singleton<SceneMgr>
 {
     /// <summary>
@@ -69,10 +69,10 @@ public class SceneMgr : Singleton<SceneMgr>
             }
 
             // 沿用RO桌面档位(VeryHigh)的运行时Shader上限500，排除仅用于编辑模式的LOD600；
-            // 本项目未迁移RO画质档位入口，此处仅做全局一次性接入，不按场景还原。
+            // 本项目未迁移RO画质档位入口，这里每次成功加载场景都设置为 500，不恢复之前的值。
             Shader.globalMaximumLOD = 500;
             _currentSceneType = sceneType;
-            // 沿RO场景加载入口先准备同名公共导航数据，再执行创建玩家等原业务回调。
+            // 先读取与场景同名的导航文件，之后业务回调才可以查询路线。
             MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
             // 目标场景根对象；创角业务根默认禁用，加载成功后才启用其场景脚本。
             GameObject[] roots = handle.SceneObject.GetRootGameObjects();

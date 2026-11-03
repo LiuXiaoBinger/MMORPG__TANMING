@@ -74,7 +74,7 @@ public sealed class TeamManager
         /// <summary>队长角色ID，仅队长可发起副本挑战。</summary>
         public ulong CaptainId;
 
-        /// <summary>成员角色ID列表，顺序即入队顺序，第一个为创建者。</summary>
+        /// <summary>成员角色ID列表，按入队先后排列；成员离队后从列表移除。</summary>
         public List<ulong> Members = new List<ulong>();
 
         /// <summary>该队伍当前所在副本实例ID，0 表示不在副本内。</summary>
@@ -87,6 +87,7 @@ public sealed class TeamManager
         get { return _instance; }
     }
 
+    /// <summary>由静态单例字段创建；所有队伍、邀请和申请共用这一份内存记录。</summary>
     private TeamManager()
     {
     }
@@ -108,8 +109,8 @@ public sealed class TeamManager
     /// 创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam。
     /// 创建者自动成为队长，队伍人数为 1。
     /// </summary>
-    /// <param name="role">发起创建的在世角色，身份来自会话校验结果。</param>
-    /// <param name="targetId">组队目标ID，RO 缺省 1000，仅记录不参与匹配。</param>
+    /// <param name="role">发起创建的会话对应的在线角色，身份来自会话校验结果。</param>
+    /// <param name="targetId">客户端传入的组队目标ID；当前方法未读取或保存此参数。</param>
     /// <returns>创建成功返回队伍ID，角色已在队伍中则返回 0。</returns>
     public ulong RequestCreateTeam(OnlineRole role, int targetId)
     {
@@ -217,7 +218,7 @@ public sealed class TeamManager
     #endregion
 
     #region 移除与回收
-    /// <summary>回收副本实例，当前实例只记录在队伍上，清空即回收。</summary>
+    /// <summary>记录副本实例回收日志；本方法不创建或销毁场景对象。</summary>
     /// <param name="instanceId">待回收的实例ID。</param>
     private void ReleaseInstance(ulong instanceId)
     {
@@ -264,7 +265,7 @@ public sealed class TeamManager
 
     #region 查询与判定
     /// <summary>
-    /// 返回角色所在副本实例ID，供 RoleManager 的附近过滤使用。
+    /// 先查角色所属队伍，再返回队伍记录的副本实例ID。
     /// </summary>
     /// <param name="roleId">待查询的角色ID。</param>
     /// <returns>所在队伍实例ID；不在队伍或不在副本时返回 0。</returns>
@@ -335,7 +336,7 @@ public sealed class TeamManager
     /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
     /// 只登记待确认邀请，被邀请人同意后才真正入队；不关心失败原因的既有调用沿用布尔返回。
     /// </summary>
-    /// <param name="inviterRole">发起邀请的在世角色，必须是某队成员。</param>
+    /// <param name="inviterRole">发起邀请的会话对应的在线角色，必须是某队成员。</param>
     /// <param name="targetRoleId">被邀请角色ID。</param>
     /// <returns>邀请登记成功返回 true；无队伍、队伍已满、目标已在队伍中或队伍已开副本实例返回 false。</returns>
     public bool InviteJoinTeam(OnlineRole inviterRole, ulong targetRoleId)
@@ -348,7 +349,7 @@ public sealed class TeamManager
     /// <summary>
     /// 邀请他人入队并带回失败原因，供协议处理器把原来的静默拒绝变成玩家可见提示。
     /// </summary>
-    /// <param name="inviterRole">发起邀请的在世角色，必须是某队成员。</param>
+    /// <param name="inviterRole">发起邀请的会话对应的在线角色，必须是某队成员。</param>
     /// <param name="targetRoleId">被邀请角色ID。</param>
     /// <param name="errorCode">失败原因；成功或无需提示时为 Succeed。</param>
     /// <returns>邀请登记成功返回 true。</returns>
@@ -428,7 +429,7 @@ public sealed class TeamManager
     /// 同意入队邀请，对应 RO TeamMgr.lua:165 AcceptTeamInvatation()。
     /// 校验队伍ID与邀请人一致后把角色加入队伍；不关心失败原因的既有调用沿用布尔返回。
     /// </summary>
-    /// <param name="role">同意邀请的在世角色。</param>
+    /// <param name="role">同意邀请的会话对应的在线角色。</param>
     /// <param name="teamId">邀请中的队伍ID。</param>
     /// <param name="inviterId">邀请人角色ID，用于确认邀请未被替换。</param>
     /// <param name="agree">true 同意入队，false 拒绝邀请或申请。</param>
@@ -444,7 +445,7 @@ public sealed class TeamManager
     /// 同意或拒绝入队邀请并带回失败原因，供协议处理器回执玩家可见提示。
     /// 拒绝本身是正常业务结果，不产生失败原因。
     /// </summary>
-    /// <param name="role">同意或拒绝的在世角色。</param>
+    /// <param name="role">同意或拒绝的会话对应的在线角色。</param>
     /// <param name="teamId">邀请中的队伍ID。</param>
     /// <param name="inviterId">邀请人角色ID；审批申请时传申请人角色ID。</param>
     /// <param name="agree">true 同意入队，false 拒绝邀请或申请。</param>
@@ -538,7 +539,7 @@ public sealed class TeamManager
         // 没有待确认邀请时拒绝，避免绕过邀请直接入队。
         if (!_invitations.TryGetValue(key, out recordedInviter))
         {
-            // 邀请已失效（可能已被处理或过期），必须告诉玩家而不是静默丢弃。
+            // 找不到待处理邀请（例如已经处理过），必须告诉玩家而不是静默丢弃。
             errorCode = CmdCode.ReqParamError;
             return false;
         }
@@ -581,11 +582,11 @@ public sealed class TeamManager
 
     /// <summary>
     /// 申请加入指定队伍，对应 RO TeamMgr.lua:413 BegInTeamByTeamId(cTeamId)。
-    /// 本阶段按"申请即入队"的最短流程处理，不引入额外审批队列。
+    /// 先登记申请并通知在线队长；队长在 AcceptTeamInvatation 中同意后才加入队伍。
     /// </summary>
-    /// <param name="role">发起申请的在世角色。</param>
+    /// <param name="role">发起申请的会话对应的在线角色。</param>
     /// <param name="teamId">目标队伍ID。</param>
-    /// <returns>入队成功返回 true；队伍不存在、已满或角色已在队伍中返回 false。</returns>
+    /// <returns>申请登记成功返回 true；队伍不存在、已满或角色已在队伍中返回 false。</returns>
     public bool BegInTeamByTeamId(OnlineRole role, ulong teamId)
     {
         if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
@@ -620,7 +621,7 @@ public sealed class TeamManager
         _applications[key] = roleId;
 
         // 通知队长有新申请，复用现有邀请型强类型通知，来源字段携带申请人角色ID。
-        // captainRole 为队长的在线角色对象，为空表示队长不在线，申请仅留在表里等其上线后处理。
+        // captainRole 是队长当前的在线对象；离线时只保留申请记录，这里没有上线后补发通知的逻辑。
         OnlineRole captainRole = RoleManager.Instance.GetOnlineRole((int)team.CaptainId);
         if (captainRole != null)
         {
@@ -698,7 +699,7 @@ public sealed class TeamManager
     /// 队长请求进入魔神塔，对应 RO DungeonMgr.lua:1274 CaptainRequestEnterFBPtc。
     /// 服务端先分配实例并写入每个成员的 MapId/InstanceId/出生点，再通知全队加载场景。
     /// </summary>
-    /// <param name="role">发起挑战的在世角色，必须是队长。</param>
+    /// <param name="role">发起挑战的会话对应的在线角色，必须是队长。</param>
     /// <param name="dungeonId">副本配置ID，当前只开放魔神塔 4060。</param>
     /// <returns>入场通知已下发返回 true；非队长、无队伍或副本未开放返回 false。</returns>
     public bool CaptainRequestEnterFBPtc(OnlineRole role, int dungeonId)

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>可编辑的 RO 施法权限配置；通过导出菜单同时更新客户端与服务端数据，不改旧技能表。</summary>
+/// <summary>
+/// Unity 编辑器中保存施法规则的资源，导出工具从中生成客户端与服务端的配置。
+/// </summary>
 public sealed class SkillCastingRulesConfig : ScriptableObject
 {
-    /// <summary>技能主表 ID 对应的互断和移动权限，Q 三段共享 10010 一行。</summary>
+    /// <summary>按技能主表 ID 配置打断与移动权限；同一技能的各动作段共用一行。</summary>
     public List<SkillCastingRules> Rules = new List<SkillCastingRules>();
 }

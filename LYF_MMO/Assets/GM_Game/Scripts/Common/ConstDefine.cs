@@ -1,21 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/**
- * Title:
- * Description:
- */
+// 供资源加载器和界面读取的固定路径、职业名称。
 
 
 /// <summary>
-/// 客户端资源路径与常量定义集中入口。
+/// 保存客户端常用资源目录和职业名称；路径相对于 Unity 工程。
 /// </summary>
 public class ConstDefine {
 
 
     /// <summary>GM_Game 资源根目录的相对路径，YooAsset 下各子目录路径均以此为前缀。</summary>
     public const string BasePath = "Assets/GM_Game/";
-    /// <summary>预制体资源目录，窗口/控件/角色等 Prefab 均从此加载。</summary>
+    /// <summary>常用预制体的路径前缀，调用方在后面拼接具体资源路径。</summary>
     public const string PrefabPath = BasePath + "Prefabs/";
     /// <summary>特效资源目录。</summary>
     public const string EffectPath = BasePath + "Effects/";

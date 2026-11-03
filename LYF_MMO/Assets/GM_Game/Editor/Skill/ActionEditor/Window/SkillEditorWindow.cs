@@ -11,13 +11,14 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 /// <summary>
-/// ACT 技能动作编辑器 — Action + TimeLine + Event/Command 架构
+/// 技能动作编辑器：打开一个技能配置，在时间轴上安排动画、攻击、特效和声音。
 /// 
 /// 布局：顶部工具栏 | 左侧轨道标签(Track Header)+右侧时间轴(TimeLine) | 底部属性检查器(Inspector)
 /// 
-/// - Action: 一个 SkillConfigSO 对应一个行为
-/// - TimeLine: 由多条 Track 组成，每条 Track 承载一类 Event
-/// - Event/Command: 轨道上的具体指令（攻击、特效、音效、连招窗口等）
+/// - 技能配置（SkillConfigSO）：保存这一个动作的编辑数据。
+/// - 轨道（Track）：把同类事件排在一行，横轴是时间帧。
+/// - 事件（Event）：记录何时播放动画、触发攻击或显示特效等内容。
+/// 编辑器支持的字段多于本游戏已接入的运行能力；实际可导出内容由 SkillEditorAssetTools 校验。
 /// </summary>
 public partial class SkillEditorWindow : EditorWindow
 {
@@ -201,6 +202,7 @@ public partial class SkillEditorWindow : EditorWindow
     /// <summary>本輪已生成的原效果引用集合，用于避免同事件重复触发。</summary>
     HashSet<Global.FxAndSound> _spawnedFxIndices=new HashSet<Global.FxAndSound>();
     // ── 投掷物预览实例支持 ──
+    // 一个投掷物预览实例的状态，记录模拟位置和寿命，结束预览后清理，不保存进技能配置。
     struct PreviewProjEntry { 
     /// <summary>此预览条目的隔离对象实例，过期或关闭时销毁。</summary>
     public GameObject go; 

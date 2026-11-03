@@ -1,11 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 旧场景实体调用的兼容契约。
-///
-/// ROObject 现在是接口而不是实体基类，实际实体继承链严格保持
-/// MObject -&gt; MSceneObject -&gt; MEntity -&gt; 具体实体。旧系统仍可继续使用
-/// ROObject 作为参数、集合元素或泛型约束，不会把兼容层插入实体继承层级。
+/// 场景实体对外使用的现有接口，提供身份、组件、事件和生命周期入口。
+/// 实际类继承关系是 MObject → MSceneObject → MEntity → 具体实体，ROObject 不在类继承链中。
 /// </summary>
 public interface ROObject
 {
@@ -92,7 +89,7 @@ public interface ROObject
     /// <summary>从睡眠唤醒，恢复 Active 状态</summary>
     void Wake();
 
-    /// <summary>标记为待销毁，由世界在下一帧统一移除回收</summary>
+    /// <summary>标记为待销毁，由实体世界在更新后的清理阶段统一移除回收</summary>
     void MarkPendingDestroy();
 
     /// <summary>

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>原 Y 独立播放器的运行诊断面板；本项目正式角色不依赖该播放器。</summary>
+    /// <summary>显示 ActionPlayer 独立播放器的检查结果；本项目正式角色使用自己的技能播放流程。</summary>
     [CustomEditor(typeof(ActionPlayer))]
     public sealed class ActionPlayerInspector : UnityEditor.Editor
     {

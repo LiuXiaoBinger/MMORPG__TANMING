@@ -3,7 +3,7 @@ using System;
 
 /// <summary>
 /// 角色技能表，保存角色对技能的学习和成长状态。
-/// 技能名称、伤害、冷却等静态数据由 Luban 的 SkillInfo 提供。
+/// 技能身份和类别来自 SkillInfo，具体等级的消耗、冷却和持续时间来自 SkillEffectInfo。
 /// </summary>
 [SugarTable("role_skill", TableDescription = "角色技能表")]
 internal class RoleSkillTable

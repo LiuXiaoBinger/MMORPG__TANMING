@@ -58,12 +58,13 @@ public static class SkillPresentationBuildVerification
             for (int assetIndex = 0; assetIndex < mainAssets.Count; assetIndex++)
                 assetsByPath.Add(mainAssets[assetIndex].AssetPath, mainAssets[assetIndex]);
         }
-        // 待真实构建的 Bundle 名列表同时作为队列，迭代加入完整依赖闭包。
+        // 待实际构建的包名列表也作为队列：遍历时不断追加依赖包，直到没有新包需要加入。
         List<string> selectedBundles = new List<string>();
         for (int index = 0; index < runtimeGuids.Length; index++)
         {
             // 当前运行资产完整路径，必须存在于新生成清单及原构建映射。
             string runtimePath = AssetDatabase.GUIDToAssetPath(runtimeGuids[index]);
+            // 新生成清单中的此技能运行资产记录，用于检查包和依赖编号。
             SkillManifestAssetSnapshot item = FindManifestAsset(manifest, runtimePath);
             ValidateManifestDependencies(manifest, item);
             AddBundleForAsset(assetsByPath, selectedBundles, runtimePath);
@@ -106,6 +107,7 @@ public static class SkillPresentationBuildVerification
         // 实际构建输出目录独立于游戏正式资源包和 StreamingAssets。
         string bundleOutput = Path.Combine(output, "actual-skill-bundles");
         Directory.CreateDirectory(bundleOutput);
+        // Unity 实际打包返回的清单，返回空表示构建未成功。
         AssetBundleManifest unityManifest = BuildPipeline.BuildAssetBundles(bundleOutput, builds.ToArray(),
             BuildAssetBundleOptions.ChunkBasedCompression | BuildAssetBundleOptions.StrictMode, parameters.BuildTarget);
         if (unityManifest == null) throw new InvalidOperationException("技能相关 Bundle 实际构建失败。");
@@ -143,7 +145,7 @@ public static class SkillPresentationBuildVerification
         return result;
     }
 
-    /// <summary>从实际构建文件加载完整依赖闭包并验证运行资产粒子引用。</summary>
+    /// <summary>从实际构建目录加载技能包及其递归依赖包，再检查运行表现资产与粒子引用。</summary>
     /// <param name="output">本轮 _temp 下的实际 Bundle 输出目录。</param>
     /// <param name="bundleNames">已经实际构建的完整依赖包名称列表。</param>
     /// <param name="runtimeGuids">当前正式表对应源运行资产的 AssetDatabase GUID 数组。</param>
@@ -159,6 +161,7 @@ public static class SkillPresentationBuildVerification
             {
                 // 每个相关 Bundle 从真实文件读取，不使用 AssetDatabase 替代加载。
                 string name = bundleNames[index];
+                // 从当前验证输出目录加载的真实包，最后统一卸载。
                 AssetBundle bundle = AssetBundle.LoadFromFile(Path.Combine(output, name));
                 if (bundle == null) throw new InvalidOperationException("无法加载真实技能 Bundle：" + name);
                 loaded.Add(name, bundle);
@@ -167,7 +170,9 @@ public static class SkillPresentationBuildVerification
             {
                 // 先根据原构建映射确定本体包，然后从实际 Bundle 读取强类型 SO。
                 string path = AssetDatabase.GUIDToAssetPath(runtimeGuids[index]);
+                // 正式构建映射给出的主资产归属包。
                 BuildAssetInfo asset = assetsByPath[path];
+                // 从实际包读取的运行表现，必须保留粒子资产引用。
                 SkillRuntimePresentation runtime = loaded[asset.BundleName].LoadAsset<SkillRuntimePresentation>(path);
                 if (runtime == null || runtime.PresentationId <= 0) throw new InvalidOperationException("实际 Bundle 缺少运行表现：" + path);
                 for (int eventIndex = 0; eventIndex < runtime.FxEvents.Count; eventIndex++)
@@ -201,7 +206,7 @@ public static class SkillPresentationBuildVerification
     /// <summary>读取本轮真实 YooAsset 清单中的精确主资源记录。</summary>
     /// <param name="manifest">本轮实际生成并读取的完整清单。</param>
     /// <param name="path">运行缓存请求的完整资源路径。</param>
-    /// <returns>清单中的唯一资源记录；缺失时抛出错误。</returns>
+    /// <returns>清单中路径匹配的第一条记录；缺失时抛出错误，此方法不额外检查重复路径。</returns>
     private static SkillManifestAssetSnapshot FindManifestAsset(SkillManifestSnapshot manifest, string path)
     {
         for (int index = 0; index < manifest.AssetList.Count; index++)

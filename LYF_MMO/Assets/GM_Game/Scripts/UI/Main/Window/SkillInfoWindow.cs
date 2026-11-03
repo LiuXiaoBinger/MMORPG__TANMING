@@ -113,7 +113,7 @@ public class SkillInfoWindow : WindowBase
         return true;
     }
 
-    /// <summary>更新技能窗口顶部的职业和可用点数。</summary>
+    /// <summary>把 jobName 职业名称与 availablePoints 可分配点数显示在窗口顶部，不修改角色技能数据。</summary>
     public void SetHeader(string jobName, int availablePoints)
     {
         if (_texJob != null)
@@ -210,6 +210,7 @@ public class SkillInfoWindow : WindowBase
         // 旧快照中的条目索引，空位代表该条目尚未加载成功。
         for (int index = 0; index < _skillItems.Count; index++)
         {
+            // 上个内容版本对应的实例，空位表示此前未加载成功。
             GameObject item = _skillItems[index];
             if (item != null)
             {

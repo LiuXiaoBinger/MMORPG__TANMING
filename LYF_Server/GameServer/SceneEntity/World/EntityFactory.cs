@@ -3,12 +3,17 @@ using MMoRpgCommon.SceneEntity;
 
 namespace GameServer.SceneEntity
 {
-    /// <summary>参考项目 ObjectFactory/ObjectBuilder 的服务端实体构建器。</summary>
+    /// <summary>创建具体场景对象并按类别装配组件；对象加入 EntityWorld 时才初始化。</summary>
     public static class EntityFactory
     {
+        /// <summary>分配运行时编号、创建对象并装配组件；不支持的类别返回 null。</summary>
+        /// <param name="type">决定具体对象与组件组合的类别位。</param>
+        /// <param name="configId">对象使用的配置编号。</param>
         public static ROObject Create(EntityType type, int configId)
         {
+            // 此编号只标识本进程中的场景对象，不替代角色数据库编号。
             ulong uid = SceneUidAllocator.Next();
+            // 根据下面的类别优先级选出一种具体对象，再统一挂组件。
             ROObject entity = CreateObject(type, uid, configId);
             if (entity == null)
             {
@@ -18,6 +23,10 @@ namespace GameServer.SceneEntity
             return entity;
         }
 
+        /// <summary>按固定优先级选择具体对象；组合类别命中较前分支后立即返回。</summary>
+        /// <param name="type">待识别的类别位组合。</param>
+        /// <param name="uid">已分配的场景编号。</param>
+        /// <param name="configId">对象配置编号。</param>
         private static ROObject CreateObject(EntityType type, ulong uid, int configId)
         {
             if (HasType(type, EntityType.Player))
@@ -79,8 +88,11 @@ namespace GameServer.SceneEntity
             return null;
         }
 
+        /// <summary>为不同实体挂上所需组件标记；NPC、采集物、陷阱和飞行物采用独立组合。</summary>
+        /// <param name="entity">已创建但尚未初始化的对象。</param>
         private static void Assemble(ROObject entity)
         {
+            // 使用对象构造后实际保存的类别决定组件组合。
             EntityType type = entity.EntityType;
             if (HasType(type, EntityType.Npc))
             {
@@ -182,6 +194,8 @@ namespace GameServer.SceneEntity
             }
         }
 
+        /// <summary>登记可战斗实体共用的属性、状态、移动、同步等组件。</summary>
+        /// <param name="entity">接受公共组件的实体。</param>
         private static void AddCommon(ROObject entity)
         {
             Add(entity, EntityComponentType.Entity);
@@ -196,6 +210,9 @@ namespace GameServer.SceneEntity
             Add(entity, EntityComponentType.Combat);
         }
 
+        /// <summary>创建一个指定类别的组件并交由实体持有。</summary>
+        /// <param name="entity">组件所属对象。</param>
+        /// <param name="type">要挂载的组件类别。</param>
         private static void Add(ROObject entity, EntityComponentType type)
         {
             entity.AddComponent(CreateComponent(entity, type));
@@ -210,6 +227,9 @@ namespace GameServer.SceneEntity
             return (value & flag) == flag;
         }
 
+        /// <summary>把组件类别转换成具体类；尚无专用类的类别使用轻量标记。</summary>
+        /// <param name="entity">组件所属实体。</param>
+        /// <param name="type">要创建的组件类别。</param>
         private static EntityComponentBase CreateComponent(ROObject entity, EntityComponentType type)
         {
             switch (type)

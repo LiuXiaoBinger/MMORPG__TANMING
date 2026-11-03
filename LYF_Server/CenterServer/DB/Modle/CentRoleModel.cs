@@ -9,7 +9,7 @@ using SqlSugar;
 /// <summary>
 /// 中心服角色与背包数据访问层。负责进入世界时查询并回包角色技能、分类型背包物品、
 /// 装备/装备词条扩展、角色通用次数与已开格子容量，以及背包容量同步与商城购买占位处理。
-/// 所有方法在中心服逻辑线程执行，直接读写 MySQL，不持有跨线程可变状态。
+/// 由 CenterRoleCtrl 在协议回调中调用并直接访问 MySQL；异步排队的角色快照保存另由 CRoleWriteTask 执行。
 /// </summary>
 public class CentRoleModel
 {
@@ -192,6 +192,8 @@ public class CentRoleModel
         return value.ToUniversalTime().Ticks;
     }
 
+    /// <summary>判断该背包是否保存可扩容容量；穿戴栏和虚拟物品栏不在其中。</summary>
+    /// <param name="type">待检查的背包分类。</param>
     private static bool IsPersistedKnapsackType(KnapsackType type)
     {
         // 是否为普通包裹或装备包裹类型。
@@ -201,6 +203,7 @@ public class CentRoleModel
         return isPlainOrEquip || isConsumeOrMaterial;
     }
 
+    /// <summary>返回需要分别保存容量的普通、装备、消耗品和材料背包。</summary>
     private static KnapsackType[] GetPersistedKnapsackTypes()
     {
         return new[]
@@ -238,7 +241,7 @@ public class CentRoleModel
             System.Math.Max(DefaultOpenedKnapsackGridCount, (int)row.roleKnapsackcount));
     }
 
-    /// <summary>处理中心服商城购买请求。</summary>
+    /// <summary>中心服商城入口当前仅返回功能未就绪，不扣货币、不发物品，也不改购买次数。</summary>
     public BuyShopItemRes ProcessShopPurchase(BuyShopItemReq request)
     {
         return new BuyShopItemRes
@@ -304,7 +307,7 @@ public class CentRoleModel
 
     /// <summary>
     /// 获取主角背包信息：分类型物品列表、装备/词条扩展、已开格子容量、角色通用次数与保存版本。
-    /// 旧角色缺失的分类记录会在建表读取时补齐，容量取旧普通背包与默认 81 格的较大值。
+    /// 旧角色缺失的分类记录会在读取背包时补齐，容量取旧普通背包与默认 81 格的较大值。
     /// </summary>
     /// <param name="req">进入世界请求，携带持久角色 ID。</param>
     /// <returns>完整背包与次数信息回包，失败时仅携带错误码。</returns>
@@ -325,9 +328,11 @@ public class CentRoleModel
         {
             knapsackTables = new List<RoleKnapsackTable>();
         }
+        // 旧普通背包容量作为新增分类的最低容量，且至少保留 81 格。
         int legacyFallback = GetLegacyFallback(knapsackTables);
         EnsureMissingKnapsackRows(req.RoleId, knapsackTables, legacyFallback);
 
+        // 当前角色的物品主记录，先按分类再按格子排列。
         List<ItemTable> itemList = _db.Queryable<ItemTable>()
             .Where(v => v.RoleID == req.RoleId)
             .OrderBy(v => v.BagType)
@@ -344,16 +349,19 @@ public class CentRoleModel
             .Where(v => v.RoleID == req.RoleId)
             .ToList()
             .ToDictionary(v => v.ItemUID);
+        // 通过物品实例编号拼接词条，避免同配置的不同装备互相混淆。
         Dictionary<long, EquipXLGeneTable> geneByItemUid = _db.Queryable<EquipXLGeneTable>()
             .Where(v => v.RoleID == req.RoleId)
             .ToList()
             .ToDictionary(v => v.ItemUID);
 
+        // 读取结果的索引列表，每个物品再附上装备和词条扩展。
         List<ItemTable> itemSnapshot = new List<ItemTable>(itemList);
         for (int itemIndex = 0; itemIndex < itemSnapshot.Count; itemIndex++)
         {
             ItemTable item = itemSnapshot[itemIndex];
             KnapsackType packType = (KnapsackType)item.BagType;
+            // 协议中零表示没有到期时间，其余用 UTC 的 100 纳秒刻度。
             long expireTimeUtcTicks = 0L;
             if (item.ExpireDate.HasValue)
             {
@@ -421,6 +429,7 @@ public class CentRoleModel
         // 穿戴栏是装备状态而非可扩容背包，仍返回最小容量供旧客户端布局兼容。
         AddPackCount(ret.RoleKanpsackInfo, KnapsackType.RoleCurrtEquipPack, DefaultOpenedKnapsackGridCount);
 
+        // 角色主表保存已落库版本，游戏服从该版本继续产生后续保存请求。
         RoleTable role = _db.Queryable<RoleTable>().Where(v => v.Id == req.RoleId).First();
         if (role != null)
         {
@@ -428,6 +437,7 @@ public class CentRoleModel
         }
 
         // 次数与背包物品一起返回，GameServer 登录时一次性装载所有角色组件数据。
+        // 商城、副本等计数随背包一起恢复，避免在线角色各组件使用不同批次存档。
         List<RoleCountTable> roleCounts = _db.Queryable<RoleCountTable>()
             .Where(v => v.RoleId == req.RoleId).ToList();
         if (roleCounts != null)

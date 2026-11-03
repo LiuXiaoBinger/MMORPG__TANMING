@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 飞行物运动与命中信息组件，对应参考项目 ROBullet 体系。
-/// 记录投射物类型、目标 UID、飞行速度和存活时长，超时自动标记待销毁。
+/// 保存投射物类型、目标、速度及存活时间；每帧只累计时间并检查是否超时。
+/// 超时后标记实体待销毁，由实体世界统一移除；此组件不更新弹道或判断命中。
 /// </summary>
 public sealed class EntityProjectileComponent : EntityComponentBase
 {
@@ -14,13 +14,13 @@ public sealed class EntityProjectileComponent : EntityComponentBase
         get { return EntityComponentType.Projectile; }
     }
 
-    /// <summary>投射物表现类型，决定使用动画、特效或模型等表现形式。</summary>
+    /// <summary>投射物类别数据；此组件不按类别驱动不同表现。</summary>
     public ProjectileType ProjectileType { get; set; }
 
-    /// <summary>目标实体 UID，用于追踪和命中判定；0 表示无目标。</summary>
+    /// <summary>保存目标实体 UID；0 表示无目标，此组件不自行追踪目标。</summary>
     public ulong TargetUID { get; set; }
 
-    /// <summary>飞行速度（单位/秒）。</summary>
+    /// <summary>保存飞行速度，单位为场景单位/秒；此组件不按该值移动实体。</summary>
     public float Speed { get; set; }
 
     /// <summary>最大存活时长（毫秒），小于等于 0 表示不做超时销毁。</summary>
@@ -53,11 +53,13 @@ public sealed class EntityProjectileComponent : EntityComponentBase
         }
     }
 
+    /// <summary>投射物计时不依赖实体事件，无需订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>没有事件订阅，无需解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

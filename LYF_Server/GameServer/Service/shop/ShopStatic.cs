@@ -1,4 +1,4 @@
-﻿//商店类型通过商店类型保存在shopmgr中
+﻿// ShopManager 按商店ID保存本对象，商品和价格来自 Luban 配置。
 
 using System.Collections.Generic;
 using cfg;
@@ -18,6 +18,7 @@ public class ShopStatic
     private Dictionary<int, ShopItemParseInfo> _shop_items;
 
     /// <summary>由 Luban 商店表构造内存商店，私有构造仅允许工厂方法创建。</summary>
+    /// <param name="static_shops">本商店的 Luban 主表记录，Id 用于筛选商品。</param>
     ShopStatic(ShopTable  static_shops)
     {
         shopDate = static_shops;
@@ -78,6 +79,8 @@ public class ShopStatic
     /// <summary>
     /// 执行购买结算：先做条件校验，再逐商品发放物品、扣除货币并累计限购次数。
     /// </summary>
+    /// <param name="role">接收道具、支付货币并记录限购次数的在线角色。</param>
+    /// <param name="request">商品ID及本次各商品的购买数量。</param>
     public CmdCode BuyItems(OnlineRole role, BuyShopItemReq request)
     {
         CmdCode code = CmdCode.Succeed;
@@ -101,18 +104,18 @@ public class ShopStatic
 
             //一个商品的消耗数量
             var cost_info = shopItemInfo.Cost;
-            //所消耗的钱
+            // 本行请求数量乘以商品单价；单位由 money_type 指定。
             int cost_money = cost_info.buy_cost.cost_money * (int)request.Items[index].BuyCount;
             if (cost_money < 0)
             {
                 continue;
             }
             //todo 折扣
-            //给予item给到背包
+            // 按请求数量发放道具；此处没有乘上配置的 ItemPerMount。
             code = give_trans.GiveItem(new ItemDesc(shopItemInfo.ItemID,
                 (int)request.Items[index].BuyCount,cost_money, (ItemBind)(int)shopItemInfo.IsBind));
 
-            //先给后面在扣除兑换的钱或者物品
+            // 发放后再扣货币；当前没有检查扣除返回码，也没有把前面已发物品回滚。
             take_trans.TakeItem(new ItemDesc(cost_info.buy_cost.money_type, cost_money));
 
             if (!shopItemInfo.IsUnlimitedPurchase())

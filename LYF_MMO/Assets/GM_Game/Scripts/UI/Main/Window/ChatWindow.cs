@@ -19,7 +19,7 @@ public class ChatWindow : WindowBase
     /// <summary>输入焦点变化事件，true 表示正在输入。</summary>
     public event Action<bool> InputFocusChanged;
 
-    /// <summary>聊天发送事件。</summary>
+    /// <summary>提交频道名称和消息正文的事件，由控制器校验并发送。</summary>
     public event Action<string, string> SendRequested;
 
     /// <summary>注册输入框焦点监听。</summary>
@@ -43,7 +43,7 @@ public class ChatWindow : WindowBase
         }
     }
 
-    /// <summary>通知控制器聊天输入获得焦点。</summary>
+    /// <summary>通知控制器聊天输入获得焦点；value 是输入框文本，此处不使用。</summary>
     private void OnInputSelected(string value)
     {
         if (InputFocusChanged != null)
@@ -52,7 +52,7 @@ public class ChatWindow : WindowBase
         }
     }
 
-    /// <summary>通知控制器聊天输入失去焦点。</summary>
+    /// <summary>通知控制器聊天输入失去焦点；value 是输入框文本，此处不使用。</summary>
     private void OnInputDeselected(string value)
     {
         if (InputFocusChanged != null)
@@ -64,10 +64,13 @@ public class ChatWindow : WindowBase
     /// <summary>Inspector 绑定入口：提交当前频道和消息文本。</summary>
     public void OnSendBrnClicked()
     {
+        // 下拉选项显示文字作为频道名称，选项无效时保持空。
         string channel = string.Empty;
+        // 本次点击发送时取出的正文，取出后立即清空输入框。
         string message = string.Empty;
         if (_dropdown != null && _dropdown.value >= 0 && _dropdown.value < _dropdown.options.Count)
         {
+            // 当前选中的频道项，不是协议中的频道编号。
             TMP_Dropdown.OptionData option = _dropdown.options[_dropdown.value];
             if (option != null)
             {
@@ -86,7 +89,7 @@ public class ChatWindow : WindowBase
         }
     }
 
-    /// <summary>生成并显示一条聊天消息。</summary>
+    /// <summary>异步生成一个消息条目，显示 channel 频道、nickname 发言人和 message 正文。</summary>
     public void AppendMessage(string channel, string nickname, string message)
     {
         ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/ChatItemWidget", itemObject =>
@@ -96,6 +99,7 @@ public class ChatWindow : WindowBase
                 return;
             }
             itemObject.transform.SetParent(_content, false);
+            // 已加载条目的展示组件，内容由本次方法参数固定。
             ChatItemWidget widget = itemObject.GetComponent<ChatItemWidget>();
             if (widget != null)
             {

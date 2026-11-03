@@ -11,7 +11,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 // The original script GUID stays on SkillEditorWindow.cs.
-/// <summary>按帧制作技能的原 Y 窗口分部；完整编辑能力与本游戏导出支持范围独立，预览使用隔离副本。</summary>
+/// <summary>处理时间轴的鼠标和快捷键操作，包括选中、拖动、添加、删除，以及带资源引用的复制粘贴。</summary>
 public partial class SkillEditorWindow
 {
     #region 剪贴板（Clip 复制粘贴，static 支持跨 Config 文件）

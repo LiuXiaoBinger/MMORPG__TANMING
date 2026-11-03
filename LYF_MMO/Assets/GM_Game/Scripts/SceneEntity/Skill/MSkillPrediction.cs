@@ -1,11 +1,14 @@
-/// <summary>单次客户端预表现等待服务器确认的数据，动画结束后仍按 UUID 保留至确认或超时。</summary>
+/// <summary>
+/// 记录一次客户端先行播放的施法，以及等待服务器确认的截止时间。
+/// 技能动画结束不等于确认完成，因此记录可以继续保留到确认或超时。
+/// </summary>
 public sealed class MSkillPrediction
 {
     /// <summary>本次施法请求与服务器通知共用的非零 UUID。</summary>
     public ulong SkillUuid { get; private set; }
     /// <summary>本次预测前的单技能冷却截止时间，单位为本机不缩放秒数。</summary>
     public float PreviousCooldownEnd { get; private set; }
-    /// <summary>本次动作时长加 RO 两秒宽限后的确认截止时刻，单位为本机不缩放秒数。</summary>
+    /// <summary>等待服务器确认的截止时刻，使用 Time.realtimeSinceStartup 的秒数；由创建者计算。</summary>
     public float DeadlineRealtime { get; private set; }
 
     /// <summary>创建空预测记录，正式 UUID 在借出后由 Initialize 写入。</summary>

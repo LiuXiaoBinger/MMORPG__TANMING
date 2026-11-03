@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Ethan.ActionEditor;
 
-/// <summary>把原 Y 音效事件、动画窗口与前向程序位移段转换为本游戏正式表现；不接管角色移动或权威结算。</summary>
+/// <summary>把编辑器中的声音、动画播放区间和向前位移转换成游戏可读取的表现数据，并核对导出结果。</summary>
 public static class SkillEditorAudioMotionTools
 {
     /// <summary>读取固定音量单次完整声音；触发帧按作者 FPS 换秒，与编辑器现有预览语义一致。</summary>

@@ -1,7 +1,6 @@
 /// <summary>
-/// 受击动作状态组件。
-/// 实体受到伤害时播放受击动画。
-/// 监听受伤事件切入受击状态，受击动画播放完毕后自动回到默认状态。
+/// 收到 DamageReceived 时申请进入受击状态，并使用 BeHit 动画。
+/// 本类没有动画结束计时，也没有自行返回默认状态的逻辑。
 /// </summary>
 public sealed class MBeHitComponent : MBasicActionComponent
 {
@@ -21,11 +20,13 @@ public sealed class MBeHitComponent : MBasicActionComponent
         RegisterActionEvent(MEventType.DamageReceived);
     }
 
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

@@ -1,8 +1,7 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 佣兵 Builder，对应 MercenaryBuilder 的怪物公共装配和召唤组件。
-/// 佣兵使用完整的怪物组件集合并额外添加佣兵和召唤物标记。
+/// 创建或复用佣兵，装配怪物共用组件，再添加佣兵和召唤物标记。
 /// </summary>
 public sealed class MercenaryEntityBuilder : MonsterEntityBuilder
 {
@@ -20,11 +19,11 @@ public sealed class MercenaryEntityBuilder : MonsterEntityBuilder
             {
                 return new MercenaryEntity(id, config);
             });
-        // 挂载怪物完整组件集合（含仇恨、AI、导航等）
+        // 装配怪物数据及仇恨、AI、导航等类别标记
         AttachMonsterComponents(entity);
         // 佣兵专属标记
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Mercenary));
-        // 召唤物标记：佣兵由玩家召唤产生
+        // 登记召唤物类别；召唤者信息不在此设置
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Summon));
         return entity;
     }

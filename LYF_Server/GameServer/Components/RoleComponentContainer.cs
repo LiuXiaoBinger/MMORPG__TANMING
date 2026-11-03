@@ -4,12 +4,14 @@ using System.Collections.Generic;
 /// <summary>按注册顺序管理角色组件生命周期和持久化。</summary>
 public sealed class RoleComponentContainer
 {
+    /// <summary>用注册时的具体 C# 类型定位组件，不会自动按基类匹配。</summary>
     private readonly Dictionary<Type, RoleComponentBase> _components = new Dictionary<Type, RoleComponentBase>();
 
+    /// <summary>保留注册顺序，初始化和更新正序执行，释放反序执行。</summary>
     private readonly List<RoleComponentBase> _orderedComponents = new List<RoleComponentBase>();
 
     #region 构造与初始化
-    /// <summary>创建角色组件容器并绑定角色。</summary>
+    /// <summary>建立组件容器并确认角色参数非空；角色引用由各组件自己持有，容器不保存 owner。</summary>
     public RoleComponentContainer(OnlineRole owner)
     {
         if (owner == null) throw new ArgumentNullException("owner");
@@ -41,11 +43,11 @@ public sealed class RoleComponentContainer
     }
     #endregion
 
-    /// <summary>ACK 后统一通知组件清理已确认版本。</summary>
+    /// <summary>收到中心服保存成功确认后，依注册顺序通知组件处理该版本。</summary>
     public void OnSaveAcknowledged(long version) { for (int i = 0; i < _orderedComponents.Count; i++) { RoleComponentBase value = _orderedComponents[i]; Invoke(value, "OnSaveAcknowledged", delegate { value.OnSaveAcknowledged(version); }); } }
 
     #region 查询与判定
-    /// <summary>获取已注册组件。</summary>
+    /// <summary>按注册时的具体类型取得组件；不存在时抛异常。</summary>
     public T GetComponent<T>() where T : RoleComponentBase
     {
         RoleComponentBase value;
@@ -53,7 +55,7 @@ public sealed class RoleComponentContainer
         return (T)value;
     }
 
-    /// <summary>尝试获取已注册组件。</summary>
+    /// <summary>尝试按注册时的具体类型取得组件；不存在时抛异常。</summary>
     public bool TryGetComponent<T>(out T component) where T : RoleComponentBase
     {
         RoleComponentBase value;
@@ -66,6 +68,7 @@ public sealed class RoleComponentContainer
     /// <summary>统一收集全部组件脏数据。</summary>
     public bool Save(RoleDataFieldManager fields, long version)
     {
+        // 只要任意组件把数据加入请求，就把本次收集结果记为 true。
         bool saved = false;
         for (int i = 0; i < _orderedComponents.Count; i++)
         {
@@ -81,6 +84,7 @@ public sealed class RoleComponentContainer
     public void SetComponent<T>(T component) where T : RoleComponentBase
     {
         if (component == null) throw new ArgumentNullException("component");
+        // 以泛型参数声明的类型作为键，与 GetComponent 的查找方式一致。
         Type type = typeof(T);
         if (_components.ContainsKey(type)) throw new InvalidOperationException("角色组件重复注册: " + type.Name);
         _components.Add(type, component);

@@ -2,10 +2,9 @@ using cfg;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 角色跳跃表现组件。
-/// 组件只负责读取 PresentTable 的三段跳动画并驱动动画器，
-/// 一段、二段和三段跳统一复用 JumpStart、JumpLoop、JumpEnd 三个状态槽。
-/// 跳跃位移和重力仍由移动组件负责，本组件不修改实体坐标。
+/// 负责跳跃的动画表现：起跳、空中循环、落地三个阶段。
+/// 每次追加跳跃都重新播放起跳动画；技能接管时让出动画，落地继续移动时直接恢复走跑。
+/// 位置、重力和跳跃次数由 MMoveComponent 处理，本组件只选择动画和声音。
 /// </summary>
 public sealed class MJumpComponent : EntityComponentBase
 {
@@ -41,10 +40,10 @@ public sealed class MJumpComponent : EntityComponentBase
     /// <summary>本轮实体生命周期是否已经记录动画配置缺失日志。</summary>
     private bool _hasLoggedPrepareFailure;
 
-    /// <summary>跳跃开始事件处理器，由移动组件的 IsJump 状态变化触发。</summary>
+    /// <summary>跳跃开始事件处理器，由移动组件派发；追加二段、三段跳时也会再次触发。</summary>
     private readonly MEventHandler _onJumpStarted;
 
-    /// <summary>跳跃结束事件处理器，由移动组件的 IsJump 状态变化触发。</summary>
+    /// <summary>跳跃结束事件处理器，由移动组件派发；追加二段、三段跳时也会再次触发。</summary>
     private readonly MEventHandler _onJumpEnded;
     #endregion
 
@@ -253,7 +252,7 @@ public sealed class MJumpComponent : EntityComponentBase
     #endregion
 
     #region 查询与判定
-    /// <summary>读取表现表并登记跳跃三阶段动画，三段跳不重复读取或创建动画。</summary>
+    /// <summary>读取表现表并登记跳跃三阶段动画，多次起跳共用同一组三阶段动画。</summary>
     private void TryPrepareJumpAnimations()
     {
         // 实体缺失或非角色对象时不登记跳跃动画。

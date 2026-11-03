@@ -1,6 +1,6 @@
 /// <summary>
-/// 角色商店记录组件，管理角色商店模块的购买状态与折扣结算逻辑。
-/// 本组件自身无独立落地数据：购买次数、折扣额度等计数统一由 RoleCountManager 管理，
+/// 角色商店次数入口，查询商品剩余可购数量，并把购买次数交给次数组件累计。
+/// 本组件自身无独立存档字段：购买次数统一由 RoleCountComponent 管理，
 /// 因此持久化相关虚函数均为空实现，仅返回模块编号参与角色保存链路。
 /// </summary>
 public class RoleShopRecord : RoleComponentBase
@@ -32,10 +32,14 @@ public class RoleShopRecord : RoleComponentBase
         return RoleModuleType.kRoleModuleTypeShop;
     }
 
-    // 查询购买次数
+    /// <summary>用配置限购数量减去已购买数量；不限购返回 -1，已超限返回零。</summary>
+    /// <param name="goodsId">商品配置编号，也是购买次数的业务键。</param>
+    /// <param name="configPurchaseCondition">限购周期和限购份数。</param>
     public long GetBuyLeftTimes(int goodsId, ShopItemPurchaseCondition configPurchaseCondition)
     {
+        // 此商品配置允许购买的总份数。
         long table_buy_count = (int)configPurchaseCondition.Limit;
+        // 次数组件当前记录的已购份数，按配置周期刷新。
         long already_buy_count = 0;
 
         switch ((PurchaseLimitType)configPurchaseCondition.Action)
@@ -62,9 +66,7 @@ public class RoleShopRecord : RoleComponentBase
     #endregion
 
     #region 数据读写
-    /// <summary>无持久化数据，保存版本恒为 0。</summary>
-
-    /// <summary>无数据可写入角色保存请求。</summary>
+        /// <summary>无数据可写入角色保存请求。</summary>
     public override bool Save(RoleDataFieldManager fieldManager, long saveVersion)
     {
         return true;
@@ -78,7 +80,9 @@ public class RoleShopRecord : RoleComponentBase
     /// <summary>商店记录无独立落地数据，无需保存。</summary>
     public override bool NeedSave() { return false; }
 
-    // 消耗购买次数
+    /// <summary>累计该商品已购买份数，实际保存与同步由角色次数组件负责。</summary>
+    /// <param name="goodsId">商品配置编号。</param>
+    /// <param name="count">本次购买的份数。</param>
     public void UseBuyTimes(int goodsId, uint count)
     {
         Owner.GetComponent<RoleCountComponent>().

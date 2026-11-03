@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>项目级编辑偏好；默认资源目录与旧配置兜底帧率保存在 ProjectSettings。</summary>
+    /// <summary>保存项目共用的编辑器设置：新资产存放目录，以及旧技能没有帧率信息时使用的默认帧率。</summary>
     [FilePath("ProjectSettings/ActionEditorSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     internal sealed class ActionEditorSettings : ScriptableSingleton<ActionEditorSettings>
     {

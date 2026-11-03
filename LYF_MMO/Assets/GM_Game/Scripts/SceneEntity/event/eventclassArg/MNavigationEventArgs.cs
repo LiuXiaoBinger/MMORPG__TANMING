@@ -1,6 +1,9 @@
 using UnityEngine;
 
-/// <summary>沿RO名称描述点地或目标导航，技能到达动作使用强类型载荷。</summary>
+/// <summary>
+/// 描述一次导航请求：目的点、可选目标、到达距离，以及到达后要释放的技能。
+/// 导航跨帧执行时复制本参数；技能子参数也复制，回收导航参数时一并归还。
+/// </summary>
 public sealed class MNavigationEventArgs : IEventArg
 {
     /// <summary>世界空间目的点，单位米；NeedTarget为true时改用目标当前位置。</summary>
@@ -25,7 +28,7 @@ public sealed class MNavigationEventArgs : IEventArg
     /// <summary>事件池创建空导航指令，具体数据由Create设置。</summary>
     public MNavigationEventArgs() { }
 
-    /// <summary>沿原技能入口借出指令，现有无目标技能在自己的释放点立即到达。</summary>
+    /// <summary>为技能输入创建导航请求，先把技能释放点作为目的点。</summary>
     /// <param name="navAction">本次技能输入；事件接管其回收责任。</param>
     /// <returns>同步派发结束后由实体回收的导航事件。</returns>
     public static MNavigationEventArgs Create(MSkillEventArgs navAction)
@@ -37,7 +40,7 @@ public sealed class MNavigationEventArgs : IEventArg
         return args;
     }
 
-    /// <summary>借出普通点地导航指令，距离范围和目标可按RO字段显式填写。</summary>
+    /// <summary>为点地移动创建导航请求，调用方可继续填写目标与到达距离。</summary>
     /// <param name="pos">世界空间点击或导航目的点，单位米。</param>
     /// <returns>由实体派发器在同步处理结束后回收的导航事件。</returns>
     public static MNavigationEventArgs Create(Vector3 pos)
@@ -52,7 +55,7 @@ public sealed class MNavigationEventArgs : IEventArg
     /// <returns>由持有者独立回收的完整指令。</returns>
     public IEventArg Clone()
     {
-        // 本次复制件保持原实体引用，技能参数另租独立事件。
+        // 复制后的 Target 仍指向同一实体；NavAction 则使用独立的参数池实例。
         MNavigationEventArgs clone = Create(Pos);
         clone.NeedTarget = NeedTarget;
         clone.Target = Target;

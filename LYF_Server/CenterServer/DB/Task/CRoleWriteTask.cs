@@ -5,10 +5,10 @@ using Google.Protobuf;
 using SqlSugar;
 
 /// <summary>
-/// CenterServer 角色物品数据库写任务，对齐参考项目 CRoleWriteTask。
+/// CenterServer 的角色存档任务，把游戏服提交的背包和次数变化写入数据库。
 /// 任务在 CenterServer 主循环的单消费者队列中执行，负责将 GameServer 提交的角色物品快照
-/// 以事务方式写入 MySQL（物品表、装备表、装备词条表），并更新角色保存版本。
-/// 事务提交成功后才向 GameServer 返回 ACK；版本冲突或过期请求不会覆盖数据库权威数据。
+/// 以事务方式写入 MySQL（物品、装备、装备词条及可选的次数表），并更新角色保存版本。
+/// 事务提交成功后才向 GameServer 返回保存确认；版本冲突或过期请求不会覆盖较新存档。
 /// </summary>
 public sealed class CRoleWriteTask
 {
@@ -63,7 +63,9 @@ public sealed class CRoleWriteTask
     /// <param name="itemDataLists">请求携带的各背包物品快照列表。</param>
     private void SaveItemDataLists(SqlSugarClient db, IEnumerable<ItemDataList> itemDataLists)
     {
+        // 固定本次保存的背包列表，每个列表都是该分类的完整物品集合。
         List<ItemDataList> dataLists = itemDataLists.ToList();
+        // 仅替换请求涉及的分类，其他背包原有记录保持不动。
         List<int> bagTypes = dataLists.Select(v => v.BagType).ToList();
 
         // 查询本次涉及背包类型中已有的旧物品 UID，用于级联删除装备和词条。
@@ -95,8 +97,11 @@ public sealed class CRoleWriteTask
 
         // 写新阶段：将协议快照转换为三张表的实体列表，统一批量插入。
         DateTime now = DateTime.Now;
+        // 将要批量插入的物品主记录。
         List<ItemTable> items = new List<ItemTable>();
+        // 有装备扩展的物品才进入这份待写列表。
         List<EquipTable> equips = new List<EquipTable>();
+        // 有词条扩展的物品才进入这份待写列表。
         List<EquipXLGeneTable> genes = new List<EquipXLGeneTable>();
         foreach (RoleItemInfo item in dataLists.SelectMany(v => v.Items))
         {
@@ -237,7 +242,7 @@ public sealed class CRoleWriteTask
             // 版本分支一：请求版本等于数据库版本，可能是幂等重试，也可能是版本碰撞的内容冲突。
             if (role.ItemSaveVersion == _request.Version)
             {
-                // 同版本只有在快照内容完全一致时才是幂等重试；版本冲突必须拒绝覆盖。
+                // 同版本要通过下方字段比较才当作重复保存；物品创建和到期时间、次数刷新时间不参与本次比较。
                 if (!SnapshotMatches(db, _request.ItemDataLists) ||
                     (_request.RoleCountSnapshot && !RoleCountSnapshotMatches(db, _request.RoleCountInfoList)))
                 {
@@ -310,7 +315,7 @@ public sealed class CRoleWriteTask
 
     /// <summary>
     /// 校验保存请求的参数合法性，包括角色 ID、版本号、背包类型去重、物品字段合法性、
-    /// 物品 UID 全局去重，以及装备扩展数据与物品实例的一致性。
+    /// 本次请求内的物品 UID 去重，以及装备扩展数据与物品实例的一致性。
     /// 校验不通过时抛出 InvalidOperationException，由 Execute 捕获并回滚。
     /// </summary>
     private void ValidateRequest()
@@ -350,7 +355,7 @@ public sealed class CRoleWriteTask
             foreach (RoleItemInfo item in itemDataList.Items)
             {
                 // 物品字段校验：UID/类型 ID/数量合法、角色 ID 匹配、背包类型与所属列表一致、
-                // 格子索引非负、UID 全局唯一。
+                // 格子索引非负、UID 在本次请求内唯一。
                 // 物品对象缺失或 UID、类型 ID 不合法时判为非法。
                 if (item == null || item.ItemUid <= 0 || item.ItemTypeId <= 0)
                 {
@@ -361,7 +366,7 @@ public sealed class CRoleWriteTask
                 {
                     throw new InvalidOperationException("物品快照包含非法或重复数据");
                 }
-                // 格子索引非负，且 UID 全局唯一（Add 仅在前面校验全部通过后执行）。
+                // 格子索引非负，且 UID 在本次请求内唯一（Add 仅在前面校验全部通过后执行）。
                 if (item.BagIndex < 0 || !itemUids.Add(item.ItemUid))
                 {
                     throw new InvalidOperationException("物品快照包含非法或重复数据");
@@ -384,7 +389,7 @@ public sealed class CRoleWriteTask
 
     }
 
-    /// <summary>比较同版本角色次数快照，空列表代表清空。</summary>
+    /// <summary>比较同版本次数记录的条数、行为、键和数值；空列表代表清空，刷新时间不参与比较。</summary>
     private bool RoleCountSnapshotMatches(SqlSugarClient db, IEnumerable<RoleCountInfo> counts)
     {
         List<RoleCountTable> stored = db.Queryable<RoleCountTable>().Where(v => v.RoleId == _request.RoleId).ToList();
@@ -404,12 +409,12 @@ public sealed class CRoleWriteTask
 
     /// <summary>
     /// 比较数据库当前快照与同版本请求，确保重复保存不会因版本碰撞误报成功。
-    /// 比对范围：物品主表的全部业务字段、装备表的装备类型和强化等级、
-    /// 装备词条表的三个词条 ID 和数值；任一字段不一致即返回 false。
+    /// 比对范围：物品类型、所属背包、格子、数量、绑定、货币和总价，以及装备类型和强化等级；
+    /// 另外比较三个词条 ID 和数值；不比较物品创建时间和到期时间。
     /// </summary>
     /// <param name="db">SqlSugar 数据库客户端。</param>
     /// <param name="itemDataLists">请求携带的物品快照。</param>
-    /// <returns>数据库内容与请求完全一致返回 true；数量或任一字段不一致返回 false。</returns>
+    /// <returns>本方法列出的比较字段均一致时返回 true；数量或被比较字段不同返回 false。</returns>
     private bool SnapshotMatches(SqlSugarClient db, IEnumerable<ItemDataList> itemDataLists)
     {
         List<ItemDataList> lists = itemDataLists.ToList();

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 场景实体组件池。普通组件按实际类型进入池并挂接到 Components；
-/// Move/Buff/Skill/Machine 由实体快捷属性独占，单独创建、更新和回收。
-/// 同时维护动作状态专用池，供状态机获取/回收各动作状态组件。
+/// 统一借出和归还场景实体组件，按实际 C# 类型分池。
+/// 普通组件放入实体容器；移动、Buff 和状态机由实体单独持有。
+/// 技能组件同时是动作状态，交由状态机回收到动作状态池，避免重复回收。
 /// </summary>
 public sealed class MComponentMgr
 {
@@ -22,7 +22,7 @@ public sealed class MComponentMgr
     private readonly Dictionary<Type, Queue<MActionComponent>> _actionStatePool =
         new Dictionary<Type, Queue<MActionComponent>>();
 
-    /// <summary>按实体类型登记的附加组件类型表，由 Builder/注册流程配置，创建实体时批量追加。</summary>
+    /// <summary>按实体类型登记的附加组件类型表，由 Builder/注册流程配置，保存后供需要它的注册流程查询；本类当前没有批量装配这些记录的调用。</summary>
     private readonly Dictionary<EntityType, List<Type>> _extraComponentTypes =
         new Dictionary<EntityType, List<Type>>();
 
@@ -50,6 +50,7 @@ public sealed class MComponentMgr
     /// <param name="componentTypes">要追加的组件类型数组，自动去重并校验是否继承 <see cref="EntityComponentBase"/>。</param>
     public void RegisterExtraComponents(EntityType entityType, params Type[] componentTypes)
     {
+        // 这个实体类别已经登记的附加组件类型。
         List<Type> types;
         if (!_extraComponentTypes.TryGetValue(entityType, out types))
         {
@@ -62,6 +63,7 @@ public sealed class MComponentMgr
         }
         for (int index = 0; index < componentTypes.Length; index++)
         {
+            // 本次准备登记的组件 C# 类型。
             Type type = componentTypes[index];
             if (type != null && typeof(EntityComponentBase).IsAssignableFrom(type) &&
                 !types.Contains(type))
@@ -135,6 +137,7 @@ public sealed class MComponentMgr
             return null;
         }
 
+        // 从对应类型的池中取得的组件，随后由 AddComponent 绑定宿主。
         EntityComponentBase component = TakeComponent(owner, componentType);
         if (component == null)
         {
@@ -154,6 +157,7 @@ public sealed class MComponentMgr
         }
         if (entity.MoveComp == null)
         {
+            // 实体专用的移动组件，不加入普通组件列表。
             MMoveComponent move = TakeComponent(entity, typeof(MMoveComponent)) as MMoveComponent;
             if (move != null)
             {
@@ -164,6 +168,7 @@ public sealed class MComponentMgr
         }
         if (entity.Buff == null)
         {
+            // 实体专用的 Buff 记录组件。
             MBuffComponent buff = TakeComponent(entity, typeof(MBuffComponent)) as MBuffComponent;
             if (buff != null)
             {
@@ -182,6 +187,7 @@ public sealed class MComponentMgr
         }
         if (entity.Machine == null)
         {
+            // 状态机负责持有和驱动动作状态。
             MStateMachine machine = TakeComponent(entity, typeof(MStateMachine)) as MStateMachine;
             if (machine != null)
             {
@@ -191,7 +197,7 @@ public sealed class MComponentMgr
         }
         if (entity.AttrComp == null)
         {
-            // 属性组件
+            // 兼容路径：实体没有属性快捷引用时，补借属性组件并设置引用。
             EntityAttributesComponent AttCom = TakeComponent(entity, typeof(EntityAttributesComponent)) as EntityAttributesComponent;
             if (AttCom != null)
             {
@@ -210,8 +216,11 @@ public sealed class MComponentMgr
         {
             return;
         }
+        // 先保存原引用，因为状态机与组件解绑会清空实体上的快捷属性。
         MMoveComponent move = entity.MoveComp;
+        // 随后单独归还的 Buff 组件。
         MBuffComponent buff = entity.Buff;
+        // 先归还状态机，由它统一归还 Skill 等动作状态。
         MStateMachine machine = entity.Machine;
         // 状态机拥有 Skill 动作状态的唯一回收权，Skill 不得再进入普通组件池。
         ReleaseComponent(machine, true);
@@ -241,7 +250,9 @@ public sealed class MComponentMgr
         // 先调用 Shutdown 释放业务资源，再重置对象池状态
         state.Shutdown();
         state.ResetForPool();
+        // 按具体动作类型归还，避免不同状态互相复用。
         Type stateType = state.GetType();
+        // 当前动作状态 C# 类型的空闲实例队列。
         Queue<MActionComponent> queue;
         if (!_actionStatePool.TryGetValue(stateType, out queue))
         {
@@ -276,7 +287,9 @@ public sealed class MComponentMgr
             return;
         }
 
+        // 按具体组件类型归还，不按共享的 ComponentType 标记混池。
         Type componentType = component.GetType();
+        // 当前 C# 组件类型的空闲实例队列。
         Queue<EntityComponentBase> queue;
         if (!_componentPool.TryGetValue(componentType, out queue))
         {
@@ -312,7 +325,9 @@ public sealed class MComponentMgr
         {
             return null;
         }
+        // 当前动作状态 C# 类型的空闲实例队列。
         Queue<MActionComponent> queue;
+        // 本次借出的状态，池未命中时通过带宿主参数的构造函数创建。
         MActionComponent state = null;
         // 优先从对象池取出，没有可用实例再反射新建
         if (_actionStatePool.TryGetValue(stateType, out queue) && queue.Count > 0)
@@ -343,7 +358,9 @@ public sealed class MComponentMgr
     /// <returns>可用组件实例，创建失败返回 null。</returns>
     private EntityComponentBase TakeComponent(ROObject owner, Type componentType)
     {
+        // 当前 C# 组件类型的空闲实例队列。
         Queue<EntityComponentBase> queue;
+        // 本次借出的普通组件；这里暂不绑定宿主。
         EntityComponentBase component = null;
         // 优先复用池内组件
         if (_componentPool.TryGetValue(componentType, out queue) && queue.Count > 0)

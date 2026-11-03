@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-/// <summary>沿RO管理器入口读取当前地图公共三角网，并在Unity与纯C#查询间转换坐标。</summary>
+/// <summary>加载当前场景的导航三角网，对外提供路线、贴地位置和地形射线查询，并转换 Unity 与公共坐标类型。</summary>
 public sealed class MNavigationMgr
 {
     /// <summary>管理器仅由同名单例持有，不新建场景对象或独立更新循环。</summary>
@@ -11,7 +11,7 @@ public sealed class MNavigationMgr
     /// <summary>当前进程唯一的地图查询入口，切换地图时替换查询实例。</summary>
     public static readonly MNavigationMgr singleton = new MNavigationMgr();
 
-    /// <summary>沿RO路径查询使用的最近面搜索半盒，XYZ分别为4、8、4米。</summary>
+    /// <summary>查找最近导航面时，允许位置在 X、Y、Z 轴上分别偏移 4、8、4 米。</summary>
     private readonly MNavigationPoint _halfExtents = new MNavigationPoint(4f, 8f, 4f);
 
     /// <summary>纯C#查询返回的临时路点，主线程同步查询期间复用。</summary>
@@ -89,7 +89,7 @@ public sealed class MNavigationMgr
     /// <returns>射线命中地图Geometry层时为true。</returns>
     public bool TryRaycastTerrain(Vector3 start_pos, Vector3 end_pos, out Vector3 res)
     {
-        // 本次有限射线的方向与总长度，沿RO点击距离最多1000米。
+        // 本次射线从 start_pos 指向 end_pos，检测长度就是两点距离。
         Vector3 direction = end_pos - start_pos;
         // Geometry层承载主城地形、道路和建筑，排除角色及UI碰撞体。
         int terrainMask = LayerMask.GetMask("Geometry");

@@ -1,7 +1,11 @@
 using UnityEngine;
 using MMoRpgCommon.SceneEntity;
 
-/// <summary>实体普通程序位移组件；容器在移动提交前计算水平差量，由 MMoveComponent 合并重力和碰撞。</summary>
+/// <summary>
+/// 按技能位移曲线计算本帧应增加的水平位移，先累计在组件中。
+/// MMoveComponent 随后取走这份增量，与输入和重力合并后一次提交碰撞移动。
+/// 技能结束、模型更换或撞墙时清理未提交的位移，不补跳到原计划终点。
+/// </summary>
 public sealed class MDisplacementComponent : EntityComponentBase
 {
 
@@ -12,7 +16,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
     /// <summary>当前持有的原施法 UUID，停止请求必须匹配。</summary>
     private ulong _skillUuid;
 
-    /// <summary>开始时冻结的施法代次，不能用 Reset 后的新代次替代。</summary>
+    /// <summary>开始时保存的技能复用次数，用来识别后来属于同一对象的新施法。</summary>
     private ulong _fireGeneration;
 
     /// <summary>正在推进的原位移数据，段完成后置空但保留待提交差量。</summary>
@@ -33,10 +37,10 @@ public sealed class MDisplacementComponent : EntityComponentBase
     /// <summary>本段已计算的横向累计距离，单位米，可选横向曲线存在时生效。</summary>
     private float _appliedDistanceX;
 
-    /// <summary>等待本帧移动合并的一次水平世界差量，单位米，多个同 tick 段可累计。</summary>
+    /// <summary>等待移动组件取走的水平世界位移，单位米；同一次更新到期的多段可以累计。</summary>
     private Vector3 _translation;
 
-    /// <summary>是否已经取得可用模型并设置运动基线；冷模型首次到达不追补历史位移。</summary>
+    /// <summary>是否已取得可用模型并记下当前曲线位置；模型刚加载时不补走此前错过的位移。</summary>
     private bool _started;
 
     /// <summary>实际产生本段基线的原生模型对象，同模型同步换 GO 时也必须丢弃旧差量。</summary>
@@ -60,8 +64,8 @@ public sealed class MDisplacementComponent : EntityComponentBase
         Update(deltaMilliseconds * 0.001f);
     }
 
-    /// <summary>从唯一全局计时器计算累计曲线差量，暂停或同 clock 重复更新不会重复积分。</summary>
-    /// <param name="fDeltaT">保留 RO Update 秒接口；进度以标称绝对时钟计算，不再叠加该帧秒数。</param>
+    /// <summary>按全局计时器计算当前累计距离，再减去上次距离，得到本次新增位移。</summary>
+    /// <param name="fDeltaT">保留的帧间隔参数；本方法用全局计时器计算进度，不直接累加此值。</param>
     public override void Update(float fDeltaT)
     {
         // 暂停或宿主失效时停止本段位移；保持原 || 短路顺序逐组早退。
@@ -189,8 +193,8 @@ public sealed class MDisplacementComponent : EntityComponentBase
     }
 
     #region 核心逻辑
-    /// <summary>沿 RO 开始入口接管一条已经到期的指令，同 owner 多段先完成前段差量再切换。</summary>
-    /// <param name="args">计时回调冻结的技能身份、原点、方向及冷登记基线。</param>
+    /// <summary>开始一段到期的技能位移；同一施法有连续多段时，先结算上一段再接管新段。</summary>
+    /// <param name="args">计时回调保存的施法身份、开始时刻、方向及资源就绪时已经过去的时间。</param>
     /// <returns>身份仍占用当前动作槽且数据有效时返回 true。</returns>
     public bool onStart(MDisplacementEventArgs args)
     {
@@ -258,7 +262,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
         return true;
     }
 
-    /// <summary>沿 RO 停止入口取消原施法，动作自然离槽与打断都丢弃未提交差量，保留碰撞安全。</summary>
+    /// <summary>停止指定施法的位移，丢弃还未提交的增量，不直接改变实体位置。</summary>
     /// <param name="args">开始运动时保存的身份；旧 UUID 或旧代次停止请求无副作用。</param>
     public void onStop(MDisplacementStopEventArgs args)
     {
@@ -271,7 +275,7 @@ public sealed class MDisplacementComponent : EntityComponentBase
         }
     }
 
-    /// <summary>冷配置或模型迟到时仅建立当前累计基线，已经结束的窗口直接跳过。</summary>
+    /// <summary>资源或模型较晚就绪时，记下曲线此刻已走到的距离；已经结束的段直接跳过。</summary>
     /// <param name="elapsedSeconds">段内已经经过的非负秒数。</param>
     private void SetLateBaseline(float elapsedSeconds)
     {

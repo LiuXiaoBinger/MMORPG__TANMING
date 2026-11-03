@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 角色当前信息窗口，只负责角色状态和技能快捷栏显示。
+/// 主城常驻的角色状态和技能快捷栏：显示 HP、MP、真气、气力、满怒外观及当前选择目标。
+/// 技能槽按固定按键异步创建；新快照只在技能内容变化时重绑图标，单纯冷却变化只刷新倒计时。
+/// 瞄准按钮只通知控制器切换目标，本窗口不施法、不结算角色资源。
 /// </summary>
 public class RoleCurrInfoWindow : WindowBase
 {
@@ -17,7 +19,7 @@ public class RoleCurrInfoWindow : WindowBase
     /// <summary>当前窗口生命周期内创建的瞄准按钮，重复初始化时复用。</summary>
     private Button _aimButton;
 
-    /// <summary>当前目标的中文文字提示，空目标显示未选中。</summary>
+    /// <summary>当前目标文字：角色显示昵称，其他实体显示“怪物”加配置编号，空目标显示未选中。</summary>
     private TMP_Text _targetText;
 
     /// <summary>角色生命值进度条。</summary>
@@ -46,7 +48,7 @@ public class RoleCurrInfoWindow : WindowBase
     private readonly Dictionary<string, SkillViewData> _slotBindings =
         new Dictionary<string, SkillViewData>();
 
-    /// <summary>等待技能槽创建完成后应用的最新技能快照。</summary>
+    /// <summary>最近收到的技能展示列表引用；槽位异步创建完成后也用它刷新，窗口不自行复制列表。</summary>
     private List<SkillViewData> _pendingSkills;
 
     /// <summary>技能槽预制体是否正在异步加载。</summary>
@@ -250,7 +252,8 @@ public class RoleCurrInfoWindow : WindowBase
             bool bindingChanged = false;
             if (!bindingMissing)
             {
-                bool skillIdChanged = previous.SkillId != skill.SkillId;
+                // 技能身份是否更换；下方同时比较等级与图标路径。
+            bool skillIdChanged = previous.SkillId != skill.SkillId;
                 bool levelChanged = previous.Level != skill.Level;
                 bool iconChanged = previous.IconPath != skill.IconPath;
                 bindingChanged = skillIdChanged || levelChanged || iconChanged;
@@ -408,9 +411,10 @@ public class RoleCurrInfoWindow : WindowBase
         UpdateTarget(target);
     }
 
-    /// <summary>播放指定快捷键对应技能槽的冷却表现。</summary>
+    /// <summary>让 key 对应槽位显示 duration 秒的剩余冷却，未创建该键槽位时不处理。</summary>
     public void StartSkillCooldown(string key, float duration)
     {
+        // 已创建的指定快捷槽，沿用该槽当前技能绑定。
         SkillSlotWidget slot;
         if (_slots.TryGetValue(key, out slot) && slot != null)
         {

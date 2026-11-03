@@ -7,15 +7,24 @@ using UnityEngine.UI;
 * Descrpiton: 角色信息窗口 聊天信息窗口 小地图 背包信息窗口 技能信息窗口 ，Npc
 */
 
+/// <summary>持有主城各窗口和常驻快捷栏，提供控制器访问入口，并登记窗口、绑定视图间引用。</summary>
 public class MainView : UIBase
 {
+   /// <summary>主角血蓝、资源弧条、技能快捷栏及当前目标文字区域。</summary>
    [SerializeField,Header("角色当前信息window")] private RoleCurrInfoWindow _roleCurrInfoWindow;
+   /// <summary>技能列表和快捷技能槽窗口，数据由技能控制器提供。</summary>
    [SerializeField,Header("技能信息window")] private SkillInfoWindow _skillInfoWindow;
+   /// <summary>可滚动的背包格子窗口。</summary>
    [SerializeField,Header("背包")] private KnapsackWindow _knapsackWindow;
+   /// <summary>与当前 NPC 交谈的文本窗口。</summary>
    [SerializeField,Header("交谈相关Window")] private TalkWindow _talkWindow;
+   /// <summary>展示当前 NPC 商品的商城窗口。</summary>
    [SerializeField,Header("NPC商城")] private NpcShopWindow _shopWindow;
+   /// <summary>按装备部位显示角色穿戴的窗口。</summary>
    [SerializeField,Header("角色信息window")] private RoleAttriibuteWindow _roleAttriibuteWindow;
+   /// <summary>聊天输入和消息展示窗口，可从子节点补找旧预制体引用。</summary>
    [SerializeField,Header("聊天window")] private ChatWindow _chatWindow;
+   /// <summary>跟踪当前角色与场景辅助点的小地图窗口。</summary>
    [SerializeField,Header("小地图window")] private MinMapWindow _minMapWindow;
 
    /// <summary>设置窗口，只承载RO设置界面与页签切换。</summary>
@@ -60,7 +69,7 @@ public class MainView : UIBase
    /// <summary>左上角始终可见的功能菜单开关，由主控制器接收点击。</summary>
    [SerializeField, Header("功能菜单开关")] private Button _functionMenuButton;
 
-   /// <summary>四个功能入口的容器，收起时整组隐藏且不接收点击。</summary>
+   /// <summary>功能入口按钮组的容器，收起时整组隐藏且不接收点击。</summary>
    [SerializeField, Header("功能菜单内容")] private GameObject _functionMenuContent;
 
    /// <summary>开关内的箭头，收起时朝右提示可向右展开，展开时朝左提示可收回。</summary>
@@ -130,7 +139,7 @@ public class MainView : UIBase
    }
 
    /// <summary>控制入口组显隐及箭头朝向，不改变任何业务窗口。</summary>
-   /// <param name="visible">true展开四个入口，false只保留功能开关。</param>
+   /// <param name="visible">true 展开入口组，false 只保留功能开关。</param>
    public void SetFunctionMenuVisible(bool visible)
    {
       _functionMenuContent.SetActive(visible);
@@ -146,12 +155,19 @@ public class MainView : UIBase
       }
    }
 
+   /// <summary>供控制器刷新角色状态与锁定目标信息。</summary>
    public RoleCurrInfoWindow RoleCurrentWindow => _roleCurrInfoWindow;
+   /// <summary>供控制器刷新技能列表和顶部职业、可用技能点数。</summary>
    public SkillInfoWindow SkillWindow => _skillInfoWindow;
+   /// <summary>供商城控制器绑定商品点击与刷新列表。</summary>
    public NpcShopWindow ShopWindow => _shopWindow;
+   /// <summary>供装备控制器刷新穿戴槽位。</summary>
    public RoleAttriibuteWindow RoleAttributeWindow => _roleAttriibuteWindow;
+   /// <summary>供背包控制器设置容量、分类和物品列表。</summary>
    public KnapsackWindow KnapsackWindow => _knapsackWindow;
+   /// <summary>供交互控制器显示 NPC 文本并绑定商店按钮。</summary>
    public TalkWindow TalkWindow => _talkWindow;
+   /// <summary>取得小地图窗口；未手动绑定时查找包括隐藏节点在内的子组件。</summary>
    public MinMapWindow MinMapWindow
    {
       get
@@ -176,7 +192,7 @@ public class MainView : UIBase
          return _chatWindow;
       }
    }
-   /// <summary>登记主界面已有窗口，并将左上功能入口初始化为收起状态。</summary>
+   /// <summary>登记主城窗口并收起功能菜单；初始化任务、副本和快捷栏，再连接副本选择页与详情页。</summary>
    public override void InitView()
    {
       base.InitView();

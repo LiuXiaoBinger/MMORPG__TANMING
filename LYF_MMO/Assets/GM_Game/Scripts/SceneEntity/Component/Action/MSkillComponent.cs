@@ -3,9 +3,9 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>
-/// 技能动作状态组件。
-/// 既是实体的快捷组件（ComponentType.Skill），也是技能动作状态。
-/// 维护已学效果、预测与权威冷却和单次技能动画表现，数值结算只由服务器执行。
+/// 实体的技能管理组件，同时也是状态机中的技能动作状态。
+/// 已学技能核心保存配置，冷却列表保存倒计时，_skill 表示当前占用动作的施法。
+/// 动作结束后的实例转入 _skills 继续完成特效和声音；服务器结果按施法 UUID 匹配，不重播本地表现。
 /// </summary>
 public sealed class MSkillComponent : MBasicActionComponent
 {
@@ -14,14 +14,14 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>实体当前已学习/可用的技能 ID 集合。</summary>
     private readonly HashSet<int> _learnedSkillIds = new HashSet<int>();
 
-    /// <summary>按技能主表 ID 索引的已学等级配置与单技能 CD。</summary>
+    /// <summary>按技能主表 ID 保存当前已学等级的核心，已绑定核心从本组件读取冷却。</summary>
     private readonly Dictionary<int, MSkillCore> _cores =
         new Dictionary<int, MSkillCore>();
 
-    /// <summary>RO 公共组冷却记录，按索引递减并到期归池，元素与 SkillCDGroupDic 为同一对象。</summary>
+    /// <summary>公共组冷却记录列表；每帧扣减剩余秒数，到期后从列表和字典同时移除再归池。</summary>
     private readonly List<SkillCDGroupInfo> SkillCDGroupList = new List<SkillCDGroupInfo>();
 
-    /// <summary>RO 单技能冷却记录，按索引递减并到期归池，元素与 SkillCDDic 为同一对象。</summary>
+    /// <summary>单技能冷却记录列表，元素与 SkillCDDic 共用同一对象。</summary>
     private readonly List<SkillCDGroupInfo> SkillCDList = new List<SkillCDGroupInfo>();
 
     /// <summary>公共组 ID 到当前冷却记录；与单技能 ID 即使数值相同也独立维护。</summary>
@@ -199,7 +199,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     #endregion
 
     #region 技能装载
-    /// <summary>RO同名装配服务器已学列表，只持有每个技能当前等级；保留原CD及旧施法持有权。</summary>
+    /// <summary>按服务器已学列表装配每个技能的当前等级，删除本轮已失效的核心，保留有效冷却。</summary>
     /// <param name="skills">11080已学技能项或控制器保存的同角色列表，零级项只用于显示。</param>
     public void OnAttachSkill(IList<RoleSkillInfo> skills)
     {
@@ -222,7 +222,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         RetainSkillCores(skillIds);
     }
 
-    /// <summary>RO同名按主表与当前学习等级装配核心，职业沿角色真实基础数据解析。</summary>
+    /// <summary>按技能编号和学习等级装配核心，职业取宿主角色的基础信息。</summary>
     /// <param name="skillId">服务器已学技能的主表ID。</param>
     /// <param name="lv">服务器同步的当前正数技能等级。</param>
     public void AttachSkillInfo(int skillId, int lv)
@@ -263,7 +263,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return _skill != null && _skill.IsActive;
     }
 
-    /// <summary>RO同名获取最近主技能；没有主技能时取独立列表的第一项。</summary>
+    /// <summary>优先返回当前动作技能；没有时返回旧施法列表的第一项，不按时间重新排序。</summary>
     /// <returns>仍存活的主技能或列表首项，没有施法时为空。</returns>
     public MSkill GetLastSkill()
     {
@@ -278,7 +278,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return null;
     }
 
-    /// <summary>RO同名停止全部表现；普通停止保留单技能和组CD，明确清场才清CD。</summary>
+    /// <summary>结束当前和旧施法列表中的全部实例；默认保留冷却，clearCD 为 true 时才清空冷却。</summary>
     /// <param name="clearCD">真表示同时归还所有冷却记录，假表示仅结束表现实例。</param>
     public void StopAllSkill(bool clearCD = false)
     {
@@ -320,7 +320,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     #endregion
 
     #region 技能数据与核心
-    /// <summary>RO同名获取指定等级核心，未装配时先按当前角色职业装配再返回。</summary>
+    /// <summary>先尝试按当前职业装配指定等级的核心，再返回该等级的查询结果。</summary>
     /// <param name="skillId">需要装配的技能主表ID。</param>
     /// <param name="skillLv">调用方提供的当前正数学习等级。</param>
     /// <returns>该等级可由当前职业配置装配时返回核心，否则为空。</returns>
@@ -347,7 +347,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return GetSkill(id, lv) != null;
     }
 
-    /// <summary>RO同名按主表ID及等级获取已装配核心，不降低或替换服务器当前等级。</summary>
+    /// <summary>按技能主表 ID 查询，并要求已装配等级与传入等级一致；此方法不重新装配。</summary>
     /// <param name="skill_id">技能主表ID。</param>
     /// <param name="lv">当前学习等级，从1开始。</param>
     /// <returns>已装配且等级一致时返回核心，否则为空。</returns>
@@ -362,7 +362,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return null;
     }
 
-    /// <summary>RO同名按效果主键获取已装配核心；未知效果不会被查询操作登记为已学技能。</summary>
+    /// <summary>按效果表主键找到技能，再确认已装配核心使用的正是该效果行。</summary>
     /// <param name="id">SkillEffectInfo.Id效果主键，零表示无效。</param>
     /// <returns>效果存在且与实体当前装配等级一致时返回核心，否则为空。</returns>
     public MSkillCore GetSkill(uint id)
@@ -698,7 +698,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         SkillCDDic.Clear();
     }
 
-    /// <summary>按 RO 规则先读单技能 CD，其结束后再读服务器同步的组 CD。</summary>
+    /// <summary>先返回单技能剩余冷却；单技能已结束时，再返回它所属公共组的剩余冷却。</summary>
     /// <param name="skillId">旧技能主表 ID。</param>
     /// <param name="realtimeSeconds">本机不受时间缩放影响的秒数。</param>
     /// <returns>非负剩余秒数。</returns>
@@ -744,7 +744,8 @@ public sealed class MSkillComponent : MBasicActionComponent
         return true;
     }
 
-    /// <summary>滑步按当前技能CanSlideCancel决定取消，普通技能沿RO InteruptSkill互断；非技能状态使用原矩阵。</summary>
+    /// <summary>准备释放滑步时看当前技能是否允许被滑步取消；其他技能看新技能的打断列表。
+    /// 当前不在技能状态时，使用状态机的状态切换许可表。</summary>
     /// <param name="skillId">当前准备释放的新技能主表 ID。</param>
     /// <returns>状态允许施法，或新技能允许打断当前活动技能时为 true。</returns>
     public bool CanSkill(int skillId)
@@ -937,7 +938,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return isLatestResult;
     }
 
-    /// <summary>RO同名核心同步入口，把本项目权威结果中的单技能和组CD统一换算为剩余秒数。</summary>
+    /// <summary>把服务器回包中的冷却截止时间减去服务器生成时间，再按秒更新本地冷却。</summary>
     /// <param name="data">11170施法结果，包含服务器生成时间、冷却截止及权威段号。</param>
     /// <param name="realtimeSeconds">接收时本机不缩放时间，单位秒，仅用于本地后续倒计时。</param>
     /// <returns>该结果属于最新本地请求且首次应用时为真，供控制器同步MP和提示。</returns>
@@ -1096,7 +1097,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     #endregion
 
     #region 技能表现与动作状态
-    /// <summary>RO同名主技能启动入口，按UUID去重、移交旧实例，再借出并启动本次技能载体。</summary>
+    /// <summary>开始本次动作：按 UUID 去重，先让旧实例交出动画，再借出并启动新施法。</summary>
     /// <param name="newOne">开始事件对应的当前已装配等级核心。</param>
     /// <param name="args">同步事件中的施法UUID、释放点、目标与预测标志，禁止跨帧保存。</param>
     private void FireSkill(MSkillCore newOne, SkillStartedEventArgs args)
@@ -1150,7 +1151,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return StateName;
     }
 
-    /// <summary>RO 当前动作更新：推进主技能，动作窗结束后释放动作槽。</summary>
+    /// <summary>状态机驱动当前动作技能；到达状态占用时长后 Finish，让角色可以进入下一动作。</summary>
     /// <param name="deltaTime">距上一帧的非负秒数。</param>
     protected override void OnUpdate(float deltaTime)
     {
@@ -1172,7 +1173,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
     }
 
-    /// <summary>RO同名正常动作结束钩子，恢复默认动作已有的后摇标记和战斗待机表现。</summary>
+    /// <summary>正常动作结束时设置后摇与战斗待机标记，随后由默认动作处理动画恢复。</summary>
     protected override void OnFinished()
     {
         base.OnFinished();
@@ -1188,7 +1189,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         stop = true;
     }
 
-    /// <summary>动作结束后把仍存活的主技能移交列表，继续自己的时间轴。</summary>
+    /// <summary>动作结束后释放动画和程序位移，把仍存活的施法移入旧列表，继续它的时间轴和声音。</summary>
     private void OnSkillAutoEnd()
     {
         if (_skill == null || !_skill.IsActive)

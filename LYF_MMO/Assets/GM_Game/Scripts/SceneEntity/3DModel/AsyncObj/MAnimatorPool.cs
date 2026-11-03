@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// MAnimator 与 MObjectAnimator 的强类型对象池。
-/// 区分两种动画器类型分别池化，避免类型转换开销。
+/// 分别缓存 MAnimator 和 MObjectAnimator，借出时保持调用方要求的类型。
+/// 归还前先 Reset，清理旧模型、动画资源及参数。
 /// </summary>
 public sealed class MAnimatorPool
 {
@@ -47,6 +47,7 @@ public sealed class MAnimatorPool
     {
         if (animator == null) return;
         animator.Reset();
+        // 以实际类型选择归还队列，保证简化动画器仍回到它自己的池中。
         MObjectAnimator objectAnimator = animator as MObjectAnimator;
         if (objectAnimator != null) _objectAnimators.Enqueue(objectAnimator);
         else _animators.Enqueue(animator);

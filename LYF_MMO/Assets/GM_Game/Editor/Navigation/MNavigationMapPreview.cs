@@ -5,7 +5,7 @@ using UnityEditor.AI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-/// <summary>反读公共地图文件，在当前Scene相机自绘浅蓝可走面和三角边线，不调用原生导航绘制。</summary>
+/// <summary>读取已导出的地图文件，在 Scene 视图画出可行走区域和三角网格边线；这些内容只用于预览。</summary>
 public sealed class MNavigationMapPreview
 {
 

@@ -1,7 +1,7 @@
 using System;
 
 /// <summary>
-/// 动作状态组件的统一视图，对应参考工程 rogamelibs/entity/action/state_define.h 的 IStateTransform。
+/// 所有动作状态共用的基类，规定进入、逐帧更新、打断和自然结束的调用入口。
 /// 状态机只依赖这一层，因此吟唱、默认态、技能动作可以放进同一张状态表。
 /// </summary>
 public abstract class ActionStateComponent : RoleComponentBase, IROEventListener
@@ -66,7 +66,7 @@ public abstract class ActionStateComponent : RoleComponentBase, IROEventListener
 }
 
 /// <summary>
-/// 动作状态组件模板基类，对应 action_state_component.h:24-255。
+/// 带具体事件类型的动作状态基类，负责监听事件、请求状态切换和记录动作是否结束。
 /// 每个具体动作（吟唱、默认态等）既是一个角色组件，又作为状态机中的一个可切换状态。
 /// </summary>
 /// <typeparam name="T">驱动该动作的事件类型，必须以 ROEvent 为基类（对应 RO 的 static_assert）。</typeparam>

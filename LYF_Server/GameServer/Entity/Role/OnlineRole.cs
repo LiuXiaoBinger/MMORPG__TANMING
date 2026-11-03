@@ -5,7 +5,7 @@ using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 存储服务端的在线玩家
+/// 一个已登录角色的运行时数据入口：持有会话、角色快照、业务组件、事件和存档发送器。
 /// </summary>
 public class OnlineRole
 {
@@ -52,6 +52,9 @@ public class OnlineRole
         /// <summary>上次落库时间（毫秒级时间戳）。</summary>
         public ulong save_db_time;
 
+        /// <summary>保存模块修改时间和落库时间；修改时间用 Unix 秒，落库时间字段按毫秒约定。</summary>
+        /// <param name="m_time">最近修改的 UTC 秒时间戳，零表示未记录。</param>
+        /// <param name="s_time">最近落库的毫秒时间戳，零表示未记录。</param>
         public ModuleTime(long m_time=0, ulong s_time=0)
         {
             modify_time = m_time;
@@ -95,6 +98,7 @@ public class OnlineRole
     #endregion
 
     #region 构造与初始化
+    /// <summary>为角色建立业务组件容器、保存计时器和存档发送器；具体组件随后由 InitSerializes 装配。</summary>
     public OnlineRole()
     {
         _components = new RoleComponentContainer(this);
@@ -151,7 +155,7 @@ public class OnlineRole
         _components.AfterAddedToRole();
     }
 
-    /// <summary>在背包和次数数据全部装载后解除保存门闩并启动保存定时器。</summary>
+    /// <summary>背包和次数装载完成、保存版本确定后，允许生成存档并启动每分钟保存计时。</summary>
     /// <returns>首次完成加载时返回 true；条件不满足或重复调用时返回 false。</returns>
     public bool CompleteRoleDataLoad()
     {
@@ -262,6 +266,7 @@ public class OnlineRole
             return false;
         }
 
+        // 先找游戏服到网关的连接，再把客户端编号放入回包，让网关继续定位玩家。
         Session gateSession = SessionMgr.Instance.GetSession(GateSessionId);
         if (gateSession == null)
         {
@@ -299,7 +304,9 @@ public class OnlineRole
             return null;
         }
         _saveVersion++;
+        // 本次所有脏组件共用同一角色版本，等待中心服按此版本确认。
         long version = _saveVersion;
+        // 汇总各组件提供的完整背包或次数快照。
         RoleDataFieldManager fieldManager = 
             new RoleDataFieldManager(mainRoleInfo.BaseInfo.RoleId, version);
         _components.Save(fieldManager, version);
@@ -348,8 +355,7 @@ public class OnlineRole
         return _roleDataLoaded;
     }
 
-    /// <summary>CenterServer 事务成功后才按版本清除组件脏状态。</summary>
-    /// <summary>处理中心服成功 ACK，并按版本通知各组件清理脏数据。</summary>
+    /// <summary>中心服确认保存成功后，通知各组件清除该版本已包含且此后未再变化的数据标记。</summary>
     /// <param name="version">中心服确认的角色保存版本。</param>
     public void OnRoleDataSaved(long version)
     {
@@ -380,7 +386,7 @@ public class OnlineRole
     // 基础属性实体预留给战斗模块，伤害计算应基于服务端属性。
     private RoleBaseAttrEntity _roleBaseAttrEntity;
 
-    // 角色运行时开关表，保存/重连等状态标志按位记录。
+    // 以枚举为键的角色开关字典；每个标志独立保存布尔值，并非整数位掩码。
     private Dictionary<RoleStateFlag, bool> _flags;
     #endregion
     // 背包明细和容量由 RoItemComponent/BagTransition 管理。
@@ -501,7 +507,7 @@ public class OnlineRole
     #endregion
 
     #region 组件、事件与标识访问
-    /// <summary>获取角色组件，未注册时返回 null。</summary>
+    /// <summary>取得指定类型的角色组件；未注册时容器会抛出 KeyNotFoundException。</summary>
     public T GetComponent<T>() where T : RoleComponentBase
     {
         return _components.GetComponent<T>();
@@ -549,6 +555,7 @@ public class OnlineRole
         
         if (_module_modify_time.ContainsKey((int)module))
         {
+            // ModuleTime 是结构体，此处读取到副本；当前代码未把修改后的副本写回字典。
             var moduleTime = _module_modify_time[(int)module];
             moduleTime.modify_time =
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds();

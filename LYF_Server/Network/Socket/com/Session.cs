@@ -33,6 +33,7 @@ public class Session : BaseLink
         SessionMgr.Instance.AddSession(this);
     }
 
+    /// <summary>监听端收到消息后按宿主连接类型补入可信的 UnitySessionId 或 GateSessionId，再调用处理器 OnServerCommand。</summary>
     protected override void HandleCommand(BasePackage basePackage)
     {
 
@@ -125,6 +126,7 @@ public class Session : BaseLink
 
     }
 
+    /// <summary>释放 UDP 绑定、关闭 TCP 并通知宿主会话已断开；本方法没有直接删除 SessionMgr 中的记录。</summary>
     public override void Disconnect()
     {
         LogMsg.Info("客户端会话断开，SessionID=" + SessionID);

@@ -11,6 +11,7 @@ using UnityEngine.UI;
 * Descrpiton:
 */
 
+/// <summary>创建系统短提示、购买确认弹窗和物品详情提示，并保存需要关闭的弹窗引用。</summary>
 public class TipsMgr :Singleton<TipsMgr>
 {
    #region 系统提示
@@ -41,7 +42,9 @@ public class TipsMgr :Singleton<TipsMgr>
 
    // 购买弹窗异步加载期间也要上锁，避免同一帧的连续点击创建多个实例。
    private bool _isBuyGoodsDialogLoading;
+   /// <summary>当前购买弹窗，关闭后清空，避免同时打开多份。</summary>
    private BuyDialog _buyGoodsDialog;
+   /// <summary>每次购买弹窗请求的编号，异步图标加载用它排除旧结果。</summary>
    private int _buyDialogRequestVersion;
 
    /// <summary>
@@ -178,6 +181,7 @@ public class TipsMgr :Singleton<TipsMgr>
    /// <summary>
    /// 在鼠标位置附近显示物品详情提示。
    /// </summary>
+   /// <remarks>mousePos 为屏幕坐标；imgIcon、texName、texPrice 当前未写入详情控件。</remarks>
    public void ShowItmeTips(Vector3 mousePos, Image imgIcon =null, TMP_Text texName= null, TMP_Text texPrice= null)
    {
       ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/TipsDiialog/EquipItemTips", (GameObject go) =>
@@ -193,6 +197,7 @@ public class TipsMgr :Singleton<TipsMgr>
       });
    }
 
+   /// <summary>销毁当前登记的所有物品详情提示，并清空列表。</summary>
    public void CloseItemTips()
    {
       if (_itemsTips.Count > 0)

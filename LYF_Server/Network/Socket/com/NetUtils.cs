@@ -15,7 +15,7 @@ public class NetUtils : Singleton<NetUtils>
 {
 
     /// <summary>
-    /// 封装数组
+    /// 将 BasePackage 字节加上压缩标记、CRC16和长度；长度字段不包含自身两字节。
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
@@ -55,9 +55,12 @@ public class NetUtils : Singleton<NetUtils>
 
 
     /// <summary>
-    /// 解析数据
+    /// 从一条完整 TCP 帧取出消息体，先校验传输字节的 CRC16，再按标记解压。
     /// </summary>
     /// <returns></returns>
+    /// <param name="buffer">包含完整帧的累积缓冲区。</param>
+    /// <param name="msgLen">帧头声明的后续字节数，包含压缩标记和CRC。</param>
+    /// <param name="offset">本帧长度字段在缓冲区中的起点。</param>
     public byte[] ParseData(byte[] buffer, int msgLen, int offset = 0)
     {
         bool isCom = BitConverter.ToBoolean(buffer, offset + 2);
@@ -114,17 +117,17 @@ public class NetUtils : Singleton<NetUtils>
             using (GZipStream zipStream = new GZipStream(comStream, CompressionMode.Compress))
             {
                 zipStream.Write(data, 0, data.Length);
-                zipStream.Close();//必须关闭
+                zipStream.Close();// 先完成 GZip 尾部写入，再读取压缩结果。
                 return comStream.ToArray();
             }
         }
     }
 
     /// <summary>
-    /// crc校验
+    /// 使用固定查表算法计算 16 位校验值；用于发现数据变化，不提供身份认证。
     /// </summary>
     /// <param name="data"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// 调用方需传入非空字节数组。
     public ushort CRC16(byte[] data)
     {
         byte CRCHigh = 0xFF; //重置CRC高位校验码
@@ -132,7 +135,7 @@ public class NetUtils : Singleton<NetUtils>
         for (int i = 0; i < data.Length; i++)
         {
             int crcIndex = CRCHigh ^ data[i];
-            // calculate the crc lookup index
+            // 用当前高字节与本次输入确定查表下标，再更新高低字节。
             CRCHigh = (byte)(CRCLow ^ ArrayCRCHigh[crcIndex]);
             CRCLow = checkCRCLow[crcIndex];
         }
@@ -140,6 +143,7 @@ public class NetUtils : Singleton<NetUtils>
 
     }
 
+    // CRC 状态低字节的 256 项查表数据，参与每个输入字节的更新。
     static byte[] checkCRCLow =
        {
          0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06,
@@ -170,6 +174,7 @@ public class NetUtils : Singleton<NetUtils>
          0x43, 0x83, 0x41, 0x81, 0x80, 0x40
          };
 
+    // CRC 状态高字节的 256 项查表数据，必须与低字节表配套。
     static byte[] ArrayCRCHigh =
          {
          0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,

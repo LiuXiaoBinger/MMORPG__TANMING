@@ -3,7 +3,7 @@ using Ethan.ActionEditor.Editor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>声音独立轨道的真实长度波形及音频采样点选择；仅影响制作界面，不把完整长度写成事件区间。</summary>
+/// <summary>在声音轨道上按音频实际长度绘制波形，并把点击位置换算为试听时间；显示长度不会改写事件时长。</summary>
 public partial class SkillEditorWindow
 {
 

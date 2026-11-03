@@ -15,7 +15,7 @@ public struct MRendererLightmapScale
 
     /// <summary>
     /// 该渲染器使用的光照图下标，对应 MLightmapData.lightmaps 数组位置。
-    /// 本场景取值为 0 或 1（共两张光照图）。
+    /// 应指向所选光照图数组中的有效槽位。
     /// </summary>
     public int index;
 

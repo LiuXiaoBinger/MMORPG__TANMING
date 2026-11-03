@@ -3,7 +3,7 @@ using UnityEngine;
 using YooAsset;
 
 /// <summary>
-/// 管理客户端全局生命周期、默认 YooAsset 资源包、动画索引启动门控和场景实体世界。
+/// 客户端启动入口：初始化网络、配置表和技能规则，等动画索引加载成功后创建场景实体世界。
 /// 该组件从 Unity 启动持续存活到应用退出，并统一释放其持有的运行时资源。
 /// </summary>
 public class Global : MonoBehaviour {
@@ -57,7 +57,7 @@ public class Global : MonoBehaviour {
     /// <summary>Global 是否正在退出或销毁；进入清理后不再发起异步重试。</summary>
     private bool _isShuttingDown;
 
-    /// <summary>动画门控期间最新一次成功开始游戏回包的角色副本，仅由 Global 消费一次。</summary>
+    /// <summary>动画索引尚未就绪时暂存的最新角色数据；成功创建角色后清空。</summary>
     private MainRoleInfo _pendingMainRoleInfo;
 
     /// <summary>场景角色创建失败后下一次允许重试的实时秒数，避免每帧重复创建。</summary>
@@ -78,7 +78,7 @@ public class Global : MonoBehaviour {
     private void Awake() {
         Instance = this;
 
-        // 全局只启动一个 RO 时间轴时钟，施法实例只登记票据，不自行推进管理器。
+        // 所有技能共用一个计时器；每次施法只登记回调，由 Global 每帧推进一次时间。
         MTimerMgr.singleton.Init();
 
         DontDestroyOnLoad(this);
@@ -88,9 +88,9 @@ public class Global : MonoBehaviour {
         MNetClient.Instance.Init();
         PlayStateMgr.Instance.init();
         LubanMgr.Instance.Init();
-        // 同步锁定本次进程施法权限，之后才允许动画门控开放角色；缺配置采用稳定禁止默认。
+        // 先读取本次运行使用的施法规则，再允许创建角色；缺失规则时按禁止施法处理。
         SkillCastingRulesCatalog.Initialize();
-        // 同步装载客户端大状态互斥表，保证角色开放前矩阵已就绪，施法门口不会读到半张表。
+        // 先读完角色状态之间的允许关系，角色创建后才能据此判断是否能切换动作或施法。
         StateExclusionManager.singleton.Initialize();
         BeginAnimationPreload();
     }
@@ -163,7 +163,7 @@ public class Global : MonoBehaviour {
 
     #region 动画资源预加载
     /// <summary>
-    /// 发起动画索引异步加载；只有成功回调才创建场景实体世界，从入口阻断未就绪实体。
+    /// 开始加载动画索引；只有成功后才建立场景实体世界，避免角色找不到动作配置。
     /// </summary>
     private void BeginAnimationPreload()
     {
@@ -186,7 +186,7 @@ public class Global : MonoBehaviour {
     }
 
     /// <summary>
-    /// 处理动画索引加载结果；成功后开放 SceneWorld，失败时保持阻断并安排下一次重试。
+    /// 动画索引成功时创建 SceneWorld 并尝试装载暂存角色；失败时记录下次重试时间。
     /// </summary>
     /// <param name="isSucceed">二维动画索引是否已完整解析并写入 MAnimationMgr。</param>
     private void OnAnimationPreloadCompleted(bool isSucceed)
@@ -232,7 +232,7 @@ public class Global : MonoBehaviour {
 
     #region 本地角色装载
     /// <summary>
-    /// 提交开始游戏成功回包中的角色数据；世界未就绪时保留最新副本，世界就绪时立即消费。
+    /// 收到开始游戏成功回包后提交角色数据；场景世界没准备好就暂存，准备好后立即尝试创建角色。
     /// 相同角色的重复回包不会重新创建本地玩家实体。
     /// </summary>
     /// <param name="roleInfo">服务器返回的完整本地角色信息，方法内部会克隆以隔离协议对象后续修改。</param>
@@ -286,7 +286,7 @@ public class Global : MonoBehaviour {
         return LocalRoleLoadSubmitResult.Queued;
     }
 
-    /// <summary>在 SceneWorld 可用时消费最新待加载角色；失败时保留请求并按重试间隔再次尝试。</summary>
+    /// <summary>用最新暂存数据创建本地角色；创建失败时保留数据，等到重试时间再尝试。</summary>
     /// <returns>本次是否成功创建本地玩家并发出完成事件。</returns>
     private bool TryConsumePendingLocalRole()
     {
@@ -322,7 +322,7 @@ public class Global : MonoBehaviour {
         return true;
     }
 
-    /// <summary>通过强类型事件公布已经存在于 SceneWorld 的本地玩家实体。</summary>
+    /// <summary>通知订阅者本地角色已经创建完成，主城管理器可继续加载模型。</summary>
     /// <param name="localRole">已完成入世界生命周期的玩家实体；为空时不触发事件。</param>
     private void NotifyLocalRoleLoadCompleted(PlayerEntity localRole)
     {

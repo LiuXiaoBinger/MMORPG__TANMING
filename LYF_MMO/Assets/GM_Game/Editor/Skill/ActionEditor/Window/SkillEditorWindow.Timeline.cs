@@ -11,7 +11,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 // The original script GUID stays on SkillEditorWindow.cs.
-/// <summary>按帧制作技能的原 Y 窗口分部；完整编辑能力与本游戏导出支持范围独立，预览使用隔离副本。</summary>
+/// <summary>注册各类技能轨道，计算时间轴布局并绘制事件、帧刻度和选中状态；具体编辑操作由其他分部处理。</summary>
 public partial class SkillEditorWindow
 {
     #region Timeline区域

@@ -3,16 +3,16 @@ using Google.Protobuf;
 using UnityEngine;
 
 /// <summary>
-/// 登录模块控制器，负责校验、协议发送和窗口流程。
+/// 组织账号登录、邮箱注册和区服选择：校验输入、收发协议，并在游戏服登录成功后进入选角场景。
 /// </summary>
 public class LoginCtrl : CtrlBase
 {
 
     #region 字段
-    /// <summary>本地保存的用户协议键。</summary>
+    /// <summary>PlayerPrefs 中记录是否勾选用户协议的键，值 1 表示已同意。</summary>
     private const string AgreementKey = "Agreement";
 
-    /// <summary>本地保存的账号键。</summary>
+    /// <summary>PlayerPrefs 中保存记住账号的键；此控制器不保存密码。</summary>
     private const string AccountKey = "Account";
 
     /// <summary>登录模块视图。</summary>
@@ -27,6 +27,7 @@ public class LoginCtrl : CtrlBase
 
     #region 构造、初始化与事件注册
     /// <summary>创建登录控制器并恢复本地登录状态。</summary>
+    /// <param name="view">登录模块的 Loginview，保存各登录窗口及其交互回调。</param>
     public LoginCtrl(UIBase view) : base(view)
     {
         _loginview = view as Loginview;
@@ -38,7 +39,9 @@ public class LoginCtrl : CtrlBase
         _loginview.InitView();
         RegisterCommands();
         RegisterViewActions();
+        // 恢复上次勾选协议的状态，缺少记录时为 false。
         bool agreementAccepted = PlayerPrefs.GetInt(AgreementKey) == 1;
+        // 恢复记住的账号，未保存时为空字符串。
         string account = PlayerPrefs.GetString(AccountKey);
         _loginview.SetSavedLoginState(agreementAccepted, account);
     }
@@ -84,8 +87,10 @@ public class LoginCtrl : CtrlBase
 
     #region 交互响应
     /// <summary>连接用户选中的游戏服务器。</summary>
+    /// <param name="serverId">玩家在当前服务器窗口确认的服务器编号。</param>
     private void OnGameServerBtnClicked(int serverId)
     {
+        // 从服务端列表缓存中取得连接 IP 和端口，窗口本身不保存连接对象。
         GameServer server;
         if (!_gameServers.TryGetValue(serverId, out server) || server == null)
         {
@@ -97,6 +102,7 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>校验邮箱并发送验证码请求。</summary>
+    /// <param name="email">接收验证码的邮箱；这里仅检查非空，不检查邮箱格式。</param>
     private void OnVerifyCodeBtnClicked(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -110,6 +116,7 @@ public class LoginCtrl : CtrlBase
             return;
         }
 
+        // 验证码请求只携带邮箱，验证码生成与发送由登录服处理。
         RegistVarifyReq request = new RegistVarifyReq
         {
             Email = email
@@ -138,6 +145,7 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>确认服务器列表中的选择。</summary>
+    /// <param name="serverId">列表中选定的服务器编号；这里只切回确认窗口，不立即连接。</param>
     private void OnServerConfirmed(int serverId)
     {
         GameServer gameServer;
@@ -150,6 +158,10 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>校验并发送登录请求，同时保存用户选择的本地状态。</summary>
+    /// <param name="account">玩家输入的账号名。</param>
+    /// <param name="password">本次登录密码，只随请求发送。</param>
+    /// <param name="rememberAccount">是否把账号写入 PlayerPrefs。</param>
+    /// <param name="agreementAccepted">是否勾选协议，未同意时不发送登录。</param>
     private void OnLoginRequested(string account, string password, bool rememberAccount,
         bool agreementAccepted)
     {
@@ -185,6 +197,7 @@ public class LoginCtrl : CtrlBase
         }
         PlayerPrefs.Save();
 
+        // 登录服需要的账号和密码，不包含本地记住账号选项。
         LoginReq request = new LoginReq
         {
             UserName = account,
@@ -194,6 +207,11 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>校验并发送注册请求。</summary>
+    /// <param name="account">注册账号。</param>
+    /// <param name="email">接收过验证码的邮箱。</param>
+    /// <param name="verifyCode">用户填写的邮箱验证码。</param>
+    /// <param name="password">注册密码。</param>
+    /// <param name="confirmPassword">仅用于本地比对的确认密码，不随协议发送。</param>
     private void OnRegisterRequested(string account, string email, string verifyCode,
         string password, string confirmPassword)
     {
@@ -219,6 +237,7 @@ public class LoginCtrl : CtrlBase
             return;
         }
 
+        // 校验两次密码一致后，发送账号、邮箱、验证码和一份密码。
         RegistReq request = new RegistReq
         {
             UserName = account,
@@ -238,6 +257,7 @@ public class LoginCtrl : CtrlBase
             return;
         }
 
+        // ServerId 为 0，向登录服请求服务器列表。
         GetServerListReq request = new GetServerListReq
         {
             ServerId = 0
@@ -260,6 +280,7 @@ public class LoginCtrl : CtrlBase
             return;
         }
 
+        // TCP 已连到选定游戏服后，用已登录账号 ID 与目标区服 ID 继续登录。
         LoginGameServerReq request = new LoginGameServerReq
         {
             AccountId = Global.Instance.LoginInfo.AccountId,
@@ -270,6 +291,7 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>处理游戏服登录结果并进入角色场景。</summary>
+    /// <param name="data">游戏服返回的登录结果及已有角色摘要。</param>
     private void OnLoginGameServerHandle(ByteString data)
     {
         LoginGameServerRet result = LoginGameServerRet.Parser.ParseFrom(data);
@@ -295,12 +317,14 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>处理服务器列表回包。</summary>
+    /// <param name="data">登录服返回的区服列表。</param>
     private void OnGetServerListHandle(ByteString data)
     {
         GetServerListRet result = GetServerListRet.Parser.ParseFrom(data);
         if (result != null && result.CmdCode == CmdCode.Succeed)
         {
             _gameServers.Clear();
+            // 窗口只需要名称、状态、新服标记等展示字段。
             List<GameServerViewData> serverList = new List<GameServerViewData>();
             for (int index = 0; index < result.GameServers.Count; index++)
             {
@@ -319,6 +343,7 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>处理账号登录回包。</summary>
+    /// <param name="data">账号登录结果，包含账号身份和默认服务器信息。</param>
     private void OnLoginHandle(ByteString data)
     {
         LoginRet result = LoginRet.Parser.ParseFrom(data);
@@ -338,6 +363,7 @@ public class LoginCtrl : CtrlBase
     }
 
     /// <summary>处理账号注册回包。</summary>
+    /// <param name="data">注册结果；验证码错误单独给出提示。</param>
     private void OnRegistHandle(ByteString data)
     {
         RegistRet result = RegistRet.Parser.ParseFrom(data);
@@ -357,8 +383,10 @@ public class LoginCtrl : CtrlBase
     #endregion
 
     /// <summary>把服务器协议对象转换为不含网络类型的展示数据。</summary>
+    /// <param name="gameServer">保存 IP、端口等完整连接信息的协议对象。</param>
     private GameServerViewData CreateServerViewData(GameServer gameServer)
     {
+        // 协议使用整数 1 标记新服，窗口使用布尔值。
         bool isNew = false;
         if (gameServer.IsNew == 1)
         {

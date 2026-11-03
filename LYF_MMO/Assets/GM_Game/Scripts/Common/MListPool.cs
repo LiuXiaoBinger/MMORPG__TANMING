@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-/// <summary>沿用 RO 临时列表池，在借出和归还时清空元素引用。</summary>
-/// <typeparam name="T">列表元素的强类型，支持值类型和引用类型。</typeparam>
+/// <summary>复用临时 List；每次取出或放回都会清空内容，减少反复创建列表。</summary>
+/// <typeparam name="T">列表中保存的元素类型。</typeparam>
 public static class MListPool<T>
 {
     /// <summary>该元素类型的临时列表池，借出与归还时均清空列表。</summary>
@@ -36,7 +36,7 @@ public static class MListPool<T>
 #if DEBUG
         if (items == null)
         {
-            // 本项目未接入 RO MDebug，以 Unity 日志承接列表池调试错误。
+            // 调试版本报告错误；下面仍按原流程调用对象池归还。
             UnityEngine.Debug.LogError("归还的临时列表为空。");
         }
 #endif

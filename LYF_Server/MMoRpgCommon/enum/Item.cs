@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 物品类型枚举（背包Tab分类）
-/// 对应protobuf生成枚举，用于区分道具大类，控制背包分页、显示逻辑、过滤规则
+/// 自研公共分类值，用于读取物品配置和区分背包展示类别；此文件不是生成代码。
 /// </summary>
 public enum ItemMainType
 {
@@ -67,14 +67,14 @@ public enum ItemMainType
 }
 
 
-/// <summary>道具是否绑定。绑定道具不可交易。</summary>
+/// <summary>物品绑定标记；扣除筛选中 kItemBindIs 还表示允许使用绑定与非绑定物品。</summary>
 public enum ItemBind
 {
     kItemBindNo = 0,
     kItemBindIs = 1,
 };
 
-/// <summary>限时道具的生命周期类型，决定过期销毁与热更规则。</summary>
+/// <summary>沿用的限时道具分类约定；枚举本身不执行过期清理，当前基础容器的时间检查为空。</summary>
 public enum TimeLimitType
 {
     kTimeLimitType_None = 0,                    //没有时效性类型,永久
@@ -144,6 +144,7 @@ public enum ItemEnum
     VIRTUAL_ITEM_MAX = 1000,
 };
 
+/// <summary>物品变动来源的固定编号，供同步与记录使用；保留的业务编号不代表对应玩法已实现。</summary>
 public enum ItemChangeReason {
     ITEM_REASON_NONE = 0,
     ITEM_REASON_PICK_UP = 1,
@@ -494,9 +495,9 @@ public enum SignBit
     BrokenBit = 1,   
     /// 附魔是否已提炼，0未提炼，1已提炼
     RebornBit = 2,      
-    /// 第二位表示 是否是商会买来的
+    /// 第 3 位：是否为商会购买物品。
     BusinessBit = 3,      
-    /// 第三位标记 是否是拍卖买来
+    /// 第 4 位：是否为拍卖购买物品。
     AuctionBit = 4,   
     /// 到期后是否保留
     LifeEndSurvivalBit = 5,   

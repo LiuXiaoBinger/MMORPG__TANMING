@@ -15,7 +15,7 @@ public class GameServerWindow : WindowBase
     /// <summary>当前显示的服务器编号。</summary>
     private int _serverId;
 
-    /// <summary>选择当前服务器事件，保留旧字段名兼容已有代码。</summary>
+    /// <summary>提交当前服务器编号的事件；点击时只提交大于零的编号。</summary>
     public Action<int> gameServerBtnClickedAction;
 
     /// <summary>请求服务器列表事件。</summary>
@@ -24,6 +24,7 @@ public class GameServerWindow : WindowBase
     /// <summary>使用控制器提供的展示数据刷新服务器状态。</summary>
     public override void ReFreshUI(object obj)
     {
+        // 控制器提供的服务器摘要，窗口不直接读取网络回包。
         GameServerViewData viewData = obj as GameServerViewData;
         if (viewData == null)
         {
@@ -31,7 +32,9 @@ public class GameServerWindow : WindowBase
         }
 
         _serverId = viewData.ServerId;
+        // 状态 1/2/3 分别显示红/黄/绿，未知状态保持白色和空文字。
         Color color = Color.white;
+        // 与颜色配套的服务器负载文字。
         string runState = string.Empty;
         if (viewData.RunState == 1)
         {
@@ -57,6 +60,7 @@ public class GameServerWindow : WindowBase
 
         if (_texServerName != null)
         {
+            // 新服在名称后追加标记，普通服不追加。
             string newServerText = string.Empty;
             if (viewData.IsNew)
             {

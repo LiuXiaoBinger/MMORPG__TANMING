@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>设置窗口视图，保留RO的四类页面；本轮仅负责页面显隐，不修改游戏设置。</summary>
+/// <summary>设置窗口包含系统、个人、挂机和推送四页；当前只切换页面与页签外观，不修改游戏设置。</summary>
 public sealed class SettingPanel : WindowBase
 {
     /// <summary>依次为系统、个人、挂机、推送的页面根节点。</summary>

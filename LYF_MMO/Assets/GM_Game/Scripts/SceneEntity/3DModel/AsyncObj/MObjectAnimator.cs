@@ -1,6 +1,6 @@
 /// <summary>
-/// 非角色对象使用的简化动画封装，对应 RO 的 MObjectAnimator。
-/// 跳过 CrossFade 过渡，直接播放目标动画，适用于怪物、NPC、掉落物等简单动画对象。
+/// 立即切换动画的 MAnimator 子类。
+/// 它只重写 CrossFade，把渐变切换请求改为直接调用 Play；其他逻辑沿用基类。
 /// </summary>
 public sealed class MObjectAnimator : MAnimator
 {

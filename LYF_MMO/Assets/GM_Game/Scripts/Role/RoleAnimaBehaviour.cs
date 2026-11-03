@@ -15,9 +15,10 @@ public class RoleAnimaBehaviour : MonoBehaviour
    /// <summary>所属角色表现控制器，用于查找挂点、驱动目标受击状态。</summary>
    private RoleCtrlBase _roleCtrl;
 
-   /// <summary>攻击特效挂载点，由 Inspector 指定的骨骼节点位置。</summary>
+   /// <summary>保留的攻击特效挂点字段，当前 DoAttackConfig 使用配置中的路径查找节点。</summary>
    [SerializeField, Header("特效位置点")] private Transform _effectpos;
 
+   /// <summary>取得同一模型上的角色控制器，供动画事件查找目标和特效挂点。</summary>
    private void Awake()
    {
       _roleCtrl = GetComponent<RoleCtrlBase>();
@@ -30,7 +31,7 @@ public class RoleAnimaBehaviour : MonoBehaviour
    }
 
    /// <summary>按攻击配置实例化技能特效并挂到配置指定的骨骼节点。</summary>
-   /// <param name="atkConfigEntity">本次攻击的特效/音频/震屏配置。</param>
+   /// <param name="atkConfigEntity">本次攻击表现配置；当前函数只读取粒子和变换，不播放音频或震屏。</param>
    private void DoAttackConfig(atkConfigEntity atkConfigEntity)
    {
       if (atkConfigEntity != null&&atkConfigEntity._effectInfo._fx!=null)

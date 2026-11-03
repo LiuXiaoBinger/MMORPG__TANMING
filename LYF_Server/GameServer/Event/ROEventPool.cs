@@ -16,13 +16,13 @@ public sealed class ROEventPool<T> where T : ROEvent, new()
     {
     }
 
-    /// <summary>单类型空闲实例上限；超出部分交给垃圾回收，避免长尾占用。</summary>
+    /// <summary>单类型空闲实例上限；超出部分交给垃圾回收，限制池本身长期保留的对象数量。</summary>
     private const int MaxIdleCount = 128;
 
     /// <summary>进程内该事件类型的唯一对象池，对应 RO 的 ObjectPool&lt;T&gt;::Instance()。</summary>
     private static readonly ROEventPool<T> instance_ = new ROEventPool<T>();
 
-    /// <summary>空闲实例栈，后进先出以提升缓存命中。</summary>
+    /// <summary>空闲实例栈，优先复用最近归还的事件。</summary>
     private readonly Stack<T> idle_stack_ = new Stack<T>();
 
     /// <summary>获取该事件类型的唯一对象池实例。</summary>

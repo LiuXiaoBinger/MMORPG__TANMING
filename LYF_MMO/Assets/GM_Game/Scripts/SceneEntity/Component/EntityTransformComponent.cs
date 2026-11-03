@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 实体场景位置组件，对应参考项目 ROSceneComponent。
-/// 负责把外部传入的变换快照直接应用到宿主实体 Transform，并派发变换变更事件。
+/// 接收一组位置和朝向数据，写入宿主实体的逻辑坐标，再发送位置变更事件。
+/// 这里不直接修改 UnityEngine.Transform，也不执行平滑移动。
 /// </summary>
 public sealed class EntityTransformComponent : EntityComponentBase
 {
@@ -14,11 +14,13 @@ public sealed class EntityTransformComponent : EntityComponentBase
     {
     }
 
+    /// <summary>数据由公开方法直接写入，此处不订阅事件。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>本组件没有自行订阅事件，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
        
@@ -36,7 +38,7 @@ public sealed class EntityTransformComponent : EntityComponentBase
     {
     }
 
-    /// <summary>把变换快照一次性写入宿主实体 Transform，并派发 TransformChanged 事件。</summary>
+    /// <summary>把位置与朝向一次性写入实体的逻辑 Transform，再派发 TransformChanged 事件。</summary>
     /// <param name="snapshot">位置与朝向快照，为空直接忽略。</param>
     public void Apply(EntityTransformSnapshot snapshot)
     {

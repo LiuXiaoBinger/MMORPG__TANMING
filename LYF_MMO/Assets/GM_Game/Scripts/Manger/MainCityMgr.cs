@@ -5,12 +5,12 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using SceneObject = ROObject;
 
-/// <summary>主城角色表现管理器，负责把角色模型转换为 Unity 表现对象。</summary>
+/// <summary>管理主城或副本中的角色模型：读取角色实体数据，加载预制体，绑定动画、输入和相机。</summary>
 public class MainCityMgr : MonoBehaviour
 {
 
     #region 字段与常量
-   /// <summary>正式角色统一使用的 RO 动画控制器 YooAsset Location，包含待机、四移动和常规动作同名槽位。</summary>
+   /// <summary>角色模型共用的动画控制器资源地址，包含待机、四向移动及常用动作的替换位置。</summary>
    private const string RoleAnimatorControllerLocation =
       "Assets/artres/Resources/Controller/MAnimator.controller";
 
@@ -70,7 +70,7 @@ public class MainCityMgr : MonoBehaviour
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
       // 正式进城前 Global 已完成配置和实体世界初始化，复用同物体上的 NPC 管理器。
-      // 保留工作区已有的可选 NPC 接入：魔神塔不配置城市 NPC 管理器。
+      // 场景上有 NpcManager 才创建 NPC；魔神塔没有配置城市 NPC 管理器。
       if (TryGetComponent<NpcManager>(out NpcManager npcManager))
       {
          npcManager.Initialize();
@@ -115,7 +115,7 @@ public class MainCityMgr : MonoBehaviour
     #endregion
 
     #region 本地角色装载
-   /// <summary>订阅 Global 的本地主角加载完成事件，并立即处理已经存在的本地主角。</summary>
+   /// <summary>订阅 Global 的本地主角加载完成事件；已存在的角色由 TryCreateCurrentLocalRole 处理。</summary>
    private void TrySubscribeLocalRoleLoad()
    {
       if (_localRoleLoadSubscribed || Global.Instance == null)
@@ -604,7 +604,7 @@ public class MainCityMgr : MonoBehaviour
                // 主角的生命周期归全局角色实体所有，场景卸载不再销毁模型、动画器和控制器。
                DontDestroyOnLoad(obj);
                BindMainRoleCompatibilityController(obj, sceneEntity, baseInfo);
-               // 主界面先于异步主角模型创建，在输入组件就绪后补齐技能和界面快捷键订阅。
+               // 主界面可能先于角色模型显示；模型输入组件准备好后，再注册技能与界面快捷键。
                UIRoot.Instance.RegisterMainUIKeyHandler();
             }
             else
@@ -648,7 +648,7 @@ public class MainCityMgr : MonoBehaviour
    /// 场景实体激活后，旧控制器自身会跳过移动、重力和根运动，避免与 MMoveComponent 双重控制。
    /// </summary>
    /// <param name="roleObject">已经实例化且即将交由场景实体持有的主角对象。</param>
-   /// <param name="sceneEntity">拥有移动、跳跃和动画权威的本地主角场景实体。</param>
+   /// <param name="sceneEntity">实际负责本地主角移动、跳跃和动画更新的场景实体。</param>
    /// <param name="baseInfo">服务器下发的主角基础信息，供旧技能和选中逻辑读取角色状态。</param>
    private static void BindMainRoleCompatibilityController(GameObject roleObject,
       MEntity sceneEntity, RoleBaseInfo baseInfo)
@@ -695,7 +695,7 @@ public class MainCityMgr : MonoBehaviour
          return null;
       }
 
-      // 模型层级内的全部节点快照；数组支持按索引遍历并避免使用 foreach。
+      // 收集模型下所有节点（含未激活节点），按顺序查找指定名称。
       Transform[] childTransforms = rootTransform.GetComponentsInChildren<Transform>(true);
       for (int childIndex = 0; childIndex < childTransforms.Length; childIndex++)
       {

@@ -1,16 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>RO 风格 Animator 封装，统一承担播放、参数缓存和对象池重置。</summary>
+/// <summary>
+/// 把业务动作名交给 Unity Animator 播放，并管理该角色使用的动画剪辑。
+/// 控制器和动作剪辑可分别异步加载；替换动作时先保留旧剪辑，新剪辑成功装入覆盖槽位后再交接引用。
+/// 同时缓存 Animator 参数、记录最近一次播放目标，并在模型释放时归还控制器和剪辑资源。
+/// </summary>
 public class MAnimator
 {
 
     #region 字段与属性
-    // 普通待机
     /// <summary>待机动画状态名。</summary>
     public const string STATE_IDLE = "Idle";
 
-    public const string STATE_FIDLE = "FIdle";       // 向前待机（Forward Idle）
+    public const string STATE_FIDLE = "FIdle";       // 战斗待机，与普通 Idle 区分
 
     public const string STATE_CARRY_IDLE = "CarryIdle"; // 负重/搬运待机
 
@@ -62,11 +65,11 @@ public class MAnimator
     /// <summary>跳跃落地动画状态名；落地事件触发后播放一次。</summary>
     public const string STATE_JUMP_END = "Jump_End";
 
-    /// <summary>逻辑动画 key 到动画信息的映射，记录每个状态对应的片段覆盖信息。</summary>
+    /// <summary>原始剪辑名称到绑定信息的查找表；混合树的每个子剪辑各占一个键。</summary>
     private readonly Dictionary<string, MAnimInfo> _animInfos =
         new Dictionary<string, MAnimInfo>();
 
-    /// <summary>混合树状态名到去重覆盖键列表的映射，用于查询首条信息和完整就绪门控。</summary>
+    /// <summary>混合树状态名对应的子剪辑键列表；播放前检查全部子剪辑，查询时长时取首项。</summary>
     private readonly Dictionary<string, List<string>> _blendTreeDict =
         new Dictionary<string, List<string>>();
 
@@ -78,15 +81,15 @@ public class MAnimator
     private readonly HashSet<string> _missingOverrideSlotWarnings =
         new HashSet<string>();
 
-    /// <summary>Float 类型 Animator 参数缓存，用于对象池复用时重放。</summary>
+    /// <summary>Float 参数最近一次设置的值；控制器重绑时恢复，Reset 回池时清空。</summary>
     private readonly Dictionary<string, float> _floatParameters =
         new Dictionary<string, float>();
 
-    /// <summary>Int 类型 Animator 参数缓存。</summary>
+    /// <summary>Int 参数最近一次设置的值；控制器重绑时恢复，Reset 回池时清空。</summary>
     private readonly Dictionary<string, int> _intParameters =
         new Dictionary<string, int>();
 
-    /// <summary>Bool 类型 Animator 参数缓存。</summary>
+    /// <summary>Bool 参数最近一次设置的值；控制器重绑时恢复，Reset 回池时清空。</summary>
     private readonly Dictionary<string, bool> _boolParameters =
         new Dictionary<string, bool>();
 
@@ -108,19 +111,19 @@ public class MAnimator
     /// <summary>动画覆盖控制器，用于运行时替换动画片段。</summary>
     private AnimatorOverrideController _overrideController;
 
-    /// <summary>Controller 资源租约，用于释放 YooAsset 句柄。</summary>
+    /// <summary>当前控制器资源的持有凭据；模型重置或换控制器时用它归还加载引用。</summary>
     private MAnimatorControllerAssetLease _controllerLease;
 
     /// <summary>当前 Controller 资源路径。</summary>
     private string _controllerLocation = string.Empty;
 
-    /// <summary>当前播放的动画状态名。</summary>
+    /// <summary>最近一次 Play/CrossFade 请求的目标状态名；不代表 Unity 当前正在采样的过渡源。</summary>
     private string _currentState = string.Empty;
 
     /// <summary>等待 Skill 状态及过渡退出后归还的真实技能剪辑 Location，空值表示无待释放项。</summary>
     private string _pendingSkillReleaseLocation = string.Empty;
 
-    /// <summary>新 Skill 剪辑准备期间暂存的旧 ready Location，失败时恢复延迟释放。</summary>
+    /// <summary>新技能剪辑准备期间暂存的旧剪辑路径；新剪辑失败时，恢复对旧剪辑的退出后释放请求。</summary>
     private string _supersededSkillReleaseLocation = string.Empty;
 
     /// <summary>会话版本号，每次 Init 或 Reset 时递增，用于校验异步回调。</summary>
@@ -141,7 +144,7 @@ public class MAnimator
     /// <summary>获取 Unity 原生 Animator 组件。</summary>
     public Animator UnityAnimator { get { return _animator; } }
 
-    /// <summary>获取当前播放的动画状态名。</summary>
+    /// <summary>获取最近一次 Play/CrossFade 请求的目标状态名；不代表 Unity 当前正在采样的过渡源。</summary>
     public string CurrentState { get { return _currentState; } }
 
     /// <summary>关键动画准备队列为空，且当前普通状态或混合树的全部剪辑都已就绪时返回 true。</summary>
@@ -185,7 +188,7 @@ public class MAnimator
 
     #region 初始化与事件注册
     /// <summary>
-    /// 逐帧更新，同步播放速度到 Animator。
+    /// 逐帧尝试释放已经退出 Skill 状态的旧技能剪辑；随后写回 Animator 当前速度值。
     /// </summary>
     /// <param name="deltaSeconds">距上一帧时间（秒），当前未使用。</param>
     public virtual void Update(float deltaSeconds)
@@ -195,7 +198,11 @@ public class MAnimator
         _animator.speed = Speed;
     }
 
-    /// <summary>绑定模型、宿主 GameObject 和 Unity Animator。</summary>
+    /// <summary>清理上次绑定并连接新模型；有指定资源路径时异步加载控制器，否则使用预制体自带控制器。</summary>
+    /// <param name="model">拥有此动画包装器的模型。</param>
+    /// <param name="host">装有 Animator 的模型对象包装器。</param>
+    /// <param name="animator">实际播放动画的 Unity 组件。</param>
+    /// <param name="controllerLocation">控制器资源路径；空值表示沿用预制体控制器。</param>
     public virtual void Init(MModel model, MGameObject host, Animator animator,
         string controllerLocation)
     {
@@ -215,6 +222,7 @@ public class MAnimator
         {
             if (!string.IsNullOrEmpty(_controllerLocation))
             {
+                // 记录本轮绑定编号，异步完成时据此丢弃上一个模型的结果。
                 int loadSession = _sessionVersion;
                 MAnimatorControllerAssetProvider.Instance.LoadAsync(_controllerLocation,
                     lease => OnControllerLoaded(loadSession, lease));
@@ -257,7 +265,9 @@ public class MAnimator
     #endregion
 
     #region 事件回调
-    /// <summary>只接受当前初始化会话的异步结果，旧实体回调统一释放租约。</summary>
+    /// <summary>接收控制器加载结果；旧绑定的结果立即归还，当前请求失败时尝试预制体自带控制器。</summary>
+    /// <param name="loadSession">发起加载时记录的模型绑定编号。</param>
+    /// <param name="lease">加载所得控制器引用；为空表示资源加载失败。</param>
     private void OnControllerLoaded(int loadSession, MAnimatorControllerAssetLease lease)
     {
         if (loadSession != _sessionVersion || _animator == null)
@@ -291,8 +301,8 @@ public class MAnimator
         BindController(lease.Controller);
     }
 
-    /// <summary>准备中剪辑成功提升为 ready 后，当前状态按保存的归一化进度续播。</summary>
-    /// <param name="animInfo">已经完成 Controller 应用和两阶段提升的动画绑定信息。</param>
+    /// <summary>新剪辑已经成功装入控制器后，若它属于当前请求的动作，就恢复该动作的播放。</summary>
+    /// <param name="animInfo">已经从准备中转为可播放状态的剪辑绑定信息。</param>
     private void OnPreparedClipPromoted(MAnimInfo animInfo)
     {
         if (_currentState == animInfo.StateKey)
@@ -435,7 +445,7 @@ public class MAnimator
     }
 
     /// <summary>尝试把已加载剪辑写入当前 Controller 的同名覆盖槽位。</summary>
-    /// <param name="animInfo">仍处于 preparing 阶段的动画绑定信息。</param>
+    /// <param name="animInfo">已加载候选剪辑、尚未替换旧剪辑的绑定信息。</param>
     /// <param name="preparedClip">已经由共享 ClipInfo 完成加载的候选剪辑。</param>
     /// <returns>Controller 未绑定时返回 Pending，写入成功返回 Applied，确定性失败返回 Failed。</returns>
     private PreparedClipApplyResult TryApplyPreparedClip(MAnimInfo animInfo,
@@ -454,6 +464,7 @@ public class MAnimator
         AnimationClip originalClip = FindOriginalClip(animInfo.OverrideKey);
         if (originalClip == null)
         {
+            // 每个控制器和覆盖槽位只提示一次，避免反复报告同一配置问题。
             string warningKey = _controller.name + "|" + animInfo.OverrideKey;
             if (!_missingOverrideSlotWarnings.Contains(warningKey))
             {
@@ -484,7 +495,7 @@ public class MAnimator
         return PreparedClipApplyResult.Applied;
     }
 
-    /// <summary>Controller 确定加载失败时释放全部 preparing 引用并完成关键预加载标记收尾。</summary>
+    /// <summary>控制器加载失败且无法回退时，取消所有待替换剪辑并结束预加载等待。</summary>
     private void CancelPreparingClips()
     {
         // 动画信息快照保证释放回调期间原字典保持可遍历。
@@ -509,6 +520,7 @@ public class MAnimator
     /// <returns>true 表示状态节点存在。</returns>
     private bool HasNativeState(string stateName, int layer)
     {
+        // 实际存在的完整路径；找不到时使用空字符串表示。
         string nativeStatePath = GetNativeStatePath(stateName, layer);
         return !string.IsNullOrEmpty(nativeStatePath);
     }
@@ -528,7 +540,7 @@ public class MAnimator
             return string.Empty;
         }
 
-        // 当前项目的正式 MAnimator Controller 使用 Idle 子状态机。
+        // 先尝试本项目控制器的 Idle、Move、Jump 子状态机完整路径。
         string nestedStatePath = GetFormalNestedStatePath(stateName);
         if (!string.IsNullOrEmpty(nestedStatePath) &&
             _animator.HasState(layer, Animator.StringToHash(nestedStatePath)))
@@ -674,8 +686,8 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 获取当前动画状态的信息，包括归一化时间。
-    /// 如果该状态尚未登记，自动创建并加入映射表。
+    /// 获取最近一次请求动作的绑定信息；Unity 当前也处于该动作时，读取它的实际播放进度。
+    /// 未登记的动作会创建空绑定，混合树则使用第一条子剪辑信息。
     /// </summary>
     /// <returns>当前动画状态的嵌套动画信息对象。</returns>
     public virtual MAnimInfo GetCurrentAnimInfo()
@@ -705,7 +717,7 @@ public class MAnimator
     /// 根据 key 获取已登记的动画信息。
     /// </summary>
     /// <param name="key">逻辑动画 key。</param>
-    /// <returns>对应的嵌套动画信息，不存在返回 null。</returns>
+    /// <returns>普通键的绑定信息，或混合树第一条子剪辑信息；未登记时返回 null。</returns>
     public virtual MAnimInfo GetAnimInfo(string key)
     {
         // 普通状态或直接覆盖键对应的动画绑定信息。
@@ -765,6 +777,7 @@ public class MAnimator
     /// <returns>缓存的参数值，不存在返回 0。</returns>
     public virtual float GetFloat(string parameterName)
     {
+        // 只读本地保存值，不从 Unity Animator 反查。
         float value;
         if (_floatParameters.TryGetValue(parameterName, out value)) return value;
         return 0f;
@@ -777,6 +790,7 @@ public class MAnimator
     /// <returns>缓存的参数值，不存在返回 0。</returns>
     public virtual int GetInteger(string parameterName)
     {
+        // 最近通过本包装器写入的整数值。
         int value;
         if (_intParameters.TryGetValue(parameterName, out value)) return value;
         return 0;
@@ -789,6 +803,7 @@ public class MAnimator
     /// <returns>缓存的参数值，不存在返回 false。</returns>
     public virtual bool GetBool(string parameterName)
     {
+        // 最近通过本包装器写入的布尔值。
         bool value;
         if (_boolParameters.TryGetValue(parameterName, out value)) return value;
         return false;
@@ -803,6 +818,7 @@ public class MAnimator
     protected virtual AnimationClip FindOriginalClip(string key)
     {
         if (_controller == null || _controller.animationClips == null) return null;
+        // 控制器原始剪辑列表；名称就是运行时替换剪辑使用的槽位键。
         AnimationClip[] clips = _controller.animationClips;
         for (int index = 0; index < clips.Length; index++)
         {
@@ -829,7 +845,8 @@ public class MAnimator
     #endregion
 
     #region 核心逻辑
-    /// <summary>绑定 Controller 并重放缓存参数及当前逻辑动作。</summary>
+    /// <summary>装入控制器，重新应用已有剪辑与参数，再尝试安装等待中的剪辑并恢复目标动作。</summary>
+    /// <param name="controller">异步加载或预制体回退得到的控制器。</param>
     private void BindController(RuntimeAnimatorController controller)
     {
         if (_animator == null)
@@ -1115,7 +1132,7 @@ public class MAnimator
 
     /// <summary>
     /// 登记逻辑动画键并通过 MAnimationMgr 异步准备目标剪辑。
-    /// 当前就绪剪辑会一直保留到新剪辑成功完成加载，避免切换期间播放空引用。
+    /// 旧剪辑保留到新剪辑加载且写入控制器成功；仅加载成功还不算替换完成。
     /// </summary>
     /// <param name="key">AnimatorOverrideController 中需要替换的原始剪辑键。</param>
     /// <param name="clipLocation">已经由 MAnimationMgr 解析并登记的完整 YooAsset Location。</param>
@@ -1206,10 +1223,10 @@ public class MAnimator
     /// <returns>常驻待机、移动或跳跃状态之一返回 true。</returns>
     private bool NeedPreload(string animKey)
     {
-        // 常驻待机类状态：Idle、FIdle 与自动导航行走。
+        // 第一组常用动作：普通待机、战斗待机和战斗行走。
         bool isIdleLikeState = animKey == STATE_IDLE || animKey == STATE_FIDLE ||
             animKey == STATE_ZD_MOVE_WALK;
-        // 移动类状态：自动导航奔跑与非自动导航行走、奔跑。
+        // 其余移动动作：战斗奔跑、非战斗行走和非战斗奔跑。
         bool isMoveLikeState = animKey == STATE_ZD_MOVE_RUN ||
             animKey == STATE_NONZD_MOVE_WALK || animKey == STATE_NONZD_MOVE_RUN;
         // 跳跃类状态：起跳、空中循环与落地收尾。
@@ -1219,7 +1236,7 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 设置 Float 类型 Animator 参数，同时缓存到本地字典，对象池复用时重放。
+    /// 保存 Float 参数；组件当前可用时立即写入，重新绑定控制器时可从缓存恢复。
     /// </summary>
     /// <param name="parameterName">参数名。</param>
     /// <param name="value">参数值。</param>
@@ -1307,22 +1324,28 @@ public class MAnimator
     private void ApplyCachedParameters()
     {
         if (_animator == null) return;
+        // 参数名快照，逐个恢复保存的浮点参数。
         List<string> floatKeys = new List<string>(_floatParameters.Keys);
         for (int index = 0; index < floatKeys.Count; index++)
         {
+            // 当前浮点参数名及此前保存的数值。
             string key = floatKeys[index];
             float value = _floatParameters[key];
             _animator.SetFloat(key, value);
         }
+        // 整数参数名快照，与浮点参数使用独立缓存。
         List<string> intKeys = new List<string>(_intParameters.Keys);
         for (int index = 0; index < intKeys.Count; index++)
         {
+            // 本次要恢复的整数参数名。
             string key = intKeys[index];
             _animator.SetInteger(key, _intParameters[key]);
         }
+        // 布尔参数名快照，依次恢复开关状态。
         List<string> boolKeys = new List<string>(_boolParameters.Keys);
         for (int index = 0; index < boolKeys.Count; index++)
         {
+            // 本次要恢复的布尔参数名。
             string key = boolKeys[index];
             _animator.SetBool(key, _boolParameters[key]);
         }
@@ -1343,8 +1366,8 @@ public class MAnimator
     }
 
     /// <summary>
-    /// 单个逻辑动画状态的剪辑绑定信息。
-    /// 对齐 RO 的两阶段资源状态：已就绪剪辑负责当前播放，准备中剪辑负责异步替换。
+    /// 一个覆盖槽位使用的剪辑信息，记录它属于哪个播放状态。
+    /// 切换时同时持有旧剪辑和待装入的新剪辑；只有新剪辑安装成功才释放旧引用。
     /// </summary>
     public sealed class MAnimInfo
     {
@@ -1366,7 +1389,7 @@ public class MAnimator
         /// <summary>稳定的加载完成回调实例，用于注册和取消同一个异步等待者。</summary>
         private readonly MAnimationMgr.LoadClipCallback _loadClipCallback;
 
-        /// <summary>当前动画的归一化播放时间；循环动画保持在 [0,1)，非循环动画封顶为 1。</summary>
+        /// <summary>保存的播放进度，以一轮动作为 1；达到 1 后循环动画取小数部分，非循环动画封顶，负值原样保留。</summary>
         private float _normalizedTime;
 
         /// <summary>逻辑播放状态键；混合树时为树状态名，否则与覆盖键一致。</summary>
@@ -1464,7 +1487,7 @@ public class MAnimator
             get { return _clipInfo != null && _preparingClipInfo == null; }
         }
 
-        /// <summary>当前动画的归一化播放时间，循环动画自动折返，非循环动画封顶为 1。</summary>
+        /// <summary>保存的播放进度；值达到 1 后按目标剪辑是否循环折返或封顶，小于 1 的值不调整。</summary>
         public float NormalizedTime
         {
             get { return _normalizedTime; }
@@ -1642,7 +1665,7 @@ public class MAnimator
             TryPromotePreparingClip(_preparingClipInfo);
         }
 
-        /// <summary>释放准备中剪辑并保留旧 ready 剪辑，用于槽位失败或 Controller 加载失败收尾。</summary>
+        /// <summary>取消待替换剪辑并保留当前可播的旧剪辑；用于控制器加载或覆盖槽位安装失败。</summary>
         internal void CancelPreparingClip()
         {
             if (_preparingClipInfo == null)
@@ -1656,7 +1679,7 @@ public class MAnimator
             }
         }
 
-        /// <summary>释放当前 preparing 共享引用并清空准备状态，不影响旧 ready 剪辑。</summary>
+        /// <summary>归还当前待替换剪辑的引用并取消其回调，不动已安装的旧剪辑。</summary>
         private void ReleasePreparingClip()
         {
             if (_preparingClipInfo != null)

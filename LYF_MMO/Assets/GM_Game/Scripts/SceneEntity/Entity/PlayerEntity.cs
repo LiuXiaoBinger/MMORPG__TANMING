@@ -4,15 +4,14 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>
-/// 本地玩家场景实体，同时承载本地角色组件 API。
-/// 继承自 RoleEntity，额外管理本地玩家的业务组件容器、脏标记和角色数据。
-/// 是客户端唯一的本地玩家场景表现根对象。
+/// 本地玩家的场景实体，连接角色基础数据、背包/计数组件和场景表现。
+/// 每帧完成移动后按位置、朝向及跳跃变化上报服务器；销毁时清理目标与本地角色数据。
 /// </summary>
 public sealed class PlayerEntity : RoleEntity
 {
 
     #region 字段与属性
-    /// <summary>RO 同名当前选中实体，点击、瞄准与技能自动选敌共用；离场和复用时清空。</summary>
+    /// <summary>当前选中的实体，点击、瞄准和技能选择共用；离场和复用时清空。</summary>
     public MEntity Target { get; set; }
 
     /// <summary>本地玩家上次生成的施法 UUID，零表示该实体尚未释放技能。</summary>
@@ -145,7 +144,7 @@ public sealed class PlayerEntity : RoleEntity
     #endregion
 
     #region 界面刷新、事件回调等
-    /// <summary>按 RO 同名发送入口上传当前位置、朝向、耗时和移动状态，并归零同步计时。</summary>
+    /// <summary>上传当前位置、朝向、经过时间和移动/跳跃状态，再清零本次同步计时。</summary>
     public void UpdateMove()
     {
         // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
@@ -161,7 +160,7 @@ public sealed class PlayerEntity : RoleEntity
         _face = Model.Rotation.eulerAngles.y;
         _isMoving = IsMoving;
         _jumpCount = MoveComp.JumpCount;
-        // 本时间段是否实际发生位移；跳跃与技能根运动也需要远端追赶最终坐标。
+        // 本时间段是否实际发生位移；跳跃和技能程序位移也需要同步最终坐标。
         bool isMoved = Position != sysnOldPos;
         sysnOldPos = Position;
         // 本次位置上报的强类型消息：位置为米、耗时为秒，沿 RO Dx/Dy/Dz/Time 语义发送。
@@ -231,7 +230,7 @@ public sealed class PlayerEntity : RoleEntity
     /// <param name="moneyType">货币类型</param>
     /// <param name="price">价格</param>
     /// <param name="notifyNow">是否立即通知 UI 刷新</param>
-    /// <param name="idipParam">输出参数，变更后的物品参数</param>
+    /// <param name="idipParam">输出参数；当前方法置为 default，后续向背包组件按值传递，不回写变更结果</param>
     /// <returns>添加的物品实例，失败返回 null</returns>
     public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason,
         ItemSign itemSign, int moneyType, long price, bool notifyNow,
@@ -242,11 +241,13 @@ public sealed class PlayerEntity : RoleEntity
         {
             return null;
         }
+        // 本地背包组件，具体物品查询或增减交给它执行。
         RoItemComponent itemComponent;
         if (!TryGetRoleComponent(out itemComponent))
         {
             return null;
         }
+        // 是否要求背包组件在本次修改后立即通知界面。
         UpdateType updateType = UpdateType.eUT_Normal;
         if (notifyNow)
         {
@@ -362,6 +363,7 @@ public sealed class PlayerEntity : RoleEntity
     /// <returns>物品数量，组件不存在时返回 0</returns>
     public int GetItemCount(int itemId)
     {
+        // 本地背包组件，具体物品查询或增减交给它执行。
         RoItemComponent itemComponent;
         if (!TryGetRoleComponent(out itemComponent))
         {
@@ -383,6 +385,7 @@ public sealed class PlayerEntity : RoleEntity
         {
             return CmdCode.InvalidSession;
         }
+        // 本地背包组件，具体物品查询或增减交给它执行。
         RoItemComponent itemComponent;
         if (!TryGetRoleComponent(out itemComponent))
         {
@@ -406,6 +409,7 @@ public sealed class PlayerEntity : RoleEntity
     /// <returns>标记值，未设置过返回 false</returns>
     public bool GetFlag(RoleStateFlag flag)
     {
+        // 已登记的角色状态值；未登记时方法返回 false。
         bool value;
         if (_flags.TryGetValue(flag, out value))
         {
@@ -434,6 +438,7 @@ public sealed class PlayerEntity : RoleEntity
         }
         // 加载背包数据
         RoItemComponent itemComponent = GetRoleComponent<RoItemComponent>();
+        // 接收服务器计数列表的业务组件，与背包数据一同加载。
         RoleCountComponent countComponent = GetRoleComponent<RoleCountComponent>();
         itemComponent.LoadKnapsack(result);
         countComponent.Load(result.RoleKanpsackInfo.RoleCountInfoList);
@@ -590,6 +595,7 @@ public sealed class PlayerEntity : RoleEntity
         {
             return CmdCode.ItemNotExist;
         }
+        // 本地背包组件，具体物品查询或增减交给它执行。
         RoItemComponent itemComponent;
         if (!TryGetRoleComponent(out itemComponent))
         {

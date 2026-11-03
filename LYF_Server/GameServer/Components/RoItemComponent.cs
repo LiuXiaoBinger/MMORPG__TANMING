@@ -24,11 +24,10 @@ public class RoItemComponent : RoleComponentBase
     // 每个真实容器对应一个延迟持久化状态对象。
     private Dictionary<KnapsackType, ItemDataListDB> _itemDataLists;
 
-    // 角色物品内存状态的单调递增版本，每次物品变更自增，用于 CenterServer 幂等与 ACK 对齐。
-    //需要同步给客户端的道具id
+    // 等待同步给客户端的实例UID及其最后一次变更原因；同一实例多次变更只保留一条。
     private Dictionary<long,ChangeReason> _need_update_item;
 
-    // 需要延时删除的道具id vector
+    // 选择延迟删除通知时暂存实例UID及原因；当前文件没有消费此字典的逻辑。
     private Dictionary<long,ChangeReason> _delay_del_item_map;
 
     // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
@@ -46,7 +45,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 初始化组件，创建五类背包容器与对应的持久化状态对象，并为四类可扩容背包设置默认 81 格容量。
+    /// 初始化组件，创建六类背包容器与对应的持久化状态对象，并为四类可扩容背包设置默认 81 格容量。
     /// </summary>
     public override void Initialize()
     {
@@ -55,7 +54,7 @@ public class RoItemComponent : RoleComponentBase
         _need_update_item = new Dictionary<long, ChangeReason>();
         _delay_del_item_map = new Dictionary<long, ChangeReason>();
 
-        // 五类配置背包在角色组件初始化时一次性创建，避免首次访问时出现空容器。
+        // 六类配置背包在角色组件初始化时一次性创建，避免首次访问时出现空容器。
         KnapsackType[] containerTypes =
         {
             KnapsackType.RolePackPlain,
@@ -100,7 +99,7 @@ public class RoItemComponent : RoleComponentBase
     #region 事件回调、网络请求与消息等
     /// <summary>
     /// 所有物品增删改入口最终都通过此函数设置对应 ItemDataListDB 的脏状态。
-    /// 内部自增变更版本并按 sizeDelta 区分新增/删除/修改。
+    /// 读取角色当前保存版本，并按 sizeDelta 区分新增、删除或修改；这里不递增角色版本。
     /// </summary>
     /// <param name="item">发生变更的物品实例。</param>
     /// <param name="reason">变更原因。</param>
@@ -123,7 +122,7 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// CenterServer 保存成功 ACK 回调，按确认版本清除对应脏状态。
-    /// 在途期间又发生变化时 dirtyVersion 会更大，旧 ACK 不会清除新脏数据。
+    /// 同时核对保存版本和容器修改次数，避免把保存发出后的新修改清除。
     /// </summary>
     /// <param name="version">CenterServer 确认已持久化的版本号。</param>
     public override void OnSaveAcknowledged(long version)
@@ -153,7 +152,7 @@ public class RoItemComponent : RoleComponentBase
     /// <param name="itemSign">物品绑定标记。</param>
     /// <param name="moneyType">单价货币类型。</param>
     /// <param name="price">物品单价。</param>
-    /// <param name="updateType">更新类型，控制客户端同步方式。</param>
+    /// <param name="updateType">调用方传入的通知时机；当前 OnItemChange 未区分此值，统一加入待通知字典。</param>
     /// <param name="idipParam">预留 IDIP 参数。</param>
     /// <returns>最后一次添加或堆叠的物品实例；参数非法、配置缺失或空间不足返回 null。</returns>
     public ItemBase AddItem(int itemId, int itemCount, ChangeReason reason, 
@@ -329,7 +328,7 @@ public class RoItemComponent : RoleComponentBase
         item.SetItemSign(itemInfo.ItemSign);
         item.SetPrice(itemInfo.MoneyType, itemInfo.TotalPrice);
         item.SetLocation(itemInfo.RoleId, itemInfo.BagType, itemInfo.BagIndex);
-        // 创建时间按 UTC Ticks 恢复，0 或超出范围视为未设置。
+        // 创建时间按 UTC Ticks 恢复；0 或超出范围时保留构造函数设置的当前 UTC 时间。
         if (itemInfo.CreateTimeUtcTicks > 0 && itemInfo.CreateTimeUtcTicks <= DateTime.MaxValue.Ticks)
         {
             item.SetCreateTime(new DateTime(itemInfo.CreateTimeUtcTicks, DateTimeKind.Utc));
@@ -386,6 +385,7 @@ public class RoItemComponent : RoleComponentBase
         return true;
     }
 
+    /// <summary>删除整个实例，记录待保存状态，再立即发送或暂存删除通知；need_tlog 参数当前未使用。</summary>
     public bool DeleteItem(long itemUid, ChangeReason reason,bool need_delelay_del = false, bool need_tlog = true)
     {
         ItemBase item = GetItemByUID(itemUid);
@@ -403,7 +403,7 @@ public class RoItemComponent : RoleComponentBase
         if (container != null)
         {
             container.SwapOutByUID(item.GetItemUID());
-            // 道具删除需要同步到ms，先将数量置为0
+            // 实例已从内存容器移除，把旧对象数量归零后继续执行回调。
             item.SetItemCount(0);
             // 走容器道具变化接口
             container.ContainerOnItemChange(item, reason);
@@ -425,7 +425,7 @@ public class RoItemComponent : RoleComponentBase
 
         if (need_delelay_del)
         {
-            _delay_del_item_map[itemUid] = reason; // 或 TryAdd(uid, reason)
+            _delay_del_item_map[itemUid] = reason; // 暂存本次删除原因，当前文件没有后续发送循环
         }
         else
         {
@@ -444,6 +444,7 @@ public class RoItemComponent : RoleComponentBase
     #endregion
 
     #region 查询与判定
+    /// <summary>返回物品组件在角色存档中的模块编号。</summary>
     public override RoleModuleType GetModuleId()
     {
         return RoleModuleType.kRoleModuleTypeItemComponent;
@@ -536,7 +537,7 @@ public class RoItemComponent : RoleComponentBase
     /// 获取背包容器还有多少空格子
     /// </summary>
     /// <param name="type"></param>
-    /// <param name="page_num">如果是仓库看看是哪一页</param>
+    /// <param name="page_num">预留仓库页号；当前容器查询未使用。</param>
     /// <returns></returns>
     public int GetLeftSpace(KnapsackType type, int page_num=1)
     {
@@ -548,7 +549,7 @@ public class RoItemComponent : RoleComponentBase
     /// 通过类型获取容器基类
     /// </summary>
     /// <param name="type"></param>
-    /// <param name="pageNum"></param>
+    /// <param name="pageNum">预留页号；当前按背包类型直接查询，不区分页。</param>
     /// <returns></returns>
     public RoItemContainer GetContainerByType(KnapsackType type, int pageNum =1)
     {
@@ -564,12 +565,12 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 统计指定配置物品 ID 在背包中的总数量。
-    /// 默认只统计非绑定物品，找到第一个非空容器即可提前返回；
+    /// 默认统计配置指定背包中的非绑定物品；传入 kItemBindIs 时也计入绑定物品。
     /// calc_all_container 为 true 时遍历全部容器累加。
     /// </summary>
     /// <param name="itemId">配置物品 ID，必须为 int 且大于 0。</param>
-    /// <param name="calc_bind_item">预留参数，当前实现固定统计非绑定物品。</param>
-    /// <param name="calc_all_container">是否遍历全部容器累加；false 时找到即停。</param>
+    /// <param name="calc_bind_item">kItemBindNo 只计非绑定物品；kItemBindIs 同时计绑定与非绑定物品。</param>
+    /// <param name="calc_all_container">true 累计全部容器，false 只查配置指定容器。</param>
     /// <returns>物品总数量，超过 int.MaxValue 时截断为 int.MaxValue。</returns>
     public int GetItemNum(int itemId, ItemBind calc_bind_item = ItemBind.kItemBindNo, bool calc_all_container = false)
     {
@@ -597,9 +598,9 @@ public class RoItemComponent : RoleComponentBase
         for (int index = 0; index < containerSnapshot.Count; index++)
         {
             RoItemContainer container = containerSnapshot[index];
-            // 当前固定统计非绑定物品（kItemBindNo）。
+            // 每个容器都使用调用方指定的绑定筛选。
             total += container.CountItem(configuredItemId, calc_bind_item);
-            // 非全容器模式下，只要找到数量就提前终止遍历。
+            // 非全容器模式已在前面返回；进入本循环时此条件不会成立。
             if (!calc_all_container && total > 0)
             {
                 break;
@@ -630,6 +631,7 @@ public class RoItemComponent : RoleComponentBase
         return result;
     }
 
+    /// <summary>按背包类型读取负责保存确认的状态对象；未登记时返回 null。</summary>
     public ItemDataListDB GetItemDataListDB(int getBagType)
     {
         if (_itemDataLists.ContainsKey((KnapsackType)getBagType))
@@ -848,7 +850,7 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 从中心服登录回包装载角色全部背包数据：先恢复各背包容量，再清空容器，
-    /// 按 UID 去重后逐类装入物品，最后恢复保存版本并重置所有持久化状态为干净。
+    /// 按 UID 去重后逐类装入物品，最后清除各容器装载期间的待保存标记；本方法不恢复角色保存版本。
     /// </summary>
     /// <param name="ret">中心服返回的角色背包信息回包。</param>
     public void LoadKnapsack(RoleKanpsackInfoRet ret)
@@ -890,7 +892,7 @@ public class RoItemComponent : RoleComponentBase
         LoadItems(info.RoleCurrtEquipPack, loadedItemUids);
         LoadItems(info.RoleVirtualItemPack, loadedItemUids);
 
-        // 恢复中心服已持久化的物品版本号，作为本地变更版本的起点。
+        // 这里仅重置容器的保存状态，不读取或设置角色的保存版本。
         // 装载完成后所有容器视为干净状态，等待后续变更触发脏标记。
         List<ItemDataListDB> dataListSnapshot = new List<ItemDataListDB>(_itemDataLists.Values);
         for (int index = 0; index < dataListSnapshot.Count; index++)
@@ -902,7 +904,7 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 将所有脏容器的完整快照写入字段管理器，由调用方组装为保存请求发送 CenterServer。
-    /// 脏版本高于传入 saveVersion 的容器会跳过，避免覆盖更新的本地变更。
+    /// 各容器记录本次保存版本与修改次数，收到确认后再据此判断能否清除待保存标记。
     /// </summary>
     /// <param name="fieldManager">角色数据字段管理器，用于写入序列化后的物品列表。</param>
     /// <param name="saveVersion">本次保存对应的角色数据版本。</param>
@@ -920,11 +922,11 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 将一组协议物品信息装载到对应背包容器，按 UID 全局去重避免重复装载。
+    /// 将一组协议物品装入对应背包；去重集合覆盖本次角色装载的全部背包。
     /// 装载失败的物品会从去重集合移除并记录错误日志。
     /// </summary>
     /// <param name="itemInfos">某类背包的物品信息列表。</param>
-    /// <param name="loadedItemUids">全局已装载 UID 集合，用于跨背包去重。</param>
+    /// <param name="loadedItemUids">本次角色装载共用的UID集合，用于跨背包去重。</param>
     private void LoadItems(IEnumerable<RoleItemInfo> itemInfos, HashSet<long> loadedItemUids)
     {
         List<RoleItemInfo> itemSnapshot = new List<RoleItemInfo>(itemInfos);
@@ -1077,6 +1079,7 @@ public class RoItemComponent : RoleComponentBase
         return itemData.MaxStackCount>1 ? itemData.MaxStackCount : 1;
     }
 
+    /// <summary>把待通知UID仍对应的物品当前状态打包发送，然后清空待通知字典；已经移除的UID不会在此生成删除项。</summary>
     private void Ntf2ClientItemChange()
     {
         if (Owner == null || _need_update_item == null || _need_update_item.Count == 0)
@@ -1118,6 +1121,7 @@ public class RoItemComponent : RoleComponentBase
         return info;
     }
 
+    /// <summary>把时间转为 UTC 的 100 纳秒刻度；DateTime.MinValue 用协议值 0 表示未设置。</summary>
     private static long ToUtcTicks(DateTime value)
     {
         if (value == DateTime.MinValue)
@@ -1128,11 +1132,11 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 通知任务模块
+    /// 任务模块通知占位；当前方法为空，不派发任务事件。
     /// </summary>
     /// <param name="item"></param>
     /// <param name="i"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// 当前实现不抛出 NotImplementedException。
     private void NtfTaskModleItemChange(ItemBase item, int i)
     {
         
@@ -1365,7 +1369,7 @@ public class RoItemComponent : RoleComponentBase
         List<long> need_del_vec =  new List<long>();
         for(int i=0;i<item_list.Count;i++)
         {
-            ItemBase item = item_list[i]; // ✅ 生效
+            ItemBase item = item_list[i]; // 仍是容器中的原实例，数量变化会影响后续保存
             if (item.GetItemCount() <= need_reduce)
             {
                 need_reduce -= item.GetItemCount();

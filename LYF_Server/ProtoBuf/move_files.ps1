@@ -1,11 +1,11 @@
 ﻿# ============================================================
-#  ProtoBuf out 文件夹文件转移脚本
-#  用法：修改下面的 $destination 为你的目标路径，然后运行本脚本
+#  将协议生成输出目录第一层文件移动到目标目录；成功移动后源文件不再保留。
+#  当前目标仍是占位路径，运行时会提示结束；实际移动使用 Force，可能覆盖目标同名文件。
 # ============================================================
 
-# ---------- 请在这里填写目标路径 ----------
+# 目标目录的配置位置；必须先改成实际目标才会进入移动流程。
 $destination = "D:\your\target\path"
-# ------------------------------------------
+# 协议生成器的输出目录，下面只枚举这一层文件。
 
 $source = "D:\unitypro\LYFMMORGP\LYF_Server\ProtoBuf\out"
 
@@ -27,7 +27,7 @@ if (-not (Test-Path -Path $destination)) {
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
 }
 
-# 获取源目录下的所有文件（不包含子目录）
+# 枚举源目录第一层默认可见的文件；不进入子目录，也未启用隐藏项目枚举。
 $files = Get-ChildItem -Path $source -File
 
 if ($files.Count -eq 0) {
@@ -37,10 +37,14 @@ if ($files.Count -eq 0) {
 
 Write-Host "[开始] 共找到 $($files.Count) 个文件，正在转移到: $destination" -ForegroundColor Green
 
+# 已成功移动的文件数；只有 Move-Item 未抛异常才增加。
 $successCount = 0
+# 移动失败的文件数；单个文件失败后继续处理下一个。
 $failCount = 0
 
+# file 是当前枚举到的文件信息，保持原文件名构造目标完整路径。
 foreach ($file in $files) {
+    # 当前文件的目标路径，源文件和目标文件使用同一个文件名。
     $destPath = Join-Path -Path $destination -ChildPath $file.Name
     try {
         Move-Item -Path $file.FullName -Destination $destPath -Force -ErrorAction Stop

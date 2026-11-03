@@ -22,13 +22,14 @@ public class DBMgr:Singleton<DBMgr>
     /// <returns>可供各 Model 与写任务复用的 SqlSugar 客户端。</returns>
     public SqlSugarClient initDB()
     {
+        // 本地开发数据库的连接参数，SqlSugar 按需打开和关闭连接。
         ConnectionConfig connectionConfig =new ConnectionConfig()
         { 
             ConnectionString = "Server=localhost;Port=3308;DataBase=game_db;User=root;Password=123456",
             DbType = DbType.MySql,
             IsAutoCloseConnection = true
         };
-        //创建数据库对象 (用法和EF Dappper一样通过new保证线程安全)
+        //创建并保存中心服复用的数据库客户端；new 只创建实例，本身不保证并发访问安全。
         SqlSugarClient Db = new SqlSugarClient(connectionConfig);
         _db = Db;
         // Server=localhost;Port=3306;DataBase=gm_game;User=root;Password=123456;
@@ -82,7 +83,9 @@ public class DBMgr:Singleton<DBMgr>
             return 0;
         }
 
+        // 本轮已经执行的任务数，达到 100 条后把余下任务留到下一轮。
         int processed = 0;
+        // 从网络投递队列中依次取出的角色保存任务。
         CRoleWriteTask task;
         while (processed < MaxTasksPerUpdate && _tasks.TryDequeue(out task))
         {

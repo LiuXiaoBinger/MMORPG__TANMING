@@ -11,7 +11,7 @@ internal sealed class MNavigationPointComparer : IEqualityComparer<MNavigationPo
         return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
     }
 
-    /// <summary>组合三个浮点坐标，避免拼接整数键的异或聚集。</summary>
+    /// <summary>将 X、Y、Z 的哈希值组合成字典索引；真正是否同一点仍由 Equals 判断。</summary>
     /// <param name="point">需要放入顶点或空间桶字典的坐标。</param>
     public int GetHashCode(MNavigationPoint point)
     {

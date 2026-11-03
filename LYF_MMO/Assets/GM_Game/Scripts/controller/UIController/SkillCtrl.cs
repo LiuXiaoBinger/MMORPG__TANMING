@@ -5,7 +5,7 @@ using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
-/// <summary>技能界面控制器，负责快捷输入与服务器MP/CD结果展示，施法发送交给RO模块链。</summary>
+/// <summary>把技能快捷键交给施法模块，接收服务器技能列表与施法通知，并刷新技能栏、法力值和冷却显示。</summary>
 public sealed class SkillCtrl : CtrlBase
 {
 
@@ -30,7 +30,7 @@ public sealed class SkillCtrl : CtrlBase
     private readonly Dictionary<int, RoleSkillInfoRet> _pendingRoleSkillInfos =
         new Dictionary<int, RoleSkillInfoRet>();
 
-    /// <summary>待应用技能回包所属的连接代次，零表示没有待应用回包。</summary>
+    /// <summary>待应用技能回包所属的连接编号，零表示没有待应用回包。</summary>
     private long _pendingRoleSkillGeneration;
 
     /// <summary>快捷键事件是否已绑定，避免 UI 反复初始化时重复施法。</summary>
@@ -109,7 +109,7 @@ public sealed class SkillCtrl : CtrlBase
     #endregion
 
     #region 交互响应
-    /// <summary>主角晚于技能列表创建时补装已学效果，不复制旧控制器冷却字典。</summary>
+    /// <summary>角色出现时应用同连接、同角色的暂存技能列表；角色离场时清空快捷键和显示数据。</summary>
     /// <param name="localRole">刚加入场景世界的本地角色，离场时为空。</param>
     private void OnLocalRoleChanged(PlayerEntity localRole)
     {
@@ -130,7 +130,7 @@ public sealed class SkillCtrl : CtrlBase
             RefreshSkillWindows();
             return;
         }
-        // 新角色只消费同一连接代次且 RoleId 相符的待应用列表。
+        // 新角色只消费同一连接编号且 RoleId 相符的待应用列表。
         RoleSkillInfoRet pendingResult = null;
         bool hasMatchingPendingResult = _pendingRoleSkillGeneration > 0 &&
             _pendingRoleSkillGeneration ==
@@ -168,7 +168,7 @@ public sealed class SkillCtrl : CtrlBase
     #endregion
 
     #region 事件回调
-    /// <summary>装载中心服已学等级，建立长期核心并更新技能列表与快捷栏。</summary>
+    /// <summary>接收服务器的已学技能列表；当前角色未创建就暂存，否则按角色 ID 应用等级和快捷键。</summary>
     /// <param name="data">11080 对应的只读 protobuf 消息体。</param>
     private void OnRoleSkillInfo(ByteString data)
     {
@@ -207,7 +207,7 @@ public sealed class SkillCtrl : CtrlBase
         ApplyRoleSkillInfo(result, localRole);
     }
 
-    /// <summary>快捷键入口：选中已学技能，交给RO经典释放模块并刷新当前CD视图。</summary>
+    /// <summary>快捷键入口：查找该键绑定的已学技能，交给 MSkillClassicsHandler 发起施法，再刷新冷却显示。</summary>
     /// <param name="key">输入系统上报的固定技能快捷键。</param>
     private void OnSkillKey(string key)
     {
@@ -332,8 +332,8 @@ public sealed class SkillCtrl : CtrlBase
     #region 查询与判定
     /// <summary>将协议字节解析为成功且带有效角色 ID 的已学技能快照。</summary>
     /// <param name="data">11080 对应的只读 protobuf 消息体。</param>
-    /// <param name="result">解析成功时的强类型角色技能快照，失败时为空。</param>
-    /// <returns>消息格式、结果码和角色 ID 均有效时返回 true。</returns>
+    /// <param name="result">解析后的角色技能列表；空输入时为空，结果码或角色 ID 无效时仍可能保留解析对象。</param>
+    /// <returns>非空输入成功解析，且结果码成功、角色 ID 为正时返回 true；协议解析异常直接向外抛出。</returns>
     private static bool TryParseRoleSkillInfo(ByteString data,
         out RoleSkillInfoRet result)
     {
@@ -354,7 +354,7 @@ public sealed class SkillCtrl : CtrlBase
     /// <summary>沿 RO 同名入口优先沿用合格敌人，否则自动找敌；本项目无目标攻击只辅助选择与朝向。</summary>
     /// <param name="skillCore">本次已学技能，只有主表 Type 一或二的攻击参与自动选敌。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>最近合格敌人；无敌人或非攻击技能返回空，保留原无目标施法。</returns>
+    /// <returns>优先返回仍合格的当前敌人；否则取最近敌人。非攻击技能或没有敌人时返回空。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
         // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
@@ -451,13 +451,15 @@ public sealed class SkillCtrl : CtrlBase
             {
                 continue;
             }
-            // 有效效果配置才使用新表中的权威 CD 时长。
+            // 角色已经建立技能核心时，从核心读取实际冷却时长和剩余时间。
             MSkillCore core = null;
             if (localRole != null && localRole.Skill != null)
             {
                 core = localRole.Skill.GetSkillCore(previous.SkillId);
             }
+            // 完整冷却时长，单位为秒；无技能核心时使用原展示配置。
             float duration = previous.Cooldown;
+            // 当前剩余冷却秒数，无核心时按 0 显示。
             float remaining = 0f;
             if (core != null)
             {

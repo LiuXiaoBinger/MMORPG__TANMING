@@ -1,11 +1,11 @@
-/// <summary>邻接构建期间保存的三角形有向边；地图初始化完成后不再持有。</summary>
+/// <summary>建立相邻三角形关系时临时保存的一条边，记录所属三角形及两个端点。</summary>
 internal sealed class MNavigationEdge
 {
     /// <summary>该边所属三角形的零起始编号。</summary>
     public int Triangle;
-    /// <summary>焊接后较小的顶点编号，用于精确共享边查找。</summary>
+    /// <summary>完全重合的顶点共用编号后，两个端点中较小的编号，用于精确共享边查找。</summary>
     public int VertexA;
-    /// <summary>焊接后较大的顶点编号，用于区分同起点的边。</summary>
+    /// <summary>完全重合的顶点共用编号后，两个端点中较大的编号，用于区分同起点的边。</summary>
     public int VertexB;
     /// <summary>边第一端点的世界坐标。</summary>
     public MNavigationPoint A;

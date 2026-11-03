@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// NPC Builder，对应参考项目 NpcBuilder 的场景、交互和 AI 组件。
-/// NPC 不需要战斗组件，但需要 AI 和导航来实现巡路和交互表现。
+/// 创建或复用 NPC，添加公共组件以及 NPC、AI、导航标记。
+/// 这里的 AI 和导航标记本身不执行巡逻或寻路。
 /// </summary>
 public sealed class NpcEntityBuilder : EntityBuilder
 {
@@ -24,9 +24,9 @@ public sealed class NpcEntityBuilder : EntityBuilder
         AttachCommonComponents(entity);
         // NPC 专属标记
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Npc));
-        // AI 标记：NPC 有自动行为逻辑
+        // 登记 AI 类别；此标记不执行 NPC 行为
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.AI));
-        // 导航标记：NPC 需要寻路巡路
+        // 登记导航类别；此标记不执行寻路
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Navigation));
         return entity;
     }

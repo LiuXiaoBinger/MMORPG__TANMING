@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 宠物场景实体，由玩家召唤的宠物单位。
-/// 继承自 MEntity，当前为轻量占位实体，后续可扩展宠物 AI 和跟随逻辑。
+/// 宠物的场景实体类型，沿用 MEntity 的模型和组件生命周期。
+/// 本类只指定 Pet 类别，没有宠物 AI 或跟随逻辑。
 /// </summary>
 public sealed class PetEntity : MEntity
 {

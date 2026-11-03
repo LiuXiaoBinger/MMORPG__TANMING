@@ -8,6 +8,6 @@ public enum TeamPage
     Target = 4, // 队伍目标选择弹窗。
     MemberDetails = 5, // 队员详细信息。
     Applications = 6, // 申请加入队伍的列表。
-    Recruitment = 7, // 队伍招募展示。
+    Recruitment = 7, // 当前用于收到队伍邀请后的确认页，仅存在待处理邀请时打开。
     MemberActions = 8 // 成员快捷操作菜单；未建队空态不作为独立页面。
 }

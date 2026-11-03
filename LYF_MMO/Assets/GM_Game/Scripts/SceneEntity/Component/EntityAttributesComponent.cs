@@ -2,8 +2,8 @@ using cfg;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 实体战斗属性组件，对应参考项目 AttributeComponent。
-/// 维护实体最大/当前生命值与魔法值，并在数值变化时派发 HP/MP/综合属性变更事件。
+/// 保存实体的生命值和魔法值，并在数值变化时通知实体上的监听者。
+/// 移动速度取自全局移动配置；角色动画表现表通过角色职业查找。
 /// </summary>
 public sealed class EntityAttributesComponent : EntityComponentBase
 {
@@ -46,7 +46,7 @@ public sealed class EntityAttributesComponent : EntityComponentBase
     public float RunSpeed
     { get => PlayStateMgr.Instance.stats.runningTopSpeed; }
 
-    /// <summary>骑乘坐骑速度</summary>
+    /// <summary>预留的坐骑速度，当前固定返回 0</summary>
     public float VehicleSpeed
     {
         get { return 0; }
@@ -62,19 +62,22 @@ public sealed class EntityAttributesComponent : EntityComponentBase
         return 1;
     } }
 
-    /// <summary>当前生效外观表现表（无视图外观时回退真实外观）。</summary>
+    /// <summary>角色职业对应的表现表；非角色实体返回 null。</summary>
     public PresentTable PresentDataView
     {
         get
         {
             if (Entity.IsRole)
             {
+                // 带有 Role 类别的具体角色对象，提供职业同步信息。
                 RoleEntity role = Entity as RoleEntity;
                 if (role != null)
                 {
-                    //职业id
+                    // 角色当前职业编号，用它查职业配置中的表现表编号。
                     int Jobid = role.BaseInfo.JobId;
+                    // 职业配置保存模型与动画所用的表现表编号。
                     ProfessionInfo professionInfo= LubanMgr.Instance.GetProfessionInfoById(Jobid);
+                    // 最终返回给动画组件的职业表现表。
                     PresentTable presentTable = LubanMgr.Instance.GetPresentTableById(professionInfo.PresentTableID);
                     return presentTable;
                 }
@@ -92,11 +95,13 @@ public sealed class EntityAttributesComponent : EntityComponentBase
     {
     }
 
+    /// <summary>数据由公开方法直接写入，此处不订阅事件。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>本组件没有自行订阅事件，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
         
@@ -118,24 +123,25 @@ public sealed class EntityAttributesComponent : EntityComponentBase
     {
     }
 
-    /// <summary>一次性应用一组 HP/MP 属性，自动做范围钳制，并按变化情况派发事件。</summary>
+    /// <summary>一次性应用一组 HP/MP 属性，自动做限制数值范围，并按变化情况派发事件。</summary>
     /// <param name="maxHp">新的最大生命值。</param>
     /// <param name="currentHp">新的当前生命值。</param>
     /// <param name="maxMp">新的最大魔法值。</param>
     /// <param name="currentMp">新的当前魔法值。</param>
     public void Apply(int maxHp, int currentHp, int maxMp, int currentMp)
     {
-        // 范围钳制：不允许负数
+        // 限制数值范围：不允许负数
         if (maxHp < 0) maxHp = 0;
         if (maxMp < 0) maxMp = 0;
         if (currentHp < 0) currentHp = 0;
         if (currentMp < 0) currentMp = 0;
-        // 范围钳制：当前值不得超过最大值
+        // 限制数值范围：当前值不得超过最大值
         if (currentHp > maxHp) currentHp = maxHp;
         if (currentMp > maxMp) currentMp = maxMp;
 
         // 记录变化前是否与新值不同，避免无变化时重复派发事件
         bool hpChanged = MaxHp != maxHp || CurrentHp != currentHp;
+        // 魔法上限或当前值是否变化，决定是否发送 MpChanged。
         bool mpChanged = MaxMp != maxMp || CurrentMp != currentMp;
         MaxHp = maxHp;
         CurrentHp = currentHp;

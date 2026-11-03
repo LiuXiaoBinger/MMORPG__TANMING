@@ -1,15 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// 时间段环境数据。对应 RO 源工程 MDayTimeData，
-/// 只保留魔神塔场景实际使用的字段：主光/可视光方向、场景色偏、云草树环境色、
-/// 影色/日色、地形叠加色，以及角色光数据引用。
-/// 源数据中的天空球、后处理、大气散射字段本场景未接入，故不移植。
+/// 保存一个时间段的光照方向和颜色；环境组件选择这份数据后，一次性写入场景与角色着色器。
 /// </summary>
 public class MDayTimeData : ScriptableObject
 {
     /// <summary>
-    /// 时间段类型。决定雾色等参数走哪个分支，本场景为 Dusk（黄昏）。
+    /// 时间段标识；天气配置启用分时雾且这里为 Dusk 时，采用黄昏雾参数。
     /// </summary>
     public MDaytimeType daytimeType = MDaytimeType.Dusk;
 
@@ -28,7 +25,7 @@ public class MDayTimeData : ScriptableObject
 
     /// <summary>
     /// 场景色偏。应用时写入全局 _ROCSceneColor，
-    /// 与场景着色器的贴图颜色相乘，决定整体色调。a 为权重，保留源值语义。
+    /// 供场景着色器调整整体色调；各颜色分量原样传入，不在此处换算。
     /// </summary>
     public Color sceneColor = Color.gray;
 
@@ -55,7 +52,7 @@ public class MDayTimeData : ScriptableObject
     public Color cloudEnvorimentColor = Color.white;
 
     /// <summary>
-    /// 草地的环境色。应用时写入全局 _ROGrassEnvorimentColor（本场景无草，仅保持通道一致）。
+    /// 草地的环境色。应用时写入全局 _ROGrassEnvorimentColor。
     /// </summary>
     public Color grassEnvorimentColor = Color.white;
 

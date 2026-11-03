@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 怪物实体业务组件，对应参考项目 ROMonsterComponent。
-/// 保存怪物配置 ID 与品质等级，供 AI、表现和掉落等系统查询。
+/// 保存怪物编号及普通、精英、Boss 等档位，随组件回收清空。
+/// 这里只存数据，不执行 AI、掉落或名字颜色变化。
 /// </summary>
 public sealed class EntityMonsterComponent : EntityComponentBase
 {
@@ -14,11 +14,13 @@ public sealed class EntityMonsterComponent : EntityComponentBase
     {
     }
 
+    /// <summary>数据由公开方法直接写入，此处不订阅事件。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>本组件没有自行订阅事件，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
         
@@ -46,6 +48,6 @@ public sealed class EntityMonsterComponent : EntityComponentBase
     /// <summary>怪物配置表 ID，决定怪物模型、数值和技能等静态数据。</summary>
     public int MonsterId { get; set; }
 
-    /// <summary>怪物品质等级（普通/精英/Boss 等），影响血条、名字颜色和 AI 表现。</summary>
+    /// <summary>怪物档位（普通/精英/Boss 等）；此组件只保存该值，不应用显示或 AI 效果。</summary>
     public MonsterRank Rank { get; set; }
 }

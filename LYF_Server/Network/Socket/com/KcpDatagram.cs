@@ -2,11 +2,11 @@ using System;
 
 /// <summary>
 /// KCP 外层数据报编解码：版本、类型、conv、载荷长度、认证码与载荷。
-/// 头部固定 28 字节，认证码覆盖版本到载荷的全部内容。
+/// 头部固定 28 字节；认证输入是版本、类型、conv、长度和载荷，不包含魔术字或认证码本身。
 /// </summary>
 public static class KcpDatagram
 {
-    /// <summary>认证码在缓冲区中的固定起点；紧随 12 字节可变头部之后。</summary>
+    /// <summary>认证码在缓冲区中的固定起点；位于魔术字及 8 字节字段之后。</summary>
     private const int MacOffset = 12;
 
     /// <summary>被认证的可变头部长度：版本 1 + 类型 1 + conv 4 + 载荷长度 2。</summary>
@@ -16,7 +16,7 @@ public static class KcpDatagram
     /// 把一条数据报写入目标缓冲区，并在写入后补齐认证码。
     /// </summary>
     /// <param name="buffer">目标缓冲区，长度不得小于数据报总长。</param>
-    /// <param name="type">数据报类型，取值见 KcpDefine 的四种类型。</param>
+    /// <param name="type">数据报类型，取值见 KcpDefine，包含绑定、KCP数据和保活。</param>
     /// <param name="conv">会话号，仅用于网关查表，不承担身份认证。</param>
     /// <param name="token">会话令牌，作为 HMAC 密钥；绑定请求阶段使用待绑定令牌。</param>
     /// <param name="payload">KCP 段或绑定请求载荷，可为 null。</param>

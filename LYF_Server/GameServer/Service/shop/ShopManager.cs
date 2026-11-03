@@ -21,7 +21,7 @@ public class ShopManager :Singleton<ShopManager>
         }
     }
 
-    /// <summary>根据角色状态检查商店是否开放。</summary>
+    /// <summary>商店开放判断入口；当前固定返回 true，未使用角色或商店类型做限制。</summary>
     public bool IsOpen(OnlineRole role, ShopType shopType)
     {
         return true;

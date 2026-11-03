@@ -1,7 +1,7 @@
 using System;
 
 /// <summary>
-/// 吟唱状态组件，对应参考工程 rogamelibs/entity/action/singing_component.h/.cpp。
+/// 技能正式施放前的吟唱状态；当前配置没有独立读条时间，所以会立即结束并转入技能动作。
 /// 只承担"读条计时 + 到期派发攻击动作事件"两件事，权威校验与结算仍由技能组件负责。
 /// 按本项目边界裁剪：无目标/Buff/仇恨/TV 公告/ATTR_SPECIAL_* 属性。
 /// </summary>
@@ -210,7 +210,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
 
     #region 核心逻辑
     /// <summary>
-    /// 每帧前置检查：角色离线、数据未就绪或血量归零时立即打断吟唱，
+    /// 每帧前置检查：角色或基础快照缺失、角色离线或血量归零时立即打断吟唱，
     /// 对应 RO 在 OnUpdate 开头做的合法性校验。
     /// </summary>
     /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数。</param>

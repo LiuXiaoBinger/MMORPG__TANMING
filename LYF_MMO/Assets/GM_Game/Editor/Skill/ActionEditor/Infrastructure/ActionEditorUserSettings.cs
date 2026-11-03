@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>当前用户的预览模型绑定；保存到 UserSettings，避免改写技能资产的模型引用。</summary>
+    /// <summary>记住本机用户为每个技能选择的预览模型，设置保存在 UserSettings 中，不写进技能资产。</summary>
     [FilePath("UserSettings/ActionEditorUserSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     internal sealed class ActionEditorUserSettings : ScriptableSingleton<ActionEditorUserSettings>
     {

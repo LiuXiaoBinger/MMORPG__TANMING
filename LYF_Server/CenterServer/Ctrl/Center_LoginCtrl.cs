@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Google.Protobuf;
 
 /// <summary>
-/// 中心服务器处理登录模块的相关逻辑
+/// 把账号、选服和建角协议交给 LoginModle 查询或写入数据库，再沿原会话返回结果。
 /// </summary>
 public class Center_LoginCtrl : IContainer
 {
@@ -33,15 +33,14 @@ public class Center_LoginCtrl : IContainer
 
     #region 事件回调
     /// <summary>
-    /// 处理客户端直接发送到中心服务器的命令。
-    /// 当前登录流程中的请求由服务器间命令处理。
+    /// 作为主动连接一侧收到消息时的回调；中心服在此只监听其他服务器，因此该入口为空。
     /// </summary>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
     }
 
     /// <summary>
-    /// 根据协议号分发 LoginServer 转发的请求。
+    /// 按协议号分发 LoginServer 或 GameServer 转来的账号与角色请求。
     /// </summary>
     /// <param name="serverBase">当前网络服务器。</param>
     /// <param name="basePackage">包含协议号和 protobuf 数据的网络包。</param>
@@ -143,8 +142,8 @@ public class Center_LoginCtrl : IContainer
     /// <summary>
     /// 处理注册事件
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收服务器间请求的连接，用于返回结果。</param>
+    /// <param name="basePackage">带原客户端会话编号的注册请求。</param>
     private void OnRegistHandle(BaseLink serverBase, BasePackage basePackage)
     {
 

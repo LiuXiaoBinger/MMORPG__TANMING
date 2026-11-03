@@ -47,7 +47,7 @@ public sealed class MainCityOtherRolePlayModeTests
     }
 
     /// <summary>
-    /// 验证自动投递 CMD_SyncotherOnlineCode 后，正式场景实体世界包含目标其他玩家。
+    /// 在最多 30 秒实时时间内，检查正式世界能按角色 ID 找到自动同步的玩家；不另外断言模型或动画加载完成。
     /// </summary>
     /// <returns>等待协议处理完成或超时断言失败的 Unity Test Framework 协程。</returns>
     [UnityTest]

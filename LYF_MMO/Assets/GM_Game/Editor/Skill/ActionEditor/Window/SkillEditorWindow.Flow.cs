@@ -4,7 +4,7 @@ using Ethan.ActionEditor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>行为流程轨道的窗口显示、选择和属性编辑；显示语言不参与流程数据保存。</summary>
+/// <summary>绘制技能的流程节点和连接关系，支持选择、添加节点及编辑对应属性。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>当前配置中的原流程节点列表，仍使用原节点引用。</summary>

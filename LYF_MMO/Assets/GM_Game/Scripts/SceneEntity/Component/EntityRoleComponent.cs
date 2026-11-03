@@ -1,8 +1,7 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 角色实体业务组件，对应参考项目 RORoleComponent。
-/// 保存场景实体对应的角色持久化身份（RoleId）与显示名（UserName）。
+/// 在实体组件中保存角色编号和显示名，回收时清空，避免复用旧角色信息。
 /// </summary>
 public sealed class EntityRoleComponent : EntityComponentBase
 {
@@ -14,11 +13,13 @@ public sealed class EntityRoleComponent : EntityComponentBase
     {
     }
 
+    /// <summary>数据由公开方法直接写入，此处不订阅事件。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>本组件没有自行订阅事件，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

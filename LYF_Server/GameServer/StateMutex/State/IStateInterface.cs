@@ -4,8 +4,7 @@
 ///
 /// 类名沿用参考工程的 I 前缀，但它是 abstract class 而不是 C# interface：
 /// RO 侧本类就是 C++ 抽象基类，自身持有数据成员 type_、提供 Check/Leave 的默认实现、
-/// 并把 GetErrorCode 声明为纯虚。C# 的 interface 不能保存字段，也无法给出
-/// “Check/Leave 默认返回 false、派生类按需重写”的默认实现，因此只能用抽象类忠实对应。
+/// 并要求派生类给出 GetErrorCode。这里沿用抽象基类，让状态编号和默认判定行为集中在同一处。
 /// </summary>
 public abstract class IStateInterface
 {

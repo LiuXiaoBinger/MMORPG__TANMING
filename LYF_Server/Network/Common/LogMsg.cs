@@ -44,8 +44,7 @@ public class LogMsg {
         [CallerFilePath] string callerFile = "",
         [CallerLineNumber] int callerLine = 0) {
 
-        // Include the managed thread ID in every log entry so asynchronous callbacks
-        // can be traced back to the thread that handled them.
+        // 记录调用类型、文件位置和托管线程ID，便于区分异步回调实际在哪个线程执行。
         Type callerType = new StackTrace(1, false).GetFrame(0)?.GetMethod()?.DeclaringType;
         string callerClass = callerType == null ? "UnknownClass" : callerType.Name;
         string callerFileName = string.IsNullOrEmpty(callerFile)
@@ -90,8 +89,8 @@ public class LogMsg {
 
 /// <summary>日志级别。</summary>
 public enum LogMsgType {
-    None = 0,// None
-    Warn = 1,//Yellow
-    Error = 2,//Red
-    Info = 3//Green
+    None = 0,// 只输出正文，不附加级别横幅。
+    Warn = 1,// 输出警告横幅；修改控制台颜色的代码当前被注释。
+    Error = 2,// 输出错误横幅。
+    Info = 3// 输出信息横幅。
 }

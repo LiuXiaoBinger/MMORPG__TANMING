@@ -7,27 +7,45 @@ using System.Threading;
 /// </summary>
 public static class UIDHelper
 {
+    /// <summary>业务类别占用的 3 个比特。</summary>
     private const int TypeBits = 3;
+    /// <summary>距自定义纪元的毫秒数占用的 40 个比特。</summary>
     private const int TimestampBits = 40;
+    /// <summary>游戏服实例编号占用的 8 个比特，可区分 0 到 255。</summary>
     private const int ServerInstanceBits = 8;
+    /// <summary>同一毫秒内序号占用的 12 个比特，可生成 4096 个编号。</summary>
     private const int SequenceBits = 12;
 
+    /// <summary>实例编号左移位数，为低位序号留空间。</summary>
     private const int ServerInstanceShift = SequenceBits;
+    /// <summary>毫秒时间左移位数，为实例和序号留空间。</summary>
     private const int TimestampShift = ServerInstanceBits + SequenceBits;
+    /// <summary>业务类别左移位数，最高符号位始终不使用。</summary>
     private const int TypeShift = TimestampBits + ServerInstanceBits + SequenceBits;
 
+    /// <summary>业务类别三位的取值掩码。</summary>
     private const long TypeMask = (1L << TypeBits) - 1L;
+    /// <summary>时间字段可保存的最大毫秒值。</summary>
     private const long TimestampMask = (1L << TimestampBits) - 1L;
+    /// <summary>实例编号的最大值 255。</summary>
     private const long ServerInstanceMask = (1L << ServerInstanceBits) - 1L;
+    /// <summary>同毫秒序号的最大值 4095。</summary>
     private const long SequenceMask = (1L << SequenceBits) - 1L;
 
+    /// <summary>串行保护时间、序号与实例配置，避免并发生成重复编号。</summary>
     private static readonly object SyncRoot = new object();
+    /// <summary>时间字段的起点：2025 年 1 月 1 日 UTC。</summary>
     private static readonly DateTime CustomEpochUtc = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+    /// <summary>当前进程是否已设置游戏服实例编号。</summary>
     private static bool _isServerInstanceConfigured;
+    /// <summary>是否已生成过编号；之后禁止切换实例编号。</summary>
     private static bool _hasGeneratedUid;
+    /// <summary>编码到每个 UID 中的游戏服实例编号。</summary>
     private static int _serverInstanceId;
+    /// <summary>上一个编号使用的逻辑毫秒数，系统回拨时继续沿用。</summary>
     private static long _lastTimestampMilliseconds = -1L;
+    /// <summary>上一个逻辑毫秒内已分配的序号。</summary>
     private static int _sequence;
 
     /// <summary>
@@ -125,6 +143,8 @@ public static class UIDHelper
         }
     }
 
+    /// <summary>只允许已经定义的业务类别，拒绝保留值和容量上界。</summary>
+    /// <param name="type">请求生成编号的业务类别。</param>
     private static bool IsCreatableUIDType(UIDType type)
     {
         // UID_Max 是类型位容量边界，不是实际业务类型；未定义的保留值同样禁止生成。
@@ -142,6 +162,7 @@ public static class UIDHelper
         }
     }
 
+    /// <summary>返回距自定义纪元的 UTC 毫秒数；机器时间早于纪元时抛出异常。</summary>
     private static long GetCurrentTimestampMilliseconds()
     {
         long timestampMilliseconds = (DateTime.UtcNow.Ticks - CustomEpochUtc.Ticks) / TimeSpan.TicksPerMillisecond;
@@ -153,6 +174,8 @@ public static class UIDHelper
         return timestampMilliseconds;
     }
 
+    /// <summary>同毫秒序号耗尽后等待一毫秒，再选用真实时间或递增的逻辑时间。</summary>
+    /// <param name="lastTimestampMilliseconds">刚用完序号的逻辑毫秒数。</param>
     private static long WaitNextTimestampMilliseconds(long lastTimestampMilliseconds)
     {
         Thread.Sleep(1);

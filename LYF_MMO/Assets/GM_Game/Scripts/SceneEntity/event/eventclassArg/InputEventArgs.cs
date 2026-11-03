@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// 实体统一输入参数。
-/// 事件类别固定为 MEventType.Input，参数只保留当前玩家控制需要的明确字段。
+/// InputKey 事件使用的输入数据，可表示动作输入或文本字符输入。
+/// 动作名称、阶段和移动向量描述动作输入；文本输入主要读取 InputCharacter。
 /// </summary>
 public sealed class InputEventArgs : IEventArg
 {
@@ -12,7 +12,7 @@ public sealed class InputEventArgs : IEventArg
     public InputActionPhase ActionPhase { get; private set; }
     /// <summary>Movement 动作向量，按钮和文本输入为零向量。</summary>
     public Vector2 Movement { get; private set; }
-    /// <summary>可选按键编码，当前由输入层保留供后续快捷键扩展。</summary>
+    /// <summary>保留的按键编码；当前工厂方法不设置它，重置值为 KeyCode.None。</summary>
     public KeyCode Key { get; private set; }
     /// <summary>文本快捷键字符，动作输入为默认字符。</summary>
     public char InputCharacter { get; private set; }

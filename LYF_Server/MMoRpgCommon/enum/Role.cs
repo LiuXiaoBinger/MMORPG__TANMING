@@ -79,7 +79,7 @@ public enum RoleModuleType {
 };
 
 /// <summary>
-/// 在线角色运行时状态位标记；位标记只由逻辑线程读写，用于重连、存档与场景切换流程。
+/// 在线角色开关的字典键；枚举值按顺序编号，不是可按位组合的掩码，由逻辑线程按键读写。
 /// </summary>
 public enum RoleStateFlag
 {

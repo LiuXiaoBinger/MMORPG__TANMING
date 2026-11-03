@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>定位嵌入包文档并打开本机手册的编辑器菜单，不创建配置或场景对象。</summary>
+    /// <summary>在 Unity 菜单中打开技能编辑器随包提供的本地手册。</summary>
     public static class ActionEditorHelp
     {
         /// <summary>打开包内中文使用手册，不依赖网络地址。</summary>

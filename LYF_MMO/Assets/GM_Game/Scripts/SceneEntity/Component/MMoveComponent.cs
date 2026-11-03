@@ -3,9 +3,9 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using UVEC3 = UnityEngine.Vector3;
 /// <summary>
-/// 实体移动组件，独立于普通组件容器并负责默认移动动画事件。
-/// 通过目标变换快照与插值时长，每帧把实体变换平滑过渡到目标点，
-/// 并在移动开始/结束/变换变化时派发对应事件。
+/// 负责实体的位置推进和移动状态。
+/// 本地玩家把方向输入、导航路点、跳跃重力和技能位移合成一次移动；远端角色平滑追赶同步位置。
+/// 移动和跳跃开始/结束时发送实体事件，交给动画组件更新表现。
 /// </summary>
 public sealed class MMoveComponent : EntityComponentBase
 {
@@ -32,13 +32,13 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>一轮滞空允许的最大跳跃次数。</summary>
     private const int MaximumJumpCount = 3;
 
-    /// <summary>本次移动的目标位置与朝向快照。</summary>
+    /// <summary>旧 ApplyTarget 接口保存的目标快照；对应插值更新分支目前被注释掉。</summary>
     private readonly EntityTransformSnapshot _target = new EntityTransformSnapshot();
 
-    /// <summary>本次移动插值总时长（毫秒），最小为 1。</summary>
+    /// <summary>旧快照插值接口保存的时长，单位毫秒、最小为 1；当前更新不使用该插值分支。</summary>
     private int _interpolationMilliseconds = 150;
 
-    /// <summary>本次移动已经经过的毫秒数，用于计算插值系数。</summary>
+    /// <summary>旧插值接口的计时字段，当前更新中的累计逻辑未启用。</summary>
     private int _elapsedMilliseconds;
 
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Move"/>。</summary>
@@ -109,7 +109,7 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>最终面朝方向（也用作移动预测/外推的方向）</summary>
     private UVEC3 face = UVEC3.zero;//最终面朝方向
 
-    /// <summary>目标位置（本机移动目标 / 他机服务器下发的目标点）</summary>
+    /// <summary>远端同步的最新目标世界位置；本地方向输入当前不通过此字段导航</summary>
     private UVEC3 _targetPos = UVEC3.zero;//目标位置
 
     /// <summary>开始位置（本次移动或本次同步的起点）</summary>
@@ -151,7 +151,7 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>忽略高度后的目标水平朝向，用于 RO 同名平滑转向流程。</summary>
     private Quaternion _toTargetQuat;
 
-    /// <summary>本次同步是否由角色主动移动产生；用于远端移动动画启停。</summary>
+    /// <summary>同步包声明是否发生位移或仍有方向输入，用于远端移动动画启停。</summary>
     public bool IsMoved { get; private set; }
 
     /// <summary>预测的位移向量（预留的预测移动字段）</summary>
@@ -174,7 +174,7 @@ public sealed class MMoveComponent : EntityComponentBase
         }
     }
 
-    /// <summary>移动事件（MEvent_Move）处理器：接收本机摇杆/寻路移动指令</summary>
+    /// <summary>MEvent_Move 处理器：接收本地方向输入或远端位置同步</summary>
     private MEventHandler _onMoveEvent;
 
     /// <summary>停止移动事件（MEvent_StopMove）处理器</summary>
@@ -191,8 +191,8 @@ public sealed class MMoveComponent : EntityComponentBase
         EventSubscribe();
     }
 
-    /// <summary>每帧推进插值，把实体变换向目标点靠近，到达后停止并派发结束事件。</summary>
-    /// <param name="deltaMilliseconds">距上一帧的毫秒数，负数按 0 处理。</param>
+    /// <summary>按实体类别推进本地输入或远端位置追赶，同时消费技能程序位移。</summary>
+    /// <param name="deltaMilliseconds">距上一帧的毫秒数；本地 PlayerUpdate 会把负值按零处理。</param>
     public override void Update(int deltaMilliseconds)
     {
         /*if (!IsMoving) return;
@@ -260,7 +260,7 @@ public sealed class MMoveComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 注册本组件关心的全部事件：移动 / 停止移动 / 传送带 / 携带物 / 骑乘 / 换装 / 武器切换等。
+    /// 注册移动与停止移动两个事件；下方其余历史订阅均被注释掉。
     /// </summary>
     protected override void EventSubscribe()
     {
@@ -456,7 +456,7 @@ public sealed class MMoveComponent : EntityComponentBase
         DispatchEvent(MEventType.JumpEnded, null);
     }
 
-    /// <summary>设置新的移动目标并启动插值，首次进入移动状态时派发 MoveStarted 事件。</summary>
+    /// <summary>保存旧接口的目标快照和插值时长，并标记移动；实际插值分支目前未启用。</summary>
     /// <param name="target">目标变换快照，为空直接忽略。</param>
     /// <param name="durationMilliseconds">本次插值时长（毫秒），大于 0 时覆盖默认时长。</param>
     public void ApplyTarget(EntityTransformSnapshot target, int durationMilliseconds)
@@ -466,6 +466,7 @@ public sealed class MMoveComponent : EntityComponentBase
         _target.X = target.X; _target.Y = target.Y; _target.Z = target.Z; _target.Yaw = target.Yaw;
         if (durationMilliseconds > 0) InterpolationMilliseconds = durationMilliseconds;
         _elapsedMilliseconds = 0;
+        // 保存修改前状态，仅从静止切到移动时发送开始事件。
         bool wasMoving = IsMoving;
         IsMoving = true;
         // 仅在从静止进入移动时派发开始事件，避免同帧重复触发
@@ -473,7 +474,7 @@ public sealed class MMoveComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 模型加载完成（同步或异步）后回调：启用组件，以当前位置初始化起点/终点与朝向，并准备移动动画。
+    /// 挂载完成入口：启用组件，以模型当前位置初始化目标和朝向，再准备移动动画。
     /// </summary>
     public override void Attached()
     {
@@ -485,10 +486,11 @@ public sealed class MMoveComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 统一准备移动动画入口：按公共载具/坐骑/角色/怪物等分类设置移动、自拍移动动画与脚步音效。
+    /// 为角色职业登记普通行走、普通跑步、战斗行走和战斗跑步四条动画；其他实体不在这里装配。
     /// </summary>
     private void prepairAnim()
     {
+        // 旧流程查询的默认动作组件；当前方法后续未使用该局部引用。
         MDefaultActionComponent defaultActionComponent = Entity.GetMComponentByT<MDefaultActionComponent>();
         if (Entity.IsRole)
         {
@@ -502,13 +504,16 @@ public sealed class MMoveComponent : EntityComponentBase
                 string anim = "Common_F_PaiZhao_Run_01";
                 Entity.OverrideAnim(MAnimator.STATE_SELFY_MOVE, anim);
             }*/
-            //todo 这里应该区分男女 暂时不区分
+            // 当前按职业表现表选择走跑动画，不再按男女选择自拍动画。
+            // 提供职业基础信息的角色实体。
             RoleEntity role = Entity as RoleEntity;
             if (role != null)
             {
                 // 读取当前角色的职业编号，用于查询该职业对应的移动动画表现表
                 int Jobid = role.BaseInfo.JobId;
+                // 职业配置给出对应表现表的编号。
                 ProfessionInfo professionInfo= LubanMgr.Instance.GetProfessionInfoById(Jobid);
+                // 包含普通与战斗走跑动画资源名的表现表。
                 PresentTable presentTable = LubanMgr.Instance.GetPresentTableById(professionInfo.PresentTableID);
                 
                 /// <summary>战斗行走动画状态名。</summary>
@@ -529,7 +534,7 @@ public sealed class MMoveComponent : EntityComponentBase
                 Entity.OverrideAnim(MAnimator.STATE_NONZD_MOVE_RUN, STATE_NONZD_MOVE_RUN);
             }
         }
-        /* 声音组件尚未接入，脚步音效后续按角色表现配置绑定。 */
+        /* 普通动作声音由模型持有的 SoundComponent 按导出轨道处理。 */
     }
 
     /// <summary>兼容旧控制器只提供移动状态、尚未提供目标点的表现桥接。</summary>
@@ -739,7 +744,7 @@ public sealed class MMoveComponent : EntityComponentBase
 
     /// <summary>
     /// 移动事件处理（MEvent_Move）：区分本机与他机。
-    /// 本机：校验可移动性后取目标方向，立即驱动本地移动（预测），并做卡死检测；
+    /// 本机：校验可移动性，记录输入方向并设置移动态；位置在后续 PlayerUpdate 中推进；
     /// 他机：走 onSyncMoveEvent 影子跟随逻辑。
     /// </summary>
     /// <param name="e">移动事件参数，本地输入包含世界空间方向，他机同步包含目标快照。</param>

@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 镜像角色 Builder，对应 MirrorRoleBuilder 的角色表现和 AI 组件。
-/// 镜像角色用于战斗假人、演示场景等，具备角色表现但由 AI 驱动。
+/// 创建或复用镜像角色，添加公共组件、角色数据和战斗相关标记。
+/// AI 与导航在这里仅登记组件类别，没有创建具体的行为组件。
 /// </summary>
 public sealed class MirrorRoleEntityBuilder : EntityBuilder
 {
@@ -28,9 +28,9 @@ public sealed class MirrorRoleEntityBuilder : EntityBuilder
         MComponentMgr.Instance.CreateComponent<EntityRoleComponent>(entity);
         // 镜像角色专属标记
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.MirrorRole));
-        // AI 标记：镜像角色由 AI 驱动行为
+        // 登记 AI 类别，标记本身不驱动行为
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.AI));
-        // 导航标记：镜像角色需要寻路
+        // 登记导航类别，标记本身不寻路
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Navigation));
         return entity;
     }

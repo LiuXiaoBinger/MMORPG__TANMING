@@ -1,7 +1,6 @@
 /// <summary>
-/// 场景实体事件类型，保留参考项目 MEventType 的"事件名即业务语义"模式。
-/// 输入事件由 Unity 输入桥接层采集后派发，实体核心不直接轮询 Input。
-/// 事件类型分为：实体生命周期、变换移动、状态属性、战斗技能、输入控制五大类。
+/// 实体内部使用的事件名称。
+/// 输入、移动、动作、战斗和生命周期通过这些名称找到监听器；声明事件不代表已有业务发送它。
 /// </summary>
 public enum MEventType
 {
@@ -25,7 +24,7 @@ public enum MEventType
     Destroyed,
 
     // ===== 变换与移动事件 =====
-    /// <summary>实体变换（位置/旋转/缩放）发生变化。</summary>
+    /// <summary>实体逻辑位置或朝向发生变化。</summary>
     TransformChanged,
     /// <summary>实体开始移动。</summary>
     MoveStarted,
@@ -95,6 +94,6 @@ public enum MEventType
     MEvent_StopMove,
     /// <summary>自定义事件类型，用于业务扩展。</summary>
     Custom,
-    /// <summary>RO同名导航输入事件，承载到达后释放技能的MNavigationEventArgs。</summary>
+    /// <summary>导航请求，参数为 MNavigationEventArgs；可以指定目的点及到达后的技能动作。</summary>
     MEvent_Navigation
 }

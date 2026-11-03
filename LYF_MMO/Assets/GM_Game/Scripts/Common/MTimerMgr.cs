@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>客户端主线程时间轴计时器，保留 RO 接口名称与毫秒时钟，使用强类型技能参数。</summary>
+/// <summary>在 Unity 主线程累计时间，到点后执行技能回调；外部传秒，内部按整数毫秒计时。</summary>
 public sealed class MTimerMgr
 {
 
@@ -9,27 +9,27 @@ public sealed class MTimerMgr
     /// <summary>全局唯一计时器，由 Global 每帧推进一次，不按角色或技能数量重复推进。</summary>
     public static readonly MTimerMgr singleton = new MTimerMgr();
 
-    /// <summary>已到期事件回调；零秒事件使用 token=0 同步执行，正延迟使用非零票据。</summary>
-    /// <param name="token">本次一次性计时器票据，取消后不会再次触发。</param>
-    /// <param name="args">本次施法 UUID 和具体表现指令，不允许通用弱类型载荷。</param>
+    /// <summary>计时结束时执行的方法；立即执行时 token 为 0，延迟执行时为可查询、取消的编号。</summary>
+    /// <param name="token">本次计时器编号；每次登记最多触发一次。</param>
+    /// <param name="args">本次施法的 UUID 和要播放的技能表现指令。</param>
     public delegate void TimerEventHandler(uint token, MSkillTimerArgs args);
 
-    /// <summary>按到期时刻稳定排序的待触发列表；帧推进不创建快照或临时集合。</summary>
+    /// <summary>尚未执行的计时器，按到期时间排列；到期时间相同的按登记先后执行。</summary>
     private readonly List<MTimer> _timers = new List<MTimer>();
 
-    /// <summary>最近分配票据，初始化不归零，防止跨初始化旧票据误杀新注册。</summary>
+    /// <summary>上次分配的计时器编号；Init 不将它归零，避免旧编号立即被新计时器复用。</summary>
     private uint _token;
 
     /// <summary>已经推进的非负整数毫秒，与实体世界使用相同帧间隔来源。</summary>
     private long _elapsedTime;
 
-    /// <summary>最近一次 Init 的会话版本，时钟重新归零并推进到相同毫秒也能拒绝旧程序运动。</summary>
+    /// <summary>每次 Init 递增的编号，供使用者区分计时器重启前后的记录。</summary>
     private ulong _sessionVersion;
 
-    /// <summary>全局计时器初始化会话的只读身份，不参与计时排序或票据分配。</summary>
+    /// <summary>本轮初始化编号；使用者可以据此识别时钟重置前留下的数据。</summary>
     public ulong SessionVersion { get { return _sessionVersion; } }
 
-    /// <summary>暂停时不推进正延迟计时器；零秒同步回调沿 RO 原语义仍立即执行。</summary>
+    /// <summary>暂停累计时间和延迟回调；SetTimer 的非正延迟回调仍会当场执行。</summary>
     public bool IsPause { get; set; }
 
     /// <summary>管理器运行累计毫秒数，初始化后从零开始。</summary>
@@ -42,11 +42,11 @@ public sealed class MTimerMgr
     {
     }
 
-    /// <summary>按 RO 的秒参数推进整数毫秒，每个到期事件仅触发一次。</summary>
+    /// <summary>将本帧秒数换成毫秒累计，再依次移除并执行到期回调。</summary>
     /// <param name="fDeltaT">Global 从实体帧间隔毫秒换算的非负秒数。</param>
     public void Update(float fDeltaT)
     {
-        // 帧间隔为 NaN、无穷或负值时沿 RO 语义跳过本帧推进，避免污染累计时钟。
+        // 无效或负的帧间隔不能计入时钟，本帧直接跳过。
         bool deltaTInvalid = float.IsNaN(fDeltaT) || float.IsInfinity(fDeltaT) || fDeltaT < 0f;
         if (IsPause || deltaTInvalid)
         {
@@ -82,7 +82,7 @@ public sealed class MTimerMgr
     }
     #endregion
 
-    /// <summary>生成未被在用条目占据的非零票据，包含 uint 回绕保护。</summary>
+    /// <summary>生成一个未使用的非零编号；编号溢出回到 0 时跳过 0。</summary>
     /// <returns>可用于取消和查询的新票据。</returns>
     private uint CreateToken()
     {
@@ -114,17 +114,17 @@ public sealed class MTimerMgr
     }
 
     #region 核心逻辑
-    /// <summary>客户端退出时解除全部技能委托与载荷引用并暂停。</summary>
+    /// <summary>退出时清空所有未执行的技能回调及参数，并暂停计时。</summary>
     public void Uninit()
     {
         KillTimerAll();
         IsPause = true;
     }
 
-    /// <summary>登记单次时间轴回调，非正延迟沿 RO 语义立即回调并返回零。</summary>
+    /// <summary>登记一个只执行一次的技能回调；延迟小于等于 0 时立即调用并返回 0。</summary>
     /// <param name="interval">距当前管理器时钟的延迟秒数，正数换算为至少一毫秒。</param>
     /// <param name="handler">到期回调，必须在主线程登记。</param>
-    /// <param name="args">具名施法载荷，取消后不会继续持有。</param>
+    /// <param name="args">这次回调使用的施法参数；取消时随计时器一起移除。</param>
     /// <returns>正延迟注册的非零票据；同步执行或无效登记返回零。</returns>
     public uint SetTimer(float interval, TimerEventHandler handler, MSkillTimerArgs args)
     {
@@ -141,7 +141,7 @@ public sealed class MTimerMgr
             handler(0, args);
             return 0;
         }
-        // 秒转毫秒沿 RO 取整；正数小于半毫秒仍保留一次异步触发，不误成同步事件。
+        // 将秒数四舍五入为毫秒；只要延迟为正，至少等 1 毫秒再由 Update 执行。
         int delayMilliseconds = Mathf.Max(1, Mathf.RoundToInt(interval * 1000f));
         // 本次正延迟登记条目；同一时刻的条目按插入顺序稳定派发。
         MTimer timer = new MTimer
@@ -224,7 +224,7 @@ public sealed class MTimerMgr
         /// <summary>到期时调用的主线程委托，取消后随条目一起解除引用。</summary>
         public TimerEventHandler Handler;
 
-        /// <summary>施法身份与表现指令的不可变引用，随条目取消或触发后解除。</summary>
+        /// <summary>要交给回调的施法标识和表现指令，计时器取消或执行后不再由列表保存。</summary>
         public MSkillTimerArgs Args;
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 只管理普通实体组件的容器，Move/Buff/Skill/Machine 不进入此集合。
-/// 内部同时维护按类型索引的字典和按注册顺序排列的列表，初始化、更新和销毁按顺序驱动。
+/// 保存普通实体组件，并按登记顺序驱动它们。
+/// 移动、Buff、技能和状态机由实体单独持有；程序位移虽在本容器中，也会在普通移动前提前更新。
 /// </summary>
 public sealed class EntityComponentContainer
 {
@@ -24,6 +24,7 @@ public sealed class EntityComponentContainer
         for (int index = 0; index < _ordered.Count; index++)
         {
             // 本次更新的原组件引用，位移类型在前一阶段已经完成求值。
+            // 当前位置登记的原组件对象。
             EntityComponentBase component = _ordered[index];
             if (component.ComponentType == EntityComponentType.Displacement)
             {
@@ -40,6 +41,7 @@ public sealed class EntityComponentContainer
     {
         for (int index = 0; index < _ordered.Count; index++)
         {
+            // 当前位置登记的原组件对象。
             EntityComponentBase component = _ordered[index];
             Invoke(component, "LateUpdate", delegate { component.LateUpdate(deltaSeconds); });
         }
@@ -50,6 +52,7 @@ public sealed class EntityComponentContainer
     {
         for (int index = 0; index < _ordered.Count; index++)
         {
+            // 当前位置登记的原组件对象。
             EntityComponentBase component = _ordered[index];
             Invoke(component, "Initialize", delegate { component.Initialize(); });
         }
@@ -61,6 +64,7 @@ public sealed class EntityComponentContainer
         // 逆序释放，与注册顺序相反，保证后挂载的组件先销毁
         for (int index = _ordered.Count - 1; index >= 0; index--)
         {
+            // 当前位置登记的原组件对象。
             EntityComponentBase component = _ordered[index];
             // 统一交给组件池执行 Shutdown、状态重置和宿主解绑，避免生命周期重复调用。
             MComponentMgr.Instance.ReleaseComponent(component);
@@ -126,11 +130,13 @@ public sealed class EntityComponentContainer
     /// <exception cref="InvalidCastException">组件实际类型与泛型 T 不匹配时抛出。</exception>
     public T GetMComponentByT<T>(EntityComponentType type) where T : EntityComponentBase
     {
+        // 类型标识命中的组件，随后再核对请求的 C# 类型。
         EntityComponentBase component;
         if (!_components.TryGetValue(type, out component))
         {
             throw new KeyNotFoundException("实体组件未注册: " + type);
         }
+        // 转为调用方要求的类型，失败表示组件类型与请求不一致。
         T typedComponent = component as T;
         if (typedComponent == null)
         {
@@ -147,14 +153,17 @@ public sealed class EntityComponentContainer
     /// <returns>匹配的实体组件实例。</returns>
     public T GetMComponentByT<T>() where T : EntityComponentBase
     {
+        // 顺序检查已登记组件，返回首个可转换为 T 的对象。
         Dictionary<EntityComponentType, EntityComponentBase>.
             Enumerator enumerator =
             _components.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
+            // 当前字典条目保存的原组件对象。
             EntityComponentBase component = enumerator.Current.Value;
-            T typedComponent = component as T;
+            // 转为调用方要求的类型，失败表示组件类型与请求不一致。
+        T typedComponent = component as T;
             if (typedComponent != null)
             {
                 return typedComponent;
@@ -172,6 +181,7 @@ public sealed class EntityComponentContainer
     /// <returns>获取成功返回 true，否则返回 false。</returns>
     public bool TryGet<T>(EntityComponentType type, out T component) where T : EntityComponentBase
     {
+        // 类型标识对应的组件原引用，用于尝试转换为 T。
         EntityComponentBase value;
         if (_components.TryGetValue(type, out value))
         {

@@ -1,7 +1,6 @@
 /// <summary>
-/// RO 风格动作状态组件的通用基类。
-/// 仅声明状态枚举和动画名，提供默认的事件转移判定：只要状态机允许即可切入。
-/// 具体动作状态（如默认、技能、受击、死亡等）继承本类，只需指定 _selfState 和 StateName。
+/// 简单动作状态的共用基类：收到动作事件后，向宿主状态机询问能否切入。
+/// 各派生类提供自己的状态枚举、动画名和触发事件；结束条件由具体实现负责。
 /// </summary>
 public abstract class MBasicActionComponent : MActionComponent
 {

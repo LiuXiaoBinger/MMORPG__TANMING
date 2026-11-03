@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 角色 Builder，对应参考项目 RoleBuilder 的组件装配顺序。
-/// 用于构建场景中其他玩家或非本地角色实体，包含公共组件、战斗组件和角色数据组件。
+/// 装配场景中的其他角色：公共数据、战斗标记、角色数据及待机和跳跃组件。
+/// 本地输入与导航请求由 PlayerEntityBuilder 为本地玩家另外装配。
 /// </summary>
 public sealed class RoleEntityBuilder : EntityBuilder
 {

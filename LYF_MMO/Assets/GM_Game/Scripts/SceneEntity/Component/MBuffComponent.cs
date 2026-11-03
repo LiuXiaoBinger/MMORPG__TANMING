@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 实体 Buff 组件，独立于角色数据和普通组件容器。
-/// 以 Buff 配置 ID 为键、等级为值维护当前生效 Buff 表，供状态机和表现层查询。
+/// 以 Buff 配置编号为键保存等级，提供查询、更新和移除。
+/// 这里只维护记录，不计算持续时间、数值效果或网络同步。
 /// </summary>
 public sealed class MBuffComponent : EntityComponentBase
 {
@@ -21,11 +21,13 @@ public sealed class MBuffComponent : EntityComponentBase
     /// <summary>对象池回收时清空全部 Buff 记录。</summary>
     public override void Shutdown() { _buffLevels.Clear(); }
 
+    /// <summary>数据由公开方法直接写入，此处不订阅事件。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>本组件没有自行订阅事件，无需额外解绑。</summary>
     protected override void EventUnsubscribe()
     {
         
@@ -47,6 +49,7 @@ public sealed class MBuffComponent : EntityComponentBase
     /// <returns>Buff 等级。</returns>
     public int GetLevel(int buffId)
     {
+        // 字典中保存的等级；找不到该 Buff 时方法返回 0。
         int level;
         if (_buffLevels.TryGetValue(buffId, out level)) return level;
         return 0;

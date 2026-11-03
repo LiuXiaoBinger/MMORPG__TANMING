@@ -17,18 +17,22 @@ public class Load : MonoBehaviour {
     // 启动资源模式；正式主包使用联网热更，编辑器可使用模拟资源。
     [SerializeField, Header("运行模式")] private EPlayMode _playMode = EPlayMode.EditorSimulateMode;
 
+    // 联网更新时优先访问的资源服务器地址，由启动场景配置。
     [SerializeField, Header("资源系统地址")] private string defaultHostServer;
 
+    // 主地址不可用时由 YooAsset 使用的备用资源服务器地址。
     [SerializeField, Header("备用地址")] private string fallbackHostServer;
 
+    // 启动进度界面，资源初始化、下载和代码装载都通过它显示状态。
     [SerializeField, Header("热更新View")] private HotUpdateView _hotUpdateView;
 
+    // 本次启动使用的 DefaultPackage；初始化成功后继续用于加载代码和登录场景。
     private ResourcePackage _package;
 
-    //获取资源二进制
+    // 按程序集文件名保存已下载的 DLL 字节，随后用于加载热更代码或补充 AOT 元数据。
     private static Dictionary<string, byte[]> s_assetDatas = new Dictionary<string, byte[]>();
 
-    //补充元数据dll的列表，Yooasset中不需要带后缀
+    // 需要补充元数据的 AOT 程序集文件名，包含 .dll 后缀；实际资源由 YooAsset 地址定位。
     public static List<string> AOTMetaAssemblyNames { get; } = new List<string>()
     {
         "mscorlib.dll",
@@ -38,6 +42,7 @@ public class Load : MonoBehaviour {
     };
     #endregion
 
+    // 启动组件创建后先初始化资源系统，再由协程串起后续步骤。
     private void Awake() {
 
         //初始化YooAsset
@@ -86,7 +91,7 @@ public class Load : MonoBehaviour {
     }
 
     #region 事件回调
-    //当开始下载某个文件
+    // 记录刚开始下载的文件名和文件总字节数，日志中换算成 KB 显示。
     private void OnStartDownloadFileCallback(string fileName, long sizeBytes) {
         Debug.Log($"开始下载：{fileName}  大小：{sizeBytes / 1024f}KB");
     }
@@ -112,7 +117,7 @@ public class Load : MonoBehaviour {
            $"  已下载大小::{currentDownloadBytes / 1024}KB");
     }
 
-    //当下载器发生错误
+    // 记录下载失败的文件名及 YooAsset 返回的错误，最终界面由 Download 统一更新。
     private void OnDownloadErrorCallback(string fileName, string error) {
         Debug.Log($"下载失败::{fileName}  Error::{error}");
     }
@@ -146,14 +151,17 @@ public class Load : MonoBehaviour {
         }
     }
 
+    // 把主包中已编译程序集的类型信息交给 HybridCLR，使热更代码能够使用所需的 AOT 泛型。
     private static void LoadMetadataForAOTAssemblies() {
 
-        /// 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
-        /// 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
+        // AOT 是随安装包提前编译好的代码；这里只给这些程序集补类型信息，热更 DLL 不需要这一步。
+        // SuperSet 允许补充程序集的元数据多于主包裁剪后保留下来的内容。
         HomologousImageMode mode = HomologousImageMode.SuperSet;
+        // 依次处理需要补元数据的程序集；aotDllName 是缓存中的 .dll 文件名。
         foreach (var aotDllName in AOTMetaAssemblyNames) {
+            // InitCode 已加载的程序集字节，此处不再访问磁盘或网络。
             byte[] dllBytes = s_assetDatas[aotDllName];
-            // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
+            // 返回值用于记录是否补充成功；缺少预编译泛型实现时，HybridCLR 可借助这些元数据解释执行。
             LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
             Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. mode:{mode} ret:{err}");
         }
@@ -161,7 +169,7 @@ public class Load : MonoBehaviour {
 
     #region 核心逻辑
     /// <summary>
-    /// 初始化YooAsset
+    /// 创建并设置默认资源包，然后启动资源检查和更新流程。
     /// </summary>
     private void InitYooAsset() {
         // 初始化资源系统
@@ -194,7 +202,7 @@ public class Load : MonoBehaviour {
             case EPlayMode.HostPlayMode:
                 // 联网运行参数，使用场景中配置的主备资源服务地址。
                 HostPlayModeParameters hostParameters = new HostPlayModeParameters();
-                hostParameters.BuildinQueryServices = new GameQueryServices(); //太空战机DEMO的脚本类，详细见StreamingAssetsHelper
+                hostParameters.BuildinQueryServices = new GameQueryServices(); // 查询安装包 StreamingAssets/yoo 中是否已有对应资源。
                 hostParameters.DeliveryQueryServices = new GameDeliveryQueryServices();
                 hostParameters.DecryptionServices = new GameDecryptionServices();
                 hostParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
@@ -238,7 +246,7 @@ public class Load : MonoBehaviour {
         UpdatePackageManifestOperation manifestOperation = _package.UpdatePackageManifestAsync(versionOperation.PackageVersion, timeout: 15);
         yield return manifestOperation;
 
-        //检测下载结果
+        // 资源清单更新成功后，才能知道本机还缺哪些文件。
         if (manifestOperation.Status != EOperationStatus.Succeed) {
             ShowStartupError("资源清单更新失败，请检查资源服务器后重新启动。", manifestOperation.Error);
             yield break;
@@ -308,57 +316,74 @@ public class Load : MonoBehaviour {
 
 }
 
+// YooAsset 要求的文件读取适配接口；文件方式跳过前 32 字节，流方式直接打开原文件。
 internal class GameDecryptionServices : IDecryptionServices {
+    // 返回文件读取起点，单位为字节；所有资源使用同一偏移，未读取 fileInfo 的内容。
     public ulong LoadFromFileOffset(DecryptFileInfo fileInfo) {
         return 32;
     }
 
+    // 内存解密方式尚未实现，调用会抛出异常；fileInfo 是 YooAsset 提供的文件信息。
     public byte[] LoadFromMemory(DecryptFileInfo fileInfo) {
         throw new NotImplementedException();
     }
 
+    // 按 fileInfo.FilePath 打开只读文件流，允许其他读取者同时打开，由资源加载方管理流的使用。
     public Stream LoadFromStream(DecryptFileInfo fileInfo) {
         return new FileStream(fileInfo.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
     }
 
+    // 流式读取使用的托管缓冲区大小，单位为字节。
     public uint GetManagedReadBufferSize() {
         return 1024;
     }
 }
 
+// 实现 YooAsset 的远端地址接口，把资源文件名拼到启动场景配置的主、备用地址后。
 internal class RemoteServices : IRemoteServices {
 
+    // 保存主资源地址 defaultHostServer 和备用地址 fallbackHostServer，供后续下载请求使用。
     public RemoteServices(string defaultHostServer, string fallbackHostServer) {
         _defaultHostServer = defaultHostServer;
         _fallbackHostServer = fallbackHostServer;
     }
 
+    // 优先下载地址的根路径，在创建此适配对象时确定。
     private readonly string _defaultHostServer;
 
+    // 备用下载地址的根路径，在创建此适配对象时确定。
     private readonly string _fallbackHostServer;
 
+    // 把要下载的 fileName 接到备用服务器地址后，返回完整 URL。
     public string GetRemoteFallbackURL(string fileName) {
         return $"{_fallbackHostServer}/{fileName}";
     }
 
+    // 把要下载的 fileName 接到主服务器地址后，返回完整 URL。
     public string GetRemoteMainURL(string fileName) {
         return $"{_defaultHostServer}/{fileName}";
     }
 }
 
+// YooAsset 的外部交付资源查询接口；本项目当前不提供这类资源。
 internal class GameDeliveryQueryServices : IDeliveryQueryServices {
+    // 按资源包名 packageName 和文件名 fileName 查询交付文件；当前未实现，调用会抛出异常。
     public DeliveryFileInfo GetDeliveryFileInfo(string packageName, string fileName) {
         throw new NotImplementedException();
     }
 
+    // 无论资源包名 packageName 和文件名 fileName 是什么，都返回没有外部交付文件。
     public bool QueryDeliveryFiles(string packageName, string fileName) {
         return false;
     }
 }
 
+// YooAsset 的安装包内置资源查询接口，按 StreamingAssets/yoo 下的目录结构查找。
 internal class GameQueryServices : IBuildinQueryServices {
 
+    // 检查资源包 packageName 中的 fileName 是否随安装包提供；这里只检查文件存在性。
     public bool QueryStreamingAssets(string packageName, string fileName) {
+        // 安装包内资源的完整路径，目录层级与 YooAsset 的打包输出一致。
         string filePath = Path.Combine(Application.streamingAssetsPath, "yoo", packageName, fileName);
         return File.Exists(filePath);
     }

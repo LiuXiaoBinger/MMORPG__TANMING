@@ -25,12 +25,13 @@ public class ServerListWindow : WindowBase
     /// <summary>关闭列表事件。</summary>
     public Action CloseRequested;
 
-    /// <summary>确认选择事件。</summary>
+    /// <summary>提交选中服务器编号的事件；未选条目时确认按钮仍可能传出 0，由控制器处理。</summary>
     public Action<int> ConfirmRequested;
 
     /// <summary>使用控制器提供的服务器展示列表刷新窗口。</summary>
     public override void ReFreshUI(object obj)
     {
+        // 本次要显示的服务器摘要列表，其他类型的数据不参与刷新。
         List<GameServerViewData> serverList = obj as List<GameServerViewData>;
         if (serverList == null)
         {
@@ -46,6 +47,7 @@ public class ServerListWindow : WindowBase
     private void GenerateServerListItems(List<GameServerViewData> gameServers)
     {
         ClearServerItems();
+        // 捕获本轮刷新编号，旧异步实例完成后销毁，不能填进新列表。
         int listVersion = ++_listVersion;
         ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/ServerLiistItemWidget", prefab =>
         {
@@ -72,6 +74,7 @@ public class ServerListWindow : WindowBase
             AddServerItem(prefab, gameServers[0]);
             for (int index = 1; index < gameServers.Count; index++)
             {
+                // 为当前异步回调保留这一项服务器数据。
                 GameServerViewData server = gameServers[index];
                 ResourceMgr.Instance.LoadPrefabAsync("UIPrefabs/ServerLiistItemWidget", itemObject =>
                 {
@@ -105,6 +108,7 @@ public class ServerListWindow : WindowBase
 
         itemObject.transform.SetParent(_itemParentTrans, false);
         _serverItems.Add(itemObject);
+        // 条目预制体上的交互组件，负责显示及区分单击、双击。
         GameServerItem item = itemObject.GetComponent<GameServerItem>();
         if (item != null)
         {
@@ -122,6 +126,7 @@ public class ServerListWindow : WindowBase
         _selectedServerId = 0;
         for (int index = 0; index < _serverItems.Count; index++)
         {
+            // 上轮列表创建的实例，清理后选中编号也会归零。
             GameObject serverItem = _serverItems[index];
             if (serverItem != null)
             {
@@ -136,14 +141,17 @@ public class ServerListWindow : WindowBase
     private void OnItemClicked(int serverId)
     {
         _selectedServerId = serverId;
+        // 从现有条目查找本次选中的服务器，供标题文字使用。
         GameServerItem selectedItem = null;
         for (int index = 0; index < _serverItems.Count; index++)
         {
+            // 当前检查的已创建条目对象。
             GameObject itemObject = _serverItems[index];
             if (itemObject == null)
             {
                 continue;
             }
+            // 通过服务器编号匹配的候选条目。
             GameServerItem candidate = itemObject.GetComponent<GameServerItem>();
             if (candidate != null && candidate.ServerId == serverId)
             {

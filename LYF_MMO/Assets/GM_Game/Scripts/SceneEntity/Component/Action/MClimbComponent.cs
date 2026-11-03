@@ -1,7 +1,6 @@
 /// <summary>
-/// 攀爬动作状态组件。
-/// 实体进行攀爬动作（如爬梯子、攀岩）时的状态。
-/// 监听攀爬开始事件切入本状态。
+/// 把 ClimbStarted 事件接入攀爬状态，并指定 Climb 动画名。
+/// 本类不处理梯子检测、攀爬位移或结束条件。
 /// </summary>
 public sealed class MClimbComponent : MBasicActionComponent
 {
@@ -14,11 +13,13 @@ public sealed class MClimbComponent : MBasicActionComponent
 
     /// <summary>注册攀爬开始事件：收到攀爬触发消息时切入攀爬状态。</summary>
     protected override void RegisterActionEvents() { RegisterActionEvent(MEventType.ClimbStarted); }
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

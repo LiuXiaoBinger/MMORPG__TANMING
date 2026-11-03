@@ -15,6 +15,11 @@ public sealed class EquipmentViewData
     public int StrengthenLevel { get; }
 
     /// <summary>创建装备槽展示数据。</summary>
+    /// <param name="equipType">该装备占用的身体部位。</param>
+    /// <param name="itemTypeId">装备的配置表编号。</param>
+    /// <param name="name">界面显示的装备名，null 转为空串。</param>
+    /// <param name="iconPath">异步加载图标使用的资源路径，null 转为空串。</param>
+    /// <param name="strengthenLevel">当前强化等级，原样保留。</param>
     public EquipmentViewData(EquipType equipType, int itemTypeId, string name,
         string iconPath, int strengthenLevel)
     {

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 实体事件的强类型载荷契约。
-/// 所有实体事件参数都必须实现此接口，确保事件分发器可以统一复制和回收载荷。
+/// 实体事件参数的现有接口，统一约定复制、回收和是否已归还对象池。
+/// 派发器同步调用所有监听器后回收原参数；要跨帧保存数据时，监听器需复制并自行回收副本。
 /// </summary>
 public interface IEventArg
 {
@@ -42,6 +42,7 @@ public class MEventPool<T> where T : class, IEventArg, new()
 
     /// <summary>获取一个可复用的事件参数实例。</summary>
     /// <returns>已重置生命周期标记的参数实例。</returns>
+    // 池只重置 Deprecated，具体字段由参数类型的 Create/Recycle 负责清理。
     public static T GetEvent()
     {
         if (_pool == null)
@@ -103,10 +104,10 @@ public class MMoveEventArgs : IEventArg
     public Vector3 face;
     /// <summary>是否已经发生位移。</summary>
     public bool moved;
-    /// <summary>移动开始前的延迟时间，单位为秒。</summary>
+    /// <summary>远端同步段的耗时，单位为秒，移动组件用它估算追赶速度。</summary>
     public float delay;
-    /// <summary>是否由本地 NPC 移动逻辑产生。</summary>
-    public bool isLocalMove; //本地npc等才需要置位true
+    /// <summary>是否来自本地移动；远端同步移动为 false。</summary>
+    public bool isLocalMove; // 本地生成的移动可设置此标记，使远端式处理重新估算速度。
 
     /// <summary>同步目标处的跳跃段号，零为落地，1 至 3 为本轮滞空的起跳次数。</summary>
     public int jumpCount;
@@ -119,7 +120,7 @@ public class MMoveEventArgs : IEventArg
     /// <param name="targetPosition">移动目标世界坐标，单位为 Unity 世界单位。</param>
     /// <param name="faceDirection">移动朝向的归一化世界方向向量。</param>
     /// <param name="hasMoved">本次事件是否已经产生位移。</param>
-    /// <param name="delaySeconds">移动生效前延迟秒数，非负值。</param>
+    /// <param name="delaySeconds">同步段耗时，单位秒；远端处理非正数时使用 0.01 秒。</param>
     /// <param name="isLocalMovement">是否由本地输入或本地 NPC 逻辑产生。</param>
     /// <param name="airborneJumpCount">同步目标的跳跃段号；本地输入和非跳跃移动默认使用零。</param>
     /// <returns>本次分发使用的池化移动参数，分发器完成派发后会自动回收。</returns>

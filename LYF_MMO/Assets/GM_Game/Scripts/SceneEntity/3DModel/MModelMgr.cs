@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// MModel 对象池管理器。
-/// 实体销毁时归还 MModel 实例，避免反复创建模型包装对象带来的 GC 开销。
-/// 采用单例模式，内部使用 Stack 作为池容器。
+/// 缓存 MModel 包装对象：借出时复用空闲对象，归还时先清理模型和动画资源。
+/// 池内保存的是包装对象，已加载的 Unity 模型在 Reset 时释放。
 /// </summary>
 public sealed class MModelMgr
 {

@@ -1,6 +1,6 @@
 /// <summary>
-/// 参考项目怪物实体等级枚举。
-/// 等级用于区分怪物强弱档位，但不改变 Monster 的实体根类型。
+/// 怪物档位，作为普通、精英、Boss 等分类数据保存。
+/// 它与 EntityType 是两个独立字段，设置档位不会自动修改实体类别。
 /// </summary>
 public enum MonsterRank
 {

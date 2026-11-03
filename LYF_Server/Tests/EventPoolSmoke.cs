@@ -587,7 +587,7 @@ public static class EventPoolSmoke
         int created_before_pool = ProbeEvent.created_count_;
         // first_rented 记录池化采样中第一个取用的实例，只用于首末同一性比对。
         ProbeEvent first_rented = null;
-        // last_rented 记录池化采样中最后一个取用的实例，与 first_rented 相同即证明全程复用同一对象。
+        // last_rented 记录最后一次取用对象，结束后仅核对首末引用是否相同。
         ProbeEvent last_rented = null;
         // pool_start 是池化采样开始前的累计分配字节，单位字节，与 baseline_start 口径一致。
         long pool_start = read_allocated();
@@ -605,12 +605,12 @@ public static class EventPoolSmoke
             dispatcher.DispatcherEvent(evt);
             evt.Release();
         }
-        // pool_bytes 是池化路径在采样区间内的分配字节数，单位字节，正常应为零。
+        // pool_bytes 是池化路径采样期间的线程分配字节数；下面只要求低于直接new基线，不要求为零。
         long pool_bytes = read_allocated() - pool_start;
         // pool_created 是池化路径新建的实例个数，正常应为零。
         int pool_created = ProbeEvent.created_count_ - created_before_pool;
 
-        // 实例同一性：整段采样只应复用同一个实例，首末相同即为证据。
+        // 核对首末取用对象是否相同；新建数量由独立构造计数判断，首末相同本身不证明每轮都相同。
         bool same_instance = ReferenceEquals(first_rented, last_rented);
 
         Console.WriteLine("EventPoolSmoke 分配实测（GC.GetAllocatedBytesForCurrentThread，单线程，循环 " +
@@ -642,7 +642,7 @@ public static class EventPoolSmoke
 
     /// <summary>
     /// 解析当前线程累计分配字节的读取器。
-    /// 该 API 自 .NET Framework 4.7.1 起提供，只统计当前线程，正好适合单线程采样；
+    /// 通过反射查询当前运行时是否提供该 API，只统计本测试线程的分配量；
     /// 解析不到时返回空，表示本运行时不支持精确读数。
     /// </summary>
     /// <returns>可重复调用的分配字节读取委托；运行时不支持时为空。</returns>

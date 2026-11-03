@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 陷阱场景实体，对应参考项目 OBJECT_TYPE_TRAP。
-/// 放置在场景中的陷阱装置，触发后产生伤害或效果。
+/// 陷阱的场景实体类型，沿用 MEntity 的模型与组件生命周期。
+/// 本类只指定 Trap 类别，触发检测与战斗效果不在这里执行。
 /// </summary>
 public sealed class TrapEntity : MEntity
 {

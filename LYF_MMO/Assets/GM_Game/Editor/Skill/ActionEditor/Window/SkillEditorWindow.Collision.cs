@@ -3,7 +3,7 @@ using Ethan.ActionEditor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>技能窗口的双语属性与原编辑操作适配，不改运行时或资产字段身份。</summary>
+/// <summary>编辑攻击判定范围：添加形状、设置判定属性、绑定骨骼，并定位场景中的判定框。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>原判定属性页索引，语言只改变其显示标题。</summary>

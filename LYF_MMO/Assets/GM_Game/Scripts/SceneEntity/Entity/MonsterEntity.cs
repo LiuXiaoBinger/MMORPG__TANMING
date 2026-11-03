@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 普通怪物实体，精英和 Boss 通过强类型包装共享此组件装配。
-/// 包含怪物 ID 和等级（Rank）信息，是所有怪物类型的基类。
+/// 怪物数据的基类，保存怪物配置编号及普通、精英、Boss 等档位。
+/// 对象池再次借出时清空旧编号与档位；具体组件由对应构建器装配。
 /// </summary>
 public class MonsterEntity : MEntity
 {

@@ -1,8 +1,7 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// Boss 怪物 Builder，保持 MonsterCommonAssemble 组件集合。
-/// 在普通怪物组件基础上额外设置怪物等级为 Boss，并挂载 Boss 专属标记。
+/// 创建或复用 Boss 实体，装配怪物共用组件，再设置 Boss 档位和类别标记。
 /// </summary>
 public sealed class BossEntityBuilder : MonsterEntityBuilder
 {
@@ -24,7 +23,7 @@ public sealed class BossEntityBuilder : MonsterEntityBuilder
         entity.Rank = MonsterRank.Boss;
         // 挂载怪物公共组件集合
         AttachMonsterComponents(entity);
-        // Boss 专属标记，用于 UI 表现和特殊逻辑
+        // 登记 Boss 类别，供按组件类型查询的代码识别
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Boss));
         return entity;
     }

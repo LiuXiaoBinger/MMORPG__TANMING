@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-/// <summary>技能窗口的属性面板显示；保留原窗口脚本 GUID 与事件选择行为。</summary>
+/// <summary>根据时间轴当前选中的事件绘制属性面板，并显示校验结果、定位出错事件。</summary>
 public partial class SkillEditorWindow
 {
     #region 属性检查器

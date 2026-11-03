@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// NPC 场景实体，对应参考项目 NpcBuilder 装配。
-/// 场景中可交互的 NPC 单位，包含对话、商店、任务等功能配置。
+/// 保存 NPC 的名称、地图、模型、对话和商店等配置，供场景与交互代码读取。
+/// 对象池复用前清空这些数据，避免上一个 NPC 的信息留到新 NPC 上。
 /// </summary>
 public sealed class NpcEntity : MEntity
 {
@@ -16,10 +16,10 @@ public sealed class NpcEntity : MEntity
     {
     }
 
-    /// <summary>NPC 编号（旧字段，兼容用）</summary>
+    /// <summary>NPC 编号字段之一；与 NpcID 独立存储，赋值入口需要分别设置</summary>
     public int NpcId { get; set; }
 
-    /// <summary>NPC ID（标准字段）</summary>
+    /// <summary>NPC 配置编号；修改它不会自动同步 NpcId</summary>
     public int NpcID { get; set; }
 
     /// <summary>NPC 类型（功能分类：对话、商店、任务等）</summary>
@@ -34,7 +34,7 @@ public sealed class NpcEntity : MEntity
     /// <summary>NPC 模型预制体路径</summary>
     public string PrefabPath { get; set; }
 
-    /// <summary>NPC 思考/行为文本（待补充）</summary>
+    /// <summary>配置中的 Think 文本；本类只保存原值，不解释或执行其中内容</summary>
     public string Think { get; set; }
 
     /// <summary>NPC 对话文本</summary>

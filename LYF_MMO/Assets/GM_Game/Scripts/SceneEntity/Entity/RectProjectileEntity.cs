@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 矩形范围飞行物实体，对应 RealRectBullet。
-/// 以矩形范围进行伤害判定的投射物，通常用于直线扇形或长方形区域技能。
+/// 矩形类别投射物的实体类型。
+/// 当前只区分类别，不在本类计算矩形范围或伤害。
 /// </summary>
 public sealed class RectProjectileEntity : ProjectileEntity
 {

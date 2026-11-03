@@ -397,7 +397,7 @@ public static class EventDispatcherSmoke
                 return Fail("在线角色装配失败");
             }
 
-            // 首次施法前的权威 MP，主表配置为 500，成功一次扣 20。
+            // 首次施法前的MP由本用例设为500；当前被测技能配置每次消耗20点。
             int initial_mp = role.mainRoleInfo.BaseInfo.CurrMp;
 
             // cast_result 是入口调用返回码，非零表示命令构造或会话解析失败。
@@ -472,7 +472,7 @@ public static class EventDispatcherSmoke
             {
                 return reject_result;
             }
-            // 入口非提交校验必须尽早拒绝：不派发事件、不读条，因此这里不再推进任何逻辑帧。
+            // 入口先检查是否允许施法，失败时不扣蓝也不派发吟唱事件；这里不推进逻辑帧。
             BasePackage reject_package;
             if (!gate.TryReadFrame(out reject_package, 2000))
             {
@@ -901,7 +901,7 @@ public static class EventDispatcherSmoke
         package.GateSessionId = role.GateSessionId;
         package.Data = request.ToByteString();
 
-        // 命令信封与网络线程入队时一致，处理器据此还原协议包与会话。
+        // 命令记录保存来源、传输对象和协议字段，格式与网络线程提交给逻辑队列的记录一致。
         GameCommand command = GameCommand.From(GameCommandSource.GateServer, gate.Session, package);
         if (command == null)
         {
@@ -1026,7 +1026,7 @@ public static class EventDispatcherSmoke
             }
         }
 
-        /// <summary>关闭测试侧连接、会话与监听器，避免残留句柄。</summary>
+        /// <summary>移除会话登记并关闭测试侧连接与监听器；本方法未直接调用服务端Session的Disconnect。</summary>
         public void Dispose()
         {
             SessionMgr.Instance.RemoveSession(session_.SessionID);

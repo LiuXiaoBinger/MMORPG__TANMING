@@ -9,9 +9,9 @@ internal sealed class MNavigationTriangle
     public MNavigationPoint B;
     /// <summary>原网格第三个顶点的世界位置。</summary>
     public MNavigationPoint C;
-    /// <summary>接缝两侧判定与门户左右排序使用的三维重心，保留坡面和楼层高度。</summary>
+    /// <summary>三个顶点的平均位置，用来判断相邻三角形在公共边哪一侧及行进方向。</summary>
     public MNavigationPoint Center;
-    /// <summary>三角形最小X，用于查询半盒的快速范围排除。</summary>
+    /// <summary>三角形最小X，用于先排除不在查询范围内的三角形。</summary>
     public float MinX;
     /// <summary>三角形最大X，单位与世界坐标一致。</summary>
     public float MaxX;
@@ -19,7 +19,7 @@ internal sealed class MNavigationTriangle
     public float MinY;
     /// <summary>三角形最大Y，保留坡面高度范围。</summary>
     public float MaxY;
-    /// <summary>三角形最小Z，用于查询半盒的快速范围排除。</summary>
+    /// <summary>三角形最小Z，用于先排除不在查询范围内的三角形。</summary>
     public float MinZ;
     /// <summary>三角形最大Z，单位与世界坐标一致。</summary>
     public float MaxZ;

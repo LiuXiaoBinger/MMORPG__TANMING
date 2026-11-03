@@ -2,17 +2,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 单次技能释放的客户端运行时基类，保存施法 UUID、核心和动作时钟。
-/// 实例由工厂池借出并在单次 UUID 生命周期结束后归还；伤害和资源消耗始终以服务器结果为准。
+/// 一次技能释放的运行对象，保存施法 UUID、所用配置、动画和计时器。
+/// 动作结束可以先交出角色控制权，尚未触发的特效或声音继续由同一实例收尾。
+/// 最终取消或回收时先注销回调，再释放资源和核心引用；伤害与消耗以服务器结果为准。
 /// </summary>
 public abstract class MSkill
 {
 
     #region 字段与属性
-    /// <summary>RO 正式技能在表现范围之后的最大生命周期宽限秒数，不是客户端施法门禁。</summary>
+    /// <summary>已确认施法在全部表现预计结束之后最多保留的额外秒数，用于最终清理。</summary>
     private const float ServerEndGraceSeconds = 10f;
 
-    /// <summary>RO 预表现实例在表现范围之后的最大生命周期宽限秒数；不维护逐笔确认期限。</summary>
+    /// <summary>尚未确认的本地表现，在全部表现预计结束后最多额外保留的秒数。</summary>
     private const float PerformanceGraceSeconds = 2f;
 
     /// <summary>本次施法尚未触发的正延迟计时器票据，触发后移除、取消时统一注销。</summary>
@@ -21,7 +22,7 @@ public abstract class MSkill
     /// <summary>实例生命周期内复用的 RO 时间轴回调委托，注册时不重复创建方法委托。</summary>
     protected readonly MTimerMgr.TimerEventHandler _onProcessTimer;
 
-    /// <summary>每次 Reset 更新的实例施法代次，区分同一池对象甚至同 UUID 的同步重新 Fire。</summary>
+    /// <summary>每次 Reset 递增的复用次数；旧回调据此识别同一对象已经开始了另一轮施法。</summary>
     protected ulong _fireGeneration;
 
     /// <summary>本次释放持有的技能核心引用，直到该施法实例归还才解除。</summary>
@@ -54,7 +55,7 @@ public abstract class MSkill
     /// <summary>本次释放从开始到当前的本地经过时长，单位为秒。</summary>
     private float _elapsedSeconds;
 
-    /// <summary>本次表现预计播放时长，单位为秒，优先使用动画索引长度。</summary>
+    /// <summary>本次完整动画时长，单位秒；开始时用配置值，动画信息就绪后可更新为剪辑长度。</summary>
     protected float _durationSeconds;
 
     /// <summary>本段技能动作状态应结束的时间，单位为秒；完整剪辑时长仍由 _durationSeconds 保存。</summary>
@@ -66,10 +67,10 @@ public abstract class MSkill
     /// <summary>本次 Fire 冻结的计时器初始化版本，全局重新 Init 后旧程序运动必须停止。</summary>
     private ulong _timerSessionVersion;
 
-    /// <summary>本次 Fire 冻结的水平技能单位方向，程序位移各段不跟随手动输入转向。</summary>
+    /// <summary>开始施法时保存的水平单位方向；后续位移段沿此方向移动，不跟随新的输入转向。</summary>
     private Vector3 _skillForward;
 
-    /// <summary>RO 同名施法方向接口，Y Forward 程序段沿该固定世界方向移动。</summary>
+    /// <summary>本次施法固定的世界前向，前向位移段使用它计算方向。</summary>
     public Vector3 SkillTowardsTo { get { return _skillForward; } }
 
     /// <summary>计时器原点至今经过的秒数，程序位移独占该时钟；FX/声音既有补发时钟保持。</summary>
@@ -217,7 +218,7 @@ public abstract class MSkill
 
     /// <summary>RO 时间轴统一入口，先解除已触发票据，再按锁定 UUID 校验本次施法身份。</summary>
     /// <param name="token">到期的单次票据，零表示同步补发。</param>
-    /// <param name="args">注册时捕获的具名强类型技能事件载荷。</param>
+    /// <param name="args">登记计时器时保存的施法身份和具体表现指令。</param>
     protected void OnProcessTimer(uint token, MSkillTimerArgs args)
     {
         if (token != 0)
@@ -234,7 +235,7 @@ public abstract class MSkill
     }
     #endregion
 
-    /// <summary>按 RO 记录正延迟票据；零票据已同步执行，无需纳入取消列表。</summary>
+    /// <summary>保存尚未触发的计时器编号；编号为零表示已经同步执行，无需再取消。</summary>
     /// <param name="token">MTimerMgr.SetTimer 返回的单次票据，零表示同步事件。</param>
     protected void AddedTimerToken(uint token)
     {
@@ -253,7 +254,7 @@ public abstract class MSkill
     #endregion
 
     #region 查询与判定
-    /// <summary>RO 同名动作解锁判断，仅表示当前动作窗结束，独立于技能制作尾段及服务器生命周期。</summary>
+    /// <summary>判断当前动作占用时间是否结束，不代表特效、声音或服务器施法已经全部结束。</summary>
     /// <returns>本次活动技能已运行到动作状态解锁秒数时为真。</returns>
     public abstract bool IsEnd();
 
@@ -335,7 +336,7 @@ public abstract class MSkill
         // 只锁定本段身份；资源迟到时仍按该 ID 取轨道，不读取已被下一段改动的核心选择。
         _runtimePresentationId = core.PresentationId;
         _runtimePresentationDurationSeconds = core.AnimationDurationSeconds;
-        // 状态时钟仍来自旧表现表，Y 编辑资产不改写 Q 接段时间。
+        // 动作占用时长来自表现表；编辑器的后续特效、声音事件不会延长连招接段时间。
         _durationSeconds = core.AnimationDurationSeconds;
 
         _skillStateTimeSeconds = _durationSeconds;
@@ -382,7 +383,7 @@ public abstract class MSkill
         }
     }
 
-    /// <summary>RO 同名施法结束入口：先解除所属组件的当前槽或脱手引用，再注销回调并归还具体技能池。</summary>
+    /// <summary>彻底结束本次施法：先让组件移除对本实例的引用，再注销回调并归还对象池。</summary>
     /// <param name="cleanUp">RO 兼容的额外清理标记；本项目没有额外分支，任意值都终止并注销本次回调，自然尾段由组件延后调用 Cease。</param>
     public virtual void Cease(bool cleanUp = false)
     {
@@ -463,7 +464,7 @@ public abstract class MSkill
         return false;
     }
 
-    /// <summary>按 RO 从统一动作播放入口覆盖并播放技能动画，迟到触发按施法时钟续播。</summary>
+    /// <summary>从技能状态的统一入口安装并播放动画；模型较晚就绪时，从已经经过的位置继续播放。</summary>
     public virtual void TriggerAnim()
     {
         // 存活且未释放、核心与施法者齐全时才绑定并播放动画。

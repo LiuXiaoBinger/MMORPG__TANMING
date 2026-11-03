@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 状态机专用状态容器，负责注册、查询、遍历和池回收动作状态。
-/// 同时维护按 StateDefine 索引、按 (StateDefine, EntityType) 复合键索引和按注册顺序遍历三套结构。
+/// 保存一个实体已经注册的动作状态。
+/// 状态枚举用于常规查询，状态加实体类别用于组合查询，列表保存注册顺序以便反向回收。
+/// 同一状态枚举只允许注册一次，即使实体类别不同也不能重复注册。
 /// </summary>
 public sealed class MActionStateContainer
 {
@@ -35,8 +36,9 @@ public sealed class MActionStateContainer
             return false;
         }
         _states.Add(state.SelfState, state);
-        // 取宿主实体类型作为复合键的一部分，支持后续按实体类型细分状态
+        // 取宿主类别构造组合键；主字典仍限制同一状态枚举只能有一个实例
         MEntity entity = state.EntityForState;
+        // 没有宿主实体时，组合键沿用 Role 作为默认类别。
         EntityType entityType = EntityType.Role;
         if (entity != null)
         {
@@ -71,6 +73,7 @@ public sealed class MActionStateContainer
     /// <returns>动作状态实例，未注册返回 null。</returns>
     public MActionComponent Get(StateDefine state)
     {
+        // 状态枚举对应的已注册组件，找不到时返回 null。
         MActionComponent component;
         if (_states.TryGetValue(state, out component))
         {
@@ -93,7 +96,7 @@ public sealed class MActionStateContainer
     /// <param name="owner">宿主实体，用于回收时的上下文（当前未直接使用）。</param>
     public void Clear(MEntity owner)
     {
-        // 逆序回收，保证后注册的状态先归还
+        // index 从末尾向前，先归还后注册的状态
         for (int index = _ordered.Count - 1; index >= 0; index--)
         {
             MComponentMgr.Instance.ReleaseActionState(_ordered[index]);

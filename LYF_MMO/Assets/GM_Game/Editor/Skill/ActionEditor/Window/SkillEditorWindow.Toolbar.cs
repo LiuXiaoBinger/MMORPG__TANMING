@@ -4,7 +4,7 @@ using Ethan.ActionEditor.Editor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>技能窗口工具栏，个人语言控件与技能数据编辑的变更检测相互独立。</summary>
+/// <summary>绘制技能窗口顶部的配置选择、保存、预览和语言按钮；语言偏好与技能数据分别处理。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>绘制资源、预览与时间轴工具；切换语言只更新展示缓存，不产生技能编辑事务。</summary>

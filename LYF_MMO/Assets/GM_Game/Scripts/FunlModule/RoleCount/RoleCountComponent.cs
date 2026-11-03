@@ -5,7 +5,7 @@ using cfg;
 /// <summary>客户端角色次数组件，保存商城、副本等业务次数快照。</summary>
 public sealed class RoleCountComponent : RoleComponentBase
 {
-    /// <summary>次数发生变化时通知客户端控制器刷新展示。</summary>
+    /// <summary>保留的次数变化事件；当前类内没有触发它，界面通过 DirtyTracker 得知需要刷新。</summary>
     public event Action<RoleCountItemInfo> CountChanged;
 
     /// <summary>按行为类型与业务编号组成复合键保存次数。</summary>
@@ -27,7 +27,7 @@ public sealed class RoleCountComponent : RoleComponentBase
     }
     #endregion
 
-    /// <summary>通知订阅者刷新指定次数展示。</summary>
+    /// <summary>当 itemInfo 和所属角色有效时，登记次数模块需要刷新；不直接调用 CountChanged。</summary>
     private void NotifyChanged(RoleCountItemInfo itemInfo)
     {
         if (itemInfo != null && Owner != null)
@@ -79,7 +79,7 @@ public sealed class RoleCountComponent : RoleComponentBase
         return left;
     }
 
-    /// <summary>兼容旧商城类型查询剩余次数。</summary>
+    /// <summary>旧接口保留 type 参数，但实际始终按商品购买次数查询 id。</summary>
     public long GetLeftCount(RoleCountType type, long id)
     {
         return GetLeftCount(RoleCountAction.ShopPurchase, (int)id);
@@ -183,7 +183,7 @@ public sealed class RoleCountComponent : RoleComponentBase
     }
 
     #region 核心逻辑
-    /// <summary>设置客户端次数模型，并通知控制器刷新界面。</summary>
+    /// <summary>写入 action、key 对应的客户端次数 count，并标记次数界面需要刷新。</summary>
     public bool SetCount(RoleCountAction action, int key, long count)
     {
         // 所属角色缺失、数据未就绪或动作为空时拒绝写入。
@@ -254,7 +254,7 @@ public sealed class RoleCountComponent : RoleComponentBase
         return IncrCount(ResolveAction(type, scope), (int)id, increment);
     }
 
-    /// <summary>应用服务器推送的次数变化，并通知商城等界面刷新。</summary>
+    /// <summary>按服务器给出的绝对次数更新本地记录，再标记相关界面需要刷新。</summary>
     /// <param name="syncInfo">服务器次数增量消息。</param>
     public void ApplyServerSync(CountUpdateSyncInfo syncInfo)
     {

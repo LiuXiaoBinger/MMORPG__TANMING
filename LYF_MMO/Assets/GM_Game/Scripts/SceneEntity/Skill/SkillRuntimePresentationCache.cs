@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
-/// <summary>按表现行 ID 管理编辑器导出资产的异步加载和粒子实例共享租约。</summary>
+/// <summary>
+/// 按表现表 ID 共用一次异步资源加载，并统计技能核心和粒子对它的引用。
+/// 资源就绪后通知等待者；最后一个持有者释放后归还加载句柄。
+/// </summary>
 public static class SkillRuntimePresentationCache
 {
     /// <summary>单条表现资产的地址前缀，后接十进制表现行 ID。</summary>
@@ -19,7 +22,7 @@ public static class SkillRuntimePresentationCache
         /// <summary>关联的表现行主键，正整数。</summary>
         public int PresentationId;
 
-        /// <summary>核心与已生成粒子合计持有数，非负整数。</summary>
+        /// <summary>动作数据与已生成粒子合计持有的引用数，非负整数。</summary>
         public int OwnerCount;
 
         /// <summary>当前异步加载的 YooAsset 句柄；最终持有者释放时归还。</summary>
@@ -45,7 +48,7 @@ public static class SkillRuntimePresentationCache
     /// <param name="listener">一次性强类型回调；调用方负责捕获施法身份并在取消时解除。</param>
     public static void AddReadyListener(int presentationId, Action<SkillRuntimePresentation> listener)
     {
-        // 核心所持有的共享记录；订阅本身不增加资源租约。
+        // 核心所持有的共享记录；仅订阅回调不会增加资源引用计数。
         Entry entry;
         if (listener == null || !Entries.TryGetValue(presentationId, out entry))
         {
@@ -103,7 +106,7 @@ public static class SkillRuntimePresentationCache
         entry.ReadyListeners.Clear();
         // 本轮终态资产快照；首个回调释放记录后其他回调仍收到原始终态并自行校验身份。
         SkillRuntimePresentation asset = entry.Asset;
-        // index 按登记顺序交付每个独立施法，过期闭包由 UUID/代次门控拒绝。
+        // index 按登记顺序通知等待者；调用方用施法 UUID 和复用次数识别过期回调。
         for (int index = 0; index < listeners.Count; index++)
         {
             try

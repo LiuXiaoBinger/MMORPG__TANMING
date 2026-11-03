@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>旧剪辑帧尺到显式时间轴帧率的手动迁移；保留事件帧号，混合帧率须显式确认。</summary>
+    /// <summary>为旧技能配置补上明确的时间轴帧率，保留原事件帧号；遇到不同帧率混用时让编辑者确认。</summary>
     public static class ActionTimingMigration
     {
         /// <summary>保存恢复点后把旧时间尺改为显式计时；失败恢复原稿，最终销毁未持久化副本。</summary>

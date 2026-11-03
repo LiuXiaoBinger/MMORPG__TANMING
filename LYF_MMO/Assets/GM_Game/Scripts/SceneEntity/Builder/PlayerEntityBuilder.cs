@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 玩家 Builder，玩家实体复用 RoleBuilder 的公共组件。
-/// 本地玩家实体需要同时挂载公共组件、战斗组件和角色数据组件。
+/// 装配本地玩家：基础数据、战斗标记、角色数据，以及待机、跳跃和导航组件。
+/// 玩家类型同时带有 Role 与 Player 位，便于按角色类别或本地玩家类别查找。
 /// </summary>
 public sealed class PlayerEntityBuilder : EntityBuilder
 {
@@ -32,7 +32,7 @@ public sealed class PlayerEntityBuilder : EntityBuilder
         MComponentMgr.Instance.CreateComponent<MIdleComponent>(entity);
         // 挂载角色跳跃表现组件，统一装配起跳、空中循环和落地动画。
         MComponentMgr.Instance.CreateComponent<MJumpComponent>(entity);
-        // 本地主角挂载RO导航到达模块，接收输入交接并发送技能请求。
+        // 本地玩家用导航组件接收移动/交互目标，到达施法范围后发送技能请求。
         MComponentMgr.Instance.CreateComponent<MNavigationComponent>(entity);
 
         return entity;

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>按技能主表 ID 保存的施法权限，普通攻击各表现段共用一行；两端从同一编辑资产导出。</summary>
+/// <summary>
+/// 一个技能的施法规则：能打断哪些技能，以及施法时能否水平移动。
+/// 按技能主表 ID 配置，同一技能的多个动作段共用规则。
+/// </summary>
 [Serializable]
 public sealed class SkillCastingRules
 {

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>保留 Y 编辑器的主线程自动化接口，用于显式资源查询、校验和带撤销的编辑；不驱动本项目角色战斗。</summary>
+    /// <summary>供工具调用的技能编辑入口：在 Unity 主线程查找、创建、检查和修改指定技能资产；编辑结果支持撤销。</summary>
     public static partial class ActionEditorAgent
     {
         /// <summary>自动化 JSON 请求的强类型结构；资产路径与操作均由调用者显式提供。</summary>

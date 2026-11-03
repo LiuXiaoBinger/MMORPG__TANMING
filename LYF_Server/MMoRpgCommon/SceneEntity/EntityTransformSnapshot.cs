@@ -1,6 +1,6 @@
 namespace MMoRpgCommon.SceneEntity
 {
-    /// <summary>实体同步使用的确定性位置与朝向快照。</summary>
+    /// <summary>实体位置与朝向的数据副本；使用浮点值保存，不负责移动计算。</summary>
     public sealed class EntityTransformSnapshot
     {
         /// <summary>世界坐标 X。</summary>

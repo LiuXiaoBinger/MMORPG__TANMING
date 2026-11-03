@@ -20,7 +20,7 @@ public sealed class KcpPeer
     /// </summary>
     private readonly object _sync = new object();
 
-    /// <summary>最近一次收到合法数据报的计时器刻度，用于空闲超时清理；跨线程以原子读写访问。</summary>
+    /// <summary>最近一次收到合法数据报的 UTC 时间刻度（每刻度 100 纳秒），用于空闲超时清理；跨线程以原子读写访问。</summary>
     private long _lastActiveTicks;
 
     /// <summary>
@@ -39,7 +39,7 @@ public sealed class KcpPeer
     /// <summary>16 字节会话令牌，作为该 Peer 数据报的认证密钥；只在网关与客户端内存中保存。</summary>
     public byte[] Token { get; private set; }
 
-    /// <summary>当前远端地址；认证通过后才会更新，避免被伪造源地址劫持。</summary>
+    /// <summary>绑定时通过令牌认证的远端地址；当前数据接收路径不自动改写该地址。</summary>
     public IPEndPoint Remote { get; set; }
 
     /// <summary>本 Peer 关联的 TCP 会话；解绑或释放时置空，避免继续向旧角色交付。</summary>
@@ -69,7 +69,7 @@ public sealed class KcpPeer
         Channel = new KCP(conv, OnKcpOutput);
         // MTU 与数据报预算保持一致，整包不会超过 1200 字节。
         Channel.SetMtu(KcpDefine.KcpMtu);
-        // 低延迟模式：nodelay=1、interval=10ms、快速重传 2 次、关闭拥塞窗口自适应。
+        // 低延迟模式：更新间隔 10ms、快速重传阈值为 2、关闭拥塞窗口限制；2 不是最多只重传两次。
         Channel.NoDelay(1, KcpDefine.UpdateIntervalMilliseconds, 2, 1);
         Channel.WndSize(128, 128);
         _lastActiveTicks = DateTime.UtcNow.Ticks;

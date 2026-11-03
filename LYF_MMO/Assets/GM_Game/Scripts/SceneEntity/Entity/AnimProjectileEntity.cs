@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 动画飞行物实体，对应 AnimBullet。
-/// 仅播放动画表现、无实体碰撞的投射物类型。
+/// 动画类投射物的实体类型。
+/// 当前只沿用投射物基类的初始化，不在本类播放动画或检测碰撞。
 /// </summary>
 public sealed class AnimProjectileEntity : ProjectileEntity
 {

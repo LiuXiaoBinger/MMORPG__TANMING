@@ -1,4 +1,4 @@
-/// <summary>客户端可延迟消费的角色模块脏标记类型。</summary>
+/// <summary>标记哪个角色模块的数据变了，控制器稍后据此刷新对应界面。</summary>
 public enum ClientDirtyModule
 {
     /// <summary>未知模块。</summary>

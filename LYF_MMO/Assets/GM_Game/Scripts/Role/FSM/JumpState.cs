@@ -12,15 +12,17 @@ using UnityEngine;
 public class JumpState : RoleFSMStateBase
 {
 
+    /// <summary>等待跳跃循环动画出现的逐帧订阅，命中或退出状态时释放。</summary>
     private IDisposable _obs;
 
+    /// <summary>保存 roleCtrl 所属控制器和 animator 动画组件，供进入、退出状态时使用。</summary>
     public JumpState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)
     {
         
     }
 
     /// <summary>
-    /// 进入状态
+    /// 先播放动作 21；逐帧等到 Jump_Loop 标签出现，再切到动作 23 并结束监听。
     /// </summary>
     public override void OnEnter()
     {
@@ -35,7 +37,7 @@ public class JumpState : RoleFSMStateBase
       });
     }
     /// <summary>
-    /// 退出状态
+    /// 退出跳跃时释放逐帧监听，避免继续改变动画。
     /// </summary>
     public override void OnExit()
     {

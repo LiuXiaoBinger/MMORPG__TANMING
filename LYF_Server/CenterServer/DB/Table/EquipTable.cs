@@ -19,7 +19,7 @@ internal class EquipTable
     public int RoleID { get; set; }
 
     /// <summary>
-    /// 装备类别，由业务层定义，例如武器、防具或饰品。
+    /// 装备部位类别，对应 EquipType 中的衣服、武器、饰品等位置。
     /// </summary>
     public int EquipType { get; set; }
 

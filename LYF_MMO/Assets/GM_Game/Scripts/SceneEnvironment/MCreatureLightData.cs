@@ -1,9 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 角色光照数据。对应 RO 源工程 MCreatureLightData：
-/// 承载角色（主角与 NPC）卡通着色需要的四路颜色与反射立方图，
-/// 由 MEnvorimentSetting 写入对应的 RO 全局 Shader 变量。
+/// 保存角色主光、背光、环境光、边缘光和反射贴图；MEnvorimentSetting 启用时把这些值交给着色器。
 /// </summary>
 public class MCreatureLightData : ScriptableObject
 {
@@ -21,7 +19,7 @@ public class MCreatureLightData : ScriptableObject
 
     /// <summary>
     /// 角色环境光颜色。应用时写入全局 _ROCAmbientColor，
-    /// 决定角色暗部的基础色偏（本场景为偏蓝紫）。
+    /// 决定角色暗部的基础颜色。
     /// </summary>
     public Color ambientColor = new Color(0.7f, 0.95f, 1f, 1f);
 
@@ -32,7 +30,7 @@ public class MCreatureLightData : ScriptableObject
     public Color rimColor = new Color(0.8f, 0.8f, 0.8f, 0.6f);
 
     /// <summary>
-    /// 场景反射立方图。非空时赋给 RenderSettings.customReflection，
+    /// 场景反射立方图。非空时赋给 RenderSettings.customReflectionTexture，
     /// 供依赖反射探针的材质取样；为空表示不改动当前反射设置。
     /// </summary>
     public Cubemap reflectMap;

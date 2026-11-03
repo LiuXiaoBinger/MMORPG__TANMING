@@ -1,4 +1,7 @@
-/// <summary>场景实体输入事件桥接器，统一将具名输入参数路由到 Input 事件。</summary>
+/// <summary>
+/// 把输入参数交给目标实体的事件分发器。
+/// 目标不存在时直接回收参数；成功交给分发器后，由分发器负责回收。
+/// </summary>
 public static class EntityInputEventBridge
 {
     /// <summary>向目标实体派发统一输入参数。</summary>
@@ -21,9 +24,9 @@ public static class EntityInputEventBridge
         entity.DispatchEvent(MEventType.InputKey, eventArgs);
     }
     
-    /// <summary>向目标实体派发统一输入参数。</summary>
-    /// <param name="entity">接收输入的目标实体。</param>
-    /// <param name="eventArgs">统一输入参数。</param>
+    /// <summary>向目标实体发送 MEvent_Move 移动事件。</summary>
+    /// <param name="entity">接收移动请求的实体。</param>
+    /// <param name="eventArgs">移动组件所需的事件参数，交接后由分发器回收。</param>
     public static void DispatchInputMove(ROObject entity, IEventArg eventArgs)
     {
         // 参数为空时没有可交接或回收的对象，直接结束本次派发。

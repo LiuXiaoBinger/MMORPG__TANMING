@@ -3,7 +3,7 @@ using MMoRpgCommon;
 using UnityEngine;
 
 /// <summary>
-/// 主界面控制器，组合商城、技能、角色信息和聊天流程。
+/// 主界面的业务入口：创建商城、技能、角色信息、背包、任务和队伍控制器，统一处理相关协议与菜单交互。
 /// </summary>
 public class MainCtrl : CtrlBase
 {
@@ -30,7 +30,7 @@ public class MainCtrl : CtrlBase
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
 
-    /// <summary>主题副本建队子控制器，负责本地单人队伍状态与进入魔神塔的流程。</summary>
+    /// <summary>主题副本队伍控制器，根据服务器通知刷新队伍，并在入场通知后切换场景。</summary>
     private readonly ThemeDungeonTeamCtrl _themeDungeonTeamCtrl;
 
     /// <summary>主界面快捷键是否已注册。</summary>
@@ -42,6 +42,7 @@ public class MainCtrl : CtrlBase
 
     #region 构造、初始化与事件注册
     /// <summary>创建主界面控制器并组合各业务子控制器。</summary>
+    /// <param name="view">持有所有主界面子窗口的 MainView。</param>
     public MainCtrl(UIBase view) : base(view)
     {
         _mainView = view as MainView;
@@ -114,7 +115,7 @@ public class MainCtrl : CtrlBase
         }
     }
 
-    /// <summary>幂等注册主界面快捷键。</summary>
+    /// <summary>注册主界面快捷键；已注册时不重复订阅，同时重新绑定小地图和技能输入。</summary>
     public void RegisterMainInput()
     {
         // 主角可能晚于主界面控制器创建，因此每次主 UI 注册时重新绑定小地图。
@@ -205,7 +206,9 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 界面显示与开关
-    /// <summary>商城窗口先由商城控制器准备数据，其余窗口沿用基础流程。</summary>
+    /// <summary>对话窗口先把 NPC 转为展示数据，商店交给 ShopCtrl 准备商品；其他窗口沿用基类显隐流程。</summary>
+    /// <param name="windowType">需要切换的主界面子窗口。</param>
+    /// <param name="obj">窗口数据；对话和商店入口要求传入 NpcEntity。</param>
     public override void ShowMainWindow(WindowType windowType, object obj = null)
     {
         if (windowType == WindowType.TalkWindow)
@@ -224,6 +227,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>使用服务端返回的容量刷新对应背包分类。</summary>
+    /// <param name="data">扩容回包，包含背包分类和服务端确认的已开格数。</param>
     private void OpenKnapsackGridHandle(ByteString data)
     {
         OpenKnapsackGridRet result = OpenKnapsackGridRet.Parser.ParseFrom(data);
@@ -234,7 +238,7 @@ public class MainCtrl : CtrlBase
 
         // 接收扩容结果的本地玩家背包组件。
         RoItemComponent itemComponent;
-        // 当前场景中的本地玩家；启动门控未开放或断线清理后保持为空。
+        // 当前场景中的本地玩家；角色尚未创建或已被断线清理时为空。
         PlayerEntity localRole = null;
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
@@ -249,7 +253,7 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 界面刷新
-    /// <summary>供外部在登录后用服务端任务快照刷新任务界面。</summary>
+    /// <summary>重画任务主窗口和快捷任务面板；这里只读取现有 TaskMgr 数据，不请求或装载服务端数据。</summary>
     public void RefreshTaskUI()
     {
         if (_taskCtrl == null)
@@ -260,6 +264,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>接收服务器物品增量并交给角色背包组件更新客户端模型。</summary>
+    /// <param name="data">服务端推送的单次物品增量。</param>
     private void UpdateItemInfoHandle(ByteString data)
     {
         // 本次物品增量回包，成功后更新当前角色的背包数据。
@@ -290,6 +295,7 @@ public class MainCtrl : CtrlBase
 
     #region 交互响应
     /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
+    /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
     {
         if (_knapsackCtrl != null)
@@ -299,7 +305,8 @@ public class MainCtrl : CtrlBase
         BindTrackedRole();
     }
 
-    /// <summary>聊天输入期间暂停角色输入。</summary>
+    /// <summary>聊天获得焦点时调用输入控制器 OnDisable，失焦时调用 OnEnable；不修改组件 enabled 属性。</summary>
+    /// <param name="focused">聊天框是否正在接收键盘输入。</param>
     private void OnChatInputFocusChanged(bool focused)
     {
         if (PlayerInputCtr.Instance == null)
@@ -382,6 +389,8 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>校验聊天文本并协调本地回显。</summary>
+    /// <param name="channel">窗口选中的聊天频道，仅用于当前本地回显。</param>
+    /// <param name="message">要显示的正文，纯空白时拒绝。</param>
     private void OnChatSendRequested(string channel, string message)
     {
         if (string.IsNullOrWhiteSpace(message))
@@ -397,6 +406,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>
+    /// <param name="npcEntity">当前交互 NPC，null 时返回空数据。</param>
     private NpcTalkViewData CreateNpcTalkViewData(NpcEntity npcEntity)
     {
         if (npcEntity == null)
@@ -407,6 +417,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
+    /// <param name="data">服务器下发的次数计数更新。</param>
     private void CountUpdateSyncInfoHandle(ByteString data)
     {
         // 服务器推送的次数增量，用于同步当前角色的次数组件。
@@ -462,12 +473,14 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>把商城购买回包交给商城模型解析。</summary>
+    /// <param name="data">商城购买结果的序列化字节。</param>
     private void BuyShopItemHandle(ByteString data)
     {
         ShopMgr.Instance.HandleResponse(data);
     }
 
     /// <summary>分发角色背包快照到背包、商城和角色信息模块。</summary>
+    /// <param name="data">包含当前角色各背包数据的完整回包。</param>
     private void RoleKnapsackInfoHandle(ByteString data)
     {
         RoleKanpsackInfoRet result = RoleKanpsackInfoRet.Parser.ParseFrom(data);
@@ -495,6 +508,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>处理主界面快捷键。</summary>
+    /// <param name="key">L 切技能、B 切背包、I 切角色属性；其他字符不处理。</param>
     public void MainUIKeyHandler(string key)
     {
         switch (key)

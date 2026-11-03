@@ -27,7 +27,7 @@ public sealed class GateTeamCtrl : IContainer
     /// <param name="basePackage">队伍下行通知，含目标 Unity 会话号。</param>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
-        // session 是按包内 UnitySessionId 反查出的目标玩家会话；为 null 时由转发器按错误码回绝，不在此处丢弃。
+        // 按包内 UnitySessionId 找目标玩家会话；找不到时转发器只记录日志并返回，无法向已丢失的连接回包。
         Session session = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         GateClientResponseForwarder.ForwardToUnity(session, basePackage);
     }

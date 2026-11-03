@@ -1,7 +1,6 @@
 /// <summary>
-/// 特殊动作状态组件。
-/// 用于播放特殊表情、交互动作等非战斗类特殊动画。
-/// 监听特殊动作开始事件切入本状态。
+/// 把 SpecialActionStarted 事件接入特殊动作状态。
+/// 实际动画由基类根据表现表中的休闲动作或 NPC 欢迎动作查找。
 /// </summary>
 public sealed class MSpecialComponent : MBasicActionComponent
 {
@@ -19,11 +18,13 @@ public sealed class MSpecialComponent : MBasicActionComponent
     /// <summary>注册特殊动作开始事件：收到特殊动作触发消息时切入本状态。</summary>
     protected override void RegisterActionEvents() 
     { RegisterActionEvent(MEventType.SpecialActionStarted); }
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

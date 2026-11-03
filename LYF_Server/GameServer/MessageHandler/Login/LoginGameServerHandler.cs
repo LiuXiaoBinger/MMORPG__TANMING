@@ -1,12 +1,17 @@
 /// <summary>处理登录游戏服协议，根据消息来源区分客户端请求和中心服回包。</summary>
 public sealed class LoginGameServerHandler : IGameMessageHandler
 {
+    /// <summary>按选服协议号匹配网关请求和中心服结果两种来源。</summary>
+    /// <param name="source">消息来自网关或中心服。</param>
+    /// <param name="commandCode">消息的协议编号。</param>
     public bool CanHandle(GameCommandSource source, ushort commandCode)
     {
         return commandCode == NetDefine.CMD_LoginGameServerCode &&
             (source == GameCommandSource.GateServer || source == GameCommandSource.CenterServer);
     }
 
+    /// <summary>网关选服请求继续转给中心服，中心服结果不在此重复转发。</summary>
+    /// <param name="context">逻辑线程中的消息、会话和原网络连接。</param>
     public void OnCall(GameMessageHandlerContext context)
     {
         if (context == null || context.Package == null)

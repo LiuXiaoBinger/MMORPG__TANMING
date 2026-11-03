@@ -17,11 +17,13 @@ public sealed class EntityComponentMarker : EntityComponentBase
         _componentType = componentType;
     }
 
+    /// <summary>标记组件没有事件处理，不订阅实体事件。</summary>
     protected override void EventSubscribe()
     {
      
     }
 
+    /// <summary>标记组件没有事件订阅，此处无需解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

@@ -4,11 +4,10 @@ using cfg;
 using UnityEngine;
 using MMoRpgCommon.SceneEntity;
     /// <summary>
-    /// 动作状态组件抽象基类，挂载于具备动作状态机的实体（MEntity）上。
-    /// 封装一个动作状态的生命周期：获得许可(OnGetPermission)、开始(OnStart)、逐帧更新(OnUpdate)、
-    /// 正常结束(Finish/OnFinished)、强制停止(Stop/OnStop)以及结束后清理(AfterFinish)。
-    /// 具体动作（移动、攻击、攀爬、采集、跳舞等）均继承本类，覆写相应钩子完成各自状态逻辑。
-    /// </summary>
+/// 一个动作状态的共用流程：接收事件、向状态机申请切换、播放动画，并在结束时清理。
+/// 状态逻辑由 OnStart、OnUpdate、OnFinished 和 OnStop 等方法交给派生类实现。
+/// Finish 表示正常结束，Stop 表示被打断；两者都会调用 AfterFinish。
+/// </summary>
     public abstract class MActionComponent : EntityComponentBase, IMStateTransform
     {
 
@@ -19,24 +18,24 @@ using MMoRpgCommon.SceneEntity;
             get { return EntityComponentType.Sync; }
         }
 
-        /// <summary>获取或设置该状态是否已废弃（废弃后状态机不再选用）。</summary>
+        /// <summary>保存状态是否被标为废弃；本类不据此阻止状态切换。</summary>
         public bool Deprecated { get; set; }
 
         /// <summary>获取是否为“预表现”状态（正式生效前的前置表现阶段），默认 false。</summary>
         public virtual bool IsPreperformance { get { return false; } }
 
-        /// <summary>当前实体所处的状态定义，默认为默认状态。</summary>
+        /// <summary>本组件代表的状态枚举；实体此刻正在执行哪个状态由状态机保存。</summary>
         protected StateDefine _selfState = StateDefine.kStateDefault;
 
         /// <summary>当前状态是否已结束（true 表示空闲/未激活）。</summary>
         protected bool _isFinished = true;
 
-        /// <summary>状态转移令牌，用于标识本次状态切换的唯一编号。</summary>
+        /// <summary>预留的状态切换编号；本基类只在回收时清零。</summary>
         protected long _token = 0;
 
-        protected bool _isOverrideSuccess = true;  // 是否成功OverrideAnim，失败调用idle动作
+        protected bool _isOverrideSuccess = true;  // 本次动作动画是否准备成功；失败时改播待机
 
-        protected IEventArg _evt; //切状态的时候暂存的evt数据
+        protected IEventArg _evt; // 切换期间暂存的事件，供 OnStart 读取；切换调用结束后清空。
 
         /// <summary>动作事件处理回调，注册后用于监听状态转移消息。</summary>
         protected MEventHandler _onActionEvent;
@@ -44,7 +43,7 @@ using MMoRpgCommon.SceneEntity;
         /// <summary>动作结束事件回调，收到结束事件时自动触发 Finish() 正常结束本状态。</summary>
         private readonly MEventHandler _onFinishEvent;
 
-        /// <summary>获取该状态是否需要与服务端做预测同步，默认 true。TODO: 后续接入 syncMode 配置。</summary>
+        /// <summary>对外提供预测同步标记，默认 true；此属性本身不发送同步消息。</summary>
         public virtual bool SyncPredicted { get { return true; } }
 
         /// <summary>获取当前组件对应的状态定义。</summary>
@@ -79,6 +78,7 @@ using MMoRpgCommon.SceneEntity;
 
         #region 构造、初始化与事件注册
         /// <summary>构造函数，初始化动作事件处理器。</summary>
+        /// <param name="owner">持有此动作状态的场景实体。</param>
         public MActionComponent(ROObject owner) : base(owner)
         {
             _onActionEvent = new MEventHandler(OnActionEvent);
@@ -144,8 +144,8 @@ using MMoRpgCommon.SceneEntity;
         }
 
         /// <summary>
-        /// 状态成功获得转移许可后调用：标记未结束、通知状态机已触发，
-        /// 若当前处于战斗坐骑上则处理坐骑显隐，最后回调 OnStart 开始状态逻辑。
+        /// 状态成功获得切换许可后，标记为执行中并通知状态机。
+        /// 最后调用 OnStart；坐骑显隐分支目前被注释掉，不参与执行。
         /// </summary>
         //状态成功转移
         public void OnGetPermission()
@@ -167,6 +167,7 @@ using MMoRpgCommon.SceneEntity;
         //状态转移消息监听
         protected void OnActionEvent(IEventArg e)
         {
+            // 切换前正在执行的状态，用于本动作判断能否接管。
             IMStateTransform last = Entity.Machine.CurrentState;
 
             if (OnGetEvent(e, last.SelfState))
@@ -241,7 +242,7 @@ using MMoRpgCommon.SceneEntity;
             return animator.HasState(0, Animator.StringToHash("Base Layer." + stateName));
         }
 
-        /// <summary>按 RO 的表现表字段映射解析常规动作状态使用的真实动画名。</summary>
+        /// <summary>按动作状态名，从实体表现表取对应的动画名。</summary>
         /// <param name="stateName">Animator 中稳定的状态槽名称。</param>
         /// <returns>表现表动画短名或完整 Location；当前状态没有通用字段时返回空字符串。</returns>
         private string ResolveClipName(string stateName)
@@ -370,9 +371,8 @@ using MMoRpgCommon.SceneEntity;
         }
 
         /// <summary>
-        /// 状态开始时播放对应动画。若 OverrideAnim 失败则退回 idle 动画；
-        /// 根据是否允许混合到默认动作，选择 CrossFade 过渡或直接 Play，
-        /// 并对人物模型与坐骑模型分别进行动画切换。
+        /// 为当前状态准备动画；失败时准备待机动画，并让状态机回到默认状态。
+        /// 设置播放倍率后，按实体的混合设置选择渐变切换或立即播放。
         /// </summary>
         /// <param name="preState">上一个动画机状态名（保留参数）。</param>
         /// <returns>实际播放的动画机状态名。</returns>
@@ -412,7 +412,8 @@ using MMoRpgCommon.SceneEntity;
 
         /// <summary>
         /// 从当前实体表现表解析并安装目标状态的真实动画剪辑。
-        /// 技能、特殊动作等没有通用表现表字段的状态必须由专用系统先提供剪辑，不能回退到 Controller 默认剪辑。
+        /// 优先使用已安装的剪辑，再查表现表；没有通用字段的状态需由专用组件先安装剪辑。
+        /// NPC 可以直接使用预制体控制器里已经存在的状态。
         /// </summary>
         /// <param name="stateName">需要安装剪辑的 Animator 状态名。</param>
         /// <returns>找到真实剪辑且成功提交异步准备时返回 true；缺少配置或索引时返回 false。</returns>
@@ -510,8 +511,7 @@ using MMoRpgCommon.SceneEntity;
         protected virtual void AfterFinish(bool selfTrans = false) { }
 
         /// <summary>
-        /// 根据 WithBattleVehicle 决定临时隐藏或显示战斗坐骑，
-        /// 通过派发 MBattleVehicleTemporaryHiding 事件通知坐骑表现层。
+        /// 保留的坐骑显隐入口；方法体目前全部被注释掉，调用不会产生效果。
         /// </summary>
         //隐藏或者显示战斗坐骑
         protected void TakeBattleVehilce()

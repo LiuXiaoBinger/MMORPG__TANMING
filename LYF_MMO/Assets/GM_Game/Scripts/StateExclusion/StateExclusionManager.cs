@@ -2,10 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// RO 客户端大状态互斥管理器：在发包前按 <see cref="StateExclusionTable"/> 判定
-/// “当前持有的多个大状态”能否切换到目标状态，矩阵语义与 RO
-/// <c>MoonClient/StateExclusion/StateExclusionManager.cs</c> 一致。
-/// 只做客户端准入判定，真正退旧状态与结果仍由服务端权威处理，不修改任何协议字段。
+/// 发包前检查角色能否开始目标动作：当前状态决定查哪一行，目标状态决定查哪一列。
+/// 这里只判断是否放行，不执行退出旧状态；最终处理结果仍以服务端为准。
 /// </summary>
 public sealed class StateExclusionManager
 {
@@ -30,7 +28,7 @@ public sealed class StateExclusionManager
     /// <summary>进程内唯一管理器，冷启动阶段由 <see cref="Global"/> 初始化。</summary>
     private static readonly StateExclusionManager _singleton = new StateExclusionManager();
 
-    /// <summary>当前角色持有的大状态列表，每次查询原地清空复用，避免施法热路径反复分配集合。</summary>
+    /// <summary>本次查询收集到的角色状态；每次检查先清空再填充，复用同一个列表。</summary>
     private readonly List<MExlusionStates> _playerExclusionStateList = new List<MExlusionStates>();
 
     /// <summary>本次进程是否已完成装载尝试，包括缺表或表非法，装载失败不会被后续查询反复重试。</summary>
@@ -41,7 +39,7 @@ public sealed class StateExclusionManager
 
     /// <summary>
     /// 当前角色持有的大状态列表，由 <see cref="GetPlayerCurrentState"/> 原地清空后重新填充。
-    /// 这里暴露的是同一个复用实例，不是只读快照：调用方读取即可，写入会污染下一次判定。
+    /// 这里暴露的是同一个复用实例，不是只读快照：调用方读取即可，外部修改会改变当前列表；下一次 GetPlayerCurrentState 会重新填充它。
     /// </summary>
     public List<MExlusionStates> PlayerExclusionStateList
     {
@@ -51,7 +49,7 @@ public sealed class StateExclusionManager
 
     #region 配置读取与解析
     /// <summary>
-    /// 同步装载互斥表并锁定开关。Global 在角色开放前调用；重复调用只装载一次。
+    /// Global 在创建角色前同步读取互斥表和开关；本进程只尝试读取一次，失败也不会自动重读。
     /// 缺表或表非法时保留空表并记录错误，此时只有处于已接入大状态的角色会被判定拒绝。
     /// </summary>
     public void Initialize()
@@ -82,7 +80,7 @@ public sealed class StateExclusionManager
 
     #region 业务逻辑：当前状态收集
     /// <summary>
-    /// 按 RO 的顺序收集本地主角当前持有的全部大状态。本项目尚无载具、变身、自拍、
+    /// 读取本地主角状态机，把采集、攀爬、吟唱、钓鱼或跳舞转换成互斥表状态。本项目尚无载具、变身、自拍、
     /// 观战、跑商等玩法来源，这些状态不会进入列表；列表为空表示处于默认态，可直接切换。
     /// </summary>
     /// <returns>复用同一个列表实例的当前状态集合，返回值在下一次调用前有效。</returns>

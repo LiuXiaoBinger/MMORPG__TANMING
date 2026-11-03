@@ -46,7 +46,7 @@ public sealed class ROEventDispatcher
         new Dictionary<ROEventDefine, List<ROEventListenerEntry>>();
 
     /// <summary>
-    /// 派发快照缓冲池；派发是多监听时才需要快照，用池化缓冲避免每次派发都产生一个数组。
+    /// 派发用的临时监听列表池；多监听时复制到可复用列表，单监听则直接调用。
     /// 嵌套派发会各自借走一块，因此缓冲池深度等于最大嵌套层数。
     /// </summary>
     private readonly Stack<List<ROEventListenerEntry>> snapshot_pool_ =
@@ -168,7 +168,7 @@ public sealed class ROEventDispatcher
         {
             return;
         }
-        // 已归还对象池的事件引用计数为零，AddRef 会拒绝，这里直接不派发。
+        // 没有活动引用的事件（计数为零或池内负一）会被 AddRef 拒绝，不再派发。
         if (!evt.AddRef())
         {
             return;

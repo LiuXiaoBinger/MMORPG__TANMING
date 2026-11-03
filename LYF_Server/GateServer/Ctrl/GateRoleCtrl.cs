@@ -36,6 +36,9 @@ public class GateRoleCtrl:IContainer
         }
     }
 
+    /// <summary>把角色进入世界的请求原样转给游戏服，网关只记录请求内容。</summary>
+    /// <param name="serverBase">持有游戏服连接的客户端会话。</param>
+    /// <param name="basePackage">包含角色编号和出生位置的请求。</param>
     private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
     {
         EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
@@ -75,10 +78,11 @@ public class GateRoleCtrl:IContainer
     /// <summary>
     /// 网关服务器作为客户端，接收游戏逻辑服务器数据
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收游戏服回包的连接，目标客户端从包内编号查找。</param>
+    /// <param name="basePackage">携带目标客户端编号的角色或背包业务回包。</param>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
+        // 目标连接由包内客户端会话编号定位，游戏服已经决定业务结果。
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);
     }

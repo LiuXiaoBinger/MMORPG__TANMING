@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 /// <summary>
-/// 会话管理器：按会话 ID 管理所有活动 TCP 会话，全局单例。
+/// 会话管理器：按本进程会话ID保存登记过的 TCP 会话；是否移除断开记录由调用方负责。
 /// </summary>
 public class SessionMgr :Singleton<SessionMgr>
 {
@@ -54,7 +54,7 @@ public class SessionMgr :Singleton<SessionMgr>
         return null;
     }
 
-    /// <summary>返回当前活动会话数量。</summary>
+    /// <summary>返回当前登记的会话记录数，不单独检查连接是否仍在线。</summary>
     public int GetSessionCount()
     {
         return _sessionDic.Count;

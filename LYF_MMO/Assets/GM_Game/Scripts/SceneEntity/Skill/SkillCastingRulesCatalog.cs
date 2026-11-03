@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>客户端进程内只装载一次的施法权限索引；在角色开放前同步完成，资源迟到不改变当前规则。</summary>
+/// <summary>
+/// 从 Resources 同步读取施法规则，并按技能 ID 建立查询表。
+/// 整个进程只尝试加载一次；缺文件或校验失败时保持空表，查询结果为不允许。
+/// </summary>
 public static class SkillCastingRulesCatalog
 {
 
@@ -10,7 +13,7 @@ public static class SkillCastingRulesCatalog
     /// <summary>同步 Resources 配置键；正式 JSON 位于 Data/Skill/Resources 下。</summary>
     private const string ResourceName = "SkillCastingRules";
 
-    /// <summary>按旧技能主表 ID 索引的本次进程规则；解析失败时保持空索引。</summary>
+    /// <summary>按技能主表 ID 保存本进程的规则；解析失败时保持空表。</summary>
     private static readonly Dictionary<int, SkillCastingRules> _rules = new Dictionary<int, SkillCastingRules>();
 
     /// <summary>首次装载尝试已完成，包括缺文件或解析失败；失败默认不会被异步资源替换。</summary>
@@ -18,7 +21,7 @@ public static class SkillCastingRulesCatalog
     #endregion
 
     #region 配置读取与解析
-    /// <summary>同步读取完整配置并一次建立索引；无效配置明确报警并保持稳定禁止策略。</summary>
+    /// <summary>同步读取并校验整份配置，通过后建立索引；失败时记录日志，查询仍返回不允许。</summary>
     public static void Initialize()
     {
         if (_initialized)
@@ -84,7 +87,7 @@ public static class SkillCastingRulesCatalog
     public static bool IsMoveCasting(int skillId)
     {
         Initialize();
-        // 当前动作技能的权限行；缺失时禁止技能中的普通水平移动。
+        // 当前正在释放的技能规则；没有配置时不允许施法中普通水平移动。
         SkillCastingRules rule;
         return _rules.TryGetValue(skillId, out rule) && rule.MoveCasting;
     }

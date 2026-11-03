@@ -13,7 +13,7 @@ public  class ItemDesc
     /// <summary>道具数量；扣除时使用正数表示扣除数量。</summary>
     public long ItemCount { get; set; }
 
-    /// <summary>道具实例唯一 ID，堆叠道具可为 0。</summary>
+    /// <summary>可选的现有物品实例UID；仅描述待新增的配置与数量时可不填写。</summary>
     public ulong ItemUID { get; set; }
 
     /// <summary>发放道具时采用的绑定标记。</summary>
@@ -31,7 +31,7 @@ public  class ItemDesc
     /// <summary>购买或扣除使用的货币类型。</summary>
     public int MoneyType { get; set; }
 
-    /// <summary>道具创建时间，使用 Unix 时间戳或服务端约定的时间值。</summary>
+    /// <summary>预留的创建时间数值；当前发放入口没有读取此字段，因此这里未约定时间单位。</summary>
     public ulong CreateTime { get; set; }
 
     /// <summary>业务侧道具标记。</summary>
@@ -43,6 +43,7 @@ public  class ItemDesc
     /// <summary>本次物品变化原因。</summary>
     public ItemChangeReason ChangeReason { get; set; }
 
+    /// <summary>初始化绑定选项、附加数据和默认原因；配置ID与数量留给调用方填写。</summary>
     public ItemDesc()
     {
         BindOptionForGive = ItemBind.kItemBindNo;
@@ -51,6 +52,7 @@ public  class ItemDesc
         ChangeReason = ItemChangeReason.ITEM_REASON_NONE;
     }
 
+    /// <summary>按配置ID和数量描述一次增删；默认发放非绑定物品，扣除时允许绑定与非绑定物品。</summary>
     public ItemDesc(
         int itemId,
         long itemCount,
@@ -64,6 +66,7 @@ public  class ItemDesc
         BindOptionForTake = bindOptionForTake;
     }
 
+    /// <summary>按数量和总价计算整数单价；本重载不调用无参构造，且要求 itemCount 非零。</summary>
     public ItemDesc(int itemId, int itemCount, int totalPrice,  ItemBind bindOptionForGive = ItemBind.kItemBindNo,
         ItemBind bindOptionForTake = ItemBind.kItemBindIs)
     {

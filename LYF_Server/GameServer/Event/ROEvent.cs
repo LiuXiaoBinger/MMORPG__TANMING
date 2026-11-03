@@ -51,8 +51,8 @@ public struct ROVector3
 
 /// <summary>
 /// 实体事件基类，对应 event.h 的 ROEvent。
-/// 与 RO 的差异仅在持有语义：RO 用 shared_ptr 自定义删除器自动回池，C# 没有等价物，
-/// 因此这里显式引用计数（AddRef/Release），引用归零时由派生类 Recycle 归还对象池。
+/// 通过 AddRef/Release 记录多少处仍在使用此事件；全部用完后清空字段并归还对象池。
+/// 这套计数控制的是对象何时可以被复用，不替代 C# 的垃圾回收。
 /// </summary>
 public class ROEvent
 {
@@ -115,7 +115,7 @@ public class ROEvent
         }
     }
 
-    /// <summary>增加一个引用；引用计数为零（已回池）时拒绝，防止复活已归还的实例。</summary>
+    /// <summary>增加一个使用引用；计数为零或负一时拒绝，防止再次使用正在归还或已在池中的实例。</summary>
     /// <returns>成功增加引用返回 true；实例已归还对象池时返回 false。</returns>
     public bool AddRef()
     {

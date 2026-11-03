@@ -23,9 +23,10 @@ public class BaseLink
     /// <summary>协议号到命令处理器的映射。</summary>
     protected Dictionary<int, IContainer> _cmdDic = new Dictionary<int, IContainer>();
 
-    // TCP 单次接收可能只有 4KB，保留半包并支持协议允许的最大帧。
+    // TCP 帧先读两字节长度；收到半帧时保留到下次接收。
     private const int FrameHeaderSize = 2;
 
+    // 两字节无符号长度最多表示 65535 字节，不包括自身的两个字节。
     private const int MaxFrameLength = ushort.MaxValue;
 
     /// <summary>接收累积缓存，长度为帧头 + 最大帧。</summary>
@@ -39,7 +40,7 @@ public class BaseLink
 
     /// <summary>
     /// TCP 单帧写入锁。业务回包、转发线程与 UDP 绑定线程都可能对同一连接写帧，
-    /// 并发 Send 会交错截断帧，必须串行；锁内只做一次完整帧写入。
+    /// 并发 Send 会交错截断帧，必须串行；锁内只调用一次 Socket.Send，不在此循环补齐短写。
     /// </summary>
     private readonly object _sendSync = new object();
 
@@ -55,7 +56,7 @@ public class BaseLink
     /// 处理服务端发来的数据
     /// </summary>
     /// <param name="ar"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// 收取、拆帧或派发异常会进入当前接收回调的异常处理并断开连接。
     private void OnReceiveCB(IAsyncResult ar)
     {
         try
@@ -152,7 +153,7 @@ public class BaseLink
             }
             if (realtimeResult == RealtimeSendResult.Dropped)
             {
-                // 曾经启用的实时通道已失效：本条丢弃，禁止改投 TCP 造成重复执行或跨通道乱序。
+                // 实时通道未就绪或写入失败时丢弃；该结果不再进入下面的 TCP 发送。
                 LogMsg.Info("[BaseLink] 实时通道已失效，丢弃实时协议，protoCode=" +
                     basePackage.ProtoCode, LogMsgType.Warn);
                 return false;
@@ -235,7 +236,7 @@ public class BaseLink
 
     /// <summary>
     /// 传输分流钩子：子类在具备实时通道时接管发送。
-    /// 返回值必须区分“未启用”与“启用后失效”，后者不允许回退 TCP。
+    /// 返回值区分继续使用 TCP、KCP 已接收和丢弃；玩家实时协议未就绪时也会丢弃。
     /// </summary>
     /// <param name="basePackage">已填好协议号与载荷的协议包。</param>
     /// <param name="payload">BasePackage 序列化字节，供 KCP 直接承载。</param>

@@ -6,57 +6,59 @@ using Object = UnityEngine.Object;
 using UnityEngine.UI;
 
 /// <summary>
-/// DrawCall计算规则:1.默认Text Mesh与大小一致;2.默认z都为0;3.默认旋转为0;
-/// TODO:1.多个canvas合批计算,canvas实现动静分离,会增加drawcall;2.不同层之间的DrawCall合并;
+/// 根据 UI 矩形重叠、组件类型和材质，估算选中 Canvas 下可以合并绘制的批次。
+/// 当前只识别 Image、RawImage 和旧 Text；估算假设文字占满矩形、Z 为 0 且没有旋转。
+/// 多 Canvas 和跨层合批尚未处理，显示的数量不能代替 Unity 实际渲染统计。
 /// </summary>
 public class DrawCallAssistantUtil : EditorWindow
 {
 
     #region 字段
-    //全部节点;
+    // 当前分析范围的节点；筛选后只保留符合本工具渲染条件的节点。
     private static List<AssetNode> _assetNodeList = new List<AssetNode>();
 
-    //z值不为0的的全部节点;
+    // 局部坐标 Z 不为 0 的节点，单独列出以提示估算条件不满足。
     private static List<AssetNode> _zValueList = new List<AssetNode>();
 
-    //存在旋转的节点;
+    // 局部旋转不为单位旋转的节点，矩形估算可能不准确。
     private static List<AssetNode> _rotNodeList = new List<AssetNode>();
 
-    //alpha 为0的节点;
+    // 图形颜色透明度为 0 的节点，供人工检查。
     private static List<AssetNode> _colorAlphaList = new List<AssetNode>();
 
-    //根canvas;
+    // 本次分析使用的 Canvas，只在选中对象及其直接父节点中查找。
     private static Canvas _canvas = null;
 
-    //分析对象;
+    // 遍历 UI 层级的起点，即找到 Canvas 的对象。
     private static GameObject _target = null;
 
-    //选中节点;
+    // 当前在结果列表中选中的节点，用于定位 Hierarchy 中的原对象。
     private static AssetNode _curSelectNode = null;
 
-    //Disable和DeActive是否包含;
+    // 是否把禁用组件和未激活节点也纳入分析；改变后需刷新结果。
     private static bool _incluedDisable = true;
 
-    //合批次数;
+    // 本工具按类型和材质估算出的绘制批次数。
     private static int _drawCall = 0;
 
-    //节点分层;
+    // 估算渲染层号到节点列表的映射，由矩形重叠关系计算。
     private static Dictionary<int, List<AssetNode>> _renderLayerDict = new Dictionary<int, List<AssetNode>>();
 
-    //合批结果;
+    // 预留的批次结果字典，当前只会在刷新时清空。
     private static Dictionary<int, List<AssetNode>> _batchDict = new Dictionary<int, List<AssetNode>>();
 
-    //图集引用;
+    // 按 MatName 统计引用次数；实际键是材质名或 Text 标签，不是图集资源 ID。
     private static Dictionary<string, int> _atlasRefDict = new Dictionary<string, int>();
 
-    //滑动区域;
+    // 结果列表的滚动位置，单位为编辑器界面坐标。
     private static Vector2 _scrollPosition;
 
-    //最大深度;
+    // 已筛选节点在 Hierarchy 中的最大深度，用于对齐结果列。
     private static int _mostDepth = 0;
     #endregion
 
     #region 生命周期
+    // 绘制刷新入口和分析列表；刷新时重新计算，列表点击只定位原 UI 对象。
     void OnGUI()
     {
         Color previousContentColor = GUI.contentColor;
@@ -235,7 +237,7 @@ public class DrawCallAssistantUtil : EditorWindow
     }
 
     /// <summary>
-    /// 初始化;
+    /// 清空上一次分析的节点、警示和估算批次，为重新刷新作准备。
     /// </summary>
     private static void OnInit()
     {
@@ -255,7 +257,7 @@ public class DrawCallAssistantUtil : EditorWindow
     #endregion
 
     /// <summary>
-    /// 画出组件矩阵;
+    /// 用红线画出本工具估算的节点矩形；当前 OnGUI 中的调用已注释。
     /// </summary>
     private void DrawRect()
     {
@@ -272,9 +274,9 @@ public class DrawCallAssistantUtil : EditorWindow
 
     #region 查询与判定
     /// <summary>
-    /// 查找canvas;
+    /// 只检查 go 自身及其直接父节点是否带 Canvas，成功后记录分析根对象；不会继续向祖先查找。
     /// </summary>
-    /// <param name="go"></param>
+    /// <param name="go">本次在编辑器中选中的对象。</param>
     public static bool FindRootCanvas(GameObject go)
     {
         Canvas canvas = go.GetComponent<Canvas>();
@@ -308,7 +310,7 @@ public class DrawCallAssistantUtil : EditorWindow
     }
 
     /// <summary>
-    /// 找出不符合规定的节点;
+    /// 记录 Z、旋转和透明度提示，按开关筛掉禁用图形，并统计留下的节点及材质引用。
     /// </summary>
     private static void FindDirtyNode()
     {
@@ -354,6 +356,7 @@ public class DrawCallAssistantUtil : EditorWindow
     #endregion
 
     #region 核心逻辑
+    // 从 GameObject 菜单打开分析窗口并清空上次结果，不修改被分析的场景对象。
     [MenuItem("GameObject/UGUI DrawCall小助手", false, 0)]
     public static void StartAssistant()
     {
@@ -364,9 +367,9 @@ public class DrawCallAssistantUtil : EditorWindow
     }
 
     /// <summary>
-    /// 创建节点;
+    /// 按层级顺序收集 go 的子节点；关闭包含禁用项时，跳过未激活的节点。
     /// </summary>
-    /// <param name="go"></param>
+    /// <param name="go">当前需要继续收集子节点的对象。</param>
     private static void RecursiveCreateNode(GameObject go)
     {
         if (!_incluedDisable && go.activeSelf == false)
@@ -382,7 +385,7 @@ public class DrawCallAssistantUtil : EditorWindow
     }
 
     /// <summary>
-    /// 重叠检测,进行分层;
+    /// 按节点顺序比较矩形：与前面节点重叠时放到更高估算层，随后按层收集节点。
     /// </summary>
     private static void OverlapDetection()
     {
@@ -418,10 +421,10 @@ public class DrawCallAssistantUtil : EditorWindow
     }
 
     /// <summary>
-    /// 同层合批;
+    /// 在当前层中把组件类型和材质相同的节点放入同一批，再递归处理剩余节点。
     /// </summary>
-    /// <param name="preBatch">前一batch值;</param>
-    /// <param name="combineNodeList"></param>
+    /// <param name="preBatch">前面各层已经分配的最大批次号，当前批次从它加一开始。</param>
+    /// <param name="combineNodeList">当前层尚未分配批次的节点，保存原节点引用。</param>
     private static int RecursiveCombineBatch(int preBatch, List<AssetNode> combineNodeList)
     {
         if (combineNodeList.Count == 0)
@@ -463,10 +466,11 @@ public class DrawCallAssistantUtil : EditorWindow
 }
 
 /// <summary>
-/// 分析的资源节点;
+/// 一次分析采集的 UI 节点信息，保存原 GameObject 引用及用于估算的矩形、材质和层号。
 /// </summary>
 public class AssetNode
 {
+    // 从 UI 对象 go 采集局部变换、矩形和图形组件；本对象只是分析数据，不会改动原控件。
     public AssetNode(GameObject go)
     {
         _go = go;
@@ -555,6 +559,7 @@ public class AssetNode
 
     private int _localDepth;              //hierarchy层级深度;
 
+    // 分析结果对应的原场景对象，用于点击列表时定位。
     private GameObject _go;
 
     private RenderTypeEnum _renderType;   //参与渲染的组件类型;
@@ -563,6 +568,7 @@ public class AssetNode
 
     private string _matName;              //材质名;
 
+    // 识别出的 Image、RawImage 或旧 Text 组件，供禁用状态筛选。
     private Graphic _graphic;
 
     private bool _isRender;               //是否参与渲染;
@@ -583,45 +589,62 @@ public class AssetNode
 
     private Color _color;                  //显示颜色;
 
+    // 节点名称，用于结果列表显示。
     public string Name { get { return _name; } }
 
+    // 节点完整层级路径，保留原属性名的拼写。
     public string LoaclPath { get { return _localpath; } }
 
+    // 从根对象向下计算的层级深度，用于列表缩进。
     public int LocalDepth { get { return _localDepth; } }
 
+    // 分析时保存的原 GameObject 引用。
     public GameObject gameObject { get { return _go; } }
 
+    // 本工具识别到的图形类别，参与合批比较。
     public RenderTypeEnum RenderType { get { return _renderType; } }
 
+    // 图形实际引用的材质对象，合批比较使用引用是否相同。
     public Material material { get { return _material; } }
 
+    // 列表显示和引用统计使用的名称，旧 Text 固定显示 Text。
     public string MatName { get { return _matName; } }
 
+    // 原图形组件，用于读取 enabled 状态。
     public Graphic graphic { get { return _graphic; } }
 
+    // 当前节点是否满足本工具的类型、尺寸和缩放条件，不等同于 Unity 最终是否绘制。
     public bool IsRender { get { return _isRender; } }
 
+    // 矩形重叠算法分配的估算层号。
     public int RenderLayer { get { return _renderLayer; } set { _renderLayer = value; } }
 
+    // 同层合批算法分配的批次号。
     public int DrawCallBatch { get { return _drawCallBatch; } set { _drawCallBatch = value; } }
 
+    // 采集时的局部位置；Z 分量用于提示非平面 UI。
     public Vector3 Position { get { return _position; } }
 
+    // 采集时的局部缩放。
     public Vector3 Scale { get { return _scale; } }
 
+    // 采集时的局部旋转，用于提示估算误差。
     public Quaternion Rotation { get { return _rotation; } }
 
+    // 由局部尺寸和父节点变换估算出的二维矩形，用于重叠检测。
     public Rect TransRect { get { return _rect; } }
 
+    // 图形颜色的透明度，通常为 0 到 1；未识别图形时为 -1。
     public float ColorAlpha { get { return _colorAlpha; } }
 
+    // 结果列表的文字颜色；独占一个批次的节点会被标红。
     public Color ColorValue { get { return _color; } set { _color = value; } }
 
     /// <summary>
-    /// 获取结构路径;
+    /// 从 go 向父节点递归拼接 Hierarchy 路径，同时累计当前节点深度。
     /// </summary>
-    /// <param name="go"></param>
-    /// <returns></returns>
+    /// <param name="go">当前需要拼接名字并继续向父节点查找的对象。</param>
+    /// <returns>由父子对象名组成、以斜杠分隔的路径。</returns>
     private string GetAssetLoaclPath(GameObject go)
     {
         string localName = string.Empty;
@@ -639,11 +662,14 @@ public class AssetNode
 }
 
 /// <summary>
-/// 参与渲染的组件类型;
+/// 本工具能识别的 UI 图形类别；RawImage 与 Image 归为同一类。
 /// </summary>
 public enum RenderTypeEnum : int
 {
+    // 没有识别到本工具支持的 UI 图形。
     Non = 0,
+    // Image 或 RawImage 图形。
     Image = 1,
+    // Unity 旧版 UGUI Text 文本。
     Text = 2,
 }

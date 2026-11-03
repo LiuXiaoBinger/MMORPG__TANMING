@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>客户端 JsonUtility 与服务端 JSON 解析器共用的强类型配置根，不包含运行时状态。</summary>
+/// <summary>
+/// JSON 的根数据结构，Rules 保存每个技能的施法规则。
+/// 客户端与服务端约定使用相同字段格式；这里不保存施法运行状态。
+/// </summary>
 [Serializable]
 public sealed class SkillCastingRulesCollection
 {

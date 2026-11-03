@@ -1,6 +1,6 @@
 /// <summary>
 /// GateServer 面向 Unity 的回包校验与转发入口。
-/// 所有来自 GameServer 的客户端可见回包均在网关解析错误码，失败时统一发送 CMD_ErrCode。
+/// 按协议读取业务结果；普通失败转为 CMD_ErrCode，购买、扩容、技能等仍保留客户端需要的专用字段。
 /// </summary>
 public static class GateClientResponseForwarder
 {
@@ -15,6 +15,7 @@ public static class GateClientResponseForwarder
             return;
         }
 
+        // 业务错误码来自具体消息；没有结果码的同步通知按成功转发。
         CmdCode resultCode;
         if (!TryReadResultCode(package, out resultCode))
         {
@@ -152,7 +153,7 @@ public static class GateClientResponseForwarder
     }
 
     /// <summary>
-    /// 保留已存在的专用响应契约，避免通用错误码丢失客户端继续处理所需的业务字段。
+    /// 判断失败时是否仍需原样保留业务回包，避免只返回错误码而丢失格子数、法力或冷却等数据。
     /// </summary>
     private static bool ShouldForwardBusinessResult(int commandCode)
     {

@@ -19,7 +19,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <summary>成员卡模板，同时作为第一张成员卡使用。</summary>
     [SerializeField] private GameObject _memberSlotTemplate;
 
-    /// <summary>成员卡末尾的邀请空位，未满员且本人是队长时显示。</summary>
+    /// <summary>成员卡末尾邀请空位，直接按控制器传入的 canInvite 显隐，不在窗口内重新计算权限或人数。</summary>
     [SerializeField] private GameObject _inviteSlot;
 
     /// <summary>成员卡上的真实昵称。</summary>
@@ -166,7 +166,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <summary>候选人行上的邀请按钮路径，相对候选人行根节点，与 RO TeamInviteCtrl 的 BtnSmall_B 一致。</summary>
     private const string InviteRowButtonPath = "BtnSmall_B";
 
-    /// <summary>运行时复制出来的成员卡，下标与服务器成员顺序一致。</summary>
+    /// <summary>按服务器顺序保存的成员卡；第一项是预制体原模板，其余按需复制，多余项隐藏复用。</summary>
     private readonly List<GameObject> _memberSlots = new List<GameObject>();
 
     /// <summary>邀请页候选人行，第一项是预制体原行模板，其余为按需复制的行。</summary>
@@ -490,8 +490,8 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// 始终排在邀请空位之前，多余成员卡隐藏，不新建控件节点。
     /// </summary>
     /// <param name="members">服务器下发的成员列表，为空表示不在队伍中。</param>
-    /// <param name="localRoleId">本地主角角色ID，用于标记本人与队长。</param>
-    /// <param name="canInvite">是否允许显示邀请空位，只有队长且未满员时为真。</param>
+    /// <param name="localRoleId">本地主角角色 ID，用于识别本人头像；队长标记直接来自成员 IsCaptain。</param>
+    /// <param name="canInvite">控制器计算好的邀请空位显示结果，本窗口直接应用。</param>
     public void SetMembers(IList<TeamMemberInfo> members, ulong localRoleId, bool canInvite)
     {
         if (_memberSlotTemplate == null)
@@ -544,8 +544,11 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         }
         // 第一张卡沿用预制体已序列化的引用，其余卡按固定路径取同结构控件。
         Text nameText = _memberName;
+        // 当前卡片等级控件，克隆卡改从固定路径获取。
         Text levelText = _memberLevel;
+        // 当前卡片队长标记，使用成员 IsCaptain 字段。
         GameObject captainMark = _captainMark;
+        // 当前卡片职业头像控件，图片由独立刷新入口设置。
         Image jobImage = _professionImage;
         if (index > 0)
         {
@@ -566,7 +569,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
         {
             captainMark.SetActive(member.IsCaptain);
         }
-        // 本人所在的成员卡统一使用本人职业头像，其余成员保留预制体默认图。
+        // 此处只启用本人头像组件；具体精灵由外部 SetMemberJobSprite 设置，不在这里按职业查图。
         if (jobImage != null && localRoleId != 0UL && member.RoleId == localRoleId)
         {
             jobImage.enabled = true;

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-/// <summary>一次编辑会话中的真实音频包络；按采样帧保留所有声道峰值，绝不改写音频资源或技能事件时长。</summary>
+/// <summary>读取音频每段时间内的最大、最小振幅，供时间轴绘制波形；读取结果只在当前编辑会话缓存。</summary>
 public sealed class SkillEditorAudioWaveform
 {
     /// <summary>包络最多保存八千一百九十二个时间桶，限制长声音的编辑缓存内存。</summary>

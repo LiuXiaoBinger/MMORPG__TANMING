@@ -1,4 +1,7 @@
-/// <summary>同一技能在当前职业和武器下的一段动作表现，核心归还时重置并回池。</summary>
+/// <summary>
+/// 保存一个技能动作段的动画路径、完整动画时长和状态占用时长。
+/// 初始化时持有对应表现资源，核心回收此动作段时再释放资源引用。
+/// </summary>
 public sealed class MSkillData
 {
     /// <summary>本段对应的表现表主键，用于加载独立编辑器表现资产。</summary>
@@ -13,7 +16,7 @@ public sealed class MSkillData
     /// <summary>该动作配置的完整播放时长，单位为秒。</summary>
     public float DurationSeconds { get; private set; }
 
-    /// <summary>RO 技能动作状态占用时长，单位为秒；可以短于完整剪辑时长。</summary>
+    /// <summary>此动作占用技能状态的时长，单位为秒；可以早于完整动画结束。</summary>
     public float SkillStateTimeSeconds { get; private set; }
 
     /// <summary>创建空表现段，正式配置在借出后由 Initialize 写入。</summary>
@@ -39,7 +42,7 @@ public sealed class MSkillData
         SkillRuntimePresentationCache.Retain(presentationId);
     }
 
-    /// <summary>归还前解除动画资源路径引用和全部段时长。</summary>
+    /// <summary>归还前释放表现资源引用，并清空动画路径与动作时长。</summary>
     public void Reset()
     {
         SkillRuntimePresentationCache.Release(PresentationId);

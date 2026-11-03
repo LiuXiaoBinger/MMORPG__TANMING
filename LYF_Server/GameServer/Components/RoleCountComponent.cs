@@ -8,7 +8,7 @@ public sealed class RoleCountComponent : RoleComponentBase
 {
 
     #region 字段
-    /// <summary>等价于参考项目 map<pair<Action,Key>, RoleCountItemInfo*> 的强类型字典。</summary>
+    /// <summary>按“行为类别、业务对象键”组合定位次数记录，例如某件商城商品的已购份数。</summary>
     private readonly Dictionary<Tuple<long, long>, RoleCountItemInfo> _roleCountItemList = new Dictionary<Tuple<long, long>, RoleCountItemInfo>();
 
     // 计数变化通知包，复用后发送给客户端。
@@ -16,10 +16,10 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>是否存在未确认的修改。</summary>
     private bool _needSave;
 
-    /// <summary>当前修改代数。</summary>
+    /// <summary>当前数据已经变化的次数，用于识别保存发出后又发生的新变化。</summary>
     private long _changeGeneration;
 
-    /// <summary>最近保存快照的修改代数。</summary>
+    /// <summary>生成最近一次保存快照时的数据变化次数。</summary>
     private long _savedGeneration;
 
     /// <summary>最近保存快照对应的角色保存版本，ACK 必须与该版本一致。</summary>
@@ -73,6 +73,8 @@ public sealed class RoleCountComponent : RoleComponentBase
         }
     }
 
+    /// <summary>把一条次数的当前值发送给所属角色，不发送整份次数表。</summary>
+    /// <param name="itemInfo">本次发生变化的次数记录。</param>
     private void NotifyToClient(RoleCountItemInfo itemInfo)
     {
         if (itemInfo==null)
@@ -97,7 +99,7 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>构造强类型复合键。</summary>
     private static Tuple<long, long> CreateKey(RoleCountAction action, long key) { return Tuple.Create((long)action, key); }
 
-    /// <summary>读取次数，不存在时返回零。</summary>
+    /// <summary>读取业务次数；有配置但尚无记录时先创建零次数记录，无配置返回零。</summary>
     public long GetCount(RoleCountAction action, int key)
     {
         if (Owner == null || !Owner.IsRoleDataReady())
@@ -113,6 +115,9 @@ public sealed class RoleCountComponent : RoleComponentBase
         
     }
 
+    /// <summary>查找行为与业务键的次数记录；首次访问且有配置时创建零次数记录。</summary>
+    /// <param name="action">商城购买或副本等行为。</param>
+    /// <param name="key">商品或副本等具体对象编号。</param>
     RoleCountItemInfo GetAndCreateItemInfo(RoleCountAction action, int key)
     {
         
@@ -130,7 +135,8 @@ public sealed class RoleCountComponent : RoleComponentBase
             return null;
         }
 
-        // 新记录默认使用刷新后的次数；没有刷新次数时使用配置上限。
+        // 新创建的记录从零次开始；周期刷新另由 Refresh 根据配置更新。
+        // 初始已用次数，不是剩余次数，也不是配置上限。
         long initialCount = 0;
       
         RoleCountItemInfo info = new RoleCountItemInfo((long)action,
@@ -142,6 +148,8 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>兼容旧业务类型查询。</summary>
     public long GetCount(RoleCountType type, long id, long scope = 0L) { return GetCount(ResolveAction(type, scope), (int)id); }
 
+    /// <summary>读取该记录的配置上限并加上活动额外额度；当前活动额度恒为零。</summary>
+    /// <param name="itemInfo">要检查上限的次数记录。</param>
     private long GetTopLimit(RoleCountItemInfo itemInfo)
     {
         if (itemInfo ==null)
@@ -185,7 +193,7 @@ public sealed class RoleCountComponent : RoleComponentBase
         return RoleCountAction.ShopPurchase;
     }
 
-    /// <summary>判断每日或每周刷新是否到期，RefreshType 约定 1=每日、2=每周。</summary>
+    /// <summary>按传入时间的日期判断刷新：1 为每日，2 为以周日为起点的每周；运行时传入 UTC 时间。</summary>
     private static bool IsRefreshDue(DateTime last, DateTime now, int refreshType)
     {
         if (last == DateTime.MinValue) return true;
@@ -310,6 +318,7 @@ public sealed class RoleCountComponent : RoleComponentBase
                 Owner.GetID(), action, key));
             return false;
         }
+        // 本次累计后的已用次数，限购校验通过后才覆盖运行时值。
         long count = item_info.Count + increment;
         if (check_limit)
         {
@@ -350,8 +359,7 @@ public sealed class RoleCountComponent : RoleComponentBase
     /// <summary>组件是否需要保存。</summary>
     public override bool NeedSave() { return _needSave; }
 
-    /// <summary>标记一次修改。</summary>
-    /// <summary>记录次数变化并重置该模块的修改时间。</summary>
+    /// <summary>递增变化计数并标记需要保存，再通知角色记录本模块修改时间。</summary>
     private void MarkChanged()
     {
         if (_changeGeneration < long.MaxValue)

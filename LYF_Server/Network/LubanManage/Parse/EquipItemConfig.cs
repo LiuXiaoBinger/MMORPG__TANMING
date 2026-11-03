@@ -5,8 +5,10 @@ using cfg;
 /// </summary>
 public sealed class EquipItemConfig : ItemConfigBase
 {
+    /// <summary>保留原始装备配置，发放装备时从中读取 EquipType 等专用字段。</summary>
     public EquipInfo Config { get; private set; }
 
+    /// <summary>把装备表一行转换为通用物品配置；名称缺失时用描述或ID，背包类型无效时回退装备背包。</summary>
     public EquipItemConfig(EquipInfo config)
         : base(
             config.ItemTypeId,

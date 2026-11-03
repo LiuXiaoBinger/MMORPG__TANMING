@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 
-/// <summary>客户端角色脏标记聚合器，记录模块和局部格位变化。</summary>
+/// <summary>合并角色各模块尚未刷新的变化；同一格子只记录一次，控制器刷新后再清除。</summary>
 public sealed class ClientDirtyTracker
 {
+    /// <summary>保存一个模块或背包页尚未处理的刷新要求。</summary>
     private sealed class DirtyState
     {
+        /// <summary>是否至少有一次变化要求重建整页。</summary>
         public bool FullRefresh;
+        /// <summary>变化格子的编号，重复标记同一格不会增加记录。</summary>
         public readonly HashSet<int> Slots = new HashSet<int>();
+        /// <summary>最近一次提供的变化来源；空来源不会覆盖旧值。</summary>
         public ClientChangeContext Context;
     }
 
@@ -19,7 +23,7 @@ public sealed class ClientDirtyTracker
         new Dictionary<KnapsackType, DirtyState>();
 
     #region 查询与判定
-    /// <summary>读取模块脏状态但不清除，便于控制器决定是否消费。</summary>
+    /// <summary>复制 module 的待刷新记录到 snapshot；读取不会清除，未记录时返回 false。</summary>
     public bool TryGet(ClientDirtyModule module, out ClientDirtySnapshot snapshot)
     {
         DirtyState state;
@@ -33,7 +37,7 @@ public sealed class ClientDirtyTracker
         return true;
     }
 
-    /// <summary>读取指定背包页脏状态但不清除。</summary>
+    /// <summary>复制 bagType 背包页的待刷新记录到 snapshot；读取后仍保留原记录。</summary>
     public bool TryGetKnapsack(KnapsackType bagType, out ClientDirtySnapshot snapshot)
     {
         DirtyState state;
@@ -49,7 +53,7 @@ public sealed class ClientDirtyTracker
     #endregion
 
     #region 核心逻辑
-    /// <summary>标记模块发生变化，可附带一个或多个受影响格位。</summary>
+    /// <summary>记录 module 的变化；fullRefresh 要求整页刷新，slotIndex 非负时记录该格，context 保存最近一次来源。</summary>
     public void Mark(ClientDirtyModule module, bool fullRefresh, int slotIndex,
         ClientChangeContext context)
     {
@@ -60,7 +64,7 @@ public sealed class ClientDirtyTracker
         MarkState(module, fullRefresh, slotIndex, context);
     }
 
-    /// <summary>写入通用模块状态的内部实现，避免背包页标记产生递归。</summary>
+    /// <summary>合并 module 的刷新要求；整页标志只会累加为 true，格子编号通过集合去重。</summary>
     private void MarkState(ClientDirtyModule module, bool fullRefresh, int slotIndex,
         ClientChangeContext context)
     {
@@ -103,7 +107,7 @@ public sealed class ClientDirtyTracker
         }
     }
 
-    /// <summary>消费指定背包页脏状态。</summary>
+    /// <summary>清除 bagType 页已处理的变化；所有页都处理完后，同时清除背包模块标记。</summary>
     public void ClearKnapsack(KnapsackType bagType)
     {
         _knapsackStates.Remove(bagType);
@@ -113,7 +117,7 @@ public sealed class ClientDirtyTracker
         }
     }
 
-    /// <summary>消费并清除指定模块的脏状态。</summary>
+    /// <summary>清除 module 的模块记录；不会清除独立保存的背包页记录。</summary>
     public void Clear(ClientDirtyModule module)
     {
         _states.Remove(module);

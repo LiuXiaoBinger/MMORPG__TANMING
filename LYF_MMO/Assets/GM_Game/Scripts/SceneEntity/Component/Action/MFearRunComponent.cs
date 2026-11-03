@@ -1,9 +1,6 @@
 /// <summary>
-/// 恐惧逃跑动作状态组件。
-/// 实体被恐惧控制时自动逃跑的状态，播放移动动画。
-/// 与普通移动状态共用移动动画，但通过独立的状态枚举区分，
-/// 避免与 MMoveActionComponent 的状态注册冲突。
-/// 监听恐惧逃跑开始事件切入本状态。
+/// 把 FearRunStarted 事件接入独立的恐惧状态，动画复用战斗跑步。
+/// 本类没有选择逃跑方向或驱动实体移动。
 /// </summary>
 public sealed class MFearRunComponent : MBasicActionComponent
 {
@@ -16,11 +13,13 @@ public sealed class MFearRunComponent : MBasicActionComponent
 
     /// <summary>注册恐惧逃跑开始事件：收到恐惧触发消息时切入逃跑状态。</summary>
     protected override void RegisterActionEvents() { RegisterActionEvent(MEventType.FearRunStarted); }
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

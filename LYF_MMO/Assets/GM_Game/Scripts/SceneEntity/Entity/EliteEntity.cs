@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 精英怪物实体，根类型仍属于 Monster 类别。
-/// 继承自 MonsterEntity，共享怪物组件装配，标记为精英等级。
+/// 精英怪物实体，创建时固定 EntityType.Elite 和精英档位。
+/// 其他怪物数据与生命周期沿用 MonsterEntity。
 /// </summary>
 public sealed class EliteEntity : MonsterEntity
 {

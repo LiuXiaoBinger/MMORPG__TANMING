@@ -1,9 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 鹰类召唤物 Builder。
-/// 鹰是飞行类召唤物，使用公共组件但不挂载完整战斗组件集，
-/// 仅挂载鹰专属标记和召唤物标记。
+/// 创建或复用鹰实体，添加公共组件、鹰类别和召唤物标记。
+/// 这里不实现飞行或攻击行为。
 /// </summary>
 public sealed class EagleEntityBuilder : MonsterEntityBuilder
 {

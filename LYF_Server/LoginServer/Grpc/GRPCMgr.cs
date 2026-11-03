@@ -5,22 +5,27 @@ using System.Threading;
 using System.Threading.Tasks;
 
 /// <summary>
-    /// gRPC 客户端管理器。
+    /// 登录服调用独立邮箱验证码服务的客户端；负责创建连接、发起请求和关闭连接。
     /// </summary>
     public class GRPCMgr : Singleton<GRPCMgr>
     {
+        /// <summary>到验证码服务的 gRPC 连接通道，初始化时创建，ShutdownAsync 时释放。</summary>
         private Channel _channel;
 
+        /// <summary>基于通道创建的验证码 RPC 客户端。</summary>
         public VarifyService.VarifyServiceClient VarifyClient { get; private set; }
 
+        /// <summary>通道和 RPC 客户端均已创建时为 true，不代表远端服务一定可达。</summary>
         public bool IsInitialized
         {
             get { return _channel != null && VarifyClient != null; }
         }
 
         /// <summary>
-        /// 初始化验证码服务客户端。
+        /// 初始化验证码服务客户端；重复调用不会替换已有连接。
         /// </summary>
+        /// <param name="host">验证码服务地址，连接前去掉首尾空白。</param>
+        /// <param name="port">验证码服务监听端口，范围为 1 到 65535。</param>
         public void InitVarifyClient(string host, int port)
         {
             if (string.IsNullOrWhiteSpace(host))
@@ -45,8 +50,11 @@ using System.Threading.Tasks;
         }
 
         /// <summary>
-        /// 请求邮箱验证码。
+        /// 请求远端发送邮箱验证码，并等待 RPC 返回结果。
         /// </summary>
+        /// <param name="email">接收验证码的邮箱。</param>
+        /// <param name="deadline">可选的请求截止时间。</param>
+        /// <param name="cancellationToken">调用方用来取消等待的令牌。</param>
         public async Task<GetVarifyRsp> GetVarifyCodeAsync(
             string email,
             DateTime? deadline = null,
@@ -62,6 +70,7 @@ using System.Threading.Tasks;
                 throw new ArgumentException("邮箱不能为空", "email");
             }
 
+            // 去掉邮箱首尾空白后交给验证码服务，验证码生成与发送由远端完成。
             GetVarifyReq request = new GetVarifyReq
             {
                 Email = email.Trim()

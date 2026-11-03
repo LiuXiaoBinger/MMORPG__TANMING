@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 
-/// <summary>编辑导出、客户端装载和服务端装载共用的规则校验，防止非法 ID 或重复配置覆盖权限。</summary>
+/// <summary>
+/// 检查施法规则中的技能编号与打断列表。
+/// 拒绝空行、非正数编号和重复编号；这里只检查格式与唯一性，不查技能表是否存在该编号。
+/// </summary>
 public static class SkillCastingRulesValidation
 {
     /// <summary>逐行验证施法规则，全部通过才允许替换运行索引或导出文件。</summary>

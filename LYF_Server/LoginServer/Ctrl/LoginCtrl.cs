@@ -19,6 +19,7 @@ public class LoginCtrl:IContainer
     /// <param name="basePackage">中心服回包协议。</param>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
+        // 根据外层包保留的客户端编号找到原连接。
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         switch (basePackage.ProtoCode)
         {
@@ -38,6 +39,9 @@ public class LoginCtrl:IContainer
         }
     }
 
+    /// <summary>读取中心服选服结果；成功返回角色列表，失败返回统一错误码。</summary>
+    /// <param name="seesion">接收结果的客户端会话。</param>
+    /// <param name="basePackage">中心服原始响应。</param>
     private void OnLoginGameServerResultHandle(Session seesion, BasePackage basePackage)
     {
         LoginGameServerRet ret = LoginGameServerRet.Parser.ParseFrom(basePackage.Data);
@@ -51,6 +55,9 @@ public class LoginCtrl:IContainer
         seesion.Send(basePackage);
     }
 
+    /// <summary>读取服务器列表结果并送回客户端。</summary>
+    /// <param name="seesion">接收列表的客户端会话。</param>
+    /// <param name="basePackage">中心服列表响应。</param>
     private void OnGetServerListResultHandle(Session seesion, BasePackage basePackage)
     {
         GetServerListRet ret = GetServerListRet.Parser.ParseFrom(basePackage.Data);
@@ -64,6 +71,9 @@ public class LoginCtrl:IContainer
         seesion.Send(basePackage);
     }
 
+    /// <summary>读取账号登录结果并送回客户端，失败时发送统一错误码。</summary>
+    /// <param name="seesion">发起登录的客户端会话。</param>
+    /// <param name="basePackage">中心服账号登录结果。</param>
     private void OnLoginResultHandle(Session seesion, BasePackage basePackage)
     {
         LoginRet ret = LoginRet.Parser.ParseFrom(basePackage.Data);
@@ -78,11 +88,10 @@ public class LoginCtrl:IContainer
     }
 
     /// <summary>
-    /// 注册结果处理
+    /// 把中心服注册结果送回原客户端；失败时改发统一错误码。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="seesion">注册请求对应的客户端连接。</param>
+    /// <param name="basePackage">中心服返回的注册结果包。</param>
     private void OnRegistResultHandle(BaseLink seesion, BasePackage basePackage)
     {
         RegistRet ret = RegistRet.Parser.ParseFrom(basePackage.Data);
@@ -128,6 +137,9 @@ public class LoginCtrl:IContainer
 
     }
 
+    /// <summary>向独立验证码服务发起邮箱申请；当前调用没有等待 RPC 结果或回送验证码响应。</summary>
+    /// <param name="serverBase">接收申请的登录服连接，当前方法未使用。</param>
+    /// <param name="basePackage">包含注册邮箱的请求。</param>
     private void OnRegistVarifyHandle(BaseLink serverBase, BasePackage basePackage)
     {
         RegistVarifyReq req = RegistVarifyReq.Parser.ParseFrom(basePackage.Data);
@@ -139,6 +151,9 @@ public class LoginCtrl:IContainer
         LogMsg.Info("OnRegistVarifyHandle::" + req.ToString());
     }
 
+    /// <summary>把选服请求原样交给中心服读取角色列表。</summary>
+    /// <param name="serverBase">持有中心服连接的客户端会话。</param>
+    /// <param name="basePackage">包含账号和游戏服编号的请求。</param>
     private void OnLoginGameServerHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginGameServerReq req = LoginGameServerReq.Parser.ParseFrom(basePackage.Data);
@@ -147,6 +162,9 @@ public class LoginCtrl:IContainer
         LogMsg.Info("OnLoginGameServerHandle::" + req.ToString());
     }
 
+    /// <summary>把服务器列表查询原样交给中心服。</summary>
+    /// <param name="serverBase">持有中心服连接的客户端会话。</param>
+    /// <param name="basePackage">服务器列表查询请求。</param>
     private void OnGetServerListHandle(BaseLink serverBase, BasePackage basePackage)
     {
        
@@ -157,14 +175,15 @@ public class LoginCtrl:IContainer
     }
 
     /// <summary>
-    /// 登录请求
+    /// 限制同一用户名在 300 毫秒内重复登录，通过后把请求交给中心服验证账号密码。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收客户端请求的登录服连接，持有到中心服的连接。</param>
+    /// <param name="basePackage">携带原会话编号的请求包。</param>
     private void OnLoginHandle(BaseLink serverBase, BasePackage basePackage)
     {
         LoginReq req = LoginReq.Parser.ParseFrom(basePackage.Data);
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
+        // 同一用户名上一次请求登录的 UTC 毫秒时间戳，用于短时间频率限制。
         long timer = DataUtils.Instance.GetLoginMilliseconds(req.UserName);
         if (timer > 0&&DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - timer <300)
         {
@@ -179,10 +198,10 @@ public class LoginCtrl:IContainer
     }
 
     /// <summary>
-    /// 处理注册事件
+    /// 检查用户名、邮箱格式及 4 到 16 字符的密码长度，然后转发注册请求。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收客户端请求的登录服连接，持有到中心服的连接。</param>
+    /// <param name="basePackage">携带原会话编号的请求包。</param>
     private void OnRegistHandle(BaseLink serverBase, BasePackage basePackage)
     {
 
@@ -205,7 +224,7 @@ public class LoginCtrl:IContainer
             serverBase.SendError(basePackage,CmdCode.PasswordIllegal);
             return;
         }
-        //MD5密码加密
+        // 此处直接转发密码字段，没有执行 MD5 或其他密码转换。
         //basePackage.UnitySessionId = (serverBase as Session).SessionID;
         serverBase._client.Send(basePackage);
         LogMsg.Info("OnRegistHandle::" + req.ToString());

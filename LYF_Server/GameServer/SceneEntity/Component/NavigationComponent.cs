@@ -1,9 +1,11 @@
 using MMoRpgCommon.SceneEntity;
 namespace GameServer.SceneEntity
 {
-    /// <summary>参考项目 RONavigationComponent 的导航组件。</summary>
+    /// <summary>标记实体装配了寻路组件；当前只保存组件类别和所属实体，尚无独立的寻路处理。</summary>
     public sealed class NavigationComponent : RuntimeEntityComponent
     {
+        /// <summary>把此组件绑定到所属场景实体，并登记固定的组件类别。</summary>
+        /// <param name="owner">拥有此组件的场景实体，释放组件时解除引用。</param>
         public NavigationComponent(ROObject owner) : 
             base(owner, EntityComponentType.Navigation) { }
     }

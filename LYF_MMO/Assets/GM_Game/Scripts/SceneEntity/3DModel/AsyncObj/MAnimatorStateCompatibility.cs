@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// 将 RO 逻辑动作名映射到现有角色/怪物 Controller 的 Movement、Action 参数。
-/// 现有控制器没有 Idle、Move 等状态节点时，使用该兼容协议驱动原状态机。
+/// 兼容使用 Movement 和 Action 参数的旧动画控制器。
+/// 把项目的待机、走跑和动作名转换成这些参数，让原控制器选择动画。
 /// </summary>
 public static class MAnimatorStateCompatibility
 {
@@ -105,11 +105,11 @@ public static class MAnimatorStateCompatibility
             animator.SetInteger(ActionParameter, 1);
             return true;
         }
-        // 旧协议 Move/FMove 或自动导航行走状态。
+        // Move/FMove 旧状态名或战斗行走状态。
         bool isOldOrZdWalkState = stateName == MAnimationStateNames.Move ||
             stateName == MAnimationStateNames.FMove ||
             stateName == MAnimator.STATE_ZD_MOVE_WALK;
-        // 非自动导航行走状态。
+        // 非战斗行走状态。
         bool isNonZdWalkState = stateName == MAnimator.STATE_NONZD_MOVE_WALK;
         if (isOldOrZdWalkState || isNonZdWalkState)
         {

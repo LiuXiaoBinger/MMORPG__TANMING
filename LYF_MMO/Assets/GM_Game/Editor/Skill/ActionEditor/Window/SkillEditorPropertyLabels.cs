@@ -5,7 +5,7 @@ using Ethan.ActionEditor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>编辑器显示边界的字段、工具提示与枚举标签；不更改序列化名称、枚举值或用户文本。</summary>
+/// <summary>提供字段名、提示和枚举选项的中英显示文字；翻译只影响界面，保存时仍使用原字段名和数值。</summary>
 public static class SkillEditorPropertyLabels
 {
     /// <summary>一项框架字段的中英名称及用途说明，仅用于 GUI 显示。</summary>

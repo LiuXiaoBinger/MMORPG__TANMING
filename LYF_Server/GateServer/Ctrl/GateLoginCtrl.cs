@@ -33,6 +33,9 @@ public class GateLoginCtrl:IContainer
         }
     }
 
+    /// <summary>解析开始游戏请求用于日志，并把原协议包转给游戏服。</summary>
+    /// <param name="serverBase">持有游戏服连接的客户端会话。</param>
+    /// <param name="basePackage">包含所选角色编号的请求。</param>
     private void OnStartGameCodeHandle(BaseLink serverBase, BasePackage basePackage)
     {
         StartGameReq req = StartGameReq.Parser.ParseFrom(basePackage.Data);
@@ -42,10 +45,10 @@ public class GateLoginCtrl:IContainer
     }
 
     /// <summary>
-    /// 创建角色
+    /// 把建角请求交给游戏服继续转发；网关目前没有实现昵称检查。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收客户端请求并持有游戏服连接的会话。</param>
+    /// <param name="basePackage">保留客户端会话编号的建角请求。</param>
     private void OnCreateRoleHandle(BaseLink serverBase, BasePackage basePackage)
     {
         CreateRoleReq req = CreateRoleReq.Parser.ParseFrom(basePackage.Data);
@@ -73,6 +76,7 @@ public class GateLoginCtrl:IContainer
     /// </summary>
     public void OnClientCommand(BaseLink serverBase, BasePackage basePackage)
     {
+        // 游戏服返回的客户端编号对应网关保存的原始会话。
         Session seesion = SessionMgr.Instance.GetSession(basePackage.UnitySessionId);
         GateClientResponseForwarder.ForwardToUnity(seesion, basePackage);
     }

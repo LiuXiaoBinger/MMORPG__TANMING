@@ -1,9 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 其他角色场景实体，角色账户数据由角色数据模型独立保存。
-/// 继承自 MEntity，用于场景中除本地玩家外的其他玩家角色。
-/// PlayerEntity 继承本类，额外承载本地角色业务组件。
+/// 保存角色基础同步信息的场景实体，也是本地玩家 PlayerEntity 的基类。
+/// 直接创建时表示其他角色；本地玩家通过派生类补充输入和本地业务组件。
 /// </summary>
 public class RoleEntity : MEntity
 {

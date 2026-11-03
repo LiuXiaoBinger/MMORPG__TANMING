@@ -14,7 +14,7 @@ public class NetDefine
     public const int CenterServerPort = 10110;//中心服务器端口号
     
     public const int LoginServerPort = 10120;//登录服务器的端口号
-    public const int GameServerPort = 10130;//登录服务器的端口号
+    public const int GameServerPort = 10130;//游戏逻辑服务器端口号
     public const int GateServerPort = 10140;//网关服务器端口号
     public const ushort CMD_ErrCode = 10001;//错误码，
     public const ushort CMD_RegistVarifyCode = 11000;//获取验证码
@@ -28,13 +28,13 @@ public class NetDefine
     public const ushort CMD_RoleSkillInfoCode = 11080;//技能
     public const ushort CMD_SyncRoleEnterWorldCode = 11090;//同步角色进入游戏世界数据给其他玩家
     public const ushort CMD_SyncotherOnlineCode = 11100;//同步其他角色给主角
-    public const ushort CMD_RoleKnapsackInfoCode = 11110;//同步其他角色给主角
+    public const ushort CMD_RoleKnapsackInfoCode = 11110;//查询并装载角色的分类背包与次数数据
     public const ushort CMD_RoleShopPurchaseInfoCode = 11111;//同步角色商城购买次数
     public const ushort CMD_OpenKnapsackGridCode = 11120;//请求开启背包格子并返回当前已开启数量
     public const ushort CMD_SyncKnapsackGridCountCode = 11121;//GameServer 同步已开背包格子数量到中心服
     public const ushort CMD_BuyShopItemCode = 11130;//客户端购买商城商品
-    public const ushort CMD_SaveRoleDataCode = 11140;//GameServer 定时保存角色物品数据
-    public const ushort CMD_CountUpdateSyncInfoCode = 11150;//更新商店购买 副本次数到客户端 与中心服务器
+    public const ushort CMD_SaveRoleDataCode = 11140;//GameServer 提交角色物品/次数快照，CenterServer 返回保存结果
+    public const ushort CMD_CountUpdateSyncInfoCode = 11150;//将商城、副本等次数变化通知客户端
     public const ushort CMD_SC_UpdateItemInfoCode = 11160;//更新item给客户端
     /// <summary>客户端施法请求与服务端权威结果共用的协议号。</summary>
     public const ushort CMD_SkillCastCode = 11170;

@@ -8,7 +8,7 @@ using SqlSugar;
 internal class ItemTable
 {
     /// <summary>
-    /// 物品实例唯一ID，与 RoleID 组成复合主键；不同角色之间可以重复。
+    /// 物品实例编号，与 RoleID 组成数据库复合主键；业务使用 UIDHelper 分配编号来区分具体物品。
     /// </summary>
     [SugarColumn(IsPrimaryKey = true, IsIdentity = false)]
     public long ItemUID { get; set; }
@@ -25,12 +25,12 @@ internal class ItemTable
     public int ItemTypeID { get; set; }
 
     /// <summary>
-    /// 背包类型，例如普通背包、仓库等，由业务层定义。
+    /// 物品所在的 KnapsackType 分类，包含普通、装备、消耗品、材料、穿戴和虚拟物品栏。
     /// </summary>
     public int BagType { get; set; }
 
     /// <summary>
-    /// 物品在背包中的位置。
+    /// 物品在所属背包中的零起始格子索引。
     /// </summary>
     public int BagIndex { get; set; }
 

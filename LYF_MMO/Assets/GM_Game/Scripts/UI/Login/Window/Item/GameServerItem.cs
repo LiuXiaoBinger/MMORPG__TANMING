@@ -17,12 +17,12 @@ public class GameServerItem : MonoBehaviour
     private int _serverId;
     /// <summary>当前条目显示的服务器名称。</summary>
     private string _serverName = string.Empty;
-    /// <summary>服务器条目单击事件。</summary>
+    /// <summary>每次点击都会触发的选择事件，参数为本条目的服务器编号。</summary>
     public Action<int> ONItemClickCB;
-    /// <summary>服务器条目双击事件。</summary>
+    /// <summary>两次点击间隔不超过 0.3 秒时追加触发的确认事件，参数为服务器编号。</summary>
     public Action<int> ONItemDoubleClickCB;
 
-    /// <summary>上一次点击的未缩放时间。</summary>
+    /// <summary>上次点击时的 Time.unscaledTime 秒数；-1 表示当前没有等待组成双击的首击。</summary>
     private float _lastClickTime = -1f;
 
     /// <summary>获取当前条目的服务器编号。</summary>
@@ -46,6 +46,7 @@ public class GameServerItem : MonoBehaviour
         }
         _serverId = viewData.ServerId;
         _serverName = viewData.ServerName;
+        // 状态 1 为红色爆满、2 为黄色拥挤、3 为绿色正常，其他值保持白色。
         Color color = Color.white;
         if (viewData.RunState == 1)
         {
@@ -64,6 +65,7 @@ public class GameServerItem : MonoBehaviour
             _imageRun.color = color;
         }
 
+        // 新服名称后缀，不改变用于查询的原始服务器名。
         string newServerText = string.Empty;
         if (viewData.IsNew)
         {
@@ -75,7 +77,7 @@ public class GameServerItem : MonoBehaviour
         }
     }
 
-    /// <summary>上报服务器条目的单击和双击事件。</summary>
+    /// <summary>先上报本次单击，再按未缩放时间判断是否追加双击；双击成功后重置计时。</summary>
     public void OnItemClick()
     {
         if (ONItemClickCB != null)

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 
 /// <summary>
-/// 背包操作的公共事务基类。
-/// 当前项目尚未提供物品明细、货币和装备栏的权威内存状态，
-/// 因此该类只保存事务上下文和角色组件引用，不直接修改任何背包数据。
-///  一个事务绑定一个角色和其背包，负责汇总物品变化原因、通知客户端和任务系统。
-// 它不是数据库事务；数据库落地由角色的定时/退出存档流程统一处理。
+/// 一次客户端背包操作的共同基类，保存角色、背包组件和变更原因。
+/// 派生类负责增加、扣除、穿戴或扩容；部分旧接口仍只返回 NotImplemented。
+/// 这里修改的是客户端数据，实际结果仍以服务器同步为准。
+// 这里的“事务”表示一次背包业务操作，本类不写数据库。
 /// </summary>
 
 public class BagTransition
@@ -26,6 +25,7 @@ public class BagTransition
     protected  int money_count_ = 0;
     // 本次操作附带的 IDIP 审计参数。
     protected  IdipParam idip_param_ = new IdipParam();
+    /// <summary>保存本次操作的 role，并查找它的背包组件；同时建立空的来源记录。</summary>
     public BagTransition(PlayerEntity role)
     {
         m_role = role;
@@ -77,7 +77,7 @@ public class BagTransition
 
     /// <summary>
     /// 同步本次背包变化给客户端。
-    /// 当前尚无增量背包协议，故不执行发送操作。
+    /// 当前这个保留接口只返回 NotImplemented，不发送消息。
     /// </summary>
     public virtual BagTransitionResult NotifyClient()
     {
@@ -102,7 +102,7 @@ public class BagTransition
 
         if (m_roItemComponent == null) { return BagTransitionResult.KnapsackUnavailable; }
 
-        // 中心服背包和次数数据未完整装载前，禁止任何会改变角色状态的事务。
+        // 角色基础信息、背包及次数数据准备好后，才允许继续此处的本地操作。
         if (!m_role.IsRoleDataReady()) { return BagTransitionResult.KnapsackUnavailable; }
 
         return BagTransitionResult.Success;
@@ -127,10 +127,12 @@ public class BagTransition
         return BagTransitionResult.Success;
     }
 
+    /// <summary>把 itemReasonBuyItem 保存为本次操作的主要变更原因。</summary>
     public void SetReason(ItemChangeReason itemReasonBuyItem)
     {
         record.SetItemChangeReason(new ChangeReason(itemReasonBuyItem));
     }
+    /// <summary>取得本次操作设置的主要原因。</summary>
     public ItemChangeReason GetReason()
     {
         return record.GetItemChangeReason();
@@ -152,6 +154,7 @@ public enum UpdateType
     eUT_Update_One = 3
 }
 
+/// <summary>标明背包操作由哪个业务发起。</summary>
 public enum TransitionAction
 {
     /// <summary>
@@ -165,6 +168,7 @@ public enum TransitionAction
     BuyGoods = 1
 }
 
+/// <summary>背包操作的本地结果；NotImplemented 表示接口仍未实现。</summary>
 public enum BagTransitionResult
 {
     /// <summary>
@@ -197,6 +201,7 @@ public enum BagTransitionResult
 // 辅助数据结构
 // ============================================================
 
+/// <summary>保存同一次背包操作的业务来源和文字原因。</summary>
 public sealed class BagTransitionContext
 {
     /// <summary>
@@ -210,6 +215,7 @@ public sealed class BagTransitionContext
     public string Reason { get; set; }
 }
 
+/// <summary>描述一次物品变化的请求，包含配置编号、数量和来源或目标格子。</summary>
 public sealed class BagItemChange
 {
     /// <summary>
@@ -247,6 +253,7 @@ public sealed class BagItemChange
 // 背包事务派生类
 // ============================================================
 
+/// <summary>扣除物品或虚拟货币的客户端操作，包含仍未接入的旧重载。</summary>
 public class BagTakeItemTransition : BagTransition
 {
     public BagTakeItemTransition(PlayerEntity role) : base(role)
@@ -267,7 +274,7 @@ public class BagTakeItemTransition : BagTransition
     }
 
     /// <summary>
-    /// 扣除指定物品。待背包物品明细接入后实现。
+    /// 保留的 BagItemChange 扣除入口，目前只校验参数并返回 NotImplemented。
     /// </summary>
     public virtual BagTransitionResult TakeItem(BagItemChange itemChange)
     {
@@ -319,6 +326,7 @@ public class BagTakeItemTransition : BagTransition
     }
 }
 
+/// <summary>把物品或虚拟货币加入角色的客户端背包。</summary>
 public class BagGiveItemTransition : BagTransition
 {
     public BagGiveItemTransition(PlayerEntity role) : base(role)
@@ -326,7 +334,7 @@ public class BagGiveItemTransition : BagTransition
     }
 
     /// <summary>
-    /// 发放物品。待背包明细和容量占格规则接入后实现。
+    /// 保留的 BagItemChange 发放入口，目前只校验参数并返回 NotImplemented。
     /// </summary>
     public virtual BagTransitionResult GiveItem(BagItemChange itemChange)
     {
@@ -353,6 +361,7 @@ public class BagGiveItemTransition : BagTransition
         return BagTransitionResult.NotImplemented;
     }
 
+    /// <summary>根据 itemDesc 发放物品；虚拟物品走货币入口，其余交给角色 AddItem。当前没有检查 AddItem 的返回结果。</summary>
     public CmdCode GiveItem(ItemDesc itemDesc)
     {
         //校验
@@ -384,12 +393,12 @@ public class BagGiveItemTransition : BagTransition
         }
         //todo判断是否是经验
 
-        //给句物品
+        // 读取发放前数量；当前局部值没有参与后续发放。
         int item_cout = Role.GetItemCount(itemDesc.ItemID);
         var reason = GetTotalReason();
         if (itemDesc.ChangeReason != ItemChangeReason.ITEM_REASON_NONE)
         {
-            //2020-06-10 组队队长额外奖励增加的 itemchange
+            // 单个物品显式指定原因时，优先使用该原因。
             reason = new ChangeReason(itemDesc.ChangeReason);
         }
 
@@ -400,6 +409,7 @@ public class BagGiveItemTransition : BagTransition
         return CmdCode.Succeed;
     }
 
+    /// <summary>读取本次操作的完整原因，供新物品记录使用。</summary>
     private ChangeReason GetTotalReason()
     {
         return record.GetTotalReason();
@@ -427,9 +437,12 @@ public class BagGiveItemTransition : BagTransition
     }
 }
 
+/// <summary>增加四类普通背包的已开启格数，限制最终容量为 81 到 255。</summary>
 public class BagExpansionTransition : BagTransition
 {
+    /// <summary>可扩容背包至少按 81 格起算。</summary>
     private const int MinOpenedGridCount = 81;
+    /// <summary>容量沿用 byte 可表示的上限，即 255 格。</summary>
     private const int MaxOpenedGridCount = byte.MaxValue;
 
     public BagExpansionTransition(PlayerEntity role) : base(role)
@@ -483,6 +496,7 @@ public class BagExpansionTransition : BagTransition
     }
 }
 
+/// <summary>在装备背包和已穿戴栏之间移动装备实例。</summary>
 public class BagWearItemTransition : BagTransition
 {
     public BagWearItemTransition(PlayerEntity role) : base(role)
@@ -589,6 +603,7 @@ public class BagWearItemTransition : BagTransition
     }
 }
 
+/// <summary>预留的使用物品入口，尚未执行扣除或道具效果。</summary>
 public class BagUseItemTransition : BagTransition
 {
     public BagUseItemTransition(PlayerEntity role) : base(role)
@@ -609,6 +624,7 @@ public class BagUseItemTransition : BagTransition
     }
 }
 
+/// <summary>预留的背包移动接口；实际容器移动另由 RoItemComponent.SwapItem 处理。</summary>
 public class BagMoveItemTransition : BagTransition
 {
     public BagMoveItemTransition(PlayerEntity role) : base(role)
@@ -616,7 +632,7 @@ public class BagMoveItemTransition : BagTransition
     }
 
     /// <summary>
-    /// 移动物品。当前无物品明细和格子占用信息，不能直接交换或拆分物品。
+    /// 保留的移动入口，校验角色、物品和目标格后返回 NotImplemented；不会移动或拆分物品。
     /// </summary>
     public virtual BagTransitionResult MoveItem(
         BagItemChange itemChange,
@@ -638,6 +654,7 @@ public class BagMoveItemTransition : BagTransition
     }
 }
 
+/// <summary>预留的批量增删预演接口，目前不计算结果。</summary>
 public class BagSimulateTransition : BagTransition
 {
     public BagSimulateTransition(PlayerEntity role) : base(role)
@@ -645,7 +662,7 @@ public class BagSimulateTransition : BagTransition
     }
 
     /// <summary>
-    /// 预演增删物品操作。当前无物品明细，无法计算真实可用格子数。
+    /// 保留的批量增删预演入口，当前仅检查角色组件，并未处理 addItems、removeItems 或 knapsackType。
     /// </summary>
     public virtual BagTransitionResult Simulate(
         IList<BagItemChange> addItems,
@@ -662,6 +679,7 @@ public class BagSimulateTransition : BagTransition
     }
 }
 
+/// <summary>预留的物品锁定接口，目前只做基础检查。</summary>
 public class BagLockTransition : BagTransition
 {
     public BagLockTransition(PlayerEntity role) : base(role)
@@ -669,7 +687,7 @@ public class BagLockTransition : BagTransition
     }
 
     /// <summary>
-    /// 锁定指定物品。当前无物品实例状态，不能执行。
+    /// 保留的锁定入口，检查角色和 itemId 后返回 NotImplemented，不改变物品锁定状态。
     /// </summary>
     public virtual BagTransitionResult LockItem(int itemId)
     {
@@ -687,6 +705,7 @@ public class BagLockTransition : BagTransition
     }
 }
 
+/// <summary>预留的物品属性修改接口，目前只做基础检查。</summary>
 public class BagChangeAttrTransition : BagTransition
 {
     public BagChangeAttrTransition(PlayerEntity role) : base(role)
@@ -694,7 +713,7 @@ public class BagChangeAttrTransition : BagTransition
     }
 
     /// <summary>
-    /// 修改指定物品属性。当前没有物品实例和属性持久化接口，不能执行。
+    /// 保留的属性修改入口，检查角色和 itemId 后返回 NotImplemented，不修改任何属性。
     /// </summary>
     public virtual BagTransitionResult ChangeAttribute(int itemId)
     {
@@ -711,7 +730,7 @@ public class BagChangeAttrTransition : BagTransition
         return BagTransitionResult.NotImplemented;
     }
 }
-// 批量发奖事务：先检查全部物品是否都能放入，全部满足后才一次性提交；否则不发任何物品。
+// 批量领奖的空间预检工具；真正发奖的 ZhuDongGetItem 目前仍为空实现。
 public class BagZhuDongGetItemTranstion :  BagTransition
 {
     public BagZhuDongGetItemTranstion(PlayerEntity role) : base(role)
@@ -773,7 +792,7 @@ public class BagZhuDongGetItemTranstion :  BagTransition
             }
 
             // ceil：按堆叠上限向上取整，计算剩余数量需要新开的格子数。
-            // temp_count / overlap 向上取整，纯整数版本
+            // 现有表达式重复累加 space_still_need，保留原实现；此结果不能当作已验证的正确缺格数。
           
             space_still_need += space_still_need += (int)Math.Ceiling((float)temp_count / maxOverlap);
             
@@ -782,12 +801,12 @@ public class BagZhuDongGetItemTranstion :  BagTransition
         if( temp_bag_left_space - space_still_need< 0 )
         {
             Result.ErrorCode = CmdCode.BagFull;
-            // abs：记录本次领取还需要的额外格子数量。
+            // 这里保存的是计算出的需要格子数的绝对值，当前没有减去已有空格。
             Result.space_still_need = Math.Abs(space_still_need);
         }
         return Result;
     }
-    // 仅在整批物品均可放入时一次性发放；任一项无法放入则不提交。
+    // 尚未实现发奖，仅返回默认结果，不会向背包添加物品。
     ItemZhuDongGetResult ZhuDongGetItem(List<ItemDesc> desc, KnapsackType type = KnapsackType.RolePackPlain)
     {
         ItemZhuDongGetResult Result = default;

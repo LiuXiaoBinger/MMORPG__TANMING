@@ -3,9 +3,9 @@ using UnityEngine;
 using UVEC3 = UnityEngine.Vector3;
 
 /// <summary>
-/// 实体层。MoveComp、Buff、Skill、Machine 是实体固有快捷组件，
-/// 不进入普通 Components 容器，避免按组件类型查询产生重复实例。
-/// 实体直属持有 MModel，模型内部管理 MAnimator。
+/// 把场景模型、移动、Buff、技能和动作状态机连接成一个可更新的实体。
+/// 普通组件由 Components 管理，专用组件通过快捷属性单独管理，模型内部持有动画器。
+/// 本层安排更新与回收顺序，各具体实体再补充自己的数据。
 /// </summary>
 public abstract class MEntity : MSceneObject
 {
@@ -100,7 +100,7 @@ public abstract class MEntity : MSceneObject
     /// <summary>传送特效 ID</summary>
     public int TeleportFx { set { _teleportFx = value; } get { return _teleportFx; } }
 
-    /// <summary>是否允许手动移动（无禁止移动属性）</summary>
+    /// <summary>手动移动许可的预留入口，目前固定返回 true</summary>
     public bool CanManualMove {
         get
         {
@@ -111,7 +111,7 @@ public abstract class MEntity : MSceneObject
     /// <summary>实体名字（来自属性组件）</summary>
     // 实体名称由角色数据组件提供，当前实体层不直接依赖该组件。
 
-    /// <summary>是否死亡（属性组件缺失或血量为 0）</summary>
+    /// <summary>死亡查询的预留入口，目前固定返回 false，不读取血量</summary>
     public bool IsDead {
         get
         {
@@ -128,7 +128,7 @@ public abstract class MEntity : MSceneObject
     /// <summary>是否移动中（来自移动组件）</summary>
     public bool IsMoving { get { return MoveComp.IsMoving; } }
 
-    /// <summary>是否移动中（来自移动组件）</summary>
+    /// <summary>是否处于跳跃中，由移动组件提供</summary>
     public bool IsJump { get { return MoveComp.IsJump; } }
 
     /// <summary>是否与默认动作混合（动画混合开关）</summary>
@@ -137,7 +137,7 @@ public abstract class MEntity : MSceneObject
     /// <summary>是否显示待机连击动画</summary>
     bool _showIdleComboAnim = false;
 
-    /// <summary>待机连击动画开关：开启时广播连击同步，变化时刷新默认状态</summary>
+    /// <summary>保存待机连击动画开关；相关广播与刷新代码目前被注释掉</summary>
     public bool ShowIdleComboAnim
     {
         get { return _showIdleComboAnim; }
@@ -154,12 +154,13 @@ public abstract class MEntity : MSceneObject
         }
     }
 
+    /// <summary>属性组件的快捷引用，由组件管理器设置，用于读取速度和表现表等数据。</summary>
     public EntityAttributesComponent AttrComp { get; private set; }
 
     /// <summary>移动组件（专用快捷组件，由 MComponentMgr 注入）</summary>
     public MMoveComponent MoveComp { get; private set; }
 
-    /// <summary>RO同名导航快捷查询，组件实际挂在实体普通容器中，不另存生命周期引用。</summary>
+    /// <summary>从普通组件容器查询导航组件；未挂载时沿用容器的异常行为，不另存生命周期引用。</summary>
     public MNavigationComponent NavComp { get { return GetMComponentByT<MNavigationComponent>(); } }
 
     /// <summary>实体直属的普通位移组件，由普通容器负责初始化、每帧推进和池回收。</summary>
@@ -197,7 +198,7 @@ public abstract class MEntity : MSceneObject
     /// <summary>是否为假对象（无服务器对应）</summary>
     public bool IsFake { get; set; } = false;
 
-    /// <summary>是否可移动（未死亡/未禁移动/当前状态可动/非乘客）</summary>
+    /// <summary>综合实体移动开关和当前动作的移动/打断许可；死亡与手动移动入口目前仍为固定值</summary>
     public virtual bool IsMovable
     {
         get
@@ -231,6 +232,7 @@ public abstract class MEntity : MSceneObject
         get { return false; }
     }
 
+    /// <summary>是否处于搬运状态的标记，本层只保存该值。</summary>
     public bool InCarrying { get; set; } = false;
 
     #endregion
@@ -288,6 +290,7 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>实体逻辑更新后统一驱动状态机动画刷新。</summary>
+    /// <param name="deltaSeconds">本帧经过的秒数。</param>
     public override void LateUpdate(float deltaSeconds)
     {
         if (LifecycleState != EntityLifecycleState.Active)
@@ -341,11 +344,16 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>
-    /// 静态移动推进：普通移动做高度寻路/空气墙平滑/墙体碰撞；
-    /// 飞行处理地形高度与上升；下落直接设置位置。
+    /// 调用模型的 Move；原高度、飞行和墙体处理分支目前全部被注释掉。
+    /// movement 只用于计算未继续使用的 target，当前不按 type 选择移动方式。
     /// </summary>
+    /// <param name="model">本次要推进的模型。</param>
+    /// <param name="movement">调用方累计的位移，当前只参与未继续使用的目标点计算。</param>
+    /// <param name="type">保留的移动方式参数，当前不参与分支。</param>
+    /// <returns>当前实现固定返回 false。</returns>
     public static bool MoveModel(MModel model, UnityEngine.Vector3 movement, MoveType type = MoveType.Normal)
     {
+        // 原移动分支使用的目标点；当前分支保留计算，但没有应用它。
         UnityEngine.Vector3 target = model.Position + movement;
         /*if (type == MoveType.Fly)
         {
@@ -460,9 +468,9 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>
-    /// 由 MComponentMgr 注入移动组件
+    /// 由 MComponentMgr 设置属性组件快捷引用
     /// </summary>
-    /// <param name="component">移动组件实例</param>
+    /// <param name="component">属性组件实例</param>
     internal void SetAttComponent(EntityAttributesComponent component)
     {
         AttrComp = component;
@@ -565,6 +573,9 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>追加位移（分量）</summary>
+    /// <param name="x">世界 X 轴位移增量，单位为场景单位。</param>
+    /// <param name="y">世界 Y 轴位移增量，单位为场景单位。</param>
+    /// <param name="z">世界 Z 轴位移增量，单位为场景单位。</param>
     public void AppendMove(float x, float y, float z)
     {
         _movement.x += x;
@@ -574,22 +585,30 @@ public abstract class MEntity : MSceneObject
 
     #region 静态函数
 
-    /// <summary>按当前移动配置平滑加速到指定方向和顶速的简化入口，内部补全转向阻力与加速度后转调完整 Accelerate。</summary>
+    /// <summary>使用全局转向阻力和空中加速度，转调完整的速度计算方法。</summary>
     /// <param name="entity">待加速的实体。</param>
     /// <param name="direction">期望移动方向向量。</param>
     /// <param name="topSpeed">本次加速的目标顶速（米/秒）。</param>
     public static void Accelerate(MEntity entity,Vector3 direction ,float topSpeed)
     {
 
+        // 每秒消除侧向速度的强度，取自全局移动配置。
         var turningDrag =  PlayStateMgr.Instance.stats.turningDrag;
+        // 读取的地面加速度；当前简化入口未把此值传给下一级。
         var acceleration = PlayStateMgr.Instance.stats.acceleration;
+        // 当前实际传入的空中加速度，未按是否着地分支。
         var finalAcceleration = PlayStateMgr.Instance.stats.airAcceleration; // 空中与地面不同
         //var topSpeed =  PlayStateMgr.Instance.stats.topSpeed;
 
         Accelerate(entity,direction, turningDrag, finalAcceleration, topSpeed);
     }
 
-    // 根据输入的方向平滑加速移动
+    /// <summary>把当前速度分成目标方向和侧向两部分，沿目标方向加速并逐步消除侧向速度。</summary>
+    /// <param name="entity">保存当前模型速度的实体。</param>
+    /// <param name="direction">期望前进方向，调用方提供世界方向向量。</param>
+    /// <param name="turningDrag">每秒消除侧向速度的强度。</param>
+    /// <param name="acceleration">目标方向加速度，单位为场景单位/秒²。</param>
+    /// <param name="topSpeed">最高移动速度，单位为场景单位/秒。</param>
     public static void Accelerate(MEntity entity,Vector3 direction, float turningDrag,
         float acceleration, float topSpeed)
     {
@@ -634,23 +653,28 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>
-    /// 平滑地改变玩家水平角度 参数是水平速度
+    /// 按全局旋转速度平滑转向目标世界方向
     /// </summary>
-    /// <param name="direction"></param>
+    /// <param name="entity">需要转向的实体。</param>
+    /// <param name="direction">要面向的世界方向，零向量不改变朝向。</param>
     public static void FaceDirectionSmooth(MEntity entity,Vector3 direction)
     {
         FaceDirection(entity,direction, PlayStateMgr.Instance.stats.rotationSpeed);
     }
 
+    /// <summary>按本帧允许的最大角度旋转模型，不改变位置。</summary>
+    /// <param name="entity">需要转向的实体。</param>
+    /// <param name="direction">目标世界方向。</param>
+    /// <param name="currentRotationSpeed">旋转速度，单位为度/秒。</param>
     protected static void FaceDirection(MEntity entity,Vector3 direction, float currentRotationSpeed)
     {
         if (direction != Vector3.zero)
         {
-            //当前旋转
+            // 模型当前的世界旋转。
             var rotation=entity.Model.Rotation;
-            //
+            // 本帧最多旋转的角度，单位为度。
             var rotationDelta =currentRotationSpeed*Time.deltaTime;
-            //
+            // 以世界上方向为基准，构造面向目标方向的旋转。
             var target=Quaternion.LookRotation(direction, Vector3.up);
             entity.Model.Rotation = Quaternion.RotateTowards(rotation,target,rotationDelta);
         }
@@ -698,8 +722,11 @@ public abstract class MEntity : MSceneObject
     /// <summary>移动方式：普通/飞行/下落</summary>
     public enum MoveType
     {
+        /// <summary>普通移动类别，当前 MoveModel 未按此值分支。</summary>
         Normal,
+        /// <summary>飞行类别，原高度处理分支目前未启用。</summary>
         Fly,
+        /// <summary>下落类别，原直接设置位置的分支目前未启用。</summary>
         Fall,
     }
 }

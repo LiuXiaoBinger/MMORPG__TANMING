@@ -1,8 +1,8 @@
 using Google.Protobuf;
 
 /// <summary>
-/// 角色到 CenterServer 的数据发送器，对齐参考项目 RoleNetSender。
-/// 同一角色只保留一个在途版本，失败或超时始终重发同一份快照。
+/// 负责把一个角色的待保存数据发往 CenterServer，并等待保存结果。
+/// 同一角色一次只等待一份请求；失败或超过 5 秒未确认时，仍发送原版本和原内容。
 /// </summary>
 public sealed class RoleNetSender
 {
@@ -17,16 +17,22 @@ public sealed class RoleNetSender
     // 当前在途请求自上次发送以来经过的毫秒数。
     private int _inFlightMilliseconds;
 
+    /// <summary>绑定提供存档数据和会话信息的角色。</summary>
+    /// <param name="role">本发送器独占服务的在线角色。</param>
     public RoleNetSender(OnlineRole role)
     {
         _role = role;
     }
 
+    /// <summary>设置游戏服所有角色共用的中心服连接。</summary>
+    /// <param name="centerClient">已建立或正在建立的中心服 TCP 客户端。</param>
     public static void Configure(NetClient centerClient)
     {
         _centerClient = centerClient;
     }
 
+    /// <summary>累计尚未确认请求的等待毫秒数，达到 5 秒就重发同一份内容。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧经过的毫秒数。</param>
     public void Update(int deltaMilliseconds)
     {
         if (_inFlightRequest == null || deltaMilliseconds <= 0)
@@ -42,6 +48,7 @@ public sealed class RoleNetSender
         }
     }
 
+    /// <summary>没有等待确认的请求时收集角色变化并发送；没有可保存数据则返回 false。</summary>
     public bool SendRoleDataToDB()
     {
         if (_role == null || _centerClient == null || _inFlightRequest != null)
@@ -49,6 +56,7 @@ public sealed class RoleNetSender
             return false;
         }
 
+        // 此请求在确认之前固定不变，期间的新变化继续保留在角色组件中。
         SaveRoleDataReq request = _role.SaveAllMoudle();
         // 空保存请求直接忽略。
         if (request == null)
@@ -70,6 +78,8 @@ public sealed class RoleNetSender
         return true;
     }
 
+    /// <summary>只接受当前角色和版本的回包；成功后清理该批标记，并立即检查期间是否又有变化。</summary>
+    /// <param name="result">中心服返回的提交结果与已落库版本。</param>
     public void OnSaveRoleDataResult(SaveRoleDataRet result)
     {
         // 回包为空或没有在途保存请求时直接忽略。
@@ -101,11 +111,13 @@ public sealed class RoleNetSender
         SendRoleDataToDB();
     }
 
+    /// <summary>存在已生成但尚未收到成功确认的保存请求时返回 true。</summary>
     public bool HasInFlightRequest()
     {
         return _inFlightRequest != null;
     }
 
+    /// <summary>沿中心服连接发送当前等待确认的快照，并重新开始 5 秒计时。</summary>
     private void SendInFlightRequest()
     {
         if (_centerClient == null || _inFlightRequest == null)
@@ -113,6 +125,7 @@ public sealed class RoleNetSender
             return;
         }
 
+        // 只复制返回路径，中心服按这些会话字段把保存结果送回。
         BasePackage package = new BasePackage
         {
             GateSessionId = _role.GateSessionId,

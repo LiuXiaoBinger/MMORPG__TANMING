@@ -9,7 +9,7 @@ using UnityEngine;
 public class MLightmapIndex
 {
     /// <summary>
-    /// 本组内的逐渲染器绑定记录。初始为空数组，由环境组件按场景实际渲染器填充。
+    /// 本组的渲染器绑定记录，随场景或组件配置保存；环境组件读取它来设置光照图。
     /// </summary>
     public MRendererLightmapScale[] lightmapScales = new MRendererLightmapScale[0];
 }

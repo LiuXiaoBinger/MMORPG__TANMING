@@ -5,8 +5,7 @@ using UnityEngine;
 using Object = System.Object;
 
 /**
-* Title:控制器base类
-* Descrpiton:
+* UI 控制器共用的视图引用与窗口操作入口。
 */
 
 /// <summary>
@@ -43,7 +42,7 @@ public class CtrlBase : IDisposable
     }
 
     /// <summary>
-    /// 弹出指定类型子窗口。
+    /// 显示目标子窗口并隐藏同一 View 中的其他窗口；View 未显示时先显示 View。
     /// </summary>
     /// <param name="windowType">目标窗口枚举。</param>
     /// <param name="obj">透传给窗口的业务数据。</param>
@@ -54,7 +53,7 @@ public class CtrlBase : IDisposable
     }
 
     /// <summary>
-    /// 在主界面中打开指定常驻窗口。
+    /// 切换指定主界面窗口的显隐，不关闭同一 View 中的其他窗口。
     /// </summary>
     /// <param name="windowType">目标主界面窗口枚举。</param>
     /// <param name="obj">透传给窗口的业务数据。</param>

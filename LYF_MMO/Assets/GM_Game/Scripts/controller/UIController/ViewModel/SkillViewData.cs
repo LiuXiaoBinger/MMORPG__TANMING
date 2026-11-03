@@ -13,14 +13,22 @@ public sealed class SkillViewData
     public string IconPath { get; }
     /// <summary>角色当前技能等级。</summary>
     public int Level { get; }
-    /// <summary>技能完整冷却时间。</summary>
+    /// <summary>技能完整冷却时长，单位为秒。</summary>
     public float Cooldown { get; }
     /// <summary>技能绑定的快捷键。</summary>
     public string BindKey { get; }
-    /// <summary>控制器保存的剩余冷却时间。</summary>
+    /// <summary>创建这份展示数据时的剩余冷却秒数，不是持续自动更新的计时器。</summary>
     public float RemainingCooldown { get; }
 
     /// <summary>创建技能展示数据。</summary>
+    /// <param name="skillId">技能配置编号。</param>
+    /// <param name="name">技能名称，null 转为空串。</param>
+    /// <param name="description">技能说明正文。</param>
+    /// <param name="iconPath">技能图标资源路径。</param>
+    /// <param name="level">已学等级，0 表示尚未学会。</param>
+    /// <param name="cooldown">完整冷却秒数。</param>
+    /// <param name="bindKey">技能绑定的快捷键字符。</param>
+    /// <param name="remainingCooldown">本次刷新时剩余的冷却秒数。</param>
     public SkillViewData(int skillId, string name, string description, string iconPath,
         int level, float cooldown, string bindKey, float remainingCooldown)
     {

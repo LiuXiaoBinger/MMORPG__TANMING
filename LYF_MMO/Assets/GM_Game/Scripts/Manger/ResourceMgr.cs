@@ -28,10 +28,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <summary>按原始配置路径缓存已经加载的 Sprite。</summary>
     private Dictionary<string, Sprite> _spriteDic = new Dictionary<string, Sprite>();
     /// <summary>
-    /// 加载Prefab
+    /// 加载并实例化预制体；已缓存时立即创建新对象，否则加载完成后回调。
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="callback"></param>
+    /// <param name="path">预制体可传 Assets/ 开头的完整资源地址，或传预制体目录下相对路径；特效入口只接收特效目录下相对路径。</param>
+    /// <param name="callback">接收本次新建对象的回调；调用方负责对象使用和销毁。</param>
     public void LoadPrefabAsync(string path, Action<GameObject> callback)
     {
 
@@ -68,10 +68,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
         
     }
     /// <summary>
-    /// 加载特效资源
+    /// 从特效目录加载资源并创建新对象；缓存句柄供下一次播放复用。
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="callback"></param>
+    /// <param name="path">预制体可传 Assets/ 开头的完整资源地址，或传预制体目录下相对路径；特效入口只接收特效目录下相对路径。</param>
+    /// <param name="callback">接收本次新建对象的回调；调用方负责对象使用和销毁。</param>
     public void LoadEffetAsync(string path, Action<GameObject> callback)
     {
 
@@ -165,6 +165,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="callback">加载完成回调，加载失败时返回空对象。</param>
     private void LoadSpriteFromAtlas(string path, Action<Sprite> callback)
     {
+        // 最后一个斜线把图集路径与切片名称分开。
         int separatorIndex = path.LastIndexOf('/');
         if (separatorIndex <= 0 || separatorIndex >= path.Length - 1)
         {
@@ -173,7 +174,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
             return;
         }
 
+        // 约定图集主资源为 PNG，去掉切片名后补扩展名。
         string atlasRelativePath = path.Substring(0, separatorIndex) + ".png";
+        // 从图集中取出的 Sprite 名称。
         string spriteName = path.Substring(separatorIndex + 1);
         string atlasLocation = $"{ConstDefine.SpritePath}{atlasRelativePath}";
 

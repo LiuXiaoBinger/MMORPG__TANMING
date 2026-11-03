@@ -14,6 +14,7 @@ public class ItemTransition
      /// <returns>以背包类型为键、物品列表为值的分类结果。</returns>
      public static Dictionary<KnapsackType, List<ItemDesc>> ClassifyItemsByBagType(List<ItemDesc> items)
      {
+         // 按配置背包类型收集原物品描述，不复制物品对象。
          Dictionary<KnapsackType, List<ItemDesc>> result =
              new Dictionary<KnapsackType, List<ItemDesc>>();
          if (items == null || items.Count == 0)
@@ -22,6 +23,7 @@ public class ItemTransition
          }
          for (int index = 0; index < items.Count; index++)
          {
+             // 本次要分类的物品描述，非法编号会跳过。
              ItemDesc item = items[index];
              if (item == null || item.ItemID <= 0) { continue; }
 
@@ -41,11 +43,13 @@ public class ItemTransition
          return result;
      }
 
+     /// <summary>逐项检查 role 的物品是否够扣；遇到首个失败即返回错误码，不扣除物品。</summary>
      public static CmdCode TryTakeItem(PlayerEntity role, List<ItemDesc> items)
      {
         if (items.Count == 0) { return CmdCode.Succeed; }
         for (int index = 0; index < items.Count; index++)
         {
+            // 当前待扣物品，携带数量和绑定物品的使用规则。
             ItemDesc item = items[index];
             CmdCode  err = role.
                 CheckItem(item.ItemID, item.ItemCount, item.BindOptionForTake);
@@ -57,11 +61,13 @@ public class ItemTransition
         return CmdCode.Succeed;
     }
 
+     /// <summary>检查 items 能否放入 role 的指定背包 type，只返回预检结果。</summary>
      public static ItemZhuDongGetResult TryZhuDongGetItem(PlayerEntity role, List<ItemDesc> items,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);
          return trans.TryZhuDongGetItem(items, type);
      }
+     /// <summary>将单个 item 包装为列表，再检查 role 的背包 type 是否放得下。</summary>
      public static ItemZhuDongGetResult TryZhuDongGetItem(PlayerEntity role, ItemDesc item,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);

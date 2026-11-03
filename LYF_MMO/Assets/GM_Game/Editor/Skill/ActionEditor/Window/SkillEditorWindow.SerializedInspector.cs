@@ -4,7 +4,7 @@ using Ethan.ActionEditor.Editor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>技能窗口的双语属性与原编辑操作适配，不改运行时或资产字段身份。</summary>
+/// <summary>通过 Unity 序列化属性绘制事件编辑面板，处理字段、列表和预设的修改，并接入撤销与保存。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>旧效果字段页签的窗口内显示缓存，关闭窗口失效，不存入配置。</summary>

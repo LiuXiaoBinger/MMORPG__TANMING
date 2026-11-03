@@ -16,13 +16,13 @@ public class MLightmapData : ScriptableObject
 
     /// <summary>
     /// 与该套光照图配套的光照探针数据，赋给 LightmapSettings.lightProbes。
-    /// 为空表示场景没有烘焙探针。
+    /// 为空时也会写入场景设置，清除当前使用的烘焙探针。
     /// </summary>
     public LightProbes lightProbes;
 
     /// <summary>
     /// 渲染器分组下标，对应 MEnvorimentSetting.lightmapIndex 数组的取值（0 起）。
-    /// 本场景为 0，表示 937 条渲染器绑定都在第 0 组。
+    /// 该组中保存了每个渲染器应使用的光照图编号和 UV 位置。
     /// </summary>
     public int lightmapIndex;
 }

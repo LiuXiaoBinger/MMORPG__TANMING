@@ -1,7 +1,7 @@
 using System;
 using SqlSugar;
 
-/// <summary>角色通用次数持久化表，商城和副本共用 Action、CountKey 复合键。</summary>
+/// <summary>角色通用次数记录，业务按 RoleId、Action、CountKey 查找；当前数据库主键标记仅落在 RoleId 和 Action 上。</summary>
 [SugarTable("role_count")]
 public class RoleCountTable
 {

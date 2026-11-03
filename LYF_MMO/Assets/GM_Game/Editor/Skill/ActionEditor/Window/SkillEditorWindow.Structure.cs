@@ -4,7 +4,7 @@ using Ethan.ActionEditor;
 using Ethan.ActionEditor.Editor;
 using UnityEditor;
 using UnityEngine;
-/// <summary>按帧制作技能的原 Y 窗口分部；完整编辑能力与本游戏导出支持范围独立，预览使用隔离副本。</summary>
+/// <summary>组织时间轴中的特效、预警和运动显示行，并计算特效预计播放区间，避免重叠事件挤在同一行。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>把普通粒子和预警统一分配显示行时使用的帧区间。</summary>

@@ -4,12 +4,12 @@ using UnityEngine;
 /// 玩家数值配置文件 (Player Stats)。
 /// 
 /// - 使用 ScriptableObject 形式存储，可在 Unity 中创建并复用。
-/// - 所有玩家相关的物理参数、动作参数、技能参数都集中在这里。
+/// - 保存移动和动作参数；部分字段为预留，是否生效取决于控制器是否读取。
 /// - 通过 Inspector 可视化调整，方便策划/程序调试。
 /// 
 /// 使用方法：
 /// 在 Unity 编辑器菜单中：
-/// "PLAYER TWO/Platformer Project/Player/New Player Stats"
+/// "Create/GameData/PlayerStats"
 /// 即可创建新的玩家数值配置文件。
 /// </summary>
 [CreateAssetMenu(fileName = "PlayerStats", menuName = "GameData/PlayerStats")]
@@ -22,7 +22,7 @@ public class PlayerStats : ScriptableObject
 	public float slideForce = 10f;         // 下坡滑动的额外推力
 	public float rotationSpeed = 970f;     // 玩家角色旋转速度（度/秒）
 	public float gravity = 38f;            // 普通重力加速度
-	public float fallGravity = 65f;        // 下落时额外重力加速度
+	public float fallGravity = 65f;        // 下落阶段使用的重力加速度，替代普通重力，并非与它相加
 	public float gravityTopSpeed = 50f;    // 重力作用下的最大下落速度
 
 	//==============================【拾取与投掷】==============================//
@@ -56,7 +56,7 @@ public class PlayerStats : ScriptableObject
 	//==============================【跳跃】==============================//
 	[Header("Jump Stats")]
 	public int multiJumps = 1;                 // 允许的额外跳跃次数（多段跳）
-	public float coyoteJumpThreshold = 0.15f;  // 土狼跳判定时间（离地后还能跳的时间窗口）
+	public float coyoteJumpThreshold = 0.15f;  // 离地后仍允许起跳的宽限时间（秒）
 	public float maxJumpHeight = 17f;          // 最大跳跃高度
 	public float minJumpHeight = 10f;          // 最小跳跃高度（轻按跳）
 
@@ -108,7 +108,7 @@ public class PlayerStats : ScriptableObject
 	[Header("Spin Stats")]
 	public bool canSpin = true;                // 是否可以旋转攻击
 	public bool canAirSpin = true;             // 是否可以空中旋转攻击
-	public float spinDuration = 0.5f;          // 旋转攻击持续时间
+	public float spinDuration = 0.5f;          // 旋转攻击持续时间（秒）
 	public float airSpinUpwardForce = 10f;     // 空中旋转攻击时的上升力
 	public int allowedAirSpins = 1;            // 允许的空中旋转次数
 
@@ -133,8 +133,8 @@ public class PlayerStats : ScriptableObject
 	[Header("Stomp Attack Stats")]
 	public bool canStompAttack = true;         // 是否能进行踩踏攻击
 	public float stompDownwardForce = 20f;     // 踩踏时向下的力
-	public float stompAirTime = 0.8f;          // 空中踩踏时间
-	public float stompGroundTime = 0.5f;       // 落地后的硬直时间
+	public float stompAirTime = 0.8f;          // 空中踩踏停留时间（秒）
+	public float stompGroundTime = 0.5f;       // 落地后暂时不能行动的时间（秒）
 	public float stompGroundLeapHeight = 10f;  // 踩踏落地后的反弹高度
 
 	//==============================【悬挂在边缘】==============================//
@@ -154,7 +154,7 @@ public class PlayerStats : ScriptableObject
 	public bool canClimbLedges = true;         // 是否可以攀爬边缘
 	public LayerMask ledgeClimbingLayers;      // 攀爬检测层
 	public Vector3 ledgeClimbingSkinOffset;    // 碰撞偏移
-	public float ledgeClimbingDuration = 1f;   // 攀爬动作时长
+	public float ledgeClimbingDuration = 1f;   // 攀爬动作时长（秒）
 
 	//==============================【后空翻】==============================//
 	[Header("Backflip Stats")]
@@ -180,8 +180,8 @@ public class PlayerStats : ScriptableObject
 	public bool canAirDash = true;             // 是否能空中冲刺
 	public bool canGroundDash = true;          // 是否能地面冲刺
 	public float dashForce = 25f;              // 冲刺推力
-	public float dashDuration = 0.3f;          // 冲刺持续时间
-	public float groundDashCoolDown = 0.5f;    // 地面冲刺冷却时间
+	public float dashDuration = 0.3f;          // 冲刺持续时间（秒）
+	public float groundDashCoolDown = 0.5f;    // 两次地面冲刺之间的最短间隔（秒）
 	public float allowedAirDashes = 1;         // 允许的空中冲刺次数
 
 	//==============================【铁轨滑行（Grinding）】==============================//
@@ -203,6 +203,6 @@ public class PlayerStats : ScriptableObject
 	[Header("Rail Grinding Dash Stats")]
 	public bool canGrindDash = true;           // 是否能在滑轨时冲刺
 	public bool applyGrindingSlopeFactor = true;// 是否考虑坡度因子
-	public float grindDashCoolDown = 0.5f;     // 冲刺冷却时间
+	public float grindDashCoolDown = 0.5f;     // 两次滑轨冲刺之间的最短间隔（秒）
 	public float grindDashForce = 25f;         // 冲刺推力
 }

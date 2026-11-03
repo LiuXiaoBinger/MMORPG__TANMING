@@ -1,6 +1,5 @@
 /// <summary>
-/// RO 常用动作状态名常量定义。
-/// 状态组件和 MAnimator 只通过这些常量访问模型动画，避免硬编码字符串散落各处。
+/// 动作组件与动画器共用的常见状态名称，需与 Animator Controller 中的命名对应。
 /// </summary>
 public static class MAnimationStateNames
 {
@@ -8,9 +7,9 @@ public static class MAnimationStateNames
     public const string Idle = "Idle";
     /// <summary>行走/移动动画状态名。</summary>
     public const string Move = "Move";
-    /// <summary>女性待机动画状态名。</summary>
+    /// <summary>战斗待机动画状态名，F 表示战斗用动作，并非女性动作。</summary>
     public const string FIdle = "FIdle";
-    /// <summary>女性移动动画状态名。</summary>
+    /// <summary>兼容控制器中的战斗移动动画状态名，并非女性动作。</summary>
     public const string FMove = "FMove";
     /// <summary>出生/登场动画状态名。</summary>
     public const string Born = "Born";

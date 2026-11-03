@@ -34,7 +34,7 @@ public sealed class KcpBindPayload
         byte[] buffer = new byte[PayloadBytes];
         buffer[0] = (byte)Result;
         Buffer.BlockCopy(BitConverter.GetBytes(Conv), 0, buffer, 1, 4);
-        // 令牌缺失时按全零写出，接收方按拒绝处理，不抛异常。
+        // 缺失令牌时这一段保持全零；Enabled 确认也使用零令牌，接收方按结果码处理。
         if (Token != null)
         {
             // 实际拷贝字节数：令牌不足 16 字节时按真实长度截断，避免越界。

@@ -4,12 +4,16 @@ using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
-/// <summary>沿RO导航流程维护目的地、完整路线、逐帧路点与到达后的强类型技能动作。</summary>
+/// <summary>
+/// 保存本地玩家的导航目的地和路点，供移动组件每帧取下一步。
+/// 移动后按实际位置判断是否到达：NPC 导航打开对话，技能导航进入原施法请求流程。
+/// 中断路线时回收尚未执行的技能参数，不把中断当作到达。
+/// </summary>
 public class MNavigationComponent : EntityComponentBase
 {
 
     #region 字段与属性
-    /// <summary>沿RO common_define.h的SELECT_TARGET_DISTANCE_HEIGHT，目标高度差超过6米不能按水平距离到达。</summary>
+    /// <summary>目标与角色高度差超过 6 米时，普通范围判断不能仅凭水平距离判定到达。</summary>
     private const float SelectTargetDistanceHeight = 6f;
 
     /// <summary>使用项目已有导航组件编号20，由本地主角普通组件容器挂载和回收。</summary>
@@ -69,7 +73,7 @@ public class MNavigationComponent : EntityComponentBase
         _onGetEvent = new MEventHandler(OnGetEvent);
     }
 
-    /// <summary>沿RO导航事件入口接收NPC、显式坐标与技能导航指令。</summary>
+    /// <summary>订阅导航事件，接收目标实体、显式坐标或技能输入。</summary>
     protected override void EventSubscribe()
     {
         RegisterEvent(MEventType.MEvent_Navigation, _onGetEvent);
@@ -90,7 +94,7 @@ public class MNavigationComponent : EntityComponentBase
         LateUpdate(deltaMilliseconds * 0.001f);
     }
 
-    /// <summary>沿RO在移动后更新追近目标及到达，实际碰撞位置决定能否触发技能。</summary>
+    /// <summary>在移动后刷新跟随目标的路线，并用碰撞后的实际位置检查到达条件。</summary>
     /// <param name="deltaTime">本次帧后间隔，单位秒；移动预算由MMoveComponent计算。</param>
     public override void LateUpdate(float deltaTime)
     {
@@ -149,7 +153,8 @@ public class MNavigationComponent : EntityComponentBase
         navigate();
     }
 
-    /// <summary>沿RO到达回调发送技能请求，成功发送后立即开始原本地预表现，不增加确认等待。</summary>
+    /// <summary>检查状态、MP 和冷却后发送技能请求，再开始本地提前播放。
+    /// 当前网络客户端为空时会跳过发送，仍继续执行本地预测入口。</summary>
     /// <param name="skillArgs">本次输入的技能主表ID、释放点和可空目标。</param>
     protected void OnAfterAction(MSkillEventArgs skillArgs)
     {
@@ -358,7 +363,7 @@ public class MNavigationComponent : EntityComponentBase
         navToPos();
     }
 
-    /// <summary>按RO上下限中值选追近点，目标自身或显式坐标范围为零时返回原目标。</summary>
+    /// <summary>沿角色到目标的方向，选择上下限中间的距离作为追近点；自定义范围使用其一半。</summary>
     /// <returns>本次查询使用的世界目的点，单位米。</returns>
     private Vector3 calcTargetPos()
     {
@@ -378,7 +383,7 @@ public class MNavigationComponent : EntityComponentBase
         return _tarPosition - dir.normalized * range;
     }
 
-    /// <summary>按RO水平距离和0.01米边界余量判断是否到达本次指定范围。</summary>
+    /// <summary>判断当前位置是否进入指定范围；普通 NPC 对话用三维距离，其余用高度限制加水平距离。</summary>
     /// <returns>当前位置进入上下限或非零自定义范围时为true。</returns>
     private bool isTargetInRange()
     {
@@ -447,7 +452,7 @@ public class MNavigationComponent : EntityComponentBase
         _useAfterAction = false;
     }
 
-    /// <summary>RO同名技能到达入口，先上报已有位置同步，再进入原技能发送流程。</summary>
+    /// <summary>技能导航到达入口：先按现有移动同步规则上报位置，再尝试发送技能请求。</summary>
     /// <param name="skillArgs">本次到达后执行的强类型技能指令。</param>
     private void closeTargetAfter(MSkillEventArgs skillArgs)
     {

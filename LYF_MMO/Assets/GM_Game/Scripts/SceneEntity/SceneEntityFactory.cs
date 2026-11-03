@@ -2,8 +2,8 @@ using System;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 客户端实体工厂，统一复现参考 ObjectFactory 的 Builder 入口。
-/// 根据实体类型或投射物类型创建对应的 Builder，由 Builder 完成实体构造和组件装配。
+/// 按实体类别选择构建器，由构建器创建或复用实体并添加组件。
+/// 这里只完成装配，加入实体世界和初始化由调用方负责。
 /// </summary>
 public static class SceneEntityFactory
 {
@@ -17,6 +17,7 @@ public static class SceneEntityFactory
     public static ROObject Build(EntityType entityType, ulong uid,
         int configId)
     {
+        // 当前实体类别匹配的构建器。
         EntityBuilder builder = CreateBuilder(entityType);
         return builder.Build(uid, configId);
     }
@@ -31,6 +32,7 @@ public static class SceneEntityFactory
     public static ROObject BuildProjectile(ProjectileType projectileType,
         ulong uid, int configId)
     {
+        // 投射物使用独立类别参数选择实体子类。
         ProjectileEntityBuilder builder = new ProjectileEntityBuilder(projectileType);
         return builder.Build(uid, configId);
     }
@@ -43,8 +45,6 @@ public static class SceneEntityFactory
     /// <exception cref="ArgumentOutOfRangeException">传入不支持的实体类型时抛出</exception>
     private static EntityBuilder CreateBuilder(EntityType entityType)
     {
-        // 玩家角色实体（其他玩家）
-        // 客户端本地玩家实体
         // Player 是 Role 的组合类别，必须优先判断 Player，避免被 Role 位先截获。
         if ((entityType & EntityType.Player) != EntityType.None)
         {
@@ -75,7 +75,7 @@ public static class SceneEntityFactory
         {
             return new NpcEntityBuilder();
         }
-        // 测试替身实体（Dummy）
+        // Dummy 类别实体
         if ((entityType & EntityType.Dummy) != EntityType.None)
         {
             return new DummyEntityBuilder();

@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// BOSS 怪物实体，保留参考项目 MonsterRank.Boss 等级信息。
-/// 继承自 MonsterEntity，共享怪物组件装配逻辑，仅标记为 BOSS 等级。
+/// Boss 怪物的实体类型，创建时固定 EntityType.Boss 和 Boss 档位。
+/// 其他怪物数据与生命周期沿用 MonsterEntity。
 /// </summary>
 public sealed class BossEntity : MonsterEntity
 {

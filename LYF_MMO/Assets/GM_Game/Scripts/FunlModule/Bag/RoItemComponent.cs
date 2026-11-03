@@ -14,17 +14,17 @@ public class RoItemComponent : RoleComponentBase
     // 数据库存储为 byte 时允许的最大容量。
     private const int MaxOpenedGridCount = byte.MaxValue;
 
-    // 仅保存四类可扩容背包的权威容量。
+    // 保存四类可扩容背包在客户端的已开启容量，登录时由服务器数据覆盖。
     private readonly Dictionary<KnapsackType, int> _openedGridCounts =
         new Dictionary<KnapsackType, int>();
 
     /// <summary>物品模型发生变化时通知控制器刷新界面。</summary>
     public event Action<ItemBase, ChangeReason, UpdateType> ItemChanged;
 
-    /// <summary>背包物品或容量发生变化时通知背包控制器。</summary>
+    /// <summary>保留的背包变化事件；当前刷新入口使用 DirtyTracker，类内没有触发此事件。</summary>
     public event Action KnapsackChanged;
 
-    /// <summary>背包发生细粒度变化时通知控制器，参数是不可变快照。</summary>
+    /// <summary>保留的逐格变化事件；当前类内没有触发，变化数据用于生成刷新标记。</summary>
     public event Action<KnapsackChangedEventArgs> KnapsackChangedDetailed;
 
     // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
@@ -56,7 +56,7 @@ public class RoItemComponent : RoleComponentBase
         _itemContainers = new Dictionary<KnapsackType, RoItemContainer>();
         _openedGridCounts.Clear();
 
-        // 五类配置背包在角色组件初始化时一次性创建，避免首次访问时出现空容器。
+        // 一次创建六类容器：普通、装备、消耗品、材料、穿戴栏和虚拟物品。
         KnapsackType[] containerTypes =
         {
             KnapsackType.RolePackPlain,
@@ -137,7 +137,7 @@ public class RoItemComponent : RoleComponentBase
             previousBagType, previousBagIndex));
     }
 
-    /// <summary>统一发布背包状态变化，避免界面直接读取协议快照。</summary>
+    /// <summary>根据 change 记录哪个背包页、哪些格子需要刷新；移动时同时记录原位置。</summary>
     private void NotifyKnapsackChanged(KnapsackChangedEventArgs change)
     {
         if (change != null)
@@ -149,7 +149,7 @@ public class RoItemComponent : RoleComponentBase
                 change.BagIndex, context);
             if (change.ChangeType == KnapsackChangeType.Moved)
             {
-                // 移动始终标记旧格位；跨背包移动还会标记源页，供拍卖行等事务复用。
+                // 移走后的旧格子也需要刷新；跨页移动时会分别记录源页和目标页。
                 Owner.DirtyTracker.MarkKnapsack(change.PreviousBagType, false,
                     change.PreviousBagIndex, context);
             }
@@ -158,7 +158,7 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 向角色背包添加物品，自动堆叠到未满的同类同标记堆叠，不足时占用空格新建堆叠。
-    /// 武器类配置生成 EquipBase 实例，其余生成 ItemBase 实例。
+    /// 装备配置生成 EquipBase 实例，其余配置生成 ItemBase 实例。
     /// 每次数量变更或新建实例都会触发 OnItemChange 通知控制器。
     /// </summary>
     /// <param name="itemId">配置物品 ID。</param>
@@ -200,6 +200,7 @@ public class RoItemComponent : RoleComponentBase
         {
             maxStackCount = Math.Max(1, itemData.MaxStackCount);
         }
+        // 本次发放中尚未放入已有堆叠或新格子的数量。
         int remainingCount = itemCount;
         // 收集所有同 ID、同标记且未满的堆叠，优先填充这些堆叠。
         List<ItemBase> matchingStacks = new List<ItemBase>();
@@ -240,6 +241,7 @@ public class RoItemComponent : RoleComponentBase
             return null;
         }
 
+        // 返回给调用方的最后一个被新增或增加数量的物品实例。
         ItemBase lastAdded = null;
         // 第一阶段：填充已有未满堆叠。
         for (int index = 0; index < matchingStacks.Count; index++)
@@ -272,7 +274,7 @@ public class RoItemComponent : RoleComponentBase
             EquipItemConfig equipConfig = itemData as EquipItemConfig;
             if (equipConfig != null)
             {
-                // 武器类配置生成装备实例并记录装备类型。
+                // 装备配置生成带有装备部位信息的实例。
                 item = new EquipBase
                 {
                     EquipType = equipConfig.Config.EquipType
@@ -446,7 +448,7 @@ public class RoItemComponent : RoleComponentBase
         if (container != null)
         {
             container.SwapOutByUID(item.GetItemUID());
-            // 道具删除需要同步到ms，先将数量置为0
+            // 容器变化回调使用数量 0 表示该物品已删除。
             item.SetItemCount(0);
             // 走容器道具变化接口
             container.ContainerOnItemChange(item, reason);
@@ -559,8 +561,8 @@ public class RoItemComponent : RoleComponentBase
     /// <summary>
     /// 获取背包容器还有多少空格子
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="page_num">如果是仓库看看是哪一页</param>
+    /// <param name="type">要查询的背包类型。</param>
+    /// <param name="page_num">保留的页码参数；当前容器查询不按页码区分。</param>
     /// <returns></returns>
     public int GetLeftSpace(KnapsackType type, int page_num=1)
     {
@@ -575,8 +577,8 @@ public class RoItemComponent : RoleComponentBase
     /// <summary>
     /// 通过类型获取容器基类
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="pageNum"></param>
+    /// <param name="type">要查询的背包类型。</param>
+    /// <param name="pageNum">保留页码，当前实现未使用。</param>
     /// <returns></returns>
     public RoItemContainer GetContainerByType(KnapsackType type, int pageNum =1)
     {
@@ -592,12 +594,12 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 统计指定配置物品 ID 在背包中的总数量。
-    /// 默认只统计非绑定物品，找到第一个非空容器即可提前返回；
+    /// 默认只统计物品配置对应的容器，并按 calc_bind_item 选择绑定规则；
     /// calc_all_container 为 true 时遍历全部容器累加。
     /// </summary>
     /// <param name="itemId">配置物品 ID，必须为 int 且大于 0。</param>
-    /// <param name="calc_bind_item">预留参数，当前实现固定统计非绑定物品。</param>
-    /// <param name="calc_all_container">是否遍历全部容器累加；false 时找到即停。</param>
+    /// <param name="calc_bind_item">kItemBindNo 只统计非绑定物品，其余情况允许计入绑定物品。</param>
+    /// <param name="calc_all_container">true 遍历所有容器；false 只查配置指定的默认容器。</param>
     /// <returns>物品总数量，超过 int.MaxValue 时截断为 int.MaxValue。</returns>
     public int GetItemNum(int itemId, ItemBind calc_bind_item = ItemBind.kItemBindNo, bool calc_all_container = false)
     {
@@ -623,7 +625,7 @@ public class RoItemComponent : RoleComponentBase
         for (int index = 0; index < containers.Count; index++)
         {
             RoItemContainer container = containers[index];
-            // 当前固定统计非绑定物品（kItemBindNo）。
+            // 按调用方传入的绑定筛选规则累计数量。
             total += container.CountItem(configuredItemId, calc_bind_item);
             // 非全容器模式下，只要找到数量就提前终止遍历。
             if (!calc_all_container && total > 0)
@@ -684,7 +686,7 @@ public class RoItemComponent : RoleComponentBase
 
     /// <summary>
     /// 校验虚拟物品是否同时满足公共编号范围和 Luban 配置分类。
-    /// 公共层只负责编号段判断，GameServer 在实际增减前必须确认配置存在且属于虚拟物品背包。
+    /// 先检查公共编号范围，再确认本地配置将它定义为货币并放入虚拟物品背包。
     /// </summary>
     /// <param name="itemId">待校验的物品配置 ID。</param>
     /// <returns>配置存在、主类型为货币且背包类型为虚拟物品背包时返回 true。</returns>
@@ -1089,7 +1091,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 应用服务器推送的物品增量；该入口只更新客户端投影，不产生本地持久化脏标记。
+    /// 先删除服务器已移除的物品，再应用新增或更新的数据；只修改客户端记录并标记界面刷新。
     /// </summary>
     /// <param name="update">服务器返回的增量物品数据。</param>
     public void ApplyServerItemDelta(UpdateItem update)
@@ -1187,7 +1189,7 @@ public class RoItemComponent : RoleComponentBase
     /// <summary>
     /// 获取该物品最大堆叠数量
     /// </summary>
-    /// <param name="item_id"></param>
+    /// <param name="item_id">物品配置编号；配置缺失或堆叠上限小于 1 时返回 1。</param>
     /// <returns></returns>
     public int MaxOverlap(int item_id)
     {
@@ -1205,7 +1207,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 通知任务模块
+    /// 预留的任务通知入口，当前为空实现，不发送任务事件。
     /// </summary>
     /// <param name="item"></param>
     /// <param name="i"></param>
@@ -1260,7 +1262,7 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>
-    /// 在两个真实容器之间移动实例；源和目标容器都会进入同一变更版本。
+    /// 在两个背包容器间移动同一个物品实例，并标记源格和目标格需要刷新。
     /// 同容器内仅调整格子位置；跨容器移动时若目标放入失败会回滚到源容器原位置。
     /// </summary>
     /// <param name="itemUid">待移动物品实例 UID。</param>
@@ -1343,6 +1345,7 @@ public class RoItemComponent : RoleComponentBase
         return currentPrice + unitPrice * count;
     }
 
+    /// <summary>按 descItemId 和绑定规则选出可扣物品，先检查总量，再逐个扣除 ItemCount；reason 记录扣除原因。</summary>
     public CmdCode ReduceItem(int descItemId, long ItemCount, ItemChangeReason reason, ItemBind descBindOptionForTake)
     {
         if (Owner == null)
@@ -1364,6 +1367,7 @@ public class RoItemComponent : RoleComponentBase
         {
             return CmdCode.ItemNotExist;
         }
+        // 可用物品的总数量，达到本次需求后即可停止统计。
         long totalCount = 0L;
         for (int index = 0; index < item_list.Count; index++)
         {
@@ -1378,7 +1382,9 @@ public class RoItemComponent : RoleComponentBase
             return CmdCode.InsufficientItems;
         }
 
+        // 还需从后续物品堆中扣除的数量。
         long remainingCount = ItemCount;
+        // 先保存各物品 UID 与扣除数量，随后删除物品时不会破坏遍历列表。
         List<KeyValuePair<long, int>> reducePlan = new List<KeyValuePair<long, int>>();
         for (int index = 0; index < item_list.Count; index++)
         {

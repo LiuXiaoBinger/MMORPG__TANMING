@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using cfg;
 
+/// <summary>启动时装载 Luban 二进制表，建立技能、物品、NPC和商城的业务查询索引；这里是手写配置接入层。</summary>
 public class LubanMgr:Singleton<LubanMgr>
 {
 
     #region 字段与常量
+    // 技能ID到主表定义的索引，用于职业、技能类型等基础判断。
     private Dictionary<int, SkillInfo> _skillInfos;
 
     /// <summary>按稳定效果 ID 索引的技能等级效果表，启动后只读。</summary>
@@ -20,33 +22,46 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>按表现配置 ID 索引的技能动画资源表，供客户端选择变体。</summary>
     private Dictionary<int, SkillPresentationInfo> _skillPresentationInfos;
 
+    // 普通物品配置ID到原始表记录的索引。
     private Dictionary<int, ItemInfo> _itemInfos;
 
+    // 装备配置ID到原始装备记录的索引。
     private Dictionary<int, EquipInfo> _equipInfos;
 
+    // 普通物品与装备共用的配置索引，同ID时后加入的装备配置覆盖普通物品。
     private Dictionary<int, ItemConfigBase> _itemConfigInfos;
 
+    // 背包类型对应的容量及扩容配置。
     private Dictionary<int, KnapsackInfo> _knapsackInfos;
 
+    // 装备词条配置索引，键为词条配置ID。
     private Dictionary<int, Gene> _geneInfos;
 
+    // NPC配置ID到已解析坐标、商店等信息的索引。
     private Dictionary<int, NpcParseInfo> _npcInfos;
 
+    // 职业配置ID到职业表记录的索引。
     private Dictionary<int, ProfessionInfo> _professionInfos;
 
+    // 任务配置ID到任务表记录的索引。
     private Dictionary<int, QuestInfo> _questInfos;
 
+    // 角色等级表的原始ID索引。
     private Dictionary<int, RoleLevelInfo> _roleLevelInfos;
 
+    // 角色等级属性表的原始ID索引。
     private Dictionary<int, RoleLevelAttributeInfo> _roleLevelAttributeInfos;
 
     // 按表现配置 ID 索引的角色表现表，初始化后供运行时查询模型、动画和碰撞参数。
     private Dictionary<int, PresentTable> _presentTables;
 
+    // 商店主表ID到商店配置的索引。
     private Dictionary<int, ShopTable> _shopTables;
 
+    // 商品GoodsId到原始商品配置的索引。
     private Dictionary<int, ShopItemInfo> _shopItemInfos;
 
+    // 次数表索引，查询时再按业务分类和 GoodsId 匹配。
     private Dictionary<int, CountInfo> _countInfos;
 
     // 外层按商店主表 ID 分组，内层按商店商品配置 ID 索引。
@@ -59,7 +74,7 @@ public class LubanMgr:Singleton<LubanMgr>
     /// </summary>
     public void Init()
     {
-        // 服务部署时优先从输出目录读取全部表数据；旧 Unity 开发目录仍可回退读取。
+        // 服务部署时优先从输出目录读取全部表数据；项目源目录作为本机开发时的回退位置。
         string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
             "LubanManage", "Tb");
         if (!File.Exists(Path.Combine(dataDirectory, "tbskilleffectinfo.bytes")))
@@ -294,7 +309,7 @@ public class LubanMgr:Singleton<LubanMgr>
 
     /// <summary>
     /// 将普通物品和武器配置汇总为统一的物品配置集合。
-    /// 同一个配置 ID 只能属于一个物品大类，否则商城无法仅凭 ItemId 判断商品类型。
+    /// 两表共用配置ID索引；重复ID会记录警告，并由后加入的装备配置覆盖普通物品。
     /// </summary>
     private static Dictionary<int, ItemConfigBase> CreateItemConfigInfos(
         Dictionary<int, ItemInfo> itemInfos,
@@ -321,6 +336,7 @@ public class LubanMgr:Singleton<LubanMgr>
         return itemConfigInfos;
     }
 
+    /// <summary>插入统一物品配置；同ID已存在时记录警告并采用后加入的记录。</summary>
     private static void AddItemConfig(Dictionary<int, ItemConfigBase> itemConfigInfos, ItemConfigBase itemConfig)
     {
         if (itemConfigInfos.TryGetValue(itemConfig.ItemId, out ItemConfigBase existingConfig))
@@ -421,11 +437,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 物品相关
+    /// <summary>返回普通物品原始索引，调用方读取时应保留配置不变。</summary>
     public Dictionary<int, ItemInfo> GetItemInfos()
     {
         return _itemInfos;
     }
 
+    /// <summary>只在普通物品表按配置ID查找，未找到返回 null；装备请走统一物品查询。</summary>
     public ItemInfo GetItemInfoById(int id)
     {
         if (_itemInfos != null && _itemInfos.TryGetValue(id, out ItemInfo info))
@@ -460,6 +478,7 @@ public class LubanMgr:Singleton<LubanMgr>
         return itemConfig.PackType;
     }
 
+    /// <summary>返回普通物品和装备合并的配置索引，未初始化时为 null。</summary>
     public Dictionary<int, ItemConfigBase> GetItemConfigInfos()
     {
         return _itemConfigInfos;
@@ -487,11 +506,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 装备相关
+    /// <summary>返回装备原始配置索引。</summary>
     public Dictionary<int, EquipInfo> GetEquipInfos()
     {
         return _equipInfos;
     }
 
+    /// <summary>按装备配置ID读取原始记录，未找到返回 null。</summary>
     public EquipInfo GetEquipInfoById(int id)
     {
         if (_equipInfos != null && _equipInfos.TryGetValue(id, out EquipInfo info))
@@ -503,11 +524,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 基因相关
+    /// <summary>返回装备词条的原始配置索引。</summary>
     public Dictionary<int, Gene> GetGeneInfos()
     {
         return _geneInfos;
     }
 
+    /// <summary>按词条配置ID查询，未找到返回 null。</summary>
     public Gene GetGeneInfoById(int id)
     {
         if (_geneInfos != null && _geneInfos.TryGetValue(id, out Gene info))
@@ -519,11 +542,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region NPC 相关
+    /// <summary>返回已解析坐标及商店关联的NPC索引。</summary>
     public Dictionary<int, NpcParseInfo> GetNpcInfos()
     {
         return _npcInfos;
     }
 
+    /// <summary>按NPC配置ID读取解析后的配置，未找到返回 null。</summary>
     public NpcParseInfo GetNpcInfoById(int id)
     {
         if (_npcInfos != null && _npcInfos.TryGetValue(id, out NpcParseInfo info))
@@ -535,11 +560,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 职业相关
+    /// <summary>返回职业配置索引。</summary>
     public Dictionary<int, ProfessionInfo> GetProfessionInfos()
     {
         return _professionInfos;
     }
 
+    /// <summary>按职业配置ID查询，未找到返回 null。</summary>
     public ProfessionInfo GetProfessionInfoById(int id)
     {
         if (_professionInfos != null && _professionInfos.TryGetValue(id, out ProfessionInfo info))
@@ -551,11 +578,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 任务相关
+    /// <summary>返回任务配置索引。</summary>
     public Dictionary<int, QuestInfo> GetQuestInfos()
     {
         return _questInfos;
     }
 
+    /// <summary>按任务配置ID查询，未找到返回 null。</summary>
     public QuestInfo GetQuestInfoById(int id)
     {
         if (_questInfos != null && _questInfos.TryGetValue(id, out QuestInfo info))
@@ -567,11 +596,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 角色等级相关
+    /// <summary>返回角色等级表的原始索引。</summary>
     public Dictionary<int, RoleLevelInfo> GetRoleLevelInfos()
     {
         return _roleLevelInfos;
     }
 
+    /// <summary>按等级表的记录ID查询，未找到返回 null。</summary>
     public RoleLevelInfo GetRoleLevelInfoById(int id)
     {
         if (_roleLevelInfos != null && _roleLevelInfos.TryGetValue(id, out RoleLevelInfo info))
@@ -581,11 +612,13 @@ public class LubanMgr:Singleton<LubanMgr>
         return null;
     }
 
+    /// <summary>返回角色等级属性表的原始索引。</summary>
     public Dictionary<int, RoleLevelAttributeInfo> GetRoleLevelAttributeInfos()
     {
         return _roleLevelAttributeInfos;
     }
 
+    /// <summary>按等级属性表的记录ID查询，未找到返回 null。</summary>
     public RoleLevelAttributeInfo GetRoleLevelAttributeInfoById(int id)
     {
         if (_roleLevelAttributeInfos != null && _roleLevelAttributeInfos.TryGetValue(id, out RoleLevelAttributeInfo info))

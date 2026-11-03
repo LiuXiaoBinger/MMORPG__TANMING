@@ -5,7 +5,7 @@ using Ethan.ActionEditor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>技能窗口的RO轨道扩展，复用原时间轴、事务、剪贴板和保存生命周期。</summary>
+/// <summary>把 RO 的变色、施法条、Buff、镜头等事件接入时间轴，支持添加、删除、拖动、属性编辑和复制粘贴。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>RO事件末尾追加的编辑余量，单位时间轴帧，与原轨道的五帧余量一致。</summary>

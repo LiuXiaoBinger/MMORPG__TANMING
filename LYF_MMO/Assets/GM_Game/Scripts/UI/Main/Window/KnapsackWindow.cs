@@ -5,30 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 背包窗口（虚拟列表实现）
-///
-/// 【核心设计：为什么用虚拟列表？】
-/// 传统做法：背包有 500 个物品，就创建 500 个 Slot 格子。
-///   问题：内存占用大、初始化慢、滚动时所有格子都在场景里。
-///
-/// 虚拟列表做法：只创建"可视区域 + 上下缓冲行"的格子（比如 5 行 x 5 列 = 25 个），
-///   500 个物品也只用 25 个格子，滚动时复用这些格子，重新绑定不同物品的数据。
-///   Content 的高度按 500 个格子算，这样 ScrollRect 能正确滚动。
-///
-/// 【关键组件分工】
-/// - _content：所有格子的父节点，高度由物品总数决定（撑起滚动范围）
-/// - _slotTemplate：格子模板，首次创建和对象池扩容时用
-/// - _scrollRect：提供滚动事件和可视区域尺寸
-/// - _gridLayout：只读配置（格子尺寸、间距、列数），但实际排版由代码手动计算
-/// - _activeSlots：当前可见的格子列表（数量固定，不随物品数增长）
-/// - _slotPool：被回收的格子栈，滚动时从这里取出来复用
-///
-/// 【滚动时发生了什么？】
-/// 1. 用户拖动 ScrollRect → OnScrollChanged 触发
-/// 2. 计算当前第一行是第几行（GetFirstVisibleRow）
-/// 3. 如果行号没变，什么都不做（避免重复刷新）
-/// 4. 如果行号变了，把 _activeSlots 里的格子依次绑定到新的物品数据（BindSlot）
-/// 5. 格子的位置也按新的行号重新计算（左上角原点 + 行列偏移）
+/// 背包的可滚动格子窗口，只显示控制器给出的物品和容量。
+/// Content 高度代表全部逻辑格子，实际只保留视口加缓冲行需要的格子实例；滚动时把这些实例换绑到新的逻辑格号。
+/// 逻辑格数至少 81，并覆盖已开容量和最高物品格号；实例数随视口、列数和逻辑格数计算，不是固定数量。
+/// 分类按钮只通知控制器切换数据；本窗口负责位置、图标、数量及滚动展示。
 /// </summary>
 public class KnapsackWindow : WindowBase
 {
@@ -56,13 +36,14 @@ public class KnapsackWindow : WindowBase
     // 正式逻辑以服务器返回的已开格子数为准，默认至少显示 81 格。
     [SerializeField, Header("空背包保底格子数"), Min(1)] private int _minimumSlotCount = 1;
 
-    // 可视区域外额外保留的行数，减少滚动时的格子复用频率。
-    // 比如可视区 5 行，缓冲 1 行，就创建 6 行格子，滚动半行内不需要换数据。
+    // 视口外额外创建的缓冲行数，补足边缘显示；首行变化时仍会重绑活跃格子。
     [SerializeField, Header("虚拟列表缓冲行"), Min(0)] private int _bufferRowCount = 1;
 
     // 顶部货币显示
+    /// <summary>预留金币文本，本文件当前未向它写入数值。</summary>
     [SerializeField, Header("金币")] private TMP_Text _texGold;
 
+    /// <summary>预留灵石文本，本文件当前未向它写入数值。</summary>
     [SerializeField, Header("灵石")] private TMP_Text _texLs;
 
     // ============================================================
@@ -70,48 +51,62 @@ public class KnapsackWindow : WindowBase
     // ============================================================
     // 五个分类：普通背包、装备、消耗品、材料、当前装备。
     [Header("背包分类按钮")]
+    /// <summary>普通背包分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnAll;
 
+    /// <summary>装备分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnEquip;
 
+    /// <summary>消耗品分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnConsume;
 
+    /// <summary>材料分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnMaterial;
 
+    /// <summary>当前穿戴分类按钮，只负责发出分类切换。</summary>
     [SerializeField] private Button _btnCurrtEquip;
 
     // 每个分类有"选中态"和"未选中态"两个 GameObject，切换时控制显隐
     [Header("背包分类选中状态")]
+    /// <summary>普通背包页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _allOff;
 
+    /// <summary>普通背包页签的选中外观节点。</summary>
     [SerializeField] private GameObject _allOn;
 
+    /// <summary>装备页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _equipOff;
 
+    /// <summary>装备页签的选中外观节点。</summary>
     [SerializeField] private GameObject _equipOn;
 
+    /// <summary>消耗品页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _consumeOff;
 
+    /// <summary>消耗品页签的选中外观节点。</summary>
     [SerializeField] private GameObject _consumeOn;
 
+    /// <summary>材料页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _materialOff;
 
+    /// <summary>材料页签的选中外观节点。</summary>
     [SerializeField] private GameObject _materialOn;
 
+    /// <summary>当前穿戴页签的未选中外观节点。</summary>
     [SerializeField] private GameObject _currtEquipOff;
 
+    /// <summary>当前穿戴页签的选中外观节点。</summary>
     [SerializeField] private GameObject _currtEquipOn;
 
     // ============================================================
     // 三、运行时状态字段
     // ============================================================
 
-    // 虚拟列表当前持有的可见格子，数量只和可视区域有关，不随物品总数增长。
-    // 比如 500 个物品，这里可能只有 25 个格子对象。
+    // 当前用于视口和缓冲行的格子实例；数量取逻辑总格数与视口需求数的较小值。
     private readonly List<KnapsackSlotWidget> _activeSlots = new List<KnapsackSlotWidget>();
 
-    // 格子对象池：切换分类、窗口关闭或可见行减少时，格子会回收并等待复用。
-    // 滚动时新进入可视区的格子优先从这里取，避免反复 Instantiate。
+    // 刷新布局后不再需要的格子放到这里；以后布局扩容时取出。
+    // 普通滚动直接重绑 _activeSlots，关闭窗口也不会把它们全部回收。
     private readonly Stack<KnapsackSlotWidget> _slotPool = new Stack<KnapsackSlotWidget>();
 
     // 读取格子尺寸、间距、边距和列数配置。
@@ -129,7 +124,7 @@ public class KnapsackWindow : WindowBase
     // 当前正在展示的独立背包分类（普通背包/装备/消耗品/材料/当前装备）。
     private KnapsackType _currtType = KnapsackType.RolePackPlain;
 
-    // 用于计算 Content 高度的逻辑格子总数，即服务器确认已经开通的格子数量。
+    // 逻辑格子总数：至少 81 格，并覆盖已开容量和当前物品最大格号，用它计算滚动高度。
     private int _virtualSlotCount;
 
     // 当前布局可容纳的列数（由 GridLayoutGroup 配置或视口宽度计算）。
@@ -139,7 +134,7 @@ public class KnapsackWindow : WindowBase
     private int _visibleRowCount;
 
     // 上次已绑定到对象池格子的首行，避免同一行重复刷新。
-    // 滚动时如果首行没变，直接 return，不做任何更新。
+    // 普通滚动首行未变时跳过；数据或布局刷新可通过 forceRefresh 强制重绑。
     private int _firstVisibleRow = -1;
 
     // 防止 Awake、OnEnable 与 ReFreshUI 重复注册事件和回收模板。
@@ -160,12 +155,14 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     #region 生命周期
+    /// <summary>完成一次性事件和格子池初始化，再按当前布局显示背包。</summary>
     private void Awake()
     {
         // 首次初始化：注册事件、回收模板、计算布局、刷新列表
         EnsureInitialized();
     }
 
+    /// <summary>窗口重新显示时按当前视口尺寸重新计算实例与滚动高度。</summary>
     private void OnEnable()
     {
         // 窗口重新显示时再刷新一次，确保使用当前 ScrollRect 的实际尺寸。
@@ -183,6 +180,7 @@ public class KnapsackWindow : WindowBase
         {
             return;
         }
+        // 当前订阅快照，交由控制器消费背包变化。
         Action handler = FrameUpdated;
         if (handler != null)
         {
@@ -190,6 +188,7 @@ public class KnapsackWindow : WindowBase
         }
     }
 
+    /// <summary>注销分类与滚动监听，清空对外事件引用；实例由窗口对象生命周期清理。</summary>
     private void OnDestroy()
     {
         if (_initialized)
@@ -218,6 +217,7 @@ public class KnapsackWindow : WindowBase
     public void RefreshSlot(int slotIndex, KnapsackSlotViewData itemData)
     {
         EnsureInitialized();
+        // 格号对应的旧数据，用于判断本次是否仅数量改变。
         KnapsackSlotViewData oldData = null;
         _displayItemsBySlot.TryGetValue(slotIndex, out oldData);
         if (itemData == null)
@@ -229,7 +229,9 @@ public class KnapsackWindow : WindowBase
             _displayItemsBySlot[slotIndex] = itemData;
         }
 
+        // 活跃实例列表第一个对象当前代表的逻辑格号。
         int firstVirtualIndex = _firstVisibleRow * _columnCount;
+        // 将逻辑格号换算为活跃实例下标，屏幕外只更新数据缓存。
         int poolIndex = slotIndex - firstVirtualIndex;
         if (poolIndex < 0 || poolIndex >= _activeSlots.Count)
         {
@@ -249,7 +251,7 @@ public class KnapsackWindow : WindowBase
         BindSlot(_activeSlots[poolIndex], slotIndex, countOnly);
     }
 
-    /// <summary>更新当前分类容量；容量变化才重新计算虚拟列表高度。</summary>
+    /// <summary>保存非负的当前分类容量并重算布局；即使容量值没变也会刷新。</summary>
     public void UpdateCapacity(int openedSlotCount)
     {
         EnsureInitialized();
@@ -271,13 +273,8 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     /// <summary>
-    /// 刷新当前分类的完整流程：
-    /// 1. 获取当前分类的物品列表
-    /// 2. 计算列数、逻辑格子总数、可见行数
-    /// 3. 确保可见格子数量足够（不够就创建，多了就回收）
-    /// 4. 更新 Content 高度（撑起滚动范围）
-    /// 5. 仅在明确要求时滚动到底部，普通刷新保持当前位置
-    /// 6. 刷新可见格子的数据绑定
+    /// 使用已经缓存的物品格号和容量重算列数、逻辑格数与视口行数，调整实例数量及滚动高度。
+    /// 按参数决定是否滚底，最后强制刷新可见格子；这里不向控制器重新取数据。
     /// </summary>
     /// <param name="scrollToNewest">true=明确要求定位到底部，false=保持当前位置</param>
     private void RefreshCurrentType(bool scrollToNewest = false)
@@ -289,10 +286,10 @@ public class KnapsackWindow : WindowBase
 
         // 2. 计算布局参数
         _columnCount = GetColumnCount(_gridLayout);           // 列数
-        _virtualSlotCount = GetVirtualSlotCount(); // 组件确认的已开格子总数
+        _virtualSlotCount = GetVirtualSlotCount(); // 能覆盖容量和物品的逻辑格子总数
         _visibleRowCount = GetVisibleRowCount();               // 可视行数
 
-        // 3. 500 件物品只会创建首屏加缓冲行的 Slot，剩余物品由 Content 高度表示。
+        // 实例只覆盖视口与缓冲行，其他逻辑格子仅通过 Content 高度参与滚动。
         EnsureVisibleSlotCount();
 
         // 4. 更新 Content 高度，让 ScrollRect 知道总共有多少可滚动内容
@@ -314,7 +311,7 @@ public class KnapsackWindow : WindowBase
 
     /// <summary>
     /// 刷新可见格子的数据绑定。
-    /// 核心优化：如果首行号没变，直接 return，不做任何更新。
+    /// 普通滚动且首行未变时跳过；forceRefresh 为 true 时仍会重绑。
     /// </summary>
     /// <param name="forceRefresh">true=强制刷新（切换分类/新数据时），false=只在行号变化时刷新</param>
     private void RefreshVisibleSlots(bool forceRefresh)
@@ -349,8 +346,7 @@ public class KnapsackWindow : WindowBase
 
     /// <summary>
     /// 根据逻辑格子总数设置 Content 的高度。
-    /// 这是虚拟列表能滚动的关键：Content 很高（比如 500 格的高度），
-    /// 但实际只有 25 个格子对象挂在上面。
+    /// Content 表示全部逻辑行的高度，实际格子对象只覆盖视口和缓冲行。
     /// </summary>
     private void UpdateContentHeight(int slotCount)
     {
@@ -419,12 +415,12 @@ public class KnapsackWindow : WindowBase
     }
 
     /// <summary>
-    /// 计算逻辑格子总数（用于设置 Content 高度）。
-    /// 把物品数向上取整到完整行，比如 12 个物品 5 列 → 15 格（3 整行）。
-    /// 这样最后一行不会出现"缺几格显示成白色空洞"的问题。
+    /// 取保底格数、已开容量、最高已占格号加一的最大值，不在这里补齐整行。
+    /// 后续计算 Content 高度时才将逻辑格数向上换算为行数。
     /// </summary>
     private int GetVirtualSlotCount()
     {
+        // 最高物品格号加一，确保显示范围包含位置稀疏的物品。
         int highestOccupiedSlotCount = GetHighestOccupiedSlotCount();
         return Mathf.Max(GetMinimumSlotCount(), _openedSlotCount,
             highestOccupiedSlotCount);
@@ -435,11 +431,14 @@ public class KnapsackWindow : WindowBase
     /// </summary>
     private int GetHighestOccupiedSlotCount()
     {
+        // 遍历过程中找到的最大占用范围，空背包返回零。
         int highestSlotCount = 0;
+        // 缓存物品的引用快照，按每项 SlotIndex 计算而非列表顺序。
         List<KnapsackSlotViewData> itemList =
             new List<KnapsackSlotViewData>(_displayItemsBySlot.Values);
         for (int index = 0; index < itemList.Count; index++)
         {
+            // 当前物品摘要，其中 SlotIndex 是该分类内的逻辑格号。
             KnapsackSlotViewData item = itemList[index];
             if (item != null)
             {
@@ -469,9 +468,11 @@ public class KnapsackWindow : WindowBase
         }
 
         // 灵活列数模式：按视口宽度计算
+        // 视口扣除左右边距后可排格子的宽度。
         float availableWidth =
             _scrollRect.viewport.rect.width
             - grid.padding.left - grid.padding.right;
+        // 一列占用的宽度，包含格子宽度及列间距。
         float columnWidth = grid.cellSize.x + grid.spacing.x;
         if (columnWidth <= 0f)
         {
@@ -490,6 +491,7 @@ public class KnapsackWindow : WindowBase
             return 1;
         }
 
+        // 一行格子与行间距合计的 UI 高度。
         float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
         if (rowHeight <= 0f)
         {
@@ -541,6 +543,7 @@ public class KnapsackWindow : WindowBase
             return 0;
         }
 
+        // 一行格子与行间距合计的 UI 高度。
         float rowHeight = _gridLayout.cellSize.y + _gridLayout.spacing.y;
 
         // 总行数（用于限制首行最大值，避免滚到空白区域）
@@ -580,7 +583,8 @@ public class KnapsackWindow : WindowBase
         {
             for (int index = 0; index < items.Count; index++)
             {
-                KnapsackSlotViewData item = items[index];
+                // 当前物品摘要，其中 SlotIndex 是该分类内的逻辑格号。
+            KnapsackSlotViewData item = items[index];
                 if (item != null)
                 {
                     _displayItemsBySlot[item.SlotIndex] = item;
@@ -637,6 +641,7 @@ public class KnapsackWindow : WindowBase
     // 七、分类 Tab 按钮事件绑定
     // ============================================================
 
+    /// <summary>为五个分类按钮注册对应选择入口。</summary>
     private void BindTabButtons()
     {
         if (_btnAll != null) _btnAll.onClick.AddListener(SelectAll);
@@ -646,6 +651,7 @@ public class KnapsackWindow : WindowBase
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.AddListener(SelectCurrtEquip);
     }
 
+    /// <summary>仅移除本窗口添加的五个分类监听。</summary>
     private void UnbindTabButtons()
     {
         if (_btnAll != null) _btnAll.onClick.RemoveListener(SelectAll);
@@ -655,6 +661,7 @@ public class KnapsackWindow : WindowBase
         if (_btnCurrtEquip != null) _btnCurrtEquip.onClick.RemoveListener(SelectCurrtEquip);
     }
 
+    /// <summary>注册滚动位置变化，事件参数不用，实际位置从 Content 读取。</summary>
     private void BindScrollRect()
     {
         if (_scrollRect != null)
@@ -664,6 +671,7 @@ public class KnapsackWindow : WindowBase
         }
     }
 
+    /// <summary>注销本窗口的滚动刷新回调。</summary>
     private void UnbindScrollRect()
     {
         if (_scrollRect != null)
@@ -678,18 +686,23 @@ public class KnapsackWindow : WindowBase
 
     // 五个按钮的快捷方法，都调用 SelectType 传入对应的独立容器类型。
     // SelectAll 保留旧方法名以兼容预制体事件绑定，实际映射为普通背包页。
+    /// <summary>选择普通背包容器，旧 All 名称不表示合并所有分类。</summary>
     private void SelectAll() => SelectType(KnapsackType.RolePackPlain);
 
+    /// <summary>选择未穿戴装备的背包分类。</summary>
     private void SelectEquip() => SelectType(KnapsackType.RolePackEquip);
 
+    /// <summary>选择消耗品背包分类。</summary>
     private void SelectConsume() => SelectType(KnapsackType.RolePackConsume);
 
+    /// <summary>选择材料背包分类。</summary>
     private void SelectMaterial() => SelectType(KnapsackType.RolePackMaterial);
 
+    /// <summary>选择当前穿戴装备容器。</summary>
     private void SelectCurrtEquip() => SelectType(KnapsackType.RoleCurrtEquipPack);
 
     /// <summary>
-    /// 切换背包分类：更新选中态、重新计算布局、回到顶部、刷新可见格子。
+    /// 切换分类并更新按钮外观，随后通知 CategorySelected；数据获取和后续滚动定位由控制器处理。
     /// </summary>
     private void SelectType(KnapsackType type)
     {
@@ -701,6 +714,7 @@ public class KnapsackWindow : WindowBase
 
         _currtType = type;
         SetTabVisuals();       // 更新按钮选中/未选中图片
+        // 分类变化的控制器订阅快照。
         Action<KnapsackType> handler = CategorySelected;
         if (handler != null)
         {
@@ -751,6 +765,7 @@ public class KnapsackWindow : WindowBase
             return;
         }
 
+        // 忽略自动布局的标记组件，实际坐标由 BindSlot 设置。
         LayoutElement layoutElement = slot.GetComponent<LayoutElement>();
         if (layoutElement == null)
         {
@@ -762,15 +777,14 @@ public class KnapsackWindow : WindowBase
     }
 
     /// <summary>
-    /// 确保活跃格子数量 = min(逻辑格子总数, 可视行+缓冲行)。
-    /// - 不够：从对象池取（或新建）
-    /// - 多了：回收到对象池
-    /// 这是虚拟列表的关键：格子数量永远只和屏幕大小有关，和物品总数无关。
+    /// 把活跃格子数量调整为 min(逻辑格子总数, 列数 × (可视行数 + 缓冲行数))。
+    /// 不足时从池取或创建，多余时回收；普通滚动不会调用这里调整数量。
     /// </summary>
     private void EnsureVisibleSlotCount()
     {
         // 活跃格子数只覆盖可视行与缓冲行，而非整个背包。
         int maxVisibleSlots = _columnCount * (_visibleRowCount + _bufferRowCount);
+        // 本次需要保留的实例数，不超过逻辑格子总数。
         int requiredSlotCount = Mathf.Min(_virtualSlotCount, maxVisibleSlots);
 
         // 不够就创建/取出
@@ -782,6 +796,7 @@ public class KnapsackWindow : WindowBase
         // 多了就回收
         while (_activeSlots.Count > requiredSlotCount)
         {
+            // 从活跃列表尾部回收超出视口需求的实例。
             int lastIndex = _activeSlots.Count - 1;
             ReleaseSlot(_activeSlots[lastIndex]);
             _activeSlots.RemoveAt(lastIndex);
@@ -796,7 +811,7 @@ public class KnapsackWindow : WindowBase
     /// </summary>
     /// <param name="slot">要绑定的格子</param>
     /// <param name="virtualIndex">逻辑索引（0 = 第一行第一列）</param>
-    /// <param name="itemList">当前分类的物品列表</param>
+    /// <param name="countOnly">true 只更新当前物品数量；false 完整刷新图标等数据。</param>
     private void BindSlot(KnapsackSlotWidget slot, int virtualIndex, bool countOnly)
     {
         // 超出逻辑格子总数的格子（缓冲行多出来的）直接隐藏
@@ -829,6 +844,7 @@ public class KnapsackWindow : WindowBase
             _gridLayout.padding.left + column * (_gridLayout.cellSize.x + _gridLayout.spacing.x),
             -_gridLayout.padding.top - row * (_gridLayout.cellSize.y + _gridLayout.spacing.y));
 
+        // 当前逻辑格号上的物品；缺少条目表示显示空格。
         KnapsackSlotViewData item = null;
         _displayItemsBySlot.TryGetValue(virtualIndex, out item);
         if (item != null)
@@ -870,11 +886,11 @@ public class KnapsackWindow : WindowBase
     }
 
     /// <summary>
-    /// 滚动到底部。获得新物品时调用，让新添加的格子立即可见。
+    /// 按调用方要求定位列表底部；物品按格号分布，因此底部不一定是本次新增物品的位置。
     /// </summary>
     private void ResetScrollToBottom()
     {
-        // 新增物品后定位到最后一行，让刚添加的格子立即可见。
+        // 更新布局后定位到列表末尾，下次刷新从新的首行重新绑定。
         Canvas.ForceUpdateCanvases();
         if (_scrollRect != null)
         {

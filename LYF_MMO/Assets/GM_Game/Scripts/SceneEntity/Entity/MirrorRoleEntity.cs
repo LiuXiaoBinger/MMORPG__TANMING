@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 镜像角色实体，对应参考项目 MirrorRoleBuilder。
-/// 用于技能分身、镜像幻影等场景，外观与玩家角色一致但无真实属性。
+/// 镜像角色的实体类型，使用 MEntity 的模型与组件管理。
+/// 本类只指定 MirrorRole 类别，外观与属性由其他数据入口提供。
 /// </summary>
 public sealed class MirrorRoleEntity : MEntity
 {

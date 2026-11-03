@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-/// <summary>共用地图的纯C#导航查询；沿用RO的PathFind/TrySetHeight入口，提供三角走廊A*与共享边路点。</summary>
+/// <summary>在三角网格上寻找路线：先用 A* 找出经过哪些相邻三角形，再沿公共边计算转弯点和高度。</summary>
 public sealed class MNavigation
 {
 
@@ -18,7 +18,7 @@ public sealed class MNavigation
     /// <summary>A*各三角形从起点累计的路径代价。</summary>
     private readonly float[] _costs;
 
-    /// <summary>A*各三角形的总代价g+h，供二叉堆排序。</summary>
+    /// <summary>到达每个三角形的已走距离，加上预计剩余距离；每次优先检查总值最小的三角形。</summary>
     private readonly float[] _scores;
 
     /// <summary>本次查询首次进入各三角形的门户位置，沿RO按此位置累计路程，避免长细面的重心绕路代价。</summary>
@@ -30,13 +30,13 @@ public sealed class MNavigation
     /// <summary>各三角形前驱到自身所穿过的共享边。</summary>
     private readonly MNavigationPortal[] _parentPortals;
 
-    /// <summary>已出开放表并完成扩展的三角形标记。</summary>
+    /// <summary>本次搜索中已经检查过其相邻三角形的标记，不再重复扩展。</summary>
     private readonly bool[] _closed;
 
     /// <summary>三角形在开放堆中的下标，-1表示当前不在堆内。</summary>
     private readonly int[] _heapIndices;
 
-    /// <summary>当前同步查询的最小代价堆，不跨线程并发使用同一查询对象。</summary>
+    /// <summary>尚待搜索的三角形编号，按预计总路程从小到大维护；同一对象不能同时查询多条路线。</summary>
     private readonly List<int> _openList = new List<int>();
     #endregion
 
@@ -202,7 +202,7 @@ public sealed class MNavigation
     }
 
     #region 查询与判定
-    /// <summary>把世界点吸附到搜索半盒内的最近导航面，按三维距离保留最近高度层。</summary>
+    /// <summary>在以 point 为中心、halfExtents 为各轴半尺寸的盒子里找最近导航面，并把 point 移到面上。</summary>
     /// <param name="point">输入世界点；成功时改为网格上的最近三维位置。</param>
     /// <param name="halfExtents">XYZ搜索盒半尺寸，单位为世界米。</param>
     public bool TrySetHeight(ref MNavigationPoint point, MNavigationPoint halfExtents)
@@ -285,7 +285,7 @@ public sealed class MNavigation
         Connect(first, second, a, b);
     }
 
-    /// <summary>在搜索半盒内找三维距离最近的三角投影。</summary>
+    /// <summary>在给定搜索范围内，找离 point 最近的三角形表面位置；没有找到返回 -1。</summary>
     /// <param name="point">待定位的世界坐标。</param>
     /// <param name="halfExtents">各轴允许的最大坐标偏差。</param>
     /// <param name="closest">成功时的世界导航面位置。</param>
@@ -331,7 +331,7 @@ public sealed class MNavigation
         return nearest;
     }
 
-    /// <summary>沿RO直线路点职责用标准门户漏斗提取走廊转角，不生成样条或边中点锯齿。</summary>
+    /// <summary>将连续公共边看作一连串门口，逐步收窄可直达的左右范围；范围交叉时留下必要转角。</summary>
     /// <param name="left">按走向排序的每个门户左端点。</param>
     /// <param name="right">按走向排序的每个门户右端点。</param>
     /// <param name="corners">输出起点、必要转角和终点。</param>
@@ -594,7 +594,7 @@ public sealed class MNavigation
         _triangles[second.Triangle].Portals.Add(new MNavigationPortal { Triangle = first.Triangle, A = a, B = b });
     }
 
-    /// <summary>从A*前驱恢复走廊，漏斗提取转角后补齐各共享边交点高度。</summary>
+    /// <summary>从终点沿前驱记录还原经过的三角形，再提取转角，补上穿过各公共边时的真实高度。</summary>
     /// <param name="startTriangle">起点所在三角形。</param>
     /// <param name="endTriangle">终点所在三角形。</param>
     /// <param name="start">吸附后的起点。</param>
@@ -688,7 +688,7 @@ public sealed class MNavigation
         return Math.Abs(a.X - b.X) < 0.00001f && Math.Abs(a.Z - b.Z) < 0.00001f;
     }
 
-    /// <summary>计算XZ有向面积的相反数，与Detour门户漏斗的方向约定一致。</summary>
+    /// <summary>计算 XZ 平面的有符号面积量；这里只用符号判断三个点的左右关系，符号约定与漏斗算法一致。</summary>
     /// <param name="a">面积基点。</param>
     /// <param name="b">第一条射线端点。</param>
     /// <param name="c">第二条射线端点。</param>

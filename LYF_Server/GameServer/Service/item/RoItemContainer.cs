@@ -9,6 +9,7 @@ public class RoItemContainer
 {
 
     #region 字段与属性
+    // 自动寻找空格的位置参数，-1 不是实际格子下标。
     public const int InvalidItemPos = -1;
 
     // 按实例 UID 保存容器内物品；外部只能通过事务接口修改，避免绕过脏标记。
@@ -17,27 +18,34 @@ public class RoItemContainer
     // 容器当前已开启的格子数，扩容由 RoItemComponent 统一校验。
     private int _containerSize;
 
+    /// <summary>当前容器对应的背包分类，创建后不再改变。</summary>
     public KnapsackType ContainerType { get; private set; }
 
+    /// <summary>拥有该容器的在线角色，放入物品时用于填写归属ID。</summary>
     public OnlineRole Role { get; private set; }
 
     /// <summary>只读物品视图，禁止业务模块直接写入容器字典。</summary>
     public IReadOnlyDictionary<long, ItemBase> Items { get { return _items; } }
 
+    /// <summary>已开启的格子数；基础容器用 0 表示不限制数量。</summary>
     public int ContainerSize { get { return _containerSize; } }
     #endregion
 
+    /// <summary>只绑定容器类型和角色；容量由角色物品组件稍后设置。</summary>
     public RoItemContainer(KnapsackType containerType, OnlineRole role)
     {
         ContainerType = containerType;
         Role = role;
     }
 
+    /// <summary>进入场景的扩展入口，基础容器不执行额外操作。</summary>
     public virtual void OnEnterScene() { }
 
     #region 事件回调
+    /// <summary>物品移动结束的扩展入口，基础实现为空。</summary>
     public virtual void OnSwapEnd() { }
 
+    /// <summary>配置同步后的扩展入口，基础实现为空。</summary>
     public virtual void OnSyncLibs() { }
     #endregion
 
@@ -122,17 +130,22 @@ public class RoItemContainer
         return item != null && _items.ContainsKey(item.GetItemUID());
     }
 
+    /// <summary>读取当前配置的格子数，0 在容量检查中表示不限数量。</summary>
     public virtual int GetContainerSize() { return _containerSize; }
 
+    /// <summary>限时物品检查占位；基础实现不会自动删除过期物品。</summary>
     public virtual void CheckItemTimeEffect() { }
 
+    /// <summary>容量大于 0 且实例数达到容量时视为已满；容量为 0 时不限数量。</summary>
     public virtual bool IsFull()
     {
         return _containerSize > 0 && _items.Count >= _containerSize;
     }
 
+    /// <summary>容器属性结算扩展入口，基础实现为空。</summary>
     public virtual void CalcContainerAttr() { }
 
+    /// <summary>按正数实例UID查询原物品对象，找不到时返回 null。</summary>
     public virtual ItemBase GetItemByUid(long uid)
     {
         if (uid <= 0)
@@ -147,6 +160,7 @@ public class RoItemContainer
         return null;
     }
 
+    /// <summary>遍历容器内实例，返回格子下标匹配的第一个物品。</summary>
     public ItemBase GetItemByPos(int pos)
     {
         foreach (ItemBase item in _items.Values)
@@ -160,6 +174,7 @@ public class RoItemContainer
         return null;
     }
 
+    /// <summary>返回可容纳的新实例数；容量为 0 时用 int.MaxValue 表示不限数量。</summary>
     public int GetEmptySize()
     {
         if (_containerSize <= 0)
@@ -169,7 +184,7 @@ public class RoItemContainer
         return Math.Max(0, _containerSize - _items.Count);
     }
 
-    /// <summary>统计指定配置的数量。当前 ItemBase 没有绑定字段，因此忽略绑定筛选。</summary>
+    /// <summary>统计指定配置的数量；kItemBindNo 排除绑定物品，kItemBindIs 同时计入绑定与非绑定物品。</summary>
     public virtual int CountItem(int itemId, ItemBind enum_bind)
     {
         if (_items == null) return 0;
@@ -191,6 +206,7 @@ public class RoItemContainer
         return count;
     }
 
+    /// <summary>有限容量按 0 起逐格寻找空位；容量为 0 时直接使用当前实例数作为下标。</summary>
     protected virtual int GetEmptyPos(ItemBase item)
     {
         if (_containerSize <= 0)
@@ -221,9 +237,9 @@ public class RoItemContainer
     /// <summary>
     /// 查找同 ID 且仍有空余堆叠空间的物品。
     /// </summary>
-    /// <param name="desc"></param>
+    /// <param name="desc">待发放物品的配置ID；此处不按绑定标记筛选已有堆叠。</param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// 当前实现不抛出 NotImplementedException。
     public List<ItemDesc> FindItemForGive(ItemDesc desc)
     {
         List<ItemDesc> result = new List<ItemDesc>();
@@ -300,7 +316,7 @@ public class RoItemContainer
         return true;
     }
 
-    /// <summary>按物品 ID 移出物品。</summary>
+    /// <summary>按物品实例UID移出整个堆叠，并返回仍可供调用方使用的原对象。</summary>
     public virtual ItemBase SwapOutByUID(long itemUid)
     {
         if (itemUid <= 0 || !_items.TryGetValue(itemUid, out ItemBase item) || !CheckOut(item))
@@ -325,6 +341,7 @@ public class RoItemContainer
         return SwapOutByUID(item.GetItemUID());
     }
 
+    /// <summary>设置已开启格数，负数归为 0；这里不搬移或删除已有物品。</summary>
     public virtual void SetContainerSize(int size) { _containerSize = Math.Max(0, size); }
 
     /// <summary>仅用于登录快照重载，调用方负责确保当前没有正在执行的背包事务。</summary>
@@ -355,11 +372,13 @@ public class RoItemContainer
 
     public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason) { }
 
+    /// <summary>角色装载完成扩展入口，基础实现为空。</summary>
     public virtual void AfterInitGameRole() { }
 
+    /// <summary>角色重连扩展入口，基础实现为空。</summary>
     public virtual void Reconnect() { }
 
-    /// <summary>修改物品堆叠数量，数量小于等于零时移除物品。</summary>
+    /// <summary>按增量修改堆叠数量；变成负数则拒绝，恰好归零时移除实例，averagePrice 参数当前未使用。</summary>
     public virtual bool ModifyCount(long itemUid, long addCount, int averagePrice = 0)
     {
         ItemBase item = GetItemByUid(itemUid);
@@ -381,10 +400,13 @@ public class RoItemContainer
         return true;
     }
 
+    /// <summary>实例加入容器后的扩展入口，基础实现为空。</summary>
     protected virtual void AfterSwapIn(ItemBase item) { }
 
+    /// <summary>实例移出容器后的扩展入口，基础实现为空。</summary>
     protected virtual void AfterSwapOut(ItemBase item) { }
 
+    /// <summary>实例移出前的扩展入口，基础实现为空。</summary>
     protected virtual void BeforeSwapOut(ItemBase item) { }
     #endregion
 }
@@ -434,7 +456,7 @@ public class Warehouse : RoItemContainer
     public override bool CheckIn(ItemBase item, int pos = InvalidItemPos) { return base.CheckIn(item, pos); }
 }
 
-/// <summary>快捷栏容器。当前仅保存快捷栏物品，映射关系待协议模型接入。</summary>
+/// <summary>快捷栏容器占位；查询依赖槽位映射，但当前文件没有填充该映射的入口。</summary>
 public class ShortCutBag : RoItemContainer
 {
     public ShortCutBag(KnapsackType type, OnlineRole role) : 
@@ -443,6 +465,7 @@ public class ShortCutBag : RoItemContainer
     // 快捷栏槽位到物品实例 UID 的映射。
     private readonly Dictionary<ulong, ulong> _shortcutMap = new Dictionary<ulong, ulong>();
 
+    /// <summary>把传入的快捷栏键转换成目标物品UID，再查询本容器中的原物品对象。</summary>
     public ItemBase GetShortCutItemByUid(long uid)
     {
         if (uid <= 0 || !_shortcutMap.TryGetValue((ulong)uid, out ulong targetUid))
@@ -454,6 +477,7 @@ public class ShortCutBag : RoItemContainer
     }
 }
 
+/// <summary>货币容器的旧占位类型；工厂当前为虚拟背包创建 PlainBag，此类型中的回调均未实现。</summary>
 class MoneyBag : RoItemContainer
 {
    

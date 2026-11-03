@@ -1,6 +1,6 @@
 /// <summary>
-/// RO 状态切换许可工具。矩阵行表示当前状态，列表示目标状态。
-/// 数据逐项对应参考项目 state_machine_define.cpp 的权威许可表。
+/// 用固定表判断一种动作状态能否切到另一种状态。
+/// 行是当前状态，列是目标状态；索引顺序必须与 StateDefine 一致。
 /// </summary>
 public static class CommonStateTypeTool
 {
@@ -34,8 +34,11 @@ public static class CommonStateTypeTool
     /// <returns>允许切换返回 true，任一枚举越界或矩阵中为 false 时返回 false。</returns>
     public static bool StatePermitted(StateDefine source, StateDefine destination)
     {
+        // 当前状态对应的表行号。
         int sourceIndex = (int)source;
+        // 目标状态对应的表列号。
         int destinationIndex = (int)destination;
+        // 有效状态个数，不包括末尾的 kStateCount 标记。
         int stateCount = (int)StateDefine.kStateCount;
         // 越界枚举一律拒绝，避免数组访问异常
         if (sourceIndex < 0 || sourceIndex >= stateCount)

@@ -1,8 +1,8 @@
 using System;
 
 /// <summary>
-/// 实体事件处理器，负责保存并调用强类型事件参数回调。
-/// 封装具体的事件回调委托，使分发器可以统一管理不同类型的事件回调。
+/// 保存一个实体事件回调，供分发器以同一入口调用。
+/// 普通回调接收 IEventArg，具体参数类型由对应事件约定。
 /// </summary>
 public class MEventHandler
 {
@@ -11,6 +11,7 @@ public class MEventHandler
     /// </summary>
     private EventCallbackHandler _callbackHandler = null;
 #if LIBS_EDITOR
+        /// <summary>LIBS_EDITOR 分支保存的网络回调；当前 Invoke 不调用此字段。</summary>
         private Action<RONetEvent> onSceneTriggerObjectSync;
 #endif
 
@@ -28,6 +29,8 @@ public class MEventHandler
         _callbackHandler = callback;
     }
 #if LIBS_EDITOR
+        /// <summary>保存编辑器分支传入的网络回调，不设置普通实体事件回调。</summary>
+        /// <param name="onSceneTriggerObjectSync">要保存的网络事件处理函数。</param>
         public MEventHandler(Action<RONetEvent> onSceneTriggerObjectSync)
         {
             this.onSceneTriggerObjectSync = onSceneTriggerObjectSync;

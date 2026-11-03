@@ -12,7 +12,7 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
         return source == GameCommandSource.CenterServer && commandCode == NetDefine.CMD_RoleKnapsackInfoCode;
     }
 
-    /// <summary>装载角色背包和次数数据，并在完整装载后解除保存门闩。</summary>
+    /// <summary>装载角色背包和次数数据，全部完成后才允许在线业务改动物品并产生存档。</summary>
     /// <param name="context">中心服消息上下文。</param>
     public void OnCall(GameMessageHandlerContext context)
     {

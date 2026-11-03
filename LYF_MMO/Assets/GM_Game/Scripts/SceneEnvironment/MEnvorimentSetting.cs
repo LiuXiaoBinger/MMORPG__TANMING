@@ -1,23 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// 魔神塔场景最小环境组件。对应 RO 源工程 MEnvorimentSetting 的精简移植：
-/// 按源数据结构与调用顺序，把固定黄昏配置（主光方向、场景色、角色光、云草树环境色、
-/// 静态雾与散射参数）写入 RO 场景着色器使用的全局变量，并恢复烘焙 Lightmap 与 LightProbes。
-/// 仅覆盖本场景实际使用的通道：不含昼夜过渡、天气循环、雨雪雷电、后处理与相机控制。
-/// 与源工程唯一的生命周期差异：源工程只靠运行时 OnEnable 生效，本组件额外标记 [ExecuteAlways]，
-/// 让编辑器里打开场景、重新勾选组件、脚本重载后也自动应用同一套数据，不必先右键「应用环境配置」
-/// 才看得到烘焙光图；停用或离开时仍由 OnDisable 还原应用前状态。
-/// 自动应用只是一次性整批写入，不在 Update／OnGUI 里反复重写。
-///
-/// 与源 ResetGlobalShaderVariable 的边界说明：源工程的 ResetGlobalShaderVariable 把全局量写死成
-/// 一套「引擎默认兜底值」，因为源客户端只有这一套全局环境系统，退出即回到默认。
-/// 本组件是挂在单个场景上的独立组件，若同样写死兜底值，会把其他场景已经设置好的全局环境量冲掉。
-/// 因此停用时改为还原「首次应用前实际捕获到的原值」：既不残留本场景数据，也不覆盖别人的数据。
+/// 场景环境入口：启用时依次应用烘焙光照、时间段、天气和最终场景色。
+/// 第一次应用前保存原来的渲染设置和 Shader 全局值，停用时按保存值恢复。
+/// 编辑器和运行时都生效；只在启用或手动应用时写入，不逐帧更新，也不驱动昼夜或天气循环。
 /// </summary>
-// 标记 [ExecuteAlways] 是本任务唯一的生命周期适配：Unity 在编辑器里也会调用它的
-// OnEnable／OnDisable，因此打开场景、重新勾选组件、脚本重载后会自动应用，取消勾选或关闭场景会自动还原。
-// 不加 Update／OnGUI，避免每帧重写 937 条渲染器绑定。
+// 让编辑器打开场景、启停组件或重载脚本时，也执行环境应用与还原。
 [ExecuteAlways]
 public class MEnvorimentSetting : MonoBehaviour
 {
@@ -35,7 +23,7 @@ public class MEnvorimentSetting : MonoBehaviour
     public MLightmapData defaultLightmapData;
 
     /// <summary>
-    /// 默认时间段数据（本场景为黄昏）。非空时写入主光/可视光方向、场景色偏、云草树环境色等通道。
+    /// 默认采用的时间段数据。非空时写入主光/可视光方向、场景色偏、云草树环境色等通道。
     /// </summary>
     public MDayTimeData defaultDayTimeData;
 
@@ -266,7 +254,7 @@ public class MEnvorimentSetting : MonoBehaviour
     /// 用于改完配置后立刻重写一遍（例如只调了雾色或云速）。
     /// 顺序与源 MEnvorimentSetting 一致：烘焙光 → 时间段 → 天气 → 场景色偏。
     /// 首次调用时取一次「应用前原值」快照；之后再次调用只按当前数据重新写入，
-    /// 不再覆盖首次快照，因此改完配置再次点菜单能立即看到新结果，且停用时仍能还原到最初状态。
+    /// 不再覆盖首次快照，因此再次应用仍保留最初的全局设置；渲染器绑定的恢复要求当前分组与保存时一致。
     /// </summary>
     [ContextMenu("应用环境配置")]
     public void ApplyEnvironment()
@@ -328,7 +316,7 @@ public class MEnvorimentSetting : MonoBehaviour
             return;
         }
 
-        // 该组的逐渲染器烘焙绑定数组，长度即需要记录原值的渲染器数量（本场景 937 条）
+        // 该组的渲染器绑定记录，数组下标同时用于保存各渲染器的原值
         MRendererLightmapScale[] scales = group.lightmapScales;
         // 实际参与记录的渲染器条数，为 0 时下面两个数组留空
         int count = 0;
@@ -352,7 +340,7 @@ public class MEnvorimentSetting : MonoBehaviour
     }
 
     /// <summary>
-    /// 把被绑定渲染器的光照图下标与 UV 变换还原为记录值。
+    /// 把当前分组中渲染器的光照图下标和 UV 变换还原；分组长度与保存时不同则跳过。
     /// </summary>
     private void RestoreRendererLightmapBindings()
     {
@@ -585,7 +573,7 @@ public class MEnvorimentSetting : MonoBehaviour
     /// </summary>
     private void ApplySceneColor()
     {
-        // 最终写入 _ROCSceneColor 的色偏值，默认中灰表示不改变原色
+        // 最终写入 _ROCSceneColor 的色偏值；缺少时间段和天气覆盖时使用中灰
         Color sceneColor = Color.gray;
         if (defaultDayTimeData != null)
         {

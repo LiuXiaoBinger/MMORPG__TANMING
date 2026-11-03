@@ -2,7 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine.AI;
 
-/// <summary>将单份已烘焙的Unity导航资产导出为两端共用三角网格，不重新烘焙或修改场景。</summary>
+/// <summary>把 Unity 已烘焙的导航数据转成客户端和服务端都能读取的三角网格文件。</summary>
 public static class MNavigationMapExporter
 {
     /// <summary>临时注册所选资产并导出；仅在当前没有已加载导航网格时执行，避免混入其他地图或角色类型。</summary>

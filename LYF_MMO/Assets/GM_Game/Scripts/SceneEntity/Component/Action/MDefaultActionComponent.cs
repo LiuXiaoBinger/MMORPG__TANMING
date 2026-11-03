@@ -1,13 +1,12 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 默认动作状态组件。
-/// 实体未进入其他动作状态时停留在默认状态，根据实体是否移动自动切换 idle/move 动画。
-/// 监听移动开始/停止、战斗开始/结束事件，触发状态机标记刷新。
+/// 实体没有执行技能等专用动作时使用的默认状态。
+/// 根据移动、走跑模式、战斗待机和射击姿态选择动画；跳跃或落地动画尚未结束时暂不覆盖它。
 /// </summary>
 public sealed class MDefaultActionComponent : MBasicActionComponent
 {
-    /// <summary>默认动作组件内部的子状态机，决定当前应选用普通/战斗/自拍/搬运/射击/组合技哪一套待机与移动动画槽位。</summary>
+    /// <summary>默认动作的模式编号；当前 StateName 单独处理 Shoot，其余值走普通/战斗待机与移动分支。</summary>
     public enum State : int
     {
         /// <summary>普通待机/移动。</summary>
@@ -135,10 +134,12 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         RegisterEvent(MEventType.CombatEnded, _onCombatEnded);
     }
 
+    /// <summary>所需事件由 RegisterActionEvents 登记，此处不追加订阅。</summary>
     protected override void EventSubscribe()
     {
     }
 
+    /// <summary>登记的事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
     }
@@ -203,7 +204,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
 
     /// <summary>
     /// 逐帧更新：移动且处于跑步模式时同步动画机速度到属性跑速；
-    /// 非循环移动音效模式下，根据当前动画归一化时间是否越过脚步声时间点来触发 FootSteps。
+    /// 旧脚步点检查未关闭时，根据动画进度调用 FootSteps 维护下标；实际声音由模型声音组件播放。
     /// </summary>
     /// <param name="fDeltaT">距上一帧时间（秒）。</param>
     protected override void OnUpdate(float fDeltaT)
@@ -306,7 +307,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
     }
 
     /// <summary>
-    /// 播放一次脚步声：移动中且动画机有效时播放移动音效，并前进到下一个脚步声时间点。
+    /// 检查旧脚步点并推进下标；本方法不播放声音，普通动作声音由 SoundComponent 处理。
     /// </summary>
     private void FootSteps()
     {
@@ -325,7 +326,7 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
             return;
         }
 
-        // 当前项目尚未接入脚步音效，仅维护动画归一化进度和下一个触发下标。
+        // 此旧脚步点入口只维护进度；实际普通动作音效在 SoundComponent 按导出轨道播放。
         _footStepTimeIdx++;
         _footStepTimeIdx %= _footStepsTimes.Length;
         _lastStepTimeIdx = Entity.Model.Ator.GetCurrentAnimInfo().NormalizedTime % 1;

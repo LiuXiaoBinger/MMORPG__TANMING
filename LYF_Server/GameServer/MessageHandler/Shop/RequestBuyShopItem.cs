@@ -145,7 +145,7 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
         SendResult(context, CmdCode.Succeed, "购买成功");
     }
 
-    /// <summary>向当前客户端返回商城购买失败结果。</summary>
+    /// <summary>向当前客户端返回商城购买结果，成功与失败都使用同一个回包结构。</summary>
     /// <param name="context">当前消息及网络会话上下文。</param>
     /// <param name="code">购买错误码。</param>
     /// <param name="message">用于诊断的中文错误信息。</param>
@@ -167,7 +167,7 @@ public sealed class RequestBuyShopItem : IGameMessageHandler
         context.Transport.Send(context.Package, NetDefine.CMD_BuyShopItemCode,
             response.ToByteString());
     }
-    /// <summary>购买失败时返还已经扣除的虚拟物品，保持本次购买在内存中的原子性。</summary>
+    /// <summary>按传入清单返还虚拟物品；当前购买入口没有调用本方法，因此不代表已实现失败回滚。</summary>
     /// <param name="role">需要返还虚拟物品的在线角色。</param>
     /// <param name="spent">物品配置 ID 到已扣数量的映射。</param>
     private static void RollbackVirtualItems(OnlineRole role, Dictionary<int, long> spent)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
-/// <summary>沿 RO 目标查询职责筛选当前世界实体；本项目暂用直线距离，未接导航路程或自动战斗配置。</summary>
+/// <summary>从当前世界中筛选并排序目标；按直线距离查找，敌方目前只包括 MonsterEntity。</summary>
 public static class MSkillTargetDefine
 {
     /// <summary>取得排序后的首个候选，不保存跨场景实体引用。</summary>
@@ -116,7 +116,7 @@ public static class MSkillTargetDefine
         return result;
     }
 
-    /// <summary>保留 RO 同名血量排序接口；默认选择仍按距离，不新增设置系统。</summary>
+    /// <summary>按剩余血量比例从小到大排序；默认目标查找没有调用本方法，仍按距离排序。</summary>
     /// <param name="a">第一个候选实体。</param>
     /// <param name="b">第二个候选实体。</param>
     /// <returns>血量比例更低者优先，同值沿距离顺序。</returns>
@@ -124,7 +124,7 @@ public static class MSkillTargetDefine
     {
         // 已初始化实体使用真实血量比例，未初始化时按满血处理。
         float hpA = GetHpPercent(a);
-        // 第二个候选的当前血量比例，范围零到一。
+        // 第二个候选的当前血量除以上限，未做 0 到 1 的范围裁剪。
         float hpB = GetHpPercent(b);
         // 先比较血量比例，再以距离稳定排序。
         int result = hpA.CompareTo(hpB);
@@ -135,7 +135,7 @@ public static class MSkillTargetDefine
         return result;
     }
 
-    /// <summary>读取当前候选的真实血量比例，未初始化属性时返回一。</summary>
+    /// <summary>优先用角色基础数据计算血量比例，否则读属性组件；上限无效时返回 1，不裁剪比例范围。</summary>
     /// <param name="entity">已装配到当前世界的候选实体。</param>
     /// <returns>当前生命除以生命上限，未初始化时按满血。</returns>
     private static float GetHpPercent(MEntity entity)

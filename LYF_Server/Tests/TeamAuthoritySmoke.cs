@@ -49,7 +49,7 @@ public static class TeamAuthoritySmoke
         }
         catch (Exception ex)
         {
-            // ex 为用例执行中抛出的异常，只打印消息并计一次失败，不中断后续用例。
+            // 任一用例抛错都会进入此处并计一次失败；try内尚未执行的后续用例会跳过。
             Console.WriteLine("[EXCEPTION] " + ex.Message);
             _failures = _failures + 1;
         }
@@ -330,7 +330,7 @@ public static class TeamAuthoritySmoke
         TeamManager.Instance.LeaveTeam(1802UL);
     }
 
-    /// <summary>验证最后一名成员离队后队伍解散、实例回收。</summary>
+    /// <summary>验证最后一名成员离队后队伍记录消失、实例查询归零；不检查场景对象是否回收。</summary>
     private static void CheckLastMemberDissolve()
     {
         // 解散用例的角色：角色ID 1901，作为队伍唯一成员，离队即触发解散。
@@ -346,7 +346,7 @@ public static class TeamAuthoritySmoke
         Expect(TeamManager.Instance.GetInstanceId(1901UL) == 0UL, "解散后实例归零");
     }
 
-    /// <summary>验证重复挑战不重新分配实例，进入世界不清除已有实例。</summary>
+    /// <summary>验证重复挑战复用原实例，并把实例、地图和出生点写入角色；本用例未调用进入世界协议入口。</summary>
     private static void CheckRepeatEnterKeepsInstance()
     {
         // 重复进入用例的角色：角色ID 2001，单人成队后连续挑战两次。
@@ -371,7 +371,7 @@ public static class TeamAuthoritySmoke
         Expect(solo.mainRoleInfo.BaseInfo.Pos == TeamManager.MainCitySpawnPos, "离队后 BaseInfo.Pos 为主城真实出生点");
     }
 
-    /// <summary>验证出生点常量与场景真实坐标一致，且同队成员进入后位置完全一致。</summary>
+    /// <summary>核对出生点常量等于测试记录的预期值，并检查同队成员入场后坐标一致；此处不读取Unity场景文件。</summary>
     private static void CheckSpawnCoordinates()
     {
         // 魔神塔 RoleSpawnPoint 世界坐标来自 sc_dungeon_moshenta_001.unity。

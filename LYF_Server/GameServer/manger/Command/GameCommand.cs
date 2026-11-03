@@ -3,11 +3,12 @@ using System.Threading;
 using Google.Protobuf;
 
 /// <summary>
-/// GameServer 网络消息的不可变信封。
-/// 网络线程只创建该对象并入队，业务线程通过信封恢复协议包后执行逻辑。
+/// GameServer 跨线程传递的一条消息记录，创建后不再改写其中的协议和会话数据。
+/// 网络线程只创建该对象并入队，业务线程把记录还原成协议包后执行逻辑。
 /// </summary>
 public sealed class GameCommand
 {
+    /// <summary>跨网络线程递增的消息序号，只用于追踪本进程内的命令。</summary>
     private static long _nextSequence;
 
     /// <summary>协议号，用于模块路由。</summary>
@@ -16,7 +17,7 @@ public sealed class GameCommand
     public GameCommandSource Source { get; private set; }
     /// <summary>网关会话和 Unity 会话，用于回包及角色身份校验。</summary>
     public GameCommandSession Session { get; private set; }
-    /// <summary>网络线程复制后的协议载荷，避免跨线程持有可变网络包。</summary>
+    /// <summary>不可变的 ByteString 消息体；与原包共享字节对象，但不共享可改写的 BasePackage。</summary>
     public ByteString Payload { get; private set; }
     /// <summary>入队时间，用于后续监控消息等待时长。</summary>
     public DateTime EnqueuedAtUtc { get; private set; }
@@ -26,6 +27,12 @@ public sealed class GameCommand
     // 只读保存发送端，用于主线程执行业务后的转发或回包。
     public BaseLink Transport { get; private set; }
 
+    /// <summary>记录消息内容、返回链路、入队时间和日志序号。</summary>
+    /// <param name="commandCode">用于路由的协议号。</param>
+    /// <param name="source">发送此包的服务器类别。</param>
+    /// <param name="session">客户端与网关两层会话编号。</param>
+    /// <param name="payload">protobuf 消息字节，ByteString 本身不可变。</param>
+    /// <param name="transport">接收请求时的传输对象，供后续回包。</param>
     private GameCommand(
         int commandCode,
         GameCommandSource source,
@@ -43,7 +50,7 @@ public sealed class GameCommand
     }
 
     /// <summary>
-    /// 从网络层的 BasePackage 创建信封。BasePackage 本身不会跨线程共享。
+    /// 提取网络包的协议号、会话和不可变消息体，建立逻辑线程要处理的记录。BasePackage 本身不跨线程共享。
     /// </summary>
     public static GameCommand From(
         GameCommandSource source,

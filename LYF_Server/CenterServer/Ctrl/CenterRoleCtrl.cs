@@ -30,10 +30,10 @@ public class CenterRoleCtrl:IContainer
     #endregion
 
     /// <summary>
-    /// 角色请求进入游戏世界
+    /// 为进入世界的角色分别读取技能与背包快照，并用两种协议返回。
     /// </summary>
-    /// <param name="serverBase"></param>
-    /// <param name="basePackage"></param>
+    /// <param name="serverBase">接收游戏服请求的中心服连接，用于返回加载结果。</param>
+    /// <param name="basePackage">包含角色编号和原两层会话编号的进入世界请求。</param>
     private void OnEnterWroldHandle(BaseLink serverBase, BasePackage basePackage)
     {
         EnterWroldReq req = EnterWroldReq.Parser.ParseFrom(basePackage.Data);
@@ -106,7 +106,7 @@ public class CenterRoleCtrl:IContainer
     /// <summary>解析 GameServer 角色保存请求并投递数据库任务，网络线程不直接写库。</summary>
     private static void OnSaveRoleDataHandle(BaseLink serverBase, BasePackage basePackage)
     {
-        // 游戏服提交的角色保存数据，由数据库任务在工作线程中持久化。
+        // 游戏服提交的角色保存数据，入队后由 CenterApp 主循环调用 DBMgr.Update 顺序写入。
         SaveRoleDataReq request = SaveRoleDataReq.Parser.ParseFrom(basePackage.Data);
         DBMgr.Instance.PushTask(new CRoleWriteTask(request, serverBase, basePackage));
     }

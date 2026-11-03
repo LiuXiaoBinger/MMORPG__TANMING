@@ -12,7 +12,7 @@ public class TaskViewData
     public string TypeName;
     /// <summary>任务或目标描述文本，无描述时为空字符串。</summary>
     public string Description;
-    /// <summary>首期唯一目标行的描述文本，含当前数量与目标数量。</summary>
+    /// <summary>任务目标行的显示文字，可包含当前数量和目标数量。</summary>
     public string TargetText;
     /// <summary>任务展示状态，决定标题与进度样式。</summary>
     public TaskViewState State;
@@ -30,6 +30,6 @@ public class TaskViewData
     public bool HasReward;
     /// <summary>是否允许放弃，决定放弃按钮是否显示。</summary>
     public bool CanGiveUp;
-    /// <summary>是否需要追踪显示，不需要追踪的任务不进入快捷面板。</summary>
+    /// <summary>保留的任务追踪标志；当前 TaskMgr 的快捷列表不按此字段过滤。</summary>
     public bool NeedTrack;
 }

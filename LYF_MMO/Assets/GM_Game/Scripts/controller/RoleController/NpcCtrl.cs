@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using MMoRpgCommon;
 using UnityEngine;
 /**
-* Title:
-* Descrpiton:
+* NPC 模型侧的对话入口。
 */
 
 /// <summary>
-/// NPC 表现控制器：持有 NpcEntity 领域数据，负责走近检测并打开 NPC 对话窗口。
+/// NPC 表现控制器：保存对应的 NpcEntity，负责走近检测并打开 NPC 对话窗口。
 /// </summary>
 public class NpcCtrl : RoleCtrlBase
 {
-    /// <summary>原NPC对话允许的三维距离上限，单位米；点击导航共用这一现有范围。</summary>
+    /// <summary>允许打开对话的三维距离上限，单位为世界单位；点击 NPC 导航也使用此距离。</summary>
     public const float TalkDistance = 10f;
     /// <summary>当前 NPC 对应的领域实体数据。</summary>
     private NpcEntity _npcEntity;
@@ -33,7 +32,7 @@ public class NpcCtrl : RoleCtrlBase
         OpenTalk(mainRole);
     }*/
     
-    /// <summary>角色进入原对话距离后转向主角并打开现有NPC对话窗口。</summary>
+    /// <summary>主角位于对话距离内时，让 NPC 面向主角并打开对话窗口；过远只显示提示。</summary>
     /// <param name="mainRole">本地主角的现有表现控制器，用于读取实际碰撞后位置。</param>
     public void OpenTalk(RoleCtrlBase mainRole)
     {

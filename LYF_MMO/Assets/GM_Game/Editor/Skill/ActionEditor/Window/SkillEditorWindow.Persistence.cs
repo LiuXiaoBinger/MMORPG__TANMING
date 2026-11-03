@@ -11,7 +11,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 // The original script GUID stays on SkillEditorWindow.cs.
-/// <summary>按帧制作技能的原 Y 窗口分部；完整编辑能力与本游戏导出支持范围独立，预览使用隔离副本。</summary>
+/// <summary>负责技能配置的新建、加载、保存、撤销、重做和版本迁移，并在切换配置后重新绑定各轨道。</summary>
 public partial class SkillEditorWindow
 {
     #region 保存加载

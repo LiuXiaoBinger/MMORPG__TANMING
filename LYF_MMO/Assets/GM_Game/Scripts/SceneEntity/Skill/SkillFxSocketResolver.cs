@@ -1,12 +1,15 @@
 using UnityEngine;
 
-/// <summary>解析粒子挂点，已确认的旧 JX 右手路径通过模型 Avatar 映射到当前实际右手骨骼。</summary>
+/// <summary>
+/// 在角色模型中查找特效挂点。
+/// 优先使用完整路径；只有已知的旧右手路径缺失时，才从人形 Avatar 找实际右手骨骼。
+/// </summary>
 public static class SkillFxSocketResolver
 {
     /// <summary>旧 Jx_Skill02 使用的具名右手路径，只为这一已核实语义提供跨模型适配。</summary>
     private const string LegacyRightHandPath = "root/Hips/Spine/Chest/UpperChest/shoulder_R/Arm_R/forearm_R/hand_R";
 
-    /// <summary>按完整路径优先定位，已知旧右手路径缺失时使用唯一 Avatar RightHand 映射。</summary>
+    /// <summary>按完整路径优先定位，已知旧右手路径缺失时，要求 Avatar 的 RightHand 映射到唯一骨骼。</summary>
     /// <param name="modelRoot">角色模型实际根节点，预制体和运行实例均可读取。</param>
     /// <param name="socketPath">完整特效挂点路径，不对未知路径做名称猜测。</param>
     /// <returns>确切节点；未知、缺失或映射歧义时返回 null，不回退角色根。</returns>

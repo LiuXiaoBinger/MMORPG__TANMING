@@ -5,8 +5,9 @@ using System.Reflection;
 using UnityEngine;
 
 /// <summary>
-/// 客户端大状态互斥的 Editor 契约测试：只读取 Resources 里的正式互斥表与两份正式源码文本，
-/// 不创建角色、不发送协议、不改动任何资产。由 Editor 手动或批处理调用 <see cref="Run"/>。
+/// Editor 中检查大状态互斥规则的专用测试，读取正式表和源码，不创建角色或发送协议。
+/// 表会加载到单例内存，判决用例也会临时清空、填入单例状态列表；“只读”仅指不写入资产文件。
+/// 部分检查直接对源码全文搜索字符串，注释也会参与匹配，不能把这类检查当作编译或运行验证。
 /// </summary>
 public static class StateExclusionContractTests
 {
@@ -128,6 +129,7 @@ public static class StateExclusionContractTests
     private static void CheckCell(MExlusionStates currentState, MExlusionStates targetState,
         int expectedCode)
     {
+        // 当前状态对应的矩阵行，目标状态用于索引它的列。
         StateExclusionTable.RowData rowData = StateExclusionTable.singleton[(int)currentState];
         if (rowData == null)
         {
@@ -145,7 +147,7 @@ public static class StateExclusionContractTests
     /// <summary>
     /// 用反射直接调用私有判决方法并喂入构造的当前状态列表，
     /// 覆盖 0/-1 拒绝、1/2/3 放行、忽略“先离开再进入”以及多来源任一拒绝。
-    /// 反射只读取正式实现，不修改生产类接口。
+    /// 反射调用正式私有实现，但测试会修改单例里的当前状态列表；不改生产接口或资产。
     /// </summary>
     private static void TestJudgeSemantics()
     {
@@ -269,12 +271,17 @@ public static class StateExclusionContractTests
         // 逐个确认枚举成员存在且源码中存在“判断该状态→收集对应大状态”的片段。
         for (int index = 0; index < connectedStates.Length; index++)
         {
+            // 当前待验证的已接入动作枚举名称。
             string stateName = connectedStates[index].ToString();
             Check(Array.IndexOf(Enum.GetNames(typeof(StateDefine)), stateName) >= 0,
                 "StateDefine 存在成员 " + stateName);
+            // 源码中用于识别状态判断的固定文本。
             string collectSnippet = "currentState == StateDefine." + stateName;
+            // 源码中用于识别收集互斥状态的固定文本。
             string addSnippet = "AddStateToList(MExlusionStates." + connectedExclusionStates[index] + ")";
+            // 首次出现判断文本的位置，搜索包括注释。
             int collectIndex = managerSource.IndexOf(collectSnippet, StringComparison.Ordinal);
+            // 首次出现收集文本的位置，需位于判断文本之后。
             int addIndex = managerSource.IndexOf(addSnippet, StringComparison.Ordinal);
             Check(collectIndex >= 0 && addIndex > collectIndex,
                 "管理器按 " + stateName + " 收集 " + connectedExclusionStates[index]);
@@ -311,7 +318,9 @@ public static class StateExclusionContractTests
         }
         // 原技能准入、发包与本地预表现的调用位置。
         int canStartIndex = navigationSource.IndexOf("CanStart(skillArgs.Identify", StringComparison.Ordinal);
+        // 技能发包协议常量在源码全文第一次出现的位置。
         int sendIndex = navigationSource.IndexOf("CMD_SkillCastCode", StringComparison.Ordinal);
+        // 本地预测调用文本第一次出现的位置。
         int predictIndex = navigationSource.IndexOf(".BeginPrediction(", StringComparison.Ordinal);
         Check(canStartIndex > gateIndex, "互斥判定在 CanStart 之前");
         Check(sendIndex > gateIndex, "互斥判定在技能发包之前");
@@ -338,7 +347,7 @@ public static class StateExclusionContractTests
 
     /// <summary>按工程相对路径读取源码文本，供静态契约断言使用。</summary>
     /// <param name="projectRelativePath">以 Assets/ 开头的工程相对路径。</param>
-    /// <returns>文件全文；读取失败时返回空串。</returns>
+    /// <returns>文件全文；文件不存在时返回空串，其他 I/O 异常仍向外抛出。</returns>
     private static string ReadProjectText(string projectRelativePath)
     {
         // 工程根目录，源自 Assets 的上一级。

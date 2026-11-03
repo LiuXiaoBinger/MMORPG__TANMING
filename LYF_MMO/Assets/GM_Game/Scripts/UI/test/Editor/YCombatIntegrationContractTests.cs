@@ -5,13 +5,13 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>仅供 Editor batch 执行的 YCombat 导出合同测试；只修改内存副本，不生成角色或更新正式资产。</summary>
+/// <summary>供 Editor 手动或批处理调用的 YCombat 导出规则测试；错误输入只写入内存副本，测试本身不保存正式资产。</summary>
 public static class YCombatIntegrationContractTests
 {
     /// <summary>本轮通过的验收断言数，每次 Run 从零开始。</summary>
     private static int _passed;
 
-    /// <summary>读取已生成配置，验证合法导出、未接入字段拒绝、同帧顺序及两端规则文件一致。</summary>
+    /// <summary>读取固定表现编号的已保存配置，检查合法输入、预期应拒绝的变更、同帧顺序及两端规则文件一致；断言仍需以当前运行结果为准。</summary>
     public static void Run()
     {
         _passed = 0;
@@ -110,7 +110,7 @@ public static class YCombatIntegrationContractTests
         finally { DestroyCopy(copy); }
     }
 
-    /// <summary>检查音频、错误挂点及无效缩放会被生产导出器拒绝。</summary>
+    /// <summary>构造带音频、错误挂点和零缩放的三个副本，分别断言生产校验应拒绝；这是测试预期，不是未执行时的验证结论。</summary>
     /// <param name="source">至少含一条 FX 的正式绑定。</param>
     private static void TestFxFields(SkillEditorBinding source)
     {
@@ -125,6 +125,7 @@ public static class YCombatIntegrationContractTests
             {
                 // 通过既有第三方字段结构产生明确的错误输入。
                 SerializedObject serialized = new SerializedObject(copy.Config);
+                // 第一条 FX 的序列化字段，本轮只对这一条制造错误输入。
                 SerializedProperty effect = serialized.FindProperty("fxList").GetArrayElementAtIndex(0);
                 if (index == 0) effect.FindPropertyRelative("audioClip").objectReferenceValue = audio;
                 else if (index == 1)
@@ -154,6 +155,7 @@ public static class YCombatIntegrationContractTests
         {
             // FX 事件只有帧号被修改，其余已验证字段保持原值。
             SerializedObject serialized = new SerializedObject(copy.Config);
+            // 配置中的 FX 序列化列表，供当前测试读取或修改指定轨道字段。
             SerializedProperty effects = serialized.FindProperty("fxList");
             if (effects.arraySize < 2) throw new InvalidOperationException("同帧测试需要两条旧特效。");
             // index 为两条粒子配置的零起始序号，使用相同 F10 触发帧。
@@ -196,7 +198,7 @@ public static class YCombatIntegrationContractTests
             // 两条事件均必须携带粒子资源。
             if (events[0].Particle == null || events[1].Particle == null)
                 throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
-            // 首条事件必须挂在命名字段且提供套接路径。
+            // 首条事件预期使用命名挂点，并提供非空骨骼路径。
             if (events[0].PlacementKind != SkillFxPlacementKind.NamedSocket || string.IsNullOrEmpty(events[0].SocketPath))
                 throw new InvalidOperationException("大剑蓄力或目标头顶落剑事件导出不完整。");
             // 次条事件必须落于目标头顶且前向距离为十米。
@@ -205,6 +207,7 @@ public static class YCombatIntegrationContractTests
             // 序列化访问第三方轨道结构，读取本次真实帧率、帧号和局部位置。
             SerializedObject serialized = new SerializedObject(copy.Config);
             // 本次轨道双阶段列表，对应生产导出的同序事件。
+            // 配置中的 FX 序列化列表，供当前测试读取或修改指定轨道字段。
             SerializedProperty effects = serialized.FindProperty("fxList");
             // 当前时间轴零起始帧换算的秒数，精度容限一微秒。
             float chargeTime = effects.GetArrayElementAtIndex(0).FindPropertyRelative("keyNumber").intValue / copy.Config.timelineFrameRate;
@@ -233,6 +236,7 @@ public static class YCombatIntegrationContractTests
         string root = Directory.GetParent(Application.dataPath).Parent.FullName;
         // 两端正式导出文件都由同一次序列化产物生成。
         string client = File.ReadAllText(Path.Combine(root, "LYF_MMO/Assets/GM_Game/Scripts/Data/Skill/Resources/SkillCastingRules.json"));
+        // 服务端同步导出的文本，直接与客户端逐字符比较。
         string server = File.ReadAllText(Path.Combine(root, "LYF_Server/GameServer/Config/SkillCastingRules.json"));
         if (client != server) throw new InvalidOperationException("客户端和服务端施法规则内容不同。");
         // JSON 输入在序列化边界转为具名强类型规则。

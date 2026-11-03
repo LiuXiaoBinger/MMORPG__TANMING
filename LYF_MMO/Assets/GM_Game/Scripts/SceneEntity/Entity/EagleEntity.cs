@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 鹰类召唤物实体。
-/// 继承自 DummyEntity，用于战斗中召唤的鹰型单位（如侦察、俯冲攻击）。
+/// 鹰类场景实体，沿用 DummyEntity 的生命周期，并把实体类别设为 Eagle。
+/// 本类没有实现侦察、飞行或攻击。
 /// </summary>
 public sealed class EagleEntity : DummyEntity
 {

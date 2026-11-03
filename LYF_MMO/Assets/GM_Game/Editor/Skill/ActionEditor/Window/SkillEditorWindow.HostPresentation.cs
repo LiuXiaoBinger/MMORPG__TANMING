@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Ethan.ActionEditor.Editor;
 
-/// <summary>为宿主编辑资产提供现有窗口入口，以及挂点、前方和目标落点预览。</summary>
+/// <summary>把本项目的技能资产和角色模型交给编辑窗口，并计算挂点、角色前方或目标位置上的特效预览坐标。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>预览目标只用于 Scene 中位置参照，不写入技能资产或正式场景。</summary>

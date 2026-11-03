@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 角色状态机，对应参考工程 rogamelibs/entity/action/state_machine_component.h/.cpp。
-/// 只保存"默认态 / 当前态 / 上一个态"三个引用，切换顺序与 RO 完全一致：
+/// 保存已注册状态以及默认、当前、上一个状态引用；真正切换时按以下顺序执行：
 /// 先让当前状态 Stop，再切引用，最后让新状态 OnGetPermission。
 /// </summary>
 public sealed class StateMachineComponent : RoleComponentBase

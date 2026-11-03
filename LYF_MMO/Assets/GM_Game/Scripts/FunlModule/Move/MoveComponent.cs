@@ -7,14 +7,16 @@ using UnityEngine;
 * Descrpiton:
 */
 
+/// <summary>保存旧移动方案的预留状态；当前未实现逐帧移动，只有状态读取和一次性同步标志。</summary>
 public class MoveComponent : RoleComponentBase
 {
+    /// <summary>把此组件绑定到 owner 角色。</summary>
     public MoveComponent(PlayerEntity owner) : base(owner)
     {
     }
-    /// <summary>影子跟随的间隔时间（秒）。他机收到移动同步后，从当前点到目标点平滑移动的窗口时长</summary>
+    /// <summary>预留的远端移动平滑时长（秒）；本类当前没有推进这些字段的 Update 实现。</summary>
     private float delay = 0.15f;//影子跟随的间隔时间
-    /// <summary>移动预测标记：服务器下发同步时实体是否仍在持续移动。用于提前到达目标后是“沿朝向外推”还是“停步”</summary>
+    /// <summary>预留的持续移动标志；本类当前未根据它计算预测位置。</summary>
     private bool keep_moving = false;//移动预测的标记
     /// <summary>最大 Lerp 转向角度（超过该角度则直接转向，不插值）</summary>
     const float MaxRotationAngle = 90;//最大lerp转向角度
@@ -43,7 +45,7 @@ public class MoveComponent : RoleComponentBase
     private UVEC3 _targetDir = UVEC3.zero;//目标方向向量
     /// <summary>上次移动后离目标点的距离（用于判断是否走过头，防止在目标点附近来回抖动）</summary>
     private float _lastDis = 0.0f;//上次移动后离目标点的距离
-    /// <summary>影子跟随已经持续的时间（每帧累加 deltaTime，与 delay 比较判断是否到达目标）</summary>
+    /// <summary>预留的平滑跟随累计秒数，当前类内没有累加逻辑。</summary>
     private float _server_time = 0;//影子跟随已经持续的时间
     /// <summary>预测的位移向量（预留的预测移动字段）</summary>
     private UVEC3 _predictedPos = UVEC3.zero;//预测的向量

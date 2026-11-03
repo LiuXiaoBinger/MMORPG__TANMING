@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>主城与副本共用的地图导航导出窗口，选择场景及其烘焙资产后生成一份公共文件。</summary>
+/// <summary>在窗口中选择地图场景名和已烘焙的导航数据，再导出客户端与服务端共用的地图文件。</summary>
 public sealed class MNavigationExportWindow : EditorWindow
 {
 

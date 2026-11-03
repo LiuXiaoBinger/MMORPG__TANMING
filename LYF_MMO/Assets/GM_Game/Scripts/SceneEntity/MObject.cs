@@ -2,9 +2,8 @@ using System;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 通用对象层，统一负责普通实体组件、对象事件和基础生命周期。
-/// 实现 ROObject 接口，是实体继承链的根抽象类。
-/// 专用快捷组件（Move/Buff/Skill/Machine）由 MComponentMgr 单独管理，不进入普通组件容器。
+/// 实体继承链的基础层，保存身份和生命周期，并管理普通组件与实体事件。
+/// 位置和模型由派生类补充；移动、Buff、技能和状态机由 MEntity 单独管理。
 /// </summary>
 public abstract class MObject : ROObject
 {
@@ -81,7 +80,7 @@ public abstract class MObject : ROObject
     }
 
     /// <summary>
-    /// 每帧逻辑更新，仅在 Active 状态下驱动组件更新
+    /// 调用普通组件的每帧更新；此基类的 Active 检查已被注释，MEntity 入口负责该检查
     /// </summary>
     /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
     public virtual void Update(int deltaMilliseconds)
@@ -209,11 +208,12 @@ public abstract class MObject : ROObject
 
     #region 查询与判定
     /// <summary>获取表现控制器（由派生类实现）</summary>
+    /// <returns>当前关联的表现控制器，没有关联时为空。</returns>
     public abstract RoleCtrlBase GetEntityCtrl();
 
     /// <summary>按组件类型查询普通组件容器中已挂载的组件实例。</summary>
     /// <typeparam name="T">要查询的组件类型。</typeparam>
-    /// <returns>命中的组件实例；未挂载返回 null。</returns>
+    /// <returns>命中的组件实例；没有匹配组件时，组件容器抛出 KeyNotFoundException。</returns>
     public T GetMComponentByT<T>() where T : EntityComponentBase
     {
         return Components.GetMComponentByT<T>();
@@ -222,6 +222,7 @@ public abstract class MObject : ROObject
 
     #region 核心逻辑
     /// <summary>关联 Unity 表现控制器（由派生类实现）</summary>
+    /// <param name="ctrl">要关联的 Unity 表现控制器。</param>
     public abstract void SetEntityCtrl(RoleCtrlBase ctrl);
 
     /// <summary>
@@ -260,7 +261,7 @@ public abstract class MObject : ROObject
         }
     }
 
-    /// <summary>标记为待销毁，由世界在下一帧统一移除回收，广播 PendingDestroy 事件</summary>
+    /// <summary>标记为待销毁，由世界在更新后的清理阶段统一移除回收，广播 PendingDestroy 事件</summary>
     public virtual void MarkPendingDestroy()
     {
         if (LifecycleState == EntityLifecycleState.Destroyed)
@@ -278,6 +279,7 @@ public abstract class MObject : ROObject
     /// <returns>实体快照对象</returns>
     public virtual EntitySnapshot ToSnapshot()
     {
+        // 独立保存本次读取的身份、生命周期和逻辑坐标，不共享 Transform 对象。
         EntitySnapshot snapshot = new EntitySnapshot();
         snapshot.UID = UID;
         snapshot.EntityType = EntityType;

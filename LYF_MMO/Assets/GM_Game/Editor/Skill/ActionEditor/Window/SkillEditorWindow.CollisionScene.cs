@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-/// <summary>技能窗口的双语属性与原编辑操作适配，不改运行时或资产字段身份。</summary>
+/// <summary>在 Scene 视图绘制攻击判定范围，并把拖动手柄得到的位置、尺寸和旋转写回当前判定配置。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>显示活动或选中判定体，逐项访问原攻击对象引用。</summary>

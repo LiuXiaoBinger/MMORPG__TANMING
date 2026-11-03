@@ -5,7 +5,7 @@ public sealed class ROSkillCore
 {
     /// <summary>稳定技能主表引用，职业、类别和滑行取消规则来自该行。</summary>
     private readonly SkillInfo skill_table_;
-    /// <summary>该学习等级的效果引用，冷却、法力消耗和持续时间以毫秒计。</summary>
+    /// <summary>该学习等级的效果引用；冷却和持续时间以毫秒计，法力消耗为法力点数。</summary>
     private readonly SkillEffectInfo skill_effect_data_;
 
     /// <summary>装载已匹配技能和等级的两份只读配置。</summary>

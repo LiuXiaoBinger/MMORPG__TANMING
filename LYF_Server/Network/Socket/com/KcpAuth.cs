@@ -17,7 +17,7 @@ public static class KcpAuth
     /// <param name="payload">KCP 或绑定载荷。</param>
     /// <param name="payloadOffset">载荷起始下标。</param>
     /// <param name="payloadLength">载荷字节数。</param>
-    /// <returns>16 字节截断认证码；参数非法时返回 null。</returns>
+    /// <returns>16 字节截断认证码；缺少密钥/头部或密钥长度错误时返回 null，其余数组区间由调用方保证合法。</returns>
     public static byte[] Compute(byte[] token, byte[] header, int headerOffset, int headerLength,
         byte[] payload, int payloadOffset, int payloadLength)
     {
@@ -110,7 +110,7 @@ public static class KcpAuth
     /// <returns>可用于 conv 的随机无符号整数。</returns>
     public static uint CreateRandomConv()
     {
-        // 4 字节随机源，按小端解释为无符号整数前先取原始字节。
+        // 取 4 个随机字节；BitConverter 按当前平台字节序解释为无符号整数。
         byte[] random = CreateRandomBytes(4);
         // 由 4 字节随机源解释出的候选 conv 值。
         uint value = BitConverter.ToUInt32(random, 0);

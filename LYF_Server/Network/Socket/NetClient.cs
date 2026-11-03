@@ -59,7 +59,7 @@ public class NetClient : BaseLink
     /// 连接服务端成功
     /// </summary>
     /// <param name="ar"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// 连接完成、成功回调或启动接收出现异常时调用 Disconnect。
     private void OnConnectCB(IAsyncResult ar)
     {
         try
@@ -78,6 +78,7 @@ public class NetClient : BaseLink
         }
     }
 
+    /// <summary>Unity 类型连接直接通知消息回调；服务之间的主动连接按协议号找到处理器并调用 OnClientCommand。</summary>
     protected override void HandleCommand(BasePackage basePackage)
     {
 
@@ -178,8 +179,8 @@ public class NetClient : BaseLink
     /// <summary>
     /// 注册指令
     /// </summary>
-    /// <param name="cmd"></param>
-    /// <param name="container"></param>
+    /// <param name="cmd">待接收的协议号，同号重复登记会由字典抛错。</param>
+    /// <param name="container">该协议在主动连接端使用的处理器。</param>
     public void RegistCommand(int cmd, IContainer container)
     {
         _cmdDic.Add(cmd, container);
@@ -204,7 +205,7 @@ public class NetClient : BaseLink
     }
 
     /// <summary>
-    /// 设置重连时间
+    /// 断开后安排首次 3 秒、后续每 10 秒尝试重连；回调内部再检查是否允许重连。
     /// </summary>
     private void SetReconnectTimer()
     {
@@ -219,7 +220,7 @@ public class NetClient : BaseLink
     /// <summary>
     /// 断开重连
     /// </summary>
-    /// <param name="state"></param>
+    /// <param name="state">System.Threading.Timer 提供的状态对象，当前回调未使用。</param>
     private void ReConn(object state)
     {
         if (_isNeedReconn)

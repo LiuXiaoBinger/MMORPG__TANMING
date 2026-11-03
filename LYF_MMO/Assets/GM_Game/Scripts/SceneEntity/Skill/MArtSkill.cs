@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>RO普通技能表现载体，派发粒子、声音、程序位移及原滑行残影回调，按窗口接管水平根位移。</summary>
+/// <summary>
+/// 普通技能和普通攻击的表现实现，负责登记特效、声音、程序位移和滑行残影事件。
+/// 到时间后执行对应表现；模型或资源未就绪时按各轨道规则等待、补播或跳过。
+/// 动作交出控制权后停止位移，但后续特效和声音可以继续播放到结束。
+/// </summary>
 public class MArtSkill : MSkill
 {
 
@@ -10,13 +14,13 @@ public class MArtSkill : MSkill
     /// <summary>本次表现轨道校验失败后为 true，直到归还；阻止每帧重复报错。</summary>
     private bool _runtimePresentationInvalid;
 
-    /// <summary>本次锁定资产是否已完整注册时间轴，冷就绪后只允许注册一次。</summary>
+    /// <summary>本次表现资源的时间轴是否已登记，异步加载完成后也只登记一次。</summary>
     private bool _eventsRegistered;
 
     /// <summary>本代施法等待资源终态的可取消通知，捕获锁定 UUID 与代次，归还前解除。</summary>
     private Action<SkillRuntimePresentation> _presentationReady;
 
-    /// <summary>RO 式已到期操作所在模型，用于真正取消时移除其尚未交付的 GO 回调。</summary>
+    /// <summary>等待 GameObject 就绪的回调所属模型；取消施法时用它移除尚未执行的回调。</summary>
     private MModel _loadGoModel;
 
     /// <summary>仅保存已到期但 GO 未加载的声音或粒子票据，模型交付后移除，取消时逐条注销。</summary>
@@ -54,7 +58,7 @@ public class MArtSkill : MSkill
     #endregion
 
     #region 生命周期
-    /// <summary>沿 RO 的 Start 入口只注册 timeline，到期表现由 OnProcessTimer 交付。</summary>
+    /// <summary>开始时登记时间轴，具体表现由 OnProcessTimer 在到期时触发。</summary>
     protected override void Start()
     {
         base.Start();
@@ -92,7 +96,7 @@ public class MArtSkill : MSkill
         FireEvents();
     }
 
-    /// <summary>归还时解除根位移并停止声音，清除轨道进度；粒子仍由独立租约保持到尾迹结束。</summary>
+    /// <summary>归还时取消位移、等待回调和声音；已经生成的粒子由自身组件持有资源，直到尾迹结束。</summary>
     protected override void OnReset()
     {
         SkillRuntimePresentationCache.RemoveReadyListener(_runtimePresentationId, _presentationReady);
@@ -165,14 +169,14 @@ public class MArtSkill : MSkill
     /// <summary>把本次粒子、声音、程序位移和原滑行残影采样一次登记到MTimerMgr。</summary>
     protected virtual void FireEvents() // 注册各种 timeline 回调。
     {
-        // 已注册、已标记失效或已退出动作槽时不再重复登记；存在待加载通知也等待回调。
+        // 已经登记或已失效时不重复登记；施法已结束或正在等资源通知时直接返回。
         bool alreadyRegistered = _eventsRegistered || _runtimePresentationInvalid;
         bool inactiveOrWaiting = !IsActive || _presentationReady != null;
         if (alreadyRegistered || inactiveOrWaiting)
         {
             return;
         }
-        // 暖资产直接注册；冷资产保存一次通知，同 UUID 取消也由代次识别。
+        // 资源已就绪时直接登记；尚未加载时保存一次回调，用复用次数识别失效请求。
         ulong fireGeneration = _fireGeneration;
         if (_runtimePresentation == null)
         {
@@ -327,7 +331,7 @@ public class MArtSkill : MSkill
         effect.CreateGhostEffectObject(Color.white, 0.2f, 0.2f, 0.2f, 0.2f);
     }
 
-    /// <summary>沿 RO charge 入口将已到期的程序运动交独立驱动，技能不逐帧扫描或直接改坐标。</summary>
+    /// <summary>把到期的位移段交给实体位移组件；技能自身不逐帧移动角色。</summary>
     /// <param name="data">本次锁定的前向累计曲线指令。</param>
     /// <param name="initialElapsedSeconds">冷注册时已经经过的段内秒数，正常计时回调为负一。</param>
     private void charge(MSkillChargeData data, float initialElapsedSeconds)
@@ -435,7 +439,7 @@ public class MArtSkill : MSkill
         }
     }
 
-    /// <summary>在派发前检查完整粒子、声音和根位移轨道，任一数据无效即停止本次编辑表现。</summary>
+    /// <summary>派发前一次检查特效、声音和程序位移的时间与参数，任一无效则拒绝整份表现轨道。</summary>
     /// <param name="presentation">本次 Fire 锁定的编辑器运行资产。</param>
     /// <returns>全部事件可解释且按时间排序时返回 true。</returns>
     private static bool ValidateRuntimePresentation(SkillRuntimePresentation presentation)
@@ -443,6 +447,7 @@ public class MArtSkill : MSkill
         // 两类事件列表必须齐全，缺一不能校验派发。
         bool presentationEventsMissing = presentation.FxEvents == null ||
             presentation.AudioEvents == null;
+        // 时间轴必须有限且覆盖完整动画；声音尾部不包含在该触发范围中。
         bool presentationDurationInvalid =
             !IsFinite(presentation.EffectiveTimelineDurationSeconds) ||
             presentation.EffectiveTimelineDurationSeconds < presentation.DurationSeconds;
@@ -461,34 +466,45 @@ public class MArtSkill : MSkill
             SkillRuntimeFxEvent fxEvent = presentation.FxEvents[index];
             // 粒子事件与粒子资源必须存在，后续字段读取均以此为前提。
             if (fxEvent == null || fxEvent.Particle == null) return false;
+            // 触发时间必须有限、按顺序排列，并处于允许的时间轴范围内。
             bool fxTimeInvalid = !IsFinite(fxEvent.TimeSeconds) ||
                 fxEvent.TimeSeconds < previousTime ||
                 fxEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds;
+            // 作者事件编号和帧号从零开始。
             bool fxIndexInvalid = fxEvent.SourceEventIndex < 0 || fxEvent.Frame < 0;
-            // 同时间粒子按原序号递增，重复顺序视为非法。
+            // 同一触发时间的粒子序号不能倒退；当前检查允许相同序号。
             bool fxOrderInvalid = fxEvent.TimeSeconds == previousTime &&
                 fxEvent.SourceEventIndex < previousSourceIndex;
+            // 前向偏移必须是有限的非负距离。
             bool fxForwardInvalid = !IsFinite(fxEvent.ForwardDistance) ||
                 fxEvent.ForwardDistance < 0f;
+            // 位置三个分量都必须可参与正常浮点运算。
             bool fxPositionInvalid = !IsFinite(fxEvent.LocalPosition.x) ||
                 !IsFinite(fxEvent.LocalPosition.y) ||
                 !IsFinite(fxEvent.LocalPosition.z);
+            // 欧拉角三个分量都必须有限。
             bool fxRotationInvalid = !IsFinite(fxEvent.LocalEulerAngles.x) ||
                 !IsFinite(fxEvent.LocalEulerAngles.y) ||
                 !IsFinite(fxEvent.LocalEulerAngles.z);
+            // 缩放不能包含 NaN 或无穷值。
             bool fxScaleFiniteInvalid = !IsFinite(fxEvent.LocalScale.x) ||
                 !IsFinite(fxEvent.LocalScale.y) ||
                 !IsFinite(fxEvent.LocalScale.z);
+            // 每个缩放轴都要求大于零。
             bool fxScalePositiveInvalid = fxEvent.LocalScale.x <= 0f ||
                 fxEvent.LocalScale.y <= 0f || fxEvent.LocalScale.z <= 0f;
             // 命名挂点必须给出挂点路径。
             bool fxSocketInvalid = fxEvent.PlacementKind == SkillFxPlacementKind.NamedSocket &&
                 string.IsNullOrEmpty(fxEvent.SocketPath);
+            // 位置模式必须是当前枚举定义的值。
             bool fxPlacementRangeInvalid =
                 (int)fxEvent.PlacementKind < (int)SkillFxPlacementKind.ActorRoot ||
                 (int)fxEvent.PlacementKind > (int)SkillFxPlacementKind.WorldAbsolute;
+            // 合并时间和编号问题，任一成立即拒绝该轨道。
             bool fxTimeBad = fxTimeInvalid || fxIndexInvalid || fxOrderInvalid;
+            // 合并距离、位置和朝向的数值问题。
             bool fxVectorBad = fxForwardInvalid || fxPositionInvalid || fxRotationInvalid;
+            // 合并缩放与必填挂点的问题。
             bool fxScaleBad = fxScaleFiniteInvalid || fxScalePositiveInvalid || fxSocketInvalid;
             if (fxTimeBad || fxVectorBad || fxScaleBad)
             {
@@ -510,15 +526,19 @@ public class MArtSkill : MSkill
             SkillRuntimeAudioEvent audioEvent = presentation.AudioEvents[index];
             // 声音事件与音频片段必须存在，缺一不能派发。
             if (audioEvent == null || audioEvent.Clip == null) return false;
+            // 声音的作者帧号和事件序号从零开始。
             bool audioBasicInvalid = audioEvent.Frame < 0 || audioEvent.SourceEventIndex < 0;
+            // 声音必须按时间排列，且触发时间不能超过时间轴。
             bool audioTimeInvalid = !IsFinite(audioEvent.TimeSeconds) ||
                 audioEvent.TimeSeconds < previousTime ||
                 audioEvent.TimeSeconds > presentation.EffectiveTimelineDurationSeconds;
-            // 同时间声音按原序号递增，重复顺序视为非法。
+            // 同一触发时间的声音序号不能倒退；当前检查允许相同序号。
             bool audioOrderInvalid = audioEvent.TimeSeconds == previousTime &&
                 audioEvent.SourceEventIndex < previousSourceIndex;
+            // 音量必须是零到一之间的有限值。
             bool audioVolumeInvalid = !IsFinite(audioEvent.Volume) ||
                 audioEvent.Volume < 0f || audioEvent.Volume > 1f;
+            // 任一声音编号或时间条件失败，整条轨道不予派发。
             bool audioTimeBad = audioBasicInvalid || audioTimeInvalid || audioOrderInvalid;
             if (audioTimeBad || audioVolumeInvalid)
             {
@@ -618,7 +638,7 @@ public class MArtSkill : MSkill
                     if (Global.Instance.SceneWorld.TryGetEntity(TargetUid,
                         out targetObject))
                     {
-                        // 当前目标角色实体，非角色对象不改动兜底落点。
+                        // 目标只需是有模型的 MEntity，不要求是玩家或其他角色。
                         MEntity target = targetObject as MEntity;
                         if (target != null && target.Model != null)
                         {
@@ -631,7 +651,7 @@ public class MArtSkill : MSkill
             effect.transform.position = worldPosition;
             if (fxEvent.PlacementKind == SkillFxPlacementKind.CasterForwardWorld)
             {
-                // 对齐旧 skill03_2：向前六米的世界粒子随当前角色水平朝向旋转。
+                // 前方世界特效保留配置 X 角，Y/Z 角取角色当前旋转；不直接使用配置的 Y/Z 角。
                 effect.transform.eulerAngles = new Vector3(fxEvent.LocalEulerAngles.x,
                     roleTransform.eulerAngles.y, roleTransform.eulerAngles.z);
             }

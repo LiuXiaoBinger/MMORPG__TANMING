@@ -9,7 +9,7 @@ public static class KcpDefine
     /// <summary>网关 KCP UDP 默认监听端口；未配置时使用该值，可与 TCP 10140 独立改端口。</summary>
     public const int GateUdpPort = 10141;
 
-    /// <summary>单个 UDP 数据报总字节上限（含 28 字节认证头）；不得大于 1200 以免路径分片。</summary>
+    /// <summary>单个 UDP 数据报总字节上限（含 28 字节认证头）；本项目取 1200 作为预算以减少网络分片风险。</summary>
     public const int MaxDatagramBytes = 1200;
 
     /// <summary>外层认证头长度：魔术字 4 + 版本 1 + 类型 1 + conv 4 + 载荷长度 2 + 认证码 16。</summary>
@@ -27,10 +27,10 @@ public static class KcpDefine
     /// <summary>数据报类型：客户端请求绑定到其 TCP 会话。</summary>
     public const byte DatagramTypeBindRequest = 1;
 
-    /// <summary>数据报类型：网关确认绑定成功，客户端此后可发送 KCP 数据。</summary>
+    /// <summary>数据报类型：网关已收到UDP地址证明；客户端停止重复请求，仍须等待TCP Enabled 才启用业务发送。</summary>
     public const byte DatagramTypeBindAccept = 2;
 
-    /// <summary>数据报类型：网关拒绝绑定，客户端本次会话保持 TCP。</summary>
+    /// <summary>数据报类型：网关拒绝绑定，客户端触发绑定失败回调，由网络层处理恢复。</summary>
     public const byte DatagramTypeBindReject = 3;
 
     /// <summary>数据报类型：KCP 协议段载荷。</summary>
@@ -48,7 +48,7 @@ public static class KcpDefine
     /// </summary>
     public const int BindTokenBytes = 16;
 
-    /// <summary>数据报认证码截断字节数；HMAC-SHA256 前 16 字节足以抵抗伪造且控制带宽。</summary>
+    /// <summary>数据报认证码截断字节数；取 HMAC-SHA256 的前 16 字节，客户端和网关使用相同长度。</summary>
     public const int MacBytes = 16;
 
     /// <summary>KCP 更新间隔毫秒；与协议内部 interval 一致，作为驱动线程每次休眠基准。</summary>
@@ -65,7 +65,7 @@ public static class KcpDefine
 
     /// <summary>
     /// 客户端绑定总期限毫秒。期限到仍未收到 TCP 启用确认时关闭 UDP 通道，
-    /// 本会话确定保持 TCP，不再重试，避免半个通道长期悬挂。
+    /// 当前KCP实例停止重试并回调绑定失败，由网络层处理连接恢复。
     /// </summary>
     public const int BindTimeoutMilliseconds = 3000;
 

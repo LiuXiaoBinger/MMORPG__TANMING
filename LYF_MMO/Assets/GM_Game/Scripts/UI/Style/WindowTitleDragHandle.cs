@@ -7,15 +7,19 @@ using UnityEngine.EventSystems;
 [DisallowMultipleComponent]
 public class WindowTitleDragHandle : MonoBehaviour, IDragHandler
 {
+    /// <summary>被标题栏带动的窗口本体，移动它而非标题栏自身。</summary>
     [SerializeField, Header("拖动目标窗口")] private RectTransform _targetWindow;
 
+    /// <summary>父级画布，用其 scaleFactor 把屏幕位移换算为 UI 位移。</summary>
     private Canvas _rootCanvas;
 
+    /// <summary>缓存父级画布的缩放来源。</summary>
     private void Awake()
     {
         _rootCanvas = GetComponentInParent<Canvas>();
     }
 
+    /// <summary>按 eventData.delta 增量移动目标窗口，保留按下时鼠标与窗口的相对位置。</summary>
     public void OnDrag(PointerEventData eventData)
     {
         // 未配置需要拖动的窗口时，不执行移动。

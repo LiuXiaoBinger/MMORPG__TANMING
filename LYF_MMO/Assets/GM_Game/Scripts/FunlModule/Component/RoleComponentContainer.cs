@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>按注册顺序管理客户端角色组件生命周期。</summary>
+/// <summary>保存角色的业务组件，按加入顺序初始化和更新，释放时按相反顺序处理。</summary>
 public sealed class RoleComponentContainer
 {
     /// <summary>组件类型索引。</summary>
     private readonly Dictionary<Type, RoleComponentBase> _components =
         new Dictionary<Type, RoleComponentBase>();
 
-    /// <summary>组件稳定生命周期顺序。</summary>
+    /// <summary>按加入先后保存组件，后续生命周期回调沿用这个顺序。</summary>
     private readonly List<RoleComponentBase> _orderedComponents =
         new List<RoleComponentBase>();
 
     #region 构造与初始化
-    /// <summary>创建角色组件容器。</summary>
+    /// <summary>检查所属角色 owner 不为空；角色绑定保存在各组件自身。</summary>
     public RoleComponentContainer(PlayerEntity owner)
     {
         if (owner == null)
@@ -48,7 +48,7 @@ public sealed class RoleComponentContainer
     #endregion
 
     #region 查询与判定
-    /// <summary>获取已经注册的组件。</summary>
+    /// <summary>按类型 T 取得组件；没有加入该类型时抛出异常。</summary>
     public T GetComponent<T>() where T : RoleComponentBase
     {
         RoleComponentBase value;
@@ -59,7 +59,7 @@ public sealed class RoleComponentContainer
         return (T)value;
     }
 
-    /// <summary>尝试获取已经注册的组件。</summary>
+    /// <summary>按类型 T 查找组件并写入 component；未找到时输出 null 并返回 false。</summary>
     public bool TryGetComponent<T>(out T component) where T : RoleComponentBase
     {
         RoleComponentBase value;
@@ -82,6 +82,7 @@ public sealed class RoleComponentContainer
             throw new ArgumentNullException("component");
         }
 
+        // 用调用方指定的类型 T 作为字典键。
         Type type = typeof(T);
         if (_components.ContainsKey(type))
         {
@@ -113,7 +114,7 @@ public sealed class RoleComponentContainer
         }
     }
 
-    /// <summary>隔离单组件异常，避免中断其他组件生命周期。</summary>
+    /// <summary>执行 component 的 action；发生异常时记录组件类型和阶段 name，外层继续处理其他组件。</summary>
     private static void Invoke(RoleComponentBase component, string name, Action action)
     {
         try

@@ -1,7 +1,6 @@
 /// <summary>
-/// 死亡动作状态组件。
-/// 实体死亡时播放死亡动画，死亡状态下实体不可移动。
-/// 监听死亡事件切入死亡状态，监听复活事件结束死亡状态。
+/// 收到 Death 时申请进入死亡状态，状态期间禁止正常移动。
+/// 收到 Revived 时结束此状态；死亡动画名由基类播放流程使用。
 /// </summary>
 public sealed class MDeadComponent : MBasicActionComponent
 {
@@ -18,18 +17,20 @@ public sealed class MDeadComponent : MBasicActionComponent
     /// <summary>死亡状态下实体不可移动。</summary>
     public override bool IsActiveMovable { get { return false; } }
 
-    /// <summary>注册死亡和复活事件：死亡时切入状态，复活时正常结束回到默认状态。</summary>
+    /// <summary>注册死亡事件以申请进入状态，注册复活事件以调用 Finish 结束状态。</summary>
     protected override void RegisterActionEvents()
     {
         RegisterActionEvent(MEventType.Death);
         RegisterFinishEvent(MEventType.Revived);
     }
     
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

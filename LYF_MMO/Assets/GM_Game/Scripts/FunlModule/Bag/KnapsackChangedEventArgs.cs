@@ -1,5 +1,5 @@
 /// <summary>
-/// 背包变更的不可变快照，不直接把 ItemBase 可变对象暴露给界面。
+/// 保存一次背包变化的展示数据；界面读取这些值，不持有会继续变化的 ItemBase。
 /// </summary>
 public sealed class KnapsackChangedEventArgs
 {
@@ -24,7 +24,7 @@ public sealed class KnapsackChangedEventArgs
     /// <summary>用于生成展示数据的图标路径。</summary>
     public string IconPath { get; }
 
-    /// <summary>创建一个背包变更快照。</summary>
+    /// <summary>保存本次变化的类型、物品编号、数量和图标；previousBagType、previousBagIndex 记录移动前位置，其余位置字段记录移动后位置。</summary>
     public KnapsackChangedEventArgs(KnapsackChangeType changeType,
         KnapsackType bagType, long itemUid, int bagIndex, int itemTypeId,
         int count, int openedSlotCount, string iconPath,

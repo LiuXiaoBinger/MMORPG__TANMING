@@ -202,7 +202,7 @@ public static class SingingStateSmoke
         }
 
         // 动作存活期间再推进一帧仍是技能态、仍是同一动作实例：
-        // 若同一帧被推进两次，动作会在半个时长内结束，这里就会失败。
+        // 这里确认下一帧仍在使用同一个动作；完整结束时间在后续逐帧循环中观察。
         Advance(role, 1);
         if (machine.GetCurrentState() != StateDefine.kStateSkill)
         {
@@ -302,7 +302,7 @@ public static class SingingStateSmoke
         {
             return Fail("角色未注册移动组件");
         }
-        // move_request 是构造的移动请求，只有 IsMoving 与三轴增量参与本次打断判断。
+        // 构造主动移动上报；IsMoving 用于触发打断，Dx/Dy/Dz 表示移动结束的世界坐标。
         MoveOperationReq move_request = new MoveOperationReq();
         move_request.IsMoving = true;
         move_request.Dx = 1f;
@@ -669,7 +669,7 @@ public static class SingingStateSmoke
         // index 是要推进的逻辑帧计数器，从零到 frames 减一，每帧推进一次 LogicTick。
         for (int index = 0; index < frames; index++)
         {
-            // next_tick 是下一帧的逻辑 Tick 值（毫秒制递增计数），模拟 GameGlobal.Update 的推进。
+            // next_tick 是下一逻辑帧序号，每帧加 1；时间跨度由下面的 50 毫秒更新参数表示。
             long next_tick = GameGlobal.Instance.LogicTick + 1L;
             LogicTickField.SetValue(GameGlobal.Instance, next_tick);
             role.Update(FrameMilliseconds);

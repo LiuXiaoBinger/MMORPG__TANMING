@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>RO 同名选择管理器，统一承接点击、瞄准切换与技能自动找敌，不负责攻击结算。</summary>
+/// <summary>管理当前选中目标：处理点击、瞄准按钮循环选择、技能自动找敌和目标失效清除。</summary>
 public sealed class MSkillTargetMgr
 {
     /// <summary>当前客户端唯一选择入口，不持有跨场景玩家引用。</summary>
@@ -62,7 +62,7 @@ public sealed class MSkillTargetMgr
         MListPool<MEntity>.Release(targets);
     }
 
-    /// <summary>沿 RO 技能自动选择入口，取得最近的合格候选并同步当前目标。</summary>
+    /// <summary>技能需要自动选目标时，查找 18 单位范围内最近的合格候选，并同步玩家当前目标。</summary>
     /// <param name="findEnemy">true 选择怪物敌方，false 选择角色友方。</param>
     /// <param name="condition">该次技能的额外条件，允许为空。</param>
     /// <returns>找到的目标；无候选时为空，不禁止既有无目标技能。</returns>
@@ -77,7 +77,7 @@ public sealed class MSkillTargetMgr
 
     /// <summary>统一写入玩家当前目标并通知界面，同目标不重复刷新。</summary>
     /// <param name="target">要选择的当前世界实体，空值取消选择。</param>
-    /// <param name="isSelectTarget">保留 RO 点击选择参数；本项目无自动战斗头像特例。</param>
+    /// <param name="isSelectTarget">保留的点击选择参数；当前方法没有读取它，所有来源使用同一赋值流程。</param>
     public void ResetTarget(MEntity target, bool isSelectTarget = false)
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -135,14 +135,14 @@ public sealed class MSkillTargetMgr
         // 目标是当前世界中有效的敌对单位；IsValidTarget 内部已包含全局与世界非空判断。
         bool isEnemyTarget = MSkillTargetDefine.IsValidTarget(entity) &&
             MSkillTargetDefine.IsEnemy(entity);
-        // 非敌对目标不满足时，后续本地玩家读取与距离计算都不得执行，保持原短路语义。
+        // 无效或非敌方目标直接返回，无需再计算距离。
         if (!isEnemyTarget)
         {
             return false;
         }
         // 本地玩家已在当前场景中。
         bool hasLocalRole = Global.Instance.SceneWorld.LocalRole != null;
-        // 本地玩家不存在时原表达式短路返回 false，距离表达式不得解引用 LocalRole。
+        // 没有本地玩家就没有距离比较的起点，直接返回 false。
         if (!hasLocalRole)
         {
             return false;

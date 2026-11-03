@@ -19,7 +19,7 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
    private Image _imgDrag;
 
    //默认父组件
-   /// <summary>拖拽前的父节点，结束后用于恢复。</summary>
+   /// <summary>Start 时记录的父节点；未被其他槽位接收时恢复到该节点。</summary>
    public Transform _defluParent;
 
    //拖拽类型
@@ -30,25 +30,35 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
    /// <summary>顶层 Canvas，拖拽中把父级切到它上面。</summary>
    private Canvas _canvas;
 
+   /// <summary>拖拽期间关闭 blocksRaycasts，避免自身挡住目标槽位。</summary>
    private CanvasGroup _canvasGroup;
 
+   /// <summary>被拖动控件的矩形和布局数据。</summary>
    private RectTransform _rectTransform;
 
-   // 拖拽前的 RectTransform 数据，用于拖拽取消时恢复原始布局。
+   // Start 时的 RectTransform 布局数据；取消拖拽时恢复初始布局，并非每次拖拽前重新采样。
+   /// <summary>初始化时矩形的最小锚点。</summary>
    private Vector2 _initialAnchorMin;
 
+   /// <summary>初始化时矩形的最大锚点。</summary>
    private Vector2 _initialAnchorMax;
 
+   /// <summary>初始化时的轴心位置，取值按矩形宽高归一化。</summary>
    private Vector2 _initialPivot;
 
+   /// <summary>初始化时相对锚点范围的尺寸差。</summary>
    private Vector2 _initialSizeDelta;
 
+   /// <summary>初始化时相对锚点的三维局部位置。</summary>
    private Vector3 _initialAnchoredPosition3D;
 
+   /// <summary>初始化时相对父节点的缩放。</summary>
    private Vector3 _initialLocalScale;
 
+   /// <summary>初始化时相对父节点的旋转。</summary>
    private Quaternion _initialLocalRotation;
 
+   /// <summary>取得拖拽控件、父节点及根画布，并保存初始布局用于归位。</summary>
    private void Start()
    {
       _rectTransform  =transform as RectTransform;
@@ -68,9 +78,9 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
    }
 
    /// <summary>
-   /// 开始拖拽
+   /// 开始拖拽时关闭自身射线遮挡并移到根画布下，让底部槽位能接收放下事件。
    /// </summary>
-   /// <param name="eventData"></param>
+   /// <param name="eventData">Unity 提供的指针数据；移动阶段使用其中的屏幕位置。</param>
    public void OnBeginDrag(PointerEventData eventData)
    {
       _canvasGroup.blocksRaycasts = false;
@@ -78,18 +88,18 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
    }
 
    /// <summary>
-   /// 拖拽中
+   /// 拖拽中把屏幕指针位置换算为画布局部位置，更新拖动对象。
    /// </summary>
-   /// <param name="eventData"></param>
+   /// <param name="eventData">Unity 提供的指针数据；移动阶段使用其中的屏幕位置。</param>
    public void OnDrag(PointerEventData eventData)
    {
       _rectTransform.anchoredPosition = UIRoot.Instance.ScreenPointToviewPoint(eventData.position);
    }
 
    /// <summary>
-   /// 拖拽结束
+   /// 结束拖拽时恢复射线遮挡；父节点仍是根画布表示未被目标槽位接管，恢复初始布局。
    /// </summary>
-   /// <param name="eventData"></param>
+   /// <param name="eventData">Unity 提供的指针数据；移动阶段使用其中的屏幕位置。</param>
    public void OnEndDrag(PointerEventData eventData)
    {
       _canvasGroup.blocksRaycasts = true;
@@ -100,6 +110,7 @@ public class UIDragWidget : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDra
       
    }
 
+   /// <summary>挂回初始父节点，逐项恢复启动时记录的锚点、尺寸、位置、旋转和缩放。</summary>
    private void RestoreInitialTransform()
    {
       transform.SetParent(_defluParent, false);

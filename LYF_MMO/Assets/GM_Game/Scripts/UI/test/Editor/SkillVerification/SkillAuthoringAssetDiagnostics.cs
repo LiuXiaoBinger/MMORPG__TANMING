@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>专用只读资产诊断，不生成角色、不挂场景组件、不进入正式业务运行。</summary>
 public static class SkillAuthoringAssetDiagnostics
 {
-    /// <summary>读取实际预制体层级及 Humanoid 右手映射，帮助核对旧 JX 挂点迁移到 MJS。</summary>
+    /// <summary>输出 MJS/JX 预制体完整层级和全部 Humanoid 骨骼映射，供人工核对技能挂点。</summary>
     public static void DumpModelSockets()
     {
         Dump("Assets/GM_Game/Prefabs/Role/Role_MJS.prefab");
@@ -31,6 +31,7 @@ public static class SkillAuthoringAssetDiagnostics
             // 每个动画器的 Avatar 独立报告，禁止默选多个动画器的首项。
             Animator animator = animators[index];
             if (animator.avatar == null || !animator.avatar.isHuman) continue;
+            // 当前人形 Avatar 的全部语义骨骼映射，不只检查右手。
             HumanBone[] bones = animator.avatar.humanDescription.human;
             for (int boneIndex = 0; boneIndex < bones.Length; boneIndex++)
             {

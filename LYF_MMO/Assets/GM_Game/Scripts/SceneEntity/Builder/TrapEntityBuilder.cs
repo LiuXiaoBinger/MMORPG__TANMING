@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 陷阱 Builder，对应参考项目陷阱对象的场景、同步和战斗组件。
-/// 陷阱是场景中的触发式战斗对象，挂载战斗组和战斗标记但不包含受击和死亡组件。
+/// 创建或复用陷阱，添加公共组件以及战斗分组、战斗和陷阱标记。
+/// 这里只登记类别，不实现触发检测或伤害结算。
 /// </summary>
 public sealed class TrapEntityBuilder : EntityBuilder
 {

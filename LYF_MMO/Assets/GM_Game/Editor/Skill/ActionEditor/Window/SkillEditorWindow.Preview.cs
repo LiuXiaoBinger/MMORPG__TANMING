@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-/// <summary>技能窗口的隔离角色、动画采样与特效预览实现；原脚本身份仍由 SkillEditorWindow.cs 保留。</summary>
+/// <summary>复制角色用于编辑器预览，按时间轴采样动画、特效、声音和投掷物，结束预览时清理这些临时对象。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>当前预览副本的角色根位置，单位为父节点局部米；预制体归零，场景源沿用实例化时局部坐标。</summary>

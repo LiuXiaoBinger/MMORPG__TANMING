@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 环形飞行物实体，对应 RealRingBullet。
-/// 以环形/圆形范围进行伤害判定的投射物，通常用于范围 AOE 技能。
+/// 环形类别投射物的实体类型。
+/// 当前只区分类别，不在本类计算圆环范围或伤害。
 /// </summary>
 public sealed class RingProjectileEntity : ProjectileEntity
 {

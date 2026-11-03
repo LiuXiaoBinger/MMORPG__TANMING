@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// 窗口类型
+/// View 保存窗口时使用的编号，控制器据此查找并打开对应窗口。
 /// </summary>
 public enum WindowType
 {
@@ -21,7 +21,7 @@ public enum WindowType
     TaskWindow,//任务窗口，展示任务详情、目标与奖励
     DailyTaskWindow,//日常任务窗口，RO原版日常面板，仅呈现与关闭
     ThemeDungeonArroundWindow,//主题副本选择窗口，展示副本书位、翻页与详情
-    ThemeDungeonTeamCreateWindow//主题副本建队窗口，复制RO快捷队伍面板的建队与队伍成员展示
+    ThemeDungeonTeamCreateWindow//主题副本建队窗口，创建副本队伍并展示已加入的成员
 }
 
 /// <summary>
@@ -39,7 +39,7 @@ public enum RoleState
     Hit//受击硬直
 }
 /// <summary>
-/// 角色类型
+/// 区分本地玩家、其他玩家、NPC 和怪物，供实体创建与交互判断使用。
 /// </summary>
 public enum RoleType
 {
@@ -50,15 +50,15 @@ public enum RoleType
 
 }
 /// <summary>
-/// 拖拽的类型
+/// 标记正在拖动的界面元素，接收方据此判断如何处理拖放。
 /// </summary>
 public enum DragType
 {
-    KanpsackSlot,//背包Slot
+    KanpsackSlot,//背包中的物品格子
 }
 
 /// <summary>
-/// 场景类型
+/// 客户端可以切换的场景；SceneMgr 将枚举名转换为资源路径。
 /// </summary>
 public enum SceneType  
 {

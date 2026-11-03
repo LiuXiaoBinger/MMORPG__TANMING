@@ -57,11 +57,11 @@ public class MinMapWindow : WindowBase
          {
             return;
          }
-         //实施更新小地图位置 ，根据角色信息的位置来更新
+         // 把场景辅助点移到角色世界位置，再利用辅助点父节点的比例换算地图偏移。
          _mapHelp.transform.position = roleTransform.position;
          
          _imgMinMap.rectTransform.anchoredPosition = new Vector2((_mapHelp.transform.localPosition.x*-_mapsize),(_mapHelp.transform.localPosition.z*-_mapsize));
-         //箭头
+         // 角色绕 Y 轴的朝向转成 UI 绕 Z 轴旋转，并补偿底图的 90 度方向差。
          _imgArrow.transform.localEulerAngles = new Vector3(0,0,360-roleTransform.localEulerAngles.y+90);
       }
    }
@@ -74,6 +74,7 @@ public class MinMapWindow : WindowBase
    #endregion
 
    #region 交互响应
+   /// <summary>将地图边长放大为当前的 1.1 倍，并限制在 512 到 2048。</summary>
    public void OnPluseBtnClicked()
    {
       Debug.Log("OnPluseBtnClicked");
@@ -81,6 +82,7 @@ public class MinMapWindow : WindowBase
       _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize,_mapsize);
    }
 
+   /// <summary>将地图边长缩小为当前的 1/1.1，并限制在 512 到 2048。</summary>
    public void OnDecBtnClicked()
    {
       Debug.Log("OnDecBtnClicked");

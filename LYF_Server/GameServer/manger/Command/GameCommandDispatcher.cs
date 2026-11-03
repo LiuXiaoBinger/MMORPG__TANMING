@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 /// </summary>
 public sealed class GameCommandDispatcher : Singleton<GameCommandDispatcher>
 {
-    // ConcurrentQueue 只负责跨线程传递，命令内容本身由 GameCommand 保证不可变。
+    // ConcurrentQueue 只负责跨线程传递，GameCommand 创建后不再改写其协议、会话和消息体。
     private readonly ConcurrentQueue<GameCommand> _pendingCommands =
         new ConcurrentQueue<GameCommand>();
 
@@ -20,6 +20,7 @@ public sealed class GameCommandDispatcher : Singleton<GameCommandDispatcher>
     // 停服时先禁止生产者入队，再由逻辑线程按策略排空队列。
     private volatile bool _accepting = true;
 
+    /// <summary>尚未出队的消息计数，用于观察队列积压。</summary>
     public int PendingCount
     {
         get { return _pendingCount; }
@@ -29,7 +30,7 @@ public sealed class GameCommandDispatcher : Singleton<GameCommandDispatcher>
     /// 将网络命令放入待处理队列。
     /// 仅允许网络回调线程调用，游戏状态由逻辑帧统一修改。
     /// </summary>
-    /// <param name="command">已完成协议解析的游戏命令。</param>
+    /// <param name="command">已提取外层包信息的命令；内部业务 protobuf 在逻辑线程处理时解析。</param>
     /// <returns>命令成功入队时返回 true；停止接收、命令为空或队列已满时返回 false。</returns>
     public bool Enqueue(GameCommand command)
     {
@@ -61,6 +62,7 @@ public sealed class GameCommandDispatcher : Singleton<GameCommandDispatcher>
     {
         // 此方法运行在 GameServer 主线程，模块可以安全地修改游戏状态。
         int processedCount = 0;
+        // 本轮逐条取出的消息，仍按入队顺序交给消息管理器。
         GameCommand command;
         while (processedCount < MaxCommandsPerTick &&
                _pendingCommands.TryDequeue(out command))

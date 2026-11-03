@@ -1,5 +1,6 @@
 syntax = "proto3"; //指定proto使用proto3语法，不指定默认是使用proto2
 
+// 各业务共用的结果编号；0 表示成功，非零含义由具体处理入口选择。
 enum CmdCode{
 	Succeed = 0;//请求成功
 	AcctExist = 1;//账号已存在
@@ -148,7 +149,7 @@ message RoleBaseInfo{
 	int32 jian_ren = 29;         //坚韧，PVP减伤
 
 	// 位置信息
-	string pos = 30;             //地图位置
+	string pos = 30;             //地图世界坐标，使用 X_Y_Z 下划线连接的文本
 	int32 map_id = 31;           //地图ID
 	int32 instance_id = 32;      //副本实例ID，0 表示公共场景；同一地图内不同队伍分属不同实例
 }
@@ -177,7 +178,7 @@ message TeamInfoNtf{
 // 邀请入队通知，对应 RO TeamInvatationData。
 message TeamInvatationNtf{
 	uint64 team_id = 1;        //发出邀请的队伍ID
-	uint64 inviter_id = 2;     //邀请人角色ID
+	uint64 inviter_id = 2;     //邀请时是邀请人角色ID；队长收到申请时是申请人角色ID
 	string inviter_name = 3;   //邀请人昵称，用于邀请弹窗
 	uint64 captain_id = 4;     //该队队长角色ID
 }
@@ -187,7 +188,7 @@ message TeamEnterDungeonNtf{
 	uint64 team_id = 1;        //发起挑战的队伍ID
 	int32 dungeon_id = 2;      //副本配置ID，魔神塔为 4060
 	int32 scene_id = 3;        //目标场景ID
-	uint64 instance_id = 4;    //服务端分配的副本实例ID，必为非0
+	uint64 instance_id = 4;    //进入副本时为分配的非零实例ID；离开副本回城通知中为 0
 	int32 map_id = 5;          //该实例对应的地图ID
 	string pos = 6;            //出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
 }
@@ -221,9 +222,9 @@ message RoleSkillInfoRet
 //技能信息数据
 message RoleSkillInfo
 {
-	int32 skill_id = 1;
-	int32 level = 2;
-	string bind_key = 3;
+	int32 skill_id = 1;//技能主表配置ID
+	int32 level = 2;//角色已学等级，0 表示未学习
+	string bind_key = 3;//该技能保存的客户端快捷键文本
 }
 
 // 施法请求结果；失败时也返回原施法 UUID 及当前权威 MP/CD。
@@ -314,11 +315,13 @@ message RoleShopPurchaseInfo
 	string update_date = 8;//记录最后更新时间，使用 ISO-8601 文本
 }
 
+// 一类背包已开启的容量，以格子为单位。
 message Kanpsacktypecount
 {
 	int32 type =1;//包类型
 	int32 count =2;//该包裹已开启的格子数量
 }
+// 一个物品堆叠的实例数据，物品UID与配置ID分别用于实例关联和查询配置。
 message RoleItemInfo
 {
 	int64 item_uid = 1;//物品实例 UID，全链路禁止截断为 32 位
@@ -336,6 +339,7 @@ message RoleItemInfo
 	int64 expire_time_utc_ticks = 13;//物品过期时间的 UTC ticks，0 表示永久
 }
 
+// 与物品实例UID关联的装备专用字段。
 message RoleEquipItemInfo
 {
 	int64 item_uid = 1;//物品实例 UID
@@ -344,6 +348,7 @@ message RoleEquipItemInfo
 	int32 equip_type = 4;//装备类别
 }
 
+// 同一装备的三个词条槽位：每槽保存配置ID与实际数值。
 message RoleEquipGeneInfo
 {
 	int64 item_uid = 1;//物品实例 UID
@@ -374,12 +379,12 @@ message OpenKnapsackGridRet
 	int32 current_opened_grid_count = 3;//服务器当前已开启的背包格子数量
 	int32 knapsack_type = 4;//背包类型，对应 KnapsackType
 }
-// 一般表示什么物品数量变化
+// 一条业务次数当前值；type 和 id 共同确定是哪项商城或副本次数。
 message CountItemInfo{
-	int64 type = 1;
-	int64 id = 2;
-	int32 count = 3;
-	int64 cd_time_stamp = 4;
+	int64 type = 1;//次数业务分类，对应 RoleCountAction
+	int64 id = 2;//商品GoodsId或其他业务对象ID
+	int32 count = 3;//当前计数值，不是背包物品数量
+	int64 cd_time_stamp = 4;//预留时间字段，当前次数通知没有赋值
 }
 //通知客户端数量变化
 message GetCountInfoRes{
@@ -392,16 +397,17 @@ message CountUpdateSyncInfo{
 }
 message MapKey64Value32
 {
-		uint64 key = 1;
-		int32 val = 2;
+		uint64 key = 1;//删除通知中的物品实例UID
+		int32 val = 2;//本次物品变化原因编号
 }
 message UpdateItem
 {
-	repeated MapKey64Value32 delete_list = 1;//需要删除的itme
-	int64 update_time = 2;
-	repeated RoleItemInfo item_list = 3;
+	repeated MapKey64Value32 delete_list = 1;//需要客户端移除的物品实例及其原因
+	int64 update_time = 2;//增量通知生成时间，UTC Unix秒
+	repeated RoleItemInfo item_list = 3;//需要客户端新增或更新的物品当前状态
 }
 
+// 背包增量回包，包含结果码以及增删改列表。
 message UpdateItemRet
 {
 	CmdCode cmd_code = 1;

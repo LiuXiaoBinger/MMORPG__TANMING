@@ -3,14 +3,14 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 rem ============================================================
-rem  将 Network\bin\Debug 下的 .dll 分发复制到各 Server 及客户端
-rem  双击即可运行
+rem  把网络项目 Debug 目录直接包含的全部 DLL 复制到四服和客户端，包含同目录依赖 DLL
+rem 复制覆盖同名文件但保留源文件，实际目标由下方路径变量决定
 rem ============================================================
 
 set "source=D:\unitypro\LYFMMORGP\LYF_Server\Network\bin\Debug"
 set "serverRoot=D:\unitypro\LYFMMORGP\LYF_Server"
 
-rem 目标目录列表（相对 serverRoot 的子目录，客户端用完整路径）
+rem 四服目标是 serverRoot 下的子目录，客户端目标另由 clientTarget 的完整路径指定
 set "targets=CenterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
 set "clientTarget=D:\unitypro\LYFMMORGP\LYF_MMO\Assets\GM_Game\Plugins\Net"
 
@@ -22,7 +22,7 @@ if not exist "%source%" (
     exit /b 1
 )
 
-rem 统计源 dll 数量
+rem 只统计源目录第一层的 DLL，未找到时直接结束
 set /a dllCount=0
 for %%f in ("%source%\*.dll") do (
     if exist "%%f" set /a dllCount+=1
@@ -40,7 +40,7 @@ echo.
 set /a totalSuccess=0
 set /a totalFail=0
 
-rem ---------- 复制到 4 个 Server 项目 ----------
+rem 分别向四服复制，每个文件在每个目标的一次复制分别计数
 for %%t in (%targets%) do (
     set "dest=%serverRoot%\%%t"
     echo === %%t ===
@@ -63,7 +63,7 @@ for %%t in (%targets%) do (
     echo.
 )
 
-rem ---------- 复制到客户端 Plugins\Net ----------
+rem 复制到 clientTarget 指定的 Net 插件目录，下面的提示文字不决定实际目标路径
 echo === LYF_MMO\Assets\LYF_Game\Plugins\Net ===
 if not exist "%clientTarget%" (
     echo   [信息] 目标目录不存在，正在创建: %clientTarget%

@@ -3,8 +3,11 @@ using System.Threading;
 
 namespace GameServer
 {
+    /// <summary>游戏逻辑服入口：连接中心服、监听网关，并持续推进单线程游戏逻辑。</summary>
     internal class GameServerApp
     {
+        /// <summary>加载配置和网络链路后启动游戏主循环。</summary>
+        /// <param name="args">命令行参数，当前未使用。</param>
         public static void Main(string[] args)
         {
             LubanMgr.Instance.Init();
@@ -30,9 +33,12 @@ namespace GameServer
             }
         }
 
+        /// <summary>读取 GAME_SERVER_INSTANCE_ID；未配置时采用本地开发实例 1，有值时要求为 0 到 255。</summary>
         private static int GetServerInstanceId()
         {
+            // 本地单游戏服的默认编号，多实例部署时由环境变量区分。
             const int defaultServerInstanceId = 1;
+            // 物品 UID 编码要用到的游戏服实例配置。
             string configuredValue = Environment.GetEnvironmentVariable("GAME_SERVER_INSTANCE_ID");
             if (string.IsNullOrWhiteSpace(configuredValue))
             {
@@ -40,6 +46,7 @@ namespace GameServer
                 return defaultServerInstanceId;
             }
 
+            // 解析后的实例编号，占 UID 的 8 位。
             int serverInstanceId;
             if (!int.TryParse(configuredValue, out serverInstanceId) || serverInstanceId < 0 || serverInstanceId > 255)
             {

@@ -10,6 +10,7 @@ public sealed class ItemExtraData
     /// </summary>
     public Dictionary<string, string> Values { get; private set; }
 
+    /// <summary>为一件物品建立独立的扩展键值字典。</summary>
     public ItemExtraData()
     {
         Values = new Dictionary<string, string>();

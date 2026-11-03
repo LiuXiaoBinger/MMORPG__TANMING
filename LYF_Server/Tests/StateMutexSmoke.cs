@@ -298,7 +298,7 @@ public static class StateMutexSmoke
                 table.GetStateName(StateTransitionType.kStateTransitionRequestSinging));
         }
 
-        // 跳舞 -> 吟唱 为 0 禁止；采集 -> 吟唱 为 1 直接；单人动作 -> 吟唱 为 2 先退旧状态。
+        // 跳舞到吟唱为 0 禁止；单人动作到吟唱为 1 直接允许；自动采集到吟唱为 2 先离开旧状态。
         if (!ExpectValue(StateTransitionType.kStateTransitionDance, StateValueType.kForbidTransition))
         {
             return Fail("跳舞 -> 吟唱 取值不符，期望 0 禁止");
@@ -432,7 +432,7 @@ public static class StateMutexSmoke
         manager.UnInit();
         manager.Init();
 
-        // collection 是本用例伪造的采集类状态，真实表里它对吟唱是 1 直接切换。
+        // collection 变量实际构造的是单人动作状态，用于检查到吟唱的直接允许分支。
         ProbeState collection = new ProbeState(StateTransitionType.kSingleAction);
         collection.in_state_ = true;
         manager.RegisterState(collection);
@@ -588,7 +588,7 @@ public static class StateMutexSmoke
         // token 接收挂起请求令牌，取消时要用同一个令牌定位请求。
         ulong token;
         manager.TransferStateByFunc(role, StateTransitionType.kStateTransitionRequestSinging, true,
-            // code 是取消路径给出的结果码，本用例只关心回调是否被调用一次。
+            // code 是若请求完成时传入的结果码；本用例取消请求，期望回调始终不执行。
             delegate(CmdCode code) { callback_count++; }, out token);
 
         if (token == 0UL || PendingCount(transfer) != 1)

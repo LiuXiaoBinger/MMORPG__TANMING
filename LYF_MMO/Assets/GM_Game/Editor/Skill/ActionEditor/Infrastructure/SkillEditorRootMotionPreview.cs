@@ -4,7 +4,7 @@ using UnityEngine;
 using Ethan.ActionEditor;
 using ActionData = global::Global;
 
-/// <summary>从动画真实根平移曲线重建指定帧的水平位移，重复采样和拖回时间轴不会累加上次预览位置。</summary>
+/// <summary>根据动画根节点的位置曲线，计算模型从起点到指定帧应移动多远；拖回时间轴时也从起点重新计算。</summary>
 public static class SkillEditorRootMotionPreview
 {
     /// <summary>计算作者动作从零帧到目标帧期间声明的动画根位移。</summary>

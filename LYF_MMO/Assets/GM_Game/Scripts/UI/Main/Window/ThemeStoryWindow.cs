@@ -4,8 +4,8 @@ using TMPro;
 
 /// <summary>
 /// 主题副本详情窗口，移植自 RO 的 Theme_Story 预制体。
-/// 全屏展示首领立绘、首领/特性/档案三个页签、通关奖励与「开始挑战」入口。
-/// 本类只负责展示与交互，真正的进入副本协议通过 <see cref="OnEnterDungeon"/> 交给外部发起。
+/// 按固定设计尺寸显示首领立绘、首领/特性/档案三页及挑战入口，背景另向四周扩展。
+/// 本类只负责展示与交互，通过 <see cref="OnEnterDungeon"/> 把选中配置交给外部，由控制器继续建队或进入流程。
 /// </summary>
 public sealed class ThemeStoryWindow : WindowBase
 {
@@ -59,7 +59,7 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>奖励区根节点，只在首领页签显示。</summary>
     private GameObject _awardRoot;
 
-    /// <summary>描述滚动区，只在首领页签显示。</summary>
+    /// <summary>三个页签共用的描述滚动区，切换任意页签都保持显示。</summary>
     private GameObject _descScroll;
 
     /// <summary>正文的滚动组件，用来判断还有没有没读完的内容。</summary>
@@ -150,6 +150,7 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             return;
         }
+        // 页签上的点击图片，没有精灵时仅保留透明射线区域。
         Image img = t.GetComponent<Image>();
         if (img == null)
         {
@@ -172,7 +173,9 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         if (isShow)
         {
-            ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
+            // 本次 Show 传入的副本配置，类型不符时保留原内容。
+            // 本次要展示的副本数据，替换后回到首领页。
+        ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
             if (entry != null)
             {
                 ReFreshUI(entry);
@@ -212,7 +215,9 @@ public sealed class ThemeStoryWindow : WindowBase
             _downArrow.SetActive(false);
             return;
         }
+        // 实际正文总高度，用于判断溢出和分页量。
         float contentHeight = _infoScroll.content.rect.height;
+        // 滚动视口高度，代表一次可见的正文范围。
         float viewHeight = _infoScroll.viewport.rect.height;
         if (contentHeight <= viewHeight + 1f)
         {
@@ -226,6 +231,7 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>用副本数据刷新界面，并把页签重置到首领页。</summary>
     public override void ReFreshUI(object obj)
     {
+        // 本次要展示的副本数据，替换后回到首领页。
         ThemeDungeonEntry entry = obj as ThemeDungeonEntry;
         if (entry == null)
         {
@@ -296,15 +302,20 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             return;
         }
+        // 实际正文总高度，用于判断溢出和分页量。
         float contentHeight = _infoScroll.content.rect.height;
+        // 滚动视口高度，代表一次可见的正文范围。
         float viewHeight = _infoScroll.viewport.rect.height;
+        // 内容超过视口的可滚动距离。
         float range = contentHeight - viewHeight;
         if (range <= 1f)
         {
             _downArrow.SetActive(false);
             return;
         }
+        // 一屏高度占可滚动距离的比例。
         float page = viewHeight / range;
+        // 下翻一屏后的归一化位置，最低为零。
         float target = _infoScroll.verticalNormalizedPosition - page;
         if (target < 0f)
         {
@@ -320,7 +331,7 @@ public sealed class ThemeStoryWindow : WindowBase
         CloseWindow();
     }
 
-    /// <summary>「开始挑战」回调：等级校验通过后交给外部发起进入流程。</summary>
+    /// <summary>“开始挑战”回调：存在副本配置就通知外部，本窗口不校验角色或服务器等级。</summary>
     private void OnBeginClicked()
     {
         if (_entry == null)
@@ -354,7 +365,9 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             return null;
         }
+        // 包含 root 及隐藏后代的节点快照，按名称取第一项匹配。
         Transform[] all = root.GetComponentsInChildren<Transform>(true);
+        // 当前顺序遍历下标。
         int i = 0;
         while (i < all.Length)
         {
@@ -370,6 +383,7 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>按名字找节点并返回 GameObject。</summary>
     private GameObject FindNode(string name)
     {
+        // 查到的具名节点，缺失时向调用方返回空。
         Transform t = FindDeep(_root, name);
         return t == null ? null : t.gameObject;
     }
@@ -377,6 +391,7 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>按名字找 TMP 文本。</summary>
     private TextMeshProUGUI FindText(string name)
     {
+        // 查到的具名节点，缺失时向调用方返回空。
         Transform t = FindDeep(_root, name);
         return t == null ? null : t.GetComponent<TextMeshProUGUI>();
     }
@@ -400,10 +415,13 @@ public sealed class ThemeStoryWindow : WindowBase
     /// </summary>
     private void NormalizeTextAlignment()
     {
+        // 所有 TMP 文字快照，用于修正旧资源的垂直对齐数值。
         TextMeshProUGUI[] texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+        // 当前顺序遍历下标。
         int i = 0;
         while (i < texts.Length)
         {
+            // 序列化的垂直对齐整数，大于阈值时按旧导入倍数还原。
             int value = (int)texts[i].verticalAlignment;
             if (value > 8192)
             {
@@ -416,19 +434,23 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>按名字缓存控件，找不到的留空并由调用处判空跳过。</summary>
     private void CacheNodes()
     {
+        // 首领大图节点。
         Transform boss = FindDeep(_root, "BossImg");
         if (boss != null)
         {
             _bossPic = boss.GetComponent<RawImage>();
         }
+        // 标题区域，也是标题文字和关闭按钮的查找范围。
         Transform title = FindDeep(_root, "Title");
         if (title != null)
         {
-            Transform t = FindDeep(title, "Text");
+            // 查到的具名节点，缺失时向调用方返回空。
+        Transform t = FindDeep(title, "Text");
             if (t != null)
             {
                 _titleText = t.GetComponent<TextMeshProUGUI>();
             }
+            // 标题区域内的关闭按钮。
             Transform close = FindDeep(title, "Btn_Close");
             if (close != null)
             {
@@ -445,26 +467,31 @@ public sealed class ThemeStoryWindow : WindowBase
         _lvText = FindText("DungeonLv");
         _nameText = FindText("DungeonName");
         // 奖励标题是 Award 下的 Text，不能直接按名字找，否则会撞到标题栏里的 Text
+        // 奖励区域，标题必须限定在此区域查找。
         Transform award = FindDeep(_root, "Award");
         if (award != null)
         {
             _awardRoot = award.gameObject;
+            // 奖励区域自己的标题文字。
             Transform at = FindDeep(award, "Text");
             if (at != null)
             {
                 _rewardTitle = at.GetComponent<TextMeshProUGUI>();
             }
         }
+        // 开始挑战按钮节点。
         Transform begin = FindDeep(_root, "BeginBtn");
         if (begin != null)
         {
             _beginBtn = begin.GetComponent<Button>();
         }
+        // 公开情报按钮节点，目前只输出占位日志。
         Transform info = FindDeep(_root, "InformationBtn");
         if (info != null)
         {
             _infoBtn = info.GetComponent<Button>();
         }
+        // 正文滚动区根节点。
         Transform scroll = FindDeep(_root, "InformationScroll");
         if (scroll != null)
         {
@@ -495,21 +522,26 @@ public sealed class ThemeStoryWindow : WindowBase
     /// </summary>
     private void SetupOpaqueBackdrop()
     {
+        // 原预制体背景，在其下层插入不透明底色。
         Transform bg = FindDeep(_root, "Bg");
         if (bg == null)
         {
             return;
         }
+        // 检查此前是否已创建背景底色节点。
         Transform old = _root.Find("TD_StoryBackdrop");
         if (old != null)
         {
             return;
         }
+        // 本窗口创建的不透明背景对象。
         GameObject go = new GameObject("TD_StoryBackdrop", typeof(RectTransform), typeof(Image));
+        // 背景矩形，覆盖根窗口并向外扩展。
         RectTransform rt = go.GetComponent<RectTransform>();
         rt.SetParent(_root, false);
         rt.anchorMin = new Vector2(0f, 0f);
         rt.anchorMax = new Vector2(1f, 1f);
+        // 背景图片，用纯色阻挡下层内容和射线。
         Image img = go.GetComponent<Image>();
         img.color = new Color(0.05f, 0.05f, 0.07f, 1f);
         img.raycastTarget = true;
@@ -536,11 +568,13 @@ public sealed class ThemeStoryWindow : WindowBase
         _descText.alignment = TextAlignmentOptions.TopLeft;
         _descText.enableAutoSizing = false;
         _descText.margin = new Vector4(2f, 0f, 2f, 2f);
+        // 正文的父容器，调整自动布局以适应内容高度。
         Transform content = _descText.transform.parent;
         if (content == null)
         {
             return;
         }
+        // 正文容器上的竖向布局组件，存在时设置边距和子项尺寸规则。
         VerticalLayoutGroup vlg = content.GetComponent<VerticalLayoutGroup>();
         if (vlg != null)
         {
@@ -552,6 +586,7 @@ public sealed class ThemeStoryWindow : WindowBase
             vlg.childForceExpandHeight = false;
             vlg.childForceExpandWidth = true;
         }
+        // 按正文首选高度撑开内容的组件。
         ContentSizeFitter fitter = content.GetComponent<ContentSizeFitter>();
         if (fitter != null)
         {
@@ -559,9 +594,11 @@ public sealed class ThemeStoryWindow : WindowBase
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
         // 正文宽度跟随视口，避免预制体里写死的窄框把长句挤在一起。
+        // 正文容器的父级矩形，用来确认有可依附的视口布局。
         RectTransform vp = content.parent as RectTransform;
         if (vp != null)
         {
+            // 正文自身矩形，左右锚点跟随父容器宽度。
             RectTransform rt = _descText.rectTransform;
             rt.anchorMin = new Vector2(0f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
@@ -579,32 +616,38 @@ public sealed class ThemeStoryWindow : WindowBase
         BindTab(2, "RecordTog");
     }
 
-    /// <summary>缓存单个页签的两个状态节点，并把它的按钮点击接到页签切换上。</summary>
+    /// <summary>缓存单页签 ON/OFF 节点；优先选择 ON 节点绑定按钮，ON 不存在时才使用 OFF。</summary>
     private void BindTab(int index, string name)
     {
+        // 按名称找到的页签根节点。
         Transform tog = FindDeep(_root, name);
         if (tog == null)
         {
             return;
         }
+        // 选中态节点。
         Transform on = FindDeep(tog, "ON");
+        // 未选中态节点。
         Transform off = FindDeep(tog, "OFF");
         _tabOn[index] = on == null ? null : on.gameObject;
         _tabOff[index] = off == null ? null : off.gameObject;
         HideBlankSprite(on);
         HideBlankSprite(off);
-        // ON/OFF 两个状态节点里各带一个 Image，把点击挂到它们身上，比挂 Toggle 稳定。
+        // 当前只选一个状态节点作点击区，优先 ON，缺失时回退 OFF。
+        // 当前被选作按钮点击区的一个节点。
         Transform hit = on != null ? on : off;
         if (hit == null)
         {
             return;
         }
+        // 按钮需要的射线图片组件。
         Image img = hit.GetComponent<Image>();
         if (img == null)
         {
             return;
         }
         img.raycastTarget = true;
+        // 页签按钮，缺少时补到选中的点击节点上。
         Button btn = hit.GetComponent<Button>();
         if (btn == null)
         {
@@ -612,6 +655,7 @@ public sealed class ThemeStoryWindow : WindowBase
             btn.transition = Selectable.Transition.None;
             btn.targetGraphic = img;
         }
+        // 固定本按钮对应的页签下标供回调使用。
         int captured = index;
         btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(delegate { SwitchTab(captured); });
@@ -627,6 +671,7 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             return;
         }
+        // 下翻箭头已有的按钮，仅存在时绑定翻页事件。
         Button btn = _downArrow.GetComponent<Button>();
         if (btn != null)
         {
@@ -641,18 +686,20 @@ public sealed class ThemeStoryWindow : WindowBase
         _downArrow.SetActive(false);
     }
 
-    /// <summary>加载首领立绘，路径为空或加载失败时保留预制体自带的图。</summary>
+    /// <summary>加载 path 对应首领立绘，去掉末尾 .png 后拼接 UI/Texture/；路径空或失败时保留当前图片。</summary>
     private void ApplyBossPic(string path)
     {
         if (_bossPic == null || string.IsNullOrEmpty(path))
         {
             return;
         }
+        // 资源相对路径，当前仅移除末尾小写 .png。
         string realPath = path;
         if (realPath.EndsWith(".png"))
         {
             realPath = realPath.Substring(0, realPath.Length - 4);
         }
+        // 按 UI/Texture/ 根目录读取的首领立绘纹理。
         Texture2D tex = Resources.Load<Texture2D>("UI/Texture/" + realPath);
         if (tex != null)
         {
@@ -660,7 +707,7 @@ public sealed class ThemeStoryWindow : WindowBase
         }
     }
 
-    /// <summary>按通关状态显示角标。</summary>
+    /// <summary>当前未接入通关数据，统一隐藏已通关角标。</summary>
     private void ApplyPassedState()
     {
         if (_passedImg != null)
@@ -677,9 +724,11 @@ public sealed class ThemeStoryWindow : WindowBase
             return;
         }
         _tab = index;
+        // 当前顺序遍历下标。
         int i = 0;
         while (i < 3)
         {
+            // 此下标是否为当前选中页签。
             bool active = i == index;
             if (_tabOn[i] != null)
             {
@@ -702,9 +751,10 @@ public sealed class ThemeStoryWindow : WindowBase
         RefreshTabContent();
     }
 
-    /// <summary>拼出当前页签要显示的正文。真实文案等配置表接入后替换这里。</summary>
+    /// <summary>按页签拼接固定展示文案，只插入副本名和首领名；这些文案不表示已实现对应战斗机制，也未使用 chapterContent。</summary>
     private string BuildTabText()
     {
+        // 用于拼接固定正文的主题副本名称。
         string name = _entry.themeName;
         if (_tab == TabBoss)
         {

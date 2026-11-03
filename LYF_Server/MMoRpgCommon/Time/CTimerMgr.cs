@@ -14,6 +14,7 @@ public sealed class CTimerMgr
     /// <summary>无限循环触发标记。</summary>
     public const int InfiniteRepeatCount = -1;
 
+    /// <summary>一个活动定时器的剩余时间、回调对象和触发计数。</summary>
     private sealed class TimerEntry
     {
         /// <summary>定时器句柄。</summary>
@@ -26,7 +27,7 @@ public sealed class CTimerMgr
         private int _intervalMilliseconds;
         /// <summary>剩余触发次数，负数表示无限触发。</summary>
         private int _repeatCount;
-        /// <summary>距离下一次触发的剩余时间。</summary>
+        /// <summary>距离下一次触发的剩余毫秒数。</summary>
         private int _remainingMilliseconds;
         /// <summary>当前生命周期已经触发的次数。</summary>
         private uint _triggerCount;
@@ -52,7 +53,7 @@ public sealed class CTimerMgr
             get { return _handle; }
         }
 
-        /// <summary>获取下一次触发的剩余时间。</summary>
+        /// <summary>获取下一次触发前还需经过的毫秒数。</summary>
         internal int RemainingMilliseconds
         {
             get { return _remainingMilliseconds; }
@@ -64,7 +65,7 @@ public sealed class CTimerMgr
             get { return _removeAfterCallback; }
         }
 
-        /// <summary>推进定时器并返回本轮是否到期。</summary>
+        /// <summary>扣减本帧毫秒数并判断到期；到期后从完整间隔重新计时，不补发错过的次数。</summary>
         internal bool Advance(int deltaMilliseconds)
         {
             _remainingMilliseconds -= deltaMilliseconds;
@@ -116,6 +117,7 @@ public sealed class CTimerMgr
     #endregion
 
     #region 构造与初始化
+    /// <summary>只允许管理器内部建立进程共享实例。</summary>
     private CTimerMgr()
     {
     }
@@ -242,7 +244,9 @@ public sealed class CTimerMgr
             return InvalidTimer;
         }
 
+        // 此句柄标识本次注册，业务 timerId 则会原样交给回调。
         long handle = CreateHandle();
+        // 独立保存本次注册的间隔与次数，等待 Update 推进倒计时。
         TimerEntry entry = new TimerEntry(
             handle,
             timer,

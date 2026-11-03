@@ -29,7 +29,7 @@ public class SkillSlotWidget : MonoBehaviour
     /// <summary>技能槽固定快捷键。</summary>
     private string _skillKey;
 
-    /// <summary>当前冷却动画订阅。</summary>
+    /// <summary>逐帧刷新冷却文字和遮罩的订阅，重绑或冷却结束时释放。</summary>
     private IDisposable _cooldownSubscription;
 
     /// <summary>技能图标异步绑定版本。</summary>
@@ -91,7 +91,7 @@ public class SkillSlotWidget : MonoBehaviour
     }
 
     #region 核心逻辑
-    /// <summary>设置技能槽固定快捷键。</summary>
+    /// <summary>设置 key 对应的固定快捷键文字；清空技能时仍保留此文字。</summary>
     public void SetKey(string key)
     {
         _skillKey = key;
@@ -221,7 +221,7 @@ public class SkillSlotWidget : MonoBehaviour
         });
     }
 
-    /// <summary>切换冷却遮罩和倒计时显示。</summary>
+    /// <summary>按 visible 切换遮罩；隐藏时清空倒计时文字，显示时由冷却刷新写入文字。</summary>
     private void SetCooldownVisible(bool visible)
     {
         if (_imgMask != null)

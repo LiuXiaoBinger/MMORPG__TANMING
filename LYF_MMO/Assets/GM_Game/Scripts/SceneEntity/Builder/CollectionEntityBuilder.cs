@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 采集物 Builder，对应 CollectionBuilder 的采集与场景组件。
-/// 采集物是场景中的可交互静态对象，不需要战斗和 AI 组件。
+/// 创建或复用采集物，添加位置、属性和采集物类别标记。
+/// 这里只完成实体装配，采集交互由其他业务入口处理。
 /// </summary>
 public sealed class CollectionEntityBuilder : EntityBuilder
 {

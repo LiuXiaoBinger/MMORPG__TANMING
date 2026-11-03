@@ -11,6 +11,7 @@ public abstract class RoleComponentBase
 
     #region 构造与初始化
     /// <summary>创建组件并绑定角色。</summary>
+    /// <param name="owner">拥有本组件的角色，释放时解除引用。</param>
     protected RoleComponentBase(OnlineRole owner)
     {
         if (owner == null) throw new ArgumentNullException("owner");
@@ -21,6 +22,7 @@ public abstract class RoleComponentBase
     public virtual void Initialize() { }
 
     /// <summary>固定帧更新。</summary>
+    /// <param name="deltaMilliseconds">本帧经过的毫秒数，基类不使用。</param>
     public virtual void Update(int deltaMilliseconds) { }
 
     /// <summary>
@@ -54,9 +56,11 @@ public abstract class RoleComponentBase
 
     #region 数据读写
     /// <summary>将组件快照写入角色保存请求。</summary>
+    /// <param name="fieldManager">收集这批组件存档数据的请求构造器。</param>
+    /// <param name="saveVersion">当前角色保存版本，确认时用于区分不同批次。</param>
     public virtual bool Save(RoleDataFieldManager fieldManager, long saveVersion) { return false; }
 
-    /// <summary>装载角色登录数据。</summary>
+    /// <summary>旧版登录装载入口；具体组件决定如何解释数据，基类没有装载行为。</summary>
     public virtual void Load(object roleData) { }
     #endregion
 

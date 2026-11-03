@@ -39,7 +39,7 @@ namespace Ethan.ActionEditor.Editor
         }
     }
 
-    /// <summary>对技能编辑资产统一记录撤销、设置脏标记和定点保存，不执行全项目保存。</summary>
+    /// <summary>负责技能编辑的撤销和保存：先记录旧值，再标记资产已修改，需要时只保存指定资产。</summary>
     internal static class ActionEditorTransaction
     {
         /// <summary>在明确的编辑目标修改前保存原生 Undo 快照；不创建拖拽手势分组。</summary>

@@ -5,8 +5,13 @@ public class RoleCountItemInfo
 {
 
     #region 构造
+    /// <summary>建立字段为默认值的次数记录，供快照复制时逐项填充。</summary>
     public RoleCountItemInfo() { }
 
+    /// <summary>建立一个业务对象的已用次数，刷新时间先记为未设置。</summary>
+    /// <param name="type">商城购买或副本等行为编号。</param>
+    /// <param name="id">该行为对应商品或副本的业务键。</param>
+    /// <param name="count">初始累计次数。</param>
     public RoleCountItemInfo(long type, long id, long count)
     {
         Type = type;
@@ -43,7 +48,7 @@ public class RoleCountItemInfo
 }
 
 /// <summary>
-/// 轻量一次性自旋标志：用于标记某段逻辑是否已进入/已处理，保证同一周期内不重复执行。
+/// 普通布尔开关：Set 可识别是否重复置位，Reset 清空；这里没有自旋、锁或线程同步。
 /// </summary>
 public class Switch
 {

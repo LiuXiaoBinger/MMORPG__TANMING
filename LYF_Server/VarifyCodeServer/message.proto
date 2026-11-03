@@ -2,16 +2,24 @@ syntax = "proto3";
 
 package message;
 
+// 登录服调用的邮箱验证码服务；具体生成和发送在验证码服务端执行。
 service VarifyService {
+  // 为指定邮箱申请验证码，并返回服务执行结果。
   rpc GetVarifyCode (GetVarifyReq) returns (GetVarifyRsp) {}
 }
 
+// 验证码申请，只需提供接收邮箱。
 message GetVarifyReq {
+  // 接收验证码的邮箱地址。
   string email = 1;
 }
 
+// 验证码服务返回的状态、邮箱和验证码。
 message GetVarifyRsp {
+  // 服务错误码，零表示成功；业务含义由验证码服务定义。
   int32 error = 1;
+  // 本次请求对应的邮箱。
   string email = 2;
+  // 本次服务生成的验证码文本。
   string code = 3;
 }

@@ -1,8 +1,7 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 佣兵实体，对应参考项目 MercenaryBuilder。
-/// 继承自 MonsterEntity，作为玩家召唤的佣兵单位使用。
+/// 佣兵实体，沿用怪物数据与生命周期，并把实体类别设为 Mercenary。
 /// </summary>
 public sealed class MercenaryEntity : MonsterEntity
 {

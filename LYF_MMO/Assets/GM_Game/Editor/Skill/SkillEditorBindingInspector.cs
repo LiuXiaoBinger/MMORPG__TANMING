@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>提供绑定资产的明确编辑和发布入口，保存 Y 资产不自动修改正式表现。</summary>
+/// <summary>在技能绑定资产的 Inspector 中提供打开编辑器、检查和导出按钮；保存草稿后仍需手动导出才会更新游戏表现。</summary>
 [CustomEditor(typeof(SkillEditorBinding))]
 public sealed class SkillEditorBindingInspector : Editor
 {

@@ -1,10 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 天气环境数据。对应 RO 源工程 MWeatherData，
-/// 只保留魔神塔场景静态天气实际使用的字段：静态雾（含黄昏时段雾）、
-/// 海拔雾与散射参数、云影色、雾/云流动与风参数。
-/// 源数据中的昼夜雾循环、雨雪雷电、彩虹、后处理字段本场景未接入，故不移植。
+/// 保存雾、散射、云影和风的参数；MEnvorimentSetting 读取后写入 Shader，不负责切换天气或生成雨雪。
 /// </summary>
 public class MWeatherData : ScriptableObject
 {
@@ -73,7 +70,7 @@ public class MWeatherData : ScriptableObject
 
     /// <summary>
     /// 海拔雾起始高度（世界单位）。小于等于 0 表示关闭海拔雾，
-    /// 应用时写入 _ROCHeightFogParams.x 的倒数并置启用位为 0。
+    /// 大于 0 时 x 写入高度倒数；关闭时 x 写 1、w 写 0，由着色器停用海拔雾。
     /// </summary>
     public float hightFogStart = -1f;
 

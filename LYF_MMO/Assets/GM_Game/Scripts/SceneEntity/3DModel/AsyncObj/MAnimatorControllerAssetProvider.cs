@@ -3,8 +3,8 @@ using UnityEngine;
 using YooAsset;
 
 /// <summary>
-/// Animator Controller 资源适配器。
-/// 路径按 YooAsset Location 解析，失败时不伪造租约，回调 null。
+/// 按 YooAsset 资源地址加载 Animator Controller。
+/// 成功后把控制器和句柄一起交给回调管理；失败返回 null，没有接收者时立即释放。
 /// </summary>
 public sealed class MAnimatorControllerAssetProvider
 {
@@ -25,7 +25,7 @@ public sealed class MAnimatorControllerAssetProvider
 
     /// <summary>
     /// 异步加载 Animator Controller。
-    /// 回调在 YooAsset 主线程完成回调中触发。
+    /// 地址或资源包无效时立即回调 null；发起加载后，在 YooAsset 完成回调中交付结果。
     /// </summary>
     /// <param name="location">YooAsset 资源 Location。</param>
     /// <param name="callback">加载完成回调，参数为 Controller 资源租约，失败时为 null。</param>
@@ -52,6 +52,7 @@ public sealed class MAnimatorControllerAssetProvider
             return;
         }
 
+        // 本次控制器加载的句柄，成功后交给资源持有对象负责释放。
         AssetOperationHandle operation =
             Global.Instance.YooPackage.LoadAssetAsync<RuntimeAnimatorController>(location);
         operation.Completed += handle =>
@@ -66,6 +67,7 @@ public sealed class MAnimatorControllerAssetProvider
                 return;
             }
 
+            // 从完成句柄中取得的控制器资源，为空同样按加载失败处理。
             RuntimeAnimatorController controller =
                 handle.GetAssetObject<RuntimeAnimatorController>();
             if (controller == null)

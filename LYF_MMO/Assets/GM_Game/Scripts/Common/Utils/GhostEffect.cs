@@ -2,15 +2,15 @@
 using UnityEngine;
 
 /// <summary>
-/// 角色残影（拖尾）特效组件：在角色移动或攻击时把当前网格烘焙成半透明鬼影，
-/// 并按剩余时间线性衰减菲涅尔、透明度与主图强度，用于表现高速动作的视觉残留。
+/// 在被调用时复制角色当前姿势的网格，停留在原位置并逐渐淡出，形成高速动作的残影。
+/// 边缘亮度、整体不透明度和贴图强度随时间降低，边缘形状参数保持不变。
 /// </summary>
 public class GhostEffect : MonoBehaviour
 {
-    /// <summary>残影 Shader 中菲涅尔强度属性的缓存ID，避免字符串查找。</summary>
+    /// <summary>控制残影边缘效果形状的 Shader 属性编号，预先缓存以免反复按名称查找。</summary>
     private static readonly int m_IdFresnelStrength = Shader.PropertyToID("_FresnelStrength");
 
-    /// <summary>残影 Shader 中菲涅尔颜色强度属性的缓存ID。</summary>
+    /// <summary>控制残影边缘颜色亮度的 Shader 属性编号。</summary>
     private static readonly int m_IdFresnelColorStrength = Shader.PropertyToID("_FresnelColorStrength");
 
     /// <summary>残影 Shader 中主图强度属性的缓存ID。</summary>
@@ -31,7 +31,7 @@ public class GhostEffect : MonoBehaviour
     /// <summary>跨残影实例复用的材质属性块，每次刷新前清空再写入参数。</summary>
     private static MaterialPropertyBlock m_MaterialPropertyBlock = null;
 
-    /// <summary>当前存活的残影快照列表，每帧倒序更新并移除已结束项。</summary>
+    /// <summary>尚未消失的残影；从列表头逐个更新，移除后仍检查同一位置的下一项。</summary>
     private List<GhostObject> m_GhostShadowList = new List<GhostObject>();
 
     /// <summary>缓存的角色所有 SkinnedMeshRenderer，首次访问时从子节点收集。</summary>
@@ -85,6 +85,7 @@ public class GhostEffect : MonoBehaviour
     }
 
     #region UnityMethods
+    /// <summary>启用时准备绘制层和共享材质参数，材质不可用时关闭组件。</summary>
     private void OnEnable()
     {
         if (m_DefaultLayer == -1)
@@ -104,6 +105,7 @@ public class GhostEffect : MonoBehaviour
         }
     }
 
+    /// <summary>更新每份残影，移除已淡出的记录并销毁为它创建的网格。</summary>
     private void Update()
     {
         for (int i = 0; i < m_GhostShadowList.Count;)
@@ -122,6 +124,7 @@ public class GhostEffect : MonoBehaviour
         }
     }
 
+    /// <summary>停用时立即清理残影，避免角色隐藏后仍留有图像。</summary>
     private void OnDisable()
     {
         CleanUp();
@@ -144,6 +147,7 @@ public class GhostEffect : MonoBehaviour
         m_GhostShadowList.Clear();
     }
 
+    /// <summary>销毁 obj 中为残影新建的网格；模型共享网格仍归原资源所有。</summary>
     private void DestroyGhostShadowObj(GhostObject obj)
     {
         List<MeshInfo> meshInfoList = obj.meshInfoList;
@@ -159,36 +163,23 @@ public class GhostEffect : MonoBehaviour
     #endregion
 
     #region API
-    // Summary:
-    //     ///
-    //     Create a ghost images of the previous locations of the object.
-    //     ///
-    //
-    // params:
-    //   color:
-    //     Ghost color.
-    //
-    //   fresnelStrength:
-    //     Strength of fresnel.
-    //
-    //   fresnelColorStrength:
-    //     Strength of color
-    //     
-    //   alpha:
-    //     Ghost alpha.
-    //
-    //   fadeoutTime:
-    //     Fadeout time of the ghost effect object
-    //     
-    //   mainTexStrength:
-    //     Strength of the MainTexture, 0 to 1.
+    /// <summary>按角色当前姿势和世界位置生成一份残影，后续每帧绘制直到淡出。</summary>
+    /// <param name="color">残影的整体颜色。</param>
+    /// <param name="fresnelStrength">边缘效果强度，残影存活期间不变。</param>
+    /// <param name="fresnelColorStrength">边缘颜色的初始亮度，会随时间降到 0。</param>
+    /// <param name="alpha">初始不透明度，会随时间降到 0。</param>
+    /// <param name="fadeoutTime">淡出所用的秒数。</param>
+    /// <param name="mainTexStrength">原贴图的显示强度；小于等于 0 时合并蒙皮网格，不显示原贴图。</param>
     public void CreateGhostEffectObject(Color color, float fresnelStrength, float fresnelColorStrength, float alpha, float fadeoutTime, float mainTexStrength = 0f)
     {
+        // 保存这一次姿势的网格、世界位置和淡出参数。
         GhostObject obj = new GhostObject();
 
+        // 不显示原贴图时，可把蒙皮网格合并成一份绘制。
         bool combineMesh = mainTexStrength <= 0;
         if (combineMesh)
         {
+            // 临时保存各蒙皮部件烘焙结果及其世界变换。
             List<CombineInstance> combines = new List<CombineInstance>();
 
             for (int i = 0; i < cachedSkinnedMeshRenderer.Count; i++)
@@ -310,8 +301,11 @@ public class GhostEffect : MonoBehaviour
         public bool Update(Material material)
         {
             remainingTime -= Time.deltaTime;
+            // 按剩余时长比例降低边缘亮度。
             float fresnelColorStrength = Mathf.Lerp(0, originFresnelColorStrength, remainingTime / totalTime);
+            // 当前帧的不透明度。
             float alpha = Mathf.Lerp(0, originAlpha, remainingTime / totalTime);
+            // 当前帧保留原贴图的强度。
             float mainTexStrength = Mathf.Lerp(0, originMainTexStrength, remainingTime / totalTime);
 
             m_MaterialPropertyBlock.Clear();

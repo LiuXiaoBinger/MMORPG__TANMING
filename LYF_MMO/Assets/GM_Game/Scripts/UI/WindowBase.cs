@@ -11,12 +11,12 @@ using UnityEngine;
 /// </summary>
 public class WindowBase : MonoBehaviour
 {
-   /// <summary>窗口初始化，子类重写以绑定控件。</summary>
+   /// <summary>窗口初始化扩展点，基类不做操作；具体窗口按需绑定控件。</summary>
    public virtual void InitWindow()
    {
 
    }
-   /// <summary>显示窗口并在有数据时刷新。</summary>
+   /// <summary>先设置窗口显隐；obj 非空就刷新，隐藏窗口时也遵循同一规则。</summary>
    /// <param name="isShow">true 显示，false 隐藏。</param>
    /// <param name="obj">刷新数据，为空则不刷新。</param>
    public virtual void Show(bool  isShow = true,object obj = null)

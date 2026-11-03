@@ -1,7 +1,10 @@
 using System;
 using UnityEngine;
 
-/// <summary>RO 同名水平位移指令；本项目从 Y 程序段导出（含可选横向），不使用 Animator 根增量。</summary>
+/// <summary>
+/// 描述技能的一段水平位移：开始/结束时间、前向与横向曲线、距离及停止方式。
+/// 数据由动作编辑器导出，运行时由程序移动角色，不使用 Animator 根运动。
+/// </summary>
 [Serializable]
 public sealed class MSkillChargeData
 {
@@ -9,22 +12,22 @@ public sealed class MSkillChargeData
     public float At;
     /// <summary>相对施法原点的结束秒数，允许等于 At 表示一次瞬时位移。</summary>
     public float End;
-    /// <summary>RO 横向累计比例曲线，可选；为空时横向包络距离必须为零。</summary>
+    /// <summary>可选的横向累计比例曲线；为空时横向距离必须为零。</summary>
     public AnimationCurve CurveX;
     /// <summary>段内归一化时间对应的前向累计比例曲线，沿用 Y 原曲线及包围方式。</summary>
     public AnimationCurve CurveZ;
-    /// <summary>RO 横向包络距离，单位米且有限；曲线按此尺度输出有符号横移，允许配零距离表示无实际横移。</summary>
+    /// <summary>横向曲线的距离倍率，单位米；可以为负数表示反向横移，为零时不产生横移。</summary>
     public float DistanceX;
     /// <summary>前向累计距离的硬上限，单位米且非负；对应 Y maxDistance，不是原 RO 的额外限制。</summary>
     public float DistanceZ;
-    /// <summary>RO 按施法点追加距离开关；当前 Forward/Self 子集必须为 false。</summary>
+    /// <summary>预留的朝目标追加距离开关，当前位移实现不支持，必须为 false。</summary>
     public bool AimTarget;
     /// <summary>Y Continue 策略允许累计曲线下降时回拉，前向硬上限仍然保留。</summary>
     public bool AllowReverse;
     /// <summary>Y Stop 策略在曲线回拉或达到距离上限时结束该段，不能与 AllowReverse 同时启用。</summary>
     public bool StopAtDistanceLimit;
 
-    /// <summary>核验运行指令的可解释范围，禁止未接入的追目标内容被静默忽略。</summary>
+    /// <summary>检查位移段的时间、距离、曲线和开关是否在当前实现支持的范围内。</summary>
     /// <param name="durationSeconds">原完整动作的秒数上限，程序运动不延长动作窗口。</param>
     /// <returns>时间、曲线及当前支持字段全部合法时返回 true。</returns>
     public bool IsValid(float durationSeconds)
@@ -113,10 +116,10 @@ public sealed class MSkillChargeData
         {
             // 当前累计比例关键帧；权重必须是有限非负值，不能产生不可解释的插值输入。
             Keyframe key = keys[index];
-            // 时间、值与切入切线必须有限，不能产生不可解释的插值。
+            // 时间和值必须有限；切入切线只拒绝 NaN，无穷值可以表示常量段。
             bool valueInvalid = !Finite(key.time) || !Finite(key.value) ||
                 float.IsNaN(key.inTangent);
-            // 切出切线与两侧权重必须有限，无穷权重会产生退化插值输入。
+            // 切出切线只拒绝 NaN；两侧权重必须有限，避免无效插值。
             bool tangentInvalid = float.IsNaN(key.outTangent) ||
                 !Finite(key.inWeight) || !Finite(key.outWeight);
             // 两侧权重必须非负。

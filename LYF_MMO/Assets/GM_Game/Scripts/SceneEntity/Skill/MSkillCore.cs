@@ -1,12 +1,13 @@
 /// <summary>
-/// 实体已装配的单个技能等级配置与冷却状态，由技能字典及存活施法分别持有。
-/// 释放前的预测冷却与服务器回包按施法 UUID 配对，旧回包不能覆盖新一次释放。
+/// 一个已学习技能在当前等级下的配置和运行数据，供技能字典与单次施法共用。
+/// 保存效果、消耗、动作段和最近施法编号；装配到实体后，冷却统一存放在 MSkillComponent。
+/// 所有持有者释放后才归还对象池，旧施法可以继续使用升级前的配置。
 /// </summary>
 public sealed class MSkillCore
 {
 
     #region 字段与属性
-    /// <summary>RO 本地动作轮换间隔超过十秒时重新使用第一段。</summary>
+    /// <summary>两次动作间隔超过十秒后，下一次从第一段重新开始。</summary>
     private const float ComboResetSeconds = 10f;
 
     /// <summary>当前职业默认武器的有序动作列表，生命周期随核心结束。</summary>
@@ -15,7 +16,7 @@ public sealed class MSkillCore
     /// <summary>上次已启动表现的动作序号，负一表示本核心尚未释放。</summary>
     private int _usingTimes = -1;
 
-    /// <summary>上次启动表现时的本机不缩放时间，单位为秒，用于 RO 十秒重置。</summary>
+    /// <summary>上次开始动作的 Time.realtimeSinceStartup 秒数，用于判断是否需要从第一段重新开始。</summary>
     private float _fireRealtime;
 
     /// <summary>技能配置 ID，同一技能的不同等级共享该编号。</summary>
@@ -45,16 +46,16 @@ public sealed class MSkillCore
     /// <summary>单次释放需要的法力值，非负整数。</summary>
     public int MpCost { get; private set; }
 
-    /// <summary>动画索引登记的真实剪辑 Location。</summary>
+    /// <summary>当前选中动作的动画资源地址；是否能加载由后续动画准备流程确认。</summary>
     public string AnimationLocation { get; private set; }
 
     /// <summary>技能表现的保底时长，单位为秒，资源尚未加载时用于结束动作。</summary>
     public float AnimationDurationSeconds { get; private set; }
 
-    /// <summary>当前选中动作占用技能状态的时长，单位为秒；与完整剪辑长度分开。</summary>
+    /// <summary>当前动作占用技能状态的时长，单位秒；多段技能可用它提前交出动作控制权。</summary>
     public float SkillStateTimeSeconds { get; private set; }
 
-    /// <summary>已装配核心所属的组件；装配后单技能 CD 只在其 RO 冷却记录内保存，核心只保最近施法及结果去重身份。</summary>
+    /// <summary>持有此核心的技能组件；绑定后由组件保存单技能冷却，本核心仍保存最近施法及已处理结果的编号。</summary>
     private MSkillComponent _cooldownOwner;
 
     /// <summary>尚未装配到实体的独立核心使用的冷却截止秒数；装配后不再作为 CD 数据源。</summary>
@@ -200,10 +201,10 @@ public sealed class MSkillCore
     }
 
     #region 查询与判定
-    /// <summary>查询在给定本机时间和法力值下能否发起技能请求。</summary>
+    /// <summary>检查本技能配置、MP 和单技能冷却；公共组冷却及角色状态由技能组件另查。</summary>
     /// <param name="realtimeSeconds">本机不受时间缩放影响的时间，单位为秒。</param>
     /// <param name="currentMp">角色当前已知法力值，非负整数；最终由服务器校验。</param>
-    /// <returns>配置有效、法力充足且冷却结束时返回 true；是否收到旧施法回包不构成门禁。</returns>
+    /// <returns>配置有效、法力充足且冷却结束时返回 true；不要求先收到上一次施法的回包。</returns>
     public bool CanStart(float realtimeSeconds, int currentMp)
     {
         // 主键、等级与效果 ID 必须为正，否则配置不完整不能发起。
@@ -311,7 +312,7 @@ public sealed class MSkillCore
         return true;
     }
 
-    /// <summary>按 RO 使用次数推进本次动作；首次和间隔超过十秒时从第一段开始。</summary>
+    /// <summary>按释放次数轮换动作段；首次释放或间隔超过十秒时使用第一段。</summary>
     /// <param name="realtimeSeconds">本次释放的本机不缩放时间，单位为秒。</param>
     private void AdvancePresentation(float realtimeSeconds)
     {
@@ -330,7 +331,7 @@ public sealed class MSkillCore
         SelectPresentation(_usingTimes, realtimeSeconds);
     }
 
-    /// <summary>服务器开始通知使用权威动作序号选择表现；本地确认不得重播已经开始的动作。</summary>
+    /// <summary>按指定序号选择核心的当前动作配置；已启动的施法保存了自己的配置，不会因此重播。</summary>
     /// <param name="usingTimes">RO 对应的非负动作序号，按当前武器动作数量取模。</param>
     /// <param name="realtimeSeconds">应用服务器确认时的本机不缩放时间，单位为秒。</param>
     public void SelectPresentation(int usingTimes, float realtimeSeconds)

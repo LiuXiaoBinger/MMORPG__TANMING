@@ -6,7 +6,7 @@ using Google.Protobuf;
 using KcpProject;
 
 /// <summary>
-/// 客户端 KCP 通道：用对空载荷的 MAC 证明 UDP 地址，等待网关经 TCP 回启用确认后承载实时协议。
+/// 客户端 KCP 通道：用头部加空载荷的认证码证明持有绑定令牌，等待网关经 TCP 回启用确认后承载实时协议。
 /// 网关地址与令牌来自 TCP 绑定响应，UDP 只承载移动与技能实时协议。
 /// KCP 通道本身不是线程安全的，本类用实例锁把全部通道操作串行化。
 /// </summary>
@@ -210,7 +210,7 @@ public sealed class KcpClient
     }
 
     /// <summary>
-    /// 关闭通道并释放线程与 Socket；TCP 断开或重连时调用，不触发失败回调。
+    /// 关闭 Socket 并让后台线程结束循环；TCP 断开或重连时调用，不触发失败回调。
     /// </summary>
     public void Close()
     {
@@ -432,7 +432,7 @@ public sealed class KcpClient
                 message = new byte[receivedLength];
                 Buffer.BlockCopy(_receiveBuffer, 0, message, 0, receivedLength);
             }
-            // 本地缓存的业务包回调，为空则跳过，在锁外触发避免重入。
+            // 本地缓存业务回调；为空时跳过，在锁外执行以免业务处理长期占用通道锁。
             Action<byte[]> handler = OnPackageReceived;
             if (handler != null)
             {
@@ -546,7 +546,7 @@ public sealed class KcpClient
         }
     }
 
-    /// <summary>发出一次绑定请求：载荷为空，唯一证明是对空载荷计算的认证码。</summary>
+    /// <summary>发出一次绑定请求：载荷为空，证明来自使用绑定令牌对头部与空载荷计算的认证码。</summary>
     /// <param name="nowTicks">本次发送时刻刻度。</param>
     private void SendBindRequest(long nowTicks)
     {

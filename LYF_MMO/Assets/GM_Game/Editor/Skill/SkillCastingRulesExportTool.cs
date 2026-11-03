@@ -4,7 +4,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>创建独立技能权限编辑资产，并从一份配置同步导出客户端与游戏服 JSON，保留旧表格。</summary>
+/// <summary>把同一份施法规则配置分别导出为客户端和游戏服读取的 JSON，确保两端使用一致规则。</summary>
 public static class SkillCastingRulesExportTool
 {
     /// <summary>正式技能权限 SO 路径，五技能共用一份规则资产。</summary>

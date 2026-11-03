@@ -6,9 +6,9 @@ using UnityEngine;
 using YooAsset;
 
 /// <summary>
-/// RO 风格动画剪辑管理器。
-/// 负责维护动画短名到 YooAsset Location 的解析表，以及按 Location 共享的异步剪辑加载、引用计数和回调队列。
-/// MAnimator 只持有本类的 ClipInfo，不直接创建或释放 YooAsset 操作句柄。
+/// 集中管理角色动画资源：先把动作短名查成资源路径，再按路径共享加载结果。
+/// 多个角色使用同一动作时只加载一份剪辑；无人使用后先留在空闲缓存，定期释放最久未使用的资源。
+/// MAnimator 通过 ClipInfo 申请和归还引用，实际 YooAsset 句柄只在这里管理。
 /// </summary>
 public sealed class MAnimationMgr
 {
@@ -31,10 +31,10 @@ public sealed class MAnimationMgr
     /// <summary>YooAsset 中动画索引文本的固定 Location，文件内容使用 RO 同款二维 JSON。</summary>
     private const string AnimInfoLocation = "Assets/GM_Game/Resources/ResInfo/animInfo.txt";
 
-    /// <summary>空闲剪辑 LRU 的最大保留数量，达到阈值时按批量回收。</summary>
+    /// <summary>触发空闲剪辑回收的数量阈值；并非硬上限，只在周期检查时判断。</summary>
     private const int IdleCacheCapacity = 64;
 
-    /// <summary>单次 LRU 回收的最大剪辑数量，保持 RO 的 32 条批量淘汰语义。</summary>
+    /// <summary>一次最多释放 32 份最久未使用的空闲剪辑，避免集中释放全部缓存。</summary>
     private const int IdleCacheReleaseCount = 32;
 
     /// <summary>空闲缓存执行淘汰检查的周期，单位为秒。</summary>
@@ -43,7 +43,7 @@ public sealed class MAnimationMgr
     /// <summary>进程内唯一的动画管理器实例。</summary>
     private static readonly MAnimationMgr _singleton = new MAnimationMgr();
 
-    /// <summary>动画短名到资源 Location 的映射，键为配置中的 clipName。</summary>
+    /// <summary>动作短名到完整资源路径的查找表；预加载时从配置路径的文件名提取短名。</summary>
     private readonly Dictionary<string, string> _nameToPathDict =
         new Dictionary<string, string>();
 
@@ -51,11 +51,11 @@ public sealed class MAnimationMgr
     private readonly Dictionary<string, ClipInfo> _clipInfoDict =
         new Dictionary<string, ClipInfo>();
 
-    /// <summary>空闲剪辑的 LRU 路径队列，首节点为最久未使用的剪辑。</summary>
+    /// <summary>无人引用的已加载剪辑路径队列，队首是最早进入空闲状态的剪辑，回收时先释放它。</summary>
     private readonly LinkedList<string> _idleClipPathList =
         new LinkedList<string>();
 
-    /// <summary>空闲剪辑路径到 LRU 节点的索引，用于 O(1) 取消空闲状态。</summary>
+    /// <summary>由资源路径直接找到空闲队列节点；动作重新使用时无需遍历队列即可移出。</summary>
     private readonly Dictionary<string, LinkedListNode<string>> _idleClipNodeDict =
         new Dictionary<string, LinkedListNode<string>>();
 
@@ -98,7 +98,7 @@ public sealed class MAnimationMgr
         private readonly List<LoadClipCallback> _loadCallbacks =
             new List<LoadClipCallback>();
 
-        /// <summary>当前 YooAsset 异步加载操作句柄；加载成功后作为剪辑资源租约持有。</summary>
+        /// <summary>本次 YooAsset 加载句柄；加载完成后仍持有它，直到缓存回收或管理器清空时释放。</summary>
         private AssetOperationHandle _assetHandle;
 
         /// <summary>当前异步加载会话版本，忽略已被释放或重新发起的旧回调。</summary>
@@ -107,7 +107,7 @@ public sealed class MAnimationMgr
         /// <summary>是否已有未完成的 YooAsset 加载请求。</summary>
         private bool _isLoading;
 
-        /// <summary>使用该剪辑的 MAnimator.MAnimInfo 数量；大于零时资源句柄必须保持有效。</summary>
+        /// <summary>尚未归还的剪辑引用次数；准备新动作和保留旧动作分别占用引用。</summary>
         private int _referenceCount;
 
         /// <summary>YooAsset 动画资源 Location，创建后不变。</summary>
@@ -119,10 +119,10 @@ public sealed class MAnimationMgr
         /// <summary>动画是否循环；加载成功后以 AnimationClip.isLooping 为准。</summary>
         public bool IsLooping { get; private set; }
 
-        /// <summary>已加载的 Unity AnimationClip；加载中、失败或无引用释放后为 null。</summary>
+        /// <summary>已加载的 Unity AnimationClip；引用归零后仍可缓存，实际回收资源或加载失败时才为空。</summary>
         public AnimationClip Clip { get; private set; }
 
-        /// <summary>当前使用该资源的动画信息数量，仅供调试和生命周期核对。</summary>
+        /// <summary>当前尚未归还的引用次数，用于调试动作资源何时可被回收。</summary>
         internal int ReferenceCount { get { return _referenceCount; } }
 
         /// <summary>
@@ -211,6 +211,7 @@ public sealed class MAnimationMgr
 
             _isLoading = true;
             _loadVersion++;
+            // 记录本轮请求编号；清空后晚到的旧回调不能重新装入剪辑。
             int loadVersion = _loadVersion;
             _assetHandle = Global.Instance.YooPackage.LoadAssetAsync<AnimationClip>(ClipPath);
             _assetHandle.Completed += handle => OnLoadCompleted(loadVersion, handle);
@@ -398,7 +399,7 @@ public sealed class MAnimationMgr
     #region 事件注册与注销
     /// <summary>
     /// 登记动画配置短名与 YooAsset Location 的关系。
-    /// 同名重复登记会覆盖旧映射，但不会销毁仍被实体引用的旧 ClipInfo。
+    /// 同名重复登记会覆盖旧映射，但保留旧路径的 ClipInfo；这里只拒绝空名称和空路径，资源存在性留到加载时检查。
     /// </summary>
     /// <param name="clipName">配置或表现表中的动画短名，不能为空。</param>
     /// <param name="clipPath">YooAsset 动画资源 Location，不能为空。</param>
@@ -414,6 +415,7 @@ public sealed class MAnimationMgr
         }
 
         _nameToPathDict[clipName] = clipPath;
+        // 同一路径复用一份加载信息，重新登记只更新尚未加载资源的配置。
         ClipInfo clipInfo;
         if (!_clipInfoDict.TryGetValue(clipPath, out clipInfo))
         {
@@ -595,7 +597,7 @@ public sealed class MAnimationMgr
     /// 从完整 YooAsset Location 得到不含扩展名的动画短名。
     /// </summary>
     /// <param name="clipPath">Unity 工程内的完整动画资源 Location。</param>
-    /// <returns>不带 .anim 扩展名的文件短名；路径非法时返回空字符串。</returns>
+    /// <returns>去掉最后一段扩展名的文件名；路径为空时返回空字符串。</returns>
     private string GetClipNameFromPath(string clipPath)
     {
         if (string.IsNullOrEmpty(clipPath))
@@ -690,8 +692,8 @@ public sealed class MAnimationMgr
     /// 每一行必须严格包含三个值：完整 YooAsset Location、秒为单位的时长、循环标记；数值与布尔值允许使用 RO 原始的字符串写法。
     /// </summary>
     /// <param name="animInfoText">从 YooAsset TextAsset 读取的 UTF-8 动画索引内容。</param>
-    /// <param name="entries">解析成功时返回的强类型动画配置行；失败时返回空列表。</param>
-    /// <returns>二维 JSON 结构和所有字段值均合法时返回 true。</returns>
+    /// <param name="entries">已读出的配置行；中途失败时可能仍有前面读出的行，调用方必须在返回 true 后才使用。</param>
+    /// <returns>各行都有路径、可解析且未小于零的时长、布尔循环标记，并读到文本末尾时返回 true。</returns>
     private bool TryParseAnimInfo(string animInfoText,
         out List<AnimationConfigEntry> entries)
     {
@@ -702,7 +704,7 @@ public sealed class MAnimationMgr
             return false;
         }
 
-        // 字符级读取器只接受本索引所需的二维 JSON 数据，避免将弱类型 JSON 对象引入业务层。
+        // 专用读取器逐行取出三个文本值，再由下面的代码转换为明确类型；它不是通用 JSON 校验器。
         AnimationInfoReader reader = new AnimationInfoReader(animInfoText);
         if (!reader.TryConsume('['))
         {
@@ -735,6 +737,7 @@ public sealed class MAnimationMgr
                 return false;
             }
 
+            // 由配置文本转换得到的秒数；这里检查解析结果及负值，不额外检查 NaN 或无穷值。
             float length;
             if (!float.TryParse(lengthText, NumberStyles.Float,
                 CultureInfo.InvariantCulture, out length) || length < 0f)
@@ -749,6 +752,7 @@ public sealed class MAnimationMgr
                 return false;
             }
 
+            // 该动作是否循环，允许配置采用 True/False 字符串形式。
             bool isLooping;
             if (!bool.TryParse(isLoopingText, out isLooping) ||
                 !reader.TryConsume(']'))
@@ -761,7 +765,7 @@ public sealed class MAnimationMgr
                 return false;
             }
 
-            // 当前行已完整校验，才能写入强类型配置集合。
+            // 三个字段已通过本读取流程的检查，暂存当前行；后续行失败时调用方不会应用整个结果。
             entries.Add(new AnimationConfigEntry(clipPath, length, isLooping));
 
             if (reader.TryConsume(']'))
@@ -937,7 +941,7 @@ public sealed class MAnimationMgr
     /// </summary>
     private sealed class AnimationInfoReader
     {
-        /// <summary>待解析的完整 UTF-8 文本内容。</summary>
+        /// <summary>TextAsset 解码后的完整 C# 字符串；读取下标按字符推进，不按 UTF-8 字节推进。</summary>
         private readonly string _text;
 
         /// <summary>下一次读取的字符下标，范围为 0 到文本长度。</summary>
@@ -954,7 +958,7 @@ public sealed class MAnimationMgr
         }
 
         /// <summary>
-        /// 消费下一个非空白字符，只有它与期望字符一致时才向前推进。
+        /// 先跳过空白，再尝试消费指定结构字符；不匹配时只保留已经跳过的空白。
         /// </summary>
         /// <param name="expectedCharacter">期望读取到的 JSON 结构字符。</param>
         /// <returns>成功消费期望字符时返回 true。</returns>
@@ -976,7 +980,7 @@ public sealed class MAnimationMgr
         /// 双引号包围的字符串会处理标准 JSON 转义；未加引号的数值和布尔值读取到逗号、方括号或空白为止。
         /// </summary>
         /// <param name="value">成功读取到的标量文本。</param>
-        /// <returns>标量格式合法且非空时返回 true。</returns>
+        /// <returns>完整读到引号字符串或非空的未加引号文本时返回 true；具体数值类型由调用方检查。</returns>
         public bool TryReadValue(out string value)
         {
             value = string.Empty;
@@ -1113,6 +1117,7 @@ public sealed class MAnimationMgr
 
                 // 四位十六进制 Unicode 转义值。
                 string unicodeText = _text.Substring(_position, 4);
+                // 四位十六进制转成的字符值，随后追加一个 UTF-16 字符。
                 int unicodeValue;
                 if (!int.TryParse(unicodeText, NumberStyles.HexNumber,
                     CultureInfo.InvariantCulture, out unicodeValue))
@@ -1128,7 +1133,7 @@ public sealed class MAnimationMgr
         }
 
         /// <summary>
-        /// 跳过 JSON 允许的空白字符，使结构读取不受格式化缩进和换行影响。
+        /// 按 char.IsWhiteSpace 跳过空格、缩进和换行等空白字符，供下次结构或字段读取使用。
         /// </summary>
         private void SkipWhitespace()
         {

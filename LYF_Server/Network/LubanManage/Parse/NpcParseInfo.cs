@@ -61,6 +61,9 @@ public class NpcParseInfo
         };
     }
 
+    /// <summary>解析下划线分隔的 x_y_z_朝向；前三段无效时位置归零，第四段可省略。</summary>
+    /// <param name="positionText">NPC 配置中的 Pos 文本，数值使用小数点格式。</param>
+    /// <param name="rotationY">解析到的绕 Y 轴朝向，单位为度；缺失或无效时为零。</param>
     private static Vector3 ParsePosition(string positionText, out float rotationY)
     {
         rotationY = 0f;
@@ -69,6 +72,7 @@ public class NpcParseInfo
             return Vector3.Zero;
         }
 
+        // 位置取前三段，第四段单独作为朝向处理。
         string[] values = positionText.Split('_');
         // 配置允许追加朝向字段，坐标只取前三段，避免因第四段存在而丢失位置。
         if (values.Length < 3)
@@ -76,6 +80,7 @@ public class NpcParseInfo
             return Vector3.Zero;
         }
 
+        // 三个坐标分量分别解析，任一失败就放弃整组位置。
         float x;
         float y;
         float z;

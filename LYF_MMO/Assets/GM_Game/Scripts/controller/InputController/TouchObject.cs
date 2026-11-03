@@ -3,7 +3,7 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>沿RO点击入口选择角色或敌人，点击NPC时交给目标导航；空白地面不产生业务指令。</summary>
+/// <summary>处理场景点击：角色和敌人设为当前目标，NPC 交给导航靠近；点空白地面不发出移动指令。</summary>
 public sealed class TouchObject
 {
     /// <summary>RO 同名点击入口，由现有玩家输入组件每帧采集鼠标驱动。</summary>
@@ -14,9 +14,9 @@ public sealed class TouchObject
     private readonly List<MEntity> _entities = new List<MEntity>();
     /// <summary>UI 命中结果复用列表，用于防止点击技能或瞄准按钮时点穿到场景。</summary>
     private readonly List<RaycastResult> _uiHits = new List<RaycastResult>();
-    /// <summary>同一 EventSystem 的指针载荷，切换 EventSystem 时重建。</summary>
+    /// <summary>同一 EventSystem 复用的指针事件数据，切换 EventSystem 时重建。</summary>
     private PointerEventData _pointerData;
-    /// <summary>指针载荷所属的 EventSystem，确保切场景后不复用旧系统。</summary>
+    /// <summary>指针事件数据所属的 EventSystem，确保切场景后不复用旧系统。</summary>
     private EventSystem _eventSystem;
     /// <summary>鼠标按下命中的原实体引用，松开或禁用输入后清除。</summary>
     private MEntity _downEntity;
@@ -36,8 +36,8 @@ public sealed class TouchObject
 
     /// <summary>RO 同名实体命中入口，适配本项目现有屏幕坐标与 Unity 点击阶段。</summary>
     /// <param name="position">点击的屏幕像素坐标。</param>
-    /// <param name="phase">Began 记录按下对象，Ended 对账并选择。</param>
-    /// <param name="selectOnly">保留RO参数；角色点击仅选择，NPC点击导航交互，均不自动攻击。</param>
+    /// <param name="phase">Began 记录按下对象，Ended 要求仍命中同一对象后才处理。</param>
+    /// <param name="selectOnly">保留的选择模式参数；当前未据此分支，角色只选择、NPC 只发起导航，都不自动攻击。</param>
     /// <returns>本次点击完成角色选择或提交NPC导航时为true。</returns>
     public bool JudegeType(Vector2 position, TouchPhase phase, bool selectOnly = true)
     {
@@ -131,7 +131,7 @@ public sealed class TouchObject
             {
                 if (selectEnt is NpcEntity)
                 {
-                    // 新增NPC交互仅接受10像素内的点击，拖动镜头不能发起导航。
+                    // NPC 点击要求按下与松开的屏幕距离不超过 10 像素，拖动镜头不发起导航。
                     if ((position - _lastPos).sqrMagnitude > 100f)
                     {
                         return false;
@@ -190,8 +190,8 @@ public sealed class TouchObject
 
     /// <summary>沿 RO 点击写入目标前检查最大选择距离，普通角色可被查看但不会被自动认作敌人。</summary>
     /// <param name="entity">按下与松开均命中的当前世界实体。</param>
-    /// <param name="selectOnly">保留点击选择参数，本轮不触发自动普攻。</param>
-    /// <returns>在三十米内且已写入目标时为 true。</returns>
+    /// <param name="selectOnly">保留的选择模式参数，当前方法不读取它，也不触发普攻。</param>
+    /// <returns>在 MaxChooseDistance 指定的选择半径内且已写入目标时为 true。</returns>
     private bool setPlayerTarget(MEntity entity, bool selectOnly)
     {
         if ((entity.Position - Global.Instance.SceneWorld.LocalRole.Position).sqrMagnitude >

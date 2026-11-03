@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 
+/// <summary>提供物品按背包分类、扣除前数量检查与放入前容量检查；这些静态入口不真正改变物品。</summary>
 public class ItemTransition
 {
      /// <summary>
@@ -37,6 +38,7 @@ public class ItemTransition
          return result;
      }
 
+     /// <summary>逐条核对角色是否拥有足量物品；遇到首个不足即返回错误，不执行扣除。</summary>
      public static CmdCode TryTakeItem(OnlineRole role, List<ItemDesc> items)
      {
         if (items.Count == 0) { return CmdCode.Succeed; }
@@ -52,11 +54,13 @@ public class ItemTransition
         return CmdCode.Succeed;
     }
 
+     /// <summary>检查一批物品能否放入指定背包，返回错误码和仍缺的格数；默认检查普通背包。</summary>
      public static ItemZhuDongGetResult TryZhuDongGetItem(OnlineRole role, List<ItemDesc> items,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);
          return trans.TryZhuDongGetItem(items, type);
      }
+     /// <summary>把单件物品包装成列表后复用批量容量检查；不实际发放。</summary>
      public static ItemZhuDongGetResult TryZhuDongGetItem(OnlineRole role, ItemDesc item,KnapsackType type = KnapsackType.RolePackPlain)
      {
          BagZhuDongGetItemTranstion trans = new BagZhuDongGetItemTranstion(role);

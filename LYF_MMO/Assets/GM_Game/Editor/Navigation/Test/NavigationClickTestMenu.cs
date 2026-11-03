@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>导航工具程序集内的专用测试菜单，Play期间临时开关点地输入，不保存场景组件。</summary>
+/// <summary>只在编辑器运行期间启用或关闭点地移动测试；测试对象是临时的，退出运行时清理。</summary>
 [InitializeOnLoad]
 public static class NavigationClickTestMenu
 {

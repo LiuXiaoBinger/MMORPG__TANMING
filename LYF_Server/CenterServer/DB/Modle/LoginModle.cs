@@ -42,6 +42,7 @@ public class LoginModle
         }
         else
         {
+            // 初始属性使用所选职业配置，配置不存在时终止建角。
             var professionInfo = LubanMgr.Instance.GetProfessionInfoById(req.JobId);
             if (professionInfo == null)
             {
@@ -49,8 +50,10 @@ public class LoginModle
                 return ret;
             }
 
+            // 记录当前建角时刻；下方主表仍分别读取各自的创建与更新时间。
             DateTime now = DateTime.Now;
 
+            // 先建立角色主记录，返回的自增编号再用于属性、技能和背包。
             RoleTable role = new RoleTable()
             {
                 AccountID = req.AccountId,
@@ -66,9 +69,11 @@ public class LoginModle
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
             };
+            // 新角色主键，用作后续表的角色归属编号。
             int id = _db.Insertable(role).ExecuteReturnIdentity();
             if (id > 0)
             {
+                // 按职业配置建立初始战斗属性，当前血量和法力从上限开始。
                 RoleBaseArrtTable roleBaseArrtTable = new RoleBaseArrtTable()
                 {
                     Id = id,
@@ -120,9 +125,9 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 为角色创建背包数据
+    /// 删除该角色旧容量记录，再为普通、装备、消耗品和材料背包分别创建 81 格容量。
     /// </summary>
-    /// <param name="roleid"></param>
+    /// <param name="roleid">正在初始化的持久角色编号。</param>
     private void CreateRoleKnapsackInfo(int roleid)
     {
         // 建角时为四类可持久化背包各创建一条 81 格记录；穿戴栏不参与扩容。
@@ -183,9 +188,9 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 为角色创建技能信息
+    /// 按职业列出技能；普通攻击、滑步和轻功初始学会并绑定 Q、F、V，其余等级为零。
     /// </summary>
-    /// <param name="roleid"></param>
+    /// <param name="roleid">正在初始化的持久角色编号。</param>
     private void CreateRoleSkillInfo(int roleid, int jobid)
         {
             //删除表数据
@@ -201,7 +206,9 @@ public class LoginModle
                 listRoleSkillTables = new List<RoleSkillTable>();
             }
 
+            // 职业技能配置集合，随后转换成可按索引遍历的列表。
             var JobSkillMap = LubanMgr.Instance.GetSkillInfosByJob(jobid);
+            // 只复制集合结构，仍读取配置行本身的技能编号和类别。
             List<KeyValuePair<int, cfg.SkillInfo>> skillSnapshot =
                 new List<KeyValuePair<int, cfg.SkillInfo>>(JobSkillMap);
             for (int index = 0; index < skillSnapshot.Count; index++)
@@ -285,6 +292,7 @@ public class LoginModle
     // GetMigratedGridCount / EnsureMissingKnapsackRows）为旧版背包分类迁移逻辑的残留副本，
     // 当前 LoginModle 内无任何调用者（实际背包读取由 CentRoleModel 同名方法负责），
     // 经全局搜索确认属于死代码。本次仅加注释不删除，详见《项目分析/废代码分析报告-服务端-分服与测试.md》。
+    /// <summary>返回四种保存已开容量的背包类型；本类中的这份辅助实现当前没有调用。</summary>
     private static KnapsackType[] GetPersistedKnapsackTypes()
     {
         return new[]
@@ -382,7 +390,7 @@ public class LoginModle
     }
 
     /// <summary>
-    /// 账号注册。校验用户名不重复、邮箱验证码一致，通过后写入账号表并默认绑定首次登录服务器 1。
+    /// 账号注册入口：用户名未重复时读取 Redis 验证码，并按下方现有条件决定是否写入账号表。
     /// </summary>
     /// <param name="req">注册请求，携带用户名、邮箱、密码与验证码。</param>
     internal RegistRet RegistAccont(RegistReq req)
@@ -397,8 +405,9 @@ public class LoginModle
         }
         else
         {
+            // 验证码服务约定以 code_ 加邮箱作为 Redis 键。
             string Varify = RedisMgr.Instance.GetValue("code_" + req.Email);
-            //判断验证码
+            // 当前条件要求 Redis 验证码为空且与请求相等；这是现有判断，不能理解成已完成非空验证码校验。
             if (string.IsNullOrEmpty(Varify) && req.Varify.Equals(Varify))
             {
                 AccoutTable accout = new AccoutTable()
@@ -411,7 +420,7 @@ public class LoginModle
                     UpdateDate = DateTime.Now
 
                 };
-                int id = _db.Insertable(accout).ExecuteCommand(); //返回的id小于等于0插入失败
+                int id = _db.Insertable(accout).ExecuteCommand(); // 返回受影响行数；小于等于零表示插入失败，不是新账号主键。
                 if (id <= 0)
                 {
                     ret.CmdCode = CmdCode.ServerError;
@@ -449,7 +458,7 @@ public class LoginModle
                 accountTable.LastLoginServerId = req.GameServerId;
                 if (_db.Updateable(accountTable).ExecuteCommand() > 0)
                 {
-                    //查询角色表， 当前用户是否已经创建了角色， 如果没有创建，那么返回默认数据
+                    // 按账号查第一条角色记录，当前查询未按所选服务器再次过滤；没有记录时保留默认响应。
                     RoleTable roleTable = _db.Queryable<RoleTable>().Where(v => v.AccountID == req.AccountId).First();
                     if (roleTable != null)
                     {

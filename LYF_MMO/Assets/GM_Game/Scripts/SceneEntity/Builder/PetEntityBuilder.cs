@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 宠物 Builder，宠物作为实体挂载召唤、移动和战斗组件。
-/// 宠物继承怪物 Builder 的组件体系，但额外添加宠物和召唤物标记。
+/// 创建或复用宠物，添加公共组件、战斗标记、宠物和召唤物标记。
+/// 没有调用怪物装配方法，也没有在此添加宠物移动或 AI 逻辑。
 /// </summary>
 public sealed class PetEntityBuilder : MonsterEntityBuilder
 {

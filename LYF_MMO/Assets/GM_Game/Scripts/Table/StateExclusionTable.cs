@@ -3,7 +3,7 @@ using System.Globalization;
 using UnityEngine;
 
 /// <summary>
-/// RO <c>StateExclusionTable</c> 的客户端只读镜像：按状态下标提供互斥矩阵行。
+/// 客户端状态互斥表：按状态下标返回一整行切换规则。
 /// 数据来源是 RO <c>config/Table/CSV/StateExclusionTable.csv</c> 的逐字节副本，
 /// 位于本项目 <c>Data/StateExclusion/Resources/StateExclusionTable.csv</c>。
 /// RO 按行下标消费该表，因此行下标直接等于 <see cref="MExlusionStates"/> 的枚举值：
@@ -26,7 +26,7 @@ public sealed class StateExclusionTable
     /// <summary>未装载数据时的空行集合，避免调用方对空引用做额外判断。</summary>
     private static readonly RowData[] EmptyRows = new RowData[0];
 
-    /// <summary>按状态下标索引的矩阵行；装载失败时保持空数组。</summary>
+    /// <summary>按状态下标索引的矩阵行；格式校验失败时清空，空文本输入则保留原有行。</summary>
     private RowData[] _rows = EmptyRows;
 
     /// <summary>矩阵行数，正常等于 <see cref="MExlusionStates.State_Last"/> 的数值。</summary>
@@ -68,13 +68,14 @@ public sealed class StateExclusionTable
     /// 用 CSV 文本整体替换当前矩阵。表结构与 RO 原表完全一致：
     /// 第 1 行表头、第 2 行状态码说明，其后每行一个状态；
     /// 第 1 列 StateId、第 2 列中文名、第 3 列 Concatenate（竖线分隔的矩阵值）。
-    /// 只消费 RO 自己标注为“实际使用的配置”的第 3 列，右侧 38 个逐状态列保留但不读。
+    /// 只解析第 3 列的竖线分隔整数，右侧逐状态展示列不参与判断。
     /// 行数或列数与枚举不匹配时整份拒绝，避免半张错位矩阵参与施法准入。
     /// </summary>
     /// <param name="csvText">来自 Resources 的整份 CSV 文本，允许 CRLF 或 LF 换行。</param>
-    /// <returns>整张表通过行数、列数与数值校验时返回 true。</returns>
+    /// <returns>整张表的行列数量正确、每格均能解析成整数时返回 true；这里不检查整数是否属于状态码枚举。</returns>
     public bool LoadFromCsv(string csvText)
     {
+        // 空输入直接返回，不替换已有矩阵；首次读取时原矩阵才是空表。
         if (string.IsNullOrEmpty(csvText))
         {
             Debug.LogError("状态互斥表内容为空，保留空表。");
@@ -149,6 +150,7 @@ public sealed class StateExclusionTable
         {
             // 当前单元格值：单格矩阵文本去掉首尾空白后的整数结果，取值含义见 MExlusionStatesCode。
             string cell = valueCells[index].Trim();
+            // 当前格解析出的整数状态码，稍后按列下标存入结果。
             int value;
             if (!int.TryParse(cell, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
@@ -177,7 +179,7 @@ public sealed class StateExclusionTable
         /// <summary>到各目标状态的矩阵值，下标为目标状态枚举值，取值见 <see cref="MExlusionStatesCode"/>。</summary>
         public int[] Concatenate { get; private set; }
 
-        /// <summary>按 CSV 行构造一行只读矩阵数据。</summary>
+        /// <summary>保存 CSV 行的名称和矩阵数组；数组直接保存原引用，未复制或封装成只读集合。</summary>
         /// <param name="stateId">状态枚举名。</param>
         /// <param name="stateName">状态中文名。</param>
         /// <param name="concatenate">到各目标状态的矩阵值，长度等于状态总数。</param>

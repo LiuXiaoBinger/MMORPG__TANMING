@@ -1,7 +1,6 @@
 /// <summary>
-/// 吟唱动作状态组件。
-/// 实体处于施法吟唱阶段时的状态，播放吟唱动画。
-/// 监听吟唱开始事件切入本状态，吟唱结束后回到默认状态。
+/// 把 SingingStarted 事件接入吟唱状态，并指定吟唱动画。
+/// 本类没有吟唱计时或结束事件；技能自身的阶段推进由技能代码处理。
 /// </summary>
 public sealed class MSingingComponent : MBasicActionComponent
 {
@@ -21,11 +20,13 @@ public sealed class MSingingComponent : MBasicActionComponent
         RegisterActionEvent(MEventType.SingingStarted);
     }
     
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

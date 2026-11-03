@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// 单个实体的事件分发器，对应参考项目 MEventDispatcher。
-/// 负责按事件类型注册、注销和派发事件处理器。
-/// 派发时复制监听器列表快照，使监听器在回调中注销自身不会破坏当前遍历。
+/// 为一个实体保存各类事件的监听器，并同步调用它们。
+/// 派发前复制监听器列表，所以回调里增删订阅不会改变本轮调用清单。
+/// 所有监听器共用一份参数，派发结束后统一回收；需要延后处理的监听器应先复制参数。
 /// </summary>
 public sealed class MEventDispatcher
 {
@@ -63,6 +63,7 @@ public sealed class MEventDispatcher
             return false;
         }
 
+        // 目标事件目前登记的监听器列表；没有列表就无需移除。
         List<MEventHandler> handlers;
         if (!_listeners.TryGetValue(eventType, out handlers))
         {
@@ -117,7 +118,7 @@ public sealed class MEventDispatcher
 
                 try
                 {
-                    // 按 RO 分发器模式将同一个参数实例传给所有监听器。
+                    // 所有监听器在本次同步派发中读取同一份参数，不应自行回收原参数。
                     handler.Invoke(eventArgs);
                 }
                 catch (Exception exception)

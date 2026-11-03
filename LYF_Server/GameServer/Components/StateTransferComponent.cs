@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 单个状态切换请求，对应参考工程 rogamelibs/entity/component/state_transfer_component.h 的 TransferRequestInfo。
-/// 除 RO 字段外额外持有触发事件：C# 没有 shared_ptr，必须显式引用计数才能保证异步期间事件不被回收。
+/// 请求额外保留触发事件的池引用；等待旧状态退出期间，引用计数防止该事件被提前重置并供其他请求复用。
 /// </summary>
 public sealed class TransferRequestInfo
 {
@@ -44,7 +44,7 @@ public sealed class TransferRequestInfo
 /// </summary>
 public sealed class StateTransferComponent : RoleComponentBase
 {
-    /// <summary>进入新状态的三种来源，对应 RO 的 EnterStateType。</summary>
+    /// <summary>结束切换请求的两种结果，对应 RO 的 EnterStateType。</summary>
     private enum EnterStateType
     {
         /// <summary>正常进入。</summary>
@@ -309,7 +309,7 @@ public sealed class StateTransferComponent : RoleComponentBase
 
     /// <summary>
     /// 进入新状态并回调结果，对应 state_transfer_component.cpp 的 EnterState。
-    /// 正常进入前会再检查一次互斥表，因为状态切换是异步的，中途可能被别的状态插入。
+    /// 正常进入前会再检查一次互斥表，请求可能等到后续回调才完成，期间角色的其他状态可能已改变。
     /// </summary>
     /// <param name="req">待完成的请求。</param>
     /// <param name="enter_type">进入来源。</param>

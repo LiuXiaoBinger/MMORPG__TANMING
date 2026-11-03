@@ -2,8 +2,7 @@ using System;
 using Google.Protobuf;
 
 /// <summary>
-/// 队伍协议控制器，对应 RO TeamMgr.lua 的上下行分支。
-/// 负责收发队伍协议：下行写入 TeamData 并向上层抛事件，上行统一从本类发出，数据类不发包。
+/// 收发组队协议：收到队伍与邀请通知后更新 TeamData，再通知界面；用户操作则组装请求交给网络层。
 /// </summary>
 public sealed class TeamCtrl : CtrlBase
 {
@@ -135,7 +134,7 @@ public sealed class TeamCtrl : CtrlBase
     /// <summary>
     /// 请求创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam(targetId)。
     /// </summary>
-    /// <param name="targetId">组队目标ID，RO 缺省 1000。</param>
+    /// <param name="targetId">队伍要参与的玩法目标编号，调用方当前使用 1000。</param>
     /// <returns>请求已提交返回 true；未连接服务器返回 false。</returns>
     public bool RequestCreateTeam(int targetId)
     {
@@ -145,7 +144,7 @@ public sealed class TeamCtrl : CtrlBase
         return Send(NetDefine.CMD_CreateTeamCode, arg.ToByteString());
     }
 
-    /// <summary>统一发送入口，未连接时返回 false 且不抛异常。</summary>
+    /// <summary>统一交给网络层发送；本方法返回值表示网络层是否接收请求，不代表服务器业务已成功。</summary>
     /// <param name="protoCode">协议号。</param>
     /// <param name="data">已序列化的协议体。</param>
     /// <returns>成功提交到网络层返回 true。</returns>
@@ -185,10 +184,10 @@ public sealed class TeamCtrl : CtrlBase
     #region 核心逻辑
     /// <summary>
     /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
-    /// 等级仅用于界面校验提示，服务端以会话身份为准。
+    /// 当前方法不读取等级参数；请求只携带被邀请角色的 ID。
     /// </summary>
     /// <param name="userId">被邀请角色ID。</param>
-    /// <param name="userLevel">被邀请角色等级，未知名传 0。</param>
+    /// <param name="userLevel">保留的角色等级参数，当前未使用，可传 0。</param>
     /// <returns>请求已提交返回 true。</returns>
     public bool InviteJoinTeam(ulong userId, int userLevel)
     {
@@ -196,7 +195,7 @@ public sealed class TeamCtrl : CtrlBase
         {
             return false;
         }
-        // 邀请入队请求体：只携带被邀请角色ID；userLevel 仅用于界面提示，等级与身份以服务端会话为准，不随包上传。
+        // 邀请请求只携带被邀请角色 ID；userLevel 不参与本方法判断，也不随包发送。
         InviteJoinTeamArg arg = new InviteJoinTeamArg();
         arg.UserId = userId;
         return Send(NetDefine.CMD_InviteJoinTeamCode, arg.ToByteString());
@@ -273,7 +272,7 @@ public sealed class TeamCtrl : CtrlBase
     public bool CaptainRequestEnterFBPtc(int dungeonId)
     {
         // 队长进副本请求体：DungeonId 为副本配置ID（魔神塔 4060）；ChapterId 与 DungeonsDegree 固定 0，
-        // 表示章节与难度由副本配置表决定，客户端不上报，防止改包指定难度。
+        // 当前客户端没有选择章节和难度，两个字段均发送 0。
         CaptainRequestEnterFBArg arg = new CaptainRequestEnterFBArg();
         arg.DungeonId = dungeonId;
         arg.ChapterId = 0;

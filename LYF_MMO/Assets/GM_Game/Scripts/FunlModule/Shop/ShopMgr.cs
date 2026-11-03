@@ -5,7 +5,7 @@ using cfg;
 using UnityEngine;
 
 /// <summary>
-/// 商城模型管理器，协调角色组件数据和购买请求状态。
+/// 发送商品购买请求，检查本地余额和限购数量，并把服务器结果交给商店控制器。
 /// </summary>
 public class ShopMgr : Singleton<ShopMgr>
 {
@@ -20,7 +20,7 @@ public class ShopMgr : Singleton<ShopMgr>
     /// <summary>当前等待购买回包的商品编号。</summary>
     private int _pendingGoodsId;
 
-    /// <summary>发出当前购买请求时的连接代次。</summary>
+    /// <summary>发出当前购买请求时使用的网络连接编号，用来排除旧连接回包。</summary>
     private long _pendingConnectionGeneration;
     #endregion
 
@@ -88,7 +88,7 @@ public class ShopMgr : Singleton<ShopMgr>
         }
     }
 
-    /// <summary>清理指定断开连接代次关联的商城状态。</summary>
+    /// <summary>如果 connectionGeneration 正是购买请求使用的连接，就清除等待状态。</summary>
     public void HandleDisconnected(long connectionGeneration)
     {
         if (connectionGeneration <= 0)
@@ -105,7 +105,7 @@ public class ShopMgr : Singleton<ShopMgr>
 
     #region 购买请求发送与状态清理
     /// <summary>
-    /// 发送购买请求。协议没有请求号，因此同一时间只允许一个请求在途。
+    /// 检查参数、剩余次数和余额后发送购买请求，并记录商品与连接编号；是否允许连续点击由调用方判断。
     /// </summary>
     public bool SendBuyRequest(int shopTableId, int goodsId, int buyCount)
     {
@@ -200,7 +200,7 @@ public class ShopMgr : Singleton<ShopMgr>
         return countInfo == null || countInfo.Limit <= 0;
     }
 
-    /// <summary>获取指定商品当前剩余可购买次数。</summary>
+    /// <summary>返回 goodsId 商品的剩余可买数量；不限购用 int.MaxValue 表示，角色数据未就绪返回 0。</summary>
     public int GetRemainingPurchaseCount(int goodsId)
     {
         cfg.CountInfo countInfo = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, goodsId);

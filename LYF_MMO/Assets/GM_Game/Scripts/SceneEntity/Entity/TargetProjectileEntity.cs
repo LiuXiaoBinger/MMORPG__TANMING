@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 目标追踪飞行物实体，对应 RealTargetBullet/UnrealTargetBullet。
-/// 发射后自动追踪目标实体，命中目标后消失。
+/// 目标型投射物的实体类型，由两种目标投射物配置共用。
+/// 当前只区分类别，不在本类追踪目标或处理命中。
 /// </summary>
 public sealed class TargetProjectileEntity : ProjectileEntity
 {

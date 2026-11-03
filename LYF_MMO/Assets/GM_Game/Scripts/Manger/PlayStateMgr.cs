@@ -7,7 +7,7 @@ using UnityEngine;
 */
 
 /// <summary>
-/// 玩家玩法运行态管理器，集中持有玩家数值配置（PlayerStats）等运行期共享数据。
+/// 保存角色控制器共用的 PlayerStats；当前 init 在没有配置时直接创建默认数值对象。
 /// </summary>
 public class PlayStateMgr : Singleton< PlayStateMgr>
 {

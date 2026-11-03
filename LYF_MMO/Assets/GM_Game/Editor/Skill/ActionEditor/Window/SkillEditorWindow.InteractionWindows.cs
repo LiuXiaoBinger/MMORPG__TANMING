@@ -4,7 +4,7 @@ using Ethan.ActionEditor;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>技能窗口的双语属性与原编辑操作适配，不改运行时或资产字段身份。</summary>
+/// <summary>编辑技能中的交互时间段，为新段生成不重复的编号，并把预设选项写入当前段。</summary>
 public partial class SkillEditorWindow
 {
     /// <summary>在当前交互窗口列表中生成不冲突的原英文 ID。</summary>

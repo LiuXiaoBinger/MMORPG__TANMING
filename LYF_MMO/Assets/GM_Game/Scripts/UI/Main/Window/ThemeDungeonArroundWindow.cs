@@ -6,7 +6,7 @@ using TMPro;
 
 /// <summary>
 /// 主题副本选择窗口，直接挂在 ThemeDungeonArround 预制体实例的根节点上（该实例挂在 UIRoot / MainView 下），
-/// 负责副本书位的配置填充、上下翻页、选中高亮、右侧详情展示与关闭。
+/// 负责副本书位填充、翻页、高亮和背景切换；点击书位打开独立详情窗口，确认挑战再通知控制器。
 /// </summary>
 public sealed class ThemeDungeonArroundWindow : WindowBase
 {
@@ -50,7 +50,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>全部副本条目，由配置文件反序列化得到。</summary>
     private ThemeDungeonEntry[] _items = new ThemeDungeonEntry[0];
 
-    /// <summary>8 个书位的运行时包装，顺序与预制体 ScrollView 下 Item1* 子节点一致。</summary>
+    /// <summary>从预制体 ScrollView 或 ActivePanel 下找到的 Item1* 书位，顺序随子节点排列，不在代码中固定为 8 个。</summary>
     private readonly List<Slot> _slots = new List<Slot>();
 
     /// <summary>ThemeDungeonArround 预制体实例的根变换，所有节点查找都以它为起点。</summary>
@@ -89,7 +89,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>关闭按钮。</summary>
     private Button _closeBtn;
 
-    /// <summary>挑战（进入副本）按钮。</summary>
+    /// <summary>中心“挑战玩法”信息牌按钮，目前点击只显示提示。</summary>
     private Button _challengeBtn;
 
     /// <summary>
@@ -102,10 +102,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>RO 书位名字底条的精灵，从预制体的 NameBg 节点上取，保证和 RO 一致。</summary>
     private Sprite _nameBarSprite;
 
-    /// <summary>进入副本按钮上的副本名文本，随选中的副本实时刷新。</summary>
+    /// <summary>中心信息牌上的副本名文本，随选中副本刷新。</summary>
     private TextMeshProUGUI _challengeName;
 
-    /// <summary>进入副本按钮的透明度分组，未选中任何副本时整体压暗。</summary>
+    /// <summary>中心信息牌的透明度分组，没有选中副本时整体压暗。</summary>
     private CanvasGroup _challengeGroup;
 
     /// <summary>副本详情窗口（RO 的 Theme_Story），点书位翻开时打开。</summary>
@@ -280,10 +280,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
     #region 配置读取与解析
     /// <summary>
-    /// 读取并解析主题副本配置，失败时置为空数组并打印错误。
+    /// 读取 Resources 配置并转换为条目数组；文件缺失时记录错误，空配置返回空数组，解析异常原样抛出。
     /// </summary>
     private void LoadConfig()
     {
+        // 配置文本资源，Resources 路径不含扩展名。
         TextAsset asset = Resources.Load<TextAsset>(_configResourcePath);
         if (asset == null)
         {
@@ -291,6 +292,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             _items = new ThemeDungeonEntry[0];
             return;
         }
+        // 将配置根对象解析后取得条目数组。
         ThemeDungeonConfig config = JsonUtility.FromJson<ThemeDungeonConfig>(asset.text);
         if (config == null || config.items == null)
         {
@@ -331,6 +333,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void BringToFront()
     {
+        // 当前窗口节点，用兄弟顺序调整同级渲染前后。
         Transform self = transform;
         if (self.parent == null)
         {
@@ -355,7 +358,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
         for (int i = 0; i < _slots.Count; i++)
         {
+            // 把页内书位下标换成配置数组的全局下标。
             int index = _page * _slots.Count + i;
+            // 当前书位的缓存控件引用。
             Slot s = _slots[i];
             if (index >= _items.Length)
             {
@@ -380,8 +385,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             // 翻页后原来选中的副本可能已经不在本页，继续留着会让「进入副本」按钮
             // 显示上一页的副本名，所以自动改选本页第一个。
+            // 本页第一个配置下标，用于判断原选择是否仍在本页。
             int first = _page * _slots.Count;
+            // 本页理论最后一个配置下标，实际还要受配置数组长度限制。
             int last = first + _slots.Count - 1;
+            // 原选择既位于本页范围又没有超过配置数组。
             bool inPage = _selected >= first && _selected <= last && _selected < _items.Length;
             if (!inPage)
             {
@@ -411,9 +419,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void RefreshChallengeButton()
     {
+        // 当前是否已选中数组内的有效条目。
         bool ready = _selected >= 0 && _selected < _items.Length;
 
-        // 中心的信息牌：只显示当前选中的副本名，不响应点击。
+        // 中心信息牌显示当前副本名；点击由 OnChallengeClicked 给出挑战模式提示。
         if (_challengeName != null)
         {
             if (ready)
@@ -440,12 +449,14 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
     }
 
-    /// <summary>刷新所有书位的边框颜色，选中项为高亮金边，其余为暗金。</summary>
+    /// <summary>刷新书位边框，选中项显示金边，未选中项使用透明颜色。</summary>
     private void UpdateFrames()
     {
         for (int i = 0; i < _slots.Count; i++)
         {
+            // 当前书位的缓存控件引用。
             Slot s = _slots[i];
+            // 此书位是否对应当前选中条目。
             bool on = s.Index == _selected;
             if (on)
             {
@@ -470,6 +481,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             return;
         }
+        // 把点击的页内书位还原为全局配置下标。
         int index = _slots[slotIndex].Index;
         Select(index, true);
         if (_selected != index)
@@ -515,8 +527,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>创建一个居中锚点的 RectTransform 子节点。</summary>
     private RectTransform NewRect(string name, Transform parent, float x, float y, float w, float h)
     {
+        // 本次创建的 UI 子节点，名称用于重复初始化时定位清理。
         GameObject go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
+        // 以父节点中心为锚点设置新节点位置和尺寸。
         RectTransform rt = go.transform as RectTransform;
         rt.anchorMin = new Vector2(0.5f, 0.5f);
         rt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -529,7 +543,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>创建一个纯色 Image 子节点。</summary>
     private Image NewImage(string name, Transform parent, float x, float y, float w, float h, Color c)
     {
+        // 新节点的矩形，位置和宽高均使用 UI 局部坐标。
         RectTransform rt = NewRect(name, parent, x, y, w, h);
+        // 给矩形添加可着色图片，使用共用白色精灵。
         Image img = rt.gameObject.AddComponent<Image>();
         img.sprite = _whiteSprite;
         img.color = c;
@@ -540,7 +556,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     private TextMeshProUGUI NewText(string name, Transform parent, float x, float y, float w, float h,
         float fontSize, Color color, TextAlignmentOptions align)
     {
+        // 新节点的矩形，位置和宽高均使用 UI 局部坐标。
         RectTransform rt = NewRect(name, parent, x, y, w, h);
+        // 新建文字组件，应用窗口字体、字号和对齐方式。
         TextMeshProUGUI t = rt.gameObject.AddComponent<TextMeshProUGUI>();
         if (_fontAsset != null)
         {
@@ -569,6 +587,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private RectTransform FindThemeDungeonRoot()
     {
+        // 脚本所在对象的矩形，找不到专名子根时仍回退使用它。
         RectTransform self = transform as RectTransform;
         if (self != null && transform.name == "ThemeDungeonArround")
         {
@@ -576,6 +595,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         for (int i = 0; i < transform.childCount; i++)
         {
+            // 当前直接子节点，只在这一层寻找专名窗口根。
             Transform child = transform.GetChild(i);
             if (child.name == "ThemeDungeonArround")
             {
@@ -596,11 +616,13 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         for (int i = 0; i < root.childCount; i++)
         {
+            // 当前遍历的直接子节点。
             Transform c = root.GetChild(i);
             if (c.name == name)
             {
                 return c;
             }
+            // 当前子树递归查找的结果。
             Transform r = FindDeep(c, name);
             if (r != null)
             {
@@ -619,6 +641,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         for (int i = 0; i < root.childCount; i++)
         {
+            // 当前遍历的直接子节点。
             Transform c = root.GetChild(i);
             if (c.name == name)
             {
@@ -637,7 +660,9 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             return null;
         }
+        // 统一斜杠后的资源相对路径，再去掉文件扩展名。
         string p = relative.Replace("\\", "/");
+        // 最后一个点的位置，仅在文件名部分时当作扩展名分隔符。
         int dot = p.LastIndexOf('.');
         if (dot > p.LastIndexOf('/'))
         {
@@ -654,9 +679,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void CacheLegacySprites()
     {
+        // 旧预制体名字底条节点，用于复用原精灵。
         Transform bar = FindDeep(_root, "NameBg");
         if (bar != null)
         {
+            // 底条图片组件，读取它的精灵而不复制纹理。
             Image img = bar.GetComponent<Image>();
             if (img != null)
             {
@@ -675,6 +702,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             return;
         }
+        // 包含隐藏节点的快照，逆序删除 TD_ 运行时子节点。
         Transform[] all = _root.GetComponentsInChildren<Transform>(true);
         for (int i = all.Length - 1; i >= 0; i--)
         {
@@ -689,7 +717,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
 
         // 这些控件都是运行时建的，已经跟着节点一起销毁。引用必须同步清空：
-        // Unity 销毁过的对象做 != null 判断仍然为 true，留着会在下一次刷新时报空引用。
+        // 清掉运行时节点的字段引用，下一次初始化会重新赋值。
         _splash = null;
         _statusText = null;
     }
@@ -699,48 +727,57 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void CacheNodes()
     {
+        // 上一页按钮节点。
         Transform up = FindDeep(_root, "UpBtn");
         if (up != null)
         {
             _upBtn = up.GetComponent<Button>();
         }
+        // 下一页按钮节点。
         Transform down = FindDeep(_root, "DownBtn");
         if (down != null)
         {
             _downBtn = down.GetComponent<Button>();
         }
+        // 关闭按钮节点。
         Transform close = FindDeep(_root, "CloseBtn");
         if (close != null)
         {
             _closeBtn = close.GetComponent<Button>();
         }
+        // 中心挑战信息牌节点。
         Transform challenge = FindDeep(_root, "ChallengeDungeonBtn");
         if (challenge != null)
         {
             _challengeBtn = challenge.GetComponent<Button>();
         }
+        // 中心信息牌的副本名称节点。
         Transform challengeName = FindDeep(_root, "ChallengeName");
         if (challengeName != null)
         {
             _challengeName = challengeName.GetComponent<TextMeshProUGUI>();
         }
+        // 预制体中名为 Button 的确认入口节点。
         Transform confirm = FindDeep(_root, "Button");
         if (confirm != null)
         {
             _confirmBtn = confirm.GetComponent<Button>();
         }
 
+        // 页码文字节点。
         Transform pageNode = FindDeep(_root, "PageText");
         if (pageNode != null)
         {
             _pageText = pageNode.GetComponent<TextMeshProUGUI>();
         }
+        // 窗口顶部名称文字节点。
         Transform nameNode = FindDeep(_root, "Name");
         if (nameNode != null)
         {
             _nameOfPanel = nameNode.GetComponent<TextMeshProUGUI>();
         }
 
+        // 书位容器，优先 ScrollView，缺失时使用 ActivePanel。
         Transform scroll = FindDeep(_root, "ScrollView");
         if (scroll == null)
         {
@@ -750,6 +787,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             for (int i = 0; i < scroll.childCount; i++)
             {
+                // 当前候选书位，名称以 Item1 开头才登记。
                 Transform c = scroll.GetChild(i);
                 if (c.name.StartsWith("Item1"))
                 {
@@ -762,7 +800,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 配置「进入副本」按钮：解锁主题名的自动缩放，并挂一个透明度分组，
+    /// 配置中心挑战信息牌：启用主题名自动缩放，并挂一个透明度分组，
     /// 供未选中任何副本时把整个按钮压暗。重复调用是安全的。
     /// </summary>
     private void SetupChallengeButton()
@@ -788,6 +826,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             _challengeBtn.gameObject.SetActive(ShowLegacyThemeBadge);
             // RO 的牌子挂在 y=73.4，正好落在 3D 书台的空心位置；LYF 的封面是 2D 矩形，
             // 往上占得更多，实测把牌子抬到 100 才刚好卡在上下两本书之间（上下各留 ~2px）。
+            // 中心信息牌矩形，使用适配当前二维封面的固定位置。
             RectTransform badgeRt = _challengeBtn.transform as RectTransform;
             if (badgeRt != null)
             {
@@ -796,9 +835,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             // 底下是明亮的场景大图，白字会糊，所以在副本名背后垫一层半透明暗色。
             if (_challengeName != null)
             {
+                // 副本名的父节点，在它下面添加文字底色。
                 Transform info = _challengeName.transform.parent;
                 if (info != null && info.Find("TD_BadgePlate") == null)
                 {
+                    // 副本名后方的半透明暗底，不挡点击。
                     Image plate = NewImage("TD_BadgePlate", info, 0f, -8f, 214f, 90f, new Color(0f, 0f, 0f, 0.42f));
                     plate.raycastTarget = false;
                     plate.transform.SetAsFirstSibling();
@@ -817,15 +858,19 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void FixLostSpriteGraphics()
     {
+        // 所有图片控件快照，包括隐藏节点。
         Image[] images = _root.GetComponentsInChildren<Image>(true);
+        // 本次把无精灵图片改透明的数量，仅供日志。
         int fixedCount = 0;
         for (int i = 0; i < images.Length; i++)
         {
+            // 正在检查的图片控件。
             Image img = images[i];
             if (img.sprite != null)
             {
                 continue;
             }
+            // 保留原 RGB，只把没有精灵图片的透明度改为零。
             Color c = img.color;
             if (c.a <= 0f)
             {
@@ -849,10 +894,13 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     {
         for (int i = 0; i < _slots.Count; i++)
         {
+            // 当前书位的缓存控件引用。
             Slot s = _slots[i];
+            // 当前书位根矩形，以下运行时装饰都挂在这里。
             RectTransform rt = s.Root;
 
             // 整块 155x155 都可点：原预制体只有 Collider 子节点可点，偏移对不上。
+            // 覆盖书位的透明射线点击区。
             Image hit = rt.GetComponent<Image>();
             if (hit == null)
             {
@@ -862,12 +910,14 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             hit.color = new Color(1f, 1f, 1f, 0f);
             hit.raycastTarget = true;
 
+            // 书位点击按钮，当前使用无过渡样式。
             Button btn = rt.GetComponent<Button>();
             if (btn == null)
             {
                 btn = rt.gameObject.AddComponent<Button>();
             }
             btn.transition = Selectable.Transition.None;
+            // 为按钮回调固定此书位下标。
             int captured = i;
             btn.onClick.AddListener(delegate { OnSlotClicked(captured); });
 
@@ -876,6 +926,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             s.Frame.raycastTarget = false;
 
             // RO 的书是 3D 立在书台上的，2D 缩略图不能太大，否则环心会被占满、中心信息牌没地方放。
+            // 当前书位的场景缩略图矩形。
             RectTransform thumbRt = NewRect("TD_Thumb", rt, 0f, 12f, 108f, 108f);
             s.Thumb = thumbRt.gameObject.AddComponent<RawImage>();
             s.Thumb.raycastTarget = false;
@@ -883,6 +934,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
             // RO 的书位是「压条写章节 + 下面写副本名」（NameBg / ChapterName / DungeonName 三层），
             // 这里照抄这套层级，只是把 3D 书皮换成了场景缩略图。
+            // 章节文字的底条，优先复用旧预制体精灵。
             Image bar = NewImage("TD_NameBar", rt, 0f, -56f, 146f, 24f, Color.white);
             bar.raycastTarget = false;
             if (_nameBarSprite != null)
@@ -901,14 +953,17 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             s.LockMask.raycastTarget = false;
             s.LockText = NewText("TD_LockText", s.LockMask.transform, 0f, 0f, 108f, 30f, 16f, ColRed, TextAlignmentOptions.Center);
 
+            // 旧碰撞点击节点，当前改由整块书位按钮接收点击。
             Transform col = FindDirect(rt, "Collider");
             if (col != null)
             {
                 col.gameObject.SetActive(false);
             }
+            // 被新二维书位展示替代的旧子节点名称。
             string[] legacy = { "DungeonName", "ChapterName", "NotOpen", "Lock", "NameBg" };
             for (int k = 0; k < legacy.Length; k++)
             {
+                // 需要隐藏的旧展示节点，保留对象不删除。
                 Transform old = FindDirect(rt, legacy[k]);
                 if (old != null)
                 {
@@ -925,6 +980,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     private void BuildDetailPanel()
     {
+        // 全屏背景矩形，插在窗口内容下方。
         RectTransform splashRt = NewRect("TD_Splash", _root, 0f, 0f, 0f, 0f);
         Stretch(splashRt);
         _splash = splashRt.gameObject.AddComponent<RawImage>();
@@ -934,6 +990,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _splash.uvRect = new Rect(0f, 0f, 1f, 1f);
         splashRt.SetSiblingIndex(1);
 
+        // 背景上的半透明遮暗层，使前景文字更清楚。
         Image dim = NewImage("TD_SplashDim", _root, 0f, 0f, 0f, 0f, new Color(0f, 0f, 0f, 0.30f));
         Stretch(dim.rectTransform);
         dim.raycastTarget = false;
@@ -964,7 +1021,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 选中指定下标的副本并刷新右侧详情。
+    /// 选中指定下标，刷新书位高亮、背景大图和中心副本名；独立详情窗口另由 EnterSelected 打开。
     /// </summary>
     /// <param name="index">副本在 _items 中的下标。</param>
     /// <param name="fromClick">true 表示由玩家点击触发，会给出操作反馈。</param>
@@ -977,6 +1034,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         _selected = index;
         UpdateFrames();
 
+        // 本次选中或要打开的副本配置。
         ThemeDungeonEntry d = _items[index];
         _splash.texture = LoadTexture(d.scenePic);
         ApplySplashCover();
@@ -994,7 +1052,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         {
             _nameOfPanel.text = d.themeName;
         }
-        // 进入副本按钮上的名字跟着选中项走。
+        // 中心挑战信息牌上的副本名跟随当前选中项。
         RefreshChallengeButton();
         if (fromClick)
         {
@@ -1025,9 +1083,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 翻开选中的书：按 RO 的流程先打开 Theme_Story 详情页，
-    /// 由详情页右下角的「开始挑战」再真正发起进入。
-    /// 重复点击已选中的书位走这里，对应 RO 里点书翻开书的动作。
+    /// 打开当前副本的 Theme_Story 详情页；当前书位首次点击就会调用这里，不需要再次点击。
+    /// 详情页的“开始挑战”只转发选中配置，后续建队和进入流程由控制器组织。
     /// </summary>
     private void EnterSelected()
     {
@@ -1036,6 +1093,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
             SetStatus("请先选择一个副本");
             return;
         }
+        // 本次选中或要打开的副本配置。
         ThemeDungeonEntry d = _items[_selected];
         if (_storyWindow == null)
         {
@@ -1064,7 +1122,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
     }
 
-    /// <summary>在右下角显示一行操作反馈文本。</summary>
+    /// <summary>把 msg 显示在窗口底部居中的操作反馈行。</summary>
     private void SetStatus(string msg)
     {
         if (_statusText != null)
@@ -1074,7 +1132,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     }
 
     /// <summary>
-    /// 让 RawImage 按"短边铺满、长边裁切"的方式显示贴图，避免宽幅场景图被压扁。
+    /// 把 RawImage UV 恢复为整张贴图；targetW 和 targetH 当前未参与计算，不执行按比例裁切。
     /// </summary>
     private static void ApplyCoverUv(RawImage raw, float targetW, float targetH)
     {
@@ -1085,7 +1143,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         raw.uvRect = new Rect(0f, 0f, 1f, 1f);
     }
 
-    /// <summary>按当前屏幕宽高比重算背景大图的裁切区域。</summary>
+    /// <summary>为背景调用统一 UV 设置；当前实现显示完整贴图，传入屏幕尺寸不会改变裁切。</summary>
     private void ApplySplashCover()
     {
         if (_splash == null)
@@ -1108,6 +1166,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>生成一张 1x1 白色贴图对应的精灵，供纯色图与透明点击区使用。</summary>
     private Sprite MakeWhiteSprite()
     {
+        // 一像素白纹理，用作纯色背景及透明点击区的精灵来源。
         Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         tex.SetPixel(0, 0, Color.white);
         tex.Apply();

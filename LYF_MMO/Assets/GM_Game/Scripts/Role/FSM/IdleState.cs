@@ -10,12 +10,13 @@ using UnityEngine;
 public class IdleState :RoleFSMStateBase
 {
 
+    /// <summary>保存 roleCtrl 所属控制器和 animator 动画组件，供进入、退出状态时使用。</summary>
     public IdleState(RoleCtrlBase roleCtrl, Animator animator) : base(roleCtrl, animator)
     {
     }
     
     /// <summary>
-    /// 进入状态
+    /// 把动作编号设为 1、Movement 设为 0，切回待机。
     /// </summary>
     public override void OnEnter()
     {
@@ -23,7 +24,7 @@ public class IdleState :RoleFSMStateBase
         _animator.SetFloat("Movement", 0);
     }
     /// <summary>
-    /// 退出状态
+    /// 待机退出当前无额外处理。
     /// </summary>
     public override void OnExit()
     {

@@ -1,7 +1,5 @@
 /// <summary>
-/// 跳舞动作状态组件。
-/// 实体进行跳舞表演时的状态，属于社交/休闲类动作。
-/// 监听跳舞开始事件切入本状态。
+/// 把 DanceStarted 事件接入跳舞状态，并指定 Dance 动画名。
 /// </summary>
 public sealed class MDanceComponent : MBasicActionComponent
 {
@@ -14,11 +12,13 @@ public sealed class MDanceComponent : MBasicActionComponent
 
     /// <summary>注册跳舞开始事件：收到跳舞触发消息时切入跳舞状态。</summary>
     protected override void RegisterActionEvents() { RegisterActionEvent(MEventType.DanceStarted); }
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

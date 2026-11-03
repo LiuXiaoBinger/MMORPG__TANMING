@@ -15,10 +15,10 @@ public class ThemeDungeonEntry
     /// <summary>章节文案，如"章节·一"。</summary>
     public string chapterText;
 
-    /// <summary>进入该副本所需的角色等级，低于此等级显示锁定遮罩。</summary>
+    /// <summary>配置中的章节等级，当前选择页和详情页用于显示 Lv. 文案，不据此锁定入口。</summary>
     public int chapterLevel;
 
-    /// <summary>副本场景缩略图与背景大图的资源相对路径，相对 UI/Texture/ 目录，带 .png 后缀。</summary>
+    /// <summary>书位缩略图和背景大图路径；相对选择窗口配置的纹理根目录，默认 UI/Texture/，加载时移除扩展名。</summary>
     public string scenePic;
 
     /// <summary>首领怪物编号。</summary>
@@ -39,9 +39,9 @@ public class ThemeDungeonEntry
     /// <summary>困难难度副本编号。</summary>
     public int hardDungeonId;
 
-    /// <summary>开启该副本所需的服务器世界等级。</summary>
+    /// <summary>配置记录的服务器等级条件，当前这两个展示窗口没有用它限制进入。</summary>
     public int serverLv;
 
-    /// <summary>副本背景说明文案，含 \n 换行转义。</summary>
+    /// <summary>配置中的副本背景文案；当前详情页使用 BuildTabText 固定文案，尚未显示此字段。</summary>
     public string chapterContent;
 }

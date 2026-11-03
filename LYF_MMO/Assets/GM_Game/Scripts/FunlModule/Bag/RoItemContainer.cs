@@ -9,6 +9,7 @@ public class RoItemContainer
 {
 
     #region 字段与属性
+    /// <summary>-1 表示未指定格子，由容器选择空位。</summary>
     public const int InvalidItemPos = -1;
 
     // 按实例 UID 保存容器内物品，外部只能通过事务接口修改。
@@ -17,27 +18,34 @@ public class RoItemContainer
     // 容器当前已开启的格子数，扩容由 RoItemComponent 统一校验。
     private int _containerSize;
 
+    /// <summary>本容器对应的背包类别，构造后不变。</summary>
     public KnapsackType ContainerType { get; private set; }
 
+    /// <summary>物品归属的客户端角色，放入物品时从中读取角色编号。</summary>
     public PlayerEntity Role { get; private set; }
 
     /// <summary>只读物品视图，禁止业务模块直接写入容器字典。</summary>
     public IReadOnlyDictionary<long, ItemBase> Items { get { return _items; } }
 
+    /// <summary>当前容量；小于等于 0 在容量判断中表示不设上限。</summary>
     public int ContainerSize { get { return _containerSize; } }
     #endregion
 
+    /// <summary>保存背包类型 containerType 和所属角色 role，容量随后由调用方设置。</summary>
     public RoItemContainer(KnapsackType containerType, PlayerEntity role)
     {
         ContainerType = containerType;
         Role = role;
     }
 
+    /// <summary>进入场景时的扩展入口，基础容器不处理。</summary>
     public virtual void OnEnterScene() { }
 
     #region 事件回调
+    /// <summary>一轮物品移动结束后的扩展入口，基础容器不处理。</summary>
     public virtual void OnSwapEnd() { }
 
+    /// <summary>保留的数据同步回调，基础容器没有同步实现。</summary>
     public virtual void OnSyncLibs() { }
     #endregion
 
@@ -122,17 +130,22 @@ public class RoItemContainer
         return item != null && _items.ContainsKey(item.GetItemUID());
     }
 
+    /// <summary>返回当前设置的容量值。</summary>
     public virtual int GetContainerSize() { return _containerSize; }
 
+    /// <summary>预留的物品有效期检查入口，当前不执行到期处理。</summary>
     public virtual void CheckItemTimeEffect() { }
 
+    /// <summary>容量为正且物品实例数达到容量时表示已满；容量为 0 表示不限制。</summary>
     public virtual bool IsFull()
     {
         return _containerSize > 0 && _items.Count >= _containerSize;
     }
 
+    /// <summary>预留的容器属性汇总入口，基础容器不计算角色数值。</summary>
     public virtual void CalcContainerAttr() { }
 
+    /// <summary>用实例编号 uid 查找原物品对象，编号无效或不存在时返回 null。</summary>
     public virtual ItemBase GetItemByUid(long uid)
     {
         if (uid <= 0)
@@ -147,6 +160,7 @@ public class RoItemContainer
         return null;
     }
 
+    /// <summary>按格子位置 pos 查找物品；遍历的是引用列表，返回的仍是容器内原对象。</summary>
     public ItemBase GetItemByPos(int pos)
     {
         List<ItemBase> snapshot = new List<ItemBase>(_items.Values);
@@ -162,6 +176,7 @@ public class RoItemContainer
         return null;
     }
 
+    /// <summary>返回可容纳的新物品实例数；不限容量时用 int.MaxValue 表示。</summary>
     public int GetEmptySize()
     {
         if (_containerSize <= 0)
@@ -171,7 +186,7 @@ public class RoItemContainer
         return Math.Max(0, _containerSize - _items.Count);
     }
 
-    /// <summary>统计指定配置的数量。当前 ItemBase 没有绑定字段，因此忽略绑定筛选。</summary>
+    /// <summary>统计 itemId 的总数量；enum_bind 为 kItemBindNo 时排除绑定物品，否则两类都计入。</summary>
     public virtual int CountItem(int itemId, ItemBind enum_bind)
     {
         if (_items == null) return 0;
@@ -195,6 +210,7 @@ public class RoItemContainer
         return count;
     }
 
+    /// <summary>查找第一个空格；不限容量时使用当前实例数量作为位置，item 参数目前未用。</summary>
     protected virtual int GetEmptyPos(ItemBase item)
     {
         if (_containerSize <= 0)
@@ -225,9 +241,9 @@ public class RoItemContainer
     /// <summary>
     /// 查找同 ID 且仍有空余堆叠空间的物品。
     /// </summary>
-    /// <param name="desc"></param>
+    /// <param name="desc">要发放的物品描述，以配置 ID 查找现有未满堆叠。</param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <remarks>只返回可继续堆叠的描述列表，不修改容器内容。</remarks>
     public List<ItemDesc> FindItemForGive(ItemDesc desc)
     {
         List<ItemDesc> result = new List<ItemDesc>();
@@ -306,7 +322,7 @@ public class RoItemContainer
         return true;
     }
 
-    /// <summary>按物品 ID 移出物品。</summary>
+    /// <summary>按物品实例 UID 移出物品，执行移出前后的回调并返回原实例。</summary>
     public virtual ItemBase SwapOutByUID(long itemUid)
     {
         if (itemUid <= 0 || !_items.TryGetValue(itemUid, out ItemBase item) || !CheckOut(item))
@@ -331,6 +347,7 @@ public class RoItemContainer
         return SwapOutByUID(item.GetItemUID());
     }
 
+    /// <summary>把 size 写为非负容量，不移动或删除已经存在的物品。</summary>
     public virtual void SetContainerSize(int size) { _containerSize = Math.Max(0, size); }
 
     /// <summary>仅用于登录快照重载，调用方负责确保当前没有正在执行的背包事务。</summary>
@@ -359,13 +376,16 @@ public class RoItemContainer
         }
     }
 
+    /// <summary>item 因 reason 变化后的扩展回调，基础容器不处理。</summary>
     public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason) { }
 
+    /// <summary>角色初始化完成后的扩展入口，当前为空。</summary>
     public virtual void AfterInitGameRole() { }
 
+    /// <summary>重连后的扩展入口，当前为空。</summary>
     public virtual void Reconnect() { }
 
-    /// <summary>修改物品堆叠数量，数量小于等于零时移除物品。</summary>
+    /// <summary>给指定实例增加 addCount；变成负数时拒绝，恰好为 0 时移除；averagePrice 当前未使用。</summary>
     public virtual bool ModifyCount(long itemUid, long addCount, int averagePrice = 0)
     {
         ItemBase item = GetItemByUid(itemUid);
@@ -387,10 +407,13 @@ public class RoItemContainer
         return true;
     }
 
+    /// <summary>item 成功放入之后调用，基础容器不处理。</summary>
     protected virtual void AfterSwapIn(ItemBase item) { }
 
+    /// <summary>item 成功移出之后调用，基础容器不处理。</summary>
     protected virtual void AfterSwapOut(ItemBase item) { }
 
+    /// <summary>item 从字典移除之前调用，基础容器不处理。</summary>
     protected virtual void BeforeSwapOut(ItemBase item) { }
     #endregion
 }
@@ -425,10 +448,11 @@ public class ConsumeBag : RoItemContainer
     public override bool CheckIn(ItemBase item, int pos = InvalidItemPos) { return base.CheckIn(item, pos); }
 }
 
-/// <summary>角色已穿戴装备容器，对应 C++ BodyBag。</summary>
+/// <summary>保存角色当前穿戴的装备，格子位置代表装备部位。</summary>
 public class BodyBag : RoItemContainer
 {
     public BodyBag(KnapsackType type, PlayerEntity role) : base(type, role) { }
+    /// <summary>预留的装备页切换标志，当前容器没有读取它的逻辑。</summary>
     public bool IsChangeEquipPage { get; set; }
     public override void CalcContainerAttr() { }
 }
@@ -449,6 +473,7 @@ public class ShortCutBag : RoItemContainer
     // 快捷栏槽位到物品实例 UID 的映射。
     private readonly Dictionary<ulong, ulong> _shortcutMap = new Dictionary<ulong, ulong>();
 
+    /// <summary>把快捷槽编号 uid 映射为物品 UID 再查询；映射未登记时返回 null。</summary>
     public ItemBase GetShortCutItemByUid(long uid)
     {
         if (uid <= 0 || !_shortcutMap.TryGetValue((ulong)uid, out ulong targetUid))
@@ -460,34 +485,36 @@ public class ShortCutBag : RoItemContainer
     }
 }
 
+/// <summary>预留的货币专用容器，目前回调均为空；创建工厂实际为虚拟物品使用 PlainBag。</summary>
 class MoneyBag : RoItemContainer
 {
    
+    /// <summary>预留的元气提示红点编号，当前类内尚未使用。</summary>
     public  static readonly int kVigourRedPointId = 92;
 
     public MoneyBag(KnapsackType type, PlayerEntity role) :
 base(type, role) { }
 
     #region 事件回调
-    //当经验值发生变化
+    // 经验变化的预留回调，当前无实现。
     private void OnExpChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
 
-    //当职业经验值发生变化
+    // 职业经验变化的预留回调，当前无实现。
     private void OnJobExpChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
 
-    //当元气值发生变化
+    // 元气变化的预留回调，当前无实现。
     private void OnVitalityChange(ItemBase item, ItemChangeReason reason)
     {
         
     }
 
-    //当通信证经验值发生变化
+    // 通行证经验变化的预留回调，当前无实现。
     private void OnPassCheckExpChange(ItemBase item, ItemChangeReason reason)
     {
         
@@ -518,25 +545,26 @@ base(type, role) { }
         
     }
 
+    /// <summary>货币容器的保留统计入口；item_id、enum_bind 当前均未使用，固定返回 0。</summary>
     public virtual Int64 CountItem(int item_id, ItemBind enum_bind)
     {
         return 0;
     }
 
     #region 核心逻辑
-    //当道具进入容器
+    // 物品进入货币容器的预留回调，当前无实现。
     public virtual void AfterSwapIn(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
     {
         
     }
 
-    //当道具移除容器
+    // 物品移出货币容器的预留回调，当前无实现。
     public virtual void AfterSwapOut(ItemBase item, ITEM_SWAP_REASON swapin_reason = ITEM_SWAP_REASON.ISR_None)
     {
         
     }
 
-    //当道具发生改变
+    // 货币物品变化的预留回调，当前无实现。
     public virtual void ContainerOnItemChange(ItemBase item, ItemChangeReason reason)
     {
         

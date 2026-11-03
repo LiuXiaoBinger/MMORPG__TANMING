@@ -14,10 +14,10 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>当前绑定的角色物品组件。</summary>
     private RoItemComponent _itemComponent;
 
-    /// <summary>当前绑定角色，用于读取角色级脏标记。</summary>
+    /// <summary>当前绑定角色，用来查询哪些背包格子或分类需要刷新。</summary>
     private PlayerEntity _role;
 
-    /// <summary>上次渲染的物品数量，用于判断是否需要定位到新物品。</summary>
+    /// <summary>上次渲染的物品条目数；当前只保存或重置，没有用它决定滚动位置。</summary>
     private int _lastRenderedItemCount = -1;
 
     /// <summary>当前页按格位缓存的展示数据，增量事件只改动对应条目。</summary>
@@ -31,6 +31,7 @@ public sealed class KnapsackCtrl : IDisposable
 
     #region 构造与初始化
     /// <summary>创建背包控制器并绑定当前本地角色。</summary>
+    /// <param name="mainView">提供背包窗口引用的主界面。</param>
     public KnapsackCtrl(MainView mainView)
     {
         if (mainView != null)
@@ -41,13 +42,15 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>为专用测试组件创建背包控制器。</summary>
+    /// <param name="window">测试专用窗口实例。</param>
     public KnapsackCtrl(KnapsackWindow window)
     {
         _window = window;
         Initialize();
     }
 
-    /// <summary>背包窗口帧循环调用，按当前页消费脏标记。</summary>
+    /// <summary>背包窗口每帧调用：可见时读取当前分类的变化标记，刷新后清除本次标记。</summary>
+    /// <param name="deltaMilliseconds">保留的帧间隔参数，当前不参与刷新判断。</param>
     public void Update(int deltaMilliseconds)
     {
         if (_window == null || !_window.isActiveAndEnabled)
@@ -58,6 +61,7 @@ public sealed class KnapsackCtrl : IDisposable
         {
             return;
         }
+        // 当前分类积累的整页刷新标记或格子下标，成功绘制后由角色清除。
         ClientDirtySnapshot snapshot;
         if (!_role.DirtyTracker.TryGetKnapsack(_window.CurrentType, out snapshot))
         {
@@ -92,7 +96,7 @@ public sealed class KnapsackCtrl : IDisposable
         BindRole(localRole);
     }
 
-    /// <summary>解除窗口和角色组件事件订阅。</summary>
+    /// <summary>解除窗口事件，清空角色引用和格子缓存；当前没有订阅角色组件事件。</summary>
     public void Dispose()
     {
         if (_window != null)
@@ -108,10 +112,13 @@ public sealed class KnapsackCtrl : IDisposable
     #endregion
 
     #region 界面刷新、交互响应等
-    /// <summary>只刷新脏摘要中的格位，避免打开页面前产生 UI 工作。</summary>
+    /// <summary>先重建当前分类的物品列表，再把标记中的格子交给窗口刷新，最后更新容量和布局。</summary>
+    /// <param name="snapshot">这一帧待处理的背包变化摘要。</param>
     private void RefreshDirtySlots(ClientDirtySnapshot snapshot)
     {
+        // 当前分类的最新完整列表，用它查询受影响格子的现状。
         List<KnapsackSlotViewData> items = BuildItems(_window.CurrentType);
+        // 按格子下标查最新数据；查不到表示这个格子已经为空。
         Dictionary<int, KnapsackSlotViewData> latest =
             new Dictionary<int, KnapsackSlotViewData>();
         for (int index = 0; index < items.Count; index++)
@@ -137,6 +144,7 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>生成当前页展示数据并交给窗口渲染。</summary>
+    /// <param name="detectNewItem">保留参数，当前未读取；刷新始终保留现有滚动位置。</param>
     private void RefreshCurrentCategory(bool detectNewItem)
     {
         if (_window == null)
@@ -159,6 +167,7 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>窗口切换页签后从组件重新生成对应页面。</summary>
+    /// <param name="type">窗口报告的新分类；实际绘制读取窗口已保存的 CurrentType。</param>
     private void OnCategorySelected(KnapsackType type)
     {
         _lastRenderedItemCount = -1;
@@ -178,6 +187,7 @@ public sealed class KnapsackCtrl : IDisposable
 
     #region 创建与添加
     /// <summary>构造不可变展示数据，控制器不把 ItemBase 传入窗口。</summary>
+    /// <param name="change">旧增量事件中的物品信息；缺图标时从物品配置补齐。</param>
     private static KnapsackSlotViewData CreateViewData(KnapsackChangedEventArgs change)
     {
         string iconPath = change.IconPath;
@@ -194,6 +204,9 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>读取指定独立容器中的物品，并按实例编号去重后生成展示数据。</summary>
+    /// <param name="result">接收整理后展示条目的列表。</param>
+    /// <param name="itemUids">本次已加入的实例编号，避免重复展示同一物品。</param>
+    /// <param name="type">本次读取的独立背包分类。</param>
     private void AppendContainer(List<KnapsackSlotViewData> result,
         HashSet<long> itemUids, KnapsackType type)
     {
@@ -227,6 +240,7 @@ public sealed class KnapsackCtrl : IDisposable
     #endregion
 
     /// <summary>从当前页缓存删除指定格位。</summary>
+    /// <param name="slotIndex">需要从当前分类缓存中移除的格子下标。</param>
     private void RemoveSlot(int slotIndex)
     {
         if (_slotDataByIndex.TryGetValue(slotIndex, out KnapsackSlotViewData data))
@@ -238,6 +252,7 @@ public sealed class KnapsackCtrl : IDisposable
 
     #region 查询与判定
     /// <summary>读取当前分类已经开启的格子数量。</summary>
+    /// <param name="type">需要查询容量的背包分类。</param>
     private int GetOpenedSlotCount(KnapsackType type)
     {
         if (_itemComponent == null)
@@ -248,6 +263,8 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>按背包格子位置和实例编号稳定排序展示数据。</summary>
+    /// <param name="left">参与排序的前一个展示条目。</param>
+    /// <param name="right">参与排序的后一个展示条目。</param>
     private static int CompareSlot(KnapsackSlotViewData left,
         KnapsackSlotViewData right)
     {
@@ -260,6 +277,8 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>按容器格子位置和实例编号稳定排序物品。</summary>
+    /// <param name="left">参与排序的前一个物品，可为空。</param>
+    /// <param name="right">参与排序的后一个物品，可为空。</param>
     private static int CompareItem(ItemBase left, ItemBase right)
     {
         if (left == null)
@@ -280,7 +299,8 @@ public sealed class KnapsackCtrl : IDisposable
     #endregion
 
     #region 核心逻辑
-    /// <summary>绑定本地角色，并监听其背包模型变化。</summary>
+    /// <summary>换绑本地角色和物品组件，清空旧缓存、标记当前分类需要刷新，并立即绘制一次。</summary>
+    /// <param name="role">新的本地角色，null 表示解除绑定并清空显示。</param>
     public void BindRole(PlayerEntity role)
     {
         if (_itemComponent != null)
@@ -310,7 +330,8 @@ public sealed class KnapsackCtrl : IDisposable
         RefreshCurrentCategory(false);
     }
 
-    /// <summary>只修改当前页受影响的 UID 和格位，不重新生成整页列表。</summary>
+    /// <summary>保留的旧事件增量处理方法，当前未被调用；按增删移事件修改对应格子，不重建列表。</summary>
+    /// <param name="change">旧事件描述的物品新增、删除、数量变化或移动。</param>
     private void ApplyIncrementalChange(KnapsackChangedEventArgs change)
     {
         if (_window == null)
@@ -363,6 +384,7 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>将展示数据写入当前页的格位和 UID 索引。</summary>
+    /// <param name="data">将要占用指定格子的物品展示数据，替换旧 UID 与格子对应关系。</param>
     private void SetSlot(KnapsackSlotViewData data)
     {
         if (data == null)
@@ -384,6 +406,7 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>从角色物品容器构建当前分类的展示列表。</summary>
+    /// <param name="type">本次要显示的独立背包分类。</param>
     private List<KnapsackSlotViewData> BuildItems(KnapsackType type)
     {
         List<KnapsackSlotViewData> result = new List<KnapsackSlotViewData>();
@@ -392,6 +415,7 @@ public sealed class KnapsackCtrl : IDisposable
             return result;
         }
 
+        // 本次列表已经收录的物品实例编号，只用于去重。
         HashSet<long> itemUids = new HashSet<long>();
         // 每个页签只对应一个独立容器，普通背包不再聚合装备、消耗品和材料。
         AppendContainer(result, itemUids, type);

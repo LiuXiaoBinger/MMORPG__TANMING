@@ -4,8 +4,8 @@ using Google.Protobuf;
 using UnityEngine;
 
 /// <summary>
-/// 客户端网络管理器（对齐 RO 的 MNetClient）：负责连接生命周期、协议发送与主线程消息派发。
-/// 业务统一经 Send 上行；TCP 与 KCP 两路下行汇入同一个 OnRecv 后再进入业务分发。
+/// 客户端网络入口：建立和关闭连接、发送协议，并把网络线程收到的消息交回 Unity 主线程。
+/// 通常通过 Send 发消息；TCP 和 KCP 收到的消息都先进入 OnRecv，再按协议号交给控制器。
 /// </summary>
 public class MNetClient : Singleton<MNetClient>
 {
@@ -17,13 +17,13 @@ public class MNetClient : Singleton<MNetClient>
     /// <summary>当前网络客户端。</summary>
     private static NetClient _client;
 
-    /// <summary>单调递增的连接代次种子。</summary>
+    /// <summary>每次连接分配新编号所用的计数器，重连后也不会沿用旧编号。</summary>
     private long _connectionGenerationSeed;
 
-    /// <summary>正在建立连接的待定代次；连接成功前不对业务暴露。</summary>
+    /// <summary>正在尝试建立的连接编号；成功之前不作为当前有效连接。</summary>
     private long _pendingConnectionGeneration;
 
-    /// <summary>当前有效连接代次，零表示没有有效连接。</summary>
+    /// <summary>当前可用连接的编号；0 表示没有连接成功。</summary>
     private long _activeConnectionGeneration;
 
     /// <summary>获取当前网络客户端。</summary>
@@ -109,8 +109,8 @@ public class MNetClient : Singleton<MNetClient>
     }
 
     /// <summary>
-    /// 协议接收公共入口（对齐 RO 的 MNetClient 主线程派发）：TCP 与 KCP 两路下行在此汇合，
-    /// 统一完成归属校验、主线程投递与业务分发，不再各留一份实际派发逻辑。
+    /// TCP 与 KCP 的公共接收入口：先确认消息仍属于当前连接，
+    /// 再排到 Unity 主线程处理；排队期间若断线或重连，旧消息会被丢弃。
     /// </summary>
     /// <param name="sourceClient">消息所属的 TCP 连接，注册回调时固定。</param>
     /// <param name="sourceGeneration">消息所属的连接代次，注册回调时固定。</param>
@@ -373,7 +373,7 @@ public class MNetClient : Singleton<MNetClient>
     }
 
     /// <summary>
-    /// KCP 下行薄接入：只做“载荷字节 → BasePackage”这一段 KCP 专属解析，
+    /// 解析 KCP 收到的字节为 BasePackage，取出协议号和消息体，
     /// 解析成功后即汇入公共 OnRecv，主线程投递与业务分发由后者统一完成。
     /// </summary>
     /// <param name="sourceClient">通道所属连接，注册时固定。</param>
@@ -403,7 +403,7 @@ public class MNetClient : Singleton<MNetClient>
 
     #region 网络请求与消息
     /// <summary>
-    /// 业务公共上行入口（对齐 RO 的 MNetClient::Send）：按协议号与载荷交给当前连接。
+    /// 发送业务消息：把协议号和消息体交给当前连接。
     /// 实时协议是否改走 KCP 由连接层按协议号分流，调用方不需要感知通道。
     /// 需要把发送固定到某个已捕获连接与代次的业务（例如商城），继续使用自己捕获的连接发送，不受本入口影响。
     /// </summary>
@@ -471,7 +471,7 @@ public class MNetClient : Singleton<MNetClient>
         sourceClient.Send(NetDefine.CMD_KcpBindCode, ByteString.CopyFrom(payload.Encode()));
     }
 
-    /// <summary>在 Unity 主线程执行网络生命周期或消息回调。</summary>
+    /// <summary>将 action 排入初始化时保存的 Unity 主线程队列，不在当前网络线程直接调用。</summary>
     private void PostToMainThread(Action action)
     {
         if (action == null)
@@ -548,7 +548,7 @@ public class MNetClient : Singleton<MNetClient>
     }
 
     #region 核心逻辑
-    /// <summary>切换到指定服务器，并为新连接分配独立代次。</summary>
+    /// <summary>关闭旧连接后连接 host:port，并分配新连接编号；成功或失败后在主线程调用对应回调。</summary>
     public void ConnectServer(string host, int port, Action connSucced = null,
         Action connFail = null)
     {

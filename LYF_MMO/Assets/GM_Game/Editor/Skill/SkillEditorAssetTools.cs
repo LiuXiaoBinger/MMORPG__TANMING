@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using Ethan.ActionEditor;
 
-/// <summary>从旧资源建立 Y 编辑资产，并在显式校验后发布独立运行表现；不修改旧表或原动画。</summary>
+/// <summary>连接旧技能表、编辑器草稿和游戏表现资产：创建可编辑技能，检查配置，再导出游戏运行时读取的数据。</summary>
 public static class SkillEditorAssetTools
 {
 

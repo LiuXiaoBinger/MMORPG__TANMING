@@ -2,9 +2,8 @@ using cfg;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 角色待机动画装配组件。
-/// 仅为普通角色的 Animator 预先绑定表现表中的普通待机和战斗待机剪辑，
-/// 不参与动作状态切换；载具表现和非角色实体不会进入本组件的装配流程。
+/// 在角色模型可用后，给 Idle 和 FIdle 分别绑定普通待机、战斗待机动画。
+/// 本组件只准备动画；当前该播放哪种动作，由状态机和默认动作组件决定。
 /// </summary>
 public sealed class MIdleComponent : EntityComponentBase
 {
@@ -29,7 +28,7 @@ public sealed class MIdleComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 等待角色模型 Animator 就绪后装配两条 RO 风格待机动画。
+    /// 等待角色模型 Animator 就绪后登记普通与战斗待机动画。
     /// </summary>
     /// <param name="deltaMilliseconds">当前逻辑帧间隔，单位为毫秒；本组件只检测就绪状态，不使用该数值。</param>
     public override void Update(int deltaMilliseconds)
@@ -96,7 +95,7 @@ public sealed class MIdleComponent : EntityComponentBase
         // 普通静止状态使用表现表的普通待机动画。
         MAnimator.MAnimInfo idleAnimInfo = Entity.OverrideAnim(
             MAnimator.STATE_IDLE, presentData.IdleAnim);
-        // 战斗静止状态使用表现表的向前待机动画。
+        // 战斗静止状态使用表现表的战斗待机动画。
         MAnimator.MAnimInfo idleFAnimInfo = Entity.OverrideAnim(
             MAnimator.STATE_FIDLE, presentData.IdleFAnim);
         if (idleAnimInfo == null || idleFAnimInfo == null)

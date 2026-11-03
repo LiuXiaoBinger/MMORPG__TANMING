@@ -1,6 +1,6 @@
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>时间轴与属性面板共享的特效内容分类和字段显示规则，兼容原音效数据。</summary>
+    /// <summary>区分粒子特效和声音事件，为时间轴生成名称，并决定属性面板要显示哪些字段。</summary>
     public static class EffectAuthoring
     {
         /// <summary>显式内容类型优先；旧事件仅有音频时归音效，其他情况归粒子特效。</summary>

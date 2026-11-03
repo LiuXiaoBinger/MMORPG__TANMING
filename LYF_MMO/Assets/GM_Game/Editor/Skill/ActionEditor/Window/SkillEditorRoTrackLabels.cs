@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>RO轨道属性的双语显示映射；字段身份及枚举数值不随语言改变。</summary>
+/// <summary>为 RO 专用轨道的字段和枚举选项提供中英标签，切换语言不会改变技能数据。</summary>
 internal static class SkillEditorRoTrackLabels
 {
     /// <summary>为原RO字段构建当前语言标签，未知扩展仍显示原字段名便于定位。</summary>

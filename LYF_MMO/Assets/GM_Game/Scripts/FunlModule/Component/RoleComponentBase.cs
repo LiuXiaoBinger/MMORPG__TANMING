@@ -1,13 +1,13 @@
 using System;
 
-/// <summary>客户端角色组件基类，统一角色绑定与运行时生命周期。</summary>
+/// <summary>角色业务组件的共同基类，保存所属角色，并提供初始化、更新和释放入口。</summary>
 public abstract class RoleComponentBase
 {
     /// <summary>组件所属客户端角色。</summary>
     protected PlayerEntity Owner { get; private set; }
 
     #region 构造与初始化
-    /// <summary>创建组件并绑定所属角色。</summary>
+    /// <summary>把 owner 保存为所属角色；owner 为空时不能创建组件。</summary>
     protected RoleComponentBase(PlayerEntity owner)
     {
         if (owner == null)
@@ -17,7 +17,7 @@ public abstract class RoleComponentBase
         Owner = owner;
     }
 
-    /// <summary>推进组件客户端逻辑。</summary>
+    /// <summary>按 deltaMilliseconds（距上帧的毫秒数）更新组件；基类不执行具体业务。</summary>
     public virtual void Update(int deltaMilliseconds)
     {
     }
@@ -45,7 +45,7 @@ public abstract class RoleComponentBase
     {
     }
 
-    /// <summary>记录组件变化，统一交给角色级脏标记聚合器。</summary>
+    /// <summary>将 module 的变化交给所属角色记录；fullRefresh 表示整页刷新，slotIndex 为变化格子，context 为来源。</summary>
     protected void MarkDirty(ClientDirtyModule module, bool fullRefresh,
         int slotIndex, ClientChangeContext context)
     {

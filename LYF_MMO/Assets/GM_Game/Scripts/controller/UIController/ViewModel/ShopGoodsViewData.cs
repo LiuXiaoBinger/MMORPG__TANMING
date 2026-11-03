@@ -29,6 +29,17 @@ public sealed class ShopGoodsViewData
     public bool IsUnlimitedPurchase { get; }
 
     /// <summary>创建一份不可变的商城商品展示数据。</summary>
+    /// <param name="shopId">当前商品所在商店编号。</param>
+    /// <param name="goodsId">购买协议使用的商品编号。</param>
+    /// <param name="productName">商品名称，null 转为空串。</param>
+    /// <param name="productIconPath">商品图标路径。</param>
+    /// <param name="price">每购买一份需要支付的货币数量。</param>
+    /// <param name="currencyItemId">结算货币对应的物品配置编号。</param>
+    /// <param name="currencyName">货币显示名，缺失时显示未知货币。</param>
+    /// <param name="currencyIconPath">货币图标路径。</param>
+    /// <param name="remainingPurchaseCount">当前还允许购买的份数。</param>
+    /// <param name="maxPurchaseCount">购买窗口数量选择器的上限。</param>
+    /// <param name="isUnlimitedPurchase">是否按不限次数商品显示。</param>
     public ShopGoodsViewData(int shopId, int goodsId, string productName, string productIconPath,
         int price, int currencyItemId, string currencyName, string currencyIconPath,
         int remainingPurchaseCount, int maxPurchaseCount, bool isUnlimitedPurchase)

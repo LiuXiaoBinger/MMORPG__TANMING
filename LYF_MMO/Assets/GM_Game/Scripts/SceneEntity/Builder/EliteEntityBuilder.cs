@@ -1,8 +1,7 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 精英怪物 Builder，保持 MonsterCommonAssemble 组件集合。
-/// 在普通怪物组件基础上额外设置怪物等级为精英，并挂载精英专属标记。
+/// 创建或复用精英怪物，装配怪物共用组件，再设置精英档位和类别标记。
 /// </summary>
 public sealed class EliteEntityBuilder : MonsterEntityBuilder
 {

@@ -47,6 +47,7 @@ public class RedisMgr : Singleton<RedisMgr>
             throw new ArgumentOutOfRangeException("port", "Redis port must be between 1 and 65535.");
         }
 
+        // 连接和同步操作最多等待 5000 毫秒，连接暂不可达时不在首次连接阶段直接终止。
         ConfigurationOptions options = new ConfigurationOptions
         {
             AbortOnConnectFail = false,
@@ -75,7 +76,7 @@ public class RedisMgr : Singleton<RedisMgr>
     }
 
     #region 查询与判定
-    /// <summary>同步读取字符串键，存在时通过 out 参数返回值，键不存在或异常返回 false。</summary>
+    /// <summary>同步读取字符串键，存在时通过 out 参数返回值，键不存在或 RedisException 返回 false；未初始化和非法键仍抛异常。</summary>
     /// <param name="key">Redis 键，非空。</param>
     /// <param name="value">输出读取到的字符串值，失败时为 null。</param>
     public bool Get(string key, out string value)
@@ -99,14 +100,14 @@ public class RedisMgr : Singleton<RedisMgr>
         }
     }
 
-    /// <summary>读取字符串键并直接返回值，键不存在或异常时返回 null。</summary>
+    /// <summary>读取字符串键并直接返回值，键不存在或 RedisException 时返回 null；未初始化和非法键仍抛异常。</summary>
     public string GetValue(string key)
     {
         string value;
         return Get(key, out value) ? value : null;
     }
 
-    /// <summary>异步读取字符串键，键不存在或异常时返回 null。</summary>
+    /// <summary>异步读取字符串键，键不存在或 RedisException 时返回 null；未初始化和非法键仍抛异常。</summary>
     public async Task<string> GetValueAsync(string key)
     {
         try
@@ -225,7 +226,7 @@ public class RedisMgr : Singleton<RedisMgr>
     {
         try
         {
-            // HashSet returns false when an existing field is updated, which is still success.
+            // Redis 的 HashSet 在更新已有字段时返回 false，本封装仍把正常更新视为成功。
             GetDatabase().HashSet(ValidateKey(key), ValidateKey(field), value);
             return true;
         }

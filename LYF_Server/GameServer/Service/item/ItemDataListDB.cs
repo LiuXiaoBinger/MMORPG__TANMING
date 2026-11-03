@@ -13,7 +13,7 @@ public sealed class ItemDataListDB
     private bool _needSave;
     // 本列表最后一次修改对应的角色数据版本。
     private long _dirtyVersion;
-    // 每次进入脏状态批次递增，用于识别保存请求发出后的新修改。
+    // 每次标记修改时递增，用于识别保存请求发出后的新修改。
     private long _changeGeneration;
     // 最近一次组包时包含的修改批次。
     private long _savedGeneration;
@@ -53,7 +53,7 @@ public sealed class ItemDataListDB
     /// <param name="acknowledgedVersion">中心服确认的角色保存版本。</param>
     public void ResetNeedSave(long acknowledgedVersion)
     {
-        // 在途期间又发生变化时 dirtyVersion 会更大，旧 ACK 不能清除新脏数据。
+        // 保存请求发出后若又有变化，修改次数就与已保存次数不同，旧确认不能清除新修改。
         // 存在待持久化修改。
         bool hasPendingSave = _needSave;
         // 修改代次与已保存代次一致，没有在途新修改。
@@ -187,6 +187,7 @@ public sealed class ItemDataListDB
         return true;
     }
 
+    /// <summary>把有效时间转为 UTC 刻度，每刻度 100 纳秒；未设置时间以 0 写入协议。</summary>
     private static long ToUtcTicks(DateTime value)
     {
         if (value == DateTime.MinValue)

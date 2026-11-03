@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 实体 Builder 基类，对应参考项目 ObjectBuilder 的装配职责。
-/// 子类负责通过对象池获取实体实例，并按实体类型挂载对应的组件标记和业务组件。
+/// 场景实体的装配入口：子类从对象池取实体，再为它添加所需组件。
+/// 公共方法区分实际的数据组件和只声明类别的标记组件。
 /// </summary>
 public abstract class EntityBuilder
 {
@@ -21,30 +21,30 @@ public abstract class EntityBuilder
     /// <param name="entity">待装配的实体实例。</param>
     protected void AttachCommonComponents(ROObject entity)
     {
-        // 实体基础标记，标识该实体属于普通实体类型
+        // 基础实体标记；它不改变实体自身的 EntityType
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Entity));
         // 变换组件：负责实体位置、旋转等空间变换
         MComponentMgr.Instance.CreateComponent<EntityTransformComponent>(entity);
         // 属性组件：负责实体基础属性数据
         MComponentMgr.Instance.CreateComponent<EntityAttributesComponent>(entity);
-        // 同步标记：标识该实体需要参与网络同步
+        // 登记同步类别；标记组件本身不发送网络消息
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Sync));
     }
 
     /// <summary>
-    /// 只有可参与战斗并可受击死亡的实体才追加战斗组件。
-    /// 包括仇恨组、受击、死亡和战斗标记。
+    /// 为可战斗实体登记战斗分组、受击、死亡和战斗四类标记。
+    /// 这些标记不执行战斗逻辑，具体行为仍由动作组件等代码处理。
     /// </summary>
     /// <param name="entity">待装配的实体实例。</param>
     protected void AttachCombatComponents(ROObject entity)
     {
-        // 战斗组标记：用于仇恨分组和队伍归属
+        // 登记战斗分组类别
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.FightGroup));
-        // 受击标记：该实体可被攻击
+        // 登记受击类别
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.BeHit));
-        // 死亡标记：该实体可进入死亡状态
+        // 登记死亡类别
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Dead));
-        // 战斗标记：该实体参与战斗逻辑
+        // 登记战斗类别
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Combat));
     }
 

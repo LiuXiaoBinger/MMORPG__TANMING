@@ -1,8 +1,8 @@
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>
-/// 普通怪物 Builder，对应 MonsterBuilder 和 MonsterCommonAssemble。
-/// 怪物实体需要公共组件、战斗组件、怪物 AI 组件以及仇恨、生命周期、导航等标记。
+/// 创建或复用怪物，并装配公共数据、怪物数据和战斗相关标记。
+/// 精英、Boss 和佣兵复用同一个装配方法；AI、仇恨等在这里仍是标记组件。
 /// </summary>
 public class MonsterEntityBuilder : EntityBuilder
 {
@@ -26,8 +26,8 @@ public class MonsterEntityBuilder : EntityBuilder
     }
 
     /// <summary>
-    /// 装配怪物公共组件，供 Boss、精英、宠物、佣兵、Dummy 等子类复用。
-    /// 包含公共组件、战斗组件、怪物业务组件以及仇恨/生命周期/AI/导航标记。
+    /// 装配怪物公共组件，当前由普通怪物、Boss、精英和佣兵构建器调用。
+    /// 包含公共组件、战斗组件、怪物数据组件以及仇恨、生命周期、AI、导航标记。
     /// </summary>
     /// <param name="entity">待装配的怪物实体实例。</param>
     protected void AttachMonsterComponents(ROObject entity)
@@ -38,13 +38,13 @@ public class MonsterEntityBuilder : EntityBuilder
         AttachCombatComponents(entity);
         // 怪物业务数据组件
         MComponentMgr.Instance.CreateComponent<EntityMonsterComponent>(entity);
-        // 仇恨标记：参与仇恨列表管理
+        // 登记仇恨类别；此标记不维护仇恨列表
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Hatred));
-        // 生命周期标记：怪物有出生和销毁时机
+        // 登记生命周期类别；实体销毁由实体世界处理
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Lifetime));
-        // AI 标记：怪物由 AI 驱动行为
+        // 登记 AI 类别；此标记不执行 AI
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.AI));
-        // 导航标记：怪物需要寻路
+        // 登记导航类别；此标记不执行寻路
         entity.AddComponent(new EntityComponentMarker(entity, EntityComponentType.Navigation));
     }
 }

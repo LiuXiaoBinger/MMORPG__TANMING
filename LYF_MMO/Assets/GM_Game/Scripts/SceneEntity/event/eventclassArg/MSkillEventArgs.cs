@@ -1,13 +1,16 @@
 using UnityEngine;
 
-/// <summary>RO同名技能输入载荷；仅描述导航到达后要释放的技能，不承担服务器开始广播。</summary>
+/// <summary>
+/// 导航到达后准备释放的技能输入：技能编号、释放点和所选目标。
+/// 这是输入阶段的数据；服务器通知开始播放时使用 SkillStartedEventArgs。
+/// </summary>
 public sealed class MSkillEventArgs : IEventArg
 {
-    /// <summary>本项目技能主表ID；对应RO Identify，在导航到达时用于查询已学核心。</summary>
+    /// <summary>技能主表 ID，导航到达后用它查找角色已学习的技能核心。</summary>
     public int Identify { get; private set; }
     /// <summary>输入选择的世界空间释放点，单位米；当前无目标协议不会上传该坐标。</summary>
     public Vector3 CastPoint { get; private set; }
-    /// <summary>输入选择的目标引用，只在本次同步派发期间有效。</summary>
+    /// <summary>输入选择的目标实体引用；参数回收后此字段会清空，复制件仍指向同一实体。</summary>
     public MEntity Target { get; private set; }
     /// <summary>事件池回收标记，true表示不可继续使用本次载荷。</summary>
     public bool Deprecated { get; set; }

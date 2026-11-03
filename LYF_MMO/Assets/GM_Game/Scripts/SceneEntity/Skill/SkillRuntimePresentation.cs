@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>按 SkillPresentationInfo.Id 定位的只读技能表现资产，不参与权威结算。</summary>
+/// <summary>
+/// 按表现表 ID 加载的技能表现资源，保存动画信息、特效、声音和程序位移指令。
+/// 它只描述客户端表现，不计算服务器的命中和伤害。
+/// </summary>
 public sealed class SkillRuntimePresentation : ScriptableObject
 {
     /// <summary>原表现表行的唯一 ID，运行时按此值验证异步加载结果。</summary>
@@ -19,7 +22,8 @@ public sealed class SkillRuntimePresentation : ScriptableObject
     /// <summary>作者制作时间轴的最后触发秒数，至少覆盖原动画；零兼容尚未重新导出的旧资产。</summary>
     public float TimelineDurationSeconds;
 
-    /// <summary>事件最后触发上限，单位秒，不含音频或粒子自然尾；旧资产零值沿用原动画长度，不延长动作解锁。</summary>
+    /// <summary>时间轴允许触发事件的最后时刻，单位秒，不包含声音或粒子继续播放的尾部时间。
+    /// TimelineDurationSeconds 为 0 时使用完整动画时长；这不改变技能状态的结束时刻。</summary>
     public float EffectiveTimelineDurationSeconds
     {
         get
@@ -38,6 +42,6 @@ public sealed class SkillRuntimePresentation : ScriptableObject
     /// <summary>编辑器音效轨道的单次三维声音，按触发秒数和作者序号排序。</summary>
     public List<SkillRuntimeAudioEvent> AudioEvents = new List<SkillRuntimeAudioEvent>();
 
-    /// <summary>RO 同名程序位移指令，默认空兼容旧资产；位移全部由程序段驱动。</summary>
+    /// <summary>由程序计算的位移段；空列表表示此资源没有额外位移指令。</summary>
     public List<MSkillChargeData> ChargeList = new List<MSkillChargeData>();
 }

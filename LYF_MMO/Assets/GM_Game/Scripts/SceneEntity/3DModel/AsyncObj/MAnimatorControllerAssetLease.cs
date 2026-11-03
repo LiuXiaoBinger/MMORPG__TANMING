@@ -2,9 +2,8 @@ using YooAsset;
 using UnityEngine;
 
 /// <summary>
-/// Animator Controller 的资源租约。
-/// 封装 YooAsset 异步加载句柄，确保异步加载完成后由 Animator 池回收时正确释放句柄。
-/// 防止对象池复用时旧实体的异步回调泄露资源引用。
+/// 把已经加载的动画控制器与 YooAsset 加载句柄放在一起交给使用者。
+/// 使用结束调用 Release，一次释放后同时清空控制器和句柄引用。
 /// </summary>
 public sealed class MAnimatorControllerAssetLease
 {
@@ -30,7 +29,7 @@ public sealed class MAnimatorControllerAssetLease
 
     /// <summary>
     /// 释放 YooAsset 句柄。
-    /// 重复释放不会影响资源引用计数，通过 _released 标记保证幂等。
+    /// 重复释放不会影响资源引用计数，通过 _released 标记保证只释放一次。
     /// </summary>
     public void Release()
     {

@@ -1,15 +1,18 @@
 using UnityEngine;
 
-/// <summary>粒子克隆体独立持有源资产，技能结束或回池后仍保证有限粒子尾迹的资源有效。</summary>
+/// <summary>
+/// 让已经生成的粒子独立保留表现资源，直到所有子粒子播放完再销毁。
+/// 因此技能结束或技能对象回池后，尚未消失的粒子仍能正常播放。
+/// </summary>
 public sealed class SkillRuntimeFxLifetime : MonoBehaviour
 {
-    /// <summary>该粒子源自的表现行主键，零表示尚未绑定资源租约。</summary>
+    /// <summary>该粒子源自的表现行主键，零表示尚未持有表现资源引用。</summary>
     private int _presentationId;
 
     /// <summary>本克隆体的根粒子；由真实存活状态决定回收，不估算寿命曲线的最大常量。</summary>
     private ParticleSystem _effect;
 
-    /// <summary>所有子粒子的延迟发射和存活尾粒均结束后销毁克隆体，随后 OnDestroy 解除租约。</summary>
+    /// <summary>所有子粒子的延迟发射和存活尾粒均结束后销毁克隆体，随后 OnDestroy 释放表现资源引用。</summary>
     private void LateUpdate()
     {
         if (_effect == null || !_effect.IsAlive(true))
@@ -18,7 +21,7 @@ public sealed class SkillRuntimeFxLifetime : MonoBehaviour
         }
     }
 
-    /// <summary>对象销毁时释放源资产及其粒子依赖的最后一个实例引用。</summary>
+    /// <summary>对象销毁时释放本粒子实例持有的一份表现资源引用。</summary>
     private void OnDestroy()
     {
         ReleaseLease();

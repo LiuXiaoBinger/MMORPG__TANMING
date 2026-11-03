@@ -23,7 +23,7 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>移动状态检查的固定时间间隔，单位为秒，约等于 30Hz。</summary>
     private const float MovementCheckIntervalSeconds = 0.033f;
 
-    /// <summary>方向键从按下到允许停止的最短保持时间，单位为秒；用于完整走完动画混合过渡。</summary>
+    /// <summary>松开方向键后继续保持移动的秒数；停止时间按取消输入的时刻加此值计算。</summary>
     private const float MinimumMovementHoldSeconds = 0.2f;
 
     /// <summary>自上次移动检查后累计的非缩放时间，禁用组件时清零。</summary>
@@ -38,10 +38,10 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>最近一次移动取消事件的 Input System 时间戳，单位为秒，用于拒绝取消事件之前排队的旧方向回调。</summary>
     private double _lastMovementCanceledTime = -1d;
 
-    /// <summary>本轮非零方向输入开始时间，使用不受 Time.timeScale 影响的秒数。</summary>
+    /// <summary>本轮方向输入开始时记录的非缩放秒数；当前停止时间计算没有读取它。</summary>
     private float _movementInputStartedTime = -1f;
 
-    /// <summary>方向松开后是否正在等待最短保持时间结束。</summary>
+    /// <summary>方向松开后是否正在等待延迟停止时间。</summary>
     private bool _movementStopPending;
 
     /// <summary>延迟停止的目标时间，达到该时间后才派发停止事件。</summary>
@@ -92,7 +92,7 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
-    /// <summary>按固定时间间隔对账移动输入，补发持续移动或遗漏的停止事件。</summary>
+    /// <summary>每帧处理目标与技能快捷键，并约每 0.033 秒读取方向，补发持续移动或停止事件。</summary>
     private void Update()
     {
         // 文本输入事件并不保证由 QueueStateEvent 或所有键盘布局产生，物理边沿作为统一技能入口的补充来源。
@@ -154,7 +154,7 @@ public class PlayerInputCtr : MonoBehaviour
         }
     }
 
-    /// <summary>销毁输入资产，避免控制器销毁后继续处理输入。</summary>
+    /// <summary>销毁组件时停止角色、禁用动作并取消文本输入订阅；此处没有调用输入资产的 Dispose。</summary>
     private void OnDestroy()
     {
         // 销毁前再次收敛角色状态；重复停止不会产生额外业务副作用。
@@ -200,7 +200,7 @@ public class PlayerInputCtr : MonoBehaviour
     {
         // 回调时间早于最近一次移动取消时间，属于取消之前的旧回调。
         bool isBeforeCancelTime = context.time < _lastMovementCanceledTime;
-        // 与取消时间同戳、取消闸门仍开启且本次不是 Started 阶段，仍视为排队旧回调。
+        // 与取消时间同戳、仍标记为已取消且本次不是 Started 阶段，仍视为排队旧回调。
         bool isSameStampLegacy = context.time <= _lastMovementCanceledTime &&
             _movementInputCanceled && !context.started;
         if (isBeforeCancelTime || isSameStampLegacy)
@@ -227,14 +227,14 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
-        // 新的非零 started/performed 回调代表新一轮真实按键，解除取消闸门。
+        // 新的非零 started/performed 回调代表新一轮真实按键，清除取消标记。
         BeginMovementInput(movement);
         // 按键边沿即时派发，确保角色在空中按下方向时能在落地前记录输入。
         DispatchMovement(_latestMovementInput);
     }
 
     #region 事件回调
-    /// <summary>处理移动取消，立即清除输入缓存并停止本地角色水平移动。</summary>
+    /// <summary>收到移动取消后记录事件时间，再安排延迟停止；此处不会立即停止角色。</summary>
     /// <param name="context">Input System 提供的取消阶段信息；当前逻辑不读取其中的零向量。</param>
     private void OnMovementCanceled(InputAction.CallbackContext context)
     {
@@ -314,6 +314,10 @@ public class PlayerInputCtr : MonoBehaviour
         return Global.Instance.SceneWorld.LocalRole;
     }
 
+    /// <summary>先处理输入死区，再按相机水平朝向旋转为世界方向；非零结果归一化。</summary>
+    /// <param name="mainCameraTransform">提供 Y 轴朝向的相机 Transform。</param>
+    /// <param name="value">左右和前后的二维输入。</param>
+    /// <param name="deadzone">单轴输入的忽略阈值，应小于 1。</param>
     public virtual Vector3 GetMovementCameraDirection(Transform mainCameraTransform,
         Vector2 value, float deadzone)
     {
@@ -340,9 +344,10 @@ public class PlayerInputCtr : MonoBehaviour
     }
 
     /// <summary>
-    /// 获取移动方向输入（带十字型死区判断）
-    /// 如果在锁定时间内，则返回 Vector3.zero
+    /// 将二维输入按各轴死区换算成 XZ 平面的方向；当前没有启用时间锁定判断。
     /// </summary>
+    /// <param name="value">左右和前后的二维输入。</param>
+    /// <param name="deadzone">绝对值不超过此阈值的轴输入置为零。</param>
     public virtual Vector3 GetMovementDirection(Vector2 value, float deadzone)
     {
         //if (Time.time < m_movementDirectionUnlockTime) return Vector3.zero;
@@ -352,7 +357,8 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>
     /// 根据十字形死区修正输入值（Input System 默认是圆形死区）
     /// </summary>
-    /// <param name="axis">输入轴</param>
+    /// <param name="axis">二维输入，x 为左右，y 为前后。</param>
+    /// <param name="deadzone">各轴单独判断的死区阈值，通常取 0 到 1 之间且小于 1。</param>
     public virtual Vector3 GetAxisWithCrossDeadZone(Vector2 axis, float deadzone)
     {
         //Debug.Log("axis " + axis.ToString());
@@ -420,7 +426,7 @@ public class PlayerInputCtr : MonoBehaviour
     {
         if (!_isMovementInputActive || _movementStopPending)
         {
-            // 延迟停止期间重新按键代表新一轮输入，必须从本次按下重新计算 0.1 秒保持窗口。
+            // 停止等待期间重新按键视为新一轮输入，并取消原来的停止安排。
             _movementInputStartedTime = Time.unscaledTime;
         }
 
@@ -431,7 +437,7 @@ public class PlayerInputCtr : MonoBehaviour
         _movementStopTime = -1f;
     }
 
-    /// <summary>安排移动停止，在本轮输入已保持至少 0.1 秒后执行。</summary>
+    /// <summary>把停止时间设为当前非缩放时间加 0.2 秒；重复调用会按新的调用时间重新安排。</summary>
     private void ScheduleMovementStop()
     {
         _movementInputCanceled = true;
@@ -440,12 +446,13 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
+        // 从本次取消时刻起计算停止时间，不使用先前记录的按下时刻。
         float minimumStopTime = Time.unscaledTime + MinimumMovementHoldSeconds;
         _movementStopPending = true;
         _movementStopTime = minimumStopTime;
     }
 
-    /// <summary>到达最短保持时间后派发停止事件并清理本轮输入状态。</summary>
+    /// <summary>到达延迟停止时间后清空本轮输入，并向角色发出停止事件。</summary>
     private void FinalizeMovementStop()
     {
         ResetMovementInputState();
@@ -614,12 +621,14 @@ public class PlayerInputCtr : MonoBehaviour
     }
 
     /// <summary>
-    /// 将输入值按给定死区重新映射到 0-1
+    /// 按当前公式放大死区外的有符号输入；没有限制结果范围，输入接近边界时可能超过 -1 到 1。
     /// </summary>
     //protected float RemapToDeadzone(float value,float deadzone)=>(value - deadzone) / (1-deadzone);
+    /// <param name="value">已超过死区阈值的单轴输入。</param>
+    /// <param name="deadzone">死区阈值，用作偏移和分母中的缩放量，不能为 1。</param>
     protected float RemapToDeadzone(float value, float deadzone)
     {
-        // 输入值为正时使用负偏移，输入值为负时使用正偏移，使死区外数值映射回完整区间。
+        // 正输入使用负 offset，负输入使用正 offset；下面减去 offset 会增大输入的绝对值。
         float offset = deadzone;
         if (value > 0)
         {

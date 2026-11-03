@@ -41,7 +41,7 @@ public class DataUtils : Singleton<DataUtils>
 
     /// <summary>
     /// 验证中国大陆手机号（11位，以1开头）
-    /// 支持最新号段：13/14/15/16/17/18/19
+    /// 仅按字符串规则检查第二位是否为 3 至 9，不查询真实号段或手机号是否存在。
     /// </summary>
     public static bool IsValidMobile(string phone)
     {
@@ -54,7 +54,7 @@ public class DataUtils : Singleton<DataUtils>
     }
 
     /// <summary>
-    /// 验证邮箱地址是否合法。
+    /// 检查邮箱的基本文本形状：非空、最长 254 字符、包含 @ 与域名中的点；不验证地址是否真实可用。
     /// </summary>
     public static bool IsValidEmail(string email)
     {
@@ -74,9 +74,9 @@ public class DataUtils : Singleton<DataUtils>
     }
 
     /// <summary>
-    /// 验证账号是否合法
+    /// 检查账号以英文字母开头，其余字符只能是英文字母、数字或下划线。
     /// </summary>
-    /// <param name="username"></param>
+    /// <param name="username">待检查的账号文本；此函数不限制最大长度。</param>
     /// <returns></returns>
     public static bool IsValidUserName(string username)
     {
@@ -86,9 +86,9 @@ public class DataUtils : Singleton<DataUtils>
     }
 
     /// <summary>
-    /// MD5
+    /// 对输入文本的 UTF-8 字节计算 MD5，返回 32 个小写十六进制字符。
     /// </summary>
-    /// <param name="input"></param>
+    /// <param name="input">待计算摘要的原始文本。</param>
     /// <returns></returns>
     public static string GetMD5Hash(string input)
     {

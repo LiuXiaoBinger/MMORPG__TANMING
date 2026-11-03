@@ -1,4 +1,6 @@
-/// <summary>技能特效生成位置的确定性语义，编辑器与运行时使用同一枚举。</summary>
+/// <summary>
+/// 技能特效的位置解释方式，决定坐标相对角色、模型挂点、目标还是世界。
+/// </summary>
 public enum SkillFxPlacementKind
 {
     /// <summary>角色根节点局部坐标，跟随角色变换。</summary>

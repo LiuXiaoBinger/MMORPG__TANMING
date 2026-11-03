@@ -2,9 +2,12 @@ using MMoRpgCommon.SceneEntity;
 
 namespace GameServer.SceneEntity
 {
-    /// <summary>首领怪实体；行为组件沿用怪物档案并额外标记首领等级。</summary>
+    /// <summary>首领怪的场景对象；实体工厂根据 Boss 类别装配怪物公共组件和首领标记。</summary>
     public sealed class BossEntity : MonsterEntity
     {
+        /// <summary>建立指定配置的场景对象；这里只保存身份，组件装配和初始化由工厂与实体世界继续完成。</summary>
+        /// <param name="uid">本游戏服进程分配的非零运行时编号。</param>
+        /// <param name="configId">此实体所用配置行的编号。</param>
         public BossEntity(ulong uid, int configId)
             : base(uid, EntityType.Boss, configId)
         {

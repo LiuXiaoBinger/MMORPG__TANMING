@@ -32,10 +32,10 @@ public class ItemBase
     // 购买或出售使用的货币配置 ID。
     private int _moneyType;
 
-    // 当前堆叠物品的总买入价格。 //道具买入平均价格 用于出售 防止玩家屯道具刷钱;
+    // 当前整组物品的总买入价格；平均单价由总价除以当前数量得到。
     private long _totalPrice;
 
-    // 物品实例创建时间，统一使用 UTC。
+    // 构造时记录当前 UTC 时间；从存档恢复时可由 SetCreateTime 替换。
     private DateTime _createTime;
 
     // 物品实例过期时间，DateTime.MinValue 表示永久有效。
@@ -235,7 +235,7 @@ public class ItemBase
         _itemId = itemId;
     }
 
-    /// <summary>设置实例归属和容器位置，仅由容器在放入物品时调用。</summary>
+    /// <summary>设置实例归属和容器位置，供容器放入或持久化恢复时使用。</summary>
     public void SetLocation(int roleId, int bagType, int bagIndex)
     {
         _roleId = roleId;
@@ -296,7 +296,7 @@ public class ItemBase
         _createTime = createTime;
     }
 
-    /// <summary>设置过期时间；未过期物品传入 DateTime.MinValue。</summary>
+    /// <summary>设置过期时刻；永久物品使用 DateTime.MinValue，限时但尚未过期的物品仍需保存实际到期时间。</summary>
     public void SetExpireTime(DateTime expireTime)
     {
         _expireTime = expireTime;

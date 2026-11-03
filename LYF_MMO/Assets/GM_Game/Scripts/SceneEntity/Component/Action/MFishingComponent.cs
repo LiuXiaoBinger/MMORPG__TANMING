@@ -1,7 +1,6 @@
 /// <summary>
-/// 钓鱼动作状态组件。
-/// 实体进行钓鱼休闲玩法时的状态。
-/// 监听钓鱼开始事件切入本状态。
+/// 把 FishingStarted 事件接入钓鱼动作状态，并指定 Fishing 动画名。
+/// 本类不处理钓鱼流程或产出。
 /// </summary>
 public sealed class MFishingComponent : MBasicActionComponent
 {
@@ -15,11 +14,13 @@ public sealed class MFishingComponent : MBasicActionComponent
     /// <summary>注册钓鱼开始事件：收到钓鱼触发消息时切入钓鱼状态。</summary>
     protected override void RegisterActionEvents() { RegisterActionEvent(MEventType.FishingStarted); }
     
+    /// <summary>状态事件由 RegisterActionEvents 统一登记，这里不增加订阅。</summary>
     protected override void EventSubscribe()
     {
         
     }
 
+    /// <summary>已登记的状态事件由组件基类统一解绑。</summary>
     protected override void EventUnsubscribe()
     {
         

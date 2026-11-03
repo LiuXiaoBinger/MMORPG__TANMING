@@ -2,9 +2,8 @@ using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>
-/// 场景对象层，负责逻辑 Transform 快照及 Unity 表现控制器关联。
-/// 表现对象由 MEntity 直属 MModel 持有，模型内部统一管理 MAnimator。
-/// 继承自 MObject，在组件和事件基础上增加位置、朝向等场景变换数据。
+/// 在 MObject 上增加逻辑位置、朝向、模型和 Unity 表现控制器引用。
+/// 本层每帧继续驱动模型，实际位置读写由派生实体实现。
 /// </summary>
 public abstract class MSceneObject : MObject
 {
@@ -34,9 +33,10 @@ public abstract class MSceneObject : MObject
     /// <summary>逻辑 Transform 快照（位置、朝向）</summary>
     public override EntityTransformSnapshot Transform { get { return _transform; } }
 
+    /// <summary>实体的世界位置；具体数据来源和写入方式由派生实体实现。</summary>
     public abstract Vector3 Position { get; set; }
 
-    /// <summary>移动速度（跑步速度，供移动组件/动画使用）</summary>
+    /// <summary>基类保存的跑步速度，单位为场景单位/秒；派生实体可以提供自己的速度读取入口</summary>
     public virtual float RunSpeed { get; set; }
 
     #endregion
@@ -101,7 +101,7 @@ public abstract class MSceneObject : MObject
     internal override void PrepareForReuse(ulong uid, EntityType entityType,
         int configId)
     {
-        // 重置位置和朝向上到原点
+        // 重置逻辑位置到原点，朝向角恢复为零
         _transform.X = 0f;
         _transform.Y = 0f;
         _transform.Z = 0f;

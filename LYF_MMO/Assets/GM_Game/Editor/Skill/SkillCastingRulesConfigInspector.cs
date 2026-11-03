@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>展示 RO 互断/移动字段和固定跳跃策略，并提供同源两端导出入口。</summary>
+/// <summary>在 Inspector 中编辑技能能否打断其他技能、施法时能否移动等规则，并导出给客户端和服务端。</summary>
 [CustomEditor(typeof(SkillCastingRulesConfig))]
 public sealed class SkillCastingRulesConfigInspector : Editor
 {

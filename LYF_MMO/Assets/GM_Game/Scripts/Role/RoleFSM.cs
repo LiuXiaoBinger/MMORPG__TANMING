@@ -32,9 +32,9 @@ public class RoleFSM
       _stateDic.Add(RoleState.Hit,new HitState(roleCtrl, animator));
    }
    /// <summary>
-   /// 获取状态
+   /// 按枚举取得已注册的动画状态，未注册则返回 null。
    /// </summary>
-   /// <param name="state"></param>
+   /// <param name="state">要查询的角色动作状态。</param>
    /// <returns></returns>
    public RoleFSMStateBase  GetState(RoleState state)
    {
@@ -45,9 +45,9 @@ public class RoleFSM
       return null;
    }
    /// <summary>
-   /// 改变角色状态
+   /// 先退出旧状态再进入 newstate；同状态通常忽略，攻击状态允许再次进入以接续连击。
    /// </summary>
-   /// <param name="state"></param>
+   /// <param name="newstate">要进入的角色动作状态。</param>
    public void ChangeState(RoleState newstate)
    {
       if (!_stateDic.ContainsKey(newstate))

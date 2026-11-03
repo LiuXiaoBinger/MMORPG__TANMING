@@ -1,7 +1,7 @@
 using SqlSugar;
 
 /// <summary>
-/// 装备词条表，保存装备随机生成的三个词条ID。
+/// 装备词条扩展表，按物品实例保存三个词条的配置编号和实际数值。
 /// </summary>
 [SugarTable("equip_xl_gene", TableDescription = "装备词条表")]
 internal class EquipXLGeneTable

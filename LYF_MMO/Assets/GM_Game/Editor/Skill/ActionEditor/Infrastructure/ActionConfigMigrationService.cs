@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Ethan.ActionEditor.Editor
 {
-    /// <summary>编辑配置结构版本迁移与恢复服务；迁移前保存完整备份，保持原资产 GUID。</summary>
+    /// <summary>把旧版技能配置升级到当前格式，或从备份恢复；每次改动前先备份，并保留原资产 GUID。</summary>
     internal static class ActionConfigMigrationService
     {
         /// <summary>当前包支持的配置结构版本号；旧配置只经显式带备份迁移升级。</summary>

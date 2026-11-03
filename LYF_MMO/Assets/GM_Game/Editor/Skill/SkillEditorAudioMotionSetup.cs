@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Ethan.ActionEditor;
 
-/// <summary>显式制作 MJS 技能及普通动作的声音和动画位移轨道，保留原粒子、用户位移段和资产身份。</summary>
+/// <summary>通过菜单为 MJS 技能及走跑跳动作配置声音和位移轨道，再导出运行数据；已有粒子和用户位移段予以保留。</summary>
 public static class SkillEditorAudioMotionSetup
 {
 
