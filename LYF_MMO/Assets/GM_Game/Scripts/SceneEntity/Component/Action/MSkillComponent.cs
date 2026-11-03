@@ -1117,7 +1117,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         OnSkillAutoEnd();
         if (_skill == null)
         {
-            _skill = MSkillFactory.CreateSkill();
+            _skill = MSkillFactory.CreateSkill(newOne);
         }
         // 技能核心须与事件的技能、等级和效果三重身份一致；任一不符即视为播放失败。
         bool identityMismatch = newOne == null || newOne.EffectId != args.EffectId ||

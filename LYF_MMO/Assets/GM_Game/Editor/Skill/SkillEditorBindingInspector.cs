@@ -39,6 +39,12 @@ public sealed class SkillEditorBindingInspector : Editor
         serializedObject.ApplyModifiedProperties();
         // 当前 Inspector 指向的强类型绑定，按钮只作用于此资产。
         SkillEditorBinding binding = (SkillEditorBinding)target;
+        if (binding.Config != null && binding.Config.TypeToken == 1)
+        {
+            if (GUILayout.Button("编辑组合技能")) SkillEditorAssetTools.Open(binding);
+            if (GUILayout.Button("校验并导出组合技能")) SkillCombinationAssetTools.Export(binding);
+            return;
+        }
         EditorGUILayout.HelpBox(SkillEditorLocalization.Text("Casting rules use a separate asset. Edit animation and particles here. The three Q attacks use the existing variant selection.", "规则由独立技能规则配置控制；此处编辑动画和粒子。Q 三段仍由旧变体选择。"), MessageType.Info);
         if (GUILayout.Button(SkillEditorLocalization.Text("Edit with SkillEditorWindow", "用 SkillEditorWindow 编辑")))
         {

@@ -419,7 +419,14 @@ public partial class SkillEditorWindow : EditorWindow
         }
     }
     /// <summary>编辑模式且原配置没有错误时才允许生成隔离预览。</summary>
-    bool IsPreviewAllowed=>!Application.isPlaying&&_validationErrorCount==0;
+    bool IsPreviewAllowed
+    {
+        get
+        {
+            if(configFile!=null&&configFile.TypeToken==1) return false;
+            return !Application.isPlaying&&_validationErrorCount==0;
+        }
+    }
 
     /// <summary>重新加载 Undo 后的原配置并恢复有效选择帧，清除未完成拖拽状态。</summary>
     void OnUnityUndoRedo(){
@@ -456,6 +463,16 @@ public partial class SkillEditorWindow : EditorWindow
                 Text("Create a new action or select an existing asset to begin.", 
                     "新建技能或选择已有技能资源开始编辑。"),MessageType.None);
             GUILayout.FlexibleSpace(); } return; }
+        if (configFile.TypeToken == 1)
+        {
+            using (new GUILayout.AreaScope(GetContentRect()))
+            {
+                inspScrollPos = EditorGUILayout.BeginScrollView(inspScrollPos);
+                DrawCombinationInspector();
+                EditorGUILayout.EndScrollView();
+            }
+            return;
+        }
         if(ActionConfigMigrationService.NeedsMigration(configFile)){
             using(new GUILayout.AreaScope(GetContentRect())){
             EditorGUILayout.HelpBox(SkillEditorLocalization.

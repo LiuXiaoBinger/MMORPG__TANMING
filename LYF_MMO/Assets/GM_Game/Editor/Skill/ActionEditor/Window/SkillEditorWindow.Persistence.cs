@@ -55,6 +55,7 @@ public partial class SkillEditorWindow
         CommitDeferredChanges();
         if(configFile==null) return;
         _serializedConfig=new SerializedObject(configFile);
+        if(configFile.TypeToken==1) _serializedConfig.FindProperty("CombineSkillList").isExpanded=true;
         RefreshConfigBindings();
         previewModel=ActionEditorUserSettings.instance.GetPreviewModel(configFile);
         if(previewModel==null&&!string.IsNullOrEmpty(configFile.previewModelName)){
@@ -189,12 +190,13 @@ public partial class SkillEditorWindow
         InvalidatePreviewFrame();
     }
 
-    /// <summary>重新运行原完整配置验证并统计错误警告，出现错误时停止动画预览。</summary>
+    /// <summary>普通技能统计时间轴诊断；组合由宿主导出器校验引用，不要求主技能拥有动画。</summary>
     void RefreshValidation(){
         _validationIssues.Clear();
         _validationErrorCount=0;
         _validationWarningCount=0;
         if(configFile==null) return;
+        if(configFile.TypeToken==1) return;
         _validationIssues.AddRange(ActionConfigValidator.Validate(configFile));
         // 当前可索引集合的零起始遍历下标，访问原对象引用。
         for(int i=0;i<_validationIssues.Count;i++){

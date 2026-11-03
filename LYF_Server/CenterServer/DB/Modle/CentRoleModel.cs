@@ -296,6 +296,7 @@ public class CentRoleModel
                 }
                 ret.RoleSkillInfoList.Add(roleSkillInfo);
             }
+            AddCombinationSkill(ret);
         }
         else
         {
@@ -303,6 +304,35 @@ public class CentRoleModel
         }
         
         return ret;
+    }
+
+    /// <summary>已有 E 和 2 的角色获得本次组合示例，保留数据库原技能和已有快捷键。</summary>
+    /// <param name="response">本角色从数据库组装出的技能列表，仅补充派生组合技能。</param>
+    private static void AddCombinationSkill(RoleSkillInfoRet response)
+    {
+        // 两个组成技能均已学会时才提供组合入口。
+        bool hasFirst = false;
+        // 斩天剑学习标记，与清风剑法共同决定示例是否可用。
+        bool hasSecond = false;
+        // 组合已由数据库记录时完全保留该记录和等级。
+        bool hasCombination = false;
+        // 三号键已有绑定时不能覆盖，组合仍可从技能列表显示。
+        bool thirdKeyUsed = false;
+        // 原技能列表的零起始索引，组合在遍历完成后追加。
+        for (int index = 0; index < response.RoleSkillInfoList.Count; index++)
+        {
+            // 当前角色持有的技能记录，不改写其原对象字段。
+            RoleSkillInfo skill = response.RoleSkillInfoList[index];
+            if (skill.SkillId == 10040 && skill.Level > 0) hasFirst = true;
+            if (skill.SkillId == 10060 && skill.Level > 0) hasSecond = true;
+            if (skill.SkillId == 10100) hasCombination = true;
+            if (skill.BindKey == "3") thirdKeyUsed = true;
+        }
+        if (!hasFirst || !hasSecond || hasCombination) return;
+        // 新技能以一级参数执行 E→2，不对已有角色数据库做迁移。
+        RoleSkillInfo combination = new RoleSkillInfo { SkillId = 10100, Level = 1 };
+        if (!thirdKeyUsed) combination.BindKey = "3";
+        response.RoleSkillInfoList.Add(combination);
     }
 
     /// <summary>

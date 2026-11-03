@@ -116,6 +116,8 @@ public partial class SkillEditorWindow
 
     /// <summary>绘制行为基础字段与原计时迁移入口，语言切换不执行迁移。</summary>
     void InspBasic(){
+        DrawCombinationInspector();
+        if (configFile.TypeToken == 1) return;
         if(configFile.UsesExplicitTiming) DrawSerializedFields("timelineFrameRate");
         else {
             EditorGUILayout.HelpBox(SkillEditorLocalization.Text("Legacy timing uses the first clip FPS. Migration preserves event frame numbers; recheck mixed-rate clips afterward.", "旧计时采用首个动画剪辑的帧率。迁移保留事件帧号；迁移后请复查混合帧率剪辑。"),MessageType.None);

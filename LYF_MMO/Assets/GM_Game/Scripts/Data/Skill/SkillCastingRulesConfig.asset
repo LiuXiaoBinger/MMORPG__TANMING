@@ -14,17 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rules:
   - SkillId: 10010
+    TypeToken: 0
+    CombineSkillList: 
     InteruptSkill: 
     MoveCasting: 0
   - SkillId: 10040
+    TypeToken: 0
+    CombineSkillList: 
     InteruptSkill: 
     MoveCasting: 0
   - SkillId: 10050
+    TypeToken: 0
+    CombineSkillList: 
     InteruptSkill: 
     MoveCasting: 0
   - SkillId: 10060
+    TypeToken: 0
+    CombineSkillList: 
     InteruptSkill: 
     MoveCasting: 0
   - SkillId: 10070
+    TypeToken: 0
+    CombineSkillList: 
+    InteruptSkill: 
+    MoveCasting: 0
+  - SkillId: 10100
+    TypeToken: 1
+    CombineSkillList: 382700004c270000
     InteruptSkill: 
     MoveCasting: 0

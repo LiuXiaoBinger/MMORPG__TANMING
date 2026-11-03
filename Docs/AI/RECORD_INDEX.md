@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f42d1baf1a93011bffd13c262c4e42e8610d7aee68d145c731857d116d872158`
+Source normalized SHA256: `45ce3afc867f9fa662e7095d352acdc4d793d573103e847ad323c67b8a3760b3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -35,11 +35,12 @@ Source normalized SHA256: `f42d1baf1a93011bffd13c262c4e42e8610d7aee68d145c731857
 | [CODE][FILES][HANDOFF][技能][事件][SERVER-ENTITY-EVENT-20261101] RO entity events and OnCall entry | 163-172 |
 | [CODE][FILES][HANDOFF][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] RO client casting exclusion gate | 173-180 |
 | [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state base class | 181-187 |
-| [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-193 |
+| [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-195 |
+| [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-200 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2011b47445269c42663bdace8af0b89f8d25ef9bc9053e74836f7c4dc7921066`
+Source normalized SHA256: `3f2806eed5477b0aba35bee3e5c8576055fba0a4502fce060980f23405010df3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -66,7 +67,8 @@ Source normalized SHA256: `2011b47445269c42663bdace8af0b89f8d25ef9bc9053e74836f7
 | [VERIFY][技能][事件][SERVER-ENTITY-EVENT-20261101] Server event and protocol acceptance | 178-188 |
 | [VERIFY][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] Client exclusion validation | 189-197 |
 | [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state contract validation | 198-204 |
-| [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-210 |
+| [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-212 |
+| [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-218 |
 
 ## Docs/AI/DECISIONS.en.md
 

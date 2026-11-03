@@ -723,7 +723,10 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <param name="skill_uuid">客户端本次施法 UUID。</param>
     /// <param name="duration_ms">当前表现段占用动作的毫秒数。</param>
     /// <param name="using_times">权威选定的零起始表现段下标。</param>
-    private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times)
+    /// <param name="children">组合技能的顺序核心；普通技能为空。</param>
+    /// <param name="stateTimes">组合各段状态毫秒数，与 children 对应。</param>
+    private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times,
+        List<ROSkillCore> children, List<int> stateTimes)
     {
         // 向上取整为固定帧期限；零时长也留一帧，保持 Start 先于 End 的原顺序。
         long end_tick = CalculateEndTick(GameGlobal.Instance.LogicTick, duration_ms);
@@ -731,7 +734,11 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             end_tick++;
         }
-        skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
+        if (children != null)
+        {
+            skill_ = new ROCombineSkill(core, skill_uuid, end_tick, children, stateTimes);
+        }
+        else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         last_used_skill_effect_id_ = core.SkillEffectID();
     }
 
@@ -826,6 +833,38 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             }
         }
 
+        // 组合引用的配置在扣蓝前解析，子技能不再次执行独立施法校验。
+        List<ROSkillCore> children = null;
+        // 每段实际动作毫秒数；最终通知采用每段向上对齐固定步进后的合计。
+        List<int> stateTimes = null;
+        // 运行类型与客户端同源，不用主表主动/被动类别推断组合类型。
+        SkillCastingRules rule = SkillCastingRulesCatalog.Get(prepared.skill_id_);
+        if (rule != null && rule.TypeToken == 1)
+        {
+            children = new List<ROSkillCore>();
+            stateTimes = new List<int>();
+            cast_duration_ms = 0;
+            // 按作者配置顺序装配原技能，重复 ID 表示再次执行同一技能。
+            for (int index = 0; index < rule.CombineSkillList.Count; index++)
+            {
+                // 子技能沿用主技能等级，查询不会扣除该子技能 MP 或启动它的冷却。
+                ROSkillCore child = CheckAndAttachSkillCore(rule.CombineSkillList[index], prepared.core_.Level());
+                if (child == null) return Reject(result, CmdCode.SkillConfigMissing);
+                // 每个子技能的默认表现段，对应客户端 SelectPresentation(0)。
+                List<SkillPresentationInfo> childPresentations = FindPresentations(child.SkillEffectID());
+                // 无表现时沿用现有普通动作的 CastMs + RecoveryMs 语义。
+                int stateTime = child.GetEffect().CastMs + child.GetEffect().RecoveryMs;
+                if (childPresentations.Count > 0)
+                {
+                    stateTime = childPresentations[0].DurationMs;
+                    if (childPresentations[0].SkillStateTimeMs > 0) stateTime = childPresentations[0].SkillStateTimeMs;
+                }
+                children.Add(child);
+                stateTimes.Add(stateTime);
+                cast_duration_ms += ((stateTime + 49) / 50) * 50;
+            }
+        }
+
         // 所有拒绝条件已结束；同一逻辑线程内一次性提交 MP、单技能 CD 与组 CD。
         Owner.mainRoleInfo.BaseInfo.CurrMp -= prepared.effect_.MpCost;
         SetSkillCoolDown(prepared.skill_id_, prepared.effect_.CooldownMs);
@@ -834,7 +873,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             SetSkillGroupCoolDown(prepared.effect_.CooldownGroupId, prepared.effect_.GroupCooldownMs);
         }
 
-        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times);
+        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes);
 
         result.CmdCode = CmdCode.Succeed;
         result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;

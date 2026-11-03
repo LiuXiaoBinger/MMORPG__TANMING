@@ -316,7 +316,7 @@ public class MArtSkill : MSkill
         // 逐级确认施法者动作槽、动作状态与模型原生对象就绪，缺一不能生成残影。
         if (_firer == null) return;
         if (_firer.Skill == null) return;
-        if (_firer.Skill.CurrentSkill != this) return;
+        if (_firer.Skill.CurrentSkill != ActionOwner) return;
         if (IsSkillStateFinished) return;
         if (_firer.Model == null) return;
         if (!_firer.Model.IsLoaded) return;

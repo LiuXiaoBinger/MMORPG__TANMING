@@ -1,5 +1,5 @@
 /// <summary>对应 RO 实际放出的技能；一次 UUID 只保存动作期限和结束状态，冷却属于角色组件。</summary>
-public sealed class ROSkill
+public class ROSkill
 {
     /// <summary>本次施法使用的已装载等级核心，直到技能结束仍引用原等级。</summary>
     private readonly ROSkillCore core_;
@@ -47,11 +47,11 @@ public sealed class ROSkill
 
     /// <summary>更新当前动作期限；自然到期返回 false，由组件发送唯一结束通知。</summary>
     /// <param name="delta_time">当前固定逻辑帧的毫秒跨度，结束判定复用全局 Tick。</param>
-    public bool Update(int delta_time) { return casting_ && !IsStateTimeEnd(); }
+    public virtual bool Update(int delta_time) { return casting_ && !IsStateTimeEnd(); }
 
     /// <summary>结束本次动作并记录中断原因，不退还已扣法力或技能冷却。</summary>
     /// <param name="interrupted">主动取消、死亡或离线结束为 true，自然到期为 false。</param>
-    public void Freeze(bool interrupted)
+    public virtual void Freeze(bool interrupted)
     {
         Interrupted = interrupted;
         casting_ = false;

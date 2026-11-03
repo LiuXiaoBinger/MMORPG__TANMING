@@ -53,6 +53,7 @@
         <Compile Include="manger\TeamManager.cs" />
         <Compile Include="SceneEntity\Skill\ROSkillCore.cs" />
         <Compile Include="SceneEntity\Skill\ROSkill.cs" />
+        <Compile Include="SceneEntity\Skill\ROCombineSkill.cs" />
         <Compile Include="Config\SkillCastingRulesCatalog.cs" />
         <Compile Include="StateMutex\StateMutexDef.cs" />
         <Compile Include="StateMutex\StateMutexManager.cs" />

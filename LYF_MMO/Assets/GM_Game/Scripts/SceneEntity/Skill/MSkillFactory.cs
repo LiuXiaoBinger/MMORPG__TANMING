@@ -126,6 +126,7 @@ public sealed class MSkillFactory
             effect.CastMs * 0.001f, effect.MpCost, clipLocation,
             animationDurationSeconds, presentations);
         MListPool<MSkillData>.Release(presentations);
+        core.ProfessionId = professionId;
         return core;
     }
 
@@ -208,8 +209,13 @@ public sealed class MSkillFactory
 
     /// <summary>借出一个空施法实例；调用方在成功或失败终止时均须归还。</summary>
     /// <returns>当前动作槽独占的实例。</returns>
-    public static MSkill CreateSkill()
+    /// <param name="core">当前技能核心；空值保留既有普通技能调用方式。</param>
+    public static MSkill CreateSkill(MSkillCore core = null)
     {
+        if (core != null && core.IsCombined)
+        {
+            return MCommonObjectPool<MCombineSkill>.Get();
+        }
         return MCommonObjectPool<MArtSkill>.Get();
     }
 

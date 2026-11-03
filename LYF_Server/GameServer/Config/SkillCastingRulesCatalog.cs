@@ -6,6 +6,16 @@ using System.Web.Script.Serialization;
 /// <summary>游戏服同步读取客户端编辑器导出的同源施法权限；首次装载后只读，不在请求中热更新。</summary>
 public static class SkillCastingRulesCatalog
 {
+    /// <summary>取得与客户端同源的技能运行规则；没有配置时按普通技能处理。</summary>
+    /// <param name="skillId">技能主表 ID，不是等级效果 ID。</param>
+    public static SkillCastingRules Get(int skillId)
+    {
+        Initialize();
+        // 整个进程共享的只读规则行。
+        SkillCastingRules rule;
+        _rules.TryGetValue(skillId, out rule);
+        return rule;
+    }
 
     #region 字段与常量
     /// <summary>各技能主表 ID 对应的互断/移动权限，JSON 无效或缺失时为空。</summary>

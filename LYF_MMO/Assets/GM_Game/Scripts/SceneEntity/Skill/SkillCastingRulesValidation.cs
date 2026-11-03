@@ -35,6 +35,23 @@ public static class SkillCastingRulesValidation
                 error = "技能 " + rule.SkillId + " 的 InteruptSkill 列表缺失。";
                 return false;
             }
+            if (rule.TypeToken == 1)
+            {
+                if (rule.CombineSkillList == null || rule.CombineSkillList.Count == 0)
+                {
+                    error = "组合技能 " + rule.SkillId + " 必须指定子技能顺序。";
+                    return false;
+                }
+                // 重复子技能合法；非正 ID 或直接自引用无法形成可执行顺序。
+                for (int childIndex = 0; childIndex < rule.CombineSkillList.Count; childIndex++)
+                {
+                    if (rule.CombineSkillList[childIndex] <= 0 || rule.CombineSkillList[childIndex] == rule.SkillId)
+                    {
+                        error = "组合技能 " + rule.SkillId + " 含非法子技能或自身引用。";
+                        return false;
+                    }
+                }
+            }
             // 本行允许打断的技能 ID 集合；相同 ID 不能重复列出。
             HashSet<int> interruptedIds = new HashSet<int>();
             // 当前互断 ID 的零起始下标，列表的每个值都必须为正数。

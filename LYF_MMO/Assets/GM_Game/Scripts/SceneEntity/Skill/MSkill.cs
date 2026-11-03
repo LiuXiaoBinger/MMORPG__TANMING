@@ -28,6 +28,19 @@ public abstract class MSkill
     /// <summary>本次释放持有的技能核心引用，直到该施法实例归还才解除。</summary>
     protected MSkillCore _core;
 
+    /// <summary>组合子技能所属的主技能；只有主技能占角色动作槽，普通技能为空。</summary>
+    protected MCombineSkill _rootSkill;
+
+    /// <summary>动画和程序位移对应的实际动作槽所有者。</summary>
+    protected MSkill ActionOwner
+    {
+        get
+        {
+            if (_rootSkill != null) return _rootSkill;
+            return this;
+        }
+    }
+
     /// <summary>本次释放的场景实体，回收时清空以免持有已销毁实体。</summary>
     protected MEntity _firer;
 
@@ -184,6 +197,7 @@ public abstract class MSkill
             _core.Release();
         }
         _core = null;
+        _rootSkill = null;
         _firer = null;
         _boundAnimator = null;
         _animationModel = null;
@@ -295,11 +309,13 @@ public abstract class MSkill
     /// <param name="targetUid">目标实体运行时 UID，无目标时为零。</param>
     /// <param name="castPoint">世界空间施法点，单位为 Unity 世界单位。</param>
     /// <param name="predicted">本次表现是否先于服务器确认开始。</param>
+    /// <param name="rootSkill">组合子技能的主实例，普通施法不传入。</param>
     /// <returns>配置与实体有效时返回 true；动画器延迟加载不阻止启动。</returns>
     public bool Fire(MSkillCore core, MEntity firer, ulong skillUuid,
-        ulong targetUid, Vector3 castPoint, bool predicted)
+        ulong targetUid, Vector3 castPoint, bool predicted, MCombineSkill rootSkill = null)
     {
         Reset();
+        _rootSkill = rootSkill;
         // 核心与施法者必须同时存在，且施法 UUID 非零才允许启动。
         if (core == null)
         {
@@ -318,11 +334,11 @@ public abstract class MSkill
         {
             return false;
         }
-        if (core.AnimationDurationSeconds <= 0f)
+        if (!core.IsCombined && core.AnimationDurationSeconds <= 0f)
         {
             return false;
         }
-        if (string.IsNullOrEmpty(core.AnimationLocation))
+        if (!core.IsCombined && string.IsNullOrEmpty(core.AnimationLocation))
         {
             return false;
         }
@@ -391,7 +407,11 @@ public abstract class MSkill
         // 表现回收只释放实例，角色冷却由施放、倒计时及权威结果维护。
         // 先置为非存活，组件切状态的同步回调不能再次结束并重复归还此实例。
         IsActive = false;
-        if (_firer != null && _firer.Skill != null)
+        if (_rootSkill != null)
+        {
+            _rootSkill.OnSkillEnd(this);
+        }
+        else if (_firer != null && _firer.Skill != null)
         {
             _firer.Skill.OnSkillEnd(this);
         }
@@ -416,14 +436,14 @@ public abstract class MSkill
         if (!ReferenceEquals(_firer, entity)) return false;
         if (entity == null) return false;
         if (entity.Skill == null) return false;
-        if (!ReferenceEquals(entity.Skill.CurrentSkill, this)) return false;
+        if (!ReferenceEquals(entity.Skill.CurrentSkill, ActionOwner)) return false;
         return true;
     }
 
     /// <summary>按同一个施法 UUID 确认预表现，避免服务器广播重复播放动画。</summary>
     /// <param name="skillUuid">请求与广播共同携带的非零单次施法 UUID。</param>
     /// <returns>UUID 匹配且实例仍有效时返回 true。</returns>
-    public bool Confirm(ulong skillUuid)
+    public virtual bool Confirm(ulong skillUuid)
     {
         if (!IsActive || skillUuid == 0 || SkillUuid != skillUuid)
         {
@@ -474,7 +494,7 @@ public abstract class MSkill
         if (_firer == null) return;
         if (_firer.Model == null) return;
         if (_firer.Skill == null) return;
-        if (!ReferenceEquals(_firer.Skill.CurrentSkill, this)) return;
+        if (!ReferenceEquals(_firer.Skill.CurrentSkill, ActionOwner)) return;
         _animationModel = _firer.Model;
         _animationModel.BindSkillAnimation(this);
         if (_animationModel.Ator == null)

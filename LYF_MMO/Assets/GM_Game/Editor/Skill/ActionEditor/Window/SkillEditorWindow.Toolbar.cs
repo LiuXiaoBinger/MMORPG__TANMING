@@ -56,6 +56,12 @@ public partial class SkillEditorWindow
         // 场景目标只属于预览，不存入技能配置。
         previewTarget = (GameObject)EditorGUILayout.ObjectField(SkillEditorLocalization.Text("Preview target", "预览目标"), previewTarget, typeof(GameObject), true, GUILayout.Width(230));
         EditorGUILayout.EndHorizontal();
+        if (configFile != null && configFile.TypeToken == 1)
+        {
+            EditorGUILayout.HelpBox("组合按下方列表顺序执行；点击各段按钮打开原技能时间轴进行预览。", MessageType.Info);
+        }
+        else
+        {
         EditorGUILayout.BeginHorizontal(GUILayout.Height(22));
         // 按钮文案只读取当前播放状态。
         string playLabel = SkillEditorLocalization.Text("Play", "播放");
@@ -86,6 +92,7 @@ public partial class SkillEditorWindow
         pixelsPerFrame = GUILayout.HorizontalSlider(pixelsPerFrame, MIN_PPF, MAX_PPF, GUILayout.Width(65));
         if (GUILayout.Button(SkillEditorLocalization.Text("Fit", "适配"), EditorStyles.miniButton, GUILayout.Width(34))) FitTimeline();
         EditorGUILayout.EndHorizontal();
+        }
         GUILayout.EndArea();
         EditorGUIUtility.labelWidth = 0;
         if (languageChanged) GUIUtility.ExitGUI(); // 布局已平衡，跳过技能事务而保持预览继续。

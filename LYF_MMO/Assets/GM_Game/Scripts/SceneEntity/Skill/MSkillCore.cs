@@ -22,6 +22,20 @@ public sealed class MSkillCore
     /// <summary>技能配置 ID，同一技能的不同等级共享该编号。</summary>
     public int SkillId { get; private set; }
 
+    /// <summary>装配核心时的职业 ID，用于组合子技能和远端角色选择同一职业表现。</summary>
+    public int ProfessionId { get; internal set; }
+
+    /// <summary>组合主技能只组织子技能，自己没有动画剪辑。</summary>
+    public bool IsCombined
+    {
+        get
+        {
+            // 两端同源规则决定运行类型，不能由技能类别或快捷键推断。
+            SkillCastingRules rule = SkillCastingRulesCatalog.Get(SkillId);
+            return rule != null && rule.TypeToken == SkillLogicType.SkillTypeCombined;
+        }
+    }
+
     /// <summary>当前已学习的技能等级，从 1 开始。</summary>
     public int Level { get; private set; }
 
@@ -92,7 +106,11 @@ public sealed class MSkillCore
     /// <summary>是否有可由动画索引解析的真实技能剪辑配置。</summary>
     public bool HasPresentation
     {
-        get { return !string.IsNullOrEmpty(AnimationLocation) && AnimationDurationSeconds > 0f; }
+        get
+        {
+            if (IsCombined) return true;
+            return !string.IsNullOrEmpty(AnimationLocation) && AnimationDurationSeconds > 0f;
+        }
     }
     #endregion
 
@@ -166,6 +184,7 @@ public sealed class MSkillCore
         }
         _presentations.Clear();
         SkillId = 0;
+        ProfessionId = 0;
         Level = 0;
         EffectId = 0;
         TargetMode = 0;

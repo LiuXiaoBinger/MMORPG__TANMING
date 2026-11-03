@@ -8,6 +8,16 @@ using UnityEngine;
 /// </summary>
 public static class SkillCastingRulesCatalog
 {
+    /// <summary>取得已导出的技能运行规则，未配置的普通技能返回空。</summary>
+    /// <param name="skillId">技能主表 ID，不是表现或效果 ID。</param>
+    public static SkillCastingRules Get(int skillId)
+    {
+        Initialize();
+        // 配置由当前进程只读持有，不复制或修改子技能列表。
+        SkillCastingRules rule;
+        _rules.TryGetValue(skillId, out rule);
+        return rule;
+    }
 
     #region 字段与常量
     /// <summary>同步 Resources 配置键；正式 JSON 位于 Data/Skill/Resources 下。</summary>

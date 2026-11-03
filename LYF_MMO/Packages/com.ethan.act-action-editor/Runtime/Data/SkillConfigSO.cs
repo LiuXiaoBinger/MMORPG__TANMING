@@ -8,6 +8,10 @@ using UnityEngine;
 /// </summary>
 public class SkillConfigSO : ScriptableObject
 {
+    /// <summary>RO 运行类型：0 为普通技能，1 为依次执行子技能的组合技能；与 skillType 的业务类别独立。</summary>
+    public int TypeToken;
+    /// <summary>组合技能按此列表依次执行已有技能主表 ID，子技能自己的时间轴仍保存在原资产中。</summary>
+    public List<int> CombineSkillList = new List<int>();
     /// <summary>RO水平旋转区间，角速度单位度/秒；与原追目标朝向窗口独立。</summary>
     public List<MSkillRotateData> RotateList = new List<MSkillRotateData>();
     /// <summary>RO召唤时间轴，按At秒触发，默认空列表保留原技能行为。</summary>
