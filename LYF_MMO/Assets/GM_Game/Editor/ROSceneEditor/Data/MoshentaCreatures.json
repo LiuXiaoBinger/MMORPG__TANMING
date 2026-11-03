@@ -1,0 +1,926 @@
+{
+  "models": [
+    {
+      "modelName": "Monster_BeiAi",
+      "displayName": "达纳托斯的悲哀",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_BeiAi.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Run.anim"
+        },
+        {
+          "displayName": "谢幕传送",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Show.anim"
+        },
+        {
+          "displayName": "悲哀或欣喜",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_BeiAiHuoXinXi.anim"
+        },
+        {
+          "displayName": "哀歌·吟",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_BeiAiHuoXinXi_Singing.anim"
+        },
+        {
+          "displayName": "冲锋",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_ChongFeng.anim"
+        },
+        {
+          "displayName": "诡诈把戏",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_ChongFeng_Singing.anim"
+        },
+        {
+          "displayName": "光与沉默",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_GuangYuChenMo.anim"
+        },
+        {
+          "displayName": "技能吟唱",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_Singing.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_ELing",
+      "displayName": "梦罗克的恶灵",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_ELing.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_BeHit.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Death.anim"
+        },
+        {
+          "displayName": "撕咬",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_ELingSiYao.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Run.anim"
+        },
+        {
+          "displayName": "SiWangHuaErZi",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_SiWangHuaErZi.anim"
+        },
+        {
+          "displayName": "Skill ChongFeng01",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Skill_ChongFeng01.anim"
+        },
+        {
+          "displayName": "冲锋",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Skill_ChongFeng02.anim"
+        },
+        {
+          "displayName": "Skill ChongFeng03",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Skill_ChongFeng03.anim"
+        },
+        {
+          "displayName": "技能吟唱",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Skill_Singing.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_JueWang",
+      "displayName": "达纳托斯的绝望",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_JueWang.prefab",
+      "animations": [
+        {
+          "displayName": "熔岩爆发",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Run.anim"
+        },
+        {
+          "displayName": "谢幕传送",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Show.anim"
+        },
+        {
+          "displayName": "Skill Release 01",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Release_01.anim"
+        },
+        {
+          "displayName": "熔岩吐息",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Release_02.anim"
+        },
+        {
+          "displayName": "Skill Release 03",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Release_03.anim"
+        },
+        {
+          "displayName": "技能吟唱",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Singing.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_MiLuoSi",
+      "displayName": "梦罗克的米洛斯",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_MiLuoSi.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_BeHit.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Idle.anim"
+        },
+        {
+          "displayName": "Release",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Release.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Run.anim"
+        },
+        {
+          "displayName": "吟唱",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Singing.anim"
+        },
+        {
+          "displayName": "大地之击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Skill_DaDiZhiJi.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_MoFaShi",
+      "displayName": "梦罗克的魔法师",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_MoFaShi.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_BeHit.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Run.anim"
+        },
+        {
+          "displayName": "灵魂扩散",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_HeiAnKuoSan.anim"
+        },
+        {
+          "displayName": "Skill LingHunAnJi",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_LingHunAnJi.anim"
+        },
+        {
+          "displayName": "Skill MoFaFanShang",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_MoFaFanShang.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_MoShenYingZi01",
+      "displayName": "魔神的影子（1）",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_MoShenYingZi01.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Idle.anim"
+        },
+        {
+          "displayName": "穿刺攻击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Release_01.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Run.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_MoShenYingZi02",
+      "displayName": "魔神的影子（2）",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_MoShenYingZi02.prefab",
+      "animations": [
+        {
+          "displayName": "普通攻击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Idle.anim"
+        },
+        {
+          "displayName": "灵魂痛击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Release_01.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Run.anim"
+        },
+        {
+          "displayName": "Singing 01",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Singing_01.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_NanGuaHun",
+      "displayName": "梦罗克的南瓜魂",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_NanGuaHun.prefab",
+      "animations": [
+        {
+          "displayName": "普通攻击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_Run.anim"
+        },
+        {
+          "displayName": "南瓜炸弹",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_TouZhiNanGuaZhaDan.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_SiWangZhiShu",
+      "displayName": "死亡之书",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_SiWangZhiShu.prefab",
+      "animations": [
+        {
+          "displayName": "普通攻击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Run.anim"
+        },
+        {
+          "displayName": "Skill ZuZhou",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_Skill_ZuZhou.anim"
+        },
+        {
+          "displayName": "ZuZhou",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_SiWangZhiShu/Monster_SiWangZhiShu_ZuZhou.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_WangLingWuShi",
+      "displayName": "梦罗克的亡灵巫师",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_WangLingWuShi.prefab",
+      "animations": [
+        {
+          "displayName": "普通攻击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Run.anim"
+        },
+        {
+          "displayName": "Skill DianKuang Release",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Skill_DianKuang_Release.anim"
+        },
+        {
+          "displayName": "Skill DianKuang Singing",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Skill_DianKuang_Singing.anim"
+        },
+        {
+          "displayName": "Skill FuHuaLingYu",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Skill_FuHuaLingYu.anim"
+        },
+        {
+          "displayName": "Skill Release",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Skill_Release.anim"
+        },
+        {
+          "displayName": "技能吟唱",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_WangLingWuShi/Monster_WangLingWuShi_Skill_Singing.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_XieHaiFuLu",
+      "displayName": "梦罗克的亡灵战俘",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_XieHaiFuLu.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Death.anim"
+        },
+        {
+          "displayName": "Death Loop",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Death_Loop.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Run.anim"
+        },
+        {
+          "displayName": "Skill HuanShu",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Skill_HuanShu.anim"
+        },
+        {
+          "displayName": "Skill WangYu",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Skill_WangYu.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_XieHaiGongJianShou",
+      "displayName": "梦罗克的邪骸弓箭手",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_XieHaiGongJianShou.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Run.anim"
+        },
+        {
+          "displayName": "Skill ChuanYunJian",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Skill_ChuanYunJian.anim"
+        },
+        {
+          "displayName": "Skill RanXueJian",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Skill_RanXueJian.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_XieHaiShouRen",
+      "displayName": "梦罗克的邪骸兽人",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_XieHaiShouRen.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_BeHit.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Run.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_XieHaiZhanShi",
+      "displayName": "梦罗克的邪骸士兵",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_XieHaiZhanShi.prefab",
+      "animations": [
+        {
+          "displayName": "普攻",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Run.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "Monster_ZengHen",
+      "displayName": "达纳托斯的憎恨",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/Monster_ZengHen.prefab",
+      "animations": [
+        {
+          "displayName": "恨·重锤",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Attack.anim"
+        },
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_BeHit.anim"
+        },
+        {
+          "displayName": "出场",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Born.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Death.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Idle.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Run.anim"
+        },
+        {
+          "displayName": "谢幕传送",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Show.anim"
+        },
+        {
+          "displayName": "黑暗涌动",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_HuJi.anim"
+        },
+        {
+          "displayName": "凝视",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_NingShi.anim"
+        },
+        {
+          "displayName": "憎恨之锤",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_ZengHenZhiChui.anim"
+        }
+      ]
+    },
+    {
+      "modelName": "NPC_M_DaNaTuoSi",
+      "displayName": "达纳托斯（NPC）",
+      "prefabPath": "Assets/GM_Game/Models/Monster/RO/Showcase/Models/NPC_M_DaNaTuoSi.prefab",
+      "animations": [
+        {
+          "displayName": "受击",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_BeHit.anim"
+        },
+        {
+          "displayName": "死亡",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_Death.anim"
+        },
+        {
+          "displayName": "癫狂",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_DianKuang.anim"
+        },
+        {
+          "displayName": "癫狂释放",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_DianKuangShiFang.anim"
+        },
+        {
+          "displayName": "回归本体 1",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_HuiGuiBenTi_01.anim"
+        },
+        {
+          "displayName": "回归本体 2",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_HuiGuiBenTi_02.anim"
+        },
+        {
+          "displayName": "回归本体 3",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_HuiGuiBenTi_03.anim"
+        },
+        {
+          "displayName": "待机",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_IdleF.anim"
+        },
+        {
+          "displayName": "跑步",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_RunF.anim"
+        },
+        {
+          "displayName": "虚弱下跪 1",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_XuRuoXiaGu_01.anim"
+        },
+        {
+          "displayName": "虚弱下跪 2",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_XuRuoXiaGu_02.anim"
+        },
+        {
+          "displayName": "虚弱下跪 3",
+          "clipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_XuRuoXiaGu_03.anim"
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "id": 5357,
+      "displayName": "副本终结者",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5457,
+      "displayName": "梦罗克的亡灵巫师",
+      "modelName": "Monster_WangLingWuShi",
+      "scale": 1.2,
+      "idleAnimation": "Monster_WangLingWuShi_Skill_Singing",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5468,
+      "displayName": "死亡的骑士团成员",
+      "modelName": "Common_M_Default",
+      "scale": 1.0,
+      "idleAnimation": "Swordman_M_Death_Loop",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5469,
+      "displayName": "死亡的骑士团成员",
+      "modelName": "Common_F_Default",
+      "scale": 1.0,
+      "idleAnimation": "Swordman_F_Death_Loop",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5470,
+      "displayName": "死亡的骑士团成员",
+      "modelName": "Common_F_Default",
+      "scale": 1.0,
+      "idleAnimation": "Swordman_F_Death_Loop",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5471,
+      "displayName": "受伤的骑士团成员",
+      "modelName": "Common_F_Default",
+      "scale": 1.0,
+      "idleAnimation": "Common_F_ShouShang",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5473,
+      "displayName": "死亡的骑士团成员",
+      "modelName": "Common_M_Default",
+      "scale": 1.0,
+      "idleAnimation": "Swordman_M_Death_Loop",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5474,
+      "displayName": "受伤的骑士团成员",
+      "modelName": "Common_M_Default",
+      "scale": 1.0,
+      "idleAnimation": "Common_M_ShouShangZuo",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5477,
+      "displayName": "受伤的刺客",
+      "modelName": "Common_M_Default",
+      "scale": 1.0,
+      "idleAnimation": "Common_F_ShouShang",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5478,
+      "displayName": "受伤的刺客",
+      "modelName": "Common_F_Default",
+      "scale": 1.0,
+      "idleAnimation": "Common_F_ShouShang",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5483,
+      "displayName": "法阵破坏震屏怪",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5484,
+      "displayName": "癫狂召唤兽1",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5485,
+      "displayName": "癫狂召唤兽2",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5486,
+      "displayName": "癫狂召唤兽3",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5487,
+      "displayName": "癫狂召唤兽4",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5491,
+      "displayName": "塔顶震屏怪",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5501,
+      "displayName": "达纳托斯的憎恨",
+      "modelName": "Monster_ZengHen",
+      "scale": 1.0,
+      "idleAnimation": "Monster_ZengHen_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5502,
+      "displayName": "达纳托斯的绝望",
+      "modelName": "Monster_JueWang",
+      "scale": 1.0,
+      "idleAnimation": "Monster_JueWang_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5503,
+      "displayName": "达纳托斯的悲哀",
+      "modelName": "Monster_BeiAi",
+      "scale": 1.0,
+      "idleAnimation": "Monster_BeiAi_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5504,
+      "displayName": "梦罗克的南瓜魂",
+      "modelName": "Monster_NanGuaHun",
+      "scale": 1.5,
+      "idleAnimation": "Monster_NanGuaHun_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5506,
+      "displayName": "魔神的影子",
+      "modelName": "Monster_MoShenYingZi01",
+      "scale": 1.0,
+      "idleAnimation": "Monster_MoShenYingZi01_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5507,
+      "displayName": "魔神的影子",
+      "modelName": "Monster_MoShenYingZi02",
+      "scale": 1.0,
+      "idleAnimation": "Monster_MoShenYingZi02_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5508,
+      "displayName": "梦罗克的恶灵",
+      "modelName": "Monster_ELing",
+      "scale": 1.5,
+      "idleAnimation": "Monster_ELing_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5509,
+      "displayName": "梦罗克的米洛斯",
+      "modelName": "Monster_MiLuoSi",
+      "scale": 1.5,
+      "idleAnimation": "Monster_MiLuoSi_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5510,
+      "displayName": "梦罗克的魔法师",
+      "modelName": "Monster_MoFaShi",
+      "scale": 2.5,
+      "idleAnimation": "Monster_MoFaShi_Idle",
+      "bornAnimation": "Monster_MoFaShi_Skill_LingHunAnJi"
+    },
+    {
+      "id": 5511,
+      "displayName": "梦罗克的亡灵战俘",
+      "modelName": "Monster_XieHaiFuLu",
+      "scale": 1.3,
+      "idleAnimation": "Monster_XieHaiFuLu_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5512,
+      "displayName": "BossController",
+      "modelName": "Monster_Empty",
+      "scale": 1.0,
+      "idleAnimation": "",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5513,
+      "displayName": "梦罗克的邪骸弓箭手",
+      "modelName": "Monster_XieHaiGongJianShou",
+      "scale": 1.2,
+      "idleAnimation": "Monster_XieHaiGongJianShou_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5514,
+      "displayName": "梦罗克的邪骸士兵",
+      "modelName": "Monster_XieHaiZhanShi",
+      "scale": 1.1,
+      "idleAnimation": "Monster_XieHaiZhanShi_Idle",
+      "bornAnimation": ""
+    },
+    {
+      "id": 5515,
+      "displayName": "梦罗克的邪骸兽人",
+      "modelName": "Monster_XieHaiShouRen",
+      "scale": 1.5,
+      "idleAnimation": "Monster_XieHaiShouRen_Idle",
+      "bornAnimation": ""
+    }
+  ]
+}
