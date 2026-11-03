@@ -213,3 +213,10 @@
 - CombinationSkillSmoke 通过学习、授予、已有快捷键保留、6300 ms 总占用时间、仅扣除一次 200 MP、仅根技能冷却、共享 UUID、完成和中断验证。SingingStateSmoke 与 SkillAuthoritySmoke 回归构建及运行也通过。无网关测试会按预期输出发送失败诊断，这些诊断不构成真实玩家传输验证证据。
 - 真实失败与修正：无法访问内部 schema 常量，已改用当前版本 1；首个客户端测试夹具保留了尚未加载的 MModel，并等待 GO 回调，导致完成断言失败。夹具现已归还并移除空模型，未弱化业务等待行为。源码空白检查通过；保留 Unity 生成 YAML 中空数组的空白。两张 XLSX 表各新增一行数据；客户端与服务端规则 JSON 一致。
 - 未完成四服完整登录/视觉验收、碰撞/特效/音效观察、YooAsset 包加载测试、Player 构建、生产部署或干净检出构建。编辑器仅实现逐个子技能预览。所有文件与回执见 `项目修改日志/2026-11-03-组合技能编辑器与E接2.md`。
+
+## [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] 接段与取消回归验收
+
+- GameServer 构建通过，保留既有警告。Unity 编译通过，CombinationSkillContractTests 菜单测试通过：覆盖 E 在 1.5 s 接段、根 UUID/确认/移动归属、自然尾部表现、实际 Stop 清理已登记的未来特效/音效计时器票据、组合→滑步的预测技能状态自转换、起跳取消 E/2/滑步/组合，以及无效或被禁用的起跳保留原动作。
+- CombinationSkillSmoke 通过 1500 ms 接段 / 4700 ms 总占用、仅扣除一次 200 MP、根技能 CD，以及全部七个既有技能（10010/10040/10050/10060/10070/10080/10100）的滑步/跳跃取消。还验证了打断后不进入后续组合段、保留 MP/CD、被拒绝的滑步保留当前施法、重复空中状态上报保留当前施法，以及跳跃计数增加时取消当前施法。SingingStateSmoke 与 SkillAuthoritySmoke 同样通过。网关发送失败诊断来自没有真实在线会话的隔离角色。
+- 真实修正：首个正式服务端事件测试暴露滑步请求被排队至旧动作结束；直接派发攻击事件并接入经校验的技能状态自转换后修复。一个客户端断言将池中复用的子技能误判为旧施法仍存活，现改为检查旧 UUID。另一个服务端测试夹具仅推进 10 s，而实际冷却为 13 s，现改为推进 15 s。Artifact Tool 将共享空字符串导出为 `32`；最终仅将该工具写入的数值单元格合并回原始 XLSX 包，保留其他内容与样式。部署 bytes 对比确认仅一个字段变化：3004001.SkillStateTimeMs 3100→1500。
+- 最终源码与暂存区空白检查通过。证据位于 `_temp/skill-cancel-feel-20261103/`（`server-build.log`、`client-contract.txt`、`unity-console-final.json`、`CombinationSkillSmoke.log`、`SingingStateSmoke.log`、`SkillAuthoritySmoke.log`、`compare-tables.ps1`、`staged-business.json`）。未完成四服完整登录/视觉/音效/碰撞验收、YooAsset 包测试、Player/干净检出构建、权威伤害测试或运行进程重新部署/重启。完整文件清单与回执见 `项目修改日志/2026-11-03-组合接段提速与滑步跳跃打断.md`。

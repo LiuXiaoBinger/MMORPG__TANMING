@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `45ce3afc867f9fa662e7095d352acdc4d793d573103e847ad323c67b8a3760b3`
+Source normalized SHA256: `bf5df7abc895ad1ed4389a1092e75cb43cae0776c6cee4c0701622a379338263`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -36,11 +36,12 @@ Source normalized SHA256: `45ce3afc867f9fa662e7095d352acdc4d793d573103e847ad323c
 | [CODE][FILES][HANDOFF][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] RO client casting exclusion gate | 173-180 |
 | [CODE][FILES][HANDOFF][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state base class | 181-187 |
 | [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-195 |
-| [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-200 |
+| [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-202 |
+| [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-208 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3f2806eed5477b0aba35bee3e5c8576055fba0a4502fce060980f23405010df3`
+Source normalized SHA256: `97067855bce137edc7def6bb3be44abf4eeb35d648b82a36831415d32f5dc1e9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -68,7 +69,8 @@ Source normalized SHA256: `3f2806eed5477b0aba35bee3e5c8576055fba0a4502fce060980f
 | [VERIFY][技能][互斥][CLIENT-STATE-EXCLUSION-20261102] Client exclusion validation | 189-197 |
 | [VERIFY][互斥][规范][STATE-INTERFACE-VIRTUAL-20261102] Virtual state contract validation | 198-204 |
 | [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-212 |
-| [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-218 |
+| [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
+| [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-226 |
 
 ## Docs/AI/DECISIONS.en.md
 
