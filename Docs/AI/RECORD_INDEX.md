@@ -42,7 +42,7 @@ Source normalized SHA256: `41a0498a72d33e84dcf60e15681a8d9f9e0d20c59ec44ae74f2bc
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0ed3c29864b4f5c00335bba962caeafd63804dc38ba476cd17e4fe5accafb632`
+Source normalized SHA256: `1e9d3bd6ecaee23766b8b17d74bc70ac37067e81475dd7eef1b0312cb5218b93`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -72,7 +72,7 @@ Source normalized SHA256: `0ed3c29864b4f5c00335bba962caeafd63804dc38ba476cd17e4f
 | [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-212 |
 | [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
 | [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
-| [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-234 |
+| [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-236 |
 
 ## Docs/AI/DECISIONS.en.md
 
