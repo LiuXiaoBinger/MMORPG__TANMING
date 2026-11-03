@@ -47,7 +47,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>组件类型为技能快捷组件，不进入普通组件集合。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Skill; } }
 
-    /// <summary>按当前技能 RO MoveCasting 控制普通水平移动；主动起跳仍禁止，已有重力和落地继续。</summary>
+    /// <summary>按当前技能 RO MoveCasting 控制普通水平移动；跳跃使用独立的主动取消入口。</summary>
     public override bool IsActiveMovable
     {
         get
@@ -744,7 +744,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return true;
     }
 
-    /// <summary>准备释放滑步时看当前技能是否允许被滑步取消；其他技能看新技能的打断列表。
+    /// <summary>滑步默认可以取消所有技能；其他技能看新技能的打断列表。
     /// 当前不在技能状态时，使用状态机的状态切换许可表。</summary>
     /// <param name="skillId">当前准备释放的新技能主表 ID。</param>
     /// <returns>状态允许施法，或新技能允许打断当前活动技能时为 true。</returns>
@@ -766,9 +766,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         cfg.SkillInfo newSkill = LubanMgr.Instance.GetSkillInfoById(skillId);
         if (newSkill != null && newSkill.Type == 3)
         {
-            // 正占动作槽的原技能配置；1允许被滑步取消，0需等待原动作结束。
-            cfg.SkillInfo currentSkill = LubanMgr.Instance.GetSkillInfoById(_skill.SkillId);
-            return currentSkill != null && currentSkill.CanSlideCancel == 1;
+            return true;
         }
         return SkillCastingRulesCatalog.CanInterrupt(skillId, _skill.SkillId);
     }
@@ -1181,12 +1179,19 @@ public sealed class MSkillComponent : MBasicActionComponent
         Entity.BattleIdle = true;
     }
 
-    /// <summary>RO同名外部停止钩子，只记录可消费通知；尾段仍由AfterFinish移交并沿原生命周期回收。</summary>
+    /// <summary>主动打断时立即清除当前施法和未来事件；自然结束仍由 AfterFinish 保留表现尾部。</summary>
     /// <param name="selfTrans">是否由技能自身切回技能状态触发。</param>
     protected override void OnStop(bool selfTrans = false)
     {
         base.OnStop(selfTrans);
         stop = true;
+        // 先解除动作引用，避免 Cease 回调在已有状态切换中再次切回默认态。
+        MSkill interruptedSkill = _skill;
+        _skill = null;
+        if (interruptedSkill != null)
+        {
+            interruptedSkill.Cease(true);
+        }
     }
 
     /// <summary>动作结束后释放动画和程序位移，把仍存活的施法移入旧列表，继续它的时间轴和声音。</summary>

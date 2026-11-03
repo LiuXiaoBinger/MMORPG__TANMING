@@ -356,7 +356,7 @@ public abstract class MSkill
         _durationSeconds = core.AnimationDurationSeconds;
 
         _skillStateTimeSeconds = _durationSeconds;
-        if (core.HasMultiplePresentations && core.SkillStateTimeSeconds > 0f)
+        if (core.SkillStateTimeSeconds > 0f)
         {
             _skillStateTimeSeconds = core.SkillStateTimeSeconds;
         }
@@ -512,7 +512,8 @@ public abstract class MSkill
         if (animationInfo.Length > 0f)
         {
             _durationSeconds = animationInfo.Length;
-            if (!_core.HasMultiplePresentations)
+            // 真实剪辑长度只补未配置的动作时长，不能覆盖编辑器设置的接段点。
+            if (_core.SkillStateTimeSeconds <= 0f)
             {
                 _skillStateTimeSeconds = _durationSeconds;
             }

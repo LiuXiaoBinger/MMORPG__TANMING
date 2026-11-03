@@ -345,7 +345,7 @@ public sealed class MMoveComponent : EntityComponentBase
 
     #region 查询与判定
     /// <summary>
-    /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；技能状态即使 MoveCasting 为 true 也禁止主动起跳。
+    /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；成功起跳可以取消当前技能。
     /// </summary>
     /// <returns>成功开始下一段跳跃时返回 true；未接地或已达到三段时返回 false。</returns>
     public bool TryJump()
@@ -355,9 +355,8 @@ public sealed class MMoveComponent : EntityComponentBase
         {
             return false;
         }
-        // 仅本地玩家可主动起跳；技能状态或不可移动时同样拒绝。
-        if (!Entity.IsPlayer ||
-            Entity.CurrentState == StateDefine.kStateSkill || !Entity.IsMovable)
+        // 仅本地玩家可主动起跳；保留死亡、禁移动及其他动作的移动限制。
+        if (!Entity.IsPlayer || !Entity.CanJump)
         {
             return false;
         }
@@ -438,6 +437,11 @@ public sealed class MMoveComponent : EntityComponentBase
         _isjump = true;
         _verticalVelocity = JumpUpwardSpeed;
         _airborneElapsedSeconds = 0f;
+        // 跳跃次数校验通过后才取消技能，随后跳跃事件可以立即接管动画。
+        if (Entity.CurrentState == StateDefine.kStateSkill)
+        {
+            Entity.Skill.Stop();
+        }
         DispatchEvent(MEventType.JumpStarted, null);
         return true;
     }

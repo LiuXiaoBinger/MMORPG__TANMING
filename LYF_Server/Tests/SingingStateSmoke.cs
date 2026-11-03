@@ -486,7 +486,7 @@ public static class SingingStateSmoke
             // ids 前三项验证普攻连段，其余项验证不同技能结束后的接续施放。
             int[] ids = { 10010, 10010, 10010, 10040, 10050, 10060, 10070, 10080 };
             // durations 为当前部署表现表的动作占用毫秒数，不含任何额外吟唱时间。
-            int[] durations = { 700, 700, 700, 3100, 3433, 3167, 1133, 667 };
+            int[] durations = { 700, 700, 700, 1500, 3433, 3167, 1133, 667 };
             // learned 是本测试角色的技能快照，重复的普攻只登记一次。
             RoleSkillInfoRet learned = new RoleSkillInfoRet { CmdCode = CmdCode.Succeed };
             learned.RoleSkillInfoList.Add(new RoleSkillInfo { SkillId = 10010, Level = 1 });

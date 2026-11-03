@@ -315,6 +315,17 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <summary>当前存在且仍在释放的动作技能时为 true。</summary>
     public bool IsCasting() { return skill_ != null && skill_.Casting(); }
 
+    /// <summary>技能自转移交给 OnGetEvent 校验新技能的互断权限、MP 和 CD，通过后才停止原动作。</summary>
+    /// <param name="state">请求切入的状态；其他状态继续沿用原许可。</param>
+    public override bool IsPermitted(StateDefine state)
+    {
+        if (state == StateDefine.kStateSkill)
+        {
+            return true;
+        }
+        return base.IsPermitted(state);
+    }
+
     /// <summary>角色与角色数据可用且血量大于零时技能动作可以继续。</summary>
     private bool CanKeepCasting()
     {
@@ -351,13 +362,11 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return true;
         }
-        // 当前动作是否允许新技能中断；仅值一的旧滑行取消旗标允许 Type3 接管。
+        // 滑步默认可中断全部技能，普通技能继续沿用配置的互断列表。
         bool can_interrupt;
         if (skill_table != null && skill_table.Type == 3)
         {
-            // 当前活动技能主表只负责滑行取消权限，不退还它已扣的 MP/CD。
-            SkillInfo active_definition = LubanMgr.Instance.GetSkillInfoById(skill_.SkillID());
-            can_interrupt = active_definition != null && active_definition.CanSlideCancel == 1;
+            can_interrupt = true;
         }
         else
         {

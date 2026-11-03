@@ -56,7 +56,8 @@ public sealed class MCombineSkill : MSkill
         if (core == null) return;
         core.SelectPresentation(0, UnityEngine.Time.realtimeSinceStartup);
         _durationSeconds += core.AnimationDurationSeconds;
-        _skillStateTimeSeconds = _durationSeconds;
+        // 主动作按各段的接段点累加，完整剪辑时长只用于表现生命期。
+        _skillStateTimeSeconds += core.SkillStateTimeSeconds;
         // 每段都是独立普通技能，保留原动画、特效和程序位移处理器。
         MSkill skill = MSkillFactory.CreateSkill(core);
         if (skill.Fire(core, _firer, SkillUuid, TargetUid, CastPoint, IsPredicted, this))

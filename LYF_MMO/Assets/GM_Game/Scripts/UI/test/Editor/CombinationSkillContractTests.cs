@@ -9,7 +9,7 @@ using UnityEngine;
 public static class CombinationSkillContractTests
 {
     /// <summary>本次测试报告仅写入项目临时目录。</summary>
-    private const string ReportPath = "../_temp/combo-skill-20261103/client-contract.txt";
+    private const string ReportPath = "../_temp/skill-cancel-feel-20261103/client-contract.txt";
 
     /// <summary>加载真实保存资产，验证组合装配、同 UUID、确认、动作归属和中断回收。</summary>
     [MenuItem("Tools/技能/测试/组合技能验收")]
@@ -51,9 +51,9 @@ public static class CombinationSkillContractTests
             Require(first.SkillId == 10040 && first.SkillUuid == 301UL, "首段身份错误");
             Require(OwnsMovement(first, actor), "子技能未取得主动作槽的位移权限");
             Require(combined.Confirm(301UL) && !first.IsPredicted, "主确认未传递给已开始子技能");
-            Advance(combined, 3f);
+            Advance(combined, 1.49f);
             Require(ReferenceEquals(Current(combined), first), "E 提前交出动作");
-            Advance(combined, 0.11f);
+            Advance(combined, 0.02f);
             // 第二段使用原 2 技能数据，保持确认状态且不产生新施法 UUID。
             MSkill second = Current(combined);
             Require(second != null && second.SkillId == 10060, "E 结束后未接 2");
@@ -69,11 +69,20 @@ public static class CombinationSkillContractTests
             // 同一实例重新 Fire 后中断，必须停止第一段并清空待接的第二段。
             Require(combined.Fire(core, actor, 302UL, 0UL, Vector3.zero, true), "重新施放失败");
             first = Current(combined);
-            combined.Reset();
+            // 通过真实动作停止钩子清理已登记的未来特效/音频票据，而不是直接 Reset。
+            System.Collections.Generic.List<uint> pending = (System.Collections.Generic.List<uint>)typeof(MSkill)
+                .GetField("_tokens", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(first);
+            Require(pending.Count > 0, "取消测试没有登记未来时间轴事件");
+            typeof(MActionComponent).GetField("_isFinished", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(component, false);
+            component.Stop(false);
             MTimerMgr.singleton.Update(7f);
-            Require(!combined.IsActive && !first.IsActive && Current(combined) == null, "中断后仍保留子动作");
-            File.WriteAllText(ReportPath, "PASS：真实资产 E→2、同 UUID、确认传递、主槽位移归属、自然收尾、中断回收。\n边界：编辑态无角色模型，未覆盖画面、YooAsset 资源包或四服登录联调。\n");
-            Debug.Log("COMBINATION_CONTRACT_PASS：E→2、确认、动作归属、收尾和中断。");
+            Require(!combined.IsActive && !first.IsActive && pending.Count == 0, "中断后仍保留子动作或未来事件");
+            Require(component.CurrentSkill == null, "中断后原组合仍占用主动作");
+            // Stop 已将组合归还池，后续用例可能再次借用它，finally 不能重复回池。
+            combined = null;
+            VerifyCancellation();
+            File.WriteAllText(ReportPath, "PASS：真实资产 E→2 在1.5秒接段、同UUID、确认传递、主槽位移归属、自然收尾、中断回收、滑步/跳跃取消及无效跳跃保留原动作。\n边界：编辑态逻辑验证，未覆盖画面、YooAsset资源包或四服登录联调。\n");
+            Debug.Log("COMBINATION_CONTRACT_PASS：1.5秒接段、确认、动作归属、滑步和跳跃取消。");
         }
         finally
         {
@@ -81,6 +90,58 @@ public static class CombinationSkillContractTests
             if (core != null) core.Release();
             SkillRuntimePresentationCache.Release(3004001);
             SkillRuntimePresentationCache.Release(3006001);
+        }
+    }
+
+    /// <summary>使用真实玩家组件和预测入口验证滑步自转移、起跳许可及取消后的动作清理。</summary>
+    private static void VerifyCancellation()
+    {
+        RetainEditorPresentation(3008001);
+        // 独立编辑态玩家不加入场景世界，不连接网络或挂载正式预制体。
+        PlayerEntity actor = new PlayerEntity(930102UL, 0);
+        actor.UpdateBaseInfo(new RoleBaseInfo { RoleId = 930102, JobId = 1 });
+        actor.Initialize();
+        try
+        {
+            // 使用 E、2、滑步和组合覆盖单段、旧禁止取消技能及组合主动作。
+            int[] skillIds = { 10040, 10060, 10080, 10100 };
+            // 当前登记的真实学习技能下标。
+            for (int index = 0; index < skillIds.Length; index++) actor.Skill.AttachSkillInfo(skillIds[index], 1);
+            Require(actor.Skill.BeginPrediction(10100, 401UL, 100f, 10000), "组合预测入口失败");
+            // 原组合由滑步接管，必须立刻停止而非移到旧施法尾段列表。
+            MCombineSkill combined = actor.Skill.CurrentSkill as MCombineSkill;
+            // 保留旧子段引用以检查取消状态，后续不依赖已被池化重置的主 ID。
+            MSkill child = Current(combined);
+            Require(actor.Skill.BeginPrediction(10080, 402UL, 100f, 10000), "滑步不能打断组合");
+            // 子实例可能被对象池立即复用为新滑步，只检查旧 UUID 已消失。
+            Require(!combined.IsActive && child.SkillUuid != 401UL, "滑步保留了原组合或子段");
+            Require(actor.Skill.CurrentSkill.SkillId == 10080, "自转移错误清除了新滑步");
+            Require(actor.MoveComp.TryJump(), "跳跃不能取消滑步");
+            Require(actor.Skill.CurrentSkill == null && actor.IsJump, "取消后未进入跳跃");
+            actor.MoveComp.EndJump();
+            // 当前待测试的技能下标；每个技能都应允许地面起跳和滑步取消。
+            for (int index = 0; index < skillIds.Length; index++)
+            {
+                Require(actor.Skill.BeginPrediction(skillIds[index], (ulong)(410 + index), 200f + index, 10000), "取消测试未开始技能");
+                // 本次待取消的原动作实例。
+                MSkill skill = actor.Skill.CurrentSkill;
+                Require(actor.Skill.CanSkill(10080), "滑步默认取消权限未生效");
+                Require(!actor.MoveComp.BeginJump(4) && skill.IsActive, "无效四段跳错误取消技能");
+                actor.IsMovable = false;
+                Require(!actor.MoveComp.TryJump() && skill.IsActive, "禁止移动时错误取消技能");
+                actor.IsMovable = true;
+                Require(actor.MoveComp.TryJump(), "技能中不能起跳 " + skillIds[index]);
+                Require(!skill.IsActive && actor.Skill.CurrentSkill == null, "起跳后技能仍活动");
+                Require(actor.Machine.CurrentState == actor.Machine.DefaultState, "起跳后技能仍占用状态机");
+                MTimerMgr.singleton.Update(7f);
+                Require(actor.Skill.CurrentSkill == null, "起跳后旧时间轴重新开始后续段");
+                actor.MoveComp.EndJump();
+            }
+        }
+        finally
+        {
+            actor.Destroy();
+            SkillRuntimePresentationCache.Release(3008001);
         }
     }
 

@@ -6,6 +6,9 @@ public sealed class ROMoveComponent : RoleComponentBase
     /// <summary>最近一次上报的主动移动状态，生命周期与当前在线角色相同。</summary>
     private bool is_moving_;
 
+    /// <summary>最近同步的跳跃段数，0 表示落地；只在新起跳或追加跳跃时取消技能。</summary>
+    private int jump_count_;
+
     /// <summary>创建在线角色的移动组件，不创建额外场景宿主。</summary>
     /// <param name="owner">现有在线角色，负责位置数据与会话生命周期。</param>
     public ROMoveComponent(OnlineRole owner) : base(owner) { }
@@ -20,6 +23,17 @@ public sealed class ROMoveComponent : RoleComponentBase
     /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
+        // 新跳跃沿用现有移动协议；同一空中姿势的后续同步不重复触发技能取消。
+        if (action.JumpCount > jump_count_ && action.JumpCount <= 3)
+        {
+            // 只切出技能动作，不把死亡、受控或其他动作强制变为默认态。
+            StateMachineComponent jump_state_machine = Owner.GetComponent<StateMachineComponent>();
+            if (jump_state_machine.GetCurrentState() == StateDefine.kStateSkill)
+            {
+                jump_state_machine.ForceToDefaultState(false);
+            }
+        }
+        jump_count_ = action.JumpCount;
         is_moving_ = action.IsMoving;
         // 主动移动必须先打断不可带动作移动的状态（吟唱），对应 RO ActionStateComponent::Move。
         if (is_moving_)

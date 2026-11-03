@@ -115,6 +115,24 @@ public sealed class RoleSingingComponent : SingingComponent
             return;
         }
 
+        // 滑步没有吟唱阶段，直接交给技能动作事件校验并接管，不能排队等待原技能结束。
+        cfg.SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(action.skill_id_);
+        if (definition != null && definition.Type == 3)
+        {
+            // 池化攻击事件仍走 ROSkillComponent.OnGetEvent 的完整费用、冷却和取消校验。
+            ROAttackActionArgs attack = ROEventPool<ROAttackActionArgs>.Instance.Get();
+            try
+            {
+                attack.skill_id_ = action.skill_id_;
+                attack.skill_uuid_ = action.skill_uuid_;
+                attack.target_ = action.target_;
+                attack.cast_point_ = action.cast_point_;
+                Owner.GetEventDispatcher().DispatcherEvent(attack);
+            }
+            finally { attack.Release(); }
+            return;
+        }
+
         // 队列为空且当前动作允许立刻吟唱时，直接派发吟唱事件，不经过队列。
         if (request_list_.Count == 0 && CanStartSingingNow())
         {

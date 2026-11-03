@@ -22,7 +22,7 @@ MonoBehaviour:
   Config: {fileID: 11400000, guid: f506ac612d331c54f9aedecef61853f8, type: 2}
   PreviewModel: {fileID: 8115728581419920701, guid: d76aa3412cb81bd4598ec4a0db60d14f, type: 3}
   SourceClip: {fileID: 7400000, guid: 3cb1688486b8c6547a872272501acaef, type: 2}
-  SkillStateTimeMs: 3100
+  SkillStateTimeMs: 1500
   FxSources:
   - SourceEventIndex: 0
     OriginalTimeSeconds: 0.29245287

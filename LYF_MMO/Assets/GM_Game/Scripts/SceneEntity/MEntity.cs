@@ -213,6 +213,19 @@ public abstract class MEntity : MSceneObject
         set { _isMovable = value; }
     }
 
+    /// <summary>起跳沿用基础移动限制；技能动作允许被跳跃取消，其他动作仍使用原移动许可。</summary>
+    public bool CanJump
+    {
+        get
+        {
+            if (CurrentState == StateDefine.kStateSkill)
+            {
+                return !IsDead && _isMovable && CanManualMove;
+            }
+            return IsMovable;
+        }
+    }
+
     /// <summary>位置（委托给实际表现模型）</summary>
     public override UnityEngine.Vector3 Position
     {
