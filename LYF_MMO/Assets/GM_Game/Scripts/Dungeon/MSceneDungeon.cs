@@ -212,6 +212,7 @@ public class MSceneDungeon : MonoBehaviour
             entity.Model.SetGameObject(model, string.Empty, false);
             // 实体碰撞尺寸与实际模型包围盒一致，不使用角色职业表猜测怪物尺寸。
             MModelPrepareData prepared = model.GetComponent<MModelPrepareData>();
+            prepared.ApplyMotions(entity.Model.Ator);
             entity.Radius = Mathf.Max(prepared.ProjectSize.x, prepared.ProjectSize.z) * 0.5f * creature.scale;
             entity.Height = prepared.ProjectSize.y * creature.scale;
             if (!creature.isNpc && creature.maxHp > 0)

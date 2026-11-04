@@ -4894,7 +4894,7 @@ Animator:
   m_GameObject: {fileID: 5660117949580877150}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: a5de240061f9c784a9e9ca7832478b50, type: 3}
-  m_Controller: {fileID: 9100000, guid: a78520c3bcbd3ad48bdae8f1486cfbfe, type: 2}
+  m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4948,6 +4948,13 @@ MonoBehaviour:
   ProjectCenter: {x: 0.045409024, y: 0.90900725, z: 0.20361072}
   BoundRange: {x: -0.010552347, y: 1.8285668}
   ShadowPoint: {fileID: 8825971186747701702}
+  motions:
+  - Slot: {fileID: 7400000, guid: ae6feea6e6524224c84d5b042bc8ac26, type: 2}
+    Clip: {fileID: 7400000, guid: 2a703f26acaab1d498ada38980b280e6, type: 2}
+  - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
+    Clip: {fileID: 7400000, guid: 2e6d28379550d8245aa2327bf8f8f8f0, type: 2}
+  - Slot: {fileID: 7400000, guid: 9ec2fc6ceb390f0408d144e36bbe328c, type: 2}
+    Clip: {fileID: 7400000, guid: 2a703f26acaab1d498ada38980b280e6, type: 2}
   IgnoreShadow: 0
 --- !u!65 &595759675947891615
 BoxCollider:

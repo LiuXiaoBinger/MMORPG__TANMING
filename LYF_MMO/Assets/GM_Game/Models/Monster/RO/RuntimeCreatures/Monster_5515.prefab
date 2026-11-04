@@ -44,7 +44,7 @@ Animator:
   m_GameObject: {fileID: 1066866512797450199}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 968cc234eb818f444a791194c4aeb30b, type: 3}
-  m_Controller: {fileID: 9100000, guid: fe52f2ab368922e48b418f3e516ee6b0, type: 2}
+  m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -282,6 +282,21 @@ MonoBehaviour:
   ProjectCenter: {x: 0.22966135, y: 1.0465041, z: 0.18021908}
   BoundRange: {x: -0.0071001053, y: 2.1001084}
   ShadowPoint: {fileID: 6831052043589745667}
+  motions:
+  - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
+    Clip: {fileID: 7400000, guid: 9086ef1dcea37514a9326b8aa09d6dcc, type: 2}
+  - Slot: {fileID: 7400000, guid: 9ec2fc6ceb390f0408d144e36bbe328c, type: 2}
+    Clip: {fileID: 7400000, guid: 25fcbca2a197aef45b473d4abe0b289c, type: 2}
+  - Slot: {fileID: 7400000, guid: ae6feea6e6524224c84d5b042bc8ac26, type: 2}
+    Clip: {fileID: 7400000, guid: 25fcbca2a197aef45b473d4abe0b289c, type: 2}
+  - Slot: {fileID: 7400000, guid: 3562e7a379272be4bb91fbda5cf4e221, type: 2}
+    Clip: {fileID: 7400000, guid: ffd8c44b09bfff44781e73b799d82ab9, type: 2}
+  - Slot: {fileID: 7400000, guid: 4b2878e6d9ea03240bccf4b7b54a4a1e, type: 2}
+    Clip: {fileID: 7400000, guid: ad5a4f7c113aae844bedde2d9c88125d, type: 2}
+  - Slot: {fileID: 7400000, guid: a7a0ce4109a30e44991023813d368d67, type: 2}
+    Clip: {fileID: 7400000, guid: d6b384ed93a3f6342bcfa98cb4405a06, type: 2}
+  - Slot: {fileID: 7400000, guid: 40fb03497f9995547a4eb823b48ff3ae, type: 2}
+    Clip: {fileID: 7400000, guid: d6b384ed93a3f6342bcfa98cb4405a06, type: 2}
   IgnoreShadow: 0
 --- !u!65 &5061589133179366430
 BoxCollider:

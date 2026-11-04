@@ -475,11 +475,7 @@ public class MAnimator
             return PreparedClipApplyResult.Failed;
         }
 
-        if (_overrideController == null)
-        {
-            _overrideController = new AnimatorOverrideController(_controller);
-            _animator.runtimeAnimatorController = _overrideController;
-        }
+        GetOrCreateOverrideController();
 
         try
         {
@@ -518,7 +514,7 @@ public class MAnimator
     /// <param name="stateName">动画状态名。</param>
     /// <param name="layer">动画层索引。</param>
     /// <returns>true 表示状态节点存在。</returns>
-    private bool HasNativeState(string stateName, int layer)
+    public bool HasNativeState(string stateName, int layer)
     {
         // 实际存在的完整路径；找不到时使用空字符串表示。
         string nativeStatePath = GetNativeStatePath(stateName, layer);
@@ -582,6 +578,10 @@ public class MAnimator
     /// <returns>正式控制器中的完整状态路径；未映射状态返回空字符串。</returns>
     private string GetFormalNestedStatePath(string stateName)
     {
+        if (stateName == "Move" || stateName == "FMove")
+        {
+            return "Base Layer.Move." + stateName;
+        }
         if (stateName == STATE_IDLE)
         {
             return "Base Layer.Idle.Idle";
@@ -1025,6 +1025,18 @@ public class MAnimator
         return _currentState == stateName;
     }
 
+    /// <summary>取得本实体唯一的运行时剪辑覆盖器，公共状态图仍由所有同类模型共享。</summary>
+    /// <returns>基于当前已绑定控制器的覆盖器，在本模型重绑或回收时释放。</returns>
+    public AnimatorOverrideController GetOrCreateOverrideController()
+    {
+        if (_overrideController == null)
+        {
+            _overrideController = new AnimatorOverrideController(_controller);
+            _animator.runtimeAnimatorController = _overrideController;
+        }
+        return _overrideController;
+    }
+
     /// <summary>将已加载的动作片段重新应用到新绑定的 Controller。</summary>
     private void ApplyOverrideClips()
     {
@@ -1042,11 +1054,7 @@ public class MAnimator
             {
                 continue;
             }
-            if (_overrideController == null)
-            {
-                _overrideController = new AnimatorOverrideController(_controller);
-                _animator.runtimeAnimatorController = _overrideController;
-            }
+            GetOrCreateOverrideController();
             // 当前覆盖键在基础控制器中对应的原始剪辑。
             AnimationClip original = FindOriginalClip(info.OverrideKey);
             if (original != null)

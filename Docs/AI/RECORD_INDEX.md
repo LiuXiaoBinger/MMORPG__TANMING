@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `4666e098e029217f4e0e107b9b931b8863f1181d4e84675539c02220ab3de74e`
+Source normalized SHA256: `a4587d9cc0ad8690fd115a141e3f0f82d68e110953d939e198a45dbdb4bd4be8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -42,11 +42,12 @@ Source normalized SHA256: `4666e098e029217f4e0e107b9b931b8863f1181d4e84675539c02
 | [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-224 |
 | [CODE][FILES][HANDOFF][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Shared Moshenta basic-attack damage and death | 225-229 |
 | [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map | 230-234 |
-| [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters | 235-239 |
+| [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters | 235-240 |
+| [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Use the public RO monster Animator in Moshenta | 241-244 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b936720bfc59ae69c09e2123b4801ccf85456763004ccac217b84cdb7f489c84`
+Source normalized SHA256: `6c15a1dff8a428add16b0eb0c4f31e84da2511f5b97bff2d038afc28eb0d95c3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -80,7 +81,8 @@ Source normalized SHA256: `b936720bfc59ae69c09e2123b4801ccf85456763004ccac217b84
 | [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-244 |
 | [VERIFY][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Instance isolation, lethal hits and Unity playback | 245-250 |
 | [VERIFY][战斗表现][跳字][RO-HUD-WORD-ART-20261104] Atlas references, Unity import and offline browser checks | 251-255 |
-| [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words | 256-260 |
+| [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words | 256-261 |
+| [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Verify shared monster animation playback | 262-265 |
 
 ## Docs/AI/DECISIONS.en.md
 
@@ -94,7 +96,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `a07a845c929710c571f492ad717005597a6bc953d962a8d2f048ecb75198645d`
+Source normalized SHA256: `78aaeadd1a0afb9c1a413c3f86471379e4b5a73aecba20ee618a670c4e7af8c5`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -110,7 +112,8 @@ Source normalized SHA256: `a07a845c929710c571f492ad717005597a6bc953d962a8d2f048e
 | [QUERY][副本编辑器][RO-DUNGEON-EDITOR-20261102] RO dungeon editor entry points and data route, 2026-11-02 | 79-89 |
 | [QUERY][技能][互斥][RO-CLIENT-CAST-CHECK-20261102] RO client/server casting checks | 90-99 |
 | [QUERY][技能][吟唱][SKILL-FALSE-SINGING-20261102] Non-singing skills delayed by an extra server singing phase | 100-109 |
-| [QUERY][技能][打断][组合][RO-SKILL-CANCEL-20261103] RO cancellation and combination handoff semantics | 110-116 |
+| [QUERY][技能][打断][组合][RO-SKILL-CANCEL-20261103] RO cancellation and combination handoff semantics | 110-117 |
+| [QUERY][怪物AI][副本][LYF-MONSTER-AI-READY-20261104] Readiness of LYF wave 18 for server-driven monster AI | 118-124 |
 
 ## Older records
 

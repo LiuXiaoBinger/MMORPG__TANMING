@@ -226,20 +226,8 @@ using MMoRpgCommon.SceneEntity;
             {
                 return false;
             }
-            // 模型上实际播放动画的 Unity 组件，NPC 预制体的状态位于 Base Layer 顶层。
-            Animator animator = Entity.Model.Ator.UnityAnimator;
-            if (animator == null)
-            {
-                return false;
-            }
-            // 层 0 目标状态短名的哈希，用于向控制器查询该状态是否真实存在。
-            int shortStateHash = Animator.StringToHash(stateName);
-            if (animator.HasState(0, shortStateHash))
-            {
-                return true;
-            }
-            // 部分控制器以完整路径登记状态，补一次 Base Layer 全路径检查。
-            return animator.HasState(0, Animator.StringToHash("Base Layer." + stateName));
+            // 沿用播放时的路径解析，同时识别公共怪物图的嵌套待机、移动和根层动作。
+            return Entity.Model.Ator.HasNativeState(stateName, 0);
         }
 
         /// <summary>按动作状态名，从实体表现表取对应的动画名。</summary>

@@ -234,3 +234,8 @@
 - SceneWaveSpawner.ChangeHP 将每只怪物实际扣除的 HP 和服务端命中起点写入现有的同实例通知 MonsterAttrUpdateNtf。快照中的伤害值保持为零。TeamData 和 MSceneDungeon 只把实时 HP 变化传给 MBattleHudWordMgr.AddDraw。
 - Hurt_Normal_Attack.prefab 绑定了从 RO 提取的十个普通伤害数字和 Fonts.mat。渲染器把可见蒙皮模型的头顶投影到屏幕，在 1.7 s 内采样 RO 的位移、缩放和颜色。同一只怪物同时受到多次命中时，各条跳字间隔 0.068 s 显示。
 - 本地 GameServer、GateServer 和 Windows 热更新程序集已更新。现有工作树生成的 GM_Game.dll.bytes 仅保留在本地，因为这次构建包含另一项任务未跟踪的 DailyTaskWindow.cs。完整记录见 项目修改日志/2026-11-04-魔神塔普通伤害跳字.md。
+
+## [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] 魔神塔运行时角色改用 RO 公共怪物动画控制器
+
+- Codex 修正了先前提交 `0a7c986` 的接入方式。魔神塔运行时使用的 22 个怪物预制体和 11 个 NPC 预制体均已改用现有的 RO 公共控制器 `MMonsterAnimator.controller`。每个模型在预制体中保存原始动画槽与实际片段的对应关系，运行时由各自的 `MAnimator` 实例保存覆盖片段。已删除 33 个按角色 ID 建立的专用控制器及其 33 个 `.meta` 文件。公共控制器的状态图与 RO 参考文件逐字节一致。此前对项目现状的调查见 `LYF-MONSTER-AI-READY-20261104`。
+- `MSceneDungeon` 绑定模型时，`MModelPrepareData` 会应用整套动画片段。`MAnimator` 在后续技能播放时复用同一实例的覆盖控制器，并能定位怪物的两个嵌套移动状态。`MActionComponent` 检查状态和播放动画时使用相同的原生状态路径。原有的剧情待机、受击、死亡和已配置的出生动作均保留。完整文件清单与验证结果见 `项目修改日志/2026-11-04-魔神塔公共怪物动画控制器.md`。

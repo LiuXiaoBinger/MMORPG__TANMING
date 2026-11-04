@@ -253,3 +253,8 @@
 - GameServer 和 GateServer 均构建通过。两条独立的队友连接收到相同的 80 点伤害和最后扣除 20 HP 的致死一击，另一副本实例内的第三条连接未收到命中通知。首次入场和重新入场的快照以及未命中的攻击均未产生跳字。服务端 44 项断言通过。
 - 两名接收者的消息均经 Unity 正式客户端处理逻辑处理，并在正式 5504 模型上使用正式材质和数字切片渲染。50 项断言通过。重复更新只显示一次跳字，本地 HP 过期时致死一击仍显示实际扣除的 20 点伤害。同一帧原本重叠的多条跳字可以区分，跳字到期或卸载后网格均已移除。在两张可对照的 960×540 首帧渲染图中，跳字与可见模型顶部的间距分别为 17 px 和 15 px。
 - 本地 Windows 热更新程序集编译通过，大小为 692736 字节。两台 Unity 游戏客户端同时登录和打包后的 Player 均未实测。证据见 _temp/moshenta-normal-hit-word-20261104/ 和 项目修改日志/2026-11-04-魔神塔普通伤害跳字.md。
+
+## [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] 验证魔神塔公共怪物动画控制器的实际播放
+
+- Unity 2023.2.20f1c1 在隔离预览场景中检查了全部 33 个实际运行时预制体，经 `MModel.SetGameObject` 和公共 `MAnimator` 逐一播放 156 项序列化绑定，每个槽位实际播放的片段均与配置一致。兽人 5515 收到正式的 `DamageReceived` 事件后播放 `BeHit`，结束后回到 `Idle`。触发 `Death` 事件后，经 `Update` 和 `LateUpdate` 播放死亡片段。5514 和 5515 同时使用同一基础状态图，各实例的片段互相独立。项目资源中已无对已删除控制器 GUID 的引用。
+- Unity 编辑器编译未报告 C# 错误。当前工作树的 Windows Player 脚本在隔离输出目录中编译出 28 个程序集，包括 `GM_Game.dll`。未部署独立构建，也未运行双客户端游戏。验证证据见 `_temp/lyf-monster-public-animator-20261104/unity-clip-playback.json`、`_temp/lyf-monster-public-animator-20261104/unity-entity-events.json` 和 `_temp/lyf-monster-public-animator-20261104/player-compile.json`。
