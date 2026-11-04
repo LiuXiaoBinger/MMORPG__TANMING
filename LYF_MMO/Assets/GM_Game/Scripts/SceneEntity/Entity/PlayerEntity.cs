@@ -15,7 +15,10 @@ public sealed class PlayerEntity : RoleEntity
     public MEntity Target { get; set; }
 
     /// <summary>本地玩家的敌方选中圈，跟随当前目标并随玩家回收。</summary>
-    private readonly MTargetFxComponent _targetFx = new MTargetFxComponent();
+    private readonly MTargetFxComponent _fxComp = new MTargetFxComponent();
+
+    /// <summary>沿用 RO 本地玩家的 FxComp 入口，返回当前玩家拥有的选中表现组件。</summary>
+    public MTargetFxComponent FxComp { get { return _fxComp; } }
 
     /// <summary>本地玩家上次生成的施法 UUID，零表示该实体尚未释放技能。</summary>
     private ulong _nextSkillUuid;
@@ -217,7 +220,7 @@ public sealed class PlayerEntity : RoleEntity
     public override void LateUpdate(float deltaSeconds)
     {
         base.LateUpdate(deltaSeconds);
-        _targetFx.LateUpdate(Target);
+        FxComp.LateUpdate(Target);
     }
 
     /// <summary>销毁前取消目标，释放场景中的选中圈及本地角色数据。</summary>
@@ -225,7 +228,7 @@ public sealed class PlayerEntity : RoleEntity
     {
         MSkillTargetMgr.singleton.ResetTarget(null);
         Target = null;
-        _targetFx.OnDetachFromHost();
+        FxComp.OnDetachFromHost();
         DisposeRoleData();
         base.OnDestroying();
     }
