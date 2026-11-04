@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `23ac6512a38be44de77838181d543a8b04d80a9d64a18a4194b6ebf758ac40c1`
+Source normalized SHA256: `50c399157496e8723924b2a824db3ac350472632928191736e943f3cfad72c8c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -39,11 +39,11 @@ Source normalized SHA256: `23ac6512a38be44de77838181d543a8b04d80a9d64a18a4194b6e
 | [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-202 |
 | [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-209 |
 | [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-217 |
-| [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-222 |
+| [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-223 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3591a6c1de871a0941cb211ae5f71effb26c5ba536333d6fd7aef7306814cdc8`
+Source normalized SHA256: `b747dbc81bc84be7d2663c0fad10271ca1949a5d53f6969ed595a2ba6cd30cdb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -74,7 +74,7 @@ Source normalized SHA256: `3591a6c1de871a0941cb211ae5f71effb26c5ba536333d6fd7aef
 | [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
 | [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
 | [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-237 |
-| [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-242 |
+| [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-243 |
 
 ## Docs/AI/DECISIONS.en.md
 
