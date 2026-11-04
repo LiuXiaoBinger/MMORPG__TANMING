@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `cc452ba24bc9972980cfd2ff83ce99dcb5937145ab9b664b4e2abf789308d8b9`
+Source normalized SHA256: `a3e491841f099835495eedf70c009db729162265a4573751f7f5d412f9cf16ac`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -40,11 +40,12 @@ Source normalized SHA256: `cc452ba24bc9972980cfd2ff83ce99dcb5937145ab9b664b4e2ab
 | [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-209 |
 | [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-217 |
 | [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-224 |
-| [CODE][FILES][HANDOFF][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Shared Moshenta basic-attack damage and death | 225-228 |
+| [CODE][FILES][HANDOFF][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Shared Moshenta basic-attack damage and death | 225-229 |
+| [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map | 230-233 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e37e626b9684f555e606bcf0b8add9596850f0f27df1ab7cbf23fcae7d6cc812`
+Source normalized SHA256: `0d2dc6b457e5381186623463b2dc7a71700b15befb6d02468f9fd41d41222e76`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -76,7 +77,8 @@ Source normalized SHA256: `e37e626b9684f555e606bcf0b8add9596850f0f27df1ab7cbf23f
 | [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
 | [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-237 |
 | [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-244 |
-| [VERIFY][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Instance isolation, lethal hits and Unity playback | 245-249 |
+| [VERIFY][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Instance isolation, lethal hits and Unity playback | 245-250 |
+| [VERIFY][战斗表现][跳字][RO-HUD-WORD-ART-20261104] Atlas references, Unity import and offline browser checks | 251-254 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -226,3 +226,8 @@
 
 - Codex implemented and verified the feature directly. GameServer creates 68 initial combat monsters per instance through SceneWaveSpawner. ROArtSkill checks the four authored hit windows across the three variants (1/1/2) of basic attack 10010 against the caster's position and aim. Monster HP is broadcast reliably to that instance and restored from entry state. Unity binds by wave and spawn ordinal and uses BeHit / Dead with the 14 original monster death clips.
 - Initial tuning is 80 damage per hit, 240 HP for ordinary monsters and 480 HP for the three Thanatos forms. Story actors and NPCs are excluded. Full inventory and evidence: 项目修改日志/2026-11-04-魔神塔普攻伤害与怪物死亡.md.
+
+## [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map
+
+- Imported the original 512 × 512 Fonts.png atlas and all 97 Sprite slices into LYF_MMO/Assets/GM_Game/UISprites/ROHudWord. Fonts.mat keeps the RO material GUID but uses the project's built-in UI/Default shader. No game code or RO script prefabs were imported.
+- 项目分析/RO伤害跳字-资源与显示链路思维导图-2026-11-04.html is a standalone browser map with source references, motion previews and a ZIP of the 97 original PNGs. Full record: 项目修改日志/2026-11-04-RO伤害跳字美术资源与思维导图.md.
