@@ -14,6 +14,9 @@ public sealed class PlayerEntity : RoleEntity
     /// <summary>当前选中的实体，点击、瞄准和技能选择共用；离场和复用时清空。</summary>
     public MEntity Target { get; set; }
 
+    /// <summary>本地玩家的敌方选中圈，跟随当前目标并随玩家回收。</summary>
+    private readonly MTargetFxComponent _targetFx = new MTargetFxComponent();
+
     /// <summary>本地玩家上次生成的施法 UUID，零表示该实体尚未释放技能。</summary>
     private ulong _nextSkillUuid;
 
@@ -209,13 +212,20 @@ public sealed class PlayerEntity : RoleEntity
         base.UpdateBaseInfo(baseInfo);
     }
 
-    /// <summary>
-    /// 销毁前释放本地角色数据
-    /// </summary>
+    /// <summary>玩家模型完成本帧更新后，将脚下标记同步到实际选中的怪物。</summary>
+    /// <param name="deltaSeconds">本帧经过的秒数，由实体世界传给模型和状态机。</param>
+    public override void LateUpdate(float deltaSeconds)
+    {
+        base.LateUpdate(deltaSeconds);
+        _targetFx.LateUpdate(Target);
+    }
+
+    /// <summary>销毁前取消目标，释放场景中的选中圈及本地角色数据。</summary>
     protected override void OnDestroying()
     {
         MSkillTargetMgr.singleton.ResetTarget(null);
         Target = null;
+        _targetFx.OnDetachFromHost();
         DisposeRoleData();
         base.OnDestroying();
     }
