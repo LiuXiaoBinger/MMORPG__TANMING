@@ -192,6 +192,7 @@ message TeamEnterDungeonNtf{
 	int32 map_id = 5;          //该实例对应的地图ID
 	string pos = 6;            //出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
 	repeated MonsterHpData monsters = 7;//本实例已经出生的战斗怪物及其当前血量
+	repeated MonsterActionData monster_actions = 8;//入场时已有 AI 的怪物当前动作，含权威位置与剩余时间
 }
 
 // 实例内的怪物属性；同一波次的多个相同模型由出生序号区分。
@@ -209,6 +210,8 @@ message MonsterAttrUpdateNtf {
 	float firer_x = 3;//命中时施害者的世界坐标 X，单位米，供同实例观察者计算跳字方向
 	float firer_y = 4;//命中时施害者的世界坐标 Y，单位米
 	float firer_z = 5;//命中时施害者的世界坐标 Z，单位米
+	repeated MonsterActionData monster_actions = 6;//本次开始或改变的怪物动作，按服务端执行顺序下发
+	repeated MonsterPlayerHitData player_hits = 7;//怪物技能结果点实际造成的玩家血量变化
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。
@@ -444,4 +447,38 @@ message SyncMoveNtf
   bool is_moving = 7;//本段末帧是否仍处于主动移动状态
   bool is_moved = 8;//本段是否产生位置变化，供远端动画接入
   int32 jump_count = 9;//移动者当前跳跃段，0表示落地或未跳跃，1到3表示对应跳跃段
+}
+
+// 怪物在服务端决定的表现阶段，巡逻和追击共用沿导航段移动的表现。
+enum MonsterActionPhase {
+	MonsterActionPhaseIdle = 0;   // 当前站定或在巡逻点等待
+	MonsterActionPhaseMove = 1;   // 正沿当前导航段前往目标点
+	MonsterActionPhaseAttack = 2; // 正在播放本次普攻，伤害另由服务端结果点下发
+	MonsterActionPhaseDead = 3;   // 生命已归零，停止移动和攻击
+}
+
+// 同一出生位的一段动作。入场快照从怪物此刻的位置开始，使用该段剩余时间。
+message MonsterActionData {
+	uint64 spawn_id = 1;       // 本实例的稳定出生标识，高 32 位为波次，低 32 位为序号
+	MonsterActionPhase phase = 2; // 当前动作阶段
+	float x = 3;               // 通知生成时的权威世界坐标 X，单位米
+	float y = 4;               // 通知生成时的权威世界坐标 Y，单位米
+	float z = 5;               // 通知生成时的权威世界坐标 Z，单位米
+	float to_x = 6;            // 当前移动段终点 X，单位米
+	float to_y = 7;            // 当前移动段终点 Y，单位米
+	float to_z = 8;            // 当前移动段终点 Z，单位米
+	int32 duration_ms = 9;     // 移动段或本次攻击剩余时长，单位毫秒
+	float face = 10;           // 绕世界 Y 轴的朝向，单位度，零度朝世界正 Z
+	int32 skill_id = 11;       // 攻击阶段使用的怪物技能配置号
+	int32 target_role_id = 12; // 当前追击或攻击的玩家角色 ID，无目标为零
+	int32 elapsed_ms = 13;     // 当前攻击已经过的毫秒数，恢复进行中的挥刀时使用
+}
+
+// 由 GameServer 结算的单次怪物攻击结果，用角色 ID 定位玩家、出生标识定位施害者。
+message MonsterPlayerHitData {
+	int32 target_role_id = 1; // 受击玩家角色 ID
+	int32 hp = 2;             // 本次扣血后的权威生命，零为死亡
+	int32 max_hp = 3;         // 受击玩家的生命上限
+	int32 damage = 4;         // 本次实际扣除的生命点
+	uint64 spawn_id = 5;      // 发起这次攻击的怪物出生标识
 }

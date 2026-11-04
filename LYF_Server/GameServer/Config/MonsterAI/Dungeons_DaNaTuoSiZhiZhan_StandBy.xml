@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_StandBy>
+  <EntryTask T_Target="" F_TargetDistance="0" S_CurrentState="" S_PreviousState="" F_Temp="0" V_out_fight_pos="0:0:0" V_FinalDest="0:0:0" L_TargetUuid="0" LL_SkillList="" LL_CommonSkillList="" F_min_attack_range="0.5" F_FightRange="0" B_OutFightBuff="0" F_BackDistance="0" B_FreeMove="1" V_in_fight_pos="0:0:0" B_OutCombat="0" B_ReturnBack="0" F_SelfSpeed="0" F_IdleProb="0.1" F_FightProb="0.05">
+    <Selector>
+      <Sequence>
+        <AIGetCurrentState Shared_store_resultName="CurrentState" Shared_store_resultmValue="" />
+        <AIStringEqual Shared_string1Name="CurrentState" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="Idle" />
+        <ReturnSuccess>
+          <AIPatrolWhthPath />
+        </ReturnSuccess>
+      </Sequence>
+      <Sequence>
+        <AIGetCurrentState Shared_store_resultName="CurrentState" Shared_store_resultmValue="" />
+        <AIStringEqual Shared_string1Name="CurrentState" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="Combat" />
+        <AIFindTargetByHatred Shared_store_targetName="Target" Shared_store_targetmValue="" Shared_store_target_distanceName="TargetDistance" Shared_store_target_distancemValue="0" />
+        <AIGetTargetUUID Shared_store_uuidName="TargetUuid" Shared_store_uuidmValue="0" Shared_direct_targetName="Target" Shared_direct_targetmValue="" />
+        <Selector>
+          <Sequence>
+            <AIFilterGroupSkill Shared_group_idName="" Shared_group_idmValue="1" Shared_store_skillsName="SkillList" Shared_store_skillsmValue="" Shared_target_uuidName="TargetUuid" Shared_target_uuidmValue="0" />
+            <AICastSkillByList Shared_cast_typeName="" Shared_cast_typemValue="0" Shared_store_skillsName="SkillList" Shared_store_skillsmValue="" Shared_target_uuidName="TargetUuid" Shared_target_uuidmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIFilterGroupSkill Shared_group_idName="" Shared_group_idmValue="0" Shared_store_skillsName="CommonSkillList" Shared_store_skillsmValue="" Shared_target_uuidName="TargetUuid" Shared_target_uuidmValue="0" />
+            <AICastSkillByList Shared_cast_typeName="" Shared_cast_typemValue="0" Shared_store_skillsName="CommonSkillList" Shared_store_skillsmValue="" Shared_target_uuidName="TargetUuid" Shared_target_uuidmValue="0" />
+          </Sequence>
+          <BehaviorTreeReference externalBehaviors="0" collapsed="0" variables="" />
+        </Selector>
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects>
+    <pointer fileName="Common_Monster_CloseToEnemy" />
+  </UnityObjects>
+</Dungeons_DaNaTuoSiZhiZhan_StandBy>

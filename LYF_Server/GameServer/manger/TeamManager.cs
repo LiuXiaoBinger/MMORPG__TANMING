@@ -49,6 +49,8 @@ public sealed class TeamManager
 
     /// <summary>队伍表，键为队伍ID，值为队伍状态。</summary>
     private readonly Dictionary<ulong, Team> _teams = new Dictionary<ulong, Team>();
+    /// <summary>当前确实持有魔神塔实例的队伍，避免逻辑帧扫描主城队伍。</summary>
+    private readonly List<Team> dungeonTeams = new List<Team>();
 
     /// <summary>角色到队伍的索引，键为角色ID，值为队伍ID，用于快速反查。</summary>
     private readonly Dictionary<ulong, ulong> _roleTeam = new Dictionary<ulong, ulong>();
@@ -82,6 +84,8 @@ public sealed class TeamManager
         public ulong InstanceId;
         /// <summary>队伍当前副本的服务端怪物与生命值，最后一人离开时释放。</summary>
         public SceneWaveSpawner WaveSpawner;
+        /// <summary>复用的逐帧动作通知，每帧发送前已将上一帧的列表清空。</summary>
+        public readonly MonsterAttrUpdateNtf MonsterFrame = new MonsterAttrUpdateNtf();
     }
 
     /// <summary>由已提交的普攻在逻辑线程调用，只向角色所在实例的成员广播本窗口实际命中的怪物。</summary>
@@ -98,15 +102,43 @@ public sealed class TeamManager
         if (team.WaveSpawner == null || (ulong)caster.mainRoleInfo.BaseInfo.InstanceId != team.InstanceId) return;
         // 同一逻辑线程先扣血、再构造一份全队共享的可靠下行载荷。
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
-        team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets);
+        team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets, caster);
         if (notice.Monsters.Count == 0) return;
+        SendMonsterNotice(team, notice);
+    }
+
+    /// <summary>向本副本当前在线队员可靠广播同一份怪物结果。</summary>
+    /// <param name="team">拥有本次事件的队伍。</param>
+    /// <param name="notice">在当前逻辑线程已结算的动作和生命变化。</param>
+    private static void SendMonsterNotice(Team team, MonsterAttrUpdateNtf notice)
+    {
+        // 同实例所有观察者复用相同的一份序列化结果。
         ByteString payload = notice.ToByteString();
         for (int index = 0; index < team.Members.Count; index++)
         {
             // 队员的位置仍属于本实例才接收，不使用附近距离裁剪血量。
             OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
-            if (member != null && member.mainRoleInfo.BaseInfo.InstanceId == caster.mainRoleInfo.BaseInfo.InstanceId)
+            if (member != null && (ulong)member.mainRoleInfo.BaseInfo.InstanceId == team.InstanceId)
                 member.SendToClient(NetDefine.CMD_MonsterAttrUpdateCode, payload);
+        }
+    }
+
+    /// <summary>只驱动仍持有实例的队伍，发出本帧产生的移动、施法与玩家扣血。</summary>
+    /// <param name="deltaMilliseconds">本固定逻辑帧的毫秒数。</param>
+    public void UpdateMonsters(int deltaMilliseconds)
+    {
+        // 副本列表的下标；队员进出与帧更新都由 GameGlobal 串行执行。
+        for (int index = 0; index < dungeonTeams.Count; index++)
+        {
+            // 同一副本的兽人及该实例本次复用的事件集合。
+            Team team = dungeonTeams[index];
+            // 当前帧本实例专属的广播载荷，跳过没有动作和伤害的帧。
+            MonsterAttrUpdateNtf frame = team.MonsterFrame;
+            frame.InstanceId = team.InstanceId;
+            frame.MonsterActions.Clear();
+            frame.PlayerHits.Clear();
+            team.WaveSpawner.Update(deltaMilliseconds, frame);
+            if (frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0) SendMonsterNotice(team, frame);
         }
     }
 
@@ -710,6 +742,7 @@ public sealed class TeamManager
             RemoveTeamInvitations(teamId);
             if (team.InstanceId != 0UL)
             {
+                dungeonTeams.Remove(team);
                 team.WaveSpawner.Clear();
                 ReleaseInstance(team.InstanceId);
             }
@@ -768,6 +801,7 @@ public sealed class TeamManager
             team.WaveSpawner = new SceneWaveSpawner();
             team.InstanceId = _nextInstanceId;
             _nextInstanceId = _nextInstanceId + 1UL;
+            dungeonTeams.Add(team);
         }
 
         // 进入新实例前，先按原主城/原实例的真实观察者广播离开通知，不能只通知同队。

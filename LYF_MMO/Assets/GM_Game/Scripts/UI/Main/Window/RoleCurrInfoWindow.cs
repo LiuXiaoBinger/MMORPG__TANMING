@@ -97,6 +97,17 @@ public class RoleCurrInfoWindow : WindowBase
         }
     }
 
+    /// <summary>把服务端扣血结果显示在主角当前生命条上。</summary>
+    /// <param name="hp">命中结算后的生命点数。</param>
+    /// <param name="maxHp">本次同步的生命上限，非正数时显示为空条。</param>
+    public void UpdateHp(int hp, int maxHp)
+    {
+        // 滑条使用 0 到 1 的比例，不推算伤害或剩余血量。
+        float ratio = 0f;
+        if (maxHp > 0) ratio = Mathf.Clamp01((float)hp / maxHp);
+        if (_sliderHP != null) _sliderHP.value = ratio;
+    }
+
     /// <summary>只刷新窗口中的 MP 进度条，供施法权威回包增量更新。</summary>
     /// <param name="currentMp">当前 MP 点数，显示前按范围约束。</param>
     /// <param name="maxMp">最大 MP 点数，非正数时进度显示为零。</param>

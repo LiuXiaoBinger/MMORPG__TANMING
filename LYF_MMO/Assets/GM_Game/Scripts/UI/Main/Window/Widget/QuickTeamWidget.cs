@@ -325,7 +325,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
     /// <param name="member">服务器下发的成员信息。</param>
     /// <param name="localRoleId">本地主角角色ID。</param>
     /// <param name="index">成员在列表中的下标，0 表示第一行。</param>
-    /// <param name="hpRatio">本人生命比例，非本人行按满值显示。</param>
+    /// <param name="hpRatio">本人成员条目的最新服务端生命比例。</param>
     /// <param name="mpRatio">本人法力比例，非本人行按满值显示。</param>
     private void ApplyMemberToSlot(GameObject slot, TeamMemberInfo member, ulong localRoleId,
         int index, float hpRatio, float mpRatio)
@@ -340,7 +340,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
         TMP_Text levelText = _memberLevel;
         // 当前行职业头像，图片资源由外部 SetMemberJobSprite 设置。
         Image jobImage = _professionImage;
-        // 当前行生命条，只在本人行使用实时比例。
+        // 当前行生命条，按当前成员自己的权威生命值更新。
         Slider hpSlider = _hpSlider;
         // 当前行法力条，非本人行当前显示满值。
         Slider mpSlider = _mpSlider;
@@ -367,7 +367,7 @@ public sealed class QuickTeamWidget : MonoBehaviour
         {
             captainMark.SetActive(member.IsCaptain);
         }
-        // 本人行显示真实血蓝比例，其他成员行暂按满值显示。
+        // 本人同时有生命和法力；队伍协议只同步其他成员的生命。
         if (localRoleId != 0UL && member.RoleId == localRoleId)
         {
             SetSliderValue(hpSlider, hpRatio);
@@ -375,7 +375,10 @@ public sealed class QuickTeamWidget : MonoBehaviour
         }
         else
         {
-            SetSliderValue(hpSlider, 1f);
+            // 首包尚无生命上限时沿用原满条占位，正常副本成员显示自己的血量。
+            float memberHpRatio = 1f;
+            if (member.MaxHp > 0) memberHpRatio = (float)member.CurrHp / member.MaxHp;
+            SetSliderValue(hpSlider, memberHpRatio);
             SetSliderValue(mpSlider, 1f);
         }
         if (jobImage != null && localRoleId != 0UL && member.RoleId == localRoleId)

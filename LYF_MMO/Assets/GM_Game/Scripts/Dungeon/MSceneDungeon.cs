@@ -31,6 +31,7 @@ public class MSceneDungeon : MonoBehaviour
         world = Global.Instance.SceneWorld;
         instanceId = TeamData.Instance.DungeonInstanceId;
         TeamData.Instance.MonsterAttrUpdated += OnMonsterAttrUpdate;
+        TeamData.Instance.MonsterMotionUpdated += OnMonsterMotion;
         if (UIRoot.Instance != null && instanceId != 0UL)
         {
             // 预制体保存十张原始数字 Sprite、材质和 RO 普攻曲线，显示在功能窗口下方。
@@ -224,10 +225,24 @@ public class MSceneDungeon : MonoBehaviour
                 MonsterHpData data;
                 if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterAttr(spawnId, out data))
                     ChangeHP(monster, data, false);
+                // 晚加载的模型从服务器当前段进度恢复，保持入场死亡优先。
+                MSceneMonsterMotion motion;
+                if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterMotion(spawnId, out motion))
+                    ((MSceneMonsterHoster)controller).ApplyMotion(motion);
             }
             // 原 invisible 波次只隐藏模型和判定体，不改写出生配置。
             if (ROSceneXml.Text(wave.Data, "base_info/init_invisible") == "true") model.SetActive(false);
         });
+    }
+
+    /// <summary>只把本实例动作交给对应出生位的现有模型，未完成加载时由 TeamData 缓存。</summary>
+    /// <param name="motion">对应怪物最近收到的服务端位姿和动作阶段。</param>
+    private void OnMonsterMotion(MSceneMonsterMotion motion)
+    {
+        // 预制体已完成出生时可通过此服务端编号定位对应运行实体。
+        MonsterEntity monster;
+        if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(motion.Action.SpawnId, out monster)) return;
+        ((MSceneMonsterHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
     }
 
     /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>
@@ -253,6 +268,9 @@ public class MSceneDungeon : MonoBehaviour
         // 重复通知不能重播死亡；初次装载时 MaxHp 仍为零。
         if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return false;
         monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
+        // 受击与死亡走实体动作机，先解除当前普攻专用的慢速播放倍率。
+        if (hit || data.Hp == 0)
+            ((MSceneMonsterHoster)monster.GetEntityCtrl()).EndAttackPlayback();
         if (data.Hp == 0) monster.DispatchEvent(MEventType.Death, null);
         else if (hit) monster.DispatchEvent(MEventType.DamageReceived, null);
         return true;
@@ -262,6 +280,7 @@ public class MSceneDungeon : MonoBehaviour
     private void OnDestroy()
     {
         TeamData.Instance.MonsterAttrUpdated -= OnMonsterAttrUpdate;
+        TeamData.Instance.MonsterMotionUpdated -= OnMonsterMotion;
         if (battleHudWord != null) Destroy(battleHudWord.gameObject);
         monsters.Clear();
         if (world == null) return;

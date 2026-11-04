@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Common_Monster_CloseToEnemy>
+  <EntryTask T_Target="" F_TargetDistance="0" V_FinalDest="0:0:0" F_min_attack_range="0.5" F_FightRange="0" F_tolerance_range="0">
+    <Sequence>
+      <AIFloatComparison Shared_float1Name="TargetDistance" Shared_float1mValue="0" cmp_type="kCmpTypeGreaterTo" Shared_float2Name="min_attack_range" Shared_float2mValue="0.5" />
+      <AIFloatOperator oper_type="kOperTypeSubtract" Shared_float1Name="min_attack_range" Shared_float1mValue="0.5" Shared_float2Name="tolerance_range" Shared_float2mValue="0" Shared_store_resultName="FightRange" Shared_store_resultmValue="0" />
+      <Selector>
+        <AIGetTargetFightPosition Shared_store_posName="FinalDest" Shared_store_posmValue="0:0:0" Shared_distanceName="FightRange" Shared_distancemValue="0" Shared_fight_targetName="Target" Shared_fight_targetmValue="" />
+        <AIGetPostion Shared_store_postionName="FinalDest" Shared_store_postionmValue="0:0:0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_targetName="Target" Shared_targetmValue="" />
+      </Selector>
+      <ReturnSuccess>
+        <AIActionMove Shared_move_destName="FinalDest" Shared_move_destmValue="0:0:0" />
+      </ReturnSuccess>
+    </Sequence>
+  </EntryTask>
+  <UnityObjects />
+</Common_Monster_CloseToEnemy>

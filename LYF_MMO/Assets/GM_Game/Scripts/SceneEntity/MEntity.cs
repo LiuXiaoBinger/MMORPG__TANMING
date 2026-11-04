@@ -111,10 +111,14 @@ public abstract class MEntity : MSceneObject
     /// <summary>实体名字（来自属性组件）</summary>
     // 实体名称由角色数据组件提供，当前实体层不直接依赖该组件。
 
-    /// <summary>已初始化怪物的死亡状态读取服务端同步的生命属性</summary>
+    /// <summary>怪物和玩家按服务器同步的生命值判定死亡，尚未初始化血量的实体不算死亡。</summary>
     public bool IsDead {
         get
         {
+            // 本人和他人的基础属性均由持久角色 ID 对应的权威结果更新。
+            RoleEntity role = this as RoleEntity;
+            if (role != null && role.BaseInfo != null)
+                return role.BaseInfo.MaxHp > 0 && role.BaseInfo.CurrHp == 0;
             if (!(this is MonsterEntity) || AttrComp == null) return false;
             return AttrComp.MaxHp > 0 && AttrComp.CurrentHp == 0;
         } }

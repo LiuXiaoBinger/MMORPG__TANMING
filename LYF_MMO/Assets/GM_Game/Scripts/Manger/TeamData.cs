@@ -19,6 +19,10 @@ public sealed class TeamData
     private readonly Dictionary<ulong, MonsterHpData> monsterAttributes = new Dictionary<ulong, MonsterHpData>();
     /// <summary>实时命中事件携带单怪结算和施害者世界坐标，供副本播放动作及普通伤害跳字。</summary>
     public event Action<MonsterHpData, Vector3> MonsterAttrUpdated;
+    /// <summary>本实例中已收到的最新动作。模型异步创建前的位移和攻击也按出生位保留。</summary>
+    private readonly Dictionary<ulong, MSceneMonsterMotion> monsterMotions = new Dictionary<ulong, MSceneMonsterMotion>();
+    /// <summary>已加载的模型订阅此事件，按服务器当前路径段或攻击阶段播放表现。</summary>
+    public event Action<MSceneMonsterMotion> MonsterMotionUpdated;
 
     /// <summary>切换入场状态，按服务端快照重新绑定本实例的出生位。</summary>
     /// <param name="notice">组队入场或回城通知，包含当时的完整怪物血量。</param>
@@ -26,8 +30,12 @@ public sealed class TeamData
     {
         DungeonInstanceId = notice.InstanceId;
         monsterAttributes.Clear();
+        monsterMotions.Clear();
         for (int index = 0; index < notice.Monsters.Count; index++)
             monsterAttributes.Add(notice.Monsters[index].SpawnId, notice.Monsters[index]);
+        // 入场快照本身也可能落在攻击或移动途中。
+        for (int index = 0; index < notice.MonsterActions.Count; index++)
+            CacheMonsterMotion(notice.MonsterActions[index]);
     }
 
     /// <summary>读取出生位最近的服务端属性，供模型首次绑定使用。</summary>
@@ -38,11 +46,31 @@ public sealed class TeamData
         return monsterAttributes.TryGetValue(spawnId, out data);
     }
 
+    /// <summary>返回怪物模型尚未加载时已经到达的最近动作。</summary>
+    /// <param name="spawnId">副本内的波次和出生序号。</param>
+    /// <param name="motion">命中时返回带原始收包时间的动作。</param>
+    /// <returns>服务器是否已经同步过该怪物的动作。</returns>
+    public bool GetMonsterMotion(ulong spawnId, out MSceneMonsterMotion motion)
+    {
+        return monsterMotions.TryGetValue(spawnId, out motion);
+    }
+
+    /// <summary>保存最新的动作和收包时间，同时通知本实例中已经绑定的表现对象。</summary>
+    /// <param name="action">可靠包中一只怪物的权威动作。</param>
+    private void CacheMonsterMotion(MonsterActionData action)
+    {
+        // 时间在收包时记录，避免模型出现时重播已结束的挥刀。
+        MSceneMonsterMotion motion = new MSceneMonsterMotion(action, Time.realtimeSinceStartupAsDouble);
+        monsterMotions[action.SpawnId] = motion;
+        MonsterMotionUpdated?.Invoke(motion);
+    }
+
     /// <summary>处理 RO 风格怪物属性通知，仅更新所属实例。</summary>
     /// <param name="notice">本次命中的实体及服务器扣血结果。</param>
-    public void OnMonsterAttrUpdate(MonsterAttrUpdateNtf notice)
+    /// <returns>当前实例已接收此包时为真，控制器只呈现本实例的玩家受击。</returns>
+    public bool OnMonsterAttrUpdate(MonsterAttrUpdateNtf notice)
     {
-        if (notice.InstanceId != DungeonInstanceId) return;
+        if (notice.InstanceId != DungeonInstanceId) return false;
         // 这一批怪物由同一攻击者命中，队员无需从本地角色朝向猜测跳字方向。
         Vector3 firerPosition = new Vector3(notice.FirerX, notice.FirerY, notice.FirerZ);
         for (int index = 0; index < notice.Monsters.Count; index++)
@@ -52,6 +80,21 @@ public sealed class TeamData
             monsterAttributes[data.SpawnId] = data;
             MonsterAttrUpdated?.Invoke(data, firerPosition);
         }
+        // 属性先于动作，避免同包中的位移覆盖已经死亡的模型。
+        for (int index = 0; index < notice.MonsterActions.Count; index++)
+            CacheMonsterMotion(notice.MonsterActions[index]);
+        // 队伍列表使用角色的持久 ID，同一招的扣血量只取服务端结算。
+        for (int index = 0; index < notice.PlayerHits.Count; index++)
+        {
+            // 被打角色的血量快照，队伍窗口下一次刷新时直接读取。
+            MonsterPlayerHitData hit = notice.PlayerHits[index];
+            // 该角色的队伍条目。队伍全量快照有时晚于副本通知。
+            TeamMemberInfo member = FindMember((ulong)hit.TargetRoleId);
+            if (member == null) continue;
+            member.CurrHp = hit.Hp;
+            member.MaxHp = hit.MaxHp;
+        }
+        return true;
     }
 
     /// <summary>当前队伍成员列表，顺序与服务器下发一致，第一项通常是队长。</summary>
@@ -306,6 +349,7 @@ public sealed class TeamData
     {
         DungeonInstanceId = 0UL;
         monsterAttributes.Clear();
+        monsterMotions.Clear();
         ApplyTeamInfo(new TeamInfoNtf());
     }
 

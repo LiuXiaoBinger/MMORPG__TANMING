@@ -62,7 +62,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>服务器最近一次队伍通知中本人的生命比例，传给快捷队伍栏。</summary>
     private float _hpRatio;
 
-    /// <summary>快捷栏使用的法力条比例；当前由 _hpRatio 赋值，并非真实法力数据。</summary>
+    /// <summary>快捷栏显示的本地角色真实法力比例，怪物扣血不会改变它。</summary>
     private float _mpRatio;
 
     /// <summary>本次挑战选中的副本配置，由副本选择窗的挑战事件传入。</summary>
@@ -385,8 +385,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (self != null)
         {
             _hpRatio = CalculateRatio(self.CurrHp, self.MaxHp);
-            // 当前没有从队伍通知读取法力比例，快捷栏暂时复用生命比例。
-            _mpRatio = _hpRatio;
+            // 队伍包只携带生命，法力继续使用本人现有的权威基础属性。
+            RoleBaseInfo selfInfo = Global.Instance.SceneWorld.LocalRole.BaseInfo;
+            _mpRatio = CalculateRatio(selfInfo.CurrMp, selfInfo.MaxMp);
         }
         RefreshViews();
     }

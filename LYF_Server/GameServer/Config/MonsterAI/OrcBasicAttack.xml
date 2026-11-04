@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4060 第18波。以下是 RO 原表 5515 与其 1 级普攻参与本场结算的原字段。 -->
+<OrcBasicAttack>
+  <EntityTable Id="5515" UnitLevel="75" STR="52" DEX="24" LUK="5" BaseATK="0" WEAPON_ATK="3302" HIT="146" CRI="0" DEF_IGNORE="150" SheildIgnore="50"
+               AI="Dungeons_DaNaTuoSiZhiZhan_RandMove|Dungeons_DaNaTuoSiZhiZhan_StandBy" UnitSkillID="1000118401=1=0=10000"
+               MoveSpeed="5.1" ASPD="79" AIStartTime="1" AIHeartInterval="1" AIHeartIntervalCombat="0.3" />
+  <SkillTable Id="1000118401" IsAffectedASPD="1" />
+  <SkillEffectTable Id="1000118401" Level="1" DamageScript="CommonSkillCritCalc" AttackCount="1" PVEDamageRadio="10000" PVEStaticDam="0"
+                    FarRange="1.5" PVECoolTime="1" />
+  <!-- 原 SkillData/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Attack.txt，时间单位为秒。 -->
+  <MSkillData><Time>1</Time><ResultList><MSkillResultData><At>0.333333343</At></MSkillResultData></ResultList></MSkillData>
+</OrcBasicAttack>

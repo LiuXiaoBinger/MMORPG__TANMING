@@ -108,7 +108,33 @@ public sealed class TeamCtrl : CtrlBase
     /// <param name="data">GameServer 发送的 MonsterAttrUpdateNtf 原始字节。</param>
     private void OnMonsterAttrUpdate(ByteString data)
     {
-        TeamData.Instance.OnMonsterAttrUpdate(MonsterAttrUpdateNtf.Parser.ParseFrom(data));
+        // 同一通知承载怪物动作、怪物失血或某玩家被打的权威结果。
+        MonsterAttrUpdateNtf notice = MonsterAttrUpdateNtf.Parser.ParseFrom(data);
+        if (!TeamData.Instance.OnMonsterAttrUpdate(notice) || notice.PlayerHits.Count == 0) return;
+        // 当前显示该实例的角色索引，本人和远端分别存放。
+        SceneWorldSystem world = Global.Instance.SceneWorld;
+        for (int index = 0; index < notice.PlayerHits.Count; index++)
+        {
+            // 角色 ID 是持久身份，不可用于查找本地 SceneWorld 的实体 UID。
+            MonsterPlayerHitData hit = notice.PlayerHits[index];
+            // 本地角色同时需要刷新当前生命条。
+            PlayerEntity self = world.LocalRole;
+            if (self != null && self.GetID() == hit.TargetRoleId)
+            {
+                self.ApplyMonsterHit(hit);
+                // 主界面重建后由新的队伍控制器接管此窗口。
+                MainView main = _view as MainView;
+                if (main != null && main.RoleCurrentWindow != null)
+                    main.RoleCurrentWindow.UpdateHp(hit.Hp, hit.MaxHp);
+            }
+            else
+            {
+                // 只对当前可见的其他玩家派发受击，队伍成员血量已由数据缓存更新。
+                RoleEntity other;
+                if (world.TryGetRole(hit.TargetRoleId, out other)) other.ApplyMonsterHit(hit);
+            }
+        }
+        TeamInfoReceived?.Invoke(TeamData.Instance.IsInTeam);
     }
 
     #region 事件回调

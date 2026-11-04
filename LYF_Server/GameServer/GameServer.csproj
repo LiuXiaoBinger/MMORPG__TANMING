@@ -52,7 +52,15 @@
         <Compile Include="MessageHandler\Team\TeamMessageHandler.cs" />
         <Compile Include="manger\TeamManager.cs" />
         <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
+        <Compile Include="SceneEntity\MoshentaOrc.cs" />
+        <Compile Include="SceneEntity\MoshentaOrcDefinition.cs" />
+        <Compile Include="SceneEntity\OrcStandByTree.cs" />
+        <Compile Include="SceneEntity\OrcNavigation.cs" />
         <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
+        <Compile Include="SceneEntity\Skill\OrcBasicAttackDamage.cs" />
+        <EmbeddedResource Include="Config\MonsterAI\OrcBasicAttack.xml">
+            <LogicalName>Moshenta.OrcBasicAttack.xml</LogicalName>
+        </EmbeddedResource>
         <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Dungeon\ROSceneCreatureEntity.cs">
             <Link>Config\ROSceneCreatureEntity.cs</Link>
         </Compile>
@@ -213,6 +221,16 @@
       </Content>
       <!-- 状态互斥表：原样取自参考工程 config/Table/CSV/StateExclusionTable.csv，随程序集嵌入。 -->
       <EmbeddedResource Include="Config\StateExclusionTable.csv" />
+      <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_StandBy.xml">
+        <LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_StandBy.xml</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Config\MonsterAI\Common_Monster_CloseToEnemy.xml">
+        <LogicalName>Moshenta.AI.Common_Monster_CloseToEnemy.xml</LogicalName>
+      </EmbeddedResource>
+      <Content Include="..\..\NavigationData\sc_dungeon_moshenta_001.navmesh.bytes">
+        <Link>NavigationData\sc_dungeon_moshenta_001.navmesh.bytes</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt">
             <LogicalName>Moshenta.Waves.xml</LogicalName>
         </EmbeddedResource>

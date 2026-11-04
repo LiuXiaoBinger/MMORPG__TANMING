@@ -258,3 +258,8 @@
 
 - Unity 2023.2.20f1c1 在隔离预览场景中检查了全部 33 个实际运行时预制体，经 `MModel.SetGameObject` 和公共 `MAnimator` 逐一播放 156 项序列化绑定，每个槽位实际播放的片段均与配置一致。兽人 5515 收到正式的 `DamageReceived` 事件后播放 `BeHit`，结束后回到 `Idle`。触发 `Death` 事件后，经 `Update` 和 `LateUpdate` 播放死亡片段。5514 和 5515 同时使用同一基础状态图，各实例的片段互相独立。项目资源中已无对已删除控制器 GUID 的引用。
 - Unity 编辑器编译未报告 C# 错误。当前工作树的 Windows Player 脚本在隔离输出目录中编译出 28 个程序集，包括 `GM_Game.dll`。未部署独立构建，也未运行双客户端游戏。验证证据见 `_temp/lyf-monster-public-animator-20261104/unity-clip-playback.json`、`_temp/lyf-monster-public-animator-20261104/unity-entity-events.json` 和 `_temp/lyf-monster-public-animator-20261104/player-compile.json`。
+
+## [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] 第 18 波兽人的服务端、伤害与 Unity 回放验证
+
+- 候选 `GameServer` 使用 3 名玩家、2 个副本实例和真实 TCP 数据包，推进 42.9 秒模拟服务端时间，39 项专用检查全部通过。把怪物移开 30 米后，玩家普攻在旧位置打空，在怪物权威当前位置命中。检查覆盖巡逻与等待、受击反击、追击、攻击时刻与冷却、血量、切换仇恨目标、死亡取消攻击、入场快照和实例清理。已有的 17 项战斗及 Gate 检查、108 项队伍检查也全部通过。9 组固定随机取值的样例使用 LYF 目标数据，与 RO 原版 Lua 分支结算一致，覆盖防御、暴击、暴击抵抗、暴伤减免、未命中和伤害浮动。
+- Unity 2023.2.20f1c1 在隔离预览场景中，经正常客户端通知与模型流程回放 10 个实抓数据包，17 项检查全部通过。覆盖公共控制器的实际动画片段、本地与远端视角的血量、跨实例消息过滤、死亡、攻击播放速度，以及迟到和已过期的动作快照。未同时运行两个独立发布客户端，也未进行线上部署。证据见 `_temp/orc-wave18-ai-20261104/test-report.json`、`_temp/orc-wave18-ai-20261104/damage-parity.json` 和 `_temp/orc-wave18-ai-20261104/unity-wire-replay.json`。

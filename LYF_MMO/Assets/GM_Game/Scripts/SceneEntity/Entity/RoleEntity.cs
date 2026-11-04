@@ -69,6 +69,28 @@ public class RoleEntity : MEntity
         BaseInfo = baseInfo.Clone();
     }
 
+    /// <summary>接收怪物对本角色的权威伤害，更新角色资料、实体生命和动作状态。</summary>
+    /// <param name="hit">携带剩余生命、上限和本次真实伤害的服务端结果。</param>
+    public void ApplyMonsterHit(MonsterPlayerHitData hit)
+    {
+        if (BaseInfo == null) return;
+        // 已应用的相同血量不重复触发受击或死亡。
+        bool lostHealth = hit.Hp < BaseInfo.CurrHp;
+        // 本地玩家的虚方法会同时更新 MainRoleInfo 与场景 BaseInfo 的独立副本。
+        RoleBaseInfo updated = BaseInfo.Clone();
+        updated.CurrHp = hit.Hp;
+        updated.MaxHp = hit.MaxHp;
+        UpdateBaseInfo(updated);
+        if (AttrComp != null)
+            AttrComp.Apply(hit.MaxHp, hit.Hp, updated.MaxMp, updated.CurrMp);
+        // 已绑定的主角旧攻击入口也从控制器上的基础信息检查存活。
+        RoleCtrlBase controller = GetEntityCtrl();
+        if (controller != null) controller.InitCtrl(controller._roleType, BaseInfo);
+        if (!lostHealth) return;
+        if (hit.Hp == 0) DispatchEvent(MEventType.Death, null);
+        else if (hit.Damage > 0) DispatchEvent(MEventType.DamageReceived, null);
+    }
+
     /// <summary>
     /// 对象池复用时清空角色基础信息
     /// </summary>
