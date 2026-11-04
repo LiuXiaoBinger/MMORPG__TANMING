@@ -134,9 +134,11 @@ public sealed class SkillCastHandler : IGameMessageHandler
         {
             args.skill_id_ = request.SkillId;
             args.skill_uuid_ = request.SkillUuid;
-            // 现有协议只携带技能 ID 与单次施法标识，目标与施法点保持 RO 字段的零值默认。
+            // RO 的施法点只决定普攻朝向，命中目标由游戏服查询。
             args.target_ = 0UL;
             args.cast_point_ = new ROVector3(0f, 0f, 0f);
+            if (request.CastPoint != null)
+                args.cast_point_ = new ROVector3(request.CastPoint.X, 0f, request.CastPoint.Z);
 
             // req_token 是本次状态切换请求的序号；最终结果由下面的回调给出，不靠序号同步等待。
             ulong req_token;

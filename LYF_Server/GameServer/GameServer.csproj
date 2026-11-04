@@ -51,6 +51,11 @@
         <Compile Include="MessageHandler\Role\MoveOperationHandler.cs" />
         <Compile Include="MessageHandler\Team\TeamMessageHandler.cs" />
         <Compile Include="manger\TeamManager.cs" />
+        <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
+        <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Dungeon\ROSceneCreatureEntity.cs">
+            <Link>Config\ROSceneCreatureEntity.cs</Link>
+        </Compile>
         <Compile Include="SceneEntity\Skill\ROSkillCore.cs" />
         <Compile Include="SceneEntity\Skill\ROSkill.cs" />
         <Compile Include="SceneEntity\Skill\ROCombineSkill.cs" />
@@ -185,6 +190,8 @@
       <Reference Include="mscorlib" />
       <Reference Include="System" />
       <Reference Include="System.Web.Extensions" />
+      <Reference Include="System.Xml" />
+      <Reference Include="System.Xml.Linq" />
       <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
         <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
       </Reference>
@@ -206,6 +213,12 @@
       </Content>
       <!-- 状态互斥表：原样取自参考工程 config/Table/CSV/StateExclusionTable.csv，随程序集嵌入。 -->
       <EmbeddedResource Include="Config\StateExclusionTable.csv" />
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt">
+            <LogicalName>Moshenta.Waves.xml</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\MoshentaCreatures.json">
+            <LogicalName>Moshenta.Creatures.json</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

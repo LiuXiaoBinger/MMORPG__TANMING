@@ -42,6 +42,8 @@ public class NetDefine
     public const ushort CMD_SkillCastStartCode = 11171;
     /// <summary>服务器正常结束或中断施法的表现结束通知协议号。</summary>
     public const ushort CMD_SkillCastEndCode = 11173;
+    /// <summary>副本实例内怪物的权威生命值变化，走可靠下行。</summary>
+    public const ushort CMD_MonsterAttrUpdateCode = 11174;
     /// <summary>Unity 按 RO UpdateMove 上报位置和朝向的请求协议号。</summary>
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>

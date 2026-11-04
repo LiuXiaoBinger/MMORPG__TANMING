@@ -191,6 +191,20 @@ message TeamEnterDungeonNtf{
 	uint64 instance_id = 4;    //进入副本时为分配的非零实例ID；离开副本回城通知中为 0
 	int32 map_id = 5;          //该实例对应的地图ID
 	string pos = 6;            //出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
+	repeated MonsterHpData monsters = 7;//本实例已经出生的战斗怪物及其当前血量
+}
+
+// 实例内的怪物属性；同一波次的多个相同模型由出生序号区分。
+message MonsterHpData {
+	uint64 spawn_id = 1;//高32位为波次号，低32位为从1起算的出生序号
+	int32 hp = 2;//当前生命值，零表示已死亡
+	int32 max_hp = 3;//本次出生的生命上限
+}
+
+// GameServer 向同一副本实例可靠广播本次命中的属性变化。
+message MonsterAttrUpdateNtf {
+	uint64 instance_id = 1;//权威副本实例号
+	repeated MonsterHpData monsters = 2;//本次血量下降的实体
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。

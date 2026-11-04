@@ -24,4 +24,10 @@ public sealed class ROSceneCreatureEntity
     public bool isNpc;
     /// <summary>副本剧情怪物为 true 时只参与场景表现，旧配置默认参与战斗。</summary>
     public bool nonCombatant;
+    /// <summary>本项目基础战斗的出生生命值；零表示没有战斗属性。</summary>
+    public int maxHp;
+    /// <summary>正式预制体按出生缩放后的水平战斗半径，单位米。</summary>
+    public float boundRadius;
+    /// <summary>正式预制体按出生缩放后的判定高度，单位米。</summary>
+    public float boundHeight;
 }

@@ -63,6 +63,7 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_SkillCastCode, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_SkillCastStartCode, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_SkillCastEndCode, gateSkillCtrl);
+            client.RegistCommand(NetDefine.CMD_MonsterAttrUpdateCode, gateSkillCtrl);
             // 移动只做原路上报和附近通知转发，网关不参与位置结算。
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);

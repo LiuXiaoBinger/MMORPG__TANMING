@@ -12,6 +12,45 @@ public sealed class TeamData
     /// <summary>单例，全局只保留一份队伍状态。</summary>
     private static readonly TeamData _instance = new TeamData();
 
+    /// <summary>当前已确认进入的副本实例，回城时归零。</summary>
+    public ulong DungeonInstanceId { get; private set; }
+    /// <summary>当前实例各出生位最近收到的生命值，模型异步加载时也保留更新。</summary>
+    private readonly Dictionary<ulong, MonsterHpData> monsterAttributes = new Dictionary<ulong, MonsterHpData>();
+    /// <summary>正式怪物模型监听本事件，按收到的权威血量播放受击或死亡。</summary>
+    public event Action<MonsterHpData> MonsterAttrUpdated;
+
+    /// <summary>切换入场状态，按服务端快照重新绑定本实例的出生位。</summary>
+    /// <param name="notice">组队入场或回城通知，包含当时的完整怪物血量。</param>
+    public void OnEnterScene(TeamEnterDungeonNtf notice)
+    {
+        DungeonInstanceId = notice.InstanceId;
+        monsterAttributes.Clear();
+        for (int index = 0; index < notice.Monsters.Count; index++)
+            monsterAttributes.Add(notice.Monsters[index].SpawnId, notice.Monsters[index]);
+    }
+
+    /// <summary>读取出生位最近的服务端属性，供模型首次绑定使用。</summary>
+    /// <param name="spawnId">波次与点位展开序号合成的实例内标识。</param>
+    /// <param name="data">成功时为该怪物的最新血量。</param>
+    public bool GetMonsterAttr(ulong spawnId, out MonsterHpData data)
+    {
+        return monsterAttributes.TryGetValue(spawnId, out data);
+    }
+
+    /// <summary>处理 RO 风格怪物属性通知，仅更新所属实例。</summary>
+    /// <param name="notice">本次命中的实体及服务器扣血结果。</param>
+    public void OnMonsterAttrUpdate(MonsterAttrUpdateNtf notice)
+    {
+        if (notice.InstanceId != DungeonInstanceId) return;
+        for (int index = 0; index < notice.Monsters.Count; index++)
+        {
+            // 先缓存后通知，迟于协议完成加载的模型仍会读到最新值。
+            MonsterHpData data = notice.Monsters[index];
+            monsterAttributes[data.SpawnId] = data;
+            MonsterAttrUpdated?.Invoke(data);
+        }
+    }
+
     /// <summary>当前队伍成员列表，顺序与服务器下发一致，第一项通常是队长。</summary>
     private readonly List<TeamMemberInfo> _members = new List<TeamMemberInfo>();
 
@@ -262,6 +301,8 @@ public sealed class TeamData
     /// <summary>清空全部队伍状态，用于收到空 TeamInfo 时复位界面。</summary>
     public void Clear()
     {
+        DungeonInstanceId = 0UL;
+        monsterAttributes.Clear();
         ApplyTeamInfo(new TeamInfoNtf());
     }
 

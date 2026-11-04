@@ -26,6 +26,8 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
 
     /// <summary>客户端本次施法标识，贯穿开始与结束通知。</summary>
     protected ulong skill_uuid_;
+    /// <summary>本次吟唱的 RO 世界施法点，进入攻击动作时沿用。</summary>
+    private ROVector3 cast_point_;
 
     /// <summary>本次吟唱解析出的技能等级核心，结束后置空。</summary>
     protected ROSkillCore core_;
@@ -65,6 +67,7 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
         }
         skill_id_ = args.skill_id_;
         skill_uuid_ = args.skill_uuid_;
+        cast_point_ = args.cast_point_;
 
         // skill_component 是角色身上的技能组件（本工程为 RoleSkillComponent 实现），用于解析技能主表与效果行。
         ROSkillComponent skill_component = GetSkillComponent();
@@ -243,9 +246,9 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
         {
             args.skill_id_ = skill_id_;
             args.skill_uuid_ = skill_uuid_;
-            // 本项目协议不携带目标与施法点，保持 RO 字段的零值默认。
+            // 向攻击动作传递同一施法点，怪物命中由游戏服查询。
             args.target_ = 0UL;
-            args.cast_point_ = new ROVector3(0f, 0f, 0f);
+            args.cast_point_ = cast_point_;
             Owner.GetEventDispatcher().DispatcherEvent(args);
         }
         finally

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `50c399157496e8723924b2a824db3ac350472632928191736e943f3cfad72c8c`
+Source normalized SHA256: `cc452ba24bc9972980cfd2ff83ce99dcb5937145ab9b664b4e2abf789308d8b9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -39,11 +39,12 @@ Source normalized SHA256: `50c399157496e8723924b2a824db3ac350472632928191736e943
 | [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-202 |
 | [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-209 |
 | [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-217 |
-| [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-223 |
+| [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-224 |
+| [CODE][FILES][HANDOFF][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Shared Moshenta basic-attack damage and death | 225-228 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b747dbc81bc84be7d2663c0fad10271ca1949a5d53f6969ed595a2ba6cd30cdb`
+Source normalized SHA256: `e37e626b9684f555e606bcf0b8add9596850f0f27df1ab7cbf23fcae7d6cc812`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -74,7 +75,8 @@ Source normalized SHA256: `b747dbc81bc84be7d2663c0fad10271ca1949a5d53f6969ed595a
 | [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
 | [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
 | [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-237 |
-| [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-243 |
+| [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-244 |
+| [VERIFY][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Instance isolation, lethal hits and Unity playback | 245-249 |
 
 ## Docs/AI/DECISIONS.en.md
 

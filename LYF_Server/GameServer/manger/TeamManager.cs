@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
+using System.Numerics;
 
 /// <summary>
 /// 服务端队伍与副本实例管理器，对应 RO TeamMgr.lua 与 DungeonMgr.lua 的服务端职责。
@@ -79,6 +80,34 @@ public sealed class TeamManager
 
         /// <summary>该队伍当前所在副本实例ID，0 表示不在副本内。</summary>
         public ulong InstanceId;
+        /// <summary>队伍当前副本的服务端怪物与生命值，最后一人离开时释放。</summary>
+        public SceneWaveSpawner WaveSpawner;
+    }
+
+    /// <summary>由已提交的普攻在逻辑线程调用，只向角色所在实例的成员广播本窗口实际命中的怪物。</summary>
+    /// <param name="caster">从网关会话确认且正在施法的在线角色。</param>
+    /// <param name="forward">释放时确认的水平单位朝向。</param>
+    /// <param name="damage">当前普攻配置的每次伤害。</param>
+    /// <param name="hit_targets">当前碰撞窗口内已命中的服务端实体编号。</param>
+    public void OnMonsterHit(OnlineRole caster, Vector2 forward, int damage, HashSet<ulong> hit_targets)
+    {
+        // 只从服务端队伍与角色位置解析副本；客户端不能指定另一个实例。
+        ulong teamId;
+        if (!_roleTeam.TryGetValue(caster.GetID(), out teamId)) return;
+        Team team = _teams[teamId];
+        if (team.WaveSpawner == null || (ulong)caster.mainRoleInfo.BaseInfo.InstanceId != team.InstanceId) return;
+        // 同一逻辑线程先扣血、再构造一份全队共享的可靠下行载荷。
+        MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
+        team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets);
+        if (notice.Monsters.Count == 0) return;
+        ByteString payload = notice.ToByteString();
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            // 队员的位置仍属于本实例才接收，不使用附近距离裁剪血量。
+            OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            if (member != null && member.mainRoleInfo.BaseInfo.InstanceId == caster.mainRoleInfo.BaseInfo.InstanceId)
+                member.SendToClient(NetDefine.CMD_MonsterAttrUpdateCode, payload);
+        }
     }
 
     /// <summary>获取队伍管理器单例。</summary>
@@ -681,6 +710,7 @@ public sealed class TeamManager
             RemoveTeamInvitations(teamId);
             if (team.InstanceId != 0UL)
             {
+                team.WaveSpawner.Clear();
                 ReleaseInstance(team.InstanceId);
             }
             return true;
@@ -735,6 +765,7 @@ public sealed class TeamManager
         // 重复请求复用已有实例，避免同一队伍开出两个副本。
         if (team.InstanceId == 0UL)
         {
+            team.WaveSpawner = new SceneWaveSpawner();
             team.InstanceId = _nextInstanceId;
             _nextInstanceId = _nextInstanceId + 1UL;
         }
@@ -803,6 +834,7 @@ public sealed class TeamManager
         notice.InstanceId = team.InstanceId;
         notice.MapId = MoshentaMapId;
         notice.Pos = MoshentaSpawnPos;
+        team.WaveSpawner.FillEnterScene(notice);
         // 已序列化的入场通知字节，全队复用同一份，保证各成员收到的场景与实例完全一致。
         ByteString payload = notice.ToByteString();
         // index 为成员表零基下标，逐个下发同一份 payload。

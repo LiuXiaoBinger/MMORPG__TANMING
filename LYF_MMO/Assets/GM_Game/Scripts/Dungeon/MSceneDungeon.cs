@@ -7,6 +7,13 @@ using UnityEngine;
 /// <summary>正式魔神塔的出生运行器：读取编辑器 XML，加入统一实体世界，并随副本卸载回收。</summary>
 public class MSceneDungeon : MonoBehaviour
 {
+    /// <summary>当前项目剑气普攻的稳定 ID，对应服务端 ROArtSkill 的三段表现。</summary>
+    public const int BasicAttackId = 10010;
+    /// <summary>已加载的怪物按波次出生标识定位；与异步模型完成顺序无关。</summary>
+    private readonly Dictionary<ulong, MonsterEntity> monsters = new Dictionary<ulong, MonsterEntity>();
+    /// <summary>本场景开始时确认的服务端实例号。</summary>
+    private ulong instanceId;
+
     /// <summary>本次进入副本解析出的原波次，不与其他场景共享状态。</summary>
     public readonly List<MSceneRuntimeWave> Waves = new List<MSceneRuntimeWave>();
     /// <summary>本副本创建的运行实体身份，退出时只回收这一批实体。</summary>
@@ -20,6 +27,8 @@ public class MSceneDungeon : MonoBehaviour
     private void Start()
     {
         world = Global.Instance.SceneWorld;
+        instanceId = TeamData.Instance.DungeonInstanceId;
+        TeamData.Instance.MonsterAttrUpdated += OnMonsterAttrUpdate;
         catalog = ROSceneCreatureCatalog.Load();
         // Resources 中的原 XML 随编辑器保存更新，不另外烘焙出生点副本。
         TextAsset source = Resources.Load<TextAsset>("Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ");
@@ -133,7 +142,7 @@ public class MSceneDungeon : MonoBehaviour
         {
             for (int copyIndex = 0; copyIndex < ROSceneXml.Int(points[pointIndex], "count", 1); copyIndex++)
             {
-                if (ordinal >= wave.SpawnCount && ordinal < batchEnd) SpawnCreature(wave, creature, points[pointIndex]);
+                if (ordinal >= wave.SpawnCount && ordinal < batchEnd) SpawnCreature(wave, creature, points[pointIndex], ordinal);
                 ordinal++;
             }
         }
@@ -146,7 +155,8 @@ public class MSceneDungeon : MonoBehaviour
     /// <param name="wave">原出生波次。</param>
     /// <param name="creature">原表对应的正式资源映射。</param>
     /// <param name="point">原场景位置和朝向，单位米/角度。</param>
-    private void SpawnCreature(MSceneRuntimeWave wave, ROSceneCreatureEntity creature, XElement point)
+    /// <param name="ordinal">按点位 count 展开的波内零基序号，在加载资源前即已确定。</param>
+    private void SpawnCreature(MSceneRuntimeWave wave, ROSceneCreatureEntity creature, XElement point, int ordinal)
     {
         ResourceMgr.Instance.LoadPrefabAsync(creature.runtimePrefabPath, model =>
         {
@@ -195,14 +205,49 @@ public class MSceneDungeon : MonoBehaviour
             MModelPrepareData prepared = model.GetComponent<MModelPrepareData>();
             entity.Radius = Mathf.Max(prepared.ProjectSize.x, prepared.ProjectSize.z) * 0.5f * creature.scale;
             entity.Height = prepared.ProjectSize.y * creature.scale;
+            if (!creature.isNpc && creature.maxHp > 0)
+            {
+                // 两端使用相同的出生序号关联实例属性，Unity 自身的实体 UID 仍交给 SceneWorld。
+                ulong spawnId = ((ulong)(uint)wave.Id << 32) | (uint)(ordinal + 1);
+                MonsterEntity monster = (MonsterEntity)entity;
+                monsters.Add(spawnId, monster);
+                MonsterHpData data;
+                if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterAttr(spawnId, out data))
+                    ChangeHP(monster, data, false);
+            }
             // 原 invisible 波次只隐藏模型和判定体，不改写出生配置。
             if (ROSceneXml.Text(wave.Data, "base_info/init_invisible") == "true") model.SetActive(false);
         });
     }
 
+    /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>
+    /// <param name="data">该出生位最近一次权威属性。</param>
+    private void OnMonsterAttrUpdate(MonsterHpData data)
+    {
+        // 未装载的模型在绑定时读取 TeamData 中的最新血量。
+        MonsterEntity monster;
+        if (instanceId == TeamData.Instance.DungeonInstanceId && monsters.TryGetValue(data.SpawnId, out monster))
+            ChangeHP(monster, data, true);
+    }
+
+    /// <summary>先应用生命，再沿已有的 DamageReceived / Death 状态播放动作。</summary>
+    /// <param name="monster">出生位对应的正式怪物实体。</param>
+    /// <param name="data">GameServer 已结算的剩余生命和上限。</param>
+    /// <param name="hit">实时命中为真，首次绑定只还原当前存活或死亡姿势。</param>
+    private static void ChangeHP(MonsterEntity monster, MonsterHpData data, bool hit)
+    {
+        // 重复通知不能重播死亡；初次装载时 MaxHp 仍为零。
+        if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return;
+        monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
+        if (data.Hp == 0) monster.DispatchEvent(MEventType.Death, null);
+        else if (hit) monster.DispatchEvent(MEventType.DamageReceived, null);
+    }
+
     /// <summary>随场景卸载从实体世界注销全部副本角色，模型由实体模型组件归还。</summary>
     private void OnDestroy()
     {
+        TeamData.Instance.MonsterAttrUpdated -= OnMonsterAttrUpdate;
+        monsters.Clear();
         if (world == null) return;
         for (int index = 0; index < entityUids.Count; index++) world.RemoveEntity(entityUids[index]);
         entityUids.Clear();

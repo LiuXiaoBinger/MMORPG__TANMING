@@ -24,6 +24,8 @@ public class MSkillCollision
     /// <param name="targetUid">本次施法锁定的目标身份，零表示未选中目标。</param>
     public void Update(MEntity firer, SkillRuntimePresentation presentation, float time, ulong targetUid)
     {
+        // 联机魔神塔的普攻由 GameServer 按同段动作结算，两端只在属性通知到达时播放受击。
+        if (presentation.SkillId == MSceneDungeon.BasicAttackId && TeamData.Instance.DungeonInstanceId != 0UL) return;
         if (!firer.Model.IsLoaded) return;
         // 使用当前真实模型变换，与编辑器 ActionCollisionGeometry 的坐标语义一致。
         Transform actor = firer.Model.GameObject.Transform;
@@ -63,6 +65,7 @@ public class MSkillCollision
                 MEntity target = host.GetROObject() as MEntity;
                 // 与点击和自动索敌共用战斗资格，范围技能也跳过剧情角色。
                 if (!MSkillTargetDefine.IsEnemy(target) || target.LifecycleState != EntityLifecycleState.Active || target == firer) continue;
+                if (target.IsDead) continue;
                 // 同一次窗口每个目标只触发一次；重复轨道按作者帧间隔放行。
                 int lastHit;
                 if (hits[index].TryGetValue(target.UID, out lastHit))

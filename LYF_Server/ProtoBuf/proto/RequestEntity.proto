@@ -61,11 +61,18 @@ message EnterWroldReq
 }
 
 // 客户端请求释放已学技能。身份和等级由 GameServer 按复合会话及中心服技能快照解析。
-// 本阶段只允许无需目标的 TargetMode=0；跨端场景 UID 映射尚未建立，故不携目标 UID。
+// 魔神塔普攻可携带水平瞄准点；命中目标和伤害由 GameServer 决定。
 message SkillCastReq
 {
 	uint64 skill_uuid = 1;//客户端生成的单次施法标识，参照 RO 在 1~9999 内循环
 	int32 skill_id = 2;//原 SkillInfo.Id；不能由客户端指定等级、效果或消耗
+	DungeonCastPoint cast_point = 3;//RO 施法点；旧客户端或其他技能可省略
+}
+
+// RO cast_point 在水平面上的世界坐标，单位米。
+message DungeonCastPoint {
+	float x = 1;//Unity 世界 X
+	float z = 2;//Unity 世界 Z
 }
 
 // 请求开启背包格子。open_grid_count 是本次申请开启的数量。

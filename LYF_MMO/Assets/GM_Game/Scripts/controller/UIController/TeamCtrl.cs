@@ -53,6 +53,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         _activeInstance = this;
         _registered = true;
     }
@@ -71,6 +72,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInfoCode, OnTeamInfo);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
         if (_activeInstance == this)
         {
             // 只有仍由本实例持有时才清空静态标记，避免误清后来接管的实例。
@@ -95,10 +97,18 @@ public sealed class TeamCtrl : CtrlBase
     {
         // 入场确认通知：携带场景ID、实例号与出生点，客户端收到后才允许加载副本场景。
         TeamEnterDungeonNtf notice = TeamEnterDungeonNtf.Parser.ParseFrom(data);
+        TeamData.Instance.OnEnterScene(notice);
         if (EnterDungeonReceived != null)
         {
             EnterDungeonReceived(notice);
         }
+    }
+
+    /// <summary>将可靠下行的怪物血量交给当前副本状态。</summary>
+    /// <param name="data">GameServer 发送的 MonsterAttrUpdateNtf 原始字节。</param>
+    private void OnMonsterAttrUpdate(ByteString data)
+    {
+        TeamData.Instance.OnMonsterAttrUpdate(MonsterAttrUpdateNtf.Parser.ParseFrom(data));
     }
 
     #region 事件回调

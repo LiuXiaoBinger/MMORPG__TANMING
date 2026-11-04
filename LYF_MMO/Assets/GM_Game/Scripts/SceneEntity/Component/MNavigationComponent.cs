@@ -158,7 +158,7 @@ public class MNavigationComponent : EntityComponentBase
     /// <param name="skillArgs">本次输入的技能主表ID、释放点和可空目标。</param>
     protected void OnAfterAction(MSkillEventArgs skillArgs)
     {
-        // 导航模块所属本地主角；当前无目标协议不上传尚未接入的目标或施法点。
+        // 导航模块所属本地主角，也是本次施法请求的输入来源。
         PlayerEntity localRole = Entity as PlayerEntity;
         // 原施法输入时钟，单位为不缩放秒；保留统一跳跃、特殊滑步、MP与CD许可。
         float realtimeSeconds = Time.realtimeSinceStartup;
@@ -180,8 +180,15 @@ public class MNavigationComponent : EntityComponentBase
         {
             try
             {
-                // 沿原无目标协议，只发送UUID与主表ID，不扩导航或目标字段。
+                // 沿用施法标识和主表 ID，只为魔神塔普攻提供世界瞄准点。
                 SkillCastReq request = new SkillCastReq { SkillUuid = skillUuid, SkillId = skillArgs.Identify };
+                if (skillArgs.Identify == MSceneDungeon.BasicAttackId && TeamData.Instance.DungeonInstanceId != 0UL)
+                {
+                    // 无锁定目标时沿玩家当前朝向攻击；有目标时与本地转身使用同一世界坐标。
+                    Vector3 point = localRole.Position + localRole.Model.GameObject.Transform.forward;
+                    if (skillArgs.Target != null) point = skillArgs.Target.Position;
+                    request.CastPoint = new DungeonCastPoint { X = point.x, Z = point.z };
+                }
                 MNetClient.Instance.Send(NetDefine.CMD_SkillCastCode, request.ToByteString());
             }
             catch (Exception exception)

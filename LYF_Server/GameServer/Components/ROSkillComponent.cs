@@ -53,6 +53,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         public ROSkillCore core_;
         /// <summary>本次等级对应的只读效果配置行。</summary>
         public SkillEffectInfo effect_;
+        /// <summary>本次输入的水平世界施法点，魔神塔普攻据此定向。</summary>
+        public ROVector3 cast_point_;
     }
 
     /// <summary>角色扩展确认中心服学习快照已完整装载后才允许施法。</summary>
@@ -157,7 +159,9 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return false;
         }
-        return PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_);
+        if (!PrepareCast(args.skill_id_, args.skill_uuid_, out prepared_cast_, out pending_reject_)) return false;
+        prepared_cast_.cast_point_ = args.cast_point_;
+        return true;
     }
 
     /// <summary>
@@ -734,8 +738,9 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <param name="using_times">权威选定的零起始表现段下标。</param>
     /// <param name="children">组合技能的顺序核心；普通技能为空。</param>
     /// <param name="stateTimes">组合各段状态毫秒数，与 children 对应。</param>
+    /// <param name="cast_point">本次世界瞄准点，用于副本普攻的水平朝向。</param>
     private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times,
-        List<ROSkillCore> children, List<int> stateTimes)
+        List<ROSkillCore> children, List<int> stateTimes, ROVector3 cast_point)
     {
         // 向上取整为固定帧期限；零时长也留一帧，保持 Start 先于 End 的原顺序。
         long end_tick = CalculateEndTick(GameGlobal.Instance.LogicTick, duration_ms);
@@ -746,6 +751,10 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         if (children != null)
         {
             skill_ = new ROCombineSkill(core, skill_uuid, end_tick, children, stateTimes);
+        }
+        else if (core.SkillID() == ROArtSkill.BasicAttackId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            skill_ = new ROArtSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point);
         }
         else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         last_used_skill_effect_id_ = core.SkillEffectID();
@@ -882,7 +891,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             SetSkillGroupCoolDown(prepared.effect_.CooldownGroupId, prepared.effect_.GroupCooldownMs);
         }
 
-        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes);
+        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes, prepared.cast_point_);
 
         result.CmdCode = CmdCode.Succeed;
         result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;

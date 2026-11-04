@@ -111,12 +111,12 @@ public abstract class MEntity : MSceneObject
     /// <summary>实体名字（来自属性组件）</summary>
     // 实体名称由角色数据组件提供，当前实体层不直接依赖该组件。
 
-    /// <summary>死亡查询的预留入口，目前固定返回 false，不读取血量</summary>
+    /// <summary>已初始化怪物的死亡状态读取服务端同步的生命属性</summary>
     public bool IsDead {
         get
         {
-            /*return AttrComp == null || (AttrComp.IsDead || (AttrComp.HP <= 0 && AttrComp.MaxHP > 0));*/
-            return false;
+            if (!(this is MonsterEntity) || AttrComp == null) return false;
+            return AttrComp.MaxHp > 0 && AttrComp.CurrentHp == 0;
         } }
 
     /// <summary>是否普通跳舞中</summary>
