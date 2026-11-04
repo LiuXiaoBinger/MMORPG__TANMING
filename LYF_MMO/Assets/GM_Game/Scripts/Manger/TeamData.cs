@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 客户端队伍数据缓存，对应 RO TeamData.lua 的成员表与队长信息。
@@ -16,8 +17,8 @@ public sealed class TeamData
     public ulong DungeonInstanceId { get; private set; }
     /// <summary>当前实例各出生位最近收到的生命值，模型异步加载时也保留更新。</summary>
     private readonly Dictionary<ulong, MonsterHpData> monsterAttributes = new Dictionary<ulong, MonsterHpData>();
-    /// <summary>正式怪物模型监听本事件，按收到的权威血量播放受击或死亡。</summary>
-    public event Action<MonsterHpData> MonsterAttrUpdated;
+    /// <summary>实时命中事件携带单怪结算和施害者世界坐标，供副本播放动作及普通伤害跳字。</summary>
+    public event Action<MonsterHpData, Vector3> MonsterAttrUpdated;
 
     /// <summary>切换入场状态，按服务端快照重新绑定本实例的出生位。</summary>
     /// <param name="notice">组队入场或回城通知，包含当时的完整怪物血量。</param>
@@ -42,12 +43,14 @@ public sealed class TeamData
     public void OnMonsterAttrUpdate(MonsterAttrUpdateNtf notice)
     {
         if (notice.InstanceId != DungeonInstanceId) return;
+        // 这一批怪物由同一攻击者命中，队员无需从本地角色朝向猜测跳字方向。
+        Vector3 firerPosition = new Vector3(notice.FirerX, notice.FirerY, notice.FirerZ);
         for (int index = 0; index < notice.Monsters.Count; index++)
         {
             // 先缓存后通知，迟于协议完成加载的模型仍会读到最新值。
             MonsterHpData data = notice.Monsters[index];
             monsterAttributes[data.SpawnId] = data;
-            MonsterAttrUpdated?.Invoke(data);
+            MonsterAttrUpdated?.Invoke(data, firerPosition);
         }
     }
 

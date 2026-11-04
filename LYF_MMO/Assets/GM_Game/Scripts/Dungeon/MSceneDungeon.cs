@@ -13,6 +13,8 @@ public class MSceneDungeon : MonoBehaviour
     private readonly Dictionary<ulong, MonsterEntity> monsters = new Dictionary<ulong, MonsterEntity>();
     /// <summary>本场景开始时确认的服务端实例号。</summary>
     private ulong instanceId;
+    /// <summary>挂在主画布底层、生命周期跟随本副本的普通伤害跳字网格。</summary>
+    private MBattleHudWordMgr battleHudWord;
 
     /// <summary>本次进入副本解析出的原波次，不与其他场景共享状态。</summary>
     public readonly List<MSceneRuntimeWave> Waves = new List<MSceneRuntimeWave>();
@@ -29,6 +31,13 @@ public class MSceneDungeon : MonoBehaviour
         world = Global.Instance.SceneWorld;
         instanceId = TeamData.Instance.DungeonInstanceId;
         TeamData.Instance.MonsterAttrUpdated += OnMonsterAttrUpdate;
+        if (UIRoot.Instance != null && instanceId != 0UL)
+        {
+            // 预制体保存十张原始数字 Sprite、材质和 RO 普攻曲线，显示在功能窗口下方。
+            GameObject prefab = Resources.Load<GameObject>("Dungeons/Moshenta/Hurt_Normal_Attack");
+            battleHudWord = Instantiate(prefab, UIRoot.Instance._canvas.transform, false).GetComponent<MBattleHudWordMgr>();
+            battleHudWord.transform.SetAsFirstSibling();
+        }
         catalog = ROSceneCreatureCatalog.Load();
         // Resources 中的原 XML 随编辑器保存更新，不另外烘焙出生点副本。
         TextAsset source = Resources.Load<TextAsset>("Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ");
@@ -222,31 +231,37 @@ public class MSceneDungeon : MonoBehaviour
 
     /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>
     /// <param name="data">该出生位最近一次权威属性。</param>
-    private void OnMonsterAttrUpdate(MonsterHpData data)
+    /// <param name="firerPosition">本次普攻施害者的服务器世界坐标，单位米。</param>
+    private void OnMonsterAttrUpdate(MonsterHpData data, Vector3 firerPosition)
     {
         // 未装载的模型在绑定时读取 TeamData 中的最新血量。
         MonsterEntity monster;
-        if (instanceId == TeamData.Instance.DungeonInstanceId && monsters.TryGetValue(data.SpawnId, out monster))
-            ChangeHP(monster, data, true);
+        if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(data.SpawnId, out monster)) return;
+        if (!ChangeHP(monster, data, true)) return;
+        if (data.Damage > 0 && battleHudWord != null)
+            battleHudWord.AddDraw(monster, firerPosition, data.Damage);
     }
 
     /// <summary>先应用生命，再沿已有的 DamageReceived / Death 状态播放动作。</summary>
     /// <param name="monster">出生位对应的正式怪物实体。</param>
     /// <param name="data">GameServer 已结算的剩余生命和上限。</param>
     /// <param name="hit">实时命中为真，首次绑定只还原当前存活或死亡姿势。</param>
-    private static void ChangeHP(MonsterEntity monster, MonsterHpData data, bool hit)
+    /// <returns>属性确实改变时为真，重复通知不重播动作或跳字。</returns>
+    private static bool ChangeHP(MonsterEntity monster, MonsterHpData data, bool hit)
     {
         // 重复通知不能重播死亡；初次装载时 MaxHp 仍为零。
-        if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return;
+        if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return false;
         monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
         if (data.Hp == 0) monster.DispatchEvent(MEventType.Death, null);
         else if (hit) monster.DispatchEvent(MEventType.DamageReceived, null);
+        return true;
     }
 
     /// <summary>随场景卸载从实体世界注销全部副本角色，模型由实体模型组件归还。</summary>
     private void OnDestroy()
     {
         TeamData.Instance.MonsterAttrUpdated -= OnMonsterAttrUpdate;
+        if (battleHudWord != null) Destroy(battleHudWord.gameObject);
         monsters.Clear();
         if (world == null) return;
         for (int index = 0; index < entityUids.Count; index++) world.RemoveEntity(entityUids[index]);

@@ -199,12 +199,16 @@ message MonsterHpData {
 	uint64 spawn_id = 1;//高32位为波次号，低32位为从1起算的出生序号
 	int32 hp = 2;//当前生命值，零表示已死亡
 	int32 max_hp = 3;//本次出生的生命上限
+	int32 damage = 4;//本次普攻实际扣除的生命值，入场血量快照为零
 }
 
 // GameServer 向同一副本实例可靠广播本次命中的属性变化。
 message MonsterAttrUpdateNtf {
 	uint64 instance_id = 1;//权威副本实例号
 	repeated MonsterHpData monsters = 2;//本次血量下降的实体
+	float firer_x = 3;//命中时施害者的世界坐标 X，单位米，供同实例观察者计算跳字方向
+	float firer_y = 4;//命中时施害者的世界坐标 Y，单位米
+	float firer_z = 5;//命中时施害者的世界坐标 Z，单位米
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。

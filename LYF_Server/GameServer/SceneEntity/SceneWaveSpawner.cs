@@ -116,6 +116,10 @@ public sealed class SceneWaveSpawner
     /// <param name="hit_targets">当前碰撞窗口已经命中的服务端实体编号。</param>
     public void ChangeHP(MonsterAttrUpdateNtf notice, Vector3 origin, Vector2 forward, int damage, HashSet<ulong> hit_targets)
     {
+        // 同一攻击窗口共用施害位置，观察者按自己的镜头投影受击方向。
+        notice.FirerX = origin.X;
+        notice.FirerY = origin.Y;
+        notice.FirerZ = origin.Z;
         for (int index = 0; index < monsters_.Count; index++)
         {
             // 实例内的权威实体，零血后不再参与随后窗口或其他队员的结算。
@@ -132,16 +136,19 @@ public sealed class SceneWaveSpawner
             float dz = Math.Max(0f, depth - 1.5f);
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
             hit_targets.Add(monster.UID);
-            monster.CurrentHp = Math.Max(0, monster.CurrentHp - damage);
-            notice.Monsters.Add(GetHpData(index));
+            // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
+            int hpBeforeHit = monster.CurrentHp;
+            monster.CurrentHp = Math.Max(0, hpBeforeHit - damage);
+            notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
         }
     }
 
     /// <summary>提取跨端出生位和权威实体当前生命值。</summary>
     /// <param name="index">当前实例内与出生配置一一对应的实体下标。</param>
-    private MonsterHpData GetHpData(int index)
+    /// <param name="damage">本次实际扣血点数；完整入场快照沿用零值。</param>
+    private MonsterHpData GetHpData(int index, int damage = 0)
     {
-        return new MonsterHpData { SpawnId = spawn_points_[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp };
+        return new MonsterHpData { SpawnId = spawn_points_[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp, Damage = damage };
     }
 
     /// <summary>最后一名队员离开时释放此实例中的实体和组件。</summary>
