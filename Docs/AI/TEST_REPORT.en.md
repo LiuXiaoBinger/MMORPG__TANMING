@@ -252,3 +252,9 @@
 
 - Matched all 97 Unity Sprite names and local file IDs to the source atlas. FontAssembly maps 85 characters and SpriteAssembly maps 8 icons, with 4 atlas slices unused by these two tables. The 97 original PNGs in the downloadable ZIP matched the source files byte for byte.
 - Edge passed the six branches, 25 style types, 38 variant entries, timeline replay, search, single-slice and full-ZIP downloads. The offline page made no HTTP requests and showed no horizontal overflow at 390 px. In-game jump-word playback and a Player build were outside this art-only task. Evidence: _temp/ro-damage-hud-20261104/.
+
+## [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words
+
+- GameServer and GateServer built. Two independent teammate connections received identical 80-point hits and a 20-HP lethal hit; a third connection in another instance received no hits. Entry/re-entry snapshots and misses emitted no word (44 server assertions).
+- Both recipients' payloads passed through the production Unity client handler and rendered using the formal 5504 model, material and digit sprites (50 assertions). Duplicate updates drew once, lethal 20 stayed 20 despite stale local HP, overlapping same-frame hits became distinct, and expiry/unload removed the mesh. Matched 960×540 initial renders measured 17 px and 15 px clearance above the visible model.
+- The local Windows hot-update assembly compiled (692736 bytes). Two simultaneously logged-in Unity game clients and a packaged Player were not exercised. Evidence: _temp/moshenta-normal-hit-word-20261104/; 项目修改日志/2026-11-04-魔神塔普通伤害跳字.md.

@@ -231,3 +231,9 @@
 
 - Imported the original 512 × 512 Fonts.png atlas and all 97 Sprite slices into LYF_MMO/Assets/GM_Game/UISprites/ROHudWord. Fonts.mat keeps the RO material GUID but uses the project's built-in UI/Default shader. No game code or RO script prefabs were imported.
 - 项目分析/RO伤害跳字-资源与显示链路思维导图-2026-11-04.html is a standalone browser map with source references, motion previews and a ZIP of the 97 original PNGs. Full record: 项目修改日志/2026-11-04-RO伤害跳字美术资源与思维导图.md.
+
+## [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters
+
+- SceneWaveSpawner.ChangeHP writes the actual HP loss per monster plus the server hit origin to the existing same-instance MonsterAttrUpdateNtf. Snapshots keep damage at zero. TeamData and MSceneDungeon feed only live HP changes to MBattleHudWordMgr.AddDraw.
+- Hurt_Normal_Attack.prefab binds the ten extracted RO normal digits and Fonts.mat. The renderer projects the visible skinned head, samples RO motion/scale/color over 1.7 s, and spaces simultaneous hits on the same monster by 0.068 s.
+- The local GameServer, GateServer and Windows hot-update assembly were updated. The GM_Game.dll.bytes produced in the existing working tree remains local because its build includes the unrelated untracked DailyTaskWindow.cs. Reference: 项目修改日志/2026-11-04-魔神塔普通伤害跳字.md.

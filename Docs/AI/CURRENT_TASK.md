@@ -228,3 +228,9 @@
 
 - 将 RO 原版 512 × 512 的 Fonts.png 图集及其全部 97 个 Sprite 切片导入 LYF_MMO/Assets/GM_Game/UISprites/ROHudWord。Fonts.mat 保留 RO 原材质的 GUID，着色器改用本项目内置的 UI/Default。本次未导入游戏代码或 RO 脚本预制体。
 - 项目分析/RO伤害跳字-资源与显示链路思维导图-2026-11-04.html 可在浏览器中独立打开，内含来源引用、动作预览和收录 97 张原始 PNG 的 ZIP 压缩包。完整记录见 项目修改日志/2026-11-04-RO伤害跳字美术资源与思维导图.md。
+
+## [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] 魔神塔怪物头顶的普通攻击伤害跳字
+
+- SceneWaveSpawner.ChangeHP 将每只怪物实际扣除的 HP 和服务端命中起点写入现有的同实例通知 MonsterAttrUpdateNtf。快照中的伤害值保持为零。TeamData 和 MSceneDungeon 只把实时 HP 变化传给 MBattleHudWordMgr.AddDraw。
+- Hurt_Normal_Attack.prefab 绑定了从 RO 提取的十个普通伤害数字和 Fonts.mat。渲染器把可见蒙皮模型的头顶投影到屏幕，在 1.7 s 内采样 RO 的位移、缩放和颜色。同一只怪物同时受到多次命中时，各条跳字间隔 0.068 s 显示。
+- 本地 GameServer、GateServer 和 Windows 热更新程序集已更新。现有工作树生成的 GM_Game.dll.bytes 仅保留在本地，因为这次构建包含另一项任务未跟踪的 DailyTaskWindow.cs。完整记录见 项目修改日志/2026-11-04-魔神塔普通伤害跳字.md。

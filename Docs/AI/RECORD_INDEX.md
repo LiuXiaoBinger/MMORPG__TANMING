@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a3e491841f099835495eedf70c009db729162265a4573751f7f5d412f9cf16ac`
+Source normalized SHA256: `4666e098e029217f4e0e107b9b931b8863f1181d4e84675539c02220ab3de74e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -41,11 +41,12 @@ Source normalized SHA256: `a3e491841f099835495eedf70c009db729162265a4573751f7f5d
 | [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-217 |
 | [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-224 |
 | [CODE][FILES][HANDOFF][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Shared Moshenta basic-attack damage and death | 225-229 |
-| [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map | 230-233 |
+| [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map | 230-234 |
+| [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters | 235-239 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0d2dc6b457e5381186623463b2dc7a71700b15befb6d02468f9fd41d41222e76`
+Source normalized SHA256: `b936720bfc59ae69c09e2123b4801ccf85456763004ccac217b84cdb7f489c84`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -78,7 +79,8 @@ Source normalized SHA256: `0d2dc6b457e5381186623463b2dc7a71700b15befb6d02468f9fd
 | [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-237 |
 | [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-244 |
 | [VERIFY][副本][战斗][RO-DUNGEON-MONSTER-HP-20261104] Instance isolation, lethal hits and Unity playback | 245-250 |
-| [VERIFY][战斗表现][跳字][RO-HUD-WORD-ART-20261104] Atlas references, Unity import and offline browser checks | 251-254 |
+| [VERIFY][战斗表现][跳字][RO-HUD-WORD-ART-20261104] Atlas references, Unity import and offline browser checks | 251-255 |
+| [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words | 256-260 |
 
 ## Docs/AI/DECISIONS.en.md
 
