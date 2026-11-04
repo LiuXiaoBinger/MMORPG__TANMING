@@ -9,7 +9,7 @@ rem ============================================================
 set "source=D:\unitypro\LYFMMORGP\LYF_Server\MMoRpgCommon\bin\Debug"
 set "serverRoot=D:\unitypro\LYFMMORGP\LYF_Server"
 rem 四个服务端输出子目录，均以 serverRoot 指定的服务器根目录为起点
-set "targets=CenterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
+set "targets=CenterServer\bin\Debug MasterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
 rem 客户端共用程序集插件目录，不存在时由脚本创建
 set "clientTarget=D:\unitypro\LYFMMORGP\LYF_MMO\Assets\GM_Game\Plugins\Common"
 

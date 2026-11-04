@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "RequestEntity.proto";
+
+// 游戏服与队伍服传递的定向消息。角色号取自已登录角色，内部复用既有组队请求和客户端通知。
+message MasterTeamRolePacket {
+  uint64 role_id = 1; // 请求的发起角色，或通知的目标角色。
+  string nickname = 2; // 发起邀请或申请时需要展示的角色昵称。
+  BasePackage packet = 3; // 内层协议号决定按哪种已定义的 Protobuf 消息解析。
+}
+
+// 队长通过队伍资格检查后，交给游戏服实际创建或重入副本的成员清单。
+message MasterTeamDungeonOrder {
+  uint64 team_id = 1; // 授权本次进入的队伍。
+  uint64 instance_id = 2; // 队伍服预留的实例编号，供游戏服定位同一份场景。
+  int32 dungeon_id = 3; // 队长申请进入的副本配置编号。
+  repeated uint64 member_ids = 4; // 此次有资格进入该实例的成员角色号。
+}

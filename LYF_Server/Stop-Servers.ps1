@@ -8,7 +8,7 @@ $serverRoot = $PSScriptRoot
 $serverRootKey = $serverRoot.TrimEnd('\', '/').Replace('/', '\')
 
 # 待匹配的四个服务可执行文件名
-$exeNames = @('CenterServer.exe', 'GameServer.exe', 'GateServer.exe', 'LoginServer.exe')
+$exeNames = @('CenterServer.exe', 'MasterServer.exe', 'GameServer.exe', 'GateServer.exe', 'LoginServer.exe')
 
 # 路径筛选后等待停止的 PID 集合，在查找阶段收集，随后统一遍历。
 $targetPids = New-Object System.Collections.ArrayList

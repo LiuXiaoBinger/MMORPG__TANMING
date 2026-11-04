@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7ee5cce05cf09b8aed467166e95cab21ba0d5d43d122b20b861898ff67601ead`
+Source normalized SHA256: `b54542902cf1006889151891ca696cf0f05fbfec38b7ef353b395543d3740202`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -44,11 +44,12 @@ Source normalized SHA256: `7ee5cce05cf09b8aed467166e95cab21ba0d5d43d122b20b86189
 | [FILES][HANDOFF][战斗表现][跳字][RO-HUD-WORD-ART-20261104] RO jump-word art and offline illustrated map | 230-234 |
 | [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters | 235-240 |
 | [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Use the public RO monster Animator in Moshenta | 241-245 |
-| [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-250 |
+| [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-251 |
+| [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-255 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2b14765687c0ae25ecce89ad1317d3378e3a03643c4f30321fe38239cb1a198e`
+Source normalized SHA256: `3165852ab1ec9b1ef77fd296e569887cad4e02abae8ddbf4b0ebd3cc77c305e6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -84,7 +85,8 @@ Source normalized SHA256: `2b14765687c0ae25ecce89ad1317d3378e3a03643c4f30321fe38
 | [VERIFY][战斗表现][跳字][RO-HUD-WORD-ART-20261104] Atlas references, Unity import and offline browser checks | 251-255 |
 | [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words | 256-261 |
 | [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Verify shared monster animation playback | 262-266 |
-| [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-270 |
+| [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-271 |
+| [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-275 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -7,7 +7,7 @@ using System.Reflection;
 
 /// <summary>
 /// 服务端队伍与副本实例权威的独立进程冒烟测试。
-/// 直接调用 TeamManager 与 RoleManager 的正式方法，不使用数据库、账号或镜像算法。
+/// 实际连接独立 MasterServer 并使用正式 GS 场景处理；通过协议通知核对权威结果。
 /// </summary>
 public static class TeamAuthoritySmoke
 {
@@ -21,13 +21,17 @@ public static class TeamAuthoritySmoke
     private static readonly List<OnlineRole> _registeredRoles = new List<OnlineRole>();
 
     /// <summary>测试入口，返回 0 表示全部断言通过。</summary>
-    /// <param name="args">命令行参数，本测试不接受参数。</param>
+    /// <param name="args">可选参数为测试所连的独立 MasterServer 端口。</param>
     /// <returns>全部通过返回 0，否则返回失败条数。</returns>
     public static int Main(string[] args)
     {
         // 本测试不依赖 Luban 配置表与数据库，直接使用强类型协议对象。
         try
         {
+            // 从实际 MS 读取权威结果，端口由隔离测试启动器传入。
+            int port = NetDefine.MasterServerPort;
+            if (args.Length > 0) port = int.Parse(args[0]);
+            MasterTeamProbe.Instance = new MasterTeamProbe(port);
             CheckCreateAndInviteFlow();
             CheckCapacityAndSixthRejected();
             CheckApplicationNeedsCaptainApproval();
@@ -46,6 +50,7 @@ public static class TeamAuthoritySmoke
             CheckDungeonLeaveBroadcastsLeaveAndReturns();
             CheckOfflineInMainCityStillRemovesRole();
             CheckRejectedTeamRequestsReportReason();
+            CheckProductionRoute(port);
         }
         catch (Exception ex)
         {
@@ -56,6 +61,7 @@ public static class TeamAuthoritySmoke
         finally
         {
             // 无论用例是否异常都移除测试注册的角色，避免污染同进程在线索引。
+            if (MasterTeamProbe.Instance != null) MasterTeamProbe.Instance.Dispose();
             UnregisterAllRoles();
         }
 
@@ -69,6 +75,93 @@ public static class TeamAuthoritySmoke
         return _failures;
     }
 
+    /// <summary>经真实 Gate 会话、GS 认证分派、独立 MS、GS 主循环及客户端帧验证双人组队。</summary>
+    /// <param name="port">当前隔离 MS 的监听端口。</param>
+    private static void CheckProductionRoute(int port)
+    {
+        // 使用和正式启动完全相同的 GS 协议注册表。
+        NetClient center = new NetClient(NetDefine.IPHost, NetDefine.CenterServerPort, ClientType.GameServer);
+        NetServer registered = new NetServer(center);
+        GameMessageProtocolRegister.Register(registered, center);
+        MasterTeamLink.Instance.Connect(NetDefine.IPHost, port);
+        // 仅测试读取连接就绪标记，避免为测试在生产接口加入等待或探测包。
+        FieldInfo connected = typeof(MasterTeamLink).GetField("_connected", BindingFlags.Instance | BindingFlags.NonPublic);
+        // 为后台 Socket 建连提供有界等待。
+        DateTime limit = DateTime.UtcNow.AddSeconds(5);
+        while ((int)connected.GetValue(MasterTeamLink.Instance) == 0 && DateTime.UtcNow < limit) System.Threading.Thread.Sleep(10);
+        // 真实服务间 TCP，用同一网关会话承载两个已登录客户端。
+        LoopbackLink gate = new LoopbackLink(true, registered);
+        try
+        {
+            // 角色实体和会话是隔离测试数据，后续消息全部通过正式 TCP 及 GS 逻辑线程。
+            OnlineRole captain = NewRole(6001, "新链路队长");
+            OnlineRole member = NewRole(6002, "新链路队员");
+            BindGate(captain, gate.SessionId, 51);
+            BindGate(member, gate.SessionId, 52);
+            gate.SendFromGate(51, NetDefine.CMD_CreateTeamCode, new CreateTeamArg());
+            // 队伍号取自实际发给客户端的名单。
+            TeamInfoNtf created = TeamInfoNtf.Parser.ParseFrom(WaitProduction(gate, 51, NetDefine.CMD_TeamInfoCode).Data);
+            Expect(created.TeamId > 0 && created.CaptainId == 6001, "Gate→GS→独立 MS→GS→Gate 建队身份正确");
+            gate.SendFromGate(51, NetDefine.CMD_InviteJoinTeamCode, new InviteJoinTeamArg { UserId = 6002 });
+            // 邀请通知必须只发给目标会话。
+            TeamInvatationNtf invite = TeamInvatationNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamInvatationCode).Data);
+            Expect(invite.InviterId == captain.GetID() && invite.InviterName == "新链路队长", "真实网关回包携带认证发起人的昵称与角色号");
+            gate.SendFromGate(52, NetDefine.CMD_AcceptTeamInvatationCode,
+                new AcceptTeamInvatationArg { TeamId = created.TeamId, InviterId = 6001, Agree = true });
+            // 当前队员收到完整名单，属性由持有角色实体的 GS 填写。
+            TeamInfoNtf joined = TeamInfoNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamInfoCode).Data);
+            Expect(joined.Members.Count == 2 && joined.Members[1].CurrHp == 100, "独立 MS 成员决定与 GS 血量合成正确");
+            gate.SendFromGate(51, NetDefine.CMD_CaptainRequestEnterFBCode, new CaptainRequestEnterFBArg { DungeonId = TeamManager.MoshentaDungeonId });
+            // 在 GS 读取实际副本通知，包含 GS 填入的场景与实例。
+            TeamEnterDungeonNtf entered = TeamEnterDungeonNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamEnterDungeonCode).Data);
+            Expect(entered.InstanceId > 0 && captain.mainRoleInfo.BaseInfo.InstanceId == (int)entered.InstanceId &&
+                member.mainRoleInfo.BaseInfo.InstanceId == captain.mainRoleInfo.BaseInfo.InstanceId, "双人授权后由 GS 进入同一实际副本");
+            gate.SendFromGate(52, NetDefine.CMD_LeaveTeamCode, new LeaveTeamArg { RoleId = member.GetID() });
+            // GS 把退队玩家送回主城，留队玩家继续原实例。
+            TeamEnterDungeonNtf left = TeamEnterDungeonNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamEnterDungeonCode).Data);
+            Expect(left.InstanceId == 0 && member.mainRoleInfo.BaseInfo.InstanceId == 0 && captain.mainRoleInfo.BaseInfo.InstanceId > 0,
+                "MS 批准退队后仅该成员由 GS 回城");
+            // 中断测试自己创建的队伍服连接，验证留队玩家不会滞留废弃副本。
+            NetClient gameToMaster = (NetClient)typeof(MasterTeamLink).GetField("_client", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(MasterTeamLink.Instance);
+            gameToMaster._isNeedReconn = false;
+            gameToMaster.Disconnect();
+            WaitProduction(gate, 51, NetDefine.CMD_TeamEnterDungeonCode);
+            Expect(captain.mainRoleInfo.BaseInfo.InstanceId == 0, "MS 断开后 GS 清理旧实例并通知在线队长");
+        }
+        finally { gate.Close(); }
+    }
+
+    /// <summary>将隔离角色绑定到正式网关会话索引，复用 GS 的已登录身份校验。</summary>
+    /// <param name="role">测试已创建的 GS 角色。</param><param name="gate">服务端会话号。</param><param name="unity">玩家会话号。</param>
+    private static void BindGate(OnlineRole role, int gate, int unity)
+    {
+        role.GateSessionId = gate;
+        role.UnitySessionId = unity;
+        // 与 GS 的登录索引采用相同的网关号和玩家号组合。
+        Dictionary<long, int> sessions = (Dictionary<long, int>)typeof(RoleManager).GetField("m_roleIdBySessionMap",
+            BindingFlags.Instance | BindingFlags.NonPublic).GetValue(RoleManager.Instance);
+        sessions[((long)(uint)gate << 32) | (uint)unity] = (int)role.GetID();
+    }
+
+    /// <summary>驱动正式游戏命令队列，同时等待指定客户端收到对应的完整响应。</summary>
+    /// <param name="link">GS 与测试网关的真实回环连接。</param><param name="unity">目标玩家会话。</param><param name="code">预期响应协议号。</param>
+    private static BasePackage WaitProduction(LoopbackLink link, int unity, ushort code)
+    {
+        // 单次真实回包的超时上限，超时即判定链路未通过。
+        DateTime deadline = DateTime.UtcNow.AddSeconds(5);
+        do
+        {
+            GameGlobal.Instance.ProcessNetMessage();
+            // 每个窗口可收到多个在线成员的通知。
+            List<DecodedFrame> frames = link.WaitWindow(5);
+            for (int i = 0; i < frames.Count; i++)
+            {
+                if (frames[i].UnitySessionId == unity && frames[i].ProtoCode == code) return frames[i].Package;
+            }
+        } while (DateTime.UtcNow < deadline);
+        throw new InvalidOperationException("未收到 GS 正式回包 " + code + "，会话 " + unity);
+    }
+
     /// <summary>验证建队后队长为本人、成员数为 1，且待邀请未同意不能入队。</summary>
     private static void CheckCreateAndInviteFlow()
     {
@@ -78,38 +171,38 @@ public static class TeamAuthoritySmoke
         OnlineRole invited = NewRole(1002, "队员乙");
 
         // 建队返回的队伍ID，0 表示建队失败，后续断言都以它作为队伍身份。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
         Expect(teamId != 0UL, "建队返回非0队伍ID");
-        Expect(TeamManager.Instance.GetCaptainId(teamId) == 1001UL, "建队者成为队长");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 1, "建队后成员数为1");
-        Expect(TeamManager.Instance.GetTeamId(1002UL) == 0UL, "被邀请人尚未入队");
+        Expect(MasterTeamProbe.Instance.GetCaptainId(teamId) == 1001UL, "建队者成为队长");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 1, "建队后成员数为1");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1002UL) == 0UL, "被邀请人尚未入队");
 
         // 仅邀请未同意时，被邀请人不得进入队伍。
         // 邀请登记结果：true 表示待确认邀请已写入，此时被邀请人仍未入队。
-        bool invitedOk = TeamManager.Instance.InviteJoinTeam(captain, 1002UL);
+        bool invitedOk = MasterTeamProbe.Instance.InviteJoinTeam(captain, 1002UL);
         Expect(invitedOk, "邀请登记成功");
-        Expect(TeamManager.Instance.GetTeamId(1002UL) == 0UL, "邀请未同意不能入队");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1002UL) == 0UL, "邀请未同意不能入队");
 
         // 同意后才入队。
         // 同意结果：true 表示被邀请人已真正加入该队伍。
-        bool acceptOk = TeamManager.Instance.AcceptTeamInvatation(invited, teamId, 1001UL, true);
+        bool acceptOk = MasterTeamProbe.Instance.AcceptTeamInvatation(invited, teamId, 1001UL, true);
         Expect(acceptOk, "同意邀请返回成功");
-        Expect(TeamManager.Instance.GetTeamId(1002UL) == teamId, "同意后进入该队伍");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 2, "同意后成员数为2");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1002UL) == teamId, "同意后进入该队伍");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 2, "同意后成员数为2");
 
         // 拒绝邀请：另一名角色收到邀请后拒绝，不得入队。
         // 拒绝邀请的角色：角色ID 1003，用于验证拒绝后既不占队伍名额也不留待确认记录。
         OnlineRole rejected = NewRole(1003, "队员丙");
-        TeamManager.Instance.InviteJoinTeam(captain, 1003UL);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 1003UL);
         // 拒绝结果：false 表示确实未入队，是拒绝分支的预期返回值。
-        bool rejectOk = TeamManager.Instance.AcceptTeamInvatation(rejected, teamId, 1001UL, false);
+        bool rejectOk = MasterTeamProbe.Instance.AcceptTeamInvatation(rejected, teamId, 1001UL, false);
         Expect(!rejectOk, "拒绝邀请返回失败");
-        Expect(TeamManager.Instance.GetTeamId(1003UL) == 0UL, "拒绝后未入队");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1003UL) == 0UL, "拒绝后未入队");
 
         // 清理：队长离队后队伍解散，避免影响后续用例。
-        TeamManager.Instance.LeaveTeam(1002UL);
-        TeamManager.Instance.LeaveTeam(1001UL);
-        Expect(TeamManager.Instance.GetTeamId(1001UL) == 0UL, "清理后队长已不在队伍");
+        MasterTeamProbe.Instance.LeaveTeam(1002UL);
+        MasterTeamProbe.Instance.LeaveTeam(1001UL);
+        Expect(MasterTeamProbe.Instance.GetTeamId(1001UL) == 0UL, "清理后队长已不在队伍");
     }
 
     /// <summary>验证队伍容量为 5，第 6 人无法入队。</summary>
@@ -118,7 +211,7 @@ public static class TeamAuthoritySmoke
         // 容量用例的队长：角色ID 1101，占用第一个名额。
         OnlineRole captain = NewRole(1101, "容量队长");
         // 容量用例的队伍ID，整段用它校验成员数增减。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
         Expect(TeamManager.MaxMember == 5, "队伍上限为5");
 
         // 依次让 4 名角色通过邀请加入，凑满 5 人。
@@ -129,26 +222,26 @@ public static class TeamAuthoritySmoke
             int roleId = 1102 + index;
             // 本轮成员角色实例，用于走"邀请+同意"完整入队路径。
             OnlineRole member = NewRole(roleId, "容量成员" + index.ToString());
-            TeamManager.Instance.InviteJoinTeam(captain, (ulong)roleId);
-            TeamManager.Instance.AcceptTeamInvatation(member, teamId, 1101UL, true);
+            MasterTeamProbe.Instance.InviteJoinTeam(captain, (ulong)roleId);
+            MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 1101UL, true);
         }
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 5, "满员为5人");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 5, "满员为5人");
 
         // 第 6 人邀请必须被拒绝。
         // 第六名角色：角色ID 1106，用于验证满员后无法再占名额。
         OnlineRole sixth = NewRole(1106, "第六人");
         // 第六人邀请结果：false 表示满员保护生效。
-        bool sixthInvited = TeamManager.Instance.InviteJoinTeam(captain, 1106UL);
+        bool sixthInvited = MasterTeamProbe.Instance.InviteJoinTeam(captain, 1106UL);
         Expect(!sixthInvited, "满员后邀请被拒绝");
-        Expect(TeamManager.Instance.GetTeamId(1106UL) == 0UL, "第六人未入队");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1106UL) == 0UL, "第六人未入队");
 
         // 清理。
         // index 为清理轮次，范围 [0, 5)，按角色ID 1101 起逐个离队直到队伍解散。
         for (int index = 0; index < 5; index++)
         {
-            TeamManager.Instance.LeaveTeam((ulong)(1101 + index));
+            MasterTeamProbe.Instance.LeaveTeam((ulong)(1101 + index));
         }
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "清理后队伍已解散");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 0, "清理后队伍已解散");
     }
 
     /// <summary>验证按队伍ID申请后不会直接入队，必须由队长同意。</summary>
@@ -161,28 +254,28 @@ public static class TeamAuthoritySmoke
         // 与队伍无关的第三方：角色ID 1203，用于验证非队长无权审批。
         OnlineRole outsider = NewRole(1203, "无关成员");
         // 审批用例的队伍ID，三人共用同一支队伍做权限对比。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
 
         // 申请登记结果：true 表示申请已写入，但此时申请人仍未入队。
-        bool applied = TeamManager.Instance.BegInTeamByTeamId(applicant, teamId);
+        bool applied = MasterTeamProbe.Instance.BegInTeamByTeamId(applicant, teamId);
         Expect(applied, "申请登记成功");
-        Expect(TeamManager.Instance.GetTeamId(1202UL) == 0UL, "申请后未直接入队");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1202UL) == 0UL, "申请后未直接入队");
 
         // 非队长无法审批，申请保持待处理。
         // 非队长审批结果：false 表示权限校验拦住了越权审批。
-        bool outsiderApprove = TeamManager.Instance.AcceptTeamInvatation(outsider, teamId, 1202UL, true);
+        bool outsiderApprove = MasterTeamProbe.Instance.AcceptTeamInvatation(outsider, teamId, 1202UL, true);
         Expect(!outsiderApprove, "非队长审批被拒绝");
-        Expect(TeamManager.Instance.GetTeamId(1202UL) == 0UL, "非队长审批后仍未入队");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1202UL) == 0UL, "非队长审批后仍未入队");
 
         // 队长同意后入队。
         // 队长审批结果：true 表示申请被批准、申请人正式入队。
-        bool captainApprove = TeamManager.Instance.AcceptTeamInvatation(captain, teamId, 1202UL, true);
+        bool captainApprove = MasterTeamProbe.Instance.AcceptTeamInvatation(captain, teamId, 1202UL, true);
         Expect(captainApprove, "队长同意申请成功");
-        Expect(TeamManager.Instance.GetTeamId(1202UL) == teamId, "队长同意后入队");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 2, "审批后成员数为2");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1202UL) == teamId, "队长同意后入队");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 2, "审批后成员数为2");
 
-        TeamManager.Instance.LeaveTeam(1202UL);
-        TeamManager.Instance.LeaveTeam(1201UL);
+        MasterTeamProbe.Instance.LeaveTeam(1202UL);
+        MasterTeamProbe.Instance.LeaveTeam(1201UL);
     }
 
     /// <summary>验证只有队长可以发起副本挑战，非队长被拒绝。</summary>
@@ -193,22 +286,22 @@ public static class TeamAuthoritySmoke
         // 普通队员：角色ID 1302，用于验证非队长挑战会被拒绝。
         OnlineRole member = NewRole(1302, "普通队员");
         // 挑战用例的队伍ID，先建队再拉入一名队员。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
-        TeamManager.Instance.InviteJoinTeam(captain, 1302UL);
-        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 1301UL, true);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 1302UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 1301UL, true);
 
         // 队员挑战结果：false 表示队长身份校验生效。
-        bool memberEnter = TeamManager.Instance.CaptainRequestEnterFBPtc(member, TeamManager.MoshentaDungeonId);
+        bool memberEnter = MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(member, TeamManager.MoshentaDungeonId);
         Expect(!memberEnter, "非队长挑战被拒绝");
-        Expect(TeamManager.Instance.GetInstanceId(1301UL) == 0UL, "被拒绝后未分配实例");
+        Expect(MasterTeamProbe.Instance.GetInstanceId(1301UL) == 0UL, "被拒绝后未分配实例");
 
         // 未开放副本同样被拒绝。
         // 非法副本ID挑战结果：false 表示只放行已授权的魔神塔 4060。
-        bool wrongDungeon = TeamManager.Instance.CaptainRequestEnterFBPtc(captain, 9999);
+        bool wrongDungeon = MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captain, 9999);
         Expect(!wrongDungeon, "未开放副本被拒绝");
 
-        TeamManager.Instance.LeaveTeam(1302UL);
-        TeamManager.Instance.LeaveTeam(1301UL);
+        MasterTeamProbe.Instance.LeaveTeam(1302UL);
+        MasterTeamProbe.Instance.LeaveTeam(1301UL);
     }
 
     /// <summary>验证单人成队后可以入场，且实例ID非0。</summary>
@@ -217,18 +310,18 @@ public static class TeamAuthoritySmoke
         // 单人用例的角色：角色ID 1401，建队后队伍只有他一人。
         OnlineRole solo = NewRole(1401, "单人角色");
         // 单人队伍的队伍ID，用于校验成员数与实例归属。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(solo, 1000);
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 1, "单人队伍成员数为1");
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(solo, 1000);
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 1, "单人队伍成员数为1");
 
         // 单人入场结果：true 表示单人成队同样可以开副本实例。
-        bool entered = TeamManager.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
+        bool entered = MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
         Expect(entered, "单人成队可入场");
         // 入场后分配给本人的实例ID，用于校验非 0 与离队后归零。
-        ulong instanceId = TeamManager.Instance.GetInstanceId(1401UL);
+        ulong instanceId = MasterTeamProbe.Instance.GetInstanceId(1401UL);
         Expect(instanceId != 0UL, "单人入场实例ID非0");
 
-        TeamManager.Instance.LeaveTeam(1401UL);
-        Expect(TeamManager.Instance.GetInstanceId(1401UL) == 0UL, "离队后实例归零");
+        MasterTeamProbe.Instance.LeaveTeam(1401UL);
+        Expect(MasterTeamProbe.Instance.GetInstanceId(1401UL) == 0UL, "离队后实例归零");
     }
 
     /// <summary>验证同队成员进入同一实例，不同队伍实例互相隔离。</summary>
@@ -242,29 +335,29 @@ public static class TeamAuthoritySmoke
         OnlineRole captainB = NewRole(1601, "乙队队长");
 
         // 甲队队伍ID，两人共用。
-        ulong teamA = TeamManager.Instance.RequestCreateTeam(captainA, 1000);
-        TeamManager.Instance.InviteJoinTeam(captainA, 1502UL);
-        TeamManager.Instance.AcceptTeamInvatation(memberA, teamA, 1501UL, true);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(captainA, TeamManager.MoshentaDungeonId);
+        ulong teamA = MasterTeamProbe.Instance.RequestCreateTeam(captainA, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captainA, 1502UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(memberA, teamA, 1501UL, true);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captainA, TeamManager.MoshentaDungeonId);
 
         // 乙队队伍ID，独立建队并独立入场，用于和甲队比较实例号。
-        ulong teamB = TeamManager.Instance.RequestCreateTeam(captainB, 1000);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(captainB, TeamManager.MoshentaDungeonId);
+        ulong teamB = MasterTeamProbe.Instance.RequestCreateTeam(captainB, 1000);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captainB, TeamManager.MoshentaDungeonId);
 
         // 甲队队长实际所在实例号。
-        ulong instanceA1 = TeamManager.Instance.GetInstanceId(1501UL);
+        ulong instanceA1 = MasterTeamProbe.Instance.GetInstanceId(1501UL);
         // 甲队队员实际所在实例号，应与队长一致。
-        ulong instanceA2 = TeamManager.Instance.GetInstanceId(1502UL);
+        ulong instanceA2 = MasterTeamProbe.Instance.GetInstanceId(1502UL);
         // 乙队队长实际所在实例号，应与甲队不同。
-        ulong instanceB = TeamManager.Instance.GetInstanceId(1601UL);
+        ulong instanceB = MasterTeamProbe.Instance.GetInstanceId(1601UL);
         Expect(instanceA1 != 0UL && instanceA2 != 0UL, "甲队两人均有实例");
         Expect(instanceA1 == instanceA2, "同队成员进入同一实例");
         Expect(instanceB != 0UL, "乙队有实例");
         Expect(instanceA1 != instanceB, "两队实例互相隔离");
 
-        TeamManager.Instance.LeaveTeam(1502UL);
-        TeamManager.Instance.LeaveTeam(1501UL);
-        TeamManager.Instance.LeaveTeam(1601UL);
+        MasterTeamProbe.Instance.LeaveTeam(1502UL);
+        MasterTeamProbe.Instance.LeaveTeam(1501UL);
+        MasterTeamProbe.Instance.LeaveTeam(1601UL);
     }
 
     /// <summary>验证四个广播与补发共用的收件人谓词按同地图同实例过滤。</summary>
@@ -309,25 +402,25 @@ public static class TeamAuthoritySmoke
         // 次名队员：角色ID 1803，用于验证掉线清理走同一路径。
         OnlineRole second = NewRole(1803, "次名队员");
         // 转交用例的队伍ID，三人共用，便于比较成员数变化。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
-        TeamManager.Instance.InviteJoinTeam(captain, 1802UL);
-        TeamManager.Instance.AcceptTeamInvatation(first, teamId, 1801UL, true);
-        TeamManager.Instance.InviteJoinTeam(captain, 1803UL);
-        TeamManager.Instance.AcceptTeamInvatation(second, teamId, 1801UL, true);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 1802UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(first, teamId, 1801UL, true);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 1803UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(second, teamId, 1801UL, true);
 
         // 队长离队结果：true 表示确实移除了队伍关系，随后队长应转给剩余首人。
-        bool left = TeamManager.Instance.LeaveTeam(1801UL);
+        bool left = MasterTeamProbe.Instance.LeaveTeam(1801UL);
         Expect(left, "队长离队成功");
-        Expect(TeamManager.Instance.GetTeamId(1801UL) == 0UL, "离队者不再有队伍");
-        Expect(TeamManager.Instance.GetCaptainId(teamId) == 1802UL, "队长转给剩余首人");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 2, "剩余成员数为2");
+        Expect(MasterTeamProbe.Instance.GetTeamId(1801UL) == 0UL, "离队者不再有队伍");
+        Expect(MasterTeamProbe.Instance.GetCaptainId(teamId) == 1802UL, "队长转给剩余首人");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 2, "剩余成员数为2");
 
         // 掉线清理走同一路径且不向失效会话发包。
-        TeamManager.Instance.OnRoleOffline(1803UL);
-        Expect(TeamManager.Instance.GetTeamId(1803UL) == 0UL, "掉线角色被清理出队伍");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 1, "掉线后剩余1人");
+        MasterTeamProbe.Instance.OnRoleOffline(1803UL);
+        Expect(MasterTeamProbe.Instance.GetTeamId(1803UL) == 0UL, "掉线角色被清理出队伍");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 1, "掉线后剩余1人");
 
-        TeamManager.Instance.LeaveTeam(1802UL);
+        MasterTeamProbe.Instance.LeaveTeam(1802UL);
     }
 
     /// <summary>验证最后一名成员离队后队伍记录消失、实例查询归零；不检查场景对象是否回收。</summary>
@@ -336,14 +429,14 @@ public static class TeamAuthoritySmoke
         // 解散用例的角色：角色ID 1901，作为队伍唯一成员，离队即触发解散。
         OnlineRole solo = NewRole(1901, "末人角色");
         // 解散用例的队伍ID，用于校验解散后成员数与队长都归零。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(solo, 1000);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
-        Expect(TeamManager.Instance.GetInstanceId(1901UL) != 0UL, "入场后有实例");
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(solo, 1000);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
+        Expect(MasterTeamProbe.Instance.GetInstanceId(1901UL) != 0UL, "入场后有实例");
 
-        TeamManager.Instance.LeaveTeam(1901UL);
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "末人离队后队伍解散");
-        Expect(TeamManager.Instance.GetCaptainId(teamId) == 0UL, "解散后无队长");
-        Expect(TeamManager.Instance.GetInstanceId(1901UL) == 0UL, "解散后实例归零");
+        MasterTeamProbe.Instance.LeaveTeam(1901UL);
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 0, "末人离队后队伍解散");
+        Expect(MasterTeamProbe.Instance.GetCaptainId(teamId) == 0UL, "解散后无队长");
+        Expect(MasterTeamProbe.Instance.GetInstanceId(1901UL) == 0UL, "解散后实例归零");
     }
 
     /// <summary>验证重复挑战复用原实例，并把实例、地图和出生点写入角色；本用例未调用进入世界协议入口。</summary>
@@ -351,21 +444,21 @@ public static class TeamAuthoritySmoke
     {
         // 重复进入用例的角色：角色ID 2001，单人成队后连续挑战两次。
         OnlineRole solo = NewRole(2001, "重复进入");
-        TeamManager.Instance.RequestCreateTeam(solo, 1000);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
+        MasterTeamProbe.Instance.RequestCreateTeam(solo, 1000);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
         // 首次挑战分配的实例ID，作为"重复挑战必须复用"的比对基准。
-        ulong first = TeamManager.Instance.GetInstanceId(2001UL);
+        ulong first = MasterTeamProbe.Instance.GetInstanceId(2001UL);
         Expect(first != 0UL, "首次入场有实例");
 
         // 重复挑战复用同一实例，且服务器权威字段必须真的落到 BaseInfo 上。
-        TeamManager.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
-        Expect(TeamManager.Instance.GetInstanceId(2001UL) == first, "重复挑战复用同一实例");
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(solo, TeamManager.MoshentaDungeonId);
+        Expect(MasterTeamProbe.Instance.GetInstanceId(2001UL) == first, "重复挑战复用同一实例");
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId != 0, "入场后 BaseInfo.InstanceId 非0");
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId == (int)first, "BaseInfo.InstanceId 与队伍实例一致");
         Expect(solo.mainRoleInfo.BaseInfo.MapId == TeamManager.MoshentaMapId, "入场后 BaseInfo.MapId 为魔神塔");
         Expect(solo.mainRoleInfo.BaseInfo.Pos == TeamManager.MoshentaSpawnPos, "入场后 BaseInfo.Pos 为场景真实出生点");
 
-        TeamManager.Instance.LeaveTeam(2001UL);
+        MasterTeamProbe.Instance.LeaveTeam(2001UL);
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId == 0, "离队后 BaseInfo.InstanceId 归零");
         Expect(solo.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "离队后 BaseInfo.MapId 回到主城");
         Expect(solo.mainRoleInfo.BaseInfo.Pos == TeamManager.MainCitySpawnPos, "离队后 BaseInfo.Pos 为主城真实出生点");
@@ -384,16 +477,16 @@ public static class TeamAuthoritySmoke
         // 坐标用例的队员：角色ID 2102，用于和队长比较入场后的位置与实例。
         OnlineRole member = NewRole(2102, "坐标队员");
         // 坐标用例的队伍ID，两人共用同一实例。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
-        TeamManager.Instance.InviteJoinTeam(captain, 2102UL);
-        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 2101UL, true);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 2102UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 2101UL, true);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
 
         Expect(captain.mainRoleInfo.BaseInfo.Pos == member.mainRoleInfo.BaseInfo.Pos, "同队成员入场位置一致");
         Expect(captain.mainRoleInfo.BaseInfo.InstanceId == member.mainRoleInfo.BaseInfo.InstanceId,
             "同队成员实例一致");
-        TeamManager.Instance.LeaveTeam(2102UL);
-        TeamManager.Instance.LeaveTeam(2101UL);
+        MasterTeamProbe.Instance.LeaveTeam(2102UL);
+        MasterTeamProbe.Instance.LeaveTeam(2101UL);
     }
 
     /// <summary>
@@ -421,21 +514,21 @@ public static class TeamAuthoritySmoke
 
         // 先建队并让乙入队，确保离队分支确实有队伍关系可清。
         // 甲建队得到的队伍ID，后续用它查队长与成员数，验证主城离队只清关系、不改写位置。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(leaver, 1000);
-        TeamManager.Instance.InviteJoinTeam(leaver, 3002UL);
-        TeamManager.Instance.AcceptTeamInvatation(observer, teamId, 3001UL, true);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(leaver, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(leaver, 3002UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(observer, teamId, 3001UL, true);
         // 离队前的位置快照，用于比对离队后坐标是否被改写。
         string posBefore = leaver.mainRoleInfo.BaseInfo.Pos;
         link.ClearFrames();
 
         // 甲在主城主动离队：只应清队伍关系，不应广播离开，也不应被传送回出生点。
-        TeamManager.Instance.LeaveTeam(3001UL);
+        MasterTeamProbe.Instance.LeaveTeam(3001UL);
         // 离队后窗口内收到的全部真实帧，用于负向断言"乙没有收到离开通知"。
         List<DecodedFrame> frames = link.WaitWindow(800);
         // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
         Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 2), "主城离队后乙仍收到队伍状态刷新");
         Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 2), "主城离队未向同场景观察者广播 RoleLeave");
-        Expect(TeamManager.Instance.GetTeamId(3001UL) == 0UL, "主城离队后甲不在队伍");
+        Expect(MasterTeamProbe.Instance.GetTeamId(3001UL) == 0UL, "主城离队后甲不在队伍");
         Expect(leaver.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "主城离队后地图未被改写");
         Expect(leaver.mainRoleInfo.BaseInfo.InstanceId == 0, "主城离队后实例未被改写");
         Expect(leaver.mainRoleInfo.BaseInfo.Pos == posBefore, "主城离队后坐标未被传送回出生点");
@@ -454,9 +547,9 @@ public static class TeamAuthoritySmoke
         Expect(HasFrame(moveFrames, NetDefine.CMD_SyncMoveCode, 2), "主城离队后乙仍能收到甲的移动同步");
 
         // 队长离队后队长转给剩余首人，随后乙离队解散队伍。
-        Expect(TeamManager.Instance.GetCaptainId(teamId) == 3002UL, "主城队长离队后队长转给剩余成员");
-        TeamManager.Instance.LeaveTeam(3002UL);
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "主城末人离队后队伍解散");
+        Expect(MasterTeamProbe.Instance.GetCaptainId(teamId) == 3002UL, "主城队长离队后队长转给剩余成员");
+        MasterTeamProbe.Instance.LeaveTeam(3002UL);
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 0, "主城末人离队后队伍解散");
         link.Close();
     }
 
@@ -481,25 +574,25 @@ public static class TeamAuthoritySmoke
         member.UnitySessionId = 2;
 
         // 队长建队得到的队伍ID，用于断言非队长离队后队伍仍在队长名下保留。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
-        TeamManager.Instance.InviteJoinTeam(captain, 3302UL);
-        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 3301UL, true);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 3302UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 3301UL, true);
         // 离队前的坐标快照，用于比对非队长离队是否被传送。
         string posBefore = member.mainRoleInfo.BaseInfo.Pos;
         link.ClearFrames();
 
-        TeamManager.Instance.LeaveTeam(3302UL);
+        MasterTeamProbe.Instance.LeaveTeam(3302UL);
         // 非队长离队后窗口内的全部真实帧，用于负向断言"队长没有收到离开通知"。
         List<DecodedFrame> frames = link.WaitWindow(800);
         // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
         Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 1), "非队长主城离队后队长仍收到队伍状态刷新");
         Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 1), "非队长主城离队未向队长广播 RoleLeave");
         Expect(member.mainRoleInfo.BaseInfo.Pos == posBefore, "非队长主城离队后坐标未被改写");
-        Expect(TeamManager.Instance.GetTeamId(3302UL) == 0UL, "非队长离队后不再有队伍");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 1, "非队长离队后队伍仍保留队长");
-        Expect(TeamManager.Instance.GetCaptainId(teamId) == 3301UL, "非队长离队不改变队长");
+        Expect(MasterTeamProbe.Instance.GetTeamId(3302UL) == 0UL, "非队长离队后不再有队伍");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 1, "非队长离队后队伍仍保留队长");
+        Expect(MasterTeamProbe.Instance.GetCaptainId(teamId) == 3301UL, "非队长离队不改变队长");
 
-        TeamManager.Instance.LeaveTeam(3301UL);
+        MasterTeamProbe.Instance.LeaveTeam(3301UL);
         link.Close();
     }
 
@@ -516,18 +609,18 @@ public static class TeamAuthoritySmoke
         solo.GateSessionId = link.SessionId;
         solo.UnitySessionId = 1;
         // 单人建队得到的队伍ID，用于断言末人离队后队伍成员数归零即解散。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(solo, 1000);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(solo, 1000);
         // 离队前的坐标快照，用于比对单人离队是否被传送。
         string posBefore = solo.mainRoleInfo.BaseInfo.Pos;
         link.ClearFrames();
 
-        TeamManager.Instance.LeaveTeam(3401UL);
+        MasterTeamProbe.Instance.LeaveTeam(3401UL);
         // 单人离队后窗口内的全部真实帧，用于负向断言"本人也没有收到离开通知"。
         List<DecodedFrame> frames = link.WaitWindow(800);
         // 先确认帧链路真的有下行，再断言没有离开通知，避免"收不到任何包"被误判成通过。
         Expect(HasFrame(frames, NetDefine.CMD_TeamInfoCode, 1), "主城单人离队后本人仍收到空队伍状态");
         Expect(!HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 1), "主城单人离队未向本人广播 RoleLeave");
-        Expect(TeamManager.Instance.GetMemberCount(teamId) == 0, "主城单人离队后队伍解散");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamId) == 0, "主城单人离队后队伍解散");
         Expect(solo.mainRoleInfo.BaseInfo.Pos == posBefore, "主城单人离队后坐标未被传送");
         Expect(solo.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "主城单人离队后仍在主城");
         link.Close();
@@ -558,15 +651,15 @@ public static class TeamAuthoritySmoke
         cityObserver.mainRoleInfo.BaseInfo.Pos = TeamManager.MainCitySpawnPos;
 
         // 副本队长建队得到的队伍ID，用于组队入场并在断言里查成员与队长状态。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(captain, 1000);
-        TeamManager.Instance.InviteJoinTeam(captain, 3102UL);
-        TeamManager.Instance.AcceptTeamInvatation(member, teamId, 3101UL, true);
-        TeamManager.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(captain, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(captain, 3102UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 3101UL, true);
+        MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
         Expect(member.mainRoleInfo.BaseInfo.InstanceId != 0, "入场后队员实例非0");
         link.ClearFrames();
 
         // 队员在副本内离队：旧实例观察者必须收到离开，本人必须回城，主城观察者必须收到出现。
-        TeamManager.Instance.LeaveTeam(3102UL);
+        MasterTeamProbe.Instance.LeaveTeam(3102UL);
         // 离队是一次同步调用，离开、回城与出现通知会在同一批写出；
         // 先等离开帧，再补收一个窗口并把补收帧并入同一份列表，避免先出现的帧被前一次等待消费掉。
         List<DecodedFrame> frames = link.WaitFrames(NetDefine.CMD_RoleLeaveCode, 1, 1500);
@@ -584,7 +677,7 @@ public static class TeamAuthoritySmoke
         Expect(member.mainRoleInfo.BaseInfo.MapId == TeamManager.MainCityMapId, "副本内离队后回到主城地图");
         Expect(member.mainRoleInfo.BaseInfo.Pos == TeamManager.MainCitySpawnPos, "副本内离队后赋主城出生点");
 
-        TeamManager.Instance.LeaveTeam(3101UL);
+        MasterTeamProbe.Instance.LeaveTeam(3101UL);
         link.Close();
     }
 
@@ -612,18 +705,18 @@ public static class TeamAuthoritySmoke
         observer.UnitySessionId = 2;
 
         // 掉线者建队得到的队伍ID，用于断言掉线清理会把他从队伍索引里移除。
-        ulong teamId = TeamManager.Instance.RequestCreateTeam(offlineRole, 1000);
-        TeamManager.Instance.InviteJoinTeam(offlineRole, 3202UL);
-        TeamManager.Instance.AcceptTeamInvatation(observer, teamId, 3201UL, true);
+        ulong teamId = MasterTeamProbe.Instance.RequestCreateTeam(offlineRole, 1000);
+        MasterTeamProbe.Instance.InviteJoinTeam(offlineRole, 3202UL);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(observer, teamId, 3201UL, true);
         link.ClearFrames();
 
-        TeamManager.Instance.OnRoleOffline(3201UL);
+        MasterTeamProbe.Instance.OnRoleOffline(3201UL);
         // 掉线清理后等到的离开通知帧，用于正向断言"掉线仍会让观察者删掉远端角色"。
         List<DecodedFrame> frames = link.WaitFrames(NetDefine.CMD_RoleLeaveCode, 2, 1500);
         Expect(HasFrame(frames, NetDefine.CMD_RoleLeaveCode, 2), "主城掉线仍向观察者广播 RoleLeave");
-        Expect(TeamManager.Instance.GetTeamId(3201UL) == 0UL, "主城掉线后被清理出队伍");
+        Expect(MasterTeamProbe.Instance.GetTeamId(3201UL) == 0UL, "主城掉线后被清理出队伍");
 
-        TeamManager.Instance.LeaveTeam(3202UL);
+        MasterTeamProbe.Instance.LeaveTeam(3202UL);
         link.Close();
     }
 
@@ -663,35 +756,35 @@ public static class TeamAuthoritySmoke
         OnlineRole outsider = NewRole(4004, "无队伍角色");
 
         // 甲队队伍ID，后续邀请与接受都以它为目标。
-        ulong teamA = TeamManager.Instance.RequestCreateTeam(captainA, 1000);
+        ulong teamA = MasterTeamProbe.Instance.RequestCreateTeam(captainA, 1000);
         Expect(teamA != 0UL, "原因回执用例：甲队建队成功");
         // 乙队队伍ID，用来让乙队队长处于"已在队伍中"的状态。
-        ulong teamB = TeamManager.Instance.RequestCreateTeam(captainB, 1000);
+        ulong teamB = MasterTeamProbe.Instance.RequestCreateTeam(captainB, 1000);
         Expect(teamB != 0UL, "原因回执用例：乙队建队成功");
 
         // 正常路径：甲队邀请队员并同意，成功时不得产生失败原因。
         // inviteMemberCode 为邀请登记的失败原因，成功时必须是 Succeed。
         CmdCode inviteMemberCode;
-        Expect(TeamManager.Instance.InviteJoinTeam(captainA, 4003UL, out inviteMemberCode),
+        Expect(MasterTeamProbe.Instance.InviteJoinTeam(captainA, 4003UL, out inviteMemberCode),
             "原因回执用例：甲队邀请队员登记成功");
         // acceptMemberCode 为入队的失败原因，成功时必须是 Succeed。
         CmdCode acceptMemberCode;
-        Expect(TeamManager.Instance.AcceptTeamInvatation(memberA, teamA, 4001UL, true, out acceptMemberCode),
+        Expect(MasterTeamProbe.Instance.AcceptTeamInvatation(memberA, teamA, 4001UL, true, out acceptMemberCode),
             "原因回执用例：甲队队员入队成功");
         Expect(acceptMemberCode == CmdCode.Succeed, "原因回执用例：正常入队不产生失败原因");
-        Expect(TeamManager.Instance.GetMemberCount(teamA) == 2, "原因回执用例：正常入队后甲队为2人");
+        Expect(MasterTeamProbe.Instance.GetMemberCount(teamA) == 2, "原因回执用例：正常入队后甲队为2人");
 
         // 关键场景一：邀请一个已经在别的队伍里的角色，必须给出失败原因。
         // inviteBusyCode 为该次邀请的失败原因，用于断言不再静默。
         CmdCode inviteBusyCode;
-        bool invitedBusy = TeamManager.Instance.InviteJoinTeam(captainA, 4002UL, out inviteBusyCode);
+        bool invitedBusy = MasterTeamProbe.Instance.InviteJoinTeam(captainA, 4002UL, out inviteBusyCode);
         Expect(!invitedBusy, "原因回执用例：对方已在队伍中时邀请被拒绝");
         Expect(inviteBusyCode != CmdCode.Succeed, "原因回执用例：邀请被拒绝时带回失败原因");
 
         // 关键场景二：自己已在队伍中时接受他人邀请，必须给出失败原因。
         // acceptBusyCode 为该次接受的失败原因，对应"点加入没反应"的服务端分支。
         CmdCode acceptBusyCode;
-        bool acceptedBusy = TeamManager.Instance.AcceptTeamInvatation(captainB, teamA, 4001UL, true,
+        bool acceptedBusy = MasterTeamProbe.Instance.AcceptTeamInvatation(captainB, teamA, 4001UL, true,
             out acceptBusyCode);
         Expect(!acceptedBusy, "原因回执用例：自己已在队伍中时接受邀请被拒绝");
         Expect(acceptBusyCode != CmdCode.Succeed, "原因回执用例：接受被拒绝时带回失败原因");
@@ -699,7 +792,7 @@ public static class TeamAuthoritySmoke
         // 关键场景三：没有任何待确认邀请时接受，必须给出失败原因而不是静默返回。
         // acceptExpiredCode 为该次接受的失败原因，用来覆盖邀请已失效分支。
         CmdCode acceptExpiredCode;
-        bool acceptedExpired = TeamManager.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, true,
+        bool acceptedExpired = MasterTeamProbe.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, true,
             out acceptExpiredCode);
         Expect(!acceptedExpired, "原因回执用例：不存在的邀请不能入队");
         Expect(acceptExpiredCode != CmdCode.Succeed, "原因回执用例：邀请失效时带回失败原因");
@@ -707,13 +800,13 @@ public static class TeamAuthoritySmoke
         // 拒绝邀请属于正常业务结果，不得产生失败原因，避免客户端误报错误提示。
         // rejectInviteCode 为拒绝邀请的返回原因，必须是 Succeed。
         CmdCode rejectInviteCode;
-        TeamManager.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, false, out rejectInviteCode);
+        MasterTeamProbe.Instance.AcceptTeamInvatation(outsider, teamA, 4001UL, false, out rejectInviteCode);
         Expect(rejectInviteCode == CmdCode.Succeed, "原因回执用例：拒绝邀请不产生失败原因");
 
         // 清理：解散两个临时队伍，避免影响后续用例。
-        TeamManager.Instance.LeaveTeam(4003UL);
-        TeamManager.Instance.LeaveTeam(4001UL);
-        TeamManager.Instance.LeaveTeam(4002UL);
+        MasterTeamProbe.Instance.LeaveTeam(4003UL);
+        MasterTeamProbe.Instance.LeaveTeam(4001UL);
+        MasterTeamProbe.Instance.LeaveTeam(4002UL);
     }
 
     /// <summary>构造一名仅含基础信息的在线角色，并注册进 RoleManager 现有在线索引。</summary>

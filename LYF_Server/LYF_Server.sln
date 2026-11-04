@@ -19,12 +19,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GateServer", "GateServer\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMoRpgCommon", "MMoRpgCommon\MMoRpgCommon.csproj", "{A9070AC6-E01D-4CFE-A171-34EA469D0038}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterServer", "MasterServer\MasterServer.csproj", "{774A732E-5B93-4E52-83EC-8F052C5F0E2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{774A732E-5B93-4E52-83EC-8F052C5F0E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774A732E-5B93-4E52-83EC-8F052C5F0E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774A732E-5B93-4E52-83EC-8F052C5F0E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774A732E-5B93-4E52-83EC-8F052C5F0E2F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E695F887-4879-41C0-85F3-D86A91150282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E695F887-4879-41C0-85F3-D86A91150282}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E695F887-4879-41C0-85F3-D86A91150282}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,6 +60,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{774A732E-5B93-4E52-83EC-8F052C5F0E2F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{E695F887-4879-41C0-85F3-D86A91150282} = {78DA7FA0-1604-4428-A7A6-9DCFEF8A3792}
 		{81BDC8E9-449A-4CFF-BF60-39F788B21100} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F0E18A88-B81F-424C-BBA5-F9393FE9A398} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}

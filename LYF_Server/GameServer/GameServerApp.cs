@@ -25,6 +25,8 @@ namespace GameServer
             
             // 协议注册只绑定网络入口和独立处理器，业务仍由逻辑线程执行。
             GameMessageProtocolRegister.Register(server, client);
+            // 组队请求经已有玩家会话认证后转交独立 MS。
+            MasterTeamLink.Instance.Connect(NetDefine.IPHost, NetDefine.MasterServerPort);
             while (true)
             {
                 // 每轮先消费网络命令，再由 GameGlobal 按 50ms 固定步长推进业务模块。

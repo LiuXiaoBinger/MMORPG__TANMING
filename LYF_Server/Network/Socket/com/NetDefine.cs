@@ -50,6 +50,23 @@ public class NetDefine
     public const ushort CMD_SyncMoveCode = 11181;
     /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
     public const ushort CMD_KcpBindCode = 11190;
+    /// <summary>独立 MasterServer 在本机服务网段监听的 TCP 端口。</summary>
+    public const int MasterServerPort = 10150;
+    /// <summary>GS 转发已认证玩家的组队请求。</summary>
+    public const ushort CMD_MasterTeamRequest = 11220;
+    /// <summary>MS 交付给单个玩家的邀请或业务错误。</summary>
+    public const ushort CMD_MasterTeamDelivery = 11221;
+    /// <summary>MS 发布成员名单，GS 补充在线角色属性后发送。</summary>
+    public const ushort CMD_MasterTeamRoster = 11222;
+    /// <summary>MS 授权 GS 按成员清单创建或重用副本。</summary>
+    public const ushort CMD_MasterTeamEnter = 11223;
+    /// <summary>MS 通知 GS 执行主动退队后的场景清理。</summary>
+    public const ushort CMD_MasterTeamExit = 11224;
+    /// <summary>GS 告知 MS 角色已离线。</summary>
+    public const ushort CMD_MasterTeamOffline = 11225;
+    /// <summary>GS 队列内部的队伍服断线事件，不注册为网络命令。</summary>
+    public const ushort CMD_MasterTeamLost = 11226;
+
     /// <summary>创建队伍请求，对应 RO TeamMgr.lua RequestCreateTeam。</summary>
     public const ushort CMD_CreateTeamCode = 11200;
     /// <summary>邀请他人入队请求，对应 RO TeamMgr.lua InviteJoinTeam。</summary>

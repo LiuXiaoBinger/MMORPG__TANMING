@@ -11,7 +11,7 @@ set "source=D:\unitypro\LYFMMORGP\LYF_Server\Network\bin\Debug"
 set "serverRoot=D:\unitypro\LYFMMORGP\LYF_Server"
 
 rem 四服目标是 serverRoot 下的子目录，客户端目标另由 clientTarget 的完整路径指定
-set "targets=CenterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
+set "targets=CenterServer\bin\Debug MasterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
 set "clientTarget=D:\unitypro\LYFMMORGP\LYF_MMO\Assets\GM_Game\Plugins\Net"
 
 rem 检查源目录是否存在

@@ -177,13 +177,13 @@ public static class OrcWave18AiSmoke
         return data.MonsterActions.Single(action => action.SpawnId == SpawnId);
     }
 
-    /// <summary>按队伍 ID 定位真实场景。测试反射私有队伍字典，避免添加业务调试入口。</summary>
-    /// <param name="teamId">正式建队接口分配的队伍号。</param>
-    private static SceneWaveSpawner GetScene(ulong teamId)
+    /// <summary>按 MS 已分配的实例 ID 定位 GS 真实场景。测试反射私有实例字典，避免添加业务调试入口。</summary>
+    /// <param name="instanceId">进入副本后 GS 写入角色的实例号。</param>
+    private static SceneWaveSpawner GetScene(ulong instanceId)
     {
-        // Team 为嵌套私有类型，反射只用于测试读取真实存在的实例。
-        IDictionary teams = (IDictionary)typeof(TeamManager).GetField("_teams", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(TeamManager.Instance);
-        return (SceneWaveSpawner)teams[teamId].GetType().GetField("WaveSpawner").GetValue(teams[teamId]);
+        // Dungeon 为 GS 嵌套私有类型，反射只用于测试读取真实存在的实例。
+        IDictionary teams = (IDictionary)typeof(TeamManager).GetField("_instances", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(TeamManager.Instance);
+        return (SceneWaveSpawner)teams[instanceId].GetType().GetField("WaveSpawner").GetValue(teams[instanceId]);
     }
 
     /// <summary>按真实普攻面向，在兽人当前中心或指定旧位置进行一次命中判定。</summary>
@@ -330,8 +330,8 @@ public static class OrcWave18AiSmoke
         using (Peer b = new Peer(981002))
         using (Peer other = new Peer(981003))
         {
-            // 同一单例按真实队伍分配副本，不共享同一只怪物实体。
-            TeamManager teams = TeamManager.Instance;
+            // 通过真实 MS 建队，由 GS 分别运行两份副本。
+            MasterTeamProbe teams = MasterTeamProbe.Instance;
             // 正式接口分配的两个独立队伍号。
             ulong firstId = teams.RequestCreateTeam(a.Role, 1000);
             Check(teams.InviteJoinTeam(a.Role, b.Role.GetID()) && teams.AcceptTeamInvatation(b.Role, firstId, a.Role.GetID(), true), "双人组队");
@@ -346,7 +346,7 @@ public static class OrcWave18AiSmoke
             Evidence(folder, "entry", a.Entry.ToByteArray());
             Evidence(folder, "other-entry", other.Entry.ToByteArray());
             // 各自队伍从正式入场流程取得的服务端副本对象。
-            SceneWaveSpawner scene = GetScene(firstId), separate = GetScene(otherId);
+            SceneWaveSpawner scene = GetScene((ulong)a.Role.mainRoleInfo.BaseInfo.InstanceId), separate = GetScene((ulong)other.Role.mainRoleInfo.BaseInfo.InstanceId);
             CheckPatrol(scene, a.Role);
             // 必须在移动段中途重入，避免起点坐标掩盖快照错误。
             MonsterActionData move = Snapshot(scene);
@@ -440,7 +440,14 @@ public static class OrcWave18AiSmoke
         // 测试输出位置由命令明确指定，不向当前工作区的正式资源目录写样本。
         string folder = string.Empty;
         if (args.Length > 0) folder = args[0];
-        CheckInstances(folder);
+        // 独立 MS 使用默认服务端口，隔离启动器可通过第二个参数覆盖。
+        int port = NetDefine.MasterServerPort;
+        if (args.Length > 1) port = int.Parse(args[1]);
+        using (MasterTeamProbe probe = new MasterTeamProbe(port))
+        {
+            MasterTeamProbe.Instance = probe;
+            CheckInstances(folder);
+        }
         Console.WriteLine("ORC_WAVE18_AI: PASS " + passed);
         return 0;
     }

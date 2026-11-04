@@ -5,4 +5,6 @@ public enum GameCommandSource
     GateServer = 1,
     /// <summary>来自 CenterServer 的跨服结果或通知。</summary>
     CenterServer = 2,
+    /// <summary>来自独立队伍服的内网控制消息。</summary>
+    MasterServer = 3,
 }

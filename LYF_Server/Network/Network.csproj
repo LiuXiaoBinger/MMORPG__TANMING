@@ -103,6 +103,7 @@
     <Compile Include="LubanManage\Parse\EquipItemConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proto\RequestEntity.cs" />
+    <Compile Include="Proto\MasterTeam.cs" />
     <Compile Include="Proto\ResultEntity.cs" />
     <Compile Include="Socket\com\IContainer.cs" />
     <Compile Include="Socket\com\NetDefine.cs" />

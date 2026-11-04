@@ -54,10 +54,10 @@
 > 整理前原文：`项目修改日志/协作记录归档/2026-10-23/PROJECT_CONTEXT.md`，第 515—523 行；历史时点记录，不代表当前仍在执行。
 
 - 解决方案：`LYF_Server/LYF_Server.sln`
-- 服务：CenterServer、LoginServer、GateServer、GameServer
+- 服务：CenterServer、LoginServer、GateServer、GameServer、MasterServer
 - 公共库：Network、MMoRpgCommon
 - 协议：`LYF_Server/ProtoBuf/proto`，生成代码位于 Network 协议目录
-- 默认端口：中心 10110、登录 10120、游戏 10130、网关 10140
+- 默认端口：中心 10110、登录 10120、游戏 10130、网关 10140、队伍服 10150。MasterServer 管理组队与进本许可，GameServer 运行副本和战斗
 - 技术栈：.NET Framework 4.8、Google.Protobuf、TCP Socket、SqlSugar/MySQL、Redis、Luban
 
 ## [STRUCTURE][综合][PC-083] 项目结构总览

@@ -38,8 +38,8 @@
 - Source: `Docs/AI/PROJECT_CONTEXT.md` `[PC-081]`.
 ## [STRUCTURE][综合][PC-082] Backend layout
 
-- Solution: `LYF_Server/LYF_Server.sln`; services: CenterServer, LoginServer, GateServer and GameServer; shared libraries: Network and MMoRpgCommon. Protocol sources: `LYF_Server/ProtoBuf/proto`; generated protocol code belongs in Network.
-- Recorded defaults: Center 10110, Login 10120, Game 10130, Gate 10140. Stack: .NET Framework 4.8, Google.Protobuf, TCP Socket, SqlSugar/MySQL, Redis and Luban. These recorded defaults are not current connection observations.
+- Solution: `LYF_Server/LYF_Server.sln`; services: CenterServer, LoginServer, GateServer, GameServer and MasterServer; shared libraries: Network and MMoRpgCommon. Protocol sources: `LYF_Server/ProtoBuf/proto`; generated protocol code belongs in Network.
+- Recorded defaults: Center 10110, Login 10120, Game 10130, Gate 10140, Master 10150. MasterServer owns party membership and entry authorization. GameServer runs the dungeon and combat. Stack: .NET Framework 4.8, Google.Protobuf, TCP Socket, SqlSugar/MySQL, Redis and Luban. These recorded defaults are not current connection observations.
 - Source: `Docs/AI/PROJECT_CONTEXT.md` `[PC-082]`.
 ## [STRUCTURE][综合][PC-083] Responsibility boundaries and execution flow
 

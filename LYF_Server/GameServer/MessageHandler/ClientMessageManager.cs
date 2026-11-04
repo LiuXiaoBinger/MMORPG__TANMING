@@ -49,7 +49,8 @@ public sealed class ClientMessageManager : IContainer
         }
 
         if (key.Source != GameCommandSource.GateServer &&
-            key.Source != GameCommandSource.CenterServer)
+            key.Source != GameCommandSource.CenterServer &&
+            key.Source != GameCommandSource.MasterServer)
         {
             LogMsg.Info("消息处理器注册失败：未知来源 " + key.Source, LogMsgType.Error);
             return false;
@@ -157,7 +158,8 @@ public sealed class ClientMessageManager : IContainer
         }
 
         if (command.Source != GameCommandSource.GateServer &&
-            command.Source != GameCommandSource.CenterServer)
+            command.Source != GameCommandSource.CenterServer &&
+            command.Source != GameCommandSource.MasterServer)
         {
             LogMsg.Info("拒绝未知消息来源，序号=" + command.Sequence + "，来源=" +
                 command.Source, LogMsgType.Error);
@@ -369,6 +371,7 @@ public static class GameMessageProtocolRegister
         }
 
         ClientMessageManager messageManager = ClientMessageManager.Instance;
+        TeamMessageHandler.Register(server, messageManager);
         IGameMessageHandler loginGameServerHandler = new LoginGameServerHandler();
         IGameMessageHandler createRoleHandler = new CreateRoleHandler();
         IGameMessageHandler startGameHandler = new StartGameHandler();
