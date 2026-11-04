@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b54542902cf1006889151891ca696cf0f05fbfec38b7ef353b395543d3740202`
+Source normalized SHA256: `c301fc3325b3a37f946c8bc24738b86b89f11c5d62c1f824c67d9abb110c21bc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -45,11 +45,12 @@ Source normalized SHA256: `b54542902cf1006889151891ca696cf0f05fbfec38b7ef353b395
 | [CODE][FILES][HANDOFF][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Normal attack damage words above dungeon monsters | 235-240 |
 | [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Use the public RO monster Animator in Moshenta | 241-245 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-251 |
-| [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-255 |
+| [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-256 |
+| [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-259 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3165852ab1ec9b1ef77fd296e569887cad4e02abae8ddbf4b0ebd3cc77c305e6`
+Source normalized SHA256: `5d499c13bbdcfa011194c13016a33cdc8943e9618971c962f8c68b8c46469640`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -86,7 +87,8 @@ Source normalized SHA256: `3165852ab1ec9b1ef77fd296e569887cad4e02abae8ddbf4b0ebd
 | [VERIFY][魔神塔][跳字][MOSHENTA-NORMAL-HIT-WORD-20261104] Server damage fan-out and rendered normal words | 256-261 |
 | [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Verify shared monster animation playback | 262-266 |
 | [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-271 |
-| [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-275 |
+| [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-276 |
+| [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-279 |
 
 ## Docs/AI/DECISIONS.en.md
 

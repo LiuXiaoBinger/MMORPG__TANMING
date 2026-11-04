@@ -21,7 +21,8 @@ public enum WindowType
     TaskWindow,//任务窗口，展示任务详情、目标与奖励
     DailyTaskWindow,//日常任务窗口，RO原版日常面板，仅呈现与关闭
     ThemeDungeonArroundWindow,//主题副本选择窗口，展示副本书位、翻页与详情
-    ThemeDungeonTeamCreateWindow//主题副本建队窗口，创建副本队伍并展示已加入的成员
+    ThemeDungeonTeamCreateWindow,//主题副本建队窗口，创建副本队伍并展示已加入的成员
+    ChatWindow // 主界面聊天窗口，管理频道消息与语音控件。
 }
 
 /// <summary>

@@ -33,7 +33,9 @@ $combatCompiler += Join-Path $PSScriptRoot 'OrcWave18AiSmoke.cs'
 $combatCompiler += Join-Path $PSScriptRoot 'MasterTeamProbe.cs'
 & $csc @combatCompiler
 if ($LASTEXITCODE -ne 0) { throw '副本战斗测试编译失败' }
-$tests = @('TeamAuthoritySmoke.cs','MasterTeamProbe.cs','LoopbackLink.cs','DecodedFrame.cs')
+# 聊天用例还会经过真实网关的客户端回包校验及 TCP 写出。
+$compiler += "/r:$(Join-Path $buildDir 'GateServer.exe')"
+$tests = @('TeamAuthoritySmoke.cs','ChatAuthoritySmoke.cs','MasterTeamProbe.cs','LoopbackLink.cs','DecodedFrame.cs')
 for ($i = 0; $i -lt $tests.Count; $i++) { $compiler += Join-Path $PSScriptRoot $tests[$i] }
 & $csc @compiler
 if ($LASTEXITCODE -ne 0) { throw '组队测试编译失败' }

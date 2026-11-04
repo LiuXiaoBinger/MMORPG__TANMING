@@ -32,6 +32,12 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
                 this, CenterMessageRoute.Internal);
             if (code != NetDefine.CMD_MasterTeamLost) _client.RegistCommand(code, this);
         }
+        // 聊天回包共用同一条 GS→MS 连接，因此队伍聊天读取的就是本分区权威名单。
+        _client.RegistCommand(NetDefine.RpcC2M_SendChatMsg, this);
+        _client.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, this);
+        _client.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, this);
+        _client.RegistCommand(NetDefine.PtcM2T_ChatBroadCastM2T, this);
+        _client.RegistCommand(NetDefine.PtcM2G_ChatBroadCastM2Gs, this);
         _client.OnConnSucceed = () => Interlocked.Exchange(ref _connected, 1);
         _client.OnConnFailed = OnDisconnected;
         _client.StartConnect();
@@ -51,6 +57,13 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         {
             role.SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.ServerError }.ToByteString());
         }
+    }
+
+    /// <summary>沿本分区连接发送需要保留玩家返回地址的 MS 业务包。</summary>
+    /// <param name="packet">已由 GS 核对会话的服务请求。</param><returns>消息是否提交给连接。</returns>
+    public bool SendToMaster(BasePackage packet)
+    {
+        return Volatile.Read(ref _connected) != 0 && _client.Send(packet);
     }
 
     /// <summary>GS 下线时让 MS 删除该角色的组队关系。</summary>

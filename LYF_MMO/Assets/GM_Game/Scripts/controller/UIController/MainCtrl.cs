@@ -25,7 +25,9 @@ public class MainCtrl : CtrlBase
     private readonly KnapsackCtrl _knapsackCtrl;
 
     /// <summary>聊天窗口视图。</summary>
-    private readonly ChatWindow _chatWindow;
+    private readonly ChatWindows _chatWindow;
+    /// <summary>管理正式聊天窗口的文字及录音请求与回包。</summary>
+    private readonly ChatMgr _chatMgr;
 
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
@@ -64,6 +66,7 @@ public class MainCtrl : CtrlBase
         }
         BindTrackedRole();
         _chatWindow = _mainView.ChatWindow;
+        if (_chatWindow != null) _chatMgr = new ChatMgr(_chatWindow);
         RegisterCommands();
         RegisterViewActions();
     }
@@ -111,7 +114,6 @@ public class MainCtrl : CtrlBase
         if (_chatWindow != null)
         {
             _chatWindow.InputFocusChanged += OnChatInputFocusChanged;
-            _chatWindow.SendRequested += OnChatSendRequested;
         }
     }
 
@@ -171,7 +173,7 @@ public class MainCtrl : CtrlBase
         if (_chatWindow != null)
         {
             _chatWindow.InputFocusChanged -= OnChatInputFocusChanged;
-            _chatWindow.SendRequested -= OnChatSendRequested;
+            _chatMgr.Dispose();
         }
         if (_shopCtrl != null)
         {
@@ -386,23 +388,6 @@ public class MainCtrl : CtrlBase
             return;
         }
         _shopCtrl.OpenNpcShop(_currentTalkNpc);
-    }
-
-    /// <summary>校验聊天文本并协调本地回显。</summary>
-    /// <param name="channel">窗口选中的聊天频道，仅用于当前本地回显。</param>
-    /// <param name="message">要显示的正文，纯空白时拒绝。</param>
-    private void OnChatSendRequested(string channel, string message)
-    {
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            TipsMgr.Instance.ShowSystemTips("请输入聊天内容");
-            return;
-        }
-        if (_chatWindow != null)
-        {
-            // 当前聊天协议尚未接入，暂由控制器提供本地昵称和回显。
-            _chatWindow.AppendMessage(channel, "昵称:小米", message);
-        }
     }
 
     /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>

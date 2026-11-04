@@ -11,6 +11,8 @@ internal static class MasterServerApp
         NetServer server = new NetServer(null);
         // 同一游戏服的队伍请求沿一条 TCP 链路顺序到达。
         MasterTeamService teams = new MasterTeamService();
+        server.RegistCommand(NetDefine.RpcC2M_SendChatMsg, teams);
+        server.RegistCommand(NetDefine.PtcG2M_ChatAudioTransfer, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamRequest, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamOffline, teams);
         server.OnSessionDisconnected = teams.RemoveGame;

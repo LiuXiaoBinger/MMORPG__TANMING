@@ -57,7 +57,7 @@
 - 服务：CenterServer、LoginServer、GateServer、GameServer、MasterServer
 - 公共库：Network、MMoRpgCommon
 - 协议：`LYF_Server/ProtoBuf/proto`，生成代码位于 Network 协议目录
-- 默认端口：中心 10110、登录 10120、游戏 10130、网关 10140、队伍服 10150。MasterServer 管理组队与进本许可，GameServer 运行副本和战斗
+- 默认端口：中心 10110、登录 10120、游戏 10130、网关 10140、MasterServer 10150。MasterServer 管理组队、进本许可、聊天规则和录音文件。世界频道覆盖本分区在线角色，附近频道只在同地图同实例投递，队伍频道取 MS 成员名单。GameServer 运行副本和战斗
 - 技术栈：.NET Framework 4.8、Google.Protobuf、TCP Socket、SqlSugar/MySQL、Redis、Luban
 
 ## [STRUCTURE][综合][PC-083] 项目结构总览

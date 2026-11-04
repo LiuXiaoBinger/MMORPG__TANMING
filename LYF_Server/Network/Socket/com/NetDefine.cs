@@ -50,6 +50,26 @@ public class NetDefine
     public const ushort CMD_SyncMoveCode = 11181;
     /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
     public const ushort CMD_KcpBindCode = 11190;
+    /// <summary>16 kHz 单声道 16 位 PCM 每秒字节数。</summary>
+    public const int ChatAudioBytesPerSecond = 32000;
+    /// <summary>录音上限 30 秒。</summary>
+    public const int ChatAudioMaxBytes = ChatAudioBytesPerSecond * 30;
+    /// <summary>为 16 位 TCP 帧头、protobuf 及压缩预留空间的语音片长。</summary>
+    public const int ChatAudioChunkBytes = 24 * 1024;
+    /// <summary>客户端向自托管媒体服务上传一个录音片。</summary>
+    public const ushort RpcC2M_UploadChatAudio = 11234;
+    /// <summary>客户端点击气泡按 ID 读取一个录音片。</summary>
+    public const ushort RpcC2M_DownloadChatAudio = 11235;
+    /// <summary>游戏服携带已认证角色身份转发媒体请求。</summary>
+    public const ushort PtcG2M_ChatAudioTransfer = 11236;
+    /// <summary>RO 发言 RPC，客户端请求和单播结果共享编号。</summary>
+    public const ushort RpcC2M_SendChatMsg = 11230;
+    /// <summary>RO 网关发给玩家的聊天正文通知。</summary>
+    public const ushort PtcT2C_ChattingMsgNtf = 11231;
+    /// <summary>MS 下发世界广播或权威队伍收件名单。</summary>
+    public const ushort PtcM2T_ChatBroadCastM2T = 11232;
+    /// <summary>MS 交给持有场景角色的 GS 计算附近收件人。</summary>
+    public const ushort PtcM2G_ChatBroadCastM2Gs = 11233;
     /// <summary>独立 MasterServer 在本机服务网段监听的 TCP 端口。</summary>
     public const int MasterServerPort = 10150;
     /// <summary>GS 转发已认证玩家的组队请求。</summary>

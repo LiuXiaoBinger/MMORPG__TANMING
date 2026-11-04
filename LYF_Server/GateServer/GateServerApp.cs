@@ -70,6 +70,15 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
             // 队伍与副本入场：6 条上行原样转给游戏服，4 条下行按 Unity 会话回发。
             // 网关只做会话寻址，队伍状态与实例分配全部由 GameServer 权威决定。
+            // 发言请求和两种客户端回包由正式聊天通道转发。
+            GateChatCtrl gateChatCtrl = new GateChatCtrl();
+            server.RegistCommand(NetDefine.RpcC2M_SendChatMsg, gateChatCtrl);
+            server.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, gateChatCtrl);
+            server.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, gateChatCtrl);
+            client.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, gateChatCtrl);
+            client.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, gateChatCtrl);
+            client.RegistCommand(NetDefine.RpcC2M_SendChatMsg, gateChatCtrl);
+            client.RegistCommand(NetDefine.PtcT2C_ChattingMsgNtf, gateChatCtrl);
             GateTeamCtrl gateTeamCtrl = new GateTeamCtrl();
             server.RegistCommand(NetDefine.CMD_CreateTeamCode, gateTeamCtrl);
             server.RegistCommand(NetDefine.CMD_InviteJoinTeamCode, gateTeamCtrl);

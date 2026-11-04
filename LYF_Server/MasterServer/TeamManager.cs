@@ -273,6 +273,18 @@ internal sealed class TeamManager
         NotifyRoster(team);
     }
 
+    /// <summary>把真实队员写入聊天收件名单，调用期间分区串行处理。</summary>
+    /// <param name="sender">已由 GS 认证的发言角色。</param><param name="notice">待发送的队伍通知。</param>
+    /// <returns>发言人是否已加入队伍。</returns>
+    internal bool GetChatMembers(ulong sender, ChatMsgWithLists notice)
+    {
+        // 名单由 MS 直接提供，客户端不能指定其他玩家收件。
+        Team team;
+        if (!_roleTeams.TryGetValue(sender, out team)) return false;
+        notice.ReceiverList.Add(team.Members);
+        return true;
+    }
+
     /// <summary>沿现有错误协议通知发起玩家。</summary>
     /// <param name="roleId">要收到错误提示的玩家。</param>
     /// <param name="code">原组队协议定义的业务错误。</param>

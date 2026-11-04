@@ -253,3 +253,7 @@
 
 - The independent .NET Framework 4.8 `MasterServer` listens on TCP 10150. Gate keeps the existing client protocol. GS authenticates the role and forwards team commands to MS. MS owns membership, invitations, applications, captain succession and dungeon entry authorization. GS owns scene creation, waves, damage, visibility and return to town.
 - Teams live in memory per connected GS partition. Losing the MS link clears that partition and its displayed teams and active team dungeons. Existing running development services were not switched. Codex implemented and verified this change directly. File inventory and Git receipts are in `项目修改日志/MasterServer组队迁移-2026-11-04.md`.
+
+## [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat
+- Independent MasterServer validates chat and stores uploaded voice by ID. GameServer authenticates the role and delivers messages by shard, scene instance or the MS party roster. Unity sends text, records on hold, cancels on slide-out and plays the tapped message. SpeechToText currently returns empty.
+- Reference names include ChatMsg, AudioChat.audio_id, CChatMgr, ChatAudioMgr, and PtcT2C_ChattingMsgNtf. Recordings use mono 16 kHz signed 16-bit PCM, 24 KiB chunks and 1–30 seconds. See `项目修改日志/RO三频道文字与语音-2026-11-04.md`.

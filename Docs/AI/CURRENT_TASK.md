@@ -250,3 +250,7 @@
 
 - 独立的 .NET Framework 4.8 `MasterServer` 监听 TCP 10150。Gate 沿用客户端协议，GS 核实角色后转发组队命令。MS 管理队员、邀请、申请、队长继任和进本许可，GS 创建场景并处理刷怪、伤害、可见性和回城。
 - 各 GS 连接拥有独立的内存队伍分区。MS 链路断开时，清理该分区及 GS 已显示的队伍和活跃组队副本。本轮未切换正在运行的开发服。Codex 直接实现并验收。逐项清单及 Git 回执见 `项目修改日志/MasterServer组队迁移-2026-11-04.md`。
+
+## [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] 世界、附近、队伍文字和语音
+- 独立 MasterServer 受理聊天并按 ID 保存录音。GameServer 认证发言人，按分区、场景实例或 MS 队伍名单投递。Unity 可输入文字、按住录音、滑出取消、点击气泡收听。SpeechToText 默认返回空字符串。
+- 参照 ChatMsg、AudioChat.audio_id、CChatMgr、ChatAudioMgr、PtcT2C_ChattingMsgNtf 等命名。采用 16 kHz 单声道 16 位有符号 PCM、24 KiB 分块，录音 1 到 30 秒。完整清单见 `项目修改日志/RO三频道文字与语音-2026-11-04.md`。

@@ -23,7 +23,7 @@ public class MainView : UIBase
    /// <summary>按装备部位显示角色穿戴的窗口。</summary>
    [SerializeField,Header("角色信息window")] private RoleAttriibuteWindow _roleAttriibuteWindow;
    /// <summary>聊天输入和消息展示窗口，可从子节点补找旧预制体引用。</summary>
-   [SerializeField,Header("聊天window")] private ChatWindow _chatWindow;
+   [SerializeField,Header("聊天window")] private ChatWindows _chatWindow;
    /// <summary>跟踪当前角色与场景辅助点的小地图窗口。</summary>
    [SerializeField,Header("小地图window")] private MinMapWindow _minMapWindow;
 
@@ -181,13 +181,13 @@ public class MainView : UIBase
    }
 
    /// <summary>获取聊天窗口，兼容尚未绑定序列化字段的旧预制体。</summary>
-   public ChatWindow ChatWindow
+   public ChatWindows ChatWindow
    {
       get
       {
          if (_chatWindow == null)
          {
-            _chatWindow = GetComponentInChildren<ChatWindow>(true);
+            _chatWindow = GetComponentInChildren<ChatWindows>(true);
          }
          return _chatWindow;
       }
@@ -196,6 +196,7 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      if (ChatWindow != null) windowDic[WindowType.ChatWindow] = ChatWindow;
       windowDic[WindowType.RoleCurrtInfoWindow] = _roleCurrInfoWindow;
       windowDic[WindowType.SkillInfoWindow] = _skillInfoWindow;
       windowDic[WindowType.KnapsackWindow] = _knapsackWindow;

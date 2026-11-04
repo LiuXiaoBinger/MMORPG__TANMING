@@ -41,25 +41,34 @@ public sealed class ChatMessage
     public bool IsLocalPlayer;
     // 语音消息可同时显示文字；纯文字消息会隐藏语音节点。
     public bool HasVoice;
+    // 收到的语音留言引用，点击时按文件 ID 收听。
+    public AudioChat Audio;
     // 语音消息保存的音频资源引用，当前窗口只保存，不负责播放。
     public AudioClip VoiceClip;
-    // 在本地生成这条消息时记录的系统时间，用 HH:mm 显示，不是服务器时间。
+    // 正式消息使用 MS 的发送时间并转为本地时区，格式为 HH:mm。
     public DateTime SentAt;
 }
 
 /// <summary>
-/// 聊天演示窗口：保存消息、按当前频道显示最近一段记录，并处理输入、未读提示和频道显隐。
-/// 基础控件和消息模板由 Inspector 提供；本类不发送网络协议，语音入口只保存音频引用并显示语音节点。
+/// 主界面聊天窗口，保存服务器下发的消息并处理频道、未读、输入和语音气泡。
 /// </summary>
-public sealed class ChatWindows : MonoBehaviour
+public sealed class ChatWindows : WindowBase
 {
 
     #region 字段、事件与属性
+    /// <summary>正式预制体中的长按录音按钮。</summary>
+    [SerializeField] private ChatRecordObj _recordObj;
+    /// <summary>录音、上传、下载和播放共用的窗口组件。</summary>
+    [SerializeField] private ChatAudioMgr _audioMgr;
+    /// <summary>用户提交文字后交由 ChatMgr 发包。</summary>
+    public event Action<ChatChannel, string> SendRequested;
+    /// <summary>一条录音已上传，等待 ChatMgr 将其发布到频道。</summary>
+    public event Action<ChatChannel, AudioChat> VoiceReady;
+    /// <summary>主界面据此暂停或恢复角色输入。</summary>
+    public event Action<bool> InputFocusChanged;
     // 所有频道合计保存的消息上限，至少按 1 处理；超过时删除最早记录，实际显示行数另受 pooledMessageRows 限制。
     [SerializeField] private int maxVisibleMessages = 1000;
 
-    // 本地玩家发送消息时显示的名字。
-    [SerializeField] private string localPlayerName = "You";
 
     // 是否允许在输入框内按 Enter / 小键盘 Enter 发送消息。
     [SerializeField] private bool submitWithReturn = true;
@@ -247,6 +256,8 @@ public sealed class ChatWindows : MonoBehaviour
         {
             // 输入框结束编辑时，检查是否由 Enter 引起并尝试发送。
             inputField.onEndEdit.AddListener(SubmitOnEndEdit);
+            inputField.onSelect.AddListener(OnInputSelected);
+            inputField.onDeselect.AddListener(OnInputDeselected);
         }
         if (legacyInputField != null)
         {
@@ -283,6 +294,8 @@ public sealed class ChatWindows : MonoBehaviour
         if (inputField != null)
         {
             inputField.onEndEdit.RemoveListener(SubmitOnEndEdit);
+            inputField.onSelect.RemoveListener(OnInputSelected);
+            inputField.onDeselect.RemoveListener(OnInputDeselected);
         }
         if (legacyInputField != null)
         {
@@ -481,10 +494,8 @@ public sealed class ChatWindows : MonoBehaviour
     private void SynchronizeChannelVisibilitySettings()
     {
         SynchronizeChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
-        SynchronizeChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
         SynchronizeChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
         SynchronizeChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
-        SynchronizeChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
     }
 
     /// <summary>设置开关与上次应用状态不同，或尚未初始化时，更新标签并保存选择。</summary>
@@ -604,7 +615,7 @@ public sealed class ChatWindows : MonoBehaviour
         SubmitOnEndEdit(_);
     }
 
-    /// <summary>读取并修剪输入，非空时加入本地消息，然后清空输入并恢复焦点。</summary>
+    /// <summary>读取并修剪输入，非空时提交通讯控制器，然后清空输入并恢复焦点。</summary>
     public void SendInputMessage()
     {
         // 没有找到输入框时无法发送。
@@ -615,41 +626,68 @@ public sealed class ChatWindows : MonoBehaviour
 
         // 去掉首尾空白，空消息不发送。
         string text = GetInputText();
-        text = text == null ? string.Empty : text.Trim();
+        text = (text ?? string.Empty).Trim();
         if (text.Length == 0)
         {
             return;
         }
 
-        // 生成本地消息后清空输入框，并继续保持输入焦点。
+        // 提交正文后清空输入框，并继续保持输入焦点。
         SendLocalMessage(text);
         SetInputText(string.Empty);
         ActivateInputField();
     }
 
-    /// <summary>向当前频道加入本地消息并通知 MessageSent 订阅者；本类不直接访问服务器。</summary>
-    /// <param name="text">待发送正文，空白文本忽略，其他文本去掉首尾空白。</param>
+    /// <summary>把玩家输入交给控制器，回包与广播分开处理。</summary><param name="text">待发送的正文。</param>
     public void SendLocalMessage(string text)
     {
-        // 供其他脚本直接调用，用于发送本地玩家消息。
-        if (string.IsNullOrWhiteSpace(text))
+        if (!string.IsNullOrWhiteSpace(text)) SendRequested?.Invoke(currentChannel, text.Trim());
+    }
+
+    /// <summary>聊天输入获焦时暂停角色快捷键。</summary><param name="value">输入框当前正文。</param>
+    private void OnInputSelected(string value) { InputFocusChanged?.Invoke(true); }
+    /// <summary>聊天输入失焦时恢复角色快捷键。</summary><param name="value">输入框当前正文。</param>
+    private void OnInputDeselected(string value) { InputFocusChanged?.Invoke(false); }
+
+    /// <summary>主界面控制器建立时接上手势、上传及频道回调。</summary>
+    public void BindChatAudio()
+    {
+        _recordObj.RecordStarted += OnStartRecord;
+        _recordObj.RecordEnded += _audioMgr.FinishRecord;
+        _audioMgr.Ready += OnAudioReady;
+    }
+
+    /// <summary>主界面销毁时解除与录音控件的绑定。</summary>
+    public void UnbindChatAudio()
+    {
+        _recordObj.RecordStarted -= OnStartRecord;
+        _recordObj.RecordEnded -= _audioMgr.FinishRecord;
+        _audioMgr.Ready -= OnAudioReady;
+    }
+
+    /// <summary>开始时固定发言频道，收起键盘不改变发送目标。</summary>
+    private bool OnStartRecord() { return _audioMgr.StartRecord(currentChannel); }
+
+    /// <summary>将已上传的录音交给负责发言的 ChatMgr。</summary>
+    /// <param name="channel">录制时的目标频道。</param><param name="audio">MS 签发的录音引用。</param>
+    private void OnAudioReady(ChatChannel channel, AudioChat audio) { VoiceReady?.Invoke(channel, audio); }
+
+    /// <summary>仅在收到正式广播时将消息加入对应频道。</summary>
+    /// <param name="msg">服务端确认的聊天正文及元数据。</param><param name="channel">窗口频道。</param><param name="mine">是否为自己的发言。</param>
+    public void AppendChattingMsg(ChatMsg msg, ChatChannel channel, bool mine)
+    {
+        // 使用服务端时间和作者信息，自发与他人消息走同一展示入口。
+        ChatMessage row = new ChatMessage { Channel = channel, Sender = msg.SenderName, Text = msg.MsgContent,
+            IsLocalPlayer = mine, SentAt = DateTimeOffset.FromUnixTimeSeconds((long)msg.MsgHead.MsgTime).LocalDateTime };
+        if (msg.Medium == ChatMediumType.Audio && msg.Audio != null)
         {
-            return;
+            row.HasVoice = true;
+            row.Audio = msg.Audio;
+            row.Text = msg.Audio.Text;
         }
-
-        // 本地消息加入当前选中的频道，世界频道只是组件的初始默认值。
-        ChatMessage message = new ChatMessage
-        {
-            Channel = currentChannel,
-            Sender = localPlayerName,
-            Text = text.Trim(),
-            IsLocalPlayer = true,
-            SentAt = DateTime.Now
-        };
-
-        // 同时写入数据列表、创建 UI，并通知外部订阅者。
-        AddMessage(message, true);
-        MessageSent?.Invoke(message);
+        AddMessage(row, mine);
+        if (mine) MessageSent?.Invoke(row);
+        else MessageReceived?.Invoke(row);
     }
     #endregion
 
@@ -1177,12 +1215,7 @@ public sealed class ChatWindows : MonoBehaviour
         channelToggleMap.Clear();
         BindChannelToggle(worldChannelTab, ChatChannel.World);
         BindChannelToggle(teamChannelTab, ChatChannel.Team);
-        BindChannelToggle(guildChannelTab, ChatChannel.Guild);
         BindChannelToggle(nearbyChannelTab, ChatChannel.Nearby);
-        BindChannelToggle(systemChannelTab, ChatChannel.System);
-        BindChannelToggle(watchChannelTab, ChatChannel.Watch);
-        BindChannelToggle(privateChannelTab, ChatChannel.Private);
-        BindChannelToggle(professionChannelTab, ChatChannel.Profession);
         SetSelectedChannelToggle(currentChannel);
     }
 
@@ -1215,10 +1248,8 @@ public sealed class ChatWindows : MonoBehaviour
     private void BindChannelVisibilitySettings()
     {
         BindChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
-        BindChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
         BindChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
         BindChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
-        BindChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
     }
 
     /// <summary>恢复单频道 PlayerPrefs 选择，先无事件地更新开关，再监听之后的变化。</summary>
@@ -1386,11 +1417,17 @@ public sealed class ChatWindows : MonoBehaviour
             legacyTimeText.text = message.SentAt.ToString("HH:mm");
         }
 
-        // 按 HasVoice 决定 AudioObj 显隐；此处不读取 VoiceClip，也不播放或录制音频。
+        // 复用同一行时重新绑定音频 ID，普通消息隐藏语音入口。
         Transform audioObject = FindNamedTransform(row, "AudioObj");
         if (audioObject != null)
         {
             audioObject.gameObject.SetActive(message.HasVoice);
+            if (message.Audio != null)
+            {
+                // 绑定正式预制体已有的时长及播放按钮。
+                ChatVoiceItem item = audioObject.GetComponent<ChatVoiceItem>();
+                item.Bind(message.Audio, _audioMgr.PlayRecordedFile);
+            }
         }
     }
 

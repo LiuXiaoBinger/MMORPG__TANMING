@@ -111,6 +111,13 @@ public static class TeamAuthoritySmoke
             // 当前队员收到完整名单，属性由持有角色实体的 GS 填写。
             TeamInfoNtf joined = TeamInfoNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamInfoCode).Data);
             Expect(joined.Members.Count == 2 && joined.Members[1].CurrHp == 100, "独立 MS 成员决定与 GS 血量合成正确");
+            // 两个非队员分别处于不同实例与地图，用真实连接验证聊天和语音的收件范围。
+            OnlineRole other = NewRole(6003, "另一实例");
+            // 此角色在聊天测试中作为其他地图的对照组。
+            OnlineRole far = NewRole(6004, "另一地图");
+            BindGate(other, gate.SessionId, 53);
+            BindGate(far, gate.SessionId, 54);
+            ChatAuthoritySmoke.Run(gate, captain, member, other, far);
             gate.SendFromGate(51, NetDefine.CMD_CaptainRequestEnterFBCode, new CaptainRequestEnterFBArg { DungeonId = TeamManager.MoshentaDungeonId });
             // 在 GS 读取实际副本通知，包含 GS 填入的场景与实例。
             TeamEnterDungeonNtf entered = TeamEnterDungeonNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamEnterDungeonCode).Data);

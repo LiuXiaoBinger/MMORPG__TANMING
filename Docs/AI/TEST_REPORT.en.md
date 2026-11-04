@@ -273,3 +273,7 @@
 
 - The .NET Framework 4.8 solution built from the isolated task tree. The real TCP MS party suite passed 114 checks with no failures. The existing GS Orc wave 18 suite passed 39 checks. Coverage includes two authenticated test role sessions, invitations, captain transfer, entry into the same instance, returning one member to town, clearing an instance on MS link loss, damage and instance isolation.
 - The first isolated build exposed six missing Gate-to-GS registrations for team commands. The corrected production registration passed on the clean tree. Real Unity multi-account login, live rollout and cross-GS transfer were not tested. Codex performed the checks directly. Evidence and reproduction are in `项目修改日志/MasterServer组队迁移-2026-11-04.md`.
+
+## [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback
+- Isolated processes passed 129 chat, 114 party and 39 dungeon/combat checks. Four bound game sessions verified all three channels, ack vs notification, authenticated identity, actual Gate response forwarding and byte-identical 96,000-byte downloads. Unity verified both bubble bindings, a three-second mono AudioClip and empty transcription. Windows player compiled from scoped inputs after restoring the approved existing DailyTaskWindow.cs and .meta.
+- No two-device human microphone exchange, mobile permission test, 24-hour wall-clock retention test or production deployment was performed. Evidence and per-file details: `项目修改日志/RO三频道文字与语音-2026-11-04.md`.

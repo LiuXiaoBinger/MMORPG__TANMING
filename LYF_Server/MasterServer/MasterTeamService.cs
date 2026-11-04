@@ -4,7 +4,25 @@ using System.Collections.Generic;
 internal sealed class MasterTeamService : IContainer
 {
     /// <summary>每条游戏服连接对应原游戏分区的队伍集合，分区间的角色、队伍和实例编号相互独立。</summary>
-    private readonly Dictionary<int, TeamManager> _games = new Dictionary<int, TeamManager>();
+    private readonly Dictionary<int, GamePartition> _games = new Dictionary<int, GamePartition>();
+
+    /// <summary>同一个 GS 连接共享队伍权威与聊天频道，不跨游戏分区广播。</summary>
+    private sealed class GamePartition
+    {
+        /// <summary>真实成员和队长的唯一记录。</summary>
+        internal readonly TeamManager Teams;
+        /// <summary>使用同一份队伍名单的聊天规则。</summary>
+        internal readonly CChatMgr Chat;
+        /// <summary>该分区正在上传和等待发布的语音记录。</summary>
+        internal readonly ChatAudioRecordMgr Audio;
+        /// <summary>启动该连接的分区业务。</summary><param name="link">对应 GS 的内部连接。</param>
+        internal GamePartition(BaseLink link)
+        {
+            Teams = new TeamManager(link);
+            Audio = new ChatAudioRecordMgr(link);
+            Chat = new CChatMgr(link, Teams, Audio);
+        }
+    }
 
     /// <summary>队伍集合在对应游戏服第一次提交业务时创建。</summary>
     public void OnInit() { }
@@ -19,18 +37,32 @@ internal sealed class MasterTeamService : IContainer
         lock (_games)
         {
             // 该游戏服分区的唯一组队权威，成员变更与连接清理按顺序执行。
-            TeamManager teams;
-            if (!_games.TryGetValue(session.SessionID, out teams))
+            GamePartition partition;
+            if (!_games.TryGetValue(session.SessionID, out partition))
             {
-                teams = new TeamManager(session);
-                _games.Add(session.SessionID, teams);
+                partition = new GamePartition(session);
+                _games.Add(session.SessionID, partition);
+            }
+            if (basePackage.ProtoCode == NetDefine.PtcG2M_ChatAudioTransfer)
+            {
+                partition.Audio.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
+                return;
+            }
+            if (basePackage.ProtoCode == NetDefine.RpcC2M_SendChatMsg)
+            {
+                partition.Chat.SendMsg(basePackage);
+                return;
             }
             if (basePackage.ProtoCode == NetDefine.CMD_MasterTeamOffline)
             {
-                teams.OnRoleOffline(LeaveTeamArg.Parser.ParseFrom(basePackage.Data).RoleId);
+                // 同一角色的社交状态一并释放。
+                ulong uid = LeaveTeamArg.Parser.ParseFrom(basePackage.Data).RoleId;
+                partition.Teams.OnRoleOffline(uid);
+                partition.Chat.OnRoleOffline(uid);
+                partition.Audio.Offline(uid);
                 return;
             }
-            teams.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
+            partition.Teams.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
         }
     }
 

@@ -125,6 +125,18 @@ public static class GateClientResponseForwarder
                 // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
                 SyncMoveNtf.Parser.ParseFrom(package.Data);
                 return true;
+            case NetDefine.RpcC2M_UploadChatAudio:
+                resultCode = UploadChatAudioRes.Parser.ParseFrom(package.Data).Result;
+                return true;
+            case NetDefine.RpcC2M_DownloadChatAudio:
+                resultCode = DownloadChatAudioRes.Parser.ParseFrom(package.Data).Result;
+                return true;
+            case NetDefine.RpcC2M_SendChatMsg:
+                resultCode = SendChatMsgRes.Parser.ParseFrom(package.Data).Result;
+                return true;
+            case NetDefine.PtcT2C_ChattingMsgNtf:
+                ChatMsg.Parser.ParseFrom(package.Data);
+                return true;
             case NetDefine.CMD_TeamInfoCode:
                 // 队伍状态是服务端主动下发的权威快照，无业务错误码，验证协议后原样转发。
                 TeamInfoNtf.Parser.ParseFrom(package.Data);
@@ -160,6 +172,7 @@ public static class GateClientResponseForwarder
     /// </summary>
     private static bool ShouldForwardBusinessResult(int commandCode)
     {
+        if (commandCode == NetDefine.RpcC2M_SendChatMsg || commandCode == NetDefine.RpcC2M_UploadChatAudio || commandCode == NetDefine.RpcC2M_DownloadChatAudio) return true;
         // 是否为背包开格子或商城购买回包。
         bool isKnapsackOrBuyCode = commandCode == NetDefine.CMD_OpenKnapsackGridCode ||
             commandCode == NetDefine.CMD_BuyShopItemCode;
