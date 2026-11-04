@@ -1,0 +1,2565 @@
+fileFormatVersion: 2
+guid: 294757ee38e67a94f8858a43f9992e5b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: Tex_ui_tiaozi_Absorb.png
+  - first:
+      213: 21300002
+    second: Tex_ui_tiaozi_beidongmiss.png
+  - first:
+      213: 21300004
+    second: Tex_ui_tiaozi_bj_dt.png
+  - first:
+      213: 21300006
+    second: Tex_ui_tiaozi_Block.png
+  - first:
+      213: 21300008
+    second: Tex_ui_tiaozi_pt_00.png
+  - first:
+      213: 21300010
+    second: Tex_ui_tiaozi_pt_01.png
+  - first:
+      213: 21300012
+    second: Tex_ui_tiaozi_pt_02.png
+  - first:
+      213: 21300014
+    second: Tex_ui_tiaozi_pt_03.png
+  - first:
+      213: 21300016
+    second: Tex_ui_tiaozi_pt_04.png
+  - first:
+      213: 21300018
+    second: Tex_ui_tiaozi_pt_05.png
+  - first:
+      213: 21300020
+    second: Tex_ui_tiaozi_pt_06.png
+  - first:
+      213: 21300022
+    second: Tex_ui_tiaozi_pt_07.png
+  - first:
+      213: 21300024
+    second: Tex_ui_tiaozi_pt_08.png
+  - first:
+      213: 21300026
+    second: Tex_ui_tiaozi_pt_09.png
+  - first:
+      213: 21300028
+    second: Tex_ui_tiaozi_zhudongmiss.png
+  - first:
+      213: 21300030
+    second: UI_Tiaozi_Absorb.png
+  - first:
+      213: 21300032
+    second: UI_Tiaozi_Attribute_00.png
+  - first:
+      213: 21300034
+    second: UI_Tiaozi_Attribute_01.png
+  - first:
+      213: 21300036
+    second: UI_Tiaozi_Attribute_02.png
+  - first:
+      213: 21300038
+    second: UI_Tiaozi_Attribute_03.png
+  - first:
+      213: 21300040
+    second: UI_Tiaozi_Attribute_04.png
+  - first:
+      213: 21300042
+    second: UI_Tiaozi_Attribute_05.png
+  - first:
+      213: 21300044
+    second: UI_Tiaozi_Attribute_06.png
+  - first:
+      213: 21300046
+    second: UI_Tiaozi_Attribute_07.png
+  - first:
+      213: 21300048
+    second: UI_Tiaozi_Attribute_08.png
+  - first:
+      213: 21300050
+    second: UI_Tiaozi_Attribute_09.png
+  - first:
+      213: 21300052
+    second: UI_Tiaozi_Attribute_Minus.png
+  - first:
+      213: 21300054
+    second: UI_Tiaozi_Attribute_Percent.png
+  - first:
+      213: 21300056
+    second: UI_Tiaozi_Attribute_Plus.png
+  - first:
+      213: 21300058
+    second: UI_Tiaozi_Base.png
+  - first:
+      213: 21300060
+    second: UI_Tiaozi_Base_00.png
+  - first:
+      213: 21300062
+    second: UI_Tiaozi_Base_01.png
+  - first:
+      213: 21300064
+    second: UI_Tiaozi_Base_02.png
+  - first:
+      213: 21300066
+    second: UI_Tiaozi_Base_03.png
+  - first:
+      213: 21300068
+    second: UI_Tiaozi_Base_04.png
+  - first:
+      213: 21300070
+    second: UI_Tiaozi_Base_05.png
+  - first:
+      213: 21300072
+    second: UI_Tiaozi_Base_06.png
+  - first:
+      213: 21300074
+    second: UI_Tiaozi_Base_07.png
+  - first:
+      213: 21300076
+    second: UI_Tiaozi_Base_08.png
+  - first:
+      213: 21300078
+    second: UI_Tiaozi_Base_09.png
+  - first:
+      213: 21300080
+    second: UI_Tiaozi_Beijing.png
+  - first:
+      213: 21300082
+    second: UI_Tiaozi_Beikezhi_00.png
+  - first:
+      213: 21300084
+    second: UI_Tiaozi_Beikezhi_01.png
+  - first:
+      213: 21300086
+    second: UI_Tiaozi_Beikezhi_02.png
+  - first:
+      213: 21300088
+    second: UI_Tiaozi_Beikezhi_03.png
+  - first:
+      213: 21300090
+    second: UI_Tiaozi_Beikezhi_04.png
+  - first:
+      213: 21300092
+    second: UI_Tiaozi_Beikezhi_05.png
+  - first:
+      213: 21300094
+    second: UI_Tiaozi_Beikezhi_06.png
+  - first:
+      213: 21300096
+    second: UI_Tiaozi_Beikezhi_07.png
+  - first:
+      213: 21300098
+    second: UI_Tiaozi_Beikezhi_08.png
+  - first:
+      213: 21300100
+    second: UI_Tiaozi_Beikezhi_09.png
+  - first:
+      213: 21300102
+    second: UI_Tiaozi_Beikezhi_Baifenbi.png
+  - first:
+      213: 21300104
+    second: UI_Tiaozi_Beikezhi_Jiahao.png
+  - first:
+      213: 21300106
+    second: UI_Tiaozi_Beikezhi_Jianhao.png
+  - first:
+      213: 21300108
+    second: UI_Tiaozi_Beikezhi_MofaIcon.png
+  - first:
+      213: 21300110
+    second: UI_Tiaozi_Beikezhi_WuliIcon.png
+  - first:
+      213: 21300112
+    second: UI_Tiaozi_Job.png
+  - first:
+      213: 21300114
+    second: UI_Tiaozi_Job_00.png
+  - first:
+      213: 21300116
+    second: UI_Tiaozi_Job_01.png
+  - first:
+      213: 21300118
+    second: UI_Tiaozi_Job_02.png
+  - first:
+      213: 21300120
+    second: UI_Tiaozi_Job_03.png
+  - first:
+      213: 21300122
+    second: UI_Tiaozi_Job_04.png
+  - first:
+      213: 21300124
+    second: UI_Tiaozi_Job_05.png
+  - first:
+      213: 21300126
+    second: UI_Tiaozi_Job_06.png
+  - first:
+      213: 21300128
+    second: UI_Tiaozi_Job_07.png
+  - first:
+      213: 21300130
+    second: UI_Tiaozi_Job_08.png
+  - first:
+      213: 21300132
+    second: UI_Tiaozi_Job_09.png
+  - first:
+      213: 21300134
+    second: UI_Tiaozi_Lengquezhong.png
+  - first:
+      213: 21300136
+    second: UI_Tiaozi_Mofakezhi_00.png
+  - first:
+      213: 21300138
+    second: UI_Tiaozi_Mofakezhi_01.png
+  - first:
+      213: 21300140
+    second: UI_Tiaozi_Mofakezhi_02.png
+  - first:
+      213: 21300142
+    second: UI_Tiaozi_Mofakezhi_03.png
+  - first:
+      213: 21300144
+    second: UI_Tiaozi_Mofakezhi_04.png
+  - first:
+      213: 21300146
+    second: UI_Tiaozi_Mofakezhi_05.png
+  - first:
+      213: 21300148
+    second: UI_Tiaozi_Mofakezhi_06.png
+  - first:
+      213: 21300150
+    second: UI_Tiaozi_Mofakezhi_07.png
+  - first:
+      213: 21300152
+    second: UI_Tiaozi_Mofakezhi_08.png
+  - first:
+      213: 21300154
+    second: UI_Tiaozi_Mofakezhi_09.png
+  - first:
+      213: 21300156
+    second: UI_Tiaozi_Mofakezhi_Baifenbi.png
+  - first:
+      213: 21300158
+    second: UI_Tiaozi_Mofakezhi_Icon.png
+  - first:
+      213: 21300160
+    second: UI_Tiaozi_Mofakezhi_Jiahao.png
+  - first:
+      213: 21300162
+    second: UI_Tiaozi_Mofakezhi_Jianhao.png
+  - first:
+      213: 21300164
+    second: UI_Tiaozi_Wulikezhi_00.png
+  - first:
+      213: 21300166
+    second: UI_Tiaozi_Wulikezhi_01.png
+  - first:
+      213: 21300168
+    second: UI_Tiaozi_Wulikezhi_02.png
+  - first:
+      213: 21300170
+    second: UI_Tiaozi_Wulikezhi_03.png
+  - first:
+      213: 21300172
+    second: UI_Tiaozi_Wulikezhi_04.png
+  - first:
+      213: 21300174
+    second: UI_Tiaozi_Wulikezhi_05.png
+  - first:
+      213: 21300176
+    second: UI_Tiaozi_Wulikezhi_06.png
+  - first:
+      213: 21300178
+    second: UI_Tiaozi_Wulikezhi_07.png
+  - first:
+      213: 21300180
+    second: UI_Tiaozi_Wulikezhi_08.png
+  - first:
+      213: 21300182
+    second: UI_Tiaozi_Wulikezhi_09.png
+  - first:
+      213: 21300184
+    second: UI_Tiaozi_Wulikezhi_Baifenbi.png
+  - first:
+      213: 21300186
+    second: UI_Tiaozi_Wulikezhi_Icon.png
+  - first:
+      213: 21300188
+    second: UI_Tiaozi_Wulikezhi_Jiahao.png
+  - first:
+      213: 21300190
+    second: UI_Tiaozi_Wulikezhi_Jianhao.png
+  - first:
+      213: 21300192
+    second: UI_Tiaozi_Wuyouxiaomubiao.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_Absorb.png
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 424
+        width: 116
+        height: 86
+      alignment: 1
+      pivot: {x: 309, y: 45}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30dd069e897e931498bf646d82e43800
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_beidongmiss.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 328
+        width: 80
+        height: 35
+      alignment: 1
+      pivot: {x: 42, y: 166.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32a3bb6031cc9e04e9f1dafd82a0238b
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_bj_dt.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 402
+        width: 127
+        height: 108
+      alignment: 1
+      pivot: {x: 65.5, y: 56}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8067dfee365960f40bd1f4e13d9ce528
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_Block.png
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 388
+        width: 81
+        height: 60
+      alignment: 1
+      pivot: {x: 171.5, y: 94}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f717712c21c8a14ca6f20778bbc43fc
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_00.png
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 350
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 139, y: 144}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7848abf1824da84d8b2ad86ada72555
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_01.png
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 300
+        width: 16
+        height: 36
+      alignment: 1
+      pivot: {x: 466, y: 194}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7512ab757687b884784295023237a6e1
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_02.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 382
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 227, y: 112}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f9294eb13d17a042a69cd3eb6aae5f6
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_03.png
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 386
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 264, y: 108}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 063de0ee868a0344dbab32a668e49470
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_04.png
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 345
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 452, y: 149}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45e2d0454be0b3e438f4e3654f0c3610
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_05.png
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 382
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 424, y: 112}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0862ca19023629a45899b9b5319f290f
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_06.png
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 383
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 452, y: 111}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c0e0a5bbcba1a44792b0a498b2da6cc
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_07.png
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 420
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 424, y: 74}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ead3702ce1941419c8387607337cbd
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_08.png
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 458
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 432, y: 36}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d7b120f8979c024e850ceb2f3fed6ff
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_pt_09.png
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 443
+        width: 26
+        height: 36
+      alignment: 1
+      pivot: {x: 229, y: 51}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87ad21ebfb96b2240a5aa99c47ca973e
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tex_ui_tiaozi_zhudongmiss.png
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 365
+        width: 80
+        height: 35
+      alignment: 1
+      pivot: {x: 42, y: 129.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70908719b1493674a8bcab0ad76220b2
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Absorb.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 496
+        width: 76
+        height: 14
+      alignment: 1
+      pivot: {x: 407, y: 9}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57ae02f63685c9c4293922ffc3d8572b
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_00.png
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 336
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 390.5, y: 165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d51ec972e2ff949ac454cdbb769dde
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_01.png
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 364
+        width: 11
+        height: 22
+      alignment: 1
+      pivot: {x: 205.5, y: 137}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59b02a21969d0b544a45b85403b4f9c2
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_02.png
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 270
+        width: 15
+        height: 22
+      alignment: 1
+      pivot: {x: 479.5, y: 231}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4404b8b1777ad14ea27ddda413f282d
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_03.png
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 292
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 322.5, y: 209}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b024ffdfa4528640aebedf7cfd89e23
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_04.png
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 313
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 350.5, y: 188}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c9db958f5bcec94cb7f393815f706f7
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_05.png
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 336
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 371.5, y: 165}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9465d207e3806d42bc9b95fca7b09e6
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_06.png
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 313
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 303.5, y: 188}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50751155c1cc7304b92e605d57deced5
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_07.png
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 313
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 284.5, y: 188}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067a0e0d574c3604fa612d38e89b4e14
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_08.png
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 276
+        width: 15
+        height: 22
+      alignment: 1
+      pivot: {x: 462.5, y: 225}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c82ff25966c39c74f8bd6ad3fcd96c19
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_09.png
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 335
+        width: 17
+        height: 22
+      alignment: 1
+      pivot: {x: 115.5, y: 166}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b666fd3be500ca547824e5d4d6216532
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_Minus.png
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 335
+        width: 17
+        height: 8
+      alignment: 1
+      pivot: {x: 447.5, y: 173}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc801ad0124d7646af30f174d5b588f
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_Percent.png
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 396
+        width: 20
+        height: 23
+      alignment: 1
+      pivot: {x: 477, y: 104.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 778a2dbfb517f064f93dc9fb64676648
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Attribute_Plus.png
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 334
+        width: 17
+        height: 17
+      alignment: 1
+      pivot: {x: 428.5, y: 169.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d2cd5c2d79484840918a8cf518b98f4
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 475
+        width: 48
+        height: 19
+      alignment: 1
+      pivot: {x: 393, y: 27.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 598f3fb5891714c48bf8722250692431
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_00.png
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 249
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 472.5, y: 253.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05edb8fd7a0ecb14eb3edc5d18073676
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_01.png
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 470
+        width: 9
+        height: 19
+      alignment: 1
+      pivot: {x: 505.5, y: 32.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cae59335305d994e994d819ec7240bb
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_02.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 252
+        width: 15
+        height: 19
+      alignment: 1
+      pivot: {x: 496.5, y: 250.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc11b7f338b4edb468bb9f4794e8d461
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_03.png
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 255
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 457.5, y: 247.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c389ca09fe59de4da700aad5032bba2
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_04.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 273
+        width: 15
+        height: 19
+      alignment: 1
+      pivot: {x: 496.5, y: 229.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2642c3c4a18885249a7110fb2ca7b898
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_05.png
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 264
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 442.5, y: 238.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b657e0f9efd384e9b228aa9763cd7d
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_06.png
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 271
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 427.5, y: 231.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d1e0cef8c032a542837c464c97ec7f1
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_07.png
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 271
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 412.5, y: 231.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19c767b01dd5dca499fa7d790026a1c2
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_08.png
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 273
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 369.5, y: 229.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e741e3f5dedd9a45afe2d18705e3f1f
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Base_09.png
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 290
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 397.5, y: 212.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f91ff901082d63b4f8a3c620de50a1c9
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beijing.png
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 464
+        width: 52
+        height: 46
+      alignment: 1
+      pivot: {x: 473, y: 25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aa20fce5368d0147bd2c7f6b32961c4
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_00.png
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 395
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 312.5, y: 103.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e4ab14178cb6094aadd8385101d8787
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 294
+        width: 15
+        height: 27
+      alignment: 1
+      pivot: {x: 500.5, y: 204.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d60113452d5d294e8227654f83724d2
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_02.png
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 314
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 264.5, y: 184.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29179a84f4054da4f8730df38533678e
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_03.png
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 328
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 243.5, y: 170.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f3a3d82e6f2eb748aa53cea31736e29
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_04.png
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 395
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 289.5, y: 103.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 999b36cbba1f61c4cbb7bef80e083b9f
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_05.png
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 316
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 330.5, y: 182.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e9843cb4f9b4f34494722d35d4a81cd
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_06.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 337
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 309.5, y: 161.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ef5691ad780b7d47a0c4918b07b1731
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_07.png
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 337
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 288.5, y: 161.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2185790e824525428082f18eba3eff6
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_08.png
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 359
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 187.5, y: 139.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad58569b078cd9b4eb21bc4984ffda2c
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_09.png
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 353
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 222.5, y: 145.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76cf3cf47dc4e684ab5ce8c2e8460366
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_Baifenbi.png
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 374
+        width: 21
+        height: 23
+      alignment: 1
+      pivot: {x: 335.5, y: 126.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67d49208f8d7c5046800b1df7624956b
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_Jiahao.png
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 313
+        width: 16
+        height: 19
+      alignment: 1
+      pivot: {x: 428, y: 189.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: faf0f658b23efc743bb67f8826990a4e
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_Jianhao.png
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 325
+        width: 15
+        height: 9
+      alignment: 1
+      pivot: {x: 368.5, y: 182.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d956e94b97efb884f9dd366b04b48e0a
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_MofaIcon.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 389
+        width: 40
+        height: 41
+      alignment: 1
+      pivot: {x: 389, y: 102.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d20760c330fae14e98c958e39d0aee7
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Beikezhi_WuliIcon.png
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 421
+        width: 40
+        height: 41
+      alignment: 1
+      pivot: {x: 467, y: 70.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69428f5fe2c458640ad07f08b0bf6214
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 420
+        width: 35
+        height: 21
+      alignment: 1
+      pivot: {x: 231.5, y: 81.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95088b027b6ddff4487e3065b27e37ef
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_00.png
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 292
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 429.5, y: 210.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af3609b73d10c3a4aadf24429a547fb1
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_01.png
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 491
+        width: 9
+        height: 19
+      alignment: 1
+      pivot: {x: 505.5, y: 11.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 557475f96856457468995ed00f427912
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_02.png
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 292
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 414.5, y: 210.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cde5cdc6fd10b04c8264e7a9cf76a65
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_03.png
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 283
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 354.5, y: 219.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e98306726d02724e88e0def7159c001
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_04.png
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 292
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 339.5, y: 210.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae27a282556f6c840974da80005b6ba9
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_05.png
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 294
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 382.5, y: 208.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb2a7ea2c9487ce4eab44f19f7c1c30d
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_06.png
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 311
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 399.5, y: 191.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e0ac9fb9d946344b29430ac7404411
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_07.png
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 304
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 367.5, y: 198.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1370b2691821a814bb14162bba361278
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_08.png
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 315
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 384.5, y: 187.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32423c364c194e143aa6de101dac096e
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Job_09.png
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 343
+        width: 13
+        height: 19
+      alignment: 1
+      pivot: {x: 269.5, y: 159.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 543b6206c1a76f14586091d4b28beff2
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Lengquezhong.png
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 450
+        width: 83
+        height: 29
+      alignment: 1
+      pivot: {x: 172.5, y: 47.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07f0194131f0224abe22beb548d45b2
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_00.png
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 359
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 164.5, y: 139.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ef00d1a9c5e884488983a7c319c304c
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 294
+        width: 15
+        height: 27
+      alignment: 1
+      pivot: {x: 483.5, y: 204.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a096f95b7975f84ba3babd6e5f4fd49
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_02.png
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 357
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 251.5, y: 141.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c793f808c9584c449a0bd4c55ec84d7
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_03.png
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 337
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 351.5, y: 161.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d5088121f921aa44b41687253d3f1ff
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_04.png
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 330
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 94.5, y: 168.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c677dec84b72d3941b17b7c384434b5b
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_05.png
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 345
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 330.5, y: 153.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6e51b8b8c4fefc4e8b08ff83d8ef4f7
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_06.png
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 366
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 309.5, y: 132.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fdfddd3635bd2f409dfcd1bc4769832
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_07.png
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 366
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 288.5, y: 132.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ca018455c164a54aa18f50bc6e8d16d
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_08.png
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 323
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 498.5, y: 175.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29f5ef2627e188c498642019ef0a5b42
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_09.png
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 353
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 420.5, y: 145.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ef48fd658df8574d977b9556845e2f7
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_Baifenbi.png
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 399
+        width: 21
+        height: 23
+      alignment: 1
+      pivot: {x: 335.5, y: 101.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38890a18d088acb47bd1ddc0fe61d697
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_Icon.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 432
+        width: 40
+        height: 41
+      alignment: 1
+      pivot: {x: 389, y: 59.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e770c47126bb654aaad44cf7d4fd702
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_Jiahao.png
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 332
+        width: 17
+        height: 19
+      alignment: 1
+      pivot: {x: 409.5, y: 170.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6479752ff99a1447a1e265c33b5aa70
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Mofakezhi_Jianhao.png
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 364
+        width: 14
+        height: 9
+      alignment: 1
+      pivot: {x: 270, y: 143.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9bd3472c947ebf4e9a909d4ba53cc96
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_00.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 377
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 499.5, y: 121.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64c9cb85f5f695541bd736a8651577cd
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_01.png
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 285
+        width: 15
+        height: 27
+      alignment: 1
+      pivot: {x: 445.5, y: 213.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0f05b457706a5d4880ab683bd6ae24a
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_02.png
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 360
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 399.5, y: 138.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328a9e82422914c41908bb1f34efe579
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_03.png
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 360
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 378.5, y: 138.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfd73cdec45cec841bafef7d0593e89a
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_04.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 406
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 499.5, y: 92.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea583eaf6f7c4fa45bbf7b010fe7f2b5
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_05.png
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 366
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 357.5, y: 132.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a8f222855b168543afbe2b5bfae3070
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_06.png
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 395
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 357.5, y: 103.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2580af79911cde6499cab4727c7feb03
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_07.png
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 338
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 476.5, y: 160.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8194e800c635a439b65b9802abb131
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_08.png
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 435
+        width: 21
+        height: 27
+      alignment: 1
+      pivot: {x: 499.5, y: 63.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d6474eba9b9c2742bc1018f387b329c
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_09.png
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 367
+        width: 19
+        height: 27
+      alignment: 1
+      pivot: {x: 476.5, y: 131.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa973d3749ff7db4585ed8404035e437
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_Baifenbi.png
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 352
+        width: 22
+        height: 23
+      alignment: 1
+      pivot: {x: 499, y: 148.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce4491746f753aa4cb165941bb532eac
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_Icon.png
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 359
+        width: 40
+        height: 41
+      alignment: 1
+      pivot: {x: 104, y: 132.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50708fb8c2a074d419688e62e664b626
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_Jiahao.png
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 314
+        width: 16
+        height: 19
+      alignment: 1
+      pivot: {x: 447, y: 188.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b537d4882b1ad44c811a35627eaf599
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wulikezhi_Jianhao.png
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 375
+        width: 14
+        height: 9
+      alignment: 1
+      pivot: {x: 270, y: 132.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b19d4cc897e85ab478b54737f39cdeba
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Tiaozi_Wuyouxiaomubiao.png
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 481
+        width: 118
+        height: 29
+      alignment: 1
+      pivot: {x: 190, y: 16.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad7c1816186ee514a9dadfcfe554408f
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Tex_ui_tiaozi_Absorb.png: 21300000
+      Tex_ui_tiaozi_Block.png: 21300006
+      Tex_ui_tiaozi_beidongmiss.png: 21300002
+      Tex_ui_tiaozi_bj_dt.png: 21300004
+      Tex_ui_tiaozi_pt_00.png: 21300008
+      Tex_ui_tiaozi_pt_01.png: 21300010
+      Tex_ui_tiaozi_pt_02.png: 21300012
+      Tex_ui_tiaozi_pt_03.png: 21300014
+      Tex_ui_tiaozi_pt_04.png: 21300016
+      Tex_ui_tiaozi_pt_05.png: 21300018
+      Tex_ui_tiaozi_pt_06.png: 21300020
+      Tex_ui_tiaozi_pt_07.png: 21300022
+      Tex_ui_tiaozi_pt_08.png: 21300024
+      Tex_ui_tiaozi_pt_09.png: 21300026
+      Tex_ui_tiaozi_zhudongmiss.png: 21300028
+      UI_Tiaozi_Absorb.png: 21300030
+      UI_Tiaozi_Attribute_00.png: 21300032
+      UI_Tiaozi_Attribute_01.png: 21300034
+      UI_Tiaozi_Attribute_02.png: 21300036
+      UI_Tiaozi_Attribute_03.png: 21300038
+      UI_Tiaozi_Attribute_04.png: 21300040
+      UI_Tiaozi_Attribute_05.png: 21300042
+      UI_Tiaozi_Attribute_06.png: 21300044
+      UI_Tiaozi_Attribute_07.png: 21300046
+      UI_Tiaozi_Attribute_08.png: 21300048
+      UI_Tiaozi_Attribute_09.png: 21300050
+      UI_Tiaozi_Attribute_Minus.png: 21300052
+      UI_Tiaozi_Attribute_Percent.png: 21300054
+      UI_Tiaozi_Attribute_Plus.png: 21300056
+      UI_Tiaozi_Base.png: 21300058
+      UI_Tiaozi_Base_00.png: 21300060
+      UI_Tiaozi_Base_01.png: 21300062
+      UI_Tiaozi_Base_02.png: 21300064
+      UI_Tiaozi_Base_03.png: 21300066
+      UI_Tiaozi_Base_04.png: 21300068
+      UI_Tiaozi_Base_05.png: 21300070
+      UI_Tiaozi_Base_06.png: 21300072
+      UI_Tiaozi_Base_07.png: 21300074
+      UI_Tiaozi_Base_08.png: 21300076
+      UI_Tiaozi_Base_09.png: 21300078
+      UI_Tiaozi_Beijing.png: 21300080
+      UI_Tiaozi_Beikezhi_00.png: 21300082
+      UI_Tiaozi_Beikezhi_01.png: 21300084
+      UI_Tiaozi_Beikezhi_02.png: 21300086
+      UI_Tiaozi_Beikezhi_03.png: 21300088
+      UI_Tiaozi_Beikezhi_04.png: 21300090
+      UI_Tiaozi_Beikezhi_05.png: 21300092
+      UI_Tiaozi_Beikezhi_06.png: 21300094
+      UI_Tiaozi_Beikezhi_07.png: 21300096
+      UI_Tiaozi_Beikezhi_08.png: 21300098
+      UI_Tiaozi_Beikezhi_09.png: 21300100
+      UI_Tiaozi_Beikezhi_Baifenbi.png: 21300102
+      UI_Tiaozi_Beikezhi_Jiahao.png: 21300104
+      UI_Tiaozi_Beikezhi_Jianhao.png: 21300106
+      UI_Tiaozi_Beikezhi_MofaIcon.png: 21300108
+      UI_Tiaozi_Beikezhi_WuliIcon.png: 21300110
+      UI_Tiaozi_Job.png: 21300112
+      UI_Tiaozi_Job_00.png: 21300114
+      UI_Tiaozi_Job_01.png: 21300116
+      UI_Tiaozi_Job_02.png: 21300118
+      UI_Tiaozi_Job_03.png: 21300120
+      UI_Tiaozi_Job_04.png: 21300122
+      UI_Tiaozi_Job_05.png: 21300124
+      UI_Tiaozi_Job_06.png: 21300126
+      UI_Tiaozi_Job_07.png: 21300128
+      UI_Tiaozi_Job_08.png: 21300130
+      UI_Tiaozi_Job_09.png: 21300132
+      UI_Tiaozi_Lengquezhong.png: 21300134
+      UI_Tiaozi_Mofakezhi_00.png: 21300136
+      UI_Tiaozi_Mofakezhi_01.png: 21300138
+      UI_Tiaozi_Mofakezhi_02.png: 21300140
+      UI_Tiaozi_Mofakezhi_03.png: 21300142
+      UI_Tiaozi_Mofakezhi_04.png: 21300144
+      UI_Tiaozi_Mofakezhi_05.png: 21300146
+      UI_Tiaozi_Mofakezhi_06.png: 21300148
+      UI_Tiaozi_Mofakezhi_07.png: 21300150
+      UI_Tiaozi_Mofakezhi_08.png: 21300152
+      UI_Tiaozi_Mofakezhi_09.png: 21300154
+      UI_Tiaozi_Mofakezhi_Baifenbi.png: 21300156
+      UI_Tiaozi_Mofakezhi_Icon.png: 21300158
+      UI_Tiaozi_Mofakezhi_Jiahao.png: 21300160
+      UI_Tiaozi_Mofakezhi_Jianhao.png: 21300162
+      UI_Tiaozi_Wulikezhi_00.png: 21300164
+      UI_Tiaozi_Wulikezhi_01.png: 21300166
+      UI_Tiaozi_Wulikezhi_02.png: 21300168
+      UI_Tiaozi_Wulikezhi_03.png: 21300170
+      UI_Tiaozi_Wulikezhi_04.png: 21300172
+      UI_Tiaozi_Wulikezhi_05.png: 21300174
+      UI_Tiaozi_Wulikezhi_06.png: 21300176
+      UI_Tiaozi_Wulikezhi_07.png: 21300178
+      UI_Tiaozi_Wulikezhi_08.png: 21300180
+      UI_Tiaozi_Wulikezhi_09.png: 21300182
+      UI_Tiaozi_Wulikezhi_Baifenbi.png: 21300184
+      UI_Tiaozi_Wulikezhi_Icon.png: 21300186
+      UI_Tiaozi_Wulikezhi_Jiahao.png: 21300188
+      UI_Tiaozi_Wulikezhi_Jianhao.png: 21300190
+      UI_Tiaozi_Wuyouxiaomubiao.png: 21300192
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
