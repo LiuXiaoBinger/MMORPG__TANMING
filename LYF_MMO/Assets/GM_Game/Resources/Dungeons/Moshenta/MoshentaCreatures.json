@@ -827,6 +827,7 @@
         },
         {
             "id": 5468,
+            "nonCombatant": true,
             "displayName": "死亡的骑士团成员",
             "modelName": "Common_M_Default",
             "scale": 1.0,
@@ -838,6 +839,7 @@
         },
         {
             "id": 5469,
+            "nonCombatant": true,
             "displayName": "死亡的骑士团成员",
             "modelName": "Common_F_Default",
             "scale": 1.0,
@@ -849,6 +851,7 @@
         },
         {
             "id": 5470,
+            "nonCombatant": true,
             "displayName": "死亡的骑士团成员",
             "modelName": "Common_F_Default",
             "scale": 1.0,
@@ -860,6 +863,7 @@
         },
         {
             "id": 5471,
+            "nonCombatant": true,
             "displayName": "受伤的骑士团成员",
             "modelName": "Common_F_Default",
             "scale": 1.0,
@@ -871,6 +875,7 @@
         },
         {
             "id": 5473,
+            "nonCombatant": true,
             "displayName": "死亡的骑士团成员",
             "modelName": "Common_M_Default",
             "scale": 1.0,
@@ -882,6 +887,7 @@
         },
         {
             "id": 5474,
+            "nonCombatant": true,
             "displayName": "受伤的骑士团成员",
             "modelName": "Common_M_Default",
             "scale": 1.0,
@@ -893,6 +899,7 @@
         },
         {
             "id": 5477,
+            "nonCombatant": true,
             "displayName": "受伤的刺客",
             "modelName": "Common_M_Default",
             "scale": 1.0,
@@ -904,6 +911,7 @@
         },
         {
             "id": 5478,
+            "nonCombatant": true,
             "displayName": "受伤的刺客",
             "modelName": "Common_F_Default",
             "scale": 1.0,

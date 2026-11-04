@@ -184,6 +184,8 @@ public class MSceneDungeon : MonoBehaviour
             else
             {
                 ((MSceneMonsterHoster)controller).WaveId = wave.Id;
+                // 尸体和伤员仍按原点位生成，其能否被攻击由本条实体配置决定。
+                ((MonsterEntity)entity).NonCombatant = creature.nonCombatant;
                 controller._roleType = RoleType.Monster;
             }
             controller.SetROObject(entity);

@@ -25,6 +25,9 @@ public class MonsterEntity : MEntity
     /// <summary>怪物等级档位（普通/精英/BOSS/MVP 等）</summary>
     public MonsterRank Rank { get; set; }
 
+    /// <summary>当前出生配置指定的非战斗剧情角色标记，供选敌和技能碰撞共用。</summary>
+    public bool NonCombatant { get; set; }
+
     /// <summary>
     /// 对象池复用时重置怪物 ID 和等级为默认值
     /// </summary>
@@ -36,6 +39,7 @@ public class MonsterEntity : MEntity
     {
         MonsterId = 0;
         Rank = MonsterRank.Normal;
+        NonCombatant = false;
         base.PrepareForReuse(uid, entityType, configId);
     }
 }

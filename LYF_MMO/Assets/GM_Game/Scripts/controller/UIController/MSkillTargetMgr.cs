@@ -11,6 +11,8 @@ public sealed class MSkillTargetMgr
     public const float MaxChooseDistance = 18f;
     /// <summary>沿 RO 默认值，只在距离最近的前四个候选中循环。</summary>
     private const int _maxSelectCount = 4;
+    /// <summary>当前目标是否来自主动点击或瞄准切换；自动选择和清除目标时复位。</summary>
+    public bool HasManualTarget { get; private set; }
     /// <summary>统一选中目标变化通知，空值表示取消选择，供正式界面显示。</summary>
     public event Action<MEntity> TargetChanged;
 
@@ -58,7 +60,7 @@ public sealed class MSkillTargetMgr
                 }
             }
         }
-        ResetTarget(target);
+        ResetTarget(target, true);
         MListPool<MEntity>.Release(targets);
     }
 
@@ -77,7 +79,7 @@ public sealed class MSkillTargetMgr
 
     /// <summary>统一写入玩家当前目标并通知界面，同目标不重复刷新。</summary>
     /// <param name="target">要选择的当前世界实体，空值取消选择。</param>
-    /// <param name="isSelectTarget">保留的点击选择参数；当前方法没有读取它，所有来源使用同一赋值流程。</param>
+    /// <param name="isSelectTarget">点击或瞄准切换传 true，技能自动选择传 false。</param>
     public void ResetTarget(MEntity target, bool isSelectTarget = false)
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -87,6 +89,8 @@ public sealed class MSkillTargetMgr
         }
         // 不在管理器缓存角色，切场景后自动使用新本地玩家。
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
+        // 玩家点中原自动目标时，只更新选择来源即可继续使用同一界面目标。
+        HasManualTarget = target != null && isSelectTarget;
         if (player.Target == target)
         {
             return;

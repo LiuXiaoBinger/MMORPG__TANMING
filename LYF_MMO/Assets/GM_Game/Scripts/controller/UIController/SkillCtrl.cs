@@ -351,10 +351,10 @@ public sealed class SkillCtrl : CtrlBase
         return true;
     }
 
-    /// <summary>沿 RO 同名入口优先沿用合格敌人，否则自动找敌；本项目无目标攻击只辅助选择与朝向。</summary>
+    /// <summary>攻击优先使用主动点选的有效敌人，否则按本次按键时的角色朝向重新索敌。</summary>
     /// <param name="skillCore">本次已学技能，只有主表 Type 一或二的攻击参与自动选敌。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>优先返回仍合格的当前敌人；否则取最近敌人。非攻击技能或没有敌人时返回空。</returns>
+    /// <returns>主动目标或前方扇形内最近的敌人；空值沿用原技能的朝向释放。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
         // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
@@ -363,11 +363,11 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        if (MSkillTargetMgr.singleton.CanAttack(target))
+        if (MSkillTargetMgr.singleton.HasManualTarget && MSkillTargetMgr.singleton.CanAttack(target))
         {
             return target;
         }
-        return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, null);
+        return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, MSkillTargetDefine.IsInAttackFacing);
     }
 
     /// <summary>从统一场景世界取得当前本地主角。</summary>

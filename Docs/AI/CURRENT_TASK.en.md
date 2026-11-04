@@ -214,3 +214,9 @@
 - Seven attack presentation assets now export 12 collision windows; MArtSkill queries the authored geometry/timing and deduplicates targets, excludes NPCs, and triggers reactions only. Target-space binding supports the existing targeted attack. Initial window sizes/timing still need gameplay tuning.
 - Re-entry exposed a real pooled attribute shortcut bug: MEntity clears its shortcut on reuse; MComponentMgr uses the actual bound component in the entity container instead of borrowing a second component. Unrelated pre-existing worktree changes are preserved.
 - Complete per-file manifest, failures, limits and Git receipts: 项目修改日志/2026-11-04-魔神塔运行时实体与技能受击.md. Usage: 项目分析/RO副本编辑器主工程使用说明-2026-11-04.md. Evidence: _temp/dungeon-runtime-entities-20261104/.
+
+## [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta
+
+- Basic attacks and offensive skills reevaluate automatic targets in the actor's horizontal 120-degree sector and existing 18 m radius. The nearest eligible enemy wins. With none ahead the existing untargeted cast keeps its facing. Explicit clicks and the aim button/Tab retain priority, including a manually selected enemy behind the actor.
+- Eight Moshenta monster entries mark story corpses and wounded actors as nonCombatant. Spawning copies the flag to MonsterEntity, pooling clears it, and enemy selection and real collision hits share the same eligibility check. This preserves their configured poses and spawn points.
+- Scope, file manifest and verification: 项目修改日志/2026-11-04-魔神塔普攻与技能前方索敌.md. Usage: 项目分析/RO副本编辑器主工程使用说明-2026-11-04.md.

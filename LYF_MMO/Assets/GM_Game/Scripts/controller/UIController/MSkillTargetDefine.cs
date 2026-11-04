@@ -6,6 +6,25 @@ using UnityEngine;
 /// <summary>从当前世界中筛选并排序目标；按直线距离查找，敌方目前只包括 MonsterEntity。</summary>
 public static class MSkillTargetDefine
 {
+    /// <summary>自动攻击的水平扇形半角为 60 度，单位朝向向量的点积下限为 cos(60°)。</summary>
+    private const float MinAttackFacingDot = 0.5f;
+
+    /// <summary>判断候选是否在角色模型面前的水平攻击扇形内，忽略台阶造成的高度差。</summary>
+    /// <param name="candidate">当前场景已通过敌方与距离筛选的候选实体。</param>
+    /// <returns>角色能在前方扇形内取得该目标方向时返回 true。</returns>
+    public static bool IsInAttackFacing(MEntity candidate)
+    {
+        // 本地角色模型的朝向与实际施法旋转使用同一坐标系。
+        PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
+        // 将朝向投影到地面，避免模型倾角改变水平索敌角度。
+        Vector3 forward = player.Model.Forward;
+        forward.y = 0f;
+        // 从角色指向候选的位置差，重合点没有可用于转身的方向。
+        Vector3 direction = candidate.Position - player.Position;
+        direction.y = 0f;
+        return Vector3.Dot(forward.normalized, direction.normalized) >= MinAttackFacingDot;
+    }
+
     /// <summary>取得排序后的首个候选，不保存跨场景实体引用。</summary>
     /// <param name="findEnemy">true 查询怪物敌方，false 查询角色友方。</param>
     /// <param name="range">选择半径，单位米；负数表示不限距离。</param>
@@ -55,12 +74,12 @@ public static class MSkillTargetDefine
         targets.Sort(SortTargetByRng);
     }
 
-    /// <summary>当前未接入玩家阵营，只有正式怪物实体（含精英、首领）归敌方。</summary>
+    /// <summary>只将参加战斗的怪物实体作为敌方，过滤副本中按怪物表生成的剧情角色。</summary>
     /// <param name="entity">被查询的当前场景实体。</param>
-    /// <returns>怪物实体返回 true；其他玩家、NPC、宠物等不自动认作敌人。</returns>
+    /// <returns>可攻击的怪物返回 true，剧情角色和友方不会进入攻击候选。</returns>
     public static bool IsEnemy(MEntity entity)
     {
-        return entity is MonsterEntity;
+        return entity is MonsterEntity monster && !monster.NonCombatant;
     }
 
     /// <summary>检查目标仍在当前世界并可见存活；未初始化的零上限属性不判死亡。</summary>

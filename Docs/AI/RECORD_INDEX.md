@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `41a0498a72d33e84dcf60e15681a8d9f9e0d20c59ec44ae74f2bc8a35fedc8d8`
+Source normalized SHA256: `23ac6512a38be44de77838181d543a8b04d80a9d64a18a4194b6ebf758ac40c1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -38,11 +38,12 @@ Source normalized SHA256: `41a0498a72d33e84dcf60e15681a8d9f9e0d20c59ec44ae74f2bc
 | [CODE][FILES][HANDOFF][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Restore zero-singing skill entry | 188-195 |
 | [CODE][FILES][HANDOFF][技能][组合][SKILL-COMBINATION-20261103] RO-style combination authoring and E-to-2 skill | 196-202 |
 | [CODE][FILES][HANDOFF][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Faster E-to-2 handoff and slide/jump cancellation | 203-209 |
-| [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-216 |
+| [CODE][FILES][HANDOFF][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Moshenta runtime actors and hit reactions | 210-217 |
+| [CODE][FILES][HANDOFF][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Forward attack targeting in Moshenta | 218-222 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1e9d3bd6ecaee23766b8b17d74bc70ac37067e81475dd7eef1b0312cb5218b93`
+Source normalized SHA256: `3591a6c1de871a0941cb211ae5f71effb26c5ba536333d6fd7aef7306814cdc8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -72,7 +73,8 @@ Source normalized SHA256: `1e9d3bd6ecaee23766b8b17d74bc70ac37067e81475dd7eef1b03
 | [VERIFY][技能][吟唱][SKILL-ZERO-SINGING-FIX-20261102] Zero-singing regression and loopback acceptance | 205-212 |
 | [VERIFY][技能][组合][SKILL-COMBINATION-20261103] Combination editor and runtime acceptance | 213-220 |
 | [VERIFY][技能][组合][打断][SKILL-CANCEL-FEEL-20261103] Handoff and cancellation regression acceptance | 221-227 |
-| [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-236 |
+| [VERIFY][副本][实体][技能][RO-DUNGEON-RUNTIME-20261104] Runtime spawning, reactions and cleanup | 228-237 |
+| [VERIFY][副本][技能][索敌][RO-DUNGEON-FORWARD-TARGET-20261104] Front selection, manual targets and story hit exclusion | 238-242 |
 
 ## Docs/AI/DECISIONS.en.md
 

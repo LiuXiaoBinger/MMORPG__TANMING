@@ -61,7 +61,8 @@ public class MSkillCollision
                 MSceneMonsterHoster host = overlaps[targetIndex].GetComponentInParent<MSceneMonsterHoster>();
                 if (host == null) continue;
                 MEntity target = host.GetROObject() as MEntity;
-                if (target == null || target.LifecycleState != EntityLifecycleState.Active || target == firer) continue;
+                // 与点击和自动索敌共用战斗资格，范围技能也跳过剧情角色。
+                if (!MSkillTargetDefine.IsEnemy(target) || target.LifecycleState != EntityLifecycleState.Active || target == firer) continue;
                 // 同一次窗口每个目标只触发一次；重复轨道按作者帧间隔放行。
                 int lastHit;
                 if (hits[index].TryGetValue(target.UID, out lastHit))

@@ -22,4 +22,6 @@ public sealed class ROSceneCreatureEntity
     public string hitAnimation;
     /// <summary>非战斗 NPC 标记，与怪物使用独立表编号。</summary>
     public bool isNpc;
+    /// <summary>副本剧情怪物为 true 时只参与场景表现，旧配置默认参与战斗。</summary>
+    public bool nonCombatant;
 }
