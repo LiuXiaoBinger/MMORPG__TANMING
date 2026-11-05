@@ -259,3 +259,10 @@
 - Reference names include ChatMsg, AudioChat.audio_id, CChatMgr, ChatAudioMgr, and PtcT2C_ChattingMsgNtf. Recordings use mono 16 kHz signed 16-bit PCM, 24 KiB chunks and 1–30 seconds. See `项目修改日志/RO三频道文字与语音-2026-11-04.md`.
 - 2026-11-05 follow-up restored all eight existing channel tabs and the hidden settings. World/current-scene/party network behavior is retained. System, guild, private, profession and watch UI entries are visible again. See the follow-up section of `项目修改日志/RO三频道文字与语音-2026-11-04.md`.
 - 2026-11-05 build repair: the artres collector now uses CollectWithoutAsmref to exclude the editor-only GM_Game.asmref while retaining the chat assembly reference and resource scope. See the build-repair section in `项目修改日志/RO三频道文字与语音-2026-11-04.md`.
+
+## [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair
+
+- Codex directly fixed three Toon includes, the existing collector/filter, and pinned locally patched Shader Graph 16.0.6 / YooAsset 1.5.7 packages. Versions are unchanged. YooAsset main/dependency validation excludes .shadersubgraph and UGUI editor icons; the four TMP icon PSDs alone reproduced the native assertion before exclusion.
+- Windows64 DefaultPackage ForceRebuild `2026-11-05-1144-icons` passed: 2820 main assets, 1181 bundles, Console errors/assertions 0. UIRoot/Chat remain collected. No player EXE/mobile build or scene-wide visual regression was performed.
+- Authorized temporary-bundle deletion was blocked by automatic tool policy; Codex did not delete it. External disk-space recovery allowed builds to finish. Unrelated worktree changes remain separate.
+- Full file list, failed attempts, verification and Git receipts: `项目修改日志/Unity全量打包与Shader兼容修复-2026-11-05.md`. Local evidence: `_temp/unity-force-build-20261105-01a1a67e/verification.json`. User requested Codex-only execution, including bilingual records.

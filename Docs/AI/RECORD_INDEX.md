@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7d3671b37641a4cef999a4dff24748343951de327d97249c1c75243374743969`
+Source normalized SHA256: `f19dfcfe902b2f8e00ec7455d788b1d1997b745a693552021eb874118b5cc917`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -46,11 +46,12 @@ Source normalized SHA256: `7d3671b37641a4cef999a4dff24748343951de327d97249c1c752
 | [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Use the public RO monster Animator in Moshenta | 241-245 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-251 |
 | [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-256 |
-| [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-261 |
+| [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-262 |
+| [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-268 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `be78cdd6bd3a4a7c79694acc085972d946bf9d807ef02f030b429de7bfc86715`
+Source normalized SHA256: `6030603bc8091d2a062df44c23eb755b5b54b97dc6cc316ab9fd6b5b82cd5f2b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -88,7 +89,8 @@ Source normalized SHA256: `be78cdd6bd3a4a7c79694acc085972d946bf9d807ef02f030b429
 | [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Verify shared monster animation playback | 262-266 |
 | [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-271 |
 | [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-276 |
-| [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-281 |
+| [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-282 |
+| [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-288 |
 
 ## Docs/AI/DECISIONS.en.md
 

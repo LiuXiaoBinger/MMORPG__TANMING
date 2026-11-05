@@ -256,3 +256,10 @@
 - 参照 ChatMsg、AudioChat.audio_id、CChatMgr、ChatAudioMgr、PtcT2C_ChattingMsgNtf 等命名。采用 16 kHz 单声道 16 位有符号 PCM、24 KiB 分块，录音 1 到 30 秒。完整清单见 `项目修改日志/RO三频道文字与语音-2026-11-04.md`。
 - 2026-11-05 返修恢复全部八个原有频道页签及被隐藏的设置项。世界、附近、队伍网络行为继续有效，系统、公会、私聊、职业、观战界面入口已恢复。详见 `项目修改日志/RO三频道文字与语音-2026-11-04.md` 的返修章节。
 - 2026-11-05 打包返修：artres 收集器改用 CollectWithoutAsmref，排除仅供编辑器编译的 GM_Game.asmref，保留聊天程序集引用和原有资源范围。详见 `项目修改日志/RO三频道文字与语音-2026-11-04.md` 的打包返修章节。
+
+## [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — 全量资源构建修复
+
+- Codex 直接修复三份 Toon include、现有收集器/过滤器，并固定 Shader Graph 16.0.6、YooAsset 1.5.7 本地补丁包，版本保持不变。YooAsset 依赖验证与主资源收集均排除 .shadersubgraph 和 UGUI 编辑器图标；修复前单独构建四张 TMP 图标即可复现原生断言。
+- Windows64 DefaultPackage ForceRebuild `2026-11-05-1144-icons` 通过：2820 个主资源、1181 个包、Console 错误/断言 0；UIRoot/Chat 保留。未执行 EXE/移动端打包及所有场景视觉回归。
+- 用户批准的临时包删除被自动工具策略拒绝，Codex 未删除；外部释放空间后构建得以完成。无关工作区修改单独保留。
+- 完整文件清单、失败尝试、验收与 Git 回执见 `项目修改日志/Unity全量打包与Shader兼容修复-2026-11-05.md`；本地证据 `_temp/unity-force-build-20261105-01a1a67e/verification.json`。用户要求仅使用 Codex，双语记录由 Codex 直接完成。

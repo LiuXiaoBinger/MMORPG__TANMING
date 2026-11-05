@@ -274,3 +274,10 @@
 - 未做两台设备真人录音互发、移动端权限实测、实际等待 24 小时的缓存过期测试或生产部署。详见 `项目修改日志/RO三频道文字与语音-2026-11-04.md`。
 - 2026-11-05 返修通过提交范围 353 份及本机 354 份源码的 Windows Player 编译、八个启用且可交互页签的引用、五个显隐设置及程序集八项绑定检查。三个恢复方法与 `8513729` 一致，预制体只改九个显隐值。本轮未进行 Unity Play 模式验证。
 - 2026-11-05 Unity 2023.2.20f1c1 / YooAsset 1.5.7 对 StandaloneWindows64 的 DefaultPackage 2026-11-05-1016 增量构建通过：2,824 项主资源及全部 1,183 个包文件存在。聊天界面资源仍在，错误的脚本资源包已排除。本轮增量构建无新增 Shader error，仍有一条 HumanTemplate 编辑器资源警告。本次未做全量 Shader 重编、可执行程序打包或运行时加载验证。证据：`_temp/yoo-chat-build-20261105-01a1a67e/verification.json`。
+
+## [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild 验收
+
+- Unity 2023.2.20f1c1 / Windows64 / BuiltinBuildPipeline / ForceRebuild / LZ4 / EncryptionNone：`2026-11-05-1144-icons` 用时 741 秒成功；2820 个主资源及 1181 个包与报告一致。最终日志无 Shader/C# 错误、归档写入失败、原生资产索引断言或编辑器对象警告；Console 错误/断言 0。
+- 已核对 12 个原报错 Shader 名称完成序列化；UIRoot/Chat 保留；.asmref/.ht/.shadersubgraph 与编辑器收集配置被排除。干净脚本编译及依赖包修改核对通过：Shader Graph 1 个文件、YooAsset 2 个文件。四张 TMP 编辑器图标在排除前单独构建可复现断言。
+- 中间构建不作为通过证据：磁盘耗尽、初次遗漏 UV1 声明、旧 PackageCache 路径、回执成功但仍有原生断言、只过滤主资源仍从依赖带入子图、过滤子图后仍有独立的 UGUI 图标断言。真实失败证据保留于 `_temp/unity-force-build-20261105-01a1a67e`。
+- 边界：仅当前工作区资源包；未在干净检出重建，未进行 EXE/移动端打包、双设备真人运行或完整场景视觉检查。详情和 Git 回执见 `项目修改日志/Unity全量打包与Shader兼容修复-2026-11-05.md`。
