@@ -162,7 +162,7 @@ MonoBehaviour:
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
-        FilterRuleName: CollectAll
+        FilterRuleName: CollectWithoutAsmref
         AssetTags: 
         UserData: 
     - GroupName: Resources

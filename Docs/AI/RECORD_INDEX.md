@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `864d7b5519c1631646df2222501d6d992e6b6b013200fd5c43b27dd071865f84`
+Source normalized SHA256: `7d3671b37641a4cef999a4dff24748343951de327d97249c1c75243374743969`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -46,11 +46,11 @@ Source normalized SHA256: `864d7b5519c1631646df2222501d6d992e6b6b013200fd5c43b27
 | [CODE][FILES][HANDOFF][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Use the public RO monster Animator in Moshenta | 241-245 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-251 |
 | [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-256 |
-| [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-260 |
+| [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-261 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5b066287e039e85aee0000102d4c16ed1393b9db7cae1cfb25f614106d4070ce`
+Source normalized SHA256: `be78cdd6bd3a4a7c79694acc085972d946bf9d807ef02f030b429de7bfc86715`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -88,7 +88,7 @@ Source normalized SHA256: `5b066287e039e85aee0000102d4c16ed1393b9db7cae1cfb25f61
 | [VERIFY][副本][动画][MOSHENTA-SHARED-ANIMATOR-20261104] Verify shared monster animation playback | 262-266 |
 | [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-271 |
 | [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-276 |
-| [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-280 |
+| [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-281 |
 
 ## Docs/AI/DECISIONS.en.md
 
