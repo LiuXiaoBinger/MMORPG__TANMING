@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+// 沿用 RO 的成员答复值：未作答只保存在服务端等待集合，不用默认值表示同意。
+enum ReplyType {
+  REPLY_TYPE_REFUSE = 0; // 拒绝本次入场。
+  REPLY_TYPE_AGREE = 1; // 同意本次入场。
+}
+
+// 本项目用到的 RO 入场失败原因，编号与 RO 保持一致。
+enum FailEnterFBReason {
+  FAIL_ENTER_FB_SUCESS = 0; // 保留默认值。
+  FAIL_ENTER_FN_TIMEOUT = 11; // 十秒内未全员确认。
+  FAIL_ENTER_FB_SOMEONE_LEAVE_WAITING_SCENE = 13; // 确认期间队伍名单变化。
+}
+
+// MS 请求全队确认；目前只接魔神塔，不携带 RO 未接入的章节与助战字段。
+message AskMemberEnterFBData {
+  uint32 dungeon_id = 1; // 目标副本配置号。
+  uint32 confirm_seconds = 4; // 本项目扩展：服务端确认窗口持续秒数。
+}
+
+// 客户端回复入场选择，角色身份由 GS 会话确认。
+message MemberReplyEnterFBData {
+  ReplyType type = 1; // 同意或拒绝。
+}
+
+// MS 向全队同步一名成员的答复。
+message SyncMemberReplyEnterFBData {
+  uint64 uid = 1; // 实际答复的角色号。
+  ReplyType type = 2; // 该角色的选择。
+}
+
+// MS 取消本次入场确认，沿用 RO 失败通知字段编号。
+message FailEnterFBData {
+  uint64 uid = 1; // 触发取消的成员，超时为 0。
+  FailEnterFBReason reason = 2; // 本次未入场原因。
+}

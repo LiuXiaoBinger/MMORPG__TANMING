@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f19dfcfe902b2f8e00ec7455d788b1d1997b745a693552021eb874118b5cc917`
+Source normalized SHA256: `c60ed46f262549d316c0d804bce8d2fbc464af638964342851940aca5ab290b8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -47,11 +47,12 @@ Source normalized SHA256: `f19dfcfe902b2f8e00ec7455d788b1d1997b745a693552021eb87
 | [CODE][FILES][HANDOFF][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 orc patrol, retaliation and melee | 246-251 |
 | [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-256 |
 | [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-262 |
-| [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-268 |
+| [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-269 |
+| [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-275 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6030603bc8091d2a062df44c23eb755b5b54b97dc6cc316ab9fd6b5b82cd5f2b`
+Source normalized SHA256: `5727e3757d6e6d4590b57c072c0a52d6c296978a1a0d6db8492bb4118b8c68b8`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -90,7 +91,8 @@ Source normalized SHA256: `6030603bc8091d2a062df44c23eb755b5b54b97dc6cc316ab9fd6
 | [VERIFY][副本][怪物AI][MOSHENTA-ORC-W18-AI-20261104] Wave 18 server, damage and Unity playback checks | 267-271 |
 | [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-276 |
 | [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-282 |
-| [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-288 |
+| [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-289 |
+| [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-295 |
 
 ## Docs/AI/DECISIONS.en.md
 

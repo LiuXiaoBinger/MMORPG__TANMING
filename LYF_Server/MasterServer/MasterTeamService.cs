@@ -43,6 +43,8 @@ internal sealed class MasterTeamService : IContainer
                 partition = new GamePartition(session);
                 _games.Add(session.SessionID, partition);
             }
+            // 先结束到期确认，迟到的答复不能越过服务端时限。
+            partition.Teams.Update(System.DateTime.UtcNow);
             if (basePackage.ProtoCode == NetDefine.PtcG2M_ChatAudioTransfer)
             {
                 partition.Audio.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
@@ -63,6 +65,18 @@ internal sealed class MasterTeamService : IContainer
                 return;
             }
             partition.Teams.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
+        }
+    }
+
+    /// <summary>主循环推进进本确认时限，与网络请求使用同一分区锁。</summary>
+    public void Update()
+    {
+        lock (_games)
+        {
+            // 分区快照持有原对象引用；断链移除分区同样受此锁保护。
+            List<GamePartition> partitions = new List<GamePartition>(_games.Values);
+            for (int index = 0; index < partitions.Count; index++)
+                partitions[index].Teams.Update(System.DateTime.UtcNow);
         }
     }
 

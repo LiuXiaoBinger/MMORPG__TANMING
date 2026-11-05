@@ -86,6 +86,10 @@ namespace GateServer
             server.RegistCommand(NetDefine.CMD_LeaveTeamCode, gateTeamCtrl);
             server.RegistCommand(NetDefine.CMD_BegInTeamByTeamIdCode, gateTeamCtrl);
             server.RegistCommand(NetDefine.CMD_CaptainRequestEnterFBCode, gateTeamCtrl);
+            server.RegistCommand(NetDefine.PtcC2M_MemberReplyEnterFBPtc, gateTeamCtrl);
+            client.RegistCommand(NetDefine.PtcM2C_AskMemberEnterFBNtf, gateTeamCtrl);
+            client.RegistCommand(NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, gateTeamCtrl);
+            client.RegistCommand(NetDefine.PtcM2C_FailEnterFBNtf, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamInfoCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamInvatationCode, gateTeamCtrl);
             client.RegistCommand(NetDefine.CMD_TeamEnterDungeonCode, gateTeamCtrl);

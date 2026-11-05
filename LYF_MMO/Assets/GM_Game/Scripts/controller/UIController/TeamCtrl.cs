@@ -16,6 +16,12 @@ public sealed class TeamCtrl : CtrlBase
 
     /// <summary>服务器确认入场回调，携带实例、场景与出生点。</summary>
     public event Action<TeamEnterDungeonNtf> EnterDungeonReceived;
+    /// <summary>MS 发起全队进本确认，通知副本控制器打开 RO 确认窗。</summary>
+    public event Action<AskMemberEnterFBData> AskMemberEnterFBReceived;
+    /// <summary>MS 同步某位队员的真实答复。</summary>
+    public event Action<SyncMemberReplyEnterFBData> MemberReplyEnterFBReceived;
+    /// <summary>MS 取消本次进本确认，原因包含超时或名单变化。</summary>
+    public event Action<FailEnterFBData> FailEnterFBReceived;
 
     /// <summary>是否已经注册协议，避免重复注册。</summary>
     private bool _registered;
@@ -54,6 +60,9 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, OnSyncMemberReplyEnterFB);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_FailEnterFBNtf, OnFailEnterFB);
         _activeInstance = this;
         _registered = true;
     }
@@ -73,6 +82,9 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, OnSyncMemberReplyEnterFB);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_FailEnterFBNtf, OnFailEnterFB);
         if (_activeInstance == this)
         {
             // 只有仍由本实例持有时才清空静态标记，避免误清后来接管的实例。
@@ -88,8 +100,39 @@ public sealed class TeamCtrl : CtrlBase
         TeamInfoReceived = null;
         InvitationReceived = null;
         EnterDungeonReceived = null;
+        AskMemberEnterFBReceived = null;
+        MemberReplyEnterFBReceived = null;
+        FailEnterFBReceived = null;
     }
     #endregion
+
+    /// <summary>转发 RO 进本询问，保留服务器给出的副本与时限。</summary>
+    /// <param name="data">AskMemberEnterFBData 的消息体。</param>
+    private void OnAskMemberEnterFB(ByteString data)
+    {
+        AskMemberEnterFBReceived?.Invoke(AskMemberEnterFBData.Parser.ParseFrom(data));
+    }
+
+    /// <summary>转发队员答复，客户端只显示服务器已广播的选择。</summary>
+    /// <param name="data">SyncMemberReplyEnterFBData 的消息体。</param>
+    private void OnSyncMemberReplyEnterFB(ByteString data)
+    {
+        MemberReplyEnterFBReceived?.Invoke(SyncMemberReplyEnterFBData.Parser.ParseFrom(data));
+    }
+
+    /// <summary>转发服务器取消确认通知。</summary>
+    /// <param name="data">FailEnterFBData 的消息体。</param>
+    private void OnFailEnterFB(ByteString data)
+    {
+        FailEnterFBReceived?.Invoke(FailEnterFBData.Parser.ParseFrom(data));
+    }
+
+    /// <summary>沿 RO MemberReplyEnterFBPtc 提交选择，实际角色身份由 GS 会话取得。</summary>
+    /// <param name="reply">玩家明确点击的同意或拒绝。</param><returns>网络层是否接收本次请求。</returns>
+    public bool SendMemberReplyEnterFBPtc(ReplyType reply)
+    {
+        return Send(NetDefine.PtcC2M_MemberReplyEnterFBPtc, new MemberReplyEnterFBData { Type = reply }.ToByteString());
+    }
 
     /// <summary>处理服务器确认的副本入场通知，客户端据此才加载场景。</summary>
     /// <param name="data">TeamEnterDungeonNtf 二进制消息体。</param>

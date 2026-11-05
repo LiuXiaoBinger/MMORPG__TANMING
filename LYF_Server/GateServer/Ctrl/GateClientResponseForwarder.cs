@@ -137,6 +137,15 @@ public static class GateClientResponseForwarder
             case NetDefine.PtcT2C_ChattingMsgNtf:
                 ChatMsg.Parser.ParseFrom(package.Data);
                 return true;
+            case NetDefine.PtcM2C_AskMemberEnterFBNtf:
+                AskMemberEnterFBData.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf:
+                SyncMemberReplyEnterFBData.Parser.ParseFrom(package.Data);
+                return true;
+            case NetDefine.PtcM2C_FailEnterFBNtf:
+                FailEnterFBData.Parser.ParseFrom(package.Data);
+                return true;
             case NetDefine.CMD_TeamInfoCode:
                 // 队伍状态是服务端主动下发的权威快照，无业务错误码，验证协议后原样转发。
                 TeamInfoNtf.Parser.ParseFrom(package.Data);

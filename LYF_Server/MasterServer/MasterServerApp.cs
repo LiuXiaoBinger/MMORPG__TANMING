@@ -20,6 +20,11 @@ internal static class MasterServerApp
         int port = NetDefine.MasterServerPort;
         if (args.Length > 0) port = int.Parse(args[0]);
         server.StartServer(NetDefine.IPHost, port);
-        Thread.Sleep(Timeout.Infinite);
+        // 确认超时由 MS 主循环结束，100 毫秒粒度不承担任何副本或战斗运算。
+        while (true)
+        {
+            teams.Update();
+            Thread.Sleep(100);
+        }
     }
 }

@@ -266,3 +266,10 @@
 - Windows64 DefaultPackage ForceRebuild `2026-11-05-1144-icons` passed: 2820 main assets, 1181 bundles, Console errors/assertions 0. UIRoot/Chat remain collected. No player EXE/mobile build or scene-wide visual regression was performed.
 - Authorized temporary-bundle deletion was blocked by automatic tool policy; Codex did not delete it. External disk-space recovery allowed builds to finish. Unrelated worktree changes remain separate.
 - Full file list, failed attempts, verification and Git receipts: `项目修改日志/Unity全量打包与Shader兼容修复-2026-11-05.md`. Local evidence: `_temp/unity-force-build-20261105-01a1a67e/verification.json`. User requested Codex-only execution, including bilingual records.
+
+## [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation
+
+- The live client had two authoritative members but zero generated HUD rows: the nested `QuickPanel.prefab` omitted three serialized references. The actual UIRoot dependency now binds the member container/template/invite slot; both real members became visible after applying these same bindings in the running client.
+- MS follows RO `TeamVoteTool`: captain starts ready, other members have 10 seconds, all agree before GS receives the dungeon order. Refusal, timeout or roster change cancels. A solo team enters directly, as in RO. `ThemeDungeonTeamWindow` is registered and held by MainView; GS still owns scene creation and combat.
+- Codex implemented directly without another model. Local MS/GS/Gate were switched to verified workspace outputs; 10150/10130/10140 listen and Gate→GS→MS reconnects. The client protocol DLL matches those services. Existing EXEs/mobile packages were not rebuilt; new protocols require a new Player build. No new two-device human confirmation acceptance.
+- Full file manifest, failure history, local deployment receipts and Git results: `项目修改日志/队友显示与RO进本确认-2026-11-05.md`. Evidence: `_temp/team-entry-confirm-20261105/`.

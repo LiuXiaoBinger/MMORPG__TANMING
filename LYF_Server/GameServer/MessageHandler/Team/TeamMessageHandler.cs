@@ -5,11 +5,12 @@
 /// </summary>
 public sealed class TeamMessageHandler : IGameMessageHandler
 {
-    /// <summary>客户端已有的六个组队协议；监听注册与能力判断共享同一份清单。</summary>
+    /// <summary>客户端已有的组队及进本确认协议；监听注册与能力判断共享同一份清单。</summary>
     private static readonly ushort[] Commands =
     {
         NetDefine.CMD_CreateTeamCode, NetDefine.CMD_InviteJoinTeamCode, NetDefine.CMD_AcceptTeamInvatationCode,
-        NetDefine.CMD_LeaveTeamCode, NetDefine.CMD_BegInTeamByTeamIdCode, NetDefine.CMD_CaptainRequestEnterFBCode
+        NetDefine.CMD_LeaveTeamCode, NetDefine.CMD_BegInTeamByTeamIdCode, NetDefine.CMD_CaptainRequestEnterFBCode,
+        NetDefine.PtcC2M_MemberReplyEnterFBPtc
     };
 
     /// <summary>同时注册监听端和游戏线程分派，认证成功的请求才会转交 MS。</summary>

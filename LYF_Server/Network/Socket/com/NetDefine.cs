@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -99,6 +99,14 @@ public class NetDefine
     public const ushort CMD_BegInTeamByTeamIdCode = 11204;
     /// <summary>队长请求进入副本，对应 RO DungeonMgr CaptainRequestEnterFBPtc。</summary>
     public const ushort CMD_CaptainRequestEnterFBCode = 11205;
+    /// <summary>队员回复是否进本，名称沿用 RO PtcC2M_MemberReplyEnterFBPtc。</summary>
+    public const ushort PtcC2M_MemberReplyEnterFBPtc = 11206;
+    /// <summary>MS 通知全队开始入场确认。</summary>
+    public const ushort PtcM2C_AskMemberEnterFBNtf = 11214;
+    /// <summary>MS 向全队同步某成员的同意或拒绝。</summary>
+    public const ushort PtcM2C_SyncMemberReplyEnterFBNtf = 11215;
+    /// <summary>MS 通知确认超时或名单变化，本次不进入副本。</summary>
+    public const ushort PtcM2C_FailEnterFBNtf = 11216;
     /// <summary>服务端下发队伍完整状态，客户端据此刷新队伍窗口。</summary>
     public const ushort CMD_TeamInfoCode = 11210;
     /// <summary>服务端下发邀请入队通知，对应 RO TeamInvatationData。</summary>

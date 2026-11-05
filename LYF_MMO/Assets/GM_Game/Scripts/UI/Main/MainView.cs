@@ -47,6 +47,8 @@ public class MainView : UIBase
 
    /// <summary>主题副本建队窗口，复制 RO 快捷队伍面板的建队分支，由详情页挑战打开。</summary>
    [SerializeField, Header("建队窗口")] private ThemeDungeonTeamCreateWindow _themeDungeonTeamCreateWindow;
+   /// <summary>RO 全队进本确认窗口，成员答复由 MS 统一处理。</summary>
+   [SerializeField] private ThemeDungeonTeamWindow _themeDungeonTeamWindow;
 
    /// <summary>主界面左侧常驻快捷队伍栏，复制 RO QuickTeamPanel 的原层级与布局。</summary>
    [SerializeField, Header("快捷队伍栏")] private QuickTeamWidget _quickTeamWidget;
@@ -119,6 +121,8 @@ public class MainView : UIBase
 
    /// <summary>建队窗口实例，供建队控制器初始化、刷新与显隐。</summary>
    public ThemeDungeonTeamCreateWindow ThemeDungeonTeamCreateWindow => _themeDungeonTeamCreateWindow;
+   /// <summary>供副本控制器接入服务器询问与成员答复展示。</summary>
+   public ThemeDungeonTeamWindow ThemeDungeonTeamWindow => _themeDungeonTeamWindow;
 
    /// <summary>快捷队伍栏实例，供建队控制器刷新成员信息。</summary>
    public QuickTeamWidget QuickTeamWidget => _quickTeamWidget;
@@ -208,6 +212,8 @@ public class MainView : UIBase
       windowDic[WindowType.DailyTaskWindow] = _dailyTaskWindow;
       windowDic[WindowType.ThemeDungeonArroundWindow] = _themeDungeonArroundWindow;
       windowDic[WindowType.ThemeDungeonTeamCreateWindow] = _themeDungeonTeamCreateWindow;
+      windowDic[WindowType.ThemeDungeonTeamWindow] = _themeDungeonTeamWindow;
+      _themeDungeonTeamWindow.InitWindow();
       SetFunctionMenuVisible(false);
       if (_taskWindow != null)
       {

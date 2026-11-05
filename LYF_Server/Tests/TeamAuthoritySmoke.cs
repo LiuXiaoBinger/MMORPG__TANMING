@@ -36,6 +36,8 @@ public static class TeamAuthoritySmoke
             CheckCapacityAndSixthRejected();
             CheckApplicationNeedsCaptainApproval();
             CheckCaptainOnlyEnter();
+            CheckDungeonConfirmation();
+            CheckDungeonConfirmationGateFrames();
             CheckSingleMemberEnterAndInstance();
             CheckTwoTeamIsolation();
             CheckBroadcastRecipientFilter();
@@ -119,6 +121,11 @@ public static class TeamAuthoritySmoke
             BindGate(far, gate.SessionId, 54);
             ChatAuthoritySmoke.Run(gate, captain, member, other, far);
             gate.SendFromGate(51, NetDefine.CMD_CaptainRequestEnterFBCode, new CaptainRequestEnterFBArg { DungeonId = TeamManager.MoshentaDungeonId });
+            // 正式 GS 下行询问必须到达队员会话；成员答复也经过同一认证转发链。
+            AskMemberEnterFBData ask = AskMemberEnterFBData.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.PtcM2C_AskMemberEnterFBNtf).Data);
+            Expect(ask.DungeonId == 4060 && captain.mainRoleInfo.BaseInfo.InstanceId == 0,
+                "正式路由只发确认询问，未同意前不创建副本");
+            gate.SendFromGate(52, NetDefine.PtcC2M_MemberReplyEnterFBPtc, new MemberReplyEnterFBData { Type = ReplyType.Agree });
             // 在 GS 读取实际副本通知，包含 GS 填入的场景与实例。
             TeamEnterDungeonNtf entered = TeamEnterDungeonNtf.Parser.ParseFrom(WaitProduction(gate, 52, NetDefine.CMD_TeamEnterDungeonCode).Data);
             Expect(entered.InstanceId > 0 && captain.mainRoleInfo.BaseInfo.InstanceId == (int)entered.InstanceId &&
@@ -346,6 +353,7 @@ public static class TeamAuthoritySmoke
         MasterTeamProbe.Instance.InviteJoinTeam(captainA, 1502UL);
         MasterTeamProbe.Instance.AcceptTeamInvatation(memberA, teamA, 1501UL, true);
         MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captainA, TeamManager.MoshentaDungeonId);
+        MasterTeamProbe.Instance.MemberReplyEnterFBPtc(memberA, ReplyType.Agree);
 
         // 乙队队伍ID，独立建队并独立入场，用于和甲队比较实例号。
         ulong teamB = MasterTeamProbe.Instance.RequestCreateTeam(captainB, 1000);
@@ -488,6 +496,7 @@ public static class TeamAuthoritySmoke
         MasterTeamProbe.Instance.InviteJoinTeam(captain, 2102UL);
         MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 2101UL, true);
         MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
+        MasterTeamProbe.Instance.MemberReplyEnterFBPtc(member, ReplyType.Agree);
 
         Expect(captain.mainRoleInfo.BaseInfo.Pos == member.mainRoleInfo.BaseInfo.Pos, "同队成员入场位置一致");
         Expect(captain.mainRoleInfo.BaseInfo.InstanceId == member.mainRoleInfo.BaseInfo.InstanceId,
@@ -662,6 +671,7 @@ public static class TeamAuthoritySmoke
         MasterTeamProbe.Instance.InviteJoinTeam(captain, 3102UL);
         MasterTeamProbe.Instance.AcceptTeamInvatation(member, teamId, 3101UL, true);
         MasterTeamProbe.Instance.CaptainRequestEnterFBPtc(captain, TeamManager.MoshentaDungeonId);
+        MasterTeamProbe.Instance.MemberReplyEnterFBPtc(member, ReplyType.Agree);
         Expect(member.mainRoleInfo.BaseInfo.InstanceId != 0, "入场后队员实例非0");
         link.ClearFrames();
 
@@ -1003,4 +1013,96 @@ public static class TeamAuthoritySmoke
         _failures = _failures + 1;
         Console.WriteLine("[FAIL] " + message);
     }
+    /// <summary>用真实客户端套接字验证网关不会把三个新增下行通知改写成错误回包。</summary>
+    private static void CheckDungeonConfirmationGateFrames()
+    {
+        // 三种确认阶段下行，与正式 MS 使用相同的序列化协议。
+        BasePackage[] notices = {
+            new BasePackage { ProtoCode = NetDefine.PtcM2C_AskMemberEnterFBNtf, Data = Google.Protobuf.MessageExtensions.ToByteString(new AskMemberEnterFBData { DungeonId = 4060, ConfirmSeconds = 10 }) },
+            new BasePackage { ProtoCode = NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, Data = Google.Protobuf.MessageExtensions.ToByteString(new SyncMemberReplyEnterFBData { Uid = 2, Type = ReplyType.Agree }) },
+            new BasePackage { ProtoCode = NetDefine.PtcM2C_FailEnterFBNtf, Data = Google.Protobuf.MessageExtensions.ToByteString(new FailEnterFBData { Reason = FailEnterFBReason.FailEnterFnTimeout }) }
+        };
+        // 逐种通知通过正式网关转发器并读取实际帧。
+        for (int index = 0; index < notices.Length; index++)
+        {
+            // 本次临时客户端连接，测试结束后关闭自身套接字。
+            LoopbackLink client = new LoopbackLink(false);
+            try
+            {
+                GateClientResponseForwarder.ForwardToUnity(SessionMgr.Instance.GetSession(client.SessionId), notices[index]);
+                // 原始客户端字节帧解码结果，必须保留协议号和完整载荷。
+                List<DecodedFrame> frames = client.WaitWindow(220);
+                Expect(frames.Count == 1 && frames[0].ProtoCode == notices[index].ProtoCode && frames[0].Package.Data.Equals(notices[index].Data),
+                    "确认协议真实网关透传 " + notices[index].ProtoCode);
+            }
+            finally { client.Close(); }
+        }
+    }
+
+    /// <summary>以真实 MS TCP 通知验证全员确认、拒绝、名单变更及实际超时。</summary>
+    private static void CheckDungeonConfirmation()
+    {
+        // 独立角色与队伍，避免借用其他用例的入场状态。
+        OnlineRole captain = NewRole(99001, "确认队长");
+        // 第一位需要主动选择的成员。
+        OnlineRole first = NewRole(99002, "确认队员甲");
+        // 最后一位成员用于验证部分同意不能入场。
+        OnlineRole last = NewRole(99003, "确认队员乙");
+        // 无队伍玩家不能替代任何队员答复。
+        OnlineRole outsider = NewRole(99004, "外部玩家");
+        // 当前测试真实连接的 MS 分区。
+        MasterTeamProbe probe = MasterTeamProbe.Instance;
+        // 由正式创建流程取得的权威队伍号。
+        ulong team = probe.RequestCreateTeam(captain, 1000);
+        probe.InviteJoinTeam(captain, first.GetID());
+        probe.AcceptTeamInvatation(first, team, captain.GetID(), true);
+        probe.InviteJoinTeam(captain, last.GetID());
+        probe.AcceptTeamInvatation(last, team, captain.GetID(), true);
+        Expect(!probe.CaptainRequestEnterFBPtc(captain, 4060), "发起确认不能立即入场");
+        Expect(probe.Deliveries.Count == 3, "询问送达三个真实队员");
+        // 核对每个收件人拿到的是询问，且都保留同一个目标和时限。
+        HashSet<ulong> recipients = new HashSet<ulong>();
+        for (int index = 0; index < probe.Deliveries.Count; index++)
+        {
+            // 本次真实 TCP 收到的定向包。
+            MasterTeamRolePacket packet = probe.Deliveries[index];
+            recipients.Add(packet.RoleId);
+            Expect(packet.Packet.ProtoCode == NetDefine.PtcM2C_AskMemberEnterFBNtf, "确认询问协议号");
+            // 直接解析业务包验证内容，不替服务端生成结果。
+            AskMemberEnterFBData ask = AskMemberEnterFBData.Parser.ParseFrom(packet.Packet.Data);
+            Expect(ask.DungeonId == 4060 && ask.ConfirmSeconds == 10, "RO 目标与十秒确认时间");
+        }
+        Expect(recipients.SetEquals(new ulong[] {99001, 99002, 99003}), "询问收件人恰为当前名单");
+        Expect(!probe.MemberReplyEnterFBPtc(outsider, ReplyType.Agree), "队外答复不触发入场");
+        Expect(!probe.MemberReplyEnterFBPtc(captain, ReplyType.Agree), "队长重复同意不代替队员");
+        Expect(!probe.MemberReplyEnterFBPtc(first, ReplyType.Agree), "部分队员同意仍留在主城");
+        Expect(probe.Deliveries.Count == 3, "队员同意结果广播全队");
+        Expect(probe.GetInstanceId(captain.GetID()) == 0, "尚未全员确认时 GS 没有创建实例");
+        Expect(!probe.MemberReplyEnterFBPtc(last, ReplyType.Refuse), "拒绝取消本次入场");
+        Expect(probe.Deliveries.Count == 3, "拒绝结果广播全队");
+        Expect(!probe.MemberReplyEnterFBPtc(last, ReplyType.Agree), "取消后迟到同意不能入场");
+        probe.CaptainRequestEnterFBPtc(captain, 4060);
+        probe.MemberReplyEnterFBPtc(first, ReplyType.Agree);
+        Expect(probe.MemberReplyEnterFBPtc(last, ReplyType.Agree), "重新发起后全员同意才执行入场");
+        // 全员通过后 GS 的实际实例号必须非零且相同。
+        ulong instance = probe.GetInstanceId(captain.GetID());
+        Expect(instance != 0 && instance == probe.GetInstanceId(first.GetID()) && instance == probe.GetInstanceId(last.GetID()), "三名成员进入同一 GS 副本");
+        probe.LeaveTeam(captain.GetID());
+        probe.LeaveTeam(first.GetID());
+        probe.LeaveTeam(last.GetID());
+        team = probe.RequestCreateTeam(captain, 1000);
+        probe.InviteJoinTeam(captain, first.GetID());
+        probe.AcceptTeamInvatation(first, team, captain.GetID(), true);
+        probe.CaptainRequestEnterFBPtc(captain, 4060);
+        probe.WaitForConfirmationTimeout();
+        Expect(probe.Deliveries.Count == 2, "MS 超时通知送达全队");
+        Expect(FailEnterFBData.Parser.ParseFrom(probe.Deliveries[0].Packet.Data).Reason == FailEnterFBReason.FailEnterFnTimeout, "超时原因沿用 RO 编号");
+        Expect(!probe.MemberReplyEnterFBPtc(first, ReplyType.Agree), "超时后答复不再入场");
+        probe.CaptainRequestEnterFBPtc(captain, 4060);
+        probe.LeaveTeam(first.GetID());
+        Expect(probe.Deliveries.Count == 2, "成员离队时取消全队确认");
+        Expect(FailEnterFBData.Parser.ParseFrom(probe.Deliveries[0].Packet.Data).Reason == FailEnterFBReason.FailEnterFbSomeoneLeaveWaitingScene, "名单变化原因正确");
+        Expect(probe.GetInstanceId(captain.GetID()) == 0, "确认期间离队不会自动拉剩余成员进本");
+    }
+
 }

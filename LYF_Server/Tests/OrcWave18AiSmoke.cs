@@ -336,7 +336,8 @@ public static class OrcWave18AiSmoke
             ulong firstId = teams.RequestCreateTeam(a.Role, 1000);
             Check(teams.InviteJoinTeam(a.Role, b.Role.GetID()) && teams.AcceptTeamInvatation(b.Role, firstId, a.Role.GetID(), true), "双人组队");
             ulong otherId = teams.RequestCreateTeam(other.Role, 1000);
-            Check(teams.CaptainRequestEnterFBPtc(a.Role, 4060) && teams.CaptainRequestEnterFBPtc(other.Role, 4060), "两支队伍分别进入 4060");
+            Check(!teams.CaptainRequestEnterFBPtc(a.Role, 4060), "双人队伍等待队员确认");
+            Check(teams.MemberReplyEnterFBPtc(b.Role, ReplyType.Agree) && teams.CaptainRequestEnterFBPtc(other.Role, 4060), "两支队伍分别进入 4060");
             a.Receive(); b.Receive(); other.Receive();
             Check(a.Entry.Equals(b.Entry) && a.Entry.InstanceId != other.Entry.InstanceId, "真实入场协议同队一致、跨队实例不同");
             Check(a.Entry.MonsterActions.Count == 1 && a.Entry.MonsterActions[0].SpawnId == SpawnId && a.Entry.Monsters.Count == 68,
@@ -351,7 +352,8 @@ public static class OrcWave18AiSmoke
             // 必须在移动段中途重入，避免起点坐标掩盖快照错误。
             MonsterActionData move = Snapshot(scene);
             for (int frame = 0; frame < 200 && move.Phase != MonsterActionPhase.Move; frame++) { Tick(); move = Snapshot(scene); }
-            Check(move.Phase == MonsterActionPhase.Move && teams.CaptainRequestEnterFBPtc(a.Role, 4060), "在巡逻移动中重新进入同一副本");
+            Check(move.Phase == MonsterActionPhase.Move && !teams.CaptainRequestEnterFBPtc(a.Role, 4060), "在巡逻移动中发起重新入场确认");
+            Check(teams.MemberReplyEnterFBPtc(b.Role, ReplyType.Agree), "队员确认后重新进入同一副本");
             a.Receive(); b.Receive();
             Check(a.Entry.MonsterActions.Single().Equals(move) && a.Entry.Equals(b.Entry), "重入带回当前运动段和位置");
             Evidence(folder, "reentry-move", a.Entry.ToByteArray());

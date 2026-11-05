@@ -263,3 +263,10 @@
 - Windows64 DefaultPackage ForceRebuild `2026-11-05-1144-icons` 通过：2820 个主资源、1181 个包、Console 错误/断言 0；UIRoot/Chat 保留。未执行 EXE/移动端打包及所有场景视觉回归。
 - 用户批准的临时包删除被自动工具策略拒绝，Codex 未删除；外部释放空间后构建得以完成。无关工作区修改单独保留。
 - 完整文件清单、失败尝试、验收与 Git 回执见 `项目修改日志/Unity全量打包与Shader兼容修复-2026-11-05.md`；本地证据 `_temp/unity-force-build-20261105-01a1a67e/verification.json`。用户要求仅使用 Codex，双语记录由 Codex 直接完成。
+
+## [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] 队友显示与 RO 进本确认
+
+- 真实客户端已有两名权威成员，但成员行数量为 0：实际嵌套的 `QuickPanel.prefab` 漏绑成员容器、成员模板、邀请空位三个字段。现已补齐正式 UIRoot 依赖，并在运行中的真实队伍应用相同绑定后看到两名成员。
+- MS 沿用 RO `TeamVoteTool` 流程：队长发起即同意，其他成员有 10 秒选择，全员同意后才交 GS 入场。拒绝、超时、名单变化取消；单人队伍同 RO 直接进入。确认窗口由 MainView 持有并登记为 `ThemeDungeonTeamWindow`，GS 继续负责场景和战斗。
+- Codex 直接实现，未调用其他模型。本机 MS/GS/Gate 已换成验收过的工作区产物，10150/10130/10140 监听且 Gate→GS→MS 已恢复；客户端协议 DLL 与这些服务一致。未重建既有 EXE/移动端包，新协议需要重新打 Player。未做新版双设备真人确认验收。
+- 完整文件清单、失败过程、本机部署与 Git 回执：`项目修改日志/队友显示与RO进本确认-2026-11-05.md`；证据：`_temp/team-entry-confirm-20261105/`。

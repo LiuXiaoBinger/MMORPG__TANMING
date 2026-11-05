@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Google.Protobuf;
 
@@ -8,6 +9,8 @@ internal sealed class TeamManager
     private const int MaxMember = 5;
     /// <summary>本项目目前开放的魔神塔副本配置编号。</summary>
     private const int MoshentaDungeonId = 4060;
+    /// <summary>RO GlobalTableFight.TeamEnterDungeonConfirmTime 的默认确认时限，单位秒。</summary>
+    private const int TeamEnterDungeonConfirmTime = 10;
     /// <summary>本分区的服务连接，所有玩家通知和场景指令由它投递给 GS。</summary>
     private readonly BaseLink _game;
     /// <summary>按队伍号保存存活队伍，最后一名成员离开时删除。</summary>
@@ -34,6 +37,12 @@ internal sealed class TeamManager
         public readonly Dictionary<ulong, ulong> Invitations = new Dictionary<ulong, ulong>();
         /// <summary>等待本队队长审批的申请人角色号。</summary>
         public readonly HashSet<ulong> Applications = new HashSet<ulong>();
+        /// <summary>当前等待全员确认的副本，0 表示没有正在确认的入场。</summary>
+        public int PendingDungeonId;
+        /// <summary>当前确认的 UTC 截止时间，只在 PendingDungeonId 非零时使用。</summary>
+        public DateTime ConfirmDeadline;
+        /// <summary>本次已同意的角色，队长发起时即同意；完成或取消后清空。</summary>
+        public readonly HashSet<ulong> PreparedMembers = new HashSet<ulong>();
     }
 
     /// <summary>创建当前游戏分区的组队管理。</summary>
@@ -71,6 +80,9 @@ internal sealed class TeamManager
                 {
                     Leave(request.RoleId, true);
                 }
+                break;
+            case NetDefine.PtcC2M_MemberReplyEnterFBPtc:
+                MemberReplyEnterFB(request.RoleId, MemberReplyEnterFBData.Parser.ParseFrom(data).Type);
                 break;
             case NetDefine.CMD_CaptainRequestEnterFBCode:
                 Enter(request.RoleId, CaptainRequestEnterFBArg.Parser.ParseFrom(data).DungeonId);
@@ -197,6 +209,7 @@ internal sealed class TeamManager
     /// <param name="roleId">已通过检查的成员角色号。</param>
     private void Join(Team team, ulong roleId)
     {
+        CancelConfirmation(team, roleId, FailEnterFBReason.FailEnterFbSomeoneLeaveWaitingScene);
         team.Members.Add(roleId);
         _roleTeams.Add(roleId, team);
         NotifyRoster(team);
@@ -226,6 +239,7 @@ internal sealed class TeamManager
         // 查找本人当前所在的权威队伍。
         Team team;
         if (!_roleTeams.TryGetValue(roleId, out team)) return;
+        CancelConfirmation(team, roleId, FailEnterFBReason.FailEnterFbSomeoneLeaveWaitingScene);
         team.Members.Remove(roleId);
         _roleTeams.Remove(roleId);
         if (notifySelf)
@@ -265,6 +279,88 @@ internal sealed class TeamManager
         Team team;
         if (dungeonId != MoshentaDungeonId || !_roleTeams.TryGetValue(roleId, out team)) return;
         if (team.Captain != roleId) return;
+        // RO 单人队伍直接进入；多人队伍先广播确认，队长视为已同意。
+        if (team.Members.Count == 1)
+        {
+            EnterConfirmedDungeon(team, dungeonId);
+            return;
+        }
+        team.PendingDungeonId = dungeonId;
+        team.ConfirmDeadline = DateTime.UtcNow.AddSeconds(TeamEnterDungeonConfirmTime);
+        team.PreparedMembers.Clear();
+        team.PreparedMembers.Add(roleId);
+        Broadcast(team, NetDefine.PtcM2C_AskMemberEnterFBNtf,
+            new AskMemberEnterFBData { DungeonId = (uint)dungeonId, ConfirmSeconds = TeamEnterDungeonConfirmTime }.ToByteString());
+    }
+
+    /// <summary>处理实际队员的进本答复；拒绝立即取消，全部同意才发送 GS 入场指令。</summary>
+    /// <param name="roleId">GS 会话认证后的答复人。</param><param name="reply">该成员的同意或拒绝。</param>
+    private void MemberReplyEnterFB(ulong roleId, ReplyType reply)
+    {
+        // 只处理当前队伍正在等待的确认，已取消或结束的答复没有入场效果。
+        Team team;
+        if (!_roleTeams.TryGetValue(roleId, out team) || team.PendingDungeonId == 0) return;
+        if (reply != ReplyType.Agree && reply != ReplyType.Refuse) return;
+        Broadcast(team, NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf,
+            new SyncMemberReplyEnterFBData { Uid = roleId, Type = reply }.ToByteString());
+        if (reply == ReplyType.Refuse)
+        {
+            ClearConfirmation(team);
+            return;
+        }
+        team.PreparedMembers.Add(roleId);
+        if (team.PreparedMembers.Count != team.Members.Count) return;
+        // 保存确认目标后清理本轮数据，GS 仍是场景与战斗的执行者。
+        int dungeonId = team.PendingDungeonId;
+        ClearConfirmation(team);
+        EnterConfirmedDungeon(team, dungeonId);
+    }
+
+    /// <summary>按 MS 的时钟结束未全员同意的确认，不因客户端关闭窗口而自动入场。</summary>
+    /// <param name="now">当前 UTC 时间。</param>
+    public void Update(DateTime now)
+    {
+        // 仅复制队伍引用，超时直接修改原队伍的确认状态。
+        List<Team> teams = new List<Team>(_teams.Values);
+        for (int index = 0; index < teams.Count; index++)
+        {
+            // 当前待检查的队伍，未发起确认的队伍没有计时行为。
+            Team team = teams[index];
+            if (team.PendingDungeonId != 0 && now >= team.ConfirmDeadline)
+                CancelConfirmation(team, 0, FailEnterFBReason.FailEnterFnTimeout);
+        }
+    }
+
+    /// <summary>取消尚未结束的确认，并让全队关闭确认窗。</summary>
+    /// <param name="team">当前队伍。</param><param name="roleId">变更成员，超时为 0。</param><param name="reason">RO 失败原因。</param>
+    private void CancelConfirmation(Team team, ulong roleId, FailEnterFBReason reason)
+    {
+        if (team.PendingDungeonId == 0) return;
+        ClearConfirmation(team);
+        Broadcast(team, NetDefine.PtcM2C_FailEnterFBNtf,
+            new FailEnterFBData { Uid = roleId, Reason = reason }.ToByteString());
+    }
+
+    /// <summary>释放单次入场确认的数据，队伍关系及已有副本保持不变。</summary>
+    /// <param name="team">完成或取消确认的队伍。</param>
+    private static void ClearConfirmation(Team team)
+    {
+        team.PendingDungeonId = 0;
+        team.PreparedMembers.Clear();
+    }
+
+    /// <summary>沿现有定向投递通道将相同确认通知发送给每个真实成员。</summary>
+    /// <param name="team">收件队伍。</param><param name="code">客户端通知协议号。</param><param name="payload">序列化后的通知。</param>
+    private void Broadcast(Team team, ushort code, ByteString payload)
+    {
+        for (int index = 0; index < team.Members.Count; index++)
+            Deliver(team.Members[index], code, payload);
+    }
+
+    /// <summary>已确认的名单交给 GS 创建或重入同一副本，不在 MS 执行场景与战斗。</summary>
+    /// <param name="team">完成确认的队伍。</param><param name="dungeonId">已同意进入的副本。</param>
+    private void EnterConfirmedDungeon(Team team, int dungeonId)
+    {
         if (team.InstanceId == 0) team.InstanceId = _nextInstanceId++;
         // 创建怪物和切换角色场景属于 GS，MS 只传入队伍、实例编号和名单。
         MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = team.InstanceId, DungeonId = dungeonId };

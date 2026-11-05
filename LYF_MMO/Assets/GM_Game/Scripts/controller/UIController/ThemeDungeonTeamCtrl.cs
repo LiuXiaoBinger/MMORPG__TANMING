@@ -56,6 +56,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>队伍协议控制器，收发服务器队伍与入场协议，是本控制器的权威来源。</summary>
     private readonly TeamCtrl _teamCtrl;
 
+    /// <summary>由 MainView 持有的 RO 入场确认窗口。</summary>
+    private readonly ThemeDungeonTeamWindow _confirmationWindow;
+
     /// <summary>按职业编号缓存的头像精灵，避免每次刷新都重新查图集。</summary>
     private readonly Dictionary<int, Sprite> _jobSprites = new Dictionary<int, Sprite>();
 
@@ -86,6 +89,8 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             return;
         }
         _teamWindow = _mainView.ThemeDungeonTeamCreateWindow;
+        _confirmationWindow = _mainView.ThemeDungeonTeamWindow;
+        _confirmationWindow.ReplyRequested += OnMemberReplyRequested;
         _quickTeamWidget = _mainView.QuickTeamWidget;
         if (_mainView.ThemeDungeonArroundWindow != null)
         {
@@ -115,6 +120,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _teamCtrl.TeamInfoReceived += OnTeamInfoReceived;
         _teamCtrl.InvitationReceived += OnInvitationReceived;
         _teamCtrl.EnterDungeonReceived += OnEnterDungeonReceived;
+        _teamCtrl.AskMemberEnterFBReceived += OnAskMemberEnterFB;
+        _teamCtrl.MemberReplyEnterFBReceived += OnSyncMemberReplyEnterFB;
+        _teamCtrl.FailEnterFBReceived += OnFailEnterFB;
         RefreshViews();
     }
 
@@ -149,8 +157,12 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamCtrl.TeamInfoReceived -= OnTeamInfoReceived;
             _teamCtrl.InvitationReceived -= OnInvitationReceived;
             _teamCtrl.EnterDungeonReceived -= OnEnterDungeonReceived;
+            _teamCtrl.AskMemberEnterFBReceived -= OnAskMemberEnterFB;
+            _teamCtrl.MemberReplyEnterFBReceived -= OnSyncMemberReplyEnterFB;
+            _teamCtrl.FailEnterFBReceived -= OnFailEnterFB;
             _teamCtrl.Dispose();
         }
+        if (_confirmationWindow != null) _confirmationWindow.ReplyRequested -= OnMemberReplyRequested;
         _selectedEntry = null;
     }
     #endregion
@@ -237,6 +249,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         {
             return;
         }
+        _confirmationWindow.CloseWindow();
         // 先同步服务器权威位置，客户端不自行推测地图与实例。
         ApplyAuthoritativePosition(notice);
         // 魔神塔：关闭副本界面并加载魔神塔场景。
@@ -252,9 +265,52 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         }
     }
 
+    /// <summary>服务器发起全队询问后，沿现有 MainView 窗口入口显示确认界面。</summary>
+    /// <param name="notice">MS 指定的目标副本及确认秒数。</param>
+    private void OnAskMemberEnterFB(AskMemberEnterFBData notice)
+    {
+        _confirmationWindow.SetMembers(TeamData.Instance.Members, ResolveLocalRoleId(), notice.ConfirmSeconds);
+        // 按权威名单中的职业编号复用队伍窗口已使用的图集。
+        for (int index = 0; index < TeamData.Instance.Members.Count; index++)
+            _confirmationWindow.SetMemberJobSprite(index, ResolveJobSprite(TeamData.Instance.Members[index].JobId));
+        _confirmationWindow.transform.SetAsLastSibling();
+        _confirmationWindow.CloseWindow();
+        _mainView.ShowMainWindow(WindowType.ThemeDungeonTeamWindow);
+    }
+
+    /// <summary>发送玩家明确点击的选择，成功提交后等待 MS 广播。</summary>
+    /// <param name="reply">玩家的同意或拒绝。</param>
+    private void OnMemberReplyRequested(ReplyType reply)
+    {
+        if (_teamCtrl.SendMemberReplyEnterFBPtc(reply)) _confirmationWindow.DisableReply();
+    }
+
+    /// <summary>刷新真实答复；有人拒绝时与 RO 一样关闭全队确认窗并提示。</summary>
+    /// <param name="notice">MS 广播的答复人及其选择。</param>
+    private void OnSyncMemberReplyEnterFB(SyncMemberReplyEnterFBData notice)
+    {
+        _confirmationWindow.SetReply(notice.Uid, notice.Type);
+        if (notice.Type != ReplyType.Refuse) return;
+        _confirmationWindow.CloseWindow();
+        // 拒绝者来自当前权威名单，名单变更另走失败通知。
+        TeamMemberInfo member = TeamData.Instance.FindMember(notice.Uid);
+        if (member != null) TipsMgr.Instance.ShowSystemTips(member.Nickname + "拒绝进入副本");
+    }
+
+    /// <summary>处理 MS 超时或名单变化取消，保持当前场景。</summary>
+    /// <param name="notice">服务端给出的本次取消原因。</param>
+    private void OnFailEnterFB(FailEnterFBData notice)
+    {
+        _confirmationWindow.CloseWindow();
+        if (notice.Reason == FailEnterFBReason.FailEnterFnTimeout)
+            TipsMgr.Instance.ShowSystemTips("确认超时，未进入副本");
+        else
+            TipsMgr.Instance.ShowSystemTips("队伍成员发生变化，请重新发起挑战");
+    }
+
     #region 事件回调
     /// <summary>
-    /// 详情页「开始挑战」：已有队伍直接向服务器申请进入魔神塔，没有队伍先打开正式队伍窗建队。
+    /// 详情页「开始挑战」：已有队伍向 MS 发起确认，没有队伍先打开正式队伍窗建队。
     /// 建队不会自动进图，必须再点一次开始挑战。
     /// </summary>
     /// <param name="entry">详情页当前确认挑战的副本配置。</param>
@@ -272,7 +328,13 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         }
         if (TeamData.Instance.IsInTeam)
         {
-            // 已有队伍时由队长向服务器申请入场，收到入场通知后才加载场景。
+            // 只有队长发起确认，成员可从服务器询问通知中选择同意或拒绝。
+            if (!TeamData.Instance.IsCaptain(ResolveLocalRoleId()))
+            {
+                TipsMgr.Instance.ShowSystemTips("请由队长发起挑战");
+                return;
+            }
+            // MS 收集全员答复后才授权 GS 入场，客户端仍等最终入场通知。
             _teamCtrl.CaptainRequestEnterFBPtc(ServerDungeonId4060);
             return;
         }
@@ -377,6 +439,8 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <param name="inTeam">服务器确认是否仍在队伍中。</param>
     private void OnTeamInfoReceived(bool inTeam)
     {
+        // 退队或 MS 断链清空名单时，当前确认窗口也随队伍状态关闭。
+        if (!inTeam) _confirmationWindow.CloseWindow();
         // 本地主角角色ID，队伍成员里只有这一项代表本人。
         ulong localRoleId = ResolveLocalRoleId();
         TeamData.Instance.SetLocalRoleId(localRoleId);

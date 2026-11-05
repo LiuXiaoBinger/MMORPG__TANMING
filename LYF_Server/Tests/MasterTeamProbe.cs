@@ -16,6 +16,8 @@ internal sealed class MasterTeamProbe : IDisposable
     private int _result;
     /// <summary>上一条请求给发起人的实际错误码。</summary>
     private CmdCode _error;
+    /// <summary>当前请求实际收到的 MS 定向包，用于核对确认通知覆盖所有收件人。</summary>
+    public readonly List<MasterTeamRolePacket> Deliveries = new List<MasterTeamRolePacket>();
 
     /// <summary>连接测试所启动的 MS，保留原生帧头及 CRC 编码。</summary>
     /// <param name="port">测试进程实际监听的队伍服端口。</param>
@@ -33,6 +35,7 @@ internal sealed class MasterTeamProbe : IDisposable
     /// <param name="msg">该命令的强类型 Protobuf 消息。</param>
     private void Request(ulong roleId, string name, ushort code, IMessage msg)
     {
+        Deliveries.Clear();
         Write(NetDefine.CMD_MasterTeamRequest, new MasterTeamRolePacket { RoleId = roleId, Nickname = name,
             Packet = new BasePackage { ProtoCode = code, Data = msg.ToByteString() } });
         Drain();
@@ -54,6 +57,7 @@ internal sealed class MasterTeamProbe : IDisposable
                 // 角色号从独立 MS 回包读取，没有模拟队伍决策。
                 MasterTeamRolePacket delivery = MasterTeamRolePacket.Parser.ParseFrom(packet.Data);
                 if (delivery.RoleId == ulong.MaxValue) return;
+                Deliveries.Add(delivery);
                 _result = delivery.Packet.ProtoCode;
                 if (_result == NetDefine.CMD_ErrCode) _error = ErrMsg.Parser.ParseFrom(delivery.Packet.Data).CmdCode;
             }
@@ -217,6 +221,23 @@ internal sealed class MasterTeamProbe : IDisposable
         Request(role.GetID(), role.mainRoleInfo.BaseInfo.Nickname, NetDefine.CMD_CaptainRequestEnterFBCode,
             new CaptainRequestEnterFBArg { DungeonId = dungeon });
         return _result == NetDefine.CMD_MasterTeamEnter;
+    }
+
+    /// <summary>通过真实 TCP 提交测试成员的明确答复，不在探针里自动替全员同意。</summary>
+    /// <param name="role">本次实际答复人。</param><param name="reply">同意或拒绝。</param><returns>是否收到 GS 入场授权。</returns>
+    public bool MemberReplyEnterFBPtc(OnlineRole role, ReplyType reply)
+    {
+        Request(role.GetID(), role.mainRoleInfo.BaseInfo.Nickname, NetDefine.PtcC2M_MemberReplyEnterFBPtc,
+            new MemberReplyEnterFBData { Type = reply });
+        return _result == NetDefine.CMD_MasterTeamEnter;
+    }
+
+    /// <summary>等待真实 MS 的十秒确认时限结束并读取其取消通知。</summary>
+    public void WaitForConfirmationTimeout()
+    {
+        Deliveries.Clear();
+        System.Threading.Thread.Sleep(11000);
+        Drain();
     }
 
     /// <summary>关闭本次测试的实际服务端 TCP 会话。</summary>
