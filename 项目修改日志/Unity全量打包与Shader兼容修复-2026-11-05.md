@@ -83,4 +83,13 @@
 
 - Codex 按用户明确要求直接同步本次中英文段落；核对同一任务编号、版本、2,820 主资源、1,181 包、741 秒、错误/断言 0 及未验证边界。只检查本次增量，不重验其他历史。
 - 本次仅发布已批准记录，不修改构建输入或重复运行 Unity；沿用最终构建证据。私有 Git 索引只纳入本次七份文档的新增内容，保留无关工作区变动。
-- 本次收尾额度与压缩计数证据将保存在 `_temp/unity-force-build-20261105-01a1a67e/record-close-usage.json` 和 `record-close-compactions.json`，完整工具输出保留在同目录。
+- 本次收尾额度与压缩计数证据保存在 `_temp/unity-force-build-20261105-01a1a67e/record-close-usage.json` 和 `record-close-compactions.json`，完整工具输出保留在同目录。
+
+## 日志发布回执与本次收尾用量
+
+- 日志发布提交：`a8c5b61c1015e16c85aa0c1fe8d44868442784d3`；范围为完整日志、CURRENT_TASK/TEST_REPORT 各自中英文版、RECORD_INDEX 和项目难点，共七份文件。已推送 `origin/codex/feature-development`，远端分支头核对一致。
+- 文档增量核验通过：与批准草稿一致、中英关键字段一致、工作区和提交内容各自索引有效、git diff --check 通过；证据 `_temp/unity-force-build-20261105-01a1a67e/record-close-verification.json`。未改动构建输入，未重跑 Unity。
+- Git 原始回执：`_temp/unity-force-build-20261105-01a1a67e/record-close-git-receipt.json`、`_temp/unity-force-build-20261105-01a1a67e/record-close-push-output.txt`。
+- 本次日志收尾统计窗口：`2026-11-05T11:01:40.709Z` 至 `2026-11-05T11:05:12.090Z`（UTC）；原生输入 955412，其中缓存 944384，输出 6461。该快照不含随后回执补记和最终回复。
+- 上下文与项目规则、用户需求、工具输入输出、重复读取/返工/验证均无独立 token 计量；子 Agent/WorkBuddy 未调用，用量未记录。token-monitor 已完成 collect/report，Codex 适配器为实验性来源，账户剩余额度本地不可测。
+- 当前对话累计压缩 3 次，依据本对话原始 JSONL 的 compacted 事件，观测截至 `2026-11-05T11:05:12.090000+00:00`，无覆盖缺口。额度与压缩证据见本日志前述 record-close-usage.json、record-close-compactions.json。
