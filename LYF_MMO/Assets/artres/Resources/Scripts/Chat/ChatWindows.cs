@@ -494,8 +494,10 @@ public sealed class ChatWindows : WindowBase
     private void SynchronizeChannelVisibilitySettings()
     {
         SynchronizeChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
+        SynchronizeChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
         SynchronizeChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
         SynchronizeChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
+        SynchronizeChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
     }
 
     /// <summary>设置开关与上次应用状态不同，或尚未初始化时，更新标签并保存选择。</summary>
@@ -1215,7 +1217,12 @@ public sealed class ChatWindows : WindowBase
         channelToggleMap.Clear();
         BindChannelToggle(worldChannelTab, ChatChannel.World);
         BindChannelToggle(teamChannelTab, ChatChannel.Team);
+        BindChannelToggle(guildChannelTab, ChatChannel.Guild);
         BindChannelToggle(nearbyChannelTab, ChatChannel.Nearby);
+        BindChannelToggle(systemChannelTab, ChatChannel.System);
+        BindChannelToggle(watchChannelTab, ChatChannel.Watch);
+        BindChannelToggle(privateChannelTab, ChatChannel.Private);
+        BindChannelToggle(professionChannelTab, ChatChannel.Profession);
         SetSelectedChannelToggle(currentChannel);
     }
 
@@ -1248,8 +1255,10 @@ public sealed class ChatWindows : WindowBase
     private void BindChannelVisibilitySettings()
     {
         BindChannelVisibilitySetting(worldVisibilityToggle, ChatChannel.World);
+        BindChannelVisibilitySetting(guildVisibilityToggle, ChatChannel.Guild);
         BindChannelVisibilitySetting(teamVisibilityToggle, ChatChannel.Team);
         BindChannelVisibilitySetting(nearbyVisibilityToggle, ChatChannel.Nearby);
+        BindChannelVisibilitySetting(systemVisibilityToggle, ChatChannel.System);
     }
 
     /// <summary>恢复单频道 PlayerPrefs 选择，先无事件地更新开关，再监听之后的变化。</summary>

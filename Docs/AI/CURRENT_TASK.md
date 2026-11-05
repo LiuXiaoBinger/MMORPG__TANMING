@@ -254,3 +254,4 @@
 ## [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] 世界、附近、队伍文字和语音
 - 独立 MasterServer 受理聊天并按 ID 保存录音。GameServer 认证发言人，按分区、场景实例或 MS 队伍名单投递。Unity 可输入文字、按住录音、滑出取消、点击气泡收听。SpeechToText 默认返回空字符串。
 - 参照 ChatMsg、AudioChat.audio_id、CChatMgr、ChatAudioMgr、PtcT2C_ChattingMsgNtf 等命名。采用 16 kHz 单声道 16 位有符号 PCM、24 KiB 分块，录音 1 到 30 秒。完整清单见 `项目修改日志/RO三频道文字与语音-2026-11-04.md`。
+- 2026-11-05 返修恢复全部八个原有频道页签及被隐藏的设置项。世界、附近、队伍网络行为继续有效，系统、公会、私聊、职业、观战界面入口已恢复。详见 `项目修改日志/RO三频道文字与语音-2026-11-04.md` 的返修章节。

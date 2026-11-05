@@ -257,3 +257,4 @@
 ## [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat
 - Independent MasterServer validates chat and stores uploaded voice by ID. GameServer authenticates the role and delivers messages by shard, scene instance or the MS party roster. Unity sends text, records on hold, cancels on slide-out and plays the tapped message. SpeechToText currently returns empty.
 - Reference names include ChatMsg, AudioChat.audio_id, CChatMgr, ChatAudioMgr, and PtcT2C_ChattingMsgNtf. Recordings use mono 16 kHz signed 16-bit PCM, 24 KiB chunks and 1–30 seconds. See `项目修改日志/RO三频道文字与语音-2026-11-04.md`.
+- 2026-11-05 follow-up restored all eight existing channel tabs and the hidden settings. World/current-scene/party network behavior is retained. System, guild, private, profession and watch UI entries are visible again. See the follow-up section of `项目修改日志/RO三频道文字与语音-2026-11-04.md`.
