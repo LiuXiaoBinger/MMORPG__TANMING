@@ -11,6 +11,8 @@ struct VertexInput {
     float3 normal : NORMAL;
     float4 tangent : TANGENT;
     float2 texcoord0 : TEXCOORD0;
+    // 第二套模型 UV，用于混合光照 ShadowMask 的烘焙采样。
+    float2 texcoord1 : TEXCOORD1;
 };
 #endif
 struct VertexOutput {
@@ -22,7 +24,8 @@ struct VertexOutput {
     float3 bitangentDir : TEXCOORD4;
     //v.2.0.7
     float mirrorFlag : TEXCOORD5;
-    LIGHTING_COORDS(6,7)
+    // 与 UNITY_LIGHT_ATTENUATION 配套声明实时阴影和 ShadowMask 坐标。
+    UNITY_LIGHTING_COORDS(6,7)
     UNITY_FOG_COORDS(8)
     //
 };
@@ -61,7 +64,8 @@ struct VertexOutput {
                 o.mirrorFlag = dot(crossFwd, UNITY_MATRIX_V[2]) < 0 ? 1 : -1;
                 //
                 UNITY_TRANSFER_FOG(o,o.pos);
-                TRANSFER_VERTEX_TO_FRAGMENT(o)
+                // 传入第二套 UV，让混合光照的阴影遮罩使用正确的烘焙坐标。
+                UNITY_TRANSFER_LIGHTING(o, v.texcoord1)
                 return o;
             }
 

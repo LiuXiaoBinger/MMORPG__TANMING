@@ -157,12 +157,8 @@
                 float3 normal : NORMAL;
                 float4 tangent : TANGENT;
                 float2 texcoord0 : TEXCOORD0;
-//v.2.0.4
-#ifdef _IS_ANGELRING_OFF
-//
-#elif _IS_ANGELRING_ON
+                // 第二套 UV 同时服务于天使环采样和混合光照 ShadowMask。
                 float2 texcoord1 : TEXCOORD1;
-#endif
             };
             struct VertexOutput {
                 float4 pos : SV_POSITION;
@@ -175,7 +171,8 @@
                 float3 bitangentDir : TEXCOORD4;
                 //v.2.0.7
                 float mirrorFlag : TEXCOORD5;
-                LIGHTING_COORDS(6,7)
+                // 与 UNITY_LIGHT_ATTENUATION 配套声明实时阴影和 ShadowMask 坐标。
+                UNITY_LIGHTING_COORDS(6,7)
                 UNITY_FOG_COORDS(8)
                 //
 #elif _IS_ANGELRING_ON
@@ -186,7 +183,8 @@
                 float3 bitangentDir : TEXCOORD5;
                 //v.2.0.7
                 float mirrorFlag : TEXCOORD6;
-                LIGHTING_COORDS(7,8)
+                // 与 UNITY_LIGHT_ATTENUATION 配套声明实时阴影和 ShadowMask 坐标。
+                UNITY_LIGHTING_COORDS(7,8)
                 UNITY_FOG_COORDS(9)
                 //
 #endif
@@ -211,7 +209,8 @@
                 o.mirrorFlag = dot(crossFwd, UNITY_MATRIX_V[2]) < 0 ? 1 : -1;
                 //
                 UNITY_TRANSFER_FOG(o,o.pos);
-                TRANSFER_VERTEX_TO_FRAGMENT(o)
+                // 传入第二套 UV，让混合光照的阴影遮罩使用正确的烘焙坐标。
+                UNITY_TRANSFER_LIGHTING(o, v.texcoord1)
                 return o;
             }
             float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET {

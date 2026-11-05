@@ -1,0 +1,10 @@
+--- a/Editor/Generation/Targets/BuiltIn/Editor/ShaderGraph/Includes/PBRDeferredPass.hlsl
++++ b/Editor/Generation/Targets/BuiltIn/Editor/ShaderGraph/Includes/PBRDeferredPass.hlsl
+@@ -58 +58,2 @@
+-#if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
++// 与调用端及 GBuffer 布局使用同一阴影输出条件。
++#if OUTPUT_SHADOWMASK
+@@ -129 +130,2 @@
+-  #if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
++  // 与调用端及 GBuffer 布局使用同一阴影输出条件。
++#if OUTPUT_SHADOWMASK

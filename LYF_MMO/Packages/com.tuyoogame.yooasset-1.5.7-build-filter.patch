@@ -1,0 +1,13 @@
+--- a/Editor/AssetBundleCollector/DefaultRules/DefaultFilterRule.cs
++++ b/Editor/AssetBundleCollector/DefaultRules/DefaultFilterRule.cs
+@@ -14 +14,2 @@
+-		private readonly static HashSet<string> _ignoreFileExtensions = new HashSet<string>() { "", ".so", ".dll", ".cs", ".js", ".boo", ".meta", ".cginc", ".hlsl" };
++		// Shader 子图只供编辑器生成着色器；主资源和依赖收集均不能把它作为运行时对象打包。
++		private readonly static HashSet<string> _ignoreFileExtensions = new HashSet<string>() { "", ".so", ".dll", ".cs", ".js", ".boo", ".meta", ".cginc", ".hlsl", ".shadersubgraph" };
+--- a/Editor/AssetBundleCollector/AssetBundleCollector.cs
++++ b/Editor/AssetBundleCollector/AssetBundleCollector.cs
+@@ -247,0 +248,4 @@
++			// TMP 的编辑器图标被场景依赖带入时会触发原生资源索引断言；运行时不需要这些图标。
++			if (assetPath.StartsWith("Packages/com.unity.ugui/Editor Resources/", StringComparison.Ordinal))
++				return false;
++
