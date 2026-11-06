@@ -112,4 +112,8 @@
 
 ## Git回执
 
-待精确暂存、提交和推送后追加实际回执；不提前声称已上传。
+- 分支：`codex/feature-development`；基线：`fdc4d3e173c052f7919c904ad8ea6e6d167b655f`。
+- 功能及获准归档提交：`a3dbcbbe712d48b220196287ff9b0aef4575bee3`，精确58项，提交树为`a427eb5976a4d23e0d3b99bd8a11d11a40495bd5`；候选树与实际提交树相同，`git diff --cached --check`通过。
+- 推送：`git push origin codex/feature-development`成功，远端回执为`fdc4d3e..a3dbcbb codex/feature-development -> codex/feature-development`。没有合入主分支，也没有强制推送。
+- 暂存只使用经独立验收的本次文件投影与获准记录增量；记录索引按该提交的源记录单独生成，其他用户工作区修改保留。8份新`.meta`仅清理行尾空格。
+- 本段推送回执单独提交于本日志，回执提交可从该文件Git历史定位；原始机器可读回执保存于`_temp/dungeon-config-progress-20261106/git-receipt.json`。
