@@ -49,6 +49,12 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>RO 原始副本目标 ID 到定义的只读业务索引，随配置初始化加载。</summary>
     private Dictionary<int, DungeonTargetTable> _dungeonTargetTables;
 
+    /// <summary>RO 原始副本 ID 到完整主表行的索引，随共享配置初始化加载。</summary>
+    private Dictionary<int, DungeonsTable> _dungeonsTables;
+
+    /// <summary>分支副本目标组 ID 到原始组定义的索引，加载后供进度与界面查询。</summary>
+    private Dictionary<int, DungeonTargetGroupTable> _dungeonTargetGroupTables;
+
     // 角色等级表的原始ID索引。
     private Dictionary<int, RoleLevelInfo> _roleLevelInfos;
 
@@ -101,6 +107,8 @@ public class LubanMgr:Singleton<LubanMgr>
         _professionInfos = tables.TbProfessionInfo.DataMap;
         _questInfos = tables.TbQuestInfo.DataMap;
         _dungeonTargetTables = tables.TbDungeonTargetTable.DataMap;
+        _dungeonsTables = tables.TbDungeonsTable.DataMap;
+        _dungeonTargetGroupTables = tables.TbDungeonTargetGroupTable.DataMap;
         _roleLevelInfos = tables.TbRoleLevelInfo.DataMap;
         _roleLevelAttributeInfos = tables.TbRoleLevelAttributeInfo.DataMap;
         // 直接复用 Luban 生成表的索引，避免启动后重复复制配置数据。
@@ -582,6 +590,32 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 任务相关
+    /// <summary>按 RO 原始副本 ID 查询主表，供副本进入、目标进度和界面展示共用。</summary>
+    /// <param name="id">DungeonsTable.DungeonsID 中的稳定副本 ID。</param>
+    /// <returns>副本原表行；尚未加载或未配置时返回 null。</returns>
+    public DungeonsTable GetDungeonsTableById(int id)
+    {
+        // 保存主键索引命中的副本原始配置，不复制或改写目标表达式。
+        if (_dungeonsTables != null && _dungeonsTables.TryGetValue(id, out DungeonsTable dungeon))
+        {
+            return dungeon;
+        }
+        return null;
+    }
+
+    /// <summary>按原始目标组 ID 查询分支副本的候选目标定义。</summary>
+    /// <param name="id">DungeonTargetGroupTable.ID 中的稳定目标组 ID。</param>
+    /// <returns>目标组原表行；尚未加载或未配置时返回 null。</returns>
+    public DungeonTargetGroupTable GetDungeonTargetGroupTableById(int id)
+    {
+        // 保存分支目标组的原始记录，组内目标 ID 顺序保持原表定义。
+        if (_dungeonTargetGroupTables != null && _dungeonTargetGroupTables.TryGetValue(id, out DungeonTargetGroupTable group))
+        {
+            return group;
+        }
+        return null;
+    }
+
     /// <summary>按 RO 原始目标 ID 获取副本目标定义。</summary>
     /// <param name="id">DungeonTargetTable.ID 中的稳定目标 ID。</param>
     /// <returns>目标原表记录；尚未加载或未配置此 ID 时返回 null。</returns>

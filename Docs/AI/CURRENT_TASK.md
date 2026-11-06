@@ -288,3 +288,14 @@
 - 共享场景XML现在仅保留有序的dungeon_target_ids/int引用137–143，来源为RO DungeonsTable的4060配置；删除目标定义与自定义阶段1–7。MoshentaSceneFlow消费原SceneAI事件并维护当前单个Section，提前事件不缓存。采集41不完成141，实际波次42死亡才完成；Boss波次34/35/46完成143。现有事件刷怪、墙、传送点及简化的FinishDungeon链保留。
 - TaskCtrl按权威ID查询表中文案并接入现有任务UI，不增加独立目标面板。编辑器按引用ID读取真实目标表并打开XLSX。已部署本地GameServer及其表和Network DLL；为恢复连接重启原GateServer二进制，切换时没有客户端连接。主Agent随后真实登录、组队并进入挑战，收到137及与表完全一致的文案，Play运行且未暂停，Console错误为0。
 - 精确的16个业务/资源/工具/测试文件、七份获批记录文件、失败事实与Git回执见`项目修改日志/2026-11-06-DungeonTargetTable-Luban与魔神塔目标移植.md`。原始证据位于`_temp/dungeon-target-luban-20261106/`。其他工作区改动已保留，并提供仅含本任务的HEAD投影。未验证：完整手动双客户端通关、发行构建/生产环境、其他副本及非类型7目标的运行时行为；导入554行不代表实现所有目标类型。
+
+## [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] 原表驱动的通用副本目标与阶段推进
+
+- 用户明确要求补齐三处通用接入，由原生 Codex 子 Agent 开发、主 Agent 检查；最后更正“写入选错了”，批准此前列出的归档清单。分支 `codex/feature-development`，基线 `fdc4d3e173c052f7919c904ad8ea6e6d167b655f`。配置、服务端、客户端由三位原生 Codex 子 Agent 实施，主 Agent 对错误 SceneAI 语义和损坏的提交投影退回返修后验收；未使用外部 Agent。
+- 执行身份与真实轮次：配置 `dungeons_luban_config`，session `01a1b0e7-bb26-7c60-bbfb-0854fc395240`，两轮，第二轮修正组目标注释；原报告未披露模型。客户端 `dungeons_client_progress`，session `01a1b0e8-b5d3-7291-aac8-9b6d1c92e80b`，模型 `gpt-6-astra`，两轮。服务端 `dungeons_server_progress`，session `01a1b0e8-365a-7e52-9338-f5ee85ad6a43`，模型 `gpt-6-astra`，初始实施中四批定向修正，正式交付后两次返修，分别修正 SceneAI Selector 语义和投影生成，均沿用原会话。
+- `DungeonsTable` 保留 462 行 × 56 字段，必要依赖 `DungeonTargetGroupTable` 保留 50 行 × 3 字段；`gen_dungeons.ps1` 仅隔离生成这两表。既有 `DungeonTargetTable` 的 554 行与 52 个保护文件不变，通过既有 `cfg.Tables` / `LubanMgr` 加载 19 张表；原字段、完整目标字符串与目标组语义均保留。
+- 每实例 `DungeonTargetProgress` 读取所选 `DungeonsID`。目标模式 1 按 `|` 分阶段、`=` 分同时目标；模式 2 按原组关系推进，同组全部目标同时激活且全部完成后推进，单后继自动进入，多后继等待明确的 NPC 分支选择。实现原表实际引用的目标类型 1/2/3/5/7/8；对话及分支脚本边界尚无游戏内 NPC 执行器。只有当前阶段消费匹配事件，晚加入、重置和独立实例按各自范围保留状态。
+- MS/GS 按所选配置确定 `SceneID`、资源和出生点；换副本分配新实例并释放已空的旧实例。MS 在修改队伍实例状态前检查共享场景登记，GS 在移动角色前检查实际资源。客户端请求、标题和资源查询均读主表；北森缺客户端场景资产时明确提示且不发入场请求。既有 `TaskWindow` / `QuickTaskPanel` 按原显示上限同屏展示当前阶段多目标与普通任务；编辑器读取全部副本/组，不再依赖 XML 中复制的目标 ID 列表。
+- 场景 XML 只承载有原源依据的事件映射及资产/出生数据。保留的 RO SceneAI 分支遵循 Selector 首成功优先级、原布尔初值/条件/赋值和结果顺序；旧统一一次性标志经真实失败回归后移除。保留魔神塔波次、墙、传送与公共 `MMonsterAnimator`，未新增怪物控制器或完整 NPC/Boss AI 系统。
+- 完整 51 个业务/资源/测试文件及 7 个已批准归档文件、真实失败、本机 17 项产物部署和 Git 回执见 `项目修改日志/2026-11-06-DungeonsTable与通用副本目标推进.md`；原始证据在 `_temp/dungeon-config-progress-20261106/`。主 Agent 验证不含无关工作区改动的 HEAD 投影后，部署本机 MS/GS 并重启 Gate；真实登录、角色、一人组队进入 4060，从原表收到目标 137，`Play=true`、`paused=false`、控制台错误 0，当前 Unity 保持运行魔神塔。
+- 未完成边界：北森 4050/4051 已有服务端场景数据，并验证目标、协议和 UI 链路；完整客户端地图/导航/模型、NPC 剧情时间轴、完整 Boss 玩法仍缺失。测试夹具仅在原场景事件边界补发缺失的 NPC 剧情输入，未直接写计数，不称北森完整自然通关。未验证完整人工多人通关、独立发布包和线上部署；未新增未被引用的目标类型 4/6/9，也未移植其他副本的全部场景/玩法资产。

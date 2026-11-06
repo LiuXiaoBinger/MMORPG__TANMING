@@ -15,6 +15,10 @@ public sealed class TeamData
 
     /// <summary>当前已确认进入的副本实例，回城时归零。</summary>
     public ulong DungeonInstanceId { get; private set; }
+    /// <summary>入场通知确认的 DungeonsTable 编号，回城或离队时归零。</summary>
+    public int DungeonId { get; private set; }
+    /// <summary>入场通知确认的 SceneID，用于定位当前副本的客户端资源。</summary>
+    public int DungeonSceneId { get; private set; }
     /// <summary>当前实例各出生位最近收到的生命值，模型异步加载时也保留更新。</summary>
     private readonly Dictionary<ulong, MonsterHpData> monsterAttributes = new Dictionary<ulong, MonsterHpData>();
     /// <summary>实时命中事件携带单怪结算和施害者世界坐标，供副本播放动作及普通伤害跳字。</summary>
@@ -55,6 +59,8 @@ public sealed class TeamData
     public void OnEnterScene(TeamEnterDungeonNtf notice)
     {
         DungeonInstanceId = notice.InstanceId;
+        DungeonId = notice.DungeonId;
+        DungeonSceneId = notice.SceneId;
         SetNearbyInteraction(null);
         DungeonFlow = notice.Flow;
         monsterAttributes.Clear();
@@ -378,6 +384,8 @@ public sealed class TeamData
     public void Clear()
     {
         DungeonInstanceId = 0UL;
+        DungeonId = 0;
+        DungeonSceneId = 0;
         SetNearbyInteraction(null);
         ApplyDungeonFlow(null);
         monsterAttributes.Clear();

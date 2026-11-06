@@ -5,17 +5,16 @@ using UnityEngine;
 [Serializable]
 public sealed class ROSceneCreatureCatalog
 {
-    /// <summary>主工程内的模型、动作目录位置。</summary>
-    public const string AssetPath = "Assets/GM_Game/Resources/Dungeons/Moshenta/MoshentaCreatures.json";
-    /// <summary>已经迁移的 16 个模型和各自原版动作。</summary>
+    /// <summary>该场景已经迁移的模型和各自原版动作。</summary>
     public ROSceneCreatureModel[] models;
-    /// <summary>魔神塔 EZ 实际引用的怪物表映射。</summary>
+    /// <summary>当前场景实际引用的原怪物表映射。</summary>
     public ROSceneCreatureEntity[] entities;
 
     /// <summary>读取随编辑器保存的本项目资源映射。</summary>
-    public static ROSceneCreatureCatalog Load()
+    /// <param name="resourcePath">场景登记中的模型目录 Resources 路径，不含扩展名。</param>
+    public static ROSceneCreatureCatalog Load(string resourcePath)
     {
-        return JsonUtility.FromJson<ROSceneCreatureCatalog>(Resources.Load<TextAsset>("Dungeons/Moshenta/MoshentaCreatures").text);
+        return JsonUtility.FromJson<ROSceneCreatureCatalog>(Resources.Load<TextAsset>(resourcePath).text);
     }
 
     /// <summary>按原怪物配置编号查找表现数据。</summary>

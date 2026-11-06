@@ -65,21 +65,14 @@ public class TaskMgr : Singleton<TaskMgr>
     {
         // 需要追踪的任务结果列表，受上限条数约束。
         List<TaskViewData> result = new List<TaskViewData>();
-        // 快捷追踪只占用一行副本目标，优先下一条未完成阶段，其他行继续显示普通任务。
+        // 当前阶段目标在快捷栏同时保留，完成项等待服务器切换阶段后移除。
         for (int i = 0; i < _dungeonTasks.Count; i++)
         {
-            // 当前阶段必须属于既有追踪页签，并保留服务器的完成状态。
+            // 当前服务器目标沿用既有追踪页签，普通任务继续填充剩余行。
             TaskViewData stage = _dungeonTasks[i];
-            if (stage.Page != TaskPageFilter.MainLine || stage.State == TaskViewState.Finished) continue;
+            if (stage.Page != TaskPageFilter.MainLine) continue;
+            if (result.Count >= MaxTrackShowCount) break;
             result.Add(stage);
-            break;
-        }
-        // 全部完成后保留最后阶段，显示服务端通关结果直到离开副本。
-        if (result.Count == 0 && _dungeonTasks.Count > 0)
-        {
-            // 最后一条阶段已经包含通关出口提示。
-            TaskViewData finalStage = _dungeonTasks[_dungeonTasks.Count - 1];
-            if (finalStage.Page == TaskPageFilter.MainLine) result.Add(finalStage);
         }
         // 主线页签下的全部任务，追踪只从主线取。
         List<TaskViewData> mainLine = GetPageTasks(TaskPageFilter.MainLine);

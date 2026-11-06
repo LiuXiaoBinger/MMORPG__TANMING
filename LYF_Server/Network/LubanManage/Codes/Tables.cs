@@ -16,6 +16,10 @@ public partial class Tables
     public TbCountInfo TbCountInfo {get; }
     /// <summary>按 RO 原始目标 ID 加载的副本目标定义。</summary>
     public TbDungeonTargetTable TbDungeonTargetTable {get; }
+    /// <summary>按 RO 原始副本 ID 加载的完整副本主表。</summary>
+    public TbDungeonsTable TbDungeonsTable {get; }
+    /// <summary>分支副本的目标组定义，组内目标关联原始目标表。</summary>
+    public TbDungeonTargetGroupTable TbDungeonTargetGroupTable {get; }
     public TbEquipInfo TbEquipInfo {get; }
     public TbGene TbGene {get; }
     public TbItemInfo TbItemInfo {get; }
@@ -36,6 +40,8 @@ public partial class Tables
     {
         TbCountInfo = new TbCountInfo(loader("tbcountinfo"));
         TbDungeonTargetTable = new TbDungeonTargetTable(loader("tbdungeontargettable"));
+        TbDungeonsTable = new TbDungeonsTable(loader("tbdungeonstable"));
+        TbDungeonTargetGroupTable = new TbDungeonTargetGroupTable(loader("tbdungeontargetgrouptable"));
         TbEquipInfo = new TbEquipInfo(loader("tbequipinfo"));
         TbGene = new TbGene(loader("tbgene"));
         TbItemInfo = new TbItemInfo(loader("tbiteminfo"));
@@ -58,6 +64,8 @@ public partial class Tables
     {
         TbCountInfo.ResolveRef(this);
         TbDungeonTargetTable.ResolveRef(this);
+        TbDungeonsTable.ResolveRef(this);
+        TbDungeonTargetGroupTable.ResolveRef(this);
         TbEquipInfo.ResolveRef(this);
         TbGene.ResolveRef(this);
         TbItemInfo.ResolveRef(this);

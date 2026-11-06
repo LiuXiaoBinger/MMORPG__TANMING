@@ -9,15 +9,6 @@
       </position>
       <face>0</face>
     </player_spawn>
-    <dungeon_target_ids>
-      <int>137</int>
-      <int>138</int>
-      <int>139</int>
-      <int>140</int>
-      <int>141</int>
-      <int>142</int>
-      <int>143</int>
-    </dungeon_target_ids>
     <wallDatas />
     <patrolPathDatas>
       <MScenePatrolPathData>
@@ -1721,6 +1712,35 @@
         <audio_list />
       </MSceneTriggerObjectData>
     </scene_trigger_objects>
+
+    <scene_ai_events source="roserver/exe/gsconf/AI/Dungeons/DaNaTuoSiZhiZhan/Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ.xml" selection="first_success">
+      <variables />
+      <event name="monster_die" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[1]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <require_wave id="34" />
+        <require_wave id="35" />
+        <require_wave id="46" />
+        <target id="143" />
+      </event>
+      <event name="HuiHeBuDui" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[2]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <target id="137" />
+      </event>
+      <event name="TongWangErLou" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[4]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <target id="138" />
+      </event>
+      <event name="DaoDaErLou" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[6]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <target id="139" />
+      </event>
+      <event name="DaoDaCeTing" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[8]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <target id="140" />
+      </event>
+      <event name="monster_die" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[10]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <require_wave id="42" />
+        <target id="141" />
+      </event>
+      <event name="DaoDaTaDing" source_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]/Sequence[13]" selector_path="./EntryTask[1]/Selector[1]/Sequence[2]/Selector[1]">
+        <target id="142" />
+      </event>
+    </scene_ai_events>
   </data>
   <dataEx>
     <waveDataEx />

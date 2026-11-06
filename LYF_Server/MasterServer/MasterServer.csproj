@@ -30,5 +30,10 @@
       <Name>MMoRpgCommon</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Scenes\4050.json"><LogicalName>Dungeons.4050.json</LogicalName></EmbeddedResource>
+    <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Scenes\4051.json"><LogicalName>Dungeons.4051.json</LogicalName></EmbeddedResource>
+    <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Scenes\4060.json"><LogicalName>Dungeons.4060.json</LogicalName></EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

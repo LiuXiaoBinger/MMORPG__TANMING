@@ -54,6 +54,7 @@
         <Compile Include="manger\TeamManager.cs" />
         <Compile Include="Service\MasterTeamLink.cs" />
         <Compile Include="SceneEntity\MoshentaSceneFlow.cs" />
+        <Compile Include="SceneEntity\DungeonTargetProgress.cs" />
         <Compile Include="MessageHandler\Role\DungeonInteractHandler.cs" />
         <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
         <Compile Include="SceneEntity\MoshentaOrc.cs" />
@@ -241,6 +242,14 @@
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\MoshentaCreatures.json">
             <LogicalName>Moshenta.Creatures.json</LogicalName>
         </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt"><LogicalName>Dungeons.4060.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\MoshentaCreatures.json"><LogicalName>Dungeons.4060.Creatures.json</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\RO_BeiSenYiBian_EZ.txt"><LogicalName>Dungeons.4050.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4050.Creatures.json</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\RO_BeiSenYiBian_H.txt"><LogicalName>Dungeons.4051.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4051.Creatures.json</LogicalName></EmbeddedResource>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -69,7 +69,7 @@ public enum SceneType
     Scene_Login,//登录场景
     Scene_CreateRole,//创建角色场景
     Scene_MainCity,//主城
-    Scene_DungeonMoshenta//魔神塔副本场景（资源位于 Scenes/RODungeon_Moshenta 子目录，地址由 SceneMgr 单独映射）
+    Scene_Dungeon//副本场景类别；保留原枚举数值，具体地址按服务器 SceneID 读取资源登记。
 }
 
 

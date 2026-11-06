@@ -11,6 +11,8 @@ using System.Reflection;
 /// </summary>
 public static class TeamAuthoritySmoke
 {
+    /// <summary>原魔神塔入口的米制坐标期望，仅用于验收，业务按所选场景XML取出生点。</summary>
+    private const string ExpectedMoshentaSpawnPos = "132.97_58.89_60.95";
     /// <summary>断言失败计数，为 0 时整体通过。</summary>
     private static int _failures;
 
@@ -471,7 +473,7 @@ public static class TeamAuthoritySmoke
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId != 0, "入场后 BaseInfo.InstanceId 非0");
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId == (int)first, "BaseInfo.InstanceId 与队伍实例一致");
         Expect(solo.mainRoleInfo.BaseInfo.MapId == TeamManager.MoshentaMapId, "入场后 BaseInfo.MapId 为魔神塔");
-        Expect(solo.mainRoleInfo.BaseInfo.Pos == TeamManager.MoshentaSpawnPos, "入场后 BaseInfo.Pos 为场景真实出生点");
+        Expect(solo.mainRoleInfo.BaseInfo.Pos == ExpectedMoshentaSpawnPos, "入场后 BaseInfo.Pos 为场景真实出生点");
 
         MasterTeamProbe.Instance.LeaveTeam(2001UL);
         Expect(solo.mainRoleInfo.BaseInfo.InstanceId == 0, "离队后 BaseInfo.InstanceId 归零");
@@ -483,7 +485,7 @@ public static class TeamAuthoritySmoke
     private static void CheckSpawnCoordinates()
     {
         // 魔神塔 RoleSpawnPoint 世界坐标来自 sc_dungeon_moshenta_001.unity。
-        Expect(TeamManager.MoshentaSpawnPos == "132.97_58.89_60.95", "魔神塔出生点与场景 RoleSpawnPoint 一致");
+        Expect(new SceneWaveSpawner(4060).Flow.SpawnPosition == new System.Numerics.Vector3(132.97f, 58.89f, 60.95f), "魔神塔出生点与场景 RoleSpawnPoint 一致");
         // 主城出生坐标来自 MainCityMgr.ResolveMainRoleSpawnPosition 的原有硬编码值。
         Expect(TeamManager.MainCitySpawnPos == "62.1493416_19.4139996_80.6689758", "主城出生点与 MainCityMgr 默认坐标一致");
 

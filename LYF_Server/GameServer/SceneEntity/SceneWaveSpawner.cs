@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using GameServer.SceneEntity;
 using MMoRpgCommon.SceneEntity;
 
-/// <summary>对应 RO 的 SceneWaveSpawner；每个魔神塔实例拥有独立的怪物实体世界和生命值。</summary>
+/// <summary>对应 RO 的 SceneWaveSpawner；每个副本实例拥有独立的怪物实体世界和生命值。</summary>
 public sealed class SceneWaveSpawner
 {
     /// <summary>仅反序列化正式目录中的实体配置，模型动作列表由 Unity 使用。</summary>
@@ -34,7 +34,11 @@ public sealed class SceneWaveSpawner
     }
 
     /// <summary>配置只解析一次；每个队伍重新创建自己的怪物实例。</summary>
-    private static readonly List<SpawnPoint> spawn_points_ = LoadSpawnPoints();
+    private readonly List<SpawnPoint> spawn_points_;
+    /// <summary>本实例选择的原DungeonsTable行，包含独立的场景和目标配置。</summary>
+    public DungeonsTable Dungeon { get; private set; }
+    /// <summary>按SceneID定位的正式场景XML，不借用其他副本资源。</summary>
+    internal XDocument Config { get; private set; }
     /// <summary>当前副本私有的服务端实体容器。</summary>
     private readonly EntityWorld world_ = new EntityWorld();
     /// <summary>与出生点一一对应的真实服务端怪物，生命保存在实体上。</summary>
@@ -49,9 +53,22 @@ public sealed class SceneWaveSpawner
     public MoshentaSceneFlow Flow { get; private set; }
 
     /// <summary>对应 RO 的 FirstCreateMonster，只生成当前副本起始激活的可战斗波次。</summary>
-    public SceneWaveSpawner()
+    /// <param name="dungeonId">MS已批准的原副本配置号。</param>
+    public SceneWaveSpawner(int dungeonId)
     {
+        Dungeon = LubanMgr.Instance.GetDungeonsTableById(dungeonId);
+        using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Waves.xml")) Config = XDocument.Load(source);
+        spawn_points_ = LoadSpawnPoints();
         Flow = new MoshentaSceneFlow(this);
+    }
+
+    /// <summary>入场前核对所选表行对应的两份正式资源，防止把未移植场景传入XML加载器。</summary>
+    /// <param name="dungeon">MS请求的原副本配置；未知配置为null。</param>
+    public static bool HasSceneResources(DungeonsTable dungeon)
+    {
+        if (dungeon == null) return false;
+        return typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".Waves.xml") != null
+            && typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".Creatures.json") != null;
     }
 
     /// <summary>原波次条件已满足后创建对应实体，未激活的模板不会参与战斗。</summary>
@@ -65,7 +82,7 @@ public sealed class SceneWaveSpawner
             if ((int)(point.SpawnId >> 32) != waveId) continue;
             activePoints.Add(point);
             GameServer.SceneEntity.MonsterEntity monster = (GameServer.SceneEntity.MonsterEntity)EntityFactory.Create(EntityType.Monster, point.Creature.id);
-            monster.MapId = TeamManager.MoshentaMapId;
+            monster.MapId = Dungeon.SceneID;
             monster.Transform.X = point.Position.X;
             monster.Transform.Y = point.Position.Y;
             monster.Transform.Z = point.Position.Z;
@@ -83,18 +100,16 @@ public sealed class SceneWaveSpawner
     }
 
     /// <summary>按客户端相同的 XML 点位 count、波内顺序和 real_num 展开真实开场怪物。</summary>
-    private static List<SpawnPoint> LoadSpawnPoints()
+    private List<SpawnPoint> LoadSpawnPoints()
     {
         // 资源直接嵌入同一份 Unity 正式配置，发布游戏服不依赖开发机项目路径。
         CreatureCatalog catalog;
-        using (StreamReader reader = new StreamReader(typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Moshenta.Creatures.json")))
+        using (StreamReader reader = new StreamReader(typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Creatures.json")))
             catalog = new JavaScriptSerializer().Deserialize<CreatureCatalog>(reader.ReadToEnd());
         // 仅战斗怪物具备生命配置，NPC 即使和怪物编号相同也不进入索引。
         Dictionary<int, ROSceneCreatureEntity> creatures = catalog.entities.Where(row => row.maxHp > 0 && !row.isNpc && !row.nonCombatant).ToDictionary(row => row.id);
         // XML 序列化边界；波次条件和坐标均按原标签解析。
-        XDocument scene;
-        using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Moshenta.Waves.xml"))
-            scene = XDocument.Load(source);
+        XDocument scene = Config;
         // 当前副本的波次以及同一份场景文件里的巡逻线保持相同的编号体系。
         XElement[] waves = scene.Descendants("MSceneWaveData").ToArray();
         // 波内点位的展开次序与 MSceneDungeon.SpawnBatch 一致。
@@ -213,7 +228,11 @@ public sealed class SceneWaveSpawner
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
             monster.CurrentHp = Math.Max(0, hpBeforeHit - damage);
-            if (monster.CurrentHp == 0) monsterDied = true;
+            if (monster.CurrentHp == 0)
+            {
+                monsterDied = true;
+                Flow.CountMonsterDeath(point.Creature.id);
+            }
             notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
             if (index == orcIndex) orc.OnHit(caster, hpBeforeHit - monster.CurrentHp, notice);
         }

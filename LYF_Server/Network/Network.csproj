@@ -62,6 +62,10 @@
     <Compile Include="LubanManage\Codes\CountInfo.cs" />
     <Compile Include="LubanManage\Codes\DungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonTargetTable.cs" />
+    <Compile Include="LubanManage\Codes\DungeonsTable.cs" />
+    <Compile Include="LubanManage\Codes\TbDungeonsTable.cs" />
+    <Compile Include="LubanManage\Codes\DungeonTargetGroupTable.cs" />
+    <Compile Include="LubanManage\Codes\TbDungeonTargetGroupTable.cs" />
     <Compile Include="LubanManage\Codes\Gene.cs" />
     <Compile Include="LubanManage\Codes\ItemInfo.cs" />
     <Compile Include="LubanManage\Codes\KnapsackInfo.cs" />
@@ -155,6 +159,8 @@
     <Content Include="LubanManage\Tb\tbskillpresentationinfo.bytes" />
     <Content Include="LubanManage\Tb\tbpresenttable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeontargettable.bytes" />
+    <Content Include="LubanManage\Tb\tbdungeonstable.bytes" />
+    <Content Include="LubanManage\Tb\tbdungeontargetgrouptable.bytes" />
   </ItemGroup>
   <ItemDefinitionGroup>
     <Content>

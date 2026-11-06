@@ -7,8 +7,6 @@ internal sealed class TeamManager
 {
     /// <summary>现有客户端的队伍上限，包括队长。</summary>
     private const int MaxMember = 5;
-    /// <summary>本项目目前开放的魔神塔副本配置编号。</summary>
-    private const int MoshentaDungeonId = 4060;
     /// <summary>RO GlobalTableFight.TeamEnterDungeonConfirmTime 的默认确认时限，单位秒。</summary>
     private const int TeamEnterDungeonConfirmTime = 10;
     /// <summary>本分区的服务连接，所有玩家通知和场景指令由它投递给 GS。</summary>
@@ -31,6 +29,8 @@ internal sealed class TeamManager
         public ulong Captain;
         /// <summary>已授权进入的实例号；队伍在本内时不接受新成员。</summary>
         public ulong InstanceId;
+        /// <summary>当前实例实际选择的副本配置号，改选其他副本时创建新的实例身份。</summary>
+        public int DungeonId;
         /// <summary>按入队顺序保存成员，原队长离开后首位继任。</summary>
         public readonly List<ulong> Members = new List<ulong>();
         /// <summary>被邀请人角色号到实际邀请人角色号的对应关系。</summary>
@@ -277,7 +277,17 @@ internal sealed class TeamManager
     {
         // 找出该角色的队伍并核对其发起权限。
         Team team;
-        if (dungeonId != MoshentaDungeonId || !_roleTeams.TryGetValue(roleId, out team)) return;
+        // 所选原副本行决定场景资源登记；不存在的配置不能分配实例。
+        DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(dungeonId);
+        if (dungeon == null) { Error(roleId, CmdCode.ReqParamError); return; }
+        // 与客户端共用正式Scenes登记，未迁入的副本在修改MS状态前失败。
+        if (typeof(TeamManager).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".json") == null)
+        {
+            LogMsg.Info("副本场景尚未登记，DungeonId=" + dungeonId);
+            Error(roleId, CmdCode.ServerError);
+            return;
+        }
+        if (!_roleTeams.TryGetValue(roleId, out team)) return;
         if (team.Captain != roleId) return;
         // RO 单人队伍直接进入；多人队伍先广播确认，队长视为已同意。
         if (team.Members.Count == 1)
@@ -361,7 +371,11 @@ internal sealed class TeamManager
     /// <param name="team">完成确认的队伍。</param><param name="dungeonId">已同意进入的副本。</param>
     private void EnterConfirmedDungeon(Team team, int dungeonId)
     {
-        if (team.InstanceId == 0) team.InstanceId = _nextInstanceId++;
+        if (team.InstanceId == 0 || team.DungeonId != dungeonId)
+        {
+            team.InstanceId = _nextInstanceId++;
+            team.DungeonId = dungeonId;
+        }
         // 创建怪物和切换角色场景属于 GS，MS 只传入队伍、实例编号和名单。
         MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = team.InstanceId, DungeonId = dungeonId };
         order.MemberIds.Add(team.Members);

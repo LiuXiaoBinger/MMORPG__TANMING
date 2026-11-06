@@ -4,25 +4,12 @@ using UnityEngine;
 
 /// <summary>
 /// 主题副本队伍控制器。队伍状态全部来自服务器通知，本控制器只做协议转发与界面刷新，
-/// 并在收到入场通知后加载魔神塔场景，不在本地伪造队伍或场景切换。
+/// 并在收到入场通知后按 SceneID 加载已登记场景，不在本地伪造队伍或场景切换。
 /// </summary>
 public sealed class ThemeDungeonTeamCtrl : CtrlBase
 {
 
     #region 字段
-    /// <summary>
-    /// 魔神塔在主题副本配置里的编号。RO 侧链路为 ThemeDungeonTable 第 7 条（达纳托斯之战）
-    /// 指向 DungeonsTable 的 4060，再由 SceneTable 指向 sc_dungeon_moshenta_001；
-    /// 当前只接入这一条副本的入场请求，其他条目不发起魔神塔入场。
-    /// </summary>
-    private const int MoshentaThemeDungeonId = 7;
-
-    /// <summary>魔神塔在服务器 DungeonsTable 中的副本配置ID，theme=7 映射到 4060。</summary>
-    private const int ServerDungeonId4060 = 4060;
-
-    /// <summary>魔神塔场景在服务器 SceneTable 中的场景ID，与副本配置一致为 4060。</summary>
-    private const int ServerSceneId4060 = 4060;
-
     /// <summary>
     /// 服务器下发回城通知时使用的场景ID，取值对应客户端 SceneType.Scene_MainCity 的枚举序号 2，
     /// 与服务端 TeamManager.MainCitySceneId 保持同一约定。
@@ -239,7 +226,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     #endregion
 
     /// <summary>
-    /// 收到服务器场景通知后再切场景：4060 加载魔神塔，2 切回主城。
+    /// 收到服务器场景通知后再切场景：副本按表中 SceneID 加载，2 切回主城。
     /// 先把服务器权威的地图、实例与出生点写回本地角色，保证进入后过滤与移动同步一致。
     /// </summary>
     /// <param name="notice">服务器下发的入场或回城通知。</param>
@@ -252,17 +239,13 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _confirmationWindow.CloseWindow();
         // 先同步服务器权威位置，客户端不自行推测地图与实例。
         ApplyAuthoritativePosition(notice);
-        // 魔神塔：关闭副本界面并加载魔神塔场景。
-        if (notice.SceneId == ServerSceneId4060)
-        {
-            EnterMoshenta();
-            return;
-        }
         // 主城：离队回城，只有确实不在主城时才重新加载，避免无故重载。
         if (notice.SceneId == MainCitySceneId)
         {
             ReturnToMainCity();
+            return;
         }
+        EnterDungeon(notice.SceneId);
     }
 
     /// <summary>服务器发起全队询问后，沿现有 MainView 窗口入口显示确认界面。</summary>
@@ -321,9 +304,13 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             return;
         }
         _selectedEntry = entry;
-        // 目前只接入魔神塔，其他主题副本不发送入场请求。
-        if (entry.id != MoshentaThemeDungeonId)
+        // 当前详情页的挑战入口对应剧情难度，主题编号不能作为实际副本编号发送。
+        DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(entry.storyDungeonId);
+        // 未迁入的场景无法完成客户端切图，发起请求前报告实际资源缺口，避免服务端先切地图。
+        DungeonSceneResource resource = DungeonSceneResource.Load(dungeon.SceneID);
+        if (resource == null || string.IsNullOrEmpty(resource.sceneLocation))
         {
+            TipsMgr.Instance.ShowSystemTips("副本场景资源尚未迁入（" + dungeon.SceneID + "）");
             return;
         }
         if (TeamData.Instance.IsInTeam)
@@ -335,7 +322,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
                 return;
             }
             // MS 收集全员答复后才授权 GS 入场，客户端仍等最终入场通知。
-            _teamCtrl.CaptainRequestEnterFBPtc(ServerDungeonId4060);
+            _teamCtrl.CaptainRequestEnterFBPtc(dungeon.DungeonsID);
             return;
         }
         OpenTeamWindow();
@@ -688,11 +675,12 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     }
 
     /// <summary>
-    /// 收起副本相关界面并加载魔神塔场景，主角由新场景的主城管理器重建。
-    /// 本方法只由服务器 4060 入场通知调用：服务器已确认整队入场，
+    /// 收起副本相关界面并加载服务器指定的场景，主角沿用现有跨场景生命周期。
+    /// 本方法只由服务器入场通知调用：服务器已确认整队入场，
     /// 被邀请的队员未打开过副本详情页，因此不能用界面选中项作为入场前提。
     /// </summary>
-    private void EnterMoshenta()
+    /// <param name="sceneId">入场通知携带的真实 SceneID。</param>
+    private void EnterDungeon(int sceneId)
     {
         if (_mainView.ThemeStoryWindow != null)
         {
@@ -710,7 +698,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         {
             return;
         }
-        SceneMgr.Instance.LoadSceneMode(SceneType.Scene_DungeonMoshenta);
+        SceneMgr.Instance.LoadDungeonScene(sceneId);
     }
 
     /// <summary>把服务器通知的地图、实例与出生点写回本地主角，后续场景加载使用这份数据。</summary>

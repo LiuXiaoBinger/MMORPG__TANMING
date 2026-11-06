@@ -10,21 +10,25 @@ using System.Xml.Linq;
 public sealed class MoshentaSceneFlow
 {
     /// <summary>正式 XML 同时嵌入游戏服并供客户端与编辑器读取。</summary>
-    internal static readonly XDocument Config = LoadConfig();
+    internal readonly XDocument Config;
     /// <summary>波次定义按原编号定位，不另存出生配置。</summary>
-    private static readonly Dictionary<int, XElement> Waves = Config.Descendants("MSceneWaveData").ToDictionary(row => (int)row.Element("base_info").Element("id"));
+    private readonly Dictionary<int, XElement> Waves;
     /// <summary>触发物件的位置、朝向与碰撞盒均来自原 XML。</summary>
-    private static readonly Dictionary<int, XElement> Objects = Config.Descendants("MSceneTriggerObjectData").ToDictionary(row => (int)row.Element("id"));
+    private readonly Dictionary<int, XElement> Objects;
     /// <summary>画布数据引用表，仅用于原 XML 反序列化边界。</summary>
-    private static readonly Dictionary<string, XElement> Data = Config.Root.Element("canvas").Element("Objects").Elements().ToDictionary(row => (string)row.Attribute("refID"), row => row.Elements().First());
+    private readonly Dictionary<string, XElement> Data;
     /// <summary>画布节点与端口，按原连接顺序运行结果。</summary>
-    private static readonly XElement[] Nodes = Config.Root.Element("canvas").Element("Nodes").Elements().ToArray();
+    private readonly XElement[] Nodes;
     /// <summary>每个端口所属的原画布节点。</summary>
-    private static readonly Dictionary<string, XElement> Ports = Nodes.SelectMany(node => node.Element("Ports").Elements().Select(port => new KeyValuePair<string, XElement>((string)port.Attribute("ID"), node))).ToDictionary(pair => pair.Key, pair => pair.Value);
+    private readonly Dictionary<string, XElement> Ports;
     /// <summary>原节点之间的连线，不建立另一套手写图。</summary>
-    private static readonly XElement[] Connections = Config.Root.Element("canvas").Element("Connections").Elements().ToArray();
-    /// <summary>原副本4060的线性阶段顺序；每个int节点只引用Luban目标行，不重复定义目标内容。</summary>
-    private static readonly int[] TargetIds = Config.Root.Element("data").Element("dungeon_target_ids").Elements("int").Select(row => (int)row).ToArray();
+    private readonly XElement[] Connections;
+    /// <summary>当前副本所选Luban目标阶段和每个目标的实例计数。</summary>
+    private readonly DungeonTargetProgress targets;
+    /// <summary>原SceneAI转发规则；字段从该场景的原AI文件逐条提取。</summary>
+    private readonly XElement[] sceneEvents;
+    /// <summary>仅保存所移植分支实际使用的原AI布尔变量；没有原条件的分支不增加一次性状态。</summary>
+    private readonly Dictionary<string, bool> sceneAiFlags;
     /// <summary>拥有实体世界的实例宿主。</summary>
     private readonly SceneWaveSpawner owner;
     /// <summary>已激活波次，保留到重置用于去重及晚加入快照。</summary>
@@ -39,10 +43,6 @@ public sealed class MoshentaSceneFlow
     private readonly HashSet<int> walls = new HashSet<int>();
     /// <summary>区域触发器的画布节点身份，同号旧触发器不会相互覆盖。</summary>
     private readonly HashSet<string> entered = new HashSet<string>();
-    /// <summary>当前单目标Section在原副本目标顺序中的零基下标，完成末阶段后保持末项。</summary>
-    private int currentTargetIndex;
-    /// <summary>当前Section已经收到的匹配特殊事件次数；推进到下一Section时归零。</summary>
-    private int currentTargetCount;
     /// <summary>是否存在尚未广播的流程变化。</summary>
     internal bool Dirty { get; private set; }
 
@@ -51,6 +51,17 @@ public sealed class MoshentaSceneFlow
     public MoshentaSceneFlow(SceneWaveSpawner owner)
     {
         this.owner = owner;
+        Config = owner.Config;
+        Waves = Config.Descendants("MSceneWaveData").ToDictionary(row => (int)row.Element("base_info").Element("id"));
+        Objects = Config.Descendants("MSceneTriggerObjectData").ToDictionary(row => (int)row.Element("id"));
+        Data = Config.Root.Element("canvas").Element("Objects").Elements().ToDictionary(row => (string)row.Attribute("refID"), row => row.Elements().First());
+        Nodes = Config.Root.Element("canvas").Element("Nodes").Elements().ToArray();
+        Ports = Nodes.SelectMany(node => node.Element("Ports").Elements().Select(port => new KeyValuePair<string, XElement>((string)port.Attribute("ID"), node))).ToDictionary(pair => pair.Key, pair => pair.Value);
+        Connections = Config.Root.Element("canvas").Element("Connections").Elements().ToArray();
+        targets = new DungeonTargetProgress(owner.Dungeon);
+        sceneEvents = Config.Root.Element("data").Element("scene_ai_events").Elements("event").ToArray();
+        sceneAiFlags = Config.Root.Element("data").Element("scene_ai_events").Element("variables").Elements("bool")
+            .ToDictionary(row => (string)row.Attribute("name"), row => (bool)row.Attribute("value"));
         // 原对象列表中的默认出生标记决定初始存在状态。
         XElement[] rows = Objects.Values.ToArray();
         // 当前配置集合的零基下标，仅遍历本次快照长度。
@@ -59,14 +70,8 @@ public sealed class MoshentaSceneFlow
         Advance();
     }
 
-    /// <summary>读取正式资源，不使用开发机文件路径。</summary>
-    private static XDocument LoadConfig()
-    {
-        using (Stream source = typeof(MoshentaSceneFlow).Assembly.GetManifestResourceStream("Moshenta.Waves.xml")) return XDocument.Load(source);
-    }
-
-    /// <summary>统一入口位置的米制向量。</summary>
-    public static Vector3 SpawnPosition { get { return Position(Config.Root.Element("data").Element("player_spawn").Element("position")); } }
+    /// <summary>当前实例入口的米制向量，普通与困难配置各自提供出生点。</summary>
+    public Vector3 SpawnPosition { get { return Position(Config.Root.Element("data").Element("player_spawn").Element("position")); } }
 
     /// <summary>将 XML 坐标转换为游戏服向量。</summary>
     /// <param name="row">包含 x/y/z 的 XML 坐标。</param>
@@ -84,7 +89,7 @@ public sealed class MoshentaSceneFlow
 
     /// <summary>按画布变量引用取得真实配置。</summary>
     /// <param name="node">原画布节点。</param>
-    private static XElement NodeData(XElement node)
+    private XElement NodeData(XElement node)
     {
         // 实体波次使用 data，其余服务端触发节点使用 realData。
         XElement variable = node.Element("Variables").Elements("Variable").FirstOrDefault(row => (string)row.Attribute("name") == "realData");
@@ -95,7 +100,7 @@ public sealed class MoshentaSceneFlow
     /// <summary>沿指定端口读取相邻节点，保留配置连线顺序。</summary>
     /// <param name="node">端口宿主节点。</param>
     /// <param name="name">原端口名。</param>
-    private static List<XElement> Linked(XElement node, string name)
+    private List<XElement> Linked(XElement node, string name)
     {
         // 每次仅展开需要消费的原端口。
         List<XElement> result = new List<XElement>();
@@ -121,6 +126,7 @@ public sealed class MoshentaSceneFlow
     {
         if (string.IsNullOrEmpty(name) || !events.Add(name)) return;
         Dirty = true;
+        SceneAIEvent(name);
         Advance();
     }
 
@@ -130,49 +136,71 @@ public sealed class MoshentaSceneFlow
     {
         if (!active.Contains(id) || !complete.Add(id)) return;
         Dirty = true;
+        targets.WaveFinished(id);
         Event((string)Waves[id].Element("base_info").Element("end_scene_ai_event"));
         Advance();
     }
 
-    /// <summary>沿用原SceneAI的五个区域事件，只转发本副本引用的特殊事件目标。</summary>
-    /// <param name="name">原SSTResultTypeSceneAIEvent中的事件名称。</param>
+    /// <summary>按所选场景原AI的事件名与清波条件转发目标和出生事件。</summary>
+    /// <param name="name">服务端场景图或实体死亡产生的真实事件名。</param>
     private void SceneAIEvent(string name)
     {
-        switch (name)
+        // 原场景AI分支顺序保存在正式XML中；目标ID不再写入C#分支。
+        for (int index = 0; index < sceneEvents.Length; index++)
         {
-            case "HuiHeBuDui": DungeonTargetEvent("dungeonfinishtarget", 137); break;
-            case "TongWangErLou": DungeonTargetEvent("dungeonfinishtarget", 138); break;
-            case "DaoDaErLou": DungeonTargetEvent("dungeonfinishtarget", 139); break;
-            case "DaoDaCeTing": DungeonTargetEvent("dungeonfinishtarget", 140); break;
-            case "DaoDaTaDing": DungeonTargetEvent("dungeonfinishtarget", 142); break;
+            // 当前原AI序列的输入事件与所需清空波次。
+            XElement rule = sceneEvents[index];
+            if ((string)rule.Attribute("name") != name) continue;
+            // 清波分支的前置只接受已出生且真正完成的波次。
+            XElement[] required = rule.Elements("require_wave").ToArray();
+            // 只有本条规则引用的所有实际波次都完成才执行原AI结果。
+            bool ready = true;
+            for (int wave = 0; wave < required.Length; wave++)
+                if (!complete.Contains((int)required[wave].Attribute("id"))) ready = false;
+            // 北森的出生/完成标记按原AIBoolComparison判断，魔神塔143/141没有这些条件。
+            XElement[] conditions = rule.Elements("require_bool").ToArray();
+            // 当前规则的每个原布尔前置必须与该实例的黑板一致。
+            for (int condition = 0; condition < conditions.Length; condition++)
+                if (sceneAiFlags[(string)conditions[condition].Attribute("name")] != (bool)conditions[condition].Attribute("value")) ready = false;
+            if (!ready) continue;
+            // 按原Sequence顺序保留副本目标通知和WaveEvent，不移植无关Boss/对白AI。
+            XElement[] results = rule.Elements().ToArray();
+            for (int result = 0; result < results.Length; result++)
+            {
+                if (results[result].Name.LocalName == "target") DungeonTargetEvent("dungeonfinishtarget", (int)results[result].Attribute("id"));
+                if (results[result].Name.LocalName == "wave") Event((string)results[result].Attribute("name"));
+                if (results[result].Name.LocalName == "set_bool") sceneAiFlags[(string)results[result].Attribute("name")] = (bool)results[result].Attribute("value");
+            }
+            // 原Selector在首个成功分支结束；目标暂不属于当前Section也不继续执行后续分支。
+            return;
         }
     }
 
-    /// <summary>仅当前Section消费匹配的特殊事件；提前事件不缓存，末阶段完成后保留最终进度。</summary>
-    /// <param name="name">原AI事件名，只有dungeonfinishtarget能推进此类目标。</param>
-    /// <param name="targetId">原AI事件int_arg携带的DungeonTargetTable行号。</param>
+    /// <summary>转发RO特殊目标事件，由当前实例Section按原目标ID匹配。</summary>
+    /// <param name="name">原事件名。</param>
+    /// <param name="targetId">原AI事件int_arg携带的目标表行号。</param>
     private void DungeonTargetEvent(string name, int targetId)
     {
-        if (name != "dungeonfinishtarget" || TargetIds[currentTargetIndex] != targetId) return;
-        // 仅实现4060引用的类型7；Target第三项为该目标需要收到的事件总次数。
-        DungeonTargetTable row = LubanMgr.Instance.GetDungeonTargetTableById(targetId);
-        if (row.Target[0] != 7 || currentTargetCount >= (int)row.Target[2]) return;
-        currentTargetCount++;
-        if (currentTargetCount == (int)row.Target[2] && currentTargetIndex + 1 < TargetIds.Length)
-        {
-            currentTargetIndex++;
-            currentTargetCount = 0;
-        }
-        Dirty = true;
+        if (targets.SceneEvent(name, targetId)) Dirty = true;
     }
 
-    /// <summary>真实怪物死亡后按原SceneAI顺序先检查三名Boss，再检查42波；采集不触发此入口。</summary>
-    internal void MonsterDied()
+    /// <summary>单个实体真实死亡时统计击杀目标，清波完成后再调用原SceneAI。</summary>
+    /// <param name="entityId">死亡实体的原EntityTable编号。</param>
+    internal void CountMonsterDeath(int entityId)
     {
-        if (complete.Contains(34) && complete.Contains(35) && complete.Contains(46))
-            DungeonTargetEvent("dungeonfinishtarget", 143);
-        else if (complete.Contains(42))
-            DungeonTargetEvent("dungeonfinishtarget", 141);
+        if (targets.MonsterDied(entityId)) Dirty = true;
+    }
+
+    /// <summary>真实死亡结算并完成清波后消费原monster_die场景AI事件。</summary>
+    internal void MonsterDied() { SceneAIEvent("monster_die"); }
+
+    /// <summary>保留原NPC脚本事件接入边界；本项目尚无NPC脚本执行器，不由客户端直接调用。</summary>
+    /// <param name="name">RO对话或分支选择事件名。</param>
+    /// <param name="npcId">执行脚本的NPC表编号。</param>
+    /// <param name="branchId">原脚本选择的目标组编号。</param>
+    internal void NpcScript(string name, int npcId, int branchId)
+    {
+        if (targets.NpcScript(name, npcId, branchId)) Dirty = true;
     }
 
     /// <summary>从原前置条件解析当前可出生波次；触发组波次立即执行其 WaveEvent 结果。</summary>
@@ -306,6 +334,7 @@ public sealed class MoshentaSceneFlow
             // 本波采集点世界坐标，交互范围为四米。
             Vector3 target = Position(collection.Descendants("MScenePositionData").First().Element("position"));
             if (Vector3.DistanceSquared(target, position) > 16f) return reply;
+            if (targets.Collected((int)collection.Element("collection_id"))) Dirty = true;
             Complete(request.WaveId);
             Event((string)collection.Element("collect_end_ai_event"));
             reply.Success = true;
@@ -328,7 +357,11 @@ public sealed class MoshentaSceneFlow
         int[] ids = objects.ToArray();
         // 当前配置集合的零基下标，仅遍历本次快照长度。
         for (int index = 0; index < ids.Length; index++)
-            if (Near(ids[index], position, 0.5f)) Trigger("SSttimingTypeServerEnter", ids[index], null, false);
+            if (Near(ids[index], position, 0.5f))
+            {
+                if (targets.EnterTrigger(owner.Dungeon.SceneID, ids[index])) Dirty = true;
+                Trigger("SSttimingTypeServerEnter", ids[index], null, false);
+            }
     }
 
     /// <summary>触发匹配物件的时机，并遵循触发次数与原战斗条件。</summary>
@@ -394,7 +427,7 @@ public sealed class MoshentaSceneFlow
     /// <param name="id">物件配置号。</param>
     /// <param name="position">权威位置。</param>
     /// <param name="margin">距离容差，米。</param>
-    private static bool Near(int id, Vector3 position, float margin)
+    private bool Near(int id, Vector3 position, float margin)
     {
         // 当前物件的原碰撞盒配置。
         XElement row = Objects[id];
@@ -462,16 +495,7 @@ public sealed class MoshentaSceneFlow
         result.CompletedWaveIds.Add(complete.OrderBy(id => id));
         result.ActiveObjectIds.Add(objects.OrderBy(id => id));
         result.ActiveWallIds.Add(walls.OrderBy(id => id));
-        // 当前Section只有一个原表目标；文案和总次数来自同一份Luban数据。
-        DungeonTargetTable target = LubanMgr.Instance.GetDungeonTargetTableById(TargetIds[currentTargetIndex]);
-        result.Objectives.Add(new DungeonObjectiveData
-        {
-            Id = target.ID,
-            Description = target.TargetDes,
-            Current = currentTargetCount,
-            Total = (int)target.Target[2],
-            Completed = currentTargetCount == (int)target.Target[2]
-        });
+        targets.FillSnapshot(result);
         return result;
     }
 
@@ -484,8 +508,7 @@ public sealed class MoshentaSceneFlow
         objects.Clear();
         walls.Clear();
         entered.Clear();
-        currentTargetIndex = 0;
-        currentTargetCount = 0;
+        sceneAiFlags.Clear();
         Dirty = true;
     }
 

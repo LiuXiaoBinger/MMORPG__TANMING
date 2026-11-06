@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `223c6a7223328ea605cd520559c083ed5c1bd1d29681fc97cbe83a637b9c8b75`
+Source normalized SHA256: `924157a83fe33d60fc8deebf7f39b743ceee338a808bae6496a8f92aeb217838`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -50,11 +50,12 @@ Source normalized SHA256: `223c6a7223328ea605cd520559c083ed5c1bd1d29681fc97cbe83
 | [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-269 |
 | [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-276 |
 | [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-286 |
-| [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable and Moshenta current objectives | 287-293 |
+| [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable and Moshenta current objectives | 287-295 |
+| [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Config-driven dungeon objectives and original RO sections | 296-305 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `85042ad20ea51017659bee92e8aa4727f2b0756c8c0322f93c252d7ff051419b`
+Source normalized SHA256: `0bdee90b6af67677b6313a74e1db8a1e5a3ef089e4d1ec9dac7ff04a3a31d4e3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -96,7 +97,8 @@ Source normalized SHA256: `85042ad20ea51017659bee92e8aa4727f2b0756c8c0322f93c252
 | [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-289 |
 | [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-296 |
 | [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-306 |
-| [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] Original table fidelity and current Section acceptance | 307-313 |
+| [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] Original table fidelity and current Section acceptance | 307-315 |
+| [VERIFY][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Northern forest objectives and Moshenta regression | 316-324 |
 
 ## Docs/AI/DECISIONS.en.md
 

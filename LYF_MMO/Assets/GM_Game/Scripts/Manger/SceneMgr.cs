@@ -6,13 +6,6 @@ using YooAsset;
 /// <summary>加载目标场景时显示进度；成功后更新当前场景、读取导航数据、启用业务根节点，再调用回调。</summary>
 public class SceneMgr : Singleton<SceneMgr>
 {
-    /// <summary>
-    /// 魔神塔副本场景的 YooAsset 资源地址。该场景放在 Scenes/RODungeon_Moshenta 子目录下，
-    /// 名称也无法由 SceneType 直接拼出，因此单独登记地址，避免改动其他场景的既有拼接规则。
-    /// </summary>
-    private const string DungeonMoshentaSceneLocation =
-        "Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001";
-
     /// <summary>已成功加载的业务场景类型，失败时保留原值。</summary>
     public SceneType _currentSceneType;
 
@@ -34,10 +27,34 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="callback">目标场景加载成功后执行一次的业务回调。</param>
     public void LoadSceneMode(SceneType sceneType, Action callback = null)
     {
+        LoadSceneLocation(sceneType, ConstDefine.ScenePath + sceneType, callback);
+    }
+
+    /// <summary>按权威 SceneID 加载已登记的副本资源，缺资源时保留当前场景并报告实际原因。</summary>
+    /// <param name="sceneId">服务器已确认进入的场景编号。</param>
+    public void LoadDungeonScene(int sceneId)
+    {
+        // 资源登记只定位已迁入资产，不承担副本规则或目标配置。
+        DungeonSceneResource resource = DungeonSceneResource.Load(sceneId);
+        if (resource == null || string.IsNullOrEmpty(resource.sceneLocation))
+        {
+            Debug.LogError("副本场景 " + sceneId + " 加载失败：客户端场景资源尚未迁入。");
+            TipsMgr.Instance.ShowSystemTips("副本场景资源尚未迁入（" + sceneId + "）");
+            return;
+        }
+        LoadSceneLocation(SceneType.Scene_Dungeon, resource.sceneLocation, null);
+    }
+
+    /// <summary>复用现有加载进度和成功回调处理，副本地址由 SceneID 对应资源登记提供。</summary>
+    /// <param name="sceneType">加载成功后保存的业务场景类别。</param>
+    /// <param name="sceneLocation">YooAsset 可直接定位的场景资源地址。</param>
+    /// <param name="callback">场景成功加载后的业务回调，允许为空。</param>
+    private void LoadSceneLocation(SceneType sceneType, string sceneLocation, Action callback)
+    {
         PrepareLocalRoleForSceneChange(sceneType);
         // 本次场景加载句柄；Single模式自动卸载旧场景并激活目标场景。
         SceneOperationHandle handle = Global.Instance.YooPackage.LoadSceneAsync(
-            ResolveSceneLocation(sceneType),
+            sceneLocation,
             UnityEngine.SceneManagement.LoadSceneMode.Single);
         if (_loadingView != null)
         {
@@ -74,7 +91,7 @@ public class SceneMgr : Singleton<SceneMgr>
             _currentSceneType = sceneType;
             // 先读取与场景同名的导航文件，之后业务回调才可以查询路线。
             MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
-            if (sceneType == SceneType.Scene_DungeonMoshenta)
+            if (sceneType == SceneType.Scene_Dungeon)
             {
                 // 出生根属于当前副本场景，Single 切走时自动注销该副本的实体。
                 GameObject dungeonRoot = new GameObject("[RO 副本实体]");
@@ -99,10 +116,10 @@ public class SceneMgr : Singleton<SceneMgr>
     }
 
     /// <summary>玩法场景切换前停止旧路线和方向输入；原主角自首次创建起始终常驻。</summary>
-    /// <param name="sceneType">仅主城和魔神塔携带主角；登录与创角沿用原有角色清理流程。</param>
+    /// <param name="sceneType">主城和副本携带主角；登录与创角沿用原有角色清理流程。</param>
     private static void PrepareLocalRoleForSceneChange(SceneType sceneType)
     {
-        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_DungeonMoshenta)
+        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_Dungeon)
         {
             return;
         }
@@ -121,18 +138,4 @@ public class SceneMgr : Singleton<SceneMgr>
         localRole.MoveComp.StopHorizontalMovement();
     }
 
-    /// <summary>
-    /// 取得场景在 YooAsset 中的定位地址：魔神塔副本位于子目录，使用单独登记的地址；
-    /// 其余场景继续沿用「场景目录 + 枚举名」的原拼接规则，加载顺序与行为不变。
-    /// </summary>
-    /// <param name="sceneType">本次要加载的业务场景类型。</param>
-    /// <returns>可直接传给 LoadSceneAsync 的资源定位地址。</returns>
-    private static string ResolveSceneLocation(SceneType sceneType)
-    {
-        if (sceneType == SceneType.Scene_DungeonMoshenta)
-        {
-            return DungeonMoshentaSceneLocation;
-        }
-        return ConstDefine.ScenePath + sceneType;
-    }
 }

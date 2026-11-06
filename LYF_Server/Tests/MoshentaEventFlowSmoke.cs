@@ -13,6 +13,8 @@ using Google.Protobuf;
 /// <summary>隔离 TCP 场景流程验收，不连接正在运行的游戏服务或数据库。</summary>
 public static class MoshentaEventFlowSmoke
 {
+    /// <summary>原魔神塔入口的米制坐标期望，仅用于验收，业务按所选场景XML取出生点。</summary>
+    private const string ExpectedMoshentaSpawnPos = "132.97_58.89_60.95";
     /// <summary>测试角色生命上限，避免巡逻测试时偶然全灭。</summary>
     private const int StartingHp = 100000000;
     /// <summary>成功断言数量。</summary>
@@ -217,7 +219,7 @@ public static class MoshentaEventFlowSmoke
             a.Receive(); b.Receive(); other.Receive();
             SceneWaveSpawner scene = Scene(70001);
             Check(a.Entry.Equals(b.Entry) && a.Entry.Monsters.Count == 0, "同队入场快照一致且无战斗怪物");
-            Check(a.Entry.Pos == "132.97_58.89_60.95" && TeamManager.MoshentaSpawnPos == a.Entry.Pos, "单一XML入口与协议位置一致");
+            Check(scene.Flow.SpawnPosition == new Vector3(132.97f, 58.89f, 60.95f) && ExpectedMoshentaSpawnPos == a.Entry.Pos, "单一XML入口与协议位置一致");
             Check(Objective(scene, 137), "初始只同步原表137且进度为0");
             Check(a.Entry.Flow.Objectives[0].Description == LubanMgr.Instance.GetDungeonTargetTableById(137).TargetDes, "目标文案直接来自正式Luban表");
             TargetEvent(scene, 138);
@@ -298,7 +300,7 @@ public static class MoshentaEventFlowSmoke
             late.Receive(); a.Receive(); b.Receive();
             Check(late.Entry.Flow.ActiveWallIds.Contains(23) && late.Entry.Flow.Equals(a.Entry.Flow), "中途加入取得相同墙门任务完整快照");
             Check(late.Entry.Flow.Objectives.Single().Id == 143 && late.Entry.Flow.Objectives.Single().Current == 0, "晚加入只收到当前143阶段及真实计数");
-            Check(a.Role.mainRoleInfo.BaseInfo.Pos == before && late.Entry.Pos == TeamManager.MoshentaSpawnPos, "晚加入不移动已在场队员");
+            Check(a.Role.mainRoleInfo.BaseInfo.Pos == before && late.Entry.Pos == ExpectedMoshentaSpawnPos, "晚加入不移动已在场队员");
             Move(a, 77.5f, 80.31f, 580f);
             a.Receive();
             Check(a.Role.mainRoleInfo.BaseInfo.Pos == before && !a.Replies.Last().Success && a.Replies.Last().Pos == before, "跨过薄墙的大步移动被拒绝并收到11241权威校正");
@@ -326,7 +328,7 @@ public static class MoshentaEventFlowSmoke
             a.Receive(); b.Receive(); late.Receive();
             Check(Snapshot(scene).Monsters.Count == 0 && Snapshot(scene).Flow.ActiveWallIds.Count == 0 && !Snapshot(scene).Flow.ActiveObjectIds.Contains(35), "全队死亡重置实体空气墙和出口");
             Check(Objective(scene, 137) && !Snapshot(scene).Flow.Finished, "全灭目标进度回到原表137初始状态");
-            Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow) && a.Role.mainRoleInfo.BaseInfo.Pos == TeamManager.MoshentaSpawnPos, "全灭重置快照同队一致且回权威入口");
+            Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow) && a.Role.mainRoleInfo.BaseInfo.Pos == ExpectedMoshentaSpawnPos, "全灭重置快照同队一致且回权威入口");
             File.WriteAllBytes(Path.Combine(folder, "wire-reset.bin"), a.Notices.Last().ToByteArray());
             a.Role.mainRoleInfo.BaseInfo.CurrHp = StartingHp;
             TeamManager.Instance.UpdateMonsters(50);

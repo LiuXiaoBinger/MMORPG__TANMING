@@ -250,6 +250,8 @@ public class TaskCtrl : CtrlBase
             TaskMgr.Instance.SetDungeonTasks(new TaskViewData[0]);
             return;
         }
+        // 副本名称与服务器入场编号对应，不从任务标题或界面选中项猜测。
+        DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(TeamData.Instance.DungeonId);
         // 每个服务器目标对应一个既有任务子条目，编号在本实例内稳定。
         TaskViewData[] tasks = new TaskViewData[flow.Objectives.Count];
         // 按服务器当前阶段的目标顺序生成展示条目。
@@ -263,7 +265,7 @@ public class TaskCtrl : CtrlBase
             TaskViewData task = new TaskViewData();
             task.TaskId = -objective.Id;
             task.IsDungeonObjective = true;
-            task.Title = "魔神塔 · " + target.TargetDes;
+            task.Title = dungeon.DungeonsName + " · " + target.TargetDes;
             task.TypeName = "副本";
             task.Description = string.Empty;
             task.TargetText = target.TargetDes + "  " + objective.Current + "/" + objective.Total;

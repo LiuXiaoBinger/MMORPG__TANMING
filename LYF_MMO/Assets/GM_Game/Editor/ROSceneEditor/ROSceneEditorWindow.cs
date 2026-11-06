@@ -13,8 +13,6 @@ public sealed class ROSceneEditorWindow : EditorWindow
 {
     /// <summary>本次迁入并配置的魔神塔简单难度编辑文件。</summary>
     public const string DefaultConfigPath = "Assets/GM_Game/Resources/Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ.txt";
-    /// <summary>已存在于主工程的魔神塔正式场景。</summary>
-    public const string ScenePath = "Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001.unity";
     /// <summary>当前文件路径，窗口重载后恢复。</summary>
     [SerializeField] private string currentPath = DefaultConfigPath;
     /// <summary>左侧列表与画布使用的类别：波次、机制、区域。</summary>
@@ -45,6 +43,27 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private readonly ROSceneFieldGUI fields = new ROSceneFieldGUI();
     /// <summary>从正式 Luban 二进制读取的目标表，加载场景或手动刷新时更新。</summary>
     private TbDungeonTargetTable dungeonTargetTable;
+    /// <summary>完整副本表，场景目标的顺序和分组以该表为准。</summary>
+    private TbDungeonsTable dungeonsTable;
+    /// <summary>分支模式引用的目标组定义，组内目标同时展示。</summary>
+    private TbDungeonTargetGroupTable dungeonTargetGroupTable;
+    /// <summary>目标面板当前查看的 DungeonsID，切换查看不写回场景 XML。</summary>
+    [SerializeField] private int selectedDungeonId = 4060;
+    /// <summary>副本下拉框的真实编号，顺序与生成表一致。</summary>
+    private int[] dungeonIds = new int[0];
+    /// <summary>副本下拉框使用编号和原表名称，便于区分同名难度。</summary>
+    private string[] dungeonNames = new string[0];
+    /// <summary>当前打开的 XML 所属资源登记，未登记时不借用其他场景预览。</summary>
+    private DungeonSceneResource sceneResource;
+    /// <summary>当前 XML 对应的已迁入 Unity 场景路径；缺场景时为空。</summary>
+    private string CurrentScenePath
+    {
+        get
+        {
+            if (sceneResource == null || string.IsNullOrEmpty(sceneResource.sceneLocation)) return string.Empty;
+            return sceneResource.sceneLocation + ".unity";
+        }
+    }
     /// <summary>当前窗口拥有的临时场景预览。</summary>
     private ROScenePreview preview;
     /// <summary>用户首先点选、等待接入另一个端口的起点。</summary>
@@ -108,8 +127,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
         StopPreview();
         config = MSceneEditorConfig.LoadFromFile(path);
         currentPath = path;
-        catalog = ROSceneCreatureCatalog.Load();
         LoadDungeonTargets();
+        BindSceneResource();
         selected = null;
         selectedArea = null;
         hasUnsavedChanges = false;
@@ -162,7 +181,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
             if (path.Length > 0 && ConfirmDiscard()) LoadConfig(path);
         }
         if (GUILayout.Button("保存", EditorStyles.toolbarButton, GUILayout.Width(50))) SaveChanges();
-        if (GUILayout.Button("打开魔神塔", EditorStyles.toolbarButton, GUILayout.Width(85))) OpenDungeonScene();
+        if (GUILayout.Button("打开当前场景", EditorStyles.toolbarButton, GUILayout.Width(95))) OpenDungeonScene();
         if (GUILayout.Button("适配画布", EditorStyles.toolbarButton, GUILayout.Width(75))) FitGraph();
         GUILayout.Space(12);
         if (GUILayout.Button("开始流程预览", EditorStyles.toolbarButton, GUILayout.Width(95))) StartPreview();
@@ -405,22 +424,61 @@ public sealed class ROSceneEditorWindow : EditorWindow
         DrawPreviewLog();
     }
 
-    /// <summary>只加载副本目标生成表，不初始化编辑模式下无关的运行时模块。</summary>
+    /// <summary>读取副本、目标与目标组生成表，不初始化编辑模式下无关的运行时模块。</summary>
     private void LoadDungeonTargets()
     {
         // 正式表由项目 Luban 生成流程复制到共享 Network 配置目录。
-        string dataPath = Path.GetFullPath(Path.Combine(Application.dataPath,
-            "../../LYF_Server/Network/LubanManage/Tb/tbdungeontargettable.bytes"));
+        string dataPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../LYF_Server/Network/LubanManage/Tb"));
         dungeonTargetTable = null;
-        if (!File.Exists(dataPath)) return;
-        dungeonTargetTable = new TbDungeonTargetTable(new Luban.ByteBuf(File.ReadAllBytes(dataPath)));
+        dungeonsTable = null;
+        dungeonTargetGroupTable = null;
+        if (!File.Exists(Path.Combine(dataPath, "tbdungeonstable.bytes"))) return;
+        dungeonsTable = new TbDungeonsTable(new Luban.ByteBuf(File.ReadAllBytes(Path.Combine(dataPath, "tbdungeonstable.bytes"))));
+        dungeonTargetTable = new TbDungeonTargetTable(new Luban.ByteBuf(File.ReadAllBytes(Path.Combine(dataPath, "tbdungeontargettable.bytes"))));
+        dungeonTargetGroupTable = new TbDungeonTargetGroupTable(new Luban.ByteBuf(File.ReadAllBytes(Path.Combine(dataPath, "tbdungeontargetgrouptable.bytes"))));
+        dungeonIds = new int[dungeonsTable.DataList.Count];
+        dungeonNames = new string[dungeonIds.Length];
+        // 下拉框保留全部表行，不局限于已迁入美术资源的副本。
+        for (int index = 0; index < dungeonIds.Length; index++)
+        {
+            // 当前表行提供唯一编号与显示名称。
+            DungeonsTable dungeon = dungeonsTable.DataList[index];
+            dungeonIds[index] = dungeon.DungeonsID;
+            dungeonNames[index] = dungeon.DungeonsID + " · " + dungeon.DungeonsName;
+        }
     }
 
-    /// <summary>按场景引用顺序显示真实 Luban 目标，源表是目标定义的唯一编辑入口。</summary>
+    /// <summary>按 XML 资源路径匹配场景登记，打开北森配置时不误用魔神塔地图或模型。</summary>
+    private void BindSceneResource()
+    {
+        sceneResource = null;
+        catalog = null;
+        if (dungeonsTable == null) return;
+        // 按表行匹配已登记的场景，不从 XML 内维护第二套目标编号。
+        for (int index = 0; index < dungeonsTable.DataList.Count; index++)
+        {
+            // 当前副本可能与同主题的其他难度共用 SceneID。
+            DungeonsTable dungeon = dungeonsTable.DataList[index];
+            // 只检查已有资源登记，未迁入的场景没有默认回退。
+            DungeonSceneResource resource = DungeonSceneResource.Load(dungeon.SceneID);
+            if (resource == null) continue;
+            // 原 XML 文件地址与 Resources 相对路径的实际映射。
+            string path = "Assets/GM_Game/Resources/" + resource.flowResource + ".txt";
+            if (!string.Equals(Path.GetFullPath(path), Path.GetFullPath(currentPath), StringComparison.OrdinalIgnoreCase)) continue;
+            sceneResource = resource;
+            selectedDungeonId = dungeon.DungeonsID;
+            catalog = ROSceneCreatureCatalog.Load(resource.creatureResource);
+            break;
+        }
+    }
+
+    /// <summary>完整展示所选副本的全部阶段及组分支，源表是目标定义的唯一编辑入口。</summary>
     private void DrawDungeonTargets()
     {
         GUILayout.Label("副本目标（Luban）", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("打开副本表"))
+            EditorUtility.OpenWithDefaultApp(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Luaban/MiniTemplate/Datas/#DungeonsTable.xlsx")));
         if (GUILayout.Button("打开目标配置表"))
         {
             // 打开项目正式源表；本窗口不把文案或目标条件写回场景 XML。
@@ -430,36 +488,74 @@ public sealed class ROSceneEditorWindow : EditorWindow
         }
         if (GUILayout.Button("重新读取")) LoadDungeonTargets();
         EditorGUILayout.EndHorizontal();
-        if (dungeonTargetTable == null)
+        if (dungeonTargetTable == null || dungeonsTable == null)
         {
             EditorGUILayout.HelpBox("未找到副本目标生成表，请先运行项目 Luban 导出。", MessageType.Warning);
             return;
         }
-        // 场景只保存原目标编号与顺序，目标字段全部由同一份 Luban 表提供。
-        XElement references = config.Document.Root.Element("data").Element("dungeon_target_ids");
-        if (references == null)
+        selectedDungeonId = EditorGUILayout.IntPopup("查看副本目标", selectedDungeonId, dungeonNames, dungeonIds);
+        // 目标面板可查看尚未迁入场景的表行，不会改变当前打开 XML 的波次或地图。
+        DungeonsTable dungeon = dungeonsTable.GetOrDefault(selectedDungeonId);
+        if (dungeon == null) return;
+        EditorGUILayout.LabelField("场景编号 / 目标模式", dungeon.SceneID + " / " + dungeon.DungeonTargetType);
+        if (string.IsNullOrEmpty(dungeon.DungeonTarget))
         {
-            EditorGUILayout.HelpBox("当前场景未引用副本目标。", MessageType.Info);
+            EditorGUILayout.HelpBox("该副本未配置目标。", MessageType.Info);
             return;
         }
-        // 使用原 XML 引用数组，绘制期间不修改场景目标顺序。
-        XElement[] targetIds = references.Elements("int").ToArray();
-        // 按场景中的编号引用逐项查询，不依赖副本固定编号或目标备注。
-        for (int i = 0; i < targetIds.Length; i++)
+        if (dungeon.DungeonTargetType == 2)
         {
-            // 当前引用必须是正式目标表的整数 ID。
-            int targetId = int.Parse(targetIds[i].Value, CultureInfo.InvariantCulture);
-            // 目标定义直接来自生成表；缺行时显示引用错误，不回退旧 XML 文案。
-            DungeonTargetTable target = dungeonTargetTable.GetOrDefault(targetId);
-            if (target == null)
-            {
-                EditorGUILayout.HelpBox("Luban 表中未找到目标 " + targetId, MessageType.Warning);
-                continue;
-            }
-            EditorGUILayout.LabelField(target.ID + "  " + target.TargetDes, EditorStyles.wordWrappedLabel);
-            EditorGUILayout.LabelField("目标参数", string.Join("|", target.Target));
-            EditorGUILayout.LabelField("引导坐标", string.Join("=", target.GuidePos));
+            DrawDungeonTargetGroups(dungeon.DungeonTarget);
+            return;
         }
+        // 原配置用 | 分阶段，用 = 表示同阶段同时存在的目标。
+        string[] sections = dungeon.DungeonTarget.Split('|');
+        for (int sectionIndex = 0; sectionIndex < sections.Length; sectionIndex++)
+        {
+            EditorGUILayout.LabelField("阶段 " + (sectionIndex + 1), EditorStyles.boldLabel);
+            // 当前阶段的原始目标编号顺序。
+            string[] targetIds = sections[sectionIndex].Split('=');
+            for (int index = 0; index < targetIds.Length; index++)
+                DrawDungeonTarget(int.Parse(targetIds[index], CultureInfo.InvariantCulture));
+        }
+    }
+
+    /// <summary>展示原组有向边及各组内全部目标，分支不会被误当成线性阶段。</summary>
+    /// <param name="definition">DungeonsTable 原始分支串，逗号分边，等号左侧为父组。</param>
+    private void DrawDungeonTargetGroups(string definition)
+    {
+        // 已经显示的组仅去重正文，边仍完整保留，汇合节点不会丢失关系。
+        System.Collections.Generic.HashSet<int> displayedGroups = new System.Collections.Generic.HashSet<int>();
+        // 每条边包含一个父组和一个或多个可选后继组。
+        string[] edges = definition.Split(',');
+        for (int edgeIndex = 0; edgeIndex < edges.Length; edgeIndex++)
+        {
+            EditorGUILayout.LabelField("分支 " + edges[edgeIndex].Replace("=", " → ").Replace("|", " / "), EditorStyles.wordWrappedLabel);
+            // 关系中的编号都是组编号，组内 Targets 才是真正的目标编号。
+            string[] groupIds = edges[edgeIndex].Split('=', '|');
+            for (int index = 0; index < groupIds.Length; index++)
+            {
+                // 当前关系引用的组编号。
+                int groupId = int.Parse(groupIds[index], CultureInfo.InvariantCulture);
+                if (!displayedGroups.Add(groupId)) continue;
+                // 原组定义按自身数组顺序展示同组目标。
+                DungeonTargetGroupTable group = dungeonTargetGroupTable.GetOrDefault(groupId);
+                EditorGUILayout.LabelField("组 " + group.ID + " · " + group.Des, EditorStyles.boldLabel);
+                for (int targetIndex = 0; targetIndex < group.Targets.Length; targetIndex++)
+                    DrawDungeonTarget(group.Targets[targetIndex]);
+            }
+        }
+    }
+
+    /// <summary>显示一条正式目标定义，不把目标条件或文案复制回场景 XML。</summary>
+    /// <param name="targetId">DungeonTargetTable 的原始目标编号。</param>
+    private void DrawDungeonTarget(int targetId)
+    {
+        // 目标定义只从共享 Luban 生成表读取。
+        DungeonTargetTable target = dungeonTargetTable.GetOrDefault(targetId);
+        EditorGUILayout.LabelField(target.ID + "  " + target.TargetDes, EditorStyles.wordWrappedLabel);
+        EditorGUILayout.LabelField("目标参数", string.Join("|", target.Target));
+        EditorGUILayout.LabelField("引导坐标", string.Join("=", target.GuidePos));
     }
 
     /// <summary>给波次提供直观的刷点与出场预览操作。</summary>
@@ -565,7 +661,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="view">当前 Scene View。</param>
     private void DuringSceneGUI(SceneView view)
     {
-        if (config == null || SceneManager.GetActiveScene().path != ScenePath) return;
+        if (config == null || string.IsNullOrEmpty(CurrentScenePath) || SceneManager.GetActiveScene().path != CurrentScenePath) return;
         if (showAreas)
         {
             for (int i = 0; i < config.TriggerObjects.Length; i++)
@@ -662,11 +758,16 @@ public sealed class ROSceneEditorWindow : EditorWindow
     }
 
     /// <summary>打开已经迁入主工程的正式地图，保留 Unity 原生未保存场景提示。</summary>
-    private static void OpenDungeonScene()
+    private void OpenDungeonScene()
     {
-        if (SceneManager.GetActiveScene().path == ScenePath) return;
+        if (string.IsNullOrEmpty(CurrentScenePath))
+        {
+            ShowNotification(new GUIContent("当前配置的客户端场景尚未迁入"));
+            return;
+        }
+        if (SceneManager.GetActiveScene().path == CurrentScenePath) return;
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-        EditorSceneManager.OpenScene(ScenePath);
+        EditorSceneManager.OpenScene(CurrentScenePath);
     }
 
     /// <summary>开始当前配置的完整波次预览。</summary>
@@ -681,7 +782,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     {
         if (EditorApplication.isPlaying) { ShowNotification(new GUIContent("请退出运行模式后使用编辑预览")); return; }
         OpenDungeonScene();
-        if (SceneManager.GetActiveScene().path != ScenePath) return;
+        if (string.IsNullOrEmpty(CurrentScenePath) || SceneManager.GetActiveScene().path != CurrentScenePath) return;
         if (preview == null) preview = new ROScenePreview(config, catalog);
         preview.Changed = Repaint;
     }

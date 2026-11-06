@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
-/// <summary>正式魔神塔的出生运行器：读取编辑器 XML，加入统一实体世界，并随副本卸载回收。</summary>
+/// <summary>正式副本的出生运行器：按场景登记读取 XML，加入统一实体世界，并随副本卸载回收。</summary>
 public class MSceneDungeon : MonoBehaviour
 {
     /// <summary>当前项目剑气普攻的稳定 ID，对应服务端 ROArtSkill 的三段表现。</summary>
@@ -53,9 +53,11 @@ public class MSceneDungeon : MonoBehaviour
             battleHudWord = Instantiate(prefab, UIRoot.Instance._canvas.transform, false).GetComponent<MBattleHudWordMgr>();
             battleHudWord.transform.SetAsFirstSibling();
         }
-        catalog = ROSceneCreatureCatalog.Load();
+        // 读取本次入场 SceneID 的资源，不能沿用另一副本的波次或怪物目录。
+        DungeonSceneResource resource = DungeonSceneResource.Load(TeamData.Instance.DungeonSceneId);
+        catalog = ROSceneCreatureCatalog.Load(resource.creatureResource);
         // Resources 中的原 XML 随编辑器保存更新，不另外烘焙出生点副本。
-        TextAsset source = Resources.Load<TextAsset>("Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ");
+        TextAsset source = Resources.Load<TextAsset>(resource.flowResource);
         // XML 是配置序列化边界；只枚举原波次对象，不使用画布显示节点计数。
         document = XDocument.Parse(source.text);
         XElement[] records = document.Descendants("MSceneWaveData").ToArray();

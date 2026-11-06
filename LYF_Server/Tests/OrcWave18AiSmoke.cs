@@ -212,7 +212,7 @@ public static class OrcWave18AiSmoke
     private static void CheckMovedHit()
     {
         // 独立于随后真实队伍的实例，用于单独确认生命碰撞的空间来源。
-        SceneWaveSpawner scene = new SceneWaveSpawner();
+        SceneWaveSpawner scene = new SceneWaveSpawner(4060);
         // 入场血量按出生序号和实体集合一一对应。
         TeamEnterDungeonNtf entry = new TeamEnterDungeonNtf();
         scene.FillEnterScene(entry);
