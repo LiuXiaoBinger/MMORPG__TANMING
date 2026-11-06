@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,15 +24,44 @@ public sealed class TeamData
     /// <summary>已加载的模型订阅此事件，按服务器当前路径段或攻击阶段播放表现。</summary>
     public event Action<MSceneMonsterMotion> MonsterMotionUpdated;
 
+    /// <summary>服务端最近一次完整副本阶段，空值表示没有副本流程。</summary>
+    public DungeonFlowState DungeonFlow { get; private set; }
+    /// <summary>完整阶段更新后通知场景和目标窗口。</summary>
+    public event Action DungeonFlowUpdated;
+    /// <summary>当前主角附近可交互的正式物件；离开区域时清空。</summary>
+    public MSceneInteraction NearbyInteraction { get; private set; }
+    /// <summary>附近物件变化后刷新操作按钮。</summary>
+    public event Action NearbyInteractionUpdated;
+
+    /// <summary>替换权威阶段，不在本地推进任何任务或出生条件。</summary>
+    /// <param name="flow">服务器完整阶段快照，退出副本时为空。</param>
+    public void ApplyDungeonFlow(DungeonFlowState flow)
+    {
+        DungeonFlow = flow;
+        DungeonFlowUpdated?.Invoke();
+    }
+
+    /// <summary>只更新本地交互候选，业务是否有效仍由服务器校验。</summary>
+    /// <param name="interaction">主角附近物件，离开时为空。</param>
+    public void SetNearbyInteraction(MSceneInteraction interaction)
+    {
+        if (NearbyInteraction == interaction) return;
+        NearbyInteraction = interaction;
+        NearbyInteractionUpdated?.Invoke();
+    }
+
     /// <summary>切换入场状态，按服务端快照重新绑定本实例的出生位。</summary>
     /// <param name="notice">组队入场或回城通知，包含当时的完整怪物血量。</param>
     public void OnEnterScene(TeamEnterDungeonNtf notice)
     {
         DungeonInstanceId = notice.InstanceId;
+        SetNearbyInteraction(null);
+        DungeonFlow = notice.Flow;
         monsterAttributes.Clear();
         monsterMotions.Clear();
         for (int index = 0; index < notice.Monsters.Count; index++)
             monsterAttributes.Add(notice.Monsters[index].SpawnId, notice.Monsters[index]);
+        DungeonFlowUpdated?.Invoke();
         // 入场快照本身也可能落在攻击或移动途中。
         for (int index = 0; index < notice.MonsterActions.Count; index++)
             CacheMonsterMotion(notice.MonsterActions[index]);
@@ -94,6 +123,7 @@ public sealed class TeamData
             member.CurrHp = hit.Hp;
             member.MaxHp = hit.MaxHp;
         }
+        if (notice.Flow != null) ApplyDungeonFlow(notice.Flow);
         return true;
     }
 
@@ -348,6 +378,8 @@ public sealed class TeamData
     public void Clear()
     {
         DungeonInstanceId = 0UL;
+        SetNearbyInteraction(null);
+        ApplyDungeonFlow(null);
         monsterAttributes.Clear();
         monsterMotions.Clear();
         ApplyTeamInfo(new TeamInfoNtf());

@@ -67,6 +67,8 @@ namespace GateServer
             // 移动只做原路上报和附近通知转发，网关不参与位置结算。
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);
+            server.RegistCommand(NetDefine.CMD_DungeonInteractCode, gateMoveCtrl);
+            client.RegistCommand(NetDefine.CMD_DungeonInteractResultCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
             // 队伍与副本入场：6 条上行原样转给游戏服，4 条下行按 Unity 会话回发。
             // 网关只做会话寻址，队伍状态与实例分配全部由 GameServer 权威决定。

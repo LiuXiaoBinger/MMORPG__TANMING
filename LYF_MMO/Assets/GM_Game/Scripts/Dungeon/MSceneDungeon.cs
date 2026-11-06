@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using MMoRpgCommon.SceneEntity;
@@ -25,13 +25,27 @@ public class MSceneDungeon : MonoBehaviour
     /// <summary>编辑器与运行时共用的模型和动作目录。</summary>
     private ROSceneCreatureCatalog catalog;
 
-    /// <summary>正式场景加载成功后读取同一份编辑配置，首帧即可请求无前置波次。</summary>
+    /// <summary>按原配置编号保存物件和空气墙，激活状态完全由服务器快照决定。</summary>
+    private readonly Dictionary<int, GameObject> sceneObjects = new Dictionary<int, GameObject>();
+    /// <summary>门户与采集交互候选，随当前权威快照重建。</summary>
+    private readonly List<MSceneInteraction> interactions = new List<MSceneInteraction>();
+    /// <summary>每波拥有的运行实体，阶段重置时只回收对应实体。</summary>
+    private readonly Dictionary<int, List<ulong>> waveEntities = new Dictionary<int, List<ulong>>();
+    /// <summary>每个异步出生身份只提交一次，权威重置时删除。</summary>
+    private readonly HashSet<ulong> requestedSpawns = new HashSet<ulong>();
+    /// <summary>原采集法阵特效，完成采集后隐藏，退出时随副本根销毁。</summary>
+    private GameObject collectionEffect;
+    /// <summary>当前场景同份编辑文档，保存物件位置与效果配置。</summary>
+    private XDocument document;
+
+    /// <summary>读取同一份编辑配置并订阅服务端阶段，客户端不判断出生前置。</summary>
     private void Start()
     {
         world = Global.Instance.SceneWorld;
         instanceId = TeamData.Instance.DungeonInstanceId;
         TeamData.Instance.MonsterAttrUpdated += OnMonsterAttrUpdate;
         TeamData.Instance.MonsterMotionUpdated += OnMonsterMotion;
+        TeamData.Instance.DungeonFlowUpdated += ApplyFlow;
         if (UIRoot.Instance != null && instanceId != 0UL)
         {
             // 预制体保存十张原始数字 Sprite、材质和 RO 普攻曲线，显示在功能窗口下方。
@@ -43,7 +57,8 @@ public class MSceneDungeon : MonoBehaviour
         // Resources 中的原 XML 随编辑器保存更新，不另外烘焙出生点副本。
         TextAsset source = Resources.Load<TextAsset>("Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ");
         // XML 是配置序列化边界；只枚举原波次对象，不使用画布显示节点计数。
-        XElement[] records = XDocument.Parse(source.text).Descendants("MSceneWaveData").ToArray();
+        document = XDocument.Parse(source.text);
+        XElement[] records = document.Descendants("MSceneWaveData").ToArray();
         for (int index = 0; index < records.Length; index++)
         {
             // 本次副本独有的波次状态。
@@ -51,71 +66,134 @@ public class MSceneDungeon : MonoBehaviour
             wave.Data = records[index];
             wave.Id = ROSceneXml.Int(wave.Data, "base_info/id");
             Waves.Add(wave);
+            waveEntities.Add(wave.Id, new List<ulong>());
         }
+        ApplyFlow();
     }
 
-    /// <summary>按原延迟和间隔推进出生；血量与击杀前置不在本次纯表现范围内伪造满足。</summary>
+    /// <summary>仅寻找主角附近的已解锁交互；阶段与出生不由帧循环推进。</summary>
     private void Update()
     {
+        if (world.LocalRole == null) return;
+        // 选择最近可用物件，离开后恢复为空。
+        MSceneInteraction nearest = null;
+        float distance = float.MaxValue;
+        for (int index = 0; index < interactions.Count; index++)
+        {
+            // 已解锁交互及其与主角的距离平方。
+            MSceneInteraction candidate = interactions[index];
+            float candidateDistance = (candidate.Position - world.LocalRole.Position).sqrMagnitude;
+            if (!candidate.Contains(world.LocalRole.Position) || candidateDistance >= distance) continue;
+            nearest = candidate;
+            distance = candidateDistance;
+        }
+        TeamData.Instance.SetNearbyInteraction(nearest);
+    }
+
+    /// <summary>消费完整权威快照，支持模型晚加载、晚加入与同实例重置。</summary>
+    private void ApplyFlow()
+    {
+        if (document == null || instanceId != TeamData.Instance.DungeonInstanceId) return;
+        // 当前服务端阶段，不使用 XML 的 None 条件自行创建。
+        DungeonFlowState flow = TeamData.Instance.DungeonFlow;
+        if (flow == null) return;
         for (int index = 0; index < Waves.Count; index++)
         {
-            // 按原文件顺序推进，出生点与顺序均可从编辑器定位。
+            // 对应原 XML 波次，出生条件已经由服务器求值。
             MSceneRuntimeWave wave = Waves[index];
-            if (!wave.Requested && CanStart(wave)) Request(wave);
-            if (wave.Requested && !wave.Spawned && Time.time >= wave.DueTime) SpawnBatch(wave);
+            if (flow.ActiveWaveIds.Contains(wave.Id)) SpawnBatch(wave);
+            else
+            {
+                // 该波实体身份列表在模型加载完成时登记。
+                List<ulong> owned = waveEntities[wave.Id];
+                for (int entityIndex = 0; entityIndex < owned.Count; entityIndex++)
+                {
+                    world.RemoveEntity(owned[entityIndex]);
+                    entityUids.Remove(owned[entityIndex]);
+                }
+                owned.Clear();
+                // 出生字典使用稳定的高32位波次编号。
+                ulong[] keys = requestedSpawns.Where(key => (int)(key >> 32) == wave.Id).ToArray();
+                for (int keyIndex = 0; keyIndex < keys.Length; keyIndex++)
+                {
+                    requestedSpawns.Remove(keys[keyIndex]);
+                    monsters.Remove(keys[keyIndex]);
+                }
+            }
         }
+        RefreshSceneObjects(flow);
     }
 
-    /// <summary>接受真实机制事件；WaitEvent/TriggerEvent 波次只在对应名字到达时创建。</summary>
-    /// <param name="eventName">RO base_info/pre_scene_ai_event 保存的事件名。</param>
-    public void SendEvent(string eventName)
+    /// <summary>恢复服务器的物件、墙与采集状态；所有位置仍读取编辑 XML。</summary>
+    /// <param name="flow">本实例完整阶段快照。</param>
+    private void RefreshSceneObjects(DungeonFlowState flow)
     {
+        interactions.Clear();
+        TeamData.Instance.SetNearbyInteraction(null);
+        // 原区域对象带有门户效果、空气墙、按钮等选项。
+        XElement[] objects = document.Descendants("MSceneTriggerObjectData").ToArray();
+        for (int index = 0; index < objects.Length; index++)
+        {
+            // 当前对象配置与快照身份。
+            XElement data = objects[index];
+            int id = ROSceneXml.Int(data, "id");
+            bool wall = data.Descendants("SceneTriggerObjectOpType").Any(option => option.Value == "StoOpTypeAirWall");
+            bool button = data.Descendants("SceneTriggerObjectOpType").Any(option => option.Value == "StoOpTypePlayerButton");
+            bool active = flow.ActiveObjectIds.Contains(id);
+            if (wall) active = flow.ActiveWallIds.Contains(id);
+            if (!wall && !button) continue;
+            // 已加载表现复用；关闭时同时关闭碰撞和导航障碍。
+            GameObject instance;
+            if (!sceneObjects.TryGetValue(id, out instance))
+            {
+                if (!active) continue;
+                // 正式资源根分别持有原 RO 传送效果与实体空气墙。
+                string resource = "Dungeons/Moshenta/MoshentaPortal";
+                if (wall) resource = "Dungeons/Moshenta/MoshentaAirWall";
+                instance = Instantiate(Resources.Load<GameObject>(resource), transform);
+                instance.name = "Scene object " + id;
+                instance.transform.position = ROSceneXml.Vector(data, "position") + ROSceneXml.Vector(data, "box/offset");
+                instance.transform.rotation = Quaternion.Euler(0, ROSceneXml.Float(data, "face"), 0);
+                if (wall) instance.transform.localScale = ROSceneXml.Vector(data, "box/scale");
+                sceneObjects.Add(id, instance);
+            }
+            instance.SetActive(active);
+            if (active && button)
+            {
+                // 配置盒中的正式传送按钮，不使用自动触碰传送。
+                MSceneInteraction interaction = new MSceneInteraction();
+                interaction.ObjectId = id;
+                interaction.Title = "传送";
+                interaction.Position = instance.transform.position;
+                interaction.Rotation = instance.transform.rotation;
+                interaction.Extents = ROSceneXml.Vector(data, "box/scale") * 0.5f;
+                interactions.Add(interaction);
+            }
+        }
+        if (collectionEffect != null) collectionEffect.SetActive(false);
         for (int index = 0; index < Waves.Count; index++)
         {
-            // 当前波次原前置类型，禁止通过事件绕过普通 And/Or 条件。
+            // 采集仅在服务器已激活且尚未完成时提供操作。
             MSceneRuntimeWave wave = Waves[index];
-            string option = ROSceneXml.Text(wave.Data, "base_info/pre_wave_option");
-            if (option != "PreWaveOptionTypeWaitEvent" && option != "PreWaveOptionTypeTriggerEvent") continue;
-            if (ROSceneXml.Text(wave.Data, "base_info/pre_scene_ai_event") == eventName) Request(wave);
+            if (wave.Data.Element("collection_info") == null) continue;
+            if (!flow.ActiveWaveIds.Contains(wave.Id) || flow.CompletedWaveIds.Contains(wave.Id)) continue;
+            // 采集物位置沿用原配置出生点。
+            XElement[] points = ROSceneXml.SpawnPoints(wave.Data);
+            if (points.Length == 0) continue;
+            MSceneInteraction interaction = new MSceneInteraction();
+            if (collectionEffect == null)
+            {
+                collectionEffect = Instantiate(Resources.Load<GameObject>("Dungeons/Moshenta/FlowEffects/Fx_Scene_MoFaShi_05"), transform);
+                collectionEffect.transform.position = ROSceneXml.Vector(points[0], "position");
+            }
+            collectionEffect.SetActive(true);
+            interaction.WaveId = wave.Id;
+            interaction.Title = "破坏魔法阵";
+            interaction.Position = ROSceneXml.Vector(points[0], "position");
+            interaction.Rotation = Quaternion.identity;
+            interaction.Extents = Vector3.one * 2.5f;
+            interactions.Add(interaction);
         }
-    }
-
-    /// <summary>判断无前置或纯出生前置；战斗前置仍等待真正的战斗结果接入。</summary>
-    /// <param name="wave">尚未请求创建的原波次。</param>
-    private bool CanStart(MSceneRuntimeWave wave)
-    {
-        if (ROSceneXml.Text(wave.Data, "base_info/not_active_create") == "true") return false;
-        // RO 前置枚举保持原文本语义。
-        string option = ROSceneXml.Text(wave.Data, "base_info/pre_wave_option");
-        if (option == "PreWaveOptionTypeNone") return true;
-        if (option != "PreWaveOptionTypeAnd" && option != "PreWaveOptionTypeOr") return false;
-        // 前置阈值表示剩余数量/血量百分比，本次不扣血所以均保持百分之百。
-        XElement[] previous = wave.Data.Element("base_info").Element("pre_wave_list").Elements().ToArray();
-        bool any = false;
-        for (int index = 0; index < previous.Length; index++)
-        {
-            // 按原波次编号寻找对应的出生完成状态。
-            int previousId = ROSceneXml.Int(previous[index], "pre_wave_id");
-            MSceneRuntimeWave dependency = Waves.Find(item => item.Id == previousId);
-            bool fulfilled = dependency != null && dependency.Spawned;
-            int countLimit = ROSceneXml.Int(previous[index], "pre_wave_num", -1);
-            int healthLimit = ROSceneXml.Int(previous[index], "pre_wave_blood", -1);
-            if (countLimit >= 0 && countLimit < 100) fulfilled = false;
-            if (healthLimit >= 0 && healthLimit < 100) fulfilled = false;
-            if (option == "PreWaveOptionTypeAnd" && !fulfilled) return false;
-            any = any || fulfilled;
-        }
-        if (option == "PreWaveOptionTypeAnd") return true;
-        return any;
-    }
-
-    /// <summary>从前置满足时刻计算原毫秒延迟，避免每帧重新开始倒计时。</summary>
-    /// <param name="wave">已经满足前置条件的波次。</param>
-    private void Request(MSceneRuntimeWave wave)
-    {
-        if (wave.Requested) return;
-        wave.Requested = true;
-        wave.DueTime = Time.time + ROSceneXml.Int(wave.Data, "base_info/delay_create_time") * 0.001f;
     }
 
     /// <summary>按原点位数量、实际总数和分批间隔提交实例创建。</summary>
@@ -143,22 +221,19 @@ public class MSceneDungeon : MonoBehaviour
         int total = 0;
         for (int index = 0; index < points.Length; index++) total += ROSceneXml.Int(points[index], "count", 1);
         total = Mathf.Clamp(ROSceneXml.Int(wave.Data, "monster_info/monster_base_data/entity_info/real_num", total), 0, total);
-        // 间隔数据的 time 单位沿用 RO 秒数。
-        XElement interval = ROSceneXml.Find(wave.Data, "base_info/interval_rush_data");
+        // 服务器已经提交本批出生，客户端不另起本地延迟。
         int batchEnd = total;
-        if (interval != null) batchEnd = Mathf.Min(total, wave.SpawnCount + Mathf.Max(1, ROSceneXml.Int(interval, "count", 1)));
         int ordinal = 0;
         for (int pointIndex = 0; pointIndex < points.Length; pointIndex++)
         {
             for (int copyIndex = 0; copyIndex < ROSceneXml.Int(points[pointIndex], "count", 1); copyIndex++)
             {
-                if (ordinal >= wave.SpawnCount && ordinal < batchEnd) SpawnCreature(wave, creature, points[pointIndex], ordinal);
+                if (ordinal < batchEnd) SpawnCreature(wave, creature, points[pointIndex], ordinal);
                 ordinal++;
             }
         }
         wave.SpawnCount = batchEnd;
         wave.Spawned = batchEnd >= total;
-        wave.DueTime = Time.time + ROSceneXml.Float(interval, "interval");
     }
 
     /// <summary>实例化正式资源后建立实体、模型、控制器的同一身份绑定。</summary>
@@ -168,10 +243,20 @@ public class MSceneDungeon : MonoBehaviour
     /// <param name="ordinal">按点位 count 展开的波内零基序号，在加载资源前即已确定。</param>
     private void SpawnCreature(MSceneRuntimeWave wave, ROSceneCreatureEntity creature, XElement point, int ordinal)
     {
+        // 身份由原波次及序号组成，与服务器怪物字典一致。
+        ulong spawnId = ((ulong)(uint)wave.Id << 32) | (uint)(ordinal + 1);
+        MonsterHpData authority;
+        if (!creature.isNpc && creature.maxHp > 0 && !TeamData.Instance.GetMonsterAttr(spawnId, out authority)) return;
+        if (!requestedSpawns.Add(spawnId)) return;
         ResourceMgr.Instance.LoadPrefabAsync(creature.runtimePrefabPath, model =>
         {
             // 资源完成前副本已退出时，不将迟到模型加入新场景的世界。
-            if (this == null)
+            if (this == null || instanceId != TeamData.Instance.DungeonInstanceId)
+            {
+                Destroy(model);
+                return;
+            }
+            if (!TeamData.Instance.DungeonFlow.ActiveWaveIds.Contains(wave.Id))
             {
                 Destroy(model);
                 return;
@@ -186,6 +271,7 @@ public class MSceneDungeon : MonoBehaviour
             if (creature.isNpc) entityType = EntityType.Npc;
             MEntity entity = (MEntity)world.CreateEntity(entityType, creature.id);
             entityUids.Add(entity.UID);
+            waveEntities[wave.Id].Add(entity.UID);
             // 正式预制体上持久保存模型准备数据与类型匹配的控制器。
             RoleCtrlBase controller = model.GetComponent<RoleCtrlBase>();
             if (creature.isNpc)
@@ -219,7 +305,6 @@ public class MSceneDungeon : MonoBehaviour
             if (!creature.isNpc && creature.maxHp > 0)
             {
                 // 两端使用相同的出生序号关联实例属性，Unity 自身的实体 UID 仍交给 SceneWorld。
-                ulong spawnId = ((ulong)(uint)wave.Id << 32) | (uint)(ordinal + 1);
                 MonsterEntity monster = (MonsterEntity)entity;
                 monsters.Add(spawnId, monster);
                 MonsterHpData data;
@@ -281,6 +366,8 @@ public class MSceneDungeon : MonoBehaviour
     {
         TeamData.Instance.MonsterAttrUpdated -= OnMonsterAttrUpdate;
         TeamData.Instance.MonsterMotionUpdated -= OnMonsterMotion;
+        TeamData.Instance.DungeonFlowUpdated -= ApplyFlow;
+        TeamData.Instance.SetNearbyInteraction(null);
         if (battleHudWord != null) Destroy(battleHudWord.gameObject);
         monsters.Clear();
         if (world == null) return;

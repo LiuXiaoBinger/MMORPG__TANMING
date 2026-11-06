@@ -87,6 +87,10 @@ public class NetDefine
     /// <summary>GS 队列内部的队伍服断线事件，不注册为网络命令。</summary>
     public const ushort CMD_MasterTeamLost = 11226;
 
+    /// <summary>客户端点击副本物件或采集波次，身份来自网关会话。</summary>
+    public const ushort CMD_DungeonInteractCode = 11240;
+    /// <summary>副本交互结果以及权威位置校正。</summary>
+    public const ushort CMD_DungeonInteractResultCode = 11241;
     /// <summary>创建队伍请求，对应 RO TeamMgr.lua RequestCreateTeam。</summary>
     public const ushort CMD_CreateTeamCode = 11200;
     /// <summary>邀请他人入队请求，对应 RO TeamMgr.lua InviteJoinTeam。</summary>

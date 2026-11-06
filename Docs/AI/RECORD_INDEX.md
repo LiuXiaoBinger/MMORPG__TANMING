@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c60ed46f262549d316c0d804bce8d2fbc464af638964342851940aca5ab290b8`
+Source normalized SHA256: `823f736c4cf48bf341cb2b24fb86e5364613ee2432caae7c03f468f48bf45434`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -48,11 +48,12 @@ Source normalized SHA256: `c60ed46f262549d316c0d804bce8d2fbc464af638964342851940
 | [CODE][FILES][HANDOFF][组队][MASTER-TEAM-20261104] Party ownership moved into MasterServer | 252-256 |
 | [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-262 |
 | [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-269 |
-| [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-275 |
+| [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-276 |
+| [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-282 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5727e3757d6e6d4590b57c072c0a52d6c296978a1a0d6db8492bb4118b8c68b8`
+Source normalized SHA256: `525fe9cb4bf60aaa8e1bb378685b6d2aac87ed17a40996ff66952e2153c08639`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -92,7 +93,8 @@ Source normalized SHA256: `5727e3757d6e6d4590b57c072c0a52d6c296978a1a0d6db8492bb
 | [VERIFY][组队][MASTER-TEAM-20261104] Independent MS and GS regression | 272-276 |
 | [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-282 |
 | [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-289 |
-| [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-295 |
+| [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-296 |
+| [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-302 |
 
 ## Docs/AI/DECISIONS.en.md
 

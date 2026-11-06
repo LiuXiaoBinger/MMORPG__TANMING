@@ -42,15 +42,28 @@ public sealed class SceneWaveSpawner
     /// <summary>本实例第18波的唯一行为树宿主。</summary>
     private MoshentaOrc orc;
     /// <summary>该兽人在本实例怪物表的下标，其他同模板怪物不会启动树。</summary>
-    private readonly int orcIndex = -1;
+    private int orcIndex = -1;
+    /// <summary>实际创建实体对应的出生配置，随事件激活追加。</summary>
+    private readonly List<SpawnPoint> activePoints = new List<SpawnPoint>();
+    /// <summary>本实例独立的原场景图执行状态。</summary>
+    public MoshentaSceneFlow Flow { get; private set; }
 
     /// <summary>对应 RO 的 FirstCreateMonster，只生成当前副本起始激活的可战斗波次。</summary>
     public SceneWaveSpawner()
+    {
+        Flow = new MoshentaSceneFlow(this);
+    }
+
+    /// <summary>原波次条件已满足后创建对应实体，未激活的模板不会参与战斗。</summary>
+    /// <param name="waveId">XML 波次配置号。</param>
+    internal void ActivateWave(int waveId)
     {
         for (int index = 0; index < spawn_points_.Count; index++)
         {
             // 配置点与按服务端工厂装配的实体在整个实例内保持同一下标。
             SpawnPoint point = spawn_points_[index];
+            if ((int)(point.SpawnId >> 32) != waveId) continue;
+            activePoints.Add(point);
             GameServer.SceneEntity.MonsterEntity monster = (GameServer.SceneEntity.MonsterEntity)EntityFactory.Create(EntityType.Monster, point.Creature.id);
             monster.MapId = TeamManager.MoshentaMapId;
             monster.Transform.X = point.Position.X;
@@ -63,7 +76,7 @@ public sealed class SceneWaveSpawner
             monsters_.Add(monster);
             if (point.OrcPatrol != null)
             {
-                orcIndex = index;
+                orcIndex = monsters_.Count - 1;
                 orc = new MoshentaOrc(monster, point.SpawnId, point.OrcPatrol);
             }
         }
@@ -91,7 +104,7 @@ public sealed class SceneWaveSpawner
             // 被动机制、事件与隐藏波次不属于当前开场战斗。
             XElement wave = waves[index];
             XElement info = wave.Element("base_info");
-            if ((string)info.Element("pre_wave_option") != "PreWaveOptionTypeNone" || (bool)info.Element("not_active_create") || (bool)info.Element("init_invisible")) continue;
+            // 此处只展开模板，是否出生由每个实例的原波次条件决定。
             // 怪物模板与实际可创建数量来自同条波次。
             XElement monster = wave.Element("monster_info");
             ROSceneCreatureEntity creature;
@@ -140,6 +153,7 @@ public sealed class SceneWaveSpawner
     /// <param name="notice">将发给该队所有成员的入场协议。</param>
     public void FillEnterScene(TeamEnterDungeonNtf notice)
     {
+        notice.Flow = Flow.Snapshot();
         for (int index = 0; index < monsters_.Count; index++) notice.Monsters.Add(GetHpData(index));
         if (orc != null) notice.MonsterActions.Add(orc.Snapshot());
     }
@@ -182,7 +196,7 @@ public sealed class SceneWaveSpawner
             GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
             if (monster.CurrentHp <= 0 || hit_targets.Contains(monster.UID)) continue;
             // 当前普攻使用宽3、高2.5、深3米的前向盒，中心位于施法者前1.7米、高1.1米。
-            SpawnPoint point = spawn_points_[index];
+            SpawnPoint point = activePoints[index];
             // 怪物行走后，命中盒必须与服务端当前实体坐标比较，出生点只提供体积配置。
             Vector3 delta = new Vector3(monster.Transform.X, monster.Transform.Y, monster.Transform.Z) - origin;
             if (delta.Y > 2.35f || delta.Y + point.Creature.boundHeight < -0.15f) continue;
@@ -199,6 +213,58 @@ public sealed class SceneWaveSpawner
             notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
             if (index == orcIndex) orc.OnHit(caster, hpBeforeHit - monster.CurrentHp, notice);
         }
+        // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
+        CheckCompletedWaves();
+    }
+
+    /// <summary>按已出生实体的实际生命判断清波，不能把尚未创建的波次视为完成。</summary>
+    private void CheckCompletedWaves()
+    {
+        // 本窗口实际出现的波次与仍存活的波次。
+        HashSet<int> spawned = new HashSet<int>();
+        HashSet<int> living = new HashSet<int>();
+        for (int index = 0; index < monsters_.Count; index++)
+        {
+            // 同波次多只实体必须全部死亡。
+            int waveId = (int)(activePoints[index].SpawnId >> 32);
+            spawned.Add(waveId);
+            if (monsters_[index].CurrentHp > 0) living.Add(waveId);
+        }
+        // 集合快照允许完成事件继续产生新的波次。
+        int[] waveIds = spawned.ToArray();
+        for (int index = 0; index < waveIds.Length; index++)
+            if (!living.Contains(waveIds[index])) Flow.Complete(waveIds[index]);
+    }
+
+    /// <summary>将变化后的完整波次、血量及动作放进同一条可靠通知。</summary>
+    /// <param name="notice">所属实例的可靠通知。</param>
+    internal void FillFlow(MonsterAttrUpdateNtf notice)
+    {
+        if (!Flow.Dirty) return;
+        notice.Flow = Flow.Snapshot();
+        for (int index = 0; index < monsters_.Count; index++)
+        {
+            // 本次已经包含的伤害条目保留实际扣血值，仅补全其他实体快照。
+            ulong spawnId = activePoints[index].SpawnId;
+            if (!notice.Monsters.Any(row => row.SpawnId == spawnId)) notice.Monsters.Add(GetHpData(index));
+        }
+        if (orc != null) notice.MonsterActions.Add(orc.Snapshot());
+        Flow.Acknowledge();
+    }
+
+    /// <summary>查询本实例兽人是否仍对当前玩家保有有效攻击目标。</summary>
+    /// <param name="role">正在交互的角色。</param>
+    internal bool IsFighting(OnlineRole role)
+    {
+        return orc != null && orc.Target == role;
+    }
+
+    /// <summary>全队死亡后释放实体并重新建立原 XML 初始场景。</summary>
+    internal void Reset()
+    {
+        Clear();
+        orcIndex = -1;
+        Flow = new MoshentaSceneFlow(this);
     }
 
     /// <summary>提取跨端出生位和权威实体当前生命值。</summary>
@@ -206,14 +272,16 @@ public sealed class SceneWaveSpawner
     /// <param name="damage">本次实际扣血点数；完整入场快照沿用零值。</param>
     private MonsterHpData GetHpData(int index, int damage = 0)
     {
-        return new MonsterHpData { SpawnId = spawn_points_[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp, Damage = damage };
+        return new MonsterHpData { SpawnId = activePoints[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp, Damage = damage };
     }
 
     /// <summary>最后一名队员离开时释放此实例中的实体和组件。</summary>
     public void Clear()
     {
         orc = null;
+        if (Flow != null) Flow.Clear();
         world_.Clear();
         monsters_.Clear();
+        activePoints.Clear();
     }
 }

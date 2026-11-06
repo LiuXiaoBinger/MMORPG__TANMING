@@ -23,7 +23,9 @@ public sealed class ROScenePreview : IDisposable
     /// <summary>预览中被创建的区域或空气墙对象编号。</summary>
     public readonly HashSet<int> VisibleObjects = new HashSet<int>();
     /// <summary>预览角色当前所在位置，用于区域进入和传送验证。</summary>
-    public Vector3 PlayerPosition = new Vector3(119.5f, 62f, 118.3f);
+    public Vector3 PlayerPosition;
+    /// <summary>每个原触发器本轮已执行次数，用于原 trigger_count_limit 限制。</summary>
+    private readonly Dictionary<string, int> triggerCounts = new Dictionary<string, int>();
     /// <summary>上一帧已经进入的区域编号，用于检测进入/离开事件。</summary>
     private readonly HashSet<int> insideObjects = new HashSet<int>();
     /// <summary>是否正在推进编辑预览时间。</summary>
@@ -38,6 +40,7 @@ public sealed class ROScenePreview : IDisposable
     {
         config = document;
         catalog = creatures;
+        PlayerPosition = ROSceneXml.Vector(config.Document.Root.Element("data"), "player_spawn/position");
     }
 
     /// <summary>按原自动波次条件开始预览，创建临时表现根节点。</summary>
@@ -51,6 +54,8 @@ public sealed class ROScenePreview : IDisposable
         Waves.Clear();
         VisibleObjects.Clear();
         insideObjects.Clear();
+        triggerCounts.Clear();
+        PlayerPosition = ROSceneXml.Vector(config.Document.Root.Element("data"), "player_spawn/position");
         for (int i = 0; i < config.Nodes.Count; i++) if (config.Nodes[i].IsWave) Waves.Add(new MSceneWavePreview { Node = config.Nodes[i] });
         for (int i = 0; i < config.TriggerObjects.Length; i++)
         {
@@ -105,6 +110,7 @@ public sealed class ROScenePreview : IDisposable
         // 该状态只属于编辑器预览，不产生战斗伤害或游戏奖励。
         MSceneWavePreview wave = FindWave(id);
         if (wave == null) return;
+        if (wave.Completed) return;
         wave.Completed = true;
         wave.Spawning = false;
         wave.AlivePercent = 0;
@@ -114,6 +120,25 @@ public sealed class ROScenePreview : IDisposable
         // 沿用原 Wave 结束后的场景 AI 事件字段。
         string eventName = ROSceneXml.Text(wave.Node.Data, "base_info/end_scene_ai_event");
         if (eventName.Length > 0) SendEvent(eventName);
+        // 法阵采集结束事件与正式场景共用同一配置字段。
+        string collectEvent = ROSceneXml.Text(wave.Node.Data, "collection_info/collect_end_ai_event");
+        if (collectEvent.Length > 0) SendEvent(collectEvent);
+    }
+
+    /// <summary>在角色进入可操作区域后模拟点击，自动进入区域不会执行按钮时机。</summary>
+    /// <param name="objectId">当前可见的传送门或采集物区域编号。</param>
+    public void PressObject(int objectId)
+    {
+        if (!Running || !VisibleObjects.Contains(objectId)) return;
+        if (!insideObjects.Contains(objectId)) return;
+        TriggerTiming("SSttimingTypePlayerButton", objectId);
+    }
+
+    /// <summary>检查角色是否已进入对象范围，供编辑器展示可用按钮。</summary>
+    /// <param name="objectId">原 XML 交互对象编号。</param>
+    public bool CanPressObject(int objectId)
+    {
+        return Running && VisibleObjects.Contains(objectId) && insideObjects.Contains(objectId);
     }
 
     /// <summary>按连接预览一个触发器、触发组或单独的结果节点。</summary>
@@ -403,6 +428,13 @@ public sealed class ROScenePreview : IDisposable
     private void ExecuteTrigger(MSceneEditorNode trigger)
     {
         if (ROSceneXml.Text(trigger.Data, "enable", "true") == "false") return;
+        // 计数属于触发器节点而不是可能重复的组内业务 ID。
+        int count;
+        triggerCounts.TryGetValue(trigger.Id, out count);
+        // 零表示原配置不限制次数；正数限制本轮实际执行次数。
+        int limit = ROSceneXml.Int(trigger.Data, "trigger_count_limit");
+        if (limit > 0 && count >= limit) return;
+        triggerCounts[trigger.Id] = count + 1;
         // 直接点击触发器是策划的手动触发，条件是否满足仍由各时机入口检查。
         List<MSceneEditorNode> results = Linked(trigger, "resultKnob");
         results.Sort((first, second) => ROSceneXml.Int(first.Data, "result_index").CompareTo(ROSceneXml.Int(second.Data, "result_index")));
@@ -427,6 +459,12 @@ public sealed class ROScenePreview : IDisposable
         else if (type == "SSTResultTypeCreateObj" || type == "SSTResultTypeAirWall") VisibleObjects.Add(objectId);
         else if (type == "SSTResultTypeTransPosition") PlayerPosition = ROSceneXml.Vector(node.Data, "trans_position_info/position");
         else if (type == "SSTResultTypeWaveEvent") SendEvent(ROSceneXml.Text(node.Data, "wave_event_info/wave_event"));
+        else if (type == "SSTResultTypeDungeonsEnd")
+        {
+            VisibleObjects.Clear();
+            Dispose();
+            Log("已退出副本预览，空气墙与临时对象已移除。");
+        }
         else if (type == "SSTResultTypeSceneAIEvent") Log("场景 AI 入口：" + ROSceneXml.Text(node.Data, "scene_ai_event/ai_event") + "（外部 AI 未在编辑预览执行）");
         else if (type == "SSTResultTypeToClientGroup")
         {

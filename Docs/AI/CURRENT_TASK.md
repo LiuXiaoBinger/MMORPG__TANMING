@@ -270,3 +270,10 @@
 - MS 沿用 RO `TeamVoteTool` 流程：队长发起即同意，其他成员有 10 秒选择，全员同意后才交 GS 入场。拒绝、超时、名单变化取消；单人队伍同 RO 直接进入。确认窗口由 MainView 持有并登记为 `ThemeDungeonTeamWindow`，GS 继续负责场景和战斗。
 - Codex 直接实现，未调用其他模型。本机 MS/GS/Gate 已换成验收过的工作区产物，10150/10130/10140 监听且 Gate→GS→MS 已恢复；客户端协议 DLL 与这些服务一致。未重建既有 EXE/移动端包，新协议需要重新打 Player。未做新版双设备真人确认验收。
 - 完整文件清单、失败过程、本机部署与 Git 回执：`项目修改日志/队友显示与RO进本确认-2026-11-05.md`；证据：`_temp/team-entry-confirm-20261105/`。
+
+## [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] 魔神塔事件刷怪、Boss 空气墙与门户交互
+
+- 用户已批准实现及本次准确归档清单；Codex 原生子 Agent `/root/event_flow_editor`、`/root/event_flow_server`、`/root/event_flow_client` 各交付 1 轮，由主 Agent 审查验收。未调用外部模型或开发 Agent。分支 `codex/feature-development`；基线 `dbd3b82b48c7e8fc68527b0095ca072662ec1c15`。
+- 同一份 XML 统一管理入口 `(132.97,58.89,60.95)`、本轮新增的阶段目标 1–7（不是 RO 原目标 137–143 的原样复刻）、事件激活战斗波次、Boss 空气墙 23 与胜利门户 35。原 319 个节点/236 条连线保留；最终 336 个节点/254 条连线、64 个波次/36 个物件。服务端实际消费 XML 连线，按副本实例维护激活、HP、目标、墙与门户快照。区域 18/20/21 分别激活前线/二层/Boss；采集 41→42→62/组 12→门户 5；Boss 34/35/46→63/组 34→移除 23/创建 35/FinishDungeon。门户 35 返回主城。
+- 客户端 `MSceneDungeon` 不再自动生成 None 战斗波次；按服务端激活的 SpawnIds 加载，使用公共 `MMonsterAnimator`，恢复晚加入状态并清理重置实体。`DungeonFlowCtrl`/`DungeonFlowWindow` 由 MainView 持有，使用正式预制体引用；靠近已解锁门户显示“传送”。11240/11241 承载交互与权威位置，包括穿墙移动被拒绝后的纠正。复用 RO 原门户/法阵/墙特效，使用真实 BoxCollider 和 NavMeshObstacle 阻挡通行。MasterServer 继续管理队伍成员；本轮只保留既有 wave18 AI，其余完整 AI/技能不在范围内。
+- 准确的 86 个业务/资源/测试文件清单及完整证据见 `项目修改日志/2026-11-06-魔神塔事件刷怪与Boss封路传送.md`；原始材料位于 `_temp/moshenta-event-flow-20261106/`。其中 3 个文件已有无关用户修改，集成仅暂存本任务差异并保留工作区修改。未部署到运行中的 GameServer/GateServer。未验证：人工多人完整通关、独立构建、正式 MS 链路、RO 原完整 Boss/技能/时序节点。RO ResetDungeons 是局部 AI/采集刷新，不是整个副本重新刷怪；不支持的原外部刷新已明确记录。

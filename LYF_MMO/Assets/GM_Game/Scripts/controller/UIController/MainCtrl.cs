@@ -1,4 +1,4 @@
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using MMoRpgCommon;
 using UnityEngine;
 
@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class MainCtrl : CtrlBase
 {
+
+    /// <summary>副本阶段和场景交互窗口的控制器。</summary>
+    private readonly DungeonFlowCtrl _dungeonFlowCtrl;
 
     #region 字段
     /// <summary>主界面视图集合。</summary>
@@ -60,6 +63,7 @@ public class MainCtrl : CtrlBase
         _knapsackCtrl = new KnapsackCtrl(_mainView);
         _taskCtrl = new TaskCtrl(_mainView);
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
+        _dungeonFlowCtrl = new DungeonFlowCtrl(_mainView);
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -134,6 +138,7 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
+        _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
         _mainView.KnapsackButton.onClick.RemoveListener(OnKnapsackRequested);
         _mainView.RoleButton.onClick.RemoveListener(OnRoleRequested);

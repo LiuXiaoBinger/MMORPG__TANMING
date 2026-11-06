@@ -370,12 +370,20 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>显示当前节点字段、刷点和机制执行记录。</summary>
     private void DrawInspector()
     {
+        GUILayout.Label("正式出生点（客户端与服务端共用）", EditorStyles.boldLabel);
+        EditorGUI.BeginChangeCheck();
+        fields.Draw(config.Document.Root.Element("data").Element("player_spawn"));
+        GUILayout.Label("副本阶段目标", EditorStyles.boldLabel);
+        fields.Draw(config.Document.Root.Element("data").Element("dungeon_targets"));
+        if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
+        EditorGUILayout.Space();
         if (selectedArea != null)
         {
             GUILayout.Label("区域 " + ROSceneXml.Int(selectedArea, "id"), EditorStyles.boldLabel);
             EditorGUI.BeginChangeCheck();
             fields.Draw(selectedArea);
             if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
+            DrawPreviewLog();
             return;
         }
         if (selected == null) { GUILayout.Label("选择一个波次或机制节点", EditorStyles.boldLabel); DrawPreviewLog(); return; }
@@ -477,6 +485,18 @@ public sealed class ROSceneEditorWindow : EditorWindow
         GUILayout.Label("机制预览记录", EditorStyles.boldLabel);
         // 预览角色坐标也允许直接输入，以检查原传送点和区域。
         preview.PlayerPosition = EditorGUILayout.Vector3Field("预览角色位置", preview.PlayerPosition);
+        // 区域索引与原 XML 顺序一致，不改变持久化对象编号。
+        for (int i = 0; i < config.TriggerObjects.Length; i++)
+        {
+            // 只显示当前位置可操作对象；点击按原 PlayerButton 连线执行。
+            XElement area = config.TriggerObjects[i];
+            // 原对象编号与正式客户端、服务端保持一致。
+            int objectId = ROSceneXml.Int(area, "id");
+            if (!preview.CanPressObject(objectId)) continue;
+            // option 是原区域支持的一个操作枚举，只有按钮操作才展示入口。
+            if (!area.Descendants("SceneTriggerObjectOpType").Any(option => option.Value == "StoOpTypePlayerButton")) continue;
+            if (GUILayout.Button(ROSceneXml.Text(area, "box/title", "交互") + " · " + objectId)) preview.PressObject(objectId);
+        }
         eventScroll = EditorGUILayout.BeginScrollView(eventScroll, GUILayout.Height(170));
         for (int i = preview.Events.Count - 1; i >= 0; i--) EditorGUILayout.LabelField(preview.Events[i], EditorStyles.wordWrappedMiniLabel);
         EditorGUILayout.EndScrollView();

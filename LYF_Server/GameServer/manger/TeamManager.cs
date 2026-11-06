@@ -28,12 +28,10 @@ public sealed class TeamManager
     public const int MoshentaMapId = 4060;
 
     /// <summary>
-    /// 魔神塔出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式。
-    /// 取值来源：已验场景 Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001.unity
-    /// 中 RoleSpawnPoint 的世界坐标（其父节点位于原点），与客户端 MainCityMgr._localRoleSpawnPoint 一致，
-    /// 不能再用 0_0_0，否则服务端通知位置与客户端实际出生点不同，进入后互见与移动同步会错位。
+    /// 魔神塔出生坐标直接读取正式场景 XML 的 data/player_spawn/position。
+    /// 游戏服、客户端和编辑器预览共享此源，沿用 RoleBaseInfo.pos 的 X_Y_Z 格式。
     /// </summary>
-    public const string MoshentaSpawnPos = "132.97_58.89_60.95";
+    public static string MoshentaSpawnPos { get { return MoshentaSceneFlow.Format(MoshentaSceneFlow.SpawnPosition); } }
 
     /// <summary>主城地图ID，与进入副本前的公共场景一致，0 表示公共主城。</summary>
     public const int MainCityMapId = 0;
@@ -59,6 +57,8 @@ public sealed class TeamManager
         public readonly SceneWaveSpawner WaveSpawner = new SceneWaveSpawner();
         /// <summary>复用本实例的逐帧怪物动作通知。</summary>
         public readonly MonsterAttrUpdateNtf MonsterFrame = new MonsterAttrUpdateNtf();
+        /// <summary>全灭状态只处理一次，直到成员复活后允许下一次重置。</summary>
+        public bool Wiped;
     }
 
     /// <summary>由游戏进程统一创建副本运行入口。</summary>
@@ -78,6 +78,7 @@ public sealed class TeamManager
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
         team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets, caster);
         if (notice.Monsters.Count == 0) return;
+        team.WaveSpawner.FillFlow(notice);
         SendMonsterNotice(team, notice);
     }
 
@@ -109,11 +110,125 @@ public sealed class TeamManager
             // 当前帧本实例专属的广播载荷，跳过没有动作和伤害的帧。
             MonsterAttrUpdateNtf frame = team.MonsterFrame;
             frame.InstanceId = team.InstanceId;
+            frame.Monsters.Clear();
+            frame.Flow = null;
             frame.MonsterActions.Clear();
             frame.PlayerHits.Clear();
             team.WaveSpawner.Update(deltaMilliseconds, frame);
-            if (frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0) SendMonsterNotice(team, frame);
+            // 权威生命值全部归零时重置本实例，其他队伍状态不受影响。
+            bool alive = false;
+            for (int memberIndex = 0; memberIndex < team.Members.Count; memberIndex++)
+            {
+                // 成员可能在同一逻辑帧掉线，空对象不作为存活者。
+                OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[memberIndex]);
+                if (member != null && member.mainRoleInfo.BaseInfo.CurrHp > 0) alive = true;
+            }
+            if (alive) team.Wiped = false;
+            else if (!team.Wiped)
+            {
+                team.Wiped = true;
+                team.WaveSpawner.Reset();
+                frame.MonsterActions.Clear();
+                // 全灭回入口且保留死亡血量，由既有复活入口处理复活。
+                // 全灭时逐个重置本实例成员的权威位置。
+                for (int memberIndex = 0; memberIndex < team.Members.Count; memberIndex++)
+                {
+                    // 当前在线成员，掉线成员不再投递。
+                    OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[memberIndex]);
+                    if (member == null) continue;
+                    member.mainRoleInfo.BaseInfo.Pos = MoshentaSpawnPos;
+                    PublishPosition(team, new DungeonInteractRet { Success = true, InstanceId = team.InstanceId, RoleId = member.mainRoleInfo.BaseInfo.RoleId, Pos = MoshentaSpawnPos });
+                }
+            }
+            team.WaveSpawner.FillFlow(frame);
+            if (frame.Flow != null || frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0) SendMonsterNotice(team, frame);
         }
+    }
+
+    /// <summary>在写入上报位置前验证整个移动线段，没有副本则沿用原公共场景流程。</summary>
+    /// <param name="role">会话确认的移动角色。</param>
+    /// <param name="destination">本次上报终点，米。</param>
+    public bool AllowDungeonMove(OnlineRole role, Vector3 destination)
+    {
+        // 本角色的实例以服务端基础信息确定。
+        // 从玩家当前权威实例号定位本次场景。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return true;
+        if (!team.WaveSpawner.Flow.Blocks(role.mainRoleInfo.BaseInfo.Pos.ToVector3(), destination)) return true;
+        role.SendToClient(NetDefine.CMD_DungeonInteractResultCode, new DungeonInteractRet {
+            InstanceId = team.InstanceId, RoleId = role.mainRoleInfo.BaseInfo.RoleId,
+            Pos = role.mainRoleInfo.BaseInfo.Pos, Reason = "战斗空气墙阻止通行" }.ToByteString());
+        return false;
+    }
+
+    /// <summary>正式位置被接纳后消费该实例区域事件并同步新增波次。</summary>
+    /// <param name="role">已经写入权威位置的角色。</param>
+    public void OnDungeonMove(OnlineRole role)
+    {
+        // 从玩家当前权威实例号定位本次场景。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
+        if (role.mainRoleInfo.BaseInfo.CurrHp <= 0) return;
+        team.WaveSpawner.Flow.Enter(role.mainRoleInfo.BaseInfo.Pos.ToVector3());
+        PublishFlow(team);
+    }
+
+    /// <summary>处理场景按钮，位置、波次解锁和目标实例均由服务器决定。</summary>
+    /// <param name="role">会话反查的真实在线角色。</param>
+    /// <param name="request">客户端只提供物件或采集波次编号。</param>
+    public void Interact(OnlineRole role, DungeonInteractReq request)
+    {
+        // 从玩家当前权威实例号定位本次场景。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team))
+        {
+            role.SendToClient(NetDefine.CMD_DungeonInteractResultCode, new DungeonInteractRet { Reason = "当前不在副本", RoleId = role.mainRoleInfo.BaseInfo.RoleId }.ToByteString());
+            return;
+        }
+        if (role.mainRoleInfo.BaseInfo.CurrHp <= 0) return;
+        // 原场景的战斗限制读取正式施法状态及兽人仇恨。
+        bool fighting = team.WaveSpawner.IsFighting(role) || role.GetComponent<StateMachineComponent>().GetCurrentState() == StateDefine.kStateSkill;
+        // 原场景图返回实际交互结果与权威位置。
+        DungeonInteractRet reply = team.WaveSpawner.Flow.Interact(request, role.mainRoleInfo.BaseInfo.Pos.ToVector3(), fighting);
+        reply.InstanceId = team.InstanceId;
+        reply.RoleId = role.mainRoleInfo.BaseInfo.RoleId;
+        if (!reply.Success)
+        {
+            role.SendToClient(NetDefine.CMD_DungeonInteractResultCode, reply.ToByteString());
+            return;
+        }
+        role.mainRoleInfo.BaseInfo.Pos = reply.Pos;
+        PublishPosition(team, reply);
+        team.WaveSpawner.Flow.Enter(reply.Pos.ToVector3());
+        PublishFlow(team);
+        if (reply.Exited) ResetRoleInstance(role.GetID(), true);
+    }
+
+    /// <summary>只把角色位置变化发送给原实例成员。</summary>
+    /// <param name="team">权威副本。</param>
+    /// <param name="reply">已确认交互或全灭位置。</param>
+    private static void PublishPosition(Dungeon team, DungeonInteractRet reply)
+    {
+        // 一次编码供同实例成员可靠共享。
+        ByteString payload = reply.ToByteString();
+        // 实例当前成员的零基下标。
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            // 本机在线且仍属于本实例的接收成员。
+            OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            if (member != null && (ulong)member.mainRoleInfo.BaseInfo.InstanceId == team.InstanceId)
+                member.SendToClient(NetDefine.CMD_DungeonInteractResultCode, payload);
+        }
+    }
+
+    /// <summary>将区域或按钮产生的完整流程变化可靠广播一次。</summary>
+    /// <param name="team">发生变化的独立副本。</param>
+    private static void PublishFlow(Dungeon team)
+    {
+        // 只装载本实例的流程和怪物快照。
+        MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
+        team.WaveSpawner.FillFlow(notice);
+        if (notice.Flow != null) SendMonsterNotice(team, notice);
     }
 
     /// <summary>把 MS 的权威名单补上本机的实时角色展示数据，再沿原网关协议广播。</summary>
@@ -245,9 +360,11 @@ public sealed class TeamManager
             {
                 continue;
             }
+            // 同实例重复入场或队友中途加入时，已经在场的成员保留当前位置。
+            if ((ulong)memberRole.mainRoleInfo.BaseInfo.InstanceId != team.InstanceId)
+                memberRole.mainRoleInfo.BaseInfo.Pos = MoshentaSpawnPos;
             memberRole.mainRoleInfo.BaseInfo.MapId = MoshentaMapId;
             memberRole.mainRoleInfo.BaseInfo.InstanceId = (int)team.InstanceId;
-            memberRole.mainRoleInfo.BaseInfo.Pos = MoshentaSpawnPos;
         }
 
         // 新实例内互相可见：先把本人补发给同实例其他成员，再把同实例其他成员补发给本人。
@@ -294,7 +411,9 @@ public sealed class TeamManager
             {
                 continue;
             }
-            memberRole.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, payload);
+            // 本人的权威位置可能与新成员入口不同，流程和怪物快照仍来自同一实例。
+            notice.Pos = memberRole.mainRoleInfo.BaseInfo.Pos;
+            memberRole.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, notice.ToByteString());
         }
         // 队伍状态变化后同步成员实例信息。
 

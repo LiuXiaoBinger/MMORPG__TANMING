@@ -23,6 +23,8 @@ public sealed class ROMoveComponent : RoleComponentBase
     /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
+        // 先验证权威起点到上报终点的整段，拒绝时不修改角色位置或动作。
+        if (!TeamManager.Instance.AllowDungeonMove(Owner, new System.Numerics.Vector3(action.Dx, action.Dy, action.Dz))) return;
         // 新跳跃沿用现有移动协议；同一空中姿势的后续同步不重复触发技能取消。
         if (action.JumpCount > jump_count_ && action.JumpCount <= 3)
         {
@@ -48,6 +50,7 @@ public sealed class ROMoveComponent : RoleComponentBase
         // 复用正式基础快照的下划线坐标格式，使进入世界和技能附近广播读取同一位置。
         Owner.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture,
             "{0}_{1}_{2}", action.Dx, action.Dy, action.Dz);
+        TeamManager.Instance.OnDungeonMove(Owner);
         // 本项目没有 RO 场景高度/导航结算，直接沿用当前客户端碰撞完成后的终点。
         RoleManager.Instance.SyncMove(Owner, new SyncMoveNtf
         {

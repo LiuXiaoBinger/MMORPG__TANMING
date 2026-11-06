@@ -192,6 +192,7 @@ message TeamEnterDungeonNtf{
 	int32 map_id = 5;          //该实例对应的地图ID
 	string pos = 6;            //出生坐标，沿用 RoleBaseInfo.pos 的 X_Y_Z 下划线格式
 	repeated MonsterHpData monsters = 7;//本实例已经出生的战斗怪物及其当前血量
+	DungeonFlowState flow = 9;//同实例任务、物件及波次的完整权威状态
 	repeated MonsterActionData monster_actions = 8;//入场时已有 AI 的怪物当前动作，含权威位置与剩余时间
 }
 
@@ -211,6 +212,7 @@ message MonsterAttrUpdateNtf {
 	float firer_y = 4;//命中时施害者的世界坐标 Y，单位米
 	float firer_z = 5;//命中时施害者的世界坐标 Z，单位米
 	repeated MonsterActionData monster_actions = 6;//本次开始或改变的怪物动作，按服务端执行顺序下发
+	DungeonFlowState flow = 8;//非空时替换本实例的流程快照
 	repeated MonsterPlayerHitData player_hits = 7;//怪物技能结果点实际造成的玩家血量变化
 }
 
@@ -481,4 +483,36 @@ message MonsterPlayerHitData {
 	int32 max_hp = 3;         // 受击玩家的生命上限
 	int32 damage = 4;         // 本次实际扣除的生命点
 	uint64 spawn_id = 5;      // 发起这次攻击的怪物出生标识
+}
+
+// 玩家仅提交场景交互对象，位置和解锁由游戏服验证。
+message DungeonInteractReq {
+ int32 object_id = 1;//原场景物件编号，0有效
+ int32 wave_id = 2;//大于零表示采集波次，否则点击物件
+}
+// 同实例位置变化或单播失败校正。
+message DungeonInteractRet {
+ bool success = 1;//交互是否实际执行
+ string reason = 2;//失败展示原因
+ uint64 instance_id = 3;//位置所属实例
+ int32 role_id = 4;//角色持久编号
+ string pos = 5;//服务端当前X_Y_Z米制坐标
+ bool exited = 6;//随后是否由既有入场协议回城
+}
+// 任务进度取自同一份场景XML的目标定义。
+message DungeonObjectiveData {
+ int32 id = 1;//目标配置编号
+ string description = 2;//目标展示文本
+ int32 current = 3;//已完成前置波次数或事件数
+ int32 total = 4;//需要完成的波次数或事件数
+ bool completed = 5;//是否已达成目标
+}
+// 入场、中途加入和事件变更共用完整快照，集合均为替换语义。
+message DungeonFlowState {
+ repeated int32 active_wave_ids = 1;//已经激活的波次
+ repeated int32 completed_wave_ids = 2;//已经完成的波次
+ repeated int32 active_object_ids = 3;//当前存在的场景物件
+ repeated int32 active_wall_ids = 4;//当前具有权威碰撞的空气墙物件
+ repeated DungeonObjectiveData objectives = 5;//已激活的任务目标与实际进度
+ bool finished = 6;//已触发配置的完成事件
 }

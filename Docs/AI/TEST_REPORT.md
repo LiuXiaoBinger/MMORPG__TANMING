@@ -288,3 +288,10 @@
 - 现场证据为两名缓存成员、零个生成行、三个空引用；补上真实绑定后显示两名实际成员并截图。Unity 编译通过，Console 错误为 0。预制体/协议/按钮 15 项与实际控制器方法 3 项通过，包含重复询问保持打开、退队关闭。已查看临时场景渲染结果，测试实例已移除，未保存测试场景。
 - 首轮旧正式路由用例仍预期立即入场，已改为明确答复。隔离夹具曾漏跨目录依赖，补齐 HEAD 输入后通过。UI 检查首次执行到旧编译的状态标签映射，刷新后通过。本机切换修正 PowerShell 文件名数组并等待旧进程释放句柄后，已核对最终二进制哈希及连接。
 - 未重建 Player/移动端包，未做新版双设备真人确认。完整清单、失败、部署及 Git 回执：`项目修改日志/队友显示与RO进本确认-2026-11-05.md`；证据：`_temp/team-entry-confirm-20261105/`。
+
+## [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] 权威事件流程与 Unity 运行验收
+
+- 开发者自检：GameServer/GateServer 构建 PASS（存在既有警告）；隔离进程中的真实 TCP + protobuf/CRC 封帧检查，34 项断言 PASS。主 Agent 重跑 `_temp/moshenta-event-flow-20261106/run-server-smoke.ps1 -SkipBuild`：PASS34。覆盖初入战斗数为 0、事件只激活一次、wave18 巡逻/当前位置命中、门 0/1 战斗中拒绝与脱战后目标位置、采集 41→42→62→门户 5、Boss 墙线段拒绝与位置纠正、晚加入、胜利出口 35 的实际请求、团灭清理、另一实例隔离及释放。
+- 主 Agent 使用 Unity2023.2.20f1c1、实例 `LYF_MMO@47ea91c229a904f3`：最终 Network.dll 刷新/编译 error0；真实 TCP 快照经 TeamData，再由实际 PlayMode 的 MSceneDungeon.Start/YooAsset 异步加载：初入 0 个战斗实体→前线 52→Boss 69，预期 SpawnIds/HP 和公共动画控制器均符合；三名 Boss 的 HP0 后，空气墙 23 移除/出口 35 可见；重置后战斗实体与墙为 0、出口禁用→重试 52，实体身份不重复，即本轮 Play 序列 0→52→69→0→52。实际 TeamCtrl 失败回执把本地实体纠正到权威位置。证据为 `root-runtime-check.txt`、`server-packets/types.txt`；合成的本地实体只用于回执测试，不是已登录的多人客户端。
+- 客户端隔离检查：靠近显隐、正式 MainView 按钮引用/事件、门户 4 粒子系统、墙 BoxCollider 和 carving。CharacterController.Move 在 z=-1.09 被阻挡，禁用墙后到达 z=4.91。XML 编辑器往返读取为 336 个节点/254 条连线/缺失 0/目标 7；阶段预览通过，使用加速计时器。NavMesh 采样成功不等同完整路线通行。主 Agent 已停止 Play、返回干净的 Scene_Boot 并移除仅运行期的测试对象；没有保存正式测试组件。
+- 真实自检修正：服务端 RunGroup 最初匹配 AIEvent 而非原 WaveEvent，已在最终 34 项 PASS 前修正；门 1 预期目标改为原 XML 数据；客户端 out 类型编译错误已修正。主 Agent 的反射探针最初命中重复的 Global/MonsterEntity 类型，改为指定已知程序集/基类，无须修改业务。完整人工联机游玩、独立构建/部署、原版完整 AI/时序仍未验证。日志为 `项目修改日志/2026-11-06-魔神塔事件刷怪与Boss封路传送.md`；子 Agent 交付与原始证据位于 `_temp/moshenta-event-flow-20261106/`。

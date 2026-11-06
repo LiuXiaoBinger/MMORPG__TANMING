@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using Google.Protobuf;
+using MMoRpgCommon.SceneEntity;
 
 /// <summary>
 /// 收发组队协议：收到队伍与邀请通知后更新 TeamData，再通知界面；用户操作则组装请求交给网络层。
@@ -60,6 +61,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, OnSyncMemberReplyEnterFB);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.PtcM2C_FailEnterFBNtf, OnFailEnterFB);
@@ -82,6 +84,7 @@ public sealed class TeamCtrl : CtrlBase
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamInvatationCode, OnInvatation);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_TeamEnterDungeonCode, OnEnterDungeon);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MonsterAttrUpdateCode, OnMonsterAttrUpdate);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_DungeonInteractResultCode, OnDungeonInteractResult);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_AskMemberEnterFBNtf, OnAskMemberEnterFB);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_SyncMemberReplyEnterFBNtf, OnSyncMemberReplyEnterFB);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.PtcM2C_FailEnterFBNtf, OnFailEnterFB);
@@ -178,6 +181,51 @@ public sealed class TeamCtrl : CtrlBase
             }
         }
         TeamInfoReceived?.Invoke(TeamData.Instance.IsInTeam);
+    }
+
+    /// <summary>发送正式按钮所选的门户或采集波次，不提交目标坐标。</summary>
+    /// <param name="interaction">当前附近的配置物件身份。</param>
+    public static void RequestDungeonInteraction(MSceneInteraction interaction)
+    {
+        // 物件零号有效，采集物使用独立波次字段。
+        DungeonInteractReq request = new DungeonInteractReq();
+        request.ObjectId = interaction.ObjectId;
+        request.WaveId = interaction.WaveId;
+        Send(NetDefine.CMD_DungeonInteractCode, request.ToByteString());
+    }
+
+    /// <summary>应用服务器传送或空气墙纠正，其他队员同样按角色身份更新。</summary>
+    /// <param name="data">DungeonInteractRet 的二进制消息体。</param>
+    private void OnDungeonInteractResult(ByteString data)
+    {
+        // 协议解析直接交给 Protobuf，不吞掉数据异常。
+        DungeonInteractRet notice = DungeonInteractRet.Parser.ParseFrom(data);
+        if (notice.InstanceId != TeamData.Instance.DungeonInstanceId || notice.Exited) return;
+        // 当前实体世界及服务器指定的移动角色。
+        SceneWorldSystem world = Global.Instance.SceneWorld;
+        RoleEntity player = world.LocalRole;
+        if (player == null) return;
+        if (player.GetID() != notice.RoleId)
+        {
+            if (!notice.Success) return;
+            RoleEntity other;
+            if (!world.TryGetRole(notice.RoleId, out other)) return;
+            player = other;
+        }
+        if (!string.IsNullOrEmpty(notice.Pos))
+        {
+            // 沿项目已有位置文本格式恢复服务器坐标，同时更新基础信息。
+            RoleBaseInfo info = player.BaseInfo.Clone();
+            info.Pos = notice.Pos;
+            player.UpdateBaseInfo(info);
+            // 项目共用坐标扩展以服务器三分量文本解析。
+            System.Numerics.Vector3 position = notice.Pos.ToVector3();
+            player.NavComp.Interrupt();
+            player.MoveComp.StopHorizontalMovement();
+            player.Position = new UnityEngine.Vector3(position.X, position.Y, position.Z);
+        }
+        if (!notice.Success && !string.IsNullOrEmpty(notice.Reason))
+            TipsMgr.Instance.ShowSystemTips(notice.Reason);
     }
 
     #region 事件回调

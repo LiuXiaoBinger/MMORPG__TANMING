@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 /// <summary>
 /// View 保存窗口时使用的编号，控制器据此查找并打开对应窗口。
@@ -23,7 +23,8 @@ public enum WindowType
     ThemeDungeonArroundWindow,//主题副本选择窗口，展示副本书位、翻页与详情
     ThemeDungeonTeamCreateWindow,//主题副本建队窗口，创建副本队伍并展示已加入的成员
     ChatWindow, // 主界面聊天窗口，管理频道消息与语音控件。
-    ThemeDungeonTeamWindow // RO 全队进入副本的确认窗口。
+    ThemeDungeonTeamWindow, // RO 全队进入副本的确认窗口。
+    DungeonFlowWindow // 服务端副本目标与附近门户、采集交互窗口。
 }
 
 /// <summary>

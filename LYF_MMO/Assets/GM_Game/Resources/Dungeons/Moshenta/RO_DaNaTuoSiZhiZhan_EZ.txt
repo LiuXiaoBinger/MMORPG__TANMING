@@ -1,6 +1,98 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <MSceneEditorConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <data>
+    <player_spawn>
+      <position>
+        <x>132.97</x>
+        <y>58.89</y>
+        <z>60.95</z>
+      </position>
+      <face>0</face>
+    </player_spawn>
+    <dungeon_targets>
+      <MSceneDungeonTarget>
+        <id>1</id>
+        <description>前往前线与部队会合</description>
+        <activation_event />
+        <target_event>HuiHeBuDui</target_event>
+        <wave_ids />
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>2</id>
+        <description>清理一层敌人</description>
+        <activation_event>HuiHeBuDui</activation_event>
+        <target_event />
+        <wave_ids>
+          <int>15</int>
+          <int>16</int>
+          <int>17</int>
+          <int>18</int>
+          <int>19</int>
+          <int>20</int>
+          <int>21</int>
+          <int>22</int>
+          <int>23</int>
+          <int>24</int>
+          <int>25</int>
+          <int>26</int>
+          <int>27</int>
+          <int>28</int>
+          <int>29</int>
+          <int>30</int>
+          <int>31</int>
+          <int>32</int>
+        </wave_ids>
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>3</id>
+        <description>清理二层敌人</description>
+        <activation_event>DaoDaErLou</activation_event>
+        <target_event />
+        <wave_ids>
+          <int>33</int>
+          <int>40</int>
+          <int>43</int>
+          <int>44</int>
+          <int>45</int>
+        </wave_ids>
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>4</id>
+        <description>破坏召唤法阵</description>
+        <activation_event>DaoDaErLou</activation_event>
+        <target_event />
+        <wave_ids>
+          <int>41</int>
+        </wave_ids>
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>5</id>
+        <description>击败召唤的魔法师</description>
+        <activation_event>SummonDemon</activation_event>
+        <target_event />
+        <wave_ids>
+          <int>42</int>
+        </wave_ids>
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>6</id>
+        <description>击败塔顶三名Boss</description>
+        <activation_event>BossBattle</activation_event>
+        <target_event />
+        <wave_ids>
+          <int>34</int>
+          <int>35</int>
+          <int>46</int>
+        </wave_ids>
+      </MSceneDungeonTarget>
+      <MSceneDungeonTarget>
+        <id>7</id>
+        <description>通过门户离开副本</description>
+        <activation_event>FinishDungeon</activation_event>
+        <target_event>DungeonsEnd</target_event>
+        <wave_ids />
+      </MSceneDungeonTarget>
+    </dungeon_targets>
     <wallDatas />
     <patrolPathDatas>
       <MScenePatrolPathData>
@@ -73,7 +165,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
-          <title>DUNGEONS_A7_DOWNSTAIRS</title>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -130,7 +222,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
-          <title>DUNGEONS_SHANGLOU_BUTTON</title>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -242,6 +334,7 @@
         <id>3</id>
         <ignore_init>false</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
         </options>
         <position>
@@ -263,6 +356,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -294,6 +388,7 @@
         <id>4</id>
         <ignore_init>false</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
         </options>
         <position>
@@ -315,6 +410,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -346,6 +442,7 @@
         <id>5</id>
         <ignore_init>true</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeCreateSceneTriggerObject</SceneTriggerObjectOpType>
         </options>
@@ -368,6 +465,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -399,6 +497,7 @@
         <id>6</id>
         <ignore_init>false</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
         </options>
         <position>
@@ -420,6 +519,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -541,6 +641,7 @@
         <id>10</id>
         <ignore_init>true</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeCreateSceneTriggerObject</SceneTriggerObjectOpType>
         </options>
@@ -563,6 +664,7 @@
             <z>0</z>
           </offset>
           <player_limit>0</player_limit>
+          <title>传送</title>
           <interrupt_nav>false</interrupt_nav>
           <button_position>
             <x>0</x>
@@ -1588,6 +1690,7 @@
         <id>34</id>
         <ignore_init>true</ignore_init>
         <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeServerEnter</SceneTriggerObjectOpType>
           <SceneTriggerObjectOpType>StoOpTypeCreateSceneTriggerObject</SceneTriggerObjectOpType>
         </options>
@@ -1595,6 +1698,60 @@
           <x>124.32</x>
           <y>58.8</y>
           <z>72.86</z>
+        </position>
+        <face>0</face>
+        <box>
+          <check_time>0</check_time>
+          <scale>
+            <x>3</x>
+            <y>2</y>
+            <z>3</z>
+          </scale>
+          <offset>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </offset>
+          <player_limit>0</player_limit>
+          <title>传送</title>
+          <interrupt_nav>false</interrupt_nav>
+          <button_position>
+            <x>0</x>
+            <y>0</y>
+          </button_position>
+          <button_scale>0</button_scale>
+          <modify_button_position>false</modify_button_position>
+          <modify_button_scale>false</modify_button_scale>
+        </box>
+        <reset>false</reset>
+        <elf_id>0</elf_id>
+        <init_invisible>false</init_invisible>
+        <shape_type>StObjectShapeTypeCube</shape_type>
+        <fx_list>
+          <MSceneFxData>
+            <fx_id>110005</fx_id>
+            <fx_scale>
+              <x>0</x>
+              <y>0</y>
+              <z>0</z>
+            </fx_scale>
+            <fx_lifetime>FxLifeTimeType_OnCreate</fx_lifetime>
+          </MSceneFxData>
+        </fx_list>
+        <check_time>0</check_time>
+        <audio_list />
+      </MSceneTriggerObjectData>
+      <MSceneTriggerObjectData>
+        <id>35</id>
+        <ignore_init>true</ignore_init>
+        <options>
+          <SceneTriggerObjectOpType>StoOpTypePlayerButton</SceneTriggerObjectOpType>
+          <SceneTriggerObjectOpType>StoOpTypeCreateSceneTriggerObject</SceneTriggerObjectOpType>
+        </options>
+        <position>
+          <x>77.46</x>
+          <y>80.32</y>
+          <z>604.5</z>
         </position>
         <face>0</face>
         <box>
@@ -1618,6 +1775,7 @@
           <button_scale>0</button_scale>
           <modify_button_position>false</modify_button_position>
           <modify_button_scale>false</modify_button_scale>
+          <title>传送</title>
         </box>
         <reset>false</reset>
         <elf_id>0</elf_id>
@@ -1627,9 +1785,9 @@
           <MSceneFxData>
             <fx_id>110005</fx_id>
             <fx_scale>
-              <x>0</x>
-              <y>0</y>
-              <z>0</z>
+              <x>1</x>
+              <y>1</y>
+              <z>1</z>
             </fx_scale>
             <fx_lifetime>FxLifeTimeType_OnCreate</fx_lifetime>
           </MSceneFxData>
@@ -1840,6 +1998,14 @@
         <isFxScaleSameAsObjScaleList>
           <boolean>false</boolean>
         </isFxScaleSameAsObjScaleList>
+      </MSceneTriggerObjectDataEx>
+      <MSceneTriggerObjectDataEx>
+        <dir>SceneTriggerObject</dir>
+        <isNeedFx>true</isNeedFx>
+        <isFxScaleSameAsObjScaleList>
+          <boolean>false</boolean>
+        </isFxScaleSameAsObjScaleList>
+        <name>胜利离开门户</name>
       </MSceneTriggerObjectDataEx>
     </triggerObjectList>
     <clientTriggerObjectList />
@@ -2666,7 +2832,7 @@
       <Object refID="-7060466922230906880" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>4</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -2748,7 +2914,7 @@
       <Object refID="-7060466922230644736" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>6</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -2784,7 +2950,7 @@
       <Object refID="-7060466922230448128" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>3</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -2861,7 +3027,7 @@
       <Object refID="-7060466922230317056" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>5</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -2876,8 +3042,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>22</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -2950,8 +3117,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>24</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -3034,8 +3202,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>29</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -3118,8 +3287,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>32</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -3182,8 +3352,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>33</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -3979,8 +4150,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>40</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4073,8 +4245,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>15</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4187,8 +4360,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>16</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4251,8 +4425,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>17</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4345,8 +4520,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>19</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4416,8 +4592,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>20</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4510,8 +4687,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>23</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4604,8 +4782,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>26</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4668,8 +4847,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>21</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4749,8 +4929,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>25</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4849,8 +5030,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>31</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -4913,8 +5095,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>28</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5003,8 +5186,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>27</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5103,8 +5287,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>30</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5233,8 +5418,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>44</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5343,8 +5529,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>45</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5424,15 +5611,17 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Collect</spawn_type>
             <id>41</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
+            <end_scene_ai_event>FaZhenZhenPing</end_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
             <not_active_create>false</not_active_create>
           </base_info>
           <collection_info>
-            <collect_end_ai_event>DestroyDemonMatrix</collect_end_ai_event>
+            <collect_end_ai_event>SummonDemon</collect_end_ai_event>
             <entity_info>
               <position_list>
                 <MScenePositionData>
@@ -5524,8 +5713,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>34</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5588,8 +5778,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>35</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5652,8 +5843,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>49</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -5714,7 +5906,7 @@
       <Object refID="-7060466922227826688" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>10</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -6391,8 +6583,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>54</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -6455,8 +6648,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>55</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -6519,8 +6713,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>56</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -7164,8 +7359,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>57</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -7500,8 +7696,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>43</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>DaoDaErLou</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -7571,8 +7768,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>46</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>BossBattle</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -7700,8 +7898,9 @@
           <base_info>
             <spawn_type>SceneSpawnType_Spawn_Source_Monster</spawn_type>
             <id>18</id>
-            <pre_wave_option>PreWaveOptionTypeNone</pre_wave_option>
+            <pre_wave_option>PreWaveOptionTypeWaitEvent</pre_wave_option>
             <pre_wave_list />
+            <pre_scene_ai_event>HuiHeBuDui</pre_scene_ai_event>
             <elf_id>0</elf_id>
             <init_invisible>false</init_invisible>
             <delay_create_time>0</delay_create_time>
@@ -10828,7 +11027,7 @@
       <Object refID="4692909661105356800" type="PbLocal.Xml.MSSceneTriggerTimingData">
         <MSSceneTriggerTimingData>
           <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
-          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
           <scene_trigger_obj_id>34</scene_trigger_obj_id>
         </MSSceneTriggerTimingData>
       </Object>
@@ -11095,6 +11294,317 @@
         <MSceneTriggerGroupDataEx>
           <groupName>TriggerGroup</groupName>
         </MSceneTriggerGroupDataEx>
+      </Object>
+      <Object refID="9076762619536213003" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeWaveEvent</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <result_index>0</result_index>
+          <wave_event_info>
+            <wave_event>HuiHeBuDui</wave_event>
+          </wave_event_info>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213004" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213007" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeWaveEvent</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <result_index>0</result_index>
+          <wave_event_info>
+            <wave_event>DaoDaErLou</wave_event>
+          </wave_event_info>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213008" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213014" type="PbLocal.Xml.MSSceneTriggerData">
+        <MSSceneTriggerData>
+          <id>90</id>
+          <reset>false</reset>
+          <enable>true</enable>
+          <trigger_count_limit>1</trigger_count_limit>
+          <run_results_data>
+            <run_results_type>SceneTriggerRunResultsType_None</run_results_type>
+            <run_results_random>
+              <min_run_results_num>0</min_run_results_num>
+              <max_run_results_num>0</max_run_results_num>
+              <results_weight />
+            </run_results_random>
+          </run_results_data>
+          <opentimings />
+        </MSSceneTriggerData>
+      </Object>
+      <Object refID="9076762619536213015" type="MEditor.MSceneTriggerDataEx">
+        <MSceneTriggerDataEx>
+          <triggerName>Trigger</triggerName>
+          <runResults />
+        </MSceneTriggerDataEx>
+      </Object>
+      <Object refID="9076762619536213019" type="PbLocal.Xml.MSSceneTriggerTimingData">
+        <MSSceneTriggerTimingData>
+          <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
+          <timing_type>SSttimingTypeServerEnter</timing_type>
+          <scene_trigger_obj_id>21</scene_trigger_obj_id>
+        </MSSceneTriggerTimingData>
+      </Object>
+      <Object refID="9076762619536213020" type="MEditor.MSceneTriggerTimingDataEx">
+        <MSceneTriggerTimingDataEx>
+          <drawBoxInfo />
+          <conditionList />
+        </MSceneTriggerTimingDataEx>
+      </Object>
+      <Object refID="9076762619536213023" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeWaveEvent</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <result_index>0</result_index>
+          <wave_event_info>
+            <wave_event>BossBattle</wave_event>
+          </wave_event_info>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213024" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213027" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeAirWall</result_type>
+          <scene_trigger_obj_id>23</scene_trigger_obj_id>
+          <result_index>0</result_index>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213028" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <drawBoxInfo />
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213033" type="PbLocal.Xml.MSSceneTriggerGroupData">
+        <MSSceneTriggerGroupData>
+          <id>34</id>
+        </MSSceneTriggerGroupData>
+      </Object>
+      <Object refID="9076762619536213034" type="MEditor.MSceneTriggerGroupDataEx">
+        <MSceneTriggerGroupDataEx>
+          <groupName>刷出2楼通往塔顶触发器</groupName>
+        </MSceneTriggerGroupDataEx>
+      </Object>
+      <Object refID="9076762619536213040" type="PbLocal.Xml.MSSceneTriggerData">
+        <MSSceneTriggerData>
+          <id>0</id>
+          <reset>false</reset>
+          <enable>true</enable>
+          <trigger_count_limit>1</trigger_count_limit>
+          <run_results_data>
+            <run_results_type>SceneTriggerRunResultsType_None</run_results_type>
+            <run_results_random>
+              <min_run_results_num>0</min_run_results_num>
+              <max_run_results_num>0</max_run_results_num>
+              <results_weight />
+            </run_results_random>
+          </run_results_data>
+          <opentimings />
+        </MSSceneTriggerData>
+      </Object>
+      <Object refID="9076762619536213041" type="MEditor.MSceneTriggerDataEx">
+        <MSceneTriggerDataEx>
+          <triggerName>Trigger</triggerName>
+          <runResults />
+        </MSceneTriggerDataEx>
+      </Object>
+      <Object refID="9076762619536213045" type="PbLocal.Xml.MSSceneTriggerTimingData">
+        <MSSceneTriggerTimingData>
+          <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
+          <timing_type>SSttimingTypeWaveEvent</timing_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+        </MSSceneTriggerTimingData>
+      </Object>
+      <Object refID="9076762619536213046" type="MEditor.MSceneTriggerTimingDataEx">
+        <MSceneTriggerTimingDataEx>
+          <conditionList />
+        </MSceneTriggerTimingDataEx>
+      </Object>
+      <Object refID="9076762619536213049" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeDestroyObj</result_type>
+          <scene_trigger_obj_id>23</scene_trigger_obj_id>
+          <result_index>0</result_index>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213050" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213053" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeCreateObj</result_type>
+          <scene_trigger_obj_id>35</scene_trigger_obj_id>
+          <result_index>0</result_index>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213054" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213057" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeWaveEvent</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <result_index>0</result_index>
+          <wave_event_info>
+            <wave_event>FinishDungeon</wave_event>
+          </wave_event_info>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213058" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213062" type="PbLocal.Xml.MSceneWaveData">
+        <MSceneWaveData>
+          <base_info>
+            <spawn_type>SceneSpawnType_Spawn_Source_SceneTriggerGroupEvent</spawn_type>
+            <id>63</id>
+            <pre_wave_option>PreWaveOptionTypeAnd</pre_wave_option>
+            <pre_wave_list>
+              <MScenePreWaveInfo>
+                <pre_wave_id>34</pre_wave_id>
+                <pre_wave_blood>0</pre_wave_blood>
+                <pre_wave_num>0</pre_wave_num>
+              </MScenePreWaveInfo>
+              <MScenePreWaveInfo>
+                <pre_wave_id>35</pre_wave_id>
+                <pre_wave_blood>0</pre_wave_blood>
+                <pre_wave_num>0</pre_wave_num>
+              </MScenePreWaveInfo>
+              <MScenePreWaveInfo>
+                <pre_wave_id>46</pre_wave_id>
+                <pre_wave_blood>0</pre_wave_blood>
+                <pre_wave_num>0</pre_wave_num>
+              </MScenePreWaveInfo>
+            </pre_wave_list>
+            <elf_id>0</elf_id>
+            <init_invisible>false</init_invisible>
+            <delay_create_time>0</delay_create_time>
+            <not_active_create>false</not_active_create>
+          </base_info>
+          <trigger_group_event_info>
+            <group_id>34</group_id>
+          </trigger_group_event_info>
+          <related_to_trigger_info>
+            <is_related>false</is_related>
+            <trigger_group_id>0</trigger_group_id>
+          </related_to_trigger_info>
+        </MSceneWaveData>
+      </Object>
+      <Object refID="9076762619536213063" type="MEditor.MSceneWaveDataEx">
+        <MSceneWaveDataEx>
+          <dir>MonsterRoot/wave62</dir>
+          <preWaveFoldout>true</preWaveFoldout>
+        </MSceneWaveDataEx>
+      </Object>
+      <Object refID="9076762619536213069" type="PbLocal.Xml.MSSceneTriggerData">
+        <MSSceneTriggerData>
+          <id>0</id>
+          <reset>false</reset>
+          <enable>true</enable>
+          <trigger_count_limit>0</trigger_count_limit>
+          <run_results_data>
+            <run_results_type>SceneTriggerRunResultsType_None</run_results_type>
+            <run_results_random>
+              <min_run_results_num>0</min_run_results_num>
+              <max_run_results_num>0</max_run_results_num>
+              <results_weight />
+            </run_results_random>
+          </run_results_data>
+          <opentimings />
+        </MSSceneTriggerData>
+      </Object>
+      <Object refID="9076762619536213070" type="MEditor.MSceneTriggerDataEx">
+        <MSceneTriggerDataEx>
+          <triggerName>Trigger</triggerName>
+          <runResults />
+        </MSceneTriggerDataEx>
+      </Object>
+      <Object refID="9076762619536213074" type="PbLocal.Xml.MSSceneTriggerTimingData">
+        <MSSceneTriggerTimingData>
+          <condition_logic_type>SceneTriggerConditionLogicType_And</condition_logic_type>
+          <timing_type>SSttimingTypePlayerButton</timing_type>
+          <scene_trigger_obj_id>35</scene_trigger_obj_id>
+        </MSSceneTriggerTimingData>
+      </Object>
+      <Object refID="9076762619536213075" type="MEditor.MSceneTriggerTimingDataEx">
+        <MSceneTriggerTimingDataEx>
+          <drawBoxInfo />
+          <conditionList />
+        </MSceneTriggerTimingDataEx>
+      </Object>
+      <Object refID="9076762619536213078" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeDungeonsEnd</result_type>
+          <scene_trigger_obj_id>35</scene_trigger_obj_id>
+          <result_index>0</result_index>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213079" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
+      </Object>
+      <Object refID="9076762619536213082" type="PbLocal.Xml.MSSceneTriggerResultData">
+        <MSSceneTriggerResultData>
+          <result_type>SSTResultTypeWaveEvent</result_type>
+          <scene_trigger_obj_id>0</scene_trigger_obj_id>
+          <result_index>0</result_index>
+          <wave_event_info>
+            <wave_event>TaDingZhenPing</wave_event>
+          </wave_event_info>
+        </MSSceneTriggerResultData>
+      </Object>
+      <Object refID="9076762619536213083" type="MEditor.MSceneTriggerResultDataEx">
+        <MSceneTriggerResultDataEx>
+          <luaData />
+          <teleportDoorData />
+          <transPositionData />
+          <animationData />
+        </MSceneTriggerResultDataEx>
       </Object>
     </Objects>
     <Nodes>
@@ -18266,6 +18776,378 @@
           </content>
         </Variables>
       </Node>
+      <Node name="[结果]wave事件(server)" ID="9076762619536213001" author="yufengLiuliu" type="[结果]wave事件(server)">
+        <nodePos>
+          <Vector2>
+            <x>3050</x>
+            <y>1720</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213002" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213003" />
+          <Variable name="dataEx" refID="9076762619536213004" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>HuiHeBuDui</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]wave事件(server)" ID="9076762619536213005" author="yufengLiuliu" type="[结果]wave事件(server)">
+        <nodePos>
+          <Vector2>
+            <x>2550</x>
+            <y>2050</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213006" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213007" />
+          <Variable name="dataEx" refID="9076762619536213008" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>DaoDaErLou</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="触发器(server)" ID="9076762619536213009" author="yufengLiuliu" type="触发器(server)">
+        <nodePos>
+          <Vector2>
+            <x>1550</x>
+            <y>2350</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213010" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213011" name="borntimingKnob" dynamic="False" />
+          <Port ID="9076762619536213012" name="timingKnob" dynamic="False" />
+          <Port ID="9076762619536213013" name="resultKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213014" />
+          <Variable name="dataEx" refID="9076762619536213015" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>Boss区域开始战斗</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[时机]玩家进入(服务器触发)" ID="9076762619536213016" author="yufengLiuliu" type="[时机]玩家进入(服务器触发)">
+        <nodePos>
+          <Vector2>
+            <x>1880</x>
+            <y>2240</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213017" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213018" name="conditionKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213019" />
+          <Variable name="dataEx" refID="9076762619536213020" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>越过入口后封闭Boss区域</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]wave事件(server)" ID="9076762619536213021" author="yufengLiuliu" type="[结果]wave事件(server)">
+        <nodePos>
+          <Vector2>
+            <x>2200</x>
+            <y>2300</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213022" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213023" />
+          <Variable name="dataEx" refID="9076762619536213024" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>BossBattle</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]空气墙(server)" ID="9076762619536213025" author="cassisji" type="[结果]空气墙(server)">
+        <nodePos>
+          <Vector2>
+            <x>2500</x>
+            <y>2300</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213026" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213027" />
+          <Variable name="dataEx" refID="9076762619536213028" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>战斗开启空气墙23</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[0]TriggerGroup-触发器组(server)" ID="9076762619536213029" author="cassisji" type="触发器组(server)">
+        <nodePos>
+          <Vector2>
+            <x>1150</x>
+            <y>2850</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213030" name="fromClientKnob" dynamic="False" />
+          <Port ID="9076762619536213031" name="triggerKnob" dynamic="False" />
+          <Port ID="9076762619536213032" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213033" />
+          <Variable name="dataEx" refID="9076762619536213034" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>Boss全部击败</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="触发器(server)" ID="9076762619536213035" author="cassisji" type="触发器(server)">
+        <nodePos>
+          <Vector2>
+            <x>1550</x>
+            <y>2850</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213036" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213037" name="borntimingKnob" dynamic="False" />
+          <Port ID="9076762619536213038" name="timingKnob" dynamic="False" />
+          <Port ID="9076762619536213039" name="resultKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213040" />
+          <Variable name="dataEx" refID="9076762619536213041" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>解除空气墙并开放离开门户</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[时机]Wave事件触发(server)" ID="9076762619536213042" author="cassisji" type="[时机]Wave事件触发(server)">
+        <nodePos>
+          <Vector2>
+            <x>1880</x>
+            <y>2740</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213043" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213044" name="conditionKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213045" />
+          <Variable name="dataEx" refID="9076762619536213046" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>Boss波次完成</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]删除Scene Trigger Object(server)" ID="9076762619536213047" author="cassisji" type="[结果]删除SceneTriggerObject(server)">
+        <nodePos>
+          <Vector2>
+            <x>2200</x>
+            <y>2750</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213048" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213049" />
+          <Variable name="dataEx" refID="9076762619536213050" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>解除空气墙23</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]创建Scene Trigger Object(server)" ID="9076762619536213051" author="cassisji" type="[结果]创建SceneTriggerObject(server)">
+        <nodePos>
+          <Vector2>
+            <x>2200</x>
+            <y>2880</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213052" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213053" />
+          <Variable name="dataEx" refID="9076762619536213054" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>显示离开门户35</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]wave事件(server)" ID="9076762619536213055" author="yufengLiuliu" type="[结果]wave事件(server)">
+        <nodePos>
+          <Vector2>
+            <x>2200</x>
+            <y>3010</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213056" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213057" />
+          <Variable name="dataEx" refID="9076762619536213058" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>FinishDungeon</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="Wave0" ID="9076762619536213059" author="cassisji" type="MSceneWaveTriggerGroupEventNode">
+        <nodePos>
+          <Vector2>
+            <x>500</x>
+            <y>2850</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213060" name="prevInKnob" dynamic="False" />
+          <Port ID="9076762619536213061" name="prevOutKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="data" refID="9076762619536213062" />
+          <Variable name="dataEx" refID="9076762619536213063" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>击败三组Boss后胜利</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="触发器(server)" ID="9076762619536213064" author="yufengLiuliu" type="触发器(server)">
+        <nodePos>
+          <Vector2>
+            <x>1550</x>
+            <y>3300</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213065" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213066" name="borntimingKnob" dynamic="False" />
+          <Port ID="9076762619536213067" name="timingKnob" dynamic="False" />
+          <Port ID="9076762619536213068" name="resultKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213069" />
+          <Variable name="dataEx" refID="9076762619536213070" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>胜利离开副本</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[时机]玩家进入(服务器触发)" ID="9076762619536213071" author="yufengLiuliu" type="[时机]玩家进入(服务器触发)">
+        <nodePos>
+          <Vector2>
+            <x>1880</x>
+            <y>3200</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213072" name="inKnob" dynamic="False" />
+          <Port ID="9076762619536213073" name="conditionKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213074" />
+          <Variable name="dataEx" refID="9076762619536213075" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>点击离开门户</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]副本结束(server)" ID="9076762619536213076" author="yufengLiuliu" type="[结果]副本结束(server)">
+        <nodePos>
+          <Vector2>
+            <x>2200</x>
+            <y>3300</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213077" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213078" />
+          <Variable name="dataEx" refID="9076762619536213079" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>退出副本</string>
+          </content>
+        </Variables>
+      </Node>
+      <Node name="[结果]wave事件(server)" ID="9076762619536213080" author="yufengLiuliu" type="[结果]wave事件(server)">
+        <nodePos>
+          <Vector2>
+            <x>2800</x>
+            <y>2300</y>
+          </Vector2>
+        </nodePos>
+        <Ports>
+          <Port ID="9076762619536213081" name="inKnob" dynamic="False" />
+        </Ports>
+        <Variables>
+          <Variable name="realData" refID="9076762619536213082" />
+          <Variable name="dataEx" refID="9076762619536213083" />
+          <_isHideChilren>
+            <boolean>false</boolean>
+          </_isHideChilren>
+          <content>
+            <string>TaDingZhenPing</string>
+          </content>
+        </Variables>
+      </Node>
     </Nodes>
     <Connections>
       <Connection port1ID="-6169089164805865472" port2ID="-6169089164802064383" />
@@ -18504,6 +19386,24 @@
       <Connection port1ID="-3138943184307224576" port2ID="-3138943184307421182" />
       <Connection port1ID="-3138943184307159040" port2ID="-3138943184307683328" />
       <Connection port1ID="-3138943184307159039" port2ID="-3138943184307945472" />
+      <Connection port1ID="-6169089164796690429" port2ID="9076762619536213002" />
+      <Connection port1ID="-6169089164796231677" port2ID="9076762619536213006" />
+      <Connection port1ID="-6169089164797673471" port2ID="9076762619536213010" />
+      <Connection port1ID="9076762619536213012" port2ID="9076762619536213017" />
+      <Connection port1ID="9076762619536213013" port2ID="9076762619536213022" />
+      <Connection port1ID="9076762619536213013" port2ID="9076762619536213026" />
+      <Connection port1ID="9076762619536213031" port2ID="9076762619536213036" />
+      <Connection port1ID="9076762619536213038" port2ID="9076762619536213043" />
+      <Connection port1ID="9076762619536213039" port2ID="9076762619536213048" />
+      <Connection port1ID="9076762619536213039" port2ID="9076762619536213052" />
+      <Connection port1ID="9076762619536213039" port2ID="9076762619536213056" />
+      <Connection port1ID="-6169089164803047421" port2ID="9076762619536213060" />
+      <Connection port1ID="-6169089164802981885" port2ID="9076762619536213060" />
+      <Connection port1ID="-6169089164797870077" port2ID="9076762619536213060" />
+      <Connection port1ID="9076762619536213031" port2ID="9076762619536213065" />
+      <Connection port1ID="9076762619536213067" port2ID="9076762619536213072" />
+      <Connection port1ID="9076762619536213068" port2ID="9076762619536213077" />
+      <Connection port1ID="9076762619536213013" port2ID="9076762619536213081" />
     </Connections>
     <Groups>
       <Group name="BossAirWallController">
