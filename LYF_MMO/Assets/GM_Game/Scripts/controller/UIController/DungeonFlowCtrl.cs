@@ -1,6 +1,4 @@
-using System.Text;
-
-/// <summary>将权威副本目标和本地附近物件接入主视图，点击只发送服务器请求。</summary>
+/// <summary>将副本附近物件交互接入主视图，点击只发送服务器请求。</summary>
 public class DungeonFlowCtrl : CtrlBase
 {
     /// <summary>由 MainView 持有的正式副本窗口。</summary>
@@ -25,7 +23,7 @@ public class DungeonFlowCtrl : CtrlBase
         TeamData.Instance.NearbyInteractionUpdated -= RefreshInteraction;
     }
 
-    /// <summary>仅显示服务器给出的目标与完成量，不计算本地进度。</summary>
+    /// <summary>按副本状态管理交互窗口，阶段目标由现有 TaskCtrl 展示。</summary>
     private void Refresh()
     {
         // 本次最新权威阶段；退出时空值收起窗口。
@@ -35,17 +33,6 @@ public class DungeonFlowCtrl : CtrlBase
             window.CloseWindow();
             return;
         }
-        // 各目标保持服务器顺序，便于沿副本路线阅读。
-        StringBuilder text = new StringBuilder("魔神塔\n");
-        for (int index = 0; index < flow.Objectives.Count; index++)
-        {
-            // 原目标描述与实际计数，不补出尚未激活的目标。
-            DungeonObjectiveData objective = flow.Objectives[index];
-            if (objective.Completed) text.Append("✓ ");
-            text.Append(objective.Description).Append("  ").Append(objective.Current).Append("/").Append(objective.Total).Append('\n');
-        }
-        if (flow.Finished) text.Append("挑战完成，请前往出口传送");
-        window.SetObjectives(text.ToString());
         if (!window.gameObject.activeSelf) ShowMainWindow(WindowType.DungeonFlowWindow);
         RefreshInteraction();
     }

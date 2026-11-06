@@ -428,7 +428,9 @@ public class TaskWindow : WindowBase
     {
         if (_startButtonRoot != null)
         {
-            _startButtonRoot.SetActive(current != null);
+            // 副本阶段只追踪服务器目标，不展示尚未接入的普通任务导航按钮。
+            bool canNavigate = current != null && !current.IsDungeonObjective;
+            _startButtonRoot.SetActive(canNavigate);
         }
         if (_cancelButtonRoot != null)
         {

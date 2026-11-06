@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `823f736c4cf48bf341cb2b24fb86e5364613ee2432caae7c03f468f48bf45434`
+Source normalized SHA256: `57958c18d8ffc8693f9ee8bf69a8465c0ef72a4df8a246c47e0f072371b0d09e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -49,11 +49,11 @@ Source normalized SHA256: `823f736c4cf48bf341cb2b24fb86e5364613ee2432caae7c03f46
 | [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-262 |
 | [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-269 |
 | [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-276 |
-| [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-282 |
+| [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-285 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `525fe9cb4bf60aaa8e1bb378685b6d2aac87ed17a40996ff66952e2153c08639`
+Source normalized SHA256: `646043b436ed2a397a9aac9b4190b37978a31e66c6b876bcda1e8003c5a78d26`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -94,7 +94,7 @@ Source normalized SHA256: `525fe9cb4bf60aaa8e1bb378685b6d2aac87ed17a40996ff66952
 | [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-282 |
 | [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-289 |
 | [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-296 |
-| [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-302 |
+| [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-305 |
 
 ## Docs/AI/DECISIONS.en.md
 

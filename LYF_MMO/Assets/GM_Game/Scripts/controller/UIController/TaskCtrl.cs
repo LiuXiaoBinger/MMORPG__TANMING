@@ -36,6 +36,8 @@ public class TaskCtrl : CtrlBase
         _taskWindow = _mainView.TaskWindow;
         _quickPanel = _mainView.QuickTaskPanel;
         RegisterActions();
+        TeamData.Instance.DungeonFlowUpdated += RefreshDungeonTasks;
+        RefreshDungeonTasks();
     }
 
     /// <summary>注册任务窗口与快捷面板抛出的界面事件，已注册时跳过。</summary>
@@ -77,6 +79,7 @@ public class TaskCtrl : CtrlBase
     /// <summary>注销网络、输入和视图事件，控制器销毁时调用。</summary>
     public override void Dispose()
     {
+        TeamData.Instance.DungeonFlowUpdated -= RefreshDungeonTasks;
         if (!_actionsRegistered)
         {
             return;
@@ -237,4 +240,42 @@ public class TaskCtrl : CtrlBase
             _quickPanel.RefreshTrackedTasks();
         }
     }
+    /// <summary>把权威副本阶段转换为现有任务条目，复用任务列表、详情和快捷追踪。</summary>
+    private void RefreshDungeonTasks()
+    {
+        // 当前完整阶段；空值只清理本来源，不清普通任务。
+        DungeonFlowState flow = TeamData.Instance.DungeonFlow;
+        if (flow == null)
+        {
+            TaskMgr.Instance.SetDungeonTasks(new TaskViewData[0]);
+            return;
+        }
+        // 每个服务器目标对应一个既有任务子条目，编号在本实例内稳定。
+        TaskViewData[] tasks = new TaskViewData[flow.Objectives.Count];
+        for (int i = 0; i < flow.Objectives.Count; i++)
+        {
+            // 当前原始目标及其只读展示投影，不自行判断完成条件。
+            DungeonObjectiveData objective = flow.Objectives[i];
+            TaskViewData task = new TaskViewData();
+            task.TaskId = -objective.Id;
+            task.IsDungeonObjective = true;
+            task.Title = "魔神塔 · " + objective.Description;
+            task.TypeName = "副本";
+            task.Description = string.Empty;
+            task.TargetText = objective.Description + "  " + objective.Current + "/" + objective.Total;
+            // 现有任务页固定值为1，兼容MainLine/Adventure两套名称，不依赖未提交的页签改名。
+            task.Page = (TaskPageFilter)1;
+            task.State = TaskViewState.Accepted;
+            if (objective.Completed)
+            {
+                task.State = TaskViewState.Finished;
+                task.TargetText += "（已完成）";
+            }
+            if (flow.Finished && i == flow.Objectives.Count - 1)
+                task.TargetText = "挑战完成，请前往出口传送";
+            tasks[i] = task;
+        }
+        TaskMgr.Instance.SetDungeonTasks(tasks);
+    }
+
 }

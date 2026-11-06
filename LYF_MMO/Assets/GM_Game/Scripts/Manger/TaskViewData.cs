@@ -4,8 +4,10 @@
 /// </summary>
 public class TaskViewData
 {
-    /// <summary>任务配置 ID，与 QuestInfo 的任务编号一致。</summary>
+    /// <summary>普通任务为 QuestInfo 编号；副本展示条目为负的服务器目标编号。</summary>
     public int TaskId;
+    /// <summary>是否为副本阶段投影；只展示权威目标，不提供普通任务接取、放弃或交付。</summary>
+    public bool IsDungeonObjective;
     /// <summary>任务标题文本，对应标题节点的 TitleText。</summary>
     public string Title;
     /// <summary>任务类型名称文本，无配置时为空字符串。</summary>
