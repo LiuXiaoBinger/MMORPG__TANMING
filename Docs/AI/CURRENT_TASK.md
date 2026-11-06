@@ -279,3 +279,12 @@
 - 准确的 86 个业务/资源/测试文件清单及完整证据见 `项目修改日志/2026-11-06-魔神塔事件刷怪与Boss封路传送.md`；原始材料位于 `_temp/moshenta-event-flow-20261106/`。其中 3 个文件已有无关用户修改，集成仅暂存本任务差异并保留工作区修改。未部署到运行中的 GameServer/GateServer。未验证：人工多人完整通关、独立构建、正式 MS 链路、RO 原完整 Boss/技能/时序节点。RO ResetDungeons 是局部 AI/采集刷新，不是整个副本重新刷怪；不支持的原外部刷新已明确记录。
 - 用户要求的 UI 修正（2026-11-06）：移除独立的魔神塔黑色目标面板。`TaskCtrl.RefreshDungeonTasks` 现在将收到的权威目标投影到既有 `TaskMgr` 的独立来源列表；既有 TaskWindow/详情/QuickTaskPanel 与普通任务一同展示。快捷追踪保留一个当前副本阶段及普通任务。`DungeonFlowCtrl`/`DungeonFlowWindow` 仅保留附近门户/采集交互。准确修改 8 个既有客户端文件，没有新增业务文件、任务协议、持久化、奖励或服务端改动。原 TaskMgr/TaskCtrl/TaskWindow 用户修改仍保留在工作区；仅基于 HEAD 的集成兼容旧任务布局 API。任务页枚举值 1 在两种布局中均表示首个任务页。完整文件清单及后续证据见 `_temp/moshenta-task-ui-fix-20261106/` 和同一份已批准的修改日志。
 - 实时编辑器边界与恢复：尽管临时设置 ScriptCompilationDuringPlay 以延后刷新，原运行会话仍发生自动编译/ForceDomainReload。重载后观察到 146 个 RoleCtrlBase 实体绑定和 PlayStateMgr.stats 为 null；未采集重载前字段值，准确的重载发起源也未捕获。已恢复原偏好值 2。用户已明确批准重启。主 Agent 随后观察到编辑器已停止并处于 Boot，启动干净会话，经既有登录 UI 登录、选择既有角色、创建单人测试队伍，再通过既有挑战入口进入魔神塔。真实服务端目标现在与普通任务一同显示于既有 TaskWindow/详情和 QuickTaskPanel；独立 Objectives 子树不存在，Play=true、paused=false、console errors=0。证据：`_temp/moshenta-task-ui-fix-20261106/root-live-acceptance.json` 和 `live-task-ui-final.png`。未记录凭证。本次 UI 修正仍未验证完整副本通关、双客户端游玩和发布构建。
+
+
+## [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable与魔神塔当前目标
+
+- 用户要求将RO原始目标表转为Luban源表，并已批准本次归档清单。Codex原生子Agent dungeon_target_config/server/client负责实现；主Agent审查、集成与验收。分支codex/feature-development，基线feacf97b8c2bb628e69ef2f97f7c1d1c6a5fce7a。未使用外部模型。
+- 新增`Luaban/MiniTemplate/Datas/#DungeonTargetTable.xlsx`，保留原表全部554行以及ID/Target/GuidePos/TargetDes/Des字段。专用`gen_dungeon_targets.ps1`只生成此表；全局行类型与容器接入现有cfg.Tables/LubanMgr。原有48份生成文件保持不变。真实Windows PowerShell 5解析失败后，脚本补上UTF-8 BOM；该次修复仅改变3个字节。
+- 共享场景XML现在仅保留有序的dungeon_target_ids/int引用137–143，来源为RO DungeonsTable的4060配置；删除目标定义与自定义阶段1–7。MoshentaSceneFlow消费原SceneAI事件并维护当前单个Section，提前事件不缓存。采集41不完成141，实际波次42死亡才完成；Boss波次34/35/46完成143。现有事件刷怪、墙、传送点及简化的FinishDungeon链保留。
+- TaskCtrl按权威ID查询表中文案并接入现有任务UI，不增加独立目标面板。编辑器按引用ID读取真实目标表并打开XLSX。已部署本地GameServer及其表和Network DLL；为恢复连接重启原GateServer二进制，切换时没有客户端连接。主Agent随后真实登录、组队并进入挑战，收到137及与表完全一致的文案，Play运行且未暂停，Console错误为0。
+- 精确的16个业务/资源/工具/测试文件、七份获批记录文件、失败事实与Git回执见`项目修改日志/2026-11-06-DungeonTargetTable-Luban与魔神塔目标移植.md`。原始证据位于`_temp/dungeon-target-luban-20261106/`。其他工作区改动已保留，并提供仅含本任务的HEAD投影。未验证：完整手动双客户端通关、发行构建/生产环境、其他副本及非类型7目标的运行时行为；导入554行不代表实现所有目标类型。

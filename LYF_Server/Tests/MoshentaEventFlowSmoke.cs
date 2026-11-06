@@ -130,6 +130,32 @@ public static class MoshentaEventFlowSmoke
         return result;
     }
 
+    /// <summary>核对完整快照只包含当前Section，以及该目标真实事件次数与完成标记。</summary>
+    /// <param name="scene">独立测试副本的正式实体宿主。</param>
+    /// <param name="id">当前阶段应引用的原DungeonTargetTable行号。</param>
+    /// <param name="current">当前目标应收到的事件次数，默认尚未完成。</param>
+    private static bool Objective(SceneWaveSpawner scene, int id, int current = 0)
+    {
+        // 每次从业务入口创建独立快照，禁止借测试修改内部进度。
+        DungeonFlowState state = Snapshot(scene).Flow;
+        if (state.Objectives.Count != 1) return false;
+        // 4060每个Section只有一个特殊事件目标，总次数取正式表定义。
+        DungeonObjectiveData target = state.Objectives[0];
+        if (target.Total != (int)LubanMgr.Instance.GetDungeonTargetTableById(id).Target[2]) return false;
+        return target.Id == id && target.Current == current && target.Completed == (current == target.Total);
+    }
+
+    /// <summary>通过测试专用反射注入原AI事件，验证提前和错误通知；不添加正式业务调试入口。</summary>
+    /// <param name="scene">接收目标事件的独立副本。</param>
+    /// <param name="id">事件int_arg中的目标表行号。</param>
+    /// <param name="eventName">原AI事件名，默认使用正式特殊目标事件。</param>
+    private static void TargetEvent(SceneWaveSpawner scene, int id, string eventName = "dungeonfinishtarget")
+    {
+        // object[]仅作为Reflection.Invoke强制要求的调用边界，不作为业务数据载荷。
+        typeof(MoshentaSceneFlow).GetMethod("DungeonTargetEvent", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(scene.Flow, new object[] { eventName, id });
+    }
+
     /// <summary>通过正式移动组件进入配置区域。</summary>
     /// <param name="peer">当前玩家。</param>
     /// <param name="x">目标X米数。</param>
@@ -192,17 +218,32 @@ public static class MoshentaEventFlowSmoke
             SceneWaveSpawner scene = Scene(70001);
             Check(a.Entry.Equals(b.Entry) && a.Entry.Monsters.Count == 0, "同队入场快照一致且无战斗怪物");
             Check(a.Entry.Pos == "132.97_58.89_60.95" && TeamManager.MoshentaSpawnPos == a.Entry.Pos, "单一XML入口与协议位置一致");
+            Check(Objective(scene, 137), "初始只同步原表137且进度为0");
+            Check(a.Entry.Flow.Objectives[0].Description == LubanMgr.Instance.GetDungeonTargetTableById(137).TargetDes, "目标文案直接来自正式Luban表");
+            TargetEvent(scene, 138);
+            TargetEvent(scene, 140);
+            TargetEvent(scene, 142);
+            TargetEvent(scene, 143);
+            Check(Objective(scene, 137), "提前目标事件不推进或预完成后续Section");
+            TargetEvent(scene, 999999);
+            TargetEvent(scene, 137, "错误事件名");
+            Check(Objective(scene, 137), "错误目标ID和事件名不能推进当前Section");
             File.WriteAllBytes(Path.Combine(folder, "wire-entry.bin"), a.Entry.ToByteArray());
             Interact(a, 5);
             Check(!a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.Pos == a.Entry.Pos, "未解锁门户拒绝且位置不变");
             Move(a, 133.14f, 63.89f, 121.74f);
             a.Receive(); b.Receive(); other.Receive();
             Check(Snapshot(scene).Monsters.Any(row => row.SpawnId == ((18UL << 32) | 1)), "前线区域激活第18波");
+            Check(Objective(scene, 138), "原区域18完成137并进入138且不补提前事件");
+            TargetEvent(scene, 137);
+            Check(Objective(scene, 138), "已完成137重复事件不会跨阶段推进");
             int count = Snapshot(scene).Monsters.Count;
             Move(a, 133.14f, 63.89f, 121.74f);
             Check(Snapshot(scene).Monsters.Count == count, "重复区域上报不重复生成");
             Check(a.Notices.SequenceEqual(b.Notices) && other.Notices.Count == 0, "事件快照同队一致且不串实例");
             File.WriteAllBytes(Path.Combine(folder, "wire-frontline.bin"), a.Notices.Last().ToByteArray());
+            Move(a, 116.1f, 63.89f, 179.02f);
+            Check(Objective(scene, 139), "原区域19完成138并进入139");
             // 保留原18波巡逻与当前位置命中结算。
             for (int frame = 0; frame < 100; frame++) TeamManager.Instance.UpdateMonsters(50);
             MonsterActionData orc = Snapshot(scene).MonsterActions.Single();
@@ -227,14 +268,18 @@ public static class MoshentaEventFlowSmoke
             Check(b.Replies.Last().Success && b.Role.mainRoleInfo.BaseInfo.Pos == "75.3_65.9_106", "门1脱战请求采用原配置目标");
             Move(a, 44.57f, 72.06f, 212.91f);
             Check(Snapshot(scene).Flow.ActiveWaveIds.Contains(41), "二层区域解锁法阵采集波次");
+            Check(Objective(scene, 140), "原区域20完成139并进入140且不补提前事件");
             Interact(a, 0, 41);
             Check(!a.Replies.Last().Success, "远距离法阵采集被拒绝");
+            Move(a, 80.68f, 72.06f, 244.38f);
+            Check(Objective(scene, 141), "原区域8完成140并进入141");
             Move(a, 80.76f, 72.06f, 289.66f);
             Interact(a, 0, 41);
             Check(a.Replies.Last().Success && Snapshot(scene).Flow.ActiveWaveIds.Contains(42), "真实采集请求完成41并召唤42");
-            Check(Snapshot(scene).Flow.Objectives.Single(row => row.Id == 4).Completed, "法阵任务进度由实际采集完成推进");
+            Check(Objective(scene, 141), "采集41仅召唤42且不完成原目标141");
             Kill(a, 42);
             Check(Snapshot(scene).Flow.CompletedWaveIds.Contains(62) && Snapshot(scene).Flow.ActiveObjectIds.Contains(5), "42真实死亡自动执行62并创建上塔门户5");
+            Check(Objective(scene, 142), "42真实全灭完成141并进入142且不补提前事件");
             Move(a, 108.99f, 72.06f, 274.9f);
             Interact(a, 5);
             Check(a.Replies.Last().Success && a.Role.mainRoleInfo.BaseInfo.Pos == "107.01_62_612.23", "上塔传送采用XML目标且服务端位置已更新");
@@ -243,6 +288,7 @@ public static class MoshentaEventFlowSmoke
             Check(Snapshot(scene).Flow.CompletedWaveIds.Contains(42), "原区域25不会把已清波次误重置");
             Move(a, 77.5f, 80.31f, 591.49f);
             Check(Snapshot(scene).Flow.ActiveWallIds.Contains(23), "Boss入口事件创建权威空气墙23");
+            Check(Objective(scene, 143), "原区域21完成142并进入143且不补提前事件");
             a.Receive(); b.Receive();
             Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow), "空气墙及Boss目标同步所有同实例队员");
             File.WriteAllBytes(Path.Combine(folder, "wire-boss.bin"), a.Notices.Last().ToByteArray());
@@ -251,16 +297,24 @@ public static class MoshentaEventFlowSmoke
             TeamManager.Instance.EnterDungeon(order);
             late.Receive(); a.Receive(); b.Receive();
             Check(late.Entry.Flow.ActiveWallIds.Contains(23) && late.Entry.Flow.Equals(a.Entry.Flow), "中途加入取得相同墙门任务完整快照");
+            Check(late.Entry.Flow.Objectives.Single().Id == 143 && late.Entry.Flow.Objectives.Single().Current == 0, "晚加入只收到当前143阶段及真实计数");
             Check(a.Role.mainRoleInfo.BaseInfo.Pos == before && late.Entry.Pos == TeamManager.MoshentaSpawnPos, "晚加入不移动已在场队员");
             Move(a, 77.5f, 80.31f, 580f);
             a.Receive();
             Check(a.Role.mainRoleInfo.BaseInfo.Pos == before && !a.Replies.Last().Success && a.Replies.Last().Pos == before, "跨过薄墙的大步移动被拒绝并收到11241权威校正");
-            Kill(a, 34); Kill(a, 35); Kill(a, 46);
+            Kill(a, 34);
+            Check(Objective(scene, 143), "只死亡Boss波34不完成143");
+            Kill(a, 35);
+            Check(Objective(scene, 143), "只死亡Boss波34和35不完成143");
+            Kill(a, 46);
             Check(!Snapshot(scene).Flow.ActiveWallIds.Contains(23) && Snapshot(scene).Flow.ActiveObjectIds.Contains(35), "Boss实际全灭执行63释放墙并生成出口");
-            Check(Snapshot(scene).Flow.Finished && Snapshot(scene).Flow.Objectives.Single(row => row.Id == 6).Completed, "Boss目标真实完成并激活出口目标");
+            Check(Snapshot(scene).Flow.Finished && Objective(scene, 143, 1), "三Boss实际全灭完成143并保留现有胜利出口链");
+            TargetEvent(scene, 143);
+            Check(Objective(scene, 143, 1), "末目标重复事件保持143完成且不增计数");
             a.Receive();
             File.WriteAllBytes(Path.Combine(folder, "wire-victory.bin"), a.Notices.Last().ToByteArray());
             Check(Snapshot(Scene(70002)).Monsters.Count == 0, "另一个副本的怪物和流程始终独立");
+            Check(Objective(Scene(70002), 137), "另一副本目标保持137且不串当前Section");
             Move(late, 77.46f, 80.32f, 604.5f);
             // 测试角色从入口跨越已释放墙，可直接到达出口。
             Interact(late, 35);
@@ -271,7 +325,7 @@ public static class MoshentaEventFlowSmoke
             TeamManager.Instance.UpdateMonsters(50);
             a.Receive(); b.Receive(); late.Receive();
             Check(Snapshot(scene).Monsters.Count == 0 && Snapshot(scene).Flow.ActiveWallIds.Count == 0 && !Snapshot(scene).Flow.ActiveObjectIds.Contains(35), "全队死亡重置实体空气墙和出口");
-            Check(Snapshot(scene).Flow.Objectives.Count == 1 && !Snapshot(scene).Flow.Finished, "全灭目标进度回到初始状态");
+            Check(Objective(scene, 137) && !Snapshot(scene).Flow.Finished, "全灭目标进度回到原表137初始状态");
             Check(a.Notices.Last().Flow.Equals(b.Notices.Last().Flow) && a.Role.mainRoleInfo.BaseInfo.Pos == TeamManager.MoshentaSpawnPos, "全灭重置快照同队一致且回权威入口");
             File.WriteAllBytes(Path.Combine(folder, "wire-reset.bin"), a.Notices.Last().ToByteArray());
             a.Role.mainRoleInfo.BaseInfo.CurrHp = StartingHp;

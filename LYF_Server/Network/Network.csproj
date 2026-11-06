@@ -60,6 +60,8 @@
     <Compile Include="Common\Singleton.cs" />
     <Compile Include="LubanManage\Codes\EquipInfo.cs" />
     <Compile Include="LubanManage\Codes\CountInfo.cs" />
+    <Compile Include="LubanManage\Codes\DungeonTargetTable.cs" />
+    <Compile Include="LubanManage\Codes\TbDungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\Gene.cs" />
     <Compile Include="LubanManage\Codes\ItemInfo.cs" />
     <Compile Include="LubanManage\Codes\KnapsackInfo.cs" />
@@ -152,6 +154,7 @@
     <Content Include="LubanManage\Tb\tbskilleffectinfo.bytes" />
     <Content Include="LubanManage\Tb\tbskillpresentationinfo.bytes" />
     <Content Include="LubanManage\Tb\tbpresenttable.bytes" />
+    <Content Include="LubanManage\Tb\tbdungeontargettable.bytes" />
   </ItemGroup>
   <ItemDefinitionGroup>
     <Content>

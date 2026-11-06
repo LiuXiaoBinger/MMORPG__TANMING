@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `57958c18d8ffc8693f9ee8bf69a8465c0ef72a4df8a246c47e0f072371b0d09e`
+Source normalized SHA256: `223c6a7223328ea605cd520559c083ed5c1bd1d29681fc97cbe83a637b9c8b75`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -49,11 +49,12 @@ Source normalized SHA256: `57958c18d8ffc8693f9ee8bf69a8465c0ef72a4df8a246c47e0f0
 | [CODE][FILES][HANDOFF][聊天][RO-CHAT-DEV-20261104] World, current scene and party chat | 257-262 |
 | [CODE][FILES][HANDOFF] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — Full resource build repair | 263-269 |
 | [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-276 |
-| [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-285 |
+| [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-286 |
+| [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable and Moshenta current objectives | 287-293 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `646043b436ed2a397a9aac9b4190b37978a31e66c6b876bcda1e8003c5a78d26`
+Source normalized SHA256: `85042ad20ea51017659bee92e8aa4727f2b0756c8c0322f93c252d7ff051419b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -94,7 +95,8 @@ Source normalized SHA256: `646043b436ed2a397a9aac9b4190b37978a31e66c6b876bcda1e8
 | [VERIFY][聊天][RO-CHAT-DEV-20261104] TCP routing and voice playback | 277-282 |
 | [VERIFY] [构建][Shader][资源] UNITY-FULL-BUILD-20261105 — ForceRebuild acceptance | 283-289 |
 | [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-296 |
-| [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-305 |
+| [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-306 |
+| [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] Original table fidelity and current Section acceptance | 307-313 |
 
 ## Docs/AI/DECISIONS.en.md
 

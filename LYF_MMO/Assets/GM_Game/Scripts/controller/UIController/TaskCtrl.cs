@@ -252,17 +252,21 @@ public class TaskCtrl : CtrlBase
         }
         // 每个服务器目标对应一个既有任务子条目，编号在本实例内稳定。
         TaskViewData[] tasks = new TaskViewData[flow.Objectives.Count];
+        // 按服务器当前阶段的目标顺序生成展示条目。
         for (int i = 0; i < flow.Objectives.Count; i++)
         {
-            // 当前原始目标及其只读展示投影，不自行判断完成条件。
+            // 当前原始目标只提供权威编号、进度和完成状态。
             DungeonObjectiveData objective = flow.Objectives[i];
+            // 文案使用同编号的 Luban 原始目标表，避免协议或场景 XML 维护第二份定义。
+            DungeonTargetTable target = LubanMgr.Instance.GetDungeonTargetTableById(objective.Id);
+            // 副本目标沿用现有任务展示结构，不提供普通任务接取和交付。
             TaskViewData task = new TaskViewData();
             task.TaskId = -objective.Id;
             task.IsDungeonObjective = true;
-            task.Title = "魔神塔 · " + objective.Description;
+            task.Title = "魔神塔 · " + target.TargetDes;
             task.TypeName = "副本";
             task.Description = string.Empty;
-            task.TargetText = objective.Description + "  " + objective.Current + "/" + objective.Total;
+            task.TargetText = target.TargetDes + "  " + objective.Current + "/" + objective.Total;
             // 现有任务页固定值为1，兼容MainLine/Adventure两套名称，不依赖未提交的页签改名。
             task.Page = (TaskPageFilter)1;
             task.State = TaskViewState.Accepted;

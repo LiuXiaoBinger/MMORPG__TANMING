@@ -14,6 +14,8 @@ namespace cfg
 public partial class Tables
 {
     public TbCountInfo TbCountInfo {get; }
+    /// <summary>按 RO 原始目标 ID 加载的副本目标定义。</summary>
+    public TbDungeonTargetTable TbDungeonTargetTable {get; }
     public TbEquipInfo TbEquipInfo {get; }
     public TbGene TbGene {get; }
     public TbItemInfo TbItemInfo {get; }
@@ -33,6 +35,7 @@ public partial class Tables
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbCountInfo = new TbCountInfo(loader("tbcountinfo"));
+        TbDungeonTargetTable = new TbDungeonTargetTable(loader("tbdungeontargettable"));
         TbEquipInfo = new TbEquipInfo(loader("tbequipinfo"));
         TbGene = new TbGene(loader("tbgene"));
         TbItemInfo = new TbItemInfo(loader("tbiteminfo"));
@@ -54,6 +57,7 @@ public partial class Tables
     private void ResolveRef()
     {
         TbCountInfo.ResolveRef(this);
+        TbDungeonTargetTable.ResolveRef(this);
         TbEquipInfo.ResolveRef(this);
         TbGene.ResolveRef(this);
         TbItemInfo.ResolveRef(this);

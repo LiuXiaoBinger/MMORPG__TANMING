@@ -9,90 +9,15 @@
       </position>
       <face>0</face>
     </player_spawn>
-    <dungeon_targets>
-      <MSceneDungeonTarget>
-        <id>1</id>
-        <description>前往前线与部队会合</description>
-        <activation_event />
-        <target_event>HuiHeBuDui</target_event>
-        <wave_ids />
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>2</id>
-        <description>清理一层敌人</description>
-        <activation_event>HuiHeBuDui</activation_event>
-        <target_event />
-        <wave_ids>
-          <int>15</int>
-          <int>16</int>
-          <int>17</int>
-          <int>18</int>
-          <int>19</int>
-          <int>20</int>
-          <int>21</int>
-          <int>22</int>
-          <int>23</int>
-          <int>24</int>
-          <int>25</int>
-          <int>26</int>
-          <int>27</int>
-          <int>28</int>
-          <int>29</int>
-          <int>30</int>
-          <int>31</int>
-          <int>32</int>
-        </wave_ids>
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>3</id>
-        <description>清理二层敌人</description>
-        <activation_event>DaoDaErLou</activation_event>
-        <target_event />
-        <wave_ids>
-          <int>33</int>
-          <int>40</int>
-          <int>43</int>
-          <int>44</int>
-          <int>45</int>
-        </wave_ids>
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>4</id>
-        <description>破坏召唤法阵</description>
-        <activation_event>DaoDaErLou</activation_event>
-        <target_event />
-        <wave_ids>
-          <int>41</int>
-        </wave_ids>
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>5</id>
-        <description>击败召唤的魔法师</description>
-        <activation_event>SummonDemon</activation_event>
-        <target_event />
-        <wave_ids>
-          <int>42</int>
-        </wave_ids>
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>6</id>
-        <description>击败塔顶三名Boss</description>
-        <activation_event>BossBattle</activation_event>
-        <target_event />
-        <wave_ids>
-          <int>34</int>
-          <int>35</int>
-          <int>46</int>
-        </wave_ids>
-      </MSceneDungeonTarget>
-      <MSceneDungeonTarget>
-        <id>7</id>
-        <description>通过门户离开副本</description>
-        <activation_event>FinishDungeon</activation_event>
-        <target_event>DungeonsEnd</target_event>
-        <wave_ids />
-      </MSceneDungeonTarget>
-    </dungeon_targets>
+    <dungeon_target_ids>
+      <int>137</int>
+      <int>138</int>
+      <int>139</int>
+      <int>140</int>
+      <int>141</int>
+      <int>142</int>
+      <int>143</int>
+    </dungeon_target_ids>
     <wallDatas />
     <patrolPathDatas>
       <MScenePatrolPathData>

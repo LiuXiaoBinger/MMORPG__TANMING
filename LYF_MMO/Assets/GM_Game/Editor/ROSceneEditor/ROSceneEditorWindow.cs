@@ -43,6 +43,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private ROSceneCreatureCatalog catalog;
     /// <summary>原 XML 属性控件及其展开状态。</summary>
     private readonly ROSceneFieldGUI fields = new ROSceneFieldGUI();
+    /// <summary>从正式 Luban 二进制读取的目标表，加载场景或手动刷新时更新。</summary>
+    private TbDungeonTargetTable dungeonTargetTable;
     /// <summary>当前窗口拥有的临时场景预览。</summary>
     private ROScenePreview preview;
     /// <summary>用户首先点选、等待接入另一个端口的起点。</summary>
@@ -107,6 +109,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         config = MSceneEditorConfig.LoadFromFile(path);
         currentPath = path;
         catalog = ROSceneCreatureCatalog.Load();
+        LoadDungeonTargets();
         selected = null;
         selectedArea = null;
         hasUnsavedChanges = false;
@@ -373,9 +376,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
         GUILayout.Label("正式出生点（客户端与服务端共用）", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
         fields.Draw(config.Document.Root.Element("data").Element("player_spawn"));
-        GUILayout.Label("副本阶段目标", EditorStyles.boldLabel);
-        fields.Draw(config.Document.Root.Element("data").Element("dungeon_targets"));
         if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
+        DrawDungeonTargets();
         EditorGUILayout.Space();
         if (selectedArea != null)
         {
@@ -401,6 +403,63 @@ public sealed class ROSceneEditorWindow : EditorWindow
         if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
         DrawConnections();
         DrawPreviewLog();
+    }
+
+    /// <summary>只加载副本目标生成表，不初始化编辑模式下无关的运行时模块。</summary>
+    private void LoadDungeonTargets()
+    {
+        // 正式表由项目 Luban 生成流程复制到共享 Network 配置目录。
+        string dataPath = Path.GetFullPath(Path.Combine(Application.dataPath,
+            "../../LYF_Server/Network/LubanManage/Tb/tbdungeontargettable.bytes"));
+        dungeonTargetTable = null;
+        if (!File.Exists(dataPath)) return;
+        dungeonTargetTable = new TbDungeonTargetTable(new Luban.ByteBuf(File.ReadAllBytes(dataPath)));
+    }
+
+    /// <summary>按场景引用顺序显示真实 Luban 目标，源表是目标定义的唯一编辑入口。</summary>
+    private void DrawDungeonTargets()
+    {
+        GUILayout.Label("副本目标（Luban）", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("打开目标配置表"))
+        {
+            // 打开项目正式源表；本窗口不把文案或目标条件写回场景 XML。
+            string sourcePath = Path.GetFullPath(Path.Combine(Application.dataPath,
+                "../../Luaban/MiniTemplate/Datas/#DungeonTargetTable.xlsx"));
+            EditorUtility.OpenWithDefaultApp(sourcePath);
+        }
+        if (GUILayout.Button("重新读取")) LoadDungeonTargets();
+        EditorGUILayout.EndHorizontal();
+        if (dungeonTargetTable == null)
+        {
+            EditorGUILayout.HelpBox("未找到副本目标生成表，请先运行项目 Luban 导出。", MessageType.Warning);
+            return;
+        }
+        // 场景只保存原目标编号与顺序，目标字段全部由同一份 Luban 表提供。
+        XElement references = config.Document.Root.Element("data").Element("dungeon_target_ids");
+        if (references == null)
+        {
+            EditorGUILayout.HelpBox("当前场景未引用副本目标。", MessageType.Info);
+            return;
+        }
+        // 使用原 XML 引用数组，绘制期间不修改场景目标顺序。
+        XElement[] targetIds = references.Elements("int").ToArray();
+        // 按场景中的编号引用逐项查询，不依赖副本固定编号或目标备注。
+        for (int i = 0; i < targetIds.Length; i++)
+        {
+            // 当前引用必须是正式目标表的整数 ID。
+            int targetId = int.Parse(targetIds[i].Value, CultureInfo.InvariantCulture);
+            // 目标定义直接来自生成表；缺行时显示引用错误，不回退旧 XML 文案。
+            DungeonTargetTable target = dungeonTargetTable.GetOrDefault(targetId);
+            if (target == null)
+            {
+                EditorGUILayout.HelpBox("Luban 表中未找到目标 " + targetId, MessageType.Warning);
+                continue;
+            }
+            EditorGUILayout.LabelField(target.ID + "  " + target.TargetDes, EditorStyles.wordWrappedLabel);
+            EditorGUILayout.LabelField("目标参数", string.Join("|", target.Target));
+            EditorGUILayout.LabelField("引导坐标", string.Join("=", target.GuidePos));
+        }
     }
 
     /// <summary>给波次提供直观的刷点与出场预览操作。</summary>

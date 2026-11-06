@@ -23,13 +23,15 @@ public sealed class MoshentaSceneFlow
     private static readonly Dictionary<string, XElement> Ports = Nodes.SelectMany(node => node.Element("Ports").Elements().Select(port => new KeyValuePair<string, XElement>((string)port.Attribute("ID"), node))).ToDictionary(pair => pair.Key, pair => pair.Value);
     /// <summary>原节点之间的连线，不建立另一套手写图。</summary>
     private static readonly XElement[] Connections = Config.Root.Element("canvas").Element("Connections").Elements().ToArray();
+    /// <summary>原副本4060的线性阶段顺序；每个int节点只引用Luban目标行，不重复定义目标内容。</summary>
+    private static readonly int[] TargetIds = Config.Root.Element("data").Element("dungeon_target_ids").Elements("int").Select(row => (int)row).ToArray();
     /// <summary>拥有实体世界的实例宿主。</summary>
     private readonly SceneWaveSpawner owner;
     /// <summary>已激活波次，保留到重置用于去重及晚加入快照。</summary>
     private readonly HashSet<int> active = new HashSet<int>();
     /// <summary>已经清空或采集完成的波次。</summary>
     private readonly HashSet<int> complete = new HashSet<int>();
-    /// <summary>已发生的场景事件，驱动等待事件波次与目标。</summary>
+    /// <summary>已发生的波次事件，只用于出生依赖，不缓存副本目标事件。</summary>
     private readonly HashSet<string> events = new HashSet<string>();
     /// <summary>当前实际存在的场景物件。</summary>
     private readonly HashSet<int> objects = new HashSet<int>();
@@ -37,6 +39,10 @@ public sealed class MoshentaSceneFlow
     private readonly HashSet<int> walls = new HashSet<int>();
     /// <summary>区域触发器的画布节点身份，同号旧触发器不会相互覆盖。</summary>
     private readonly HashSet<string> entered = new HashSet<string>();
+    /// <summary>当前单目标Section在原副本目标顺序中的零基下标，完成末阶段后保持末项。</summary>
+    private int currentTargetIndex;
+    /// <summary>当前Section已经收到的匹配特殊事件次数；推进到下一Section时归零。</summary>
+    private int currentTargetCount;
     /// <summary>是否存在尚未广播的流程变化。</summary>
     internal bool Dirty { get; private set; }
 
@@ -126,6 +132,47 @@ public sealed class MoshentaSceneFlow
         Dirty = true;
         Event((string)Waves[id].Element("base_info").Element("end_scene_ai_event"));
         Advance();
+    }
+
+    /// <summary>沿用原SceneAI的五个区域事件，只转发本副本引用的特殊事件目标。</summary>
+    /// <param name="name">原SSTResultTypeSceneAIEvent中的事件名称。</param>
+    private void SceneAIEvent(string name)
+    {
+        switch (name)
+        {
+            case "HuiHeBuDui": DungeonTargetEvent("dungeonfinishtarget", 137); break;
+            case "TongWangErLou": DungeonTargetEvent("dungeonfinishtarget", 138); break;
+            case "DaoDaErLou": DungeonTargetEvent("dungeonfinishtarget", 139); break;
+            case "DaoDaCeTing": DungeonTargetEvent("dungeonfinishtarget", 140); break;
+            case "DaoDaTaDing": DungeonTargetEvent("dungeonfinishtarget", 142); break;
+        }
+    }
+
+    /// <summary>仅当前Section消费匹配的特殊事件；提前事件不缓存，末阶段完成后保留最终进度。</summary>
+    /// <param name="name">原AI事件名，只有dungeonfinishtarget能推进此类目标。</param>
+    /// <param name="targetId">原AI事件int_arg携带的DungeonTargetTable行号。</param>
+    private void DungeonTargetEvent(string name, int targetId)
+    {
+        if (name != "dungeonfinishtarget" || TargetIds[currentTargetIndex] != targetId) return;
+        // 仅实现4060引用的类型7；Target第三项为该目标需要收到的事件总次数。
+        DungeonTargetTable row = LubanMgr.Instance.GetDungeonTargetTableById(targetId);
+        if (row.Target[0] != 7 || currentTargetCount >= (int)row.Target[2]) return;
+        currentTargetCount++;
+        if (currentTargetCount == (int)row.Target[2] && currentTargetIndex + 1 < TargetIds.Length)
+        {
+            currentTargetIndex++;
+            currentTargetCount = 0;
+        }
+        Dirty = true;
+    }
+
+    /// <summary>真实怪物死亡后按原SceneAI顺序先检查三名Boss，再检查42波；采集不触发此入口。</summary>
+    internal void MonsterDied()
+    {
+        if (complete.Contains(34) && complete.Contains(35) && complete.Contains(46))
+            DungeonTargetEvent("dungeonfinishtarget", 143);
+        else if (complete.Contains(42))
+            DungeonTargetEvent("dungeonfinishtarget", 141);
     }
 
     /// <summary>从原前置条件解析当前可出生波次；触发组波次立即执行其 WaveEvent 结果。</summary>
@@ -222,6 +269,7 @@ public sealed class MoshentaSceneFlow
             switch ((string)row.Element("result_type"))
             {
                 case "SSTResultTypeWaveEvent": Event((string)row.Element("wave_event_info").Element("wave_event")); break;
+                case "SSTResultTypeSceneAIEvent": SceneAIEvent((string)row.Element("scene_ai_event").Element("ai_event")); break;
                 case "SSTResultTypeCreateObj": objects.Add(id); Dirty = true; break;
                 case "SSTResultTypeDestroyObj": objects.Remove(id); walls.Remove(id); Dirty = true; break;
                 case "SSTResultTypeAirWall": objects.Add(id); walls.Add(id); Dirty = true; break;
@@ -405,7 +453,7 @@ public sealed class MoshentaSceneFlow
         return lower <= upper;
     }
 
-    /// <summary>生成可序列化的完整实例快照，目标进度来自真实完成集合。</summary>
+    /// <summary>生成完整实例快照，目标只同步RO当前Section的表定义与实例进度。</summary>
     public DungeonFlowState Snapshot()
     {
         // 对外传输的独立快照，不暴露内部集合。
@@ -414,26 +462,16 @@ public sealed class MoshentaSceneFlow
         result.CompletedWaveIds.Add(complete.OrderBy(id => id));
         result.ActiveObjectIds.Add(objects.OrderBy(id => id));
         result.ActiveWallIds.Add(walls.OrderBy(id => id));
-        // 正式 XML 中有序的副本任务定义。
-        XElement[] targets = Config.Root.Element("data").Element("dungeon_targets").Elements().ToArray();
-        // 当前配置集合的零基下标，仅遍历本次快照长度。
-        for (int index = 0; index < targets.Length; index++)
+        // 当前Section只有一个原表目标；文案和总次数来自同一份Luban数据。
+        DungeonTargetTable target = LubanMgr.Instance.GetDungeonTargetTableById(TargetIds[currentTargetIndex]);
+        result.Objectives.Add(new DungeonObjectiveData
         {
-            // 当前目标对应的原配置行。
-            XElement row = targets[index];
-            // 当前目标需要先收到的场景事件，空值表示初始目标。
-            string activation = (string)row.Element("activation_event");
-            if (!string.IsNullOrEmpty(activation) && !events.Contains(activation)) continue;
-            // 当前目标要求全部完成的波次编号。
-            XElement[] waveIds = row.Element("wave_ids").Elements().ToArray();
-            // 当前目标的展示文字与实际完成计数。
-            DungeonObjectiveData target = new DungeonObjectiveData { Id = (int)row.Element("id"), Description = (string)row.Element("description"), Total = Math.Max(1, waveIds.Length) };
-            // 当前配置集合的零基下标，仅遍历本次快照长度。
-            for (int item = 0; item < waveIds.Length; item++) if (complete.Contains((int)waveIds[item])) target.Current++;
-            if (waveIds.Length == 0 && events.Contains((string)row.Element("target_event"))) target.Current = 1;
-            target.Completed = target.Current == target.Total;
-            result.Objectives.Add(target);
-        }
+            Id = target.ID,
+            Description = target.TargetDes,
+            Current = currentTargetCount,
+            Total = (int)target.Target[2],
+            Completed = currentTargetCount == (int)target.Target[2]
+        });
         return result;
     }
 
@@ -446,6 +484,8 @@ public sealed class MoshentaSceneFlow
         objects.Clear();
         walls.Clear();
         entered.Clear();
+        currentTargetIndex = 0;
+        currentTargetCount = 0;
         Dirty = true;
     }
 

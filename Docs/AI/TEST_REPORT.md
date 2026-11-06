@@ -297,3 +297,12 @@
 - 真实自检修正：服务端 RunGroup 最初匹配 AIEvent 而非原 WaveEvent，已在最终 34 项 PASS 前修正；门 1 预期目标改为原 XML 数据；客户端 out 类型编译错误已修正。主 Agent 的反射探针最初命中重复的 Global/MonsterEntity 类型，改为指定已知程序集/基类，无须修改业务。完整人工联机游玩、独立构建/部署、原版完整 AI/时序仍未验证。日志为 `项目修改日志/2026-11-06-魔神塔事件刷怪与Boss封路传送.md`；子 Agent 交付与原始证据位于 `_temp/moshenta-event-flow-20261106/`。
 - UI 修正验收：新的 GM_Game 源码经外部编译，C# 错误为 0；实际已加载的新 TaskCtrl/TaskMgr 在隔离状态中执行检查，之后恢复状态。进入副本及普通 SetTasks 后，普通任务对象/选中项保留；阶段进度、下一未完成目标、完成、重置和退出均保留普通任务。正式既有 TaskWindow 和 QuickTaskPanel 能渲染副本/普通任务行；两份正式预制体均不再包含独立 Objectives 子树；门户点击/隐藏仍有效。主 Agent 已检查 8 文件任务差异、截图与任务选中调用路径。证据：`_temp/moshenta-task-ui-fix-20261106/verification.txt`、`task-ui-preview.png`、`delivery.md`、`file-manifest.json`。截图在预览场景中使用显式测试进度 3/18，不是实时玩家进度。
 - 真实失败、恢复与边界：首次外部编译响应文件指向错误程序集（缺少 AotStubs）；改用实际 GM_Game 响应文件后编译通过。第一次暂存暴露出尚未提交的任务 UI 枚举/布局修改；原开发者在第 2 轮提供共享页值兼容修正及纯 HEAD 投影，未覆盖用户修改。工作区与 HEAD 投影两套源码均编译通过；两者的实际 TaskCtrl/TaskMgr 页映射和普通任务保留检查均通过。自动 ForceDomainReload 曾使原实时会话 Play 暂停，实体/重力绑定为 null；已恢复偏好值 2 及隔离测试状态，准确的重载发起源仍未确认。用户明确批准重启后，主 Agent 执行干净登录、选角、组建单人队伍，并通过真实挑战入口进入 sc_dungeon_moshenta_001。收到的目标“前往前线与部队会合 0/1”与普通任务一同显示于既有任务窗口/详情和快捷追踪栏；主 Agent 使用该实际收到的条目调用既有任务选中处理。Play=true、paused=false，独立 Objectives 子树不存在，console errors=0。`root-live-acceptance.json` / `live-task-ui-final.png` 记录的是实际运行入场，不是模拟阶段进度。本次修正没有重跑服务端 34 项，也不宣称已完成完整副本通关、双客户端游玩、发布构建或完整任务玩法验证。
+
+
+## [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] 原表一致性与当前Section验收
+
+- 配置子Agent逐项比对原CSV的554行×5字段=2770个值；实际生成读取器解码全部行，cfg.Tables加载17张表，查询API通过，原有48份生成文件未变。重新生成后，两份新增C#文件与bytes的哈希一致。Network/GameServer/GateServer构建通过，保留既有警告；客户端与编辑器的工作区和仅含本任务的HEAD投影均编译通过。未重新生成无关任务表。
+- 服务端子Agent与主Agent各运行一次真实隔离TCP烟测，均为PASS50。覆盖保留原34项检查，并增加原始137–143顺序、提前/错误/重复事件、采集41与波次42完成区别、Boss部分/全部死亡、晚加入、实例隔离与重置。主Agent审查实际代码和原recv-event语义；未新增协议或覆盖全部目标类型的框架。
+- Unity中实际Network/LubanMgr加载554行和七个XML引用，旧目标定义已不存在。真实TCP报文在临时隔离状态下经过实际TaskCtrl/TaskMgr：入场137、前线138、Boss143、胜利、重置137、退出清理及普通任务保留均通过。正式任务UI已渲染，主Agent检查截图。编辑器加载真实表与引用，dirty=false。临时状态和预览已清除，用户已托管的编辑器窗口保留。
+- 主Agent更新本地GameServer的五项构建/表产物并重启原GateServer恢复连接，已记录源/目标SHA。真实登录、角色进入、单人队伍与挑战入场收到137，表文案与任务文案一致，Play=true/paused=false/errors0。证据为root-live-verification.txt/root-live-ui.png及deployment.json。未记录凭证。
+- 真实失败：未托管测试EditorWindow.Close抛异常，测试清理改用DestroyImmediate，未因此修改业务。Windows PowerShell 5无法解析UTF-8无BOM脚本；正式生成器补BOM后解析错误由77降为0。本地部署在停止进程后首次遇到临时可执行文件占用；确认旧进程/监听均不存在后复制已校验产物并成功重启。完整手动通关、双客户端实机游玩、发行/生产环境及其他目标类型仍按完整日志记载，未验证或未实现。

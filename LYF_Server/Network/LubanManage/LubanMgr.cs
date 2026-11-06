@@ -46,6 +46,9 @@ public class LubanMgr:Singleton<LubanMgr>
     // 任务配置ID到任务表记录的索引。
     private Dictionary<int, QuestInfo> _questInfos;
 
+    /// <summary>RO 原始副本目标 ID 到定义的只读业务索引，随配置初始化加载。</summary>
+    private Dictionary<int, DungeonTargetTable> _dungeonTargetTables;
+
     // 角色等级表的原始ID索引。
     private Dictionary<int, RoleLevelInfo> _roleLevelInfos;
 
@@ -97,6 +100,7 @@ public class LubanMgr:Singleton<LubanMgr>
         _npcInfos = ParseNpcInfos(tables.TbNpcInfo.DataList);
         _professionInfos = tables.TbProfessionInfo.DataMap;
         _questInfos = tables.TbQuestInfo.DataMap;
+        _dungeonTargetTables = tables.TbDungeonTargetTable.DataMap;
         _roleLevelInfos = tables.TbRoleLevelInfo.DataMap;
         _roleLevelAttributeInfos = tables.TbRoleLevelAttributeInfo.DataMap;
         // 直接复用 Luban 生成表的索引，避免启动后重复复制配置数据。
@@ -578,6 +582,19 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 任务相关
+    /// <summary>按 RO 原始目标 ID 获取副本目标定义。</summary>
+    /// <param name="id">DungeonTargetTable.ID 中的稳定目标 ID。</param>
+    /// <returns>目标原表记录；尚未加载或未配置此 ID 时返回 null。</returns>
+    public DungeonTargetTable GetDungeonTargetTableById(int id)
+    {
+        // 保存目标索引命中的记录，调用方仅读取原表定义。
+        if (_dungeonTargetTables != null && _dungeonTargetTables.TryGetValue(id, out DungeonTargetTable target))
+        {
+            return target;
+        }
+        return null;
+    }
+
     /// <summary>返回任务配置索引。</summary>
     public Dictionary<int, QuestInfo> GetQuestInfos()
     {

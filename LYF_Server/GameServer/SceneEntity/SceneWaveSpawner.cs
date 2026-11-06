@@ -190,6 +190,9 @@ public sealed class SceneWaveSpawner
         notice.FirerX = origin.X;
         notice.FirerY = origin.Y;
         notice.FirerZ = origin.Z;
+        // 本攻击窗口是否真实产生新死亡，避免非致命伤害和快照补发误触发场景目标。
+        bool monsterDied = false;
+        // 当前权威实体的零基下标，本轮结束后才允许清波生成新实体。
         for (int index = 0; index < monsters_.Count; index++)
         {
             // 实例内的权威实体，零血后不再参与随后窗口或其他队员的结算。
@@ -210,11 +213,13 @@ public sealed class SceneWaveSpawner
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
             monster.CurrentHp = Math.Max(0, hpBeforeHit - damage);
+            if (monster.CurrentHp == 0) monsterDied = true;
             notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
             if (index == orcIndex) orc.OnHit(caster, hpBeforeHit - monster.CurrentHp, notice);
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
         CheckCompletedWaves();
+        if (monsterDied) Flow.MonsterDied();
     }
 
     /// <summary>按已出生实体的实际生命判断清波，不能把尚未创建的波次视为完成。</summary>

@@ -18,9 +18,6 @@ public sealed class ROSceneFieldGUI
     private static readonly Dictionary<string, string> labels = new Dictionary<string, string>
     {
         { "base_info", "波次基础" }, { "id", "编号" }, { "spawn_type", "生成类型" },
-        { "MSceneDungeonTarget", "阶段目标" }, { "description", "目标说明" },
-        { "activation_event", "激活事件（空为初始）" }, { "target_event", "完成事件" },
-        { "wave_ids", "需完成的波次编号" },
         { "pre_wave_option", "前置波次条件" }, { "pre_wave_list", "前置波次列表" },
         { "pre_scene_ai_event", "等待事件名" }, { "end_scene_ai_event", "结束发送 AI 事件" },
         { "delay_create_time", "创建延迟（毫秒）" }, { "not_active_create", "不主动创建" },
