@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `924157a83fe33d60fc8deebf7f39b743ceee338a808bae6496a8f92aeb217838`
+Source normalized SHA256: `a8adcaa9dcbc084b2cadce3827911847141a198de2d729dba12d52275b8471b9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -51,11 +51,12 @@ Source normalized SHA256: `924157a83fe33d60fc8deebf7f39b743ceee338a808bae6496a8f
 | [CODE][FILES][HANDOFF][组队][TEAM-ENTRY-CONFIRM-20261105] Teammate HUD bindings and RO entry confirmation | 270-276 |
 | [CODE][FILES][HANDOFF][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Event-driven Moshenta waves, Boss walls and portal interaction | 277-286 |
 | [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable and Moshenta current objectives | 287-295 |
-| [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Config-driven dungeon objectives and original RO sections | 296-305 |
+| [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Config-driven dungeon objectives and original RO sections | 296-307 |
+| [CODE][FILES][HANDOFF][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Readable creature waves and explicit trigger/map locations | 308-313 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0bdee90b6af67677b6313a74e1db8a1e5a3ef089e4d1ec9dac7ff04a3a31d4e3`
+Source normalized SHA256: `ea03a3a8c24013a3be1f6ebb2ca9f4903a3f188d8bc071fb12577ea236f59a94`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -98,7 +99,8 @@ Source normalized SHA256: `0bdee90b6af67677b6313a74e1db8a1e5a3ef089e4d1ec9dac7ff
 | [VERIFY][组队][TEAM-ENTRY-CONFIRM-20261105] Confirmation protocol, real roster and prefab checks | 290-296 |
 | [VERIFY][副本][场景编辑器][MOSHENTA-EVENT-FLOW-20261106] Authoritative event flow and Unity runtime acceptance | 297-306 |
 | [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] Original table fidelity and current Section acceptance | 307-315 |
-| [VERIFY][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Northern forest objectives and Moshenta regression | 316-324 |
+| [VERIFY][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Northern forest objectives and Moshenta regression | 316-326 |
+| [VERIFY][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Offline presentation and isolated commit validation | 327-332 |
 
 ## Docs/AI/DECISIONS.en.md
 
