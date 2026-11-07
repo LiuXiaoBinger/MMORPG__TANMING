@@ -322,6 +322,9 @@
 - 已解决有证据支持的 CS0433 构建边界问题：`MMoRpgCommon.csproj` 仅在 BuildForUnity 时排除 8 个 Navigation 链接，并提供 BuildAndPublishUnityCommon；现有 Common/Network 拷贝 bat 调用该目标，在客户端拷贝循环中跳过服务端 Common。两个客户端 Common DLL 资源均已更新；默认服务端导航和原有服务端拷贝循环保持不变。本轮共修改六个代码/构建/资源文件；既有无关菜单位置改动已保留，并排除在本次提交之外。证据与实机验证边界见 `项目修改日志/2026-11-07-副本阶段流程视图.md`、`stage-cards/compile-audit/delivery-receipt.json`。
 - 实机验收仍待完成：未发送任何桌面输入；用户仅授权使用虚拟桌面 1，尚未确认该桌面已切到前台。发布后 Unity 日志未推进，因此不能依据离线编译结果宣称窗口已渲染或已完成域重载。
 
+- MCP 实机验收（2026-11-07，取代此前待重载状态）：原生客户端握手失败后，直接接通用户本机 Unity MCP。现有 LYF_MMO 编辑器空闲，未处于播放、编译或更新状态；已加载的 RO.SceneEditor.Editor 程序集对应修复后的 Flow GUID。现有窗口已处于 editorView=0、dungeon4060，包含 entry、targets137–143、finish 及一个高级未归属条目。本次无需新增玩法、源码或配置改动。
+- 主 Agent 通过现有窗口的 GUIView.GrabPixels 缓冲区核验了入口、stage2 和 Boss-stage7 的真实像素（2220x1062 像素、1480x708.33 逻辑尺寸、1.5 缩放），并使用既有 SelectStage 方法切换阶段。阶段列表、波次/机关卡片及固定完成条件/下一步页脚均已渲染；Boss 要求明确列出 waves34/35/46。MCP 验收未使用 OS 输入、Focus、Show 或虚拟桌面切换。此前用户确认 desktop1 后，一次 CUA 尝试误激活了 desktop2 上的 Explorer，被 Escape 中止，该次尝试未作为验收通过依据。当前原始证据：_temp/scene-editor-stage-flow-20261107/mcp-live-acceptance/。物理按钮/地图点击、1100x650 渲染及完整副本游玩仍未验证。
+
 ## [CODE][基因][GENE-RUNTIME-20261107] Gene 基因表与共享运行模块
 
 ### 最新补充：分页、事件与次数

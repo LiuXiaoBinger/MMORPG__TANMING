@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `12cd145eb2f5ffa8a6f453a62619a6fd671199a6e7685cd47d54f5d7e6393591`
+Source normalized SHA256: `7b2eaa4b6c075c59be357800f780dc12d0f158d62911330d5d4b7fbe75cce674`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -53,12 +53,12 @@ Source normalized SHA256: `12cd145eb2f5ffa8a6f453a62619a6fd671199a6e7685cd47d54f
 | [CODE][FILES][HANDOFF][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] RO DungeonTargetTable and Moshenta current objectives | 287-295 |
 | [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Config-driven dungeon objectives and original RO sections | 296-307 |
 | [CODE][FILES][HANDOFF][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Readable creature waves and explicit trigger/map locations | 308-315 |
-| [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Player-oriented dungeon stage flow | 316-329 |
-| [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 330-347 |
+| [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Player-oriented dungeon stage flow | 316-333 |
+| [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-351 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `66068cd8a36f626c6650817c5d5e5db9d6370bbc03f2ffa4fa5581302281995e`
+Source normalized SHA256: `a918f9ea853894c63e454fab9310b7ac4b0404cc1c8de8f947d247180cd0d28d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -103,8 +103,8 @@ Source normalized SHA256: `66068cd8a36f626c6650817c5d5e5db9d6370bbc03f2ffa4fa558
 | [VERIFY][副本][Luban][DUNGEON-TARGET-LUBAN-20261106] Original table fidelity and current Section acceptance | 307-315 |
 | [VERIFY][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Northern forest objectives and Moshenta regression | 316-326 |
 | [VERIFY][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Offline presentation and isolated commit validation | 327-334 |
-| [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Stage associations, readable conditions and isolated commit | 335-348 |
-| [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 349-365 |
+| [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Stage associations, readable conditions and isolated commit | 335-352 |
+| [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-369 |
 
 ## Docs/AI/DECISIONS.en.md
 

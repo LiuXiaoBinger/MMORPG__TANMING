@@ -338,6 +338,9 @@
 - 默认服务端 Common 与 BuildForUnity Common 均构建通过（各有 4 条既有警告）。客户端变体恰好移除 8 个重复 Navigation 类型；其余 1,356 项 public/protected API 条目和 Gene=4 保持一致；两个客户端 DLL 哈希一致，75 个受保护的 meta/插件/运行中服务端文件未变。LYF.Navigation.Editor、Assembly-CSharp-Editor 和 RO.SceneEditor.Editor 的真实 Unity rsp 编译均通过（仅主编辑器有一条既有 TMP 警告）。首轮尝试因缺少既有导航引用而报 CS0006；将依赖编译到 _temp，并仅替换该临时验证引用后通过，未写入 Library。新 bat 定位片段执行成功；未运行完整服务端分发。
 - 发布时间为本地 20:19:08，而最后观察到的 Unity 日志时间为 20:11:47；实机刷新/重载、1100x650 渲染布局、阶段/地图点击、完整游玩及发布验收仍未验证。证据：`_temp/scene-editor-stage-flow-20261107/stage-cards/`，重点包括 ui-source-check.json、offline-editor/receipt.json 和 compile-audit/delivery-receipt.json。桌面 1 输入确认仍待用户答复。
 
+- MCP 实机验证（2026-11-07）：读取现有实例、窗口和状态，随后检查实时窗口并捕获其自身 GUIView 缓冲区，未激活 OS 窗口。初始状态为 editorView=0、selectedStageKey=entry、dungeon4060，共 10 个条目（含高级未归属条目），具有实际 target137–143 后继链，GUID 为有效的 c12b495622374f6a951cdb097a1ffa54。通过既有方法成功选择并重绘 stage2 和 stage7；真实截图展示完整目录、默认无连线图、波次/机关卡片及固定完成条件/下一步页脚。stage7 完成条件完整列出了全部所需 waves34/35/46。PNG 编码时已修正捕获内容的 Direct3D 行顺序；这些是真实窗口截图，并非生成的示意图。
+- 未清空 Console。最终仅查询错误时，仍包含验收前已有的同一条历史无效 GUID 错误；未观察到新增选择/渲染错误。本次证实了实机重载以及 1480x708.33 尺寸下的渲染，不代表物理鼠标命中测试、场景/地图定位、1100x650 渲染或完整玩法已通过。此前在用户确认 desktop1 后，CUA 尝试却激活了 desktop2，被用户按 Escape 中止；随后的 MCP 验收未发送 OS 键盘/鼠标输入，也未使用 Focus/Show。证据为 _temp/scene-editor-stage-flow-20261107/ 下的 mcp-live-acceptance/window-state-initial.json，以及同目录的 stage-entry.png、stage-2.png、stage-7.png、console-initial.json 和 console-errors-final.json。
+
 ## [VERIFY][基因][GENE-RUNTIME-20261107] 基因运行模块验收
 
 ### 最新补充验收
