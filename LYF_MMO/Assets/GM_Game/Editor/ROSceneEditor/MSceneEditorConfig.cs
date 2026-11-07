@@ -192,6 +192,8 @@ public sealed class MSceneEditorConfig
     /// <param name="node">用户明确选中删除的节点。</param>
     public void RemoveNode(MSceneEditorNode node)
     {
+        // 原始节点页和阶段页共用此删除入口，真正删除时同步清除所有显式阶段引用。
+        ROSceneStageBindings.RemoveNodeReferences(this, node);
         for (int i = Connections.Count - 1; i >= 0; i--)
         {
             if (Connections[i].First.Owner == node || Connections[i].Second.Owner == node) Connections[i].Element.Remove();

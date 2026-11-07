@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <MSceneEditorConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <data>
     <player_spawn>
@@ -19447,4 +19447,110 @@
       </EditorState>
     </EditorStates>
   </canvas>
+  <editor_stage_bindings>
+    <dungeon id="4060">
+      <stage key="entry">
+        <wave id="12" />
+        <wave id="8" />
+        <wave id="2" />
+        <wave id="0" />
+        <wave id="1" />
+        <wave id="58" />
+        <wave id="9" />
+        <wave id="3" />
+        <wave id="59" />
+        <wave id="13" />
+        <wave id="10" />
+        <wave id="7" />
+        <wave id="5" />
+        <wave id="6" />
+        <wave id="14" />
+        <wave id="11" />
+        <wave id="4" />
+        <wave id="38" />
+        <wave id="37" />
+        <wave id="36" />
+        <wave id="39" />
+        <wave id="47" />
+        <mechanism node_id="-7804316122156629948" />
+        <mechanism node_id="3867400926566285485" />
+      </stage>
+      <stage key="targets:137">
+        <mechanism node_id="-7804316122156629867" />
+      </stage>
+      <stage key="targets:138">
+        <wave id="22" />
+        <wave id="24" />
+        <wave id="29" />
+        <wave id="32" />
+        <wave id="15" />
+        <wave id="16" />
+        <wave id="17" />
+        <wave id="19" />
+        <wave id="20" />
+        <wave id="23" />
+        <wave id="26" />
+        <wave id="21" />
+        <wave id="25" />
+        <wave id="31" />
+        <wave id="28" />
+        <wave id="27" />
+        <wave id="30" />
+        <wave id="18" />
+        <mechanism node_id="-7804316122156629866" />
+        <mechanism node_id="-7804316122156629867" />
+      </stage>
+      <stage key="targets:139">
+        <mechanism node_id="-7804316122156629860" />
+        <mechanism node_id="3867400926566285614" />
+      </stage>
+      <stage key="targets:140">
+        <wave id="33" />
+        <wave id="40" />
+        <wave id="44" />
+        <wave id="45" />
+        <wave id="43" />
+        <wave id="41" />
+        <mechanism node_id="-7804316122156629875" />
+        <mechanism node_id="3867400926566285614" />
+        <mechanism node_id="-7804316122156629860" />
+      </stage>
+      <stage key="targets:141">
+        <wave id="42" />
+        <wave id="41" />
+        <wave id="62" />
+        <wave id="61" />
+        <mechanism node_id="-7804316122156629967" />
+        <mechanism node_id="-7804316122156629860" />
+        <mechanism node_id="3867400926566285505" />
+        <mechanism node_id="3867400926566285614" />
+        <mechanism node_id="-7804316122156629897" />
+      </stage>
+      <stage key="targets:142">
+        <mechanism node_id="-7804316122156629858" />
+        <mechanism node_id="3867400926566285614" />
+        <mechanism node_id="-7804316122156629897" />
+      </stage>
+      <stage key="targets:143">
+        <wave id="34" />
+        <wave id="35" />
+        <wave id="49" />
+        <wave id="54" />
+        <wave id="55" />
+        <wave id="56" />
+        <wave id="57" />
+        <wave id="46" />
+        <wave id="63" />
+        <wave id="60" />
+        <wave id="48" />
+        <mechanism node_id="9076762619536213009" />
+        <mechanism node_id="9076762619536213035" />
+        <mechanism node_id="-7804316122156629850" />
+        <mechanism node_id="9076762619536213064" />
+      </stage>
+      <stage key="finish">
+        <mechanism node_id="9076762619536213064" />
+      </stage>
+    </dungeon>
+  </editor_stage_bindings>
 </MSceneEditorConfig>

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
-/// <summary>只读拼接正式目标阶段与原图证据；不模拟黑板、计时器或运行中的副本状态。</summary>
+/// <summary>按正式目标表建立阶段并读取显式节点归属；旧文件仅为首次初始化解释原图证据。</summary>
 public static class ROSceneStageFlow
 {
     /// <summary>按DungeonTargetProgress的阶段定义与原事件顺序建立玩家流程。</summary>
@@ -33,6 +33,13 @@ public static class ROSceneStageFlow
         stages[0].EntryText = "角色进入 " + dungeon.DungeonsName + "（场景 " + dungeon.SceneID + "）\n出生点 "
             + ROSceneNodePresentation.PositionText(config.Document.Root, "data/player_spawn/position");
         stages[0].Notes.Add("阶段图来源：DungeonsTable.DungeonTarget；当前阶段才接收目标事件。图中是配置流程，不是实时通关进度。");
+        if (ROSceneStageBindings.HasConfiguration(config, dungeon.DungeonsID))
+        {
+            // 完成条件仍解释正式目标及真实事件，但不再据此增减波次/机制归属。
+            for (int index = 1; index < stages.Count - 1; index++) DescribeConfiguredCompletion(config, stages[index], targetTable, rules, catalog);
+            ROSceneStageBindings.Apply(config, dungeon.DungeonsID, stages);
+            return stages;
+        }
         // 目标本身的清波、实体或区域条件是最直接的归属证据。
         for (int index = 1; index < stages.Count - 1; index++)
             AttachTargets(config, stages[index], targetTable, rules, catalog);
@@ -87,6 +94,49 @@ public static class ROSceneStageFlow
             stages.Add(unresolved);
         }
         return stages;
+    }
+
+    /// <summary>为显式绑定阶段说明正式完成条件；本方法不添加或移除任何节点关联。</summary>
+    /// <param name="config">供事件动作说明读取的当前场景配置。</param>
+    /// <param name="stage">正式目标定义中的当前阶段。</param>
+    /// <param name="targets">只读正式目标表。</param>
+    /// <param name="rules">原场景事件规则，顺序与运行配置一致。</param>
+    /// <param name="catalog">当前场景的怪物名称目录。</param>
+    private static void DescribeConfiguredCompletion(MSceneEditorConfig config, ROSceneStage stage, TbDungeonTargetTable targets, XElement[] rules, ROSceneCreatureCatalog catalog)
+    {
+        // 完成语义由目标表与事件决定，不能因用户移出一个关联卡片就视为目标已完成。
+        List<string> completion = new List<string>();
+        // 同阶段多个目标仍要求全部完成。
+        for (int index = 0; index < stage.TargetIds.Count; index++)
+        {
+            // 原表缺失时保留具体目标编号供修正。
+            DungeonTargetTable target = targets.GetOrDefault(stage.TargetIds[index]);
+            if (target == null)
+            {
+                completion.Add("目标 " + stage.TargetIds[index] + " 完成条件未解析");
+                continue;
+            }
+            if ((int)target.Target[0] != 7)
+            {
+                completion.Add(TargetCondition(target));
+                continue;
+            }
+            // 事件目标可以由多个原分支完成，逐项保留真实条件。
+            List<string> actions = new List<string>();
+            // 这里只翻译完成动作，不调用 AttachTargets 或任何归属扩展。
+            for (int ruleIndex = 0; ruleIndex < rules.Length; ruleIndex++)
+            {
+                if (!RuleTargets(rules[ruleIndex]).Contains(target.ID)) continue;
+                actions.Add(PlayerAction(config, rules[ruleIndex], catalog));
+                stage.Notes.Add("目标 " + target.ID + " 的完成事件 " + (string)rules[ruleIndex].Attribute("name") + "；原分支 " + (string)rules[ruleIndex].Attribute("source_path"));
+            }
+            if (actions.Count == 0) actions.Add(TargetCondition(target));
+            // 次数仍取正式目标参数，不随阶段显示关联改变。
+            string action = string.Join("；或：", actions);
+            if (target.Target[2] > 1) action += "（需完成 " + target.Target[2] + " 次）";
+            completion.Add(action);
+        }
+        stage.CompletionText = CompletionSummary(stage, completion);
     }
 
     /// <summary>沿正式模式创建阶段，分支起点与服务端一样取最小组号。</summary>

@@ -288,6 +288,15 @@ public sealed class ROSceneEditorWindow : EditorWindow
         MSceneEditorConfig stageConfig = null;
         if (StageMatchesMap(dungeon)) stageConfig = config;
         stages = ROSceneStageFlow.Build(stageConfig, dungeon, dungeonTargetTable, dungeonTargetGroupTable, catalog);
+        if (stageConfig != null)
+        {
+            // 仅首次兼容旧文件生成初始关联；已有空段和手工配置不会再次从原图推导覆盖。
+            if (ROSceneStageBindings.Initialize(stageConfig, dungeon.DungeonsID, stages))
+            {
+                stageEditMessage = "已从旧文件生成一次初始阶段关联；点击保存将写入 XML，之后以显式关联为准。";
+                stages = ROSceneStageFlow.Build(stageConfig, dungeon, dungeonTargetTable, dungeonTargetGroupTable, catalog);
+            }
+        }
         if (FindStage(selectedStageKey) == null) selectedStageKey = "entry";
     }
 
@@ -426,13 +435,21 @@ public sealed class ROSceneEditorWindow : EditorWindow
         GUILayout.Space(8f);
         GUILayout.Label(new GUIContent(StageNavigationTitle(stage), stage.Title), StageTextStyle(20, true));
         EditorGUILayout.BeginHorizontal();
-        using (new EditorGUI.DisabledScope(!StageMatchesMap(dungeonsTable.GetOrDefault(selectedDungeonId))))
+        using (new EditorGUI.DisabledScope(stage.Key == "unresolved" || !StageMatchesMap(dungeonsTable.GetOrDefault(selectedDungeonId))))
         {
             if (GUILayout.Button("＋怪物波次", StageNodeButtonStyle(), GUILayout.Width(145f))) ShowStageWaveMenu(stage);
             if (GUILayout.Button("＋机制", StageNodeButtonStyle(), GUILayout.Width(115f))) ShowStageMechanismMenu(stage);
         }
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
+        using (new EditorGUI.DisabledScope(stage.Key == "unresolved" || !StageMatchesMap(dungeonsTable.GetOrDefault(selectedDungeonId))))
+        {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("关联已有波次", StageNodeButtonStyle(), GUILayout.Width(145f))) ShowExistingStageNodes(stage, true);
+            if (GUILayout.Button("关联已有机制", StageNodeButtonStyle(), GUILayout.Width(145f))) ShowExistingStageNodes(stage, false);
+            GUILayout.Label("归属写入 XML；关联不改变出生 / 触发条件", StageTextStyle(12, false));
+            EditorGUILayout.EndHorizontal();
+        }
         if (stageEditMessage.Length > 0) GUILayout.Label(stageEditMessage, StageTextStyle(12, false));
         GUILayout.Space(8f);
         stageContentScroll = EditorGUILayout.BeginScrollView(stageContentScroll);
@@ -603,6 +620,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         GUILayout.Label("波次 " + wave.WaveId + " · " + ROSceneNodePresentation.CreatureLabel(wave, catalog), StageTextStyle(14, true));
         GUILayout.Label(ROSceneNodePresentation.WaveDetails(wave), StageTextStyle(13, false));
+        GUILayout.Label("实际出生：" + ROSceneStageEditing.SpawnDescription(wave), StageTextStyle(12, false));
         GUILayout.Space(5f);
         EditorGUILayout.BeginHorizontal();
         // 逻辑波次不显示无效的地图按钮。
@@ -610,8 +628,10 @@ public sealed class ROSceneEditorWindow : EditorWindow
             if (GUILayout.Button("地图定位", StageNodeButtonStyle())) { SelectNode(wave); FrameAllPoints(); }
         if (GUILayout.Button("编辑", StageNodeButtonStyle())) BeginStageNodeEdit(wave.Id);
         if (GUILayout.Button("复制", StageNodeButtonStyle())) DuplicateStageWave(wave.Id);
-        if (GUILayout.Button("删除", StageNodeButtonStyle())) ConfirmStageDeletion(wave.Id);
+        if (GUILayout.Button("删除节点", StageNodeButtonStyle())) ConfirmStageDeletion(wave.Id);
         EditorGUILayout.EndHorizontal();
+        if (selectedStageKey != "unresolved")
+            if (GUILayout.Button("移出本阶段（保留波次）", StageNodeButtonStyle())) SetStageNodeLinked(wave.Id, false);
         EditorGUILayout.EndVertical();
         GUILayout.Space(6f);
     }
@@ -649,10 +669,73 @@ public sealed class ROSceneEditorWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("编辑", StageNodeButtonStyle())) BeginStageNodeEdit(node.Id);
         if (GUILayout.Button("复制", StageNodeButtonStyle())) DuplicateStageMechanism(node.Id);
-        if (GUILayout.Button("删除", StageNodeButtonStyle())) ConfirmStageDeletion(node.Id);
+        if (GUILayout.Button("删除节点", StageNodeButtonStyle())) ConfirmStageDeletion(node.Id);
         EditorGUILayout.EndHorizontal();
+        if (selectedStageKey != "unresolved")
+            if (GUILayout.Button("移出本阶段（保留机制）", StageNodeButtonStyle())) SetStageNodeLinked(node.Id, false);
         EditorGUILayout.EndVertical();
         GUILayout.Space(6f);
+    }
+
+    /// <summary>选择当前原图已有节点加入阶段；不会复制节点或改动它的执行条件。</summary>
+    /// <param name="stage">用户正在配置归属的正式阶段。</param>
+    /// <param name="waves">为 true 时列波次，为 false 时列真实根触发器。</param>
+    private void ShowExistingStageNodes(ROSceneStage stage, bool waves)
+    {
+        // 候选包含未关联及已被其他阶段引用的节点，允许一个机制被多阶段共享。
+        GenericMenu menu = new GenericMenu();
+        // 空候选时显示真实缺少节点的情况，不创建模板或运行数据。
+        int count = 0;
+        // 按原图顺序列出稳定身份，节点备注不作为唯一键。
+        for (int index = 0; index < config.Nodes.Count; index++)
+        {
+            // 回调捕获节点的原画布 ID，关联时再按当前宿主解析。
+            MSceneEditorNode node = config.Nodes[index];
+            if (waves && !node.IsWave) continue;
+            if (!waves && !ROSceneNodePresentation.IsTrigger(node)) continue;
+            // 波次带实体名称；同名机制带真实时机与唯一节点 ID。
+            string title = ROSceneNodePresentation.Title(node, catalog);
+            if (!waves) title = StageMechanismTemplateTitle(node);
+            // 已关联项勾选显示，再次选择只保持原关联，不会复制或切换其他阶段。
+            bool linked = stage.Waves.Contains(node) || stage.Mechanisms.Contains(node);
+            menu.AddItem(new GUIContent(title.Replace("/", "／")), linked, () => SetStageNodeLinked(node.Id, true));
+            count++;
+        }
+        if (count == 0)
+        {
+            stageEditMessage = "当前 XML 中没有可关联的此类节点；本操作不创建节点。";
+            return;
+        }
+        menu.ShowAsContext();
+    }
+
+    /// <summary>只修改当前阶段的持久引用，移出不删除实体，也不影响其他阶段。</summary>
+    /// <param name="nodeId">现有原节点的稳定画布编号。</param>
+    /// <param name="linked">为 true 时关联已有节点，为 false 时移出当前阶段。</param>
+    private void SetStageNodeLinked(string nodeId, bool linked)
+    {
+        // 当前阶段来自正式目标表，持久键由绑定助手转换为目标集合或组编号。
+        ROSceneStage stage = FindStage(selectedStageKey);
+        // 只关联当前 XML 中的真实节点，不构造显示副本。
+        MSceneEditorNode node = ROSceneStageEditing.FindNode(config, nodeId);
+        ROSceneStageBindings.SetLinked(config, selectedDungeonId, stage, node, linked);
+        if (linked) stageEditMessage = "已关联到「" + stage.Title + "」；出生事件 / 触发条件保持不变，点击保存持久化阶段配置。";
+        else
+        {
+            stageEditMessage = "已从「" + stage.Title + "」移出；原节点、连线和其他阶段关联均保留，运行条件没有改变。";
+            if (inlineNodeId == nodeId) inlineNodeId = "";
+        }
+        stageFlowNeedsRefresh = true;
+        Repaint();
+    }
+
+    /// <summary>新增或复制完成后明确写入当前正式阶段，而不是等待推导重新猜测归属。</summary>
+    /// <param name="node">刚创建并已接好真实运行条件的新节点。</param>
+    private void LinkNewStageNode(MSceneEditorNode node)
+    {
+        // 未关联排查页不是正式阶段；其节点仍由用户回到正式阶段显式选择。
+        if (selectedStageKey == "unresolved") return;
+        ROSceneStageBindings.SetLinked(config, selectedDungeonId, FindStage(selectedStageKey), node, true);
     }
 
     /// <summary>展示本阶段已有出生来源及真实前驱完成规则，缺少来源时说明原因。</summary>
@@ -771,6 +854,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         StopPreview();
         // 复制发生前解析当前对象，原引用可能因其他节点操作已经重建。
         MSceneEditorNode added = ROSceneStageEditing.DuplicateWave(config, ROSceneStageEditing.FindNode(config, nodeId));
+        LinkNewStageNode(added);
         stageEditMessage = "已复制波次 " + added.WaveId + "；保留原出生条件和前置连接。请在下方修改怪物、数量与刷点，然后保存。";
         stageFlowNeedsRefresh = true;
         BeginStageNodeEdit(added.Id);
@@ -783,6 +867,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         StopPreview();
         // 编辑操作只作用于当前内存 XML，保存仍走原 SaveChanges。
         MSceneEditorNode added = ROSceneStageEditing.CreateEntryWave(config, ROSceneStageEditing.FindNode(config, templateId));
+        LinkNewStageNode(added);
         stageEditMessage = "已新增入场波次 " + added.WaveId + "；怪物与刷点来自所选模板，可直接修改。";
         stageFlowNeedsRefresh = true;
         BeginStageNodeEdit(added.Id);
@@ -796,6 +881,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         StopPreview();
         // 新事件追加在原 target 结果之后，保持正式任务推进顺序。
         MSceneEditorNode added = ROSceneStageEditing.CreateWaveAfterRule(config, ROSceneStageEditing.FindNode(config, templateId), rule);
+        LinkNewStageNode(added);
         stageEditMessage = "已新增波次 " + added.WaveId + "：原任务完成规则后发送 " + ROSceneXml.Text(added.Data, "base_info/pre_scene_ai_event") + "，原目标定义保持不变。";
         stageFlowNeedsRefresh = true;
         BeginStageNodeEdit(added.Id);
@@ -808,6 +894,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         StopPreview();
         // 仅克隆此触发器的时机、条件和结果，不复制整个共享组。
         MSceneEditorNode added = ROSceneStageEditing.DuplicateMechanism(config, ROSceneStageEditing.FindNode(config, nodeId));
+        LinkNewStageNode(added);
         stageEditMessage = "已复制机制。出生/触发条件和动作与模板相同，仍操作原有区域；请按需选择其他已有区域，避免在同一区域重复执行动作。";
         stageFlowNeedsRefresh = true;
         BeginStageNodeEdit(added.Id);
@@ -1011,7 +1098,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         // helper 同时处理原字段和前置端口，保存时不会丢失关联。
         MSceneEditorNode wave = ROSceneStageEditing.UseWaveStart(config, ROSceneStageEditing.FindNode(config, waveId), ROSceneStageEditing.FindNode(config, sourceId));
         stageFlowNeedsRefresh = true;
-        stageEditMessage = "已改用真实出生来源：" + ROSceneStageEditing.SpawnDescription(wave);
+        stageEditMessage = "已改用真实出生来源：" + ROSceneStageEditing.SpawnDescription(wave) + "；显式阶段关联保持不变。";
         BeginStageNodeEdit(wave.Id);
     }
 
@@ -1041,7 +1128,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="node">当前波次或完整触发链根节点。</param>
     private void DrawStageRawEditor(MSceneEditorNode node)
     {
-        inlineRawFields = EditorGUILayout.Foldout(inlineRawFields, "高级：完整原字段（修改触发条件可能改变阶段归属）", true);
+        inlineRawFields = EditorGUILayout.Foldout(inlineRawFields, "高级：完整原字段（不自动改变阶段关联）", true);
         if (!inlineRawFields) return;
         // 波次只编辑自身，机制仍限定在同一个真实触发器上下文。
         List<MSceneEditorNode> nodes = new List<MSceneEditorNode> { node };
@@ -1050,9 +1137,15 @@ public sealed class ROSceneEditorWindow : EditorWindow
         for (int index = 0; index < nodes.Count; index++)
         {
             GUILayout.Label(ROSceneNodePresentation.Title(nodes[index], catalog), EditorStyles.boldLabel);
+            // 原高级表单允许修改 Wave ID，先保留旧值以同步本轮新增的显式阶段引用。
+            int oldWaveId = nodes[index].WaveId;
             EditorGUI.BeginChangeCheck();
             fields.Draw(nodes[index].Data);
-            if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (nodes[index].IsWave) ROSceneStageBindings.RenameWaveReferences(config, oldWaveId, nodes[index].WaveId);
+                config.IsDirty = true;
+            }
         }
     }
 
@@ -1062,7 +1155,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         inlineNodeId = "";
         inlineRawFields = false;
         stageFlowNeedsRefresh = true;
-        stageEditMessage = "编辑已应用到当前配置，点击顶部保存写回 XML。触发条件改变后，阶段归属按真实配置重新计算。";
+        stageEditMessage = "编辑已应用到当前配置，点击顶部保存写回 XML。阶段归属以显式关联为准；出生 / 触发条件另行保留，互不代改。";
         Repaint();
     }
 
@@ -1379,9 +1472,16 @@ public sealed class ROSceneEditorWindow : EditorWindow
                 // 备注属于原画布数据，保存时仍可回到 RO 编辑器查看。
                 string content = EditorGUILayout.TextField("备注", selected.Content);
                 if (EditorGUI.EndChangeCheck()) { selected.Content = content; config.IsDirty = true; }
+                // 高级节点页与阶段页采用相同编号同步，避免改ID后绑定残留旧编号。
+                int oldWaveId = selected.WaveId;
                 EditorGUI.BeginChangeCheck();
                 fields.Draw(selected.Data);
-                if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
+                if (EditorGUI.EndChangeCheck())
+                {
+                    if (selected.IsWave) ROSceneStageBindings.RenameWaveReferences(config, oldWaveId, selected.WaveId);
+                    config.IsDirty = true;
+                    SceneView.RepaintAll();
+                }
             }
         }
         else GUILayout.Label("选择一个波次、机制节点或区域", EditorStyles.boldLabel);
