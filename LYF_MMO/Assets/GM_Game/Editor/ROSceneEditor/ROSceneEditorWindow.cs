@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -78,6 +79,16 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private Rect graphRect;
     /// <summary>是否绘制全部原始区域轮廓。</summary>
     private bool showAreas = true;
+    /// <summary>全局出生点和目标表默认折叠，优先展示当前选择。</summary>
+    private bool showGlobalSettings;
+    /// <summary>原 XML 编辑字段按需展开，不挤占所选节点摘要和动作。</summary>
+    private bool showRawFields;
+    /// <summary>最近一次明确定位的地图场景路径，跨场景传送也按目标资源登记显示。</summary>
+    private string focusedMapPath = "";
+    /// <summary>最近一次地图定位的原世界坐标，单位为米。</summary>
+    private Vector3 focusedMapPosition;
+    /// <summary>最近一次地图定位标记的具体对象说明。</summary>
+    private string focusedMapLabel = "";
 
     /// <summary>保留两个 RO 原菜单入口并添加本项目中文入口。</summary>
     [MenuItem("TreeEditor/OpenSceneEditor %l")]
@@ -131,6 +142,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
         BindSceneResource();
         selected = null;
         selectedArea = null;
+        focusedMapPath = "";
+        inspectorScroll = Vector2.zero;
         hasUnsavedChanges = false;
         FitGraph();
         Repaint();
@@ -203,6 +216,11 @@ public sealed class ROSceneEditorWindow : EditorWindow
     {
         tab = GUILayout.Toolbar(tab, new[] { "波次", "机制", "区域" });
         search = EditorGUILayout.TextField(search, EditorStyles.toolbarSearchField);
+        // 列表名称允许多行，不截断怪物名称、编号和刷点数量。
+        GUIStyle listStyle = new GUIStyle(EditorStyles.miniButton);
+        listStyle.fixedHeight = 0f;
+        listStyle.wordWrap = true;
+        listStyle.alignment = TextAnchor.MiddleLeft;
         listScroll = EditorGUILayout.BeginScrollView(listScroll);
         if (tab == 2)
         {
@@ -212,7 +230,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
                 XElement area = config.TriggerObjects[i];
                 string title = "区域 " + ROSceneXml.Int(area, "id") + " · " + ROSceneXml.Text(area, "box/title");
                 if (!Matches(title)) continue;
-                if (GUILayout.Button(title, EditorStyles.miniButton)) { selectedArea = area; selected = null; FramePosition(ROSceneXml.Vector(area, "position")); }
+                if (GUILayout.Button(title, listStyle)) SelectArea(area);
             }
         }
         else
@@ -223,9 +241,10 @@ public sealed class ROSceneEditorWindow : EditorWindow
                 MSceneEditorNode node = config.Nodes[i];
                 if (tab == 0 && !node.IsWave) continue;
                 if (tab == 1 && node.IsWave) continue;
-                string label = node.Title;
+                // 标题与数量来自当前 XML 和本场景实体目录，搜索同步包含真实怪名和 ID。
+                string label = NodeLabel(node);
                 if (!Matches(label + " " + node.Content)) continue;
-                if (GUILayout.Button(label, EditorStyles.miniButton)) SelectNode(node);
+                if (GUILayout.Button(label, listStyle)) SelectNode(node);
             }
         }
         EditorGUILayout.EndScrollView();
@@ -255,10 +274,44 @@ public sealed class ROSceneEditorWindow : EditorWindow
         selected = node;
         selectedArea = null;
         pointIndex = 0;
-        zoom = Mathf.Max(zoom, 0.55f);
+        inspectorScroll = Vector2.zero;
+        focusedMapPath = "";
+        zoom = Mathf.Max(zoom, 1f);
         pan = new Vector2(Mathf.Max(160f, graphRect.width) * 0.5f, 180f) - (node.Position + new Vector2(105f, 40f)) * zoom;
         Repaint();
         SceneView.RepaintAll();
+    }
+
+    /// <summary>选择区域只更新属性面板；地图切换由明确的定位按钮发起。</summary>
+    /// <param name="area">原 XML 区域对象。</param>
+    private void SelectArea(XElement area)
+    {
+        selectedArea = area;
+        selected = null;
+        inspectorScroll = Vector2.zero;
+        focusedMapPath = "";
+        Repaint();
+        SceneView.RepaintAll();
+    }
+
+    /// <summary>生成列表和画布共用的多行摘要，标题保留真实名称和编号。</summary>
+    /// <param name="node">当前显示节点。</param>
+    private string NodeLabel(MSceneEditorNode node)
+    {
+        if (node.IsWave) return ROSceneNodePresentation.Title(node, catalog) + "\n" + ROSceneNodePresentation.WaveDetails(node);
+        return ROSceneNodePresentation.Title(node, catalog);
+    }
+
+    /// <summary>按文字实际换行计算未缩放标题高度，为下方端口留出空间。</summary>
+    /// <param name="node">当前显示节点。</param>
+    private float NodeHeaderHeight(MSceneEditorNode node)
+    {
+        // 使用原尺寸字体计算后整体缩放，避免长名称被固定行高裁切。
+        GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
+        style.fontSize = 11;
+        style.fixedHeight = 0f;
+        style.wordWrap = true;
+        return Mathf.Max(48f, style.CalcHeight(new GUIContent(NodeLabel(node)), 206f) + 12f);
     }
 
     /// <summary>绘制原节点位置、端口和连线，并处理拖动交互。</summary>
@@ -289,21 +342,25 @@ public sealed class ROSceneEditorWindow : EditorWindow
         // 所有节点仍使用原坐标，缩放只影响编辑窗口显示。
         Rect rect = NodeRect(node);
         if (!rect.Overlaps(new Rect(0, 0, graphRect.width, graphRect.height))) return;
+        // 颜色区分普通逻辑、波次和当前选择。
         Color color = new Color(0.18f, 0.22f, 0.28f);
         if (node.IsWave) color = new Color(0.18f, 0.32f, 0.27f);
         if (selected == node) color = new Color(0.26f, 0.44f, 0.62f);
         EditorGUI.DrawRect(rect, color);
         // 小缩放时保留节点轮廓，大缩放时显示完整可读信息。
         GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
+        style.fixedHeight = 0f;
         style.normal.textColor = Color.white;
         style.fontSize = Mathf.Max(7, Mathf.RoundToInt(11f * zoom));
-        GUI.Label(new Rect(rect.x + 7f * zoom, rect.y + 3f * zoom, rect.width - 14f * zoom, 22f * zoom), node.Title, style);
-        GUI.Label(new Rect(rect.x + 7f * zoom, rect.y + 25f * zoom, rect.width - 14f * zoom, 18f * zoom), node.Content, style);
+        style.wordWrap = true;
+        GUI.Label(new Rect(rect.x + 7f * zoom, rect.y + 3f * zoom, rect.width - 14f * zoom, NodeHeaderHeight(node) * zoom), new GUIContent(NodeLabel(node), node.Content), style);
         for (int i = 0; i < node.Ports.Count; i++)
         {
             // 原端口名用作连接语义提示，不重新命名序列化字段。
             MSceneEditorPort port = node.Ports[i];
+            // 端口坐标随标题实际高度下移。
             Vector2 position = PortPosition(port);
+            // 连接点击区保持窗口像素大小，方便低缩放时操作。
             Rect handle = new Rect(position.x - 5f, position.y - 5f, 10f, 10f);
             EditorGUI.DrawRect(handle, new Color(0.75f, 0.85f, 0.96f));
             if (zoom > 0.45f)
@@ -328,7 +385,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="node">原节点。</param>
     private Rect NodeRect(MSceneEditorNode node)
     {
-        return new Rect(node.Position * zoom + pan, new Vector2(220f, 58f + node.Ports.Count * 18f) * zoom);
+        return new Rect(node.Position * zoom + pan, new Vector2(220f, NodeHeaderHeight(node) + 10f + node.Ports.Count * 18f) * zoom);
     }
 
     /// <summary>计算一个原端口在当前画布中的位置。</summary>
@@ -337,9 +394,10 @@ public sealed class ROSceneEditorWindow : EditorWindow
     {
         // 同节点端口按文件顺序排列。
         Rect rect = NodeRect(port.Owner);
+        // 输入和输出分别位于节点边框左右。
         float x = rect.xMax;
         if (port.IsInput) x = rect.xMin;
-        return new Vector2(x, rect.y + (54f + port.Owner.Ports.IndexOf(port) * 18f) * zoom);
+        return new Vector2(x, rect.y + (NodeHeaderHeight(port.Owner) + 6f + port.Owner.Ports.IndexOf(port) * 18f) * zoom);
     }
 
     /// <summary>响应缩放、平移、选中和原节点坐标拖动。</summary>
@@ -370,9 +428,12 @@ public sealed class ROSceneEditorWindow : EditorWindow
                     selected = config.Nodes[i];
                     selectedArea = null;
                     pointIndex = 0;
+                    inspectorScroll = Vector2.zero;
+                    focusedMapPath = "";
                     dragging = selected;
                     input.Use();
                     Repaint();
+                    SceneView.RepaintAll();
                     return;
                 }
                 panning = true;
@@ -392,36 +453,50 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>显示当前节点字段、刷点和机制执行记录。</summary>
     private void DrawInspector()
     {
+        if (selectedArea != null)
+        {
+            GUILayout.Label("区域 " + ROSceneXml.Int(selectedArea, "id") + " · " + ROSceneXml.Text(selectedArea, "box/title"), EditorStyles.wordWrappedLabel);
+            GUILayout.Label("世界坐标 " + ROSceneNodePresentation.PositionText(selectedArea, "position"), EditorStyles.wordWrappedLabel);
+            if (GUILayout.Button("定位地图区域（Scene 视图）")) FrameArea(selectedArea);
+            EditorGUI.BeginChangeCheck();
+            fields.Draw(selectedArea);
+            if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
+        }
+        else if (selected != null)
+        {
+            GUILayout.Label(NodeLabel(selected), EditorStyles.wordWrappedLabel);
+            GUILayout.Label("点选仅定位流程画布；地图按钮打开对应场景并定位 Scene 视图。", EditorStyles.wordWrappedMiniLabel);
+            if (selected.IsWave) DrawWaveTools();
+            else
+            {
+                DrawMechanismSummary();
+                if (GUILayout.Button("预览所选机制")) { EnsurePreview(); if (preview != null) preview.ExecuteNode(selected); }
+            }
+            DrawConnections();
+            showRawFields = EditorGUILayout.Foldout(showRawFields, "编辑原始字段与备注", true);
+            if (showRawFields)
+            {
+                EditorGUILayout.LabelField("原节点类型", selected.TypeName, EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.LabelField("画布节点 ID", selected.Id, EditorStyles.wordWrappedMiniLabel);
+                EditorGUI.BeginChangeCheck();
+                // 备注属于原画布数据，保存时仍可回到 RO 编辑器查看。
+                string content = EditorGUILayout.TextField("备注", selected.Content);
+                if (EditorGUI.EndChangeCheck()) { selected.Content = content; config.IsDirty = true; }
+                EditorGUI.BeginChangeCheck();
+                fields.Draw(selected.Data);
+                if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
+            }
+        }
+        else GUILayout.Label("选择一个波次、机制节点或区域", EditorStyles.boldLabel);
+        DrawPreviewLog();
+        EditorGUILayout.Space();
+        showGlobalSettings = EditorGUILayout.Foldout(showGlobalSettings, "全局配置：出生点 / 副本全部目标", true);
+        if (!showGlobalSettings) return;
         GUILayout.Label("正式出生点（客户端与服务端共用）", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
         fields.Draw(config.Document.Root.Element("data").Element("player_spawn"));
         if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
         DrawDungeonTargets();
-        EditorGUILayout.Space();
-        if (selectedArea != null)
-        {
-            GUILayout.Label("区域 " + ROSceneXml.Int(selectedArea, "id"), EditorStyles.boldLabel);
-            EditorGUI.BeginChangeCheck();
-            fields.Draw(selectedArea);
-            if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
-            DrawPreviewLog();
-            return;
-        }
-        if (selected == null) { GUILayout.Label("选择一个波次或机制节点", EditorStyles.boldLabel); DrawPreviewLog(); return; }
-        GUILayout.Label(selected.Title, EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("原节点类型", selected.TypeName, EditorStyles.wordWrappedMiniLabel);
-        EditorGUI.BeginChangeCheck();
-        // 备注属于原画布数据，保存时仍可回到 RO 编辑器查看。
-        string content = EditorGUILayout.TextField("备注", selected.Content);
-        if (EditorGUI.EndChangeCheck()) { selected.Content = content; config.IsDirty = true; }
-        if (selected.IsWave) DrawWaveTools();
-        else if (GUILayout.Button("预览所选机制")) { EnsurePreview(); if (preview != null) preview.ExecuteNode(selected); }
-        EditorGUILayout.Space();
-        EditorGUI.BeginChangeCheck();
-        fields.Draw(selected.Data);
-        if (EditorGUI.EndChangeCheck()) { config.IsDirty = true; SceneView.RepaintAll(); }
-        DrawConnections();
-        DrawPreviewLog();
     }
 
     /// <summary>读取副本、目标与目标组生成表，不初始化编辑模式下无关的运行时模块。</summary>
@@ -561,8 +636,26 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>给波次提供直观的刷点与出场预览操作。</summary>
     private void DrawWaveTools()
     {
+        // 地图定位独立于模型生成，名称未登记也可查看真实坐标。
+        XElement[] points = ROSceneXml.SpawnPoints(selected.Data);
+        if (points.Length > 0)
+        {
+            pointIndex = Mathf.Clamp(EditorGUILayout.IntSlider("当前刷点（从 1 开始）", pointIndex + 1, 1, points.Length) - 1, 0, points.Length - 1);
+            GUILayout.Label("世界坐标 " + ROSceneNodePresentation.PositionText(points[pointIndex], "position"), EditorStyles.wordWrappedLabel);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("定位地图刷点")) FrameSelectedPoint();
+            if (GUILayout.Button("定位全部刷点")) FrameAllPoints();
+            EditorGUILayout.EndHorizontal();
+        }
+        else EditorGUILayout.HelpBox("此波为逻辑节点，没有地图刷点。可通过下方相邻节点查看关联对象。", MessageType.Info);
+        // 现有模型预览仅实现 monster_info，NPC 和采集物仍可独立定位原刷点。
+        bool supportsModelPreview = ROSceneNodePresentation.HasField(selected, "monster_info");
+        if (!supportsModelPreview) EditorGUILayout.HelpBox("此类型当前只支持地图刷点查看，模型预览尚未实现。", MessageType.Info);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("预览此波怪物")) { EnsurePreview(); if (preview != null) preview.ShowWave(selected); FrameSelectedPoint(); }
+        using (new EditorGUI.DisabledScope(!supportsModelPreview))
+        {
+            if (GUILayout.Button("预览此波怪物")) { EnsurePreview(); if (preview != null) { preview.ShowWave(selected); FrameSelectedPoint(); } }
+        }
         if (GUILayout.Button("预览完成此波")) { EnsurePreview(); if (preview != null) preview.CompleteWave(selected.WaveId); }
         EditorGUILayout.EndHorizontal();
         if (preview != null)
@@ -576,8 +669,10 @@ public sealed class ROSceneEditorWindow : EditorWindow
             }
         }
         // 原怪物编号决定真实模型目录映射。
-        int id = ROSceneXml.Int(selected.Data, "monster_info/entity_id", -1);
-        ROSceneCreatureEntity entity = catalog.FindEntity(id);
+        int id = ROSceneNodePresentation.EntityId(selected);
+        // 未登记模型不妨碍刷点定位，只隐藏不存在的动作目录。
+        ROSceneCreatureEntity entity = null;
+        if (catalog != null && supportsModelPreview) entity = catalog.FindEntity(id);
         if (entity != null)
         {
             EditorGUILayout.LabelField("怪物", id + " · " + entity.displayName);
@@ -591,16 +686,12 @@ public sealed class ROSceneEditorWindow : EditorWindow
                 {
                     // 此局部保存当前循环的动作条目供菜单回调使用。
                     ROSceneCreatureAnimation animation = model.animations[i];
-                    menu.AddItem(new GUIContent(animation.displayName), false, () => { EnsurePreview(); preview.ShowWave(selected); preview.PlayAnimation(selected.WaveId, AssetDatabase.LoadAssetAtPath<AnimationClip>(animation.clipPath)); FrameSelectedPoint(); });
+                    menu.AddItem(new GUIContent(animation.displayName), false, () => { EnsurePreview(); if (preview == null) return; preview.ShowWave(selected); preview.PlayAnimation(selected.WaveId, AssetDatabase.LoadAssetAtPath<AnimationClip>(animation.clipPath)); FrameSelectedPoint(); });
                 }
                 menu.ShowAsContext();
             }
         }
-        // 刷点引用直接来自原波次 XML，不维护第二份位置数据。
-        XElement[] points = ROSceneXml.SpawnPoints(selected.Data);
         if (points.Length == 0) return;
-        pointIndex = Mathf.Clamp(EditorGUILayout.IntSlider("编辑刷点", pointIndex, 0, points.Length - 1), 0, points.Length - 1);
-        if (GUILayout.Button("场景聚焦当前刷点")) FrameSelectedPoint();
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("复制当前刷点"))
         {
@@ -611,23 +702,62 @@ public sealed class ROSceneEditorWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    /// <summary>先解释触发语义，再提供原区域和传送目的地的真实地图入口。</summary>
+    private void DrawMechanismSummary()
+    {
+        EditorGUILayout.HelpBox(ROSceneNodePresentation.FlowSummary(config, selected), MessageType.None);
+        // 只检查当前触发器的真实时机与结果，不遍历整个触发组。
+        List<MSceneEditorNode> nodes = ROSceneNodePresentation.FlowNodes(config, selected);
+        // 记录是否存在可定位对象，纯事件节点只显示逻辑提示。
+        bool hasLocation = false;
+        for (int index = 0; index < nodes.Count; index++)
+        {
+            // 当前节点可能提供来源区域或传送坐标。
+            MSceneEditorNode node = nodes[index];
+            if (ROSceneNodePresentation.HasSourceArea(node))
+            {
+                // 原时机的业务编号用于关联区域对象。
+                int areaId = ROSceneXml.Int(node.Data, "scene_trigger_obj_id");
+                // 未找到原对象时只报告缺失，不默认为零坐标。
+                XElement area = ROSceneNodePresentation.FindArea(config, areaId);
+                if (area == null) EditorGUILayout.HelpBox("来源区域 " + areaId + " 未在当前 XML 中找到。", MessageType.Warning);
+                else
+                {
+                    hasLocation = true;
+                    GUILayout.Label("来源区域 " + areaId + " · " + ROSceneXml.Text(area, "box/title") + "\n" + ROSceneNodePresentation.PositionText(area, "position"), EditorStyles.wordWrappedLabel);
+                    if (GUILayout.Button("定位来源区域 " + areaId)) FrameArea(area);
+                }
+            }
+            if (ROSceneXml.Find(node.Data, "trans_position_info/position") == null) continue;
+            hasLocation = true;
+            GUILayout.Label("传送终点 " + ROSceneNodePresentation.PositionText(node.Data, "trans_position_info/position") + "\n目标场景 " + ROSceneXml.Text(node.Data, "trans_position_info/scene_id"), EditorStyles.wordWrappedLabel);
+            if (GUILayout.Button("定位传送终点")) FrameDestination(node);
+        }
+        if (!hasLocation) EditorGUILayout.HelpBox("这是逻辑节点，本身没有可定位的地图坐标。下方列出真实连接的关联节点，可跳转继续查看。", MessageType.Info);
+    }
+
     /// <summary>列出所选节点的真实连接，支持移除后重新接线。</summary>
     private void DrawConnections()
     {
-        GUILayout.Label("节点连线", EditorStyles.boldLabel);
+        GUILayout.Label("相邻节点（仅定位画布）", EditorStyles.boldLabel);
         for (int i = 0; i < config.Connections.Count; i++)
         {
             // 当前节点的数据元素在 Rebuild 后仍是同一 XML 对象。
             MSceneEditorConnection connection = config.Connections[i];
+            // 当前节点一侧的端口保留真实端口名。
             MSceneEditorPort local = connection.First;
+            // 另一端用于显示具体行为和画布跳转。
             MSceneEditorPort remote = connection.Second;
             if (remote.Owner.Element == selected.Element) { local = connection.Second; remote = connection.First; }
             if (local.Owner.Element != selected.Element) continue;
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(local.Name + " → " + remote.Owner.Title, EditorStyles.wordWrappedMiniLabel);
+            GUILayout.Label(local.Name + " ↔ " + ROSceneNodePresentation.Title(remote.Owner, catalog), EditorStyles.wordWrappedMiniLabel);
+            // 跳转仅改变当前选择，不会移动地图或修改连线。
+            bool jump = GUILayout.Button("画布", GUILayout.Width(45));
             // 移除后立即结束当前遍历，下一帧读取更新后的连接列表。
             bool remove = GUILayout.Button("断开", GUILayout.Width(45));
             EditorGUILayout.EndHorizontal();
+            if (jump) { SelectNode(remote.Owner); break; }
             if (remove) { StopPreview(); config.Disconnect(connection); break; }
         }
     }
@@ -661,35 +791,83 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="view">当前 Scene View。</param>
     private void DuringSceneGUI(SceneView view)
     {
-        if (config == null || string.IsNullOrEmpty(CurrentScenePath) || SceneManager.GetActiveScene().path != CurrentScenePath) return;
+        if (config == null) return;
+        // 最近一次定位标记只在其明确登记的目标地图绘制，包括跨场景传送目的地。
+        if (focusedMapPath.Length > 0 && SceneManager.GetActiveScene().path == focusedMapPath)
+        {
+            Handles.color = Color.yellow;
+            Handles.DrawWireDisc(focusedMapPosition, Vector3.up, 1f);
+            Handles.DrawLine(focusedMapPosition, focusedMapPosition + Vector3.up * 3f);
+            Handles.Label(focusedMapPosition + Vector3.up * 3f, focusedMapLabel);
+        }
+        if (string.IsNullOrEmpty(CurrentScenePath) || SceneManager.GetActiveScene().path != CurrentScenePath) return;
         if (showAreas)
         {
             for (int i = 0; i < config.TriggerObjects.Length; i++)
             {
                 // 原区域的偏移在朝向旋转之后应用。
                 XElement area = config.TriggerObjects[i];
-                Vector3 position = ROSceneXml.Vector(area, "position");
-                Quaternion rotation = Quaternion.Euler(0, ROSceneXml.Float(area, "face"), 0);
                 Handles.color = new Color(0.3f, 0.8f, 1f, 0.8f);
                 if (preview != null && !preview.VisibleObjects.Contains(ROSceneXml.Int(area, "id"))) Handles.color = Color.gray;
-                using (new Handles.DrawingScope(Matrix4x4.TRS(position, rotation, Vector3.one))) Handles.DrawWireCube(ROSceneXml.Vector(area, "box/offset"), ROSceneXml.Vector(area, "box/scale"));
-                Handles.Label(position, "区域 " + ROSceneXml.Int(area, "id"));
+                DrawAreaMarker(area, "区域");
             }
         }
         if (selectedArea != null)
         {
+            Handles.color = Color.yellow;
+            DrawAreaMarker(selectedArea, "所选区域");
             EditorGUI.BeginChangeCheck();
             // 场景平移工具直接写回当前区域坐标。
             Vector3 moved = Handles.PositionHandle(ROSceneXml.Vector(selectedArea, "position"), Quaternion.identity);
             if (EditorGUI.EndChangeCheck()) { ROSceneXml.SetVector(selectedArea, "position", moved); config.IsDirty = true; Repaint(); }
         }
         if (selected != null && selected.IsWave) DrawSpawnHandles();
+        if (selected != null && !selected.IsWave) DrawMechanismMarkers();
         if (preview != null && preview.Running)
         {
             Handles.color = Color.yellow;
             Handles.DrawWireDisc(preview.PlayerPosition, Vector3.up, 0.7f);
             Handles.Label(preview.PlayerPosition + Vector3.up, "预览角色（拖动可触发区域）");
             preview.PlayerPosition = Handles.PositionHandle(preview.PlayerPosition, Quaternion.identity);
+        }
+    }
+
+    /// <summary>绘制区域原始旋转盒体和具体说明，即使未生成预览物件也可识别。</summary>
+    /// <param name="area">原区域配置。</param>
+    /// <param name="prefix">当前标记是普通区域、所选区域还是触发来源。</param>
+    private static void DrawAreaMarker(XElement area, string prefix)
+    {
+        // 原区域位置与朝向共同决定碰撞盒的世界变换。
+        Vector3 position = ROSceneXml.Vector(area, "position");
+        // face 使用角度制，绕世界 Y 轴旋转。
+        Quaternion rotation = Quaternion.Euler(0, ROSceneXml.Float(area, "face"), 0);
+        using (new Handles.DrawingScope(Matrix4x4.TRS(position, rotation, Vector3.one))) Handles.DrawWireCube(ROSceneXml.Vector(area, "box/offset"), ROSceneXml.Vector(area, "box/scale"));
+        Handles.Label(position + Vector3.up, prefix + " " + ROSceneXml.Int(area, "id") + " · " + ROSceneXml.Text(area, "box/title") + "\n" + ROSceneNodePresentation.PositionText(area, "position"));
+    }
+
+    /// <summary>标注所选机制真实连接的来源和传送目的地，不使用画布坐标。</summary>
+    private void DrawMechanismMarkers()
+    {
+        // 当前触发器上下文与右侧摘要保持同一份连接解释。
+        List<MSceneEditorNode> nodes = ROSceneNodePresentation.FlowNodes(config, selected);
+        for (int index = 0; index < nodes.Count; index++)
+        {
+            // 每个关联节点至多提供一个来源区域或传送目的地。
+            MSceneEditorNode node = nodes[index];
+            if (ROSceneNodePresentation.HasSourceArea(node))
+            {
+                // 未解析的区域不画零坐标。
+                XElement area = ROSceneNodePresentation.FindArea(config, ROSceneXml.Int(node.Data, "scene_trigger_obj_id"));
+                if (area != null) { Handles.color = Color.yellow; DrawAreaMarker(area, "触发来源"); }
+            }
+            if (ROSceneXml.Find(node.Data, "trans_position_info/position") == null) continue;
+            if (DestinationScenePath(node) != CurrentScenePath) continue;
+            // 只在目的地所属地图绘制传送点，不把跨场景坐标画在来源地图。
+            Vector3 position = ROSceneXml.Vector(node.Data, "trans_position_info/position");
+            Handles.color = Color.magenta;
+            Handles.DrawWireDisc(position, Vector3.up, 1f);
+            Handles.DrawLine(position, position + Vector3.up * 2f);
+            Handles.Label(position + Vector3.up * 2f, "传送终点 " + ROSceneNodePresentation.PositionText(node.Data, "trans_position_info/position"));
         }
     }
 
@@ -704,7 +882,9 @@ public sealed class ROSceneEditorWindow : EditorWindow
             Vector3 position = ROSceneXml.Vector(points[i], "position");
             Handles.color = Color.green;
             Handles.DrawWireDisc(position, Vector3.up, Mathf.Max(0.4f, ROSceneXml.Float(points[i], "born_radius")));
-            Handles.Label(position, "Wave " + selected.WaveId + " / 点 " + i + " ×" + ROSceneXml.Int(points[i], "count", 1));
+            if (i == pointIndex) Handles.color = Color.yellow;
+            Handles.DrawLine(position, position + Vector3.up * 2f);
+            Handles.Label(position + Vector3.up * 2f, ROSceneNodePresentation.Title(selected, catalog) + "\n刷点 " + (i + 1) + "/" + points.Length + " ×" + ROSceneXml.Int(points[i], "count", 1) + " " + ROSceneNodePresentation.PositionText(points[i], "position"));
             if (i != pointIndex) continue;
             EditorGUI.BeginChangeCheck();
             // 选中刷点的平移和朝向独立于模型预览对象。
@@ -729,18 +909,71 @@ public sealed class ROSceneEditorWindow : EditorWindow
         XElement[] points = ROSceneXml.SpawnPoints(selected.Data);
         if (points.Length == 0) return;
         pointIndex = Mathf.Clamp(pointIndex, 0, points.Length - 1);
-        FramePosition(ROSceneXml.Vector(points[pointIndex], "position"));
+        FramePosition(ROSceneXml.Vector(points[pointIndex], "position"), CurrentScenePath, ROSceneNodePresentation.Title(selected, catalog) + " · 刷点 " + (pointIndex + 1));
     }
 
-    /// <summary>让 Scene View 观察指定原场景位置。</summary>
-    /// <param name="position">需要查看的世界坐标。</param>
-    private static void FramePosition(Vector3 position)
+    /// <summary>框选当前波次所有原刷点及出生半径，无需生成怪物模型。</summary>
+    private void FrameAllPoints()
     {
+        // 按原刷点集合计算范围，不修改坐标或数量。
+        XElement[] points = ROSceneXml.SpawnPoints(selected.Data);
+        if (points.Length == 0) return;
+        // 边界至少包含第一个真实点。
+        Bounds bounds = new Bounds(ROSceneXml.Vector(points[0], "position"), Vector3.one);
+        for (int index = 0; index < points.Length; index++)
+        {
+            // 每个点的出生半径也计入观察范围。
+            float radius = Mathf.Max(0.4f, ROSceneXml.Float(points[index], "born_radius"));
+            bounds.Encapsulate(new Bounds(ROSceneXml.Vector(points[index], "position"), Vector3.one * radius * 2f));
+        }
+        FramePosition(bounds.center, CurrentScenePath, ROSceneNodePresentation.Title(selected, catalog) + " · 全部 " + points.Length + " 个刷点", Mathf.Max(12f, bounds.extents.magnitude * 1.3f));
+    }
+
+    /// <summary>定位来源区域时保持所选机制，便于继续查看其结果。</summary>
+    /// <param name="area">原 XML 中的真实区域。</param>
+    private void FrameArea(XElement area)
+    {
+        if (ROSceneXml.Find(area, "position") == null) return;
+        FramePosition(ROSceneXml.Vector(area, "position"), CurrentScenePath, "区域 " + ROSceneXml.Int(area, "id") + " · " + ROSceneXml.Text(area, "box/title"));
+    }
+
+    /// <summary>按传送结果中的场景编号解析目标地图；未登记时不借用当前场景。</summary>
+    /// <param name="node">包含 trans_position_info 的结果节点。</param>
+    private string DestinationScenePath(MSceneEditorNode node)
+    {
+        // 目标场景编号来自传送结果，不取当前下拉查看的副本目标编号。
+        int sceneId = ROSceneXml.Int(node.Data, "trans_position_info/scene_id");
+        if (sceneResource != null && sceneResource.sceneId == sceneId) return CurrentScenePath;
+        // 跨场景目的地必须有独立资源登记。
+        DungeonSceneResource destination = DungeonSceneResource.Load(sceneId);
+        if (destination == null || string.IsNullOrEmpty(destination.sceneLocation)) return "";
+        return destination.sceneLocation + ".unity";
+    }
+
+    /// <summary>定位传送结果的原坐标，允许切换到明确登记的目的地地图。</summary>
+    /// <param name="node">含真实传送坐标的结果节点。</param>
+    private void FrameDestination(MSceneEditorNode node)
+    {
+        FramePosition(ROSceneXml.Vector(node.Data, "trans_position_info/position"), DestinationScenePath(node), "传送终点 · 场景 " + ROSceneXml.Text(node.Data, "trans_position_info/scene_id"));
+    }
+
+    /// <summary>先确认正确地图再让 Scene View 观察原坐标；取消打开不继续定位。</summary>
+    /// <param name="position">需要查看的世界坐标。</param>
+    /// <param name="scenePath">坐标所属的资源登记地图。</param>
+    /// <param name="label">标记的对象名称与用途。</param>
+    /// <param name="size">观察范围，单位为场景米。</param>
+    private void FramePosition(Vector3 position, string scenePath, string label, float size = 12f)
+    {
+        if (!OpenMap(scenePath)) return;
+        focusedMapPath = scenePath;
+        focusedMapPosition = position;
+        focusedMapLabel = label;
         // Scene View 由 Unity 管理，不改动正式场景相机。
         SceneView view = SceneView.lastActiveSceneView;
         if (view == null) view = GetWindow<SceneView>();
-        view.LookAt(position + Vector3.up, Quaternion.Euler(35f, 200f, 0f), 12f);
-        view.Repaint();
+        view.LookAt(position + Vector3.up, Quaternion.Euler(35f, 200f, 0f), size);
+        view.Focus();
+        SceneView.RepaintAll();
     }
 
     /// <summary>将全部原节点坐标适配到中央画布。</summary>
@@ -760,14 +993,28 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <summary>打开已经迁入主工程的正式地图，保留 Unity 原生未保存场景提示。</summary>
     private void OpenDungeonScene()
     {
-        if (string.IsNullOrEmpty(CurrentScenePath))
+        OpenMap(CurrentScenePath);
+    }
+
+    /// <summary>仅打开已登记且存在的目标地图，保留 Unity 原生未保存场景确认。</summary>
+    /// <param name="scenePath">待打开的真实 Unity 场景资源路径。</param>
+    private bool OpenMap(string scenePath)
+    {
+        if (string.IsNullOrEmpty(scenePath) || !File.Exists(scenePath))
         {
-            ShowNotification(new GUIContent("当前配置的客户端场景尚未迁入"));
-            return;
+            ShowNotification(new GUIContent("该坐标所属地图未登记或尚未迁入，无法定位"));
+            return false;
         }
-        if (SceneManager.GetActiveScene().path == CurrentScenePath) return;
-        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-        EditorSceneManager.OpenScene(CurrentScenePath);
+        if (SceneManager.GetActiveScene().path == scenePath) return true;
+        if (EditorApplication.isPlaying)
+        {
+            ShowNotification(new GUIContent("请退出运行模式后切换地图"));
+            return false;
+        }
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;
+        StopPreview();
+        EditorSceneManager.OpenScene(scenePath);
+        return SceneManager.GetActiveScene().path == scenePath;
     }
 
     /// <summary>开始当前配置的完整波次预览。</summary>
