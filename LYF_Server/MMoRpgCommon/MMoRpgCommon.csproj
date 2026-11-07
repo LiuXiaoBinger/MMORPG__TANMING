@@ -41,29 +41,30 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Class1.cs"/>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigation.cs">
+        <!-- Unity 已在 GM_Game 编译导航源码；只有服务端公共程序集包含这八份链接源码。 -->
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigation.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigation.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationTriangle.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationTriangle.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationTriangle.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPortal.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPortal.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationPortal.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationEdge.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationEdge.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationEdge.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPointComparer.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPointComparer.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationPointComparer.cs</Link>
         </Compile>
         <!-- 公共导航格式直接链接客户端同份纯C#源码，避免两端复制后字段或文件版本不一致。 -->
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPoint.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationPoint.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationPoint.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapData.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapData.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationMapData.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapSerializer.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Navigation\MNavigationMapSerializer.cs" Condition="'$(BuildForUnity)' != 'true'">
             <Link>Navigation\MNavigationMapSerializer.cs</Link>
         </Compile>
         <Compile Include="EntityData\Entity\EntityBase.cs" />
@@ -136,6 +137,19 @@
       <None Include="EntityData\Gene\SpecialGene\TimeBuff\.gitkeep" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <!-- 两个既有分发脚本共用此入口，只构建并发布客户端公共 DLL，不部署任何服务端文件。 -->
+    <Target Name="BuildAndPublishUnityCommon">
+        <PropertyGroup>
+            <!-- 客户端变体的程序集和中间产物目录；可在验证时改到本次任务的 _temp 子目录。 -->
+            <UnityCommonBuildRoot Condition="'$(UnityCommonBuildRoot)' == ''">$(MSBuildProjectDirectory)\..\..\_temp\unity-common-client\</UnityCommonBuildRoot>
+            <!-- 两个现有客户端插件位置共享同一份不含导航重复类型的公共程序集。 -->
+            <UnityCommonAssetsRoot>$(MSBuildProjectDirectory)\..\..\LYF_MMO\Assets\GM_Game\Plugins\</UnityCommonAssetsRoot>
+        </PropertyGroup>
+        <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Rebuild"
+                 Properties="Configuration=$(Configuration);BuildForUnity=true;OutDir=$(UnityCommonBuildRoot)bin\;BaseIntermediateOutputPath=$(UnityCommonBuildRoot)obj\" />
+        <Copy SourceFiles="$(UnityCommonBuildRoot)bin\MMoRpgCommon.dll" DestinationFolder="$(UnityCommonAssetsRoot)Common\" />
+        <Copy SourceFiles="$(UnityCommonBuildRoot)bin\MMoRpgCommon.dll" DestinationFolder="$(UnityCommonAssetsRoot)Net\" />
+    </Target>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

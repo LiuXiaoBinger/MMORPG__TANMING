@@ -318,6 +318,10 @@
 - 后续返修（2026-11-07）：将 `ROSceneStageFlow.cs.meta` 中 33 字符的 GUID 修正为有效的 `c12b495622374f6a951cdb097a1ffa54`。无效 meta 导致 Unity 忽略该脚本，在出现 CS0103 后仍保留旧窗口。`ROSceneNodePresentation.cs` 和 `ROSceneEditorWindow.cs` 现为已观察到的全部 13 个端口名称添加中文标签，并保留英文原名和用途提示；相邻节点面板中的连接两端也已覆盖，行高随文本换行调整。端口 ID、连接关系和节点坐标保持不变。
 - 当前验收边界：磁盘上的 Unity 编辑器 DLL 已包含新增阶段类型，但 Unity 整体编译/重载仍被独立的 CS0433 阻断（`MNavigationMapData` 同时存在于 GM_Game 与 MMoRpgCommon）。未宣称实机窗口已成功重载。用户仅允许在 Windows 虚拟桌面 1 控制 UI；工具无法将后台输入与当前活动的桌面 2 隔离，因此在该限制提出后没有发送输入。本次返修未修改导航源码及插件 DLL。证据：`_temp/scene-editor-stage-flow-20261107/live-repair/` 和 `node-labels/`。
 
+- 阶段卡片返修（2026-11-07）：`ROSceneEditorWindow.cs` 移除了默认总览连线图，以及波次/机关/完成条件中的嵌套滚动区域。入口/完成出口和阶段目录保持可见；单一正文滚动区展示玩家目标、按类型标注的波次卡片和按触发器划分的机关卡片，完成条件与真实 NextKeys 固定在下方。技术节点/证据折叠在“高级”区域。菜单打开和 LoadConfig 均显式选择“阶段流程”；仍保留手动高级图编辑。审查修正将包含 NPC/环境对象的集合准确标注为波次，不再全部称为怪物。
+- 已解决有证据支持的 CS0433 构建边界问题：`MMoRpgCommon.csproj` 仅在 BuildForUnity 时排除 8 个 Navigation 链接，并提供 BuildAndPublishUnityCommon；现有 Common/Network 拷贝 bat 调用该目标，在客户端拷贝循环中跳过服务端 Common。两个客户端 Common DLL 资源均已更新；默认服务端导航和原有服务端拷贝循环保持不变。本轮共修改六个代码/构建/资源文件；既有无关菜单位置改动已保留，并排除在本次提交之外。证据与实机验证边界见 `项目修改日志/2026-11-07-副本阶段流程视图.md`、`stage-cards/compile-audit/delivery-receipt.json`。
+- 实机验收仍待完成：未发送任何桌面输入；用户仅授权使用虚拟桌面 1，尚未确认该桌面已切到前台。发布后 Unity 日志未推进，因此不能依据离线编译结果宣称窗口已渲染或已完成域重载。
+
 ## [CODE][基因][GENE-RUNTIME-20261107] Gene 基因表与共享运行模块
 
 ### 最新补充：分页、事件与次数

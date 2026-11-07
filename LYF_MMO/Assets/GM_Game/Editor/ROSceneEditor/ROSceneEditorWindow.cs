@@ -97,20 +97,14 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private List<ROSceneStage> stages = new List<ROSceneStage>();
     /// <summary>配置、目标表或原图编辑变化后重建一次阶段，避免每次重绘重复解析全图。</summary>
     private bool stageFlowNeedsRefresh = true;
-    /// <summary>顶部阶段关系图的水平与垂直滚动位置。</summary>
-    private Vector2 stageGraphScroll;
     /// <summary>左侧完整阶段导航的滚动位置。</summary>
     private Vector2 stageListScroll;
     /// <summary>当前阶段行动与关联说明的滚动位置。</summary>
     private Vector2 stageContentScroll;
-    /// <summary>当前阶段波次卡片独立滚动位置。</summary>
-    private Vector2 stageWaveScroll;
-    /// <summary>当前阶段机制卡片独立滚动位置。</summary>
-    private Vector2 stageMechanismScroll;
-    /// <summary>较长的原事件完成条件在底部独立滚动，保持下一步按钮可见。</summary>
-    private Vector2 stageCompletionScroll;
     /// <summary>是否展开当前阶段全部关联证据，不影响配置数据。</summary>
     private bool showStageNotes;
+    /// <summary>是否展示高级排查入口；未归属节点不会混入正常阶段目录。</summary>
+    private bool showStageAdvanced;
 
     /// <summary>保留两个 RO 原菜单入口并添加本项目中文入口。</summary>
     [MenuItem("TreeEditor/OpenSceneEditor %l")]
@@ -122,6 +116,8 @@ public sealed class ROSceneEditorWindow : EditorWindow
         ROSceneEditorWindow window = GetWindow<ROSceneEditorWindow>();
         window.titleContent = new GUIContent("RO 副本编辑器");
         window.minSize = new Vector2(1100f, 650f);
+        window.editorView = 0;
+        window.SelectStage("entry");
         window.Show();
     }
 
@@ -165,8 +161,9 @@ public sealed class ROSceneEditorWindow : EditorWindow
         selected = null;
         selectedArea = null;
         focusedMapPath = "";
-        selectedStageKey = "entry";
-        stageGraphScroll = Vector2.zero;
+        editorView = 0;
+        SelectStage("entry");
+        stageListScroll = Vector2.zero;
         inspectorScroll = Vector2.zero;
         hasUnsavedChanges = false;
         FitGraph();
@@ -222,7 +219,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private void DrawToolbar()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        editorView = GUILayout.Toolbar(editorView, new[] { "副本流程", "原始节点" }, EditorStyles.toolbarButton, GUILayout.Width(150));
+        editorView = GUILayout.Toolbar(editorView, new[] { "阶段流程", "高级：节点编辑" }, EditorStyles.toolbarButton, GUILayout.Width(220));
         if (GUILayout.Button("打开配置", EditorStyles.toolbarButton, GUILayout.Width(75)))
         {
             // Unity 原生文件框只负责选择待编辑文件。
@@ -242,15 +239,14 @@ public sealed class ROSceneEditorWindow : EditorWindow
         else if (GUILayout.Button("查看入口", EditorStyles.toolbarButton, GUILayout.Width(75)))
         {
             SelectStage("entry");
-            stageGraphScroll = Vector2.zero;
         }
         GUILayout.FlexibleSpace();
-        if (config != null) GUILayout.Label(config.Nodes.Count + " 节点 / " + config.Connections.Count + " 连线 / " + config.TriggerObjects.Length + " 区域");
+        if (config != null && editorView == 1) GUILayout.Label(config.Nodes.Count + " 节点 / " + config.Connections.Count + " 连线 / " + config.TriggerObjects.Length + " 区域");
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
         if (editorView == 0)
         {
-            GUILayout.Label("配置流程", EditorStyles.boldLabel, GUILayout.Width(65));
+            GUILayout.Label("当前副本", EditorStyles.boldLabel, GUILayout.Width(65));
             // 选择其他副本只读其目标表，不把当前 XML 或地图套到该副本上。
             EditorGUI.BeginChangeCheck();
             if (dungeonsTable != null)
@@ -259,10 +255,9 @@ public sealed class ROSceneEditorWindow : EditorWindow
             {
                 stageFlowNeedsRefresh = true;
                 SelectStage("entry");
-                stageGraphScroll = Vector2.zero;
             }
             if (GUILayout.Button("重读目标表", EditorStyles.toolbarButton, GUILayout.Width(80))) LoadDungeonTargets();
-            GUILayout.Label("选择阶段查看配置关系，不代表游戏中的完成进度", EditorStyles.miniLabel);
+            GUILayout.Label("进入 → 查看当前阶段 → 按实际出口继续（配置查看）", EditorStyles.miniLabel);
         }
         else
         {
@@ -313,270 +308,239 @@ public sealed class ROSceneEditorWindow : EditorWindow
     {
         selectedStageKey = key;
         stageContentScroll = Vector2.zero;
-        stageWaveScroll = Vector2.zero;
-        stageMechanismScroll = Vector2.zero;
-        stageCompletionScroll = Vector2.zero;
         showStageNotes = false;
         Repaint();
     }
 
-    /// <summary>绘制全程关系、阶段导航和当前阶段卡片，原始节点保留为独立高级视图。</summary>
+    /// <summary>固定阶段目录与完成出口，只让当前阶段正文纵向滚动。</summary>
     private void DrawStageFlow()
     {
         if (stages.Count == 0)
         {
-            EditorGUILayout.HelpBox("尚未读取到副本目标定义。可重读目标表，或切换到原始节点查看当前 XML。", MessageType.Warning);
+            EditorGUILayout.HelpBox("尚未读取到副本目标定义。可重读目标表，或进入高级节点编辑查看当前 XML。", MessageType.Warning);
             return;
         }
-        // 顶部关系图独立滚动，阶段列表始终在左侧保留完整编号。
-        float overviewHeight = 122f;
-        DrawStageOverview(new Rect(0f, 46f, position.width, overviewHeight));
-        // 正文固定左侧导航，中央空间留给当前玩家阶段。
-        float bodyTop = 46f + overviewHeight;
-        // 正文高度使用窗口剩余像素，缩放窗口时同步变化。
+        // 两行工具栏下直接进入工作台，不再占用顶部空间绘制全程连线。
+        float bodyTop = 46f;
+        // 正文随窗口高度伸缩，1100×650 的最小窗口仍保留约 600 像素。
         float bodyHeight = position.height - bodyTop;
-        // 左侧阶段列表宽度，单位为窗口像素。
-        float navigationWidth = 222f;
+        // 导航宽度容纳完整阶段编号与两行目标名，中央保留至少 840 像素。
+        float navigationWidth = 244f;
         GUILayout.BeginArea(new Rect(0f, bodyTop, navigationWidth, bodyHeight), EditorStyles.helpBox);
         DrawStageNavigation();
         GUILayout.EndArea();
-        GUILayout.BeginArea(new Rect(navigationWidth + 4f, bodyTop, position.width - navigationWidth - 8f, bodyHeight), EditorStyles.helpBox);
+        GUILayout.BeginArea(new Rect(navigationWidth + 6f, bodyTop, position.width - navigationWidth - 10f, bodyHeight), EditorStyles.helpBox);
         // 当前阶段对象来自本次布局，不保留失效的旧节点引用。
         ROSceneStage stage = FindStage(selectedStageKey);
         if (stage != null) DrawCurrentStage(stage);
         GUILayout.EndArea();
     }
 
-    /// <summary>按真实后继边分层绘制可点选关系图；分支、汇合和回边均保留。</summary>
-    /// <param name="area">窗口顶部的固定可见矩形。</param>
-    private void DrawStageOverview(Rect area)
-    {
-        // 未归属节点只供排查，不伪装成通关所需的额外步骤。
-        List<ROSceneStage> graphStages = new List<ROSceneStage>();
-        for (int index = 0; index < stages.Count; index++)
-            if (stages[index].Key != "unresolved") graphStages.Add(stages[index]);
-        // 每个键对应一个真实图节点；以下层级仅决定编辑器排版。
-        Dictionary<string, int> stageIndices = new Dictionary<string, int>();
-        // -1 表示尚未从入口找到该阶段，非负数是最短路径层级。
-        int[] levels = new int[graphStages.Count];
-        for (int index = 0; index < graphStages.Count; index++)
-        {
-            stageIndices[graphStages[index].Key] = index;
-            levels[index] = -1;
-        }
-        // 从入口开始广度遍历，遇到已经排版的节点不重复入队，回边照常绘制。
-        List<int> pending = new List<int>();
-        // 入口在当前图集合内的索引。
-        int entryIndex;
-        if (stageIndices.TryGetValue("entry", out entryIndex))
-        {
-            levels[entryIndex] = 0;
-            pending.Add(entryIndex);
-        }
-        for (int queueIndex = 0; queueIndex < pending.Count; queueIndex++)
-        {
-            // 当前节点的全部后继来自目标定义，不按列表顺序制造连接。
-            int sourceIndex = pending[queueIndex];
-            for (int edgeIndex = 0; edgeIndex < graphStages[sourceIndex].NextKeys.Count; edgeIndex++)
-            {
-                // 缺失目标由阶段说明报告，关系图不创建假节点。
-                int targetIndex;
-                if (!stageIndices.TryGetValue(graphStages[sourceIndex].NextKeys[edgeIndex], out targetIndex)) continue;
-                if (levels[targetIndex] >= 0) continue;
-                levels[targetIndex] = levels[sourceIndex] + 1;
-                pending.Add(targetIndex);
-            }
-        }
-        // 同层节点按原表顺序竖排，孤立阶段单独放在尾部并保留无连线状态。
-        Dictionary<int, int> rows = new Dictionary<int, int>();
-        // 各阶段卡片的可点击矩形，坐标相对于顶部滚动内容。
-        Rect[] boxes = new Rect[graphStages.Count];
-        // 横向滚动范围至少覆盖当前窗口可见宽度。
-        float contentWidth = area.width - 20f;
-        // 纵向滚动范围至少覆盖顶部图的可见高度。
-        float contentHeight = area.height - 20f;
-        // 当前已分配的最远层级，用于放置与入口不连通的阶段。
-        int maximumLevel = 0;
-        for (int index = 0; index < levels.Length; index++) maximumLevel = Mathf.Max(maximumLevel, levels[index]);
-        for (int index = 0; index < graphStages.Count; index++)
-        {
-            if (levels[index] < 0) levels[index] = ++maximumLevel;
-            // 每层累计行数，仅影响图形位置。
-            int row;
-            rows.TryGetValue(levels[index], out row);
-            rows[levels[index]] = row + 1;
-            boxes[index] = new Rect(14f + levels[index] * 190f, 22f + row * 74f, 154f, 50f);
-            contentWidth = Mathf.Max(contentWidth, boxes[index].xMax + 20f);
-            contentHeight = Mathf.Max(contentHeight, boxes[index].yMax + 20f);
-        }
-        GUI.Box(area, GUIContent.none, EditorStyles.helpBox);
-        stageGraphScroll = GUI.BeginScrollView(area, stageGraphScroll, new Rect(0f, 0f, contentWidth, contentHeight));
-        GUI.Label(new Rect(14f, 1f, 600f, 20f), "全程关系 · 箭头来自目标配置；多个出口表示分支，点击任一阶段查看", EditorStyles.miniLabel);
-        Handles.BeginGUI();
-        for (int index = 0; index < graphStages.Count; index++)
-        {
-            for (int edgeIndex = 0; edgeIndex < graphStages[index].NextKeys.Count; edgeIndex++)
-            {
-                // 只绘制存在于解释结果中的真实有向边。
-                int targetIndex;
-                if (!stageIndices.TryGetValue(graphStages[index].NextKeys[edgeIndex], out targetIndex)) continue;
-                DrawStageEdge(boxes[index], boxes[targetIndex], selectedStageKey == graphStages[index].Key);
-            }
-        }
-        Handles.EndGUI();
-        // 标题允许换行，按钮完整文案同时用作悬浮说明。
-        GUIStyle nodeStyle = new GUIStyle(EditorStyles.miniButton);
-        nodeStyle.wordWrap = true;
-        nodeStyle.fontSize = 12;
-        for (int index = 0; index < graphStages.Count; index++)
-        {
-            // 背景色只代表当前查看项，不表示运行成功或失败。
-            Color oldColor = GUI.backgroundColor;
-            if (graphStages[index].Key == selectedStageKey) GUI.backgroundColor = new Color(0.35f, 0.75f, 1f);
-            if (GUI.Button(boxes[index], new GUIContent(StageNavigationTitle(graphStages[index]), graphStages[index].Title + "\n" + graphStages[index].EntryText), nodeStyle)) SelectStage(graphStages[index].Key);
-            GUI.backgroundColor = oldColor;
-        }
-        GUI.EndScrollView();
-    }
-
-    /// <summary>绘制带明确箭头的阶段连接；回边从节点上方经过。</summary>
-    /// <param name="source">起点卡片的图内位置。</param>
-    /// <param name="target">终点卡片的图内位置。</param>
-    /// <param name="highlight">是否突出当前查看阶段的出口。</param>
-    private static void DrawStageEdge(Rect source, Rect target, bool highlight)
-    {
-        // 正向边从右侧进入左侧，回边保留方向并沿上方绕行。
-        Vector3 start = new Vector3(source.xMax, source.center.y, 0f);
-        // 箭头尖端留在终点卡片左侧外 3 像素处。
-        Vector3 end = new Vector3(target.xMin - 3f, target.center.y, 0f);
-        // 起点控制柄限制曲线离开卡片的方向。
-        Vector3 firstTangent = start + Vector3.right * 30f;
-        // 终点控制柄决定曲线入射和箭头朝向。
-        Vector3 lastTangent = end + Vector3.left * 30f;
-        // 普通连线使用低饱和灰蓝色，当前出口使用亮蓝色。
-        Color edgeColor = new Color(0.58f, 0.65f, 0.72f);
-        if (highlight) edgeColor = new Color(0.25f, 0.75f, 1f);
-        if (target.x <= source.x)
-        {
-            start = new Vector3(source.center.x, source.yMin, 0f);
-            end = new Vector3(target.center.x, target.yMin - 3f, 0f);
-            firstTangent = start + Vector3.down * 16f;
-            lastTangent = end + Vector3.down * 16f;
-        }
-        Handles.DrawBezier(start, end, firstTangent, lastTangent, edgeColor, null, 2.5f);
-        // 箭头朝向取曲线终点切线，区分前进、汇合和返回关系。
-        Vector3 direction = (end - lastTangent).normalized;
-        // 与箭头方向垂直的单位向量，用于计算三角形两翼。
-        Vector3 normal = new Vector3(-direction.y, direction.x, 0f);
-        Handles.color = edgeColor;
-        Handles.DrawAAConvexPolygon(end, end - direction * 8f + normal * 4f, end - direction * 8f - normal * 4f);
-    }
-
-    /// <summary>展示开始、编号阶段、结束，以及独立的未归属排查入口。</summary>
+    /// <summary>固定进入与结束入口，阶段目录保留真实编号，技术排查默认折叠。</summary>
     private void DrawStageNavigation()
     {
-        GUILayout.Label("副本阶段", EditorStyles.boldLabel);
-        GUILayout.Label("仅查看配置 · 不记录完成状态", EditorStyles.miniLabel);
-        // 短导航使用固定两行高度，默认窗口能同时看到多段流程。
-        GUIStyle itemStyle = new GUIStyle(EditorStyles.miniButton);
-        itemStyle.wordWrap = true;
-        itemStyle.alignment = TextAnchor.MiddleLeft;
+        GUILayout.Space(8f);
+        GUILayout.Label("副本阶段", StageTextStyle(16, true));
+        GUILayout.Label("点击阶段查看；出口决定下一步", StageTextStyle(12, false));
+        GUILayout.Space(8f);
+        DrawStageNavigationItem(FindStage("entry"));
         stageListScroll = EditorGUILayout.BeginScrollView(stageListScroll);
+        // 只列正式目标阶段，不把未归属节点或原图节点当作玩家任务。
         for (int index = 0; index < stages.Count; index++)
         {
-            if (stages[index].Key == "unresolved") continue;
-            // 当前查看阶段用底色区别，不使用完成勾选或虚构进度条。
-            Color oldColor = GUI.backgroundColor;
-            if (stages[index].Key == selectedStageKey) GUI.backgroundColor = new Color(0.35f, 0.75f, 1f);
-            if (GUILayout.Button(new GUIContent(StageNavigationTitle(stages[index]), stages[index].Title), itemStyle, GUILayout.Height(36f))) SelectStage(stages[index].Key);
-            GUI.backgroundColor = oldColor;
+            if (stages[index].IsEntry || stages[index].IsFinish || stages[index].Key == "unresolved") continue;
+            DrawStageNavigationItem(stages[index]);
         }
         EditorGUILayout.EndScrollView();
-        // 无法建立关联的原节点不混进阶段列表，也不静默丢弃。
-        ROSceneStage unresolved = FindStage("unresolved");
-        if (unresolved != null)
+        DrawStageNavigationItem(FindStage("finish"));
+        GUILayout.Space(8f);
+        showStageAdvanced = EditorGUILayout.Foldout(showStageAdvanced, "高级：关联排查", true);
+        if (showStageAdvanced)
         {
-            if (GUILayout.Button("未归属节点 · " + (unresolved.Waves.Count + unresolved.Mechanisms.Count), itemStyle)) SelectStage("unresolved");
+            // 未建立阶段关系的节点保留单独入口，不暗示它们属于通关流程。
+            ROSceneStage unresolved = FindStage("unresolved");
+            if (unresolved != null)
+                if (GUILayout.Button("未归属节点（" + (unresolved.Waves.Count + unresolved.Mechanisms.Count) + "）", GUILayout.Height(26f))) SelectStage("unresolved");
+            if (GUILayout.Button("高级：节点编辑", GUILayout.Height(26f))) editorView = 1;
         }
-        if (GUILayout.Button("查看 / 编辑原始节点")) editorView = 1;
+        GUILayout.Space(6f);
     }
 
-    /// <summary>为固定导航生成短标题，完整目标仍在悬浮说明和中央任务卡片显示。</summary>
+    /// <summary>绘制可换行的阶段入口，选中底色仅表示当前查看项。</summary>
+    /// <param name="stage">来自真实阶段集合的目录项。</param>
+    private void DrawStageNavigationItem(ROSceneStage stage)
+    {
+        if (stage == null) return;
+        // 导航文字使用正常字号并自动换行，不把长目标缩成无法识别的小按钮。
+        GUIStyle itemStyle = new GUIStyle(GUI.skin.button);
+        itemStyle.fontSize = 13;
+        itemStyle.wordWrap = true;
+        itemStyle.alignment = TextAnchor.MiddleLeft;
+        itemStyle.padding = new RectOffset(10, 10, 8, 8);
+        // 目录保持至少两行的点击面积，长名称继续按内容扩高。
+        float itemHeight = Mathf.Max(48f, itemStyle.CalcHeight(new GUIContent(StageNavigationTitle(stage)), 218f));
+        // 恢复原背景色以免当前选择影响其他窗口控件。
+        Color oldColor = GUI.backgroundColor;
+        if (stage.Key == selectedStageKey) GUI.backgroundColor = new Color(0.35f, 0.75f, 1f);
+        if (GUILayout.Button(new GUIContent(StageNavigationTitle(stage), stage.Title), itemStyle, GUILayout.Height(itemHeight))) SelectStage(stage.Key);
+        GUI.backgroundColor = oldColor;
+        GUILayout.Space(4f);
+    }
+
+    /// <summary>保留真实阶段或分支组名称，开始和结束采用玩家流程文案。</summary>
     /// <param name="stage">需要显示编号和任务的阶段。</param>
     private static string StageNavigationTitle(ROSceneStage stage)
     {
-        if (stage.Title.Length <= 28) return stage.Title;
-        return stage.Title.Substring(0, 27) + "…";
+        if (stage.IsEntry) return "进入 · 角色进入副本";
+        if (stage.IsFinish) return "结束 · 完成与离开";
+        if (stage.Title.Length > 42) return stage.Title.Substring(0, 41) + "…";
+        return stage.Title;
     }
 
-    /// <summary>以行动、目标、怪物、机制和完成出口组织单个玩家阶段。</summary>
+    /// <summary>构造当前工作台使用的可换行文字样式，避免继承编辑器微型字号。</summary>
+    /// <param name="fontSize">文字字号，单位为屏幕逻辑像素。</param>
+    /// <param name="bold">是否突出标题，不改变正文内容。</param>
+    private static GUIStyle StageTextStyle(int fontSize, bool bold)
+    {
+        // 每个样式只影响当前控件，不修改 Unity 的共享 EditorStyles。
+        GUIStyle style = new GUIStyle(EditorStyles.wordWrappedLabel);
+        style.fontSize = fontSize;
+        style.wordWrap = true;
+        if (bold) style.fontStyle = FontStyle.Bold;
+        return style;
+    }
+
+    /// <summary>按玩家行动、怪物、机制和完成出口组织四块内容。</summary>
     /// <param name="stage">本次布局读取的当前阶段。</param>
     private void DrawCurrentStage(ROSceneStage stage)
     {
-        // 标题始终固定在中央顶部，内容滚动时仍能确认当前阶段。
-        GUIStyle headingStyle = new GUIStyle(EditorStyles.boldLabel);
-        headingStyle.fontSize = 17;
-        headingStyle.wordWrap = true;
-        GUILayout.Label(stage.Title, headingStyle);
+        GUILayout.Space(8f);
+        GUILayout.Label(new GUIContent(StageNavigationTitle(stage), stage.Title), StageTextStyle(20, true));
+        GUILayout.Space(8f);
         stageContentScroll = EditorGUILayout.BeginScrollView(stageContentScroll);
-        // 当前行动与正式任务放在同一卡片，避免让 XML 参数挤掉玩家目标。
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        GUILayout.Label("玩家现在要做什么", EditorStyles.boldLabel);
-        GUILayout.Label(stage.EntryText, EditorStyles.wordWrappedLabel);
-        if (stage.TargetTexts.Count > 0)
-        {
-            GUILayout.Space(4f);
-            GUILayout.Label("当前任务目标", EditorStyles.boldLabel);
-            for (int index = 0; index < stage.TargetTexts.Count; index++)
-                GUILayout.Label("• " + stage.TargetTexts[index], EditorStyles.wordWrappedLabel);
-        }
+        GUILayout.Label("① 这一步做什么", StageTextStyle(15, true));
+        GUILayout.Space(5f);
+        // 先展示玩家当前目标，再说明进入条件，让第一眼就能读到行动要求。
+        for (int index = 0; index < stage.TargetTexts.Count; index++)
+            GUILayout.Label("• " + stage.TargetTexts[index], StageTextStyle(14, true));
+        GUILayout.Label(stage.EntryText, StageTextStyle(13, false));
         if (stage.IsEntry) DrawEntryLocation();
+        GUILayout.Space(5f);
         EditorGUILayout.EndVertical();
-        DrawStageDownArrow();
-        // 波次和机制分别滚动，节点多的阶段不会把完成条件推到长文末尾。
+        GUILayout.Space(8f);
+        // 仅展示真实触发器摘要；同链的时机、条件与结果不会再生成重复机制卡片。
+        List<MSceneEditorNode> mechanisms = StageMechanismCards(stage);
+        // 两列共用外层唯一正文滚动，既能对照怪物与机制，又不产生细小内层滚动窗。
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(Mathf.Max(240f, (position.width - 264f) * 0.48f)));
-        GUILayout.Label("本阶段怪物 / 波次 · " + stage.Waves.Count, EditorStyles.boldLabel);
-        stageWaveScroll = EditorGUILayout.BeginScrollView(stageWaveScroll, GUILayout.Height(156f));
-        if (stage.Waves.Count == 0) GUILayout.Label("未从配置确认本阶段的实体波次。请结合关联说明查看。", EditorStyles.wordWrappedMiniLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width((position.width - 284f) * 0.45f));
+        GUILayout.Label("② 本阶段波次 · " + stage.Waves.Count + " 组", StageTextStyle(15, true));
+        GUILayout.Space(6f);
+        if (stage.Waves.Count == 0) GUILayout.Label("配置未确认此阶段的关联波次。", StageTextStyle(13, false));
+        // 每个已关联波次保留名称、数量和地图入口，不按节点数任意截断。
         for (int index = 0; index < stage.Waves.Count; index++) DrawStageWave(stage.Waves[index]);
-        EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
+        GUILayout.Space(8f);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        GUILayout.Label("本阶段机制 / 效果 · " + stage.Mechanisms.Count, EditorStyles.boldLabel);
-        stageMechanismScroll = EditorGUILayout.BeginScrollView(stageMechanismScroll, GUILayout.Height(156f));
-        if (stage.Mechanisms.Count == 0) GUILayout.Label("未从配置确认本阶段的专属机制。公共逻辑或未归属节点可在左侧查看。", EditorStyles.wordWrappedMiniLabel);
-        for (int index = 0; index < stage.Mechanisms.Count; index++) DrawStageMechanism(stage.Mechanisms[index]);
-        EditorGUILayout.EndScrollView();
+        GUILayout.Label("③ 本阶段机制 · " + mechanisms.Count + " 项", StageTextStyle(15, true));
+        GUILayout.Space(6f);
+        if (mechanisms.Count == 0) GUILayout.Label("配置未确认此阶段的独立触发机制。", StageTextStyle(13, false));
+        // 一张卡片对应一个真实触发器；共享结果不合并不同触发器的条件。
+        for (int index = 0; index < mechanisms.Count; index++) DrawStageMechanism(mechanisms[index]);
         EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
-        if (stage.Notes.Count > 0)
+        GUILayout.Space(10f);
+        showStageNotes = EditorGUILayout.Foldout(showStageNotes, "高级：关联依据与原始节点（" + stage.Notes.Count + " 条说明）", true);
+        if (showStageNotes)
         {
-            GUILayout.Label("关联说明：" + stage.Notes[0], EditorStyles.wordWrappedMiniLabel);
-            showStageNotes = EditorGUILayout.Foldout(showStageNotes, "查看全部关联依据与未解析项（" + stage.Notes.Count + "）", true);
-            if (showStageNotes)
-                for (int index = 0; index < stage.Notes.Count; index++) GUILayout.Label("• " + stage.Notes[index], EditorStyles.wordWrappedMiniLabel);
+            // 技术证据只在用户展开后显示，避免原图节点挤占默认玩家流程。
+            for (int index = 0; index < stage.Notes.Count; index++) GUILayout.Label("• " + stage.Notes[index], StageTextStyle(12, false));
+            // 所有原始关联节点均有入口，包含未能归入某个触发器的节点。
+            for (int index = 0; index < stage.Mechanisms.Count; index++)
+                if (GUILayout.Button(ROSceneNodePresentation.Title(stage.Mechanisms[index], catalog), StageNodeButtonStyle())) OpenStageNode(stage.Mechanisms[index]);
         }
+        GUILayout.Space(8f);
         EditorGUILayout.EndScrollView();
-        DrawStageDownArrow();
-        // 完成条件及出口固定在中央底部，默认窗口无需滚到底才能看下一步。
+        DrawStageCompletion(stage);
+    }
+
+    /// <summary>从真实触发上下文收集机制卡片，同一链只显示触发器一次。</summary>
+    /// <param name="stage">包含解释器已确认关联节点的当前阶段。</param>
+    private List<MSceneEditorNode> StageMechanismCards(ROSceneStage stage)
+    {
+        // 只改变展示去重，不修改原阶段关联集合、节点或连线。
+        List<MSceneEditorNode> cards = new List<MSceneEditorNode>();
+        // 原数据中的时机和结果会通过已有 FlowNodes 找到所属触发器。
+        for (int index = 0; index < stage.Mechanisms.Count; index++)
+        {
+            // 当前节点的一跳触发链保持原 XML 的归属，不扩大到整个触发器组。
+            List<MSceneEditorNode> related = ROSceneNodePresentation.FlowNodes(config, stage.Mechanisms[index]);
+            // 同一个触发器可能由多个时机、条件和结果引用，只建立一张机制卡。
+            for (int relatedIndex = 0; relatedIndex < related.Count; relatedIndex++)
+            {
+                if (!ROSceneNodePresentation.IsTrigger(related[relatedIndex])) continue;
+                if (!cards.Contains(related[relatedIndex])) cards.Add(related[relatedIndex]);
+            }
+        }
+        return cards;
+    }
+
+    /// <summary>固定完成条件和真实后继入口，超长条件可独立查看完整原文。</summary>
+    /// <param name="stage">提供完成说明与真实 NextKeys 的当前阶段。</param>
+    private void DrawStageCompletion(ROSceneStage stage)
+    {
+        GUILayout.Space(6f);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        GUILayout.Label("完成条件", EditorStyles.boldLabel);
-        stageCompletionScroll = EditorGUILayout.BeginScrollView(stageCompletionScroll, GUILayout.Height(64f));
-        GUILayout.Label(stage.CompletionText, EditorStyles.wordWrappedLabel);
-        EditorGUILayout.EndScrollView();
-        if (stage.NextKeys.Count > 1) GUILayout.Label("配置存在多个后继分支；以下为可查看出口，不代表依次执行。", EditorStyles.wordWrappedMiniLabel);
-        // 同层多个后继共用一行入口，完整目标通过悬浮说明提供。
-        EditorGUILayout.BeginHorizontal();
-        for (int index = 0; index < stage.NextKeys.Count; index++)
+        GUILayout.Label("④ 怎样完成 / 接下来去哪", StageTextStyle(15, true));
+        GUILayout.Space(4f);
+        // 固定区显示前三行核心条件，避免少数超长目标挤掉当前阶段全部正文。
+        string[] completionLines = stage.CompletionText.Split('\n');
+        // 未截断时与原文完全一致；被省略的内容通过按钮保留完整查看入口。
+        string completion = stage.CompletionText;
+        if (completionLines.Length > 3) completion = string.Join("\n", completionLines, 0, 3) + "…";
+        if (completion.Length > 180) completion = completion.Substring(0, 180) + "…";
+        GUILayout.Label(new GUIContent(completion, stage.CompletionText), StageTextStyle(13, false));
+        if (completion != stage.CompletionText)
+            if (GUILayout.Button("查看全部完成条件", GUILayout.Height(24f))) EditorUtility.DisplayDialog(stage.Title + " · 完成条件", stage.CompletionText, "返回阶段");
+        GUILayout.Space(5f);
+        if (stage.NextKeys.Count == 1)
         {
-            // 出口按钮按稳定键选择目标，点击不会推进游戏进度。
-            ROSceneStage next = FindStage(stage.NextKeys[index]);
-            if (next != null && GUILayout.Button(new GUIContent("下一步 → " + StageNavigationTitle(next), next.Title))) SelectStage(next.Key);
+            // 单出口严格使用当前阶段配置的后继键，不使用目录的下一行。
+            ROSceneStage next = FindStage(stage.NextKeys[0]);
+            if (next != null)
+                if (GUILayout.Button("下一步 → " + StageNavigationTitle(next), StageNodeButtonStyle())) SelectStage(next.Key);
         }
-        if (stage.NextKeys.Count == 0) GUILayout.Label("配置中没有后继阶段。", EditorStyles.miniLabel);
-        EditorGUILayout.EndHorizontal();
+        else if (stage.NextKeys.Count > 1)
+        {
+            GUILayout.Label("存在 " + stage.NextKeys.Count + " 条真实后继；完成后按配置选择路线。", StageTextStyle(12, false));
+            if (GUILayout.Button("查看下一阶段 / 选择分支 →", StageNodeButtonStyle()))
+            {
+                // 分支菜单容纳全部真实出口，不因窗口宽度隐藏或挤压某个分支。
+                GenericMenu menu = new GenericMenu();
+                // 菜单项仅导航，不触发游戏中的 NPC 选支或目标完成。
+                for (int index = 0; index < stage.NextKeys.Count; index++)
+                {
+                    // 每个回调捕获本次循环对应的真实后继对象。
+                    ROSceneStage next = FindStage(stage.NextKeys[index]);
+                    if (next != null) menu.AddItem(new GUIContent(StageNavigationTitle(next).Replace("/", "／")), false, () => SelectStage(next.Key));
+                }
+                menu.ShowAsContext();
+            }
+        }
+        else GUILayout.Label("此处没有配置后继阶段。", StageTextStyle(12, false));
+        GUILayout.Space(4f);
         EditorGUILayout.EndVertical();
+    }
+
+    /// <summary>为地图、原节点及下一步提供可换行的正常大小按钮。</summary>
+    private static GUIStyle StageNodeButtonStyle()
+    {
+        // 使用正常按钮作为基底，长名称按可用宽度换行而不是横向溢出。
+        GUIStyle style = new GUIStyle(GUI.skin.button);
+        style.fontSize = 12;
+        style.wordWrap = true;
+        style.padding = new RectOffset(8, 8, 6, 6);
+        return style;
     }
 
     /// <summary>提供原始 player_spawn 的地图定位，不从任务引导坐标推测入口。</summary>
@@ -593,11 +557,11 @@ public sealed class ROSceneEditorWindow : EditorWindow
         XElement spawn = ROSceneXml.Find(config.Document.Root, "data/player_spawn");
         if (spawn == null || ROSceneXml.Find(spawn, "position") == null)
         {
-            GUILayout.Label("当前 XML 未提供 player_spawn/position，无法定位真实入口。", EditorStyles.wordWrappedMiniLabel);
+            GUILayout.Label("当前 XML 未提供 player_spawn/position，无法定位真实入口。", StageTextStyle(13, false));
             return;
         }
-        GUILayout.Label("正式出生点 " + ROSceneNodePresentation.PositionText(spawn, "position"), EditorStyles.wordWrappedMiniLabel);
-        if (GUILayout.Button("定位玩家进入位置（地图）")) FramePosition(ROSceneXml.Vector(spawn, "position"), CurrentScenePath, "玩家进入副本 · player_spawn");
+        GUILayout.Label("正式出生点 " + ROSceneNodePresentation.PositionText(spawn, "position"), StageTextStyle(13, false));
+        if (GUILayout.Button("地图定位：玩家进入位置", StageNodeButtonStyle())) FramePosition(ROSceneXml.Vector(spawn, "position"), CurrentScenePath, "玩家进入副本 · player_spawn");
     }
 
     /// <summary>绘制一个真实波次的名称、数量和原图/地图入口。</summary>
@@ -605,15 +569,17 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private void DrawStageWave(MSceneEditorNode wave)
     {
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        GUILayout.Label(ROSceneNodePresentation.Title(wave, catalog), EditorStyles.wordWrappedLabel);
-        GUILayout.Label(ROSceneNodePresentation.WaveDetails(wave), EditorStyles.wordWrappedMiniLabel);
+        GUILayout.Label("波次 " + wave.WaveId + " · " + ROSceneNodePresentation.CreatureLabel(wave, catalog), StageTextStyle(14, true));
+        GUILayout.Label(ROSceneNodePresentation.WaveDetails(wave), StageTextStyle(13, false));
+        GUILayout.Space(5f);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("原始节点")) OpenStageNode(wave);
         // 逻辑波次不显示无效的地图按钮。
         if (ROSceneXml.SpawnPoints(wave.Data).Length > 0)
-            if (GUILayout.Button("地图刷点")) { SelectNode(wave); FrameAllPoints(); }
+            if (GUILayout.Button("地图定位", StageNodeButtonStyle())) { SelectNode(wave); FrameAllPoints(); }
+        if (GUILayout.Button("编辑波次", StageNodeButtonStyle())) OpenStageNode(wave);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
+        GUILayout.Space(6f);
     }
 
     /// <summary>把机制触发与结果连在同一张卡片，地图动作沿用真实来源/目的地定位。</summary>
@@ -621,11 +587,18 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private void DrawStageMechanism(MSceneEditorNode node)
     {
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        GUILayout.Label(ROSceneNodePresentation.Title(node, catalog), EditorStyles.wordWrappedLabel);
-        GUILayout.Label(ROSceneNodePresentation.FlowSummary(config, node), EditorStyles.wordWrappedMiniLabel);
-        if (GUILayout.Button("查看原始机制节点")) OpenStageNode(node);
+        GUILayout.Label(ROSceneNodePresentation.Title(node, catalog), StageTextStyle(14, true));
+        // 触发器初始启用状态来自原 enable 字段，不把配置显示成当前运行状态。
+        string enabled = ROSceneXml.Text(node.Data, "enable");
+        if (enabled == "true") GUILayout.Label("启用：初始开启", StageTextStyle(12, false));
+        else if (enabled == "false") GUILayout.Label("启用：初始关闭", StageTextStyle(12, false));
+        else GUILayout.Label("启用：原字段未明确（" + enabled + "）", StageTextStyle(12, false));
+        GUILayout.Space(5f);
+        GUILayout.Label(ROSceneNodePresentation.FlowSummary(config, node), StageTextStyle(13, false));
+        GUILayout.Space(5f);
         // 只显示此触发器上下文中的真实来源区域或传送目的地。
         List<MSceneEditorNode> related = ROSceneNodePresentation.FlowNodes(config, node);
+        // 每个关联位置入口对应原触发器中的时机或执行结果。
         for (int index = 0; index < related.Count; index++)
         {
             // 每个节点最多提供一个来源区域和一个传送结果。
@@ -634,12 +607,14 @@ public sealed class ROSceneEditorWindow : EditorWindow
             {
                 // 区域 ID 必须能在当前 XML 中找到真实对象才允许定位。
                 XElement area = ROSceneNodePresentation.FindArea(config, ROSceneXml.Int(location.Data, "scene_trigger_obj_id"));
-                if (area != null && GUILayout.Button("地图：来源区域 " + ROSceneXml.Int(area, "id"))) { SelectNode(node); FrameArea(area); }
+                if (area != null && GUILayout.Button("地图定位：来源区域 " + ROSceneXml.Int(area, "id"), StageNodeButtonStyle())) { SelectNode(node); FrameArea(area); }
             }
             if (ROSceneXml.Find(location.Data, "trans_position_info/position") != null)
-                if (GUILayout.Button("地图：传送终点")) { SelectNode(node); FrameDestination(location); }
+                if (GUILayout.Button("地图定位：传送终点", StageNodeButtonStyle())) { SelectNode(node); FrameDestination(location); }
         }
+        if (GUILayout.Button("编辑此机制", StageNodeButtonStyle())) OpenStageNode(node);
         EditorGUILayout.EndVertical();
+        GUILayout.Space(6f);
     }
 
     /// <summary>从阶段卡片切换至原画布并沿用现有节点选择与编辑能力。</summary>
@@ -650,23 +625,6 @@ public sealed class ROSceneEditorWindow : EditorWindow
         // 原画布布局尚未重绘时先设置宽度，确保首次定位在实际中心区域。
         graphRect = new Rect(230f, 50f, position.width - 580f, position.height - 50f);
         SelectNode(node);
-    }
-
-    /// <summary>为当前阶段卡片绘制真实线段与箭头，明确行动到机制再到完成条件的阅读方向。</summary>
-    private static void DrawStageDownArrow()
-    {
-        // 连接区域由布局保留，不覆盖任何文字或可点击控件。
-        Rect lineArea = GUILayoutUtility.GetRect(20f, 18f, GUILayout.ExpandWidth(true));
-        if (Event.current.type != EventType.Repaint) return;
-        Handles.BeginGUI();
-        Handles.color = new Color(0.3f, 0.7f, 0.95f);
-        // 竖线连接上下两张卡片，底端三角形表示配置阅读方向。
-        Vector3 top = new Vector3(lineArea.center.x, lineArea.yMin + 1f, 0f);
-        // 箭头尖端保留 2 像素底部间距，避免压住下一张卡片边框。
-        Vector3 bottom = new Vector3(lineArea.center.x, lineArea.yMax - 2f, 0f);
-        Handles.DrawAAPolyLine(2.5f, top, bottom);
-        Handles.DrawAAConvexPolygon(bottom, bottom + new Vector3(-4f, -6f, 0f), bottom + new Vector3(4f, -6f, 0f));
-        Handles.EndGUI();
     }
 
     /// <summary>显示波次、机制和区域的可搜索列表。</summary>

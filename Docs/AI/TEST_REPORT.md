@@ -334,6 +334,10 @@
 - 后续返修（2026-11-07）：Unity Editor.log 和 Bee 输入证实了“无效的 33 字符 meta GUID -> Flow 脚本被忽略 -> CS0103 -> 仍加载旧窗口”的链路；此前只检查 GUID 唯一性，未验证长度。修复后的 GUID 格式有效、唯一，且 Assets 中没有旧 GUID 引用。随后 Cecil 确认新的磁盘编辑器 DLL 中包含 `ROSceneStageFlow`、`ROSceneStage`、`editorView`、`RefreshStageFlow` 和 `DrawStageFlow`。
 - 中文端口标签改动使用 267 个真实引用编译 13 个编辑器源文件通过，错误和警告均为零；主 Agent 核验了限定范围的差异及空白检查。Unity 整体编译仍因 Navigation 导出/预览中的 CS0433 失败：GM_Game 和更新后的 MMoRpgCommon 均包含被链接的导航类型；最新记录的刷新中域重载次数为零。标签、布局、点击和阶段 UI 尚未在 Unity 中验证。先前两次桌面操作尝试被用户按 Escape 中止；用户限制仅使用虚拟桌面 1 后，只读取了窗口清单，没有发送 UI 输入。完整失败/返修细节仍记录在同一份已授权任务日志中。
 
+- 阶段卡片返修验证（2026-11-07）：13 个 UI 编辑器源文件使用 267 个真实引用编译通过，错误和警告均为零；12 项限定范围的源码检查通过，主 Agent 已核验实现差异。源码尺寸检查覆盖 1100x650、244 像素阶段目录、正常字号，以及真实 Boss 完成条件（88 字符/源码两行，未截断）。这些是源码/布局检查，不是 Unity 渲染截图。解析器、配置表和运行时未改动，也未重新遍历测试全部 462 行。
+- 默认服务端 Common 与 BuildForUnity Common 均构建通过（各有 4 条既有警告）。客户端变体恰好移除 8 个重复 Navigation 类型；其余 1,356 项 public/protected API 条目和 Gene=4 保持一致；两个客户端 DLL 哈希一致，75 个受保护的 meta/插件/运行中服务端文件未变。LYF.Navigation.Editor、Assembly-CSharp-Editor 和 RO.SceneEditor.Editor 的真实 Unity rsp 编译均通过（仅主编辑器有一条既有 TMP 警告）。首轮尝试因缺少既有导航引用而报 CS0006；将依赖编译到 _temp，并仅替换该临时验证引用后通过，未写入 Library。新 bat 定位片段执行成功；未运行完整服务端分发。
+- 发布时间为本地 20:19:08，而最后观察到的 Unity 日志时间为 20:11:47；实机刷新/重载、1100x650 渲染布局、阶段/地图点击、完整游玩及发布验收仍未验证。证据：`_temp/scene-editor-stage-flow-20261107/stage-cards/`，重点包括 ui-source-check.json、offline-editor/receipt.json 和 compile-audit/delivery-receipt.json。桌面 1 输入确认仍待用户答复。
+
 ## [VERIFY][基因][GENE-RUNTIME-20261107] 基因运行模块验收
 
 ### 最新补充验收

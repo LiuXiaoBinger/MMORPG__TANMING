@@ -34,10 +34,22 @@ if %dllCount% equ 0 (
     exit /b 0
 )
 
+rem 定位本机现有 Visual Studio 构建工具；客户端公共 DLL 必须排除已由 Unity 编译的导航源码。
+set "commonBuildTool="
+for /f "usebackq delims=" %%m in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do set "commonBuildTool=%%m"
+if not defined commonBuildTool (
+    echo [错误] 未找到 Visual Studio MSBuild，未开始分发。
+    exit /b 1
+)
+rem 共用同一个客户端公共程序集发布目标；下方服务端循环仍使用 Network 的完整 Debug 依赖。
+"%commonBuildTool%" "%~dp0..\MMoRpgCommon\MMoRpgCommon.csproj" /t:BuildAndPublishUnityCommon /p:Configuration=Debug /nologo /v:minimal
+if errorlevel 1 exit /b 1
+
 echo [开始] 源目录共 %dllCount% 个 .dll，正在分发复制到 5 个目标目录...
 echo.
 
-set /a totalSuccess=0
+rem 上方专用目标已成功发布 Common 和 Net 两个客户端公共 DLL。
+set /a totalSuccess=2
 set /a totalFail=0
 
 rem 分别向四服复制，每个文件在每个目标的一次复制分别计数
@@ -63,14 +75,14 @@ for %%t in (%targets%) do (
     echo.
 )
 
-rem 复制到 clientTarget 指定的 Net 插件目录，下面的提示文字不决定实际目标路径
+rem Net 的其他依赖沿用原复制流程；MMoRpgCommon.dll 已由专用目标发布，不再复制服务端版本。
 echo === LYF_MMO\Assets\LYF_Game\Plugins\Net ===
 if not exist "%clientTarget%" (
     echo   [信息] 目标目录不存在，正在创建: %clientTarget%
     mkdir "%clientTarget%"
 )
 for %%f in ("%source%\*.dll") do (
-    if exist "%%f" (
+    if exist "%%f" if /i not "%%~nxf"=="MMoRpgCommon.dll" (
         copy /y "%%f" "%clientTarget%\" >nul 2>&1
         if !errorlevel! equ 0 (
             echo   [OK] %%~nxf
