@@ -760,6 +760,18 @@ public sealed class ROSceneEditorWindow : EditorWindow
         return ROSceneNodePresentation.Title(node, catalog);
     }
 
+    /// <summary>取得当前缩放下实际绘制的节点字体，供文字测量和显示共同使用。</summary>
+    private GUIStyle NodeTextStyle()
+    {
+        // 小缩放保留最小可读字号，布局使用相同字号计算换行。
+        GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
+        style.fixedHeight = 0f;
+        style.normal.textColor = Color.white;
+        style.fontSize = Mathf.Max(7, Mathf.RoundToInt(11f * zoom));
+        style.wordWrap = true;
+        return style;
+    }
+
     /// <summary>按文字实际换行计算未缩放标题高度，为下方端口留出空间。</summary>
     /// <param name="node">当前显示节点。</param>
     private float NodeHeaderHeight(MSceneEditorNode node)
@@ -770,6 +782,24 @@ public sealed class ROSceneEditorWindow : EditorWindow
         style.fixedHeight = 0f;
         style.wordWrap = true;
         return Mathf.Max(48f, style.CalcHeight(new GUIContent(NodeLabel(node)), 206f) + 12f);
+    }
+
+    /// <summary>按最长中英端口标签计算统一行高，输入输出各占完整一行且允许换行。</summary>
+    /// <param name="node">需要测量端口文字的节点。</param>
+    private float NodePortRowHeight(MSceneEditorNode node)
+    {
+        // 返回原画布单位的行高，绘制时再应用当前缩放。
+        float height = 20f;
+        // 隐藏文字的远景缩放保持紧凑轮廓，不为不可见标签增加高度。
+        if (zoom <= 0.45f) return height;
+        // 测量字号与实际绘制完全相同，避免低缩放的最小字号挤出行高。
+        GUIStyle style = NodeTextStyle();
+        // 原端口顺序同时决定标签和连线锚点的行号。
+        for (int index = 0; index < node.Ports.Count; index++)
+        {
+            height = Mathf.Max(height, style.CalcHeight(new GUIContent(ROSceneNodePresentation.PortLabel(node.Ports[index])), 196f * zoom) / zoom + 4f);
+        }
+        return height;
     }
 
     /// <summary>绘制原节点位置、端口和连线，并处理拖动交互。</summary>
@@ -806,27 +836,29 @@ public sealed class ROSceneEditorWindow : EditorWindow
         if (selected == node) color = new Color(0.26f, 0.44f, 0.62f);
         EditorGUI.DrawRect(rect, color);
         // 小缩放时保留节点轮廓，大缩放时显示完整可读信息。
-        GUIStyle style = new GUIStyle(EditorStyles.miniLabel);
-        style.fixedHeight = 0f;
-        style.normal.textColor = Color.white;
-        style.fontSize = Mathf.Max(7, Mathf.RoundToInt(11f * zoom));
-        style.wordWrap = true;
+        GUIStyle style = NodeTextStyle();
         GUI.Label(new Rect(rect.x + 7f * zoom, rect.y + 3f * zoom, rect.width - 14f * zoom, NodeHeaderHeight(node) * zoom), new GUIContent(NodeLabel(node), node.Content), style);
+        // 每个端口独占节点宽度，行高容纳当前缩放下的完整中英文字。
+        float rowHeight = NodePortRowHeight(node) * zoom;
+        // 端口仍按原文件顺序排列，不改变持久化端口或节点位置。
         for (int i = 0; i < node.Ports.Count; i++)
         {
-            // 原端口名用作连接语义提示，不重新命名序列化字段。
+            // 中文说明仅用于界面，英文原名仍与 XML 完全一致。
             MSceneEditorPort port = node.Ports[i];
             // 端口坐标随标题实际高度下移。
             Vector2 position = PortPosition(port);
             // 连接点击区保持窗口像素大小，方便低缩放时操作。
             Rect handle = new Rect(position.x - 5f, position.y - 5f, 10f, 10f);
             EditorGUI.DrawRect(handle, new Color(0.75f, 0.85f, 0.96f));
+            // 端口圆点和中英标签提供相同的真实用途说明。
+            GUIContent label = new GUIContent(ROSceneNodePresentation.PortLabel(port), ROSceneNodePresentation.PortDescription(port));
+            GUI.Label(handle, new GUIContent("", label.tooltip));
             if (zoom > 0.45f)
             {
-                // 输入端口标签从左侧开始，输出标签靠右。
-                float left = rect.x + 12f * zoom;
-                if (!port.IsInput) left = rect.x + 80f * zoom;
-                GUI.Label(new Rect(left, position.y - 8f * zoom, 135f * zoom, 18f * zoom), port.Name, style);
+                // 两侧端口均使用整行，靠各自连接锚点对齐，长标签按行高换行。
+                style.alignment = TextAnchor.MiddleRight;
+                if (port.IsInput) style.alignment = TextAnchor.MiddleLeft;
+                GUI.Label(new Rect(rect.x + 12f * zoom, position.y - rowHeight * 0.5f, rect.width - 24f * zoom, rowHeight), label, style);
             }
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && handle.Contains(Event.current.mousePosition))
             {
@@ -843,7 +875,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="node">原节点。</param>
     private Rect NodeRect(MSceneEditorNode node)
     {
-        return new Rect(node.Position * zoom + pan, new Vector2(220f, NodeHeaderHeight(node) + 10f + node.Ports.Count * 18f) * zoom);
+        return new Rect(node.Position * zoom + pan, new Vector2(220f, NodeHeaderHeight(node) + 10f + node.Ports.Count * NodePortRowHeight(node)) * zoom);
     }
 
     /// <summary>计算一个原端口在当前画布中的位置。</summary>
@@ -855,7 +887,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
         // 输入和输出分别位于节点边框左右。
         float x = rect.xMax;
         if (port.IsInput) x = rect.xMin;
-        return new Vector2(x, rect.y + (NodeHeaderHeight(port.Owner) + 6f + port.Owner.Ports.IndexOf(port) * 18f) * zoom);
+        return new Vector2(x, rect.y + (NodeHeaderHeight(port.Owner) + (port.Owner.Ports.IndexOf(port) + 0.5f) * NodePortRowHeight(port.Owner)) * zoom);
     }
 
     /// <summary>响应缩放、平移、选中和原节点坐标拖动。</summary>
@@ -1203,14 +1235,16 @@ public sealed class ROSceneEditorWindow : EditorWindow
         {
             // 当前节点的数据元素在 Rebuild 后仍是同一 XML 对象。
             MSceneEditorConnection connection = config.Connections[i];
-            // 当前节点一侧的端口保留真实端口名。
+            // 当前节点一侧的端口显示中文用途并保留真实英文名。
             MSceneEditorPort local = connection.First;
             // 另一端用于显示具体行为和画布跳转。
             MSceneEditorPort remote = connection.Second;
             if (remote.Owner.Element == selected.Element) { local = connection.Second; remote = connection.First; }
             if (local.Owner.Element != selected.Element) continue;
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(local.Name + " ↔ " + ROSceneNodePresentation.Title(remote.Owner, catalog), EditorStyles.wordWrappedMiniLabel);
+            // 两端均说明用途，避免只看到相邻节点标题却无法辨认连接关系。
+            GUIContent connectionLabel = new GUIContent(ROSceneNodePresentation.PortLabel(local) + " ↔ " + ROSceneNodePresentation.Title(remote.Owner, catalog) + "\n" + ROSceneNodePresentation.PortLabel(remote), ROSceneNodePresentation.PortDescription(local) + "\n" + ROSceneNodePresentation.PortDescription(remote));
+            GUILayout.Label(connectionLabel, EditorStyles.wordWrappedMiniLabel);
             // 跳转仅改变当前选择，不会移动地图或修改连线。
             bool jump = GUILayout.Button("画布", GUILayout.Width(45));
             // 移除后立即结束当前遍历，下一帧读取更新后的连接列表。

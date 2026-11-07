@@ -5,6 +5,64 @@ using System.Xml.Linq;
 /// <summary>只读解释原节点与连线，供列表、画布和地图定位共用，不改变 XML 或执行规则。</summary>
 public static class ROSceneNodePresentation
 {
+    /// <summary>为原端口补充中文用途，保留括号内英文名供连线数据对照。</summary>
+    /// <param name="port">仅用于展示的原端口，不修改名称或连接。</param>
+    public static string PortLabel(MSceneEditorPort port)
+    {
+        // 中文只作用于界面，序列化仍使用 port.Name。
+        string label;
+        switch (port.Name)
+        {
+            case "inKnob": label = "上游输入"; break;
+            case "borntimingKnob": label = "出生启用时机"; break;
+            case "timingKnob": label = "触发时机"; break;
+            case "resultKnob": label = "执行结果"; break;
+            case "conditionKnob": label = "判断条件"; break;
+            case "fromClientKnob": label = "客户端事件"; break;
+            case "fromServerKnob": label = "服务端事件"; break;
+            case "triggerKnob": label = "组内触发器"; break;
+            case "groupKnob": label = "目标触发组"; break;
+            case "prevInKnob": label = "前置波次"; break;
+            case "prevOutKnob": label = "后续波次"; break;
+            case "followInKnob": label = "跟随目标"; break;
+            case "followOutKnob": label = "跟随者"; break;
+            default:
+                label = "输出端口";
+                if (port.IsInput) label = "输入端口";
+                break;
+        }
+        return label + "（" + port.Name + "）";
+    }
+
+    /// <summary>按原节点保存及执行语义解释端口，区分启用、触发、前置波次和跟随关系。</summary>
+    /// <param name="port">当前悬停或显示相邻连接的端口。</param>
+    public static string PortDescription(MSceneEditorPort port)
+    {
+        switch (port.Name)
+        {
+            case "inKnob":
+                if (IsTrigger(port.Owner)) return "连接所属触发器组，由组内管理此触发器。";
+                if (HasField(port.Owner, "timing_type")) return "连接所属触发器的出生启用时机或触发时机端口，具体作用由连到的端口决定。";
+                if (HasField(port.Owner, "result_type")) return "连接所属触发器的执行结果端口，触发后执行本结果。";
+                if (HasField(port.Owner, "condition_type")) return "连接需要本条件的时机节点，条件参与该时机的判断。";
+                if (port.Owner.Data != null && port.Owner.Data.Name.LocalName.EndsWith("SceneTriggerGroupData", System.StringComparison.Ordinal)) return "接收启用或关闭此触发器组的控制结果连接。";
+                return "连接上游节点，具体用途由当前节点类型和对端端口决定。";
+            case "borntimingKnob": return "连接触发器的出生启用时机（opentimings）；默认未启用时等待该时机，满足后启用触发器。";
+            case "timingKnob": return "连接触发器启用后监听的时机；时机及其条件满足后，执行相连结果。";
+            case "resultKnob": return "连接触发后要执行的结果，执行顺序由结果节点的 result_index 配置决定。";
+            case "conditionKnob": return "连接当前时机需要判断的条件，组合方式使用该时机的原配置。";
+            case "fromClientKnob": return "接收客户端“触发服务端组”结果，向本服务端触发器组发送事件。";
+            case "fromServerKnob": return "接收服务端“触发客户端组”结果，向本客户端触发器组发送事件。";
+            case "triggerKnob": return "连接本触发器组包含的触发器，各触发器按自己的时机、条件和结果执行。";
+            case "groupKnob": return "指定当前结果作用的触发器组，用于发送组事件或启用、关闭目标组，具体操作由结果类型决定。";
+            case "prevInKnob": return "连接本波次等待的前置波次，血量、剩余数量阈值及组合方式使用前置波次配置。";
+            case "prevOutKnob": return "连接以本波次作为前置条件的后续波次，是否开始由后续波次的前置条件配置决定。";
+            case "followInKnob": return "连接本波次实体要跟随的目标波次，对应巡逻跟随配置 follow_wave_id。";
+            case "followOutKnob": return "连接跟随本波次实体的其他波次；这是移动跟随关系，不是刷怪先后顺序。";
+            default: return "原端口名：" + port.Name + "。保留原连接语义，请结合所属节点和相邻节点查看。";
+        }
+    }
+
     /// <summary>取得怪物或 NPC 的原表编号；非实体波次返回 -1。</summary>
     /// <param name="node">当前波次节点。</param>
     public static int EntityId(MSceneEditorNode node)

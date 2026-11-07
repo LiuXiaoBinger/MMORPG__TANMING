@@ -315,6 +315,9 @@
 - 代码/资源改动仅五个文件：`ROSceneEditorWindow.cs`、新增 `ROSceneStage.cs` 和 `ROSceneStageFlow.cs`，以及两个新增 meta，均位于 `LYF_MMO/Assets/GM_Game/Editor/ROSceneEditor/`。Codex 原生数据/UI 子 Agent 完成实现；主 Agent 针对默认完成文案退回返修一次，核验交付证据，并编译独立提交投影。既有未提交的菜单位置改动已保留，并排除在本次提交之外。
 - 完整文件清单、失败/返修经过及 Git 回执见 `项目修改日志/2026-11-07-副本阶段流程视图.md`；事件先后归属难点见 `项目分析/项目难点.md` 的本任务编号条目。Unity 实机导入、布局、按钮、地图定位以及完整副本通关尚未验证；本地 Unity MCP 端点连接被拒绝。
 
+- 后续返修（2026-11-07）：将 `ROSceneStageFlow.cs.meta` 中 33 字符的 GUID 修正为有效的 `c12b495622374f6a951cdb097a1ffa54`。无效 meta 导致 Unity 忽略该脚本，在出现 CS0103 后仍保留旧窗口。`ROSceneNodePresentation.cs` 和 `ROSceneEditorWindow.cs` 现为已观察到的全部 13 个端口名称添加中文标签，并保留英文原名和用途提示；相邻节点面板中的连接两端也已覆盖，行高随文本换行调整。端口 ID、连接关系和节点坐标保持不变。
+- 当前验收边界：磁盘上的 Unity 编辑器 DLL 已包含新增阶段类型，但 Unity 整体编译/重载仍被独立的 CS0433 阻断（`MNavigationMapData` 同时存在于 GM_Game 与 MMoRpgCommon）。未宣称实机窗口已成功重载。用户仅允许在 Windows 虚拟桌面 1 控制 UI；工具无法将后台输入与当前活动的桌面 2 隔离，因此在该限制提出后没有发送输入。本次返修未修改导航源码及插件 DLL。证据：`_temp/scene-editor-stage-flow-20261107/live-repair/` 和 `node-labels/`。
+
 ## [CODE][基因][GENE-RUNTIME-20261107] Gene 基因表与共享运行模块
 
 - 用户确认范围为基因表和通用运行模块，要求 Codex 自行开发，不使用外部 Agent；未向外部下发业务任务。用户于 2026-11-07 批准本次记录，Codex 按本任务自行执行要求完成双语增量检查。

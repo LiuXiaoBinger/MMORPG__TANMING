@@ -331,6 +331,9 @@
 - 临时测试程序的一处括号错误在检查通过前已修正；正式解析器编译始终通过。第一版 UI 在每次布局时重建；隔离运行环境中测得全图 Build 平均约 12ms，因此最终 UI 仅在相关内容变化后刷新。此结果不是 Unity 内帧耗时测量。主 Agent 驳回了默认 `dungeonfinishtarget` 文案；数据实现仅经过一次正式返修，目前展示实际进入区域或所需波次操作。
 - 证据位于 `_temp/scene-editor-stage-flow-20261107/`：`data-test/results.json`、`snapshot.json`、`data-manifest.json`、`ui-source-check.json`、`data-compile/receipt.json`、`head-projection/receipt.json`。1100x650 布局几何已按源码核验；Unity 实机视觉/布局/点击/导入/场景定位、完整手动通关及发布尚未验证。完整文件与 Git 记录见 `项目修改日志/2026-11-07-副本阶段流程视图.md`。
 
+- 后续返修（2026-11-07）：Unity Editor.log 和 Bee 输入证实了“无效的 33 字符 meta GUID -> Flow 脚本被忽略 -> CS0103 -> 仍加载旧窗口”的链路；此前只检查 GUID 唯一性，未验证长度。修复后的 GUID 格式有效、唯一，且 Assets 中没有旧 GUID 引用。随后 Cecil 确认新的磁盘编辑器 DLL 中包含 `ROSceneStageFlow`、`ROSceneStage`、`editorView`、`RefreshStageFlow` 和 `DrawStageFlow`。
+- 中文端口标签改动使用 267 个真实引用编译 13 个编辑器源文件通过，错误和警告均为零；主 Agent 核验了限定范围的差异及空白检查。Unity 整体编译仍因 Navigation 导出/预览中的 CS0433 失败：GM_Game 和更新后的 MMoRpgCommon 均包含被链接的导航类型；最新记录的刷新中域重载次数为零。标签、布局、点击和阶段 UI 尚未在 Unity 中验证。先前两次桌面操作尝试被用户按 Escape 中止；用户限制仅使用虚拟桌面 1 后，只读取了窗口清单，没有发送 UI 输入。完整失败/返修细节仍记录在同一份已授权任务日志中。
+
 ## [VERIFY][基因][GENE-RUNTIME-20261107] 基因运行模块验收
 
 - 真实 Luban 生成通过；独立读取 XLSX 确认共 69 行、原 1～23 条所有数据单元格保留、三个页签名称及其他页签数据保留；客户端组件改名后 Unity GUID 不变。证据：`_temp/gene-20261107/delivery-checks.json`、`diff-check.log`。
