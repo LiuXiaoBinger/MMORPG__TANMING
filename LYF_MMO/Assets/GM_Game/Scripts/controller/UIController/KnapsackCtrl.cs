@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Google.Protobuf;
 
 /// <summary>
 /// 背包界面控制器，负责将角色物品组件转换成窗口展示数据。
@@ -10,6 +12,15 @@ public sealed class KnapsackCtrl : IDisposable
     #region 字段
     /// <summary>背包窗口，只负责渲染和派发页签事件。</summary>
     private readonly KnapsackWindow _window;
+
+    /// <summary>持有并管理装备详情生命周期的现有主视图。</summary>
+    private readonly MainView _mainView;
+    /// <summary>显示当前装备详情的正式子窗口。</summary>
+    private readonly EquipmentDetailWindow _detailWindow;
+    /// <summary>已穿戴装备槽的点击来源。</summary>
+    private readonly RoleAttriibuteWindow _equipmentWindow;
+    /// <summary>当前详情所选实例的 UID，切换角色时清空。</summary>
+    private long _selectedEquipmentUid;
 
     /// <summary>当前绑定的角色物品组件。</summary>
     private RoItemComponent _itemComponent;
@@ -37,6 +48,9 @@ public sealed class KnapsackCtrl : IDisposable
         if (mainView != null)
         {
             _window = mainView.KnapsackWindow;
+            _mainView = mainView;
+            _detailWindow = mainView.EquipmentDetailWindow;
+            _equipmentWindow = mainView.RoleAttributeWindow;
         }
         Initialize();
     }
@@ -86,6 +100,17 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _window.CategorySelected += OnCategorySelected;
             _window.FrameUpdated += OnWindowFrameUpdated;
+            _window.ItemSelected += OpenEquipmentDetail;
+        }
+        if (_equipmentWindow != null)
+        {
+            _equipmentWindow.EquipmentSelected += OpenEquipmentDetail;
+        }
+        if (_detailWindow != null)
+        {
+            _detailWindow.WearRequested += WearSelectedEquipment;
+            _detailWindow.TakeOffRequested += TakeOffSelectedEquipment;
+            _detailWindow.SpecialSkillRequested += SwitchSelectedSpecialSkill;
         }
 
         PlayerEntity localRole = null;
@@ -103,6 +128,17 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _window.CategorySelected -= OnCategorySelected;
             _window.FrameUpdated -= OnWindowFrameUpdated;
+            _window.ItemSelected -= OpenEquipmentDetail;
+        }
+        if (_equipmentWindow != null)
+        {
+            _equipmentWindow.EquipmentSelected -= OpenEquipmentDetail;
+        }
+        if (_detailWindow != null)
+        {
+            _detailWindow.WearRequested -= WearSelectedEquipment;
+            _detailWindow.TakeOffRequested -= TakeOffSelectedEquipment;
+            _detailWindow.SpecialSkillRequested -= SwitchSelectedSpecialSkill;
         }
         _itemComponent = null;
         _role = null;
@@ -303,6 +339,11 @@ public sealed class KnapsackCtrl : IDisposable
     /// <param name="role">新的本地角色，null 表示解除绑定并清空显示。</param>
     public void BindRole(PlayerEntity role)
     {
+        if (_role != role)
+        {
+            _selectedEquipmentUid = 0;
+            if (_detailWindow != null) _detailWindow.CloseWindow();
+        }
         if (_itemComponent != null)
         {
             // 背包数据变化不再直接驱动窗口刷新，改由帧循环消费角色脏标记。
@@ -422,6 +463,181 @@ public sealed class KnapsackCtrl : IDisposable
 
         result.Sort(CompareSlot);
         return result;
+    }
+
+    /// <summary>按 UID 提交服务器装备操作；成功仅表示请求已发送，模型等待物品增量。</summary>
+    /// <param name="itemUid">装备实例 UID，不能使用配置 ID 代替。</param>
+    /// <param name="operation">穿戴、卸下或切换特技的操作类型。</param>
+    /// <param name="specialSkillIndex">切换操作选择的保存槽0至2，其他操作忽略。</param>
+    public static bool SendEquipmentOperation(long itemUid, EquipOperation operation, int specialSkillIndex = 0)
+    {
+        // 只发送本次明确选择，不在客户端移动物品或预算属性。
+        EquipOperationReq request = new EquipOperationReq
+        {
+            ItemUid = itemUid,
+            Operation = operation,
+            SpecialSkillIndex = specialSkillIndex
+        };
+        return MNetClient.Instance.Send(NetDefine.CMD_EquipOperationCode, request.ToByteString());
+    }
+
+    /// <summary>由背包或已穿戴槽打开同一装备详情窗口。</summary>
+    /// <param name="itemUid">玩家实际点击的物品 UID。</param>
+    public void OpenEquipmentDetail(long itemUid)
+    {
+        if (_itemComponent == null || _detailWindow == null) return;
+        // 普通物品继续使用既有物品提示，只有装备打开此窗口。
+        EquipBase equip = _itemComponent.GetItemByUID(itemUid) as EquipBase;
+        if (equip == null) return;
+        _selectedEquipmentUid = itemUid;
+        RefreshEquipmentDetail();
+        if (!_detailWindow.gameObject.activeSelf)
+        {
+            _mainView.ShowMainWindow(WindowType.EquipmentDetailWindow);
+        }
+    }
+
+    /// <summary>服务器增量应用后重新读取当前实例，确保穿脱和特技状态来自服务器。</summary>
+    public void RefreshEquipmentDetail()
+    {
+        if (_detailWindow == null || _itemComponent == null || _selectedEquipmentUid <= 0) return;
+        // 增量替换后的装备引用，不能缓存上一次已被移出的实例。
+        EquipBase equip = _itemComponent.GetItemByUID(_selectedEquipmentUid) as EquipBase;
+        if (equip == null)
+        {
+            _detailWindow.CloseWindow();
+            _selectedEquipmentUid = 0;
+            return;
+        }
+        _detailWindow.Render(BuildEquipmentDetail(equip));
+    }
+
+    /// <summary>请求穿戴当前详情装备，业务结果由服务器回复。</summary>
+    private void WearSelectedEquipment() { SubmitSelectedOperation(EquipOperation.Wear, 0); }
+    /// <summary>请求卸下当前详情装备，业务结果由服务器回复。</summary>
+    private void TakeOffSelectedEquipment() { SubmitSelectedOperation(EquipOperation.TakeOff, 0); }
+    /// <summary>请求启用当前装备的指定保存特技槽。</summary>
+    /// <param name="index">玩家点击的槽下标0至2。</param>
+    private void SwitchSelectedSpecialSkill(int index) { SubmitSelectedOperation(EquipOperation.SwitchSpecialSkill, index); }
+
+    /// <summary>提交当前选择并仅在连接发送失败时显示提示。</summary>
+    /// <param name="operation">当前按钮对应的服务器装备操作。</param>
+    /// <param name="index">切换特技时的目标保存槽下标。</param>
+    private void SubmitSelectedOperation(EquipOperation operation, int index)
+    {
+        if (!SendEquipmentOperation(_selectedEquipmentUid, operation, index))
+        {
+            TipsMgr.Instance.ShowSystemTips("装备操作发送失败，连接不可用");
+        }
+    }
+
+    /// <summary>将基础六基因、实例三词条和三个特技槽合并为显示正文。</summary>
+    /// <param name="equip">当前服务器装备实例。</param>
+    private EquipmentDetailViewData BuildEquipmentDetail(EquipBase equip)
+    {
+        // 装备静态配置只提供基础属性，不覆盖实例保存的词条和特技。
+        cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+        // 当前装备的纯展示结果。
+        EquipmentDetailViewData result = new EquipmentDetailViewData();
+        result.Name = config.EquipName;
+        if (equip.StrengthenLevel > 0) result.Name += " +" + equip.StrengthenLevel;
+        result.IsWorn = equip.GetBagType() == (int)KnapsackType.RoleCurrtEquipPack;
+        // 属性说明分别标明静态基础与实例词条，避免把槽位含义混为一谈。
+        StringBuilder attributes = new StringBuilder("基础属性\n");
+        // 静态装备配置中的六个基因编号及对应覆盖值。
+        int[] baseIds = { config.GeneId0, config.GeneId1, config.GeneId2, config.GeneId3, config.GeneId4, config.GeneId5 };
+        // 六个静态基因的策划值，与基础编号保持同序。
+        int[] baseValues = { config.GeneValue0, config.GeneValue1, config.GeneValue2, config.GeneValue3, config.GeneValue4, config.GeneValue5 };
+        for (int index = 0; index < baseIds.Length; index++) AppendGeneText(attributes, baseIds[index], baseValues[index]);
+        attributes.Append("实例词条\n");
+        AppendGeneText(attributes, equip.GeneID0, equip.GeneValue0);
+        AppendGeneText(attributes, equip.GeneID1, equip.GeneValue1);
+        AppendGeneText(attributes, equip.GeneID2, equip.GeneValue2);
+        if (equip.GeneID0 == 0 && equip.GeneID1 == 0 && equip.GeneID2 == 0) attributes.Append("无\n");
+        result.Attributes = attributes.ToString();
+        // 三个保存槽逐一展示，只有当前选择且已穿戴的槽计算实际同名件数等级。
+        for (int index = 0; index < 3; index++)
+        {
+            // 槽中保存的是稳定特技族 ID，不是某级配置行 ID。
+            int familyId = equip.GetSpecialSkillId(index);
+            if (familyId == 0)
+            {
+                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空";
+                continue;
+            }
+            // 本装备当前选择状态，未穿戴时不作为已生效显示。
+            bool selected = equip.ActiveSpecialSkillIndex == index;
+            // 同名已启用装备的真实件数，不对未启用槽进行换装模拟。
+            int pieces = CountWornSpecialSkill(familyId);
+            // 当前族的有效等级配置；没有穿戴时显示一级基础说明。
+            cfg.EquipSpecialSkillInfo skill = ResolveSpecialSkill(familyId, pieces);
+            if (skill == null) continue;
+            // 当前槽状态说明。
+            string state = "未启用";
+            if (selected)
+            {
+                state = "已选，未穿戴";
+                if (result.IsWorn) state = "已启用，同名" + pieces + "件";
+            }
+            result.SpecialSkillTexts[index] = skill.Name + " Lv." + skill.Level + "（" + state + "）\n" + skill.Description;
+            result.CanActivateSpecialSkill[index] = !selected;
+        }
+        return result;
+    }
+
+    /// <summary>按配置的数值类型显示一个基因覆盖值。</summary>
+    /// <param name="text">当前属性正文的累加器。</param>
+    /// <param name="geneId">基础属性或实例词条引用的基因编号，0为空。</param>
+    /// <param name="value">该装备保存的基因数值，百分数10表示10%。</param>
+    private static void AppendGeneText(StringBuilder text, int geneId, float value)
+    {
+        if (geneId == 0) return;
+        // 显示名称和数值语义来自统一基因配置。
+        cfg.Gene gene = LubanMgr.Instance.GetGeneInfoById(geneId);
+        if (gene == null) return;
+        text.Append(gene.EffectDesc).Append("：").Append(value);
+        if (gene.ValueType == 1) text.Append('%');
+        text.Append('\n');
+    }
+
+    /// <summary>只统计当前穿戴栏中启用该特技族的装备件数。</summary>
+    /// <param name="familyId">特技稳定族编号。</param>
+    private int CountWornSpecialSkill(int familyId)
+    {
+        // 当前穿戴装备容器，服务器增量后已经是权威状态。
+        RoItemContainer container = _itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack);
+        // 用原装备引用的快照按索引遍历。
+        List<ItemBase> items = new List<ItemBase>(container.GetItemMap().Values);
+        // 同名生效装备件数，品质不参与此计算。
+        int count = 0;
+        for (int index = 0; index < items.Count; index++)
+        {
+            // 当前穿戴条目必须是完整装备实例。
+            EquipBase equip = items[index] as EquipBase;
+            if (equip != null && equip.GetActiveSpecialSkillId() == familyId) count++;
+        }
+        return count;
+    }
+
+    /// <summary>按当前件数选取不超过件数的最高等级，并自然封顶配置最高级。</summary>
+    /// <param name="familyId">稳定特技族编号。</param>
+    /// <param name="pieces">已穿戴且启用同名特技的装备件数，0时展示一级说明。</param>
+    private static cfg.EquipSpecialSkillInfo ResolveSpecialSkill(int familyId, int pieces)
+    {
+        // 未穿戴时用基础一级展示，不推算装备后的组合收益。
+        int level = Math.Max(1, pieces);
+        // 该族最终选中的配置等级。
+        cfg.EquipSpecialSkillInfo selected = null;
+        // 真实Luban特技等级行，按Level筛选而非按品质计算。
+        List<cfg.EquipSpecialSkillInfo> configs = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < configs.Count; index++)
+        {
+            // 当前候选等级记录。
+            cfg.EquipSpecialSkillInfo config = configs[index];
+            if (config.SpecialSkillId != familyId || config.Level > level) continue;
+            if (selected == null || config.Level > selected.Level) selected = config;
+        }
+        return selected;
     }
     #endregion
 }

@@ -369,3 +369,12 @@
 
 - 最终 Unity MCP 验收：新加载的模块为 b10b7dce-88c6-4989-b26b-22d9df12203e（helper=True）。真实 DuplicateStageWave 创建了临时 Wave64，带有 HuiHeBuDui 且 count3；SaveChanges/重载后两者均保留。真实 CreateStageRuleWave 在 phase3 创建 Wave65，使用 StageEditorWave_65，缺失连线为零。真实 DuplicateStageMechanism 复制了 phase3 的入口到二层机制；保存/重新打开后，目的地 X=77.25 和 phase3 归属均保留。通过正式辅助实现删除三个临时根后，恢复 336 个节点/254 条连线，原始节点数据深比较一致，无私有信号且缺失连线为零。最后通过 LoadConfig 恢复无未保存改动的正式 Entry 视图；受保护的 XML/场景哈希一致。证据：mcp/type-live-result.json、fixture-wave-result.json、fixture-empty-stage-result.json、fixture-mechanism-result.json、fixture-delete-restore-result.json 和 protected-final.json。
 - 真实窗口缓冲区图像 live-wave.png 和 live-mechanism.png 确认了固定新增按钮及顶部行内表单。最终 console-final.json 中有四条位于 MCP ExecuteCode.cs:275 的 RenderTexture 释放错误；该结果中没有 Gene 编译错误。不得报告 Console 无错误，也不得宣称已做物理鼠标/按钮测试。未保存正式场景/配置文件；完整玩法、地图操作、完整构建及线上使用仍未验证。
+
+
+## [VERIFY][装备][基因][EQUIP-GENE-20261107] 装备与基因验收
+
+- 通过 618 项不重复断言：基因 452 项、装备/战斗 47 项、服务端事务 49 项、实际回环网关转发 12 项、客户端模型 58 项。Codex 已按最终源码重跑 49 项事务断言，这次重复执行不计入 618 项。Game/Center/Gate 构建通过；独立 371 份源码的客户端构建为 0 错误、164 条既有警告。
+- 已核对真实 Luban/protoc 生成结果。XLSX 校验保留原 80 条基因和 12 条装备记录，验证总计 107 条基因、15 条特技配置，并保留无关预制体块。源文件与哈希见 `_temp/equipment-gene-20261107/task-files.json` 及子 Agent 交付文件。
+- Codex 同步客户端 Common/Network DLL 后，现有 Unity 2023.2.20f1c1 编辑器已完成编译和域重载，编译错误为 0。真实隔离预制体预览核验了 11 个详情引用、MainView 关联、槽位/卸装回调，以及角色面板 22 个引用和 16 行显示。截图与结果见本任务临时目录下的 `unity-acceptance/`；未保存场景，未向正式资源添加测试组件。
+- 预览清理最初产生 4 条 RenderTexture 目标相关错误；测试辅助工具改为先解除相机目标再释放临时纹理，随后一次预览没有新增错误。未清空 Console。首次截取错误场景及 Windows PowerShell 调用失败的证据仍保留；最终使用 pwsh 运行事务测试通过。
+- 未进行真实数据库迁移/保存后重登、已部署服务端到 Unity 的玩法联调或数值平衡验证。隔离角色测试中的无会话发送失败属于预期边界；回环网关覆盖不等于部署环境覆盖。完整证据和限制见 `项目修改日志/2026-11-07-装备穿脱基因与特技.md`。

@@ -369,6 +369,10 @@ message RoleEquipItemInfo
 	int32 role_id = 2;//角色id
 	int32 strengthen_level = 3;//装备强化等级，非装备时为0
 	int32 equip_type = 4;//装备类别
+	int32 special_skill_id0 = 5;//装备实例的第一个特技配置族编号，0为空
+	int32 special_skill_id1 = 6;//装备实例的第二个特技配置族编号，0为空
+	int32 special_skill_id2 = 7;//装备实例的第三个特技配置族编号，0为空
+	int32 active_special_skill_index = 8;//唯一启用的特技槽位下标，范围0到2
 }
 
 // 同一装备的三个词条槽位：每槽保存配置ID与实际数值。
@@ -515,4 +519,24 @@ message DungeonFlowState {
  repeated int32 active_wall_ids = 4;//当前具有权威碰撞的空气墙物件
  repeated DungeonObjectiveData objectives = 5;//已激活的任务目标与实际进度
  bool finished = 6;//已触发配置的完成事件
+}
+
+// 客户端可请求的装备实例操作，服务端按会话确定角色。
+enum EquipOperation {
+	None = 0;//未指定操作
+	Wear = 1;//穿戴装备或替换同部位装备
+	TakeOff = 2;//卸下当前穿戴的装备
+	SwitchSpecialSkill = 3;//切换装备实例唯一启用的特技槽位
+}
+
+// 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。
+message EquipOperationRet {
+	CmdCode cmd_code = 1;//权威操作结果
+	int64 item_uid = 2;//本次请求操作的装备实例UID
+	EquipOperation operation = 3;//本次执行的装备操作
+}
+
+// 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。
+message RoleAttributeUpdateNtf {
+	RoleBaseInfo base_info = 1;//本次计算得到的最终战斗属性及当前生命法力
 }

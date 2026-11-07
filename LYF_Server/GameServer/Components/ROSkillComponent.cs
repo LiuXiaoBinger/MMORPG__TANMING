@@ -337,7 +337,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return false;
         }
-        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        // 眩晕或沉默复用现有拒绝/中断分支，不另建施法状态。
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
         {
             return false;
         }
@@ -645,7 +646,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
-        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        // 眩晕或沉默复用现有拒绝/中断分支，不另建施法状态。
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
@@ -810,7 +812,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
-        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        // 眩晕或沉默复用现有拒绝/中断分支，不另建施法状态。
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
@@ -892,6 +895,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         }
 
         FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes, prepared.cast_point_);
+        // 仅在 MP/CD 已提交并建立真实动作后通知施法特技。
+        Owner.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.SkillCast, null, prepared.skill_id_));
 
         result.CmdCode = CmdCode.Succeed;
         result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;

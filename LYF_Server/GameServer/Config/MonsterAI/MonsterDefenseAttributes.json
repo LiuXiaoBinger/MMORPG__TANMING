@@ -1,0 +1,207 @@
+[
+  {
+    "Id": 5457,
+    "DefExternal": 355,
+    "DefInternal": 355
+  },
+  {
+    "Id": 5501,
+    "DefExternal": 200,
+    "DefInternal": 20
+  },
+  {
+    "Id": 5502,
+    "DefExternal": 60,
+    "DefInternal": 150
+  },
+  {
+    "Id": 5503,
+    "DefExternal": 60,
+    "DefInternal": 150
+  },
+  {
+    "Id": 5504,
+    "DefExternal": 50,
+    "DefInternal": 60
+  },
+  {
+    "Id": 5506,
+    "DefExternal": 104,
+    "DefInternal": 20
+  },
+  {
+    "Id": 5507,
+    "DefExternal": 64,
+    "DefInternal": 20
+  },
+  {
+    "Id": 5508,
+    "DefExternal": 47,
+    "DefInternal": 10
+  },
+  {
+    "Id": 5509,
+    "DefExternal": 53,
+    "DefInternal": 40
+  },
+  {
+    "Id": 5510,
+    "DefExternal": 64,
+    "DefInternal": 80
+  },
+  {
+    "Id": 5511,
+    "DefExternal": 96,
+    "DefInternal": 12
+  },
+  {
+    "Id": 5513,
+    "DefExternal": 86,
+    "DefInternal": 0
+  },
+  {
+    "Id": 5514,
+    "DefExternal": 82,
+    "DefInternal": 10
+  },
+  {
+    "Id": 5515,
+    "DefExternal": 120,
+    "DefInternal": 12
+  },
+  {
+    "Id": 9751,
+    "DefExternal": 72,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9752,
+    "DefExternal": 0,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9753,
+    "DefExternal": 18,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9754,
+    "DefExternal": 16,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9755,
+    "DefExternal": 20,
+    "DefInternal": 32
+  },
+  {
+    "Id": 9760,
+    "DefExternal": 72,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9761,
+    "DefExternal": 72,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9765,
+    "DefExternal": 69,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9767,
+    "DefExternal": 120,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9769,
+    "DefExternal": 0,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9770,
+    "DefExternal": 18,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9771,
+    "DefExternal": 16,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9758,
+    "DefExternal": 99,
+    "DefInternal": 99
+  },
+  {
+    "Id": 9764,
+    "DefExternal": 38,
+    "DefInternal": 2
+  },
+  {
+    "Id": 9766,
+    "DefExternal": 38,
+    "DefInternal": 2
+  },
+  {
+    "Id": 9768,
+    "DefExternal": 120,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9801,
+    "DefExternal": 72,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9802,
+    "DefExternal": 0,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9803,
+    "DefExternal": 18,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9804,
+    "DefExternal": 16,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9806,
+    "DefExternal": 69,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9807,
+    "DefExternal": 120,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9810,
+    "DefExternal": 69,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9811,
+    "DefExternal": 120,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9812,
+    "DefExternal": 0,
+    "DefInternal": 30
+  },
+  {
+    "Id": 9813,
+    "DefExternal": 18,
+    "DefInternal": 0
+  },
+  {
+    "Id": 9814,
+    "DefExternal": 16,
+    "DefInternal": 0
+  }
+]

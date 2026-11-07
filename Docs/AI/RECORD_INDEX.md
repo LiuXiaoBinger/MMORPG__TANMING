@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d88391e60c8d76ffc6207d8cb1e1f87a8043cde9c1de5ee1c40d9efa985f3d0d`
+Source normalized SHA256: `7905a55212db314550ae289360e4ac1a26490cfdfdd355e96848158f48156f0c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -55,11 +55,12 @@ Source normalized SHA256: `d88391e60c8d76ffc6207d8cb1e1f87a8043cde9c1de5ee1c40d9
 | [CODE][FILES][HANDOFF][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Readable creature waves and explicit trigger/map locations | 308-315 |
 | [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Player-oriented dungeon stage flow | 316-333 |
 | [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-352 |
-| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Direct wave and mechanism editing in the stage view | 353-362 |
+| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Direct wave and mechanism editing in the stage view | 353-364 |
+| [CODE][FILES][装备][基因][EQUIP-GENE-20261107] Equipment genes and special skills | 365-372 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `27eb1d203d23059e6d3e59faff5a606dd02f54b8390797805e5237a2ffec21dd`
+Source normalized SHA256: `240ae3fb89f4ba534a8faa7cd4b5e2e93a7de5bcf69fc2622b6a1cde0a11c35b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -106,7 +107,8 @@ Source normalized SHA256: `27eb1d203d23059e6d3e59faff5a606dd02f54b8390797805e523
 | [VERIFY][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Offline presentation and isolated commit validation | 327-334 |
 | [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Stage associations, readable conditions and isolated commit | 335-352 |
 | [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-370 |
-| [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-380 |
+| [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-382 |
+| [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-389 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -137,7 +137,11 @@ public sealed class CRoleWriteTask
                     ItemUID = item.ItemUid,
                     RoleID = item.RoleId,
                     EquipType = item.EquipInfo.EquipType,
-                    StrengthenLevel = item.EquipInfo.StrengthenLevel
+                    StrengthenLevel = item.EquipInfo.StrengthenLevel,
+                    SpecialSkillId0 = item.EquipInfo.SpecialSkillId0,
+                    SpecialSkillId1 = item.EquipInfo.SpecialSkillId1,
+                    SpecialSkillId2 = item.EquipInfo.SpecialSkillId2,
+                    ActiveSpecialSkillIndex = item.EquipInfo.ActiveSpecialSkillIndex
                 });
             }
 
@@ -477,8 +481,12 @@ public sealed class CRoleWriteTask
         }
         Dictionary<long, EquipTable> equipByUid = storedEquips.ToDictionary(v => v.ItemUID);
         Dictionary<long, EquipXLGeneTable> geneByUid = storedGenes.ToDictionary(v => v.ItemUID);
-        foreach (RoleItemInfo requested in requestedItems)
+        // 按协议列表索引逐件核对装备扩展，保持请求中的原实例数据。
+        for (int requestedIndex = 0; requestedIndex < requestedItems.Count; requestedIndex++)
         {
+            // 本次重放请求中的完整物品快照。
+            RoleItemInfo requested = requestedItems[requestedIndex];
+            // 数据库中与该 UID 对应的装备扩展记录。
             EquipTable storedEquip;
             // 请求有装备信息时，数据库必须存在且装备类型、强化等级一致。
             if (requested.EquipInfo != null)
@@ -486,6 +494,17 @@ public sealed class CRoleWriteTask
                 if (!equipByUid.TryGetValue(requested.ItemUid, out storedEquip) ||
                     storedEquip.EquipType != requested.EquipInfo.EquipType ||
                     storedEquip.StrengthenLevel != requested.EquipInfo.StrengthenLevel)
+                {
+                    return false;
+                }
+                // 特技三个槽位与启用下标均属于实例持久字段，重复保存必须完整一致。
+                if (storedEquip.SpecialSkillId0 != requested.EquipInfo.SpecialSkillId0 ||
+                    storedEquip.SpecialSkillId1 != requested.EquipInfo.SpecialSkillId1 ||
+                    storedEquip.SpecialSkillId2 != requested.EquipInfo.SpecialSkillId2)
+                {
+                    return false;
+                }
+                if (storedEquip.ActiveSpecialSkillIndex != requested.EquipInfo.ActiveSpecialSkillIndex)
                 {
                     return false;
                 }

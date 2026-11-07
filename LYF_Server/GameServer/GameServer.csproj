@@ -179,6 +179,15 @@
         <Compile Include="MessageHandler\Skill\SkillCastHandler.cs" />
         <Compile Include="MessageHandler\Role\SaveRoleDataHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\RoleKnapsackInfoHandler.cs" />
+        <Compile Include="MessageHandler\Knapsack\EquipOperationHandler.cs" />
+        <Compile Include="Components\RoleEquipComponent.cs" />
+        <Compile Include="SceneEntity\Skill\MonsterDefenseAttributes.cs" />
+        <EmbeddedResource Include="Config\MonsterAI\MonsterDefenseAttributes.json">
+            <LogicalName>MonsterDefenseAttributes.json</LogicalName>
+        </EmbeddedResource>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneTriggerArgs.cs">
+            <Link>SceneEntity\Gene\GeneTriggerArgs.cs</Link>
+        </Compile>
         <Compile Include="MessageHandler\Knapsack\OpenKnapsackGridHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\SyncKnapsackGridCountHandler.cs" />
         <Compile Include="MessageHandler\Shop\RequestBuyShopItem.cs" />

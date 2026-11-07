@@ -36,6 +36,10 @@ public class NetDefine
     public const ushort CMD_SaveRoleDataCode = 11140;//GameServer 提交角色物品/次数快照，CenterServer 返回保存结果
     public const ushort CMD_CountUpdateSyncInfoCode = 11150;//将商城、副本等次数变化通知客户端
     public const ushort CMD_SC_UpdateItemInfoCode = 11160;//更新item给客户端
+    /// <summary>客户端装备穿脱、换装和特技切换请求与权威结果共用编号。</summary>
+    public const ushort CMD_EquipOperationCode = 11161;
+    /// <summary>装备与基因效果计算后的最终角色属性通知。</summary>
+    public const ushort CMD_RoleAttributeUpdateCode = 11162;
     /// <summary>客户端施法请求与服务端权威结果共用的协议号。</summary>
     public const ushort CMD_SkillCastCode = 11170;
     /// <summary>服务器确认施法后的表现开始通知协议号。</summary>

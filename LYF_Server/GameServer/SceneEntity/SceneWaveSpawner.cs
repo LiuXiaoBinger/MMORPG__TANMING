@@ -178,6 +178,34 @@ public sealed class SceneWaveSpawner
     /// <param name="notice">本实例的同帧通知，只有产生变化才会发送。</param>
     public void Update(int deltaMilliseconds, MonsterAttrUpdateNtf notice)
     {
+        // GeneComponent 在世界帧内写真实资源，保留帧前 HP 用于同帧网络变化和新死亡判定。
+        int[] previousHp = new int[monsters_.Count];
+        for (int i = 0; i < monsters_.Count; i++) previousHp[i] = monsters_[i].CurrentHp;
+        // 正式怪物世界必须推进 GeneComponent，目标破甲等限时效果才能真实到期。
+        world_.Update(deltaMilliseconds);
+        // 整帧只推进一次死亡事件，不能把已经零血的怪物重复视作新击败。
+        bool monsterDied = false;
+        for (int i = 0; i < previousHp.Length; i++)
+        {
+            if (previousHp[i] == monsters_[i].CurrentHp) continue;
+            // 周期变化后的实际资源差，治疗只同步 HP，不显示负伤害。
+            int damage = Math.Max(0, previousHp[i] - monsters_[i].CurrentHp);
+            notice.Monsters.Add(GetHpData(i, damage));
+            // 归因使用施加角色编号，不能把装备 UID 用来查在线角色。
+            OnlineRole caster = RoleManager.Instance.GetOnlineRole((int)monsters_[i].Components.Get<GeneComponent>(EntityComponentType.Gene).LastDamageFirerId);
+            if (i == orcIndex) orc.OnHit(caster, damage, notice);
+            if (previousHp[i] > 0 && monsters_[i].CurrentHp == 0)
+            {
+                monsterDied = true;
+                Flow.CountMonsterDeath(activePoints[i].Creature.id);
+                if (caster != null) caster.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.Kill, null, 0, damage));
+            }
+        }
+        if (monsterDied)
+        {
+            CheckCompletedWaves();
+            Flow.MonsterDied();
+        }
         if (orc != null) orc.Update(deltaMilliseconds, notice);
     }
 
@@ -225,9 +253,28 @@ public sealed class SceneWaveSpawner
             float dz = Math.Max(0f, depth - 1.5f);
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
             hit_targets.Add(monster.UID);
+            // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
+            GeneRuntime targetGenes = monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+            // 当前攻击者的最终属性在结果点读取，动作中换装也不会使用旧的攻击面板。
+            RoleEquipComponent equipment = null;
+            // 保留旧的无来源调用伤害；真实角色普攻同时结算外功和内功对应防御。
+            int calculatedDamage = damage;
+            if (caster != null)
+            {
+                equipment = caster.GetComponent<RoleEquipComponent>();
+                calculatedDamage = MonsterDefenseAttributes.Get(point.Creature.id).CalculateDamage(equipment.CalculateAttribute(), targetGenes, damage);
+            }
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
-            monster.CurrentHp = Math.Max(0, hpBeforeHit - damage);
+            monster.CurrentHp = Math.Max(0, hpBeforeHit - calculatedDamage);
+            // 事件只能使用当前结算得到的实际伤害，零伤害不伪造有效攻击命中。
+            int actualDamage = hpBeforeHit - monster.CurrentHp;
+            if (equipment != null && actualDamage > 0)
+            {
+                targetGenes.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, ROArtSkill.BasicAttackId, actualDamage));
+                equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
+                if (monster.CurrentHp == 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
+            }
             if (monster.CurrentHp == 0)
             {
                 monsterDied = true;

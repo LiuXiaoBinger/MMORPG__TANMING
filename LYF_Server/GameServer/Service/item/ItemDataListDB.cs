@@ -165,7 +165,11 @@ public sealed class ItemDataListDB
                     ItemUid = item.GetItemUID(),
                     RoleId = item.GetRoleID(),
                     StrengthenLevel = equip.StrengthenLevel,
-                    EquipType = equip.EquipType
+                    EquipType = equip.EquipType,
+                    SpecialSkillId0 = equip.SpecialSkillId0,
+                    SpecialSkillId1 = equip.SpecialSkillId1,
+                    SpecialSkillId2 = equip.SpecialSkillId2,
+                    ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
                 };
                 itemInfo.EquipGeneInfo = new RoleEquipGeneInfo
                 {

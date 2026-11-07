@@ -5,6 +5,8 @@ public struct GenePulse
     public int GeneId { get; private set; }
     /// <summary>施加者或装备实例编号，沿用父基因的来源。</summary>
     public ulong SourceId { get; private set; }
+    /// <summary>施加该效果的角色编号；装备 UID 仅保存在 SourceId。</summary>
+    public ulong FirerId { get; private set; }
     /// <summary>本次应结算生命伤害、生命恢复还是法力恢复。</summary>
     public GeneEffectType EffectType { get; private set; }
     /// <summary>包含层数后的数值；伤害和恢复均为正数。</summary>
@@ -19,6 +21,7 @@ public struct GenePulse
     {
         GeneId = instance.Definition.Id;
         SourceId = instance.SourceId;
+        FirerId = instance.FirerId;
         EffectType = (GeneEffectType)effect.Definition.EffectType;
         Value = effect.Value * instance.StackCount;
         ValueType = effect.Definition.ValueType;
@@ -36,7 +39,7 @@ public struct GenePulse
         }
         // 持续回蓝以法力上限为基数，另外两种周期效果使用生命上限。
         int maximum = maxHp;
-        if (EffectType == GeneEffectType.PeriodicMana)
+        if (EffectType == GeneEffectType.PeriodicMana || EffectType == GeneEffectType.InstantMana)
         {
             maximum = maxMp;
         }

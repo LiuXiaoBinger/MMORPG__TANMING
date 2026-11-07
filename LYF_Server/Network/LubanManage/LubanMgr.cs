@@ -28,6 +28,12 @@ public class LubanMgr:Singleton<LubanMgr>
     // 装备配置ID到原始装备记录的索引。
     private Dictionary<int, EquipInfo> _equipInfos;
 
+    /// <summary>装备特技配置行索引，包含同名特技各个装备件数等级。</summary>
+    private Dictionary<int, EquipSpecialSkillInfo> _equipSpecialSkillInfos;
+
+    /// <summary>装备特技全部等级记录，供穿戴结算按族编号和件数选择等级。</summary>
+    private List<EquipSpecialSkillInfo> _equipSpecialSkillList;
+
     // 普通物品与装备共用的配置索引，同ID时后加入的装备配置覆盖普通物品。
     private Dictionary<int, ItemConfigBase> _itemConfigInfos;
 
@@ -100,6 +106,8 @@ public class LubanMgr:Singleton<LubanMgr>
         _skillPresentationInfos = tables.TbSkillPresentationInfo.DataMap;
         _itemInfos = tables.TbItemInfo.DataMap;
         _equipInfos = tables.TbEquipInfo.DataMap;
+        _equipSpecialSkillInfos = tables.TbEquipSpecialSkillInfo.DataMap;
+        _equipSpecialSkillList = tables.TbEquipSpecialSkillInfo.DataList;
         _itemConfigInfos = CreateItemConfigInfos(_itemInfos, _equipInfos);
         _knapsackInfos = tables.TbKnapsackInfo.DataMap;
         _geneInfos = tables.TbGene.DataMap;
@@ -528,6 +536,25 @@ public class LubanMgr:Singleton<LubanMgr>
     public EquipInfo GetEquipInfoById(int id)
     {
         if (_equipInfos != null && _equipInfos.TryGetValue(id, out EquipInfo info))
+        {
+            return info;
+        }
+        return null;
+    }
+
+    /// <summary>返回各特技族的全部等级配置，加载完成后只读使用。</summary>
+    public List<EquipSpecialSkillInfo> GetEquipSpecialSkillInfos()
+    {
+        return _equipSpecialSkillList;
+    }
+
+    /// <summary>按唯一配置行编号查询装备特技等级记录。</summary>
+    /// <param name="id">特技表 Id，不是装备实例保存的 SpecialSkillId 族编号。</param>
+    public EquipSpecialSkillInfo GetEquipSpecialSkillInfo(int id)
+    {
+        // 查询到的特技等级行，缺少配置时返回空。
+        EquipSpecialSkillInfo info;
+        if (_equipSpecialSkillInfos != null && _equipSpecialSkillInfos.TryGetValue(id, out info))
         {
             return info;
         }

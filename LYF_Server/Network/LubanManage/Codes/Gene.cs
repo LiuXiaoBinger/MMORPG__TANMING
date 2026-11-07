@@ -35,6 +35,9 @@ public sealed partial class Gene : Luban.BeanBase
         State = _buf.ReadInt();
         TriggerEvent = _buf.ReadInt();
         TriggerCount = _buf.ReadInt();
+        TriggerChance = _buf.ReadInt();
+        Cooldown = _buf.ReadInt();
+        Target = _buf.ReadInt();
     }
 
     public static Gene DeserializeGene(ByteBuf _buf)
@@ -84,7 +87,7 @@ public sealed partial class Gene : Luban.BeanBase
     /// </summary>
     public readonly int GeneTime;
     /// <summary>
-    /// 0属性；1持续伤害；2持续治疗；3持续回蓝；4状态；5组合；6事件；7次数
+    /// 0属性；1持续伤害；2持续治疗；3持续回蓝；4状态；5组合；6事件；7次数；8即时治疗；9即时回蓝
     /// </summary>
     public readonly int EffectType;
     /// <summary>
@@ -115,6 +118,18 @@ public sealed partial class Gene : Luban.BeanBase
     /// 次数基因可触发次数，必须大于0；刷新恢复次数
     /// </summary>
     public readonly int TriggerCount;
+    /// <summary>
+    /// 触发概率，万分比0至10000；旧效果10000为必定触发
+    /// </summary>
+    public readonly int TriggerChance;
+    /// <summary>
+    /// 触发冷却，单位毫秒；0为无冷却
+    /// </summary>
+    public readonly int Cooldown;
+    /// <summary>
+    /// 事件触发对象：0自身，1事件目标；子基因继承承接目标
+    /// </summary>
+    public readonly int Target;
    
     public const int __ID__ = 2215733;
     public override int GetTypeId() => __ID__;
@@ -145,6 +160,9 @@ public sealed partial class Gene : Luban.BeanBase
         + "State:" + State + ","
         + "TriggerEvent:" + TriggerEvent + ","
         + "TriggerCount:" + TriggerCount + ","
+        + "TriggerChance:" + TriggerChance + ","
+        + "Cooldown:" + Cooldown + ","
+        + "Target:" + Target + ","
         + "}";
     }
 }

@@ -60,7 +60,10 @@ public static partial class RequestEntityReflection {
           "ZWF2ZVRlYW1BcmcSDwoHcm9sZV9pZBgBIAEoBCInChRCZWdJblRlYW1CeVRl",
           "YW1JZEFyZxIPCgd0ZWFtX2lkGAEgASgEIlsKGENhcHRhaW5SZXF1ZXN0RW50",
           "ZXJGQkFyZxISCgpkdW5nZW9uX2lkGAEgASgFEhIKCmNoYXB0ZXJfaWQYAiAB",
-          "KAUSFwoPZHVuZ2VvbnNfZGVncmVlGAMgASgFYgZwcm90bzM="));
+          "KAUSFwoPZHVuZ2VvbnNfZGVncmVlGAMgASgFImYKEUVxdWlwT3BlcmF0aW9u",
+          "UmVxEhAKCGl0ZW1fdWlkGAEgASgDEiIKCW9wZXJhdGlvbhgCIAEoDjIPLkVx",
+          "dWlwT3BlcmF0aW9uEhsKE3NwZWNpYWxfc2tpbGxfaW5kZXgYAyABKAViBnBy",
+          "b3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -87,13 +90,18 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::AcceptTeamInvatationArg), global::AcceptTeamInvatationArg.Parser, new[]{ "TeamId", "InviterId", "Agree" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::LeaveTeamArg), global::LeaveTeamArg.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BegInTeamByTeamIdArg), global::BegInTeamByTeamIdArg.Parser, new[]{ "TeamId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex" }, null, null, null, null)
         }));
   }
   #endregion
 
 }
 #region Messages
+/// <summary>
+/// 各服务之间传递的外层消息包；业务消息放在 data 中，两层会话编号保留返回路径。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class BasePackage : pb::IMessage<BasePackage>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -145,7 +153,7 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   public const int ProtoCodeFieldNumber = 1;
   private int protoCode_;
   /// <summary>
-  ///协议码
+  ///决定消息交给哪个协议处理器的编号
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -160,7 +168,7 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   public const int UnitySessionIdFieldNumber = 2;
   private int unitySessionId_;
   /// <summary>
-  ///unity端的sessionID.
+  ///客户端在网关上的会话编号，用于回包
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -175,7 +183,7 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   public const int GateSessionIdFieldNumber = 3;
   private int gateSessionId_;
   /// <summary>
-  ///gated端连接gameserver使用
+  ///网关连接游戏服的会话编号，与客户端编号共同定位连接
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -190,7 +198,7 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   public const int DataFieldNumber = 10;
   private pb::ByteString data_ = pb::ByteString.Empty;
   /// <summary>
-  ///数据
+  ///由 proto_code 指定类型的 protobuf 消息字节
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -348,7 +356,11 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -379,7 +391,11 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -406,6 +422,10 @@ public sealed partial class BasePackage : pb::IMessage<BasePackage>
 
 }
 
+/// <summary>
+/// 申请发送注册邮箱验证码。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RegistVarifyReq : pb::IMessage<RegistVarifyReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -564,7 +584,11 @@ public sealed partial class RegistVarifyReq : pb::IMessage<RegistVarifyReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -583,7 +607,11 @@ public sealed partial class RegistVarifyReq : pb::IMessage<RegistVarifyReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -598,6 +626,10 @@ public sealed partial class RegistVarifyReq : pb::IMessage<RegistVarifyReq>
 
 }
 
+/// <summary>
+/// 提交用户名、邮箱、验证码和密码完成注册。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class RegistReq : pb::IMessage<RegistReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -664,7 +696,7 @@ public sealed partial class RegistReq : pb::IMessage<RegistReq>
   public const int EmailFieldNumber = 2;
   private string email_ = "";
   /// <summary>
-  ///手机号
+  ///注册邮箱
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -852,7 +884,11 @@ public sealed partial class RegistReq : pb::IMessage<RegistReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -883,7 +919,11 @@ public sealed partial class RegistReq : pb::IMessage<RegistReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -913,6 +953,7 @@ public sealed partial class RegistReq : pb::IMessage<RegistReq>
 /// <summary>
 ///登录
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class LoginReq : pb::IMessage<LoginReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1103,7 +1144,11 @@ public sealed partial class LoginReq : pb::IMessage<LoginReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1126,7 +1171,11 @@ public sealed partial class LoginReq : pb::IMessage<LoginReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1148,6 +1197,7 @@ public sealed partial class LoginReq : pb::IMessage<LoginReq>
 /// <summary>
 ///获取服务器列表
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class GetServerListReq : pb::IMessage<GetServerListReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1196,6 +1246,7 @@ public sealed partial class GetServerListReq : pb::IMessage<GetServerListReq>
   public const int ServerIdFieldNumber = 1;
   private int serverId_;
   /// <summary>
+  ///查询服务器列表时附带的服务器编号
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1305,7 +1356,11 @@ public sealed partial class GetServerListReq : pb::IMessage<GetServerListReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1324,7 +1379,11 @@ public sealed partial class GetServerListReq : pb::IMessage<GetServerListReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1342,6 +1401,7 @@ public sealed partial class GetServerListReq : pb::IMessage<GetServerListReq>
 /// <summary>
 ///登录游戏服务器
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1391,6 +1451,7 @@ public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq
   public const int AccountIdFieldNumber = 1;
   private int accountId_;
   /// <summary>
+  ///当前登录账号编号
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1405,6 +1466,7 @@ public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq
   public const int GameServerIdFieldNumber = 2;
   private int gameServerId_;
   /// <summary>
+  ///选择的游戏服编号
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1530,7 +1592,11 @@ public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1553,7 +1619,11 @@ public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1575,6 +1645,7 @@ public sealed partial class LoginGameServerReq : pb::IMessage<LoginGameServerReq
 /// <summary>
 ///创建角色请求数据
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CreateRoleReq : pb::IMessage<CreateRoleReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1626,6 +1697,7 @@ public sealed partial class CreateRoleReq : pb::IMessage<CreateRoleReq>
   public const int AccountIdFieldNumber = 1;
   private int accountId_;
   /// <summary>
+  ///当前登录账号编号
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1828,7 +1900,11 @@ public sealed partial class CreateRoleReq : pb::IMessage<CreateRoleReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -1859,7 +1935,11 @@ public sealed partial class CreateRoleReq : pb::IMessage<CreateRoleReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -1889,6 +1969,7 @@ public sealed partial class CreateRoleReq : pb::IMessage<CreateRoleReq>
 /// <summary>
 ///请求游戏开始
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class StartGameReq : pb::IMessage<StartGameReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2047,7 +2128,11 @@ public sealed partial class StartGameReq : pb::IMessage<StartGameReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2066,7 +2151,11 @@ public sealed partial class StartGameReq : pb::IMessage<StartGameReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2082,8 +2171,9 @@ public sealed partial class StartGameReq : pb::IMessage<StartGameReq>
 }
 
 /// <summary>
-///那个角色进入世界
+/// 已选择的角色请求进入世界，并可附带出生位置。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2274,7 +2364,11 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2297,7 +2391,11 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2320,6 +2418,7 @@ public sealed partial class EnterWroldReq : pb::IMessage<EnterWroldReq>
 /// 客户端请求释放已学技能。身份和等级由 GameServer 按复合会话及中心服技能快照解析。
 /// 魔神塔普攻可携带水平瞄准点；命中目标和伤害由 GameServer 决定。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -2545,7 +2644,11 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -2575,7 +2678,11 @@ public sealed partial class SkillCastReq : pb::IMessage<SkillCastReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -2848,6 +2955,7 @@ public sealed partial class DungeonCastPoint : pb::IMessage<DungeonCastPoint>
 /// <summary>
 /// 请求开启背包格子。open_grid_count 是本次申请开启的数量。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3070,7 +3178,11 @@ public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridR
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -3097,7 +3209,11 @@ public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridR
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -3123,6 +3239,7 @@ public sealed partial class OpenKnapsackGridReq : pb::IMessage<OpenKnapsackGridR
 /// <summary>
 /// GameServer 向 CenterServer 同步最终格子数的内部协议，客户端不可调用。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsackGridCountReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3345,7 +3462,11 @@ public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsack
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -3372,7 +3493,11 @@ public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsack
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -3398,6 +3523,7 @@ public sealed partial class SyncKnapsackGridCountReq : pb::IMessage<SyncKnapsack
 /// <summary>
 /// 单个背包容器的完整物品快照，仅用于 GameServer 到 CenterServer 的内部持久化。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3577,7 +3703,11 @@ public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -3600,7 +3730,11 @@ public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -3622,6 +3756,7 @@ public sealed partial class ItemDataList : pb::IMessage<ItemDataList>
 /// <summary>
 /// GameServer 定时提交的角色物品脏数据，同一角色同一时刻只允许一个版本在途。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -3886,7 +4021,11 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -3921,7 +4060,11 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -3955,6 +4098,7 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
 /// <summary>
 /// 商城购买商品明细。goods_id 对应 ShopItemInfo.GoodsId，价格和物品由服务端配置读取。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -4145,7 +4289,11 @@ public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -4168,7 +4316,11 @@ public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -4190,6 +4342,7 @@ public sealed partial class BuyShopItem : pb::IMessage<BuyShopItem>
 /// <summary>
 /// 客户端购买商城商品请求。role_id 仅用于与网关会话中的角色做一致性校验。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -4401,7 +4554,11 @@ public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -4428,7 +4585,11 @@ public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -4454,6 +4615,7 @@ public sealed partial class BuyShopItemReq : pb::IMessage<BuyShopItemReq>
 /// <summary>
 /// 本地角色按 RO UpdateMove 上报的位置、朝向及本段移动耗时；角色身份从会话取得。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -4836,7 +4998,11 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -4883,7 +5049,11 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -4929,6 +5099,7 @@ public sealed partial class MoveOperationReq : pb::IMessage<MoveOperationReq>
 /// <summary>
 /// 创建队伍，对应 RO TeamMgr.lua:43 RequestCreateTeam(targetId)。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CreateTeamArg : pb::IMessage<CreateTeamArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5087,7 +5258,11 @@ public sealed partial class CreateTeamArg : pb::IMessage<CreateTeamArg>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5106,7 +5281,11 @@ public sealed partial class CreateTeamArg : pb::IMessage<CreateTeamArg>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5124,6 +5303,7 @@ public sealed partial class CreateTeamArg : pb::IMessage<CreateTeamArg>
 /// <summary>
 /// 邀请他人入队，对应 RO TeamMgr.lua:81 InviteJoinTeam(UserID, UserLevel)。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class InviteJoinTeamArg : pb::IMessage<InviteJoinTeamArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5282,7 +5462,11 @@ public sealed partial class InviteJoinTeamArg : pb::IMessage<InviteJoinTeamArg>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5301,7 +5485,11 @@ public sealed partial class InviteJoinTeamArg : pb::IMessage<InviteJoinTeamArg>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5319,6 +5507,7 @@ public sealed partial class InviteJoinTeamArg : pb::IMessage<InviteJoinTeamArg>
 /// <summary>
 /// 同意入队邀请，对应 RO TeamMgr.lua:165 AcceptTeamInvatation()。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class AcceptTeamInvatationArg : pb::IMessage<AcceptTeamInvatationArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5541,7 +5730,11 @@ public sealed partial class AcceptTeamInvatationArg : pb::IMessage<AcceptTeamInv
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5568,7 +5761,11 @@ public sealed partial class AcceptTeamInvatationArg : pb::IMessage<AcceptTeamInv
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5594,6 +5791,7 @@ public sealed partial class AcceptTeamInvatationArg : pb::IMessage<AcceptTeamInv
 /// <summary>
 /// 离队，对应 RO TeamMgr.lua:315 LeaveTeam()。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class LeaveTeamArg : pb::IMessage<LeaveTeamArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5752,7 +5950,11 @@ public sealed partial class LeaveTeamArg : pb::IMessage<LeaveTeamArg>
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5771,7 +5973,11 @@ public sealed partial class LeaveTeamArg : pb::IMessage<LeaveTeamArg>
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5789,6 +5995,7 @@ public sealed partial class LeaveTeamArg : pb::IMessage<LeaveTeamArg>
 /// <summary>
 /// 申请加入指定队伍，对应 RO TeamMgr.lua:413 BegInTeamByTeamId(cTeamId)。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class BegInTeamByTeamIdArg : pb::IMessage<BegInTeamByTeamIdArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -5947,7 +6154,11 @@ public sealed partial class BegInTeamByTeamIdArg : pb::IMessage<BegInTeamByTeamI
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -5966,7 +6177,11 @@ public sealed partial class BegInTeamByTeamIdArg : pb::IMessage<BegInTeamByTeamI
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -5984,6 +6199,7 @@ public sealed partial class BegInTeamByTeamIdArg : pb::IMessage<BegInTeamByTeamI
 /// <summary>
 /// 队长请求进入副本，对应 RO DungeonMgr.lua:1274 CaptainRequestEnterFBPtc 的 CaptainRequestEnterFBData。
 /// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainRequestEnterFBArg>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -6206,7 +6422,11 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
   #else
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
@@ -6233,7 +6453,11 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
   void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
     uint tag;
     while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
@@ -6247,6 +6471,290 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
         }
         case 24: {
           DungeonsDegree = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 按实例UID请求穿脱或切换特技，角色身份来自网关会话。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<EquipOperationReq> _parser = new pb::MessageParser<EquipOperationReq>(() => new EquipOperationReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<EquipOperationReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::RequestEntityReflection.Descriptor.MessageTypes[24]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public EquipOperationReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public EquipOperationReq(EquipOperationReq other) : this() {
+    itemUid_ = other.itemUid_;
+    operation_ = other.operation_;
+    specialSkillIndex_ = other.specialSkillIndex_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public EquipOperationReq Clone() {
+    return new EquipOperationReq(this);
+  }
+
+  /// <summary>Field number for the "item_uid" field.</summary>
+  public const int ItemUidFieldNumber = 1;
+  private long itemUid_;
+  /// <summary>
+  ///需要操作的装备实例UID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ItemUid {
+    get { return itemUid_; }
+    set {
+      itemUid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "operation" field.</summary>
+  public const int OperationFieldNumber = 2;
+  private global::EquipOperation operation_ = global::EquipOperation.None;
+  /// <summary>
+  ///穿戴、卸下或切换特技
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::EquipOperation Operation {
+    get { return operation_; }
+    set {
+      operation_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "special_skill_index" field.</summary>
+  public const int SpecialSkillIndexFieldNumber = 3;
+  private int specialSkillIndex_;
+  /// <summary>
+  ///切换特技时使用，范围0到2
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SpecialSkillIndex {
+    get { return specialSkillIndex_; }
+    set {
+      specialSkillIndex_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as EquipOperationReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(EquipOperationReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ItemUid != other.ItemUid) return false;
+    if (Operation != other.Operation) return false;
+    if (SpecialSkillIndex != other.SpecialSkillIndex) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ItemUid != 0L) hash ^= ItemUid.GetHashCode();
+    if (Operation != global::EquipOperation.None) hash ^= Operation.GetHashCode();
+    if (SpecialSkillIndex != 0) hash ^= SpecialSkillIndex.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ItemUid != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ItemUid);
+    }
+    if (Operation != global::EquipOperation.None) {
+      output.WriteRawTag(16);
+      output.WriteEnum((int) Operation);
+    }
+    if (SpecialSkillIndex != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SpecialSkillIndex);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ItemUid != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ItemUid);
+    }
+    if (Operation != global::EquipOperation.None) {
+      output.WriteRawTag(16);
+      output.WriteEnum((int) Operation);
+    }
+    if (SpecialSkillIndex != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SpecialSkillIndex);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ItemUid != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ItemUid);
+    }
+    if (Operation != global::EquipOperation.None) {
+      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Operation);
+    }
+    if (SpecialSkillIndex != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SpecialSkillIndex);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(EquipOperationReq other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ItemUid != 0L) {
+      ItemUid = other.ItemUid;
+    }
+    if (other.Operation != global::EquipOperation.None) {
+      Operation = other.Operation;
+    }
+    if (other.SpecialSkillIndex != 0) {
+      SpecialSkillIndex = other.SpecialSkillIndex;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ItemUid = input.ReadInt64();
+          break;
+        }
+        case 16: {
+          Operation = (global::EquipOperation) input.ReadEnum();
+          break;
+        }
+        case 24: {
+          SpecialSkillIndex = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ItemUid = input.ReadInt64();
+          break;
+        }
+        case 16: {
+          Operation = (global::EquipOperation) input.ReadEnum();
+          break;
+        }
+        case 24: {
+          SpecialSkillIndex = input.ReadInt32();
           break;
         }
       }

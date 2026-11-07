@@ -28,4 +28,17 @@ internal class EquipTable
     /// </summary>
     [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int StrengthenLevel { get; set; }
+
+    /// <summary>装备实例第一个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int SpecialSkillId0 { get; set; }
+    /// <summary>装备实例第二个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int SpecialSkillId1 { get; set; }
+    /// <summary>装备实例第三个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int SpecialSkillId2 { get; set; }
+    /// <summary>唯一启用的特技槽位，下标为 0 到 2；旧记录默认使用第一个槽位。</summary>
+    [SugarColumn(DefaultValue = "0")]
+    public int ActiveSpecialSkillIndex { get; set; }
 }

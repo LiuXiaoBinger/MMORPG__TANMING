@@ -224,7 +224,8 @@ public class SingingComponent : ActionStateComponent<ROSingingArgs>
             Stop(StateDefine.kStateDefault, null);
             return;
         }
-        if (Owner.State != OnlineRoleState.Online || Owner.mainRoleInfo.BaseInfo.CurrHp <= 0)
+        // 眩晕或沉默沿已有 Stop 入口打断进行中的吟唱。
+        if (Owner.State != OnlineRoleState.Online || Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
         {
             Stop(StateDefine.kStateDefault, null);
         }

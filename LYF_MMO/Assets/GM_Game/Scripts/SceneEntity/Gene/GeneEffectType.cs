@@ -16,5 +16,9 @@ public enum GeneEffectType
     /// <summary>收到 TriggerEvent 对应事件后施加关联基因，自身不消耗次数。</summary>
     Event = 6,
     /// <summary>收到匹配事件后施加关联基因，每次消耗一次 TriggerCount。</summary>
-    Count = 7
+    Count = 7,
+    /// <summary>施加时立即恢复生命，不等待周期或保留常驻资源实例。</summary>
+    InstantHeal = 8,
+    /// <summary>施加时立即恢复法力，不等待周期或保留常驻资源实例。</summary>
+    InstantMana = 9
 }

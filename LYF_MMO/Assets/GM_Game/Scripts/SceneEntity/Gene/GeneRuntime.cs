@@ -8,6 +8,12 @@ public class GeneRuntime
     private readonly Dictionary<int, cfg.Gene> definitions;
     /// <summary>当前实体的活跃实例，按施加顺序保存。</summary>
     private readonly List<GeneInstance> instances = new List<GeneInstance>();
+    /// <summary>本容器触发概率使用的随机源；测试可传入确定序列。</summary>
+    private readonly Random random;
+    /// <summary>由宿主固定帧累加的逻辑毫秒，仅用于事件冷却。</summary>
+    private long elapsedMilliseconds;
+    /// <summary>即时生命或法力效果在施加时直接交给宿主结算。</summary>
+    public event Action<GenePulse> Pulse;
     /// <summary>活跃实例的只读视图；移除或到期后自动反映最新列表。</summary>
     public IReadOnlyList<GeneInstance> ActiveGenes { get; private set; }
     /// <summary>当前使用场景：0 公共场景，1 副本，2 PvP；配置 0 在所有场景生效。</summary>
@@ -16,11 +22,14 @@ public class GeneRuntime
     /// <summary>为一个实体建立独立的基因容器。</summary>
     /// <param name="geneDefinitions">当前版本的基因配置，所有引用均应已通过配置校验。</param>
     /// <param name="scenario">实体当前环境，0 公共、1 副本、2 PvP。</param>
-    public GeneRuntime(Dictionary<int, cfg.Gene> geneDefinitions, int scenario = 0)
+    /// <param name="triggerRandom">概率触发的随机源；省略时为本容器创建独立随机源。</param>
+    public GeneRuntime(Dictionary<int, cfg.Gene> geneDefinitions, int scenario = 0, Random triggerRandom = null)
     {
         definitions = geneDefinitions;
         Scenario = scenario;
         ActiveGenes = instances.AsReadOnly();
+        random = triggerRandom;
+        if (random == null) random = new Random();
     }
 
     /// <summary>添加基因；同编号同来源按规则叠加并刷新时间，不同来源独立。</summary>
@@ -28,13 +37,15 @@ public class GeneRuntime
     /// <param name="sourceId">施加者或装备实例编号，0 为默认来源。</param>
     /// <param name="value">可选的根效果数值覆盖；关联效果沿用各自表值。</param>
     /// <returns>本次添加或刷新的实例；场景不适用时返回 null。</returns>
-    public virtual GeneInstance AddGene(int geneId, ulong sourceId = 0, float? value = null)
+    /// <param name="sourceSlot">同一装备内的效果槽，0 为普通施加，1 至 9 为装备词条。</param>
+    /// <param name="firerId">施加角色编号，独立于来源装备 UID。</param>
+    public virtual GeneInstance AddGene(int geneId, ulong sourceId = 0, float? value = null, int sourceSlot = 0, ulong firerId = 0)
     {
         // 父定义只控制这组效果的寿命、叠加与适用场景。
         cfg.Gene definition = definitions[geneId];
         if (!AppliesToScenario(definition)) return null;
         // 相同施加来源的既有实例，重复施加时不产生第二份属性增量。
-        GeneInstance existing = FindGene(geneId, sourceId);
+        GeneInstance existing = FindGene(geneId, sourceId, sourceSlot);
         if (existing != null)
         {
             if (definition.IsStack == 0)
@@ -54,6 +65,7 @@ public class GeneRuntime
                 if (IsTriggered(existing.Effects[i].Definition)) existing.Effects[i].ResetTriggers();
             }
             existing.RefreshDuration();
+            PublishInstantEffects(existing);
             return existing;
         }
         // 实例保留当前激活的效果；事件子树只有在匹配事件到来后才施加。
@@ -65,21 +77,42 @@ public class GeneRuntime
         GeneEffect root = CreateEffect(definition, effectValue, new HashSet<int>());
         CollectActiveEffects(root, effects);
         // 普通关联项共同存亡；事件后产生的基因按自己的配置独立计时。
-        GeneInstance instance = new GeneInstance(definition, sourceId, effects);
-        instances.Add(instance);
+        GeneInstance instance = new GeneInstance(definition, sourceId, effects, sourceSlot, firerId);
+        // 即时节点只发布资源结果；同一组合内其他节点仍按根寿命保存。
+        bool persistent = false;
+        for (int i = 0; i < effects.Count; i++)
+        {
+            if (!IsInstant(effects[i].Definition)) persistent = true;
+        }
+        if (persistent) instances.Add(instance);
+        PublishInstantEffects(instance);
         return instance;
+    }
+
+    /// <summary>首次施加和刷新组合时都兑现其中的即时资源节点，不重复启动周期。</summary>
+    /// <param name="instance">本次实际施加或刷新的原实例。</param>
+    private void PublishInstantEffects(GeneInstance instance)
+    {
+        // 只遍历已激活节点，事件子树中的即时资源仍等待对应事件。
+        for (int i = 0; i < instance.Effects.Count; i++)
+        {
+            // 组合中的实际叶子，场景约束仍沿父引用检查。
+            GeneEffect effect = instance.Effects[i];
+            if (IsInstant(effect.Definition) && AppliesToEffect(effect)) Pulse?.Invoke(new GenePulse(instance, effect));
+        }
     }
 
     /// <summary>按配置编号及来源定位唯一实例。</summary>
     /// <param name="geneId">父基因配置编号。</param>
     /// <param name="sourceId">施加者或装备实例编号。</param>
     /// <returns>现有实例；未施加或已移除时返回 null。</returns>
-    public GeneInstance FindGene(int geneId, ulong sourceId = 0)
+    /// <param name="sourceSlot">要查找的同来源槽，默认 0 保留普通效果接口。</param>
+    public GeneInstance FindGene(int geneId, ulong sourceId = 0, int sourceSlot = 0)
     {
         // 顺序查询当前少量生效基因，保持与 ActiveGenes 一致的对象引用。
         for (int i = 0; i < instances.Count; i++)
         {
-            if (instances[i].Definition.Id == geneId && instances[i].SourceId == sourceId)
+            if (instances[i].Definition.Id == geneId && instances[i].SourceId == sourceId && instances[i].SourceSlot == sourceSlot)
             {
                 return instances[i];
             }
@@ -94,6 +127,25 @@ public class GeneRuntime
     public virtual bool RemoveGene(int geneId, ulong sourceId = 0)
     {
         return instances.Remove(FindGene(geneId, sourceId));
+    }
+
+    /// <summary>移除指定原实例，供装备单个词条或特技等级变更使用。</summary>
+    /// <param name="instance">此前 AddGene 返回的原实例。</param>
+    /// <returns>当前仍在容器中并已移除时返回 true。</returns>
+    public virtual bool RemoveGene(GeneInstance instance)
+    {
+        return instances.Remove(instance);
+    }
+
+    /// <summary>卸装时移除该装备来源的全部槽及其自身临时效果，保留其他来源。</summary>
+    /// <param name="sourceId">需要卸载的装备实例 UID。</param>
+    public virtual void RemoveGenesBySource(ulong sourceId)
+    {
+        // 反向删除不会跳过同一来源的相邻词条。
+        for (int i = instances.Count - 1; i >= 0; i--)
+        {
+            if (instances[i].SourceId == sourceId) instances.RemoveAt(i);
+        }
     }
 
     /// <summary>切换适用环境，立即移除在新环境不再生效的实例。</summary>
@@ -171,6 +223,7 @@ public class GeneRuntime
         // 强类型周期结果与计时推进分离，宿主处理结果时可正常增删基因。
         List<GenePulse> pulses = new List<GenePulse>();
         if (deltaMilliseconds <= 0) return pulses;
+        elapsedMilliseconds += deltaMilliseconds;
         // 反向遍历可在到期时直接删除当前实例，不移动尚未处理项的索引。
         for (int i = instances.Count - 1; i >= 0; i--)
         {
@@ -210,7 +263,15 @@ public class GeneRuntime
     /// <returns>本次实际施加或刷新的关联基因数量。</returns>
     public virtual int Trigger(GeneEventType geneEvent)
     {
-        if (geneEvent == GeneEventType.None) return 0;
+        return Trigger(new GeneTriggerArgs(geneEvent));
+    }
+
+    /// <summary>处理真实事件参数；只有成功施加关联效果才消耗次数并开始冷却。</summary>
+    /// <param name="args">事件类型、实际伤害和事件对方的运行容器。</param>
+    /// <returns>本事件实际施加或刷新关联基因的数量。</returns>
+    public virtual int Trigger(GeneTriggerArgs args)
+    {
+        if (args.Event == GeneEventType.None) return 0;
         // 从原列表末尾向前处理，新增实例追加到末尾，不在同一事件中再次响应。
         int activated = 0;
         for (int i = instances.Count - 1; i >= 0; i--)
@@ -222,7 +283,7 @@ public class GeneRuntime
             {
                 // 非触发节点仍由属性查询或逻辑帧驱动，不响应事件。
                 GeneEffect effect = instance.Effects[j];
-                if (IsTriggered(effect.Definition)) activated += TriggerEffect(effect, geneEvent, instance.SourceId);
+                if (IsTriggered(effect.Definition)) activated += TriggerEffect(effect, args, instance, this);
             }
             if (instance.Definition.EffectType == (int)GeneEffectType.Count)
             {
@@ -268,6 +329,14 @@ public class GeneRuntime
     {
         return definition.EffectType >= (int)GeneEffectType.PeriodicDamage
             && definition.EffectType <= (int)GeneEffectType.PeriodicMana;
+    }
+
+    /// <summary>判断施加时立即结算的生命或法力恢复。</summary>
+    /// <param name="definition">当前配置节点。</param>
+    /// <returns>无需等待周期的资源节点返回 true。</returns>
+    private static bool IsInstant(cfg.Gene definition)
+    {
+        return definition.EffectType == (int)GeneEffectType.InstantHeal || definition.EffectType == (int)GeneEffectType.InstantMana;
     }
 
     /// <summary>创建完整关联树；允许任意类型嵌套，循环引用不能展开为有效组合。</summary>
@@ -330,31 +399,45 @@ public class GeneRuntime
 
     /// <summary>执行一个匹配事件节点；相邻事件／次数节点沿当前事件继续触发。</summary>
     /// <param name="effect">保存剩余次数和关联子树的原节点。</param>
-    /// <param name="geneEvent">由宿主传入的实际事件。</param>
-    /// <param name="sourceId">继承施加者身份，避免不同来源相互覆盖。</param>
+    /// <param name="args">由权威战斗入口提供的实际事件。</param>
+    /// <param name="instance">保留装备来源和施加角色的根实例。</param>
+    /// <param name="inheritedTarget">上层事件选中的效果承接容器，默认是当前宿主。</param>
     /// <returns>本节点实际产生的关联基因施加次数。</returns>
-    private int TriggerEffect(GeneEffect effect, GeneEventType geneEvent, ulong sourceId)
+    private int TriggerEffect(GeneEffect effect, GeneTriggerArgs args, GeneInstance instance, GeneRuntime inheritedTarget)
     {
         if (!AppliesToEffect(effect)) return 0;
-        if (effect.Definition.TriggerEvent != 0 && effect.Definition.TriggerEvent != (int)geneEvent) return 0;
+        if (effect.Definition.TriggerEvent != 0 && effect.Definition.TriggerEvent != (int)args.Event) return 0;
+        // 事件根选择目标后，默认子节点沿用承接容器；没有目标不能消耗次数或冷却。
+        GeneRuntime target = inheritedTarget;
+        if (effect.Definition.Target == 1) target = args.TargetRuntime;
+        if (target == null) return 0;
+        if (elapsedMilliseconds < effect.CooldownUntilMilliseconds) return 0;
         if (effect.Definition.EffectType == (int)GeneEffectType.Count)
         {
             if (effect.RemainingTriggers == 0) return 0;
-            effect.RemainingTriggers--;
         }
+        if (effect.Definition.TriggerChance <= 0) return 0;
+        if (effect.Definition.TriggerChance < 10000 && random.Next(10000) >= effect.Definition.TriggerChance) return 0;
         // 关联的普通基因从本次触发时刻开始独立计时，后续按自己的叠加规则刷新。
         int activated = 0;
         for (int i = 0; i < effect.Children.Count; i++)
         {
             // 相邻触发节点保留原次数；其他节点作为新基因施加到当前宿主。
             GeneEffect child = effect.Children[i];
-            if (!AppliesToScenario(child.Definition)) continue;
-            if (IsTriggered(child.Definition)) activated += TriggerEffect(child, geneEvent, sourceId);
+            if (IsTriggered(child.Definition)) activated += TriggerEffect(child, args, instance, target);
             else
             {
-                AddGene(child.Definition.Id, sourceId);
-                activated++;
+                // 普通子节点也可以显式选事件目标，否则沿用上层触发节点选中的容器。
+                GeneRuntime childTarget = target;
+                if (child.Definition.Target == 1) childTarget = args.TargetRuntime;
+                if (childTarget == null) continue;
+                if (childTarget.AddGene(child.Definition.Id, instance.SourceId, null, 0, instance.FirerId) != null) activated++;
             }
+        }
+        if (activated > 0)
+        {
+            if (effect.Definition.EffectType == (int)GeneEffectType.Count) effect.RemainingTriggers--;
+            effect.CooldownUntilMilliseconds = elapsedMilliseconds + effect.Definition.Cooldown;
         }
         return activated;
     }

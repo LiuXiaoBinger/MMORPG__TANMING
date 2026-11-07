@@ -117,6 +117,8 @@ public class OnlineRole
 
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
+        // 装备属性与特技跟随真实在线角色推进，不依赖尚未绑定的玩家场景实体。
+        _components.SetComponent(new RoleEquipComponent(this));
         _components.SetComponent(new RoleShopRecord(this));
         // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放；
         // 该组件同时是状态机里的技能动作状态，由吟唱结束派发的 kActionSkill 事件驱动。

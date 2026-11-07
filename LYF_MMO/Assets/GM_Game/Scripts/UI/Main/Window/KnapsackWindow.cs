@@ -17,6 +17,9 @@ public class KnapsackWindow : WindowBase
     /// <summary>窗口帧循环事件，由背包控制器消费当前页脏标记。</summary>
     public event Action FrameUpdated;
 
+    /// <summary>背包物品被点击时通知控制器，参数是服务器物品 UID。</summary>
+    public event Action<long> ItemSelected;
+
     // ============================================================
     // 一、Inspector 可配置字段
     // ============================================================
@@ -525,7 +528,16 @@ public class KnapsackWindow : WindowBase
         slot.transform.SetParent(_content, false);
         slot.transform.SetSiblingIndex(_activeSlots.Count);  // 保持层级顺序
         PrepareSlotForVirtualLayout(slot);
+        slot.ItemSelected -= OnItemSelected;
+        slot.ItemSelected += OnItemSelected;
         return slot;
+    }
+
+    /// <summary>将虚拟格子点击转交控制器，不在窗口内判断装备或发协议。</summary>
+    /// <param name="itemUid">当前格子绑定的物品实例 UID。</param>
+    private void OnItemSelected(long itemUid)
+    {
+        ItemSelected?.Invoke(itemUid);
     }
 
     /// <summary>

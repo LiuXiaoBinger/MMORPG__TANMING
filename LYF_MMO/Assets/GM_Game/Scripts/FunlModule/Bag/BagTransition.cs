@@ -496,111 +496,61 @@ public class BagExpansionTransition : BagTransition
     }
 }
 
-/// <summary>在装备背包和已穿戴栏之间移动装备实例。</summary>
+/// <summary>按实例 UID 请求服务器穿脱装备，客户端物品位置只接受权威增量更新。</summary>
 public class BagWearItemTransition : BagTransition
 {
+    /// <summary>绑定当前角色的装备请求入口。</summary>
+    /// <param name="role">提交穿脱操作的本地角色。</param>
     public BagWearItemTransition(PlayerEntity role) : base(role)
     {
     }
 
-    /// <summary>把装备背包中的指定装备移动到对应的穿戴栏。</summary>
-    public virtual BagTransitionResult WearItem(int itemId)
+    /// <summary>提交指定实例的穿戴请求；Success 表示已发送，位置等待服务器确认。</summary>
+    /// <param name="itemUid">玩家选择的装备 UID，不是装备配置 ID。</param>
+    public virtual BagTransitionResult WearItem(long itemUid)
     {
+        // 保留现有角色装载状态检查。
         BagTransitionResult contextResult = ValidateContext();
         if (contextResult != BagTransitionResult.Success)
         {
             return contextResult;
         }
-        EquipBase equip = FindEquipment(KnapsackType.RolePackEquip, itemId);
-        if (equip == null || equip.EquipType < 0 || equip.EquipType >= 256)
-        {
-            return BagTransitionResult.InvalidArgument;
-        }
-        RoItemContainer target = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack);
-        if (target == null || target.GetItemByPos(equip.EquipType) != null)
-        {
-            return BagTransitionResult.KnapsackUnavailable;
-        }
-        bool moved = m_roItemComponent.SwapItem(equip.GetItemUID(),
-            KnapsackType.RolePackEquip, KnapsackType.RoleCurrtEquipPack,
-            equip.EquipType,
-            new ChangeReason(ItemChangeReason.ITEM_REASON_WEAR_EQUIP),
-            UpdateType.eUT_Update_All);
-        if (moved)
-        {
-            return BagTransitionResult.Success;
-        }
-        return BagTransitionResult.KnapsackUnavailable;
-    }
-
-    /// <summary>把穿戴栏中的指定装备移动回普通装备背包。</summary>
-    public virtual BagTransitionResult TakeOffItem(int itemId)
-    {
-        BagTransitionResult contextResult = ValidateContext();
-        if (contextResult != BagTransitionResult.Success)
-        {
-            return contextResult;
-        }
-        EquipBase equip = FindEquipment(KnapsackType.RoleCurrtEquipPack, itemId);
+        // 使用 UID 精确找到玩家选择的那一件装备。
+        EquipBase equip = m_roItemComponent.GetItemByUID(itemUid) as EquipBase;
         if (equip == null)
         {
             return BagTransitionResult.InvalidArgument;
         }
-        RoItemContainer target = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip);
-        if (target == null)
-        {
-            return BagTransitionResult.KnapsackUnavailable;
-        }
-        int targetGrid = FindEmptyGrid(target);
-        if (targetGrid < 0)
-        {
-            return BagTransitionResult.KnapsackUnavailable;
-        }
-        bool moved = m_roItemComponent.SwapItem(equip.GetItemUID(),
-            KnapsackType.RoleCurrtEquipPack, KnapsackType.RolePackEquip,
-            targetGrid,
-            new ChangeReason(ItemChangeReason.ITEM_REASON_WEAR_EQUIP),
-            UpdateType.eUT_Update_All);
-        if (moved)
+        if (KnapsackCtrl.SendEquipmentOperation(itemUid, EquipOperation.Wear))
         {
             return BagTransitionResult.Success;
         }
         return BagTransitionResult.KnapsackUnavailable;
     }
 
-    /// <summary>从指定容器查找配置 ID 对应的装备实例。</summary>
-    private EquipBase FindEquipment(KnapsackType type, int itemId)
+    /// <summary>提交指定实例的卸下请求，不提前腾空穿戴栏。</summary>
+    /// <param name="itemUid">需要卸下的装备实例 UID。</param>
+    public virtual BagTransitionResult TakeOffItem(long itemUid)
     {
-        RoItemContainer container = m_roItemComponent.GetContainer(type);
-        if (container == null || container.GetItemMap() == null)
+        // 保留现有角色装载状态检查。
+        BagTransitionResult contextResult = ValidateContext();
+        if (contextResult != BagTransitionResult.Success)
         {
-            return null;
+            return contextResult;
         }
-        List<ItemBase> items = new List<ItemBase>(container.GetItemMap().Values);
-        for (int index = 0; index < items.Count; index++)
+        // 使用 UID 查实例，避免多件同配置装备时取错对象。
+        EquipBase equip = m_roItemComponent.GetItemByUID(itemUid) as EquipBase;
+        if (equip == null)
         {
-            EquipBase equip = items[index] as EquipBase;
-            if (equip != null && equip.GetItemID() == itemId)
-            {
-                return equip;
-            }
+            return BagTransitionResult.InvalidArgument;
         }
-        return null;
+        if (KnapsackCtrl.SendEquipmentOperation(itemUid, EquipOperation.TakeOff))
+        {
+            return BagTransitionResult.Success;
+        }
+        return BagTransitionResult.KnapsackUnavailable;
     }
 
-    /// <summary>查找目标容器中的首个空格，避免直接暴露容器内部索引逻辑。</summary>
-    private static int FindEmptyGrid(RoItemContainer container)
-    {
-        int size = container.GetContainerSize();
-        for (int index = 0; index < size; index++)
-        {
-            if (container.GetItemByPos(index) == null)
-            {
-                return index;
-            }
-        }
-        return -1;
-    }
 }
 
 /// <summary>预留的使用物品入口，尚未执行扣除或道具效果。</summary>

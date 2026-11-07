@@ -72,6 +72,32 @@ public sealed class RoleInfoCtrl : CtrlBase
             (mpRatio * 100f).ToString("F0") + "%";
         _roleCurrentWindow.UpdateRoleInfo(new RoleCurrentViewData(roleInfo.BaseInfo.Nickname,
             jobName, roleInfo.BaseInfo.Level, headIconPath, hpRatio, mpRatio, hpText, mpText));
+        if (_roleAttributeWindow != null)
+        {
+            // 服务器最终属性，各率字段仅显示协议已经明确的百分数。
+            RoleBaseInfo info = roleInfo.BaseInfo;
+            _roleAttributeWindow.RenderAttributes(new RoleAttributeViewData
+            {
+                Nickname = info.Nickname,
+                JobName = jobName,
+                HpText = hpText,
+                MpText = mpText,
+                HpRatio = hpRatio,
+                MpRatio = mpRatio,
+                AttributeValues = new string[]
+                {
+                    info.AtkExternalMin + "-" + info.AtkExternalMax,
+                    info.AtkInternalMin + "-" + info.AtkInternalMax,
+                    info.DefExternal.ToString(), info.DefInternal.ToString(),
+                    info.HitPoint.ToString(), info.BlockPoint.ToString(),
+                    info.ZhenJi.ToString(), info.WuGu.ToString(),
+                    info.CritPoint.ToString(), info.CritResistPoint.ToString(),
+                    info.CritDamage + "%", info.CritDamageReduce + "%",
+                    info.HealStrength.ToString(), info.HealBonus + "%",
+                    info.ZhuXin.ToString(), info.JianRen.ToString()
+                }
+            });
+        }
         if (_skillWindow != null)
         {
             // 当前协议尚无独立技能点字段，沿用旧界面使用角色等级的表现。
@@ -98,6 +124,31 @@ public sealed class RoleInfoCtrl : CtrlBase
             {
                 equipments.Add(viewData);
             }
+        }
+        _roleAttributeWindow.ReFreshUI(equipments);
+    }
+
+    /// <summary>物品增量应用后直接读取穿戴容器刷新装备格，不使用登录时的旧快照。</summary>
+    /// <param name="itemComponent">已经应用服务器完整装备数据的物品组件。</param>
+    public void RefreshEquipment(RoItemComponent itemComponent)
+    {
+        if (_roleAttributeWindow == null) return;
+        // 当前穿戴栏保存服务器确认的装备实例。
+        RoItemContainer container = itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack);
+        // 按索引读取原装备引用，构建纯展示列表。
+        List<ItemBase> items = new List<ItemBase>(container.GetItemMap().Values);
+        // 本次全量重绘的装备槽内容。
+        List<EquipmentViewData> equipments = new List<EquipmentViewData>();
+        for (int index = 0; index < items.Count; index++)
+        {
+            // 穿戴栏中的完整装备实例。
+            EquipBase equip = items[index] as EquipBase;
+            if (equip == null) continue;
+            // 配置负责名称与图标，实例负责强化与唯一编号。
+            EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+            if (config == null) continue;
+            equipments.Add(new EquipmentViewData((EquipType)equip.EquipType,
+                equip.GetItemID(), config.EquipName, config.Icon, equip.StrengthenLevel, equip.GetItemUID()));
         }
         _roleAttributeWindow.ReFreshUI(equipments);
     }
@@ -165,7 +216,7 @@ public sealed class RoleInfoCtrl : CtrlBase
             strengthenLevel = roleItem.EquipInfo.StrengthenLevel;
         }
         viewData = new EquipmentViewData((EquipType)equipTypeValue, roleItem.ItemTypeId,
-            name, iconPath, strengthenLevel);
+            name, iconPath, strengthenLevel, roleItem.ItemUid);
         return true;
     }
 }

@@ -238,7 +238,7 @@ public sealed class TeamManager
             OnlineRole role = RoleManager.Instance.GetOnlineRole((int)member.RoleId);
             if (role == null || role.State != OnlineRoleState.Online) continue;
             // 当前角色的服务端属性。
-            RoleBaseInfo info = role.mainRoleInfo.BaseInfo;
+            RoleBaseInfo info = role.GetComponent<RoleEquipComponent>().CalculateAttribute();
             member.Nickname = info.Nickname;
             member.Level = info.Level;
             member.JobId = info.JobId;

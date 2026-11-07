@@ -383,6 +383,7 @@ public static class GameMessageProtocolRegister
         server.RegistCommand(NetDefine.CMD_StartGameCode, messageManager);
         server.RegistCommand(NetDefine.CMD_EnterWroldCode, messageManager);
         server.RegistCommand(NetDefine.CMD_OpenKnapsackGridCode, messageManager);
+        server.RegistCommand(NetDefine.CMD_EquipOperationCode, messageManager);
         server.RegistCommand(NetDefine.CMD_BuyShopItemCode, messageManager);
         server.RegistCommand(NetDefine.CMD_SkillCastCode, messageManager);
         // 移动请求沿用总逻辑队列，网络线程不写角色坐标。
@@ -420,6 +421,8 @@ public static class GameMessageProtocolRegister
             NetDefine.CMD_RoleKnapsackInfoCode, new RoleKnapsackInfoHandler(), CenterMessageRoute.ForwardToGate);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_OpenKnapsackGridCode, new OpenKnapsackGridHandler(), CenterMessageRoute.Internal);
+        RegisterHandler(messageManager, GameCommandSource.GateServer,
+            NetDefine.CMD_EquipOperationCode, new EquipOperationHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.CenterServer,
             NetDefine.CMD_SyncKnapsackGridCountCode, new SyncKnapsackGridCountHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,

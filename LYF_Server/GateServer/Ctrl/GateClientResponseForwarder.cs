@@ -54,6 +54,13 @@ public static class GateClientResponseForwarder
         resultCode = CmdCode.Succeed;
         switch (package.ProtoCode)
         {
+            case NetDefine.CMD_EquipOperationCode:
+                // 装备失败也要保留实例 UID 与操作类型，供原界面结束本次交互。
+                resultCode = EquipOperationRet.Parser.ParseFrom(package.Data).CmdCode;
+                return true;
+            case NetDefine.CMD_RoleAttributeUpdateCode:
+                // 最终属性是主动通知，没有业务错误码；有效载荷须携带角色属性。
+                return RoleAttributeUpdateNtf.Parser.ParseFrom(package.Data).BaseInfo != null;
             case NetDefine.CMD_LoginGameServerCode:
                 resultCode = LoginGameServerRet.Parser.ParseFrom(package.Data).CmdCode;
                 return true;
@@ -182,8 +189,10 @@ public static class GateClientResponseForwarder
     /// <summary>
     /// 判断失败时是否仍需原样保留业务回包，避免只返回错误码而丢失格子数、法力或冷却等数据。
     /// </summary>
+    /// <param name="commandCode">待回传客户端的业务协议编号。</param>
     private static bool ShouldForwardBusinessResult(int commandCode)
     {
+        if (commandCode == NetDefine.CMD_EquipOperationCode) return true;
         if (commandCode == NetDefine.RpcC2M_SendChatMsg || commandCode == NetDefine.RpcC2M_UploadChatAudio || commandCode == NetDefine.RpcC2M_DownloadChatAudio) return true;
         // 是否为背包开格子或商城购买回包。
         bool isKnapsackOrBuyCode = commandCode == NetDefine.CMD_OpenKnapsackGridCode ||

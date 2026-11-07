@@ -31,6 +31,34 @@ public class EquipBase : ItemBase
     /// </summary>
     public int StrengthenLevel { get; set; }
 
+    /// <summary>第一个装备特技的配置族编号，0 表示该槽位为空。</summary>
+    public int SpecialSkillId0 { get; set; }
+    /// <summary>第二个装备特技的配置族编号，0 表示该槽位为空。</summary>
+    public int SpecialSkillId1 { get; set; }
+    /// <summary>第三个装备特技的配置族编号，0 表示该槽位为空。</summary>
+    public int SpecialSkillId2 { get; set; }
+    /// <summary>当前启用的特技槽位，下标范围为 0 到 2，默认使用第一个槽位。</summary>
+    public int ActiveSpecialSkillIndex { get; set; }
+
+    /// <summary>按槽位读取装备实例保存的特技编号。</summary>
+    /// <param name="index">特技槽位下标，范围为 0 到 2；其他值返回 0。</param>
+    public int GetSpecialSkillId(int index)
+    {
+        switch (index)
+        {
+            case 0: return SpecialSkillId0;
+            case 1: return SpecialSkillId1;
+            case 2: return SpecialSkillId2;
+            default: return 0;
+        }
+    }
+
+    /// <summary>读取唯一启用的特技编号；启用槽为空时返回 0。</summary>
+    public int GetActiveSpecialSkillId()
+    {
+        return GetSpecialSkillId(ActiveSpecialSkillIndex);
+    }
+
     /// <summary>
     /// 第一个词条使用的配置编号，实际数值由 GeneValue0 保存。
     /// </summary>

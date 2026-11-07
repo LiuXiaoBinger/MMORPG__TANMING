@@ -59,6 +59,7 @@
     <Compile Include="Common\LogMsg.cs" />
     <Compile Include="Common\Singleton.cs" />
     <Compile Include="LubanManage\Codes\EquipInfo.cs" />
+    <Compile Include="LubanManage\Codes\EquipSpecialSkillInfo.cs" />
     <Compile Include="LubanManage\Codes\CountInfo.cs" />
     <Compile Include="LubanManage\Codes\DungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonTargetTable.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="LubanManage\Codes\SkillPresentationInfo.cs" />
     <Compile Include="LubanManage\Codes\Tables.cs" />
     <Compile Include="LubanManage\Codes\TbEquipInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbEquipSpecialSkillInfo.cs" />
     <Compile Include="LubanManage\Codes\TbCountInfo.cs" />
     <Compile Include="LubanManage\Codes\TbGene.cs" />
     <Compile Include="LubanManage\Codes\TbItemInfo.cs" />
@@ -144,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LubanManage\Tb\tbequipinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbequipspecialskillinfo.bytes" />
     <Content Include="LubanManage\Tb\tbgene.bytes" />
     <Content Include="LubanManage\Tb\tbiteminfo.bytes" />
     <Content Include="LubanManage\Tb\tbknapsackinfo.bytes" />

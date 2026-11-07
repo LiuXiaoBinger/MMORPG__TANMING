@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Xml.Linq;
 
 /// <summary>魔神塔邪骸兽人的一级物理普攻，按 RO 的怪物属性、玩家 PvE 防御与 CommonSkillCritCalc 结算。</summary>
@@ -53,7 +53,18 @@ public static class OrcBasicAttackDamage
     /// <returns>闪避为零，命中后由调用方按剩余生命裁切实际扣血量。</returns>
     public static int Calculate(OnlineRole target)
     {
-        return Calculate(target.mainRoleInfo.BaseInfo, combatRandom);
+        // 兼容原接口，暴击标记仍由同一次随机判定生成。
+        bool critical;
+        return Calculate(target, out critical);
+    }
+
+    /// <summary>同时返回本刀伤害与实际暴击结果，不在事件层重新抽样。</summary>
+    /// <param name="target">读取最终装备属性的受击在线角色。</param>
+    /// <param name="critical">本刀权威暴击结果。</param>
+    /// <returns>未按剩余生命裁切的整点伤害。</returns>
+    public static int Calculate(OnlineRole target, out bool critical)
+    {
+        return Calculate(target.GetComponent<RoleEquipComponent>().CalculateAttribute(), combatRandom, out critical);
     }
 
     /// <summary>按 RO 的判定次序和 PvE 玩家分支，用指定随机源一次结算无属性普通攻击。</summary>
@@ -62,10 +73,22 @@ public static class OrcBasicAttackDamage
     /// <returns>结果点应造成的整点伤害，不直接修改玩家属性。</returns>
     public static int Calculate(RoleBaseInfo target, Random rolls)
     {
+        // 兼容已有只需要伤害的独立测试接口。
+        bool critical;
+        return Calculate(target, rolls, out critical);
+    }
+
+    /// <summary>沿原判定次序计算伤害并保留暴击结果供事件使用。</summary>
+    /// <param name="target">已经合成装备与临时效果的玩家面板。</param>
+    /// <param name="rolls">本刀唯一随机源。</param>
+    /// <param name="critical">实际暴击成功为 true，闪避必为 false。</param>
+    /// <returns>未按剩余生命裁切的整点伤害。</returns>
+    public static int Calculate(RoleBaseInfo target, Random rolls, out bool critical)
+    {
         // 当前职业没有 RO 的格挡技能状态和卡片概率，BlockPoint 是面板点数，不能当万分比使用。
         // RO 普攻先判暴击，成功的暴击绕过普通命中判定。暴抗来自玩家实际面板。
         double criticalChance = Math.Min(1.0, Math.Max(0.0, (criticalPoints - target.CritResistPoint) / 100.0));
-        bool critical = criticalChance > 0.0 && rolls.NextDouble() <= criticalChance;
+        critical = criticalChance > 0.0 && rolls.NextDouble() <= criticalChance;
         if (!critical)
         {
             // RO 玩家基础闪避等于等级。LYF 没有独立 AGI、FLEE 加成，本副本当前仅这一只攻击者。

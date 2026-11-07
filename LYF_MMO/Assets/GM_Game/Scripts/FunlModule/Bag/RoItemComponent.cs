@@ -277,7 +277,11 @@ public class RoItemComponent : RoleComponentBase
                 // 装备配置生成带有装备部位信息的实例。
                 item = new EquipBase
                 {
-                    EquipType = equipConfig.Config.EquipType
+                    EquipType = equipConfig.Config.EquipType,
+                    SpecialSkillId0 = equipConfig.Config.SpecialSkillId0,
+                    SpecialSkillId1 = equipConfig.Config.SpecialSkillId1,
+                    SpecialSkillId2 = equipConfig.Config.SpecialSkillId2,
+                    ActiveSpecialSkillIndex = equipConfig.Config.ActiveSpecialSkillIndex
                 };
                 item.SetItemID(itemId);
                 item.SetItemCount(count);
@@ -321,6 +325,10 @@ public class RoItemComponent : RoleComponentBase
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
             equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
+            equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
+            equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;
+            equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {
@@ -641,18 +649,22 @@ public class RoItemComponent : RoleComponentBase
         return (int)total;
     }
 
-    //通过UID得到指定道具
-    private ItemBase GetItemByUID(long itemUid)
+    /// <summary>从当前所有背包按实例 UID 查询原物品引用，供装备详情和穿脱入口使用。</summary>
+    /// <param name="itemUid">服务器分配的物品实例唯一编号。</param>
+    public ItemBase GetItemByUID(long itemUid)
     {
+        // 容器引用快照，按索引遍历不会复制其中的装备实例。
         List<RoItemContainer> containers = new List<RoItemContainer>(_itemContainers.Values);
         for (int index = 0; index < containers.Count; index++)
         {
+            // 本次查询的一个背包容器。
             RoItemContainer container = containers[index];
             if (container == null)
             {
                 continue;
             }
 
+            // 当前容器查到的真实实例，缺少时继续查其他容器。
             ItemBase item = container.GetItemByUid(itemUid);
             if (item != null)
             {
@@ -1111,15 +1123,35 @@ public class RoItemComponent : RoleComponentBase
             RemoveServerItem(deleteInfo.Key, (ItemChangeReason)deleteInfo.Val);
         }
 
+        // 换装会让两件装备互换格位，整包先移出旧实例，避免首件被另一件占位阻挡。
+        Dictionary<long, ItemBase> previousItems = new Dictionary<long, ItemBase>();
         for (int itemIndex = 0; itemIndex < update.ItemList.Count; itemIndex++)
         {
+            // 本条服务器权威实例，旧实例只用于标记原格位。
             RoleItemInfo itemInfo = update.ItemList[itemIndex];
-            ApplyServerItem(itemInfo);
+            if (itemInfo == null) continue;
+            // 该 UID 更新前的装备或物品引用，移出不会改变它的原格位字段。
+            ItemBase previousItem = GetItemByUID(itemInfo.ItemUid);
+            if (previousItem == null) continue;
+            previousItems[itemInfo.ItemUid] = previousItem;
+            GetContainer((KnapsackType)previousItem.GetBagType()).SwapOutByUID(itemInfo.ItemUid);
+        }
+        for (int itemIndex = 0; itemIndex < update.ItemList.Count; itemIndex++)
+        {
+            // 本次更新的数据和对应的原实例位置。
+            RoleItemInfo itemInfo = update.ItemList[itemIndex];
+            if (itemInfo == null) continue;
+            // 新物品没有旧实例，按新增方式通知界面。
+            ItemBase previousItem;
+            previousItems.TryGetValue(itemInfo.ItemUid, out previousItem);
+            ApplyServerItem(itemInfo, previousItem);
         }
     }
 
     /// <summary>新增或替换服务器推送的单个物品实例，保持 UID 和格位与服务器一致。</summary>
-    private void ApplyServerItem(RoleItemInfo itemInfo)
+    /// <param name="itemInfo">服务器下发的完整物品、装备和实例词条数据。</param>
+    /// <param name="oldItem">整包应用前移出的旧实例，用于刷新它原先所在的格位。</param>
+    private void ApplyServerItem(RoleItemInfo itemInfo, ItemBase oldItem)
     {
         // 服务端物品数据缺失或标识字段非法时拒绝应用。
         if (itemInfo == null || itemInfo.ItemUid <= 0 || itemInfo.ItemTypeId <= 0)
@@ -1132,33 +1164,33 @@ public class RoItemComponent : RoleComponentBase
             return;
         }
 
-        ItemBase oldItem = GetItemByUID(itemInfo.ItemUid);
+        // 权威数据指定的目标背包分类。
         KnapsackType targetType = (KnapsackType)itemInfo.BagType;
+        // 对应目标容器，保存服务器给出的最终格位。
         RoItemContainer targetContainer = GetContainer(targetType);
         if (targetContainer == null)
         {
             return;
         }
 
+        // 没有旧实例时不标记旧格子。
         int oldBagIndex = -1;
+        // 已有实例的原背包分类。
         KnapsackType oldBagType = targetType;
         if (oldItem != null)
         {
             oldBagIndex = oldItem.GetBagIndex();
             oldBagType = (KnapsackType)oldItem.GetBagType();
-            RoItemContainer oldContainer = GetContainer(oldBagType);
-            if (oldContainer != null)
-            {
-                oldContainer.SwapOutByUID(itemInfo.ItemUid);
-            }
         }
 
+        // 完整重建装备实例，保留强化、三个词条及三个特技槽。
         ItemBase item = CreateLoadedItem(itemInfo);
         if (item == null || !targetContainer.SwapIn(item, itemInfo.BagIndex))
         {
             return;
         }
 
+        // 界面分别刷新新增格位、原格位与新格位。
         KnapsackChangeType changeType = KnapsackChangeType.Added;
         if (oldItem != null)
         {

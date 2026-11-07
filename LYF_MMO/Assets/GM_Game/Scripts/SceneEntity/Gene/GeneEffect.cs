@@ -15,6 +15,8 @@ public class GeneEffect
     public GeneEffect Parent { get; private set; }
     /// <summary>次数节点尚可触发的次数，其他类型为 0；与叠加层数独立。</summary>
     public int RemainingTriggers { get; internal set; }
+    /// <summary>宿主运行时的下次允许触发毫秒；仅成功产生效果后推进。</summary>
+    internal long CooldownUntilMilliseconds;
 
     /// <summary>创建一个与父基因共同存亡的效果。</summary>
     /// <param name="definition">当前节点的任意类型基因定义。</param>

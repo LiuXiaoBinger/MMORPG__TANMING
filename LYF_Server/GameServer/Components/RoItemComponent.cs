@@ -253,14 +253,20 @@ public class RoItemComponent : RoleComponentBase
         while (remainingCount > 0)
         {
             int count = Math.Min(remainingCount, maxStackCount);
+            // 新建实例保留配置类别，装备会独立保存词条和特技槽。
             ItemBase item;
+            // 装备配置提供部位及初始特技，基础六基因继续从配置读取。
             EquipItemConfig equipConfig = itemData as EquipItemConfig;
             if (equipConfig != null)
             {
                 // 武器类配置生成装备实例并记录装备类型。
                 item = new EquipBase
                 {
-                    EquipType = equipConfig.Config.EquipType
+                    EquipType = equipConfig.Config.EquipType,
+                    SpecialSkillId0 = equipConfig.Config.SpecialSkillId0,
+                    SpecialSkillId1 = equipConfig.Config.SpecialSkillId1,
+                    SpecialSkillId2 = equipConfig.Config.SpecialSkillId2,
+                    ActiveSpecialSkillIndex = equipConfig.Config.ActiveSpecialSkillIndex
                 };
                 item.SetItemID(itemId);
                 item.SetItemCount(count);
@@ -302,9 +308,14 @@ public class RoItemComponent : RoleComponentBase
         // 携带装备信息时重建为 EquipBase，包含强化等级和词条。
         if (itemInfo.EquipInfo != null)
         {
+            // 从存档恢复装备原 UID，特技与词条使用实例保存值，不覆盖为配置默认值。
             EquipBase equip = EquipBase.CreateEquipForRestore();
             equip.EquipType = itemInfo.EquipInfo.EquipType;
             equip.StrengthenLevel = itemInfo.EquipInfo.StrengthenLevel;
+            equip.SpecialSkillId0 = itemInfo.EquipInfo.SpecialSkillId0;
+            equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
+            equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;
+            equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {
@@ -1109,8 +1120,10 @@ public class RoItemComponent : RoleComponentBase
     }
 
     /// <summary>将运行时物品转换为客户端增量协议结构。</summary>
+    /// <param name="item">本次发生变化的权威物品实例，装备扩展随基础字段一起传输。</param>
     private static RoleItemInfo ToRoleItemInfo(ItemBase item)
     {
+        // 当前实例的完整基础字段，客户端按同一 UID 替换旧快照。
         RoleItemInfo info = new RoleItemInfo
         {
             ItemUid = item.GetItemUID(), Count = item.GetItemCount(), RoleId = item.GetRoleID(),
@@ -1118,6 +1131,24 @@ public class RoItemComponent : RoleComponentBase
             ItemSign = item.GetItemSign(), MoneyType = item.GetMoneyType(), TotalPrice = item.GetTotalPrice(),
             CreateTimeUtcTicks = ToUtcTicks(item.GetCreateTime()), ExpireTimeUtcTicks = ToUtcTicks(item.GetExpireTime())
         };
+        // 装备增量必须保留类型、词条和特技，否则客户端会恢复成普通 ItemBase。
+        EquipBase equip = item as EquipBase;
+        if (equip != null)
+        {
+            info.EquipInfo = new RoleEquipItemInfo
+            {
+                ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),
+                EquipType = equip.EquipType, StrengthenLevel = equip.StrengthenLevel,
+                SpecialSkillId0 = equip.SpecialSkillId0, SpecialSkillId1 = equip.SpecialSkillId1,
+                SpecialSkillId2 = equip.SpecialSkillId2, ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
+            };
+            info.EquipGeneInfo = new RoleEquipGeneInfo
+            {
+                ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),
+                GeneId0 = equip.GeneID0, GeneId1 = equip.GeneID1, GeneId2 = equip.GeneID2,
+                GeneValue0 = equip.GeneValue0, GeneValue1 = equip.GeneValue1, GeneValue2 = equip.GeneValue2
+            };
+        }
         return info;
     }
 
@@ -1246,6 +1277,57 @@ public class RoItemComponent : RoleComponentBase
         long version = Owner.GetSaveVersion();
         MarkDataListChanged((KnapsackType)sourceBagType, version, -1, true);
         MarkDataListChanged(targetType, version, 1, true);
+        // 增量携带移动后的完整位置，客户端用 UID 移除原容器中的同一实例。
+        _need_update_item[itemUid] = reason;
+        return true;
+    }
+
+    /// <summary>将装备穿到指定部位；同槽旧装备回到新装备腾出的原格，满背包也可换装。</summary>
+    /// <param name="itemUid">装备背包中将要穿戴的实例 UID。</param>
+    /// <param name="position">配置决定的装备部位枚举值。</param>
+    /// <param name="reason">穿戴业务的物品变化原因。</param>
+    public bool WearEquip(long itemUid, int position, ChangeReason reason)
+    {
+        // 新装备所在的普通装备背包。
+        RoItemContainer source = GetContainer(KnapsackType.RolePackEquip);
+        // 已穿戴容器按部位保存装备，不占普通背包容量。
+        RoItemContainer target = GetContainer(KnapsackType.RoleCurrtEquipPack);
+        // 本次按 UID 找到的新装备；调用事务已校验等级、职业与部位。
+        ItemBase item = source.GetItemByUid(itemUid);
+        // 同部位旧装备，为空时沿用普通跨容器移动。
+        ItemBase oldItem = target.GetItemByPos(position);
+        if (oldItem == null)
+        {
+            return SwapItem(itemUid, KnapsackType.RolePackEquip, KnapsackType.RoleCurrtEquipPack,
+                position, reason, UpdateType.eUT_Normal);
+        }
+        if (!source.CheckOut(item) || !target.CheckOut(oldItem))
+        {
+            return false;
+        }
+        // 新装备离开后腾出的格位，也是换下装备的最终格位。
+        int sourcePosition = item.GetBagIndex();
+        source.SwapOutByUID(itemUid);
+        target.SwapOutByUID(oldItem.GetItemUID());
+        if (!target.SwapIn(item, position))
+        {
+            source.SwapIn(item, sourcePosition);
+            target.SwapIn(oldItem, position);
+            return false;
+        }
+        if (!source.SwapIn(oldItem, sourcePosition))
+        {
+            target.SwapOutByUID(itemUid);
+            source.SwapIn(item, sourcePosition);
+            target.SwapIn(oldItem, position);
+            return false;
+        }
+        // 换装前后两个容器数量均不变，仅标记内容变化与两个实例的新位置。
+        long version = Owner.GetSaveVersion();
+        MarkDataListChanged(KnapsackType.RolePackEquip, version, 0, true);
+        MarkDataListChanged(KnapsackType.RoleCurrtEquipPack, version, 0, true);
+        _need_update_item[itemUid] = reason;
+        _need_update_item[oldItem.GetItemUID()] = reason;
         return true;
     }
 

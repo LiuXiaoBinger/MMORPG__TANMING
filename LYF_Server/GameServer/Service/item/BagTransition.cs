@@ -200,7 +200,10 @@ public enum BagTransitionResult
     /// <summary>
     /// 当前项目尚未具备所需的权威数据或协议，不能执行该操作。
     /// </summary>
-    NotImplemented = 4
+    NotImplemented = 4,
+
+    /// <summary>卸装需要的普通装备背包格子已满。</summary>
+    BagFull = 5
 }
 
 // ============================================================
@@ -523,44 +526,138 @@ public class BagExpansionTransition : BagTransition
     }
 }
 
-/// <summary>穿脱装备的预留入口，目前只有参数检查。</summary>
+/// <summary>按装备实例 UID 执行穿脱、同槽换装和特技切换，再重算角色装备效果。</summary>
 public class BagWearItemTransition : BagTransition
 {
     /// <summary>为本次操作绑定角色，复用基类保存的背包组件和原因记录。</summary>
+    /// <param name="role">本次操作所属的在线角色，客户端不能指定其他角色。</param>
     public BagWearItemTransition(OnlineRole role) : base(role)
     {
     }
 
-    /// <summary>
-    /// 穿戴入口尚未实现；只校验角色状态和配置ID，随后返回 NotImplemented。
-    /// </summary>
-    public virtual BagTransitionResult WearItem(int itemId)
+    /// <summary>穿戴装备背包中的指定实例；目标部位由装备配置决定，同部位旧装备返回原格。</summary>
+    /// <param name="itemUid">本角色装备背包中的装备实例 UID。</param>
+    public virtual BagTransitionResult WearItem(long itemUid)
     {
-        return ValidateEquipmentItem(itemId);
-    }
-
-    /// <summary>
-    /// 卸装入口尚未实现；只校验角色状态和配置ID，随后返回 NotImplemented。
-    /// </summary>
-    public virtual BagTransitionResult TakeOffItem(int itemId)
-    {
-        return ValidateEquipmentItem(itemId);
-    }
-
-    /// <summary>穿脱装备共用的参数检查；通过检查后仍返回 NotImplemented，因为穿脱步骤尚未接入。</summary>
-    private BagTransitionResult ValidateEquipmentItem(int itemId)
-    {
+        // 背包恢复未完成时沿用既有事务的装载状态约束。
         BagTransitionResult contextResult = ValidateContext();
         if (contextResult != BagTransitionResult.Success)
         {
             return contextResult;
         }
-
-        if (itemId <= 0)
+        // 只允许从普通装备背包穿戴，不能按配置 ID 误选另一件装备。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip)
+            .GetItemByUid(itemUid) as EquipBase;
+        if (equip == null)
         {
             return BagTransitionResult.InvalidArgument;
         }
-        return BagTransitionResult.NotImplemented;
+        // 装备配置提供权威部位、等级与职业需求。
+        cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+        if (config == null || !Enum.IsDefined(typeof(EquipType), config.EquipType))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 角色裸属性中的等级和职业不受装备效果影响。
+        RoleBaseInfo roleInfo = m_role.mainRoleInfo.BaseInfo;
+        if (roleInfo.Level < config.NeedLevel)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        if (config.Job != 0 && config.Job != roleInfo.JobId)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        SetReason(ItemChangeReason.ITEM_REASON_WEAR_EQUIP);
+        if (!m_roItemComponent.WearEquip(itemUid, config.EquipType, record.GetTotalReason()))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
+    }
+
+    /// <summary>卸下指定穿戴实例，先确认装备背包空位再移动，背包满时保持原穿戴状态。</summary>
+    /// <param name="itemUid">本角色当前穿戴的装备实例 UID。</param>
+    public virtual BagTransitionResult TakeOffItem(long itemUid)
+    {
+        // 保持和穿戴一致的角色装载要求。
+        BagTransitionResult contextResult = ValidateContext();
+        if (contextResult != BagTransitionResult.Success)
+        {
+            return contextResult;
+        }
+        // 只有当前穿戴容器中的装备可通过卸装入口移出。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack)
+            .GetItemByUid(itemUid) as EquipBase;
+        if (equip == null)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 查找普通装备背包的第一个实际空格，容量由现有扩容数据提供。
+        RoItemContainer target = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip);
+        // targetPosition 为找到的空格下标，-1 表示背包已满。
+        int targetPosition = -1;
+        // index 按已开启背包格位顺序检查，不影响任何物品状态。
+        for (int index = 0; index < target.GetContainerSize(); index++)
+        {
+            if (target.GetItemByPos(index) == null)
+            {
+                targetPosition = index;
+                break;
+            }
+        }
+        if (targetPosition < 0)
+        {
+            return BagTransitionResult.BagFull;
+        }
+        SetReason(ItemChangeReason.ITEM_REASON_TAKE_OFF_EQUIP);
+        if (!m_roItemComponent.SwapItem(itemUid, KnapsackType.RoleCurrtEquipPack,
+            KnapsackType.RolePackEquip, targetPosition, record.GetTotalReason(), UpdateType.eUT_Normal))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
+    }
+
+    /// <summary>在装备已有的三个特技中启用一个非空槽位，保留其他槽位内容用于后续切换。</summary>
+    /// <param name="itemUid">本角色装备背包或穿戴栏中的装备实例 UID。</param>
+    /// <param name="specialSkillIndex">本次启用的特技槽位下标，范围为 0 到 2。</param>
+    public virtual BagTransitionResult SwitchSpecialSkill(long itemUid, int specialSkillIndex)
+    {
+        // 特技状态必须在权威背包装载完成后才能持久修改。
+        BagTransitionResult contextResult = ValidateContext();
+        if (contextResult != BagTransitionResult.Success)
+        {
+            return contextResult;
+        }
+        // 仅查询本角色穿戴栏和装备背包，不扩大私有的全容器查询入口。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack)
+            .GetItemByUid(itemUid) as EquipBase;
+        if (equip == null)
+        {
+            equip = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip).GetItemByUid(itemUid) as EquipBase;
+        }
+        if (equip == null || specialSkillIndex < 0 || specialSkillIndex > 2)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        if (equip.GetSpecialSkillId(specialSkillIndex) <= 0)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        equip.ActiveSpecialSkillIndex = specialSkillIndex;
+        m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
+    }
+
+    /// <summary>操作成功后先发送完整装备增量，再由装备组件重算并通知最终属性。</summary>
+    private void CompleteEquipmentChange()
+    {
+        NotifyClient();
+        m_role.GetComponent<RoleEquipComponent>().OnEquipChange();
     }
 }
 

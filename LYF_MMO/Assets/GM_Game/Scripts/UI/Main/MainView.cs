@@ -15,6 +15,11 @@ public class MainView : UIBase
    /// <summary>供副本控制器绑定正式窗口。</summary>
    public DungeonFlowWindow DungeonFlowWindow => _dungeonFlowWindow;
 
+   /// <summary>当前选中装备的详情窗口，提供穿脱和三特技槽选择。</summary>
+   [SerializeField] private EquipmentDetailWindow _equipmentDetailWindow;
+   /// <summary>供背包控制器绑定装备详情的展示与按钮事件。</summary>
+   public EquipmentDetailWindow EquipmentDetailWindow => _equipmentDetailWindow;
+
    /// <summary>主角血蓝、资源弧条、技能快捷栏及当前目标文字区域。</summary>
    [SerializeField,Header("角色当前信息window")] private RoleCurrInfoWindow _roleCurrInfoWindow;
    /// <summary>技能列表和快捷技能槽窗口，数据由技能控制器提供。</summary>
@@ -205,6 +210,8 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      windowDic[WindowType.EquipmentDetailWindow] = _equipmentDetailWindow;
+      _equipmentDetailWindow.InitWindow();
       windowDic[WindowType.DungeonFlowWindow] = _dungeonFlowWindow;
       _dungeonFlowWindow.InitWindow();
       if (ChatWindow != null) windowDic[WindowType.ChatWindow] = ChatWindow;

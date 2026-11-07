@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -30,6 +31,12 @@ public class KnapsackSlotWidget : MonoBehaviour,
 
     /// <summary>当前物品类型编号，图标回调只在编号仍一致时写入。</summary>
     private int _itemTypeId;
+
+    /// <summary>当前格子物品唯一编号，用于点击真实装备实例。</summary>
+    private long _itemUid;
+
+    /// <summary>玩家点击格子时上报实例 UID，具体业务由控制器判断。</summary>
+    public event Action<long> ItemSelected;
     #endregion
 
     #region 界面刷新
@@ -46,6 +53,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
 
         _count = itemData.Count;
         _itemTypeId = itemData.ItemTypeId;
+        _itemUid = itemData.ItemUid;
         if (_count <= 0)
         {
             return;
@@ -118,9 +126,15 @@ public class KnapsackSlotWidget : MonoBehaviour,
     {
     }
 
-    /// <summary>Unity 指针抬起接口的空实现；本方法不记录状态。</summary>
+    /// <summary>左键在未拖拽的物品格上抬起时通知上层打开详情。</summary>
+    /// <param name="eventData">Unity 指针事件，提供按键和拖拽状态。</param>
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (eventData.button != PointerEventData.InputButton.Left || eventData.dragging || _itemUid <= 0)
+        {
+            return;
+        }
+        ItemSelected?.Invoke(_itemUid);
     }
 
     /// <summary>识别背包拖拽来源；交换位置仍是 TODO，当前不会提交移动请求。</summary>
@@ -156,6 +170,7 @@ public class KnapsackSlotWidget : MonoBehaviour,
     {
         _count = 0;
         _itemTypeId = 0;
+        _itemUid = 0;
         _imgIcon.gameObject.Show(false);
         _texCount.gameObject.Show(false);
         _imgEnter.gameObject.Show(false);

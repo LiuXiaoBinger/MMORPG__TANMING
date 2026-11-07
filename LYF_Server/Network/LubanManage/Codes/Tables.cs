@@ -21,6 +21,7 @@ public partial class Tables
     /// <summary>分支副本的目标组定义，组内目标关联原始目标表。</summary>
     public TbDungeonTargetGroupTable TbDungeonTargetGroupTable {get; }
     public TbEquipInfo TbEquipInfo {get; }
+    public TbEquipSpecialSkillInfo TbEquipSpecialSkillInfo {get; }
     public TbGene TbGene {get; }
     public TbItemInfo TbItemInfo {get; }
     public TbKnapsackInfo TbKnapsackInfo {get; }
@@ -43,6 +44,7 @@ public partial class Tables
         TbDungeonsTable = new TbDungeonsTable(loader("tbdungeonstable"));
         TbDungeonTargetGroupTable = new TbDungeonTargetGroupTable(loader("tbdungeontargetgrouptable"));
         TbEquipInfo = new TbEquipInfo(loader("tbequipinfo"));
+        TbEquipSpecialSkillInfo = new TbEquipSpecialSkillInfo(loader("tbequipspecialskillinfo"));
         TbGene = new TbGene(loader("tbgene"));
         TbItemInfo = new TbItemInfo(loader("tbiteminfo"));
         TbKnapsackInfo = new TbKnapsackInfo(loader("tbknapsackinfo"));
@@ -67,6 +69,7 @@ public partial class Tables
         TbDungeonsTable.ResolveRef(this);
         TbDungeonTargetGroupTable.ResolveRef(this);
         TbEquipInfo.ResolveRef(this);
+        TbEquipSpecialSkillInfo.ResolveRef(this);
         TbGene.ResolveRef(this);
         TbItemInfo.ResolveRef(this);
         TbKnapsackInfo.ResolveRef(this);

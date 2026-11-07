@@ -1,11 +1,14 @@
 using TMPro;
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
 /// 装备槽控件，只显示控制器解析后的装备展示数据。
 /// </summary>
-public class EquipSlotWidget : MonoBehaviour
+// Unity 指针分发要求实现 IPointerClickHandler，业务数据仍通过具名 UID 事件交给控制器。
+public class EquipSlotWidget : MonoBehaviour, IPointerClickHandler
 {
     /// <summary>当前穿戴装备图标，空槽时隐藏。</summary>
     [SerializeField, Header("装备图标")] private Image _imgIcon;
@@ -21,6 +24,22 @@ public class EquipSlotWidget : MonoBehaviour
 
     /// <summary>每次清空或重绑递增的图标请求编号。</summary>
     private int _loadVersion;
+
+    /// <summary>当前槽位的真实装备 UID，空槽为 0。</summary>
+    private long _itemUid;
+
+    /// <summary>玩家点击已穿戴装备时通知所属窗口。</summary>
+    public event Action<long> EquipmentSelected;
+
+    /// <summary>点击现有装备格时只派发 UID，不执行穿脱业务。</summary>
+    /// <param name="eventData">Unity UI 指针数据，只接受左键点击。</param>
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left && _itemUid > 0)
+        {
+            EquipmentSelected?.Invoke(_itemUid);
+        }
+    }
 
     /// <summary>补找旧预制体中尚未绑定的图标和文本引用。</summary>
     private void Awake()
@@ -39,6 +58,7 @@ public class EquipSlotWidget : MonoBehaviour
     {
         _loadVersion++;
         _itemTypeId = 0;
+        _itemUid = 0;
         if (_imgIcon != null)
         {
             _imgIcon.sprite = null;
@@ -66,6 +86,7 @@ public class EquipSlotWidget : MonoBehaviour
             return;
         }
         _itemTypeId = equipment.ItemTypeId;
+        _itemUid = equipment.ItemUid;
         // 此次装备图标请求编号，切换或清空后不得再回填。
         int currentLoadVersion = ++_loadVersion;
         gameObject.SetActive(true);

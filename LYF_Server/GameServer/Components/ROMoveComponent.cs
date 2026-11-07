@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 
 /// <summary>按 RO MoveComponent.OnMoveStart 消费在线角色移动上报，使用现有角色位置和附近同步。</summary>
 public sealed class ROMoveComponent : RoleComponentBase
@@ -19,10 +19,23 @@ public sealed class ROMoveComponent : RoleComponentBase
         return is_moving_;
     }
 
+    /// <summary>持续控制生效后结束已有移动标记，后续位移仍由 OnMoveStart 拒绝。</summary>
+    /// <param name="deltaMilliseconds">角色固定帧间隔；控制读取当前状态，不另建时钟。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        if (is_moving_ && !Owner.GetComponent<RoleEquipComponent>().Runtime.CanMove) is_moving_ = false;
+    }
+
     /// <summary>按 RO 顺序更新上报位置和移动状态，再同步给现有附近角色。</summary>
     /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
+        // 眩晕和定身阻止继续提交位移，同时结束角色现有的移动标记。
+        if (!Owner.GetComponent<RoleEquipComponent>().Runtime.CanMove)
+        {
+            is_moving_ = false;
+            return;
+        }
         // 先验证权威起点到上报终点的整段，拒绝时不修改角色位置或动作。
         if (!TeamManager.Instance.AllowDungeonMove(Owner, new System.Numerics.Vector3(action.Dx, action.Dy, action.Dz))) return;
         // 新跳跃沿用现有移动协议；同一空中姿势的后续同步不重复触发技能取消。

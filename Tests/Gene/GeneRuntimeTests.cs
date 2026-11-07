@@ -11,6 +11,7 @@ using GeneInstance = Server::GeneInstance;
 using GenePulse = Server::GenePulse;
 using GeneRuntime = Server::GeneRuntime;
 using GeneState = Server::GeneState;
+using GeneTriggerArgs = Server::GeneTriggerArgs;
 
 /// <summary>使用真实 Luban 表和已编译服务端模块进行独立契约测试，不进入正式场景或预制体。</summary>
 public static class GeneRuntimeTests
@@ -39,6 +40,7 @@ public static class GeneRuntimeTests
         VerifyAnyTypeComposites();
         VerifyEventsAndCounts();
         VerifyNestedScenariosAndCycles();
+        VerifyEquipmentTriggers();
         VerifyServerComponent();
         Console.WriteLine("PASS Gene：" + passed + " 项断言，" + definitions.Count + " 条真实配置。");
         return 0;
@@ -47,7 +49,7 @@ public static class GeneRuntimeTests
     /// <summary>验证原有编号、周期单位和组合引用等表格与程序之间的契约。</summary>
     private static void VerifyConfiguration()
     {
-        Check(definitions.Count == 80, "六个 Sheet 合并导出 80 条配置");
+        Check(definitions.Count == 107, "原80条及本轮27条装备特技基因完整导出");
         // 原编号不能重排，否则会改变既有装备词条的属性含义。
         for (int id = 1; id <= 23; id++)
         {
@@ -316,7 +318,10 @@ public static class GeneRuntimeTests
     /// <param name="childId">替换第一个关联槽，其余槽位清空。</param>
     /// <param name="scenario">本测试需要的场景限制。</param>
     /// <returns>仅供当前测试配置副本使用的定义。</returns>
-    private static cfg.Gene WithChild(cfg.Gene source, int childId, int scenario)
+    /// <param name="chance">本测试采用的万分比触发概率。</param>
+    /// <param name="cooldown">本测试采用的冷却毫秒数。</param>
+    /// <param name="target">0 继承宿主，1 事件目标。</param>
+    private static cfg.Gene WithChild(cfg.Gene source, int childId, int scenario, int chance = 10000, int cooldown = 0, int target = 0)
     {
         // 这是 Luban 测试序列化边界，字段顺序与生成解析器一致。
         Luban.ByteBuf buffer = new Luban.ByteBuf();
@@ -337,7 +342,81 @@ public static class GeneRuntimeTests
         buffer.WriteInt(source.State);
         buffer.WriteInt(source.TriggerEvent);
         buffer.WriteInt(source.TriggerCount);
+        buffer.WriteInt(chance);
+        buffer.WriteInt(cooldown);
+        buffer.WriteInt(target);
         return new cfg.Gene(buffer);
+    }
+
+    /// <summary>验证装备同来源独立槽、目标破甲、概率/冷却/次数和即时回复。</summary>
+    private static void VerifyEquipmentTriggers()
+    {
+        // 同装备两个相同基因槽必须累计，其他来源临时加成不随卸装删除。
+        GeneRuntime runtime = new GeneRuntime(definitions);
+        runtime.AddGene(3, 300, 20, 1, 7);
+        runtime.AddGene(3, 300, 30, 7, 7);
+        runtime.AddGene(3, 999, 10);
+        Equal(160, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "同装备重复编号按槽累计");
+        runtime.RemoveGenesBySource(300);
+        Equal(110, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "卸装移除全槽并保留其他来源");
+        // 仅测试替换概率和冷却，不改正式配置：两次受击触发间隔一秒，目标缺失不消耗次数。
+        Dictionary<int, cfg.Gene> adjusted = new Dictionary<int, cfg.Gene>(definitions);
+        adjusted[1601] = WithChild(definitions[1601], 82101, 0, 10000, 1000, 1);
+        runtime = new GeneRuntime(adjusted);
+        // 对方独立容器中的实际外防，作为破甲后续伤害的属性输入。
+        GeneRuntime target = new GeneRuntime(adjusted);
+        // 原次数实例用于直接核对失败和成功分支的消费。
+        GeneInstance counter = runtime.AddGene(1601, 300, null, 1, 7);
+        Equal(0, runtime.Trigger(GeneEventType.BeHit), "没有事件目标不能触发");
+        Equal(3, counter.Effects[0].RemainingTriggers, "目标缺失不吞次数");
+        Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "存在目标后成功触发");
+        Equal(2, counter.Effects[0].RemainingTriggers, "成功才消费一次");
+        Equal(90, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲作用实际目标");
+        Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲不作用攻击者");
+        Check(target.FindGene(82101, 300).FirerId == 7, "施加角色与装备来源独立保留");
+        Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "成功触发开始冷却");
+        Equal(2, counter.Effects[0].RemainingTriggers, "冷却拒绝不吞次数");
+        runtime.Update(999);
+        Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "冷却前一毫秒不提前触发");
+        runtime.Update(1);
+        Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "冷却到点允许触发");
+        target.Update(7999);
+        Equal(90, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲持续八秒前仍有效");
+        target.Update(1);
+        Equal(100, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "八秒到期恢复原防御");
+        adjusted[1601] = WithChild(definitions[1601], 82101, 0, 0, 1000, 1);
+        runtime = new GeneRuntime(adjusted);
+        counter = runtime.AddGene(1601);
+        Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "零概率永不触发");
+        Equal(3, counter.Effects[0].RemainingTriggers, "概率失败不吞次数");
+        // 原始30%概率使用固定种子，真实随机流应同时出现成功与失败。
+        runtime = new GeneRuntime(definitions, 0, new Random(19));
+        runtime.AddGene(82001);
+        // 本轮一百次命中的实际成功数，不把概率当必定触发。
+        int successes = 0;
+        for (int i = 0; i < 100; i++) successes += runtime.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, target));
+        Check(successes > 0 && successes < 100, "正式3000万分概率产生成功和失败");
+        // 击败立即产生资源结果，不等待 Update 或伪装成持续治疗。
+        runtime = new GeneRuntime(definitions);
+        // 本测试捕获即时结果，确认没有额外常驻资源节点。
+        List<GenePulse> instant = new List<GenePulse>();
+        runtime.Pulse += instant.Add;
+        runtime.AddGene(84001, 300, null, 0, 7);
+        runtime.AddGene(85001, 301, null, 0, 7);
+        Equal(2, runtime.Trigger(GeneEventType.Kill), "击败同时触发即时回血与回蓝");
+        Equal(2, instant.Count, "不推进时间即得到两个资源结果");
+        Equal(2, runtime.ActiveGenes.Count, "即时效果不残留常驻实例");
+        // 查找两种类型的换算结果，百分比法力不能误用生命上限。
+        int heal = 0;
+        // 法力结果使用独立的100点上限。
+        int mana = 0;
+        for (int i = 0; i < instant.Count; i++)
+        {
+            if (instant[i].EffectType == GeneEffectType.InstantHeal) heal = instant[i].ResolveAmount(1000, 100);
+            if (instant[i].EffectType == GeneEffectType.InstantMana) mana = instant[i].ResolveAmount(1000, 100);
+        }
+        Equal(100, heal, "击败立即恢复10%最终生命");
+        Equal(10, mana, "击败立即恢复10%最终法力");
     }
 
     /// <summary>验证正式服务端工厂装配的组件能够计时、通知和随实体释放。</summary>

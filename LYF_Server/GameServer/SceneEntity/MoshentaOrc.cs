@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Xml.Linq;
@@ -340,11 +340,22 @@ internal sealed class MoshentaOrc
         if (!Valid(attackTarget)) return;
         // 实际受击玩家的服务端属性和剩余生命。
         RoleBaseInfo info = attackTarget.mainRoleInfo.BaseInfo;
+        // 防御、上限与承伤读取在线角色的最终装备属性，当前 HP 仍写回权威资源。
+        RoleEquipComponent equipment = attackTarget.GetComponent<RoleEquipComponent>();
+        // 受击事件沿用本刀权威暴击结果，不能使用默认 false 丢失它。
+        bool critical;
         // 本刀实际可扣生命，命中、暴击、防御等取原伤害脚本。
-        int damage = Math.Min(info.CurrHp, OrcBasicAttackDamage.Calculate(attackTarget));
+        int damage = Math.Min(info.CurrHp, Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical)
+            * equipment.Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100)));
         info.CurrHp -= damage;
+        if (damage > 0)
+        {
+            // 受击特技只在实际扣血后处理，对方是同一只权威怪物的容器。
+            GeneRuntime attackerGenes = monster.Components.Get<GeneComponent>(MMoRpgCommon.SceneEntity.EntityComponentType.Gene).Runtime;
+            equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, attackerGenes, MoshentaOrcDefinition.SkillId, damage, critical));
+        }
         notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = spawnId, TargetRoleId = info.RoleId,
-            Hp = info.CurrHp, MaxHp = info.MaxHp, Damage = damage });
+            Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = damage });
         if (info.CurrHp > 0) return;
         // 沿用在线角色死亡时停止正在施放的技能和吟唱的既有入口。
         RoleSkillComponent activeSkill;

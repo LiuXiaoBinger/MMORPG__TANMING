@@ -420,7 +420,11 @@ public class CentRoleModel
                     ItemUid = equip.ItemUID,
                     RoleId = equip.RoleID,
                     StrengthenLevel = equip.StrengthenLevel,
-                    EquipType = equip.EquipType
+                    EquipType = equip.EquipType,
+                    SpecialSkillId0 = equip.SpecialSkillId0,
+                    SpecialSkillId1 = equip.SpecialSkillId1,
+                    SpecialSkillId2 = equip.SpecialSkillId2,
+                    ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
                 };
             }
 

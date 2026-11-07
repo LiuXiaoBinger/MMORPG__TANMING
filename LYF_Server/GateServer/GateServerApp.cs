@@ -43,6 +43,7 @@ namespace GateServer
             GateRoleCtrl  gateRoleCtrl = new GateRoleCtrl();
             server.RegistCommand(NetDefine.CMD_EnterWroldCode, gateRoleCtrl);//进入游戏请求
             server.RegistCommand(NetDefine.CMD_OpenKnapsackGridCode, gateRoleCtrl);//开启背包格子请求
+            server.RegistCommand(NetDefine.CMD_EquipOperationCode, gateRoleCtrl);//装备实例穿脱和特技切换请求
             server.RegistCommand(NetDefine.CMD_BuyShopItemCode, gateRoleCtrl);//商城购买请求
             client.RegistCommand(NetDefine.CMD_RoleSkillInfoCode, gateRoleCtrl);//技能数据返回unity
             client.RegistCommand(NetDefine.CMD_SyncRoleEnterWorldCode, gateRoleCtrl);//同步主角给其他玩家
@@ -50,6 +51,8 @@ namespace GateServer
             client.RegistCommand(NetDefine.CMD_RoleKnapsackInfoCode, gateRoleCtrl);//返回角色背包信息
             client.RegistCommand(NetDefine.CMD_RoleShopPurchaseInfoCode, gateRoleCtrl);//返回角色商城购买记录
             client.RegistCommand(NetDefine.CMD_OpenKnapsackGridCode, gateRoleCtrl);//开启背包格子结果
+            client.RegistCommand(NetDefine.CMD_EquipOperationCode, gateRoleCtrl);//装备实例操作结果
+            client.RegistCommand(NetDefine.CMD_RoleAttributeUpdateCode, gateRoleCtrl);//最终装备与基因属性通知
             client.RegistCommand(NetDefine.CMD_BuyShopItemCode, gateRoleCtrl);//商城购买结果
             client.RegistCommand(NetDefine.CMD_CountUpdateSyncInfoCode, gateRoleCtrl);//同步商城和副本次数
 

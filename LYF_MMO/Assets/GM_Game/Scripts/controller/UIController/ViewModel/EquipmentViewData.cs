@@ -13,6 +13,8 @@ public sealed class EquipmentViewData
     public string IconPath { get; }
     /// <summary>装备当前强化等级。</summary>
     public int StrengthenLevel { get; }
+    /// <summary>装备实例 UID，点击后按该编号读取完整装备详情。</summary>
+    public long ItemUid { get; }
 
     /// <summary>创建装备槽展示数据。</summary>
     /// <param name="equipType">该装备占用的身体部位。</param>
@@ -20,8 +22,9 @@ public sealed class EquipmentViewData
     /// <param name="name">界面显示的装备名，null 转为空串。</param>
     /// <param name="iconPath">异步加载图标使用的资源路径，null 转为空串。</param>
     /// <param name="strengthenLevel">当前强化等级，原样保留。</param>
+    /// <param name="itemUid">服务器分配的物品实例 UID，旧展示调用可省略。</param>
     public EquipmentViewData(EquipType equipType, int itemTypeId, string name,
-        string iconPath, int strengthenLevel)
+        string iconPath, int strengthenLevel, long itemUid = 0)
     {
         EquipType = equipType;
         ItemTypeId = itemTypeId;
@@ -36,5 +39,6 @@ public sealed class EquipmentViewData
             IconPath = string.Empty;
         }
         StrengthenLevel = strengthenLevel;
+        ItemUid = itemUid;
     }
 }

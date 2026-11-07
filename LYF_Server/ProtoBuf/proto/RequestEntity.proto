@@ -179,3 +179,10 @@ message CaptainRequestEnterFBArg
 	int32 chapter_id = 2;//章节ID，沿用 RO 字段
 	int32 dungeons_degree = 3;//副本难度，沿用 RO 字段
 }
+
+// 按实例UID请求穿脱或切换特技，角色身份来自网关会话。
+message EquipOperationReq {
+	int64 item_uid = 1;//需要操作的装备实例UID
+	EquipOperation operation = 2;//穿戴、卸下或切换特技
+	int32 special_skill_index = 3;//切换特技时使用，范围0到2
+}

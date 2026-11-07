@@ -91,6 +91,9 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
         if (itemComponent == null || countComponent == null || !role.CompleteRoleDataLoad())
         {
             LogMsg.Info("角色背包或次数组件未完成初始化，继续保持角色数据加载门闩", LogMsgType.Error);
+            return;
         }
+        // 已穿戴装备从存档恢复后再计算效果，裸属性不写入装备加成。
+        role.GetComponent<RoleEquipComponent>().OnEquipChange();
     }
 }
