@@ -112,7 +112,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `196cdec738a8fe85be414eb4f5c79bc2ad92c937ceeaef3293ba7abda0fe6d65`
+Source normalized SHA256: `8b107ec8e4df1101456d0a921bac59a8eff1a3e4c539ed629eb85363e689060d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -130,7 +130,8 @@ Source normalized SHA256: `196cdec738a8fe85be414eb4f5c79bc2ad92c937ceeaef3293ba7
 | [QUERY][技能][吟唱][SKILL-FALSE-SINGING-20261102] Non-singing skills delayed by an extra server singing phase | 100-109 |
 | [QUERY][技能][打断][组合][RO-SKILL-CANCEL-20261103] RO cancellation and combination handoff semantics | 110-117 |
 | [QUERY][怪物AI][副本][LYF-MONSTER-AI-READY-20261104] Readiness of LYF wave 18 for server-driven monster AI | 118-125 |
-| [QUERY][怪物AI][副本][MOSHENTA-WAVES-FLOW-20261106] All-wave AI, spawn conditions and dungeon objectives | 126-134 |
+| [QUERY][怪物AI][副本][MOSHENTA-WAVES-FLOW-20261106] All-wave AI, spawn conditions and dungeon objectives | 126-135 |
+| [QUERY][场景编辑器][UI][SCENE-EDITOR-USABILITY-20261107] Missing flow navigation and editor/runtime mismatches | 136-142 |
 
 ## Older records
 
