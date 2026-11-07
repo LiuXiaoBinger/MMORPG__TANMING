@@ -344,6 +344,16 @@
 
 ## [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance
 
+### Latest follow-up acceptance
+
+- Real Luban generation merged all six sheets into TbGene. Independent XLSX checks found 80 unique IDs, identical schemas, valid cross-sheet references and unchanged data values for all initial 69 rows. Evidence: `_temp/gene-tabs-20261107/luban.log`, `table-checks.json`; table preview reviewed.
+- 351 assertions passed using the actual generated data and server: all types compose, nested event/count state persists, last count executes before removal, refresh replenishes counts, ancestor scenarios apply, and cyclic references fail without partial insertion. Evidence: `_temp/gene-tabs-20261107/runtime-tests.log`.
+- Server build and independent client compilation passed (367 sources, 164 warnings, zero errors). Logs: `_temp/gene-runtime-tests/build.log`, `_temp/gene-tabs-20261107/client-build/build.log`. Existing project warnings remain; no Unity in-scene combat, skill wiring, network or balance verification.
+- The public spreadsheet tool did not expose a documented rename API; it edited/rendered all data and formatting, followed by a narrow workbook.xml patch for the three original tab names. XML read-back and real Luban generation verified the resulting file. Codex checked only this follow-up's bilingual delta.
+
+### Initial acceptance facts (historical)
+
+
 - Real Luban generation succeeded. Independent XLSX read-back confirms 69 rows, preservation of all original data cells in rows 1–23 and all three sheet names/other-sheet data. The renamed client component retains its Unity GUID. `delivery-checks.json` and `diff-check.log` are under `_temp/gene-20261107`.
 - `Tests/Gene/run.ps1` passed 194 assertions against the real table and compiled server, including sources, stack caps, refresh, periods, large-frame expiry, composites, states, scenario switching and actual server entity initialization/update/destruction. Evidence: `_temp/gene-20261107/runtime-tests.log` and `_temp/gene-runtime-tests/build.log`.
 - Server and 366-source client independent compilation passed. Client initially failed because Common/MMoRpgCommon.dll remained old while Net/MMoRpgCommon.dll had been updated; both existing copies were synchronized and compilation then passed with 164 warnings and zero errors. Existing warnings remain; logs: `_temp/gene-20261107/server-build.log` and `_temp/gene-20261107/client-build/build.log`.

@@ -6,6 +6,7 @@ using MMoRpgCommon.SceneEntity;
 using GeneAttributeType = Server::GeneAttributeType;
 using GeneComponent = Server::GeneComponent;
 using GeneEffectType = Server::GeneEffectType;
+using GeneEventType = Server::GeneEventType;
 using GeneInstance = Server::GeneInstance;
 using GenePulse = Server::GenePulse;
 using GeneRuntime = Server::GeneRuntime;
@@ -35,6 +36,9 @@ public static class GeneRuntimeTests
         VerifyPeriodicResults();
         VerifyComposites();
         VerifyStatesAndScenarios();
+        VerifyAnyTypeComposites();
+        VerifyEventsAndCounts();
+        VerifyNestedScenariosAndCycles();
         VerifyServerComponent();
         Console.WriteLine("PASS Gene：" + passed + " 项断言，" + definitions.Count + " 条真实配置。");
         return 0;
@@ -43,7 +47,7 @@ public static class GeneRuntimeTests
     /// <summary>验证原有编号、周期单位和组合引用等表格与程序之间的契约。</summary>
     private static void VerifyConfiguration()
     {
-        Check(definitions.Count == 69, "配置数量应为原 23 条与新增 46 条");
+        Check(definitions.Count == 80, "六个 Sheet 合并导出 80 条配置");
         // 原编号不能重排，否则会改变既有装备词条的属性含义。
         for (int id = 1; id <= 23; id++)
         {
@@ -61,15 +65,16 @@ public static class GeneRuntimeTests
             {
                 Check(row.Interval > 0 && row.Value >= 0, "周期参数 " + row.Id);
             }
-            if (row.EffectType != (int)GeneEffectType.Composite) continue;
-            // 原表的五个组合槽位只能指向叶子，避免递归组合含义不明确。
+            if (row.EffectType == (int)GeneEffectType.Event) Check(row.TriggerEvent > 0, "事件类型必须指定 " + row.Id);
+            if (row.EffectType == (int)GeneEffectType.Count) Check(row.TriggerCount > 0, "次数必须为正 " + row.Id);
+            // 所有类型都允许跨 Sheet 引用，包含继续引用组合的嵌套情况。
             int[] children = { row.AttachGeneId0, row.AttachGeneId1, row.AttachGeneId2, row.AttachGeneId3, row.AttachGeneId4 };
             for (int j = 0; j < children.Length; j++)
             {
                 if (children[j] == 0) continue;
                 Check(definitions.ContainsKey(children[j]), "组合引用存在 " + row.Id);
-                Check(definitions[children[j]].EffectType != 5, "组合引用叶子 " + row.Id);
             }
+            Check(new GeneRuntime(definitions, row.Scenario).AddGene(row.Id) != null, "完整配置可展开 " + row.Id);
         }
     }
 
@@ -191,6 +196,148 @@ public static class GeneRuntimeTests
         runtime.SetScenario(1);
         Check(runtime.FindGene(1017) == null, "离开 PvP 移除专用效果");
         Check(runtime.FindGene(1001) != null, "全局效果跨环境保留");
+    }
+
+    /// <summary>验证属性、周期、状态均可携带关联基因，组合也能再次嵌套组合。</summary>
+    private static void VerifyAnyTypeComposites()
+    {
+        // 属性根同时携带速度效果，覆盖只影响根自身的数值。
+        GeneRuntime runtime = new GeneRuntime(definitions);
+        runtime.AddGene(1022, 7, 20);
+        Equal(120, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "属性根数值覆盖");
+        Equal(6.5, runtime.CalculateAttribute(GeneAttributeType.MoveSpeed, 5), "属性携带移速");
+        runtime.RemoveGene(1022, 7);
+        Equal(5, runtime.CalculateAttribute(GeneAttributeType.MoveSpeed, 5), "关联效果一起移除");
+        runtime.AddGene(1205);
+        Equal(3.5, runtime.CalculateAttribute(GeneAttributeType.MoveSpeed, 5), "周期携带减速");
+        Equal(20, runtime.Update(1000)[0].ResolveAmount(1000, 100), "周期根继续结算自身");
+        runtime.AddGene(1305);
+        Check(!runtime.CanMove, "状态根提供定身");
+        // 第二个更新包含寒毒的两次伤害与状态关联中毒的一次伤害。
+        List<GenePulse> pulses = runtime.Update(2000);
+        Equal(3, pulses.Count, "状态携带周期效果");
+        runtime.Clear();
+        runtime.AddGene(1507);
+        Equal(110, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "多层组合外功");
+        Equal(220, runtime.CalculateAttribute(GeneAttributeType.AtkInternalMax, 200), "多层组合内功");
+        Check((runtime.GetStates() & GeneState.SuperArmor) != 0, "组合包含状态");
+        Equal(1, runtime.Update(2000).Count, "组合包含持续恢复");
+        Equal(1, runtime.Trigger(GeneEventType.BeHit), "组合包含事件基因");
+        Check(runtime.FindGene(1201) != null, "嵌套事件生成独立回春");
+        runtime.RemoveGene(1507);
+        Equal(100, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "移除根清除普通组合效果");
+        Check(runtime.FindGene(1201) != null, "事件已生成的基因独立存续");
+    }
+
+    /// <summary>验证事件过滤、次数消耗与补满、来源隔离和事件嵌套次数的持久状态。</summary>
+    private static void VerifyEventsAndCounts()
+    {
+        // 事件的关联项在发生匹配事件前必须保持未激活。
+        GeneRuntime runtime = new GeneRuntime(definitions);
+        runtime.AddGene(1401, 11);
+        Equal(0, runtime.Update(1000).Count, "事件前没有周期结果");
+        Equal(0, runtime.Trigger(GeneEventType.SkillCast), "不同事件不触发");
+        Equal(1, runtime.Trigger(GeneEventType.BeHit), "受击事件触发");
+        Check(runtime.FindGene(1201, 11) != null, "事件结果保留来源");
+        Equal(1, runtime.Update(2000).Count, "事件产生周期基因");
+        runtime.Clear();
+        // 根次数基因用完即移除，重复施加同来源会补满次数。
+        GeneInstance count = runtime.AddGene(1601, 1);
+        Equal(0, runtime.Trigger(GeneEventType.None), "空事件不消费次数");
+        Equal(0, runtime.Trigger(GeneEventType.AttackHit), "不匹配事件不消费次数");
+        Equal(3, count.Effects[0].RemainingTriggers, "初始次数保留");
+        Equal(1, runtime.Trigger(GeneEventType.BeHit), "第一次次数触发");
+        Equal(2, count.Effects[0].RemainingTriggers, "触发扣一次");
+        runtime.AddGene(1601, 1);
+        Equal(3, count.Effects[0].RemainingTriggers, "刷新补满次数");
+        // 三次成功触发都必须执行效果，最后一次执行后移除根。
+        for (int i = 0; i < 3; i++) Equal(1, runtime.Trigger(GeneEventType.BeHit), "三次均生效");
+        Check(runtime.FindGene(1601, 1) == null, "次数用完移除根");
+        Check(runtime.FindGene(1201, 1) != null, "最后一次结果保留");
+        Equal(0, runtime.Trigger(GeneEventType.BeHit), "耗尽后不再响应");
+        runtime.Clear();
+        runtime.AddGene(1601, 1);
+        runtime.AddGene(1601, 2);
+        Equal(2, runtime.Trigger(GeneEventType.BeHit), "不同来源独立触发");
+        Equal(2, runtime.FindGene(1601, 1).Effects[0].RemainingTriggers, "来源一次数");
+        Equal(2, runtime.FindGene(1601, 2).Effects[0].RemainingTriggers, "来源二次数");
+        runtime.Clear();
+        runtime.AddGene(1403, 9);
+        // 事件直接关联次数节点，次数必须在多次事件之间保留，不能每次重建。
+        for (int i = 0; i < 3; i++)
+        {
+            Equal(1, runtime.Trigger(GeneEventType.BeHit), "事件与次数组合");
+            Check(runtime.FindGene(1503, 9) != null, "次数关联嵌套组合");
+            runtime.RemoveGene(1503, 9);
+        }
+        Equal(0, runtime.Trigger(GeneEventType.BeHit), "事件中的次数已耗尽");
+        Check(runtime.FindGene(1403, 9) != null, "子次数耗尽不移除事件父项");
+        runtime.AddGene(1403, 9);
+        Equal(1, runtime.Trigger(GeneEventType.BeHit), "刷新事件恢复子次数");
+        runtime.Clear();
+        runtime.AddGene(1506);
+        // 根组合的其他属性不应因为它持有的次数节点耗尽而消失。
+        for (int i = 0; i < 3; i++) Equal(1, runtime.Trigger(GeneEventType.SkillCast), "组合中的施法次数");
+        Equal(0, runtime.Trigger(GeneEventType.SkillCast), "组合子次数耗尽");
+        Equal(110, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "其他组合属性仍存在");
+    }
+
+    /// <summary>验证嵌套父节点的场景限制和循环配置的明确拒绝。</summary>
+    private static void VerifyNestedScenariosAndCycles()
+    {
+        // 测试专用配置副本，将中间组合限制为副本场景，不改正式数据。
+        Dictionary<int, cfg.Gene> adjusted = new Dictionary<int, cfg.Gene>(definitions);
+        adjusted[1506] = WithChild(definitions[1506], 1007, 1);
+        // 外层 1507 为全局，内层 1506 的场景约束必须传递给 1007。
+        GeneRuntime runtime = new GeneRuntime(adjusted);
+        runtime.AddGene(1507);
+        Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "中间组合场景阻止子属性");
+        runtime.SetScenario(1);
+        Equal(115, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "切换副本激活嵌套属性");
+        runtime.SetScenario(2);
+        Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "离开副本停止嵌套属性");
+        adjusted[1003] = WithChild(definitions[1003], 1501, 0);
+        // 1501 引用 1003，1003 又引用 1501，必须在入容器前失败。
+        bool rejected = false;
+        try { runtime.AddGene(1501); }
+        catch (InvalidOperationException) { rejected = true; }
+        Check(rejected, "检测间接循环引用");
+        Check(runtime.FindGene(1501) == null, "无半完成的循环实例");
+        adjusted[1601] = WithChild(definitions[1601], 1401, 0);
+        adjusted[1401] = WithChild(definitions[1401], 1601, 0);
+        rejected = false;
+        try { runtime.AddGene(1401); }
+        catch (InvalidOperationException) { rejected = true; }
+        Check(rejected, "事件次数子树同样拒绝循环");
+    }
+
+    /// <summary>在测试内按真实 Luban 字段顺序生成单个替换配置，不写正式表格。</summary>
+    /// <param name="source">保持其他字段不变的原定义。</param>
+    /// <param name="childId">替换第一个关联槽，其余槽位清空。</param>
+    /// <param name="scenario">本测试需要的场景限制。</param>
+    /// <returns>仅供当前测试配置副本使用的定义。</returns>
+    private static cfg.Gene WithChild(cfg.Gene source, int childId, int scenario)
+    {
+        // 这是 Luban 测试序列化边界，字段顺序与生成解析器一致。
+        Luban.ByteBuf buffer = new Luban.ByteBuf();
+        buffer.WriteInt(source.Id);
+        buffer.WriteString(source.EffectDesc);
+        buffer.WriteInt(scenario);
+        buffer.WriteInt(source.ValueType);
+        buffer.WriteInt(childId);
+        // 清空其余四个关联槽，确保只测试指定的循环或条件路径。
+        for (int i = 0; i < 4; i++) buffer.WriteInt(0);
+        buffer.WriteInt(source.IsStack);
+        buffer.WriteInt(source.GeneTime);
+        buffer.WriteInt(source.EffectType);
+        buffer.WriteInt(source.AttributeId);
+        buffer.WriteFloat(source.Value);
+        buffer.WriteInt(source.Interval);
+        buffer.WriteInt(source.MaxStack);
+        buffer.WriteInt(source.State);
+        buffer.WriteInt(source.TriggerEvent);
+        buffer.WriteInt(source.TriggerCount);
+        return new cfg.Gene(buffer);
     }
 
     /// <summary>验证正式服务端工厂装配的组件能够计时、通知和随实体释放。</summary>

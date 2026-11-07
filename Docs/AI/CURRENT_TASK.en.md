@@ -325,6 +325,16 @@
 
 ## [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime
 
+### Latest follow-up: sheets, events and trigger counts
+
+- User requested categorized sheets, a meaningful Sheet1 name and composition for every Gene type. The six sheets are 属性基因 / 周期基因 / 状态基因 / 事件基因 / 次数基因 / 组合基因, with 57/5/5/3/3/7 rows (80 total). All 69 initial rows retain their data values.
+- TriggerEvent and TriggerCount plus GeneEventType support explicit host event dispatch through `GeneRuntime.Trigger`. Counts are consumed on matching events, replenished on reapplication, and removed when exhausted at the root. Nested exhausted counts stop themselves while other parent effects remain.
+- Every type accepts the five attachment slots, including nested composites. Ordinary attached effects share root lifetime/layers and honor every ancestor's scenario. Adjacent event/count nodes preserve their counters; triggered ordinary Genes become independent instances. Reference cycles are rejected during construction.
+- Server now links eight shared Gene sources. Specific skill event wiring, resource settlement and network synchronization remain outside scope. Codex implemented and checked the bilingual delta directly under the user's solo-work instruction. Existing approved log and usage-guide paths below are unchanged.
+
+### Initial delivery facts (historical)
+
+
 - Scope approved by the user: Gene table and general runtime only. Codex implemented this directly after the user declined external agents; no external business task was dispatched. The user approved these records on 2026-11-07; Codex also performed the bilingual delta check under the explicit solo-work instruction.
 - `#Gene.xlsx` now contains 69 entries: the original IDs 1–23 and 46 additions. `GeneTime` replaces `buffTime`; EffectType, AttributeId, Value, Interval, MaxStack and State are added. Values are initial project tuning, not exact values from the reference game.
 - `GeneRuntime` handles source-specific stacking/refresh, expiry, attribute calculation, periodic results, control queries, scenarios and five-slot leaf composites. Client `MGeneComponent` and server `GeneComponent` replace the placeholders; component ID 4 and the client Unity GUID are retained. The server links the same seven runtime source files used by the client. Both existing client common DLL locations and Network.dll are synchronized.

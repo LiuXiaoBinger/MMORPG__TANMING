@@ -107,6 +107,9 @@
         <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneEffect.cs">
             <Link>SceneEntity\Gene\GeneEffect.cs</Link>
         </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneEventType.cs">
+            <Link>SceneEntity\Gene\GeneEventType.cs</Link>
+        </Compile>
         <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneEffectType.cs">
             <Link>SceneEntity\Gene\GeneEffectType.cs</Link>
         </Compile>

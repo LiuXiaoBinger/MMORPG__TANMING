@@ -1,4 +1,4 @@
-/// <summary>基因表 EffectType 的效果分类；组合只负责装配其引用的叶子效果。</summary>
+/// <summary>基因表 EffectType 的效果分类；每种类型都允许关联其他类型的基因。</summary>
 public enum GeneEffectType
 {
     /// <summary>按 AttributeId 对属性施加固定值或百分比修正。</summary>
@@ -11,6 +11,10 @@ public enum GeneEffectType
     PeriodicMana = 3,
     /// <summary>在基因存续期间提供 State 指定的状态。</summary>
     State = 4,
-    /// <summary>组合 AttachGeneId0 至 AttachGeneId4 的叶子效果，共享父基因寿命和层数。</summary>
-    Composite = 5
+    /// <summary>组合关联基因，支持跨表页和嵌套，共享根基因寿命和层数。</summary>
+    Composite = 5,
+    /// <summary>收到 TriggerEvent 对应事件后施加关联基因，自身不消耗次数。</summary>
+    Event = 6,
+    /// <summary>收到匹配事件后施加关联基因，每次消耗一次 TriggerCount。</summary>
+    Count = 7
 }

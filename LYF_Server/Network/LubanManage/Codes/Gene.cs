@@ -33,6 +33,8 @@ public sealed partial class Gene : Luban.BeanBase
         Interval = _buf.ReadInt();
         MaxStack = _buf.ReadInt();
         State = _buf.ReadInt();
+        TriggerEvent = _buf.ReadInt();
+        TriggerCount = _buf.ReadInt();
     }
 
     public static Gene DeserializeGene(ByteBuf _buf)
@@ -54,27 +56,27 @@ public sealed partial class Gene : Luban.BeanBase
     /// </summary>
     public readonly int ValueType;
     /// <summary>
-    /// 组合叶子1，0为空；寿命及层数由父基因控制
+    /// 关联基因1，支持跨页和嵌套；0为空
     /// </summary>
     public readonly int AttachGeneId0;
     /// <summary>
-    /// 组合叶子2，0为空；寿命及层数由父基因控制
+    /// 关联基因2，支持跨页和嵌套；0为空
     /// </summary>
     public readonly int AttachGeneId1;
     /// <summary>
-    /// 组合叶子3，0为空；寿命及层数由父基因控制
+    /// 关联基因3，支持跨页和嵌套；0为空
     /// </summary>
     public readonly int AttachGeneId2;
     /// <summary>
-    /// 组合叶子4，0为空；寿命及层数由父基因控制
+    /// 关联基因4，支持跨页和嵌套；0为空
     /// </summary>
     public readonly int AttachGeneId3;
     /// <summary>
-    /// 组合叶子5，0为空；寿命及层数由父基因控制
+    /// 关联基因5，支持跨页和嵌套；0为空
     /// </summary>
     public readonly int AttachGeneId4;
     /// <summary>
-    /// 同来源叠加：0允许，1只刷新；不同来源独立
+    /// 同来源叠加：0允许，1只刷新；刷新恢复触发次数
     /// </summary>
     public readonly int IsStack;
     /// <summary>
@@ -82,7 +84,7 @@ public sealed partial class Gene : Luban.BeanBase
     /// </summary>
     public readonly int GeneTime;
     /// <summary>
-    /// 0属性；1持续伤害；2持续治疗；3持续回蓝；4状态；5组合
+    /// 0属性；1持续伤害；2持续治疗；3持续回蓝；4状态；5组合；6事件；7次数
     /// </summary>
     public readonly int EffectType;
     /// <summary>
@@ -105,6 +107,14 @@ public sealed partial class Gene : Luban.BeanBase
     /// 状态位：1眩晕，2定身，4沉默，8霸体；可相加
     /// </summary>
     public readonly int State;
+    /// <summary>
+    /// 事件编号：1命中，2受击，3施法，4击败目标；次数基因0响应任意有效事件
+    /// </summary>
+    public readonly int TriggerEvent;
+    /// <summary>
+    /// 次数基因可触发次数，必须大于0；刷新恢复次数
+    /// </summary>
+    public readonly int TriggerCount;
    
     public const int __ID__ = 2215733;
     public override int GetTypeId() => __ID__;
@@ -133,6 +143,8 @@ public sealed partial class Gene : Luban.BeanBase
         + "Interval:" + Interval + ","
         + "MaxStack:" + MaxStack + ","
         + "State:" + State + ","
+        + "TriggerEvent:" + TriggerEvent + ","
+        + "TriggerCount:" + TriggerCount + ","
         + "}";
     }
 }

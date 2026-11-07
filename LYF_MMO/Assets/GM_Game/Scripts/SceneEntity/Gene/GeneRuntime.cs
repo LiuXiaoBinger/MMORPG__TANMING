@@ -26,7 +26,7 @@ public class GeneRuntime
     /// <summary>添加基因；同编号同来源按规则叠加并刷新时间，不同来源独立。</summary>
     /// <param name="geneId">基因配置编号；不存在时由字典明确报出配置错误。</param>
     /// <param name="sourceId">施加者或装备实例编号，0 为默认来源。</param>
-    /// <param name="value">可选的单效果数值覆盖，用于原有装备词条；组合沿用各子效果表值。</param>
+    /// <param name="value">可选的根效果数值覆盖；关联效果沿用各自表值。</param>
     /// <returns>本次添加或刷新的实例；场景不适用时返回 null。</returns>
     public virtual GeneInstance AddGene(int geneId, ulong sourceId = 0, float? value = null)
     {
@@ -48,32 +48,23 @@ public class GeneRuntime
             {
                 existing.Effects[0].Value = value.Value;
             }
+            // 刷新实例时补满事件子树中的次数，周期累计值仍然保留。
+            for (int i = 0; i < existing.Effects.Count; i++)
+            {
+                if (IsTriggered(existing.Effects[i].Definition)) existing.Effects[i].ResetTriggers();
+            }
             existing.RefreshDuration();
             return existing;
         }
-        // 每个实例独享周期累计值，避免两个实体或两个来源相互影响。
+        // 实例保留当前激活的效果；事件子树只有在匹配事件到来后才施加。
         List<GeneEffect> effects = new List<GeneEffect>();
-        if (definition.EffectType == (int)GeneEffectType.Composite)
-        {
-            // 沿用原表五个组合槽位，叶子不递归，寿命和叠加始终属于父基因。
-            int[] attachedIds = { definition.AttachGeneId0, definition.AttachGeneId1, definition.AttachGeneId2,
-                definition.AttachGeneId3, definition.AttachGeneId4 };
-            for (int i = 0; i < attachedIds.Length; i++)
-            {
-                if (attachedIds[i] == 0) continue;
-                // 组合槽位对应的属性、状态或周期效果定义。
-                cfg.Gene child = definitions[attachedIds[i]];
-                effects.Add(CreateEffect(child, child.Value));
-            }
-        }
-        else
-        {
-            // 没有调用方覆盖时直接采用表内每层数值。
-            float effectValue = definition.Value;
-            if (value.HasValue) effectValue = value.Value;
-            effects.Add(CreateEffect(definition, effectValue));
-        }
-        // 将完整实例登记到当前实体；组合的子项不作为独立基因再次添加。
+        // 覆盖数值只作用于根节点，不能改变其他被组合配置的原始数值。
+        float effectValue = definition.Value;
+        if (value.HasValue) effectValue = value.Value;
+        // 路径集合只检测当前递归链，允许不同分支引用同一基因。
+        GeneEffect root = CreateEffect(definition, effectValue, new HashSet<int>());
+        CollectActiveEffects(root, effects);
+        // 普通关联项共同存亡；事件后产生的基因按自己的配置独立计时。
         GeneInstance instance = new GeneInstance(definition, sourceId, effects);
         instances.Add(instance);
         return instance;
@@ -137,7 +128,7 @@ public class GeneRuntime
                 GeneEffect effect = instance.Effects[j];
                 if (effect.Definition.EffectType != (int)GeneEffectType.Attribute) continue;
                 if (effect.Definition.AttributeId != (int)attribute) continue;
-                if (!AppliesToScenario(effect.Definition)) continue;
+                if (!AppliesToEffect(effect)) continue;
                 if (effect.Definition.ValueType == 1) percent += effect.Value * instance.StackCount;
                 else flat += effect.Value * instance.StackCount;
             }
@@ -156,10 +147,10 @@ public class GeneRuntime
             for (int j = 0; j < instances[i].Effects.Count; j++)
             {
                 // 当前待合并的叶子效果；子项也遵守自己的场景限制。
-                cfg.Gene effect = instances[i].Effects[j].Definition;
-                if (effect.EffectType == (int)GeneEffectType.State && AppliesToScenario(effect))
+                GeneEffect effect = instances[i].Effects[j];
+                if (effect.Definition.EffectType == (int)GeneEffectType.State && AppliesToEffect(effect))
                 {
-                    states |= (GeneState)effect.State;
+                    states |= (GeneState)effect.Definition.State;
                 }
             }
         }
@@ -197,7 +188,7 @@ public class GeneRuntime
                 // 周期项各自累计时间，刷新父寿命不会把该累计值归零。
                 GeneEffect effect = instance.Effects[j];
                 if (!IsPeriodic(effect.Definition)) continue;
-                if (!AppliesToScenario(effect.Definition)) continue;
+                if (!AppliesToEffect(effect)) continue;
                 effect.ElapsedMilliseconds += activeMilliseconds;
                 while (effect.ElapsedMilliseconds >= effect.Definition.Interval)
                 {
@@ -214,6 +205,33 @@ public class GeneRuntime
         return pulses;
     }
 
+    /// <summary>向当前宿主传入事件，施加匹配的关联基因；次数节点每次匹配消耗一次。</summary>
+    /// <param name="geneEvent">本次实际发生的宿主事件，None 不触发任何效果。</param>
+    /// <returns>本次实际施加或刷新的关联基因数量。</returns>
+    public virtual int Trigger(GeneEventType geneEvent)
+    {
+        if (geneEvent == GeneEventType.None) return 0;
+        // 从原列表末尾向前处理，新增实例追加到末尾，不在同一事件中再次响应。
+        int activated = 0;
+        for (int i = instances.Count - 1; i >= 0; i--)
+        {
+            // 当前原有实例及它已经激活的普通效果和触发节点。
+            GeneInstance instance = instances[i];
+            // 事件子树内部的次数保存在原节点上，不因每次通知而重新创建。
+            for (int j = 0; j < instance.Effects.Count; j++)
+            {
+                // 非触发节点仍由属性查询或逻辑帧驱动，不响应事件。
+                GeneEffect effect = instance.Effects[j];
+                if (IsTriggered(effect.Definition)) activated += TriggerEffect(effect, geneEvent, instance.SourceId);
+            }
+            if (instance.Definition.EffectType == (int)GeneEffectType.Count)
+            {
+                if (instance.Effects[0].RemainingTriggers == 0) instances.RemoveAt(i);
+            }
+        }
+        return activated;
+    }
+
     /// <summary>实体销毁或对象池回收时移除所有基因及其周期进度。</summary>
     public virtual void Clear()
     {
@@ -228,6 +246,21 @@ public class GeneRuntime
         return definition.Scenario == 0 || definition.Scenario == Scenario;
     }
 
+    /// <summary>检查节点及其全部组合父项的场景要求，避免嵌套后跳过中间条件。</summary>
+    /// <param name="effect">待使用的原运行节点。</param>
+    /// <returns>整条路径均适用于当前场景时返回 true。</returns>
+    private bool AppliesToEffect(GeneEffect effect)
+    {
+        // 沿父引用逐级检查，不创建副本或改变任何节点状态。
+        GeneEffect current = effect;
+        while (current != null)
+        {
+            if (!AppliesToScenario(current.Definition)) return false;
+            current = current.Parent;
+        }
+        return true;
+    }
+
     /// <summary>判断效果是否需要按毫秒周期产生脉冲。</summary>
     /// <param name="definition">待检查的叶子效果定义。</param>
     /// <returns>持续伤害、持续治疗或持续回蓝返回 true。</returns>
@@ -237,20 +270,92 @@ public class GeneRuntime
             && definition.EffectType <= (int)GeneEffectType.PeriodicMana;
     }
 
-    /// <summary>创建叶子运行状态，并明确拒绝不受支持的递归组合或无周期配置。</summary>
-    /// <param name="definition">已通过编号索引找到的叶子定义。</param>
+    /// <summary>创建完整关联树；允许任意类型嵌套，循环引用不能展开为有效组合。</summary>
+    /// <param name="definition">当前基因定义。</param>
     /// <param name="value">当前实例每层采用的效果数值。</param>
-    /// <returns>与其他实例不共享计时器的叶子效果。</returns>
-    private static GeneEffect CreateEffect(cfg.Gene definition, float value)
+    /// <param name="path">当前递归路径的编号，用于定位直接或间接自引用。</param>
+    /// <returns>包含独立周期和次数的效果树。</returns>
+    private GeneEffect CreateEffect(cfg.Gene definition, float value, HashSet<int> path)
     {
-        if (definition.EffectType == (int)GeneEffectType.Composite)
+        if (!path.Add(definition.Id))
         {
-            throw new InvalidOperationException("组合基因只允许引用叶子效果：" + definition.Id);
+            throw new InvalidOperationException("基因组合存在循环引用：" + definition.Id);
         }
         if (IsPeriodic(definition) && definition.Interval <= 0)
         {
             throw new InvalidOperationException("周期基因的 Interval 必须大于零：" + definition.Id);
         }
-        return new GeneEffect(definition, value);
+        if (definition.EffectType == (int)GeneEffectType.Count && definition.TriggerCount <= 0)
+        {
+            throw new InvalidOperationException("次数基因的 TriggerCount 必须大于零：" + definition.Id);
+        }
+        if (definition.EffectType == (int)GeneEffectType.Event && definition.TriggerEvent == 0)
+        {
+            throw new InvalidOperationException("事件基因必须指定 TriggerEvent：" + definition.Id);
+        }
+        // 五个槽位在全部类型上有效，子节点顺序与表中槽位一致。
+        int[] attachedIds = { definition.AttachGeneId0, definition.AttachGeneId1, definition.AttachGeneId2,
+            definition.AttachGeneId3, definition.AttachGeneId4 };
+        // 完整子树保留事件下的次数状态，事件触发时不重新初始化。
+        List<GeneEffect> children = new List<GeneEffect>();
+        for (int i = 0; i < attachedIds.Length; i++)
+        {
+            if (attachedIds[i] == 0) continue;
+            // 关联定义仍由统一的 TbGene 索引读取，与它位于哪个 Sheet 无关。
+            cfg.Gene child = definitions[attachedIds[i]];
+            children.Add(CreateEffect(child, child.Value, path));
+        }
+        path.Remove(definition.Id);
+        return new GeneEffect(definition, value, children);
+    }
+
+    /// <summary>收集立即生效的节点，事件和次数节点的子树保持待触发状态。</summary>
+    /// <param name="effect">当前遍历的关联节点。</param>
+    /// <param name="activeEffects">供属性、状态、计时及事件入口访问的原节点引用。</param>
+    private static void CollectActiveEffects(GeneEffect effect, List<GeneEffect> activeEffects)
+    {
+        if (effect.Definition.EffectType != (int)GeneEffectType.Composite) activeEffects.Add(effect);
+        if (IsTriggered(effect.Definition)) return;
+        // 非触发节点可以在自身效果之外，继续叠加所有关联类型的效果。
+        for (int i = 0; i < effect.Children.Count; i++) CollectActiveEffects(effect.Children[i], activeEffects);
+    }
+
+    /// <summary>判断节点是否必须等待宿主事件才能施加关联项。</summary>
+    /// <param name="definition">待判断的基因定义。</param>
+    /// <returns>事件和次数节点返回 true。</returns>
+    private static bool IsTriggered(cfg.Gene definition)
+    {
+        return definition.EffectType == (int)GeneEffectType.Event || definition.EffectType == (int)GeneEffectType.Count;
+    }
+
+    /// <summary>执行一个匹配事件节点；相邻事件／次数节点沿当前事件继续触发。</summary>
+    /// <param name="effect">保存剩余次数和关联子树的原节点。</param>
+    /// <param name="geneEvent">由宿主传入的实际事件。</param>
+    /// <param name="sourceId">继承施加者身份，避免不同来源相互覆盖。</param>
+    /// <returns>本节点实际产生的关联基因施加次数。</returns>
+    private int TriggerEffect(GeneEffect effect, GeneEventType geneEvent, ulong sourceId)
+    {
+        if (!AppliesToEffect(effect)) return 0;
+        if (effect.Definition.TriggerEvent != 0 && effect.Definition.TriggerEvent != (int)geneEvent) return 0;
+        if (effect.Definition.EffectType == (int)GeneEffectType.Count)
+        {
+            if (effect.RemainingTriggers == 0) return 0;
+            effect.RemainingTriggers--;
+        }
+        // 关联的普通基因从本次触发时刻开始独立计时，后续按自己的叠加规则刷新。
+        int activated = 0;
+        for (int i = 0; i < effect.Children.Count; i++)
+        {
+            // 相邻触发节点保留原次数；其他节点作为新基因施加到当前宿主。
+            GeneEffect child = effect.Children[i];
+            if (!AppliesToScenario(child.Definition)) continue;
+            if (IsTriggered(child.Definition)) activated += TriggerEffect(child, geneEvent, sourceId);
+            else
+            {
+                AddGene(child.Definition.Id, sourceId);
+                activated++;
+            }
+        }
+        return activated;
     }
 }

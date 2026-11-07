@@ -336,6 +336,16 @@
 
 ## [VERIFY][基因][GENE-RUNTIME-20261107] 基因运行模块验收
 
+### 最新补充验收
+
+- 真实 Luban 将六个 Sheet 合并到 TbGene；独立 XLSX 校验确认 80 个唯一 ID、同一字段结构、跨页引用有效、初版 69 条数据值不变。证据：`_temp/gene-tabs-20261107/luban.log`、`table-checks.json`；已核对表格预览。
+- 对真实生成表和服务端通过 351 项断言，覆盖全类型组合、嵌套事件／次数状态保留、最后一次先执行再移除、刷新补次、祖先场景过滤，以及循环引用失败且不插入半成品。证据：`_temp/gene-tabs-20261107/runtime-tests.log`。
+- 服务端编译和客户端独立编译通过，客户端 367 份源码、164 个警告、0 错误。证据：`_temp/gene-runtime-tests/build.log`、`_temp/gene-tabs-20261107/client-build/build.log`。现有项目警告保留；未做 Unity 场景战斗、技能接线、网络或数值平衡验证。
+- 表格工具没有公开的改名 API：数据及格式由工具编辑／渲染，再仅修改 workbook.xml 中三个原页签名称；XML 回读及真实 Luban 生成已验证最终文件。Codex 只检查本次双语增量。
+
+### 初次验收事实（历史）
+
+
 - 真实 Luban 生成通过；独立读取 XLSX 确认共 69 行、原 1～23 条所有数据单元格保留、三个页签名称及其他页签数据保留；客户端组件改名后 Unity GUID 不变。证据：`_temp/gene-20261107/delivery-checks.json`、`diff-check.log`。
 - `Tests/Gene/run.ps1` 对真实表与已编译服务端通过 194 项断言，覆盖来源、叠层上限、刷新、周期、大帧到期、组合、状态、场景切换及真实服务端实体初始化／更新／销毁。证据：`_temp/gene-20261107/runtime-tests.log`、`_temp/gene-runtime-tests/build.log`。
 - 服务端与 366 份源码的客户端独立编译通过。客户端最初因只同步 Net/MMoRpgCommon.dll、Common/MMoRpgCommon.dll 仍为旧版而失败；两处既有副本同步后通过，164 个警告、0 错误。原有警告保留；日志：`_temp/gene-20261107/server-build.log`、`_temp/gene-20261107/client-build/build.log`。
