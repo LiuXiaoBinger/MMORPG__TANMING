@@ -105,6 +105,12 @@ public sealed class ROSceneEditorWindow : EditorWindow
     private bool showStageNotes;
     /// <summary>是否展示高级排查入口；未归属节点不会混入正常阶段目录。</summary>
     private bool showStageAdvanced;
+    /// <summary>正在阶段卡片内编辑的稳定节点编号；空值表示没有展开编辑器。</summary>
+    private string inlineNodeId = "";
+    /// <summary>本次阶段编辑操作的结果或缺少真实接入来源的说明。</summary>
+    private string stageEditMessage = "";
+    /// <summary>内联编辑器中是否展开完整原始字段，常用中文表单始终优先显示。</summary>
+    private bool inlineRawFields;
 
     /// <summary>保留两个 RO 原菜单入口并添加本项目中文入口。</summary>
     [MenuItem("TreeEditor/OpenSceneEditor %l")]
@@ -306,6 +312,9 @@ public sealed class ROSceneEditorWindow : EditorWindow
     /// <param name="key">用户选择的真实阶段键。</param>
     private void SelectStage(string key)
     {
+        if (inlineNodeId.Length > 0) stageFlowNeedsRefresh = true;
+        inlineNodeId = "";
+        inlineRawFields = false;
         selectedStageKey = key;
         stageContentScroll = Vector2.zero;
         showStageNotes = false;
@@ -416,8 +425,31 @@ public sealed class ROSceneEditorWindow : EditorWindow
     {
         GUILayout.Space(8f);
         GUILayout.Label(new GUIContent(StageNavigationTitle(stage), stage.Title), StageTextStyle(20, true));
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUI.DisabledScope(!StageMatchesMap(dungeonsTable.GetOrDefault(selectedDungeonId))))
+        {
+            if (GUILayout.Button("＋怪物波次", StageNodeButtonStyle(), GUILayout.Width(145f))) ShowStageWaveMenu(stage);
+            if (GUILayout.Button("＋机制", StageNodeButtonStyle(), GUILayout.Width(115f))) ShowStageMechanismMenu(stage);
+        }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        if (stageEditMessage.Length > 0) GUILayout.Label(stageEditMessage, StageTextStyle(12, false));
         GUILayout.Space(8f);
         stageContentScroll = EditorGUILayout.BeginScrollView(stageContentScroll);
+        if (inlineNodeId.Length > 0)
+        {
+            // 新增节点可能排在长列表末尾，始终把当前编辑面板放到正文顶部。
+            MSceneEditorNode editing = ROSceneStageEditing.FindNode(config, inlineNodeId);
+            if (editing != null)
+            {
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                GUILayout.Label("正在编辑：" + ROSceneNodePresentation.Title(editing, catalog), StageTextStyle(16, true));
+                if (editing.IsWave) DrawStageWaveEditor(editing);
+                else DrawStageMechanismEditor(editing);
+                EditorGUILayout.EndVertical();
+                GUILayout.Space(8f);
+            }
+        }
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         GUILayout.Label("① 这一步做什么", StageTextStyle(15, true));
         GUILayout.Space(5f);
@@ -576,7 +608,9 @@ public sealed class ROSceneEditorWindow : EditorWindow
         // 逻辑波次不显示无效的地图按钮。
         if (ROSceneXml.SpawnPoints(wave.Data).Length > 0)
             if (GUILayout.Button("地图定位", StageNodeButtonStyle())) { SelectNode(wave); FrameAllPoints(); }
-        if (GUILayout.Button("编辑波次", StageNodeButtonStyle())) OpenStageNode(wave);
+        if (GUILayout.Button("编辑", StageNodeButtonStyle())) BeginStageNodeEdit(wave.Id);
+        if (GUILayout.Button("复制", StageNodeButtonStyle())) DuplicateStageWave(wave.Id);
+        if (GUILayout.Button("删除", StageNodeButtonStyle())) ConfirmStageDeletion(wave.Id);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
         GUILayout.Space(6f);
@@ -612,9 +646,424 @@ public sealed class ROSceneEditorWindow : EditorWindow
             if (ROSceneXml.Find(location.Data, "trans_position_info/position") != null)
                 if (GUILayout.Button("地图定位：传送终点", StageNodeButtonStyle())) { SelectNode(node); FrameDestination(location); }
         }
-        if (GUILayout.Button("编辑此机制", StageNodeButtonStyle())) OpenStageNode(node);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("编辑", StageNodeButtonStyle())) BeginStageNodeEdit(node.Id);
+        if (GUILayout.Button("复制", StageNodeButtonStyle())) DuplicateStageMechanism(node.Id);
+        if (GUILayout.Button("删除", StageNodeButtonStyle())) ConfirmStageDeletion(node.Id);
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
         GUILayout.Space(6f);
+    }
+
+    /// <summary>展示本阶段已有出生来源及真实前驱完成规则，缺少来源时说明原因。</summary>
+    /// <param name="stage">用户正在查看的真实阶段。</param>
+    private void ShowStageWaveMenu(ROSceneStage stage)
+    {
+        // 所有候选都来自当前配置，不加载其他副本的怪物或出生条件。
+        GenericMenu menu = new GenericMenu();
+        // 没有可证明来源时保留明确提示，不生成无法归属的孤立波次。
+        int choices = 0;
+        // 当前阶段已有怪物提供可直接沿用的真实门槛。
+        for (int index = 0; index < stage.Waves.Count; index++)
+        {
+            // 每个回调只捕获稳定 ID，创建时重新读取当前节点。
+            MSceneEditorNode source = stage.Waves[index];
+            if (!ROSceneNodePresentation.HasField(source, "monster_info")) continue;
+            menu.AddItem(new GUIContent("沿用本阶段来源/波次 " + source.WaveId + " · " + ROSceneNodePresentation.CreatureLabel(source, catalog) + " · " + ROSceneStageEditing.SpawnDescription(source).Replace("/", "／")), false, () => DuplicateStageWave(source.Id));
+            choices++;
+        }
+        // 空波次阶段可使用当前 XML 的怪物结构，但必须另接真实任务推进来源。
+        List<MSceneEditorNode> templates = config.Nodes.FindAll(item => ROSceneNodePresentation.HasField(item, "monster_info"));
+        // 先选出生来源再选真实怪物模板，不能静默拿全图第一个特殊怪当默认。
+        for (int templateIndex = 0; templateIndex < templates.Count; templateIndex++)
+        {
+            // 每个回调使用用户明确点选的怪物类型和刷点模板。
+            MSceneEditorNode template = templates[templateIndex];
+            // 模板名称与实体 ID 直接来自当前怪物目录。
+            string templateTitle = ROSceneNodePresentation.CreatureLabel(template, catalog) + " · 波次 " + template.WaveId;
+            if (stage.IsEntry)
+            {
+                menu.AddItem(new GUIContent("角色进入时出现/" + templateTitle), false, () => CreateStageEntryWave(template.Id));
+                choices++;
+            }
+            // 同一前驱有多个真实分支时逐项显示，用户自己选择本次接入来源。
+            List<XElement> rules = ROSceneStageEditing.EntryRules(config, stages, stage);
+            // 每条菜单项显示原完成目标和事件，避免把 SceneAI 名称误当已有 WaveEvent。
+            for (int index = 0; index < rules.Count; index++)
+            {
+                // 原规则对象在本次菜单期间保持为当前 XML 中的真实引用。
+                XElement rule = rules[index];
+                // 正式目标通知用于解释该事件将推进哪个阶段。
+                string ids = string.Join("、", rule.Elements("target").Select(item => (string)item.Attribute("id")));
+                menu.AddItem(new GUIContent("上一阶段完成后出现/目标 " + ids + " · " + (string)rule.Attribute("name") + "（来源 " + (index + 1) + "）/" + templateTitle), false, () => CreateStageRuleWave(template.Id, rule));
+                choices++;
+            }
+        }
+        if (choices == 0)
+        {
+            stageEditMessage = "当前配置缺少怪物结构模板，或本阶段没有可证明的出生来源 / 唯一前驱完成规则。没有生成波次；可先检查真实任务与机制配置。";
+            // 首个目标没有独立的前驱完成事件，出生仍应使用原入场语义。
+            ROSceneStage entry = FindStage("entry");
+            if (entry != null && templates.Count > 0)
+                if (entry.NextKeys.Contains(stage.Key)) stageEditMessage = "首个目标随入场开始，没有独立出生事件。请选择左侧“进入 · 角色进入副本”，点击“＋怪物波次”创建入场怪物；不会伪造第一阶段门禁。";
+            return;
+        }
+        menu.ShowAsContext();
+    }
+
+    /// <summary>按当前阶段现有触发链提供可读机制模板，公共区域会明确告知复用。</summary>
+    /// <param name="stage">用户要新增机制的阶段。</param>
+    private void ShowStageMechanismMenu(ROSceneStage stage)
+    {
+        // 现有机制已经具有阶段证据，复制其完整链可保留真实启用来源。
+        List<MSceneEditorNode> mechanisms = StageMechanismCards(stage);
+        if (mechanisms.Count == 0)
+        {
+            stageEditMessage = "本阶段没有已确认归属的触发链模板；没有生成孤立机制。请先检查关联依据或在高级节点编辑建立真实触发来源。";
+            return;
+        }
+        // 菜单明确是复制原行为，不把共用区域说成独立新传送门。
+        GenericMenu menu = new GenericMenu();
+        // 每张现有卡片提供一个完整模板入口。
+        for (int index = 0; index < mechanisms.Count; index++)
+        {
+            // 回调按稳定编号重新取得节点，避免依赖临时集合位置。
+            MSceneEditorNode source = mechanisms[index];
+            menu.AddItem(new GUIContent("复制现有触发与动作/" + StageMechanismTemplateTitle(source).Replace("/", "／")), false, () => DuplicateStageMechanism(source.Id));
+        }
+        menu.ShowAsContext();
+    }
+
+    /// <summary>以真实时机和结果区分默认同名 Trigger，稳定编号避免菜单项被合并。</summary>
+    /// <param name="trigger">当前阶段的真实根触发器。</param>
+    private string StageMechanismTemplateTitle(MSceneEditorNode trigger)
+    {
+        // 触发链由已有连线助手限定，不跨公共组扩展。
+        List<MSceneEditorNode> related = ROSceneNodePresentation.FlowNodes(config, trigger);
+        // 首个真实时机提供短标签，完整所有条件仍在卡片摘要显示。
+        MSceneEditorNode timing = related.Find(item => ROSceneNodePresentation.HasField(item, "timing_type"));
+        // 首个动作加稳定身份即可区分同名模板，不挤进整段 XML 摘要。
+        MSceneEditorNode result = related.Find(item => ROSceneNodePresentation.HasField(item, "result_type"));
+        // 未配置时机或结果时如实说明，不伪造默认行为。
+        string title = "未连接时机";
+        if (timing != null) title = ROSceneNodePresentation.Behavior(timing);
+        if (result != null) title += " → " + ROSceneNodePresentation.Behavior(result);
+        return title + " [触发器 " + ROSceneXml.Int(trigger.Data, "id") + " · 节点 " + trigger.Id + "]";
+    }
+
+    /// <summary>展开当前卡片编辑，不切换到原图也不改变玩家阶段。</summary>
+    /// <param name="nodeId">当前配置内的稳定画布节点编号。</param>
+    private void BeginStageNodeEdit(string nodeId)
+    {
+        inlineNodeId = nodeId;
+        inlineRawFields = false;
+        stageContentScroll = Vector2.zero;
+        selected = ROSceneStageEditing.FindNode(config, nodeId);
+        selectedArea = null;
+        editorView = 0;
+        Repaint();
+    }
+
+    /// <summary>复制阶段波次并立即打开该副本的内联字段。</summary>
+    /// <param name="nodeId">用户选择的原波次稳定编号。</param>
+    private void DuplicateStageWave(string nodeId)
+    {
+        StopPreview();
+        // 复制发生前解析当前对象，原引用可能因其他节点操作已经重建。
+        MSceneEditorNode added = ROSceneStageEditing.DuplicateWave(config, ROSceneStageEditing.FindNode(config, nodeId));
+        stageEditMessage = "已复制波次 " + added.WaveId + "；保留原出生条件和前置连接。请在下方修改怪物、数量与刷点，然后保存。";
+        stageFlowNeedsRefresh = true;
+        BeginStageNodeEdit(added.Id);
+    }
+
+    /// <summary>创建明确入场出生的怪物，不继承其他阶段模板的触发事件。</summary>
+    /// <param name="templateId">当前 XML 中的怪物结构模板编号。</param>
+    private void CreateStageEntryWave(string templateId)
+    {
+        StopPreview();
+        // 编辑操作只作用于当前内存 XML，保存仍走原 SaveChanges。
+        MSceneEditorNode added = ROSceneStageEditing.CreateEntryWave(config, ROSceneStageEditing.FindNode(config, templateId));
+        stageEditMessage = "已新增入场波次 " + added.WaveId + "；怪物与刷点来自所选模板，可直接修改。";
+        stageFlowNeedsRefresh = true;
+        BeginStageNodeEdit(added.Id);
+    }
+
+    /// <summary>在所选真实任务完成规则后接入新出生信号，支持空波次阶段。</summary>
+    /// <param name="templateId">仅提供怪物结构的当前节点编号。</param>
+    /// <param name="rule">用户选择的原前驱完成规则。</param>
+    private void CreateStageRuleWave(string templateId, XElement rule)
+    {
+        StopPreview();
+        // 新事件追加在原 target 结果之后，保持正式任务推进顺序。
+        MSceneEditorNode added = ROSceneStageEditing.CreateWaveAfterRule(config, ROSceneStageEditing.FindNode(config, templateId), rule);
+        stageEditMessage = "已新增波次 " + added.WaveId + "：原任务完成规则后发送 " + ROSceneXml.Text(added.Data, "base_info/pre_scene_ai_event") + "，原目标定义保持不变。";
+        stageFlowNeedsRefresh = true;
+        BeginStageNodeEdit(added.Id);
+    }
+
+    /// <summary>复制真实机制链并在阶段页展开；公共组和现有区域仍复用。</summary>
+    /// <param name="nodeId">已确认归属的根触发器编号。</param>
+    private void DuplicateStageMechanism(string nodeId)
+    {
+        StopPreview();
+        // 仅克隆此触发器的时机、条件和结果，不复制整个共享组。
+        MSceneEditorNode added = ROSceneStageEditing.DuplicateMechanism(config, ROSceneStageEditing.FindNode(config, nodeId));
+        stageEditMessage = "已复制机制。出生/触发条件和动作与模板相同，仍操作原有区域；请按需选择其他已有区域，避免在同一区域重复执行动作。";
+        stageFlowNeedsRefresh = true;
+        BeginStageNodeEdit(added.Id);
+    }
+
+    /// <summary>显示真实删除影响；正式清波引用必须先处理，不能把删除当作完成。</summary>
+    /// <param name="nodeId">用户明确点击删除的卡片节点编号。</param>
+    private void ConfirmStageDeletion(string nodeId)
+    {
+        // 影响计算与执行使用同一份当前配置。
+        MSceneEditorNode node = ROSceneStageEditing.FindNode(config, nodeId);
+        // 直接目标或原事件的数值依赖不能由删除操作隐式改写。
+        string blocked = ROSceneStageEditing.DeleteBlockReason(config, node, stages, dungeonTargetTable);
+        if (blocked.Length > 0)
+        {
+            EditorUtility.DisplayDialog("无法直接删除 · " + ROSceneNodePresentation.Title(node, catalog), blocked, "返回修改引用");
+            return;
+        }
+        if (!EditorUtility.DisplayDialog("删除 · " + ROSceneNodePresentation.Title(node, catalog) + " · 节点 " + node.Id,
+            ROSceneStageEditing.DeletionImpact(config, node) + "\n" + ROSceneStageEditing.EntityTargetImpact(node, stages, dungeonTargetTable), "确认删除", "取消")) return;
+        StopPreview();
+        ROSceneStageEditing.Delete(config, node);
+        inlineNodeId = "";
+        selected = null;
+        stageFlowNeedsRefresh = true;
+        stageEditMessage = "已删除所选内容，修改尚未保存。共享组、区域和其他机制仍保留。";
+        Repaint();
+    }
+
+    /// <summary>显示怪物、数量、真实出生条件和刷点的常用中文字段。</summary>
+    /// <param name="wave">正在原卡片展开编辑的波次。</param>
+    private void DrawStageWaveEditor(MSceneEditorNode wave)
+    {
+        GUILayout.Space(6f);
+        GUILayout.Label("编辑本波次", StageTextStyle(14, true));
+        DrawStageNodeRemark(wave);
+        if (ROSceneNodePresentation.HasField(wave, "monster_info"))
+        {
+            DrawStageIntField(wave.Data, "monster_info/entity_id", "怪物表 ID");
+            DrawStageIntField(wave.Data, "monster_info/monster_base_data/entity_info/real_num", "刷新数量上限");
+        }
+        else if (ROSceneNodePresentation.HasField(wave, "npc_info")) DrawStageIntField(wave.Data, "npc_info/npc_id", "NPC 表 ID");
+        GUILayout.Label("出生条件：" + ROSceneStageEditing.SpawnDescription(wave), StageTextStyle(12, false));
+        if (GUILayout.Button("选择本阶段已有出生来源…", StageNodeButtonStyle())) ShowStageSpawnMenu(wave);
+        DrawStageIntField(wave.Data, "base_info/delay_create_time", "出生延迟（毫秒）");
+        // 刷点直接引用原 XML，编辑数量和位置不生成替代配置。
+        XElement[] points = ROSceneXml.SpawnPoints(wave.Data);
+        // 常用刷点字段直接展示，不要求用户展开多层原数据结构。
+        for (int index = 0; index < points.Length; index++)
+        {
+            GUILayout.Label("刷点 " + (index + 1), EditorStyles.boldLabel);
+            EditorGUI.BeginChangeCheck();
+            // 世界坐标使用米，与地图定位和正式保存字段保持一致。
+            Vector3 positionValue = EditorGUILayout.Vector3Field("位置（米）", ROSceneXml.Vector(points[index], "position"));
+            if (EditorGUI.EndChangeCheck()) { ROSceneXml.SetVector(points[index], "position", positionValue); config.IsDirty = true; }
+            if (points[index].Element("count") != null) DrawStageIntField(points[index], "count", "本点数量");
+        }
+        if (points.Length > 0 && points[0].Name.LocalName == "MScenePositionData")
+        {
+            if (GUILayout.Button("＋刷点（复制最后一个位置）", StageNodeButtonStyle())) { points[points.Length - 1].Parent.Add(new XElement(points[points.Length - 1])); config.IsDirty = true; }
+            if (points.Length > 1 && GUILayout.Button("删除最后一个刷点", StageNodeButtonStyle())) { points[points.Length - 1].Remove(); config.IsDirty = true; }
+        }
+        DrawStageRawEditor(wave);
+        if (GUILayout.Button("完成编辑", StageNodeButtonStyle())) EndStageNodeEdit();
+    }
+
+    /// <summary>按时机、条件和结果展示机制常用字段；区域只选择既有对象，不隐式改共用位置。</summary>
+    /// <param name="trigger">当前卡片对应的原触发器。</param>
+    private void DrawStageMechanismEditor(MSceneEditorNode trigger)
+    {
+        GUILayout.Space(6f);
+        GUILayout.Label("编辑本机制", StageTextStyle(14, true));
+        DrawStageNodeRemark(trigger);
+        EditorGUI.BeginChangeCheck();
+        // 原 enable 字段只控制触发器的初始状态，不显示成当前运行状态。
+        bool enabled = EditorGUILayout.Toggle("初始启用", ROSceneXml.Text(trigger.Data, "enable") == "true");
+        if (EditorGUI.EndChangeCheck()) { ROSceneXml.Set(trigger.Data, "enable", enabled.ToString().ToLowerInvariant()); config.IsDirty = true; }
+        GUILayout.Label("区域、空气墙和传送物件为现有共享对象；这里只选择作用对象，不修改其位置和尺寸。", StageTextStyle(12, false));
+        // 原连接定义时机、条件和动作的边界，不能把组内其他触发器混进编辑面板。
+        List<MSceneEditorNode> related = ROSceneNodePresentation.FlowNodes(config, trigger);
+        // 每项按实际字段种类给出中文说明。
+        for (int index = 0; index < related.Count; index++)
+        {
+            // 当前对象仍是原 XML 数据，修改后复用原保存路径。
+            MSceneEditorNode node = related[index];
+            if (node == trigger) continue;
+            if (ROSceneNodePresentation.HasField(node, "timing_type")) GUILayout.Label("何时触发：" + ROSceneNodePresentation.Behavior(node), StageTextStyle(13, true));
+            if (ROSceneNodePresentation.HasField(node, "condition_type")) GUILayout.Label("条件：" + ROSceneNodePresentation.Behavior(node), StageTextStyle(13, true));
+            if (ROSceneNodePresentation.HasField(node, "result_type")) GUILayout.Label("执行结果：" + ROSceneNodePresentation.Behavior(node), StageTextStyle(13, true));
+            // 传送结果中的默认 scene_trigger_obj_id=0 不是来源区域，不能误导用户编辑。
+            string resultType = ROSceneXml.Text(node.Data, "result_type");
+            // 这几个原结果真实消费区域/物件编号。
+            bool usesArea = resultType == "SSTResultTypeCreateObj" || resultType == "SSTResultTypeDestroyObj" || resultType == "SSTResultTypeAirWall";
+            if (resultType == "SSTResultTypeObjAnimation") usesArea = true;
+            if (ROSceneNodePresentation.HasSourceArea(node) || usesArea) DrawStageAreaChoice(node.Data);
+            if (node.Data.Element("condition_logic_type") != null)
+            {
+                // 原组合方式只使用配置实际支持的 And/Or 枚举。
+                string logic = ROSceneXml.Text(node.Data, "condition_logic_type");
+                if (logic == "SceneTriggerConditionLogicType_And" || logic == "SceneTriggerConditionLogicType_Or")
+                {
+                    // 下拉项分别表示全部条件满足和至少一个条件满足。
+                    int logicIndex = 0;
+                    if (logic == "SceneTriggerConditionLogicType_Or") logicIndex = 1;
+                    EditorGUI.BeginChangeCheck();
+                    logicIndex = EditorGUILayout.Popup("触发条件组合", logicIndex, new[] { "全部条件满足", "任一条件满足" });
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        if (logicIndex == 0) ROSceneXml.Set(node.Data, "condition_logic_type", "SceneTriggerConditionLogicType_And");
+                        else ROSceneXml.Set(node.Data, "condition_logic_type", "SceneTriggerConditionLogicType_Or");
+                        config.IsDirty = true;
+                    }
+                }
+            }
+            if (ROSceneNodePresentation.HasField(node, "result_type")) DrawStageIntField(node.Data, "result_index", "执行顺序");
+            // 传送、计时、墙体与事件配置都是原类型已有参数，默认只展示当前相关容器。
+            string[] paths = { "trans_position_info", "timer_info", "air_wall_info", "wave_event_info", "scene_ai_event", "is_in_fight" };
+            // 原字段缺失时不创建假类型或无效参数。
+            for (int pathIndex = 0; pathIndex < paths.Length; pathIndex++)
+            {
+                // 参数容器通过已有中文序列化表单编辑，未知字段原样保留。
+                XElement parameters = ROSceneXml.Find(node.Data, paths[pathIndex]);
+                if (parameters == null) continue;
+                EditorGUI.BeginChangeCheck();
+                fields.Draw(parameters);
+                if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
+            }
+            if (node.Data.Element("opposite") != null)
+            {
+                EditorGUI.BeginChangeCheck();
+                // 原条件取反字段保持布尔值，不替换为新的判断逻辑。
+                bool opposite = EditorGUILayout.Toggle("条件取反", ROSceneXml.Text(node.Data, "opposite") == "true");
+                if (EditorGUI.EndChangeCheck()) { ROSceneXml.Set(node.Data, "opposite", opposite.ToString().ToLowerInvariant()); config.IsDirty = true; }
+            }
+            GUILayout.Space(6f);
+        }
+        DrawStageRawEditor(trigger);
+        if (GUILayout.Button("完成编辑", StageNodeButtonStyle())) EndStageNodeEdit();
+    }
+
+    /// <summary>选择当前 XML 中存在的区域编号，原区域的位置和尺寸保持不变。</summary>
+    /// <param name="data">包含 scene_trigger_obj_id 的原时机或结果数据。</param>
+    private void DrawStageAreaChoice(XElement data)
+    {
+        // 下拉值直接保存原区域 ID，不创建另一套空间对象。
+        int[] ids = new int[config.TriggerObjects.Length];
+        // 名称同时带编号，避免同名区域选错。
+        string[] names = new string[ids.Length];
+        // 现有所有场景区域都保留为可选项。
+        for (int index = 0; index < ids.Length; index++)
+        {
+            ids[index] = ROSceneXml.Int(config.TriggerObjects[index], "id");
+            names[index] = "已有区域 " + ids[index] + " · " + ROSceneXml.Text(config.TriggerObjects[index], "box/title");
+        }
+        EditorGUI.BeginChangeCheck();
+        // 当前未登记编号仍由 IntPopup 保留，不能静默改成第一项。
+        int selectedId = EditorGUILayout.IntPopup("作用于已有区域", ROSceneXml.Int(data, "scene_trigger_obj_id"), names, ids);
+        if (EditorGUI.EndChangeCheck()) { ROSceneXml.Set(data, "scene_trigger_obj_id", selectedId.ToString(CultureInfo.InvariantCulture)); config.IsDirty = true; }
+    }
+
+    /// <summary>让用户明确选择已有波次的出生条件，而非直接输入没有生产者的事件名。</summary>
+    /// <param name="wave">正在修改出生门槛的波次。</param>
+    private void ShowStageSpawnMenu(MSceneEditorNode wave)
+    {
+        // 来源只取当前阶段已证明关联的波次，显示真实条件供用户判断。
+        ROSceneStage stage = FindStage(selectedStageKey);
+        // 菜单项保留每个不同来源，不能把多事件阶段当成唯一启动信号。
+        GenericMenu menu = new GenericMenu();
+        // 回调捕获稳定编号，执行时重新取得当前宿主。
+        for (int index = 0; index < stage.Waves.Count; index++)
+        {
+            // 当前候选包含原门槛的完整数据和连线。
+            MSceneEditorNode source = stage.Waves[index];
+            // 逻辑波可能以当前怪物为前置，不能反过来让当前怪物等待自身。
+            string blocked = ROSceneStageEditing.WaveStartBlockReason(wave, source);
+            if (blocked.Length > 0)
+            {
+                menu.AddDisabledItem(new GUIContent("波次 " + source.WaveId + " · 不可用：前置包含当前波次 " + wave.WaveId, blocked));
+                continue;
+            }
+            menu.AddItem(new GUIContent("波次 " + source.WaveId + " · " + ROSceneNodePresentation.CreatureLabel(source, catalog) + " · " + ROSceneStageEditing.SpawnDescription(source).Replace("/", "／")), source.Id == wave.Id,
+                () => ApplyStageSpawnSource(wave.Id, source.Id));
+        }
+        menu.ShowAsContext();
+    }
+
+    /// <summary>应用用户选择的出生来源，同时保留波次本身的怪物与输出行为。</summary>
+    /// <param name="waveId">被编辑波次的稳定节点编号。</param>
+    /// <param name="sourceId">提供出生条件的现有波次节点编号。</param>
+    private void ApplyStageSpawnSource(string waveId, string sourceId)
+    {
+        // 直接方法调用也要返回同一明确原因，不能依赖菜单过滤作为唯一检查。
+        string blocked = ROSceneStageEditing.WaveStartBlockReason(ROSceneStageEditing.FindNode(config, waveId), ROSceneStageEditing.FindNode(config, sourceId));
+        if (blocked.Length > 0)
+        {
+            stageEditMessage = blocked;
+            Repaint();
+            return;
+        }
+        StopPreview();
+        // helper 同时处理原字段和前置端口，保存时不会丢失关联。
+        MSceneEditorNode wave = ROSceneStageEditing.UseWaveStart(config, ROSceneStageEditing.FindNode(config, waveId), ROSceneStageEditing.FindNode(config, sourceId));
+        stageFlowNeedsRefresh = true;
+        stageEditMessage = "已改用真实出生来源：" + ROSceneStageEditing.SpawnDescription(wave);
+        BeginStageNodeEdit(wave.Id);
+    }
+
+    /// <summary>在常用表单中编辑一个已有数值字段，所有值仍写回原 XML 路径。</summary>
+    /// <param name="data">原序列化数据对象。</param>
+    /// <param name="path">实际字段相对路径。</param>
+    /// <param name="label">包含用途或单位的中文标签。</param>
+    private void DrawStageIntField(XElement data, string path, string label)
+    {
+        EditorGUI.BeginChangeCheck();
+        // 仅用户变更后写回，未操作字段不会因为绘制而补默认值。
+        int value = EditorGUILayout.IntField(label, ROSceneXml.Int(data, path));
+        if (EditorGUI.EndChangeCheck()) { ROSceneXml.Set(data, path, value.ToString(CultureInfo.InvariantCulture)); config.IsDirty = true; }
+    }
+
+    /// <summary>直接修改卡片备注，原节点身份和业务编号保持不变。</summary>
+    /// <param name="node">正在编辑的原节点。</param>
+    private void DrawStageNodeRemark(MSceneEditorNode node)
+    {
+        EditorGUI.BeginChangeCheck();
+        // 备注用于阶段卡片标题，不参与事件或目标判断。
+        string remark = EditorGUILayout.TextField("备注", node.Content);
+        if (EditorGUI.EndChangeCheck()) { node.Content = remark; config.IsDirty = true; }
+    }
+
+    /// <summary>完整技术字段默认折叠，常用操作不要求用户进入原始节点图。</summary>
+    /// <param name="node">当前波次或完整触发链根节点。</param>
+    private void DrawStageRawEditor(MSceneEditorNode node)
+    {
+        inlineRawFields = EditorGUILayout.Foldout(inlineRawFields, "高级：完整原字段（修改触发条件可能改变阶段归属）", true);
+        if (!inlineRawFields) return;
+        // 波次只编辑自身，机制仍限定在同一个真实触发器上下文。
+        List<MSceneEditorNode> nodes = new List<MSceneEditorNode> { node };
+        if (!node.IsWave) nodes = ROSceneNodePresentation.FlowNodes(config, node);
+        // 每个对象保留原字段顺序与未知字段。
+        for (int index = 0; index < nodes.Count; index++)
+        {
+            GUILayout.Label(ROSceneNodePresentation.Title(nodes[index], catalog), EditorStyles.boldLabel);
+            EditorGUI.BeginChangeCheck();
+            fields.Draw(nodes[index].Data);
+            if (EditorGUI.EndChangeCheck()) config.IsDirty = true;
+        }
+    }
+
+    /// <summary>收起卡片并依据最新字段重新解释阶段；不自动保存用户配置。</summary>
+    private void EndStageNodeEdit()
+    {
+        inlineNodeId = "";
+        inlineRawFields = false;
+        stageFlowNeedsRefresh = true;
+        stageEditMessage = "编辑已应用到当前配置，点击顶部保存写回 XML。触发条件改变后，阶段归属按真实配置重新计算。";
+        Repaint();
     }
 
     /// <summary>从阶段卡片切换至原画布并沿用现有节点选择与编辑能力。</summary>

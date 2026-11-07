@@ -449,6 +449,9 @@ public static class ROSceneStageFlow
                 MSceneEditorNode other = config.Nodes[otherIndex];
                 if (!other.IsWave || stage.Waves.Contains(other)) continue;
                 if (ROSceneXml.Text(other.Data, "base_info/not_active_create") == "true") continue;
+                // 阶段内新增/复制波次沿用完全相同的非空前置条件时，与原波次并行出生。
+                if (ROSceneStageEditing.SamePreWaveGate(wave, other))
+                    AddWave(stage, other, "与Wave " + wave.WaveId + " 使用相同的非空前置波次和阈值，并行等待这些条件满足。");
                 if (gate.Length > 0)
                 {
                     if (ROSceneXml.Text(other.Data, "collection_info/collect_end_ai_event") == gate)

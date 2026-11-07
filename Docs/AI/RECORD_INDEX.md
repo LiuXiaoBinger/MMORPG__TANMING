@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7b2eaa4b6c075c59be357800f780dc12d0f158d62911330d5d4b7fbe75cce674`
+Source normalized SHA256: `d88391e60c8d76ffc6207d8cb1e1f87a8043cde9c1de5ee1c40d9efa985f3d0d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -54,11 +54,12 @@ Source normalized SHA256: `7b2eaa4b6c075c59be357800f780dc12d0f158d62911330d5d4b7
 | [CODE][FILES][HANDOFF][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Config-driven dungeon objectives and original RO sections | 296-307 |
 | [CODE][FILES][HANDOFF][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Readable creature waves and explicit trigger/map locations | 308-315 |
 | [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Player-oriented dungeon stage flow | 316-333 |
-| [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-351 |
+| [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-352 |
+| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Direct wave and mechanism editing in the stage view | 353-362 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a918f9ea853894c63e454fab9310b7ac4b0404cc1c8de8f947d247180cd0d28d`
+Source normalized SHA256: `27eb1d203d23059e6d3e59faff5a606dd02f54b8390797805e5237a2ffec21dd`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -104,7 +105,8 @@ Source normalized SHA256: `a918f9ea853894c63e454fab9310b7ac4b0404cc1c8de8f947d24
 | [VERIFY][副本][Luban][DUNGEONS-CONFIG-PROGRESS-20261106] Northern forest objectives and Moshenta regression | 316-326 |
 | [VERIFY][场景编辑器][UI][SCENE-EDITOR-LOCATE-20261107] Offline presentation and isolated commit validation | 327-334 |
 | [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Stage associations, readable conditions and isolated commit | 335-352 |
-| [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-369 |
+| [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-370 |
+| [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-380 |
 
 ## Docs/AI/DECISIONS.en.md
 

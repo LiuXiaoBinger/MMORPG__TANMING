@@ -358,3 +358,14 @@
 - 服务端与 366 份源码的客户端独立编译通过。客户端最初因只同步 Net/MMoRpgCommon.dll、Common/MMoRpgCommon.dll 仍为旧版而失败；两处既有副本同步后通过，164 个警告、0 错误。原有警告保留；日志：`_temp/gene-20261107/server-build.log`、`_temp/gene-20261107/client-build/build.log`。
 - 未执行 Unity Play 模式战斗、技能施加、网络同步或数值平衡验证。周期结果需要战斗模块消费，控制／属性查询不自动替换现有战斗逻辑。Codex 只检查本次双语增量，未由外部 Agent 执行。
 - 完整证据、用量边界及 Git 回执：`项目修改日志/2026-11-07-Gene基因表与运行模块.md`。
+
+## [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] 阶段内编辑、序列化与依赖检查
+
+- 最终 14 个编辑器源文件使用 267 个真实引用编译通过，错误和警告均为零。真实辅助实现测试通过 46 项核心断言、8 项定向补充断言和 9 项直接自身依赖断言（共 63 项）；10 项源码检查及差异空白检查通过。未重跑未改动的既有测试集。新增 meta 的 f29c04c639e448919e7d48ce1bc70d61 是有效、唯一的 32 字符 GUID。最终哈希与 delivery.json 及编译回执一致。
+- 测试使用真实编译的编辑器 DLL 和实际临时 Moshenta XML/Luban 表，覆盖 section2/Boss 出生前置条件、空阶段 sections3/6 中先目标后波次的顺序、保存/重载及未知字段保留、最后使用者清理、机制复制/删除时保留组/区域/共享节点、联盟清理、实体目标影响和改变出生来源后的归属。正式 XML/场景哈希未变。运行时代码确认先处理 target，再处理 wave/Event 和 ActivateWave；该源码追踪不是实际游玩验证。
+- 主 Agent 曾退回首次追加后不可见的编辑面板和含糊的模板菜单；目前面板在顶部打开，模板具备名称且可唯一识别。最初认为 Wave41 是唯一生产者的测试假设，已根据实际另有 SummonDemon 生产者的事实修正。随后审查复现真实 Wave34 -> Wave63 自身依赖问题：保存会移除自连并改变前置条件；round2 在修改 XML/dirty 状态前拒绝该操作，并通过 9 项限定范围断言。证据：test/results.json、extra-results.json、self-dependency-results.json、offline-editor/receipt.json、delivery.json、audit/review-receipt.json。
+- MCP 就绪/未保存状态检查确认现有窗口无未保存改动。仅请求脚本编译未导入新代码；强制刷新随后暴露 GM_Game 当前 6 条 GeneRuntime.cs CS1061 错误，涉及 Target/TriggerChance/Cooldown。生成的 Gene.cs 已具备这些字段，但实际客户端 Network.dll 仍为旧版本；Common DLL 与此无关。该次检查时，实机窗口仍缺少 ROSceneStageEditing，因此未宣称新 UI 或实机保存成功。用户要求等待，而不是向并行任务发送消息。证据：mcp/console-after-import.json、type-reflect-result.json、audit/gene-import-blocker.json。已准备的 MCP 测试夹具脚本尚未执行。
+- 待验收项目：实机新控件/编辑/保存/重新打开、物理按钮命中、地图定位、完整手动副本通关及发布。本任务未发送 OS 鼠标/键盘输入，未使用 Focus/Show，也未切换虚拟桌面。完整文件/Git 记录：项目修改日志/2026-11-07-阶段页波次与机制直接编辑.md。
+
+- 最终 Unity MCP 验收：新加载的模块为 b10b7dce-88c6-4989-b26b-22d9df12203e（helper=True）。真实 DuplicateStageWave 创建了临时 Wave64，带有 HuiHeBuDui 且 count3；SaveChanges/重载后两者均保留。真实 CreateStageRuleWave 在 phase3 创建 Wave65，使用 StageEditorWave_65，缺失连线为零。真实 DuplicateStageMechanism 复制了 phase3 的入口到二层机制；保存/重新打开后，目的地 X=77.25 和 phase3 归属均保留。通过正式辅助实现删除三个临时根后，恢复 336 个节点/254 条连线，原始节点数据深比较一致，无私有信号且缺失连线为零。最后通过 LoadConfig 恢复无未保存改动的正式 Entry 视图；受保护的 XML/场景哈希一致。证据：mcp/type-live-result.json、fixture-wave-result.json、fixture-empty-stage-result.json、fixture-mechanism-result.json、fixture-delete-restore-result.json 和 protected-final.json。
+- 真实窗口缓冲区图像 live-wave.png 和 live-mechanism.png 确认了固定新增按钮及顶部行内表单。最终 console-final.json 中有四条位于 MCP ExecuteCode.cs:275 的 RenderTexture 释放错误；该结果中没有 Gene 编译错误。不得报告 Console 无错误，也不得宣称已做物理鼠标/按钮测试。未保存正式场景/配置文件；完整玩法、地图操作、完整构建及线上使用仍未验证。
