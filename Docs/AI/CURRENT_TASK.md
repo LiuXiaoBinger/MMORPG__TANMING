@@ -306,3 +306,11 @@
 - 本次业务改动仅涉及 `LYF_MMO/Assets/GM_Game/Editor/ROSceneEditor/ROSceneEditorWindow.cs`、新增的 `ROSceneNodePresentation.cs` 及其 `.meta`。保留已有本地菜单迁移改动，并将其排除在本任务提交投影之外。XML、场景、游戏业务、协议及预览执行器均未改动。
 - Codex原生开发子Agent `scene_locate_developer` 和验收子Agent `scene_locate_acceptance` 完成开发及定向修正；主Agent审查实际改动，并编译独立提交投影。完整文件清单、失败、证据与Git回执见 `项目修改日志/2026-11-07-场景编辑器怪物识别与触发定位.md`。
 - Unity GUI布局、真实按钮、SceneView标记、场景保存取消及跨场景交互、模型预览仍需实机验证。窗口工具未能捕获或激活Unity；离线检查不代表已通过编辑器内验收。
+
+
+## [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] 面向玩家的副本阶段流程
+
+- 编辑器现在默认打开“副本流程”视图：进入副本 -> 配置的目标阶段/分支 -> 目标完成/出口。常驻阶段列表、真实后继箭头和当前阶段卡片展示玩家操作、目标、关联波次/怪物、机关、完成条件及下一步。“原始节点”保留原有编辑能力；地图/节点定位复用原实现。本视图用于查看配置，不表示实时通关进度。
+- `ROSceneStage`/`ROSceneStageFlow` 读取现有三张 Luban 表及原始 XML 事件/端口证据，不修改业务逻辑、配置表或场景。先完成 target137、再生成 HuiHeBuDui 波次的事件顺序，使这些波次归入 target138；已关联 altar41 -> wave42 -> wave62/group12 -> portal5，以及 bosses34/35/46 -> wave63/group34 -> wall23 移除/portal35。缺少证据的关联仍独立保留；副本与 XML 不匹配时不借用其他地图的怪物。没有硬编码 Moshenta 的阶段/ID 映射。
+- 代码/资源改动仅五个文件：`ROSceneEditorWindow.cs`、新增 `ROSceneStage.cs` 和 `ROSceneStageFlow.cs`，以及两个新增 meta，均位于 `LYF_MMO/Assets/GM_Game/Editor/ROSceneEditor/`。Codex 原生数据/UI 子 Agent 完成实现；主 Agent 针对默认完成文案退回返修一次，核验交付证据，并编译独立提交投影。既有未提交的菜单位置改动已保留，并排除在本次提交之外。
+- 完整文件清单、失败/返修经过及 Git 回执见 `项目修改日志/2026-11-07-副本阶段流程视图.md`；事件先后归属难点见 `项目分析/项目难点.md` 的本任务编号条目。Unity 实机导入、布局、按钮、地图定位以及完整副本通关尚未验证；本地 Unity MCP 端点连接被拒绝。

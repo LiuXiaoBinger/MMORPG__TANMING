@@ -322,3 +322,11 @@
 - Wave 44的实体编号为5506，共5只怪物、5个刷点。楼梯触发器为区域1玩家交互 → 角色不在战斗中（`valid_state=12`、`opposite=false`）→ 场景4060目的地 `(75.3,65.9,106)`。WaveEvent来源为Wave 62 → 组12、Wave 63 → 组34；AI时机数据不含事件名称字段。
 - 首次测试预期错误地遗漏了第四个战斗条件节点；保留两次失败/诊断执行，并按真实XML修正测试夹具。定向审查修正了多行高度、触发组及条件解释、NPC预览能力表述、已知战斗状态表述、事件来源说明以及Play模式同地图定位。最终XML SHA256保持为 `97152c11ec44d856c5b6defca3db6156ab961a6f5fe9ac3f3c1604faf0405b3f`。
 - 证据位于 `_temp/scene-editor-locate-20261107/`：`delivery.md`、`offline-editor/receipt.json`、`helper-test/results.json`、`directed-review.json`、`head-projection/receipt.json`。尚未验证Unity实机导入、UI、场景导航、预览及发布行为。完整范围和Git回执见 `项目修改日志/2026-11-07-场景编辑器怪物识别与触发定位.md`。
+
+
+## [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] 阶段关联、可读条件与独立提交
+
+- 最终 13 个编辑器源文件使用 267 个真实 Unity/项目程序集引用编译通过，错误和警告均为零。实际编译后的解析器测试通过 27 项关键行为/可读性检查，以及 924 项结构检查（逐一核验 462 条副本行的唯一键和有效后继）；这是离线数据检查，不是端到端业务通关。主 Agent 独立编译了排除既有菜单改动的提交投影；新增 meta GUID 无重复，差异空白检查通过。
+- 证据覆盖 Moshenta 七个阶段、137->138 生成时序、altar41/42/62 与 portal5、Boss34/35/46/63 与 wall23/portal35、Northern Forest 实际 XML 事件结果顺序与同时存在的 targets246/247、真实分支 row2809、XML 不匹配处理及源文件只读行为。两份 XML 输入均未改动。面向用户的文案返修保留了每个阶段的目标/后继/波次/机关关联及顺序；技术事件、源路径和黑板证据保留在可展开的 Notes 中。
+- 临时测试程序的一处括号错误在检查通过前已修正；正式解析器编译始终通过。第一版 UI 在每次布局时重建；隔离运行环境中测得全图 Build 平均约 12ms，因此最终 UI 仅在相关内容变化后刷新。此结果不是 Unity 内帧耗时测量。主 Agent 驳回了默认 `dungeonfinishtarget` 文案；数据实现仅经过一次正式返修，目前展示实际进入区域或所需波次操作。
+- 证据位于 `_temp/scene-editor-stage-flow-20261107/`：`data-test/results.json`、`snapshot.json`、`data-manifest.json`、`ui-source-check.json`、`data-compile/receipt.json`、`head-projection/receipt.json`。1100x650 布局几何已按源码核验；Unity 实机视觉/布局/点击/导入/场景定位、完整手动通关及发布尚未验证。完整文件与 Git 记录见 `项目修改日志/2026-11-07-副本阶段流程视图.md`。
