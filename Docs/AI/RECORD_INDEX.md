@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7905a55212db314550ae289360e4ac1a26490cfdfdd355e96848158f48156f0c`
+Source normalized SHA256: `c7312ebf364ea52e341fb6300e39816734403cbc8b9a1ee4ce8d74727ed71b11`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -56,11 +56,12 @@ Source normalized SHA256: `7905a55212db314550ae289360e4ac1a26490cfdfdd355e968481
 | [CODE][FILES][HANDOFF][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Player-oriented dungeon stage flow | 316-333 |
 | [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-352 |
 | [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Direct wave and mechanism editing in the stage view | 353-364 |
-| [CODE][FILES][装备][基因][EQUIP-GENE-20261107] Equipment genes and special skills | 365-372 |
+| [CODE][FILES][装备][基因][EQUIP-GENE-20261107] Equipment genes and special skills | 365-373 |
+| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-BINDINGS-20261107] Explicit stage membership in scene configuration | 374-379 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `240ae3fb89f4ba534a8faa7cd4b5e2e93a7de5bcf69fc2622b6a1cde0a11c35b`
+Source normalized SHA256: `2de669c99be436c0c79b5e51509fc6997dca5a643ff4e3517234744436c9e1bd`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -108,7 +109,8 @@ Source normalized SHA256: `240ae3fb89f4ba534a8faa7cd4b5e2e93a7de5bcf69fc2622b6a1
 | [VERIFY][场景编辑器][副本][SCENE-EDITOR-STAGE-FLOW-20261107] Stage associations, readable conditions and isolated commit | 335-352 |
 | [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-370 |
 | [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-382 |
-| [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-389 |
+| [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-390 |
+| [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-397 |
 
 ## Docs/AI/DECISIONS.en.md
 
