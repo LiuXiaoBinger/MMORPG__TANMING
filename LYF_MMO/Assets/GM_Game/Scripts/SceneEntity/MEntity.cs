@@ -3,7 +3,7 @@ using UnityEngine;
 using UVEC3 = UnityEngine.Vector3;
 
 /// <summary>
-/// 把场景模型、移动、Buff、技能和动作状态机连接成一个可更新的实体。
+/// 把场景模型、移动、Gene、技能和动作状态机连接成一个可更新的实体。
 /// 普通组件由 Components 管理，专用组件通过快捷属性单独管理，模型内部持有动画器。
 /// 本层安排更新与回收顺序，各具体实体再补充自己的数据。
 /// </summary>
@@ -173,8 +173,8 @@ public abstract class MEntity : MSceneObject
     /// <summary>技能计时器与输入移动读取的同一实体位移实例；实体未装配或已销毁时为空。</summary>
     public MDisplacementComponent DisplacementComp { get { return _displacementComp; } }
 
-    /// <summary>Buff 组件（专用快捷组件，由 MComponentMgr 注入）</summary>
-    public MBuffComponent Buff { get; private set; }
+    /// <summary>Gene 组件（专用快捷组件，由 MComponentMgr 注入）</summary>
+    public MGeneComponent Gene { get; private set; }
 
     /// <summary>技能组件（专用快捷组件，由 MComponentMgr 注入）</summary>
     public MSkillComponent Skill { get; private set; }
@@ -280,7 +280,7 @@ public abstract class MEntity : MSceneObject
 
         // 程序差量先求值，专用 Move 再统一提交碰撞；保留 Move 先于技能离槽处理的原顺序。
         Components.UpdateBeforeMovement(deltaMilliseconds);
-        // 移动、Buff、技能和状态机仍在其余普通表现组件之前推进。
+        // 移动、Gene、技能和状态机仍在其余普通表现组件之前推进。
         MComponentMgr.Instance.UpdateSpecialComponents(this, deltaMilliseconds);
         base.Update(deltaMilliseconds);
         Move();
@@ -289,7 +289,7 @@ public abstract class MEntity : MSceneObject
             return;
         }
 
-        // 专用组件优先更新（移动、Buff、技能、状态机逻辑）
+        // 专用组件优先更新（移动、Gene、技能、状态机逻辑）
         MComponentMgr.Instance.UpdateSpecialComponents(this, deltaMilliseconds);
         base.Update(deltaMilliseconds);
 
@@ -336,7 +336,7 @@ public abstract class MEntity : MSceneObject
             return;
         }
 
-        // 专用组件（Move/Buff/Skill/Machine）优先创建和初始化
+        // 专用组件（Move/Gene/Skill/Machine）优先创建和初始化
         MComponentMgr.Instance.CreateSpecialComponents(this);
         MComponentMgr.Instance.InitializeSpecialComponents(this);
         base.Initialize();
@@ -494,12 +494,12 @@ public abstract class MEntity : MSceneObject
     }
 
     /// <summary>
-    /// 由 MComponentMgr 注入 Buff 组件
+    /// 由 MComponentMgr 注入 Gene 组件
     /// </summary>
-    /// <param name="component">Buff 组件实例</param>
-    internal void SetBuffComponent(MBuffComponent component)
+    /// <param name="component">Gene 组件实例</param>
+    internal void SetGeneComponent(MGeneComponent component)
     {
-        Buff = component;
+        Gene = component;
     }
 
     /// <summary>
@@ -567,7 +567,7 @@ public abstract class MEntity : MSceneObject
         IsMixToDefaultAction = true;
         MoveComp = null;
         _displacementComp = null;
-        Buff = null;
+        Gene = null;
         Skill = null;
         Machine = null;
     }

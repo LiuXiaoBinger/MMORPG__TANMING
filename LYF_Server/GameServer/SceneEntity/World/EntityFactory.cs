@@ -201,7 +201,7 @@ namespace GameServer.SceneEntity
             Add(entity, EntityComponentType.Entity);
             Add(entity, EntityComponentType.Scene);
             Add(entity, EntityComponentType.Attributes);
-            Add(entity, EntityComponentType.Buff);
+            Add(entity, EntityComponentType.Gene);
             Add(entity, EntityComponentType.FightGroup);
             Add(entity, EntityComponentType.Move);
             Add(entity, EntityComponentType.BeHit);
@@ -237,7 +237,7 @@ namespace GameServer.SceneEntity
                 case EntityComponentType.Entity: return new EntityComponent(entity);
                 case EntityComponentType.Scene: return new SceneComponent(entity);
                 case EntityComponentType.Attributes: return new AttributesComponent(entity);
-                case EntityComponentType.Buff: return new BuffComponent(entity);
+                case EntityComponentType.Gene: return new GeneComponent(entity);
                 case EntityComponentType.FightGroup: return new FightGroupComponent(entity);
                 case EntityComponentType.Move: return new MoveComponent(entity);
                 case EntityComponentType.BeHit: return new BeHitComponent(entity);

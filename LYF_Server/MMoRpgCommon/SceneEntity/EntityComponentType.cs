@@ -12,7 +12,7 @@ namespace MMoRpgCommon.SceneEntity
         /// <summary>战斗属性组件的稳定查找编号。</summary>
         Attributes = 3,
         /// <summary>增益与减益效果组件的稳定查找编号。</summary>
-        Buff = 4,
+        Gene = 4,
         /// <summary>阵营关系组件的稳定查找编号。</summary>
         FightGroup = 5,
         /// <summary>移动组件的稳定查找编号。</summary>

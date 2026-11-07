@@ -1,4 +1,4 @@
-﻿
+
 
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ public class LubanMgr:Singleton<LubanMgr>
     // 背包类型对应的容量及扩容配置。
     private Dictionary<int, KnapsackInfo> _knapsackInfos;
 
-    // 装备词条配置索引，键为词条配置ID。
+    // 属性、周期和状态基因配置索引，键为基因配置编号。
     private Dictionary<int, Gene> _geneInfos;
 
     // NPC配置ID到已解析坐标、商店等信息的索引。
@@ -536,13 +536,13 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 基因相关
-    /// <summary>返回装备词条的原始配置索引。</summary>
+    /// <summary>返回基因配置索引，供每个实体创建独立的运行容器。</summary>
     public Dictionary<int, Gene> GetGeneInfos()
     {
         return _geneInfos;
     }
 
-    /// <summary>按词条配置ID查询，未找到返回 null。</summary>
+    /// <summary>按基因配置编号查询，未找到返回 null。</summary>
     public Gene GetGeneInfoById(int id)
     {
         if (_geneInfos != null && _geneInfos.TryGetValue(id, out Gene info))

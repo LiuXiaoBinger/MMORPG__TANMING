@@ -26,7 +26,13 @@ public sealed partial class Gene : Luban.BeanBase
         AttachGeneId3 = _buf.ReadInt();
         AttachGeneId4 = _buf.ReadInt();
         IsStack = _buf.ReadInt();
-        BuffTime = _buf.ReadInt();
+        GeneTime = _buf.ReadInt();
+        EffectType = _buf.ReadInt();
+        AttributeId = _buf.ReadInt();
+        Value = _buf.ReadFloat();
+        Interval = _buf.ReadInt();
+        MaxStack = _buf.ReadInt();
+        State = _buf.ReadInt();
     }
 
     public static Gene DeserializeGene(ByteBuf _buf)
@@ -36,7 +42,7 @@ public sealed partial class Gene : Luban.BeanBase
 
     public readonly int Id;
     /// <summary>
-    /// 属性效果说明
+    /// 基因效果说明
     /// </summary>
     public readonly string EffectDesc;
     /// <summary>
@@ -44,37 +50,61 @@ public sealed partial class Gene : Luban.BeanBase
     /// </summary>
     public readonly int Scenario;
     /// <summary>
-    /// 0是代表数值，1代表百分比
+    /// 0固定值；1相对基础值百分比，10表示10%
     /// </summary>
     public readonly int ValueType;
     /// <summary>
-    /// 基因组合0
+    /// 组合叶子1，0为空；寿命及层数由父基因控制
     /// </summary>
     public readonly int AttachGeneId0;
     /// <summary>
-    /// 基因组合2
+    /// 组合叶子2，0为空；寿命及层数由父基因控制
     /// </summary>
     public readonly int AttachGeneId1;
     /// <summary>
-    /// 基因组合3
+    /// 组合叶子3，0为空；寿命及层数由父基因控制
     /// </summary>
     public readonly int AttachGeneId2;
     /// <summary>
-    /// 基因组合4
+    /// 组合叶子4，0为空；寿命及层数由父基因控制
     /// </summary>
     public readonly int AttachGeneId3;
     /// <summary>
-    /// 基因组合5
+    /// 组合叶子5，0为空；寿命及层数由父基因控制
     /// </summary>
     public readonly int AttachGeneId4;
     /// <summary>
-    /// 是否可以叠加,0可以叠加，1不可以叠加
+    /// 同来源叠加：0允许，1只刷新；不同来源独立
     /// </summary>
     public readonly int IsStack;
     /// <summary>
-    /// 单位秒，0为常驻buff
+    /// 持续秒数，0为常驻基因
     /// </summary>
-    public readonly int BuffTime;
+    public readonly int GeneTime;
+    /// <summary>
+    /// 0属性；1持续伤害；2持续治疗；3持续回蓝；4状态；5组合
+    /// </summary>
+    public readonly int EffectType;
+    /// <summary>
+    /// 属性编号见 GeneAttributeType；非属性填0
+    /// </summary>
+    public readonly int AttributeId;
+    /// <summary>
+    /// 每层初始值；百分数10表示10%；支持调用方覆盖
+    /// </summary>
+    public readonly float Value;
+    /// <summary>
+    /// 周期毫秒数；周期效果必须大于0
+    /// </summary>
+    public readonly int Interval;
+    /// <summary>
+    /// 同来源最大层数，0为不限；不叠加时填1
+    /// </summary>
+    public readonly int MaxStack;
+    /// <summary>
+    /// 状态位：1眩晕，2定身，4沉默，8霸体；可相加
+    /// </summary>
+    public readonly int State;
    
     public const int __ID__ = 2215733;
     public override int GetTypeId() => __ID__;
@@ -96,7 +126,13 @@ public sealed partial class Gene : Luban.BeanBase
         + "AttachGeneId3:" + AttachGeneId3 + ","
         + "AttachGeneId4:" + AttachGeneId4 + ","
         + "IsStack:" + IsStack + ","
-        + "buffTime:" + BuffTime + ","
+        + "GeneTime:" + GeneTime + ","
+        + "EffectType:" + EffectType + ","
+        + "AttributeId:" + AttributeId + ","
+        + "Value:" + Value + ","
+        + "Interval:" + Interval + ","
+        + "MaxStack:" + MaxStack + ","
+        + "State:" + State + ","
         + "}";
     }
 }

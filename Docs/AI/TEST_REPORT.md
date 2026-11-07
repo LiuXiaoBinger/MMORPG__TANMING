@@ -330,3 +330,11 @@
 - 证据覆盖 Moshenta 七个阶段、137->138 生成时序、altar41/42/62 与 portal5、Boss34/35/46/63 与 wall23/portal35、Northern Forest 实际 XML 事件结果顺序与同时存在的 targets246/247、真实分支 row2809、XML 不匹配处理及源文件只读行为。两份 XML 输入均未改动。面向用户的文案返修保留了每个阶段的目标/后继/波次/机关关联及顺序；技术事件、源路径和黑板证据保留在可展开的 Notes 中。
 - 临时测试程序的一处括号错误在检查通过前已修正；正式解析器编译始终通过。第一版 UI 在每次布局时重建；隔离运行环境中测得全图 Build 平均约 12ms，因此最终 UI 仅在相关内容变化后刷新。此结果不是 Unity 内帧耗时测量。主 Agent 驳回了默认 `dungeonfinishtarget` 文案；数据实现仅经过一次正式返修，目前展示实际进入区域或所需波次操作。
 - 证据位于 `_temp/scene-editor-stage-flow-20261107/`：`data-test/results.json`、`snapshot.json`、`data-manifest.json`、`ui-source-check.json`、`data-compile/receipt.json`、`head-projection/receipt.json`。1100x650 布局几何已按源码核验；Unity 实机视觉/布局/点击/导入/场景定位、完整手动通关及发布尚未验证。完整文件与 Git 记录见 `项目修改日志/2026-11-07-副本阶段流程视图.md`。
+
+## [VERIFY][基因][GENE-RUNTIME-20261107] 基因运行模块验收
+
+- 真实 Luban 生成通过；独立读取 XLSX 确认共 69 行、原 1～23 条所有数据单元格保留、三个页签名称及其他页签数据保留；客户端组件改名后 Unity GUID 不变。证据：`_temp/gene-20261107/delivery-checks.json`、`diff-check.log`。
+- `Tests/Gene/run.ps1` 对真实表与已编译服务端通过 194 项断言，覆盖来源、叠层上限、刷新、周期、大帧到期、组合、状态、场景切换及真实服务端实体初始化／更新／销毁。证据：`_temp/gene-20261107/runtime-tests.log`、`_temp/gene-runtime-tests/build.log`。
+- 服务端与 366 份源码的客户端独立编译通过。客户端最初因只同步 Net/MMoRpgCommon.dll、Common/MMoRpgCommon.dll 仍为旧版而失败；两处既有副本同步后通过，164 个警告、0 错误。原有警告保留；日志：`_temp/gene-20261107/server-build.log`、`_temp/gene-20261107/client-build/build.log`。
+- 未执行 Unity Play 模式战斗、技能施加、网络同步或数值平衡验证。周期结果需要战斗模块消费，控制／属性查询不自动替换现有战斗逻辑。Codex 只检查本次双语增量，未由外部 Agent 执行。
+- 完整证据、用量边界及 Git 回执：`项目修改日志/2026-11-07-Gene基因表与运行模块.md`。

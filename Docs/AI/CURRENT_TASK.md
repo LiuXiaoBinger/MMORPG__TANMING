@@ -314,3 +314,12 @@
 - `ROSceneStage`/`ROSceneStageFlow` 读取现有三张 Luban 表及原始 XML 事件/端口证据，不修改业务逻辑、配置表或场景。先完成 target137、再生成 HuiHeBuDui 波次的事件顺序，使这些波次归入 target138；已关联 altar41 -> wave42 -> wave62/group12 -> portal5，以及 bosses34/35/46 -> wave63/group34 -> wall23 移除/portal35。缺少证据的关联仍独立保留；副本与 XML 不匹配时不借用其他地图的怪物。没有硬编码 Moshenta 的阶段/ID 映射。
 - 代码/资源改动仅五个文件：`ROSceneEditorWindow.cs`、新增 `ROSceneStage.cs` 和 `ROSceneStageFlow.cs`，以及两个新增 meta，均位于 `LYF_MMO/Assets/GM_Game/Editor/ROSceneEditor/`。Codex 原生数据/UI 子 Agent 完成实现；主 Agent 针对默认完成文案退回返修一次，核验交付证据，并编译独立提交投影。既有未提交的菜单位置改动已保留，并排除在本次提交之外。
 - 完整文件清单、失败/返修经过及 Git 回执见 `项目修改日志/2026-11-07-副本阶段流程视图.md`；事件先后归属难点见 `项目分析/项目难点.md` 的本任务编号条目。Unity 实机导入、布局、按钮、地图定位以及完整副本通关尚未验证；本地 Unity MCP 端点连接被拒绝。
+
+## [CODE][基因][GENE-RUNTIME-20261107] Gene 基因表与共享运行模块
+
+- 用户确认范围为基因表和通用运行模块，要求 Codex 自行开发，不使用外部 Agent；未向外部下发业务任务。用户于 2026-11-07 批准本次记录，Codex 按本任务自行执行要求完成双语增量检查。
+- `#Gene.xlsx` 共 69 条：原 1～23 号加 46 条新增。`GeneTime` 替换 `buffTime`，新增 EffectType、AttributeId、Value、Interval、MaxStack、State。数值为项目初始策划值，不冒称参考游戏精确值。
+- `GeneRuntime` 实现按来源叠加／刷新、到期、属性计算、周期结果、控制查询、场景与五槽叶子组合。客户端 `MGeneComponent`、服务端 `GeneComponent` 替换占位组件，保留组件编号 4 和客户端 Unity GUID；服务端链接客户端相同七份运行源码。同步客户端两处既有 Common DLL 及 Network.dll。
+- 具体技能施加、资源结算、网络同步、Unity 场景战斗未接入。属性 23 基础气尚无角色协议字段，不等同于法力或轻功气力。
+- AGENTS 已加入表格占用授权：命令结束实际占用目标表格的程序后重试，不通过 GUI 手动关闭或再次询问。
+- 使用说明：`项目分析/Gene基因运行模块与配置说明-2026-11-07.md`。完整清单、证据及 Git 回执：`项目修改日志/2026-11-07-Gene基因表与运行模块.md`。

@@ -100,7 +100,29 @@
         <Compile Include="SceneEntity\Base\EntityComponent.cs" />
         <Compile Include="SceneEntity\Component\SceneComponent.cs" />
         <Compile Include="SceneEntity\Component\AttributesComponent.cs" />
-        <Compile Include="SceneEntity\Component\BuffComponent.cs" />
+        <!-- 基因运行算法直接链接客户端纯 C# 源码，保持两端计时、叠加与属性计算一致。 -->
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneAttributeType.cs">
+            <Link>SceneEntity\Gene\GeneAttributeType.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneEffect.cs">
+            <Link>SceneEntity\Gene\GeneEffect.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneEffectType.cs">
+            <Link>SceneEntity\Gene\GeneEffectType.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneInstance.cs">
+            <Link>SceneEntity\Gene\GeneInstance.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GenePulse.cs">
+            <Link>SceneEntity\Gene\GenePulse.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneRuntime.cs">
+            <Link>SceneEntity\Gene\GeneRuntime.cs</Link>
+        </Compile>
+        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Gene\GeneState.cs">
+            <Link>SceneEntity\Gene\GeneState.cs</Link>
+        </Compile>
+        <Compile Include="SceneEntity\Component\GeneComponent.cs" />
         <Compile Include="SceneEntity\Component\FightGroupComponent.cs" />
         <Compile Include="SceneEntity\Component\MoveComponent.cs" />
         <Compile Include="SceneEntity\Component\BeHitComponent.cs" />

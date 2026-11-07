@@ -4,7 +4,7 @@ using MMoRpgCommon.SceneEntity;
 
 /// <summary>
 /// 统一借出和归还场景实体组件，按实际 C# 类型分池。
-/// 普通组件放入实体容器；移动、Buff 和状态机由实体单独持有。
+/// 普通组件放入实体容器；移动、Gene 和状态机由实体单独持有。
 /// 技能组件同时是动作状态，交由状态机回收到动作状态池，避免重复回收。
 /// </summary>
 public sealed class MComponentMgr
@@ -85,7 +85,7 @@ public sealed class MComponentMgr
             return;
         }
         UpdateComponent(entity.MoveComp, deltaMilliseconds);
-        UpdateComponent(entity.Buff, deltaMilliseconds);
+        UpdateComponent(entity.Gene, deltaMilliseconds);
         UpdateComponent(entity.Skill, deltaMilliseconds);
         UpdateComponent(entity.Machine, deltaMilliseconds);
     }
@@ -166,14 +166,14 @@ public sealed class MComponentMgr
                 entity.SetMoveComponent(move);
             }
         }
-        if (entity.Buff == null)
+        if (entity.Gene == null)
         {
-            // 实体专用的 Buff 记录组件。
-            MBuffComponent buff = TakeComponent(entity, typeof(MBuffComponent)) as MBuffComponent;
-            if (buff != null)
+            // 实体专用的 Gene 记录组件。
+            MGeneComponent gene = TakeComponent(entity, typeof(MGeneComponent)) as MGeneComponent;
+            if (gene != null)
             {
-                buff.RebindOwner(entity);
-                entity.SetBuffComponent(buff);
+                gene.RebindOwner(entity);
+                entity.SetGeneComponent(gene);
             }
         }
         if (entity.Skill == null)
@@ -216,18 +216,18 @@ public sealed class MComponentMgr
         }
         // 先保存原引用，因为状态机与组件解绑会清空实体上的快捷属性。
         MMoveComponent move = entity.MoveComp;
-        // 随后单独归还的 Buff 组件。
-        MBuffComponent buff = entity.Buff;
+        // 随后单独归还的 Gene 组件。
+        MGeneComponent gene = entity.Gene;
         // 先归还状态机，由它统一归还 Skill 等动作状态。
         MStateMachine machine = entity.Machine;
         // 状态机拥有 Skill 动作状态的唯一回收权，Skill 不得再进入普通组件池。
         ReleaseComponent(machine, true);
         entity.SetMoveComponent(null);
-        entity.SetBuffComponent(null);
+        entity.SetGeneComponent(null);
         entity.SetSkillComponent(null);
         entity.SetMachineComponent(null);
         ReleaseComponent(move, true);
-        ReleaseComponent(buff, true);
+        ReleaseComponent(gene, true);
     }
 
     /// <summary>组件从宿主卸载后进入类型队列；不可池化的 Marker 等组件直接丢弃。</summary>
@@ -299,7 +299,7 @@ public sealed class MComponentMgr
     #endregion
 
     #region 核心逻辑
-    /// <summary>依次初始化实体四个专用组件：Move、Buff、Skill、Machine。</summary>
+    /// <summary>依次初始化实体四个专用组件：Move、Gene、Skill、Machine。</summary>
     /// <param name="entity">宿主实体，为空时直接返回。</param>
     public void InitializeSpecialComponents(MEntity entity)
     {
@@ -308,7 +308,7 @@ public sealed class MComponentMgr
             return;
         }
         InitializeComponent(entity.MoveComp);
-        InitializeComponent(entity.Buff);
+        InitializeComponent(entity.Gene);
         InitializeComponent(entity.Skill);
         InitializeComponent(entity.Machine);
     }
