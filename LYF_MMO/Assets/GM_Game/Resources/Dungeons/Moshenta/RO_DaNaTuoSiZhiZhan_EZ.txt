@@ -19447,9 +19447,16 @@
       </EditorState>
     </EditorStates>
   </canvas>
+  <!-- 阶段归属配置随当前场景 XML 保存，位置为 Assets/GM_Game/Resources/Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ.txt；不会写入三张 Luban 任务表。 -->
+  <!-- 本块只配置编辑器中各阶段展示哪些波次和机制，不改变真实出生事件、触发条件或执行时刻，也不增加运行时阶段门禁。 -->
+  <!-- 已有配置以这里为准；空的 stage 表示明确没有关联，不会再次自动推导补齐。旧文件仅在首次初始化时生成初始关联。 -->
+  <!-- 一个节点可关联多个阶段；“移出本阶段”只删当前引用，“删除节点”才删除原节点并同步清理所有阶段引用。 -->
   <editor_stage_bindings>
+    <!-- dungeon 的 id 对应 DungeonsTable.DungeonsID；4060 是当前副本编号，不是场景编号或目标编号。 -->
     <dungeon id="4060">
+      <!-- entry 表示角色进入副本时的归属页；这些关联本身不构成出生条件，实际生成仍看各波次原配置。 -->
       <stage key="entry">
+        <!-- wave 的 id 是原波次 base_info/id，不是怪物表 EntityId；一个波次可以包含多个刷点和多个实体。 -->
         <wave id="12" />
         <wave id="8" />
         <wave id="2" />
@@ -19472,12 +19479,17 @@
         <wave id="36" />
         <wave id="39" />
         <wave id="47" />
+        <!-- mechanism 的 node_id 对应原图 canvas/Nodes/Node 的稳定 ID，不是区域 ID，也不是可能重复为 0 的触发器业务 id。 -->
         <mechanism node_id="-7804316122156629948" />
         <mechanism node_id="3867400926566285485" />
       </stage>
+      <!-- targets: 后是 DungeonTargetTable.ID 的目标集合，不是阶段序号；阶段先后仍由 DungeonsTable.DungeonTarget 配置。 -->
+      <!-- 同阶段多个目标 ID 按数值排序并用逗号组成稳定键；分支模式使用 group-组ID，归属不会因显示顺序调整而串到其他目标。 -->
+      <!-- 目标 137：和前线部队回合。 -->
       <stage key="targets:137">
         <mechanism node_id="-7804316122156629867" />
       </stage>
+      <!-- 目标 138：深入魔神塔，支援突击部队。 -->
       <stage key="targets:138">
         <wave id="22" />
         <wave id="24" />
@@ -19496,14 +19508,17 @@
         <wave id="28" />
         <wave id="27" />
         <wave id="30" />
+        <!-- 例如波次 18 的原 monster_info/entity_id 为 5515；这里写 18 是关联该波次，不是重新配置怪物 5515 的出生时机。 -->
         <wave id="18" />
         <mechanism node_id="-7804316122156629866" />
         <mechanism node_id="-7804316122156629867" />
       </stage>
+      <!-- 目标 139：寻找通往二楼的路。 -->
       <stage key="targets:139">
         <mechanism node_id="-7804316122156629860" />
         <mechanism node_id="3867400926566285614" />
       </stage>
+      <!-- 目标 140：前往二楼侧厅。 -->
       <stage key="targets:140">
         <wave id="33" />
         <wave id="40" />
@@ -19515,6 +19530,7 @@
         <mechanism node_id="3867400926566285614" />
         <mechanism node_id="-7804316122156629860" />
       </stage>
+      <!-- 目标 141：阻止邪恶的献祭仪式。 -->
       <stage key="targets:141">
         <wave id="42" />
         <wave id="41" />
@@ -19526,11 +19542,13 @@
         <mechanism node_id="3867400926566285614" />
         <mechanism node_id="-7804316122156629897" />
       </stage>
+      <!-- 目标 142：去塔顶支援达纳托斯。 -->
       <stage key="targets:142">
         <mechanism node_id="-7804316122156629858" />
         <mechanism node_id="3867400926566285614" />
         <mechanism node_id="-7804316122156629897" />
       </stage>
+      <!-- 目标 143：消灭达纳托斯的诅咒人格。 -->
       <stage key="targets:143">
         <wave id="34" />
         <wave id="35" />
@@ -19548,6 +19566,7 @@
         <mechanism node_id="-7804316122156629850" />
         <mechanism node_id="9076762619536213064" />
       </stage>
+      <!-- finish 表示目标完成后的离开归属页；关联结束机制不代表提前执行，实际触发仍由原机制条件决定。 -->
       <stage key="finish">
         <mechanism node_id="9076762619536213064" />
       </stage>
