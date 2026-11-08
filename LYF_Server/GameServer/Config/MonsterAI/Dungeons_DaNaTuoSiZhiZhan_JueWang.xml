@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_JueWang>
+  <EntryTask T_Target="" F_TargetDistance="0" S_CurrentState="" V_TargetDest="0:0:0" I_DespairState="0" I_DespairSkillState="0" LL_RandTargetList="" L_RandTargetUuid="0" B_InitSelfState="0" T_RandTarget="" V_MoveDest="83.04:80.32:615.74">
+    <Selector>
+      <Sequence>
+        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="InitSelfState" Shared_bool1mValue="0" />
+        <AISetSceneVar Shared_keyName="" Shared_keymValue="DespairState" var_type="kTypeInt" Shared_valueName="" Shared_valuemValue="0" />
+        <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DespairSkillState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="InitSelfState" Shared_store_resultmValue="0" />
+      </Sequence>
+      <Sequence>
+        <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="DespairState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DespairState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AIIntComparison Shared_int1Name="DespairState" Shared_int1mValue="0" cmp_type="kCmpTypeGreaterTo" Shared_int2Name="" Shared_int2mValue="0" />
+        <Selector>
+          <Sequence>
+            <Selector>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="DespairState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+                <AIShowTVNotice Shared_send_targetName="" Shared_send_targetmValue="" Shared_annouce_idName="" Shared_annouce_idmValue="2304" Shared_outlook_idName="" Shared_outlook_idmValue="0" Shared_list_rolesName="" Shared_list_rolesmValue="" who_can_see="kSendTargetType_RolesInView" Shared_contentName="" Shared_contentmValue="" />
+                <ReturnSuccess>
+                  <AIActionMove Shared_move_destName="MoveDest" Shared_move_destmValue="83.04:80.32:615.74" />
+                </ReturnSuccess>
+              </Sequence>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="DespairState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+                <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545305" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+              </Sequence>
+            </Selector>
+            <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DespairState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIIntComparison Shared_int1Name="DespairState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="3" />
+            <ReturnSuccess>
+              <Parallel>
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="36052" Shared_operator_idName="" Shared_operator_idmValue="1" Shared_is_selfName="" Shared_is_selfmValue="1" Shared_hoster_uuidName="" Shared_hoster_uuidmValue="0" />
+                <AIActivePassive Shared_targetlistName="" Shared_targetlistmValue="" Shared_is_passiveName="" Shared_is_passivemValue="0" Shared_is_selfName="" Shared_is_selfmValue="1" Shared_targetName="" Shared_targetmValue="" />
+              </Parallel>
+            </ReturnSuccess>
+            <AIFindTargetByHatred Shared_store_targetName="Target" Shared_store_targetmValue="" Shared_store_target_distanceName="TargetDistance" Shared_store_target_distancemValue="0" />
+            <Selector>
+              <Sequence>
+                <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="DespairSkillState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DespairSkillState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+                <Selector>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="DespairSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+                    <Sequence>
+                      <AINewGroupFindByEntityType Shared_distance_shortName="" Shared_distance_shortmValue="0" Shared_store_entitysName="RandTargetList" Shared_store_entitysmValue="" Shared_distance_longName="" Shared_distance_longmValue="20" entity_type="TYPE_ROLE" Shared_angleName="" Shared_anglemValue="360" />
+                      <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="RandTargetUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="RandTargetList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                      <AINewGroupUUIDtoTransform Shared_uuidName="RandTargetUuid" Shared_uuidmValue="0" Shared_store_transformName="RandTarget" Shared_store_transformmValue="" />
+                    </Sequence>
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545303" Shared_targetName="RandTarget" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="DespairSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545304" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="DespairSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="3" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545302" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="DespairSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="4" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545306" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                </Selector>
+                <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DespairSkillState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+              </Sequence>
+              <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545301" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+              <BehaviorTreeReference externalBehaviors="0" collapsed="0" variables="" />
+            </Selector>
+          </Sequence>
+        </Selector>
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects>
+    <pointer fileName="Common_Monster_CloseToEnemy" />
+  </UnityObjects>
+</Dungeons_DaNaTuoSiZhiZhan_JueWang>

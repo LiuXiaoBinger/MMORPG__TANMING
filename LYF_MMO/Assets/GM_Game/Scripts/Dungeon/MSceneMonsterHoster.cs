@@ -9,34 +9,46 @@ public class MSceneMonsterHoster : MonsterCtrl
     public int WaveId;
     /// <summary>本模型最近收到的权威动作，未启用 AI 的波次为空。</summary>
     private MSceneMonsterMotion motion;
-    /// <summary>相邻两刀使用同名 Skill 状态，每个新挥刀通知只重新起手一次。</summary>
-    private bool attackPending;
-    /// <summary>这只兽人正在用服务端攻速播放普通攻击时为真。</summary>
-    private bool playingAttack;
-    /// <summary>进入攻击前的动画倍率，受击、死亡及返回站立时恢复。</summary>
-    private float previousSpeed;
+    /// <summary>按真实SkillId执行的原技能表现，生命周期跟随当前怪物模型。</summary>
+    private MSceneMonsterSkillPlayer skillPlayer;
+    /// <summary>普通怪尸体的原可见度变化，实体删除仍等待服务器离场。</summary>
+    private MSceneMonsterCorpsePlayer corpsePlayer;
 
     /// <summary>接管一个新路径段或攻击，保留收包时刻用于恢复迟到的表现。</summary>
     /// <param name="state">与本模型同一出生位的最新动作。</param>
     public void ApplyMotion(MSceneMonsterMotion state)
     {
         motion = state;
-        attackPending = state.Action.Phase == MonsterActionPhase.Attack;
+        if (skillPlayer == null) skillPlayer = new MSceneMonsterSkillPlayer(this, (MonsterEntity)GetROObject());
+        skillPlayer.Apply(state);
         LateUpdate();
     }
 
     /// <summary>结束上一次普攻的专属动画倍率，保证随后的其他动作使用原倍率。</summary>
     public void EndAttackPlayback()
     {
-        if (!playingAttack) return;
-        ((MEntity)GetROObject()).Model.Ator.Speed = previousSpeed;
-        playingAttack = false;
+        if (skillPlayer == null) return;
+        skillPlayer.RestoreSpeed();
+        if (((MonsterEntity)GetROObject()).IsDead) skillPlayer.Clear();
+    }
+
+    /// <summary>把真实结算携带的原结果序号交给同一怪物的表现宿主。</summary>
+    /// <param name="hit">服务端的实际命中结果。</param>
+    /// <param name="target">本实例实际受击角色。</param>
+    public void PlayResult(MonsterPlayerHitData hit, RoleEntity target)
+    {
+        if (skillPlayer == null) skillPlayer = new MSceneMonsterSkillPlayer(this, (MonsterEntity)GetROObject());
+        skillPlayer.PlayResult(hit, target);
     }
 
     /// <summary>按权威路径段插值并驱动公共图。受击和死亡由实体的正式状态机播放。</summary>
     private void LateUpdate()
     {
-        if (motion == null) return;
+        if (motion == null)
+        {
+            if (skillPlayer != null) skillPlayer.Update(false);
+            return;
+        }
         // 已绑定好公共控制器和实体剪辑的怪物。
         MonsterEntity monster = (MonsterEntity)GetROObject();
         // 起点为服务器创建本段或入场快照时的位置。
@@ -62,33 +74,38 @@ public class MSceneMonsterHoster : MonsterCtrl
         }
         monster.Position = position;
         monster.Model.Rotation = Quaternion.Euler(0f, action.Face, 0f);
-        if (action.Phase == MonsterActionPhase.Dead || monster.IsDead) return;
-        if (monster.CurrentState == StateDefine.kStateBehit) return;
-        // 只修改这只兽人实例的覆盖器，公共状态图本身不承载攻速或选招。
-        MAnimator animator = monster.Model.Ator;
-        if (action.Phase == MonsterActionPhase.Attack && ageMs < action.DurationMs)
+        if (action.Phase == MonsterActionPhase.Dead || monster.IsDead)
         {
-            if (!playingAttack)
+            if (skillPlayer != null) skillPlayer.Clear();
+            if (action.Phase == MonsterActionPhase.Dead)
             {
-                previousSpeed = animator.Speed;
-                playingAttack = true;
-            }
-            // 1000118401 的 RO 脚本基础时长为 1 秒，实际总时长由服务端按攻速换算。
-            float speed = 1000f / (action.ElapsedMs + (float)action.DurationMs);
-            animator.Speed = speed;
-            if (attackPending || animator.CurrentState != MAnimator.STATE_SKILL)
-            {
-                // Skill 槽内是真实兽人片段；迟到时按已过的片段时间定位，而非按整段攻击百分比。
-                AnimationClip clip = animator.GetOrCreateOverrideController()[MAnimator.STATE_SKILL];
-                float normalized = Mathf.Clamp01((action.ElapsedMs + ageMs) * 0.001f * speed / clip.length);
-                animator.Play(MAnimator.STATE_SKILL, 0, normalized);
-                attackPending = false;
+                if (corpsePlayer == null) corpsePlayer = new MSceneMonsterCorpsePlayer(monster);
+                corpsePlayer.Update(motion);
             }
             return;
         }
+        // 受击由原实体状态机播放，技能特效与服务器结果时钟仍继续推进。
+        bool allowAnimation = monster.CurrentState != StateDefine.kStateBehit;
+        if (skillPlayer != null && skillPlayer.Update(allowAnimation)) return;
+        if (!allowAnimation) return;
+        // 行走和待机仍使用同一公共控制器；技能剪辑由真实SkillId单独绑定。
+        MAnimator animator = monster.Model.Ator;
         EndAttackPlayback();
         if (animator.CurrentState != state) animator.Play(state);
-        attackPending = false;
+    }
+
+    /// <summary>显示原奸笑头顶特效和声音，持续时间来自原ShowExpressionTable。</summary>
+    public void ShowHeadExpression()
+    {
+        if (skillPlayer == null) skillPlayer = new MSceneMonsterSkillPlayer(this, (MEntity)GetROObject());
+        skillPlayer.ShowHeadExpression();
+    }
+
+    /// <summary>模型销毁时取消迟到加载并释放其动画、声音和特效引用。</summary>
+    private void OnDestroy()
+    {
+        if (skillPlayer != null) skillPlayer.Dispose();
+        if (corpsePlayer != null) corpsePlayer.Dispose();
     }
 
     /// <summary>运行时实体身份；零表示该模型尚未绑定实体世界。</summary>

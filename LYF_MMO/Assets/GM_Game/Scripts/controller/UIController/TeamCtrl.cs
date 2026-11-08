@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using UnityEngine;
 using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 
@@ -26,6 +28,8 @@ public sealed class TeamCtrl : CtrlBase
 
     /// <summary>是否已经注册协议，避免重复注册。</summary>
     private bool _registered;
+    /// <summary>原20002黑幕播放协程，进出副本或控制器释放时停止。</summary>
+    private Coroutine blackCurtain;
 
     /// <summary>当前实际持有三条队伍下行协议的控制器实例，用于接管前先注销旧实例。</summary>
     private static TeamCtrl _activeInstance;
@@ -99,6 +103,7 @@ public sealed class TeamCtrl : CtrlBase
     /// <summary>释放时注销协议并清空事件订阅。</summary>
     public override void Dispose()
     {
+        StopBlackCurtain();
         UnregisterHandlers();
         TeamInfoReceived = null;
         InvitationReceived = null;
@@ -143,6 +148,7 @@ public sealed class TeamCtrl : CtrlBase
     {
         // 入场确认通知：携带场景ID、实例号与出生点，客户端收到后才允许加载副本场景。
         TeamEnterDungeonNtf notice = TeamEnterDungeonNtf.Parser.ParseFrom(data);
+        StopBlackCurtain();
         TeamData.Instance.OnEnterScene(notice);
         if (EnterDungeonReceived != null)
         {
@@ -156,7 +162,9 @@ public sealed class TeamCtrl : CtrlBase
     {
         // 同一通知承载怪物动作、怪物失血或某玩家被打的权威结果。
         MonsterAttrUpdateNtf notice = MonsterAttrUpdateNtf.Parser.ParseFrom(data);
-        if (!TeamData.Instance.OnMonsterAttrUpdate(notice) || notice.PlayerHits.Count == 0) return;
+        if (!TeamData.Instance.OnMonsterAttrUpdate(notice)) return;
+        for (int index = 0; index < notice.AiNotices.Count; index++) ShowAiNotice(notice.AiNotices[index]);
+        if (notice.PlayerHits.Count == 0) return;
         // 当前显示该实例的角色索引，本人和远端分别存放。
         SceneWorldSystem world = Global.Instance.SceneWorld;
         for (int index = 0; index < notice.PlayerHits.Count; index++)
@@ -181,6 +189,91 @@ public sealed class TeamCtrl : CtrlBase
             }
         }
         TeamInfoReceived?.Invoke(TeamData.Instance.IsInTeam);
+    }
+
+    /// <summary>沿现有提示、真实模型和主界面窗口接收原AI显示节点。</summary>
+    /// <param name="notice">当前副本实例已接受的原AI通知。</param>
+    private void ShowAiNotice(MonsterAiNoticeData notice)
+    {
+        // 原who_can_see只给指定角色时，不能在同实例其它客户端显示。
+        PlayerEntity self = Global.Instance.SceneWorld.LocalRole;
+        if (notice.TargetRoleId != 0)
+            if (self == null || self.GetID() != notice.TargetRoleId) return;
+        // 本副本实际原文及时间配置，不把通知ID当作显示文案。
+        MSceneMonsterNoticeCatalog data = MSceneMonsterNoticeCatalog.Load();
+        if (notice.Kind == 1)
+        {
+            for (int index = 0; index < data.Notices.Length; index++)
+                if (data.Notices[index].Id == notice.NoticeId) TipsMgr.Instance.ShowSystemTips(data.Notices[index].Text);
+        }
+        else if (notice.Kind == 2 && notice.NoticeId == 5) TeamData.Instance.OnMonsterHeadExpression(notice);
+        else if (notice.Kind == 3 && notice.NoticeId == 20002)
+        {
+            if (blackCurtain != null) return;
+            blackCurtain = _view.StartCoroutine(PlayBlackCurtain(data));
+        }
+    }
+
+    /// <summary>以原BlackCurtainCtrl顺序调度20002五行文字，窗口只展示本帧数据。</summary>
+    /// <param name="data">原表五行文字与原Lua默认时长。</param>
+    private IEnumerator PlayBlackCurtain(MSceneMonsterNoticeCatalog data)
+    {
+        // 黑幕由现有MainView持有，沿WindowType管理显隐。
+        MainView main = (MainView)_view;
+        // 正式预制体上的强类型子窗口。
+        MoshentaBlackCurtainWindow window = main.MoshentaBlackCurtainWindow;
+        // 每行实际透明度，生命周期只覆盖本次黑幕。
+        float[] alphas = new float[data.CurtainLines.Length];
+        window.Display(0f, data.CurtainLines, alphas);
+        if (!window.gameObject.activeSelf) main.ShowMainWindow(WindowType.MoshentaBlackCurtainWindow);
+        // 原整段末尾等待时刻：背景渐入后逐行渐入并保留0.5秒间隔。
+        float textEnd = data.FadeIn;
+        for (int index = 0; index < data.CurtainLineTimes.Length; index++) textEnd += data.CurtainLineTimes[index] + data.LinePause;
+        // 原内容区先退场，随后黑色背景淡出。
+        float contentEnd = textEnd + data.ParagraphPause + data.ContentFadeOut;
+        // 当前播放的本地起点，使用未缩放时间保持UI时钟。
+        float started = Time.unscaledTime;
+        while (Time.unscaledTime - started < contentEnd + data.FadeOut)
+        {
+            // 本次黑幕的已过秒数。
+            float elapsed = Time.unscaledTime - started;
+            // 原BG的线性透明度。
+            float background = Mathf.Clamp01(elapsed / data.FadeIn);
+            if (elapsed > contentEnd) background = 1f - Mathf.Clamp01((elapsed - contentEnd) / data.FadeOut);
+            // 原下一行开始渐入的时刻。
+            float lineAt = data.FadeIn;
+            for (int index = 0; index < alphas.Length; index++)
+            {
+                alphas[index] = Mathf.Clamp01((elapsed - lineAt) / data.CurtainLineTimes[index]);
+                // 原FadeOut先ClearCache移除行文字，再淡出内容背景。
+                if (elapsed >= textEnd + data.ParagraphPause) alphas[index] = 0f;
+                lineAt += data.CurtainLineTimes[index] + data.LinePause;
+            }
+            window.Display(background, data.CurtainLines, alphas);
+            yield return null;
+        }
+        main.ShowMainWindow(WindowType.MoshentaBlackCurtainWindow);
+        blackCurtain = null;
+    }
+
+    /// <summary>离开实例或释放控制器时关闭该次原黑幕，不影响其他主界面窗口。</summary>
+    private void StopBlackCurtain()
+    {
+        if (blackCurtain != null) _view.StopCoroutine(blackCurtain);
+        blackCurtain = null;
+        // 控制器在MainView实际存在时才持有此正式子窗口。
+        MainView main = _view as MainView;
+        if (main == null || main.MoshentaBlackCurtainWindow == null) return;
+        if (main.MoshentaBlackCurtainWindow.gameObject.activeSelf) main.ShowMainWindow(WindowType.MoshentaBlackCurtainWindow);
+    }
+
+    /// <summary>沿原NetAIEventCommand发送玩家明确选中的NPC剧情事件。</summary>
+    /// <param name="name">原命令事件名；角色身份和所属动态场景由服务端当前会话取得。</param>
+    public static void RequestDungeonCommandEvent(string name)
+    {
+        // 原命令只携带name，不能由客户端写Boss状态或任务完成值。
+        DungeonCommandEventReq request = new DungeonCommandEventReq { Name = name };
+        Send(NetDefine.CMD_DungeonCommandEventCode, request.ToByteString());
     }
 
     /// <summary>发送正式按钮所选的门户或采集波次，不提交目标坐标。</summary>

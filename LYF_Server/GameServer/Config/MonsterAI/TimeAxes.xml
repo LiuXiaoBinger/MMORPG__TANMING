@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TimeAxes>
+  <script entityId="5512">
+    <axis id="1">
+      <event delay="1000000" action="Wait" />
+    </axis>
+    <axis id="2">
+      <event delay="500" action="SetIntSceneVar">
+        <arg>DaNaTuoSiState</arg>
+        <arg>4</arg>
+      </event>
+      <event delay="15000" action="Wait" />
+    </axis>
+    <axis id="3">
+      <event delay="200" action="SetIntSceneVar">
+        <arg>HaterState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="2500" action="SetIntSceneVar">
+        <arg>HaterState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="3000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="7000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="6000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="6000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="7000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="6000" action="SetIntSceneVar">
+        <arg>HaterState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="4000" action="SetDaNaTuoSiState" />
+      <event delay="11000" action="ChooseOption" />
+    </axis>
+    <axis id="4">
+      <event delay="200" action="SetIntSceneVar">
+        <arg>DespairState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="2500" action="SetIntSceneVar">
+        <arg>DespairState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="6000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>4</arg>
+      </event>
+      <event delay="9000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="23000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="9000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="9000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="22000" action="SetIntSceneVar">
+        <arg>DespairState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="4000" action="SetDaNaTuoSiState" />
+      <event delay="11000" action="ChooseOption" />
+    </axis>
+    <axis id="5">
+      <event delay="200" action="SetIntSceneVar">
+        <arg>SadState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="2500" action="SetIntSceneVar">
+        <arg>SadState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="6000" action="SetIntSceneVar">
+        <arg>SadState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="2000" action="SetDaNaTuoSiState" />
+      <event delay="11000" action="ChooseOption" />
+    </axis>
+    <axis id="6">
+      <event delay="2000" action="LuaSendTVNotice">
+        <arg>2318</arg>
+        <arg>0</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>SadState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>DespairState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>HaterState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="5000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="2000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>1</arg>
+      </event>
+      <event delay="10000" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="3000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="2000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>3</arg>
+      </event>
+      <event delay="8000" action="SetIntSceneVar">
+        <arg>DespairSkillState</arg>
+        <arg>4</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>HaterSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="2000" action="SetIntSceneVar">
+        <arg>SadSkillState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="5000" action="SetIntSceneVar">
+        <arg>SadState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>DespairState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="0" action="SetIntSceneVar">
+        <arg>HaterState</arg>
+        <arg>2</arg>
+      </event>
+      <event delay="4000" action="SetIntSceneVar">
+        <arg>DaNaTuoSiState</arg>
+        <arg>4</arg>
+      </event>
+      <event delay="15000" action="SwitchAxisBySelf">
+        <arg>2</arg>
+      </event>
+    </axis>
+    <axis id="7">
+      <event delay="200" action="Wait" />
+      <event delay="0" action="ChooseOption" />
+    </axis>
+  </script>
+  <script entityId="5456">
+    <axis id="1">
+      <event delay="100000" action="Wait" />
+    </axis>
+    <axis id="2">
+      <event delay="0" action="DianKuangBuff" />
+      <event delay="5000" action="SwitchAxisBySelf">
+        <arg>1</arg>
+      </event>
+    </axis>
+  </script>
+</TimeAxes>

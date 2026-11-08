@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Google.Protobuf;
 using System.Numerics;
 
@@ -71,8 +71,8 @@ public sealed class TeamManager
         // 同一逻辑线程先扣血、再构造一份全队共享的可靠下行载荷。
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
         team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets, caster);
-        if (notice.Monsters.Count == 0) return;
         team.WaveSpawner.FillFlow(notice);
+        if (notice.Monsters.Count == 0) return;
         SendMonsterNotice(team, notice);
     }
 
@@ -108,6 +108,10 @@ public sealed class TeamManager
             frame.Flow = null;
             frame.MonsterActions.Clear();
             frame.PlayerHits.Clear();
+            frame.MonsterSpawns.Clear();
+            frame.RemovedSpawnIds.Clear();
+            frame.AiNotices.Clear();
+            frame.BuffChanges.Clear();
             team.WaveSpawner.Update(deltaMilliseconds, frame);
             // 权威生命值全部归零时重置本实例，其他队伍状态不受影响。
             bool alive = false;
@@ -135,7 +139,11 @@ public sealed class TeamManager
                 }
             }
             team.WaveSpawner.FillFlow(frame);
-            if (frame.Flow != null || frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0) SendMonsterNotice(team, frame);
+            bool changed = frame.Flow != null || frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0;
+            changed = changed || frame.Monsters.Count > 0 || frame.MonsterSpawns.Count > 0;
+            changed = changed || frame.RemovedSpawnIds.Count > 0 || frame.AiNotices.Count > 0;
+            changed = changed || frame.BuffChanges.Count > 0;
+            if (changed) SendMonsterNotice(team, frame);
         }
     }
 
@@ -196,6 +204,27 @@ public sealed class TeamManager
         team.WaveSpawner.Flow.Enter(reply.Pos.ToVector3());
         PublishFlow(team);
         if (reply.Exited) ResetRoleInstance(role.GetID(), true);
+    }
+
+    /// <summary>原NPC命令事件从真实会话角色进入其当前副本SceneAI。</summary><param name="role">当前在线角色。</param><param name="name">原CommandScript的netaievent事件名。</param>
+    public void CommandEvent(OnlineRole role, string name)
+    {
+        // 与原CommandScriptSendEvent一致，仅使用角色当前场景和非空事件名。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
+        if (name.Length == 0) return;
+        team.WaveSpawner.SceneEvent(name, 0, 0, role.GetID());
+        PublishFlow(team);
+    }
+
+    /// <summary>原怪物强制位置结果沿已存在的副本位置可靠协议广播。</summary><param name="role">已确认同实例的原角色。</param><param name="position">原技能指定米制位置。</param>
+    internal void ForceDungeonPosition(OnlineRole role, Vector3 position)
+    {
+        // 角色仍引用TeamManager中的同一实例与成员列表。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
+        role.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(position);
+        PublishPosition(team, new DungeonInteractRet { Success = true, InstanceId = team.InstanceId, RoleId = role.mainRoleInfo.BaseInfo.RoleId, Pos = role.mainRoleInfo.BaseInfo.Pos });
     }
 
     /// <summary>只把角色位置变化发送给原实例成员。</summary>
@@ -355,6 +384,7 @@ public sealed class TeamManager
         }
         team.Members.Clear();
         team.Members.AddRange(entering);
+        team.WaveSpawner.BindInstance(team.InstanceId, team.Members);
         for (int index = 0; index < team.Members.Count; index++)
         {
             // 当前成员在"改写位置之前"的在线角色对象，为空说明该成员已掉线，跳过。

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -35,6 +35,8 @@ public sealed class MoshentaSceneFlow
     private readonly HashSet<int> active = new HashSet<int>();
     /// <summary>已经清空或采集完成的波次。</summary>
     private readonly HashSet<int> complete = new HashSet<int>();
+    /// <summary>实际完成事实保留到实例重置，供尸体移除后的原清波节点查询。</summary><param name="wave">原波次号。</param>
+    internal bool IsComplete(int wave) { return complete.Contains(wave); }
     /// <summary>已发生的波次事件，只用于出生依赖，不缓存副本目标事件。</summary>
     private readonly HashSet<string> events = new HashSet<string>();
     /// <summary>当前实际存在的场景物件。</summary>
@@ -130,6 +132,14 @@ public sealed class MoshentaSceneFlow
         Advance();
     }
 
+    /// <summary>原AIWaveEvent只进入波次系统，不递归重新触发SceneAI。</summary><param name="name">原波次事件名。</param>
+    internal bool RecordWaveEvent(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return false;
+        if (events.Add(name)) { Dirty = true; Advance(); }
+        return true;
+    }
+
     /// <summary>实际怪物全灭或采集完成后推进依赖。</summary>
     /// <param name="id">本实例已出生的波次编号。</param>
     internal void Complete(int id)
@@ -145,6 +155,7 @@ public sealed class MoshentaSceneFlow
     /// <param name="name">服务端场景图或实体死亡产生的真实事件名。</param>
     private void SceneAIEvent(string name)
     {
+        if (owner.IsMoshenta) { owner.SceneEvent(name); return; }
         // 原场景AI分支顺序保存在正式XML中；目标ID不再写入C#分支。
         for (int index = 0; index < sceneEvents.Length; index++)
         {
@@ -179,7 +190,7 @@ public sealed class MoshentaSceneFlow
     /// <summary>转发RO特殊目标事件，由当前实例Section按原目标ID匹配。</summary>
     /// <param name="name">原事件名。</param>
     /// <param name="targetId">原AI事件int_arg携带的目标表行号。</param>
-    private void DungeonTargetEvent(string name, int targetId)
+    internal void DungeonTargetEvent(string name, int targetId)
     {
         if (targets.SceneEvent(name, targetId)) Dirty = true;
     }
@@ -246,8 +257,13 @@ public sealed class MoshentaSceneFlow
 
     /// <summary>执行波次选中的服务端触发组，仅消费其中 WaveEvent 时机。</summary>
     /// <param name="id">原服务端触发组号。</param>
-    private void RunGroup(int id)
+    private void RunGroup(int id) { SendTriggerGroup(id, -1); }
+
+    /// <summary>原AI触发组按组号/触发器号派发AIEvent，波次入口只派WaveEvent。</summary>
+    /// <param name="id">原组编号。</param><param name="triggerId">原触发器编号，波次调用为-1。</param>
+    internal bool SendTriggerGroup(int id, int triggerId)
     {
+        bool executed = false;
         // 当前配置集合的零基下标，仅遍历本次快照长度。
         for (int index = 0; index < Nodes.Length; index++)
         {
@@ -272,11 +288,18 @@ public sealed class MoshentaSceneFlow
                     {
                         // 当前组内时机的原始 XML 数据。
                         XElement condition = NodeData(timings[timing]);
-                        if (condition != null && (string)condition.Element("timing_type") == "SSttimingTypeWaveEvent") RunResults(triggers[trigger], null);
+                        if (condition == null) continue;
+                        string expected = "SSttimingTypeAIEvent";
+                        if (triggerId < 0) expected = "SSttimingTypeWaveEvent";
+                        if ((string)condition.Element("timing_type") != expected) continue;
+                        XElement triggerData = NodeData(triggers[trigger]);
+                        if (triggerId > 0 && (int?)triggerData?.Element("id") != triggerId) continue;
+                        RunResults(triggers[trigger], null); executed = true;
                     }
                 }
             }
         }
+        return executed;
     }
 
     /// <summary>消费已确认时机连接的结果，本轮只执行原图已有的流程节点。</summary>
@@ -490,7 +513,9 @@ public sealed class MoshentaSceneFlow
     public DungeonFlowState Snapshot()
     {
         // 对外传输的独立快照，不暴露内部集合。
-        DungeonFlowState result = new DungeonFlowState { Finished = events.Contains("FinishDungeon") };
+        bool finished = events.Contains("FinishDungeon");
+        if (owner.IsMoshenta) finished = owner.Victory;
+        DungeonFlowState result = new DungeonFlowState { Finished = finished };
         result.ActiveWaveIds.Add(active.OrderBy(id => id));
         result.CompletedWaveIds.Add(complete.OrderBy(id => id));
         result.ActiveObjectIds.Add(objects.OrderBy(id => id));

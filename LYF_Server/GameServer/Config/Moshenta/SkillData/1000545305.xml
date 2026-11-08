@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<MSkillData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>Monster_JueWang_Teleport</Name>
+  <ClipName>Anims/Monster/Monster_JueWang/Monster_JueWang_Show</ClipName>
+  <CastType>ESkillCastType_None</CastType>
+  <SingingFx>0</SingingFx>
+  <SingingFxOffsetX>0</SingingFxOffsetX>
+  <SingingFxOffsetY>0</SingingFxOffsetY>
+  <SingingFxOffsetZ>0</SingingFxOffsetZ>
+  <UseEagle>false</UseEagle>
+  <EagleData>
+    <SkillEffectId>0</SkillEffectId>
+    <At>0</At>
+    <Index>0</Index>
+  </EagleData>
+  <SingingAudio />
+  <SingingInterruptedAudio />
+  <Time>4.767</Time>
+  <AnimationLength>4.766667</AnimationLength>
+  <SkillStateTime>4.767</SkillStateTime>
+  <TypeToken>0</TypeToken>
+  <MoveSinging>false</MoveSinging>
+  <MoveCasting>false</MoveCasting>
+  <ResultCommonData>
+    <NeedProb>false</NeedProb>
+    <ProbMinCount>0</ProbMinCount>
+    <ProbMaxCount>0</ProbMaxCount>
+    <ProbWeightList />
+  </ResultCommonData>
+  <ResultList>
+    <MSkillResultData>
+      <Summary>0</Summary>
+      <Token>0</Token>
+      <Damage>false</Damage>
+      <LongAttackEffect>false</LongAttackEffect>
+      <TargetType>ESkillTargetType_self</TargetType>
+      <ResultJumpWordType>JumpWordType_None</ResultJumpWordType>
+      <WithoutAccumulate>false</WithoutAccumulate>
+      <At>2.66666675</At>
+      <RangeType>ESkillRangeType_Sector</RangeType>
+      <RangeLow>0</RangeLow>
+      <RangeFar>0</RangeFar>
+      <Scope>0</Scope>
+      <AngleShift>0</AngleShift>
+      <OffsetX>0</OffsetX>
+      <OffsetZ>0</OffsetZ>
+      <LoopResult>false</LoopResult>
+      <LoopResultCount>0</LoopResultCount>
+      <LoopResultCycle>0</LoopResultCycle>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <LoopHit>false</LoopHit>
+      <BeatBack>false</BeatBack>
+      <UseBeatBackDistance>false</UseBeatBackDistance>
+      <BeatBackDistance>0</BeatBackDistance>
+      <BeatBackCurve />
+      <BeatBackType>ESkillBeatBackType_AttackDir</BeatBackType>
+      <UseCameraShake>false</UseCameraShake>
+      <ShakeOnlyCri>false</ShakeOnlyCri>
+      <CameraShakeData>
+        <At>0</At>
+        <Time>0</Time>
+        <Coordinate>CameraMotionSpace_World</Coordinate>
+        <FovAmp>0</FovAmp>
+        <Frequency>0</Frequency>
+        <AmplitudeX>0</AmplitudeX>
+        <AmplitudeY>0</AmplitudeY>
+        <AmplitudeZ>0</AmplitudeZ>
+        <Random>false</Random>
+        <WithResult>false</WithResult>
+        <ShakeEveryOne>false</ShakeEveryOne>
+        <Curve />
+        <Index>0</Index>
+      </CameraShakeData>
+      <CameraShakeIndex>0</CameraShakeIndex>
+      <AffectDir>ESkillAffectDir_AttackDir</AffectDir>
+      <Fx>0</Fx>
+      <Fx_Follow>false</Fx_Follow>
+      <Fx_Position>ESkillFxPosition_Middle</Fx_Position>
+      <HitAudio />
+      <FxCri>0</FxCri>
+      <Fx_Follow_Cri>false</Fx_Follow_Cri>
+      <Fx_Position_Cri>ESkillFxPosition_Middle</Fx_Position_Cri>
+      <HitAudioCri />
+      <ResultFxList />
+      <Index>0</Index>
+      <JumpWordCurve>0</JumpWordCurve>
+      <TargetSelectType>ESkillTargetSelectType_Default</TargetSelectType>
+      <AttrBehitFxList />
+      <AttrBehitCritFxList />
+      <DamageSign>0</DamageSign>
+      <BeHitCameraFx>0</BeHitCameraFx>
+      <DelayDamageTime>0</DelayDamageTime>
+      <DamageRange>
+        <RangeType>ESkillRangeType_Sector</RangeType>
+        <RangeLow>0</RangeLow>
+        <RangeFar>0</RangeFar>
+        <Scope>0</Scope>
+        <AngleShift>0</AngleShift>
+        <OffsetX>0</OffsetX>
+        <OffsetZ>0</OffsetZ>
+        <RangeCount>0</RangeCount>
+        <followTargetFace>false</followTargetFace>
+      </DamageRange>
+      <LongAttackMultiTarget>false</LongAttackMultiTarget>
+    </MSkillResultData>
+  </ResultList>
+  <AIEventList>
+    <MSkillAIEventData>
+      <Event>JueWangTel</Event>
+      <At>2.80000019</At>
+      <Index>0</Index>
+    </MSkillAIEventData>
+  </AIEventList>
+  <BuffList />
+  <FxList>
+    <MSkillFxData>
+      <Type>ESkillFxType_FirerBased</Type>
+      <Follow>false</Follow>
+      <At>2.66666675</At>
+      <End>2.66666675</End>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <Fx>104</Fx>
+      <WarningTime>0</WarningTime>
+      <ScaleX>2.5</ScaleX>
+      <ScaleY>2.5</ScaleY>
+      <ScaleZ>2.5</ScaleZ>
+      <OffsetX>0</OffsetX>
+      <OffsetY>0</OffsetY>
+      <OffsetZ>0</OffsetZ>
+      <TargetOffsetX>0</TargetOffsetX>
+      <TargetOffsetY>0</TargetOffsetY>
+      <TargetOffsetZ>0</TargetOffsetZ>
+      <OffsetFace>0</OffsetFace>
+      <StickToGround>false</StickToGround>
+      <DestroyDelay>0</DestroyDelay>
+      <Index>0</Index>
+      <AttrFxList />
+      <FxShowToType>ShowToSkillFirer</FxShowToType>
+      <UseHeightPercent>false</UseHeightPercent>
+      <HeightPercent>0</HeightPercent>
+      <MultiTarget>false</MultiTarget>
+      <FollowTargetRotation>false</FollowTargetRotation>
+    </MSkillFxData>
+  </FxList>
+  <SingingFxList />
+  <AudioList>
+    <MSkillAudioData>
+      <At>0.6666667</At>
+      <Clip>event:/Ambience/Interact/ChuanSongMen3</Clip>
+      <End>0.6666667</End>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <Channel>EAudioChannel_Skill</Channel>
+      <Index>0</Index>
+    </MSkillAudioData>
+  </AudioList>
+  <SkillBarList />
+  <CameraTurnBack>0</CameraTurnBack>
+  <CameraPostEffect>
+    <UseCameraEffect>false</UseCameraEffect>
+    <EveryOne>false</EveryOne>
+    <Range>0</Range>
+    <At>0</At>
+    <End>0</End>
+    <EffectType>CameraEffectType_RadialBlur</EffectType>
+    <Args0>0</Args0>
+    <Args1>0</Args1>
+    <Index>0</Index>
+  </CameraPostEffect>
+  <ChangeColorList />
+  <Index>0</Index>
+  <UseBarrow>false</UseBarrow>
+  <BarrowData>
+    <At>0</At>
+    <End>0</End>
+    <Bone />
+    <OffsetPoint />
+    <Clip />
+  </BarrowData>
+  <CombineSkillList />
+  <EnemyFxList />
+  <TVNoticeData>
+    <At>0</At>
+    <IsInSinging>false</IsInSinging>
+    <SingleAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </SingleAnnounceData>
+    <ContinuousAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </ContinuousAnnounceData>
+  </TVNoticeData>
+  <UseTVNotice>false</UseTVNotice>
+  <CameraFxData />
+  <RotateList />
+  <UUID>8393182351982592</UUID>
+</MSkillData>

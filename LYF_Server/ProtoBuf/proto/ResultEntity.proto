@@ -194,6 +194,8 @@ message TeamEnterDungeonNtf{
 	repeated MonsterHpData monsters = 7;//本实例已经出生的战斗怪物及其当前血量
 	DungeonFlowState flow = 9;//同实例任务、物件及波次的完整权威状态
 	repeated MonsterActionData monster_actions = 8;//入场时已有 AI 的怪物当前动作，含权威位置与剩余时间
+	repeated MonsterSpawnData monster_spawns = 10;//当前仍存在的技能召唤实体；固定场景波次仍由flow还原
+	repeated MonsterBuffData buffs = 11;//当前所有存活Buff实例与真实剩余时长，供晚加入恢复持续表现
 }
 
 // 实例内的怪物属性；同一波次的多个相同模型由出生序号区分。
@@ -214,6 +216,10 @@ message MonsterAttrUpdateNtf {
 	repeated MonsterActionData monster_actions = 6;//本次开始或改变的怪物动作，按服务端执行顺序下发
 	DungeonFlowState flow = 8;//非空时替换本实例的流程快照
 	repeated MonsterPlayerHitData player_hits = 7;//怪物技能结果点实际造成的玩家血量变化
+	repeated MonsterSpawnData monster_spawns = 9;//本次实际产生的动态召唤实体
+	repeated uint64 removed_spawn_ids = 10;//本次离场的动态实体出生标识，与死亡表现区分
+	repeated MonsterAiNoticeData ai_notices = 11;//本实例原AI触发的提示、表情或黑幕表现
+	repeated MonsterBuffData buff_changes = 12;//本次原Buff实例新增、刷新或明确移除
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。
@@ -461,6 +467,7 @@ enum MonsterActionPhase {
 	MonsterActionPhaseMove = 1;   // 正沿当前导航段前往目标点
 	MonsterActionPhaseAttack = 2; // 正在播放本次普攻，伤害另由服务端结果点下发
 	MonsterActionPhaseDead = 3;   // 生命已归零，停止移动和攻击
+	MonsterActionPhaseSinging = 4; // 当前为吟唱，结束后攻击时间轴从零开始
 }
 
 // 同一出生位的一段动作。入场快照从怪物此刻的位置开始，使用该段剩余时间。
@@ -478,6 +485,28 @@ message MonsterActionData {
 	int32 skill_id = 11;       // 攻击阶段使用的怪物技能配置号
 	int32 target_role_id = 12; // 当前追击或攻击的玩家角色 ID，无目标为零
 	int32 elapsed_ms = 13;     // 当前攻击已经过的毫秒数，恢复进行中的挥刀时使用
+	float cast_x = 14;         // 本次技能锁定的地面或目标点X，单位米
+	float cast_y = 15;         // 本次技能锁定的地面或目标点Y，单位米
+	float cast_z = 16;         // 本次技能锁定的地面或目标点Z，单位米
+	int32 skill_level = 17;    // 原实体技能槽指定的等级，从1开始
+}
+
+// 不属于固定场景波次的实际召唤实体，模型和缩放按原Entity/Present配置解析。
+message MonsterSpawnData {
+	uint64 spawn_id = 1; // 副本实例内唯一出生标识，不与固定波次冲突，离场后不复用
+	int32 entity_id = 2; // 原EntityTable编号，包含不可见机制实体
+	float x = 3;        // 服务器实际出生世界坐标X，单位米
+	float y = 4;        // 服务器实际出生世界坐标Y，单位米
+	float z = 5;        // 服务器实际出生世界坐标Z，单位米
+	float face = 6;     // 出生绕世界Y轴角度，零为正Z
+}
+
+// 原AI表现通知，目标角色为零时向同实例可见成员展示。
+message MonsterAiNoticeData {
+	int32 kind = 1;           // 1为TVNotice、2为HeadShow表情、3为BlackCurtain
+	int32 notice_id = 2;      // 对应原表配置编号
+	uint64 source_spawn_id = 3; // 触发此表现的服务端出生标识
+	int32 target_role_id = 4; // 非零时仅指定角色消费此表现
 }
 
 // 由 GameServer 结算的单次怪物攻击结果，用角色 ID 定位玩家、出生标识定位施害者。
@@ -487,6 +516,9 @@ message MonsterPlayerHitData {
 	int32 max_hp = 3;         // 受击玩家的生命上限
 	int32 damage = 4;         // 本次实际扣除的生命点
 	uint64 spawn_id = 5;      // 发起这次攻击的怪物出生标识
+	int32 skill_id = 6;       // 造成此次结果的原技能编号，用于选受击特效
+	int32 result_index = 7;   // 原MSkillData.ResultList的零基序号
+	bool critical = 8;        // 服务端本次结果是否暴击，决定原暴击表现
 }
 
 // 玩家仅提交场景交互对象，位置和解锁由游戏服验证。
@@ -539,4 +571,20 @@ message EquipOperationRet {
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。
 message RoleAttributeUpdateNtf {
 	RoleBaseInfo base_info = 1;//本次计算得到的最终战斗属性及当前生命法力
+}
+
+// 原Buff的表现身份与寿命，客户端不据此执行伤害、数值或免疫判定。
+message MonsterBuffData {
+    uint64 target_spawn_id = 1;//怪物/NPC目标出生位，玩家目标时为零
+    int32 target_role_id = 2;//玩家持久角色ID，怪物目标时为零
+    uint64 caster_spawn_id = 3;//原施加者出生位，用于原LinkFx连接
+    int32 buff_id = 4;//原BuffTable完整Id，包含原等级
+    int32 remaining_ms = 5;//当前剩余毫秒，-1表示原常驻Buff
+    bool removed = 6;//true仅移除此buff_instance_id，不能移除其它来源同Buff
+    uint64 buff_instance_id = 7;//当前副本实例内单调唯一编号，不复用
+}
+
+// 原NetAIEventCommand仅发送命令事件名，角色与动态场景由服务器当前会话解析。
+message DungeonCommandEventReq {
+    string name = 1;//原剧情命令中的事件名，例如NPC20186帮助选项的BossEnterCombat
 }

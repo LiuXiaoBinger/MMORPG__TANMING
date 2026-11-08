@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: c_sd5
+  m_Shader: {fileID: 4800000, guid: 397eb285e85e47d4fa1145b501c220a0, type: 3}
+  m_ShaderKeywords: _FOG_ON _HDR_ON _SCROLLTYPE_NONE _SECONDCOLOR_ON _SECONDTYPE_NONE
+    _SHOWVERTEXCOLOR_ON _USEDRIFT2_ON _USEP1_2_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CombinedMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CombinedMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 68a6ad4c188c5784a9b0dfa3e758c93d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Msk2Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BaseHeight2: 0
+    - _BlackLess: 0
+    - _BlendSmooth2: 0.5
+    - _BumpAmt: 10
+    - _BumpAmt2: 10
+    - _Contrast: 1
+    - _Cull: 0
+    - _Cutoff: 0
+    - _DepthBias: 50
+    - _DepthBiasPower: 2
+    - _DepthBiasThreshold: 0
+    - _DstBlend: 1
+    - _EdgeWidth: 0.15
+    - _FlowSpeed2: 0.25
+    - _Fog: 1
+    - _GlobalTrans: 0
+    - _GlobalTrans2: 0
+    - _HDR: 1
+    - _HardFade: 0
+    - _HeightBasedTransparency2: 0.5
+    - _HeightmapFactor2: 0.5
+    - _Hue: 0
+    - _InvFade: 1
+    - _Luminance: 1
+    - _MaskChannel: 0
+    - _Metallic: 0
+    - _Metallic2: 0
+    - _Mode: 3
+    - _Msk2Channel: 0
+    - _Msk2Strength: 1
+    - _Multiple: 1
+    - _Occlusion: 1
+    - _Occlusion2: 1
+    - _Parallax: -0.01
+    - _Parallax2: -0.01
+    - _ParallaxInterpolation: 15
+    - _PreserveVertAlpha: 0
+    - _RandomNum: 1
+    - _Rim: 0
+    - _RimPower: 3
+    - _RimScatter: 1
+    - _Saturate: 1
+    - _ScrollType: 0
+    - _SecondColor: 1
+    - _SecondType: 0
+    - _Smoothness: 1
+    - _Smoothness2: 1
+    - _SrcBlend: 5
+    - _Strength: 1
+    - _ThirdMap: 0
+    - _TransEmission: 0
+    - _TransEmission2: 0
+    - _Transparency: 0.5
+    - _Transparency2: 0.5
+    - _TransparencyBlur: 1
+    - _TransparencyBlur2: 1
+    - _VertColorAlphaIsLifeTime: 0
+    - _WorldUV: 0
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _showAlpha: 0
+    - _showBlue: 0
+    - _showGeneral: 0
+    - _showGreen: 0
+    - _showParallax: 0
+    - _showRed: 0
+    - _showVertexColor: 1
+    - _showVertexFlow: 0
+    - _useDepthBias: 0
+    - _useDrift2: 1
+    - _useFlowMap2: 0
+    - _useFlowMapGlobal: 0
+    - _useHeightBasedBlending: 0
+    - _useP1_2: 1
+    - _useParallax: 1
+    m_Colors:
+    - _ColorA: {r: 0.972549, g: 0.46223736, b: 0.24313726, a: 0.5}
+    - _ColorB: {r: 1, g: 0, b: 0, a: 0.5}
+    - _EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MaskColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollMain: {r: 1, g: 1, b: 0, a: 0}
+    - _ScrollMain2: {r: -1, g: 0, b: 0, a: 0}
+    - _ScrollMask: {r: 1, g: 1, b: 0, a: 0}
+    - _ScrollMask2: {r: -1, g: 0, b: 0, a: 0}
+    - _TintColor: {r: 1.326188, g: 1.309006, b: 1.3074211, a: 0.5}

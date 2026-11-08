@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ>
+  <EntryTask I_SceneState="0" B_InitSceneVar="0" S_AIEvent="" LL_WangLingWuShiList="" F_RandomKey="0" LL_SymbolList="" LL_PlayerList="" LL_TeleportList="" V_ZengHenPos="77.36:80.32:623.66" V_JueWangPos="87.04:80.32:617.76" V_BeiAiPos="68.16:80.32:618.18" B_OpenBossAirWall="0" F_BossAirWallWarning="0" B_CheckBossNotice="0" LL_BossList="">
+    <Selector>
+      <Sequence>
+        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="InitSceneVar" Shared_bool1mValue="0" />
+        <Sequence>
+          <AIRandomFloat Shared_minName="" Shared_minmValue="0" Shared_store_resultName="RandomKey" Shared_store_resultmValue="0" Shared_maxName="" Shared_maxmValue="5" />
+          <Selector>
+            <Sequence>
+              <AIFloatComparison Shared_float1Name="RandomKey" Shared_float1mValue="0" cmp_type="kCmpTypeLessThan" Shared_float2Name="" Shared_float2mValue="1" />
+              <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="Key01" />
+            </Sequence>
+            <Sequence>
+              <AIFloatComparison Shared_float1Name="RandomKey" Shared_float1mValue="0" cmp_type="kCmpTypeLessThan" Shared_float2Name="" Shared_float2mValue="2" />
+              <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="Key02" />
+            </Sequence>
+            <Sequence>
+              <AIFloatComparison Shared_float1Name="RandomKey" Shared_float1mValue="0" cmp_type="kCmpTypeLessThan" Shared_float2Name="" Shared_float2mValue="3" />
+              <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="Key03" />
+            </Sequence>
+            <Sequence>
+              <AIFloatComparison Shared_float1Name="RandomKey" Shared_float1mValue="0" cmp_type="kCmpTypeLessThan" Shared_float2Name="" Shared_float2mValue="4" />
+              <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="Key04" />
+            </Sequence>
+            <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="NoKey" />
+          </Selector>
+        </Sequence>
+        <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="InitSceneVar" Shared_store_resultmValue="0" />
+      </Sequence>
+      <ReturnFailure>
+        <AIReceiveEvent Shared_store_face_degreeName="" Shared_store_face_degreemValue="0" Shared_store_uuidName="" Shared_store_uuidmValue="0" Shared_store_levelName="" Shared_store_levelmValue="0" Shared_store_profession_idName="" Shared_store_profession_idmValue="0" Shared_store_positionName="" Shared_store_positionmValue="0:0:0" Shared_store_sexName="" Shared_store_sexmValue="0" Shared_store_float_argName="" Shared_store_float_argmValue="0" Shared_store_int_argName="" Shared_store_int_argmValue="0" Shared_store_transformName="" Shared_store_transformmValue="" Shared_store_eventName="AIEvent" Shared_store_eventmValue="" />
+      </ReturnFailure>
+      <Sequence>
+        <Selector>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="monster_die" />
+            <AICheckWaveMonsterAllDie Shared_wave_idName="" Shared_wave_idmValue="34" />
+            <AICheckWaveMonsterAllDie Shared_wave_idName="" Shared_wave_idmValue="35" />
+            <AICheckWaveMonsterAllDie Shared_wave_idName="" Shared_wave_idmValue="46" />
+            <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="5" Shared_keyName="" Shared_keymValue="DaNaTuoSiState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="143" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="HuiHeBuDui" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="137" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="DestroyDemonMatrix" />
+            <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="2" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+            <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="40" Shared_store_entitysName="WangLingWuShiList" Shared_store_entitysmValue="" />
+            <AIGroupBuffOperator Shared_buffidName="" Shared_buffidmValue="3270501" Shared_opidName="" Shared_opidmValue="0" Shared_transformsName="WangLingWuShiList" Shared_transformsmValue="" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="TongWangErLou" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="138" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="LuKeXiBuff" />
+            <AIGroupFindAllPlayer Shared_playersName="PlayerList" Shared_playersmValue="" />
+            <AIGroupBuffOperator Shared_buffidName="" Shared_buffidmValue="3606301" Shared_opidName="" Shared_opidmValue="0" Shared_transformsName="PlayerList" Shared_transformsmValue="" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="DaoDaErLou" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="139" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="GetKey" />
+            <AIShowTVNotice Shared_send_targetName="" Shared_send_targetmValue="" Shared_annouce_idName="" Shared_annouce_idmValue="2301" Shared_outlook_idName="" Shared_outlook_idmValue="0" Shared_list_rolesName="" Shared_list_rolesmValue="" who_can_see="kSendTargetType_RolesInView" Shared_contentName="" Shared_contentmValue="" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="DaoDaCeTing" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="140" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="OpenDoor" />
+            <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="5" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="monster_die" />
+            <AICheckWaveMonsterAllDie Shared_wave_idName="" Shared_wave_idmValue="42" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="141" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="ClearBuff" />
+            <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+            <AIGroupFindAllPlayer Shared_playersName="PlayerList" Shared_playersmValue="" />
+            <ReturnSuccess>
+              <AIGroupBuffOperator Shared_buffidName="" Shared_buffidmValue="36053" Shared_opidName="" Shared_opidmValue="1" Shared_transformsName="SymbolList" Shared_transformsmValue="" />
+            </ReturnSuccess>
+            <ReturnSuccess>
+              <AIGroupBuffOperator Shared_buffidName="" Shared_buffidmValue="3606001" Shared_opidName="" Shared_opidmValue="0" Shared_transformsName="PlayerList" Shared_transformsmValue="" />
+            </ReturnSuccess>
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="FinishDungeon" />
+            <AIWaveEvent Shared_event_nameName="" Shared_event_namemValue="FinishDungeon" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="DaoDaTaDing" />
+            <AISendSceneEvent Shared_entity_uuidName="" Shared_entity_uuidmValue="0" Shared_int_argName="" Shared_int_argmValue="142" Shared_delay_timeName="" Shared_delay_timemValue="0" Shared_event_typeName="" Shared_event_typemValue="dungeonfinishtarget" Shared_float_argName="" Shared_float_argmValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="BossTimeLine" />
+            <AICallBlackCurtain Shared_send_targetName="" Shared_send_targetmValue="" Shared_idName="" Shared_idmValue="20002" who_can_see="kSendTargetType_RolesInView" />
+          </Sequence>
+          <Selector>
+            <ReturnFailure>
+              <Sequence>
+                <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="BossEnterCombat" />
+                <ReturnSuccess>
+                  <Sequence>
+                    <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="34,35,46" Shared_store_entitysName="BossList" Shared_store_entitysmValue="" />
+                    <ReturnSuccess>
+                      <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="32" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+                    </ReturnSuccess>
+                    <AIActivePassive Shared_targetlistName="BossList" Shared_targetlistmValue="" Shared_is_passiveName="" Shared_is_passivemValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_targetName="" Shared_targetmValue="" />
+                  </Sequence>
+                </ReturnSuccess>
+                <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="OpenBossAirWall" Shared_store_resultmValue="0" />
+                <AISetFloat Shared_store_resultName="BossAirWallWarning" Shared_store_resultmValue="0" Shared_valueName="" Shared_valuemValue="0" />
+                <AIResetEvent Shared_event_nameName="AIEvent" Shared_event_namemValue="" />
+              </Sequence>
+            </ReturnFailure>
+            <Sequence>
+              <AIStringEqual Shared_string1Name="AIEvent" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="boss_out_combat" />
+              <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="OpenBossAirWall" Shared_store_resultmValue="0" />
+              <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="CheckBossNotice" Shared_store_resultmValue="0" />
+              <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="1" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+            </Sequence>
+            <Sequence>
+              <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="1" Shared_bool1Name="OpenBossAirWall" Shared_bool1mValue="0" />
+              <ReturnSuccess>
+                <Sequence>
+                  <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="CheckBossNotice" Shared_bool1mValue="0" />
+                  <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="1" Shared_keyName="" Shared_keymValue="BossState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+                  <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="8" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+                  <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="CheckBossNotice" Shared_store_resultmValue="0" />
+                </Sequence>
+              </ReturnSuccess>
+              <AINewCooldown Shared_last_check_timeName="BossAirWallWarning" Shared_last_check_timemValue="0" Shared_cd_timeName="" Shared_cd_timemValue="10" />
+              <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="31" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+              <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="OpenBossAirWall" Shared_store_resultmValue="0" />
+              <AIResetEvent Shared_event_nameName="AIEvent" Shared_event_namemValue="" />
+            </Sequence>
+          </Selector>
+        </Selector>
+        <AIResetEvent Shared_event_nameName="AIEvent" Shared_event_namemValue="" />
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects />
+</Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ>

@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<MSkillData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>Monster_JueWang_RongYanBaoFa</Name>
+  <ClipName>Anims/Monster/Monster_JueWang/Monster_JueWang_Attack</ClipName>
+  <CastType>ESkillCastType_None</CastType>
+  <SingingFx>38</SingingFx>
+  <SingingFxOffsetX>0</SingingFxOffsetX>
+  <SingingFxOffsetY>0</SingingFxOffsetY>
+  <SingingFxOffsetZ>0</SingingFxOffsetZ>
+  <UseEagle>false</UseEagle>
+  <EagleData>
+    <SkillEffectId>0</SkillEffectId>
+    <At>0</At>
+    <Index>0</Index>
+  </EagleData>
+  <SingingAudio />
+  <SingingInterruptedAudio />
+  <Time>1.267</Time>
+  <AnimationLength>1.26666677</AnimationLength>
+  <SkillStateTime>1.267</SkillStateTime>
+  <TypeToken>0</TypeToken>
+  <MoveSinging>false</MoveSinging>
+  <MoveCasting>false</MoveCasting>
+  <ResultCommonData>
+    <NeedProb>false</NeedProb>
+    <ProbMinCount>0</ProbMinCount>
+    <ProbMaxCount>0</ProbMaxCount>
+    <ProbWeightList />
+  </ResultCommonData>
+  <MobUnitList>
+    <MSkillMobUnitData>
+      <CastPointType>ESkillCastPointType_FirerBase</CastPointType>
+      <At>0.6</At>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <TemplateID>5489</TemplateID>
+      <MobPositionType>ESkillMobPositionType_RANDOM_CIRCLE</MobPositionType>
+      <MobLifeType>ESkillMobLifeType_ESMLT_Normal</MobLifeType>
+      <IsCopyHated>false</IsCopyHated>
+      <IsCopyAttr>true</IsCopyAttr>
+      <MobMonsterType>ESkillMobMonsterType_Dummy</MobMonsterType>
+      <LifeTime>6</LifeTime>
+      <OffsetAtX>0</OffsetAtX>
+      <OffsetAtY>0</OffsetAtY>
+      <OffsetAtZ>0</OffsetAtZ>
+      <MinRadius>5</MinRadius>
+      <MaxRadius>8</MaxRadius>
+      <Index>0</Index>
+      <MobFirerType>kMobFirerType_Firer</MobFirerType>
+      <MobAttrType>kMobAttrType_Config</MobAttrType>
+      <SceneCastKey />
+      <MaxDistanceWithOwner>0</MaxDistanceWithOwner>
+      <CanBeAffected>false</CanBeAffected>
+    </MSkillMobUnitData>
+    <MSkillMobUnitData>
+      <CastPointType>ESkillCastPointType_FirerBase</CastPointType>
+      <At>0.6</At>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <TemplateID>5489</TemplateID>
+      <MobPositionType>ESkillMobPositionType_RANDOM_CIRCLE</MobPositionType>
+      <MobLifeType>ESkillMobLifeType_ESMLT_Normal</MobLifeType>
+      <IsCopyHated>false</IsCopyHated>
+      <IsCopyAttr>true</IsCopyAttr>
+      <MobMonsterType>ESkillMobMonsterType_Dummy</MobMonsterType>
+      <LifeTime>6</LifeTime>
+      <OffsetAtX>0</OffsetAtX>
+      <OffsetAtY>0</OffsetAtY>
+      <OffsetAtZ>0</OffsetAtZ>
+      <MinRadius>5</MinRadius>
+      <MaxRadius>8</MaxRadius>
+      <Index>1</Index>
+      <MobFirerType>kMobFirerType_Firer</MobFirerType>
+      <MobAttrType>kMobAttrType_Config</MobAttrType>
+      <SceneCastKey />
+      <MaxDistanceWithOwner>0</MaxDistanceWithOwner>
+      <CanBeAffected>false</CanBeAffected>
+    </MSkillMobUnitData>
+    <MSkillMobUnitData>
+      <CastPointType>ESkillCastPointType_FirerBase</CastPointType>
+      <At>0.6</At>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <TemplateID>5489</TemplateID>
+      <MobPositionType>ESkillMobPositionType_RANDOM_CIRCLE</MobPositionType>
+      <MobLifeType>ESkillMobLifeType_ESMLT_Normal</MobLifeType>
+      <IsCopyHated>false</IsCopyHated>
+      <IsCopyAttr>true</IsCopyAttr>
+      <MobMonsterType>ESkillMobMonsterType_Dummy</MobMonsterType>
+      <LifeTime>6</LifeTime>
+      <OffsetAtX>0</OffsetAtX>
+      <OffsetAtY>0</OffsetAtY>
+      <OffsetAtZ>0</OffsetAtZ>
+      <MinRadius>5</MinRadius>
+      <MaxRadius>8</MaxRadius>
+      <Index>2</Index>
+      <MobFirerType>kMobFirerType_Firer</MobFirerType>
+      <MobAttrType>kMobAttrType_Config</MobAttrType>
+      <SceneCastKey />
+      <MaxDistanceWithOwner>0</MaxDistanceWithOwner>
+      <CanBeAffected>false</CanBeAffected>
+    </MSkillMobUnitData>
+    <MSkillMobUnitData>
+      <CastPointType>ESkillCastPointType_FirerBase</CastPointType>
+      <At>0.6</At>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <TemplateID>5489</TemplateID>
+      <MobPositionType>ESkillMobPositionType_RANDOM_CIRCLE</MobPositionType>
+      <MobLifeType>ESkillMobLifeType_ESMLT_Normal</MobLifeType>
+      <IsCopyHated>false</IsCopyHated>
+      <IsCopyAttr>true</IsCopyAttr>
+      <MobMonsterType>ESkillMobMonsterType_Dummy</MobMonsterType>
+      <LifeTime>6</LifeTime>
+      <OffsetAtX>0</OffsetAtX>
+      <OffsetAtY>0</OffsetAtY>
+      <OffsetAtZ>0</OffsetAtZ>
+      <MinRadius>5</MinRadius>
+      <MaxRadius>8</MaxRadius>
+      <Index>3</Index>
+      <MobFirerType>kMobFirerType_Firer</MobFirerType>
+      <MobAttrType>kMobAttrType_Config</MobAttrType>
+      <SceneCastKey />
+      <MaxDistanceWithOwner>0</MaxDistanceWithOwner>
+      <CanBeAffected>false</CanBeAffected>
+    </MSkillMobUnitData>
+  </MobUnitList>
+  <AIEventList />
+  <BuffList />
+  <SingingFxList />
+  <AudioList>
+    <MSkillAudioData>
+      <At>0</At>
+      <Clip>event:/Monster/Monster_KuiLeiWaWa/Monster_KuiLeiWaWa_HuoYanZhiBi</Clip>
+      <End>0</End>
+      <Loop>false</Loop>
+      <LoopCount>0</LoopCount>
+      <LoopCycle>0</LoopCycle>
+      <Channel>EAudioChannel_Skill</Channel>
+      <Index>0</Index>
+    </MSkillAudioData>
+  </AudioList>
+  <SkillBarList />
+  <CameraTurnBack>0</CameraTurnBack>
+  <CameraPostEffect>
+    <UseCameraEffect>false</UseCameraEffect>
+    <EveryOne>false</EveryOne>
+    <Range>0</Range>
+    <At>0</At>
+    <End>0</End>
+    <EffectType>CameraEffectType_RadialBlur</EffectType>
+    <Args0>0</Args0>
+    <Args1>0</Args1>
+    <Index>0</Index>
+  </CameraPostEffect>
+  <ChangeColorList />
+  <Index>0</Index>
+  <UseBarrow>false</UseBarrow>
+  <BarrowData>
+    <At>0</At>
+    <End>0</End>
+    <Bone />
+    <OffsetPoint />
+    <Clip />
+  </BarrowData>
+  <CombineSkillList />
+  <EnemyFxList />
+  <TVNoticeData>
+    <At>0</At>
+    <IsInSinging>false</IsInSinging>
+    <SingleAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </SingleAnnounceData>
+    <ContinuousAnnounceData>
+      <AnnounceId>0</AnnounceId>
+      <SendType>TVShowSendTargetTypeOneRole</SendType>
+      <UseSelfTime>false</UseSelfTime>
+      <LocalName />
+    </ContinuousAnnounceData>
+  </TVNoticeData>
+  <UseTVNotice>false</UseTVNotice>
+  <channellingData>
+    <loop_anim_info>
+      <at>0</at>
+      <clip_path />
+      <mount_clip_path />
+    </loop_anim_info>
+  </channellingData>
+  <CameraFxData />
+  <RotateList />
+  <UUID>8393182360371200</UUID>
+</MSkillData>

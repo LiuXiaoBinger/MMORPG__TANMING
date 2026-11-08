@@ -1,0 +1,6516 @@
+{
+  "Skills": [
+    {
+      "Id": 1000113901,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 0.833,
+      "SkillStateTime": 0.833,
+      "AnimationLength": 0.8000001,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_XieHaiGongJianShou_putonggongji_01.prefab",
+          "At": 0.40000004,
+          "Duration": 0.30000001192092896,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.5,
+            "z": 1.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.40000004,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.40000004,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Archer_GongJianShou_JianShi_01_01.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.5
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 50.0,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 0.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1000114501,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.067,
+      "SkillStateTime": 1.067,
+      "AnimationLength": 1.0,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.5,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.5,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000117401,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 0.733,
+      "SkillStateTime": 0.733,
+      "AnimationLength": 0.73333335,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.3666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.3666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000118401,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.0,
+      "SkillStateTime": 1.0,
+      "AnimationLength": 0.7666667,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.33333334,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.33333334,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000121201,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.4,
+      "SkillStateTime": 1.4,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_27.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.6333333,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000123101,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 2.167,
+      "SkillStateTime": 2.167,
+      "AnimationLength": 1.4000001,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_30.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.70000005,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.70000005,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_31.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545201,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 2.1,
+      "SkillStateTime": 2.1,
+      "AnimationLength": 2.1000001,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeZengHen_PuGong.prefab",
+          "At": 0.8333334,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_02.wav",
+          "At": 0.666667,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.70000005,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.70000005,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_03.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545202,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_HuJi.anim",
+      "SingingClipPath": "",
+      "Time": 4.0,
+      "SkillStateTime": 2.5,
+      "AnimationLength": 2.5000002,
+      "SingingAudioPath": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_19.wav",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeZengHen_HuiJi.prefab",
+          "At": 0.66666675,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          }
+        }
+      ],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_ShanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -2.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 341,
+          "WarningSize": {
+            "x": 12.0,
+            "y": 2.0,
+            "z": 60.0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_18.wav",
+          "At": 0.7333335,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.6666667,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        },
+        {
+          "Index": 1,
+          "At": 1.2666668,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_03.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545203,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_ZengHenZhiChui.anim",
+      "SingingClipPath": "",
+      "Time": 5.333,
+      "SkillStateTime": 5.333,
+      "AnimationLength": 5.3333335,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ZengHenZhiChui.prefab",
+          "At": 0.6,
+          "Duration": 5.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_20.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.7,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ZengHenZhiChui_01.prefab",
+            "At": 0.7,
+            "Duration": 2.0,
+            "Follow": false,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_03.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        },
+        {
+          "Index": 1,
+          "At": 1.3666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ZengHenZhiChui_01.prefab",
+            "At": 1.3666667,
+            "Duration": 2.0,
+            "Follow": false,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        },
+        {
+          "Index": 2,
+          "At": 3.1333334,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ZengHenZhiChui_02.prefab",
+            "At": 3.1333334,
+            "Duration": 2.0,
+            "Follow": false,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545204,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Skill_NingShi.anim",
+      "SingingClipPath": "",
+      "Time": 2.0,
+      "SkillStateTime": 2.0,
+      "AnimationLength": 3.0000002,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeZengHen_ZengHenNingShi_Shifang_01.prefab",
+          "At": 0.33333334,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_23.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.53333336,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545205,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ZengHen/Monster_ZengHen_Show.anim",
+      "SingingClipPath": "",
+      "Time": 5.433,
+      "SkillStateTime": 5.433,
+      "AnimationLength": 5.4333334,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_MVP_Telesport_01.prefab",
+          "At": 3.266667,
+          "Duration": 2.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "",
+          "At": 1.3333334,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 3.4000006,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545301,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.267,
+      "SkillStateTime": 1.267,
+      "AnimationLength": 1.0666667,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_end01.prefab",
+          "At": 0.06666667,
+          "Duration": 2.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_32.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.5666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 0.5666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_32.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Magician_MoFaShi_HuoQiuShu_Zd01.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": 0.0,
+              "y": 4.0,
+              "z": 3.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 30.0,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 0.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.01693226
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.05733775
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1146642
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.1813107
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2496762
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.318766
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.4125768
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.5223371
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.6342169
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.7343865
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.8090158
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.8552808
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.8912675
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.918764
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.9388333
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.9525385
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.9609427
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.9651088
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.9661
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.9649792
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.9628096
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.9606541
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.959576
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.9606192
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.9625089
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.963862
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.9645605
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.9644864
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.9635215
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615479
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_37.wav"
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1000545302,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Release_02.anim",
+      "SingingClipPath": "",
+      "Time": 4.6,
+      "SkillStateTime": 4.6,
+      "AnimationLength": 3.9,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian01.prefab",
+          "At": 0.0,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": -1.5,
+            "y": 5.6,
+            "z": -2.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian01.prefab",
+          "At": 0.0,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 1.5,
+            "y": 5.6,
+            "z": -2.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian01.prefab",
+          "At": 0.0,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": -4.0,
+            "y": 5.0,
+            "z": -2.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian01.prefab",
+          "At": 0.0,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 4.0,
+            "y": 5.0,
+            "z": -2.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop01.prefab",
+          "At": 0.0,
+          "Duration": 2.6666667,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop01.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_16.wav",
+          "At": 0.0,
+          "Duration": 3.0000002,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+            "At": 0.0,
+            "Duration": 0.30000001192092896,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_17.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": -1.5,
+              "y": 5.6,
+              "z": -2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.5,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 2.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0333333,
+                "Value": -2.103939e-05
+              },
+              {
+                "Time": 0.0666666,
+                "Value": -4.107095e-05
+              },
+              {
+                "Time": 0.0999999,
+                "Value": -6.011299e-05
+              },
+              {
+                "Time": 0.1333332,
+                "Value": -7.818384e-05
+              },
+              {
+                "Time": 0.1666665,
+                "Value": -9.530184e-05
+              },
+              {
+                "Time": 0.1999998,
+                "Value": -0.0001114853
+              },
+              {
+                "Time": 0.2333331,
+                "Value": -0.0001267525
+              },
+              {
+                "Time": 0.2666664,
+                "Value": -0.0001411219
+              },
+              {
+                "Time": 0.2999997,
+                "Value": -0.0001546116
+              },
+              {
+                "Time": 0.333333,
+                "Value": -0.0001672402
+              },
+              {
+                "Time": 0.3666663,
+                "Value": -0.0001790258
+              },
+              {
+                "Time": 0.3999996,
+                "Value": -0.0001899868
+              },
+              {
+                "Time": 0.4333329,
+                "Value": -0.0002001415
+              },
+              {
+                "Time": 0.4666662,
+                "Value": -0.0002095083
+              },
+              {
+                "Time": 0.4999995,
+                "Value": -0.0002181055
+              },
+              {
+                "Time": 0.5333328,
+                "Value": -0.0002259514
+              },
+              {
+                "Time": 0.5666661,
+                "Value": -0.0002330643
+              },
+              {
+                "Time": 0.5999994,
+                "Value": -0.0002394626
+              },
+              {
+                "Time": 0.6333327,
+                "Value": -0.0002451645
+              },
+              {
+                "Time": 0.666666,
+                "Value": -0.0002501884
+              },
+              {
+                "Time": 0.6999993,
+                "Value": -0.0002545527
+              },
+              {
+                "Time": 0.7333326,
+                "Value": -0.0002582756
+              },
+              {
+                "Time": 0.7666659,
+                "Value": -0.0002613755
+              },
+              {
+                "Time": 0.7999992,
+                "Value": -0.0002638707
+              },
+              {
+                "Time": 0.8333325,
+                "Value": -0.0002657795
+              },
+              {
+                "Time": 0.8666658,
+                "Value": -0.0002671202
+              },
+              {
+                "Time": 0.8999991,
+                "Value": -0.0002679112
+              },
+              {
+                "Time": 0.9333324,
+                "Value": -0.0002681708
+              },
+              {
+                "Time": 0.9666657,
+                "Value": -0.0002679173
+              },
+              {
+                "Time": 0.999999,
+                "Value": -0.0002671691
+              },
+              {
+                "Time": 1.033332,
+                "Value": -0.0002659445
+              },
+              {
+                "Time": 1.066666,
+                "Value": -0.0002642617
+              },
+              {
+                "Time": 1.099999,
+                "Value": -0.0002621391
+              },
+              {
+                "Time": 1.133332,
+                "Value": -0.0002595951
+              },
+              {
+                "Time": 1.166666,
+                "Value": -0.000256648
+              },
+              {
+                "Time": 1.199999,
+                "Value": -0.000253316
+              },
+              {
+                "Time": 1.233332,
+                "Value": -0.0002496176
+              },
+              {
+                "Time": 1.266665,
+                "Value": -0.0002455709
+              },
+              {
+                "Time": 1.299999,
+                "Value": -0.0002411945
+              },
+              {
+                "Time": 1.333332,
+                "Value": -0.0002365065
+              },
+              {
+                "Time": 1.366665,
+                "Value": -0.0002315253
+              },
+              {
+                "Time": 1.399999,
+                "Value": -0.0002262693
+              },
+              {
+                "Time": 1.433332,
+                "Value": -0.0002207567
+              },
+              {
+                "Time": 1.466665,
+                "Value": -0.000215006
+              },
+              {
+                "Time": 1.499999,
+                "Value": -0.0002090354
+              },
+              {
+                "Time": 1.533332,
+                "Value": -0.0002028631
+              },
+              {
+                "Time": 1.566665,
+                "Value": -0.0001965076
+              },
+              {
+                "Time": 1.599998,
+                "Value": -0.0001899872
+              },
+              {
+                "Time": 1.633332,
+                "Value": -0.0001833202
+              },
+              {
+                "Time": 1.666665,
+                "Value": -0.000176525
+              },
+              {
+                "Time": 1.699998,
+                "Value": -0.0001696197
+              },
+              {
+                "Time": 1.733332,
+                "Value": -0.000162623
+              },
+              {
+                "Time": 1.766665,
+                "Value": -0.0001555527
+              },
+              {
+                "Time": 1.799998,
+                "Value": -0.0001484276
+              },
+              {
+                "Time": 1.833332,
+                "Value": -0.0001412659
+              },
+              {
+                "Time": 1.866665,
+                "Value": -0.0001340858
+              },
+              {
+                "Time": 1.899998,
+                "Value": -0.0001269057
+              },
+              {
+                "Time": 1.933331,
+                "Value": -0.000119744
+              },
+              {
+                "Time": 1.966665,
+                "Value": -0.0001126189
+              },
+              {
+                "Time": 1.999998,
+                "Value": -0.0001055487
+              },
+              {
+                "Time": 2.033331,
+                "Value": -9.855187e-05
+              },
+              {
+                "Time": 2.066665,
+                "Value": -9.164657e-05
+              },
+              {
+                "Time": 2.099998,
+                "Value": -8.485145e-05
+              },
+              {
+                "Time": 2.133331,
+                "Value": -7.818433e-05
+              },
+              {
+                "Time": 2.166665,
+                "Value": -7.166393e-05
+              },
+              {
+                "Time": 2.199998,
+                "Value": -6.530842e-05
+              },
+              {
+                "Time": 2.233331,
+                "Value": -5.913615e-05
+              },
+              {
+                "Time": 2.266665,
+                "Value": -5.316543e-05
+              },
+              {
+                "Time": 2.299998,
+                "Value": -4.741472e-05
+              },
+              {
+                "Time": 2.333331,
+                "Value": -4.190208e-05
+              },
+              {
+                "Time": 2.366664,
+                "Value": -3.664597e-05
+              },
+              {
+                "Time": 2.399998,
+                "Value": -3.166498e-05
+              },
+              {
+                "Time": 2.433331,
+                "Value": -2.697675e-05
+              },
+              {
+                "Time": 2.466664,
+                "Value": -2.260044e-05
+              },
+              {
+                "Time": 2.499998,
+                "Value": -1.855367e-05
+              },
+              {
+                "Time": 2.533331,
+                "Value": -1.485519e-05
+              },
+              {
+                "Time": 2.566664,
+                "Value": -1.152319e-05
+              },
+              {
+                "Time": 2.599998,
+                "Value": -8.575971e-06
+              },
+              {
+                "Time": 2.633331,
+                "Value": -6.032029e-06
+              },
+              {
+                "Time": 2.666664,
+                "Value": -3.909378e-06
+              },
+              {
+                "Time": 2.699997,
+                "Value": -2.226493e-06
+              },
+              {
+                "Time": 2.733331,
+                "Value": -1.001858e-06
+              },
+              {
+                "Time": 2.766664,
+                "Value": -2.534786e-07
+              },
+              {
+                "Time": 2.799997,
+                "Value": 0.0
+              },
+              {
+                "Time": 2.833331,
+                "Value": 0.2592144
+              },
+              {
+                "Time": 2.866664,
+                "Value": 0.7406992
+              },
+              {
+                "Time": 2.899997,
+                "Value": 0.9999999
+              },
+              {
+                "Time": 2.9,
+                "Value": 1.0
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 1,
+          "At": 0.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+            "At": 0.0,
+            "Duration": 0.30000001192092896,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_17.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": 1.5,
+              "y": 5.6,
+              "z": -2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.5,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 2.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0333333,
+                "Value": -2.103939e-05
+              },
+              {
+                "Time": 0.0666666,
+                "Value": -4.107095e-05
+              },
+              {
+                "Time": 0.0999999,
+                "Value": -6.011299e-05
+              },
+              {
+                "Time": 0.1333332,
+                "Value": -7.818384e-05
+              },
+              {
+                "Time": 0.1666665,
+                "Value": -9.530184e-05
+              },
+              {
+                "Time": 0.1999998,
+                "Value": -0.0001114853
+              },
+              {
+                "Time": 0.2333331,
+                "Value": -0.0001267525
+              },
+              {
+                "Time": 0.2666664,
+                "Value": -0.0001411219
+              },
+              {
+                "Time": 0.2999997,
+                "Value": -0.0001546116
+              },
+              {
+                "Time": 0.333333,
+                "Value": -0.0001672402
+              },
+              {
+                "Time": 0.3666663,
+                "Value": -0.0001790258
+              },
+              {
+                "Time": 0.3999996,
+                "Value": -0.0001899868
+              },
+              {
+                "Time": 0.4333329,
+                "Value": -0.0002001415
+              },
+              {
+                "Time": 0.4666662,
+                "Value": -0.0002095083
+              },
+              {
+                "Time": 0.4999995,
+                "Value": -0.0002181055
+              },
+              {
+                "Time": 0.5333328,
+                "Value": -0.0002259514
+              },
+              {
+                "Time": 0.5666661,
+                "Value": -0.0002330643
+              },
+              {
+                "Time": 0.5999994,
+                "Value": -0.0002394626
+              },
+              {
+                "Time": 0.6333327,
+                "Value": -0.0002451645
+              },
+              {
+                "Time": 0.666666,
+                "Value": -0.0002501884
+              },
+              {
+                "Time": 0.6999993,
+                "Value": -0.0002545527
+              },
+              {
+                "Time": 0.7333326,
+                "Value": -0.0002582756
+              },
+              {
+                "Time": 0.7666659,
+                "Value": -0.0002613755
+              },
+              {
+                "Time": 0.7999992,
+                "Value": -0.0002638707
+              },
+              {
+                "Time": 0.8333325,
+                "Value": -0.0002657795
+              },
+              {
+                "Time": 0.8666658,
+                "Value": -0.0002671202
+              },
+              {
+                "Time": 0.8999991,
+                "Value": -0.0002679112
+              },
+              {
+                "Time": 0.9333324,
+                "Value": -0.0002681708
+              },
+              {
+                "Time": 0.9666657,
+                "Value": -0.0002679173
+              },
+              {
+                "Time": 0.999999,
+                "Value": -0.0002671691
+              },
+              {
+                "Time": 1.033332,
+                "Value": -0.0002659445
+              },
+              {
+                "Time": 1.066666,
+                "Value": -0.0002642617
+              },
+              {
+                "Time": 1.099999,
+                "Value": -0.0002621391
+              },
+              {
+                "Time": 1.133332,
+                "Value": -0.0002595951
+              },
+              {
+                "Time": 1.166666,
+                "Value": -0.000256648
+              },
+              {
+                "Time": 1.199999,
+                "Value": -0.000253316
+              },
+              {
+                "Time": 1.233332,
+                "Value": -0.0002496176
+              },
+              {
+                "Time": 1.266665,
+                "Value": -0.0002455709
+              },
+              {
+                "Time": 1.299999,
+                "Value": -0.0002411945
+              },
+              {
+                "Time": 1.333332,
+                "Value": -0.0002365065
+              },
+              {
+                "Time": 1.366665,
+                "Value": -0.0002315253
+              },
+              {
+                "Time": 1.399999,
+                "Value": -0.0002262693
+              },
+              {
+                "Time": 1.433332,
+                "Value": -0.0002207567
+              },
+              {
+                "Time": 1.466665,
+                "Value": -0.000215006
+              },
+              {
+                "Time": 1.499999,
+                "Value": -0.0002090354
+              },
+              {
+                "Time": 1.533332,
+                "Value": -0.0002028631
+              },
+              {
+                "Time": 1.566665,
+                "Value": -0.0001965076
+              },
+              {
+                "Time": 1.599998,
+                "Value": -0.0001899872
+              },
+              {
+                "Time": 1.633332,
+                "Value": -0.0001833202
+              },
+              {
+                "Time": 1.666665,
+                "Value": -0.000176525
+              },
+              {
+                "Time": 1.699998,
+                "Value": -0.0001696197
+              },
+              {
+                "Time": 1.733332,
+                "Value": -0.000162623
+              },
+              {
+                "Time": 1.766665,
+                "Value": -0.0001555527
+              },
+              {
+                "Time": 1.799998,
+                "Value": -0.0001484276
+              },
+              {
+                "Time": 1.833332,
+                "Value": -0.0001412659
+              },
+              {
+                "Time": 1.866665,
+                "Value": -0.0001340858
+              },
+              {
+                "Time": 1.899998,
+                "Value": -0.0001269057
+              },
+              {
+                "Time": 1.933331,
+                "Value": -0.000119744
+              },
+              {
+                "Time": 1.966665,
+                "Value": -0.0001126189
+              },
+              {
+                "Time": 1.999998,
+                "Value": -0.0001055487
+              },
+              {
+                "Time": 2.033331,
+                "Value": -9.855187e-05
+              },
+              {
+                "Time": 2.066665,
+                "Value": -9.164657e-05
+              },
+              {
+                "Time": 2.099998,
+                "Value": -8.485145e-05
+              },
+              {
+                "Time": 2.133331,
+                "Value": -7.818433e-05
+              },
+              {
+                "Time": 2.166665,
+                "Value": -7.166393e-05
+              },
+              {
+                "Time": 2.199998,
+                "Value": -6.530842e-05
+              },
+              {
+                "Time": 2.233331,
+                "Value": -5.913615e-05
+              },
+              {
+                "Time": 2.266665,
+                "Value": -5.316543e-05
+              },
+              {
+                "Time": 2.299998,
+                "Value": -4.741472e-05
+              },
+              {
+                "Time": 2.333331,
+                "Value": -4.190208e-05
+              },
+              {
+                "Time": 2.366664,
+                "Value": -3.664597e-05
+              },
+              {
+                "Time": 2.399998,
+                "Value": -3.166498e-05
+              },
+              {
+                "Time": 2.433331,
+                "Value": -2.697675e-05
+              },
+              {
+                "Time": 2.466664,
+                "Value": -2.260044e-05
+              },
+              {
+                "Time": 2.499998,
+                "Value": -1.855367e-05
+              },
+              {
+                "Time": 2.533331,
+                "Value": -1.485519e-05
+              },
+              {
+                "Time": 2.566664,
+                "Value": -1.152319e-05
+              },
+              {
+                "Time": 2.599998,
+                "Value": -8.575971e-06
+              },
+              {
+                "Time": 2.633331,
+                "Value": -6.032029e-06
+              },
+              {
+                "Time": 2.666664,
+                "Value": -3.909378e-06
+              },
+              {
+                "Time": 2.699997,
+                "Value": -2.226493e-06
+              },
+              {
+                "Time": 2.733331,
+                "Value": -1.001858e-06
+              },
+              {
+                "Time": 2.766664,
+                "Value": -2.534786e-07
+              },
+              {
+                "Time": 2.799997,
+                "Value": 0.0
+              },
+              {
+                "Time": 2.833331,
+                "Value": 0.2592144
+              },
+              {
+                "Time": 2.866664,
+                "Value": 0.7406992
+              },
+              {
+                "Time": 2.899997,
+                "Value": 0.9999999
+              },
+              {
+                "Time": 2.9,
+                "Value": 1.0
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 2,
+          "At": 0.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+            "At": 0.0,
+            "Duration": 0.30000001192092896,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_17.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": -4.0,
+              "y": 5.0,
+              "z": -2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.5,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 2.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0333333,
+                "Value": -2.103939e-05
+              },
+              {
+                "Time": 0.0666666,
+                "Value": -4.107095e-05
+              },
+              {
+                "Time": 0.0999999,
+                "Value": -6.011299e-05
+              },
+              {
+                "Time": 0.1333332,
+                "Value": -7.818384e-05
+              },
+              {
+                "Time": 0.1666665,
+                "Value": -9.530184e-05
+              },
+              {
+                "Time": 0.1999998,
+                "Value": -0.0001114853
+              },
+              {
+                "Time": 0.2333331,
+                "Value": -0.0001267525
+              },
+              {
+                "Time": 0.2666664,
+                "Value": -0.0001411219
+              },
+              {
+                "Time": 0.2999997,
+                "Value": -0.0001546116
+              },
+              {
+                "Time": 0.333333,
+                "Value": -0.0001672402
+              },
+              {
+                "Time": 0.3666663,
+                "Value": -0.0001790258
+              },
+              {
+                "Time": 0.3999996,
+                "Value": -0.0001899868
+              },
+              {
+                "Time": 0.4333329,
+                "Value": -0.0002001415
+              },
+              {
+                "Time": 0.4666662,
+                "Value": -0.0002095083
+              },
+              {
+                "Time": 0.4999995,
+                "Value": -0.0002181055
+              },
+              {
+                "Time": 0.5333328,
+                "Value": -0.0002259514
+              },
+              {
+                "Time": 0.5666661,
+                "Value": -0.0002330643
+              },
+              {
+                "Time": 0.5999994,
+                "Value": -0.0002394626
+              },
+              {
+                "Time": 0.6333327,
+                "Value": -0.0002451645
+              },
+              {
+                "Time": 0.666666,
+                "Value": -0.0002501884
+              },
+              {
+                "Time": 0.6999993,
+                "Value": -0.0002545527
+              },
+              {
+                "Time": 0.7333326,
+                "Value": -0.0002582756
+              },
+              {
+                "Time": 0.7666659,
+                "Value": -0.0002613755
+              },
+              {
+                "Time": 0.7999992,
+                "Value": -0.0002638707
+              },
+              {
+                "Time": 0.8333325,
+                "Value": -0.0002657795
+              },
+              {
+                "Time": 0.8666658,
+                "Value": -0.0002671202
+              },
+              {
+                "Time": 0.8999991,
+                "Value": -0.0002679112
+              },
+              {
+                "Time": 0.9333324,
+                "Value": -0.0002681708
+              },
+              {
+                "Time": 0.9666657,
+                "Value": -0.0002679173
+              },
+              {
+                "Time": 0.999999,
+                "Value": -0.0002671691
+              },
+              {
+                "Time": 1.033332,
+                "Value": -0.0002659445
+              },
+              {
+                "Time": 1.066666,
+                "Value": -0.0002642617
+              },
+              {
+                "Time": 1.099999,
+                "Value": -0.0002621391
+              },
+              {
+                "Time": 1.133332,
+                "Value": -0.0002595951
+              },
+              {
+                "Time": 1.166666,
+                "Value": -0.000256648
+              },
+              {
+                "Time": 1.199999,
+                "Value": -0.000253316
+              },
+              {
+                "Time": 1.233332,
+                "Value": -0.0002496176
+              },
+              {
+                "Time": 1.266665,
+                "Value": -0.0002455709
+              },
+              {
+                "Time": 1.299999,
+                "Value": -0.0002411945
+              },
+              {
+                "Time": 1.333332,
+                "Value": -0.0002365065
+              },
+              {
+                "Time": 1.366665,
+                "Value": -0.0002315253
+              },
+              {
+                "Time": 1.399999,
+                "Value": -0.0002262693
+              },
+              {
+                "Time": 1.433332,
+                "Value": -0.0002207567
+              },
+              {
+                "Time": 1.466665,
+                "Value": -0.000215006
+              },
+              {
+                "Time": 1.499999,
+                "Value": -0.0002090354
+              },
+              {
+                "Time": 1.533332,
+                "Value": -0.0002028631
+              },
+              {
+                "Time": 1.566665,
+                "Value": -0.0001965076
+              },
+              {
+                "Time": 1.599998,
+                "Value": -0.0001899872
+              },
+              {
+                "Time": 1.633332,
+                "Value": -0.0001833202
+              },
+              {
+                "Time": 1.666665,
+                "Value": -0.000176525
+              },
+              {
+                "Time": 1.699998,
+                "Value": -0.0001696197
+              },
+              {
+                "Time": 1.733332,
+                "Value": -0.000162623
+              },
+              {
+                "Time": 1.766665,
+                "Value": -0.0001555527
+              },
+              {
+                "Time": 1.799998,
+                "Value": -0.0001484276
+              },
+              {
+                "Time": 1.833332,
+                "Value": -0.0001412659
+              },
+              {
+                "Time": 1.866665,
+                "Value": -0.0001340858
+              },
+              {
+                "Time": 1.899998,
+                "Value": -0.0001269057
+              },
+              {
+                "Time": 1.933331,
+                "Value": -0.000119744
+              },
+              {
+                "Time": 1.966665,
+                "Value": -0.0001126189
+              },
+              {
+                "Time": 1.999998,
+                "Value": -0.0001055487
+              },
+              {
+                "Time": 2.033331,
+                "Value": -9.855187e-05
+              },
+              {
+                "Time": 2.066665,
+                "Value": -9.164657e-05
+              },
+              {
+                "Time": 2.099998,
+                "Value": -8.485145e-05
+              },
+              {
+                "Time": 2.133331,
+                "Value": -7.818433e-05
+              },
+              {
+                "Time": 2.166665,
+                "Value": -7.166393e-05
+              },
+              {
+                "Time": 2.199998,
+                "Value": -6.530842e-05
+              },
+              {
+                "Time": 2.233331,
+                "Value": -5.913615e-05
+              },
+              {
+                "Time": 2.266665,
+                "Value": -5.316543e-05
+              },
+              {
+                "Time": 2.299998,
+                "Value": -4.741472e-05
+              },
+              {
+                "Time": 2.333331,
+                "Value": -4.190208e-05
+              },
+              {
+                "Time": 2.366664,
+                "Value": -3.664597e-05
+              },
+              {
+                "Time": 2.399998,
+                "Value": -3.166498e-05
+              },
+              {
+                "Time": 2.433331,
+                "Value": -2.697675e-05
+              },
+              {
+                "Time": 2.466664,
+                "Value": -2.260044e-05
+              },
+              {
+                "Time": 2.499998,
+                "Value": -1.855367e-05
+              },
+              {
+                "Time": 2.533331,
+                "Value": -1.485519e-05
+              },
+              {
+                "Time": 2.566664,
+                "Value": -1.152319e-05
+              },
+              {
+                "Time": 2.599998,
+                "Value": -8.575971e-06
+              },
+              {
+                "Time": 2.633331,
+                "Value": -6.032029e-06
+              },
+              {
+                "Time": 2.666664,
+                "Value": -3.909378e-06
+              },
+              {
+                "Time": 2.699997,
+                "Value": -2.226493e-06
+              },
+              {
+                "Time": 2.733331,
+                "Value": -1.001858e-06
+              },
+              {
+                "Time": 2.766664,
+                "Value": -2.534786e-07
+              },
+              {
+                "Time": 2.799997,
+                "Value": 0.0
+              },
+              {
+                "Time": 2.833331,
+                "Value": 0.2592144
+              },
+              {
+                "Time": 2.866664,
+                "Value": 0.7406992
+              },
+              {
+                "Time": 2.899997,
+                "Value": 0.9999999
+              },
+              {
+                "Time": 2.9,
+                "Value": 1.0
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 3,
+          "At": 0.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+            "At": 0.0,
+            "Duration": 0.30000001192092896,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_17.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_YanHuoJian.prefab",
+            "Kind": 1,
+            "Start": {
+              "x": 4.0,
+              "y": 5.0,
+              "z": -2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.5,
+            "MaxSpeed": 50.0,
+            "AimTargetCenter": true,
+            "InitTime": 2.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 3.5,
+              "z": -2.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0333333,
+                "Value": -2.103939e-05
+              },
+              {
+                "Time": 0.0666666,
+                "Value": -4.107095e-05
+              },
+              {
+                "Time": 0.0999999,
+                "Value": -6.011299e-05
+              },
+              {
+                "Time": 0.1333332,
+                "Value": -7.818384e-05
+              },
+              {
+                "Time": 0.1666665,
+                "Value": -9.530184e-05
+              },
+              {
+                "Time": 0.1999998,
+                "Value": -0.0001114853
+              },
+              {
+                "Time": 0.2333331,
+                "Value": -0.0001267525
+              },
+              {
+                "Time": 0.2666664,
+                "Value": -0.0001411219
+              },
+              {
+                "Time": 0.2999997,
+                "Value": -0.0001546116
+              },
+              {
+                "Time": 0.333333,
+                "Value": -0.0001672402
+              },
+              {
+                "Time": 0.3666663,
+                "Value": -0.0001790258
+              },
+              {
+                "Time": 0.3999996,
+                "Value": -0.0001899868
+              },
+              {
+                "Time": 0.4333329,
+                "Value": -0.0002001415
+              },
+              {
+                "Time": 0.4666662,
+                "Value": -0.0002095083
+              },
+              {
+                "Time": 0.4999995,
+                "Value": -0.0002181055
+              },
+              {
+                "Time": 0.5333328,
+                "Value": -0.0002259514
+              },
+              {
+                "Time": 0.5666661,
+                "Value": -0.0002330643
+              },
+              {
+                "Time": 0.5999994,
+                "Value": -0.0002394626
+              },
+              {
+                "Time": 0.6333327,
+                "Value": -0.0002451645
+              },
+              {
+                "Time": 0.666666,
+                "Value": -0.0002501884
+              },
+              {
+                "Time": 0.6999993,
+                "Value": -0.0002545527
+              },
+              {
+                "Time": 0.7333326,
+                "Value": -0.0002582756
+              },
+              {
+                "Time": 0.7666659,
+                "Value": -0.0002613755
+              },
+              {
+                "Time": 0.7999992,
+                "Value": -0.0002638707
+              },
+              {
+                "Time": 0.8333325,
+                "Value": -0.0002657795
+              },
+              {
+                "Time": 0.8666658,
+                "Value": -0.0002671202
+              },
+              {
+                "Time": 0.8999991,
+                "Value": -0.0002679112
+              },
+              {
+                "Time": 0.9333324,
+                "Value": -0.0002681708
+              },
+              {
+                "Time": 0.9666657,
+                "Value": -0.0002679173
+              },
+              {
+                "Time": 0.999999,
+                "Value": -0.0002671691
+              },
+              {
+                "Time": 1.033332,
+                "Value": -0.0002659445
+              },
+              {
+                "Time": 1.066666,
+                "Value": -0.0002642617
+              },
+              {
+                "Time": 1.099999,
+                "Value": -0.0002621391
+              },
+              {
+                "Time": 1.133332,
+                "Value": -0.0002595951
+              },
+              {
+                "Time": 1.166666,
+                "Value": -0.000256648
+              },
+              {
+                "Time": 1.199999,
+                "Value": -0.000253316
+              },
+              {
+                "Time": 1.233332,
+                "Value": -0.0002496176
+              },
+              {
+                "Time": 1.266665,
+                "Value": -0.0002455709
+              },
+              {
+                "Time": 1.299999,
+                "Value": -0.0002411945
+              },
+              {
+                "Time": 1.333332,
+                "Value": -0.0002365065
+              },
+              {
+                "Time": 1.366665,
+                "Value": -0.0002315253
+              },
+              {
+                "Time": 1.399999,
+                "Value": -0.0002262693
+              },
+              {
+                "Time": 1.433332,
+                "Value": -0.0002207567
+              },
+              {
+                "Time": 1.466665,
+                "Value": -0.000215006
+              },
+              {
+                "Time": 1.499999,
+                "Value": -0.0002090354
+              },
+              {
+                "Time": 1.533332,
+                "Value": -0.0002028631
+              },
+              {
+                "Time": 1.566665,
+                "Value": -0.0001965076
+              },
+              {
+                "Time": 1.599998,
+                "Value": -0.0001899872
+              },
+              {
+                "Time": 1.633332,
+                "Value": -0.0001833202
+              },
+              {
+                "Time": 1.666665,
+                "Value": -0.000176525
+              },
+              {
+                "Time": 1.699998,
+                "Value": -0.0001696197
+              },
+              {
+                "Time": 1.733332,
+                "Value": -0.000162623
+              },
+              {
+                "Time": 1.766665,
+                "Value": -0.0001555527
+              },
+              {
+                "Time": 1.799998,
+                "Value": -0.0001484276
+              },
+              {
+                "Time": 1.833332,
+                "Value": -0.0001412659
+              },
+              {
+                "Time": 1.866665,
+                "Value": -0.0001340858
+              },
+              {
+                "Time": 1.899998,
+                "Value": -0.0001269057
+              },
+              {
+                "Time": 1.933331,
+                "Value": -0.000119744
+              },
+              {
+                "Time": 1.966665,
+                "Value": -0.0001126189
+              },
+              {
+                "Time": 1.999998,
+                "Value": -0.0001055487
+              },
+              {
+                "Time": 2.033331,
+                "Value": -9.855187e-05
+              },
+              {
+                "Time": 2.066665,
+                "Value": -9.164657e-05
+              },
+              {
+                "Time": 2.099998,
+                "Value": -8.485145e-05
+              },
+              {
+                "Time": 2.133331,
+                "Value": -7.818433e-05
+              },
+              {
+                "Time": 2.166665,
+                "Value": -7.166393e-05
+              },
+              {
+                "Time": 2.199998,
+                "Value": -6.530842e-05
+              },
+              {
+                "Time": 2.233331,
+                "Value": -5.913615e-05
+              },
+              {
+                "Time": 2.266665,
+                "Value": -5.316543e-05
+              },
+              {
+                "Time": 2.299998,
+                "Value": -4.741472e-05
+              },
+              {
+                "Time": 2.333331,
+                "Value": -4.190208e-05
+              },
+              {
+                "Time": 2.366664,
+                "Value": -3.664597e-05
+              },
+              {
+                "Time": 2.399998,
+                "Value": -3.166498e-05
+              },
+              {
+                "Time": 2.433331,
+                "Value": -2.697675e-05
+              },
+              {
+                "Time": 2.466664,
+                "Value": -2.260044e-05
+              },
+              {
+                "Time": 2.499998,
+                "Value": -1.855367e-05
+              },
+              {
+                "Time": 2.533331,
+                "Value": -1.485519e-05
+              },
+              {
+                "Time": 2.566664,
+                "Value": -1.152319e-05
+              },
+              {
+                "Time": 2.599998,
+                "Value": -8.575971e-06
+              },
+              {
+                "Time": 2.633331,
+                "Value": -6.032029e-06
+              },
+              {
+                "Time": 2.666664,
+                "Value": -3.909378e-06
+              },
+              {
+                "Time": 2.699997,
+                "Value": -2.226493e-06
+              },
+              {
+                "Time": 2.733331,
+                "Value": -1.001858e-06
+              },
+              {
+                "Time": 2.766664,
+                "Value": -2.534786e-07
+              },
+              {
+                "Time": 2.799997,
+                "Value": 0.0
+              },
+              {
+                "Time": 2.833331,
+                "Value": 0.2592144
+              },
+              {
+                "Time": 2.866664,
+                "Value": 0.7406992
+              },
+              {
+                "Time": 2.899997,
+                "Value": 0.9999999
+              },
+              {
+                "Time": 2.9,
+                "Value": 1.0
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1000545304,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Skill_Release_02.anim",
+      "SingingClipPath": "",
+      "Time": 20.0,
+      "SkillStateTime": 20.0,
+      "AnimationLength": 1.8333334,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 90.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 8.0,
+            "y": 0.0,
+            "z": 1.5
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 270.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 8.0,
+            "y": 0.0,
+            "z": 1.5
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_15.wav",
+          "At": 0.0,
+          "Duration": 2.8333335,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_14.wav",
+          "At": 2.8333335,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 3.0000002,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 3.0000002,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_21.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_ChiYan.prefab",
+            "Kind": 4,
+            "Start": {
+              "x": -6.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "End": {
+              "x": -7.0,
+              "y": 0.0,
+              "z": 5.9604645e-08
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 15.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": true,
+            "RevolutionSpeed": 24.0,
+            "RevolutionCenter": {
+              "y": 2.0,
+              "x": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 1,
+          "At": 3.0000002,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 3.0000002,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_21.wav",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeJueWang_ChiYan.prefab",
+            "Kind": 4,
+            "Start": {
+              "x": 6.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "End": {
+              "x": 7.0,
+              "y": 0.0,
+              "z": 5.9604645e-08
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 15.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": true,
+            "RevolutionSpeed": 24.0,
+            "RevolutionCenter": {
+              "y": 2.0,
+              "x": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 2,
+          "At": 3.0000002,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 3.0000002,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_21.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545305,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Show.anim",
+      "SingingClipPath": "",
+      "Time": 4.767,
+      "SkillStateTime": 4.767,
+      "AnimationLength": 4.766667,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_MVP_Telesport_01.prefab",
+          "At": 2.6666667,
+          "Duration": 2.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "",
+          "At": 0.6666667,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 2.6666667,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545306,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_JueWang/Monster_JueWang_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.267,
+      "SkillStateTime": 1.267,
+      "AnimationLength": 1.2666668,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop01.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_29.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": []
+    },
+    {
+      "Id": 1000545307,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Anims/Monster/Monster_Empty/Monster_Empty_Nil.anim",
+      "SingingClipPath": "",
+      "Time": 5.0,
+      "SkillStateTime": 5.0,
+      "AnimationLength": 3.3333335,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_YuanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 342,
+          "WarningSize": {
+            "x": 3.0,
+            "y": 0.0,
+            "z": 360.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Wizard_HuoZhuGongJi_02.prefab",
+          "At": 3.0000002,
+          "Duration": 2.5999999046325684,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_34.wav",
+          "At": 3.0000005,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 3.0000002,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 3.0000002,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_35.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545401,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.6,
+      "SkillStateTime": 1.6,
+      "AnimationLength": 1.6000001,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_PuGong.prefab",
+          "At": 0.43333337,
+          "Duration": 1.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_01.wav",
+          "At": 0.33333334,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.40000004,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.40000004,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_04.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545402,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_ChongFeng_Singing.anim",
+      "SingingClipPath": "",
+      "Time": 6.033,
+      "SkillStateTime": 6.033,
+      "AnimationLength": 2.0333335,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_YuanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 4.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 342,
+          "WarningSize": {
+            "x": 4.0,
+            "y": 0.0,
+            "z": 360.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_Singing.prefab",
+          "At": 0.0,
+          "Duration": 4.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_AssassinCross_HeiAnShunJian_05.prefab",
+          "At": 4.5,
+          "Duration": 1.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_11.wav",
+          "At": 0.0,
+          "Duration": 4.0,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_10.wav",
+          "At": 4.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 4.3333335,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 4.3333335,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545403,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_BeiAiHuoXinXi.anim",
+      "SingingClipPath": "",
+      "Time": 6.867,
+      "SkillStateTime": 6.867,
+      "AnimationLength": 1.4666667,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_BeiDui.prefab",
+          "At": 0.0,
+          "Duration": 4.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 4.0,
+            "z": 1.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_GuangYuChenMo.prefab",
+          "At": 4.0,
+          "Duration": 2.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_09.wav",
+          "At": 0.0,
+          "Duration": 4.0,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_08.wav",
+          "At": 4.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 5.0000005,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545405,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Show.anim",
+      "SingingClipPath": "",
+      "Time": 3.967,
+      "SkillStateTime": 3.967,
+      "AnimationLength": 3.966667,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_MVP_Telesport_01.prefab",
+          "At": 2.2,
+          "Duration": 2.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 2.2,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545407,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_BeiAi/Monster_BeiAi_Skill_BeiAiHuoXinXi_Singing.anim",
+      "SingingClipPath": "",
+      "Time": 5.0,
+      "SkillStateTime": 5.0,
+      "AnimationLength": 1.0,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_Singing.prefab",
+          "At": 0.0,
+          "Duration": 3.8333337,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_07.wav",
+          "At": 0.0,
+          "Duration": 2.8333335,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_06.wav",
+          "At": 2.8333335,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.0,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545601,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_DianKuangShiFang.anim",
+      "SingingClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_DianKuang.anim",
+      "Time": 15.0,
+      "SkillStateTime": 12.132999,
+      "AnimationLength": 3.6000001,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_DianKuangChiXu.prefab",
+          "At": 2.1666667,
+          "Duration": 3.5000003000000004,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.5,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSi_DianKuangShiFang.prefab",
+          "At": 7.0,
+          "Duration": 2.700000047683716,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_13.wav",
+          "At": 0.0,
+          "Duration": 5.666667,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_12.wav",
+          "At": 5.666667,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 7.0,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 7.0,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545602,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/NPC/NPC_M_DaNaTuoSi/NPC_M_DaNaTuoSi_XuRuoXiaGu_03.anim",
+      "SingingClipPath": "",
+      "Time": 3602.5,
+      "SkillStateTime": 3602.5,
+      "AnimationLength": 2.2,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeXiWang_HuiGuiBenTi_01.prefab",
+          "At": 0.0,
+          "Duration": 2.200000047683716,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeXiWang_HuiGuiBenTi_Dead.prefab",
+          "At": 0.0,
+          "Duration": 4.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -1.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 180.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeXiWang_HuiGuiBenTi_02.prefab",
+          "At": 2.0000002,
+          "Duration": 2.200000047683716,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_33.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 1.5665998,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000545801,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_NanGuaHun/Monster_NanGuaHun_TouZhiNanGuaZhaDan.anim",
+      "SingingClipPath": "",
+      "Time": 3.0,
+      "SkillStateTime": 1.167,
+      "AnimationLength": 1.1666667,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": []
+    },
+    {
+      "Id": 1000545802,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Anims/Monster/Monster_Empty/Monster_Empty_Nil.anim",
+      "SingingClipPath": "",
+      "Time": 4.0,
+      "SkillStateTime": 4.0,
+      "AnimationLength": 3.3333335,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_YuanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 342,
+          "WarningSize": {
+            "x": 2.0,
+            "y": 0.0,
+            "z": 360.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_MengLuoKeNanGuaHun_NanGuaZhaDan_01.prefab",
+          "At": 0.0,
+          "Duration": 3.799999952316284,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_24.wav",
+          "At": 3.0000002,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 3.0000002,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Fire01.prefab",
+            "At": 3.0000002,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546001,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.333,
+      "SkillStateTime": 1.333,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_MoShenYingZi_01.prefab",
+          "At": 0.49999997,
+          "Duration": 1.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546002,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi01/Monster_MoShenYingZi01_Release_01.anim",
+      "SingingClipPath": "",
+      "Time": 1.667,
+      "SkillStateTime": 1.667,
+      "AnimationLength": 1.1666667,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_MoShenYingZi_ChuanCi_01.prefab",
+          "At": 0.6666667,
+          "Duration": 0.44999998807907104,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.70000005,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.70000005,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546101,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoShenYingZi02/Monster_MoShenYingZi02_Release_01.anim",
+      "SingingClipPath": "",
+      "Time": 1.4,
+      "SkillStateTime": 1.4,
+      "AnimationLength": 0.86666673,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop06.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_28.wav",
+          "At": 0.0,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.3,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.3,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunAnJi_01.prefab",
+            "Kind": 2,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": true,
+            "InitTime": 1.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -9.0
+            },
+            "P3": {
+              "x": 9.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.04471779
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.08959547
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1333587
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.175989
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2174678
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.2577767
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.2968971
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.3348104
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.3714982
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.4069419
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.441123
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.4740231
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.5056236
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.5359059
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.5648516
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.5924422
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.618659
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.6434836
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.6668975
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.6888823
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.7094193
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.7284899
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.7460758
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.7621584
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.7767192
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.7897396
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.8012012
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.8275133
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.8927987
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615462
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_36.wav"
+          }
+        },
+        {
+          "Index": 1,
+          "At": 0.53333336,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.53333336,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunAnJi_01.prefab",
+            "Kind": 2,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": true,
+            "InitTime": 1.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -9.0
+            },
+            "P3": {
+              "x": 6.36,
+              "y": 6.36,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.04471779
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.08959547
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1333587
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.175989
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2174678
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.2577767
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.2968971
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.3348104
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.3714982
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.4069419
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.441123
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.4740231
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.5056236
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.5359059
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.5648516
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.5924422
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.618659
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.6434836
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.6668975
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.6888823
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.7094193
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.7284899
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.7460758
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.7621584
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.7767192
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.7897396
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.8012012
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.8275133
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.8927987
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615462
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_36.wav"
+          }
+        },
+        {
+          "Index": 2,
+          "At": 0.6666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.6666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunAnJi_01.prefab",
+            "Kind": 2,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": true,
+            "InitTime": 1.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -9.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 9.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.04471779
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.08959547
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1333587
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.175989
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2174678
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.2577767
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.2968971
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.3348104
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.3714982
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.4069419
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.441123
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.4740231
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.5056236
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.5359059
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.5648516
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.5924422
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.618659
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.6434836
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.6668975
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.6888823
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.7094193
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.7284899
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.7460758
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.7621584
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.7767192
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.7897396
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.8012012
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.8275133
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.8927987
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615462
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_36.wav"
+          }
+        },
+        {
+          "Index": 3,
+          "At": 0.8,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.8,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunAnJi_01.prefab",
+            "Kind": 2,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": true,
+            "InitTime": 1.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -9.0
+            },
+            "P3": {
+              "x": -6.36,
+              "y": 6.36,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.04471779
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.08959547
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1333587
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.175989
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2174678
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.2577767
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.2968971
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.3348104
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.3714982
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.4069419
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.441123
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.4740231
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.5056236
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.5359059
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.5648516
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.5924422
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.618659
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.6434836
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.6668975
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.6888823
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.7094193
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.7284899
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.7460758
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.7621584
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.7767192
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.7897396
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.8012012
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.8275133
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.8927987
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615462
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_36.wav"
+          }
+        },
+        {
+          "Index": 4,
+          "At": 0.9333334,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.9333334,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunAnJi_01.prefab",
+            "Kind": 2,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 2.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "StartSpeed": 0.0,
+            "MaxSpeed": 0.0,
+            "AimTargetCenter": true,
+            "InitTime": 1.0,
+            "TotalTime": 0.0,
+            "P1": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -9.0
+            },
+            "P3": {
+              "x": -9.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [
+              {
+                "Time": 0.0,
+                "Value": 0.0
+              },
+              {
+                "Time": 0.0,
+                "Value": 0.001147792
+              },
+              {
+                "Time": 0.0333333,
+                "Value": 0.04471779
+              },
+              {
+                "Time": 0.0666666,
+                "Value": 0.08959547
+              },
+              {
+                "Time": 0.0999999,
+                "Value": 0.1333587
+              },
+              {
+                "Time": 0.1333332,
+                "Value": 0.175989
+              },
+              {
+                "Time": 0.1666665,
+                "Value": 0.2174678
+              },
+              {
+                "Time": 0.1999998,
+                "Value": 0.2577767
+              },
+              {
+                "Time": 0.2333331,
+                "Value": 0.2968971
+              },
+              {
+                "Time": 0.2666664,
+                "Value": 0.3348104
+              },
+              {
+                "Time": 0.2999997,
+                "Value": 0.3714982
+              },
+              {
+                "Time": 0.333333,
+                "Value": 0.4069419
+              },
+              {
+                "Time": 0.3666663,
+                "Value": 0.441123
+              },
+              {
+                "Time": 0.3999996,
+                "Value": 0.4740231
+              },
+              {
+                "Time": 0.4333329,
+                "Value": 0.5056236
+              },
+              {
+                "Time": 0.4666662,
+                "Value": 0.5359059
+              },
+              {
+                "Time": 0.4999995,
+                "Value": 0.5648516
+              },
+              {
+                "Time": 0.5333328,
+                "Value": 0.5924422
+              },
+              {
+                "Time": 0.5666661,
+                "Value": 0.618659
+              },
+              {
+                "Time": 0.5999994,
+                "Value": 0.6434836
+              },
+              {
+                "Time": 0.6333327,
+                "Value": 0.6668975
+              },
+              {
+                "Time": 0.666666,
+                "Value": 0.6888823
+              },
+              {
+                "Time": 0.6999993,
+                "Value": 0.7094193
+              },
+              {
+                "Time": 0.7333326,
+                "Value": 0.7284899
+              },
+              {
+                "Time": 0.7666659,
+                "Value": 0.7460758
+              },
+              {
+                "Time": 0.7999992,
+                "Value": 0.7621584
+              },
+              {
+                "Time": 0.8333325,
+                "Value": 0.7767192
+              },
+              {
+                "Time": 0.8666658,
+                "Value": 0.7897396
+              },
+              {
+                "Time": 0.8999991,
+                "Value": 0.8012012
+              },
+              {
+                "Time": 0.9333324,
+                "Value": 0.8275133
+              },
+              {
+                "Time": 0.9666657,
+                "Value": 0.8927987
+              },
+              {
+                "Time": 0.999999,
+                "Value": 0.9615462
+              },
+              {
+                "Time": 1.0,
+                "Value": 0.9615479
+              }
+            ],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_36.wav"
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1000546201,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_ELingSiYao.anim",
+      "SingingClipPath": "",
+      "Time": 2.4,
+      "SkillStateTime": 2.4,
+      "AnimationLength": 2.4,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.0,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546202,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_ELing/Monster_ELing_Skill_ChongFeng02.anim",
+      "SingingClipPath": "",
+      "Time": 0.5,
+      "SkillStateTime": 0.5,
+      "AnimationLength": 0.6,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_MengLuoKeELing_ChongFeng_01.prefab",
+          "At": 0.0,
+          "Duration": -1.0,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.5,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.5,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546301,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MiLuoSi/Monster_MiLuoSi_Skill_DaDiZhiJi.anim",
+      "SingingClipPath": "",
+      "Time": 3.1,
+      "SkillStateTime": 3.1,
+      "AnimationLength": 3.1000001,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_MiLuoSi_DaDiZhiJi_01.prefab",
+          "At": 1.5000001,
+          "Duration": 1.2999999523162842,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop01.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_YuanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 3.5
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 342,
+          "WarningSize": {
+            "x": 3.5,
+            "y": 0.0,
+            "z": 360.0
+          }
+        }
+      ],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 1.5000001,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546401,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Attack.anim",
+      "SingingClipPath": "",
+      "Time": 1.333,
+      "SkillStateTime": 1.333,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546402,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_HeiAnKuoSan.anim",
+      "SingingClipPath": "",
+      "Time": 6.0,
+      "SkillStateTime": 4.533,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Scene/Fx_Scene_Dungeon_BeiDui.prefab",
+          "At": 0.0,
+          "Duration": 3.5000002,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 2.5,
+            "z": 0.5
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_WangLingWuShi_DianKuang_01.prefab",
+          "At": 4.0000005,
+          "Duration": 1.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop106.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_09.wav",
+          "At": 0.0,
+          "Duration": 3.0000005,
+          "Loop": false
+        },
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_06.wav",
+          "At": 3.0000005,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 4.0000005,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 4.0000005,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546403,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_HeiAnKuoSan.anim",
+      "SingingClipPath": "",
+      "Time": 1.333,
+      "SkillStateTime": 1.333,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop06.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_WangLingWuShi_SiWangQiXi_01.prefab",
+            "At": 0.4666667,
+            "Duration": 1.5,
+            "Follow": false,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 2.0,
+              "y": 2.0,
+              "z": 2.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546404,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_HeiAnKuoSan.anim",
+      "SingingClipPath": "",
+      "Time": 1.333,
+      "SkillStateTime": 1.333,
+      "AnimationLength": 1.3333334,
+      "SingingAudioPath": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_05.wav",
+      "Effects": [],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop06.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_22.wav",
+          "At": 0.26666668,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.4666667,
+          "HitFx": null,
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    },
+    {
+      "Id": 1000546405,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Anims/Monster/Monster_MoFaShi/Monster_MoFaShi_Skill_HeiAnKuoSan.anim",
+      "SingingClipPath": "",
+      "Time": 1.333,
+      "SkillStateTime": 1.333,
+      "AnimationLength": 2.8666668,
+      "SingingAudioPath": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_05.wav",
+      "Effects": [],
+      "SingingEffects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop06.prefab",
+          "At": 0,
+          "Duration": -1,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 10.0,
+            "y": 0.0,
+            "z": 2.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 90.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 10.0,
+            "y": 0.0,
+            "z": 2.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 180.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 10.0,
+            "y": 0.0,
+            "z": 2.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_JuXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.5,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 270.0,
+          "WarningType": 343,
+          "WarningSize": {
+            "x": 10.0,
+            "y": 0.0,
+            "z": 2.0
+          }
+        }
+      ],
+      "Audio": [],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_ChongFeng.prefab",
+            "Kind": 3,
+            "Start": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "End": {
+              "x": 4.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "StartSpeed": 30.0,
+            "MaxSpeed": 30.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 1.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_18.wav"
+          }
+        },
+        {
+          "Index": 1,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_ChongFeng.prefab",
+            "Kind": 3,
+            "Start": {
+              "x": -1.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "End": {
+              "x": -4.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "StartSpeed": 30.0,
+            "MaxSpeed": 30.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 1.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 2,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_ChongFeng.prefab",
+            "Kind": 3,
+            "Start": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 4.0
+            },
+            "StartSpeed": 30.0,
+            "MaxSpeed": 30.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 1.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        },
+        {
+          "Index": 3,
+          "At": 0.4666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 0.4666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "",
+          "CriticalAudio": "",
+          "Projectile": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSiDeBeiAi_ChongFeng.prefab",
+            "Kind": 3,
+            "Start": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -1.0
+            },
+            "End": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -4.0
+            },
+            "StartSpeed": 30.0,
+            "MaxSpeed": 30.0,
+            "AimTargetCenter": false,
+            "InitTime": 0.0,
+            "TotalTime": 1.0,
+            "P1": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P2": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "P3": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "InitAngle": 0.0,
+            "Curve": [],
+            "Revolution": false,
+            "RevolutionSpeed": 0.0,
+            "RevolutionCenter": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "Audio": ""
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1000548301,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Anims/Monster/Monster_Empty/Monster_Empty_Nil.anim",
+      "SingingClipPath": "",
+      "Time": 3.0,
+      "SkillStateTime": 3.0,
+      "AnimationLength": 3.3333335,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": []
+    },
+    {
+      "Id": 1000549101,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Anims/Monster/Monster_Empty/Monster_Empty_Nil.anim",
+      "SingingClipPath": "",
+      "Time": 3.0,
+      "SkillStateTime": 3.0,
+      "AnimationLength": 3.3333335,
+      "SingingAudioPath": "",
+      "Effects": [],
+      "SingingEffects": [],
+      "Audio": [],
+      "Results": []
+    },
+    {
+      "Id": 1000549201,
+      "ClipPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Anims/Monster/Monster_Empty/Monster_Empty_Nil.anim",
+      "SingingClipPath": "",
+      "Time": 5.0,
+      "SkillStateTime": 5.0,
+      "AnimationLength": 3.3333335,
+      "SingingAudioPath": "",
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Caution_YuanXingFanWei_10.prefab",
+          "At": 0.0,
+          "Duration": 3.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 342,
+          "WarningSize": {
+            "x": 3.0,
+            "y": 0.0,
+            "z": 360.0
+          }
+        },
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_EMoBoLi_LingHunShenYuan_01.prefab",
+          "At": 3.0000002,
+          "Duration": 2.0,
+          "Follow": false,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 2.0,
+            "y": 2.0,
+            "z": 2.0
+          },
+          "HeightRatio": 0,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 2.0,
+            "y": 2.0,
+            "z": 2.0
+          }
+        }
+      ],
+      "SingingEffects": [],
+      "Audio": [
+        {
+          "Path": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_25.wav",
+          "At": 3.0000005,
+          "Duration": 0,
+          "Loop": false
+        }
+      ],
+      "Results": [
+        {
+          "Index": 0,
+          "At": 3.1666667,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_An01.prefab",
+            "At": 3.1666667,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          "CriticalFx": null,
+          "HitAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_26.wav",
+          "CriticalAudio": "",
+          "Projectile": null
+        }
+      ]
+    }
+  ]
+}

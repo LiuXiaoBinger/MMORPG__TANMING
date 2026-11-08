@@ -71,6 +71,8 @@ namespace GateServer
             GateMoveCtrl gateMoveCtrl = new GateMoveCtrl();
             server.RegistCommand(NetDefine.CMD_MoveOperationCode, gateMoveCtrl);
             server.RegistCommand(NetDefine.CMD_DungeonInteractCode, gateMoveCtrl);
+            // 原对话命令沿现有网关转发保持真实复合会话身份。
+            server.RegistCommand(NetDefine.CMD_DungeonCommandEventCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_DungeonInteractResultCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
             // 队伍与副本入场：6 条上行原样转给游戏服，4 条下行按 Unity 会话回发。

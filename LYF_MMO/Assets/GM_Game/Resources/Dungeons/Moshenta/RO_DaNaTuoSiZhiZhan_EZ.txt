@@ -11447,17 +11447,7 @@
             <pre_wave_option>PreWaveOptionTypeAnd</pre_wave_option>
             <pre_wave_list>
               <MScenePreWaveInfo>
-                <pre_wave_id>34</pre_wave_id>
-                <pre_wave_blood>0</pre_wave_blood>
-                <pre_wave_num>0</pre_wave_num>
-              </MScenePreWaveInfo>
-              <MScenePreWaveInfo>
-                <pre_wave_id>35</pre_wave_id>
-                <pre_wave_blood>0</pre_wave_blood>
-                <pre_wave_num>0</pre_wave_num>
-              </MScenePreWaveInfo>
-              <MScenePreWaveInfo>
-                <pre_wave_id>46</pre_wave_id>
+                <pre_wave_id>48</pre_wave_id>
                 <pre_wave_blood>0</pre_wave_blood>
                 <pre_wave_num>0</pre_wave_num>
               </MScenePreWaveInfo>

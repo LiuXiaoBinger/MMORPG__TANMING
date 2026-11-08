@@ -1,0 +1,655 @@
+{
+  "Buffs": [
+    {
+      "Id": 402401,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 500701,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Buff_YunXuan_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 1.0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 902001,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 902601,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_AngelBoli_Skill_AntiInjury_02.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 903501,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 925801,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 946701,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 950101,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3252401,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3270501,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605101,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Magician_MoFaShi_Buff_NengLiangWaiTao_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605201,
+      "Effects": [],
+      "Alpha": 0.5,
+      "ChangeEffect": 2,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605301,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Blue.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.5,
+            "y": 1.5,
+            "z": 1.5
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605302,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Green.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.5,
+            "y": 1.5,
+            "z": 1.5
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605303,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Purple.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.5,
+            "y": 1.5,
+            "z": 1.5
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605304,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Red.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.5,
+            "y": 1.5,
+            "z": 1.5
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605401,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Blue_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605501,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Green_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605601,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Purple_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605701,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Red_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605801,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSi_FaZhen_Yellow_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3605901,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606001,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606101,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeZengHen_ZengHenNingShi_01.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 1.0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_ZhuiJi_01.prefab"
+    },
+    {
+      "Id": 3606201,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Buff_ChenMo_02.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 1.0,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606301,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_DaNaTuoSi_CiKeYinJi.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0.5,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606401,
+      "Effects": [],
+      "Alpha": 1.0,
+      "ChangeEffect": 3,
+      "Color": {
+        "r": 0.23529411764705882,
+        "g": 0.23529411764705882,
+        "b": 0.23529411764705882,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606501,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606601,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeZengHen_BenTi.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0.5,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606701,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeJueWang_BenTi.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0.5,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 3606801,
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_BenTi.prefab",
+          "Follow": true,
+          "Bone": "",
+          "HeightRatio": 0.5,
+          "Scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "Duration": -1
+        }
+      ],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    },
+    {
+      "Id": 810025201,
+      "Effects": [],
+      "Alpha": 1,
+      "ChangeEffect": 0,
+      "Color": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1
+      },
+      "LinkPath": ""
+    }
+  ],
+  "VisibilityShader": "Assets/GM_Game/Scenes/RODungeon_Moshenta/RO/artres/Resources/Shader/RO/Creature/ROMonsterVisibility__beta153.shader"
+}

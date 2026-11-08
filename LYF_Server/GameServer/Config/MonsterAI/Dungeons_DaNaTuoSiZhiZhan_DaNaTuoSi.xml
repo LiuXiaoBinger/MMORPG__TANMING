@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_DaNaTuoSi>
+  <EntryTask I_DaNaTuoSiState="0" S_AIEvent="" B_InitSelfState="0" LL_SymbolList="" L_SymbolUuid="0" LL_PlayerList="" I_BossState="0" F_CheckPlayerTime="0">
+    <Selector>
+      <ReturnFailure>
+        <AITimeAxisWithNode />
+      </ReturnFailure>
+      <Sequence>
+        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="InitSelfState" Shared_bool1mValue="0" />
+        <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DaNaTuoSiState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="InitSelfState" Shared_store_resultmValue="0" />
+      </Sequence>
+      <Sequence>
+        <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="DaNaTuoSiState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DaNaTuoSiState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <Selector>
+          <Sequence>
+            <Selector>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="DaNaTuoSiState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605301" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605302" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AIShowTVNotice Shared_send_targetName="" Shared_send_targetmValue="" Shared_annouce_idName="" Shared_annouce_idmValue="2315" Shared_outlook_idName="" Shared_outlook_idmValue="0" Shared_list_rolesName="" Shared_list_rolesmValue="" who_can_see="kSendTargetType_RolesInView" Shared_contentName="" Shared_contentmValue="" />
+              </Sequence>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="DaNaTuoSiState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605301" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605302" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605303" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+              </Sequence>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="DaNaTuoSiState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="3" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605301" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605302" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605303" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+                <AINewGroupFindByWave Shared_wave_idsName="" Shared_wave_idsmValue="54,55,56,57" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" />
+                <AINewGroupFilterBuff Shared_buff_idName="" Shared_buff_idmValue="36053" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_has_or_notName="" Shared_has_or_notmValue="0" />
+                <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="SymbolUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="SymbolList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="3605304" Shared_operator_idName="" Shared_operator_idmValue="0" Shared_is_selfName="" Shared_is_selfmValue="0" Shared_hoster_uuidName="SymbolUuid" Shared_hoster_uuidmValue="0" />
+              </Sequence>
+              <AIIntComparison Shared_int1Name="DaNaTuoSiState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="4" />
+            </Selector>
+            <AISwitchAxis Shared_time_axisName="" Shared_time_axismValue="2" />
+            <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DaNaTuoSiState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+            <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545601" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+          </Sequence>
+          <Sequence>
+            <AIIntComparison Shared_int1Name="DaNaTuoSiState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="5" />
+            <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545602" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+            <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="DaNaTuoSiState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+          </Sequence>
+        </Selector>
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects />
+</Dungeons_DaNaTuoSiZhiZhan_DaNaTuoSi>

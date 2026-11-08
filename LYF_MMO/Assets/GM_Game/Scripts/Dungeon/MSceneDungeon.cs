@@ -10,9 +10,11 @@ public class MSceneDungeon : MonoBehaviour
     /// <summary>当前项目剑气普攻的稳定 ID，对应服务端 ROArtSkill 的三段表现。</summary>
     public const int BasicAttackId = 10010;
     /// <summary>已加载的怪物按波次出生标识定位；与异步模型完成顺序无关。</summary>
-    private readonly Dictionary<ulong, MonsterEntity> monsters = new Dictionary<ulong, MonsterEntity>();
+    private readonly Dictionary<ulong, MEntity> monsters = new Dictionary<ulong, MEntity>();
     /// <summary>本场景开始时确认的服务端实例号。</summary>
     private ulong instanceId;
+    /// <summary>当前副本原Buff实例视觉生命周期，退出时随场景释放。</summary>
+    private MSceneMonsterBuffPlayer buffPlayer;
     /// <summary>挂在主画布底层、生命周期跟随本副本的普通伤害跳字网格。</summary>
     private MBattleHudWordMgr battleHudWord;
 
@@ -43,8 +45,17 @@ public class MSceneDungeon : MonoBehaviour
     {
         world = Global.Instance.SceneWorld;
         instanceId = TeamData.Instance.DungeonInstanceId;
+        buffPlayer = new MSceneMonsterBuffPlayer(world, FindMonster);
+        TeamData.Instance.MonsterBuffUpdated += OnMonsterBuffUpdated;
+        // 入场时已经收到的原Buff快照，模型就绪后使用剩余寿命恢复。
+        List<MSceneMonsterBuffState> buffs = TeamData.Instance.GetMonsterBuffs();
+        for (int index = 0; index < buffs.Count; index++) buffPlayer.Apply(buffs[index]);
         TeamData.Instance.MonsterAttrUpdated += OnMonsterAttrUpdate;
         TeamData.Instance.MonsterMotionUpdated += OnMonsterMotion;
+        TeamData.Instance.MonsterSpawned += SpawnDynamic;
+        TeamData.Instance.MonsterRemoved += RemoveDynamic;
+        TeamData.Instance.MonsterPlayerHit += OnMonsterPlayerHit;
+        TeamData.Instance.MonsterHeadExpression += OnHeadExpression;
         TeamData.Instance.DungeonFlowUpdated += ApplyFlow;
         if (UIRoot.Instance != null && instanceId != 0UL)
         {
@@ -71,11 +82,33 @@ public class MSceneDungeon : MonoBehaviour
             waveEntities.Add(wave.Id, new List<ulong>());
         }
         ApplyFlow();
+        // 入场包中的召唤物不在XML固定波次中，按当前服务端快照恢复。
+        List<MonsterSpawnData> summons = TeamData.Instance.GetMonsterSpawns();
+        for (int index = 0; index < summons.Count; index++) SpawnDynamic(summons[index]);
+    }
+
+    /// <summary>只把同实例Buff通知交给当前场景，切场景期间旧模型不接受新副本表现。</summary>
+    /// <param name="state">TeamData已经记录收到时刻的原Buff更新。</param>
+    private void OnMonsterBuffUpdated(MSceneMonsterBuffState state)
+    {
+        if (instanceId != TeamData.Instance.DungeonInstanceId) return;
+        buffPlayer.Apply(state);
+    }
+
+    /// <summary>按服务端出生位查找已经绑定好的怪物或NPC实体。</summary>
+    /// <param name="spawnId">当前实例中的固定或动态出生身份。</param>
+    private MEntity FindMonster(ulong spawnId)
+    {
+        // 原模型字典中的同一实体引用。
+        MEntity entity;
+        monsters.TryGetValue(spawnId, out entity);
+        return entity;
     }
 
     /// <summary>仅寻找主角附近的已解锁交互；阶段与出生不由帧循环推进。</summary>
     private void Update()
     {
+        if (buffPlayer != null) buffPlayer.Update();
         if (world.LocalRole == null) return;
         // 选择最近可用物件，离开后恢复为空。
         MSceneInteraction nearest = null;
@@ -212,8 +245,8 @@ public class MSceneDungeon : MonoBehaviour
             if (catalog.entities[index].id == configId && catalog.entities[index].isNpc == isNpc)
                 creature = catalog.entities[index];
         }
-        // 采集与组事件没有角色模型；原空模型控制怪也不伪造可攻击对象。
-        if (creature == null || creature.modelName == "Monster_Empty")
+        // 采集与组事件没有实体；原空模型控制怪使用无Renderer的正式机制预制体。
+        if (creature == null)
         {
             wave.Spawned = true;
             return;
@@ -247,8 +280,16 @@ public class MSceneDungeon : MonoBehaviour
     {
         // 身份由原波次及序号组成，与服务器怪物字典一致。
         ulong spawnId = ((ulong)(uint)wave.Id << 32) | (uint)(ordinal + 1);
+        // 魔神塔快照包含所有仍在场Actor，零HP机制/NPC也据此排除已经清尸的固定点。
         MonsterHpData authority;
-        if (!creature.isNpc && creature.maxHp > 0 && !TeamData.Instance.GetMonsterAttr(spawnId, out authority)) return;
+        if (TeamData.Instance.DungeonId == 4060)
+        {
+            if (!TeamData.Instance.GetMonsterAttr(spawnId, out authority)) return;
+        }
+        else if (!creature.isNpc && creature.maxHp > 0)
+        {
+            if (!TeamData.Instance.GetMonsterAttr(spawnId, out authority)) return;
+        }
         if (!requestedSpawns.Add(spawnId)) return;
         ResourceMgr.Instance.LoadPrefabAsync(creature.runtimePrefabPath, model =>
         {
@@ -259,6 +300,12 @@ public class MSceneDungeon : MonoBehaviour
                 return;
             }
             if (!TeamData.Instance.DungeonFlow.ActiveWaveIds.Contains(wave.Id))
+            {
+                Destroy(model);
+                return;
+            }
+            // 资源加载期间收到的移除同样有效，不能让晚完成模型重新生成尸体。
+            if (TeamData.Instance.DungeonId == 4060 && !TeamData.Instance.GetMonsterAttr(spawnId, out authority))
             {
                 Destroy(model);
                 return;
@@ -304,7 +351,7 @@ public class MSceneDungeon : MonoBehaviour
             prepared.ApplyMotions(entity.Model.Ator);
             entity.Radius = Mathf.Max(prepared.ProjectSize.x, prepared.ProjectSize.z) * 0.5f * creature.scale;
             entity.Height = prepared.ProjectSize.y * creature.scale;
-            if (!creature.isNpc && creature.maxHp > 0)
+            if (!creature.isNpc)
             {
                 // 两端使用相同的出生序号关联实例属性，Unity 自身的实体 UID 仍交给 SceneWorld。
                 MonsterEntity monster = (MonsterEntity)entity;
@@ -317,6 +364,14 @@ public class MSceneDungeon : MonoBehaviour
                 if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterMotion(spawnId, out motion))
                     ((MSceneMonsterHoster)controller).ApplyMotion(motion);
             }
+            if (creature.isNpc)
+            {
+                monsters.Add(spawnId, entity);
+                // NPC控制节点与其原模型共用服务端SpawnId，不再次创建怪物。
+                MSceneMonsterMotion npcMotion;
+                if (TeamData.Instance.GetMonsterMotion(spawnId, out npcMotion))
+                    ((MSceneNpcHoster)controller).ApplyMotion(npcMotion);
+            }
             // 原 invisible 波次只隐藏模型和判定体，不改写出生配置。
             if (ROSceneXml.Text(wave.Data, "base_info/init_invisible") == "true") model.SetActive(false);
         });
@@ -327,9 +382,107 @@ public class MSceneDungeon : MonoBehaviour
     private void OnMonsterMotion(MSceneMonsterMotion motion)
     {
         // 预制体已完成出生时可通过此服务端编号定位对应运行实体。
-        MonsterEntity monster;
+        MEntity monster;
         if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(motion.Action.SpawnId, out monster)) return;
-        ((MSceneMonsterHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
+        // 已有NPC控制器仍负责交互，只复用技能表现播放器。
+        MSceneNpcHoster npc = monster.GetEntityCtrl() as MSceneNpcHoster;
+        if (npc != null) npc.ApplyMotion(motion);
+        else ((MSceneMonsterHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
+    }
+
+    /// <summary>沿既有资源、实体和控制器链创建不属于固定波次的召唤实体。</summary>
+    /// <param name="spawn">服务端真实EntityTable编号、出生位置与身份。</param>
+    private void SpawnDynamic(MonsterSpawnData spawn)
+    {
+        if (instanceId != TeamData.Instance.DungeonInstanceId || !requestedSpawns.Add(spawn.SpawnId)) return;
+        // 召唤闭包也登记在本副本同一目录，Dummy使用不可见机制预制体。
+        ROSceneCreatureEntity creature = catalog.FindEntity(spawn.EntityId);
+        ResourceMgr.Instance.LoadPrefabAsync(creature.runtimePrefabPath, model =>
+        {
+            if (this == null || instanceId != TeamData.Instance.DungeonInstanceId)
+            {
+                Destroy(model);
+                return;
+            }
+            if (!TeamData.Instance.HasMonsterSpawn(spawn.SpawnId))
+            {
+                Destroy(model);
+                return;
+            }
+            model.transform.SetParent(transform, false);
+            model.transform.position = new Vector3(spawn.X, spawn.Y, spawn.Z);
+            model.transform.rotation = Quaternion.Euler(0f, spawn.Face, 0f);
+            model.transform.localScale = Vector3.one * creature.scale;
+            // 复用SceneWorld中的真实怪物类型，不另建召唤物世界。
+            MonsterEntity monster = (MonsterEntity)world.CreateEntity(EntityType.Monster, creature.id);
+            entityUids.Add(monster.UID);
+            monsters.Add(spawn.SpawnId, monster);
+            // 原三个召唤物都是IsDummy，无可点击怪物模型。
+            monster.NonCombatant = true;
+            MSceneMonsterHoster controller = model.GetComponent<MSceneMonsterHoster>();
+            controller.WaveId = -1;
+            controller._roleType = RoleType.Monster;
+            controller.SetROObject(monster);
+            monster.SetEntityCtrl(controller);
+            monster.Model.SetGameObject(model, string.Empty, false);
+            model.GetComponent<MModelPrepareData>().ApplyMotions(monster.Model.Ator);
+            // 读取加载期间可能改变的权威血量与正在进行的技能，不重放出生时旧状态。
+            MonsterHpData hp;
+            if (TeamData.Instance.GetMonsterAttr(spawn.SpawnId, out hp)) ChangeHP(monster, hp, false);
+            MSceneMonsterMotion motion;
+            if (TeamData.Instance.GetMonsterMotion(spawn.SpawnId, out motion)) controller.ApplyMotion(motion);
+        });
+    }
+
+    /// <summary>移除指定固定或动态身份，实体销毁负责回收其动画、特效及声音。</summary>
+    /// <param name="spawnId">本实例已离场的服务器出生标识。</param>
+    private void RemoveDynamic(ulong spawnId)
+    {
+        requestedSpawns.Remove(spawnId);
+        // 资源尚未完成时字典没有实体，回调会通过出生缓存检查自行销毁。
+        MEntity monster;
+        if (!monsters.TryGetValue(spawnId, out monster)) return;
+        monsters.Remove(spawnId);
+        entityUids.Remove(monster.UID);
+        // 固定波持有的世界UID同时移除，后续重置不能再次回收已复用的实体身份。
+        List<ulong> owned;
+        if (waveEntities.TryGetValue((int)(spawnId >> 32), out owned)) owned.Remove(monster.UID);
+        world.RemoveEntity(monster.UID);
+    }
+
+    /// <summary>真实命中回包驱动原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
+    /// <param name="hit">含原技能、结果序号和暴击的服务器结算。</param>
+    private void OnMonsterPlayerHit(MonsterPlayerHitData hit)
+    {
+        if (instanceId != TeamData.Instance.DungeonInstanceId) return;
+        if (hit.SkillId == 0 || hit.Damage <= 0) return;
+        // 原目标角色身份与SceneWorld实体UID不同，沿正式角色索引查找。
+        RoleEntity target = world.LocalRole;
+        if (target == null || target.GetID() != hit.TargetRoleId)
+        {
+            if (!world.TryGetRole(hit.TargetRoleId, out target)) return;
+        }
+        // 命中效果归对应怪物宿主持有，副本离开和怪物回收会同时释放。
+        MEntity caster;
+        if (!monsters.TryGetValue(hit.SpawnId, out caster)) return;
+        // 原NPC也可能参与剧情技能，仍使用同一结算表现入口。
+        MSceneNpcHoster npc = caster.GetEntityCtrl() as MSceneNpcHoster;
+        if (npc != null) npc.PlayResult(hit, target);
+        else ((MSceneMonsterHoster)caster.GetEntityCtrl()).PlayResult(hit, target);
+    }
+
+    /// <summary>将原HeadShow5表情挂在当前实例的既有模型，不建立影子实体。</summary>
+    /// <param name="notice">已经筛选可见角色的AI通知。</param>
+    private void OnHeadExpression(MonsterAiNoticeData notice)
+    {
+        if (instanceId != TeamData.Instance.DungeonInstanceId) return;
+        // 表情来源的固定波次或动态召唤物身份。
+        MEntity entity;
+        if (!monsters.TryGetValue(notice.SourceSpawnId, out entity)) return;
+        // NPC和怪物共用技能表现资源，保留各自原控制器。
+        MSceneNpcHoster npc = entity.GetEntityCtrl() as MSceneNpcHoster;
+        if (npc != null) npc.ShowHeadExpression();
+        else ((MSceneMonsterHoster)entity.GetEntityCtrl()).ShowHeadExpression();
     }
 
     /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>
@@ -338,11 +491,11 @@ public class MSceneDungeon : MonoBehaviour
     private void OnMonsterAttrUpdate(MonsterHpData data, Vector3 firerPosition)
     {
         // 未装载的模型在绑定时读取 TeamData 中的最新血量。
-        MonsterEntity monster;
+        MEntity monster;
         if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(data.SpawnId, out monster)) return;
         if (!ChangeHP(monster, data, true)) return;
         if (data.Damage > 0 && battleHudWord != null)
-            battleHudWord.AddDraw(monster, firerPosition, data.Damage);
+            battleHudWord.AddDraw((MonsterEntity)monster, firerPosition, data.Damage);
     }
 
     /// <summary>先应用生命，再沿已有的 DamageReceived / Death 状态播放动作。</summary>
@@ -350,8 +503,10 @@ public class MSceneDungeon : MonoBehaviour
     /// <param name="data">GameServer 已结算的剩余生命和上限。</param>
     /// <param name="hit">实时命中为真，首次绑定只还原当前存活或死亡姿势。</param>
     /// <returns>属性确实改变时为真，重复通知不重播动作或跳字。</returns>
-    private static bool ChangeHP(MonsterEntity monster, MonsterHpData data, bool hit)
+    private static bool ChangeHP(MEntity monster, MonsterHpData data, bool hit)
     {
+        // 原无生命机制和Dummy仅承载动作/特效，零上限不能派发死亡状态。
+        if (data.MaxHp == 0 || !(monster is MonsterEntity)) return false;
         // 重复通知不能重播死亡；初次装载时 MaxHp 仍为零。
         if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return false;
         monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
@@ -366,8 +521,17 @@ public class MSceneDungeon : MonoBehaviour
     /// <summary>随场景卸载从实体世界注销全部副本角色，模型由实体模型组件归还。</summary>
     private void OnDestroy()
     {
+        if (buffPlayer != null)
+        {
+            TeamData.Instance.MonsterBuffUpdated -= OnMonsterBuffUpdated;
+            buffPlayer.Dispose();
+        }
         TeamData.Instance.MonsterAttrUpdated -= OnMonsterAttrUpdate;
         TeamData.Instance.MonsterMotionUpdated -= OnMonsterMotion;
+        TeamData.Instance.MonsterSpawned -= SpawnDynamic;
+        TeamData.Instance.MonsterRemoved -= RemoveDynamic;
+        TeamData.Instance.MonsterPlayerHit -= OnMonsterPlayerHit;
+        TeamData.Instance.MonsterHeadExpression -= OnHeadExpression;
         TeamData.Instance.DungeonFlowUpdated -= ApplyFlow;
         TeamData.Instance.SetNearbyInteraction(null);
         if (battleHudWord != null) Destroy(battleHudWord.gameObject);

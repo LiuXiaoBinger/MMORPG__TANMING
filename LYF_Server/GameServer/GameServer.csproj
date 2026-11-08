@@ -59,6 +59,12 @@
         <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
         <Compile Include="SceneEntity\MoshentaOrc.cs" />
         <Compile Include="SceneEntity\MoshentaOrcDefinition.cs" />
+        <!-- 魔神塔原技能表与动作配置的读取。 -->
+        <Compile Include="SceneEntity\Skill\MoshentaSkillCatalog.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaSkillDefinition.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaDamageSnapshot.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaDamageResult.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaDamageCalculator.cs" />
         <Compile Include="SceneEntity\OrcStandByTree.cs" />
         <Compile Include="SceneEntity\OrcNavigation.cs" />
         <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
@@ -255,6 +261,10 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
+      <!-- 魔神塔原运行表、技能动作和 Lua 脚本随服务端发布。 -->
+      <Content Include="Config\Moshenta\**\*" Exclude="Config\Moshenta\**\*.cs">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Config\SkillCastingRules.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -284,6 +294,55 @@
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4050.Creatures.json</LogicalName></EmbeddedResource>
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\RO_BeiSenYiBian_H.txt"><LogicalName>Dungeons.4051.Waves.xml</LogicalName></EmbeddedResource>
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4051.Creatures.json</LogicalName></EmbeddedResource>
+    </ItemGroup>
+    <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
+    <ItemGroup>
+        <Compile Include="SceneEntity\Lua51Callback.cs" />
+        <Compile Include="SceneEntity\Lua51Native.cs" />
+        <Compile Include="SceneEntity\Lua51State.cs" />
+        <EmbeddedResource Include="Config\MonsterAI\Common_Monster_RandMoveInSmallRange.xml"><LogicalName>Moshenta.AI.Common_Monster_RandMoveInSmallRange.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Common_Monster_Summon.xml"><LogicalName>Moshenta.AI.Common_Monster_Summon.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_BeiAi.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_BeiAi.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_BossController.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_BossController.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_DaNaTuoSi.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_DaNaTuoSi.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_JueWang.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_JueWang.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_NanGuaHun.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_NanGuaHun.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_RandMove.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_RandMove.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_ZengHen.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_ZengHen.xml</LogicalName></EmbeddedResource>
+        <Content Include="ThirdParty\Lua51\x64\lua51.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="ThirdParty\Lua51\x86\lua51.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="Config\MonsterAI\MoshentaAI.config"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="Config\MonsterAI\Lua\Dungeon_DaNaTuoSiZhiZhan_BossController_EZ.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="Config\MonsterAI\Lua\Dungeon_DaNaTuoSiZhiZhan_DaNaTuoSi.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="Config\MonsterAI\Lua\lua_timeline_utiltool.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+        <Content Include="Config\MonsterAI\Lua\Perform_BasicAction.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    </ItemGroup>
+    <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
+    <ItemGroup>
+        <Compile Include="SceneEntity\MoshentaActor.cs" />
+        <Compile Include="SceneEntity\MoshentaAiEvent.cs" />
+        <Compile Include="SceneEntity\MoshentaSceneVariable.cs" />
+        <Compile Include="SceneEntity\MoshentaScheduledEvent.cs" />
+        <Compile Include="SceneEntity\MoshentaBehaviorTree.cs" />
+        <Compile Include="SceneEntity\MoshentaTimePoint.cs" />
+        <Compile Include="SceneEntity\MoshentaTimeline.cs" />
+        <Compile Include="SceneEntity\MoshentaCodeTimeline.cs" />
+        <Compile Include="SceneEntity\MoshentaLuaTimeline.cs" />
+        <Compile Include="SceneEntity\SceneWaveSpawner.AI.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaBuffInstance.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaGeneBridge.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaBuffRuntime.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaSkillCast.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaSkillEvent.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaSkillRuntime.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaActionCurve.cs" />
+        <Compile Include="SceneEntity\Skill\MoshentaSkillBullet.cs" />
+        <Content Include="Config\MonsterAI\TimeAxes.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    </ItemGroup>
+    <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
+    <ItemGroup>
+        <Compile Include="MessageHandler\Role\DungeonCommandEventHandler.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,6 +12,8 @@ public class GeneComponent : RuntimeEntityComponent
     public event Action<GenePulse> Pulse;
     /// <summary>最近一次实际周期伤害的施加角色编号，供场景死亡归因使用。</summary>
     public ulong LastDamageFirerId { get; private set; }
+    /// <summary>魔神塔共享生命组的原属性增量出口；第二参数已结算承伤/治疗但尚未单体截断，处理成功返回true。</summary>
+    internal Func<GenePulse, int, bool> SharedHpChange;
 
     /// <summary>绑定场景实体，并保留组件类别的稳定编号。</summary>
     /// <param name="owner">持有基因实例的服务器场景实体。</param>
@@ -52,7 +54,7 @@ public class GeneComponent : RuntimeEntityComponent
             if (pulse.EffectType == GeneEffectType.PeriodicDamage)
             {
                 amount = Math.Max(0, (int)(amount * Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
-                Owner.CurrentHp = Math.Max(0, Owner.CurrentHp - amount);
+                if (SharedHpChange == null || !SharedHpChange(pulse, -amount)) Owner.CurrentHp = Math.Max(0, Owner.CurrentHp - amount);
                 if (amount > 0) LastDamageFirerId = pulse.FirerId;
             }
             else if (pulse.EffectType == GeneEffectType.PeriodicMana || pulse.EffectType == GeneEffectType.InstantMana)
@@ -62,7 +64,7 @@ public class GeneComponent : RuntimeEntityComponent
             else
             {
                 amount = Math.Max(0, (int)(amount * Runtime.CalculateAttribute(GeneAttributeType.HealingReceived, 100) / 100));
-                Owner.CurrentHp = Math.Min(maxHp, Owner.CurrentHp + amount);
+                if (SharedHpChange == null || !SharedHpChange(pulse, amount)) Owner.CurrentHp = Math.Min(maxHp, Owner.CurrentHp + amount);
             }
         }
         Pulse?.Invoke(pulse);
@@ -74,6 +76,7 @@ public class GeneComponent : RuntimeEntityComponent
         Runtime.Pulse -= ApplyPulse;
         Runtime.Clear();
         Pulse = null;
+        SharedHpChange = null;
         base.Shutdown();
     }
 }

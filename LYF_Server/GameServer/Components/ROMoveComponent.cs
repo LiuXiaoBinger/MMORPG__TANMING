@@ -9,6 +9,9 @@ public sealed class ROMoveComponent : RoleComponentBase
     /// <summary>最近同步的跳跃段数，0 表示落地；只在新起跳或追加跳跃时取消技能。</summary>
     private int jump_count_;
 
+    /// <summary>最近一次通过服务器移动处理的角色朝向，单位度；初始未上报时沿现有角色正前方0度。</summary>
+    public float Facing { get; private set; }
+
     /// <summary>创建在线角色的移动组件，不创建额外场景宿主。</summary>
     /// <param name="owner">现有在线角色，负责位置数据与会话生命周期。</param>
     public ROMoveComponent(OnlineRole owner) : base(owner) { }
@@ -63,6 +66,8 @@ public sealed class ROMoveComponent : RoleComponentBase
         // 复用正式基础快照的下划线坐标格式，使进入世界和技能附近广播读取同一位置。
         Owner.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture,
             "{0}_{1}_{2}", action.Dx, action.Dy, action.Dz);
+        // 与即将同步给其他角色的Face保存同一值，供原RO背对伤害判定读取。
+        Facing = action.Face;
         TeamManager.Instance.OnDungeonMove(Owner);
         // 本项目没有 RO 场景高度/导航结算，直接沿用当前客户端碰撞完成后的终点。
         RoleManager.Instance.SyncMove(Owner, new SyncMoveNtf

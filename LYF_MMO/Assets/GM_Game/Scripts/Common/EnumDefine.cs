@@ -25,7 +25,8 @@ public enum WindowType
     ChatWindow, // 主界面聊天窗口，管理频道消息与语音控件。
     ThemeDungeonTeamWindow, // RO 全队进入副本的确认窗口。
     DungeonFlowWindow, // 服务端副本目标与附近门户、采集交互窗口。
-    EquipmentDetailWindow // 装备实例属性、特技和穿脱操作窗口。
+    EquipmentDetailWindow, // 装备实例属性、特技和穿脱操作窗口。
+    MoshentaBlackCurtainWindow // 魔神塔原20002剧情黑幕，沿主界面窗口生命周期显示。
 }
 
 /// <summary>

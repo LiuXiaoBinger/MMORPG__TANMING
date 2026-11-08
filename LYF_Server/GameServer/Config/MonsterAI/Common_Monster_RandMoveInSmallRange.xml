@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Common_Monster_RandMoveInSmallRange>
+  <EntryTask T_Target="" F_TargetDistance="0" S_CurrentState="" F_attack_range="1.5" F_Temp="0" V_out_fight_pos="0:0:0" V_FinalDest="0:0:0" F_FightRange="0" F_min_attack_range="0.5" F_tolerance_range="0">
+    <Sequence>
+      <AISetDest adjust_dir_type="kSelfFace" Shared_targetName="" Shared_targetmValue="" Shared_random_maxName="" Shared_random_maxmValue="3" Shared_adjust_angleName="" Shared_adjust_anglemValue="60" set_dest_type="kSelfPos" Shared_adjust_lengthName="" Shared_adjust_lengthmValue="1.5" Shared_born_posName="out_fight_pos" Shared_born_posmValue="0:0:0" Shared_store_final_destName="FinalDest" Shared_store_final_destmValue="0:0:0" />
+      <ReturnSuccess>
+        <Sequence>
+          <AICalDistance Shared_store_resultName="Temp" Shared_store_resultmValue="0" Shared_target1Name="" Shared_target1mValue="" Shared_dest2Name="out_fight_pos" Shared_dest2mValue="0:0:0" Shared_target2Name="" Shared_target2mValue="" Shared_dest1Name="FinalDest" Shared_dest1mValue="0:0:0" />
+          <AIFloatComparison Shared_float1Name="Temp" Shared_float1mValue="0" cmp_type="kCmpTypeGreaterOrEqualTo" Shared_float2Name="" Shared_float2mValue="3.5" />
+          <AISetDest adjust_dir_type="kSelfFace" Shared_targetName="" Shared_targetmValue="" Shared_random_maxName="" Shared_random_maxmValue="3" Shared_adjust_angleName="" Shared_adjust_anglemValue="60" set_dest_type="kBornPos" Shared_adjust_lengthName="" Shared_adjust_lengthmValue="1.5" Shared_born_posName="out_fight_pos" Shared_born_posmValue="0:0:0" Shared_store_final_destName="FinalDest" Shared_store_final_destmValue="0:0:0" />
+        </Sequence>
+      </ReturnSuccess>
+      <AIActionMove Shared_move_destName="FinalDest" Shared_move_destmValue="0:0:0" />
+    </Sequence>
+  </EntryTask>
+  <UnityObjects />
+</Common_Monster_RandMoveInSmallRange>

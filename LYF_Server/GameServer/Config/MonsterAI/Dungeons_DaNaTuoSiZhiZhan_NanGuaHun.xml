@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_NanGuaHun>
+  <EntryTask S_CurrentState="" I_BoLiState="0" LL_Players="" L_PlayerUuid="0" T_Target="" F_IdleRandom="0" F_AverageAttackRange="1" F_temp="0" V_FinalDest="0:0:0" B_FreeMove="1" F_TargetDistance="0" B_CanCastBoom="1" F_BoomCD="0" T_Player="">
+    <Selector>
+      <Sequence>
+        <AIGetCurrentState Shared_store_resultName="CurrentState" Shared_store_resultmValue="" />
+        <AIStringEqual Shared_string1Name="CurrentState" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="Idle" />
+        <Sequence>
+          <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="1" Shared_bool1Name="FreeMove" Shared_bool1mValue="1" />
+          <AIRandomProbability Shared_probabilityName="" Shared_probabilitymValue="0.1" />
+          <BehaviorTreeReference externalBehaviors="0" collapsed="0" variables="" />
+        </Sequence>
+      </Sequence>
+      <Sequence>
+        <AIGetCurrentState Shared_store_resultName="CurrentState" Shared_store_resultmValue="" />
+        <AIStringEqual Shared_string1Name="CurrentState" Shared_string1mValue="" Shared_string2Name="" Shared_string2mValue="Combat" />
+        <AIFindTargetByHatred Shared_store_targetName="Target" Shared_store_targetmValue="" Shared_store_target_distanceName="TargetDistance" Shared_store_target_distancemValue="0" />
+        <Selector>
+          <Sequence>
+            <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="1" Shared_bool1Name="CanCastBoom" Shared_bool1mValue="1" />
+            <Selector>
+              <Sequence>
+                <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545801" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="CanCastBoom" Shared_store_resultmValue="1" />
+                <AISetFloat Shared_store_resultName="BoomCD" Shared_store_resultmValue="0" Shared_valueName="" Shared_valuemValue="0" />
+              </Sequence>
+              <BehaviorTreeReference externalBehaviors="1" collapsed="0" variables="" />
+            </Selector>
+          </Sequence>
+          <Sequence>
+            <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="CanCastBoom" Shared_bool1mValue="1" />
+            <ReturnSuccess>
+              <Sequence>
+                <AINewCooldown Shared_last_check_timeName="BoomCD" Shared_last_check_timemValue="0" Shared_cd_timeName="" Shared_cd_timemValue="6" />
+                <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="CanCastBoom" Shared_store_resultmValue="1" />
+              </Sequence>
+            </ReturnSuccess>
+            <Sequence>
+              <AIGroupFindAllPlayer Shared_playersName="Players" Shared_playersmValue="" />
+              <AINewGroupFilterDistance Shared_short_distanceName="" Shared_short_distancemValue="0" Shared_far_distanceName="" Shared_far_distancemValue="5" Shared_store_entitysName="Players" Shared_store_entitysmValue="" Shared_enemy_friendName="" Shared_enemy_friendmValue="0" />
+              <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="PlayerUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="Players" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="0" />
+              <AINewGroupUUIDtoTransform Shared_uuidName="PlayerUuid" Shared_uuidmValue="0" Shared_store_transformName="Player" Shared_store_transformmValue="" />
+            </Sequence>
+            <ReturnSuccess>
+              <Sequence>
+                <AISetDest adjust_dir_type="kTargetDir" Shared_targetName="Player" Shared_targetmValue="" Shared_random_maxName="" Shared_random_maxmValue="1" Shared_adjust_angleName="" Shared_adjust_anglemValue="0" set_dest_type="kTarget" Shared_adjust_lengthName="" Shared_adjust_lengthmValue="8" Shared_born_posName="" Shared_born_posmValue="0:0:0" Shared_store_final_destName="FinalDest" Shared_store_final_destmValue="0:0:0" />
+                <AIActionMove Shared_move_destName="FinalDest" Shared_move_destmValue="0:0:0" />
+              </Sequence>
+            </ReturnSuccess>
+            <Sequence>
+              <AIRandomProbability Shared_probabilityName="" Shared_probabilitymValue="0.1" />
+              <Sequence>
+                <AIFloatComparison Shared_float1Name="IdleRandom" Shared_float1mValue="0" cmp_type="kCmpTypeLessOrEqualTo" Shared_float2Name="" Shared_float2mValue="3" />
+                <AIEmotion Shared_target_if_not_selfName="" Shared_target_if_not_selfmValue="" emotion_type="kEmotionSyncType_HeadShow" Shared_is_selfName="" Shared_is_selfmValue="1" who_can_see="kSendTargetType_RolesInView" Shared_role_seeName="" Shared_role_seemValue="" Shared_take_photo_statusName="" Shared_take_photo_statusmValue="5" />
+              </Sequence>
+            </Sequence>
+          </Sequence>
+        </Selector>
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects>
+    <pointer fileName="Common_Monster_RandMoveInSmallRange" />
+    <pointer fileName="Common_Monster_CloseToEnemy" />
+  </UnityObjects>
+</Dungeons_DaNaTuoSiZhiZhan_NanGuaHun>

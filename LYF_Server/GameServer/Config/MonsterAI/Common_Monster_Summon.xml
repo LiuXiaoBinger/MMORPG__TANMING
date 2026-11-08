@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Common_Monster_Summon>
+  <EntryTask>
+    <Sequence>
+      <AIFilterSkill Shared_use_attack_fieldName="" Shared_use_attack_fieldmValue="0" Shared_use_cd_checkName="" Shared_use_cd_checkmValue="1" Shared_targetName="" Shared_targetmValue="" />
+      <AIDoCastSkill Shared_targetName="" Shared_targetmValue="" cast_type="kHightestPriorityOne" />
+    </Sequence>
+  </EntryTask>
+  <UnityObjects />
+</Common_Monster_Summon>

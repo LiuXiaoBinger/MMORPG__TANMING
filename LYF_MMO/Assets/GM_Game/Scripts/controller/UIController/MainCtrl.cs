@@ -118,6 +118,8 @@ public class MainCtrl : CtrlBase
         if (_mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
+            _mainView.TalkWindow.MoshentaBattleRequested += OnMoshentaBattleRequested;
+            _mainView.TalkWindow.TalkLeaveRequested += CloseNpcTalk;
         }
         if (_chatWindow != null)
         {
@@ -182,6 +184,8 @@ public class MainCtrl : CtrlBase
         if (_mainView != null && _mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested -= OnShopRequested;
+            _mainView.TalkWindow.MoshentaBattleRequested -= OnMoshentaBattleRequested;
+            _mainView.TalkWindow.TalkLeaveRequested -= CloseNpcTalk;
         }
         if (_chatWindow != null)
         {
@@ -439,6 +443,33 @@ public class MainCtrl : CtrlBase
         _shopCtrl.OpenNpcShop(_currentTalkNpc);
     }
 
+    /// <summary>仅原NPC20186帮助选项发送BossEnterCombat，黑幕结束不调用此入口。</summary>
+    private void OnMoshentaBattleRequested()
+    {
+        if (!IsMoshentaBossNpc(_currentTalkNpc)) return;
+        // 对应原NPC/2000000.txt的danatuosi_boss_enter_combat，后续状态由SceneAI原树决定。
+        TeamCtrl.RequestDungeonCommandEvent("BossEnterCombat");
+        CloseNpcTalk();
+    }
+
+    /// <summary>沿原stoptalk/end语义结束当前对话，不自动推进副本条件。</summary>
+    private void CloseNpcTalk()
+    {
+        _mainView.TalkWindow.CloseWindow();
+        _currentTalkNpc = null;
+    }
+
+    /// <summary>识别本次原魔神塔波47的同一NPC实例，普通NPC保持已有商店/任务分支。</summary>
+    /// <param name="npc">当前真实交互的NPC领域实体。</param>
+    private static bool IsMoshentaBossNpc(NpcEntity npc)
+    {
+        if (npc == null || npc.NpcID != 20186) return false;
+        if (TeamData.Instance.DungeonId != 4060) return false;
+        // 从原NPC控制器取得出生波次，不另造或重定位一份Boss模型。
+        MSceneNpcHoster host = npc.GetEntityCtrl() as MSceneNpcHoster;
+        return host != null && host.WaveId == 47;
+    }
+
     /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>
     /// <param name="npcEntity">当前交互 NPC，null 时返回空数据。</param>
     private NpcTalkViewData CreateNpcTalkViewData(NpcEntity npcEntity)
@@ -446,6 +477,12 @@ public class MainCtrl : CtrlBase
         if (npcEntity == null)
         {
             return null;
+        }
+        if (IsMoshentaBossNpc(npcEntity))
+        {
+            // 原NPC/2000000.txt:596的正文与597的两个选项，不执行无关剧情脚本。
+            return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name,
+                "啊啊！！啊啊啊啊！！！我好痛苦，让我死个痛快！！！", true);
         }
         return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk);
     }

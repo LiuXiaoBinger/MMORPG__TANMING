@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_ZengHen>
+  <EntryTask T_Target="" F_TargetDistance="0" S_CurrentState="" V_TargetDest="0:0:0" I_SceneState="0" I_HaterState="0" I_DarknessSpread="0" T_DarknessSpreadTarget="" I_HatredWatch="0" B_RandomTarget="0" F_HatredWatchTime="0" F_AttackRange="2.2" B_CanFight="0" I_HaterSkillState="0" LL_TargetList="" L_TargetUuid="0" B_IsStare="0" B_PlayerDead="0" B_InitSelfState="0" V_MoveDest="77.36:80.32:618.69" B_Performance="0" F_MoveTime="0">
+    <Selector>
+      <Sequence>
+        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="InitSelfState" Shared_bool1mValue="0" />
+        <AISetSceneVar Shared_keyName="" Shared_keymValue="HaterState" var_type="kTypeInt" Shared_valueName="" Shared_valuemValue="0" />
+        <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="HaterSkillState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="InitSelfState" Shared_store_resultmValue="0" />
+      </Sequence>
+      <Sequence>
+        <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="HaterState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="HaterState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AIIntComparison Shared_int1Name="HaterState" Shared_int1mValue="0" cmp_type="kCmpTypeGreaterTo" Shared_int2Name="" Shared_int2mValue="0" />
+        <Selector>
+          <Sequence>
+            <Selector>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="HaterState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+                <AIShowTVNotice Shared_send_targetName="" Shared_send_targetmValue="" Shared_annouce_idName="" Shared_annouce_idmValue="2302" Shared_outlook_idName="" Shared_outlook_idmValue="0" Shared_list_rolesName="" Shared_list_rolesmValue="" who_can_see="kSendTargetType_RolesInView" Shared_contentName="" Shared_contentmValue="" />
+                <ReturnSuccess>
+                  <AIActionMove Shared_move_destName="MoveDest" Shared_move_destmValue="77.36:80.32:618.69" />
+                </ReturnSuccess>
+              </Sequence>
+              <Sequence>
+                <AIIntComparison Shared_int1Name="HaterState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+                <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545205" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+              </Sequence>
+            </Selector>
+            <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="HaterState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+          </Sequence>
+          <Sequence>
+            <AIIntComparison Shared_int1Name="HaterState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="3" />
+            <ReturnSuccess>
+              <Parallel>
+                <AIBuffOperator Shared_firer_uuidName="" Shared_firer_uuidmValue="0" Shared_buff_idName="" Shared_buff_idmValue="36052" Shared_operator_idName="" Shared_operator_idmValue="1" Shared_is_selfName="" Shared_is_selfmValue="1" Shared_hoster_uuidName="" Shared_hoster_uuidmValue="0" />
+                <AIActivePassive Shared_targetlistName="" Shared_targetlistmValue="" Shared_is_passiveName="" Shared_is_passivemValue="0" Shared_is_selfName="" Shared_is_selfmValue="1" Shared_targetName="" Shared_targetmValue="" />
+              </Parallel>
+            </ReturnSuccess>
+            <Selector>
+              <Sequence>
+                <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="IsStare" Shared_bool1mValue="0" />
+                <AIFindTargetByHatred Shared_store_targetName="Target" Shared_store_targetmValue="" Shared_store_target_distanceName="TargetDistance" Shared_store_target_distancemValue="0" />
+              </Sequence>
+              <Sequence>
+                <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="1" Shared_bool1Name="IsStare" Shared_bool1mValue="0" />
+                <Selector>
+                  <AINewGroupUUIDtoTransform Shared_uuidName="TargetUuid" Shared_uuidmValue="0" Shared_store_transformName="Target" Shared_store_transformmValue="" />
+                  <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="IsStare" Shared_store_resultmValue="0" />
+                </Selector>
+                <ReturnSuccess>
+                  <Sequence>
+                    <Selector>
+                      <Sequence>
+                        <AIGetTargetIsDead Shared_store_is_deadName="PlayerDead" Shared_store_is_deadmValue="0" Shared_targetName="Target" Shared_targetmValue="" />
+                        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="1" Shared_bool1Name="PlayerDead" Shared_bool1mValue="0" />
+                      </Sequence>
+                      <AINewCooldown Shared_last_check_timeName="HatredWatchTime" Shared_last_check_timemValue="0" Shared_cd_timeName="" Shared_cd_timemValue="15000" />
+                    </Selector>
+                    <AISetBool Shared_valueName="" Shared_valuemValue="0" Shared_store_resultName="IsStare" Shared_store_resultmValue="0" />
+                  </Sequence>
+                </ReturnSuccess>
+                <AIDistanceTo Shared_destName="" Shared_destmValue="0:0:0" Shared_targetName="Target" Shared_targetmValue="" Shared_store_resultName="TargetDistance" Shared_store_resultmValue="0" />
+              </Sequence>
+            </Selector>
+            <Selector>
+              <Sequence>
+                <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="HaterSkillState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="HaterSkillState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+                <Selector>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="HaterSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+                    <Sequence>
+                      <AINewGroupFindByEntityType Shared_distance_shortName="" Shared_distance_shortmValue="0" Shared_store_entitysName="TargetList" Shared_store_entitysmValue="" Shared_distance_longName="" Shared_distance_longmValue="12" entity_type="TYPE_ROLE" Shared_angleName="" Shared_anglemValue="360" />
+                      <AINewGroupFindEnd Shared_maxnumName="" Shared_maxnummValue="1" Shared_store_uuidName="TargetUuid" Shared_store_uuidmValue="0" Shared_store_entitysName="TargetList" Shared_store_entitysmValue="" Shared_randomName="" Shared_randommValue="1" />
+                      <AINewGroupUUIDtoTransform Shared_uuidName="TargetUuid" Shared_uuidmValue="0" Shared_store_transformName="Target" Shared_store_transformmValue="" />
+                      <AIDistanceTo Shared_destName="" Shared_destmValue="0:0:0" Shared_targetName="Target" Shared_targetmValue="" Shared_store_resultName="TargetDistance" Shared_store_resultmValue="0" />
+                      <AISetFloat Shared_store_resultName="HatredWatchTime" Shared_store_resultmValue="0" Shared_valueName="" Shared_valuemValue="0" />
+                      <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="IsStare" Shared_store_resultmValue="0" />
+                    </Sequence>
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545204" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                    <AIShowTVNotice Shared_send_targetName="Target" Shared_send_targetmValue="" Shared_annouce_idName="" Shared_annouce_idmValue="2316" Shared_outlook_idName="" Shared_outlook_idmValue="0" Shared_list_rolesName="" Shared_list_rolesmValue="" who_can_see="kSendTargetType_OneRole" Shared_contentName="" Shared_contentmValue="" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="HaterSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545203" Shared_targetName="" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="HaterSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="3" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545202" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                  <Sequence>
+                    <AIIntComparison Shared_int1Name="HaterSkillState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="4" />
+                    <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545206" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+                  </Sequence>
+                </Selector>
+                <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="HaterSkillState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+              </Sequence>
+              <AIDoCastSkillByIDLevel Shared_skill_idName="" Shared_skill_idmValue="1000545201" Shared_targetName="Target" Shared_targetmValue="" Shared_skill_levelName="" Shared_skill_levelmValue="1" />
+              <BehaviorTreeReference externalBehaviors="0" collapsed="0" variables="" />
+            </Selector>
+          </Sequence>
+        </Selector>
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects>
+    <pointer fileName="Common_Monster_CloseToEnemy" />
+  </UnityObjects>
+</Dungeons_DaNaTuoSiZhiZhan_ZengHen>

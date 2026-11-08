@@ -1,0 +1,68 @@
+{
+  "Notices": [
+    {
+      "Id": 2301,
+      "Text": "获得了骑士团突击队长的徽章"
+    },
+    {
+      "Id": 2302,
+      "Text": "憎恨吧，只有憎恨才会让你变得强大！"
+    },
+    {
+      "Id": 2303,
+      "Text": "无谓的抵抗而已，可悲"
+    },
+    {
+      "Id": 2304,
+      "Text": "死亡，才是一种解脱…"
+    },
+    {
+      "Id": 2315,
+      "Text": "寻找和自己对应的符文来抵抗达纳托斯的伤害"
+    },
+    {
+      "Id": 2316,
+      "Text": "达纳托斯的憎恨正在凝视你，快跑！"
+    },
+    {
+      "Id": 2318,
+      "Text": "啊啊啊啊！！憎恨，绝望，悲哀！哈哈哈哈哈！！！"
+    }
+  ],
+  "CurtainLines": [
+    "只见达纳托斯手中的魔剑剑气冲天，一股令人心悸的力量似乎让大地颤动",
+    "梦罗克的一大半身子已经破碎成虚空，眼神透露着不甘，但知道自己已经失去了机会",
+    "邪恶的低语响起，梦罗克大笑：“你以为这样就结束了吗？迷失吧！痛苦吧！“",
+    "黑色的能量疯狂涌入达纳托斯的身体，达纳托斯嘶喊着”啊啊啊啊啊！！！“",
+    "只见达纳托斯的身体中分散出3个与众不同的负面人格，而梦罗克已经逃走"
+  ],
+  "CurtainLineTimes": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+  ],
+  "FadeIn": 2,
+  "LinePause": 0.5,
+  "ParagraphPause": 3,
+  "ContentFadeOut": 1.5,
+  "FadeOut": 1,
+  "HeadExpression": {
+    "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/CutScene/Fx_CutScene_jianxiaobiaoqing_01.prefab",
+    "Duration": 2,
+    "Follow": true,
+    "Offset": {
+      "x": 0,
+      "y": 0.7,
+      "z": 0
+    },
+    "Scale": {
+      "x": 0.75,
+      "y": 0.75,
+      "z": 0.75
+    },
+    "HeightRatio": 1
+  },
+  "HeadAudio": "Assets/GM_Game/Resources/Dungeons/Moshenta/Audio/event_38.wav"
+}

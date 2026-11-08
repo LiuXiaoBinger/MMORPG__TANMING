@@ -1,0 +1,323 @@
+{
+  "reference_root": "D:\\unitypro\\RO_cs422nb\\RO",
+  "authority": "roserver/exe/gsconf/rogameslib_table",
+  "files": [
+    {
+      "source": "roserver/exe/gsconf/rogameslib_table/EntityTable.bytes",
+      "source_sha256": "5b73ecc87bd24d6363639e77df8fa43ba755c076d69c1f658df99bb0751c78bb",
+      "imported_rows": 35
+    },
+    {
+      "source": "roserver/exe/gsconf/rogameslib_table/SkillTable.bytes",
+      "source_sha256": "67f5992147cc350de53d10629b0603240753ecb67cb13f8d8932437e9e8e4070",
+      "imported_rows": 40
+    },
+    {
+      "source": "roserver/exe/gsconf/rogameslib_table/SkillEffectTable.bytes",
+      "source_sha256": "83c0ed5530e1ec42787dd6d9e7ebddd0b2fbdca0d7367b21d58ebafe1402f265",
+      "imported_rows": 40
+    },
+    {
+      "source": "roserver/exe/gsconf/rogameslib_table/BuffTable.bytes",
+      "source_sha256": "87d36b5ca65f4045b966a5e97a53458d4be2023e393fe912b7b99328c7dfd3d7",
+      "imported_rows": 32
+    },
+    {
+      "source": "roserver/exe/gsconf/rogameslib_table/BuffEffectTable.bytes",
+      "source_sha256": "93b4db114b597c4fc53a86f91b9389e84a06ef903fc5ceef887f2bd15d05ddb2",
+      "imported_rows": 31
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_XieHaiGongJianShou/Monster_XieHaiGongJianShou_Attack.txt",
+      "target": "SkillData/1000113901.xml",
+      "source_sha256": "b0b4557393ff2b9df93a8096fcde0f33223816b511af24bad33ed77b1504417e"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_XieHaiFuLu/Monster_XieHaiFuLu_Attack.txt",
+      "target": "SkillData/1000114501.xml",
+      "source_sha256": "e4ac73e3430fb0e790151d60b045227f87f0b4b54ef3c7f68edfab4cd1fedd00"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_XieHaiZhanShi/Monster_XieHaiZhanShi_Attack.txt",
+      "target": "SkillData/1000117401.xml",
+      "source_sha256": "965f14ff3055a771304eef258277b8d122a58bb70031eeb6bd7a4e2bf4369501"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_XieHaiShouRen/Monster_XieHaiShouRen_Attack.txt",
+      "target": "SkillData/1000118401.xml",
+      "source_sha256": "77d05f7c86db53e67dce6697e7a7379997009b48fc79cf426f806f435daf9bbf"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_Eling/Monster_Eling_Attack.txt",
+      "target": "SkillData/1000121201.xml",
+      "source_sha256": "b216f8819f3563d602ed20da6437b75753e6d55dbfdd987d85e7acc805173e19"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Monster_MiLuoSi/Monster_MiLuoSi_Attack.txt",
+      "target": "SkillData/1000123101.xml",
+      "source_sha256": "85a73035c9fd8a37c0a05ab21bf1417fd9366234fdb12d0e25fd813a35277229"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_Attack.txt",
+      "target": "SkillData/1000545201.xml",
+      "source_sha256": "d9018c6500a1b58bb98b361fba68e1cee8449c594e03968261a04b09350d5516"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_HeiAnYongDong.txt",
+      "target": "SkillData/1000545202.xml",
+      "source_sha256": "2c48d806b6d5c664595df2ea7430e65cbd8c5b3c0c5b30a46b48894644992c41"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_ZengHenZhiChui.txt",
+      "target": "SkillData/1000545203.xml",
+      "source_sha256": "80b3499c8c78d76afcc36fafcf370180f6572893e6417faf1ba2a2363889493c"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_NingShi.txt",
+      "target": "SkillData/1000545204.xml",
+      "source_sha256": "30e1b66722ca0d734f74462fa4e0b7880cda61bc90ea5ef383770aa93667a6a1"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_Teleport.txt",
+      "target": "SkillData/1000545205.xml",
+      "source_sha256": "d7dcd3e9b24169345b24f7b52767d8bb70fed3e8da042d3640c0f5c1b9ef1176"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_Attack.txt",
+      "target": "SkillData/1000545301.xml",
+      "source_sha256": "ac66769e859762c0accf3d8d650f0618299dc31770a585aba5914edef86b2c3c"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_YanHuoJian.txt",
+      "target": "SkillData/1000545302.xml",
+      "source_sha256": "e3f97d583f298138829f492349ea29d4264b5daf8f05c8edc2f356a91ded31c1"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_RongYanTuXi.txt",
+      "target": "SkillData/1000545304.xml",
+      "source_sha256": "b592b766512b4f070abf832c6a9d86e675aac90fe8ac62c6acc5e8d5e2ff4a8c"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_Teleport.txt",
+      "target": "SkillData/1000545305.xml",
+      "source_sha256": "a854ad6259b7fd4731b37b45d5dd01acb1ee4e74612eb1a09afa56cf215642be"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_RongYanBaoFa.txt",
+      "target": "SkillData/1000545306.xml",
+      "source_sha256": "464c40a4e400885da65cc79625747ac6050a0eb542580d7a06e9a8b91dfdd690"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_RongYanBaoFa_Effect.txt",
+      "target": "SkillData/1000545307.xml",
+      "source_sha256": "03eae3b3c64d7118cd124c2fad22ac208c43f74ce0593c209db8f034b73cbdc9"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_Attack.txt",
+      "target": "SkillData/1000545401.xml",
+      "source_sha256": "8e92708c603a78472558162dc4d29b3230eb425a0b2db91821172ba9a38501b9"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_GuiZhaBaXi.txt",
+      "target": "SkillData/1000545402.xml",
+      "source_sha256": "96cdddcbbb99dcd93ec74e5483fa05aabe7006cff072861af58bc34a3e61abb2"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_BeiAiHuoXinXi.txt",
+      "target": "SkillData/1000545403.xml",
+      "source_sha256": "268ce1be25cd50cb8cc4d94aafdc58b0fc7bc7d0830381a19e81f6f634c85748"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_Teleport.txt",
+      "target": "SkillData/1000545405.xml",
+      "source_sha256": "a99473a41dc9fb9c7915f62096c8b6f7e2c3649cb0e1fde600c2b9b911c06093"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_AiGe_Simple.txt",
+      "target": "SkillData/1000545407.xml",
+      "source_sha256": "7f6b5f0c5ae09e5ae149df31e923a9d2f5eb9a55edb54d3ccf190549a6a8a56d"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_DaNaTuoSi_DianKuang.txt",
+      "target": "SkillData/1000545601.xml",
+      "source_sha256": "033e5fa90b199446f11b37e478af0cfcbc83a5634d4b5133600d9e6aa9edc617"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_DaNaTuoSi_SuXing.txt",
+      "target": "SkillData/1000545602.xml",
+      "source_sha256": "59d23e9b8c2d0f9cc24ee07e4b21adb5bc4feeefc552274af594233974e030ee"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_NanGuaHun_Boom.txt",
+      "target": "SkillData/1000545801.xml",
+      "source_sha256": "e8bb9101b7e246be0d0227073fc74181c6f22489830342cee0cd59eaa19878cd"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_NanGuaHun_Boom_Effect.txt",
+      "target": "SkillData/1000545802.xml",
+      "source_sha256": "20a836ab321fdee423d87212db3fcdf2fc382495e1dd7a17c6628d67bdde8380"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoShenYingZi_Attack.txt",
+      "target": "SkillData/1000546001.xml",
+      "source_sha256": "e0652cb8795160181b66796a450a5bb7182363b9a2766b7a4148d87f0b35ceee"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoShenYingZi_ChuanCiGongJi.txt",
+      "target": "SkillData/1000546002.xml",
+      "source_sha256": "bec501a04547c06635a475c170abc781baeee1a68fb3c552cc5a6664fb05f488"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoShenYingZi_LingHunTongJi.txt",
+      "target": "SkillData/1000546101.xml",
+      "source_sha256": "b2055985f67ce0b3ebeaf9b0fbde8488cf2afd1609e5a5c5140ee0aa9eb53975"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Eling_SiYao.txt",
+      "target": "SkillData/1000546201.xml",
+      "source_sha256": "cd61d613e71771496c3b6deba0015215a319e8c865f28cc87218d55a73745e8e"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Eling_ChongFeng02.txt",
+      "target": "SkillData/1000546202.xml",
+      "source_sha256": "4a504ab3a035cf77423645f7187e43f201a7a15eb1cbfe7a752311e29271b721"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MiLuoSi_DaJiZhiJi.txt",
+      "target": "SkillData/1000546301.xml",
+      "source_sha256": "1ea5627f0e8b6f1967b149ad2a934f064709b56754c2a7cef563f3a343441a2c"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_Attack.txt",
+      "target": "SkillData/1000546401.xml",
+      "source_sha256": "6e4044e0e11f2b10d4ca05396494404e99d471ad94dfc814cf87a2193cf81984"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_DianKuang.txt",
+      "target": "SkillData/1000546402.xml",
+      "source_sha256": "299dea361ebbbc18fcc4bfc8486dc8405002bf1428b40bf972b9d1f8ccdd6068"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_SiWangQiXi.txt",
+      "target": "SkillData/1000546403.xml",
+      "source_sha256": "fb8bbcba95feb94b9fc2a51e4570fb4df956098eaf179f88a47a2d526ced78d2"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_LingHunShenYuan.txt",
+      "target": "SkillData/1000546404.xml",
+      "source_sha256": "fa9c6c0e454bac1345f750d168ff96b96d22770a87f93705f115e93e1b74af54"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_LingHunKuoSan.txt",
+      "target": "SkillData/1000546405.xml",
+      "source_sha256": "8515373995376bdf9bfdfe680ff4c697b5b3c6d9e9416c1c28c6b8900bd724e1"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_FaZhenZhenPing_Release.txt",
+      "target": "SkillData/1000548301.xml",
+      "source_sha256": "0ac9ed1becfd24dcc1488cbcb36eaf4eed2f27ad1e0b7ce6ad8a13eb524ccc0a"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_TaDingZhenPing_Release.txt",
+      "target": "SkillData/1000549101.xml",
+      "source_sha256": "7afdcbec1ad57abce1606aa115b89a97376874c389860c32ca82d33997cb40b7"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_MoFaShi_LingHunShenYuan_Effect.txt",
+      "target": "SkillData/1000549201.xml",
+      "source_sha256": "e6bf63d50966b5c0916451c0a50aaba4887363f695a4dadbd7db664b0a36cd86"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/damage_calculator.lua",
+      "target": "Lua/damage_calculator.lua",
+      "source_sha256": "ab38a81bcf6b3085b146e3c113a8d9a70565554eb80c848fef5c42a4611287a7"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/skill/skill_trigger_moudle.lua",
+      "target": "Lua/skill/skill_trigger_moudle.lua",
+      "source_sha256": "1a1366783d860e2662e582c54e9c4aa1afe273883f6cd19cebbbd5da63d1551d"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/buff_add_condition.lua",
+      "target": "Lua/buff_add_condition.lua",
+      "source_sha256": "12a683e272335521ab99d845850399d1d36ce958d44bdd3a1b9e12d05a69744e"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/buff_time_calculator.lua",
+      "target": "Lua/buff_time_calculator.lua",
+      "source_sha256": "b8438d83f0552130f0e58138a10cad4a16ad2219e72c9f8b0c1b1148d7a3fb0e"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/buff_trigger_condition.lua",
+      "target": "Lua/buff_trigger_condition.lua",
+      "source_sha256": "968b4d67e2c7efabc10073797ab9585c4882b110a658e81bf32d57e069b65c1c"
+    },
+    {
+      "source": "roserver/exe/gsconf/lua_script/buff_trigger_result.lua",
+      "target": "Lua/buff_trigger_result.lua",
+      "source_sha256": "cbb6f49b8ae0064c6d4b68b6094b4fcc89c573766bff59231c29758289549e73"
+    },
+    {
+      "source": "roserver/exe/gsconf/curve/Skill_YanHuoJian_Zcurve.txt",
+      "target": "Curve/Skill_YanHuoJian_Zcurve.txt",
+      "source_sha256": "8e2bb245af5eb93c1131e794e75e4122e865a515ee609af3fc912dfa8753e3c1"
+    },
+    {
+      "source": "roserver/exe/gsconf/curve/Skill_HuoQiu_Zd_Z.txt",
+      "target": "Curve/Skill_HuoQiu_Zd_Z.txt",
+      "source_sha256": "198eddd0d0eeaedc53cca4db36c46db31df48a3559bd5c2b8131921423f242de"
+    }
+  ],
+  "differences": [
+    {
+      "table": "SkillTable",
+      "id": "1000545202",
+      "field": "SkillAttr",
+      "config": 7,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545203",
+      "field": "SkillAttr",
+      "config": 7,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545302",
+      "field": "SkillAttr",
+      "config": 3,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545304",
+      "field": "SkillAttr",
+      "config": 3,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545307",
+      "field": "SkillAttr",
+      "config": 3,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545403",
+      "field": "SkillAttr",
+      "config": 7,
+      "server": 0
+    },
+    {
+      "table": "SkillTable",
+      "id": "1000545407",
+      "field": "SkillAttr",
+      "config": 7,
+      "server": 0
+    }
+  ],
+  "xml_bytes_difference_count": 0
+}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +9,7 @@ using GameServer.SceneEntity;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>对应 RO 的 SceneWaveSpawner；每个副本实例拥有独立的怪物实体世界和生命值。</summary>
-public sealed class SceneWaveSpawner
+public sealed partial class SceneWaveSpawner
 {
     /// <summary>仅反序列化正式目录中的实体配置，模型动作列表由 Unity 使用。</summary>
     private sealed class CreatureCatalog
@@ -31,6 +31,10 @@ public sealed class SceneWaveSpawner
         public XElement[] OrcPatrol;
         /// <summary>原出生点的 Unity 绕 Y 轴角度。</summary>
         public float Facing;
+        /// <summary>原实体AI树的零基索引。</summary>
+        public int AiIndex;
+        /// <summary>原场景巡逻类型。</summary>
+        public string PatrolType;
     }
 
     /// <summary>配置只解析一次；每个队伍重新创建自己的怪物实例。</summary>
@@ -43,10 +47,6 @@ public sealed class SceneWaveSpawner
     private readonly EntityWorld world_ = new EntityWorld();
     /// <summary>与出生点一一对应的真实服务端怪物，生命保存在实体上。</summary>
     private readonly List<GameServer.SceneEntity.MonsterEntity> monsters_ = new List<GameServer.SceneEntity.MonsterEntity>();
-    /// <summary>本实例第18波的唯一行为树宿主。</summary>
-    private MoshentaOrc orc;
-    /// <summary>该兽人在本实例怪物表的下标，其他同模板怪物不会启动树。</summary>
-    private int orcIndex = -1;
     /// <summary>实际创建实体对应的出生配置，随事件激活追加。</summary>
     private readonly List<SpawnPoint> activePoints = new List<SpawnPoint>();
     /// <summary>本实例独立的原场景图执行状态。</summary>
@@ -59,7 +59,9 @@ public sealed class SceneWaveSpawner
         Dungeon = LubanMgr.Instance.GetDungeonsTableById(dungeonId);
         using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Waves.xml")) Config = XDocument.Load(source);
         spawn_points_ = LoadSpawnPoints();
+        InitializeAi();
         Flow = new MoshentaSceneFlow(this);
+        FinishBirths();
     }
 
     /// <summary>入场前核对所选表行对应的两份正式资源，防止把未移植场景传入XML加载器。</summary>
@@ -91,10 +93,15 @@ public sealed class SceneWaveSpawner
             monster.CurrentHp = monster.MaxHp;
             world_.Add(monster);
             monsters_.Add(monster);
-            if (point.OrcPatrol != null)
+            if (IsMoshenta)
             {
-                orcIndex = monsters_.Count - 1;
-                orc = new MoshentaOrc(monster, point.SpawnId, point.OrcPatrol);
+                // 所有原实体都保留角色，包括零HP机制和NPC实体5456。
+                monster.MaxHp = MoshentaSkillCatalog.I(MoshentaSkillCatalog.Entity(point.Creature.id), "BaseHP");
+                monster.CurrentHp = monster.MaxHp;
+                MoshentaActor actor = new MoshentaActor(this, monster, point.Creature.id, point.SpawnId, waveId, point.AiIndex, point.OrcPatrol, point.PatrolType);
+                Actors.Add(actor);
+                if (Flow != null) actor.Born();
+                else births.Add(actor);
             }
         }
     }
@@ -107,57 +114,63 @@ public sealed class SceneWaveSpawner
         using (StreamReader reader = new StreamReader(typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Creatures.json")))
             catalog = new JavaScriptSerializer().Deserialize<CreatureCatalog>(reader.ReadToEnd());
         // 仅战斗怪物具备生命配置，NPC 即使和怪物编号相同也不进入索引。
-        Dictionary<int, ROSceneCreatureEntity> creatures = catalog.entities.Where(row => row.maxHp > 0 && !row.isNpc && !row.nonCombatant).ToDictionary(row => row.id);
-        // XML 序列化边界；波次条件和坐标均按原标签解析。
-        XDocument scene = Config;
-        // 当前副本的波次以及同一份场景文件里的巡逻线保持相同的编号体系。
-        XElement[] waves = scene.Descendants("MSceneWaveData").ToArray();
-        // 波内点位的展开次序与 MSceneDungeon.SpawnBatch 一致。
+        Dictionary<int, ROSceneCreatureEntity> creatures = new Dictionary<int, ROSceneCreatureEntity>();
+        for (int index = 0; index < catalog.entities.Length; index++)
+        {
+            // NPC配置号与EntityTable号分开；5456由NPC表绑定到实体。
+            ROSceneCreatureEntity row = catalog.entities[index];
+            if (!row.isNpc) creatures[row.id] = row;
+        }
+        // 当前XML的波次顺序与客户端固定SpawnId展开一致。
+        XElement[] waves = Config.Descendants("MSceneWaveData").ToArray();
         List<SpawnPoint> result = new List<SpawnPoint>();
         for (int index = 0; index < waves.Length; index++)
         {
-            // 被动机制、事件与隐藏波次不属于当前开场战斗。
+            // 怪物与实际拥有EntityID的NPC都走同一实例AI宿主。
             XElement wave = waves[index];
             XElement info = wave.Element("base_info");
-            // 此处只展开模板，是否出生由每个实例的原波次条件决定。
-            // 怪物模板与实际可创建数量来自同条波次。
             XElement monster = wave.Element("monster_info");
+            XElement npc = wave.Element("npc_info");
+            int entityId = 0;
+            if (monster != null) entityId = (int)monster.Element("entity_id");
+            else if (IsMoshenta && (int?)npc?.Element("npc_id") == 20186) entityId = 5456;
+            if (entityId == 0) continue;
             ROSceneCreatureEntity creature;
-            if (monster == null || !creatures.TryGetValue((int)monster.Element("entity_id"), out creature)) continue;
-            // 实体模板 5515 另有三个出生波次，本次只接入18波选择的 StandBy 和 PingPong。
-            XElement[] orcPatrol = null;
-            if ((int)info.Element("id") == 18 && creature.id == 5515)
+            if (!creatures.TryGetValue(entityId, out creature))
             {
-                // 本波所选树的零基索引、巡逻方式和路径号均来自原 XML。
-                XElement ai = monster.Element("monster_base_data");
-                // 同一波的巡逻段同时指定路径号和往返方式。
-                XElement patrol = ai.Element("patrol_data");
-                // 使用该行实体配置的原树列表，以本波从零计数的下标取实际主树。
-                int treeIndex = (int)ai.Element("ai_tree_choose");
-                if (MoshentaOrcDefinition.Trees[treeIndex] == OrcStandByTree.MainName && (string)patrol.Element("patrol_type") == "ScenePatrolType_PingPong")
-                {
-                    // 此波引用的场景巡逻线 ID，从中取得有序点及各点停留时间。
-                    int pathId = (int)patrol.Element("patrol_path_id");
-                    orcPatrol = scene.Descendants("MScenePatrolPathData").First(path => (int)path.Element("id") == pathId)
-                        .Descendants("MScenePatrolPointData").ToArray();
-                }
+                if (!IsMoshenta) continue;
+                creature = new ROSceneCreatureEntity { id = entityId, nonCombatant = npc != null };
             }
-            int limit = (int?)monster.Element("monster_base_data").Element("entity_info").Element("real_num") ?? int.MaxValue;
-            // 当前正式魔神塔的战斗波次按点列表排布。
-            XElement[] points = monster.Descendants("MScenePositionData").ToArray();
+            if (!IsMoshenta && (creature.maxHp <= 0 || creature.nonCombatant)) continue;
+            // 原波次独立提供选树、数量和巡逻路线。
+            XElement ai = npc;
+            if (monster != null) ai = monster.Element("monster_base_data");
+            XElement patrol = ai.Element("patrol_data");
+            XElement[] route = new XElement[0];
+            string patrolType = "";
+            if (patrol != null)
+            {
+                patrolType = (string)patrol.Element("patrol_type");
+                int pathId = (int)patrol.Element("patrol_path_id");
+                XElement path = Config.Descendants("MScenePatrolPathData").FirstOrDefault(row => (int)row.Element("id") == pathId);
+                if (path != null) route = path.Descendants("MScenePatrolPointData").ToArray();
+            }
+            int limit = (int?)ai.Element("entity_info")?.Element("real_num") ?? 1;
+            XElement[] points = new XElement[0];
+            if (monster != null) points = monster.Descendants("MScenePositionData").ToArray();
+            else points = new[] { npc.Element("position_info") };
             int ordinal = 0;
             for (int pointIndex = 0; pointIndex < points.Length && ordinal < limit; pointIndex++)
             {
-                // 一个点可创建多只同模板怪物，每一只仍有自己的血量和出生标识。
+                // 同点多个实体仍保留各自的跨端身份与HP。
                 XElement point = points[pointIndex];
-                XElement position = point.Element("position");
                 int copies = (int?)point.Element("count") ?? 1;
                 for (int copy = 0; copy < copies && ordinal < limit; copy++)
                 {
                     ordinal++;
                     result.Add(new SpawnPoint { SpawnId = ((ulong)(uint)(int)info.Element("id") << 32) | (uint)ordinal,
-                        Position = new Vector3((float)position.Element("x"), (float)position.Element("y"), (float)position.Element("z")),
-                        Facing = (float?)point.Element("face") ?? 0f, Creature = creature, OrcPatrol = orcPatrol });
+                        Position = MoshentaSceneFlow.Position(point.Element("position")), Facing = (float?)point.Element("face") ?? 0f,
+                        Creature = creature, OrcPatrol = route, AiIndex = (int?)ai.Element("ai_tree_choose") ?? 0, PatrolType = patrolType });
                 }
             }
         }
@@ -168,9 +181,11 @@ public sealed class SceneWaveSpawner
     /// <param name="notice">将发给该队所有成员的入场协议。</param>
     public void FillEnterScene(TeamEnterDungeonNtf notice)
     {
+        MoshentaSkillRuntime.FillSceneBuffs(this, notice);
         notice.Flow = Flow.Snapshot();
+        for (int index = 0; index < Actors.Count; index++) if (Actors[index].WaveId < 0) notice.MonsterSpawns.Add(SpawnData(Actors[index]));
         for (int index = 0; index < monsters_.Count; index++) notice.Monsters.Add(GetHpData(index));
-        if (orc != null) notice.MonsterActions.Add(orc.Snapshot());
+        for (int index = 0; index < Actors.Count; index++) notice.MonsterActions.Add(Actors[index].Snapshot());
     }
 
     /// <summary>队伍实例的逻辑帧推进兽人位置和技能结果。</summary>
@@ -181,23 +196,26 @@ public sealed class SceneWaveSpawner
         // GeneComponent 在世界帧内写真实资源，保留帧前 HP 用于同帧网络变化和新死亡判定。
         int[] previousHp = new int[monsters_.Count];
         for (int i = 0; i < monsters_.Count; i++) previousHp[i] = monsters_[i].CurrentHp;
+        sharedGeneChanged.Clear(); sharedGeneDied = false;
         // 正式怪物世界必须推进 GeneComponent，目标破甲等限时效果才能真实到期。
         world_.Update(deltaMilliseconds);
         // 整帧只推进一次死亡事件，不能把已经零血的怪物重复视作新击败。
-        bool monsterDied = false;
+        bool monsterDied = sharedGeneDied;
         for (int i = 0; i < previousHp.Length; i++)
         {
+            if (sharedGeneChanged.Contains(monsters_[i].UID)) continue;
             if (previousHp[i] == monsters_[i].CurrentHp) continue;
             // 周期变化后的实际资源差，治疗只同步 HP，不显示负伤害。
             int damage = Math.Max(0, previousHp[i] - monsters_[i].CurrentHp);
             notice.Monsters.Add(GetHpData(i, damage));
             // 归因使用施加角色编号，不能把装备 UID 用来查在线角色。
             OnlineRole caster = RoleManager.Instance.GetOnlineRole((int)monsters_[i].Components.Get<GeneComponent>(EntityComponentType.Gene).LastDamageFirerId);
-            if (i == orcIndex) orc.OnHit(caster, damage, notice);
+            MoshentaActor actor = FindActor(monsters_[i].UID);
+            if (actor != null) actor.OnHit(caster, damage);
             if (previousHp[i] > 0 && monsters_[i].CurrentHp == 0)
             {
                 monsterDied = true;
-                Flow.CountMonsterDeath(activePoints[i].Creature.id);
+                CountDeath(activePoints[i].Creature.id);
                 if (caster != null) caster.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.Kill, null, 0, damage));
             }
         }
@@ -206,7 +224,8 @@ public sealed class SceneWaveSpawner
             CheckCompletedWaves();
             Flow.MonsterDied();
         }
-        if (orc != null) orc.Update(deltaMilliseconds, notice);
+        UpdateAi(deltaMilliseconds);
+        FlushAiNotice(notice);
     }
 
     /// <summary>按 RO ChangeHP 顺序查询本实例存活怪物、扣血并生成同一批属性通知。</summary>
@@ -241,8 +260,12 @@ public sealed class SceneWaveSpawner
             // 实例内的权威实体，零血后不再参与随后窗口或其他队员的结算。
             GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
             if (monster.CurrentHp <= 0 || hit_targets.Contains(monster.UID)) continue;
+            // 原IsDummy/不可受击状态必须早于防御查询，机制实体不参加玩家命中循环。
+            MoshentaActor hitActor = FindActor(monster.UID);
+            if (hitActor != null && !hitActor.CanBeAttacked) continue;
             // 当前普攻使用宽3、高2.5、深3米的前向盒，中心位于施法者前1.7米、高1.1米。
             SpawnPoint point = activePoints[index];
+            if (point.Creature.nonCombatant) continue;
             // 怪物行走后，命中盒必须与服务端当前实体坐标比较，出生点只提供体积配置。
             Vector3 delta = new Vector3(monster.Transform.X, monster.Transform.Y, monster.Transform.Z) - origin;
             if (delta.Y > 2.35f || delta.Y + point.Creature.boundHeight < -0.15f) continue;
@@ -262,11 +285,16 @@ public sealed class SceneWaveSpawner
             if (caster != null)
             {
                 equipment = caster.GetComponent<RoleEquipComponent>();
-                calculatedDamage = MonsterDefenseAttributes.Get(point.Creature.id).CalculateDamage(equipment.CalculateAttribute(), targetGenes, damage);
+                // 魔神塔全部闭包用原运行表DEF/MDEF；其他副本仍用其既有正式切片。
+                MonsterDefenseAttributes defense;
+                if (hitActor != null) defense = hitActor.Defense;
+                else defense = MonsterDefenseAttributes.Get(point.Creature.id);
+                calculatedDamage = defense.CalculateDamage(equipment.CalculateAttribute(), targetGenes, damage);
             }
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
-            monster.CurrentHp = Math.Max(0, hpBeforeHit - calculatedDamage);
+            if (hitActor != null) DamageActor(hitActor, calculatedDamage, caster);
+            else monster.CurrentHp = Math.Max(0, hpBeforeHit - calculatedDamage);
             // 事件只能使用当前结算得到的实际伤害，零伤害不伪造有效攻击命中。
             int actualDamage = hpBeforeHit - monster.CurrentHp;
             if (equipment != null && actualDamage > 0)
@@ -278,14 +306,14 @@ public sealed class SceneWaveSpawner
             if (monster.CurrentHp == 0)
             {
                 monsterDied = true;
-                Flow.CountMonsterDeath(point.Creature.id);
+                if (hitActor == null) CountDeath(point.Creature.id);
             }
-            notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
-            if (index == orcIndex) orc.OnHit(caster, hpBeforeHit - monster.CurrentHp, notice);
+            if (hitActor == null) notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
         CheckCompletedWaves();
         if (monsterDied) Flow.MonsterDied();
+        FlushAiNotice(notice);
     }
 
     /// <summary>按已出生实体的实际生命判断清波，不能把尚未创建的波次视为完成。</summary>
@@ -298,8 +326,11 @@ public sealed class SceneWaveSpawner
         {
             // 同波次多只实体必须全部死亡。
             int waveId = (int)(activePoints[index].SpawnId >> 32);
+            if (waveId < 0) continue;
             spawned.Add(waveId);
-            if (monsters_[index].CurrentHp > 0) living.Add(waveId);
+            MoshentaActor actor = FindActor(monsters_[index].UID);
+            if (actor != null) { if (!actor.IsDead) living.Add(waveId); }
+            else if (monsters_[index].CurrentHp > 0) living.Add(waveId);
         }
         // 集合快照允许完成事件继续产生新的波次。
         int[] waveIds = spawned.ToArray();
@@ -311,6 +342,7 @@ public sealed class SceneWaveSpawner
     /// <param name="notice">所属实例的可靠通知。</param>
     internal void FillFlow(MonsterAttrUpdateNtf notice)
     {
+        FlushAiNotice(notice);
         if (!Flow.Dirty) return;
         notice.Flow = Flow.Snapshot();
         for (int index = 0; index < monsters_.Count; index++)
@@ -319,7 +351,7 @@ public sealed class SceneWaveSpawner
             ulong spawnId = activePoints[index].SpawnId;
             if (!notice.Monsters.Any(row => row.SpawnId == spawnId)) notice.Monsters.Add(GetHpData(index));
         }
-        if (orc != null) notice.MonsterActions.Add(orc.Snapshot());
+        for (int index = 0; index < Actors.Count; index++) notice.MonsterActions.Add(Actors[index].Snapshot());
         Flow.Acknowledge();
     }
 
@@ -327,15 +359,17 @@ public sealed class SceneWaveSpawner
     /// <param name="role">正在交互的角色。</param>
     internal bool IsFighting(OnlineRole role)
     {
-        return orc != null && orc.Target == role;
+        for (int index = 0; index < Actors.Count; index++) if (Actors[index].Target == role) return true;
+        return false;
     }
 
     /// <summary>全队死亡后释放实体并重新建立原 XML 初始场景。</summary>
     internal void Reset()
     {
         Clear();
-        orcIndex = -1;
+        InitializeAi();
         Flow = new MoshentaSceneFlow(this);
+        FinishBirths();
     }
 
     /// <summary>提取跨端出生位和权威实体当前生命值。</summary>
@@ -349,8 +383,9 @@ public sealed class SceneWaveSpawner
     /// <summary>最后一名队员离开时释放此实例中的实体和组件。</summary>
     public void Clear()
     {
-        orc = null;
+        ClearAi();
         if (Flow != null) Flow.Clear();
+        Flow = null;
         world_.Clear();
         monsters_.Clear();
         activePoints.Clear();

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Dungeons_DaNaTuoSiZhiZhan_BossController>
+  <EntryTask B_ShareHP="0" I_BossState="0" B_EnterCombat="0" B_InitBossState="0">
+    <Selector>
+      <ReturnFailure>
+        <AITimeAxisWithNode />
+      </ReturnFailure>
+      <Sequence>
+        <AIBoolComparison Shared_bool2Name="" Shared_bool2mValue="0" Shared_bool1Name="InitBossState" Shared_bool1mValue="0" />
+        <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="BossState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <AIShareHP Shared_wave_idsName="" Shared_wave_idsmValue="34,35,46" Shared_enableName="" Shared_enablemValue="1" />
+        <AISendEventToSceneTriggerGroup Shared_group_idName="" Shared_group_idmValue="11" Shared_trigger_idName="" Shared_trigger_idmValue="0" />
+        <AISetBool Shared_valueName="" Shared_valuemValue="1" Shared_store_resultName="InitBossState" Shared_store_resultmValue="0" />
+      </Sequence>
+      <Sequence>
+        <AIGetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="BossState" Shared_int_valuemValue="0" Shared_keyName="" Shared_keymValue="BossState" Shared_float_valueName="" Shared_float_valuemValue="0" />
+        <Selector>
+          <Sequence>
+            <AIIntComparison Shared_int1Name="BossState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="1" />
+            <AISwitchAxis Shared_time_axisName="" Shared_time_axismValue="7" />
+          </Sequence>
+          <Sequence>
+            <AIIntComparison Shared_int1Name="BossState" Shared_int1mValue="0" cmp_type="kCmpTypeEqualTo" Shared_int2Name="" Shared_int2mValue="2" />
+            <AISwitchAxis Shared_time_axisName="" Shared_time_axismValue="1" />
+          </Sequence>
+        </Selector>
+        <AINewSetSceneVar Shared_string_valueName="" Shared_string_valuemValue="" Shared_int_valueName="" Shared_int_valuemValue="3" Shared_keyName="" Shared_keymValue="BossState" var_type="kTypeInt" Shared_float_valueName="" Shared_float_valuemValue="0" />
+      </Sequence>
+    </Selector>
+  </EntryTask>
+  <UnityObjects />
+</Dungeons_DaNaTuoSiZhiZhan_BossController>

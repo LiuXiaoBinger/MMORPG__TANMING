@@ -27,6 +27,55 @@ public sealed class TeamData
     private readonly Dictionary<ulong, MSceneMonsterMotion> monsterMotions = new Dictionary<ulong, MSceneMonsterMotion>();
     /// <summary>已加载的模型订阅此事件，按服务器当前路径段或攻击阶段播放表现。</summary>
     public event Action<MSceneMonsterMotion> MonsterMotionUpdated;
+    /// <summary>不属于固定XML波次的召唤实体，跨异步模型加载保留。</summary>
+    private readonly Dictionary<ulong, MonsterSpawnData> monsterSpawns = new Dictionary<ulong, MonsterSpawnData>();
+    /// <summary>动态出生通知，场景负责沿现有实体工厂建立模型。</summary>
+    public event Action<MonsterSpawnData> MonsterSpawned;
+    /// <summary>动态实体实际离场通知，取消未完成加载并清理模型。</summary>
+    public event Action<ulong> MonsterRemoved;
+    /// <summary>真实命中结果用于选取原受击特效，不承担客户端伤害。</summary>
+    public event Action<MonsterPlayerHitData> MonsterPlayerHit;
+    /// <summary>当前实例仍存活的原Buff快照，以唯一BuffInstanceId区分同Buff不同来源。</summary>
+    private readonly Dictionary<ulong, MSceneMonsterBuffState> monsterBuffs = new Dictionary<ulong, MSceneMonsterBuffState>();
+    /// <summary>原Buff增删或剩余时长校正，客户端仅订阅视觉变化。</summary>
+    public event Action<MSceneMonsterBuffState> MonsterBuffUpdated;
+
+    /// <summary>模型装载时读取全部仍有效的Buff实例。</summary>
+    public List<MSceneMonsterBuffState> GetMonsterBuffs()
+    {
+        return new List<MSceneMonsterBuffState>(monsterBuffs.Values);
+    }
+
+    /// <summary>记录真实收包时刻，离场与同实例ID移除不能留下旧持续特效。</summary>
+    /// <param name="data">原Buff实例的增删、目标和剩余毫秒。</param>
+    private void CacheMonsterBuff(MonsterBuffData data)
+    {
+        // 异步模型等待也消耗此Buff真实剩余时间。
+        MSceneMonsterBuffState state = new MSceneMonsterBuffState { Data = data, ReceivedAt = Time.realtimeSinceStartupAsDouble };
+        if (data.Removed) monsterBuffs.Remove(data.BuffInstanceId);
+        else monsterBuffs[data.BuffInstanceId] = state;
+        MonsterBuffUpdated?.Invoke(state);
+    }
+
+    /// <summary>已经由TeamCtrl按实例与可见角色筛选的原头顶表情通知。</summary>
+    public event Action<MonsterAiNoticeData> MonsterHeadExpression;
+
+    /// <summary>将原头顶表情交给当前副本中的真实出生模型。</summary>
+    /// <param name="notice">服务端AI表情节点输出。</param>
+    public void OnMonsterHeadExpression(MonsterAiNoticeData notice)
+    {
+        MonsterHeadExpression?.Invoke(notice);
+    }
+
+    /// <summary>复制当前仍存在的动态出生列表，供场景晚加载恢复。</summary>
+    public List<MonsterSpawnData> GetMonsterSpawns()
+    {
+        return new List<MonsterSpawnData>(monsterSpawns.Values);
+    }
+
+    /// <summary>检查异步创建期间召唤实体是否仍然存在。</summary>
+    /// <param name="spawnId">服务器实例唯一出生标识。</param>
+    public bool HasMonsterSpawn(ulong spawnId) { return monsterSpawns.ContainsKey(spawnId); }
 
     /// <summary>服务端最近一次完整副本阶段，空值表示没有副本流程。</summary>
     public DungeonFlowState DungeonFlow { get; private set; }
@@ -65,6 +114,12 @@ public sealed class TeamData
         DungeonFlow = notice.Flow;
         monsterAttributes.Clear();
         monsterMotions.Clear();
+        monsterSpawns.Clear();
+        monsterBuffs.Clear();
+        for (int index = 0; index < notice.Buffs.Count; index++) CacheMonsterBuff(notice.Buffs[index]);
+        // 入场时先保存动态身份，随后场景可以在完整HP及动作缓存就绪后恢复。
+        for (int index = 0; index < notice.MonsterSpawns.Count; index++)
+            monsterSpawns[notice.MonsterSpawns[index].SpawnId] = notice.MonsterSpawns[index];
         for (int index = 0; index < notice.Monsters.Count; index++)
             monsterAttributes.Add(notice.Monsters[index].SpawnId, notice.Monsters[index]);
         DungeonFlowUpdated?.Invoke();
@@ -106,6 +161,11 @@ public sealed class TeamData
     public bool OnMonsterAttrUpdate(MonsterAttrUpdateNtf notice)
     {
         if (notice.InstanceId != DungeonInstanceId) return false;
+        // 保存同包动态出生，再应用HP与动作；模型完成前也有可查询身份。
+        for (int index = 0; index < notice.MonsterSpawns.Count; index++)
+            monsterSpawns[notice.MonsterSpawns[index].SpawnId] = notice.MonsterSpawns[index];
+        // 原死亡先清Buff再进入Dead，避免材质恢复覆盖刚应用的尸体透明度。
+        for (int index = 0; index < notice.BuffChanges.Count; index++) CacheMonsterBuff(notice.BuffChanges[index]);
         // 这一批怪物由同一攻击者命中，队员无需从本地角色朝向猜测跳字方向。
         Vector3 firerPosition = new Vector3(notice.FirerX, notice.FirerY, notice.FirerZ);
         for (int index = 0; index < notice.Monsters.Count; index++)
@@ -118,11 +178,24 @@ public sealed class TeamData
         // 属性先于动作，避免同包中的位移覆盖已经死亡的模型。
         for (int index = 0; index < notice.MonsterActions.Count; index++)
             CacheMonsterMotion(notice.MonsterActions[index]);
+        for (int index = 0; index < notice.MonsterSpawns.Count; index++)
+            MonsterSpawned?.Invoke(notice.MonsterSpawns[index]);
+        // 同次服务器推进可能聚合出生、HP、Dead和离场；最后删除才能保持最终权威状态。
+        for (int index = 0; index < notice.RemovedSpawnIds.Count; index++)
+        {
+            // 固定尸体和动态召唤均使用同一稳定出生身份。
+            ulong spawnId = notice.RemovedSpawnIds[index];
+            monsterSpawns.Remove(spawnId);
+            monsterAttributes.Remove(spawnId);
+            monsterMotions.Remove(spawnId);
+            MonsterRemoved?.Invoke(spawnId);
+        }
         // 队伍列表使用角色的持久 ID，同一招的扣血量只取服务端结算。
         for (int index = 0; index < notice.PlayerHits.Count; index++)
         {
             // 被打角色的血量快照，队伍窗口下一次刷新时直接读取。
             MonsterPlayerHitData hit = notice.PlayerHits[index];
+            MonsterPlayerHit?.Invoke(hit);
             // 该角色的队伍条目。队伍全量快照有时晚于副本通知。
             TeamMemberInfo member = FindMember((ulong)hit.TargetRoleId);
             if (member == null) continue;
@@ -390,6 +463,8 @@ public sealed class TeamData
         ApplyDungeonFlow(null);
         monsterAttributes.Clear();
         monsterMotions.Clear();
+        monsterSpawns.Clear();
+        monsterBuffs.Clear();
         ApplyTeamInfo(new TeamInfoNtf());
     }
 

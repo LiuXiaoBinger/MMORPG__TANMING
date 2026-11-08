@@ -796,7 +796,7 @@
             "id": 20186,
             "displayName": "达纳托斯",
             "modelName": "NPC_M_DaNaTuoSi",
-            "scale": 1.2000000476837159,
+            "scale": 1.2000000476837158,
             "idleAnimation": "NPC_M_DaNaTuoSi_XuRuoXiaGu_02",
             "bornAnimation": "",
             "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Npc_20186.prefab",
@@ -810,18 +810,21 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 4,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5457,
             "displayName": "梦罗克的亡灵巫师",
-            "maxHp": 240,
+            "maxHp": 60000,
             "boundRadius": 2.1363,
             "boundHeight": 2.2695,
             "modelName": "Monster_WangLingWuShi",
-            "scale": 1.2000000476837159,
+            "scale": 1.2000000476837158,
             "idleAnimation": "Monster_WangLingWuShi_Skill_Singing",
             "bornAnimation": "",
             "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_5457.prefab",
@@ -931,9 +934,12 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5484,
@@ -942,9 +948,12 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5485,
@@ -953,9 +962,12 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5486,
@@ -964,9 +976,12 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5487,
@@ -975,9 +990,12 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5491,
@@ -986,14 +1004,17 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5501,
             "displayName": "达纳托斯的憎恨",
-            "maxHp": 480,
+            "maxHp": 1827954,
             "boundRadius": 3.3404,
             "boundHeight": 4.3822,
             "modelName": "Monster_ZengHen",
@@ -1007,7 +1028,7 @@
         {
             "id": 5502,
             "displayName": "达纳托斯的绝望",
-            "maxHp": 480,
+            "maxHp": 1178420,
             "boundRadius": 1.8456,
             "boundHeight": 5.1442,
             "modelName": "Monster_JueWang",
@@ -1021,7 +1042,7 @@
         {
             "id": 5503,
             "displayName": "达纳托斯的悲哀",
-            "maxHp": 480,
+            "maxHp": 1178420,
             "boundRadius": 1.6777,
             "boundHeight": 5.1827,
             "modelName": "Monster_BeiAi",
@@ -1035,7 +1056,7 @@
         {
             "id": 5504,
             "displayName": "梦罗克的南瓜魂",
-            "maxHp": 240,
+            "maxHp": 72339,
             "boundRadius": 0.8544,
             "boundHeight": 1.8772,
             "modelName": "Monster_NanGuaHun",
@@ -1049,7 +1070,7 @@
         {
             "id": 5506,
             "displayName": "魔神的影子",
-            "maxHp": 240,
+            "maxHp": 176849,
             "boundRadius": 1.0932,
             "boundHeight": 2.2678,
             "modelName": "Monster_MoShenYingZi01",
@@ -1063,7 +1084,7 @@
         {
             "id": 5507,
             "displayName": "魔神的影子",
-            "maxHp": 240,
+            "maxHp": 90998,
             "boundRadius": 1.0917,
             "boundHeight": 2.1829,
             "modelName": "Monster_MoShenYingZi02",
@@ -1077,7 +1098,7 @@
         {
             "id": 5508,
             "displayName": "梦罗克的恶灵",
-            "maxHp": 240,
+            "maxHp": 390062,
             "boundRadius": 1.4563,
             "boundHeight": 3.6545,
             "modelName": "Monster_ELing",
@@ -1091,8 +1112,8 @@
         {
             "id": 5509,
             "displayName": "梦罗克的米洛斯",
-            "maxHp": 240,
-            "boundRadius": 3.2080,
+            "maxHp": 321964,
+            "boundRadius": 3.208,
             "boundHeight": 3.6453,
             "modelName": "Monster_MiLuoSi",
             "scale": 1.5,
@@ -1105,7 +1126,7 @@
         {
             "id": 5510,
             "displayName": "梦罗克的魔法师",
-            "maxHp": 240,
+            "maxHp": 511629,
             "boundRadius": 1.5646,
             "boundHeight": 3.8971,
             "modelName": "Monster_MoFaShi",
@@ -1119,7 +1140,7 @@
         {
             "id": 5511,
             "displayName": "梦罗克的亡灵战俘",
-            "maxHp": 240,
+            "maxHp": 143043,
             "boundRadius": 1.8938,
             "boundHeight": 2.4145,
             "modelName": "Monster_XieHaiFuLu",
@@ -1137,18 +1158,21 @@
             "scale": 1.0,
             "idleAnimation": "",
             "bornAnimation": "",
-            "runtimePrefabPath": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
             "hitAnimation": "",
-            "isNpc": false
+            "isNpc": false,
+            "maxHp": 60000,
+            "boundRadius": 0,
+            "boundHeight": 0
         },
         {
             "id": 5513,
             "displayName": "梦罗克的邪骸弓箭手",
-            "maxHp": 240,
+            "maxHp": 91263,
             "boundRadius": 1.5902,
             "boundHeight": 2.6162,
             "modelName": "Monster_XieHaiGongJianShou",
-            "scale": 1.2000000476837159,
+            "scale": 1.2000000476837158,
             "idleAnimation": "Monster_XieHaiGongJianShou_Idle",
             "bornAnimation": "",
             "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_5513.prefab",
@@ -1158,9 +1182,9 @@
         {
             "id": 5514,
             "displayName": "梦罗克的邪骸士兵",
-            "maxHp": 240,
+            "maxHp": 55131,
             "boundRadius": 1.1679,
-            "boundHeight": 2.0430,
+            "boundHeight": 2.043,
             "modelName": "Monster_XieHaiZhanShi",
             "scale": 1.100000023841858,
             "idleAnimation": "Monster_XieHaiZhanShi_Idle",
@@ -1172,7 +1196,7 @@
         {
             "id": 5515,
             "displayName": "梦罗克的邪骸兽人",
-            "maxHp": 240,
+            "maxHp": 516777,
             "boundRadius": 3.1629,
             "boundHeight": 3.1608,
             "modelName": "Monster_XieHaiShouRen",
@@ -1182,6 +1206,48 @@
             "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_5515.prefab",
             "hitAnimation": "Monster_XieHaiShouRen_BeHit",
             "isNpc": false
+        },
+        {
+            "id": 5489,
+            "displayName": "原技能机制实体 5489",
+            "modelName": "Monster_Empty",
+            "scale": 1.0,
+            "isNpc": false,
+            "idleAnimation": "",
+            "bornAnimation": "",
+            "hitAnimation": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
+        },
+        {
+            "id": 5490,
+            "displayName": "原技能机制实体 5490",
+            "modelName": "Monster_Empty",
+            "scale": 1.0,
+            "isNpc": false,
+            "idleAnimation": "",
+            "bornAnimation": "",
+            "hitAnimation": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
+        },
+        {
+            "id": 5492,
+            "displayName": "原技能机制实体 5492",
+            "modelName": "Monster_Empty",
+            "scale": 1.0,
+            "isNpc": false,
+            "idleAnimation": "",
+            "bornAnimation": "",
+            "hitAnimation": "",
+            "runtimePrefabPath": "Assets/GM_Game/Models/Monster/RO/RuntimeCreatures/Monster_Mechanism.prefab",
+            "maxHp": 18129,
+            "boundRadius": 0,
+            "boundHeight": 0
         }
     ]
 }

@@ -10,6 +10,11 @@ using UnityEngine.UI;
 /// <summary>持有主城各窗口和常驻快捷栏，提供控制器访问入口，并登记窗口、绑定视图间引用。</summary>
 public class MainView : UIBase
 {
+   /// <summary>原魔神塔剧情黑幕，显隐沿主视图窗口生命周期管理。</summary>
+   [SerializeField] private MoshentaBlackCurtainWindow _moshentaBlackCurtainWindow;
+   /// <summary>提供给TeamCtrl的强类型黑幕展示入口。</summary>
+   public MoshentaBlackCurtainWindow MoshentaBlackCurtainWindow => _moshentaBlackCurtainWindow;
+
    /// <summary>服务端副本目标及附近交互窗口，生命周期跟随主视图。</summary>
    [SerializeField] private DungeonFlowWindow _dungeonFlowWindow;
    /// <summary>供副本控制器绑定正式窗口。</summary>
@@ -210,6 +215,8 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      windowDic[WindowType.MoshentaBlackCurtainWindow] = _moshentaBlackCurtainWindow;
+      _moshentaBlackCurtainWindow.InitWindow();
       windowDic[WindowType.EquipmentDetailWindow] = _equipmentDetailWindow;
       _equipmentDetailWindow.InitWindow();
       windowDic[WindowType.DungeonFlowWindow] = _dungeonFlowWindow;

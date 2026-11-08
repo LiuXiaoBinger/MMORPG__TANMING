@@ -18,6 +18,8 @@ internal sealed class OrcNavigation
     private readonly List<MNavigationPoint> checkPath = new List<MNavigationPoint>();
     /// <summary>拥有真实 Transform 的实例怪物。</summary>
     private readonly ServerMonster monster;
+    /// <summary>当前实体原EntityTable配置的移动米速。</summary>
+    private readonly float speed;
     /// <summary>指向路线里下一个待发的转角。</summary>
     private int corner;
     /// <summary>当前移动段的起点。</summary>
@@ -37,15 +39,49 @@ internal sealed class OrcNavigation
 
     /// <summary>绑定该副本的怪物实体。</summary>
     /// <param name="owner">服务端实体工厂创建的兽人。</param>
-    internal OrcNavigation(ServerMonster owner) { monster = owner; }
+    /// <param name="moveSpeed">原实体移动米速；旧兽人入口仍使用其已核验值。</param>
+    internal OrcNavigation(ServerMonster owner, float moveSpeed) { monster = owner; speed = moveSpeed; }
+    /// <summary>保留旧兽人调用入口，原表速度在运行时读取。</summary><param name="owner">服务端兽人实体。</param>
+    internal OrcNavigation(ServerMonster owner) : this(owner, MoshentaOrcDefinition.Speed) { }
 
     /// <summary>转换为跨端导航查询器使用的米制坐标。</summary>
     /// <param name="point">服务端世界位置。</param>
     private static MNavigationPoint NavPoint(Vector3 point) { return new MNavigationPoint(point.X, point.Y, point.Z); }
 
+    /// <summary>沿原Vector3.HorizontalRotate方向与整度量化旋转，保留Y分量。</summary><param name="direction">待旋转的三维方向。</param><param name="degrees">原顺时针度数。</param>
+    internal static Vector3 RotateDirection(Vector3 direction, float degrees)
+    {
+        // 原先取负角再环绕至360度，并以floor(value+0.5)取整度查三角函数表。
+        float wrapped = -degrees % 360;
+        if (wrapped < 0) wrapped += 360;
+        double radians = Math.Floor(wrapped + 0.5f) * Math.PI / 180;
+        // C#三角函数边界保持原float运算精度，方向与原ROSin/ROCos约定一致。
+        float sine = (float)Math.Sin(radians);
+        float cosine = (float)Math.Cos(radians);
+        return new Vector3(direction.X * cosine - direction.Z * sine, direction.Y, direction.X * sine + direction.Z * cosine);
+    }
+
     /// <summary>检查攻击站位的地面与连通性，失败时由追近子树尝试备用点。</summary>
     /// <param name="point">计算出的候选位置。</param>
     internal bool Reachable(Vector3 point) { return nav.PathFind(NavPoint(Position), NavPoint(point), checkPath, search); }
+    /// <summary>技能逐步冲锋只取既有导航首段，不沿完整绕行路线瞬移。</summary><param name="desired">本时点原曲线期望位置。</param>
+    internal Vector3 ClampSkillStep(Vector3 desired)
+    {
+        if (!nav.PathFind(NavPoint(Position), NavPoint(desired), checkPath, search)) return Position;
+        // 本次原曲线步长上限，首段较长时仍只前进该距离。
+        float step = Vector3.Distance(Position, desired);
+        for (int index = 0; index < checkPath.Count; index++)
+        {
+            MNavigationPoint point = checkPath[index];
+            Vector3 cornerPoint = new Vector3(point.X, point.Y, point.Z);
+            Vector3 direction = cornerPoint - Position;
+            float length = direction.Length();
+            if (length < 0.001f) continue;
+            if (length > step) return Position + direction / length * step;
+            return cornerPoint;
+        }
+        return Position;
+    }
 
     /// <summary>重复心跳沿用当前追击路线，目标移动后才重算。</summary>
     /// <param name="point">待比较的最终目的地。</param>
@@ -78,7 +114,8 @@ internal sealed class OrcNavigation
             if (length < 0.001f) continue;
             Face(To);
             start = now;
-            End = start + (int)Math.Ceiling(length / MoshentaOrcDefinition.Speed * 1000);
+            if (speed <= 0) return false;
+            End = start + (int)Math.Ceiling(length / speed * 1000);
             Moving = true;
             return true;
         }
