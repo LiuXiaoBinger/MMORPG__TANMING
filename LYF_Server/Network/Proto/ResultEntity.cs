@@ -190,35 +190,44 @@ public static partial class ResultEntityReflection {
           "d2FsbF9pZHMYBCADKAUSKQoKb2JqZWN0aXZlcxgFIAMoCzIVLkR1bmdlb25P",
           "YmplY3RpdmVEYXRhEhAKCGZpbmlzaGVkGAYgASgIImUKEUVxdWlwT3BlcmF0",
           "aW9uUmV0EhoKCGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIQCghpdGVtX3Vp",
-          "ZBgCIAEoAxIiCglvcGVyYXRpb24YAyABKA4yDy5FcXVpcE9wZXJhdGlvbiI6",
-          "ChZSb2xlQXR0cmlidXRlVXBkYXRlTnRmEiAKCWJhc2VfaW5mbxgBIAEoCzIN",
-          "LlJvbGVCYXNlSW5mbyKtAQoPTW9uc3RlckJ1ZmZEYXRhEhcKD3RhcmdldF9z",
-          "cGF3bl9pZBgBIAEoBBIWCg50YXJnZXRfcm9sZV9pZBgCIAEoBRIXCg9jYXN0",
-          "ZXJfc3Bhd25faWQYAyABKAQSDwoHYnVmZl9pZBgEIAEoBRIUCgxyZW1haW5p",
-          "bmdfbXMYBSABKAUSDwoHcmVtb3ZlZBgGIAEoCBIYChBidWZmX2luc3RhbmNl",
-          "X2lkGAcgASgEIiYKFkR1bmdlb25Db21tYW5kRXZlbnRSZXESDAoEbmFtZRgB",
-          "IAEoCSq9BQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4aXN0EAES",
-          "DwoLU2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1QYXNzd29y",
-          "ZEVycm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVycm9yEAYS",
-          "EQoNTmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAIEhMKD1Bo",
-          "b25lTnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIKDlVzZXJP",
-          "ZnRlbkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90RXhpc3QQ",
-          "DRITCg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1ZXN0EA8S",
-          "FQoRTm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZvdW5kEBES",
-          "GAoUUHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMSEgoOSW52",
-          "YWxpZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJbnZhbGlk",
-          "U2hvcBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZmaWNpZW50",
-          "SXRlbXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJdGVtTm90",
-          "RXhpc3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RMZWFybmVk",
-          "EBwSFgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNvb2xkb3du",
-          "EB4SFwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3RhdGVCbG9j",
-          "a2VkECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhKqUBChJNb25zdGVy",
-          "QWN0aW9uUGhhc2USGgoWTW9uc3RlckFjdGlvblBoYXNlSWRsZRAAEhoKFk1v",
-          "bnN0ZXJBY3Rpb25QaGFzZU1vdmUQARIcChhNb25zdGVyQWN0aW9uUGhhc2VB",
-          "dHRhY2sQAhIaChZNb25zdGVyQWN0aW9uUGhhc2VEZWFkEAMSHQoZTW9uc3Rl",
-          "ckFjdGlvblBoYXNlU2luZ2luZxAEKkkKDkVxdWlwT3BlcmF0aW9uEggKBE5v",
-          "bmUQABIICgRXZWFyEAESCwoHVGFrZU9mZhACEhYKElN3aXRjaFNwZWNpYWxT",
-          "a2lsbBADYgZwcm90bzM="));
+          "ZBgCIAEoAxIiCglvcGVyYXRpb24YAyABKA4yDy5FcXVpcE9wZXJhdGlvbiKD",
+          "AQoWUm9sZUF0dHJpYnV0ZVVwZGF0ZU50ZhIgCgliYXNlX2luZm8YASABKAsy",
+          "DS5Sb2xlQmFzZUluZm8SEgoKZ2VuZXNfZnVsbBgCIAEoCBIcCgVnZW5lcxgD",
+          "IAMoCzINLlJvbGVHZW5lRGF0YRIVCg1nZW5lX3NjZW5hcmlvGAQgASgFIsMC",
+          "CgxSb2xlR2VuZURhdGESDwoHZ2VuZV9pZBgBIAEoBRIRCglzb3VyY2VfaWQY",
+          "AiABKAQSEwoLc291cmNlX3Nsb3QYAyABKAUSEAoIZmlyZXJfaWQYBCABKAQS",
+          "EwoLc3RhY2tfY291bnQYBSABKAUSFAoMcmVtYWluaW5nX21zGAYgASgDEg8K",
+          "B3JlbW92ZWQYByABKAgSDAoEbmFtZRgIIAEoCRITCgtlZmZlY3RfdHlwZRgJ",
+          "IAEoBRIUCgxhdHRyaWJ1dGVfaWQYCiABKAUSDQoFc3RhdGUYCyABKAUSGgoS",
+          "cmVtYWluaW5nX3RyaWdnZXJzGAwgASgFEhUKDXRyaWdnZXJfZXZlbnQYDSAB",
+          "KAUSHwoIY2hpbGRyZW4YDiADKAsyDS5Sb2xlR2VuZURhdGESEAoIc2NlbmFy",
+          "aW8YDyABKAUirQEKD01vbnN0ZXJCdWZmRGF0YRIXCg90YXJnZXRfc3Bhd25f",
+          "aWQYASABKAQSFgoOdGFyZ2V0X3JvbGVfaWQYAiABKAUSFwoPY2FzdGVyX3Nw",
+          "YXduX2lkGAMgASgEEg8KB2J1ZmZfaWQYBCABKAUSFAoMcmVtYWluaW5nX21z",
+          "GAUgASgFEg8KB3JlbW92ZWQYBiABKAgSGAoQYnVmZl9pbnN0YW5jZV9pZBgH",
+          "IAEoBCImChZEdW5nZW9uQ29tbWFuZEV2ZW50UmVxEgwKBG5hbWUYASABKAkq",
+          "vQUKB0NtZENvZGUSCwoHU3VjY2VlZBAAEg0KCUFjY3RFeGlzdBABEg8KC1Nl",
+          "cnZlckVycm9yEAISEAoMQWNjdE5vdEV4aXN0EAMSEQoNUGFzc3dvcmRFcnJv",
+          "chAEEg8KC0FjY3REaXNhYmxlEAUSEQoNUmVxUGFyYW1FcnJvchAGEhEKDU5p",
+          "Y2tuYW1lRXhpc3QQBxITCg9Vc2VyTmFtZUlsbGVnYWwQCBITCg9QaG9uZU51",
+          "bUlsbGVnYWwQCRITCg9QYXNzd29yZElsbGVnYWwQChISCg5Vc2VyT2Z0ZW5M",
+          "b2dpbhALEg8KC1ZhcmlmeUVycm9yEAwSEAoMUm9sZU5vdEV4aXN0EA0SEwoP",
+          "RmVhdHVyZU5vdFJlYWR5EA4SFAoQRHVwbGljYXRlUmVxdWVzdBAPEhUKEU5v",
+          "dEVub3VnaEN1cnJlbmN5EBASFAoQU2hvcEl0ZW1Ob3RGb3VuZBAREhgKFFB1",
+          "cmNoYXNlTGltaXRSZWFjaGVkEBISCwoHQmFnRnVsbBATEhIKDkludmFsaWRT",
+          "ZXNzaW9uEBQSEwoPSW52YWxpZFF1YW50aXR5EBUSDwoLSW52YWxpZFNob3AQ",
+          "FhIVChFUcmFuc2FjdGlvbkZhaWxlZBAXEhUKEUluc3VmZmljaWVudEl0ZW1z",
+          "EBgSGQoVSW5jb3JyZWN0QmFja3BhY2tUeXBlEBkSEAoMSXRlbU5vdEV4aXN0",
+          "EBoSEQoNSXRlbU5vdEVub3VnaBAbEhMKD1NraWxsTm90TGVhcm5lZBAcEhYK",
+          "ElNraWxsQ29uZmlnTWlzc2luZxAdEhMKD1NraWxsT25Db29sZG93bhAeEhcK",
+          "E1NraWxsSW5zdWZmaWNpZW50TXAQHxIVChFTa2lsbFN0YXRlQmxvY2tlZBAg",
+          "EhoKFlNraWxsVGFyZ2V0VW5zdXBwb3J0ZWQQISqlAQoSTW9uc3RlckFjdGlv",
+          "blBoYXNlEhoKFk1vbnN0ZXJBY3Rpb25QaGFzZUlkbGUQABIaChZNb25zdGVy",
+          "QWN0aW9uUGhhc2VNb3ZlEAESHAoYTW9uc3RlckFjdGlvblBoYXNlQXR0YWNr",
+          "EAISGgoWTW9uc3RlckFjdGlvblBoYXNlRGVhZBADEh0KGU1vbnN0ZXJBY3Rp",
+          "b25QaGFzZVNpbmdpbmcQBCpJCg5FcXVpcE9wZXJhdGlvbhIICgROb25lEAAS",
+          "CAoEV2VhchABEgsKB1Rha2VPZmYQAhIWChJTd2l0Y2hTcGVjaWFsU2tpbGwQ",
+          "A2IGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), typeof(global::MonsterActionPhase), typeof(global::EquipOperation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -274,7 +283,8 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonObjectiveData), global::DungeonObjectiveData.Parser, new[]{ "Id", "Description", "Current", "Total", "Completed" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonFlowState), global::DungeonFlowState.Parser, new[]{ "ActiveWaveIds", "CompletedWaveIds", "ActiveObjectIds", "ActiveWallIds", "Objectives", "Finished" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationRet), global::EquipOperationRet.Parser, new[]{ "CmdCode", "ItemUid", "Operation" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "BaseInfo" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "BaseInfo", "GenesFull", "Genes", "GeneScenario" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleGeneData), global::RoleGeneData.Parser, new[]{ "GeneId", "SourceId", "SourceSlot", "FirerId", "StackCount", "RemainingMs", "Removed", "Name", "EffectType", "AttributeId", "State", "RemainingTriggers", "TriggerEvent", "Children", "Scenario" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MonsterBuffData), global::MonsterBuffData.Parser, new[]{ "TargetSpawnId", "TargetRoleId", "CasterSpawnId", "BuffId", "RemainingMs", "Removed", "BuffInstanceId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonCommandEventReq), global::DungeonCommandEventReq.Parser, new[]{ "Name" }, null, null, null, null)
         }));
@@ -20143,6 +20153,9 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public RoleAttributeUpdateNtf(RoleAttributeUpdateNtf other) : this() {
     baseInfo_ = other.baseInfo_ != null ? other.baseInfo_.Clone() : null;
+    genesFull_ = other.genesFull_;
+    genes_ = other.genes_.Clone();
+    geneScenario_ = other.geneScenario_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -20167,6 +20180,50 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     }
   }
 
+  /// <summary>Field number for the "genes_full" field.</summary>
+  public const int GenesFullFieldNumber = 2;
+  private bool genesFull_;
+  /// <summary>
+  ///true先清空再装载完整列表；false且genes为空表示基因没有变化
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool GenesFull {
+    get { return genesFull_; }
+    set {
+      genesFull_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "genes" field.</summary>
+  public const int GenesFieldNumber = 3;
+  private static readonly pb::FieldCodec<global::RoleGeneData> _repeated_genes_codec
+      = pb::FieldCodec.ForMessage(26, global::RoleGeneData.Parser);
+  private readonly pbc::RepeatedField<global::RoleGeneData> genes_ = new pbc::RepeatedField<global::RoleGeneData>();
+  /// <summary>
+  ///本角色根节点的完整列表或真实增删/刷新项
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleGeneData> Genes {
+    get { return genes_; }
+  }
+
+  /// <summary>Field number for the "gene_scenario" field.</summary>
+  public const int GeneScenarioFieldNumber = 4;
+  private int geneScenario_;
+  /// <summary>
+  ///当前基因场景类别，0公共、1副本、2PvP
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneScenario {
+    get { return geneScenario_; }
+    set {
+      geneScenario_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -20183,6 +20240,9 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
       return true;
     }
     if (!object.Equals(BaseInfo, other.BaseInfo)) return false;
+    if (GenesFull != other.GenesFull) return false;
+    if(!genes_.Equals(other.genes_)) return false;
+    if (GeneScenario != other.GeneScenario) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -20191,6 +20251,9 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
   public override int GetHashCode() {
     int hash = 1;
     if (baseInfo_ != null) hash ^= BaseInfo.GetHashCode();
+    if (GenesFull != false) hash ^= GenesFull.GetHashCode();
+    hash ^= genes_.GetHashCode();
+    if (GeneScenario != 0) hash ^= GeneScenario.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -20213,6 +20276,15 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
       output.WriteRawTag(10);
       output.WriteMessage(BaseInfo);
     }
+    if (GenesFull != false) {
+      output.WriteRawTag(16);
+      output.WriteBool(GenesFull);
+    }
+    genes_.WriteTo(output, _repeated_genes_codec);
+    if (GeneScenario != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(GeneScenario);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -20227,6 +20299,15 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
       output.WriteRawTag(10);
       output.WriteMessage(BaseInfo);
     }
+    if (GenesFull != false) {
+      output.WriteRawTag(16);
+      output.WriteBool(GenesFull);
+    }
+    genes_.WriteTo(ref output, _repeated_genes_codec);
+    if (GeneScenario != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(GeneScenario);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -20239,6 +20320,13 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     int size = 0;
     if (baseInfo_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(BaseInfo);
+    }
+    if (GenesFull != false) {
+      size += 1 + 1;
+    }
+    size += genes_.CalculateSize(_repeated_genes_codec);
+    if (GeneScenario != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneScenario);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -20257,6 +20345,13 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
         BaseInfo = new global::RoleBaseInfo();
       }
       BaseInfo.MergeFrom(other.BaseInfo);
+    }
+    if (other.GenesFull != false) {
+      GenesFull = other.GenesFull;
+    }
+    genes_.Add(other.genes_);
+    if (other.GeneScenario != 0) {
+      GeneScenario = other.GeneScenario;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -20282,6 +20377,18 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
             BaseInfo = new global::RoleBaseInfo();
           }
           input.ReadMessage(BaseInfo);
+          break;
+        }
+        case 16: {
+          GenesFull = input.ReadBool();
+          break;
+        }
+        case 26: {
+          genes_.AddEntriesFrom(input, _repeated_genes_codec);
+          break;
+        }
+        case 32: {
+          GeneScenario = input.ReadInt32();
           break;
         }
       }
@@ -20310,6 +20417,771 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
           input.ReadMessage(BaseInfo);
           break;
         }
+        case 16: {
+          GenesFull = input.ReadBool();
+          break;
+        }
+        case 26: {
+          genes_.AddEntriesFrom(ref input, _repeated_genes_codec);
+          break;
+        }
+        case 32: {
+          GeneScenario = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 运行节点的展示同步边界；客户端仍由具体类型工厂创建GeneBase，不保存协议对象为运行状态。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class RoleGeneData : pb::IMessage<RoleGeneData>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<RoleGeneData> _parser = new pb::MessageParser<RoleGeneData>(() => new RoleGeneData());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<RoleGeneData> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[53]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleGeneData() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleGeneData(RoleGeneData other) : this() {
+    geneId_ = other.geneId_;
+    sourceId_ = other.sourceId_;
+    sourceSlot_ = other.sourceSlot_;
+    firerId_ = other.firerId_;
+    stackCount_ = other.stackCount_;
+    remainingMs_ = other.remainingMs_;
+    removed_ = other.removed_;
+    name_ = other.name_;
+    effectType_ = other.effectType_;
+    attributeId_ = other.attributeId_;
+    state_ = other.state_;
+    remainingTriggers_ = other.remainingTriggers_;
+    triggerEvent_ = other.triggerEvent_;
+    children_ = other.children_.Clone();
+    scenario_ = other.scenario_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleGeneData Clone() {
+    return new RoleGeneData(this);
+  }
+
+  /// <summary>Field number for the "gene_id" field.</summary>
+  public const int GeneIdFieldNumber = 1;
+  private int geneId_;
+  /// <summary>
+  ///实际节点编号，允许服务端动态配置使用负值
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GeneId {
+    get { return geneId_; }
+    set {
+      geneId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "source_id" field.</summary>
+  public const int SourceIdFieldNumber = 2;
+  private ulong sourceId_;
+  /// <summary>
+  ///根来源实体或装备UID
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong SourceId {
+    get { return sourceId_; }
+    set {
+      sourceId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "source_slot" field.</summary>
+  public const int SourceSlotFieldNumber = 3;
+  private int sourceSlot_;
+  /// <summary>
+  ///同来源独立槽，与gene_id/source_id共同标识根
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int SourceSlot {
+    get { return sourceSlot_; }
+    set {
+      sourceSlot_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "firer_id" field.</summary>
+  public const int FirerIdFieldNumber = 4;
+  private ulong firerId_;
+  /// <summary>
+  ///实际施加角色编号
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong FirerId {
+    get { return firerId_; }
+    set {
+      firerId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "stack_count" field.</summary>
+  public const int StackCountFieldNumber = 5;
+  private int stackCount_;
+  /// <summary>
+  ///服务器当前根层数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int StackCount {
+    get { return stackCount_; }
+    set {
+      stackCount_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "remaining_ms" field.</summary>
+  public const int RemainingMsFieldNumber = 6;
+  private long remainingMs_;
+  /// <summary>
+  ///显示剩余毫秒，-1为永久；客户端到零仍等待权威移除
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long RemainingMs {
+    get { return remainingMs_; }
+    set {
+      remainingMs_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "removed" field.</summary>
+  public const int RemovedFieldNumber = 7;
+  private bool removed_;
+  /// <summary>
+  ///true只按根身份移除，其余展示参数不使用
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Removed {
+    get { return removed_; }
+    set {
+      removed_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "name" field.</summary>
+  public const int NameFieldNumber = 8;
+  private string name_ = "";
+  /// <summary>
+  ///实际基因名称，动态节点同样由服务器提供
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Name {
+    get { return name_; }
+    set {
+      name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "effect_type" field.</summary>
+  public const int EffectTypeFieldNumber = 9;
+  private int effectType_;
+  /// <summary>
+  ///具体节点效果类型，使用GeneEffectType数值
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int EffectType {
+    get { return effectType_; }
+    set {
+      effectType_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "attribute_id" field.</summary>
+  public const int AttributeIdFieldNumber = 10;
+  private int attributeId_;
+  /// <summary>
+  ///具体属性节点类型；非属性为0
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int AttributeId {
+    get { return attributeId_; }
+    set {
+      attributeId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "state" field.</summary>
+  public const int StateFieldNumber = 11;
+  private int state_;
+  /// <summary>
+  ///状态节点的状态位
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int State {
+    get { return state_; }
+    set {
+      state_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "remaining_triggers" field.</summary>
+  public const int RemainingTriggersFieldNumber = 12;
+  private int remainingTriggers_;
+  /// <summary>
+  ///次数节点当前剩余次数
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RemainingTriggers {
+    get { return remainingTriggers_; }
+    set {
+      remainingTriggers_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "trigger_event" field.</summary>
+  public const int TriggerEventFieldNumber = 13;
+  private int triggerEvent_;
+  /// <summary>
+  ///事件/次数节点对应的事件
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int TriggerEvent {
+    get { return triggerEvent_; }
+    set {
+      triggerEvent_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "children" field.</summary>
+  public const int ChildrenFieldNumber = 14;
+  private static readonly pb::FieldCodec<global::RoleGeneData> _repeated_children_codec
+      = pb::FieldCodec.ForMessage(114, global::RoleGeneData.Parser);
+  private readonly pbc::RepeatedField<global::RoleGeneData> children_ = new pbc::RepeatedField<global::RoleGeneData>();
+  /// <summary>
+  ///实际关联树，仅传展示所需类型/次数；子节点共享根来源和寿命
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<global::RoleGeneData> Children {
+    get { return children_; }
+  }
+
+  /// <summary>Field number for the "scenario" field.</summary>
+  public const int ScenarioFieldNumber = 15;
+  private int scenario_;
+  /// <summary>
+  ///节点自己的场景限制，保留祖先约束
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Scenario {
+    get { return scenario_; }
+    set {
+      scenario_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as RoleGeneData);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(RoleGeneData other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (GeneId != other.GeneId) return false;
+    if (SourceId != other.SourceId) return false;
+    if (SourceSlot != other.SourceSlot) return false;
+    if (FirerId != other.FirerId) return false;
+    if (StackCount != other.StackCount) return false;
+    if (RemainingMs != other.RemainingMs) return false;
+    if (Removed != other.Removed) return false;
+    if (Name != other.Name) return false;
+    if (EffectType != other.EffectType) return false;
+    if (AttributeId != other.AttributeId) return false;
+    if (State != other.State) return false;
+    if (RemainingTriggers != other.RemainingTriggers) return false;
+    if (TriggerEvent != other.TriggerEvent) return false;
+    if(!children_.Equals(other.children_)) return false;
+    if (Scenario != other.Scenario) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (GeneId != 0) hash ^= GeneId.GetHashCode();
+    if (SourceId != 0UL) hash ^= SourceId.GetHashCode();
+    if (SourceSlot != 0) hash ^= SourceSlot.GetHashCode();
+    if (FirerId != 0UL) hash ^= FirerId.GetHashCode();
+    if (StackCount != 0) hash ^= StackCount.GetHashCode();
+    if (RemainingMs != 0L) hash ^= RemainingMs.GetHashCode();
+    if (Removed != false) hash ^= Removed.GetHashCode();
+    if (Name.Length != 0) hash ^= Name.GetHashCode();
+    if (EffectType != 0) hash ^= EffectType.GetHashCode();
+    if (AttributeId != 0) hash ^= AttributeId.GetHashCode();
+    if (State != 0) hash ^= State.GetHashCode();
+    if (RemainingTriggers != 0) hash ^= RemainingTriggers.GetHashCode();
+    if (TriggerEvent != 0) hash ^= TriggerEvent.GetHashCode();
+    hash ^= children_.GetHashCode();
+    if (Scenario != 0) hash ^= Scenario.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (GeneId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(GeneId);
+    }
+    if (SourceId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SourceId);
+    }
+    if (SourceSlot != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SourceSlot);
+    }
+    if (FirerId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(FirerId);
+    }
+    if (StackCount != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(StackCount);
+    }
+    if (RemainingMs != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(RemainingMs);
+    }
+    if (Removed != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(Removed);
+    }
+    if (Name.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(Name);
+    }
+    if (EffectType != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(EffectType);
+    }
+    if (AttributeId != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(AttributeId);
+    }
+    if (State != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(State);
+    }
+    if (RemainingTriggers != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(RemainingTriggers);
+    }
+    if (TriggerEvent != 0) {
+      output.WriteRawTag(104);
+      output.WriteInt32(TriggerEvent);
+    }
+    children_.WriteTo(output, _repeated_children_codec);
+    if (Scenario != 0) {
+      output.WriteRawTag(120);
+      output.WriteInt32(Scenario);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (GeneId != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(GeneId);
+    }
+    if (SourceId != 0UL) {
+      output.WriteRawTag(16);
+      output.WriteUInt64(SourceId);
+    }
+    if (SourceSlot != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(SourceSlot);
+    }
+    if (FirerId != 0UL) {
+      output.WriteRawTag(32);
+      output.WriteUInt64(FirerId);
+    }
+    if (StackCount != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(StackCount);
+    }
+    if (RemainingMs != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(RemainingMs);
+    }
+    if (Removed != false) {
+      output.WriteRawTag(56);
+      output.WriteBool(Removed);
+    }
+    if (Name.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(Name);
+    }
+    if (EffectType != 0) {
+      output.WriteRawTag(72);
+      output.WriteInt32(EffectType);
+    }
+    if (AttributeId != 0) {
+      output.WriteRawTag(80);
+      output.WriteInt32(AttributeId);
+    }
+    if (State != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(State);
+    }
+    if (RemainingTriggers != 0) {
+      output.WriteRawTag(96);
+      output.WriteInt32(RemainingTriggers);
+    }
+    if (TriggerEvent != 0) {
+      output.WriteRawTag(104);
+      output.WriteInt32(TriggerEvent);
+    }
+    children_.WriteTo(ref output, _repeated_children_codec);
+    if (Scenario != 0) {
+      output.WriteRawTag(120);
+      output.WriteInt32(Scenario);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (GeneId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneId);
+    }
+    if (SourceId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SourceId);
+    }
+    if (SourceSlot != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SourceSlot);
+    }
+    if (FirerId != 0UL) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FirerId);
+    }
+    if (StackCount != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(StackCount);
+    }
+    if (RemainingMs != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(RemainingMs);
+    }
+    if (Removed != false) {
+      size += 1 + 1;
+    }
+    if (Name.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+    }
+    if (EffectType != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(EffectType);
+    }
+    if (AttributeId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(AttributeId);
+    }
+    if (State != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(State);
+    }
+    if (RemainingTriggers != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RemainingTriggers);
+    }
+    if (TriggerEvent != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(TriggerEvent);
+    }
+    size += children_.CalculateSize(_repeated_children_codec);
+    if (Scenario != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Scenario);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(RoleGeneData other) {
+    if (other == null) {
+      return;
+    }
+    if (other.GeneId != 0) {
+      GeneId = other.GeneId;
+    }
+    if (other.SourceId != 0UL) {
+      SourceId = other.SourceId;
+    }
+    if (other.SourceSlot != 0) {
+      SourceSlot = other.SourceSlot;
+    }
+    if (other.FirerId != 0UL) {
+      FirerId = other.FirerId;
+    }
+    if (other.StackCount != 0) {
+      StackCount = other.StackCount;
+    }
+    if (other.RemainingMs != 0L) {
+      RemainingMs = other.RemainingMs;
+    }
+    if (other.Removed != false) {
+      Removed = other.Removed;
+    }
+    if (other.Name.Length != 0) {
+      Name = other.Name;
+    }
+    if (other.EffectType != 0) {
+      EffectType = other.EffectType;
+    }
+    if (other.AttributeId != 0) {
+      AttributeId = other.AttributeId;
+    }
+    if (other.State != 0) {
+      State = other.State;
+    }
+    if (other.RemainingTriggers != 0) {
+      RemainingTriggers = other.RemainingTriggers;
+    }
+    if (other.TriggerEvent != 0) {
+      TriggerEvent = other.TriggerEvent;
+    }
+    children_.Add(other.children_);
+    if (other.Scenario != 0) {
+      Scenario = other.Scenario;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          GeneId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SourceId = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SourceSlot = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          FirerId = input.ReadUInt64();
+          break;
+        }
+        case 40: {
+          StackCount = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          RemainingMs = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          Removed = input.ReadBool();
+          break;
+        }
+        case 66: {
+          Name = input.ReadString();
+          break;
+        }
+        case 72: {
+          EffectType = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          AttributeId = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          State = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          RemainingTriggers = input.ReadInt32();
+          break;
+        }
+        case 104: {
+          TriggerEvent = input.ReadInt32();
+          break;
+        }
+        case 114: {
+          children_.AddEntriesFrom(input, _repeated_children_codec);
+          break;
+        }
+        case 120: {
+          Scenario = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          GeneId = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          SourceId = input.ReadUInt64();
+          break;
+        }
+        case 24: {
+          SourceSlot = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          FirerId = input.ReadUInt64();
+          break;
+        }
+        case 40: {
+          StackCount = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          RemainingMs = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          Removed = input.ReadBool();
+          break;
+        }
+        case 66: {
+          Name = input.ReadString();
+          break;
+        }
+        case 72: {
+          EffectType = input.ReadInt32();
+          break;
+        }
+        case 80: {
+          AttributeId = input.ReadInt32();
+          break;
+        }
+        case 88: {
+          State = input.ReadInt32();
+          break;
+        }
+        case 96: {
+          RemainingTriggers = input.ReadInt32();
+          break;
+        }
+        case 104: {
+          TriggerEvent = input.ReadInt32();
+          break;
+        }
+        case 114: {
+          children_.AddEntriesFrom(ref input, _repeated_children_codec);
+          break;
+        }
+        case 120: {
+          Scenario = input.ReadInt32();
+          break;
+        }
       }
     }
   }
@@ -20335,7 +21207,7 @@ public sealed partial class MonsterBuffData : pb::IMessage<MonsterBuffData>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[53]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[54]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -20779,7 +21651,7 @@ public sealed partial class DungeonCommandEventReq : pb::IMessage<DungeonCommand
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::ResultEntityReflection.Descriptor.MessageTypes[54]; }
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[55]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

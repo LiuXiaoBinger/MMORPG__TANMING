@@ -22,7 +22,117 @@ public sealed class RoleInfoCtrl : CtrlBase
         _roleCurrentWindow = mainView.RoleCurrentWindow;
         _roleAttributeWindow = mainView.RoleAttributeWindow;
         _skillWindow = mainView.SkillWindow;
+        _roleAttributeWindow.GeneVisibilityChanged += OnGeneVisibilityChanged;
         RefreshCurrentRole();
+    }
+
+    /// <summary>当前本地角色的实际基因组件；窗口隐藏时仅保留绑定，不订阅变化。</summary>
+    private MGeneComponent boundGene;
+    /// <summary>当前是否已经订阅，确保显隐和角色替换不会重复注册。</summary>
+    private bool geneSubscribed;
+
+    /// <summary>角色替换时解除旧组件，打开的窗口立即显示新角色当前节点。</summary>
+    /// <param name="role">当前本地角色，离场时为 null。</param>
+    public void BindGeneRole(PlayerEntity role)
+    {
+        // 本地角色拥有的正式专用组件，未入场时为空。
+        MGeneComponent next = null;
+        if (role != null) next = role.Gene;
+        if (boundGene == next) return;
+        UnsubscribeGene();
+        boundGene = next;
+        if (_roleAttributeWindow.isActiveAndEnabled) OnGeneVisibilityChanged(true);
+    }
+
+    /// <summary>窗口打开读取当前状态，隐藏则解除组件事件。</summary>
+    /// <param name="visible">窗口真实激活状态。</param>
+    private void OnGeneVisibilityChanged(bool visible)
+    {
+        UnsubscribeGene();
+        if (!visible) return;
+        if (boundGene != null) { boundGene.Changed += RefreshGenes; geneSubscribed = true; }
+        RefreshGenes();
+    }
+
+    /// <summary>只在已订阅时解绑旧组件，角色替换、隐藏和销毁共用。</summary>
+    private void UnsubscribeGene()
+    {
+        if (geneSubscribed && boundGene != null) boundGene.Changed -= RefreshGenes;
+        geneSubscribed = false;
+    }
+
+    /// <summary>列表变化或窗口重开时从实际节点生成中文展示行。</summary>
+    private void RefreshGenes()
+    {
+        // 展示输入只存活于当前列表刷新，倒计时读取原节点。
+        List<RoleGeneViewData> rows = new List<RoleGeneViewData>();
+        if (boundGene != null)
+        {
+            // 当前根列表按服务器同步顺序显示，源 UID/槽区分同编号装备词条。
+            for (int index = 0; index < boundGene.Runtime.ActiveGenes.Count; index++)
+            {
+                // 当前服务器确认的具体根。
+                GeneBase gene = boundGene.Runtime.ActiveGenes[index];
+                // 组合子树的事件与次数说明。
+                List<string> details = new List<string>();
+                CollectTriggerDetails(gene, details);
+                if (details.Count == 0) details.Add(EffectLabel(gene.EffectType));
+                rows.Add(new RoleGeneViewData(gene, gene.DisplayName, string.Join(" · ", details)));
+            }
+        }
+        _roleAttributeWindow.RenderGenes(rows);
+    }
+
+    /// <summary>按真实子树显示事件和独立次数，不把根层数当成可触发次数。</summary>
+    /// <param name="gene">当前待读取的具体节点。</param>
+    /// <param name="details">当前行的中文触发说明列表。</param>
+    private static void CollectTriggerDetails(GeneBase gene, List<string> details)
+    {
+        // 次数也是事件节点，先处理以避免重复显示一份时机。
+        CountGene counted = gene as CountGene;
+        if (counted != null) details.Add(EventLabel(counted.TriggerEvent) + " 剩余" + counted.RemainingTriggers + "次");
+        else
+        {
+            // 普通事件显示触发时机，不显示虚构次数。
+            EventGene triggered = gene as EventGene;
+            if (triggered != null) details.Add(EventLabel(triggered.TriggerEvent) + "触发");
+        }
+        // 组合内嵌套的次数同样需要显示。
+        for (int index = 0; index < gene.Children.Count; index++) CollectTriggerDetails(gene.Children[index], details);
+    }
+
+    /// <summary>将固定事件编号转换为界面说明。</summary>
+    /// <param name="eventType">具体节点保存的真实事件。</param>
+    /// <returns>简短中文时机。</returns>
+    private static string EventLabel(GeneEventType eventType)
+    {
+        if (eventType == GeneEventType.AttackHit) return "命中";
+        if (eventType == GeneEventType.BeHit) return "受击";
+        if (eventType == GeneEventType.SkillCast) return "施法";
+        if (eventType == GeneEventType.Kill) return "击败";
+        return "事件";
+    }
+
+    /// <summary>没有事件信息时显示节点本身的效果类别。</summary>
+    /// <param name="effect">具体节点分类。</param>
+    /// <returns>界面使用的中文类别。</returns>
+    private static string EffectLabel(GeneEffectType effect)
+    {
+        if (effect == GeneEffectType.Attribute) return "属性效果";
+        if (effect == GeneEffectType.PeriodicDamage) return "持续伤害";
+        if (effect == GeneEffectType.PeriodicHeal) return "持续治疗";
+        if (effect == GeneEffectType.PeriodicMana) return "持续回蓝";
+        if (effect == GeneEffectType.State) return "状态效果";
+        return "组合效果";
+    }
+
+    /// <summary>主界面销毁时解除窗口和旧角色组件的全部新增订阅。</summary>
+    public override void Dispose()
+    {
+        UnsubscribeGene();
+        boundGene = null;
+        _roleAttributeWindow.GeneVisibilityChanged -= OnGeneVisibilityChanged;
+        base.Dispose();
     }
 
     /// <summary>从全局角色模型生成当前角色信息展示数据。</summary>
@@ -40,6 +150,7 @@ public sealed class RoleInfoCtrl : CtrlBase
             return;
         }
         // 已装载的完整角色数据，生命、法力、职业和等级取 BaseInfo。
+        BindGeneRole(localRole);
         MainRoleInfo roleInfo = localRole.RoleInfo;
         if (roleInfo == null || roleInfo.BaseInfo == null)
         {

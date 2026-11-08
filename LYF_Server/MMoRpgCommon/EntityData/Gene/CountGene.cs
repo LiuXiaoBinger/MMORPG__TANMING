@@ -10,6 +10,10 @@ public class CountGene : EventGene
     /// <summary>最后一次效果已执行后，当前次数节点不再触发。</summary>
     public override bool IsExhausted { get { return RemainingTriggers == 0; } }
 
+    /// <summary>客户端只接收服务器剩余次数，不执行事件或补充次数。</summary>
+    /// <param name="remaining">服务器确认的当前剩余次数。</param>
+    public void ApplyDisplayTriggers(int remaining) { RemainingTriggers = remaining; }
+
     /// <summary>补满本节点并继续恢复嵌套子树，不重置周期或冷却。</summary>
     public override void ResetTriggers()
     {

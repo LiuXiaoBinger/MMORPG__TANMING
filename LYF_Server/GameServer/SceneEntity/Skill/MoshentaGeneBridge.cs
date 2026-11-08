@@ -9,7 +9,8 @@ internal static class MoshentaGeneBridge
     /// <param name="value">固定点数或百分数。</param>
     /// <param name="percent">数值是否表示基础值的百分比。</param>
     /// <param name="state">需要施加的动作限制；None 表示属性基因。</param>
-    internal static void Add(GeneRuntime runtime, MoshentaBuffInstance buff, int slot, GeneAttributeType attribute, float value, bool percent, GeneState state)
+    /// <param name="remainingMilliseconds">直接读取原 Buff End 与场景时间的查询，不驱动节点到期。</param>
+    internal static void Add(GeneRuntime runtime, MoshentaBuffInstance buff, int slot, GeneAttributeType attribute, float value, bool percent, GeneState state, System.Func<long> remainingMilliseconds)
     {
         // 编号仍区分原效果和叶子槽，仅用于当前运行集合，不写入任何配置索引。
         int id = -1000000000 - (buff.Id % 10000000) * 16 - slot;
@@ -18,6 +19,8 @@ internal static class MoshentaGeneBridge
         if (state != GeneState.None) gene = new StateGene { States = state };
         else gene = GeneFactory.CreateAttribute(attribute);
         gene.GeneID = id;
+        gene.DisplayName = MoshentaSkillCatalog.S(buff.Row, "Name");
+        gene.ReadExternalRemainingMilliseconds = remainingMilliseconds;
         gene.Value = value;
         if (percent) gene.ValueType = 1;
         // 原副本效果负责寿命，默认常驻，移除时通过保存的原节点引用精确卸载。

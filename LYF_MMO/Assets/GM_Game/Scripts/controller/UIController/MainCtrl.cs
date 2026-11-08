@@ -326,21 +326,14 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>应用服务器最终属性，同时刷新实体资源和现有角色窗口。</summary>
-    /// <param name="data">包含最终 RoleBaseInfo 的权威通知。</param>
+    /// <param name="data">包含最终 RoleBaseInfo 与基因完整/增量列表的权威通知。</param>
     private void RoleAttributeUpdateHandle(ByteString data)
     {
         // 服务器已结算装备与基因，客户端直接采用最终属性。
         RoleAttributeUpdateNtf result = RoleAttributeUpdateNtf.Parser.ParseFrom(data);
         // 当前本地角色是此通知的唯一应用目标。
         PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
-        if (localRole == null || result.BaseInfo == null) return;
-        if (localRole.GetID() != result.BaseInfo.RoleId) return;
-        localRole.UpdateBaseInfo(result.BaseInfo);
-        if (localRole.AttrComp != null)
-        {
-            localRole.AttrComp.Apply(result.BaseInfo.MaxHp, result.BaseInfo.CurrHp,
-                result.BaseInfo.MaxMp, result.BaseInfo.CurrMp);
-        }
+        if (localRole == null || !localRole.ApplyAttributeUpdate(result)) return;
         // 兼容已有攻击入口通过角色控制器读取基础属性的流程。
         RoleCtrlBase controller = localRole.GetEntityCtrl();
         if (controller != null) controller.InitCtrl(controller._roleType, localRole.BaseInfo);
@@ -353,6 +346,7 @@ public class MainCtrl : CtrlBase
     /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
     {
+        _roleInfoCtrl.BindGeneRole(role);
         if (_knapsackCtrl != null)
         {
             _knapsackCtrl.BindRole(role);

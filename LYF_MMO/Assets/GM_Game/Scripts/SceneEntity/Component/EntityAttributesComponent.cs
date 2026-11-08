@@ -11,7 +11,17 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
     /// <summary>已由节点 OnCall 写入的属性和状态修正，随宿主生命周期释放。</summary>
     private readonly AttributeModifiers modifiers = new AttributeModifiers();
     /// <summary>读取按来源计数并处理霸体冲突后的有效状态。</summary>
-    public GeneState States { get { return modifiers.States; } }
+    public GeneState States
+    {
+        get
+        {
+            // 保留原状态入口，服务器节点状态从客户端展示运行器的变化缓存读取。
+            GeneState states = modifiers.States;
+            if (Entity.Gene != null && Entity.Gene.Runtime != null) states |= Entity.Gene.Runtime.GetStates();
+            if ((states & GeneState.SuperArmor) != 0) states &= ~(GeneState.Stun | GeneState.Root);
+            return states;
+        }
+    }
     /// <summary>使用属性组件中已生效的修正计算最终属性。</summary>
     /// <param name="attribute">要读取的属性。</param>
     /// <param name="baseValue">不含基因的原始基础值。</param>

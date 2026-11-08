@@ -571,6 +571,28 @@ message EquipOperationRet {
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。
 message RoleAttributeUpdateNtf {
 	RoleBaseInfo base_info = 1;//本次计算得到的最终战斗属性及当前生命法力
+    bool genes_full = 2;//true先清空再装载完整列表；false且genes为空表示基因没有变化
+    repeated RoleGeneData genes = 3;//本角色根节点的完整列表或真实增删/刷新项
+    int32 gene_scenario = 4;//当前基因场景类别，0公共、1副本、2PvP
+}
+
+// 运行节点的展示同步边界；客户端仍由具体类型工厂创建GeneBase，不保存协议对象为运行状态。
+message RoleGeneData {
+    int32 gene_id = 1;//实际节点编号，允许服务端动态配置使用负值
+    uint64 source_id = 2;//根来源实体或装备UID
+    int32 source_slot = 3;//同来源独立槽，与gene_id/source_id共同标识根
+    uint64 firer_id = 4;//实际施加角色编号
+    int32 stack_count = 5;//服务器当前根层数
+    int64 remaining_ms = 6;//显示剩余毫秒，-1为永久；客户端到零仍等待权威移除
+    bool removed = 7;//true只按根身份移除，其余展示参数不使用
+    string name = 8;//实际基因名称，动态节点同样由服务器提供
+    int32 effect_type = 9;//具体节点效果类型，使用GeneEffectType数值
+    int32 attribute_id = 10;//具体属性节点类型；非属性为0
+    int32 state = 11;//状态节点的状态位
+    int32 remaining_triggers = 12;//次数节点当前剩余次数
+    int32 trigger_event = 13;//事件/次数节点对应的事件
+    repeated RoleGeneData children = 14;//实际关联树，仅传展示所需类型/次数；子节点共享根来源和寿命
+    int32 scenario = 15;//节点自己的场景限制，保留祖先约束
 }
 
 // 原Buff的表现身份与寿命，客户端不据此执行伤害、数值或免疫判定。

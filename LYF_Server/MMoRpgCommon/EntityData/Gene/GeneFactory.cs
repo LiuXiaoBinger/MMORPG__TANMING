@@ -8,6 +8,28 @@ public abstract class GeneFactory
     /// <param name="value">仅覆盖根节点数值，子节点使用各自配置数值。</param>
     /// <returns>拥有独立可变状态的根节点。</returns>
     public abstract GeneBase CreateGene(int geneId, float? value = null);
+    /// <summary>配置和协议边界共同使用的具体类型工厂，不创建配置包装节点。</summary>
+    /// <param name="effect">当前实际效果类别。</param>
+    /// <param name="attribute">属性节点负责的具体属性；其他类别使用 None。</param>
+    /// <returns>尚未挂载或执行的独立具体节点。</returns>
+    public static GeneBase CreateNode(GeneEffectType effect, GeneAttributeType attribute = GeneAttributeType.None)
+    {
+        switch (effect)
+        {
+            case GeneEffectType.Attribute: return CreateAttribute(attribute);
+            case GeneEffectType.PeriodicDamage: return new PeriodicDamageGene();
+            case GeneEffectType.PeriodicHeal: return new PeriodicHealGene();
+            case GeneEffectType.PeriodicMana: return new PeriodicManaGene();
+            case GeneEffectType.State: return new StateGene();
+            case GeneEffectType.Composite: return new CompositeGene();
+            case GeneEffectType.Event: return new EventGene();
+            case GeneEffectType.Count: return new CountGene();
+            case GeneEffectType.InstantHeal: return new CurrHPGene();
+            case GeneEffectType.InstantMana: return new CurrMPGene();
+            default: throw new InvalidOperationException("未知基因效果类型：" + effect);
+        }
+    }
+
     /// <summary>复用现有具体属性类，类型本身固定它所修正的属性。</summary>
     /// <param name="attribute">表内合法的属性编号。</param>
     /// <returns>对应属性的独立运行节点。</returns>

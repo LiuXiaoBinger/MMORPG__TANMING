@@ -36,6 +36,7 @@ public class LubanGeneFactory : GeneFactory
         // EffectType 和 AttributeId 只负责一次类型选择，不参与运行器行为分派。
         GeneBase node = CreateType(definition);
         node.GeneID = definition.Id;
+        node.DisplayName = definition.EffectDesc;
         node.Value = definition.Value;
         node.ValueType = definition.ValueType;
         node.DurationSeconds = definition.GeneTime;
@@ -60,22 +61,11 @@ public class LubanGeneFactory : GeneFactory
     /// <returns>尚未连接子树的具体运行节点。</returns>
     private static GeneBase CreateType(cfg.Gene definition)
     {
-        // 周期类共用计时基类，事件和次数类共用事件行为。
-        GeneBase node;
-        switch ((GeneEffectType)definition.EffectType)
-        {
-            case GeneEffectType.Attribute: return CreateAttribute((GeneAttributeType)definition.AttributeId);
-            case GeneEffectType.PeriodicDamage: node = new PeriodicDamageGene(); break;
-            case GeneEffectType.PeriodicHeal: node = new PeriodicHealGene(); break;
-            case GeneEffectType.PeriodicMana: node = new PeriodicManaGene(); break;
-            case GeneEffectType.State: return new StateGene { States = (GeneState)definition.State };
-            case GeneEffectType.Composite: return new CompositeGene();
-            case GeneEffectType.Event: node = new EventGene(); break;
-            case GeneEffectType.Count: node = new CountGene(); break;
-            case GeneEffectType.InstantHeal: return new CurrHPGene();
-            case GeneEffectType.InstantMana: return new CurrMPGene();
-            default: throw new InvalidOperationException("未知基因效果类型：" + definition.EffectType);
-        }
+        // 配置装载和客户端同步使用相同的具体类型映射。
+        GeneBase node = GeneFactory.CreateNode((GeneEffectType)definition.EffectType, (GeneAttributeType)definition.AttributeId);
+        // 状态位属于该具体节点的参数，运行过程中不再读取配置行。
+        StateGene state = node as StateGene;
+        if (state != null) state.States = (GeneState)definition.State;
         // 周期配置在边界明确拒绝零间隔，避免运行时无法推进。
         TimeBuffGeneBase periodic = node as TimeBuffGeneBase;
         if (periodic != null)

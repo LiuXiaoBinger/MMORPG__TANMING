@@ -173,8 +173,8 @@ internal sealed class MoshentaBuffRuntime
         Scene.Notice.BuffChanges.Add(ToData(added, false));
         // 原状态号：401眩晕、106沉默，使用已有动作门控。
         int status = MoshentaSkillCatalog.I(row, "BuffEffect");
-        if (status == 401) MoshentaGeneBridge.Add(genes, added, 0, GeneAttributeType.None, 0, false, GeneState.Stun);
-        if (status == 106) MoshentaGeneBridge.Add(genes, added, 0, GeneAttributeType.None, 0, false, GeneState.Silence);
+        if (status == 401) MoshentaGeneBridge.Add(genes, added, 0, GeneAttributeType.None, 0, false, GeneState.Stun, () => RemainingMilliseconds(added));
+        if (status == 106) MoshentaGeneBridge.Add(genes, added, 0, GeneAttributeType.None, 0, false, GeneState.Silence, () => RemainingMilliseconds(added));
         Trigger(added, 0);
         if (Role != null) Role.GetComponent<RoleEquipComponent>().NotifyAttributeUpdate();
     }
@@ -212,6 +212,14 @@ internal sealed class MoshentaBuffRuntime
         List<MonsterBuffData> result = new List<MonsterBuffData>();
         for (int index = 0; index < buffs.Count; index++) result.Add(ToData(buffs[index], false));
         return result;
+    }
+    /// <summary>只读取原Buff寿命；Gene同步与界面不会接管这里的到期移除。</summary>
+    /// <param name="buff">原容器中实际生效的实例。</param>
+    /// <returns>距离原 End 的毫秒数，永久为 -1。</returns>
+    private long RemainingMilliseconds(MoshentaBuffInstance buff)
+    {
+        if (buff.End == long.MaxValue) return -1;
+        return Math.Max(0, buff.End - Scene.Now);
     }
     /// <summary>同一个实际原实例用于增删通知及入场快照。</summary><param name="buff">原Buff实例。</param><param name="removed">是否已移除。</param>
     private MonsterBuffData ToData(MoshentaBuffInstance buff, bool removed)
@@ -289,7 +297,7 @@ internal sealed class MoshentaBuffRuntime
             {
                 // 141/142只免被动位移和僵直，不能映射会免Root/Stun的Gene.SuperArmor。
                 // 不可受击仍有独立提前判定，Gene供既有非RO伤害入口。
-                if (parameter.Contains("146")) MoshentaGeneBridge.Add(genes, buff, index + 1, GeneAttributeType.DamageTaken, -100, false, GeneState.None);
+                if (parameter.Contains("146")) MoshentaGeneBridge.Add(genes, buff, index + 1, GeneAttributeType.DamageTaken, -100, false, GeneState.None, () => RemainingMilliseconds(buff));
             }
             else if (type == 7) Remove(int.Parse(parameter, CultureInfo.InvariantCulture));
             else if (type == 11)
@@ -325,13 +333,13 @@ internal sealed class MoshentaBuffRuntime
     /// <summary>将实际属性叶子映射到已有Gene；公式额外属性仍保留原枚举。</summary><param name="buff">源Buff。</param><param name="index">原叶子编号。</param><param name="parameter">原属性编号与值序列。</param>
     private void AttributeGenes(MoshentaBuffInstance buff, int index, string parameter)
     {
-        if (parameter == "67=-8000|68=-8000") MoshentaGeneBridge.Add(genes, buff, index + 1, GeneAttributeType.DamageTaken, 80, false, GeneState.None);
+        if (parameter == "67=-8000|68=-8000") MoshentaGeneBridge.Add(genes, buff, index + 1, GeneAttributeType.DamageTaken, 80, false, GeneState.None, () => RemainingMilliseconds(buff));
         if (parameter == "27=1000|36=1000")
         {
-            MoshentaGeneBridge.Add(genes, buff, 1, GeneAttributeType.AtkExternalMin, 1000, false, GeneState.None);
-            MoshentaGeneBridge.Add(genes, buff, 2, GeneAttributeType.AtkExternalMax, 1000, false, GeneState.None);
-            MoshentaGeneBridge.Add(genes, buff, 3, GeneAttributeType.AtkInternalMin, 1000, false, GeneState.None);
-            MoshentaGeneBridge.Add(genes, buff, 4, GeneAttributeType.AtkInternalMax, 1000, false, GeneState.None);
+            MoshentaGeneBridge.Add(genes, buff, 1, GeneAttributeType.AtkExternalMin, 1000, false, GeneState.None, () => RemainingMilliseconds(buff));
+            MoshentaGeneBridge.Add(genes, buff, 2, GeneAttributeType.AtkExternalMax, 1000, false, GeneState.None, () => RemainingMilliseconds(buff));
+            MoshentaGeneBridge.Add(genes, buff, 3, GeneAttributeType.AtkInternalMin, 1000, false, GeneState.None, () => RemainingMilliseconds(buff));
+            MoshentaGeneBridge.Add(genes, buff, 4, GeneAttributeType.AtkInternalMax, 1000, false, GeneState.None, () => RemainingMilliseconds(buff));
         }
     }
 }

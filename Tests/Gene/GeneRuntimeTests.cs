@@ -182,7 +182,7 @@ public static class GeneRuntimeTests
 
         // 反射仅用于访问副本内部适配边界，不在正式业务新增测试入口。
         Type bridgeType = typeof(GeneComponent).Assembly.GetType("MoshentaGeneBridge");
-        // 原副本实例只需要编号，空施加者表示真实场景来源。
+        // 原副本实例使用实际配置名称，空施加者表示真实场景来源。
         Type buffType = typeof(GeneComponent).Assembly.GetType("MoshentaBuffInstance");
         // 此处 object 是反射调用边界，业务集合仍严格为 List<GeneBase>。
         object buff = Activator.CreateInstance(buffType, true);
@@ -191,10 +191,12 @@ public static class GeneRuntimeTests
         // 记录正式配置索引大小，桥接添加节点不能往里面注册伪造配置。
         int definitionCount = LubanMgr.Instance.GetGeneInfos().Count;
         // 取实际桥接方法，参数数组仅用于反射调用已有强类型方法。
+        // 真实原配置只在桥接边界复制名称，常驻测试通过只读查询返回 -1。
+        buffType.GetField("Row", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(buff, bridgeType.Assembly.GetType("MoshentaSkillCatalog").GetMethod("Buff", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { 3606001 }));
         MethodInfo add = bridgeType.GetMethod("Add", BindingFlags.Static | BindingFlags.NonPublic);
-        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 80f, false, GeneState.None });
+        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 80f, false, GeneState.None, new Func<long>(() => -1) });
         Equal(180, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "副本桥接直接创建属性节点");
-        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 130f, false, GeneState.None });
+        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 130f, false, GeneState.None, new Func<long>(() => -1) });
         Equal(230, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "同一内部编号使用本次数值");
         Equal(definitionCount, LubanMgr.Instance.GetGeneInfos().Count, "副本桥接不修改配置索引");
     }

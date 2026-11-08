@@ -69,6 +69,18 @@ public class RoleEntity : MEntity
         BaseInfo = baseInfo.Clone();
     }
 
+    /// <summary>应用本角色的完整权威属性和基因通知，节点显示不再次加减这些最终值。</summary>
+    /// <param name="notification">由正式11162处理器直接解析的回包。</param>
+    /// <returns>角色身份匹配且应用成功时返回 true。</returns>
+    public bool ApplyAttributeUpdate(RoleAttributeUpdateNtf notification)
+    {
+        if (notification.BaseInfo == null || GetID() != notification.BaseInfo.RoleId) return false;
+        UpdateBaseInfo(notification.BaseInfo);
+        AttrComp.Apply(notification.BaseInfo.MaxHp, notification.BaseInfo.CurrHp, notification.BaseInfo.MaxMp, notification.BaseInfo.CurrMp);
+        Gene.ApplySynchronization(notification);
+        return true;
+    }
+
     /// <summary>接收怪物对本角色的权威伤害，更新角色资料、实体生命和动作状态。</summary>
     /// <param name="hit">携带剩余生命、上限和本次真实伤害的服务端结果。</param>
     public void ApplyMonsterHit(MonsterPlayerHitData hit)

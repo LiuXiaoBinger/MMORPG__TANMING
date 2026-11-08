@@ -6,6 +6,8 @@ public abstract class GeneBase
 {
     /// <summary>工厂使用的配置编号；节点不保留配置行引用。</summary>
     public int GeneID { get; set; }
+    /// <summary>配置或服务器提供的基因名称，仅用于展示，不参与效果执行。</summary>
+    public string DisplayName { get; set; } = string.Empty;
     /// <summary>本次施加每层采用的数值；百分比时 10 表示 10%。</summary>
     public float Value { get; set; }
     /// <summary>0 为固定点数，1 为相对基础属性或资源上限的百分数。</summary>
@@ -56,6 +58,15 @@ public abstract class GeneBase
     }
     /// <summary>根节点剩余寿命，单位毫秒；-1 为常驻，0 为已到期。</summary>
     public long RemainingMilliseconds { get; internal set; }
+    /// <summary>魔神塔等已有外部寿命的只读查询；仅同步时读取，不参与本容器到期删除。</summary>
+    public Func<long> ReadExternalRemainingMilliseconds { get; set; }
+    /// <summary>取得真实展示寿命；外部 Buff 保持自己的 End，普通节点直接使用运行寿命。</summary>
+    /// <returns>剩余毫秒，-1 为永久；不会推进或撤销任何节点。</returns>
+    public long GetDisplayRemainingMilliseconds()
+    {
+        if (ReadExternalRemainingMilliseconds != null) return ReadExternalRemainingMilliseconds();
+        return RemainingMilliseconds;
+    }
     /// <summary>根节点当前直接生效的原节点引用；事件下的待触发子树不在其中。</summary>
     internal IReadOnlyList<GeneBase> ActiveNodes { get; private set; }
     /// <summary>按配置槽顺序保存的子节点；工厂每次创建均使用独立对象。</summary>
@@ -97,6 +108,28 @@ public abstract class GeneBase
         List<GeneBase> activeNodes = new List<GeneBase>();
         CollectActiveNodes(activeNodes);
         ActiveNodes = activeNodes.AsReadOnly();
+    }
+
+    /// <summary>客户端接收权威来源、层数与显示寿命，只赋值，不调用施加或撤销行为。</summary>
+    /// <param name="source">服务器确认的施加者或装备 UID。</param>
+    /// <param name="slot">同来源中的独立效果槽。</param>
+    /// <param name="firer">实际施加角色编号。</param>
+    /// <param name="stacks">服务器当前层数。</param>
+    /// <param name="remaining">剩余显示毫秒，-1 表示永久；到零等待服务器移除。</param>
+    public void ApplyDisplayState(ulong source, int slot, ulong firer, int stacks, long remaining)
+    {
+        SourceId = source;
+        SourceSlot = slot;
+        FirerId = firer;
+        StackCount = stacks;
+        RemainingMilliseconds = remaining;
+    }
+
+    /// <summary>客户端仅推进显示寿命，不能由本地到期撤销服务器属性或移除节点。</summary>
+    /// <param name="milliseconds">本帧经过的正毫秒数。</param>
+    public void AdvanceDisplayTime(int milliseconds)
+    {
+        if (RemainingMilliseconds > 0) RemainingMilliseconds = Math.Max(0, RemainingMilliseconds - milliseconds);
     }
 
     /// <summary>刷新根节点寿命，保留已有周期进度与事件冷却。</summary>

@@ -7,7 +7,7 @@ public class GeneRuntime
     /// <summary>按配置编号创建具体节点的工厂；直接添加节点时不需要它。</summary>
     private readonly GeneFactory factory;
     /// <summary>当前角色直接持有的根节点，普通组合子项保存在各自父节点中。</summary>
-    private readonly List<GeneBase> genes = new List<GeneBase>();
+    protected readonly List<GeneBase> genes = new List<GeneBase>();
     /// <summary>当前角色事件概率使用的独立随机源。</summary>
     private readonly Random random;
     /// <summary>直接接受节点行为的真实角色或怪物，不是结算包装。</summary>
@@ -16,6 +16,8 @@ public class GeneRuntime
     internal long ElapsedMilliseconds { get; private set; }
     /// <summary>当前集合的只读视图，元素就是实际 GeneBase 派生对象。</summary>
     public IReadOnlyList<GeneBase> ActiveGenes { get; private set; }
+    /// <summary>根节点添加、刷新、层数/次数变化或移除时通知宿主；普通时间推进不通知。</summary>
+    public event Action<GeneBase, bool> Changed;
     /// <summary>宿主环境：0 公共、1 副本、2 PvP。</summary>
     public int Scenario { get; private set; }
 
@@ -68,6 +70,7 @@ public class GeneRuntime
             if (!gene.ActiveNodes[index].IsInstant) persistent = true;
         if (persistent) genes.Add(gene);
         CallAttachedNodes(gene, true);
+        if (genes.Contains(gene)) Changed?.Invoke(gene, false);
         return gene;
     }
 
@@ -85,13 +88,14 @@ public class GeneRuntime
         gene.ResetTriggers();
         gene.RefreshDuration();
         CallAttachedNodes(gene, true);
+        if (genes.Contains(gene)) Changed?.Invoke(gene, false);
         return gene;
     }
 
     /// <summary>逐项调用节点自身的施加行为，事件与周期等待自己的调用时机。</summary>
     /// <param name="gene">当前根节点。</param>
     /// <param name="includeInstant">首次施加和刷新执行即时资源，切换场景不再次兑现。</param>
-    private void CallAttachedNodes(GeneBase gene, bool includeInstant)
+    protected virtual void CallAttachedNodes(GeneBase gene, bool includeInstant)
     {
         // 列表保留原节点引用，子类可以一次修改多个属性。
         for (int index = 0; index < gene.ActiveNodes.Count; index++)
@@ -106,7 +110,7 @@ public class GeneRuntime
 
     /// <summary>让各子节点撤销自己在当前场景下施加的持续修正。</summary>
     /// <param name="gene">即将移除、刷新或切换场景的根节点。</param>
-    private void RemoveNodeEffects(GeneBase gene)
+    protected virtual void RemoveNodeEffects(GeneBase gene)
     {
         // 普通资源节点的 OnRemove 为空，因此已造成的伤害和恢复不回滚。
         for (int index = 0; index < gene.ActiveNodes.Count; index++)
@@ -142,6 +146,7 @@ public class GeneRuntime
     {
         if (!genes.Remove(gene)) return false;
         RemoveNodeEffects(gene);
+        Changed?.Invoke(gene, true);
         return true;
     }
 
@@ -157,12 +162,24 @@ public class GeneRuntime
     /// <param name="scenario">新的公共、副本或 PvP 场景类别。</param>
     public virtual void SetScenario(int scenario)
     {
+        // 场景变化可能只改变保留组合的有效子树，也需要通知客户端更新状态。
+        bool scenarioChanged = Scenario != scenario;
         for (int index = 0; index < genes.Count; index++) RemoveNodeEffects(genes[index]);
         Scenario = scenario;
         for (int index = genes.Count - 1; index >= 0; index--)
         {
-            if (!genes[index].AppliesToScenario(scenario)) genes.RemoveAt(index);
-            else CallAttachedNodes(genes[index], false);
+            if (!genes[index].AppliesToScenario(scenario))
+            {
+                // 撤销已在切场景前完成，此处只通知真实根移除。
+                GeneBase removed = genes[index];
+                genes.RemoveAt(index);
+                Changed?.Invoke(removed, true);
+            }
+            else
+            {
+                CallAttachedNodes(genes[index], false);
+                if (scenarioChanged) Changed?.Invoke(genes[index], false);
+            }
         }
     }
 
@@ -173,7 +190,7 @@ public class GeneRuntime
     public virtual double CalculateAttribute(GeneAttributeType attribute, double baseValue) { return Owner.AttrComp.CalculateAttribute(attribute, baseValue); }
     /// <summary>读取属性组件按来源维护的有效状态。</summary>
     /// <returns>当前生效的状态位。</returns>
-    public GeneState GetStates() { return Owner.AttrComp.States; }
+    public virtual GeneState GetStates() { return Owner.AttrComp.States; }
     /// <summary>眩晕或定身禁止移动。</summary>
     public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root)) == 0; } }
     /// <summary>眩晕或沉默禁止施法。</summary>
@@ -229,6 +246,8 @@ public class GeneRuntime
             // 已被资源结算清理的节点不重复响应。
             GeneBase gene = current[index];
             if (!genes.Contains(gene)) continue;
+            // 成功事件会改变次数或冷却，通知当前根；失败事件不发增量。
+            int previousActivated = activated;
             for (int nodeIndex = 0; nodeIndex < gene.ActiveNodes.Count; nodeIndex++)
             {
                 // 属性和周期节点有各自的时机，不在战斗事件中重复施加。
@@ -236,6 +255,7 @@ public class GeneRuntime
                 if (node.WaitsForEvent) activated += node.OnCall(Owner, args);
             }
             if (gene.IsExhausted) RemoveGene(gene);
+            else if (activated > previousActivated && genes.Contains(gene)) Changed?.Invoke(gene, false);
         }
         return activated;
     }

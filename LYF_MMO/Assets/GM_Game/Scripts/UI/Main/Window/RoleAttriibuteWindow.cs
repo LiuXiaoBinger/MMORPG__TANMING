@@ -9,6 +9,69 @@ using UnityEngine.UI;
 /// </summary>
 public class RoleAttriibuteWindow : WindowBase
 {
+    /// <summary>窗口的实际显隐通知，控制器据此订阅或解除基因列表事件。</summary>
+    public event Action<bool> GeneVisibilityChanged;
+    /// <summary>正式预制体中的基因滚动内容容器。</summary>
+    [SerializeField] private RectTransform _geneContent;
+    /// <summary>正式预制体中默认隐藏的完整基因行模板。</summary>
+    [SerializeField] private RoleGeneItemWidget _geneRowTemplate;
+    /// <summary>正式预制体中的无生效基因提示。</summary>
+    [SerializeField] private TMP_Text _geneEmptyText;
+    /// <summary>本窗口已创建的行，列表变化时按索引复用，窗口销毁时随层级释放。</summary>
+    private readonly List<RoleGeneItemWidget> geneRows = new List<RoleGeneItemWidget>();
+    /// <summary>当前可见且有有限寿命的行；永久基因不参加时间刷新。</summary>
+    private readonly List<RoleGeneItemWidget> timedGeneRows = new List<RoleGeneItemWidget>();
+    /// <summary>距上一次倒计时显示刷新的秒数。</summary>
+    private float geneDisplayElapsed;
+
+    /// <summary>真实窗口打开时通知控制器读取当前节点，重开也能显示最新列表。</summary>
+    private void OnEnable() { GeneVisibilityChanged?.Invoke(true); }
+
+    /// <summary>隐藏时停止订阅及时间刷新，并释放对旧角色节点的引用。</summary>
+    private void OnDisable()
+    {
+        GeneVisibilityChanged?.Invoke(false);
+        timedGeneRows.Clear();
+        // 窗口对象可以复用，行本身保留但不再持有角色数据。
+        for (int index = 0; index < geneRows.Count; index++) geneRows[index].Clear();
+    }
+
+    /// <summary>可见时每四分之一秒检查有限节点的显示秒数，属性列表不逐帧计算。</summary>
+    private void Update()
+    {
+        if (timedGeneRows.Count == 0) return;
+        geneDisplayElapsed += Time.unscaledDeltaTime;
+        if (geneDisplayElapsed < 0.25f) return;
+        geneDisplayElapsed = 0;
+        // 每行仅当秒数改变时才写 TMP 文本。
+        for (int index = 0; index < timedGeneRows.Count; index++) timedGeneRows[index].RefreshTime();
+    }
+
+    /// <summary>只在列表、层数或次数变化时更新当前可见行，滚动区域负责容纳全部根。</summary>
+    /// <param name="items">控制器提供的当前完整展示列表，元素引用真实节点。</param>
+    public void RenderGenes(IReadOnlyList<RoleGeneViewData> items)
+    {
+        timedGeneRows.Clear();
+        geneDisplayElapsed = 0;
+        _geneEmptyText.gameObject.SetActive(items.Count == 0);
+        // 正式行模板的全部控件引用在预制体中绑定，运行时只实例化列表行。
+        for (int index = 0; index < items.Count; index++)
+        {
+            if (index == geneRows.Count) geneRows.Add(Instantiate(_geneRowTemplate, _geneContent));
+            // 同索引复用当前窗口的展示行，不给业务节点增加生命周期。
+            RoleGeneItemWidget row = geneRows[index];
+            row.gameObject.SetActive(true);
+            row.Bind(items[index]);
+            if (row.HasCountdown) timedGeneRows.Add(row);
+        }
+        // 删除项对应的旧行立即隐藏，避免同数量替换或卸装留下旧文字。
+        for (int index = items.Count; index < geneRows.Count; index++)
+        {
+            geneRows[index].Clear();
+            geneRows[index].gameObject.SetActive(false);
+        }
+    }
+
     /// <summary>已穿戴装备格点击事件，携带装备实例 UID。</summary>
     public event Action<long> EquipmentSelected;
 

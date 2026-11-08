@@ -114,7 +114,10 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         Owner.mainRoleInfo.BaseInfo.CurrHp = attributes.CurrHp;
         Owner.mainRoleInfo.BaseInfo.CurrMp = attributes.CurrMp;
         ResourcesChanged = false;
-        Owner.SendToClient(NetDefine.CMD_RoleAttributeUpdateCode, new RoleAttributeUpdateNtf { BaseInfo = attributes }.ToByteString());
+        // 原属性通知同时承载本次节点变化，保持网关和角色UI的既有入口。
+        RoleAttributeUpdateNtf notification = new RoleAttributeUpdateNtf { BaseInfo = attributes };
+        Owner.Gene.AppendSynchronization(notification);
+        Owner.SendToClient(NetDefine.CMD_RoleAttributeUpdateCode, notification.ToByteString());
     }
 
     /// <summary>角色离线时释放已生效的属性修正与宿主引用。</summary>
