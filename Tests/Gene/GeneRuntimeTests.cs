@@ -31,6 +31,7 @@ public static class GeneRuntimeTests
         for (int index = 0; index < originalIds.Count; index++) originalRows.Add(originalIds[index], definitions[originalIds[index]].ToString());
         VerifyConfiguration();
         VerifyNodeFactory();
+        VerifyDirectNodes();
         VerifyAttributesAndSources();
         VerifyRefreshAndStacking();
         VerifyPeriodicResults();
@@ -87,9 +88,9 @@ public static class GeneRuntimeTests
         // 第二宿主不会消费第一宿主的运行状态。
         GeneRuntime secondRuntime = new GeneRuntime(factory);
         // 相同持续治疗节点分别记时。
-        TimeBuffGeneBase firstPeriodic = (TimeBuffGeneBase)firstRuntime.AddGene(1201).Root;
+        TimeBuffGeneBase firstPeriodic = (TimeBuffGeneBase)firstRuntime.AddGene(1201);
         // 未推进的节点仍保持零周期进度。
-        TimeBuffGeneBase secondPeriodic = (TimeBuffGeneBase)secondRuntime.AddGene(1201).Root;
+        TimeBuffGeneBase secondPeriodic = (TimeBuffGeneBase)secondRuntime.AddGene(1201);
         firstRuntime.Update(333);
         Equal(333, firstPeriodic.ElapsedMilliseconds, "首实例周期独立推进");
         Equal(0, secondPeriodic.ElapsedMilliseconds, "第二实例周期未被推进");
@@ -100,9 +101,9 @@ public static class GeneRuntimeTests
         firstRuntime = new GeneRuntime(factory);
         secondRuntime = new GeneRuntime(factory);
         // 保存两个真实次数节点以核对消费和冷却的原对象。
-        CountGene firstCount = (CountGene)firstRuntime.AddGene(1601).Root;
+        CountGene firstCount = (CountGene)firstRuntime.AddGene(1601);
         // 第二节点仍使用相同配置总量，状态独立。
-        CountGene secondCount = (CountGene)secondRuntime.AddGene(1601).Root;
+        CountGene secondCount = (CountGene)secondRuntime.AddGene(1601);
         firstRuntime.Trigger(GeneEventType.BeHit);
         Equal(2, firstCount.RemainingTriggers, "首节点消费一次");
         Equal(3, secondCount.RemainingTriggers, "第二节点次数未消费");
@@ -132,6 +133,69 @@ public static class GeneRuntimeTests
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++) Check(!ReferencesConfiguration(properties[propertyIndex].PropertyType), "运行属性无 cfg " + type.Name + "." + properties[propertyIndex].Name);
         }
+    }
+
+    /// <summary>验证集合直接持有节点，并且手工组合与事件施加均不依赖配置索引。</summary>
+    private static void VerifyDirectNodes()
+    {
+        // 省略配置工厂，证明具体节点能独立进入正式运行模块。
+        GeneRuntime runtime = new GeneRuntime();
+        // 两秒寿命的生命节点，其运行状态应保存在传入对象本身。
+        MaxHPGene health = new MaxHPGene { GeneID = -1, Value = 120, DurationSeconds = 2 };
+        Check(ReferenceEquals(health, runtime.AddGene(health, 900, 2, 7)), "添加返回原基因节点");
+        Check(ReferenceEquals(health, runtime.ActiveGenes[0]), "角色集合直接保存原节点");
+        Equal(220, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "直接节点参与属性计算");
+        runtime.Update(500);
+        Equal(1500, health.RemainingMilliseconds, "剩余寿命直接保存在节点上");
+        Check(health.SourceId == 900 && health.FirerId == 7, "节点直接保存来源与施加者");
+        Check(runtime.RemoveGene(health), "按原节点引用移除");
+        Equal(100, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "移除节点恢复基础属性");
+
+        // 事件节点直接关联无表格编号的周期节点，实际触发时必须使用节点自身的参数。
+        CountGene trigger = new CountGene { GeneID = -2, TriggerEvent = GeneEventType.BeHit,
+            TriggerChance = 10000, TriggerLimit = 2, CooldownMilliseconds = 1000, TargetOpponent = true };
+        // 每秒恢复 25 点生命、持续三秒；事件产生的每次施加应有独立周期进度。
+        PeriodicHealGene heal = new PeriodicHealGene { GeneID = -3, Value = 25,
+            IntervalMilliseconds = 1000, DurationSeconds = 3 };
+        trigger.AddChild(heal);
+        runtime.AddGene(trigger, 901, 0, 7);
+        // 两个目标没有配置工厂，分别接收两次独立施加。
+        GeneRuntime firstTarget = new GeneRuntime();
+        // 第二目标的周期不能继承第一目标已经经过的时间。
+        GeneRuntime secondTarget = new GeneRuntime();
+        Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, firstTarget)), "直接组合第一次触发");
+        // 第一目标得到实际类型的独立对象，原事件子树仍保留在施加者上。
+        TimeBuffGeneBase firstHeal = (TimeBuffGeneBase)firstTarget.ActiveGenes[0];
+        Check(!ReferenceEquals(heal, firstHeal), "跨宿主施加不共享原子节点");
+        firstTarget.Update(400);
+        Equal(400, firstHeal.ElapsedMilliseconds, "首目标独立推进周期");
+        Equal(0, heal.ElapsedMilliseconds, "原事件子节点没有被推进");
+        // 修改原子节点的数值，下一次触发应保留此运行参数，不回读初始表值。
+        heal.Value = 40;
+        runtime.Update(1000);
+        Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, secondTarget)), "直接组合第二次触发");
+        Equal(0, trigger.RemainingTriggers, "次数直接保存在原节点上");
+        Equal(0, runtime.ActiveGenes.Count, "根次数耗尽移除原节点");
+        Equal(40, secondTarget.Update(1000)[0].Value, "事件施加采用当前节点参数");
+        Equal(25, firstTarget.Update(600)[0].Value, "前一次施加保留自己的数值与周期");
+
+        // 反射仅用于访问副本内部适配边界，不在正式业务新增测试入口。
+        Type bridgeType = typeof(GeneComponent).Assembly.GetType("MoshentaGeneBridge");
+        // 原副本实例只需要编号，空施加者表示真实场景来源。
+        Type buffType = typeof(GeneComponent).Assembly.GetType("MoshentaBuffInstance");
+        // 此处 object 是反射调用边界，业务集合仍严格为 List<GeneBase>。
+        object buff = Activator.CreateInstance(buffType, true);
+        buffType.GetField("Id", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(buff, 3606001);
+        LubanMgr.Instance.Init();
+        // 记录正式配置索引大小，桥接添加节点不能往里面注册伪造配置。
+        int definitionCount = LubanMgr.Instance.GetGeneInfos().Count;
+        // 取实际桥接方法，参数数组仅用于反射调用已有强类型方法。
+        MethodInfo add = bridgeType.GetMethod("Add", BindingFlags.Static | BindingFlags.NonPublic);
+        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 80f, false, GeneState.None });
+        Equal(180, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "副本桥接直接创建属性节点");
+        add.Invoke(null, new object[] { runtime, buff, 1, GeneAttributeType.MaxHp, 130f, false, GeneState.None });
+        Equal(230, runtime.CalculateAttribute(GeneAttributeType.MaxHp, 100), "同一内部编号使用本次数值");
+        Equal(definitionCount, LubanMgr.Instance.GetGeneInfos().Count, "副本桥接不修改配置索引");
     }
 
     /// <summary>递归核对两棵真实工厂结果不存在共享节点，且各自父引用正确。</summary>
@@ -230,7 +294,7 @@ public static class GeneRuntimeTests
         // 刷新和叠加场景独立使用一个容器。
         GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         // 记录首个实例引用，重复施加应复用它。
-        GeneInstance original = runtime.AddGene(1001, 1);
+        GeneBase original = runtime.AddGene(1001, 1);
         runtime.Update(4000);
         Equal(6000, original.RemainingMilliseconds, "寿命以毫秒推进");
         Check(ReferenceEquals(original, runtime.AddGene(1001, 1)), "同来源刷新同一实例");
@@ -364,14 +428,14 @@ public static class GeneRuntimeTests
         Equal(1, runtime.Update(2000).Count, "事件产生周期基因");
         runtime.Clear();
         // 根次数基因用完即移除，重复施加同来源会补满次数。
-        GeneInstance count = runtime.AddGene(1601, 1);
+        GeneBase count = runtime.AddGene(1601, 1);
         Equal(0, runtime.Trigger(GeneEventType.None), "空事件不消费次数");
         Equal(0, runtime.Trigger(GeneEventType.AttackHit), "不匹配事件不消费次数");
-        Equal(3, ((CountGene)count.Root).RemainingTriggers, "初始次数保留");
+        Equal(3, ((CountGene)count).RemainingTriggers, "初始次数保留");
         Equal(1, runtime.Trigger(GeneEventType.BeHit), "第一次次数触发");
-        Equal(2, ((CountGene)count.Root).RemainingTriggers, "触发扣一次");
+        Equal(2, ((CountGene)count).RemainingTriggers, "触发扣一次");
         runtime.AddGene(1601, 1);
-        Equal(3, ((CountGene)count.Root).RemainingTriggers, "刷新补满次数");
+        Equal(3, ((CountGene)count).RemainingTriggers, "刷新补满次数");
         // 三次成功触发都必须执行效果，最后一次执行后移除根。
         for (int i = 0; i < 3; i++) Equal(1, runtime.Trigger(GeneEventType.BeHit), "三次均生效");
         Check(runtime.FindGene(1601, 1) == null, "次数用完移除根");
@@ -381,8 +445,8 @@ public static class GeneRuntimeTests
         runtime.AddGene(1601, 1);
         runtime.AddGene(1601, 2);
         Equal(2, runtime.Trigger(GeneEventType.BeHit), "不同来源独立触发");
-        Equal(2, ((CountGene)runtime.FindGene(1601, 1).Root).RemainingTriggers, "来源一次数");
-        Equal(2, ((CountGene)runtime.FindGene(1601, 2).Root).RemainingTriggers, "来源二次数");
+        Equal(2, ((CountGene)runtime.FindGene(1601, 1)).RemainingTriggers, "来源一次数");
+        Equal(2, ((CountGene)runtime.FindGene(1601, 2)).RemainingTriggers, "来源二次数");
         runtime.Clear();
         runtime.AddGene(1403, 9);
         // 事件直接关联次数节点，次数必须在多次事件之间保留，不能每次重建。
@@ -486,16 +550,16 @@ public static class GeneRuntimeTests
         // 对方独立容器中的实际外防，作为破甲后续伤害的属性输入。
         GeneRuntime target = new GeneRuntime(new LubanGeneFactory(adjusted));
         // 原次数实例用于直接核对失败和成功分支的消费。
-        GeneInstance counter = runtime.AddGene(1601, 300, null, 1, 7);
+        GeneBase counter = runtime.AddGene(1601, 300, null, 1, 7);
         Equal(0, runtime.Trigger(GeneEventType.BeHit), "没有事件目标不能触发");
-        Equal(3, ((CountGene)counter.Root).RemainingTriggers, "目标缺失不吞次数");
+        Equal(3, ((CountGene)counter).RemainingTriggers, "目标缺失不吞次数");
         Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "存在目标后成功触发");
-        Equal(2, ((CountGene)counter.Root).RemainingTriggers, "成功才消费一次");
+        Equal(2, ((CountGene)counter).RemainingTriggers, "成功才消费一次");
         Equal(90, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲作用实际目标");
         Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲不作用攻击者");
         Check(target.FindGene(82101, 300).FirerId == 7, "施加角色与装备来源独立保留");
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "成功触发开始冷却");
-        Equal(2, ((CountGene)counter.Root).RemainingTriggers, "冷却拒绝不吞次数");
+        Equal(2, ((CountGene)counter).RemainingTriggers, "冷却拒绝不吞次数");
         runtime.Update(999);
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "冷却前一毫秒不提前触发");
         runtime.Update(1);
@@ -508,7 +572,7 @@ public static class GeneRuntimeTests
         runtime = new GeneRuntime(new LubanGeneFactory(adjusted));
         counter = runtime.AddGene(1601);
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "零概率永不触发");
-        Equal(3, ((CountGene)counter.Root).RemainingTriggers, "概率失败不吞次数");
+        Equal(3, ((CountGene)counter).RemainingTriggers, "概率失败不吞次数");
         // 原始30%概率使用固定种子，真实随机流应同时出现成功与失败。
         runtime = new GeneRuntime(new LubanGeneFactory(definitions), 0, new Random(19));
         runtime.AddGene(82001);

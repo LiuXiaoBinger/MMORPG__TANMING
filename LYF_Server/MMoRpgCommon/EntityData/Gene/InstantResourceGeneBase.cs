@@ -9,7 +9,7 @@ public abstract class InstantResourceGeneBase : GeneBase
     /// <summary>立即发布包含来源与当前层数的资源结果，不直接依赖角色或协议类型。</summary>
     /// <param name="instance">提供来源、角色归因与当前层数的根实例。</param>
     /// <param name="publish">宿主结算回调，未订阅时不执行资源业务。</param>
-    public override void PublishInstant(GeneInstance instance, Action<GenePulse> publish)
+    public override void PublishInstant(GeneBase instance, Action<GenePulse> publish)
     {
         publish?.Invoke(new GenePulse(instance, this));
     }

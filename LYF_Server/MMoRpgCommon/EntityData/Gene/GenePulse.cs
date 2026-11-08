@@ -17,9 +17,9 @@ public struct GenePulse
     /// <summary>复制本次脉冲所需的配置和运行数据，避免后续层数变化修改已发出的结果。</summary>
     /// <param name="instance">触发效果的父实例。</param>
     /// <param name="node">本次达到周期的叶子效果。</param>
-    public GenePulse(GeneInstance instance, GeneBase node)
+    public GenePulse(GeneBase instance, GeneBase node)
     {
-        GeneId = instance.Root.GeneID;
+        GeneId = instance.GeneID;
         SourceId = instance.SourceId;
         FirerId = instance.FirerId;
         EffectType = node.EffectType;

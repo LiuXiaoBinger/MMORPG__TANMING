@@ -14,13 +14,23 @@ public class EventGene : GeneBase
     /// <summary>关联子项须等事件成功后才激活。</summary>
     public override bool WaitsForEvent { get { return true; } }
 
+    /// <summary>独立施加的事件副本从未冷却状态开始；原事件节点的冷却保持不变。</summary>
+    /// <returns>拥有独立子树与冷却的同类型节点。</returns>
+    public override GeneBase Clone()
+    {
+        // 基类复制实际运行类型，次数子类仍保留自己的类型与配置总次数。
+        EventGene copy = (EventGene)base.Clone();
+        copy.CooldownUntilMilliseconds = 0;
+        return copy;
+    }
+
     /// <summary>匹配场景、事件、目标、冷却与概率后，沿原子树兑现关联项。</summary>
     /// <param name="args">本次真实事件及事件对方。</param>
     /// <param name="instance">提供来源与施加角色的根实例。</param>
     /// <param name="host">保存原事件时间与随机源的宿主。</param>
     /// <param name="target">上层选择的效果承接容器。</param>
     /// <returns>实际成功施加或刷新的关联项数量。</returns>
-    internal override int Trigger(GeneTriggerArgs args, GeneInstance instance, GeneRuntime host, GeneRuntime target)
+    internal override int Trigger(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target)
     {
         if (!AppliesToScenario(host.Scenario)) return 0;
         if (TriggerEvent != GeneEventType.None && TriggerEvent != args.Event) return 0;
@@ -51,7 +61,7 @@ public class EventGene : GeneBase
     /// <param name="host">负责此事件树计时的原宿主。</param>
     /// <param name="target">继承自上层的承接容器。</param>
     /// <returns>当前事件子树实际成功施加数量。</returns>
-    internal override int ActivateFromEvent(GeneTriggerArgs args, GeneInstance instance, GeneRuntime host, GeneRuntime target)
+    internal override int ActivateFromEvent(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target)
     {
         return Trigger(args, instance, host, target);
     }

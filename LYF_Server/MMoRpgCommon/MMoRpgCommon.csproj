@@ -80,7 +80,6 @@
         <Compile Include="EntityData\Gene\GeneEffectType.cs" />
         <Compile Include="EntityData\Gene\GeneEventType.cs" />
         <Compile Include="EntityData\Gene\GeneFactory.cs" />
-        <Compile Include="EntityData\Gene\GeneInstance.cs" />
         <Compile Include="EntityData\Gene\GenePulse.cs" />
         <Compile Include="EntityData\Gene\GeneRuntime.cs" />
         <Compile Include="EntityData\Gene\GeneState.cs" />

@@ -8,7 +8,7 @@ public class RoleEquipComponent : RoleComponentBase
     /// <summary>当前真正挂载了基础词条的装备 UID，换装只增删发生变化的来源。</summary>
     private readonly HashSet<long> attachedEquipment = new HashSet<long>();
     /// <summary>按特技族保存当前唯一生效等级，未变等级保留原次数和冷却。</summary>
-    private readonly Dictionary<int, GeneInstance> activeSpecialSkills = new Dictionary<int, GeneInstance>();
+    private readonly Dictionary<int, GeneBase> activeSpecialSkills = new Dictionary<int, GeneBase>();
     /// <summary>即时恢复已改变资源，本逻辑帧结束或事件处理结束时发布一次最终属性。</summary>
     private bool resourcesChanged;
     /// <summary>角色持有的唯一装备及临时基因容器，随在线角色释放。</summary>
@@ -121,10 +121,10 @@ public class RoleEquipComponent : RoleComponentBase
             }
             if (selected == null) continue;
             // 现有原实例决定是否真正需要重新挂载，重复刷新不会重置冷却。
-            GeneInstance existing;
+            GeneBase existing;
             if (activeSpecialSkills.TryGetValue(family, out existing))
             {
-                if (existing.Root.GeneID == selected.GeneId && existing.SourceId == sources[family]) continue;
+                if (existing.GeneID == selected.GeneId && existing.SourceId == sources[family]) continue;
                 Runtime.RemoveGene(existing);
             }
             activeSpecialSkills[family] = Runtime.AddGene(selected.GeneId, sources[family], null, 100 + family, Owner.GetID());

@@ -106,7 +106,7 @@ public static class GeneEquipmentTests
         Check(new BagWearItemTransition(role).SwitchSpecialSkill(worn[1].GetItemUID(), 1) == Server::BagTransitionResult.Success, "真实特技槽切换成功");
         Equal(12, equipment.CalculateAttribute().HealBonus, "同名启用件数减少后降级");
         // 确认同一特技根对象未被重复 OnEquipChange 替换。
-        GeneInstance root = equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104);
+        GeneBase root = equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104);
         equipment.OnEquipChange();
         Check(ReferenceEquals(root, equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104)), "重复变更保留特技运行实例");
         role.mainRoleInfo.BaseInfo.CurrHp = 10;
@@ -239,7 +239,7 @@ public static class GeneEquipmentTests
     {
         // 计数只遍历实际生效的根实例，不包含尚未触发的子配置。
         int count = 0;
-        for (int i = 0; i < runtime.ActiveGenes.Count; i++) if (runtime.ActiveGenes[i].Root.GeneID == id) count++;
+        for (int i = 0; i < runtime.ActiveGenes.Count; i++) if (runtime.ActiveGenes[i].GeneID == id) count++;
         return count;
     }
 

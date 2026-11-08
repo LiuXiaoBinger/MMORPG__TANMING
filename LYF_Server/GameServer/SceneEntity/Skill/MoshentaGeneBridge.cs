@@ -1,33 +1,28 @@
-using System.Collections.Generic;
-using Luban;
-
-/// <summary>将本副本RO属性/状态叶子接入既有Gene；不另建属性叠加或状态引擎。</summary>
+/// <summary>将本副本的属性和状态直接创建为公共基因节点，交给现有容器管理。</summary>
 internal static class MoshentaGeneBridge
 {
-    /// <summary>生成原Buff专用内部Gene配置并沿用既有实例管理。</summary>
-    /// <param name="runtime">实际宿主的现有Gene容器。</param><param name="buff">原Buff实例。</param><param name="slot">该原Buff内唯一叶子槽。</param><param name="attribute">已核实语义的本项目属性。</param><param name="value">固定点数或百分数。</param><param name="percent">是否按基础值百分比。</param><param name="state">实际动作限制状态。</param>
+    /// <summary>挂载原效果对应的具体节点，不构造或修改 Luban 配置。</summary>
+    /// <param name="runtime">实际宿主的基因容器。</param>
+    /// <param name="buff">原副本效果实例，负责这些叶子的生命周期。</param>
+    /// <param name="slot">原效果内唯一的叶子槽。</param>
+    /// <param name="attribute">需要修正的本项目属性类型。</param>
+    /// <param name="value">固定点数或百分数。</param>
+    /// <param name="percent">数值是否表示基础值的百分比。</param>
+    /// <param name="state">需要施加的动作限制；None 表示属性基因。</param>
     internal static void Add(GeneRuntime runtime, MoshentaBuffInstance buff, int slot, GeneAttributeType attribute, float value, bool percent, GeneState state)
     {
-        // 负编号仅为服务端内部定义键，不进入玩家装备或技能表。
+        // 编号仍区分原效果和叶子槽，仅用于当前运行集合，不写入任何配置索引。
         int id = -1000000000 - (buff.Id % 10000000) * 16 - slot;
-        // 配置注册边界使用工厂持有的原索引，后续创建直接读取新定义，允许有符号 int 键。
-        Dictionary<int, cfg.Gene> definitions = LubanMgr.Instance.GetGeneInfos();
-        if (!definitions.ContainsKey(id))
-        {
-            // cfg.Gene是Luban生成只读类型，此处仅为第三方表反序列化边界。
-            ByteBuf buffer = new ByteBuf();
-            buffer.WriteInt(id); buffer.WriteString("魔神塔原Buff内部叶子"); buffer.WriteInt(0);
-            if (percent) buffer.WriteInt(1); else buffer.WriteInt(0);
-            for (int index = 0; index < 5; index++) buffer.WriteInt(0);
-            buffer.WriteInt(1); buffer.WriteInt(0);
-            if (state != GeneState.None) buffer.WriteInt(4); else buffer.WriteInt(0);
-            buffer.WriteInt((int)attribute); buffer.WriteFloat(value); buffer.WriteInt(0); buffer.WriteInt(1);
-            buffer.WriteInt((int)state); buffer.WriteInt(0); buffer.WriteInt(0); buffer.WriteInt(10000); buffer.WriteInt(0); buffer.WriteInt(0);
-            definitions.Add(id, new cfg.Gene(new ByteBuf(buffer.CopyData())));
-        }
-        // 原Buff负责计时，GeneTime=0避免第二套计时提前删除叶子。
+        // 类型决定节点行为；属性与状态均直接使用 Common 中的具体基因。
+        GeneBase gene;
+        if (state != GeneState.None) gene = new StateGene { States = state };
+        else gene = GeneFactory.CreateAttribute(attribute);
+        gene.GeneID = id;
+        gene.Value = value;
+        if (percent) gene.ValueType = 1;
+        // 原副本效果负责寿命，默认常驻，移除时通过保存的原节点引用精确卸载。
         ulong sourceId = 0;
         if (buff.Caster != null) sourceId = buff.Caster.UnitId;
-        buff.Genes.Add(runtime.AddGene(id, sourceId, null, slot, sourceId));
+        buff.Genes.Add(runtime.AddGene(gene, sourceId, slot, sourceId));
     }
 }

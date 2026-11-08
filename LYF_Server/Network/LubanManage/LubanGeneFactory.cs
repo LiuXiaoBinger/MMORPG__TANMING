@@ -103,40 +103,4 @@ public class LubanGeneFactory : GeneFactory
         return node;
     }
 
-    /// <summary>复用现有具体属性类，类型本身固定它所修正的属性。</summary>
-    /// <param name="attribute">表内合法的属性编号。</param>
-    /// <returns>对应属性的独立运行节点。</returns>
-    private static AttributeGeneBase CreateAttribute(GeneAttributeType attribute)
-    {
-        switch (attribute)
-        {
-            case GeneAttributeType.MaxHp: return new MaxHPGene();
-            case GeneAttributeType.MaxMp: return new MaxMPGene();
-            case GeneAttributeType.AtkExternalMin: return new AtkExternalMinGene();
-            case GeneAttributeType.AtkExternalMax: return new AtkExternalMaxGene();
-            case GeneAttributeType.AtkInternalMin: return new AtkInternalMinGene();
-            case GeneAttributeType.AtkInternalMax: return new AtkInternalMaxGene();
-            case GeneAttributeType.DefExternal: return new DefExternalGene();
-            case GeneAttributeType.DefExternalDelta: return new DefExternalDeltaGene();
-            case GeneAttributeType.DefInternal: return new DefInternalGene();
-            case GeneAttributeType.DefInternalDelta: return new DefInternalDeltaGene();
-            case GeneAttributeType.HitPoint: return new HitPointGene();
-            case GeneAttributeType.BlockPoint: return new BlockPointGene();
-            case GeneAttributeType.ZhenJi: return new ZhenJiGene();
-            case GeneAttributeType.WuGu: return new WuGuGene();
-            case GeneAttributeType.CritPoint: return new CritPointGene();
-            case GeneAttributeType.CritResistPoint: return new CritResistPointGene();
-            case GeneAttributeType.CritDamage: return new CritDamageGene();
-            case GeneAttributeType.CritDamageReduce: return new CritDamageReduceGene();
-            case GeneAttributeType.HealStrength: return new HealStrengthGene();
-            case GeneAttributeType.HealBonus: return new HealBonusGene();
-            case GeneAttributeType.ZhuXin: return new ZhuXinGene();
-            case GeneAttributeType.JianRen: return new JianRenGene();
-            case GeneAttributeType.Qi: return new QiGene();
-            case GeneAttributeType.MoveSpeed: return new MoveSpeedGene();
-            case GeneAttributeType.DamageTaken: return new DamageTakenGene();
-            case GeneAttributeType.HealingReceived: return new HealingReceivedGene();
-            default: throw new InvalidOperationException("未知基因属性编号：" + attribute);
-        }
-    }
 }

@@ -15,7 +15,7 @@ internal sealed class MoshentaBuffInstance
     /// <summary>原效果叶子按声明顺序保存。</summary>
     internal readonly List<XElement> Effects = new List<XElement>();
     /// <summary>只删除本实例产生的Gene，不按状态或来源批量删除。</summary>
-    internal readonly List<GeneInstance> Genes = new List<GeneInstance>();
+    internal readonly List<GeneBase> Genes = new List<GeneBase>();
     /// <summary>原Buff寿命截止毫秒，常驻为最大值。</summary>
     internal long End;
     /// <summary>DestroyTiming种类3的剩余成功触发次数；0表示非次数寿命。</summary>
