@@ -128,7 +128,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `2337fa020d6ed732450639ef69e1b2bcdee741d671f4eb31e9427a30e7c4c44e`
+Source normalized SHA256: `b97b8d0da974bb2b89baaf3c74fbe4790c2848bcad70cb90b7926ebe05456340`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -150,7 +150,8 @@ Source normalized SHA256: `2337fa020d6ed732450639ef69e1b2bcdee741d671f4eb31e9427
 | [QUERY][场景编辑器][UI][SCENE-EDITOR-USABILITY-20261107] Missing flow navigation and editor/runtime mismatches | 136-143 |
 | [QUERY][场景编辑器][副本][STAGE-CONFIG-EXPLAIN-20261107] Stage order, spawning and mechanism timing | 144-151 |
 | [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-160 |
-| [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-167 |
+| [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-168 |
+| [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO client effect ticks and attribute UI refresh | 169-176 |
 
 ## Older records
 

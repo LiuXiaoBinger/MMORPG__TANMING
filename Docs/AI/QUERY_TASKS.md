@@ -160,3 +160,12 @@
 - 对移除的装备 UID，在当前所属角色的运行时调用 RemoveGenesBySource，再由各适用节点的 OnRemove 撤销持续贡献，其他装备/技能来源保留。已经产生的伤害/治疗不回滚；独立触发到其他目标的效果不会因当前角色卸装而被全局移除，仍按自身生命周期处理。源码：上述目录中的 RoleEquipComponent.cs:56；GeneRuntime.cs:109,141,150。
 - 特技只统计每件已穿戴装备当前启用的特技家族。RefreshSpecialSkills 选择不超过该家族穿戴件数的最高配置等级，并取贡献装备中最小的 UID 作为来源；家族/等级/来源变化时替换节点，GeneID 与来源都未变时保留原节点。最后 NotifyAttributeUpdate 委托 Owner.AttrComp 发送最终属性，不覆盖裸属性。源码：上述目录中的 RoleEquipComponent.cs:85,120,134。
 - 本记录仅解释当前代码，未修改业务、未重跑测试。既有隔离测试不能证明真实 Unity、数据库/重新登录或多服务器行为。主 Agent 核对调用链；既有 Codex 原生文档子 Agent 仅同步、检查本次双语新段。证据：_temp/equip-gene-flow-query-20261108/。
+
+## [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO 客户端效果更新与属性界面刷新
+
+- 用户于 2026-11-08 批准写入本次查询记录。RO 将此功能称为 Buff，LYF 使用 Gene。本次检查针对已查看的普通在线客户端路径，不代表所有单机/编辑器模式均已验证。参考根目录：F:/UnityPro/ro/Ro_cs422nb/。
+- MObject.Update 驱动已启用的组件。MBuffComponent.Update 只更新 _buffUpdateList 中的实例；OnBuffAdd 仅在 IsNeedUpdate 为 true 时将实例加入该列表。MBuff.Update 将更新转发给其效果，不会重新计算角色的全部属性。例如 MBuffEffectLink 将自身标记为需要更新，并更新连线特效位置。源码位于 clientcode/CSProject/MoonClient/：Entity/MObject.cs:298；Skill/Buff/MBuffComponent.cs:127,454,467；Skill/Buff/MBuff.cs:264；Skill/Buff/MBuffEffectLink.cs:36,92。
+- Buff 界面通知由变化驱动：MBuffComponent.Update 仅在 _needRefresh 已设置时调用 onUpdateBuffCallLua，然后清除该标记；回调为玩家/当前目标调用 ModuleMgr.BuffMgr.UpdateBuffInfo。这与更新选中的效果是两条不同流程。源码位于 clientcode/CSProject/MoonClient/：Skill/Buff/MBuffComponent.cs:133,489,902。队伍 Buff 的剩余时间维护在 clientproj/Assets/Scripts/Lua/ModuleMgr/BuffMgr.lua:200 中使用独立的 0.5 秒阈值，不能将此间隔泛化到所有图标/界面元素。
+- 属性通知将服务端 CurValue 传入 AttrComp.OnStateSync。针对适用的来源类型，随后携带属性增量调用 RoleInfoMgr.OnShowRoleAttrChange；该 Lua 函数通过 MEntityMgr:GetMyPlayerAttr 读取当前值，再调用 RefreshView。因此，已检查的面板路径读取同步后的属性，不要求每个 Buff 每帧重新计算属性。源码：clientcode/CSProject/MoonClient/Network/protocol/process/attribute/process_ptcg2c_attrupdatenotify.cs:48,56,65；clientproj/Assets/Scripts/Lua/ModuleMgr/RoleInfoMgr.lua:209,219,251。
+- HP/MaxHP 变化会单独安排一个待执行的 0.01 秒刷新定时器；其回调发送 MEvent_HP_Change 并更新 Lua HP 模型。OnStateSync 根据接收值赋值 HP/MaxHP，并在 !IsSoloMode 时复制完整属性字典。源码：clientcode/CSProject/MoonClient/Components/Attribute/MAttrComponent.cs:215,231,257,273,710,738。这些属于事件/数值变化路径，不能作为每帧计算属性公式的证据。
+- 未修改 LYF/RO 的玩法、配置或资源；未启动、构建 RO，未抓包，也未穷尽检查特殊模式。主 Agent Codex 核验实际函数体；既有 Codex 原生文档子 Agent 仅同步、检查这段已批准的双语记录。本次调查使用的技能：karpathy-guidelines 用于限定源码核验范围，task-log-policy 用于已批准的记录写入，project-subagent-coordination 用于文档同步，token-monitor 用于 collect/report 与原始会话压缩计数。本地证据：_temp/ro-client-buff-update-query-20261108/。
