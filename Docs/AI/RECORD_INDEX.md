@@ -126,7 +126,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `8f74626a1e93ce303d537ad4853d43720cd4dcba8d6069ac7fc228311e18cf58`
+Source normalized SHA256: `0a992402a1140b4ca46c8c8b3be52db283cef060890fe6bee8113241c0183318`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -146,7 +146,8 @@ Source normalized SHA256: `8f74626a1e93ce303d537ad4853d43720cd4dcba8d6069ac7fc22
 | [QUERY][怪物AI][副本][LYF-MONSTER-AI-READY-20261104] Readiness of LYF wave 18 for server-driven monster AI | 118-125 |
 | [QUERY][怪物AI][副本][MOSHENTA-WAVES-FLOW-20261106] All-wave AI, spawn conditions and dungeon objectives | 126-135 |
 | [QUERY][场景编辑器][UI][SCENE-EDITOR-USABILITY-20261107] Missing flow navigation and editor/runtime mismatches | 136-143 |
-| [QUERY][场景编辑器][副本][STAGE-CONFIG-EXPLAIN-20261107] Stage order, spawning and mechanism timing | 144-150 |
+| [QUERY][场景编辑器][副本][STAGE-CONFIG-EXPLAIN-20261107] Stage order, spawning and mechanism timing | 144-151 |
+| [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-159 |
 
 ## Older records
 

@@ -143,3 +143,12 @@
 - 入口到二层的交互34属于阶段3完成后的效果：其初始 ignore_init=true；进入 area20 时先完成139，再创建对象34。随后点击34会传送到 (41.13,72.06,212.74)。这是返回捷径，并非进入阶段3时就自动开放的传送门。XML 证据为行1606、10949、10972-11005、11037及连线19201/19322-19323。
 - 波次/机关卡片依据真实目标/事件/前置条件/区域/端口推导关联；选择阶段不是运行门禁，也不是任意指定阶段编号。DungeonTargetProgress 只处理当前阶段，并在切换时重置目标计数；MoshentaSceneFlow 独立跟踪波次生命周期，因此活着的怪物可以在阶段切换后继续存在。修改顺序需要改副本表，修改目标需要改目标表，修改刷怪/交互需要改实际场景触发条件/结果。行内编辑器没有用独立的阶段编号字段替代这些机制。
 - Codex 原生子 Agent verify_stage_example 完成限定范围的源码/配置复核；主 Agent 核验阶段解析及既有证据。本次说明未修改代码、配置表或场景，也未运行 Unity/玩法测试。用户仅批准本条双语查询记录及索引；此前实现证据仍归属 STAGE-INLINE-EDIT-20261107。技能：project-subagent-coordination 用于限定范围的 Codex 复核，task-log-policy 用于已批准的记录写入，token-monitor 用于 collect/report 和压缩计数。本地日志覆盖截至2026-11-06 15:54:12 CST，已观测到2次压缩；本任务 token 归属及账户余额不可测。本地原始输出：`_temp/stage-configuration-explanation-20261107/`。
+
+## [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] 移动过程中的非控制伤害反馈
+
+- 用户于 2026-11-08 仅批准本条双语查询记录及 RECORD_INDEX。本次为只读分析，未修改玩法代码或配置，也未进行运行时复现。Codex 原生子 Agent /root/noncontrol_hit_sources 完成一次有界网页查找，未取得《逆水寒》或《一梦江湖》可用的官方实现证据；不能声称两款游戏使用 Unity 或本文建议的动画分层结构。
+- 2023-07-09 的一篇玩家亲自慢放分析描述：《逆水寒》手游的非控制命中表现为受击光效，不播放控制类受击动作：https://www.taptap.cn/moment/427080159917509798 。这只是该作者当时的观察，不是官方文档，也不代表已经核验当前版本、全部技能或全部移动状态。
+- 对 LYF 的建议：血量与死亡结算应与实际控制、打断结果分开。没有僵直或打断的伤害应让跑动输入、滑行时间线与位移、跳跃速度与重力继续推进；展示命中特效、音效和 UI，必要时可叠加不影响根节点及腿部运动的小幅上半身反应。该反应淡出后衔接当前移动姿态，不恢复过时的受击前状态，也不重新开始滑行或跳跃。如果反应期间已落地或滑行已结束，应展示此时实际产生的当前状态。实际僵直属于打断，即使技能说明没有标为控制；无敌与免控不能混为一谈。
+- Unity 的 https://docs.unity3d.com/2023.2/Documentation/Manual/AnimationLayers.html 和 https://docs.unity3d.com/2023.2/Documentation/Manual/class-AvatarMask.html 说明了带遮罩的动画层及 Additive / Override 混合。这些资料支持 LYF 的一种实现选项，不是对上述两款游戏内部实现的发现。Additive 反应需要兼容的动画制作姿态；不能简单用全身受击片段覆盖跑动、滑行或跳跃。
+- LYF 当前源码：LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Entity/RoleEntity.cs:74-91 先结算 HP，再对仍存活、伤害为正且实际损失血量的角色发出 DamageReceived；Component/Action/MBeHitComponent.cs:5-32 在状态许可时请求 BeHit，并根据 layer0 的动画进度结束动作；Component/State/MStateMachine.cs:249-254 将已结束的动作切回默认状态。因此，普通伤害当前会请求状态受击反应，但仅凭这次源码查阅不能断言每次跑动、滑行或跳跃都会被打断。本次查询没有实现上述分离方案。
+- 本次未修改玩法代码、配置表、预制体或已部署服务；未观察当前版本游戏，也未执行 Unity 受击复现、多人联机或 Player 构建验证。技能：project-subagent-coordination 用于委派 Codex 查证；task-log-policy 用于已获批准的限定范围记录；token-monitor 用于 collect/report 和原始会话压缩计数。本地用量证据：_temp/noncontrol-hit-analysis-20261108/ 。
