@@ -6,7 +6,17 @@ public class StateGene : GeneBase
     /// <summary>状态查询由此具体节点实现。</summary>
     public override GeneEffectType EffectType { get { return GeneEffectType.State; } }
 
-    /// <summary>返回此节点贡献的原始状态；霸体冲突由宿主合并后统一处理。</summary>
-    /// <returns>工厂复制的持续状态位。</returns>
-    public override GeneState GetStates() { return States; }
+    /// <summary>本节点执行时在角色属性组件登记状态来源。</summary>
+    /// <param name="role">当前承受状态的角色。</param>
+    /// <param name="args">状态施加不使用额外事件参数。</param>
+    /// <returns>登记状态后返回 1。</returns>
+    public override int OnCall(IGeneOwner role, GeneTriggerArgs args = default(GeneTriggerArgs))
+    {
+        role.AttrComp.ChangeState(States, 1);
+        return 1;
+    }
+
+    /// <summary>只撤销当前节点贡献的一份状态来源。</summary>
+    /// <param name="role">此前承受状态的角色。</param>
+    public override void OnRemove(IGeneOwner role) { role.AttrComp.ChangeState(States, -1); }
 }

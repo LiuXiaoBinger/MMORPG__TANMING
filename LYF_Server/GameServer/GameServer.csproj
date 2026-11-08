@@ -163,6 +163,8 @@
         <Compile Include="MessageHandler\Knapsack\RoleKnapsackInfoHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\EquipOperationHandler.cs" />
         <Compile Include="Components\RoleEquipComponent.cs" />
+        <Compile Include="Components\RoleAttributeComponent.cs" />
+        <Compile Include="Components\RoleGeneComponent.cs" />
         <Compile Include="SceneEntity\Skill\MonsterDefenseAttributes.cs" />
         <EmbeddedResource Include="Config\MonsterAI\MonsterDefenseAttributes.json">
             <LogicalName>MonsterDefenseAttributes.json</LogicalName>

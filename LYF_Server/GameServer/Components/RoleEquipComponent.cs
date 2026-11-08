@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Google.Protobuf;
 
 /// <summary>在线角色的穿戴属性与装备特技；裸属性仍保存在 BaseInfo，运行加成不进入裸属性存档。</summary>
 public class RoleEquipComponent : RoleComponentBase
@@ -9,21 +8,12 @@ public class RoleEquipComponent : RoleComponentBase
     private readonly HashSet<long> attachedEquipment = new HashSet<long>();
     /// <summary>按特技族保存当前唯一生效等级，未变等级保留原次数和冷却。</summary>
     private readonly Dictionary<int, GeneBase> activeSpecialSkills = new Dictionary<int, GeneBase>();
-    /// <summary>即时恢复已改变资源，本逻辑帧结束或事件处理结束时发布一次最终属性。</summary>
-    private bool resourcesChanged;
-    /// <summary>角色持有的唯一装备及临时基因容器，随在线角色释放。</summary>
-    public GeneRuntime Runtime { get; private set; }
+    /// <summary>装备操作访问角色自己的基因容器，本装备组件不再持有通用基因集合。</summary>
+    public GeneRuntime Runtime { get { return Owner.Gene.Runtime; } }
 
     /// <summary>绑定实际在线角色，不依赖尚未建立的玩家场景实体。</summary>
     /// <param name="owner">持有裸属性、当前资源和背包的在线角色。</param>
     public RoleEquipComponent(OnlineRole owner) : base(owner) { }
-
-    /// <summary>连接共享基因节点工厂并订阅即时资源结果。</summary>
-    public override void Initialize()
-    {
-        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneFactory());
-        Runtime.Pulse += ApplyPulse;
-    }
 
     /// <summary>沿用项目已经定义的装备模块编号。</summary>
     /// <returns>装备模块的稳定编号。</returns>
@@ -131,116 +121,21 @@ public class RoleEquipComponent : RoleComponentBase
         }
     }
 
-    /// <summary>从裸属性生成最终面板，不把装备加成回写到裸属性或数据库。</summary>
-    /// <returns>独立的最终属性协议对象，当前资源不超过生效后的上限。</returns>
-    public virtual RoleBaseInfo CalculateAttribute()
-    {
-        // Clone 保留角色身份、位置与当前资源；只在返回对象中合成属性。
-        RoleBaseInfo result = Owner.mainRoleInfo.BaseInfo.Clone();
-        result.MaxHp = Math.Max(1, (int)Runtime.CalculateAttribute(GeneAttributeType.MaxHp, result.MaxHp));
-        result.MaxMp = Math.Max(0, (int)Runtime.CalculateAttribute(GeneAttributeType.MaxMp, result.MaxMp));
-        result.AtkExternalMin = (int)Runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, result.AtkExternalMin);
-        result.AtkExternalMax = (int)Runtime.CalculateAttribute(GeneAttributeType.AtkExternalMax, result.AtkExternalMax);
-        result.AtkInternalMin = (int)Runtime.CalculateAttribute(GeneAttributeType.AtkInternalMin, result.AtkInternalMin);
-        result.AtkInternalMax = (int)Runtime.CalculateAttribute(GeneAttributeType.AtkInternalMax, result.AtkInternalMax);
-        // 裸面板防御已包含其 Delta，新增 Delta 基因只补本次变动部分。
-        result.DefExternalDelta = (int)Runtime.CalculateAttribute(GeneAttributeType.DefExternalDelta, result.DefExternalDelta);
-        result.DefInternalDelta = (int)Runtime.CalculateAttribute(GeneAttributeType.DefInternalDelta, result.DefInternalDelta);
-        result.DefExternal = (int)Runtime.CalculateAttribute(GeneAttributeType.DefExternal, result.DefExternal)
-            + result.DefExternalDelta - Owner.mainRoleInfo.BaseInfo.DefExternalDelta;
-        result.DefInternal = (int)Runtime.CalculateAttribute(GeneAttributeType.DefInternal, result.DefInternal)
-            + result.DefInternalDelta - Owner.mainRoleInfo.BaseInfo.DefInternalDelta;
-        result.HitPoint = (int)Runtime.CalculateAttribute(GeneAttributeType.HitPoint, result.HitPoint);
-        result.BlockPoint = (int)Runtime.CalculateAttribute(GeneAttributeType.BlockPoint, result.BlockPoint);
-        result.ZhenJi = (int)Runtime.CalculateAttribute(GeneAttributeType.ZhenJi, result.ZhenJi);
-        result.WuGu = (int)Runtime.CalculateAttribute(GeneAttributeType.WuGu, result.WuGu);
-        result.CritPoint = (int)Runtime.CalculateAttribute(GeneAttributeType.CritPoint, result.CritPoint);
-        result.CritResistPoint = (int)Runtime.CalculateAttribute(GeneAttributeType.CritResistPoint, result.CritResistPoint);
-        result.CritDamage = (float)Runtime.CalculateAttribute(GeneAttributeType.CritDamage, result.CritDamage);
-        result.CritDamageReduce = (float)Runtime.CalculateAttribute(GeneAttributeType.CritDamageReduce, result.CritDamageReduce);
-        result.HealStrength = (int)Runtime.CalculateAttribute(GeneAttributeType.HealStrength, result.HealStrength);
-        result.HealBonus = (float)Runtime.CalculateAttribute(GeneAttributeType.HealBonus, result.HealBonus);
-        result.ZhuXin = (int)Runtime.CalculateAttribute(GeneAttributeType.ZhuXin, result.ZhuXin);
-        result.JianRen = (int)Runtime.CalculateAttribute(GeneAttributeType.JianRen, result.JianRen);
-        result.CurrHp = Math.Min(result.CurrHp, result.MaxHp);
-        result.CurrMp = Math.Min(result.CurrMp, result.MaxMp);
-        return result;
-    }
+    /// <summary>既有装备面板入口转交角色属性组件计算。</summary>
+    /// <returns>包含当前所有生效修正的最终属性。</returns>
+    public virtual RoleBaseInfo CalculateAttribute() { return Owner.AttrComp.CalculateAttribute(); }
 
-    /// <summary>把真实事件交给当前角色特技，事件目标仍由战斗入口给出。</summary>
-    /// <param name="args">本次权威事件及对方容器。</param>
+    /// <summary>既有装备特技入口转交角色自己的基因组件。</summary>
+    /// <param name="args">实际战斗事件及目标。</param>
     /// <returns>成功施加的关联效果数。</returns>
-    public virtual int Trigger(GeneTriggerArgs args)
-    {
-        // 即时资源已由 Pulse 回调结算，事件结束统一通知最终面板。
-        int activated = Runtime.Trigger(args);
-        if (activated > 0) NotifyAttributeUpdate();
-        return activated;
-    }
+    public virtual int Trigger(GeneTriggerArgs args) { return Owner.Gene.Trigger(args); }
 
-    /// <summary>推进持续效果并在到期或资源改变后同步最终属性。</summary>
-    /// <param name="deltaMilliseconds">角色逻辑帧实际经过的毫秒数。</param>
-    public override void Update(int deltaMilliseconds)
-    {
-        // 到期移除可能改变生命上限，和周期结算一起在本帧发布。
-        int previousCount = Runtime.ActiveGenes.Count;
-        // 周期结果由同一套资源入口消费，不再要求外部订阅未使用的事件。
-        List<GenePulse> pulses = Runtime.Update(deltaMilliseconds);
-        for (int i = 0; i < pulses.Count; i++) ApplyPulse(pulses[i]);
-        if (resourcesChanged || previousCount != Runtime.ActiveGenes.Count) NotifyAttributeUpdate();
-    }
+    /// <summary>换装完成后由角色属性组件发布最终属性。</summary>
+    public virtual void NotifyAttributeUpdate() { Owner.AttrComp.NotifyAttributeUpdate(); }
 
-    /// <summary>按当前最终上限结算资源；治疗增益是百分点，承伤与受疗为百分倍率。</summary>
-    /// <param name="pulse">携带真实施加角色和装备来源的即时或周期结果。</param>
-    private void ApplyPulse(GenePulse pulse)
-    {
-        // 死亡角色不由普通装备恢复复活，死亡处理沿用既有技能中断入口。
-        RoleBaseInfo resources = Owner.mainRoleInfo.BaseInfo;
-        if (resources.CurrHp <= 0) return;
-        // 本次恢复或伤害需要的最终生命、法力上限与治疗增益。
-        RoleBaseInfo attributes = CalculateAttribute();
-        // Percent 以生效后的真实上限计算；数值向零取整。
-        int amount = pulse.ResolveAmount(attributes.MaxHp, attributes.MaxMp);
-        if (pulse.EffectType == GeneEffectType.PeriodicDamage)
-        {
-            amount = Math.Max(0, (int)(amount * Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
-            resources.CurrHp = Math.Max(0, resources.CurrHp - amount);
-        }
-        else if (pulse.EffectType == GeneEffectType.PeriodicMana || pulse.EffectType == GeneEffectType.InstantMana)
-        {
-            resources.CurrMp = Math.Min(attributes.MaxMp, resources.CurrMp + amount);
-        }
-        else
-        {
-            // 本轮恢复均由自身装备产生；治疗增益不改动原表或裸角色面板。
-            amount = Math.Max(0, (int)(amount * (1 + attributes.HealBonus / 100.0)
-                * Runtime.CalculateAttribute(GeneAttributeType.HealingReceived, 100) / 100));
-            resources.CurrHp = Math.Min(attributes.MaxHp, resources.CurrHp + amount);
-        }
-        resourcesChanged = true;
-        if (resources.CurrHp == 0)
-        {
-            Owner.GetComponent<RoleSkillComponent>().InterruptActiveCast(true);
-            Owner.GetComponent<StateMachineComponent>().ForceToDefaultState(true);
-        }
-    }
-
-    /// <summary>同步给角色自身；只把上限裁切后的当前资源写回权威数据，保留裸属性。</summary>
-    public virtual void NotifyAttributeUpdate()
-    {
-        // 最终面板用于下行，不能覆盖 BaseInfo 中的裸攻击、防御和资源上限。
-        RoleBaseInfo attributes = CalculateAttribute();
-        Owner.mainRoleInfo.BaseInfo.CurrHp = attributes.CurrHp;
-        Owner.mainRoleInfo.BaseInfo.CurrMp = attributes.CurrMp;
-        resourcesChanged = false;
-        Owner.SendToClient(NetDefine.CMD_RoleAttributeUpdateCode, new RoleAttributeUpdateNtf { BaseInfo = attributes }.ToByteString());
-    }
-
-    /// <summary>离线时解除资源订阅并释放全部在线效果。</summary>
+    /// <summary>释放装备挂载索引；角色通用基因集合由角色 Gene 组件释放。</summary>
     public override void Dispose()
     {
-        Runtime.Pulse -= ApplyPulse;
-        Runtime.Clear();
         attachedEquipment.Clear();
         activeSpecialSkills.Clear();
         base.Dispose();

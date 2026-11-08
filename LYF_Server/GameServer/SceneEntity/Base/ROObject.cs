@@ -4,8 +4,13 @@ using MMoRpgCommon.SceneEntity;
 namespace GameServer.SceneEntity
 {
     /// <summary>参考项目 ROObject 的服务端纯逻辑对应物，不依赖 Unity GameObject。</summary>
-    public abstract class ROObject
+    public abstract class ROObject : IGeneOwner
     {
+
+        /// <summary>公共节点直接取得本实体已经装配的属性组件；不同实体继承链通过接口共享此入口。</summary>
+        IAttributeComponent IGeneOwner.AttrComp { get { return Components.Get<AttributesComponent>(EntityComponentType.Attributes); } }
+        /// <summary>事件节点直接取得本实体的现有基因容器。</summary>
+        GeneRuntime IGeneOwner.GeneRuntime { get { return Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime; } }
 
         #region 字段与属性
         /// <summary>本实体持有的场景组件，创建阶段装配，销毁时统一释放。</summary>

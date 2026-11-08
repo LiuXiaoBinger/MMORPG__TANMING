@@ -23,13 +23,37 @@ public abstract class GeneBase
     /// <summary>当前具体节点的效果分类，由类型固定，不由运行器切换行为。</summary>
     public abstract GeneEffectType EffectType { get; }
     /// <summary>根节点的施加者或装备实例编号；普通子项沿用所属根节点的来源。</summary>
-    public ulong SourceId { get; private set; }
+    private ulong sourceId;
+    /// <summary>当前根节点的来源编号。普通子节点读取其父节点的值。</summary>
+    public ulong SourceId
+    {
+        get { if (Parent != null) return Parent.SourceId; return sourceId; }
+        private set { sourceId = value; }
+    }
     /// <summary>同一来源的独立效果槽；0 为普通施加，装备槽用于区分重复编号。</summary>
-    public int SourceSlot { get; private set; }
+    private int sourceSlot;
+    /// <summary>当前根节点的来源槽位。普通子节点读取其父节点的值。</summary>
+    public int SourceSlot
+    {
+        get { if (Parent != null) return Parent.SourceSlot; return sourceSlot; }
+        private set { sourceSlot = value; }
+    }
     /// <summary>实际施加角色编号，资源归因使用它而不是装备 UID。</summary>
-    public ulong FirerId { get; private set; }
+    private ulong firerId;
+    /// <summary>当前根节点实际施加角色编号。普通子节点读取其父节点的值。</summary>
+    public ulong FirerId
+    {
+        get { if (Parent != null) return Parent.FirerId; return firerId; }
+        private set { firerId = value; }
+    }
     /// <summary>根节点当前叠加层数；已激活的普通子项共用此层数。</summary>
-    public int StackCount { get; internal set; }
+    private int stackCount;
+    /// <summary>当前根节点叠加层数。普通子节点读取其父节点的值。</summary>
+    public int StackCount
+    {
+        get { if (Parent != null) return Parent.StackCount; return stackCount; }
+        internal set { stackCount = value; }
+    }
     /// <summary>根节点剩余寿命，单位毫秒；-1 为常驻，0 为已到期。</summary>
     public long RemainingMilliseconds { get; internal set; }
     /// <summary>根节点当前直接生效的原节点引用；事件下的待触发子树不在其中。</summary>
@@ -46,6 +70,8 @@ public abstract class GeneBase
     public virtual bool WaitsForEvent { get { return false; } }
     /// <summary>即时资源节点无需在施加后常驻；组合中的其他节点仍可常驻。</summary>
     public virtual bool IsInstant { get { return false; } }
+    /// <summary>属性、状态和即时效果在挂载时调用 OnCall；周期与事件类型自行决定调用时机。</summary>
+    public virtual bool CallsOnAttach { get { return true; } }
     /// <summary>次数根耗尽时从容器移除，普通节点不会因触发次数结束。</summary>
     public virtual bool IsExhausted { get { return false; } }
 
@@ -135,47 +161,40 @@ public abstract class GeneBase
         for (int index = 0; index < children.Count; index++) children[index].ResetTriggers();
     }
 
-    /// <summary>属性节点覆盖此入口，向本次查询累加固定值与百分数。</summary>
-    /// <param name="attribute">本次查询的属性。</param>
-    /// <param name="stacks">所在根实例的当前层数。</param>
-    /// <param name="flat">累计的固定点数修正。</param>
-    /// <param name="percent">累计的百分数修正，10 表示 10%。</param>
-    public virtual void AccumulateAttribute(GeneAttributeType attribute, int stacks, ref double flat, ref double percent) { }
+    /// <summary>具体基因独立执行行为，可以通过角色属性组件连续修改多个属性。</summary>
+    /// <param name="role">当前实际承受效果的角色或怪物。</param>
+    /// <param name="args">事件基因接收的战斗事件；普通施加和周期调用使用默认事件值。</param>
+    /// <returns>事件实际激活的子节点数；普通效果成功执行返回 1。</returns>
+    public abstract int OnCall(IGeneOwner role, GeneTriggerArgs args = default(GeneTriggerArgs));
 
-    /// <summary>状态节点覆盖此入口，普通节点不提供动作限制。</summary>
-    /// <returns>此节点持续提供的状态位。</returns>
-    public virtual GeneState GetStates() { return GeneState.None; }
+    /// <summary>移除或刷新前撤销本节点施加的持续修正；即时与周期资源不回滚。</summary>
+    /// <param name="role">本节点所属的真实角色。</param>
+    public virtual void OnRemove(IGeneOwner role) { }
 
-    /// <summary>周期节点覆盖此入口，在根寿命内推进独立周期。</summary>
-    /// <param name="milliseconds">本帧仍处于根寿命内的毫秒数。</param>
-    /// <param name="instance">提供来源和层数的根实例。</param>
-    /// <param name="pulses">本帧待宿主结算的强类型结果。</param>
-    public virtual void AdvanceTime(long milliseconds, GeneBase instance, List<GenePulse> pulses) { }
+    /// <summary>周期节点推进自身计时，到点后直接执行自己的 OnCall。</summary>
+    /// <param name="milliseconds">本帧仍在根寿命内的毫秒数。</param>
+    /// <param name="role">本节点所属的真实角色。</param>
+    public virtual void AdvanceTime(long milliseconds, IGeneOwner role) { }
 
-    /// <summary>即时资源节点覆盖此入口，在首次施加和刷新时兑现资源效果。</summary>
-    /// <param name="instance">提供来源与层数的根实例。</param>
-    /// <param name="publish">宿主提供的即时结算回调，未订阅时允许为空。</param>
-    public virtual void PublishInstant(GeneBase instance, Action<GenePulse> publish) { }
+    /// <summary>把本节点的每层资源数值换算为实际点数，百分数 10 表示上限的 10%。</summary>
+    /// <param name="maximum">当前生效的生命或法力上限。</param>
+    /// <returns>计入层数后的资源点数，向零取整。</returns>
+    protected int ResolveAmount(int maximum)
+    {
+        if (ValueType == 0) return (int)(Value * StackCount);
+        return (int)(maximum * (double)(Value * StackCount) / 100);
+    }
 
-    /// <summary>事件节点覆盖此入口；普通已激活节点不响应宿主事件。</summary>
-    /// <param name="args">权威宿主提供的实际事件。</param>
-    /// <param name="instance">保存原始装备来源和施加角色的根实例。</param>
-    /// <param name="host">管理此节点冷却时间和随机源的原宿主。</param>
-    /// <param name="target">上层选中的效果承接容器。</param>
-    /// <returns>成功施加或刷新的子基因数量。</returns>
-    internal virtual int Trigger(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target) { return 0; }
-
-    /// <summary>普通事件子项作为新根独立施加；事件类型覆盖后继续沿同一原子树触发。</summary>
-    /// <param name="args">包含实际事件对方的事件参数。</param>
-    /// <param name="instance">保留来源及施加角色的原根实例。</param>
-    /// <param name="host">管理当前原子树的宿主。</param>
-    /// <param name="target">继承自上层的目标容器。</param>
-    /// <returns>施加成功返回 1，没有目标或场景不符返回 0。</returns>
-    internal virtual int ActivateFromEvent(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target)
+    /// <summary>事件的普通子项以独立节点施加到目标，继续保留原效果来源。</summary>
+    /// <param name="role">收到本次事件的原角色。</param>
+    /// <param name="args">事件类型和实际对方。</param>
+    /// <param name="target">上层事件选中的承受效果容器。</param>
+    /// <returns>成功施加返回 1，目标或场景不适用返回 0。</returns>
+    internal virtual int ActivateFromEvent(IGeneOwner role, GeneTriggerArgs args, GeneRuntime target)
     {
         if (TargetOpponent) target = args.TargetRuntime;
         if (target == null) return 0;
-        if (target.AddGene(Clone(), instance.SourceId, 0, instance.FirerId) != null) return 1;
+        if (target.AddGene(Clone(), SourceId, 0, FirerId) != null) return 1;
         return 0;
     }
 }

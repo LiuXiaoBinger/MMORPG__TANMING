@@ -7,8 +7,17 @@ using MMoRpgCommon.SceneEntity;
 /// <summary>
 /// 一个已登录角色的运行时数据入口：持有会话、角色快照、业务组件、事件和存档发送器。
 /// </summary>
-public class OnlineRole
+public class OnlineRole : IGeneOwner
 {
+
+    /// <summary>当前在线角色的实际属性组件，节点直接调用它修改属性和资源。</summary>
+    public RoleAttributeComponent AttrComp { get; private set; }
+    /// <summary>当前在线角色的通用基因组件，独立于装备组件。</summary>
+    public RoleGeneComponent Gene { get; private set; }
+    /// <summary>公共节点通过此多契约入口访问同一个真实属性组件，不构造代理对象。</summary>
+    IAttributeComponent IGeneOwner.AttrComp { get { return AttrComp; } }
+    /// <summary>公共事件节点访问当前角色自己的基因容器。</summary>
+    GeneRuntime IGeneOwner.GeneRuntime { get { return Gene.Runtime; } }
 
     #region 场景实体绑定
     /// <summary>与场景 PlayerEntity 的运行时绑定；OnlineRole 本身仍然只是持久角色数据根。</summary>
@@ -118,6 +127,10 @@ public class OnlineRole
         _components.SetComponent(new RoleCountComponent(this));
         _components.SetComponent(new RoItemComponent(this));
         // 装备属性与特技跟随真实在线角色推进，不依赖尚未绑定的玩家场景实体。
+        AttrComp = new RoleAttributeComponent(this);
+        _components.SetComponent(AttrComp);
+        Gene = new RoleGeneComponent(this);
+        _components.SetComponent(Gene);
         _components.SetComponent(new RoleEquipComponent(this));
         _components.SetComponent(new RoleShopRecord(this));
         // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放；

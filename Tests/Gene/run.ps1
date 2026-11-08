@@ -14,7 +14,7 @@ $geneMsbuild = & $geneVswhere -latest -requires Microsoft.Component.MSBuild -fin
 if ($LASTEXITCODE -ne 0) { Get-Content (Join-Path $geneOutput 'build.log') -Tail 25; exit $LASTEXITCODE }
 # 使用同一套构建工具中的 C# 编译器，测试引用真实服务端程序集。
 $geneCompiler = Join-Path (Split-Path $geneMsbuild) 'Roslyn/csc.exe'
-& $geneCompiler /nologo /target:exe "/out:$geneOutput/bin/GeneRuntimeTests.exe" "/r:Server=$geneOutput/bin/GameServer.exe" "/r:$geneOutput/bin/Network.dll" "/r:$geneOutput/bin/MMoRpgCommon.dll" (Join-Path $PSScriptRoot 'GeneRuntimeTests.cs')
+& $geneCompiler /nologo /target:exe "/out:$geneOutput/bin/GeneRuntimeTests.exe" "/r:Server=$geneOutput/bin/GameServer.exe" "/r:$geneOutput/bin/Network.dll" "/r:$geneOutput/bin/MMoRpgCommon.dll" (Join-Path $PSScriptRoot 'GeneRuntimeTests.cs') (Join-Path $PSScriptRoot 'GeneTestOwner.cs') (Join-Path $PSScriptRoot 'GeneTestAttributes.cs') (Join-Path $PSScriptRoot 'MultiAttributeTestGene.cs')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & (Join-Path $geneOutput 'bin/GeneRuntimeTests.exe') $geneRoot
 exit $LASTEXITCODE

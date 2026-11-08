@@ -395,3 +395,11 @@
 - 初始 1112px 布局的导图文字偏小；刷新后已检查 <=1300px 时上下排列的布局。一次 PowerShell/Python 引号 SyntaxError 和一次 summary/button 定位器不匹配已解决，未改动游戏逻辑。拖动、滚轮缩放及剪贴板复制未分别进行浏览器验证。
 - 证据：`_temp/gene-mindmap-20261108/verification.txt`、`browser-preview.jpg`、`atlas-data.json`，以及同目录下的 token 报告和原始会话压缩计数。预览为临时本机回环服务。真实数据库/重登、部署后的游戏联调与数值平衡仍不在已验证范围内。
 - 完整记录及 Git 回执：`项目修改日志/2026-11-08-Gene基因思维导图.md`。中英检查仅覆盖本次新增的两条 GENE-MINDMAP-20261108 记录；未改动历史段落。
+
+## [VERIFY][基因][GENE-NODE-FACTORY-20261108] 直接修改真实角色与清理验收
+
+- 已通过：使用 107 条真实配置执行的 1843 项 Gene 断言；50 项装备/战斗/角色持有断言；49 项装备流程断言；58 项客户端装备断言；6 项实际客户端 Gene/属性组件断言。服务端、Unity Common/Network 与 381 个客户端源码文件编译通过，保留既有警告。证据位于 `_temp/gene-oncall-20261108/`：gene-tests.log、GeneEquipmentTests.log、FlowTests.log、client-tests-run.log、client-gene-after.log，以及三个构建目录。
+- 自定义多属性节点在一次 OnCall 中修改 HP，并按两倍数值修改外攻，覆盖叠加和移除。真实服务端场景属性保留共享 HP 接管、伤害倍率及 firer77 归属，未重复扣血。直接资源结算可能移除节点时，运行时使用保留原对象引用的快照。
+- 已复现客户端刷新失败：临时移除时 HP 从 1200 降到 1000；client-gene-before.log 保留失败证据。最终 6 项组件测试覆盖刷新、真实移除、Destroying 先于属性清理以及复用。测试通过 Unity Mono 运行实际客户端程序集，仅以反射搭建宿主，没有启动 Unity 场景。开发期间的编译/测试宿主失败保留在完整日志中。
+- 已验证导图锚点及全部 47 个路径；node --check 通过；三个已发布 DLL 与 dll-publish.json 中的构建哈希一致。没有新增浏览器交互验证。隔离装备测试不含数据库/玩家会话，gateway-session 错误属于预期隔离边界。真实 Unity 战斗、数据库迁移/重新登录、多服务器部署、完整 Gene 同步及平衡性未验证。
+- 完整文件、Git 与用量记录：`项目修改日志/2026-11-08-Gene节点工厂与公共运行模块.md`。中文增量检查仅限 CURRENT_TASK 和 TEST_REPORT 中本任务编号的新段，证据位于 `_temp/gene-oncall-20261108/bilingual-check.json`；旧双语内容不在本次检查范围内。

@@ -17,6 +17,15 @@ public class CountGene : EventGene
         base.ResetTriggers();
     }
 
-    /// <summary>仅在关联项实际施加成功后扣除一次。</summary>
-    protected override void OnTriggered() { RemainingTriggers--; }
+    /// <summary>次数节点独立执行事件行为，只在关联效果确实生效后扣除一次。</summary>
+    /// <param name="role">收到事件的真实角色。</param>
+    /// <param name="args">当前实际战斗事件。</param>
+    /// <returns>成功激活的关联节点数。</returns>
+    public override int OnCall(IGeneOwner role, GeneTriggerArgs args = default(GeneTriggerArgs))
+    {
+        // 事件基类保留概率、目标和冷却判断，本类型负责自己的次数消费。
+        int activated = base.OnCall(role, args);
+        if (activated > 0) RemainingTriggers--;
+        return activated;
+    }
 }

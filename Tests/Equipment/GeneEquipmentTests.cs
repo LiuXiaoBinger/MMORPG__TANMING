@@ -50,6 +50,9 @@ public static class GeneEquipmentTests
         OnlineRole role = CreateRole(rows[0].Job, 93001);
         // 真实在线装备模块，包含实际生命周期注册的 GeneRuntime。
         RoleEquipComponent equipment = role.GetComponent<RoleEquipComponent>();
+        Check(ReferenceEquals(equipment.Runtime, role.Gene.Runtime), "装备使用角色自身的基因集合");
+        Check(ReferenceEquals(role, role.Gene.Runtime.Owner), "公共运行模块直接持有真实角色");
+        Check(ReferenceEquals(role.AttrComp, ((IGeneOwner)role).AttrComp), "节点直接获得角色原属性组件");
         // 真实物品模块负责新建 UID 与背包事务。
         RoItemComponent items = role.GetComponent<RoItemComponent>();
         // 已穿部位去重，防止测试用同槽替换误算同名件数。

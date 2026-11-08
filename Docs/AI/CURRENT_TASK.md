@@ -380,3 +380,10 @@
 - Edge 通过仅服务这一 HTML 的本机回环预览打开页面。浏览器工具拒绝了 file URL；保留的 HTML 也可手动离线打开。预览 URL/端口为临时使用，并非已部署服务。
 - 既有边界保持：Scenario 尚未接入自动切图；完整 GeneInstance 列表/计时器/图标尚未同步；真实数据库迁移/重登、部署后的游戏联调与数值平衡仍未验证。历史 618 项断言不得算作本次文档任务重新执行。
 - 完整文件清单、浏览器证据、本次范围内的中英同步及 Git 回执：`项目修改日志/2026-11-08-Gene基因思维导图.md`；本地产物：`_temp/gene-mindmap-20261108/`。
+
+## [CODE][FILES][HANDOFF][基因][GENE-NODE-FACTORY-20261108] 具体节点直接操作真实角色
+
+- cfg.Gene 仍仅作为工厂配置；Common GeneRuntime 保存实际 GeneBase 节点。每个具体节点实现 OnCall(role)，持续效果通过 OnRemove 撤销；自定义节点可按不同规则修改多个属性。GenePulse 已删除，运行时不再提取数值或发布资源载荷。早期提交 ffdd68d/c63d23a 提供了 Common/工厂与直接节点调用的基础。
+- OnlineRole 现自行持有 RoleGeneComponent Gene 与 RoleAttributeComponent AttrComp；装备仅管理装备来源和特性。既有服务端场景组件与客户端实体组件直接实现相同的所属角色/属性契约，不使用代理对象。这两个接口保留了原本不同的继承链；行为仍由 virtual/override 节点类实现。
+- 客户端 Destroying 在属性对象回池前清空 Gene。属性立即变化，资源上下限约束在本帧 Gene 处理结束后执行，修复了刷新最大生命值 Gene 时 HP 从 1200 降到 1000 的已复现问题。当前说明和导图包含 33 个节点、47 个代码/配置入口。未修改配置数值和协议。
+- 主 Agent Codex 实现并验收业务代码；子 Agent 仅同步、检查本次两个中文记录新段。证据：`_temp/gene-oncall-20261108/bilingual-check.json`。完整文件清单、失败、技能、用量和 Git 回执：`项目修改日志/2026-11-08-Gene节点工厂与公共运行模块.md`；难点分析：`项目分析/项目难点.md` 中本任务编号条目。真实 Unity 玩法、数据库重新登录、多服务器联网、完整 Gene 同步及平衡性仍未验证。

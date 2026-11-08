@@ -7,8 +7,13 @@ using UVEC3 = UnityEngine.Vector3;
 /// 普通组件由 Components 管理，专用组件通过快捷属性单独管理，模型内部持有动画器。
 /// 本层安排更新与回收顺序，各具体实体再补充自己的数据。
 /// </summary>
-public abstract class MEntity : MSceneObject
+public abstract class MEntity : MSceneObject, IGeneOwner
 {
+    /// <summary>公共节点直接使用本实体的已有属性组件，接口用于兼容两端不同的继承链。</summary>
+    IAttributeComponent IGeneOwner.AttrComp { get { return AttrComp; } }
+    /// <summary>事件节点直接访问本实体已挂载的基因容器。</summary>
+    GeneRuntime IGeneOwner.GeneRuntime { get { return Gene.Runtime; } }
+
     #region 实体属性
 
     /// <summary>是否战斗状态</summary>

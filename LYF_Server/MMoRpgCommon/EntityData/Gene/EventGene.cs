@@ -11,6 +11,8 @@ public class EventGene : GeneBase
     public long CooldownUntilMilliseconds { get; private set; }
     /// <summary>事件节点的效果分类。</summary>
     public override GeneEffectType EffectType { get { return GeneEffectType.Event; } }
+    /// <summary>事件节点等待实际事件，不在初次挂载时触发。</summary>
+    public override bool CallsOnAttach { get { return false; } }
     /// <summary>关联子项须等事件成功后才激活。</summary>
     public override bool WaitsForEvent { get { return true; } }
 
@@ -24,48 +26,45 @@ public class EventGene : GeneBase
         return copy;
     }
 
-    /// <summary>匹配场景、事件、目标、冷却与概率后，沿原子树兑现关联项。</summary>
-    /// <param name="args">本次真实事件及事件对方。</param>
-    /// <param name="instance">提供来源与施加角色的根实例。</param>
-    /// <param name="host">保存原事件时间与随机源的宿主。</param>
-    /// <param name="target">上层选择的效果承接容器。</param>
-    /// <returns>实际成功施加或刷新的关联项数量。</returns>
-    internal override int Trigger(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target)
+    /// <summary>由本事件节点独立判断事件、概率和冷却，并执行关联节点。</summary>
+    /// <param name="role">收到战斗事件的真实角色。</param>
+    /// <param name="args">当前事件及实际对方；为空时没有事件可触发。</param>
+    /// <returns>实际激活的关联节点数量。</returns>
+    public override int OnCall(IGeneOwner role, GeneTriggerArgs args = default(GeneTriggerArgs))
     {
+        if (args.Event == GeneEventType.None) return 0;
+        // 冷却与概率属于原角色的基因模块，效果目标可以是事件对方。
+        GeneRuntime host = role.GeneRuntime;
         if (!AppliesToScenario(host.Scenario)) return 0;
         if (TriggerEvent != GeneEventType.None && TriggerEvent != args.Event) return 0;
-        if (TargetOpponent) target = args.TargetRuntime;
+        // 嵌套事件沿祖先继承目标选择，普通子项随后直接施加到选中的容器。
+        GeneRuntime target = host;
+        GeneBase ancestor = this;
+        while (ancestor != null)
+        {
+            if (ancestor.TargetOpponent) target = args.TargetRuntime;
+            ancestor = ancestor.Parent;
+        }
         if (target == null) return 0;
         if (host.ElapsedMilliseconds < CooldownUntilMilliseconds) return 0;
         if (IsExhausted) return 0;
         if (TriggerChance <= 0) return 0;
         if (TriggerChance < 10000 && host.NextTriggerRoll() >= TriggerChance) return 0;
-        // 只有真实产生效果才消耗次数或开始冷却。
+        // 只有确实激活子节点，才开启冷却或由次数子类扣除次数。
         int activated = 0;
-        // 相邻事件/次数继续使用原子树；普通节点从本次触发开始独立计时。
         for (int index = 0; index < Children.Count; index++)
-        {
-            activated += Children[index].ActivateFromEvent(args, instance, host, target);
-        }
-        if (activated > 0)
-        {
-            OnTriggered();
-            CooldownUntilMilliseconds = host.ElapsedMilliseconds + CooldownMilliseconds;
-        }
+            activated += Children[index].ActivateFromEvent(role, args, target);
+        if (activated > 0) CooldownUntilMilliseconds = host.ElapsedMilliseconds + CooldownMilliseconds;
         return activated;
     }
 
-    /// <summary>相邻事件子项继续使用当前节点的冷却和次数，不创建新事件树。</summary>
-    /// <param name="args">沿关联链传递的同一个实际事件。</param>
-    /// <param name="instance">保留来源和施加角色的根实例。</param>
-    /// <param name="host">负责此事件树计时的原宿主。</param>
-    /// <param name="target">继承自上层的承接容器。</param>
-    /// <returns>当前事件子树实际成功施加数量。</returns>
-    internal override int ActivateFromEvent(GeneTriggerArgs args, GeneBase instance, GeneRuntime host, GeneRuntime target)
+    /// <summary>相邻事件继续调用原节点的 OnCall，保留原冷却和次数。</summary>
+    /// <param name="role">收到事件的原角色。</param>
+    /// <param name="args">沿关联链传递的同一个事件。</param>
+    /// <param name="target">上层选中的目标；OnCall 通过父链继承该选择。</param>
+    /// <returns>当前事件子树激活的节点数量。</returns>
+    internal override int ActivateFromEvent(IGeneOwner role, GeneTriggerArgs args, GeneRuntime target)
     {
-        return Trigger(args, instance, host, target);
+        return OnCall(role, args);
     }
-
-    /// <summary>次数节点在成功产生效果后覆盖此入口扣次；普通事件不限次数。</summary>
-    protected virtual void OnTriggered() { }
 }

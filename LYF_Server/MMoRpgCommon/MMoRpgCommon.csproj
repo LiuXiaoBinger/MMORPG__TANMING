@@ -80,7 +80,6 @@
         <Compile Include="EntityData\Gene\GeneEffectType.cs" />
         <Compile Include="EntityData\Gene\GeneEventType.cs" />
         <Compile Include="EntityData\Gene\GeneFactory.cs" />
-        <Compile Include="EntityData\Gene\GenePulse.cs" />
         <Compile Include="EntityData\Gene\GeneRuntime.cs" />
         <Compile Include="EntityData\Gene\GeneState.cs" />
         <Compile Include="EntityData\Gene\GeneTriggerArgs.cs" />
@@ -94,6 +93,9 @@
         <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\PeriodicManaGene.cs" />
         <Compile Include="EntityData\Gene\StateGene.cs" />
         <Compile Include="EntityData\Gene\GeneBase.cs" />
+        <Compile Include="EntityData\Gene\IGeneOwner.cs" />
+        <Compile Include="EntityData\Gene\IAttributeComponent.cs" />
+        <Compile Include="EntityData\Gene\AttributeModifiers.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkExternalMaxGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkExternalMinGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkInternalMaxGene.cs" />

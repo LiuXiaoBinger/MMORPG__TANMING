@@ -262,15 +262,15 @@ public sealed partial class SceneWaveSpawner
         if (total + delta < group.Count) remainder = -target.CurrentHp;
         ChangeActorHp(target, (int)remainder, caster);
     }
-    /// <summary>Gene先算出最终生命增量，本宿主只共享分摊；原Pulse事件仍由GeneComponent派发。</summary><param name="actor">原Gene宿主。</param><param name="pulse">强类型原Gene来源。</param><param name="delta">最终生命增量。</param>
-    private bool ApplySharedGene(MoshentaActor actor, GenePulse pulse, int delta)
+    /// <summary>具体基因已通过属性组件算出生命增量，本宿主负责共享分摊。</summary><param name="actor">原Gene宿主。</param><param name="firerId">本次生命变化的实际施加角色编号。</param><param name="delta">最终生命增量。</param>
+    private bool ApplySharedGene(MoshentaActor actor, ulong firerId, int delta)
     {
         List<MoshentaActor> group;
         if (!sharedHp.TryGetValue(actor.UnitId, out group)) return false;
         // 记住本次变化前仍存活的实体，重复脉冲不能重复死亡统计。
         int living = 0;
         for (int index = 0; index < group.Count; index++) { sharedGeneChanged.Add(group[index].UnitId); if (!group[index].IsDead) living++; }
-        OnlineRole caster = FindRole(pulse.FirerId);
+        OnlineRole caster = FindRole(firerId);
         ChangeSharedHp(actor, delta, caster);
         int remaining = 0;
         for (int index = 0; index < group.Count; index++) if (!group[index].IsDead) remaining++;
@@ -297,9 +297,10 @@ public sealed partial class SceneWaveSpawner
             // 钩子只在原AI启用共享期间存在，捕获当前原对象引用。
             MoshentaActor actor = group[index];
             hp += actor.CurrentHp; maximum += actor.MaxHp;
-            GeneComponent genes = actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene);
-            if (enabled) { sharedHp[actor.UnitId] = group; genes.SharedHpChange = (pulse, delta) => ApplySharedGene(actor, pulse, delta); }
-            else { sharedHp.Remove(actor.UnitId); genes.SharedHpChange = null; }
+            // 实体已有的属性组件；firerId 为实际施加者，delta 为子类算好的生命增量。
+            AttributesComponent attributes = actor.Monster.Components.Get<AttributesComponent>(EntityComponentType.Attributes);
+            if (enabled) { sharedHp[actor.UnitId] = group; attributes.SharedHpChange = (firerId, delta) => ApplySharedGene(actor, firerId, delta); }
+            else { sharedHp.Remove(actor.UnitId); attributes.SharedHpChange = null; }
         }
         if (!enabled || group.Count < 2 || hp == maximum) return;
         if (maximum == 0) return;
