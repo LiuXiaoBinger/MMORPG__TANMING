@@ -1,7 +1,10 @@
+# 可传入当前任务的 _temp 绝对目录，默认保留已有测试位置。
+param([string]$OutputDirectory = '')
 # 从测试目录定位项目根目录，所有编译产物统一放入 _temp。
 $geneRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 # 本次运行的程序集、缓存与日志输出位置。
 $geneOutput = Join-Path $geneRoot '_temp/gene-runtime-tests'
+if ($OutputDirectory) { $geneOutput = $OutputDirectory }
 New-Item -ItemType Directory -Force -Path $geneOutput | Out-Null
 # 使用本机 Visual Studio 提供的 .NET Framework 构建工具。
 $geneVswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'

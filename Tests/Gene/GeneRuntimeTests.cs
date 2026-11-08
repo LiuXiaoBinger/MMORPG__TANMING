@@ -2,16 +2,9 @@ extern alias Server;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using MMoRpgCommon.SceneEntity;
-using GeneAttributeType = Server::GeneAttributeType;
 using GeneComponent = Server::GeneComponent;
-using GeneEffectType = Server::GeneEffectType;
-using GeneEventType = Server::GeneEventType;
-using GeneInstance = Server::GeneInstance;
-using GenePulse = Server::GenePulse;
-using GeneRuntime = Server::GeneRuntime;
-using GeneState = Server::GeneState;
-using GeneTriggerArgs = Server::GeneTriggerArgs;
 
 /// <summary>使用真实 Luban 表和已编译服务端模块进行独立契约测试，不进入正式场景或预制体。</summary>
 public static class GeneRuntimeTests
@@ -31,7 +24,13 @@ public static class GeneRuntimeTests
         // 指定的数据文件即正式共享层消费的 Gene 二进制表。
         string tablePath = Path.Combine(args[0], "LYF_Server/Network/LubanManage/Tb/tbgene.bytes");
         definitions = new cfg.TbGene(new Luban.ByteBuf(File.ReadAllBytes(tablePath))).DataMap;
+        // 配置快照仅用于测试，确认整轮运行没有修改任何原始字段。
+        Dictionary<int, string> originalRows = new Dictionary<int, string>();
+        // 按稳定键保存生成类型的完整字段输出，不把运行数值写回表行。
+        List<int> originalIds = new List<int>(definitions.Keys);
+        for (int index = 0; index < originalIds.Count; index++) originalRows.Add(originalIds[index], definitions[originalIds[index]].ToString());
         VerifyConfiguration();
+        VerifyNodeFactory();
         VerifyAttributesAndSources();
         VerifyRefreshAndStacking();
         VerifyPeriodicResults();
@@ -42,8 +41,129 @@ public static class GeneRuntimeTests
         VerifyNestedScenariosAndCycles();
         VerifyEquipmentTriggers();
         VerifyServerComponent();
+        // 整轮覆盖刷新、次数消费和周期推进后，所有配置字段仍保持原值。
+        for (int index = 0; index < originalIds.Count; index++) Check(originalRows[originalIds[index]] == definitions[originalIds[index]].ToString(), "配置行保持只读 " + originalIds[index]);
         Console.WriteLine("PASS Gene：" + passed + " 项断言，" + definitions.Count + " 条真实配置。");
         return 0;
+    }
+
+    /// <summary>验证具体类型映射、每次创建独立状态、配置边界及运行模型的程序集依赖。</summary>
+    private static void VerifyNodeFactory()
+    {
+        // 属性编号 1 至 26 均应返回具有实际属性语义的具体类型。
+        Type[] attributeTypes = { typeof(MaxHPGene), typeof(MaxMPGene), typeof(AtkExternalMinGene), typeof(AtkExternalMaxGene),
+            typeof(AtkInternalMinGene), typeof(AtkInternalMaxGene), typeof(DefExternalGene), typeof(DefExternalDeltaGene),
+            typeof(DefInternalGene), typeof(DefInternalDeltaGene), typeof(HitPointGene), typeof(BlockPointGene),
+            typeof(ZhenJiGene), typeof(WuGuGene), typeof(CritPointGene), typeof(CritResistPointGene), typeof(CritDamageGene),
+            typeof(CritDamageReduceGene), typeof(HealStrengthGene), typeof(HealBonusGene), typeof(ZhuXinGene), typeof(JianRenGene),
+            typeof(QiGene), typeof(MoveSpeedGene), typeof(DamageTakenGene), typeof(HealingReceivedGene) };
+        // 所有非属性 EffectType 的实际节点类型，属性槽由上面的具体属性表判断。
+        Type[] effectTypes = { typeof(AttributeGeneBase), typeof(PeriodicDamageGene), typeof(PeriodicHealGene), typeof(PeriodicManaGene),
+            typeof(StateGene), typeof(CompositeGene), typeof(EventGene), typeof(CountGene), typeof(CurrHPGene), typeof(CurrMPGene) };
+        // 工厂连接原索引，创建结果只持有复制后的运行字段。
+        LubanGeneFactory factory = new LubanGeneFactory(definitions);
+        // 全部正式配置覆盖真实类型与父子树，不使用手写运行替身。
+        List<cfg.Gene> rows = new List<cfg.Gene>(definitions.Values);
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 当前只读配置用于核对一次类型转换。
+            cfg.Gene row = rows[index];
+            // 工厂应每次创建新的具体运行对象。
+            GeneBase node = factory.CreateGene(row.Id);
+            if (row.EffectType == 0) Check(node.GetType() == attributeTypes[row.AttributeId - 1], "具体属性类型 " + row.Id);
+            else Check(node.GetType() == effectTypes[row.EffectType], "具体效果类型 " + row.Id);
+            Check(node.GetType().Assembly == typeof(GeneBase).Assembly, "所有节点来自公共程序集 " + row.Id);
+        }
+        // 同一编号与工厂两次创建的整个子树及父引用都必须独立。
+        GeneBase first = factory.CreateGene(1507, 321);
+        // 第二棵树不能继承第一次数值覆盖或子树变更。
+        GeneBase second = factory.CreateGene(1507);
+        VerifyIndependentTrees(first, second);
+        first.Children[0].Value = 987;
+        Check(second.Children[0].Value != 987, "子节点数值不跨实例共享");
+        Equal(definitions[1507].Value, second.Value, "根数值覆盖不写回配置");
+        // 两个宿主共享同一工厂但保存各自的周期、冷却与次数。
+        GeneRuntime firstRuntime = new GeneRuntime(factory);
+        // 第二宿主不会消费第一宿主的运行状态。
+        GeneRuntime secondRuntime = new GeneRuntime(factory);
+        // 相同持续治疗节点分别记时。
+        TimeBuffGeneBase firstPeriodic = (TimeBuffGeneBase)firstRuntime.AddGene(1201).Root;
+        // 未推进的节点仍保持零周期进度。
+        TimeBuffGeneBase secondPeriodic = (TimeBuffGeneBase)secondRuntime.AddGene(1201).Root;
+        firstRuntime.Update(333);
+        Equal(333, firstPeriodic.ElapsedMilliseconds, "首实例周期独立推进");
+        Equal(0, secondPeriodic.ElapsedMilliseconds, "第二实例周期未被推进");
+        // 复制专用事件配置仅用于验证同工厂两次创建的冷却与次数独立。
+        Dictionary<int, cfg.Gene> adjusted = new Dictionary<int, cfg.Gene>(definitions);
+        adjusted[1601] = WithChild(definitions[1601], 1201, 0, 10000, 1000);
+        factory = new LubanGeneFactory(adjusted);
+        firstRuntime = new GeneRuntime(factory);
+        secondRuntime = new GeneRuntime(factory);
+        // 保存两个真实次数节点以核对消费和冷却的原对象。
+        CountGene firstCount = (CountGene)firstRuntime.AddGene(1601).Root;
+        // 第二节点仍使用相同配置总量，状态独立。
+        CountGene secondCount = (CountGene)secondRuntime.AddGene(1601).Root;
+        firstRuntime.Trigger(GeneEventType.BeHit);
+        Equal(2, firstCount.RemainingTriggers, "首节点消费一次");
+        Equal(3, secondCount.RemainingTriggers, "第二节点次数未消费");
+        Equal(1000, firstCount.CooldownUntilMilliseconds, "首节点开启自己的冷却");
+        Equal(0, secondCount.CooldownUntilMilliseconds, "第二节点冷却未开启");
+        // 工厂建好后新增配置仍可读取，覆盖魔神塔内部配置晚注册的真实使用方式。
+        adjusted.Remove(23);
+        factory = new LubanGeneFactory(adjusted);
+        adjusted.Add(23, definitions[23]);
+        Check(factory.CreateGene(23) is QiGene, "工厂读取晚注册的原索引");
+        // 属性编号 25、26 与移动速度同样必须有具体运行类型。
+        Check(attributeTypes.Length == 26, "全部已支持属性都有具体类型");
+        // 公共运行程序集绝不能反向引用包含 cfg 的 Network 程序集。
+        AssemblyName[] references = typeof(GeneBase).Assembly.GetReferencedAssemblies();
+        for (int index = 0; index < references.Length; index++) Check(references[index].Name != "Network", "Common 无 Network 反向依赖");
+        // 检查公共节点层及容器的所有实例字段和属性，包括私有自动属性后备字段。
+        Type[] runtimeTypes = typeof(GeneBase).Assembly.GetTypes();
+        for (int index = 0; index < runtimeTypes.Length; index++)
+        {
+            // 只检查本任务运行模型，不扩大为公共程序集其他历史类型的审计。
+            Type type = runtimeTypes[index];
+            if (!typeof(GeneBase).IsAssignableFrom(type) && !type.Name.StartsWith("Gene")) continue;
+            // 反射是测试边界，只读取成员签名，不读取私有业务值。
+            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            for (int fieldIndex = 0; fieldIndex < fields.Length; fieldIndex++) Check(!ReferencesConfiguration(fields[fieldIndex].FieldType), "运行字段无 cfg " + type.Name + "." + fields[fieldIndex].Name);
+            // 公共属性同样不能把 cfg.Gene 暴露为运行模型。
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++) Check(!ReferencesConfiguration(properties[propertyIndex].PropertyType), "运行属性无 cfg " + type.Name + "." + properties[propertyIndex].Name);
+        }
+    }
+
+    /// <summary>递归核对两棵真实工厂结果不存在共享节点，且各自父引用正确。</summary>
+    /// <param name="first">第一次创建的运行树。</param>
+    /// <param name="second">同编号第二次创建的运行树。</param>
+    private static void VerifyIndependentTrees(GeneBase first, GeneBase second)
+    {
+        Check(!ReferenceEquals(first, second), "节点对象独立 " + first.GeneID);
+        Equal(first.Children.Count, second.Children.Count, "两次展开的子项数量一致");
+        // 按配置槽顺序逐层核对原运行引用。
+        for (int index = 0; index < first.Children.Count; index++)
+        {
+            Check(ReferenceEquals(first.Children[index].Parent, first), "首树父引用正确");
+            Check(ReferenceEquals(second.Children[index].Parent, second), "第二树父引用正确");
+            VerifyIndependentTrees(first.Children[index], second.Children[index]);
+        }
+    }
+
+    /// <summary>检查成员签名是否直接或通过数组、泛型容器保留生成配置类型。</summary>
+    /// <param name="type">仅用于测试反射的成员声明类型。</param>
+    /// <returns>签名包含 cfg 命名空间类型时返回 true。</returns>
+    private static bool ReferencesConfiguration(Type type)
+    {
+        if (type.Namespace == "cfg") return true;
+        if (type.HasElementType) return ReferencesConfiguration(type.GetElementType());
+        // Dictionary 或列表的泛型参数也不能藏有配置行。
+        Type[] arguments = type.GetGenericArguments();
+        for (int index = 0; index < arguments.Length; index++)
+        {
+            if (ReferencesConfiguration(arguments[index])) return true;
+        }
+        return false;
     }
 
     /// <summary>验证原有编号、周期单位和组合引用等表格与程序之间的契约。</summary>
@@ -76,7 +196,7 @@ public static class GeneRuntimeTests
                 if (children[j] == 0) continue;
                 Check(definitions.ContainsKey(children[j]), "组合引用存在 " + row.Id);
             }
-            Check(new GeneRuntime(definitions, row.Scenario).AddGene(row.Id) != null, "完整配置可展开 " + row.Id);
+            Check(new GeneRuntime(new LubanGeneFactory(definitions), row.Scenario).AddGene(row.Id) != null, "完整配置可展开 " + row.Id);
         }
     }
 
@@ -84,7 +204,7 @@ public static class GeneRuntimeTests
     private static void VerifyAttributesAndSources()
     {
         // 当前容器只用于这一组属性场景，不影响后续测试。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(3, 1, 20);
         runtime.AddGene(1003, 2);
         Equal(130, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "固定值与百分比合并");
@@ -108,7 +228,7 @@ public static class GeneRuntimeTests
     private static void VerifyRefreshAndStacking()
     {
         // 刷新和叠加场景独立使用一个容器。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         // 记录首个实例引用，重复施加应复用它。
         GeneInstance original = runtime.AddGene(1001, 1);
         runtime.Update(4000);
@@ -134,7 +254,7 @@ public static class GeneRuntimeTests
     private static void VerifyPeriodicResults()
     {
         // 一个大帧跨过多次周期，但只能结算基因真实存续时间。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(1201);
         // 十秒回春每两秒一次，二十五秒更新也只能产生五次。
         List<GenePulse> pulses = runtime.Update(25000);
@@ -159,7 +279,7 @@ public static class GeneRuntimeTests
     private static void VerifyComposites()
     {
         // 同一实体同时持有一个组合和一个独立叶子。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(1501, 1);
         runtime.AddGene(1003, 1);
         Equal(2, runtime.ActiveGenes.Count, "组合只登记父实例");
@@ -179,7 +299,7 @@ public static class GeneRuntimeTests
     private static void VerifyStatesAndScenarios()
     {
         // 默认处于公共场景，只有全局配置可进入此容器。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(1301, 1);
         runtime.AddGene(1301, 2);
         runtime.RemoveGene(1301, 1);
@@ -204,7 +324,7 @@ public static class GeneRuntimeTests
     private static void VerifyAnyTypeComposites()
     {
         // 属性根同时携带速度效果，覆盖只影响根自身的数值。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(1022, 7, 20);
         Equal(120, runtime.CalculateAttribute(GeneAttributeType.AtkExternalMin, 100), "属性根数值覆盖");
         Equal(6.5, runtime.CalculateAttribute(GeneAttributeType.MoveSpeed, 5), "属性携带移速");
@@ -235,7 +355,7 @@ public static class GeneRuntimeTests
     private static void VerifyEventsAndCounts()
     {
         // 事件的关联项在发生匹配事件前必须保持未激活。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(1401, 11);
         Equal(0, runtime.Update(1000).Count, "事件前没有周期结果");
         Equal(0, runtime.Trigger(GeneEventType.SkillCast), "不同事件不触发");
@@ -247,11 +367,11 @@ public static class GeneRuntimeTests
         GeneInstance count = runtime.AddGene(1601, 1);
         Equal(0, runtime.Trigger(GeneEventType.None), "空事件不消费次数");
         Equal(0, runtime.Trigger(GeneEventType.AttackHit), "不匹配事件不消费次数");
-        Equal(3, count.Effects[0].RemainingTriggers, "初始次数保留");
+        Equal(3, ((CountGene)count.Root).RemainingTriggers, "初始次数保留");
         Equal(1, runtime.Trigger(GeneEventType.BeHit), "第一次次数触发");
-        Equal(2, count.Effects[0].RemainingTriggers, "触发扣一次");
+        Equal(2, ((CountGene)count.Root).RemainingTriggers, "触发扣一次");
         runtime.AddGene(1601, 1);
-        Equal(3, count.Effects[0].RemainingTriggers, "刷新补满次数");
+        Equal(3, ((CountGene)count.Root).RemainingTriggers, "刷新补满次数");
         // 三次成功触发都必须执行效果，最后一次执行后移除根。
         for (int i = 0; i < 3; i++) Equal(1, runtime.Trigger(GeneEventType.BeHit), "三次均生效");
         Check(runtime.FindGene(1601, 1) == null, "次数用完移除根");
@@ -261,8 +381,8 @@ public static class GeneRuntimeTests
         runtime.AddGene(1601, 1);
         runtime.AddGene(1601, 2);
         Equal(2, runtime.Trigger(GeneEventType.BeHit), "不同来源独立触发");
-        Equal(2, runtime.FindGene(1601, 1).Effects[0].RemainingTriggers, "来源一次数");
-        Equal(2, runtime.FindGene(1601, 2).Effects[0].RemainingTriggers, "来源二次数");
+        Equal(2, ((CountGene)runtime.FindGene(1601, 1).Root).RemainingTriggers, "来源一次数");
+        Equal(2, ((CountGene)runtime.FindGene(1601, 2).Root).RemainingTriggers, "来源二次数");
         runtime.Clear();
         runtime.AddGene(1403, 9);
         // 事件直接关联次数节点，次数必须在多次事件之间保留，不能每次重建。
@@ -291,7 +411,7 @@ public static class GeneRuntimeTests
         Dictionary<int, cfg.Gene> adjusted = new Dictionary<int, cfg.Gene>(definitions);
         adjusted[1506] = WithChild(definitions[1506], 1007, 1);
         // 外层 1507 为全局，内层 1506 的场景约束必须传递给 1007。
-        GeneRuntime runtime = new GeneRuntime(adjusted);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(adjusted));
         runtime.AddGene(1507);
         Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "中间组合场景阻止子属性");
         runtime.SetScenario(1);
@@ -352,7 +472,7 @@ public static class GeneRuntimeTests
     private static void VerifyEquipmentTriggers()
     {
         // 同装备两个相同基因槽必须累计，其他来源临时加成不随卸装删除。
-        GeneRuntime runtime = new GeneRuntime(definitions);
+        GeneRuntime runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         runtime.AddGene(3, 300, 20, 1, 7);
         runtime.AddGene(3, 300, 30, 7, 7);
         runtime.AddGene(3, 999, 10);
@@ -362,20 +482,20 @@ public static class GeneRuntimeTests
         // 仅测试替换概率和冷却，不改正式配置：两次受击触发间隔一秒，目标缺失不消耗次数。
         Dictionary<int, cfg.Gene> adjusted = new Dictionary<int, cfg.Gene>(definitions);
         adjusted[1601] = WithChild(definitions[1601], 82101, 0, 10000, 1000, 1);
-        runtime = new GeneRuntime(adjusted);
+        runtime = new GeneRuntime(new LubanGeneFactory(adjusted));
         // 对方独立容器中的实际外防，作为破甲后续伤害的属性输入。
-        GeneRuntime target = new GeneRuntime(adjusted);
+        GeneRuntime target = new GeneRuntime(new LubanGeneFactory(adjusted));
         // 原次数实例用于直接核对失败和成功分支的消费。
         GeneInstance counter = runtime.AddGene(1601, 300, null, 1, 7);
         Equal(0, runtime.Trigger(GeneEventType.BeHit), "没有事件目标不能触发");
-        Equal(3, counter.Effects[0].RemainingTriggers, "目标缺失不吞次数");
+        Equal(3, ((CountGene)counter.Root).RemainingTriggers, "目标缺失不吞次数");
         Equal(1, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "存在目标后成功触发");
-        Equal(2, counter.Effects[0].RemainingTriggers, "成功才消费一次");
+        Equal(2, ((CountGene)counter.Root).RemainingTriggers, "成功才消费一次");
         Equal(90, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲作用实际目标");
         Equal(100, runtime.CalculateAttribute(GeneAttributeType.DefExternal, 100), "破甲不作用攻击者");
         Check(target.FindGene(82101, 300).FirerId == 7, "施加角色与装备来源独立保留");
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "成功触发开始冷却");
-        Equal(2, counter.Effects[0].RemainingTriggers, "冷却拒绝不吞次数");
+        Equal(2, ((CountGene)counter.Root).RemainingTriggers, "冷却拒绝不吞次数");
         runtime.Update(999);
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "冷却前一毫秒不提前触发");
         runtime.Update(1);
@@ -385,19 +505,19 @@ public static class GeneRuntimeTests
         target.Update(1);
         Equal(100, target.CalculateAttribute(GeneAttributeType.DefExternal, 100), "八秒到期恢复原防御");
         adjusted[1601] = WithChild(definitions[1601], 82101, 0, 0, 1000, 1);
-        runtime = new GeneRuntime(adjusted);
+        runtime = new GeneRuntime(new LubanGeneFactory(adjusted));
         counter = runtime.AddGene(1601);
         Equal(0, runtime.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, target)), "零概率永不触发");
-        Equal(3, counter.Effects[0].RemainingTriggers, "概率失败不吞次数");
+        Equal(3, ((CountGene)counter.Root).RemainingTriggers, "概率失败不吞次数");
         // 原始30%概率使用固定种子，真实随机流应同时出现成功与失败。
-        runtime = new GeneRuntime(definitions, 0, new Random(19));
+        runtime = new GeneRuntime(new LubanGeneFactory(definitions), 0, new Random(19));
         runtime.AddGene(82001);
         // 本轮一百次命中的实际成功数，不把概率当必定触发。
         int successes = 0;
         for (int i = 0; i < 100; i++) successes += runtime.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, target));
         Check(successes > 0 && successes < 100, "正式3000万分概率产生成功和失败");
         // 击败立即产生资源结果，不等待 Update 或伪装成持续治疗。
-        runtime = new GeneRuntime(definitions);
+        runtime = new GeneRuntime(new LubanGeneFactory(definitions));
         // 本测试捕获即时结果，确认没有额外常驻资源节点。
         List<GenePulse> instant = new List<GenePulse>();
         runtime.Pulse += instant.Add;

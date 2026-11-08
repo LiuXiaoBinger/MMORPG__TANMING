@@ -6,7 +6,7 @@ using MMoRpgCommon.SceneEntity;
 /// <summary>服务端场景实体的基因组件，管理实例及周期结果，不承担角色持久化或网络协议。</summary>
 public class GeneComponent : RuntimeEntityComponent
 {
-    /// <summary>当前实体的独立基因容器；客户端与服务端使用同一份运行算法源码。</summary>
+    /// <summary>当前实体的独立基因容器；客户端与服务端引用同一公共程序集类型。</summary>
     public GeneRuntime Runtime { get; private set; }
     /// <summary>资源已经写入当前场景实体后发出的结果，供场景通知订阅。</summary>
     public event Action<GenePulse> Pulse;
@@ -19,10 +19,10 @@ public class GeneComponent : RuntimeEntityComponent
     /// <param name="owner">持有基因实例的服务器场景实体。</param>
     public GeneComponent(ROObject owner) : base(owner, EntityComponentType.Gene) { }
 
-    /// <summary>从当前 Luban 配置为宿主建立运行容器。</summary>
+    /// <summary>通过当前 Luban 节点工厂为宿主建立独立运行容器。</summary>
     public override void Initialize()
     {
-        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneInfos());
+        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneFactory());
         Runtime.Pulse += ApplyPulse;
     }
 

@@ -1,6 +1,6 @@
-/// <summary>当前生命值基因，装备词条对该属性的增量记录。</summary>
-public class CurrHPGene : GeneBase
+/// <summary>当前生命基因，施加时立即发布恢复结果，由宿主按资源上限裁切。</summary>
+public class CurrHPGene : InstantResourceGeneBase
 {
-    /// <summary>本词条提供的当前生命值增量；这里只保存数据，不在此计算角色最终属性。</summary>
-    public int Value { get; set; }
+    /// <summary>当前生命变更使用即时恢复分类。</summary>
+    public override GeneEffectType EffectType { get { return GeneEffectType.InstantHeal; } }
 }

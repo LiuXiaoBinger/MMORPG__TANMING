@@ -18,10 +18,10 @@ public class RoleEquipComponent : RoleComponentBase
     /// <param name="owner">持有裸属性、当前资源和背包的在线角色。</param>
     public RoleEquipComponent(OnlineRole owner) : base(owner) { }
 
-    /// <summary>读取共享基因配置并订阅即时资源结果。</summary>
+    /// <summary>连接共享基因节点工厂并订阅即时资源结果。</summary>
     public override void Initialize()
     {
-        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneInfos());
+        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneFactory());
         Runtime.Pulse += ApplyPulse;
     }
 
@@ -124,7 +124,7 @@ public class RoleEquipComponent : RoleComponentBase
             GeneInstance existing;
             if (activeSpecialSkills.TryGetValue(family, out existing))
             {
-                if (existing.Definition.Id == selected.GeneId && existing.SourceId == sources[family]) continue;
+                if (existing.Root.GeneID == selected.GeneId && existing.SourceId == sources[family]) continue;
                 Runtime.RemoveGene(existing);
             }
             activeSpecialSkills[family] = Runtime.AddGene(selected.GeneId, sources[family], null, 100 + family, Owner.GetID());

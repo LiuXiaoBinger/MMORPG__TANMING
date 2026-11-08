@@ -16,10 +16,10 @@ public class MGeneComponent : EntityComponentBase
     /// <param name="owner">拥有此组件的场景实体。</param>
     public MGeneComponent(ROObject owner) : base(owner) { }
 
-    /// <summary>从共享配置索引建立当前宿主的独立容器。</summary>
+    /// <summary>连接共享节点工厂，建立当前宿主的独立运行容器。</summary>
     public override void Initialize()
     {
-        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneInfos());
+        Runtime = new GeneRuntime(LubanMgr.Instance.GetGeneFactory());
     }
 
     /// <summary>推进实例寿命，并通知当前帧产生的周期效果。</summary>

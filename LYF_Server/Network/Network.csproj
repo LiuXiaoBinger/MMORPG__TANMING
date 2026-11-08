@@ -103,6 +103,7 @@
     <Compile Include="LubanManage\LubanLib\ByteBuf.cs" />
     <Compile Include="LubanManage\LubanLib\ITypeId.cs" />
     <Compile Include="LubanManage\LubanLib\StringUtil.cs" />
+    <Compile Include="LubanManage\LubanGeneFactory.cs" />
     <Compile Include="LubanManage\LubanMgr.cs" />
     <Compile Include="LubanManage\Parse\ItemConfigBase.cs" />
     <Compile Include="LubanManage\Parse\NormalItemConfig.cs" />

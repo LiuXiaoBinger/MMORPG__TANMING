@@ -21,7 +21,7 @@ for ($clientIndex=0; $clientIndex -lt $clientSources.Count; $clientIndex++) { $c
 & $clientCompiler /nologo /target:exe "/out:$clientBin/ClientDeltaTests.exe" "/r:$clientBin/Network.dll" "/r:$clientBin/MMoRpgCommon.dll" "/r:$clientBin/Google.Protobuf.dll" "/r:$clientBin/System.Memory.dll" "/r:$clientBin/System.Runtime.CompilerServices.Unsafe.dll" "/r:$clientStandard" $clientSourcePaths *> (Join-Path $clientBin '../test-build.log')
 if ($LASTEXITCODE -ne 0) { Get-Content (Join-Path $clientBin '../test-build.log') -Tail 12; exit $LASTEXITCODE }
 Copy-Item -LiteralPath (Join-Path $clientRoot '_temp/equipment-gene-20261107/equipment-flow/build/bin/GameServer.exe.config') -Destination (Join-Path $clientBin 'ClientDeltaTests.exe.config') -Force
-# 独立exe没有Unity的程序集加载器，按实际共享DLL版本显式重定向System.Memory。
+# 独立exe没有Unity的程序集加载器，按本轮复制的共享DLL实际版本重定向System.Memory。
 $clientConfigPath = Join-Path $clientBin 'ClientDeltaTests.exe.config'
 [xml]$clientConfig = Get-Content -LiteralPath $clientConfigPath -Raw
 $clientBinding = $clientConfig.configuration.runtime.assemblyBinding
@@ -31,8 +31,10 @@ $clientIdentity.SetAttribute('name','System.Memory')
 $clientIdentity.SetAttribute('publicKeyToken','cc7b13ffcd2ddd51')
 $clientIdentity.SetAttribute('culture','neutral')
 $clientRedirect = $clientConfig.CreateElement('bindingRedirect','urn:schemas-microsoft-com:asm.v1')
+# 只读取程序集清单，不加载客户端依赖；避免旧脚本固定版本与当前服务端输出冲突。
+$clientMemoryVersion = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $clientBin 'System.Memory.dll')).Version.ToString()
 $clientRedirect.SetAttribute('oldVersion','0.0.0.0-4.0.1.2')
-$clientRedirect.SetAttribute('newVersion','4.0.1.2')
+$clientRedirect.SetAttribute('newVersion',$clientMemoryVersion)
 $clientDependency.AppendChild($clientIdentity) | Out-Null
 $clientDependency.AppendChild($clientRedirect) | Out-Null
 $clientBinding.AppendChild($clientDependency) | Out-Null

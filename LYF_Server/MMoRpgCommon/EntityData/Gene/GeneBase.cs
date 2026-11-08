@@ -1,10 +1,129 @@
-/// <summary>
-/// 装备词条数据的共同基类；这里的“基因”指装备附带的属性项。
-/// </summary>
+using System;
+using System.Collections.Generic;
+
+/// <summary>一次创建对应一个独立运行节点；自身行为由具体类型实现，全部类型均可关联子基因。</summary>
 public abstract class GeneBase
 {
-    /// <summary>
-    /// 基因配置 ID。
-    /// </summary>
+    /// <summary>工厂使用的配置编号；节点不保留配置行引用。</summary>
     public int GeneID { get; set; }
+    /// <summary>本次施加每层采用的数值；百分比时 10 表示 10%。</summary>
+    public float Value { get; set; }
+    /// <summary>0 为固定点数，1 为相对基础属性或资源上限的百分数。</summary>
+    public int ValueType { get; set; }
+    /// <summary>作为根节点施加时的寿命，单位秒；0 表示常驻，普通子项共用根寿命。</summary>
+    public float DurationSeconds { get; set; }
+    /// <summary>适用环境：0 为全部，1 为副本，2 为 PvP。</summary>
+    public int Scenario { get; set; }
+    /// <summary>同编号、来源和槽位重复施加时是否增加层数。</summary>
+    public bool AllowsStacking { get; set; }
+    /// <summary>允许的最大层数；0 表示不限制，只有 AllowsStacking 为真时使用。</summary>
+    public int MaxStack { get; set; }
+    /// <summary>事件施加此节点时是否选择事件对方，否则沿用上层选择的宿主。</summary>
+    public bool TargetOpponent { get; set; }
+    /// <summary>当前具体节点的效果分类，由类型固定，不由运行器切换行为。</summary>
+    public abstract GeneEffectType EffectType { get; }
+    /// <summary>按配置槽顺序保存的子节点；工厂每次创建均使用独立对象。</summary>
+    private readonly List<GeneBase> children = new List<GeneBase>();
+    /// <summary>完整关联子树的只读视图，事件子项可以尚未激活。</summary>
+    public IReadOnlyList<GeneBase> Children { get; private set; }
+    /// <summary>组合中的直接父节点，根为 null；场景检查沿此引用保留全部祖先约束。</summary>
+    public GeneBase Parent { get; private set; }
+    /// <summary>纯组合没有自身效果，但它的子节点仍参与激活。</summary>
+    public virtual bool HasOwnEffect { get { return true; } }
+    /// <summary>事件节点在匹配事件之前不激活关联子树。</summary>
+    public virtual bool WaitsForEvent { get { return false; } }
+    /// <summary>即时资源节点无需在施加后常驻；组合中的其他节点仍可常驻。</summary>
+    public virtual bool IsInstant { get { return false; } }
+    /// <summary>次数根耗尽时从容器移除，普通节点不会因触发次数结束。</summary>
+    public virtual bool IsExhausted { get { return false; } }
+
+    /// <summary>建立节点自己的子树视图，避免不同施加共享可变列表。</summary>
+    protected GeneBase()
+    {
+        Children = children.AsReadOnly();
+    }
+
+    /// <summary>工厂按槽顺序连接新建子节点，并保留原节点的父引用。</summary>
+    /// <param name="child">本次工厂创建的独立子节点。</param>
+    public void AddChild(GeneBase child)
+    {
+        child.Parent = this;
+        children.Add(child);
+    }
+
+    /// <summary>收集当前直接生效的节点；事件以下的关联项等待事件再施加。</summary>
+    /// <param name="nodes">本次施加持有的原节点引用列表。</param>
+    internal void CollectActiveNodes(List<GeneBase> nodes)
+    {
+        if (HasOwnEffect) nodes.Add(this);
+        if (WaitsForEvent) return;
+        // 槽位顺序决定相同事件内的子项处理顺序。
+        for (int index = 0; index < children.Count; index++) children[index].CollectActiveNodes(nodes);
+    }
+
+    /// <summary>判断当前节点及全部组合祖先是否适用于宿主环境。</summary>
+    /// <param name="scenario">宿主当前场景分类。</param>
+    /// <returns>路径上全部场景要求都满足时返回 true。</returns>
+    internal bool AppliesToScenario(int scenario)
+    {
+        // 沿原对象引用检查，不复制祖先状态。
+        GeneBase current = this;
+        while (current != null)
+        {
+            if (current.Scenario != 0 && current.Scenario != scenario) return false;
+            current = current.Parent;
+        }
+        return true;
+    }
+
+    /// <summary>重复施加时恢复子树次数，周期进度与事件冷却保持原值。</summary>
+    public virtual void ResetTriggers()
+    {
+        // 遍历尚未激活的事件子树，保证嵌套次数也得到补充。
+        for (int index = 0; index < children.Count; index++) children[index].ResetTriggers();
+    }
+
+    /// <summary>属性节点覆盖此入口，向本次查询累加固定值与百分数。</summary>
+    /// <param name="attribute">本次查询的属性。</param>
+    /// <param name="stacks">所在根实例的当前层数。</param>
+    /// <param name="flat">累计的固定点数修正。</param>
+    /// <param name="percent">累计的百分数修正，10 表示 10%。</param>
+    public virtual void AccumulateAttribute(GeneAttributeType attribute, int stacks, ref double flat, ref double percent) { }
+
+    /// <summary>状态节点覆盖此入口，普通节点不提供动作限制。</summary>
+    /// <returns>此节点持续提供的状态位。</returns>
+    public virtual GeneState GetStates() { return GeneState.None; }
+
+    /// <summary>周期节点覆盖此入口，在根寿命内推进独立周期。</summary>
+    /// <param name="milliseconds">本帧仍处于根寿命内的毫秒数。</param>
+    /// <param name="instance">提供来源和层数的根实例。</param>
+    /// <param name="pulses">本帧待宿主结算的强类型结果。</param>
+    public virtual void AdvanceTime(long milliseconds, GeneInstance instance, List<GenePulse> pulses) { }
+
+    /// <summary>即时资源节点覆盖此入口，在首次施加和刷新时兑现资源效果。</summary>
+    /// <param name="instance">提供来源与层数的根实例。</param>
+    /// <param name="publish">宿主提供的即时结算回调，未订阅时允许为空。</param>
+    public virtual void PublishInstant(GeneInstance instance, Action<GenePulse> publish) { }
+
+    /// <summary>事件节点覆盖此入口；普通已激活节点不响应宿主事件。</summary>
+    /// <param name="args">权威宿主提供的实际事件。</param>
+    /// <param name="instance">保存原始装备来源和施加角色的根实例。</param>
+    /// <param name="host">管理此节点冷却时间和随机源的原宿主。</param>
+    /// <param name="target">上层选中的效果承接容器。</param>
+    /// <returns>成功施加或刷新的子基因数量。</returns>
+    internal virtual int Trigger(GeneTriggerArgs args, GeneInstance instance, GeneRuntime host, GeneRuntime target) { return 0; }
+
+    /// <summary>普通事件子项作为新根独立施加；事件类型覆盖后继续沿同一原子树触发。</summary>
+    /// <param name="args">包含实际事件对方的事件参数。</param>
+    /// <param name="instance">保留来源及施加角色的原根实例。</param>
+    /// <param name="host">管理当前原子树的宿主。</param>
+    /// <param name="target">继承自上层的目标容器。</param>
+    /// <returns>施加成功返回 1，没有目标或场景不符返回 0。</returns>
+    internal virtual int ActivateFromEvent(GeneTriggerArgs args, GeneInstance instance, GeneRuntime host, GeneRuntime target)
+    {
+        if (TargetOpponent) target = args.TargetRuntime;
+        if (target == null) return 0;
+        if (target.AddGene(GeneID, instance.SourceId, null, 0, instance.FirerId) != null) return 1;
+        return 0;
+    }
 }

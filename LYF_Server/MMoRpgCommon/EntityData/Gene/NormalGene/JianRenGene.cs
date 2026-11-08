@@ -1,6 +1,6 @@
-/// <summary>坚韧属性值（PVP 减伤）基因，装备词条对该属性的增量记录。</summary>
-public class JianRenGene : GeneBase
+/// <summary>坚韧点数运行基因，按根实例层数提供固定值或百分比修正。</summary>
+public class JianRenGene : AttributeGeneBase
 {
-    /// <summary>本词条提供的坚韧属性值（PVP 减伤）增量；这里只保存数据，不在此计算角色最终属性。</summary>
-    public int Value { get; set; }
+    /// <summary>此节点只修正坚韧点数，不会改变其他属性。</summary>
+    public override GeneAttributeType Attribute { get { return GeneAttributeType.JianRen; } }
 }

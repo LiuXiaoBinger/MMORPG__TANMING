@@ -16,15 +16,15 @@ public struct GenePulse
 
     /// <summary>复制本次脉冲所需的配置和运行数据，避免后续层数变化修改已发出的结果。</summary>
     /// <param name="instance">触发效果的父实例。</param>
-    /// <param name="effect">本次达到周期的叶子效果。</param>
-    public GenePulse(GeneInstance instance, GeneEffect effect)
+    /// <param name="node">本次达到周期的叶子效果。</param>
+    public GenePulse(GeneInstance instance, GeneBase node)
     {
-        GeneId = instance.Definition.Id;
+        GeneId = instance.Root.GeneID;
         SourceId = instance.SourceId;
         FirerId = instance.FirerId;
-        EffectType = (GeneEffectType)effect.Definition.EffectType;
-        Value = effect.Value * instance.StackCount;
-        ValueType = effect.Definition.ValueType;
+        EffectType = node.EffectType;
+        Value = node.Value * instance.StackCount;
+        ValueType = node.ValueType;
     }
 
     /// <summary>把脉冲换算为资源点数；百分比生命伤害及治疗均以目标生命上限为基数。</summary>

@@ -1,10 +1,6 @@
-/// <summary>
-/// 记录带伤害效果的装备词条；这里只存伤害数值，不执行结算。
-/// </summary>
-public abstract class DamageBuffGeneBase : GeneBase
+/// <summary>持续伤害基类，复用周期推进并产生生命伤害脉冲；实际扣血由宿主完成。</summary>
+public abstract class DamageBuffGeneBase : TimeBuffGeneBase
 {
-    /// <summary>
-    /// Buff 伤害数值。
-    /// </summary>
-    public int DamageValue { get; set; }
+    /// <summary>持续伤害按生命上限或固定生命点结算。</summary>
+    public override GeneEffectType EffectType { get { return GeneEffectType.PeriodicDamage; } }
 }

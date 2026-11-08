@@ -8,10 +8,6 @@ using OnlineRole = Server::OnlineRole;
 using RoleEquipComponent = Server::RoleEquipComponent;
 using RoItemComponent = Server::RoItemComponent;
 using BagWearItemTransition = Server::BagWearItemTransition;
-using GeneAttributeType = Server::GeneAttributeType;
-using GeneEventType = Server::GeneEventType;
-using GeneTriggerArgs = Server::GeneTriggerArgs;
-using GeneRuntime = Server::GeneRuntime;
 using GeneComponent = Server::GeneComponent;
 using MonsterDefenseAttributes = Server::MonsterDefenseAttributes;
 using SceneWaveSpawner = Server::SceneWaveSpawner;
@@ -110,7 +106,7 @@ public static class GeneEquipmentTests
         Check(new BagWearItemTransition(role).SwitchSpecialSkill(worn[1].GetItemUID(), 1) == Server::BagTransitionResult.Success, "真实特技槽切换成功");
         Equal(12, equipment.CalculateAttribute().HealBonus, "同名启用件数减少后降级");
         // 确认同一特技根对象未被重复 OnEquipChange 替换。
-        Server::GeneInstance root = equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104);
+        GeneInstance root = equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104);
         equipment.OnEquipChange();
         Check(ReferenceEquals(root, equipment.Runtime.FindGene(84001, (ulong)worn[1].GetItemUID(), 104)), "重复变更保留特技运行实例");
         role.mainRoleInfo.BaseInfo.CurrHp = 10;
@@ -132,17 +128,23 @@ public static class GeneEquipmentTests
     {
         // 独立正式副本实例，初始化路径会创建同一批权威怪物组件。
         SceneWaveSpawner scene = new SceneWaveSpawner(4060);
-        // 原副本入口尚未激活战斗波次；测试通过现有正式创建入口激活22波，不新增业务测试入口。
-        MethodInfo activateWave = typeof(SceneWaveSpawner).GetMethod("ActivateWave", BindingFlags.Instance | BindingFlags.NonPublic);
-        activateWave.Invoke(scene, new object[] { 22 });
         // 反射仅用于测试访问私有实例集合，不向正式业务暴露测试入口。
         FieldInfo monstersField = typeof(SceneWaveSpawner).GetField("monsters_", BindingFlags.Instance | BindingFlags.NonPublic);
         // 集合中的对象就是本次真实世界更新的原怪物引用。
         List<SceneMonster> monsters = (List<SceneMonster>)monstersField.GetValue(scene);
-        Check(monsters.Count > 0, "正式副本创建了权威怪物");
-        // 当前目标从真实实例中选择；其他怪物移出测试命中盒，测试不改正式出生配置。
-        SceneMonster target = monsters[0];
-        for (int i = 1; i < monsters.Count; i++) monsters[i].Transform.X = 100000;
+        // 当前入口已包含剧情和零生命机制实体，记录本次战斗波次追加的起点。
+        int waveStart = monsters.Count;
+        // 测试通过正式创建入口激活22波；object[] 仅用于私有方法的反射调用边界。
+        MethodInfo activateWave = typeof(SceneWaveSpawner).GetMethod("ActivateWave", BindingFlags.Instance | BindingFlags.NonPublic);
+        activateWave.Invoke(scene, new object[] { 22 });
+        Check(monsters.Count > waveStart, "正式副本创建了权威怪物");
+        // 目标取本次明确激活的战斗波，不把入口剧情实体假定为可战斗怪物。
+        SceneMonster target = monsters[waveStart];
+        // 其他实体移出测试命中盒，测试不改正式出生配置。
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            if (i != waveStart) monsters[i].Transform.X = 100000;
+        }
         target.Transform.X = 0;
         target.Transform.Y = 0;
         target.Transform.Z = 1.7f;
@@ -237,7 +239,7 @@ public static class GeneEquipmentTests
     {
         // 计数只遍历实际生效的根实例，不包含尚未触发的子配置。
         int count = 0;
-        for (int i = 0; i < runtime.ActiveGenes.Count; i++) if (runtime.ActiveGenes[i].Definition.Id == id) count++;
+        for (int i = 0; i < runtime.ActiveGenes.Count; i++) if (runtime.ActiveGenes[i].Root.GeneID == id) count++;
         return count;
     }
 

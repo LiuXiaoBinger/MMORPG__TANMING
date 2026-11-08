@@ -43,6 +43,9 @@ public class LubanMgr:Singleton<LubanMgr>
     // 属性、周期和状态基因配置索引，键为基因配置编号。
     private Dictionary<int, Gene> _geneInfos;
 
+    /// <summary>共享配置转换工厂，每次创建返回独立运行树；原配置索引可继续注册内部定义。</summary>
+    private LubanGeneFactory _geneFactory;
+
     // NPC配置ID到已解析坐标、商店等信息的索引。
     private Dictionary<int, NpcParseInfo> _npcInfos;
 
@@ -111,6 +114,7 @@ public class LubanMgr:Singleton<LubanMgr>
         _itemConfigInfos = CreateItemConfigInfos(_itemInfos, _equipInfos);
         _knapsackInfos = tables.TbKnapsackInfo.DataMap;
         _geneInfos = tables.TbGene.DataMap;
+        _geneFactory = new LubanGeneFactory(_geneInfos);
         _npcInfos = ParseNpcInfos(tables.TbNpcInfo.DataList);
         _professionInfos = tables.TbProfessionInfo.DataMap;
         _questInfos = tables.TbQuestInfo.DataMap;
@@ -563,7 +567,11 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
     #region 基因相关
-    /// <summary>返回基因配置索引，供每个实体创建独立的运行容器。</summary>
+    /// <summary>返回将当前配置转换为具体运行节点的工厂，运行组件不直接持有配置索引。</summary>
+    /// <returns>每次创建均产生独立节点树的共享工厂。</returns>
+    public GeneFactory GetGeneFactory() { return _geneFactory; }
+
+    /// <summary>返回只读配置查询和内部配置注册使用的原索引；实体运行时通过工厂创建节点。</summary>
     public Dictionary<int, Gene> GetGeneInfos()
     {
         return _geneInfos;

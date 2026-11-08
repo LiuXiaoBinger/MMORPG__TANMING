@@ -10,7 +10,7 @@ internal static class MoshentaGeneBridge
     {
         // 负编号仅为服务端内部定义键，不进入玩家装备或技能表。
         int id = -1000000000 - (buff.Id % 10000000) * 16 - slot;
-        // GetGeneInfos返回GeneRuntime共同持有的原字典，允许正常有符号int键。
+        // 配置注册边界使用工厂持有的原索引，后续创建直接读取新定义，允许有符号 int 键。
         Dictionary<int, cfg.Gene> definitions = LubanMgr.Instance.GetGeneInfos();
         if (!definitions.ContainsKey(id))
         {

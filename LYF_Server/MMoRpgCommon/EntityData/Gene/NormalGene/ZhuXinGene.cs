@@ -1,6 +1,6 @@
-/// <summary>诛心属性值（PVP 增伤）基因，装备词条对该属性的增量记录。</summary>
-public class ZhuXinGene : GeneBase
+/// <summary>诛心点数运行基因，按根实例层数提供固定值或百分比修正。</summary>
+public class ZhuXinGene : AttributeGeneBase
 {
-    /// <summary>本词条提供的诛心属性值（PVP 增伤）增量；这里只保存数据，不在此计算角色最终属性。</summary>
-    public int Value { get; set; }
+    /// <summary>此节点只修正诛心点数，不会改变其他属性。</summary>
+    public override GeneAttributeType Attribute { get { return GeneAttributeType.ZhuXin; } }
 }

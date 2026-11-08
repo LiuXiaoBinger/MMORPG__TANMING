@@ -1,6 +1,6 @@
-/// <summary>最大生命值基因，装备词条对该属性的增量记录。</summary>
-public class MaxHPGene : GeneBase
+/// <summary>最大生命值运行基因，按根实例层数提供固定值或百分比修正。</summary>
+public class MaxHPGene : AttributeGeneBase
 {
-    /// <summary>本词条提供的最大生命值增量；这里只保存数据，不在此计算角色最终属性。</summary>
-    public int Value { get; set; }
+    /// <summary>此节点只修正最大生命值，不会改变其他属性。</summary>
+    public override GeneAttributeType Attribute { get { return GeneAttributeType.MaxHp; } }
 }
