@@ -128,7 +128,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `0a992402a1140b4ca46c8c8b3be52db283cef060890fe6bee8113241c0183318`
+Source normalized SHA256: `2337fa020d6ed732450639ef69e1b2bcdee741d671f4eb31e9427a30e7c4c44e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -149,7 +149,8 @@ Source normalized SHA256: `0a992402a1140b4ca46c8c8b3be52db283cef060890fe6bee8113
 | [QUERY][怪物AI][副本][MOSHENTA-WAVES-FLOW-20261106] All-wave AI, spawn conditions and dungeon objectives | 126-135 |
 | [QUERY][场景编辑器][UI][SCENE-EDITOR-USABILITY-20261107] Missing flow navigation and editor/runtime mismatches | 136-143 |
 | [QUERY][场景编辑器][副本][STAGE-CONFIG-EXPLAIN-20261107] Stage order, spawning and mechanism timing | 144-151 |
-| [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-159 |
+| [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-160 |
+| [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-167 |
 
 ## Older records
 

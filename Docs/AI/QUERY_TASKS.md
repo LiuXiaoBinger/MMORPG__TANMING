@@ -152,3 +152,11 @@
 - Unity 的 https://docs.unity3d.com/2023.2/Documentation/Manual/AnimationLayers.html 和 https://docs.unity3d.com/2023.2/Documentation/Manual/class-AvatarMask.html 说明了带遮罩的动画层及 Additive / Override 混合。这些资料支持 LYF 的一种实现选项，不是对上述两款游戏内部实现的发现。Additive 反应需要兼容的动画制作姿态；不能简单用全身受击片段覆盖跑动、滑行或跳跃。
 - LYF 当前源码：LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Entity/RoleEntity.cs:74-91 先结算 HP，再对仍存活、伤害为正且实际损失血量的角色发出 DamageReceived；Component/Action/MBeHitComponent.cs:5-32 在状态许可时请求 BeHit，并根据 layer0 的动画进度结束动作；Component/State/MStateMachine.cs:249-254 将已结束的动作切回默认状态。因此，普通伤害当前会请求状态受击反应，但仅凭这次源码查阅不能断言每次跑动、滑行或跳跃都会被打断。本次查询没有实现上述分离方案。
 - 本次未修改玩法代码、配置表、预制体或已部署服务；未观察当前版本游戏，也未执行 Unity 受击复现、多人联机或 Player 构建验证。技能：project-subagent-coordination 用于委派 Codex 查证；task-log-policy 用于已获批准的限定范围记录；token-monitor 用于 collect/report 和原始会话压缩计数。本地用量证据：_temp/noncontrol-hit-analysis-20261108/ 。
+
+## [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] 装备穿戴与卸下流程
+
+- BagWearItemTransition.WearItem/TakeOffItem 成功后先更新装备容器，再由 CompleteEquipmentChange 发送物品增量并调用 RoleEquipComponent.OnEquipChange；失败操作不进入本次 Gene 更新。同槽替换时，旧装备放回新装备原来的背包槽。源码：LYF_Server/GameServer/Service/item/BagTransition.cs:540,582,657；LYF_Server/GameServer/Components/RoItemComponent.cs:1289。
+- OnEquipChange 扫描当前已穿戴装备。对每个新增装备 UID，AddEquipGenes 读取 EquipInfo 的 6 个配置槽和 EquipBase 的 3 个实例槽；非零 ID 调用 AddGene(id, equipmentUid, value, slot1to9, roleId)，其中 equipmentUid 是装备 UID，roleId 是角色 ID，来源槽编号为 1..9。工厂创建具体 GeneBase 树；持续型根节点归 Owner.Gene.Runtime.ActiveGenes 持有，适用的属性/状态/即时节点执行 OnCall(Owner)，周期/事件节点等待各自的时机或事件。不同来源槽中的相同 ID 仍为独立节点。源码：LYF_Server/GameServer/Components/RoleEquipComponent.cs:23,66；LYF_Server/MMoRpgCommon/EntityData/Gene/GeneRuntime.cs:44,58,94。
+- 对移除的装备 UID，在当前所属角色的运行时调用 RemoveGenesBySource，再由各适用节点的 OnRemove 撤销持续贡献，其他装备/技能来源保留。已经产生的伤害/治疗不回滚；独立触发到其他目标的效果不会因当前角色卸装而被全局移除，仍按自身生命周期处理。源码：上述目录中的 RoleEquipComponent.cs:56；GeneRuntime.cs:109,141,150。
+- 特技只统计每件已穿戴装备当前启用的特技家族。RefreshSpecialSkills 选择不超过该家族穿戴件数的最高配置等级，并取贡献装备中最小的 UID 作为来源；家族/等级/来源变化时替换节点，GeneID 与来源都未变时保留原节点。最后 NotifyAttributeUpdate 委托 Owner.AttrComp 发送最终属性，不覆盖裸属性。源码：上述目录中的 RoleEquipComponent.cs:85,120,134。
+- 本记录仅解释当前代码，未修改业务、未重跑测试。既有隔离测试不能证明真实 Unity、数据库/重新登录或多服务器行为。主 Agent 核对调用链；既有 Codex 原生文档子 Agent 仅同步、检查本次双语新段。证据：_temp/equip-gene-flow-query-20261108/。
