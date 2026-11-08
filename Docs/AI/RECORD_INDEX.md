@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c7312ebf364ea52e341fb6300e39816734403cbc8b9a1ee4ce8d74727ed71b11`
+Source normalized SHA256: `bab1d25efe402a61409716d742780eb28fd6c83067293d9c595904a3f616669d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -57,11 +57,12 @@ Source normalized SHA256: `c7312ebf364ea52e341fb6300e39816734403cbc8b9a1ee4ce8d7
 | [CODE][基因][GENE-RUNTIME-20261107] Gene table and shared runtime | 334-352 |
 | [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Direct wave and mechanism editing in the stage view | 353-364 |
 | [CODE][FILES][装备][基因][EQUIP-GENE-20261107] Equipment genes and special skills | 365-373 |
-| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-BINDINGS-20261107] Explicit stage membership in scene configuration | 374-379 |
+| [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-BINDINGS-20261107] Explicit stage membership in scene configuration | 374-380 |
+| [CODE][FILES][基因][GENE-MINDMAP-20261108] Gene browser mind map | 381-388 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4557523a8dffa3177a27209305fe36281c07077db305d7ceff63d858b34469d3`
+Source normalized SHA256: `9d67401d588d91d7c3f4dfe794fca9cfe65527eb122f7848a87ad8d8830914e3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -110,7 +111,8 @@ Source normalized SHA256: `4557523a8dffa3177a27209305fe36281c07077db305d7ceff63d
 | [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-370 |
 | [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-382 |
 | [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-390 |
-| [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-399 |
+| [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-400 |
+| [VERIFY][基因][GENE-MINDMAP-20261108] Gene mind map acceptance | 401-407 |
 
 ## Docs/AI/DECISIONS.en.md
 

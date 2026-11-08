@@ -387,3 +387,11 @@
 - 主 Agent 截图发现切页后“this stage”状态文案存在歧义。Round3 仅将两处字符串改为使用实际 stage.Title；真实跨页回调补验通过，最终渲染的正式 Entry 视图显示新增关联/解绑控件，最终 MCP 错误 Console 查询返回0条。证据：mcp/acceptance-edit-result.json、acceptance-clear-restore-result.json、acceptance-message-result.json、live-bindings.png、formal-protected.json 和 console-final.json，以及 round3-message-check.json。此前审计源码哈希覆盖 round2；最终 Window 增量由主 Agent 结合最终编译回执核验。
 - 迁移回执证明在偏移779867处精确插入3334字节，包含9个绑定阶段/61个波次引用/23个机制引用；原始字节及用户 y=18.9807758 均保留。完整日志：项目修改日志/2026-11-07-副本阶段关联显式配置.md。未完成完整玩法、物理按钮/地图操作、打包或线上验收；保留了原始出生/触发行为，未用阶段关联列表替代这些行为。
 - 2026-11-08 XML 注释续作（同一任务）：在 LYF_MMO/Assets/GM_Game/Resources/Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ.txt 的 editor_stage_bindings 周围新增19条独立中文注释（交付时行19450-19569），说明目标名称、稳定阶段键、波次/节点 ID、共享关联及未改变的运行时触发行为。开发自检8项通过；仅移除新增注释即可逐字节恢复原文件，UTF-8 BOM、CRLF、用户节点 y=18.9807758，以及9个阶段/61个波次引用/23个机制引用均保留。主 Agent 核验实际差异仅为插入，并确认 XML 数据一致；暂存时排除了既有用户位置改动。目标137文案已按当前正式二进制表核对。证据：_temp/scene-stage-bindings-comments-20261108/verification.json，以及同目录 target137-current-table.json、root-review.json 和 git-receipt.json。本次仅注释续作未执行 Unity 编译、MCP/桌面操作或副本玩法验证。完整日志仍为 项目修改日志/2026-11-07-副本阶段关联显式配置.md。
+
+## [VERIFY][基因][GENE-MINDMAP-20261108] Gene 思维导图验收
+
+- 生成器验证了 33 个唯一节点、38 个实际存在的源码/配置入口、可定位的代码标记及有效的节点引用。`node --check _temp/gene-mindmap-20261108/script.js` 通过。本次仅改动文档/HTML，未重跑游戏构建及历史 618 项断言。
+- 实际 Edge 检查通过：属性公式/详情及 GeneRuntime.cs:167 代码摘录；折叠为 9 个节点并展开至 33 个；AddGene 搜索命中 4 个节点；破甲示例从第 5 步推进到 8 秒到期步骤；缩放使 viewBox 改变，Fit 恢复视图；捕获的控制台错误列表为空。最终完整导图已保留为浏览器交付结果。
+- 初始 1112px 布局的导图文字偏小；刷新后已检查 <=1300px 时上下排列的布局。一次 PowerShell/Python 引号 SyntaxError 和一次 summary/button 定位器不匹配已解决，未改动游戏逻辑。拖动、滚轮缩放及剪贴板复制未分别进行浏览器验证。
+- 证据：`_temp/gene-mindmap-20261108/verification.txt`、`browser-preview.jpg`、`atlas-data.json`，以及同目录下的 token 报告和原始会话压缩计数。预览为临时本机回环服务。真实数据库/重登、部署后的游戏联调与数值平衡仍不在已验证范围内。
+- 完整记录及 Git 回执：`项目修改日志/2026-11-08-Gene基因思维导图.md`。中英检查仅覆盖本次新增的两条 GENE-MINDMAP-20261108 记录；未改动历史段落。
