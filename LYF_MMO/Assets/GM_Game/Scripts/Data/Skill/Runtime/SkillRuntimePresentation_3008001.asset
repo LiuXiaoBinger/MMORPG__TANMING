@@ -1493,7 +1493,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     DistanceX: 0.057665601
-    DistanceZ: 4.999852847
+    DistanceZ: 6
     AimTarget: 0
     AllowReverse: 1
     StopAtDistanceLimit: 0

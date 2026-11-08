@@ -12,7 +12,7 @@ public sealed class MMoveComponent : EntityComponentBase
 
     #region 字段与属性
     /// <summary>单次起跳采用的初始向上速度，单位为米/秒。</summary>
-    private const float JumpUpwardSpeed = 10f;
+    private const float JumpUpwardSpeed = 11f;
 
     /// <summary>角色上升阶段的重力加速度，单位为米/秒平方。</summary>
     private const float RisingGravity = 28f;

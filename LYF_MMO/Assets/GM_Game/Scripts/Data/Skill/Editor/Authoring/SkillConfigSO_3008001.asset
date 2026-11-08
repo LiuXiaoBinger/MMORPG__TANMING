@@ -37,7 +37,7 @@ MonoBehaviour:
   flowNodes: []
   skillID: 10080
   skillName: "滑行"
-  skillDescription: "F\u6ed1\u6b65\uff1a\u4f4d\u79fb\u5df2\u8fc1\u79fb\u4e3a\u7a0b\u5e8f\u66f2\u7ebf\u7a0b\u5e8f\u6bb5\uff0c\u500d\u73871.458485\u4fdd\u6301\u7ea65\u7c73\u524d\u5411\u6ed1\u6b65\u3002"
+  skillDescription: "F\u6ed1\u6b65\uff1a\u4f4d\u79fb\u5df2\u8fc1\u79fb\u4e3a\u7a0b\u5e8f\u66f2\u7ebf\u7a0b\u5e8f\u6bb5\uff0c\u6309\u914d\u7f6e\u8ddd\u79bb\u4fdd\u6301\u7ea66\u7c73\u524d\u5411\u6ed1\u6b65\u3002"
   skillType: 3
   previewModelName: Role_MJS
   ownerType: 0
@@ -798,7 +798,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    maxDistance: 4.999852847
+    maxDistance: 6
     curveX:
       serializedVersion: 2
       m_Curve:
