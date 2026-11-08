@@ -61,7 +61,7 @@ Source normalized SHA256: `c7312ebf364ea52e341fb6300e39816734403cbc8b9a1ee4ce8d7
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2de669c99be436c0c79b5e51509fc6997dca5a643ff4e3517234744436c9e1bd`
+Source normalized SHA256: `4557523a8dffa3177a27209305fe36281c07077db305d7ceff63d858b34469d3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -110,7 +110,7 @@ Source normalized SHA256: `2de669c99be436c0c79b5e51509fc6997dca5a643ff4e35172347
 | [VERIFY][基因][GENE-RUNTIME-20261107] Gene runtime acceptance | 353-370 |
 | [VERIFY][场景编辑器][副本][STAGE-INLINE-EDIT-20261107] Inline authoring, serialization and dependency checks | 371-382 |
 | [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-390 |
-| [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-397 |
+| [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-399 |
 
 ## Docs/AI/DECISIONS.en.md
 
