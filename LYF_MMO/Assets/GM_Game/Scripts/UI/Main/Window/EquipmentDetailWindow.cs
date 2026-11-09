@@ -65,6 +65,10 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _garnishRowText;
     /// <summary>套装总阶与件数独立行，无实例数据时整行中性占位。</summary>
     [SerializeField] private TMP_Text _setRowText;
+    /// <summary>套装行末尾的查看入口，只提示暂未开放，不请求套装数据。</summary>
+    [SerializeField] private Button _setViewButton;
+    /// <summary>外观行末尾的查看入口，只提示暂未开放，不请求外观数据。</summary>
+    [SerializeField] private Button _appearanceViewButton;
     #endregion
 
     #region 头部角标与双列属性
@@ -165,6 +169,8 @@ public sealed class EquipmentDetailWindow : WindowBase
         _editButton.onClick.AddListener(OnEditClicked);
         _infoButton.onClick.AddListener(OnInfoClicked);
         _gemDropButton.onClick.AddListener(OnGemDropClicked);
+        _setViewButton.onClick.AddListener(OnSetViewClicked);
+        _appearanceViewButton.onClick.AddListener(OnAppearanceViewClicked);
         // index 是特技槽下标，每行末尾的详情入口只展示本槽完整说明。
         for (int index = 0; index < _specialSkillDetailButtons.Length; index++)
         {
@@ -352,6 +358,18 @@ public sealed class EquipmentDetailWindow : WindowBase
         // visible 是切换后镶嵌下拉是否显示，显隐本身就是点击反馈。
         bool visible = !_gemDropPanel.gameObject.activeSelf;
         _gemDropPanel.gameObject.SetActive(visible);
+    }
+
+    /// <summary>套装行末的查看入口只提示暂未开放，不请求套装数据、不发协议。</summary>
+    private void OnSetViewClicked()
+    {
+        TipsMgr.Instance.ShowSystemTips("套装：暂未开放");
+    }
+
+    /// <summary>外观行末的查看入口只提示暂未开放，不请求外观数据、不发协议。</summary>
+    private void OnAppearanceViewClicked()
+    {
+        TipsMgr.Instance.ShowSystemTips("外观：暂未开放");
     }
 
     /// <summary>三个右侧主按钮共用提示，按下标取准确名称。</summary>
