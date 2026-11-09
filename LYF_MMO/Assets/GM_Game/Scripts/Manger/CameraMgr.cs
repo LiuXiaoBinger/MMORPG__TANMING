@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 /**
@@ -99,8 +100,8 @@ public class CameraMgr : MonoBehaviour
         if(_isOpenRoleAtttWindow ==true)return;
 
         //摄像机缩放功能
-        //1.获取到鼠标滚轮事件 
-        if (_mouse.scroll.y.ReadValue() != 0)
+        // 指针位于界面上时交给正文滚动，避免同一滚轮同时缩放场景镜头。
+        if (_mouse.scroll.y.ReadValue() != 0 && !EventSystem.current.IsPointerOverGameObject())
         {
             SetOrbites(_cinemachine.m_Orbits[0].m_Height - _mouse.scroll.y.ReadValue()*2 );
         }

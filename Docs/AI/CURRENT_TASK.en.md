@@ -403,6 +403,14 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09)
 
+**Latest UI revision 4 — narrow RO-style equipment details (2026-11-09).**
+
+- Followed the user's Yimeng Jianghu screenshot and 39.59-second recording: fixed compact identity header, separately scrolling attributes/Gene/traits, fine separators and a short independent right action area. Total detail bounds are 470x660, information panel width 380 (previous detail width 620). Reused the project's existing RO UI_Common_Bg_Tips_01 sprite for an opaque pale-blue background; no new assets, game-specific fake fields or crafting actions. Unworn items show “装备”; worn items show “卸载”. Trait activation remains beside its own heading. Controls/references live in UIRoot.prefab; EquipmentDetailWindow/ViewModel/Ctrl are unchanged.
+- Real wheel testing exposed CameraMgr reading scroll while the pointer hit UI. Parent authorized only an EventSystems using, Chinese comment and the existing scroll-if UI-hit condition; CameraRotation ordering and pre-existing unrelated dirty edits are preserved. Stage this file from HEAD plus this task's three-line change, not the full dirty working copy. Current live state was preserved: main UID 61353029711958016 worn (bag4/index7), offhand UID 61353029713006592 in bag1/index1, count1 each, selected trait slots0. The agent did not equip/unequip or change traits/DB. After loading the new assembly, normal login restored Scene_MainCity; details closed, Gene hidden, 1920x1080 and camera height12 restored.
+- Native developer /root/equipment_manual, gpt-6-astra, session 01a1be4e-c60a-7e42-9530-6ba0b70e009b, revision4; parent reviewed actual UI and recording frames, hashes and minimal camera delta. Evidence: _temp/equipment-ui-layout-20261109/revision4/. Approved log: 项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md. Physical drag injection was not verified; native ScrollRect drag-event paths and real wheel behavior passed. Earlier EditorPrefs original-value uncertainty remains; no server/protocol/item changes in this revision.
+
+**Earlier revision history (preserved; prior layout/equipment snapshots are not the current state):**
+
 **Latest state — revisions 2/3 (2026-11-09; supersedes round-1 equipment/window state below).**
 
 - User requested hiding the active Gene control and leaving weapons for manual equipping. UIRoot now disables ActiveGenesPanel, narrows the role root from 900 to 640, and centers RoleSummary (x -132→0); Gene computation remains unchanged. The existing TakeOff button/protocol moved role 789's original main weapon 21001 / UID 61353029711958016 into bag 1, slot 0. Offhand 21002 / UID 61353029713006592 remains in bag 1, slot 1; one each, zero worn items, no duplicate grant.

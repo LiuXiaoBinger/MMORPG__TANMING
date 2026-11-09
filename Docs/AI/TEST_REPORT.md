@@ -415,6 +415,15 @@
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
 
 
+**最新验收——UI 第 4 轮返修（2026-11-09）。**
+
+- 主/副武器详情在 1920x1080 和 1366x768 下均通过（四种组合）：固定头部/右侧操作、“卸载”与“装备”对应正确、顶部/底部文字完整，滚动范围约 78.33 参考单位。复用 RO 背景的内部 alpha 为 255，截图呈现不透明淡蓝色。实际 Prefab 差异：修改 89 个既有块、新增 41 个详情块、删除 0 个块；详情之外 5653 个块逐字节保留。UIRoot SHA256 为 ebd159a613fdde26f2514cbf14998f52d32708deb07e9f8ccb21e75ff04f8de5。主 Agent 查看了 main-1920-top、offhand-1920-bottom、main-1366-bottom 截图，以及录屏 0/19.80s 帧。
+- 真实 UI 滚轮使 verticalNormalizedPosition 从 1→0.540405，三个镜头 orbit 均未改变（顶部高度 12）。在场景空白处，滚轮使顶部高度由 12→22，而详情正文保持不动；之后恢复为 12。CameraMgr 的最小 UI 命中条件已在实际 Editor GM_Game.dll 中编译通过（error CS=0）；正常重登加载正式资源，最终 Console error=0，详情关闭无残留，Gene 保持隐藏。源码哈希 5467aa0403cc2ee67130ca4f41dbd72e7afb1e293109ef23a4bdef021843dee5 包含此前无关 dirty 改动，这些改动不得随本任务提交。
+- 物理拖拽自动化在 8 秒追踪中没有产生可观察的按下/保持/释放帧，因此不声称物理拖拽通过。既有 ScrollRect initialize/begin/drag/end 事件到达两端边界，真实滚轮输入已验证。未执行穿脱、特技激活或数据库写入。保留当前主武器已穿戴、副武器在包及选中槽 0 的状态；本轮不属于新的战斗/持久化测试。RO 参考为 CommonItemTipsBaseComponent.prefab 与 Common1.png；用户视频提供了 5 个关键帧，打造/弹窗及不可用属性明确不在本次布局范围内。证据：_temp/equipment-ui-layout-20261109/ 下的 revision4/runtime-acceptance.json、compile-check.json、prefab-preservation.json、CameraMgr.task-only.diff 和 video-reference/observations.json。沿用同一原生开发者/会话，第 4 轮；完整已批准日志及此前 EditorPrefs 边界仍如下方所记。
+
+**此前验收历史（原文未变）：**
+
+
 **最新验收——第 2/3 轮返修（2026-11-09；第 1 轮证据保留于下方）。**
 
 - 第 2 轮：真实 TakeOff 请求 11161 成功，观察到回复 11160→11162→11161。原主/副武器 UID 现位于 bag 1 的 slot 0/1，各一件、零穿戴。服务端与客户端属性一致：外攻 1286–2519→50–65、命中 2041→20、暴击 1980→15、诛心 4151→0、韧性 3088→0；已移除七个主武器 Gene 根节点。1920x1080 下首次打开 3.464 秒、重新打开 3.417 秒，ActiveGenesPanel 均保持隐藏，12 个槽位全部为空，角色宽度为 640。主 Agent 已查看截图和差异。临时协议委托已恢复，未新增正式测试组件。
