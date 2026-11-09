@@ -394,3 +394,11 @@
 - 用户选择了本地两个角色：`1 / 789` 和 `2 / 112`（JobID 1、等级 1）。每个角色的装备背包 `BagType=1` 中现有武器 `21001` 和 `21002`，分别位于从零开始的格位 `0,1`；穿戴栏保持为空，由用户手动穿戴。一次真实 MySQL 事务新增四件独立物品及对应装备/Gene 行，保存版本分别为 `22` 和 `1`。既有物品、裸属性和背包容量保持不变。
 - Codex 原生开发子 Agent `/root/equipment_manual`，模型 `gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，开发第 1 轮包含 UI 与数据库两个阶段，未使用外部执行器。主 Agent 已验收精确 UI 差异/截图及真实数据库只读比对。正式中心服读回通过 152 项字段比对，隔离穿戴测试通过 34 项断言。
 - 完整且已批准的日志：`项目修改日志/2026-11-09-角色空装备栏与武器入包.md`。证据：`_temp/equipment-bag-manual-20261109/parent-acceptance.json` 和 `database/verification.json`。用户可登录后穿戴两把武器；真实登录/网络/PlayMode/手动穿戴及 YooAsset 包异步加载仍未验证。不得重复执行已提交的数据库发放。
+
+## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] 装备详情不透明布局与实机运行修复（2026-11-09）
+
+- 已完成布局及登录后运行验收：Gene 列表现位于宽 900 的角色窗口内；装备详情采用 620x780 不透明浅色面板，头尾固定、正文滚动、属性列对齐，Gene 与特技分区展示。四个业务文件为 UIRoot.prefab、EquipmentDetailWindow.cs、EquipmentDetailViewData.cs、KnapsackCtrl.cs（位于 LYF_MMO/Assets/GM_Game 下）。初始布局提交 `04a91ec` 已推送到 `codex/feature-development`；既有穿戴/特技协议未变。
+- 实机复现默认装备问题：正式 UIRoot 中的 `RoleSummary/测试使用后面要删除` 节点挂有 RoleAttriibuteWindowMockServer，将真实槽位替换为 12 条 UID=0 的 Mock 数据。已移除该节点及父引用，保留测试脚本。时序事实修正：脚本默认延迟为 0.5 秒，但该 Prefab 序列化配置为 2 秒；实测等待 2.364 秒与 2.375 秒，均超过配置延迟。
+- 实机还复现了不透明详情上方的白色覆盖：12 个未使用的 img_enter 装饰使用 renderQueue 3001，高于普通 UI 的 3000。仅在 UIRoot 内禁用这些装饰（11 个本地字段加一个主武器嵌套实例覆盖）；共享材质、装备图标、边框和点击行为未变。主 Agent 已验收精确最终差异和截图。
+- 角色 789 保持主武器 `21001 / 61353029711958016` 已穿戴（bag 4、slot 7），副武器 `21002 / 61353029713006592` 在背包内（bag 1、slot 1）；特技选择/家族未变。已在 1920x1080 与 1366x768 验证既有窗口/点击/滚动路径，关闭后无 Gene 残留。Unity 保持运行于 Scene_MainCity，窗口全部关闭，已恢复 1920x1080，场景 dirty=False。未写数据库或发放物品。
+- 原生开发者 `/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮包含布局与实机两个阶段。已批准的完整日志：`项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md`；证据为 `_temp/equipment-ui-layout-20261109/runtime-acceptance.json` 和 `parent-acceptance.json`。未重新验证：移除节点后的重新登录、角色 112、实际穿脱/特技变更、战斗/平衡。初始阶段将 EditorPrefs ScriptCompilationDuringPlay=1，未记录原值；未猜测恢复，实机阶段也未再次修改。

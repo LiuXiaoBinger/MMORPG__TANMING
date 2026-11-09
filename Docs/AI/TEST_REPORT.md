@@ -411,3 +411,12 @@
 - 真实 localhost:3308/game_db 事务：角色 `1 / 789` 与 `2 / 112` 各获得 `21001,21002`，位于 BagType 1、从零开始的格位 0 和 1；共四个独立 UID，item/equip/equip_xl_gene 每张表各新增四行。保存版本为 `21→22` 和 `0→1`，两个角色的穿戴列表均为空。既有物品、裸属性、容量和其他角色字段保持不变。正式 `CentRoleModel.RoleKanpaskInfo(EnterWroldReq)` 读回匹配 152 个字段，读回本身未修改存储；主 Agent 另行将实时记录与事务后快照比对。回滚仅作预检，从未执行。
 - 初次只读查询因表名拼写错误产生 MySQL 1146，已改为 `equip_xl_gene`；一次临时 PowerShell 引号错误通过改用脚本解决。未发生失败写入。原生开发者：`/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮分两个阶段执行；主 Agent 已完成验收。
 - 证据：`_temp/equipment-bag-manual-20261109/`（`changed-files.json`、`unity-ui-verification.txt`、`weapon-check-results.log`、`database/verification.json`、`parent-acceptance.json`）。完整且已批准的日志：`项目修改日志/2026-11-09-角色空装备栏与武器入包.md`。仍未验证：实际客户端登录/Socket 路径、Unity PlayMode 与手动穿戴、YooAsset 包异步加载及战斗平衡。本次仅追加文档后未重跑业务测试。
+
+## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
+
+- 初始布局阶段：Unity C# 编译通过；隔离的 1920x1080/1102x759 预览确认布局、滚动，并通过红/蓝背景下像素相同验证面板不透明。初次 git 空白警告来自既有的 38 行相同 Prefab 块；新增/修改块未引入行尾空白。预览克隆在异步图标回调前被销毁，产生一条已记录的 MissingReferenceException；已修正测试时序并保留原始 Console 证据。
+- 用户登录后，真实角色 789 暴露出正式 Prefab 的 Mock 组件将全部 12 个装备槽覆盖为 UID=0。已移除其三个块及父引用，通过既有 RoleInfoCtrl 刷新；首次打开等待 2.364 秒，重新打开等待 2.375 秒后，仅保留真实主武器，其余 11 槽为空。Prefab 延迟为 2 秒，不是脚本默认的 0.5 秒。源 Prefab 和当前运行实例中此类 Mock 组件现均为零，测试脚本仍保留。
+- 实机槽位 PointerClick 与背包 PointerUp 打开了正确的主/副武器详情，分别显示 TakeOff/Wear 按钮，特技状态与实例一致。滚动 1→0 时头尾位置不变；关闭角色窗口也隐藏 Gene，背包/详情可继续显示，随后四个窗口全部隐藏。已检查真实 GameView 1920x1080 与 1366x768；最终会话保持在 Scene_MainCity，窗口关闭，恢复原来的 1920x1080，dirty=False。
+- 最后一张 1366 截图暴露出 renderQueue 3001 的 img_enter 覆盖层，高于普通 UI 的 3000。仅在 UIRoot 内禁用 12 个未使用装饰，同场景对比确认白色覆盖消失，未修改共享材质。主 Agent 核验了角色、修复覆盖后的详情及全部关闭截图、最终哈希与精确实机差异：删除 3 个块、修改 13 个既有块，其余全部保留，git diff --check 通过。最终 UIRoot SHA256 为 `e22ef3df2b81fb77ec34cb9b0da1a0970567910f8e163eba1eda321d122080d9`。
+- 主武器 UID `61353029711958016`（21001、bag 4、slot 7、selected 0、families 2/4/0）与副武器 UID `61353029713006592`（21002、bag 1、slot 1、selected 0、families 3/5/0）前后完全一致。未写数据库，也未点击实际穿脱/特技变更操作。未新增运行时业务异常，早期预览异常仍留在 Console。工具字段/源码/ID 解析失败均发生在写入前，已保留于证据。
+- 开发者：Codex 原生 `/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮先布局、后实机阶段。证据为 `_temp/equipment-ui-layout-20261109/`（`runtime-acceptance.json`、`parent-acceptance.json`、`runtime-overlay-comparison.json`）。已批准的完整日志：`项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md`。边界：未在移除后重新登录，未切换角色 112，未进行实际穿脱/特技协议往返或战斗/平衡复测。初始阶段将 EditorPrefs ScriptCompilationDuringPlay 设为 1，原值未记录，不声称已恢复。
