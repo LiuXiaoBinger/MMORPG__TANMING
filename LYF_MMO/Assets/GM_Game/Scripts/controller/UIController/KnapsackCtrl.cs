@@ -540,21 +540,38 @@ public sealed class KnapsackCtrl : IDisposable
         // 当前装备的纯展示结果。
         EquipmentDetailViewData result = new EquipmentDetailViewData();
         result.Name = config.EquipName;
+        result.IconPath = config.Icon;
+        result.PartName = EquipmentPartName((EquipType)config.EquipType);
         if (equip.StrengthenLevel > 0) result.Name += " +" + equip.StrengthenLevel;
         result.IsWorn = equip.GetBagType() == (int)KnapsackType.RoleCurrtEquipPack;
         // 属性说明分别标明静态基础与实例词条，避免把槽位含义混为一谈。
-        StringBuilder attributes = new StringBuilder("基础属性\n");
+        StringBuilder attributes = new StringBuilder();
+        // 基础属性右列，与左列名称保持同样的行数和顺序。
+        StringBuilder values = new StringBuilder();
         // 静态装备配置中的六个基因编号及对应覆盖值。
         int[] baseIds = { config.GeneId0, config.GeneId1, config.GeneId2, config.GeneId3, config.GeneId4, config.GeneId5 };
         // 六个静态基因的策划值，与基础编号保持同序。
         int[] baseValues = { config.GeneValue0, config.GeneValue1, config.GeneValue2, config.GeneValue3, config.GeneValue4, config.GeneValue5 };
-        for (int index = 0; index < baseIds.Length; index++) AppendGeneText(attributes, baseIds[index], baseValues[index]);
-        attributes.Append("实例词条\n");
-        AppendGeneText(attributes, equip.GeneID0, equip.GeneValue0);
-        AppendGeneText(attributes, equip.GeneID1, equip.GeneValue1);
-        AppendGeneText(attributes, equip.GeneID2, equip.GeneValue2);
-        if (equip.GeneID0 == 0 && equip.GeneID1 == 0 && equip.GeneID2 == 0) attributes.Append("无\n");
-        result.Attributes = attributes.ToString();
+        for (int index = 0; index < baseIds.Length; index++)
+        {
+            if (baseIds[index] == 0) continue;
+            // 正式基因配置提供显示名和百分数类型，此处只拆分两列展示文字。
+            cfg.Gene gene = LubanMgr.Instance.GetGeneInfoById(baseIds[index]);
+            if (gene == null) continue;
+            attributes.Append(gene.EffectDesc).Append('\n');
+            values.Append(baseValues[index]);
+            if (gene.ValueType == 1) values.Append('%');
+            values.Append('\n');
+        }
+        result.Attributes = attributes.ToString().TrimEnd('\n');
+        result.AttributeValues = values.ToString().TrimEnd('\n');
+        // 实例词条单独分区，仍使用原有配置描述和数值格式。
+        StringBuilder traits = new StringBuilder();
+        AppendGeneText(traits, equip.GeneID0, equip.GeneValue0);
+        AppendGeneText(traits, equip.GeneID1, equip.GeneValue1);
+        AppendGeneText(traits, equip.GeneID2, equip.GeneValue2);
+        if (equip.GeneID0 == 0 && equip.GeneID1 == 0 && equip.GeneID2 == 0) traits.Append("暂无额外词条");
+        result.Traits = traits.ToString().TrimEnd('\n');
         // 三个保存槽逐一展示，只有当前选择且已穿戴的槽计算实际同名件数等级。
         for (int index = 0; index < 3; index++)
         {
@@ -583,6 +600,28 @@ public sealed class KnapsackCtrl : IDisposable
             result.CanActivateSpecialSkill[index] = !selected;
         }
         return result;
+    }
+
+    /// <summary>把已有装备部位枚举转换为详情顶部的中文标签。</summary>
+    /// <param name="part">当前装备正式配置中的部位。</param>
+    private static string EquipmentPartName(EquipType part)
+    {
+        switch (part)
+        {
+            case EquipType.MainWeapon: return "主武器";
+            case EquipType.OffhandWeapon: return "副武器";
+            case EquipType.Head: return "头部";
+            case EquipType.Chest: return "上衣";
+            case EquipType.Pants: return "下装";
+            case EquipType.Shoes: return "鞋履";
+            case EquipType.WaistWaist: return "腰带";
+            case EquipType.Bracer: return "护腕";
+            case EquipType.Necklace: return "项链";
+            case EquipType.Ring: return "戒指";
+            case EquipType.Bracelet: return "手镯";
+            case EquipType.JadePendant: return "玉佩";
+            default: return "装备";
+        }
     }
 
     /// <summary>按配置的数值类型显示一个基因覆盖值。</summary>

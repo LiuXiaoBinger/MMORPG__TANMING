@@ -8,8 +8,18 @@ public sealed class EquipmentDetailWindow : WindowBase
 {
     /// <summary>显示装备名和强化等级的标题。</summary>
     [SerializeField] private TMP_Text _nameText;
-    /// <summary>基础基因与实例词条说明。</summary>
+    /// <summary>固定顶部的装备图标，使用现有资源加载入口。</summary>
+    [SerializeField] private Image _icon;
+    /// <summary>固定顶部的中文部位名称。</summary>
+    [SerializeField] private TMP_Text _partText;
+    /// <summary>基础属性左列名称，与右列数值逐行对齐。</summary>
     [SerializeField] private TMP_Text _attributesText;
+    /// <summary>基础属性右列数值，采用与左列相同的行距。</summary>
+    [SerializeField] private TMP_Text _attributeValuesText;
+    /// <summary>实例词条分区中的正文。</summary>
+    [SerializeField] private TMP_Text _traitsText;
+    /// <summary>只滚动中间属性、词条和特技，顶部和底部按钮保持固定。</summary>
+    [SerializeField] private ScrollRect _scroll;
     /// <summary>预制体中按槽0、1、2排列的特技说明。</summary>
     [SerializeField] private TMP_Text[] _specialSkillTexts;
     /// <summary>对应三个特技槽的启用按钮，引用保存在正式预制体。</summary>
@@ -44,7 +54,13 @@ public sealed class EquipmentDetailWindow : WindowBase
     public void Render(EquipmentDetailViewData data)
     {
         _nameText.text = data.Name;
+        _partText.text = data.PartName;
         _attributesText.text = data.Attributes;
+        _attributeValuesText.text = data.AttributeValues;
+        _traitsText.text = data.Traits;
+        _icon.sprite = null;
+        // 图标仅用于展示，装备身份和所有操作仍由控制器持有。
+        ResourceMgr.Instance.LoadSpriteAsync(data.IconPath, sprite => _icon.sprite = sprite);
         _wearButton.gameObject.SetActive(!data.IsWorn);
         _takeOffButton.gameObject.SetActive(data.IsWorn);
         // 三个固定槽按服务器保存顺序渲染，空槽按钮停用。
@@ -53,6 +69,13 @@ public sealed class EquipmentDetailWindow : WindowBase
             _specialSkillTexts[index].text = data.SpecialSkillTexts[index];
             _activateButtons[index].interactable = data.CanActivateSpecialSkill[index];
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_scroll.content);
+    }
+
+    /// <summary>每次打开详情从正文顶部阅读，不改变已经绑定的装备或按钮事件。</summary>
+    private void OnEnable()
+    {
+        _scroll.verticalNormalizedPosition = 1f;
     }
 
     /// <summary>转交穿戴按钮事件。</summary>
