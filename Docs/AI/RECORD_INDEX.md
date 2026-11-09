@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `78ff09ebd9cba768e9a5f4a26749bc8fabc3ccae78d0186cd7f84e240e45115e`
+Source normalized SHA256: `4678410538b373c7d745f09e248750a7a2333d1d64e5e553266f9219fb307df9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -59,11 +59,12 @@ Source normalized SHA256: `78ff09ebd9cba768e9a5f4a26749bc8fabc3ccae78d0186cd7f84
 | [CODE][FILES][装备][基因][EQUIP-GENE-20261107] Equipment genes and special skills | 365-373 |
 | [CODE][FILES][HANDOFF][场景编辑器][副本][STAGE-BINDINGS-20261107] Explicit stage membership in scene configuration | 374-380 |
 | [CODE][FILES][基因][GENE-MINDMAP-20261108] Gene browser mind map | 381-389 |
-| [CODE][FILES][HANDOFF][基因][GENE-NODE-FACTORY-20261108] Concrete nodes call the actual role | 390-395 |
+| [CODE][FILES][HANDOFF][基因][GENE-NODE-FACTORY-20261108] Concrete nodes call the actual role | 390-396 |
+| [CODE][FILES][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment slots and manual weapon grant (2026-11-09) | 397-402 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `49271d3ae3be9ab615122a6b8980322bd793b9e98f32b62e6d8bbcc215a23d67`
+Source normalized SHA256: `018174d4db13f20f7c7d02469464f602427f3c10b701455d1df3e683adde865e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -114,7 +115,8 @@ Source normalized SHA256: `49271d3ae3be9ab615122a6b8980322bd793b9e98f32b62e6d8bb
 | [VERIFY][装备][基因][EQUIP-GENE-20261107] Equipment and Gene acceptance | 383-390 |
 | [VERIFY][场景编辑器][副本][STAGE-BINDINGS-20261107] Persistent membership and shared-node acceptance | 391-400 |
 | [VERIFY][基因][GENE-MINDMAP-20261108] Gene mind map acceptance | 401-408 |
-| [VERIFY][基因][GENE-NODE-FACTORY-20261108] Direct role mutation and cleanup acceptance | 409-415 |
+| [VERIFY][基因][GENE-NODE-FACTORY-20261108] Direct role mutation and cleanup acceptance | 409-416 |
+| [VERIFY][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment UI and persisted weapons (2026-11-09) | 417-423 |
 
 ## Docs/AI/DECISIONS.en.md
 

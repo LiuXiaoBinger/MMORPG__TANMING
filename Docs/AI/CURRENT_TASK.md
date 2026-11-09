@@ -387,3 +387,10 @@
 - OnlineRole 现自行持有 RoleGeneComponent Gene 与 RoleAttributeComponent AttrComp；装备仅管理装备来源和特性。既有服务端场景组件与客户端实体组件直接实现相同的所属角色/属性契约，不使用代理对象。这两个接口保留了原本不同的继承链；行为仍由 virtual/override 节点类实现。
 - 客户端 Destroying 在属性对象回池前清空 Gene。属性立即变化，资源上下限约束在本帧 Gene 处理结束后执行，修复了刷新最大生命值 Gene 时 HP 从 1200 降到 1000 的已复现问题。当前说明和导图包含 33 个节点、47 个代码/配置入口。未修改配置数值和协议。
 - 主 Agent Codex 实现并验收业务代码；子 Agent 仅同步、检查本次两个中文记录新段。证据：`_temp/gene-oncall-20261108/bilingual-check.json`。完整文件清单、失败、技能、用量和 Git 回执：`项目修改日志/2026-11-08-Gene节点工厂与公共运行模块.md`；难点分析：`项目分析/项目难点.md` 中本任务编号条目。真实 Unity 玩法、数据库重新登录、多服务器联网、完整 Gene 同步及平衡性仍未验证。
+
+## [CODE][FILES][装备][EQUIP-MANUAL-BAG-20261109] 空装备栏与手动武器发放（2026-11-09）
+
+- 已完成用户批准的范围：禁用 `LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab` 中 12 个静态外层 Image，保留真实装备槽、边框和 Gene 侧栏。精确修改 12 字节，未修改脚本/配置/协议/meta。UI 提交 `bd776af` 已推送到 `codex/feature-development`。
+- 用户选择了本地两个角色：`1 / 789` 和 `2 / 112`（JobID 1、等级 1）。每个角色的装备背包 `BagType=1` 中现有武器 `21001` 和 `21002`，分别位于从零开始的格位 `0,1`；穿戴栏保持为空，由用户手动穿戴。一次真实 MySQL 事务新增四件独立物品及对应装备/Gene 行，保存版本分别为 `22` 和 `1`。既有物品、裸属性和背包容量保持不变。
+- Codex 原生开发子 Agent `/root/equipment_manual`，模型 `gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，开发第 1 轮包含 UI 与数据库两个阶段，未使用外部执行器。主 Agent 已验收精确 UI 差异/截图及真实数据库只读比对。正式中心服读回通过 152 项字段比对，隔离穿戴测试通过 34 项断言。
+- 完整且已批准的日志：`项目修改日志/2026-11-09-角色空装备栏与武器入包.md`。证据：`_temp/equipment-bag-manual-20261109/parent-acceptance.json` 和 `database/verification.json`。用户可登录后穿戴两把武器；真实登录/网络/PlayMode/手动穿戴及 YooAsset 包异步加载仍未验证。不得重复执行已提交的数据库发放。

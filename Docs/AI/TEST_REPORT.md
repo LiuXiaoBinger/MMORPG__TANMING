@@ -403,3 +403,11 @@
 - 已复现客户端刷新失败：临时移除时 HP 从 1200 降到 1000；client-gene-before.log 保留失败证据。最终 6 项组件测试覆盖刷新、真实移除、Destroying 先于属性清理以及复用。测试通过 Unity Mono 运行实际客户端程序集，仅以反射搭建宿主，没有启动 Unity 场景。开发期间的编译/测试宿主失败保留在完整日志中。
 - 已验证导图锚点及全部 47 个路径；node --check 通过；三个已发布 DLL 与 dll-publish.json 中的构建哈希一致。没有新增浏览器交互验证。隔离装备测试不含数据库/玩家会话，gateway-session 错误属于预期隔离边界。真实 Unity 战斗、数据库迁移/重新登录、多服务器部署、完整 Gene 同步及平衡性未验证。
 - 完整文件、Git 与用量记录：`项目修改日志/2026-11-08-Gene节点工厂与公共运行模块.md`。中文增量检查仅限 CURRENT_TASK 和 TEST_REPORT 中本任务编号的新段，证据位于 `_temp/gene-oncall-20261108/bilingual-check.json`；旧双语内容不在本次检查范围内。
+
+## [VERIFY][装备][EQUIP-MANUAL-BAG-20261109] 空装备栏界面与武器持久化（2026-11-09）
+
+- 主 Agent 核验了 `UIRoot.prefab` 中精确 12 字节的变化，均为选定外层 Image 的启用标记，并查看了 `empty-equipment.png`。Unity 隔离 PreviewScene 确认 12 个空装备槽边框、Gene 的三个引用，以及真实 `RefreshUI → LoadSpriteAsync` 使用正式 Sprite 的缓存回调、正确的点击 UID 和清空行为。Console 错误保持 0，保留 Scene_Boot dirty=False。该验证未覆盖包异步加载或真实 PlayMode。
+- 真实服务端组件隔离测试：两把适用武器经 AddItem/WearItem/TakeOffItem 共通过 34 项断言。每把武器安装七个 Gene 根节点，改变最终属性且不改变裸属性，移除后恢复。向隔离角色 95009 发送时报告缺少网关会话，不能据此声称真实网络已通过。
+- 真实 localhost:3308/game_db 事务：角色 `1 / 789` 与 `2 / 112` 各获得 `21001,21002`，位于 BagType 1、从零开始的格位 0 和 1；共四个独立 UID，item/equip/equip_xl_gene 每张表各新增四行。保存版本为 `21→22` 和 `0→1`，两个角色的穿戴列表均为空。既有物品、裸属性、容量和其他角色字段保持不变。正式 `CentRoleModel.RoleKanpaskInfo(EnterWroldReq)` 读回匹配 152 个字段，读回本身未修改存储；主 Agent 另行将实时记录与事务后快照比对。回滚仅作预检，从未执行。
+- 初次只读查询因表名拼写错误产生 MySQL 1146，已改为 `equip_xl_gene`；一次临时 PowerShell 引号错误通过改用脚本解决。未发生失败写入。原生开发者：`/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮分两个阶段执行；主 Agent 已完成验收。
+- 证据：`_temp/equipment-bag-manual-20261109/`（`changed-files.json`、`unity-ui-verification.txt`、`weapon-check-results.log`、`database/verification.json`、`parent-acceptance.json`）。完整且已批准的日志：`项目修改日志/2026-11-09-角色空装备栏与武器入包.md`。仍未验证：实际客户端登录/Socket 路径、Unity PlayMode 与手动穿戴、YooAsset 包异步加载及战斗平衡。本次仅追加文档后未重跑业务测试。
