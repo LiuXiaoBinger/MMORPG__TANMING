@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `36b398346fdf5e0c63c344f771f01adf75d032ea20a54bea91ed1d78db2800c6`
+Source normalized SHA256: `df52d6686d8e52003ff4b577483c2f35d4091afac6665e220d5ebe10c73607e5`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -61,12 +61,12 @@ Source normalized SHA256: `36b398346fdf5e0c63c344f771f01adf75d032ea20a54bea91ed1
 | [CODE][FILES][基因][GENE-MINDMAP-20261108] Gene browser mind map | 381-389 |
 | [CODE][FILES][HANDOFF][基因][GENE-NODE-FACTORY-20261108] Concrete nodes call the actual role | 390-396 |
 | [CODE][FILES][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment slots and manual weapon grant (2026-11-09) | 397-403 |
-| [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09) | 404-445 |
-| [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Per-scene monster battle resources | 446-453 |
+| [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09) | 404-448 |
+| [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Per-scene monster battle resources | 449-456 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `ee5f12992e3b154f885e5f0217c6c4d79e7bddf211097d86f3f577eae7dcfe57`
+Source normalized SHA256: `1749d43a5a9b1fd629bbb7cd1641abd01d4a45eef94cce989f6ecf077ccc19bb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -119,8 +119,8 @@ Source normalized SHA256: `ee5f12992e3b154f885e5f0217c6c4d79e7bddf211097d86f3f57
 | [VERIFY][基因][GENE-MINDMAP-20261108] Gene mind map acceptance | 401-408 |
 | [VERIFY][基因][GENE-NODE-FACTORY-20261108] Direct role mutation and cleanup acceptance | 409-416 |
 | [VERIFY][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment UI and persisted weapons (2026-11-09) | 417-424 |
-| [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09) | 425-467 |
-| [VERIFY][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Configured battle loading and Moshenta regression | 468-475 |
+| [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09) | 425-470 |
+| [VERIFY][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Configured battle loading and Moshenta regression | 471-478 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -424,6 +424,9 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09)
 
+**Final two-entry acceptance (2026-11-10).** Parent verified both new button centers hit their own handlers and both exact unavailable messages appeared for live weapon 21001; screenshot and evidence: `_temp/equipment-ui-layout-20261109/revision16/r18-final.png`, `r18-parent-buttons-final.txt`, `r18-stripped-fix.json`. This check required temporary runtime binding of the existing MoshentaBlackCurtainWindow: the unrelated working-tree MainView reference was null at InitView line 219 and paused Play. No production binding was saved; normal fresh-login acceptance remains blocked by that reference. After a fresh run with this test-only binding, original camera rendering and normal login were used, without wear/trait operations. Play was stopped to discard all temporary state. Earlier full layout checks remain historical; this addendum does not claim an unmodified fresh-login pass.
+
+
 **Latest revision 6 acceptance — video comparison and real runtime (2026-11-10).**
 
 - WorkBuddy's final build passed with zero errors; earlier full rebuilds reported 62 warnings. Unity imported the final prefab/scripts; final Console error query returned zero. Parent visually checked actual 1920x1080 and 1366x768 captures (not mock previews); final GameView restored to 1920x1080.

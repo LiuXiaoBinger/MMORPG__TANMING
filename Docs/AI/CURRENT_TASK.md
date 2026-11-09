@@ -397,6 +397,9 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] 装备详情不透明布局与实机运行修复（2026-11-09）
 
+**最终补充（2026-11-10）。** WorkBuddy DeepSeek 在既有预制体与 EquipmentDetailWindow 中新增了独立的套装/外观查看按钮；两者均只提示对应功能未开放。这是第 18 次代码修订，其后为一次预制体序列化修正（对应 Hub 第 17/18 轮）。Codex 在推送前拒绝了 c3772ea：其投影丢失 69 个 stripped 块头，并引入两处子节点列表空行。修正后的投影保留全部 69 个块头，改动 5 个既有详情块、新增 18 个、删除 0 个；子树之外的所有块与 c573028 一致。未包含任何无关的工作区改动。
+
+
 **最新第 6 轮——按录屏对齐的紧凑装备详情（2026-11-10）。**
 
 - 仅四个生产文件：UIRoot.prefab 的 EquipmentDetailWindow 子树、EquipmentDetailWindow.cs、EquipmentDetailViewData.cs 与 KnapsackCtrl.cs。520x580 的不透明淡蓝窗口现包含身份/状态、独立祭甲条、可滚动的双列属性/Gene/镶嵌/套装/淬锋/三个独立特技/外观，另有固定底栏与独立的右侧操作列。缺失的养成数据保持占位；八个未开放动作给出明确提示。既有 View/WindowBase 归属与穿戴/特技协议事件保持不变。

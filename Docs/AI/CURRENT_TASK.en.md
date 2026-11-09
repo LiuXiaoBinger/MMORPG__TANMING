@@ -403,6 +403,9 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09)
 
+**Final entry addendum (2026-11-10).** WorkBuddy DeepSeek added separate set/appearance view buttons in the existing prefab and EquipmentDetailWindow; each only reports that its feature is unavailable. This was code revision 18, followed by one prefab serialization repair (Hub rounds 17/18). Codex rejected c3772ea before push: its projection lost 69 stripped headers and introduced two child-list blank lines. The corrected projection retains all 69 headers, changes five existing detail blocks, adds 18 and deletes none; all outside blocks equal c573028. No unrelated working-tree changes are included.
+
+
 **Latest revision 6 — video-guided compact equipment details (2026-11-10).**
 
 - Four production files only: EquipmentDetailWindow subtree of UIRoot.prefab, EquipmentDetailWindow.cs, EquipmentDetailViewData.cs and KnapsackCtrl.cs. A 520x580 opaque pale-blue window now has identity/status, a separate garnish strip, scrolling two-column attributes/Gene/gems/set/forge/three independent traits/appearance, a fixed footer and a separate action rail. Missing progression data stays a placeholder; eight unopened actions give explicit feedback. Existing View/WindowBase ownership and wear/trait protocol events are retained.
