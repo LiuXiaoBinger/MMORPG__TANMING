@@ -544,27 +544,51 @@ public sealed class KnapsackCtrl : IDisposable
         result.PartName = EquipmentPartName((EquipType)config.EquipType);
         if (equip.StrengthenLevel > 0) result.Name += " +" + equip.StrengthenLevel;
         result.IsWorn = equip.GetBagType() == (int)KnapsackType.RoleCurrtEquipPack;
-        // 属性说明分别标明静态基础与实例词条，避免把槽位含义混为一谈。
-        StringBuilder attributes = new StringBuilder();
-        // 基础属性右列，与左列名称保持同样的行数和顺序。
-        StringBuilder values = new StringBuilder();
+        // 属性按录屏改成双列：左列三行先填满，剩余行落到右列，名称与数值行号一一对应。
+        StringBuilder leftNames = new StringBuilder();
+        // 左列数值，保留百分数语义。
+        StringBuilder leftValues = new StringBuilder();
+        // 右列名称，与左列行序连续。
+        StringBuilder rightNames = new StringBuilder();
+        // 右列数值，与右列名称同序。
+        StringBuilder rightValues = new StringBuilder();
         // 静态装备配置中的六个基因编号及对应覆盖值。
         int[] baseIds = { config.GeneId0, config.GeneId1, config.GeneId2, config.GeneId3, config.GeneId4, config.GeneId5 };
         // 六个静态基因的策划值，与基础编号保持同序。
         int[] baseValues = { config.GeneValue0, config.GeneValue1, config.GeneValue2, config.GeneValue3, config.GeneValue4, config.GeneValue5 };
+        // visible 是已配置基因在双列中的实际填写行数，0~2 落左列，3 起落右列。
+        int visible = 0;
         for (int index = 0; index < baseIds.Length; index++)
         {
             if (baseIds[index] == 0) continue;
-            // 正式基因配置提供显示名和百分数类型，此处只拆分两列展示文字。
+            // 正式基因配置提供显示名和百分数类型，此处只拆分四列展示文字。
             cfg.Gene gene = LubanMgr.Instance.GetGeneInfoById(baseIds[index]);
             if (gene == null) continue;
-            attributes.Append(gene.EffectDesc).Append('\n');
-            values.Append(baseValues[index]);
-            if (gene.ValueType == 1) values.Append('%');
-            values.Append('\n');
+            // nameTarget 与 valueTarget 是当前行应写入的列缓冲，左列满三行后切到右列。
+            StringBuilder nameTarget = leftNames;
+            // valueTarget 是同名列对应的数值缓冲，切换规则与名称一致。
+            StringBuilder valueTarget = leftValues;
+            if (visible >= 3)
+            {
+                nameTarget = rightNames;
+                valueTarget = rightValues;
+            }
+            nameTarget.Append(ShortGeneName(gene.EffectDesc)).Append('\n');
+            valueTarget.Append(baseValues[index]);
+            if (gene.ValueType == 1) valueTarget.Append('%');
+            valueTarget.Append('\n');
+            visible++;
         }
-        result.Attributes = attributes.ToString().TrimEnd('\n');
-        result.AttributeValues = values.ToString().TrimEnd('\n');
+        result.AttributeLeftNames = leftNames.ToString().TrimEnd('\n');
+        result.AttributeLeftValues = leftValues.ToString().TrimEnd('\n');
+        // 右列没有配置时补中性占位，避免右侧 TMP 空白。
+        result.AttributeRightNames = rightNames.ToString().TrimEnd('\n');
+        result.AttributeRightValues = rightValues.ToString().TrimEnd('\n');
+        if (string.IsNullOrEmpty(result.AttributeRightNames)) result.AttributeRightNames = "—";
+        if (string.IsNullOrEmpty(result.AttributeRightValues)) result.AttributeRightValues = "—";
+        // 旧字段保持左列语义，其它引用方不会读到空值。
+        result.Attributes = result.AttributeLeftNames;
+        result.AttributeValues = result.AttributeLeftValues;
         // 实例词条单独分区，仍使用原有配置描述和数值格式。
         StringBuilder traits = new StringBuilder();
         AppendGeneText(traits, equip.GeneID0, equip.GeneValue0);
@@ -579,7 +603,9 @@ public sealed class KnapsackCtrl : IDisposable
             int familyId = equip.GetSpecialSkillId(index);
             if (familyId == 0)
             {
-                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空";
+                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空槽，未镶嵌特技";
+                // 空槽标题行只写槽位与「空」，不伪造已装配的特技名，也不画占位横线。
+                result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：空";
                 continue;
             }
             // 本装备当前选择状态，未穿戴时不作为已生效显示。
@@ -589,17 +615,90 @@ public sealed class KnapsackCtrl : IDisposable
             // 当前族的有效等级配置；没有穿戴时显示一级基础说明。
             cfg.EquipSpecialSkillInfo skill = ResolveSpecialSkill(familyId, pieces);
             if (skill == null) continue;
-            // 当前槽状态说明。
+            // 当前槽状态说明，详情层保留完整措辞。
             string state = "未启用";
             if (selected)
             {
                 state = "已选，未穿戴";
                 if (result.IsWorn) state = "已启用，同名" + pieces + "件";
             }
+            // 标题行只放短状态，窄行内不会被省略号截断而丢掉「未穿戴」。
+            string shortState = "未启用";
+            if (selected)
+            {
+                shortState = "已选·未穿";
+                if (result.IsWorn) shortState = "已启用·" + pieces + "件";
+            }
             result.SpecialSkillTexts[index] = skill.Name + " Lv." + skill.Level + "（" + state + "）\n" + skill.Description;
+            // 标题行两行：第一行槽位与名称等级，第二行短状态；完整说明留给详情层。
+            result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：" + skill.Name + " Lv." + skill.Level + "\n" + shortState;
             result.CanActivateSpecialSkill[index] = !selected;
         }
+        // 头部角标只由服务器穿戴状态派生，不根据按钮显隐猜测。
+        result.WornBadgeText = "未装备";
+        if (result.IsWorn)
+        {
+            result.WornBadgeText = "装备中";
+        }
+        // 右上部位与品质、绑定拆成两个独立 TMP；品质与绑定没有真实字段，统一中性占位。
+        result.HeaderPartText = EquipmentPartName((EquipType)config.EquipType) + " · 品质 —";
+        result.HeaderBindText = "绑定 —";
+        // 原元信息行改承担评分与需求，两行都在窄区内。
+        result.MetaText = BuildMetaText(config);
+        // 附加分区与底栏只用已存在的配置和实例字段；没有来源的统一中性占位，不写录屏数值。
+        // 交易与耐久都没有真实字段，未知不等于不可交易，统一中性占位。
+        result.FooterText = "交易：—    耐久：—/—";
+        result.InfoLayerText = BuildInfoText(config);
+        result.FooterExtraText = result.InfoLayerText;
+        // 无真实宝石实例时只显示空槽，不断言已镶嵌或未镶嵌。
+        result.GemDropText = "镶嵌：空槽";
+        // 独立行控件的数据：宝石孔数与强化取真实配置，其余保持中性占位。
+        result.GemSlotCount = config.GemSlotCount;
+        result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  阶位 —";
+        result.ForgeRowText = "淬锋：暂无数据  ·  铭缀：暂无数据";
+        // 祭甲与甲片、套装总阶与件数各占一整行，避免挤成 34px 再溢出。
+        result.GarnishRowText = "祭甲：未祭甲    甲片：—    甲片评分：—";
+        result.SetRowText = "套装：总阶 —  ·  件数 —/—";
+        // 特技信息行取第一个真实特技槽文本，空槽时也沿用其「空」说明。
+        result.FeatureRowText = result.SpecialSkillTexts[0];
+        result.AppearanceRowText = "外观：—  ·  无额外养成";
         return result;
+    }
+
+    /// <summary>生成头部元信息：评分与需求等级两行，职业为中性占位，状态由角标单独承载。</summary>
+    /// <param name="config">当前装备的静态配置。</param>
+    /// <returns>头部元信息的两行展示文本。</returns>
+    private static string BuildMetaText(cfg.EquipInfo config)
+    {
+        // meta 是逐段拼接的头部两行文本，避免为展示数据新建类型。
+        StringBuilder meta = new StringBuilder();
+        meta.Append("评分 —\n");
+        meta.Append("需求等级 ").Append(config.NeedLevel).Append(" · 职业 —");
+        return meta.ToString();
+    }
+
+    /// <summary>生成信息层正文，只用静态配置里已有的说明与获取途径，不编造装备背景。</summary>
+    /// <param name="config">当前装备的静态配置。</param>
+    /// <returns>说明与获取途径两行文本。</returns>
+    private static string BuildInfoText(cfg.EquipInfo config)
+    {
+        // desc 是配置里的装备说明，缺失时用中性占位。
+        string desc = "暂无数据";
+        if (!string.IsNullOrEmpty(config.Des))
+        {
+            desc = config.Des;
+        }
+        // source 是配置里的获取途径，缺失时用中性占位。
+        string source = "暂无数据";
+        if (!string.IsNullOrEmpty(config.Source))
+        {
+            source = config.Source;
+        }
+        // text 是说明层两行正文，职业编号不映射职业名，避免用数字冒充中文职业。
+        StringBuilder text = new StringBuilder();
+        text.Append("说明：").Append(desc).Append('\n');
+        text.Append("获取途径：").Append(source);
+        return text.ToString();
     }
 
     /// <summary>把已有装备部位枚举转换为详情顶部的中文标签。</summary>
@@ -622,6 +721,27 @@ public sealed class KnapsackCtrl : IDisposable
             case EquipType.JadePendant: return "玉佩";
             default: return "装备";
         }
+    }
+
+    /// <summary>把过长的属性名压到四列可读长度，只做等价缩写，不改变含义。</summary>
+    /// <param name="desc">配置里的原始属性描述。</param>
+    /// <returns>不超过四字的展示名，未命中的名称原样返回。</returns>
+    private static string ShortGeneName(string desc)
+    {
+        if (string.IsNullOrEmpty(desc)) return "—";
+        // 命中表里只放常见长名，缩写后语义不变，避免四列各 77 宽时被截断。
+        if (desc == "外功攻击最小值") return "外攻下限";
+        if (desc == "外功攻击最大值") return "外攻上限";
+        if (desc == "内功攻击最小值") return "内攻下限";
+        if (desc == "内功攻击最大值") return "内攻上限";
+        if (desc == "外功攻击") return "外攻";
+        if (desc == "内功攻击") return "内攻";
+        if (desc == "命中属性值") return "命中";
+        if (desc == "暴击属性值") return "暴击";
+        if (desc == "暴击伤害") return "暴伤";
+        if (desc == "外功防御") return "外防";
+        if (desc == "内功防御") return "内防";
+        return desc;
     }
 
     /// <summary>按配置的数值类型显示一个基因覆盖值。</summary>

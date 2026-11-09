@@ -403,6 +403,14 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09)
 
+**Latest revision 6 — video-guided compact equipment details (2026-11-10).**
+
+- Four production files only: EquipmentDetailWindow subtree of UIRoot.prefab, EquipmentDetailWindow.cs, EquipmentDetailViewData.cs and KnapsackCtrl.cs. A 520x580 opaque pale-blue window now has identity/status, a separate garnish strip, scrolling two-column attributes/Gene/gems/set/forge/three independent traits/appearance, a fixed footer and a separate action rail. Missing progression data stays a placeholder; eight unopened actions give explicit feedback. Existing View/WindowBase ownership and wear/trait protocol events are retained.
+- Parent verified live bag weapons 21001/21002: hover and right click do not open details; left click does, with wear visible and takeoff hidden. No wear, trait activation or direct item/database mutation was performed. Three complete trait explanations, both scroll limits, more menu, footer, fold/reopen/switch reset and 1920x1080/1366x768 screenshots were checked. GameView restored to 1920x1080; main city remains running with details closed.
+- Native domestic WorkBuddy: four Hy4 implementation attempts, then thirteen deepseek-v4.1-flash code revisions (17 total including the final equivalent if/else compliance correction, not platform rounds). Original Hub hub-d0273747-ecdc-4772-9164-c64aa5d5eaa2 was cancelled after its unclaimed Hy4-limited request; continuation Hub hub-9187a331-8d36-4133-a2b0-8060e754c6f2 uses session 46168831-5453-4dcb-aacc-3d540babbcb5. User expressly waived this task's seven-round limit. Doubao compatibility failed before task dispatch; it did not develop this UI. Codex inspected/rejected artifacts, verified runtime and integrated Git; it did not implement production changes.
+- Evidence: _temp/equipment-ui-layout-20261109/revision13/parent-details.txt, revision15/final-forge.txt, revision16/final-routes.txt, final-raycast.txt, final-feedback.txt and screenshots. Approved full log: 项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md. Not a pixel-exact recreation; progression, combat, persistence, equipped-item runtime branch and physical mouse input were not re-tested. Earlier history below remains historical.
+
+
 **Latest revision 5 — click-only equipment details (2026-11-09).**
 
 - WorkBuddy domestic / hy4free removed the sole ShowItmeTips call from KnapsackSlotWidget.OnPointerEnter and corrected that method's Chinese comments. Hover still highlights; existing left-button routes open the pale-blue EquipmentDetailWindow; exit cleanup remains. No prefab, item, server or protocol changes; no new non-equipment detail feature.

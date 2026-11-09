@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>装备详情 · 视频布局对照（2026-11-10）</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --panel: #ffffff;
+    --ink: #1d2733;
+    --ink-2: #4a5a6b;
+    --ink-3: #7a8794;
+    --line: #dde4ec;
+    --accent: #2f6fa8;
+    --warn-bg: #fff8e6;
+    --warn-line: #e8cd8a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 28px 24px 56px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.7 "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: .3px; }
+  h2 {
+    font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
+    border-left: 3px solid var(--accent); line-height: 1.4;
+  }
+  .sub { color: var(--ink-3); font-size: 12.5px; margin: 0 0 18px; }
+  .sub-tight { margin-bottom: 6px; }
+  .sub-below-table { margin-top: 10px; }
+  .note {
+    background: var(--warn-bg); border: 1px solid var(--warn-line);
+    border-radius: 6px; padding: 12px 16px; margin: 16px 0 4px;
+    color: #5b4516; font-size: 13px;
+  }
+  .note ul { margin: 6px 0 0; padding-left: 18px; }
+  .note li { margin: 3px 0; }
+
+  .pair {
+    display: flex; gap: 22px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 8px; padding: 16px; overflow-x: auto;
+  }
+  .pair.bottom { align-items: flex-end; }
+  .col { flex: 0 0 auto; }
+  .col-head {
+    display: flex; align-items: baseline; gap: 8px;
+    margin: 0 0 8px; font-size: 13px; color: var(--ink-2);
+  }
+  .col-head b { color: var(--ink); font-weight: 600; }
+  .col-head span { color: var(--ink-3); font-size: 12px; }
+
+  /* 裁剪用真实像素，1:1 显示；不做任何拉伸 */
+  .shot {
+    background-repeat: no-repeat;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background-color: #eef2f7;
+  }
+  .shot.bytes { width: auto; height: auto; }
+
+  .ref-top {
+    width: 634px; height: 674px;
+    background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-01.00s.png");
+    background-size: 1336px 796px;
+    background-position: -550px -120px;
+  }
+  .cur-top {
+    width: 506px; height: 560px;
+    background-image: url("../_temp/equipment-ui-layout-20261109/revision15/final-top.png");
+    background-size: 1920px 1080px;
+    background-position: -714px -252px;
+  }
+  .ref-bottom {
+    width: 634px; height: 380px;
+    background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-19.00s.png");
+    background-size: 1336px 796px;
+    background-position: -550px -414px;
+  }
+  .cur-bottom {
+    width: 506px; height: 380px;
+    background-image: url("../_temp/equipment-ui-layout-20261109/revision14/parent-real-bottom-more.png");
+    background-size: 1920px 1080px;
+    background-position: -714px -432px;
+  }
+
+  .links { font-size: 12.5px; margin-top: 8px; }
+  .links a { color: var(--accent); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin-top: 10px;
+    background: var(--panel); font-size: 12.5px;
+  }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }
+  th { background: #eef3f9; font-weight: 600; color: var(--ink-2); }
+  td code { font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #2b4a68; }
+
+  ul.plain { margin: 8px 0 0; padding-left: 20px; }
+  ul.plain li { margin: 5px 0; }
+  .foot { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>装备详情 · 视频布局对照</h1>
+  <p class="sub">任务编号 EQUIP-UI-LAYOUT-20261109 · revision 6 · 2026-11-10 · 左侧为参考录屏原始帧，右侧为本项目实机截图</p>
+
+  <div class="note">
+    <b>阅读说明</b>
+    <ul>
+      <li>两侧图都是从<strong>原始截图直接裁剪</strong>的像素，未重绘、未拼接、未改色，也未做任何缩放或比例压扁；裁剪框数值见文末表格，可对照原图复核。</li>
+      <li>两侧<strong>只对照布局</strong>（区块顺序、分区高度、按钮位置、层级关系），不表示视觉风格一致。</li>
+      <li>本项目背景与参考配色不同：参考为深色面板，本项目为不透明淡蓝面板；背景色差异不属于布局差异。</li>
+      <li>参考里的养成数值，本项目只有一部分有真实来源：<strong>强化当前值/上限</strong>（如 0/80，取实例 StrengthenLevel 与配置 MaxStrengthenLevel）、<strong>宝石孔数</strong>（取配置 GemSlotCount）、装备部位与需求等级、特技名称与等级为真实读取；<strong>强化与镶嵌等养成操作本身、宝石实例数据、套装总阶与件数、淬锋与铭缀、外观养成</strong>尚未开发，用「—」或「暂无数据」占位，不填录屏数值，也不伪造已镶嵌/已生效状态。</li>
+    </ul>
+  </div>
+
+  <h2>一、顶部对照</h2>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏</b><span>frame-01.00s.png（1336×796）裁剪 550,120 – 1184,794</span></p>
+      <div class="shot ref-top" role="img" aria-label="参考录屏顶部裁剪：装备名与品质、祭甲与甲片评分、强化行、双列属性、右侧操作列"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-01.00s.png">打开原始帧 frame-01.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目实机</b><span>revision15/final-top.png（1920×1080）裁剪 714,252 – 1220,812</span></p>
+      <div class="shot cur-top" role="img" aria-label="本项目实机顶部裁剪：装备详情窗口与右侧操作列"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision15/final-top.png">打开原图 final-top.png</a></p>
+    </div>
+  </div>
+
+  <h2>二、底部对照</h2>
+  <div class="pair bottom">
+    <div class="col">
+      <p class="col-head"><b>参考录屏</b><span>frame-19.00s.png（1336×796）裁剪 550,414 – 1184,794（套装往下到底行）</span></p>
+      <div class="shot ref-bottom" role="img" aria-label="参考录屏底部裁剪：套装、淬锋、特技、外观与底部行"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-19.00s.png">打开原始帧 frame-19.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目实机</b><span>revision14/parent-real-bottom-more.png 裁剪 714,432 – 1220,812（滚到底 + 更多展开）</span></p>
+      <div class="shot cur-bottom" role="img" aria-label="本项目实机底部裁剪：套装到交易行与展开的更多菜单"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision14/parent-real-bottom-more.png">打开原图 parent-real-bottom-more.png</a></p>
+    </div>
+  </div>
+
+  <h2>三、最新实机原图（revision16）</h2>
+  <p class="sub sub-tight">以下是本轮收尾后的最新截图原图，未裁剪、未处理，供逐项复核；正文对照图沿用布局未变动的版本。</p>
+  <ul class="plain">
+    <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-1366-top.png">revision16 / final-1366-top.png</a> —— 1366×768 顶部</li>
+    <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-1366-bottom.png">revision16 / final-1366-bottom.png</a> —— 1366×768 底部</li>
+    <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-footer.png">revision16 / final-footer.png</a> —— 1920×1080 底栏说明区</li>
+  </ul>
+
+  <h2>四、裁剪框与实际尺寸核对</h2>
+  <table>
+    <thead>
+      <tr><th>位置</th><th>来源文件</th><th>原图尺寸</th><th>裁剪框 (left, top, right, bottom)</th><th>裁剪后尺寸</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>顶部 · 参考</td><td>revision6/frames/frame-01.00s.png</td><td>1336×796</td><td><code>550, 120, 1184, 794</code></td><td>634×674</td></tr>
+      <tr><td>顶部 · 本项目</td><td>revision15/final-top.png</td><td>1920×1080</td><td><code>714, 252, 1220, 812</code></td><td>506×560</td></tr>
+      <tr><td>底部 · 参考</td><td>revision6/frames/frame-19.00s.png</td><td>1336×796</td><td><code>550, 414, 1184, 794</code></td><td>634×380</td></tr>
+      <tr><td>底部 · 本项目</td><td>revision14/parent-real-bottom-more.png</td><td>1920×1080</td><td><code>714, 432, 1220, 812</code></td><td>506×380</td></tr>
+    </tbody>
+  </table>
+  <p class="sub sub-below-table">
+    本项目窗口外框实测：左沿 x≈714、上沿 y≈252、右沿 x≈1219（含右侧操作列）、下沿 y≈811；与预先给出的约 710,250–1220,830 一致，830 略低于实测下沿，故按实测 812 取值。
+    参考帧窗口边界按 550,120–1184,794 取值（顶部取 frame-01.00s.png、底部取 frame-19.00s.png，两帧同为 1336×796、窗口位置一致），裁剪右缘会带进参考界面自身右侧面板的窄条，属原始画面，未做涂抹。
+  </p>
+
+  <h2>五、已知差异与未覆盖项</h2>
+  <ul class="plain">
+    <li>分辨率不同：参考帧为 1336×796，本项目截图 1920×1080 与 1366×768，故两侧裁剪像素尺寸不同，按原生像素 1:1 并排，不缩放对齐。</li>
+    <li>配色不同：参考为深色底 + 金色描边；本项目为不透明淡蓝底 + 深蓝文字。仅对照布局。</li>
+    <li>未开发内容：强化/镶嵌等养成操作、宝石实例（镶嵌内容）、套装总阶与件数、淬锋与铭缀、外观养成、评分与品质字段、交易与耐久；这些显示「—」或「暂无数据」。<strong>强化当前值/上限与宝石孔数不是占位</strong>，按真实实例（StrengthenLevel）与配置（MaxStrengthenLevel、GemSlotCount）读取。</li>
+    <li>未验证：本页面未在浏览器中打开过（浏览器安全策略拒绝 file URL，未做任何绕过），仅完成 HTML 结构与引用路径的存在性校验。</li>
+  </ul>
+
+  <p class="foot">生成时间 2026-11-10 · 由 WorkBuddy 会话 46168831-5453-4dcb-aacc-3d540babbcb5 生成 · 图片均引用项目内本地相对路径</p>
+</div>
+</body>
+</html>

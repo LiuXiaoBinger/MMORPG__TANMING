@@ -424,6 +424,14 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09)
 
+**Latest revision 6 acceptance — video comparison and real runtime (2026-11-10).**
+
+- WorkBuddy's final build passed with zero errors; earlier full rebuilds reported 62 warnings. Unity imported the final prefab/scripts; final Console error query returned zero. Parent visually checked actual 1920x1080 and 1366x768 captures (not mock previews); final GameView restored to 1920x1080.
+- Parent drove actual existing buttons/ExecuteEvents. Both bag weapons passed hover=false, right=false, left=true, wear=true, takeoff=false. Three trait slots show independent full effects, including Blood Sorrow's 10% recovery description and an explicit empty slot. Eight progression/edit actions produced their matching unopened tips. At 1366x768, all 20 visible button centers in the bottom/more state hit their own handlers; earlier 17-button test also passed. No wear or activation button was clicked.
+- Real failures were retained and fixed: overflowed header, uneven attribute baselines, huge gem slot, hidden trait names, title-only detail, controller data accidentally reset by developer, stale assembly during preview, collapsed forge state surviving reopen, footer outside the window, and low footer contrast. Parent observed forge alpha 1->0->1, reopen=1, switch to 21002=1 with footer closed. Footer is now opaque pale blue with readable dark 14-point text inside the main panel. Developer's later login blocker was a mistaken role-name-as-account; parent restored the existing correct account via read-only ownership lookup, without changing server or DB code.
+- Final evidence directory: _temp/equipment-ui-layout-20261109/revision16/; cross-input evidence retained in revision13/parent-details.txt and revision15/final-forge.txt. Earlier editor-only snapshots are not runtime proof. Local comparison HTML was not browser-verified because the browser rejected file URLs; no bypass was attempted. Physical OS mouse input, newly equipped state, combat, persistence, progression/balance and other screen sizes remain unverified in this phase. Documentation synchronization and Git receipts are recorded separately in the full approved log.
+
+
 **Latest revision 5 acceptance — click-only detail route (2026-11-09).**
 
 - Actual source diff is confined to KnapsackSlotWidget.OnPointerEnter: one old-detail call removed and summary/parameter comments updated. Unity GM_Game.dll compiled at 2026-11-09T12:29:44.6842054Z; compilation finished and Console error count was zero before Play and after runtime checks.

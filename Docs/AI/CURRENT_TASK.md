@@ -397,6 +397,13 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] 装备详情不透明布局与实机运行修复（2026-11-09）
 
+**最新第 6 轮——按录屏对齐的紧凑装备详情（2026-11-10）。**
+
+- 仅四个生产文件：UIRoot.prefab 的 EquipmentDetailWindow 子树、EquipmentDetailWindow.cs、EquipmentDetailViewData.cs 与 KnapsackCtrl.cs。520x580 的不透明淡蓝窗口现包含身份/状态、独立祭甲条、可滚动的双列属性/Gene/镶嵌/套装/淬锋/三个独立特技/外观，另有固定底栏与独立的右侧操作列。缺失的养成数据保持占位；八个未开放动作给出明确提示。既有 View/WindowBase 归属与穿戴/特技协议事件保持不变。
+- 主 Agent 在实机背包武器 21001/21002 上验证：悬停与右键均不打开详情；左键打开，穿戴时显示“卸载”、未穿戴时显示“装备”。未执行穿戴、特技激活或直接改物品/数据库。已核对三段完整特技说明、滚动两端极限、更多菜单、底栏、折叠/重开/切换后的复位，以及 1920x1080 与 1366x768 截图。GameView 已恢复 1920x1080；主城保持运行，详情已关闭。
+- 国内版原生 WorkBuddy：Hy4 实施四次，随后 deepseek-v4.1-flash 实施十三次（合计 17 次，含最后一次等价 if/else 合规修正；不等于平台轮数）。原 Hub hub-d0273747-ecdc-4772-9164-c64aa5d5eaa2 在其未领取的 Hy4 受限请求后被取消；接续 Hub hub-9187a331-8d36-4133-a2b0-8060e754c6f2 使用会话 46168831-5453-4dcb-aacc-3d540babbcb5。用户明确豁免本任务的七轮上限。Doubao 兼容在任务派发前即失败，未参与本界面开发。Codex 负责检查/退回产物、实机验证与 Git 集成，未实施生产代码改动。
+- 证据：_temp/equipment-ui-layout-20261109/revision13/parent-details.txt、revision15/final-forge.txt、revision16/final-routes.txt、final-raycast.txt、final-feedback.txt 及截图。已批准完整日志：项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md。本轮不是像素级复刻；养成数值、战斗、持久化、已穿戴物的运行时分支与物理鼠标输入未重新测试。下方更早历史仍为历史。
+
 **最新第 5 轮——仅点击打开装备详情（2026-11-09）。**
 
 - 国内版 WorkBuddy / hy4free 删除 KnapsackSlotWidget.OnPointerEnter 中唯一的 ShowItmeTips 调用，并修正该方法的中文注释。悬停仍显示格子高亮；既有左键链路仍打开淡蓝 EquipmentDetailWindow；鼠标离开时的清理保留。未改预制体、物品、服务端或协议，也未新增非装备详情功能。
