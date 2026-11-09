@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `3111bd1d3c9adf275c8f9c635f4052c9ebf9b60154b526a7499c8f8e91654111`
+Source normalized SHA256: `f820db5b73df50fbb38d0d578e6d946832c849a34713ff50ef7e43af201f0b64`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -61,11 +61,11 @@ Source normalized SHA256: `3111bd1d3c9adf275c8f9c635f4052c9ebf9b60154b526a7499c8
 | [CODE][FILES][基因][GENE-MINDMAP-20261108] Gene browser mind map | 381-389 |
 | [CODE][FILES][HANDOFF][基因][GENE-NODE-FACTORY-20261108] Concrete nodes call the actual role | 390-396 |
 | [CODE][FILES][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment slots and manual weapon grant (2026-11-09) | 397-403 |
-| [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09) | 404-427 |
+| [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09) | 404-436 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3e6d0d03d6a2a763b3b38cc4f3c1a5485697786fc0131b0ded99919d2d53805d`
+Source normalized SHA256: `97a01bb80df47ab0e923faf58d87b911c7f561a9a9b0c4e2ed88fe7513777500`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -118,7 +118,7 @@ Source normalized SHA256: `3e6d0d03d6a2a763b3b38cc4f3c1a5485697786fc0131b0ded999
 | [VERIFY][基因][GENE-MINDMAP-20261108] Gene mind map acceptance | 401-408 |
 | [VERIFY][基因][GENE-NODE-FACTORY-20261108] Direct role mutation and cleanup acceptance | 409-416 |
 | [VERIFY][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment UI and persisted weapons (2026-11-09) | 417-424 |
-| [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09) | 425-449 |
+| [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09) | 425-458 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -414,6 +414,15 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
 
+**最新第 5 轮验收——仅点击详情链路（2026-11-09）。**
+
+- 实际源码差异仅限 KnapsackSlotWidget.OnPointerEnter：删除一处旧详情调用，并更新 summary 与参数注释。Unity GM_Game.dll 于 2026-11-09T12:29:44.6842054Z 编译；编译完成，Play 前及运行时检查后 Console 错误数均为零。
+- 正常 UI 登录回到角色 789 / Scene_MainCity。ExecuteEvents 对两件真实武器控件派发 enter/down/up/exit：悬停与右键路径保持详情关闭；左键路径在 EquipmentDetailWindow 打开对应标题且显示“装备”；离开槽位后已点击的详情仍保持打开。关闭后不残留旧 EquipItemTips 对象；普通物品悬停同样不打开详情。原 UID 61353029711958016 与 61353029713006592 仍留在装备背包，穿戴槽数为零。截图 left-detail.png 已由主 Codex 目视核对。
+- 证据：_temp/equipment-ui-layout-20261109/ 下的 revision5/hover-check.json、equipment-hover-right.json、equipment-left.json、final-runtime.json、implementation.diff 与 parent-acceptance.json。国内版 WorkBuddy hy4free，Hub hub-d0273747-ecdc-4772-9164-c64aa5d5eaa2，第 2 轮 / run-3f8ae84f-19aa-4b50-b3e7-db9ad0341b88；主 Codex 已验收实际代码、编译、事件与截图证据。未做物理系统鼠标自动化、穿戴槽运行时测试、穿脱或特技请求、数据库写入或战斗回归。临时检查片段遇到 Global 类型重复、可选按钮未绑定与相机工具输出目录限制，仅调整检查脚本，未对业务代码做规避。
+
+**此前验收历史（原文保留）：**
+
+
 
 **最新验收——UI 第 4 轮返修（2026-11-09）。**
 

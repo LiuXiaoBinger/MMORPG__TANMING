@@ -102,13 +102,13 @@ public class KnapsackSlotWidget : MonoBehaviour,
     #endregion
 
     #region 交互响应
-    /// <summary>鼠标进入格子时显示选中效果和物品提示。</summary>
+    /// <summary>鼠标进入格子时只显示选中高亮，不再弹出旧物品详情；详情由左键点击链路打开。</summary>
+    /// <param name="eventData">Unity 指针进入事件；本函数不读取按键与坐标，参数仅为满足 IPointerEnterHandler 接口签名而保留。</param>
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (_count > 0)
         {
             _imgEnter.gameObject.Show();
-            TipsMgr.Instance.ShowItmeTips(eventData.position);
         }
     }
 

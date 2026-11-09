@@ -424,6 +424,15 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09)
 
+**Latest revision 5 acceptance — click-only detail route (2026-11-09).**
+
+- Actual source diff is confined to KnapsackSlotWidget.OnPointerEnter: one old-detail call removed and summary/parameter comments updated. Unity GM_Game.dll compiled at 2026-11-09T12:29:44.6842054Z; compilation finished and Console error count was zero before Play and after runtime checks.
+- Normal UI login returned to role 789 / Scene_MainCity. ExecuteEvents dispatched enter/down/up/exit on both real weapon widgets: hover and right-button paths kept details closed; left-button paths opened matching titles in EquipmentDetailWindow with 装备 visible; leaving the slot kept clicked details open. Closing left no legacy EquipItemTips objects. Ordinary-item hover also opened no details. Original UIDs 61353029711958016 and 61353029713006592 stayed in the equipment bag; worn-slot count zero. Screenshot left-detail.png was visually checked by parent Codex.
+- Evidence: revision5/hover-check.json, equipment-hover-right.json, equipment-left.json, final-runtime.json, implementation.diff and parent-acceptance.json under _temp/equipment-ui-layout-20261109/. WorkBuddy domestic hy4free, hub-d0273747-ecdc-4772-9164-c64aa5d5eaa2, round2 / run-3f8ae84f-19aa-4b50-b3e7-db9ad0341b88; parent Codex accepted actual code/compile/event/screenshot evidence. No physical OS mouse automation, worn-slot runtime test, wear/trait request, DB write or combat regression. Temporary inspection snippets encountered a duplicate Global type, an unbound optional button and the camera tool's output-folder restriction; adjusted inspection only, no business-code workaround.
+
+**Earlier verification (preserved):**
+
+
 **Latest acceptance — UI revision 4 (2026-11-09).**
 
 - Main and offhand detail views passed at 1920x1080 and 1366x768 (four combinations): fixed header/right action, correct “卸载” versus “装备”, complete text at top/bottom and scroll range about 78.33 reference units. The reused RO background's inner alpha is255; screenshots show opaque pale blue. Actual prefab delta:89 changed existing blocks,41 added detail blocks,0 removed;5653 blocks outside details kept byte-for-byte. UIRoot SHA256 ebd159a613fdde26f2514cbf14998f52d32708deb07e9f8ccb21e75ff04f8de5. Parent viewed main-1920-top, offhand-1920-bottom and main-1366-bottom screenshots and recording frames0/19.80s.

@@ -403,6 +403,15 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09)
 
+**Latest revision 5 — click-only equipment details (2026-11-09).**
+
+- WorkBuddy domestic / hy4free removed the sole ShowItmeTips call from KnapsackSlotWidget.OnPointerEnter and corrected that method's Chinese comments. Hover still highlights; existing left-button routes open the pale-blue EquipmentDetailWindow; exit cleanup remains. No prefab, item, server or protocol changes; no new non-equipment detail feature.
+- Parent Codex compiled GM_Game.dll and verified the live role 789 through Unity ExecuteEvents: both weapons ignore hover/right click, left click opens the correct new details, pointer exit preserves clicked details, close removes the window, old tips count remains zero. Both original weapon UIDs are now in the equipment bag and no worn slots are visible; this observed state supersedes revision4's equipment snapshot. No wear/unequip/trait operation was issued. Physical OS mouse input and the currently empty worn-slot route were not runtime-tested.
+- Hub hub-d0273747-ecdc-4772-9164-c64aa5d5eaa2, session 46168831-5453-4dcb-aacc-3d540babbcb5: platform round1 investigated, round2 implemented (run-3f8ae84f-19aa-4b50-b3e7-db9ad0341b88). Two stopped legacy tasks were operator-cancelled with original-process/native-session evidence, not reported as successful worker results. Evidence: _temp/equipment-ui-layout-20261109/revision5/. Approved full log: 项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md. Earlier boundaries remain.
+
+**Earlier revisions (historical snapshots):**
+
+
 **Latest UI revision 4 — narrow RO-style equipment details (2026-11-09).**
 
 - Followed the user's Yimeng Jianghu screenshot and 39.59-second recording: fixed compact identity header, separately scrolling attributes/Gene/traits, fine separators and a short independent right action area. Total detail bounds are 470x660, information panel width 380 (previous detail width 620). Reused the project's existing RO UI_Common_Bg_Tips_01 sprite for an opaque pale-blue background; no new assets, game-specific fake fields or crafting actions. Unworn items show “装备”; worn items show “卸载”. Trait activation remains beside its own heading. Controls/references live in UIRoot.prefab; EquipmentDetailWindow/ViewModel/Ctrl are unchanged.
