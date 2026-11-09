@@ -448,3 +448,12 @@
 - 最后一张 1366 截图暴露出 renderQueue 3001 的 img_enter 覆盖层，高于普通 UI 的 3000。仅在 UIRoot 内禁用 12 个未使用装饰，同场景对比确认白色覆盖消失，未修改共享材质。主 Agent 核验了角色、修复覆盖后的详情及全部关闭截图、最终哈希与精确实机差异：删除 3 个块、修改 13 个既有块，其余全部保留，git diff --check 通过。最终 UIRoot SHA256 为 `e22ef3df2b81fb77ec34cb9b0da1a0970567910f8e163eba1eda321d122080d9`。
 - 主武器 UID `61353029711958016`（21001、bag 4、slot 7、selected 0、families 2/4/0）与副武器 UID `61353029713006592`（21002、bag 1、slot 1、selected 0、families 3/5/0）前后完全一致。未写数据库，也未点击实际穿脱/特技变更操作。未新增运行时业务异常，早期预览异常仍留在 Console。工具字段/源码/ID 解析失败均发生在写入前，已保留于证据。
 - 开发者：Codex 原生 `/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮先布局、后实机阶段。证据为 `_temp/equipment-ui-layout-20261109/`（`runtime-acceptance.json`、`parent-acceptance.json`、`runtime-overlay-comparison.json`）。已批准的完整日志：`项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md`。边界：未在移除后重新登录，未切换角色 112，未进行实际穿脱/特技协议往返或战斗/平衡复测。初始阶段将 EditorPrefs ScriptCompilationDuringPlay 设为 1，原值未记录，不声称已恢复。
+
+## [VERIFY][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] 配置化战斗加载与魔神塔回归
+
+- 服务端以 HEAD 50e63e1 加本任务文件/共享场景登记隔离编译，未带入工作区无关 Gene/Attributes 改动；最终测试 GS SHA256 为 84680C658AD920950C1D46B90D2C84901CFB171EC3091693BDCF020831A0FCB6。客户端编译覆盖当前完整 GM_Game 工作区（384 个源文件、268 个引用），不是 HEAD 隔离投影。主 Agent 已核对交付 35 文件哈希、精确暂存范围及 git diff --check。
+- 全部 299 项断言通过：MoshentaAiSmoke 50（含原 Lua/Code 的 65 事件等价）、MoshentaSkillSmoke 103、自然推进/TCP MoshentaFullAiIntegration 50、真实北森 DungeonConfigProgressSmoke 52、DungeonBattleProfileSmoke 33、DungeonSceneRegistrationSmoke 11。显式 FixtureA/B 目录的同号技能/实体/Buff/曲线、同名行为树、NPC/时间轴绑定与采样导航均隔离。无时间轴配置可以省略 Lua/轴计划路径。
+- 合成场景 99001 通过正常 Spawner/Update 入口执行，在测试进程临时登记表映射并恢复。测试投影仅追加三个嵌入资源，353 份业务源码哈希与已测服务端一致；证明的是配置化非 4060 入口，不是真实北森战斗。证据见 verify/fixture-source-hashes.json 和 verification-summary.json。
+- 主 Agent 通过 Unity MCP 实际加载 4060 的 40 技能、32 Buff、7 通知、四项效果预制体及公共 MMonsterAnimator；核验按根目录稳定缓存，4050/4051 的空目录不增加缓存，两处真实 32 实体目录和 XML、NoFadeEntityIds 5357/5501/5502/5503 及不同采集标题。只读检查保留场景身份和 dirty 状态，Console 返回 0 条错误。没有桌面输入或 Prefab/场景修改。
+- 保留真实失败：客户端临时编译初次引用过期 Network.dll，缺少 RoleGeneData，改用当前项目引用后通过；旧测试在过期位置/类型查找共享生命与 Gene API，且临时测试适配曾编译失败。最终测试使用实际 AttributesComponent 和 Gene 返回类型，没有将无关 Gene 工作区改动拷入服务端。主 Agent 在最终验收前退回硬编码尸体 ID 与未使用时间轴路径必填问题修正。
+- 代码提交 6a094fb 已推送；未切换本机运行服务器、构建独立 Player 或线上部署。未完整移植北森战斗/地图，未手动多人完整通关。完整文件清单、实际角色、回执和边界见 项目修改日志/2026-11-09-副本AI技能导航配置化.md；原始证据位于 _temp/dungeon-generic-battle-20261109/。

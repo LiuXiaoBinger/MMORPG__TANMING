@@ -430,3 +430,12 @@
 - 实机还复现了不透明详情上方的白色覆盖：12 个未使用的 img_enter 装饰使用 renderQueue 3001，高于普通 UI 的 3000。仅在 UIRoot 内禁用这些装饰（11 个本地字段加一个主武器嵌套实例覆盖）；共享材质、装备图标、边框和点击行为未变。主 Agent 已验收精确最终差异和截图。
 - 角色 789 保持主武器 `21001 / 61353029711958016` 已穿戴（bag 4、slot 7），副武器 `21002 / 61353029713006592` 在背包内（bag 1、slot 1）；特技选择/家族未变。已在 1920x1080 与 1366x768 验证既有窗口/点击/滚动路径，关闭后无 Gene 残留。Unity 保持运行于 Scene_MainCity，窗口全部关闭，已恢复 1920x1080，场景 dirty=False。未写数据库或发放物品。
 - 原生开发者 `/root/equipment_manual`、`gpt-6-astra`，会话 `01a1be4e-c60a-7e42-9530-6ba0b70e009b`，第 1 轮包含布局与实机两个阶段。已批准的完整日志：`项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md`；证据为 `_temp/equipment-ui-layout-20261109/runtime-acceptance.json` 和 `parent-acceptance.json`。未重新验证：移除节点后的重新登录、角色 112、实际穿脱/特技变更、战斗/平衡。初始阶段将 EditorPrefs ScriptCompilationDuringPlay=1，未记录原值；未猜测恢复，实机阶段也未再次修改。
+
+## [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] 按场景配置怪物战斗资源
+
+- 用户要求修复已核验的魔神塔专用资源耦合。本次开发归档已明确批准；此前只读调查被拒绝归档，不补写调查记录。Codex 原生服务端、客户端和测试子 Agent 实现与验证；主 Agent 核对差异，退回时间轴路径可选性及尸体/采集配置两项问题，并完成 Unity 实际资源检查。本次没有使用外部 Agent。
+- 共用的 Resources/Dungeons/Scenes/{SceneID}.json 通过 battleConfig 选择服务端配置，再选择表/技能/公式/曲线、导航、行为树目录、可选 SceneAI 和 NPC/时间轴绑定。移除 4060 AI 门禁。缓存保留所属实例或资源目录，不使用全局当前副本指针。Lua 脚本按绑定选择；Code 模式仅保留两个既有显式实现，不自动支持新的节点、API 或代码行为。
+- 客户端技能/Buff/通知目录按 battleResourceRoot 缓存并绑定所属场景；四项效果路径、collectionTitle 和 NoFadeEntityIds 均改为配置数据。公共 MMonsterAnimator 及魔神塔原数据/行为保持。删除 Moshenta.Waves.xml/Moshenta.Creatures.json 两项重复资源别名，并更新原冒烟测试读取入口。新场景仍须按既有嵌入/发布方式包含波次、实体及战斗依赖文件。
+- 业务/配置/测试共 35 个文件：服务端/测试 22 个、客户端/资源 13 个，逐项用途与失败证据见 项目修改日志/2026-11-09-副本AI技能导航配置化.md。代码提交 6a094fb 已推送 codex/feature-development。无关 Gene、XML 编辑位置及协作记录的既有改动均保留；未部署或重启本机正在运行的服务器。
+- 验收共 299 项断言：AI 50、技能 103、魔神塔 TCP 50、真实北森流程 52、目录隔离 33、合成非 4060 入口 11；另有服务端 HEAD 加本任务文件隔离编译、客户端工作区编译及 Unity 实际配置/资源加载。证据位于 _temp/dungeon-generic-battle-20261109/；项目分析/项目难点.md 使用同一任务编号记录难点。
+- 边界：北森 4050/4051 保留各自真实 32 项实体目录和流程，未移植完整客户端地图、导航、AI、技能和 Boss 玩法。battleConfig 为空时保留先前通用流程，不借用魔神塔战斗。99001 与 FixtureA/B 是合成测试，不能代表北森完成。未验证手动多人完整通关、独立 Player 或生产部署。
