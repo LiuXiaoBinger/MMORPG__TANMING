@@ -60,6 +60,10 @@ public sealed class MSceneMonsterSkillPlayer
     private readonly MEntity monster;
     /// <summary>模型控制器也是异步完成时的生命周期依据。</summary>
     private readonly RoleCtrlBase host;
+    /// <summary>所属副本的只读技能目录，模型存活期间不会换成另一副本的同号技能。</summary>
+    private readonly MSceneMonsterSkillCatalog skillCatalog;
+    /// <summary>所属副本的通知表现目录，未迁入战斗表现时为空。</summary>
+    private readonly MSceneMonsterNoticeCatalog noticeCatalog;
     /// <summary>当前吟唱或攻击阶段。</summary>
     private Playback active;
     /// <summary>原技能状态结束后仍执行至Time的尾轨道，可与下一技能并存。</summary>
@@ -86,6 +90,10 @@ public sealed class MSceneMonsterSkillPlayer
     {
         host = owner;
         monster = entity;
+        // 模型已经挂在实际出生场景下，从场景持有的登记绑定本实例表现。
+        DungeonSceneResource resource = owner.GetComponentInParent<MSceneDungeon>().Resource;
+        skillCatalog = MSceneMonsterSkillCatalog.Load(resource.battleResourceRoot);
+        noticeCatalog = MSceneMonsterNoticeCatalog.Load(resource.battleResourceRoot);
     }
 
     /// <summary>读取新阶段或更新中途快照，技能时间不从模型加载完成时重新计时。</summary>
@@ -108,8 +116,9 @@ public sealed class MSceneMonsterSkillPlayer
             }
         }
         EndPhase();
+        if (skillCatalog == null) return;
         // 原技能配置号不命中时不借用另一怪物普攻。
-        MSceneMonsterSkillData data = MSceneMonsterSkillCatalog.Find(motion.Action.SkillId);
+        MSceneMonsterSkillData data = skillCatalog.Find(motion.Action.SkillId);
         if (data == null) return;
         // 本次独立阶段的时间轴与已消费事件游标。
         Playback playback = new Playback { Motion = motion, Data = data };
@@ -234,8 +243,9 @@ public sealed class MSceneMonsterSkillPlayer
     /// <param name="target">实际命中的角色实体。</param>
     public void PlayResult(MonsterPlayerHitData hit, RoleEntity target)
     {
+        if (skillCatalog == null) return;
         // 此原技能编号对应的只读结果配置。
-        MSceneMonsterSkillData data = MSceneMonsterSkillCatalog.Find(hit.SkillId);
+        MSceneMonsterSkillData data = skillCatalog.Find(hit.SkillId);
         if (data == null || hit.ResultIndex >= data.Results.Length) return;
         // 按服务器零基序号选择的原结果点。
         MSceneMonsterResultData result = data.Results[hit.ResultIndex];
@@ -257,7 +267,8 @@ public sealed class MSceneMonsterSkillPlayer
     public void ShowHeadExpression()
     {
         // 原表裁剪配置包含两秒寿命、原挂点偏移和原FX/音频地址。
-        MSceneMonsterNoticeCatalog data = MSceneMonsterNoticeCatalog.Load();
+        MSceneMonsterNoticeCatalog data = noticeCatalog;
+        if (data == null) return;
         SpawnFx(data.HeadExpression, monster, 0f, null);
         PlayAudio(data.HeadAudio, monster, data.HeadExpression.Duration, false, null);
     }

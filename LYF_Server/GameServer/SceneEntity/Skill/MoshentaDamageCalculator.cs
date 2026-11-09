@@ -15,20 +15,21 @@ internal sealed class MoshentaDamageCalculator
 
     /// <summary>载入未修改的原伤害及Buff概率/寿命脚本。</summary>
     /// <param name="randomSource">本副本随机源；隔离验证可传入固定种子。</param>
-    internal MoshentaDamageCalculator(Random randomSource)
+    /// <param name="catalog">本副本选择的公式脚本目录，不使用进程全局目录。</param>
+    internal MoshentaDamageCalculator(Random randomSource, MoshentaSkillCatalog catalog)
     {
         random = randomSource;
         lua.Register("moshenta_random", RandomValue);
         lua.Register("moshenta_float", FloatValue);
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "moshenta_formula_bridge.lua")), "moshenta_formula_bridge.lua");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "skill", "skill_trigger_moudle.lua")), "skill/skill_trigger_moudle.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "moshenta_formula_bridge.lua")), "moshenta_formula_bridge.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "skill", "skill_trigger_moudle.lua")), "skill/skill_trigger_moudle.lua");
         lua.Execute("package.loaded['skill.skill_trigger_moudle']=SkillEffectIDMoudle");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "damage_calculator.lua")), "damage_calculator.lua");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "buff_add_condition.lua")), "buff_add_condition.lua");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "buff_time_calculator.lua")), "buff_time_calculator.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "damage_calculator.lua")), "damage_calculator.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "buff_add_condition.lua")), "buff_add_condition.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "buff_time_calculator.lua")), "buff_time_calculator.lua");
         lua.Execute("package.loaded['Table/EntityTable']={}");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "buff_trigger_condition.lua")), "buff_trigger_condition.lua");
-        lua.Execute(File.ReadAllText(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Lua", "buff_trigger_result.lua")), "buff_trigger_result.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "buff_trigger_condition.lua")), "buff_trigger_condition.lua");
+        lua.Execute(File.ReadAllText(Path.Combine(catalog.DirectoryPath, "Lua", "buff_trigger_result.lua")), "buff_trigger_result.lua");
     }
     /// <summary>Lua随机接口边界；同一结果的所有抽样保留原脚本调用次序。</summary>
     /// <param name="state">发起本次原生回调的Lua状态。</param>

@@ -9,8 +9,10 @@ public sealed class MSceneMonsterCorpsePlayer
     private const float BodyDisappearMilliseconds = 2000f;
     /// <summary>当前真实怪物模型及原配置编号。</summary>
     private readonly MonsterEntity monster;
-    /// <summary>原UnitTypeLevel为Boss的模型等待移除，不执行淡出。</summary>
+    /// <summary>当前副本表现目录指定保留完整模型，等待服务器移除而不淡出。</summary>
     private readonly bool noFade;
+    /// <summary>所属场景 Buff 目录登记的可见度 Shader；未登记战斗表现时为空。</summary>
+    private readonly string visibilityShader;
     /// <summary>淡出期间克隆的材质，不修改共享资源。</summary>
     private readonly List<Material> materials = new List<Material>();
     /// <summary>原怪物可见度Shader的异步句柄，实体销毁时释放。</summary>
@@ -18,22 +20,34 @@ public sealed class MSceneMonsterCorpsePlayer
     /// <summary>模型材质已经切换为本尸体持有的副本。</summary>
     private bool initialized;
 
-    /// <summary>绑定当前怪物，保留原Boss不淡出的实体分类。</summary>
+    /// <summary>绑定当前怪物，从所属副本表现目录读取尸体不淡出的实体分类。</summary>
     /// <param name="entity">收到权威Dead动作的原怪物实例。</param>
     public MSceneMonsterCorpsePlayer(MonsterEntity entity)
     {
         monster = entity;
-        noFade = entity.ConfigId == 5357 || entity.ConfigId == 5501 || entity.ConfigId == 5502;
-        if (entity.ConfigId == 5503) noFade = true;
+        // 尸体沿当前模型所属的副本登记读取材质，不借用后续场景的目录。
+        DungeonSceneResource resource = entity.GetEntityCtrl().GetComponentInParent<MSceneDungeon>().Resource;
+        // 同根只读目录与当前副本 Buff 播放器共享，未迁入时没有淡出资源。
+        MSceneMonsterBuffCatalog catalog = MSceneMonsterBuffCatalog.Load(resource.battleResourceRoot);
+        if (catalog == null) return;
+        visibilityShader = catalog.VisibilityShader;
+        if (catalog.NoFadeEntityIds == null) return;
+        // 当前模型命中本目录保留列表时，沿原服务器删除时间保持可见。
+        for (int index = 0; index < catalog.NoFadeEntityIds.Length; index++)
+        {
+            if (catalog.NoFadeEntityIds[index] != entity.ConfigId) continue;
+            noFade = true;
+            break;
+        }
     }
 
     /// <summary>从权威剩余时间继续淡出，包含模型异步加载耗时和晚加入进度。</summary>
     /// <param name="motion">Dead动作的剩余毫秒与真实收包时刻。</param>
     public void Update(MSceneMonsterMotion motion)
     {
-        if (noFade) return;
+        if (noFade || string.IsNullOrEmpty(visibilityShader)) return;
         if (visibility == null)
-            visibility = Global.Instance.YooPackage.LoadAssetAsync(MSceneMonsterBuffCatalog.Load().VisibilityShader);
+            visibility = Global.Instance.YooPackage.LoadAssetAsync(visibilityShader);
         if (!visibility.IsDone) return;
         if (!initialized)
         {

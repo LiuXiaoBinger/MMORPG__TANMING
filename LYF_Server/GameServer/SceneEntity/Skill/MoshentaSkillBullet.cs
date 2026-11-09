@@ -52,7 +52,7 @@ internal sealed class MoshentaSkillBullet
         revolutionCenter = runtime.Actor.Position + MoshentaSkillRuntime.Rotate(new Vector3(MoshentaSkillCatalog.F(center, "x"), 0, MoshentaSkillCatalog.F(center, "z")), cast.Facing);
         revolutionOffset = position - revolutionCenter;
         if (type != "ESkillBulletType_Anim" && MoshentaSkillCatalog.I(data, "UseCurve") != 0)
-            curve = new MoshentaActionCurve(MoshentaSkillCatalog.S(data, "OffsetZCurve"));
+            curve = new MoshentaActionCurve(runtime.Actor.Owner.Battle.Catalog, MoshentaSkillCatalog.S(data, "OffsetZCurve"));
     }
     /// <summary>读取原XYZ字段。</summary><param name="prefix">Start或End。</param>
     private Vector3 Vector(string prefix) { return new Vector3(MoshentaSkillCatalog.F(data, prefix + "X"), MoshentaSkillCatalog.F(data, prefix + "Y"), MoshentaSkillCatalog.F(data, prefix + "Z")); }

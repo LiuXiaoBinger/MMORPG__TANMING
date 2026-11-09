@@ -27,7 +27,7 @@ internal sealed class MoshentaDamageSnapshot
     internal static MoshentaDamageSnapshot Capture(MoshentaActor actor)
     {
         // EntityTable基础属性不是已计算的最终攻击。
-        XElement row = MoshentaSkillCatalog.Entity(actor.EntityId);
+        XElement row = actor.Owner.Battle.Catalog.Entity(actor.EntityId);
         // 此对象从起手保留到该技能全部结果结束。
         MoshentaDamageSnapshot result = new MoshentaDamageSnapshot();
         // 原六维与等级，按attribute_calculator.lua的怪物分支还原。

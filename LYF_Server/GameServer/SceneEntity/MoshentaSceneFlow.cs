@@ -155,7 +155,7 @@ public sealed class MoshentaSceneFlow
     /// <param name="name">服务端场景图或实体死亡产生的真实事件名。</param>
     private void SceneAIEvent(string name)
     {
-        if (owner.IsMoshenta) { owner.SceneEvent(name); return; }
+        if (owner.HasSceneAi) { owner.SceneEvent(name); return; }
         // 原场景AI分支顺序保存在正式XML中；目标ID不再写入C#分支。
         for (int index = 0; index < sceneEvents.Length; index++)
         {
@@ -514,7 +514,7 @@ public sealed class MoshentaSceneFlow
     {
         // 对外传输的独立快照，不暴露内部集合。
         bool finished = events.Contains("FinishDungeon");
-        if (owner.IsMoshenta) finished = owner.Victory;
+        if (owner.HasSceneAi) finished = owner.Victory;
         DungeonFlowState result = new DungeonFlowState { Finished = finished };
         result.ActiveWaveIds.Add(active.OrderBy(id => id));
         result.CompletedWaveIds.Add(complete.OrderBy(id => id));

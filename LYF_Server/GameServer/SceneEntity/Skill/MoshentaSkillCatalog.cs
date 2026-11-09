@@ -6,33 +6,41 @@ using System.Linq;
 using System.Xml.Linq;
 
 /// <summary>魔神塔实际服务端表与技能XML切片；XElement只用于原配置的序列化边界。</summary>
-internal static class MoshentaSkillCatalog
+internal sealed class MoshentaSkillCatalog
 {
     /// <summary>随游戏服部署的本副本配置目录。</summary>
-    internal static readonly string DirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "Moshenta");
+    internal readonly string DirectoryPath;
     /// <summary>从RO部署表精确导出的五张表，运行中不修改。</summary>
-    private static readonly XElement tables = XElement.Load(Path.Combine(DirectoryPath, "Tables.xml"));
+    private readonly XElement tables;
     /// <summary>已解析的40项本副本动作，按技能编号缓存。</summary>
-    private static readonly Dictionary<int, MoshentaSkillDefinition> skills = new Dictionary<int, MoshentaSkillDefinition>();
+    private readonly Dictionary<int, MoshentaSkillDefinition> skills = new Dictionary<int, MoshentaSkillDefinition>();
+
+    /// <summary>只装载当前副本所选数据目录，同编号技能不会借用其他目录的缓存。</summary>
+    /// <param name="directory">原表、SkillData、Lua和Curve所在绝对目录。</param>
+    internal MoshentaSkillCatalog(string directory)
+    {
+        DirectoryPath = directory;
+        tables = XElement.Load(Path.Combine(DirectoryPath, "Tables.xml"));
+    }
 
     /// <summary>取得本副本实体的完整原始字段。</summary>
     /// <param name="id">EntityTable编号。</param>
-    internal static XElement Entity(int id) { return Row("EntityTable", id, "Id"); }
+    internal XElement Entity(int id) { return Row("EntityTable", id, "Id"); }
     /// <summary>取得技能一级效果；本副本闭包全部使用一级。</summary>
     /// <param name="id">SkillEffectTable编号。</param>
-    internal static XElement Effect(int id) { return Row("SkillEffectTable", id, "Id"); }
+    internal XElement Effect(int id) { return Row("SkillEffectTable", id, "Id"); }
     /// <summary>取得原Buff具体等级行。</summary>
     /// <param name="id">包含末两位等级的原Buff行号。</param>
-    internal static XElement Buff(int id) { return Row("BuffTable", id, "Id"); }
+    internal XElement Buff(int id) { return Row("BuffTable", id, "Id"); }
     /// <summary>取得Buff叶子效果行。</summary>
     /// <param name="id">BuffEffectTable.EffectId。</param>
-    internal static XElement BuffEffect(int id) { return Row("BuffEffectTable", id, "EffectId"); }
+    internal XElement BuffEffect(int id) { return Row("BuffEffectTable", id, "EffectId"); }
 
     /// <summary>取得技能及其原动作，不重新拼装或覆盖原始时点。</summary>
     /// <param name="id">SkillTable编号。</param>
-    internal static MoshentaSkillDefinition Skill(int id)
+    internal MoshentaSkillDefinition Skill(int id)
     {
-        // 同一游戏服的技能配置仅初始化一次。
+        // 同一副本实例的每项技能配置仅初始化一次。
         MoshentaSkillDefinition result;
         if (!skills.TryGetValue(id, out result))
         {
@@ -47,7 +55,7 @@ internal static class MoshentaSkillCatalog
     /// <param name="table">原表名。</param>
     /// <param name="id">原主键值。</param>
     /// <param name="key">主键字段名。</param>
-    private static XElement Row(string table, int id, string key)
+    private XElement Row(string table, int id, string key)
     {
         // XElement是配置输入，筛选结果仍为原配置对象。
         return tables.Element(table).Elements().First(row => I(row, key) == id);

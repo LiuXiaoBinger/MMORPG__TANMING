@@ -42,17 +42,19 @@ public sealed class MSceneMonsterBuffPlayer
     /// <summary>绑定现有实体索引，不创建新角色或另一套Buff结算系统。</summary>
     /// <param name="sceneWorld">当前副本原实体世界。</param>
     /// <param name="resolver">当前副本SpawnId到原实体的查找。</param>
-    public MSceneMonsterBuffPlayer(SceneWorldSystem sceneWorld, Func<ulong, MEntity> resolver)
+    /// <param name="resource">本场景出生时绑定的资源登记，不随全局场景切换。</param>
+    public MSceneMonsterBuffPlayer(SceneWorldSystem sceneWorld, Func<ulong, MEntity> resolver, DungeonSceneResource resource)
     {
         world = sceneWorld;
         findMonster = resolver;
-        catalog = MSceneMonsterBuffCatalog.Load();
+        catalog = MSceneMonsterBuffCatalog.Load(resource.battleResourceRoot);
     }
 
     /// <summary>新增、校正寿命或移除同一服务器Buff实例。</summary>
     /// <param name="state">当前实例已筛选的真实Buff更新。</param>
     public void Apply(MSceneMonsterBuffState state)
     {
+        if (catalog == null) return;
         if (state.Data.Removed) { Remove(state.Data.BuffInstanceId); return; }
         // 同一实例的剩余时间刷新保留已经存在的视觉对象。
         Instance value;

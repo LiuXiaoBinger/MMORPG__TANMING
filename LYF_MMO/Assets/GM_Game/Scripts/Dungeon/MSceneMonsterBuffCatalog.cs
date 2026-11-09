@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>魔神塔原BuffTable与BuffEffectTable中实际用到的视觉闭包。</summary>
+/// <summary>当前副本原 BuffTable 与 BuffEffectTable 中实际用到的视觉闭包。</summary>
 [Serializable]
 public sealed class MSceneMonsterBuffCatalog
 {
@@ -22,19 +23,28 @@ public sealed class MSceneMonsterBuffCatalog
         /// <summary>原ChangeAlphaAndColor的RGB除以255后的颜色。</summary>
         public Color Color;
     }
-    /// <summary>按原32个Buff闭包裁剪的静态列表。</summary>
+    /// <summary>按当前副本实际 Buff 闭包裁剪的静态列表。</summary>
     public Buff[] Buffs;
     /// <summary>原Monster Visibility shader的正式资源地址。</summary>
     public string VisibilityShader;
-    /// <summary>首次副本加载时读取一次的只读配置。</summary>
-    private static MSceneMonsterBuffCatalog instance;
+    /// <summary>死亡后保留完整模型、等待服务器移除的原 EntityTable 编号；未登记表示均按普通尸体淡出。</summary>
+    public int[] NoFadeEntityIds;
+    /// <summary>按 Resources 根路径隔离的只读配置，不让同号 Buff 复用另一副本的表现。</summary>
+    private static readonly Dictionary<string, MSceneMonsterBuffCatalog> loaded = new Dictionary<string, MSceneMonsterBuffCatalog>();
 
-    /// <summary>读取当前副本原Buff表现目录。</summary>
-    public static MSceneMonsterBuffCatalog Load()
+    /// <summary>读取登记根目录中的 Buff 表，未登记战斗表现时返回空。</summary>
+    /// <param name="resourceRoot">当前场景登记的战斗表现 Resources 根路径。</param>
+    public static MSceneMonsterBuffCatalog Load(string resourceRoot)
     {
-        if (instance == null)
-            instance = JsonUtility.FromJson<MSceneMonsterBuffCatalog>(Resources.Load<TextAsset>("Dungeons/Moshenta/MonsterBuffs").text);
-        return instance;
+        if (string.IsNullOrEmpty(resourceRoot)) return null;
+        // 相同根共享只读数据，不同根独立保存完整原 Buff ID。
+        MSceneMonsterBuffCatalog catalog;
+        if (!loaded.TryGetValue(resourceRoot, out catalog))
+        {
+            catalog = JsonUtility.FromJson<MSceneMonsterBuffCatalog>(Resources.Load<TextAsset>(resourceRoot + "/MonsterBuffs").text);
+            loaded.Add(resourceRoot, catalog);
+        }
+        return catalog;
     }
 
     /// <summary>按原完整BuffId定位其表现定义。</summary>

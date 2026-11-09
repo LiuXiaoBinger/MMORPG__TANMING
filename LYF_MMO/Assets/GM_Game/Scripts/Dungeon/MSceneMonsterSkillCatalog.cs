@@ -1,24 +1,38 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>魔神塔40个原技能的受控表现切片，与服务器原技能ID对齐。</summary>
+/// <summary>当前副本原技能的受控表现切片，与服务器原技能 ID 对齐。</summary>
 [Serializable]
 public sealed class MSceneMonsterSkillCatalog
 {
     /// <summary>本场景依赖闭包中按技能号排序的完整表现行。</summary>
     public MSceneMonsterSkillData[] Skills;
-    /// <summary>正式Resources配置的进程内只读缓存。</summary>
-    private static MSceneMonsterSkillCatalog loaded;
+    /// <summary>按 Resources 根路径隔离的只读目录，不让相同技能号串用另一副本的数据。</summary>
+    private static readonly Dictionary<string, MSceneMonsterSkillCatalog> loaded = new Dictionary<string, MSceneMonsterSkillCatalog>();
 
-    /// <summary>按服务端真实技能号读取原时间轴，非魔神塔技能返回空。</summary>
-    /// <param name="skillId">MonsterActionData携带的原技能编号。</param>
-    public static MSceneMonsterSkillData Find(int skillId)
+    /// <summary>读取登记根目录中的技能表，未登记战斗表现时返回空。</summary>
+    /// <param name="resourceRoot">当前场景登记的战斗表现 Resources 根路径。</param>
+    public static MSceneMonsterSkillCatalog Load(string resourceRoot)
     {
-        if (loaded == null)
-            loaded = JsonUtility.FromJson<MSceneMonsterSkillCatalog>(Resources.Load<TextAsset>("Dungeons/Moshenta/MonsterSkills").text);
+        if (string.IsNullOrEmpty(resourceRoot)) return null;
+        // 相同根共享只读数据，不同根即使技能 ID 相同也保持独立。
+        MSceneMonsterSkillCatalog catalog;
+        if (!loaded.TryGetValue(resourceRoot, out catalog))
+        {
+            catalog = JsonUtility.FromJson<MSceneMonsterSkillCatalog>(Resources.Load<TextAsset>(resourceRoot + "/MonsterSkills").text);
+            loaded.Add(resourceRoot, catalog);
+        }
+        return catalog;
+    }
+
+    /// <summary>按服务端真实技能号读取本目录时间轴，未登记的技能返回空。</summary>
+    /// <param name="skillId">MonsterActionData 携带的原技能编号。</param>
+    public MSceneMonsterSkillData Find(int skillId)
+    {
         // 小型固定闭包直接按索引查找，不建立另一套技能管理器。
-        for (int index = 0; index < loaded.Skills.Length; index++)
-            if (loaded.Skills[index].Id == skillId) return loaded.Skills[index];
+        for (int index = 0; index < Skills.Length; index++)
+            if (Skills[index].Id == skillId) return Skills[index];
         return null;
     }
 }

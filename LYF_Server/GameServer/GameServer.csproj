@@ -255,12 +255,6 @@
         <Link>NavigationData\sc_dungeon_moshenta_001.navmesh.bytes</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt">
-            <LogicalName>Moshenta.Waves.xml</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\MoshentaCreatures.json">
-            <LogicalName>Moshenta.Creatures.json</LogicalName>
-        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt"><LogicalName>Dungeons.4060.Waves.xml</LogicalName></EmbeddedResource>
@@ -287,14 +281,16 @@
         <EmbeddedResource Include="Config\MonsterAI\Dungeons_DaNaTuoSiZhiZhan_ZengHen.xml"><LogicalName>Moshenta.AI.Dungeons_DaNaTuoSiZhiZhan_ZengHen.xml</LogicalName></EmbeddedResource>
         <Content Include="ThirdParty\Lua51\x64\lua51.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
         <Content Include="ThirdParty\Lua51\x86\lua51.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-        <Content Include="Config\MonsterAI\MoshentaAI.config"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-        <Content Include="Config\MonsterAI\Lua\Dungeon_DaNaTuoSiZhiZhan_BossController_EZ.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-        <Content Include="Config\MonsterAI\Lua\Dungeon_DaNaTuoSiZhiZhan_DaNaTuoSi.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-        <Content Include="Config\MonsterAI\Lua\lua_timeline_utiltool.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-        <Content Include="Config\MonsterAI\Lua\Perform_BasicAction.lua"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     </ItemGroup>
     <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
     <ItemGroup>
+        <Compile Include="SceneEntity\DungeonSceneRegistration.cs" />
+        <Compile Include="SceneEntity\DungeonBattleConfig.cs" />
+        <Compile Include="SceneEntity\DungeonTimelineBinding.cs" />
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Resources\Dungeons\Scenes\*.json">
+            <LogicalName>Dungeons.Scenes.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <Content Include="Config\MonsterAI\**\*"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
         <Compile Include="SceneEntity\MoshentaActor.cs" />
         <Compile Include="SceneEntity\MoshentaAiEvent.cs" />
         <Compile Include="SceneEntity\MoshentaSceneVariable.cs" />
@@ -313,7 +309,6 @@
         <Compile Include="SceneEntity\Skill\MoshentaSkillRuntime.cs" />
         <Compile Include="SceneEntity\Skill\MoshentaActionCurve.cs" />
         <Compile Include="SceneEntity\Skill\MoshentaSkillBullet.cs" />
-        <Content Include="Config\MonsterAI\TimeAxes.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     </ItemGroup>
     <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
     <ItemGroup>

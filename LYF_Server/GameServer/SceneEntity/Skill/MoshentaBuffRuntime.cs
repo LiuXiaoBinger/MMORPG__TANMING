@@ -126,7 +126,7 @@ internal sealed class MoshentaBuffRuntime
     internal void Add(MoshentaActor caster, int id)
     {
         // 原具体等级行，不回退到其他技能Buff。
-        XElement row = MoshentaSkillCatalog.Buff(id);
+        XElement row = Scene.Battle.Catalog.Buff(id);
         if (MoshentaSkillCatalog.I(row, "IsDebuff") != 0 && Has(32524)) return;
         if (MoshentaSkillCatalog.I(row, "BuffEffect") != 0 && Has(9035)) return;
         // DestroyTiming第一项是种类：1时间，3触发次数。
@@ -162,7 +162,7 @@ internal sealed class MoshentaBuffRuntime
         for (int index = 0; index < effectIds.Length; index++)
         {
             if (effectIds[index].Length == 0) continue;
-            added.Effects.Add(MoshentaSkillCatalog.BuffEffect(int.Parse(effectIds[index], CultureInfo.InvariantCulture)));
+            added.Effects.Add(Scene.Battle.Catalog.BuffEffect(int.Parse(effectIds[index], CultureInfo.InvariantCulture)));
         }
         for (int index = 0; index < added.Effects.Count; index++)
         {

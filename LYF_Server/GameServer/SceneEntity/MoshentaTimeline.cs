@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
 
 /// <summary>原AITimeAxisProcess毫秒调度，Lua/Code仅替换事件函数执行器。</summary>
 internal abstract class MoshentaTimeline : IDisposable
@@ -21,11 +20,13 @@ internal abstract class MoshentaTimeline : IDisposable
     /// <summary>读取正式可编辑配置选择两种执行器，默认Lua。</summary><param name="actor">真实宿主。</param>
     internal static MoshentaTimeline Create(MoshentaActor actor)
     {
-        // 配置随程序集发布，用户可把TimelineMode改为Code后重启实例。
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "MonsterAI", "MoshentaAI.config");
-        string mode = (string)XElement.Load(path).Attribute("TimelineMode");
-        if (mode == "Code") return new MoshentaCodeTimeline(actor);
-        if (mode == "Lua") return new MoshentaLuaTimeline(actor);
+        // 未登记时间轴的实体只运行自己的行为树，不推断魔神塔剧情身份。
+        DungeonTimelineBinding binding = actor.Owner.Battle.Timeline(actor.EntityId);
+        if (binding == null) return null;
+        // 用户修改所选配置的TimelineMode后，新建实例按同一映射切换执行器。
+        string mode = actor.Owner.Battle.TimelineMode;
+        if (mode == "Code") return new MoshentaCodeTimeline(actor, binding);
+        if (mode == "Lua") return new MoshentaLuaTimeline(actor, binding);
         throw new InvalidDataException("TimelineMode必须为Lua或Code：" + mode);
     }
     /// <summary>原SwitchAxis同轴成功但不重启；真实换轴重置时钟并请求AI再运行。</summary><param name="axis">原轴号。</param>

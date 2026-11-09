@@ -11,8 +11,10 @@ using ServerMonster = GameServer.SceneEntity.MonsterEntity;
 /// <summary>实例原AI与技能的窄宿主，复用MonsterEntity和OnlineRole的权威资源。</summary>
 public sealed partial class SceneWaveSpawner
 {
-    /// <summary>当前场景是否使用本次实际移植的十二棵树。</summary>
-    internal bool IsMoshenta { get { return Dungeon.SceneID == 4060; } }
+    /// <summary>当前登记选择的战斗资源；空值表示尚未移植完整AI的通用场景流程。</summary>
+    internal DungeonBattleConfig Battle { get; private set; }
+    /// <summary>当前副本是否配置独立场景树，未配置时保留场景XML事件规则。</summary>
+    internal bool HasSceneAi { get { return Battle != null && Battle.SceneTree.Length > 0; } }
     /// <summary>所有实际AI实体，包含无HP机制与动态召唤。</summary>
     internal List<MoshentaActor> Actors { get; private set; } = new List<MoshentaActor>();
     /// <summary>本帧的统一可靠通知出口，出生阶段也保留事件。</summary>
@@ -71,7 +73,7 @@ public sealed partial class SceneWaveSpawner
     /// <summary>仅在本实例解析真实MonsterEntity UID。</summary><param name="uid">怪物运行时身份。</param>
     internal MoshentaActor FindActor(ulong uid) { for (int index = 0; index < Actors.Count; index++) if (Actors[index].UnitId == uid) return Actors[index]; return null; }
     /// <summary>按原场景树创建实例状态。</summary>
-    private void InitializeAi() { Now = 0; nextSceneThink = 1000; if (IsMoshenta) sceneTree = new MoshentaBehaviorTree(this, null, "Dungeons_DaNaTuoSiZhiZhan_SceneAI_EZ"); }
+    private void InitializeAi() { Now = 0; nextSceneThink = 1000; if (HasSceneAi) sceneTree = new MoshentaBehaviorTree(this, null, Battle.SceneTree); }
     /// <summary>初始Flow构造结束后才执行出生副作用。</summary>
     private void FinishBirths() { for (int index = 0; index < births.Count; index++) births[index].Born(); births.Clear(); if (sceneTree != null) sceneTree.Tick(); }
     /// <summary>按最早原结果/转角/心跳截止点推进，保留同刻技能先于AI的调用顺序。</summary><param name="elapsed">本固定帧毫秒。</param>
@@ -329,7 +331,7 @@ public sealed partial class SceneWaveSpawner
     {
         ServerMonster monster = (ServerMonster)EntityFactory.Create(EntityType.Monster, entityId);
         monster.MapId = Dungeon.SceneID; monster.Transform.X = position.X; monster.Transform.Y = position.Y; monster.Transform.Z = position.Z; monster.Transform.Yaw = facing;
-        monster.MaxHp = MoshentaSkillCatalog.I(MoshentaSkillCatalog.Entity(entityId), "BaseHP"); monster.CurrentHp = monster.MaxHp;
+        monster.MaxHp = MoshentaSkillCatalog.I(Battle.Catalog.Entity(entityId), "BaseHP"); monster.CurrentHp = monster.MaxHp;
         ulong spawnId = 0xFFFFFFFF00000000UL | ++summonSequence;
         MoshentaActor actor = new MoshentaActor(this, monster, entityId, spawnId, -1, 0, new XElement[0], "");
         actor.SummonerId = caster.UnitId;

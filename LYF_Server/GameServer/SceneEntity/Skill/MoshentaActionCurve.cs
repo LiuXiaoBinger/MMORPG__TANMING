@@ -10,10 +10,11 @@ internal sealed class MoshentaActionCurve
     private readonly List<float> times = new List<float>();
     /// <summary>对应原值。</summary>
     private readonly List<float> values = new List<float>();
-    /// <summary>读取原Curve，首行是WrapMode不是关键帧。</summary><param name="name">原曲线名。</param>
-    internal MoshentaActionCurve(string name)
+    /// <summary>读取原Curve，首行是WrapMode不是关键帧。</summary><param name="catalog">本副本选择的原曲线目录。</param><param name="name">原曲线名。</param>
+    internal MoshentaActionCurve(MoshentaSkillCatalog catalog, string name)
     {
-        string[] lines = File.ReadAllLines(Path.Combine(MoshentaSkillCatalog.DirectoryPath, "Curve", Path.GetFileName(name) + ".txt"));
+        // 原动作曲线只从当前副本的数据目录读取。
+        string[] lines = File.ReadAllLines(Path.Combine(catalog.DirectoryPath, "Curve", Path.GetFileName(name) + ".txt"));
         for (int index = 1; index < lines.Length; index++)
         {
             if (string.IsNullOrWhiteSpace(lines[index])) continue;

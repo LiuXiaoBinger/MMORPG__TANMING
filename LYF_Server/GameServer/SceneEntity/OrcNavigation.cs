@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 using ServerMonster = GameServer.SceneEntity.MonsterEntity;
 
@@ -9,9 +8,8 @@ internal sealed class OrcNavigation
 {
     /// <summary>与客户端相同的投影搜索半盒，单位米。</summary>
     private static readonly MNavigationPoint search = new MNavigationPoint(4, 8, 4);
-    /// <summary>只在游戏服单线程逻辑帧调用，同地图的实例共享查询器。</summary>
-    private static readonly MNavigation nav = new MNavigation(MNavigationMapSerializer.Load(Path.Combine(
-        Path.GetDirectoryName(typeof(OrcNavigation).Assembly.Location), "NavigationData", "sc_dungeon_moshenta_001.navmesh.bytes")));
+    /// <summary>所属副本配置选定的导航查询器，地图间不共用查询状态。</summary>
+    private readonly MNavigation nav;
     /// <summary>当前路线转角；坐标由正式导航网查询得到。</summary>
     private readonly List<MNavigationPoint> path = new List<MNavigationPoint>();
     /// <summary>站位可达性查询的复用列表，与正在移动的路线分开。</summary>
@@ -40,9 +38,11 @@ internal sealed class OrcNavigation
     /// <summary>绑定该副本的怪物实体。</summary>
     /// <param name="owner">服务端实体工厂创建的兽人。</param>
     /// <param name="moveSpeed">原实体移动米速；旧兽人入口仍使用其已核验值。</param>
-    internal OrcNavigation(ServerMonster owner, float moveSpeed) { monster = owner; speed = moveSpeed; }
+    /// <param name="navigation">当前副本地图的导航查询器。</param>
+    internal OrcNavigation(ServerMonster owner, float moveSpeed, MNavigation navigation) { monster = owner; speed = moveSpeed; nav = navigation; }
     /// <summary>保留旧兽人调用入口，原表速度在运行时读取。</summary><param name="owner">服务端兽人实体。</param>
-    internal OrcNavigation(ServerMonster owner) : this(owner, MoshentaOrcDefinition.Speed) { }
+    internal OrcNavigation(ServerMonster owner) : this(owner, MoshentaOrcDefinition.Speed,
+        new DungeonBattleConfig(DungeonSceneRegistration.Load(owner.MapId).battleConfig).Navigation) { }
 
     /// <summary>转换为跨端导航查询器使用的米制坐标。</summary>
     /// <param name="point">服务端世界位置。</param>

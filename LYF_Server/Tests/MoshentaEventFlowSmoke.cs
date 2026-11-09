@@ -187,7 +187,7 @@ public static class MoshentaEventFlowSmoke
     {
         // 测试直接读取同份正式资源，不给业务添加击杀调试入口。
         System.Xml.Linq.XDocument config;
-        using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Moshenta.Waves.xml")) config = System.Xml.Linq.XDocument.Load(source);
+        using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons.4060.Waves.xml")) config = System.Xml.Linq.XDocument.Load(source);
         System.Xml.Linq.XElement wave = config.Descendants("MSceneWaveData").Single(row => (int)row.Element("base_info").Element("id") == waveId);
         System.Xml.Linq.XElement[] positions = wave.Descendants("MScenePositionData").ToArray();
         for (int index = 0; index < positions.Length; index++)

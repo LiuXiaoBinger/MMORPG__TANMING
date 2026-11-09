@@ -2,5 +2,12 @@
   "sceneId": 4060,
   "sceneLocation": "Assets/GM_Game/Scenes/RODungeon_Moshenta/sc_dungeon_moshenta_001",
   "flowResource": "Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ",
-  "creatureResource": "Dungeons/Moshenta/MoshentaCreatures"
+  "creatureResource": "Dungeons/Moshenta/MoshentaCreatures",
+  "battleConfig": "Config/MonsterAI/MoshentaAI.config",
+  "battleResourceRoot": "Dungeons/Moshenta",
+  "hitWordResource": "Dungeons/Moshenta/Hurt_Normal_Attack",
+  "portalResource": "Dungeons/Moshenta/MoshentaPortal",
+  "airWallResource": "Dungeons/Moshenta/MoshentaAirWall",
+  "collectionResource": "Dungeons/Moshenta/FlowEffects/Fx_Scene_MoFaShi_05",
+  "collectionTitle": "破坏魔法阵"
 }

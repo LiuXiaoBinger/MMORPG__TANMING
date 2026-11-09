@@ -9,11 +9,12 @@ internal sealed class MoshentaCodeTimeline : MoshentaTimeline
 {
     /// <summary>每实体独立的原LuaEnv整数槽。</summary>
     private readonly Dictionary<string, int> environment = new Dictionary<string, int>();
-    /// <summary>读取对应原计划并执行InitVariables。</summary><param name="actor">5456或5512宿主。</param>
-    internal MoshentaCodeTimeline(MoshentaActor actor) : base(actor)
+    /// <summary>读取所选配置的原计划并执行明确登记的代码初始化。</summary><param name="actor">本时间轴真实宿主。</param><param name="binding">当前实体的计划与代码实现绑定。</param>
+    internal MoshentaCodeTimeline(MoshentaActor actor, DungeonTimelineBinding binding) : base(actor)
     {
         // 原65事件只导出数据，函数执行由本类明确实现。
-        XElement config = XElement.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "MonsterAI", "TimeAxes.xml"));
+        XElement config = XElement.Load(actor.Owner.Battle.TimeAxesPath);
+        // 计划行按当前绑定实体选择，不用固定实体号推断脚本行为。
         XElement script = config.Elements("script").First(row => (int)row.Attribute("entityId") == actor.EntityId);
         XElement[] lines = script.Elements("axis").ToArray();
         for (int index = 0; index < lines.Length; index++)
@@ -24,14 +25,15 @@ internal sealed class MoshentaCodeTimeline : MoshentaTimeline
             for (int item = 0; item < events.Length; item++) points.Add(new MoshentaTimePoint { Delay = (int)events[item].Attribute("delay"), Action = (string)events[item].Attribute("action"), Parameters = events[item].Elements("arg").Select(value => value.Value).ToArray() });
             Plans[(int)lines[index].Attribute("id")] = points;
         }
-        if (actor.EntityId == 5456) environment["mark_count"] = 1;
-        else
+        if (binding.CodeProfile == "DaNaTuoSi") environment["mark_count"] = 1;
+        else if (binding.CodeProfile == "BossController")
         {
             // 原BossOpt在整局场景共享，第一次才随机六种排列。
             MoshentaSceneVariable option;
             if (!actor.Owner.TrySceneVariable("BossOpt", out option)) actor.Owner.SetSceneInt("BossOpt", actor.Owner.Random.Next(2, 8));
             environment["init_axis_var"] = actor.Owner.GetSceneInt("BossOpt"); environment["axis_seq"] = 1;
         }
+        else throw new InvalidDataException("未实现的代码时间轴配置：" + binding.CodeProfile);
     }
     /// <summary>执行Perform_BasicAction和本脚本实际出现的八种函数。</summary><param name="axis">原轴号。</param><param name="number">事件号。</param>
     protected override bool Invoke(int axis, int number)

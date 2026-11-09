@@ -77,7 +77,7 @@ internal sealed class MoshentaSkillRuntime
     internal MoshentaSkillRuntime(MoshentaActor actor)
     {
         Actor = actor; Buffs = new MoshentaBuffRuntime(actor.Owner, actor, null);
-        Calculator = new MoshentaDamageCalculator(actor.Owner.Random);
+        Calculator = new MoshentaDamageCalculator(actor.Owner.Random, actor.Owner.Battle.Catalog);
     }
     /// <summary>检查原CD、吟唱/技能状态和目标射程。</summary><param name="skillId">原技能编号。</param><param name="level">实际等级。</param><param name="targetId">同实例目标UID。</param><param name="castPoint">本次施法位置。</param>
     internal bool CanCast(int skillId, int level, ulong targetId, Vector3 castPoint)
@@ -95,7 +95,7 @@ internal sealed class MoshentaSkillRuntime
         long next;
         if (cooldowns.TryGetValue(skillId, out next) && Actor.Owner.Now < next) return false;
         // 原需要目标技能必须使用同实例有效实体，位置类技能允许无目标。
-        MoshentaSkillDefinition skill = MoshentaSkillCatalog.Skill(skillId);
+        MoshentaSkillDefinition skill = Actor.Owner.Battle.Catalog.Skill(skillId);
         if (skill.NeedTarget)
         {
             OnlineRole role = Actor.Owner.FindRole(targetId);
@@ -116,7 +116,7 @@ internal sealed class MoshentaSkillRuntime
     internal List<int> FilterGroup(int group, ulong targetId)
     {
         // 原绑定为skill=level=group=percent。
-        string[] bindings = MoshentaSkillCatalog.S(MoshentaSkillCatalog.Entity(Actor.EntityId), "UnitSkillID").Split('|');
+        string[] bindings = MoshentaSkillCatalog.S(Actor.Owner.Battle.Catalog.Entity(Actor.EntityId), "UnitSkillID").Split('|');
         List<int> result = new List<int>();
         for (int index = 0; index < bindings.Length; index++)
         {
@@ -132,7 +132,7 @@ internal sealed class MoshentaSkillRuntime
     {
         // 原randInt(0,MAX_EASY_SKILL_LIMIT+1)包含0到10000。
         int value = Actor.Owner.Random.Next(0, 10001);
-        string[] bindings = MoshentaSkillCatalog.S(MoshentaSkillCatalog.Entity(Actor.EntityId), "UnitSkillID").Split('|');
+        string[] bindings = MoshentaSkillCatalog.S(Actor.Owner.Battle.Catalog.Entity(Actor.EntityId), "UnitSkillID").Split('|');
         for (int index = 0; index < skillIds.Count; index++)
         {
             for (int binding = 0; binding < bindings.Length; binding++)
@@ -151,7 +151,7 @@ internal sealed class MoshentaSkillRuntime
     {
         if (!CanCast(skillId, level, targetId, castPoint)) return false;
         // 攻击属性冻结在起手，命中目标属性不冻结。
-        MoshentaSkillDefinition skill = MoshentaSkillCatalog.Skill(skillId);
+        MoshentaSkillDefinition skill = Actor.Owner.Battle.Catalog.Skill(skillId);
         current = new MoshentaSkillCast { Skill = skill, Level = level, TargetId = targetId, Point = castPoint,
             Facing = Actor.Facing, Snapshot = MoshentaDamageSnapshot.Capture(Actor), TimeScale = TimeScale(skill) };
         // 有目标时技能方向按真实施法点，空目标保留原宿主朝向。
@@ -173,7 +173,7 @@ internal sealed class MoshentaSkillRuntime
     {
         if (MoshentaSkillCatalog.I(skill.Table, "IsAffectedASPD") == 0) return 1;
         // 原怪物最终ASPD，基础字段本副本均低于200。
-        float speed = (int)(50.0 / (200 - MoshentaSkillCatalog.F(MoshentaSkillCatalog.Entity(Actor.EntityId), "ASPD")) * 10000) / 10000f;
+        float speed = (int)(50.0 / (200 - MoshentaSkillCatalog.F(Actor.Owner.Battle.Catalog.Entity(Actor.EntityId), "ASPD")) * 10000) / 10000f;
         if (MoshentaSkillCatalog.I(skill.Table, "SkillDamType") != 0)
         {
             if (speed <= 1) return 1;

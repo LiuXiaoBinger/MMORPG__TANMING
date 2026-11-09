@@ -45,18 +45,17 @@ function ROLuaCommonFunction.RandomSort(t)
  end
 end
 ";
-    /// <summary>注册真实C API桥后原样加载helper和两份原脚本中的本实体脚本。</summary><param name="actor">5456或5512。</param>
-    internal MoshentaLuaTimeline(MoshentaActor actor) : base(actor)
+    /// <summary>注册真实C API桥后原样加载所选配置的helper和实体脚本。</summary><param name="actor">本时间轴真实宿主。</param><param name="binding">当前实体明确登记的脚本名称。</param>
+    internal MoshentaLuaTimeline(MoshentaActor actor, DungeonTimelineBinding binding) : base(actor)
     {
-        scriptName = "Dungeon_DaNaTuoSiZhiZhan_DaNaTuoSi";
-        if (actor.EntityId == 5512) scriptName = "Dungeon_DaNaTuoSiZhiZhan_BossController_EZ";
+        scriptName = binding.Script;
         lua.Register("__sceneGet", SceneGet); lua.Register("__sceneSet", SceneSet); lua.Register("__switch", SwitchAxis);
         lua.Register("__notice", Notice); lua.Register("__players", Players); lua.Register("__buff", AddBuff);
         lua.Register("__plan", Plan); lua.Register("__random", Random); lua.Register("__vectorNew", VectorNew);
         lua.Register("__vectorIndex", VectorIndex); lua.Register("__vectorWrite", VectorWrite); lua.Register("__vectorSize", VectorSize);
         lua.Execute(Bootstrap, "RO窄API桥");
         // 源码按文件原样执行，require缓存仍使用原time模块名。
-        string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "MonsterAI", "Lua");
+        string directory = actor.Owner.Battle.LuaDirectory;
         lua.Execute(File.ReadAllText(Path.Combine(directory, "Perform_BasicAction.lua")), "Perform_BasicAction.lua");
         lua.Execute("package.loaded['time.Perform_BasicAction']=true", "原模块缓存");
         lua.Execute(File.ReadAllText(Path.Combine(directory, "lua_timeline_utiltool.lua")), "lua_timeline_utiltool.lua");

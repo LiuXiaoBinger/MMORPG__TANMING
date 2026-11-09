@@ -57,6 +57,9 @@ public sealed partial class SceneWaveSpawner
     public SceneWaveSpawner(int dungeonId)
     {
         Dungeon = LubanMgr.Instance.GetDungeonsTableById(dungeonId);
+        // 客户端与服务端嵌入同一份场景登记；空配置只启用既有通用流程。
+        DungeonSceneRegistration registration = DungeonSceneRegistration.Load(Dungeon.SceneID);
+        if (!string.IsNullOrEmpty(registration.battleConfig)) Battle = new DungeonBattleConfig(registration.battleConfig);
         using (Stream source = typeof(SceneWaveSpawner).Assembly.GetManifestResourceStream("Dungeons." + Dungeon.SceneID + ".Waves.xml")) Config = XDocument.Load(source);
         spawn_points_ = LoadSpawnPoints();
         InitializeAi();
@@ -70,7 +73,8 @@ public sealed partial class SceneWaveSpawner
     {
         if (dungeon == null) return false;
         return typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".Waves.xml") != null
-            && typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".Creatures.json") != null;
+            && typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons." + dungeon.SceneID + ".Creatures.json") != null
+            && typeof(SceneWaveSpawner).Assembly.GetManifestResourceInfo("Dungeons.Scenes." + dungeon.SceneID + ".json") != null;
     }
 
     /// <summary>原波次条件已满足后创建对应实体，未激活的模板不会参与战斗。</summary>
@@ -93,10 +97,10 @@ public sealed partial class SceneWaveSpawner
             monster.CurrentHp = monster.MaxHp;
             world_.Add(monster);
             monsters_.Add(monster);
-            if (IsMoshenta)
+            if (Battle != null)
             {
                 // 所有原实体都保留角色，包括零HP机制和NPC实体5456。
-                monster.MaxHp = MoshentaSkillCatalog.I(MoshentaSkillCatalog.Entity(point.Creature.id), "BaseHP");
+                monster.MaxHp = MoshentaSkillCatalog.I(Battle.Catalog.Entity(point.Creature.id), "BaseHP");
                 monster.CurrentHp = monster.MaxHp;
                 MoshentaActor actor = new MoshentaActor(this, monster, point.Creature.id, point.SpawnId, waveId, point.AiIndex, point.OrcPatrol, point.PatrolType);
                 Actors.Add(actor);
@@ -133,15 +137,15 @@ public sealed partial class SceneWaveSpawner
             XElement npc = wave.Element("npc_info");
             int entityId = 0;
             if (monster != null) entityId = (int)monster.Element("entity_id");
-            else if (IsMoshenta && (int?)npc?.Element("npc_id") == 20186) entityId = 5456;
+            else if (Battle != null && npc != null) entityId = Battle.NpcEntity((int)npc.Element("npc_id"));
             if (entityId == 0) continue;
             ROSceneCreatureEntity creature;
             if (!creatures.TryGetValue(entityId, out creature))
             {
-                if (!IsMoshenta) continue;
+                if (Battle == null) continue;
                 creature = new ROSceneCreatureEntity { id = entityId, nonCombatant = npc != null };
             }
-            if (!IsMoshenta && (creature.maxHp <= 0 || creature.nonCombatant)) continue;
+            if (Battle == null && (creature.maxHp <= 0 || creature.nonCombatant)) continue;
             // 原波次独立提供选树、数量和巡逻路线。
             XElement ai = npc;
             if (monster != null) ai = monster.Element("monster_base_data");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -47,18 +47,16 @@ internal sealed class MoshentaBehaviorTree
         if (actor != null) { floats["min_attack_range"] = actor.AttackRange; vectors["out_fight_pos"] = actor.BornPosition; vectors["born_pos"] = actor.BornPosition; }
         floats["tolerance_range"] = 0.5f;
     }
-    /// <summary>读取嵌入的原始导出XML，未知树直接失败。</summary><param name="name">原树名。</param>
-    private static XElement Load(string name)
+    /// <summary>读取当前配置目录的原始导出XML，未知树直接失败。</summary><param name="name">原树名。</param>
+    private XElement Load(string name)
     {
         // 同一逻辑线程首次装载后复用只读定义。
+        string path = Path.GetFullPath(Path.Combine(scene.Battle.TreeDirectory, name + ".xml"));
+        // 缓存键包含实际目录，相同树名可由不同副本独立提供。
         XElement value;
-        if (definitions.TryGetValue(name, out value)) return value;
-        using (Stream source = typeof(MoshentaBehaviorTree).Assembly.GetManifestResourceStream("Moshenta.AI." + name + ".xml"))
-        {
-            if (source == null) throw new FileNotFoundException("未部署RO AI树：" + name);
-            value = XElement.Load(source);
-        }
-        definitions.Add(name, value); return value;
+        if (definitions.TryGetValue(path, out value)) return value;
+        value = XElement.Load(path);
+        definitions.Add(path, value); return value;
     }
     /// <summary>按EntryTask类型前缀建立槽；子树合并不覆盖主树已有值。</summary><param name="tree">当前树根。</param>
     private void Initialize(XElement tree)
@@ -247,7 +245,7 @@ internal sealed class MoshentaBehaviorTree
     {
         canCast.Clear();
         // 原绑定仅在本场景闭包中读取，不扫描全服技能。
-        string[] bindings = MoshentaSkillCatalog.S(MoshentaSkillCatalog.Entity(actor.EntityId), "UnitSkillID").Split('|');
+        string[] bindings = MoshentaSkillCatalog.S(scene.Battle.Catalog.Entity(actor.EntityId), "UnitSkillID").Split('|');
         for (int index = 0; index < bindings.Length; index++)
         {
             // 原SkillTable编号为第一个等号字段。

@@ -26,6 +26,8 @@ public class MSceneDungeon : MonoBehaviour
     private SceneWorldSystem world;
     /// <summary>编辑器与运行时共用的模型和动作目录。</summary>
     private ROSceneCreatureCatalog catalog;
+    /// <summary>本场景出生时绑定的资源登记，模型播放器始终读取所属场景，不跟随全局切场景变化。</summary>
+    public DungeonSceneResource Resource { get; private set; }
 
     /// <summary>按原配置编号保存物件和空气墙，激活状态完全由服务器快照决定。</summary>
     private readonly Dictionary<int, GameObject> sceneObjects = new Dictionary<int, GameObject>();
@@ -45,7 +47,8 @@ public class MSceneDungeon : MonoBehaviour
     {
         world = Global.Instance.SceneWorld;
         instanceId = TeamData.Instance.DungeonInstanceId;
-        buffPlayer = new MSceneMonsterBuffPlayer(world, FindMonster);
+        Resource = DungeonSceneResource.Load(TeamData.Instance.DungeonSceneId);
+        buffPlayer = new MSceneMonsterBuffPlayer(world, FindMonster, Resource);
         TeamData.Instance.MonsterBuffUpdated += OnMonsterBuffUpdated;
         // 入场时已经收到的原Buff快照，模型就绪后使用剩余寿命恢复。
         List<MSceneMonsterBuffState> buffs = TeamData.Instance.GetMonsterBuffs();
@@ -57,18 +60,17 @@ public class MSceneDungeon : MonoBehaviour
         TeamData.Instance.MonsterPlayerHit += OnMonsterPlayerHit;
         TeamData.Instance.MonsterHeadExpression += OnHeadExpression;
         TeamData.Instance.DungeonFlowUpdated += ApplyFlow;
-        if (UIRoot.Instance != null && instanceId != 0UL)
+        if (UIRoot.Instance != null && instanceId != 0UL && !string.IsNullOrEmpty(Resource.hitWordResource))
         {
             // 预制体保存十张原始数字 Sprite、材质和 RO 普攻曲线，显示在功能窗口下方。
-            GameObject prefab = Resources.Load<GameObject>("Dungeons/Moshenta/Hurt_Normal_Attack");
+            GameObject prefab = Resources.Load<GameObject>(Resource.hitWordResource);
             battleHudWord = Instantiate(prefab, UIRoot.Instance._canvas.transform, false).GetComponent<MBattleHudWordMgr>();
             battleHudWord.transform.SetAsFirstSibling();
         }
         // 读取本次入场 SceneID 的资源，不能沿用另一副本的波次或怪物目录。
-        DungeonSceneResource resource = DungeonSceneResource.Load(TeamData.Instance.DungeonSceneId);
-        catalog = ROSceneCreatureCatalog.Load(resource.creatureResource);
+        catalog = ROSceneCreatureCatalog.Load(Resource.creatureResource);
         // Resources 中的原 XML 随编辑器保存更新，不另外烘焙出生点副本。
-        TextAsset source = Resources.Load<TextAsset>(resource.flowResource);
+        TextAsset source = Resources.Load<TextAsset>(Resource.flowResource);
         // XML 是配置序列化边界；只枚举原波次对象，不使用画布显示节点计数。
         document = XDocument.Parse(source.text);
         XElement[] records = document.Descendants("MSceneWaveData").ToArray();
@@ -183,8 +185,9 @@ public class MSceneDungeon : MonoBehaviour
             {
                 if (!active) continue;
                 // 正式资源根分别持有原 RO 传送效果与实体空气墙。
-                string resource = "Dungeons/Moshenta/MoshentaPortal";
-                if (wall) resource = "Dungeons/Moshenta/MoshentaAirWall";
+                string resource = Resource.portalResource;
+                if (wall) resource = Resource.airWallResource;
+                if (string.IsNullOrEmpty(resource)) continue;
                 instance = Instantiate(Resources.Load<GameObject>(resource), transform);
                 instance.name = "Scene object " + id;
                 instance.transform.position = ROSceneXml.Vector(data, "position") + ROSceneXml.Vector(data, "box/offset");
@@ -216,14 +219,14 @@ public class MSceneDungeon : MonoBehaviour
             XElement[] points = ROSceneXml.SpawnPoints(wave.Data);
             if (points.Length == 0) continue;
             MSceneInteraction interaction = new MSceneInteraction();
-            if (collectionEffect == null)
+            if (collectionEffect == null && !string.IsNullOrEmpty(Resource.collectionResource))
             {
-                collectionEffect = Instantiate(Resources.Load<GameObject>("Dungeons/Moshenta/FlowEffects/Fx_Scene_MoFaShi_05"), transform);
+                collectionEffect = Instantiate(Resources.Load<GameObject>(Resource.collectionResource), transform);
                 collectionEffect.transform.position = ROSceneXml.Vector(points[0], "position");
             }
-            collectionEffect.SetActive(true);
+            if (collectionEffect != null) collectionEffect.SetActive(true);
             interaction.WaveId = wave.Id;
-            interaction.Title = "破坏魔法阵";
+            interaction.Title = Resource.collectionTitle;
             interaction.Position = ROSceneXml.Vector(points[0], "position");
             interaction.Rotation = Quaternion.identity;
             interaction.Extents = Vector3.one * 2.5f;
@@ -280,9 +283,9 @@ public class MSceneDungeon : MonoBehaviour
     {
         // 身份由原波次及序号组成，与服务器怪物字典一致。
         ulong spawnId = ((ulong)(uint)wave.Id << 32) | (uint)(ordinal + 1);
-        // 魔神塔快照包含所有仍在场Actor，零HP机制/NPC也据此排除已经清尸的固定点。
+        // 已启用战斗配置的快照包含所有仍在场 Actor，零 HP 机制/NPC 也据此排除已经清尸的固定点。
         MonsterHpData authority;
-        if (TeamData.Instance.DungeonId == 4060)
+        if (!string.IsNullOrEmpty(Resource.battleConfig))
         {
             if (!TeamData.Instance.GetMonsterAttr(spawnId, out authority)) return;
         }
@@ -305,7 +308,7 @@ public class MSceneDungeon : MonoBehaviour
                 return;
             }
             // 资源加载期间收到的移除同样有效，不能让晚完成模型重新生成尸体。
-            if (TeamData.Instance.DungeonId == 4060 && !TeamData.Instance.GetMonsterAttr(spawnId, out authority))
+            if (!string.IsNullOrEmpty(Resource.battleConfig) && !TeamData.Instance.GetMonsterAttr(spawnId, out authority))
             {
                 Destroy(model);
                 return;

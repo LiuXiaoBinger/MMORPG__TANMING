@@ -119,7 +119,7 @@ internal sealed class MoshentaActor
     private readonly List<OnlineRole> deadThreats = new List<OnlineRole>();
     /// <summary>实际节点运行器，黑板只属于本实体。</summary>
     internal MoshentaBehaviorTree Tree { get; private set; }
-    /// <summary>仅5456与5512拥有原时间轴。</summary>
+    /// <summary>当前副本登记为本实体选择的原时间轴；未登记的普通怪物为空。</summary>
     internal MoshentaTimeline Timeline { get; private set; }
     /// <summary>显式死亡标记，区别于无生命机制。</summary>
     private bool dead;
@@ -135,7 +135,7 @@ internal sealed class MoshentaActor
         Owner = owner; Monster = monster; EntityId = entityId; SpawnId = spawnId; WaveId = waveId;
         Now = owner.Now; BornPosition = Position; patrol = points; patrolType = type;
         // 实际运行EntityTable提供AI与属性，不再沿用兽人常量。
-        XElement row = MoshentaSkillCatalog.Entity(entityId);
+        XElement row = Owner.Battle.Catalog.Entity(entityId);
         Level = MoshentaSkillCatalog.I(row, "UnitLevel");
         dummy = MoshentaSkillCatalog.I(row, "IsDummy") != 0;
         if (!dummy) corpseDuration = (int)(MoshentaSkillCatalog.F(row, "BodyDisappearTime") * 1000);
@@ -148,7 +148,7 @@ internal sealed class MoshentaActor
         idleInterval = Math.Max(200, (int)(MoshentaSkillCatalog.F(row, "AIHeartInterval") * 1000));
         combatInterval = Math.Max(200, (int)(MoshentaSkillCatalog.F(row, "AIHeartIntervalCombat") * 1000));
         nextThink = Now + (int)(MoshentaSkillCatalog.F(row, "AIStartTime") * 1000);
-        navigation = new OrcNavigation(monster, MoshentaSkillCatalog.F(row, "MoveSpeed"));
+        navigation = new OrcNavigation(monster, MoshentaSkillCatalog.F(row, "MoveSpeed"), owner.Battle.Navigation);
         // 索引超上界与原GetAIByIndex一致夹到最后，负数表示无树。
         string configured = MoshentaSkillCatalog.S(row, "AI");
         TreeName = "";
@@ -168,7 +168,7 @@ internal sealed class MoshentaActor
             int skillId;
             if (!int.TryParse(fields[0], out skillId)) continue;
             // min_attack_range来自所有已绑定技能的最小有效射程。
-            float range = MoshentaSkillCatalog.F(MoshentaSkillCatalog.Effect(skillId), "FarRange");
+            float range = MoshentaSkillCatalog.F(Owner.Battle.Catalog.Effect(skillId), "FarRange");
             if (range > 0 && (AttackRange == 0 || range < AttackRange)) AttackRange = range;
         }
         Skills = new MoshentaSkillRuntime(this);
@@ -179,7 +179,7 @@ internal sealed class MoshentaActor
             fightRotation = (float)((owner.Random.NextDouble() * 2 - 1) * offset);
             Tree = new MoshentaBehaviorTree(owner, this, TreeName);
         }
-        if (entityId == 5456 || entityId == 5512) Timeline = MoshentaTimeline.Create(this);
+        Timeline = MoshentaTimeline.Create(this);
         action = new MonsterActionData { SpawnId = spawnId, Phase = MonsterActionPhase.Idle };
     }
 
@@ -187,7 +187,7 @@ internal sealed class MoshentaActor
     internal void Born()
     {
         // 原BornBuff条目为完整BuffID=万分比概率。
-        string[] buffs = MoshentaSkillCatalog.S(MoshentaSkillCatalog.Entity(EntityId), "BornBuff").Split('|');
+        string[] buffs = MoshentaSkillCatalog.S(Owner.Battle.Catalog.Entity(EntityId), "BornBuff").Split('|');
         for (int index = 0; index < buffs.Length; index++)
         {
             // 零字符串表示此实体未配置出生Buff。

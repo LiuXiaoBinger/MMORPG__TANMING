@@ -651,5 +651,6 @@
       "LinkPath": ""
     }
   ],
-  "VisibilityShader": "Assets/GM_Game/Scenes/RODungeon_Moshenta/RO/artres/Resources/Shader/RO/Creature/ROMonsterVisibility__beta153.shader"
+  "VisibilityShader": "Assets/GM_Game/Scenes/RODungeon_Moshenta/RO/artres/Resources/Shader/RO/Creature/ROMonsterVisibility__beta153.shader",
+  "NoFadeEntityIds": [5357, 5501, 5502, 5503]
 }

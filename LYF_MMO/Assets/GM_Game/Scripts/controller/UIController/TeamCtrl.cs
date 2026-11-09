@@ -199,8 +199,11 @@ public sealed class TeamCtrl : CtrlBase
         PlayerEntity self = Global.Instance.SceneWorld.LocalRole;
         if (notice.TargetRoleId != 0)
             if (self == null || self.GetID() != notice.TargetRoleId) return;
-        // 本副本实际原文及时间配置，不把通知ID当作显示文案。
-        MSceneMonsterNoticeCatalog data = MSceneMonsterNoticeCatalog.Load();
+        // 当前通知已通过实例身份校验，按该实例场景登记读取原文与时间配置。
+        DungeonSceneResource resource = DungeonSceneResource.Load(TeamData.Instance.DungeonSceneId);
+        // 当前根目录的只读文本与时长，未导入时不显示其他副本的通知。
+        MSceneMonsterNoticeCatalog data = MSceneMonsterNoticeCatalog.Load(resource.battleResourceRoot);
+        if (data == null) return;
         if (notice.Kind == 1)
         {
             for (int index = 0; index < data.Notices.Length; index++)

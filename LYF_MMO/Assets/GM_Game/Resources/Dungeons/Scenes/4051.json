@@ -2,5 +2,12 @@
   "sceneId": 4051,
   "sceneLocation": "",
   "flowResource": "Dungeons/Beisen/RO_BeiSenYiBian_H",
-  "creatureResource": "Dungeons/Beisen/BeisenCreatures"
+  "creatureResource": "Dungeons/Beisen/BeisenCreatures",
+  "battleConfig": "",
+  "battleResourceRoot": "",
+  "hitWordResource": "",
+  "portalResource": "",
+  "airWallResource": "",
+  "collectionResource": "",
+  "collectionTitle": "采集"
 }
