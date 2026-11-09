@@ -401,8 +401,8 @@ public class OnlineRole : IGeneOwner
     // 基础属性实体预留给战斗模块，伤害计算应基于服务端属性。
     private RoleBaseAttrEntity _roleBaseAttrEntity;
 
-    // 以枚举为键的角色开关字典；每个标志独立保存布尔值，并非整数位掩码。
-    private Dictionary<RoleStateFlag, bool> _flags;
+    // 每个角色构造时创建并持有至释放的开关字典，供保存定时器等逻辑读写独立布尔标志。
+    private Dictionary<RoleStateFlag, bool> _flags = new Dictionary<RoleStateFlag, bool>();
     #endregion
     // 背包明细和容量由 RoItemComponent/BagTransition 管理。
 
