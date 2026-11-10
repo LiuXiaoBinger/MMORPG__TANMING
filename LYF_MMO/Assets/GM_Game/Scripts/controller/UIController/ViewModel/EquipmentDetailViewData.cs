@@ -17,6 +17,10 @@ public sealed class EquipmentDetailViewData
     public string[] SpecialSkillTexts = new string[3];
     /// <summary>三个特技槽的独立说明卡正文，按标题、当前层效果、下一层效果、同名装备说明分区。</summary>
     public string[] SpecialSkillCards = new string[3];
+    /// <summary>三个特技侧卡的标题，逐槽保存特技名与当前展示等级。</summary>
+    public string[] SpecialSkillCardTitles = new string[3];
+    /// <summary>三个特技侧卡的只读状态，区分当前生效、已选未穿、未使用与未镶嵌。</summary>
+    public string[] SpecialSkillCardStates = new string[3];
     /// <summary>三个特技槽的首行摘要，逐行显示槽位、名称、等级与启用状态。</summary>
     public string[] SpecialSkillHeadlines = new string[3];
     /// <summary>槽有特技且不是当前启用槽时允许提交切换。</summary>

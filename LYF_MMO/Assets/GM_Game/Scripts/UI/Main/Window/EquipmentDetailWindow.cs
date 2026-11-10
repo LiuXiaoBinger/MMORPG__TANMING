@@ -21,10 +21,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _traitsText;
     /// <summary>只滚动中间属性、词条和特技，顶部和底部按钮保持固定。</summary>
     [SerializeField] private ScrollRect _scroll;
-    /// <summary>预制体中按槽0、1、2排列的特技说明。</summary>
+    /// <summary>预制体中按槽0、1、2排列的单行特技摘要。</summary>
     [SerializeField] private TMP_Text[] _specialSkillTexts;
-    /// <summary>对应三个特技槽的启用按钮，引用保存在正式预制体。</summary>
-    [SerializeField] private Button[] _activateButtons;
     /// <summary>未穿戴时显示的穿戴按钮。</summary>
     [SerializeField] private Button _wearButton;
     /// <summary>已穿戴时显示的卸下按钮。</summary>
@@ -57,7 +55,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _forgeRowText;
     /// <summary>淬锋与铭缀行的折叠按钮，切换该行显隐。</summary>
     [SerializeField] private Button _forgeFoldButton;
-    /// <summary>三个特技行末的详情入口按钮，按槽位顺序对应三个特技说明。</summary>
+    /// <summary>三个特技行末的单个图标入口，按保存槽顺序打开对应侧卡。</summary>
     [SerializeField] private Button[] _specialSkillDetailButtons;
     /// <summary>外观独立行，无实例数据时显示中性占位。</summary>
     [SerializeField] private TMP_Text _appearanceRowText;
@@ -142,6 +140,10 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private Button _infoLayerCloseButton;
     /// <summary>说明卡标题，打开属性卡或特技卡时按内容改写。</summary>
     [SerializeField] private TMP_Text _infoLayerTitleText;
+    /// <summary>特技侧卡右上角的使用入口，提交当前正在阅读的槽位。</summary>
+    [SerializeField] private Button _cardUseButton;
+    /// <summary>特技侧卡右上角的只读状态，区分当前生效、已选未穿和空槽。</summary>
+    [SerializeField] private TMP_Text _cardStateText;
     /// <summary>说明卡底部的兑换入口，只给暂未开放提示。</summary>
     [SerializeField] private Button _cardDeductButton;
     /// <summary>说明卡底部的拓源入口，只给暂未开放提示。</summary>
@@ -150,7 +152,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private Button _cardRemoveButton;
     /// <summary>基础属性分区行末的查看按钮，打开属性说明卡。</summary>
     [SerializeField] private Button _attrViewButton;
-    /// <summary>图标后方的品质光晕，用透明度呼吸体现武器光效，不改任何装备数据。</summary>
+    /// <summary>图标外框的蓝青展示光效，不代表未知的装备品质。</summary>
     [SerializeField] private Image _iconGlow;
     #endregion
 
@@ -165,12 +167,12 @@ public sealed class EquipmentDetailWindow : WindowBase
     private const string FoldCollapseText = "收起";
     /// <summary>折叠态下折叠按钮的提示词，指向「点了会展开」。</summary>
     private const string FoldExpandText = "展开";
-    /// <summary>图标光晕呼吸的最低透明度，温和且不压过装备名。</summary>
-    private const float GlowMinAlpha = 0.10f;
-    /// <summary>图标光晕呼吸的最高透明度。</summary>
-    private const float GlowMaxAlpha = 0.30f;
-    /// <summary>光晕呼吸速度，一次往返约 3.3 秒。</summary>
-    private const float GlowPulseSpeed = 0.6f;
+    /// <summary>外框闪动起点为清晰的蓝色，透明度0.95，确保浅蓝底上可见。</summary>
+    private static readonly Color GlowBlue = new Color(0.25f, 0.55f, 1f, 0.95f);
+    /// <summary>外框闪动终点为青色，透明度1，不影响武器图标本身的颜色。</summary>
+    private static readonly Color GlowCyan = new Color(0.18f, 1f, 0.76f, 1f);
+    /// <summary>外框每秒走过的单程相位，一次蓝青蓝往返约2.7秒。</summary>
+    private const float GlowPulseSpeed = 0.75f;
     /// <summary>详情窗口在屏幕上的最小显示缩放，1366 下按它补偿，保证正文可读。</summary>
     private const float MinScreenScale = 0.9f;
     /// <summary>说明卡最大高度，与预制体默认卡高一致，特技卡到顶后在卡内滚动。</summary>
@@ -182,7 +184,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     /// <summary>说明卡正文宽度，等于卡宽减去左右内边距。</summary>
     private const float CardBodyWidth = 300f;
     /// <summary>说明卡顶部标题区高度，正文滚动区从这里往下开始。</summary>
-    private const float CardTopArea = 34f;
+    private const float CardTopArea = 42f;
     /// <summary>说明卡底部三按钮区高度，按钮固定贴在卡底内边距之上。</summary>
     private const float CardButtonArea = 34f;
     /// <summary>说明卡底部留白，无按钮时只留这一条边距。</summary>
@@ -193,10 +195,6 @@ public sealed class EquipmentDetailWindow : WindowBase
     private const float GemCellSize = 32f;
     /// <summary>镶嵌孔位格行距，等于格高加行间空隙。</summary>
     private const float GemCellRowStep = 34f;
-    /// <summary>可启用特技按钮的浅底底色。</summary>
-    private static readonly Color NormalSlotColor = new Color(0.93f, 0.965f, 1f, 1f);
-    /// <summary>空槽或不可启用特技的按钮底色，明确的禁用视觉。</summary>
-    private static readonly Color DisabledSlotColor = new Color(0.82f, 0.87f, 0.93f, 1f);
     /// <summary>可启用特技的标题字色，与正文一致。</summary>
     private static readonly Color ActiveSkillTitleColor = new Color(0.07f, 0.19f, 0.33f, 1f);
     /// <summary>空槽标题字色，压暗表示不可启用。</summary>
@@ -223,6 +221,16 @@ public sealed class EquipmentDetailWindow : WindowBase
     private readonly string[] _specialSkillDetails = new string[3];
     /// <summary>三个特技槽各自的说明卡正文，已按标题、当前层、下一层、同名说明分区。</summary>
     private readonly string[] _specialSkillCards = new string[3];
+    /// <summary>三个特技槽的侧卡标题，包含真实特技名与等级。</summary>
+    private readonly string[] _specialSkillCardTitles = new string[3];
+    /// <summary>三个特技槽的只读状态，由控制器根据服务器选择和穿戴状态生成。</summary>
+    private readonly string[] _specialSkillCardStates = new string[3];
+    /// <summary>各槽是否可使用，缓存当前Render数据，打开侧卡时决定使用入口显隐。</summary>
+    private readonly bool[] _canUseSpecialSkills = new bool[3];
+    /// <summary>当前特技侧卡对应的保存槽下标，范围0至2，仅用于原有选择事件。</summary>
+    private int _currentCardSkillSlot;
+    /// <summary>当前开窗的光效起点，使用不受游戏暂停影响的秒数。</summary>
+    private float _glowStartedAt;
 
     /// <summary>把状态词写进按钮自带 Label；Label 已铺满父 Rect，长词也不会溢出按钮背景。</summary>
     /// <param name="button">需要改写文案的扩展按钮。</param>
@@ -241,9 +249,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _wearButton.onClick.AddListener(OnWearRequested);
         _takeOffButton.onClick.AddListener(OnTakeOffRequested);
         _closeButton.onClick.AddListener(CloseWindow);
-        _activateButtons[0].onClick.AddListener(OnActivateFirst);
-        _activateButtons[1].onClick.AddListener(OnActivateSecond);
-        _activateButtons[2].onClick.AddListener(OnActivateThird);
+        _cardUseButton.onClick.AddListener(OnCardUseClicked);
         _editButton.onClick.AddListener(OnEditClicked);
         _infoButton.onClick.AddListener(OnInfoClicked);
         _gemDropButton.onClick.AddListener(OnGemDropClicked);
@@ -324,32 +330,20 @@ public sealed class EquipmentDetailWindow : WindowBase
         ResourceMgr.Instance.LoadSpriteAsync(data.IconPath, sprite => _icon.sprite = sprite);
         _wearButton.gameObject.SetActive(!data.IsWorn);
         _takeOffButton.gameObject.SetActive(data.IsWorn);
-        // 三个固定槽按服务器保存顺序渲染，空槽按钮停用；index 是特技槽下标。
+        // 三个保存槽只显示一行摘要和一个查看图标，空槽使用次级色但仍可查看空态说明。
         for (int index = 0; index < 3; index++)
         {
             // 首行只显示槽位、名称、等级与状态；完整说明留给详情层，不在行内换行溢出。
             _specialSkillTexts[index].text = data.SpecialSkillHeadlines[index];
-            // canActivate 表示该槽不是服务器当前选中槽，点了可以提交切换；已选槽也会是 false。
-            bool canActivate = data.CanActivateSpecialSkill[index];
-            _activateButtons[index].interactable = canActivate;
             // isEmptySlot 表示该槽没有任何特技族 ID，只有真正空槽才用浅灰禁用色。
             bool isEmptySlot = data.IsSpecialSkillEmpty[index];
-            // slotImage 是启用按钮的背景 Image，用来区分空槽、已选槽与可切换槽三种底色。
-            UnityEngine.UI.Image slotImage = _activateButtons[index].targetGraphic as UnityEngine.UI.Image;
-            if (slotImage != null)
+            if (isEmptySlot)
             {
-                if (isEmptySlot)
-                {
-                    // 空槽：浅灰底加压暗标题，明确表示这里没有特技可启用。
-                    slotImage.color = DisabledSlotColor;
-                    _specialSkillTexts[index].color = DisabledSkillTitleColor;
-                }
-                else
-                {
-                    // 已选或可切换槽都按正常特技显示，不能因为 CanActivate=false 被误判成空槽。
-                    slotImage.color = NormalSlotColor;
-                    _specialSkillTexts[index].color = ActiveSkillTitleColor;
-                }
+                _specialSkillTexts[index].color = DisabledSkillTitleColor;
+            }
+            else
+            {
+                _specialSkillTexts[index].color = ActiveSkillTitleColor;
             }
         }
         // 打开新装备时把新增交互状态复位，避免上一次的展开状态残留。
@@ -369,14 +363,15 @@ public sealed class EquipmentDetailWindow : WindowBase
         _footerExtra.gameObject.SetActive(false);
         SetButtonLabel(_footerExpandButton, FoldExpandText);
         _infoLayer.gameObject.SetActive(false);
-        // 重开复位光晕透明度，避免上一次呼吸停在最亮或最暗。
-        ApplyGlowAlpha(GlowMinAlpha);
+        // 每次打开从蓝色起点开始，在预制体内的外框上做实际颜色变化。
+        _glowStartedAt = Time.unscaledTime;
+        ApplyGlowColor(0f);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_scroll.content);
         // 本窗口的显示尺度在每次刷新时按根画布缩放补偿，1366 下正文不会被缩到 10 像素。
         ApplyDisplayScale();
     }
 
-    /// <summary>每帧驱动图标光晕呼吸；窗口隐藏后由 OnDisable 停止并复位。</summary>
+    /// <summary>仅在窗口启用期间逐帧更新外框颜色，隐藏后Unity不再调用本组件Update。</summary>
     private void Update()
     {
         if (_iconGlow == null)
@@ -384,28 +379,25 @@ public sealed class EquipmentDetailWindow : WindowBase
             return;
         }
         // phase 是 0 到 1 来回往复的呼吸相位，用不受暂停影响的时间驱动。
-        float phase = Mathf.PingPong(Time.unscaledTime * GlowPulseSpeed, 1f);
-        ApplyGlowAlpha(Mathf.Lerp(GlowMinAlpha, GlowMaxAlpha, phase));
+        float phase = Mathf.PingPong((Time.unscaledTime - _glowStartedAt) * GlowPulseSpeed, 1f);
+        ApplyGlowColor(phase);
     }
 
-    /// <summary>窗口隐藏或关闭时停掉呼吸并复位到最低透明度。</summary>
+    /// <summary>窗口隐藏或关闭时把外框恢复为蓝色起点。</summary>
     private void OnDisable()
     {
-        ApplyGlowAlpha(GlowMinAlpha);
+        ApplyGlowColor(0f);
     }
 
-    /// <summary>写入光晕透明度，只改 alpha 不改颜色，避免影响品质色。</summary>
-    /// <param name="alpha">目标透明度，0 为完全透明，1 为完全不透明，本窗口只在 0.10~0.45 之间取值。</param>
-    private void ApplyGlowAlpha(float alpha)
+    /// <summary>在蓝色和青色之间更新展示框，中央镂空由预制体Image保留武器原色。</summary>
+    /// <param name="phase">单程闪动相位，范围0至1。</param>
+    private void ApplyGlowColor(float phase)
     {
         if (_iconGlow == null)
         {
             return;
         }
-        // color 是光晕当前颜色，只替换 alpha 分量，品质色本身保持不变。
-        Color color = _iconGlow.color;
-        color.a = alpha;
-        _iconGlow.color = color;
+        _iconGlow.color = Color.Lerp(GlowBlue, GlowCyan, phase);
     }
 
     /// <summary>每次打开详情从正文顶部阅读，不改变已经绑定的装备或按钮事件。</summary>
@@ -420,12 +412,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     private void OnWearRequested() { WearRequested?.Invoke(); }
     /// <summary>转交卸下按钮事件。</summary>
     private void OnTakeOffRequested() { TakeOffRequested?.Invoke(); }
-    /// <summary>转交第一个保存特技槽的启用请求。</summary>
-    private void OnActivateFirst() { SpecialSkillRequested?.Invoke(0); }
-    /// <summary>转交第二个保存特技槽的启用请求。</summary>
-    private void OnActivateSecond() { SpecialSkillRequested?.Invoke(1); }
-    /// <summary>转交第三个保存特技槽的启用请求。</summary>
-    private void OnActivateThird() { SpecialSkillRequested?.Invoke(2); }
+    /// <summary>侧卡的使用按钮沿用原事件，交给控制器选择当前阅读的特技槽。</summary>
+    private void OnCardUseClicked() { SpecialSkillRequested?.Invoke(_currentCardSkillSlot); }
     #endregion
 
     #region 新增界面的可见反馈
@@ -511,6 +499,9 @@ public sealed class EquipmentDetailWindow : WindowBase
         _cardDeductButton.gameObject.SetActive(visible);
         _cardSourceButton.gameObject.SetActive(visible);
         _cardRemoveButton.gameObject.SetActive(visible);
+        // 使用按钮和状态只在具体特技侧卡打开时按槽位设置，普通说明卡统一隐藏。
+        _cardUseButton.gameObject.SetActive(false);
+        _cardStateText.gameObject.SetActive(false);
     }
 
     /// <summary>兑换入口只提示暂未开放，不请求任何养成数据。</summary>
@@ -535,10 +526,14 @@ public sealed class EquipmentDetailWindow : WindowBase
         {
             card = _specialSkillTexts[index].text;
         }
-        _infoLayerTitleText.text = "特技" + (index + 1) + " 说明";
+        _currentCardSkillSlot = index;
+        _infoLayerTitleText.text = _specialSkillCardTitles[index];
         _infoLayerText.text = card;
         // 特技卡保留兑换、拓源与特技卸下三个真实入口，均只给未开放提示。
         ApplyCardSkillButtons(true);
+        _cardUseButton.gameObject.SetActive(_canUseSpecialSkills[index]);
+        _cardStateText.text = _specialSkillCardStates[index];
+        _cardStateText.gameObject.SetActive(!_canUseSpecialSkills[index]);
         _infoLayer.gameObject.SetActive(true);
         // 特技卡正文按内容撑高到 452 上限，超出部分在卡内滚动，三按钮固定贴卡底。
         ApplyCardLayout(true);
@@ -555,6 +550,9 @@ public sealed class EquipmentDetailWindow : WindowBase
             _specialSkillDetails[index] = data.SpecialSkillTexts[index];
             // 说明卡正文单独缓存，空串时点击入口会退回完整说明，不会出现空白卡。
             _specialSkillCards[index] = data.SpecialSkillCards[index];
+            _specialSkillCardTitles[index] = data.SpecialSkillCardTitles[index];
+            _specialSkillCardStates[index] = data.SpecialSkillCardStates[index];
+            _canUseSpecialSkills[index] = data.CanActivateSpecialSkill[index];
         }
     }
 

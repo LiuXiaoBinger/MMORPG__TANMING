@@ -414,6 +414,12 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
 
+**最新修正验收——主 Codex（2026-11-10）。** 已验证的预制体共有 6,377 个块，其中详情区 724 个块：相对本轮快照修改 120 个块、新增 1 个 LayoutElement、删除 26 个旧控件块；全部 69 个 stripped 块及无关块均保留。安装前已通过父子类型、反向链接、所有者、环、删除引用和变更 YAML 检查。三个源文件已在真实 Editor 中编译，未新增禁用语法；已加载程序集不再包含 _activateButtons。同一 Unity 进程 56992 始终存活。最终主城 Console 查询为零错误；此前曾单独观测到一次 Package Manager Unity-ID 认证错误，本 UI 工作未修复该独立问题。
+
+真实 1920x1080 与 1366x768 截图确认图标、边框、光效均在头部内，养成文字采用 Regular 15／16 磅层级，主手／副手名称与身份信息完整。8 张未经修改的实机帧以 0.4 秒间隔采集，图标区域绿色分量为 0.575–0.994、蓝色分量为 0.763–0.987，最大 RGB 像素差为 16／44／51；weapon-glow-live.gif 是这些帧的裁剪。两个尺寸下打开的特技卡均通过整数鼠标像素中心 22/22 可见按钮命中检查。保留此前一次分数中心坐标失败：精确数学点未通过原生矩形包含检查，但其周围 9 个整数像素全部命中；未因此添加业务规避逻辑。证据位于 _temp/equipment-ui-icon-20261110/ 下的 final-*.png/txt、raycast-final*-pixels.txt、glow-pixels.json 和 remove-button-investigation.txt。
+
+三个槽均打开各自的标题；未选择的 slot1 显示“使用”，已选择的 slot0 显示“已选·未穿”，空槽不提供使用动作。隔离替换监听器后，从侧卡“使用”按钮捕获了 slot1，并在 finally 中恢复原处理器，未向服务端发送激活请求。属性卡同时隐藏使用／状态控件。打开 21002 会重置全部六个浮层／展开项；原 UID 61353029711958016／61353029713006592 仍在背包中。最终状态为 1920x1080、Scene_MainCity、主武器详情与第二槽侧卡打开。物理 OS 输入、真实穿戴／当前生效状态、激活协议往返、持久化、打包及其他尺寸仍未验证；此前战斗／平衡验收边界继续保留。已批准日志和下文此前失败记录保持不变。
+
 **最新验收——无临时绑定、进程稳定与界面状态（2026-11-10）。** 全新正常登录进入 Scene_MainCity，MainCtrl 与遮幕引用有效；此前 MainView:219 的阻断已在工作副本中修复。其修正后的引用在 HEAD 中已存在；无关的本地预制体改动保留。预制体崩溃修复后，同一 Unity 进程 56992（16:49 UTC+8 启动）导入资源、进入 Play 并完成正常登录与界面检查，此后未再观测到 APPCRASH；运行时 Console 错误查询返回零。这证明的是本次已观测到的修复，并不等于永久不再崩溃。
 
 16:31/16:40 的两次原生崩溃源于 r3 的三个 SectionDivider 子引用使用 GameObject ID（class 1）而非 RectTransform ID（class 224）。两份崩溃栈都在 UIRoot.prefab 导入期间重复出现 Transform::InitializeTransformHierarchyRecursive。WorkBuddy 精确修正三处子节点列表条目；Codex 在该次修复时核验其余字节未变、69 个 stripped 块头保留、无非法子节点类型。VisualScripting 的 node options 警告属独立问题。证据：_temp/equipment-ui-polish-20261110/crash/parent-verified.json 及两份提取的崩溃栈；final-static.json 校验最终资源。

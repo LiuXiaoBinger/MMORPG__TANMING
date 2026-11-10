@@ -631,9 +631,11 @@ public sealed class KnapsackCtrl : IDisposable
             {
                 result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空槽，未镶嵌特技";
                 // 空槽说明卡只写空态，当前层与下一层都写暂无信息，不伪造效果。
-                result.SpecialSkillCards[index] = BuildSpecialSkillCard(index, null, null, 0);
+                result.SpecialSkillCards[index] = BuildSpecialSkillCard(null, null, 0);
                 // 空槽标题行只写槽位与「空」，不伪造已装配的特技名，也不画占位横线。
-                result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：空";
+                result.SpecialSkillHeadlines[index] = "特技：空";
+                result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：空槽";
+                result.SpecialSkillCardStates[index] = "未镶嵌";
                 // 明确标记空槽，界面据此使用浅灰禁用色，避免把「已选但不可切换」误判成空槽。
                 result.IsSpecialSkillEmpty[index] = true;
                 continue;
@@ -660,14 +662,23 @@ public sealed class KnapsackCtrl : IDisposable
                 if (result.IsWorn) shortState = "已启用·" + pieces + "件";
             }
             result.SpecialSkillTexts[index] = skill.Name + " Lv." + skill.Level + "（" + state + "）\n" + skill.Description;
-            // 标题行两行：第一行槽位与名称等级，第二行短状态；完整说明留给详情层。
-            // 第二行用富文本降为次级灰蓝，第一行仍保持标题深色，两行在同一 TMP 内区分层级。
-            result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：" + skill.Name + " Lv." + skill.Level
-                + "\n<color=#4E7E9C>" + shortState + "</color>";
+            // 主列表保持视频中的紧凑单行，只有已选槽附带次级状态，完整效果进入侧卡查看。
+            result.SpecialSkillHeadlines[index] = "特技：<color=#267B8B>" + skill.Name + " +" + skill.Level + "级</color>";
+            if (selected)
+            {
+                result.SpecialSkillHeadlines[index] += " <size=12><color=#627E94>（" + shortState + "）</color></size>";
+            }
+            result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：" + skill.Name + " +" + skill.Level + "级";
+            result.SpecialSkillCardStates[index] = "未使用";
+            if (selected)
+            {
+                result.SpecialSkillCardStates[index] = "已选·未穿";
+                if (result.IsWorn) result.SpecialSkillCardStates[index] = "当前生效";
+            }
             // 说明卡按区展示：当前层取真实配置等级，下一层取同族下一等级行，缺失写暂无信息。
             int maxLevel = ResolveSpecialSkillMaxLevel(familyId);
             cfg.EquipSpecialSkillInfo nextSkill = ResolveSpecialSkillLevel(familyId, skill.Level + 1);
-            result.SpecialSkillCards[index] = BuildSpecialSkillCard(index, skill, nextSkill, maxLevel);
+            result.SpecialSkillCards[index] = BuildSpecialSkillCard(skill, nextSkill, maxLevel);
             result.CanActivateSpecialSkill[index] = !selected;
         }
         // 头部角标只由服务器穿戴状态派生，不根据按钮显隐猜测。
@@ -709,7 +720,7 @@ public sealed class KnapsackCtrl : IDisposable
         // meta 是逐段拼接的头部两行文本，避免为展示数据新建类型。
         StringBuilder meta = new StringBuilder();
         meta.Append("评分 —\n");
-        meta.Append("需求等级 ").Append(config.NeedLevel).Append(" · 职业 —");
+        meta.Append("需求 ").Append(config.NeedLevel).Append("级 · 职业 —");
         return meta.ToString();
     }
 
@@ -874,17 +885,15 @@ public sealed class KnapsackCtrl : IDisposable
     }
 
     /// <summary>生成特技说明卡正文，按标题、当前层、下一层、同名说明分区，无数据写暂无信息。</summary>
-    /// <param name="index">特技槽下标，范围0至2，只用于标题里的槽位编号。</param>
     /// <param name="skill">当前生效等级配置，空槽传空。</param>
     /// <param name="next">下一层配置，没有下一层时为空。</param>
     /// <param name="maxLevel">该族配置最高等级，0表示没拿到配置。</param>
-    private static string BuildSpecialSkillCard(int index, cfg.EquipSpecialSkillInfo skill, cfg.EquipSpecialSkillInfo next, int maxLevel)
+    private static string BuildSpecialSkillCard(cfg.EquipSpecialSkillInfo skill, cfg.EquipSpecialSkillInfo next, int maxLevel)
     {
         // card 是说明卡全文，分区之间用细横线隔开，和录屏说明卡的层级一致。
         StringBuilder card = new StringBuilder();
         if (skill == null)
         {
-            card.Append("<size=15><b>特技").Append(index + 1).Append("：空槽</b></size>\n");
             card.Append("<color=#4E7E9C>此槽未镶嵌特技</color>\n");
             card.Append("当前层效果：暂无信息\n");
             card.Append("下一层效果：暂无信息\n");
@@ -894,7 +903,6 @@ public sealed class KnapsackCtrl : IDisposable
         // maxText 是标题里的满级数字，没有配置时写占位符。
         string maxText = "—";
         if (maxLevel > 0) maxText = maxLevel.ToString();
-        card.Append("<size=15><b>特技").Append(index + 1).Append("：").Append(skill.Name).Append(" +").Append(skill.Level).Append("级</b></size>\n");
         card.Append("<color=#2E6E8E>◇ ").Append(skill.Name).Append(skill.Level).Append("级/").Append(maxText).Append("级</color>\n");
         card.Append("　").Append(skill.Description).Append('\n');
         card.Append("<color=#2E6E8E>◇ 下一层</color>\n");
