@@ -371,9 +371,16 @@ public sealed class EquipmentDetailWindow : WindowBase
         ApplyDisplayScale();
     }
 
-    /// <summary>仅在窗口启用期间逐帧更新外框颜色，隐藏后Unity不再调用本组件Update。</summary>
+    /// <summary>窗口启用时检测左键外部点击并更新外框颜色，隐藏后不再执行。</summary>
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (CloseOnOutsideClick(Input.mousePosition))
+            {
+                return;
+            }
+        }
         if (_iconGlow == null)
         {
             return;
@@ -381,6 +388,57 @@ public sealed class EquipmentDetailWindow : WindowBase
         // phase 是 0 到 1 来回往复的呼吸相位，用不受暂停影响的时间驱动。
         float phase = Mathf.PingPong((Time.unscaledTime - _glowStartedAt) * GlowPulseSpeed, 1f);
         ApplyGlowColor(phase);
+    }
+
+    /// <summary>外部点击按说明卡、更多菜单、主详情的显示层级，每次只收起最上层。</summary>
+    /// <param name="screenPosition">左键按下的屏幕像素坐标，原点位于屏幕左下角。</param>
+    /// <returns>只有主详情已关闭时为true；收起小窗后保留主详情并继续更新光效。</returns>
+    private bool CloseOnOutsideClick(Vector2 screenPosition)
+    {
+        // canvas 是所属根画布，使用其实际相机适配项目的UI缩放与两种画布模式。
+        Canvas canvas = GetComponentInParent<Canvas>().rootCanvas;
+        // eventCamera 在屏幕覆盖模式下保持空，其余模式使用画布的UI相机。
+        Camera eventCamera = null;
+        if (canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            eventCamera = canvas.worldCamera;
+        }
+        if (_infoLayer.activeSelf)
+        {
+            // insideCard 表示点击仍在最上层说明卡内，卡内交互不收起任何窗口。
+            bool insideCard = RectTransformUtility.RectangleContainsScreenPoint(
+                _infoLayer.transform as RectTransform, screenPosition, eventCamera);
+            if (insideCard)
+            {
+                return false;
+            }
+            OnInfoLayerClosed();
+            return false;
+        }
+        if (_moreMenu.activeSelf)
+        {
+            // insideMenu 表示点击落在已展开的更多菜单内，保留菜单项的原有点击入口。
+            bool insideMenu = RectTransformUtility.RectangleContainsScreenPoint(
+                _moreMenu.transform as RectTransform, screenPosition, eventCamera);
+            // insideMoreButton 保留按钮自己的切换，避免按下时先收起、抬起后又重新打开菜单。
+            bool insideMoreButton = RectTransformUtility.RectangleContainsScreenPoint(
+                _moreButton.transform as RectTransform, screenPosition, eventCamera);
+            if (insideMenu || insideMoreButton)
+            {
+                return false;
+            }
+            OnMoreClicked();
+            return false;
+        }
+        // insideMain 表示点击落在固定头尾、滚动正文或右侧操作区内。
+        bool insideMain = RectTransformUtility.RectangleContainsScreenPoint(
+            transform as RectTransform, screenPosition, eventCamera);
+        if (insideMain)
+        {
+            return false;
+        }
+        CloseWindow();
+        return true;
     }
 
     /// <summary>窗口隐藏或关闭时把外框恢复为蓝色起点。</summary>
