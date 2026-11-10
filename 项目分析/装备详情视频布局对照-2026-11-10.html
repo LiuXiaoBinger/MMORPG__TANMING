@@ -15,6 +15,7 @@
     --accent: #2f6fa8;
     --warn-bg: #fff8e6;
     --warn-line: #e8cd8a;
+    --hist-bg: #f0f2f5;
   }
   * { box-sizing: border-box; }
   body {
@@ -30,6 +31,7 @@
     font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
     border-left: 3px solid var(--accent); line-height: 1.4;
   }
+  h3 { font-size: 14px; margin: 22px 0 8px; color: var(--ink); }
   .sub { color: var(--ink-3); font-size: 12.5px; margin: 0 0 18px; }
   .sub-tight { margin-bottom: 6px; }
   .sub-below-table { margin-top: 10px; }
@@ -40,6 +42,12 @@
   }
   .note ul { margin: 6px 0 0; padding-left: 18px; }
   .note li { margin: 3px 0; }
+  .hist {
+    background: var(--hist-bg); border: 1px solid var(--line); border-left: 3px solid #9fb0c2;
+    border-radius: 6px; padding: 10px 14px; margin: 10px 0 16px;
+    color: var(--ink-2); font-size: 12.5px;
+  }
+  .hist b { color: var(--ink); }
 
   .pair {
     display: flex; gap: 22px; align-items: flex-start;
@@ -47,6 +55,7 @@
     border-radius: 8px; padding: 16px; overflow-x: auto;
   }
   .pair.bottom { align-items: flex-end; }
+  .pair.center { align-items: center; }
   .col { flex: 0 0 auto; }
   .col-head {
     display: flex; align-items: baseline; gap: 8px;
@@ -55,15 +64,35 @@
   .col-head b { color: var(--ink); font-weight: 600; }
   .col-head span { color: var(--ink-3); font-size: 12px; }
 
-  /* 裁剪用真实像素，1:1 显示；不做任何拉伸 */
+  /* 裁剪用真实像素，1:1 显示；background-size 固定为原图尺寸，不做任何拉伸 */
   .shot {
     background-repeat: no-repeat;
     border: 1px solid var(--line);
     border-radius: 4px;
     background-color: #eef2f7;
   }
-  .shot.bytes { width: auto; height: auto; }
 
+  /* ===== 本轮（视觉阶段收尾）裁剪：参考帧 1336x796 / 实机 1366x768 / 1920x1080 ===== */
+  .r6-ref-attr { width: 438px; height: 296px; background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-07.00s.png"); background-size: 1336px 796px; background-position: -108px -96px; }
+  .r6-cur-attr { width: 302px; height: 178px; background-image: url("../_temp/equipment-ui-polish-20261110/final-attr1366.png"); background-size: 1366px 768px; background-position: -145px -118px; }
+
+  .r6-ref-gem { width: 402px; height: 280px; background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-19.00s.png"); background-size: 1336px 796px; background-position: -548px -190px; }
+  .r6-cur-gem { width: 464px; height: 200px; background-image: url("../_temp/equipment-ui-polish-20261110/final-expanded1366.png"); background-size: 1366px 768px; background-position: -448px -300px; }
+
+  .r6-ref-set { width: 402px; height: 400px; background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-22.00s.png"); background-size: 1336px 796px; background-position: -548px -240px; }
+  .r6-cur-set { width: 464px; height: 145px; background-image: url("../_temp/equipment-ui-polish-20261110/final-expanded1366.png"); background-size: 1366px 768px; background-position: -448px -405px; }
+
+  .r6-ref-forge { width: 402px; height: 300px; background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-25.00s.png"); background-size: 1336px 796px; background-position: -548px -460px; }
+  .r6-cur-forge { width: 464px; height: 290px; background-image: url("../_temp/equipment-ui-polish-20261110/final-bottom1366.png"); background-size: 1366px 768px; background-position: -448px -350px; }
+
+  .r6-ref-trait { width: 438px; height: 380px; background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-31.00s.png"); background-size: 1336px 796px; background-position: -108px -96px; }
+  .r6-cur-trait { width: 302px; height: 248px; background-image: url("../_temp/equipment-ui-polish-20261110/final-card1366.png"); background-size: 1366px 768px; background-position: -145px -118px; }
+
+  .r6-cur-overview { width: 464px; height: 512px; background-image: url("../_temp/equipment-ui-polish-20261110/final-top1366.png"); background-size: 1366px 768px; background-position: -448px -128px; }
+  .r6-cur-more { width: 892px; height: 532px; background-image: url("../_temp/equipment-ui-polish-20261110/final-more1366.png"); background-size: 1366px 768px; background-position: -448px -128px; }
+  .r6-cur-top1920 { width: 512px; height: 564px; background-image: url("../_temp/equipment-ui-polish-20261110/final-top1920.png"); background-size: 1920px 1080px; background-position: -700px -256px; }
+
+  /* ===== 历史（revision 6 / revision 15-16 阶段）裁剪：保留原文与原始数值 ===== */
   .ref-top {
     width: 634px; height: 674px;
     background-image: url("../_temp/equipment-ui-layout-20261109/revision6/frames/frame-01.00s.png");
@@ -110,19 +139,151 @@
 <div class="wrap">
 
   <h1>装备详情 · 视频布局对照</h1>
-  <p class="sub">任务编号 EQUIP-UI-LAYOUT-20261109 · revision 6 · 2026-11-10 · 左侧为参考录屏原始帧，右侧为本项目实机截图</p>
+  <p class="sub">任务编号 EQUIP-UI-LAYOUT-20261109 · 视觉阶段最终对照追加于 2026-11-10 19:19 · 左侧为参考录屏原始帧，右侧为本项目实机截图 · 下半部分 revision 6/16 内容为历史，未删除</p>
+
+  <h2>一、本轮最终对照：分区逐项（1366×768 实机 vs 录屏原帧）</h2>
+  <p class="sub sub-tight">
+    本节按录屏里的<strong>分区</strong>逐项对照：7s 属性侧窗、19s 孔位展开、22s 套装展开、25s 淬锋行与底部、31s 特技侧窗，另附顶部与“更多”两张总览。
+    两侧都是<strong>从原图直接裁剪的真实像素</strong>，裁剪框与尺寸见第五节表格；<strong>不是像素级复刻</strong>，只对区块顺序、分区高度与按钮位置。
+  </p>
 
   <div class="note">
-    <b>阅读说明</b>
+    <b>本轮取值口径（先说清楚，避免把占位当已实现）</b>
     <ul>
-      <li>两侧图都是从<strong>原始截图直接裁剪</strong>的像素，未重绘、未拼接、未改色，也未做任何缩放或比例压扁；裁剪框数值见文末表格，可对照原图复核。</li>
-      <li>两侧<strong>只对照布局</strong>（区块顺序、分区高度、按钮位置、层级关系），不表示视觉风格一致。</li>
-      <li>本项目背景与参考配色不同：参考为深色面板，本项目为不透明淡蓝面板；背景色差异不属于布局差异。</li>
-      <li>参考里的养成数值，本项目只有一部分有真实来源：<strong>强化当前值/上限</strong>（如 0/80，取实例 StrengthenLevel 与配置 MaxStrengthenLevel）、<strong>宝石孔数</strong>（取配置 GemSlotCount）、装备部位与需求等级、特技名称与等级为真实读取；<strong>强化与镶嵌等养成操作本身、宝石实例数据、套装总阶与件数、淬锋与铭缀、外观养成</strong>尚未开发，用「—」或「暂无数据」占位，不填录屏数值，也不伪造已镶嵌/已生效状态。</li>
+      <li>真实读取：装备名/部位/品质文字、需求等级与职业、<strong>属性数值</strong>、<strong>宝石孔数（GemSlotCount）</strong>、三个特技槽的名称与等级、已选/未穿状态、交易与耐久底栏。</li>
+      <li>中性空态（不抄录屏数字）：宝石实例与属性、套装总阶与件数及 2/4/6 件效果、淬锋属性与信息、铭缀内容、外观养成。</li>
+      <li>贡献拆分：参考侧写“基础值(+强化+进阶+奉祀)”，本项目<strong>没有基础/强化/进阶贡献的数据来源</strong>，一律显示 <code>—</code>，不计算假数值。</li>
+      <li>品质：21001/21002 的 EquipInfo 无 Quality 字段、ItemInfo 也无对应行，因此这两件显示<strong>品质未知</strong>，用中性蓝银色；不代表全项目没有品质字段。</li>
     </ul>
   </div>
 
-  <h2>一、顶部对照</h2>
+  <h3>1 · 属性「查看」→ 左侧说明卡（原帧 7s ↔ final-attr1366）</h3>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏 7s</b><span>frame-07.00s.png（1336×796）裁剪 108,96 – 546,392</span></p>
+      <div class="shot r6-ref-attr" role="img" aria-label="参考录屏 7 秒左侧属性说明卡：强化 66/80 十阶奉祀一阶、基础属性、各属性基础值与括号贡献拆分"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-07.00s.png">打开原始帧 frame-07.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目 1366×768</b><span>final-attr1366.png 裁剪 145,118 – 447,296</span></p>
+      <div class="shot r6-cur-attr" role="img" aria-label="本项目左侧属性说明卡：标题属性说明、外攻下限/外攻上限/命中/暴击/诛心/坚韧、基础贡献强化贡献进阶贡献均为破折号"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-attr1366.png">打开原图 final-attr1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    本项目实现：面板标题「属性说明」，先列属性<strong>名称与实际数值</strong>（外攻下限 1236 / 外攻上限 2454 / 命中 2021 / 暴击 1965 / 诛心 4151 / 坚韧 3088），下方单列<strong>基础贡献 / 强化贡献 / 进阶贡献</strong>三档，当前均为 <code>—</code>。
+    与参考的差异：参考把“基础值(+强化+进阶+奉祀)”直接写在数值后面逐项拆分，本项目无该拆分数据来源，因此改为独立一行并留空态，不做假拆分。
+  </p>
+
+  <h3>2 · 镶嵌摘要 → 两列孔位展开（原帧 19s ↔ final-expanded1366）</h3>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏 19s</b><span>frame-19.00s.png 裁剪 548,190 – 950,470</span></p>
+      <div class="shot r6-ref-gem" role="img" aria-label="参考录屏 19 秒镶嵌展开：可镶嵌 10 级宝石、共有 6 个宝石孔达到精琢二阶、两列 体 90 与 元抗 24 各三行、套装总阶"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-19.00s.png">打开原始帧 frame-19.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目 1366×768</b><span>final-expanded1366.png 裁剪 448,300 – 912,500</span></p>
+      <div class="shot r6-cur-gem" role="img" aria-label="本项目镶嵌展开：镶嵌行与收起按钮、两列两个空孔位、共 2 孔暂无宝石信息、套装行与暂无套装信息、淬锋行与暂无淬锋信息"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-expanded1366.png">打开原图 final-expanded1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    本项目实现：摘要按<strong>实际 GemSlotCount</strong> 出孔，21001/21002 都是 2 孔，所以摘要与展开都只有两个格子（与参考的 6 孔不同，这是真实配置差异，不是漏做）；展开为<strong>两列布局</strong>，正文写「共 2 孔，暂无宝石信息」。
+    没有宝石实例数据，因此<strong>不伪造“体 90 / 元抗 24”这类属性</strong>；套装行、淬锋行紧随其后各自独立，可分别展开。
+  </p>
+
+  <h3>3 · 套装行 → 正文效果区（原帧 22s ↔ final-expanded1366）</h3>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏 22s</b><span>frame-22.00s.png 裁剪 548,240 – 950,640</span></p>
+      <div class="shot r6-ref-set" role="img" aria-label="参考录屏 22 秒套装展开：2 件、4 件、6 件套装效果整段说明文字"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-22.00s.png">打开原始帧 frame-22.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目 1366×768</b><span>final-expanded1366.png 裁剪 448,405 – 912,550</span></p>
+      <div class="shot r6-cur-set" role="img" aria-label="本项目套装行展开：套装总阶与件数均为破折号、右端收起按钮、下方暂无套装信息空态、淬锋行与暂无淬锋信息"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-expanded1366.png">打开原图 final-expanded1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    本项目实现：套装行右端是<strong>「展开 / 收起」</strong>按钮且始终与本行同行；展开后在<strong>本行下方</strong>插入正文区，实测内容高度由 544.75 → 展开 → 折叠后回到 544.75，折叠不留空白。
+    总阶与件数没有接入配置，显示 <code>—</code>，正文为「暂无套装信息」；<strong>没有照抄录屏的 2/4/6 件效果数字</strong>。
+  </p>
+
+  <h3>4 · 淬锋行与底部行（原帧 25s ↔ final-bottom1366）</h3>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏 25s</b><span>frame-25.00s.png 裁剪 548,460 – 950,760</span></p>
+      <div class="shot r6-ref-forge" role="img" aria-label="参考录屏 25 秒：淬锋属性斩斩斩天、三个特技行、两条外观行、不可升级可进阶可重铸、底部不可交易与耐久"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-25.00s.png">打开原始帧 frame-25.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目 1366×768</b><span>final-bottom1366.png 裁剪 448,350 – 912,640</span></p>
+      <div class="shot r6-cur-forge" role="img" aria-label="本项目底部：淬锋行收起态与暂无淬锋信息、特技 1 特技 2 特技 3 三行、外观行、交易与耐久底栏、装备按钮"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-bottom1366.png">打开原图 final-bottom1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    本项目实现：淬锋行展开为<strong>本行下方信息区</strong>（「暂无淬锋信息」），与铭缀、洗练各自独立成行，不再混写成一行；特技三槽（特技1 破甲·外 Lv.1 未启用 / 特技2 血殇 Lv.1 已选·未穿 / 特技3 空）与外观行、交易与耐久底栏在最底部固定。
+    参考的淬锋属性「斩 斩 斩 天」与可升级/可进阶/可重铸提示，本项目<strong>没有对应数据来源</strong>，展示为中性空态。
+  </p>
+
+  <h3>5 · 特技「详情」→ 左侧独立说明卡（原帧 31s ↔ final-card1366）</h3>
+  <div class="pair">
+    <div class="col">
+      <p class="col-head"><b>参考录屏 31s</b><span>frame-31.00s.png 裁剪 108,96 – 546,476</span></p>
+      <div class="shot r6-ref-trait" role="img" aria-label="参考录屏 31 秒特技说明卡：特技 1 隐忍 +1 级、当前层 1 级 4 级效果、下一层效果、同名装备多条只生效一条说明、底部卸下按钮"></div>
+      <p class="links"><a href="../_temp/equipment-ui-layout-20261109/revision6/frames/frame-31.00s.png">打开原始帧 frame-31.00s.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>本项目 1366×768</b><span>final-card1366.png 裁剪 145,118 – 447,366</span></p>
+      <div class="shot r6-cur-trait" role="img" aria-label="本项目特技说明卡：标题特技 2 说明、当前层血殇 1 级 3 级效果、下一层血殇 2 级效果、同名装备说明、底部兑换拓源特技卸下三个按钮"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-card1366.png">打开原图 final-card1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    本项目实现：复用 EquipmentDetailWindow 现有 InfoLayer 作为说明面板，<strong>未另起窗口或 UI 管理器</strong>；分区为标题（特技 2 说明）→ 当前层（血殇 1级/3级 + 完整效果文本）→ 下一层（血殇 2级 + 效果）→ 同名装备说明；说明卡自身可滚动，关闭后主详情仍在且滚动位置不丢，1366 也不出屏。
+    底部三个入口「兑换 / 拓源 / 特技卸下」<strong>只给未开放提示</strong>，自检时未实际触发穿脱或启用；第三槽为空时给明确空态，下一层没配置就写暂无信息。
+  </p>
+
+  <h3>6 · 总览：顶部、更多菜单与 1920</h3>
+  <div class="pair center">
+    <div class="col">
+      <p class="col-head"><b>1366×768 顶部</b><span>final-top1366.png 裁剪 448,128 – 912,640</span></p>
+      <div class="shot r6-cur-overview" role="img" aria-label="本项目 1366 顶部：装备身份头、基础属性、基因词条、铭缀与洗练独立行、镶嵌、套装、淬锋、特技行与右侧操作列"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-top1366.png">打开原图 final-top1366.png</a></p>
+    </div>
+    <div class="col">
+      <p class="col-head"><b>1920×1080 顶部</b><span>final-top1920.png 裁剪 700,256 – 1212,820</span></p>
+      <div class="shot r6-cur-top1920" role="img" aria-label="本项目 1920 顶部：同一套布局在 1920×1080 下的装备详情窗口"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-top1920.png">打开原图 final-top1920.png</a></p>
+    </div>
+  </div>
+  <div class="pair" style="margin-top:14px">
+    <div class="col">
+      <p class="col-head"><b>1366×768 右侧更多展开</b><span>final-more1366.png 裁剪 448,128 – 1340,660</span></p>
+      <div class="shot r6-cur-more" role="img" aria-label="本项目 1366 右侧更多菜单展开：收起、淬锋、进阶、重铸、属性转换，右侧操作列与背包同时可见"></div>
+      <p class="links"><a href="../_temp/equipment-ui-polish-20261110/final-more1366.png">打开原图 final-more1366.png</a></p>
+    </div>
+  </div>
+  <p class="sub sub-below-table">
+    右侧「更多」展开保持正常（收起 / 淬锋 / 进阶 / 重铸 / 属性转换），所有新增按钮左键都有明确反馈；1366 下 22/22（含特技卡态）、22/22（含更多菜单态）与 1920 下 17/17 的按钮中心射线全部命中各自处理函数。
+  </p>
+
+  <h2>二、本轮明确未做 / 已延期项</h2>
+  <ul class="plain">
+    <li><strong>录屏 10 秒的「作坊」独立页面：用户已明确延期/取消</strong>，本轮绝对不做作坊页，也不做任何养成业务效果；下文历史章节中出现的相关提法不代表已实现。</li>
+    <li><strong>甲片（祭甲）整栏：已按要求去掉/隐藏</strong>，正文回收空间；本轮未恢复该栏。</li>
+    <li><strong>品质</strong>：两件展示武器 21001 / 21002 的 EquipInfo 无 Quality 字段、ItemInfo 无对应行，故显示品质未知，用中性蓝银；不主张“全项目无品质字段”。</li>
+    <li><strong>基础/强化/进阶贡献</strong>：无数据来源，显示 <code>—</code>；同样未做的还有宝石实例属性、套装件数效果、淬锋属性、铭缀具体词条、外观养成与评分。</li>
+    <li><strong>未验证</strong>：物理系统鼠标输入、穿戴/特技启用、打包构建、超出当前长度的长文案、1366/1920 之外的其它分辨率。</li>
+  </ul>
+
+  <h2>三、历史：顶部对照（revision 6 阶段，保留原文）</h2>
+  <div class="hist">
+    <b>历史内容提示：</b>以下“一、顶部对照”至“四、裁剪框核对”为 revision 6 / revision 15-16 阶段生成，裁剪框与数值均保持原样未改；其中的占位项与未开发项以本轮第二节为准。
+  </div>
   <div class="pair">
     <div class="col">
       <p class="col-head"><b>参考录屏</b><span>frame-01.00s.png（1336×796）裁剪 550,120 – 1184,794</span></p>
@@ -136,7 +297,7 @@
     </div>
   </div>
 
-  <h2>二、底部对照</h2>
+  <h2>四、历史：底部对照（revision 6 阶段，保留原文）</h2>
   <div class="pair bottom">
     <div class="col">
       <p class="col-head"><b>参考录屏</b><span>frame-19.00s.png（1336×796）裁剪 550,414 – 1184,794（套装往下到底行）</span></p>
@@ -150,15 +311,41 @@
     </div>
   </div>
 
-  <h2>三、最新实机原图（revision16）</h2>
-  <p class="sub sub-tight">以下是本轮收尾后的最新截图原图，未裁剪、未处理，供逐项复核；正文对照图沿用布局未变动的版本。</p>
+  <h2>五、历史：revision16 实机原图（保留原文）</h2>
+  <p class="sub sub-tight">以下是 revision 16 阶段收尾的截图原图，未裁剪、未处理，供逐项复核；最新一轮的原图见第一节各链接。</p>
   <ul class="plain">
     <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-1366-top.png">revision16 / final-1366-top.png</a> —— 1366×768 顶部</li>
     <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-1366-bottom.png">revision16 / final-1366-bottom.png</a> —— 1366×768 底部</li>
     <li><a href="../_temp/equipment-ui-layout-20261109/revision16/final-footer.png">revision16 / final-footer.png</a> —— 1920×1080 底栏说明区</li>
   </ul>
 
-  <h2>四、裁剪框与实际尺寸核对</h2>
+  <h2>六、裁剪框与实际尺寸核对</h2>
+  <p class="sub sub-tight">本轮（第一节）新用裁剪框，全部按原图真实像素 1:1 截取，<code>background-size</code> 固定为原图尺寸，因此没有缩放或比例压扁。</p>
+  <table>
+    <thead>
+      <tr><th>对照项</th><th>来源文件</th><th>原图尺寸</th><th>裁剪框 (left, top, right, bottom)</th><th>裁剪后尺寸</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>属性侧窗 · 参考 7s</td><td>revision6/frames/frame-07.00s.png</td><td>1336×796</td><td><code>108, 96, 546, 392</code></td><td>438×296</td></tr>
+      <tr><td>属性侧窗 · 本项目</td><td>final-attr1366.png</td><td>1366×768</td><td><code>145, 118, 447, 296</code></td><td>302×178</td></tr>
+      <tr><td>孔位展开 · 参考 19s</td><td>revision6/frames/frame-19.00s.png</td><td>1336×796</td><td><code>548, 190, 950, 470</code></td><td>402×280</td></tr>
+      <tr><td>孔位展开 · 本项目</td><td>final-expanded1366.png</td><td>1366×768</td><td><code>448, 300, 912, 500</code></td><td>464×200</td></tr>
+      <tr><td>套装展开 · 参考 22s</td><td>revision6/frames/frame-22.00s.png</td><td>1336×796</td><td><code>548, 240, 950, 640</code></td><td>402×400</td></tr>
+      <tr><td>套装展开 · 本项目</td><td>final-expanded1366.png</td><td>1366×768</td><td><code>448, 405, 912, 550</code></td><td>464×145</td></tr>
+      <tr><td>淬锋与底部 · 参考 25s</td><td>revision6/frames/frame-25.00s.png</td><td>1336×796</td><td><code>548, 460, 950, 760</code></td><td>402×300</td></tr>
+      <tr><td>淬锋与底部 · 本项目</td><td>final-bottom1366.png</td><td>1366×768</td><td><code>448, 350, 912, 640</code></td><td>464×290</td></tr>
+      <tr><td>特技侧窗 · 参考 31s</td><td>revision6/frames/frame-31.00s.png</td><td>1336×796</td><td><code>108, 96, 546, 476</code></td><td>438×380</td></tr>
+      <tr><td>特技侧窗 · 本项目</td><td>final-card1366.png</td><td>1366×768</td><td><code>145, 118, 447, 366</code></td><td>302×248</td></tr>
+      <tr><td>顶部总览 · 本项目</td><td>final-top1366.png</td><td>1366×768</td><td><code>448, 128, 912, 640</code></td><td>464×512</td></tr>
+      <tr><td>更多展开 · 本项目</td><td>final-more1366.png</td><td>1366×768</td><td><code>448, 128, 1340, 660</code></td><td>892×532</td></tr>
+      <tr><td>顶部总览 · 1920</td><td>final-top1920.png</td><td>1920×1080</td><td><code>700, 256, 1212, 820</code></td><td>512×564</td></tr>
+    </tbody>
+  </table>
+  <p class="sub sub-below-table">
+    本项目窗口外框实测（1366×768）：左沿 x≈456、上沿 y≈136、右沿 x≈904（含右侧操作列）、下沿 y≈632；左侧说明卡实测 152,124–440,288（属性）/ 152,124–440,360（特技）。参考帧窗口边界按 550,120–1184,794 取值（frame-01 / frame-19 同为 1336×796、窗口位置一致）；参考详情列右缘会比本轮 950 更宽，故历史裁剪会带进参考界面自身右侧面板的窄条，属原始画面，未做涂抹。
+  </p>
+
+  <h2>七、历史：裁剪框与已知差异（revision 6 阶段原文保留）</h2>
   <table>
     <thead>
       <tr><th>位置</th><th>来源文件</th><th>原图尺寸</th><th>裁剪框 (left, top, right, bottom)</th><th>裁剪后尺寸</th></tr>
@@ -170,20 +357,13 @@
       <tr><td>底部 · 本项目</td><td>revision14/parent-real-bottom-more.png</td><td>1920×1080</td><td><code>714, 432, 1220, 812</code></td><td>506×380</td></tr>
     </tbody>
   </table>
-  <p class="sub sub-below-table">
-    本项目窗口外框实测：左沿 x≈714、上沿 y≈252、右沿 x≈1219（含右侧操作列）、下沿 y≈811；与预先给出的约 710,250–1220,830 一致，830 略低于实测下沿，故按实测 812 取值。
-    参考帧窗口边界按 550,120–1184,794 取值（顶部取 frame-01.00s.png、底部取 frame-19.00s.png，两帧同为 1336×796、窗口位置一致），裁剪右缘会带进参考界面自身右侧面板的窄条，属原始画面，未做涂抹。
-  </p>
-
-  <h2>五、已知差异与未覆盖项</h2>
   <ul class="plain">
     <li>分辨率不同：参考帧为 1336×796，本项目截图 1920×1080 与 1366×768，故两侧裁剪像素尺寸不同，按原生像素 1:1 并排，不缩放对齐。</li>
-    <li>配色不同：参考为深色底 + 金色描边；本项目为不透明淡蓝底 + 深蓝文字。仅对照布局。</li>
-    <li>未开发内容：强化/镶嵌等养成操作、宝石实例（镶嵌内容）、套装总阶与件数、淬锋与铭缀、外观养成、评分与品质字段、交易与耐久；这些显示「—」或「暂无数据」。<strong>强化当前值/上限与宝石孔数不是占位</strong>，按真实实例（StrengthenLevel）与配置（MaxStrengthenLevel、GemSlotCount）读取。</li>
-    <li>未验证：本页面未在浏览器中打开过（浏览器安全策略拒绝 file URL，未做任何绕过），仅完成 HTML 结构与引用路径的存在性校验。</li>
+    <li>配色不同：参考为深色半透明底 + 金色描边；本项目为<strong>不透明淡蓝底 + 深蓝色文字</strong>。仅对照布局，不复制录屏的黑透明底。</li>
+    <li>历史章节中的未开发项以第二节为准；本轮已把铭缀、洗练拆成独立行，并补上宝石两列展开、套装展开、淬锋展开与两张左侧说明卡。</li>
   </ul>
 
-  <p class="foot">生成时间 2026-11-10 · 由 WorkBuddy 会话 46168831-5453-4dcb-aacc-3d540babbcb5 生成 · 图片均引用项目内本地相对路径</p>
+  <p class="foot">生成 2026-11-10 · 第一节与第二、六节由 WorkBuddy 会话 5127bf20-5c02-4249-ad91-07c597108d50 追加（视觉阶段第 5 次实现／新 Hub 第 6 轮文档同步）· 第三至五、七节为会话 46168831-5453-4dcb-aacc-3d540babbcb5 阶段原文保留 · 图片均引用项目内本地相对路径，可直接本机打开，未启动任何 HTTP 服务</p>
 </div>
 </body>
 </html>

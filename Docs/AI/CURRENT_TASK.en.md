@@ -403,6 +403,11 @@
 
 ## [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09)
 
+**Latest visual pass — expanded cards and prefab crash repair (2026-11-10).** The same four equipment UI files now provide an opaque pale-blue RO skin, icon frame/pulse, readable minimum display scale at 1366, separate inscription/refining rows, two-column gem expansion, set/forge expansion and a left-side attribute/trait card with current/next-level text and three real unopened-action buttons. Header/footer stay fixed; appearance is reachable at the scroll end. User explicitly deferred the entire workshop page and removed the garnish/armor-fragment strip. Weapons 21001/21002 have no matching ItemInfo rows and EquipInfo has no quality field, so quality remains unknown with neutral colors. No equipment, trait activation, DB or server mutation was performed.
+
+Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected, rejected incomplete deliveries, diagnosed the crash and verified the actual game. This visual pass had nine implementation rounds including one crash-reference repair: old Hub hub-9187a331-8d36-4133-a2b0-8060e754c6f2 rounds 21–24, then continuation Hub hub-7d291b7d-ffeb-4aa0-9d7c-96722745add4 rounds 1–5. Native context moved from 46168831-5453-4dcb-aacc-3d540babbcb5 to 5127bf20-5c02-4249-ad91-07c597108d50 after stale-template/path mistakes; the problem counter and user's seven-round waiver were retained. Some real deliveries failed the Hub output contract or were partial; they were not treated as accepted. Full facts and Git receipts remain in 项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md.
+
+
 **Final entry addendum (2026-11-10).** WorkBuddy DeepSeek added separate set/appearance view buttons in the existing prefab and EquipmentDetailWindow; each only reports that its feature is unavailable. This was code revision 18, followed by one prefab serialization repair (Hub rounds 17/18). Codex rejected c3772ea before push: its projection lost 69 stripped headers and introduced two child-list blank lines. The corrected projection retains all 69 headers, changes five existing detail blocks, adds 18 and deletes none; all outside blocks equal c573028. No unrelated working-tree changes are included.
 
 

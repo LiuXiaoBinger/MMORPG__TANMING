@@ -69,6 +69,30 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private Button _setViewButton;
     /// <summary>外观行末尾的查看入口，只提示暂未开放，不请求外观数据。</summary>
     [SerializeField] private Button _appearanceViewButton;
+    /// <summary>铭缀独立行的摘要文本，无数据时显示中性空态。</summary>
+    [SerializeField] private TMP_Text _inscribeRowValue;
+    /// <summary>洗练独立行的摘要文本，无数据时显示中性空态。</summary>
+    [SerializeField] private TMP_Text _washRowValue;
+    /// <summary>铭缀独立行末的查看入口，只给未开放提示。</summary>
+    [SerializeField] private Button _inscribeRowButton;
+    /// <summary>洗练独立行末的查看入口，只给未开放提示。</summary>
+    [SerializeField] private Button _washRowButton;
+    /// <summary>镶嵌展开区，折叠时整体隐藏并让父布局回收高度。</summary>
+    [SerializeField] private GameObject _gemExpandPanel;
+    /// <summary>镶嵌展开区的孔位说明文本。</summary>
+    [SerializeField] private TMP_Text _gemInfoText;
+    /// <summary>套装展开区，折叠时整体隐藏并让父布局回收高度。</summary>
+    [SerializeField] private GameObject _setExpandPanel;
+    /// <summary>套装展开区正文。</summary>
+    [SerializeField] private TMP_Text _setExpandText;
+    /// <summary>淬锋展开区，折叠时整体隐藏并让父布局回收高度。</summary>
+    [SerializeField] private GameObject _forgeExpandPanel;
+    /// <summary>淬锋展开区正文。</summary>
+    [SerializeField] private TMP_Text _forgeExpandText;
+    /// <summary>镶嵌展开区的六个持久孔位格，容量固定，按真实孔数启用前若干个。</summary>
+    [SerializeField] private GameObject[] _gemCells;
+    /// <summary>六个孔位格所在的网格容器，格子坐标与网格高度都按它的实际宽度推导。</summary>
+    [SerializeField] private RectTransform _gemSlotGrid;
     #endregion
 
     #region 头部角标与双列属性
@@ -112,8 +136,22 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private GameObject _infoLayer;
     /// <summary>说明层正文。</summary>
     [SerializeField] private TMP_Text _infoLayerText;
+    /// <summary>说明卡正文滚动区，卡高按内容收紧时它同步缩短，底部按钮跟随卡底。</summary>
+    [SerializeField] private RectTransform _infoLayerScroll;
     /// <summary>说明层关闭按钮。</summary>
     [SerializeField] private Button _infoLayerCloseButton;
+    /// <summary>说明卡标题，打开属性卡或特技卡时按内容改写。</summary>
+    [SerializeField] private TMP_Text _infoLayerTitleText;
+    /// <summary>说明卡底部的兑换入口，只给暂未开放提示。</summary>
+    [SerializeField] private Button _cardDeductButton;
+    /// <summary>说明卡底部的拓源入口，只给暂未开放提示。</summary>
+    [SerializeField] private Button _cardSourceButton;
+    /// <summary>说明卡底部的特技卸下入口，只给暂未开放提示。</summary>
+    [SerializeField] private Button _cardRemoveButton;
+    /// <summary>基础属性分区行末的查看按钮，打开属性说明卡。</summary>
+    [SerializeField] private Button _attrViewButton;
+    /// <summary>图标后方的品质光晕，用透明度呼吸体现武器光效，不改任何装备数据。</summary>
+    [SerializeField] private Image _iconGlow;
     #endregion
 
     /// <summary>玩家请求穿戴当前详情装备。</summary>
@@ -127,6 +165,42 @@ public sealed class EquipmentDetailWindow : WindowBase
     private const string FoldCollapseText = "收起";
     /// <summary>折叠态下折叠按钮的提示词，指向「点了会展开」。</summary>
     private const string FoldExpandText = "展开";
+    /// <summary>图标光晕呼吸的最低透明度，温和且不压过装备名。</summary>
+    private const float GlowMinAlpha = 0.10f;
+    /// <summary>图标光晕呼吸的最高透明度。</summary>
+    private const float GlowMaxAlpha = 0.30f;
+    /// <summary>光晕呼吸速度，一次往返约 3.3 秒。</summary>
+    private const float GlowPulseSpeed = 0.6f;
+    /// <summary>详情窗口在屏幕上的最小显示缩放，1366 下按它补偿，保证正文可读。</summary>
+    private const float MinScreenScale = 0.9f;
+    /// <summary>说明卡最大高度，与预制体默认卡高一致，特技卡到顶后在卡内滚动。</summary>
+    private const float CardMaxHeight = 452f;
+    /// <summary>说明卡最小高度，短属性卡收紧后仍保留标题、正文与按钮三块。</summary>
+    private const float CardMinHeight = 150f;
+    /// <summary>说明卡固定宽度，与预制体卡宽一致。</summary>
+    private const float CardWidth = 316f;
+    /// <summary>说明卡正文宽度，等于卡宽减去左右内边距。</summary>
+    private const float CardBodyWidth = 300f;
+    /// <summary>说明卡顶部标题区高度，正文滚动区从这里往下开始。</summary>
+    private const float CardTopArea = 34f;
+    /// <summary>说明卡底部三按钮区高度，按钮固定贴在卡底内边距之上。</summary>
+    private const float CardButtonArea = 34f;
+    /// <summary>说明卡底部留白，无按钮时只留这一条边距。</summary>
+    private const float CardBottomGap = 8f;
+    /// <summary>说明卡底部按钮自身高度，用于把按钮行贴到卡底。</summary>
+    private const float CardButtonHeight = 26f;
+    /// <summary>镶嵌孔位格边长，与预制体 GemCell 尺寸一致。</summary>
+    private const float GemCellSize = 32f;
+    /// <summary>镶嵌孔位格行距，等于格高加行间空隙。</summary>
+    private const float GemCellRowStep = 34f;
+    /// <summary>可启用特技按钮的浅底底色。</summary>
+    private static readonly Color NormalSlotColor = new Color(0.93f, 0.965f, 1f, 1f);
+    /// <summary>空槽或不可启用特技的按钮底色，明确的禁用视觉。</summary>
+    private static readonly Color DisabledSlotColor = new Color(0.82f, 0.87f, 0.93f, 1f);
+    /// <summary>可启用特技的标题字色，与正文一致。</summary>
+    private static readonly Color ActiveSkillTitleColor = new Color(0.07f, 0.19f, 0.33f, 1f);
+    /// <summary>空槽标题字色，压暗表示不可启用。</summary>
+    private static readonly Color DisabledSkillTitleColor = new Color(0.55f, 0.62f, 0.70f, 1f);
     /// <summary>附加分区展开高度，容纳两行新增信息后由 340 扩到 400。</summary>
     private const float ExpandedSectionHeight = 400f;
     /// <summary>附加分区折叠高度，只保留标题行。</summary>
@@ -143,8 +217,12 @@ public sealed class EquipmentDetailWindow : WindowBase
     private bool _forgeRowCollapsed;
     /// <summary>当前装备的静态说明与获取途径，供信息按钮还原说明层正文。</summary>
     private string _equipmentInfoText;
+    /// <summary>属性说明卡正文，打开属性卡时写入说明层。</summary>
+    private string _attributeCardText;
     /// <summary>三个特技槽各自的完整说明，供每行末尾的详情入口按槽位取用。</summary>
     private readonly string[] _specialSkillDetails = new string[3];
+    /// <summary>三个特技槽各自的说明卡正文，已按标题、当前层、下一层、同名说明分区。</summary>
+    private readonly string[] _specialSkillCards = new string[3];
 
     /// <summary>把状态词写进按钮自带 Label；Label 已铺满父 Rect，长词也不会溢出按钮背景。</summary>
     /// <param name="button">需要改写文案的扩展按钮。</param>
@@ -178,12 +256,18 @@ public sealed class EquipmentDetailWindow : WindowBase
             _specialSkillDetailButtons[index].onClick.AddListener(() => OnSpecialSkillDetailClicked(slot));
         }
         _forgeFoldButton.onClick.AddListener(OnForgeFoldClicked);
+        _inscribeRowButton.onClick.AddListener(OnInscribeRowClicked);
+        _washRowButton.onClick.AddListener(OnWashRowClicked);
         _strengthenButton.onClick.AddListener(OnMainButtonFirst);
         _inscribeButton.onClick.AddListener(OnMainButtonSecond);
         _forgeButton.onClick.AddListener(OnMainButtonThird);
         _moreButton.onClick.AddListener(OnMoreClicked);
         _footerExpandButton.onClick.AddListener(OnFooterExpandClicked);
         _infoLayerCloseButton.onClick.AddListener(OnInfoLayerClosed);
+        _cardDeductButton.onClick.AddListener(OnCardDeductClicked);
+        _cardSourceButton.onClick.AddListener(OnCardSourceClicked);
+        _cardRemoveButton.onClick.AddListener(OnCardRemoveClicked);
+        _attrViewButton.onClick.AddListener(OnAttributeViewClicked);
         // index 是更多菜单按钮下标，逐一绑定；slot 是闭包内固定下来的当前下标。
         for (int index = 0; index < _moreMenuButtons.Length; index++)
         {
@@ -211,10 +295,18 @@ public sealed class EquipmentDetailWindow : WindowBase
         _traitsText.text = data.Traits;
         _headerMetaText.text = data.MetaText;
         _gemDropText.text = data.GemDropText;
+        // 铭缀、洗练、镶嵌、套装、淬锋五个分区的正文只做展示，文本全部来自控制器。
+        _inscribeRowValue.text = data.InscribeRowText;
+        _washRowValue.text = data.WashRowText;
+        _gemInfoText.text = data.GemInfoText;
+        _setExpandText.text = data.SetExpandText;
+        _forgeExpandText.text = data.ForgeExpandText;
         _footerText.text = data.FooterText;
         _footerExtraText.text = data.FooterExtraText;
         _infoLayerText.text = data.InfoLayerText;
         _equipmentInfoText = data.InfoLayerText;
+        // 属性卡正文由控制器按真实属性生成，窗口只负责换文本。
+        _attributeCardText = data.AttributeCardText;
         _enhanceRowText.text = data.EnhanceRowText;
         _forgeRowText.text = data.ForgeRowText;
         _appearanceRowText.text = data.AppearanceRowText;
@@ -237,7 +329,28 @@ public sealed class EquipmentDetailWindow : WindowBase
         {
             // 首行只显示槽位、名称、等级与状态；完整说明留给详情层，不在行内换行溢出。
             _specialSkillTexts[index].text = data.SpecialSkillHeadlines[index];
-            _activateButtons[index].interactable = data.CanActivateSpecialSkill[index];
+            // canActivate 表示该槽不是服务器当前选中槽，点了可以提交切换；已选槽也会是 false。
+            bool canActivate = data.CanActivateSpecialSkill[index];
+            _activateButtons[index].interactable = canActivate;
+            // isEmptySlot 表示该槽没有任何特技族 ID，只有真正空槽才用浅灰禁用色。
+            bool isEmptySlot = data.IsSpecialSkillEmpty[index];
+            // slotImage 是启用按钮的背景 Image，用来区分空槽、已选槽与可切换槽三种底色。
+            UnityEngine.UI.Image slotImage = _activateButtons[index].targetGraphic as UnityEngine.UI.Image;
+            if (slotImage != null)
+            {
+                if (isEmptySlot)
+                {
+                    // 空槽：浅灰底加压暗标题，明确表示这里没有特技可启用。
+                    slotImage.color = DisabledSlotColor;
+                    _specialSkillTexts[index].color = DisabledSkillTitleColor;
+                }
+                else
+                {
+                    // 已选或可切换槽都按正常特技显示，不能因为 CanActivate=false 被误判成空槽。
+                    slotImage.color = NormalSlotColor;
+                    _specialSkillTexts[index].color = ActiveSkillTitleColor;
+                }
+            }
         }
         // 打开新装备时把新增交互状态复位，避免上一次的展开状态残留。
         // gemSlotCount 是当前装备真实宝石孔数量，SetFoldableRows 按它显示空槽图标。
@@ -246,16 +359,53 @@ public sealed class EquipmentDetailWindow : WindowBase
         CacheSpecialSkillDetails(data);
         ApplyGemSlots();
         // 正文分区已改为滚动区内的自然排列，不再有总折叠与固定高度空壳。
-        // 每次打开（含关闭重开同武器）都从展开态复位，避免上次折叠状态残留。
-        _forgeRowCollapsed = false;
-        ApplyForgeRowState();
+        // 三个展开区统一回到折叠态，淬锋折叠标志也由 ApplyExpandPanels 里同步复位。
+        ApplyExpandPanels();
         SetButtonLabel(_footerExpandButton, FoldExpandText);
         SetButtonLabel(_moreButton, MoreText);
         _gemDropPanel.gameObject.SetActive(false);
         _moreMenu.gameObject.SetActive(false);
+        // 附加分区默认收起，底栏只保留固定一行交易与耐久，不开窗就重复显示说明正文。
         _footerExtra.gameObject.SetActive(false);
+        SetButtonLabel(_footerExpandButton, FoldExpandText);
         _infoLayer.gameObject.SetActive(false);
+        // 重开复位光晕透明度，避免上一次呼吸停在最亮或最暗。
+        ApplyGlowAlpha(GlowMinAlpha);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_scroll.content);
+        // 本窗口的显示尺度在每次刷新时按根画布缩放补偿，1366 下正文不会被缩到 10 像素。
+        ApplyDisplayScale();
+    }
+
+    /// <summary>每帧驱动图标光晕呼吸；窗口隐藏后由 OnDisable 停止并复位。</summary>
+    private void Update()
+    {
+        if (_iconGlow == null)
+        {
+            return;
+        }
+        // phase 是 0 到 1 来回往复的呼吸相位，用不受暂停影响的时间驱动。
+        float phase = Mathf.PingPong(Time.unscaledTime * GlowPulseSpeed, 1f);
+        ApplyGlowAlpha(Mathf.Lerp(GlowMinAlpha, GlowMaxAlpha, phase));
+    }
+
+    /// <summary>窗口隐藏或关闭时停掉呼吸并复位到最低透明度。</summary>
+    private void OnDisable()
+    {
+        ApplyGlowAlpha(GlowMinAlpha);
+    }
+
+    /// <summary>写入光晕透明度，只改 alpha 不改颜色，避免影响品质色。</summary>
+    /// <param name="alpha">目标透明度，0 为完全透明，1 为完全不透明，本窗口只在 0.10~0.45 之间取值。</param>
+    private void ApplyGlowAlpha(float alpha)
+    {
+        if (_iconGlow == null)
+        {
+            return;
+        }
+        // color 是光晕当前颜色，只替换 alpha 分量，品质色本身保持不变。
+        Color color = _iconGlow.color;
+        color.a = alpha;
+        _iconGlow.color = color;
     }
 
     /// <summary>每次打开详情从正文顶部阅读，不改变已经绑定的装备或按钮事件。</summary>
@@ -288,22 +438,111 @@ public sealed class EquipmentDetailWindow : WindowBase
     /// <summary>信息按钮打开说明层并还原当前装备的静态说明与获取途径。</summary>
     private void OnInfoClicked()
     {
+        _infoLayerTitleText.text = "装备说明";
         _infoLayerText.text = _equipmentInfoText;
+        ApplyCardSkillButtons(false);
         _infoLayer.gameObject.SetActive(true);
+        // 普通信息卡没有底部三按钮，按正文高度收紧到卡底只留一条内边距。
+        ApplyCardLayout(false);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
     }
+
+    /// <summary>基础属性行末的查看入口打开属性说明卡，只展示真实属性与贡献来源。</summary>
+    private void OnAttributeViewClicked()
+    {
+        _infoLayerTitleText.text = "属性说明";
+        _infoLayerText.text = _attributeCardText;
+        // 属性卡不提供特技相关入口，底部三个按钮整体隐藏。
+        ApplyCardSkillButtons(false);
+        _infoLayer.gameObject.SetActive(true);
+        // 属性条目少时卡高收到最小高度，不再固定 452 留出大片空白。
+        ApplyCardLayout(false);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
+    }
+
+    /// <summary>按正文实际高度收紧或撑开说明卡，正文滚动区与底部按钮都贴在卡内。</summary>
+    /// <param name="withSkillButtons">true 表示特技卡，底部保留兑换、拓源与特技卸下三按钮。</param>
+    private void ApplyCardLayout(bool withSkillButtons)
+    {
+        // bottomArea 是卡底固定占位：有按钮时容纳按钮行，无按钮时只留一条留白。
+        float bottomArea = CardBottomGap;
+        if (withSkillButtons) bottomArea = CardButtonArea;
+        // bodyMax 是正文可占的最大高度，卡总高不会超过预制体给的 452。
+        float bodyMax = CardMaxHeight - CardTopArea - bottomArea;
+        // preferred 是正文按卡宽换行后的首选高度，短属性卡远小于最大高度。
+        float preferred = _infoLayerText.GetPreferredValues(_infoLayerText.text, CardBodyWidth, 0f).y;
+        // bodyHeight 是正文实际占用高度，过长时封顶并在卡内滚动。
+        float bodyHeight = preferred;
+        if (bodyHeight > bodyMax) bodyHeight = bodyMax;
+        if (bodyHeight < 0f) bodyHeight = 0f;
+        // cardHeight 是收紧后的卡高，下限保证标题、正文与关闭按钮三块不重叠。
+        float cardHeight = CardTopArea + bodyHeight + bottomArea;
+        if (cardHeight < CardMinHeight) cardHeight = CardMinHeight;
+        if (cardHeight > CardMaxHeight) cardHeight = CardMaxHeight;
+        RectTransform cardRect = _infoLayer.transform as RectTransform;
+        if (cardRect != null) cardRect.sizeDelta = new Vector2(CardWidth, cardHeight);
+        if (_infoLayerScroll != null)
+        {
+            // scrollHeight 是正文区高度，卡高收紧后同步缩短，底部不会留出空白。
+            float scrollHeight = cardHeight - CardTopArea - bottomArea;
+            _infoLayerScroll.sizeDelta = new Vector2(CardBodyWidth, scrollHeight);
+        }
+        // buttonY 是三按钮行的顶部纵坐标，按卡高从卡底内边距倒推，不会落在卡外。
+        float buttonY = CardBottomGap + CardButtonHeight - cardHeight;
+        SetCardButtonY(_cardDeductButton, buttonY);
+        SetCardButtonY(_cardSourceButton, buttonY);
+        SetCardButtonY(_cardRemoveButton, buttonY);
+    }
+
+    /// <summary>只改说明卡底部按钮的纵坐标，横向排布保持预制体原值。</summary>
+    /// <param name="button">说明卡底部的任一个入口按钮。</param>
+    /// <param name="y">相对卡顶的纵坐标，按卡高倒推得到。</param>
+    private static void SetCardButtonY(Button button, float y)
+    {
+        RectTransform rect = button.transform as RectTransform;
+        if (rect == null) return;
+        rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, y);
+    }
+
+    /// <summary>按是否特技卡切换底部三个特技入口的显隐。</summary>
+    /// <param name="visible">true 表示当前是特技卡，显示兑换、拓源与特技卸下。</param>
+    private void ApplyCardSkillButtons(bool visible)
+    {
+        _cardDeductButton.gameObject.SetActive(visible);
+        _cardSourceButton.gameObject.SetActive(visible);
+        _cardRemoveButton.gameObject.SetActive(visible);
+    }
+
+    /// <summary>兑换入口只提示暂未开放，不请求任何养成数据。</summary>
+    private void OnCardDeductClicked() { TipsMgr.Instance.ShowSystemTips("兑换：暂未开放"); }
+    /// <summary>拓源入口只提示暂未开放，不请求任何养成数据。</summary>
+    private void OnCardSourceClicked() { TipsMgr.Instance.ShowSystemTips("拓源：暂未开放"); }
+    /// <summary>特技卸下入口只提示暂未开放，不实际卸下特技。</summary>
+    private void OnCardRemoveClicked() { TipsMgr.Instance.ShowSystemTips("特技卸下：暂未开放"); }
 
     /// <summary>特技行末尾的详情入口在说明层展示该槽自己的完整说明，不共用首个槽。</summary>
     /// <param name="index">被点击的特技槽下标，范围0至2。</param>
     private void OnSpecialSkillDetailClicked(int index)
     {
-        // text 取本槽缓存下来的完整说明；标题行只有两行摘要，不能当详情。
-        string text = _specialSkillDetails[index];
-        if (string.IsNullOrEmpty(text))
+        // card 是本槽说明卡正文，标题与当前层/下一层分区都由控制器按真实配置生成。
+        string card = _specialSkillCards[index];
+        if (string.IsNullOrEmpty(card))
         {
-            text = _specialSkillTexts[index].text;
+            // 控制器没给出分区正文时退回到原来的完整说明，避免说明层空白。
+            card = _specialSkillDetails[index];
         }
-        _infoLayerText.text = text;
+        if (string.IsNullOrEmpty(card))
+        {
+            card = _specialSkillTexts[index].text;
+        }
+        _infoLayerTitleText.text = "特技" + (index + 1) + " 说明";
+        _infoLayerText.text = card;
+        // 特技卡保留兑换、拓源与特技卸下三个真实入口，均只给未开放提示。
+        ApplyCardSkillButtons(true);
         _infoLayer.gameObject.SetActive(true);
+        // 特技卡正文按内容撑高到 452 上限，超出部分在卡内滚动，三按钮固定贴卡底。
+        ApplyCardLayout(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_infoLayer.transform as RectTransform);
     }
 
     /// <summary>把三个特技槽的详情正文缓存下来，供各行末尾入口按槽位取用。</summary>
@@ -314,10 +553,12 @@ public sealed class EquipmentDetailWindow : WindowBase
         for (int index = 0; index < 3; index++)
         {
             _specialSkillDetails[index] = data.SpecialSkillTexts[index];
+            // 说明卡正文单独缓存，空串时点击入口会退回完整说明，不会出现空白卡。
+            _specialSkillCards[index] = data.SpecialSkillCards[index];
         }
     }
 
-    /// <summary>按真实宝石孔数量显示空槽图标，其余隐藏；正文其余行常驻可见。</summary>
+    /// <summary>按真实宝石孔数量显示空槽图标与展开区孔位格，其余隐藏。</summary>
     private void ApplyGemSlots()
     {
         // index 是空槽图标下标，只显示下标小于真实孔数的那些。
@@ -326,44 +567,143 @@ public sealed class EquipmentDetailWindow : WindowBase
             _gemSlots[index].gameObject.SetActive(index < _gemSlotCount);
         }
         if (_gemDropPanel != null) _gemDropPanel.gameObject.SetActive(false);
+        // index 是展开区孔位格下标，容量固定 6 个，只有真实孔位对应的格子才启用。
+        for (int index = 0; index < _gemCells.Length; index++)
+        {
+            _gemCells[index].SetActive(index < _gemSlotCount);
+        }
+        // rows 是真实孔数按两列排布后的可见行数，两孔只占一行，零孔时不占高度。
+        int rows = (_gemSlotCount + 1) / 2;
+        LayoutGemCells(rows);
     }
 
-    /// <summary>淬锋与铭缀行折叠按钮只切换该行显隐，不改其它分区。</summary>
+    /// <summary>按可见行数排布孔位格并回收网格高度，两列间距取网格可用宽度的一半。</summary>
+    /// <param name="rows">当前可见行数，由真实孔数按两列推导。</param>
+    private void LayoutGemCells(int rows)
+    {
+        if (_gemSlotGrid == null) return;
+        // gridElement 是网格容器的布局项，高度由行数推导，父纵向组据此回收空位。
+        LayoutElement gridElement = _gemSlotGrid.GetComponent<LayoutElement>();
+        if (gridElement != null)
+        {
+            gridElement.preferredHeight = rows * GemCellRowStep + 4f;
+        }
+        // columnOffset 是第二列的左边距，取网格宽度的一半，两列不会挤在左上角。
+        float columnOffset = _gemSlotGrid.rect.width * 0.5f;
+        if (columnOffset < GemCellSize * 3f)
+        {
+            // 网格尚未完成布局时宽度可能是默认值或 0，此时用主栏半宽兜底，避免两列重叠。
+            columnOffset = 152f;
+        }
+        // index 是孔位格下标，只对已启用且属于真实孔位的格子排坐标。
+        for (int index = 0; index < _gemCells.Length; index++)
+        {
+            if (!_gemCells[index].activeSelf) continue;
+            // column 是列序 0 或 1，row 是行序，格子从左上角向右向下排。
+            int column = index % 2;
+            int row = index / 2;
+            RectTransform cellRect = _gemCells[index].transform as RectTransform;
+            if (cellRect == null) continue;
+            // x 是格子左边界：第一列贴左内边距，第二列右移半栏宽。
+            float x = 8f;
+            if (column == 1) x = columnOffset;
+            cellRect.anchoredPosition = new Vector2(x, -(2f + row * GemCellRowStep));
+        }
+    }
+
+    /// <summary>按根画布实际缩放补偿本窗口显示尺度：1920 保持原观感，1366 放大到可读。</summary>
+    private void ApplyDisplayScale()
+    {
+        // rootCanvas 是本窗口所属根画布，scaleFactor 由全局 CanvasScaler 按屏幕分辨率算出。
+        Canvas rootCanvas = GetComponentInParent<Canvas>();
+        if (rootCanvas == null) return;
+        // canvasScale 是当前屏幕下的真实缩放，1920 下为 1，1366 下约 0.71。
+        float canvasScale = rootCanvas.scaleFactor;
+        // windowScale 是只作用于详情窗口的局部缩放，下限为 1，1920 下不放大。
+        float windowScale = 1f;
+        if (canvasScale > 0.0001f && canvasScale < MinScreenScale)
+        {
+            // 补偿到最小屏幕缩放，主窗口与左侧说明卡同属本 root，组合仍在 1366 屏内。
+            windowScale = MinScreenScale / canvasScale;
+        }
+        transform.localScale = new Vector3(windowScale, windowScale, 1f);
+    }
+
+    /// <summary>淬锋行折叠按钮切换行下方属性正文区，摘要行始终同行可见。</summary>
     private void OnForgeFoldClicked()
     {
-        // 折叠状态自己保存：正文只清透明不隐藏，横向布局里的占位仍保留，按钮不会被挤到行首。
+        // 折叠只隐藏下方正文区，摘要行与按钮位置不动，父布局按内容高度回收空位。
         _forgeRowCollapsed = !_forgeRowCollapsed;
-        ApplyForgeRowState();
-    }
-
-    /// <summary>按当前折叠状态刷新淬锋正文可见性与按钮标签，正文始终保留布局占位。</summary>
-    private void ApplyForgeRowState()
-    {
-        _forgeRowText.gameObject.SetActive(true);
+        _forgeExpandPanel.SetActive(!_forgeRowCollapsed);
         if (_forgeRowCollapsed)
         {
-            _forgeRowText.alpha = 0f;
             SetButtonLabel(_forgeFoldButton, FoldExpandText);
         }
         else
         {
-            _forgeRowText.alpha = 1f;
             SetButtonLabel(_forgeFoldButton, FoldCollapseText);
         }
     }
 
-    /// <summary>镶嵌下拉真实切换占位容器显隐。</summary>
-    private void OnGemDropClicked()
+    /// <summary>默认折叠全部分区展开区，切装备或重开窗口时回到初始状态。</summary>
+    private void ApplyExpandPanels()
     {
-        // visible 是切换后镶嵌下拉是否显示，显隐本身就是点击反馈。
-        bool visible = !_gemDropPanel.gameObject.activeSelf;
-        _gemDropPanel.gameObject.SetActive(visible);
+        // 淬锋折叠标志与面板显隐必须同源：默认折叠时标志为 true，首次点击才能真正展开。
+        _forgeRowCollapsed = true;
+        _gemExpandPanel.SetActive(false);
+        _setExpandPanel.SetActive(false);
+        _forgeExpandPanel.SetActive(false);
+        SetButtonLabel(_gemDropButton, FoldExpandText);
+        SetButtonLabel(_setViewButton, FoldExpandText);
+        SetButtonLabel(_forgeFoldButton, FoldExpandText);
     }
 
-    /// <summary>套装行末的查看入口只提示暂未开放，不请求套装数据、不发协议。</summary>
+    /// <summary>镶嵌摘要行末按钮展开或收起两列孔位区，折叠时隐藏内容并回收高度。</summary>
+    private void OnGemDropClicked()
+    {
+        // visible 是切换后镶嵌展开区是否显示，按钮文案随真显隐状态改写。
+        bool visible = !_gemExpandPanel.activeSelf;
+        _gemExpandPanel.SetActive(visible);
+        if (visible)
+        {
+            SetButtonLabel(_gemDropButton, FoldCollapseText);
+        }
+        else
+        {
+            SetButtonLabel(_gemDropButton, FoldExpandText);
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_gemExpandPanel.transform.parent as RectTransform);
+        // 展开后按真实半栏宽重排两列孔位格，隐藏态下拿不到网格宽度。
+        if (visible) ApplyGemSlots();
+    }
+
+    /// <summary>套装行末入口切换本行下方效果正文区，不再只给提示。</summary>
     private void OnSetViewClicked()
     {
-        TipsMgr.Instance.ShowSystemTips("套装：暂未开放");
+        // visible 是切换后套装展开区是否显示，按钮文案与真显隐一致。
+        bool visible = !_setExpandPanel.activeSelf;
+        _setExpandPanel.SetActive(visible);
+        if (visible)
+        {
+            SetButtonLabel(_setViewButton, FoldCollapseText);
+        }
+        else
+        {
+            SetButtonLabel(_setViewButton, FoldExpandText);
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_setExpandPanel.transform.parent as RectTransform);
+    }
+
+    /// <summary>铭缀行末查看入口只给未开放提示，不请求铭缀数据。</summary>
+    private void OnInscribeRowClicked()
+    {
+        TipsMgr.Instance.ShowSystemTips("铭缀：暂未开放");
+    }
+
+    /// <summary>洗练行末查看入口只给未开放提示，不请求洗练数据。</summary>
+    private void OnWashRowClicked()
+    {
+        TipsMgr.Instance.ShowSystemTips("洗练：暂未开放");
     }
 
     /// <summary>外观行末的查看入口只提示暂未开放，不请求外观数据、不发协议。</summary>

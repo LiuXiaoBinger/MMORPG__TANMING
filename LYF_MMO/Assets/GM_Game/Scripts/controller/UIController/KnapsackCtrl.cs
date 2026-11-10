@@ -589,6 +589,32 @@ public sealed class KnapsackCtrl : IDisposable
         // 旧字段保持左列语义，其它引用方不会读到空值。
         result.Attributes = result.AttributeLeftNames;
         result.AttributeValues = result.AttributeLeftValues;
+        // 属性卡正文按左列、右列逐行配对，名称与数值来自同一行号，缺失写占位。
+        StringBuilder cardAttr = new StringBuilder();
+        string[] cardNames = (result.AttributeLeftNames + "\n" + result.AttributeRightNames).Split('\n');
+        string[] cardValues = (result.AttributeLeftValues + "\n" + result.AttributeRightValues).Split('\n');
+        for (int index = 0; index < cardNames.Length; index++)
+        {
+            // 空行与占位行不写进卡片，避免出现孤立破折号。
+            if (cardNames[index] == "—") continue;
+            if (string.IsNullOrEmpty(cardNames[index])) continue;
+            // 对应行数值，行号对齐左列在前右列在后。
+            string cardValue = "—";
+            if (index < cardValues.Length) cardValue = cardValues[index];
+            cardAttr.Append("<b>").Append(cardNames[index]).Append("</b>　").Append(cardValue).Append('\n');
+        }
+        if (cardAttr.Length == 0) cardAttr.Append("暂无信息\n");
+        cardAttr.Append("<color=#4E7E9C>基础贡献：—　强化贡献：—　进阶贡献：—</color>");
+        result.AttributeCardText = cardAttr.ToString();
+        // 铭缀与洗练暂无实例数据，写中性空态，不推算任何数值。
+        result.InscribeRowText = "暂无信息";
+        result.WashRowText = "暂无信息";
+        // 宝石孔数取真实配置，必须先于说明文本赋值，否则界面会显示「共 0 孔」。
+        result.GemSlotCount = config.GemSlotCount;
+        // 镶嵌只报真实孔数与是否已有宝石，属性未知一律写暂无信息。
+        result.GemInfoText = "共 " + config.GemSlotCount + " 孔，暂无宝石信息";
+        result.SetExpandText = "暂无套装信息";
+        result.ForgeExpandText = "暂无淬锋信息";
         // 实例词条单独分区，仍使用原有配置描述和数值格式。
         StringBuilder traits = new StringBuilder();
         AppendGeneText(traits, equip.GeneID0, equip.GeneValue0);
@@ -604,8 +630,12 @@ public sealed class KnapsackCtrl : IDisposable
             if (familyId == 0)
             {
                 result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空槽，未镶嵌特技";
+                // 空槽说明卡只写空态，当前层与下一层都写暂无信息，不伪造效果。
+                result.SpecialSkillCards[index] = BuildSpecialSkillCard(index, null, null, 0);
                 // 空槽标题行只写槽位与「空」，不伪造已装配的特技名，也不画占位横线。
                 result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：空";
+                // 明确标记空槽，界面据此使用浅灰禁用色，避免把「已选但不可切换」误判成空槽。
+                result.IsSpecialSkillEmpty[index] = true;
                 continue;
             }
             // 本装备当前选择状态，未穿戴时不作为已生效显示。
@@ -631,7 +661,13 @@ public sealed class KnapsackCtrl : IDisposable
             }
             result.SpecialSkillTexts[index] = skill.Name + " Lv." + skill.Level + "（" + state + "）\n" + skill.Description;
             // 标题行两行：第一行槽位与名称等级，第二行短状态；完整说明留给详情层。
-            result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：" + skill.Name + " Lv." + skill.Level + "\n" + shortState;
+            // 第二行用富文本降为次级灰蓝，第一行仍保持标题深色，两行在同一 TMP 内区分层级。
+            result.SpecialSkillHeadlines[index] = "特技" + (index + 1) + "：" + skill.Name + " Lv." + skill.Level
+                + "\n<color=#4E7E9C>" + shortState + "</color>";
+            // 说明卡按区展示：当前层取真实配置等级，下一层取同族下一等级行，缺失写暂无信息。
+            int maxLevel = ResolveSpecialSkillMaxLevel(familyId);
+            cfg.EquipSpecialSkillInfo nextSkill = ResolveSpecialSkillLevel(familyId, skill.Level + 1);
+            result.SpecialSkillCards[index] = BuildSpecialSkillCard(index, skill, nextSkill, maxLevel);
             result.CanActivateSpecialSkill[index] = !selected;
         }
         // 头部角标只由服务器穿戴状态派生，不根据按钮显隐猜测。
@@ -652,12 +688,12 @@ public sealed class KnapsackCtrl : IDisposable
         result.FooterExtraText = result.InfoLayerText;
         // 无真实宝石实例时只显示空槽，不断言已镶嵌或未镶嵌。
         result.GemDropText = "镶嵌：空槽";
-        // 独立行控件的数据：宝石孔数与强化取真实配置，其余保持中性占位。
-        result.GemSlotCount = config.GemSlotCount;
+        // 独立行控件的数据：强化取真实配置，其余保持中性占位；宝石孔数已在前文写入。
         result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  阶位 —";
-        result.ForgeRowText = "淬锋：暂无数据  ·  铭缀：暂无数据";
-        // 祭甲与甲片、套装总阶与件数各占一整行，避免挤成 34px 再溢出。
-        result.GarnishRowText = "祭甲：未祭甲    甲片：—    甲片评分：—";
+        // 淬锋与铭缀是两个子系统，淬锋行只写自身内容，不再拼成一大段混写文字。
+        result.ForgeRowText = "淬锋：暂无数据";
+        // 祭甲与甲片按用户要求本轮不展示，该行数值不再生成，控件保持隐藏。
+        result.GarnishRowText = string.Empty;
         result.SetRowText = "套装：总阶 —  ·  件数 —/—";
         // 特技信息行取第一个真实特技槽文本，空槽时也沿用其「空」说明。
         result.FeatureRowText = result.SpecialSkillTexts[0];
@@ -797,6 +833,83 @@ public sealed class KnapsackCtrl : IDisposable
             if (selected == null || config.Level > selected.Level) selected = config;
         }
         return selected;
+    }
+
+    /// <summary>取同一特技族的配置行：指定等级有则返回该行，没有则返回空。</summary>
+    /// <param name="familyId">稳定特技族编号。</param>
+    /// <param name="level">要取的配置等级，下一层为当前层加一。</param>
+    private static cfg.EquipSpecialSkillInfo ResolveSpecialSkillLevel(int familyId, int level)
+    {
+        // 该族该等级的配置行，缺失时保持空，界面写暂无信息。
+        cfg.EquipSpecialSkillInfo matched = null;
+        // 真实Luban特技等级行，只按族编号与等级精确匹配。
+        List<cfg.EquipSpecialSkillInfo> configs = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < configs.Count; index++)
+        {
+            // 当前候选配置行。
+            cfg.EquipSpecialSkillInfo config = configs[index];
+            if (config.SpecialSkillId != familyId || config.Level != level) continue;
+            matched = config;
+            break;
+        }
+        return matched;
+    }
+
+    /// <summary>取同一特技族配置里的最高等级，用于标题里的「当前级/满级」。</summary>
+    /// <param name="familyId">稳定特技族编号。</param>
+    private static int ResolveSpecialSkillMaxLevel(int familyId)
+    {
+        // 该族已配置的最高等级；没有任何配置时返回0，由调用方转成中性占位。
+        int maxLevel = 0;
+        // 真实Luban特技等级行。
+        List<cfg.EquipSpecialSkillInfo> configs = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < configs.Count; index++)
+        {
+            // 当前候选配置行。
+            cfg.EquipSpecialSkillInfo config = configs[index];
+            if (config.SpecialSkillId != familyId || config.Level <= maxLevel) continue;
+            maxLevel = config.Level;
+        }
+        return maxLevel;
+    }
+
+    /// <summary>生成特技说明卡正文，按标题、当前层、下一层、同名说明分区，无数据写暂无信息。</summary>
+    /// <param name="index">特技槽下标，范围0至2，只用于标题里的槽位编号。</param>
+    /// <param name="skill">当前生效等级配置，空槽传空。</param>
+    /// <param name="next">下一层配置，没有下一层时为空。</param>
+    /// <param name="maxLevel">该族配置最高等级，0表示没拿到配置。</param>
+    private static string BuildSpecialSkillCard(int index, cfg.EquipSpecialSkillInfo skill, cfg.EquipSpecialSkillInfo next, int maxLevel)
+    {
+        // card 是说明卡全文，分区之间用细横线隔开，和录屏说明卡的层级一致。
+        StringBuilder card = new StringBuilder();
+        if (skill == null)
+        {
+            card.Append("<size=15><b>特技").Append(index + 1).Append("：空槽</b></size>\n");
+            card.Append("<color=#4E7E9C>此槽未镶嵌特技</color>\n");
+            card.Append("当前层效果：暂无信息\n");
+            card.Append("下一层效果：暂无信息\n");
+            card.Append("——");
+            return card.ToString();
+        }
+        // maxText 是标题里的满级数字，没有配置时写占位符。
+        string maxText = "—";
+        if (maxLevel > 0) maxText = maxLevel.ToString();
+        card.Append("<size=15><b>特技").Append(index + 1).Append("：").Append(skill.Name).Append(" +").Append(skill.Level).Append("级</b></size>\n");
+        card.Append("<color=#2E6E8E>◇ ").Append(skill.Name).Append(skill.Level).Append("级/").Append(maxText).Append("级</color>\n");
+        card.Append("　").Append(skill.Description).Append('\n');
+        card.Append("<color=#2E6E8E>◇ 下一层</color>\n");
+        if (next == null)
+        {
+            card.Append("　暂无信息\n");
+        }
+        else
+        {
+            card.Append("　").Append(next.Name).Append(next.Level).Append("级：").Append(next.Description).Append('\n');
+        }
+        card.Append("——\n");
+        card.Append("装备带有的多条特技，仅可选1条生效\n");
+        card.Append("穿戴包含相同特技的装备可提升该特技的等级");
+        return card.ToString();
     }
     #endregion
 }

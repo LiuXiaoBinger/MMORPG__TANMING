@@ -414,6 +414,13 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
 
+**最新验收——无临时绑定、进程稳定与界面状态（2026-11-10）。** 全新正常登录进入 Scene_MainCity，MainCtrl 与遮幕引用有效；此前 MainView:219 的阻断已在工作副本中修复。其修正后的引用在 HEAD 中已存在；无关的本地预制体改动保留。预制体崩溃修复后，同一 Unity 进程 56992（16:49 UTC+8 启动）导入资源、进入 Play 并完成正常登录与界面检查，此后未再观测到 APPCRASH；运行时 Console 错误查询返回零。这证明的是本次已观测到的修复，并不等于永久不再崩溃。
+
+16:31/16:40 的两次原生崩溃源于 r3 的三个 SectionDivider 子引用使用 GameObject ID（class 1）而非 RectTransform ID（class 224）。两份崩溃栈都在 UIRoot.prefab 导入期间重复出现 Transform::InitializeTransformHierarchyRecursive。WorkBuddy 精确修正三处子节点列表条目；Codex 在该次修复时核验其余字节未变、69 个 stripped 块头保留、无非法子节点类型。VisualScripting 的 node options 警告属独立问题。证据：_temp/equipment-ui-polish-20261110/crash/parent-verified.json 及两份提取的崩溃栈；final-static.json 校验最终资源。
+
+已核对真实 1366x768 与 1920x1080 截图。按钮中心射线通过：带特技卡 22/22、1366 下带更多菜单 22/22、1920 下 17/17。镶嵌/套装/淬锋各自 false→true→false，内容高度回到 544.75；孔数为二且恰好两格激活。短卡片会收紧；已读取当前层/下一层特技文本与空的第三槽，外观在底部可见，六个新增未开放动作的提示与消息一致，关闭把图标 alpha 复位为 0.1，重开武器 21002 复位全部六个展开/覆盖状态。未测试物理系统鼠标、穿戴/激活、打包构建、超出当前长度的文案或其它分辨率。证据：_temp/equipment-ui-polish-20261110/ 下的 final-*.png/txt 与 final-static.json。
+
+
 **最终两条验收（2026-11-10）。** 主 Agent 核验两个新按钮中心各自命中自己的处理函数，且实机武器 21001 上出现两条完全一致的未开放提示；截图与证据：`_temp/equipment-ui-layout-20261109/revision16/r18-final.png`、`r18-parent-buttons-final.txt`、`r18-stripped-fix.json`。本次检查需要对既有 MoshentaBlackCurtainWindow 做临时运行时绑定：无关的工作区 MainView 引用在 InitView 第 219 行为 null，导致 Play 暂停。未保存任何生产绑定；正常重新登录验收仍被该引用阻断。在带此仅测试用绑定的新一次运行中，使用原相机渲染与正常登录，未执行穿脱/特技操作。已停止 Play 以丢弃全部临时状态。此前的完整布局检查仍为历史；本补充不主张未经修改的重新登录已通过。
 
 

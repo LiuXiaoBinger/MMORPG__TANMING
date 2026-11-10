@@ -15,10 +15,14 @@ public sealed class EquipmentDetailViewData
     public string Traits;
     /// <summary>三个保存特技槽的名称、等级、状态与效果说明。</summary>
     public string[] SpecialSkillTexts = new string[3];
+    /// <summary>三个特技槽的独立说明卡正文，按标题、当前层效果、下一层效果、同名装备说明分区。</summary>
+    public string[] SpecialSkillCards = new string[3];
     /// <summary>三个特技槽的首行摘要，逐行显示槽位、名称、等级与启用状态。</summary>
     public string[] SpecialSkillHeadlines = new string[3];
     /// <summary>槽有特技且不是当前启用槽时允许提交切换。</summary>
     public bool[] CanActivateSpecialSkill = new bool[3];
+    /// <summary>槽内没有任何特技族 ID 时为空槽，用于区分「空槽」与「已选但不可切换」的显示。</summary>
+    public bool[] IsSpecialSkillEmpty = new bool[3];
     /// <summary>服务器当前是否将该实例放在穿戴栏。</summary>
     public bool IsWorn;
     /// <summary>头部元信息两行：装备状态与部位一行，需求等级与占位一行，宽度 270 内不换行。</summary>
@@ -27,6 +31,13 @@ public sealed class EquipmentDetailViewData
     public string FooterText;
     /// <summary>信息按钮说明层正文，展示装备静态说明与获取途径。</summary>
     public string InfoLayerText;
+    public string InscribeRowText;
+    public string WashRowText;
+    public string GemInfoText;
+    public string SetExpandText;
+    public string ForgeExpandText;
+    /// <summary>属性说明卡正文：逐行写当前属性名与数值，末行标注基础/强化/进阶贡献来源。</summary>
+    public string AttributeCardText;
     /// <summary>底栏展开后的单行短说明，只放交易与耐久的中性占位，不重复说明层正文。</summary>
     public string FooterExtraText;
     /// <summary>镶嵌下拉展开后的空槽中性占位文本。</summary>
