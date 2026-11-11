@@ -42,6 +42,21 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     /// <param name="owner">本组件所属的在线角色。</param>
     public RoleAttributeComponent(OnlineRole owner) : base(owner) { }
 
+    /// <summary>属性槽位初始化时同步初始化角色的基因组件，保证节点容器早于首帧生效。</summary>
+    public override void Initialize()
+    {
+        // 角色基因组件的权威引用在 OnlineRole 上，本槽位只代为驱动生命周期。
+        Owner.Gene.Initialize();
+    }
+
+    /// <summary>逐帧推进基因节点；变化由基因组件自行合并进本组件的属性通知。</summary>
+    /// <param name="deltaMilliseconds">本逻辑帧经过的毫秒数。</param>
+    public override void Update(int deltaMilliseconds)
+    {
+        // 同一份基因实例由属性槽位推进，角色不再单独占用组件槽位。
+        Owner.Gene.Update(deltaMilliseconds);
+    }
+
     /// <summary>从裸属性生成最终面板，不把装备加成回写到裸属性或数据库。</summary>
     /// <returns>独立的最终属性协议对象，当前资源不超过生效后的上限。</returns>
     public virtual RoleBaseInfo CalculateAttribute()
@@ -120,6 +135,12 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         Owner.SendToClient(NetDefine.CMD_RoleAttributeUpdateCode, notification.ToByteString());
     }
 
-    /// <summary>角色离线时释放已生效的属性修正与宿主引用。</summary>
-    public override void Dispose() { modifiers.Clear(); base.Dispose(); }
+    /// <summary>角色离线时先撤销基因节点效果，再释放已生效的属性修正与宿主引用。</summary>
+    public override void Dispose()
+    {
+        // 基因节点会直接改属性修正，必须先于修正清理撤销，避免悬空状态。
+        Owner.Gene.Shutdown();
+        modifiers.Clear();
+        base.Dispose();
+    }
 }

@@ -213,7 +213,9 @@ public sealed partial class SceneWaveSpawner
             int damage = Math.Max(0, previousHp[i] - monsters_[i].CurrentHp);
             notice.Monsters.Add(GetHpData(i, damage));
             // 归因使用施加角色编号，不能把装备 UID 用来查在线角色。
-            OnlineRole caster = RoleManager.Instance.GetOnlineRole((int)monsters_[i].Components.Get<GeneComponent>(EntityComponentType.Gene).LastDamageFirerId);
+            // 伤害来源归属属性组件，基因组件不再保留怪物专有接口。
+            ulong firerId = monsters_[i].Components.Get<AttributesComponent>(EntityComponentType.Attributes).LastDamageFirerId;
+            OnlineRole caster = RoleManager.Instance.GetOnlineRole((int)firerId);
             MoshentaActor actor = FindActor(monsters_[i].UID);
             if (actor != null) actor.OnHit(caster, damage);
             if (previousHp[i] > 0 && monsters_[i].CurrentHp == 0)
@@ -281,7 +283,9 @@ public sealed partial class SceneWaveSpawner
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
             hit_targets.Add(monster.UID);
             // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
-            GeneRuntime targetGenes = monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+            GeneComponent targetGene = monster.Components.Get<GeneComponent>(EntityComponentType.Gene);
+            // 伤害结算与事件对方仍用这只怪物自己的同一份运行容器。
+            GeneRuntime targetGenes = targetGene.Runtime;
             // 当前攻击者的最终属性在结果点读取，动作中换装也不会使用旧的攻击面板。
             RoleEquipComponent equipment = null;
             // 保留旧的无来源调用伤害；真实角色普攻同时结算外功和内功对应防御。
@@ -323,7 +327,8 @@ public sealed partial class SceneWaveSpawner
             int actualDamage = hpBeforeHit - monster.CurrentHp;
             if (equipment != null && actualDamage > 0)
             {
-                targetGenes.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, ROArtSkill.BasicAttackId, actualDamage));
+                // 受击事件由该怪物自己的基因组件派发，结算容器与传入对方保持原样。
+                targetGene.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, ROArtSkill.BasicAttackId, actualDamage));
                 equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
                 if (monster.CurrentHp == 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
             }

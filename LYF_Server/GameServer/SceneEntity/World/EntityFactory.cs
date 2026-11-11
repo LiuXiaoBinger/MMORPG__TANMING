@@ -230,7 +230,7 @@ namespace GameServer.SceneEntity
         /// <summary>把组件类别转换成具体类；尚无专用类的类别使用轻量标记。</summary>
         /// <param name="entity">组件所属实体。</param>
         /// <param name="type">要创建的组件类别。</param>
-        private static EntityComponentBase CreateComponent(ROObject entity, EntityComponentType type)
+        private static IEntityComponent CreateComponent(ROObject entity, EntityComponentType type)
         {
             switch (type)
             {

@@ -8,11 +8,11 @@ namespace GameServer.SceneEntity
     public sealed class EntityComponentContainer
     {
         /// <summary>按类别定位组件，同一实体中每类最多登记一个。</summary>
-        private readonly Dictionary<EntityComponentType, EntityComponentBase> _components =
-            new Dictionary<EntityComponentType, EntityComponentBase>();
+        private readonly Dictionary<EntityComponentType, IEntityComponent> _components =
+            new Dictionary<EntityComponentType, IEntityComponent>();
 
         /// <summary>保留添加顺序：按顺序初始化和更新，按反序释放。</summary>
-        private readonly List<EntityComponentBase> _ordered = new List<EntityComponentBase>();
+        private readonly List<IEntityComponent> _ordered = new List<IEntityComponent>();
 
         #region 生命周期
         /// <summary>依次初始化已登记组件；单个组件失败会记录日志，后续组件仍继续。</summary>
@@ -20,7 +20,8 @@ namespace GameServer.SceneEntity
         {
             for (int i = 0; i < _ordered.Count; i++)
             {
-                EntityComponentBase component = _ordered[i];
+                // 按登记顺序取出的同一实例，回调失败只记录不影响后续组件。
+                IEntityComponent component = _ordered[i];
                 Invoke(component, "Initialize", delegate { component.Initialize(); });
             }
         }
@@ -31,7 +32,8 @@ namespace GameServer.SceneEntity
         {
             for (int i = 0; i < _ordered.Count; i++)
             {
-                EntityComponentBase component = _ordered[i];
+                // 逐帧推进只读取登记时的同一实例，不重建组件。
+                IEntityComponent component = _ordered[i];
                 Invoke(component, "Update", delegate { component.Update(deltaMilliseconds); });
             }
         }
@@ -41,7 +43,8 @@ namespace GameServer.SceneEntity
         {
             for (int i = _ordered.Count - 1; i >= 0; i--)
             {
-                EntityComponentBase component = _ordered[i];
+                // 反序释放时仍按接口回调，基因等合并后的组件同样走这一入口。
+                IEntityComponent component = _ordered[i];
                 Invoke(component, "Shutdown", delegate { component.Shutdown(); });
             }
             _ordered.Clear();
@@ -51,7 +54,7 @@ namespace GameServer.SceneEntity
 
         /// <summary>登记组件和装配顺序；重复类别被视为装配错误。</summary>
         /// <param name="component">要登记的组件实例。</param>
-        public void Add(EntityComponentBase component)
+        public void Add(IEntityComponent component)
         {
             if (component == null)
             {
@@ -76,9 +79,10 @@ namespace GameServer.SceneEntity
         /// <summary>取得指定类别的组件；缺少组件时抛出异常。</summary>
         /// <typeparam name="T">调用者期望的具体组件类型。</typeparam>
         /// <param name="type">组件容器的类别键。</param>
-        public T Get<T>(EntityComponentType type) where T : EntityComponentBase
+        public T Get<T>(EntityComponentType type) where T : class, IEntityComponent
         {
-            EntityComponentBase component;
+            // 容器内保存的是统一接口对象，取出后由调用者期望类型完成核对。
+            IEntityComponent component;
             if (!_components.TryGetValue(type, out component))
             {
                 throw new KeyNotFoundException("实体组件未注册: " + type);
@@ -90,9 +94,10 @@ namespace GameServer.SceneEntity
         /// <typeparam name="T">调用者期望的具体组件类型。</typeparam>
         /// <param name="type">要查找的组件类别。</param>
         /// <param name="component">成功时返回原组件实例，失败时为 null。</param>
-        public bool TryGet<T>(EntityComponentType type, out T component) where T : EntityComponentBase
+        public bool TryGet<T>(EntityComponentType type, out T component) where T : class, IEntityComponent
         {
-            EntityComponentBase value;
+            // 按类别取出的统一接口对象，类型不符时由后面的转换判定为失败。
+            IEntityComponent value;
             if (_components.TryGetValue(type, out value))
             {
                 component = value as T;
@@ -107,7 +112,7 @@ namespace GameServer.SceneEntity
         /// <param name="component">执行回调的组件。</param>
         /// <param name="method">用于定位失败的生命周期方法名。</param>
         /// <param name="action">本次要执行的初始化、更新或释放操作。</param>
-        private static void Invoke(EntityComponentBase component, string method, Action action)
+        private static void Invoke(IEntityComponent component, string method, Action action)
         {
             try
             {

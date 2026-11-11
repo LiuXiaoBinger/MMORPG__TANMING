@@ -93,7 +93,7 @@ namespace GameServer.SceneEntity
 
         /// <summary>在初始化前挂载组件；开始运行后不再允许改变装配。</summary>
         /// <param name="component">此实体要持有的组件。</param>
-        public void AddComponent(EntityComponentBase component)
+        public void AddComponent(IEntityComponent component)
         {
             if (LifecycleState != EntityLifecycleState.Created)
             {

@@ -12,8 +12,8 @@ public class OnlineRole : IGeneOwner
 
     /// <summary>当前在线角色的实际属性组件，节点直接调用它修改属性和资源。</summary>
     public RoleAttributeComponent AttrComp { get; private set; }
-    /// <summary>当前在线角色的通用基因组件，独立于装备组件。</summary>
-    public RoleGeneComponent Gene { get; private set; }
+    /// <summary>当前在线角色的通用基因组件，与场景怪物共用同一服务端实现。</summary>
+    public GeneComponent Gene { get; private set; }
     /// <summary>公共节点通过此多契约入口访问同一个真实属性组件，不构造代理对象。</summary>
     IAttributeComponent IGeneOwner.AttrComp { get { return AttrComp; } }
     /// <summary>公共事件节点访问当前角色自己的基因容器。</summary>
@@ -129,8 +129,8 @@ public class OnlineRole : IGeneOwner
         // 装备属性与特技跟随真实在线角色推进，不依赖尚未绑定的玩家场景实体。
         AttrComp = new RoleAttributeComponent(this);
         _components.SetComponent(AttrComp);
-        Gene = new RoleGeneComponent(this);
-        _components.SetComponent(Gene);
+        // 基因沿用属性组件的固定注册槽位，由属性组件依次初始化、推进和释放。
+        Gene = new GeneComponent(this, AttrComp);
         _components.SetComponent(new RoleEquipComponent(this));
         _components.SetComponent(new RoleShopRecord(this));
         // 技能学习快照、MP 与 CD 只属于当前在线角色，离线后由组件释放；
