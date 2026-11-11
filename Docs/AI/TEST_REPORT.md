@@ -493,3 +493,10 @@
 - GameServer 验收通过 76 项检查，覆盖铜币与开孔顺序、装备部位限制、同族 Lv1–3 叠级且 Lv3 封顶、破甲·外以敌人为目标。隔离 CenterServer 数据库通过旧空槽同版本重放、改孔冲突、已开孔与铜币保存/重载、第三孔迁移、删除时清理。
 - 既有服务未随本次构建部署。独立 Player 打包、完整游戏重登，以及安装特技的物品玩法均未做端到端验收。待接入的 88 族不是运行时效果。
 - 证据：`_temp/ymjh-special-skill-catalog-20261111/main-catalog-final.json`、`_temp/ymjh-special-skill-catalog-20261111/accept-game/runtime.log`、`_temp/ymjh-special-skill-catalog-20261111/accept-db-r3/db-acceptance.txt`、`_temp/ymjh-special-skill-catalog-20261111/build-servers-r3.log`、`_temp/ymjh-special-skill-catalog-20261111/accept-current-client-build.log`。完整结果与边界见 `项目修改日志/2026-11-11-装备特技目录开孔与基因生效.md`。
+
+## [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] 正式战斗入口验收
+
+- Network、CenterServer、GameServer 及当前 Unity `GM_Game.csproj` 均构建成功。最终 Network 解析器读取 294 行与 179 条基因行，无断链基因引用。最后一次修改只改了两处来源标注，基因数据一致。
+- 隔离夹具经真实副本扣血路径执行 36 项检查，另经普通技能写入与共享生命执行 9 项，全部通过。覆盖振奋 Lv1–3、法力封顶、未击杀与重复击杀保护、生命阈值、首领与非首领、背击与正面、沉默及击倒/易伤独立到期、单独冷却刷新与响应快照，以及可归因的共享生命击杀。正向概率分支在夹具中已改为确定。
+- 完整真人多人、运行中服务部署、PvP 与独立 Player 打包仍未验证。80 个未绑定族等待所列接点或证据。破竹破气分支与跨角色外发治疗仍为部分或待接入。
+- 证据：`_temp/ymjh-special-skill-combat-20261111/production-hit-runtime-r5.log`、`_temp/ymjh-special-skill-combat-20261111/production-hit-runtime-r5-remaining.log`、`_temp/ymjh-special-skill-combat-20261111/catalog-runtime-final.log`、`_temp/ymjh-special-skill-combat-20261111/build-servers-r5.log`、`_temp/ymjh-special-skill-combat-20261111/client-build.log`。完整文件清单与 Git 回执见 `项目修改日志/2026-11-11-装备特技实战接入与原作校对.md`。

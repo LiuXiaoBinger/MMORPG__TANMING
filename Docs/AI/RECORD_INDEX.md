@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c70cdb5c51c3aac7c676a7ec7e53a8914f1cafe2900a62b171eb9b122ae39c9f`
+Source normalized SHA256: `85a52d95ec6e591b67259c619faa19e6875e605de8395efdc6053ecaaa792550`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -63,11 +63,12 @@ Source normalized SHA256: `c70cdb5c51c3aac7c676a7ec7e53a8914f1cafe2900a62b171eb9
 | [CODE][FILES][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment slots and manual weapon grant (2026-11-09) | 397-403 |
 | [CODE][FILES][装备][基因][EQUIP-UI-LAYOUT-20261109] Opaque equipment details and real-runtime fixes (2026-11-09) | 404-461 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Per-scene monster battle resources | 462-470 |
-| [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Equipment special-skill catalog, sockets and gene activation | 471-476 |
+| [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Equipment special-skill catalog, sockets and gene activation | 471-477 |
+| [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Equipment special-skill audit and combat integration | 478-483 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `9bb1c543214ec3b447c3fed0bdb5b4271f734fe51c41fb6329bb24f12a11fe78`
+Source normalized SHA256: `7632f03c4d79da07361a069d14994ff0667fa9e0714de576abdad5ab33606233`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -122,7 +123,8 @@ Source normalized SHA256: `9bb1c543214ec3b447c3fed0bdb5b4271f734fe51c41fb6329bb2
 | [VERIFY][装备][EQUIP-MANUAL-BAG-20261109] Empty equipment UI and persisted weapons (2026-11-09) | 417-424 |
 | [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] Layout and live main-city UI acceptance (2026-11-09) | 425-489 |
 | [VERIFY][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Configured battle loading and Moshenta regression | 490-498 |
-| [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Catalog and equipment instance acceptance | 499-504 |
+| [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Catalog and equipment instance acceptance | 499-505 |
+| [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Production combat entry acceptance | 506-511 |
 
 ## Docs/AI/DECISIONS.en.md
 
