@@ -486,3 +486,10 @@
 - 主 Agent 通过 Unity MCP 实际加载 4060 的 40 技能、32 Buff、7 通知、四项效果预制体及公共 MMonsterAnimator；核验按根目录稳定缓存，4050/4051 的空目录不增加缓存，两处真实 32 实体目录和 XML、NoFadeEntityIds 5357/5501/5502/5503 及不同采集标题。只读检查保留场景身份和 dirty 状态，Console 返回 0 条错误。没有桌面输入或 Prefab/场景修改。
 - 保留真实失败：客户端临时编译初次引用过期 Network.dll，缺少 RoleGeneData，改用当前项目引用后通过；旧测试在过期位置/类型查找共享生命与 Gene API，且临时测试适配曾编译失败。最终测试使用实际 AttributesComponent 和 Gene 返回类型，没有将无关 Gene 工作区改动拷入服务端。主 Agent 在最终验收前退回硬编码尸体 ID 与未使用时间轴路径必填问题修正。
 - 代码提交 6a094fb 已推送；未切换本机运行服务器、构建独立 Player 或线上部署。未完整移植北森战斗/地图，未手动多人完整通关。完整文件清单、实际角色、回执和边界见 项目修改日志/2026-11-09-副本AI技能导航配置化.md；原始证据位于 _temp/dungeon-generic-battle-20261109/。
+
+## [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] 目录与装备实例验收
+
+- Network、CenterServer、GameServer 均构建成功。当前 Unity `GM_Game.csproj` 编译零错误。最终 Luban 数据经 Network 解析通过（98 族、294 行、无断链基因引用）。最终 12 处描述修改后，全部已绑基因行与两个基因文件均未变动。
+- GameServer 验收通过 76 项检查，覆盖铜币与开孔顺序、装备部位限制、同族 Lv1–3 叠级且 Lv3 封顶、破甲·外以敌人为目标。隔离 CenterServer 数据库通过旧空槽同版本重放、改孔冲突、已开孔与铜币保存/重载、第三孔迁移、删除时清理。
+- 既有服务未随本次构建部署。独立 Player 打包、完整游戏重登，以及安装特技的物品玩法均未做端到端验收。待接入的 88 族不是运行时效果。
+- 证据：`_temp/ymjh-special-skill-catalog-20261111/main-catalog-final.json`、`_temp/ymjh-special-skill-catalog-20261111/accept-game/runtime.log`、`_temp/ymjh-special-skill-catalog-20261111/accept-db-r3/db-acceptance.txt`、`_temp/ymjh-special-skill-catalog-20261111/build-servers-r3.log`、`_temp/ymjh-special-skill-catalog-20261111/accept-current-client-build.log`。完整结果与边界见 `项目修改日志/2026-11-11-装备特技目录开孔与基因生效.md`。
