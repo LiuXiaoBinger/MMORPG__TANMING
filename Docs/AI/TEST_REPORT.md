@@ -414,6 +414,8 @@
 
 ## [VERIFY][装备][基因][EQUIP-UI-LAYOUT-20261109] 布局与主城实机界面验收（2026-11-09）
 
+**补充验收——六孔与防具套装部位（2026-11-11）。** Unity 编译和资源导入通过，Console 错误为零。64 项配置表、预制体与隔离装备容器检查通过，覆盖全部 12 条六孔记录、四个按钮样式、套装件数 0–6、移除一件装备，以及武器和饰品的排除规则。主城正常装备详情入口在 1920×1080 与 1366×768 下各通过 17 项运行检查，覆盖显示六个孔位、当前角色的 `0/6`、六个部位状态、四个菜单项射线命中目标和两层点击外部关闭。运行检查调用 Unity 事件处理器和射线检测。独立 Player 构建、真实服务器穿戴与卸下、宝石镶嵌仍待验证。证据见 `_temp/equipment-detail-six-slots-20261111/import-checks.txt`、`_temp/equipment-detail-six-slots-20261111/live-1920.txt`、`_temp/equipment-detail-six-slots-20261111/live-1366.txt`、`_temp/equipment-detail-six-slots-20261111/final-layout.png`。
+
 **最新接续验收——浮层逐层关闭（2026-11-10）。** 真实 Unity 编译通过，最终 Console 错误查询为零。既有运行中武器 21001 在 1920x1080 通过 35/35 项检查，在 1366x768 通过 35/35 项检查，覆盖三个特技卡、属性卡、菜单开关、子层共存与依次关闭、紧凑行高、图标射线命中及原背包 UID。这 70 项检查在真实运行实例上调用既有处理函数，并通过反射调用私有外部点击方法，不是 70 次 OS 物理鼠标测试。另在 1366x768 通过真实 OS 鼠标输入确认：第一次空白点击 main=True/card=False，第二次 main=False/card=False，更多菜单开关 False→True→False。两个原 UID 61353029711958016 和 61353029713006592 均仍在背包中，未提交穿戴或特技使用动作。
 
 初版实现暴露了真实的更多按钮时序冲突（mouse-down 关闭菜单，随后 onClick 又将其打开）；最终代码将该开关按钮排除在自动关闭范围之外。证据均位于 `_temp/equipment-ui-stack-20261110/`：`more-toggle-before.txt`、`assertions-1920.txt`、`assertions-1366.txt`、`physical-clicks.txt`、`prefab-preservation.json`、`after-layout-1920.png` 和 `after-layout-1366.png`。相对本任务基线，预制体恰好修改四个既有块，其余工作区块、引用与 stripped 头均保留。已暂存预制体为 HEAD 加四处数字字段修改，排除了无关脏内容。Player 构建与战斗未测试；装备／特技协议、持久化及平衡不在本次修正范围。
