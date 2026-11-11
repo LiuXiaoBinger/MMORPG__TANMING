@@ -10,6 +10,13 @@ public sealed class KnapsackCtrl : IDisposable
 {
 
     #region 字段
+    /// <summary>计入套装的六个穿戴部位，顺序与详情展开区一致。</summary>
+    private static readonly EquipType[] SetParts =
+    {
+        EquipType.Head, EquipType.Chest, EquipType.WaistWaist,
+        EquipType.Pants, EquipType.Shoes, EquipType.Bracer
+    };
+
     /// <summary>背包窗口，只负责渲染和派发页签事件。</summary>
     private readonly KnapsackWindow _window;
 
@@ -531,11 +538,11 @@ public sealed class KnapsackCtrl : IDisposable
         }
     }
 
-    /// <summary>将基础六基因、实例三词条和三个特技槽合并为显示正文。</summary>
+    /// <summary>将基础属性、当前套装穿戴状态和三个特技槽合并为详情展示数据。</summary>
     /// <param name="equip">当前服务器装备实例。</param>
     private EquipmentDetailViewData BuildEquipmentDetail(EquipBase equip)
     {
-        // 装备静态配置只提供基础属性，不覆盖实例保存的词条和特技。
+        // 装备静态配置提供基础属性和宝石孔数，特技仍从装备实例读取。
         cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
         // 当前装备的纯展示结果。
         EquipmentDetailViewData result = new EquipmentDetailViewData();
@@ -613,15 +620,8 @@ public sealed class KnapsackCtrl : IDisposable
         result.GemSlotCount = config.GemSlotCount;
         // 镶嵌只报真实孔数与是否已有宝石，属性未知一律写暂无信息。
         result.GemInfoText = "共 " + config.GemSlotCount + " 孔，暂无宝石信息";
-        result.SetExpandText = "暂无套装信息";
+        FillSetDetails(result, _itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack));
         result.ForgeExpandText = "暂无淬锋信息";
-        // 实例词条单独分区，仍使用原有配置描述和数值格式。
-        StringBuilder traits = new StringBuilder();
-        AppendGeneText(traits, equip.GeneID0, equip.GeneValue0);
-        AppendGeneText(traits, equip.GeneID1, equip.GeneValue1);
-        AppendGeneText(traits, equip.GeneID2, equip.GeneValue2);
-        if (equip.GeneID0 == 0 && equip.GeneID1 == 0 && equip.GeneID2 == 0) traits.Append("暂无额外词条");
-        result.Traits = traits.ToString().TrimEnd('\n');
         // 三个保存槽逐一展示，只有当前选择且已穿戴的槽计算实际同名件数等级。
         for (int index = 0; index < 3; index++)
         {
@@ -705,7 +705,6 @@ public sealed class KnapsackCtrl : IDisposable
         result.ForgeRowText = "淬锋：暂无数据";
         // 祭甲与甲片按用户要求本轮不展示，该行数值不再生成，控件保持隐藏。
         result.GarnishRowText = string.Empty;
-        result.SetRowText = "套装：总阶 —  ·  件数 —/—";
         // 特技信息行取第一个真实特技槽文本，空槽时也沿用其「空」说明。
         result.FeatureRowText = result.SpecialSkillTexts[0];
         result.AppearanceRowText = "外观：—  ·  无额外养成";
@@ -791,19 +790,44 @@ public sealed class KnapsackCtrl : IDisposable
         return desc;
     }
 
-    /// <summary>按配置的数值类型显示一个基因覆盖值。</summary>
-    /// <param name="text">当前属性正文的累加器。</param>
-    /// <param name="geneId">基础属性或实例词条引用的基因编号，0为空。</param>
-    /// <param name="value">该装备保存的基因数值，百分数10表示10%。</param>
-    private static void AppendGeneText(StringBuilder text, int geneId, float value)
+    /// <summary>按穿戴栏位置统计六个套装部位，并生成展开区的逐部位状态。</summary>
+    /// <param name="result">当前详情的展示数据，写入套装摘要和展开正文。</param>
+    /// <param name="worn">当前角色已同步的穿戴容器，位置使用装备部位枚举值。</param>
+    private static void FillSetDetails(EquipmentDetailViewData result, RoItemContainer worn)
     {
-        if (geneId == 0) return;
-        // 显示名称和数值语义来自统一基因配置。
-        cfg.Gene gene = LubanMgr.Instance.GetGeneInfoById(geneId);
-        if (gene == null) return;
-        text.Append(gene.EffectDesc).Append("：").Append(value);
-        if (gene.ValueType == 1) text.Append('%');
-        text.Append('\n');
+        // count 是六个指定部位中已穿戴的件数，范围为零至六。
+        int count = 0;
+        // status 每行显示两个部位，顺序与 SetParts 相同。
+        StringBuilder status = new StringBuilder();
+        // index 是套装部位的展示下标，偶数位置开始新的一行。
+        for (int index = 0; index < SetParts.Length; index++)
+        {
+            if (index > 0)
+            {
+                if (index % 2 == 0)
+                {
+                    status.Append('\n');
+                }
+                else
+                {
+                    status.Append("　　");
+                }
+            }
+            // part 同时决定中文部位名称和穿戴容器中的实际格位。
+            EquipType part = SetParts[index];
+            status.Append(EquipmentPartName(part)).Append('：');
+            if (worn.GetItemByPos((int)part) is EquipBase)
+            {
+                count++;
+                status.Append("已穿戴");
+            }
+            else
+            {
+                status.Append("未穿戴");
+            }
+        }
+        result.SetRowText = "套装：件数 " + count + "/" + SetParts.Length;
+        result.SetExpandText = status.ToString();
     }
 
     /// <summary>只统计当前穿戴栏中启用该特技族的装备件数。</summary>

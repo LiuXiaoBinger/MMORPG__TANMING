@@ -11,8 +11,6 @@ public sealed class EquipmentDetailViewData
     public string Attributes;
     /// <summary>基础属性展示值，保留配置的百分数语义，不参与计算。</summary>
     public string AttributeValues;
-    /// <summary>三个实例词条的独立说明，空词条显示暂无额外词条。</summary>
-    public string Traits;
     /// <summary>三个保存特技槽的名称、等级、状态与效果说明。</summary>
     public string[] SpecialSkillTexts = new string[3];
     /// <summary>三个特技槽的独立说明卡正文，按标题、当前层效果、下一层效果、同名装备说明分区。</summary>
@@ -38,6 +36,7 @@ public sealed class EquipmentDetailViewData
     public string InscribeRowText;
     public string WashRowText;
     public string GemInfoText;
+    /// <summary>按六个固定套装部位排列的穿戴状态，每行两个部位。</summary>
     public string SetExpandText;
     public string ForgeExpandText;
     /// <summary>属性说明卡正文：逐行写当前属性名与数值，末行标注基础/强化/进阶贡献来源。</summary>
@@ -58,7 +57,7 @@ public sealed class EquipmentDetailViewData
     public string AppearanceRowText;
     /// <summary>祭甲与甲片独立行，没有实例字段时整行中性占位。</summary>
     public string GarnishRowText;
-    /// <summary>套装总阶与件数独立行，没有实例字段时整行中性占位。</summary>
+    /// <summary>套装摘要，显示角色已穿戴的指定部位件数，分母固定为六。</summary>
     public string SetRowText;
     /// <summary>基础属性左列名称，三行一列，行号与左列数值一致。</summary>
     public string AttributeLeftNames;

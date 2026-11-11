@@ -17,9 +17,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _attributesText;
     /// <summary>基础属性右列数值，采用与左列相同的行距。</summary>
     [SerializeField] private TMP_Text _attributeValuesText;
-    /// <summary>实例词条分区中的正文。</summary>
-    [SerializeField] private TMP_Text _traitsText;
-    /// <summary>只滚动中间属性、词条和特技，顶部和底部按钮保持固定。</summary>
+    /// <summary>只滚动中间属性、养成和特技，顶部和底部按钮保持固定。</summary>
     [SerializeField] private ScrollRect _scroll;
     /// <summary>预制体中按槽0、1、2排列的单行特技摘要。</summary>
     [SerializeField] private TMP_Text[] _specialSkillTexts;
@@ -27,8 +25,6 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private Button _wearButton;
     /// <summary>已穿戴时显示的卸下按钮。</summary>
     [SerializeField] private Button _takeOffButton;
-    /// <summary>只关闭本窗口的按钮。</summary>
-    [SerializeField] private Button _closeButton;
     #endregion
 
     #region 头部元信息与图标按钮
@@ -61,9 +57,9 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _appearanceRowText;
     /// <summary>祭甲与甲片独立行，无实例数据时整行中性占位。</summary>
     [SerializeField] private TMP_Text _garnishRowText;
-    /// <summary>套装总阶与件数独立行，无实例数据时整行中性占位。</summary>
+    /// <summary>显示角色在六个指定套装部位的当前穿戴件数。</summary>
     [SerializeField] private TMP_Text _setRowText;
-    /// <summary>套装行末尾的查看入口，只提示暂未开放，不请求套装数据。</summary>
+    /// <summary>套装行末的按钮，用于展开或收起六个部位的穿戴状态。</summary>
     [SerializeField] private Button _setViewButton;
     /// <summary>外观行末尾的查看入口，只提示暂未开放，不请求外观数据。</summary>
     [SerializeField] private Button _appearanceViewButton;
@@ -81,7 +77,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     [SerializeField] private TMP_Text _gemInfoText;
     /// <summary>套装展开区，折叠时整体隐藏并让父布局回收高度。</summary>
     [SerializeField] private GameObject _setExpandPanel;
-    /// <summary>套装展开区正文。</summary>
+    /// <summary>套装展开区正文，每行显示两个部位及其穿戴状态。</summary>
     [SerializeField] private TMP_Text _setExpandText;
     /// <summary>淬锋展开区，折叠时整体隐藏并让父布局回收高度。</summary>
     [SerializeField] private GameObject _forgeExpandPanel;
@@ -248,7 +244,6 @@ public sealed class EquipmentDetailWindow : WindowBase
     {
         _wearButton.onClick.AddListener(OnWearRequested);
         _takeOffButton.onClick.AddListener(OnTakeOffRequested);
-        _closeButton.onClick.AddListener(CloseWindow);
         _cardUseButton.onClick.AddListener(OnCardUseClicked);
         _editButton.onClick.AddListener(OnEditClicked);
         _infoButton.onClick.AddListener(OnInfoClicked);
@@ -298,7 +293,6 @@ public sealed class EquipmentDetailWindow : WindowBase
         _partText.text = data.PartName;
         _attributesText.text = data.Attributes;
         _attributeValuesText.text = data.AttributeValues;
-        _traitsText.text = data.Traits;
         _headerMetaText.text = data.MetaText;
         _gemDropText.text = data.GemDropText;
         // 铭缀、洗练、镶嵌、套装、淬锋五个分区的正文只做展示，文本全部来自控制器。
@@ -733,7 +727,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         if (visible) ApplyGemSlots();
     }
 
-    /// <summary>套装行末入口切换本行下方效果正文区，不再只给提示。</summary>
+    /// <summary>切换套装行下方六个部位穿戴状态的显隐。</summary>
     private void OnSetViewClicked()
     {
         // visible 是切换后套装展开区是否显示，按钮文案与真显隐一致。
