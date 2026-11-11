@@ -37,6 +37,8 @@ internal sealed class MoshentaActor
     private long corpseRemoveAt = long.MaxValue;
     /// <summary>原运行表DEF/MDEF，复用现有玩家普攻防御结算。</summary>
     internal MonsterDefenseAttributes Defense { get; private set; }
+    /// <summary>原EntityTable.UnitTypeLevel=2 的真实首领类别；破竹、罗汉等按此判定而非创建工厂类型。</summary>
+    internal bool IsBoss { get; private set; }
     /// <summary>原Dummy和不可受击Buff共同决定是否能被伤害。</summary>
     internal bool CanBeAttacked { get { return !dummy && !IsDead && !Skills.Buffs.Invulnerable; } }
     /// <summary>与所属实例一致的当前逻辑毫秒。</summary>
@@ -140,6 +142,8 @@ internal sealed class MoshentaActor
         dummy = MoshentaSkillCatalog.I(row, "IsDummy") != 0;
         if (!dummy) corpseDuration = (int)(MoshentaSkillCatalog.F(row, "BodyDisappearTime") * 1000);
         Defense = new MonsterDefenseAttributes { Id = entityId, DefExternal = MoshentaSkillCatalog.I(row, "DEF"), DefInternal = MoshentaSkillCatalog.I(row, "MDEF") };
+        // RO kUnitTypeLevel_BOSS=2；正式5501/5502/5503为2，5515与5456为0，创建工厂仍统一给Monster类型。
+        IsBoss = MoshentaSkillCatalog.I(row, "UnitTypeLevel") == 2;
         initiative = MoshentaSkillCatalog.I(row, "IsInitiative") != 0;
         Passive = !initiative;
         buildSightHatred = MoshentaSkillCatalog.I(row, "HatredBuildType") == 1;

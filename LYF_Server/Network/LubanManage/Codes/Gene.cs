@@ -38,6 +38,7 @@ public sealed partial class Gene : Luban.BeanBase
         TriggerChance = _buf.ReadInt();
         Cooldown = _buf.ReadInt();
         Target = _buf.ReadInt();
+        Condition = _buf.ReadInt();
     }
 
     public static Gene DeserializeGene(ByteBuf _buf)
@@ -130,6 +131,10 @@ public sealed partial class Gene : Luban.BeanBase
     /// 事件触发对象：0自身，1事件目标；子基因继承承接目标
     /// </summary>
     public readonly int Target;
+    /// <summary>
+    /// 条件阈值百分点：10目标生命高于此值增伤；11目标生命低于此值增伤；12自身每损失此值百分点增伤；13目标类别1首领2非首领；其他类型填0
+    /// </summary>
+    public readonly int Condition;
    
     public const int __ID__ = 2215733;
     public override int GetTypeId() => __ID__;
@@ -163,6 +168,7 @@ public sealed partial class Gene : Luban.BeanBase
         + "TriggerChance:" + TriggerChance + ","
         + "Cooldown:" + Cooldown + ","
         + "Target:" + Target + ","
+        + "Condition:" + Condition + ","
         + "}";
     }
 }

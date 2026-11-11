@@ -89,9 +89,9 @@ internal sealed class MoshentaSkillRuntime
     private bool CanCastCore(int skillId, int level, ulong targetId, Vector3 castPoint, bool checkRange)
     {
         if (Actor.IsDead || IsCasting || level != 1) return false;
-        // 真实Gene状态已经被玩家技能和本副本Buff共用。
+        // 真实Gene状态已经被玩家技能和本副本Buff共用；击倒与眩晕、沉默同样禁止施法。
         GeneState state = Actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime.GetStates();
-        if ((state & (GeneState.Stun | GeneState.Silence)) != 0) return false;
+        if ((state & (GeneState.Stun | GeneState.Silence | GeneState.Knockdown)) != 0) return false;
         long next;
         if (cooldowns.TryGetValue(skillId, out next) && Actor.Owner.Now < next) return false;
         // 原需要目标技能必须使用同实例有效实体，位置类技能允许无目标。

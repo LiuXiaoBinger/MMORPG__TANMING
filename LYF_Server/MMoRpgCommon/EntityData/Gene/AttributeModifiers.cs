@@ -45,8 +45,8 @@ public class AttributeModifiers
     /// <param name="delta">添加来源为 1，移除来源为 -1。</param>
     public void ChangeState(GeneState state, int delta)
     {
-        // 当前状态定义为从眩晕到霸体的四个独立位。
-        for (int bit = (int)GeneState.Stun; bit <= (int)GeneState.SuperArmor; bit <<= 1)
+        // 当前状态定义为眩晕、定身、沉默、霸体、击倒五个独立位。
+        for (int bit = (int)GeneState.Stun; bit <= (int)GeneState.Knockdown; bit <<= 1)
         {
             // 每个来源对自己包含的状态各贡献一次。
             GeneState key = (GeneState)bit;
@@ -63,15 +63,15 @@ public class AttributeModifiers
     {
         get
         {
-            // 每次只读取组件已有的四个状态计数。
+            // 每次只读取组件已有的五个状态计数。
             GeneState result = GeneState.None;
-            for (int bit = (int)GeneState.Stun; bit <= (int)GeneState.SuperArmor; bit <<= 1)
+            for (int bit = (int)GeneState.Stun; bit <= (int)GeneState.Knockdown; bit <<= 1)
             {
                 // 当前单一状态的生效来源数。
                 int count;
                 if (states.TryGetValue((GeneState)bit, out count) && count > 0) result |= (GeneState)bit;
             }
-            if ((result & GeneState.SuperArmor) != 0) result &= ~(GeneState.Stun | GeneState.Root);
+            if ((result & GeneState.SuperArmor) != 0) result &= ~(GeneState.Stun | GeneState.Root | GeneState.Knockdown);
             return result;
         }
     }

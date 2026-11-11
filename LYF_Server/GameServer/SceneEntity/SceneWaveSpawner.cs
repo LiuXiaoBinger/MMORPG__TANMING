@@ -293,7 +293,27 @@ public sealed partial class SceneWaveSpawner
                 MonsterDefenseAttributes defense;
                 if (hitActor != null) defense = hitActor.Defense;
                 else defense = MonsterDefenseAttributes.Get(point.Creature.id);
-                calculatedDamage = defense.CalculateDamage(equipment.CalculateAttribute(), targetGenes, damage);
+                // 本次结算的最终面板只取一次，背水等按已含装备与基因的生命上限判断。
+                RoleBaseInfo finalAttributes = equipment.CalculateAttribute();
+                calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
+                // 条件增伤读取本次扣血前的真实双方血量、目标类别与背面判定，系数只作用于本次伤害。
+                if (calculatedDamage > 0)
+                {
+                    // 正式魔神塔创建工厂统一给Monster类型，首领类别只认原EntityTable的UnitTypeLevel。
+                    bool targetIsBoss = (monster.EntityType & EntityType.Boss) != 0;
+                    if (hitActor != null) targetIsBoss = hitActor.IsBoss;
+                    // 与生产AI同款约定：朝向角度先转弧度，水平前向为(sin,cos)，再取目标到攻击者向量点积。
+                    float targetYaw = monster.Transform.Yaw;
+                    float facingX = (float)Math.Sin(targetYaw * Math.PI / 180);
+                    float facingZ = (float)Math.Cos(targetYaw * Math.PI / 180);
+                    bool fromBehind = (origin.X - monster.Transform.X) * facingX + (origin.Z - monster.Transform.Z) * facingZ < 0;
+                    int attackerMaxHp = finalAttributes.MaxHp;
+                    int attackerHp = Math.Min(caster.mainRoleInfo.BaseInfo.CurrHp, Math.Max(0, attackerMaxHp));
+                    GeneDamageContext damageContext = new GeneDamageContext(attackerHp, attackerMaxHp,
+                        monster.CurrentHp, monster.MaxHp, targetIsBoss, fromBehind);
+                    double bonus = equipment.Runtime.ResolveDamageBonus(damageContext);
+                    if (bonus > 0) calculatedDamage = (int)(calculatedDamage * (1 + bonus / 100));
+                }
             }
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;

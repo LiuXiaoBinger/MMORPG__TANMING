@@ -84,6 +84,17 @@
         <Compile Include="EntityData\Gene\GeneState.cs" />
         <Compile Include="EntityData\Gene\GeneTriggerArgs.cs" />
         <Compile Include="EntityData\Gene\InstantResourceGeneBase.cs" />
+        <Compile Include="EntityData\Gene\GeneDamageContext.cs" />
+        <Compile Include="EntityData\Gene\ConditionDamageGeneBase.cs" />
+        <Compile Include="EntityData\Gene\ConditionReduceGeneBase.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\TargetBehindDamageGene.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\AttackerKindReduceGene.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\TargetHighHpDamageGene.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\TargetLowHpDamageGene.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\SelfHpLostDamageGene.cs" />
+        <Compile Include="EntityData\Gene\ConditionGene\TargetKindDamageGene.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\DamageHealGene.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\SkillCooldownResetGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\DamageTakenGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\HealingReceivedGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\MoveSpeedGene.cs" />

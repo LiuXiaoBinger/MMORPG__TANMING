@@ -770,6 +770,19 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         skill_cd_[skill_id] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
     }
 
+    /// <summary>清除指定技能自身的剩余冷却，供「行云流水」类施法特技在成功提交后调用。</summary>
+    /// <param name="skill_id">本次成功提交的稳定技能主表 ID。</param>
+    /// <returns>确实清除了正剩余冷却返回 true；未知技能或已到期返回 false。</returns>
+    private bool TryResetSkillCoolDown(int skill_id)
+    {
+        if (skill_id <= 0) return false;
+        // 没有剩余冷却时不写表，也不向基因回报成功。
+        if (GetSkillCoolDown(skill_id) <= 0) return false;
+        // 只清这一条单技能冷却，公共冷却组与充能次数保持原样。
+        SetSkillCoolDown(skill_id, 0);
+        return true;
+    }
+
     /// <summary>写入一个已有公共组的剩余冷却，零号表示无公共组。</summary>
     /// <param name="skill_cd_group">正数公共组 ID，零不登记。</param>
     /// <param name="cool_down">本组剩余冷却，单位毫秒。</param>
@@ -895,8 +908,13 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         }
 
         FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes, prepared.cast_point_);
-        // 仅在 MP/CD 已提交并建立真实动作后通知施法特技。
-        Owner.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.SkillCast, null, prepared.skill_id_));
+        // 施法特技的冷却刷新回调只对主表 Type=2 的普通技能开放，绝学、滑行与普攻不参与。
+        SkillInfo cast_definition = prepared.core_.GetSkillTable();
+        System.Func<int, bool> try_reset_skill_cd = null;
+        if (cast_definition != null && cast_definition.Type == 2) try_reset_skill_cd = TryResetSkillCoolDown;
+        // 仅在 MP/CD 已提交并建立真实动作后通知施法特技，刷新发生在权威冷却快照之前。
+        Owner.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.SkillCast, null,
+            prepared.skill_id_, 0, false, try_reset_skill_cd));
 
         result.CmdCode = CmdCode.Succeed;
         result.CurrentMp = Owner.mainRoleInfo.BaseInfo.CurrMp;

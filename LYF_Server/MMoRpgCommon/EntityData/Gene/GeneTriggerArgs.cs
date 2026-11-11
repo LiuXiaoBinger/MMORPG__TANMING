@@ -11,6 +11,8 @@ public struct GeneTriggerArgs
     public int Damage { get; private set; }
     /// <summary>权威伤害判定是否暴击；没有暴击判定的事件为 false。</summary>
     public bool IsCritical { get; private set; }
+    /// <summary>尝试刷新本次技能自身冷却的强类型回调；只由成功提交的普通技能提供，其他事件为空。</summary>
+    public System.Func<int, bool> TryResetSkillCooldown { get; private set; }
 
     /// <summary>建立一次事件，不复制目标容器或推测战斗结果。</summary>
     /// <param name="geneEvent">宿主已经发生的事件。</param>
@@ -25,5 +27,24 @@ public struct GeneTriggerArgs
         SkillId = skillId;
         Damage = damage;
         IsCritical = isCritical;
+        TryResetSkillCooldown = null;
+    }
+
+    /// <summary>建立一次带冷却刷新入口的施法事件；只有真实提交成功的普通技能使用本重载。</summary>
+    /// <param name="geneEvent">宿主已经发生的事件。</param>
+    /// <param name="targetRuntime">对方实体的原运行容器，允许为空。</param>
+    /// <param name="skillId">实际施放技能编号。</param>
+    /// <param name="damage">本次实际伤害，单位生命点。</param>
+    /// <param name="isCritical">权威暴击结果。</param>
+    /// <param name="tryResetSkillCooldown">技能组件提供的单技能冷却刷新回调，允许为空。</param>
+    public GeneTriggerArgs(GeneEventType geneEvent, GeneRuntime targetRuntime, int skillId, int damage, bool isCritical,
+        System.Func<int, bool> tryResetSkillCooldown)
+    {
+        Event = geneEvent;
+        TargetRuntime = targetRuntime;
+        SkillId = skillId;
+        Damage = damage;
+        IsCritical = isCritical;
+        TryResetSkillCooldown = tryResetSkillCooldown;
     }
 }

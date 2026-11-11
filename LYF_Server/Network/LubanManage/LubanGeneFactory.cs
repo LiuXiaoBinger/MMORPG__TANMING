@@ -73,6 +73,12 @@ public class LubanGeneFactory : GeneFactory
             if (definition.Interval <= 0) throw new InvalidOperationException("周期基因的 Interval 必须大于零：" + definition.Id);
             periodic.IntervalMilliseconds = definition.Interval;
         }
+        // 条件增伤节点读取自己的阈值百分点；其他类型忽略该列。
+        ConditionDamageGeneBase conditional = node as ConditionDamageGeneBase;
+        if (conditional != null) conditional.Condition = definition.Condition;
+        // 条件减伤节点同样按条件列区分来源类别。
+        ConditionReduceGeneBase reduce = node as ConditionReduceGeneBase;
+        if (reduce != null) reduce.Condition = definition.Condition;
         // 普通事件必须指定事件；次数节点允许接收任意非空事件。
         EventGene triggered = node as EventGene;
         if (triggered != null)

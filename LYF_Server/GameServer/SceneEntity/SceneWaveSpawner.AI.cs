@@ -230,7 +230,11 @@ public sealed partial class SceneWaveSpawner
     {
         RoleBaseInfo info = target.mainRoleInfo.BaseInfo;
         RoleEquipComponent equipment = target.GetComponent<RoleEquipComponent>();
-        int actual = Math.Min(info.CurrHp, Math.Max(0, damage)); info.CurrHp -= actual;
+        // 罗汉等条件减伤按伤害来源真实类别在扣血前生效，类别取原EntityTable的UnitTypeLevel。
+        int incoming = Math.Max(0, damage);
+        double reduction = equipment.Runtime.ResolveDamageReduction(caster.IsBoss);
+        if (reduction > 0) incoming = (int)(incoming * (1 - Math.Min(95, reduction) / 100));
+        int actual = Math.Min(info.CurrHp, incoming); info.CurrHp -= actual;
         if (actual > 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, caster.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime, skillId, actual, critical));
         Notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = caster.SpawnId, TargetRoleId = info.RoleId, Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = actual, SkillId = skillId, ResultIndex = resultIndex, Critical = critical });
         if (info.CurrHp > 0) return;
@@ -273,10 +277,17 @@ public sealed partial class SceneWaveSpawner
         int living = 0;
         for (int index = 0; index < group.Count; index++) { sharedGeneChanged.Add(group[index].UnitId); if (!group[index].IsDead) living++; }
         OnlineRole caster = FindRole(firerId);
+        // 记住直接目标本次变化前的真实生命，共享分摊后据此判定是否首次归零。
+        int hpBefore = actor.CurrentHp;
         ChangeSharedHp(actor, delta, caster);
         int remaining = 0;
         for (int index = 0; index < group.Count; index++) if (!group[index].IsDead) remaining++;
         if (remaining < living) sharedGeneDied = true;
+        // 角色归因的周期伤害经共享生命杀死直接目标时，Update 会跳过该实体，因此在这里补一次真实击败。
+        // 只补直接目标且必须有归因角色；无归因的旁支目标仍由原死亡统计处理，不重复普攻或 Update 路径。
+        if (caster != null && hpBefore > 0 && actor.CurrentHp == 0)
+            caster.GetComponent<RoleEquipComponent>().Trigger(new GeneTriggerArgs(GeneEventType.Kill,
+                actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime, 0, hpBefore));
         return true;
     }
     /// <summary>一次原属性变化只计一次真实死亡，HP通知保留实际损失。</summary><param name="actor">真实实体。</param><param name="delta">生命增量。</param><param name="caster">玩家来源。</param>

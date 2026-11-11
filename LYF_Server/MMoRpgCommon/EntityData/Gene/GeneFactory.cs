@@ -26,6 +26,14 @@ public abstract class GeneFactory
             case GeneEffectType.Count: return new CountGene();
             case GeneEffectType.InstantHeal: return new CurrHPGene();
             case GeneEffectType.InstantMana: return new CurrMPGene();
+            case GeneEffectType.TargetHighHpDamage: return new TargetHighHpDamageGene();
+            case GeneEffectType.TargetLowHpDamage: return new TargetLowHpDamageGene();
+            case GeneEffectType.SelfHpLostDamage: return new SelfHpLostDamageGene();
+            case GeneEffectType.TargetKindDamage: return new TargetKindDamageGene();
+            case GeneEffectType.DamageHeal: return new DamageHealGene();
+            case GeneEffectType.AttackerKindReduce: return new AttackerKindReduceGene();
+            case GeneEffectType.TargetBehindDamage: return new TargetBehindDamageGene();
+            case GeneEffectType.SkillCooldownReset: return new SkillCooldownResetGene();
             default: throw new InvalidOperationException("未知基因效果类型：" + effect);
         }
     }

@@ -191,10 +191,10 @@ public class GeneRuntime
     /// <summary>读取属性组件按来源维护的有效状态。</summary>
     /// <returns>当前生效的状态位。</returns>
     public virtual GeneState GetStates() { return Owner.AttrComp.States; }
-    /// <summary>眩晕或定身禁止移动。</summary>
-    public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root)) == 0; } }
-    /// <summary>眩晕或沉默禁止施法。</summary>
-    public bool CanCast { get { return (GetStates() & (GeneState.Stun | GeneState.Silence)) == 0; } }
+    /// <summary>眩晕、定身或击倒禁止移动。</summary>
+    public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root | GeneState.Knockdown)) == 0; } }
+    /// <summary>眩晕、沉默或击倒禁止施法。</summary>
+    public bool CanCast { get { return (GetStates() & (GeneState.Stun | GeneState.Silence | GeneState.Knockdown)) == 0; } }
 
     /// <summary>推进周期和寿命，周期到点直接调用节点 OnCall，不返回中转结果列表。</summary>
     /// <param name="deltaMilliseconds">本帧经过的非负毫秒数。</param>
@@ -258,6 +258,50 @@ public class GeneRuntime
             else if (activated > previousActivated && genes.Contains(gene)) Changed?.Invoke(gene, false);
         }
         return activated;
+    }
+
+    /// <summary>汇总当前角色按真实结算前数据产生的伤害加成百分点；由权威结算方在扣血前调用。</summary>
+    /// <param name="context">本次结算前的真实双方资源与目标类别。</param>
+    /// <returns>各条件节点返回的百分点之和，没有条件节点时为 0。</returns>
+    public virtual double ResolveDamageBonus(GeneDamageContext context)
+    {
+        // 同时遍历根节点和已激活子项，组合与事件下的条件节点都能被结算方读到。
+        double bonus = 0;
+        for (int index = 0; index < genes.Count; index++)
+        {
+            IReadOnlyList<GeneBase> nodes = genes[index].ActiveNodes;
+            for (int nodeIndex = 0; nodeIndex < nodes.Count; nodeIndex++)
+            {
+                ConditionDamageGeneBase node = nodes[nodeIndex] as ConditionDamageGeneBase;
+                if (node == null) continue;
+                // 当前环境不适用的节点不参与本次结算，与施加时的场景判断保持一致。
+                if (!node.AppliesToScenario(Scenario)) continue;
+                bonus += node.ResolveBonus(context);
+            }
+        }
+        return bonus;
+    }
+
+    /// <summary>汇总当前角色按伤害来源类别产生的减伤百分点；由受击结算方在扣血前调用。</summary>
+    /// <param name="attackerIsBoss">本次伤害来源是否为真实首领实体。</param>
+    /// <returns>各条件减伤节点返回的百分点之和，没有此类节点时为 0。</returns>
+    public virtual double ResolveDamageReduction(bool attackerIsBoss)
+    {
+        // 减伤节点只在受击侧持有，根节点与关联子项都要读到。
+        double reduction = 0;
+        for (int index = 0; index < genes.Count; index++)
+        {
+            IReadOnlyList<GeneBase> nodes = genes[index].ActiveNodes;
+            for (int nodeIndex = 0; nodeIndex < nodes.Count; nodeIndex++)
+            {
+                ConditionReduceGeneBase node = nodes[nodeIndex] as ConditionReduceGeneBase;
+                if (node == null) continue;
+                // 当前环境不适用的节点不参与本次减伤。
+                if (!node.AppliesToScenario(Scenario)) continue;
+                reduction += node.ResolveReduction(attackerIsBoss);
+            }
+        }
+        return reduction;
     }
 
     /// <summary>角色离场时先撤销各节点的持续效果，再释放集合。</summary>

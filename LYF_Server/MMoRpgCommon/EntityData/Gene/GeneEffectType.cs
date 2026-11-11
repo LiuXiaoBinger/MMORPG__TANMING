@@ -20,5 +20,21 @@ public enum GeneEffectType
     /// <summary>施加时立即恢复生命，不等待周期或保留常驻资源实例。</summary>
     InstantHeal = 8,
     /// <summary>施加时立即恢复法力，不等待周期或保留常驻资源实例。</summary>
-    InstantMana = 9
+    InstantMana = 9,
+    /// <summary>目标本次扣血前生命高于条件阈值时，按百分点提高本次伤害。</summary>
+    TargetHighHpDamage = 10,
+    /// <summary>目标本次扣血前生命低于条件阈值时，按百分点提高本次伤害。</summary>
+    TargetLowHpDamage = 11,
+    /// <summary>攻击者每损失条件阈值个百分点生命，按百分点提高本次伤害。</summary>
+    SelfHpLostDamage = 12,
+    /// <summary>按目标真实类别提高本次伤害；条件 1 为首领，2 为非首领。</summary>
+    TargetKindDamage = 13,
+    /// <summary>按攻击命中事件携带的实际伤害百分点即时回复攻击者生命。</summary>
+    DamageHeal = 14,
+    /// <summary>按伤害来源真实类别减免本次受到的伤害；条件 1 为首领、2 为普通怪。</summary>
+    AttackerKindReduce = 15,
+    /// <summary>从目标背后攻击时按百分点提高本次伤害，朝向由权威结算方判定。</summary>
+    TargetBehindDamage = 16,
+    /// <summary>成功提交施法后刷新本次技能自身的剩余冷却，由技能组件提供的权威入口执行。</summary>
+    SkillCooldownReset = 17
 }
