@@ -481,3 +481,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - 振奋 family 5 uses Kill → InstantMana roots 85001–85003 and restores 10%/15%/20% of the killer's maximum mana. Historical reference supports Lv1. 血殇 restores health on Kill. Shared-HP periodic damage emits one attributable Kill when the direct target first reaches zero.
 - The existing dungeon damage path consumes high/low target HP, attacker lost HP, target category, and rear-hit bonuses. UnitTypeLevel 2 identifies the formal boss. Positive damage dispatches effects such as silence, knockdown, and damage-based healing. 行云流水 can reset the just-committed ordinary skill's individual cooldown before the response snapshot.
 - 破竹 currently covers boss damage. The qi-break branch, generic player skill-hit routing, and critical healing remain pending. Deployment and live acceptance boundaries and the business Git receipt are in `项目修改日志/2026-11-11-装备特技实战接入与原作校对.md`.
+
+## [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters
+
+- `OnlineRole` and scene monsters now use the same server `GeneComponent` class and keep independent `GeneRuntime` instances bound to their actual `IGeneOwner`. `RoleGeneComponent` and its compile item were removed. Role initialization, ticking and cleanup run from the existing attribute component slot. Scene factory and container use the existing `IEntityComponent` lifecycle.
+- Role-only synchronization preserves the full and delta payload in 11162. The dungeon monster's `BeHit` now calls the unified component trigger. The last damage source is read from the monster attribute component, and the existing event order is preserved.
+- Business commit `8b18017` was pushed to `codex/feature-development`. The nine-file change and handoff are in `项目修改日志/2026-11-11-角色怪物基因组件统一.md`. Shared code supports effects between real role owners. Multiplayer PvP gameplay and live networking remain unverified.

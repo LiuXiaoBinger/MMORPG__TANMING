@@ -500,3 +500,9 @@
 - 隔离夹具经真实副本扣血路径执行 36 项检查，另经普通技能写入与共享生命执行 9 项，全部通过。覆盖振奋 Lv1–3、法力封顶、未击杀与重复击杀保护、生命阈值、首领与非首领、背击与正面、沉默及击倒/易伤独立到期、单独冷却刷新与响应快照，以及可归因的共享生命击杀。正向概率分支在夹具中已改为确定。
 - 完整真人多人、运行中服务部署、PvP 与独立 Player 打包仍未验证。80 个未绑定族等待所列接点或证据。破竹破气分支与跨角色外发治疗仍为部分或待接入。
 - 证据：`_temp/ymjh-special-skill-combat-20261111/production-hit-runtime-r5.log`、`_temp/ymjh-special-skill-combat-20261111/production-hit-runtime-r5-remaining.log`、`_temp/ymjh-special-skill-combat-20261111/catalog-runtime-final.log`、`_temp/ymjh-special-skill-combat-20261111/build-servers-r5.log`、`_temp/ymjh-special-skill-combat-20261111/client-build.log`。完整文件清单与 Git 回执见 `项目修改日志/2026-11-11-装备特技实战接入与原作校对.md`。
+
+## [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] 统一组件与既有副本战斗验收
+
+- GameServer 全量重建通过，25 个警告均为既有警告。隔离程序对真实角色初始化与怪物工厂、世界生命周期跑了 30 项检查；两个独立挂载的角色验证了状态只施加目标、逐帧正常到期与关闭清理；11162 的首次全量/空列表与增量、同身份替换与删除均带序列化核对。
+- 既有正式副本验收程序通过 36 项伤害与触发检查、9 项技能提交与共享生命检查。WorkBuddy 侧临时程序编译时未能解析 GameServer 类型，改由 Codex 用本地构建与直接编译补齐引用后完成验收。证据在 `_temp/unified-gene-component-20261111`：`codex-build.log`、`unified-runtime.log`、`production-hit-runtime.log`、`production-hit-remaining-runtime.log`。
+- 验收未使用网关会话；联机多人、PvP 玩法与独立 Player 构建仍未验证。业务提交 `8b18017` 与完整范围见 `项目修改日志/2026-11-11-角色怪物基因组件统一.md`。
