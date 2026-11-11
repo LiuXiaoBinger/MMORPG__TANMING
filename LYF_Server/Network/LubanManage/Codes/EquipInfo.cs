@@ -48,10 +48,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
         GeneValue3 = _buf.ReadInt();
         GeneValue4 = _buf.ReadInt();
         GeneValue5 = _buf.ReadInt();
-        SpecialSkillId0 = _buf.ReadInt();
-        SpecialSkillId1 = _buf.ReadInt();
-        SpecialSkillId2 = _buf.ReadInt();
-        ActiveSpecialSkillIndex = _buf.ReadInt();
     }
 
     public static EquipInfo DeserializeEquipInfo(ByteBuf _buf)
@@ -187,22 +183,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
     /// 属性槽位5数值
     /// </summary>
     public readonly int GeneValue5;
-    /// <summary>
-    /// 初始特技族ID槽0，0为空；装备实例保存
-    /// </summary>
-    public readonly int SpecialSkillId0;
-    /// <summary>
-    /// 初始特技族ID槽1，0为空；装备实例保存
-    /// </summary>
-    public readonly int SpecialSkillId1;
-    /// <summary>
-    /// 初始特技族ID槽2，0为空；最多保留3项
-    /// </summary>
-    public readonly int SpecialSkillId2;
-    /// <summary>
-    /// 初始启用特技槽0至2；只启用一项
-    /// </summary>
-    public readonly int ActiveSpecialSkillIndex;
    
     public const int __ID__ = -1215706914;
     public override int GetTypeId() => __ID__;
@@ -246,10 +226,6 @@ public sealed partial class EquipInfo : Luban.BeanBase
         + "GeneValue3:" + GeneValue3 + ","
         + "GeneValue4:" + GeneValue4 + ","
         + "GeneValue5:" + GeneValue5 + ","
-        + "SpecialSkillId0:" + SpecialSkillId0 + ","
-        + "SpecialSkillId1:" + SpecialSkillId1 + ","
-        + "SpecialSkillId2:" + SpecialSkillId2 + ","
-        + "ActiveSpecialSkillIndex:" + ActiveSpecialSkillIndex + ","
         + "}";
     }
 }

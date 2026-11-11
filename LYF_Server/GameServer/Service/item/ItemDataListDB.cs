@@ -169,7 +169,9 @@ public sealed class ItemDataListDB
                     SpecialSkillId0 = equip.SpecialSkillId0,
                     SpecialSkillId1 = equip.SpecialSkillId1,
                     SpecialSkillId2 = equip.SpecialSkillId2,
-                    ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
+                    ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex,
+                    // 已开孔数随装备实例一起存档，重新登录后孔位状态与装入的特技保持一致。
+                    OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
                 };
                 itemInfo.EquipGeneInfo = new RoleEquipGeneInfo
                 {

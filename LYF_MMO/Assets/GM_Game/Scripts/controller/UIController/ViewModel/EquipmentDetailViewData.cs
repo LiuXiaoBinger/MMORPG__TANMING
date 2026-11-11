@@ -21,10 +21,16 @@ public sealed class EquipmentDetailViewData
     public string[] SpecialSkillCardStates = new string[3];
     /// <summary>三个特技槽的首行摘要，逐行显示槽位、名称、等级与启用状态。</summary>
     public string[] SpecialSkillHeadlines = new string[3];
-    /// <summary>槽有特技且不是当前启用槽时允许提交切换。</summary>
-    public bool[] CanActivateSpecialSkill = new bool[3];
     /// <summary>槽内没有任何特技族 ID 时为空槽，用于区分「空槽」与「已选但不可切换」的显示。</summary>
     public bool[] IsSpecialSkillEmpty = new bool[3];
+    /// <summary>该槽已开孔且不是当前启用槽时允许提交切换；未开孔或已启用时为 false。</summary>
+    public bool[] CanActivateSpecialSkill = new bool[3];
+    /// <summary>该槽正好是下一个可开启的孔时允许提交开孔请求，其余槽位为 false。</summary>
+    public bool[] CanOpenSpecialSkill = new bool[3];
+    /// <summary>服务器下发的已开孔数量，取值 0 到 3，与六个宝石孔无关。</summary>
+    public int OpenedSpecialSkillCount;
+    /// <summary>开孔费用说明文本，与服务端扣费使用同一个常量，避免两边价格不一致。</summary>
+    public string SpecialSkillOpenCostText;
     /// <summary>服务器当前是否将该实例放在穿戴栏。</summary>
     public bool IsWorn;
     /// <summary>头部元信息两行：装备状态与部位一行，需求等级与占位一行，宽度 270 内不换行。</summary>

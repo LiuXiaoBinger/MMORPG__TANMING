@@ -44,6 +44,10 @@ public sealed class EquipOperationHandler : IGameMessageHandler
                 case EquipOperation.SwitchSpecialSkill:
                     operationResult = transition.SwitchSpecialSkill(request.ItemUid, request.SpecialSkillIndex);
                     break;
+                case EquipOperation.OpenSpecialSkillSlot:
+                    // 开孔复用同一请求结构，槽下标表示本次要开启的那一孔。
+                    operationResult = transition.OpenSpecialSkillSlot(request.ItemUid, request.SpecialSkillIndex);
+                    break;
             }
             result.CmdCode = ToCommandCode(operationResult);
         }
@@ -60,6 +64,8 @@ public sealed class EquipOperationHandler : IGameMessageHandler
             case BagTransitionResult.BagFull: return CmdCode.BagFull;
             case BagTransitionResult.RoleNotFound: return CmdCode.RoleNotExist;
             case BagTransitionResult.KnapsackUnavailable: return CmdCode.FeatureNotReady;
+            // 开孔余额不足沿用既有货币错误码，客户端据此提示铜币不够。
+            case BagTransitionResult.NotEnoughCurrency: return CmdCode.NotEnoughCurrency;
             default: return CmdCode.ReqParamError;
         }
     }

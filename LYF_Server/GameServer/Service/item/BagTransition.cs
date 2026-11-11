@@ -203,7 +203,10 @@ public enum BagTransitionResult
     NotImplemented = 4,
 
     /// <summary>卸装需要的普通装备背包格子已满。</summary>
-    BagFull = 5
+    BagFull = 5,
+
+    /// <summary>开孔或扣费时铜币余额不足，孔位和货币都保持不变。</summary>
+    NotEnoughCurrency = 6
 }
 
 // ============================================================
@@ -647,10 +650,216 @@ public class BagWearItemTransition : BagTransition
         {
             return BagTransitionResult.InvalidArgument;
         }
+        // 启用同样受部位限制：不合位的历史槽数据保留，但不能被设为启用槽。
+        cfg.EquipSpecialSkillInfo definition = FindSpecialSkillDefinition(equip.GetSpecialSkillId(specialSkillIndex));
+        if (definition == null)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        if (!EquipBase.IsSpecialSkillPartAllowed(definition.AllowedEquipTypeMask, equip.EquipType))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 待接入族没有真实基因，启用后不会产生任何效果，因此不允许设为启用槽。
+        if (!HasEffectiveSpecialSkillGene(equip.GetSpecialSkillId(specialSkillIndex)))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
         equip.ActiveSpecialSkillIndex = specialSkillIndex;
         m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
         CompleteEquipmentChange();
         return BagTransitionResult.Success;
+    }
+
+    /// <summary>
+    /// 消耗铜币开启装备的下一个特技孔。请求槽下标必须正好等于当前已开孔数且小于三，
+    /// 先校验孔位和余额再扣费；余额不足或请求非法时既不扣钱也不改孔。
+    /// </summary>
+    /// <param name="itemUid">本角色装备背包或穿戴栏中的装备实例 UID。</param>
+    /// <param name="specialSkillIndex">本次要开启的槽位下标，只能是当前已开孔数。</param>
+    public virtual BagTransitionResult OpenSpecialSkillSlot(long itemUid, int specialSkillIndex)
+    {
+        // 开孔要写账号级持久化数据，必须在权威背包装载完成后执行。
+        BagTransitionResult contextResult = ValidateContext();
+        if (contextResult != BagTransitionResult.Success)
+        {
+            return contextResult;
+        }
+        // 只在本角色穿戴栏和装备背包里查找，避免用别人的装备开孔。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack)
+            .GetItemByUid(itemUid) as EquipBase;
+        if (equip == null)
+        {
+            equip = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip).GetItemByUid(itemUid) as EquipBase;
+        }
+        if (equip == null)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 负下标直接判非法，不能绕过顺序检查。
+        if (specialSkillIndex < 0)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 三个孔全开时满孔请求一律拒绝，且不扣费。
+        if (!equip.CanOpenSpecialSkillSlot())
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 只允许开启“下一孔”：跳孔和重复请求旧槽都拒绝。
+        if (specialSkillIndex != equip.OpenedSpecialSkillCount)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 开孔费用来自服务端与客户端共用的同一个常量，单位是铜币。
+        int openCost = EquipBase.SpecialSkillSlotOpenCost;
+        if (m_roItemComponent.GetVirtualItemCount((int)ItemEnum.ZENY) < openCost)
+        {
+            return BagTransitionResult.NotEnoughCurrency;
+        }
+        // 已有现有装备相关原因可复用，不新增物品原因枚举。
+        SetReason(ItemChangeReason.ITEM_REASON_REFINE);
+        if (!m_roItemComponent.TakeVirtualItem((int)ItemEnum.ZENY, openCost))
+        {
+            return BagTransitionResult.NotEnoughCurrency;
+        }
+        equip.OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount + 1;
+        // 装备实例标记为脏，铜币和孔位由同一次角色快照事务一起落库。
+        m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
+    }
+
+    /// <summary>
+    /// 由受信任的服务端玩法把已取得的特技族装进本角色装备的已开空孔。
+    /// 本方法不对外开放客户端协议：调用方必须是已经完成掉落或奖励结算的权威玩法。
+    /// 校验顺序为装备归属、槽位已开、槽位为空、特技族存在、部位允许。
+    /// </summary>
+    /// <param name="itemUid">本角色装备实例 UID。</param>
+    /// <param name="specialSkillIndex">目标槽位下标，必须已经开孔且为空。</param>
+    /// <param name="specialSkillId">权威玩法发放的特技族编号，必须存在于特技配置表。</param>
+    /// <returns>装入成功返回 Success，其余情况保持装备原状。</returns>
+    public virtual BagTransitionResult InstallSpecialSkill(long itemUid, int specialSkillIndex, int specialSkillId)
+    {
+        // 装入特技属于装备实例状态修改，要求背包已完整装载。
+        BagTransitionResult contextResult = ValidateContext();
+        if (contextResult != BagTransitionResult.Success)
+        {
+            return contextResult;
+        }
+        // 装备必须属于本角色，穿戴栏和装备背包都算。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack)
+            .GetItemByUid(itemUid) as EquipBase;
+        if (equip == null)
+        {
+            equip = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip).GetItemByUid(itemUid) as EquipBase;
+        }
+        if (equip == null)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        if (specialSkillIndex < 0)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 目标槽必须已经开孔，未开孔的槽不能装。
+        if (!equip.IsSpecialSkillSlotOpened(specialSkillIndex))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 目标槽必须为空，已装特技不会被静默覆盖。
+        if (equip.GetSpecialSkillId(specialSkillIndex) != 0)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 特技族必须真实存在于配置表，未知族一律拒绝。
+        cfg.EquipSpecialSkillInfo definition = FindSpecialSkillDefinition(specialSkillId);
+        if (definition == null)
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 部位必须在该族允许的掩码内，否则视为不合位安装。
+        if (!EquipBase.IsSpecialSkillPartAllowed(definition.AllowedEquipTypeMask, equip.EquipType))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        // 族存在但所有等级都没有接入基因时属于待接入特技，拒绝安装，避免装进孔位却不产生效果。
+        if (!HasEffectiveSpecialSkillGene(specialSkillId))
+        {
+            return BagTransitionResult.InvalidArgument;
+        }
+        switch (specialSkillIndex)
+        {
+            case 0:
+                equip.SpecialSkillId0 = specialSkillId;
+                break;
+            case 1:
+                equip.SpecialSkillId1 = specialSkillId;
+                break;
+            default:
+                equip.SpecialSkillId2 = specialSkillId;
+                break;
+        }
+        // 首次装入时把启用槽指向该孔，已有启用槽保持不变。
+        if (equip.GetActiveSpecialSkillId() == 0)
+        {
+            equip.ActiveSpecialSkillIndex = specialSkillIndex;
+        }
+        m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
+    }
+
+    /// <summary>从配置表读取一个特技族的最低等级行，用于部位等族级定义。</summary>
+    /// <param name="specialSkillId">特技族编号。</param>
+    /// <returns>找到时返回该族等级最低的一行，缺失返回 null。</returns>
+    private static cfg.EquipSpecialSkillInfo FindSpecialSkillDefinition(int specialSkillId)
+    {
+        // 特技配置是族与等级的扁平列表，同族各行的允许部位一致，取最低级即可。
+        List<cfg.EquipSpecialSkillInfo> definitions = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        // 当前找到的最低等级行，缺失时保持 null。
+        cfg.EquipSpecialSkillInfo selected = null;
+        for (int index = 0; index < definitions.Count; index++)
+        {
+            // 只比较同一族且等级更低的配置行。
+            cfg.EquipSpecialSkillInfo row = definitions[index];
+            if (row.SpecialSkillId != specialSkillId)
+            {
+                continue;
+            }
+            if (selected == null)
+            {
+                selected = row;
+                continue;
+            }
+            if (row.Level < selected.Level)
+            {
+                selected = row;
+            }
+        }
+        return selected;
+    }
+
+    /// <summary>判断特技族是否至少有一个等级接入了真实基因。</summary>
+    /// <param name="specialSkillId">要核对的特技族编号。</param>
+    /// <returns>任一级基因不为 0 时返回 true；待接入族返回 false。</returns>
+    private static bool HasEffectiveSpecialSkillGene(int specialSkillId)
+    {
+        // 与部位校验共用同一份族与等级扁平配置。
+        List<cfg.EquipSpecialSkillInfo> definitions = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < definitions.Count; index++)
+        {
+            cfg.EquipSpecialSkillInfo row = definitions[index];
+            if (row.SpecialSkillId != specialSkillId)
+            {
+                continue;
+            }
+            if (row.GeneId != 0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>操作成功后先发送完整装备增量，再由装备组件重算并通知最终属性。</summary>

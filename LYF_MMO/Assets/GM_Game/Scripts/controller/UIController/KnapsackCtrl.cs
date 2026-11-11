@@ -523,9 +523,29 @@ public sealed class KnapsackCtrl : IDisposable
     private void WearSelectedEquipment() { SubmitSelectedOperation(EquipOperation.Wear, 0); }
     /// <summary>请求卸下当前详情装备，业务结果由服务器回复。</summary>
     private void TakeOffSelectedEquipment() { SubmitSelectedOperation(EquipOperation.TakeOff, 0); }
-    /// <summary>请求启用当前装备的指定保存特技槽。</summary>
+    /// <summary>请求启用当前装备的指定保存特技槽；该槽未开孔时改为提交开孔请求。</summary>
     /// <param name="index">玩家点击的槽下标0至2。</param>
-    private void SwitchSelectedSpecialSkill(int index) { SubmitSelectedOperation(EquipOperation.SwitchSpecialSkill, index); }
+    private void SwitchSelectedSpecialSkill(int index)
+    {
+        // 当前选择实例可能已被增量更新替换，取最新引用再判断孔位状态。
+        EquipBase equip = null;
+        if (_itemComponent != null && _selectedEquipmentUid > 0)
+        {
+            equip = _itemComponent.GetItemByUID(_selectedEquipmentUid) as EquipBase;
+        }
+        if (equip == null)
+        {
+            SubmitSelectedOperation(EquipOperation.SwitchSpecialSkill, index);
+            return;
+        }
+        // 只有正好是下一个孔时才是开孔请求；未开孔的后续孔由服务端拒绝，不会扣费。
+        if (index >= equip.OpenedSpecialSkillCount)
+        {
+            SubmitSelectedOperation(EquipOperation.OpenSpecialSkillSlot, index);
+            return;
+        }
+        SubmitSelectedOperation(EquipOperation.SwitchSpecialSkill, index);
+    }
 
     /// <summary>提交当前选择并仅在连接发送失败时显示提示。</summary>
     /// <param name="operation">当前按钮对应的服务器装备操作。</param>
@@ -622,20 +642,39 @@ public sealed class KnapsackCtrl : IDisposable
         result.GemInfoText = "共 " + config.GemSlotCount + " 孔，暂无宝石信息";
         FillSetDetails(result, _itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack));
         result.ForgeExpandText = "暂无淬锋信息";
+        // 已开孔数量来自服务器权威实例，决定哪些槽可以安装特技。
+        int openedSkillCount = equip.OpenedSpecialSkillCount;
+        // 开孔费用与服务端扣费使用同一个常量，客户端只负责展示。
+        result.SpecialSkillOpenCostText = "开孔需 " + EquipBase.SpecialSkillSlotOpenCost + " 铜币";
+        // 已开孔数量同步进视图数据，供后续分区展示使用。
+        result.OpenedSpecialSkillCount = openedSkillCount;
         // 三个保存槽逐一展示，只有当前选择且已穿戴的槽计算实际同名件数等级。
         for (int index = 0; index < 3; index++)
         {
             // 槽中保存的是稳定特技族 ID，不是某级配置行 ID。
             int familyId = equip.GetSpecialSkillId(index);
+            // 未开孔的槽即使存有历史数据也不参与启用，界面按未开孔展示。
+            if (index >= openedSkillCount)
+            {
+                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：未开孔，需先开启前一孔并消耗铜币";
+                result.SpecialSkillCards[index] = "该槽尚未开孔。开孔顺序固定为第一、第二、第三孔，每次消耗铜币。";
+                result.SpecialSkillHeadlines[index] = "特技：<color=#627E94>未开孔</color>";
+                result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：未开孔";
+                result.SpecialSkillCardStates[index] = "未开孔";
+                result.IsSpecialSkillEmpty[index] = true;
+                // 只有正好等于已开孔数的那个槽可以提交开孔，跳孔一律不给入口。
+                result.CanOpenSpecialSkill[index] = index == openedSkillCount;
+                continue;
+            }
             if (familyId == 0)
             {
-                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：空槽，未镶嵌特技";
+                result.SpecialSkillTexts[index] = "特技槽" + (index + 1) + "：已开孔，空槽，未镶嵌特技";
                 // 空槽说明卡只写空态，当前层与下一层都写暂无信息，不伪造效果。
                 result.SpecialSkillCards[index] = BuildSpecialSkillCard(null, null, 0);
-                // 空槽标题行只写槽位与「空」，不伪造已装配的特技名，也不画占位横线。
-                result.SpecialSkillHeadlines[index] = "特技：空";
-                result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：空槽";
-                result.SpecialSkillCardStates[index] = "未镶嵌";
+                // 空槽标题行只写槽位与「已开孔·空槽」，不伪造已装配的特技名，也不画占位横线。
+                result.SpecialSkillHeadlines[index] = "特技：<color=#627E94>已开孔·空槽</color>";
+                result.SpecialSkillCardTitles[index] = "特技" + (index + 1) + "：已开孔·空槽";
+                result.SpecialSkillCardStates[index] = "已开孔";
                 // 明确标记空槽，界面据此使用浅灰禁用色，避免把「已选但不可切换」误判成空槽。
                 result.IsSpecialSkillEmpty[index] = true;
                 continue;

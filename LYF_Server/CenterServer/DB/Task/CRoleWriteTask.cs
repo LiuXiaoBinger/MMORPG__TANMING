@@ -55,8 +55,8 @@ public sealed class CRoleWriteTask
     #region 数据读写
     /// <summary>
     /// 将请求中的物品快照以"删旧写新"方式写入数据库。
-    /// 删除顺序：先删装备词条、再删装备、最后按背包类型删物品主表；
-    /// 插入顺序：先插物品主表、再插装备、最后插装备词条，保证外键依赖顺序。
+    /// 删除顺序：先删装备特技、再删装备词条、再删装备、最后按背包类型删物品主表；
+    /// 插入顺序：先插物品主表、再插装备，最后插装备特技和词条（特技与词条互不依赖）。
     /// 所有操作在 Execute 开启的事务内执行。
     /// </summary>
     /// <param name="db">SqlSugar 数据库客户端。</param>
@@ -68,26 +68,30 @@ public sealed class CRoleWriteTask
         // 仅替换请求涉及的分类，其他背包原有记录保持不动。
         List<int> bagTypes = dataLists.Select(v => v.BagType).ToList();
 
-        // 查询本次涉及背包类型中已有的旧物品 UID，用于级联删除装备和词条。
+        // 查询本次涉及背包类型中已有的旧物品 UID，用于级联删除装备、特技和词条。
         List<long> oldItemUids = db.Queryable<ItemTable>()
             .Where(v => v.RoleID == _request.RoleId && bagTypes.Contains(v.BagType))
             .Select(v => v.ItemUID)
             .ToList();
 
-        // 删旧阶段一：先删除装备词条表（依赖装备 UID）。
+        // 删旧阶段一：先删除装备特技表（依赖装备 UID）。
         if (oldItemUids.Count > 0)
         {
+            db.Deleteable<EquipSpecialSkillTable>()
+                .Where(v => v.RoleID == _request.RoleId && oldItemUids.Contains(v.ItemUID))
+                .ExecuteCommand();
+            // 删旧阶段二：删除装备词条表（依赖装备 UID）。
             db.Deleteable<EquipXLGeneTable>()
                 .Where(v => v.RoleID == _request.RoleId && 
                             oldItemUids.Contains(v.ItemUID))
                 .ExecuteCommand();
-            // 删旧阶段二：删除装备表。
+            // 删旧阶段三：删除装备表。
             db.Deleteable<EquipTable>()
                 .Where(v => v.RoleID == _request.RoleId && oldItemUids.Contains(v.ItemUID))
                 .ExecuteCommand();
         }
 
-        // 删旧阶段三：按背包类型删除物品主表的全部旧记录。
+        // 删旧阶段四：按背包类型删除物品主表的全部旧记录。
         foreach (int bagType in bagTypes)
         {
             db.Deleteable<ItemTable>()
@@ -103,6 +107,8 @@ public sealed class CRoleWriteTask
         List<EquipTable> equips = new List<EquipTable>();
         // 有词条扩展的物品才进入这份待写列表。
         List<EquipXLGeneTable> genes = new List<EquipXLGeneTable>();
+        // 有装备扩展的物品才写入特技行；三个槽位可以全为 0，表示该装备还没有打过特技。
+        List<EquipSpecialSkillTable> specialSkills = new List<EquipSpecialSkillTable>();
         foreach (RoleItemInfo item in dataLists.SelectMany(v => v.Items))
         {
             DateTime? expireDate = null;
@@ -137,11 +143,19 @@ public sealed class CRoleWriteTask
                     ItemUID = item.ItemUid,
                     RoleID = item.RoleId,
                     EquipType = item.EquipInfo.EquipType,
-                    StrengthenLevel = item.EquipInfo.StrengthenLevel,
+                    StrengthenLevel = item.EquipInfo.StrengthenLevel
+                });
+                // 特技实例单独成行：三个槽位和启用槽位全部来自协议快照，不再回填配置默认值。
+                specialSkills.Add(new EquipSpecialSkillTable
+                {
+                    ItemUID = item.ItemUid,
+                    RoleID = item.RoleId,
                     SpecialSkillId0 = item.EquipInfo.SpecialSkillId0,
                     SpecialSkillId1 = item.EquipInfo.SpecialSkillId1,
                     SpecialSkillId2 = item.EquipInfo.SpecialSkillId2,
-                    ActiveSpecialSkillIndex = item.EquipInfo.ActiveSpecialSkillIndex
+                    ActiveSpecialSkillIndex = item.EquipInfo.ActiveSpecialSkillIndex,
+                    // 已开孔数与三个槽位同一行持久化，保证开孔和装入特技落在同一份存档快照里。
+                    OpenedSpecialSkillCount = item.EquipInfo.OpenedSpecialSkillCount
                 });
             }
 
@@ -174,6 +188,10 @@ public sealed class CRoleWriteTask
         if (genes.Count > 0)
         {
             db.Insertable(genes).ExecuteCommand();
+        }
+        if (specialSkills.Count > 0)
+        {
+            db.Insertable(specialSkills).ExecuteCommand();
         }
     }
 
@@ -413,8 +431,8 @@ public sealed class CRoleWriteTask
 
     /// <summary>
     /// 比较数据库当前快照与同版本请求，确保重复保存不会因版本碰撞误报成功。
-    /// 比对范围：物品类型、所属背包、格子、数量、绑定、货币和总价，以及装备类型和强化等级；
-    /// 另外比较三个词条 ID 和数值；不比较物品创建时间和到期时间。
+    /// 比对范围：物品类型、所属背包、格子、数量、绑定、货币和总价，装备类型和强化等级，
+    /// 独立特技表的三个槽位与启用槽位，以及三个词条 ID 和数值；不比较物品创建时间和到期时间。
     /// </summary>
     /// <param name="db">SqlSugar 数据库客户端。</param>
     /// <param name="itemDataLists">请求携带的物品快照。</param>
@@ -468,19 +486,23 @@ public sealed class CRoleWriteTask
             }
         }
 
-        // 查询这些物品对应的装备和词条记录，用于扩展字段比对。
+        // 查询这些物品对应的装备、特技和词条记录，用于扩展字段比对。
         HashSet<long> itemUids = new HashSet<long>(storedItems.Select(v => v.ItemUID));
         List<EquipTable> storedEquips = new List<EquipTable>();
         List<EquipXLGeneTable> storedGenes = new List<EquipXLGeneTable>();
+        List<EquipSpecialSkillTable> storedSpecialSkills = new List<EquipSpecialSkillTable>();
         if (itemUids.Count > 0)
         {
             storedEquips = db.Queryable<EquipTable>()
                 .Where(v => v.RoleID == _request.RoleId && itemUids.Contains(v.ItemUID)).ToList();
             storedGenes = db.Queryable<EquipXLGeneTable>()
                 .Where(v => v.RoleID == _request.RoleId && itemUids.Contains(v.ItemUID)).ToList();
+            storedSpecialSkills = db.Queryable<EquipSpecialSkillTable>()
+                .Where(v => v.RoleID == _request.RoleId && itemUids.Contains(v.ItemUID)).ToList();
         }
         Dictionary<long, EquipTable> equipByUid = storedEquips.ToDictionary(v => v.ItemUID);
         Dictionary<long, EquipXLGeneTable> geneByUid = storedGenes.ToDictionary(v => v.ItemUID);
+        Dictionary<long, EquipSpecialSkillTable> specialSkillByUid = storedSpecialSkills.ToDictionary(v => v.ItemUID);
         // 按协议列表索引逐件核对装备扩展，保持请求中的原实例数据。
         for (int requestedIndex = 0; requestedIndex < requestedItems.Count; requestedIndex++)
         {
@@ -497,14 +519,41 @@ public sealed class CRoleWriteTask
                 {
                     return false;
                 }
-                // 特技三个槽位与启用下标均属于实例持久字段，重复保存必须完整一致。
-                if (storedEquip.SpecialSkillId0 != requested.EquipInfo.SpecialSkillId0 ||
-                    storedEquip.SpecialSkillId1 != requested.EquipInfo.SpecialSkillId1 ||
-                    storedEquip.SpecialSkillId2 != requested.EquipInfo.SpecialSkillId2)
+                // 特技三个槽位与启用下标存放在独立特技表，重复保存必须与数据库完全一致。
+                // 旧装备可能根本没有特技行（三个槽都是空），缺失行等价于全 0，不能判定为内容冲突。
+                EquipSpecialSkillTable storedSpecialSkill;
+                // 是否查到该装备的特技实例行；false 时按全 0 参与比较。
+                bool hasStoredSpecialSkill = specialSkillByUid.TryGetValue(requested.ItemUid, out storedSpecialSkill);
+                // 数据库侧三个槽位值，缺行时统一为 0。
+                int storedSpecialSkillId0 = 0;
+                // 数据库侧第二个槽位值，缺行时为 0。
+                int storedSpecialSkillId1 = 0;
+                // 数据库侧第三个槽位值，缺行时为 0。
+                int storedSpecialSkillId2 = 0;
+                // 数据库侧启用槽下标，缺行时为 0。
+                int storedActiveSpecialSkillIndex = 0;
+                // 数据库侧已开孔数，缺行时为 0。
+                int storedOpenedSpecialSkillCount = 0;
+                if (hasStoredSpecialSkill)
+                {
+                    storedSpecialSkillId0 = storedSpecialSkill.SpecialSkillId0;
+                    storedSpecialSkillId1 = storedSpecialSkill.SpecialSkillId1;
+                    storedSpecialSkillId2 = storedSpecialSkill.SpecialSkillId2;
+                    storedActiveSpecialSkillIndex = storedSpecialSkill.ActiveSpecialSkillIndex;
+                    storedOpenedSpecialSkillCount = storedSpecialSkill.OpenedSpecialSkillCount;
+                }
+                if (storedSpecialSkillId0 != requested.EquipInfo.SpecialSkillId0 ||
+                    storedSpecialSkillId1 != requested.EquipInfo.SpecialSkillId1 ||
+                    storedSpecialSkillId2 != requested.EquipInfo.SpecialSkillId2)
                 {
                     return false;
                 }
-                if (storedEquip.ActiveSpecialSkillIndex != requested.EquipInfo.ActiveSpecialSkillIndex)
+                if (storedActiveSpecialSkillIndex != requested.EquipInfo.ActiveSpecialSkillIndex)
+                {
+                    return false;
+                }
+                // 已开孔数属于同一份装备实例状态，重放时也必须一致。
+                if (storedOpenedSpecialSkillCount != requested.EquipInfo.OpenedSpecialSkillCount)
                 {
                     return false;
                 }
@@ -546,10 +595,24 @@ public sealed class CRoleWriteTask
             }
         }
 
-        // 最终校验：数据库中装备和词条的记录数必须与请求中携带扩展信息的物品数一致，
-        // 防止数据库存在请求未覆盖的孤立扩展记录。
-        return equipByUid.Count == requestedItems.Count(v => v.EquipInfo != null) &&
-            geneByUid.Count == requestedItems.Count(v => v.EquipGeneInfo != null);
+        // 最终校验：装备与词条记录数必须与请求一致，特技行只禁止孤立记录。
+        // 旧装备迁移后可能整行缺失特技记录（三个槽全空、零孔），缺失行已在逐件比对上等价于全 0，
+        // 因此不能再要求特技行数等于携带装备信息的物品数，否则旧空槽装备重放必然判定冲突。
+        // 请求中携带装备信息的实例 UID 集合，用于识别请求未覆盖的孤立特技行。
+        HashSet<long> requestedEquipUids = new HashSet<long>();
+        for (int requestedIndex = 0; requestedIndex < requestedItems.Count; requestedIndex++)
+        {
+            if (requestedItems[requestedIndex].EquipInfo != null) requestedEquipUids.Add(requestedItems[requestedIndex].ItemUid);
+        }
+        // 数据库中确实存在但本次请求没有声明的特技行数量，非 0 即说明存在孤立记录。
+        int orphanSpecialSkillCount = 0;
+        for (int storedIndex = 0; storedIndex < storedSpecialSkills.Count; storedIndex++)
+        {
+            if (!requestedEquipUids.Contains(storedSpecialSkills[storedIndex].ItemUID)) orphanSpecialSkillCount++;
+        }
+        return equipByUid.Count == requestedEquipUids.Count &&
+            geneByUid.Count == requestedItems.Count(v => v.EquipGeneInfo != null) &&
+            orphanSpecialSkillCount == 0;
     }
 
     /// <summary>

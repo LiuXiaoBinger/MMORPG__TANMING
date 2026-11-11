@@ -2,6 +2,10 @@ using SqlSugar;
 
 /// <summary>
 /// 装备扩展属性表。
+/// 业务读写只使用装备部位和强化等级；特技属于实例玩法数据，已独立存放在
+/// EquipSpecialSkillTable 的 equip_special_skill 表。
+/// 末尾四个旧特技列仅为保留历史数据而继续保留映射：SqlSugar CodeFirst 会删除实体中不存在的
+/// 物理列（本轮实测确认），因此不能在数据确认迁移完成前从模型中移除。
 /// </summary>
 [SugarTable("equip", TableDescription = "装备表")]
 internal class EquipTable
@@ -29,16 +33,19 @@ internal class EquipTable
     [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int StrengthenLevel { get; set; }
 
-    /// <summary>装备实例第一个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
-    [SugarColumn(DefaultValue = "0")]
+    /// <summary>旧装备第一个特技槽的历史值，仅供迁移读取，业务代码不再读写；新数据写入 equip_special_skill。</summary>
+    [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int SpecialSkillId0 { get; set; }
-    /// <summary>装备实例第二个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
-    [SugarColumn(DefaultValue = "0")]
+
+    /// <summary>旧装备第二个特技槽的历史值，仅供迁移读取，业务代码不再读写。</summary>
+    [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int SpecialSkillId1 { get; set; }
-    /// <summary>装备实例第三个特技配置族编号，0 表示空槽；旧表升级时默认补 0。</summary>
-    [SugarColumn(DefaultValue = "0")]
+
+    /// <summary>旧装备第三个特技槽的历史值，仅供迁移读取，业务代码不再读写。</summary>
+    [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int SpecialSkillId2 { get; set; }
-    /// <summary>唯一启用的特技槽位，下标为 0 到 2；旧记录默认使用第一个槽位。</summary>
-    [SugarColumn(DefaultValue = "0")]
+
+    /// <summary>旧装备启用特技槽的历史值，仅供迁移读取，业务代码不再读写。</summary>
+    [SugarColumn(DefaultValue = "0", IsOnlyIgnoreInsert = true)]
     public int ActiveSpecialSkillIndex { get; set; }
 }

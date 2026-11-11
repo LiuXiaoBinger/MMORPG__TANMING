@@ -274,14 +274,10 @@ public class RoItemComponent : RoleComponentBase
             EquipItemConfig equipConfig = itemData as EquipItemConfig;
             if (equipConfig != null)
             {
-                // 装备配置生成带有装备部位信息的实例。
+                // 装备配置只提供部位；特技是实例数据，新装备三个槽位保持为空（默认 0）。
                 item = new EquipBase
                 {
-                    EquipType = equipConfig.Config.EquipType,
-                    SpecialSkillId0 = equipConfig.Config.SpecialSkillId0,
-                    SpecialSkillId1 = equipConfig.Config.SpecialSkillId1,
-                    SpecialSkillId2 = equipConfig.Config.SpecialSkillId2,
-                    ActiveSpecialSkillIndex = equipConfig.Config.ActiveSpecialSkillIndex
+                    EquipType = equipConfig.Config.EquipType
                 };
                 item.SetItemID(itemId);
                 item.SetItemCount(count);
@@ -329,6 +325,8 @@ public class RoItemComponent : RoleComponentBase
             equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
             equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;
             equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
+            // 已开孔数是服务端权威状态，客户端只按下发值展示，不自行推导。
+            equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {

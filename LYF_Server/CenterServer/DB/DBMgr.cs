@@ -45,8 +45,13 @@ public class DBMgr:Singleton<DBMgr>
             ,typeof(ItemTable)
             ,typeof(EquipTable)
             ,typeof(EquipXLGeneTable)
+            ,typeof(EquipSpecialSkillTable)
             ,typeof(RoleShopPurchaseTable)
             ,typeof(RoleCountTable)); //角色通用次数
+
+        // 新表建好后再迁移旧 equip 行的特技数值：先保证旧数据保留，再按新模型读写。
+        // 迁移按实例判重，可重复执行，已有新表记录不会被旧值覆盖。
+        EquipSpecialSkillTable.MigrateFromEquip(Db);
 
         /*for (int i = 0; i < 30; i++)
         {

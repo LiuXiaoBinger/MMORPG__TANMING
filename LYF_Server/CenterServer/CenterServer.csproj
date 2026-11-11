@@ -129,6 +129,7 @@
     <Compile Include="DB\Table\ItemTable.cs" />
     <Compile Include="DB\Table\EquipTable.cs" />
     <Compile Include="DB\Table\EquipXLGeneTable.cs" />
+    <Compile Include="DB\Table\EquipSpecialSkillTable.cs" />
     <Compile Include="DB\Table\RoleTable.cs" />
     <Compile Include="DB\Task\CRoleWriteTask.cs" />
     <Compile Include="Redis\RedisMgr.cs" />

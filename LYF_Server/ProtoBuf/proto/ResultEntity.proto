@@ -379,6 +379,7 @@ message RoleEquipItemInfo
 	int32 special_skill_id1 = 6;//装备实例的第二个特技配置族编号，0为空
 	int32 special_skill_id2 = 7;//装备实例的第三个特技配置族编号，0为空
 	int32 active_special_skill_index = 8;//唯一启用的特技槽位下标，范围0到2
+	int32 opened_special_skill_count = 9;//已开启的特技孔数量，取值0到3，按0/1/2顺序开孔
 }
 
 // 同一装备的三个词条槽位：每槽保存配置ID与实际数值。
@@ -559,6 +560,7 @@ enum EquipOperation {
 	Wear = 1;//穿戴装备或替换同部位装备
 	TakeOff = 2;//卸下当前穿戴的装备
 	SwitchSpecialSkill = 3;//切换装备实例唯一启用的特技槽位
+	OpenSpecialSkillSlot = 4;//消耗铜币开启装备的下一个特技孔
 }
 
 // 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。

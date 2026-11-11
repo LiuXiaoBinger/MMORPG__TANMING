@@ -255,18 +255,14 @@ public class RoItemComponent : RoleComponentBase
             int count = Math.Min(remainingCount, maxStackCount);
             // 新建实例保留配置类别，装备会独立保存词条和特技槽。
             ItemBase item;
-            // 装备配置提供部位及初始特技，基础六基因继续从配置读取。
+            // 装备配置只提供部位，特技属于实例数据：新装备三个特技槽为空，等待后续打特技写入。
             EquipItemConfig equipConfig = itemData as EquipItemConfig;
             if (equipConfig != null)
             {
                 // 武器类配置生成装备实例并记录装备类型。
                 item = new EquipBase
                 {
-                    EquipType = equipConfig.Config.EquipType,
-                    SpecialSkillId0 = equipConfig.Config.SpecialSkillId0,
-                    SpecialSkillId1 = equipConfig.Config.SpecialSkillId1,
-                    SpecialSkillId2 = equipConfig.Config.SpecialSkillId2,
-                    ActiveSpecialSkillIndex = equipConfig.Config.ActiveSpecialSkillIndex
+                    EquipType = equipConfig.Config.EquipType
                 };
                 item.SetItemID(itemId);
                 item.SetItemCount(count);
@@ -316,6 +312,8 @@ public class RoItemComponent : RoleComponentBase
             equip.SpecialSkillId1 = itemInfo.EquipInfo.SpecialSkillId1;
             equip.SpecialSkillId2 = itemInfo.EquipInfo.SpecialSkillId2;
             equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
+            // 已开孔数是实例玩法状态，读档时必须沿用存档值，不能按槽位内容重新推导。
+            equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {
@@ -1140,7 +1138,9 @@ public class RoItemComponent : RoleComponentBase
                 ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),
                 EquipType = equip.EquipType, StrengthenLevel = equip.StrengthenLevel,
                 SpecialSkillId0 = equip.SpecialSkillId0, SpecialSkillId1 = equip.SpecialSkillId1,
-                SpecialSkillId2 = equip.SpecialSkillId2, ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
+                SpecialSkillId2 = equip.SpecialSkillId2, ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex,
+                // 已开孔数必须跟随物品增量下发，客户端据此区分未开孔与已开孔空槽。
+                OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
             };
             info.EquipGeneInfo = new RoleEquipGeneInfo
             {

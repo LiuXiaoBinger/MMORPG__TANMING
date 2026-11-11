@@ -384,6 +384,11 @@ public class CentRoleModel
             .Where(v => v.RoleID == req.RoleId)
             .ToList()
             .ToDictionary(v => v.ItemUID);
+        // 特技实例单独成表，按物品实例编号与装备行对齐；没有记录的装备表示三个槽位都是空槽。
+        Dictionary<long, EquipSpecialSkillTable> specialSkillByItemUid = _db.Queryable<EquipSpecialSkillTable>()
+            .Where(v => v.RoleID == req.RoleId)
+            .ToList()
+            .ToDictionary(v => v.ItemUID);
 
         // 读取结果的索引列表，每个物品再附上装备和词条扩展。
         List<ItemTable> itemSnapshot = new List<ItemTable>(itemList);
@@ -420,12 +425,19 @@ public class CentRoleModel
                     ItemUid = equip.ItemUID,
                     RoleId = equip.RoleID,
                     StrengthenLevel = equip.StrengthenLevel,
-                    EquipType = equip.EquipType,
-                    SpecialSkillId0 = equip.SpecialSkillId0,
-                    SpecialSkillId1 = equip.SpecialSkillId1,
-                    SpecialSkillId2 = equip.SpecialSkillId2,
-                    ActiveSpecialSkillIndex = equip.ActiveSpecialSkillIndex
+                    EquipType = equip.EquipType
                 };
+                // 三个特技槽和启用槽来自独立特技表；没有记录时保持协议默认值 0，表示槽位全空。
+                EquipSpecialSkillTable specialSkill;
+                if (specialSkillByItemUid.TryGetValue(equip.ItemUID, out specialSkill))
+                {
+                    itemInfo.EquipInfo.SpecialSkillId0 = specialSkill.SpecialSkillId0;
+                    itemInfo.EquipInfo.SpecialSkillId1 = specialSkill.SpecialSkillId1;
+                    itemInfo.EquipInfo.SpecialSkillId2 = specialSkill.SpecialSkillId2;
+                    itemInfo.EquipInfo.ActiveSpecialSkillIndex = specialSkill.ActiveSpecialSkillIndex;
+                    // 已开孔数必须随装备下发，否则客户端无法区分“未开孔”和“已开孔空槽”。
+                    itemInfo.EquipInfo.OpenedSpecialSkillCount = specialSkill.OpenedSpecialSkillCount;
+                }
             }
 
             EquipXLGeneTable gene;

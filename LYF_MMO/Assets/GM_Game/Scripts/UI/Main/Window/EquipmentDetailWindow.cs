@@ -223,6 +223,10 @@ public sealed class EquipmentDetailWindow : WindowBase
     private readonly string[] _specialSkillCardStates = new string[3];
     /// <summary>各槽是否可使用，缓存当前Render数据，打开侧卡时决定使用入口显隐。</summary>
     private readonly bool[] _canUseSpecialSkills = new bool[3];
+    /// <summary>各槽是否为下一个可开启的孔，缓存后决定使用入口显示「开孔」还是「启用」。</summary>
+    private readonly bool[] _canOpenSpecialSkills = new bool[3];
+    /// <summary>开孔费用说明，来自控制器与服务器共享的同一个价格常量。</summary>
+    private string _specialSkillOpenCostText = string.Empty;
     /// <summary>当前特技侧卡对应的保存槽下标，范围0至2，仅用于原有选择事件。</summary>
     private int _currentCardSkillSlot;
     /// <summary>当前开窗的光效起点，使用不受游戏暂停影响的秒数。</summary>
@@ -583,9 +587,28 @@ public sealed class EquipmentDetailWindow : WindowBase
         _infoLayerText.text = card;
         // 特技卡保留兑换、拓源与特技卸下三个真实入口，均只给未开放提示。
         ApplyCardSkillButtons(true);
-        _cardUseButton.gameObject.SetActive(_canUseSpecialSkills[index]);
+        // 开孔与启用复用同一个入口：可开孔的槽写「开孔」，已装特技的槽写「启用」。
+        bool canOpenSlot = _canOpenSpecialSkills[index];
+        bool canUseSlot = canOpenSlot;
+        if (!canOpenSlot)
+        {
+            canUseSlot = _canUseSpecialSkills[index];
+        }
+        _cardUseButton.gameObject.SetActive(canUseSlot);
+        // 文案按入口语义区分：开孔提交开孔请求，启用提交切换请求。
+        string useLabel = "启用";
+        if (canOpenSlot)
+        {
+            useLabel = "开孔";
+        }
+        SetButtonLabel(_cardUseButton, useLabel);
         _cardStateText.text = _specialSkillCardStates[index];
-        _cardStateText.gameObject.SetActive(!_canUseSpecialSkills[index]);
+        // 可开孔时把费用写进只读状态行，玩家在提交前就能看到真实价格。
+        if (canOpenSlot)
+        {
+            _cardStateText.text = _specialSkillCardStates[index] + "　" + _specialSkillOpenCostText;
+        }
+        _cardStateText.gameObject.SetActive(!canUseSlot);
         _infoLayer.gameObject.SetActive(true);
         // 特技卡正文按内容撑高到 452 上限，超出部分在卡内滚动，三按钮固定贴卡底。
         ApplyCardLayout(true);
@@ -605,7 +628,11 @@ public sealed class EquipmentDetailWindow : WindowBase
             _specialSkillCardTitles[index] = data.SpecialSkillCardTitles[index];
             _specialSkillCardStates[index] = data.SpecialSkillCardStates[index];
             _canUseSpecialSkills[index] = data.CanActivateSpecialSkill[index];
+            // 只有正好是下一个孔的槽才显示开孔入口，其余未开孔槽保持只读。
+            _canOpenSpecialSkills[index] = data.CanOpenSpecialSkill[index];
         }
+        // 开孔费用文本随数据下发，未给出时保持空串，界面不显示价格。
+        _specialSkillOpenCostText = data.SpecialSkillOpenCostText;
     }
 
     /// <summary>按真实宝石孔数量显示空槽图标与展开区孔位格，其余隐藏。</summary>

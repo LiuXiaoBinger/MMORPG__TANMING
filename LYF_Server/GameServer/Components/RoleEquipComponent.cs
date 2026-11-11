@@ -41,6 +41,8 @@ public class RoleEquipComponent : RoleComponentBase
             // 每件仅启用一个保存的特技族；其余两个槽不参与件数。
             int specialId = equipment.GetActiveSpecialSkillId();
             if (specialId == 0) continue;
+            // 不合位的历史槽数据保留在装备上，但不参与件数统计，因此不会产生任何效果。
+            if (!IsPartAllowed(equipment, specialId)) continue;
             if (!specialCounts.ContainsKey(specialId))
             {
                 specialCounts.Add(specialId, 0);
@@ -59,6 +61,44 @@ public class RoleEquipComponent : RoleComponentBase
         attachedEquipment.UnionWith(currentIds);
         RefreshSpecialSkills(specialCounts, specialSources);
         NotifyAttributeUpdate();
+    }
+
+    /// <summary>按特技族允许部位掩码判断该装备是否可以使用这个特技。</summary>
+    /// <param name="equipment">实际穿戴的装备实例。</param>
+    /// <param name="specialSkillId">该装备启用槽里的特技族编号。</param>
+    /// <returns>只有配置存在、允许该部位且该族确实有效果时才返回 true。</returns>
+    private static bool IsPartAllowed(EquipBase equipment, int specialSkillId)
+    {
+        // 特技配置是族与等级的扁平列表，同族各行允许部位一致，取最低级即可。
+        List<cfg.EquipSpecialSkillInfo> definitions = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < definitions.Count; index++)
+        {
+            // 只处理同族配置行。
+            cfg.EquipSpecialSkillInfo row = definitions[index];
+            if (row.SpecialSkillId != specialSkillId) continue;
+            // 部位掩码按 1<<EquipType 累加，与服务端装入校验完全一致。
+            if (!EquipBase.IsSpecialSkillPartAllowed(row.AllowedEquipTypeMask, equipment.EquipType)) return false;
+            // 该族所有等级都没有真实基因时属于待接入特技，不能参与叠级或产生效果。
+            return HasEffectiveGene(specialSkillId);
+        }
+        // 配置里找不到的族号一律按不允许处理，避免未知族默认放行。
+        return false;
+    }
+
+    /// <summary>判断某个特技族是否存在至少一个已接入基因的等级。</summary>
+    /// <param name="specialSkillId">要核对的特技族编号。</param>
+    /// <returns>任一级别配置了非 0 基因时返回 true。</returns>
+    private static bool HasEffectiveGene(int specialSkillId)
+    {
+        // 与部位校验共用同一份族与等级扁平配置。
+        List<cfg.EquipSpecialSkillInfo> definitions = LubanMgr.Instance.GetEquipSpecialSkillInfos();
+        for (int index = 0; index < definitions.Count; index++)
+        {
+            cfg.EquipSpecialSkillInfo row = definitions[index];
+            if (row.SpecialSkillId != specialSkillId) continue;
+            if (row.GeneId != 0) return true;
+        }
+        return false;
     }
 
     /// <summary>按六个配置槽与三个实例词条挂载，重复编号使用独立槽累计。</summary>

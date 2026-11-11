@@ -23,6 +23,7 @@ public sealed partial class EquipSpecialSkillInfo : Luban.BeanBase
         Quality = _buf.ReadInt();
         GeneId = _buf.ReadInt();
         Description = _buf.ReadString();
+        AllowedEquipTypeMask = _buf.ReadInt();
     }
 
     public static EquipSpecialSkillInfo DeserializeEquipSpecialSkillInfo(ByteBuf _buf)
@@ -47,17 +48,21 @@ public sealed partial class EquipSpecialSkillInfo : Luban.BeanBase
     /// </summary>
     public readonly string Name;
     /// <summary>
-    /// 展示品质；不参与效果等级
+    /// 展示品质；不参与效果等级：1白2绿3蓝4紫5金
     /// </summary>
     public readonly int Quality;
     /// <summary>
-    /// 该级常驻或事件基因根ID
+    /// 该级常驻或事件基因根ID；0表示该级待接入
     /// </summary>
     public readonly int GeneId;
     /// <summary>
-    /// 效果描述；全部数值为项目初值，非官方现行平衡值
+    /// 效果描述；标注历史值或项目平衡值
     /// </summary>
     public readonly string Description;
+    /// <summary>
+    /// 允许部位掩码：1&lt;&lt;EquipType 之和；1696武器组，78防具组，2321饰品组，32仅鞋子
+    /// </summary>
+    public readonly int AllowedEquipTypeMask;
    
     public const int __ID__ = -406761962;
     public override int GetTypeId() => __ID__;
@@ -76,6 +81,7 @@ public sealed partial class EquipSpecialSkillInfo : Luban.BeanBase
         + "Quality:" + Quality + ","
         + "GeneId:" + GeneId + ","
         + "Description:" + Description + ","
+        + "AllowedEquipTypeMask:" + AllowedEquipTypeMask + ","
         + "}";
     }
 }
