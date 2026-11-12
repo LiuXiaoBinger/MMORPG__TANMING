@@ -561,3 +561,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The role information and attribute column scales by 12%, reaching 448 units. Twelve equipment slots and their icons scale by 20%, from 80×80 to 96×96. The close button is vertically centered on the right side of the blue title bar.
 - `UIRoot.prefab` is the business change in `1d56d4b`, pushed to `codex/feature-development`. See `项目修改日志/2026-11-12-角色信息控件放大与关闭按钮对齐.md` for scope and receipts.
 - Isolated Unity validation passed. Recreating the live main-city instance, online relogin and standalone Player remain pending.
+
+## [CODE][FILES][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Larger role controls, lower glow and whole attribute rows (2026-11-12)
+
+- `UIRoot.prefab` moves the corner glow below the equipment grid, expands the 12 equipment slots from 96×96 to 100×100, and increases the role information and attribute width from 448 to 464. `RoleAttriibuteWindow.cs` shows 10 complete base rows initially and hides partially visible rows in the base and advanced lists during scrolling.
+- Business commit `7d3a95d` was pushed to `codex/feature-development`. See `项目修改日志/2026-11-12-角色面板光效下移与属性整行显示.md` for the file changes, decisions and receipts.
+- Isolated Unity checks passed. Recreating the live main-city window, online relogin and standalone Player remain pending.

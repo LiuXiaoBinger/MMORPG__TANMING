@@ -584,3 +584,8 @@
 
 - 正式预制体在 1920×1080 与 1366×768 下通过 102 项隔离 Unity 检查，覆盖控件尺寸、布局边界、关闭键命中与回调绑定、属性页签及滚动至末行。Unity Console 返回 0 错误。
 - 整窗截图与 `runtime-proof.txt` 位于 `_temp/role-summary-spacing-20261112/`。现有主城实例重建、联机重登和独立 Player 待验。
+
+## [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] 属性整行显示与角色面板布局检查（2026-11-12）
+
+- 客户端程序集编译 0 错误。正式预制体的克隆在隔离 Unity 中于 1920×1080 与 1366×768 两种分辨率运行改动组件，312 项检查全部通过，覆盖装备槽与光效几何、页签、滚轮事件、整行可见性及基础与高级两个列表的末行。
+- 证据：`_temp/role-panel-full-rows-20261112/runtime-proof.txt`、`role-full-rows.png` 与 `role-full-rows-1366.png`。现有主城窗口重建、联机重登和独立 Player 待验。

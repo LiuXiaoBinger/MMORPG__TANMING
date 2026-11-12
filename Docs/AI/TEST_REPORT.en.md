@@ -593,3 +593,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - The formal prefab passed 102 isolated Unity checks at 1920×1080 and 1366×768. Checks covered control dimensions, layout bounds, close hit and callback binding, attribute tabs and scrolling to the last row. Unity Console returned 0 errors.
 - See `_temp/role-summary-spacing-20261112/` for both full-window screenshots and `runtime-proof.txt`. Recreating the live main-city instance, online relogin and standalone Player remain pending.
+
+## [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Whole attribute rows and role panel layout (2026-11-12)
+
+- Client assembly compilation returned 0 errors. A clone of the formal prefab ran the changed component in isolated Unity at 1920×1080 and 1366×768. All 312 checks passed, covering slot and glow geometry, tabs, wheel events, whole-row visibility and the last row in both lists.
+- Evidence: `_temp/role-panel-full-rows-20261112/runtime-proof.txt`, `role-full-rows.png` and `role-full-rows-1366.png`. Recreating the live main-city window, online relogin and standalone Player remain pending.

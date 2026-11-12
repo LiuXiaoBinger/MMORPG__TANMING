@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `50f2b4cd379224ec7cfea29ec2a8d15a8b38af89cd5023addd1813b2cb230e0b`
+Source normalized SHA256: `dc9a5c27fa5ef44e55e552123e5dc99cbd0386487aee2f5fff09d721eee44a9b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -76,11 +76,12 @@ Source normalized SHA256: `50f2b4cd379224ec7cfea29ec2a8d15a8b38af89cd5023addd181
 | [CODE][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six difficulty choices, table layers and reentry restriction | 540-546 |
 | [CODE][FILES][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Role attribute tabs and bag currencies (2026-11-12) | 547-552 |
 | [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12) | 553-558 |
-| [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12) | 559-563 |
+| [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12) | 559-564 |
+| [CODE][FILES][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Larger role controls, lower glow and whole attribute rows (2026-11-12) | 565-569 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6e135a0cd0db5a0b46b0cd954f0e15bc4f637ea2fee0524018980e837d90f28d`
+Source normalized SHA256: `47124b2786db218f4d8e51aca09d9f3ab9d6d52f21e6b8d7749f8f3e5125d6d6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -148,7 +149,8 @@ Source normalized SHA256: `6e135a0cd0db5a0b46b0cd954f0e15bc4f637ea2fee0524018980
 | [VERIFY][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six tiers, layers and actual-role entry checks | 572-578 |
 | [VERIFY][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Advanced attributes, currency bindings and prefab checks (2026-11-12) | 579-585 |
 | [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12) | 586-591 |
-| [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12) | 592-595 |
+| [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12) | 592-596 |
+| [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Whole attribute rows and role panel layout (2026-11-12) | 597-600 |
 
 ## Docs/AI/DECISIONS.en.md
 
