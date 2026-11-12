@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `92951d3e2cbfa036243a47d42ad9167a62fe578c2651e72b7cbb86c9a4783284`
+Source normalized SHA256: `5b65840651751f173e90deb750c6720f0c91e54785c067635dfa1dc1bec66b19`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -73,11 +73,12 @@ Source normalized SHA256: `92951d3e2cbfa036243a47d42ad9167a62fe578c2651e72b7cbb8
 | [CODE][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Front-priority automatic acquisition, target retention and skill-range pursuit | 520-525 |
 | [CODE][技能][TARGET-IDLE-FACING-REMOVE-20261112] Keep selected targets without continuous idle rotation | 526-532 |
 | [CODE][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four spreadsheet-driven difficulties and per-monster Gene/AI | 533-539 |
-| [CODE][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six difficulty choices, table layers and reentry restriction | 540-545 |
+| [CODE][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six difficulty choices, table layers and reentry restriction | 540-546 |
+| [CODE][FILES][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Role attribute tabs and bag currencies (2026-11-12) | 547-551 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e735f71801fba85257a2ba3369153392dcbfe40e6645afe293cf334b7f33a8bb`
+Source normalized SHA256: `a464f54611be5dd58b83d80902f947cef193967aa6a2a5e4fd31edeef7103adb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -142,7 +143,8 @@ Source normalized SHA256: `e735f71801fba85257a2ba3369153392dcbfe40e6645afe293cf3
 | [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Twenty geometry checks and real automatic pursuit of a moving monster | 550-556 |
 | [VERIFY][技能][TARGET-IDLE-FACING-REMOVE-20261112] Bounded idle-facing removal checks | 557-563 |
 | [VERIFY][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four difficulties, effective Gene attributes and Editor entry | 564-571 |
-| [VERIFY][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six tiers, layers and actual-role entry checks | 572-577 |
+| [VERIFY][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six tiers, layers and actual-role entry checks | 572-578 |
+| [VERIFY][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Advanced attributes, currency bindings and prefab checks (2026-11-12) | 579-584 |
 
 ## Docs/AI/DECISIONS.en.md
 
