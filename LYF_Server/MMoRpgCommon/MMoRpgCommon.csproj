@@ -107,6 +107,7 @@
         <Compile Include="EntityData\Gene\IGeneOwner.cs" />
         <Compile Include="EntityData\Gene\IAttributeComponent.cs" />
         <Compile Include="EntityData\Gene\AttributeModifiers.cs" />
+        <Compile Include="EntityData\Gene\NormalGene\AdvancedAttributeGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkExternalMaxGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkExternalMinGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\AtkInternalMaxGene.cs" />

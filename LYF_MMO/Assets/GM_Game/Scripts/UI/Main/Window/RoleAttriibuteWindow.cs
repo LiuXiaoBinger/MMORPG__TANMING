@@ -25,7 +25,12 @@ public class RoleAttriibuteWindow : WindowBase
     private float geneDisplayElapsed;
 
     /// <summary>真实窗口打开时通知控制器读取当前节点，重开也能显示最新列表。</summary>
-    private void OnEnable() { GeneVisibilityChanged?.Invoke(true); }
+    private void OnEnable()
+    {
+        // 页签与高级行的绑定只做一次，重开窗口沿用已有行。
+        InitializeAdvancedPanel();
+        GeneVisibilityChanged?.Invoke(true);
+    }
 
     /// <summary>隐藏时停止订阅及时间刷新，并释放对旧角色节点的引用。</summary>
     private void OnDisable()
@@ -112,7 +117,85 @@ public class RoleAttriibuteWindow : WindowBase
     /// <summary>按 RoleAttributeViewData 约定顺序保存原16个属性数值文本。</summary>
     [SerializeField] private TMP_Text[] _attributeValues;
 
-    /// <summary>在原属性面板中渲染控制器提供的最终属性和资源。</summary>
+    // ============================================================
+    // 基础/高级/生活三页签切换：页签、高级滚动区与六组折叠头都由预制体序列化引用提供。
+    // ============================================================
+    /// <summary>切回基础属性的页签按钮。</summary>
+    [SerializeField] private Button _tabBase;
+    /// <summary>切到高级属性的页签按钮。</summary>
+    [SerializeField] private Button _tabAdvanced;
+    /// <summary>切到生活属性的页签按钮。</summary>
+    [SerializeField] private Button _tabLife;
+    /// <summary>基础页签背景图，切换时改配色。</summary>
+    [SerializeField] private Image _tabBaseImage;
+    /// <summary>高级页签背景图，切换时改配色。</summary>
+    [SerializeField] private Image _tabAdvancedImage;
+    /// <summary>生活页签背景图，切换时改配色。</summary>
+    [SerializeField] private Image _tabLifeImage;
+    /// <summary>基础页签文字，切换时改配色。</summary>
+    [SerializeField] private TMP_Text _tabBaseLabel;
+    /// <summary>高级页签文字，切换时改配色。</summary>
+    [SerializeField] private TMP_Text _tabAdvancedLabel;
+    /// <summary>生活页签文字，切换时改配色。</summary>
+    [SerializeField] private TMP_Text _tabLifeLabel;
+    /// <summary>基础属性滚动区，高级与生活模式下整体隐藏。</summary>
+    [SerializeField] private GameObject _baseScroll;
+    /// <summary>高级属性滚动区，预制体里默认隐藏。</summary>
+    [SerializeField] private GameObject _advancedScroll;
+    /// <summary>生活属性容器，预制体里默认隐藏；当前只放占位提示。</summary>
+    [SerializeField] private GameObject _lifePanel;
+    /// <summary>六个高级分组根节点，每个内部固定含 Header 与 Rows 两个子节点。</summary>
+    [SerializeField] private Transform[] _advancedGroups;
+    /// <summary>六个分组的折叠按钮，与 _advancedGroups 同序。</summary>
+    [SerializeField] private Button[] _advancedHeaders;
+    /// <summary>六个分组的折叠指示文字，与 _advancedGroups 同序。</summary>
+    [SerializeField] private TMP_Text[] _advancedArrows;
+    /// <summary>预制体中的高级属性行模板，运行时按静态属性表实例化。</summary>
+    [SerializeField] private RectTransform _advancedRowTemplate;
+
+    /// <summary>页签选中态的背景配色。</summary>
+    private static readonly Color TabSelectedColor = new Color(0.85f, 0.72f, 0.42f, 1f);
+    /// <summary>页签未选中态的背景配色。</summary>
+    private static readonly Color TabNormalColor = new Color(0.13f, 0.13f, 0.13f, 1f);
+    /// <summary>页签选中态的文字配色。</summary>
+    private static readonly Color TabSelectedTextColor = new Color(0.12f, 0.10f, 0.08f, 1f);
+    /// <summary>页签未选中态的文字配色。</summary>
+    private static readonly Color TabNormalTextColor = new Color(0.80f, 0.80f, 0.80f, 1f);
+    /// <summary>分组展开时的指示符号。</summary>
+    private const string GroupExpandedMark = "-";
+    /// <summary>分组收起时的指示符号。</summary>
+    private const string GroupCollapsedMark = "+";
+
+    /// <summary>左侧属性区的三种展示模式，三个页签互斥切换。</summary>
+    private enum AttributePanelMode
+    {
+        /// <summary>16 行基础属性。</summary>
+        Base = 0,
+        /// <summary>六组 44 项高级属性。</summary>
+        Advanced = 1,
+        /// <summary>生活属性占位页，当前没有权威数据。</summary>
+        Life = 2,
+    }
+
+    /// <summary>当前停留的页签，默认基础页。</summary>
+    private AttributePanelMode attributeMode;
+    /// <summary>各分组是否展开，长度与 _advancedGroups 一致。</summary>
+    private bool[] groupExpanded;
+    /// <summary>高级属性行缓存，顺序与 RoleAttributeViewData.AdvancedEntries 一致。</summary>
+    private readonly List<AdvancedRowWidget> advancedRows = new List<AdvancedRowWidget>();
+    /// <summary>行模板是否已经实例化，避免每次显示重复创建。</summary>
+    private bool advancedBuilt;
+
+    /// <summary>高级属性行的两列文本缓存，刷新时只改文字。</summary>
+    private sealed class AdvancedRowWidget
+    {
+        /// <summary>左侧属性名称。</summary>
+        public TMP_Text Label;
+        /// <summary>右侧数值，右对齐。</summary>
+        public TMP_Text Value;
+    }
+
+    /// <summary>原属性面板中渲染控制器提供的最终属性和资源。</summary>
     /// <param name="data">服务器最终属性转换成的展示值，不含客户端概率推算。</param>
     public void RenderAttributes(RoleAttributeViewData data)
     {
@@ -127,6 +210,251 @@ public class RoleAttriibuteWindow : WindowBase
         {
             _attributeValues[index].text = data.AttributeValues[index];
         }
+        // 高级页签的 44 行只在数值变化时改文字，行本身常驻。
+        RenderAdvancedValues(data.AdvancedValues);
+    }
+
+    /// <summary>首次显示时实例化高级行并绑定页签与折叠头，重复调用直接返回。</summary>
+    private void InitializeAdvancedPanel()
+    {
+        if (advancedBuilt)
+        {
+            return;
+        }
+        if (_advancedRowTemplate == null || _advancedGroups == null)
+        {
+            return;
+        }
+        advancedBuilt = true;
+        // 首次打开时六组默认收起，直接能看见六个标题；bool 数组默认值就是 false。
+        groupExpanded = new bool[_advancedGroups.Length];
+        BuildAdvancedRows();
+        if (_tabBase != null)
+        {
+            _tabBase.onClick.AddListener(ShowBaseAttributes);
+        }
+        if (_tabAdvanced != null)
+        {
+            _tabAdvanced.onClick.AddListener(ShowAdvancedAttributes);
+        }
+        if (_tabLife != null)
+        {
+            _tabLife.onClick.AddListener(ShowLifeAttributes);
+        }
+        // 折叠头按下标绑定，不为六组各写一个方法。
+        for (int index = 0; index < _advancedHeaders.Length; index++)
+        {
+            if (_advancedHeaders[index] == null)
+            {
+                continue;
+            }
+            // 闭包需要固定的分组下标，不能直接捕获循环变量。
+            int groupIndex = index;
+            _advancedHeaders[index].onClick.AddListener(delegate { ToggleGroup(groupIndex); });
+        }
+        ApplyAttributeMode();
+    }
+
+    /// <summary>按静态属性表把固定行模板实例化到所属分组，并把名称写入左列。</summary>
+    private void BuildAdvancedRows()
+    {
+        // 静态表当前已经填到第几项，六组按配置项数顺序切分。
+        int entryIndex = 0;
+        for (int group = 0; group < _advancedGroups.Length; group++)
+        {
+            Transform rowsRoot = _advancedGroups[group].Find("Rows");
+            if (rowsRoot == null)
+            {
+                continue;
+            }
+            // 当前分组应包含的属性项数，越界时按表尾截断。
+            int size = RoleAttributeViewData.AdvancedGroupSizes[group];
+            for (int offset = 0; offset < size; offset++)
+            {
+                if (entryIndex >= RoleAttributeViewData.AdvancedEntries.Length)
+                {
+                    break;
+                }
+                AdvancedRowWidget row = CreateAdvancedRow(rowsRoot, entryIndex);
+                row.Label.text = RoleAttributeViewData.AdvancedEntries[entryIndex].Label;
+                entryIndex++;
+            }
+            rowsRoot.gameObject.SetActive(groupExpanded[group]);
+            ApplyGroupArrow(group);
+        }
+    }
+
+    /// <summary>取已缓存的行，或在分组内新建一行并缓存两列文本。</summary>
+    /// <param name="rowsRoot">该分组固定命名的行容器。</param>
+    /// <param name="entryIndex">静态属性表中的下标，同时作为行缓存下标。</param>
+    private AdvancedRowWidget CreateAdvancedRow(Transform rowsRoot, int entryIndex)
+    {
+        if (entryIndex < advancedRows.Count)
+        {
+            return advancedRows[entryIndex];
+        }
+        // 行模板在预制体里默认隐藏，实例化后单独打开。
+        RectTransform root = Instantiate(_advancedRowTemplate, rowsRoot);
+        root.gameObject.SetActive(true);
+        AdvancedRowWidget row = new AdvancedRowWidget();
+        row.Label = FindRowText(root, "name");
+        row.Value = FindRowText(root, "arrtval");
+        advancedRows.Add(row);
+        return row;
+    }
+
+    /// <summary>按节点名取行内文本，预制体未提供时返回 null 由调用方跳过。</summary>
+    private static TMP_Text FindRowText(Transform rowRoot, string nodeName)
+    {
+        Transform node = rowRoot.Find(nodeName);
+        if (node == null)
+        {
+            return null;
+        }
+        return node.GetComponent<TMP_Text>();
+    }
+
+    /// <summary>把控制器给出的 44 项正文写入高级行，缺项显示空串。</summary>
+    /// <param name="values">与静态属性表同序的已格式化正文。</param>
+    public void RenderAdvancedValues(string[] values)
+    {
+        InitializeAdvancedPanel();
+        for (int index = 0; index < advancedRows.Count; index++)
+        {
+            if (advancedRows[index].Value == null)
+            {
+                continue;
+            }
+            if (values == null || index >= values.Length)
+            {
+                advancedRows[index].Value.text = string.Empty;
+                continue;
+            }
+            advancedRows[index].Value.text = values[index];
+        }
+    }
+
+    /// <summary>基础页签点击：切回 16 行基础属性。</summary>
+    private void ShowBaseAttributes()
+    {
+        attributeMode = AttributePanelMode.Base;
+        ApplyAttributeMode();
+    }
+
+    /// <summary>高级页签点击：切到六组 44 项高级属性。</summary>
+    private void ShowAdvancedAttributes()
+    {
+        attributeMode = AttributePanelMode.Advanced;
+        ApplyAttributeMode();
+    }
+
+    /// <summary>生活页签点击：切到生活占位页，当前没有可信数值来源。</summary>
+    private void ShowLifeAttributes()
+    {
+        attributeMode = AttributePanelMode.Life;
+        ApplyAttributeMode();
+    }
+
+    /// <summary>按当前页签切换三个内容区的显隐与页签配色，同一时刻只显示一个。</summary>
+    private void ApplyAttributeMode()
+    {
+        // 三个内容区共用同一块矩形，互斥显示避免叠字。
+        bool showBase = attributeMode == AttributePanelMode.Base;
+        // 高级滚动区只在高级页签下打开，内部保留六组折叠状态。
+        bool showAdvanced = attributeMode == AttributePanelMode.Advanced;
+        if (_baseScroll != null)
+        {
+            _baseScroll.SetActive(showBase);
+        }
+        if (_advancedScroll != null)
+        {
+            _advancedScroll.SetActive(showAdvanced);
+        }
+        if (_lifePanel != null)
+        {
+            _lifePanel.SetActive(attributeMode == AttributePanelMode.Life);
+        }
+        ApplyTabStyle(_tabBaseImage, _tabBaseLabel, showBase);
+        ApplyTabStyle(_tabAdvancedImage, _tabAdvancedLabel, showAdvanced);
+        ApplyTabStyle(_tabLifeImage, _tabLifeLabel, attributeMode == AttributePanelMode.Life);
+    }
+
+    /// <summary>选中页签用高亮底加浅色字，未选中用暗底加灰字。</summary>
+    /// <param name="background">页签背景图，可为空。</param>
+    /// <param name="label">页签文字，可为空。</param>
+    /// <param name="selected">是否处于选中态。</param>
+    private static void ApplyTabStyle(Image background, TMP_Text label, bool selected)
+    {
+        if (selected)
+        {
+            if (background != null)
+            {
+                background.color = TabSelectedColor;
+            }
+            if (label != null)
+            {
+                label.color = TabSelectedTextColor;
+            }
+            return;
+        }
+        if (background != null)
+        {
+            background.color = TabNormalColor;
+        }
+        if (label != null)
+        {
+            label.color = TabNormalTextColor;
+        }
+    }
+
+    /// <summary>折叠或展开单个分组，只改该组的行容器与指示符号。</summary>
+    /// <param name="groupIndex">分组下标，越界时忽略。</param>
+    private void ToggleGroup(int groupIndex)
+    {
+        if (groupExpanded == null || groupIndex < 0)
+        {
+            return;
+        }
+        if (groupIndex >= groupExpanded.Length)
+        {
+            return;
+        }
+        groupExpanded[groupIndex] = !groupExpanded[groupIndex];
+        ApplyGroupState(groupIndex);
+    }
+
+    /// <summary>按缓存状态刷新单个分组的行容器与指示符号。</summary>
+    private void ApplyGroupState(int groupIndex)
+    {
+        if (_advancedGroups == null || groupIndex >= _advancedGroups.Length)
+        {
+            return;
+        }
+        Transform rowsRoot = _advancedGroups[groupIndex].Find("Rows");
+        if (rowsRoot != null)
+        {
+            rowsRoot.gameObject.SetActive(groupExpanded[groupIndex]);
+        }
+        ApplyGroupArrow(groupIndex);
+    }
+
+    /// <summary>只刷新折叠指示符号，展开显示减号、收起显示加号。</summary>
+    private void ApplyGroupArrow(int groupIndex)
+    {
+        if (_advancedArrows == null || groupIndex >= _advancedArrows.Length)
+        {
+            return;
+        }
+        if (_advancedArrows[groupIndex] == null)
+        {
+            return;
+        }
+        if (groupExpanded[groupIndex])
+        {
+            _advancedArrows[groupIndex].text = GroupExpandedMark;
+            return;
+        }
+        _advancedArrows[groupIndex].text = GroupCollapsedMark;
     }
 
     /// <summary>已经找到并初始化的固定装备槽，刷新时先全部清空再填入当前穿戴。</summary>

@@ -6,6 +6,10 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
 {
     /// <summary>已由节点 OnCall 写入的属性和状态修正，随宿主生命周期释放。</summary>
     private readonly AttributeModifiers modifiers = new AttributeModifiers();
+    /// <summary>高级属性编号下界，与 GeneAttributeType 中第一个高级属性 101 对齐。</summary>
+    private const int AdvancedAttributeFirstId = 101;
+    /// <summary>高级属性编号上界，与 GeneAttributeType 中最后一个高级属性 144 对齐。</summary>
+    private const int AdvancedAttributeLastId = 144;
     /// <summary>读取按来源计数并处理霸体冲突后的有效状态。</summary>
     public GeneState States { get { return modifiers.States; } }
     /// <summary>使用属性组件中已生效的修正计算最终属性。</summary>
@@ -88,6 +92,22 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         result.HealBonus = (float)CalculateAttribute(GeneAttributeType.HealBonus, result.HealBonus);
         result.ZhuXin = (int)CalculateAttribute(GeneAttributeType.ZhuXin, result.ZhuXin);
         result.JianRen = (int)CalculateAttribute(GeneAttributeType.JianRen, result.JianRen);
+        // 高级属性以角色原有数值为基础，未配置时按 0 计算，再叠加已生效基因修正。
+        for (int id = AdvancedAttributeFirstId; id <= AdvancedAttributeLastId; id++)
+        {
+            // 原面板该编号没有配置时，基础值就是 0。
+            double baseValue;
+            result.AdvancedAttributes.TryGetValue(id, out baseValue);
+            // 固定值与百分点修正都已在属性组件内累计完成。
+            double value = CalculateAttribute((GeneAttributeType)id, baseValue);
+            // 只保留非零项，客户端缺省显示 0，避免每帧下发 44 项空值。
+            if (value != 0)
+            {
+                result.AdvancedAttributes[id] = value;
+                continue;
+            }
+            result.AdvancedAttributes.Remove(id);
+        }
         result.CurrHp = Math.Min(result.CurrHp, result.MaxHp);
         result.CurrMp = Math.Min(result.CurrMp, result.MaxMp);
         return result;

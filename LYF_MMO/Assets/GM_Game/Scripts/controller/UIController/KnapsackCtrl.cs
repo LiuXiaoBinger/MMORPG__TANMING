@@ -20,6 +20,17 @@ public sealed class KnapsackCtrl : IDisposable
     /// <summary>背包窗口，只负责渲染和派发页签事件。</summary>
     private readonly KnapsackWindow _window;
 
+    // 四格货币对应的虚拟物品配置编号，与服务器 ItemEnum 现有取值一致：
+    // 铜币 101、银子 102、元宝 103、银票 106。这里只用于读取余额，不改任何消费映射。
+    /// <summary>铜币的虚拟物品配置编号。</summary>
+    private const int CopperItemId = 101;
+    /// <summary>银子（旧 zeny 币）的虚拟物品配置编号。</summary>
+    private const int SilverItemId = 102;
+    /// <summary>银票的虚拟物品配置编号。</summary>
+    private const int TicketItemId = 106;
+    /// <summary>元宝（旧钻石/金币）的虚拟物品配置编号。</summary>
+    private const int YuanbaoItemId = 103;
+
     /// <summary>持有并管理装备详情生命周期的现有主视图。</summary>
     private readonly MainView _mainView;
     /// <summary>显示当前装备详情的正式子窗口。</summary>
@@ -81,6 +92,13 @@ public sealed class KnapsackCtrl : IDisposable
         if (_role == null || _role.DirtyTracker == null)
         {
             return;
+        }
+        // 虚拟币不属于任何分类页，先消费它的脏标记再处理当前页。
+        ClientDirtySnapshot moneySnapshot;
+        if (_role.DirtyTracker.TryGetKnapsack(KnapsackType.RoleVirtualItemPack, out moneySnapshot))
+        {
+            RefreshMoney();
+            _role.DirtyTracker.ClearKnapsack(KnapsackType.RoleVirtualItemPack);
         }
         // 当前分类积累的整页刷新标记或格子下标，成功绘制后由角色清除。
         ClientDirtySnapshot snapshot;
@@ -376,6 +394,25 @@ public sealed class KnapsackCtrl : IDisposable
                 new ClientChangeContext("KnapsackBind"));
         }
         RefreshCurrentCategory(false);
+        RefreshMoney();
+    }
+
+    /// <summary>读取虚拟物品背包中的四种货币余额交给窗口，未绑定角色时四格清零。</summary>
+    public void RefreshMoney()
+    {
+        if (_window == null)
+        {
+            return;
+        }
+        if (_itemComponent == null)
+        {
+            _window.RenderMoney(0L, 0L, 0L, 0L);
+            return;
+        }
+        _window.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId),
+            _itemComponent.GetVirtualItemCount(SilverItemId),
+            _itemComponent.GetVirtualItemCount(TicketItemId),
+            _itemComponent.GetVirtualItemCount(YuanbaoItemId));
     }
 
     /// <summary>保留的旧事件增量处理方法，当前未被调用；按增删移事件修改对应格子，不重建列表。</summary>

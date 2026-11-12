@@ -206,7 +206,8 @@ public sealed class RoleInfoCtrl : CtrlBase
                     info.CritDamage + "%", info.CritDamageReduce + "%",
                     info.HealStrength.ToString(), info.HealBonus + "%",
                     info.ZhuXin.ToString(), info.JianRen.ToString()
-                }
+                },
+                AdvancedValues = BuildAdvancedValues(info)
             });
         }
         if (_skillWindow != null)
@@ -214,6 +215,31 @@ public sealed class RoleInfoCtrl : CtrlBase
             // 当前协议尚无独立技能点字段，沿用旧界面使用角色等级的表现。
             _skillWindow.SetHeader(jobName, roleInfo.BaseInfo.Level);
         }
+    }
+
+    /// <summary>按固定顺序把服务器高级属性转换成一位小数正文，未配置项显示 0.0。</summary>
+    /// <param name="info">服务器下发的角色基础信息，包含已结算的高级属性。</param>
+    /// <returns>与 RoleAttributeViewData.AdvancedEntries 同序的展示正文。</returns>
+    private static string[] BuildAdvancedValues(RoleBaseInfo info)
+    {
+        // 高级属性静态定义表，长度即 44 项，顺序与协议编号一致。
+        RoleAttributeViewData.AdvancedEntry[] entries = RoleAttributeViewData.AdvancedEntries;
+        string[] values = new string[entries.Length];
+        for (int index = 0; index < entries.Length; index++)
+        {
+            // 当前项的编号与展示单位。
+            RoleAttributeViewData.AdvancedEntry entry = entries[index];
+            // 面板只下发非零项，缺失按 0 处理。
+            double value = 0d;
+            info.AdvancedAttributes.TryGetValue(entry.Id, out value);
+            if (entry.IsPercent)
+            {
+                values[index] = value.ToString("F1") + "%";
+                continue;
+            }
+            values[index] = value.ToString("F1");
+        }
+        return values;
     }
 
     /// <summary>把当前穿戴背包转换成装备槽展示列表。</summary>

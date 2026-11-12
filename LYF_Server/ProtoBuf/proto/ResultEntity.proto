@@ -153,6 +153,8 @@ message RoleBaseInfo{
 	string pos = 30;             //地图世界坐标，使用 X_Y_Z 下划线连接的文本
 	int32 map_id = 31;           //地图ID
 	int32 instance_id = 32;      //副本实例ID，0 表示公共场景；同一地图内不同队伍分属不同实例
+	// 高级属性：键为 GeneAttributeType 的 101 至 144，值缺省 0；只下发非零项。
+	map<int32, double> advanced_attributes = 33;
 }
 
 // 队伍成员基础信息，对应 RO TeamData.memberList 的单条记录。

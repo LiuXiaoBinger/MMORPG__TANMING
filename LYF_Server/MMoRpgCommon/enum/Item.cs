@@ -101,6 +101,7 @@ public enum ItemEnum
     DIAMOND = 103,      ///> 钻石
     Coin104 = 104,      ///> 免费钻石
     QQ_POINT = 105,  //QQ点 （暂时只有程序测试直购使用）
+    SILVER_TICKET = 106,   ///> 银票，独立于铜币、银子和元宝的第四种货币
     BOLI_COIN = 110,   //跑商用波利币
 
     EXP = 201,			///> 经验

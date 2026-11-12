@@ -42,12 +42,9 @@ public class KnapsackWindow : WindowBase
     // 视口外额外创建的缓冲行数，补足边缘显示；首行变化时仍会重绑活跃格子。
     [SerializeField, Header("虚拟列表缓冲行"), Min(0)] private int _bufferRowCount = 1;
 
-    // 顶部货币显示
-    /// <summary>预留金币文本，本文件当前未向它写入数值。</summary>
-    [SerializeField, Header("金币")] private TMP_Text _texGold;
-
-    /// <summary>预留灵石文本，本文件当前未向它写入数值。</summary>
-    [SerializeField, Header("灵石")] private TMP_Text _texLs;
+    // 顶部货币显示：铜币、银子、银票、元宝四格，顺序与预制体从左到右一致。
+    /// <summary>四格货币数值文本，下标 0~3 依次为铜币、银子、银票、元宝。</summary>
+    [SerializeField, Header("货币数值")] private TMP_Text[] _moneyValues;
 
     // ============================================================
     // 二、背包分类 Tab 按钮
@@ -407,6 +404,38 @@ public class KnapsackWindow : WindowBase
     // ============================================================
     // 十三、滚动刷新：虚拟列表的核心
     // ============================================================
+
+    #region 货币显示
+    /// <summary>把四格货币余额写入顶部文本，只改文字不做任何换算。</summary>
+    /// <param name="copper">铜币数量，对应虚拟物品 101。</param>
+    /// <param name="silver">银子数量，对应虚拟物品 102。</param>
+    /// <param name="ticket">银票数量，对应虚拟物品 106。</param>
+    /// <param name="yuanbao">元宝数量，对应虚拟物品 103。</param>
+    public void RenderMoney(long copper, long silver, long ticket, long yuanbao)
+    {
+        SetMoneyText(0, copper);
+        SetMoneyText(1, silver);
+        SetMoneyText(2, ticket);
+        SetMoneyText(3, yuanbao);
+    }
+
+    /// <summary>按格号写单个货币文本，预制体缺项或多余下标时静默跳过。</summary>
+    /// <param name="index">格号 0~3，依次为铜币、银子、银票、元宝。</param>
+    /// <param name="value">该币种的真实数量。</param>
+    private void SetMoneyText(int index, long value)
+    {
+        if (_moneyValues == null || index >= _moneyValues.Length)
+        {
+            return;
+        }
+        TMP_Text text = _moneyValues[index];
+        if (text == null)
+        {
+            return;
+        }
+        text.text = value.ToString();
+    }
+    #endregion
 
     #region 查询与判定
     /// <summary>

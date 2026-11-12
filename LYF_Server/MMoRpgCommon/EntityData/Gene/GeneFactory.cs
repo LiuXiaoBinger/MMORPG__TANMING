@@ -71,6 +71,52 @@ public abstract class GeneFactory
             case GeneAttributeType.MoveSpeed: return new MoveSpeedGene();
             case GeneAttributeType.DamageTaken: return new DamageTakenGene();
             case GeneAttributeType.HealingReceived: return new HealingReceivedGene();
+
+            // 高级属性共用同一个具体类，构造时传入实际属性编号。
+            case GeneAttributeType.WaterAttack: return new AdvancedAttributeGene(GeneAttributeType.WaterAttack);
+            case GeneAttributeType.PoisonAttack: return new AdvancedAttributeGene(GeneAttributeType.PoisonAttack);
+            case GeneAttributeType.FireAttack: return new AdvancedAttributeGene(GeneAttributeType.FireAttack);
+            case GeneAttributeType.WindAttack: return new AdvancedAttributeGene(GeneAttributeType.WindAttack);
+            case GeneAttributeType.YuanAttack: return new AdvancedAttributeGene(GeneAttributeType.YuanAttack);
+            case GeneAttributeType.WaterPenetration: return new AdvancedAttributeGene(GeneAttributeType.WaterPenetration);
+            case GeneAttributeType.PoisonPenetration: return new AdvancedAttributeGene(GeneAttributeType.PoisonPenetration);
+            case GeneAttributeType.FirePenetration: return new AdvancedAttributeGene(GeneAttributeType.FirePenetration);
+            case GeneAttributeType.WindPenetration: return new AdvancedAttributeGene(GeneAttributeType.WindPenetration);
+            case GeneAttributeType.YuanPenetration: return new AdvancedAttributeGene(GeneAttributeType.YuanPenetration);
+            case GeneAttributeType.WaterResistance: return new AdvancedAttributeGene(GeneAttributeType.WaterResistance);
+            case GeneAttributeType.PoisonResistance: return new AdvancedAttributeGene(GeneAttributeType.PoisonResistance);
+            case GeneAttributeType.FireResistance: return new AdvancedAttributeGene(GeneAttributeType.FireResistance);
+            case GeneAttributeType.WindResistance: return new AdvancedAttributeGene(GeneAttributeType.WindResistance);
+            case GeneAttributeType.YuanResistance: return new AdvancedAttributeGene(GeneAttributeType.YuanResistance);
+            case GeneAttributeType.WaterPenetrationCap: return new AdvancedAttributeGene(GeneAttributeType.WaterPenetrationCap);
+            case GeneAttributeType.PoisonPenetrationCap: return new AdvancedAttributeGene(GeneAttributeType.PoisonPenetrationCap);
+            case GeneAttributeType.FirePenetrationCap: return new AdvancedAttributeGene(GeneAttributeType.FirePenetrationCap);
+            case GeneAttributeType.WindPenetrationCap: return new AdvancedAttributeGene(GeneAttributeType.WindPenetrationCap);
+            case GeneAttributeType.YuanPenetrationCap: return new AdvancedAttributeGene(GeneAttributeType.YuanPenetrationCap);
+            case GeneAttributeType.YangrenPiyi: return new AdvancedAttributeGene(GeneAttributeType.YangrenPiyi);
+            case GeneAttributeType.YangrenWenchan: return new AdvancedAttributeGene(GeneAttributeType.YangrenWenchan);
+            case GeneAttributeType.YangrenWuyan: return new AdvancedAttributeGene(GeneAttributeType.YangrenWuyan);
+            case GeneAttributeType.YangrenFuji: return new AdvancedAttributeGene(GeneAttributeType.YangrenFuji);
+            case GeneAttributeType.YangrenQuzhen: return new AdvancedAttributeGene(GeneAttributeType.YangrenQuzhen);
+            case GeneAttributeType.YangrenHuadan: return new AdvancedAttributeGene(GeneAttributeType.YangrenHuadan);
+            case GeneAttributeType.YangrenLingbu: return new AdvancedAttributeGene(GeneAttributeType.YangrenLingbu);
+            case GeneAttributeType.YangrenDichen: return new AdvancedAttributeGene(GeneAttributeType.YangrenDichen);
+            case GeneAttributeType.YangrenYinfeng: return new AdvancedAttributeGene(GeneAttributeType.YangrenYinfeng);
+            case GeneAttributeType.YangrenYanling: return new AdvancedAttributeGene(GeneAttributeType.YangrenYanling);
+            case GeneAttributeType.YangrenXianming: return new AdvancedAttributeGene(GeneAttributeType.YangrenXianming);
+            case GeneAttributeType.YangrenPengxiang: return new AdvancedAttributeGene(GeneAttributeType.YangrenPengxiang);
+            case GeneAttributeType.JumangPiyi: return new AdvancedAttributeGene(GeneAttributeType.JumangPiyi);
+            case GeneAttributeType.JumangWenchan: return new AdvancedAttributeGene(GeneAttributeType.JumangWenchan);
+            case GeneAttributeType.JumangWuyan: return new AdvancedAttributeGene(GeneAttributeType.JumangWuyan);
+            case GeneAttributeType.JumangFuji: return new AdvancedAttributeGene(GeneAttributeType.JumangFuji);
+            case GeneAttributeType.JumangQuzhen: return new AdvancedAttributeGene(GeneAttributeType.JumangQuzhen);
+            case GeneAttributeType.JumangHuadan: return new AdvancedAttributeGene(GeneAttributeType.JumangHuadan);
+            case GeneAttributeType.JumangLingbu: return new AdvancedAttributeGene(GeneAttributeType.JumangLingbu);
+            case GeneAttributeType.JumangDichen: return new AdvancedAttributeGene(GeneAttributeType.JumangDichen);
+            case GeneAttributeType.JumangYinfeng: return new AdvancedAttributeGene(GeneAttributeType.JumangYinfeng);
+            case GeneAttributeType.JumangYanling: return new AdvancedAttributeGene(GeneAttributeType.JumangYanling);
+            case GeneAttributeType.JumangXianming: return new AdvancedAttributeGene(GeneAttributeType.JumangXianming);
+            case GeneAttributeType.JumangPengxiang: return new AdvancedAttributeGene(GeneAttributeType.JumangPengxiang);
             default: throw new InvalidOperationException("未知基因属性编号：" + attribute);
         }
     }
