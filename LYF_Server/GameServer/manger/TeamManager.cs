@@ -127,16 +127,7 @@ public sealed class TeamManager
                 team.Wiped = true;
                 team.WaveSpawner.Reset();
                 frame.MonsterActions.Clear();
-                // 全灭回入口且保留死亡血量，由既有复活入口处理复活。
-                // 全灭时逐个重置本实例成员的权威位置。
-                for (int memberIndex = 0; memberIndex < team.Members.Count; memberIndex++)
-                {
-                    // 当前在线成员，掉线成员不再投递。
-                    OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[memberIndex]);
-                    if (member == null) continue;
-                    member.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(team.WaveSpawner.Flow.SpawnPosition);
-                    PublishPosition(team, new DungeonInteractRet { Success = true, InstanceId = team.InstanceId, RoleId = member.mainRoleInfo.BaseInfo.RoleId, Pos = member.mainRoleInfo.BaseInfo.Pos });
-                }
+                // 尸体留在死亡位置，只有本人点击复活并获服务端确认后才回出生点。
             }
             team.WaveSpawner.FillFlow(frame);
             bool changed = frame.Flow != null || frame.MonsterActions.Count > 0 || frame.PlayerHits.Count > 0;
@@ -144,6 +135,47 @@ public sealed class TeamManager
             changed = changed || frame.RemovedSpawnIds.Count > 0 || frame.AiNotices.Count > 0;
             changed = changed || frame.BuffChanges.Count > 0;
             if (changed) SendMonsterNotice(team, frame);
+        }
+    }
+
+    /// <summary>处理本人主动复活；保留当前实例、阶段和其他队员，只恢复死亡角色。</summary>
+    /// <param name="role">通过网关及客户端会话反查的在线角色，不能由请求载荷指定。</param>
+    public void ReviveRole(OnlineRole role)
+    {
+        // 失败只回复原连接，活人不能利用此入口补血或传送。
+        RoleReviveRet reply = new RoleReviveRet();
+        if (role.mainRoleInfo.BaseInfo.CurrHp > 0)
+        {
+            reply.Reason = "角色尚未死亡";
+            role.SendToClient(NetDefine.CMD_RoleReviveResultCode, reply.ToByteString());
+            return;
+        }
+        // 本入口只处理当前副本，出生点由实例配置决定。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team))
+        {
+            reply.Reason = "当前不在副本，无法复活";
+            role.SendToClient(NetDefine.CMD_RoleReviveResultCode, reply.ToByteString());
+            return;
+        }
+        role.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(team.WaveSpawner.Flow.SpawnPosition);
+        // 资源由现有属性组件读取最终装备加成，不把最终上限反写到裸属性。
+        RoleAttributeComponent attributes = role.GetComponent<RoleAttributeComponent>();
+        attributes.RestoreReviveResources();
+        reply.Success = true;
+        reply.BaseInfo = attributes.CalculateAttribute();
+        // 使用同一份结果向同场景实体广播，保证本人及观察者都结束死亡动作。
+        ByteString payload = reply.ToByteString();
+        // 在线角色快照保留原对象引用，不影响角色管理器维护的集合。
+        List<OnlineRole> observers = new List<OnlineRole>(RoleManager.Instance.GetOnlineRoleMap().Values);
+        // 当前观察者在快照中的零基下标。
+        for (int index = 0; index < observers.Count; index++)
+        {
+            // 只广播到相同地图及实例，不把另一队伍的角色复活到当前场景。
+            OnlineRole observer = observers[index];
+            if (observer.mainRoleInfo.BaseInfo.MapId == role.mainRoleInfo.BaseInfo.MapId &&
+                observer.mainRoleInfo.BaseInfo.InstanceId == role.mainRoleInfo.BaseInfo.InstanceId)
+                observer.SendToClient(NetDefine.CMD_RoleReviveResultCode, payload);
         }
     }
 

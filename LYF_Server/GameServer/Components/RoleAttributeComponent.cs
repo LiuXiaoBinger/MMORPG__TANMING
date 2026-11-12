@@ -110,6 +110,14 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         }
     }
 
+    /// <summary>复活入口专用：按最终装备和基因属性恢复满生命、满法力，不改变裸属性上限。</summary>
+    public void RestoreReviveResources()
+    {
+        Owner.mainRoleInfo.BaseInfo.CurrHp = MaxHp;
+        Owner.mainRoleInfo.BaseInfo.CurrMp = MaxMp;
+        ResourcesChanged = true;
+    }
+
     /// <summary>直接改变角色法力，普通资源恢复不影响已死亡角色。</summary>
     /// <param name="delta">已由具体节点算好的法力增量。</param>
     public void ChangeMp(int delta)

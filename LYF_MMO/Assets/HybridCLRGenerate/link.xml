@@ -81,6 +81,8 @@
     <type fullname="StateDefine" preserve="all" />
   </assembly>
   <assembly fullname="Network">
+    <type fullname="RoleReviveReq" preserve="all" />
+    <type fullname="RoleReviveRet" preserve="all" />
     <type fullname="BaseLink" preserve="all" />
     <type fullname="BasePackage" preserve="all" />
     <type fullname="BuyShopItem" preserve="all" />

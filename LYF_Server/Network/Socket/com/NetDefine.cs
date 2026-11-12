@@ -97,6 +97,10 @@ public class NetDefine
     public const ushort CMD_DungeonInteractResultCode = 11241;
     /// <summary>副本原NPC对话命令向当前实例SceneAI发送具名事件。</summary>
     public const ushort CMD_DungeonCommandEventCode = 11242;
+    /// <summary>死亡角色主动点击返回出生点复活。</summary>
+    public const ushort CMD_RoleReviveCode = 11243;
+    /// <summary>服务端确认的复活结果及角色完整属性。</summary>
+    public const ushort CMD_RoleReviveResultCode = 11244;
     /// <summary>创建队伍请求，对应 RO TeamMgr.lua RequestCreateTeam。</summary>
     public const ushort CMD_CreateTeamCode = 11200;
     /// <summary>邀请他人入队请求，对应 RO TeamMgr.lua InviteJoinTeam。</summary>

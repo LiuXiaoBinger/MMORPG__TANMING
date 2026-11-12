@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `2dde0a49c98a6b783c939281430a93c0f9d5cc6c626c5d415664c28fcc5b321c`
+Source normalized SHA256: `4959f0b4bd3061895b26912051134d4205e837bd5ebe1493334c24a4a8c63459`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -65,11 +65,12 @@ Source normalized SHA256: `2dde0a49c98a6b783c939281430a93c0f9d5cc6c626c5d415664c
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Per-scene monster battle resources | 462-470 |
 | [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Equipment special-skill catalog, sockets and gene activation | 471-477 |
 | [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Equipment special-skill audit and combat integration | 478-484 |
-| [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters | 485-489 |
+| [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters | 485-490 |
+| [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-498 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `75c7229deef5ce511a2c7aebe6eba8850f3c37ce4c1e6ec3e12a069fad31d725`
+Source normalized SHA256: `6da2a320f0ad8fd6b2cbc86285183fb5abc47cafcaae9058624ef650804fcbea`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -126,7 +127,8 @@ Source normalized SHA256: `75c7229deef5ce511a2c7aebe6eba8850f3c37ce4c1e6ec3e12a0
 | [VERIFY][副本][怪物AI][DUNGEON-BATTLE-CONFIG-20261109] Configured battle loading and Moshenta regression | 490-498 |
 | [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Catalog and equipment instance acceptance | 499-505 |
 | [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Production combat entry acceptance | 506-512 |
-| [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] Unified component and existing dungeon combat acceptance | 513-517 |
+| [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] Unified component and existing dungeon combat acceptance | 513-518 |
+| [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-526 |
 
 ## Docs/AI/DECISIONS.en.md
 

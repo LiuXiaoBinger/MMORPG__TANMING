@@ -74,6 +74,9 @@ namespace GateServer
             // 原对话命令沿现有网关转发保持真实复合会话身份。
             server.RegistCommand(NetDefine.CMD_DungeonCommandEventCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_DungeonInteractResultCode, gateMoveCtrl);
+            // 复活沿用真实复合会话转发，网关不恢复生命或修改坐标。
+            server.RegistCommand(NetDefine.CMD_RoleReviveCode, gateMoveCtrl);
+            client.RegistCommand(NetDefine.CMD_RoleReviveResultCode, gateMoveCtrl);
             client.RegistCommand(NetDefine.CMD_SyncMoveCode, gateMoveCtrl);
             // 队伍与副本入场：6 条上行原样转给游戏服，4 条下行按 Unity 会话回发。
             // 网关只做会话寻址，队伍状态与实例分配全部由 GameServer 权威决定。

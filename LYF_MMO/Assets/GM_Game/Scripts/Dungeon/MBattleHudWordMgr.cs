@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.Sprites;
 using UnityEngine.UI;
 
-/// <summary>魔神塔普通伤害的 HUD 网格，沿用 RO 的 MBattleHudWordMgr.AddDraw 和 Hurt_Normal_Attack 表现。</summary>
+/// <summary>副本伤害的 HUD 网格，沿用 RO 的普通攻击、玩家受伤和暴击数字表现。</summary>
 public sealed class MBattleHudWordMgr : MaskableGraphic
 {
     /// <summary>一次真实命中的绘制数据，数字在命中时确定，离场或经过寿命后释放。</summary>
     private struct Draw
     {
-        /// <summary>受击实体在当前 SceneWorld 中的唯一编号，用来错开同时命中同一怪物的数字。</summary>
+        /// <summary>受击实体在当前 SceneWorld 中的唯一编号，用来错开同时命中同一实体的数字。</summary>
         public ulong entityUid;
-        /// <summary>命中时怪物头顶的世界坐标，单位米，后续随相机重新投影。</summary>
+        /// <summary>命中时受击者头顶的世界坐标，单位米，后续随相机重新投影。</summary>
         public Vector3 originWorldPos;
-        /// <summary>攻击者指向怪物的屏幕单位方向的水平分量。</summary>
+        /// <summary>攻击者指向受击者的屏幕单位方向的水平分量。</summary>
         public float originDirX;
         /// <summary>服务端实际扣血点数转成的十进制数字。</summary>
         public string context;
@@ -29,17 +29,21 @@ public sealed class MBattleHudWordMgr : MaskableGraphic
 
     /// <summary>RO FontType.Normal 按字符 0 到 9 排列的十张 Sprite。</summary>
     [SerializeField] private Sprite[] fontSprites;
-    /// <summary>Hurt_Normal_Attack 的显示总时长，单位秒。</summary>
+    /// <summary>玩家普通受伤使用的 Hurt_Hit 子网格，绑定 RO 红色渐变和原运动曲线。</summary>
+    [SerializeField] private MBattleHudWordMgr playerHitWord;
+    /// <summary>玩家暴击受伤使用的 Hurt_Crit 子网格，绑定 RO 黄色渐变和原运动曲线。</summary>
+    [SerializeField] private MBattleHudWordMgr criticalHitWord;
+    /// <summary>当前 RO 数字样式的显示总时长，单位秒。</summary>
     [SerializeField] private float _lifeTime;
     /// <summary>按攻击方向横向漂移的 RO 速度，乘以 100 后为画布参考像素每秒。</summary>
     [SerializeField] private float _speed;
     /// <summary>原数字缩放曲线的整体倍率。</summary>
     [SerializeField] private float _scaleSize;
-    /// <summary>原普通命中先上浮再回落的高度曲线，保留 RO 的关键帧和切线。</summary>
+    /// <summary>当前样式先上浮再回落的高度曲线，保留 RO 的关键帧和切线。</summary>
     [SerializeField] private AnimationCurve _yCurve;
-    /// <summary>原普通伤害由大缩小的缩放曲线。</summary>
+    /// <summary>当前 RO 伤害数字由大缩小的缩放曲线。</summary>
     [SerializeField] private AnimationCurve _scaleCurve;
-    /// <summary>原普通数字的顶点颜色和透明度随时间的渐变。</summary>
+    /// <summary>当前 RO 数字的顶点颜色和透明度渐变，分别承载普通白字、受伤红字或暴击黄字。</summary>
     [SerializeField] private Gradient _colorGradient;
     /// <summary>本场景尚未播完的数字，按收到命中的顺序提交给同一画布网格。</summary>
     private readonly List<Draw> drawList = new List<Draw>();
@@ -47,11 +51,28 @@ public sealed class MBattleHudWordMgr : MaskableGraphic
     /// <summary>CanvasRenderer 使用已提取材质绑定的 Fonts.png 采样各数字的 UV。</summary>
     public override Texture mainTexture { get { return material.mainTexture; } }
 
-    /// <summary>从怪物头顶发起一条普通伤害跳字，方向沿用 RO 从施害者指向受击者的投影。</summary>
-    /// <param name="target">已经绑定模型的受击怪物，致死一击也使用它的头顶位置。</param>
+    /// <summary>按受击者身份和服务端暴击标记选择 RO 数字表现，怪物仍使用原普通攻击网格。</summary>
+    /// <param name="target">已经绑定模型的受击实体，致死一击也使用它的头顶位置。</param>
     /// <param name="firerPosition">本次命中时服务端记录的施害者世界坐标，单位米。</param>
-    /// <param name="damage">本次对该怪物实际扣除的正整数生命值。</param>
-    public void AddDraw(MonsterEntity target, Vector3 firerPosition, int damage)
+    /// <param name="damage">服务端本次实际结算的正整数伤害，不在客户端重新计算。</param>
+    /// <param name="critical">服务端暴击结果；仅用于选择玩家受伤的数字样式。</param>
+    public void AddDraw(MEntity target, Vector3 firerPosition, int damage, bool critical = false)
+    {
+        if (damage <= 0) return;
+        if (target is RoleEntity)
+        {
+            if (critical) criticalHitWord.AddDrawValue(target, firerPosition, damage);
+            else playerHitWord.AddDrawValue(target, firerPosition, damage);
+            return;
+        }
+        AddDrawValue(target, firerPosition, damage);
+    }
+
+    /// <summary>向已经选定样式的网格追加一次伤害，子网格不再次进行样式分流。</summary>
+    /// <param name="target">命中时仍存在于实体世界的受击者。</param>
+    /// <param name="firerPosition">施害者世界位置，单位米。</param>
+    /// <param name="damage">本次需要显示的服务端伤害点数。</param>
+    private void AddDrawValue(MEntity target, Vector3 firerPosition, int damage)
     {
         // 世界相机用于确定该观察者眼里的受击方向。
         Camera worldCamera = Camera.main;
@@ -70,7 +91,7 @@ public sealed class MBattleHudWordMgr : MaskableGraphic
             width += sprite.rect.width - sprite.border.x - sprite.border.z;
         }
 
-        // 同一帧可能收到多名队员的结算，从该怪物上一条数字起播时刻向后错开。
+        // 同一帧可能收到多次结算，从该受击者上一条数字起播时刻向后错开。
         float startTime = Time.time;
         for (int index = drawList.Count - 1; index >= 0; index--)
         {
@@ -91,11 +112,12 @@ public sealed class MBattleHudWordMgr : MaskableGraphic
     }
 
     /// <summary>在命中帧取模型可见蒙皮的最高点，悬浮怪的碰撞高度可能低于它的头顶。</summary>
-    /// <param name="target">已由魔神塔绑定正式模型与准备数据的怪物。</param>
-    private static Vector3 GetHeadPosition(MonsterEntity target)
+    /// <param name="target">受击实体；角色使用实体身高，怪物使用原准备数据中的蒙皮高度。</param>
+    private static Vector3 GetHeadPosition(MEntity target)
     {
         // 没有启用蒙皮的模型沿用实体高度，位置以世界米计。
         Vector3 head = target.Position + Vector3.up * target.Height;
+        if (target is RoleEntity) return head;
         // 复用模型准备数据里的蒙皮列表，无需在命中时重新遍历节点或烘焙网格。
         SkinnedMeshRenderer[] skins = target.Model.GameObject.NativeObject.GetComponent<MModelPrepareData>().SkinnedMeshRenderers;
         for (int index = 0; index < skins.Length; index++)

@@ -206,29 +206,31 @@ public static partial class ResultEntityReflection {
           "FgoOdGFyZ2V0X3JvbGVfaWQYAiABKAUSFwoPY2FzdGVyX3NwYXduX2lkGAMg",
           "ASgEEg8KB2J1ZmZfaWQYBCABKAUSFAoMcmVtYWluaW5nX21zGAUgASgFEg8K",
           "B3JlbW92ZWQYBiABKAgSGAoQYnVmZl9pbnN0YW5jZV9pZBgHIAEoBCImChZE",
-          "dW5nZW9uQ29tbWFuZEV2ZW50UmVxEgwKBG5hbWUYASABKAkqvQUKB0NtZENv",
-          "ZGUSCwoHU3VjY2VlZBAAEg0KCUFjY3RFeGlzdBABEg8KC1NlcnZlckVycm9y",
-          "EAISEAoMQWNjdE5vdEV4aXN0EAMSEQoNUGFzc3dvcmRFcnJvchAEEg8KC0Fj",
-          "Y3REaXNhYmxlEAUSEQoNUmVxUGFyYW1FcnJvchAGEhEKDU5pY2tuYW1lRXhp",
-          "c3QQBxITCg9Vc2VyTmFtZUlsbGVnYWwQCBITCg9QaG9uZU51bUlsbGVnYWwQ",
-          "CRITCg9QYXNzd29yZElsbGVnYWwQChISCg5Vc2VyT2Z0ZW5Mb2dpbhALEg8K",
-          "C1ZhcmlmeUVycm9yEAwSEAoMUm9sZU5vdEV4aXN0EA0SEwoPRmVhdHVyZU5v",
-          "dFJlYWR5EA4SFAoQRHVwbGljYXRlUmVxdWVzdBAPEhUKEU5vdEVub3VnaEN1",
-          "cnJlbmN5EBASFAoQU2hvcEl0ZW1Ob3RGb3VuZBAREhgKFFB1cmNoYXNlTGlt",
-          "aXRSZWFjaGVkEBISCwoHQmFnRnVsbBATEhIKDkludmFsaWRTZXNzaW9uEBQS",
-          "EwoPSW52YWxpZFF1YW50aXR5EBUSDwoLSW52YWxpZFNob3AQFhIVChFUcmFu",
-          "c2FjdGlvbkZhaWxlZBAXEhUKEUluc3VmZmljaWVudEl0ZW1zEBgSGQoVSW5j",
-          "b3JyZWN0QmFja3BhY2tUeXBlEBkSEAoMSXRlbU5vdEV4aXN0EBoSEQoNSXRl",
-          "bU5vdEVub3VnaBAbEhMKD1NraWxsTm90TGVhcm5lZBAcEhYKElNraWxsQ29u",
-          "ZmlnTWlzc2luZxAdEhMKD1NraWxsT25Db29sZG93bhAeEhcKE1NraWxsSW5z",
-          "dWZmaWNpZW50TXAQHxIVChFTa2lsbFN0YXRlQmxvY2tlZBAgEhoKFlNraWxs",
-          "VGFyZ2V0VW5zdXBwb3J0ZWQQISqlAQoSTW9uc3RlckFjdGlvblBoYXNlEhoK",
-          "Fk1vbnN0ZXJBY3Rpb25QaGFzZUlkbGUQABIaChZNb25zdGVyQWN0aW9uUGhh",
-          "c2VNb3ZlEAESHAoYTW9uc3RlckFjdGlvblBoYXNlQXR0YWNrEAISGgoWTW9u",
-          "c3RlckFjdGlvblBoYXNlRGVhZBADEh0KGU1vbnN0ZXJBY3Rpb25QaGFzZVNp",
-          "bmdpbmcQBCpjCg5FcXVpcE9wZXJhdGlvbhIICgROb25lEAASCAoEV2VhchAB",
-          "EgsKB1Rha2VPZmYQAhIWChJTd2l0Y2hTcGVjaWFsU2tpbGwQAxIYChRPcGVu",
-          "U3BlY2lhbFNraWxsU2xvdBAEYgZwcm90bzM="));
+          "dW5nZW9uQ29tbWFuZEV2ZW50UmVxEgwKBG5hbWUYASABKAkiDwoNUm9sZVJl",
+          "dml2ZVJlcSJSCg1Sb2xlUmV2aXZlUmV0Eg8KB3N1Y2Nlc3MYASABKAgSDgoG",
+          "cmVhc29uGAIgASgJEiAKCWJhc2VfaW5mbxgDIAEoCzINLlJvbGVCYXNlSW5m",
+          "byq9BQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4aXN0EAESDwoL",
+          "U2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1QYXNzd29yZEVy",
+          "cm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVycm9yEAYSEQoN",
+          "Tmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAIEhMKD1Bob25l",
+          "TnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIKDlVzZXJPZnRl",
+          "bkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90RXhpc3QQDRIT",
+          "Cg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1ZXN0EA8SFQoR",
+          "Tm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZvdW5kEBESGAoU",
+          "UHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMSEgoOSW52YWxp",
+          "ZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJbnZhbGlkU2hv",
+          "cBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZmaWNpZW50SXRl",
+          "bXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJdGVtTm90RXhp",
+          "c3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RMZWFybmVkEBwS",
+          "FgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNvb2xkb3duEB4S",
+          "FwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3RhdGVCbG9ja2Vk",
+          "ECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhKqUBChJNb25zdGVyQWN0",
+          "aW9uUGhhc2USGgoWTW9uc3RlckFjdGlvblBoYXNlSWRsZRAAEhoKFk1vbnN0",
+          "ZXJBY3Rpb25QaGFzZU1vdmUQARIcChhNb25zdGVyQWN0aW9uUGhhc2VBdHRh",
+          "Y2sQAhIaChZNb25zdGVyQWN0aW9uUGhhc2VEZWFkEAMSHQoZTW9uc3RlckFj",
+          "dGlvblBoYXNlU2luZ2luZxAEKmMKDkVxdWlwT3BlcmF0aW9uEggKBE5vbmUQ",
+          "ABIICgRXZWFyEAESCwoHVGFrZU9mZhACEhYKElN3aXRjaFNwZWNpYWxTa2ls",
+          "bBADEhgKFE9wZW5TcGVjaWFsU2tpbGxTbG90EARiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), typeof(global::MonsterActionPhase), typeof(global::EquipOperation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -287,7 +289,9 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "BaseInfo", "GenesFull", "Genes", "GeneScenario" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleGeneData), global::RoleGeneData.Parser, new[]{ "GeneId", "SourceId", "SourceSlot", "FirerId", "StackCount", "RemainingMs", "Removed", "Name", "EffectType", "AttributeId", "State", "RemainingTriggers", "TriggerEvent", "Children", "Scenario" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MonsterBuffData), global::MonsterBuffData.Parser, new[]{ "TargetSpawnId", "TargetRoleId", "CasterSpawnId", "BuffId", "RemainingMs", "Removed", "BuffInstanceId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::DungeonCommandEventReq), global::DungeonCommandEventReq.Parser, new[]{ "Name" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::DungeonCommandEventReq), global::DungeonCommandEventReq.Parser, new[]{ "Name" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleReviveReq), global::RoleReviveReq.Parser, null, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleReviveRet), global::RoleReviveRet.Parser, new[]{ "Success", "Reason", "BaseInfo" }, null, null, null, null)
         }));
   }
   #endregion
@@ -21873,6 +21877,463 @@ public sealed partial class DungeonCommandEventReq : pb::IMessage<DungeonCommand
           break;
         case 10: {
           Name = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 复活只作用于请求连接绑定的角色；客户端不提交角色编号或位置。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class RoleReviveReq : pb::IMessage<RoleReviveReq>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<RoleReviveReq> _parser = new pb::MessageParser<RoleReviveReq>(() => new RoleReviveReq());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<RoleReviveReq> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[56]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveReq() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveReq(RoleReviveReq other) : this() {
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveReq Clone() {
+    return new RoleReviveReq(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as RoleReviveReq);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(RoleReviveReq other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(RoleReviveReq other) {
+    if (other == null) {
+      return;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 成功结果向同场景角色广播；失败只回复请求者。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class RoleReviveRet : pb::IMessage<RoleReviveRet>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<RoleReviveRet> _parser = new pb::MessageParser<RoleReviveRet>(() => new RoleReviveRet());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<RoleReviveRet> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ResultEntityReflection.Descriptor.MessageTypes[57]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveRet() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveRet(RoleReviveRet other) : this() {
+    success_ = other.success_;
+    reason_ = other.reason_;
+    baseInfo_ = other.baseInfo_ != null ? other.baseInfo_.Clone() : null;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public RoleReviveRet Clone() {
+    return new RoleReviveRet(this);
+  }
+
+  /// <summary>Field number for the "success" field.</summary>
+  public const int SuccessFieldNumber = 1;
+  private bool success_;
+  /// <summary>
+  ///服务端是否完成复活
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Success {
+    get { return success_; }
+    set {
+      success_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 2;
+  private string reason_ = "";
+  /// <summary>
+  ///拒绝复活的可读原因
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "base_info" field.</summary>
+  public const int BaseInfoFieldNumber = 3;
+  private global::RoleBaseInfo baseInfo_;
+  /// <summary>
+  ///包含最终装备属性、恢复后的资源和权威出生坐标
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::RoleBaseInfo BaseInfo {
+    get { return baseInfo_; }
+    set {
+      baseInfo_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as RoleReviveRet);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(RoleReviveRet other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Success != other.Success) return false;
+    if (Reason != other.Reason) return false;
+    if (!object.Equals(BaseInfo, other.BaseInfo)) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (Success != false) hash ^= Success.GetHashCode();
+    if (Reason.Length != 0) hash ^= Reason.GetHashCode();
+    if (baseInfo_ != null) hash ^= BaseInfo.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (Success != false) {
+      output.WriteRawTag(8);
+      output.WriteBool(Success);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (baseInfo_ != null) {
+      output.WriteRawTag(26);
+      output.WriteMessage(BaseInfo);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (Success != false) {
+      output.WriteRawTag(8);
+      output.WriteBool(Success);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (baseInfo_ != null) {
+      output.WriteRawTag(26);
+      output.WriteMessage(BaseInfo);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (Success != false) {
+      size += 1 + 1;
+    }
+    if (Reason.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (baseInfo_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(BaseInfo);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(RoleReviveRet other) {
+    if (other == null) {
+      return;
+    }
+    if (other.Success != false) {
+      Success = other.Success;
+    }
+    if (other.Reason.Length != 0) {
+      Reason = other.Reason;
+    }
+    if (other.baseInfo_ != null) {
+      if (baseInfo_ == null) {
+        BaseInfo = new global::RoleBaseInfo();
+      }
+      BaseInfo.MergeFrom(other.BaseInfo);
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          Success = input.ReadBool();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+        case 26: {
+          if (baseInfo_ == null) {
+            BaseInfo = new global::RoleBaseInfo();
+          }
+          input.ReadMessage(BaseInfo);
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          Success = input.ReadBool();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+        case 26: {
+          if (baseInfo_ == null) {
+            BaseInfo = new global::RoleBaseInfo();
+          }
+          input.ReadMessage(BaseInfo);
           break;
         }
       }

@@ -63,9 +63,9 @@ public class MSceneDungeon : MonoBehaviour
         if (UIRoot.Instance != null && instanceId != 0UL && !string.IsNullOrEmpty(Resource.hitWordResource))
         {
             // 预制体保存十张原始数字 Sprite、材质和 RO 普攻曲线，显示在功能窗口下方。
-            GameObject prefab = Resources.Load<GameObject>(Resource.hitWordResource);
-            battleHudWord = Instantiate(prefab, UIRoot.Instance._canvas.transform, false).GetComponent<MBattleHudWordMgr>();
-            battleHudWord.transform.SetAsFirstSibling();
+            // 热更组件从已收集的 YooAsset 预制体加载，避免 Player 内置 Resources 丢失脚本绑定。
+            ResourceMgr.Instance.LoadPrefabAsync("Assets/GM_Game/Resources/" + Resource.hitWordResource + ".prefab",
+                OnBattleHudLoaded);
         }
         // 读取本次入场 SceneID 的资源，不能沿用另一副本的波次或怪物目录。
         catalog = ROSceneCreatureCatalog.Load(Resource.creatureResource);
@@ -453,12 +453,26 @@ public class MSceneDungeon : MonoBehaviour
         world.RemoveEntity(monster.UID);
     }
 
-    /// <summary>真实命中回包驱动原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
+    /// <summary>将异步加载的伤害数字挂到当前副本的 HUD，句柄由既有资源管理器持有。</summary>
+    /// <param name="hudObject">YooAsset 实例化的完整数字预制体，包含普通攻击、玩家受伤和暴击网格。</param>
+    private void OnBattleHudLoaded(GameObject hudObject)
+    {
+        if (this == null)
+        {
+            Destroy(hudObject);
+            return;
+        }
+        battleHudWord = hudObject.GetComponent<MBattleHudWordMgr>();
+        battleHudWord.transform.SetParent(UIRoot.Instance._canvas.transform, false);
+        battleHudWord.transform.SetAsFirstSibling();
+    }
+
+    /// <summary>真实命中回包驱动伤害数字及原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
     /// <param name="hit">含原技能、结果序号和暴击的服务器结算。</param>
     private void OnMonsterPlayerHit(MonsterPlayerHitData hit)
     {
         if (instanceId != TeamData.Instance.DungeonInstanceId) return;
-        if (hit.SkillId == 0 || hit.Damage <= 0) return;
+        if (hit.Damage <= 0) return;
         // 原目标角色身份与SceneWorld实体UID不同，沿正式角色索引查找。
         RoleEntity target = world.LocalRole;
         if (target == null || target.GetID() != hit.TargetRoleId)
@@ -467,7 +481,16 @@ public class MSceneDungeon : MonoBehaviour
         }
         // 命中效果归对应怪物宿主持有，副本离开和怪物回收会同时释放。
         MEntity caster;
-        if (!monsters.TryGetValue(hit.SpawnId, out caster)) return;
+        // 数字只依赖权威命中和受击者；施害者模型晚加载或已移除时仍能显示伤害。
+        bool hasCaster = monsters.TryGetValue(hit.SpawnId, out caster);
+        if (target.Model.IsLoaded && battleHudWord != null)
+        {
+            // 有施害者时沿真实攻击方向漂移，模型缺失时从受击者位置向上显示。
+            Vector3 firerPosition = target.Position;
+            if (hasCaster) firerPosition = caster.Position;
+            battleHudWord.AddDraw(target, firerPosition, hit.Damage, hit.Critical);
+        }
+        if (!hasCaster || hit.SkillId == 0) return;
         // 原NPC也可能参与剧情技能，仍使用同一结算表现入口。
         MSceneNpcHoster npc = caster.GetEntityCtrl() as MSceneNpcHoster;
         if (npc != null) npc.PlayResult(hit, target);

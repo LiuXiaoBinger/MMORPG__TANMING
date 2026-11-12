@@ -26,7 +26,8 @@ public enum WindowType
     ThemeDungeonTeamWindow, // RO 全队进入副本的确认窗口。
     DungeonFlowWindow, // 服务端副本目标与附近门户、采集交互窗口。
     EquipmentDetailWindow, // 装备实例属性、特技和穿脱操作窗口。
-    MoshentaBlackCurtainWindow // 魔神塔原20002剧情黑幕，沿主界面窗口生命周期显示。
+    MoshentaBlackCurtainWindow, // 魔神塔原20002剧情黑幕，沿主界面窗口生命周期显示。
+    DeathWindow // 副本死亡提示，点击后请求服务端返回出生点复活。
 }
 
 /// <summary>

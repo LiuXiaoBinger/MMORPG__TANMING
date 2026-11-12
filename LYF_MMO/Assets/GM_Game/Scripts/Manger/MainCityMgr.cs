@@ -1,4 +1,4 @@
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using System.Collections.Generic;
 using System.Globalization;
 using MMoRpgCommon.SceneEntity;
@@ -13,6 +13,9 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>角色模型共用的动画控制器资源地址，包含待机、四向移动及常用动作的替换位置。</summary>
    private const string RoleAnimatorControllerLocation =
       "Assets/artres/Resources/Controller/MAnimator.controller";
+
+   /// <summary>副本角色低于本场景出生点的最大允许距离，单位米；超过后回到出生点。</summary>
+   private const float DungeonFallResetDistance = 100f;
 
    /// <summary>主城管理器单例。</summary>
    public static MainCityMgr Instance;
@@ -77,11 +80,45 @@ public class MainCityMgr : MonoBehaviour
       }
    }
 
-   /// <summary>每帧尝试补上延迟启用的 Global 事件订阅，兼容测试场景后启用 Global 的时序。</summary>
+   /// <summary>补齐角色订阅和表现，并将跌出副本出生点下方一百米的主角送回出生点。</summary>
    private void Update()
    {
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
+      RecoverFallenDungeonRole();
+   }
+
+   /// <summary>仅检查已加载副本的本地主角，复用出生定位和原有移动同步，不重复发送进场请求。</summary>
+   private void RecoverFallenDungeonRole()
+   {
+      if (_localRoleSpawnPoint == null || SceneMgr.Instance._currentSceneType != SceneType.Scene_Dungeon)
+      {
+         return;
+      }
+      // 全局世界可能仍在首次装载，角色实际创建后再检查其高度。
+      SceneWorldSystem world = Global.Instance.SceneWorld;
+      if (world == null)
+      {
+         return;
+      }
+      // 当前客户端唯一的本地主角；模型尚未加载时没有可恢复的场景位置。
+      PlayerEntity localRole = world.LocalRole;
+      if (localRole == null || !localRole.Model.IsLoaded)
+      {
+         return;
+      }
+      // 尸体留在死亡位置，等待玩家主动选择复活；一百米保护仅用于存活角色。
+      if (localRole.BaseInfo.CurrHp <= 0) return;
+      if (localRole.Position.y >= _localRoleSpawnPoint.position.y - DungeonFallResetDistance)
+      {
+         return;
+      }
+      // 取消旧路线和方向，结束跳跃以清除累计下落速度，恢复正常贴地速度。
+      localRole.NavComp.Interrupt(false);
+      localRole.MoveComp.StopHorizontalMovement();
+      localRole.MoveComp.EndJump();
+      // 既有定位同步模型和实体坐标；进场标记已设置，不会重发进场协议。
+      PlaceExistingLocalRole(localRole);
    }
 
    /// <summary>注销主城网络消息并释放单例引用。</summary>

@@ -12,7 +12,7 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
         return source == GameCommandSource.CenterServer && commandCode == NetDefine.CMD_RoleKnapsackInfoCode;
     }
 
-    /// <summary>装载角色背包和次数数据，全部完成后才允许在线业务改动物品并产生存档。</summary>
+    /// <summary>首次装载背包和次数，按装备最终上限初始化活人资源，再允许正常在线业务。</summary>
     /// <param name="context">中心服消息上下文。</param>
     public void OnCall(GameMessageHandlerContext context)
     {
@@ -95,5 +95,10 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
         }
         // 已穿戴装备从存档恢复后再计算效果，裸属性不写入装备加成。
         role.GetComponent<RoleEquipComponent>().OnEquipChange();
+        // 首次登录在装备生效后补满当前资源；既有资源接口不会恢复已死亡角色。
+        // CompleteRoleDataLoad 只成功一次，重复背包回包及普通换装不会进入此处补血。
+        role.AttrComp.ChangeHp(role.AttrComp.MaxHp, (ulong)role.GetID());
+        role.AttrComp.ChangeMp(role.AttrComp.MaxMp);
+        role.AttrComp.NotifyAttributeUpdate();
     }
 }

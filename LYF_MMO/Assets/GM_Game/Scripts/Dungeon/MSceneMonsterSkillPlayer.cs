@@ -518,7 +518,9 @@ public sealed class MSceneMonsterSkillPlayer
     public void RestoreSpeed()
     {
         if (!ownsSpeed) return;
-        monster.Model.Ator.Speed = previousSpeed;
+        // 全灭回收先清空实体模型，帧末才执行宿主 OnDestroy；已释放模型不再恢复倍率。
+        if (monster.Model != null && monster.Model.Ator != null)
+            monster.Model.Ator.Speed = previousSpeed;
         ownsSpeed = false;
     }
 

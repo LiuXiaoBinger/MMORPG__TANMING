@@ -15,6 +15,11 @@ public class MainView : UIBase
    /// <summary>提供给TeamCtrl的强类型黑幕展示入口。</summary>
    public MoshentaBlackCurtainWindow MoshentaBlackCurtainWindow => _moshentaBlackCurtainWindow;
 
+   /// <summary>副本死亡提示与返回出生点复活窗口，引用保存在UIRoot预制体。</summary>
+   [SerializeField] private DeathWindow _deathWindow;
+   /// <summary>提供给死亡控制器的正式窗口。</summary>
+   public DeathWindow DeathWindow => _deathWindow;
+
    /// <summary>服务端副本目标及附近交互窗口，生命周期跟随主视图。</summary>
    [SerializeField] private DungeonFlowWindow _dungeonFlowWindow;
    /// <summary>供副本控制器绑定正式窗口。</summary>
@@ -215,6 +220,8 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      windowDic[WindowType.DeathWindow] = _deathWindow;
+      _deathWindow.InitWindow();
       windowDic[WindowType.MoshentaBlackCurtainWindow] = _moshentaBlackCurtainWindow;
       _moshentaBlackCurtainWindow.InitWindow();
       windowDic[WindowType.EquipmentDetailWindow] = _equipmentDetailWindow;

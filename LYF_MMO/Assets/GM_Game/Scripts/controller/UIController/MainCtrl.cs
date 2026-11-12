@@ -10,6 +10,8 @@ public class MainCtrl : CtrlBase
 
     /// <summary>副本阶段和场景交互窗口的控制器。</summary>
     private readonly DungeonFlowCtrl _dungeonFlowCtrl;
+    /// <summary>监听主角死亡并处理主动复活的窗口控制器。</summary>
+    private readonly DeathCtrl _deathCtrl;
 
     #region 字段
     /// <summary>主界面视图集合。</summary>
@@ -64,6 +66,7 @@ public class MainCtrl : CtrlBase
         _taskCtrl = new TaskCtrl(_mainView);
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
         _dungeonFlowCtrl = new DungeonFlowCtrl(_mainView);
+        _deathCtrl = new DeathCtrl(_mainView);
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -220,6 +223,7 @@ public class MainCtrl : CtrlBase
         {
             Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
         }
+        _deathCtrl.Dispose();
         _currentTalkNpc = null;
     }
     #endregion

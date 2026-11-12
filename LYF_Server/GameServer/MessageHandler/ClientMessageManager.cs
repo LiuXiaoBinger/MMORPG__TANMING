@@ -389,6 +389,8 @@ public static class GameMessageProtocolRegister
         // 移动请求沿用总逻辑队列，网络线程不写角色坐标。
         server.RegistCommand(NetDefine.CMD_MoveOperationCode, messageManager);
         server.RegistCommand(NetDefine.CMD_DungeonInteractCode, messageManager);
+        // 复活与战斗使用同一逻辑线程串行修改角色。
+        server.RegistCommand(NetDefine.CMD_RoleReviveCode, messageManager);
         // 原NPC命令与场景交互使用同一逻辑线程接收队列。
         server.RegistCommand(NetDefine.CMD_DungeonCommandEventCode, messageManager);
 
@@ -436,6 +438,8 @@ public static class GameMessageProtocolRegister
             NetDefine.CMD_MoveOperationCode, new MoveOperationHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_DungeonInteractCode, new DungeonInteractHandler(), CenterMessageRoute.Internal);
+        RegisterHandler(messageManager, GameCommandSource.GateServer,
+            NetDefine.CMD_RoleReviveCode, new RoleReviveHandler(), CenterMessageRoute.Internal);
         // 原命令事件只由会话反查角色后送入其当前副本。
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_DungeonCommandEventCode, new DungeonCommandEventHandler(), CenterMessageRoute.Internal);
