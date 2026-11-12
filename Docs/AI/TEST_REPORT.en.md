@@ -582,3 +582,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - 187 server assertions passed for actual Luban rows, all 44 runtime gene nodes, attach/remove, missing values on older roles, notification 11162 serialization and four virtual currency configurations.
 - 58 prefab checks passed for three tabs, six groups, the shared white close icon, balance field ordering, 19-digit font width and layout bounds. The isolated prefab patch has 239 added, 30 removed and 22 modified YAML documents, with 0 new unresolved local references.
 - See `_temp/role-info-bag-currency-layout-20261112/` for evidence and `项目修改日志/2026-11-12-角色信息分页高级属性与背包货币.md` for the business scope and push receipt. Actual Unity clicks, online relogin, standalone Player and runtime deployment remain pending. The advanced stats still need to be wired into combat resolution.
+
+## [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12)
+
+- In the original Play instance the fixed base row was 390 units wide in a 377.06-unit viewport. The six advanced headers became 0×0 after layout.
+- Unity Bee compiled `GM_Game` with 0 errors. The imported formal prefab passed 126 Unity assertions at 1920×1080 and 1366×768, including all 16 base rows, six advanced group callbacks, both lists' last rows, and a 19-digit currency value. The offscreen test used the compiled tab style and sample values.
+- Evidence and Unity screenshots are in `_temp/role-attribute-render-fix-20261112/`. See `项目修改日志/2026-11-12-角色属性页裁切与蓝白配色修复.md` for the receipt. Recreating the original main-city Play instance, online relogin and the standalone Player remain pending.

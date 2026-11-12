@@ -549,3 +549,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The role window has 基础 / 高级 / 生活 tabs. Basic opens first, the six advanced groups start collapsed, and Life shows an empty state. The role close icon matches the backpack. Backpack balances appear as 铜币 / 银子 / 银票 / 元宝 from the virtual bag, using IDs 101 / 102 / 106 / 103.
 - Advanced attribute IDs 101–144 map to genes 930101–930144. The 44 rows use flat increments of 1 point or 1 percentage point per layer. Existing source attach/remove drives the modifiers, and the final attributes use field 33 of `RoleBaseInfo` through notification 11162. Use of these stats in combat resolution is pending.
 - The 21-file business change is `0eae8f1`, pushed to `codex/feature-development`. The manifest, implementation decisions and push receipt are in `项目修改日志/2026-11-12-角色信息分页高级属性与背包货币.md`. Editor click-through, online relogin, standalone Player and runtime deployment remain pending.
+
+## [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12)
+
+- The base list follows its viewport and uses separate label and value columns. Both attribute viewports use `RectMask2D`. The six advanced headers have an explicit preferred height of 28 and the row template uses 22. Blue-and-white styling covers the three tabs, attribute content and four currency cells.
+- Business commit `4f03da1` covers `UIRoot.prefab` and `RoleAttriibuteWindow.cs` and is pushed to `codex/feature-development`. See `项目修改日志/2026-11-12-角色属性页裁切与蓝白配色修复.md` for the manifest and receipts.
+- Isolated Unity validation passed. Recreating the original main-city Play instance, online relogin and the standalone Player remain pending.
