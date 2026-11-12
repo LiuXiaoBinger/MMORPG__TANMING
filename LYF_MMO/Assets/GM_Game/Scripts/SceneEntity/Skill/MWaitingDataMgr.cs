@@ -21,10 +21,10 @@ public sealed class MWaitingDataMgr
         DoCastSkill(castingSkill, castPoint, target);
     }
 
-    /// <summary>先中断旧导航，再派发包含技能输入的新导航请求。</summary>
+    /// <summary>手锁普攻先沿目标导航进入配置射程，其他技能保持原立即交接。</summary>
     /// <param name="skillCore">本次输入对应的技能核心。</param>
     /// <param name="castPoint">世界空间释放点，单位米。</param>
-    /// <param name="target">选择目标；当前不扩展目标协议。</param>
+    /// <param name="target">普攻为输入层接受的手锁敌人，空值表示按角色朝向挥砍。</param>
     private void DoCastSkill(MSkillCore skillCore, Vector3 castPoint, MEntity target)
     {
         // 当前场景本地主角，导航组件通过实体普通组件生命周期挂载。
@@ -32,7 +32,17 @@ public sealed class MWaitingDataMgr
         // 本次技能指令在同步导航事件完成后随载荷归还，不保留跨帧引用。
         MSkillEventArgs skillEvent = MSkillEventArgs.
             Create(skillCore.SkillId, castPoint, target);
+        // 导航仍独占到达后的技能指令；只有带手锁目标的普攻需要先追近。
+        MNavigationEventArgs navigation = MNavigationEventArgs.Create(skillEvent);
+        // 主表攻击距离单位为世界米，与导航水平到达范围一致。
+        cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
+        if (skillInfo.Type == 1 && target != null)
+        {
+            navigation.NeedTarget = true;
+            navigation.Target = target;
+            navigation.UpperRange = skillInfo.AtkDistance;
+        }
         player.NavComp.Interrupt(false);
-        player.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(skillEvent));
+        player.DispatchEvent(MEventType.MEvent_Navigation, navigation);
     }
 }

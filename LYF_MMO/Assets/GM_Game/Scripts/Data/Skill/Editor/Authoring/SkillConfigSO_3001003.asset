@@ -2780,7 +2780,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    maxDistance: 2.1629915
+    maxDistance: 1.08149575
     curveX:
       serializedVersion: 2
       m_Curve:
@@ -5496,7 +5496,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    distanceX: 0.2140455
+    distanceX: 0.10702275
     targetOffset: {x: 0, y: 0, z: 0}
     offsetSpace: 1
     stopAtTargetOffset: 0

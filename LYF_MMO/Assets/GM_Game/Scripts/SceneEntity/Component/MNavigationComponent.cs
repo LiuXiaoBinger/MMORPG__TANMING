@@ -104,7 +104,7 @@ public class MNavigationComponent : EntityComponentBase
         }
         if (_naviWithTarget)
         {
-            if (_target == null || _target.LifecycleState != EntityLifecycleState.Active)
+            if (!isTargetValid())
             {
                 Interrupt();
                 return;
@@ -315,7 +315,7 @@ public class MNavigationComponent : EntityComponentBase
         _isNavigation = true;
         if (_naviWithTarget)
         {
-            if (_target == null || _target.LifecycleState != EntityLifecycleState.Active)
+            if (!isTargetValid())
             {
                 Interrupt();
                 return;
@@ -368,6 +368,30 @@ public class MNavigationComponent : EntityComponentBase
     private void navToTarget()
     {
         navToPos();
+    }
+
+    /// <summary>目标导航共用检查；手锁普攻在刷新路线和到达判断前确认原锁定仍有效。</summary>
+    /// <returns>原目标仍可继续导航时为 true；普攻取消、换锁或目标死亡时为 false。</returns>
+    private bool isTargetValid()
+    {
+        if (_target == null || _target.LifecycleState != EntityLifecycleState.Active)
+        {
+            return false;
+        }
+        if (!_useAfterAction || _afterAction == null)
+        {
+            return true;
+        }
+        // 本次到达后执行的技能主表，Type 仅用于限定普攻锁定检查；其他技能保持原规则。
+        cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(_afterAction.Identify);
+        if (skillInfo.Type != 1)
+        {
+            return true;
+        }
+        // 本导航组件仅由本地主角装配，锁定目标保存在 PlayerEntity 上。
+        PlayerEntity player = (PlayerEntity)Entity;
+        return MSkillTargetMgr.singleton.HasManualTarget &&
+            ReferenceEquals(player.Target, _target) && MSkillTargetMgr.singleton.CanAttack(_target);
     }
 
     /// <summary>沿角色到目标的方向，选择上下限中间的距离作为追近点；自定义范围使用其一半。</summary>
