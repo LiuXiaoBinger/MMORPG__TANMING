@@ -515,3 +515,10 @@
 - 正式入口模拟另验出生点下方 101m 的活人恢复、排除尸体，以及普通/暴击/致死回调。临时观察组件与状态已移除或还原。UIRoot 基线保留核验仅移除本次 26 个对象与 2 处引用，结果与此前脏基线完全一致。
 - 5515 原公式采样 10000 次，穿装后普通伤害为 1521～1616；满血可承受 29 次采样最高伤害，不涵盖 Boss 与群怪机制。两人装备均从真实存档回读；初始当前生命仍为 1000，促成随后首次装载修复。最终已部署服务的正常 Editor 首登通过：112/RoleID2，HP47496/47496、MP10500/10500、Scene_MainCity/kStateDefault、playing=true、paused=false、Console 错误 0。证据为 damage-numbers/final-editor-login.txt/.png。仅已启动的一次 GenerateAll 完成；Boot 原字节已恢复，遵照用户要求未继续打包。
 - 证据与失败记录见 `项目修改日志/2026-11-12-副本受伤数字与主动复活及双角色配装.md` 和 `_temp/dungeon-death-feedback-20261112/{death-ui,damage-numbers,equipment,deploy-backup}/`。没有独立 Player 验收结果、真人双客户端完整通关、线上部署或自然碰撞穿地根因复现结论。
+
+## [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] 错误目标复现与真实 Editor 战斗验收
+
+- 旧身份探针复现 NPC UID2 遮蔽玩家 2。定向服务端编译及真实 4060 配置的 96 项隔离检查通过，包括两个玩家 ID、84 个实体自定位、SpawnId 保持、Buff 归属、第 15～18 波追向真实玩家位置并权威扣血。主 Agent 已审查实际差异与动作事件生命周期。
+- 本地不修改 HP 的表现探针分别验证：静止受击自然结束、受击后移动（0.133s 为 Default，0.192s 实际播放 ZdMoveWalk）、移动/跳跃受伤保持状态、普通 10010 技能不被强制切为 Default。随后真实服务端事件验证：第 18 波在实际玩家 (149.38,63.94,162.88) 附近造成 1524 伤害；第 17 波追到 (133,122)；真实移动受伤保持 ZdMoveRun，空中受到 706 伤害保持 Jump_Start。真实死亡后再 Move 仍为 Dead/HP0/原位置；真实全灭清理未出现空引用异常。
+- 第二轮第 18 波样本是在全灭/复活后重新生成、没有目标的 path1 PingPong 巡逻，不能作为持续追击或距离超限失仇的证据。StandBy 没有追击距离上限；Sight6 用于发现目标，HatredAway0|0。原先错误追向 NPC 聚集点的根因已有独立实证。
+- 最终观察组件与自动路线均已移除，playing=true/paused=false/sceneDirty=false，Console 错误 0。未进行桌面输入、Player 打包或线上部署。证据位于 `_temp/dungeon-ai-hit-state-20261112/`；完整范围与边界见 `项目修改日志/2026-11-12-怪物目标ID冲突与受击移动衔接修复.md`。新增普攻朝向反馈另行处理，在本次记录中仍未解决。

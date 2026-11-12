@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `4959f0b4bd3061895b26912051134d4205e837bd5ebe1493334c24a4a8c63459`
+Source normalized SHA256: `f175bbd59a2c016965899b8c1e9b58d4654f82c12249bcf3f3f4e08b67c9013a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -66,11 +66,12 @@ Source normalized SHA256: `4959f0b4bd3061895b26912051134d4205e837bd5ebe1493334c2
 | [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Equipment special-skill catalog, sockets and gene activation | 471-477 |
 | [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Equipment special-skill audit and combat integration | 478-484 |
 | [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters | 485-490 |
-| [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-498 |
+| [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-499 |
+| [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-505 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6da2a320f0ad8fd6b2cbc86285183fb5abc47cafcaae9058624ef650804fcbea`
+Source normalized SHA256: `dd6c3dcf92943994dcd74dc4a32404d46f68f49d438b71b9d59d3809639b20e6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -128,7 +129,8 @@ Source normalized SHA256: `6da2a320f0ad8fd6b2cbc86285183fb5abc47cafcaae9058624ef
 | [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-CATALOG-20261111] Catalog and equipment instance acceptance | 499-505 |
 | [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Production combat entry acceptance | 506-512 |
 | [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] Unified component and existing dungeon combat acceptance | 513-518 |
-| [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-526 |
+| [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-527 |
+| [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-533 |
 
 ## Docs/AI/DECISIONS.en.md
 

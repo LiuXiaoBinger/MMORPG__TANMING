@@ -491,3 +491,10 @@
 - 真实全灭暴露模型已释放后仍恢复技能播放速度的问题；MSceneMonsterSkillPlayer.RestoreSpeed 现跳过已释放模型，未关闭 Error Pause。无客户端连接时已部署本机 GameServer/GateServer/共享 Network.dll，过程与精确文件哈希见完整日志。
 - 用户明确停止拟议的独立 Player 打包，要求只做 Editor 验收。唯一已经启动的 GenerateAll 于北京时间 13:52:55～13:56:28 完成，包含其内部 AOT 裁剪步骤；之后未执行 BuildDll/Yoo/Player 构建，也未启动 HTTP 服务。Boot 已逐字节恢复原脏基线；Dlls/AOTGenericReferences 未变；link.xml 仅暂存两项新复活协议保留声明。原 Build/HFS 未动。最终正常 Editor 首登 112 验证 HP47496/47496、MP10500/10500，位于 Scene_MainCity/kStateDefault，运行且未暂停，Console 错误 0；Editor 保持运行供用户试玩。
 - 精确 28 个业务/资源文件、数据库差异、脏文件暂存边界与后续 Git 回执统一见 `项目修改日志/2026-11-12-副本受伤数字与主动复活及双角色配装.md`。证据位于 `_temp/dungeon-death-feedback-20261112/`。尚未验证真人多人完整游玩、独立发布包、线上部署及 789 人工登录；自然穿地的原始根因仍未复现。
+
+## [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] 区分运行时身份与可移动的非控制受击反馈
+
+- 用户已批准本次归档。仅修改 SceneUidAllocator.cs 与 MBeHitComponent.cs 两个业务文件。运行时 UID 从 4294967296 开始，避开玩家 uint 身份范围；协议、RoleId、SpawnId 及原 AI 树不变。原 NPC UID2 位于 (150.56,61.98,123.12)，在 EntityPosition 查询中遮蔽 RoleId2，而攻击射程判断仍取真实玩家位置，导致怪物跑错聚集点且打不到玩家。
+- 普通受击反馈不再接管正在移动或跳跃的玩家。Move 可结束玩家当前 BeHit 状态；DamageReceived 被拒绝时保留原技能或死亡状态，不再由基类回调强制切为 Default。怪物行为保持原样。
+- 无客户端连接时仅重新部署本机 GameServer.exe，最终 SHA 为 9D32EB5210C5E8B9DE614979D4E5E557077993D753415A3743B7CC0FBDD519C3。Editor 保持运行、未暂停，无场景改动或错误；全部探针及自动路线回调已移除。按用户要求仅做 Editor 验收，本次未执行 Player/Yoo/GenerateAll。
+- 完整两文件清单、RO UUID 参考、修复、证据、部署及 Git 回执见 `项目修改日志/2026-11-12-怪物目标ID冲突与受击移动衔接修复.md`。用户新提出的普攻朝向/前冲问题属于另行进行中的调查，不在本次验收范围。尚未验证真人双客户端完整通关、打包 Player、线上部署或全部 Boss。
