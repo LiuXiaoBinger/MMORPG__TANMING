@@ -588,3 +588,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - In the original Play instance the fixed base row was 390 units wide in a 377.06-unit viewport. The six advanced headers became 0×0 after layout.
 - Unity Bee compiled `GM_Game` with 0 errors. The imported formal prefab passed 126 Unity assertions at 1920×1080 and 1366×768, including all 16 base rows, six advanced group callbacks, both lists' last rows, and a 19-digit currency value. The offscreen test used the compiled tab style and sample values.
 - Evidence and Unity screenshots are in `_temp/role-attribute-render-fix-20261112/`. See `项目修改日志/2026-11-12-角色属性页裁切与蓝白配色修复.md` for the receipt. Recreating the original main-city Play instance, online relogin and the standalone Player remain pending.
+
+## [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12)
+
+- The formal prefab passed 102 isolated Unity checks at 1920×1080 and 1366×768. Checks covered control dimensions, layout bounds, close hit and callback binding, attribute tabs and scrolling to the last row. Unity Console returned 0 errors.
+- See `_temp/role-summary-spacing-20261112/` for both full-window screenshots and `runtime-proof.txt`. Recreating the live main-city instance, online relogin and standalone Player remain pending.

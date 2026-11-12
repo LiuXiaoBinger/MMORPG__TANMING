@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `16331889e7dba9c8f01631eaba2f605a3f472b3ea4152bdb45e14cddfc8c78b8`
+Source normalized SHA256: `50f2b4cd379224ec7cfea29ec2a8d15a8b38af89cd5023addd1813b2cb230e0b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -75,11 +75,12 @@ Source normalized SHA256: `16331889e7dba9c8f01631eaba2f605a3f472b3ea4152bdb45e14
 | [CODE][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four spreadsheet-driven difficulties and per-monster Gene/AI | 533-539 |
 | [CODE][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six difficulty choices, table layers and reentry restriction | 540-546 |
 | [CODE][FILES][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Role attribute tabs and bag currencies (2026-11-12) | 547-552 |
-| [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12) | 553-557 |
+| [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12) | 553-558 |
+| [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12) | 559-563 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5cb208c894e3cf554cc11ca0cfa6353b80ce09167a17284d931f95977059f4af`
+Source normalized SHA256: `6e135a0cd0db5a0b46b0cd954f0e15bc4f637ea2fee0524018980e837d90f28d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -146,7 +147,8 @@ Source normalized SHA256: `5cb208c894e3cf554cc11ca0cfa6353b80ce09167a17284d931f9
 | [VERIFY][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four difficulties, effective Gene attributes and Editor entry | 564-571 |
 | [VERIFY][副本][DUNGEON-SIX-TIERS-LAYERS-20261112] Six tiers, layers and actual-role entry checks | 572-578 |
 | [VERIFY][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Advanced attributes, currency bindings and prefab checks (2026-11-12) | 579-585 |
-| [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12) | 586-590 |
+| [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12) | 586-591 |
+| [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12) | 592-595 |
 
 ## Docs/AI/DECISIONS.en.md
 

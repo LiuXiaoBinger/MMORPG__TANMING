@@ -555,3 +555,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The base list follows its viewport and uses separate label and value columns. Both attribute viewports use `RectMask2D`. The six advanced headers have an explicit preferred height of 28 and the row template uses 22. Blue-and-white styling covers the three tabs, attribute content and four currency cells.
 - Business commit `4f03da1` covers `UIRoot.prefab` and `RoleAttriibuteWindow.cs` and is pushed to `codex/feature-development`. See `项目修改日志/2026-11-12-角色属性页裁切与蓝白配色修复.md` for the manifest and receipts.
 - Isolated Unity validation passed. Recreating the original main-city Play instance, online relogin and the standalone Player remain pending.
+
+## [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12)
+
+- The role information and attribute column scales by 12%, reaching 448 units. Twelve equipment slots and their icons scale by 20%, from 80×80 to 96×96. The close button is vertically centered on the right side of the blue title bar.
+- `UIRoot.prefab` is the business change in `1d56d4b`, pushed to `codex/feature-development`. See `项目修改日志/2026-11-12-角色信息控件放大与关闭按钮对齐.md` for scope and receipts.
+- Isolated Unity validation passed. Recreating the live main-city instance, online relogin and standalone Player remain pending.
