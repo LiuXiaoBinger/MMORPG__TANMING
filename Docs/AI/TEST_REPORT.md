@@ -537,3 +537,10 @@
 - 修复前取消锁定后仍移动约 3.36m。修复后从 12.23103m 处取消，仅剩一帧 0.0900019m 移动，之后导航、选择、afterAction 和技能均清空；9.51565m 处的方向事件也清空导航/afterAction。目标生命周期仍为 Active 时，本地同步 HP0 可取消追近，并在同次调用内恢复 HP55131；这不是服务端真实击杀。较早一次无候选尝试在玩家已死亡时失败，尚未修改属性。
 - 前两段实测位移为 0m。首次第三段样本 0.749m 仅覆盖约 0.9s；延长样本等待第三刀后至少 2.5s，净位移为 0.748075m，技能已结束、状态为 BeHit、无侧碰撞。真实受击干扰意味着不能宣称无干扰自然完整位移，也不能将该净位移等同配置前向 1.0815m。
 - 主 Agent 已核对实际代码/资源差异、前两段资源除位移列表外不变、XLSX 单格隔离暂存，以及 bytes 仅偏移 148 由 8 改为 3；差异检查通过。证据位于 `_temp/basic-attack-manual-chase-motion-20261112/`，重点为 client-final-handoff.md、manual-moving-target-real.log、export-runtime-validation.log、root-asset-scope-check.json 和 staged-workbook-check.json。最终观察组件已移除，正式复活返回 HP47496、位置 (132.97,58.89,60.95)，Default/无导航，Play=true/Paused=false/sceneDirty=false。未伪造交还时的血量或位置，没有打包、重启或线上部署。完整范围与边界见 `项目修改日志/2026-11-12-手动锁定追近与普攻三段位移修正.md`。
+
+## [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] 二十项几何检查与真实移动怪物自动追近
+
+- Unity 重载/编译通过，最终 Console 错误 0。主 Agent 已核对实际四文件差异、正式调用点、任务前基线与 HEAD 一致、仅四文件暂存及差异检查。20 项实际方法断言通过（包括恢复）：前 8m/后 5m、后方回退、包含 10m/排除 10.01m/仅 20m 无目标、身后 25m 自动旧目标保持及超过 18m 不取消、自动来源标志不变、手动换目标、死亡失效后重寻、静止面向和移动方向保持。
+- 同一次调用的临时几何测试沿正式 E 入口使用已学习的 10040 Type2/AtkDistance10：导航按其自身 10m 射程，目标位置移动时更新位置而不换身份，取消清除到达动作，方向输入中断。最终恢复位置/HP/朝向/选择。死亡测试是临时 HP0，不是服务端击杀；Type2 检查不是实战伤害验收。测试专用 lambda 重名与 AttrComponent 拼写错误已修正，不属于业务回归。
+- 一次真实副本 Q 入口样本从未选中开始，自动取得 9.61579m 外的 UID104/spawn73014444033（manual=false）。追击中怪物实际移动 2.783357m；约 0.827s 后在 2.867724m 处首次出刀，服务端权威伤害 1678、目标 HP53453。5s 内持续保持同一 UID，静止 Default 朝向点积为 0.9994631。与上一任务不同，本轮已经实际覆盖移动目标追近。该样本未人为修改 HP/位置/伤害；Q/E 是 Editor 入口调用，不是物理按键。
+- 证据：`_temp/skill-target-acquire-chase-20261112/actual-method-geometry.cs.txt/.log`、`auto-acquire-real.log/.png`、`client-final-handoff.md`、`root-review-and-git.json`。最终观察组件/订阅已移除，正式复活返回 HP47496/MP10500、位置 (132.97,58.89,60.95)，Default/无导航，Play=true/Paused=false/sceneDirty=false。没有桌面控制、打包、服务重启或部署。其他职业/主动技能实战伤害、真人多人完整通关、Player/线上环境仍未验证。完整归档见 `项目修改日志/2026-11-12-攻击前方优先选敌与目标保持追近.md`。

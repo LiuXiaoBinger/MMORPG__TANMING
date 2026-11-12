@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `4d10b415f03a0fdd46a2682d3b054781bcc8a121dc34ad56e147c837c732d283`
+Source normalized SHA256: `7ee033c67eac3033b2106ba06d7bb8ab98922375492ebb5ab36739cc390cad8b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -69,11 +69,12 @@ Source normalized SHA256: `4d10b415f03a0fdd46a2682d3b054781bcc8a121dc34ad56e147c
 | [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-499 |
 | [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-506 |
 | [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-512 |
-| [CODE][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Manual-lock pursuit and three-hit basic-attack movement | 513-518 |
+| [CODE][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Manual-lock pursuit and three-hit basic-attack movement | 513-519 |
+| [CODE][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Front-priority automatic acquisition, target retention and skill-range pursuit | 520-524 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b476d6bdfdb85b4943a8ceccca808ae7ba21920aeabbe5c238563d357bc3d6fc`
+Source normalized SHA256: `5c223c066d9d44e6781123d92435208b6634fbcf2d18f2e06eafac5db24db3ff`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -134,7 +135,8 @@ Source normalized SHA256: `b476d6bdfdb85b4943a8ceccca808ae7ba21920aeabbe5c238563
 | [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-527 |
 | [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-534 |
 | [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-541 |
-| [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Real approach before basic attack and bounded movement checks | 542-548 |
+| [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Real approach before basic attack and bounded movement checks | 542-549 |
+| [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Twenty geometry checks and real automatic pursuit of a moving monster | 550-555 |
 
 ## Docs/AI/DECISIONS.en.md
 
