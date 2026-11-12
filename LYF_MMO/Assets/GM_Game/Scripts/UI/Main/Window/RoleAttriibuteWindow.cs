@@ -29,6 +29,9 @@ public class RoleAttriibuteWindow : WindowBase
     {
         // 页签与高级行的绑定只做一次，重开窗口沿用已有行。
         InitializeAdvancedPanel();
+        // 整行可见性在首次打开时收集行根，重开沿用缓存。
+        InitializeRowVisibility();
+        RefreshAfterLayout();
         GeneVisibilityChanged?.Invoke(true);
     }
 
@@ -297,6 +300,8 @@ public class RoleAttriibuteWindow : WindowBase
         RectTransform root = Instantiate(_advancedRowTemplate, rowsRoot);
         root.gameObject.SetActive(true);
         AdvancedRowWidget row = new AdvancedRowWidget();
+        // 行根与透明组同物体，登记到高级页列表供整行刷新复用。
+        advancedRowGroups.Add(ResolveRowGroup(root));
         row.Label = FindRowText(root, "name");
         row.Value = FindRowText(root, "arrtval");
         advancedRows.Add(row);
@@ -377,6 +382,8 @@ public class RoleAttriibuteWindow : WindowBase
         ApplyTabStyle(_tabBaseImage, _tabBaseLabel, showBase);
         ApplyTabStyle(_tabAdvancedImage, _tabAdvancedLabel, showAdvanced);
         ApplyTabStyle(_tabLifeImage, _tabLifeLabel, attributeMode == AttributePanelMode.Life);
+        // 页签切换后内容区尺寸已变，重新排版再同步整行可见性。
+        RefreshAfterLayout();
     }
 
     /// <summary>选中页签用高亮底加浅色字，未选中用暗底加灰字。</summary>
@@ -436,6 +443,8 @@ public class RoleAttriibuteWindow : WindowBase
             rowsRoot.gameObject.SetActive(groupExpanded[groupIndex]);
         }
         ApplyGroupArrow(groupIndex);
+        // 展开或收起改变内容高度，排版后重新判定整行可见性。
+        RefreshAfterLayout();
     }
 
     /// <summary>只刷新折叠指示符号，展开显示减号、收起显示加号。</summary>
@@ -537,5 +546,176 @@ public class RoleAttriibuteWindow : WindowBase
             return "WaistWaist";
         }
         return equipType.ToString();
+    }
+
+    // ============================================================
+    // 整行可见性：只显示完全落在视口内的行，半行整组透明并禁射线，
+    // 不 SetActive，避免布局重排把滚动位置带跑。
+    // ============================================================
+    /// <summary>行边界的本地坐标容差，覆盖 0.01 缩放的离屏场景。</summary>
+    private const float RowEdgeTolerance = 0.02f;
+    /// <summary>基础页每行的透明组，顺序与滚动内容子节点一致。</summary>
+    private readonly List<CanvasGroup> baseRowGroups = new List<CanvasGroup>();
+    /// <summary>高级页每行与每组标题的透明组，按创建登记顺序刷新。</summary>
+    private readonly List<CanvasGroup> advancedRowGroups = new List<CanvasGroup>();
+    /// <summary>基础滚动区，滚动变化时按视口同步整行可见性。</summary>
+    private ScrollRect baseScrollRect;
+    /// <summary>高级滚动区，与基础页同法处理。</summary>
+    private ScrollRect advancedScrollRect;
+    /// <summary>行根世界角点缓存，复用同一数组避免每次刷新分配。</summary>
+    private readonly Vector3[] rowCorners = new Vector3[4];
+    /// <summary>行可见性是否已初始化。</summary>
+    private bool rowVisibilityBuilt;
+
+    /// <summary>首次收集两个滚动区的行透明组并订阅滚动变化。</summary>
+    private void InitializeRowVisibility()
+    {
+        if (rowVisibilityBuilt)
+        {
+            return;
+        }
+        rowVisibilityBuilt = true;
+        baseScrollRect = _baseScroll.GetComponent<ScrollRect>();
+        advancedScrollRect = _advancedScroll.GetComponent<ScrollRect>();
+        CollectBaseRowGroups();
+        CollectAdvancedHeaderGroups();
+        baseScrollRect.onValueChanged.AddListener(OnAttributeScrolled);
+        advancedScrollRect.onValueChanged.AddListener(OnAttributeScrolled);
+    }
+
+    /// <summary>从基础滚动内容子节点收集行透明组，每行只补一次。</summary>
+    private void CollectBaseRowGroups()
+    {
+        baseRowGroups.Clear();
+        Transform content = baseScrollRect.content;
+        for (int index = 0; index < content.childCount; index++)
+        {
+            // 基础行按内容子节点顺序排列，与 _attributeValues 同序。
+            RectTransform row = content.GetChild(index) as RectTransform;
+            baseRowGroups.Add(ResolveRowGroup(row));
+        }
+    }
+
+    /// <summary>把六个折叠组头登记进高级页列表，避免标题被视口切成半截。</summary>
+    private void CollectAdvancedHeaderGroups()
+    {
+        for (int index = 0; index < _advancedGroups.Length; index++)
+        {
+            // 组头固定在分组根下的 Header 节点。
+            Transform header = _advancedGroups[index].Find("Header");
+            if (header == null)
+            {
+                continue;
+            }
+            advancedRowGroups.Add(ResolveRowGroup(header as RectTransform));
+        }
+    }
+
+    /// <summary>滚轮、拖拽与惯性都走滚动回调，每次变化同步一次当前页。</summary>
+    private void OnAttributeScrolled(Vector2 position)
+    {
+        RefreshRowVisibility();
+    }
+
+    /// <summary>只刷新当前活动页的整行显隐，隐藏页不测量。</summary>
+    private void RefreshRowVisibility()
+    {
+        if (!rowVisibilityBuilt)
+        {
+            return;
+        }
+        if (attributeMode == AttributePanelMode.Advanced)
+        {
+            ApplyRowVisibility(advancedRowGroups, advancedScrollRect.viewport);
+            return;
+        }
+        ApplyRowVisibility(baseRowGroups, baseScrollRect.viewport);
+    }
+
+    /// <summary>把行角点转到视口本地坐标，完全落在视口上下边内才显示。</summary>
+    private void ApplyRowVisibility(List<CanvasGroup> groups, RectTransform viewport)
+    {
+        // 视口本地坐标下的可用上下边界，向外放宽容差，
+        // 恰贴上下边的完整首末行仍判为可见。
+        float top = viewport.rect.yMax + RowEdgeTolerance;
+        float bottom = viewport.rect.yMin - RowEdgeTolerance;
+        Matrix4x4 worldToLocal = viewport.worldToLocalMatrix;
+        for (int index = 0; index < groups.Count; index++)
+        {
+            CanvasGroup group = groups[index];
+            // 透明组与行根同物体，直接取矩形即可。
+            RectTransform row = group.GetComponent<RectTransform>();
+            if (!row.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+            row.GetWorldCorners(rowCorners);
+            // 第 0 角点先换到视口本地空间，同时作为上下边初值，
+            // 后续比较都在同一坐标系内进行。
+            float firstLocalY = worldToLocal.MultiplyPoint3x4(rowCorners[0]).y;
+            float rowTop = firstLocalY;
+            float rowBottom = firstLocalY;
+            for (int corner = 1; corner < 4; corner++)
+            {
+                float localY = worldToLocal.MultiplyPoint3x4(rowCorners[corner]).y;
+                if (localY > rowTop)
+                {
+                    rowTop = localY;
+                }
+                if (localY < rowBottom)
+                {
+                    rowBottom = localY;
+                }
+            }
+            bool fullyInside = rowTop <= top;
+            if (fullyInside)
+            {
+                fullyInside = rowBottom >= bottom;
+            }
+            ApplyRowState(group, fullyInside);
+        }
+    }
+
+    /// <summary>完整行恢复正常显示，半行整组透明并关闭射线。</summary>
+    private static void ApplyRowState(CanvasGroup group, bool fullyInside)
+    {
+        if (fullyInside)
+        {
+            group.alpha = 1f;
+            group.blocksRaycasts = true;
+            group.interactable = true;
+            return;
+        }
+        group.alpha = 0f;
+        group.blocksRaycasts = false;
+        group.interactable = false;
+    }
+
+    /// <summary>取行的透明组，缺失时补一个只用于显隐的组件。</summary>
+    private static CanvasGroup ResolveRowGroup(RectTransform row)
+    {
+        CanvasGroup group = row.GetComponent<CanvasGroup>();
+        if (group == null)
+        {
+            group = row.gameObject.AddComponent<CanvasGroup>();
+        }
+        return group;
+    }
+
+    /// <summary>页签或折叠变化后只重建当前活动内容，再同步整行可见性。</summary>
+    private void RefreshAfterLayout()
+    {
+        if (!rowVisibilityBuilt)
+        {
+            return;
+        }
+        if (attributeMode == AttributePanelMode.Advanced)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(advancedScrollRect.content);
+            ApplyRowVisibility(advancedRowGroups, advancedScrollRect.viewport);
+            return;
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(baseScrollRect.content);
+        ApplyRowVisibility(baseRowGroups, baseScrollRect.viewport);
     }
 }
