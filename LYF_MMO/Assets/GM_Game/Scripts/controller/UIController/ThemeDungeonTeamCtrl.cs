@@ -58,6 +58,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <summary>本次挑战选中的副本配置，由副本选择窗的挑战事件传入。</summary>
     private ThemeDungeonEntry _selectedEntry;
 
+    /// <summary>本机详情页最近选择的难度编号，只用于尚未入场时的队伍目标展示。</summary>
+    private int _selectedDifficulty = 1;
+
     /// <summary>是否已经读取过职业头像图集，避免重复加载。</summary>
     private bool _jobAtlasLoaded;
 
@@ -200,9 +203,16 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         {
             _teamWindow.SetTeamState(inTeam, teamName);
             _teamWindow.SetMembers(members, localRoleId, inTeam && canInvite);
-            if (_selectedEntry != null)
+            if (TeamData.Instance.DungeonInstanceId != 0)
             {
-                _teamWindow.SetTargetName(_selectedEntry.themeName);
+                _teamWindow.SetTargetName(
+                    LubanMgr.Instance.GetDungeonsTableById(TeamData.Instance.DungeonId).DungeonsName +
+                    " · " + LubanMgr.Instance.GetDungeonDifficultyById(TeamData.Instance.DungeonsDegree).Name);
+            }
+            else if (_selectedEntry != null)
+            {
+                _teamWindow.SetTargetName(_selectedEntry.themeName + " · " +
+                    LubanMgr.Instance.GetDungeonDifficultyById(_selectedDifficulty).Name);
             }
             else
             {
@@ -245,6 +255,10 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             ReturnToMainCity();
             return;
         }
+        // 提示只采用入场回包的档位，不把本地选择当作已经创建的实例难度。
+        TipsMgr.Instance.ShowSystemTips("进入" +
+            LubanMgr.Instance.GetDungeonsTableById(notice.DungeonId).DungeonsName + " · " +
+            LubanMgr.Instance.GetDungeonDifficultyById(notice.DungeonsDegree).Name);
         EnterDungeon(notice.SceneId);
     }
 
@@ -252,7 +266,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// <param name="notice">MS 指定的目标副本及确认秒数。</param>
     private void OnAskMemberEnterFB(AskMemberEnterFBData notice)
     {
-        _confirmationWindow.SetMembers(TeamData.Instance.Members, ResolveLocalRoleId(), notice.ConfirmSeconds);
+        _confirmationWindow.SetMembers(TeamData.Instance.Members, ResolveLocalRoleId(), notice.ConfirmSeconds,
+            LubanMgr.Instance.GetDungeonsTableById((int)notice.DungeonId).DungeonsName,
+            LubanMgr.Instance.GetDungeonDifficultyById(notice.DungeonsDegree).Name);
         // 按权威名单中的职业编号复用队伍窗口已使用的图集。
         for (int index = 0; index < TeamData.Instance.Members.Count; index++)
             _confirmationWindow.SetMemberJobSprite(index, ResolveJobSprite(TeamData.Instance.Members[index].JobId));
@@ -297,14 +313,16 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// 建队不会自动进图，必须再点一次开始挑战。
     /// </summary>
     /// <param name="entry">详情页当前确认挑战的副本配置。</param>
-    private void OnChallengeRequested(ThemeDungeonEntry entry)
+    /// <param name="difficultyId">详情页选中的难度表编号一至四。</param>
+    private void OnChallengeRequested(ThemeDungeonEntry entry, int difficultyId)
     {
         if (entry == null)
         {
             return;
         }
         _selectedEntry = entry;
-        // 当前详情页的挑战入口对应剧情难度，主题编号不能作为实际副本编号发送。
+        _selectedDifficulty = difficultyId;
+        // 四档沿同一基础副本入口使用现有地图；难度另传，不能切换到未登记的旧普通/困难地图。
         DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(entry.storyDungeonId);
         // 未迁入的场景无法完成客户端切图，发起请求前报告实际资源缺口，避免服务端先切地图。
         DungeonSceneResource resource = DungeonSceneResource.Load(dungeon.SceneID);
@@ -322,7 +340,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
                 return;
             }
             // MS 收集全员答复后才授权 GS 入场，客户端仍等最终入场通知。
-            _teamCtrl.CaptainRequestEnterFBPtc(dungeon.DungeonsID);
+            _teamCtrl.CaptainRequestEnterFBPtc(dungeon.DungeonsID, difficultyId);
             return;
         }
         OpenTeamWindow();

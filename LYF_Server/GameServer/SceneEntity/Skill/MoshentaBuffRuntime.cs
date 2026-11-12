@@ -319,7 +319,7 @@ internal sealed class MoshentaBuffRuntime
                 // 原Type35七字段：模板/寿命种类/秒/怪种类/仇恨/施法者/属性来源。
                 string[] values = parameter.Split('=');
                 MoshentaActor summoned = Scene.Summon(buff.Caster, int.Parse(values[0]), Position, buff.Caster.Facing, (int)(float.Parse(values[2], CultureInfo.InvariantCulture) * 1000));
-                if (values[6] == "1") summoned.SummonSnapshot = MoshentaDamageSnapshot.Capture(buff.Caster);
+                if (values[6] == "1") summoned.SummonSnapshot = MoshentaDamageSnapshot.Capture(buff.Caster, true);
             }
             // 23免疫由Add前判定；26缩放/半透及33连接FX属于客户端表现，原数据完整保留。
         }

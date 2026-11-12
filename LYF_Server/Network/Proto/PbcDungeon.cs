@@ -22,21 +22,21 @@ public static partial class PbcDungeonReflection {
   static PbcDungeonReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChBQYmNEdW5nZW9uLnByb3RvIkMKFEFza01lbWJlckVudGVyRkJEYXRhEhIK",
-          "CmR1bmdlb25faWQYASABKA0SFwoPY29uZmlybV9zZWNvbmRzGAQgASgNIjIK",
-          "Fk1lbWJlclJlcGx5RW50ZXJGQkRhdGESGAoEdHlwZRgBIAEoDjIKLlJlcGx5",
-          "VHlwZSJDChpTeW5jTWVtYmVyUmVwbHlFbnRlckZCRGF0YRILCgN1aWQYASAB",
-          "KAQSGAoEdHlwZRgCIAEoDjIKLlJlcGx5VHlwZSJCCg9GYWlsRW50ZXJGQkRh",
-          "dGESCwoDdWlkGAEgASgEEiIKBnJlYXNvbhgCIAEoDjISLkZhaWxFbnRlckZC",
-          "UmVhc29uKjgKCVJlcGx5VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAAEhQK",
-          "EFJFUExZX1RZUEVfQUdSRUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIYChRG",
-          "QUlMX0VOVEVSX0ZCX1NVQ0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElNRU9V",
-          "VBALEi0KKUZBSUxfRU5URVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5HX1ND",
-          "RU5FEA1iBnByb3RvMw=="));
+          "ChBQYmNEdW5nZW9uLnByb3RvIlwKFEFza01lbWJlckVudGVyRkJEYXRhEhIK",
+          "CmR1bmdlb25faWQYASABKA0SFwoPY29uZmlybV9zZWNvbmRzGAQgASgNEhcK",
+          "D2R1bmdlb25zX2RlZ3JlZRgFIAEoBSIyChZNZW1iZXJSZXBseUVudGVyRkJE",
+          "YXRhEhgKBHR5cGUYASABKA4yCi5SZXBseVR5cGUiQwoaU3luY01lbWJlclJl",
+          "cGx5RW50ZXJGQkRhdGESCwoDdWlkGAEgASgEEhgKBHR5cGUYAiABKA4yCi5S",
+          "ZXBseVR5cGUiQgoPRmFpbEVudGVyRkJEYXRhEgsKA3VpZBgBIAEoBBIiCgZy",
+          "ZWFzb24YAiABKA4yEi5GYWlsRW50ZXJGQlJlYXNvbio4CglSZXBseVR5cGUS",
+          "FQoRUkVQTFlfVFlQRV9SRUZVU0UQABIUChBSRVBMWV9UWVBFX0FHUkVFEAEq",
+          "dwoRRmFpbEVudGVyRkJSZWFzb24SGAoURkFJTF9FTlRFUl9GQl9TVUNFU1MQ",
+          "ABIZChVGQUlMX0VOVEVSX0ZOX1RJTUVPVVQQCxItCilGQUlMX0VOVEVSX0ZC",
+          "X1NPTUVPTkVfTEVBVkVfV0FJVElOR19TQ0VORRANYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ReplyType), typeof(global::FailEnterFBReason), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::AskMemberEnterFBData), global::AskMemberEnterFBData.Parser, new[]{ "DungeonId", "ConfirmSeconds" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::AskMemberEnterFBData), global::AskMemberEnterFBData.Parser, new[]{ "DungeonId", "ConfirmSeconds", "DungeonsDegree" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MemberReplyEnterFBData), global::MemberReplyEnterFBData.Parser, new[]{ "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncMemberReplyEnterFBData), global::SyncMemberReplyEnterFBData.Parser, new[]{ "Uid", "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::FailEnterFBData), global::FailEnterFBData.Parser, new[]{ "Uid", "Reason" }, null, null, null, null)
@@ -121,6 +121,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
   public AskMemberEnterFBData(AskMemberEnterFBData other) : this() {
     dungeonId_ = other.dungeonId_;
     confirmSeconds_ = other.confirmSeconds_;
+    dungeonsDegree_ = other.dungeonsDegree_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -160,6 +161,21 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
   }
 
+  /// <summary>Field number for the "dungeons_degree" field.</summary>
+  public const int DungeonsDegreeFieldNumber = 5;
+  private int dungeonsDegree_;
+  /// <summary>
+  /// 本次确认的难度：1普通、2精英、3宗师、4宗绝。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonsDegree {
+    get { return dungeonsDegree_; }
+    set {
+      dungeonsDegree_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -177,6 +193,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
     if (DungeonId != other.DungeonId) return false;
     if (ConfirmSeconds != other.ConfirmSeconds) return false;
+    if (DungeonsDegree != other.DungeonsDegree) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -186,6 +203,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     int hash = 1;
     if (DungeonId != 0) hash ^= DungeonId.GetHashCode();
     if (ConfirmSeconds != 0) hash ^= ConfirmSeconds.GetHashCode();
+    if (DungeonsDegree != 0) hash ^= DungeonsDegree.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -212,6 +230,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
       output.WriteRawTag(32);
       output.WriteUInt32(ConfirmSeconds);
     }
+    if (DungeonsDegree != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(DungeonsDegree);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -230,6 +252,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
       output.WriteRawTag(32);
       output.WriteUInt32(ConfirmSeconds);
     }
+    if (DungeonsDegree != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(DungeonsDegree);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -245,6 +271,9 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
     if (ConfirmSeconds != 0) {
       size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ConfirmSeconds);
+    }
+    if (DungeonsDegree != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonsDegree);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -263,6 +292,9 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
     if (other.ConfirmSeconds != 0) {
       ConfirmSeconds = other.ConfirmSeconds;
+    }
+    if (other.DungeonsDegree != 0) {
+      DungeonsDegree = other.DungeonsDegree;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -291,6 +323,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
           ConfirmSeconds = input.ReadUInt32();
           break;
         }
+        case 40: {
+          DungeonsDegree = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -316,6 +352,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
         }
         case 32: {
           ConfirmSeconds = input.ReadUInt32();
+          break;
+        }
+        case 40: {
+          DungeonsDegree = input.ReadInt32();
           break;
         }
       }

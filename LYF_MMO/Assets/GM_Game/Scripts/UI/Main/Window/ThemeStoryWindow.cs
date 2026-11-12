@@ -53,6 +53,18 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>「开始挑战」按钮。</summary>
     private Button _beginBtn;
 
+    /// <summary>正式预制体中的四档选择按钮，依次对应难度表编号一至四。</summary>
+    [SerializeField] private Button[] _difficultyButtons = new Button[4];
+
+    /// <summary>四档按钮的文字，显示难度表中的名称。</summary>
+    [SerializeField] private TMP_Text[] _difficultyLabels = new TMP_Text[4];
+
+    /// <summary>当前选择及已入场难度说明，来自正式预制体引用。</summary>
+    [SerializeField] private TMP_Text _difficultyStatus;
+
+    /// <summary>本次准备挑战的难度编号，默认一为普通，不代表已经进入该难度。</summary>
+    private int _selectedDifficulty = 1;
+
     /// <summary>「公开情报」按钮。</summary>
     private Button _infoBtn;
 
@@ -92,8 +104,8 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>当前展示的副本数据。</summary>
     private ThemeDungeonEntry _entry;
 
-    /// <summary>点击「开始挑战」时触发，参数为当前展示的副本。</summary>
-    public System.Action<ThemeDungeonEntry> OnEnterDungeon;
+    /// <summary>点击「开始挑战」时传递当前基础副本与所选难度编号，场景由控制器决定。</summary>
+    public System.Action<ThemeDungeonEntry, int> OnEnterDungeon;
     #endregion
 
     #region 初始化与事件注册
@@ -135,6 +147,38 @@ public sealed class ThemeStoryWindow : WindowBase
         {
             _infoBtn.onClick.RemoveListener(OnInfoClicked);
             _infoBtn.onClick.AddListener(OnInfoClicked);
+        }
+        // 四个正式按钮与表中一至四的难度编号一一对应，只在窗口首次初始化时绑定。
+        for (int index = 0; index < _difficultyButtons.Length; index++)
+        {
+            // 闭包保存当前按钮对应的难度编号，避免循环结束后全部指向同一档。
+            int difficultyId = index + 1;
+            _difficultyButtons[index].onClick.AddListener(() => SelectDifficulty(difficultyId));
+        }
+    }
+
+    /// <summary>更新当前准备挑战的难度，并刷新正式按钮的选择状态。</summary>
+    /// <param name="difficultyId">难度表编号：一普通、二精英、三宗师、四宗绝。</param>
+    public void SelectDifficulty(int difficultyId)
+    {
+        _selectedDifficulty = difficultyId;
+        RefreshDifficulty();
+    }
+
+    /// <summary>从难度表读取名称，区分准备挑战的选择与服务端已确认的当前副本难度。</summary>
+    private void RefreshDifficulty()
+    {
+        // 遍历正式按钮，所选档位使用金色禁用态，其余档位保持可点击。
+        for (int index = 0; index < _difficultyButtons.Length; index++)
+        {
+            _difficultyLabels[index].text = LubanMgr.Instance.GetDungeonDifficultyById(index + 1).Name;
+            _difficultyButtons[index].interactable = index + 1 != _selectedDifficulty;
+        }
+        _difficultyStatus.text = "选择难度：" + LubanMgr.Instance.GetDungeonDifficultyById(_selectedDifficulty).Name;
+        if (_entry != null && TeamData.Instance.DungeonId == _entry.storyDungeonId)
+        {
+            _difficultyStatus.text += "  ·  当前副本：" +
+                LubanMgr.Instance.GetDungeonDifficultyById(TeamData.Instance.DungeonsDegree).Name;
         }
     }
     #endregion
@@ -238,6 +282,11 @@ public sealed class ThemeStoryWindow : WindowBase
             return;
         }
         _entry = entry;
+        if (TeamData.Instance.DungeonId == entry.storyDungeonId)
+        {
+            _selectedDifficulty = TeamData.Instance.DungeonsDegree;
+        }
+        RefreshDifficulty();
         if (_titleText != null)
         {
             _titleText.text = entry.themeName;
@@ -340,7 +389,7 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         if (OnEnterDungeon != null)
         {
-            OnEnterDungeon(_entry);
+            OnEnterDungeon(_entry, _selectedDifficulty);
         }
     }
 

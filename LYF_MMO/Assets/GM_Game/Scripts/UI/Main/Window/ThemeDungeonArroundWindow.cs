@@ -112,10 +112,10 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     private ThemeStoryWindow _storyWindow;
 
     /// <summary>
-    /// 详情页确认「挑战」后向主控制器发出的建队请求，载荷是本次选中的副本配置。
+    /// 详情页确认「挑战」后向主控制器传递本次选中的基础副本配置与难度编号。
     /// 本窗口只负责把选中项交出去，进入副本的场景切换全部由控制器执行，界面层不直接切场景。
     /// </summary>
-    public System.Action<ThemeDungeonEntry> OnChallengeRequested;
+    public System.Action<ThemeDungeonEntry, int> OnChallengeRequested;
 
     /// <summary>详情区的确认按钮。</summary>
     private Button _confirmBtn;
@@ -1109,7 +1109,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// 这里只把选中的副本配置交给控制器（由控制器打开建队窗），窗口自身不切换场景。
     /// </summary>
     /// <param name="d">详情页当前展示并确认挑战的副本配置。</param>
-    private void EnterDungeon(ThemeDungeonEntry d)
+    /// <param name="difficultyId">详情页选择的难度表编号，不替换基础副本地图编号。</param>
+    private void EnterDungeon(ThemeDungeonEntry d, int difficultyId)
     {
         if (d == null)
         {
@@ -1117,7 +1118,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (OnChallengeRequested != null)
         {
-            OnChallengeRequested(d);
+            OnChallengeRequested(d, difficultyId);
             return;
         }
     }

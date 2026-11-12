@@ -24,15 +24,15 @@ public static partial class MasterTeamReflection {
         string.Concat(
           "ChBNYXN0ZXJUZWFtLnByb3RvGhNSZXF1ZXN0RW50aXR5LnByb3RvIlcKFE1h",
           "c3RlclRlYW1Sb2xlUGFja2V0Eg8KB3JvbGVfaWQYASABKAQSEAoIbmlja25h",
-          "bWUYAiABKAkSHAoGcGFja2V0GAMgASgLMgwuQmFzZVBhY2thZ2UiZgoWTWFz",
+          "bWUYAiABKAkSHAoGcGFja2V0GAMgASgLMgwuQmFzZVBhY2thZ2UifwoWTWFz",
           "dGVyVGVhbUR1bmdlb25PcmRlchIPCgd0ZWFtX2lkGAEgASgEEhMKC2luc3Rh",
           "bmNlX2lkGAIgASgEEhIKCmR1bmdlb25faWQYAyABKAUSEgoKbWVtYmVyX2lk",
-          "cxgEIAMoBGIGcHJvdG8z"));
+          "cxgEIAMoBBIXCg9kdW5nZW9uc19kZWdyZWUYBSABKAViBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::RequestEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamRolePacket), global::MasterTeamRolePacket.Parser, new[]{ "RoleId", "Nickname", "Packet" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamDungeonOrder), global::MasterTeamDungeonOrder.Parser, new[]{ "TeamId", "InstanceId", "DungeonId", "MemberIds" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::MasterTeamDungeonOrder), global::MasterTeamDungeonOrder.Parser, new[]{ "TeamId", "InstanceId", "DungeonId", "MemberIds", "DungeonsDegree" }, null, null, null, null)
         }));
   }
   #endregion
@@ -374,6 +374,7 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
     instanceId_ = other.instanceId_;
     dungeonId_ = other.dungeonId_;
     memberIds_ = other.memberIds_.Clone();
+    dungeonsDegree_ = other.dungeonsDegree_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -442,6 +443,21 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
     get { return memberIds_; }
   }
 
+  /// <summary>Field number for the "dungeons_degree" field.</summary>
+  public const int DungeonsDegreeFieldNumber = 5;
+  private int dungeonsDegree_;
+  /// <summary>
+  /// MS确认的难度1至4，旧指令0按普通1兼容。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonsDegree {
+    get { return dungeonsDegree_; }
+    set {
+      dungeonsDegree_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -461,6 +477,7 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
     if (InstanceId != other.InstanceId) return false;
     if (DungeonId != other.DungeonId) return false;
     if(!memberIds_.Equals(other.memberIds_)) return false;
+    if (DungeonsDegree != other.DungeonsDegree) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -472,6 +489,7 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
     if (InstanceId != 0UL) hash ^= InstanceId.GetHashCode();
     if (DungeonId != 0) hash ^= DungeonId.GetHashCode();
     hash ^= memberIds_.GetHashCode();
+    if (DungeonsDegree != 0) hash ^= DungeonsDegree.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -503,6 +521,10 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
       output.WriteInt32(DungeonId);
     }
     memberIds_.WriteTo(output, _repeated_memberIds_codec);
+    if (DungeonsDegree != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(DungeonsDegree);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -526,6 +548,10 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
       output.WriteInt32(DungeonId);
     }
     memberIds_.WriteTo(ref output, _repeated_memberIds_codec);
+    if (DungeonsDegree != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(DungeonsDegree);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -546,6 +572,9 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonId);
     }
     size += memberIds_.CalculateSize(_repeated_memberIds_codec);
+    if (DungeonsDegree != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonsDegree);
+    }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -568,6 +597,9 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
       DungeonId = other.DungeonId;
     }
     memberIds_.Add(other.memberIds_);
+    if (other.DungeonsDegree != 0) {
+      DungeonsDegree = other.DungeonsDegree;
+    }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -604,6 +636,10 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
           memberIds_.AddEntriesFrom(input, _repeated_memberIds_codec);
           break;
         }
+        case 40: {
+          DungeonsDegree = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -638,6 +674,10 @@ public sealed partial class MasterTeamDungeonOrder : pb::IMessage<MasterTeamDung
         case 34:
         case 32: {
           memberIds_.AddEntriesFrom(ref input, _repeated_memberIds_codec);
+          break;
+        }
+        case 40: {
+          DungeonsDegree = input.ReadInt32();
           break;
         }
       }

@@ -61,6 +61,12 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>RO 原始副本 ID 到完整主表行的索引，随共享配置初始化加载。</summary>
     private Dictionary<int, DungeonsTable> _dungeonsTables;
 
+    /// <summary>四档副本难度，提供名称及普攻最小间隔毫秒。</summary>
+    private Dictionary<int, DungeonDifficultyTable> _dungeonDifficulties;
+
+    /// <summary>按副本、难度、怪物原模板组合查找逐怪基因和AI覆盖。</summary>
+    private Dictionary<Tuple<int, int, int>, DungeonMonsterDifficultyTable> _dungeonMonsterDifficulties;
+
     /// <summary>分支副本目标组 ID 到原始组定义的索引，加载后供进度与界面查询。</summary>
     private Dictionary<int, DungeonTargetGroupTable> _dungeonTargetGroupTables;
 
@@ -120,6 +126,8 @@ public class LubanMgr:Singleton<LubanMgr>
         _questInfos = tables.TbQuestInfo.DataMap;
         _dungeonTargetTables = tables.TbDungeonTargetTable.DataMap;
         _dungeonsTables = tables.TbDungeonsTable.DataMap;
+        _dungeonDifficulties = tables.TbDungeonDifficultyTable.DataMap;
+        BuildDungeonMonsterDifficulties(tables.TbDungeonMonsterDifficultyTable.DataList);
         _dungeonTargetGroupTables = tables.TbDungeonTargetGroupTable.DataMap;
         _roleLevelInfos = tables.TbRoleLevelInfo.DataMap;
         _roleLevelAttributeInfos = tables.TbRoleLevelAttributeInfo.DataMap;
@@ -863,4 +871,61 @@ public class LubanMgr:Singleton<LubanMgr>
     }
     #endregion
 
+
+    /// <summary>按表中的四档编号查询难度；非法编号返回空，由入场流程拒绝。</summary>
+    /// <param name="id">普通1、精英2、宗师3、宗绝4。</param>
+    public DungeonDifficultyTable GetDungeonDifficultyById(int id)
+    {
+        // 未登记的难度不自动回退，兼容旧0由入场入口处理。
+        DungeonDifficultyTable row;
+        if (id < 1 || id > 4) return null;
+        if (_dungeonDifficulties.TryGetValue(id, out row)) return row;
+        return null;
+    }
+
+    /// <summary>查询同实例难度下的原实体覆盖；未配置的怪物继承原属性及AI。</summary>
+    /// <param name="dungeonId">基础副本号，不按难度改写。</param>
+    /// <param name="difficultyId">本实例已确认的四档难度。</param>
+    /// <param name="entityId">原EntityTable模板号，区别于运行时UID或出生号。</param>
+    public DungeonMonsterDifficultyTable GetDungeonMonsterDifficulty(int dungeonId, int difficultyId, int entityId)
+    {
+        // 组合键防止相同模板在不同副本或难度之间串用配置。
+        DungeonMonsterDifficultyTable row;
+        if (_dungeonMonsterDifficulties.TryGetValue(Tuple.Create(dungeonId, difficultyId, entityId), out row)) return row;
+        return null;
+    }
+
+    /// <summary>启动时检查实际消费的难度配置，再建立唯一组合索引。</summary>
+    /// <param name="rows">Luban生成的逐怪配置行，Gene数组保持表格顺序。</param>
+    private void BuildDungeonMonsterDifficulties(List<DungeonMonsterDifficultyTable> rows)
+    {
+        // 检查四档入口均有正的普攻间隔，避免零间隔恢复旧高频行为。
+        for (int id = 1; id <= 4; id++)
+        {
+            // 本次检查的正式难度行。
+            DungeonDifficultyTable difficulty = GetDungeonDifficultyById(id);
+            if (difficulty == null || difficulty.BasicAttackIntervalMs <= 0)
+                throw new InvalidDataException("副本难度缺失或攻击间隔无效：" + id);
+        }
+        _dungeonMonsterDifficulties = new Dictionary<Tuple<int, int, int>, DungeonMonsterDifficultyTable>();
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 原表行只作为只读配置，实例持有自己的Gene运行节点。
+            DungeonMonsterDifficultyTable row = rows[index];
+            if (!_dungeonsTables.ContainsKey(row.DungeonId) || row.DifficultyId < 1 || row.DifficultyId > 4)
+                throw new InvalidDataException("逐怪难度目标无效：" + row.Id);
+            if (row.EntityId <= 0 || row.AITreeIndex < -1 || row.BasicAttackIntervalMs < 0)
+                throw new InvalidDataException("逐怪AI或攻击间隔无效：" + row.Id);
+            if (row.GeneIds.Length != row.GeneValues.Length)
+                throw new InvalidDataException("逐怪Gene编号与数值数量不一致：" + row.Id);
+            for (int geneIndex = 0; geneIndex < row.GeneIds.Length; geneIndex++)
+            {
+                if (!_geneInfos.ContainsKey(row.GeneIds[geneIndex]))
+                    throw new InvalidDataException("逐怪Gene不存在：" + row.Id + "/" + row.GeneIds[geneIndex]);
+                if (float.IsNaN(row.GeneValues[geneIndex]) || float.IsInfinity(row.GeneValues[geneIndex]))
+                    throw new InvalidDataException("逐怪Gene数值无效：" + row.Id);
+            }
+            _dungeonMonsterDifficulties.Add(Tuple.Create(row.DungeonId, row.DifficultyId, row.EntityId), row);
+        }
+    }
 }

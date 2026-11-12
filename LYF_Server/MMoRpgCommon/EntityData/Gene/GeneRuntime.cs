@@ -188,6 +188,34 @@ public class GeneRuntime
     /// <param name="baseValue">不含基因的基础值。</param>
     /// <returns>属性组件计算的最终值。</returns>
     public virtual double CalculateAttribute(GeneAttributeType attribute, double baseValue) { return Owner.AttrComp.CalculateAttribute(attribute, baseValue); }
+    /// <summary>召唤继承时只读排除指定来源槽的已生效属性贡献，不卸载节点或改变寿命。</summary>
+    /// <param name="attribute">需要计算的现有属性类型。</param>
+    /// <param name="baseValue">不含当前宿主Gene的基础值。</param>
+    /// <param name="sourceId">需要排除的施加来源。</param>
+    /// <param name="sourceSlot">该来源的精确槽；副本难度使用负槽，原Buff使用非负槽。</param>
+    public double CalculateAttributeExcludingSource(GeneAttributeType attribute, double baseValue, ulong sourceId, int sourceSlot)
+    {
+        // 先读取真实属性组件，再仅扣除该来源槽当前仍生效的线性修正。
+        double result = CalculateAttribute(attribute, baseValue);
+        for (int index = 0; index < genes.Count; index++)
+        {
+            // 根节点存在才代表未到期，事件待触发子树不会出现在ActiveNodes中。
+            GeneBase root = genes[index];
+            if (root.SourceId != sourceId || root.SourceSlot != sourceSlot) continue;
+            for (int nodeIndex = 0; nodeIndex < root.ActiveNodes.Count; nodeIndex++)
+            {
+                // 属性节点按原OnCall的Value、层数、ValueType贡献，不重新执行效果。
+                AttributeGeneBase node = root.ActiveNodes[nodeIndex] as AttributeGeneBase;
+                if (node == null || node.Attribute != attribute) continue;
+                if (!node.CallsOnAttach || !node.AppliesToScenario(Scenario)) continue;
+                // 百分比以调用者原基础值计算，固定值只扣实际点数。
+                double contribution = node.Value * node.StackCount;
+                if (node.ValueType == 1) contribution *= baseValue / 100;
+                result -= contribution;
+            }
+        }
+        return result;
+    }
     /// <summary>读取属性组件按来源维护的有效状态。</summary>
     /// <returns>当前生效的状态位。</returns>
     public virtual GeneState GetStates() { return Owner.AttrComp.States; }

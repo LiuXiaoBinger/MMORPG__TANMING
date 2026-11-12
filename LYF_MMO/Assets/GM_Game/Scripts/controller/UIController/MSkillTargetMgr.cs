@@ -7,8 +7,8 @@ public sealed class MSkillTargetMgr
 {
     /// <summary>当前客户端唯一选择入口，不持有跨场景玩家引用。</summary>
     public static readonly MSkillTargetMgr singleton = new MSkillTargetMgr();
-    /// <summary>点击与瞄准切换的选择半径，单位米；不用于自动获取或已选目标的保持。</summary>
-    public const float MaxChooseDistance = 18f;
+    /// <summary>当前魔剑士点击、瞄准切换与目标保持的最大距离，单位米；超过十米取消选择。</summary>
+    public const float MaxChooseDistance = 10f;
     /// <summary>攻击技能没有有效目标时自动获取敌人的半径，单位米，与技能出招射程独立。</summary>
     public const float AutoChooseDistance = 10f;
     /// <summary>沿 RO 默认值，只在距离最近的前四个候选中循环。</summary>
@@ -114,17 +114,11 @@ public sealed class MSkillTargetMgr
         {
             return false;
         }
-        // 主动点击的距离限制只在选择这一刻应用，不导致已经锁定的敌人被自动取消。
-        PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
-        if ((target.Position - player.Position).sqrMagnitude > MaxChooseDistance * MaxChooseDistance)
-        {
-            return false;
-        }
         ResetTarget(target, true);
         return true;
     }
 
-    /// <summary>仅在目标离场、死亡或隐藏时取消选择；保留有效目标，不在每帧检查中改变角色朝向。</summary>
+    /// <summary>目标离场、死亡、隐藏或超过十米时取消选择；检查选择状态时不改变角色朝向。</summary>
     public void UpdateToCheckTarget()
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -143,11 +137,15 @@ public sealed class MSkillTargetMgr
             ResetTarget(null);
             return;
         }
+        if ((player.Target.Position - player.Position).sqrMagnitude > MaxChooseDistance * MaxChooseDistance)
+        {
+            ResetTarget(null);
+        }
     }
 
-    /// <summary>判断当前世界中的有效敌人，保持目标不受获取半径或手动选择距离限制。</summary>
+    /// <summary>判断当前世界中十米内的有效敌人，供选敌、出招及追近中断共用同一距离边界。</summary>
     /// <param name="entity">当前目标或候选，可为空。</param>
-    /// <returns>本地玩家存在且目标仍为当前世界的有效敌人时为 true。</returns>
+    /// <returns>本地玩家存在且有效敌人距离不超过十米时为 true。</returns>
     public bool CanAttack(MEntity entity)
     {
         // 目标是当前世界中有效的敌对单位；IsValidTarget 内部已包含全局与世界非空判断。
@@ -165,6 +163,7 @@ public sealed class MSkillTargetMgr
         {
             return false;
         }
-        return true;
+        return (entity.Position - Global.Instance.SceneWorld.LocalRole.Position).sqrMagnitude <=
+            MaxChooseDistance * MaxChooseDistance;
     }
 }

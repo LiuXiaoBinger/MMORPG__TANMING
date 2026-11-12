@@ -23,8 +23,8 @@ public static class OrcWave18AiSmoke
     private const int StartingHp = 100000000;
     /// <summary>ASPD 79 将基础 0.333333343 秒结果点缩放为约 807 毫秒。</summary>
     private const int ImpactMs = 807;
-    /// <summary>ASPD 79 将 1 秒基础攻击周期缩放为 2420 毫秒。</summary>
-    private const int AttackCycleMs = 2420;
+    /// <summary>普通难度表将ASPD后的2420毫秒普攻限制为至少4000毫秒。</summary>
+    private const int AttackCycleMs = 4000;
     /// <summary>原副本 1 号巡逻路径，使用世界 X、Z 米制坐标。</summary>
     private static readonly Vector2[] Patrol = {
         new Vector2(150.29f, 179.48f), new Vector2(150.15f, 163.75f), new Vector2(145.28f, 159.48f)
@@ -375,7 +375,7 @@ public static class OrcWave18AiSmoke
             // 使用两次真正造成伤害的时间，命中和暴击由业务公式独立掷骰。
             int firstHit = WaitDamage(scene, a.Role);
             int nextHit = WaitDamage(scene, a.Role);
-            Check(nextHit - firstHit >= AttackCycleMs - FrameMs, "相邻伤害遵守换算后的 2420 毫秒攻击周期");
+            Check(nextHit - firstHit >= AttackCycleMs - FrameMs, "相邻伤害遵守普通难度配置的 4000 毫秒最小普攻间隔");
             a.Receive(); b.Receive(); other.Receive();
             // 比较每一条实际怪物通知，包含两个队员先后对兽人的命中和兽人反击。
             Check(a.Notices.SequenceEqual(b.Notices), "两名玩家收到完全相同的实例动作与伤害广播");

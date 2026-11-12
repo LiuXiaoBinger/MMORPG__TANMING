@@ -24,7 +24,8 @@ internal sealed class MoshentaDamageSnapshot
 
     /// <summary>捕获真实怪物实体与原表战斗属性。</summary>
     /// <param name="actor">同实例中真实怪物宿主。</param>
-    internal static MoshentaDamageSnapshot Capture(MoshentaActor actor)
+    /// <param name="forSummon">原施加者快照召唤时为真，只排除父怪难度Gene，仍继承原Buff属性。</param>
+    internal static MoshentaDamageSnapshot Capture(MoshentaActor actor, bool forSummon = false)
     {
         // EntityTable基础属性不是已计算的最终攻击。
         XElement row = actor.Owner.Battle.Catalog.Entity(actor.EntityId);
@@ -65,20 +66,69 @@ internal sealed class MoshentaDamageSnapshot
         result.Set("ATTR_SPECIAL_RACE", MoshentaSkillCatalog.I(row, "UnitRace"));
         result.Set("ATTR_SPECIAL_DEF_ATTR", MoshentaSkillCatalog.I(row, "UnitAttrType"));
         result.Set("ATTR_BASIC_MAX_HP_FINAL", actor.MaxHp);
-        // 原怪物容器中的破甲等效果只在读取基础防御时应用一次。
-        GeneRuntime genes = actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
-        result.Set("ATTR_BASIC_DEF", genes.CalculateAttribute(GeneAttributeType.DefExternal, MoshentaSkillCatalog.I(row, "DEF")));
-        result.Set("ATTR_BASIC_MDEF", genes.CalculateAttribute(GeneAttributeType.DefInternal, MoshentaSkillCatalog.I(row, "MDEF")));
-        result.Stunned = (genes.GetStates() & GeneState.Stun) != 0;
-        result.Position = actor.Position;
-        result.Facing = actor.Facing;
+        result.Set("ATTR_BASIC_DEF", MoshentaSkillCatalog.I(row, "DEF"));
+        result.Set("ATTR_BASIC_MDEF", MoshentaSkillCatalog.I(row, "MDEF"));
         if (actor.SummonSnapshot != null)
         {
-            // 原召唤者快照属性按值复制，姿态仍为实际召唤实体。
+            // 原召唤属性先作为基底；其中保留施加者Buff，已排除施加者的难度Gene。
             List<string> keys = new List<string>(actor.SummonSnapshot.Attributes.Keys);
             for (int index = 0; index < keys.Count; index++) result.Set(keys[index], actor.SummonSnapshot.Attributes[keys[index]]);
         }
+        // Gene按当前召唤物或固定怪物自己的容器应用，不能被继承快照覆盖。
+        GeneRuntime genes = actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+        ApplyAttackRangeAsRoScalar(result, actor, genes, GeneAttributeType.AtkExternalMin, GeneAttributeType.AtkExternalMax,
+            "ATTR_BASIC_BASE_ATK_FINAL", "ATTR_BASIC_WEAPON_ATK_FINAL", forSummon);
+        ApplyAttackRangeAsRoScalar(result, actor, genes, GeneAttributeType.AtkInternalMin, GeneAttributeType.AtkInternalMax,
+            "ATTR_BASIC_BASE_MATK_FINAL", "ATTR_BASIC_WEAPON_MATK_FINAL", forSummon);
+        result.Set("ATTR_BASIC_DEF", ReadGeneAttribute(actor, genes, GeneAttributeType.DefExternal, result.Get("ATTR_BASIC_DEF"), forSummon));
+        result.Set("ATTR_BASIC_MDEF", ReadGeneAttribute(actor, genes, GeneAttributeType.DefInternal, result.Get("ATTR_BASIC_MDEF"), forSummon));
+        result.Set("ATTR_BASIC_HIT_FINAL", ReadGeneAttribute(actor, genes, GeneAttributeType.HitPoint, result.Get("ATTR_BASIC_HIT_FINAL"), forSummon));
+        result.Set("ATTR_BASIC_CRI_FINAL", ReadGeneAttribute(actor, genes, GeneAttributeType.CritPoint, result.Get("ATTR_BASIC_CRI_FINAL"), forSummon));
+        result.Set("ATTR_BASIC_CRI_RES_FINAL", ReadGeneAttribute(actor, genes, GeneAttributeType.CritResistPoint, result.Get("ATTR_BASIC_CRI_RES_FINAL"), forSummon));
+        // 生命快照始终来自当前真实实体，不用父怪生命上限替换召唤模板。
+        result.Set("ATTR_BASIC_MAX_HP_FINAL", actor.MaxHp);
+        result.Stunned = (genes.GetStates() & GeneState.Stun) != 0;
+        result.Position = actor.Position;
+        result.Facing = actor.Facing;
         actor.Skills.Buffs.Snapshot(result);
+        return result;
+    }
+
+    /// <summary>将本项目攻击区间映射到RO原标量：取上下限修正的平均，不额外增加一次随机掷点。</summary>
+    /// <param name="result">沿用原Lua字段的本次快照。</param>
+    /// <param name="actor">当前实体，提供难度Gene来源。</param>
+    /// <param name="genes">当前真实Gene容器。</param>
+    /// <param name="minimum">外功或内功下限属性。</param>
+    /// <param name="maximum">对应的上限属性。</param>
+    /// <param name="baseKey">原RO素质攻击字段。</param>
+    /// <param name="weaponKey">原RO武器攻击字段。</param>
+    /// <param name="forSummon">是否只读取供子怪继承的非难度属性。</param>
+    private static void ApplyAttackRangeAsRoScalar(MoshentaDamageSnapshot result, MoshentaActor actor, GeneRuntime genes,
+        GeneAttributeType minimum, GeneAttributeType maximum, string baseKey, string weaponKey, bool forSummon)
+    {
+        // 以0为基底读出固定项，平均上下限代表同一区间的中心攻击标量。
+        double flat = (ReadGeneAttribute(actor, genes, minimum, 0, forSummon) + ReadGeneAttribute(actor, genes, maximum, 0, forSummon)) / 2;
+        // 以1为基底减去固定项，得到百分比倍率；避免将固定加值应用到两个组成各一次。
+        double scale = (ReadGeneAttribute(actor, genes, minimum, 1, forSummon) + ReadGeneAttribute(actor, genes, maximum, 1, forSummon)) / 2 - flat;
+        result.Set(baseKey, result.Get(baseKey) * scale);
+        result.Set(weaponKey, result.Get(weaponKey) * scale + flat);
+    }
+
+    /// <summary>正常施法读取完整属性；召唤继承仅扣父怪难度负槽，不改变Buff、层数或寿命。</summary>
+    /// <param name="actor">拥有难度负槽的当前怪物。</param>
+    /// <param name="genes">当前真实运行容器。</param>
+    /// <param name="attribute">已有Gene属性类型，不按基因ID特判。</param>
+    /// <param name="baseValue">原RO属性或继承的非难度基础值。</param>
+    /// <param name="forSummon">是否排除难度槽以供子怪再次应用自身配置。</param>
+    private static double ReadGeneAttribute(MoshentaActor actor, GeneRuntime genes, GeneAttributeType attribute, double baseValue, bool forSummon)
+    {
+        // 原完整属性是所有已生效来源之和，后续只扣明确属于难度的槽。
+        double original = genes.CalculateAttribute(attribute, baseValue);
+        if (!forSummon) return original;
+        // 多个同属性Gene各扣一次，Buff来源槽保持原贡献。
+        double result = original;
+        for (int index = 0; index < actor.DifficultyGeneCount; index++)
+            result -= original - genes.CalculateAttributeExcludingSource(attribute, baseValue, actor.UnitId, int.MinValue + index);
         return result;
     }
 

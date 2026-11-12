@@ -14,6 +14,10 @@ namespace cfg
 public partial class Tables
 {
     public TbCountInfo TbCountInfo {get; }
+    /// <summary>四档副本名称与普攻间隔。</summary>
+    public TbDungeonDifficultyTable TbDungeonDifficultyTable {get; }
+    /// <summary>副本和难度下逐怪Gene与AI覆盖。</summary>
+    public TbDungeonMonsterDifficultyTable TbDungeonMonsterDifficultyTable {get; }
     /// <summary>按 RO 原始目标 ID 加载的副本目标定义。</summary>
     public TbDungeonTargetTable TbDungeonTargetTable {get; }
     /// <summary>按 RO 原始副本 ID 加载的完整副本主表。</summary>
@@ -40,6 +44,8 @@ public partial class Tables
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbCountInfo = new TbCountInfo(loader("tbcountinfo"));
+        TbDungeonDifficultyTable = new TbDungeonDifficultyTable(loader("tbdungeondifficultytable"));
+        TbDungeonMonsterDifficultyTable = new TbDungeonMonsterDifficultyTable(loader("tbdungeonmonsterdifficultytable"));
         TbDungeonTargetTable = new TbDungeonTargetTable(loader("tbdungeontargettable"));
         TbDungeonsTable = new TbDungeonsTable(loader("tbdungeonstable"));
         TbDungeonTargetGroupTable = new TbDungeonTargetGroupTable(loader("tbdungeontargetgrouptable"));
@@ -65,6 +71,8 @@ public partial class Tables
     private void ResolveRef()
     {
         TbCountInfo.ResolveRef(this);
+        TbDungeonDifficultyTable.ResolveRef(this);
+        TbDungeonMonsterDifficultyTable.ResolveRef(this);
         TbDungeonTargetTable.ResolveRef(this);
         TbDungeonsTable.ResolveRef(this);
         TbDungeonTargetGroupTable.ResolveRef(this);

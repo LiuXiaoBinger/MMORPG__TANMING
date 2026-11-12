@@ -550,3 +550,11 @@
 - 保存的 MSkillTargetMgr.cs 基线与 HEAD1a5d58b 一致；主 Agent 核对精确单文件差异和暂存范围，差异检查通过。UpdateToCheckTarget 无 Rotation/LookRotation 写入，保留失效目标 ResetTarget(null) 及有效选择。施法/追近入口未修改；这些是静态证据，不是新的游戏运行结果。
 - 原生 Codex 开发者正常停止 Play 并刷新，脚本编译完成，Console 错误 0。没有重新登录、活体方法探针、战斗重跑、Player/Yoo/GenerateAll、桌面操作、服务重启或部署。最终 Play=false/Paused=false/Compiling=false，位于 Scene_Boot，dirty=false，无新增测试回调/组件。
 - 证据为 `_temp/target-idle-facing-remove-20261112/client-final-handoff.md`、`verification.txt`、`editor-state.txt` 及保存的基线。业务提交 dfaa0ce 已推送；本次仅进行已批准归档。此修正覆盖此前持续闲站面向策略，保留原始测试历史。完整文件范围以及物理输入/登录后战斗/多人/发布环境未验边界见 `项目修改日志/2026-11-12-攻击前方优先选敌与目标保持追近.md` 的本编号条目。
+
+
+## [VERIFY][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] 四难度、Gene 最终属性与 Editor 进本验收
+
+- 用户已批准归档；完整清单、真实失败、限制及 Git 见 `项目修改日志/2026-11-12-副本四难度逐怪基因AI与攻击间隔配置.md`。正式表类型编译及 bytes 读取 5231 项检查通过；行数为 4/140/183，原 179 条 Gene 字段不变。正式生成器 7 个输出一致、其余 60 个产物未变；缺源表复制测试退出码 1，在生成前中止。GS/MS/Gate/Network/Common 编译通过；Unity 重载错误 0，正式预制体四按钮/文字引用通过。
+- GS68 + MS22 + 原会合/第 15～18 波追击 96，共 186 项检查。覆盖生命不重复缩放、固定/百分比攻击、DEF/HIT/CRI、召唤保留 Buff 且排除召唤者难度基因、AI 的 -1 与 0 区别、逐行 5200ms 覆盖、跨副本查询、实例分离/重置及四档成员确认。隔离真实 GS 中，5515 在普通/精英默认 4000/3500ms 下实测起手间隔为 4200/3600ms，叠加原 300ms AI 调度；每次起手一个普通命中。
+- Editor 四个真实按钮委托发送 4060+degree1～4；九项 10m 方法边界检查使用临时位置并最终恢复，不是物理输入或网络移动测试。实际普通实例 1 的生命为 55131/516777，宗绝实例 2、degree4 为 96479/904359。宗绝四次命中为 939/942/938/950，客户端接收间隔 3.004/2.997/3.002s；普通仅一次 729 样本，连续间隔只有隔离 GS 证据。临时监听已移除，最终安全状态回执见客户端交接文件。
+- 旧 EventFlow 冒烟检查未通过历史入场怪物数 0 断言，且仍保留过时的死亡自动传送预期，不能记为通过。OrcWave18AiSmoke 已更新间隔预期，但整份脚本未重跑。UI 颜色和生成器/复制失败已修复，日志保留。未验真人多人完整通关、全部 Boss 技能/职业、Player 构建或线上环境。本机三个服务部署前后 config SHA 不变；证据位于 `_temp/dungeon-difficulty-attack-rate-20261112/`。

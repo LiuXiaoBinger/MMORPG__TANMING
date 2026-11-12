@@ -196,6 +196,7 @@ message TeamEnterDungeonNtf{
 	repeated MonsterActionData monster_actions = 8;//入场时已有 AI 的怪物当前动作，含权威位置与剩余时间
 	repeated MonsterSpawnData monster_spawns = 10;//当前仍存在的技能召唤实体；固定场景波次仍由flow还原
 	repeated MonsterBuffData buffs = 11;//当前所有存活Buff实例与真实剩余时长，供晚加入恢复持续表现
+	int32 dungeons_degree = 12;//本实例难度1至4；回城通知为0。
 }
 
 // 实例内的怪物属性；同一波次的多个相同模型由出生序号区分。

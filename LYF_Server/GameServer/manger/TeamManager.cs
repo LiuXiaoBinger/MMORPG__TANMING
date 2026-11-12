@@ -371,6 +371,16 @@ public sealed class TeamManager
     /// <param name="order">已获队长权限检查的队伍、实例、目标副本和成员。</param>
     public void EnterDungeon(MasterTeamDungeonOrder order)
     {
+        // 难度与实例身份一并验证，拒绝同一实例号被另一难度复用。
+        int degree = order.DungeonsDegree;
+        if (degree == 0) degree = 1;
+        if (LubanMgr.Instance.GetDungeonDifficultyById(degree) == null) return;
+        // 已存在的实例保留原难度，不因晚加入请求更改怪物数值。
+        Dungeon existing;
+        if (_instances.TryGetValue(order.InstanceId, out existing))
+        {
+            if (existing.WaveSpawner.Dungeon.DungeonsID != order.DungeonId || existing.WaveSpawner.Difficulty.DifficultyId != degree) return;
+        }
         // 保存本机当前在线的获准成员，已下线的角色不占用实例。
         List<ulong> entering = new List<ulong>();
         // 保留 MS 的入场顺序。
@@ -410,7 +420,7 @@ public sealed class TeamManager
         Dungeon team;
         if (!_instances.TryGetValue(order.InstanceId, out team))
         {
-            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(order.DungeonId) };
+            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(new DungeonDifficultySettings(order.DungeonId, degree)) };
             _instances.Add(order.InstanceId, team);
             dungeonTeams.Add(team);
         }
@@ -476,6 +486,7 @@ public sealed class TeamManager
         TeamEnterDungeonNtf notice = new TeamEnterDungeonNtf();
         notice.TeamId = order.TeamId;
         notice.DungeonId = order.DungeonId;
+        notice.DungeonsDegree = team.WaveSpawner.Difficulty.DifficultyId;
         notice.SceneId = team.WaveSpawner.Dungeon.SceneID;
         notice.InstanceId = team.InstanceId;
         notice.MapId = team.WaveSpawner.Dungeon.SceneID;

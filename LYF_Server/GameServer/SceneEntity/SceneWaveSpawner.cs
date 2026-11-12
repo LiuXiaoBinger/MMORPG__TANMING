@@ -41,6 +41,8 @@ public sealed partial class SceneWaveSpawner
     private readonly List<SpawnPoint> spawn_points_;
     /// <summary>本实例选择的原DungeonsTable行，包含独立的场景和目标配置。</summary>
     public DungeonsTable Dungeon { get; private set; }
+    /// <summary>本实例独立的难度配置，重置波次时保持不变。</summary>
+    internal DungeonDifficultySettings Difficulty { get; private set; }
     /// <summary>按SceneID定位的正式场景XML，不借用其他副本资源。</summary>
     internal XDocument Config { get; private set; }
     /// <summary>当前副本私有的服务端实体容器。</summary>
@@ -54,9 +56,14 @@ public sealed partial class SceneWaveSpawner
 
     /// <summary>对应 RO 的 FirstCreateMonster，只生成当前副本起始激活的可战斗波次。</summary>
     /// <param name="dungeonId">MS已批准的原副本配置号。</param>
-    public SceneWaveSpawner(int dungeonId)
+    public SceneWaveSpawner(int dungeonId) : this(new DungeonDifficultySettings(dungeonId, 1)) { }
+
+    /// <summary>按本实例已确认的强类型难度创建原场景波次。</summary>
+    /// <param name="difficulty">由GS入场验证后固定的副本与难度。</param>
+    internal SceneWaveSpawner(DungeonDifficultySettings difficulty)
     {
-        Dungeon = LubanMgr.Instance.GetDungeonsTableById(dungeonId);
+        Difficulty = difficulty;
+        Dungeon = LubanMgr.Instance.GetDungeonsTableById(difficulty.DungeonId);
         // 客户端与服务端嵌入同一份场景登记；空配置只启用既有通用流程。
         DungeonSceneRegistration registration = DungeonSceneRegistration.Load(Dungeon.SceneID);
         if (!string.IsNullOrEmpty(registration.battleConfig)) Battle = new DungeonBattleConfig(registration.battleConfig);
@@ -314,7 +321,7 @@ public sealed partial class SceneWaveSpawner
                     int attackerMaxHp = finalAttributes.MaxHp;
                     int attackerHp = Math.Min(caster.mainRoleInfo.BaseInfo.CurrHp, Math.Max(0, attackerMaxHp));
                     GeneDamageContext damageContext = new GeneDamageContext(attackerHp, attackerMaxHp,
-                        monster.CurrentHp, monster.MaxHp, targetIsBoss, fromBehind);
+                        monster.CurrentHp, GetHpData(index).MaxHp, targetIsBoss, fromBehind);
                     double bonus = equipment.Runtime.ResolveDamageBonus(damageContext);
                     if (bonus > 0) calculatedDamage = (int)(calculatedDamage * (1 + bonus / 100));
                 }
@@ -406,6 +413,9 @@ public sealed partial class SceneWaveSpawner
     /// <param name="damage">本次实际扣血点数；完整入场快照沿用零值。</param>
     private MonsterHpData GetHpData(int index, int damage = 0)
     {
+        // 战斗怪物的基础MaxHp保持原值，通知读取已经含Gene的权威上限。
+        MoshentaActor actor = FindActor(monsters_[index].UID);
+        if (actor != null) return HpData(actor, damage);
         return new MonsterHpData { SpawnId = activePoints[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp, Damage = damage };
     }
 

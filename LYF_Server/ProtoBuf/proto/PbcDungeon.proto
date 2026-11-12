@@ -17,6 +17,7 @@ enum FailEnterFBReason {
 message AskMemberEnterFBData {
   uint32 dungeon_id = 1; // 目标副本配置号。
   uint32 confirm_seconds = 4; // 本项目扩展：服务端确认窗口持续秒数。
+  int32 dungeons_degree = 5; // 本次确认的难度：1普通、2精英、3宗师、4宗绝。
 }
 
 // 客户端回复入场选择，角色身份由 GS 会话确认。

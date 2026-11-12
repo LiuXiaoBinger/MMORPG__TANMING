@@ -50,7 +50,28 @@ internal sealed class MoshentaActor
     /// <summary>权威当前生命值；零上限机制不能据此判死。</summary>
     internal int CurrentHp { get { return Monster.CurrentHp; } }
     /// <summary>真实战斗生命上限。</summary>
-    internal int MaxHp { get { return Monster.MaxHp; } }
+    internal int MaxHp
+    {
+        get
+        {
+            // 原零HP机制实体仍为零，其他实体从不含Gene的基础值计算一次。
+            if (Monster.MaxHp <= 0) return Monster.MaxHp;
+            return Monster.Components.Get<GameServer.SceneEntity.AttributesComponent>(MMoRpgCommon.SceneEntity.EntityComponentType.Attributes).MaxHp;
+        }
+    }
+    /// <summary>当前怪物的普攻最小起手间隔，单位毫秒；不改变技能动作和多击。</summary>
+    internal int BasicAttackIntervalMs { get; private set; }
+    /// <summary>本怪物在当前难度下的只读配置；未配置则继承原表。</summary>
+    private readonly DungeonMonsterDifficultyTable difficultyRow;
+    /// <summary>本怪难度Gene占用的负槽数量；召唤继承按精确来源槽排除难度，保留原Buff。</summary>
+    internal int DifficultyGeneCount
+    {
+        get
+        {
+            if (difficultyRow == null) return 0;
+            return difficultyRow.GeneIds.Length;
+        }
+    }
     /// <summary>当前最高仇恨的同实例存活玩家。</summary>
     internal OnlineRole Target { get; private set; }
     /// <summary>原ActivePassive控制的主动/被动仇恨门控。</summary>
@@ -136,6 +157,13 @@ internal sealed class MoshentaActor
     {
         Owner = owner; Monster = monster; EntityId = entityId; SpawnId = spawnId; WaveId = waveId;
         Now = owner.Now; BornPosition = Position; patrol = points; patrolType = type;
+        difficultyRow = owner.Difficulty.Monster(entityId);
+        BasicAttackIntervalMs = owner.Difficulty.BasicAttackIntervalMs;
+        if (difficultyRow != null)
+        {
+            if (difficultyRow.AITreeIndex >= 0) aiIndex = difficultyRow.AITreeIndex;
+            if (difficultyRow.BasicAttackIntervalMs > 0) BasicAttackIntervalMs = difficultyRow.BasicAttackIntervalMs;
+        }
         // 实际运行EntityTable提供AI与属性，不再沿用兽人常量。
         XElement row = Owner.Battle.Catalog.Entity(entityId);
         Level = MoshentaSkillCatalog.I(row, "UnitLevel");
@@ -190,6 +218,16 @@ internal sealed class MoshentaActor
     /// <summary>出生初始化独立于构造，确保实例已登记本实体后再处理出生Buff或场景事件。</summary>
     internal void Born()
     {
+        // 实体已进入world，先装配本实例Gene，再执行出生Buff与首次HP快照。
+        GeneRuntime genes = Monster.Components.Get<GeneComponent>(MMoRpgCommon.SceneEntity.EntityComponentType.Gene).Runtime;
+        genes.SetScenario(1);
+        if (difficultyRow != null)
+        {
+            // 每个配置槽是独立来源；与原Buff的普通槽不混用。
+            for (int index = 0; index < difficultyRow.GeneIds.Length; index++)
+                genes.AddGene(difficultyRow.GeneIds[index], UnitId, difficultyRow.GeneValues[index], int.MinValue + index, UnitId);
+        }
+        Monster.CurrentHp = MaxHp;
         // 原BornBuff条目为完整BuffID=万分比概率。
         string[] buffs = MoshentaSkillCatalog.S(Owner.Battle.Catalog.Entity(EntityId), "BornBuff").Split('|');
         for (int index = 0; index < buffs.Length; index++)

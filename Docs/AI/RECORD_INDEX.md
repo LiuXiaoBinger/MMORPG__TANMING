@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b109d361abcaffd6a46cd67fcab9dd916c0c30b11dec91d1c9ee7ecd6e005afb`
+Source normalized SHA256: `27b04bcdbf5b4a8a88f169227d037e4cc892a9d082f0a32e67a884183b3b52c6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -71,11 +71,12 @@ Source normalized SHA256: `b109d361abcaffd6a46cd67fcab9dd916c0c30b11dec91d1c9ee7
 | [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-512 |
 | [CODE][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Manual-lock pursuit and three-hit basic-attack movement | 513-519 |
 | [CODE][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Front-priority automatic acquisition, target retention and skill-range pursuit | 520-525 |
-| [CODE][技能][TARGET-IDLE-FACING-REMOVE-20261112] Keep selected targets without continuous idle rotation | 526-530 |
+| [CODE][技能][TARGET-IDLE-FACING-REMOVE-20261112] Keep selected targets without continuous idle rotation | 526-532 |
+| [CODE][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four spreadsheet-driven difficulties and per-monster Gene/AI | 533-537 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2b2f329f47fa5fa4c9d2c10c1b9a811d112df9115b09d1fb1463d0ff5ac52cd9`
+Source normalized SHA256: `429b4377b46575410a5aeed04f2a47196b68bd2637a25184c45a9a16d80085c2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -138,7 +139,8 @@ Source normalized SHA256: `2b2f329f47fa5fa4c9d2c10c1b9a811d112df9115b09d1fb1463d
 | [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-541 |
 | [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Real approach before basic attack and bounded movement checks | 542-549 |
 | [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Twenty geometry checks and real automatic pursuit of a moving monster | 550-556 |
-| [VERIFY][技能][TARGET-IDLE-FACING-REMOVE-20261112] Bounded idle-facing removal checks | 557-561 |
+| [VERIFY][技能][TARGET-IDLE-FACING-REMOVE-20261112] Bounded idle-facing removal checks | 557-563 |
+| [VERIFY][副本][DUNGEON-DIFFICULTY-GENE-AI-20261112] Four difficulties, effective Gene attributes and Editor entry | 564-569 |
 
 ## Docs/AI/DECISIONS.en.md
 

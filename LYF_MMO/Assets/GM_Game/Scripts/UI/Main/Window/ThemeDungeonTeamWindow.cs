@@ -44,12 +44,15 @@ public sealed class ThemeDungeonTeamWindow : WindowBase
     /// <summary>显示全队成员，队长发起即视为同意，其余成员等待真实答复。</summary>
     /// <param name="members">最新服务器队伍名单。</param><param name="localRoleId">本机角色号。</param>
     /// <param name="seconds">服务端本次确认的持续秒数。</param>
-    public void SetMembers(IList<TeamMemberInfo> members, ulong localRoleId, uint seconds)
+    /// <param name="dungeonName">服务端询问中副本编号对应的正式名称。</param>
+    /// <param name="difficultyName">服务端询问中难度编号对应的正式名称。</param>
+    public void SetMembers(IList<TeamMemberInfo> members, ulong localRoleId, uint seconds,
+        string dungeonName, string difficultyName)
     {
         _localRoleId = localRoleId;
         _duration = seconds;
         _deadline = Time.unscaledTime + seconds;
-        _dungeonName.text = "即将进入魔神塔";
+        _dungeonName.text = "即将进入" + dungeonName + " · " + difficultyName;
         _roleIds.Clear();
         _agreeButton.interactable = true;
         _refuseButton.interactable = true;

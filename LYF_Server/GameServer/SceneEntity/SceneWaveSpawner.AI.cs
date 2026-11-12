@@ -348,7 +348,9 @@ public sealed partial class SceneWaveSpawner
         actor.SummonerId = caster.UnitId;
         if (lifetimeMs > 0) actor.ExpireTime = Now + lifetimeMs;
         world_.Add(monster); monsters_.Add(monster); activePoints.Add(new SpawnPoint { SpawnId = spawnId, Position = position, Facing = facing, Creature = new ROSceneCreatureEntity { id = entityId } }); Actors.Add(actor);
-        Notice.MonsterSpawns.Add(SpawnData(actor)); Notice.Monsters.Add(HpData(actor, 0)); actor.Born(); return actor;
+        // 召唤物先装配同实例Gene，再发布第一次生命快照。
+        actor.Born();
+        Notice.MonsterSpawns.Add(SpawnData(actor)); Notice.Monsters.Add(HpData(actor, 0)); return actor;
     }
     /// <summary>尸体定时器或场景显式清理释放AI和真实实体，移除不重复死亡计数。</summary><param name="actor">需要移除的原实体。</param>
     internal void RemoveActor(MoshentaActor actor) { int index = monsters_.IndexOf(actor.Monster); actor.Remove(); Actors.Remove(actor); if (index >= 0) { monsters_.RemoveAt(index); activePoints.RemoveAt(index); } world_.Remove(actor.Monster.UID); Notice.RemovedSpawnIds.Add(actor.SpawnId); }

@@ -58,6 +58,7 @@
         <Compile Include="MessageHandler\Role\DungeonInteractHandler.cs" />
         <Compile Include="MessageHandler\Role\RoleReviveHandler.cs" />
         <Compile Include="SceneEntity\SceneWaveSpawner.cs" />
+        <Compile Include="SceneEntity\DungeonDifficultySettings.cs" />
         <Compile Include="SceneEntity\MoshentaOrc.cs" />
         <Compile Include="SceneEntity\MoshentaOrcDefinition.cs" />
         <!-- 魔神塔原技能表与动作配置的读取。 -->

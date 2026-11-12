@@ -491,15 +491,15 @@ public sealed class TeamCtrl : CtrlBase
     /// 只有服务器回 TeamEnterDungeonNtf 后客户端才加载场景。
     /// </summary>
     /// <param name="dungeonId">副本配置ID，魔神塔为 4060。</param>
+    /// <param name="difficultyId">难度表编号一至四，由详情页选择，服务端决定实际实例配置。</param>
     /// <returns>请求已提交返回 true。</returns>
-    public bool CaptainRequestEnterFBPtc(int dungeonId)
+    public bool CaptainRequestEnterFBPtc(int dungeonId, int difficultyId)
     {
-        // 队长进副本请求体：DungeonId 为副本配置ID（魔神塔 4060）；ChapterId 与 DungeonsDegree 固定 0，
-        // 当前客户端没有选择章节和难度，两个字段均发送 0。
+        // 基础副本编号保留现有地图；难度单独发送，不用缺失资源的其他地图编号代替难度。
         CaptainRequestEnterFBArg arg = new CaptainRequestEnterFBArg();
         arg.DungeonId = dungeonId;
         arg.ChapterId = 0;
-        arg.DungeonsDegree = 0;
+        arg.DungeonsDegree = difficultyId;
         return Send(NetDefine.CMD_CaptainRequestEnterFBCode, arg.ToByteString());
     }
     #endregion

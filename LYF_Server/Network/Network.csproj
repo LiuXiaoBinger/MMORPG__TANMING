@@ -64,6 +64,10 @@
     <Compile Include="LubanManage\Codes\DungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonTargetTable.cs" />
     <Compile Include="LubanManage\Codes\DungeonsTable.cs" />
+    <Compile Include="LubanManage\Codes\DungeonDifficultyTable.cs" />
+    <Compile Include="LubanManage\Codes\TbDungeonDifficultyTable.cs" />
+    <Compile Include="LubanManage\Codes\DungeonMonsterDifficultyTable.cs" />
+    <Compile Include="LubanManage\Codes\TbDungeonMonsterDifficultyTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonsTable.cs" />
     <Compile Include="LubanManage\Codes\DungeonTargetGroupTable.cs" />
     <Compile Include="LubanManage\Codes\TbDungeonTargetGroupTable.cs" />
@@ -164,6 +168,8 @@
     <Content Include="LubanManage\Tb\tbpresenttable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeontargettable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeonstable.bytes" />
+    <Content Include="LubanManage\Tb\tbdungeondifficultytable.bytes" />
+    <Content Include="LubanManage\Tb\tbdungeonmonsterdifficultytable.bytes" />
     <Content Include="LubanManage\Tb\tbdungeontargetgrouptable.bytes" />
   </ItemGroup>
   <ItemDefinitionGroup>

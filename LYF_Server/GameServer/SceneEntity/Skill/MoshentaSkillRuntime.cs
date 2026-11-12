@@ -190,7 +190,11 @@ internal sealed class MoshentaSkillRuntime
         endTime = now + (uint)(MoshentaSkillCatalog.F(current.Skill.Data, "SkillStateTime") * 100) * scale / 10;
         current.End = now + (uint)(MoshentaSkillCatalog.F(current.Skill.Data, "Time") * 100) * scale / 10 + 2;
         events.Add(new MoshentaSkillEvent { Kind = MoshentaSkillEvent.Finish, Cast = current, At = current.End });
-        cooldowns[current.Skill.Id] = now + (long)(MoshentaSkillCatalog.F(current.Skill.Effect, "PVECoolTime") * current.TimeScale * 1000);
+        // 原ASPD缩放仍先计算，只有普通攻击受副本配置的最小起手间隔约束。
+        long cooldownMilliseconds = (long)(MoshentaSkillCatalog.F(current.Skill.Effect, "PVECoolTime") * current.TimeScale * 1000);
+        if (MoshentaSkillCatalog.I(current.Skill.Table, "SkillDamType") == 0)
+            cooldownMilliseconds = Math.Max(cooldownMilliseconds, Actor.BasicAttackIntervalMs);
+        cooldowns[current.Skill.Id] = now + cooldownMilliseconds;
         Actor.Owner.PublishSkillAction(Actor, MonsterActionPhase.Attack, current.Skill.Id, current.Level, current.TargetId, current.Point, now, endTime);
         for (int index = 0; index < current.Skill.Results.Count; index++)
         {
