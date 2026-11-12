@@ -351,10 +351,10 @@ public sealed class SkillCtrl : CtrlBase
         return true;
     }
 
-    /// <summary>普攻只使用有效的手动锁定目标，无锁定时沿角色朝向挥砍；其他攻击保留原选敌规则。</summary>
+    /// <summary>攻击优先保持有效当前目标；没有目标时在十米内先选前方，再选其他方向的最近敌人。</summary>
     /// <param name="skillCore">本次已学技能；主表 Type 一为普攻，Type 二为其他主动攻击。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>普攻返回有效手锁目标，否则为空并按朝向释放；其他攻击保持原选择。</returns>
+    /// <returns>有效当前敌人或十米内的新目标；没有候选时为空，沿角色当前朝向释放。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
         // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
@@ -363,16 +363,8 @@ public sealed class SkillCtrl : CtrlBase
         {
             return null;
         }
-        // 普攻只追踪玩家主动锁定的敌人，不将附近怪物或其他技能的自动目标当成手锁。
-        if (skillInfo.Type == 1)
-        {
-            if (MSkillTargetMgr.singleton.HasManualTarget && MSkillTargetMgr.singleton.CanAttack(target))
-            {
-                return target;
-            }
-            return null;
-        }
-        if (MSkillTargetMgr.singleton.HasManualTarget && MSkillTargetMgr.singleton.CanAttack(target))
+        // 自动取得和主动选择的敌人同样保持，身后或更近的新怪不会抢走已有目标。
+        if (MSkillTargetMgr.singleton.CanAttack(target))
         {
             return target;
         }

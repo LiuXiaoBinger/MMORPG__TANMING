@@ -7,8 +7,10 @@ public sealed class MSkillTargetMgr
 {
     /// <summary>当前客户端唯一选择入口，不持有跨场景玩家引用。</summary>
     public static readonly MSkillTargetMgr singleton = new MSkillTargetMgr();
-    /// <summary>沿 RO GlobalTableFight 的 MaxChooseRange 默认选择半径十八米；与技能射程独立，点击、切换和自动选敌共用。</summary>
+    /// <summary>点击与瞄准切换的选择半径，单位米；不用于自动获取或已选目标的保持。</summary>
     public const float MaxChooseDistance = 18f;
+    /// <summary>攻击技能没有有效目标时自动获取敌人的半径，单位米，与技能出招射程独立。</summary>
+    public const float AutoChooseDistance = 10f;
     /// <summary>沿 RO 默认值，只在距离最近的前四个候选中循环。</summary>
     private const int _maxSelectCount = 4;
     /// <summary>当前目标是否来自主动点击或瞄准切换；自动选择和清除目标时复位。</summary>
@@ -64,15 +66,19 @@ public sealed class MSkillTargetMgr
         MListPool<MEntity>.Release(targets);
     }
 
-    /// <summary>技能需要自动选目标时，查找 18 单位范围内最近的合格候选，并同步玩家当前目标。</summary>
+    /// <summary>攻击自动获取只查十米内，优先取指定方向内最近敌人，无候选再取其余方向最近敌人。</summary>
     /// <param name="findEnemy">true 选择怪物敌方，false 选择角色友方。</param>
-    /// <param name="condition">该次技能的额外条件，允许为空。</param>
+    /// <param name="condition">优先选择的方向条件；现有攻击入口传入前方扇形，空值表示直接取最近。</param>
     /// <returns>找到的目标；无候选时为空，不禁止既有无目标技能。</returns>
     public MEntity FindEnemyBySkillBtn(bool findEnemy, Func<MEntity, bool> condition)
     {
         // 查询返回的仍为世界中的原实体引用。
         MEntity target = MSkillTargetDefine.FindOneTarget(findEnemy,
-            MaxChooseDistance, condition);
+            AutoChooseDistance, condition);
+        if (target == null)
+        {
+            target = MSkillTargetDefine.FindOneTarget(findEnemy, AutoChooseDistance);
+        }
         ResetTarget(target);
         return target;
     }
@@ -108,11 +114,17 @@ public sealed class MSkillTargetMgr
         {
             return false;
         }
+        // 主动点击的距离限制只在选择这一刻应用，不导致已经锁定的敌人被自动取消。
+        PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
+        if ((target.Position - player.Position).sqrMagnitude > MaxChooseDistance * MaxChooseDistance)
+        {
+            return false;
+        }
         ResetTarget(target, true);
         return true;
     }
 
-    /// <summary>检查当前目标的离场、死亡、隐藏与超距，失效后取消选择。</summary>
+    /// <summary>目标离场、死亡或隐藏才取消；静止默认状态持续面向所选敌人，不覆盖移动或技能朝向。</summary>
     public void UpdateToCheckTarget()
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -122,18 +134,35 @@ public sealed class MSkillTargetMgr
         }
         // 本帧当前玩家，未选择时无需候选查询。
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
-        if (player.Target != null &&
-            (!MSkillTargetDefine.IsValidTarget(player.Target) ||
-             (player.Target.Position - player.Position).sqrMagnitude >
-             MaxChooseDistance * MaxChooseDistance))
+        if (player.Target == null)
+        {
+            return;
+        }
+        if (!MSkillTargetDefine.IsValidTarget(player.Target))
         {
             ResetTarget(null);
+            return;
+        }
+        if (player.CurrentState != StateDefine.kStateDefault || player.IsMoving || player.IsJump)
+        {
+            return;
+        }
+        if (!MSkillTargetDefine.IsEnemy(player.Target))
+        {
+            return;
+        }
+        // 静止时只更新水平朝向；移动、出招及死亡继续由各自现有状态驱动。
+        Vector3 direction = player.Target.Position - player.Position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude > 0f)
+        {
+            player.Model.Rotation = Quaternion.LookRotation(direction);
         }
     }
 
-    /// <summary>提供点击与技能共用的有效敌方判定，不创建玩家阵营规则。</summary>
+    /// <summary>判断当前世界中的有效敌人，保持目标不受获取半径或手动选择距离限制。</summary>
     /// <param name="entity">当前目标或候选，可为空。</param>
-    /// <returns>当前世界有效敌人且在十八米选择半径内时为 true。</returns>
+    /// <returns>本地玩家存在且目标仍为当前世界的有效敌人时为 true。</returns>
     public bool CanAttack(MEntity entity)
     {
         // 目标是当前世界中有效的敌对单位；IsValidTarget 内部已包含全局与世界非空判断。
@@ -151,10 +180,6 @@ public sealed class MSkillTargetMgr
         {
             return false;
         }
-        // 目标位于本地玩家十八米选择半径内。
-        bool isWithinChooseDistance =
-            (entity.Position - Global.Instance.SceneWorld.LocalRole.Position).sqrMagnitude <=
-            MaxChooseDistance * MaxChooseDistance;
-        return isWithinChooseDistance;
+        return true;
     }
 }
