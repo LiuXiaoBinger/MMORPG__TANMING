@@ -124,7 +124,7 @@ public sealed class MSkillTargetMgr
         return true;
     }
 
-    /// <summary>目标离场、死亡或隐藏才取消；静止默认状态持续面向所选敌人，不覆盖移动或技能朝向。</summary>
+    /// <summary>仅在目标离场、死亡或隐藏时取消选择；保留有效目标，不在每帧检查中改变角色朝向。</summary>
     public void UpdateToCheckTarget()
     {
         if (Global.Instance == null || Global.Instance.SceneWorld == null ||
@@ -142,21 +142,6 @@ public sealed class MSkillTargetMgr
         {
             ResetTarget(null);
             return;
-        }
-        if (player.CurrentState != StateDefine.kStateDefault || player.IsMoving || player.IsJump)
-        {
-            return;
-        }
-        if (!MSkillTargetDefine.IsEnemy(player.Target))
-        {
-            return;
-        }
-        // 静止时只更新水平朝向；移动、出招及死亡继续由各自现有状态驱动。
-        Vector3 direction = player.Target.Position - player.Position;
-        direction.y = 0f;
-        if (direction.sqrMagnitude > 0f)
-        {
-            player.Model.Rotation = Quaternion.LookRotation(direction);
         }
     }
 
