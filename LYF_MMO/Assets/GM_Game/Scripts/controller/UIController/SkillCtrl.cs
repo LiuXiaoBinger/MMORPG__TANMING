@@ -351,10 +351,10 @@ public sealed class SkillCtrl : CtrlBase
         return true;
     }
 
-    /// <summary>攻击优先使用主动点选的有效敌人，否则按本次按键时的角色朝向重新索敌。</summary>
-    /// <param name="skillCore">本次已学技能，只有主表 Type 一或二的攻击参与自动选敌。</param>
+    /// <summary>普攻保留有效目标，无目标时选附近敌人；其他攻击仍沿主动点选或前方扇形索敌。</summary>
+    /// <param name="skillCore">本次已学技能；主表 Type 一为普攻，Type 二为其他主动攻击。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>主动目标或前方扇形内最近的敌人；空值沿用原技能的朝向释放。</returns>
+    /// <returns>普攻返回有效当前目标或附近最近敌人，其他攻击保持原选择；无敌人时沿原朝向释放。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
         // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
@@ -362,6 +362,16 @@ public sealed class SkillCtrl : CtrlBase
         if (skillInfo.Type != 1 && skillInfo.Type != 2)
         {
             return null;
+        }
+        // 普攻沿 RO 保留有效当前目标，前冲越过敌人后下一击仍按其当前位置转向。
+        if (skillInfo.Type == 1)
+        {
+            if (MSkillTargetMgr.singleton.CanAttack(target))
+            {
+                return target;
+            }
+            // 当前目标失效才重新选最近敌人，近处侧面或身后敌人也可成为普攻目标。
+            return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, null);
         }
         if (MSkillTargetMgr.singleton.HasManualTarget && MSkillTargetMgr.singleton.CanAttack(target))
         {
