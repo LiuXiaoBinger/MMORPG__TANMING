@@ -61,11 +61,11 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>RO 原始副本 ID 到完整主表行的索引，随共享配置初始化加载。</summary>
     private Dictionary<int, DungeonsTable> _dungeonsTables;
 
-    /// <summary>四档副本难度，提供名称及普攻最小间隔毫秒。</summary>
+    /// <summary>按表登记的副本难度，提供名称、分层上限及普攻最小间隔毫秒。</summary>
     private Dictionary<int, DungeonDifficultyTable> _dungeonDifficulties;
 
-    /// <summary>按副本、难度、怪物原模板组合查找逐怪基因和AI覆盖。</summary>
-    private Dictionary<Tuple<int, int, int>, DungeonMonsterDifficultyTable> _dungeonMonsterDifficulties;
+    /// <summary>按副本、难度、层数、怪物原模板组合查找逐怪基因和AI覆盖。</summary>
+    private Dictionary<Tuple<int, int, int, int>, DungeonMonsterDifficultyTable> _dungeonMonsterDifficulties;
 
     /// <summary>分支副本目标组 ID 到原始组定义的索引，加载后供进度与界面查询。</summary>
     private Dictionary<int, DungeonTargetGroupTable> _dungeonTargetGroupTables;
@@ -872,26 +872,43 @@ public class LubanMgr:Singleton<LubanMgr>
     #endregion
 
 
-    /// <summary>按表中的四档编号查询难度；非法编号返回空，由入场流程拒绝。</summary>
-    /// <param name="id">普通1、精英2、宗师3、宗绝4。</param>
+    /// <summary>按表中登记的编号查询难度；未登记编号返回空，由入场流程拒绝。</summary>
+    /// <param name="id">难度表主键，不在业务代码中限制档位数量。</param>
     public DungeonDifficultyTable GetDungeonDifficultyById(int id)
     {
         // 未登记的难度不自动回退，兼容旧0由入场入口处理。
         DungeonDifficultyTable row;
-        if (id < 1 || id > 4) return null;
         if (_dungeonDifficulties.TryGetValue(id, out row)) return row;
         return null;
     }
 
-    /// <summary>查询同实例难度下的原实体覆盖；未配置的怪物继承原属性及AI。</summary>
-    /// <param name="dungeonId">基础副本号，不按难度改写。</param>
-    /// <param name="difficultyId">本实例已确认的四档难度。</param>
-    /// <param name="entityId">原EntityTable模板号，区别于运行时UID或出生号。</param>
-    public DungeonMonsterDifficultyTable GetDungeonMonsterDifficulty(int dungeonId, int difficultyId, int entityId)
+    /// <summary>统一规范客户端或MS请求的难度和层数；只按实际配置判断是否分层。</summary>
+    /// <param name="difficultyId">难度表主键，旧请求0兼容第一档1。</param>
+    /// <param name="requestedLayer">请求层数；非分层必须0，分层旧0兼容首层1。</param>
+    /// <param name="difficulty">成功时返回本次实例应使用的难度表行。</param>
+    /// <param name="normalizedLayer">成功时返回已校验的规范层数。</param>
+    /// <returns>配置存在且层数符合表格上限时为真；不自动夹取非法正层。</returns>
+    public bool TryGetDungeonDifficulty(int difficultyId, int requestedLayer, out DungeonDifficultyTable difficulty, out int normalizedLayer)
     {
-        // 组合键防止相同模板在不同副本或难度之间串用配置。
+        if (difficultyId == 0) difficultyId = 1;
+        difficulty = GetDungeonDifficultyById(difficultyId);
+        normalizedLayer = requestedLayer;
+        if (difficulty == null || requestedLayer < 0) return false;
+        if (difficulty.MaxLayer == 0) return requestedLayer == 0;
+        if (requestedLayer == 0) normalizedLayer = 1;
+        return normalizedLayer <= difficulty.MaxLayer;
+    }
+
+    /// <summary>查询同实例难度和层数下的原实体覆盖；未配置的怪物继承原属性及AI。</summary>
+    /// <param name="dungeonId">基础副本号，不按难度改写。</param>
+    /// <param name="difficultyId">本实例已确认的难度表主键。</param>
+    /// <param name="layer">本实例规范层数，非分层为0。</param>
+    /// <param name="entityId">原EntityTable模板号，区别于运行时UID或出生号。</param>
+    public DungeonMonsterDifficultyTable GetDungeonMonsterDifficulty(int dungeonId, int difficultyId, int layer, int entityId)
+    {
+        // 组合键防止相同模板在不同副本、难度或层数之间串用配置。
         DungeonMonsterDifficultyTable row;
-        if (_dungeonMonsterDifficulties.TryGetValue(Tuple.Create(dungeonId, difficultyId, entityId), out row)) return row;
+        if (_dungeonMonsterDifficulties.TryGetValue(Tuple.Create(dungeonId, difficultyId, layer, entityId), out row)) return row;
         return null;
     }
 
@@ -899,21 +916,28 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <param name="rows">Luban生成的逐怪配置行，Gene数组保持表格顺序。</param>
     private void BuildDungeonMonsterDifficulties(List<DungeonMonsterDifficultyTable> rows)
     {
-        // 检查四档入口均有正的普攻间隔，避免零间隔恢复旧高频行为。
-        for (int id = 1; id <= 4; id++)
+        // 仅遍历表内实际档位，新增难度或改变分层上限不需要修改业务分支。
+        List<DungeonDifficultyTable> difficulties = new List<DungeonDifficultyTable>(_dungeonDifficulties.Values);
+        for (int index = 0; index < difficulties.Count; index++)
         {
-            // 本次检查的正式难度行。
-            DungeonDifficultyTable difficulty = GetDungeonDifficultyById(id);
-            if (difficulty == null || difficulty.BasicAttackIntervalMs <= 0)
-                throw new InvalidDataException("副本难度缺失或攻击间隔无效：" + id);
+            // 本行的编号、间隔和层数上限均来自正式表。
+            DungeonDifficultyTable difficulty = difficulties[index];
+            if (difficulty.Id <= 0 || difficulty.BasicAttackIntervalMs <= 0 || difficulty.MaxLayer < 0)
+                throw new InvalidDataException("副本难度编号、攻击间隔或层数上限无效：" + difficulty.Id);
         }
-        _dungeonMonsterDifficulties = new Dictionary<Tuple<int, int, int>, DungeonMonsterDifficultyTable>();
+        _dungeonMonsterDifficulties = new Dictionary<Tuple<int, int, int, int>, DungeonMonsterDifficultyTable>();
         for (int index = 0; index < rows.Count; index++)
         {
             // 原表行只作为只读配置，实例持有自己的Gene运行节点。
             DungeonMonsterDifficultyTable row = rows[index];
-            if (!_dungeonsTables.ContainsKey(row.DungeonId) || row.DifficultyId < 1 || row.DifficultyId > 4)
+            // 表行要求明确填写层数；仅请求入口允许分层旧0规范为1。
+            DungeonDifficultyTable difficulty;
+            // 复用入口的表格范围判断，但禁止配置行依赖旧请求兼容值。
+            int normalizedLayer;
+            if (!_dungeonsTables.ContainsKey(row.DungeonId) || row.DifficultyId <= 0)
                 throw new InvalidDataException("逐怪难度目标无效：" + row.Id);
+            if (!TryGetDungeonDifficulty(row.DifficultyId, row.Layer, out difficulty, out normalizedLayer) || row.Layer != normalizedLayer)
+                throw new InvalidDataException("逐怪层数超出难度配置：" + row.Id);
             if (row.EntityId <= 0 || row.AITreeIndex < -1 || row.BasicAttackIntervalMs < 0)
                 throw new InvalidDataException("逐怪AI或攻击间隔无效：" + row.Id);
             if (row.GeneIds.Length != row.GeneValues.Length)
@@ -925,7 +949,7 @@ public class LubanMgr:Singleton<LubanMgr>
                 if (float.IsNaN(row.GeneValues[geneIndex]) || float.IsInfinity(row.GeneValues[geneIndex]))
                     throw new InvalidDataException("逐怪Gene数值无效：" + row.Id);
             }
-            _dungeonMonsterDifficulties.Add(Tuple.Create(row.DungeonId, row.DifficultyId, row.EntityId), row);
+            _dungeonMonsterDifficulties.Add(Tuple.Create(row.DungeonId, row.DifficultyId, row.Layer, row.EntityId), row);
         }
     }
 }

@@ -58,12 +58,12 @@ public static partial class RequestEntityReflection {
           "GAEgASgEIk0KF0FjY2VwdFRlYW1JbnZhdGF0aW9uQXJnEg8KB3RlYW1faWQY",
           "ASABKAQSEgoKaW52aXRlcl9pZBgCIAEoBBINCgVhZ3JlZRgDIAEoCCIfCgxM",
           "ZWF2ZVRlYW1BcmcSDwoHcm9sZV9pZBgBIAEoBCInChRCZWdJblRlYW1CeVRl",
-          "YW1JZEFyZxIPCgd0ZWFtX2lkGAEgASgEIlsKGENhcHRhaW5SZXF1ZXN0RW50",
+          "YW1JZEFyZxIPCgd0ZWFtX2lkGAEgASgEInIKGENhcHRhaW5SZXF1ZXN0RW50",
           "ZXJGQkFyZxISCgpkdW5nZW9uX2lkGAEgASgFEhIKCmNoYXB0ZXJfaWQYAiAB",
-          "KAUSFwoPZHVuZ2VvbnNfZGVncmVlGAMgASgFImYKEUVxdWlwT3BlcmF0aW9u",
-          "UmVxEhAKCGl0ZW1fdWlkGAEgASgDEiIKCW9wZXJhdGlvbhgCIAEoDjIPLkVx",
-          "dWlwT3BlcmF0aW9uEhsKE3NwZWNpYWxfc2tpbGxfaW5kZXgYAyABKAViBnBy",
-          "b3RvMw=="));
+          "KAUSFwoPZHVuZ2VvbnNfZGVncmVlGAMgASgFEhUKDWR1bmdlb25fbGF5ZXIY",
+          "BCABKAUiZgoRRXF1aXBPcGVyYXRpb25SZXESEAoIaXRlbV91aWQYASABKAMS",
+          "IgoJb3BlcmF0aW9uGAIgASgOMg8uRXF1aXBPcGVyYXRpb24SGwoTc3BlY2lh",
+          "bF9za2lsbF9pbmRleBgDIAEoBWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -90,7 +90,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::AcceptTeamInvatationArg), global::AcceptTeamInvatationArg.Parser, new[]{ "TeamId", "InviterId", "Agree" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::LeaveTeamArg), global::LeaveTeamArg.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BegInTeamByTeamIdArg), global::BegInTeamByTeamIdArg.Parser, new[]{ "TeamId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex" }, null, null, null, null)
         }));
   }
@@ -6237,6 +6237,7 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     dungeonId_ = other.dungeonId_;
     chapterId_ = other.chapterId_;
     dungeonsDegree_ = other.dungeonsDegree_;
+    dungeonLayer_ = other.dungeonLayer_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -6280,7 +6281,7 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
   public const int DungeonsDegreeFieldNumber = 3;
   private int dungeonsDegree_;
   /// <summary>
-  ///副本难度，沿用 RO 字段
+  ///难度配置ID，旧请求0兼容1
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -6288,6 +6289,21 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     get { return dungeonsDegree_; }
     set {
       dungeonsDegree_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dungeon_layer" field.</summary>
+  public const int DungeonLayerFieldNumber = 4;
+  private int dungeonLayer_;
+  /// <summary>
+  ///非分层难度为0；分层难度为1至MaxLayer，旧0兼容首层
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonLayer {
+    get { return dungeonLayer_; }
+    set {
+      dungeonLayer_ = value;
     }
   }
 
@@ -6309,6 +6325,7 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     if (DungeonId != other.DungeonId) return false;
     if (ChapterId != other.ChapterId) return false;
     if (DungeonsDegree != other.DungeonsDegree) return false;
+    if (DungeonLayer != other.DungeonLayer) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -6319,6 +6336,7 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     if (DungeonId != 0) hash ^= DungeonId.GetHashCode();
     if (ChapterId != 0) hash ^= ChapterId.GetHashCode();
     if (DungeonsDegree != 0) hash ^= DungeonsDegree.GetHashCode();
+    if (DungeonLayer != 0) hash ^= DungeonLayer.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -6349,6 +6367,10 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
       output.WriteRawTag(24);
       output.WriteInt32(DungeonsDegree);
     }
+    if (DungeonLayer != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(DungeonLayer);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -6371,6 +6393,10 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
       output.WriteRawTag(24);
       output.WriteInt32(DungeonsDegree);
     }
+    if (DungeonLayer != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(DungeonLayer);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -6389,6 +6415,9 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     }
     if (DungeonsDegree != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonsDegree);
+    }
+    if (DungeonLayer != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonLayer);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -6410,6 +6439,9 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
     }
     if (other.DungeonsDegree != 0) {
       DungeonsDegree = other.DungeonsDegree;
+    }
+    if (other.DungeonLayer != 0) {
+      DungeonLayer = other.DungeonLayer;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -6442,6 +6474,10 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
           DungeonsDegree = input.ReadInt32();
           break;
         }
+        case 32: {
+          DungeonLayer = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -6471,6 +6507,10 @@ public sealed partial class CaptainRequestEnterFBArg : pb::IMessage<CaptainReque
         }
         case 24: {
           DungeonsDegree = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          DungeonLayer = input.ReadInt32();
           break;
         }
       }

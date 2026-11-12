@@ -15,5 +15,6 @@ message MasterTeamDungeonOrder {
   uint64 instance_id = 2; // 队伍服预留的实例编号，供游戏服定位同一份场景。
   int32 dungeon_id = 3; // 队长申请进入的副本配置编号。
   repeated uint64 member_ids = 4; // 此次有资格进入该实例的成员角色号。
-  int32 dungeons_degree = 5; // MS确认的难度1至4，旧指令0按普通1兼容。
+  int32 dungeons_degree = 5; // MS确认的难度配置ID，旧指令0兼容1。
+  int32 dungeon_layer = 6; // MS确认的层数；非分层为0，分层从1开始。
 }

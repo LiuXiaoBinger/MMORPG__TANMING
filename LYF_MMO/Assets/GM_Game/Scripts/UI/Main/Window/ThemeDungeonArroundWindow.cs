@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -115,7 +115,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// 详情页确认「挑战」后向主控制器传递本次选中的基础副本配置与难度编号。
     /// 本窗口只负责把选中项交出去，进入副本的场景切换全部由控制器执行，界面层不直接切场景。
     /// </summary>
-    public System.Action<ThemeDungeonEntry, int> OnChallengeRequested;
+    public System.Action<ThemeDungeonEntry, int, int> OnChallengeRequested;
 
     /// <summary>详情区的确认按钮。</summary>
     private Button _confirmBtn;
@@ -1110,7 +1110,8 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// </summary>
     /// <param name="d">详情页当前展示并确认挑战的副本配置。</param>
     /// <param name="difficultyId">详情页选择的难度表编号，不替换基础副本地图编号。</param>
-    private void EnterDungeon(ThemeDungeonEntry d, int difficultyId)
+    /// <param name="layer">详情页选中的层数，非分层难度为零。</param>
+    private void EnterDungeon(ThemeDungeonEntry d, int difficultyId, int layer)
     {
         if (d == null)
         {
@@ -1118,7 +1119,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
         }
         if (OnChallengeRequested != null)
         {
-            OnChallengeRequested(d, difficultyId);
+            OnChallengeRequested(d, difficultyId, layer);
             return;
         }
     }

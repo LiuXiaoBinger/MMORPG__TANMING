@@ -177,7 +177,8 @@ message CaptainRequestEnterFBArg
 {
 	int32 dungeon_id = 1;//副本配置ID，魔神塔为 4060
 	int32 chapter_id = 2;//章节ID，沿用 RO 字段
-	int32 dungeons_degree = 3;//副本难度，沿用 RO 字段
+	int32 dungeons_degree = 3;//难度配置ID，旧请求0兼容1
+	int32 dungeon_layer = 4;//非分层难度为0；分层难度为1至MaxLayer，旧0兼容首层
 }
 
 // 按实例UID请求穿脱或切换特技，角色身份来自网关会话。

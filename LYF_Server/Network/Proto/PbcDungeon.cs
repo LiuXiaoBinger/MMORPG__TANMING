@@ -22,21 +22,22 @@ public static partial class PbcDungeonReflection {
   static PbcDungeonReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChBQYmNEdW5nZW9uLnByb3RvIlwKFEFza01lbWJlckVudGVyRkJEYXRhEhIK",
+          "ChBQYmNEdW5nZW9uLnByb3RvInMKFEFza01lbWJlckVudGVyRkJEYXRhEhIK",
           "CmR1bmdlb25faWQYASABKA0SFwoPY29uZmlybV9zZWNvbmRzGAQgASgNEhcK",
-          "D2R1bmdlb25zX2RlZ3JlZRgFIAEoBSIyChZNZW1iZXJSZXBseUVudGVyRkJE",
-          "YXRhEhgKBHR5cGUYASABKA4yCi5SZXBseVR5cGUiQwoaU3luY01lbWJlclJl",
-          "cGx5RW50ZXJGQkRhdGESCwoDdWlkGAEgASgEEhgKBHR5cGUYAiABKA4yCi5S",
-          "ZXBseVR5cGUiQgoPRmFpbEVudGVyRkJEYXRhEgsKA3VpZBgBIAEoBBIiCgZy",
-          "ZWFzb24YAiABKA4yEi5GYWlsRW50ZXJGQlJlYXNvbio4CglSZXBseVR5cGUS",
-          "FQoRUkVQTFlfVFlQRV9SRUZVU0UQABIUChBSRVBMWV9UWVBFX0FHUkVFEAEq",
-          "dwoRRmFpbEVudGVyRkJSZWFzb24SGAoURkFJTF9FTlRFUl9GQl9TVUNFU1MQ",
-          "ABIZChVGQUlMX0VOVEVSX0ZOX1RJTUVPVVQQCxItCilGQUlMX0VOVEVSX0ZC",
-          "X1NPTUVPTkVfTEVBVkVfV0FJVElOR19TQ0VORRANYgZwcm90bzM="));
+          "D2R1bmdlb25zX2RlZ3JlZRgFIAEoBRIVCg1kdW5nZW9uX2xheWVyGAYgASgF",
+          "IjIKFk1lbWJlclJlcGx5RW50ZXJGQkRhdGESGAoEdHlwZRgBIAEoDjIKLlJl",
+          "cGx5VHlwZSJDChpTeW5jTWVtYmVyUmVwbHlFbnRlckZCRGF0YRILCgN1aWQY",
+          "ASABKAQSGAoEdHlwZRgCIAEoDjIKLlJlcGx5VHlwZSJCCg9GYWlsRW50ZXJG",
+          "QkRhdGESCwoDdWlkGAEgASgEEiIKBnJlYXNvbhgCIAEoDjISLkZhaWxFbnRl",
+          "ckZCUmVhc29uKjgKCVJlcGx5VHlwZRIVChFSRVBMWV9UWVBFX1JFRlVTRRAA",
+          "EhQKEFJFUExZX1RZUEVfQUdSRUUQASp3ChFGYWlsRW50ZXJGQlJlYXNvbhIY",
+          "ChRGQUlMX0VOVEVSX0ZCX1NVQ0VTUxAAEhkKFUZBSUxfRU5URVJfRk5fVElN",
+          "RU9VVBALEi0KKUZBSUxfRU5URVJfRkJfU09NRU9ORV9MRUFWRV9XQUlUSU5H",
+          "X1NDRU5FEA1iBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ReplyType), typeof(global::FailEnterFBReason), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::AskMemberEnterFBData), global::AskMemberEnterFBData.Parser, new[]{ "DungeonId", "ConfirmSeconds", "DungeonsDegree" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::AskMemberEnterFBData), global::AskMemberEnterFBData.Parser, new[]{ "DungeonId", "ConfirmSeconds", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MemberReplyEnterFBData), global::MemberReplyEnterFBData.Parser, new[]{ "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncMemberReplyEnterFBData), global::SyncMemberReplyEnterFBData.Parser, new[]{ "Uid", "Type" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::FailEnterFBData), global::FailEnterFBData.Parser, new[]{ "Uid", "Reason" }, null, null, null, null)
@@ -122,6 +123,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     dungeonId_ = other.dungeonId_;
     confirmSeconds_ = other.confirmSeconds_;
     dungeonsDegree_ = other.dungeonsDegree_;
+    dungeonLayer_ = other.dungeonLayer_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -165,7 +167,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
   public const int DungeonsDegreeFieldNumber = 5;
   private int dungeonsDegree_;
   /// <summary>
-  /// 本次确认的难度：1普通、2精英、3宗师、4宗绝。
+  /// 本次确认的难度配置ID。
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -173,6 +175,21 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     get { return dungeonsDegree_; }
     set {
       dungeonsDegree_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "dungeon_layer" field.</summary>
+  public const int DungeonLayerFieldNumber = 6;
+  private int dungeonLayer_;
+  /// <summary>
+  /// 本次确认的规范层数；非分层为0。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int DungeonLayer {
+    get { return dungeonLayer_; }
+    set {
+      dungeonLayer_ = value;
     }
   }
 
@@ -194,6 +211,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     if (DungeonId != other.DungeonId) return false;
     if (ConfirmSeconds != other.ConfirmSeconds) return false;
     if (DungeonsDegree != other.DungeonsDegree) return false;
+    if (DungeonLayer != other.DungeonLayer) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -204,6 +222,7 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     if (DungeonId != 0) hash ^= DungeonId.GetHashCode();
     if (ConfirmSeconds != 0) hash ^= ConfirmSeconds.GetHashCode();
     if (DungeonsDegree != 0) hash ^= DungeonsDegree.GetHashCode();
+    if (DungeonLayer != 0) hash ^= DungeonLayer.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -234,6 +253,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
       output.WriteRawTag(40);
       output.WriteInt32(DungeonsDegree);
     }
+    if (DungeonLayer != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(DungeonLayer);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -256,6 +279,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
       output.WriteRawTag(40);
       output.WriteInt32(DungeonsDegree);
     }
+    if (DungeonLayer != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(DungeonLayer);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -274,6 +301,9 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
     if (DungeonsDegree != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonsDegree);
+    }
+    if (DungeonLayer != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(DungeonLayer);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -295,6 +325,9 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
     }
     if (other.DungeonsDegree != 0) {
       DungeonsDegree = other.DungeonsDegree;
+    }
+    if (other.DungeonLayer != 0) {
+      DungeonLayer = other.DungeonLayer;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -327,6 +360,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
           DungeonsDegree = input.ReadInt32();
           break;
         }
+        case 48: {
+          DungeonLayer = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -356,6 +393,10 @@ public sealed partial class AskMemberEnterFBData : pb::IMessage<AskMemberEnterFB
         }
         case 40: {
           DungeonsDegree = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          DungeonLayer = input.ReadInt32();
           break;
         }
       }

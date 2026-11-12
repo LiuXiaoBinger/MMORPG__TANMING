@@ -372,14 +372,17 @@ public sealed class TeamManager
     public void EnterDungeon(MasterTeamDungeonOrder order)
     {
         // 难度与实例身份一并验证，拒绝同一实例号被另一难度复用。
-        int degree = order.DungeonsDegree;
-        if (degree == 0) degree = 1;
-        if (LubanMgr.Instance.GetDungeonDifficultyById(degree) == null) return;
+        DungeonDifficultyTable difficulty;
+        // GS与MS采用同一表格规范，规范值写入实例并回传给客户端。
+        int layer;
+        if (!LubanMgr.Instance.TryGetDungeonDifficulty(order.DungeonsDegree, order.DungeonLayer, out difficulty, out layer)) return;
+        // 已确认难度表的主键，不借用ChapterId保存层数。
+        int degree = difficulty.Id;
         // 已存在的实例保留原难度，不因晚加入请求更改怪物数值。
         Dungeon existing;
         if (_instances.TryGetValue(order.InstanceId, out existing))
         {
-            if (existing.WaveSpawner.Dungeon.DungeonsID != order.DungeonId || existing.WaveSpawner.Difficulty.DifficultyId != degree) return;
+            if (existing.WaveSpawner.Dungeon.DungeonsID != order.DungeonId || existing.WaveSpawner.Difficulty.DifficultyId != degree || existing.WaveSpawner.Difficulty.Layer != layer) return;
         }
         // 保存本机当前在线的获准成员，已下线的角色不占用实例。
         List<ulong> entering = new List<ulong>();
@@ -420,7 +423,7 @@ public sealed class TeamManager
         Dungeon team;
         if (!_instances.TryGetValue(order.InstanceId, out team))
         {
-            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(new DungeonDifficultySettings(order.DungeonId, degree)) };
+            team = new Dungeon { InstanceId = order.InstanceId, WaveSpawner = new SceneWaveSpawner(new DungeonDifficultySettings(order.DungeonId, degree, layer)) };
             _instances.Add(order.InstanceId, team);
             dungeonTeams.Add(team);
         }
@@ -487,6 +490,7 @@ public sealed class TeamManager
         notice.TeamId = order.TeamId;
         notice.DungeonId = order.DungeonId;
         notice.DungeonsDegree = team.WaveSpawner.Difficulty.DifficultyId;
+        notice.DungeonLayer = team.WaveSpawner.Difficulty.Layer;
         notice.SceneId = team.WaveSpawner.Dungeon.SceneID;
         notice.InstanceId = team.InstanceId;
         notice.MapId = team.WaveSpawner.Dungeon.SceneID;

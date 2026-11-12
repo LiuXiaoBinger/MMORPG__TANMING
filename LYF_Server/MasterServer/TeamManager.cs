@@ -31,8 +31,10 @@ internal sealed class TeamManager
         public ulong InstanceId;
         /// <summary>当前实例实际选择的副本配置号，改选其他副本时创建新的实例身份。</summary>
         public int DungeonId;
-        /// <summary>当前实例的难度1至4；不同难度不能复用同一实例。</summary>
+        /// <summary>当前实例难度表主键；不同难度不能复用同一实例。</summary>
         public int DungeonsDegree;
+        /// <summary>当前实例规范层数；切层时分配新的实例身份。</summary>
+        public int DungeonLayer;
         /// <summary>按入队顺序保存成员，原队长离开后首位继任。</summary>
         public readonly List<ulong> Members = new List<ulong>();
         /// <summary>被邀请人角色号到实际邀请人角色号的对应关系。</summary>
@@ -43,6 +45,8 @@ internal sealed class TeamManager
         public int PendingDungeonId;
         /// <summary>等待全队确认的难度，与本轮副本目标一起保存和清除。</summary>
         public int PendingDungeonsDegree;
+        /// <summary>本轮全队正在确认的规范层数，完成或取消后清除。</summary>
+        public int PendingDungeonLayer;
         /// <summary>当前确认的 UTC 截止时间，只在 PendingDungeonId 非零时使用。</summary>
         public DateTime ConfirmDeadline;
         /// <summary>本次已同意的角色，队长发起时即同意；完成或取消后清空。</summary>
@@ -91,7 +95,7 @@ internal sealed class TeamManager
             case NetDefine.CMD_CaptainRequestEnterFBCode:
                 // 沿用队长请求中的难度字段，场景与难度作为同一确认目标传递。
                 CaptainRequestEnterFBArg entry = CaptainRequestEnterFBArg.Parser.ParseFrom(data);
-                Enter(request.RoleId, entry.DungeonId, entry.DungeonsDegree);
+                Enter(request.RoleId, entry.DungeonId, entry.DungeonsDegree, entry.DungeonLayer);
                 break;
         }
     }
@@ -279,15 +283,18 @@ internal sealed class TeamManager
     /// <summary>确认队长身份和目标后授权游戏服创建或重入实际副本。</summary>
     /// <param name="roleId">请求进入副本的角色号。</param>
     /// <param name="dungeonId">现有客户端选择的副本配置。</param>
-    /// <param name="degree">队长选择的难度1至4；旧客户端0代表普通。</param>
-    private void Enter(ulong roleId, int dungeonId, int degree)
+    /// <param name="degree">队长选择的难度表主键；旧客户端0代表第一档。</param>
+    /// <param name="layer">队长选择的层数，按难度表规范及校验。</param>
+    private void Enter(ulong roleId, int dungeonId, int degree, int layer)
     {
-        if (degree == 0) degree = 1;
-        if (LubanMgr.Instance.GetDungeonDifficultyById(degree) == null)
+        // 确认窗广播之前就固定实际难度与层数，不能让队员确认未校验目标。
+        DungeonDifficultyTable difficulty;
+        if (!LubanMgr.Instance.TryGetDungeonDifficulty(degree, layer, out difficulty, out layer))
         {
             Error(roleId, CmdCode.ReqParamError);
             return;
         }
+        degree = difficulty.Id;
         // 找出该角色的队伍并核对其发起权限。
         Team team;
         // 所选原副本行决定场景资源登记；不存在的配置不能分配实例。
@@ -305,16 +312,17 @@ internal sealed class TeamManager
         // RO 单人队伍直接进入；多人队伍先广播确认，队长视为已同意。
         if (team.Members.Count == 1)
         {
-            EnterConfirmedDungeon(team, dungeonId, degree);
+            EnterConfirmedDungeon(team, dungeonId, degree, layer);
             return;
         }
         team.PendingDungeonId = dungeonId;
         team.PendingDungeonsDegree = degree;
+        team.PendingDungeonLayer = layer;
         team.ConfirmDeadline = DateTime.UtcNow.AddSeconds(TeamEnterDungeonConfirmTime);
         team.PreparedMembers.Clear();
         team.PreparedMembers.Add(roleId);
         Broadcast(team, NetDefine.PtcM2C_AskMemberEnterFBNtf,
-            new AskMemberEnterFBData { DungeonId = (uint)dungeonId, DungeonsDegree = degree, ConfirmSeconds = TeamEnterDungeonConfirmTime }.ToByteString());
+            new AskMemberEnterFBData { DungeonId = (uint)dungeonId, DungeonsDegree = degree, DungeonLayer = layer, ConfirmSeconds = TeamEnterDungeonConfirmTime }.ToByteString());
     }
 
     /// <summary>处理实际队员的进本答复；拒绝立即取消，全部同意才发送 GS 入场指令。</summary>
@@ -338,8 +346,10 @@ internal sealed class TeamManager
         int dungeonId = team.PendingDungeonId;
         // 队员同意的是发起时的难度，不能在清理确认状态后重新取默认值。
         int degree = team.PendingDungeonsDegree;
+        // 层数与原目标一起保留，清理确认窗口不能改变本次已同意的选择。
+        int layer = team.PendingDungeonLayer;
         ClearConfirmation(team);
-        EnterConfirmedDungeon(team, dungeonId, degree);
+        EnterConfirmedDungeon(team, dungeonId, degree, layer);
     }
 
     /// <summary>按 MS 的时钟结束未全员同意的确认，不因客户端关闭窗口而自动入场。</summary>
@@ -373,6 +383,7 @@ internal sealed class TeamManager
     {
         team.PendingDungeonId = 0;
         team.PendingDungeonsDegree = 0;
+        team.PendingDungeonLayer = 0;
         team.PreparedMembers.Clear();
     }
 
@@ -386,17 +397,21 @@ internal sealed class TeamManager
 
     /// <summary>已确认的名单交给 GS 创建或重入同一副本，不在 MS 执行场景与战斗。</summary>
     /// <param name="team">完成确认的队伍。</param><param name="dungeonId">已同意进入的副本。</param>
-    /// <param name="degree">已经全队确认的规范难度1至4。</param>
-    private void EnterConfirmedDungeon(Team team, int dungeonId, int degree)
+    /// <param name="degree">已经全队确认的规范难度表主键。</param>
+    /// <param name="layer">已经全队确认的规范层数。</param>
+    private void EnterConfirmedDungeon(Team team, int dungeonId, int degree, int layer)
     {
-        if (team.InstanceId == 0 || team.DungeonId != dungeonId || team.DungeonsDegree != degree)
+        // 地图、难度、层数共同标识场景内容；任一改变都不能复用旧怪物状态。
+        bool sameSelection = team.DungeonId == dungeonId && team.DungeonsDegree == degree && team.DungeonLayer == layer;
+        if (team.InstanceId == 0 || !sameSelection)
         {
             team.InstanceId = _nextInstanceId++;
             team.DungeonId = dungeonId;
             team.DungeonsDegree = degree;
+            team.DungeonLayer = layer;
         }
         // 创建怪物和切换角色场景属于 GS，MS 只传入队伍、实例编号和名单。
-        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = team.InstanceId, DungeonId = dungeonId, DungeonsDegree = degree };
+        MasterTeamDungeonOrder order = new MasterTeamDungeonOrder { TeamId = team.Id, InstanceId = team.InstanceId, DungeonId = dungeonId, DungeonsDegree = degree, DungeonLayer = layer };
         order.MemberIds.Add(team.Members);
         _game.Send(NetDefine.CMD_MasterTeamEnter, order.ToByteString());
         NotifyRoster(team);

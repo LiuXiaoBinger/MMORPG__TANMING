@@ -48,11 +48,29 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
     /// <param name="request">原客户端组队协议及载荷。</param>
     public void Forward(OnlineRole role, BasePackage request)
     {
+        // 只拦截玩家再次发起进本；内部晚加入/原成员同步仍由既有入场流程处理。
+        if (request.ProtoCode == NetDefine.CMD_CaptainRequestEnterFBCode && role.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            role.SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.DungeonAlreadyEntered }.ToByteString());
+            return;
+        }
         // 昵称取自服务器角色数据，供邀请或申请提示使用。
         MasterTeamRolePacket packet = new MasterTeamRolePacket
         {
             RoleId = role.GetID(), Nickname = role.mainRoleInfo.BaseInfo.Nickname, Packet = request
         };
+        // 队长已离场但队员仍在旧副本时，不能借成员同意把该队员拉入另一场景。
+        if (request.ProtoCode == NetDefine.PtcC2M_MemberReplyEnterFBPtc && role.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            // 只把本次同意改为拒绝，沿原MS取消链结束全队等待；原拒绝不受影响。
+            MemberReplyEnterFBData reply = MemberReplyEnterFBData.Parser.ParseFrom(request.Data);
+            if (reply.Type == ReplyType.Agree)
+            {
+                role.SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.DungeonAlreadyEntered }.ToByteString());
+                packet.Packet = request.Clone();
+                packet.Packet.Data = new MemberReplyEnterFBData { Type = ReplyType.Refuse }.ToByteString();
+            }
+        }
         if (Volatile.Read(ref _connected) == 0 || !_client.Send(NetDefine.CMD_MasterTeamRequest, packet.ToByteString()))
         {
             role.SendToClient(NetDefine.CMD_ErrCode, new ErrMsg { CmdCode = CmdCode.ServerError }.ToByteString());

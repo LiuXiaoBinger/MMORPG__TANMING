@@ -17,8 +17,10 @@ public sealed class TeamData
     public ulong DungeonInstanceId { get; private set; }
     /// <summary>入场通知确认的 DungeonsTable 编号，回城或离队时归零。</summary>
     public int DungeonId { get; private set; }
-    /// <summary>服务端确认的当前副本难度编号一至四，回城或离队归零。</summary>
+    /// <summary>服务端确认的当前副本难度编号一至六，回城或离队归零。</summary>
     public int DungeonsDegree { get; private set; }
+    /// <summary>服务端确认的当前副本层数；非分层难度和主城为零。</summary>
+    public int DungeonLayer { get; private set; }
     /// <summary>入场通知确认的 SceneID，用于定位当前副本的客户端资源。</summary>
     public int DungeonSceneId { get; private set; }
     /// <summary>当前实例各出生位最近收到的生命值，模型异步加载时也保留更新。</summary>
@@ -112,6 +114,7 @@ public sealed class TeamData
         DungeonInstanceId = notice.InstanceId;
         DungeonId = notice.DungeonId;
         DungeonsDegree = notice.DungeonsDegree;
+        DungeonLayer = notice.DungeonLayer;
         DungeonSceneId = notice.SceneId;
         SetNearbyInteraction(null);
         DungeonFlow = notice.Flow;
@@ -462,6 +465,7 @@ public sealed class TeamData
         DungeonInstanceId = 0UL;
         DungeonId = 0;
         DungeonsDegree = 0;
+        DungeonLayer = 0;
         DungeonSceneId = 0;
         SetNearbyInteraction(null);
         ApplyDungeonFlow(null);

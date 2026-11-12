@@ -20,6 +20,7 @@ public sealed partial class DungeonDifficultyTable : Luban.BeanBase
         Id = _buf.ReadInt();
         Name = _buf.ReadString();
         BasicAttackIntervalMs = _buf.ReadInt();
+        MaxLayer = _buf.ReadInt();
     }
 
     /// <summary>由表容器读取当前配置行。</summary>
@@ -30,7 +31,7 @@ public sealed partial class DungeonDifficultyTable : Luban.BeanBase
     }
 
     /// <summary>
-    /// 难度ID（1～4）
+    /// 难度ID（1～6）
     /// </summary>
     public readonly int Id;
     /// <summary>
@@ -41,6 +42,10 @@ public sealed partial class DungeonDifficultyTable : Luban.BeanBase
     /// 普攻最小起手间隔（毫秒）
     /// </summary>
     public readonly int BasicAttackIntervalMs;
+    /// <summary>
+    /// 最大可选层数；0不分层，终绝初始10层
+    /// </summary>
+    public readonly int MaxLayer;
 
     /// <summary>Luban 为该配置类型生成的稳定类型编号。</summary>
     public const int __ID__ = -1078415655;
@@ -60,6 +65,7 @@ public sealed partial class DungeonDifficultyTable : Luban.BeanBase
         + "Id:" + Id + ","
         + "Name:" + Name + ","
         + "BasicAttackIntervalMs:" + BasicAttackIntervalMs + ","
+        + "MaxLayer:" + MaxLayer + ","
         + "}";
     }
 }

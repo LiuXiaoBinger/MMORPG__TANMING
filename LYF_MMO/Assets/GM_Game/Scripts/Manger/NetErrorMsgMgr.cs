@@ -78,6 +78,10 @@ public class NetErrorMsgMgr : Singleton<NetErrorMsgMgr>
             case CmdCode.RoleNotExist:
                 TipsMgr.Instance.ShowSystemTips("角色不存在");
                 break;
+            // GS 根据玩家实际副本实例拒绝重复入场时，提示使用现有退出流程。
+            case CmdCode.DungeonAlreadyEntered:
+                TipsMgr.Instance.ShowSystemTips("请先退出当前副本");
+                break;
             default:
                 // GateServer 只发送通用错误码时，未知或后续新增错误码也必须反馈给玩家。
                 TipsMgr.Instance.ShowSystemTips($"请求失败，错误码：{errMsg.CmdCode}");

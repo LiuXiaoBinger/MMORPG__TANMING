@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -53,17 +54,41 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>「开始挑战」按钮。</summary>
     private Button _beginBtn;
 
-    /// <summary>正式预制体中的四档选择按钮，依次对应难度表编号一至四。</summary>
-    [SerializeField] private Button[] _difficultyButtons = new Button[4];
+    /// <summary>正式预制体中的六档选择按钮，依次对应难度表编号一至六。</summary>
+    [SerializeField] private Button[] _difficultyButtons = new Button[6];
 
-    /// <summary>四档按钮的文字，显示难度表中的名称。</summary>
-    [SerializeField] private TMP_Text[] _difficultyLabels = new TMP_Text[4];
+    /// <summary>六档按钮的文字，显示难度表中的名称。</summary>
+    [SerializeField] private TMP_Text[] _difficultyLabels = new TMP_Text[6];
+
+    /// <summary>右侧难度列表各行的菱形位置标记，只显示当前选择所在行。</summary>
+    [SerializeField] private GameObject[] _difficultyMarkers = new GameObject[6];
 
     /// <summary>当前选择及已入场难度说明，来自正式预制体引用。</summary>
     [SerializeField] private TMP_Text _difficultyStatus;
 
-    /// <summary>本次准备挑战的难度编号，默认一为普通，不代表已经进入该难度。</summary>
+    /// <summary>本次准备挑战的难度编号，默认一为新秀，不代表已经进入该难度。</summary>
     private int _selectedDifficulty = 1;
+
+    /// <summary>终绝层数列根节点，仅当前难度配置了 MaxLayer 时显示。</summary>
+    [SerializeField] private GameObject _layerPanel;
+
+    /// <summary>层数滚动列表的内容节点，容纳从正式模板复制的行。</summary>
+    [SerializeField] private RectTransform _layerContent;
+
+    /// <summary>正式预制体中的层数行模板，隐藏保存并按表中层数范围复用。</summary>
+    [SerializeField] private Button _layerTemplate;
+
+    /// <summary>当前层数列表的实例按钮，不包含隐藏模板。</summary>
+    private readonly List<Button> _layerButtons = new List<Button>();
+
+    /// <summary>准备挑战的层数；非分层难度为零，分层难度默认第一层。</summary>
+    private int _selectedLayer;
+
+    /// <summary>浅色主题上的选中文字色，使用暖金棕与普通灰字区分。</summary>
+    private static readonly Color SelectedChoiceColor = new Color(0.65f, 0.36f, 0.08f, 1f);
+
+    /// <summary>未选择的难度与层数文字颜色，保证浅底上的可读性。</summary>
+    private static readonly Color NormalChoiceColor = new Color(0.27f, 0.31f, 0.37f, 1f);
 
     /// <summary>「公开情报」按钮。</summary>
     private Button _infoBtn;
@@ -104,8 +129,8 @@ public sealed class ThemeStoryWindow : WindowBase
     /// <summary>当前展示的副本数据。</summary>
     private ThemeDungeonEntry _entry;
 
-    /// <summary>点击「开始挑战」时传递当前基础副本与所选难度编号，场景由控制器决定。</summary>
-    public System.Action<ThemeDungeonEntry, int> OnEnterDungeon;
+    /// <summary>点击「开始挑战」时传递当前基础副本、所选难度编号与层数，场景由控制器决定。</summary>
+    public System.Action<ThemeDungeonEntry, int, int> OnEnterDungeon;
     #endregion
 
     #region 初始化与事件注册
@@ -148,7 +173,7 @@ public sealed class ThemeStoryWindow : WindowBase
             _infoBtn.onClick.RemoveListener(OnInfoClicked);
             _infoBtn.onClick.AddListener(OnInfoClicked);
         }
-        // 四个正式按钮与表中一至四的难度编号一一对应，只在窗口首次初始化时绑定。
+        // 六个正式按钮与表中一至六的难度编号一一对应，只在窗口首次初始化时绑定。
         for (int index = 0; index < _difficultyButtons.Length; index++)
         {
             // 闭包保存当前按钮对应的难度编号，避免循环结束后全部指向同一档。
@@ -158,28 +183,113 @@ public sealed class ThemeStoryWindow : WindowBase
     }
 
     /// <summary>更新当前准备挑战的难度，并刷新正式按钮的选择状态。</summary>
-    /// <param name="difficultyId">难度表编号：一普通、二精英、三宗师、四宗绝。</param>
+    /// <param name="difficultyId">难度表编号一至六，名称与是否分层由难度表决定。</param>
     public void SelectDifficulty(int difficultyId)
     {
         _selectedDifficulty = difficultyId;
+        _selectedLayer = 0;
+        if (LubanMgr.Instance.GetDungeonDifficultyById(difficultyId).MaxLayer > 0)
+        {
+            _selectedLayer = 1;
+        }
         RefreshDifficulty();
     }
 
     /// <summary>从难度表读取名称，区分准备挑战的选择与服务端已确认的当前副本难度。</summary>
     private void RefreshDifficulty()
     {
-        // 遍历正式按钮，所选档位使用金色禁用态，其余档位保持可点击。
+        // 正式按钮只保留透明点击区，用文字色与菱形表示当前选择。
         for (int index = 0; index < _difficultyButtons.Length; index++)
         {
             _difficultyLabels[index].text = LubanMgr.Instance.GetDungeonDifficultyById(index + 1).Name;
             _difficultyButtons[index].interactable = index + 1 != _selectedDifficulty;
+            _difficultyMarkers[index].SetActive(index + 1 == _selectedDifficulty);
+            _difficultyLabels[index].color = NormalChoiceColor;
+            if (index + 1 == _selectedDifficulty)
+            {
+                _difficultyLabels[index].color = SelectedChoiceColor;
+            }
         }
         _difficultyStatus.text = "选择难度：" + LubanMgr.Instance.GetDungeonDifficultyById(_selectedDifficulty).Name;
+        if (_selectedLayer > 0)
+        {
+            _difficultyStatus.text += " · 第" + _selectedLayer + "层";
+        }
         if (_entry != null && TeamData.Instance.DungeonId == _entry.storyDungeonId)
         {
-            _difficultyStatus.text += "  ·  当前副本：" +
+            _difficultyStatus.text += "\n当前副本：" +
                 LubanMgr.Instance.GetDungeonDifficultyById(TeamData.Instance.DungeonsDegree).Name;
+            if (TeamData.Instance.DungeonLayer > 0)
+            {
+                _difficultyStatus.text += " · 第" + TeamData.Instance.DungeonLayer + "层";
+            }
         }
+        // 已在任意副本时仍允许查看配置，但挑战必须先走现有离队或退出流程。
+        bool inDungeon = TeamData.Instance.DungeonInstanceId != 0;
+        _beginBtn.interactable = !inDungeon;
+        // 复用正式挑战按钮的文字，不创建另一套退出入口。
+        TMP_Text beginLabel = _beginBtn.GetComponentInChildren<TMP_Text>(true);
+        beginLabel.text = "开始挑战";
+        if (inDungeon)
+        {
+            beginLabel.text = "已在副本中";
+            _difficultyStatus.text += "\n请先退出当前副本";
+        }
+        RefreshLayers();
+    }
+
+    /// <summary>按当前难度表的 MaxLayer 复用正式行模板，非分层难度隐藏整列。</summary>
+    private void RefreshLayers()
+    {
+        // 当前难度可选择的最高层，零表示该难度不分层。
+        int maxLayer = LubanMgr.Instance.GetDungeonDifficultyById(_selectedDifficulty).MaxLayer;
+        _layerPanel.SetActive(maxLayer > 0);
+        if (maxLayer == 0)
+        {
+            return;
+        }
+        if (_layerButtons.Count != maxLayer)
+        {
+            // 清理上次不同层数配置产生的实例，不销毁正式模板。
+            for (int index = 0; index < _layerButtons.Count; index++)
+            {
+                Destroy(_layerButtons[index].gameObject);
+            }
+            _layerButtons.Clear();
+            // 按一至最高层创建列表行，每个回调保存自身层号。
+            for (int index = 0; index < maxLayer; index++)
+            {
+                // 此行对应的一起始层数，不能使用循环结束后的下标。
+                int layer = index + 1;
+                // 复制正式预制体中的字体、点击区和布局，不在业务代码拼装控件。
+                Button button = Instantiate(_layerTemplate, _layerContent);
+                button.gameObject.name = "Layer" + layer;
+                button.GetComponentInChildren<TMP_Text>(true).text = "第 " + layer + " 层";
+                button.onClick.AddListener(() => SelectLayer(layer));
+                button.gameObject.SetActive(true);
+                _layerButtons.Add(button);
+            }
+        }
+        // 仅更新所选层文字和点击状态，列表保持当前滚动位置。
+        for (int index = 0; index < _layerButtons.Count; index++)
+        {
+            // 此行的正式模板文字，用相同颜色规则表现层数选择。
+            TMP_Text label = _layerButtons[index].GetComponentInChildren<TMP_Text>(true);
+            label.color = NormalChoiceColor;
+            _layerButtons[index].interactable = index + 1 != _selectedLayer;
+            if (index + 1 == _selectedLayer)
+            {
+                label.color = SelectedChoiceColor;
+            }
+        }
+    }
+
+    /// <summary>层数行点击后刷新待选层数，不提前改变服务端实例状态。</summary>
+    /// <param name="layer">由正式层数列表生成的一至 MaxLayer 层号。</param>
+    public void SelectLayer(int layer)
+    {
+        _selectedLayer = layer;
+        RefreshDifficulty();
     }
     #endregion
 
@@ -284,7 +394,9 @@ public sealed class ThemeStoryWindow : WindowBase
         _entry = entry;
         if (TeamData.Instance.DungeonId == entry.storyDungeonId)
         {
+            // 重开当前实例时同时恢复权威难度与层数，不能把队长选择的终绝高层误当作首层。
             _selectedDifficulty = TeamData.Instance.DungeonsDegree;
+            _selectedLayer = TeamData.Instance.DungeonLayer;
         }
         RefreshDifficulty();
         if (_titleText != null)
@@ -389,7 +501,7 @@ public sealed class ThemeStoryWindow : WindowBase
         }
         if (OnEnterDungeon != null)
         {
-            OnEnterDungeon(_entry, _selectedDifficulty);
+            OnEnterDungeon(_entry, _selectedDifficulty, _selectedLayer);
         }
     }
 
@@ -753,6 +865,9 @@ public sealed class ThemeStoryWindow : WindowBase
         if (tex != null)
         {
             _bossPic.texture = tex;
+            // 预制体的独立展示框按纹理真实宽高等比容纳完整立绘，不再伸入正文区域。
+            AspectRatioFitter aspect = _bossPic.GetComponent<AspectRatioFitter>();
+            aspect.aspectRatio = (float)tex.width / tex.height;
         }
     }
 

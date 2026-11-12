@@ -20,6 +20,7 @@ public sealed partial class DungeonMonsterDifficultyTable : Luban.BeanBase
         Id = _buf.ReadInt();
         DungeonId = _buf.ReadInt();
         DifficultyId = _buf.ReadInt();
+        Layer = _buf.ReadInt();
         EntityId = _buf.ReadInt();
         // 当前行的基因ID数量，顺序与配对数组一致。
         int geneIdsCount = _buf.ReadSize();
@@ -50,7 +51,7 @@ public sealed partial class DungeonMonsterDifficultyTable : Luban.BeanBase
     }
 
     /// <summary>
-    /// 配置ID（唯一）
+    /// 配置ID（独立唯一）
     /// </summary>
     public readonly int Id;
     /// <summary>
@@ -61,6 +62,10 @@ public sealed partial class DungeonMonsterDifficultyTable : Luban.BeanBase
     /// 难度ID，关联难度表
     /// </summary>
     public readonly int DifficultyId;
+    /// <summary>
+    /// 非分层0；终绝1～MaxLayer
+    /// </summary>
+    public readonly int Layer;
     /// <summary>
     /// 原怪物/Boss实体ID
     /// </summary>
@@ -104,6 +109,7 @@ public sealed partial class DungeonMonsterDifficultyTable : Luban.BeanBase
         + "Id:" + Id + ","
         + "DungeonId:" + DungeonId + ","
         + "DifficultyId:" + DifficultyId + ","
+        + "Layer:" + Layer + ","
         + "EntityId:" + EntityId + ","
         + "GeneIds:" + Luban.StringUtil.CollectionToString(GeneIds) + ","
         + "GeneValues:" + Luban.StringUtil.CollectionToString(GeneValues) + ","

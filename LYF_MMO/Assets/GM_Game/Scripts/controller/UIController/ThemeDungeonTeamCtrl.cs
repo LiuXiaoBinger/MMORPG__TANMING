@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
@@ -60,6 +60,9 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
 
     /// <summary>本机详情页最近选择的难度编号，只用于尚未入场时的队伍目标展示。</summary>
     private int _selectedDifficulty = 1;
+
+    /// <summary>准备挑战的层数，非分层难度为零，与服务端当前实例层数分开保存。</summary>
+    private int _selectedLayer;
 
     /// <summary>是否已经读取过职业头像图集，避免重复加载。</summary>
     private bool _jobAtlasLoaded;
@@ -207,12 +210,12 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             {
                 _teamWindow.SetTargetName(
                     LubanMgr.Instance.GetDungeonsTableById(TeamData.Instance.DungeonId).DungeonsName +
-                    " · " + LubanMgr.Instance.GetDungeonDifficultyById(TeamData.Instance.DungeonsDegree).Name);
+                    " · " + GetDifficultyTitle(TeamData.Instance.DungeonsDegree, TeamData.Instance.DungeonLayer));
             }
             else if (_selectedEntry != null)
             {
                 _teamWindow.SetTargetName(_selectedEntry.themeName + " · " +
-                    LubanMgr.Instance.GetDungeonDifficultyById(_selectedDifficulty).Name);
+                    GetDifficultyTitle(_selectedDifficulty, _selectedLayer));
             }
             else
             {
@@ -258,7 +261,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         // 提示只采用入场回包的档位，不把本地选择当作已经创建的实例难度。
         TipsMgr.Instance.ShowSystemTips("进入" +
             LubanMgr.Instance.GetDungeonsTableById(notice.DungeonId).DungeonsName + " · " +
-            LubanMgr.Instance.GetDungeonDifficultyById(notice.DungeonsDegree).Name);
+            GetDifficultyTitle(notice.DungeonsDegree, notice.DungeonLayer));
         EnterDungeon(notice.SceneId);
     }
 
@@ -268,7 +271,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     {
         _confirmationWindow.SetMembers(TeamData.Instance.Members, ResolveLocalRoleId(), notice.ConfirmSeconds,
             LubanMgr.Instance.GetDungeonsTableById((int)notice.DungeonId).DungeonsName,
-            LubanMgr.Instance.GetDungeonDifficultyById(notice.DungeonsDegree).Name);
+            GetDifficultyTitle(notice.DungeonsDegree, notice.DungeonLayer));
         // 按权威名单中的职业编号复用队伍窗口已使用的图集。
         for (int index = 0; index < TeamData.Instance.Members.Count; index++)
             _confirmationWindow.SetMemberJobSprite(index, ResolveJobSprite(TeamData.Instance.Members[index].JobId));
@@ -296,6 +299,20 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         if (member != null) TipsMgr.Instance.ShowSystemTips(member.Nickname + "拒绝进入副本");
     }
 
+    /// <summary>队伍目标、确认和入场提示共用难度名称；只有分层实例追加层数。</summary>
+    /// <param name="difficultyId">难度表编号，来自待选项或对应的权威回包。</param>
+    /// <param name="layer">对应的挑战层数，零表示不分层。</param>
+    private static string GetDifficultyTitle(int difficultyId, int layer)
+    {
+        // 正式难度表名称，不在 UI 写死六档文案。
+        string title = LubanMgr.Instance.GetDungeonDifficultyById(difficultyId).Name;
+        if (layer > 0)
+        {
+            title += " · 第" + layer + "层";
+        }
+        return title;
+    }
+
     /// <summary>处理 MS 超时或名单变化取消，保持当前场景。</summary>
     /// <param name="notice">服务端给出的本次取消原因。</param>
     private void OnFailEnterFB(FailEnterFBData notice)
@@ -313,16 +330,24 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
     /// 建队不会自动进图，必须再点一次开始挑战。
     /// </summary>
     /// <param name="entry">详情页当前确认挑战的副本配置。</param>
-    /// <param name="difficultyId">详情页选中的难度表编号一至四。</param>
-    private void OnChallengeRequested(ThemeDungeonEntry entry, int difficultyId)
+    /// <param name="difficultyId">详情页选中的难度表编号一至六。</param>
+    /// <param name="layer">详情页选中的层数，非分层难度为零。</param>
+    private void OnChallengeRequested(ThemeDungeonEntry entry, int difficultyId, int layer)
     {
         if (entry == null)
         {
             return;
         }
+        // 权威缓存仍有副本实例时禁止再发入场请求，必须先通过现有退出流程返回。
+        if (TeamData.Instance.DungeonInstanceId != 0)
+        {
+            TipsMgr.Instance.ShowSystemTips("请先退出当前副本");
+            return;
+        }
         _selectedEntry = entry;
         _selectedDifficulty = difficultyId;
-        // 四档沿同一基础副本入口使用现有地图；难度另传，不能切换到未登记的旧普通/困难地图。
+        _selectedLayer = layer;
+        // 六档与不同层数沿同一基础副本入口使用现有地图；难度另传，不能切换到未登记的旧普通/困难地图。
         DungeonsTable dungeon = LubanMgr.Instance.GetDungeonsTableById(entry.storyDungeonId);
         // 未迁入的场景无法完成客户端切图，发起请求前报告实际资源缺口，避免服务端先切地图。
         DungeonSceneResource resource = DungeonSceneResource.Load(dungeon.SceneID);
@@ -340,7 +365,7 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
                 return;
             }
             // MS 收集全员答复后才授权 GS 入场，客户端仍等最终入场通知。
-            _teamCtrl.CaptainRequestEnterFBPtc(dungeon.DungeonsID, difficultyId);
+            _teamCtrl.CaptainRequestEnterFBPtc(dungeon.DungeonsID, difficultyId, layer);
             return;
         }
         OpenTeamWindow();
