@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f175bbd59a2c016965899b8c1e9b58d4654f82c12249bcf3f3f4e08b67c9013a`
+Source normalized SHA256: `c2de6368b3c640742a5b00c384d2b4ceb60289e331d4c9fef162361a1572adf5`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -67,11 +67,12 @@ Source normalized SHA256: `f175bbd59a2c016965899b8c1e9b58d4654f82c12249bcf3f3f4e
 | [CODE][FILES][HANDOFF][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Equipment special-skill audit and combat integration | 478-484 |
 | [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters | 485-490 |
 | [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-499 |
-| [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-505 |
+| [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-506 |
+| [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-511 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `dd6c3dcf92943994dcd74dc4a32404d46f68f49d438b71b9d59d3809639b20e6`
+Source normalized SHA256: `3a73d3a23035ccd4261b684b0e0d5857e29ee559977485a550d4c41c6e15ca29`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -130,7 +131,8 @@ Source normalized SHA256: `dd6c3dcf92943994dcd74dc4a32404d46f68f49d438b71b9d59d3
 | [VERIFY][装备][特技][基因][EQUIP-SPECIAL-SKILL-COMBAT-20261111] Production combat entry acceptance | 506-512 |
 | [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] Unified component and existing dungeon combat acceptance | 513-518 |
 | [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-527 |
-| [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-533 |
+| [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-534 |
+| [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-540 |
 
 ## Docs/AI/DECISIONS.en.md
 
