@@ -529,3 +529,11 @@
 - 对实际已加载 SkillCtrl 的方法检查验证：表中 10010.Type1/10040.Type2、无敌人返回 null、自动选择的背后目标保持、无目标时选择最近背后敌人、手选目标保持，以及 Type2 朝向/手选规则不变。临时朝向与目标已恢复。这些是方法检查，与游戏集成验收分开记载。
 - 以 0.85s 间隔调用正式 OnSkillKey("Q") 入口 8 次，使用真实怪物、协议和原攻击位移，属于正式快捷键入口调用，不是物理键盘测试。未修改坐标、HP、朝向或曲线制造此过程。正常前冲越过 UID104 后，第 3 击将朝向 dot 从 -0.9953933 转为 1，仍保留 UID104；第 4/6/7 击同样转向该目标，正常 0/1/2 攻击段保留。主 Agent 已核对实际 INPUT_BEFORE/AFTER 证据。
 - 证据：`_temp/basic-attack-target-facing-20261112/selection-runtime-checks.log`、`continuous-basic-fixed.log/.png`、`development-handoff.md`。全部临时回调已移除，sceneDirty=false、Play 未暂停、Console 错误 0，没有自动治疗或复活。全部职业武器、物理键盘连续输入、真人多人完整通关、发布包及线上环境仍未验证。完整记录见 `项目修改日志/2026-11-12-普攻目标保持与逐击转向修复.md`。
+
+## [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] 真实普攻追近与位移检查边界
+
+- 正常 Unity 重载通过，最终 Console 错误 0。三个表现资源 Runtime 校验均为 true，ChargeList 数量为 0/0/1。首次错误读取 MEntity.Target 导致 CS1061，改用 PlayerEntity.Target；源资源零距离段导出空 CurveX 键并导致实际表现校验失败，随后移除这些位移段并重新导出，未削弱校验。
+- 附近有 7 个敌人、无手动锁定时调用正式 Q 入口，保持朝向（dot≈1），selected/manual/nav=false。实际手选 UID158/spawn73014444036 时距离 17.20311m，先开始导航、不释放技能；约 2.046s 后首次 SkillStarted 距离为 2.947199m，随后服务端权威伤害 1678、目标 HP53453。目标在开刀后才移动，首刀时 targetMoved=0；文件名不能作为追击移动目标的验收依据。以上为 Editor 入口调用，不是物理键盘测试。
+- 修复前取消锁定后仍移动约 3.36m。修复后从 12.23103m 处取消，仅剩一帧 0.0900019m 移动，之后导航、选择、afterAction 和技能均清空；9.51565m 处的方向事件也清空导航/afterAction。目标生命周期仍为 Active 时，本地同步 HP0 可取消追近，并在同次调用内恢复 HP55131；这不是服务端真实击杀。较早一次无候选尝试在玩家已死亡时失败，尚未修改属性。
+- 前两段实测位移为 0m。首次第三段样本 0.749m 仅覆盖约 0.9s；延长样本等待第三刀后至少 2.5s，净位移为 0.748075m，技能已结束、状态为 BeHit、无侧碰撞。真实受击干扰意味着不能宣称无干扰自然完整位移，也不能将该净位移等同配置前向 1.0815m。
+- 主 Agent 已核对实际代码/资源差异、前两段资源除位移列表外不变、XLSX 单格隔离暂存，以及 bytes 仅偏移 148 由 8 改为 3；差异检查通过。证据位于 `_temp/basic-attack-manual-chase-motion-20261112/`，重点为 client-final-handoff.md、manual-moving-target-real.log、export-runtime-validation.log、root-asset-scope-check.json 和 staged-workbook-check.json。最终观察组件已移除，正式复活返回 HP47496、位置 (132.97,58.89,60.95)，Default/无导航，Play=true/Paused=false/sceneDirty=false。未伪造交还时的血量或位置，没有打包、重启或线上部署。完整范围与边界见 `项目修改日志/2026-11-12-手动锁定追近与普攻三段位移修正.md`。

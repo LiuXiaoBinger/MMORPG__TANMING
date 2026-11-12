@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c2de6368b3c640742a5b00c384d2b4ceb60289e331d4c9fef162361a1572adf5`
+Source normalized SHA256: `4d10b415f03a0fdd46a2682d3b054781bcc8a121dc34ad56e147c837c732d283`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -68,11 +68,12 @@ Source normalized SHA256: `c2de6368b3c640742a5b00c384d2b4ceb60289e331d4c9fef1623
 | [CODE][FILES][HANDOFF][基因][GENE-COMPONENT-UNIFY-20261111] One server GeneComponent for roles and monsters | 485-490 |
 | [CODE][副本][DUNGEON-DEATH-FEEDBACK-20261112] Player damage numbers, explicit revive and two-role outfits | 491-499 |
 | [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-506 |
-| [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-511 |
+| [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-512 |
+| [CODE][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Manual-lock pursuit and three-hit basic-attack movement | 513-518 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `3a73d3a23035ccd4261b684b0e0d5857e29ee559977485a550d4c41c6e15ca29`
+Source normalized SHA256: `b476d6bdfdb85b4943a8ceccca808ae7ba21920aeabbe5c238563d357bc3d6fc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -132,7 +133,8 @@ Source normalized SHA256: `3a73d3a23035ccd4261b684b0e0d5857e29ee559977485a550d4c
 | [VERIFY][基因][GENE-COMPONENT-UNIFY-20261111] Unified component and existing dungeon combat acceptance | 513-518 |
 | [VERIFY][副本][DUNGEON-DEATH-FEEDBACK-20261112] Real server death/revive and equipment verification | 519-527 |
 | [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-534 |
-| [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-540 |
+| [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-541 |
+| [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Real approach before basic attack and bounded movement checks | 542-548 |
 
 ## Docs/AI/DECISIONS.en.md
 
