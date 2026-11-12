@@ -544,3 +544,9 @@
 - 同一次调用的临时几何测试沿正式 E 入口使用已学习的 10040 Type2/AtkDistance10：导航按其自身 10m 射程，目标位置移动时更新位置而不换身份，取消清除到达动作，方向输入中断。最终恢复位置/HP/朝向/选择。死亡测试是临时 HP0，不是服务端击杀；Type2 检查不是实战伤害验收。测试专用 lambda 重名与 AttrComponent 拼写错误已修正，不属于业务回归。
 - 一次真实副本 Q 入口样本从未选中开始，自动取得 9.61579m 外的 UID104/spawn73014444033（manual=false）。追击中怪物实际移动 2.783357m；约 0.827s 后在 2.867724m 处首次出刀，服务端权威伤害 1678、目标 HP53453。5s 内持续保持同一 UID，静止 Default 朝向点积为 0.9994631。与上一任务不同，本轮已经实际覆盖移动目标追近。该样本未人为修改 HP/位置/伤害；Q/E 是 Editor 入口调用，不是物理按键。
 - 证据：`_temp/skill-target-acquire-chase-20261112/actual-method-geometry.cs.txt/.log`、`auto-acquire-real.log/.png`、`client-final-handoff.md`、`root-review-and-git.json`。最终观察组件/订阅已移除，正式复活返回 HP47496/MP10500、位置 (132.97,58.89,60.95)，Default/无导航，Play=true/Paused=false/sceneDirty=false。没有桌面控制、打包、服务重启或部署。其他职业/主动技能实战伤害、真人多人完整通关、Player/线上环境仍未验证。完整归档见 `项目修改日志/2026-11-12-攻击前方优先选敌与目标保持追近.md`。
+
+## [VERIFY][技能][TARGET-IDLE-FACING-REMOVE-20261112] 闲站持续面向删除的限定范围检查
+
+- 保存的 MSkillTargetMgr.cs 基线与 HEAD1a5d58b 一致；主 Agent 核对精确单文件差异和暂存范围，差异检查通过。UpdateToCheckTarget 无 Rotation/LookRotation 写入，保留失效目标 ResetTarget(null) 及有效选择。施法/追近入口未修改；这些是静态证据，不是新的游戏运行结果。
+- 原生 Codex 开发者正常停止 Play 并刷新，脚本编译完成，Console 错误 0。没有重新登录、活体方法探针、战斗重跑、Player/Yoo/GenerateAll、桌面操作、服务重启或部署。最终 Play=false/Paused=false/Compiling=false，位于 Scene_Boot，dirty=false，无新增测试回调/组件。
+- 证据为 `_temp/target-idle-facing-remove-20261112/client-final-handoff.md`、`verification.txt`、`editor-state.txt` 及保存的基线。业务提交 dfaa0ce 已推送；本次仅进行已批准归档。此修正覆盖此前持续闲站面向策略，保留原始测试历史。完整文件范围以及物理输入/登录后战斗/多人/发布环境未验边界见 `项目修改日志/2026-11-12-攻击前方优先选敌与目标保持追近.md` 的本编号条目。

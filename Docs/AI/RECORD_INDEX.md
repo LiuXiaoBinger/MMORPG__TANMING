@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7ee033c67eac3033b2106ba06d7bb8ab98922375492ebb5ab36739cc390cad8b`
+Source normalized SHA256: `b109d361abcaffd6a46cd67fcab9dd916c0c30b11dec91d1c9ee7ecd6e005afb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -70,11 +70,12 @@ Source normalized SHA256: `7ee033c67eac3033b2106ba06d7bb8ab98922375492ebb5ab3673
 | [CODE][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Distinct runtime IDs and movable non-control hit feedback | 500-506 |
 | [CODE][技能][BASIC-ATTACK-TARGET-FACING-20261112] Preserve basic-attack targets through attack movement | 507-512 |
 | [CODE][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Manual-lock pursuit and three-hit basic-attack movement | 513-519 |
-| [CODE][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Front-priority automatic acquisition, target retention and skill-range pursuit | 520-524 |
+| [CODE][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Front-priority automatic acquisition, target retention and skill-range pursuit | 520-525 |
+| [CODE][技能][TARGET-IDLE-FACING-REMOVE-20261112] Keep selected targets without continuous idle rotation | 526-530 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5c223c066d9d44e6781123d92435208b6634fbcf2d18f2e06eafac5db24db3ff`
+Source normalized SHA256: `2b2f329f47fa5fa4c9d2c10c1b9a811d112df9115b09d1fb1463d0ff5ac52cd9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -136,7 +137,8 @@ Source normalized SHA256: `5c223c066d9d44e6781123d92435208b6634fbcf2d18f2e06eafa
 | [VERIFY][副本][怪物AI][DUNGEON-AI-HIT-STATE-20261112] Wrong-target reproduction and real Editor combat | 528-534 |
 | [VERIFY][技能][BASIC-ATTACK-TARGET-FACING-20261112] Eight attacks reacquire facing after passing the target | 535-541 |
 | [VERIFY][技能][BASIC-ATTACK-MANUAL-CHASE-MOTION-20261112] Real approach before basic attack and bounded movement checks | 542-549 |
-| [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Twenty geometry checks and real automatic pursuit of a moving monster | 550-555 |
+| [VERIFY][技能][SKILL-TARGET-ACQUIRE-CHASE-20261112] Twenty geometry checks and real automatic pursuit of a moving monster | 550-556 |
+| [VERIFY][技能][TARGET-IDLE-FACING-REMOVE-20261112] Bounded idle-facing removal checks | 557-561 |
 
 ## Docs/AI/DECISIONS.en.md
 
