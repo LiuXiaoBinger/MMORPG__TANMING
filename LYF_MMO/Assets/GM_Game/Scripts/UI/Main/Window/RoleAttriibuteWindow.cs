@@ -153,14 +153,14 @@ public class RoleAttriibuteWindow : WindowBase
     /// <summary>预制体中的高级属性行模板，运行时按静态属性表实例化。</summary>
     [SerializeField] private RectTransform _advancedRowTemplate;
 
-    /// <summary>页签选中态的背景配色。</summary>
-    private static readonly Color TabSelectedColor = new Color(0.85f, 0.72f, 0.42f, 1f);
-    /// <summary>页签未选中态的背景配色。</summary>
-    private static readonly Color TabNormalColor = new Color(0.13f, 0.13f, 0.13f, 1f);
-    /// <summary>页签选中态的文字配色。</summary>
-    private static readonly Color TabSelectedTextColor = new Color(0.12f, 0.10f, 0.08f, 1f);
-    /// <summary>页签未选中态的文字配色。</summary>
-    private static readonly Color TabNormalTextColor = new Color(0.80f, 0.80f, 0.80f, 1f);
+    /// <summary>页签选中态的背景配色，饱和蓝 #3F7CCF。</summary>
+    private static readonly Color TabSelectedColor = new Color(0.247f, 0.486f, 0.812f, 1f);
+    /// <summary>页签未选中态的背景配色，浅蓝 #DFEBF8。</summary>
+    private static readonly Color TabNormalColor = new Color(0.874f, 0.922f, 0.973f, 1f);
+    /// <summary>页签选中态的文字配色，选中蓝底用白字。</summary>
+    private static readonly Color TabSelectedTextColor = new Color(1f, 1f, 1f, 1f);
+    /// <summary>页签未选中态的文字配色，浅蓝底用深蓝字 #1E4169。</summary>
+    private static readonly Color TabNormalTextColor = new Color(0.118f, 0.255f, 0.412f, 1f);
     /// <summary>分组展开时的指示符号。</summary>
     private const string GroupExpandedMark = "-";
     /// <summary>分组收起时的指示符号。</summary>
