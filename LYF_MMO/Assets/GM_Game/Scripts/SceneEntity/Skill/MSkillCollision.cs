@@ -22,7 +22,8 @@ public class MSkillCollision
     /// <param name="presentation">已经加载的该次表现配置。</param>
     /// <param name="time">与动画和程序位移共用的技能时钟，单位秒。</param>
     /// <param name="targetUid">本次施法锁定的目标身份，零表示未选中目标。</param>
-    public void Update(MEntity firer, SkillRuntimePresentation presentation, float time, ulong targetUid)
+    /// <param name="owner">拥有本次碰撞轨道的技能实例，用于精确停掉这一段的剩余前冲。</param>
+    public void Update(MEntity firer, SkillRuntimePresentation presentation, float time, ulong targetUid, MArtSkill owner)
     {
         // 联机魔神塔的普攻由 GameServer 按同段动作结算，两端只在属性通知到达时播放受击。
         if (presentation.SkillId == MSceneDungeon.BasicAttackId && TeamData.Instance.DungeonInstanceId != 0UL) return;
@@ -73,6 +74,9 @@ public class MSkillCollision
                     if (collision.RepeatFrames == 0 || sample - lastHit < collision.RepeatFrames) continue;
                 }
                 hits[index][target.UID] = sample;
+                // 非副本的单机路径没有服务端命中包，由本地真实重叠停掉本次施法的剩余前冲；
+                // 直接用产生这条轨道的技能实例，不按动作槽取最近一次施法，旧事件停不了新施法。
+                if (owner != null) owner.TryStopChargeOnHit(0UL);
                 // 原模型未提供 BeHit 时保留现有动作，不用其他怪物动作冒充。
                 Animator animator = target.Model.Ator.UnityAnimator;
                 if (animator.HasState(0, Animator.StringToHash("Base Layer." + MAnimator.STATE_BEHIT)))

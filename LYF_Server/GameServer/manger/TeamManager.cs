@@ -63,7 +63,8 @@ public sealed class TeamManager
     /// <param name="forward">释放时确认的水平单位朝向。</param>
     /// <param name="damage">当前普攻配置的每次伤害。</param>
     /// <param name="hit_targets">当前碰撞窗口内已命中的服务端实体编号。</param>
-    public void OnMonsterHit(OnlineRole caster, Vector2 forward, int damage, HashSet<ulong> hit_targets)
+    /// <param name="stop_skill_uuid">普攻第三段的施法 UUID，其余段为零表示不回填攻击者身份。</param>
+    public void OnMonsterHit(OnlineRole caster, Vector2 forward, int damage, HashSet<ulong> hit_targets, ulong stop_skill_uuid = 0UL)
     {
         // 以施法者当前所在的副本查找本机运行状态。
         Dungeon team;
@@ -73,6 +74,12 @@ public sealed class TeamManager
         team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets, caster);
         team.WaveSpawner.FillFlow(notice);
         if (notice.Monsters.Count == 0) return;
+        // 只有真正扣到血时才回填攻击者与施法身份，客户端据此停止第三段的剩余前冲。
+        if (stop_skill_uuid != 0UL)
+        {
+            notice.AttackerRoleId = (ulong)caster.mainRoleInfo.BaseInfo.RoleId;
+            notice.SkillUuid = stop_skill_uuid;
+        }
         SendMonsterNotice(team, notice);
     }
 

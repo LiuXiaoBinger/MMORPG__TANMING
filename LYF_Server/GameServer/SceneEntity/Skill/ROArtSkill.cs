@@ -64,7 +64,12 @@ public sealed class ROArtSkill : ROSkill
             if (window_ == 1) start = 54;
             if (frame < start) break;
             if (previous <= start + 14)
-                TeamManager.Instance.OnMonsterHit(caster_, forward_, damage_, hit_targets_);
+            {
+                // 第三段是普攻唯一带前冲的一段，真命中后客户端要据此停掉本段剩余位移。
+                ulong stop_uuid = 0UL;
+                if (variant == 2) stop_uuid = GetSkillUUID();
+                TeamManager.Instance.OnMonsterHit(caster_, forward_, damage_, hit_targets_, stop_uuid);
+            }
             if (frame <= start + 14) break;
             window_++;
             hit_targets_.Clear();

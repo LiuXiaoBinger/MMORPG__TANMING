@@ -107,6 +107,9 @@ public abstract class MSkill
     /// <summary>本次释放使用的技能 ID。</summary>
     public int SkillId { get; private set; }
 
+    /// <summary>本次施法已锁定的表现行主键，连续普攻的各段据此区分，零表示尚未确定。</summary>
+    public int RuntimePresentationId { get { return _runtimePresentationId; } }
+
     /// <summary>本次动作启动时选中的段号，服务器确认更新核心不会改变正在播放的段。</summary>
     public int UsingTimes { get; private set; }
 

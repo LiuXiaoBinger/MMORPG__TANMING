@@ -24,9 +24,9 @@ MonoBehaviour:
     Particle: {fileID: 3653614234404995912, guid: f6d4c27662db4aeabab10a904fecd2d7, type: 3}
     PlacementKind: 0
     SocketPath:
-    LocalPosition: {x: 0, y: 0.1, z: 0}
+    LocalPosition: {x: 0, y: 1.09, z: 0}
     LocalEulerAngles: {x: 0, y: 0, z: 0}
-    LocalScale: {x: 1, y: 1, z: 1}
+    LocalScale: {x: 0.68, y: 0.68, z: 0.68}
     ForwardDistance: 0
   AudioEvents: []
   ChargeList: []

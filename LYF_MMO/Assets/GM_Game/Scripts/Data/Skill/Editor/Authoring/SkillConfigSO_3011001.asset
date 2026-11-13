@@ -55,7 +55,91 @@ MonoBehaviour:
     blendInFrames: 0
   skillClip: {fileID: 7400000, guid: ac4539012b28f5e488289706ee437177, type: 2}
   exitFrame: 0
-  moveSegmentList: []
+  moveSegmentList:
+  - keyNumber: 0
+    endKeyNumber: 18
+    driveMode: 0
+    rootMotionScale: 1
+    space: 0
+    origin: 0
+    target: 0
+    resolveDirectionPerFrame: 0
+    customDirection: {x: 0, y: 0, z: 1}
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0.0
+        value: 0.0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.45
+        value: 0.68
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1.0
+        value: 1.0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    maxDistance: 2.2
+    curveX:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    distanceX: 0
+    targetOffset: {x: 0, y: 0, z: 0}
+    offsetSpace: 1
+    stopAtTargetOffset: 0
+    arriveTolerance: 0.05
+    minKeepDistance: 0
+    verticalCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    verticalDistance: 0
+    alignFacing: 0
+    ignoreGravity: 0
+    ignoreActorCollision: 0
+    overshootPolicy: 0
   moveCurve:
     serializedVersion: 2
     m_Curve:
@@ -80,7 +164,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  totalMoveDistance: 0
+  totalMoveDistance: 2.2
   tracks:
   - type: 0
     displayName:

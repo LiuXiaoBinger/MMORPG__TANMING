@@ -225,6 +225,8 @@ message MonsterAttrUpdateNtf {
 	repeated uint64 removed_spawn_ids = 10;//本次离场的动态实体出生标识，与死亡表现区分
 	repeated MonsterAiNoticeData ai_notices = 11;//本实例原AI触发的提示、表情或黑幕表现
 	repeated MonsterBuffData buff_changes = 12;//本次原Buff实例新增、刷新或明确移除
+	uint64 attacker_role_id = 13;//本次命中的持久攻击者角色 ID，非普攻第三段不填
+	uint64 skill_uuid = 14;//本次命中的施法 UUID，仅普攻第三段真命中时填
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。

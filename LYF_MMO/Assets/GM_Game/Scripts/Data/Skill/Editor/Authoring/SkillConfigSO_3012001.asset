@@ -96,14 +96,14 @@ MonoBehaviour:
     keyNumber: 0
     endKeyNumber: 0
     particleSystem: {fileID: 3653614234404995912, guid: f6d4c27662db4aeabab10a904fecd2d7, type: 3}
-    offset: {x: 0, y: 0.1, z: 0}
+    offset: {x: 0, y: 1.09, z: 0}
     socketPath:
     placementKind: 0
     forwardDistance: 0
     audioClip: {fileID: 0}
     followCharacter: 1
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 0.68, y: 0.68, z: 0.68}
     playbackSpeed: 1
     useWorldSpace: 0
     customLifetime: 0

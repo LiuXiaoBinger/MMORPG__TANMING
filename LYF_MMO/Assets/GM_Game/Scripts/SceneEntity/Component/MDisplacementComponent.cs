@@ -46,6 +46,12 @@ public sealed class MDisplacementComponent : EntityComponentBase
     /// <summary>实际产生本段基线的原生模型对象，同模型同步换 GO 时也必须丢弃旧差量。</summary>
     private GameObject _loadedGameObject;
 
+    /// <summary>本段位移是否按前方活体敌人截断增量，段开始时按技能与表现行一次性确定。</summary>
+    private bool _lungeAdaptive;
+
+    /// <summary>本段是否已被前方活敌截断过；一旦为真，后续帧不再提交负向回拉与横向步骤。</summary>
+    private bool _lungeStopped;
+
     /// <summary>普通容器中的独立位移身份，不能与输入移动组件共用类型键。</summary>
     public override EntityComponentType ComponentType { get { return EntityComponentType.Displacement; } }
     #endregion
@@ -129,18 +135,46 @@ public sealed class MDisplacementComponent : EntityComponentBase
             return;
         }
         targetDistance = Mathf.Min(targetDistance, _data.DistanceZ);
-        // 当前累计比例要求的米数增量，Clamp 与 Stop 不允许回拉。
-        float deltaDistance = targetDistance - _appliedDistance;
-        if (deltaDistance < 0f && !_data.AllowReverse)
+        // 本帧曲线新增量取曲线累计值之差，而不是把可用距离写回整段累计。
+        float curveStep = targetDistance - _appliedDistance;
+        if (curveStep < 0f && !_data.AllowReverse)
         {
             if (_data.StopAtDistanceLimit)
             {
                 _data = null;
             }
-            deltaDistance = 0f;
+            curveStep = 0f;
         }
-        _appliedDistance += deltaDistance;
-        _translation += _direction * deltaDistance;
+        // 已消费的原曲线累计量按未截断值推进，被截掉的米数不会堆到后续帧变成突进。
+        _appliedDistance += curveStep;
+        // 实际推进量：前移类技能按前方活体敌人截断，贴身时为零但动画与竖直跳高照常。
+        float stepDistance = curveStep;
+        if (_lungeAdaptive && curveStep > 0f)
+        {
+            stepDistance = MSkillLungeSweep.ClampForwardStep(Entity, _direction, curveStep);
+            // 被活敌截断即标记本段，后半段曲线回拉不能再把角色倒拖回去。
+            if (stepDistance < curveStep)
+            {
+                _lungeStopped = true;
+            }
+        }
+        // 自由场地保持原曲线；碰过敌之后只消耗原曲线，不再提交任何负向回拉。
+        if (_lungeStopped && stepDistance < 0f)
+        {
+            stepDistance = 0f;
+        }
+        // 截断比例用于同比压缩横移，碰敌时不再侧滑，空地原曲线比例恒为一。
+        float stepRatio = 1f;
+        if (curveStep > 0f && stepDistance < curveStep)
+        {
+            stepRatio = stepDistance / curveStep;
+        }
+        // 碰到活敌后整段不再提交横向步骤，避免贴身时沿横向滑过或原地侧移。
+        if (_lungeStopped)
+        {
+            stepRatio = 0f;
+        }
+        _translation += _direction * stepDistance;
         // 横向曲线可选：沿施法方向固定右向累计横向差量，回拉策略与前向一致。
         if (_data != null && _data.CurveX != null && _data.DistanceX != 0f)
         {
@@ -161,11 +195,16 @@ public sealed class MDisplacementComponent : EntityComponentBase
             _appliedDistanceX += deltaLateral;
             // 施法方向固定右向：前向(0,0,1)对应世界右(1,0,0)。
             Vector3 right = new Vector3(_direction.z, 0f, -_direction.x);
-            _translation += right * deltaLateral;
+            // 前向被截断时横移同比压缩，避免贴着敌人横向滑过。
+            _translation += right * (deltaLateral * stepRatio);
         }
         // 本段是否已结束：进度到终值，或开启距离上限时已达到上限距离。
-        bool segmentFinished = progress >= 1f ||
-            (_data.StopAtDistanceLimit && _appliedDistance >= _data.DistanceZ);
+        // 回拉被拒时可能已经清空 _data，这里必须先判空再读上限开关。
+        bool segmentFinished = progress >= 1f;
+        if (_data != null && _data.StopAtDistanceLimit && _appliedDistance >= _data.DistanceZ)
+        {
+            segmentFinished = true;
+        }
         if (_data != null && segmentFinished)
         {
             _data = null;
@@ -248,6 +287,9 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _direction = Quaternion.Euler(0f, args.angle, 0f) * Vector3.forward;
         _appliedDistance = 0f;
         _appliedDistanceX = 0f;
+        // 只有魔剑士三段前移技能参与命中自适应，段开始时一次性确定，段内不再改变。
+        _lungeAdaptive = MSkillLungeSweep.ShouldAdapt(args.Source.SkillId, args.Source.RuntimePresentationId);
+        _lungeStopped = false;
         _started = false;
         _loadedGameObject = null;
         if (Entity.Model != null && Entity.Model.IsLoaded)
@@ -362,6 +404,8 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _startTimeMilliseconds = 0;
         _lastClockMilliseconds = 0;
         _direction = Vector3.zero;
+        _lungeAdaptive = false;
+        _lungeStopped = false;
     }
     #endregion
 }

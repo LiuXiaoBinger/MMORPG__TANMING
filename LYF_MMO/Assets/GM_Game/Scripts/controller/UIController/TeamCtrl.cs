@@ -163,6 +163,14 @@ public sealed class TeamCtrl : CtrlBase
         // 同一通知承载怪物动作、怪物失血或某玩家被打的权威结果。
         MonsterAttrUpdateNtf notice = MonsterAttrUpdateNtf.Parser.ParseFrom(data);
         if (!TeamData.Instance.OnMonsterAttrUpdate(notice)) return;
+        // 普攻第三段真命中后只停本地角色该次施法的剩余前冲；其他角色、其他段或旧 UUID 都不停。
+        if (notice.SkillUuid != 0UL)
+        {
+            // 本地角色用持久角色 ID 判定，避免同实例其他玩家的普攻停掉自己这一段。
+            PlayerEntity local = Global.Instance.SceneWorld.LocalRole;
+            if (local != null && (ulong)local.GetID() == notice.AttackerRoleId)
+                MArtSkill.TryStopLocalBasicAttackCharge(notice.SkillUuid);
+        }
         for (int index = 0; index < notice.AiNotices.Count; index++) ShowAiNotice(notice.AiNotices[index]);
         if (notice.PlayerHits.Count == 0) return;
         // 当前显示该实例的角色索引，本人和远端分别存放。

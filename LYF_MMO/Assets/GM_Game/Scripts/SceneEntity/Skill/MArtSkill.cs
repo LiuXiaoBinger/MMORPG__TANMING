@@ -75,7 +75,7 @@ public class MArtSkill : MSkill
         // 先解除本帧已经播完的声源，基类再根据动作槽、剩余表现和 RO 生命周期判断存活。
         PruneAudio();
         if (_runtimePresentation != null && !_animationReleased)
-            _collision.Update(_firer, _runtimePresentation, TimelineElapsedSeconds, TargetUid);
+            _collision.Update(_firer, _runtimePresentation, TimelineElapsedSeconds, TargetUid, this);
         return base.Update(deltaSeconds);
     }
     #endregion
@@ -376,6 +376,39 @@ public class MArtSkill : MSkill
         }
         _haveCharge = false;
         _chargeGeneration = 0;
+    }
+
+    /// <summary>普攻第三段的表现行主键，三段普攻中只有该段带前冲位移。</summary>
+    public const int BasicAttackThirdPresentationId = 3001003;
+
+    /// <summary>本次实际命中后停止本段前冲，只影响第三段且不改动作、伤害与碰撞窗口。</summary>
+    /// <param name="skillUuid">服务端回传的本次施法 UUID，零表示本地重叠命中不做 UUID 校验。</param>
+    /// <returns>确实停掉了一段前冲位移时返回 true。</returns>
+    public bool TryStopChargeOnHit(ulong skillUuid)
+    {
+        // 没有前冲的段直接返回，避免影响其他动作的位移。
+        if (!_haveCharge) return false;
+        // 只有普攻第三段带程序位移，其他表现行不能响应停位移。
+        if (RuntimePresentationId != BasicAttackThirdPresentationId) return false;
+        // 非零 UUID 必须与本次施法一致，防止同角色上一次普攻的迟到通知停掉新施法。
+        if (skillUuid != 0UL && skillUuid != SkillUuid) return false;
+        StopCharge();
+        return true;
+    }
+
+    /// <summary>按施法 UUID 停止本地角色普攻第三段的剩余前冲，供副本命中协议调用。</summary>
+    /// <param name="skillUuid">服务端在真命中后回填的本次施法 UUID。</param>
+    /// <returns>找到并停止了对应前冲时返回 true。</returns>
+    public static bool TryStopLocalBasicAttackCharge(ulong skillUuid)
+    {
+        if (skillUuid == 0UL) return false;
+        if (Global.Instance == null || Global.Instance.SceneWorld == null) return false;
+        PlayerEntity local = Global.Instance.SceneWorld.LocalRole;
+        if (local == null || local.Skill == null) return false;
+        // 按 UUID 精确取本次施法实例，不按当前动作槽猜测。
+        MArtSkill art = local.Skill.GetSkill(skillUuid) as MArtSkill;
+        if (art == null) return false;
+        return art.TryStopChargeOnHit(skillUuid);
     }
 
     /// <summary>计时器到期后派发声音；Unity 声源依赖模型 Transform，冷模型用同一 GO 回调边界承接。</summary>
