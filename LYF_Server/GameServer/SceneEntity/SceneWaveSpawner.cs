@@ -288,7 +288,31 @@ public sealed partial class SceneWaveSpawner
             float dx = Math.Max(0f, side - 1.5f);
             float dz = Math.Max(0f, depth - 1.5f);
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
-            hit_targets.Add(monster.UID);
+            SettlePlayerHit(notice, index, origin, caster, damage, ROArtSkill.BasicAttackId, ref monsterDied);
+        }
+        // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
+        CheckCompletedWaves();
+        if (monsterDied) Flow.MonsterDied();
+        FlushAiNotice(notice);
+    }
+
+
+    /// <summary>对一只已通过几何判定的怪物结算一次玩家技能伤害，并沿既有链路产生受击事件。</summary>
+    /// <param name="notice">本次命中对应实例的下行包，只追加真正扣血的怪物。</param>
+    /// <param name="index">该怪物在实例列表中的零基下标，用于读取体积配置与生命快照。</param>
+    /// <param name="origin">服务器已保存的角色当前位置，单位米。</param>
+    /// <param name="caster">同一实例的在线攻击者，旧的无来源扣血允许空值。</param>
+    /// <param name="damage">本段送入防御链的技能伤害值。</param>
+    /// <param name="skillId">产生本次伤害的技能主表编号，基因事件按它归因。</param>
+    /// <param name="monsterDied">本窗口是否出现新的死亡，供场景目标推进。</param>
+    private void SettlePlayerHit(MonsterAttrUpdateNtf notice, int index, Vector3 origin, OnlineRole caster, int damage, int skillId, ref bool monsterDied)
+    {
+        // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
+        GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
+        // 出生点只提供体积与怪物编号，位置一律使用服务端当前坐标。
+        SpawnPoint point = activePoints[index];
+        // 原IsDummy/不可受击状态必须早于防御查询，机制实体不参加玩家命中循环。
+        MoshentaActor hitActor = FindActor(monster.UID);
             // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
             GeneComponent targetGene = monster.Components.Get<GeneComponent>(EntityComponentType.Gene);
             // 伤害结算与事件对方仍用这只怪物自己的同一份运行容器。
@@ -335,9 +359,9 @@ public sealed partial class SceneWaveSpawner
             if (equipment != null && actualDamage > 0)
             {
                 // 受击事件由该怪物自己的基因组件派发，结算容器与传入对方保持原样。
-                targetGene.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, ROArtSkill.BasicAttackId, actualDamage));
-                equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
-                if (monster.CurrentHp == 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill, targetGenes, ROArtSkill.BasicAttackId, actualDamage));
+                targetGene.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, skillId, actualDamage));
+                equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, skillId, actualDamage));
+                if (monster.CurrentHp == 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill, targetGenes, skillId, actualDamage));
             }
             if (monster.CurrentHp == 0)
             {
@@ -345,12 +369,55 @@ public sealed partial class SceneWaveSpawner
                 if (hitActor == null) CountDeath(point.Creature.id);
             }
             if (hitActor == null) notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
+    }
+
+    /// <summary>按圆形半径查询施法者周围存活可攻击怪物，逐只沿同一伤害链结算。</summary>
+    /// <param name="notice">本次施法对应实例的下行包。</param>
+    /// <param name="origin">服务器已保存的施法者当前位置，单位米。</param>
+    /// <param name="radius">技能主表配置的命中半径，单位米。</param>
+    /// <param name="damage">本段送入防御链的技能伤害值。</param>
+    /// <param name="hit_targets">本段已命中的实体编号，同一段内去重。</param>
+    /// <param name="caster">发起技能的在线角色。</param>
+    /// <param name="skillId">产生本次伤害的技能主表编号。</param>
+    /// <param name="maxTargets">本段最多命中数，零或负数表示不限制。</param>
+    internal void ChangeHPRadius(MonsterAttrUpdateNtf notice, Vector3 origin, float radius, int damage, HashSet<ulong> hit_targets, OnlineRole caster, int skillId, int maxTargets)
+    {
+        // 同一攻击窗口共用施害位置，观察者按自己的镜头投影受击方向。
+        notice.FirerX = origin.X;
+        notice.FirerY = origin.Y;
+        notice.FirerZ = origin.Z;
+        // 本窗口是否真实产生新死亡，避免非致命伤害误触发场景目标。
+        bool monsterDied = false;
+        // 本段已经结算的怪物数量，用于执行技能表给定的目标上限。
+        int settled = 0;
+        for (int index = 0; index < monsters_.Count; index++)
+        {
+            if (maxTargets > 0 && settled >= maxTargets) break;
+            // 实例内的权威实体，零血后不再参与随后窗口或其他队员的结算。
+            GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
+            if (monster.CurrentHp <= 0 || hit_targets.Contains(monster.UID)) continue;
+            // 机制实体与不可受击状态不参加玩家命中。
+            MoshentaActor hitActor = FindActor(monster.UID);
+            if (hitActor != null && !hitActor.CanBeAttacked) continue;
+            SpawnPoint point = activePoints[index];
+            if (point.Creature.nonCombatant) continue;
+            // 怪物行走后按服务端当前坐标比较，出生点只提供体积配置。
+            Vector3 delta = new Vector3(monster.Transform.X, monster.Transform.Y, monster.Transform.Z) - origin;
+            // 沿用既有垂直判定阈值，保证跨层与高台不会误命中。
+            if (delta.Y > 2.35f || delta.Y + point.Creature.boundHeight < -0.15f) continue;
+            // 水平面按圆形半径加怪物自身圆柱半径判定。
+            float horizontal = (float)Math.Sqrt(delta.X * delta.X + delta.Z * delta.Z);
+            if (horizontal > radius + point.Creature.boundRadius) continue;
+            hit_targets.Add(monster.UID);
+            SettlePlayerHit(notice, index, origin, caster, damage, skillId, ref monsterDied);
+            settled++;
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
         CheckCompletedWaves();
         if (monsterDied) Flow.MonsterDied();
         FlushAiNotice(notice);
     }
+
 
     /// <summary>按已出生实体的实际生命判断清波，不能把尚未创建的波次视为完成。</summary>
     private void CheckCompletedWaves()

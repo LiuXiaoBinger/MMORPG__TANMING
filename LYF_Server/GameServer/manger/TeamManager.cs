@@ -76,6 +76,27 @@ public sealed class TeamManager
         SendMonsterNotice(team, notice);
     }
 
+    /// <summary>按刀刃风暴单段结果点查询施法者周围怪物并广播本次扣血。</summary>
+    /// <param name="caster">发起技能的在线角色，决定副本归属与结算面板。</param>
+    /// <param name="damage">本段送入防御链的技能伤害值。</param>
+    /// <param name="hit_targets">本段已命中的实体编号，同一段内去重。</param>
+    /// <param name="skillId">产生本次伤害的技能主表编号，基因事件按它归因。</param>
+    /// <param name="radius">本段命中半径，单位米。</param>
+    /// <param name="maxTargets">本段最多命中数。</param>
+    public void OnBladeStormHit(OnlineRole caster, int damage, HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets)
+    {
+        // 施法者不在任何副本实例时本次效果不生效。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)caster.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
+        // 本段结果点单独一组属性通知，与其他段互不合并。
+        MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
+        team.WaveSpawner.ChangeHPRadius(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), radius, damage, hit_targets, caster, skillId, maxTargets);
+        team.WaveSpawner.FillFlow(notice);
+        // 本段没有任何怪物扣血时不向客户端发送空通知。
+        if (notice.Monsters.Count == 0) return;
+        SendMonsterNotice(team, notice);
+    }
+
     /// <summary>向本副本当前在线队员可靠广播同一份怪物结果。</summary>
     /// <param name="team">拥有本次事件的队伍。</param>
     /// <param name="notice">在当前逻辑线程已结算的动作和生命变化。</param>
@@ -459,6 +480,8 @@ public sealed class TeamManager
                 memberRole.mainRoleInfo.BaseInfo.Pos = MoshentaSceneFlow.Format(team.WaveSpawner.Flow.SpawnPosition);
             memberRole.mainRoleInfo.BaseInfo.MapId = team.WaveSpawner.Dungeon.SceneID;
             memberRole.mainRoleInfo.BaseInfo.InstanceId = (int)team.InstanceId;
+            // 进入/切换副本实例后旧护盾一律作废，避免跨实例继续吸收伤害。
+            memberRole.ClearShield();
         }
 
         // 新实例内互相可见：先把本人补发给同实例其他成员，再把同实例其他成员补发给本人。
@@ -561,6 +584,8 @@ public sealed class TeamManager
         role.mainRoleInfo.BaseInfo.InstanceId = 0;
         role.mainRoleInfo.BaseInfo.MapId = MainCityMapId;
         role.mainRoleInfo.BaseInfo.Pos = MainCitySpawnPos;
+        // 离开副本实例回城时清掉护盾；即使之后再次进入同一实例编号也不会带回来。
+        role.ClearShield();
 
         // 主动离队且会话仍在线时，下发回城通知让客户端切回主城；掉线不发。
         if (!notifySelf)

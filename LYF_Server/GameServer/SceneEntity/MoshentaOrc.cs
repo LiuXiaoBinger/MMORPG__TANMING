@@ -344,9 +344,13 @@ internal sealed class MoshentaOrc
         RoleEquipComponent equipment = attackTarget.GetComponent<RoleEquipComponent>();
         // 受击事件沿用本刀权威暴击结果，不能使用默认 false 丢失它。
         bool critical;
-        // 本刀实际可扣生命，命中、暴击、防御等取原伤害脚本。
-        int damage = Math.Min(info.CurrHp, Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical)
-            * equipment.Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100)));
+        // 本刀完整来伤，命中、暴击、防御等仍取原伤害脚本，仅把负数修正为 0。
+        int incoming = Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical)
+            * equipment.Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
+        // 苍蓝屏障先用完整来伤扣盾池，溢出量才是真正落到角色身上的伤害。
+        int penetrating = attackTarget.AbsorbDamage(incoming);
+        // 真正掉血不能超过当前生命，护盾吸收后剩余的部分才受当前 HP 截断。
+        int damage = Math.Min(info.CurrHp, penetrating);
         info.CurrHp -= damage;
         if (damage > 0)
         {
@@ -357,6 +361,8 @@ internal sealed class MoshentaOrc
         notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = spawnId, TargetRoleId = info.RoleId,
             Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = damage });
         if (info.CurrHp > 0) return;
+        // 死亡后屏障不再保留，避免复活或重新进场继承旧护盾。
+        attackTarget.ClearShield();
         // 沿用在线角色死亡时停止正在施放的技能和吟唱的既有入口。
         RoleSkillComponent activeSkill;
         if (attackTarget.TryGetComponent(out activeSkill)) activeSkill.InterruptActiveCast(true);

@@ -306,33 +306,99 @@ public class CentRoleModel
         return ret;
     }
 
+    /// <summary>魔剑士的职业编号，与 Luban 职业表及技能表 JobId 一致。</summary>
+    private const int MageSwordsmanJobId = 1;
+
     /// <summary>已有 E 和 2 的角色获得本次组合示例，保留数据库原技能和已有快捷键。</summary>
     /// <param name="response">本角色从数据库组装出的技能列表，仅补充派生组合技能。</param>
-    private static void AddCombinationSkill(RoleSkillInfoRet response)
+    private void AddCombinationSkill(RoleSkillInfoRet response)
+    {
+        // 职业取自角色表真实 JobID，只有魔剑士获得本次两个新技能，其他职业键位完全不动。
+        RoleTable role = _db.Queryable<RoleTable>().Where(v => v.Id == response.RoleId).First();
+        // 职业编号 1 为魔剑士，与 Luban SkillInfo 的 JobId 一致。
+        bool isMageSwordsman = role != null && role.JobID == MageSwordsmanJobId;
+        ApplyNewSkillKeys(response, isMageSwordsman);
+    }
+
+    /// <summary>
+    /// 按职业补发刀刃风暴与苍蓝屏障，并规范三、四、五号键的归属。
+    /// 与数据库和网络连接无关，便于用最小用例覆盖新建角色、老角色和五号键被占用三种输入。
+    /// </summary>
+    /// <param name="response">登录回包里的技能列表，就地补发新技能并改写快捷键。</param>
+    /// <param name="isMageSwordsman">当前角色是否为魔剑士；非魔剑士只补组合技能，键位保持原样。</param>
+    private static void ApplyNewSkillKeys(RoleSkillInfoRet response, bool isMageSwordsman)
     {
         // 两个组成技能均已学会时才提供组合入口。
         bool hasFirst = false;
         // 斩天剑学习标记，与清风剑法共同决定示例是否可用。
         bool hasSecond = false;
-        // 组合已由数据库记录时完全保留该记录和等级。
-        bool hasCombination = false;
-        // 三号键已有绑定时不能覆盖，组合仍可从技能列表显示。
-        bool thirdKeyUsed = false;
-        // 原技能列表的零起始索引，组合在遍历完成后追加。
+        // 已存在的组合技能记录，只在缺键时补回退键，不改写玩家已有的绑定。
+        RoleSkillInfo combination = null;
+        // 已存在的刀刃风暴记录，登录时为主动技能建等级 0 行，未提升会无法释放。
+        RoleSkillInfo bladeStorm = null;
+        // 已存在的苍蓝屏障记录，同样可能停在等级 0 且没有任何快捷键。
+        RoleSkillInfo barrier = null;
+        // 占用三号键的其它技能，键位让给刀刃风暴后只清空它的快捷键，技能本身仍留在列表。
+        RoleSkillInfo thirdHolder = null;
+        // 占用四号键的技能，仅用于判断屏障能否默认绑定，不用于抢占。
+        RoleSkillInfo fourthHolder = null;
+        // 占用五号键的技能，组合技能回退到五号键前必须先确认它空闲。
+        RoleSkillInfo fifthHolder = null;
+        // 原技能列表的零起始索引，新技能在遍历完成后追加，一次扫描完成全部占用判定。
         for (int index = 0; index < response.RoleSkillInfoList.Count; index++)
         {
             // 当前角色持有的技能记录，不改写其原对象字段。
             RoleSkillInfo skill = response.RoleSkillInfoList[index];
             if (skill.SkillId == 10040 && skill.Level > 0) hasFirst = true;
             if (skill.SkillId == 10060 && skill.Level > 0) hasSecond = true;
-            if (skill.SkillId == 10100) hasCombination = true;
-            if (skill.BindKey == "3") thirdKeyUsed = true;
+            if (skill.SkillId == 10100) combination = skill;
+            if (skill.SkillId == 10110) bladeStorm = skill;
+            if (skill.SkillId == 10120) barrier = skill;
+            if (skill.BindKey == "3") thirdHolder = skill;
+            if (skill.BindKey == "4") fourthHolder = skill;
+            if (skill.BindKey == "5") fifthHolder = skill;
         }
-        if (!hasFirst || !hasSecond || hasCombination) return;
-        // 新技能以一级参数执行 E→2，不对已有角色数据库做迁移。
-        RoleSkillInfo combination = new RoleSkillInfo { SkillId = 10100, Level = 1 };
-        if (!thirdKeyUsed) combination.BindKey = "3";
-        response.RoleSkillInfoList.Add(combination);
+        // 组合学习条件与键位无关，只要 E 与 2 都学会就给组合技能记录。
+        if (hasFirst && hasSecond && combination == null)
+        {
+            // 新技能以一级参数执行 E→2，不对已有角色数据库做迁移。
+            combination = new RoleSkillInfo { SkillId = 10100, Level = 1 };
+            response.RoleSkillInfoList.Add(combination);
+        }
+        // 非魔剑士到此为止，保留其原有键位与技能列表。
+        if (!isMageSwordsman) return;
+        // 三号键固定属于刀刃风暴：占用它的其它技能只清空快捷键，仍保留在技能列表里。
+        if (thirdHolder != null && thirdHolder.SkillId != 10110) thirdHolder.BindKey = string.Empty;
+        // 魔剑士一律获得一级刀刃风暴并绑定数字 3，不要求先学旧 E/2。
+        if (bladeStorm == null)
+        {
+            bladeStorm = new RoleSkillInfo { SkillId = 10110, Level = 1 };
+            response.RoleSkillInfoList.Add(bladeStorm);
+        }
+        // 登录时为每个主动技能建等级 0 行，不提升到 1 时正式施法入口会直接拒绝。
+        else if (bladeStorm.Level <= 0) bladeStorm.Level = 1;
+        bladeStorm.BindKey = "3";
+        // 苍蓝屏障同样补齐记录，新建角色只有等级 0 行时在此提升为可释放的一级。
+        if (barrier == null)
+        {
+            barrier = new RoleSkillInfo { SkillId = 10120, Level = 1 };
+            response.RoleSkillInfoList.Add(barrier);
+        }
+        else if (barrier.Level <= 0) barrier.Level = 1;
+        // 四号键空闲且屏障自身没有自定义键时才默认绑定，保留玩家已有的四号键设置。
+        if (fourthHolder == null && string.IsNullOrEmpty(barrier.BindKey)) barrier.BindKey = "4";
+        // 组合技能始终以 E 与 2 都学会为学习条件：登录时会为所有主动技能建等级 0 行，
+        // 缺少该判定就会让尚未学清风剑法与斩天剑的新角色提前拿到组合技能。
+        if (hasFirst && hasSecond && combination != null)
+        {
+            // 已学会的两个基础技能使该记录可以执行，等级 0 提升为可释放的一级。
+            if (combination.Level <= 0) combination.Level = 1;
+            // 空字符串表示从未绑定；三号键已让位给刀刃风暴，两种情况都需要回退。
+            bool needsFallback = string.IsNullOrEmpty(combination.BindKey);
+            if (string.Equals(combination.BindKey, "3", StringComparison.Ordinal)) needsFallback = true;
+            // 五号键已被其它技能占用时优先保留玩家的个性键，不抢占。
+            if (needsFallback && fifthHolder == null) combination.BindKey = "5";
+        }
     }
 
     /// <summary>

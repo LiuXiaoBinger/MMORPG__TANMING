@@ -17,6 +17,12 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <summary>RO 服务端 SkillComboTime 默认窗口，超过六秒后从第零段重新开始。</summary>
     private const int SkillComboMilliseconds = 6000;
 
+    /// <summary>苍蓝屏障的持续逻辑帧数，五秒按二十赫兹固定帧换算为一百帧。</summary>
+    private const int BarrierDurationTicks = 100;
+
+    /// <summary>苍蓝屏障按最大生命百分比计算的吸收上限。</summary>
+    private const int BarrierAbsorbPercent = 20;
+
     /// <summary>单技能下次可释放的逻辑 Tick，CD 不跨重新登录持久化。</summary>
     private readonly Dictionary<int, long> skill_cd_ = new Dictionary<int, long>();
     /// <summary>公共 CD 组下次可释放的逻辑 Tick，组 ID 零不进入此表。</summary>
@@ -757,6 +763,20 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         else if (core.SkillID() == ROArtSkill.BasicAttackId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
         {
             skill_ = new ROArtSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point);
+        }
+        else if (core.SkillID() == ROBladeStormSkill.BladeStormSkillId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            // 刀刃风暴在副本内按八段结果点自行查询怪物，不占用普攻的盒判定实例。
+            skill_ = new ROBladeStormSkill(core, skill_uuid, end_tick, using_times, Owner);
+        }
+        else if (core.SkillID() == 10120 && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            // 苍蓝屏障不产生伤害段，提交瞬间建立五秒护盾池。
+            // 容量取属性组件的实际生命上限，装备与基因加成都会计入，再用 long 乘法避免极端数值溢出。
+            long barrierAbsorb = (long)Owner.AttrComp.MaxHp * BarrierAbsorbPercent / 100;
+            Owner.OpenShield((int)Math.Min(barrierAbsorb, int.MaxValue),
+                GameGlobal.Instance.LogicTick + BarrierDurationTicks);
+            skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         }
         else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         last_used_skill_effect_id_ = core.SkillEffectID();

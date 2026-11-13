@@ -10,6 +10,21 @@ public class LubanMgr:Singleton<LubanMgr>
 {
 
     #region 字段与常量
+    /// <summary>魔剑士主动技能「刀刃风暴」的主表编号，服务端按段自行查询敌人。</summary>
+    private const int BladeStormSkillId = 10110;
+
+    /// <summary>刀刃风暴在无目标模式下唯一允许的命中半径，单位厘米。</summary>
+    private const int BladeStormRadiusCm = 300;
+
+    /// <summary>刀刃风暴每段允许命中的最大敌人数。</summary>
+    private const int BladeStormMaxTargets = 20;
+
+    /// <summary>刀刃风暴的结果点段数，与技能类内的八段时间轴一一对应。</summary>
+    private const int BladeStormHitCount = 8;
+
+    /// <summary>刀刃风暴的伤害万分比，对应原版 damageMul=0.39。</summary>
+    private const int BladeStormDamagePermyriad = 3900;
+
     // 技能ID到主表定义的索引，用于职业、技能类型等基础判断。
     private Dictionary<int, SkillInfo> _skillInfos;
 
@@ -316,9 +331,26 @@ public class LubanMgr:Singleton<LubanMgr>
             bool hasDamageValues = effect.DamagePermyriad != 0 || effect.FlatDamage != 0;
             // 上述命中数值任一非零即视为无目标技能误配。
             bool hasAnyHitValue = hasRangeValues || hasTargetHitValues || hasDamageValues;
-            if (isNoTargetMode && hasAnyHitValue)
+            // 刀刃风暴在无目标模式下自行按段查询敌人，是唯一需要携带命中数值的技能。
+            bool isBladeStorm = effect.SkillId == BladeStormSkillId;
+            if (isNoTargetMode && hasAnyHitValue && !isBladeStorm)
             {
                 throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);
+            }
+            // 刀刃风暴只放行半径、目标上限、段数与倍率四项，射程与固定伤害仍必须为零。
+            if (isNoTargetMode && isBladeStorm &&
+                (effect.MinRangeCm != 0 || effect.MaxRangeCm != 0 ||
+                 effect.HitIntervalMs != 0 || effect.FlatDamage != 0))
+            {
+                throw new InvalidDataException("刀刃风暴不能配置射程或固定伤害字段，效果 ID=" + effect.Id);
+            }
+            // 刀刃风暴的四个命中字段必须与代码时间轴一致，避免表与实现脱节后静默打错伤害。
+            if (isNoTargetMode && isBladeStorm &&
+                (effect.RadiusCm != BladeStormRadiusCm || effect.MaxTargets != BladeStormMaxTargets ||
+                 effect.HitCount != BladeStormHitCount ||
+                 effect.DamagePermyriad != BladeStormDamagePermyriad))
+            {
+                throw new InvalidDataException("刀刃风暴命中字段与实现不一致，效果 ID=" + effect.Id);
             }
 
             // 一个技能 ID 下每个学习等级只允许映射到一条效果配置。

@@ -35,6 +35,12 @@ public sealed class SkillCtrl : CtrlBase
 
     /// <summary>快捷键事件是否已绑定，避免 UI 反复初始化时重复施法。</summary>
     private bool _inputRegistered;
+
+    /// <summary>刀刃风暴技能 ID，围绕自身结算，选中远处敌人时也必须原地释放。</summary>
+    private const int BladeStormSkillId = 10110;
+
+    /// <summary>苍蓝屏障技能 ID，护罩跟随自身，选中远处敌人时也必须原地释放。</summary>
+    private const int BlueBarrierSkillId = 10120;
     #endregion
 
     #region 构造、初始化与事件注册
@@ -357,6 +363,13 @@ public sealed class SkillCtrl : CtrlBase
     /// <returns>有效当前敌人或十米内的新目标；没有候选时为空，沿角色当前朝向释放。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
+        // 刀刃风暴与苍蓝屏障都以施法者自身为原点，不能因为玩家先前选中远处敌人就改朝向或追目标。
+        // 这两个技能在主表里仍是 Type=2 主动攻击类别，因此必须在通用选敌之前直接返回空目标。
+        if (skillCore.SkillId == BladeStormSkillId ||
+            skillCore.SkillId == BlueBarrierSkillId)
+        {
+            return null;
+        }
         // 沿现有主表技能类别，滑步和轻功不触发选敌，也不改变其朝向。
         SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
         if (skillInfo.Type != 1 && skillInfo.Type != 2)

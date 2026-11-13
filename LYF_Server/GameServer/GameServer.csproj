@@ -70,6 +70,7 @@
         <Compile Include="SceneEntity\OrcStandByTree.cs" />
         <Compile Include="SceneEntity\OrcNavigation.cs" />
         <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
+        <Compile Include="SceneEntity\Skill\ROBladeStormSkill.cs" />
         <Compile Include="SceneEntity\Skill\OrcBasicAttackDamage.cs" />
         <EmbeddedResource Include="Config\MonsterAI\OrcBasicAttack.xml">
             <LogicalName>Moshenta.OrcBasicAttack.xml</LogicalName>

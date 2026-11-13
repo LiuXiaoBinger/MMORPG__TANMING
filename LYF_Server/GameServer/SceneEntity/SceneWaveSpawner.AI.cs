@@ -234,10 +234,14 @@ public sealed partial class SceneWaveSpawner
         int incoming = Math.Max(0, damage);
         double reduction = equipment.Runtime.ResolveDamageReduction(caster.IsBoss);
         if (reduction > 0) incoming = (int)(incoming * (1 - Math.Min(95, reduction) / 100));
+        // 苍蓝屏障先吸收，剩余部分才受当前生命上限约束。
+        incoming = target.AbsorbDamage(incoming);
         int actual = Math.Min(info.CurrHp, incoming); info.CurrHp -= actual;
         if (actual > 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, caster.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime, skillId, actual, critical));
         Notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = caster.SpawnId, TargetRoleId = info.RoleId, Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = actual, SkillId = skillId, ResultIndex = resultIndex, Critical = critical });
         if (info.CurrHp > 0) return;
+        // 死亡后屏障不再保留，避免复活或重新进场继承旧护盾。
+        target.ClearShield();
         RoleSkillComponent skill; if (target.TryGetComponent(out skill)) skill.InterruptActiveCast(true);
         StateMachineComponent state; if (target.TryGetComponent(out state)) state.ForceToDefaultState(true);
     }

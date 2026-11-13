@@ -19,6 +19,86 @@ public class OnlineRole : IGeneOwner
     /// <summary>公共事件节点访问当前角色自己的基因容器。</summary>
     GeneRuntime IGeneOwner.GeneRuntime { get { return Gene.Runtime; } }
 
+    #region 苍蓝屏障护盾池
+    /// <summary>护盾当前剩余可吸收量，零表示当前没有生效中的护盾。</summary>
+    private int _shieldAbsorb;
+
+    /// <summary>护盾到期的服务器逻辑 Tick，到期后不再吸收任何伤害。</summary>
+    private long _shieldExpireTick;
+
+    /// <summary>开盾时角色所在的地图 ID，切换地图后旧盾必须失效。</summary>
+    private int _shieldMapId;
+
+    /// <summary>开盾时角色所在的副本实例 ID，切换实例后旧盾必须失效。</summary>
+    private int _shieldInstanceId;
+
+    /// <summary>以本次施放给定的容量与时限重建护盾；重复施放直接覆盖旧盾，不与旧盾叠加。</summary>
+    /// <param name="absorb">本次护盾总共可吸收的生命值。</param>
+    /// <param name="expireTick">护盾到期的服务器逻辑 Tick。</param>
+    public void OpenShield(int absorb, long expireTick)
+    {
+        // 非正容量按零处理，护盾池不允许出现负值。
+        _shieldAbsorb = Math.Max(absorb, 0);
+        _shieldExpireTick = expireTick;
+        // 角色数据尚未就绪时把开盾地点记为零，与承伤时的零口径一致，不会误判成跨场景。
+        if (mainRoleInfo == null || mainRoleInfo.BaseInfo == null)
+        {
+            _shieldMapId = 0;
+            _shieldInstanceId = 0;
+            return;
+        }
+        // 记录开盾时的地图与实例，用于在切图、进出副本后拒绝旧盾继续生效。
+        _shieldMapId = mainRoleInfo.BaseInfo.MapId;
+        _shieldInstanceId = mainRoleInfo.BaseInfo.InstanceId;
+    }
+
+    /// <summary>清除护盾，死亡或离开场景、副本实例时调用，避免跨场景遗留。</summary>
+    public void ClearShield()
+    {
+        _shieldAbsorb = 0;
+        _shieldExpireTick = 0;
+        _shieldMapId = 0;
+        _shieldInstanceId = 0;
+    }
+
+    /// <summary>扣血前先扣护盾池，返回真正还需要从生命里扣除的伤害。</summary>
+    /// <param name="incoming">本次已经过减伤计算的最终伤害。</param>
+    /// <returns>护盾吸收后的溢出伤害，零表示本次伤害被完全吸收。</returns>
+    public int AbsorbDamage(int incoming)
+    {
+        // 非正伤害不参与吸收，也不消耗护盾。
+        if (incoming <= 0) return 0;
+        // 没有生效中的护盾时原样交给生命结算。
+        if (_shieldAbsorb <= 0) return incoming;
+        // 当前权威地图与实例，数据未就绪时按零处理，与开盾时的记录口径保持一致。
+        int currentMapId = 0;
+        int currentInstanceId = 0;
+        if (mainRoleInfo != null && mainRoleInfo.BaseInfo != null)
+        {
+            currentMapId = mainRoleInfo.BaseInfo.MapId;
+            currentInstanceId = mainRoleInfo.BaseInfo.InstanceId;
+        }
+        // 地图或副本实例已经变化（进出副本、回城、切图）时旧盾立即作废，即使之后切回原场景也不恢复。
+        if (currentMapId != _shieldMapId || currentInstanceId != _shieldInstanceId)
+        {
+            ClearShield();
+            return incoming;
+        }
+        // 到期后立刻失效，本次及之后伤害都不再由它承担。
+        if (GameGlobal.Instance.LogicTick >= _shieldExpireTick)
+        {
+            ClearShield();
+            return incoming;
+        }
+        // 护盾只承担自己剩余的份额，超出部分作为溢出伤害继续走原链路。
+        int absorbed = Math.Min(_shieldAbsorb, incoming);
+        _shieldAbsorb -= absorbed;
+        // 耗尽即视为结束，避免残留零值状态影响后续施放判断。
+        if (_shieldAbsorb <= 0) ClearShield();
+        return incoming - absorbed;
+    }
+    #endregion
+
     #region 场景实体绑定
     /// <summary>与场景 PlayerEntity 的运行时绑定；OnlineRole 本身仍然只是持久角色数据根。</summary>
     private ulong _sceneUid;
