@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `dc9a5c27fa5ef44e55e552123e5dc99cbd0386487aee2f5fff09d721eee44a9b`
+Source normalized SHA256: `b2b22224aa3f7cbd8879e22a24d4d7920d92034de8837c3fe21e1d9c2478f49c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -77,11 +77,12 @@ Source normalized SHA256: `dc9a5c27fa5ef44e55e552123e5dc99cbd0386487aee2f5fff09d
 | [CODE][FILES][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Role attribute tabs and bag currencies (2026-11-12) | 547-552 |
 | [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12) | 553-558 |
 | [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12) | 559-564 |
-| [CODE][FILES][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Larger role controls, lower glow and whole attribute rows (2026-11-12) | 565-569 |
+| [CODE][FILES][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Larger role controls, lower glow and whole attribute rows (2026-11-12) | 565-570 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Magic Swordsman Blade Storm and Blue Barrier | 571-575 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `47124b2786db218f4d8e51aca09d9f3ab9d6d52f21e6b8d7749f8f3e5125d6d6`
+Source normalized SHA256: `65162b03b84391b18a3f55a5aea153f9905102aa8bbc2c9c6d809c98c7152bf6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -150,7 +151,8 @@ Source normalized SHA256: `47124b2786db218f4d8e51aca09d9f3ab9d6d52f21e6b8d7749f8
 | [VERIFY][角色][基因][背包][ROLE-ADVANCED-UI-20261112] Advanced attributes, currency bindings and prefab checks (2026-11-12) | 579-585 |
 | [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12) | 586-591 |
 | [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12) | 592-596 |
-| [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Whole attribute rows and role panel layout (2026-11-12) | 597-600 |
+| [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Whole attribute rows and role panel layout (2026-11-12) | 597-601 |
+| [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Eight authoritative hits, ward absorption and Unity asset checks | 602-606 |
 
 ## Docs/AI/DECISIONS.en.md
 

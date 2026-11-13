@@ -589,3 +589,9 @@
 
 - 客户端程序集编译 0 错误。正式预制体的克隆在隔离 Unity 中于 1920×1080 与 1366×768 两种分辨率运行改动组件，312 项检查全部通过，覆盖装备槽与光效几何、页签、滚轮事件、整行可见性及基础与高级两个列表的末行。
 - 证据：`_temp/role-panel-full-rows-20261112/runtime-proof.txt`、`role-full-rows.png` 与 `role-full-rows-1366.png`。现有主城窗口重建、联机重登和独立 Player 待验。
+
+## [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] 八段权威命中、护盾吸收与 Unity 资源校验（2026-11-13）
+
+- GameServer 与 CenterServer 均编译通过。在隔离的 4060 实例中，真实服务端施法与更新链路通过 22 项检查。同一只怪在 tick 2、2、4、6、8、9、11、16（50 毫秒）产生八次独立掉血通知。打断后后续命中停止。另一组 24 目标样本命中 20。两条怪物攻击链路均通过护盾检查，含溢出与死亡清除。护盾专项与 CenterServer 键位补发检查分别 13/13 与 21/21。
+- Unity 使用正式 MJS Animator。跳跃将胯部抬高 1.4872 米，实测世界根位移为 0。两条 ACT 绑定、两套运行时表现与全部十枚 120×120 图标通过编辑器与 DefaultPackage 模拟检查。蓝色刀光与压暗的半透明护罩已在编辑器中实际渲染。
+- 证据：同一任务目录下的 `_temp/twinblade-storm-skill3-20261113/server-acceptance/delivery.log`、`final-review/keys-smoke/keys-smoke-r9.log`、`final-review/shield-smoke/shield-smoke.log`、`round6-proof/jump-proof.txt`、`final-review/unity-asset-proof.txt` 与 `final-review/barrier-render/final-render-report.txt`。完整归档见 `项目修改日志/2026-11-13-魔剑士蓝色技能组.md`。真实客户端物理按键、完整联机游玩、打包与部署仍未验证。

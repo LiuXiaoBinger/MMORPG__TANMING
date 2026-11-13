@@ -598,3 +598,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Client assembly compilation returned 0 errors. A clone of the formal prefab ran the changed component in isolated Unity at 1920×1080 and 1366×768. All 312 checks passed, covering slot and glow geometry, tabs, wheel events, whole-row visibility and the last row in both lists.
 - Evidence: `_temp/role-panel-full-rows-20261112/runtime-proof.txt`, `role-full-rows.png` and `role-full-rows-1366.png`. Recreating the live main-city window, online relogin and standalone Player remain pending.
+
+## [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Eight authoritative hits, ward absorption and Unity asset checks
+
+- GameServer and CenterServer compiled. In the isolated 4060 instance, the actual server cast/update path passed 22 checks. The same monster generated eight separate HP notifications at ticks 2, 2, 4, 6, 8, 9, 11 and 16 (50 ms). Interruption stopped later hits. A separate 24-target sample hit 20. Both monster attack paths passed ward checks, including overflow and clearing on death. The ward-specific and CenterServer key-grant checks passed 13/13 and 21/21.
+- Unity used the formal MJS Animator. The jump raised the hips by 1.4872 m with zero measured world-root drift. Both ACT bindings, two runtime presentations and all ten 120×120 sprites passed the editor/DefaultPackage simulation checks. The blue blade effect and the dimmed translucent ward were rendered in the editor.
+- Evidence: `_temp/twinblade-storm-skill3-20261113/server-acceptance/delivery.log`, `final-review/keys-smoke/keys-smoke-r9.log`, `final-review/shield-smoke/shield-smoke.log`, `round6-proof/jump-proof.txt`, `final-review/unity-asset-proof.txt` and `final-review/barrier-render/final-render-report.txt` under the same task directory. Full archive: `项目修改日志/2026-11-13-魔剑士蓝色技能组.md`. Actual physical keys in a connected client, full online play, packaging and deployment remain unverified.
