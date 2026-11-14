@@ -52,17 +52,17 @@ public class SkillInfoWindow : WindowBase
     /// <summary>当前选中节点的亮色外圈。</summary>
     private static readonly Color NodeRingSelected = new Color(0.85f, 0.96f, 1f, 1f);
 
-    /// <summary>子页签选中时的底板颜色。</summary>
-    private static readonly Color TabOnColor = new Color(0.93f, 0.94f, 0.95f, 1f);
+    /// <summary>子页签选中时的底板颜色，深蓝底配金色文字，避免大面积纯白抢视线。</summary>
+    private static readonly Color TabOnColor = new Color(0.17f, 0.32f, 0.54f, 1f);
 
-    /// <summary>子页签未选中时的底板颜色。</summary>
-    private static readonly Color TabOffColor = new Color(0.16f, 0.2f, 0.26f, 0.88f);
+    /// <summary>子页签未选中时的底板颜色，与选中态保持同一组块面、只降明度。</summary>
+    private static readonly Color TabOffColor = new Color(0.13f, 0.19f, 0.29f, 0.95f);
 
-    /// <summary>子页签选中时的文字与图标颜色。</summary>
-    private static readonly Color TabOnTextColor = new Color(0.12f, 0.15f, 0.2f, 1f);
+    /// <summary>子页签选中时的文字与图标颜色，暖金白。</summary>
+    private static readonly Color TabOnTextColor = new Color(1f, 0.92f, 0.74f, 1f);
 
-    /// <summary>子页签未选中时的文字与图标颜色。</summary>
-    private static readonly Color TabOffTextColor = new Color(0.9f, 0.94f, 1f, 1f);
+    /// <summary>子页签未选中时的文字与图标颜色，灰蓝。</summary>
+    private static readonly Color TabOffTextColor = new Color(0.58f, 0.66f, 0.78f, 1f);
 
     /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
@@ -402,7 +402,7 @@ public class SkillInfoWindow : WindowBase
                 }
             }
         }
-        // 竖排导航：当前分类浅底深字，其余深底浅字。
+        // 竖排导航：当前分类用 RO 蓝底金字，其余压暗，避免整块纯白抢主视觉。
         for (int index = 0; index < _navLabels.Length; index++)
         {
             if (_navLabels[index] == null)
@@ -412,7 +412,7 @@ public class SkillInfoWindow : WindowBase
             bool current = index == _category;
             if (current)
             {
-                _navLabels[index].color = new Color(0.1f, 0.17f, 0.28f, 1f);
+                _navLabels[index].color = new Color(1f, 0.92f, 0.74f, 1f);
             }
             else if (index <= CategorySecret)
             {
@@ -433,11 +433,11 @@ public class SkillInfoWindow : WindowBase
             }
             if (current)
             {
-                navImage.color = new Color(0.9f, 0.95f, 1f, 1f);
+                navImage.color = new Color(0.17f, 0.32f, 0.54f, 1f);
             }
             else
             {
-                navImage.color = new Color(0.1f, 0.13f, 0.19f, 0.9f);
+                navImage.color = new Color(0.08f, 0.11f, 0.17f, 0.92f);
             }
         }
     }
@@ -460,11 +460,10 @@ public class SkillInfoWindow : WindowBase
         }
         SetActive(_emptyPage, false);
         SetActive(_detailPanel, true);
-        // 列表页：左侧浮出技能列表，立绘移到列表与详情之间。
+        // 列表页：左侧铺满技能列表，隐藏立绘，避免半张脸被详情面板切掉。
         if (_page == PageList)
         {
-            SetActive(_portraitRoot, true);
-            SetPortraitPosition(false);
+            SetActive(_portraitRoot, false);
             SetActive(_battleRoot, false);
             SetActive(_toolRoot, false);
             SetActive(_badgeRoot, false);
@@ -864,6 +863,13 @@ public class SkillInfoWindow : WindowBase
             _listSkills.Add(visible[index]);
         }
         _selectedListItem = 0;
+        // 内容高度按条目数显式撑开；VerticalLayoutGroup 没有 ContentSizeFitter 时滚动才生效。
+        RectTransform contentRect = _listContent as RectTransform;
+        if (contentRect != null)
+        {
+            contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x,
+                visible.Count * 118f);
+        }
         // 重建条目后把列表滚回顶部，避免停在上一次的滚动位置。
         ScrollRect scrollRect = _listContent.GetComponentInParent<ScrollRect>();
         if (scrollRect != null)

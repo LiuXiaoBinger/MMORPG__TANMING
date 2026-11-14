@@ -276,3 +276,62 @@
 - **推送未成功**：连续 3 次 `git push origin codex/feature-development` 均返回 `Connection reset by 20.205.243.160 port 443 / Could not read from remote repository`，是本机到 GitHub 的网络连接被重置，非权限或分支问题（同日 22:1x 的 `98aef87` 推送成功）。提交已保存在本地，工作区显示 `ahead`，网络恢复后执行 `git push origin codex/feature-development` 即可，不得报告为已上传。
 - 验证与未验证项：见 13.4；真实鼠标点击与非编辑器环境未测。
 
+---
+
+# 第八轮：标题美感与列表页布局实测返工（2026-11-14 23:0x~23:4x）
+
+## 14.1 需求与用户反馈
+
+- 用户反馈顶部标题条「没有点美感」，要求**自行安装一个能审核 UI 美感的技能**；随后再次指出「布局还这样，改了什么，不会自己测一下」——即上一轮只做了素材调研、没有落地改动、也没有运行时实测。
+- 本轮硬要求：改动必须落到预制体，并且**进 Play 模式真实渲染截图验证**，不能只做静态 YAML/代码分析。
+
+## 14.2 技能安装与审查方法
+
+- 走技能市场流程搜索，候选包括「界面设计评审 交互规范生成 交付物检查」「UI 设计缺陷审查」「UI 走查与设计规范」「UI设计系统」「UX设计 界面体验 交互诊断」；最终安装 **`ui-roast`（UI 设计缺陷审查）**（用户级 Skill），配合本机已有 `design-ui-designer` 做落地。
+- 用 `ui-roast` 的视觉层级 / 一致性 / 密度 / 对齐方法审查标题条，并把 RO 参考工程 19 张标题类素材拼成联系表 `_temp/title_skin/ro_title_candidates.png` 比选。
+
+## 14.3 定位到的根因
+
+| 问题 | 根因 |
+| --- | --- |
+| 标题条「一条糊掉的亮蓝渐变」 | `UI_Common_Panel_Head_01.png` 原图仅 **360×78**（带星芒球 + 云纹的精致小标题条），被当作 `RoTopBar` 拉到 **1920×92** 并 Sliced，装饰纹样全部糊掉。 |
+| 页签像 iOS 白色胶囊、两块分离 | `TabOnColor` 是 `(0.93,0.94,0.95)` 近纯白，选中/未选中明度差过大；未选中底 `(0.07,0.10,0.16)` 又与背景融为一体，视觉上变成「一个白块 + 一行裸字」。 |
+| 列表页滚动条跑到详情面板里、列表过窄 | `ScrollView` 仅 460 宽、`Scrollbar` 锚在 x=232（列表与详情之间），条目文字被压在 600 宽容器里。 |
+| 列表页露出半张脸 | 代码 `PageList` 分支仍 `SetActive(_portraitRoot, true)` 并调 `SetPortraitPosition(false)`，立绘被详情卡片切掉半边。 |
+| 列表不能滚到底 | `VerticalLayoutGroup` 无 `ContentSizeFitter` 撑高，`Content` 高度不随条目数变化。 |
+
+## 14.4 落地改动
+
+**`UIRoot.prefab`（相对上一提交 41 行真实属性改动，对象数 7458 不变）**
+
+- 顶部：`RoTopBar` 去掉失真的 `Head_01` sprite，改深色通栏 `(0.055,0.075,0.11,0.94)`；`TopBar` 复用为**原比例 360×78** 的星芒云纹徽记放左侧（alpha 0.5）；`Txt_Title` 暖金 `(1,0.89,0.68)`、字号 42、位置 `(-620,470)`；`Txt_Job` 灰蓝 20 号；`TitleLine` 改暗金细线；`Btn_Close` 右移到 `(900,470)`。
+- 子页签：`SubTab_0/1` 统一 310×72、中心 `-645 / -335` 紧贴无缝，改 RO 深蓝金；`BG_Inner` alpha 0.97→**1.0**（彻底盖住下层 UI）。
+- 列表页：`ScrollView` `(-500,-80) 880×700`（避开页签重叠）、`Scrollbar` `(426,-10) 4×680` 回到列表右沿、Handle 改半透明蓝；`ItemTemplate` 860×108、图标 `-370`、名称/副文案 600 宽；`IconMask` 改深蓝避免空图标白菱形；`PortraitHalo` 压到 alpha 0.04。
+
+**`SkillInfoWindow.cs`**
+
+- `TabOnColor`→RO 蓝 `(0.17,0.32,0.54)`、`TabOffColor`→`(0.13,0.19,0.29,0.95)`（与 prefab 对齐，避免运行时覆盖回去）、`TabOnTextColor`→暖金白、`TabOffTextColor`→灰蓝；竖排导航同步改蓝底金字 / 暗底灰字。
+- 列表页改为 `SetActive(_portraitRoot, false)`，不再露半张脸。
+- `RefreshListPage` 显式按 `visible.Count * 118f` 撑开 `Content` 高度，滚动到底生效。
+
+## 14.5 实测与自查（本轮重点）
+
+- **Play 模式真实截图**共 8 张（`LYF_MMO/Assets/Screenshots/`，最终两张归档 `_temp/title_skin/final_list_page.png`、`final_battle_page.png`）：`before_list` → `after_list` → `check_list_v2/v3` → `check_opaque` → `check_nosprite` → `check_notext` → `check_noallsprite` → `check_isolate` → 干净重载后的 `final_list_page` / `final_battle_page`。
+- 从干净资源（`ImportAsset(ForceUpdate|ForceSynchronousImport)` + 退出再进 Play）读回校验：`scrollView=(-500,-80)/(880,700)`、`scrollbar=(426,-10)/(4,680)`、`tabOff=RGBA(0.13,0.19,0.29,0.95)`、`bgAlpha=1`、`portrait=false`，全部与磁盘一致。
+- **回归自查抓到并修复一次误改**：按对象名定位时，`Scrollbar` 在预制体里有 2 个，第一次脚本误改了 `RoleAttriibuteWindow/ActiveGenesPanel/GeneScroll` 的那一个（`1517211778279627923`，原值 `pos=(0,0) size=(7,0)`），已从备份 `_temp/UIRoot_before_final_writeback.prefab` 还原；技能列表真正的 `7534451979157355276` 才写入新参数。随后用父链校验 14 个改动 GO 全部归属 `SkillInfoWindow`（`OUT_OF_SCOPE=0`）。
+- **节点点击无回归**：干净重载后 12 个 Ring 仍 `raycastTarget=1`；切回出战页跨帧后 9 个节点 `firstHit=Ring`、`clickHandler=Node_0..Node_8`。（切页**同帧**立即做 `RaycastAll` 会返回 `BG_Inner`，是 Canvas 图形重建时序，不是 bug。）
+- 改前备份：`_temp/UIRoot_before_title_list_fix.prefab`、`_temp/UIRoot_before_final_writeback.prefab`。
+
+## 14.6 未解决 / 遗留
+
+- **背景散布的小青色菱形点**：诊断到窗口内部（隐藏整个窗口后消失），但依次排除：全屏根 Image、`BG_Inner` 不透明化、所有 `Image.sprite` 清空（42 个）、所有 `TMP_Text` 关闭（33 个）、自定义 Canvas 排序（窗口 sortingOrder=100 最高）、粒子/RawImage（0 个）后**依然存在**，来源疑似更底层的自定义材质或 TMP 子网格，**本轮未消除，也未改动相关资源**；点在出战页呈「灵气星点」观感，不影响可读性，留待后续单独排查。
+- 详情卡片下半部仍有较大留白（RO 原版该区域承载更多技能条目，本版本数据未填充）；未强行压缩卡片以免破坏与右侧导航的对齐。
+- 第六/七轮遗留仍在：**`GM_Game.dll.bytes` 未重建，打包真机前必须跑 Unity 菜单 `Build/BuildDll`**；轻功页 / 秘笈页在 RO 皮肤下未实拍；多分辨率（坐标按 1920×1080 写死）、真实登录态按 `L` 打开、真实鼠标物理点击均未测；「配置 / 翻页 / 描述」、1/2 徽章、自创/双门派/失传武学仍为展示态。
+- 第七轮的 `68cc3f0` / `593c3c6` 两个本地提交推送仍受 GitHub 连接重置影响，本轮提交时一并检查推送状态。
+
+## 14.7 Git 回执
+
+- 分支：`codex/feature-development`。
+- 修改文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`、`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/SkillInfoWindow.cs`、`项目修改日志/2026-11-14-技能面板一梦江湖布局重构_CHANGELOG.md`；未改 `.cs` 之外的新增类、未增删文件、未改 `.meta`。
+- `Assets/Screenshots/` 下的截图为 Unity 编辑器验证产物，按临时产物处理、不入库，最终两张归档到 `_temp/title_skin/`。
+
