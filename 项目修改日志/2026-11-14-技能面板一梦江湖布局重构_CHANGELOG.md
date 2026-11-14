@@ -268,4 +268,11 @@
 - 第六轮记录的 **HybridCLR `GM_Game.dll.bytes` 未重建** 仍然存在；本轮未改代码，没有新增类，但整条技能面板改动打包前仍需执行 Unity 菜单 `Build/BuildDll`。
 - 「配置 / 翻页 / 描述」、1/2 徽章、自创/双门派/失传武学仍为展示态，未接协议。
 
+## 13.6 Git 回执
+
+- 分支：`codex/feature-development`。
+- 修改文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`、`项目修改日志/2026-11-14-技能面板一梦江湖布局重构_CHANGELOG.md`；无新增、移动或删除文件，未改任何 `.cs` / `.meta`。
+- 本地提交：`68cc3f0 fix: 武学面板技能节点不可点击——补上节点圆环的射线命中`（另有一次回执补充提交）。
+- **推送未成功**：连续 3 次 `git push origin codex/feature-development` 均返回 `Connection reset by 20.205.243.160 port 443 / Could not read from remote repository`，是本机到 GitHub 的网络连接被重置，非权限或分支问题（同日 22:1x 的 `98aef87` 推送成功）。提交已保存在本地，工作区显示 `ahead`，网络恢复后执行 `git push origin codex/feature-development` 即可，不得报告为已上传。
+- 验证与未验证项：见 13.4；真实鼠标点击与非编辑器环境未测。
 
