@@ -37,6 +37,9 @@ public class SkillInfoWindow : WindowBase
     /// <summary>绝学技能的两字标签，用于把绝学固定放到大节点上。</summary>
     private const string UltimateTag = "绝学";
 
+    /// <summary>技能表 Type=1 为普通攻击，不属于技能，不参与节点与列表展示。</summary>
+    private const int BasicAttackType = 1;
+
     /// <summary>节点外圈常态颜色。</summary>
     private static readonly Color NodeRingNormal = new Color(0.42f, 0.63f, 0.92f, 1f);
 
@@ -545,6 +548,11 @@ public class SkillInfoWindow : WindowBase
             {
                 continue;
             }
+            // 普通攻击不是技能，不占技能节点。
+            if (skill.SkillType == BasicAttackType)
+            {
+                continue;
+            }
             if (skill.Tag == UltimateTag)
             {
                 if (ultimate == null)
@@ -806,6 +814,11 @@ public class SkillInfoWindow : WindowBase
             // 本次判断的技能展示数据。
             SkillViewData skill = _allSkills[index];
             if (skill == null)
+            {
+                continue;
+            }
+            // 普通攻击不是技能，列表里也不与技能混排。
+            if (skill.SkillType == BasicAttackType)
             {
                 continue;
             }
