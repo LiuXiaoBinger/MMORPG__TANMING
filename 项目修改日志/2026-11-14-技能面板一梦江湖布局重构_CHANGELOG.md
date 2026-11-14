@@ -334,4 +334,6 @@
 - 分支：`codex/feature-development`。
 - 修改文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`、`LYF_MMO/Assets/GM_Game/Scripts/UI/Main/Window/SkillInfoWindow.cs`、`项目修改日志/2026-11-14-技能面板一梦江湖布局重构_CHANGELOG.md`；未改 `.cs` 之外的新增类、未增删文件、未改 `.meta`。
 - `Assets/Screenshots/` 下的截图为 Unity 编辑器验证产物，按临时产物处理、不入库，最终两张归档到 `_temp/title_skin/`。
+- 本地提交 **`441ac16 style: 武学面板标题条与列表页按 UI 评审实测重做`**（3 files changed, 121 insertions(+), 56 deletions(-)）。
+- **推送成功**：`5e81e4a..441ac16 codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。第七轮积压的 `68cc3f0`（节点点击修复）与 `593c3c6`（回执）随本次 push 一并同步到远端，此前「推送失败」的遗留至此关闭。
 
