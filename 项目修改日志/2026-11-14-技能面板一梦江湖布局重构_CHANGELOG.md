@@ -392,3 +392,10 @@
 - 第七/八轮的「背景小青点」仍未消除（详见 14.6），本轮未改动相关资源。
 - 构建脚本 `SkillUpgradeUIBuilder.cs` 与 `CoinIcon.png` 保留在仓库中，便于后续重建 / 复用；重建会覆盖同名升级 UI 对象，但不会动其它窗口。
 
+## 15.5 Git 回执
+
+- 分支 `codex/feature-development`，本地提交 **`6946daf feat: 武学面板补齐技能升级、绝学心得与描述滚动`**（8 files changed, 5235 insertions(+), 55 deletions(-)）。
+- 提交文件：`UIRoot.prefab`、`SkillInfoWindow.cs`、`SkillViewData.cs`、`Editor/SkillUpgradeUIBuilder.cs`(+`.meta`)、`UISprites/Skill/CoinIcon.png`(+`.meta`)、本 CHANGELOG；共 8 个，其中 4 个为新增文件。
+- **推送成功**：`664820a..6946daf codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。
+- `Assets/Screenshots/` 与 `_temp/skill_upgrade/` 下的验证截图按临时产物处理、不入库；工作区中与本轮无关的既有修改（如 `ROSceneEditorWindow.cs`、`.agents/` 下文档）未纳入本轮提交。
+
