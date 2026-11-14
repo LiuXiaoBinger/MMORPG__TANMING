@@ -4,39 +4,64 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 武学面板窗口：把控制器给出的技能快照铺到门派立绘周围的环形节点上，
-/// 右侧展示选中技能的名称、两字定位标签与使用条件；秘笈页当前只提供空壳界面。
+/// 武学面板窗口：按「分类 + 子页」组织界面。
+/// 出战页把技能铺到人物周围（武功 8 个普通节点 + 1 个绝学大节点，轻功左侧 3 个节点 + 中央大图标），
+/// 列表页按行展示技能；右侧详情始终显示当前选中的技能，秘笈分类仍是空壳页。
 /// </summary>
 public class SkillInfoWindow : WindowBase
 {
-    /// <summary>环形技能节点数量，最后一个为绝学大节点。</summary>
-    private const int NodeCount = 6;
+    /// <summary>武功出战页的节点数量，前 8 个为普通节点，第 9 个为绝学大节点。</summary>
+    private const int BattleNodeCount = 9;
 
-    /// <summary>武功分类编号，展示普攻、主动技能与滑行。</summary>
+    /// <summary>轻功出战页左侧的节点数量。</summary>
+    private const int LightNodeCount = 3;
+
+    /// <summary>武功分类编号。</summary>
     private const int CategorySkill = 0;
 
-    /// <summary>轻功分类编号，只展示技能表 Type 为 4 的轻功。</summary>
+    /// <summary>轻功分类编号，同时包含滑行与轻功两类技能。</summary>
     private const int CategoryLight = 1;
 
-    /// <summary>秘笈分类编号，当前仅显示空壳页。</summary>
+    /// <summary>秘笈分类编号，当前只有空壳页。</summary>
     private const int CategorySecret = 2;
+
+    /// <summary>子页编号：出战页。</summary>
+    private const int PageBattle = 0;
+
+    /// <summary>子页编号：列表页。</summary>
+    private const int PageList = 1;
 
     /// <summary>节点没有可展示技能时使用的两字标签。</summary>
     private const string EmptyNodeTag = "未习得";
 
-    /// <summary>节点外圈常态颜色，深蓝呼应技能图标的冷色调。</summary>
+    /// <summary>绝学技能的两字标签，用于把绝学固定放到大节点上。</summary>
+    private const string UltimateTag = "绝学";
+
+    /// <summary>节点外圈常态颜色。</summary>
     private static readonly Color NodeRingNormal = new Color(0.42f, 0.63f, 0.92f, 1f);
 
-    /// <summary>绝学节点的金色外圈，用于和普通技能区分。</summary>
+    /// <summary>绝学大节点的金色外圈。</summary>
     private static readonly Color NodeRingUltimate = new Color(0.98f, 0.78f, 0.42f, 1f);
 
-    /// <summary>节点没有技能时的暗色外圈。</summary>
+    /// <summary>空槽位的暗色外圈。</summary>
     private static readonly Color NodeRingEmpty = new Color(0.24f, 0.31f, 0.42f, 1f);
 
     /// <summary>当前选中节点的亮色外圈。</summary>
     private static readonly Color NodeRingSelected = new Color(0.85f, 0.96f, 1f, 1f);
 
-    /// <summary>当前职业名称文本，来自角色信息回包。</summary>
+    /// <summary>子页签选中时的底板颜色。</summary>
+    private static readonly Color TabOnColor = new Color(0.93f, 0.94f, 0.95f, 1f);
+
+    /// <summary>子页签未选中时的底板颜色。</summary>
+    private static readonly Color TabOffColor = new Color(0.16f, 0.2f, 0.26f, 0.88f);
+
+    /// <summary>子页签选中时的文字与图标颜色。</summary>
+    private static readonly Color TabOnTextColor = new Color(0.12f, 0.15f, 0.2f, 1f);
+
+    /// <summary>子页签未选中时的文字与图标颜色。</summary>
+    private static readonly Color TabOffTextColor = new Color(0.9f, 0.94f, 1f, 1f);
+
+    /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
 
     /// <summary>顶部右侧的技能点数文本。</summary>
@@ -45,44 +70,83 @@ public class SkillInfoWindow : WindowBase
     /// <summary>标题栏关闭按钮。</summary>
     [SerializeField, Header("关闭按钮")] private Button _btnClose;
 
-    /// <summary>顶部三个页签按钮：出战武功、轻功、秘笈。</summary>
-    [SerializeField, Header("页签按钮")] private Button[] _tabButtons;
+    /// <summary>两个子页签按钮：出战 / 列表。</summary>
+    [SerializeField, Header("子页签按钮")] private Button[] _tabButtons;
 
-    /// <summary>页签按钮上的文字，用于切换选中配色。</summary>
-    [SerializeField, Header("页签文字")] private TMP_Text[] _tabLabels;
+    /// <summary>子页签文字。</summary>
+    [SerializeField, Header("子页签文字")] private TMP_Text[] _tabLabels;
+
+    /// <summary>子页签左侧的剪影图标。</summary>
+    [SerializeField, Header("子页签图标")] private Image[] _tabIcons;
 
     /// <summary>右侧竖排导航按钮：武功、轻功、秘笈、自创、双门派、失传武学。</summary>
     [SerializeField, Header("导航按钮")] private Button[] _navButtons;
 
-    /// <summary>竖排导航按钮上的文字。</summary>
+    /// <summary>竖排导航文字。</summary>
     [SerializeField, Header("导航文字")] private TMP_Text[] _navLabels;
 
-    /// <summary>门派立绘节点，秘笈空壳页隐藏，避免压在空壳面板下面。</summary>
+    /// <summary>门派立绘节点，秘笈页与列表页隐藏。</summary>
     [SerializeField, Header("门派立绘")] private GameObject _portraitRoot;
 
-    /// <summary>技能节点容器，秘笈页隐藏。</summary>
-    [SerializeField, Header("节点容器")] private GameObject _nodesRoot;
+    /// <summary>武功出战页的节点容器。</summary>
+    [SerializeField, Header("武功节点容器")] private GameObject _battleRoot;
 
-    /// <summary>右侧技能详情面板，秘笈页隐藏。</summary>
+    /// <summary>武功出战页顶部的工具行（配置 / 翻页 / 描述）。</summary>
+    [SerializeField, Header("工具行")] private GameObject _toolRoot;
+
+    /// <summary>武功出战页的技能组编号徽章。</summary>
+    [SerializeField, Header("技能组徽章")] private GameObject _badgeRoot;
+
+    /// <summary>轻功出战页容器。</summary>
+    [SerializeField, Header("轻功页容器")] private GameObject _lightRoot;
+
+    /// <summary>列表页容器。</summary>
+    [SerializeField, Header("列表页容器")] private GameObject _listRoot;
+
+    /// <summary>列表页的内容节点，列表条目挂在这里。</summary>
+    [SerializeField, Header("列表内容")] private Transform _listContent;
+
+    /// <summary>列表条目模板，默认隐藏，运行时复制。</summary>
+    [SerializeField, Header("列表条目模板")] private GameObject _listItemTemplate;
+
+    /// <summary>秘笈空壳页。</summary>
+    [SerializeField, Header("秘笈页")] private GameObject _emptyPage;
+
+    /// <summary>右侧技能详情面板。</summary>
     [SerializeField, Header("详情面板")] private GameObject _detailPanel;
 
-    /// <summary>秘笈空壳页，只在秘笈分类下显示。</summary>
-    [SerializeField, Header("秘笈空壳页")] private GameObject _emptyPage;
-
-    /// <summary>六个技能节点的点击按钮。</summary>
+    /// <summary>武功页九个节点的点击按钮。</summary>
     [SerializeField, Header("节点按钮")] private Button[] _nodeButtons;
 
-    /// <summary>六个技能节点的图标。</summary>
+    /// <summary>武功页九个节点图标。</summary>
     [SerializeField, Header("节点图标")] private Image[] _nodeIcons;
 
-    /// <summary>六个技能节点的外圈。</summary>
+    /// <summary>武功页九个节点外圈。</summary>
     [SerializeField, Header("节点外圈")] private Image[] _nodeRings;
 
-    /// <summary>六个技能节点的光晕。</summary>
+    /// <summary>武功页九个节点光晕。</summary>
     [SerializeField, Header("节点光晕")] private Image[] _nodeGlows;
 
-    /// <summary>六个技能节点下方的两字标签。</summary>
+    /// <summary>武功页九个节点下方的两字标签。</summary>
     [SerializeField, Header("节点标签")] private TMP_Text[] _nodeTags;
+
+    /// <summary>轻功页左侧三个节点按钮。</summary>
+    [SerializeField, Header("轻功节点按钮")] private Button[] _lightButtons;
+
+    /// <summary>轻功页左侧三个节点图标。</summary>
+    [SerializeField, Header("轻功节点图标")] private Image[] _lightIcons;
+
+    /// <summary>轻功页左侧三个节点外圈。</summary>
+    [SerializeField, Header("轻功节点外圈")] private Image[] _lightRings;
+
+    /// <summary>轻功页左侧三个节点光晕。</summary>
+    [SerializeField, Header("轻功节点光晕")] private Image[] _lightGlows;
+
+    /// <summary>轻功页中央的大图标。</summary>
+    [SerializeField, Header("轻功大图标")] private Image _lightBigIcon;
+
+    /// <summary>轻功页中央大图标的外圈。</summary>
+    [SerializeField, Header("轻功大图标外圈")] private Image _lightBigRing;
 
     /// <summary>详情面板左上角的技能图标。</summary>
     [SerializeField, Header("详情图标")] private Image _detailIcon;
@@ -93,37 +157,58 @@ public class SkillInfoWindow : WindowBase
     /// <summary>详情面板技能等级。</summary>
     [SerializeField, Header("详情等级")] private TMP_Text _detailLevel;
 
-    /// <summary>详情面板右上角的两字定位标签。</summary>
+    /// <summary>详情面板上的两字定位标签。</summary>
     [SerializeField, Header("详情标签")] private TMP_Text _detailTag;
 
     /// <summary>详情面板的技能说明正文。</summary>
     [SerializeField, Header("详情描述")] private TMP_Text _detailDesc;
 
-    /// <summary>详情面板的使用条件，包含调息时间、效果范围与消耗内力。</summary>
+    /// <summary>详情面板的使用条件。</summary>
     [SerializeField, Header("详情条件")] private TMP_Text _detailCond;
 
-    /// <summary>控制器最近一次下发的完整技能快照，切换分类时从中筛选。</summary>
+    /// <summary>控制器最近一次下发的完整技能快照。</summary>
     private readonly List<SkillViewData> _allSkills = new List<SkillViewData>();
 
-    /// <summary>当前分类下按节点顺序排列的技能，空位为 null。</summary>
-    private readonly List<SkillViewData> _categorySkills = new List<SkillViewData>(NodeCount);
+    /// <summary>武功出战页按节点顺序排列的技能，空位为 null，末位为绝学。</summary>
+    private readonly List<SkillViewData> _battleSkills = new List<SkillViewData>(BattleNodeCount);
 
-    /// <summary>当前选中的节点下标，范围 0 到 NodeCount-1。</summary>
+    /// <summary>轻功出战页按节点顺序排列的技能，空位为 null。</summary>
+    private readonly List<SkillViewData> _lightSkills = new List<SkillViewData>(LightNodeCount);
+
+    /// <summary>列表页已创建的条目，刷新时整批销毁。</summary>
+    private readonly List<GameObject> _listItems = new List<GameObject>();
+
+    /// <summary>列表页当前展示的技能，顺序与条目下标一致。</summary>
+    private readonly List<SkillViewData> _listSkills = new List<SkillViewData>();
+
+    /// <summary>列表页当前选中的条目下标。</summary>
+    private int _selectedListItem;
+
+    /// <summary>当前分类编号。</summary>
+    private int _category;
+
+    /// <summary>当前子页编号。</summary>
+    private int _page;
+
+    /// <summary>当前选中的武功节点下标。</summary>
     private int _selectedNode;
 
-    /// <summary>当前分类编号，取值对应 CategorySkill、CategoryLight、CategorySecret。</summary>
-    private int _category;
+    /// <summary>当前选中的轻功节点下标。</summary>
+    private int _selectedLightNode;
+
+    /// <summary>详情面板当前展示的技能编号，用于丢弃过期的图标回调。</summary>
+    private int _detailSkillId;
 
     /// <summary>按钮事件是否已绑定，避免窗口反复激活时重复挂监听。</summary>
     private bool _buttonsBound;
 
-    /// <summary>窗口首次激活时绑定关闭、页签、导航与节点按钮。</summary>
+    /// <summary>窗口首次激活时绑定按钮事件。</summary>
     private void Awake()
     {
         BindButtons();
     }
 
-    /// <summary>把交互按钮的点击事件挂到本窗口方法上，只执行一次。</summary>
+    /// <summary>把关闭按钮、子页签、竖排导航与节点的点击事件挂到本窗口方法上，只执行一次。</summary>
     private void BindButtons()
     {
         if (_buttonsBound)
@@ -135,26 +220,26 @@ public class SkillInfoWindow : WindowBase
         {
             _btnClose.onClick.AddListener(CloseWindow);
         }
-        // 顶部页签与竖排导航指向同一组分类，两者保持同步高亮。
+        // 子页签数量固定为 2，对应出战页与列表页。
         for (int index = 0; index < _tabButtons.Length; index++)
         {
-            // 当前页签的分类编号，闭包中不能直接捕获循环变量。
-            int category = index;
+            // 当前子页编号，闭包中不能直接捕获循环变量。
+            int page = index;
             if (_tabButtons[index] != null)
             {
-                _tabButtons[index].onClick.AddListener(delegate { SelectCategory(category); });
+                _tabButtons[index].onClick.AddListener(delegate { SelectPage(page); });
             }
         }
+        // 竖排导航前三项与分类一一对应，后三项当前没有数据。
         for (int index = 0; index < _navButtons.Length; index++)
         {
-            // 当前导航项对应的分类编号，前三项与页签一致。
+            // 当前导航项对应的分类编号。
             int category = index;
             if (_navButtons[index] == null)
             {
                 continue;
             }
-            // 自创、双门派、失传武学当前没有数据，按钮保持不可点状态。
-            if (index >= CategorySecret + 1)
+            if (index > CategorySecret)
             {
                 _navButtons[index].interactable = false;
                 continue;
@@ -163,16 +248,25 @@ public class SkillInfoWindow : WindowBase
         }
         for (int index = 0; index < _nodeButtons.Length; index++)
         {
-            // 当前节点的下标，用于点击后切换右侧详情。
+            // 当前武功节点下标。
             int nodeIndex = index;
             if (_nodeButtons[index] != null)
             {
-                _nodeButtons[index].onClick.AddListener(delegate { SelectNode(nodeIndex); });
+                _nodeButtons[index].onClick.AddListener(delegate { SelectBattleNode(nodeIndex); });
+            }
+        }
+        for (int index = 0; index < _lightButtons.Length; index++)
+        {
+            // 当前轻功节点下标。
+            int nodeIndex = index;
+            if (_lightButtons[index] != null)
+            {
+                _lightButtons[index].onClick.AddListener(delegate { SelectLightNode(nodeIndex); });
             }
         }
     }
 
-    /// <summary>接收控制器下发的技能快照，按当前分类重新铺节点。</summary>
+    /// <summary>接收控制器下发的技能快照，按当前分类与子页重铺界面。</summary>
     /// <param name="obj">控制器生成的强类型技能展示列表。</param>
     public override void ReFreshUI(object obj)
     {
@@ -188,11 +282,12 @@ public class SkillInfoWindow : WindowBase
             _allSkills.Add(skills[index]);
         }
         BindButtons();
-        ApplyCategory(_category);
+        RefreshTabs();
+        ApplyPage();
     }
 
     /// <summary>把职业名与技能点数显示在标题栏，不修改角色技能数据。</summary>
-    /// <param name="jobName">当前职业显示名，例如“剑 修”。</param>
+    /// <param name="jobName">当前职业显示名。</param>
     /// <param name="availablePoints">顶部右侧显示的数值，当前协议沿用角色等级。</param>
     public void SetHeader(string jobName, int availablePoints)
     {
@@ -206,7 +301,7 @@ public class SkillInfoWindow : WindowBase
         }
     }
 
-    /// <summary>切换分类并重铺节点；页签与竖排导航共用该入口。</summary>
+    /// <summary>切换分类，并把子页复位到出战页。</summary>
     /// <param name="category">目标分类编号，0 武功、1 轻功、2 秘笈。</param>
     public void SelectCategory(int category)
     {
@@ -214,308 +309,578 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
-        ApplyCategory(category);
+        _category = category;
+        _page = PageBattle;
+        RefreshTabs();
+        ApplyPage();
     }
 
-    /// <summary>按分类筛选技能、刷新页签与导航高亮，并决定节点区还是秘笈空壳页可见。</summary>
-    /// <param name="category">目标分类编号。</param>
-    private void ApplyCategory(int category)
+    /// <summary>切换子页（出战 / 列表）。</summary>
+    /// <param name="page">目标子页编号。</param>
+    public void SelectPage(int page)
     {
-        _category = category;
-        _selectedNode = 0;
-        RefreshCategoryVisual(category);
-        if (category == CategorySecret)
+        if (page < PageBattle || page > PageList)
         {
-            if (_portraitRoot != null)
-            {
-                _portraitRoot.SetActive(false);
-            }
-            if (_nodesRoot != null)
-            {
-                _nodesRoot.SetActive(false);
-            }
-            if (_detailPanel != null)
-            {
-                _detailPanel.SetActive(false);
-            }
-            if (_emptyPage != null)
-            {
-                _emptyPage.SetActive(true);
-            }
             return;
         }
-        if (_portraitRoot != null)
+        // 秘笈分类只有空壳页，不接受子页切换。
+        if (_category == CategorySecret)
         {
-            _portraitRoot.SetActive(true);
+            return;
         }
-        if (_nodesRoot != null)
-        {
-            _nodesRoot.SetActive(true);
-        }
-        if (_detailPanel != null)
-        {
-            _detailPanel.SetActive(true);
-        }
-        if (_emptyPage != null)
-        {
-            _emptyPage.SetActive(false);
-        }
-        CollectCategorySkills(category);
-        ApplyNodes();
-        SelectNode(0);
+        _page = page;
+        RefreshTabs();
+        ApplyPage();
     }
 
-    /// <summary>同步页签与竖排导航的选中配色，让当前分类在两侧同时可见。</summary>
-    /// <param name="category">当前选中的分类编号。</param>
-    private void RefreshCategoryVisual(int category)
+    /// <summary>按分类设置子页签文字，并按当前子页刷新高亮。</summary>
+    private void RefreshTabs()
     {
-        for (int index = 0; index < _tabLabels.Length; index++)
+        // 子页签文字随分类变化。
+        string battleText = "出战武功";
+        string listText = "武功列表";
+        if (_category == CategoryLight)
         {
-            if (_tabLabels[index] == null)
+            battleText = "出战轻功";
+            listText = "轻功列表";
+        }
+        else if (_category == CategorySecret)
+        {
+            battleText = "秘笈";
+            listText = "秘笈列表";
+        }
+        if (_tabLabels != null && _tabLabels.Length > 0 && _tabLabels[0] != null)
+        {
+            _tabLabels[0].text = battleText;
+        }
+        if (_tabLabels != null && _tabLabels.Length > 1 && _tabLabels[1] != null)
+        {
+            _tabLabels[1].text = listText;
+        }
+        for (int index = 0; index < _tabButtons.Length; index++)
+        {
+            if (_tabButtons[index] == null)
             {
                 continue;
             }
-            // 页签选中时用白字压在蓝色条上，未选中时压到灰蓝字。
-            if (index == category)
+            // 秘笈分类只保留一个子页签，避免出现两个同样内容的入口。
+            if (_category == CategorySecret && index > 0)
             {
-                _tabLabels[index].color = new Color(1f, 1f, 1f, 1f);
+                _tabButtons[index].gameObject.SetActive(false);
+                continue;
             }
-            else
-            {
-                _tabLabels[index].color = new Color(0.62f, 0.7f, 0.82f, 1f);
-            }
-            // 页签底板由预制体上的 Image 提供，选中时换成蓝色底便于和未选中区分。
-            Image tabImage = null;
-            if (_tabButtons[index] != null)
-            {
-                tabImage = _tabButtons[index].GetComponent<Image>();
-            }
+            _tabButtons[index].gameObject.SetActive(true);
+            // 当前子页高亮：浅底深字，其余深底浅字。
+            bool selected = index == _page;
+            Image tabImage = _tabButtons[index].GetComponent<Image>();
             if (tabImage != null)
             {
-                if (index == category)
+                if (selected)
                 {
-                    tabImage.color = new Color(0.28f, 0.46f, 0.74f, 1f);
+                    tabImage.color = TabOnColor;
                 }
                 else
                 {
-                    tabImage.color = new Color(0.13f, 0.17f, 0.24f, 0.95f);
+                    tabImage.color = TabOffColor;
+                }
+            }
+            if (_tabLabels != null && index < _tabLabels.Length && _tabLabels[index] != null)
+            {
+                if (selected)
+                {
+                    _tabLabels[index].color = TabOnTextColor;
+                }
+                else
+                {
+                    _tabLabels[index].color = TabOffTextColor;
+                }
+            }
+            if (_tabIcons != null && index < _tabIcons.Length && _tabIcons[index] != null)
+            {
+                if (selected)
+                {
+                    _tabIcons[index].color = TabOnTextColor;
+                }
+                else
+                {
+                    _tabIcons[index].color = TabOffTextColor;
                 }
             }
         }
+        // 竖排导航：当前分类浅底深字，其余深底浅字。
         for (int index = 0; index < _navLabels.Length; index++)
         {
             if (_navLabels[index] == null)
             {
                 continue;
             }
-            // 竖排导航选中项为浅底深字，未选中为深底浅字。
-            if (index == category)
+            bool current = index == _category;
+            if (current)
             {
                 _navLabels[index].color = new Color(0.1f, 0.17f, 0.28f, 1f);
-                if (_navButtons[index] != null)
-                {
-                    // 选中项统一使用浅色底板，便于一眼看出当前分类。
-                    Image navImage = _navButtons[index].GetComponent<Image>();
-                    if (navImage != null)
-                    {
-                        navImage.color = new Color(0.9f, 0.95f, 1f, 1f);
-                    }
-                }
+            }
+            else if (index <= CategorySecret)
+            {
+                _navLabels[index].color = new Color(0.66f, 0.72f, 0.82f, 1f);
             }
             else
             {
-                if (index <= CategorySecret)
-                {
-                    _navLabels[index].color = new Color(0.66f, 0.72f, 0.82f, 1f);
-                }
-                else
-                {
-                    _navLabels[index].color = new Color(0.42f, 0.47f, 0.56f, 1f);
-                }
-                if (_navButtons[index] != null)
-                {
-                    Image navImage = _navButtons[index].GetComponent<Image>();
-                    if (navImage != null)
-                    {
-                        navImage.color = new Color(0.1f, 0.13f, 0.19f, 0.9f);
-                    }
-                }
+                _navLabels[index].color = new Color(0.42f, 0.47f, 0.56f, 1f);
+            }
+            if (_navButtons[index] == null)
+            {
+                continue;
+            }
+            Image navImage = _navButtons[index].GetComponent<Image>();
+            if (navImage == null)
+            {
+                continue;
+            }
+            if (current)
+            {
+                navImage.color = new Color(0.9f, 0.95f, 1f, 1f);
+            }
+            else
+            {
+                navImage.color = new Color(0.1f, 0.13f, 0.19f, 0.9f);
             }
         }
     }
 
-    /// <summary>按分类把技能快照筛成节点顺序：前五个为普通节点，第六个为绝学节点。</summary>
-    /// <param name="category">目标分类编号，只处理武功与轻功。</param>
-    private void CollectCategorySkills(int category)
+    /// <summary>按当前分类与子页切换可见容器，并刷新对应内容。</summary>
+    private void ApplyPage()
     {
-        _categorySkills.Clear();
-        for (int index = 0; index < NodeCount; index++)
+        // 秘笈分类统一走空壳页，不需要立绘、节点与详情。
+        if (_category == CategorySecret)
         {
-            _categorySkills.Add(null);
+            SetActive(_portraitRoot, false);
+            SetActive(_battleRoot, false);
+            SetActive(_toolRoot, false);
+            SetActive(_badgeRoot, false);
+            SetActive(_lightRoot, false);
+            SetActive(_listRoot, false);
+            SetActive(_detailPanel, false);
+            SetActive(_emptyPage, true);
+            return;
         }
-        // 当前分类下的有效技能按原顺序暂存，超过节点数量时只保留前六个。
-        List<SkillViewData> matched = new List<SkillViewData>(NodeCount);
+        SetActive(_emptyPage, false);
+        SetActive(_detailPanel, true);
+        // 列表页：左侧浮出技能列表，立绘仍留在中间作为背景。
+        if (_page == PageList)
+        {
+            SetActive(_portraitRoot, true);
+            SetActive(_battleRoot, false);
+            SetActive(_toolRoot, false);
+            SetActive(_badgeRoot, false);
+            SetActive(_lightRoot, false);
+            SetActive(_listRoot, true);
+            FillList();
+            return;
+        }
+        SetActive(_listRoot, false);
+        SetActive(_portraitRoot, true);
+        // 轻功出战页：左侧 3 个节点 + 中央大图标，没有工具行与技能组徽章。
+        if (_category == CategoryLight)
+        {
+            SetActive(_battleRoot, false);
+            SetActive(_toolRoot, false);
+            SetActive(_badgeRoot, false);
+            SetActive(_lightRoot, true);
+            FillLightNodes();
+            return;
+        }
+        SetActive(_battleRoot, true);
+        SetActive(_toolRoot, true);
+        SetActive(_badgeRoot, true);
+        SetActive(_lightRoot, false);
+        FillBattleNodes();
+    }
+
+    /// <summary>按开关统一处理空引用，避免调用点重复判空。</summary>
+    /// <param name="target">目标节点，可为空。</param>
+    /// <param name="active">是否启用。</param>
+    private static void SetActive(GameObject target, bool active)
+    {
+        if (target == null)
+        {
+            return;
+        }
+        target.SetActive(active);
+    }
+
+    /// <summary>把武功分类的技能铺到 8 个普通节点与 1 个绝学大节点上。</summary>
+    private void FillBattleNodes()
+    {
+        _battleSkills.Clear();
+        for (int index = 0; index < BattleNodeCount; index++)
+        {
+            _battleSkills.Add(null);
+        }
+        // 普通节点已填充的数量，绝学单独放到最后一个大节点。
+        int normalCount = 0;
+        // 扫描到的绝学技能，只保留第一条。
+        SkillViewData ultimate = null;
         for (int index = 0; index < _allSkills.Count; index++)
         {
-            // 本次判断的技能展示数据，空值来自尚未装载的条目。
+            // 本次判断的技能展示数据。
+            SkillViewData skill = _allSkills[index];
+            if (skill == null || IsLightSkill(skill))
+            {
+                continue;
+            }
+            if (skill.Tag == UltimateTag)
+            {
+                if (ultimate == null)
+                {
+                    ultimate = skill;
+                }
+                continue;
+            }
+            if (normalCount >= BattleNodeCount - 1)
+            {
+                continue;
+            }
+            _battleSkills[normalCount] = skill;
+            normalCount++;
+        }
+        _battleSkills[BattleNodeCount - 1] = ultimate;
+        _selectedNode = 0;
+        ApplyBattleNodeVisuals();
+        SelectBattleNode(0);
+    }
+
+    /// <summary>把轻功分类（含滑行）的技能铺到左侧 3 个节点，并同步中央大图标。</summary>
+    private void FillLightNodes()
+    {
+        _lightSkills.Clear();
+        for (int index = 0; index < LightNodeCount; index++)
+        {
+            _lightSkills.Add(null);
+        }
+        // 已填充的轻功节点数量。
+        int count = 0;
+        for (int index = 0; index < _allSkills.Count; index++)
+        {
+            // 本次判断的技能展示数据。
+            SkillViewData skill = _allSkills[index];
+            if (skill == null || !IsLightSkill(skill))
+            {
+                continue;
+            }
+            if (count >= LightNodeCount)
+            {
+                continue;
+            }
+            _lightSkills[count] = skill;
+            count++;
+        }
+        _selectedLightNode = 0;
+        ApplyLightNodeVisuals();
+        SelectLightNode(0);
+    }
+
+    /// <summary>刷新武功页九个节点的图标、外圈与两字标签。</summary>
+    private void ApplyBattleNodeVisuals()
+    {
+        for (int index = 0; index < BattleNodeCount; index++)
+        {
+            // 当前槽位的技能，null 表示该位置没有技能。
+            SkillViewData skill = _battleSkills[index];
+            bool isUltimateSlot = index == BattleNodeCount - 1;
+            UpdateNodeVisual(_nodeButtons, _nodeIcons, _nodeRings, _nodeGlows, _nodeTags,
+                index, skill, isUltimateSlot, false);
+        }
+    }
+
+    /// <summary>刷新轻功页三个节点的图标与外圈。</summary>
+    private void ApplyLightNodeVisuals()
+    {
+        for (int index = 0; index < LightNodeCount; index++)
+        {
+            // 当前槽位的技能，null 表示该位置没有技能。
+            SkillViewData skill = _lightSkills[index];
+            UpdateNodeVisual(_lightButtons, _lightIcons, _lightRings, _lightGlows, null,
+                index, skill, false, false);
+        }
+    }
+
+    /// <summary>把一条技能数据写进指定节点，空技能时显示未习得状态。</summary>
+    /// <param name="buttons">该组节点的按钮数组。</param>
+    /// <param name="icons">该组节点的图标数组。</param>
+    /// <param name="rings">该组节点的外圈数组。</param>
+    /// <param name="glows">该组节点的光晕数组。</param>
+    /// <param name="tags">该组节点的标签数组，轻功页没有标签时传 null。</param>
+    /// <param name="index">节点下标。</param>
+    /// <param name="skill">该节点对应技能，可为空。</param>
+    /// <param name="isUltimateSlot">该节点是否为绝学大节点。</param>
+    /// <param name="selected">该节点当前是否被选中。</param>
+    private void UpdateNodeVisual(Button[] buttons, Image[] icons, Image[] rings, Image[] glows,
+        TMP_Text[] tags, int index, SkillViewData skill, bool isUltimateSlot, bool selected)
+    {
+        if (buttons != null && index < buttons.Length && buttons[index] != null)
+        {
+            buttons[index].interactable = skill != null;
+        }
+        if (icons != null && index < icons.Length && icons[index] != null)
+        {
+            icons[index].enabled = skill != null;
+        }
+        if (rings != null && index < rings.Length && rings[index] != null)
+        {
+            if (selected)
+            {
+                rings[index].color = NodeRingSelected;
+            }
+            else if (skill == null)
+            {
+                rings[index].color = NodeRingEmpty;
+            }
+            else if (isUltimateSlot)
+            {
+                rings[index].color = NodeRingUltimate;
+            }
+            else
+            {
+                rings[index].color = NodeRingNormal;
+            }
+        }
+        if (glows != null && index < glows.Length && glows[index] != null)
+        {
+            glows[index].enabled = selected;
+        }
+        if (tags != null && index < tags.Length && tags[index] != null)
+        {
+            if (skill == null)
+            {
+                tags[index].text = EmptyNodeTag;
+            }
+            else
+            {
+                tags[index].text = skill.Tag;
+            }
+            if (isUltimateSlot)
+            {
+                tags[index].color = new Color(1f, 0.86f, 0.55f, 1f);
+            }
+            else
+            {
+                tags[index].color = new Color(0.92f, 0.96f, 1f, 1f);
+            }
+        }
+        if (skill == null)
+        {
+            return;
+        }
+        LoadNodeIcon(icons, index, skill);
+    }
+
+    /// <summary>异步加载节点图标，回调前确认槽位仍存在。</summary>
+    /// <param name="icons">节点图标数组。</param>
+    /// <param name="index">节点下标。</param>
+    /// <param name="skill">该节点对应技能。</param>
+    private void LoadNodeIcon(Image[] icons, int index, SkillViewData skill)
+    {
+        if (icons == null || index >= icons.Length || icons[index] == null)
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(skill.IconPath))
+        {
+            return;
+        }
+        ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
+        {
+            if (icons[index] == null || sprite == null)
+            {
+                return;
+            }
+            icons[index].sprite = sprite;
+        });
+    }
+
+    /// <summary>选中武功页的指定节点，右侧详情随之切换。</summary>
+    /// <param name="nodeIndex">节点下标，超出范围时忽略。</param>
+    public void SelectBattleNode(int nodeIndex)
+    {
+        if (nodeIndex < 0 || nodeIndex >= BattleNodeCount)
+        {
+            return;
+        }
+        _selectedNode = nodeIndex;
+        for (int index = 0; index < BattleNodeCount; index++)
+        {
+            // 该节点对应的技能，用于保持绝学金圈。
+            SkillViewData skill = _battleSkills[index];
+            bool isUltimateSlot = index == BattleNodeCount - 1;
+            UpdateNodeVisual(_nodeButtons, _nodeIcons, _nodeRings, _nodeGlows, _nodeTags,
+                index, skill, isUltimateSlot, index == nodeIndex);
+        }
+        ShowDetail(_battleSkills[nodeIndex]);
+    }
+
+    /// <summary>选中轻功页的指定节点，并同步中央大图标。</summary>
+    /// <param name="nodeIndex">节点下标，超出范围时忽略。</param>
+    public void SelectLightNode(int nodeIndex)
+    {
+        if (nodeIndex < 0 || nodeIndex >= LightNodeCount)
+        {
+            return;
+        }
+        _selectedLightNode = nodeIndex;
+        for (int index = 0; index < LightNodeCount; index++)
+        {
+            // 该节点对应的技能。
+            SkillViewData skill = _lightSkills[index];
+            UpdateNodeVisual(_lightButtons, _lightIcons, _lightRings, _lightGlows, null,
+                index, skill, false, index == nodeIndex);
+        }
+        // 当前选中的轻功技能，用于中央大图标与右侧详情。
+        SkillViewData selected = _lightSkills[nodeIndex];
+        ShowDetail(selected);
+        if (_lightBigIcon == null)
+        {
+            return;
+        }
+        _lightBigIcon.enabled = selected != null;
+        if (selected == null || string.IsNullOrEmpty(selected.IconPath))
+        {
+            return;
+        }
+        ResourceMgr.Instance.LoadSpriteAsync(selected.IconPath, sprite =>
+        {
+            if (_lightBigIcon != null && sprite != null)
+            {
+                _lightBigIcon.sprite = sprite;
+            }
+        });
+    }
+
+    /// <summary>按当前分类重建列表页条目。</summary>
+    private void FillList()
+    {
+        for (int index = 0; index < _listItems.Count; index++)
+        {
+            if (_listItems[index] != null)
+            {
+                Destroy(_listItems[index]);
+            }
+        }
+        _listItems.Clear();
+        if (_listContent == null || _listItemTemplate == null)
+        {
+            return;
+        }
+        // 当前分类下要展示的技能，按快照顺序收集后再建条目。
+        List<SkillViewData> visible = new List<SkillViewData>();
+        for (int index = 0; index < _allSkills.Count; index++)
+        {
+            // 本次判断的技能展示数据。
             SkillViewData skill = _allSkills[index];
             if (skill == null)
             {
                 continue;
             }
-            // 轻功页只收 Type=4，武功页收普攻、主动技能与滑行。
-            bool isLightSkill = skill.SkillType == 4;
+            // 轻功列表只收滑行与轻功，武功列表收其余技能。
+            bool isLight = IsLightSkill(skill);
             bool wanted = false;
-            if (category == CategoryLight)
+            if (_category == CategoryLight)
             {
-                wanted = isLightSkill;
+                wanted = isLight;
             }
             else
             {
-                wanted = !isLightSkill;
+                wanted = !isLight;
             }
-            if (wanted && matched.Count < NodeCount)
+            if (wanted)
             {
-                matched.Add(skill);
+                visible.Add(skill);
             }
         }
-        for (int index = 0; index < matched.Count; index++)
+        for (int index = 0; index < visible.Count; index++)
         {
-            _categorySkills[index] = matched[index];
+            GameObject item = Instantiate(_listItemTemplate, _listContent);
+            item.SetActive(true);
+            item.transform.SetAsLastSibling();
+            SkillListItemWidget widget = item.GetComponent<SkillListItemWidget>();
+            if (widget != null)
+            {
+                widget.SetData(visible[index]);
+                widget.SetSelected(index == 0);
+            }
+            // 每条目绑定自己的下标，点击时只刷新详情与选中态。
+            Button button = item.GetComponent<Button>();
+            if (button != null)
+            {
+                int itemIndex = index;
+                button.onClick.AddListener(delegate { SelectListItem(itemIndex); });
+            }
+            _listItems.Add(item);
+        }
+        _listSkills.Clear();
+        for (int index = 0; index < visible.Count; index++)
+        {
+            _listSkills.Add(visible[index]);
+        }
+        _selectedListItem = 0;
+        // 重建条目后把列表滚回顶部，避免停在上一次的滚动位置。
+        ScrollRect scrollRect = _listContent.GetComponentInParent<ScrollRect>();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
+        if (visible.Count > 0)
+        {
+            ShowDetail(visible[0]);
+        }
+        else
+        {
+            ShowEmptyDetail();
         }
     }
 
-    /// <summary>把当前分类的技能铺到六个节点上，空位显示未习得状态。</summary>
-    private void ApplyNodes()
+    /// <summary>选中列表页的指定条目，同步高亮与右侧详情。</summary>
+    /// <param name="index">条目下标，超出范围时忽略。</param>
+    public void SelectListItem(int index)
     {
-        for (int index = 0; index < NodeCount; index++)
-        {
-            // 当前节点对应的技能，null 表示该槽位没有可展示技能。
-            SkillViewData skill = _categorySkills[index];
-            bool isUltimate = index == NodeCount - 1;
-            if (_nodeTags[index] != null)
-            {
-                if (skill != null && skill.Level > 0)
-                {
-                    _nodeTags[index].text = skill.Tag;
-                }
-                else
-                {
-                    _nodeTags[index].text = EmptyNodeTag;
-                }
-                if (isUltimate)
-                {
-                    // 绝学节点标签用金色，和普通技能的冷白区分。
-                    _nodeTags[index].color = new Color(1f, 0.86f, 0.55f, 1f);
-                }
-                else
-                {
-                    _nodeTags[index].color = new Color(0.92f, 0.96f, 1f, 1f);
-                }
-            }
-            if (_nodeButtons[index] != null)
-            {
-                _nodeButtons[index].interactable = skill != null;
-            }
-            if (_nodeIcons[index] != null)
-            {
-                _nodeIcons[index].enabled = skill != null;
-            }
-            if (_nodeRings[index] != null)
-            {
-                if (skill == null)
-                {
-                    _nodeRings[index].color = NodeRingEmpty;
-                }
-                else if (isUltimate)
-                {
-                    _nodeRings[index].color = NodeRingUltimate;
-                }
-                else
-                {
-                    _nodeRings[index].color = NodeRingNormal;
-                }
-            }
-            if (_nodeGlows[index] != null)
-            {
-                _nodeGlows[index].enabled = false;
-            }
-            if (skill != null && !string.IsNullOrEmpty(skill.IconPath))
-            {
-                // 节点下标，异步回调只回填对应槽位，避免切换分类后串图。
-                int nodeIndex = index;
-                ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
-                {
-                    if (_nodeIcons[nodeIndex] == null || sprite == null)
-                    {
-                        return;
-                    }
-                    if (nodeIndex >= _categorySkills.Count)
-                    {
-                        return;
-                    }
-                    // 回调时槽位可能已被新分类覆盖，技能编号一致才回填。
-                    if (_categorySkills[nodeIndex] != null &&
-                        _categorySkills[nodeIndex].SkillId == skill.SkillId)
-                    {
-                        _nodeIcons[nodeIndex].sprite = sprite;
-                    }
-                });
-            }
-        }
-    }
-
-    /// <summary>选中指定节点，右侧详情随之切换。</summary>
-    /// <param name="nodeIndex">节点下标，超出范围时忽略。</param>
-    public void SelectNode(int nodeIndex)
-    {
-        if (nodeIndex < 0 || nodeIndex >= NodeCount)
+        if (index < 0 || index >= _listSkills.Count)
         {
             return;
         }
-        _selectedNode = nodeIndex;
-        // 选中高亮：当前节点提亮外圈并打开光晕，其余恢复常态。
-        for (int index = 0; index < NodeCount; index++)
+        _selectedListItem = index;
+        for (int itemIndex = 0; itemIndex < _listItems.Count; itemIndex++)
         {
-            if (_nodeRings[index] == null)
+            if (_listItems[itemIndex] == null)
             {
                 continue;
             }
-            // 该节点对应的技能，用于区分绝学金圈与普通蓝圈。
-            SkillViewData skill = _categorySkills[index];
-            if (index == nodeIndex)
+            SkillListItemWidget widget = _listItems[itemIndex].GetComponent<SkillListItemWidget>();
+            if (widget != null)
             {
-                _nodeRings[index].color = NodeRingSelected;
-            }
-            else if (skill == null)
-            {
-                _nodeRings[index].color = NodeRingEmpty;
-            }
-            else if (index == NodeCount - 1)
-            {
-                _nodeRings[index].color = NodeRingUltimate;
-            }
-            else
-            {
-                _nodeRings[index].color = NodeRingNormal;
-            }
-            if (_nodeGlows[index] != null)
-            {
-                _nodeGlows[index].enabled = index == nodeIndex;
+                widget.SetSelected(itemIndex == index);
             }
         }
-        ShowDetail(_categorySkills[nodeIndex]);
+        ShowDetail(_listSkills[index]);
+    }
+
+    /// <summary>判断技能是否属于轻功分类，滑行与轻功都算。</summary>
+    /// <param name="skill">待判断的技能展示数据。</param>
+    /// <returns>技能表 Type 为 3（滑行）或 4（轻功）时返回 true。</returns>
+    private static bool IsLightSkill(SkillViewData skill)
+    {
+        return skill.SkillType == 3 || skill.SkillType == 4;
     }
 
     /// <summary>把技能数据写到右侧详情面板；空数据时展示未习得提示。</summary>
-    /// <param name="skill">选中的技能展示数据，没有可展示技能时为空。</param>
+    /// <param name="skill">选中的技能展示数据，可为空。</param>
     private void ShowDetail(SkillViewData skill)
     {
         if (skill == null)
         {
+            _detailSkillId = 0;
             ShowEmptyDetail();
             return;
         }
+        _detailSkillId = skill.SkillId;
         if (_detailName != null)
         {
             _detailName.text = skill.Name;
@@ -550,37 +915,36 @@ public class SkillInfoWindow : WindowBase
             _detailCond.text = "调息时间：" + skill.Cooldown.ToString("0.0") + " 秒\n" +
                 rangeText + "\n消耗内力：" + skill.MpCost;
         }
-        if (_detailIcon != null)
+        if (_detailIcon == null)
         {
-            _detailIcon.enabled = true;
-            if (!string.IsNullOrEmpty(skill.IconPath))
-            {
-                // 当前详情技能编号，异步图标回来时用于拒绝过期结果。
-                int skillId = skill.SkillId;
-                ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
-                {
-                    if (_detailIcon == null || sprite == null)
-                    {
-                        return;
-                    }
-                    // 快照已切换时不再覆盖详情图标。
-                    if (_categorySkills.Count > _selectedNode &&
-                        _categorySkills[_selectedNode] != null &&
-                        _categorySkills[_selectedNode].SkillId == skillId)
-                    {
-                        _detailIcon.sprite = sprite;
-                    }
-                });
-            }
+            return;
         }
+        _detailIcon.enabled = true;
+        if (string.IsNullOrEmpty(skill.IconPath))
+        {
+            return;
+        }
+        // 本次请求对应的技能编号，回调时与当前详情比对。
+        int skillId = skill.SkillId;
+        ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
+        {
+            if (_detailIcon == null || sprite == null)
+            {
+                return;
+            }
+            if (_detailSkillId == skillId)
+            {
+                _detailIcon.sprite = sprite;
+            }
+        });
     }
 
-    /// <summary>节点为空时清空详情文本，避免残留上一个技能的内容。</summary>
+    /// <summary>没有可展示技能时清空详情，避免残留上一条技能内容。</summary>
     private void ShowEmptyDetail()
     {
         if (_detailName != null)
         {
-            _detailName.text = "未习得";
+            _detailName.text = EmptyNodeTag;
         }
         if (_detailLevel != null)
         {
@@ -592,7 +956,7 @@ public class SkillInfoWindow : WindowBase
         }
         if (_detailDesc != null)
         {
-            _detailDesc.text = "该槽位尚未习得技能，请先在技能列表中选择要装配的技能。";
+            _detailDesc.text = "该槽位尚未习得技能。";
         }
         if (_detailCond != null)
         {
@@ -601,6 +965,10 @@ public class SkillInfoWindow : WindowBase
         if (_detailIcon != null)
         {
             _detailIcon.enabled = false;
+        }
+        if (_lightBigIcon != null)
+        {
+            _lightBigIcon.enabled = false;
         }
     }
 }
