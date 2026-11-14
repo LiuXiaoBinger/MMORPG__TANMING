@@ -229,4 +229,43 @@
 | 分辨率 | 全部坐标按 1920×1080 绝对像素写死，未做多分辨率适配。 |
 | 业务链路 | 真实登录态主城按 `L` 打开面板的完整链路未跑；「配置 / 翻页 / 描述」、1/2 徽章、自创/双门派/失传武学仍为展示态，未接协议。 |
 
+---
+
+# 第七轮：技能节点点击无响应修复（2026-11-14 22:3x）
+
+## 13.1 现象与需求
+
+- 用户反馈：出战武功页的技能节点（突进/冲锋/爆发/连招/群攻/护盾/绝学等）看得见、图标和标签都正常，但鼠标点击没有任何反应，右侧详情不会切换。
+
+## 13.2 排查证据
+
+| 层次 | 检查结论 |
+| --- | --- |
+| 业务代码 | `SkillInfoWindow.BindButtons()` 已为 `_nodeButtons`(9) / `_lightButtons`(3) 全部 `AddListener`；序列化引用 9+3 个 `Button` 均有效，运行时 `interactable` 对有技能的节点为 `True`（两个「未习得」槽位为 `False`，符合设计）。 |
+| Canvas | `SkillInfoWindow` 自带 `Canvas(overrideSorting=1, sortingOrder=100)` 与 `GraphicRaycaster`，`EventSystem.current` 存在，`worldCamera=UICamera`，射线层正常。 |
+| 遮挡 | 全屏 `BG_Inner`/`BG_Frame` 虽 `raycastTarget=1`，但在 `NodeRoot` 之前渲染，不会盖住节点；`PortraitHalo`/`Portrait`/`DetailBorder`/`TitleLine` 均为 `raycastTarget=0`。 |
+| **节点本身** | 扫描面板全部 22 个 `Button`：`Btn_Close`、`SubTab_0/1`、`Nav_0..5`、`ItemTemplate` 共 10 个自身带可命中 `Image`；**`Node_0..8`、`LightNode_0..2` 共 12 个根对象只有 `RectTransform + Button`，没有 `Graphic`，其全部子对象（Glow/Ring/Inner/IconMask/Tag）的 `raycastTarget` 都是 0**。 |
+| 运行时复核 | Play 模式对 9 个节点中心做 `EventSystem.RaycastAll`：每个节点 `graphics=6, rayOn=0`，`rayHits=2` 且 `firstHit=BG_Inner`，事件沿命中对象向上找不到任何 `IPointerClickHandler`，因此 `Button.onClick` 永远不触发。 |
+
+**根因**：UGUI 的 `Button` 本身不参与射线；射线必须先命中一个 `raycastTarget=1` 的 `Graphic`，再由 `EventSystem` 沿父链找到 `Button`。节点为了做圆形遮罩把所有可见 `Image` 的射线都关掉了，又没有给节点根补一个命中区，点击直接穿透到全屏底图。
+
+## 13.3 修复
+
+- 文件：`LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab`（修改，无新增/删除文件）。
+- 把这 12 个节点子对象 `Ring` 的 `Image.raycastTarget` 从 `0` 改为 `1`（`Ring` 尺寸与节点完全一致，98×98 / 绝学 133×133 / 轻功 100×100），命中区精确等于圆环范围，不依赖图标 sprite 是否加载完成，也不会像 `Glow` 那样溢出到相邻节点。
+- 未改任何 `.cs`；`Button` 的 `m_TargetGraphic` 与颜色过渡逻辑保持原样。未习得槽位仍由 `interactable=false` 保持不可点。
+- 同步处理：Python 精确改 12 行 YAML → `AssetDatabase.ImportAsset(ForceUpdate|ForceSynchronousImport)` 让编辑器加载新资产 → Play 模式当前实例单独改 12 个 Ring（Play 模式下资产改动不会回灌运行时实例）。改前备份 `_temp/UIRoot_before_raycast_fix.prefab`。
+- 保留差异：`UIRoot.prefab` 相对上一提交还有 28 行与本次无关的属性变化（页签图标 `m_AnchoredPosition -68→-80`、`m_SizeDelta 34→28`、`m_fontSize 15→13`、autoSize `12/22→9/13` 等），是上一提交后编辑器二次保存产生的既有修改，按「不覆盖用户已有修改」原则原样保留；`git diff` 里的大段行序变化仍是 Unity 重新分配 local fileID 所致，归一化后真实属性差异共 40 行（本次 12 行 + 既有 28 行）。
+
+## 13.4 验证
+
+- Play 模式运行时：12 个 Ring 全部改为可命中；9 个武功节点 `firstHit=Ring`、`clickHandler=Node_0..Node_8`；对 `Node_1` 执行 `ExecuteEvents.Execute<IPointerClickHandler>` 模拟点击成功，详情随之切换。
+- 预制体资产：`LoadPrefabContents` 读回校验 `raycastOn=12, raycastOff=0`，与磁盘一致。
+- 未验证：真实鼠标物理点击（本轮用事件系统模拟）、轻功页 3 个节点的实际点击观感（同样已修但只做了静态与资产校验）、真机/非编辑器环境。
+
+## 13.5 遗留
+
+- 第六轮记录的 **HybridCLR `GM_Game.dll.bytes` 未重建** 仍然存在；本轮未改代码，没有新增类，但整条技能面板改动打包前仍需执行 Unity 菜单 `Build/BuildDll`。
+- 「配置 / 翻页 / 描述」、1/2 徽章、自创/双门派/失传武学仍为展示态，未接协议。
+
 
