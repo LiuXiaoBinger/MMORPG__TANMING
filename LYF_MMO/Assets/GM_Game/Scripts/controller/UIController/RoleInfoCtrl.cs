@@ -212,8 +212,8 @@ public sealed class RoleInfoCtrl : CtrlBase
         }
         if (_skillWindow != null)
         {
-            // 当前协议尚无独立技能点字段，沿用旧界面使用角色等级的表现。
-            _skillWindow.SetHeader(jobName, roleInfo.BaseInfo.Level);
+            // 武学面板只显示职业名，技能点已从界面移除。
+            _skillWindow.SetHeader(jobName);
         }
     }
 

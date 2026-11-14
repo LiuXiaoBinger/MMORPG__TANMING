@@ -64,9 +64,6 @@ public class SkillInfoWindow : WindowBase
     /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
 
-    /// <summary>顶部右侧的技能点数文本。</summary>
-    [SerializeField, Header("技能升级点")] private TMP_Text _texPoint;
-
     /// <summary>标题栏关闭按钮。</summary>
     [SerializeField, Header("关闭按钮")] private Button _btnClose;
 
@@ -286,18 +283,13 @@ public class SkillInfoWindow : WindowBase
         ApplyPage();
     }
 
-    /// <summary>把职业名与技能点数显示在标题栏，不修改角色技能数据。</summary>
+    /// <summary>把职业名显示在标题栏，不修改角色技能数据。</summary>
     /// <param name="jobName">当前职业显示名。</param>
-    /// <param name="availablePoints">顶部右侧显示的数值，当前协议沿用角色等级。</param>
-    public void SetHeader(string jobName, int availablePoints)
+    public void SetHeader(string jobName)
     {
         if (_texJob != null)
         {
             _texJob.text = jobName;
-        }
-        if (_texPoint != null)
-        {
-            _texPoint.text = "剩余技能点：" + availablePoints;
         }
     }
 
