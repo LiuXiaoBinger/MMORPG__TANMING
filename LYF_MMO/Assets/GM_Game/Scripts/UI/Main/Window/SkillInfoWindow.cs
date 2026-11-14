@@ -457,10 +457,11 @@ public class SkillInfoWindow : WindowBase
         }
         SetActive(_emptyPage, false);
         SetActive(_detailPanel, true);
-        // 列表页：左侧浮出技能列表，立绘仍留在中间作为背景。
+        // 列表页：左侧浮出技能列表，立绘移到列表与详情之间。
         if (_page == PageList)
         {
             SetActive(_portraitRoot, true);
+            SetPortraitPosition(false);
             SetActive(_battleRoot, false);
             SetActive(_toolRoot, false);
             SetActive(_badgeRoot, false);
@@ -471,6 +472,7 @@ public class SkillInfoWindow : WindowBase
         }
         SetActive(_listRoot, false);
         SetActive(_portraitRoot, true);
+        SetPortraitPosition(true);
         // 轻功出战页：左侧 3 个节点 + 中央大图标，没有工具行与技能组徽章。
         if (_category == CategoryLight)
         {
@@ -498,6 +500,29 @@ public class SkillInfoWindow : WindowBase
             return;
         }
         target.SetActive(active);
+    }
+
+    /// <summary>按页面摆放立绘：出战页靠左给节点留位，列表页挪到列表与详情之间。</summary>
+    /// <param name="battleLayout">true 表示出战页位置。</param>
+    private void SetPortraitPosition(bool battleLayout)
+    {
+        if (_portraitRoot == null)
+        {
+            return;
+        }
+        RectTransform rect = _portraitRoot.transform as RectTransform;
+        if (rect == null)
+        {
+            return;
+        }
+        if (battleLayout)
+        {
+            rect.anchoredPosition = new Vector2(-430f, -70f);
+        }
+        else
+        {
+            rect.anchoredPosition = new Vector2(-180f, -90f);
+        }
     }
 
     /// <summary>把武功分类的技能铺到 8 个普通节点与 1 个绝学大节点上。</summary>
