@@ -28,6 +28,12 @@ public sealed class SkillViewData
     /// <summary>技能有效距离，单位为米。</summary>
     public int Range { get; }
 
+    /// <summary>升到下一级消耗的铜币，绝学不走货币升级。</summary>
+    public int UpgradeCost { get; }
+
+    /// <summary>升到下一级所需的角色等级，0 表示由界面按当前技能等级推算。</summary>
+    public int NextRoleLevel { get; }
+
     /// <summary>创建技能展示数据。</summary>
     /// <param name="skillId">技能配置编号。</param>
     /// <param name="name">技能名称，null 转为空串。</param>
@@ -41,9 +47,12 @@ public sealed class SkillViewData
     /// <param name="tag">两字定位标签。</param>
     /// <param name="mpCost">单次消耗法力值。</param>
     /// <param name="range">有效距离，单位为米。</param>
+    /// <param name="upgradeCost">升到下一级消耗的铜币，默认 40。</param>
+    /// <param name="nextRoleLevel">下一级所需角色等级，默认 0 由界面推算。</param>
     public SkillViewData(int skillId, string name, string description, string iconPath,
         int level, float cooldown, string bindKey, float remainingCooldown,
-        int skillType, string tag, int mpCost, int range)
+        int skillType, string tag, int mpCost, int range,
+        int upgradeCost = 40, int nextRoleLevel = 0)
     {
         SkillId = skillId;
         Name = name;
@@ -77,5 +86,7 @@ public sealed class SkillViewData
         }
         MpCost = mpCost;
         Range = range;
+        UpgradeCost = upgradeCost;
+        NextRoleLevel = nextRoleLevel;
     }
 }

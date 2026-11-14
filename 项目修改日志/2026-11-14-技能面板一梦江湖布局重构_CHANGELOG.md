@@ -337,3 +337,58 @@
 - 本地提交 **`441ac16 style: 武学面板标题条与列表页按 UI 评审实测重做`**（3 files changed, 121 insertions(+), 56 deletions(-)）。
 - **推送成功**：`5e81e4a..441ac16 codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。第七轮积压的 `68cc3f0`（节点点击修复）与 `593c3c6`（回执）随本次 push 一并同步到远端，此前「推送失败」的遗留至此关闭。
 
+---
+
+# 第九轮：技能升级 / 绝学心得 / 描述滚动（2026-11-14 23:4x ~ 11-15 00:1x）
+
+## 15.1 需求来源
+
+用户提供三张一梦江湖实机截图并指出三件事：
+
+1. **技能是有升级这一说的**：出战页详情有「流星逐月(2级)」「下一级(角色3级可提升)」，右下角铜币 `40` + 升级箭头按钮；底部中间铜币 `224516` + 「升级全部」；八个技能图标右上角有绿色可升级三角。
+2. **绝学升级跟技能升级不一样**：绝学不吃铜币，走「绝学升级：心得 0/100」进度条；心得来源为「释放绝学 +1/次」与「心得丹 +10/个」（点击或长按使用道具），右下角是心得满后的升级按钮。
+3. **这个 UI 是一个滚动条，可以滚动**：描述面板右边缘有细长滚动条，长文本（白色叙述 / 橙色数值 / 青蓝词条 / 绿色下一级）需要滚动查看。
+
+## 15.2 实现（三套机制，互不混用）
+
+**数据层** `SkillViewData.cs`
+
+- 新增只读属性 `UpgradeCost`（单级铜币）与 `NextRoleLevel`（下一级角色等级门槛）。
+- 构造函数追加两个**带默认值的可选参数** `upgradeCost = 40, nextRoleLevel = 0`，`SkillCtrl.cs` 两处 `new SkillViewData(...)` 仍为原 12 参，无需改动、无破坏性。
+
+**表现层** `SkillInfoWindow.cs`（新增「技能升级与绝学心得」region）
+
+- 升级相关控件全部按 `transform.Find` 路径运行时绑定，**没有新增 `[SerializeField]` 序列化引用**，因此 prefab 与代码可独立构建；`EnsureUpgradeRefs()` 要求三块容器同时存在才绑定监听并置位，避免构建中途重复 `AddListener`。
+- `RefreshUpgradeBlock()` 按 `skill.Tag == "绝学"` 切换两套互斥 footer；`RefreshNormalBlock()` 显示 `下一级(角色N级可提升)`、单级铜币、余额是否足够；`RefreshUltimateBlock()` 显示心得进度、道具余量、攒满才可升级。
+- 本地模拟状态：`_levelOverrides`（技能等级增量，不改服务端只读快照）、`_currency = 224516`、`_ultimateExp`、`_expItemCount = 10`、`UltimateExpMax = 100`、`ExpItemGain = 10`。
+- 交互：单级升级扣铜币 + 等级 +1 + 门槛同步递增；「升级全部」按余额依次给所有已学普通技能各升一级（**普攻 `Type=1` 与绝学均排除**）；心得丹消耗道具 +10 心得并弹出说明浮层（4 秒自动收起）；心得攒满后绝学升级清空心得并 +1 级。
+- 九个武功节点新增绿色 `▲` 角标，仅在该技能可升级时显示。
+- 描述富文本：`BuildRichDescription()` 把百分比/`+N`/`N点`/`N秒` 染橙、行首中文词条染青蓝、`下一级` 染绿；换技能时 `Canvas.ForceUpdateCanvases()` 后把 ScrollRect 复位到顶部。
+- 进度条**不用 `Image.Type.Filled`**：实测无 sprite 的 Image 在该版本会忽略 `fillAmount` 显示成满格，改为控制 `rectTransform.anchorMax.x`。
+
+**资源层**（用 Unity 编辑器脚本构建，不手改 YAML）
+
+- 新增 `LYF_MMO/Assets/GM_Game/Editor/SkillUpgradeUIBuilder.cs`，菜单 `Tools/Skill/Build Upgrade UI`，可重复执行：重复执行前先把已收进滚动 Content 的五个原有对象救回 `DetailPanel`，避免随旧滚动区一起被销毁（已验证二次执行后 `contentChildren=5` 且名字齐全）。
+- `DetailPanel/DescScroll`：`ScrollRect + Viewport(RectMask2D) + Content(VerticalLayoutGroup + ContentSizeFitter)`，把 `Txt_Sec1 / Txt_Desc / Divider_2 / Txt_Sec2 / Txt_Cond` 依次收进文档流；右侧 `DescScrollbar` 细滚动条。视口 `620x460`，内容 `491.77` > 视口，确实可滚动。
+- `NormalUpgradeRoot` / `UltimateUpgradeRoot`（互斥）/ 窗口根 `CurrencyBar`（仅出战页显示，列表页隐藏）。
+- 新增 `LYF_MMO/Assets/GM_Game/UISprites/Skill/CoinIcon.png` + `.meta`：构建器生成的 64×64 圆形白色 sprite，替代字体符号 `◎`（原字体缺字显示成小点）。
+
+## 15.3 实测（Play 模式真实渲染 + 真实按钮事件）
+
+- **滚动**：`contentH=491.77 > viewportH=460`；`verticalNormalizedPosition=0` 后截图显示 `◇ 技能描述` 标题滚走、`◇ 使用条件` 下「调息时间 13.0 秒 / 效果范围 6 米 / 消耗内力 20」三行全部露出，滑块下移，底部升级区固定不动。
+- **普通技能升级链路**：初始 `224516 / (2级) / 下一级(角色3级可提升)` → 点升级 → `224476 / (3级) / 下一级(角色4级可提升)` → 点升级全部 → `224196`（7 个普通技能 × 40）。
+- **绝学链路**：切到绝学后 `normalVisible=false / ultimateVisible=true`；点 5 次心得丹 → `心得 50/100`、`心得丹 ×5`、`fillX=0.5`、浮层 `activeInHierarchy=true`；普通铜币区保持隐藏。
+- **回归**：列表页 9 个条目正常、`CurrencyBar` 隐藏、详情滚动条与升级区仍可用、无新重叠或裁切。出战页节点点击链路未改动（12 个 Ring 仍 `raycastTarget=1`）。
+- prefab 归一化对比（排除 fileID 重排）：文档数 `7458 → 7606`，新增约 3968 行全是新对象，**删除仅 5 行**（4 个描述对象 sizeDelta + 1 行），未误伤其它窗口。
+- 最终四张截图归档：`_temp/skill_upgrade/final_normal.png`、`final_ultimate.png`、`final_scroll_bottom.png`、`final_list_page.png`。
+
+## 15.4 未验证 / 遗留（如实说明）
+
+- **升级与心得全部是本地 UI 模拟，未接任何协议**：铜币余额、等级增量、心得、道具数量都只存在窗口实例内，`ReFreshUI` 由控制器重发快照时本地等级增量仍保留在 `_levelOverrides`，但不会写回服务端；真机需补升级请求/回包、货币查询、心得丹道具接口。
+- 心得来源只实现了「使用心得丹」，参考图的「释放绝学 +1/次」未接施法事件。
+- `ExpItemHint` 浮层为 4 秒自动收起；验证时截图工具为异步，抓到的图多为收起后的状态（功能本身经 `activeInHierarchy=true` 确认）。
+- **打包前必须做的事不变**：`Assets/GM_Game/Dlls/GM_Game.dll.bytes` 仍未重建，本轮又新增了 `SkillViewData` 字段与 `SkillInfoWindow` 大量逻辑，必须跑 Unity 菜单 `Build/BuildDll` 后提交 DLL，否则真机包会 Missing 新字段/逻辑。
+- 轻功页 / 秘笈页未实拍；多分辨率按 1920×1080 写死；真实登录态按 `L` 打开、真实鼠标物理点击、长描述在极端文本量下的排版未测。
+- 第七/八轮的「背景小青点」仍未消除（详见 14.6），本轮未改动相关资源。
+- 构建脚本 `SkillUpgradeUIBuilder.cs` 与 `CoinIcon.png` 保留在仓库中，便于后续重建 / 复用；重建会覆盖同名升级 UI 对象，但不会动其它窗口。
+

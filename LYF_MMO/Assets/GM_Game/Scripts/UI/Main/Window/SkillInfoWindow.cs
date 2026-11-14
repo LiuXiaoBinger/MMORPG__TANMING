@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +40,21 @@ public class SkillInfoWindow : WindowBase
 
     /// <summary>技能表 Type=1 为普通攻击，不属于技能，不参与节点与列表展示。</summary>
     private const int BasicAttackType = 1;
+
+    /// <summary>绝学升一级需要攒满的心得值，与铜币升级是两套独立机制。</summary>
+    private const int UltimateExpMax = 100;
+
+    /// <summary>使用一颗心得丹增加的心得值。</summary>
+    private const int ExpItemGain = 10;
+
+    /// <summary>技能未提供升级消耗时使用的默认铜币价格。</summary>
+    private const int DefaultUpgradeCost = 40;
+
+    /// <summary>技能升级文案的绿色，与参考实机一致。</summary>
+    private static readonly Color UpgradeGreen = new Color(0.42f, 0.88f, 0.55f, 1f);
+
+    /// <summary>技能升级文案未达成时的灰色。</summary>
+    private static readonly Color UpgradeGray = new Color(0.5f, 0.56f, 0.62f, 1f);
 
     /// <summary>节点外圈常态颜色。</summary>
     private static readonly Color NodeRingNormal = new Color(0.42f, 0.63f, 0.92f, 1f);
@@ -202,6 +218,72 @@ public class SkillInfoWindow : WindowBase
     /// <summary>按钮事件是否已绑定，避免窗口反复激活时重复挂监听。</summary>
     private bool _buttonsBound;
 
+    /// <summary>升级相关节点是否已在运行时按路径查找并绑定。</summary>
+    private bool _upgradeRefsBound;
+
+    /// <summary>描述区滚动容器，切换技能时回到顶部。</summary>
+    private ScrollRect _descScroll;
+
+    /// <summary>普通技能升级区（下一级提示 + 铜币 + 升级按钮）。</summary>
+    private GameObject _normalUpgradeRoot;
+
+    /// <summary>绝学升级区（心得进度 + 心得丹），与普通技能区互斥显示。</summary>
+    private GameObject _ultimateUpgradeRoot;
+
+    /// <summary>普通技能「下一级(角色N级可提升)」。</summary>
+    private TMP_Text _nextLevelText;
+
+    /// <summary>普通技能单级升级消耗的铜币数字。</summary>
+    private TMP_Text _costText;
+
+    /// <summary>普通技能单级升级按钮。</summary>
+    private Button _upgradeButton;
+
+    /// <summary>绝学「心得 X/100」文字。</summary>
+    private TMP_Text _expText;
+
+    /// <summary>绝学心得进度条填充。</summary>
+    private Image _expFill;
+
+    /// <summary>心得丹按钮上的数量文字。</summary>
+    private TMP_Text _expItemText;
+
+    /// <summary>心得丹道具按钮。</summary>
+    private Button _expItemButton;
+
+    /// <summary>点击心得丹后显示的浮层提示。</summary>
+    private GameObject _expItemHint;
+
+    /// <summary>绝学心得攒满后的升级按钮。</summary>
+    private Button _ultimateButton;
+
+    /// <summary>底部「铜币总数 + 升级全部」条。</summary>
+    private GameObject _currencyBar;
+
+    /// <summary>底部铜币总数文字。</summary>
+    private TMP_Text _currencyText;
+
+    /// <summary>升级全部按钮。</summary>
+    private Button _upgradeAllButton;
+
+    /// <summary>九个武功节点右上角的绿色可升级角标。</summary>
+    private readonly TMP_Text[] _nodeFlags = new TMP_Text[BattleNodeCount];
+
+    /// <summary>本地模拟的技能等级增量，键为技能编号；真实等级由服务端快照给出。</summary>
+    private readonly Dictionary<int, int> _levelOverrides = new Dictionary<int, int>();
+
+    /// <summary>本地模拟的铜币余额，未接货币协议。</summary>
+    private int _currency = 224516;
+
+    /// <summary>本地模拟的绝学心得值。</summary>
+    private int _ultimateExp;
+
+    /// <summary>本地模拟的心得丹持有数量。</summary>
+    private int _expItemCount = 10;
+
+    /// <summary>详情面板当前展示的技能，升级按钮针对它生效。</summary>
+    private SkillViewData _currentSkill;
+
     /// <summary>窗口首次激活时绑定按钮事件。</summary>
     private void Awake()
     {
@@ -264,6 +346,7 @@ public class SkillInfoWindow : WindowBase
                 _lightButtons[index].onClick.AddListener(delegate { SelectLightNode(nodeIndex); });
             }
         }
+        EnsureUpgradeRefs();
     }
 
     /// <summary>接收控制器下发的技能快照，按当前分类与子页重铺界面。</summary>
@@ -456,10 +539,13 @@ public class SkillInfoWindow : WindowBase
             SetActive(_listRoot, false);
             SetActive(_detailPanel, false);
             SetActive(_emptyPage, true);
+            SetActive(_currencyBar, false);
             return;
         }
         SetActive(_emptyPage, false);
         SetActive(_detailPanel, true);
+        // 铜币条只在出战页出现，列表页底部留给滚动列表。
+        SetActive(_currencyBar, _page == PageBattle);
         // 列表页：左侧铺满技能列表，隐藏立绘，避免半张脸被详情面板切掉。
         if (_page == PageList)
         {
@@ -929,6 +1015,8 @@ public class SkillInfoWindow : WindowBase
             return;
         }
         _detailSkillId = skill.SkillId;
+        _currentSkill = skill;
+        RefreshUpgradeBlock(skill);
         if (_detailName != null)
         {
             _detailName.text = skill.Name;
@@ -937,11 +1025,13 @@ public class SkillInfoWindow : WindowBase
         {
             if (skill.Level > 0)
             {
-                _detailLevel.text = "Lv." + skill.Level;
+                _detailLevel.text = "(" + GetSkillLevel(skill) + "级)";
+                _detailLevel.color = UpgradeGreen;
             }
             else
             {
                 _detailLevel.text = "未习得";
+                _detailLevel.color = UpgradeGray;
             }
         }
         if (_detailTag != null)
@@ -950,7 +1040,7 @@ public class SkillInfoWindow : WindowBase
         }
         if (_detailDesc != null)
         {
-            _detailDesc.text = skill.Description;
+            _detailDesc.text = BuildRichDescription(skill.Description);
         }
         if (_detailCond != null)
         {
@@ -996,6 +1086,8 @@ public class SkillInfoWindow : WindowBase
     /// <summary>没有可展示技能时清空详情，避免残留上一条技能内容。</summary>
     private void ShowEmptyDetail()
     {
+        _currentSkill = null;
+        RefreshUpgradeBlock(null);
         if (_detailName != null)
         {
             _detailName.text = EmptyNodeTag;
@@ -1025,4 +1117,337 @@ public class SkillInfoWindow : WindowBase
             _lightBigIcon.enabled = false;
         }
     }
+
+    #region 技能升级与绝学心得
+
+    /// <summary>按路径把升级区控件找出来并挂事件；资源未构建时直接返回，下次调用会重试。</summary>
+    private void EnsureUpgradeRefs()
+    {
+        if (_upgradeRefsBound)
+        {
+            return;
+        }
+        Transform detail = transform.Find("DetailPanel");
+        if (detail == null)
+        {
+            return;
+        }
+        Transform normal = detail.Find("NormalUpgradeRoot");
+        Transform ultimate = detail.Find("UltimateUpgradeRoot");
+        Transform currency = transform.Find("CurrencyBar");
+        // 三块容器必须同时存在，避免构建中途把监听器挂重。
+        if (normal == null || ultimate == null || currency == null)
+        {
+            return;
+        }
+        Transform scroll = detail.Find("DescScroll");
+        _descScroll = scroll != null ? scroll.GetComponent<ScrollRect>() : null;
+        _normalUpgradeRoot = normal.gameObject;
+        _ultimateUpgradeRoot = ultimate.gameObject;
+        _currencyBar = currency.gameObject;
+        _nextLevelText = ChildText(normal, "Txt_NextLevel");
+        _costText = ChildText(normal, "Txt_Cost");
+        _upgradeButton = ChildButton(normal, "Btn_Upgrade");
+        _expText = ChildText(ultimate, "Txt_Exp");
+        _expFill = ChildImage(ultimate, "ExpBarBg/ExpBarFill");
+        _expItemText = ChildText(ultimate, "Btn_ExpItem/Txt_ExpItem");
+        _expItemButton = ChildButton(ultimate, "Btn_ExpItem");
+        _expItemHint = ChildGo(ultimate, "ExpItemHint");
+        _ultimateButton = ChildButton(ultimate, "Btn_UltimateUpgrade");
+        _currencyText = ChildText(currency, "Txt_Currency");
+        _upgradeAllButton = ChildButton(currency, "Btn_UpgradeAll");
+        if (_upgradeButton != null)
+        {
+            _upgradeButton.onClick.AddListener(OnUpgradeClicked);
+        }
+        if (_expItemButton != null)
+        {
+            _expItemButton.onClick.AddListener(OnExpItemClicked);
+        }
+        if (_ultimateButton != null)
+        {
+            _ultimateButton.onClick.AddListener(OnUltimateUpgradeClicked);
+        }
+        if (_upgradeAllButton != null)
+        {
+            _upgradeAllButton.onClick.AddListener(OnUpgradeAllClicked);
+        }
+        Transform nodeRoot = transform.Find("NodeRoot");
+        if (nodeRoot != null)
+        {
+            for (int index = 0; index < BattleNodeCount; index++)
+            {
+                _nodeFlags[index] = ChildText(nodeRoot, "Node_" + index + "/UpgradeFlag");
+            }
+        }
+        SetActive(_expItemHint, false);
+        _upgradeRefsBound = true;
+    }
+
+    /// <summary>按当前技能切换「铜币升级」或「绝学心得」两套互斥 UI，并刷新全部数字。</summary>
+    /// <param name="skill">详情当前技能，为空时隐藏两套升级区。</param>
+    private void RefreshUpgradeBlock(SkillViewData skill)
+    {
+        EnsureUpgradeRefs();
+        if (skill == null)
+        {
+            SetActive(_normalUpgradeRoot, false);
+            SetActive(_ultimateUpgradeRoot, false);
+            return;
+        }
+        bool ultimate = skill.Tag == UltimateTag;
+        SetActive(_normalUpgradeRoot, !ultimate);
+        SetActive(_ultimateUpgradeRoot, ultimate);
+        if (_currencyText != null)
+        {
+            _currencyText.text = _currency.ToString();
+        }
+        // 换技能后描述回到顶部，长文本靠右侧滚动条查看；先强制排版再复位，避免内容高度尚未重算。
+        if (_descScroll != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            _descScroll.verticalNormalizedPosition = 1f;
+        }
+        if (ultimate)
+        {
+            RefreshUltimateBlock();
+        }
+        else
+        {
+            RefreshNormalBlock(skill);
+        }
+        RefreshNodeFlags();
+    }
+
+    /// <summary>普通技能：显示角色等级门槛、单级铜币消耗与余额是否足够。</summary>
+    private void RefreshNormalBlock(SkillViewData skill)
+    {
+        // 参考实机为「2级 → 角色3级可提升」；本地升级后门槛同步递增，不显示过期等级。
+        int levelGap = GetSkillLevel(skill) - skill.Level;
+        int requiredRoleLevel = skill.NextRoleLevel > 0
+            ? skill.NextRoleLevel + levelGap
+            : GetSkillLevel(skill) + 1;
+        int cost = GetUpgradeCost(skill);
+        if (_nextLevelText != null)
+        {
+            _nextLevelText.text = "下一级(角色" + requiredRoleLevel + "级可提升)";
+            _nextLevelText.color = UpgradeGreen;
+        }
+        if (_costText != null)
+        {
+            _costText.text = cost.ToString();
+        }
+        if (_upgradeButton != null)
+        {
+            _upgradeButton.interactable = _currency >= cost;
+        }
+    }
+
+    /// <summary>绝学：显示心得进度、道具余量与「攒满才可升级」状态。</summary>
+    private void RefreshUltimateBlock()
+    {
+        if (_expText != null)
+        {
+            _expText.text = "绝学升级：心得 " + _ultimateExp + "/" + UltimateExpMax;
+        }
+        if (_expFill != null)
+        {
+            // 无 sprite 的 Image 走 Filled 时部分版本会忽略 fillAmount，改用锚点宽度控制进度。
+            _expFill.type = Image.Type.Simple;
+            RectTransform fillRect = _expFill.rectTransform;
+            fillRect.anchorMax = new Vector2((float)_ultimateExp / UltimateExpMax, 1f);
+        }
+        if (_expItemText != null)
+        {
+            _expItemText.text = "心得丹 ×" + _expItemCount;
+        }
+        if (_expItemButton != null)
+        {
+            _expItemButton.interactable = _expItemCount > 0 && _ultimateExp < UltimateExpMax;
+        }
+        if (_ultimateButton != null)
+        {
+            _ultimateButton.interactable = _ultimateExp >= UltimateExpMax;
+        }
+    }
+
+    /// <summary>刷新九个武功节点右上角的绿色可升级角标。</summary>
+    private void RefreshNodeFlags()
+    {
+        for (int index = 0; index < _nodeFlags.Length; index++)
+        {
+            if (_nodeFlags[index] == null)
+            {
+                continue;
+            }
+            // 该节点对应技能，列表不足时视为空槽。
+            SkillViewData skill = index < _battleSkills.Count ? _battleSkills[index] : null;
+            bool canUpgrade = false;
+            if (skill != null && skill.Level > 0)
+            {
+                if (skill.Tag == UltimateTag)
+                {
+                    canUpgrade = _ultimateExp >= UltimateExpMax;
+                }
+                else
+                {
+                    canUpgrade = _currency >= GetUpgradeCost(skill);
+                }
+            }
+            _nodeFlags[index].gameObject.SetActive(canUpgrade);
+        }
+    }
+
+    /// <summary>点击右下角升级按钮：扣铜币并把当前普通技能提升一级。</summary>
+    private void OnUpgradeClicked()
+    {
+        SkillViewData skill = _currentSkill;
+        if (skill == null || skill.Tag == UltimateTag)
+        {
+            return;
+        }
+        int cost = GetUpgradeCost(skill);
+        if (_currency < cost)
+        {
+            return;
+        }
+        _currency -= cost;
+        AddSkillLevel(skill.SkillId, 1);
+        ShowDetail(skill);
+    }
+
+    /// <summary>点击「升级全部」：按铜币余额依次把所有可升级的普通技能各升一级，绝学不参与。</summary>
+    private void OnUpgradeAllClicked()
+    {
+        for (int index = 0; index < _allSkills.Count; index++)
+        {
+            SkillViewData skill = _allSkills[index];
+            if (skill == null || skill.Level <= 0)
+            {
+                continue;
+            }
+            // 普攻不算技能，绝学走心得制，都不吃铜币。
+            if (skill.SkillType == BasicAttackType || skill.Tag == UltimateTag)
+            {
+                continue;
+            }
+            int cost = GetUpgradeCost(skill);
+            if (_currency < cost)
+            {
+                continue;
+            }
+            _currency -= cost;
+            AddSkillLevel(skill.SkillId, 1);
+        }
+        if (_currentSkill != null)
+        {
+            ShowDetail(_currentSkill);
+        }
+    }
+
+    /// <summary>点击心得丹：消耗一颗道具增加心得，并弹出使用说明浮层。</summary>
+    private void OnExpItemClicked()
+    {
+        if (_expItemCount <= 0 || _ultimateExp >= UltimateExpMax)
+        {
+            return;
+        }
+        _expItemCount--;
+        _ultimateExp = Mathf.Min(UltimateExpMax, _ultimateExp + ExpItemGain);
+        SetActive(_expItemHint, true);
+        CancelInvoke("HideExpItemHint");
+        Invoke("HideExpItemHint", 4f);
+        if (_currentSkill != null)
+        {
+            ShowDetail(_currentSkill);
+        }
+    }
+
+    /// <summary>心得攒满后点击绝学升级按钮：清空心得并把绝学提升一级。</summary>
+    private void OnUltimateUpgradeClicked()
+    {
+        if (_ultimateExp < UltimateExpMax || _currentSkill == null)
+        {
+            return;
+        }
+        _ultimateExp = 0;
+        AddSkillLevel(_currentSkill.SkillId, 1);
+        ShowDetail(_currentSkill);
+    }
+
+    /// <summary>自动收起心得丹浮层。</summary>
+    private void HideExpItemHint()
+    {
+        SetActive(_expItemHint, false);
+    }
+
+    /// <summary>取技能当前等级，叠加本地模拟的升级增量。</summary>
+    private int GetSkillLevel(SkillViewData skill)
+    {
+        int extra;
+        if (_levelOverrides.TryGetValue(skill.SkillId, out extra))
+        {
+            return skill.Level + extra;
+        }
+        return skill.Level;
+    }
+
+    /// <summary>取单级升级消耗，配置缺失时回退到默认铜币价格。</summary>
+    private static int GetUpgradeCost(SkillViewData skill)
+    {
+        return skill.UpgradeCost > 0 ? skill.UpgradeCost : DefaultUpgradeCost;
+    }
+
+    /// <summary>记录一次本地模拟升级，不改动服务端下发的只读快照。</summary>
+    private void AddSkillLevel(int skillId, int delta)
+    {
+        int current;
+        _levelOverrides.TryGetValue(skillId, out current);
+        _levelOverrides[skillId] = current + delta;
+    }
+
+    /// <summary>把纯文本描述转成 TMP 富文本：数值橙色、词条青蓝、下一级绿色。</summary>
+    private static string BuildRichDescription(string raw)
+    {
+        if (string.IsNullOrEmpty(raw))
+        {
+            return string.Empty;
+        }
+        string text = Regex.Replace(raw, @"(\d+\.?\d*%|\+\d+|\d+点|\d+秒|\d+名)",
+            "<color=#FFB46B>$1</color>");
+        text = Regex.Replace(text, @"(?m)^([\u4e00-\u9fa5]{2,4})[：:]",
+            "<color=#7FD2F0>$1：</color>");
+        text = Regex.Replace(text, @"(?m)^(下一级.*)$", "<color=#6BE39A>$1</color>");
+        return text;
+    }
+
+    /// <summary>按相对路径取子物体。</summary>
+    private static GameObject ChildGo(Transform root, string path)
+    {
+        Transform found = root.Find(path);
+        return found != null ? found.gameObject : null;
+    }
+
+    /// <summary>按相对路径取 TMP 文本。</summary>
+    private static TMP_Text ChildText(Transform root, string path)
+    {
+        Transform found = root.Find(path);
+        return found != null ? found.GetComponent<TMP_Text>() : null;
+    }
+
+    /// <summary>按相对路径取 Image。</summary>
+    private static Image ChildImage(Transform root, string path)
+    {
+        Transform found = root.Find(path);
+        return found != null ? found.GetComponent<Image>() : null;
+    }
+
+    /// <summary>按相对路径取 Button。</summary>
+    private static Button ChildButton(Transform root, string path)
+    {
+        Transform found = root.Find(path);
+        return found != null ? found.GetComponent<Button>() : null;
+    }
+
+    #endregion
 }
