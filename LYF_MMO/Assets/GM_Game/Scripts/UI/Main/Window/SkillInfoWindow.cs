@@ -688,6 +688,11 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
+        // 图标回来之前先隐藏，避免 Image 在没有 sprite 时画出一个白色方块。
+        if (icons[index].sprite == null)
+        {
+            icons[index].enabled = false;
+        }
         ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
         {
             if (icons[index] == null || sprite == null)
@@ -695,6 +700,7 @@ public class SkillInfoWindow : WindowBase
                 return;
             }
             icons[index].sprite = sprite;
+            icons[index].enabled = true;
         });
     }
 
@@ -746,11 +752,17 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
+        // 大图标同样先隐藏，等图标加载完再显示。
+        if (_lightBigIcon.sprite == null)
+        {
+            _lightBigIcon.enabled = false;
+        }
         ResourceMgr.Instance.LoadSpriteAsync(selected.IconPath, sprite =>
         {
             if (_lightBigIcon != null && sprite != null)
             {
                 _lightBigIcon.sprite = sprite;
+                _lightBigIcon.enabled = true;
             }
         });
     }
@@ -924,6 +936,11 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
+        // 详情图标同样先隐藏，避免加载期间出现白块。
+        if (_detailIcon.sprite == null)
+        {
+            _detailIcon.enabled = false;
+        }
         // 本次请求对应的技能编号，回调时与当前详情比对。
         int skillId = skill.SkillId;
         ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
@@ -935,6 +952,7 @@ public class SkillInfoWindow : WindowBase
             if (_detailSkillId == skillId)
             {
                 _detailIcon.sprite = sprite;
+                _detailIcon.enabled = true;
             }
         });
     }

@@ -57,6 +57,8 @@ public class SkillListItemWidget : MonoBehaviour
         {
             return;
         }
+        // 图标未回来前先隐藏，避免出现白色方块。
+        _icon.enabled = false;
         ResourceMgr.Instance.LoadSpriteAsync(skill.IconPath, sprite =>
         {
             if (_icon == null || sprite == null)
@@ -67,6 +69,7 @@ public class SkillListItemWidget : MonoBehaviour
             if (_skillId == skill.SkillId)
             {
                 _icon.sprite = sprite;
+                _icon.enabled = true;
             }
         });
     }
