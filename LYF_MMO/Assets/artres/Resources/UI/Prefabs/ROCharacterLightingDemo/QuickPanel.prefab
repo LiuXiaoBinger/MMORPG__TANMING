@@ -530,6 +530,7 @@ MonoBehaviour:
   _taskOff: {fileID: 5849634000545529385}
   _teamOn: {fileID: 1285159136298753179}
   _teamOff: {fileID: 7131211958317672589}
+  _taskPanelWidget: {fileID: 2863729576397418375}
 --- !u!114 &6008604100385379375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5285,6 +5286,9 @@ MonoBehaviour:
   - {fileID: 5523006717635778700}
   - {fileID: 1990001244928494811}
   _foldButton: {fileID: 7617667374434183277}
+  _verticalTabGroup: {fileID: 1183751288827780}
+  _teamPanel: {fileID: 7033748235907592053}
+  _panelWidget: {fileID: 3868127413059192678}
 --- !u!114 &6329025556566527349
 MonoBehaviour:
   m_ObjectHideFlags: 0

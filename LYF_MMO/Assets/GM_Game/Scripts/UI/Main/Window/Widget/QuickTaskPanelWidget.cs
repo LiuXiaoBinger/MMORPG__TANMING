@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 快捷任务面板控件，绑定 QuickTaskPanel.prefab 根节点。
-/// 面板由主界面持有，克隆 TaskTpl 生成条目，只展示已接取且被追踪的任务；
-/// 不创建独立窗口生命周期，也不自行修改任务数据。
-/// 页签 Type_1..3 是 ON/Off 两个按钮组成的自定义页签，不是 Unity Toggle。
+/// 主界面常驻的快捷任务面板，从 TaskMgr 读取追踪列表和快捷页签，按需克隆并复用条目。
+/// 点击条目依次通知控制器选择任务、前往目标；放弃和打开主窗口也只转发请求。
+/// 任务、玩法、奇遇页签控制的是快捷面板，折叠时隐藏左侧整组 UI（竖排页签、页签行、任务列表与队伍面板），只保留折叠按钮。
 /// </summary>
 public class QuickTaskPanelWidget : MonoBehaviour
 {
@@ -20,7 +18,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
     /// <summary>条目挂载父节点，绑定 TaskList/Viewport/TaskScrollView/Content。</summary>
     [SerializeField] private RectTransform _content;
 
-    /// <summary>任务列表根节点，折叠时整列横向左移出画布、页签保留，绑定 TaskList。</summary>
+    /// <summary>任务列表根节点，折叠时随任务面板一起隐藏，绑定 TaskList。</summary>
     [SerializeField] private RectTransform _taskListRoot;
 
     /// <summary>三个页签点击按钮，依次绑定 Type_1..3 的 Off 按钮（未选中态可点）。</summary>
@@ -34,9 +32,18 @@ public class QuickTaskPanelWidget : MonoBehaviour
 
     /// <summary>
     /// 折叠按钮，绑定 QuickTaskPanel 根下正式新增的 Btn_Fold（复用 Btn_Small_02 项目视觉资源）。
-    /// 点击在折叠与展开之间切换：折叠把任务列表横向移出画布、保留页签，按钮绕 Z 轴旋转 180 度指示状态。
+    /// 点击在折叠与展开之间切换：折叠隐藏左侧整组 UI 只保留本按钮，按钮绕 Z 轴旋转 180 度指示状态。
     /// </summary>
     [SerializeField] private Button _foldButton;
+
+    /// <summary>左侧竖排页签根节点（任务/队伍/战斗），绑定 Bg/QuickPanel/ToogleGroup，折叠时整组隐藏。</summary>
+    [SerializeField] private GameObject _verticalTabGroup;
+
+    /// <summary>队伍快捷面板，绑定 Bg/QuickPanel/QuickTeamPanel，折叠时隐藏，展开时按页签状态恢复。</summary>
+    [SerializeField] private GameObject _teamPanel;
+
+    /// <summary>外层页签控件，绑定 QuickPanel 根节点；折叠前切回任务内容层，展开后按原页签状态恢复显隐。</summary>
+    [SerializeField] private QuickPanelWidget _panelWidget;
 
     /// <summary>点击任务条目切换追踪。</summary>
     public event Action<TaskViewData> TaskSelected;
@@ -50,33 +57,20 @@ public class QuickTaskPanelWidget : MonoBehaviour
     /// <summary>请求前往任务目标。</summary>
     public event Action<TaskViewData> NavigateRequested;
 
-    /// <summary>请求放弃任务，转交任务控制器收敛为具名接口边界。</summary>
+    /// <summary>把待放弃的任务交给控制器处理，本面板不删除任务数据。</summary>
     public event Action<TaskViewData> GiveUpRequested;
 
-    /// <summary>已克隆的条目控件，按索引复用，不重复创建。</summary>
+    /// <summary>已经创建的条目按索引复用；任务变多时追加实例，变少时隐藏多余条目。</summary>
     private readonly List<QuickTaskItemWidget> _items = new List<QuickTaskItemWidget>();
 
     /// <summary>页签按钮事件是否已注册，避免重复订阅。</summary>
     private bool _pageButtonsRegistered;
 
-    /// <summary>当前是否处于折叠状态，折叠时任务列表横向移出画布、页签保留。</summary>
+    /// <summary>当前是否处于折叠状态，折叠时左侧整组 UI 隐藏、只保留折叠按钮。</summary>
     private bool _isFolded;
-
-    /// <summary>任务列表收起时相对原位的横向位移量，负值表示向屏幕左侧移出，保证整列落到画布左边界之外。</summary>
-    private const float FoldOffsetX = -280f;
-
-    /// <summary>任务列表收起与展开的补间时长，单位秒。</summary>
-    private const float FoldDuration = 0.22f;
-
-    /// <summary>任务列表展开状态下的锚定 X 坐标，初始化时记录，收起与展开都以它为准。</summary>
-    private float _listBaseAnchoredX;
-
-    /// <summary>任务列表横向位移补间句柄，重复折叠时先终止上一条，避免位移叠加。</summary>
-    private Tweener _listTween;
-
-    #region 事件注册与注销
     #endregion
 
+    #region 事件注册与注销
     /// <summary>注册折叠按钮点击事件，先移除再添加保证重复初始化不叠加监听。</summary>
     private void RegisterFoldButton()
     {
@@ -115,12 +109,11 @@ public class QuickTaskPanelWidget : MonoBehaviour
                 OnPageButtonClick(page);
             });
         }
-
-    #region 界面刷新
-    #endregion
         _pageButtonsRegistered = true;
     }
+    #endregion
 
+    #region 界面刷新
     /// <summary>按当前追踪任务刷新条目，数量不足时克隆、多余时隐藏。</summary>
     public void RefreshTrackedTasks()
     {
@@ -188,14 +181,13 @@ public class QuickTaskPanelWidget : MonoBehaviour
             GameObject offNode = _pageOffNodes[i];
             if (offNode != null)
             {
-
-    #region 交互响应
-    #endregion
                 offNode.SetActive(ToPageByIndex(i) != current);
             }
         }
     }
+    #endregion
 
+    #region 交互响应
     /// <summary>页签按钮回调，把目标页签上报给任务控制器。</summary>
     /// <param name="page">该按钮对应的页签。</param>
     private void OnPageButtonClick(TaskPageFilter page)
@@ -219,16 +211,34 @@ public class QuickTaskPanelWidget : MonoBehaviour
         if (TaskSelected != null)
         {
             TaskSelected.Invoke(data);
-
-    #region 核心逻辑
-    #endregion
         }
         if (NavigateRequested != null)
         {
             NavigateRequested.Invoke(data);
         }
     }
+    #endregion
 
+    /// <summary>条目放弃回调，原样转交任务控制器，不本地删除任务。</summary>
+    /// <param name="data">被请求放弃的任务展示数据。</param>
+    private void OnItemGiveUp(TaskViewData data)
+    {
+        if (GiveUpRequested != null)
+        {
+            GiveUpRequested.Invoke(data);
+        }
+    }
+
+    /// <summary>请求打开任务主窗口，供任务入口按钮调用，事件由任务控制器消费。</summary>
+    public void RequestOpenTaskWindow()
+    {
+        if (TaskWindowRequested != null)
+        {
+            TaskWindowRequested.Invoke();
+        }
+    }
+
+    #region 核心逻辑
     /// <summary>初始化模板与页签，由主界面视图调用一次。</summary>
     public void InitWidget()
     {
@@ -236,72 +246,95 @@ public class QuickTaskPanelWidget : MonoBehaviour
         {
             _taskTemplate.gameObject.SetActive(false);
         }
-        if (_taskListRoot != null)
-        {
-            // 记录任务列表展开态的原位横坐标，折叠位移始终相对该值计算。
-            _listBaseAnchoredX = _taskListRoot.anchoredPosition.x;
-        }
         RegisterPageButtons();
         RegisterFoldButton();
         SyncPageTabs();
         RotateFoldButton();
     }
 
-    /// <summary>设置面板折叠状态：折叠时任务列表横向滑出画布、页签保留，展开时滑回原位并刷新。</summary>
-    /// <param name="folded">true 折叠，false 展开。</param>
+    /// <summary>设置左侧整组 UI 的折叠状态：折叠时只保留折叠按钮，展开时恢复全部左侧界面。</summary>
+    /// <param name="folded">true 折叠隐藏左侧 UI，false 展开恢复。</param>
     public void SetFolded(bool folded)
     {
         _isFolded = folded;
-        MoveTaskListSideways(folded);
-        RotateFoldButton();
-        if (folded == false)
+        if (folded)
         {
+            // 先切回任务内容层：队伍内容显示时整个任务容器含折叠按钮会被隐藏，用户将无法点开。
+            if (_panelWidget != null)
+            {
+                _panelWidget.ShowTaskPanel();
+            }
+            // 隐藏任务面板除折叠按钮以外的所有子节点（页签行、任务列表与背景图）。
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                // 当前遍历到的子节点变换。
+                Transform child = transform.GetChild(i);
+                if (_foldButton != null && child == _foldButton.transform)
+                {
+                    continue;
+                }
+                child.gameObject.SetActive(false);
+            }
+            // 左侧竖排页签与队伍面板同属左侧 UI，折叠时一并隐藏。
+            if (_verticalTabGroup != null)
+            {
+                _verticalTabGroup.SetActive(false);
+            }
+            if (_teamPanel != null)
+            {
+                _teamPanel.SetActive(false);
+            }
+        }
+        else
+        {
+            // 恢复任务面板除折叠按钮以外的所有子节点。
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                // 当前遍历到的子节点变换。
+                Transform child = transform.GetChild(i);
+                if (_foldButton != null && child == _foldButton.transform)
+                {
+                    continue;
+                }
+                child.gameObject.SetActive(true);
+            }
+            if (_verticalTabGroup != null)
+            {
+                _verticalTabGroup.SetActive(true);
+            }
+            // 按外层页签记录的状态恢复任务/队伍内容，再刷新任务条目。
+            if (_panelWidget != null)
+            {
+                _panelWidget.ApplyPanelState();
+            }
             RefreshTrackedTasks();
         }
+        RotateFoldButton();
     }
 
-    /// <summary>
-    /// 按折叠状态横向移动任务列表：收起时整列向左移出画布左边界，页签行与折叠按钮保持原位。
-    /// 收起不隐藏节点，展开时条目继续按当前追踪任务刷新。
-    /// </summary>
-    /// <param name="folded">true 收起，false 展开。</param>
-    private void MoveTaskListSideways(bool folded)
+    /// <summary>当前是否处于折叠状态，供外层页签在折叠期间抑制内容切换。</summary>
+    public bool IsFolded
     {
-        if (_taskListRoot == null)
-        {
-            return;
-        }
-        if (_listTween != null)
-        {
-            _listTween.Kill();
-            _listTween = null;
-        }
-        // 任务列表本次横向补间的目标 X 坐标，展开时回到初始化记录的锚定 X。
-        float targetX = _listBaseAnchoredX + FoldOffsetX;
-        if (folded == false)
-        {
-            targetX = _listBaseAnchoredX;
-        }
-        _listTween = _taskListRoot.DOAnchorPosX(targetX, FoldDuration).SetEase(Ease.OutQuad);
+        get { return _isFolded; }
     }
 
-    /// <summary>把页签按钮索引转换为页签枚举。</summary>
+    /// <summary>把页签按钮索引转换为页签枚举，顺序对齐 RO 的 ETaskTag（任务/玩法/奇遇）。</summary>
     /// <param name="index">按钮在数组中的下标，从 0 开始。</param>
     /// <returns>对应的页签枚举。</returns>
     private TaskPageFilter ToPageByIndex(int index)
     {
         if (index == 0)
         {
-            return TaskPageFilter.MainLine;
+            return TaskPageFilter.Adventure;
         }
         if (index == 1)
         {
-            return TaskPageFilter.Daily;
+            return TaskPageFilter.Story;
         }
-        return TaskPageFilter.Activity;
+        return TaskPageFilter.Other;
     }
 
-    /// <summary>按折叠状态旋转折叠按钮：展开朝上，折叠时绕 Z 轴旋转 180 度朝下。</summary>
+    /// <summary>展开时按钮恢复零角度，折叠时绕 Z 轴旋转 180 度。</summary>
     private void RotateFoldButton()
     {
         if (_foldButton == null)
@@ -341,7 +374,6 @@ public class QuickTaskPanelWidget : MonoBehaviour
             if (item == null)
             {
                 clone.SetActive(false);
-    #endregion
                 return;
             }
             item.InitItem();
@@ -350,23 +382,5 @@ public class QuickTaskPanelWidget : MonoBehaviour
             _items.Add(item);
         }
     }
-
-    /// <summary>请求打开任务主窗口，供任务入口按钮调用，事件由任务控制器消费。</summary>
-    public void RequestOpenTaskWindow()
-    {
-        if (TaskWindowRequested != null)
-        {
-            TaskWindowRequested.Invoke();
-        }
-    }
-
-    /// <summary>条目放弃回调，原样转交任务控制器，不本地删除任务。</summary>
-    /// <param name="data">被请求放弃的任务展示数据。</param>
-    private void OnItemGiveUp(TaskViewData data)
-    {
-        if (GiveUpRequested != null)
-        {
-            GiveUpRequested.Invoke(data);
-        }
-    }
+    #endregion
 }
