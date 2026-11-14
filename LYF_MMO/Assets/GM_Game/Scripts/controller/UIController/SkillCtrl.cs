@@ -420,6 +420,51 @@ public sealed class SkillCtrl : CtrlBase
         return null;
     }
 
+    /// <summary>取技能节点的两字定位标签，优先按魔剑士技能编号给出表现层标签，未收录技能按类型回退。</summary>
+    /// <param name="skillConfig">技能主表配置，提供技能编号与类型。</param>
+    /// <returns>固定两个汉字的定位标签，例如“突进”“绝学”。</returns>
+    private static string GetSkillTag(SkillInfo skillConfig)
+    {
+        // 已收录的魔剑士技能使用各自的招式定位，便于玩家在环形节点上快速辨认。
+        switch (skillConfig.Id)
+        {
+            case 10010:
+                return "普攻";
+            case 10040:
+                return "突进";
+            case 10050:
+                return "冲锋";
+            case 10060:
+                return "爆发";
+            case 10070:
+                return "绝学";
+            case 10080:
+                return "滑行";
+            case 10090:
+                return "轻功";
+            case 10100:
+                return "连招";
+            case 10110:
+                return "群攻";
+            case 10120:
+                return "护盾";
+        }
+        // 未收录技能按主表类型回退，保证任何职业都不会出现空标签。
+        if (skillConfig.Type == 1)
+        {
+            return "普攻";
+        }
+        if (skillConfig.Type == 3)
+        {
+            return "滑行";
+        }
+        if (skillConfig.Type == 4)
+        {
+            return "轻功";
+        }
+        return "攻击";
+    }
+
     /// <summary>将服务器拒绝码转换为可见的简短技能反馈。</summary>
     /// <param name="code">服务器 SkillCastRet 的失败码。</param>
     /// <returns>技能槽上方系统提示使用的中文文本。</returns>
@@ -483,7 +528,8 @@ public sealed class SkillCtrl : CtrlBase
             }
             views.Add(new SkillViewData(previous.SkillId, previous.Name,
                 previous.Description, previous.IconPath, previous.Level, duration,
-                previous.BindKey, remaining));
+                previous.BindKey, remaining, previous.SkillType, previous.Tag,
+                previous.MpCost, previous.Range));
         }
         if (_skillWindow != null)
         {
@@ -535,7 +581,9 @@ public sealed class SkillCtrl : CtrlBase
             }
             _skillViews.Add(new SkillViewData(skillConfig.Id, skillConfig.Name,
                 skillConfig.Desc, skillConfig.Icon, roleSkill.Level,
-                skillConfig.CDTime, bindKey, 0f));
+                skillConfig.CDTime, bindKey, 0f, skillConfig.Type,
+                GetSkillTag(skillConfig), skillConfig.SpendMP,
+                skillConfig.AtkDistance));
             if (roleSkill.Level > 0 && !string.IsNullOrEmpty(roleSkill.BindKey))
             {
                 // 快捷键统一使用大写，兼容服务器快照中的小写配置。
