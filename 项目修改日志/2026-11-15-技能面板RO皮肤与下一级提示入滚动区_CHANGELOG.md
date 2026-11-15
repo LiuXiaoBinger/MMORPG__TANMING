@@ -107,4 +107,10 @@
 
 - 分支 `codex/feature-development`，主提交 **`1a6b036`** `style: 武学面板统一 RO 皮肤并把「下一级」收进描述滚动区`（4 files changed, 293 insertions(+), 50 deletions(-)）。暂存清单只含本轮 3 个业务文件与本 CHANGELOG，未纳入工作区中其它任务的既有改动。
 - **推送成功**：`776ab0f..1a6b036 codex/feature-development -> codex/feature-development`（`github.com:LiuXiaoBinger/MMORPG__TANMING.git`），`git status -sb` 无 ahead/behind。
-- 本段回执为推送后补记，单独以 `docs` 提交入库，提交号见 `git log`；不改动任何业务文件。
+- 本段回执为推送后补记，单独以 `docs` 提交入库（`b777b74`）；不改动任何业务文件。
+
+### 返修回执（R1~R5）
+
+- 主提交 **`17d59dd`** `fix: 武学面板整体换成 RO 淡蓝不透明底（返修深蓝背景）`（4 files changed, 459 insertions(+), 199 deletions(-)）。暂存清单只含本轮 3 个业务文件与本 CHANGELOG。
+- **推送成功**：`b777b74..17d59dd codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。
+- 本段回执同样为推送后补记，单独以 `docs` 提交入库，提交号见 `git log`；不改动任何业务文件。
