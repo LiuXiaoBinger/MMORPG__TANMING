@@ -224,13 +224,13 @@ public class SkillInfoWindow : WindowBase
     /// <summary>描述区滚动容器，切换技能时回到顶部。</summary>
     private ScrollRect _descScroll;
 
-    /// <summary>普通技能升级区（下一级提示 + 铜币 + 升级按钮）。</summary>
+    /// <summary>普通技能升级区（铜币 + 升级按钮），等级门槛已移到描述滚动区。</summary>
     private GameObject _normalUpgradeRoot;
 
     /// <summary>绝学升级区（心得进度 + 心得丹），与普通技能区互斥显示。</summary>
     private GameObject _ultimateUpgradeRoot;
 
-    /// <summary>普通技能「下一级(角色N级可提升)」。</summary>
+    /// <summary>描述滚动内容末行的绿色「下一级(角色N级可提升)」。</summary>
     private TMP_Text _nextLevelText;
 
     /// <summary>普通技能单级升级消耗的铜币数字。</summary>
@@ -1145,7 +1145,8 @@ public class SkillInfoWindow : WindowBase
         _normalUpgradeRoot = normal.gameObject;
         _ultimateUpgradeRoot = ultimate.gameObject;
         _currencyBar = currency.gameObject;
-        _nextLevelText = ChildText(normal, "Txt_NextLevel");
+        // 等级门槛已收进描述滚动内容，按完整路径从详情面板查找。
+        _nextLevelText = ChildText(detail, "DescScroll/Viewport/Content/Txt_NextLevel");
         _costText = ChildText(normal, "Txt_Cost");
         _upgradeButton = ChildButton(normal, "Btn_Upgrade");
         _expText = ChildText(ultimate, "Txt_Exp");
@@ -1193,11 +1194,14 @@ public class SkillInfoWindow : WindowBase
         {
             SetActive(_normalUpgradeRoot, false);
             SetActive(_ultimateUpgradeRoot, false);
+            SetNextLevelActive(false);
             return;
         }
         bool ultimate = skill.Tag == UltimateTag;
         SetActive(_normalUpgradeRoot, !ultimate);
         SetActive(_ultimateUpgradeRoot, ultimate);
+        // 等级门槛在滚动内容里，不随升级区隐藏，按技能类型单独显隐。
+        SetNextLevelActive(!ultimate);
         if (_currencyText != null)
         {
             _currencyText.text = _currency.ToString();
@@ -1217,6 +1221,17 @@ public class SkillInfoWindow : WindowBase
             RefreshNormalBlock(skill);
         }
         RefreshNodeFlags();
+    }
+
+    /// <summary>控制描述滚动内容里「下一级」行的显隐，绝学心得页不显示这一行。</summary>
+    /// <param name="visible">是否显示等级门槛行。</param>
+    private void SetNextLevelActive(bool visible)
+    {
+        if (_nextLevelText == null)
+        {
+            return;
+        }
+        SetActive(_nextLevelText.gameObject, visible);
     }
 
     /// <summary>普通技能：显示角色等级门槛、单级铜币消耗与余额是否足够。</summary>

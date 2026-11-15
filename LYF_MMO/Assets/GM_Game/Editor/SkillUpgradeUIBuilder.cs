@@ -8,10 +8,14 @@ using UnityEngine.UI;
 /// <summary>
 /// 武学面板「技能升级 / 绝学心得 / 描述滚动」UI 构建器。
 /// 用 Unity 自身 API 改写 UIRoot.prefab，避免手改 YAML 造成 fileID 错乱；可重复执行。
+/// 「下一级(角色N级可提升)」收进描述滚动区随正文一起滚动，纯色控件统一套 RO 图集九宫格皮肤。
 /// </summary>
 public static class SkillUpgradeUIBuilder
 {
     private const string PrefabPath = "Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab";
+
+    /// <summary>RO 通用 UI 图集路径，皮肤九宫格都从这张图集按 sprite 名取。</summary>
+    private const string RoAtlasPath = "Assets/artres/Resources/UI/Atlas/Common1.png";
 
     private static readonly Color PanelDark = new Color(0.045f, 0.06f, 0.09f, 0.95f);
     private static readonly Color ButtonDark = new Color(0.06f, 0.09f, 0.13f, 0.96f);
@@ -21,6 +25,21 @@ public static class SkillUpgradeUIBuilder
     private static readonly Color White = new Color(0.92f, 0.95f, 1f, 1f);
     private static readonly Color Gray = new Color(0.58f, 0.66f, 0.76f, 1f);
     private static readonly Color BarBack = new Color(0.12f, 0.17f, 0.23f, 1f);
+
+    /// <summary>RO 蓝银按钮与边框主色。</summary>
+    private static readonly Color RoBlue = new Color(0.42f, 0.62f, 0.88f, 1f);
+
+    /// <summary>RO 深蓝槽底色，用于滚动条轨道与进度条背景。</summary>
+    private static readonly Color RoDeepBlue = new Color(0.18f, 0.26f, 0.38f, 1f);
+
+    /// <summary>RO 亮银滑块色。</summary>
+    private static readonly Color RoSilver = new Color(0.72f, 0.86f, 1f, 0.95f);
+
+    /// <summary>RO 心得进度填充的青蓝色。</summary>
+    private static readonly Color RoCyanFill = new Color(0.42f, 0.72f, 0.95f, 1f);
+
+    /// <summary>本次构建缓存的 RO 图集 sprite，键为 sprite 名，避免重复加载整张图集。</summary>
+    private static readonly Dictionary<string, Sprite> RoSprites = new Dictionary<string, Sprite>();
 
     [MenuItem("Tools/Skill/Build Upgrade UI")]
     public static void Build()
@@ -41,13 +60,22 @@ public static class SkillUpgradeUIBuilder
                 return;
             }
             TMP_Text sample = FindText(detail, "Txt_Desc");
-            TMP_FontAsset font = sample != null ? sample.font : null;
+            // 补建「下一级」文本时沿用的描述字体，描述对象缺失时保持空由 TMP 用默认字体。
+            TMP_FontAsset font = null;
+            if (sample != null)
+            {
+                font = sample.font;
+            }
 
+            LoadRoSprites();
+            // 先救出「下一级」控件，避免后面重建 NormalUpgradeRoot 时把它一起销毁。
+            RescueNextLevel(detail, font);
             BuildScroll(detail, font);
             BuildNormalUpgrade(detail, font);
             BuildUltimateUpgrade(detail, font);
             BuildCurrencyBar(window, font);
             BuildNodeFlags(window, font);
+            ApplyRoSkin(window, detail);
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             AssetDatabase.ImportAsset(PrefabPath,
@@ -72,7 +100,8 @@ public static class SkillUpgradeUIBuilder
             Transform oldContent = oldScroll.Find("Viewport/Content");
             if (oldContent != null)
             {
-                string[] saved = { "Txt_Sec1", "Txt_Desc", "Divider_2", "Txt_Sec2", "Txt_Cond" };
+                // 「下一级」也在滚动文档流里，重建前同样救回 detail。
+                string[] saved = { "Txt_Sec1", "Txt_Desc", "Divider_2", "Txt_Sec2", "Txt_Cond", "Txt_NextLevel" };
                 for (int i = 0; i < saved.Length; i++)
                 {
                     Transform kept = oldContent.Find(saved[i]);
@@ -128,6 +157,8 @@ public static class SkillUpgradeUIBuilder
         MoveInto(contentGo.transform, detail, "Divider_2", 10f);
         MoveInto(contentGo.transform, detail, "Txt_Sec2", -1f);
         MoveInto(contentGo.transform, detail, "Txt_Cond", -1f);
+        // 参考实机的绿色「下一级」是描述文档流的最后一行，随滚动条一起滚动。
+        MoveInto(contentGo.transform, detail, "Txt_NextLevel", -1f);
 
         scroll.viewport = viewportGo.GetComponent<RectTransform>();
         scroll.content = contentRect;
@@ -194,18 +225,146 @@ public static class SkillUpgradeUIBuilder
 
     #endregion
 
+    #region RO 皮肤
+
+    /// <summary>一次性把 RO 图集内的 sprite 按名字缓存，供皮肤替换按名取用。</summary>
+    private static void LoadRoSprites()
+    {
+        RoSprites.Clear();
+        // UnityEngine.Object[] 是 Unity 资源加载 API 的返回边界，不是业务数据载荷。
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(RoAtlasPath);
+        for (int index = 0; index < assets.Length; index++)
+        {
+            // 当前图集子资源，非 Sprite 的材质与纹理跳过。
+            Sprite sprite = assets[index] as Sprite;
+            if (sprite == null)
+            {
+                continue;
+            }
+            if (RoSprites.ContainsKey(sprite.name))
+            {
+                continue;
+            }
+            RoSprites.Add(sprite.name, sprite);
+        }
+    }
+
+    /// <summary>把「下一级」控件从旧容器救回详情面板根节点，保证重建滚动区时不丢失。</summary>
+    /// <param name="detail">详情面板根节点。</param>
+    /// <param name="font">补建控件时沿用的描述字体。</param>
+    private static void RescueNextLevel(Transform detail, TMP_FontAsset font)
+    {
+        // 已救回详情面板根节点时无需重复处理。
+        Transform already = detail.Find("Txt_NextLevel");
+        if (already != null)
+        {
+            return;
+        }
+        // 旧版本把控件放在升级区，新版本放在滚动内容区，两种位置都要能救出。
+        Transform old = detail.Find("NormalUpgradeRoot/Txt_NextLevel");
+        if (old == null)
+        {
+            old = detail.Find("DescScroll/Viewport/Content/Txt_NextLevel");
+        }
+        if (old != null)
+        {
+            old.SetParent(detail, false);
+            return;
+        }
+        // 控件确实缺失时补建，保证描述文档流末行存在。
+        MakeText("Txt_NextLevel", detail, Vector2.zero, new Vector2(360f, 30f),
+            "下一级(角色3级可提升)", 20f, Green, font, TextAlignmentOptions.Left);
+    }
+
+    /// <summary>给面板内纯色控件套 RO 图集九宫格与蓝银配色，不改任何坐标与层级。</summary>
+    /// <param name="window">技能窗口根节点。</param>
+    /// <param name="detail">详情面板根节点。</param>
+    private static void ApplyRoSkin(Transform window, Transform detail)
+    {
+        ApplyRoSprite(FindImage(detail, "DescScrollbar"),
+            "UI_Common_Bg_progress_01", new Color(0.22f, 0.34f, 0.50f, 0.55f));
+        ApplyRoSprite(FindImage(detail, "DescScrollbar/Sliding Area/Handle"),
+            "UI_Common_Btn_Scrollbar_01", RoSilver);
+        ApplyRoSprite(FindImage(detail, "NormalUpgradeRoot/Btn_Upgrade"),
+            "UI_Common_Btn_Normal_01", RoBlue);
+        ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/Btn_ExpItem"),
+            "UI_Common_Btn_Medium_01", new Color(0.30f, 0.48f, 0.72f, 1f));
+        ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/ExpBarBg"),
+            "UI_Common_Bg_progress_01", RoDeepBlue);
+        // 心得填充宽度由代码控制 anchorMax，保持无 sprite 纯色以免九宫格被压缩变形。
+        TintImage(FindImage(detail, "UltimateUpgradeRoot/ExpBarBg/ExpBarFill"), RoCyanFill);
+        ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/Btn_UltimateUpgrade"),
+            "UI_Common_Btn_Normal_01", RoBlue);
+        ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/ExpItemHint"),
+            "UI_Common_Bg_Tips_01", new Color(0.09f, 0.13f, 0.20f, 0.97f));
+        ApplyRoSprite(FindImage(window, "CurrencyBar/Btn_UpgradeAll"),
+            "UI_Common_Btn_Medium_01", new Color(0.36f, 0.56f, 0.82f, 1f));
+        ApplyRoSprite(FindImage(window, "ListRoot/ScrollView/Scrollbar"),
+            "UI_Common_Bg_progress_01", new Color(0.22f, 0.34f, 0.50f, 0.35f));
+        ApplyRoSprite(FindImage(window, "ListRoot/ScrollView/Scrollbar/Sliding Area/Handle"),
+            "UI_Common_Btn_Scrollbar_01", new Color(0.72f, 0.86f, 1f, 0.85f));
+        ApplyRoSprite(FindImage(window, "TitleLine"),
+            "UI_Common_Bg_qujianjianbian_01", new Color(0.62f, 0.72f, 0.92f, 0.55f));
+    }
+
+    /// <summary>按相对路径取 Image 组件，路径不存在时返回空引用由调用方跳过。</summary>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对 root 的 Transform 路径。</param>
+    private static Image FindImage(Transform root, string path)
+    {
+        // 命中的节点，可能没有挂 Image 组件。
+        Transform found = root.Find(path);
+        if (found == null)
+        {
+            return null;
+        }
+        return found.GetComponent<Image>();
+    }
+
+    /// <summary>把 RO 九宫格设到 Image 上并改为 Sliced，同时染成传入的 RO 配色。</summary>
+    /// <param name="image">待换皮的图片组件。</param>
+    /// <param name="spriteName">RO 图集内的 sprite 名。</param>
+    /// <param name="color">RO 蓝银或暖金配色。</param>
+    private static void ApplyRoSprite(Image image, string spriteName, Color color)
+    {
+        if (image == null)
+        {
+            return;
+        }
+        // 图集里按名字取到的九宫格，未命中时只改颜色不破坏原图。
+        Sprite sprite;
+        if (RoSprites.TryGetValue(spriteName, out sprite))
+        {
+            image.sprite = sprite;
+            image.type = Image.Type.Sliced;
+        }
+        image.color = color;
+    }
+
+    /// <summary>只改颜色不改 sprite，用于按矩形宽度驱动的进度填充。</summary>
+    /// <param name="image">待染色的图片组件。</param>
+    /// <param name="color">目标 RO 配色。</param>
+    private static void TintImage(Image image, Color color)
+    {
+        if (image == null)
+        {
+            return;
+        }
+        image.color = color;
+    }
+
+    #endregion
+
     #region 两套升级区
 
-    /// <summary>普通技能：角色等级门槛 + 单级铜币 + 右下角升级箭头。</summary>
+    /// <summary>普通技能：单级铜币 + 右下角升级箭头；「下一级」提示已移入描述滚动区。</summary>
     private static void BuildNormalUpgrade(Transform detail, TMP_FontAsset font)
     {
         RemoveChild(detail, "NormalUpgradeRoot");
         GameObject group = MakeRect("NormalUpgradeRoot", detail, new Vector2(0f, -330f),
             new Vector2(620f, 100f));
 
-        MakeText("Txt_NextLevel", group.transform, new Vector2(-120f, 28f),
-            new Vector2(360f, 30f), "下一级(角色3级可提升)", 20f, Green, font,
-            TextAlignmentOptions.Left);
+        // 绿色等级门槛由 BuildScroll 收进 DescScroll/Viewport/Content，不再固定在本容器。
         MakeIcon("CostIcon", group.transform, new Vector2(150f, -22f), 24f);
         MakeText("Txt_Cost", group.transform, new Vector2(205f, -22f),
             new Vector2(80f, 34f), "40", 22f, White, font, TextAlignmentOptions.Left);
