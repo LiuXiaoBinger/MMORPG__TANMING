@@ -26,20 +26,53 @@ public static class SkillUpgradeUIBuilder
     private static readonly Color Gray = new Color(0.58f, 0.66f, 0.76f, 1f);
     private static readonly Color BarBack = new Color(0.12f, 0.17f, 0.23f, 1f);
 
-    /// <summary>RO 蓝银按钮与边框主色。</summary>
-    private static readonly Color RoBlue = new Color(0.42f, 0.62f, 0.88f, 1f);
-
-    /// <summary>RO 深蓝槽底色，用于滚动条轨道与进度条背景。</summary>
-    private static readonly Color RoDeepBlue = new Color(0.18f, 0.26f, 0.38f, 1f);
-
-    /// <summary>RO 亮银滑块色。</summary>
-    private static readonly Color RoSilver = new Color(0.72f, 0.86f, 1f, 0.95f);
-
-    /// <summary>RO 心得进度填充的青蓝色。</summary>
-    private static readonly Color RoCyanFill = new Color(0.42f, 0.72f, 0.95f, 1f);
-
     /// <summary>本次构建缓存的 RO 图集 sprite，键为 sprite 名，避免重复加载整张图集。</summary>
     private static readonly Dictionary<string, Sprite> RoSprites = new Dictionary<string, Sprite>();
+
+    /// <summary>RO 全屏淡蓝白不透明底，与装备详情窗口一致。</summary>
+    private static readonly Color RoPageBg = new Color(0.90f, 0.95f, 1f, 1f);
+
+    /// <summary>RO 详情卡片与提示浮层底色。</summary>
+    private static readonly Color RoCardBg = new Color(0.965f, 0.982f, 1f, 1f);
+
+    /// <summary>RO 蓝银外框色。</summary>
+    private static readonly Color RoFrame = new Color(0.42f, 0.58f, 0.78f, 1f);
+
+    /// <summary>RO 顶部通栏蓝。</summary>
+    private static readonly Color RoTopStrip = new Color(0.36f, 0.56f, 0.82f, 1f);
+
+    /// <summary>页签与导航选中蓝底。</summary>
+    private static readonly Color RoTabOn = new Color(0.28f, 0.50f, 0.78f, 1f);
+
+    /// <summary>页签与导航未选中浅蓝底、通用按钮底。</summary>
+    private static readonly Color RoTabOff = new Color(0.80f, 0.89f, 1f, 1f);
+
+    /// <summary>浅底上的深蓝正文。</summary>
+    private static readonly Color RoTextMain = new Color(0.12f, 0.28f, 0.46f, 1f);
+
+    /// <summary>浅蓝按钮上的深蓝字。</summary>
+    private static readonly Color RoTextDeep = new Color(0.08f, 0.21f, 0.35f, 1f);
+
+    /// <summary>浅底上的次要灰蓝字。</summary>
+    private static readonly Color RoTextSub = new Color(0.35f, 0.47f, 0.60f, 1f);
+
+    /// <summary>章节标题蓝。</summary>
+    private static readonly Color RoTextSection = new Color(0.18f, 0.44f, 0.72f, 1f);
+
+    /// <summary>数值与绝学标签的深金色。</summary>
+    private static readonly Color RoTextGold = new Color(0.62f, 0.42f, 0.12f, 1f);
+
+    /// <summary>「下一级」与可升级角标的深绿色。</summary>
+    private static readonly Color RoTextGreen = new Color(0.16f, 0.52f, 0.30f, 1f);
+
+    /// <summary>滚动条与进度条轨道色。</summary>
+    private static readonly Color RoScrollTrack = new Color(0.78f, 0.86f, 0.94f, 1f);
+
+    /// <summary>滚动条滑块深蓝银色。</summary>
+    private static readonly Color RoScrollHandle = new Color(0.28f, 0.45f, 0.62f, 1f);
+
+    /// <summary>心得进度填充蓝色。</summary>
+    private static readonly Color RoExpFill = new Color(0.25f, 0.55f, 0.85f, 1f);
 
     [MenuItem("Tools/Skill/Build Upgrade UI")]
     public static void Build()
@@ -75,6 +108,7 @@ public static class SkillUpgradeUIBuilder
             BuildUltimateUpgrade(detail, font);
             BuildCurrencyBar(window, font);
             BuildNodeFlags(window, font);
+            ApplyRoPalette(window, detail);
             ApplyRoSkin(window, detail);
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -276,35 +310,204 @@ public static class SkillUpgradeUIBuilder
             "下一级(角色3级可提升)", 20f, Green, font, TextAlignmentOptions.Left);
     }
 
+    /// <summary>把整个面板换成 RO 淡蓝不透明底与深蓝文字，保持原有坐标和层级。</summary>
+    /// <param name="window">技能窗口根节点。</param>
+    /// <param name="detail">详情面板根节点。</param>
+    private static void ApplyRoPalette(Transform window, Transform detail)
+    {
+        // 全屏底改浅蓝白不透明，顶部改蓝通栏，取代原来的深蓝近黑底。
+        SetImageColor(window, "BG_Frame", RoFrame);
+        SetImageColor(window, "BG_Inner", RoPageBg);
+        SetImageColor(window, "PortraitHalo", new Color(0.25f, 0.42f, 0.65f, 0.22f));
+        SetImageColor(window, "RoTopBar", RoTopStrip);
+        SetImageColor(window, "TopBar", new Color(0.95f, 0.98f, 1f, 0.55f));
+        SetImageColor(window, "Btn_Close", new Color(0.97f, 0.99f, 1f, 0.95f));
+        SetTextColor(window, "Txt_Title", new Color(1f, 0.95f, 0.82f, 1f));
+        SetTextColor(window, "Txt_Job", new Color(0.88f, 0.94f, 1f, 0.95f));
+
+        // 子页签静态按未选中态，运行时由 RefreshTabs 覆盖。
+        for (int index = 0; index < 2; index++)
+        {
+            // 当前子页签的相对路径。
+            string tab = "TabRow/SubTab_" + index;
+            SetImageColor(window, tab, RoTabOff);
+            SetImageColor(window, tab + "/Icon", new Color(0.20f, 0.40f, 0.64f, 1f));
+            SetTextColor(window, tab + "/Txt", RoTextDeep);
+        }
+        // 竖排导航第一项按选中态，其余浅蓝底深蓝字。
+        for (int index = 0; index < 6; index++)
+        {
+            // 当前导航项的相对路径。
+            string nav = "NavRoot/Nav_" + index;
+            if (index == 0)
+            {
+                SetImageColor(window, nav, RoTabOn);
+                SetTextColor(window, nav + "/Txt", Color.white);
+            }
+            else
+            {
+                SetImageColor(window, nav, RoTabOff);
+                SetTextColor(window, nav + "/Txt", RoTextDeep);
+            }
+        }
+
+        // 详情卡片：淡蓝白底 + 蓝银描边，正文全部改深蓝系。
+        Image detailBg = detail.GetComponent<Image>();
+        TintImage(detailBg, RoCardBg);
+        SetImageColor(window, "DetailBorder", new Color(0.30f, 0.52f, 0.76f, 1f));
+        SetImageColor(detail, "DetailIcon", new Color(0.72f, 0.84f, 0.96f, 1f));
+        SetImageColor(detail, "Divider_1", new Color(0.33f, 0.52f, 0.72f, 0.75f));
+        SetImageColor(detail, "DescScroll/Viewport/Content/Divider_2",
+            new Color(0.33f, 0.52f, 0.72f, 0.55f));
+        SetTextColor(detail, "Txt_Name", RoTextMain);
+        SetTextColor(detail, "Txt_Level", RoTextGold);
+        SetTextColor(detail, "Txt_Tag", new Color(0.75f, 0.35f, 0.10f, 1f));
+        SetTextColor(detail, "DescScroll/Viewport/Content/Txt_Sec1", RoTextSection);
+        SetTextColor(detail, "DescScroll/Viewport/Content/Txt_Sec2", RoTextSection);
+        SetTextColor(detail, "DescScroll/Viewport/Content/Txt_Desc", RoTextMain);
+        SetTextColor(detail, "DescScroll/Viewport/Content/Txt_Cond", RoTextSub);
+        SetTextColor(detail, "DescScroll/Viewport/Content/Txt_NextLevel", RoTextGreen);
+
+        // 两套升级区文字改深蓝/深绿，铜币图标改深金以便在浅底上辨认。
+        SetImageColor(detail, "NormalUpgradeRoot/CostIcon", new Color(0.85f, 0.62f, 0.18f, 1f));
+        SetTextColor(detail, "NormalUpgradeRoot/Txt_Cost", RoTextMain);
+        SetTextColor(detail, "NormalUpgradeRoot/Btn_Upgrade/Txt", RoTextDeep);
+        SetTextColor(detail, "UltimateUpgradeRoot/Btn_ExpItem/Txt_ExpItem", RoTextDeep);
+        SetTextColor(detail, "UltimateUpgradeRoot/Txt_ExpTip", RoTextSub);
+        SetTextColor(detail, "UltimateUpgradeRoot/Txt_Exp", RoTextGreen);
+        SetTextColor(detail, "UltimateUpgradeRoot/Btn_UltimateUpgrade/Txt", RoTextDeep);
+        SetTextColor(detail, "UltimateUpgradeRoot/ExpItemHint/Txt", RoTextMain);
+
+        // 九个武功节点：内圆与遮罩提亮，绝学保持深金圈与深金字。
+        for (int index = 0; index < 9; index++)
+        {
+            // 当前武功节点的相对路径。
+            string node = "NodeRoot/Node_" + index;
+            SetImageColor(window, node + "/Glow", new Color(0.35f, 0.60f, 0.88f, 0.14f));
+            SetImageColor(window, node + "/Inner", new Color(0.82f, 0.90f, 1f, 1f));
+            SetImageColor(window, node + "/IconMask", new Color(0.90f, 0.95f, 1f, 1f));
+            SetTextColor(window, node + "/UpgradeFlag", RoTextGreen);
+            if (index == 8)
+            {
+                SetImageColor(window, node + "/Ring", new Color(0.82f, 0.62f, 0.24f, 1f));
+                SetTextColor(window, node + "/Tag", RoTextGold);
+            }
+            else
+            {
+                SetTextColor(window, node + "/Tag", RoTextMain);
+            }
+        }
+        // 轻功页三个节点与中央大图标同样提亮内圆。
+        for (int index = 0; index < 3; index++)
+        {
+            // 当前轻功节点的相对路径。
+            string node = "LightRoot/LightNode_" + index;
+            SetImageColor(window, node + "/Glow", new Color(0.35f, 0.60f, 0.88f, 0.14f));
+            SetImageColor(window, node + "/Inner", new Color(0.82f, 0.90f, 1f, 1f));
+            SetImageColor(window, node + "/IconMask", new Color(0.90f, 0.95f, 1f, 1f));
+        }
+        SetImageColor(window, "LightRoot/LightBig/Glow", new Color(0.35f, 0.60f, 0.88f, 0.14f));
+        SetImageColor(window, "LightRoot/LightBig/Inner", new Color(0.82f, 0.90f, 1f, 1f));
+        SetImageColor(window, "LightRoot/LightBig/IconMask", new Color(0.90f, 0.95f, 1f, 1f));
+
+        // 工具行、徽章、秘笈空壳页：浅底深字，徽章保留白字。
+        for (int index = 0; index < 3; index++)
+        {
+            SetImageColor(window, "ToolRow/Tool_" + index + "/Dot",
+                new Color(0.28f, 0.52f, 0.80f, 0.90f));
+            SetTextColor(window, "ToolRow/Tool_" + index + "/Txt", RoTextMain);
+        }
+        SetImageColor(window, "BadgeRoot/Badge_1", new Color(0.25f, 0.60f, 0.40f, 0.95f));
+        SetImageColor(window, "BadgeRoot/Badge_2", new Color(0.75f, 0.42f, 0.22f, 0.95f));
+        SetTextColor(window, "BadgeRoot/Badge_1/Txt", Color.white);
+        SetTextColor(window, "BadgeRoot/Badge_2/Txt", Color.white);
+        SetImageColor(window, "EmptyPage/Bg", new Color(0.90f, 0.95f, 1f, 0.98f));
+        SetTextColor(window, "EmptyPage/Txt_Title", RoTextSection);
+        SetTextColor(window, "EmptyPage/Txt_Hint", RoTextSub);
+        SetTextColor(window, "EmptyPage/Txt_Foot", RoTextSub);
+        for (int index = 0; index < 4; index++)
+        {
+            SetImageColor(window, "EmptyPage/Slot_" + index, new Color(0.80f, 0.89f, 0.98f, 1f));
+            SetTextColor(window, "EmptyPage/Slot_" + index + "/Txt", RoTextSub);
+        }
+
+        // 列表条目与底部铜币条：浅蓝卡片 + 深蓝文字。
+        SetImageColor(window, "ListRoot/ScrollView/Viewport/Content/ItemTemplate",
+            new Color(0.94f, 0.97f, 1f, 1f));
+        SetImageColor(window, "ListRoot/ScrollView/Viewport/Content/ItemTemplate/IconMask",
+            new Color(0.72f, 0.83f, 0.95f, 1f));
+        SetTextColor(window, "ListRoot/ScrollView/Viewport/Content/ItemTemplate/Txt_Name", RoTextMain);
+        SetTextColor(window, "ListRoot/ScrollView/Viewport/Content/ItemTemplate/Txt_Meta", RoTextGold);
+        SetImageColor(window, "CurrencyBar/CurrencyIcon", new Color(0.85f, 0.62f, 0.18f, 1f));
+        SetTextColor(window, "CurrencyBar/Txt_Currency", RoTextMain);
+        SetTextColor(window, "CurrencyBar/Btn_UpgradeAll/Txt", RoTextDeep);
+    }
+
+    /// <summary>按相对路径给 Image 染色，路径或组件缺失时跳过。</summary>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对 root 的 Transform 路径。</param>
+    /// <param name="color">目标 RO 配色。</param>
+    private static void SetImageColor(Transform root, string path, Color color)
+    {
+        // 命中的图片组件，可能为空。
+        Image image = FindImage(root, path);
+        if (image == null)
+        {
+            return;
+        }
+        image.color = color;
+    }
+
+    /// <summary>按相对路径给 TMP 文本染色，路径或组件缺失时跳过。</summary>
+    /// <param name="root">查找起点。</param>
+    /// <param name="path">相对 root 的 Transform 路径。</param>
+    /// <param name="color">目标 RO 文字色。</param>
+    private static void SetTextColor(Transform root, string path, Color color)
+    {
+        // 命中的文本节点，可能为空。
+        Transform found = root.Find(path);
+        if (found == null)
+        {
+            return;
+        }
+        // 节点上的 TMP 文本组件，纯容器节点取不到。
+        TMP_Text text = found.GetComponent<TMP_Text>();
+        if (text == null)
+        {
+            return;
+        }
+        text.color = color;
+    }
+
     /// <summary>给面板内纯色控件套 RO 图集九宫格与蓝银配色，不改任何坐标与层级。</summary>
     /// <param name="window">技能窗口根节点。</param>
     /// <param name="detail">详情面板根节点。</param>
     private static void ApplyRoSkin(Transform window, Transform detail)
     {
         ApplyRoSprite(FindImage(detail, "DescScrollbar"),
-            "UI_Common_Bg_progress_01", new Color(0.22f, 0.34f, 0.50f, 0.55f));
+            "UI_Common_Bg_progress_01", RoScrollTrack);
         ApplyRoSprite(FindImage(detail, "DescScrollbar/Sliding Area/Handle"),
-            "UI_Common_Btn_Scrollbar_01", RoSilver);
+            "UI_Common_Btn_Scrollbar_01", RoScrollHandle);
         ApplyRoSprite(FindImage(detail, "NormalUpgradeRoot/Btn_Upgrade"),
-            "UI_Common_Btn_Normal_01", RoBlue);
+            "UI_Common_Btn_Normal_01", RoTabOff);
         ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/Btn_ExpItem"),
-            "UI_Common_Btn_Medium_01", new Color(0.30f, 0.48f, 0.72f, 1f));
+            "UI_Common_Btn_Medium_01", RoTabOff);
         ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/ExpBarBg"),
-            "UI_Common_Bg_progress_01", RoDeepBlue);
+            "UI_Common_Bg_progress_01", RoScrollTrack);
         // 心得填充宽度由代码控制 anchorMax，保持无 sprite 纯色以免九宫格被压缩变形。
-        TintImage(FindImage(detail, "UltimateUpgradeRoot/ExpBarBg/ExpBarFill"), RoCyanFill);
+        TintImage(FindImage(detail, "UltimateUpgradeRoot/ExpBarBg/ExpBarFill"), RoExpFill);
         ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/Btn_UltimateUpgrade"),
-            "UI_Common_Btn_Normal_01", RoBlue);
+            "UI_Common_Btn_Normal_01", RoTabOff);
         ApplyRoSprite(FindImage(detail, "UltimateUpgradeRoot/ExpItemHint"),
-            "UI_Common_Bg_Tips_01", new Color(0.09f, 0.13f, 0.20f, 0.97f));
+            "UI_Common_Bg_Tips_01", RoCardBg);
         ApplyRoSprite(FindImage(window, "CurrencyBar/Btn_UpgradeAll"),
-            "UI_Common_Btn_Medium_01", new Color(0.36f, 0.56f, 0.82f, 1f));
+            "UI_Common_Btn_Medium_01", RoTabOff);
         ApplyRoSprite(FindImage(window, "ListRoot/ScrollView/Scrollbar"),
-            "UI_Common_Bg_progress_01", new Color(0.22f, 0.34f, 0.50f, 0.35f));
+            "UI_Common_Bg_progress_01", RoScrollTrack);
         ApplyRoSprite(FindImage(window, "ListRoot/ScrollView/Scrollbar/Sliding Area/Handle"),
-            "UI_Common_Btn_Scrollbar_01", new Color(0.72f, 0.86f, 1f, 0.85f));
+            "UI_Common_Btn_Scrollbar_01", RoScrollHandle);
         ApplyRoSprite(FindImage(window, "TitleLine"),
-            "UI_Common_Bg_qujianjianbian_01", new Color(0.62f, 0.72f, 0.92f, 0.55f));
+            "UI_Common_Bg_qujianjianbian_01", new Color(0.33f, 0.52f, 0.72f, 0.70f));
     }
 
     /// <summary>按相对路径取 Image 组件，路径不存在时返回空引用由调用方跳过。</summary>
@@ -598,10 +801,18 @@ public static class SkillUpgradeUIBuilder
         return null;
     }
 
+    /// <summary>在 detail 直属子节点里按名字取 TMP 文本，用作补建控件的字体来源。</summary>
+    /// <param name="parent">查找起点。</param>
+    /// <param name="name">直属子节点名字。</param>
     private static TMP_Text FindText(Transform parent, string name)
     {
+        // 命中的子节点，可能不存在或没有挂 TMP 文本。
         Transform found = parent.Find(name);
-        return found != null ? found.GetComponent<TMP_Text>() : null;
+        if (found == null)
+        {
+            return null;
+        }
+        return found.GetComponent<TMP_Text>();
     }
 
     #endregion

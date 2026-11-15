@@ -64,6 +64,45 @@
 - 历史遗留不变：`Assets/GM_Game/Dlls/GM_Game.dll.bytes` 未重建（打包真机前必须跑 `Build/BuildDll`）；多分辨率按 1920×1080 绝对像素写死；升级/心得仍是本地 UI 模拟未接协议；「背景小青点」未消除。
 - 本轮未改动脚本之外的 `.meta`，未新增或删除任何文件。
 
+# 返修（2026-11-15 14:3x）：整体换成 RO 淡蓝不透明底
+
+## R1 问题与根因
+
+用户反馈「风格没换啊 你还是这种深蓝背景嘛」。上一轮只把 12 处纯色控件换成 RO 图集九宫格，**没有改主背景**：`BG_Inner` 仍为 `(0.045, 0.06, 0.09, 1)` 深蓝近黑、`RoTopBar` `(0.055, 0.075, 0.11, 0.94)`、`DetailPanel` `(0.09, 0.12, 0.17, 0.97)`，全屏观感与改前一致。换贴图不等于换风格，主色板才决定观感。
+
+## R2 采用的 RO 基准（项目内已批准的既有约定，非新发明）
+
+| 来源 | 结论 |
+|---|---|
+| `项目修改日志/2026-11-09-装备详情不透明布局与基因面板归位.md` | 装备详情「背景指定 RO 风格淡蓝不透明」「不透明浅米白底与深色正文，重点用金色」；prefab 实测 `EquipmentDetailWindow` `(0.90,0.96,1)`、`DetailBackground` `(0.965,0.982,1)`、按钮 `(0.80,0.89,1)` + 深蓝字 `(0.08,0.21,0.35)` |
+| `项目修改日志/2026-11-12-角色属性页裁切与蓝白配色修复.md` | 「选中为蓝底白字，未选中为浅蓝底深蓝字。基础和高级正文使用浅蓝白底与深蓝文字」 |
+
+因此 RO 风格 = **淡蓝白不透明底 + 深蓝正文 + 蓝银按钮/描边 + 深金/深橙重点**，而不是技能面板原先的「深蓝底 + 白字 + 亮金」。
+
+## R3 本轮改动（仍为 0 新增 / 3 修改 / 0 删除）
+
+| 文件 | 变化 |
+|---|---|
+| `UIRoot.prefab` | 精确替换 **87 处 Image `m_Color` + 59 处 TMP `m_fontColor`**：全屏底 `BG_Inner` → `(0.90,0.95,1,1)`、顶栏 `RoTopBar` → `(0.36,0.56,0.82,1)`、详情卡片 → `(0.965,0.982,1,1)`、外框 → 蓝银；页签/导航改为「选中蓝底白字 `(0.28,0.50,0.78)`、未选中浅蓝底深蓝字 `(0.80,0.89,1)`」；节点内圆/遮罩/列表条目/空壳槽位提亮；所有正文改深蓝 `(0.12,0.28,0.46)`、次要 `(0.35,0.47,0.60)`、章节蓝、数值深金、`下一级` 深绿。**未增删任何 GameObject/组件/文档**，文档数仍 7606；上轮 12 处 RO 九宫格 sprite 引用全部保留，只把颜色同步到浅色系。3 处 `LightRoot/LightNode_*/Tag` 无此节点，属正常跳过。 |
+| `SkillInfoWindow.cs` | 14 个颜色常量改为 RO 淡蓝体系；`RefreshNav` 里 5 处硬编码深蓝/金字改为复用常量；节点标签与富文本色改浅底可读（`#FFB46B`→`#B26A18`、`#7FD2F0`→`#1B6FA8`、`#6BE39A`→`#1E8A4C`）；新增 `NavDisabledTextColor`、`NodeTagNormal`、`NodeTagUltimate` 三个具名常量。 |
+| `SkillUpgradeUIBuilder.cs` | 新增 `ApplyRoPalette(window, detail)` 与 `SetImageColor` / `SetTextColor`，让 `Tools/Skill/Build Upgrade UI` 重建后仍保持同一套淡蓝配色；`ApplyRoSkin` 的 12 处颜色同步为浅色系；删除上轮 4 个已不再使用的常量；既有 `FindText` 的三目改 if/else。 |
+
+`_temp/ui-ro-skin-20261115/` 新增 `apply_light_palette.py`、`verify_light_palette.py`、`light_palette_report.json`、`verify_light_result.json`、`UIRoot.prefab.before_light_palette.bak`，均为临时产物，不入库。上轮的 `verify_skin.py` 期望的是旧深蓝配色，已被 `verify_light_palette.py` 取代。
+
+## R4 验证
+
+| 项目 | 结果 |
+|---|---|
+| 自动校验 | `_temp/ui-ro-skin-20261115/verify_light_palette.py`：`checks=162 failed=0`；逐项比对 87 处底色与 59 处字色，另含 GameObject 集合不变、fileID 无重复、本地引用 0 断链、`Txt_NextLevel` 仍在滚动 Content、RO 图集 sprite 引用仍 ≥30、代码无旧亮色常量 |
+| 关键事实 | `BG_Inner` 由 `(0.045,0.06,0.09)` → `(0.90,0.95,1)`；`DetailPanel` → `(0.965,0.982,1)`；`Txt_Name` 字色 → `(0.12,0.28,0.46)` |
+| C# 静态 | 两个 .cs 花括号/圆括号配平；构建器无 `foreach`、无命名空间、无三目；未新增 `interface` |
+| 未验证 | **未做 Play 模式实拍**：深色立绘 `MJS_Portrait` 在淡蓝底上的融合、`PortraitHalo` 深蓝圆斑是否足够、全屏浅色底与 HUD/其它窗口的对比、页签/导航运行时 `RefreshTabs`/`RefreshNav` 覆盖后的最终观感，均需 Unity 内实测 |
+
+## R5 遗留
+
+- 若要改成 RO 参考工程的米白/羊皮纸色（`RoleAttriibuteWindow/ActiveGenesPanel` 为 `(0.97,0.95,0.9)`），只需替换 `BG_Inner` / `DetailPanel` / `RoCardBg` 三个色值，结构与代码不用动。
+- 历史遗留不变：`GM_Game.dll.bytes` 打包前需 `Build/BuildDll`；多分辨率坐标写死；升级/心得仍为本地模拟。
+
 ## 七、Git 回执
 
 - 分支 `codex/feature-development`，主提交 **`1a6b036`** `style: 武学面板统一 RO 皮肤并把「下一级」收进描述滚动区`（4 files changed, 293 insertions(+), 50 deletions(-)）。暂存清单只含本轮 3 个业务文件与本 CHANGELOG，未纳入工作区中其它任务的既有改动。
