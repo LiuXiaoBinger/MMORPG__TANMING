@@ -50,44 +50,35 @@ public class SkillInfoWindow : WindowBase
     /// <summary>技能未提供升级消耗时使用的默认铜币价格。</summary>
     private const int DefaultUpgradeCost = 40;
 
-    /// <summary>RO 淡蓝底上的技能升级文案深绿，保证浅底可读。</summary>
-    private static readonly Color UpgradeGreen = new Color(0.16f, 0.52f, 0.30f, 1f);
+    /// <summary>技能升级文案的绿色，与参考实机一致。</summary>
+    private static readonly Color UpgradeGreen = new Color(0.42f, 0.88f, 0.55f, 1f);
 
-    /// <summary>技能升级文案未达成时的灰蓝色，与 RO 次要文字同系。</summary>
-    private static readonly Color UpgradeGray = new Color(0.42f, 0.50f, 0.58f, 1f);
+    /// <summary>技能升级文案未达成时的灰色。</summary>
+    private static readonly Color UpgradeGray = new Color(0.5f, 0.56f, 0.62f, 1f);
 
-    /// <summary>节点外圈常态的 RO 蓝银色。</summary>
+    /// <summary>节点外圈常态颜色。</summary>
     private static readonly Color NodeRingNormal = new Color(0.42f, 0.63f, 0.92f, 1f);
 
-    /// <summary>绝学大节点的深金外圈，浅底上仍保持足够对比。</summary>
-    private static readonly Color NodeRingUltimate = new Color(0.82f, 0.62f, 0.24f, 1f);
+    /// <summary>绝学大节点的金色外圈。</summary>
+    private static readonly Color NodeRingUltimate = new Color(0.98f, 0.78f, 0.42f, 1f);
 
-    /// <summary>空槽位的浅灰蓝外圈。</summary>
-    private static readonly Color NodeRingEmpty = new Color(0.68f, 0.76f, 0.86f, 1f);
+    /// <summary>空槽位的暗色外圈。</summary>
+    private static readonly Color NodeRingEmpty = new Color(0.24f, 0.31f, 0.42f, 1f);
 
-    /// <summary>当前选中节点的深蓝高亮外圈。</summary>
-    private static readonly Color NodeRingSelected = new Color(0.18f, 0.44f, 0.74f, 1f);
+    /// <summary>当前选中节点的亮色外圈。</summary>
+    private static readonly Color NodeRingSelected = new Color(0.85f, 0.96f, 1f, 1f);
 
-    /// <summary>子页签选中时的 RO 蓝底，与角色属性页选中态一致。</summary>
-    private static readonly Color TabOnColor = new Color(0.28f, 0.50f, 0.78f, 1f);
+    /// <summary>子页签选中时的底板颜色，深蓝底配金色文字，避免大面积纯白抢视线。</summary>
+    private static readonly Color TabOnColor = new Color(0.17f, 0.32f, 0.54f, 1f);
 
-    /// <summary>子页签未选中时的浅蓝底。</summary>
-    private static readonly Color TabOffColor = new Color(0.80f, 0.89f, 1f, 1f);
+    /// <summary>子页签未选中时的底板颜色，与选中态保持同一组块面、只降明度。</summary>
+    private static readonly Color TabOffColor = new Color(0.13f, 0.19f, 0.29f, 0.95f);
 
-    /// <summary>子页签选中时的白色文字与图标。</summary>
-    private static readonly Color TabOnTextColor = new Color(1f, 1f, 1f, 1f);
+    /// <summary>子页签选中时的文字与图标颜色，暖金白。</summary>
+    private static readonly Color TabOnTextColor = new Color(1f, 0.92f, 0.74f, 1f);
 
-    /// <summary>子页签未选中时的深蓝文字与图标。</summary>
-    private static readonly Color TabOffTextColor = new Color(0.13f, 0.31f, 0.48f, 1f);
-
-    /// <summary>竖排导航未开放项的灰蓝文字。</summary>
-    private static readonly Color NavDisabledTextColor = new Color(0.50f, 0.57f, 0.65f, 1f);
-
-    /// <summary>武功节点普通标签的深蓝色。</summary>
-    private static readonly Color NodeTagNormal = new Color(0.12f, 0.28f, 0.46f, 1f);
-
-    /// <summary>绝学节点标签的深金色。</summary>
-    private static readonly Color NodeTagUltimate = new Color(0.62f, 0.42f, 0.12f, 1f);
+    /// <summary>子页签未选中时的文字与图标颜色，灰蓝。</summary>
+    private static readonly Color TabOffTextColor = new Color(0.58f, 0.66f, 0.78f, 1f);
 
     /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
@@ -457,7 +448,7 @@ public class SkillInfoWindow : WindowBase
                 continue;
             }
             _tabButtons[index].gameObject.SetActive(true);
-            // 当前子页高亮：RO 蓝底白字，其余浅蓝底深蓝字。
+            // 当前子页高亮：浅底深字，其余深底浅字。
             bool selected = index == _page;
             Image tabImage = _tabButtons[index].GetComponent<Image>();
             if (tabImage != null)
@@ -494,7 +485,7 @@ public class SkillInfoWindow : WindowBase
                 }
             }
         }
-        // 竖排导航：当前分类 RO 蓝底白字，其余浅蓝底深蓝字，未开放项压灰。
+        // 竖排导航：当前分类用 RO 蓝底金字，其余压暗，避免整块纯白抢主视觉。
         for (int index = 0; index < _navLabels.Length; index++)
         {
             if (_navLabels[index] == null)
@@ -504,15 +495,15 @@ public class SkillInfoWindow : WindowBase
             bool current = index == _category;
             if (current)
             {
-                _navLabels[index].color = TabOnTextColor;
+                _navLabels[index].color = new Color(1f, 0.92f, 0.74f, 1f);
             }
             else if (index <= CategorySecret)
             {
-                _navLabels[index].color = TabOffTextColor;
+                _navLabels[index].color = new Color(0.66f, 0.72f, 0.82f, 1f);
             }
             else
             {
-                _navLabels[index].color = NavDisabledTextColor;
+                _navLabels[index].color = new Color(0.42f, 0.47f, 0.56f, 1f);
             }
             if (_navButtons[index] == null)
             {
@@ -525,11 +516,11 @@ public class SkillInfoWindow : WindowBase
             }
             if (current)
             {
-                navImage.color = TabOnColor;
+                navImage.color = new Color(0.17f, 0.32f, 0.54f, 1f);
             }
             else
             {
-                navImage.color = TabOffColor;
+                navImage.color = new Color(0.08f, 0.11f, 0.17f, 0.92f);
             }
         }
     }
@@ -779,11 +770,11 @@ public class SkillInfoWindow : WindowBase
             }
             if (isUltimateSlot)
             {
-                tags[index].color = NodeTagUltimate;
+                tags[index].color = new Color(1f, 0.86f, 0.55f, 1f);
             }
             else
             {
-                tags[index].color = NodeTagNormal;
+                tags[index].color = new Color(0.92f, 0.96f, 1f, 1f);
             }
         }
         if (skill == null)
@@ -1430,19 +1421,18 @@ public class SkillInfoWindow : WindowBase
         _levelOverrides[skillId] = current + delta;
     }
 
-    /// <summary>把纯文本描述转成 TMP 富文本：数值深橙、词条深蓝、下一级深绿，均为浅底可读色。</summary>
+    /// <summary>把纯文本描述转成 TMP 富文本：数值橙色、词条青蓝、下一级绿色。</summary>
     private static string BuildRichDescription(string raw)
     {
         if (string.IsNullOrEmpty(raw))
         {
             return string.Empty;
         }
-        // RO 淡蓝底上用深色系，避免原先的亮橙/亮青/亮绿在浅底看不清。
         string text = Regex.Replace(raw, @"(\d+\.?\d*%|\+\d+|\d+点|\d+秒|\d+名)",
-            "<color=#B26A18>$1</color>");
+            "<color=#FFB46B>$1</color>");
         text = Regex.Replace(text, @"(?m)^([\u4e00-\u9fa5]{2,4})[：:]",
-            "<color=#1B6FA8>$1：</color>");
-        text = Regex.Replace(text, @"(?m)^(下一级.*)$", "<color=#1E8A4C>$1</color>");
+            "<color=#7FD2F0>$1：</color>");
+        text = Regex.Replace(text, @"(?m)^(下一级.*)$", "<color=#6BE39A>$1</color>");
         return text;
     }
 

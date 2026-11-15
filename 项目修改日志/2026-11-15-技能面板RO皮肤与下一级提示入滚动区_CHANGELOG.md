@@ -114,3 +114,40 @@
 - 主提交 **`17d59dd`** `fix: 武学面板整体换成 RO 淡蓝不透明底（返修深蓝背景）`（4 files changed, 459 insertions(+), 199 deletions(-)）。暂存清单只含本轮 3 个业务文件与本 CHANGELOG。
 - **推送成功**：`b777b74..17d59dd codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。
 - 本段回执同样为推送后补记，单独以 `docs` 提交入库，提交号见 `git log`；不改动任何业务文件。
+
+---
+
+# 第三轮：按用户要求撤回 RO 淡蓝配色（2026-11-15 14:5x）
+
+## U1 需求与处置
+
+用户看到淡蓝效果后反馈「你还是换回去吧 太丑了」。**R1~R5 的整块淡蓝色板全部撤回**，3 个业务文件精确恢复到 `b777b74`（第一轮完成态）：
+
+| 文件 | 处置 |
+|---|---|
+| `UIRoot.prefab` | 87 处 Image 颜色 + 59 处 TMP 字色全部恢复原值；`BG_Inner` 回到 `(0.045,0.06,0.09,1)`、`RoTopBar` `(0.055,0.075,0.11,0.94)`、`DetailPanel` `(0.09,0.12,0.17,0.97)`，正文恢复白色、绿色「下一级」恢复 `(0.42,0.88,0.55)` |
+| `SkillInfoWindow.cs` | 14 个颜色常量、导航硬编码色、节点标签色、富文本色恢复第一轮值；`SetNextLevelActive`、`_nextLevelText` 滚动 Content 查找路径**保留** |
+| `SkillUpgradeUIBuilder.cs` | 移除 `ApplyRoPalette` / `SetImageColor` / `SetTextColor` 与 16 个淡蓝常量，`ApplyRoSkin` 恢复 12 处深蓝系颜色；`Txt_NextLevel` 迁移逻辑与 `RescueNextLevel` **保留** |
+
+**保留的第一轮成果**：`Txt_NextLevel` 收进 `DescScroll/Viewport/Content` 文档流、12 处 RO 图集九宫格贴图（`Common1.png`）、描述滚动条、构建器可重复执行能力。用户第一次要求的两件事仍然有效，撤回的只是第二次的整体配色。
+
+**R1~R5 章节按历史保留，但其配色结论自本轮起不再代表当前有效状态**；`_temp/ui-ro-skin-20261115/verify_light_palette.py` 期望淡蓝配色，撤回后不再适用，以 `verify_skin.py` 为当前校验依据。
+
+## U2 验证
+
+| 项目 | 结果 |
+|---|---|
+| 恢复基线 | `git diff b777b74 -- <3 个业务文件>` 为空，与 `b777b74` 逐字一致 |
+| 自动校验 | `_temp/ui-ro-skin-20261115/verify_skin.py`：`checks=20 failed=0`，文档数 7606、GameObject 集合不变、fileID 无重复、本地引用 0 断链、`Txt_NextLevel` 仍在滚动 Content、12 处 RO sprite 与颜色逐项命中 |
+| 关键颜色 | `BG_Inner=(0.045,0.06,0.09,1)`、`RoTopBar=(0.055,0.075,0.11,0.94)`、`DetailPanel=(0.09,0.12,0.17,0.97)`、`Txt_Name` 字色白色、`Txt_NextLevel` 字色 `(0.42,0.88,0.55,1)` |
+| 代码 | `UpgradeGreen=(0.42,0.88,0.55)`、`TabOnColor=(0.17,0.32,0.54)`、`TabOffColor=(0.13,0.19,0.29,0.95)`、富文本 `#FFB46B` 均已恢复；构建器 `ApplyRoPalette` 出现次数 0 |
+
+## U3 未验证 / 遗留
+
+- 仍未做 Play 模式实拍；Unity 编辑器开着，需刷新资源或退出 Play 再进才能看到恢复后的深蓝面板。
+- 历史遗留不变：`GM_Game.dll.bytes` 打包前需 `Build/BuildDll`；多分辨率坐标写死；升级/心得为本地模拟。
+- 若后续仍要调整风格，建议先在 Unity Play 模式截图确认色板再落盘，避免再次反复。
+
+## U4 Git 回执
+
+（提交与推送后补记）
