@@ -150,4 +150,6 @@
 
 ## U4 Git 回执
 
-（提交与推送后补记）
+- 主提交 **`7e0e45e`** `revert: 撤回 RO 淡蓝配色，恢复技能面板深蓝底（按用户要求）`（4 files changed, 236 insertions(+), 420 deletions(-)）。暂存清单只含 3 个业务文件与本 CHANGELOG，未纳入工作区其它任务的既有改动。
+- **推送成功**：`158a3cd..7e0e45e codex/feature-development -> codex/feature-development`，`git status -sb` 无 ahead/behind。
+- 本段回执为推送后补记，单独以 `docs` 提交入库，提交号见 `git log`；不改动任何业务文件。
