@@ -7,6 +7,7 @@ using UnityEngine.UI;
 /// 主界面常驻的快捷任务面板，从 TaskMgr 读取追踪列表和快捷页签，按需克隆并复用条目。
 /// 点击条目依次通知控制器选择任务、前往目标；放弃和打开主窗口也只转发请求。
 /// 任务、玩法、奇遇页签控制的是快捷面板，折叠时隐藏左侧整组 UI（竖排页签、页签行、任务列表与队伍面板），只保留折叠按钮。
+/// 折叠时按钮移到左侧竖排页签所在的列，展开时回到页签行右侧原坐标，恢复完整面板布局。
 /// </summary>
 public class QuickTaskPanelWidget : MonoBehaviour
 {
@@ -32,7 +33,8 @@ public class QuickTaskPanelWidget : MonoBehaviour
 
     /// <summary>
     /// 折叠按钮，绑定 QuickTaskPanel 根下正式新增的 Btn_Fold（复用 Btn_Small_02 项目视觉资源）。
-    /// 点击在折叠与展开之间切换：折叠隐藏左侧整组 UI 只保留本按钮，按钮绕 Z 轴旋转 180 度指示状态。
+    /// 点击在折叠与展开之间切换：折叠隐藏左侧整组 UI 只保留本按钮，按钮贴到左边并绕 Z 轴旋转 180 度指示状态；
+    /// 展开时按钮回到页签行右侧原坐标、旋转归零。
     /// </summary>
     [SerializeField] private Button _foldButton;
 
@@ -68,6 +70,15 @@ public class QuickTaskPanelWidget : MonoBehaviour
 
     /// <summary>当前是否处于折叠状态，折叠时左侧整组 UI 隐藏、只保留折叠按钮。</summary>
     private bool _isFolded;
+
+    /// <summary>折叠时按钮停靠的 X 坐标，相对 QuickTaskPanel 左上角锚点，单位 UI 像素；取 20 使按钮落在左侧竖排页签那一列。</summary>
+    private const float FoldedButtonX = 20f;
+
+    /// <summary>展开状态下折叠按钮的锚点坐标，首次切换折叠状态时从预制体记录，展开时据此恢复页签行右侧的位置。</summary>
+    private Vector2 _expandedButtonPosition;
+
+    /// <summary>是否已记录展开态按钮坐标，避免初始化前先收到展开调用时把按钮移到锚点原点。</summary>
+    private bool _expandedPositionRecorded;
     #endregion
 
     #region 事件注册与注销
@@ -249,10 +260,10 @@ public class QuickTaskPanelWidget : MonoBehaviour
         RegisterPageButtons();
         RegisterFoldButton();
         SyncPageTabs();
-        RotateFoldButton();
+        UpdateFoldButtonState();
     }
 
-    /// <summary>设置左侧整组 UI 的折叠状态：折叠时只保留折叠按钮，展开时恢复全部左侧界面。</summary>
+    /// <summary>设置左侧整组 UI 的折叠状态：折叠时只保留移到左边的折叠按钮，展开时恢复全部左侧界面与按钮原坐标。</summary>
     /// <param name="folded">true 折叠隐藏左侧 UI，false 展开恢复。</param>
     public void SetFolded(bool folded)
     {
@@ -309,7 +320,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
             }
             RefreshTrackedTasks();
         }
-        RotateFoldButton();
+        UpdateFoldButtonState();
     }
 
     /// <summary>当前是否处于折叠状态，供外层页签在折叠期间抑制内容切换。</summary>
@@ -334,25 +345,35 @@ public class QuickTaskPanelWidget : MonoBehaviour
         return TaskPageFilter.Other;
     }
 
-    /// <summary>展开时按钮恢复零角度，折叠时绕 Z 轴旋转 180 度。</summary>
-    private void RotateFoldButton()
+    /// <summary>按折叠状态更新按钮位置与朝向：折叠时贴到左侧页签列且箭头朝右，展开时回到预制体原坐标且箭头朝左。</summary>
+    private void UpdateFoldButtonState()
     {
         if (_foldButton == null)
         {
             return;
         }
-        // 折叠按钮自身的矩形变换，旋转它指示折叠或展开朝向。
+        // 折叠按钮自身的矩形变换，移动与旋转都由它承载。
         RectTransform foldRect = _foldButton.GetComponent<RectTransform>();
         if (foldRect == null)
         {
             return;
         }
+        if (_expandedPositionRecorded == false)
+        {
+            _expandedButtonPosition = foldRect.anchoredPosition;
+            _expandedPositionRecorded = true;
+        }
         if (_isFolded)
         {
+            // 折叠后的坐标：只改 X 贴到左边缘，Y 保持页签行高度不变。
+            Vector2 foldedPosition = _expandedButtonPosition;
+            foldedPosition.x = FoldedButtonX;
+            foldRect.anchoredPosition = foldedPosition;
             foldRect.localEulerAngles = new Vector3(0f, 0f, 180f);
         }
         else
         {
+            foldRect.anchoredPosition = _expandedButtonPosition;
             foldRect.localEulerAngles = Vector3.zero;
         }
     }
