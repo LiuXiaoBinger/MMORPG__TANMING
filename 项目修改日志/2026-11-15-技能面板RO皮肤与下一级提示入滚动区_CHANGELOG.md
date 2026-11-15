@@ -66,4 +66,6 @@
 
 ## 七、Git 回执
 
-（提交与推送后补记）
+- 分支 `codex/feature-development`，主提交 **`1a6b036`** `style: 武学面板统一 RO 皮肤并把「下一级」收进描述滚动区`（4 files changed, 293 insertions(+), 50 deletions(-)）。暂存清单只含本轮 3 个业务文件与本 CHANGELOG，未纳入工作区中其它任务的既有改动。
+- **推送成功**：`776ab0f..1a6b036 codex/feature-development -> codex/feature-development`（`github.com:LiuXiaoBinger/MMORPG__TANMING.git`），`git status -sb` 无 ahead/behind。
+- 本段回执为推送后补记，单独以 `docs` 提交入库，提交号见 `git log`；不改动任何业务文件。
