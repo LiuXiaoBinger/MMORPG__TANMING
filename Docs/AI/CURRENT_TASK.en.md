@@ -594,3 +594,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Preserve original RO behavior trees, Lua timing, selection probabilities and damage. Restore three direct tree references 1000545206/5303/5408 and their original data. EZ naturally casts 5303. The other two state4 branches are verified with controlled tree input.
 - Server sends selected MultiTarget result separately from damage. Client follows the selected role position with fixed warning directions, restores meteor target FX and eight AnimList clips using MMonsterAnimator. 87 business/resource files with exact manifest in `项目修改日志/2026-11-16-魔神塔RO怪物技能与特效.md`.
 - Development code and isolated validation are complete. Active local server was left on its prior running build. Original hammer mesh and texture dependencies are missing in the reference assets. Full human co-op clear, Player packaging and online deployment unverified.
+
+## [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite
+
+- Current-role combat reproduced 5508 Bite 1000546201 and normal attack 1000121201 with empty caster and impact fields. Initial commit `7b6b0fc` added impact effects on the player. The user requested visible effects on the attacking monster.
+- Final commit `ac3fe5c` moved the work to the caster timeline in `LYF_MMO/Assets/GM_Game/Resources/Dungeons/Moshenta/MonsterSkills.json`. Seven normal attacks received a reused RO swing or cast effect. Bite uses an enlarged `Fx_Skill_Nomal_BeHit_Vector03` at 1.9 local scale. Both commits were pushed to `codex/feature-development`.
+- The original trees try group 1 before group 0. Wave 19 elite 5508 uses Bite in group 1. Wave 18 orc 5515 has one normal attack. This check covered first-floor combat. The second floor, all difficulties and Player builds were outside this live check. Full record in `项目修改日志/2026-11-17-魔神塔恶灵普攻与撕咬特效.md`.

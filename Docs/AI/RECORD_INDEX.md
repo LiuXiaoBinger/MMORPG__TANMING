@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `dba1aaec4a4a320076cc4d6ae43d7895c10bb2b916450890bde2f933b5db174f`
+Source normalized SHA256: `85e7beda9aec02cbaadfdd2f4cbab9abf29307251f95a0593a7d573edda0e534`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -81,11 +81,12 @@ Source normalized SHA256: `dba1aaec4a4a320076cc4d6ae43d7895c10bb2b916450890bde2f
 | [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Magic Swordsman Blade Storm and Blue Barrier | 571-576 |
 | [CODE][FILES][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Top function menu moved left, fold arrow aligned with the quick-panel hide button (2026-11-16) | 577-583 |
 | [CODE][FILES][界面][HP-MP-BAR-THICKEN-20261116] Bottom HP and MP bars widened and thickened (2026-11-16) | 584-591 |
-| [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-596 |
+| [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-597 |
+| [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-602 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `264a0f0071d859d3a4e4f23a6acfcdad1cffc50943ebe9307c0848b82b4e377e`
+Source normalized SHA256: `d887e40fe61726ce1204117bbc8b32bc2174f67f2c6fbd0baae9d2efcb2d2c3a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -158,7 +159,8 @@ Source normalized SHA256: `264a0f0071d859d3a4e4f23a6acfcdad1cffc50943ebe9307c084
 | [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Eight authoritative hits, ward absorption and Unity asset checks | 602-607 |
 | [VERIFY][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Function menu and fold-arrow coordinate check (2026-11-16) | 608-615 |
 | [VERIFY][界面][HP-MP-BAR-THICKEN-20261116] HP/MP bar resize checked in Play (2026-11-16) | 616-622 |
-| [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-627 |
+| [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-628 |
+| [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-633 |
 
 ## Docs/AI/DECISIONS.en.md
 
