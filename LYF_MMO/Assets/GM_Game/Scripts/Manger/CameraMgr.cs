@@ -16,6 +16,29 @@ using UnityEngine.InputSystem;
 /// <summary>本地主角的自由视角相机管理器，同时管理世界与UI相机之间的声音监听所有权。</summary>
 public class CameraMgr : MonoBehaviour
 {
+    /// <summary>本地招式反馈使用的 Cinemachine 脉冲通道掩码。</summary>
+    private const int CombatShakeChannel = 1 << 1;
+
+    /// <summary>技能起手的轻震曲线，持续 0.10 秒。</summary>
+    private static readonly CinemachineImpulseDefinition SkillCastImpulse = new CinemachineImpulseDefinition
+    {
+        m_ImpulseChannel = CombatShakeChannel,
+        m_ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Uniform,
+        m_ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Bump,
+        m_ImpulseDuration = 0.10f,
+    };
+
+    /// <summary>实际命中的快起衰减曲线，持续 0.14 秒。</summary>
+    private static readonly CinemachineImpulseDefinition SkillHitImpulse = new CinemachineImpulseDefinition
+    {
+        m_ImpulseChannel = CombatShakeChannel,
+        m_ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Uniform,
+        m_ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Recoil,
+        m_ImpulseDuration = 0.14f,
+    };
+
+    /// <summary>当前 FreeLook 虚拟相机的战斗脉冲监听器，随相机一起销毁。</summary>
+    private CinemachineImpulseListener _combatShakeListener;
 
     /// <summary>当前实际世界输出相机的声音监听器，三维角色声音必须以此位置计算衰减。</summary>
     private AudioListener _worldAudioListener;
@@ -156,6 +179,38 @@ public class CameraMgr : MonoBehaviour
         }
     }
 
+
+    /// <summary>本地主角成功起手时，沿画面平面播放轻微冲量。</summary>
+    public void PlaySkillCastShake()
+    {
+        PlayCombatShake(SkillCastImpulse, new Vector3(0.04f, -0.03f, 0f));
+    }
+
+    /// <summary>本地主角命中目标时，沿画面平面播放更强、更快起峰的冲量。</summary>
+    public void PlaySkillHitShake()
+    {
+        PlayCombatShake(SkillHitImpulse, new Vector3(0.075f, -0.065f, 0f));
+    }
+
+    /// <summary>以 Cinemachine 的噪声阶段偏移世界镜头，保留跟随、瞄准和碰撞求解使用的原始位姿。</summary>
+    /// <param name="impulse">本次反馈使用的预设曲线和持续秒数。</param>
+    /// <param name="offset">镜头平面内的位移分量，单位米。</param>
+    private void PlayCombatShake(CinemachineImpulseDefinition impulse, Vector3 offset)
+    {
+        if (_cinemachine == null || !_cinemachine.isActiveAndEnabled)
+        {
+            return;
+        }
+        if (_combatShakeListener == null)
+        {
+            _combatShakeListener = gameObject.AddComponent<CinemachineImpulseListener>();
+            _combatShakeListener.m_ChannelMask = CombatShakeChannel;
+            _combatShakeListener.m_ApplyAfter = CinemachineCore.Stage.Noise;
+            _combatShakeListener.m_Gain = 1f;
+            _combatShakeListener.m_UseCameraSpace = true;
+        }
+        impulse.CreateEvent(_cinemachine.State.FinalPosition, offset);
+    }
 
     /// <summary>让自由视角相机跟随本地主角模型，不依赖旧 MainRoleCtrl。</summary>
     /// <param name="roleTransform">本地主角模型根节点。</param>

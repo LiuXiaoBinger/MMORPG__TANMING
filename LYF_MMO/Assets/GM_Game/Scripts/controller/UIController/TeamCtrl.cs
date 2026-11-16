@@ -163,14 +163,7 @@ public sealed class TeamCtrl : CtrlBase
         // 同一通知承载怪物动作、怪物失血或某玩家被打的权威结果。
         MonsterAttrUpdateNtf notice = MonsterAttrUpdateNtf.Parser.ParseFrom(data);
         if (!TeamData.Instance.OnMonsterAttrUpdate(notice)) return;
-        // 普攻第三段真命中后只停本地角色该次施法的剩余前冲；其他角色、其他段或旧 UUID 都不停。
-        if (notice.SkillUuid != 0UL)
-        {
-            // 本地角色用持久角色 ID 判定，避免同实例其他玩家的普攻停掉自己这一段。
-            PlayerEntity local = Global.Instance.SceneWorld.LocalRole;
-            if (local != null && (ulong)local.GetID() == notice.AttackerRoleId)
-                MArtSkill.TryStopLocalBasicAttackCharge(notice.SkillUuid);
-        }
+        ApplyLocalAttackFeedback(notice);
         for (int index = 0; index < notice.AiNotices.Count; index++) ShowAiNotice(notice.AiNotices[index]);
         if (notice.PlayerHits.Count == 0) return;
         // 当前显示该实例的角色索引，本人和远端分别存放。
@@ -197,6 +190,28 @@ public sealed class TeamCtrl : CtrlBase
             }
         }
         TeamInfoReceived?.Invoke(TeamData.Instance.IsInTeam);
+    }
+
+    /// <summary>根据服务端实际扣血和攻击者身份，播放本地主角的命中反馈。</summary>
+    /// <param name="notice">已通过当前副本实例校验的一批怪物属性更新。</param>
+    private void ApplyLocalAttackFeedback(MonsterAttrUpdateNtf notice)
+    {
+        if (notice.AttackerRoleId == 0UL) return;
+        // 本地主角的持久角色 ID，用于区分同实例其他玩家的命中。
+        PlayerEntity local = Global.Instance.SceneWorld.LocalRole;
+        if (local == null || (ulong)local.GetID() != notice.AttackerRoleId) return;
+        if (notice.SkillUuid != 0UL)
+        {
+            // 特定施法带 UUID 时沿既有办法截停该段位移。
+            MArtSkill.TryStopLocalBasicAttackCharge(notice.SkillUuid);
+        }
+        // index 遍历同一结果点命中的怪物；整批正伤害只触发一次震屏。
+        for (int index = 0; index < notice.Monsters.Count; index++)
+        {
+            if (notice.Monsters[index].Damage <= 0) continue;
+            CameraMgr.Instance?.PlaySkillHitShake();
+            break;
+        }
     }
 
     /// <summary>沿现有提示、真实模型和主界面窗口接收原AI显示节点。</summary>

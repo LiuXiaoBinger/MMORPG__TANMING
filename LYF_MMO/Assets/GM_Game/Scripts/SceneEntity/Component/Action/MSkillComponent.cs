@@ -1130,6 +1130,11 @@ public sealed class MSkillComponent : MBasicActionComponent
             Finish();
             return;
         }
+        if (Entity.IsPlayer)
+        {
+            // 已通过施法检查并启动新表现的本地主角，在起手时立即反馈一次。
+            CameraMgr.Instance?.PlaySkillCastShake();
+        }
         if (Entity.MoveComp != null && !IsActiveMovable)
         {
             // 禁止施法移动的技能开始时清除旧方向和水平速度；MoveCasting 技能保留有效输入。

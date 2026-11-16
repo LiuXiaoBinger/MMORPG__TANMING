@@ -25,9 +25,14 @@ public class MSkillCollision
     /// <param name="owner">拥有本次碰撞轨道的技能实例，用于精确停掉这一段的剩余前冲。</param>
     public void Update(MEntity firer, SkillRuntimePresentation presentation, float time, ulong targetUid, MArtSkill owner)
     {
+        // 当前是否处于服务器同步战斗的副本实例。
+        bool inDungeon = TeamData.Instance.DungeonInstanceId != 0UL;
         // 联机魔神塔的普攻由 GameServer 按同段动作结算，两端只在属性通知到达时播放受击。
-        if (presentation.SkillId == MSceneDungeon.BasicAttackId && TeamData.Instance.DungeonInstanceId != 0UL) return;
+        if (presentation.SkillId == MSceneDungeon.BasicAttackId && inDungeon) return;
         if (!firer.Model.IsLoaded) return;
+        // 本次查询可播放一次本地命中震屏；副本刀刃风暴的震屏由扣血通知驱动。
+        bool playHitShake = firer.IsPlayer &&
+            (!inDungeon || presentation.SkillId != MWaitingDataMgr.BladeStormSkillId);
         // 使用当前真实模型变换，与编辑器 ActionCollisionGeometry 的坐标语义一致。
         Transform actor = firer.Model.GameObject.Transform;
         for (int index = 0; index < presentation.Collisions.Count; index++)
@@ -74,6 +79,12 @@ public class MSkillCollision
                     if (collision.RepeatFrames == 0 || sample - lastHit < collision.RepeatFrames) continue;
                 }
                 hits[index][target.UID] = sample;
+                if (playHitShake)
+                {
+                    // 同一轮查询可能命中多个目标，首个有效重叠提供这一轮的镜头反馈。
+                    CameraMgr.Instance?.PlaySkillHitShake();
+                    playHitShake = false;
+                }
                 // 非副本的单机路径没有服务端命中包，由本地真实重叠停掉本次施法的剩余前冲；
                 // 直接用产生这条轨道的技能实例，不按动作槽取最近一次施法，旧事件停不了新施法。
                 if (owner != null) owner.TryStopChargeOnHit(0UL);
