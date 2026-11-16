@@ -23,9 +23,6 @@ public class PlayerInputCtr : MonoBehaviour
     /// <summary>移动状态检查的固定时间间隔，单位为秒，约等于 30Hz。</summary>
     private const float MovementCheckIntervalSeconds = 0.033f;
 
-    /// <summary>松开方向键后继续保持移动的秒数；停止时间按取消输入的时刻加此值计算。</summary>
-    private const float MinimumMovementHoldSeconds = 0.2f;
-
     /// <summary>自上次移动检查后累计的非缩放时间，禁用组件时清零。</summary>
     private float _movementCheckElapsedSeconds;
 
@@ -37,15 +34,6 @@ public class PlayerInputCtr : MonoBehaviour
 
     /// <summary>最近一次移动取消事件的 Input System 时间戳，单位为秒，用于拒绝取消事件之前排队的旧方向回调。</summary>
     private double _lastMovementCanceledTime = -1d;
-
-    /// <summary>本轮方向输入开始时记录的非缩放秒数；当前停止时间计算没有读取它。</summary>
-    private float _movementInputStartedTime = -1f;
-
-    /// <summary>方向松开后是否正在等待延迟停止时间。</summary>
-    private bool _movementStopPending;
-
-    /// <summary>延迟停止的目标时间，达到该时间后才派发停止事件。</summary>
-    private float _movementStopTime = -1f;
 
     /// <summary>本轮输入是否已经收到取消；用于区分同一时间戳的真实 Started 与迟到 Performed。</summary>
     private bool _movementInputCanceled;
@@ -117,16 +105,6 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
-        if (_movementStopPending)
-        {
-            if (Time.unscaledTime > _movementStopTime)
-            {
-                // 停止事件到期后只派发一次，避免同一帧重复清理移动状态。
-                FinalizeMovementStop();
-                return;
-            }
-            return;
-        }
         // 当前本地角色只在本次检查中读取，输入控制器不持有跨场景角色引用。
         PlayerEntity localRole = GetLocalRole();
         // 移动组件可能保留上一角色或遗漏取消回调留下的方向，零输入时必须主动收敛。
@@ -135,8 +113,7 @@ public class PlayerInputCtr : MonoBehaviour
             localRole.MoveComp.HasDirectionalInput;
         if (_isMovementInputActive || hasResidualMovement)
         {
-            ResetMovementInputState();
-            DispatchStopMovement();
+            FinalizeMovementStop();
         }
     }
 
@@ -213,17 +190,14 @@ public class PlayerInputCtr : MonoBehaviour
         Vector2 movement = context.ReadValue<Vector2>();
         if (movement == Vector2.zero)
         {
-            // 零值进入延迟停止，避免输入持续时间短于动画混合时间。
-            _movementInputCanceled = true;
-            ScheduleMovementStop();
+            StopMovementInput();
             return;
         }
 
         // 回调队列可能在按键释放后仍携带非零值；只有动作当前仍处于按下状态才允许恢复移动。
         if (playerInput == null || !playerInput.player.Movement.IsPressed())
         {
-            _movementInputCanceled = true;
-            ScheduleMovementStop();
+            StopMovementInput();
             return;
         }
 
@@ -234,13 +208,13 @@ public class PlayerInputCtr : MonoBehaviour
     }
 
     #region 事件回调
-    /// <summary>收到移动取消后记录事件时间，再安排延迟停止；此处不会立即停止角色。</summary>
+    /// <summary>收到方向动作取消后记录事件时间，立即结束本轮手动移动。</summary>
     /// <param name="context">Input System 提供的取消阶段信息；当前逻辑不读取其中的零向量。</param>
     private void OnMovementCanceled(InputAction.CallbackContext context)
     {
         // 记录取消事件的设备时间，后续只接受时间更晚的新一轮按键输入。
         _lastMovementCanceledTime = context.time;
-        ScheduleMovementStop();
+        StopMovementInput();
     }
 
     /// <summary>按下跳跃键时直接请求本地玩家移动组件开始下一段跳跃。</summary>
@@ -415,30 +389,19 @@ public class PlayerInputCtr : MonoBehaviour
         _isMovementInputActive = false;
         _latestMovementInput = Vector2.zero;
         _movementCheckElapsedSeconds = 0f;
-        _movementInputStartedTime = -1f;
-        _movementStopPending = false;
-        _movementStopTime = -1f;
     }
 
-    /// <summary>开始或更新一轮有效方向输入，并取消尚未到期的停止请求。</summary>
+    /// <summary>记录当前有效方向并清除上一轮取消标记，供本帧移动事件使用。</summary>
     /// <param name="movement">Input System 当前读取的非零二维移动向量。</param>
     private void BeginMovementInput(Vector2 movement)
     {
-        if (!_isMovementInputActive || _movementStopPending)
-        {
-            // 停止等待期间重新按键视为新一轮输入，并取消原来的停止安排。
-            _movementInputStartedTime = Time.unscaledTime;
-        }
-
         _movementInputCanceled = false;
         _isMovementInputActive = true;
         _latestMovementInput = movement;
-        _movementStopPending = false;
-        _movementStopTime = -1f;
     }
 
-    /// <summary>把停止时间设为当前非缩放时间加 0.2 秒；重复调用会按新的调用时间重新安排。</summary>
-    private void ScheduleMovementStop()
+    /// <summary>标记方向输入已取消，有手动移动时立即提交停止事件。</summary>
+    private void StopMovementInput()
     {
         _movementInputCanceled = true;
         if (!_isMovementInputActive)
@@ -446,13 +409,10 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
-        // 从本次取消时刻起计算停止时间，不使用先前记录的按下时刻。
-        float minimumStopTime = Time.unscaledTime + MinimumMovementHoldSeconds;
-        _movementStopPending = true;
-        _movementStopTime = minimumStopTime;
+        FinalizeMovementStop();
     }
 
-    /// <summary>到达延迟停止时间后清空本轮输入，并向角色发出停止事件。</summary>
+    /// <summary>清空本轮方向和轮询状态，并通知本地角色停止手动移动。</summary>
     private void FinalizeMovementStop()
     {
         ResetMovementInputState();
