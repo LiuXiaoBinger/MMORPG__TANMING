@@ -606,3 +606,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The active MJS hotkey map identified key 1 as Infinite Sword Art (无限剑决, 10070, presentation 3007001). Blue Barrier (苍蓝屏障, 10120, presentation 3012001) now references the same Anim_MJS_Skill04 clip in the Luban source and deployed table, ACT binding and timeline, and Unity runtime presentation.
 - Clip timing is 1,133 ms (34 frames at 30 FPS). Blue Barrier's one-second action state, frame-zero shield FX and five-second ward remain in place. Change 0745b8e was pushed to codex/feature-development.
 - File manifest and verification: 项目修改日志/2026-11-17-苍蓝屏障起手动作.md. Live connected casting and Player packaging remain unverified.
+
+## [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release
+
+- `PlayerInputCtr.cs` removes the 200 ms wait measured from release. Confirmed cancel or zero direction dispatches `MEvent_StopMove` immediately for active manual movement. The existing callback timestamp filter and held-direction poll remain in use.
+- Code commit `45ad296` was pushed to `codex/feature-development`. Full log at `项目修改日志/2026-11-17-方向键松手即时停步.md`. In-scene Animator acceptance is pending.

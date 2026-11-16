@@ -628,3 +628,8 @@
 - Unity 正式校验入口 `Validate(3012001)` 通过。当前生效的 1 键查询结果、ACT 引用、部署的 Luban 表行和运行时表现均指向 `Anim_MJS_Skill04`。隔离验证中的 MJS Avatar 在 0.38 s 显示了该姿势及现有护盾，角色根节点位于原点。证据为 `_temp/mjs-barrier-opener-20261117/verification.txt` 和同目录的 `barrier-opener.png`。
 - 隔离运行 Luban 生成时，仅 `tbskillpresentationinfo.bytes` 发生变化。解码全部 10 行后确认，只有 `3012001` 行的 `ClipName`、`ClipLocation`、`DurationMs` 发生变化。屏障仍只有 1 个粒子事件，在第 0 帧触发，粒子时长保持 5 秒，动作状态时长为 1,000 ms。
 - 客户端与服务器联机施法及 Player 构建均未执行。详见 `项目修改日志/2026-11-17-苍蓝屏障起手动作.md`。
+
+## [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] 方向键松手停步回归检查
+
+- `GM_Game` 编译通过，0 个错误、61 个警告。基线版本未通过短按后的即时停步检查。修复版通过了短按、连按两次、反向输入、过期回调和取消回调缺失的隔离检查。隔离的停步状态检查确认了默认动作刷新，以及空中停步时只清除水平速度。
+- 检查时，当前 Unity Play 会话仍加载着旧程序集。实际键盘操作和 Animator 表现仍待验收。证据位于 `_temp/2026-11-17-movement-stop-fix/`。

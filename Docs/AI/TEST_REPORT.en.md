@@ -637,3 +637,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Unity's production Validate(3012001) passed. The live key 1 lookup, ACT references, deployed Luban row and runtime presentation agree on Anim_MJS_Skill04. The isolated MJS Avatar displayed the pose with the existing shield at 0.38 s and the actor root at the origin. Evidence: _temp/mjs-barrier-opener-20261117/verification.txt and barrier-opener.png in the same directory.
 - Isolated Luban generation changed only tbskillpresentationinfo.bytes. Decoding all ten rows confirmed that only ClipName, ClipLocation and DurationMs changed in row 3012001. The ward still has one particle event at frame 0 with its five-second particle duration, and the action state is 1,000 ms.
 - No live connected client/server casting check or Player build was performed. See 项目修改日志/2026-11-17-苍蓝屏障起手动作.md.
+
+## [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks
+
+- `GM_Game` compiled with 0 errors and 61 warnings. The baseline failed the immediate-stop check after a short tap. The fix passed isolated short taps, double taps, reverse input, stale callbacks and missed cancel. The isolated stop-state check verified default-action refresh and horizontal-only airborne stop.
+- The current Unity Play session still loaded the old assembly at inspection time. Live keyboard and Animator acceptance is pending. Evidence in `_temp/2026-11-17-movement-stop-fix/`.

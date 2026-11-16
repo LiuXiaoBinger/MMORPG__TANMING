@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `bd136b8c16281e0c22f7e5e54d2505140bb375750816a3afef2be25ef2311e0b`
+Source normalized SHA256: `3822c1972d518f0e4fc6b11f48e8422b962bb70c03cbecfdd3da61c7cb7d50fc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -83,11 +83,12 @@ Source normalized SHA256: `bd136b8c16281e0c22f7e5e54d2505140bb375750816a3afef2be
 | [CODE][FILES][界面][HP-MP-BAR-THICKEN-20261116] Bottom HP and MP bars widened and thickened (2026-11-16) | 584-591 |
 | [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-597 |
 | [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-603 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-608 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-609 |
+| [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-613 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d84958952de37a356d40784c8d0333cd4d932e7f604d2ecba1f7ccf1e9fe8e28`
+Source normalized SHA256: `da6841df6e0ef603024eb819803aa49c0675bbb4cbe0b0b71eae82ba4573379f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -162,7 +163,8 @@ Source normalized SHA256: `d84958952de37a356d40784c8d0333cd4d932e7f604d2ecba1f7c
 | [VERIFY][界面][HP-MP-BAR-THICKEN-20261116] HP/MP bar resize checked in Play (2026-11-16) | 616-622 |
 | [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-628 |
 | [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-634 |
-| [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-639 |
+| [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-640 |
+| [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-644 |
 
 ## Docs/AI/DECISIONS.en.md
 
