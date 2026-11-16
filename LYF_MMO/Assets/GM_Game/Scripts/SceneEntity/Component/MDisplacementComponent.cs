@@ -287,8 +287,9 @@ public sealed class MDisplacementComponent : EntityComponentBase
         _direction = Quaternion.Euler(0f, args.angle, 0f) * Vector3.forward;
         _appliedDistance = 0f;
         _appliedDistanceX = 0f;
-        // 按技能和表现行决定是否截停前移，整段位移沿用开始时确定的结果。
-        _lungeAdaptive = MSkillLungeSweep.ShouldAdapt(args.Source.SkillId, args.Source.RuntimePresentationId);
+        // 技能主表的位移遇敌开关，整段沿用开始时读取的配置；缺少主表时保留原曲线。
+        cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(args.Source.SkillId);
+        _lungeAdaptive = skillInfo != null && skillInfo.StopAtEnemy;
         _lungeStopped = false;
         _started = false;
         _loadedGameObject = null;

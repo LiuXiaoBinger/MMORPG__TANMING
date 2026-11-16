@@ -18,21 +18,6 @@ public static class MSkillLungeSweep
     /// <summary>扫掠时复用的候选容器，只在主线程顺序访问，不跨帧持有实体引用。</summary>
     private static readonly List<MEntity> Candidates = new List<MEntity>();
 
-    /// <summary>判断本次施法是否属于需要命中自适应的魔剑士前移技能。</summary>
-    /// <param name="skillId">施法实例的技能主表编号。</param>
-    /// <param name="presentationId">本次施法锁定的表现行主键，用于区分同一技能的连续普攻段。</param>
-    /// <returns>需要按前方敌人截断前移距离时返回 true。</returns>
-    public static bool ShouldAdapt(int skillId, int presentationId)
-    {
-        // 清风剑法和斩天剑都有前移曲线，抵达活体敌人的接触边界后截停。
-        if (skillId == 10040 || skillId == 10060) return true;
-        // 键位 3 的刀刃风暴为新增前移跳斩。
-        if (skillId == 10110) return true;
-        // 普攻三段共用技能编号，只有第三段带前冲表现行 3001003。
-        if (skillId == 10010 && presentationId == 3001003) return true;
-        return false;
-    }
-
     /// <summary>按前方最近可攻击敌人截断本帧前向增量，空地与身后目标保持曲线原值。</summary>
     /// <param name="caster">本次施法实体，位置取当前已提交的权威位置。</param>
     /// <param name="direction">施法时锁定的水平世界方向，长度不限，内部做水平归一化。</param>

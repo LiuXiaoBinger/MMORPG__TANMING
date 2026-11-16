@@ -33,6 +33,7 @@ public sealed partial class SkillInfo : Luban.BeanBase
         CanSlideCancel = _buf.ReadInt();
         CanJumpCancel = _buf.ReadInt();
         CanSkillCancel = _buf.ReadInt();
+        StopAtEnemy = _buf.ReadBool();
     }
 
     public static SkillInfo DeserializeSkillInfo(ByteBuf _buf)
@@ -105,6 +106,10 @@ public sealed partial class SkillInfo : Luban.BeanBase
     /// 是否可以被其他技能打断(1是0否)
     /// </summary>
     public readonly int CanSkillCancel;
+    /// <summary>
+    /// 位移遇敌截停（TRUE 开启，FALSE 沿原曲线）
+    /// </summary>
+    public readonly bool StopAtEnemy;
    
     public const int __ID__ = -300141953;
     public override int GetTypeId() => __ID__;
@@ -133,6 +138,7 @@ public sealed partial class SkillInfo : Luban.BeanBase
         + "CanSlideCancel:" + CanSlideCancel + ","
         + "CanJumpCancel:" + CanJumpCancel + ","
         + "CanSkillCancel:" + CanSkillCancel + ","
+        + "StopAtEnemy:" + StopAtEnemy + ","
         + "}";
     }
 }
