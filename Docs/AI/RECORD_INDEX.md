@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c4db9839908322916e8225d81f5aee61b0c5bcf8a748e81347f6db1dff9d23f0`
+Source normalized SHA256: `c3a919a2169ab48700912bc8e6ab645dd39fed0b6ad29c7d3797d8c5e0ed3e70`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -86,11 +86,12 @@ Source normalized SHA256: `c4db9839908322916e8225d81f5aee61b0c5bcf8a748e81347f6d
 | [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-609 |
 | [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-614 |
 | [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-620 |
-| [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-624 |
+| [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-625 |
+| [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-630 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `db83e9c59c88d1c37fc9b69b70d62fa569596b12afaf05ee1d1f4ef9f73dfcfd`
+Source normalized SHA256: `e506d1054b9d34c30f6c653a7a360e99c240938e26b46fe46c8ec6654565607b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -168,7 +169,8 @@ Source normalized SHA256: `db83e9c59c88d1c37fc9b69b70d62fa569596b12afaf05ee1d1f4
 | [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-640 |
 | [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-645 |
 | [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-651 |
-| [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-655 |
+| [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-656 |
+| [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-661 |
 
 ## Docs/AI/DECISIONS.en.md
 

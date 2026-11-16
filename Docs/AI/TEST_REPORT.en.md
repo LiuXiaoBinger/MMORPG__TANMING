@@ -653,3 +653,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - `GM_Game` compiled with 0 errors and 57 warnings. The old navigation reproduced an in-range cast clearing manual movement even with Q's permission enabled. The new code passed 9 isolated navigation checks and 16 Unity Play checks in `sc_dungeon_moshenta_001`.
 - The Unity Input System probe observed 0 m of extra horizontal movement after double taps, the Animator returning to `FIdle`, three accepted jumps and the fourth rejected, and `Jump_End` on landing. Q preserved velocity and moved approximately 1.93 m during the sampled cast with 0 degrees of facing change. Server hit settlement, two-client sync, the live E-to-2 combo, and a standalone build remain unverified. Evidence at `_temp/2026-11-17-role-feel-playtest/`.
+
+## [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values
+
+- Used the generated skill reader to compare all prior fields for 10 rows. A separate Luban export with S5 set to FALSE differed from the official export only in `10040.StopAtEnemy`. The shared loader read the full table set.
+- In isolated Unity Play, placed the same enemy 2.0 m in front of the role, started the production E displacement segment and consumed its motion in 16 ms steps. TRUE travelled 1.0835 m and hit the contact boundary. FALSE travelled 3.5791 m on the original curve. The official TRUE row was restored. Unity reopened the normal login and connected.
+- Results are in `_temp/skill-stop-at-enemy-20261117/unity-motion-switch-stepped.log`. The natural offline playback probes did not advance the test role before the stepped check. Human multiplayer and standalone Player packaging were outside this check. Details in `项目修改日志/2026-11-17-技能位移遇敌截停开关.md`.

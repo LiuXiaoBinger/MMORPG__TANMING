@@ -617,3 +617,9 @@
 
 - 改变方向或松开组合方向中的一键时，`Movement.performed` 立即派发移动输入，完全松键时立即停步。Q（`10010`）的目标已在射程内时，沿用现有施法交接并保留手动输入和速度，出手期间保持起手攻击朝向。超距时沿用原追近流程。
 - 施法规则源资产和两份导出的规则仅为 `10010` 开启 `MoveCasting`。代码及难点条目随 `672cb0c` 推送至 `codex/feature-development`。完整记录见 `项目修改日志/2026-11-17-角色走跳与普攻手感优化.md`。
+
+## [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] 按技能设置位移遇敌截停
+
+- `Luaban/MiniTemplate/Datas/#SkillInfo.xlsx` 的 `Sheet1` 中，S 列是布尔字段 `StopAtEnemy`。清风剑法（`10040`）在 `S5`，默认 `TRUE`。`TRUE` 时，前冲遇到存活敌人会截停。`FALSE` 时，沿用原位移曲线。改值后重新导出并同步 `tbskillinfo.bytes`，再重新进入 Unity Play。
+- `MDisplacementComponent` 在每段突进开始时读取技能行。共享读取器和表数据已重新生成。`10010`、`10040`、`10060`、`10110` 四行启用。剑气攻击（`10010`）在原有第三段位移读取该开关。
+- 6 个业务文件已随 `aac80aa` 推送至 `codex/feature-development`。Unity 隔离位移检查通过。真人联机和独立 Player 打包尚未验证。完整记录见 `项目修改日志/2026-11-17-技能位移遇敌截停开关.md`。

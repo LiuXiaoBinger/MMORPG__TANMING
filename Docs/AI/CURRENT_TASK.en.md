@@ -622,3 +622,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Direction changes and partial key releases now dispatch from `Movement.performed`, with the original immediate full release. When Q (`10010`) is already in range, the existing skill handoff preserves manual input and velocity. The caster keeps the attack's starting facing during the skill. Out-of-range requests use the existing chase.
 - The authoring asset and both rule exports enable `MoveCasting` for `10010` only. Code and difficulty notes were pushed as `672cb0c` on `codex/feature-development`. Full record at `项目修改日志/2026-11-17-角色走跳与普攻手感优化.md`.
+
+## [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch
+
+- `Luaban/MiniTemplate/Datas/#SkillInfo.xlsx` Sheet1 column S is the Boolean `StopAtEnemy`. Qingfeng Swordplay 10040 uses S5 and defaults to TRUE. TRUE caps forward travel at a live enemy. FALSE uses the original displacement curve. After editing the value, regenerate and sync `tbskillinfo.bytes`, then reopen Unity Play.
+- MDisplacementComponent reads the skill row at the beginning of each charge segment. The shared reader and table data were regenerated. Four skill rows are enabled (10010, 10040, 10060, 10110). Blade Energy Attack 10010 reads the flag on its existing third-segment displacement.
+- Six business files were pushed in `aac80aa` on `codex/feature-development`. Isolated Unity motion verification passed. Human multiplayer and standalone Player packaging were outside this check. Full record in `项目修改日志/2026-11-17-技能位移遇敌截停开关.md`.
