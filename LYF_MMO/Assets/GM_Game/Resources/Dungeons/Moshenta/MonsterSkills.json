@@ -279,7 +279,31 @@
         {
           "Index": 0,
           "At": 0.6333333,
-          "HitFx": null,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
+            "At": 0.6333333,
+            "Duration": 1.0,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
           "CriticalFx": null,
           "HitAudio": "",
           "CriticalAudio": "",
@@ -6106,7 +6130,31 @@
         {
           "Index": 0,
           "At": 0.0,
-          "HitFx": null,
+          "HitFx": {
+            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+            "At": 0.0,
+            "Duration": 0.3,
+            "Follow": true,
+            "Offset": {
+              "x": 0.0,
+              "y": 0,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            },
+            "HeightRatio": 0.5,
+            "Bone": "",
+            "Face": 0,
+            "WarningType": 0,
+            "WarningSize": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
           "CriticalFx": null,
           "HitAudio": "",
           "CriticalAudio": "",
