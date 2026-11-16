@@ -595,3 +595,10 @@
 - GameServer 与 CenterServer 均编译通过。在隔离的 4060 实例中，真实服务端施法与更新链路通过 22 项检查。同一只怪在 tick 2、2、4、6、8、9、11、16（50 毫秒）产生八次独立掉血通知。打断后后续命中停止。另一组 24 目标样本命中 20。两条怪物攻击链路均通过护盾检查，含溢出与死亡清除。护盾专项与 CenterServer 键位补发检查分别 13/13 与 21/21。
 - Unity 使用正式 MJS Animator。跳跃将胯部抬高 1.4872 米，实测世界根位移为 0。两条 ACT 绑定、两套运行时表现与全部十枚 120×120 图标通过编辑器与 DefaultPackage 模拟检查。蓝色刀光与压暗的半透明护罩已在编辑器中实际渲染。
 - 证据：同一任务目录下的 `_temp/twinblade-storm-skill3-20261113/server-acceptance/delivery.log`、`final-review/keys-smoke/keys-smoke-r9.log`、`final-review/shield-smoke/shield-smoke.log`、`round6-proof/jump-proof.txt`、`final-review/unity-asset-proof.txt` 与 `final-review/barrier-render/final-render-report.txt`。完整归档见 `项目修改日志/2026-11-13-魔剑士蓝色技能组.md`。真实客户端物理按键、完整联机游玩、打包与部署仍未验证。
+
+## [VERIFY][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] 功能菜单与箭头坐标核对（2026-11-16）
+
+- 在编辑器实例化 `UIRoot.prefab` 后读 `RectTransform`：`FunctionMenuButton.sizeDelta=(44,38)`、`Arrow.anchoredPosition=(14,-19)`、`FunctionMenuContent.anchoredPosition=(44,-46)`，与改后资产一致。
+- 以画布左上角为原点换算：箭头中心 x=38、`KnapsackButton` 中心 x=114；改前分别为 78 与 186。折叠态 `Btn_Fold` 中心 x=38，与箭头同列。
+- 控制台 0 错误；临时场景用后关闭，活动场景恢复 `Assets/Boot/Scene_Boot.unity`，未保存场景改动。
+- 未验证：Play 模式实机视觉与真实点击。本次只改预制体、不涉及脚本，热更 `GM_Game.dll.bytes` 无需重建。
