@@ -630,7 +630,11 @@ public sealed class MMoveComponent : EntityComponentBase
             {
                 Entity.Model.lastVelocity = Entity.Model.lastVelocity.normalized * speed;
             }
-            MEntity.FaceDirectionSmooth(Entity, Entity.Model.lastVelocity);
+            // 允许施法移动时保留技能起手朝向，方向键只改变水平位移。
+            if (Entity.CurrentState != StateDefine.kStateSkill)
+            {
+                MEntity.FaceDirectionSmooth(Entity, Entity.Model.lastVelocity);
+            }
             horizontalVelocity = Entity.Model.lastVelocity;
         }
         else

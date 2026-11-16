@@ -148,8 +148,7 @@ public class MNavigationComponent : EntityComponentBase
         {
             _afterAction = (MSkillEventArgs)args.NavAction.Clone();
         }
-        // 新导航接管原方向；导航不伪装成持续按键，输入取消不会每帧误停路线。
-        Entity.MoveComp.StopHorizontalMovement();
+        // 先检查是否已经进入射程，再让真正需要追近的路线接管原方向。
         navigate();
     }
 
@@ -312,6 +311,8 @@ public class MNavigationComponent : EntityComponentBase
     /// <summary>按RO顺序判定范围、选择目标或位置查询，再启动既有移动动画。</summary>
     private void navigate()
     {
+        // 首次建路线时接管原输入；刷新移动目标的路线时沿用当前导航状态。
+        bool isStartingNavigation = !_isNavigation;
         _isNavigation = true;
         if (_naviWithTarget)
         {
@@ -326,6 +327,10 @@ public class MNavigationComponent : EntityComponentBase
         {
             onCloseTarget();
             return;
+        }
+        if (isStartingNavigation)
+        {
+            Entity.MoveComp.StopHorizontalMovement();
         }
         if (Entity.IsMovable)
         {
@@ -438,7 +443,7 @@ public class MNavigationComponent : EntityComponentBase
         return dis > _lowerRange - 0.01f && dis < _upperRange + 0.01f;
     }
 
-    /// <summary>到达后先结束路线和水平移动，再交给原NPC对话控制器或原技能流程。</summary>
+    /// <summary>到达后结束路线并交给原交互或施法流程；允许移动施法时保留手动方向。</summary>
     private void onCloseTarget()
     {
         // close会清理目标；只在普通NPC导航到达时保存现有表现控制器供本次同步调用。
@@ -448,7 +453,13 @@ public class MNavigationComponent : EntityComponentBase
             npcCtrl = _target.GetEntityCtrl() as NpcCtrl;
         }
         close();
-        Entity.MoveComp.StopHorizontalMovement();
+        // 本次到达后是否要释放允许手动走位的技能。
+        bool isMovingSkill = _useAfterAction && _afterAction != null &&
+            SkillCastingRulesCatalog.IsMoveCasting(_afterAction.Identify);
+        if (!isMovingSkill || !Entity.MoveComp.HasDirectionalInput)
+        {
+            Entity.MoveComp.StopHorizontalMovement();
+        }
         if (npcCtrl != null)
         {
             npcCtrl.OpenTalk(Entity.GetEntityCtrl());

@@ -161,7 +161,7 @@ public class PlayerInputCtr : MonoBehaviour
         };
         playerInput.player.Jump.started += OnJumpStarted;
         playerInput.player.Movement.started += OnMovementChanged;
-        //playerInput.player.Movement.performed += OnMovementChanged;
+        playerInput.player.Movement.performed += OnMovementChanged;
         playerInput.player.Movement.canceled += OnMovementCanceled;
 
         if (Keyboard.current != null)
@@ -201,6 +201,11 @@ public class PlayerInputCtr : MonoBehaviour
             return;
         }
 
+        // 首次按下会连续触发 started 和 performed；相同方向只即时派发一次。
+        if (_isMovementInputActive && movement == _latestMovementInput)
+        {
+            return;
+        }
         // 新的非零 started/performed 回调代表新一轮真实按键，清除取消标记。
         BeginMovementInput(movement);
         // 按键边沿即时派发，确保角色在空中按下方向时能在落地前记录输入。
