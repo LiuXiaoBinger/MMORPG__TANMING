@@ -601,4 +601,5 @@
 - 在编辑器实例化 `UIRoot.prefab` 后读 `RectTransform`：`FunctionMenuButton.sizeDelta=(44,38)`、`Arrow.anchoredPosition=(14,-19)`、`FunctionMenuContent.anchoredPosition=(44,-46)`，与改后资产一致。
 - 以画布左上角为原点换算：箭头中心 x=38、`KnapsackButton` 中心 x=114；改前分别为 78 与 186。折叠态 `Btn_Fold` 中心 x=38，与箭头同列。
 - 控制台 0 错误；临时场景用后关闭，活动场景恢复 `Assets/Boot/Scene_Boot.unity`，未保存场景改动。
-- 未验证：Play 模式实机视觉与真实点击。本次只改预制体、不涉及脚本，热更 `GM_Game.dll.bytes` 无需重建。
+- 实机复核：Unity 进入 `Scene_MainCity` 播放态后截 Game View（1920×1080），量测箭头中心 x≈38、「背包」图标中心 x≈118（改前同口径为 85 与 186），整行左移、箭头贴左；对比图 `_temp/function-menu-20261116/menu_ab.png`。
+- 未验证：真实鼠标点击（收起/展开是否正常、点击区是否误触「背包」）。本次只改预制体、不涉及脚本，热更 `GM_Game.dll.bytes` 无需重建。
