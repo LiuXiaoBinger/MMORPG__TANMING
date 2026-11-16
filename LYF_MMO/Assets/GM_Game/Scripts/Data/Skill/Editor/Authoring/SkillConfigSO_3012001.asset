@@ -48,12 +48,12 @@ MonoBehaviour:
   energyCostOnActivate: 0
   defaultEnergyGainOnHit: 0
   animSegments:
-  - clip: {fileID: 7400000, guid: 3cb1688486b8c6547a872272501acaef, type: 2}
+  - clip: {fileID: 7400000, guid: 7adc89ad98f23d1448004a1e1f42e3cd, type: 2}
     startFrame: 0
     clipStartFrame: 0
-    clipEndFrame: 0
+    clipEndFrame: 34
     blendInFrames: 0
-  skillClip: {fileID: 7400000, guid: 3cb1688486b8c6547a872272501acaef, type: 2}
+  skillClip: {fileID: 7400000, guid: 7adc89ad98f23d1448004a1e1f42e3cd, type: 2}
   exitFrame: 0
   moveSegmentList: []
   moveCurve:

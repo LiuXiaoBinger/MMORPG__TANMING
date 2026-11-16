@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   PresentationId: 3012001
   SkillId: 10120
-  AnimationLocation: Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Skill01.anim
-  DurationSeconds: 3.1
-  TimelineDurationSeconds: 3.1
+  AnimationLocation: Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Skill04.anim
+  DurationSeconds: 1.133
+  TimelineDurationSeconds: 1.1333333
   FxEvents:
   - SourceEventIndex: 0
     Frame: 0
