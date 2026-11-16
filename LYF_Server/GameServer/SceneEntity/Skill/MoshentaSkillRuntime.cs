@@ -348,9 +348,16 @@ internal sealed class MoshentaSkillRuntime
         // 原非直接目标分支AttackCount=0就是不选任何目标，不代表无限。
         bool oneDirectTarget = cast.Skill.NeedTarget && count <= 1 && !delayed;
         if (!oneDirectTarget && targets.Count > count) targets.RemoveRange(count, targets.Count - count);
+        // 原 ResultFxList 在首次选定目标时开始播放，延迟伤害重查范围时不能重复通知。
+        XElement resultEffects = result.Element("ResultFxList");
+        // 原RO仅为MultiTarget结果特效同步选中者；effect为原ResultFxList中的单项配置。
+        bool publishResultEffects = !delayed && resultEffects != null && resultEffects.Elements().Any(effect => MoshentaSkillCatalog.I(effect, "MultiTarget") != 0);
+        // 当前原结果实际选中的玩家索引，保持筛选后的顺序。
         for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
         {
+            // 表现目标和延迟结果使用同一真实玩家身份。
             OnlineRole target = targets[targetIndex];
+            if (publishResultEffects) Actor.Owner.PublishSkillResultFx(Actor, cast.Skill.Id, index, target);
             if (!delayed && MoshentaSkillCatalog.F(result, "DelayDamageTime") > 0)
             {
                 events.Add(new MoshentaSkillEvent { Kind = MoshentaSkillEvent.Delayed, Cast = cast, Data = result, Index = index,

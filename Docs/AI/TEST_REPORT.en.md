@@ -619,3 +619,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - After writing the prefab, `AssetDatabase.Refresh()` read back `Slider_hp (−270,−66) 400×20` and `Slider_mp (270,−66) 400×20`; console 0 errors.
 - Geometry (1920×1080 canvas): HP bar spans x 490–890, MP bar 1030–1430, the central R dial 897–1023, leaving a 7 px gap on each side; both bars stay inside the backing plate (463–1421); the bar top edge remains y=44 as before.
 - Unverified: live fill while HP/MP change in combat, low/empty bar appearance, `Slider` transition smoothness, and positions at non-16:9 resolutions.
+
+## [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects
+
+- 43 server checks passed. Actual wave behavior and two TCP receivers confirm same target, 5407 warning followed by damage at about3.933s without duplicate warning, 5303 natural cast/hit, and six consecutive basic attack intervals at least4000ms. 5206/5408 state4 checked with explicit input.
+- 22 isolated Unity assertions and 10 native render captures passed using actual assets, including white 5515 hit, normal spell/archer effects, four-direction warning, meteor target and 5408 clip switch at3s. Main Editor PreviewScene loaded 5515 via real ResourceMgr/YooAsset and found10349 changed pixels. The first probe missed white pixels and an expanded probe duplicate script was corrected. The initial long run exposed a real missing skill row and a later test-only sample count issue.
+- Server/client builds checked, with original hammer missing two asset references and no live server restart. Full human co-op clear, Player packaging and online deployment unverified. Evidence and exact boundaries in `项目修改日志/2026-11-16-魔神塔RO怪物技能与特效.md`.

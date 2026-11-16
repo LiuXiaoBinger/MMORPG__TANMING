@@ -23,6 +23,23 @@ public sealed class MSceneMonsterSkillPlayer
         public int ResultIndex;
         /// <summary>本阶段是否已首次启动实际剪辑。</summary>
         public bool AnimationStarted;
+        /// <summary>当前已选中的原 AnimList 下标，单段技能保持零。</summary>
+        public int AnimationIndex;
+        /// <summary>当前剪辑在原技能时间轴上的起点，单位秒。</summary>
+        public float ClipStartedAt;
+        /// <summary>本次施法已收到的目标结果轨道，按原 At 顺序消费。</summary>
+        public readonly List<TargetFxPlayback> TargetEffects = new List<TargetFxPlayback>();
+    }
+
+    /// <summary>一次结果选中对应的原多目标效果列表，不产生客户端伤害。</summary>
+    private sealed class TargetFxPlayback
+    {
+        /// <summary>服务器实际选中的角色，移动时仍保持同一个目标。</summary>
+        public RoleEntity Target;
+        /// <summary>原 ResultFxList 按 At 排序的效果指令。</summary>
+        public MSceneMonsterFxData[] Effects;
+        /// <summary>下一条尚未到原施法时刻的指令下标。</summary>
+        public int Index;
     }
 
     /// <summary>已实例化的单个特效，包括预警Shader或原非权威弹道。</summary>
@@ -54,6 +71,10 @@ public sealed class MSceneMonsterSkillPlayer
         public Vector3 Direction;
         /// <summary>服务器指定地面点或目标位置的快照。</summary>
         public Vector3 Destination;
+        /// <summary>原结果特效只跟随目标位置的挂点，不继承目标转向和缩放。</summary>
+        public Transform FollowPosition;
+        /// <summary>原目标偏移转换后的世界位移，单位米。</summary>
+        public Vector3 FollowOffset;
     }
 
     /// <summary>模型所属原MEntity（怪物或NPC）。</summary>
@@ -127,10 +148,15 @@ public sealed class MSceneMonsterSkillPlayer
         // 吟唱独立于攻击时间轴；未配置吟唱剪辑时保持公共待机。
         string clipPath = data.ClipPath;
         if (motion.Action.Phase == MonsterActionPhase.Singing) clipPath = data.SingingClipPath;
+        else if (data.Animations != null && data.Animations.Length > 0)
+        {
+            clipPath = data.Animations[0].ClipPath;
+            playback.ClipStartedAt = data.Animations[0].BeginTime;
+        }
         if (!string.IsNullOrEmpty(clipPath))
             Load(clipPath, handle =>
             {
-                if (active != playback || disposed) return;
+                if (active != playback || disposed || playback.AnimationIndex != 0) return;
                 playback.Clip = handle.AssetObject as AnimationClip;
 
             });
@@ -198,7 +224,7 @@ public sealed class MSceneMonsterSkillPlayer
                 MSceneMonsterFxData fx = list[playback.FxIndex++];
                 // 晚加入时跳过已经完全过期的效果。
                 float missed = time - fx.At;
-                if (fx.Duration < 0 || missed < fx.Duration) SpawnFx(fx, monster, missed, playback);
+                if (fx.Duration < 0 || missed < fx.Duration) SpawnTimelineFx(fx, playback, missed);
             }
             if (singing) continue;
             while (playback.AudioIndex < playback.Data.Audio.Length && playback.Data.Audio[playback.AudioIndex].At <= time)
@@ -206,6 +232,19 @@ public sealed class MSceneMonsterSkillPlayer
                 // 原时间轴中的一次声音事件，LoopCount已按原间隔展开。
                 MSceneMonsterAudioData audio = playback.Data.Audio[playback.AudioIndex++];
                 if (time - audio.At < 0.15f) PlayAudio(audio.Path, monster, audio.Duration, audio.Loop, playback);
+            }
+            for (int targetIndex = 0; targetIndex < playback.TargetEffects.Count; targetIndex++)
+            {
+                // 同一结果可以命中多个角色，各自保留原效果的消费进度。
+                TargetFxPlayback targetFx = playback.TargetEffects[targetIndex];
+                while (targetFx.Index < targetFx.Effects.Length && targetFx.Effects[targetFx.Index].At <= time)
+                {
+                    // 四向预警与后续十字效果使用原施法起点，不从扣血通知重新计时。
+                    MSceneMonsterFxData fx = targetFx.Effects[targetFx.Index++];
+                    // 模型或通知迟到只恢复尚未结束的原效果。
+                    float missed = time - fx.At;
+                    if (fx.Duration < 0f || missed < fx.Duration) SpawnFx(fx, targetFx.Target, missed, playback, true);
+                }
             }
             while (playback.ResultIndex < playback.Data.Results.Length && playback.Data.Results[playback.ResultIndex].At <= time)
             {
@@ -218,6 +257,7 @@ public sealed class MSceneMonsterSkillPlayer
         // 动画占用到原SkillStateTime为止，剩余尾轨道继续由上面的列表执行。
         double animationAgeMs = (Time.realtimeSinceStartupAsDouble - active.Motion.ReceivedAt) * 1000d;
         if (animationAgeMs >= active.Motion.Action.DurationMs) { EndPhase(); return false; }
+        UpdateAnimationClip(active);
         if (allowAnimation && active.Clip != null)
         {
             // 沿同一公共Animator的Skill槽绑定当前真实剪辑。
@@ -231,11 +271,79 @@ public sealed class MSceneMonsterSkillPlayer
             if (!active.AnimationStarted || animator.CurrentState != MAnimator.STATE_SKILL)
             {
                 animator.GetOrCreateOverrideController()[MAnimator.STATE_SKILL] = active.Clip;
-                animator.Play(MAnimator.STATE_SKILL, 0, Timeline(active) / active.Clip.length);
+                animator.Play(MAnimator.STATE_SKILL, 0, (Timeline(active) - active.ClipStartedAt) / active.Clip.length);
                 active.AnimationStarted = true;
             }
         }
         return true;
+    }
+
+    /// <summary>按原 AnimList 切换本次技能片段，阶段已结束时不会调用或重新占用动作。</summary>
+    /// <param name="playback">当前仍占用动作的技能阶段。</param>
+    private void UpdateAnimationClip(Playback playback)
+    {
+        if (playback.Motion.Action.Phase == MonsterActionPhase.Singing) return;
+        // 原动画段数组，旧单段技能无需额外切换。
+        MSceneMonsterSkillData.AnimationPart[] animations = playback.Data.Animations;
+        if (animations == null || animations.Length == 0) return;
+        // 依原技能时钟选择应播放的片段，快照迟到时直接恢复当前段。
+        float time = Timeline(playback);
+        // 当前候选段下标，后续异步回调只允许写回仍选中的同一段。
+        int animationIndex = playback.AnimationIndex;
+        while (animationIndex + 1 < animations.Length && animations[animationIndex + 1].BeginTime <= time) animationIndex++;
+        if (animationIndex == playback.AnimationIndex) return;
+        playback.AnimationIndex = animationIndex;
+        playback.ClipStartedAt = animations[animationIndex].BeginTime;
+        playback.AnimationStarted = false;
+        playback.Clip = null;
+        Load(animations[animationIndex].ClipPath, handle =>
+        {
+            if (active != playback || disposed || playback.AnimationIndex != animationIndex) return;
+            playback.Clip = handle.AssetObject as AnimationClip;
+        });
+    }
+
+    /// <summary>原时间轴效果依 FirerBased/TargetBased 选择挂点，陨星不能出现在施法者脚下。</summary>
+    /// <param name="fx">原时间轴中的效果指令。</param>
+    /// <param name="playback">含真实目标身份与施法点的当前阶段。</param>
+    /// <param name="elapsed">效果原起点至当前已经过的秒数。</param>
+    private void SpawnTimelineFx(MSceneMonsterFxData fx, Playback playback, float elapsed)
+    {
+        if (!fx.TargetBased)
+        {
+            SpawnFx(fx, monster, elapsed, playback);
+            return;
+        }
+        if (!playback.Data.NeedTarget)
+        {
+            SpawnFx(fx, monster, elapsed, playback, false,
+                new Vector3(playback.Motion.Action.CastX, playback.Motion.Action.CastY, playback.Motion.Action.CastZ));
+            return;
+        }
+        // RO 有目标技能使用该次施法锁定的角色当前坐标，不自行搜索其他角色。
+        RoleEntity target = Global.Instance.SceneWorld.LocalRole;
+        if (target == null || target.GetID() != playback.Motion.Action.TargetRoleId)
+            if (!Global.Instance.SceneWorld.TryGetRole(playback.Motion.Action.TargetRoleId, out target)) return;
+        SpawnFx(fx, target, elapsed, playback, true);
+    }
+
+    /// <summary>沿 RO 的结果选中通知，将多目标特效接入同一次施法的原时钟。</summary>
+    /// <param name="result">原技能、结果序号及服务器真实选中的角色身份。</param>
+    /// <param name="target">已经按持久角色 ID 找到的真实角色。</param>
+    public void PlayResultFx(MonsterSkillResultFxData result, RoleEntity target)
+    {
+        for (int index = playbacks.Count - 1; index >= 0; index--)
+        {
+            // 从最近一次同技能的攻击轨道读取原结果，不把吟唱当作 FireSkill 起点。
+            Playback playback = playbacks[index];
+            if (playback.Data.Id != result.SkillId || playback.Motion.Action.Phase != MonsterActionPhase.Attack) continue;
+            if (result.ResultIndex >= playback.Data.Results.Length) return;
+            // 原 ResultFxList 仅在服务器选中时登记一次，真正命中通知不再次登记。
+            MSceneMonsterFxData[] effects = playback.Data.Results[result.ResultIndex].TargetEffects;
+            if (effects == null || effects.Length == 0) return;
+            playback.TargetEffects.Add(new TargetFxPlayback { Target = target, Effects = effects });
+            return;
+        }
     }
 
     /// <summary>播放服务器确认命中的原结果特效和声音。</summary>
@@ -278,7 +386,9 @@ public sealed class MSceneMonsterSkillPlayer
     /// <param name="target">施法者或真实受击者。</param>
     /// <param name="elapsed">原特效已过秒数，用于快照恢复。</param>
     /// <param name="playback">所属阶段，真实受击效果为空。</param>
-    private void SpawnFx(MSceneMonsterFxData data, MEntity target, float elapsed, Playback playback)
+    /// <param name="targetResult">原多目标结果效果为真；其 FollowPostion 只跟位置，不继承目标朝向或缩放。</param>
+    /// <param name="fixedPosition">原无角色目标技能的权威世界施法点；为空时按实际挂点定位。</param>
+    private void SpawnFx(MSceneMonsterFxData data, MEntity target, float elapsed, Playback playback, bool targetResult = false, Vector3? fixedPosition = null)
     {
         // 原结果没有Fx时JsonUtility仍可能构造空对象，不向资源系统提交空地址。
         if (string.IsNullOrEmpty(data.Path)) return;
@@ -303,11 +413,24 @@ public sealed class MSceneMonsterSkillPlayer
             }
             model.transform.position = anchor.TransformPoint(data.Offset) + Vector3.up * target.Height * data.HeightRatio;
             model.transform.rotation = anchor.rotation * Quaternion.Euler(0f, data.Face, 0f);
-            if (data.Follow) model.transform.SetParent(anchor, true);
+            if (targetResult)
+            {
+                // 原跟随目标效果固定 OffsetFace；不跟随的陨星取施法者当前朝向。
+                model.transform.rotation = Quaternion.Euler(0f, data.Face, 0f);
+                if (!data.Follow && playback != null)
+                    model.transform.rotation = monster.Model.GameObject.Transform.rotation * Quaternion.Euler(0f, data.Face, 0f);
+            }
+            if (fixedPosition.HasValue) model.transform.position = fixedPosition.Value + anchor.rotation * data.Offset;
+            if (data.Follow && !targetResult && !fixedPosition.HasValue) model.transform.SetParent(anchor, true);
             model.transform.localScale = data.Scale;
             // 此实际特效实例的归属、时钟与回收记录。
             Effect effect = new Effect { Model = model, End = double.PositiveInfinity, Started = requested - elapsed };
             if (data.Duration > 0) effect.End = effect.Started + data.Duration;
+            if (targetResult && data.Follow)
+            {
+                effect.FollowPosition = anchor;
+                effect.FollowOffset = model.transform.position - anchor.position;
+            }
             if (playback != null)
                 if (data.Duration < 0 || playback.Motion.Action.Phase == MonsterActionPhase.Singing) effect.Singing = playback;
             if (data.WarningType != 0)
@@ -482,6 +605,7 @@ public sealed class MSceneMonsterSkillPlayer
                 continue;
             }
             if (effect.Projectile != null) UpdateProjectile(effect, now);
+            if (effect.FollowPosition != null) effect.Model.transform.position = effect.FollowPosition.position + effect.FollowOffset;
             if (effect.Warning != null)
             {
                 // 当前Renderer的临时属性块，保留同材质其他属性。

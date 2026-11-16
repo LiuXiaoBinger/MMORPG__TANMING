@@ -6,6 +6,19 @@ public sealed class MSceneMonsterSkillData
 {
     /// <summary>原SkillTable技能编号。</summary>
     public int Id;
+    /// <summary>原 SkillTargetRangeType 为 ESTR_Target 时需要真实角色目标。</summary>
+    public bool NeedTarget;
+    /// <summary>原 AnimList 的单段动作，起点相对本次 FireSkill，单位秒。</summary>
+    [Serializable]
+    public sealed class AnimationPart
+    {
+        /// <summary>该段原动画资源完整路径，继续覆盖公共 Animator 的 Skill 槽。</summary>
+        public string ClipPath;
+        /// <summary>该段原 begin_time，归一化播放时间须减去此起点。</summary>
+        public float BeginTime;
+    }
+    /// <summary>原分段动画时间轴；未配置时保持 ClipPath 的单段行为。</summary>
+    public AnimationPart[] Animations = new AnimationPart[0];
     /// <summary>原ClipName解析后的正式动画资源地址。</summary>
     public string ClipPath;
     /// <summary>原SingingClips首段地址；空值保持当前待机。</summary>

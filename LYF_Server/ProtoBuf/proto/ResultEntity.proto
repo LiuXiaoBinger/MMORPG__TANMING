@@ -227,6 +227,7 @@ message MonsterAttrUpdateNtf {
 	repeated MonsterBuffData buff_changes = 12;//本次原Buff实例新增、刷新或明确移除
 	uint64 attacker_role_id = 13;//本次命中的持久攻击者角色 ID，非普攻第三段不填
 	uint64 skill_uuid = 14;//本次命中的施法 UUID，仅普攻第三段真命中时填
+	repeated MonsterSkillResultFxData skill_result_fx = 15;//原结果选中目标时广播的表现，不代表伤害结算
 }
 
 // 角色离开视野或实例的下行通知，客户端据此删除远端角色。
@@ -515,6 +516,14 @@ message MonsterAiNoticeData {
 	int32 notice_id = 2;      // 对应原表配置编号
 	uint64 source_spawn_id = 3; // 触发此表现的服务端出生标识
 	int32 target_role_id = 4; // 非零时仅指定角色消费此表现
+}
+
+// 原技能结果选定的表现目标；同实例所有观察者使用同一目标，伤害仍由独立命中消息结算。
+message MonsterSkillResultFxData {
+	uint64 spawn_id = 1;//施放该原技能的怪物出生标识
+	int32 skill_id = 2;//原技能编号，用于读取结果特效配置
+	int32 result_index = 3;//原 ResultList 的零基下标
+	int32 target_role_id = 4;//本次实际选中的玩家，不是消息接收者过滤条件
 }
 
 // 由 GameServer 结算的单次怪物攻击结果，用角色 ID 定位玩家、出生标识定位施害者。

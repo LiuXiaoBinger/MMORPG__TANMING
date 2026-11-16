@@ -106,8 +106,11 @@ public sealed partial class SceneWaveSpawner
         target.Monsters.Add(Notice.Monsters); target.MonsterActions.Add(Notice.MonsterActions); target.PlayerHits.Add(Notice.PlayerHits);
         target.MonsterSpawns.Add(Notice.MonsterSpawns); target.RemovedSpawnIds.Add(Notice.RemovedSpawnIds); target.AiNotices.Add(Notice.AiNotices);
         target.BuffChanges.Add(Notice.BuffChanges);
+        // 选中目标的结果表现与当前动作在同一实例回包中传递。
+        target.SkillResultFx.Add(Notice.SkillResultFx);
         Notice.Monsters.Clear(); Notice.MonsterActions.Clear(); Notice.PlayerHits.Clear(); Notice.MonsterSpawns.Clear(); Notice.RemovedSpawnIds.Clear(); Notice.AiNotices.Clear();
         Notice.BuffChanges.Clear();
+        Notice.SkillResultFx.Clear();
     }
     /// <summary>查询原Entity UUID是否仍存在，包括已经死亡但未消失的实体。</summary><param name="uid">目标身份。</param>
     internal bool ContainsEntity(ulong uid) { return FindActor(uid) != null || FindRole(uid) != null; }
@@ -204,6 +207,21 @@ public sealed partial class SceneWaveSpawner
         if (source != null) data.SourceSpawnId = source.SpawnId;
         OnlineRole role = FindRole(target); if (role != null) data.TargetRoleId = role.mainRoleInfo.BaseInfo.RoleId;
         Notice.AiNotices.Add(data);
+    }
+    /// <summary>原结果选中玩家时只广播目标表现，独立于随后可能发生的扣血。</summary>
+    /// <param name="source">本次技能的真实怪物宿主。</param>
+    /// <param name="skillId">原技能配置编号。</param>
+    /// <param name="resultIndex">原结果列表的零基下标。</param>
+    /// <param name="target">本次随机或范围筛选实际选中的同实例玩家。</param>
+    internal void PublishSkillResultFx(MoshentaActor source, int skillId, int resultIndex, OnlineRole target)
+    {
+        Notice.SkillResultFx.Add(new MonsterSkillResultFxData
+        {
+            SpawnId = source.SpawnId,
+            SkillId = skillId,
+            ResultIndex = resultIndex,
+            TargetRoleId = target.mainRoleInfo.BaseInfo.RoleId
+        });
     }
     /// <summary>原Actor或玩家Buff写入技能模块，禁止再建一份效果状态。</summary><param name="caster">原施加者。</param><param name="targetId">目标身份。</param><param name="fullBuffId">含等级Buff编号。</param>
     internal void AddBuff(MoshentaActor caster, ulong targetId, int fullBuffId)

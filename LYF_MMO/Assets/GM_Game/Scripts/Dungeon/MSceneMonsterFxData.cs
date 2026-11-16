@@ -7,6 +7,8 @@ public sealed class MSceneMonsterFxData
 {
     /// <summary>原EffectTable的预制体正式地址。</summary>
     public string Path;
+    /// <summary>原 TargetBased 效果；有目标技能取真实角色，点选技能取权威施法点。</summary>
+    public bool TargetBased;
     /// <summary>当前阶段开始后的原触发秒数。</summary>
     public float At;
     /// <summary>原End或EffectTable.PlayTime决定的存活秒数，负数随当前阶段结束。</summary>

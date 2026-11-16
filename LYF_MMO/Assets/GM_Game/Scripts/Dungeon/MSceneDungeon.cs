@@ -58,6 +58,7 @@ public class MSceneDungeon : MonoBehaviour
         TeamData.Instance.MonsterSpawned += SpawnDynamic;
         TeamData.Instance.MonsterRemoved += RemoveDynamic;
         TeamData.Instance.MonsterPlayerHit += OnMonsterPlayerHit;
+        TeamData.Instance.MonsterSkillResultFx += OnMonsterSkillResultFx;
         TeamData.Instance.MonsterHeadExpression += OnHeadExpression;
         TeamData.Instance.DungeonFlowUpdated += ApplyFlow;
         if (UIRoot.Instance != null && instanceId != 0UL && !string.IsNullOrEmpty(Resource.hitWordResource))
@@ -467,6 +468,24 @@ public class MSceneDungeon : MonoBehaviour
         battleHudWord.transform.SetAsFirstSibling();
     }
 
+    /// <summary>结果选中时在实际目标处启动原预警，所有同实例观察者沿同一通知播放。</summary>
+    /// <param name="result">尚未结算伤害的原结果选中通知。</param>
+    private void OnMonsterSkillResultFx(MonsterSkillResultFxData result)
+    {
+        if (instanceId != TeamData.Instance.DungeonInstanceId) return;
+        // 目标使用持久角色 ID，不能按场景实体 UID 查找。
+        RoleEntity target = world.LocalRole;
+        if (target == null || target.GetID() != result.TargetRoleId)
+            if (!world.TryGetRole(result.TargetRoleId, out target)) return;
+        // 表现生命周期仍由原施法怪物或剧情 NPC 宿主持有。
+        MEntity caster;
+        if (!monsters.TryGetValue(result.SpawnId, out caster)) return;
+        // NPC 和怪物保留各自已有控制器，不建立另一套技能播放实体。
+        MSceneNpcHoster npc = caster.GetEntityCtrl() as MSceneNpcHoster;
+        if (npc != null) npc.PlayResultFx(result, target);
+        else ((MSceneMonsterHoster)caster.GetEntityCtrl()).PlayResultFx(result, target);
+    }
+
     /// <summary>真实命中回包驱动伤害数字及原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
     /// <param name="hit">含原技能、结果序号和暴击的服务器结算。</param>
     private void OnMonsterPlayerHit(MonsterPlayerHitData hit)
@@ -557,6 +576,7 @@ public class MSceneDungeon : MonoBehaviour
         TeamData.Instance.MonsterSpawned -= SpawnDynamic;
         TeamData.Instance.MonsterRemoved -= RemoveDynamic;
         TeamData.Instance.MonsterPlayerHit -= OnMonsterPlayerHit;
+        TeamData.Instance.MonsterSkillResultFx -= OnMonsterSkillResultFx;
         TeamData.Instance.MonsterHeadExpression -= OnHeadExpression;
         TeamData.Instance.DungeonFlowUpdated -= ApplyFlow;
         TeamData.Instance.SetNearbyInteraction(null);

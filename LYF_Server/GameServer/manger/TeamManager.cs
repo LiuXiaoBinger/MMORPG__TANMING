@@ -140,6 +140,8 @@ public sealed class TeamManager
             frame.RemovedSpawnIds.Clear();
             frame.AiNotices.Clear();
             frame.BuffChanges.Clear();
+            // 每帧重新收集目标结果表现，避免旧预警随下一次属性包重播。
+            frame.SkillResultFx.Clear();
             team.WaveSpawner.Update(deltaMilliseconds, frame);
             // 权威生命值全部归零时重置本实例，其他队伍状态不受影响。
             bool alive = false;
@@ -162,6 +164,8 @@ public sealed class TeamManager
             changed = changed || frame.Monsters.Count > 0 || frame.MonsterSpawns.Count > 0;
             changed = changed || frame.RemovedSpawnIds.Count > 0 || frame.AiNotices.Count > 0;
             changed = changed || frame.BuffChanges.Count > 0;
+            // 原结果预警即使尚未扣血也必须广播给同实例观察者。
+            changed = changed || frame.SkillResultFx.Count > 0;
             if (changed) SendMonsterNotice(team, frame);
         }
     }

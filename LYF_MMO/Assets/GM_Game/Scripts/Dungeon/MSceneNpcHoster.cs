@@ -29,6 +29,15 @@ public class MSceneNpcHoster : NpcCtrl
         skillPlayer.PlayResult(hit, target);
     }
 
+    /// <summary>把原结果选中目标交给现有施法轨道，不提前播放命中或伤害数字。</summary>
+    /// <param name="result">服务端实际选中的原结果与目标身份。</param>
+    /// <param name="target">当前实例可见的真实目标角色。</param>
+    public void PlayResultFx(MonsterSkillResultFxData result, RoleEntity target)
+    {
+        if (skillPlayer == null) skillPlayer = new MSceneMonsterSkillPlayer(this, (MEntity)GetROObject());
+        skillPlayer.PlayResultFx(result, target);
+    }
+
     /// <summary>按原NPC权威位姿驱动同一公共模型控制器。</summary>
     private void LateUpdate()
     {

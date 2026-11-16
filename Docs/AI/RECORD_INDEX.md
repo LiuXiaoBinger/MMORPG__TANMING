@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b2b22224aa3f7cbd8879e22a24d4d7920d92034de8837c3fe21e1d9c2478f49c`
+Source normalized SHA256: `dba1aaec4a4a320076cc4d6ae43d7895c10bb2b916450890bde2f933b5db174f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -78,11 +78,14 @@ Source normalized SHA256: `b2b22224aa3f7cbd8879e22a24d4d7920d92034de8837c3fe21e1
 | [CODE][FILES][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Role attribute clipping and blue-and-white styling (2026-11-12) | 553-558 |
 | [CODE][FILES][角色][界面][ROLE-SUMMARY-SPACING-20261112] Larger role controls and aligned close button (2026-11-12) | 559-564 |
 | [CODE][FILES][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Larger role controls, lower glow and whole attribute rows (2026-11-12) | 565-570 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Magic Swordsman Blade Storm and Blue Barrier | 571-575 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Magic Swordsman Blade Storm and Blue Barrier | 571-576 |
+| [CODE][FILES][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Top function menu moved left, fold arrow aligned with the quick-panel hide button (2026-11-16) | 577-583 |
+| [CODE][FILES][界面][HP-MP-BAR-THICKEN-20261116] Bottom HP and MP bars widened and thickened (2026-11-16) | 584-591 |
+| [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-596 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `65162b03b84391b18a3f55a5aea153f9905102aa8bbc2c9c6d809c98c7152bf6`
+Source normalized SHA256: `264a0f0071d859d3a4e4f23a6acfcdad1cffc50943ebe9307c0848b82b4e377e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -152,7 +155,10 @@ Source normalized SHA256: `65162b03b84391b18a3f55a5aea153f9905102aa8bbc2c9c6d809
 | [VERIFY][角色][背包][ROLE-ATTRIBUTE-RENDER-FIX-20261112] Two-resolution Unity render checks (2026-11-12) | 586-591 |
 | [VERIFY][角色][界面][ROLE-SUMMARY-SPACING-20261112] Enlarged role panel render and interaction checks (2026-11-12) | 592-596 |
 | [VERIFY][角色][界面][ROLE-PANEL-FULL-ROWS-20261112] Whole attribute rows and role panel layout (2026-11-12) | 597-601 |
-| [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Eight authoritative hits, ward absorption and Unity asset checks | 602-606 |
+| [VERIFY][技能][魔剑士][MJS-BLUE-SKILLSET-20261113] Eight authoritative hits, ward absorption and Unity asset checks | 602-607 |
+| [VERIFY][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Function menu and fold-arrow coordinate check (2026-11-16) | 608-615 |
+| [VERIFY][界面][HP-MP-BAR-THICKEN-20261116] HP/MP bar resize checked in Play (2026-11-16) | 616-622 |
+| [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-627 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -10,12 +10,12 @@
     {
       "source": "roserver/exe/gsconf/rogameslib_table/SkillTable.bytes",
       "source_sha256": "67f5992147cc350de53d10629b0603240753ecb67cb13f8d8932437e9e8e4070",
-      "imported_rows": 40
+      "imported_rows": 43
     },
     {
       "source": "roserver/exe/gsconf/rogameslib_table/SkillEffectTable.bytes",
       "source_sha256": "83c0ed5530e1ec42787dd6d9e7ebddd0b2fbdca0d7367b21d58ebafe1402f265",
-      "imported_rows": 40
+      "imported_rows": 43
     },
     {
       "source": "roserver/exe/gsconf/rogameslib_table/BuffTable.bytes",
@@ -266,6 +266,21 @@
       "source": "roserver/exe/gsconf/curve/Skill_HuoQiu_Zd_Z.txt",
       "target": "Curve/Skill_HuoQiu_Zd_Z.txt",
       "source_sha256": "198eddd0d0eeaedc53cca4db36c46db31df48a3559bd5c2b8131921423f242de"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_Zenghen_ZhongChui.txt",
+      "target": "SkillData/1000545206.xml",
+      "source_sha256": "f07fb582caa6294e1f73eff8ebe4221d310b1a5d2a686c7ff30981b5b8447928"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_JueWang_YunXing.txt",
+      "target": "SkillData/1000545303.xml",
+      "source_sha256": "58263ddab3e5b13b8aad664ba3f25db5f31c15f4d65a2abb7ce669c4599661ad"
+    },
+    {
+      "source": "roserver/exe/gsconf/SkillData/Dungeon_DaNaTuoSiZhiZhan/Monster_BeiAi_AiGe_Double.txt",
+      "target": "SkillData/1000545408.xml",
+      "source_sha256": "3ea2e969dbd642ec1c65a1ceccafaa463af52acd03d104503585993d25d1a798"
     }
   ],
   "differences": [

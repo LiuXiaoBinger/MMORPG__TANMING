@@ -19,4 +19,6 @@ public sealed class MSceneMonsterResultData
     public string CriticalAudio;
     /// <summary>原结果的弹道表现参数，无弹道时为空。</summary>
     public MSceneMonsterProjectileData Projectile;
+    /// <summary>原 ResultFxList 中随服务器选中目标播放的效果，时间仍相对施法起点。</summary>
+    public MSceneMonsterFxData[] TargetEffects = new MSceneMonsterFxData[0];
 }

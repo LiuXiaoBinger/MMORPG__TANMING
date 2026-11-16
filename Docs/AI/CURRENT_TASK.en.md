@@ -588,3 +588,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The centre moved down 5 px so the bar's **top edge stays at y=44** and the added thickness grows downward, keeping it clear of the skill slots above; at 400 px wide each bar leaves a 7 px gap to the central R dial. `Fill Area` and `Background` use stretched anchors and follow automatically.
 - Commit `1f11505` was pushed to `codex/feature-development` and contains only these four lines; 413 lines of earlier uncommitted changes in the same prefab were left out.
 - Verification: before/after captures on the running main-city Play instance (`_temp/hpbar-20261116/bar_ab.png`), then the same values written to the prefab and read back; console 0 errors. Unverified: live fill while HP/MP change in combat, low/empty bar appearance, non-16:9 resolutions. Details: `项目修改日志/2026-11-16-血条蓝条加宽加粗_CHANGELOG.md`.
+
+## [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects
+
+- Preserve original RO behavior trees, Lua timing, selection probabilities and damage. Restore three direct tree references 1000545206/5303/5408 and their original data. EZ naturally casts 5303. The other two state4 branches are verified with controlled tree input.
+- Server sends selected MultiTarget result separately from damage. Client follows the selected role position with fixed warning directions, restores meteor target FX and eight AnimList clips using MMonsterAnimator. 87 business/resource files with exact manifest in `项目修改日志/2026-11-16-魔神塔RO怪物技能与特效.md`.
+- Development code and isolated validation are complete. Active local server was left on its prior running build. Original hammer mesh and texture dependencies are missing in the reference assets. Full human co-op clear, Player packaging and online deployment unverified.

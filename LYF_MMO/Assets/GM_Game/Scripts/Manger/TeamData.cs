@@ -39,6 +39,8 @@ public sealed class TeamData
     public event Action<ulong> MonsterRemoved;
     /// <summary>真实命中结果用于选取原受击特效，不承担客户端伤害。</summary>
     public event Action<MonsterPlayerHitData> MonsterPlayerHit;
+    /// <summary>服务器实际选中的结果目标，先播放预警，不能当作命中扣血。</summary>
+    public event Action<MonsterSkillResultFxData> MonsterSkillResultFx;
     /// <summary>当前实例仍存活的原Buff快照，以唯一BuffInstanceId区分同Buff不同来源。</summary>
     private readonly Dictionary<ulong, MSceneMonsterBuffState> monsterBuffs = new Dictionary<ulong, MSceneMonsterBuffState>();
     /// <summary>原Buff增删或剩余时长校正，客户端仅订阅视觉变化。</summary>
@@ -196,6 +198,9 @@ public sealed class TeamData
             monsterMotions.Remove(spawnId);
             MonsterRemoved?.Invoke(spawnId);
         }
+        // 先建立施法轨道，再按真实选中目标启动原 ResultFxList；后续伤害仍走独立命中通知。
+        for (int index = 0; index < notice.SkillResultFx.Count; index++)
+            MonsterSkillResultFx?.Invoke(notice.SkillResultFx[index]);
         // 队伍列表使用角色的持久 ID，同一招的扣血量只取服务端结算。
         for (int index = 0; index < notice.PlayerHits.Count; index++)
         {
