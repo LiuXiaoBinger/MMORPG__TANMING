@@ -631,3 +631,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Checked all 43 skill rows against `6f00249`. Exactly eight caster `Effects` additions. Unity imported and reloaded the live catalogue, and the eight prefab references resolved.
 - The first caster trial produced oversized normal swings. Adjusted the scale and anchor heights, then replayed the actual current dungeon. Waves 17 and 20 rendered attacks on their own models. Wave 19 elite 5508 rendered a golden normal swing and an orange-red Bite on the elite's model. The matching RO clips played and server hits dealt 6166 and 14712 damage. Wave 21 rendered the original projectile in the initial check.
 - The current character finished at the entrance with 47496 HP following normal revival. Traces and actual Game View images are in `_temp/moshenta-live-effects-20261116/`. The second floor, all difficulties, full human co-op clear and Player builds were outside this live check. Details in `项目修改日志/2026-11-17-魔神塔恶灵普攻与撕咬特效.md`.
+
+## [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified
+
+- Unity's production Validate(3012001) passed. The live key 1 lookup, ACT references, deployed Luban row and runtime presentation agree on Anim_MJS_Skill04. The isolated MJS Avatar displayed the pose with the existing shield at 0.38 s and the actor root at the origin. Evidence: _temp/mjs-barrier-opener-20261117/verification.txt and barrier-opener.png in the same directory.
+- Isolated Luban generation changed only tbskillpresentationinfo.bytes. Decoding all ten rows confirmed that only ClipName, ClipLocation and DurationMs changed in row 3012001. The ward still has one particle event at frame 0 with its five-second particle duration, and the action state is 1,000 ms.
+- No live connected client/server casting check or Player build was performed. See 项目修改日志/2026-11-17-苍蓝屏障起手动作.md.

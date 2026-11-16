@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `85e7beda9aec02cbaadfdd2f4cbab9abf29307251f95a0593a7d573edda0e534`
+Source normalized SHA256: `bd136b8c16281e0c22f7e5e54d2505140bb375750816a3afef2be25ef2311e0b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -82,11 +82,12 @@ Source normalized SHA256: `85e7beda9aec02cbaadfdd2f4cbab9abf29307251f95a0593a7d5
 | [CODE][FILES][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Top function menu moved left, fold arrow aligned with the quick-panel hide button (2026-11-16) | 577-583 |
 | [CODE][FILES][界面][HP-MP-BAR-THICKEN-20261116] Bottom HP and MP bars widened and thickened (2026-11-16) | 584-591 |
 | [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-597 |
-| [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-602 |
+| [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-603 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-608 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d887e40fe61726ce1204117bbc8b32bc2174f67f2c6fbd0baae9d2efcb2d2c3a`
+Source normalized SHA256: `d84958952de37a356d40784c8d0333cd4d932e7f604d2ecba1f7ccf1e9fe8e28`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -160,7 +161,8 @@ Source normalized SHA256: `d887e40fe61726ce1204117bbc8b32bc2174f67f2c6fbd0baae9d
 | [VERIFY][界面][FUNCTION-MENU-LEFT-ALIGN-20261116] Function menu and fold-arrow coordinate check (2026-11-16) | 608-615 |
 | [VERIFY][界面][HP-MP-BAR-THICKEN-20261116] HP/MP bar resize checked in Play (2026-11-16) | 616-622 |
 | [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-628 |
-| [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-633 |
+| [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-634 |
+| [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-639 |
 
 ## Docs/AI/DECISIONS.en.md
 

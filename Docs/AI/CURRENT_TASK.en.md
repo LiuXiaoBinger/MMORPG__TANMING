@@ -600,3 +600,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Current-role combat reproduced 5508 Bite 1000546201 and normal attack 1000121201 with empty caster and impact fields. Initial commit `7b6b0fc` added impact effects on the player. The user requested visible effects on the attacking monster.
 - Final commit `ac3fe5c` moved the work to the caster timeline in `LYF_MMO/Assets/GM_Game/Resources/Dungeons/Moshenta/MonsterSkills.json`. Seven normal attacks received a reused RO swing or cast effect. Bite uses an enlarged `Fx_Skill_Nomal_BeHit_Vector03` at 1.9 local scale. Both commits were pushed to `codex/feature-development`.
 - The original trees try group 1 before group 0. Wave 19 elite 5508 uses Bite in group 1. Wave 18 orc 5515 has one normal attack. This check covered first-floor combat. The second floor, all difficulties and Player builds were outside this live check. Full record in `项目修改日志/2026-11-17-魔神塔恶灵普攻与撕咬特效.md`.
+
+## [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation
+
+- The active MJS hotkey map identified key 1 as Infinite Sword Art (无限剑决, 10070, presentation 3007001). Blue Barrier (苍蓝屏障, 10120, presentation 3012001) now references the same Anim_MJS_Skill04 clip in the Luban source and deployed table, ACT binding and timeline, and Unity runtime presentation.
+- Clip timing is 1,133 ms (34 frames at 30 FPS). Blue Barrier's one-second action state, frame-zero shield FX and five-second ward remain in place. Change 0745b8e was pushed to codex/feature-development.
+- File manifest and verification: 项目修改日志/2026-11-17-苍蓝屏障起手动作.md. Live connected casting and Player packaging remain unverified.
