@@ -36,9 +36,6 @@ public sealed class SkillCtrl : CtrlBase
     /// <summary>快捷键事件是否已绑定，避免 UI 反复初始化时重复施法。</summary>
     private bool _inputRegistered;
 
-    /// <summary>刀刃风暴技能 ID，围绕自身结算，选中远处敌人时也必须原地释放。</summary>
-    private const int BladeStormSkillId = 10110;
-
     /// <summary>苍蓝屏障技能 ID，护罩跟随自身，选中远处敌人时也必须原地释放。</summary>
     private const int BlueBarrierSkillId = 10120;
     #endregion
@@ -357,16 +354,14 @@ public sealed class SkillCtrl : CtrlBase
         return true;
     }
 
-    /// <summary>攻击优先保持有效当前目标；没有目标时在十米内先选前方，再选其他方向的最近敌人。</summary>
+    /// <summary>攻击优先保持有效当前目标，常规攻击允许自动找敌，刀刃风暴只用已选目标确定起手朝向。</summary>
     /// <param name="skillCore">本次已学技能；主表 Type 一为普攻，Type 二为其他主动攻击。</param>
     /// <param name="target">玩家当前选中实体，可为空或友方。</param>
-    /// <returns>有效当前敌人或十米内的新目标；没有候选时为空，沿角色当前朝向释放。</returns>
+    /// <returns>有效当前敌人或允许自动选择时的新敌人，空值表示保持角色当前朝向。</returns>
     public MEntity GetTargetFilterSkill(MSkillCore skillCore, MEntity target)
     {
-        // 刀刃风暴与苍蓝屏障都以施法者自身为原点，不能因为玩家先前选中远处敌人就改朝向或追目标。
-        // 这两个技能在主表里仍是 Type=2 主动攻击类别，因此必须在通用选敌之前直接返回空目标。
-        if (skillCore.SkillId == BladeStormSkillId ||
-            skillCore.SkillId == BlueBarrierSkillId)
+        // 苍蓝屏障护持自己，施法无需传入敌人。
+        if (skillCore.SkillId == BlueBarrierSkillId)
         {
             return null;
         }
@@ -380,6 +375,11 @@ public sealed class SkillCtrl : CtrlBase
         if (MSkillTargetMgr.singleton.CanAttack(target))
         {
             return target;
+        }
+        // 无锁定时刀刃风暴沿角色当前方向起手，不自动抢占敌人。
+        if (skillCore.SkillId == MWaitingDataMgr.BladeStormSkillId)
+        {
+            return null;
         }
         return MSkillTargetMgr.singleton.FindEnemyBySkillBtn(true, MSkillTargetDefine.IsInAttackFacing);
     }

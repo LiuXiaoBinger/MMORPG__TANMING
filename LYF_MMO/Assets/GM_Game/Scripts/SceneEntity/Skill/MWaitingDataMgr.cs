@@ -6,6 +6,9 @@ using UnityEngine;
 /// </summary>
 public sealed class MWaitingDataMgr
 {
+    /// <summary>刀刃风暴主表编号，按施法者位置结算，已有敌人只用于起手转身。</summary>
+    internal const int BladeStormSkillId = 10110;
+
     /// <summary>全局输入交接入口；本对象不保存角色、技能或等待状态。</summary>
     public static readonly MWaitingDataMgr singleton = new MWaitingDataMgr();
 
@@ -21,7 +24,7 @@ public sealed class MWaitingDataMgr
         DoCastSkill(castingSkill, castPoint, target);
     }
 
-    /// <summary>带目标的普攻和攻击技能先追近至各自配置射程，无目标及其他类型保持原立即交接。</summary>
+    /// <summary>常规有目标攻击按射程追近，刀刃风暴直接交接施法并保留锁定朝向。</summary>
     /// <param name="skillCore">本次输入对应的技能核心。</param>
     /// <param name="castPoint">世界空间释放点，单位米。</param>
     /// <param name="target">输入层保留或自动获取的敌人，空值表示沿角色当前朝向释放。</param>
@@ -32,11 +35,13 @@ public sealed class MWaitingDataMgr
         // 本次技能指令在同步导航事件完成后随载荷归还，不保留跨帧引用。
         MSkillEventArgs skillEvent = MSkillEventArgs.
             Create(skillCore.SkillId, castPoint, target);
-        // 导航仍独占到达后的技能指令；有目标的攻击先追近，不在远处提前出招。
+        // 技能事件保存用于起手的目标，导航自身是否追近由下面的射程配置决定。
         MNavigationEventArgs navigation = MNavigationEventArgs.Create(skillEvent);
         // 主表攻击距离单位为世界米，与导航水平到达范围一致。
         cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillCore.SkillId);
-        if ((skillInfo.Type == 1 || skillInfo.Type == 2) && target != null)
+        // 普攻和主动攻击沿用主表分类，其他类型无需按攻击射程追近。
+        bool isAttack = skillInfo.Type == 1 || skillInfo.Type == 2;
+        if (isAttack && target != null && skillCore.SkillId != BladeStormSkillId)
         {
             navigation.NeedTarget = true;
             navigation.Target = target;

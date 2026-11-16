@@ -24,8 +24,8 @@ public static class MSkillLungeSweep
     /// <returns>需要按前方敌人截断前移距离时返回 true。</returns>
     public static bool ShouldAdapt(int skillId, int presentationId)
     {
-        // 键位 2 的斩天剑自带长距离前冲，贴身时不应继续前冲。
-        if (skillId == 10060) return true;
+        // 清风剑法和斩天剑都有前移曲线，抵达活体敌人的接触边界后截停。
+        if (skillId == 10040 || skillId == 10060) return true;
         // 键位 3 的刀刃风暴为新增前移跳斩。
         if (skillId == 10110) return true;
         // 普攻三段共用技能编号，只有第三段带前冲表现行 3001003。
