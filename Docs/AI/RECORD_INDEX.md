@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c2d330540a7aadd75ad25600daf5be4931e193965721c95494a8f46eb85257a7`
+Source normalized SHA256: `c4db9839908322916e8225d81f5aee61b0c5bcf8a748e81347f6db1dff9d23f0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -85,11 +85,12 @@ Source normalized SHA256: `c2d330540a7aadd75ad25600daf5be4931e193965721c95494a8f
 | [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-603 |
 | [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-609 |
 | [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-614 |
-| [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-619 |
+| [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-620 |
+| [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-624 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `eeb58cb1158b1fd8c82e4ee34c271206ee261bf611e94645db6a33a67209de9f`
+Source normalized SHA256: `db83e9c59c88d1c37fc9b69b70d62fa569596b12afaf05ee1d1f4ef9f73dfcfd`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -166,7 +167,8 @@ Source normalized SHA256: `eeb58cb1158b1fd8c82e4ee34c271206ee261bf611e94645db6a3
 | [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-634 |
 | [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-640 |
 | [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-645 |
-| [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-650 |
+| [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-651 |
+| [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-655 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -617,3 +617,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Current Magic Swordsman binds E to 清风剑法 10040 and 3 to Blade Storm 10110. E now uses the existing live-enemy contact sweep and keeps its forward curve in clear space.
 - Blade Storm uses the selected valid enemy to set cast-start facing. The input passes the enemy to the skill event and leaves pursuit disabled. With no lock it uses the player's current direction. The caster remains the source of the original attack area.
 - Four client files. Change `8937bc6` pushed to `codex/feature-development`. Actual editor dungeon replay passed; Player, remote perspective and all monster shapes were outside this check. Details in `项目修改日志/2026-11-17-魔剑士清风剑法穿怪与刀刃风暴朝向.md`.
+
+## [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack
+
+- Direction changes and partial key releases now dispatch from `Movement.performed`, with the original immediate full release. When Q (`10010`) is already in range, the existing skill handoff preserves manual input and velocity. The caster keeps the attack's starting facing during the skill. Out-of-range requests use the existing chase.
+- The authoring asset and both rule exports enable `MoveCasting` for `10010` only. Code and difficulty notes were pushed as `672cb0c` on `codex/feature-development`. Full record at `项目修改日志/2026-11-17-角色走跳与普攻手感优化.md`.
