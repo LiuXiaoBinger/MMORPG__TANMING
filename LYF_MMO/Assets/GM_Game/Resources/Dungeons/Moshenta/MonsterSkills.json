@@ -124,7 +124,33 @@
       "SkillStateTime": 1.067,
       "AnimationLength": 1.0,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_end01.prefab",
+          "At": 0.5,
+          "Duration": 0.85,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 0.52,
+            "y": 0.52,
+            "z": 0.52
+          },
+          "HeightRatio": 0.3,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [],
       "Results": [
@@ -171,7 +197,33 @@
       "SkillStateTime": 0.733,
       "AnimationLength": 0.73333335,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_PuGong.prefab",
+          "At": 0.3666667,
+          "Duration": 0.8,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.15
+          },
+          "Scale": {
+            "x": 0.28,
+            "y": 0.28,
+            "z": 0.28
+          },
+          "HeightRatio": 0.24,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [],
       "Results": [
@@ -218,7 +270,33 @@
       "SkillStateTime": 1.0,
       "AnimationLength": 0.7666667,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_PuGong.prefab",
+          "At": 0.33333334,
+          "Duration": 0.8,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.15
+          },
+          "Scale": {
+            "x": 0.32,
+            "y": 0.32,
+            "z": 0.32
+          },
+          "HeightRatio": 0.24,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [],
       "Results": [
@@ -265,7 +343,33 @@
       "SkillStateTime": 1.4,
       "AnimationLength": 1.3333334,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_PuGong.prefab",
+          "At": 0.6333333,
+          "Duration": 0.8,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.2
+          },
+          "Scale": {
+            "x": 0.39,
+            "y": 0.39,
+            "z": 0.39
+          },
+          "HeightRatio": 0.24,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [
         {
@@ -279,31 +383,7 @@
         {
           "Index": 0,
           "At": 0.6333333,
-          "HitFx": {
-            "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_10.prefab",
-            "At": 0.6333333,
-            "Duration": 1.0,
-            "Follow": true,
-            "Offset": {
-              "x": 0.0,
-              "y": 0,
-              "z": 0.0
-            },
-            "Scale": {
-              "x": 1.0,
-              "y": 1.0,
-              "z": 1.0
-            },
-            "HeightRatio": 0.5,
-            "Bone": "",
-            "Face": 0,
-            "WarningType": 0,
-            "WarningSize": {
-              "x": 0,
-              "y": 0,
-              "z": 0
-            }
-          },
+          "HitFx": null,
           "CriticalFx": null,
           "HitAudio": "",
           "CriticalAudio": "",
@@ -319,7 +399,33 @@
       "SkillStateTime": 2.167,
       "AnimationLength": 1.4000001,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Skill/Fx_Skill_Fb_DaNaTuoSiDeBeiAi_PuGong.prefab",
+          "At": 0.70000005,
+          "Duration": 0.8,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.2
+          },
+          "Scale": {
+            "x": 0.41,
+            "y": 0.41,
+            "z": 0.41
+          },
+          "HeightRatio": 0.24,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [
         {
@@ -5031,7 +5137,33 @@
       "SkillStateTime": 1.4,
       "AnimationLength": 0.86666673,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_end01.prefab",
+          "At": 0.3,
+          "Duration": 0.85,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 0.55,
+            "y": 0.55,
+            "z": 0.55
+          },
+          "HeightRatio": 0.3,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [
         {
           "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_Loop06.prefab",
@@ -6123,38 +6255,40 @@
       "SkillStateTime": 2.4,
       "AnimationLength": 2.4,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
+          "At": 0.0,
+          "Duration": 0.65,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.55
+          },
+          "Scale": {
+            "x": 1.9,
+            "y": 1.9,
+            "z": 1.9
+          },
+          "HeightRatio": 0.55,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [],
       "Results": [
         {
           "Index": 0,
           "At": 0.0,
-          "HitFx": {
-            "Path": "Assets/GM_Game/Models/Monster/RO/SkillAssets/artres/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_BeHit_Vector03.prefab",
-            "At": 0.0,
-            "Duration": 0.3,
-            "Follow": true,
-            "Offset": {
-              "x": 0.0,
-              "y": 0,
-              "z": 0.0
-            },
-            "Scale": {
-              "x": 1.0,
-              "y": 1.0,
-              "z": 1.0
-            },
-            "HeightRatio": 0.5,
-            "Bone": "",
-            "Face": 0,
-            "WarningType": 0,
-            "WarningSize": {
-              "x": 0,
-              "y": 0,
-              "z": 0
-            }
-          },
+          "HitFx": null,
           "CriticalFx": null,
           "HitAudio": "",
           "CriticalAudio": "",
@@ -6343,7 +6477,33 @@
       "SkillStateTime": 1.333,
       "AnimationLength": 1.3333334,
       "SingingAudioPath": "",
-      "Effects": [],
+      "Effects": [
+        {
+          "Path": "Assets/GM_Game/Models/Monster/RO/Art/Resources/Effects/Prefabs/Creature/Common/Fx_Skill_Nomal_Magician_Release_end01.prefab",
+          "At": 0.4666667,
+          "Duration": 0.85,
+          "Follow": true,
+          "Offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "Scale": {
+            "x": 0.58,
+            "y": 0.58,
+            "z": 0.58
+          },
+          "HeightRatio": 0.3,
+          "Bone": "",
+          "Face": 0.0,
+          "WarningType": 0,
+          "WarningSize": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      ],
       "SingingEffects": [],
       "Audio": [],
       "Results": [
