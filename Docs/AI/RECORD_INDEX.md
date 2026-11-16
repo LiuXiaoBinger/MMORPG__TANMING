@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `3822c1972d518f0e4fc6b11f48e8422b962bb70c03cbecfdd3da61c7cb7d50fc`
+Source normalized SHA256: `c2d330540a7aadd75ad25600daf5be4931e193965721c95494a8f46eb85257a7`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -84,11 +84,12 @@ Source normalized SHA256: `3822c1972d518f0e4fc6b11f48e8422b962bb70c03cbecfdd3da6
 | [CODE][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original RO monster spells and result effects | 592-597 |
 | [CODE][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster effects for normal attacks and Bite | 598-603 |
 | [CODE][FILES][HANDOFF][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier uses the key 1 opening animation | 604-609 |
-| [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-613 |
+| [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-614 |
+| [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-619 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `da6841df6e0ef603024eb819803aa49c0675bbb4cbe0b0b71eae82ba4573379f`
+Source normalized SHA256: `eeb58cb1158b1fd8c82e4ee34c271206ee261bf611e94645db6a33a67209de9f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -164,7 +165,8 @@ Source normalized SHA256: `da6841df6e0ef603024eb819803aa49c0675bbb4cbe0b0b71eae8
 | [VERIFY][副本][怪物AI][MOSHENTA-RO-CAST-FX-20261116] Original cast, replicated target warning and Unity effects | 623-628 |
 | [VERIFY][副本][怪物AI][MOSHENTA-ELING-HIT-FX-20261117] Caster anchoring checked in live first-floor combat | 629-634 |
 | [VERIFY][技能][魔剑士][MJS-BARRIER-OPENER-20261117] Blue Barrier animation binding and pose verified | 635-640 |
-| [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-644 |
+| [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-645 |
+| [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-650 |
 
 ## Docs/AI/DECISIONS.en.md
 

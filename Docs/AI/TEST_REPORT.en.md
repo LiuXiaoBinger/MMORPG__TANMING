@@ -642,3 +642,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - `GM_Game` compiled with 0 errors and 61 warnings. The baseline failed the immediate-stop check after a short tap. The fix passed isolated short taps, double taps, reverse input, stale callbacks and missed cancel. The isolated stop-state check verified default-action refresh and horizontal-only airborne stop.
 - The current Unity Play session still loaded the old assembly at inspection time. Live keyboard and Animator acceptance is pending. Evidence in `_temp/2026-11-17-movement-stop-fix/`.
+
+## [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks
+
+- True current-role dungeon session, role 1, instance 1 before and 2 after. Used the actual Unity skill shortcut handler. Before, E travelled 2.7078 m forward and crossed its target, with a minimum signed gap of -1.7082 m. After, a close target activated the contact clamp and E travelled 0 m forward.
+- With a valid selected enemy behind the caster, Blade Storm's aim dot moved from -1.0 to +1.0 at activation. Lock persisted. There was no pursuit or start-position movement. The no-lock case was verified at the selection method. Geometry checks gave 1.1 m allowance for a 2 m frontal target, 0 at contact, and the full 3.5813 m for a side target.
+- Unity accepted the four scripts after leaving Play and reloading. No Console errors. The current character returned near the entrance with 44656 HP. Evidence in `_temp/player-e-3-combat-20261117/`. Physical key input, remote perspective, all monster shapes and Player builds were outside this check. Details in `项目修改日志/2026-11-17-魔剑士清风剑法穿怪与刀刃风暴朝向.md`.
