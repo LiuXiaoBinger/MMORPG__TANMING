@@ -612,3 +612,10 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Console: 0 errors. The temporary scene was closed and `Assets/Boot/Scene_Boot.unity` restored as the active scene; no scene changes were saved.
 - In-Play check: with Unity running `Scene_MainCity`, a Game View capture (1920×1080) measured the arrow centre at x≈38 and the Knapsack icon centre at x≈118 (85 and 186 at the same scale before), confirming the row moved left and the arrow sits flush left. Comparison: `_temp/function-menu-20261116/menu_ab.png`.
 - Unverified: real mouse clicks (whether collapse/expand works and whether the shrunken click area still avoids the Knapsack button). This change touches only the prefab, not scripts, so the hot-update `GM_Game.dll.bytes` does not need rebuilding.
+
+## [VERIFY][界面][HP-MP-BAR-THICKEN-20261116] HP/MP bar resize checked in Play (2026-11-16)
+
+- Both captures came from the running `Scene_MainCity` Play instance: the new values were first applied to the live `Slider_hp`/`Slider_mp` and captured, then written into the prefab. Comparison: `_temp/hpbar-20261116/bar_ab.png` (top 340×10, bottom 400×20). The thicker bars show a clear red/blue fill over the dark navy track, rounded ends, no overlap with the skill slots and no clipping.
+- After writing the prefab, `AssetDatabase.Refresh()` read back `Slider_hp (−270,−66) 400×20` and `Slider_mp (270,−66) 400×20`; console 0 errors.
+- Geometry (1920×1080 canvas): HP bar spans x 490–890, MP bar 1030–1430, the central R dial 897–1023, leaving a 7 px gap on each side; both bars stay inside the backing plate (463–1421); the bar top edge remains y=44 as before.
+- Unverified: live fill while HP/MP change in combat, low/empty bar appearance, `Slider` transition smoothness, and positions at non-16:9 resolutions.
