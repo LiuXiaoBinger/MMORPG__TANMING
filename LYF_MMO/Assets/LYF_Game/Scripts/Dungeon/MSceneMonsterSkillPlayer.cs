@@ -79,8 +79,8 @@ public sealed class MSceneMonsterSkillPlayer
 
     /// <summary>模型所属原MEntity（怪物或NPC）。</summary>
     private readonly MEntity monster;
-    /// <summary>模型控制器也是异步完成时的生命周期依据。</summary>
-    private readonly RoleCtrlBase host;
+    /// <summary>创建播放实例时的模型，异步回调只处理该模型还存活的情况。</summary>
+    private readonly Transform host;
     /// <summary>所属副本的只读技能目录，模型存活期间不会换成另一副本的同号技能。</summary>
     private readonly MSceneMonsterSkillCatalog skillCatalog;
     /// <summary>所属副本的通知表现目录，未迁入战斗表现时为空。</summary>
@@ -104,15 +104,30 @@ public sealed class MSceneMonsterSkillPlayer
     /// <summary>是否已经保存本次技能前的倍率。</summary>
     private bool ownsSpeed;
 
-    /// <summary>绑定现有模型实体，不建立新的角色世界或控制器。</summary>
-    /// <param name="owner">正式怪物控制器。</param>
-    /// <param name="entity">同一控制器持有的怪物实体。</param>
+    /// <summary>剧情 NPC 使用所在副本的资源登记初始化技能表现。</summary>
+    /// <param name="owner">当前剧情 NPC 预制体控制器。</param>
+    /// <param name="entity">该预制体已经绑定的剧情实体。</param>
     public MSceneMonsterSkillPlayer(RoleCtrlBase owner, MEntity entity)
+        : this(owner.transform, entity, owner.GetComponentInParent<MSceneDungeon>().Resource)
     {
-        host = owner;
+    }
+
+    /// <summary>绑定已有实体模型和本副本的原技能资源。</summary>
+    /// <param name="entity">挂接完 Unity 模型的运行时施法实体。</param>
+    /// <param name="resource">生成该实体的副本资源登记。</param>
+    public MSceneMonsterSkillPlayer(MEntity entity, DungeonSceneResource resource)
+        : this(entity.Model.GameObject.Transform, entity, resource)
+    {
+    }
+
+    /// <summary>以实际承载动画和特效的 Unity 对象作为异步播放的生存期依据。</summary>
+    /// <param name="model">当前施法者的模型根节点。</param>
+    /// <param name="entity">模型对应的运行时施法实体。</param>
+    /// <param name="resource">生成该实体的副本资源登记。</param>
+    private MSceneMonsterSkillPlayer(Transform model, MEntity entity, DungeonSceneResource resource)
+    {
+        host = model;
         monster = entity;
-        // 模型已经挂在实际出生场景下，从场景持有的登记绑定本实例表现。
-        DungeonSceneResource resource = owner.GetComponentInParent<MSceneDungeon>().Resource;
         skillCatalog = MSceneMonsterSkillCatalog.Load(resource.battleResourceRoot);
         noticeCatalog = MSceneMonsterNoticeCatalog.Load(resource.battleResourceRoot);
     }
@@ -642,7 +657,7 @@ public sealed class MSceneMonsterSkillPlayer
     public void RestoreSpeed()
     {
         if (!ownsSpeed) return;
-        // 全灭回收先清空实体模型，帧末才执行宿主 OnDestroy；已释放模型不再恢复倍率。
+        // 剧情模型可能在帧末销毁，释放后跳过动画倍率恢复。
         if (monster.Model != null && monster.Model.Ator != null)
             monster.Model.Ator.Speed = previousSpeed;
         ownsSpeed = false;

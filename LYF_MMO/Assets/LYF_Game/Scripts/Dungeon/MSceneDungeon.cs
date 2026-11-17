@@ -325,12 +325,10 @@ public class MSceneDungeon : MonoBehaviour
             MEntity entity = (MEntity)world.CreateEntity(entityType, creature.id);
             entityUids.Add(entity.UID);
             waveEntities[wave.Id].Add(entity.UID);
-            // 正式预制体上持久保存模型准备数据与类型匹配的控制器。
-            RoleCtrlBase controller = model.GetComponent<RoleCtrlBase>();
             if (creature.isNpc)
             {
                 // 副本 NPC 的控制器持有与普通实体容器相同的领域实例。
-                MSceneNpcHoster npc = (MSceneNpcHoster)controller;
+                MSceneNpcHoster npc = model.GetComponent<MSceneNpcHoster>();
                 npc.WaveId = wave.Id;
                 // 两个既有编号入口均写入原 NpcTable 主键，供查看和后续交互读取。
                 NpcEntity npcEntity = (NpcEntity)entity;
@@ -338,17 +336,15 @@ public class MSceneDungeon : MonoBehaviour
                 npcEntity.NpcID = creature.id;
                 npcEntity.Name = creature.displayName;
                 npc.Initialize(npcEntity);
-                controller._roleType = RoleType.NPC;
+                npc._roleType = RoleType.NPC;
+                npc.SetROObject(npcEntity);
+                npcEntity.SetEntityCtrl(npc);
             }
             else
             {
-                ((MSceneMonsterHoster)controller).WaveId = wave.Id;
                 // 尸体和伤员仍按原点位生成，其能否被攻击由本条实体配置决定。
                 ((MonsterEntity)entity).NonCombatant = creature.nonCombatant;
-                controller._roleType = RoleType.Monster;
             }
-            controller.SetROObject(entity);
-            entity.SetEntityCtrl(controller);
             entity.Model.SetGameObject(model, string.Empty, false);
             // 实体碰撞尺寸与实际模型包围盒一致，不使用角色职业表猜测怪物尺寸。
             MModelPrepareData prepared = model.GetComponent<MModelPrepareData>();
@@ -359,6 +355,7 @@ public class MSceneDungeon : MonoBehaviour
             {
                 // 两端使用相同的出生序号关联实例属性，Unity 自身的实体 UID 仍交给 SceneWorld。
                 MonsterEntity monster = (MonsterEntity)entity;
+                prepared.MonsterUid = monster.UID;
                 monsters.Add(spawnId, monster);
                 MonsterHpData data;
                 if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterAttr(spawnId, out data))
@@ -366,7 +363,7 @@ public class MSceneDungeon : MonoBehaviour
                 // 晚加载的模型从服务器当前段进度恢复，保持入场死亡优先。
                 MSceneMonsterMotion motion;
                 if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterMotion(spawnId, out motion))
-                    ((MSceneMonsterHoster)controller).ApplyMotion(motion);
+                    monster.ApplyDungeonMotion(motion, Resource);
             }
             if (creature.isNpc)
             {
@@ -374,7 +371,7 @@ public class MSceneDungeon : MonoBehaviour
                 // NPC控制节点与其原模型共用服务端SpawnId，不再次创建怪物。
                 MSceneMonsterMotion npcMotion;
                 if (TeamData.Instance.GetMonsterMotion(spawnId, out npcMotion))
-                    ((MSceneNpcHoster)controller).ApplyMotion(npcMotion);
+                    ((MSceneNpcHoster)entity.GetEntityCtrl()).ApplyMotion(npcMotion);
             }
             // 原 invisible 波次只隐藏模型和判定体，不改写出生配置。
             if (ROSceneXml.Text(wave.Data, "base_info/init_invisible") == "true") model.SetActive(false);
@@ -388,10 +385,10 @@ public class MSceneDungeon : MonoBehaviour
         // 预制体已完成出生时可通过此服务端编号定位对应运行实体。
         MEntity monster;
         if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(motion.Action.SpawnId, out monster)) return;
-        // 已有NPC控制器仍负责交互，只复用技能表现播放器。
-        MSceneNpcHoster npc = monster.GetEntityCtrl() as MSceneNpcHoster;
-        if (npc != null) npc.ApplyMotion(motion);
-        else ((MSceneMonsterHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
+        // 同一通知也承载剧情 NPC 动作，怪物将动作交给实体组件。
+        MonsterEntity entity = monster as MonsterEntity;
+        if (entity != null) entity.ApplyDungeonMotion(motion, Resource);
+        else ((MSceneNpcHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
     }
 
     /// <summary>沿既有资源、实体和控制器链创建不属于固定波次的召唤实体。</summary>
@@ -423,18 +420,16 @@ public class MSceneDungeon : MonoBehaviour
             monsters.Add(spawn.SpawnId, monster);
             // 原三个召唤物都是IsDummy，无可点击怪物模型。
             monster.NonCombatant = true;
-            MSceneMonsterHoster controller = model.GetComponent<MSceneMonsterHoster>();
-            controller.WaveId = -1;
-            controller._roleType = RoleType.Monster;
-            controller.SetROObject(monster);
-            monster.SetEntityCtrl(controller);
             monster.Model.SetGameObject(model, string.Empty, false);
-            model.GetComponent<MModelPrepareData>().ApplyMotions(monster.Model.Ator);
+            // 原召唤模型的动画与运行时 UID 由模型数据绑定到同一实体。
+            MModelPrepareData prepared = model.GetComponent<MModelPrepareData>();
+            prepared.MonsterUid = monster.UID;
+            prepared.ApplyMotions(monster.Model.Ator);
             // 读取加载期间可能改变的权威血量与正在进行的技能，不重放出生时旧状态。
             MonsterHpData hp;
             if (TeamData.Instance.GetMonsterAttr(spawn.SpawnId, out hp)) ChangeHP(monster, hp, false);
             MSceneMonsterMotion motion;
-            if (TeamData.Instance.GetMonsterMotion(spawn.SpawnId, out motion)) controller.ApplyMotion(motion);
+            if (TeamData.Instance.GetMonsterMotion(spawn.SpawnId, out motion)) monster.ApplyDungeonMotion(motion, Resource);
         });
     }
 
@@ -477,13 +472,11 @@ public class MSceneDungeon : MonoBehaviour
         RoleEntity target = world.LocalRole;
         if (target == null || target.GetID() != result.TargetRoleId)
             if (!world.TryGetRole(result.TargetRoleId, out target)) return;
-        // 表现生命周期仍由原施法怪物或剧情 NPC 宿主持有。
+        // 本次目标结果对应的施法怪物或剧情 NPC。
         MEntity caster;
         if (!monsters.TryGetValue(result.SpawnId, out caster)) return;
-        // NPC 和怪物保留各自已有控制器，不建立另一套技能播放实体。
-        MSceneNpcHoster npc = caster.GetEntityCtrl() as MSceneNpcHoster;
-        if (npc != null) npc.PlayResultFx(result, target);
-        else ((MSceneMonsterHoster)caster.GetEntityCtrl()).PlayResultFx(result, target);
+        if (caster is MonsterEntity) caster.Skill.GetDungeonPlayback(Resource).PlayResultFx(result, target);
+        else ((MSceneNpcHoster)caster.GetEntityCtrl()).PlayResultFx(result, target);
     }
 
     /// <summary>真实命中回包驱动伤害数字及原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
@@ -498,7 +491,7 @@ public class MSceneDungeon : MonoBehaviour
         {
             if (!world.TryGetRole(hit.TargetRoleId, out target)) return;
         }
-        // 命中效果归对应怪物宿主持有，副本离开和怪物回收会同时释放。
+        // 命中效果归原施法实体持有，副本离开和怪物回收会同时释放。
         MEntity caster;
         // 数字只依赖权威命中和受击者；施害者模型晚加载或已移除时仍能显示伤害。
         bool hasCaster = monsters.TryGetValue(hit.SpawnId, out caster);
@@ -511,9 +504,8 @@ public class MSceneDungeon : MonoBehaviour
         }
         if (!hasCaster || hit.SkillId == 0) return;
         // 原NPC也可能参与剧情技能，仍使用同一结算表现入口。
-        MSceneNpcHoster npc = caster.GetEntityCtrl() as MSceneNpcHoster;
-        if (npc != null) npc.PlayResult(hit, target);
-        else ((MSceneMonsterHoster)caster.GetEntityCtrl()).PlayResult(hit, target);
+        if (caster is MonsterEntity) caster.Skill.GetDungeonPlayback(Resource).PlayResult(hit, target);
+        else ((MSceneNpcHoster)caster.GetEntityCtrl()).PlayResult(hit, target);
     }
 
     /// <summary>将原HeadShow5表情挂在当前实例的既有模型，不建立影子实体。</summary>
@@ -524,10 +516,8 @@ public class MSceneDungeon : MonoBehaviour
         // 表情来源的固定波次或动态召唤物身份。
         MEntity entity;
         if (!monsters.TryGetValue(notice.SourceSpawnId, out entity)) return;
-        // NPC和怪物共用技能表现资源，保留各自原控制器。
-        MSceneNpcHoster npc = entity.GetEntityCtrl() as MSceneNpcHoster;
-        if (npc != null) npc.ShowHeadExpression();
-        else ((MSceneMonsterHoster)entity.GetEntityCtrl()).ShowHeadExpression();
+        if (entity is MonsterEntity) entity.Skill.GetDungeonPlayback(Resource).ShowHeadExpression();
+        else ((MSceneNpcHoster)entity.GetEntityCtrl()).ShowHeadExpression();
     }
 
     /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>
@@ -557,7 +547,7 @@ public class MSceneDungeon : MonoBehaviour
         monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
         // 受击与死亡走实体动作机，先解除当前普攻专用的慢速播放倍率。
         if (hit || data.Hp == 0)
-            ((MSceneMonsterHoster)monster.GetEntityCtrl()).EndAttackPlayback();
+            monster.Skill.InterruptDungeonPlayback();
         if (data.Hp == 0) monster.DispatchEvent(MEventType.Death, null);
         else if (hit) monster.DispatchEvent(MEventType.DamageReceived, null);
         return true;

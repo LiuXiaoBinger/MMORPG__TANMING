@@ -22,11 +22,10 @@ public sealed class MSceneMonsterCorpsePlayer
 
     /// <summary>绑定当前怪物，从所属副本表现目录读取尸体不淡出的实体分类。</summary>
     /// <param name="entity">收到权威Dead动作的原怪物实例。</param>
-    public MSceneMonsterCorpsePlayer(MonsterEntity entity)
+    /// <param name="resource">怪物所属副本的表现资源登记。</param>
+    public MSceneMonsterCorpsePlayer(MonsterEntity entity, DungeonSceneResource resource)
     {
         monster = entity;
-        // 尸体沿当前模型所属的副本登记读取材质，不借用后续场景的目录。
-        DungeonSceneResource resource = entity.GetEntityCtrl().GetComponentInParent<MSceneDungeon>().Resource;
         // 同根只读目录与当前副本 Buff 播放器共享，未迁入时没有淡出资源。
         MSceneMonsterBuffCatalog catalog = MSceneMonsterBuffCatalog.Load(resource.battleResourceRoot);
         if (catalog == null) return;

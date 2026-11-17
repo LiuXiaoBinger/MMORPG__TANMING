@@ -191,10 +191,62 @@ public sealed class MMoveComponent : EntityComponentBase
         EventSubscribe();
     }
 
+    /// <summary>本怪物最近收到的副本权威动作，收包时钟用于补偿模型加载耗时。</summary>
+    internal MSceneMonsterMotion DungeonMotion { get; private set; }
+
+    /// <summary>接收副本怪物动作，并从服务端路段的当前进度更新位置。</summary>
+    /// <param name="motion">本实体的权威起点、终点、朝向、时长和收包时刻。</param>
+    internal void ApplyDungeonMotion(MSceneMonsterMotion motion)
+    {
+        // 比较新旧路段是否追击，连续移动中切换巡逻/追击时也刷新默认动作。
+        bool wasChasing = DungeonMotion != null && DungeonMotion.Action.TargetRoleId != 0;
+        DungeonMotion = motion;
+        UpdateDungeonMotion();
+        if (IsMoving && wasChasing != (motion.Action.TargetRoleId != 0) && Entity.CurrentState == StateDefine.kStateDefault)
+        {
+            Entity.Machine.MarkTriggered();
+        }
+    }
+
+    /// <summary>按副本服务器给出的起终点和实际毫秒时钟跟进怪物路段。</summary>
+    private void UpdateDungeonMotion()
+    {
+        // 最新服务端阶段含当前位置，非移动阶段直接使用这一坐标。
+        MonsterActionData action = DungeonMotion.Action;
+        if (Entity.IsDead && action.Phase != MonsterActionPhase.Dead) return;
+
+        // 回包中的世界空间坐标，单位米。
+        UVEC3 position = new UVEC3(action.X, action.Y, action.Z);
+        // 当前快照的移动段仍有剩余时间时驱动默认移动动画。
+        bool moving = false;
+        if (action.Phase == MonsterActionPhase.Move)
+        {
+            // 收包至今的真实毫秒，包含异步实例化模型的时间。
+            float ageMs = (float)((Time.realtimeSinceStartupAsDouble - DungeonMotion.ReceivedAt) * 1000d);
+            // 路段终点包含服务端导航面的高度。
+            UVEC3 destination = new UVEC3(action.ToX, action.ToY, action.ToZ);
+            moving = ageMs < action.DurationMs;
+            if (moving)
+            {
+                position = UVEC3.Lerp(position, destination, ageMs / action.DurationMs);
+            }
+            else position = destination;
+        }
+        Entity.Position = position;
+        Entity.Model.Rotation = Quaternion.Euler(0f, action.Face, 0f);
+        SetMoving(moving);
+    }
+
     /// <summary>按实体类别推进本地输入或远端位置追赶，同时消费技能程序位移。</summary>
     /// <param name="deltaMilliseconds">距上一帧的毫秒数；本地 PlayerUpdate 会把负值按零处理。</param>
     public override void Update(int deltaMilliseconds)
     {
+        if (DungeonMotion != null)
+        {
+            UpdateDungeonMotion();
+            return;
+        }
+
         /*if (!IsMoving) return;
         if (deltaMilliseconds < 0) deltaMilliseconds = 0;
         _elapsedMilliseconds += deltaMilliseconds;
@@ -294,6 +346,7 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>对象池回收时重置移动状态和目标快照，保证下次复用时干净。</summary>
     public override void Shutdown()
     {
+        DungeonMotion = null;
         IsMoving = false; _elapsedMilliseconds = 0; _interpolationMilliseconds = 150;
         _isjump = false;
         JumpCount = 0;

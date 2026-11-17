@@ -4,6 +4,9 @@ using UnityEngine;
 /// <summary>沿用 RO 模型准备数据，保存模型空间包围盒、蒙皮列表和阴影挂点。</summary>
 public class MModelPrepareData : MonoBehaviour
 {
+    /// <summary>本次模型绑定的运行时怪物 UID，零表示当前模型未挂接怪物实体。</summary>
+    internal ulong MonsterUid { get; set; }
+
     /// <summary>公共怪物动画图中的一个占位剪辑和本模型用于替换它的真实动作。</summary>
     [System.Serializable]
     private struct ModelMotion

@@ -57,6 +57,13 @@ public sealed class MDefaultActionComponent : MBasicActionComponent
         {
             // 默认动作是否应显示移动；本地主角同时识别真实方向与有效导航，保留落地运行态判断。
             bool shouldPlayMovement = ShouldPlayMovementAnimation();
+            // 副本怪物使用公共怪物图的巡逻和追击槽位，状态由实体移动组件推进。
+            if (Entity.MoveComp != null && Entity.MoveComp.DungeonMotion != null)
+            {
+                if (!shouldPlayMovement) return MAnimator.STATE_IDLE;
+                if (Entity.MoveComp.DungeonMotion.Action.TargetRoleId != 0) return "FMove";
+                return "Move";
+            }
             // 射击姿态优先级高于战斗待机，战斗事件不能改写射击中的静止或移动表现。
             if (_defaultState == State.Shoot)
             {

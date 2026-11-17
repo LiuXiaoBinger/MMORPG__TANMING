@@ -2939,7 +2939,6 @@ GameObject:
   - component: {fileID: 3823339948287938728}
   - component: {fileID: 4584555427782647876}
   - component: {fileID: 5947677000830793809}
-  - component: {fileID: 1944902762666159385}
   m_Layer: 0
   m_Name: Monster_5477
   m_TagString: Untagged
@@ -3064,26 +3063,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5576942, y: 1.8437476, z: 1.0192528}
   m_Center: {x: -0.0000007748604, y: 0.90932757, z: 0.16020545}
---- !u!114 &1944902762666159385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2969648851311304758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13bc2f74cc2353f479b626abf6904dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 0
-  LookAt: {fileID: 0}
-  Radius: 0.7788471
-  WaveId: 0
 --- !u!1 &3029486943207686649
 GameObject:
   m_ObjectHideFlags: 0

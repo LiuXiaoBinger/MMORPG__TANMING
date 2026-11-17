@@ -6,6 +6,9 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public class MonsterEntity : MEntity
 {
+    /// <summary>收到死亡动作后驱动本模型淡出的既有播放器，随实体回收释放。</summary>
+    private MSceneMonsterCorpsePlayer _dungeonCorpse;
+
     /// <summary>
     /// 构造怪物实体
     /// </summary>
@@ -27,6 +30,43 @@ public class MonsterEntity : MEntity
 
     /// <summary>当前出生配置指定的非战斗剧情角色标记，供选敌和技能碰撞共用。</summary>
     public bool NonCombatant { get; set; }
+
+    /// <summary>将本怪物的服务器动作交给实体移动和技能组件。</summary>
+    /// <param name="motion">服务端按出生身份同步的动作及其收包时刻。</param>
+    /// <param name="resource">当前实例所属副本的表现资源登记。</param>
+    internal void ApplyDungeonMotion(MSceneMonsterMotion motion, DungeonSceneResource resource)
+    {
+        MoveComp.ApplyDungeonMotion(motion);
+        Skill.GetDungeonPlayback(resource).Apply(motion);
+        if (motion.Action.Phase == MonsterActionPhase.Dead && _dungeonCorpse == null)
+        {
+            _dungeonCorpse = new MSceneMonsterCorpsePlayer(this, resource);
+        }
+    }
+
+    /// <summary>在实体状态机刷新后推进技能表现和死亡淡出。</summary>
+    /// <param name="deltaSeconds">本帧距上一帧的时间，单位秒。</param>
+    public override void LateUpdate(float deltaSeconds)
+    {
+        if (LifecycleState != EntityLifecycleState.Active) return;
+        base.LateUpdate(deltaSeconds);
+        Skill.LateUpdateDungeonPlayback();
+        if (_dungeonCorpse != null && MoveComp.DungeonMotion.Action.Phase == MonsterActionPhase.Dead)
+        {
+            _dungeonCorpse.Update(MoveComp.DungeonMotion);
+        }
+    }
+
+    /// <summary>模型归还前释放本实体死亡表现所持有的资源。</summary>
+    protected override void OnDestroying()
+    {
+        if (_dungeonCorpse != null)
+        {
+            _dungeonCorpse.Dispose();
+            _dungeonCorpse = null;
+        }
+        base.OnDestroying();
+    }
 
     /// <summary>
     /// 对象池复用时重置怪物 ID 和等级为默认值

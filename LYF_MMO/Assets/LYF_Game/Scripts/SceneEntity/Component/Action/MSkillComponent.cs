@@ -125,6 +125,7 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>对象池回收时清空技能集合并调用基类清理。</summary>
     public override void Shutdown()
     {
+        ClearDungeonPlayback();
         ClearSkillCores();
         stop = false;
         base.Shutdown();
@@ -133,11 +134,67 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>RO同名宿主摘除入口，立即结束仍存活技能并解除全部核心与冷却持有。</summary>
     public override void OnDetachFromHost()
     {
+        ClearDungeonPlayback();
         ClearSkillCores();
         stop = false;
         base.OnDetachFromHost();
     }
     #endregion
+
+    /// <summary>当前副本怪物在本次实体生命周期内使用的原技能表现时间轴。</summary>
+    private MSceneMonsterSkillPlayer _dungeonPlayback;
+
+    /// <summary>上一帧的原技能时间轴是否占用怪物的公共动画槽位。</summary>
+    private bool _dungeonAnimationActive;
+
+    /// <summary>为服务端同步的怪物技能和结果提供本实体的表现播放器。</summary>
+    /// <param name="resource">生成该怪物的副本资源登记，用于选取对应技能目录。</param>
+    internal MSceneMonsterSkillPlayer GetDungeonPlayback(DungeonSceneResource resource)
+    {
+        if (_dungeonPlayback == null)
+        {
+            _dungeonPlayback = new MSceneMonsterSkillPlayer(Entity, resource);
+        }
+        return _dungeonPlayback;
+    }
+
+    /// <summary>推进副本原技能时间轴，受击或死亡动作优先由实体状态机播放。</summary>
+    internal void LateUpdateDungeonPlayback()
+    {
+        if (_dungeonPlayback == null) return;
+        if (Entity.IsDead)
+        {
+            _dungeonAnimationActive = false;
+            return;
+        }
+
+        // 受击期间只推进时间轴和特效，不抢占实体当前的受击动画。
+        bool allowAnimation = Entity.CurrentState != StateDefine.kStateBehit;
+        // 本帧仍由原技能时间轴驱动的动画槽位。
+        bool animating = _dungeonPlayback.Update(allowAnimation);
+        if (_dungeonAnimationActive && !animating && allowAnimation)
+        {
+            Entity.Machine.MarkTriggered();
+        }
+        _dungeonAnimationActive = animating;
+    }
+
+    /// <summary>受击时恢复动作原倍率，死亡时取消仍存活的技能表现。</summary>
+    internal void InterruptDungeonPlayback()
+    {
+        if (_dungeonPlayback == null) return;
+        _dungeonPlayback.RestoreSpeed();
+        if (Entity.IsDead) _dungeonPlayback.Clear();
+    }
+
+    /// <summary>技能组件回收前归还当前怪物的特效、声音和资源句柄。</summary>
+    private void ClearDungeonPlayback()
+    {
+        if (_dungeonPlayback == null) return;
+        _dungeonPlayback.Dispose();
+        _dungeonPlayback = null;
+        _dungeonAnimationActive = false;
+    }
 
     #region 更新
     /// <summary>实体常驻毫秒入口，只桥接一次 RO 秒更新，施法不依赖服务器确认。</summary>

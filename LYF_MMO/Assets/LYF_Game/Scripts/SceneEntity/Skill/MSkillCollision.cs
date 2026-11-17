@@ -65,10 +65,14 @@ public class MSkillCollision
                 overlaps = Physics.OverlapBox(center, collision.BoxSize * 0.5f, actor.rotation * Quaternion.Euler(collision.Rotation), Physics.AllLayers, QueryTriggerInteraction.Collide);
             for (int targetIndex = 0; targetIndex < overlaps.Length; targetIndex++)
             {
-                // 正式怪物挂接组件提供真实实体身份；NPC 和地图碰撞体自然排除。
-                MSceneMonsterHoster host = overlaps[targetIndex].GetComponentInParent<MSceneMonsterHoster>();
-                if (host == null) continue;
-                MEntity target = host.GetROObject() as MEntity;
+                // 用怪物模型绑定的运行时 UID 回查，回收后的实体无法命中。
+                MModelPrepareData model = overlaps[targetIndex].GetComponentInParent<MModelPrepareData>();
+                if (model == null) continue;
+                // 这一碰撞体对应的 SceneWorld 实例，UID 与服务端出生编号各自独立。
+                ROObject entity;
+                if (!Global.Instance.SceneWorld.TryGetEntity(model.MonsterUid, out entity)) continue;
+                // 主动技能仅把已绑定的怪物实体作为重叠候选。
+                MonsterEntity target = entity as MonsterEntity;
                 // 与点击和自动索敌共用战斗资格，范围技能也跳过剧情角色。
                 if (!MSkillTargetDefine.IsEnemy(target) || target.LifecycleState != EntityLifecycleState.Active || target == firer) continue;
                 if (target.IsDead) continue;
