@@ -664,3 +664,9 @@
 - 归档 13 项资源及原 .meta，另随迁 1 个腾空目录的 .meta，27 个原文件字节一致。累计 873 项归档现在可在 Unity 的 `LYF_MMO/Assets/UnusedAssets/Editor/` 浏览。
 - 首次归档提交 `f0aa725` 和 Unity Project 位置提交 `4ab223d` 已推送至 `codex/feature-development`。原路径和最终归档位置见 `项目修改日志/2026-11-17-GM_Game未用资源复查.md` 及 TSV 清单。
 - 独立 Windows64 资源包通过。当前工作区存在原有的创建角色场景预制体缺失，完整 Player 安装包和线上热更发布待验证。
+
+## [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Unity 游戏目录与程序集统一改为 LYF_Game
+
+- 活跃 Unity 根目录移到 `LYF_MMO/Assets/LYF_Game/`。asmdef、聊天 asmref 和 `LYF_Game.dll.bytes` 使用新名字及原 GUID。编辑器工具、运行时地址、收集规则、导出和测试路径同步适配。
+- 移动 7967 个现存工作区文件和 8128 个基线文件。修改工作区 104 个文件和提交基线 101 个文件中的路径，保留本地状态。提交 `603faeb` 已推送 `codex/feature-development`。
+- 独立 Windows64 包通过，HybridCLR 生成了 `LYF_Game.dll`。完整 Player 安装包和线上热更发布待验证。逐项路径和验收证据见 `项目修改日志/2026-11-17-LYF_Game客户端改名.md`。

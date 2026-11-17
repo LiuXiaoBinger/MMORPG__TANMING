@@ -669,3 +669,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Archived 13 resources, their original .meta files, and 1 emptied-folder .meta. All 27 original files moved with identical bytes. The cumulative 873 resources are visible in Unity under `LYF_MMO/Assets/UnusedAssets/Editor/`.
 - Initial archive commit `f0aa725` and Project location commit `4ab223d` were pushed to `codex/feature-development`. The exact original and current archive paths are recorded in `项目修改日志/2026-11-17-GM_Game未用资源复查.md` and its TSV inventory.
 - The isolated Windows64 package passed. The workspace has existing missing character-creation prefabs. The full Player installer and online hot-update release remain unverified.
+
+## [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Renamed the Unity game root and assembly to LYF_Game
+
+- Moved the live Unity root to `LYF_MMO/Assets/LYF_Game/`. The asmdef, chat asmref, and `LYF_Game.dll.bytes` use the new name and original GUIDs. Editor tools, runtime addresses, collectors, exports, and test paths follow the new root.
+- Moved 7967 workspace files and 8128 tracked files. Applied 104 workspace path edits and 101 Git-baseline path edits, preserving the local state. Commit `603faeb` was pushed to `codex/feature-development`.
+- The isolated Windows64 package passed and HybridCLR compiled `LYF_Game.dll`. The full Player installer and online hot-update release remain unverified. Per-file paths and validation evidence are recorded in `项目修改日志/2026-11-17-LYF_Game客户端改名.md`.

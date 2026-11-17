@@ -33,8 +33,8 @@
 - Source: `Docs/AI/PROJECT_CONTEXT.md` `[PC-080]`.
 ## [STRUCTURE][综合][PC-081] Client layout
 
-- Main assembly: `LYF_MMO/Assets/GM_Game/GM_Game.asmdef`; startup/hot update: `LYF_MMO/Assets/Boot`; business scripts: `LYF_MMO/Assets/GM_Game/Scripts`; UI: its `UI` directory; infrastructure/network: `Common`; managers: `Manger`.
-- Recorded dependencies: YooAsset, UniRx, DOTween, HybridCLR, Google.Protobuf and Network.dll. The recorded active scene was `Assets/GM_Game/Scenes/New Scene.unity`; confirm actual editor state when needed.
+- The active Unity game root is `LYF_MMO/Assets/LYF_Game/`. The main assembly is defined by `LYF_MMO/Assets/LYF_Game/LYF_Game.asmdef`. HybridCLR compiles `LYF_Game.dll`, and `Assets/LYF_Game/Dlls/LYF_Game.dll.bytes` is the packaged input. `LYF_MMO/Assets/Boot` owns startup and hot-update loading. Business scripts are under `LYF_MMO/Assets/LYF_Game/Scripts`. UI is in `UI`, infrastructure and networking in `Common`, and managers in `Manger`.
+- Recorded dependencies: YooAsset, UniRx, DOTween, HybridCLR, Google.Protobuf and Network.dll. The previously recorded scene asset is now `Assets/LYF_Game/Scenes/New Scene.unity`; confirm actual editor state when needed.
 - Source: `Docs/AI/PROJECT_CONTEXT.md` `[PC-081]`.
 ## [STRUCTURE][综合][PC-082] Backend layout
 
@@ -43,10 +43,10 @@
 - Source: `Docs/AI/PROJECT_CONTEXT.md` `[PC-082]`.
 ## [STRUCTURE][综合][PC-083] Responsibility boundaries and execution flow
 
-- Client paths below are relative to `LYF_MMO/`. `Assets/Boot` owns startup/resources/hot updates. `Assets/GM_Game/Scripts/Common` owns infrastructure, network and shared data; `Manger` owns client managers; `controller` owns UI controllers and protocol-response registration.
-- `Assets/GM_Game/Scripts/SceneEntity/Entity/PlayerEntity.cs` and `RoleEntity.cs` directly inherit `ROObject`. Local business components and scene-entity components use different containers; remote synchronization data is held on the scene entity. Do not recreate a same-named business root model.
-- `Assets/GM_Game/Scripts/FunlModule/Role/SceneWorldSystem.cs` is the unique scene-entity manager. Local/remote/other entities share one `SceneEntityWorld`, queried and removed by entity ID. `Global.SceneWorld` provides process-level access; business modules use `SceneWorld.LocalRole`. Do not restore `ClientRole`, `RoleWorldSystem` or parallel entity worlds.
-- Official windows/pages: `Assets/GM_Game/Scripts/UI/Main`; popup dialogs: `UI/Tips`; test-only entries: `UI/test`. Recorded resource areas include `Prefabs`, `Scenes`, `UISprites` and `artres`. Tests must not be attached to production scenes/prefabs. `Assets/GM_Game/Plugins/Net/Network.dll` must match generated backend protocols.
+- Client paths below are relative to `LYF_MMO/`. `Assets/Boot` owns startup/resources/hot updates. `Assets/LYF_Game/Scripts/Common` owns infrastructure, network and shared data; `Manger` owns client managers; `controller` owns UI controllers and protocol-response registration.
+- `Assets/LYF_Game/Scripts/SceneEntity/Entity/PlayerEntity.cs` and `RoleEntity.cs` directly inherit `ROObject`. Local business components and scene-entity components use different containers; remote synchronization data is held on the scene entity. Do not recreate a same-named business root model.
+- `Assets/LYF_Game/Scripts/FunlModule/Role/SceneWorldSystem.cs` is the unique scene-entity manager. Local/remote/other entities share one `SceneEntityWorld`, queried and removed by entity ID. `Global.SceneWorld` provides process-level access; business modules use `SceneWorld.LocalRole`. Do not restore `ClientRole`, `RoleWorldSystem` or parallel entity worlds.
+- Official windows/pages: `Assets/LYF_Game/Scripts/UI/Main`; popup dialogs: `UI/Tips`; test-only entries: `UI/test`. Active resource directories include `Prefabs`, `Scenes`, `UISprites` and `Animas`. Tests must not be attached to production scenes/prefabs. `Assets/LYF_Game/Plugins/Net/Network.dll` must match generated backend protocols.
 - Backend paths below are relative to `LYF_Server/`. `GameServer/manger/RoleManager.cs` owns online roles, role/session indexes, role protocols, world entry and nearby synchronization. `GameServer/Ctrl/Game_LoginCtrl.cs` handles login/role creation/start and Center results, not role runtime logic.
 - `GameServer/Service` owns authoritative domain validation/mutation; `GameServer/Entity` holds runtime `OnlineRole`; `GameServer/Entity/Components` holds its component interfaces, containers and domains. Keep this distinct from `GameServer/SceneEntity`, organized into `Base`, `Entity`, `Component`, `Skill` and `World`. The 2026-10-21 reorganization recorded 5/15/24 base/entity/component files; existing namespaces were retained during that directory-only change, which is not permission to add new namespaces.
 - Bag capacity is persisted separately for `KnapsackType.RolePackPlain`, `RolePackEquip`, `RolePackConsume` and `RolePackMaterial`. `RoleCurrtEquipPack` is the equipped slot container, excluded from expansion. Plain is an independent bag, not an aggregate of equipment/consumables/materials; client tabs read separate containers.

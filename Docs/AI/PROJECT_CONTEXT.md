@@ -41,13 +41,13 @@
 
 > 整理前原文：`项目修改日志/协作记录归档/2026-10-23/PROJECT_CONTEXT.md`，第 505—514 行；历史时点记录，不代表当前仍在执行。
 
-- 主程序集：`LYF_MMO/Assets/GM_Game/GM_Game.asmdef`
+- 活跃游戏目录为 `LYF_MMO/Assets/LYF_Game/`。主程序集由 `LYF_MMO/Assets/LYF_Game/LYF_Game.asmdef` 定义。HybridCLR 编译 `LYF_Game.dll`，打包输入为 `Assets/LYF_Game/Dlls/LYF_Game.dll.bytes`。
 - 启动和热更新：`LYF_MMO/Assets/Boot`
-- 业务脚本：`LYF_MMO/Assets/GM_Game/Scripts`
-- UI：`LYF_MMO/Assets/GM_Game/Scripts/UI`
-- 网络和管理器：`LYF_MMO/Assets/GM_Game/Scripts/Common`、`Manger`
+- 业务脚本：`LYF_MMO/Assets/LYF_Game/Scripts`
+- UI：`LYF_MMO/Assets/LYF_Game/Scripts/UI`
+- 网络和管理器：`LYF_MMO/Assets/LYF_Game/Scripts/Common`、`Manger`
 - 依赖：YooAsset、UniRx、DOTween、HybridCLR、Google.Protobuf、Network.dll
-- 当前已知活动场景：`Assets/GM_Game/Scenes/New Scene.unity`
+- 此前记录的场景资产：`Assets/LYF_Game/Scenes/New Scene.unity`
 
 ## [STRUCTURE][综合][PC-082] 服务端
 
@@ -67,18 +67,18 @@
 ### Unity 客户端分层
 
 - `Assets/Boot`：启动、资源初始化和热更新入口。
-- `Assets/GM_Game/Scripts/Common`：客户端通用基础设施、网络和公共数据。
-- `Assets/GM_Game/Scripts/SceneEntity/Entity/PlayerEntity.cs`：本地玩家场景实体，直接继承 `ROObject`；本地角色业务组件与场景实体组件分属不同容器。
-- `Assets/GM_Game/Scripts/SceneEntity/Entity/RoleEntity.cs`：其他角色场景实体，直接继承 `ROObject`；角色同步数据作为实体运行时字段，不另建同名业务根对象。
-- `Assets/GM_Game/Scripts/FunlModule/Role/SceneWorldSystem.cs`：客户端场景实体唯一管理器；本地 `PlayerEntity`、其他 `RoleEntity` 及其他实体统一进入同一个 `SceneEntityWorld`，通过实体 ID 查询和移除。
+- `Assets/LYF_Game/Scripts/Common`：客户端通用基础设施、网络和公共数据。
+- `Assets/LYF_Game/Scripts/SceneEntity/Entity/PlayerEntity.cs`：本地玩家场景实体，直接继承 `ROObject`；本地角色业务组件与场景实体组件分属不同容器。
+- `Assets/LYF_Game/Scripts/SceneEntity/Entity/RoleEntity.cs`：其他角色场景实体，直接继承 `ROObject`；角色同步数据作为实体运行时字段，不另建同名业务根对象。
+- `Assets/LYF_Game/Scripts/FunlModule/Role/SceneWorldSystem.cs`：客户端场景实体唯一管理器；本地 `PlayerEntity`、其他 `RoleEntity` 及其他实体统一进入同一个 `SceneEntityWorld`，通过实体 ID 查询和移除。
 - `Global.SceneWorld`：跨场景访问场景实体世界的进程级入口；业务模块从 `SceneWorld.LocalRole` 获取本地 `PlayerEntity`，禁止恢复 `ClientRole`、`RoleWorldSystem` 或独立业务同名实体模型。
-- `Assets/GM_Game/Scripts/Manger`：客户端管理器，例如资源、提示和全局状态管理。
-- `Assets/GM_Game/Scripts/controller`：界面控制器和服务器协议回包注册，例如 `MainCtrl`。
-- `Assets/GM_Game/Scripts/UI/Main`：正式窗口和页面，例如背包、NPC 商城。
-- `Assets/GM_Game/Scripts/UI/Tips`：提示、购买确认等弹窗。
-- `Assets/GM_Game/Scripts/UI/test`：测试脚本和 Mock 入口，只能用于专用测试场景或手动临时挂载。
-- `Assets/GM_Game/Prefabs`、`Scenes`、`UISprites`、`artres`：正式预制体、场景、UI 资源和美术资源。
-- `Assets/GM_Game/Plugins/Net/Network.dll`：客户端使用的网络与协议程序集，必须与服务端协议生成版本匹配。
+- `Assets/LYF_Game/Scripts/Manger`：客户端管理器，例如资源、提示和全局状态管理。
+- `Assets/LYF_Game/Scripts/controller`：界面控制器和服务器协议回包注册，例如 `MainCtrl`。
+- `Assets/LYF_Game/Scripts/UI/Main`：正式窗口和页面，例如背包、NPC 商城。
+- `Assets/LYF_Game/Scripts/UI/Tips`：提示、购买确认等弹窗。
+- `Assets/LYF_Game/Scripts/UI/test`：测试脚本和 Mock 入口，只能用于专用测试场景或手动临时挂载。
+- `Assets/LYF_Game/Prefabs`、`Scenes`、`UISprites`、`Animas`：正式预制体、场景、UI 资源和美术资源。
+- `Assets/LYF_Game/Plugins/Net/Network.dll`：客户端使用的网络与协议程序集，必须与服务端协议生成版本匹配。
 
 ### .NET 服务端分层
 

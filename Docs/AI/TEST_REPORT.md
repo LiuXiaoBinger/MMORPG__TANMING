@@ -691,3 +691,9 @@
 - 核对 37 张配置表。首次归档后，工作区 YooAsset 主资产从 2936 降到 2927，Unity 无新增断引用。独立 Windows64 `DefaultPackage` 包含 2971 个主资产、1206 个 Bundle，文件和清单哈希均通过，运行时清单解析 799 个动态地址。
 - 移入 `LYF_MMO/Assets/UnusedAssets/Editor/` 后，873 个归档资源的 GUID 全部一致，2927 个活跃打包入口及依赖一致。归档中的 6 个 Resources 子目录改名为 ArchivedResources 后，实测 66 个相关键均无法读到归档文件。公共图集仍加载 380 张 Sprite。
 - 当前工作区 `Scene_CreateRole` 有原已缺失的预制体，完整 Player 安装包和线上热更发布待验证。提交 `f0aa725` 和 `4ab223d` 的证据详见 `项目修改日志/2026-11-17-GM_Game未用资源复查.md`。
+
+## [VERIFY][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] LYF_Game 编辑器编译和 Windows64 资源包验收
+
+- 按新路径比对 4755 个 Unity 导入条目和 2927 个 YooAsset 主资产，GUID 和依赖一致。编辑器、HybridCLR 和热更 DLL 的程序集名均为 `LYF_Game`。公共图集仍读取 380 张 Sprite。验收时打开的 `Scene_Boot` 保留未保存状态。
+- 独立工作区副本中 HybridCLR 编译出 `LYF_Game.dll`。Windows64 `DefaultPackage` 含 2971 个主资产和 1206 个 Bundle。Bundle 与清单哈希通过，解析了 799 个运行时地址，从新路径读取登录场景和热更 DLL。
+- 独立副本复用此前补齐的创建角色场景依赖。完整 Player 安装包和线上热更发布待验证。提交 `603faeb` 的验收证据见 `项目修改日志/2026-11-17-LYF_Game客户端改名.md`。
