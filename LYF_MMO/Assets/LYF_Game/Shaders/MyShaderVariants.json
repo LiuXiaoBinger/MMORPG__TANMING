@@ -862,7 +862,7 @@
             ]
         },
         {
-            "AssetPath": "Assets/LYF_Game/Scenes/xuanjuepan/E3D-RenderCore/Shader/PBR/E3D-ActorPBR-Mask-Normal.shader",
+            "AssetPath": "Assets/LYF_Game/Scenes/CreateRole_Res/E3D-RenderCore/Shader/PBR/E3D-ActorPBR-Mask-Normal.shader",
             "ShaderName": "E3D/Actor/PBR-Mask-Normal",
             "ShaderVariantCount": 3,
             "ShaderVariantElements": [
@@ -1452,7 +1452,7 @@
             ]
         },
         {
-            "AssetPath": "Assets/LYF_Game/Scenes/xuanjuepan/Resources/Shader/MogoSkybox.shader",
+            "AssetPath": "Assets/LYF_Game/Scenes/CreateRole_Res/Resources/Shader/MogoSkybox.shader",
             "ShaderName": "Mogo/Skybox",
             "ShaderVariantCount": 1,
             "ShaderVariantElements": [
