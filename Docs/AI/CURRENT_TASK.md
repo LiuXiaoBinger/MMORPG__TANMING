@@ -680,3 +680,8 @@
 
 - 建队和设置预制体的源文件保有绑定，Unity 导入后的字段为空。按依赖顺序在本机重新导入引用 LYF_Game 脚本的 133 项资源，包含 105 个预制体、4 个场景和 24 个 asset。
 - 更新 Luaban/MiniTemplate/Datas/#SkillPresentationInfo.xlsx 中 10 个 ClipLocation，并重新导出 LYF_Server/Network/LubanManage/Tb/tbskillpresentationinfo.bytes。技能编号、时长等字段保留原值。提交 826c401 已推送到 codex/feature-development。详情见 项目修改日志/2026-11-17-登录设置与副本报错修复.md。
+
+## [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] 魔神塔怪物改用实体组件
+
+- 移除了 `MSceneMonsterHoster` 及其 Unity `.meta`。受影响的 23 个运行时预制体均保留 `MModelPrepareData` 和公开的 `MMonsterAnimator`。固定波次怪物和召唤怪物都绑定 `MonsterEntity`；`MoveComp` 根据服务器消息更新移动和朝向，`Skill` 负责原有特效时间轴，`AttrComp` 应用服务器权威生命值。本地重叠检测的命中反馈从模型取得运行时 UID。
+- 这次实现涉及 34 个文件，已推送至 `codex/feature-development`（提交 `0e85455`）。第 18 波兽人 `5515` 通过隔离 Unity 验证。尚未验证人工完整通关和打包后的 Player。文件清单、RO 参考和 Git 回执见 `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`。

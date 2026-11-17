@@ -716,3 +716,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Unity 2023.2.20f1c1 EditorSimulateMode completed Boot → login → game server → character selection → main city using the real local servers. MainCtrl, MainView and LocalRole initialized. The settings button opened the window with 8 tabs, switched to the graphics page and closed it.
 - The server loaded dungeon 4060 in sc_dungeon_moshenta_001. Its F input fired skill 10080 with KCP ready. All 10 ClipLocation values resolved in YooAsset; presentation row 3008001 and the runtime asset agreed on Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Slider_F.anim. The final Unity Console error query returned 0 entries. The full Player and online hot-update release remain unverified. Full evidence for 826c401 is in 项目修改日志/2026-11-17-登录设置与副本报错修复.md.
+
+## [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects
+
+- Captured 8 live loopback GameServer messages for scene 4060 wave 18, creature 5515, SpawnId 77309411329. An isolated Unity 2023.2.20f1c1 Play Mode run passed 33 checks and exited with code 0. The real SpawnCreature and YooAsset path loaded the prefab. Checks covered patrol, chase, overlap hit, authoritative HP, original skill 1000118401, caster slash, target impact, idle return, death and removal.
+- The 34 business files matched the tested copy byte for byte. The isolated editor used temporary compatibility aliases for existing TaskPageFilter names, outside the implementation commit. Human full-dungeon playthrough and packaged Player are unverified. Evidence for 0e85455 is listed in `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`.

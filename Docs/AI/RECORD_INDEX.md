@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9b5d23516bd71b061c305c5acf9e9f68e9f20ba3c4648b44c0e73d9dcc8c9f55`
+Source normalized SHA256: `a274620b052bebc34cb84af408fdc2dbb0166f6b911496a7969e01d2806be236`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -97,11 +97,12 @@ Source normalized SHA256: `9b5d23516bd71b061c305c5acf9e9f68e9f20ba3c4648b44c0e73
 | [CODE][FILES][HANDOFF][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Reviewed unused resources and exposed the archive in Unity | 667-672 |
 | [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Renamed the Unity game root and assembly to LYF_Game | 673-678 |
 | [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] Restored missing character selection scene assets | 679-683 |
-| [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Reimported UI assets and corrected skill animation locations | 684-687 |
+| [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Reimported UI assets and corrected skill animation locations | 684-688 |
+| [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-692 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d9db48dbcfb77a43ca003980989f7c82230a46346812d82a1c292240fbc3e204`
+Source normalized SHA256: `854265c910f808250b0f52dbc344c88027e0b4dfe368d07cc2628b53aaf9995e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -190,7 +191,8 @@ Source normalized SHA256: `d9db48dbcfb77a43ca003980989f7c82230a46346812d82a1c292
 | [VERIFY][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Verified reference reachability, archive visibility, and Windows64 bundles | 698-703 |
 | [VERIFY][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Verified LYF_Game editor compile and Windows64 package | 704-709 |
 | [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] Verified the restored character selection scene | 710-714 |
-| [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Tested login, settings and the slide skill in the local game | 715-718 |
+| [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Tested login, settings and the slide skill in the local game | 715-719 |
+| [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-723 |
 
 ## Docs/AI/DECISIONS.en.md
 

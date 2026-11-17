@@ -685,3 +685,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Unity imported the team-creation and settings prefabs with null fields even though the source files contained their bindings. Reimported 133 assets referencing LYF_Game scripts in dependency order (105 prefabs, 4 scenes and 24 assets) in the local editor.
 - Updated 10 ClipLocation cells in Luaban/MiniTemplate/Datas/#SkillPresentationInfo.xlsx; regenerated LYF_Server/Network/LubanManage/Tb/tbskillpresentationinfo.bytes. The skill IDs, durations, and other values are preserved. Commit 826c401 was pushed to codex/feature-development. See 项目修改日志/2026-11-17-登录设置与副本报错修复.md.
+
+## [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components
+
+- Removed MSceneMonsterHoster and its Unity .meta. All 23 affected runtime prefabs retain MModelPrepareData and the public MMonsterAnimator. Fixed waves and summons bind MonsterEntity. MoveComp follows server movement and facing, Skill owns the original effect timelines, and AttrComp applies authoritative HP. Local overlap feedback looks up the runtime UID from the model.
+- The 34-file implementation was pushed as 0e85455 to codex/feature-development. Wave 18 orc 5515 passed the isolated Unity check. Human full-dungeon playthrough and packaged Player are unverified. File manifest, RO references and Git receipt are in `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`.

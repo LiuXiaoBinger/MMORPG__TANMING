@@ -707,3 +707,8 @@
 
 - Unity 2023.2.20f1c1 EditorSimulateMode 通过真实本机服务走完 Boot、账号登录、进服、选角和主城。MainCtrl、MainView、LocalRole 均已就绪。设置按钮能打开有 8 个页签的窗口，切换到画质页并关闭。
 - 服务器进入副本 4060 并加载 sc_dungeon_moshenta_001。按 F 触发技能 10080，KCP 已就绪。10 个 ClipLocation 均可通过 YooAsset 解析，表现行 3008001 与运行时资产一致，使用 Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Slider_F.anim。最终 Unity 控制台查询 Error 结果为 0 条。完整 Player 和线上热更新发布待验证。826c401 的完整证据见 项目修改日志/2026-11-17-登录设置与副本报错修复.md。
+
+## [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] 第 18 波兽人的攻击与特效验证
+
+- 在场景 `4060` 的第 18 波，针对生物 `5515`（`SpawnId` 为 `77309411329`）捕获了 8 条真实 `GameServer` 回环消息。隔离环境中运行 `Unity 2023.2.20f1c1` 的 Play Mode，33 项检查通过，进程退出码为 `0`。通过实际的 `SpawnCreature` 和 `YooAsset` 载入预制体。检查覆盖巡逻、追击、重叠命中、服务器权威生命值、原技能 `1000118401`、施法者挥砍特效、目标受击特效、恢复待机、死亡和移除。
+- 34 个业务文件与验收副本逐字节一致。隔离编辑器对现有 `TaskPageFilter` 名称使用了临时兼容别名，这些别名未进入实现提交。尚未验证人工完整通关和打包后的 Player。`0e85455` 的验证证据见 `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`。
