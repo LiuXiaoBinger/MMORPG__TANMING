@@ -66,7 +66,7 @@ public class NpcShopWindow : WindowBase
     private void AddGoodsSlot(ShopGoodsViewData goods, int listVersion)
     {
         ResourceMgr.Instance.LoadPrefabAsync(
-            "Assets/GM_Game/artres/Resources/UI/Prefabs/Item/BuyItemPrefab", itemObject =>
+            "Assets/GM_Game/Prefabs/Resources/UI/Prefabs/Item/BuyItemPrefab", itemObject =>
         {
             if (listVersion != _listVersion)
             {

@@ -41,7 +41,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
         else
         {
-            //Assets/GM_Game/artres/Resources/UI/Prefabs/Item/BuyItemPrefab.prefab
+            //Assets/GM_Game/Prefabs/Resources/UI/Prefabs/Item/BuyItemPrefab.prefab
             string assetLocation;
             if (path.StartsWith("Assets/", StringComparison.Ordinal))
             {

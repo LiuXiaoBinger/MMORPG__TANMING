@@ -13,10 +13,10 @@ using UnityEditor.SceneManagement;
 public static class ConvertChatPrefabToTMP
 {
     // 要迁移的聊天主预制体路径。
-    private const string PrefabPath = "Assets/GM_Game/artres/Resources/UI/Prefabs/Chat.prefab";
+    private const string PrefabPath = "Assets/GM_Game/Prefabs/Resources/UI/Prefabs/Chat.prefab";
 
     // 要迁移的聊天设置预制体路径，保留资源原有拼写。
-    private const string ChatSettingPrefabPath = "Assets/GM_Game/artres/Resources/UI/Prefabs/Chatseting.prefab";
+    private const string ChatSettingPrefabPath = "Assets/GM_Game/Prefabs/Resources/UI/Prefabs/Chatseting.prefab";
 
     // 打开 SampleScene，在 Chat 下补建 Chatseting 实例，然后保存场景；已有实例不会重复创建。
     [MenuItem("Tools/Chat/Add Chatseting To Sample Scene")]
@@ -104,7 +104,7 @@ public static class ConvertChatPrefabToTMP
     public static void ConvertChatsettingToTMP()
     {
         // 项目统一的 TMP 字体资源，加载失败就停止迁移。
-        TMP_FontAsset commonFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/GM_Game/artres/Resources/UI/Font/Common SDF.asset");
+        TMP_FontAsset commonFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/GM_Game/Resources/UI/Font/Common SDF.asset");
         if (commonFont == null)
         {
             Debug.LogError("找不到 Common SDF 字体资源。");
@@ -383,7 +383,7 @@ public static class ConvertChatPrefabToTMP
     public static void SetChatFontToCommonSdf()
     {
         // 统一字体资源的固定路径。
-        const string fontPath = "Assets/GM_Game/artres/Resources/UI/Font/Common SDF.asset";
+        const string fontPath = "Assets/GM_Game/Resources/UI/Font/Common SDF.asset";
         // 本次要赋给全部聊天文字的 TMP 字体。
         TMP_FontAsset commonFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
         if (commonFont == null)
