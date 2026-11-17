@@ -50,41 +50,77 @@ public class SkillInfoWindow : WindowBase
     /// <summary>技能未提供升级消耗时使用的默认铜币价格。</summary>
     private const int DefaultUpgradeCost = 40;
 
-    /// <summary>技能升级文案的绿色，与参考实机一致。</summary>
+    /// <summary>技能升级文案的绿色：详情卡改回深蓝底，绿色恢复亮绿 #6BE08A，深底上对比度约 6.9:1。</summary>
     private static readonly Color UpgradeGreen = new Color(0.42f, 0.88f, 0.55f, 1f);
 
-    /// <summary>技能升级文案未达成时的灰色。</summary>
-    private static readonly Color UpgradeGray = new Color(0.5f, 0.56f, 0.62f, 1f);
+    /// <summary>技能升级文案未达成时的灰蓝色，深蓝底上要提亮。</summary>
+    private static readonly Color UpgradeGray = new Color(0.62f, 0.70f, 0.78f, 1f);
 
     /// <summary>节点外圈常态颜色。</summary>
-    private static readonly Color NodeRingNormal = new Color(0.42f, 0.63f, 0.92f, 1f);
+    private static readonly Color NodeRingNormal = new Color(0.40f, 0.60f, 0.63f, 1f);
 
     /// <summary>绝学大节点的金色外圈。</summary>
     private static readonly Color NodeRingUltimate = new Color(0.98f, 0.78f, 0.42f, 1f);
 
     /// <summary>空槽位的暗色外圈。</summary>
-    private static readonly Color NodeRingEmpty = new Color(0.24f, 0.31f, 0.42f, 1f);
+    private static readonly Color NodeRingEmpty = new Color(0.27f, 0.37f, 0.39f, 1f);
 
     /// <summary>当前选中节点的亮色外圈。</summary>
-    private static readonly Color NodeRingSelected = new Color(0.85f, 0.96f, 1f, 1f);
+    private static readonly Color NodeRingSelected = new Color(0.87f, 0.98f, 0.89f, 1f);
 
-    /// <summary>子页签选中时的底板颜色，深蓝底配金色文字，避免大面积纯白抢视线。</summary>
-    private static readonly Color TabOnColor = new Color(0.17f, 0.32f, 0.54f, 1f);
+    /// <summary>子页签及分类选中时使用暖玉浅底，区别于深色内容区。</summary>
+    private static readonly Color TabOnColor = new Color(0.83f, 0.90f, 0.84f, 1f);
 
-    /// <summary>子页签未选中时的底板颜色，与选中态保持同一组块面、只降明度。</summary>
-    private static readonly Color TabOffColor = new Color(0.13f, 0.19f, 0.29f, 0.95f);
+    /// <summary>未选中的子页签与墨青页签条保持近似明度。</summary>
+    private static readonly Color TabOffColor = new Color(0.10f, 0.17f, 0.20f, 0.94f);
 
-    /// <summary>子页签选中时的文字与图标颜色，暖金白。</summary>
-    private static readonly Color TabOnTextColor = new Color(1f, 0.92f, 0.74f, 1f);
+    /// <summary>浅底上的深墨文字和图标。</summary>
+    private static readonly Color TabOnTextColor = new Color(0.08f, 0.16f, 0.18f, 1f);
 
-    /// <summary>子页签未选中时的文字与图标颜色，灰蓝。</summary>
-    private static readonly Color TabOffTextColor = new Color(0.58f, 0.66f, 0.78f, 1f);
+    /// <summary>深底上的冷玉白文字和图标。</summary>
+    private static readonly Color TabOffTextColor = new Color(0.76f, 0.84f, 0.84f, 1f);
 
     /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
 
     /// <summary>标题栏关闭按钮。</summary>
     [SerializeField, Header("关闭按钮")] private Button _btnClose;
+
+    /// <summary>按 1920×1080 设计坐标摆放内容的节点，尺寸变化时缩放，屏幕背景独立铺满。</summary>
+    [SerializeField, Header("布局")] private RectTransform _panelLayout;
+
+    /// <summary>包含立绘、轨道与节点的舞台，配置查看时整体移到右侧。</summary>
+    [SerializeField, Header("技能舞台")] private RectTransform _stage;
+
+    /// <summary>出战槽位沿着立绘排列的透底轨道，列表页隐藏。</summary>
+    [SerializeField, Header("技能轨道")] private GameObject _portraitHalo;
+
+    /// <summary>显示槽位对应关系的配置入口，同一按钮也用于退出查看。</summary>
+    [SerializeField, Header("配置按钮")] private Button _btnConfig;
+
+    /// <summary>轮换查看一组、二组普通武功的按钮，轻功不分组。</summary>
+    [SerializeField, Header("翻页按钮")] private Button _btnFlip;
+
+    /// <summary>出战页右侧说明卡的显隐按钮。</summary>
+    [SerializeField, Header("描述按钮")] private Button _btnDescription;
+
+    /// <summary>配置入口的标签，进入槽位查看后改为返回。</summary>
+    [SerializeField, Header("配置文字")] private TMP_Text _configLabel;
+
+    /// <summary>标记当前普通武功组的文字，与舞台两侧的组号对应。</summary>
+    [SerializeField, Header("翻页文字")] private TMP_Text _flipLabel;
+
+    /// <summary>说明入口根据正文显隐显示“描述”或“显示描述”。</summary>
+    [SerializeField, Header("描述工具文字")] private TMP_Text _descriptionLabel;
+
+    /// <summary>普通列表与配置查看共用的列表标题，用于区分武功、轻功及可选条目。</summary>
+    [SerializeField, Header("列表标题")] private TMP_Text _listHeader;
+
+    /// <summary>仅在配置查看时出现的只读操作说明。</summary>
+    [SerializeField, Header("配置说明")] private GameObject _configHint;
+
+    /// <summary>配置查看右侧的出战槽标题，常态下不盖住立绘。</summary>
+    [SerializeField, Header("配置槽位标题")] private GameObject _configStageTitle;
 
     /// <summary>两个子页签按钮：出战 / 列表。</summary>
     [SerializeField, Header("子页签按钮")] private Button[] _tabButtons;
@@ -101,7 +137,10 @@ public class SkillInfoWindow : WindowBase
     /// <summary>竖排导航文字。</summary>
     [SerializeField, Header("导航文字")] private TMP_Text[] _navLabels;
 
-    /// <summary>门派立绘节点，秘笈页与列表页隐藏。</summary>
+    /// <summary>有分类图标的导航项，前三项分别显示武功、轻功和秘笈图标。</summary>
+    [SerializeField, Header("导航图标")] private Image[] _navIcons;
+
+    /// <summary>魔剑士立绘，出战和列表使用同一资源；秘笈页不显示。</summary>
     [SerializeField, Header("门派立绘")] private GameObject _portraitRoot;
 
     /// <summary>武功出战页的节点容器。</summary>
@@ -130,6 +169,9 @@ public class SkillInfoWindow : WindowBase
 
     /// <summary>右侧技能详情面板。</summary>
     [SerializeField, Header("详情面板")] private GameObject _detailPanel;
+
+    /// <summary>与详情同位置的细框，必须和详情卡一起显隐。</summary>
+    [SerializeField, Header("详情边框")] private GameObject _detailBorder;
 
     /// <summary>武功页九个节点的点击按钮。</summary>
     [SerializeField, Header("节点按钮")] private Button[] _nodeButtons;
@@ -191,14 +233,23 @@ public class SkillInfoWindow : WindowBase
     /// <summary>轻功出战页按节点顺序排列的技能，空位为 null。</summary>
     private readonly List<SkillViewData> _lightSkills = new List<SkillViewData>(LightNodeCount);
 
-    /// <summary>列表页已创建的条目，刷新时整批销毁。</summary>
-    private readonly List<GameObject> _listItems = new List<GameObject>();
+    /// <summary>自窗口首次打开列表起按需创建的条目缓存，页签切换时复用已创建控件。</summary>
+    private readonly List<SkillListItemWidget> _listItems = new List<SkillListItemWidget>();
 
     /// <summary>列表页当前展示的技能，顺序与条目下标一致。</summary>
     private readonly List<SkillViewData> _listSkills = new List<SkillViewData>();
 
     /// <summary>列表页当前选中的条目下标。</summary>
-    private int _selectedListItem;
+    private int _selectedListItem = -1;
+
+    /// <summary>出战页是否正在查看技能所属槽位，查看时不改动实际装备。</summary>
+    private bool _viewingSlots;
+
+    /// <summary>出战页是否展开右侧详情，列表页始终显示。</summary>
+    private bool _showDescription = true;
+
+    /// <summary>每组普通武功的展示槽位数，槽位 8 是单列的绝学。</summary>
+    private const int NormalSlotsPerGroup = 4;
 
     /// <summary>当前分类编号。</summary>
     private int _category;
@@ -287,7 +338,29 @@ public class SkillInfoWindow : WindowBase
     /// <summary>窗口首次激活时绑定按钮事件。</summary>
     private void Awake()
     {
+        FitLayout();
         BindButtons();
+    }
+
+    /// <summary>画布尺寸变化时重新放置内容，宽屏保留完整控件，平时不做每帧计算。</summary>
+    private void OnRectTransformDimensionsChange()
+    {
+        FitLayout();
+    }
+
+    /// <summary>按窗口可用宽高等比缩放固定设计布局，屏幕背景不受影响。</summary>
+    private void FitLayout()
+    {
+        if (_panelLayout == null)
+        {
+            return;
+        }
+        // 当前 Canvas 单位下窗口可用宽高，以及预制体标定的设计宽高。
+        Rect frame = ((RectTransform)transform).rect;
+        Rect design = _panelLayout.rect;
+        // 取较小的一边缩放比，避免超宽屏下控件从上下边缘裁掉。
+        float scale = Mathf.Min(frame.width / design.width, frame.height / design.height);
+        _panelLayout.localScale = new Vector3(scale, scale, 1f);
     }
 
     /// <summary>把关闭按钮、子页签、竖排导航与节点的点击事件挂到本窗口方法上，只执行一次。</summary>
@@ -298,6 +371,9 @@ public class SkillInfoWindow : WindowBase
             return;
         }
         _buttonsBound = true;
+        _btnConfig.onClick.AddListener(ToggleSlotView);
+        _btnFlip.onClick.AddListener(FlipBattleGroup);
+        _btnDescription.onClick.AddListener(ToggleDescription);
         if (_btnClose != null)
         {
             _btnClose.onClick.AddListener(CloseWindow);
@@ -389,6 +465,8 @@ public class SkillInfoWindow : WindowBase
         }
         _category = category;
         _page = PageBattle;
+        _viewingSlots = false;
+        _showDescription = true;
         RefreshTabs();
         ApplyPage();
     }
@@ -407,6 +485,8 @@ public class SkillInfoWindow : WindowBase
             return;
         }
         _page = page;
+        _viewingSlots = false;
+        _showDescription = true;
         RefreshTabs();
         ApplyPage();
     }
@@ -485,97 +565,151 @@ public class SkillInfoWindow : WindowBase
                 }
             }
         }
-        // 竖排导航：当前分类用 RO 蓝底金字，其余压暗，避免整块纯白抢主视觉。
+        // 右侧分类与横向页签统一用暖玉选中颜色，未开放项保持低亮。
         for (int index = 0; index < _navLabels.Length; index++)
         {
-            if (_navLabels[index] == null)
+            // 当前条目的文字与图标公用一种前景色。
+            Color foreground = TabOffTextColor;
+            // 当前条目的底色。
+            Color background = new Color(0.07f, 0.13f, 0.16f, 0.71f);
+            if (index == _category)
             {
-                continue;
+                foreground = TabOnTextColor;
+                background = TabOnColor;
             }
-            bool current = index == _category;
-            if (current)
+            else if (index > CategorySecret)
             {
-                _navLabels[index].color = new Color(1f, 0.92f, 0.74f, 1f);
+                foreground = new Color(0.52f, 0.60f, 0.61f, 1f);
             }
-            else if (index <= CategorySecret)
+            _navLabels[index].color = foreground;
+            _navButtons[index].image.color = background;
+            if (index < _navIcons.Length)
             {
-                _navLabels[index].color = new Color(0.66f, 0.72f, 0.82f, 1f);
-            }
-            else
-            {
-                _navLabels[index].color = new Color(0.42f, 0.47f, 0.56f, 1f);
-            }
-            if (_navButtons[index] == null)
-            {
-                continue;
-            }
-            Image navImage = _navButtons[index].GetComponent<Image>();
-            if (navImage == null)
-            {
-                continue;
-            }
-            if (current)
-            {
-                navImage.color = new Color(0.17f, 0.32f, 0.54f, 1f);
-            }
-            else
-            {
-                navImage.color = new Color(0.08f, 0.11f, 0.17f, 0.92f);
+                _navIcons[index].color = foreground;
             }
         }
     }
 
-    /// <summary>按当前分类与子页切换可见容器，并刷新对应内容。</summary>
+    /// <summary>按当前分类刷新版式，并把同一技能快照映射到出战节点或列表。</summary>
     private void ApplyPage()
     {
-        // 秘笈分类统一走空壳页，不需要立绘、节点与详情。
+        RefreshPageLayout();
         if (_category == CategorySecret)
         {
-            SetActive(_portraitRoot, false);
-            SetActive(_battleRoot, false);
-            SetActive(_toolRoot, false);
-            SetActive(_badgeRoot, false);
-            SetActive(_lightRoot, false);
-            SetActive(_listRoot, false);
-            SetActive(_detailPanel, false);
-            SetActive(_emptyPage, true);
-            SetActive(_currencyBar, false);
             return;
         }
-        SetActive(_emptyPage, false);
-        SetActive(_detailPanel, true);
-        // 铜币条只在出战页出现，列表页底部留给滚动列表。
-        SetActive(_currencyBar, _page == PageBattle);
-        // 列表页：左侧铺满技能列表，隐藏立绘，避免半张脸被详情面板切掉。
         if (_page == PageList)
         {
-            SetActive(_portraitRoot, false);
-            SetActive(_battleRoot, false);
-            SetActive(_toolRoot, false);
-            SetActive(_badgeRoot, false);
-            SetActive(_lightRoot, false);
-            SetActive(_listRoot, true);
             FillList();
             return;
         }
-        SetActive(_listRoot, false);
-        SetActive(_portraitRoot, true);
-        SetPortraitPosition(true);
-        // 轻功出战页：左侧 3 个节点 + 中央大图标，没有工具行与技能组徽章。
         if (_category == CategoryLight)
         {
-            SetActive(_battleRoot, false);
-            SetActive(_toolRoot, false);
-            SetActive(_badgeRoot, false);
-            SetActive(_lightRoot, true);
             FillLightNodes();
-            return;
         }
-        SetActive(_battleRoot, true);
-        SetActive(_toolRoot, true);
-        SetActive(_badgeRoot, true);
-        SetActive(_lightRoot, false);
-        FillBattleNodes();
+        else
+        {
+            FillBattleNodes();
+        }
+        if (_viewingSlots)
+        {
+            FillList();
+        }
+    }
+
+    /// <summary>切换预制体里已摆好的页面区块，不创建或销毁控件。</summary>
+    private void RefreshPageLayout()
+    {
+        // 秘笈使用原有占位说明，没有出战数据。
+        bool content = _category != CategorySecret;
+        // 配置查看与出战页共用相同的槽位和角色舞台。
+        bool battle = content && _page == PageBattle;
+        // 只在轻功分类显示三个轻功槽。
+        bool light = _category == CategoryLight;
+        // 配置遮住右侧详情；其余页面按描述开关显示。
+        bool detail = content && !_viewingSlots && (!battle || _showDescription);
+        SetActive(_stage.gameObject, content);
+        SetActive(_emptyPage, !content);
+        SetActive(_portraitRoot, content);
+        SetActive(_portraitHalo, battle);
+        SetActive(_battleRoot, battle && !light);
+        SetActive(_badgeRoot, battle && !light);
+        SetActive(_lightRoot, battle && light);
+        SetActive(_toolRoot, battle);
+        SetActive(_listRoot, content && (!battle || _viewingSlots));
+        SetActive(_detailPanel, detail);
+        SetActive(_detailBorder, detail);
+        SetActive(_currencyBar, battle && !_viewingSlots);
+        SetActive(_configHint, _viewingSlots);
+        SetActive(_configStageTitle, _viewingSlots);
+        SetActive(_btnFlip.gameObject, !light);
+        SetActive(_btnDescription.gameObject, !_viewingSlots);
+        _configLabel.text = "配置";
+        _descriptionLabel.text = "描述";
+        _listHeader.text = "武功";
+        if (light)
+        {
+            _listHeader.text = "轻功";
+        }
+        if (_viewingSlots)
+        {
+            _configLabel.text = "返回出战";
+            _listHeader.text += "选择";
+        }
+        if (!_showDescription)
+        {
+            _descriptionLabel.text = "显示描述";
+        }
+        SetPortraitPosition(battle, light);
+    }
+
+    /// <summary>打开或关闭只读的出战槽位查看，不修改快捷键或技能装备。</summary>
+    private void ToggleSlotView()
+    {
+        _viewingSlots = !_viewingSlots;
+        RefreshPageLayout();
+        if (_viewingSlots)
+        {
+            FillList();
+        }
+        else if (_category == CategoryLight)
+        {
+            SelectLightNode(_selectedLightNode);
+        }
+        else
+        {
+            SelectBattleNode(_selectedNode);
+        }
+    }
+
+    /// <summary>从已显示的另一组普通武功中选首个可用技能；绝学不参与分组。</summary>
+    private void FlipBattleGroup()
+    {
+        // 武功索引 0–3 为一组，4–7 为二组，选中绝学时直接返回一组。
+        int start = 0;
+        if (_selectedNode < NormalSlotsPerGroup)
+        {
+            start = NormalSlotsPerGroup;
+        }
+        for (int index = start; index < start + NormalSlotsPerGroup && index < _battleSkills.Count; index++)
+        {
+            if (_battleSkills[index] != null)
+            {
+                SelectBattleNode(index);
+                return;
+            }
+        }
+    }
+
+    /// <summary>收起或打开出战说明，场上节点和升级全部入口保持在原位置。</summary>
+    private void ToggleDescription()
+    {
+        _showDescription = !_showDescription;
+        RefreshPageLayout();
+        if (_showDescription)
+        {
+            ResetScroll(_descScroll);
+        }
     }
 
     /// <summary>按开关统一处理空引用，避免调用点重复判空。</summary>
@@ -590,26 +724,32 @@ public class SkillInfoWindow : WindowBase
         target.SetActive(active);
     }
 
-    /// <summary>按页面摆放立绘：出战页靠左给节点留位，列表页挪到列表与详情之间。</summary>
-    /// <param name="battleLayout">true 表示出战页位置。</param>
-    private void SetPortraitPosition(bool battleLayout)
+    /// <summary>出战时立绘居于节点之间，列表居中，配置查看时整组移动到右侧。</summary>
+    /// <param name="battleLayout">出战或配置查看为 true；技能列表为 false。</param>
+    /// <param name="light">在轻功页为 true，立绘右移为中央大图标让位。</param>
+    private void SetPortraitPosition(bool battleLayout, bool light)
     {
-        if (_portraitRoot == null)
+        // 配置页整体平移舞台和工具行，留出左栏标题；普通页沿用预制体的居中原点。
+        Vector2 stageOffset = Vector2.zero;
+        if (_viewingSlots)
         {
+            stageOffset = new Vector2(670f, 0f);
+        }
+        _stage.anchoredPosition = stageOffset;
+        ((RectTransform)_toolRoot.transform).anchoredPosition = stageOffset;
+        // 立绘 RectTransform 的宽高和位置均为布局节点的设计单位。
+        RectTransform portrait = (RectTransform)_portraitRoot.transform;
+        if (!battleLayout)
+        {
+            portrait.sizeDelta = new Vector2(364f, 536f);
+            portrait.anchoredPosition = new Vector2(-237f, -67f);
             return;
         }
-        RectTransform rect = _portraitRoot.transform as RectTransform;
-        if (rect == null)
+        portrait.sizeDelta = new Vector2(435f, 616f);
+        portrait.anchoredPosition = new Vector2(-458f, -67f);
+        if (light)
         {
-            return;
-        }
-        if (battleLayout)
-        {
-            rect.anchoredPosition = new Vector2(-430f, -70f);
-        }
-        else
-        {
-            rect.anchoredPosition = new Vector2(-180f, -90f);
+            portrait.anchoredPosition = new Vector2(-270f, -67f);
         }
     }
 
@@ -696,9 +836,14 @@ public class SkillInfoWindow : WindowBase
         {
             // 当前槽位的技能，null 表示该位置没有技能。
             SkillViewData skill = _battleSkills[index];
+            // 绝学槽保持独有的外圈配色。
             bool isUltimateSlot = index == BattleNodeCount - 1;
             UpdateNodeVisual(_nodeButtons, _nodeIcons, _nodeRings, _nodeGlows, _nodeTags,
                 index, skill, isUltimateSlot, false);
+            if (skill != null)
+            {
+                LoadNodeIcon(_nodeIcons, index, skill);
+            }
         }
     }
 
@@ -711,6 +856,10 @@ public class SkillInfoWindow : WindowBase
             SkillViewData skill = _lightSkills[index];
             UpdateNodeVisual(_lightButtons, _lightIcons, _lightRings, _lightGlows, null,
                 index, skill, false, false);
+            if (skill != null)
+            {
+                LoadNodeIcon(_lightIcons, index, skill);
+            }
         }
     }
 
@@ -733,7 +882,7 @@ public class SkillInfoWindow : WindowBase
         }
         if (icons != null && index < icons.Length && icons[index] != null)
         {
-            icons[index].enabled = skill != null;
+            icons[index].enabled = skill != null && icons[index].sprite != null;
         }
         if (rings != null && index < rings.Length && rings[index] != null)
         {
@@ -777,11 +926,6 @@ public class SkillInfoWindow : WindowBase
                 tags[index].color = new Color(0.92f, 0.96f, 1f, 1f);
             }
         }
-        if (skill == null)
-        {
-            return;
-        }
-        LoadNodeIcon(icons, index, skill);
     }
 
     /// <summary>异步加载节点图标，回调前确认槽位仍存在。</summary>
@@ -818,7 +962,7 @@ public class SkillInfoWindow : WindowBase
     /// <param name="nodeIndex">节点下标，超出范围时忽略。</param>
     public void SelectBattleNode(int nodeIndex)
     {
-        if (nodeIndex < 0 || nodeIndex >= BattleNodeCount)
+        if (nodeIndex < 0 || nodeIndex >= _battleSkills.Count)
         {
             return;
         }
@@ -831,14 +975,27 @@ public class SkillInfoWindow : WindowBase
             UpdateNodeVisual(_nodeButtons, _nodeIcons, _nodeRings, _nodeGlows, _nodeTags,
                 index, skill, isUltimateSlot, index == nodeIndex);
         }
-        ShowDetail(_battleSkills[nodeIndex]);
+        // 当前组的可见名称，与左右组号码保持一致。
+        _flipLabel.text = "翻页 · 1";
+        if (nodeIndex >= NormalSlotsPerGroup && nodeIndex < BattleNodeCount - 1)
+        {
+            _flipLabel.text = "翻页 · 2";
+        }
+        // 选中的技能实例，列表与槽位都沿用控制器快照中的同一引用。
+        SkillViewData selected = _battleSkills[nodeIndex];
+        if (_viewingSlots)
+        {
+            SelectListRow(_listSkills.IndexOf(selected));
+            return;
+        }
+        ShowDetail(selected);
     }
 
     /// <summary>选中轻功页的指定节点，并同步中央大图标。</summary>
     /// <param name="nodeIndex">节点下标，超出范围时忽略。</param>
     public void SelectLightNode(int nodeIndex)
     {
-        if (nodeIndex < 0 || nodeIndex >= LightNodeCount)
+        if (nodeIndex < 0 || nodeIndex >= _lightSkills.Count)
         {
             return;
         }
@@ -852,7 +1009,14 @@ public class SkillInfoWindow : WindowBase
         }
         // 当前选中的轻功技能，用于中央大图标与右侧详情。
         SkillViewData selected = _lightSkills[nodeIndex];
-        ShowDetail(selected);
+        if (_viewingSlots)
+        {
+            SelectListRow(_listSkills.IndexOf(selected));
+        }
+        else
+        {
+            ShowDetail(selected);
+        }
         if (_lightBigIcon == null)
         {
             return;
@@ -877,94 +1041,72 @@ public class SkillInfoWindow : WindowBase
         });
     }
 
-    /// <summary>按当前分类重建列表页条目。</summary>
+    /// <summary>按分类整理武功或轻功，复用已有条目，只有条目数量增长时创建控件。</summary>
     private void FillList()
     {
-        for (int index = 0; index < _listItems.Count; index++)
-        {
-            if (_listItems[index] != null)
-            {
-                Destroy(_listItems[index]);
-            }
-        }
-        _listItems.Clear();
-        if (_listContent == null || _listItemTemplate == null)
-        {
-            return;
-        }
-        // 当前分类下要展示的技能，按快照顺序收集后再建条目。
-        List<SkillViewData> visible = new List<SkillViewData>();
+        _listSkills.Clear();
+        // 当前列表只收与分类一致的技能，普攻不占武学条目。
+        bool light = _category == CategoryLight;
         for (int index = 0; index < _allSkills.Count; index++)
         {
-            // 本次判断的技能展示数据。
+            // 控制器下发的原始技能展示数据。
             SkillViewData skill = _allSkills[index];
-            if (skill == null)
+            if (skill == null || skill.SkillType == BasicAttackType)
             {
                 continue;
             }
-            // 普通攻击不是技能，列表里也不与技能混排。
-            if (skill.SkillType == BasicAttackType)
+            if (IsLightSkill(skill) == light)
             {
-                continue;
-            }
-            // 轻功列表只收滑行与轻功，武功列表收其余技能。
-            bool isLight = IsLightSkill(skill);
-            bool wanted = false;
-            if (_category == CategoryLight)
-            {
-                wanted = isLight;
-            }
-            else
-            {
-                wanted = !isLight;
-            }
-            if (wanted)
-            {
-                visible.Add(skill);
+                _listSkills.Add(skill);
             }
         }
-        for (int index = 0; index < visible.Count; index++)
+        for (int index = 0; index < _listSkills.Count; index++)
         {
-            GameObject item = Instantiate(_listItemTemplate, _listContent);
-            item.SetActive(true);
-            item.transform.SetAsLastSibling();
-            SkillListItemWidget widget = item.GetComponent<SkillListItemWidget>();
-            if (widget != null)
+            if (index >= _listItems.Count)
             {
-                widget.SetData(visible[index]);
-                widget.SetSelected(index == 0);
+                // 新控件常驻在池中的下标，监听器只在创建时绑定一次。
+                int rowIndex = index;
+                // 只克隆预制体里绑定好的行；不在脚本拼图标和文字。
+                GameObject item = Instantiate(_listItemTemplate, _listContent);
+                item.GetComponent<Button>().onClick.AddListener(delegate { SelectListItem(rowIndex); });
+                _listItems.Add(item.GetComponent<SkillListItemWidget>());
             }
-            // 每条目绑定自己的下标，点击时只刷新详情与选中态。
-            Button button = item.GetComponent<Button>();
-            if (button != null)
+            // 复用同一视图，离开列表页面时随父节点一起隐藏。
+            SkillListItemWidget row = _listItems[index];
+            // 本行展示的技能快照。
+            SkillViewData skill = _listSkills[index];
+            row.SetData(skill, GetSkillLevel(skill));
+            row.SetSelected(false);
+            row.gameObject.SetActive(true);
+        }
+        for (int index = _listSkills.Count; index < _listItems.Count; index++)
+        {
+            _listItems[index].gameObject.SetActive(false);
+        }
+        _selectedListItem = -1;
+        // 列表面板上的 ScrollRect 控件，开启后从顶部开始浏览。
+        ScrollRect scroll = _listContent.GetComponentInParent<ScrollRect>();
+        ResetScroll(scroll);
+        if (_viewingSlots)
+        {
+            // 配置查看默认高亮当前出战槽位，不改变玩家上一次在节点里的选择。
+            SkillViewData selected = null;
+            if (light)
             {
-                int itemIndex = index;
-                button.onClick.AddListener(delegate { SelectListItem(itemIndex); });
+                if (_selectedLightNode < _lightSkills.Count)
+                {
+                    selected = _lightSkills[_selectedLightNode];
+                }
             }
-            _listItems.Add(item);
+            else if (_selectedNode < _battleSkills.Count)
+            {
+                selected = _battleSkills[_selectedNode];
+            }
+            SelectListRow(_listSkills.IndexOf(selected));
         }
-        _listSkills.Clear();
-        for (int index = 0; index < visible.Count; index++)
+        else if (_listSkills.Count > 0)
         {
-            _listSkills.Add(visible[index]);
-        }
-        _selectedListItem = 0;
-        // 内容高度按条目数显式撑开；VerticalLayoutGroup 没有 ContentSizeFitter 时滚动才生效。
-        RectTransform contentRect = _listContent as RectTransform;
-        if (contentRect != null)
-        {
-            contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x,
-                visible.Count * 118f);
-        }
-        // 重建条目后把列表滚回顶部，避免停在上一次的滚动位置。
-        ScrollRect scrollRect = _listContent.GetComponentInParent<ScrollRect>();
-        if (scrollRect != null)
-        {
-            scrollRect.verticalNormalizedPosition = 1f;
-        }
-        if (visible.Count > 0)
-        {
-            ShowDetail(visible[0]);
+            SelectListItem(0);
         }
         else
         {
@@ -972,28 +1114,58 @@ public class SkillInfoWindow : WindowBase
         }
     }
 
-    /// <summary>选中列表页的指定条目，同步高亮与右侧详情。</summary>
-    /// <param name="index">条目下标，超出范围时忽略。</param>
+    /// <summary>选中列表条目，普通列表切换详情，配置查看定位对应的实际槽位。</summary>
+    /// <param name="index">可见列表中的条目下标。</param>
     public void SelectListItem(int index)
     {
         if (index < 0 || index >= _listSkills.Count)
         {
             return;
         }
-        _selectedListItem = index;
-        for (int itemIndex = 0; itemIndex < _listItems.Count; itemIndex++)
+        SelectListRow(index);
+        // 列表和槽位共享同一份技能快照，不新建出战配置。
+        SkillViewData skill = _listSkills[index];
+        if (!_viewingSlots)
         {
-            if (_listItems[itemIndex] == null)
-            {
-                continue;
-            }
-            SkillListItemWidget widget = _listItems[itemIndex].GetComponent<SkillListItemWidget>();
-            if (widget != null)
-            {
-                widget.SetSelected(itemIndex == index);
-            }
+            ShowDetail(skill);
+            return;
         }
-        ShowDetail(_listSkills[index]);
+        if (_category == CategoryLight)
+        {
+            SelectLightNode(_lightSkills.IndexOf(skill));
+        }
+        else
+        {
+            SelectBattleNode(_battleSkills.IndexOf(skill));
+        }
+    }
+
+    /// <summary>只重绘旧行和新行的高亮；配置下一旦选中未上场技能，槽位不变。</summary>
+    /// <param name="index">当前行下标，-1 表示未选中可见条目。</param>
+    private void SelectListRow(int index)
+    {
+        if (_selectedListItem >= 0)
+        {
+            _listItems[_selectedListItem].SetSelected(false);
+        }
+        _selectedListItem = index;
+        if (_selectedListItem >= 0)
+        {
+            _listItems[_selectedListItem].SetSelected(true);
+        }
+    }
+
+    /// <summary>只重算当前滚动内容，然后回到顶部，不请求重建整座界面。</summary>
+    /// <param name="scroll">描述或列表负责裁剪和输入的滚动控件，未绑定则跳过。</param>
+    private static void ResetScroll(ScrollRect scroll)
+    {
+        if (scroll == null || !scroll.isActiveAndEnabled)
+        {
+            return;
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scroll.content);
+        scroll.StopMovement();
+        scroll.verticalNormalizedPosition = 1f;
     }
 
     /// <summary>判断技能是否属于轻功分类，滑行与轻功都算。</summary>
@@ -1016,7 +1188,6 @@ public class SkillInfoWindow : WindowBase
         }
         _detailSkillId = skill.SkillId;
         _currentSkill = skill;
-        RefreshUpgradeBlock(skill);
         if (_detailName != null)
         {
             _detailName.text = skill.Name;
@@ -1052,6 +1223,11 @@ public class SkillInfoWindow : WindowBase
             }
             _detailCond.text = "调息时间：" + skill.Cooldown.ToString("0.0") + " 秒\n" +
                 rangeText + "\n消耗内力：" + skill.MpCost;
+        }
+        RefreshUpgradeBlock(skill);
+        if (_page == PageList && _selectedListItem >= 0)
+        {
+            _listItems[_selectedListItem].SetLevel(GetSkillLevel(skill), skill.Tag);
         }
         if (_detailIcon == null)
         {
@@ -1127,21 +1303,23 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
-        Transform detail = transform.Find("DetailPanel");
+        // 详情卡与货币条都在等比布局内部。
+        Transform detail = _detailPanel.transform;
         if (detail == null)
         {
             return;
         }
         Transform normal = detail.Find("NormalUpgradeRoot");
         Transform ultimate = detail.Find("UltimateUpgradeRoot");
-        Transform currency = transform.Find("CurrencyBar");
+        // 出战页底部货币条。
+        Transform currency = _panelLayout.Find("CurrencyBar");
         // 三块容器必须同时存在，避免构建中途把监听器挂重。
         if (normal == null || ultimate == null || currency == null)
         {
             return;
         }
-        Transform scroll = detail.Find("DescScroll");
-        _descScroll = scroll != null ? scroll.GetComponent<ScrollRect>() : null;
+        // 仅说明正文滚动，升级区作为外层常驻操作。
+        _descScroll = detail.Find("DescScroll").GetComponent<ScrollRect>();
         _normalUpgradeRoot = normal.gameObject;
         _ultimateUpgradeRoot = ultimate.gameObject;
         _currencyBar = currency.gameObject;
@@ -1173,7 +1351,8 @@ public class SkillInfoWindow : WindowBase
         {
             _upgradeAllButton.onClick.AddListener(OnUpgradeAllClicked);
         }
-        Transform nodeRoot = transform.Find("NodeRoot");
+        // 九个武功槽在舞台内部，使用已绑定的容器。
+        Transform nodeRoot = _battleRoot.transform;
         if (nodeRoot != null)
         {
             for (int index = 0; index < BattleNodeCount; index++)
@@ -1197,20 +1376,18 @@ public class SkillInfoWindow : WindowBase
             SetNextLevelActive(false);
             return;
         }
+        // 绝学走心得升级，普通技能走铜币。
         bool ultimate = skill.Tag == UltimateTag;
         SetActive(_normalUpgradeRoot, !ultimate);
         SetActive(_ultimateUpgradeRoot, ultimate);
         // 等级门槛在滚动内容里，不随升级区隐藏，按技能类型单独显隐。
-        SetNextLevelActive(!ultimate);
+        // 描述正文若已带「下一级」行，就不再追加第二条，避免滚动区出现两行一样的提示。
+        bool descHasNextLevel = !string.IsNullOrEmpty(skill.Description)
+            && skill.Description.Contains("下一级");
+        SetNextLevelActive(!ultimate && !descHasNextLevel);
         if (_currencyText != null)
         {
             _currencyText.text = _currency.ToString();
-        }
-        // 换技能后描述回到顶部，长文本靠右侧滚动条查看；先强制排版再复位，避免内容高度尚未重算。
-        if (_descScroll != null)
-        {
-            Canvas.ForceUpdateCanvases();
-            _descScroll.verticalNormalizedPosition = 1f;
         }
         if (ultimate)
         {
@@ -1221,6 +1398,7 @@ public class SkillInfoWindow : WindowBase
             RefreshNormalBlock(skill);
         }
         RefreshNodeFlags();
+        ResetScroll(_descScroll);
     }
 
     /// <summary>控制描述滚动内容里「下一级」行的显隐，绝学心得页不显示这一行。</summary>
@@ -1421,7 +1599,7 @@ public class SkillInfoWindow : WindowBase
         _levelOverrides[skillId] = current + delta;
     }
 
-    /// <summary>把纯文本描述转成 TMP 富文本：数值橙色、词条青蓝、下一级绿色。</summary>
+    /// <summary>把纯文本描述转成 TMP 富文本：数值橙、词条蓝、下一级绿，均按深蓝底调过明度。</summary>
     private static string BuildRichDescription(string raw)
     {
         if (string.IsNullOrEmpty(raw))
@@ -1429,10 +1607,10 @@ public class SkillInfoWindow : WindowBase
             return string.Empty;
         }
         string text = Regex.Replace(raw, @"(\d+\.?\d*%|\+\d+|\d+点|\d+秒|\d+名)",
-            "<color=#FFB46B>$1</color>");
+            "<color=#FFB067>$1</color>");
         text = Regex.Replace(text, @"(?m)^([\u4e00-\u9fa5]{2,4})[：:]",
-            "<color=#7FD2F0>$1：</color>");
-        text = Regex.Replace(text, @"(?m)^(下一级.*)$", "<color=#6BE39A>$1</color>");
+            "<color=#8CC6F2>$1：</color>");
+        text = Regex.Replace(text, @"(?m)^(下一级.*)$", "<color=#6BE08A>$1</color>");
         return text;
     }
 
