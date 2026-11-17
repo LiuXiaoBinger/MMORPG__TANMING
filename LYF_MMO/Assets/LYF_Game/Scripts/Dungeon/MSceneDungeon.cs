@@ -275,7 +275,7 @@ public class MSceneDungeon : MonoBehaviour
         wave.Spawned = batchEnd >= total;
     }
 
-    /// <summary>实例化正式资源后建立实体、模型、控制器的同一身份绑定。</summary>
+    /// <summary>实例化正式资源并将副本出生位绑定到统一世界的实体及模型。</summary>
     /// <param name="wave">原出生波次。</param>
     /// <param name="creature">原表对应的正式资源映射。</param>
     /// <param name="point">原场景位置和朝向，单位米/角度。</param>
@@ -325,20 +325,14 @@ public class MSceneDungeon : MonoBehaviour
             MEntity entity = (MEntity)world.CreateEntity(entityType, creature.id);
             entityUids.Add(entity.UID);
             waveEntities[wave.Id].Add(entity.UID);
-            if (creature.isNpc)
+            // 剧情 NPC 的交互身份与副本波次跟随实体生命周期。
+            if (entity is NpcEntity npc)
             {
-                // 副本 NPC 的控制器持有与普通实体容器相同的领域实例。
-                MSceneNpcHoster npc = model.GetComponent<MSceneNpcHoster>();
-                npc.WaveId = wave.Id;
                 // 两个既有编号入口均写入原 NpcTable 主键，供查看和后续交互读取。
-                NpcEntity npcEntity = (NpcEntity)entity;
-                npcEntity.NpcId = creature.id;
-                npcEntity.NpcID = creature.id;
-                npcEntity.Name = creature.displayName;
-                npc.Initialize(npcEntity);
-                npc._roleType = RoleType.NPC;
-                npc.SetROObject(npcEntity);
-                npcEntity.SetEntityCtrl(npc);
+                npc.NpcId = creature.id;
+                npc.NpcID = creature.id;
+                npc.Name = creature.displayName;
+                npc.DungeonWaveId = wave.Id;
             }
             else
             {
@@ -351,28 +345,21 @@ public class MSceneDungeon : MonoBehaviour
             prepared.ApplyMotions(entity.Model.Ator);
             entity.Radius = Mathf.Max(prepared.ProjectSize.x, prepared.ProjectSize.z) * 0.5f * creature.scale;
             entity.Height = prepared.ProjectSize.y * creature.scale;
-            if (!creature.isNpc)
+            monsters.Add(spawnId, entity);
+            // 怪物需要可攻击 UID 和权威血量，剧情 NPC 仍使用实体身份进行场景交互。
+            if (entity is MonsterEntity monster)
             {
                 // 两端使用相同的出生序号关联实例属性，Unity 自身的实体 UID 仍交给 SceneWorld。
-                MonsterEntity monster = (MonsterEntity)entity;
                 prepared.MonsterUid = monster.UID;
-                monsters.Add(spawnId, monster);
+                // 模型完成加载时该出生位当前的服务端生命值。
                 MonsterHpData data;
                 if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterAttr(spawnId, out data))
                     ChangeHP(monster, data, false);
-                // 晚加载的模型从服务器当前段进度恢复，保持入场死亡优先。
-                MSceneMonsterMotion motion;
-                if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterMotion(spawnId, out motion))
-                    monster.ApplyDungeonMotion(motion, Resource);
             }
-            if (creature.isNpc)
-            {
-                monsters.Add(spawnId, entity);
-                // NPC控制节点与其原模型共用服务端SpawnId，不再次创建怪物。
-                MSceneMonsterMotion npcMotion;
-                if (TeamData.Instance.GetMonsterMotion(spawnId, out npcMotion))
-                    ((MSceneNpcHoster)entity.GetEntityCtrl()).ApplyMotion(npcMotion);
-            }
+            // 怪物和 NPC 晚加载时从服务端最新阶段及实际收包进度恢复。
+            MSceneMonsterMotion motion;
+            if (instanceId == TeamData.Instance.DungeonInstanceId && TeamData.Instance.GetMonsterMotion(spawnId, out motion))
+                entity.ApplyDungeonMotion(motion, Resource);
             // 原 invisible 波次只隐藏模型和判定体，不改写出生配置。
             if (ROSceneXml.Text(wave.Data, "base_info/init_invisible") == "true") model.SetActive(false);
         });
@@ -383,15 +370,12 @@ public class MSceneDungeon : MonoBehaviour
     private void OnMonsterMotion(MSceneMonsterMotion motion)
     {
         // 预制体已完成出生时可通过此服务端编号定位对应运行实体。
-        MEntity monster;
-        if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(motion.Action.SpawnId, out monster)) return;
-        // 同一通知也承载剧情 NPC 动作，怪物将动作交给实体组件。
-        MonsterEntity entity = monster as MonsterEntity;
-        if (entity != null) entity.ApplyDungeonMotion(motion, Resource);
-        else ((MSceneNpcHoster)monster.GetEntityCtrl()).ApplyMotion(motion);
+        MEntity entity;
+        if (instanceId != TeamData.Instance.DungeonInstanceId || !monsters.TryGetValue(motion.Action.SpawnId, out entity)) return;
+        entity.ApplyDungeonMotion(motion, Resource);
     }
 
-    /// <summary>沿既有资源、实体和控制器链创建不属于固定波次的召唤实体。</summary>
+    /// <summary>沿既有资源和实体模型入口创建不属于固定波次的召唤实体。</summary>
     /// <param name="spawn">服务端真实EntityTable编号、出生位置与身份。</param>
     private void SpawnDynamic(MonsterSpawnData spawn)
     {
@@ -475,8 +459,7 @@ public class MSceneDungeon : MonoBehaviour
         // 本次目标结果对应的施法怪物或剧情 NPC。
         MEntity caster;
         if (!monsters.TryGetValue(result.SpawnId, out caster)) return;
-        if (caster is MonsterEntity) caster.Skill.GetDungeonPlayback(Resource).PlayResultFx(result, target);
-        else ((MSceneNpcHoster)caster.GetEntityCtrl()).PlayResultFx(result, target);
+        caster.Skill.GetDungeonPlayback(Resource).PlayResultFx(result, target);
     }
 
     /// <summary>真实命中回包驱动伤害数字及原结果点特效，生命与受击状态仍由TeamCtrl处理。</summary>
@@ -504,8 +487,7 @@ public class MSceneDungeon : MonoBehaviour
         }
         if (!hasCaster || hit.SkillId == 0) return;
         // 原NPC也可能参与剧情技能，仍使用同一结算表现入口。
-        if (caster is MonsterEntity) caster.Skill.GetDungeonPlayback(Resource).PlayResult(hit, target);
-        else ((MSceneNpcHoster)caster.GetEntityCtrl()).PlayResult(hit, target);
+        caster.Skill.GetDungeonPlayback(Resource).PlayResult(hit, target);
     }
 
     /// <summary>将原HeadShow5表情挂在当前实例的既有模型，不建立影子实体。</summary>
@@ -516,8 +498,7 @@ public class MSceneDungeon : MonoBehaviour
         // 表情来源的固定波次或动态召唤物身份。
         MEntity entity;
         if (!monsters.TryGetValue(notice.SourceSpawnId, out entity)) return;
-        if (entity is MonsterEntity) entity.Skill.GetDungeonPlayback(Resource).ShowHeadExpression();
-        else ((MSceneNpcHoster)entity.GetEntityCtrl()).ShowHeadExpression();
+        entity.Skill.GetDungeonPlayback(Resource).ShowHeadExpression();
     }
 
     /// <summary>收到服务端命中时，直接更新该出生位已经显示的怪物。</summary>

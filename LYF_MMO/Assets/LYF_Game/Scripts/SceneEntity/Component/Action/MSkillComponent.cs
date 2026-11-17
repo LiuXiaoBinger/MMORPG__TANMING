@@ -141,14 +141,14 @@ public sealed class MSkillComponent : MBasicActionComponent
     }
     #endregion
 
-    /// <summary>当前副本怪物在本次实体生命周期内使用的原技能表现时间轴。</summary>
+    /// <summary>当前副本施法实体在本次生命周期内使用的原技能表现时间轴。</summary>
     private MSceneMonsterSkillPlayer _dungeonPlayback;
 
-    /// <summary>上一帧的原技能时间轴是否占用怪物的公共动画槽位。</summary>
+    /// <summary>上一帧的原技能时间轴是否占用当前副本实体的公共动画槽位。</summary>
     private bool _dungeonAnimationActive;
 
-    /// <summary>为服务端同步的怪物技能和结果提供本实体的表现播放器。</summary>
-    /// <param name="resource">生成该怪物的副本资源登记，用于选取对应技能目录。</param>
+    /// <summary>为服务端同步的副本 NPC 和怪物技能提供当前实体的表现播放器。</summary>
+    /// <param name="resource">当前副本的资源登记，用于选择对应的技能目录。</param>
     internal MSceneMonsterSkillPlayer GetDungeonPlayback(DungeonSceneResource resource)
     {
         if (_dungeonPlayback == null)
@@ -187,7 +187,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         if (Entity.IsDead) _dungeonPlayback.Clear();
     }
 
-    /// <summary>技能组件回收前归还当前怪物的特效、声音和资源句柄。</summary>
+    /// <summary>技能组件回收前归还当前副本实体的特效、声音和资源句柄。</summary>
     private void ClearDungeonPlayback()
     {
         if (_dungeonPlayback == null) return;

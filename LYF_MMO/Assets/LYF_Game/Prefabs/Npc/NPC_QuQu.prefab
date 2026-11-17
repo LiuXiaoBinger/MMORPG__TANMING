@@ -3110,7 +3110,6 @@ GameObject:
   - component: {fileID: 7496915426179172393}
   - component: {fileID: 6902766133334171493}
   - component: {fileID: 7740963327345995622}
-  - component: {fileID: 209778175040728812}
   m_Layer: 9
   m_Name: NPC_QuQu
   m_TagString: Untagged
@@ -3190,24 +3189,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.1, z: 0}
---- !u!114 &209778175040728812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4963085833105106898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4d34e3b13e0d3f4298dfe370fa2fcee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 2
-  LookAt: {fileID: 0}
 --- !u!1 &4982744978483319554
 GameObject:
   m_ObjectHideFlags: 0

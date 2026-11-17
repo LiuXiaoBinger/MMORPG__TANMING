@@ -256,14 +256,6 @@ namespace HighlightPlus
 
                                 ShowSelectEffect();
                             }
-                            else
-                            {
-                                NpcCtrl npcCtrl = _selectRole as NpcCtrl;
-                                if (npcCtrl != null)
-                                {
-                                    npcCtrl.OpenTalk(mainRole);
-                                }
-                            }
 
                             ToggleSelection(hitTrans, !toggle);
                         }

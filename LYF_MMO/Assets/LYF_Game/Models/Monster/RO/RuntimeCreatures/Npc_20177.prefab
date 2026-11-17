@@ -2163,7 +2163,6 @@ GameObject:
   - component: {fileID: 5015846186137280736}
   - component: {fileID: 1730465396950105215}
   - component: {fileID: 3043422035672645488}
-  - component: {fileID: 9192060618399902439}
   m_Layer: 0
   m_Name: Npc_20177
   m_TagString: Untagged
@@ -2286,25 +2285,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6561081, y: 1.8391192, z: 1.6825681}
   m_Center: {x: 0.045409024, y: 0.90900725, z: 0.20361072}
---- !u!114 &9192060618399902439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2686689931407975212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f22da0e6239cc6b49a87b139476ca73e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 0
-  LookAt: {fileID: 0}
-  WaveId: 0
 --- !u!1 &2798985842618667002
 GameObject:
   m_ObjectHideFlags: 0

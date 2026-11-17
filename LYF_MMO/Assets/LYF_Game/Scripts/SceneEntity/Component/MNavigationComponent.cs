@@ -426,7 +426,7 @@ public class MNavigationComponent : EntityComponentBase
         Vector3 dir = _tarPosition - Entity.Position;
         if (_target is NpcEntity && !_useAfterAction)
         {
-            return dir.magnitude <= NpcCtrl.TalkDistance;
+            return dir.magnitude <= NpcEntity.TalkDistance;
         }
         // 沿RO先排除超过6米的不同高度，再判水平距离；保留原参考范围语义。
         if (Mathf.Abs(dir.y) > SelectTargetDistanceHeight)
@@ -446,11 +446,11 @@ public class MNavigationComponent : EntityComponentBase
     /// <summary>到达后结束路线并交给原交互或施法流程；允许移动施法时保留手动方向。</summary>
     private void onCloseTarget()
     {
-        // close会清理目标；只在普通NPC导航到达时保存现有表现控制器供本次同步调用。
-        NpcCtrl npcCtrl = null;
-        if (_target is NpcEntity && !_useAfterAction)
+        // close 会清理目标，先保存本次普通交互的 NPC 实体。
+        NpcEntity npc = null;
+        if (!_useAfterAction)
         {
-            npcCtrl = _target.GetEntityCtrl() as NpcCtrl;
+            npc = _target as NpcEntity;
         }
         close();
         // 本次到达后是否要释放允许手动走位的技能。
@@ -460,9 +460,9 @@ public class MNavigationComponent : EntityComponentBase
         {
             Entity.MoveComp.StopHorizontalMovement();
         }
-        if (npcCtrl != null)
+        if (npc != null)
         {
-            npcCtrl.OpenTalk(Entity.GetEntityCtrl());
+            UIRoot.Instance.MainCtrl.OpenNpcTalk(npc);
         }
         if (_useAfterAction && _afterAction != null)
         {

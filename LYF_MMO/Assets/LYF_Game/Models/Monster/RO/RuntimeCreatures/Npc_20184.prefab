@@ -3266,7 +3266,6 @@ GameObject:
   - component: {fileID: 4129169892419435408}
   - component: {fileID: 3989130762094543603}
   - component: {fileID: 2463779802619399168}
-  - component: {fileID: 1551946758530382338}
   m_Layer: 0
   m_Name: Npc_20184
   m_TagString: Untagged
@@ -3387,25 +3386,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.9004362, y: 1.8032662, z: 1.1188086}
   m_Center: {x: 0.045625985, y: 0.8921222, z: -0.30735296}
---- !u!114 &1551946758530382338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3705140696698775872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f22da0e6239cc6b49a87b139476ca73e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 0
-  LookAt: {fileID: 0}
-  WaveId: 0
 --- !u!1 &3720471474329878775
 GameObject:
   m_ObjectHideFlags: 0

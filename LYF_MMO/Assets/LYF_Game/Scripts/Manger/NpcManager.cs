@@ -166,16 +166,7 @@ public class NpcManager : MonoBehaviour
             npcObject.name = info.Name;
         }
 
-        NpcCtrl npcCtrl = npcObject.GetComponent<NpcCtrl>();
-        if (npcCtrl == null)
-        {
-            npcCtrl = npcObject.AddComponent<NpcCtrl>();
-        }
-        npcCtrl.Initialize(entity);
-        npcCtrl.SetROObject(entity);
-        entity.SetEntityCtrl(npcCtrl);
-
-        // 表现对象交给实体直属 MModel，实体销毁时由模型池统一销毁并回收 Animator。
+        // NPC 模型直接绑定已有实体，点击按实体模型层级定位，模型随实体统一回收。
         entity.Model.SetGameObject(npcObject, string.Empty, false);
     }
 
@@ -259,7 +250,6 @@ public class NpcManager : MonoBehaviour
         entity.MapID = info.MapID;
         entity.MapId = info.MapID;
         entity.ShopId = info.ShopId;
-        entity.Position = info.Position.ToString();
 
         entity.Name = string.Empty;
         if (info.Name != null)

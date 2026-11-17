@@ -104,29 +104,12 @@ public sealed class MSceneMonsterSkillPlayer
     /// <summary>是否已经保存本次技能前的倍率。</summary>
     private bool ownsSpeed;
 
-    /// <summary>剧情 NPC 使用所在副本的资源登记初始化技能表现。</summary>
-    /// <param name="owner">当前剧情 NPC 预制体控制器。</param>
-    /// <param name="entity">该预制体已经绑定的剧情实体。</param>
-    public MSceneMonsterSkillPlayer(RoleCtrlBase owner, MEntity entity)
-        : this(owner.transform, entity, owner.GetComponentInParent<MSceneDungeon>().Resource)
-    {
-    }
-
-    /// <summary>绑定已有实体模型和本副本的原技能资源。</summary>
+    /// <summary>绑定已有的施法实体模型和当前副本的原技能资源。</summary>
     /// <param name="entity">挂接完 Unity 模型的运行时施法实体。</param>
     /// <param name="resource">生成该实体的副本资源登记。</param>
     public MSceneMonsterSkillPlayer(MEntity entity, DungeonSceneResource resource)
-        : this(entity.Model.GameObject.Transform, entity, resource)
     {
-    }
-
-    /// <summary>以实际承载动画和特效的 Unity 对象作为异步播放的生存期依据。</summary>
-    /// <param name="model">当前施法者的模型根节点。</param>
-    /// <param name="entity">模型对应的运行时施法实体。</param>
-    /// <param name="resource">生成该实体的副本资源登记。</param>
-    private MSceneMonsterSkillPlayer(Transform model, MEntity entity, DungeonSceneResource resource)
-    {
-        host = model;
+        host = entity.Model.GameObject.Transform;
         monster = entity;
         skillCatalog = MSceneMonsterSkillCatalog.Load(resource.battleResourceRoot);
         noticeCatalog = MSceneMonsterNoticeCatalog.Load(resource.battleResourceRoot);

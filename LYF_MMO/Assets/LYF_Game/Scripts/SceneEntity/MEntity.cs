@@ -311,7 +311,16 @@ public abstract class MEntity : MSceneObject, IGeneOwner
 
     }
 
-    /// <summary>实体逻辑更新后统一驱动状态机动画刷新。</summary>
+    /// <summary>把副本服务端动作交给此实体已有的移动与技能组件。</summary>
+    /// <param name="motion">技能与路段阶段快照，附带客户端实际收包时刻。</param>
+    /// <param name="resource">该实体出生的副本所登记的表现资源。</param>
+    internal virtual void ApplyDungeonMotion(MSceneMonsterMotion motion, DungeonSceneResource resource)
+    {
+        MoveComp.ApplyDungeonMotion(motion);
+        Skill.GetDungeonPlayback(resource).Apply(motion);
+    }
+
+    /// <summary>在实体逻辑更新后依次刷新状态机、模型与副本技能表现。</summary>
     /// <param name="deltaSeconds">本帧经过的秒数。</param>
     public override void LateUpdate(float deltaSeconds)
     {
@@ -328,6 +337,10 @@ public abstract class MEntity : MSceneObject, IGeneOwner
         if (_model != null)
         {
             _model.LateUpdate(deltaSeconds);
+        }
+        if (Skill != null)
+        {
+            Skill.LateUpdateDungeonPlayback();
         }
     }
 

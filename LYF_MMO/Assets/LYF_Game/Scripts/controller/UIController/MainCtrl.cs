@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using MMoRpgCommon;
+using MMoRpgCommon.SceneEntity;
 using UnityEngine;
 
 /// <summary>
@@ -430,6 +431,26 @@ public class MainCtrl : CtrlBase
         ShowMainWindow(WindowType.ThemeDungeonArroundWindow);
     }
 
+    /// <summary>角色到达交互范围后，让当前 NPC 面向角色并打开既有对话窗。</summary>
+    /// <param name="npc">本次点击并走近的场景 NPC 实体。</param>
+    internal void OpenNpcTalk(NpcEntity npc)
+    {
+        // 导航到达时仍处于本地场景中的主角，位置以实体实际模型为准。
+        PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
+        if (player == null || !player.Model.IsLoaded)
+        {
+            TipsMgr.Instance.ShowSystemTips("主角尚未创建完成");
+            return;
+        }
+        if (Vector3.Distance(player.Position, npc.Position) > NpcEntity.TalkDistance)
+        {
+            TipsMgr.Instance.ShowSystemTips("距离过远，请靠近");
+            return;
+        }
+        npc.Model.GameObject.Transform.LookAtTarget(player.Model.GameObject.Transform);
+        ShowMainWindow(WindowType.TalkWindow, npc);
+    }
+
     /// <summary>处理 NPC 对话窗口发出的商城请求。</summary>
     private void OnShopRequested()
     {
@@ -461,11 +482,9 @@ public class MainCtrl : CtrlBase
     /// <param name="npc">当前真实交互的NPC领域实体。</param>
     private static bool IsMoshentaBossNpc(NpcEntity npc)
     {
-        if (npc == null || npc.NpcID != 20186) return false;
+        if (npc == null || npc.NpcID != 20186 || npc.LifecycleState != EntityLifecycleState.Active) return false;
         if (TeamData.Instance.DungeonId != 4060) return false;
-        // 从原NPC控制器取得出生波次，不另造或重定位一份Boss模型。
-        MSceneNpcHoster host = npc.GetEntityCtrl() as MSceneNpcHoster;
-        return host != null && host.WaveId == 47;
+        return npc.DungeonWaveId == 47;
     }
 
     /// <summary>把 NPC 领域对象转换为对话展示数据。</summary>

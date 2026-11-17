@@ -6,6 +6,9 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public sealed class NpcEntity : MEntity
 {
+    /// <summary>点击导航与对话共用的三维距离上限，单位为米。</summary>
+    public const float TalkDistance = 10f;
+
     /// <summary>
     /// 构造 NPC 实体
     /// </summary>
@@ -43,8 +46,8 @@ public sealed class NpcEntity : MEntity
     /// <summary>关联商店 ID（0 表示无商店）</summary>
     public int ShopId { get; set; }
 
-    /// <summary>NPC 出生位置坐标字符串</summary>
-    public string Position { get; set; }
+    /// <summary>副本内创建该实体的原波次编号；主城 NPC 为 -1。</summary>
+    internal int DungeonWaveId { get; set; } = -1;
 
     /// <summary>
     /// 对象池复用时清空所有 NPC 配置数据
@@ -64,7 +67,7 @@ public sealed class NpcEntity : MEntity
         Think = null;
         Talk = null;
         ShopId = 0;
-        Position = null;
+        DungeonWaveId = -1;
         base.PrepareForReuse(uid, entityType, configId);
     }
 }

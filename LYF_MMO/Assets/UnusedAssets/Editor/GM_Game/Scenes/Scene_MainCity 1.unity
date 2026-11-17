@@ -924,9 +924,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 402145020}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 402145019}
   m_SourcePrefab: {fileID: 100100000, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
 --- !u!1 &402145017 stripped
 GameObject:
@@ -938,24 +935,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 12f2bd693ddf0b64cb7cff509d12083c, type: 3}
   m_PrefabInstance: {fileID: 402145016}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &402145019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 402145017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4d34e3b13e0d3f4298dfe370fa2fcee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 2
-  LookAt: {fileID: 0}
 --- !u!143 &402145020
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3303,9 +3282,6 @@ PrefabInstance:
       addedObject: {fileID: 1848476995}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ac2aecada960c3f4a9ae9148134614f0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1848476994}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ac2aecada960c3f4a9ae9148134614f0, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1848476993}
   m_SourcePrefab: {fileID: 100100000, guid: ac2aecada960c3f4a9ae9148134614f0, type: 3}
 --- !u!1 &1848476991 stripped
@@ -3331,24 +3307,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _effectpos: {fileID: 0}
---- !u!114 &1848476994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1848476991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef3e6639db135804c9415f6693b0c97d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roleState: 0
-  _actionId: 1080068516
-  _highlightManager: {fileID: 0}
-  _targetRole: {fileID: 0}
-  _roleType: 0
-  LookAt: {fileID: 0}
 --- !u!143 &1848476995
 CharacterController:
   m_ObjectHideFlags: 0

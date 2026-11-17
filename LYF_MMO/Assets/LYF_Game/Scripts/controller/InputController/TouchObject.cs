@@ -129,14 +129,15 @@ public sealed class TouchObject
             _downEntity = null;
             if (sameEntity)
             {
-                if (selectEnt is NpcEntity)
+                // 当前命中的 NPC 原实体，导航直接保存该领域对象。
+                if (selectEnt is NpcEntity npc)
                 {
                     // NPC 点击要求按下与松开的屏幕距离不超过 10 像素，拖动镜头不发起导航。
                     if ((position - _lastPos).sqrMagnitude > 100f)
                     {
                         return false;
                     }
-                    return ClickNpc(selectEnt);
+                    return ClickNpc(npc);
                 }
                 return setPlayerTarget(selectEnt, selectOnly);
             }
@@ -145,15 +146,15 @@ public sealed class TouchObject
     }
 
     /// <summary>点击现有NPC时沿目标导航走进原对话距离，不改写战斗选择目标。</summary>
-    /// <param name="entity">当前点击的原NPC实体；通过基类读取世界坐标，避开NPC旧字符串位置字段。</param>
+    /// <param name="entity">当前点击的 NPC 实体，提供模型上的实际世界位置。</param>
     /// <returns>已提交本次NPC导航事件时为true。</returns>
-    private bool ClickNpc(MEntity entity)
+    private bool ClickNpc(NpcEntity entity)
     {
         // 只在同步派发期间借用事件；导航组件保存目标原引用，不保存池化载荷。
         MNavigationEventArgs args = MNavigationEventArgs.Create(entity.Position);
         args.NeedTarget = true;
         args.Target = entity;
-        args.UpperRange = NpcCtrl.TalkDistance;
+        args.UpperRange = NpcEntity.TalkDistance;
         Global.Instance.SceneWorld.LocalRole.DispatchEvent(MEventType.MEvent_Navigation,
             args);
         return true;
