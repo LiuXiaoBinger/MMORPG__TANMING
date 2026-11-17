@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c3a919a2169ab48700912bc8e6ab645dd39fed0b6ad29c7d3797d8c5e0ed3e70`
+Source normalized SHA256: `7568a3a9cbd1944e040986f41ce700c937a6f0f9b7d3278a9aae6781edaf660a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -87,11 +87,12 @@ Source normalized SHA256: `c3a919a2169ab48700912bc8e6ab645dd39fed0b6ad29c7d3797d
 | [CODE][FILES][HANDOFF][移动][输入][MOVE-STOP-NO-DELAY-20261117] Stop movement immediately on direction release | 610-614 |
 | [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-620 |
 | [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-625 |
-| [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-630 |
+| [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-631 |
+| [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-636 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e506d1054b9d34c30f6c653a7a360e99c240938e26b46fe46c8ec6654565607b`
+Source normalized SHA256: `34fb58e74cf2bf67e13481972a1ce027240e63b316aec26fb4aa3a6ea776d1d2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -170,7 +171,8 @@ Source normalized SHA256: `e506d1054b9d34c30f6c653a7a360e99c240938e26b46fe46c8ec
 | [VERIFY][移动][输入][MOVE-STOP-NO-DELAY-20261117] Movement release regression checks | 641-645 |
 | [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-651 |
 | [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-656 |
-| [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-661 |
+| [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-662 |
+| [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-667 |
 
 ## Docs/AI/DECISIONS.en.md
 

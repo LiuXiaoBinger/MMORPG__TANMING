@@ -628,3 +628,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - `Luaban/MiniTemplate/Datas/#SkillInfo.xlsx` Sheet1 column S is the Boolean `StopAtEnemy`. Qingfeng Swordplay 10040 uses S5 and defaults to TRUE. TRUE caps forward travel at a live enemy. FALSE uses the original displacement curve. After editing the value, regenerate and sync `tbskillinfo.bytes`, then reopen Unity Play.
 - MDisplacementComponent reads the skill row at the beginning of each charge segment. The shared reader and table data were regenerated. Four skill rows are enabled (10010, 10040, 10060, 10110). Blade Energy Attack 10010 reads the flag on its existing third-segment displacement.
 - Six business files were pushed in `aac80aa` on `codex/feature-development`. Isolated Unity motion verification passed. Human multiplayer and standalone Player packaging were outside this check. Full record in `项目修改日志/2026-11-17-技能位移遇敌截停开关.md`.
+
+## [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons
+
+- The existing SkillInfoWindow now has a circular equipped view, a three-column list, and a two-pane read-only slot inspector. Group switching and description visibility are clickable. The real skill snapshot, Magic Swordsman portrait, lightweight movement category and existing local upgrade behavior are retained; no equipment or currency transaction API was added.
+- The original ink landscape, shared atlas with eight control glyphs, decorative ring, and five currency/button sprites are bound in UIRoot. Four bag balances and three exchange entries keep their previous mapping. The skill costs reuse the copper sprite. Rows are reused; the layout responds to a dimension change without a new per-frame update.
+- Product commit: `a2366a6`, pushed to `codex/feature-development`; manifest and references: `项目修改日志/2026-11-17-武学面板与货币视觉优化.md`. Full online trading, Player build and lower-end device performance are unverified.
