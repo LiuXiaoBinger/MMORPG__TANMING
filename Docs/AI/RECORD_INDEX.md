@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `51796da10c58da3fa9c06c003fdbd5c4b1d2062afc304af24cdb249c4a83b96b`
+Source normalized SHA256: `8886615fb2df3159c1fa55cb0539f1fdc70724952f410f90d5c12b89dec56dab`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -89,11 +89,12 @@ Source normalized SHA256: `51796da10c58da3fa9c06c003fdbd5c4b1d2062afc304af24cdb2
 | [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-625 |
 | [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-631 |
 | [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-637 |
-| [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-642 |
+| [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-643 |
+| [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Rebuilt the settings window from the reference video (2026-11-17) | 644-647 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2fc9ca2e1fd96858d75ef40521e4cfe175c10f111ed77df905b9b28597a7cd76`
+Source normalized SHA256: `bdfd77846373787c6e6ccb9059bf73f9eaa711ce39a50ea676b7641fa73fe39d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -174,7 +175,8 @@ Source normalized SHA256: `2fc9ca2e1fd96858d75ef40521e4cfe175c10f111ed77df905b9b
 | [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-656 |
 | [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-662 |
 | [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-668 |
-| [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-672 |
+| [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-673 |
+| [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17) | 674-677 |
 
 ## Docs/AI/DECISIONS.en.md
 

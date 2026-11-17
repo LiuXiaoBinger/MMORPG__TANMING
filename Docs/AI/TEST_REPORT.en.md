@@ -670,3 +670,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Isolated Unity passed 87 GUID mappings, 16 Resources keys, three dungeon scene loaders, three YooAsset setting lookups and both collector paths. Simulated collection included the moved runtime skill and text configs. The real skill exporter wrote identical client/server JSON. The normal attack rule returned false and stages had 0/0/1 motion segments. MSBuild evaluated 9 GameServer plus 3 MasterServer embedded paths and preserved resource names.
 - The initial isolated compile hit three existing TaskPageFilter enum references. Retried with aliases only in the verification copy and exited successfully. No live combat or packaged release was exercised. Logs and commit evidence are linked in 项目修改日志/2026-11-17-关闭普攻移动施法与客户端配置归位.md.
+
+## [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17)
+
+- Codex verified the production prefab and its MainView registration in Unity `2023.2.20f1c1`, using a separate preview scene. Pointer raycasts verified all eight tabs, both navigation arrows, preference scrolling, graphics presets, status subtabs, slider and switch feedback, and close/reopen. Unrelated skill-bar resource loading was bypassed only in the preview fixture.
+- Renders at `1328×748`, `1280×960`, and `1720×720` kept the frame and close control visible. Evidence: `_temp/setting-panel-20261117/unity-ui-verification.txt` and `_temp/setting-panel-20261117/unity-overview.jpg`. Full online client and packaging were not verified; no settings business logic was added. See `项目修改日志/2026-11-17-设置界面重构.md`.

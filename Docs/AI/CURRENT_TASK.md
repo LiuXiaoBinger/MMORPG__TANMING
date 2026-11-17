@@ -635,3 +635,8 @@
 - 将 Unity 编辑用资源和两份运行时 JSON 中技能 10010 的 `MoveCasting` 设为 `false`。第三段仍保留自身的根运动位移段。后续修改使用 `LYF_MMO/Assets/GM_Game/Config/Skill/SkillCastingRulesConfig.asset`，再通过现有 Inspector 按钮导出两份运行时文件。
 - 将 70 份客户端配置和 82 个原有 `.meta` 文件移到 `Assets/GM_Game/Config`，新建 5 个目录 `.meta` 文件，按 `Skill`、`Combat`、`StateExclusion`、`Resources` 和 `Editor` 分类。同步更新技能编辑入口、运行时路径、副本和 `ThemeDungeon` 加载器、`YooAsset` 收集配置，以及嵌入客户端副本配置的两个服务端项目。原有本地改动随文件保留，未纳入本次提交。
 - 业务提交 `f4cc2e8` 已推送到 `codex/feature-development`。完整文件清单与续作信息见 `项目修改日志/2026-11-17-关闭普攻移动施法与客户端配置归位.md`。
+
+## [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] 按参考录像重构设置界面
+
+- 用户提出需要类似的设置界面，并确认暂缓实现设置功能行为。现有 `MainView` 按钮和 `WindowType.SettingPanel` 现在从 `UIRoot.prefab` 打开嵌套的 `LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/SettingPanel.prefab`。窗体包含基础、镜头、画质、偏好、热键、观战、状态和跳字八页，采用月夜风格外框、可滚动的右侧页签栏和序列化控件。
+- 窗口支持打开与关闭、页签与子页切换、滚动以及控件本地反馈。未接入游戏设置、持久化、账号操作或网络行为。代码与资源提交 `9385a28`，已推送至 `codex/feature-development`。文件清单与续作信息见 `项目修改日志/2026-11-17-设置界面重构.md`。
