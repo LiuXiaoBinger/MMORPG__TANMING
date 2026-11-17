@@ -8,7 +8,7 @@ An Agent with filesystem access can read this package, implement consumer adapte
 
 The human tutorial is index.html. Use AGENTS.md at the package root and AgentCapabilities.json as the discovery entrypoints. Resolve paths relative to the installed package; do not assume the original game checkout or a particular Windows username. Read consumer project instructions first.
 
-本项目将Editor源码集中到`Assets/GM_Game/Editor/Skill/ActionEditor`，保持`Ethan.ActionEditor.Editor`程序集名称。Runtime与文档仍在嵌入包；`AgentCapabilities.json`的编辑器入口路径相对于该文档目录解析。窗口所有原轨道保留，不能据此推断宿主正式技能已执行全部机制轨道。
+本项目将Editor源码集中到`Assets/LYF_Game/Editor/Skill/ActionEditor`，保持`Ethan.ActionEditor.Editor`程序集名称。Runtime与文档仍在嵌入包；`AgentCapabilities.json`的编辑器入口路径相对于该文档目录解析。窗口所有原轨道保留，不能据此推断宿主正式技能已执行全部机制轨道。
 
 ## Integration workflow
 

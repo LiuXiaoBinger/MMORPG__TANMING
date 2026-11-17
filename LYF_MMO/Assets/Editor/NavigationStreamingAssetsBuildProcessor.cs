@@ -2,7 +2,7 @@ using System.IO;
 using UnityEditor.Build;
 using UnityEngine;
 
-/// <summary>把 GM_Game 中的导航网格随 Player 构建放到现有导航读取目录。</summary>
+/// <summary>把 LYF_Game 中的导航网格随 Player 构建放到现有导航读取目录。</summary>
 public sealed class NavigationStreamingAssetsBuildProcessor : BuildPlayerProcessor
 {
     /// <summary>使用默认顺序收录导航文件，数据不依赖其他构建回调的产物。</summary>
@@ -13,7 +13,7 @@ public sealed class NavigationStreamingAssetsBuildProcessor : BuildPlayerProcess
     public override void PrepareForBuild(BuildPlayerContext buildPlayerContext)
     {
         // Unity 项目中导航源文件的绝对目录。
-        string navigationDirectory = Path.Combine(Application.dataPath, "GM_Game", "NavigationData");
+        string navigationDirectory = Path.Combine(Application.dataPath, "LYF_Game", "NavigationData");
         // 源目录中按场景保存的导航三角网二进制文件。
         string[] navigationFiles = Directory.GetFiles(navigationDirectory, "*.navmesh.bytes");
         // 当前导航源文件在构建列表中的索引。

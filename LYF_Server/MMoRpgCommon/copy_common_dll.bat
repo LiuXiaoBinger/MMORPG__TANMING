@@ -11,7 +11,7 @@ set "serverRoot=D:\unitypro\LYFMMORGP\LYF_Server"
 rem 四个服务端输出子目录，均以 serverRoot 指定的服务器根目录为起点
 set "targets=CenterServer\bin\Debug MasterServer\bin\Debug GameServer\bin\Debug GateServer\bin\Debug LoginServer\bin\Debug"
 rem 客户端共用程序集插件目录，不存在时由脚本创建
-set "clientTarget=D:\unitypro\LYFMMORGP\LYF_MMO\Assets\GM_Game\Plugins\Common"
+set "clientTarget=D:\unitypro\LYFMMORGP\LYF_MMO\Assets\LYF_Game\Plugins\Common"
 
 rem 检查源目录是否存在
 if not exist "%source%" (
@@ -74,7 +74,7 @@ for %%t in (%targets%) do (
 )
 
 rem 客户端其他依赖沿用原复制流程；MMoRpgCommon.dll 已由专用目标发布，不能再用服务端版本覆盖。
-echo === LYF_MMO\Assets\GM_Game\Plugins\Common ===
+echo === LYF_MMO\Assets\LYF_Game\Plugins\Common ===
 if not exist "%clientTarget%" (
     echo   [信息] 目标目录不存在，正在创建: %clientTarget%
     mkdir "%clientTarget%"

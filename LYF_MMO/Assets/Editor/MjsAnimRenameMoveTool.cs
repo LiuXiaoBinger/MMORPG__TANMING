@@ -50,12 +50,12 @@ public static class MjsAnimRenameMoveTool
     /// <summary>
     /// .anim 当前所在目录的工程相对路径（MJS/Atk）。
     /// </summary>
-    private const string SourceDir = "Assets/GM_Game/Animas/Role/MJS/Atk";
+    private const string SourceDir = "Assets/LYF_Game/Animas/Role/MJS/Atk";
 
     /// <summary>
     /// .anim 移动目标目录的工程相对路径（MJS/Common/ALL/Skill）。
     /// </summary>
-    private const string TargetDir = "Assets/GM_Game/Animas/Role/MJS/Common/ALL/Skill";
+    private const string TargetDir = "Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill";
 
     /// <summary>
     /// 脚本域重载后由 Unity 自动调用的静态构造函数。

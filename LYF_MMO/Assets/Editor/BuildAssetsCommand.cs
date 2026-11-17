@@ -98,13 +98,13 @@ namespace HybridCLR.Editor {
             BuildAssetBundleByTarget(EditorUserBuildSettings.activeBuildTarget);
         }
 
-        // 复制主包裁剪后的 AOT 程序集到 Assets/GM_Game/Dlls，并加 .bytes 后缀供资源系统加载。
+        // 复制主包裁剪后的 AOT 程序集到 Assets/LYF_Game/Dlls，并加 .bytes 后缀供资源系统加载。
         public static void CopyAOTAssembliesToStreamingAssets() {
             var target = EditorUserBuildSettings.activeBuildTarget;
             // 上一次构建主包后产生的裁剪版 AOT DLL 目录。
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
             // 本项目收集 DLL 资源的目录；函数名称中的 StreamingAssets 不是当前实际目标。
-            string aotAssembliesDstDir = Application.dataPath + "/GM_Game/Dlls";
+            string aotAssembliesDstDir = Application.dataPath + "/LYF_Game/Dlls";
             Debug.Log($"aotAssembliesDstDir::{aotAssembliesDstDir}");
             // dll 为 HybridCLR 配置中的 AOT 程序集名，不含 .dll 后缀。
             foreach (var dll in SettingsUtil.AOTAssemblyNames) {
@@ -121,7 +121,7 @@ namespace HybridCLR.Editor {
             }
         }
 
-        // 把当前平台的热更 DLL 复制到 Assets/GM_Game/Dlls，作为后续 YooAsset 打包输入。
+        // 把当前平台的热更 DLL 复制到 Assets/LYF_Game/Dlls，作为后续 YooAsset 打包输入。
         public static void CopyHotUpdateAssembliesToStreamingAssets() {
             var target = EditorUserBuildSettings.activeBuildTarget;
 
@@ -129,7 +129,7 @@ namespace HybridCLR.Editor {
             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
 
             // 热更 DLL 对应的 Unity 资源目录。
-            string hotfixAssembliesDstDir = Application.dataPath + "/GM_Game/Dlls";
+            string hotfixAssembliesDstDir = Application.dataPath + "/LYF_Game/Dlls";
             // dll 是排除保留程序集后的热更文件名，已经包含 .dll 后缀。
             foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved) {
                 // 本次需要复制的热更程序集源路径。

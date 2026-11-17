@@ -12,7 +12,7 @@ This package is a frame-based action authoring tool and playback core, not a cha
 
 Paths above are relative to this file, regardless of whether installed as Embedded, Git, or tarball. An Agent may not automatically discover AGENTS.md inside Packages/Library; the user can explicitly supply this file. No specific Agent brand, MCP server or network service is required. File reading alone cannot operate Unity: execution needs a Unity Editor connection or its command line.
 
-本项目目录适配：Editor源码集中在Unity工程`Assets/GM_Game/Editor/Skill/ActionEditor`，保留原`Ethan.ActionEditor.Editor`程序集与meta。Runtime、文档及原测试继续位于本嵌入包；配置和宿主桥接目录遵守项目根AGENTS.md。不得依据原包Editor位置创建重复程序集或复制第二份源码。
+本项目目录适配：Editor源码集中在Unity工程`Assets/LYF_Game/Editor/Skill/ActionEditor`，保留原`Ethan.ActionEditor.Editor`程序集与meta。Runtime、文档及原测试继续位于本嵌入包；配置和宿主桥接目录遵守项目根AGENTS.md。不得依据原包Editor位置创建重复程序集或复制第二份源码。
 
 ## Working contract
 

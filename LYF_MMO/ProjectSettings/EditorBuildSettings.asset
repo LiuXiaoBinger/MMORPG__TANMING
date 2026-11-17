@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/GM_Game/Bootstrap/Scene_Boot.unity
+    path: Assets/LYF_Game/Bootstrap/Scene_Boot.unity
     guid: 188b131d60553a042b6a80a666c07570
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

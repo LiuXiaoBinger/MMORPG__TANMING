@@ -11,13 +11,13 @@ $clientStandard = Join-Path ${env:ProgramFiles(x86)} 'Reference Assemblies/Micro
 $clientSources = @('FunlModule/Bag/RoItemComponent.cs','FunlModule/Bag/RoItemContainer.cs','FunlModule/Bag/KnapsackChangeType.cs','FunlModule/Bag/KnapsackChangedEventArgs.cs','FunlModule/Component/RoleComponentBase.cs','FunlModule/Component/ClientDirtyTracker.cs','FunlModule/Component/ClientDirtyModule.cs','FunlModule/Component/ClientDirtySnapshot.cs','FunlModule/Component/ClientChangeContext.cs')
 $clientSourcePaths = @((Join-Path $PSScriptRoot 'ClientDeltaTests.cs'),(Join-Path $PSScriptRoot 'Client/PlayerEntity.cs'))
 # UpdateType 与网络事务共文件，按原文抽出枚举供纯模型编译，不手写另一套值。
-$clientTransition = Get-Content -LiteralPath (Join-Path $clientRoot 'LYF_MMO/Assets/GM_Game/Scripts/FunlModule/Bag/BagTransition.cs') -Raw
+$clientTransition = Get-Content -LiteralPath (Join-Path $clientRoot 'LYF_MMO/Assets/LYF_Game/Scripts/FunlModule/Bag/BagTransition.cs') -Raw
 $clientEnum = [regex]::Match($clientTransition,'public enum UpdateType\s*\{[^}]+\}').Value
 if ([string]::IsNullOrEmpty($clientEnum)) { throw '正式 UpdateType 枚举未找到' }
 $clientEnumPath = Join-Path $clientBin '../UpdateType.cs'
 [IO.File]::WriteAllText($clientEnumPath,$clientEnum,(New-Object Text.UTF8Encoding($false)))
 $clientSourcePaths += $clientEnumPath
-for ($clientIndex=0; $clientIndex -lt $clientSources.Count; $clientIndex++) { $clientSourcePaths += Join-Path $clientRoot ('LYF_MMO/Assets/GM_Game/Scripts/'+$clientSources[$clientIndex]) }
+for ($clientIndex=0; $clientIndex -lt $clientSources.Count; $clientIndex++) { $clientSourcePaths += Join-Path $clientRoot ('LYF_MMO/Assets/LYF_Game/Scripts/'+$clientSources[$clientIndex]) }
 & $clientCompiler /nologo /target:exe "/out:$clientBin/ClientDeltaTests.exe" "/r:$clientBin/Network.dll" "/r:$clientBin/MMoRpgCommon.dll" "/r:$clientBin/Google.Protobuf.dll" "/r:$clientBin/System.Memory.dll" "/r:$clientBin/System.Runtime.CompilerServices.Unsafe.dll" "/r:$clientStandard" $clientSourcePaths *> (Join-Path $clientBin '../test-build.log')
 if ($LASTEXITCODE -ne 0) { Get-Content (Join-Path $clientBin '../test-build.log') -Tail 12; exit $LASTEXITCODE }
 Copy-Item -LiteralPath (Join-Path $clientRoot '_temp/equipment-gene-20261107/equipment-flow/build/bin/GameServer.exe.config') -Destination (Join-Path $clientBin 'ClientDeltaTests.exe.config') -Force

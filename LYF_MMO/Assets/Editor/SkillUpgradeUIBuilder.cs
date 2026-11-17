@@ -12,10 +12,10 @@ using UnityEngine.UI;
 /// </summary>
 public static class SkillUpgradeUIBuilder
 {
-    private const string PrefabPath = "Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab";
+    private const string PrefabPath = "Assets/LYF_Game/Prefabs/UIPrefabs/UIRoot.prefab";
 
     /// <summary>RO 通用 UI 图集路径，皮肤九宫格都从这张图集按 sprite 名取。</summary>
-    private const string RoAtlasPath = "Assets/GM_Game/UISprites/Resources/UI/Atlas/Common1.png";
+    private const string RoAtlasPath = "Assets/LYF_Game/UISprites/Resources/UI/Atlas/Common1.png";
 
     private static readonly Color PanelDark = new Color(0.045f, 0.06f, 0.09f, 0.95f);
     private static readonly Color ButtonDark = new Color(0.06f, 0.09f, 0.13f, 0.96f);
@@ -524,7 +524,7 @@ public static class SkillUpgradeUIBuilder
     /// <summary>在项目内生成并缓存一张 64x64 圆形白色贴图，供铜币图标复用。</summary>
     private static Sprite GetCoinSprite()
     {
-        const string path = "Assets/GM_Game/UISprites/Skill/CoinIcon.png";
+        const string path = "Assets/LYF_Game/UISprites/Skill/CoinIcon.png";
         Sprite cached = AssetDatabase.LoadAssetAtPath<Sprite>(path);
         if (cached != null)
         {

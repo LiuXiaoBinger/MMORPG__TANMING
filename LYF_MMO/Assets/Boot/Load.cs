@@ -53,14 +53,14 @@ public class Load : MonoBehaviour {
     private IEnumerator InitCode() {
         _hotUpdateView.RefreshUI(1, "正在加载游戏代码..");
         // 热更程序集在前，随后加载既有补充元数据列表，文件名带dll后缀。
-        List<string> assets = new List<string> { "GM_Game.dll" };
+        List<string> assets = new List<string> { "LYF_Game.dll" };
         assets.AddRange(AOTMetaAssemblyNames);
         // 顺序加载的文件索引，范围为本次程序集列表。
         for (int index = 0; index < assets.Count; index++) {
             // 当前程序集文件名，映射到已有YooAsset地址。
             string asset = assets[index];
             // 当前代码资源异步加载句柄，失败时不读取AssetObject。
-            AssetOperationHandle dllHandle = _package.LoadAssetAsync<TextAsset>("Assets/GM_Game/Dlls/" + asset);
+            AssetOperationHandle dllHandle = _package.LoadAssetAsync<TextAsset>("Assets/LYF_Game/Dlls/" + asset);
             yield return dllHandle;
             if (dllHandle.Status != EOperationStatus.Succeed) {
                 ShowStartupError("游戏代码加载失败，请检查安装包和资源。", dllHandle.LastError);
@@ -140,7 +140,7 @@ public class Load : MonoBehaviour {
             LoadMetadataForAOTAssemblies();
 #if !UNITY_EDITOR
             // 程序集反射加载属于第三方运行时边界，保留既有二进制装载方式。
-            Assembly.Load(s_assetDatas["GM_Game.dll"]);
+            Assembly.Load(s_assetDatas["LYF_Game.dll"]);
 #endif
             return true;
         }
@@ -304,7 +304,7 @@ public class Load : MonoBehaviour {
     private IEnumerator EnterGame() {
         _hotUpdateView.RefreshUI(1, "正在进入登录..");
         // 默认资源包中的正式登录场景异步加载句柄。
-        SceneOperationHandle handle = _package.LoadSceneAsync("Assets/GM_Game/Scenes/Scene_Login");
+        SceneOperationHandle handle = _package.LoadSceneAsync("Assets/LYF_Game/Scenes/Scene_Login");
         yield return handle;
         if (handle.Status != EOperationStatus.Succeed) {
             ShowStartupError("登录界面加载失败，请检查安装包和资源。", handle.LastError);

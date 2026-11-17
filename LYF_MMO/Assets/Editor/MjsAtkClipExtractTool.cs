@@ -58,7 +58,7 @@ public static class MjsAtkClipExtractTool
     /// <summary>
     /// 目标 FBX 所在目录的工程相对路径（相对于 Unity 工程根目录）。
     /// </summary>
-    private const string TargetDir = "Assets/GM_Game/Animas/Role/MJS/Atk";
+    private const string TargetDir = "Assets/LYF_Game/Animas/Role/MJS/Atk";
 
     /// <summary>
     /// 菜单入口：依次完成“重命名 FBX 内剪辑”与“提取独立 .anim”两步，最后统一保存并刷新资源数据库。

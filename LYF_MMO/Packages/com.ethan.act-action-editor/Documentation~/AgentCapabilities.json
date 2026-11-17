@@ -10,7 +10,7 @@
     "contracts": "../Runtime/Core/ActionContracts.cs",
     "runtime": "../Runtime/Core/ActionPlayer.cs",
     "eventData": "../Runtime/Data/Global.cs",
-    "editorAutomation": "../../../Assets/GM_Game/Editor/Skill/ActionEditor/Infrastructure/ActionEditorAgent.cs"
+    "editorAutomation": "../../../Assets/LYF_Game/Editor/Skill/ActionEditor/Infrastructure/ActionEditorAgent.cs"
   },
   "compatibility": {
     "declaredMinimumUnity": "6000.0",

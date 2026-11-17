@@ -2,7 +2,7 @@
 
 本项目技能窗口支持中文与English切换。本手册介绍窗口布局、轨道配置、常用操作与预览流程。
 
-编辑器源码集中在`Assets/GM_Game/Editor/Skill/ActionEditor`：`Window`保存窗口及各职责分文件，`Timeline`保存轨道注册和特效字段规则，`Infrastructure`保存资源操作、Undo、迁移、帮助与自动化接口。同级`Assets/GM_Game/Editor/Skill`保存本游戏绑定和导出工具；运行类型与本手册继续位于嵌入包。源码按职责划分并附中文注释，位移、碰撞、飞行物、音效、镜头和流程等制作入口保留。游戏中实际执行的轨道范围由宿主运行链和导出校验决定。
+编辑器源码集中在`Assets/LYF_Game/Editor/Skill/ActionEditor`：`Window`保存窗口及各职责分文件，`Timeline`保存轨道注册和特效字段规则，`Infrastructure`保存资源操作、Undo、迁移、帮助与自动化接口。同级`Assets/LYF_Game/Editor/Skill`保存本游戏绑定和导出工具；运行类型与本手册继续位于嵌入包。源码按职责划分并附中文注释，位移、碰撞、飞行物、音效、镜头和流程等制作入口保留。游戏中实际执行的轨道范围由宿主运行链和导出校验决定。
 
 ## 1. 先认识窗口
 
@@ -143,7 +143,7 @@ Visual Effect 的高级属性包含 End frame、Playback Speed、Use World Space
 
 本游戏发布现已支持 **Audio** 的单帧单次声音，使用 Audio clip 和零至一的 Base Volume；End frame 不大于 Start frame 时仍是单次事件，包括复制粘贴后的同帧结束值。随机音量/音高、倍率、自定义寿命及跨帧音频区间尚未接入，发布时会明确报错。声音资源强引用随正式配置收集，实际技能按和粒子相同的动作秒时钟触发。预览使用窗口独占隐藏声源，不借用正式摄像机，关闭窗口、进入游戏和域重载时清理。
 
-`Tools/技能/YCombat/编入RO音效与MJS根运动` 以 Unity API 向当前七份 MJS 作者稿添加真实 RO 声音并发布。原声音目录是 `Assets/GM_Game/Audios/Skill/MJX`；Q 的原粒子 1/1/2 和第三段第二刀局部参数保留。Motion 使用 Animation 驱动，只发布根位移窗口与 Root Motion Scale，角色重力和碰撞继续生效；程序方向、目标和曲线参数沿原 Y 在 Animation 模式下不执行。已有作者位移段保留，首次添加只处理无段的 Q2/Q3/E/F，全段倍率一；Q1 原 F0–15 窗口保留。
+`Tools/技能/YCombat/编入RO音效与MJS根运动` 以 Unity API 向当前七份 MJS 作者稿添加真实 RO 声音并发布。原声音目录是 `Assets/LYF_Game/Audios/Skill/MJX`；Q 的原粒子 1/1/2 和第三段第二刀局部参数保留。Motion 使用 Animation 驱动，只发布根位移窗口与 Root Motion Scale，角色重力和碰撞继续生效；程序方向、目标和曲线参数沿原 Y 在 Animation 模式下不执行。已有作者位移段保留，首次添加只处理无段的 Q2/Q3/E/F，全段倍率一；Q1 原 F0–15 窗口保留。
 
 走路、跑步、战斗走路、战斗跑步、起跳及落地保存在六份 `SkillConfigSO_MJS_*` 作者稿，skillID 为零，用同一编辑器的动画和音效轨道制作。左右脚的首次步点取原脚掌高度曲线最低帧，起跳和落地声音在零帧；最终脚步贴合仍需动画试听调整。使用 `Tools/技能/YCombat/导出MJS走跑跳声音` 发布到 `SkillRuntimeLocomotionConfig_MJS.asset`；它由已有移动/跳跃状态读取，不建立新技能表行。执行制作与发布前须保存目标作者稿；入口检测目标未保存修改并停止，避免替用户覆盖编辑稿。
 

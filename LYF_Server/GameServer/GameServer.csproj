@@ -75,7 +75,7 @@
         <EmbeddedResource Include="Config\MonsterAI\OrcBasicAttack.xml">
             <LogicalName>Moshenta.OrcBasicAttack.xml</LogicalName>
         </EmbeddedResource>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\Dungeon\ROSceneCreatureEntity.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\Dungeon\ROSceneCreatureEntity.cs">
             <Link>Config\ROSceneCreatureEntity.cs</Link>
         </Compile>
         <Compile Include="SceneEntity\Skill\ROSkillCore.cs" />
@@ -86,13 +86,13 @@
         <Compile Include="StateMutex\StateMutexManager.cs" />
         <Compile Include="StateMutex\StateExclusionTable.cs" />
         <Compile Include="StateMutex\State\IStateInterface.cs" />
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Skill\SkillCastingRules.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\SceneEntity\Skill\SkillCastingRules.cs">
           <Link>Config\SkillCastingRules.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Skill\SkillCastingRulesCollection.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\SceneEntity\Skill\SkillCastingRulesCollection.cs">
           <Link>Config\SkillCastingRulesCollection.cs</Link>
         </Compile>
-        <Compile Include="..\..\LYF_MMO\Assets\GM_Game\Scripts\SceneEntity\Skill\SkillCastingRulesValidation.cs">
+        <Compile Include="..\..\LYF_MMO\Assets\LYF_Game\Scripts\SceneEntity\Skill\SkillCastingRulesValidation.cs">
           <Link>Config\SkillCastingRulesValidation.cs</Link>
         </Compile>
         <Compile Include="Ctrl\Game_LoginCtrl.cs" />
@@ -259,12 +259,12 @@
       </Content>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt"><LogicalName>Dungeons.4060.Waves.xml</LogicalName></EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Moshenta\MoshentaCreatures.json"><LogicalName>Dungeons.4060.Creatures.json</LogicalName></EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Beisen\RO_BeiSenYiBian_EZ.txt"><LogicalName>Dungeons.4050.Waves.xml</LogicalName></EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4050.Creatures.json</LogicalName></EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Beisen\RO_BeiSenYiBian_H.txt"><LogicalName>Dungeons.4051.Waves.xml</LogicalName></EmbeddedResource>
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4051.Creatures.json</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Moshenta\RO_DaNaTuoSiZhiZhan_EZ.txt"><LogicalName>Dungeons.4060.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Moshenta\MoshentaCreatures.json"><LogicalName>Dungeons.4060.Creatures.json</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Beisen\RO_BeiSenYiBian_EZ.txt"><LogicalName>Dungeons.4050.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4050.Creatures.json</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Beisen\RO_BeiSenYiBian_H.txt"><LogicalName>Dungeons.4051.Waves.xml</LogicalName></EmbeddedResource>
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Beisen\BeisenCreatures.json"><LogicalName>Dungeons.4051.Creatures.json</LogicalName></EmbeddedResource>
     </ItemGroup>
     <!-- 魔神塔原行为树、时间轴与运行依赖。 -->
     <ItemGroup>
@@ -289,7 +289,7 @@
         <Compile Include="SceneEntity\DungeonSceneRegistration.cs" />
         <Compile Include="SceneEntity\DungeonBattleConfig.cs" />
         <Compile Include="SceneEntity\DungeonTimelineBinding.cs" />
-        <EmbeddedResource Include="..\..\LYF_MMO\Assets\GM_Game\Config\Resources\Dungeons\Scenes\*.json">
+        <EmbeddedResource Include="..\..\LYF_MMO\Assets\LYF_Game\Config\Resources\Dungeons\Scenes\*.json">
             <LogicalName>Dungeons.Scenes.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
         <Content Include="Config\MonsterAI\**\*"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>

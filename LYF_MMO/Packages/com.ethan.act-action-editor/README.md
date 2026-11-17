@@ -2,7 +2,7 @@
 
 YCombatEditor 是面向 Unity 动作游戏的可视化动作编辑器，提供时间轴编排、动画预览和可扩展的运行时播放能力。
 
-本项目源码布局：编辑器位于`Assets/GM_Game/Editor/Skill/ActionEditor`，按窗口、时间轴与基础工具分文件并提供中文注释；Runtime与文档仍位于本包。编辑器程序集名称保持`Ethan.ActionEditor.Editor`，各轨道制作功能保留。下文安装方式描述原独立包，本项目使用上述本地布局。
+本项目源码布局：编辑器位于`Assets/LYF_Game/Editor/Skill/ActionEditor`，按窗口、时间轴与基础工具分文件并提供中文注释；Runtime与文档仍位于本包。编辑器程序集名称保持`Ethan.ActionEditor.Editor`，各轨道制作功能保留。下文安装方式描述原独立包，本项目使用上述本地布局。
 
 通过统一的动作配置组织角色与怪物的表现和机制，让动作设计、调试与迭代集中在同一套工作流程中。
 

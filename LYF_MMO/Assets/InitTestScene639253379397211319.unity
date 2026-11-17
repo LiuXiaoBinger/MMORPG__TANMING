@@ -429,7 +429,7 @@ MonoBehaviour:
       - MainCityOtherRolePlayModeTests
       synchronousOnly: 0
     sceneBased: 0
-    originalScene: Assets/GM_Game/Scenes/New Scene.unity
+    originalScene: Assets/LYF_Game/Scenes/New Scene.unity
     bootstrapScene: Assets/InitTestScene639253379397211319.unity
     runInBackgroundValue: 1
     consoleErrorPaused: 1

@@ -1,7 +1,0 @@
-{
-  "name": "LYF.Navigation.Editor",
-  "rootNamespace": "",
-  "references": ["GM_Game"],
-  "includePlatforms": ["Editor"],
-  "autoReferenced": true
-}
