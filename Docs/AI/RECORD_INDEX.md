@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d8619c50f57308413b554578c4b1c1ffb99e27238a95c708889674c2dadb2550`
+Source normalized SHA256: `e411f41e46d41e501825405d19f68890a30a4a4623412fe811a30cdf8e1585cb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -92,11 +92,12 @@ Source normalized SHA256: `d8619c50f57308413b554578c4b1c1ffb99e27238a95c70888967
 | [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-643 |
 | [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Rebuilt the settings window from the reference video (2026-11-17) | 644-648 |
 | [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Archived unused Unity resources and reorganized active art | 649-654 |
-| [CODE][FILES][HANDOFF][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] Consolidated active resources under GM_Game | 655-659 |
+| [CODE][FILES][HANDOFF][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] Consolidated active resources under GM_Game | 655-660 |
+| [CODE][FILES][HANDOFF][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Consolidated unused Unity game assets | 661-665 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `80ceb91cd67c7d9ae669c886bcb29652eeb4e322eaea985e6307859c8156b3a6`
+Source normalized SHA256: `98ac90761a3906fe927a5ec235d84c1c4a4fd2c243426025c711ee322e6fc537`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -180,7 +181,8 @@ Source normalized SHA256: `80ceb91cd67c7d9ae669c886bcb29652eeb4e322eaea985e63078
 | [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-673 |
 | [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17) | 674-678 |
 | [VERIFY][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Dependency comparison and Windows64 bundle verification | 679-684 |
-| [VERIFY][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] GM_Game relocation and package checks | 685-689 |
+| [VERIFY][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] GM_Game relocation and package checks | 685-690 |
+| [VERIFY][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Reference, runtime address, and Windows64 package verification | 691-696 |
 
 ## Docs/AI/DECISIONS.en.md
 

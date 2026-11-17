@@ -678,3 +678,10 @@
 - 对比保留资源的 Unity GUID 和依赖边，应用旧路径到新路径的映射后结果一致。确认启动场景的构建注册、RO 图集中的 380 个 Sprite、TMP 字体、迁移后的 DOTween 设置，以及编辑器读取两个导航网格。使用实际 Player 构建上下文核验这两个导航文件的目标路径。
 - Windows64 YooAsset 增量包包含 3,192 个主资源和 1,231 个 Bundle。检查了 Bundle 文件长度、MD5 和二进制清单的哈希。解析 403 个已知的运行时资源地址，并从构建后的包中直接加载迁移后的 Animator Controller、商店预制体、字体、UI 控制器和工作区的热更新 DLL。完整 Player 安装包与线上热更新发布仍未验证。
 - 完整变更清单、验证证据和 Git 回执见 `项目修改日志/2026-11-17-GM_Game资源归位.md`。
+
+## [VERIFY][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Unity 引用、动态加载和 Windows64 资源包验收
+
+- 比对 Unity 和 YooAsset 的依赖，留用资源无新增断引用。检查 37 张配置表与现有运行时入口。主资产从 3188 降到 2982，其中 206 项从收集清单移出。
+- Windows64 `DefaultPackage` 构建成功，包含 2982 个主资产和 1210 个 Bundle。所有 Bundle 的字节数与 MD5、二进制清单哈希均一致。从运行时清单解析 772 个地址，在 Editor 从成品读取代表性资源并定位登录、创建角色和主城场景。
+- `Resources.Load` 取得副本配置和通用字体，`Resources.LoadAll` 从 `UI/Atlas/Common` 取得 380 张 Sprite。启动 GUID 解析到 `Assets/Boot/Bootstrap/Scene_Boot.unity`。完整 Player 安装包和线上热更新发布待验证。
+- 资源提交 `1d5d3a9` 和证据详见 `项目修改日志/2026-11-17-Unity未用资源集中归档.md`。

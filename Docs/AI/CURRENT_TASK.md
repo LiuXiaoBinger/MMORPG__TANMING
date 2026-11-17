@@ -652,3 +652,9 @@
 - 将 329 个游戏文件移动到 `LYF_MMO/Assets/GM_Game/`。RO 美术资源位于 `artres/`，启动场景位于 `Bootstrap/`，UI 动画位于 `Resources/StaticUI/`，导航源网格位于 `NavigationData/`，插件资源位于 `ThirdParty/TextMesh Pro/` 和 `Plugins/DOTween/Resources/`。将三个 RO Shader Inspector 移到 `LYF_MMO/Assets/Editor/ROShaders/`，将三个未被引用的文件归档到 `LYF_MMO/UnusedAssets/Assets/`。保留现有 .meta 文件。TMP 包仍在原路径 `LYF_MMO/Assets/TextMesh Pro/Resources/TMP Settings.asset` 检测该设置资源。
 - 分别在源代码和两个版本的 `GM_Game.dll.bytes` 中更新两处 RO 运行时资源地址，保留已有本地修改。更新启动场景的构建注册和 YooAsset 的 RO 收集器。编辑器从 `GM_Game` 读取导航源文件，Player 构建回调将这两个文件注册到 `StreamingAssets/NavigationData/`。
 - 提交 `cc48e54` 已推送到 `origin/codex/feature-development`。完整修改日志与 742 行文件清单分别见 `项目修改日志/2026-11-17-GM_Game资源归位.md` 和 `项目修改日志/2026-11-17-GM_Game资源归位-变更清单.tsv`。
+
+## [CODE][FILES][HANDOFF][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] 集中归档 Unity 未用游戏资源
+
+- 将 222 项确认未用的资源与原 .meta、23 个空目录的原 .meta 移入 `LYF_MMO/UnusedAssets/Assets/`。归档目录累计 860 个资源文件。使用当前工作区构建，资源提交含 467 条内容一致的移动。
+- 资源提交 `1d5d3a9` 已推送到 `codex/feature-development`。完整路径、GUID、校验值及恢复方式见 `项目修改日志/2026-11-17-Unity未用资源集中归档.md` 和迁移清单。
+- Windows64 资源包验证通过。完整 Player 安装包和线上热更新发布待验证。

@@ -657,3 +657,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Moved 329 game files into `LYF_MMO/Assets/GM_Game/`. RO art is in `artres/`, the startup scene is in `Bootstrap/`, UI animation is in `Resources/StaticUI/`, navigation source meshes are in `NavigationData/`, and plugin resources are in `ThirdParty/TextMesh Pro/` and `Plugins/DOTween/Resources/`. Moved three RO shader inspectors to `LYF_MMO/Assets/Editor/ROShaders/` and archived three unreferenced files in `LYF_MMO/UnusedAssets/Assets/`. Preserved the existing metas. The TMP package still detects `LYF_MMO/Assets/TextMesh Pro/Resources/TMP Settings.asset` at its original path.
 - Updated the two RO runtime locations in source and in both versions of `GM_Game.dll.bytes` independently, preserving the existing local edits. Updated startup scene build registration and the YooAsset RO collector. The editor reads the navigation source files from `GM_Game`, and the Player build callback registers the two files under `StreamingAssets/NavigationData/`.
 - Commit `cc48e54` was pushed to `origin/codex/feature-development`. The report and 742-row file inventory are `项目修改日志/2026-11-17-GM_Game资源归位.md` and `项目修改日志/2026-11-17-GM_Game资源归位-变更清单.tsv`.
+
+## [CODE][FILES][HANDOFF][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Consolidated unused Unity game assets
+
+- Moved 222 unused resources with their original .meta files and 23 empty-folder .meta files into `LYF_MMO/UnusedAssets/Assets/`. The archive now holds 860 resource files. Worktree builds used current assets and the archive commit contains 467 content-identical moves.
+- Resource commit `1d5d3a9` was pushed to `codex/feature-development`. For exact moves, GUIDs, hashes, and restore paths, see `项目修改日志/2026-11-17-Unity未用资源集中归档.md` and its migration manifest.
+- Windows64 resource-package verification passed. The full Player installer and live hot-update release remain unverified.

@@ -687,3 +687,10 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Compared the Unity GUIDs and dependency edges of the retained resources. No difference remained after mapping old to new paths. Confirmed the startup scene registration, 380 sprites in the RO atlas, the TMP font, the relocated DOTween settings, and editor reads of both navigation meshes. Verified both destinations in the real Player build context.
 - Windows64 YooAsset incremental package contained 3,192 main assets and 1,231 Bundles. Checked bundle lengths and MD5 and the binary manifest hash. Resolved 403 known runtime locations and loaded the relocated animator controller, shop prefab, font, UI controller, and the workspace hot-update DLL directly from the built package. The complete Player installer and online hot-update release remain unverified.
 - Full inventory, evidence, and Git receipt are linked in `项目修改日志/2026-11-17-GM_Game资源归位.md`.
+
+## [VERIFY][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Reference, runtime address, and Windows64 package verification
+
+- Unity and YooAsset comparisons found no newly broken retained dependencies. Reviewed 37 workbooks and retained runtime inputs. The main asset count fell from 3188 to 2982, including 206 removed collector entries.
+- Built Windows64 `DefaultPackage` with 2982 main assets and 1210 bundles. All bundle sizes and MD5 hashes and the binary manifest hash matched. The runtime manifest resolved 772 addresses. Editor loaded representative assets and inspected login, role creation, and main city scene entries from the build.
+- `Resources.Load` verified dungeon config and the common font. `Resources.LoadAll` returned 380 sprites for `UI/Atlas/Common`. The startup GUID resolved to `Assets/Boot/Bootstrap/Scene_Boot.unity`. The full Player installer and live hot-update release remain unverified.
+- Resource commit `1d5d3a9` and evidence are documented in `项目修改日志/2026-11-17-Unity未用资源集中归档.md`.
