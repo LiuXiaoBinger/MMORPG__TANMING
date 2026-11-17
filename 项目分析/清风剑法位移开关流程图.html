@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>清风剑法 · 位移开关流程</title>
+  <style>
+    :root {
+      --page: #f4f6f3;
+      --panel: #fff;
+      --ink: #172b35;
+      --muted: #52636b;
+      --border: #d9e2e1;
+      --wire: #728488;
+      --on: #08725d;
+      --on-tint: #ebf7f0;
+      --off: #414d9a;
+      --off-tint: #eef0fb;
+      --branch-gap: 28px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font: 16px/1.6 Inter, "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+    main { width: min(100% - 40px, 1016px); margin: 42px auto; }
+    h1, h2, p { margin: 0; }
+    header { margin-bottom: 22px; }
+    .heading { display: flex; gap: 16px; align-items: center; }
+    h1 { font-size: clamp(26px, 5vw, 42px); line-height: 1.24; letter-spacing: -.02em; }
+    kbd {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 11px;
+      color: #fff;
+      background: #183640;
+      font: 650 22px/1 "IBM Plex Mono", Consolas, monospace;
+    }
+    .meta { color: var(--muted); margin: 8px 0 0 62px; font-size: 14px; }
+    code { font: 600 .88em "IBM Plex Mono", Consolas, monospace; overflow-wrap: anywhere; }
+    a { color: #1e6167; text-underline-offset: 3px; }
+    a:focus-visible, summary:focus-visible { outline: 2px solid var(--off); outline-offset: 4px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px 28px;
+    }
+    .panel + .panel { margin-top: 16px; }
+    .spine, .submit { width: min(100%, 530px); margin-inline: auto; }
+    .node {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      min-height: 60px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      text-align: center;
+    }
+    .node strong { font-size: 15px; }
+    .node small { color: var(--muted); font-size: 13px; }
+    .edge-down {
+      position: relative;
+      display: block;
+      width: 1px;
+      height: 19px;
+      margin-inline: auto;
+      background: currentColor;
+      color: var(--wire);
+    }
+    .edge-down::after, .leg::after, .join-tip {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-inline: 4px solid transparent;
+      border-top: 6px solid currentColor;
+    }
+    .junction {
+      --inset: calc(25% - var(--branch-gap) / 4);
+      position: relative;
+      height: 36px;
+      color: var(--wire);
+    }
+    .junction::before, .junction::after {
+      content: "";
+      position: absolute;
+      background: currentColor;
+    }
+    .junction::before { left: 50%; top: 0; width: 1px; height: 50%; }
+    .junction::after { left: var(--inset); right: var(--inset); top: 50%; height: 1px; }
+    .leg { position: absolute; top: 50%; bottom: 0; width: 1px; background: currentColor; }
+    .leg.left { left: var(--inset); }
+    .leg.right { right: var(--inset); }
+    .on-wire { color: var(--on); }
+    .off-wire { color: var(--off); }
+    .merge::before { top: 50%; }
+    .merge .leg { top: 0; bottom: 50%; }
+    .merge .leg::after { content: none; }
+    .routes, .outcomes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--branch-gap); }
+    .route {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 14px 14px 0;
+      border-radius: 12px;
+      color: var(--route-color);
+      background: var(--route-tint);
+    }
+    .on { --route-color: var(--on); --route-tint: var(--on-tint); }
+    .off { --route-color: var(--off); --route-tint: var(--off-tint); }
+    .route h2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px 10px;
+      font-size: 17px;
+    }
+    .route h2 code {
+      padding: 2px 7px;
+      background: var(--panel);
+      border-radius: 5px;
+    }
+    .route .edge-down, .route .junction { color: var(--route-color); }
+    .route .node { color: var(--ink); }
+    .route .decision { border-color: var(--on); }
+    .decision-legs { --branch-gap: 9px; }
+    .decision-legs .junction { height: 28px; }
+    .outcomes .node { min-height: 76px; padding-inline: 5px; gap: 2px; }
+    .outcomes .node small { color: var(--on); }
+    .route .leg-to-submit {
+      flex: 1 0 24px;
+      width: 1px;
+      margin-inline: auto;
+      background: currentColor;
+    }
+    .submit .node { background: #eef4f4; }
+    .compare-title { font-size: 20px; }
+    .compare-note { margin: 3px 0 16px; color: var(--muted); font-size: 14px; }
+    .lanes { display: grid; gap: 10px; }
+    .lane {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      background: var(--route-tint);
+      color: var(--route-color);
+    }
+    .lane > code { text-align: center; }
+    .axis { position: relative; height: 64px; margin-inline: 24px; }
+    .rail, .travel {
+      position: absolute;
+      top: 27px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #b5c1c6;
+    }
+    .travel { right: auto; width: var(--distance); height: 4px; top: 26px; background: currentColor; }
+    .travel::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -3px;
+      border-block: 5px solid transparent;
+      border-left: 7px solid currentColor;
+    }
+    .enemy {
+      position: absolute;
+      left: 50%;
+      top: 3px;
+      transform: translateX(-50%);
+      color: var(--ink);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .enemy::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 17px;
+      height: 16px;
+      border-left: 1px dashed var(--muted);
+    }
+    .origin, .finish {
+      position: absolute;
+      top: 36px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .origin { left: 0; color: var(--muted); }
+    .finish { left: var(--distance); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .contact-note { margin-top: 14px; color: var(--muted); font-size: 14px; }
+    details { margin-top: 16px; padding: 0 3px; font-size: 14px; }
+    summary { width: fit-content; cursor: pointer; color: var(--ink); font-weight: 650; }
+    .code-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 7px; }
+    @media (max-width: 600px) {
+      :root { --branch-gap: 12px; }
+      main { width: calc(100% - 20px); margin: 22px auto; }
+      .heading { gap: 9px; }
+      kbd { width: 35px; height: 35px; font-size: 18px; }
+      .meta { margin-left: 44px; }
+      .panel { padding: 15px 10px; border-radius: 12px; }
+      .route { padding: 9px 6px 0; }
+      .route h2 { font-size: 14px; gap: 3px 6px; }
+      .route .node strong { font-size: 13px; }
+      .route .node small { font-size: 11px; }
+      .decision-legs { --branch-gap: 5px; }
+      .lane { grid-template-columns: 48px minmax(0, 1fr); padding-inline: 5px; gap: 5px; }
+      .lane > code { font-size: 12px; }
+      .axis { margin-inline: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="heading"><kbd>E</kbd><h1>清风剑法位移开关</h1></div>
+      <p class="meta">技能 <code>10040</code> · <code>#SkillInfo.xlsx</code> 的 <code>Sheet1!S5</code></p>
+    </header>
+
+    <section class="panel flow" aria-label="技能位移开关流程">
+      <div class="spine">
+        <div class="node">
+          <strong>在 <code>S5</code> 设置 <code>StopAtEnemy</code></strong>
+          <small>Luban 导出 <code>tbskillinfo.bytes</code>，Unity 启动时读表</small>
+        </div>
+        <span class="edge-down" aria-hidden="true"></span>
+        <div class="node">
+          <strong>技能时间轴进入位移段</strong>
+          <small><code>onStart</code> 按技能编号读一次开关</small>
+        </div>
+        <span class="edge-down" aria-hidden="true"></span>
+        <div class="node">
+          <strong>每帧计算曲线位移差量</strong>
+          <small>曲线应走累计量减去已处理累计量</small>
+        </div>
+      </div>
+
+      <div class="junction" aria-hidden="true">
+        <span class="leg left on-wire"></span><span class="leg right off-wire"></span>
+      </div>
+
+      <div class="routes">
+        <article class="route on" aria-labelledby="enabled">
+          <h2 id="enabled"><code>TRUE</code> 遇敌截停</h2>
+          <span class="edge-down" aria-hidden="true"></span>
+          <div class="node decision">
+            <strong>这一步前移会碰到前方活怪吗？</strong>
+            <small>按角色和怪物的当前位置及半径判断</small>
+          </div>
+          <div class="decision-legs">
+            <div class="junction" aria-hidden="true">
+              <span class="leg left"></span><span class="leg right"></span>
+            </div>
+            <div class="outcomes">
+              <div class="node">
+                <small>会碰到</small>
+                <strong>截到最早接触点</strong>
+                <small>贴身时前移 0 米</small>
+              </div>
+              <div class="node">
+                <small>不会碰到</small>
+                <strong>沿曲线走这一步</strong>
+              </div>
+            </div>
+            <div class="junction merge" aria-hidden="true">
+              <span class="leg left"></span><span class="leg right"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="route off" aria-labelledby="disabled">
+          <h2 id="disabled"><code>FALSE</code> 沿原曲线</h2>
+          <span class="edge-down" aria-hidden="true"></span>
+          <div class="node">
+            <strong>直接使用曲线位移</strong>
+            <small>这一步经过活怪的位置时，仍沿曲线前移</small>
+          </div>
+          <span class="leg-to-submit" aria-hidden="true"></span>
+        </article>
+      </div>
+
+      <div class="junction merge" aria-hidden="true">
+        <span class="leg left on-wire"></span><span class="leg right off-wire"></span>
+        <span class="join-tip"></span>
+      </div>
+
+      <div class="submit">
+        <div class="node">
+          <strong>移动组件提交本帧移动</strong>
+          <small><code>MMoveComponent</code> 合并位移、方向输入和重力。位移段继续时，下一帧重新算差量。</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel comparison" aria-labelledby="comparison">
+      <h2 class="compare-title" id="comparison">同一只怪，站在正前方 2 米</h2>
+      <p class="compare-note">两条箭头共用同一距离刻度，数值取自隔离 Unity 用例。</p>
+      <div class="lanes">
+        <div class="lane on" style="--distance:27.0875%" aria-label="开启时最大前移 1.08 米，停在 2 米处的怪物身前">
+          <code>TRUE</code>
+          <div class="axis" aria-hidden="true">
+            <span class="rail"></span><span class="travel"></span>
+            <span class="enemy">怪物 2 米</span><span class="origin">起点</span><span class="finish">1.08 米</span>
+          </div>
+        </div>
+        <div class="lane off" style="--distance:89.4775%" aria-label="关闭时最大前移 3.58 米，沿曲线经过 2 米处的怪物">
+          <code>FALSE</code>
+          <div class="axis" aria-hidden="true">
+            <span class="rail"></span><span class="travel"></span>
+            <span class="enemy">怪物 2 米</span><span class="origin">起点</span><span class="finish">3.58 米</span>
+          </div>
+        </div>
+      </div>
+      <p class="contact-note">遇敌截掉的距离当帧丢弃。这一段后续横移和回拉会停住，避免贴身后从侧面滑过去。</p>
+    </section>
+
+    <details>
+      <summary>查看代码入口</summary>
+      <div class="code-links">
+        <a href="../Luaban/MiniTemplate/Datas/%23SkillInfo.xlsx">技能主表</a>
+        <a href="../LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MDisplacementComponent.cs">读取开关与逐帧位移</a>
+        <a href="../LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MSkillLungeSweep.cs">计算最早接触</a>
+        <a href="../LYF_MMO/Assets/GM_Game/Scripts/SceneEntity/Component/MMoveComponent.cs">提交本帧移动</a>
+      </div>
+    </details>
+  </main>
+</body>
+</html>
