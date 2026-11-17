@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7568a3a9cbd1944e040986f41ce700c937a6f0f9b7d3278a9aae6781edaf660a`
+Source normalized SHA256: `51796da10c58da3fa9c06c003fdbd5c4b1d2062afc304af24cdb249c4a83b96b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -88,11 +88,12 @@ Source normalized SHA256: `7568a3a9cbd1944e040986f41ce700c937a6f0f9b7d3278a9aae6
 | [CODE][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Qingfeng lunge stop and Blade Storm facing | 615-620 |
 | [CODE][FILES][HANDOFF][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Immediate steering and moving basic attack | 621-625 |
 | [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-631 |
-| [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-636 |
+| [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-637 |
+| [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-642 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `34fb58e74cf2bf67e13481972a1ce027240e63b316aec26fb4aa3a6ea776d1d2`
+Source normalized SHA256: `2fc9ca2e1fd96858d75ef40521e4cfe175c10f111ed77df905b9b28597a7cd76`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -172,7 +173,8 @@ Source normalized SHA256: `34fb58e74cf2bf67e13481972a1ce027240e63b316aec26fb4aa3
 | [VERIFY][技能][魔剑士][MJS-E3-LUNGE-FACING-20261117] Real Magic Swordsman E and 3 combat checks | 646-651 |
 | [VERIFY][手感][移动][技能][ROLE-FEEL-MOVECAST-20261117] Unity input probe and skill navigation checks | 652-656 |
 | [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-662 |
-| [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-667 |
+| [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-668 |
+| [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-672 |
 
 ## Docs/AI/DECISIONS.en.md
 

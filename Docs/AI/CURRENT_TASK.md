@@ -629,3 +629,9 @@
 - 现有 `SkillInfoWindow` 改为环绕角色的出战页、三列技能列表和双栏的只读出战槽查看页。可切换技能组并展开或收起描述。保留实际技能快照、魔剑士立绘、轻功分类和既有本地升级行为，未新增装备或货币交易接口。
 - `UIRoot` 已绑定原创水墨底图、含八枚控件图标的共用图集、装饰圆环及五枚货币和按钮图标。背包四种余额与三个兑换入口沿用旧映射，武学升级消耗处复用铜币精灵。技能列表复用条目，面板尺寸变化时重新布局，无新增逐帧逻辑。
 - 业务提交 `a2366a6` 已推送至 `codex/feature-development`。文件清单和证据见 `项目修改日志/2026-11-17-武学面板与货币视觉优化.md`。正式联机交易、Player 构建和低配设备性能尚未验证。
+
+## [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] 关闭普攻移动施法并归位客户端配置
+
+- 将 Unity 编辑用资源和两份运行时 JSON 中技能 10010 的 `MoveCasting` 设为 `false`。第三段仍保留自身的根运动位移段。后续修改使用 `LYF_MMO/Assets/GM_Game/Config/Skill/SkillCastingRulesConfig.asset`，再通过现有 Inspector 按钮导出两份运行时文件。
+- 将 70 份客户端配置和 82 个原有 `.meta` 文件移到 `Assets/GM_Game/Config`，新建 5 个目录 `.meta` 文件，按 `Skill`、`Combat`、`StateExclusion`、`Resources` 和 `Editor` 分类。同步更新技能编辑入口、运行时路径、副本和 `ThemeDungeon` 加载器、`YooAsset` 收集配置，以及嵌入客户端副本配置的两个服务端项目。原有本地改动随文件保留，未纳入本次提交。
+- 业务提交 `f4cc2e8` 已推送到 `codex/feature-development`。完整文件清单与续作信息见 `项目修改日志/2026-11-17-关闭普攻移动施法与客户端配置归位.md`。
