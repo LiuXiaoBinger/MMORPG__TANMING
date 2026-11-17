@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d8abcafefebdd62013d5bdaefc94081f717c3766bb485000af4077c2e0ac8cd0`
+Source normalized SHA256: `d8619c50f57308413b554578c4b1c1ffb99e27238a95c708889674c2dadb2550`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -91,11 +91,12 @@ Source normalized SHA256: `d8abcafefebdd62013d5bdaefc94081f717c3766bb485000af407
 | [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-637 |
 | [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-643 |
 | [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Rebuilt the settings window from the reference video (2026-11-17) | 644-648 |
-| [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Archived unused Unity resources and reorganized active art | 649-653 |
+| [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Archived unused Unity resources and reorganized active art | 649-654 |
+| [CODE][FILES][HANDOFF][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] Consolidated active resources under GM_Game | 655-659 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7a3cb75a4402c2b7f6cea5dc4eeb3221852f0be3c32356816e31ec5c79789ca3`
+Source normalized SHA256: `80ceb91cd67c7d9ae669c886bcb29652eeb4e322eaea985e6307859c8156b3a6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -178,7 +179,8 @@ Source normalized SHA256: `7a3cb75a4402c2b7f6cea5dc4eeb3221852f0be3c32356816e31e
 | [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-668 |
 | [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-673 |
 | [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17) | 674-678 |
-| [VERIFY][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Dependency comparison and Windows64 bundle verification | 679-683 |
+| [VERIFY][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Dependency comparison and Windows64 bundle verification | 679-684 |
+| [VERIFY][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] GM_Game relocation and package checks | 685-689 |
 
 ## Docs/AI/DECISIONS.en.md
 

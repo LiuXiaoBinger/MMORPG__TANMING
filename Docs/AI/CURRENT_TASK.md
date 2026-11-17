@@ -646,3 +646,9 @@
 - 将 635 个未使用的资源及其原有 `.meta` 文件移至 `LYF_MMO/UnusedAssets/Assets/`，保留归档文件的原始相对路径。将 45 个在用美术资源重新归类至 `LYF_MMO/Assets/GM_Game/` 下的 `AnimationSources/FighterAnimations`、`Materials/UI`、`Materials/Effects`、`Textures/UI` 和 `Textures/Effects`。
 - 将 `SkillUpgradeUIBuilder.cs` 及其 `.meta` 从 `LYF_MMO/Assets/GM_Game/Editor/` 移到 `LYF_MMO/Assets/Editor/`。该脚本现在编译到 `Assembly-CSharp-Editor.dll`，且不参与 Player 编译。迁移前后的文件字节和 GUID 一致。已有的本地脚本改动随文件迁移，未纳入提交。
 - 提交 `a2cf148` 已推送到 `origin/codex/feature-development`。完整报告和逐文件迁移清单分别位于 `项目修改日志/2026-11-17-Unity资源归档与目录整理.md` 和 `项目修改日志/2026-11-17-Unity资源归档与目录整理-迁移清单.tsv`。
+
+## [CODE][FILES][HANDOFF][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] 将在用资源归入 GM_Game
+
+- 将 329 个游戏文件移动到 `LYF_MMO/Assets/GM_Game/`。RO 美术资源位于 `artres/`，启动场景位于 `Bootstrap/`，UI 动画位于 `Resources/StaticUI/`，导航源网格位于 `NavigationData/`，插件资源位于 `ThirdParty/TextMesh Pro/` 和 `Plugins/DOTween/Resources/`。将三个 RO Shader Inspector 移到 `LYF_MMO/Assets/Editor/ROShaders/`，将三个未被引用的文件归档到 `LYF_MMO/UnusedAssets/Assets/`。保留现有 .meta 文件。TMP 包仍在原路径 `LYF_MMO/Assets/TextMesh Pro/Resources/TMP Settings.asset` 检测该设置资源。
+- 分别在源代码和两个版本的 `GM_Game.dll.bytes` 中更新两处 RO 运行时资源地址，保留已有本地修改。更新启动场景的构建注册和 YooAsset 的 RO 收集器。编辑器从 `GM_Game` 读取导航源文件，Player 构建回调将这两个文件注册到 `StreamingAssets/NavigationData/`。
+- 提交 `cc48e54` 已推送到 `origin/codex/feature-development`。完整修改日志与 742 行文件清单分别见 `项目修改日志/2026-11-17-GM_Game资源归位.md` 和 `项目修改日志/2026-11-17-GM_Game资源归位-变更清单.tsv`。
