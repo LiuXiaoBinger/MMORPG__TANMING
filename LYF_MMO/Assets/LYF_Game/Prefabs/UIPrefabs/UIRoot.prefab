@@ -45536,6 +45536,7 @@ MonoBehaviour:
   _shopWindow: {fileID: 633865109998995583}
   _roleAttriibuteWindow: {fileID: 4995931267619018836}
   _chatWindow: {fileID: 1744585806447309799}
+  _yimengChatPrefab: {fileID: 3916162266582210789, guid: 04a98b18283f1ea4f80a73e955554199, type: 3}
   _minMapWindow: {fileID: 0}
   _settingPanel: {fileID: 1573819479326251961}
   _taskWindow: {fileID: 7316467775395858243}

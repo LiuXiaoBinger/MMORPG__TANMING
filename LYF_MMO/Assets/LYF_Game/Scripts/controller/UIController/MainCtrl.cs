@@ -35,6 +35,9 @@ public class MainCtrl : CtrlBase
     /// <summary>管理正式聊天窗口的文字及录音请求与回包。</summary>
     private readonly ChatMgr _chatMgr;
 
+    /// <summary>可选江湖聊天模块，复用当前主界面的正式聊天服务。</summary>
+    private readonly YimengChatCtrl _yimengChatCtrl;
+
     /// <summary>任务子控制器，组合任务窗口与快捷任务面板。</summary>
     private readonly TaskCtrl _taskCtrl;
 
@@ -75,6 +78,8 @@ public class MainCtrl : CtrlBase
         BindTrackedRole();
         _chatWindow = _mainView.ChatWindow;
         if (_chatWindow != null) _chatMgr = new ChatMgr(_chatWindow);
+        if (_mainView.YimengChat != null)
+            _yimengChatCtrl = new YimengChatCtrl(_mainView.YimengChat, _chatWindow, ToggleYimengChat, OnChatInputFocusChanged);
         RegisterCommands();
         RegisterViewActions();
     }
@@ -148,6 +153,7 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
+        _yimengChatCtrl?.Dispose();
         _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
         _mainView.KnapsackButton.onClick.RemoveListener(OnKnapsackRequested);
@@ -230,6 +236,12 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 界面显示与开关
+    /// <summary>展开或收起江湖聊天，沿主界面既有窗口路由管理显隐。</summary>
+    private void ToggleYimengChat()
+    {
+        ShowMainWindow(WindowType.YimengChatWindow);
+    }
+
     /// <summary>对话窗口先把 NPC 转为展示数据，商店交给 ShopCtrl 准备商品；其他窗口沿用基类显隐流程。</summary>
     /// <param name="windowType">需要切换的主界面子窗口。</param>
     /// <param name="obj">窗口数据；对话和商店入口要求传入 NpcEntity。</param>

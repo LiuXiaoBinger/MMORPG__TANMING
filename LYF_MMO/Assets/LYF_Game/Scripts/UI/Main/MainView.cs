@@ -44,6 +44,10 @@ public class MainView : UIBase
    [SerializeField,Header("角色信息window")] private RoleAttriibuteWindow _roleAttriibuteWindow;
    /// <summary>聊天输入和消息展示窗口，可从子节点补找旧预制体引用。</summary>
    [SerializeField,Header("聊天window")] private ChatWindows _chatWindow;
+   /// <summary>可选的江湖聊天模块预制体，包含入口按钮和独立窗口。</summary>
+   [SerializeField] private GameObject _yimengChatPrefab;
+   /// <summary>当前 MainView 下保留的新版聊天子窗口。</summary>
+   public YimengChatWindow YimengChat { get; private set; }
    /// <summary>跟踪当前角色与场景辅助点的小地图窗口。</summary>
    [SerializeField,Header("小地图window")] private MinMapWindow _minMapWindow;
 
@@ -229,6 +233,17 @@ public class MainView : UIBase
       windowDic[WindowType.DungeonFlowWindow] = _dungeonFlowWindow;
       _dungeonFlowWindow.InitWindow();
       if (ChatWindow != null) windowDic[WindowType.ChatWindow] = ChatWindow;
+      if (_yimengChatPrefab != null && ChatWindow != null)
+      {
+         if (YimengChat == null)
+         {
+            // 模块留在主界面下，重新进入主城时只重新登记窗口和业务事件。
+            GameObject module = Instantiate(_yimengChatPrefab, transform, false);
+            YimengChat = module.GetComponentInChildren<YimengChatWindow>(true);
+            YimengChat.InitWindow();
+         }
+         windowDic[WindowType.YimengChatWindow] = YimengChat;
+      }
       windowDic[WindowType.RoleCurrtInfoWindow] = _roleCurrInfoWindow;
       windowDic[WindowType.SkillInfoWindow] = _skillInfoWindow;
       windowDic[WindowType.KnapsackWindow] = _knapsackWindow;

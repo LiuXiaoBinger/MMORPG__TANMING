@@ -1,0 +1,125 @@
+using System;
+using Google.Protobuf;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+/// <summary>把江湖聊天窗口接到现有主界面、聊天历史和语音管理器。</summary>
+public sealed class YimengChatCtrl : IDisposable
+{
+    /// <summary>新版窗口，组件和消息行来自江湖聊天预制体。</summary>
+    private readonly YimengChatWindow _view;
+    /// <summary>旧版聊天继续处理正式回包，也是聊天记录的唯一来源。</summary>
+    private readonly ChatWindows _legacy;
+    /// <summary>旧窗口已经启用的录音、上传、下载与回放入口。</summary>
+    private readonly ChatAudioMgr _audio;
+    /// <summary>主界面通过独立 WindowType 切换新版显隐。</summary>
+    private readonly Action _toggleWindow;
+    /// <summary>主控制器已有的角色输入暂停和恢复回调。</summary>
+    private readonly Action<bool> _inputFocusChanged;
+    /// <summary>打开新版时临时盖住旧版的显示和点击，旧版生命周期继续运行。</summary>
+    private CanvasGroup _legacyPresentation;
+
+    /// <summary>复用既有聊天数据和语音，并接通新版的开关及文字入口。</summary>
+    /// <param name="view">由 MainView 加载并初始化的江湖聊天子窗口。</param>
+    /// <param name="legacy">由既有 ChatMgr 绑定的正式聊天窗口。</param>
+    /// <param name="toggleWindow">由 MainCtrl 提供的新版窗口切换方法。</param>
+    /// <param name="inputFocusChanged">主界面暂停或恢复角色操作的统一入口。</param>
+    public YimengChatCtrl(YimengChatWindow view, ChatWindows legacy, Action toggleWindow, Action<bool> inputFocusChanged)
+    {
+        _view = view;
+        _legacy = legacy;
+        _audio = legacy.GetComponent<ChatAudioMgr>();
+        _toggleWindow = toggleWindow;
+        _inputFocusChanged = inputFocusChanged;
+
+        view.UseHistory(legacy.Messages);
+        view.ToggleRequested += _toggleWindow;
+        view.VisibilityChanged += OnVisibilityChanged;
+        view.InputFocusChanged += _inputFocusChanged;
+        view.TextRequested += SendText;
+        view.VoiceStartRequested += _audio.StartRecord;
+        view.VoiceEndRequested += _audio.FinishRecord;
+        view.VoicePlayRequested += _audio.PlayRecordedFile;
+        legacy.MessageSent += view.OnMessage;
+        legacy.MessageReceived += view.OnMessage;
+    }
+
+    /// <summary>停止接收旧窗口事件；若新版正打开，先释放焦点并恢复旧版的显示。</summary>
+    public void Dispose()
+    {
+        _view.CloseWindow();
+        _legacy.MessageSent -= _view.OnMessage;
+        _legacy.MessageReceived -= _view.OnMessage;
+        _view.ToggleRequested -= _toggleWindow;
+        _view.VisibilityChanged -= OnVisibilityChanged;
+        _view.InputFocusChanged -= _inputFocusChanged;
+        _view.TextRequested -= SendText;
+        _view.VoiceStartRequested -= _audio.StartRecord;
+        _view.VoiceEndRequested -= _audio.FinishRecord;
+        _view.VoicePlayRequested -= _audio.PlayRecordedFile;
+        if (_legacyPresentation != null)
+            UnityEngine.Object.Destroy(_legacyPresentation);
+    }
+
+    /// <summary>控制旧聊天的可见性与点击，保留消息接收、音频回包与滚动协程。</summary>
+    /// <param name="visible">新版是否在主界面左侧展开。</param>
+    private void OnVisibilityChanged(bool visible)
+    {
+        if (visible)
+        {
+            // 如果是代码打开新版，也要退出仍在接收按键的旧聊天输入框。
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem != null)
+            {
+                // 当前事件系统的选中对象，可能是旧聊天的文字输入。
+                GameObject selected = eventSystem.currentSelectedGameObject;
+                if (selected != null && selected.transform.IsChildOf(_legacy.transform))
+                    eventSystem.SetSelectedGameObject(null);
+            }
+            if (_legacyPresentation == null)
+                _legacyPresentation = _legacy.gameObject.AddComponent<CanvasGroup>();
+            _legacyPresentation.alpha = 0f;
+            _legacyPresentation.interactable = false;
+            _legacyPresentation.blocksRaycasts = false;
+            _legacyPresentation.enabled = true;
+        }
+        else if (_legacyPresentation != null)
+        {
+            _legacyPresentation.alpha = 1f;
+            _legacyPresentation.interactable = true;
+            _legacyPresentation.blocksRaycasts = true;
+            _legacyPresentation.enabled = false;
+        }
+    }
+
+    /// <summary>通过既有客户端 RPC 发言；旧版 ChatMgr 统一接收状态和正式广播。</summary>
+    /// <param name="channel">新版输入栏选择的发言目标，与旧窗口当前页独立。</param>
+    /// <param name="text">已经去掉首尾空白的非空正文。</param>
+    private static void SendText(ChatChannel channel, string text)
+    {
+        // 服务端协议使用的频道编号只支持项目已开放的三类发言。
+        ChatMsgType type;
+        switch (channel)
+        {
+            case ChatChannel.World: type = ChatMsgType.ChatTypeWorld; break;
+            case ChatChannel.Nearby: type = ChatMsgType.ChatTypeCurscene; break;
+            case ChatChannel.Team: type = ChatMsgType.ChatTypeTeam; break;
+            default:
+                TipsMgr.Instance.ShowSystemTips("该频道尚未开放");
+                return;
+        }
+
+        // 与已有聊天共用消息的发送入口，正文只在接到广播后加入历史。
+        SendChatMsgArg request = new SendChatMsgArg
+        {
+            Msg = new ChatMsg
+            {
+                MsgHead = new ChatMsgHead { MsgType = type },
+                Medium = ChatMediumType.Text,
+                MsgContent = text
+            }
+        };
+        if (!MNetClient.Instance.Send(NetDefine.RpcC2M_SendChatMsg, request.ToByteString()))
+            TipsMgr.Instance.ShowSystemTips("聊天连接不可用");
+    }
+}
