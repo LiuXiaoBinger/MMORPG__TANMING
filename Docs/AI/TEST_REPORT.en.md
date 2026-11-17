@@ -706,3 +706,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Compared 4755 Unity import entries and 2927 YooAsset main assets by the rename mapping. GUIDs and dependencies matched. Editor, HybridCLR, and the hot payload report `LYF_Game`. The common atlas still loaded 380 sprites. The open `Scene_Boot` retained its unsaved state during validation.
 - HybridCLR compiled `LYF_Game.dll` in the isolated workspace copy. Windows64 `DefaultPackage` had 2971 main assets and 1206 bundles. Bundle and manifest hashes matched, 799 runtime addresses resolved, and the new login scene and hot DLL paths loaded.
 - The isolated copy used the previously restored character-creation dependencies. The full Player installer and online hot-update release remain unverified. Evidence for `603faeb` is in `项目修改日志/2026-11-17-LYF_Game客户端改名.md`.
+
+## [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] Verified the restored character selection scene
+
+- Unity resolved all 44 assets by original GUID. Reopening LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity produced 0 errors and 0 missing prefabs. YooAsset DefaultPackage collection found 2971 main assets and included the restored scene dependencies.
+- Built a single-scene StandaloneWindows64 AssetBundle and read back Assets/LYF_Game/Scenes/Scene_CreateRole.unity. The full Player, online hot-update release and full login-to-main-city flow were outside the checks for 3af8668. Evidence is listed in 项目修改日志/2026-11-17-选角场景缺失引用修复.md.

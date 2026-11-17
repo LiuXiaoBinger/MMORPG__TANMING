@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `88398210d2cbeb7791610056a17ec2339c7fd2656656450aad87cf78a188d14e`
+Source normalized SHA256: `a2715fef11e0b957057caeb27f0bee1f291239fd2ba7e96504b4d3079e616431`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -95,11 +95,12 @@ Source normalized SHA256: `88398210d2cbeb7791610056a17ec2339c7fd2656656450aad87c
 | [CODE][FILES][HANDOFF][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] Consolidated active resources under GM_Game | 655-660 |
 | [CODE][FILES][HANDOFF][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Consolidated unused Unity game assets | 661-666 |
 | [CODE][FILES][HANDOFF][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Reviewed unused resources and exposed the archive in Unity | 667-672 |
-| [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Renamed the Unity game root and assembly to LYF_Game | 673-677 |
+| [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Renamed the Unity game root and assembly to LYF_Game | 673-678 |
+| [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] Restored missing character selection scene assets | 679-682 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `777ecdf6a22e2b5eb100d1b194af8b674bd3cc03f91425eeeae1cbaae5ad5685`
+Source normalized SHA256: `e81dc3860df067745a3d7008924b8c492d596a66f470d5ee34d988edba1a85bb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -186,7 +187,8 @@ Source normalized SHA256: `777ecdf6a22e2b5eb100d1b194af8b674bd3cc03f91425eeeae1c
 | [VERIFY][资源][构建][GM-GAME-RESOURCE-LAYOUT-20261117] GM_Game relocation and package checks | 685-690 |
 | [VERIFY][资源][构建][UNITY-UNUSED-ARCHIVE-20261117] Reference, runtime address, and Windows64 package verification | 691-697 |
 | [VERIFY][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Verified reference reachability, archive visibility, and Windows64 bundles | 698-703 |
-| [VERIFY][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Verified LYF_Game editor compile and Windows64 package | 704-708 |
+| [VERIFY][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Verified LYF_Game editor compile and Windows64 package | 704-709 |
+| [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] Verified the restored character selection scene | 710-713 |
 
 ## Docs/AI/DECISIONS.en.md
 

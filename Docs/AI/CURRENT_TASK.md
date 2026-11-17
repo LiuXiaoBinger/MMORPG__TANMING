@@ -670,3 +670,8 @@
 - 活跃 Unity 根目录移到 `LYF_MMO/Assets/LYF_Game/`。asmdef、聊天 asmref 和 `LYF_Game.dll.bytes` 使用新名字及原 GUID。编辑器工具、运行时地址、收集规则、导出和测试路径同步适配。
 - 移动 7967 个现存工作区文件和 8128 个基线文件。修改工作区 104 个文件和提交基线 101 个文件中的路径，保留本地状态。提交 `603faeb` 已推送 `codex/feature-development`。
 - 独立 Windows64 包通过，HybridCLR 生成了 `LYF_Game.dll`。完整 Player 安装包和线上热更发布待验证。逐项路径和验收证据见 `项目修改日志/2026-11-17-LYF_Game客户端改名.md`。
+
+## [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] 恢复选角场景缺失依赖
+
+- 将 44 项资源连同原资源与目录元数据恢复到 LYF_MMO/Assets/LYF_Game/Scenes/CreateRole_Res/。迁移的 109 个文件包括 44 项资源、44 份资源 .meta 和 21 份目录 .meta。更新 MyShaderVariants.json 的两条 Shader 路径。提交 3af8668 已推送到 codex/feature-development。
+- Unity 已重新打开 LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity，Scene 和 10109_Minos 均已连接。场景沿用内置天空盒，两个布景实例在保存的场景里默认关闭。文件清单和恢复依据见 项目修改日志/2026-11-17-选角场景缺失引用修复.md。

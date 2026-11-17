@@ -697,3 +697,8 @@
 - 按新路径比对 4755 个 Unity 导入条目和 2927 个 YooAsset 主资产，GUID 和依赖一致。编辑器、HybridCLR 和热更 DLL 的程序集名均为 `LYF_Game`。公共图集仍读取 380 张 Sprite。验收时打开的 `Scene_Boot` 保留未保存状态。
 - 独立工作区副本中 HybridCLR 编译出 `LYF_Game.dll`。Windows64 `DefaultPackage` 含 2971 个主资产和 1206 个 Bundle。Bundle 与清单哈希通过，解析了 799 个运行时地址，从新路径读取登录场景和热更 DLL。
 - 独立副本复用此前补齐的创建角色场景依赖。完整 Player 安装包和线上热更发布待验证。提交 `603faeb` 的验收证据见 `项目修改日志/2026-11-17-LYF_Game客户端改名.md`。
+
+## [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] 验证选角场景依赖恢复
+
+- Unity 按原 GUID 解析 44 项资源。重开 LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity 时 0 条错误、0 个缺失预制体。YooAsset DefaultPackage 收集到 2971 个主资源，并包含恢复后的场景依赖。
+- 构建 StandaloneWindows64 单场景 AssetBundle，读回 Assets/LYF_Game/Scenes/Scene_CreateRole.unity。完整 Player、线上热更新发布和从登录到主城的完整流程仍在 3af8668 的验证范围之外。证据见 项目修改日志/2026-11-17-选角场景缺失引用修复.md。

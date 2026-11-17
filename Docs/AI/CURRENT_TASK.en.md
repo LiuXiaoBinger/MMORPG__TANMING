@@ -675,3 +675,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Moved the live Unity root to `LYF_MMO/Assets/LYF_Game/`. The asmdef, chat asmref, and `LYF_Game.dll.bytes` use the new name and original GUIDs. Editor tools, runtime addresses, collectors, exports, and test paths follow the new root.
 - Moved 7967 workspace files and 8128 tracked files. Applied 104 workspace path edits and 101 Git-baseline path edits, preserving the local state. Commit `603faeb` was pushed to `codex/feature-development`.
 - The isolated Windows64 package passed and HybridCLR compiled `LYF_Game.dll`. The full Player installer and online hot-update release remain unverified. Per-file paths and validation evidence are recorded in `项目修改日志/2026-11-17-LYF_Game客户端改名.md`.
+
+## [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] Restored missing character selection scene assets
+
+- Restored 44 assets under LYF_MMO/Assets/LYF_Game/Scenes/CreateRole_Res/ with the original resource and folder metadata. The 109 relocated files include 44 assets, 44 asset .meta files and 21 folder .meta files. Updated two Shader paths in MyShaderVariants.json. Commit 3af8668 was pushed to codex/feature-development.
+- Unity reopened LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity with both Scene and 10109_Minos connected. It retains its built-in skybox and both backdrop instances are disabled in the saved scene. See 项目修改日志/2026-11-17-选角场景缺失引用修复.md for the file list and recovery evidence.
