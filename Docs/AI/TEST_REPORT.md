@@ -685,3 +685,9 @@
 - Windows64 `DefaultPackage` 构建成功，包含 2982 个主资产和 1210 个 Bundle。所有 Bundle 的字节数与 MD5、二进制清单哈希均一致。从运行时清单解析 772 个地址，在 Editor 从成品读取代表性资源并定位登录、创建角色和主城场景。
 - `Resources.Load` 取得副本配置和通用字体，`Resources.LoadAll` 从 `UI/Atlas/Common` 取得 380 张 Sprite。启动 GUID 解析到 `Assets/Boot/Bootstrap/Scene_Boot.unity`。完整 Player 安装包和线上热更新发布待验证。
 - 资源提交 `1d5d3a9` 和证据详见 `项目修改日志/2026-11-17-Unity未用资源集中归档.md`。
+
+## [VERIFY][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] 未用资源引用、编辑器可见性和 Windows64 包体验收
+
+- 核对 37 张配置表。首次归档后，工作区 YooAsset 主资产从 2936 降到 2927，Unity 无新增断引用。独立 Windows64 `DefaultPackage` 包含 2971 个主资产、1206 个 Bundle，文件和清单哈希均通过，运行时清单解析 799 个动态地址。
+- 移入 `LYF_MMO/Assets/UnusedAssets/Editor/` 后，873 个归档资源的 GUID 全部一致，2927 个活跃打包入口及依赖一致。归档中的 6 个 Resources 子目录改名为 ArchivedResources 后，实测 66 个相关键均无法读到归档文件。公共图集仍加载 380 张 Sprite。
+- 当前工作区 `Scene_CreateRole` 有原已缺失的预制体，完整 Player 安装包和线上热更发布待验证。提交 `f0aa725` 和 `4ab223d` 的证据详见 `项目修改日志/2026-11-17-GM_Game未用资源复查.md`。

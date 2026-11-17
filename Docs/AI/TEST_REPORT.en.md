@@ -694,3 +694,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Built Windows64 `DefaultPackage` with 2982 main assets and 1210 bundles. All bundle sizes and MD5 hashes and the binary manifest hash matched. The runtime manifest resolved 772 addresses. Editor loaded representative assets and inspected login, role creation, and main city scene entries from the build.
 - `Resources.Load` verified dungeon config and the common font. `Resources.LoadAll` returned 380 sprites for `UI/Atlas/Common`. The startup GUID resolved to `Assets/Boot/Bootstrap/Scene_Boot.unity`. The full Player installer and live hot-update release remain unverified.
 - Resource commit `1d5d3a9` and evidence are documented in `项目修改日志/2026-11-17-Unity未用资源集中归档.md`.
+
+## [VERIFY][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Verified reference reachability, archive visibility, and Windows64 bundles
+
+- Checked 37 workbooks. In the workspace, YooAsset main assets fell from 2936 to 2927 after the first archive. Unity found no new broken dependencies. The isolated Windows64 `DefaultPackage` contained 2971 assets and 1206 bundles, passed file and manifest hashes, and resolved 799 dynamic locations.
+- After moving the archive into `LYF_MMO/Assets/UnusedAssets/Editor/`, all 873 archived resource GUIDs matched, and the 2927 live package inputs and dependencies matched. Renaming 6 archived Resources directories to ArchivedResources kept all 66 tested keys from loading archived assets. The common atlas still loaded 380 sprites.
+- `Scene_CreateRole` has existing missing prefabs in the current workspace. The full Player installer and online hot-update release remain unverified. Evidence for `f0aa725` and `4ab223d` is linked in `项目修改日志/2026-11-17-GM_Game未用资源复查.md`.

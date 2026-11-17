@@ -663,3 +663,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Moved 222 unused resources with their original .meta files and 23 empty-folder .meta files into `LYF_MMO/UnusedAssets/Assets/`. The archive now holds 860 resource files. Worktree builds used current assets and the archive commit contains 467 content-identical moves.
 - Resource commit `1d5d3a9` was pushed to `codex/feature-development`. For exact moves, GUIDs, hashes, and restore paths, see `项目修改日志/2026-11-17-Unity未用资源集中归档.md` and its migration manifest.
 - Windows64 resource-package verification passed. The full Player installer and live hot-update release remain unverified.
+
+## [CODE][FILES][HANDOFF][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] Reviewed unused resources and exposed the archive in Unity
+
+- Archived 13 resources, their original .meta files, and 1 emptied-folder .meta. All 27 original files moved with identical bytes. The cumulative 873 resources are visible in Unity under `LYF_MMO/Assets/UnusedAssets/Editor/`.
+- Initial archive commit `f0aa725` and Project location commit `4ab223d` were pushed to `codex/feature-development`. The exact original and current archive paths are recorded in `项目修改日志/2026-11-17-GM_Game未用资源复查.md` and its TSV inventory.
+- The isolated Windows64 package passed. The workspace has existing missing character-creation prefabs. The full Player installer and online hot-update release remain unverified.

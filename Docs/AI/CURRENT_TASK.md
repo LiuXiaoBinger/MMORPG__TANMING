@@ -658,3 +658,9 @@
 - 将 222 项确认未用的资源与原 .meta、23 个空目录的原 .meta 移入 `LYF_MMO/UnusedAssets/Assets/`。归档目录累计 860 个资源文件。使用当前工作区构建，资源提交含 467 条内容一致的移动。
 - 资源提交 `1d5d3a9` 已推送到 `codex/feature-development`。完整路径、GUID、校验值及恢复方式见 `项目修改日志/2026-11-17-Unity未用资源集中归档.md` 和迁移清单。
 - Windows64 资源包验证通过。完整 Player 安装包和线上热更新发布待验证。
+
+## [CODE][FILES][HANDOFF][资源][构建][GM-GAME-UNUSED-FOLLOWUP-20261117] 复查未用资源并将归档移入 Unity
+
+- 归档 13 项资源及原 .meta，另随迁 1 个腾空目录的 .meta，27 个原文件字节一致。累计 873 项归档现在可在 Unity 的 `LYF_MMO/Assets/UnusedAssets/Editor/` 浏览。
+- 首次归档提交 `f0aa725` 和 Unity Project 位置提交 `4ab223d` 已推送至 `codex/feature-development`。原路径和最终归档位置见 `项目修改日志/2026-11-17-GM_Game未用资源复查.md` 及 TSV 清单。
+- 独立 Windows64 资源包通过。当前工作区存在原有的创建角色场景预制体缺失，完整 Player 安装包和线上热更发布待验证。
