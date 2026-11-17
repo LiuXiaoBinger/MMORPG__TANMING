@@ -711,3 +711,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Unity resolved all 44 assets by original GUID. Reopening LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity produced 0 errors and 0 missing prefabs. YooAsset DefaultPackage collection found 2971 main assets and included the restored scene dependencies.
 - Built a single-scene StandaloneWindows64 AssetBundle and read back Assets/LYF_Game/Scenes/Scene_CreateRole.unity. The full Player, online hot-update release and full login-to-main-city flow were outside the checks for 3af8668. Evidence is listed in 项目修改日志/2026-11-17-选角场景缺失引用修复.md.
+
+## [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Tested login, settings and the slide skill in the local game
+
+- Unity 2023.2.20f1c1 EditorSimulateMode completed Boot → login → game server → character selection → main city using the real local servers. MainCtrl, MainView and LocalRole initialized. The settings button opened the window with 8 tabs, switched to the graphics page and closed it.
+- The server loaded dungeon 4060 in sc_dungeon_moshenta_001. Its F input fired skill 10080 with KCP ready. All 10 ClipLocation values resolved in YooAsset; presentation row 3008001 and the runtime asset agreed on Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Slider_F.anim. The final Unity Console error query returned 0 entries. The full Player and online hot-update release remain unverified. Full evidence for 826c401 is in 项目修改日志/2026-11-17-登录设置与副本报错修复.md.

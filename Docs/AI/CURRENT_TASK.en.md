@@ -680,3 +680,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Restored 44 assets under LYF_MMO/Assets/LYF_Game/Scenes/CreateRole_Res/ with the original resource and folder metadata. The 109 relocated files include 44 assets, 44 asset .meta files and 21 folder .meta files. Updated two Shader paths in MyShaderVariants.json. Commit 3af8668 was pushed to codex/feature-development.
 - Unity reopened LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity with both Scene and 10109_Minos connected. It retains its built-in skybox and both backdrop instances are disabled in the saved scene. See 项目修改日志/2026-11-17-选角场景缺失引用修复.md for the file list and recovery evidence.
+
+## [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Reimported UI assets and corrected skill animation locations
+
+- Unity imported the team-creation and settings prefabs with null fields even though the source files contained their bindings. Reimported 133 assets referencing LYF_Game scripts in dependency order (105 prefabs, 4 scenes and 24 assets) in the local editor.
+- Updated 10 ClipLocation cells in Luaban/MiniTemplate/Datas/#SkillPresentationInfo.xlsx; regenerated LYF_Server/Network/LubanManage/Tb/tbskillpresentationinfo.bytes. The skill IDs, durations, and other values are preserved. Commit 826c401 was pushed to codex/feature-development. See 项目修改日志/2026-11-17-登录设置与副本报错修复.md.

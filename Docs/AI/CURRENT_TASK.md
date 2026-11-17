@@ -675,3 +675,8 @@
 
 - 将 44 项资源连同原资源与目录元数据恢复到 LYF_MMO/Assets/LYF_Game/Scenes/CreateRole_Res/。迁移的 109 个文件包括 44 项资源、44 份资源 .meta 和 21 份目录 .meta。更新 MyShaderVariants.json 的两条 Shader 路径。提交 3af8668 已推送到 codex/feature-development。
 - Unity 已重新打开 LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity，Scene 和 10109_Minos 均已连接。场景沿用内置天空盒，两个布景实例在保存的场景里默认关闭。文件清单和恢复依据见 项目修改日志/2026-11-17-选角场景缺失引用修复.md。
+
+## [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] 恢复界面导入引用并修正技能动画路径
+
+- 建队和设置预制体的源文件保有绑定，Unity 导入后的字段为空。按依赖顺序在本机重新导入引用 LYF_Game 脚本的 133 项资源，包含 105 个预制体、4 个场景和 24 个 asset。
+- 更新 Luaban/MiniTemplate/Datas/#SkillPresentationInfo.xlsx 中 10 个 ClipLocation，并重新导出 LYF_Server/Network/LubanManage/Tb/tbskillpresentationinfo.bytes。技能编号、时长等字段保留原值。提交 826c401 已推送到 codex/feature-development。详情见 项目修改日志/2026-11-17-登录设置与副本报错修复.md。

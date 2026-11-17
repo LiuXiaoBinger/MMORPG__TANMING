@@ -702,3 +702,8 @@
 
 - Unity 按原 GUID 解析 44 项资源。重开 LYF_MMO/Assets/LYF_Game/Scenes/Scene_CreateRole.unity 时 0 条错误、0 个缺失预制体。YooAsset DefaultPackage 收集到 2971 个主资源，并包含恢复后的场景依赖。
 - 构建 StandaloneWindows64 单场景 AssetBundle，读回 Assets/LYF_Game/Scenes/Scene_CreateRole.unity。完整 Player、线上热更新发布和从登录到主城的完整流程仍在 3af8668 的验证范围之外。证据见 项目修改日志/2026-11-17-选角场景缺失引用修复.md。
+
+## [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] 复测本机登录、设置和副本滑步
+
+- Unity 2023.2.20f1c1 EditorSimulateMode 通过真实本机服务走完 Boot、账号登录、进服、选角和主城。MainCtrl、MainView、LocalRole 均已就绪。设置按钮能打开有 8 个页签的窗口，切换到画质页并关闭。
+- 服务器进入副本 4060 并加载 sc_dungeon_moshenta_001。按 F 触发技能 10080，KCP 已就绪。10 个 ClipLocation 均可通过 YooAsset 解析，表现行 3008001 与运行时资产一致，使用 Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Slider_F.anim。最终 Unity 控制台查询 Error 结果为 0 条。完整 Player 和线上热更新发布待验证。826c401 的完整证据见 项目修改日志/2026-11-17-登录设置与副本报错修复.md。
