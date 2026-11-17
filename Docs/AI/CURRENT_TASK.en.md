@@ -645,3 +645,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - The user asked for a similar settings interface and confirmed to defer settings behavior. The existing MainView button and `WindowType.SettingPanel` now open the nested `LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/SettingPanel.prefab` from `UIRoot.prefab`. It contains Basic, Camera, Graphics, Preferences, Hotkeys, Spectate, Status, and Combat Text, with a moonlit frame, a scrollable right rail, and serialized controls.
 - The window handles opening and closing, tab and subtab changes, scrolling, and local control feedback. No game settings, persistence, account actions, or network behavior were connected. Code and assets: `9385a28`, pushed to `codex/feature-development`. File manifest and follow-up: `项目修改日志/2026-11-17-设置界面重构.md`.
+
+## [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Archived unused Unity resources and reorganized active art
+
+- Moved 635 unused assets and their original `.meta` files to `LYF_MMO/UnusedAssets/Assets/`. Archived files retain their original relative paths. Regrouped 45 active art assets under `AnimationSources/FighterAnimations`, `Materials/UI`, `Materials/Effects`, `Textures/UI` and `Textures/Effects` within `LYF_MMO/Assets/GM_Game/`.
+- Moved `SkillUpgradeUIBuilder.cs` and its `.meta` from `LYF_MMO/Assets/GM_Game/Editor/` to `LYF_MMO/Assets/Editor/`. It now compiles in `Assembly-CSharp-Editor.dll` and is excluded from Player compilation. The file bytes and GUID matched before and after the move. The existing local script edits traveled with the file and stayed out of the commit.
+- Commit `a2cf148` was pushed to `origin/codex/feature-development`. The full report and per-file manifest are `项目修改日志/2026-11-17-Unity资源归档与目录整理.md` and `项目修改日志/2026-11-17-Unity资源归档与目录整理-迁移清单.tsv`.

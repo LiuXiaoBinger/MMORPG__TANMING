@@ -640,3 +640,9 @@
 
 - 用户提出需要类似的设置界面，并确认暂缓实现设置功能行为。现有 `MainView` 按钮和 `WindowType.SettingPanel` 现在从 `UIRoot.prefab` 打开嵌套的 `LYF_MMO/Assets/GM_Game/Prefabs/UIPrefabs/SettingPanel.prefab`。窗体包含基础、镜头、画质、偏好、热键、观战、状态和跳字八页，采用月夜风格外框、可滚动的右侧页签栏和序列化控件。
 - 窗口支持打开与关闭、页签与子页切换、滚动以及控件本地反馈。未接入游戏设置、持久化、账号操作或网络行为。代码与资源提交 `9385a28`，已推送至 `codex/feature-development`。文件清单与续作信息见 `项目修改日志/2026-11-17-设置界面重构.md`。
+
+## [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] 归档未使用的 Unity 资源并整理在用美术资源
+
+- 将 635 个未使用的资源及其原有 `.meta` 文件移至 `LYF_MMO/UnusedAssets/Assets/`，保留归档文件的原始相对路径。将 45 个在用美术资源重新归类至 `LYF_MMO/Assets/GM_Game/` 下的 `AnimationSources/FighterAnimations`、`Materials/UI`、`Materials/Effects`、`Textures/UI` 和 `Textures/Effects`。
+- 将 `SkillUpgradeUIBuilder.cs` 及其 `.meta` 从 `LYF_MMO/Assets/GM_Game/Editor/` 移到 `LYF_MMO/Assets/Editor/`。该脚本现在编译到 `Assembly-CSharp-Editor.dll`，且不参与 Player 编译。迁移前后的文件字节和 GUID 一致。已有的本地脚本改动随文件迁移，未纳入提交。
+- 提交 `a2cf148` 已推送到 `origin/codex/feature-development`。完整报告和逐文件迁移清单分别位于 `项目修改日志/2026-11-17-Unity资源归档与目录整理.md` 和 `项目修改日志/2026-11-17-Unity资源归档与目录整理-迁移清单.tsv`。

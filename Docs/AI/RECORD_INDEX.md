@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8886615fb2df3159c1fa55cb0539f1fdc70724952f410f90d5c12b89dec56dab`
+Source normalized SHA256: `d8abcafefebdd62013d5bdaefc94081f717c3766bb485000af4077c2e0ac8cd0`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -90,11 +90,12 @@ Source normalized SHA256: `8886615fb2df3159c1fa55cb0539f1fdc70724952f410f90d5c12
 | [CODE][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Per-skill stop-at-enemy switch | 626-631 |
 | [CODE][FILES][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Martial arts layout and currency icons | 632-637 |
 | [CODE][FILES][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Normal attack movement disabled and client config relocated | 638-643 |
-| [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Rebuilt the settings window from the reference video (2026-11-17) | 644-647 |
+| [CODE][FILES][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Rebuilt the settings window from the reference video (2026-11-17) | 644-648 |
+| [CODE][FILES][HANDOFF][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Archived unused Unity resources and reorganized active art | 649-653 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `bdfd77846373787c6e6ccb9059bf73f9eaa711ce39a50ea676b7641fa73fe39d`
+Source normalized SHA256: `7a3cb75a4402c2b7f6cea5dc4eeb3221852f0be3c32356816e31ec5c79789ca3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -176,7 +177,8 @@ Source normalized SHA256: `bdfd77846373787c6e6ccb9059bf73f9eaa711ce39a50ea676b76
 | [VERIFY][技能][Luban][SKILL-STOP-AT-ENEMY-20261117] Binary table and Unity motion checks with both switch values | 657-662 |
 | [VERIFY][武学][背包][货币][WEAPON-UI-JIANGHU-20261117] Render, raycast, and currency entry verification | 663-668 |
 | [VERIFY][技能][客户端配置][CLIENT-CONFIG-RELOCATION-20261117] Editor import, runtime config reads and embedded resource paths | 669-673 |
-| [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17) | 674-677 |
+| [VERIFY][界面][设置][SETTINGS-PANEL-WYCLX-20261117] Unity rendering and settings window interaction checks (2026-11-17) | 674-678 |
+| [VERIFY][资源][构建][UNITY-ASSET-ORGANIZE-20261117] Dependency comparison and Windows64 bundle verification | 679-683 |
 
 ## Docs/AI/DECISIONS.en.md
 
