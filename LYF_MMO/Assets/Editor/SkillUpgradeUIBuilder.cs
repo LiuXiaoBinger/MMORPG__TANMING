@@ -15,7 +15,7 @@ public static class SkillUpgradeUIBuilder
     private const string PrefabPath = "Assets/GM_Game/Prefabs/UIPrefabs/UIRoot.prefab";
 
     /// <summary>RO 通用 UI 图集路径，皮肤九宫格都从这张图集按 sprite 名取。</summary>
-    private const string RoAtlasPath = "Assets/artres/Resources/UI/Atlas/Common1.png";
+    private const string RoAtlasPath = "Assets/GM_Game/artres/Resources/UI/Atlas/Common1.png";
 
     private static readonly Color PanelDark = new Color(0.045f, 0.06f, 0.09f, 0.95f);
     private static readonly Color ButtonDark = new Color(0.06f, 0.09f, 0.13f, 0.96f);

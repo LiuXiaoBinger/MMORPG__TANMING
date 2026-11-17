@@ -12,7 +12,7 @@ public class MainCityMgr : MonoBehaviour
     #region 字段与常量
    /// <summary>角色模型共用的动画控制器资源地址，包含待机、四向移动及常用动作的替换位置。</summary>
    private const string RoleAnimatorControllerLocation =
-      "Assets/artres/Resources/Controller/MAnimator.controller";
+      "Assets/GM_Game/artres/Resources/Controller/MAnimator.controller";
 
    /// <summary>副本角色低于本场景出生点的最大允许距离，单位米；超过后回到出生点。</summary>
    private const float DungeonFallResetDistance = 100f;

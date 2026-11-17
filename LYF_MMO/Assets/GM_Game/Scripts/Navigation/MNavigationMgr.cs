@@ -26,9 +26,14 @@ public sealed class MNavigationMgr
     {
         _cppNav = null;
         _pathPoints.Clear();
-        // 同一公共文件部署到StreamingAssets，运行时代码不访问开发机项目根目录。
-        string filePath = Path.Combine(Application.streamingAssetsPath,
-            "NavigationData", sceneName + ".navmesh.bytes");
+        // 导航数据的绝对目录。编辑器直接使用 GM_Game 中的源文件，Player 使用构建收录的文件。
+#if UNITY_EDITOR
+        string navigationDirectory = Path.Combine(Application.dataPath, "GM_Game", "NavigationData");
+#else
+        string navigationDirectory = Path.Combine(Application.streamingAssetsPath, "NavigationData");
+#endif
+        // 与已加载场景同名的导航网格文件，内容为三角网序列化字节。
+        string filePath = Path.Combine(navigationDirectory, sceneName + ".navmesh.bytes");
         if (!File.Exists(filePath))
         {
             return;
