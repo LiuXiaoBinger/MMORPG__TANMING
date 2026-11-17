@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 public sealed class ROSceneEditorWindow : EditorWindow
 {
     /// <summary>本次迁入并配置的魔神塔简单难度编辑文件。</summary>
-    public const string DefaultConfigPath = "Assets/GM_Game/Resources/Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ.txt";
+    public const string DefaultConfigPath = "Assets/GM_Game/Config/Resources/Dungeons/Moshenta/RO_DaNaTuoSiZhiZhan_EZ.txt";
     /// <summary>当前文件路径，窗口重载后恢复。</summary>
     [SerializeField] private string currentPath = DefaultConfigPath;
     /// <summary>左侧列表与画布使用的类别：波次、机制、区域。</summary>
@@ -1536,7 +1536,7 @@ public sealed class ROSceneEditorWindow : EditorWindow
             DungeonSceneResource resource = DungeonSceneResource.Load(dungeon.SceneID);
             if (resource == null) continue;
             // 原 XML 文件地址与 Resources 相对路径的实际映射。
-            string path = "Assets/GM_Game/Resources/" + resource.flowResource + ".txt";
+            string path = "Assets/GM_Game/Config/Resources/" + resource.flowResource + ".txt";
             if (!string.Equals(Path.GetFullPath(path), Path.GetFullPath(currentPath), StringComparison.OrdinalIgnoreCase)) continue;
             sceneResource = resource;
             selectedDungeonId = dungeon.DungeonsID;

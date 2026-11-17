@@ -47,7 +47,7 @@ public partial class SkillEditorWindow
     public static SkillConfigSO FindCombinationChild(int skillId)
     {
         // 查找范围限定为项目自己的技能制作资产。
-        string[] guids = AssetDatabase.FindAssets("t:SkillConfigSO", new[] { "Assets/GM_Game/Scripts/Data/Skill/Editor/Authoring" });
+        string[] guids = AssetDatabase.FindAssets("t:SkillConfigSO", new[] { "Assets/GM_Game/Config/Skill/Editor/Authoring" });
         // 资产 GUID 的零起始索引。
         for (int index = 0; index < guids.Length; index++)
         {

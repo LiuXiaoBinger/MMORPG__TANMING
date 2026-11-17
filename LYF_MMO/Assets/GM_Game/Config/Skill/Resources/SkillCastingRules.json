@@ -5,7 +5,7 @@
             "TypeToken": 0,
             "CombineSkillList": [],
             "InteruptSkill": [],
-            "MoveCasting": true
+            "MoveCasting": false
         },
         {
             "SkillId": 10040,

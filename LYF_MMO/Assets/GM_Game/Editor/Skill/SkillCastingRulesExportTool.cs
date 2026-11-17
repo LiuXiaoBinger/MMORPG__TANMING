@@ -8,10 +8,10 @@ using UnityEngine;
 public static class SkillCastingRulesExportTool
 {
     /// <summary>正式技能权限 SO 路径，五技能共用一份规则资产。</summary>
-    public const string ConfigAssetPath = "Assets/GM_Game/Scripts/Data/Skill/SkillCastingRulesConfig.asset";
+    public const string ConfigAssetPath = "Assets/GM_Game/Config/Skill/SkillCastingRulesConfig.asset";
 
     /// <summary>客户端同步读取的 Resources JSON 路径，仍归档到用户指定的 Skill 目录。</summary>
-    private const string ClientJsonPath = "Assets/GM_Game/Scripts/Data/Skill/Resources/SkillCastingRules.json";
+    private const string ClientJsonPath = "Assets/GM_Game/Config/Skill/Resources/SkillCastingRules.json";
 
     /// <summary>从项目根目录开始的游戏服 JSON 相对路径，编译时复制到部署输出。</summary>
     private const string ServerJsonRelativePath = "LYF_Server/GameServer/Config/SkillCastingRules.json";

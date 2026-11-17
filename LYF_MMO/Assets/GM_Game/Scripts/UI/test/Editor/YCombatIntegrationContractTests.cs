@@ -235,7 +235,7 @@ public static class YCombatIntegrationContractTests
         // 当前 Unity 项目的共享仓库根，不依赖当前 shell 工作目录。
         string root = Directory.GetParent(Application.dataPath).Parent.FullName;
         // 两端正式导出文件都由同一次序列化产物生成。
-        string client = File.ReadAllText(Path.Combine(root, "LYF_MMO/Assets/GM_Game/Scripts/Data/Skill/Resources/SkillCastingRules.json"));
+        string client = File.ReadAllText(Path.Combine(root, "LYF_MMO/Assets/GM_Game/Config/Skill/Resources/SkillCastingRules.json"));
         // 服务端同步导出的文本，直接与客户端逐字符比较。
         string server = File.ReadAllText(Path.Combine(root, "LYF_Server/GameServer/Config/SkillCastingRules.json"));
         if (client != server) throw new InvalidOperationException("客户端和服务端施法规则内容不同。");

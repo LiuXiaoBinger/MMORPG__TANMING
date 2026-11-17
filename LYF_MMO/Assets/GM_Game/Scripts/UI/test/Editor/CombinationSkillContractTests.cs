@@ -24,7 +24,7 @@ public static class CombinationSkillContractTests
         Require(binding.Config.CombineSkillList[0] == 10040 && binding.Config.CombineSkillList[1] == 10060, "保存的顺序不是 E→2");
         LubanMgr.Instance.Init();
         // 两端实际发布的规则必须完全一致，避免编辑器和服务器使用不同顺序。
-        string clientRules = File.ReadAllText("Assets/GM_Game/Scripts/Data/Skill/Resources/SkillCastingRules.json");
+        string clientRules = File.ReadAllText("Assets/GM_Game/Config/Skill/Resources/SkillCastingRules.json");
         Require(clientRules == File.ReadAllText("../LYF_Server/GameServer/Config/SkillCastingRules.json"), "两端组合规则不同");
         // 编辑态不启动 YooAsset，用真实导出资产填充其加载完成边界；测试不声称覆盖资源包加载和可视效果。
         RetainEditorPresentation(3004001);
@@ -158,7 +158,7 @@ public static class CombinationSkillContractTests
         // 私有 Entry 的元数据只用于模拟 YooAsset 已完成加载。
         Type entryType = entry.GetType();
         entryType.GetField("Asset").SetValue(entry, AssetDatabase.LoadAssetAtPath<SkillRuntimePresentation>(
-            "Assets/GM_Game/Scripts/Data/Skill/Runtime/SkillRuntimePresentation_" + presentationId + ".asset"));
+            "Assets/GM_Game/Config/Skill/Runtime/SkillRuntimePresentation_" + presentationId + ".asset"));
         entryType.GetField("LoadStarted").SetValue(entry, true);
         entryType.GetField("LoadCompleted").SetValue(entry, true);
         Require(SkillRuntimePresentationCache.GetReady(presentationId) != null, "缺少原子技能表现资产");

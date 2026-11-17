@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3d5a39724943f39f5d077770e22daa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _configResourcePath: UI/Prefabs/ROCharacterLightingDemo/ThemeDungeon/theme_dungeon
+  _configResourcePath: ThemeDungeon/theme_dungeon
   _textureResourceRoot: UI/Texture/
   _fontResourcePath: UI/Font/Common SDF
   _playerLevel: 50

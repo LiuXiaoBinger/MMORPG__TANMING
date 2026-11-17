@@ -13,7 +13,7 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
 
     #region 字段
     /// <summary>配置文件在 Resources 下的路径，指向 theme_dungeon.json。</summary>
-    [SerializeField, Header("配置资源路径")] private string _configResourcePath = "UI/Prefabs/ROCharacterLightingDemo/ThemeDungeon/theme_dungeon";
+    [SerializeField, Header("配置资源路径")] private string _configResourcePath = "ThemeDungeon/theme_dungeon";
 
     /// <summary>贴图资源根目录，条目里的 scenePic / painting 都是相对它的路径。</summary>
     [SerializeField, Header("贴图资源根目录")] private string _textureResourceRoot = "UI/Texture/";

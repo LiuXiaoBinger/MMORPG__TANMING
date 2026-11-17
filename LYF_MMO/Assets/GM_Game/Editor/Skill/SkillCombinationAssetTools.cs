@@ -9,7 +9,7 @@ public static class SkillCombinationAssetTools
     /// <summary>新增示例技能的主表 ID，原 10090 为轻功，不能占用。</summary>
     public const int ExampleSkillId = 10100;
     /// <summary>组合作者资产和绑定所在目录，沿用现有技能编辑资产分类。</summary>
-    private const string AuthoringDirectory = "Assets/GM_Game/Scripts/Data/Skill/Editor/Authoring/";
+    private const string AuthoringDirectory = "Assets/GM_Game/Config/Skill/Editor/Authoring/";
 
     /// <summary>创建一次正式 E→2 作者资产，已有草稿保持用户编辑内容。</summary>
     [MenuItem("Tools/技能/YCombat/创建E接2组合技能")]

@@ -13,7 +13,7 @@ public static class SkillEditorAssetTools
 
     #region 字段
     /// <summary>用户指定的正式技能配置根目录。</summary>
-    public const string SkillDirectory = "Assets/GM_Game/Scripts/Data/Skill";
+    public const string SkillDirectory = "Assets/GM_Game/Config/Skill";
 
     /// <summary>编辑资产位于 Editor 目录，不进入运行资源收集。</summary>
     public const string AuthoringDirectory = SkillDirectory + "/Editor/Authoring";
@@ -885,7 +885,7 @@ public static class SkillEditorAssetTools
     private static void EnsureRuntimeCollector()
     {
         // YooAsset 设置是第三方序列化边界，通过实际字段结构追加一条专属收集器。
-        UnityEngine.Object setting = AssetDatabase.LoadMainAssetAtPath("Assets/AssetBundleCollectorSetting.asset");
+        UnityEngine.Object setting = AssetDatabase.LoadMainAssetAtPath("Assets/GM_Game/Config/Editor/AssetBundleCollectorSetting.asset");
         if (setting == null) throw new InvalidOperationException("YooAsset 收集设置不存在。");
         // 现有 YooAsset 收集资产的序列化访问器，仅查找或追加技能专属组，保留原包、分组与收集器。
         SerializedObject serialized = new SerializedObject(setting);

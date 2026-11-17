@@ -11,7 +11,7 @@ public sealed class SoundComponent
 
     #region 字段
     /// <summary>MJS普通动作导出资产的固定资源地址。</summary>
-    private const string LocomotionLocation = "Assets/GM_Game/Scripts/Data/Skill/Runtime/SkillRuntimeLocomotionConfig_MJS.asset";
+    private const string LocomotionLocation = "Assets/GM_Game/Config/Skill/Runtime/SkillRuntimeLocomotionConfig_MJS.asset";
 
     /// <summary>仍被模型持有的普通动作共享加载记录，最后模型释放时归还。</summary>
     private static LocomotionCacheEntry _sharedEntry;

@@ -17,7 +17,7 @@ MonoBehaviour:
     TypeToken: 0
     CombineSkillList: 
     InteruptSkill: 
-    MoveCasting: 1
+    MoveCasting: 0
   - SkillId: 10040
     TypeToken: 0
     CombineSkillList: 

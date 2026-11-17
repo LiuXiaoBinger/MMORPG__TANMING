@@ -29,7 +29,7 @@ public sealed class MAnimationMgr
     public delegate void PreloadCallback(bool isSucceed);
 
     /// <summary>YooAsset 中动画索引文本的固定 Location，文件内容使用 RO 同款二维 JSON。</summary>
-    private const string AnimInfoLocation = "Assets/GM_Game/Resources/ResInfo/animInfo.txt";
+    private const string AnimInfoLocation = "Assets/GM_Game/Config/Resources/ResInfo/animInfo.txt";
 
     /// <summary>触发空闲剪辑回收的数量阈值；并非硬上限，只在周期检查时判断。</summary>
     private const int IdleCacheCapacity = 64;

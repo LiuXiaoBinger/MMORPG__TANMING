@@ -11,7 +11,7 @@ public static class SkillRuntimePresentationCache
 {
     /// <summary>单条表现资产的地址前缀，后接十进制表现行 ID。</summary>
     private const string LocationPrefix =
-        "Assets/GM_Game/Scripts/Data/Skill/Runtime/SkillRuntimePresentation_";
+        "Assets/GM_Game/Config/Skill/Runtime/SkillRuntimePresentation_";
 
     /// <summary>所有仍由技能核心或粒子实例持有的表现资产加载记录。</summary>
     private static readonly Dictionary<int, Entry> Entries = new Dictionary<int, Entry>();
