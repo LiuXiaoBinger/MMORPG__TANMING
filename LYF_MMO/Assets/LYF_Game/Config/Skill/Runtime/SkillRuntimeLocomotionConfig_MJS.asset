@@ -75,7 +75,7 @@ MonoBehaviour:
     - SourceEventIndex: 0
       Frame: 0
       TimeSeconds: 0
-      Clip: {fileID: 8300000, guid: 11cd7b17f326e564eaba6b9d94ecb25b, type: 3}
+      Clip: {fileID: 8300000, guid: 1d56dd5b8894ad6438b5426a1c40c8cf, type: 3}
       Volume: 0.35
   JumpEnd:
     AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Jump_End.anim
@@ -84,5 +84,5 @@ MonoBehaviour:
     - SourceEventIndex: 0
       Frame: 0
       TimeSeconds: 0
-      Clip: {fileID: 8300000, guid: f17e620a8493f594ba0b7b72b854d035, type: 3}
-      Volume: 0.8
+      Clip: {fileID: 8300000, guid: 87e9f0310cc924844ade57ec80d2b4ba, type: 3}
+      Volume: 0.28
