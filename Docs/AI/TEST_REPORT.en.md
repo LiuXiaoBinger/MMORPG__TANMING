@@ -732,3 +732,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Isolated Unity 2023.2.20f1c1 Play Mode passed 108 checks with exit code 0. The actual recorded GameServer entry snapshot spawned six wave 15 and four wave 17 soldiers via the normal dungeon loader. All ten used the original prefab, independent entity identities and HP, and the shared controller. Seven slots matched across 21 mesh samples.
 - YooAsset resolved the original full path. The Showcase variant kept its preview rig and root components. Wave 18 attack and hit effects and wave 47 NPC playback passed regression. Current Unity imported the original prefab and its catalog mapping. Human multiplayer and packaged Player remain unverified. Evidence and the first probe compilation correction are in `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`.
+
+## [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery
+
+- The first isolated Play Mode ran 154 checks. Main-agent acceptance reproduced a settings lockout after applying a sidebar with only Recruitment visible, closing chat and reopening it. Evidence is in `_temp/yimeng-chat-channel-management-20261118/main-only-recruit-repro.log`.
+- Unity 2023.2.20f1c1 independently passed 164 Play Mode checks with the final prefab and scripts. Coverage includes 16:9 and 16:10 layout, independent scrolling, draft rollback and apply, restoration via Settings, the frequent-tab posting menu, existing channel routes and the legacy toggle.
+- Editor and Windows Player script compilation each passed with 394 sources. The 52 protected paths match pre-task SHA-256. Main log is `_temp/yimeng-chat-channel-management-20261118/main-acceptance-channel-management.log`. Live servers, hardware microphone and the active user scene remain unverified. Full scoped record is `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.

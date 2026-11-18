@@ -700,3 +700,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Moshenta waves 15 and 17 both point to entity 5514. It now loads `Art/Resources/Prefabs/Monster_XieHaiZhanShi.prefab` directly from `MoshentaCreatures.json`. The original GUID, Avatar and skin remain in use. The original prefab root now holds MModelPrepareData, MMonsterAnimator, seven animation overrides and both collision volumes.
 - Removed `RuntimeCreatures/Monster_5514.prefab` and its meta. The scene editor uses its existing Showcase variant with the two added gameplay components excluded. No production script changed. Original RO routes 5514 through PresentID 10168 to Prefab Monster_XieHaiZhanShi. Five asset/configuration files were pushed in 82a78c7 on `codex/feature-development`. See `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`.
+
+## [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel
+
+- In Yimeng chat, Settings > Receive Messages > Manage Channels opens a separate scroll panel on the right and keeps the Receive Messages page active. The 18 serialized rows mirror the actual sidebar and distinguish interregional world from world.
+- Eye clicks and handle drag edit a draft. Apply updates visibility and order in the current MainView session. Closing discards un-applied changes. The draft needs a visible channel with a settings entry so the player can restore hidden tabs later.
+- The eight options on the frequent-tab posting menu and existing world, current scene and team routes remain available. Implementation is in `YimengChat.prefab` and `YimengChatChannelManagement.cs`. Commit `ec6b032` was pushed to `codex/feature-development`. The scoped file list and open verification are in `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.

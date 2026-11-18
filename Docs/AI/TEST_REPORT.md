@@ -723,3 +723,9 @@
 
 - 在隔离的 Unity 2023.2.20f1c1 Play Mode 中通过 108 项检查，退出码为 0。以实录 GameServer 入口快照经副本常规加载流程生成第 15 波 6 名、第 17 波 4 名士兵。10 名士兵均使用原预制体和共享控制器，各自拥有独立实体标识和 HP。21 次网格采样的七个动画槽位均匹配。
 - YooAsset 解析到原预制体完整路径，Showcase 变体保留预览 Rig 和根节点组件。第 18 波攻击和受击特效、第 47 波 NPC 播放通过回归检查。当前 Unity 已导入原预制体及目录映射。真人联机和打包 Player 尚未验证。证据和首轮探针编译修正在 `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`。
+
+## [VERIFY][聊天][YIMENG-CHAT-20261118] 频道管理布局、应用与设置恢复验收
+
+- 首轮隔离 Play Mode 执行 154 项检查。主 Agent 验收复现了设置入口丢失。应用仅保留招募的左栏后，收起再打开聊天，无法进入设置。证据见 `_temp/yimeng-chat-channel-management-20261118/main-only-recruit-repro.log`。
+- Unity 2023.2.20f1c1 对最终预制体和脚本独立复验，通过 164 项 Play Mode 检查，覆盖 16:9 和 16:10 布局、左右独立滚动、草稿撤销和应用、通过设置恢复、常用页发言菜单、既有频道路由及新旧聊天切换。
+- Editor 与 Windows Player 各编译 394 个源文件，均通过。52 个保护路径的 SHA-256 与任务前一致。主验收日志见 `_temp/yimeng-chat-channel-management-20261118/main-acceptance-channel-management.log`。真实服务器、物理麦克风和用户当前场景仍待验证。完整记录见 `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`。

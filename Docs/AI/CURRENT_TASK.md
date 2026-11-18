@@ -695,3 +695,9 @@
 
 - 魔神塔第 15 波和第 17 波均使用实体 5514。`MoshentaCreatures.json` 现直接加载 `Art/Resources/Prefabs/Monster_XieHaiZhanShi.prefab`，沿用原 GUID、Avatar 和蒙皮。原预制体根节点添加 `MModelPrepareData`、`MMonsterAnimator`、七个动画覆盖槽位和两个碰撞体。
 - 删除 `RuntimeCreatures/Monster_5514.prefab` 及其 `.meta` 文件。场景编辑器沿用既有 Showcase 变体，并在该变体中排除上述两个新增业务组件。原 RO 由 5514 经 `PresentID 10168` 指向 `Prefab Monster_XieHaiZhanShi`。本次提交仅涉及 5 个资源和配置文件，已随 `82a78c7` 推送至 `codex/feature-development`。详见 `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`。
+
+## [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] 恢复频道管理面板
+
+- 江湖聊天的「设置 → 接收消息 → 管理频道」会在右侧打开独立滚动面板，左侧仍停在「接收消息」。18 个序列化行对应实际左栏条目，区分互联世界和普通世界。
+- 点击眼睛和拖动手柄编辑草稿。点击「应用」后更新当前 MainView 会话的显隐和顺序，关闭面板会放弃未应用的变更。草稿必须保留一个带设置入口的可见频道，以便之后恢复隐藏页签。
+- 常用页的八项发言菜单，以及既有世界、当前场景和队伍路由均可使用。实现见 `YimengChat.prefab` 和 `YimengChatChannelManagement.cs`。提交 `ec6b032` 已推送到 `codex/feature-development`。本次文件清单与待验证边界见 `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`。
