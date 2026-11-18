@@ -1,39 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &439724126694844630
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6586305307960492234}
-  - component: {fileID: 8123023472555935254}
-  m_Layer: 0
-  m_Name: OriginalRig
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6586305307960492234
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439724126694844630}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7859729277777174112}
-  - {fileID: 3090410990794657624}
-  m_Father: {fileID: 1099540736550352309}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8123023472555935254
 Animator:
   serializedVersion: 7
@@ -41,7 +7,7 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439724126694844630}
+  m_GameObject: {fileID: 2305707814749678500}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 97d742c02038949469dc6025d92513ef, type: 3}
   m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
@@ -56,37 +22,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &1540886390487482470
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3572218432904474798}
-  m_Layer: 0
-  m_Name: ShadowPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3572218432904474798
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1540886390487482470}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.01315525, y: 0.00000023841855, z: -0.0000011324881, w: -0.9999135}
-  m_LocalPosition: {x: -0.0011745349, y: 0.7507182, z: 0.000000035041012}
-  m_LocalScale: {x: 1.0000004, y: 1.0000006, z: 1.0000004}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1099540736550352309}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2305707814749678500
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,6 +34,7 @@ GameObject:
   - component: {fileID: 690099876349678259}
   - component: {fileID: 8705772484987487553}
   - component: {fileID: 4312768682227883270}
+  - component: {fileID: 8123023472555935254}
   m_Layer: 0
   m_Name: Monster_5457
   m_TagString: Untagged
@@ -119,9 +55,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7163359800391601018}
-  - {fileID: 3572218432904474798}
-  - {fileID: 6586305307960492234}
+  - {fileID: 7859729277777174112}
+  - {fileID: 3090410990794657624}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &690099876349678259
@@ -162,7 +97,7 @@ MonoBehaviour:
   ProjectSize: {x: 3.5604186, y: 1.8912586, z: 1.3919446}
   ProjectCenter: {x: -0.6930442, y: 0.9320845, z: -0.31898606}
   BoundRange: {x: -0.013544798, y: 1.8777138}
-  ShadowPoint: {fileID: 3572218432904474798}
+  ShadowPoint: {fileID: 3090410990794657624}
   motions:
   - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
     Clip: {fileID: 7400000, guid: f6ba4c8daf608bb459eea2fd7c27dec3, type: 2}
@@ -229,7 +164,7 @@ Transform:
   m_LocalScale: {x: 0.9999999, y: 1.0000001, z: 0.99999994}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6586305307960492234}
+  m_Father: {fileID: 1099540736550352309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7373305340537431348
 GameObject:
@@ -243,7 +178,7 @@ GameObject:
   - component: {fileID: 5762624342544885824}
   m_Layer: 0
   m_Name: Monster_WangLingWuShi
-  m_TagString: Untagged
+  m_TagString: OutlineRenderer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -261,7 +196,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6586305307960492234}
+  m_Father: {fileID: 1099540736550352309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &5762624342544885824
 SkinnedMeshRenderer:
@@ -318,34 +253,3 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.041785657, y: -0.30307275, z: 0.71232766}
     m_Extent: {x: 1.0877738, y: 0.7118899, z: 1.7994907}
   m_DirtyAABB: 0
---- !u!1 &7408406467020387548
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7163359800391601018}
-  m_Layer: 0
-  m_Name: Monster_WangLingWuShi
-  m_TagString: OutlineRenderer
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7163359800391601018
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7408406467020387548}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.5000011, y: 0.50000036, z: 0.4999997, w: -0.499999}
-  m_LocalPosition: {x: 0, y: 0.7491931, z: 0}
-  m_LocalScale: {x: 1.0000004, y: 1.0000002, z: 1.0000002}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1099540736550352309}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

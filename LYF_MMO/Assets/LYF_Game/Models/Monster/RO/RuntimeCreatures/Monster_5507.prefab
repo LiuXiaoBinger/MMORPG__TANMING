@@ -29,68 +29,6 @@ Transform:
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2860058034318293233}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4128696275337091159
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6199083499367136117}
-  m_Layer: 0
-  m_Name: ShadowPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6199083499367136117
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4128696275337091159}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.50000024, y: 0.49999893, z: 0.5000004, w: 0.5000004}
-  m_LocalPosition: {x: -0.000000038146997, y: 0.59647304, z: -0.1137178}
-  m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8441344749574653215}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4913150452386162602
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7408871916301019894}
-  m_Layer: 0
-  m_Name: Monster_MoShenYingZi02
-  m_TagString: OutlineRenderer
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7408871916301019894
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4913150452386162602}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.5000011, y: 0.50000036, z: 0.49999964, w: -0.49999893}
-  m_LocalPosition: {x: 0, y: 0.59647304, z: -0.11371781}
-  m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
   m_Father: {fileID: 8441344749574653215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4915674526128925998
@@ -105,6 +43,7 @@ GameObject:
   - component: {fileID: 2491305688610131122}
   - component: {fileID: 6668473456385290932}
   - component: {fileID: 4394025204531960917}
+  - component: {fileID: 633597893235257291}
   m_Layer: 0
   m_Name: Monster_5507
   m_TagString: Untagged
@@ -125,9 +64,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7408871916301019894}
-  - {fileID: 6199083499367136117}
-  - {fileID: 2860058034318293233}
+  - {fileID: 7962244953352781546}
+  - {fileID: 1345178732765699997}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2491305688610131122
@@ -168,7 +106,7 @@ MonoBehaviour:
   ProjectSize: {x: 2.183495, y: 2.1828656, z: 0.8419333}
   ProjectCenter: {x: 0.00000071525574, y: 1.0880468, z: 0.07145038}
   BoundRange: {x: -0.0033860207, y: 2.1794796}
-  ShadowPoint: {fileID: 6199083499367136117}
+  ShadowPoint: {fileID: 1345178732765699997}
   motions:
   - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
     Clip: {fileID: 7400000, guid: 4f5644805bf25be4fb50a2084c324be8, type: 2}
@@ -206,40 +144,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.183495, y: 2.1828656, z: 0.8419333}
   m_Center: {x: 0.00000071525574, y: 1.0880468, z: 0.07145038}
---- !u!1 &7011436141674052827
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2860058034318293233}
-  - component: {fileID: 633597893235257291}
-  m_Layer: 0
-  m_Name: OriginalRig
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2860058034318293233
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7011436141674052827}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7962244953352781546}
-  - {fileID: 1345178732765699997}
-  m_Father: {fileID: 8441344749574653215}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &633597893235257291
 Animator:
   serializedVersion: 7
@@ -247,7 +151,7 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7011436141674052827}
+  m_GameObject: {fileID: 4915674526128925998}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9b821ac16dcc7d145ad73d24e2a1cb9d, type: 3}
   m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
@@ -274,7 +178,7 @@ GameObject:
   - component: {fileID: 2432862216231375247}
   m_Layer: 0
   m_Name: Monster_MoShenYingZi02
-  m_TagString: Untagged
+  m_TagString: OutlineRenderer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -292,7 +196,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2860058034318293233}
+  m_Father: {fileID: 8441344749574653215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &2432862216231375247
 SkinnedMeshRenderer:

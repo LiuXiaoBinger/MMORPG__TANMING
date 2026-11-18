@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7968123662520341167}
   - component: {fileID: 1647808387949655151}
   - component: {fileID: 6363233210259432168}
+  - component: {fileID: 4326764503799123296}
   m_Layer: 0
   m_Name: Monster_5513
   m_TagString: Untagged
@@ -32,9 +33,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8311857112477618716}
-  - {fileID: 4188294670967693885}
-  - {fileID: 5528387662275372521}
+  - {fileID: 7943276812858145991}
+  - {fileID: 3149032784158339438}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7968123662520341167
@@ -75,7 +75,7 @@ MonoBehaviour:
   ProjectSize: {x: 2.6502917, y: 2.1801364, z: 0.6576578}
   ProjectCenter: {x: 0.6476958, y: 1.0901045, z: -0.14345601}
   BoundRange: {x: 0.000036239624, y: 2.1801727}
-  ShadowPoint: {fileID: 4188294670967693885}
+  ShadowPoint: {fileID: 3149032784158339438}
   motions:
   - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
     Clip: {fileID: 7400000, guid: 46e0b5238b118f14a942aac9577d9a0f, type: 2}
@@ -113,40 +113,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.6502917, y: 2.1801364, z: 0.6576578}
   m_Center: {x: 0.6476958, y: 1.0901045, z: -0.14345601}
---- !u!1 &5536848643721394389
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5528387662275372521}
-  - component: {fileID: 4326764503799123296}
-  m_Layer: 0
-  m_Name: OriginalRig
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5528387662275372521
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5536848643721394389}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7943276812858145991}
-  - {fileID: 3149032784158339438}
-  m_Father: {fileID: 1927626129679550181}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &4326764503799123296
 Animator:
   serializedVersion: 7
@@ -154,7 +120,7 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5536848643721394389}
+  m_GameObject: {fileID: 2189300793514982793}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b6fe2d921c6681f46b8bc38d4213c504, type: 3}
   m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
@@ -198,7 +164,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999998}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5528387662275372521}
+  m_Father: {fileID: 1927626129679550181}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5890510196704198691
 GameObject:
@@ -212,7 +178,7 @@ GameObject:
   - component: {fileID: 2651379091184161886}
   m_Layer: 0
   m_Name: Monster_XieHaiGongJianShou
-  m_TagString: Untagged
+  m_TagString: OutlineRenderer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -230,7 +196,7 @@ Transform:
   m_LocalScale: {x: 0.99999976, y: 1.0000015, z: 1.000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5528387662275372521}
+  m_Father: {fileID: 1927626129679550181}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &2651379091184161886
 SkinnedMeshRenderer:
@@ -287,65 +253,3 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.6732888, y: 0.920105, z: -0.2317075}
     m_Extent: {x: 1.2983885, y: 1.623383, z: 0.69963264}
   m_DirtyAABB: 0
---- !u!1 &6948292393058310617
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8311857112477618716}
-  m_Layer: 0
-  m_Name: Monster_XieHaiGongJianShou
-  m_TagString: OutlineRenderer
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8311857112477618716
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6948292393058310617}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.82439554, y: 0.53482044, z: -0.15557821, w: 0.100670576}
-  m_LocalPosition: {x: -0.53880894, y: 0.69813496, z: -0.07771926}
-  m_LocalScale: {x: 0.9999996, y: 1.0000013, z: 1.000001}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1927626129679550181}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &9203055366303652070
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4188294670967693885}
-  m_Layer: 0
-  m_Name: ShadowPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4188294670967693885
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9203055366303652070}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.5000014, y: 0.50000006, z: 0.499999, w: -0.49999964}
-  m_LocalPosition: {x: -0.00000007629382, y: 0.733004, z: -0.14180598}
-  m_LocalScale: {x: 1, y: 0.9999997, z: 0.9999998}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1927626129679550181}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

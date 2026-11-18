@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6901780230664120579}
   m_Layer: 0
   m_Name: Monster_MoFaShi
-  m_TagString: Untagged
+  m_TagString: OutlineRenderer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,8 +29,9 @@ Transform:
   m_LocalPosition: {x: 0.0000000030624316, y: 0.66880715, z: 0.046182368}
   m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8190190169258323401}
+  m_Children:
+  - {fileID: 4702884362793814333}
+  m_Father: {fileID: 4655802796712190802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &6901780230664120579
 SkinnedMeshRenderer:
@@ -87,40 +88,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.22085136, y: 0.018743038, z: 0.25990868}
     m_Extent: {x: 0.8317124, y: 0.34287593, z: 0.7125975}
   m_DirtyAABB: 0
---- !u!1 &1857757357959485199
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8190190169258323401}
-  - component: {fileID: 1746062248418778426}
-  m_Layer: 0
-  m_Name: OriginalRig
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8190190169258323401
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1857757357959485199}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6817661544824841385}
-  - {fileID: 7871041859922572811}
-  m_Father: {fileID: 4655802796712190802}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1746062248418778426
 Animator:
   serializedVersion: 7
@@ -128,7 +95,7 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1857757357959485199}
+  m_GameObject: {fileID: 2860987077628041684}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2a0903ca9d30fd34095d9937fd8eb02c, type: 3}
   m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
@@ -155,6 +122,7 @@ GameObject:
   - component: {fileID: 7483183200497725551}
   - component: {fileID: 229758618485092728}
   - component: {fileID: 3299485474347448400}
+  - component: {fileID: 1746062248418778426}
   m_Layer: 0
   m_Name: Monster_5510
   m_TagString: Untagged
@@ -175,9 +143,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6673759772838149184}
-  - {fileID: 1279320645930048889}
-  - {fileID: 8190190169258323401}
+  - {fileID: 6817661544824841385}
+  - {fileID: 7871041859922572811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7483183200497725551
@@ -218,7 +185,7 @@ MonoBehaviour:
   ProjectSize: {x: 1.251709, y: 1.5588324, z: 0.6223429}
   ProjectCenter: {x: -0.2909643, y: 0.9175022, z: 0.04715982}
   BoundRange: {x: 0.13808602, y: 1.6969185}
-  ShadowPoint: {fileID: 1279320645930048889}
+  ShadowPoint: {fileID: 7871041859922572811}
   motions:
   - Slot: {fileID: 7400000, guid: ae6feea6e6524224c84d5b042bc8ac26, type: 2}
     Clip: {fileID: 7400000, guid: 98fa04a6b75854d44883ed07644dabf8, type: 2}
@@ -289,7 +256,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6673759772838149184}
+  m_Father: {fileID: 6817661544824841385}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &2629539504245855812
 ParticleSystem:
@@ -5103,37 +5070,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &4649676687710177901
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1279320645930048889}
-  m_Layer: 0
-  m_Name: ShadowPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1279320645930048889
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4649676687710177901}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.50000036, y: 0.499999, z: 0.5000004, w: 0.50000036}
-  m_LocalPosition: {x: 0.000000022136025, y: 0.66880715, z: 0.046182357}
-  m_LocalScale: {x: 1.0000006, y: 1.0000006, z: 1.0000008}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4655802796712190802}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4701258302041376870
 GameObject:
   m_ObjectHideFlags: 0
@@ -5163,37 +5099,5 @@ Transform:
   m_LocalScale: {x: 0.9999998, y: 0.9999998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8190190169258323401}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6403422040182664664
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6673759772838149184}
-  m_Layer: 0
-  m_Name: Monster_MoFaShi
-  m_TagString: OutlineRenderer
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6673759772838149184
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6403422040182664664}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.5000011, y: 0.50000036, z: 0.4999997, w: -0.499999}
-  m_LocalPosition: {x: 0.0000000030624316, y: 0.66880715, z: 0.046182368}
-  m_LocalScale: {x: 1.0000004, y: 1.0000002, z: 1.0000002}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4702884362793814333}
   m_Father: {fileID: 4655802796712190802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
