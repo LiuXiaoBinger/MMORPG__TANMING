@@ -20,12 +20,18 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     [SerializeField] private TMP_Text _moreCaption;
     /// <summary>在同一窗口恢复完整聊天的按钮。</summary>
     [SerializeField] private Button _expand;
-    /// <summary>展开完整聊天并打开已有的设置页。</summary>
+    /// <summary>开关速览旁的频道筛选面板。</summary>
     [SerializeField] private Button _settings;
+    /// <summary>速览右侧的频道筛选面板，离开速览时收起。</summary>
+    [SerializeField] private GameObject _filterPanel;
+    /// <summary>收起筛选面板并保留当前选择的按钮。</summary>
+    [SerializeField] private Button _closeFilter;
+    /// <summary>按 ChatChannel 的连续枚举值排列的频道开关，勾选值随本窗口实例保留。</summary>
+    [SerializeField] private Toggle[] _channelFilters;
     /// <summary>交给主界面路由切回旧版聊天。</summary>
     [SerializeField] private Button _legacy;
-    /// <summary>共用聊天历史为空时显示的提示。</summary>
-    [SerializeField] private GameObject _empty;
+    /// <summary>无频道选择或没有匹配记录时显示的提示。</summary>
+    [SerializeField] private TMP_Text _empty;
     /// <summary>从上往下排列的频道标签，与正文槽位同序。</summary>
     [SerializeField] private TMP_Text[] _channels;
     /// <summary>从上往下排列的单行消息摘要，使用省略号处理过长内容。</summary>
@@ -36,14 +42,19 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     /// <summary>绑定由主聊天窗口持有的数据和切换动作。</summary>
     /// <param name="toggleHeight">使用最新正式历史调整本面板的高度。</param>
     /// <param name="expand">恢复当前频道的完整聊天。</param>
-    /// <param name="openSettings">展开后打开现有接收消息设置。</param>
+    /// <param name="refresh">频道选择改变后按最新的正式历史重绘速览。</param>
     /// <param name="showLegacy">沿主界面窗口路由关闭新版。</param>
-    internal void Init(Action toggleHeight, Action expand, Action openSettings, Action showLegacy)
+    internal void Init(Action toggleHeight, Action expand, Action refresh, Action showLegacy)
     {
         _more.onClick.AddListener(() => toggleHeight());
         _expand.onClick.AddListener(() => expand());
-        _settings.onClick.AddListener(() => openSettings());
+        _settings.onClick.AddListener(ToggleFilter);
+        _closeFilter.onClick.AddListener(CloseFilter);
         _legacy.onClick.AddListener(() => showLegacy());
+
+        // 按 ChatChannel 编号绑定各开关，回调直接读取控件已保存的新勾选值。
+        for (int i = 0; i < _channelFilters.Length; i++)
+            _channelFilters[i].onValueChanged.AddListener(_ => refresh());
     }
 
     /// <summary>以短面板打开，立即显示已收到的最近消息。</summary>
@@ -70,14 +81,21 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     /// <param name="emojiPicker">与完整聊天共用的表情格集合。</param>
     internal void Refresh(IReadOnlyList<ChatMessage> history, YimengChatEmojiPicker emojiPicker)
     {
-        // 短版只取最后三条，加高时填满预制体提供的行槽。
+        // 短版最多取三条匹配记录，加高时使用预制体提供的全部行槽。
         int capacity = CompactRows;
         if (_tall) capacity = _summaries.Length;
-        // 历史少于面板容量时仅显示已经收到的消息。
-        int count = Mathf.Min(history.Count, capacity);
-        _empty.SetActive(count == 0);
-        // 上排显示这批最新消息中最早收到的记录。
-        int start = history.Count - count;
+
+        // 从最新记录回溯，找到本次要显示的最早匹配位置。
+        int start = history.Count;
+        // 已找到的匹配条数，用于决定有多少行可见。
+        int count = 0;
+        while (start > 0 && count < capacity)
+        {
+            start--;
+            if (_channelFilters[(int)history[start].Channel].isOn) count++;
+        }
+
+        // 从最早匹配位置向后填充行槽，最新的可见消息排在底部。
         for (int i = 0; i < _summaries.Length; i++)
         {
             // 未分配记录的槽位释放视觉空间。
@@ -85,12 +103,45 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
             _channels[i].gameObject.SetActive(visible);
             _summaries[i].gameObject.SetActive(visible);
             if (!visible) continue;
+
+            while (!_channelFilters[(int)history[start].Channel].isOn) start++;
             // 读取同一份只读记录里的原消息，速览只保留显示文字。
-            ChatMessage message = history[start + i];
+            ChatMessage message = history[start++];
             _channels[i].text = YimengChatMessageRow.ChannelCaption(message.Channel);
             _channels[i].color = YimengChatMessageRow.ChannelColor(message.Channel);
             _summaries[i].text = FormatSummary(message, emojiPicker);
         }
+
+        _empty.gameObject.SetActive(count == 0);
+        if (count != 0) return;
+
+        _empty.text = "未选择频道";
+        // 用首个勾选项区分全部关闭与已选频道还没有消息。
+        for (int i = 0; i < _channelFilters.Length; i++)
+        {
+            if (!_channelFilters[i].isOn) continue;
+            _empty.text = "所选频道暂无消息";
+            if (history.Count == 0) _empty.text = "暂无消息";
+            break;
+        }
+    }
+
+    /// <summary>离开速览后收起面板，下次进入时继续使用现有频道选择。</summary>
+    private void OnDisable()
+    {
+        CloseFilter();
+    }
+
+    /// <summary>在速览旁开关频道筛选，并保持速览当前高度。</summary>
+    private void ToggleFilter()
+    {
+        _filterPanel.SetActive(!_filterPanel.activeSelf);
+    }
+
+    /// <summary>关闭筛选面板，保留本窗口内各频道的勾选状态。</summary>
+    private void CloseFilter()
+    {
+        _filterPanel.SetActive(false);
     }
 
     /// <summary>保持面板底边固定，向上增加能容纳其余消息的高度。</summary>

@@ -125,7 +125,8 @@ public sealed class YimengChatWindow : WindowBase
         _launcher.onClick.AddListener(RequestToggle);
         _collapse.onClick.AddListener(RequestToggle);
         _showCompactFeed.onClick.AddListener(ShowCompactFeed);
-        _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat, OpenSettingsFromFeed, RequestToggle);
+        _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
+            () => _compactFeed.Refresh(_history, _palette), RequestToggle);
         _send.onClick.AddListener(SubmitText);
         _palette.Init(SendEmoji);
         _input.onSubmit.AddListener(OnInputSubmit);
@@ -302,13 +303,6 @@ public sealed class YimengChatWindow : WindowBase
         _compactFeed.gameObject.SetActive(false);
         _fullChat.SetActive(true);
         RebuildRows();
-    }
-
-    /// <summary>从速览展开完整界面并打开现有接收消息设置。</summary>
-    private void OpenSettingsFromFeed()
-    {
-        RestoreFullChat();
-        ToggleSettings();
     }
 
     /// <summary>切换阅读频道及其配套工具栏和输入状态。</summary>
