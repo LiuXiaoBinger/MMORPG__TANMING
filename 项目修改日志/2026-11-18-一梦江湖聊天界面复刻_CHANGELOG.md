@@ -90,3 +90,23 @@ Unity Play Mode 中通过 `Tools/Chat/新版聊天测试` →「模拟他人消�
 - 验收证据为 _temp/yimeng-chat-compact-filter-20261118/main-acceptance-filter.log，同目录 evidence/channel-filter-16x9.png 保存面板截图。隔离验证使用本地请求捕获和注入广播，真实服务器和用户当前主城场景待实测。
 - 功能提交 c4e296323b8c3802d936c6a81fffbb562ddfc489 已推送至 origin/codex/feature-development，父提交 4693e5f，范围为上表 3 个路径。推送回执为 _temp/yimeng-chat-compact-filter-20261118/filter-git-receipt.txt。
 - token-monitor 完成 collect 与 context。功能交付时主 Agent 记录 4,189,433 tokens，开发子 Agent 记录 5,649,355 tokens，均含缓存输入。汇总和统计窗口为 _temp/yimeng-chat-compact-filter-20261118/turn-usage.json，累计上下文压缩证据见同目录 context-compactions.json。
+
+## 后续补充 聊天控件换肤与弹窗点外收起（2026-11-18）
+
+- 以项目战斗 HUD 与装备详情为参考，统一完整聊天、侧栏、底栏输入、设置、管理、表情和速览操作区。速览四个操作按钮使用项目已有的 HUD 空槽框，面板采用蓝黑与石板灰底色、冷蓝细边和浅色文本。「应用」使用暖色强调。速览消息区宽度为 0.44，底色不透明度为 18%。
+- 以真实根画布和 UI 相机判定鼠标左键或首个触控的按下位置。设置与右侧频道管理按一组处理，完整或速览表情、发言目标菜单、速览筛选各沿用自己的开关。点外收起弹窗并继续派发原点击。频道管理关闭时放弃未应用的修改。
+
+| 操作 | 文件 | 内容 |
+|---|---|---|
+| 修改 | LYF_MMO/Assets/LYF_Game/Prefabs/Resources/UI/Prefabs/YimengChat.prefab | 统一完整聊天、速览与弹窗皮肤，绑定点外检测矩形。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatWindow.cs | 在弹窗打开时检测鼠标和触控，按活动面板与开关位置收起。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatCompactFeed.cs | 提供速览筛选和两个弹窗开关的矩形范围。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatChannelTab.cs | 统一频道栏选中和普通文字色。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatPages.cs | 统一设置分页的选中和普通文字色。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatMessageRow.cs | 统一本人和他人消息气泡底色。 |
+
+- Codex 原生开发子 Agent /root/chat_compact_picker_dev，实际模型 gpt-6.2-sol，会话 01a1edce-3944-70a3-bbfd-9c600db7574e，开发第 1 轮。批处理夹具曾因焦点配置漏派按钮事件，调整隔离输入配置后，以虚拟鼠标和触控经真实 InputSystemUIInputModule 完成点击复验。
+- 主 Agent 在 Unity 2023.2.20f1c1 隔离 Play Mode 独立通过 155 项。覆盖 16:9、16:10、点外传递、开关重复点击、跨工具切换、管理面板拖动与应用、未应用改动回退。Editor 和 Windows Player 各编译 399 个源文件，61 个保护路径与启动快照的 SHA-256 一致。
+- 复验证据位于 _temp/yimeng-chat-popup-style-20261118/main-acceptance-popup-style.log，样式截图位于同目录 evidence/。实际主城当前会话和真实联机待现场验证。
+- 功能提交 b4c44722c1c5ab37bc6e382a31ffe9bc6009f99f 已推送到 origin/codex/feature-development，父提交 3c53e0f，范围为上表六个文件。推送回执位于 _temp/yimeng-chat-popup-style-20261118/git-receipt.txt。
+- token-monitor 已运行 collect 与 context。用量窗口和原生结果汇总见 _temp/yimeng-chat-popup-style-20261118/turn-usage.json。

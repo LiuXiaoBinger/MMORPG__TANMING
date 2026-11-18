@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `28529f0cfa3d42454c6f665d0610f1dd50b545dcadcb4bacc661231090cc903e`
+Source normalized SHA256: `dfc49d5ce55a12e4c830a266b2e03dfd240e6655f2a23f7d86ea44d5aeed81d4`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -101,15 +101,15 @@ Source normalized SHA256: `28529f0cfa3d42454c6f665d0610f1dd50b545dcadcb4bacc6612
 | [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-693 |
 | [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-698 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
-| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-715 |
-| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 716-720 |
-| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-728 |
-| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 729-735 |
-| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 736-742 |
+| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-717 |
+| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 718-722 |
+| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 723-730 |
+| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 731-737 |
+| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 738-744 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7e75e1feaddb722bde985e2c85e9cf9e55323b654f8a09de4584b1e22b6f3f7a`
+Source normalized SHA256: `7dfed80800f19ad36c98dda6dc61e31028094d2ad4939c31892ef46faeb16ae7`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -202,11 +202,11 @@ Source normalized SHA256: `7e75e1feaddb722bde985e2c85e9cf9e55323b654f8a09de4584b
 | [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-724 |
 | [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-730 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
-| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-747 |
-| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 748-752 |
-| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-759 |
-| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 760-766 |
-| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 767-774 |
+| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-749 |
+| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 750-754 |
+| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 755-761 |
+| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 762-768 |
+| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 769-776 |
 
 ## Docs/AI/DECISIONS.en.md
 
