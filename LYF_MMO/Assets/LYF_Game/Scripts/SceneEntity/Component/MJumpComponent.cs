@@ -23,6 +23,12 @@ public sealed class MJumpComponent : EntityComponentBase
     /// <summary>追加起跳与前一姿势的固定过渡时长，单位为秒。</summary>
     private const float AdditionalJumpBlendSeconds = 0.06f;
 
+    /// <summary>二段空翻在 30 帧/秒剪辑的第 20 帧收回直立姿势，按 45 帧时长换算播放进度。</summary>
+    private const float SecondJumpFlipEnd = 20f / 45f;
+
+    /// <summary>二段空翻中收到的三段输入；重复按键共用一次请求，离开空中阶段时清除。</summary>
+    private bool _thirdJumpBuffered;
+
     /// <summary>本组件使用独立类型，避免覆盖待机表现组件的唯一索引。</summary>
     public override EntityComponentType ComponentType
     {
@@ -116,6 +122,13 @@ public sealed class MJumpComponent : EntityComponentBase
 
         TryPlayPendingState();
 
+        if (_thirdJumpBuffered && !IsSecondJumpFlipPlaying())
+        {
+            // 空翻结束后走同一输入入口，让垂直推力和三段动画在同一次起跳事件生效。
+            _thirdJumpBuffered = false;
+            Entity.MoveComp.TryJump();
+        }
+
         // 当前帧间隔换算为秒，用于推进起跳和落地动画阶段。
         float deltaSeconds = deltaMilliseconds * 0.001f;
         if (deltaSeconds < 0f)
@@ -163,10 +176,7 @@ public sealed class MJumpComponent : EntityComponentBase
     public override void Shutdown()
     {
         _isPrepared = false;
-        _isJumping = false;
-        _isEnding = false;
-        _phaseElapsedSeconds = 0f;
-        _pendingStateName = string.Empty;
+        ClearJumpPresentation();
         _hasLoggedPrepareFailure = false;
         base.Shutdown();
     }
@@ -198,6 +208,7 @@ public sealed class MJumpComponent : EntityComponentBase
         }
         _isJumping = true;
         _isEnding = false;
+        _thirdJumpBuffered = false;
         _phaseElapsedSeconds = 0f;
         _pendingStateName = GetJumpStartState();
         TryPlayPendingState();
@@ -208,6 +219,7 @@ public sealed class MJumpComponent : EntityComponentBase
     private void OnJumpEnded(IEventArg eventArg)
     {
         _isJumping = false;
+        _thirdJumpBuffered = false;
 
         if (Entity != null && Entity.CurrentState == StateDefine.kStateSkill)
         {
@@ -391,6 +403,43 @@ public sealed class MJumpComponent : EntityComponentBase
         return MAnimator.STATE_JUMP_START;
     }
 
+    /// <summary>二段空翻尚未完成时记住三段按键，由 Update 在收势点提交。</summary>
+    /// <returns>本次按键已由三段缓存接收时返回 true。</returns>
+    public bool TryBufferThirdJump()
+    {
+        if (!_isPrepared || !_isJumping || !IsSecondJumpFlipPlaying())
+        {
+            return false;
+        }
+        _thirdJumpBuffered = true;
+        return true;
+    }
+
+    /// <summary>按角色 Animator 的实际进度判断二段空翻是否仍在翻转。</summary>
+    /// <returns>二段等待开始、正在过渡或尚未到达收势点时返回 true。</returns>
+    private bool IsSecondJumpFlipPlaying()
+    {
+        // 当前角色的动画包装器以及其底层播放实例。
+        MAnimator animator = Entity.Model.Ator;
+        if (animator == null || animator.UnityAnimator == null)
+        {
+            return false;
+        }
+        if (_pendingStateName == SecondJumpState)
+        {
+            return true;
+        }
+        if (animator.CurrentState != SecondJumpState)
+        {
+            return false;
+        }
+
+        // 过渡刚开始时当前原生状态还是一段，进入二段后再按归一化进度判断。
+        AnimatorStateInfo state = animator.UnityAnimator.GetCurrentAnimatorStateInfo(0);
+        return state.shortNameHash != Animator.StringToHash(SecondJumpState) ||
+            state.normalizedTime < SecondJumpFlipEnd;
+    }
+
     /// <summary>判断当前起跳片段是否已结束，可以进入空中循环。</summary>
     /// <returns>基础起跳达到剪辑时长，或当前专属状态实际播放到末尾时返回 true。</returns>
     private bool HasTakeoffFinished()
@@ -440,6 +489,7 @@ public sealed class MJumpComponent : EntityComponentBase
     {
         _isJumping = false;
         _isEnding = false;
+        _thirdJumpBuffered = false;
         _phaseElapsedSeconds = 0f;
         _pendingStateName = string.Empty;
     }

@@ -403,7 +403,7 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>
     /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；成功起跳可以取消当前技能。
     /// </summary>
-    /// <returns>成功开始下一段跳跃时返回 true；未接地或已达到三段时返回 false。</returns>
+    /// <returns>按键立即起跳或进入三段缓存时返回 true；未接地或达到三段后返回 false。</returns>
     public bool TryJump()
     {
         // 宿主或模型缺失时不允许起跳；保持原 || 短路顺序逐组早退。
@@ -427,6 +427,15 @@ public sealed class MMoveComponent : EntityComponentBase
             !Entity.Model.IsGrounded)
         {
             return false;
+        }
+
+        // 跳跃表现组件知道二段空翻的实际进度，提前按下的三段请求由它暂存。
+        MJumpComponent jumpPresentation;
+        if (nextJumpCount == 3 &&
+            Entity.Components.TryGet(EntityComponentType.Jump, out jumpPresentation) &&
+            jumpPresentation.TryBufferThirdJump())
+        {
+            return true;
         }
 
         return BeginJump(nextJumpCount);
