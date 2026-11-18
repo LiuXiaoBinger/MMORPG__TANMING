@@ -73,3 +73,20 @@ Unity Play Mode 中通过 `Tools/Chat/新版聊天测试` →「模拟他人消�
 - 证据位于 _temp/yimeng-chat-compact-picker-20261118/main-acceptance-compact-picker.log，截图位于同目录 evidence/。网络验收捕获本地请求并注入广播。真实服务器和用户当前主城运行场景待实测。
 - 功能提交 737bea93cac48687e619c74b6319ed4d918e2a93 已推送到 origin/codex/feature-development，父提交 571df0b，提交范围为上表 9 个路径。回执位于 _temp/yimeng-chat-compact-picker-20261118/git-receipt.txt。
 - token-monitor 完成 collect 与 context。本轮历史交付时主 Agent 记录 19,318,901 tokens，开发子 Agent 记录 9,737,889 tokens，均含缓存输入。分项用量和压缩事件见 _temp/yimeng-chat-compact-picker-20261118/turn-usage.json 和 context-compactions.json。
+
+## 后续补充 聊天速览频道筛选（2026-11-18）
+
+- 从「江湖聊天 → 速览 → 设置」打开速览右侧的「频道筛选」。世界、队伍、帮派、私聊、当前、观战、门派、系统八个既有频道默认全选。勾选即时作用于速览显示。
+- 按原到达顺序展示最后 3 条或 7 条符合筛选的消息。全部取消时显示「未选择频道」，没有匹配消息时显示对应空态。完整聊天与旧版往返时，在当前窗口实例内保留勾选，重新创建窗口后恢复全选。
+
+| 操作 | 文件 | 内容 |
+|---|---|---|
+| 修改 | LYF_MMO/Assets/LYF_Game/Prefabs/Resources/UI/Prefabs/YimengChat.prefab | 绑定频道筛选面板、关闭按钮和八个既有频道的 Toggle。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatCompactFeed.cs | 为短版和加高版从共享历史回填匹配消息，区分三种空状态，关闭筛选面板时保留勾选。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatWindow.cs | 将速览设置接到筛选刷新入口，沿原窗口路由切换。 |
+
+- Codex 原生开发子 Agent /root/chat_compact_filter_dev，gpt-6.2-sol，会话 01a1ee04-3c87-76c2-8d6c-fce31efc508c，开发第 1 轮。主 Agent 使用 Unity 2023.2.20f1c1 独立验收通过 567 项隔离 Play Mode 检查，覆盖三种画幅、八个开关、历史回填、实时更新、三种空态、重建窗口、面板外游戏输入、完整设置与旧版往返。
+- Editor 与 Windows Player 各编译 397 个源文件，均通过。61 个保护路径中 60 个的 SHA-256 与启动快照一致。UIRoot.prefab 的差异与并行提交 fb1f2a8 匹配，提取的旧版聊天子树与前一轮证据逐字节一致。
+- 验收证据为 _temp/yimeng-chat-compact-filter-20261118/main-acceptance-filter.log，同目录 evidence/channel-filter-16x9.png 保存面板截图。隔离验证使用本地请求捕获和注入广播，真实服务器和用户当前主城场景待实测。
+- 功能提交 c4e296323b8c3802d936c6a81fffbb562ddfc489 已推送至 origin/codex/feature-development，父提交 4693e5f，范围为上表 3 个路径。推送回执为 _temp/yimeng-chat-compact-filter-20261118/filter-git-receipt.txt。
+- token-monitor 完成 collect 与 context。功能交付时主 Agent 记录 4,189,433 tokens，开发子 Agent 记录 5,649,355 tokens，均含缓存输入。汇总和统计窗口为 _temp/yimeng-chat-compact-filter-20261118/turn-usage.json，累计上下文压缩证据见同目录 context-compactions.json。

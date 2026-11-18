@@ -733,6 +733,8 @@
 - Editor 和 Windows Player 各编译 394 个源文件。Editor 测试窗口使用项目 Editor 引用编译通过，60 个受保护路径的 SHA-256 均匹配。证据见 `_temp/yimeng-chat-own-rows-sticker-20261118/main-acceptance-own-rows-sticker.log`。测试使用本地通信捕获与合成音频。真实服务器、物理麦克风和用户当前场景仍待验证。
 - 后续提交 `737bea9` 通过 Unity `2023.2.20f1c1` 隔离 Play Mode 独立验收 318 项。覆盖 `1600×900` 和 `1600×1000` 两种画幅、速览两档高度与草稿保留、表情分类与翻页、「大笑」和「暖笑」各单次文字请求及广播确认后显示图案、完整聊天与旧版切换。
 - Editor 与 Windows Player 脚本各编译通过 397 个源文件，45 个保护路径的 SHA-256 全部一致。隔离环境捕获发送请求并注入广播。真实服务器和正在运行的主城场景仍待验证。证据见 `_temp/yimeng-chat-compact-picker-20261118/main-acceptance-compact-picker.log` 及同级的 `evidence/` 目录。
+- 后续提交 c4e2963 通过 Unity 2023.2.20f1c1 隔离 Play Mode 独立验收 567 项，覆盖 16:9、16:10 和 4:3 三种画幅、八个开关、3 条和 7 条回填、消息实时更新、空态、窗口重建、面板外的正常游戏输入，以及完整聊天设置和旧版切换。
+- Editor 与 Windows Player 脚本各编译通过 397 个源文件。61 个保护路径中有 60 个与任务起始 SHA-256 一致，UIRoot.prefab 的变化对应并行提交 fb1f2a8。提取的旧版聊天子树逐字节一致。隔离夹具使用本地通信捕获与注入广播。证据见 _temp/yimeng-chat-compact-filter-20261118/main-acceptance-filter.log。真实服务器和正在运行的主城场景仍待验证。
 
 ## [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] 魔神塔原预制体复用的实机与战斗回放验证
 

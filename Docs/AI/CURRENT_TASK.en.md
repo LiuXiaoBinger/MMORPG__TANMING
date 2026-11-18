@@ -710,6 +710,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Open the bottom smile button, select the top `表情` tab and click `大笑`. The existing text route sends `【大笑表情】` in World, Current Scene or Team. Yimeng chat shows its EmojiOne picture on the confirmed broadcast. Legacy chat displays the marker as text. Arbitrary image upload remains outside the current chat protocol. Scope and push evidence are in `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.
 - Follow-up commit 737bea9 adds the left-bottom 速览 within the Yimeng chat window. Use the top-right 速览 to display recent history, 更多 for up to seven rows, 收起 for up to three, 展开 for the current full-chat channel, and 旧版 to return to the original chat.
 - The bottom smile button opens 快捷发送 directly on 表情. The original layout offers 15 built-in EmojiOne images across two pages and empty states for 历史、道具、装备、成就、技能、动作. Selecting a tile sends its text marker to the current posting target. A confirmed broadcast renders the image in Yimeng chat. Scope, design and push evidence are in 项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md.
+- Follow-up c4e2963 opens 频道筛选 from 江湖聊天 → 速览 → 设置 while keeping the compact feed visible. The eight existing channels 世界、队伍、帮派、私聊、当前、观战、门派、系统 start selected and take effect immediately in the compact feed.
+- The feed shows the latest matching three or seven messages in arrival order. Clearing every selection displays 未选择频道. Selections survive switching between the compact feed, full chat and legacy chat within the window instance. A newly created window starts with all eight selected.
 
 ## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs
 
