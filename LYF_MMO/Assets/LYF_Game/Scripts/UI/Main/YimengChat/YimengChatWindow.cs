@@ -70,6 +70,8 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private YimengChatPages _settings;
     /// <summary>表情与玩具面板的整体容器。</summary>
     [SerializeField] private GameObject _palette;
+    /// <summary>表情页内置大笑按钮，和文本发送共用当前可发言频道。</summary>
+    [SerializeField] private Button _sendLaughSticker;
     /// <summary>底部发言目标选择菜单。</summary>
     [SerializeField] private GameObject _channelPicker;
 
@@ -119,6 +121,7 @@ public sealed class YimengChatWindow : WindowBase
         _launcher.onClick.AddListener(RequestToggle);
         _collapse.onClick.AddListener(RequestToggle);
         _send.onClick.AddListener(SubmitText);
+        _sendLaughSticker.onClick.AddListener(SendLaughSticker);
         _input.onSubmit.AddListener(OnInputSubmit);
         _input.onSelect.AddListener(OnInputSelect);
         _input.onEndEdit.AddListener(OnInputEndEdit);
@@ -353,6 +356,7 @@ public sealed class YimengChatWindow : WindowBase
         _input.interactable = destination.CanPost;
         _send.interactable = destination.CanPost;
         _mic.interactable = destination.CanPost;
+        _sendLaughSticker.interactable = destination.CanPost;
     }
 
     /// <summary>从正式记录重建本频道的可见行。</summary>
@@ -382,7 +386,7 @@ public sealed class YimengChatWindow : WindowBase
     {
         // 行仅向列表渲染，消息规格及音频由已有聊天数据携带。
         YimengChatMessageRow row = Instantiate(_rowPrefab, _content, false);
-        row.Bind(message, _scroll.viewport.rect.width, PlayVoice);
+        row.Bind(message, PlayVoice);
         _rows.Add(row);
     }
 
@@ -445,6 +449,16 @@ public sealed class YimengChatWindow : WindowBase
         if (!destination.CanPost || text.Length == 0) return;
         TextRequested?.Invoke(destination.Channel, text);
         _input.text = string.Empty;
+    }
+
+    /// <summary>通过现有文字发言发送大笑标记，正式广播回来后由消息行显示图片。</summary>
+    private void SendLaughSticker()
+    {
+        // 和文字、语音统一使用当前页发言目标，不改动编辑框已有草稿。
+        YimengChatChannelTab destination = PostingTarget;
+        if (!destination.CanPost) return;
+        TextRequested?.Invoke(destination.Channel, YimengChatMessageRow.LaughMarker);
+        _palette.SetActive(false);
     }
 
     /// <summary>TMP 输入进入编辑状态时交出角色操作焦点。</summary>
