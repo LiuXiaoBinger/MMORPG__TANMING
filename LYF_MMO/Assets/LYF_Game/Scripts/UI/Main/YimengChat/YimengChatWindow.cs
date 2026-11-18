@@ -290,6 +290,26 @@ public sealed class YimengChatWindow : WindowBase
         ApplyChannel();
     }
 
+    /// <summary>应用频道管理后，原阅读频道隐藏时切到左栏首个仍可见的实际页签。</summary>
+    internal void RefreshManagedSidebar()
+    {
+        if (_viewed.gameObject.activeSelf) return;
+        // 直接读取应用后的左栏子节点顺序，跳过声演坊和已隐藏的页签。
+        Transform sidebar = _viewed.transform.parent;
+        // 按目前左栏显示顺序寻找可用的替代页签。
+        for (int index = 0; index < sidebar.childCount; index++)
+        {
+            // 当前子节点包含实际频道页签时才可能被选中。
+            Transform item = sidebar.GetChild(index);
+            if (!item.gameObject.activeSelf) continue;
+            // 第一个仍可见的频道用于刷新消息和固定发言状态。
+            if (!item.TryGetComponent(out YimengChatChannelTab tab)) continue;
+            _viewed = tab;
+            ApplyChannel(false);
+            return;
+        }
+    }
+
     /// <summary>更换发言目标，保留左栏阅读频道。</summary>
     /// <param name="destination">在常用菜单选择的发言目标，尚未接入的频道只更新显示。</param>
     private void SelectSendChannel(YimengChatChannelTab destination)
@@ -301,12 +321,13 @@ public sealed class YimengChatWindow : WindowBase
     }
 
     /// <summary>用阅读频道同步页面控件和记录。</summary>
-    private void ApplyChannel()
+    /// <param name="dismissPopups">正常切页时收起弹层，管理频道应用后保留接收消息页。</param>
+    private void ApplyChannel(bool dismissPopups = true)
     {
         // 遍历侧栏把选中态和用于过滤的阅读频道同步。
         for (int i = 0; i < _channels.Length; i++)
             _channels[i].SetSelected(_channels[i] == _viewed);
-        ClosePopups();
+        if (dismissPopups) ClosePopups();
         SetVoiceMode(false);
         _normalTools.SetActive(!_viewed.Recruit);
         _teamTool.SetActive(!_viewed.ReadOnly);
