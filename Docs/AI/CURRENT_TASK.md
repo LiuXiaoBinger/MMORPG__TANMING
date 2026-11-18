@@ -717,3 +717,8 @@
 - 替换 9 个 MJS 音效事件，覆盖起跳、落地、Q 的三段普攻、E 的两段斩击、R 的后续攻击以及按键 2 的首击。更新 8 个编辑期配置和 7 个运行时配置，保留原有触发帧并调整部分音量。
 - 提交 `44f6a114f240f6b861713046b6210408e5dfb2f0` 已在 `origin/codex/feature-development` 核验；文件清单与逐事件映射见 `项目修改日志/2026-11-18-课程音效与受击动画接入.md`。
 - 后续提交 `7451eaf18722aeed687667ee12f5ed6bfca90519` 已推送至 `codex/feature-development`。替换剩余 5 个技能片段以及走、跑、战斗走、战斗跑的全部 8 个左右脚步事件。22 个已配置的 MJS 事件现全部使用课程片段。`SkillEditorAudioMotionSetup.cs` 现在仅以课程片段作为初始数据。现有 RO 式角色动画触发由 `MDefaultActionComponent` 依据动画脚步时间调用模型 `SoundComponent`，LYF_MMO 复用自身对应的播放路径。
+
+## [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] 底部战斗 HUD 布局与样式
+
+- `UIRoot.prefab` 沿用原有的 `CombatHudBackdrop.png` 精灵，并保留既有的 `RoleCurrInfoWindow` 绑定。Q/E/1/2 与 3/4/5/6/F 分组分列 R 两侧。HP/MP 条位于各自分组下方，真气与体力弧线仍在 R 周围。技能精灵路径、按键分配以及技能格与聊天预制体均保持原样。
+- 资源提交 `fb1f2a8` 已推送到 `origin/codex/feature-development`。文件清单、证据与限制见 `项目修改日志/2026-11-18-底部战斗HUD布局与样式.md`。新的常规 Play 会话、实机施放和 AssetBundle 发布未验证。

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7e44311646ae9ada40e63201affc0169f2dff22fbd400b4cffec815e355061da`
+Source normalized SHA256: `ea58ad0dde0cd97aa7bcd0d73d7e5909d6ac94dd73a6bd3b24b4fe77f289d42a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -103,11 +103,12 @@ Source normalized SHA256: `7e44311646ae9ada40e63201affc0169f2dff22fbd400b4cffec8
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
 | [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-713 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 714-718 |
-| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 719-724 |
+| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 719-725 |
+| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 726-729 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d7c27abdd0fc0b63551908c3c8646eef114c32c50489e3a378804616faf297bf`
+Source normalized SHA256: `1f9cb55bfbd069b2f13fd8bb08b3547b6bde4e0a1b973228bb342ce7a0039b8f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -202,7 +203,8 @@ Source normalized SHA256: `d7c27abdd0fc0b63551908c3c8646eef114c32c50489e3a378804
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
 | [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-745 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 746-750 |
-| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 751-755 |
+| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 751-756 |
+| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 757-760 |
 
 ## Docs/AI/DECISIONS.en.md
 

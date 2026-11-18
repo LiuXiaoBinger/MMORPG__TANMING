@@ -722,3 +722,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Replaced nine MJS audio events across jump takeoff, landing, Q's three normal attack stages, E's two slashes, the R follow-up and the first strike on key 2. Updated eight authoring configs and seven runtime configs, preserving the original trigger frames and adjusting selected volumes.
 - Commit `44f6a114f240f6b861713046b6210408e5dfb2f0` was verified at `origin/codex/feature-development`. The file manifest and per-event mappings are in `项目修改日志/2026-11-18-课程音效与受击动画接入.md`.
 - Follow-up `7451eaf18722aeed687667ee12f5ed6bfca90519` was pushed to `codex/feature-development`. Replaced the five remaining skill clips and all eight left/right footstep events for walk, run, battle walk and battle run. All 22 configured MJS events now use the course clips. `SkillEditorAudioMotionSetup.cs` now seeds only course clips. RO `MDefaultActionComponent` uses animation footstep times to call the model's `SoundComponent`. LYF_MMO reuses its own corresponding playback path.
+
+## [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling
+
+- `UIRoot.prefab` uses the original `CombatHudBackdrop.png` sprite and preserves the existing `RoleCurrInfoWindow` bindings. The Q/E/1/2 and 3/4/5/6/F groups flank R. HP/MP tracks sit below their groups, with the existing true-qi and stamina arcs around R. Skill sprite paths, key assignments and the slot and chat prefabs were left as found.
+- Resource commit `fb1f2a8` was pushed to `origin/codex/feature-development`. See `项目修改日志/2026-11-18-底部战斗HUD布局与样式.md` for the file list, evidence and limits. A new regular Play session, live casting and an AssetBundle release were not verified.
