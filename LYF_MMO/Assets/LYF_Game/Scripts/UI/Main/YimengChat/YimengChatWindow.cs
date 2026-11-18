@@ -13,8 +13,6 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private Button _collapse;
     /// <summary>完整聊天的背景与操作区，进入速览时整体隐藏。</summary>
     [SerializeField] private GameObject _fullChat;
-    /// <summary>完整聊天右上角切到只读速览的入口。</summary>
-    [SerializeField] private Button _showCompactFeed;
     /// <summary>与完整聊天互斥的左下角近期消息面板。</summary>
     [SerializeField] private YimengChatCompactFeed _compactFeed;
     /// <summary>侧栏内全部频道，按预制体中的顺序列出。</summary>
@@ -131,7 +129,6 @@ public sealed class YimengChatWindow : WindowBase
     {
         _rootCanvas = GetComponentInParent<Canvas>().rootCanvas;
         _collapse.onClick.AddListener(ShowCompactFeed);
-        _showCompactFeed.onClick.AddListener(ShowCompactFeed);
         _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
             TogglePalette, ToggleCompactFilter, () => _compactFeed.Refresh(_history, _palette));
         _send.onClick.AddListener(SubmitText);
