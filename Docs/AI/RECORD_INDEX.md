@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a72fece27512139473dec57deb6b262731c3adb79904e02c1bb14447e449eb56`
+Source normalized SHA256: `b7f66fe5f5462183df114ac1f45c1a468d3e3eff8a166a2932dd85091a946b31`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -99,11 +99,12 @@ Source normalized SHA256: `a72fece27512139473dec57deb6b262731c3adb79904e02c1bb14
 | [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] Restored missing character selection scene assets | 679-683 |
 | [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Reimported UI assets and corrected skill animation locations | 684-688 |
 | [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-693 |
-| [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-697 |
+| [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-698 |
+| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-702 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a68aa0fa49789b9ceebf41b161ca0904a58cad8ebae11282df06044d29ad51bc`
+Source normalized SHA256: `1a308b71e352ac729056bfd770417a0b2ed67165fb806020e28abcc25e41cc69`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -194,7 +195,8 @@ Source normalized SHA256: `a68aa0fa49789b9ceebf41b161ca0904a58cad8ebae11282df060
 | [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] Verified the restored character selection scene | 710-714 |
 | [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Tested login, settings and the slide skill in the local game | 715-719 |
 | [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-724 |
-| [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-729 |
+| [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-730 |
+| [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-734 |
 
 ## Docs/AI/DECISIONS.en.md
 

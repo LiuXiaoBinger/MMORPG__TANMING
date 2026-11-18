@@ -690,3 +690,8 @@
 
 - 删除 `MSceneNpcHoster`、`NpcCtrl` 和 `MonsterCtrl`、对应的 `.meta` 文件及 14 个序列化资源中的相关绑定。受影响的 11 个副本 NPC 预制体均保留 `MModelPrepareData` 和 `MMonsterAnimator`。主城与副本 NPC 都将模型绑定到 `NpcEntity`。在原有 10 米对话范围内，`TouchObject` 和 `MNavigationComponent` 将目标实体传给 `MainCtrl`。副本 NPC 的移动和原技能沿用 `MEntity` 的 `MoveComp` 和 `Skill`。
 - 32 个文件的变更已通过提交 `d3fcaa4` 推送到 `codex/feature-development`。主城 NPC `4001` 可打开商店 `1`，魔神塔第 47 波 NPC `20186` 保留对话选项与原技能 `1000545601`。第 18 波的攻击与特效通过回归验证。人工全流程实玩和打包 Player 尚未验证。详见 `项目修改日志/2026-11-18-RO式NPC实体统一与宿主清理.md`。
+
+## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] 魔神塔士兵 5514 复用原始预制体
+
+- 魔神塔第 15 波和第 17 波均使用实体 5514。`MoshentaCreatures.json` 现直接加载 `Art/Resources/Prefabs/Monster_XieHaiZhanShi.prefab`，沿用原 GUID、Avatar 和蒙皮。原预制体根节点添加 `MModelPrepareData`、`MMonsterAnimator`、七个动画覆盖槽位和两个碰撞体。
+- 删除 `RuntimeCreatures/Monster_5514.prefab` 及其 `.meta` 文件。场景编辑器沿用既有 Showcase 变体，并在该变体中排除上述两个新增业务组件。原 RO 由 5514 经 `PresentID 10168` 指向 `Prefab Monster_XieHaiZhanShi`。本次提交仅涉及 5 个资源和配置文件，已随 `82a78c7` 推送至 `codex/feature-development`。详见 `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`。

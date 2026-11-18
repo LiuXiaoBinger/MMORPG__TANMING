@@ -695,3 +695,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Removed MSceneNpcHoster, NpcCtrl and MonsterCtrl, including their .meta files and bindings in 14 serialized assets. All 11 affected dungeon NPC prefabs retain MModelPrepareData and MMonsterAnimator. City and dungeon NPCs bind their models to NpcEntity. TouchObject and MNavigationComponent pass the target entity to MainCtrl within the existing 10 m dialogue range. Dungeon motion and original skills use MEntity's existing MoveComp and Skill.
 - The 32-file change was pushed as d3fcaa4 to codex/feature-development. City NPC 4001 opened shop 1, and Moshenta wave 47 NPC 20186 retained its dialogue options and original skill 1000545601. Wave 18 attack and effects passed regression. Full human playthrough and packaged Player are unverified. See `项目修改日志/2026-11-18-RO式NPC实体统一与宿主清理.md`.
+
+## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab
+
+- Moshenta waves 15 and 17 both point to entity 5514. It now loads `Art/Resources/Prefabs/Monster_XieHaiZhanShi.prefab` directly from `MoshentaCreatures.json`. The original GUID, Avatar and skin remain in use. The original prefab root now holds MModelPrepareData, MMonsterAnimator, seven animation overrides and both collision volumes.
+- Removed `RuntimeCreatures/Monster_5514.prefab` and its meta. The scene editor uses its existing Showcase variant with the two added gameplay components excluded. No production script changed. Original RO routes 5514 through PresentID 10168 to Prefab Monster_XieHaiZhanShi. Five asset/configuration files were pushed in 82a78c7 on `codex/feature-development`. See `项目修改日志/2026-11-18-邪骸士兵复用原始预制体.md`.
