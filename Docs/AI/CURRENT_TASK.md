@@ -725,3 +725,9 @@
 - `UIRoot.prefab` 沿用原有的 `CombatHudBackdrop.png` 精灵，并保留既有的 `RoleCurrInfoWindow` 绑定。Q/E/1/2 与 3/4/5/6/F 分组分列 R 两侧。HP/MP 条位于各自分组下方，真气与体力弧线仍在 R 周围。技能精灵路径、按键分配以及技能格与聊天预制体均保持原样。
 - 资源提交 `fb1f2a8` 已推送到 `origin/codex/feature-development`。文件清单、证据与限制见 `项目修改日志/2026-11-18-底部战斗HUD布局与样式.md`。新的常规 Play 会话、实机施放和 AssetBundle 发布未验证。
 - 上方 HUD 返修：`CombatHudUpperControls.prefab` 现向 `UIRoot.prefab` 提供 F1–F5 一排、K/L/分号/表情一排以及两个状态指示器。九个快捷槽位仅用于展示，其动作与状态数据均未绑定。新增的 `CombatHudStatusIcons.png` 图集与四个既有物品精灵配合使用。底部技能槽位与聊天绑定保持原样。资源提交 `c8439a0` 已推送到 `origin/codex/feature-development`。
+
+## [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] 魔剑士二、三段跳跃动画
+
+- 魔剑士的正常跳跃输入依次使用 `Jump_Start` → `Anim_JX_Jump_Start`、`Jump_Start_2` → `Anim_MJS_Jump_2`（由原地动画 `Jump_F_0_InPlace` 重命名）、`Jump_Start_3` → `Anim_MJS_Jump_3`（从 `Double_Jump_F_0` 复制）。两个新接入的动画片段均位于 `LYF_MMO/Assets/LYF_Game/Animas/Role/MJS/Common/ALL/`。二段保留原 GUID，三段使用新 GUID。
+- 共用的 `MAnimator.controller` 绑定二、三段各自的状态。`MJumpComponent` 根据 `MMoveComponent.JumpCount` 为 JobId 1 选择对应状态，混合过渡时长为 0.06 秒，当前起跳片段播完后回到 `Jump_Loop`。额外两次起跳沿用 0 秒处的起跳音效。移动和跳跃计数由 `MMoveComponent` 处理。
+- 用户的大世界录屏显示，原二段动画在起跳时向右偏转。正式二段动画将根旋转 Y 偏移设为 53 度，使起跳方向与角色正前方对齐。隔离 Unity 回放和客户端编译均通过。修正后的大世界输入、多人视角下的表现及打包后运行仍未验证。逐项文件详情见 `项目修改日志/2026-11-18-魔剑士二三段跳动画接入.md`。

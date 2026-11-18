@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `ca88b90f800bad64d37310c8aaa16e399fe69be14f7687ba116c15dc2473e927`
+Source normalized SHA256: `dd351edcafc0c6252198c5e4f3c526e49fc35c1af0eb33d46461ff0137f86599`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -104,11 +104,12 @@ Source normalized SHA256: `ca88b90f800bad64d37310c8aaa16e399fe69be14f7687ba116c1
 | [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-715 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 716-720 |
 | [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-727 |
-| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-732 |
+| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-733 |
+| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 734-738 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `bc70c833a59938bb38bd54f005b028b13f383b8796d56de9d233470158bb7da2`
+Source normalized SHA256: `cdc3e289d47168fb32be0c955ba2f23d4a5d82ceb62295de28ad4ab787d7e2ae`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -204,7 +205,8 @@ Source normalized SHA256: `bc70c833a59938bb38bd54f005b028b13f383b8796d56de9d2334
 | [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-747 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 748-752 |
 | [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-758 |
-| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-763 |
+| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-764 |
+| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 765-770 |
 
 ## Docs/AI/DECISIONS.en.md
 

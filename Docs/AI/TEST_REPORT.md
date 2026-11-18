@@ -752,3 +752,10 @@
 - Unity 2023.2.20f1c1 导入新精灵，并在 1920×1080、1280×720 和 1024×768 下以隔离预览渲染编辑后的预制体。截图位于 `_temp/2026-11-18-combat-hud/`。初步发现的聊天重叠已修正。在最终预览中，三种分辨率下聊天入口均与左侧技能行保持 6 个 Canvas 单位的间距。
 - 预览复用了当前主城 HUD 的 9 个真实技能精灵。原始界面展示了完整与部分的 HP/MP 数值、两条独立的资源弧线、待机与就绪的 R 状态以及 Q 冷却样例。预制体审计确认改动仅限战斗 HUD 内的 32 个块，并核验了滑条组件与序列化角色绑定的字节一致性。新的常规 Play 会话、实机施放和 AssetBundle 发布未验证。
 - 上方 HUD 返修：Unity 导入嵌套预制体，并在 1920×1080、1280×720 和 1024×768 下渲染 5 + 4 个快捷槽位与 2 个状态指示器。聊天入口与最近的上排及既有下排技能行均保持 6 个 Canvas 单位间距。九个预留按钮全部不可交互，所有新增图形均穿透指针事件，抽取的 9 个既有技能精灵与基线一致。`UIRoot.prefab` 仅新增嵌套预制体记录。证据位于 `_temp/2026-11-18-combat-hud/upper-status/`。新加载的常规 Play HUD、快捷效果、实时状态更新与 AssetBundle 发布未验证。
+
+## [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] 客户端编译与一至三段跳跃回放
+
+- Unity 2023.2.20f1c1 环境下用 Roslyn 编译 `LYF_Game`，退出码为 0。`MAnimator.controller` 的资源依赖检查确认两个运行时动画片段。三段原始动画源为时长 0.666667 秒的 Humanoid 片段，迁移后的二段片段实测时长为 1.5 秒。
+- 隔离的 Unity 测试使用编译后的 `MMoveComponent.BeginJump`、`MJumpComponent`、`MAnimator`、MJS 骨骼和保存后的控制器。JobId 1 依次播放 `Anim_JX_Jump_Start` → `Anim_MJS_Jump_2` → `Anim_MJS_Jump_3`。二段原地翻转时角色翻至倒立姿态，三段片段播完后转入 `Jump_Loop`，第四次起跳被拒绝，落地时播放 `Jump_End` 并重置跳跃计数。JobId 2 的三次起跳均进入 `Jump_Start`。关闭根运动时，播放期间角色根节点在 XZ 平面的位移为 0.000000 m。
+- 用户的大世界录屏 `D:/录屏/bandicam 2026-11-18 18-29-28-039.mp4` 在约 9.3–10 秒处显示原二段动画的朝向问题。在关闭根运动的正式 Avatar 上，二段起跳时骨盆相对角色的朝向由 54.9° 修正到 1.9°，与一段的 2.0° 基本一致。固定机位的 46 帧对比确认了翻至倒立的姿态和 0.000000 m 的根节点 XZ 位移。使用保存的控制器重新回放修正后的片段，验证通过。资源差异仅涉及 `m_OrientationOffsetY` 从 0 调整到 53。
+- 证据见 `_temp/MJS-Jump-Stage-Animations-20261118/compile.log`、`_temp/MJS-Jump-Stage-Animations-20261118/yaw-comparison.txt` 和 `_temp/MJS-Jump-Stage-Animations-20261118/jump-stages-playback-corrected.txt`。修正后的大世界键盘输入、多人视角下的表现、音效听感及打包后运行仍未验证。详见 `项目修改日志/2026-11-18-魔剑士二三段跳动画接入.md`。
