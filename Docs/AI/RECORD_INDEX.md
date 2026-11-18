@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `ebaa237d3170680f7a794365abbe261761331bb47066c639f05f4d490b5f479f`
+Source normalized SHA256: `b1d607efda1ef271a4c95e17116e02f7722140a99a8160332f28f25bef89b0a1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -105,11 +105,12 @@ Source normalized SHA256: `ebaa237d3170680f7a794365abbe261761331bb47066c639f05f4
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 720-724 |
 | [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 725-732 |
 | [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 733-739 |
-| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-746 |
+| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
+| [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-752 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d756d29b922bd6a05e63a1405f74984b0b2f7039104706142ad339413173cfb5`
+Source normalized SHA256: `fe2de90a6fce3e3af6147cdcf1fbfcbe0f58dd9693d6f95805342d6f2695f662`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -206,7 +207,8 @@ Source normalized SHA256: `d756d29b922bd6a05e63a1405f74984b0b2f7039104706142ad33
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 752-756 |
 | [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 757-763 |
 | [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 764-770 |
-| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-778 |
+| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
+| [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-784 |
 
 ## Docs/AI/DECISIONS.en.md
 

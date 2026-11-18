@@ -767,3 +767,9 @@
 - 证据见 `_temp/MJS-Jump-Stage-Animations-20261118/compile.log`、`_temp/MJS-Jump-Stage-Animations-20261118/yaw-comparison.txt` 和 `_temp/MJS-Jump-Stage-Animations-20261118/jump-stages-playback-corrected.txt`。修正后的大世界键盘输入、多人视角下的表现、音效听感及打包后运行仍未验证。详见 `项目修改日志/2026-11-18-魔剑士二三段跳动画接入.md`。
 - 高度调整 `d3e5ddc` 的 `LYF_Game` 编译通过。使用 MJS 骨骼和 Unity CharacterController，以 16 ms 步长回放实际跳跃与重力代码。各段从起跳到最高点分别抬升 2.074、2.914 和 3.899 m，调整前各段均为 2.074 m。第四次起跳被拒绝，落地时播放 `Jump_End` 并重置跳跃计数，记录到的根节点 XZ 位移为 0.000000 m。证据见 `_temp/MJS-Jump-Height-20261118/compile.log` 和 `_temp/MJS-Jump-Height-20261118/jump-height-playback.txt`。调整后的大世界键盘输入和多人同步仍未验证。
 - 收腿与输入缓存续作 `67c6ea2` 通过 `LYF_Game` 编译与 MJS Avatar 的 46 帧对照。仅修改 16 条下肢曲线，保留另 114 条采样曲线，片段时长为 1.5 秒，朝向偏移为 53°。隔离快速按键测试确认，二段翻至倒立后恢复直立，于 0.672 秒执行缓存的第三段起跳，播放 `Anim_MJS_Jump_3`，竖直起跳速度为 15 m/s。重复按键只执行一次，提前落地丢弃请求，晚按第三次立即起跳。证据见 `_temp/MJS-Jump-Legs-Buffer-20261118/MJS_Jump_2_Legs_Before_After.mp4`、`_temp/MJS-Jump-Legs-Buffer-20261118/leg-curve-save.txt` 和 `_temp/MJS-Jump-Legs-Buffer-20261118/jump-buffer-playback.txt`。大世界键盘操作和多人视角下的表现仍未验证。
+
+## [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] 战斗资源编译与隔离检查（2026-11-18）
+
+- GameServer、CenterServer、Unity Network/Common 插件及 Unity LYF_Game 编译均为 0 错误。隔离的 .NET Framework 运行时通过 46 项检查，覆盖角色、普通怪物和 Boss 的资源、边界、旧消息、快照，以及同帧多条命中记录后的资源终值。隔离的正式 Unity HUD 通过 8 项检查。
+- `Tests/Gene/GeneRuntimeTests.cs` 在任务基线即存在一处 `CS1061`，原因是它访问 `GeneComponent` 上的 `LastDamageFirerId`。资源冒烟测试验证了 `AttributesComponent` 上的伤害归因。证据见 `_temp/combat-resources-20261118/server-runtime-proof.txt`、`hud-proof.txt` 和 `gene-baseline-evidence.txt`。
+- 部署到运行中的服务、完整联机副本流程和独立 Player 仍未验证。
