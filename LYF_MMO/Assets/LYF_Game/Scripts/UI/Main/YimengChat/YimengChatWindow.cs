@@ -12,6 +12,12 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private Button _launcher;
     /// <summary>聊天右缘的收起箭头。</summary>
     [SerializeField] private Button _collapse;
+    /// <summary>完整聊天的背景与操作区，进入速览时整体隐藏。</summary>
+    [SerializeField] private GameObject _fullChat;
+    /// <summary>完整聊天右上角切到只读速览的入口。</summary>
+    [SerializeField] private Button _showCompactFeed;
+    /// <summary>与完整聊天互斥的左下角近期消息面板。</summary>
+    [SerializeField] private YimengChatCompactFeed _compactFeed;
     /// <summary>侧栏内全部频道，按预制体中的顺序列出。</summary>
     [SerializeField] private YimengChatChannelTab[] _channels;
     /// <summary>常用页发言菜单，包含项目已接通和仅展示的频道。</summary>
@@ -68,10 +74,8 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private ChatRecordObj _record;
     /// <summary>设置层的所有分页及显隐容器。</summary>
     [SerializeField] private YimengChatPages _settings;
-    /// <summary>表情与玩具面板的整体容器。</summary>
-    [SerializeField] private GameObject _palette;
-    /// <summary>表情页内置大笑按钮，和文本发送共用当前可发言频道。</summary>
-    [SerializeField] private Button _sendLaughSticker;
+    /// <summary>底栏笑脸打开的表情选择面板，提供可发送项及广播标记的查找。</summary>
+    [SerializeField] private YimengChatEmojiPicker _palette;
     /// <summary>底部发言目标选择菜单。</summary>
     [SerializeField] private GameObject _channelPicker;
 
@@ -120,8 +124,10 @@ public sealed class YimengChatWindow : WindowBase
     {
         _launcher.onClick.AddListener(RequestToggle);
         _collapse.onClick.AddListener(RequestToggle);
+        _showCompactFeed.onClick.AddListener(ShowCompactFeed);
+        _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat, OpenSettingsFromFeed, RequestToggle);
         _send.onClick.AddListener(SubmitText);
-        _sendLaughSticker.onClick.AddListener(SendLaughSticker);
+        _palette.Init(SendEmoji);
         _input.onSubmit.AddListener(OnInputSubmit);
         _input.onSelect.AddListener(OnInputSelect);
         _input.onEndEdit.AddListener(OnInputEndEdit);
@@ -177,13 +183,13 @@ public sealed class YimengChatWindow : WindowBase
         _settings.SelectPage(3);
     }
 
-    /// <summary>开关表情与玩具预览面板。</summary>
+    /// <summary>开关表情面板，每次打开时直接显示可发的系统表情。</summary>
     public void TogglePalette()
     {
         // 保存本次点击希望触发的显隐动作。
-        bool show = !_palette.activeSelf;
+        bool show = !_palette.gameObject.activeSelf;
         ClosePopups();
-        _palette.SetActive(show);
+        if (show) _palette.Open();
     }
 
     /// <summary>仅常用页能开关发言目标菜单。</summary>
@@ -200,7 +206,7 @@ public sealed class YimengChatWindow : WindowBase
     public void ClosePopups()
     {
         _settings.gameObject.SetActive(false);
-        _palette.SetActive(false);
+        _palette.gameObject.SetActive(false);
         _channelPicker.SetActive(false);
     }
 
@@ -209,6 +215,11 @@ public sealed class YimengChatWindow : WindowBase
     public void OnMessage(ChatMessage message)
     {
         if (!isActiveAndEnabled) return;
+        if (_compactFeed.gameObject.activeSelf)
+        {
+            _compactFeed.Refresh(_history, _palette);
+            return;
+        }
         // 非当前频道的消息仍可能使历史达到上限，但不会改变本频道的自动滚动状态。
         bool inChannel = _viewed.Includes(message.Channel);
         // 有效阅读范围内由本人发出的消息，可以在自动滚动模式下直接定位。
@@ -253,6 +264,8 @@ public sealed class YimengChatWindow : WindowBase
     private void OnEnable()
     {
         _launcher.gameObject.SetActive(false);
+        _compactFeed.gameObject.SetActive(false);
+        _fullChat.SetActive(true);
         ApplyChannel();
         VisibilityChanged?.Invoke(true);
     }
@@ -260,11 +273,7 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>收起时还原入口并释放编辑焦点、临时弹窗和旧窗口遮挡状态。</summary>
     private void OnDisable()
     {
-        if (_inputHasFocus)
-        {
-            _input.DeactivateInputField();
-            SetInputFocus(false);
-        }
+        ReleaseInputFocus();
         SetVoiceMode(false);
         ClosePopups();
         _launcher.gameObject.SetActive(true);
@@ -275,6 +284,31 @@ public sealed class YimengChatWindow : WindowBase
     public void RequestToggle()
     {
         ToggleRequested?.Invoke();
+    }
+
+    /// <summary>留在同一个聊天窗口中，交还游戏输入并在左下角展示近期消息。</summary>
+    private void ShowCompactFeed()
+    {
+        ReleaseInputFocus();
+        SetVoiceMode(false);
+        ClosePopups();
+        _fullChat.SetActive(false);
+        _compactFeed.Open(_history, _palette);
+    }
+
+    /// <summary>回到当前阅读频道，并渲染速览期间已经收到的正式消息。</summary>
+    private void RestoreFullChat()
+    {
+        _compactFeed.gameObject.SetActive(false);
+        _fullChat.SetActive(true);
+        RebuildRows();
+    }
+
+    /// <summary>从速览展开完整界面并打开现有接收消息设置。</summary>
+    private void OpenSettingsFromFeed()
+    {
+        RestoreFullChat();
+        ToggleSettings();
     }
 
     /// <summary>切换阅读频道及其配套工具栏和输入状态。</summary>
@@ -356,7 +390,7 @@ public sealed class YimengChatWindow : WindowBase
         _input.interactable = destination.CanPost;
         _send.interactable = destination.CanPost;
         _mic.interactable = destination.CanPost;
-        _sendLaughSticker.interactable = destination.CanPost;
+        _palette.SetCanPost(destination.CanPost);
     }
 
     /// <summary>从正式记录重建本频道的可见行。</summary>
@@ -386,7 +420,7 @@ public sealed class YimengChatWindow : WindowBase
     {
         // 行仅向列表渲染，消息规格及音频由已有聊天数据携带。
         YimengChatMessageRow row = Instantiate(_rowPrefab, _content, false);
-        row.Bind(message, PlayVoice);
+        row.Bind(message, _palette.Find(message.Text), PlayVoice);
         _rows.Add(row);
     }
 
@@ -451,14 +485,15 @@ public sealed class YimengChatWindow : WindowBase
         _input.text = string.Empty;
     }
 
-    /// <summary>通过现有文字发言发送大笑标记，正式广播回来后由消息行显示图片。</summary>
-    private void SendLaughSticker()
+    /// <summary>通过现有文字发言发送完整表情标记，消息行在正式广播后显示图像。</summary>
+    /// <param name="marker">表情格配置的完整正文，旧聊天按文字显示。</param>
+    private void SendEmoji(string marker)
     {
         // 和文字、语音统一使用当前页发言目标，不改动编辑框已有草稿。
         YimengChatChannelTab destination = PostingTarget;
         if (!destination.CanPost) return;
-        TextRequested?.Invoke(destination.Channel, YimengChatMessageRow.LaughMarker);
-        _palette.SetActive(false);
+        TextRequested?.Invoke(destination.Channel, marker);
+        _palette.gameObject.SetActive(false);
     }
 
     /// <summary>TMP 输入进入编辑状态时交出角色操作焦点。</summary>
@@ -484,6 +519,14 @@ public sealed class YimengChatWindow : WindowBase
     /// <param name="value">离开编辑时输入框中的现有草稿。</param>
     private void OnInputDeselect(string value)
     {
+        SetInputFocus(false);
+    }
+
+    /// <summary>窗口隐藏或进入速览时结束编辑并恢复游戏操作，保留文本草稿。</summary>
+    private void ReleaseInputFocus()
+    {
+        if (!_inputHasFocus) return;
+        _input.DeactivateInputField();
         SetInputFocus(false);
     }
 

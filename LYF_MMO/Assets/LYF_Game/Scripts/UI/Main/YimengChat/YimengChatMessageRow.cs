@@ -6,8 +6,6 @@ using UnityEngine.UI;
 /// <summary>用头像、频道标签和气泡展示一条既有聊天消息，系统消息使用传音图标样式。</summary>
 public sealed class YimengChatMessageRow : MonoBehaviour
 {
-    /// <summary>大笑表情通过普通聊天文本广播时使用的完整正文，旧聊天可按文字展示。</summary>
-    internal const string LaughMarker = "【大笑表情】";
     /// <summary>正常宽度下的头像边长，过窄的行会按行宽缩小头像。</summary>
     private const float AvatarSize = 127f;
     /// <summary>气泡顶部距离行顶部的 Canvas 像素数，给频道和昵称留出空间。</summary>
@@ -35,8 +33,8 @@ public sealed class YimengChatMessageRow : MonoBehaviour
     [SerializeField] private Image _bubbleImage;
     /// <summary>普通文字或已有的语音转写。</summary>
     [SerializeField] private TMP_Text _message;
-    /// <summary>仅在普通聊天正文完全匹配大笑标记时显示的内置贴图。</summary>
-    [SerializeField] private RawImage _laughSticker;
+    /// <summary>普通聊天正文完全匹配内置表情标记时显示的图集区域。</summary>
+    [SerializeField] private RawImage _emoji;
     /// <summary>系统消息通栏的正文。</summary>
     [SerializeField] private TMP_Text _systemMessage;
     /// <summary>旧语音播放控件，显示录音时长并提供点击回放。</summary>
@@ -48,8 +46,9 @@ public sealed class YimengChatMessageRow : MonoBehaviour
 
     /// <summary>绑定真实消息并按当前行宽排版。</summary>
     /// <param name="message">旧聊天记录提供的完整消息对象。</param>
+    /// <param name="emoji">由完整正文找到的表情格，普通文字消息传空。</param>
     /// <param name="playVoice">经聊天控制器转到现有语音管理器的回放请求。</param>
-    public void Bind(ChatMessage message, Action<AudioChat> playVoice)
+    public void Bind(ChatMessage message, YimengChatEmojiTile emoji, Action<AudioChat> playVoice)
     {
         Message = message;
         // 只有系统频道用传音图标行。
@@ -72,9 +71,10 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         bool hasVoice = message.HasVoice && message.Audio != null;
         _voice.gameObject.SetActive(hasVoice);
         if (hasVoice) _voice.Bind(message.Audio, playVoice);
-        // 只识别完整标记，不解析普通正文内的富文本或部分标记。
-        bool hasSticker = !hasVoice && string.Equals(message.Text, LaughMarker, StringComparison.Ordinal);
-        _laughSticker.gameObject.SetActive(hasSticker);
+        // 语音保留转写正文；普通表情复用选择面板的图集区域。
+        bool hasSticker = !hasVoice && emoji != null;
+        _emoji.gameObject.SetActive(hasSticker);
+        if (hasSticker) emoji.CopyIconTo(_emoji);
         _message.gameObject.SetActive(!hasSticker && !string.IsNullOrEmpty(message.Text));
         _message.text = message.Text;
         if (message.IsLocalPlayer)
@@ -128,7 +128,7 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         // 这些状态在绑定真实消息时设置，行宽变化只重排可见节点。
         bool hasText = _message.gameObject.activeSelf;
         bool hasVoice = _voice.gameObject.activeSelf;
-        bool hasSticker = _laughSticker.gameObject.activeSelf;
+        bool hasSticker = _emoji.gameObject.activeSelf;
         if (hasText)
             innerWidth = Mathf.Min(maxTextWidth, _message.GetPreferredValues(Message.Text, maxTextWidth, Mathf.Infinity).x + 1f);
         if (hasSticker) innerWidth = stickerSize;
@@ -142,7 +142,7 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         if (hasSticker)
         {
             bodyContentHeight = stickerSize;
-            SetTopBox(_laughSticker.rectTransform, edge, direction * 12f, 7f, stickerSize, stickerSize);
+            SetTopBox(_emoji.rectTransform, edge, direction * 12f, 7f, stickerSize, stickerSize);
         }
 
         // 文字与贴图上下留距各 7 像素，语音按钮在正文下方独占一行。
