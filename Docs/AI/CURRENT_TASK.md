@@ -731,3 +731,4 @@
 - 魔剑士的正常跳跃输入依次使用 `Jump_Start` → `Anim_JX_Jump_Start`、`Jump_Start_2` → `Anim_MJS_Jump_2`（由原地动画 `Jump_F_0_InPlace` 重命名）、`Jump_Start_3` → `Anim_MJS_Jump_3`（从 `Double_Jump_F_0` 复制）。两个新接入的动画片段均位于 `LYF_MMO/Assets/LYF_Game/Animas/Role/MJS/Common/ALL/`。二段保留原 GUID，三段使用新 GUID。
 - 共用的 `MAnimator.controller` 绑定二、三段各自的状态。`MJumpComponent` 根据 `MMoveComponent.JumpCount` 为 JobId 1 选择对应状态，混合过渡时长为 0.06 秒，当前起跳片段播完后回到 `Jump_Loop`。额外两次起跳沿用 0 秒处的起跳音效。移动和跳跃计数由 `MMoveComponent` 处理。
 - 用户的大世界录屏显示，原二段动画在起跳时向右偏转。正式二段动画将根旋转 Y 偏移设为 53 度，使起跳方向与角色正前方对齐。隔离 Unity 回放和客户端编译均通过。修正后的大世界输入、多人视角下的表现及打包后运行仍未验证。逐项文件详情见 `项目修改日志/2026-11-18-魔剑士二三段跳动画接入.md`。
+- 高度调整 `d3e5ddc` 将三段跳共用的 `MMoveComponent.BeginJump` 起跳速度依次设为 11、13 和 15 m/s。每次额外起跳比上一段增加 2 m/s。Unity 重新加载游戏程序集后使用更新的客户端代码。
