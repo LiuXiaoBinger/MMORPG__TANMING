@@ -11,8 +11,11 @@ public sealed class MMoveComponent : EntityComponentBase
 {
 
     #region 字段与属性
-    /// <summary>单次起跳采用的初始向上速度，单位为米/秒。</summary>
-    private const float JumpUpwardSpeed = 11f;
+    /// <summary>第一段起跳的初始向上速度，单位为米/秒。</summary>
+    private const float FirstJumpUpwardSpeed = 11f;
+
+    /// <summary>每追加一段跳跃增加的初始向上速度，单位为米/秒；二、三段分别为 13 和 15 米/秒。</summary>
+    private const float JumpUpwardSpeedPerStage = 2f;
 
     /// <summary>角色上升阶段的重力加速度，单位为米/秒平方。</summary>
     private const float RisingGravity = 28f;
@@ -471,8 +474,7 @@ public sealed class MMoveComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 通知移动组件开始一段、二段或三段跳；每次调用都会派发一次起跳事件，
-    /// 因此二段跳和三段跳即使仍处于空中也会重新播放共用的起跳动画。
+    /// 开始指定段的跳跃，按段号设置垂直初速度，再通知表现组件播放对应动画。
     /// </summary>
     /// <param name="jumpCount">本次空中第几次跳，取值 1、2 或 3。</param>
     /// <returns>参数在 1 到 3 范围内并成功触发时返回 true。</returns>
@@ -488,7 +490,7 @@ public sealed class MMoveComponent : EntityComponentBase
         }
         JumpCount = jumpCount;
         _isjump = true;
-        _verticalVelocity = JumpUpwardSpeed;
+        _verticalVelocity = FirstJumpUpwardSpeed + (jumpCount - 1) * JumpUpwardSpeedPerStage;
         _airborneElapsedSeconds = 0f;
         // 跳跃次数校验通过后才取消技能，随后跳跃事件可以立即接管动画。
         if (Entity.CurrentState == StateDefine.kStateSkill)
