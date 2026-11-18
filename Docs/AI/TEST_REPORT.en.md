@@ -721,3 +721,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Captured 8 live loopback GameServer messages for scene 4060 wave 18, creature 5515, SpawnId 77309411329. An isolated Unity 2023.2.20f1c1 Play Mode run passed 33 checks and exited with code 0. The real SpawnCreature and YooAsset path loaded the prefab. Checks covered patrol, chase, overlap hit, authoritative HP, original skill 1000118401, caster slash, target impact, idle return, death and removal.
 - The 34 business files matched the tested copy byte for byte. The isolated editor used temporary compatibility aliases for existing TaskPageFilter names, outside the implementation commit. Human full-dungeon playthrough and packaged Player are unverified. Evidence for 0e85455 is listed in `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`.
+
+## [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects
+
+- Isolated Unity 2023.2.20f1c1 Play Mode passed 61 checks and exited with code 0. All 11 dungeon NPC prefabs deserialized without the deleted bindings. City NPC 4001 opened the original dialogue and shop 1 at interaction range. The 32 files matched the tested candidate.
+- Captured 3 new GameServer messages for Moshenta wave 47. The 20186 NPC showed both dialogue options and played skill 1000545601's original animation and frenzy effect from the server message. NPC movement used a simulated authoritative segment, and unloading cleared the entity, playback and dialogue eligibility. Replayed 8 earlier wave 18 messages to verify original attack 1000118401 and its caster and hit effects.
+- The isolated editor used compatibility aliases for existing TaskPageFilter names. Human full-dungeon playthrough and packaged Player are unverified. Evidence for d3fcaa4 is listed in `项目修改日志/2026-11-18-RO式NPC实体统一与宿主清理.md`.

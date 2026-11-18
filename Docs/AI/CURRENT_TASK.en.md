@@ -690,3 +690,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Removed MSceneMonsterHoster and its Unity .meta. All 23 affected runtime prefabs retain MModelPrepareData and the public MMonsterAnimator. Fixed waves and summons bind MonsterEntity. MoveComp follows server movement and facing, Skill owns the original effect timelines, and AttrComp applies authoritative HP. Local overlap feedback looks up the runtime UID from the model.
 - The 34-file implementation was pushed as 0e85455 to codex/feature-development. Wave 18 orc 5515 passed the isolated Unity check. Human full-dungeon playthrough and packaged Player are unverified. File manifest, RO references and Git receipt are in `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`.
+
+## [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions
+
+- Removed MSceneNpcHoster, NpcCtrl and MonsterCtrl, including their .meta files and bindings in 14 serialized assets. All 11 affected dungeon NPC prefabs retain MModelPrepareData and MMonsterAnimator. City and dungeon NPCs bind their models to NpcEntity. TouchObject and MNavigationComponent pass the target entity to MainCtrl within the existing 10 m dialogue range. Dungeon motion and original skills use MEntity's existing MoveComp and Skill.
+- The 32-file change was pushed as d3fcaa4 to codex/feature-development. City NPC 4001 opened shop 1, and Moshenta wave 47 NPC 20186 retained its dialogue options and original skill 1000545601. Wave 18 attack and effects passed regression. Full human playthrough and packaged Player are unverified. See `项目修改日志/2026-11-18-RO式NPC实体统一与宿主清理.md`.

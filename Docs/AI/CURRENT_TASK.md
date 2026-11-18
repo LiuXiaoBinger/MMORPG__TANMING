@@ -685,3 +685,8 @@
 
 - 移除了 `MSceneMonsterHoster` 及其 Unity `.meta`。受影响的 23 个运行时预制体均保留 `MModelPrepareData` 和公开的 `MMonsterAnimator`。固定波次怪物和召唤怪物都绑定 `MonsterEntity`；`MoveComp` 根据服务器消息更新移动和朝向，`Skill` 负责原有特效时间轴，`AttrComp` 应用服务器权威生命值。本地重叠检测的命中反馈从模型取得运行时 UID。
 - 这次实现涉及 34 个文件，已推送至 `codex/feature-development`（提交 `0e85455`）。第 18 波兽人 `5515` 通过隔离 Unity 验证。尚未验证人工完整通关和打包后的 Player。文件清单、RO 参考和 Git 回执见 `项目修改日志/2026-11-18-魔神塔怪物实体组件移植.md`。
+
+## [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] 统一 NPC 模型、对话与副本动作
+
+- 删除 `MSceneNpcHoster`、`NpcCtrl` 和 `MonsterCtrl`、对应的 `.meta` 文件及 14 个序列化资源中的相关绑定。受影响的 11 个副本 NPC 预制体均保留 `MModelPrepareData` 和 `MMonsterAnimator`。主城与副本 NPC 都将模型绑定到 `NpcEntity`。在原有 10 米对话范围内，`TouchObject` 和 `MNavigationComponent` 将目标实体传给 `MainCtrl`。副本 NPC 的移动和原技能沿用 `MEntity` 的 `MoveComp` 和 `Skill`。
+- 32 个文件的变更已通过提交 `d3fcaa4` 推送到 `codex/feature-development`。主城 NPC `4001` 可打开商店 `1`，魔神塔第 47 波 NPC `20186` 保留对话选项与原技能 `1000545601`。第 18 波的攻击与特效通过回归验证。人工全流程实玩和打包 Player 尚未验证。详见 `项目修改日志/2026-11-18-RO式NPC实体统一与宿主清理.md`。

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a274620b052bebc34cb84af408fdc2dbb0166f6b911496a7969e01d2806be236`
+Source normalized SHA256: `a72fece27512139473dec57deb6b262731c3adb79904e02c1bb14447e449eb56`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -98,11 +98,12 @@ Source normalized SHA256: `a274620b052bebc34cb84af408fdc2dbb0166f6b911496a7969e0
 | [CODE][FILES][HANDOFF][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Renamed the Unity game root and assembly to LYF_Game | 673-678 |
 | [CODE][FILES][HANDOFF][资源][选角][CREATE-ROLE-SCENE-REPAIR-20261117] Restored missing character selection scene assets | 679-683 |
 | [CODE][FILES][HANDOFF][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Reimported UI assets and corrected skill animation locations | 684-688 |
-| [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-692 |
+| [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-693 |
+| [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-697 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `854265c910f808250b0f52dbc344c88027e0b4dfe368d07cc2628b53aaf9995e`
+Source normalized SHA256: `a68aa0fa49789b9ceebf41b161ca0904a58cad8ebae11282df06044d29ad51bc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -192,7 +193,8 @@ Source normalized SHA256: `854265c910f808250b0f52dbc344c88027e0b4dfe368d07cc2628
 | [VERIFY][资源][构建][LYF-GAME-CLIENT-RENAME-20261117] Verified LYF_Game editor compile and Windows64 package | 704-709 |
 | [VERIFY][资源][选角][构建][CREATE-ROLE-SCENE-REPAIR-20261117] Verified the restored character selection scene | 710-714 |
 | [VERIFY][登录][设置][副本][LOGIN-SETTINGS-DUNGEON-REPAIR-20261117] Tested login, settings and the slide skill in the local game | 715-719 |
-| [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-723 |
+| [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-724 |
+| [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-729 |
 
 ## Docs/AI/DECISIONS.en.md
 
