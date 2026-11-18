@@ -54,3 +54,22 @@ Unity Play Mode 中通过 `Tools/Chat/新版聊天测试` →「模拟他人消�
 - Editor 与 Windows Player 各编译 394 个源文件，新增 Editor 专用窗口按项目 Editor 引用编译通过。60 个保护路径的 SHA-256 匹配。网络验收捕获本地请求并注入服务广播，语音使用合成音频。真实服务器、物理麦克风和用户当前运行场景待实测。
 - 功能提交 `69c92fd7bbd281ccd396f78265b014d5c6228ce1` 已推送到 `origin/codex/feature-development`，父提交 `da6df38`。验证的提交范围为上表 5 个路径，证据为 `_temp/yimeng-chat-own-rows-sticker-20261118/git-receipt.txt`。
 - `token-monitor` 已运行 `collect` 和 `context`。已收到原生用量回执的开发续接轮记录 9,296,548 tokens，含缓存输入。中断尝试的独立用量不可测。汇总和统计窗口为 `_temp/yimeng-chat-own-rows-sticker-20261118/turn-usage.json`，对话压缩计数见同目录 `context-compactions.json`。
+
+## 后续补充 聊天速览与分类表情（2026-11-18）
+
+- 在新版完整聊天加「速览」入口。速览沿用同一份聊天历史，默认最多显示 3 条，点「更多」显示最多 7 条。「展开」回到当前频道，「旧版」沿窗口路由切回原聊天。在提交 737bea9 中，「设置」从速览打开完整聊天的接收消息页。
+- 底栏笑脸直接打开项目原创的「快捷发送」面板。15 种 EmojiOne 图案分为两页，历史、道具、装备、成就、技能、动作显示空状态。选择表情通过原文字发言目标发送标记，新版收到广播后显示图案。
+
+| 操作 | 文件 | 内容 |
+|---|---|---|
+| 修改 | LYF_MMO/Assets/LYF_Game/Prefabs/Resources/UI/Prefabs/YimengChat.prefab | 分组完整聊天界面，序列化速览、表情分类和翻页控件。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatWindow.cs | 接入速览显隐、切回入口和既有文字发言。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatMessageRow.cs | 按确认广播的完整正文标记映射表情图案。 |
+| 新增 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatCompactFeed.cs 及 .meta | 从同一历史呈现近期消息，保留语音时长、频道和表情名称。 |
+| 新增 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatEmojiPicker.cs 及 .meta | 管理分类、翻页、表情选择和发言权限。 |
+| 新增 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatEmojiTile.cs 及 .meta | 关联名称、完整标记和 EmojiOne 图集区域。 |
+
+- Codex 原生开发子 Agent /root/chat_compact_picker_dev，gpt-6.2-sol，会话 01a1edce-3944-70a3-bbfd-9c600db7574e，第 1 轮。主 Agent 在 Unity 2023.2.20f1c1 隔离 Play Mode 独立复验 318 项，覆盖 1600×900 和 1600×1000、速览两种高度、草稿保留、大笑和暖笑单次发言与广播回显、完整聊天和旧版切换。Editor 与 Windows Player 分别编译 397 个源文件。45 个保护路径的 SHA-256 一致。
+- 证据位于 _temp/yimeng-chat-compact-picker-20261118/main-acceptance-compact-picker.log，截图位于同目录 evidence/。网络验收捕获本地请求并注入广播。真实服务器和用户当前主城运行场景待实测。
+- 功能提交 737bea93cac48687e619c74b6319ed4d918e2a93 已推送到 origin/codex/feature-development，父提交 571df0b，提交范围为上表 9 个路径。回执位于 _temp/yimeng-chat-compact-picker-20261118/git-receipt.txt。
+- token-monitor 完成 collect 与 context。本轮历史交付时主 Agent 记录 19,318,901 tokens，开发子 Agent 记录 9,737,889 tokens，均含缓存输入。分项用量和压缩事件见 _temp/yimeng-chat-compact-picker-20261118/turn-usage.json 和 context-compactions.json。

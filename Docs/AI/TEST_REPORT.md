@@ -731,6 +731,8 @@
 - Editor 与 Windows Player 各编译 394 个源文件，均通过。52 个保护路径的 SHA-256 与任务前一致。主验收日志见 `_temp/yimeng-chat-channel-management-20261118/main-acceptance-channel-management.log`。真实服务器、物理麦克风和用户当前场景仍待验证。完整记录见 `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`。
 - 后续提交 `69c92fd` 在 Unity 2023.2.20f1c1 隔离 Play Mode 中独立验收通过 36 项检查，覆盖本人和他人的文字、语音排版，长消息重排，Editor 专用本地模拟，表情在三类频道中的真实序列化文本发包，正式广播后单次显示图片，保留草稿以及切回旧版。
 - Editor 和 Windows Player 各编译 394 个源文件。Editor 测试窗口使用项目 Editor 引用编译通过，60 个受保护路径的 SHA-256 均匹配。证据见 `_temp/yimeng-chat-own-rows-sticker-20261118/main-acceptance-own-rows-sticker.log`。测试使用本地通信捕获与合成音频。真实服务器、物理麦克风和用户当前场景仍待验证。
+- 后续提交 `737bea9` 通过 Unity `2023.2.20f1c1` 隔离 Play Mode 独立验收 318 项。覆盖 `1600×900` 和 `1600×1000` 两种画幅、速览两档高度与草稿保留、表情分类与翻页、「大笑」和「暖笑」各单次文字请求及广播确认后显示图案、完整聊天与旧版切换。
+- Editor 与 Windows Player 脚本各编译通过 397 个源文件，45 个保护路径的 SHA-256 全部一致。隔离环境捕获发送请求并注入广播。真实服务器和正在运行的主城场景仍待验证。证据见 `_temp/yimeng-chat-compact-picker-20261118/main-acceptance-compact-picker.log` 及同级的 `evidence/` 目录。
 
 ## [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] 魔神塔原预制体复用的实机与战斗回放验证
 
