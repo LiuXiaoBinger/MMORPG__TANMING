@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `ef6a5e3da62d24d36de9a7671d8161702fa1cde011afb7df57d4d9f99e8da354`
+Source normalized SHA256: `ce8565795e1e41a86a504ff8dfc4455054fc06f34dbff3b8259e2c8ae36cfd50`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -105,11 +105,11 @@ Source normalized SHA256: `ef6a5e3da62d24d36de9a7671d8161702fa1cde011afb7df57d4d
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 716-720 |
 | [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-727 |
 | [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-734 |
-| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 735-740 |
+| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 735-741 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `8b35eee9dafc4e5403fb4179979cb06b3c61b635271e10f8a065ba3ce4494e86`
+Source normalized SHA256: `c4376f4a46615e05c93a8809b923fdbfc9b7793f8067e4a24e3959351fe74eda`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -206,7 +206,7 @@ Source normalized SHA256: `8b35eee9dafc4e5403fb4179979cb06b3c61b635271e10f8a065b
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 748-752 |
 | [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-758 |
 | [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-765 |
-| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 766-772 |
+| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 766-773 |
 
 ## Docs/AI/DECISIONS.en.md
 
