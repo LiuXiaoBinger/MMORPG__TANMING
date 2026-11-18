@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `ce8565795e1e41a86a504ff8dfc4455054fc06f34dbff3b8259e2c8ae36cfd50`
+Source normalized SHA256: `28529f0cfa3d42454c6f665d0610f1dd50b545dcadcb4bacc661231090cc903e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -103,13 +103,13 @@ Source normalized SHA256: `ce8565795e1e41a86a504ff8dfc4455054fc06f34dbff3b8259e2
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
 | [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-715 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 716-720 |
-| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-727 |
-| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-734 |
-| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 735-741 |
+| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-728 |
+| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 729-735 |
+| [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 736-742 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `c4376f4a46615e05c93a8809b923fdbfc9b7793f8067e4a24e3959351fe74eda`
+Source normalized SHA256: `7e75e1feaddb722bde985e2c85e9cf9e55323b654f8a09de4584b1e22b6f3f7a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -204,9 +204,9 @@ Source normalized SHA256: `c4376f4a46615e05c93a8809b923fdbfc9b7793f8067e4a24e395
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
 | [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-747 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 748-752 |
-| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-758 |
-| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-765 |
-| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 766-773 |
+| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-759 |
+| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 760-766 |
+| [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 767-774 |
 
 ## Docs/AI/DECISIONS.en.md
 
