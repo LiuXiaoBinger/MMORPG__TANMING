@@ -110,3 +110,18 @@ Unity Play Mode 中通过 `Tools/Chat/新版聊天测试` →「模拟他人消�
 - 复验证据位于 _temp/yimeng-chat-popup-style-20261118/main-acceptance-popup-style.log，样式截图位于同目录 evidence/。实际主城当前会话和真实联机待现场验证。
 - 功能提交 b4c44722c1c5ab37bc6e382a31ffe9bc6009f99f 已推送到 origin/codex/feature-development，父提交 3c53e0f，范围为上表六个文件。推送回执位于 _temp/yimeng-chat-popup-style-20261118/git-receipt.txt。
 - token-monitor 已运行 collect 与 context。用量窗口和原生结果汇总见 _temp/yimeng-chat-popup-style-20261118/turn-usage.json。
+
+## 后续补充 聊天右缘透明与移除重复入口（2026-11-18）
+
+- 完整聊天底板收在正文和输入栏的右侧边界，右侧预留条和白箭头的底板透明。保留白箭头的原有点击范围，点击返回左下角速览。原右上角「速览」按钮移除。点击速览消息区仍能展开完整聊天。
+- 右缘的透明空白允许点击传给下方场景，弹窗打开时原点外收起规则继续生效。
+
+| 操作 | 文件 | 内容 |
+|---|---|---|
+| 修改 | LYF_MMO/Assets/LYF_Game/Prefabs/Resources/UI/Prefabs/YimengChat.prefab | 将底板移入正文宽度内，透明化箭头图层并移除右上角按钮子树。 |
+| 修改 | LYF_MMO/Assets/LYF_Game/Scripts/UI/Main/YimengChat/YimengChatWindow.cs | 移除独立「速览」按钮的序列化字段和监听，沿用白箭头返回路径。 |
+
+- Codex 原生开发子 Agent /root/chat_compact_picker_dev，gpt-6.2-sol，会话 01a1edce-3944-70a3-bbfd-9c600db7574e，开发第 1 轮。主 Agent 用正式预制体和窗口脚本在 Unity 2023.2.20f1c1 独立通过 72 项隔离 Play Mode 检查。16:9、16:10 两种画幅中，白箭头图案之外分别有 60,392 和 67,180 个右缘采样像素与场景背景一致。鼠标检查覆盖箭头透明边缘命中、设置点外收起、点击传递和速览往返。
+- 66 个保护路径的 SHA-256 与基线一致，隔离 Editor 和 Windows Player 聊天脚本编译通过。缓存 Bee 整程序集响应用于原、新窗口的对照编译时，两侧均遇到 CurrRage、HasResources、CombatResourceDefaults 等角色资源和协议引用错误。日志和截图位于 _temp/yimeng-chat-rail-clear-20261118/，主验日志为 main-acceptance-rail.log，缓存对照为 cached-bee-baseline-comparison.txt。正式主城当前会话待现场验证。
+- 功能提交 352ff9cca3c8b57528904dd42a985652058e0ed9 已推送到 origin/codex/feature-development，父提交 8eaf361，范围为上表两处。回执位于 _temp/yimeng-chat-rail-clear-20261118/git-receipt.txt。
+- token-monitor 完成 collect 与 context，用量窗口和原生日志汇总位于 _temp/yimeng-chat-rail-clear-20261118/turn-usage.json。

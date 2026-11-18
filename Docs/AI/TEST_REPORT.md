@@ -737,6 +737,8 @@
 - Editor 与 Windows Player 脚本各编译通过 397 个源文件。61 个保护路径中有 60 个与任务起始 SHA-256 一致，UIRoot.prefab 的变化对应并行提交 fb1f2a8。提取的旧版聊天子树逐字节一致。隔离夹具使用本地通信捕获与注入广播。证据见 _temp/yimeng-chat-compact-filter-20261118/main-acceptance-filter.log。真实服务器和正在运行的主城场景仍待验证。
 - 后续提交 `b4c4472` 在 16:9 和 16:10 下通过 Unity `2023.2.20f1c1` 隔离 Play Mode 独立验收 155 项。虚拟鼠标与触控经过实际 `InputSystemUIInputModule`。覆盖点外收起、首次和重复切换、跨工具切换、下方控件点击、频道管理内拖动与应用、放弃未应用变更，以及速览和完整聊天的原有行为。
 - Editor 与 Windows Player 各编译通过 399 个源文件，61 个保护路径的 SHA-256 均与基线一致。证据见 `_temp/yimeng-chat-popup-style-20261118/main-acceptance-popup-style.log` 和同级 `evidence/` 目录。正在运行的正式主城会话和联机表现仍待验证。
+- 后续提交 `352ff9c` 在 16:9 和 16:10 下通过 Unity `2023.2.20f1c1` 隔离 Play Mode 独立验收 72 项。白色箭头图标以外的右缘采样中，分别有 60,392 和 67,180 个像素与场景背景完全一致。鼠标检查覆盖箭头透明命中区、弹窗点外收起、点击传递，以及从速览重新展开完整聊天。
+- 隔离工程的 Editor 与 Windows Player 聊天脚本编译通过。使用缓存 Bee 响应编译整程序集时，基线与当前版本均报告角色资源和协议引用错误，诊断位于聊天范围之外。66 个保护路径的 SHA-256 均与基线一致。证据见 `_temp/yimeng-chat-rail-clear-20261118/main-acceptance-rail.log` 与同目录的 `cached-bee-baseline-comparison.txt`。正在运行的正式主城会话仍待验证。
 
 ## [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] 魔神塔原预制体复用的实机与战斗回放验证
 

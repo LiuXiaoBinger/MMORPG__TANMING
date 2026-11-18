@@ -714,6 +714,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - The feed shows the latest matching three or seven messages in arrival order. Clearing every selection displays 未选择频道. Selections survive switching between the compact feed, full chat and legacy chat within the window instance. A newly created window starts with all eight selected.
 - Follow-up b4c4472 aligns the full chat, channel rail, composer, compact controls and popups with the project's combat HUD and equipment-detail palette. Compact controls reuse the project's HUD slot frame, and the message surface retains 0.44 width and 18% opacity.
 - Pressing outside the Settings and Channel Management group, either emoji picker, the posting channel picker or the compact filter closes the visible popup. Normal click handling continues beneath it. Inside input and the original opener use their existing handlers. The settings group shares both visible bounds; closing it discards channel-management changes that have not been applied.
+- Follow-up 352ff9c limits the full-chat backdrop to the content and composer width. The right edge and the return-arrow plate show the scene. The white arrow retains its click area and returns to the bottom-left compact chat.
+- The separate top-right 速览 button is removed. The compact chat message area remains the entry to full chat. Points on the right edge beyond the arrow and any open popup can reach the underlying scene.
 
 ## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs
 
