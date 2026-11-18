@@ -47,8 +47,8 @@ MonoBehaviour:
   - SourceEventIndex: 3
     Frame: 54
     TimeSeconds: 0.45
-    Clip: {fileID: 8300000, guid: a54c365ca3a94624fa605c1eb9fd56cb, type: 3}
-    Volume: 0.2
+    Clip: {fileID: 8300000, guid: d640b21a2a1c5d546987a5b4548a7b82, type: 3}
+    Volume: 0.28
   ChargeList:
   - At: 0
     End: 2.5

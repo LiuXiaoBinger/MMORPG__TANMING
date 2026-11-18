@@ -98,7 +98,7 @@ MonoBehaviour:
     socketPath: 
     placementKind: 0
     forwardDistance: 0
-    audioClip: {fileID: 8300000, guid: 7234dd7bab3fb3c4982e8b2c6e5fe076, type: 3}
+    audioClip: {fileID: 8300000, guid: 87e9f0310cc924844ade57ec80d2b4ba, type: 3}
     followCharacter: 1
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 1, y: 1, z: 1}
@@ -108,7 +108,7 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.65
+    baseVolume: 0.28
   - contentKind: 2
     keyNumber: 9
     endKeyNumber: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
     socketPath: 
     placementKind: 0
     forwardDistance: 0
-    audioClip: {fileID: 8300000, guid: 52b1400491e74a8409118a0656775e02, type: 3}
+    audioClip: {fileID: 8300000, guid: 6151a7bf623ee0344a4cb3223e4c00d9, type: 3}
     followCharacter: 1
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 1, y: 1, z: 1}
@@ -127,7 +127,7 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.65
+    baseVolume: 0.3
   cancelList: []
   projectileList: []
   hitFxList: []

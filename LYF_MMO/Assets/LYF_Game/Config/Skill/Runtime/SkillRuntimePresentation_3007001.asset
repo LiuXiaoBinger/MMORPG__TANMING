@@ -42,13 +42,13 @@ MonoBehaviour:
   - SourceEventIndex: 2
     Frame: 0
     TimeSeconds: 0
-    Clip: {fileID: 8300000, guid: 90d337d3818c18f42a9d382b3ebdee73, type: 3}
-    Volume: 0.35
+    Clip: {fileID: 8300000, guid: 172cb3e922fdfd3458401ea964857915, type: 3}
+    Volume: 0.38
   - SourceEventIndex: 3
     Frame: 49
     TimeSeconds: 1.6333333
-    Clip: {fileID: 8300000, guid: 7b81b8674ac17da40a38a6eabad975f7, type: 3}
-    Volume: 0.9
+    Clip: {fileID: 8300000, guid: aafe811148239f34abd4c2c9257803ed, type: 3}
+    Volume: 0.85
   ChargeList: []
   Collisions:
   - StartFrame: 4

@@ -7179,7 +7179,7 @@ MonoBehaviour:
     socketPath: 
     placementKind: 0
     forwardDistance: 0
-    audioClip: {fileID: 8300000, guid: a54c365ca3a94624fa605c1eb9fd56cb, type: 3}
+    audioClip: {fileID: 8300000, guid: 5fc3d147e3444e640b5af0114385aeff, type: 3}
     followCharacter: 1
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 1, y: 1, z: 1}
@@ -7189,7 +7189,7 @@ MonoBehaviour:
     audioRandomize: 0
     pitchVariation: 0.1
     volumeVariation: 0.05
-    baseVolume: 0.25
+    baseVolume: 0.3
   cancelList: []
   projectileList: []
   hitFxList: []

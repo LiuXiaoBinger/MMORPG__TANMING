@@ -4,13 +4,13 @@ using UnityEditor;
 using UnityEngine;
 using Ethan.ActionEditor;
 
-/// <summary>通过菜单为 MJS 技能及走跑跳动作配置声音和位移轨道，再导出运行数据；已有粒子和用户位移段予以保留。</summary>
+/// <summary>为魔剑士技能及走跑跳动作配置课程音效，并沿原作者音轨导出运行数据。</summary>
 public static class SkillEditorAudioMotionSetup
 {
 
     #region 字段
-    /// <summary>MJS 角色的 RO 解码声音根目录；Movement、Jump 和 Skills 子目录及文件名标明动作用途。</summary>
-    private const string AudioDirectory = "Assets/LYF_Game/Audios/Characters/MJS/";
+    /// <summary>第 3 章课程音效的 Unity 资源根目录，用于加载攻击、技能及脚步等剪辑。</summary>
+    private const string AudioDirectory = "Assets/LYF_Game/Audios/Shared/CourseChapter03/";
 
     /// <summary>当前正式角色普通动作的真实动画资源目录。</summary>
     private const string CommonAnimationDirectory = "Assets/LYF_Game/Animas/Role/MJS/Common/ALL/";
@@ -26,51 +26,16 @@ public static class SkillEditorAudioMotionSetup
     #endregion
 
     #region 音频与移动技能配置装配导出
-    /// <summary>迁移上一版自动制作的声音初值；用户已调整音量时保留原事件，已迁移时不重复追加。</summary>
-    /// <param name="config">本次更新的原作者对象，粒子和位移列表不参与修改。</param>
-    /// <param name="oldFileName">上一版自动稿声音在分类根目录下的相对路径，仅用于定位旧默认事件。</param>
-    /// <param name="oldFrame">上一版默认触发帧，使用作者时间轴帧率。</param>
-    /// <param name="oldVolume">上一版默认音量，只有仍等于此值才迁移，范围零至一。</param>
-    /// <param name="fileName">本版声音在分类根目录下的相对路径，真实引用由 Unity 资源数据库解析。</param>
-    /// <param name="frame">本版默认触发帧，使用作者时间轴帧率。</param>
-    /// <param name="volume">本版默认音量，范围零至一，不修改原波形。</param>
-    private static void UpdateInitialAudio(SkillConfigSO config, string oldFileName, int oldFrame, float oldVolume, string fileName, int frame, float volume)
-    {
-        // 旧声音资源仍保留，只作为精确识别上一版初稿的引用。
-        AudioClip previousClip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + oldFileName);
-        // 新资源引用必须真实存在，禁止手写序列化身份。
-        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
-        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
-        // 原 Y 作者对象的序列化适配边界，仅更新声音的资源、时点和音量。
-        SerializedObject serialized = new SerializedObject(config);
-        // 原声音和粒子混合列表，引用类型对象由 Unity 序列化接口维护。
-        SerializedProperty effects = serialized.FindProperty("fxList");
-        // 逐条寻找上一版精确资源和时点，不改变排序和其他事件。
-        for (int index = 0; index < effects.arraySize; index++)
-        {
-            // 当前候选事件，只允许 contentKind=2 的单次音效被迁移。
-            SerializedProperty item = effects.GetArrayElementAtIndex(index);
-            if (item.FindPropertyRelative("contentKind").intValue != 2 || item.FindPropertyRelative("audioClip").objectReferenceValue != previousClip || item.FindPropertyRelative("keyNumber").intValue != oldFrame) continue;
-            if (!Mathf.Approximately(item.FindPropertyRelative("baseVolume").floatValue, oldVolume)) return;
-            item.FindPropertyRelative("audioClip").objectReferenceValue = clip;
-            item.FindPropertyRelative("keyNumber").intValue = frame;
-            item.FindPropertyRelative("baseVolume").floatValue = volume;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            return;
-        }
-        AddAudio(config, fileName, frame, volume);
-    }
-
     /// <summary>追加固定音量单次声音，重复执行时同一帧同一声音不会再次插入。</summary>
     /// <param name="config">接收新增声音的原作者对象。</param>
-    /// <param name="fileName">真实 RO 样本在 MJS 角色声音根目录下的英文相对资源路径。</param>
+    /// <param name="fileName">课程音效根目录下的相对资源路径，含音频扩展名。</param>
     /// <param name="frame">明确的时间轴触发帧，零起始。</param>
     /// <param name="volume">制作时固定音量，范围零至一。</param>
     private static void AddAudio(SkillConfigSO config, string fileName, int frame, float volume)
     {
         // Unity 解析实际音频身份，禁止猜测 GUID 或 fileID。
         AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
-        if (clip == null) throw new InvalidOperationException("RO 声音尚未导入：" + fileName);
+        if (clip == null) throw new InvalidOperationException("课程音效尚未导入：" + fileName);
         // 原 Y 声音事件列表，通过序列化边界保留所有已有事件引用。
         SerializedObject serialized = new SerializedObject(config);
         // 当前粒子与声音混合列表，新增时只扩展尾部。
@@ -147,8 +112,8 @@ public static class SkillEditorAudioMotionSetup
         AssetDatabase.SaveAssetIfDirty(runtime);
     }
 
-    /// <summary>给七份现有作者稿追加声音，位移段由程序曲线迁移承载，并生成六份普通动作及其运行声音配置。</summary>
-    [MenuItem("Tools/技能/YCombat/编入RO音效与程序位移")]
+    /// <summary>为七份技能作者稿及六个走跑跳动作补齐课程音效，并发布对应运行配置。</summary>
+    [MenuItem("Tools/技能/YCombat/编入魔剑士课程音效")]
     public static void PrepareAndExport()
     {
         EnsureEditableAssets();
@@ -159,41 +124,37 @@ public static class SkillEditorAudioMotionSetup
             int presentationId = PresentationIds[index];
             // 原作者绑定持有既有 Config 与 SourceClip，修改同一对象以保持 GUID。
             SkillEditorBinding binding = AssetDatabase.LoadAssetAtPath<SkillEditorBinding>(SkillEditorAssetTools.AuthoringDirectory + "/SkillEditorBinding_" + presentationId + ".asset");
-            Undo.RecordObject(binding.Config, "编入RO动作声音与根运动");
-            // 根据当前动作表现选择原 RO 样本；触发帧优先和现有挥刀粒子一致。
-            if (presentationId == 3001001) AddAudio(binding.Config, "Skills/Shared/Skill_BasicAttack_Slash01.wav", 48, 0.8f);
-            else if (presentationId == 3001002) AddAudio(binding.Config, "Skills/Shared/Skill_BasicAttackF_Slash02.wav", 23, 0.7f);
+            Undo.RecordObject(binding.Config, "编入魔剑士课程音效");
+            // 课程剪辑沿用现有挥刀时点；相同剪辑和帧的作者事件由 AddAudio 保留。
+            if (presentationId == 3001001) AddAudio(binding.Config, "Attack/role1_attack1.wav", 48, 0.18f);
+            else if (presentationId == 3001002) AddAudio(binding.Config, "Attack/role1_attack2.wav", 23, 0.30f);
             else if (presentationId == 3001003)
             {
-                AddAudio(binding.Config, "Skills/Shared/Skill_BasicAttack_Slash01.wav", 23, 0.8f);
-                UpdateInitialAudio(binding.Config, "Skills/Shared/Skill_Combo_FastSlash.wav", 54, 0.6f, "Skills/Shared/Skill_Combo_FastSlash.wav", 54, 0.2f);
+                AddAudio(binding.Config, "Attack/role1_attack3.wav", 23, 0.18f);
+                AddAudio(binding.Config, "Attack/tianshen2_attack2.wav", 54, 0.28f);
             }
             else if (presentationId == 3004001)
             {
-                // 首段改用短挥刀，避免原长声音的主起音晚于本动画第一快速动作。
-                UpdateInitialAudio(binding.Config, "Skills/Legacy/Skill_E_LegacyFull.wav", 9, 0.65f, "Skills/E/Skill_E_Phase01_HeavySlash.wav", 9, 0.65f);
-                // 第二快速挥刀使用独立短声，原 F36 刀光及根运动保持。
-                AddAudio(binding.Config, "Skills/E/Skill_E_Phase02_ShortSlash.wav", 36, 0.3f);
+                AddAudio(binding.Config, "Attack/tianshen2_attack1.wav", 9, 0.46f);
+                AddAudio(binding.Config, "Attack/tianshen2_attack2.wav", 36, 0.27f);
             }
             else if (presentationId == 3005001)
             {
-                // 原能量声继续覆盖释放过程，降低默认音量给第二刀留出层次。
-                UpdateInitialAudio(binding.Config, "Skills/R/Skill_R_Full.wav", FirstFxFrame(binding.Config), 0.6f, "Skills/R/Skill_R_Full.wav", FirstFxFrame(binding.Config), 0.35f);
-                // F136 触发短挥刀，其样本主起音位于后续约 0.14 秒的快速挥刀阶段。
-                AddAudio(binding.Config, "Skills/R/Skill_R_Followup_HeavySlash.wav", 136, 0.45f);
+                // R 的释放音随首个粒子时点触发，后续挥刀使用原有 F136。
+                AddAudio(binding.Config, "Skill/tianshen8_skill2.wav", FirstFxFrame(binding.Config), 0.23f);
+                AddAudio(binding.Config, "Attack/Clip_Test010.wav", 136, 0.27f);
             }
             else if (presentationId == 3006001)
             {
-                AddAudio(binding.Config, "Skills/Shared/Skill_BasicAttackF_Slash02.wav", 37, 0.65f);
-                // 第二挥刀原手曲线速度峰约 1.258 秒，短声主起音需由 F142 提前约 0.08 秒触发。
-                UpdateInitialAudio(binding.Config, "Skills/Shared/Skill_Combo_FastSlash.wav", 84, 0.6f, "Skills/Shared/Skill_Combo_FastSlash.wav", 142, 0.25f);
+                AddAudio(binding.Config, "Skill/Female_Attack_11_Kimlinh.wav", 37, 0.27f);
+                AddAudio(binding.Config, "Attack/tianshen2_attack1.wav", 142, 0.30f);
             }
             else if (presentationId == 3007001)
             {
-                AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_Charge.wav", 4, 0.35f);
-                AddAudio(binding.Config, "Skills/SwordDrop/Skill_SwordDrop_ReleaseImpact.wav", 9, 0.65f);
+                // 落剑从零帧蓄力，沿用正式音轨的 F49 冲击点。
+                AddAudio(binding.Config, "Skill/JuQi/Clip_Skill05_Juqi.wav", 0, 0.38f);
+                AddAudio(binding.Config, "Explosion/K Electric Impact.mp3", 49, 0.85f);
             }
-            // 第一批需要补充根位移的技能表现 ID 已改为程序曲线，不再自动补动画根段。
             EditorUtility.SetDirty(binding.Config);
             AssetDatabase.SaveAssetIfDirty(binding.Config);
         }
@@ -201,7 +162,7 @@ public static class SkillEditorAudioMotionSetup
         SkillEditorAssetTools.ExportAll();
         ExportLocomotion();
         SkillEditorAssetTools.ValidateAll();
-        Debug.Log("已编入 RO 声音：七份技能作者稿与运行表现、走路/跑步/起跳/落地动作；已有粒子与用户位移段保留。");
+        Debug.Log("已编入魔剑士课程音效，涵盖技能、走路、跑步、起跳和落地。");
     }
 
     /// <summary>发布前复用正式单动画与字段白名单校验，避免普通动作静默忽略未接入轨道。</summary>
@@ -260,11 +221,11 @@ public static class SkillEditorAudioMotionSetup
                 int leftFrame = FootContactFrame(clip, "LeftFootT.y", config.timelineFrameRate);
                 // 另一只脚独立读原曲线，不假定动作从脚步零帧起。
                 int rightFrame = FootContactFrame(clip, "RightFootT.y", config.timelineFrameRate);
-                AddAudio(config, "Movement/Movement_Footstep01.wav", leftFrame, 0.65f);
-                AddAudio(config, "Movement/Movement_Footstep02.wav", rightFrame, 0.65f);
+                AddAudio(config, "Footstep/Dirt_footstep8.wav", leftFrame, 0.28f);
+                AddAudio(config, "Footstep/Dirt_footstep9.wav", rightFrame, 0.30f);
             }
-            else if (index == 2) AddAudio(config, "Jump/Jump_TakeoffWhoosh.wav", 0, 0.35f);
-            else AddAudio(config, "Jump/Jump_LandingFootstep.wav", 0, 0.8f);
+            else if (index == 2) AddAudio(config, "Footstep/Female_Jump_02_Kimlinh.wav", 0, 0.35f);
+            else AddAudio(config, "Footstep/Dirt_footstep8.wav", 0, 0.28f);
             AssetDatabase.CreateAsset(config, path);
             EditorUtility.SetDirty(config);
             AssetDatabase.SaveAssetIfDirty(config);
@@ -327,11 +288,17 @@ public static class SkillEditorAudioMotionSetup
             if (config != null && EditorUtility.IsDirty(config)) throw new InvalidOperationException("普通动作存在未保存修改：" + LocomotionNames[index]);
         }
         // 所需音源在写入前全量检查，缺声音不能留下半套已经保存的作者修改。
-        string[] sounds = { "Skills/Shared/Skill_BasicAttack_Slash01.wav", "Skills/Shared/Skill_BasicAttackF_Slash02.wav", "Skills/Shared/Skill_Combo_FastSlash.wav", "Skills/Legacy/Skill_E_LegacyFull.wav", "Skills/R/Skill_R_Full.wav", "Skills/E/Skill_E_Phase01_HeavySlash.wav", "Skills/E/Skill_E_Phase02_ShortSlash.wav", "Skills/R/Skill_R_Followup_HeavySlash.wav", "Skills/SwordDrop/Skill_SwordDrop_Charge.wav", "Skills/SwordDrop/Skill_SwordDrop_ReleaseImpact.wav", "Movement/Movement_Footstep01.wav", "Movement/Movement_Footstep02.wav", "Jump/Jump_LandingFootstep.wav", "Jump/Jump_TakeoffWhoosh.wav" };
-        // 所需声音分类相对路径索引，实际身份仍由 Unity 资源数据库返回。
+        string[] sounds = {
+            "Attack/role1_attack1.wav", "Attack/role1_attack2.wav", "Attack/role1_attack3.wav",
+            "Attack/tianshen2_attack1.wav", "Attack/tianshen2_attack2.wav", "Attack/Clip_Test010.wav",
+            "Skill/tianshen8_skill2.wav", "Skill/Female_Attack_11_Kimlinh.wav", "Skill/JuQi/Clip_Skill05_Juqi.wav",
+            "Explosion/K Electric Impact.mp3", "Footstep/Dirt_footstep8.wav", "Footstep/Dirt_footstep9.wav",
+            "Footstep/Female_Jump_02_Kimlinh.wav"
+        };
+        // 新建作者音轨所需的课程素材路径，统一相对于 AudioDirectory。
         for (int index = 0; index < sounds.Length; index++)
         {
-            if (AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + sounds[index]) == null) throw new InvalidOperationException("RO 声音尚未导入：" + sounds[index]);
+            if (AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + sounds[index]) == null) throw new InvalidOperationException("课程音效尚未导入：" + sounds[index]);
         }
         // 普通动作的运行配置也在全部制作前检查脏状态。
         SkillRuntimeLocomotionConfig locomotion = AssetDatabase.LoadAssetAtPath<SkillRuntimeLocomotionConfig>(SkillEditorAssetTools.RuntimeDirectory + "/SkillRuntimeLocomotionConfig_MJS.asset");
