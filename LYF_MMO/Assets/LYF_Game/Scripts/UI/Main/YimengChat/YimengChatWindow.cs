@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>管理江湖聊天的可编辑预制体控件、频道和消息展示。</summary>
@@ -74,12 +75,20 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private ChatRecordObj _compactRecord;
     /// <summary>设置层的所有分页及显隐容器。</summary>
     [SerializeField] private YimengChatPages _settings;
+    /// <summary>完整聊天齿轮的点击边界，保留它自己的设置开关行为。</summary>
+    [SerializeField] private RectTransform _settingsTrigger;
+    /// <summary>设置右侧独立的频道管理区域，打开时与设置页一起参与点外判断。</summary>
+    [SerializeField] private RectTransform _channelManagementPanel;
     /// <summary>底栏笑脸打开的表情选择面板，提供可发送项及广播标记的查找。</summary>
     [SerializeField] private YimengChatEmojiPicker _palette;
+    /// <summary>完整聊天底栏笑脸的点击边界，关闭表情时交给按钮自身切换。</summary>
+    [SerializeField] private RectTransform _paletteTrigger;
     /// <summary>速览右侧的表情面板挂点，复用完整版弹窗的尺寸与内部布局。</summary>
     [SerializeField] private RectTransform _compactPaletteDock;
     /// <summary>底部发言目标选择菜单。</summary>
     [SerializeField] private GameObject _channelPicker;
+    /// <summary>所属根画布，提供弹窗屏幕坐标换算所需的渲染模式和实际相机。</summary>
+    private Canvas _rootCanvas;
 
     /// <summary>报告文字编辑的焦点状态，供游戏输入控制器暂停或恢复操作。</summary>
     public event Action<bool> InputFocusChanged;
@@ -120,6 +129,7 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>主视图持有窗口后绑定一次正式控件。</summary>
     public override void InitWindow()
     {
+        _rootCanvas = GetComponentInParent<Canvas>().rootCanvas;
         _collapse.onClick.AddListener(ShowCompactFeed);
         _showCompactFeed.onClick.AddListener(ShowCompactFeed);
         _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
@@ -214,6 +224,68 @@ public sealed class YimengChatWindow : WindowBase
         _palette.gameObject.SetActive(false);
         _channelPicker.SetActive(false);
         _compactFeed.CloseFilter();
+    }
+
+    /// <summary>监听弹窗打开期间的指针按下，点外仅收起当前弹层。</summary>
+    private void Update()
+    {
+        // 设置和右侧频道管理共用设置层的显隐。
+        bool fullPopupOpen = _settings.isActiveAndEnabled || _palette.isActiveAndEnabled || _channelPicker.activeInHierarchy;
+        if (!fullPopupOpen && !_compactFeed.FilterBounds.gameObject.activeInHierarchy) return;
+
+        // 优先取本帧开始的触控，坐标单位为屏幕像素。
+        Touchscreen touchscreen = Touchscreen.current;
+        if (touchscreen != null && touchscreen.primaryTouch.press.wasPressedThisFrame)
+        {
+            CloseOnOutsidePress(touchscreen.primaryTouch.position.ReadValue());
+            return;
+        }
+        // 鼠标只在左键按下时检查，抬起仍由原按钮或拖动控件处理。
+        Mouse mouse = Mouse.current;
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+            CloseOnOutsidePress(mouse.position.ReadValue());
+    }
+
+    /// <summary>在实际画布坐标下判断当前弹窗及其开关，保留原点击的传递。</summary>
+    /// <param name="position">本次指针按下时的屏幕像素坐标。</param>
+    private void CloseOnOutsidePress(Vector2 position)
+    {
+        // 覆盖画布以屏幕坐标为准，相机画布使用项目绑定的 UI 相机。
+        Camera eventCamera = null;
+        if (_rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay) eventCamera = _rootCanvas.worldCamera;
+
+        if (_settings.isActiveAndEnabled)
+        {
+            // 管理弹窗往右伸出设置边界，只在它打开时算作设置内部。
+            bool insideSettings = ContainsPress((RectTransform)_settings.transform, position, eventCamera) ||
+                ContainsPress(_channelManagementPanel, position, eventCamera);
+            if (insideSettings || ContainsPress(_settingsTrigger, position, eventCamera) ||
+                ContainsPress((RectTransform)_teaseTool.transform, position, eventCamera)) return;
+        }
+        else if (_palette.isActiveAndEnabled)
+        {
+            if (ContainsPress((RectTransform)_palette.transform, position, eventCamera) ||
+                ContainsPress(_paletteTrigger, position, eventCamera) ||
+                ContainsPress(_compactFeed.EmojiTrigger, position, eventCamera)) return;
+        }
+        else if (_channelPicker.activeInHierarchy)
+        {
+            if (ContainsPress((RectTransform)_channelPicker.transform, position, eventCamera) ||
+                ContainsPress((RectTransform)_sendPickerButton.transform, position, eventCamera)) return;
+        }
+        else if (ContainsPress(_compactFeed.FilterBounds, position, eventCamera) ||
+            ContainsPress(_compactFeed.FilterTrigger, position, eventCamera)) return;
+
+        ClosePopups();
+    }
+
+    /// <summary>判定有效控件是否包含当前屏幕位置，未显示的另一模式入口不占命中范围。</summary>
+    /// <param name="bounds">预制体中弹层或其开关的实际矩形。</param>
+    /// <param name="position">指针屏幕坐标，单位为像素。</param>
+    /// <param name="eventCamera">相机画布使用的 UI 相机，覆盖画布传空。</param>
+    private static bool ContainsPress(RectTransform bounds, Vector2 position, Camera eventCamera)
+    {
+        return bounds.gameObject.activeInHierarchy && RectTransformUtility.RectangleContainsScreenPoint(bounds, position, eventCamera);
     }
 
     /// <summary>将目前显示的频道追加收到的真实消息。</summary>

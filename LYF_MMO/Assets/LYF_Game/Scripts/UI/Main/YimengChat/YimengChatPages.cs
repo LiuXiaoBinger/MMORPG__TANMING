@@ -27,9 +27,9 @@ public sealed class YimengChatPages : MonoBehaviour
             _pages[i].SetActive(selected);
             _selection[i].enabled = selected;
             if (selected)
-                _captions[i].color = new Color32(14, 22, 23, 255);
+                _captions[i].color = new Color32(16, 26, 38, 255);
             else
-                _captions[i].color = new Color32(172, 185, 182, 255);
+                _captions[i].color = new Color32(194, 210, 224, 255);
         }
     }
 

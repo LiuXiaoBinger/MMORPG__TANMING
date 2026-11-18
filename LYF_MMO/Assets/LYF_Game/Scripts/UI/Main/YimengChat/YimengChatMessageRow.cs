@@ -78,9 +78,9 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         _message.gameObject.SetActive(!hasSticker && !string.IsNullOrEmpty(message.Text));
         _message.text = message.Text;
         if (message.IsLocalPlayer)
-            _bubbleImage.color = new Color32(45, 89, 93, 205);
+            _bubbleImage.color = new Color32(39, 68, 96, 225);
         else
-            _bubbleImage.color = new Color32(12, 18, 19, 132);
+            _bubbleImage.color = new Color32(18, 29, 43, 194);
         UpdateLayout(((RectTransform)transform).rect.width);
     }
 

@@ -58,9 +58,9 @@ public sealed class YimengChatChannelTab : MonoBehaviour
     {
         _selection.enabled = selected;
         if (selected)
-            _caption.color = new Color32(15, 23, 24, 255);
+            _caption.color = new Color32(16, 26, 38, 255);
         else
-            _caption.color = new Color32(224, 235, 231, 255);
+            _caption.color = new Color32(218, 231, 242, 255);
     }
 
     /// <summary>确定该频道是否展示一条既有聊天记录。</summary>

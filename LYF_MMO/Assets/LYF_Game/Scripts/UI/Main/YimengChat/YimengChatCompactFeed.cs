@@ -39,6 +39,13 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     /// <summary>本次打开是否已加高速览区域。</summary>
     private bool _tall;
 
+    /// <summary>频道筛选面板的边界，供主窗口判断是否点在弹窗内。</summary>
+    internal RectTransform FilterBounds => (RectTransform)_filterPanel.transform;
+    /// <summary>右侧齿轮的命中范围，点击时沿用自己的开关动作。</summary>
+    internal RectTransform FilterTrigger => (RectTransform)_settings.transform;
+    /// <summary>速览笑脸的命中范围，供共用表情面板判断其原开关。</summary>
+    internal RectTransform EmojiTrigger => (RectTransform)_emoji.transform;
+
     /// <summary>绑定由主聊天窗口持有的数据和切换动作。</summary>
     /// <param name="toggleHeight">使用最新正式历史调整本面板的高度。</param>
     /// <param name="openChat">从消息区进入当前频道的完整聊天。</param>
