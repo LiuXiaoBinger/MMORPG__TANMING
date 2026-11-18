@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `5933b0cc9b153b82bdf515fc91d4273a357e3acded3026ecfacf88d1832a7235`
+Source normalized SHA256: `da29111873f324cf7795f1603e867088a339ee2e975a454d9a8531ba20138954`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -101,12 +101,12 @@ Source normalized SHA256: `5933b0cc9b153b82bdf515fc91d4273a357e3acded3026ecfacf8
 | [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-693 |
 | [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-698 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
-| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-709 |
-| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 710-713 |
+| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-711 |
+| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 712-715 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `8b49a95460589fdda9cd0e4cdf345c01d0a8aa69218bb8bcab5ddbb40a7afeb4`
+Source normalized SHA256: `26d27d381c289e2a97a78e7f863e55826e09c51878a41de700cfd0b0ca87bbd7`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -199,8 +199,8 @@ Source normalized SHA256: `8b49a95460589fdda9cd0e4cdf345c01d0a8aa69218bb8bcab5dd
 | [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-724 |
 | [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-730 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
-| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-741 |
-| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 742-745 |
+| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-743 |
+| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 744-747 |
 
 ## Docs/AI/DECISIONS.en.md
 

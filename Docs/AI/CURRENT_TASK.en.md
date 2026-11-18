@@ -706,6 +706,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - In Yimeng chat, Settings > Receive Messages > Manage Channels opens a separate scroll panel on the right and keeps the Receive Messages page active. The 18 serialized rows mirror the actual sidebar and distinguish interregional world from world.
 - Eye clicks and handle drag edit a draft. Apply updates visibility and order in the current MainView session. Closing discards un-applied changes. The draft needs a visible channel with a settings entry so the player can restore hidden tabs later.
 - The eight options on the frequent-tab posting menu and existing world, current scene and team routes remain available. Implementation is in `YimengChat.prefab` and `YimengChatChannelManagement.cs`. Commit `ec6b032` was pushed to `codex/feature-development`. The scoped file list and open verification are in `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.
+- Follow-up `69c92fd` aligns local chat messages to the right and other players' messages to the left using `IsLocalPlayer`. In Unity Play Mode, `Tools/Chat/新版聊天测试` adds one marked local World test message visible in Frequent or World. The test window is Editor-only.
+- Open the bottom smile button, select the top `表情` tab and click `大笑`. The existing text route sends `【大笑表情】` in World, Current Scene or Team. Yimeng chat shows its EmojiOne picture on the confirmed broadcast. Legacy chat displays the marker as text. Arbitrary image upload remains outside the current chat protocol. Scope and push evidence are in `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.
 
 ## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs
 

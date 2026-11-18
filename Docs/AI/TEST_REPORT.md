@@ -729,6 +729,8 @@
 - 首轮隔离 Play Mode 执行 154 项检查。主 Agent 验收复现了设置入口丢失。应用仅保留招募的左栏后，收起再打开聊天，无法进入设置。证据见 `_temp/yimeng-chat-channel-management-20261118/main-only-recruit-repro.log`。
 - Unity 2023.2.20f1c1 对最终预制体和脚本独立复验，通过 164 项 Play Mode 检查，覆盖 16:9 和 16:10 布局、左右独立滚动、草稿撤销和应用、通过设置恢复、常用页发言菜单、既有频道路由及新旧聊天切换。
 - Editor 与 Windows Player 各编译 394 个源文件，均通过。52 个保护路径的 SHA-256 与任务前一致。主验收日志见 `_temp/yimeng-chat-channel-management-20261118/main-acceptance-channel-management.log`。真实服务器、物理麦克风和用户当前场景仍待验证。完整记录见 `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`。
+- 后续提交 `69c92fd` 在 Unity 2023.2.20f1c1 隔离 Play Mode 中独立验收通过 36 项检查，覆盖本人和他人的文字、语音排版，长消息重排，Editor 专用本地模拟，表情在三类频道中的真实序列化文本发包，正式广播后单次显示图片，保留草稿以及切回旧版。
+- Editor 和 Windows Player 各编译 394 个源文件。Editor 测试窗口使用项目 Editor 引用编译通过，60 个受保护路径的 SHA-256 均匹配。证据见 `_temp/yimeng-chat-own-rows-sticker-20261118/main-acceptance-own-rows-sticker.log`。测试使用本地通信捕获与合成音频。真实服务器、物理麦克风和用户当前场景仍待验证。
 
 ## [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] 魔神塔原预制体复用的实机与战斗回放验证
 
