@@ -9,18 +9,22 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
 {
     /// <summary>首次打开时最多显示的消息条数。</summary>
     private const int CompactRows = 3;
-    /// <summary>含标题栏及三条消息的面板高度，单位为 Canvas 像素。</summary>
+    /// <summary>包含快捷图标及三条消息的速览高度，单位为 Canvas 像素。</summary>
     private const float CompactHeight = 154f;
     /// <summary>预制体内每增加一条消息所需的高度，单位为 Canvas 像素。</summary>
     private const float RowHeight = 30f;
 
-    /// <summary>控制速览在三条和全部预设行之间切换。</summary>
+    /// <summary>右栏顶部切换速览三条和全部预设行的按钮。</summary>
     [SerializeField] private Button _more;
-    /// <summary>随当前高度切换「更多」和「收起」。</summary>
-    [SerializeField] private TMP_Text _moreCaption;
-    /// <summary>在同一窗口恢复完整聊天的按钮。</summary>
+    /// <summary>短档向上、长档向下的箭头图形，随消息区高度旋转。</summary>
+    [SerializeField] private RectTransform _heightArrow;
+    /// <summary>顶部打开同一窗口中完整聊天的图标按钮。</summary>
     [SerializeField] private Button _expand;
-    /// <summary>开关速览旁的频道筛选面板。</summary>
+    /// <summary>顶部打开完整聊天原长按录音控件的图标按钮。</summary>
+    [SerializeField] private Button _voice;
+    /// <summary>顶部打开现有表情选择器的图标按钮。</summary>
+    [SerializeField] private Button _emoji;
+    /// <summary>右栏底部开关速览频道筛选面板的齿轮。</summary>
     [SerializeField] private Button _settings;
     /// <summary>速览右侧的频道筛选面板，离开速览时收起。</summary>
     [SerializeField] private GameObject _filterPanel;
@@ -42,12 +46,16 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     /// <summary>绑定由主聊天窗口持有的数据和切换动作。</summary>
     /// <param name="toggleHeight">使用最新正式历史调整本面板的高度。</param>
     /// <param name="expand">恢复当前频道的完整聊天。</param>
+    /// <param name="openVoice">展开完整聊天并切到原有长按录音模式。</param>
+    /// <param name="openEmoji">展开完整聊天并显示现有表情选择器。</param>
     /// <param name="refresh">频道选择改变后按最新的正式历史重绘速览。</param>
     /// <param name="showLegacy">沿主界面窗口路由关闭新版。</param>
-    internal void Init(Action toggleHeight, Action expand, Action refresh, Action showLegacy)
+    internal void Init(Action toggleHeight, Action expand, Action openVoice, Action openEmoji, Action refresh, Action showLegacy)
     {
         _more.onClick.AddListener(() => toggleHeight());
         _expand.onClick.AddListener(() => expand());
+        _voice.onClick.AddListener(() => openVoice());
+        _emoji.onClick.AddListener(() => openEmoji());
         _settings.onClick.AddListener(ToggleFilter);
         _closeFilter.onClick.AddListener(CloseFilter);
         _legacy.onClick.AddListener(() => showLegacy());
@@ -149,14 +157,16 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     private void SetHeight(bool tall)
     {
         _tall = tall;
-        // 基础高度包含标题和三条消息，上拉时只增加行占用的距离。
+        // 加高时只增加额外消息行占用的距离，快捷入口随消息区上沿移动。
         float height = CompactHeight;
-        _moreCaption.text = "更多";
+        // 箭头短档朝上表示加高，长档旋转半圈表示收起。
+        float arrowAngle = 0f;
         if (tall)
         {
             height += (_summaries.Length - CompactRows) * RowHeight;
-            _moreCaption.text = "收起";
+            arrowAngle = 180f;
         }
+        _heightArrow.localRotation = Quaternion.Euler(0f, 0f, arrowAngle);
         ((RectTransform)transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
     }
 

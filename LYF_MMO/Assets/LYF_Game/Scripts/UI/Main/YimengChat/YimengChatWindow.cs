@@ -123,7 +123,7 @@ public sealed class YimengChatWindow : WindowBase
         _collapse.onClick.AddListener(ShowCompactFeed);
         _showCompactFeed.onClick.AddListener(ShowCompactFeed);
         _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
-            () => _compactFeed.Refresh(_history, _palette), RequestToggle);
+            OpenVoiceFromFeed, OpenEmojiFromFeed, () => _compactFeed.Refresh(_history, _palette), RequestToggle);
         _send.onClick.AddListener(SubmitText);
         _palette.Init(SendEmoji);
         _input.onSubmit.AddListener(OnInputSubmit);
@@ -296,6 +296,20 @@ public sealed class YimengChatWindow : WindowBase
         _compactFeed.gameObject.SetActive(false);
         _fullChat.SetActive(true);
         ApplyChannel();
+    }
+
+    /// <summary>展开当前频道并显示已有长按录音入口，玩家按住后才会开始录音。</summary>
+    private void OpenVoiceFromFeed()
+    {
+        RestoreFullChat();
+        if (PostingTarget.CanPost) SetVoiceMode(true);
+    }
+
+    /// <summary>展开当前频道并打开笑脸按钮对应的现有表情选择器。</summary>
+    private void OpenEmojiFromFeed()
+    {
+        RestoreFullChat();
+        TogglePalette();
     }
 
     /// <summary>切换阅读频道及其配套工具栏和输入状态。</summary>
