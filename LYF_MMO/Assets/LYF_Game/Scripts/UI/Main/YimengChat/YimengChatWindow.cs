@@ -166,14 +166,6 @@ public sealed class YimengChatWindow : WindowBase
         }
     }
 
-    /// <summary>定制入口打开常用频道样式的设置分页。</summary>
-    public void OpenCustomization()
-    {
-        ClosePopups();
-        _settings.gameObject.SetActive(true);
-        _settings.SelectPage(2);
-    }
-
     /// <summary>显示录屏中撩一下的设置标签页。</summary>
     public void OpenTease()
     {
