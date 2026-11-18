@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 2468108611990023332}
   - component: {fileID: 2658585488483333546}
   - component: {fileID: 6895851073973477658}
+  - component: {fileID: 3534150114431523456}
+  - component: {fileID: 17243610947046390}
   m_Layer: 0
   m_Name: Monster_MoShenYingZi01
   m_TagString: Untagged
@@ -42,10 +44,10 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4090395261497137517}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 55700abf64e4f6c4ea7e6762b0f090ef, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
+  m_Controller: {fileID: 9100000, guid: b86eebe2a9456674bb6696fff72a1388, type: 2}
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -176,3 +178,58 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.4449495, y: 0.2331599, z: -0.0000006556511}
     m_Extent: {x: 1.175033, y: 0.5416351, z: 1.1872299}
   m_DirtyAABB: 0
+--- !u!114 &3534150114431523456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4090395261497137517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17014b1c03260884fb6ec7fd734c52f9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  SkinnedMeshRenderers:
+  - {fileID: 6883347099771753069}
+  ProjectSize: {x: 2.186332, y: 2.2677734, z: 0.8869388}
+  ProjectCenter: {x: 0.00000059604645, y: 1.006291, z: 0.117084295}
+  BoundRange: {x: -0.12759566, y: 2.1401777}
+  ShadowPoint: {fileID: 5752915056916453742}
+  motions:
+  - Slot: {fileID: 7400000, guid: 9ec2fc6ceb390f0408d144e36bbe328c, type: 2}
+    Clip: {fileID: 7400000, guid: f5277c52c1947394197836d6549fbbb7, type: 2}
+  - Slot: {fileID: 7400000, guid: 2f2260fd28d4b8842a86974a5e175da8, type: 2}
+    Clip: {fileID: 7400000, guid: 80829dc0f45030245b757dce05ad26aa, type: 2}
+  - Slot: {fileID: 7400000, guid: ae6feea6e6524224c84d5b042bc8ac26, type: 2}
+    Clip: {fileID: 7400000, guid: f5277c52c1947394197836d6549fbbb7, type: 2}
+  - Slot: {fileID: 7400000, guid: 3562e7a379272be4bb91fbda5cf4e221, type: 2}
+    Clip: {fileID: 7400000, guid: 39f8f8efff54aba43a8f317ef2f821fc, type: 2}
+  - Slot: {fileID: 7400000, guid: 4b2878e6d9ea03240bccf4b7b54a4a1e, type: 2}
+    Clip: {fileID: 7400000, guid: 72af98c062e36af498ea6a69bf07492f, type: 2}
+  - Slot: {fileID: 7400000, guid: a7a0ce4109a30e44991023813d368d67, type: 2}
+    Clip: {fileID: 7400000, guid: 7bfbeaca42702324285ecc9b8ee829eb, type: 2}
+  - Slot: {fileID: 7400000, guid: 40fb03497f9995547a4eb823b48ff3ae, type: 2}
+    Clip: {fileID: 7400000, guid: 7bfbeaca42702324285ecc9b8ee829eb, type: 2}
+  IgnoreShadow: 0
+--- !u!65 &17243610947046390
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4090395261497137517}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.186332, y: 2.2677734, z: 0.8869388}
+  m_Center: {x: 0.00000059604645, y: 1.006291, z: 0.117084295}

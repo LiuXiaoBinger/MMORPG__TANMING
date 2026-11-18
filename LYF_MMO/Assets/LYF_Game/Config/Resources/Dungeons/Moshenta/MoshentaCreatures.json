@@ -689,7 +689,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20174.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_F_Wounded.prefab",
             "hitAnimation": "Swordman_F_BeHit",
             "isNpc": true
         },
@@ -700,7 +700,7 @@
             "scale": 1.0,
             "idleAnimation": "Knight_F_IdleF",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20175.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_F.prefab",
             "hitAnimation": "Swordman_F_BeHit",
             "isNpc": true
         },
@@ -711,7 +711,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_M_ShouShangZuo",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20177.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_M_Wounded.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": true
         },
@@ -722,7 +722,7 @@
             "scale": 1.0,
             "idleAnimation": "Knight_M_IdleF",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20178.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_M.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": true
         },
@@ -733,7 +733,7 @@
             "scale": 1.0,
             "idleAnimation": "Assassin_M_IdleF",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20179.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_M.prefab",
             "hitAnimation": "Thief_M_BeHit",
             "isNpc": true
         },
@@ -744,7 +744,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20180.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_M_Wounded.prefab",
             "hitAnimation": "Thief_M_BeHit",
             "isNpc": true
         },
@@ -755,7 +755,7 @@
             "scale": 1.0,
             "idleAnimation": "Assassin_F_IdleF",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20182.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_F.prefab",
             "hitAnimation": "Thief_F_BeHit",
             "isNpc": true
         },
@@ -766,7 +766,7 @@
             "scale": 1.0,
             "idleAnimation": "Swordman_M_Death_Loop",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20183.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_M_Lance_Corpse.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": true
         },
@@ -777,7 +777,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20184.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Lucille.prefab",
             "hitAnimation": "Thief_F_BeHit",
             "isNpc": true
         },
@@ -788,7 +788,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20185.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_M_Wounded.prefab",
             "hitAnimation": "Thief_M_BeHit",
             "isNpc": true
         },
@@ -799,7 +799,7 @@
             "scale": 1.2000000476837158,
             "idleAnimation": "NPC_M_DaNaTuoSi_XuRuoXiaGu_02",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Npc_20186.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/NPC_M_DaNaTuoSi.prefab",
             "hitAnimation": "NPC_M_DaNaTuoSi_BeHit",
             "isNpc": true
         },
@@ -827,7 +827,7 @@
             "scale": 1.2000000476837158,
             "idleAnimation": "Monster_WangLingWuShi_Skill_Singing",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5457.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_WangLingWuShi.prefab",
             "hitAnimation": "Monster_WangLingWuShi_BeHit",
             "isNpc": false
         },
@@ -839,7 +839,7 @@
             "scale": 1.0,
             "idleAnimation": "Swordman_M_Death_Loop",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5468.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Swordsman_M_Corpse.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": false
         },
@@ -851,7 +851,7 @@
             "scale": 1.0,
             "idleAnimation": "Swordman_F_Death_Loop",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5469.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Swordsman_F_Corpse.prefab",
             "hitAnimation": "Swordman_F_BeHit",
             "isNpc": false
         },
@@ -863,7 +863,7 @@
             "scale": 1.0,
             "idleAnimation": "Swordman_F_Death_Loop",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5470.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_F_Corpse.prefab",
             "hitAnimation": "Swordman_F_BeHit",
             "isNpc": false
         },
@@ -875,7 +875,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5471.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_F_Wounded.prefab",
             "hitAnimation": "Swordman_F_BeHit",
             "isNpc": false
         },
@@ -887,7 +887,7 @@
             "scale": 1.0,
             "idleAnimation": "Swordman_M_Death_Loop",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5473.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_M_Sword_Corpse.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": false
         },
@@ -899,7 +899,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_M_ShouShangZuo",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5474.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Knight_M_Wounded.prefab",
             "hitAnimation": "Swordman_M_BeHit",
             "isNpc": false
         },
@@ -911,7 +911,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5477.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_M_Wounded.prefab",
             "hitAnimation": "Thief_M_BeHit",
             "isNpc": false
         },
@@ -923,7 +923,7 @@
             "scale": 1.0,
             "idleAnimation": "Common_F_ShouShang",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5478.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Outfits/Resources/Prefabs/Moshenta_Assassin_F_Wounded.prefab",
             "hitAnimation": "Thief_F_BeHit",
             "isNpc": false
         },
@@ -1021,7 +1021,7 @@
             "scale": 1.0,
             "idleAnimation": "Monster_ZengHen_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5501.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_ZengHen.prefab",
             "hitAnimation": "Monster_ZengHen_BeHit",
             "isNpc": false
         },
@@ -1035,7 +1035,7 @@
             "scale": 1.0,
             "idleAnimation": "Monster_JueWang_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5502.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_JueWang.prefab",
             "hitAnimation": "Monster_JueWang_BeHit",
             "isNpc": false
         },
@@ -1049,7 +1049,7 @@
             "scale": 1.0,
             "idleAnimation": "Monster_BeiAi_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5503.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_BeiAi.prefab",
             "hitAnimation": "Monster_BeiAi_BeHit",
             "isNpc": false
         },
@@ -1063,7 +1063,7 @@
             "scale": 1.5,
             "idleAnimation": "Monster_NanGuaHun_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5504.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_NanGuaHun.prefab",
             "hitAnimation": "Monster_NanGuaHun_BeHit",
             "isNpc": false
         },
@@ -1077,7 +1077,7 @@
             "scale": 1.0,
             "idleAnimation": "Monster_MoShenYingZi01_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5506.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_MoShenYingZi01.prefab",
             "hitAnimation": "Monster_MoShenYingZi01_BeHit",
             "isNpc": false
         },
@@ -1091,7 +1091,7 @@
             "scale": 1.0,
             "idleAnimation": "Monster_MoShenYingZi02_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5507.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_MoShenYingZi02.prefab",
             "hitAnimation": "Monster_MoShenYingZi02_BeHit",
             "isNpc": false
         },
@@ -1105,7 +1105,7 @@
             "scale": 1.5,
             "idleAnimation": "Monster_ELing_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5508.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_ELing.prefab",
             "hitAnimation": "Monster_ELing_BeHit",
             "isNpc": false
         },
@@ -1119,7 +1119,7 @@
             "scale": 1.5,
             "idleAnimation": "Monster_MiLuoSi_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5509.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_MiLuoSi.prefab",
             "hitAnimation": "Monster_MiLuoSi_BeHit",
             "isNpc": false
         },
@@ -1133,7 +1133,7 @@
             "scale": 2.5,
             "idleAnimation": "Monster_MoFaShi_Idle",
             "bornAnimation": "Monster_MoFaShi_Skill_LingHunAnJi",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5510.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_MoFaShi.prefab",
             "hitAnimation": "Monster_MoFaShi_BeHit",
             "isNpc": false
         },
@@ -1147,7 +1147,7 @@
             "scale": 1.2999999523162842,
             "idleAnimation": "Monster_XieHaiFuLu_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5511.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_XieHaiFuLu.prefab",
             "hitAnimation": "Monster_XieHaiFuLu_BeHit",
             "isNpc": false
         },
@@ -1175,7 +1175,7 @@
             "scale": 1.2000000476837158,
             "idleAnimation": "Monster_XieHaiGongJianShou_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5513.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_XieHaiGongJianShou.prefab",
             "hitAnimation": "Monster_XieHaiGongJianShou_BeHit",
             "isNpc": false
         },
@@ -1203,7 +1203,7 @@
             "scale": 1.5,
             "idleAnimation": "Monster_XieHaiShouRen_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5515.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_XieHaiShouRen.prefab",
             "hitAnimation": "Monster_XieHaiShouRen_BeHit",
             "isNpc": false
         },
