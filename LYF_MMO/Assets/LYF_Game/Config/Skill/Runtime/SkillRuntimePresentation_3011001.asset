@@ -28,7 +28,47 @@ MonoBehaviour:
     LocalEulerAngles: {x: 0, y: 0, z: 0}
     LocalScale: {x: 1, y: 1, z: 1}
     ForwardDistance: 0
-  AudioEvents: []
+  AudioEvents:
+  - SourceEventIndex: 1
+    Frame: 0
+    TimeSeconds: 0
+    Clip: {fileID: 8300000, guid: aa8c9d9025746404a99b55f6ace04667, type: 3}
+    Volume: 0.3
+  - SourceEventIndex: 2
+    Frame: 3
+    TimeSeconds: 0.1
+    Clip: {fileID: 8300000, guid: d640b21a2a1c5d546987a5b4548a7b82, type: 3}
+    Volume: 0.23
+  - SourceEventIndex: 3
+    Frame: 5
+    TimeSeconds: 0.16666667
+    Clip: {fileID: 8300000, guid: dee7a73f4fc847642b26baf3097265e2, type: 3}
+    Volume: 0.2
+  - SourceEventIndex: 4
+    Frame: 8
+    TimeSeconds: 0.26666668
+    Clip: {fileID: 8300000, guid: 5fc3d147e3444e640b5af0114385aeff, type: 3}
+    Volume: 0.25
+  - SourceEventIndex: 5
+    Frame: 11
+    TimeSeconds: 0.36666667
+    Clip: {fileID: 8300000, guid: 709c3a028c7b19c409522cbf51502724, type: 3}
+    Volume: 0.22
+  - SourceEventIndex: 6
+    Frame: 13
+    TimeSeconds: 0.43333334
+    Clip: {fileID: 8300000, guid: d640b21a2a1c5d546987a5b4548a7b82, type: 3}
+    Volume: 0.22
+  - SourceEventIndex: 7
+    Frame: 20
+    TimeSeconds: 0.6666667
+    Clip: {fileID: 8300000, guid: aafe811148239f34abd4c2c9257803ed, type: 3}
+    Volume: 0.66
+  - SourceEventIndex: 8
+    Frame: 24
+    TimeSeconds: 0.8
+    Clip: {fileID: 8300000, guid: 87e9f0310cc924844ade57ec80d2b4ba, type: 3}
+    Volume: 0.52
   ChargeList:
   - At: 0
     End: 0.6

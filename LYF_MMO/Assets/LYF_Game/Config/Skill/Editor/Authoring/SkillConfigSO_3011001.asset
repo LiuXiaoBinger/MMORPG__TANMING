@@ -195,6 +195,158 @@ MonoBehaviour:
     pitchVariation: 0.1
     volumeVariation: 0.05
     baseVolume: 1
+  - contentKind: 2
+    keyNumber: 0
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: aa8c9d9025746404a99b55f6ace04667, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.3
+  - contentKind: 2
+    keyNumber: 3
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: d640b21a2a1c5d546987a5b4548a7b82, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.23
+  - contentKind: 2
+    keyNumber: 5
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: dee7a73f4fc847642b26baf3097265e2, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.2
+  - contentKind: 2
+    keyNumber: 8
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 5fc3d147e3444e640b5af0114385aeff, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.25
+  - contentKind: 2
+    keyNumber: 11
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 709c3a028c7b19c409522cbf51502724, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.22
+  - contentKind: 2
+    keyNumber: 13
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: d640b21a2a1c5d546987a5b4548a7b82, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.22
+  - contentKind: 2
+    keyNumber: 20
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: aafe811148239f34abd4c2c9257803ed, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.66
+  - contentKind: 2
+    keyNumber: 24
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 87e9f0310cc924844ade57ec80d2b4ba, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.52
   cancelList: []
   projectileList: []
   hitFxList: []
