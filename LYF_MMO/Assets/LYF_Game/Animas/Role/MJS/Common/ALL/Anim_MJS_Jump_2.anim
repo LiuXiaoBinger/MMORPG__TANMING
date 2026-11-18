@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jump_F_0_InPlace
+  m_Name: Anim_MJS_Jump_2
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0

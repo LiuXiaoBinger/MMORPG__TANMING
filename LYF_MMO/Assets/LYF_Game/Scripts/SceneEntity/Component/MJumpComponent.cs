@@ -1,15 +1,28 @@
 using cfg;
 using MMoRpgCommon.SceneEntity;
+using UnityEngine;
 
 /// <summary>
 /// 负责跳跃的动画表现：起跳、空中循环、落地三个阶段。
-/// 每次追加跳跃都重新播放起跳动画；技能接管时让出动画，落地继续移动时直接恢复走跑。
+/// 魔剑士按跳跃段号选择起跳剪辑；技能接管时让出动画，落地继续移动时直接恢复走跑。
 /// 位置、重力和跳跃次数由 MMoveComponent 处理，本组件只选择动画和声音。
 /// </summary>
 public sealed class MJumpComponent : EntityComponentBase
 {
 
     #region 字段与属性
+    /// <summary>职业配置中魔剑士的 JobId，只有该职业使用专属二、三段起跳动作。</summary>
+    private const int MagicSwordsmanJobId = 1;
+
+    /// <summary>Jump 子状态机中绑定 Anim_MJS_Jump_2 的空中二段起跳状态。</summary>
+    private const string SecondJumpState = "Jump_Start_2";
+
+    /// <summary>Jump 子状态机中绑定 Anim_MJS_Jump_3 的空中三段起跳状态。</summary>
+    private const string ThirdJumpState = "Jump_Start_3";
+
+    /// <summary>追加起跳与前一姿势的固定过渡时长，单位为秒。</summary>
+    private const float AdditionalJumpBlendSeconds = 0.06f;
+
     /// <summary>本组件使用独立类型，避免覆盖待机表现组件的唯一索引。</summary>
     public override EntityComponentType ComponentType
     {
@@ -111,19 +124,11 @@ public sealed class MJumpComponent : EntityComponentBase
         }
         _phaseElapsedSeconds += deltaSeconds;
 
-        if (_isJumping && Entity.Model.Ator.CurrentState == MAnimator.STATE_JUMP_START)
+        if (_isJumping && HasTakeoffFinished())
         {
-            // 起跳阶段已登记的动画信息，用于读取真实剪辑时长。
-            MAnimator.MAnimInfo startInfo = Entity.Model.Ator.GetAnimInfo(
-                MAnimator.STATE_JUMP_START);
-            // 起跳动画播放长度，单位为秒；缺少元数据时由保护值兜底。
-            float startLength = GetPhaseLength(startInfo);
-            if (_phaseElapsedSeconds >= startLength)
-            {
-                _phaseElapsedSeconds = 0f;
-                _pendingStateName = MAnimator.STATE_JUMP_LOOP;
-                TryPlayPendingState();
-            }
+            _phaseElapsedSeconds = 0f;
+            _pendingStateName = MAnimator.STATE_JUMP_LOOP;
+            TryPlayPendingState();
         }
 
         if (_isEnding && Entity.Model.Ator.CurrentState == MAnimator.STATE_JUMP_END)
@@ -183,7 +188,7 @@ public sealed class MJumpComponent : EntityComponentBase
 
     #region 事件回调
     /// <summary>收到起跳事件后从起跳动画开始进入空中表现阶段。</summary>
-    /// <param name="eventArg">跳跃事件载荷；当前跳跃表现不需要额外数据。</param>
+    /// <param name="eventArg">跳跃事件载荷；段号从已更新的移动组件读取。</param>
     private void OnJumpStarted(IEventArg eventArg)
     {
         if (Entity != null && Entity.CurrentState == StateDefine.kStateSkill)
@@ -194,7 +199,7 @@ public sealed class MJumpComponent : EntityComponentBase
         _isJumping = true;
         _isEnding = false;
         _phaseElapsedSeconds = 0f;
-        _pendingStateName = MAnimator.STATE_JUMP_START;
+        _pendingStateName = GetJumpStartState();
         TryPlayPendingState();
     }
 
@@ -252,7 +257,7 @@ public sealed class MJumpComponent : EntityComponentBase
     #endregion
 
     #region 查询与判定
-    /// <summary>读取表现表并登记跳跃三阶段动画，多次起跳共用同一组三阶段动画。</summary>
+    /// <summary>读取表现表并登记基础起跳、空中循环与落地动画。</summary>
     private void TryPrepareJumpAnimations()
     {
         // 实体缺失或非角色对象时不登记跳跃动画。
@@ -294,7 +299,7 @@ public sealed class MJumpComponent : EntityComponentBase
             return;
         }
 
-        // 起跳动画绑定信息，三段跳的每次起跳均复用该状态。
+        // 起跳动画绑定信息，供一段起跳及使用通用动作的职业复用。
         MAnimator.MAnimInfo startInfo = Entity.OverrideAnim(
             MAnimator.STATE_JUMP_START, presentData.JumpStartAnim);
         // 空中循环动画绑定信息，二段和三段跳不重复加载该资源。
@@ -341,12 +346,79 @@ public sealed class MJumpComponent : EntityComponentBase
             return;
         }
 
-        // 动画器是否已经完成资源准备并接受本次播放请求。
-        bool played = Entity.Model.Ator.Play(_pendingStateName);
+        // 追加起跳在前一段尚未结束时触发，需要融合前一姿势。
+        bool isAdditionalJump = IsAdditionalJumpState(_pendingStateName);
+        // 动画器是否已经接受本次播放或过渡请求。
+        bool played;
+        if (isAdditionalJump)
+        {
+            played = Entity.Model.Ator.CrossFade(_pendingStateName, AdditionalJumpBlendSeconds);
+        }
+        else
+        {
+            played = Entity.Model.Ator.Play(_pendingStateName);
+        }
         if (played)
         {
+            if (isAdditionalJump)
+            {
+                // 专属状态直接绑定剪辑，复用基础起跳轨道的零秒音效。
+                Entity.Model.Sound.Play(MAnimator.STATE_JUMP_START);
+            }
             _pendingStateName = string.Empty;
         }
+    }
+
+    /// <summary>将移动组件已确认的跳跃段号转换成角色起跳动画状态。</summary>
+    /// <returns>魔剑士二、三段返回专属状态，其余起跳使用表现表状态。</returns>
+    private string GetJumpStartState()
+    {
+        // 当前实体的职业数据，适用于本地玩家与远端同步角色。
+        RoleEntity role = Entity as RoleEntity;
+        if (role?.BaseInfo?.JobId == MagicSwordsmanJobId)
+        {
+            // 起跳事件派发前移动组件写入的段号，有效范围为 1 至 3。
+            int jumpCount = role.MoveComp.JumpCount;
+            if (jumpCount == 2)
+            {
+                return SecondJumpState;
+            }
+            if (jumpCount == 3)
+            {
+                return ThirdJumpState;
+            }
+        }
+        return MAnimator.STATE_JUMP_START;
+    }
+
+    /// <summary>判断当前起跳片段是否已结束，可以进入空中循环。</summary>
+    /// <returns>基础起跳达到剪辑时长，或当前专属状态实际播放到末尾时返回 true。</returns>
+    private bool HasTakeoffFinished()
+    {
+        // 当前角色的动画包装器，提供基础剪辑时长和原生状态时钟。
+        MAnimator animator = Entity.Model.Ator;
+        // 最近请求播放的状态名，可能正在向目标状态过渡。
+        string stateName = animator.CurrentState;
+        if (stateName == MAnimator.STATE_JUMP_START)
+        {
+            return _phaseElapsedSeconds >= GetPhaseLength(animator.GetAnimInfo(stateName));
+        }
+        if (!IsAdditionalJumpState(stateName))
+        {
+            return false;
+        }
+
+        // 原生状态时钟，归一化时间达到 1 代表该片段播放一遍。
+        AnimatorStateInfo state = animator.UnityAnimator.GetCurrentAnimatorStateInfo(0);
+        return state.shortNameHash == Animator.StringToHash(stateName) && state.normalizedTime >= 1f;
+    }
+
+    /// <summary>检查状态是否直接绑定魔剑士的追加起跳片段。</summary>
+    /// <param name="stateName">当前待播或已请求的逻辑状态名。</param>
+    /// <returns>二段或三段的专属状态返回 true。</returns>
+    private static bool IsAdditionalJumpState(string stateName)
+    {
+        return stateName == SecondJumpState || stateName == ThirdJumpState;
     }
 
     /// <summary>获取阶段动画时长，资源元数据无效时使用 0.2 秒保护值。</summary>

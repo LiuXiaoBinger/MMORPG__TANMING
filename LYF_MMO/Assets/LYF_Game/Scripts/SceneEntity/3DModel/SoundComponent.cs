@@ -155,41 +155,46 @@ public sealed class SoundComponent
     }
 
     #region 核心逻辑
-    /// <summary>落地声音补播入口：角色落地后直接继续走跑时，补播配置中零秒触发的声音。</summary>
-    /// <param name="stateName">本次物理动作状态，只支持Jump_End即时落地触发。</param>
+    /// <summary>追加起跳或移动落地时，播放对应基础跳跃轨道的零秒音效。</summary>
+    /// <param name="stateName">基础跳跃音轨状态名，取 Jump_Start 或 Jump_End。</param>
     public void Play(string stateName)
     {
-        // 仅处理跳跃结束的即时落地触发。
-        if (stateName != MAnimator.STATE_JUMP_END)
+        // 专属二、三段起跳与移动落地都会从对应基础动画复用声音。
+        if (stateName != MAnimator.STATE_JUMP_START && stateName != MAnimator.STATE_JUMP_END)
         {
             return;
         }
-        // 宿主模型或其 Animator 缺失时不补发落地声音。
+        // 宿主模型或其 Animator 缺失时无法确认职业动画绑定。
         if (_host == null || _host.Ator == null)
         {
             return;
         }
-        // 动作配置缺失时不补发落地声音。
+        // 普通动作声音配置在模型初始化后异步加载。
         if (_entry == null || _entry.Config == null)
         {
             return;
         }
-        // 立即切移动时不会进入落地动画；只执行零秒事件，后续非零事件仍由实际动画决定。
-        SkillRuntimeLocomotionAction action = _entry.Config.JumpEnd;
+        // 本次即时发声所复用的基础起跳或落地轨道。
+        SkillRuntimeLocomotionAction action = _entry.Config.JumpStart;
+        if (stateName == MAnimator.STATE_JUMP_END)
+        {
+            action = _entry.Config.JumpEnd;
+        }
         if (action == null || action.AudioEvents == null)
         {
             return;
         }
-        // 即时落地同样匹配当前模型已登记的实际剪辑，其他职业不套用MJS声音。
-        MAnimator.MAnimInfo animation = _host.Ator.GetAnimInfo(MAnimator.STATE_JUMP_END);
-        if (animation == null || !animation.IsClipReady || animation.ReadyClipPath != action.AnimationLocation)
+        // 已登记的基础剪辑需与音轨资源地址一致，确保声音属于当前职业。
+        MAnimator.MAnimInfo animation = _host.Ator.GetAnimInfo(stateName);
+        if (animation == null || !animation.IsClipReady ||
+            animation.ReadyClipPath != action.AnimationLocation)
         {
             return;
         }
-        // index为落地声音列表的零起始下标。
+        // index 为基础跳跃音轨事件的零起始下标。
         for (int index = 0; index < action.AudioEvents.Count; index++)
         {
-            // 当前零秒落地单次声音，非零事件不在即时入口补发。
+            // 当前轨道事件，只消费起点触发的单次声音。
             SkillRuntimeAudioEvent audioEvent = action.AudioEvents[index];
             if (audioEvent != null && audioEvent.TimeSeconds == 0f)
             {
