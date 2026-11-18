@@ -725,6 +725,7 @@
 - `UIRoot.prefab` 沿用原有的 `CombatHudBackdrop.png` 精灵，并保留既有的 `RoleCurrInfoWindow` 绑定。Q/E/1/2 与 3/4/5/6/F 分组分列 R 两侧。HP/MP 条位于各自分组下方，真气与体力弧线仍在 R 周围。技能精灵路径、按键分配以及技能格与聊天预制体均保持原样。
 - 资源提交 `fb1f2a8` 已推送到 `origin/codex/feature-development`。文件清单、证据与限制见 `项目修改日志/2026-11-18-底部战斗HUD布局与样式.md`。新的常规 Play 会话、实机施放和 AssetBundle 发布未验证。
 - 上方 HUD 返修：`CombatHudUpperControls.prefab` 现向 `UIRoot.prefab` 提供 F1–F5 一排、K/L/分号/表情一排以及两个状态指示器。九个快捷槽位仅用于展示，其动作与状态数据均未绑定。新增的 `CombatHudStatusIcons.png` 图集与四个既有物品精灵配合使用。底部技能槽位与聊天绑定保持原样。资源提交 `c8439a0` 已推送到 `origin/codex/feature-development`。
+- 布局与背板返修：上排与技能左边缘对齐，R 位置下移，`CombatHudBackdrop.png` 提供连续的半透明背板，HP/MP 条更宽。`YimengChat.prefab` 通过改动一处序列化水平锚点，将紧凑聊天栏保持在战斗控件左侧。原有精灵、快捷键与数据绑定均保留。资源提交 `ff4d2dc` 已推送到 `origin/codex/feature-development`。
 
 ## [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] 魔剑士二、三段跳跃动画
 
