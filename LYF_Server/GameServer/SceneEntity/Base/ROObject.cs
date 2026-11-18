@@ -46,6 +46,15 @@ namespace GameServer.SceneEntity
         /// <summary>当前剩余法力值。</summary>
         public int CurrentMp { get; set; }
 
+        /// <summary>当前怒气上限，默认取共享常量，出生怒气为零。</summary>
+        public int MaxRage { get; set; }
+        /// <summary>当前怒气点数，范围 0 至 MaxRage。</summary>
+        public int CurrentRage { get; set; }
+        /// <summary>当前真气上限，默认取共享常量，出生真气为满。</summary>
+        public int MaxTrueQi { get; set; }
+        /// <summary>当前真气点数，范围 0 至 MaxTrueQi。</summary>
+        public int CurrentTrueQi { get; set; }
+
         /// <summary>供装配和业务查找组件的容器。</summary>
         public EntityComponentContainer Components { get { return _components; } }
         #endregion
@@ -160,6 +169,10 @@ namespace GameServer.SceneEntity
             snapshot.CurrentHp = CurrentHp;
             snapshot.MaxMp = MaxMp;
             snapshot.CurrentMp = CurrentMp;
+            snapshot.MaxRage = MaxRage;
+            snapshot.CurrentRage = CurrentRage;
+            snapshot.MaxTrueQi = MaxTrueQi;
+            snapshot.CurrentTrueQi = CurrentTrueQi;
             return snapshot;
         }
         #endregion

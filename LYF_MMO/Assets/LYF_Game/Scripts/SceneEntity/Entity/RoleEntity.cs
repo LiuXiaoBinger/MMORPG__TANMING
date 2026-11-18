@@ -67,6 +67,16 @@ public class RoleEntity : MEntity
         }
         // 深拷贝，防止外部引用被意外修改
         BaseInfo = baseInfo.Clone();
+        // 组件已挂载时立即用权威基础信息加载四项资源；旧包由 ApplyAll 兜底不清空。
+        if (AttrComp != null) SyncResourcesFromBaseInfo();
+    }
+
+    /// <summary>把当前权威基础信息的四项资源写入已挂载的属性组件。</summary>
+    internal void SyncResourcesFromBaseInfo()
+    {
+        if (BaseInfo == null || AttrComp == null) return;
+        AttrComp.ApplyAll(BaseInfo.MaxHp, BaseInfo.CurrHp, BaseInfo.MaxMp, BaseInfo.CurrMp,
+            BaseInfo.MaxRage, BaseInfo.CurrRage, BaseInfo.MaxTrueQi, BaseInfo.CurrTrueQi);
     }
 
     /// <summary>应用本角色的完整权威属性和基因通知，节点显示不再次加减这些最终值。</summary>
@@ -75,8 +85,8 @@ public class RoleEntity : MEntity
     public bool ApplyAttributeUpdate(RoleAttributeUpdateNtf notification)
     {
         if (notification.BaseInfo == null || GetID() != notification.BaseInfo.RoleId) return false;
+        // UpdateBaseInfo 已全量应用四项权威资源，这里只补基因同步，避免同帧重复应用。
         UpdateBaseInfo(notification.BaseInfo);
-        AttrComp.Apply(notification.BaseInfo.MaxHp, notification.BaseInfo.CurrHp, notification.BaseInfo.MaxMp, notification.BaseInfo.CurrMp);
         Gene.ApplySynchronization(notification);
         return true;
     }

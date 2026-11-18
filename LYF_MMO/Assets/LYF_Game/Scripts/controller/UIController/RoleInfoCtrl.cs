@@ -183,6 +183,9 @@ public sealed class RoleInfoCtrl : CtrlBase
             (mpRatio * 100f).ToString("F0") + "%";
         _roleCurrentWindow.UpdateRoleInfo(new RoleCurrentViewData(roleInfo.BaseInfo.Nickname,
             jobName, roleInfo.BaseInfo.Level, headIconPath, hpRatio, mpRatio, hpText, mpText));
+        // 在权威信息刷新处接入 HUD：满怒 R 提示与真气弧条都读取服务器最终资源值。
+        _roleCurrentWindow.UpdateRage(roleInfo.BaseInfo.CurrRage, roleInfo.BaseInfo.MaxRage);
+        _roleCurrentWindow.UpdateTrueQi(roleInfo.BaseInfo.CurrTrueQi, roleInfo.BaseInfo.MaxTrueQi);
         if (_roleAttributeWindow != null)
         {
             // 服务器最终属性，各率字段仅显示协议已经明确的百分数。

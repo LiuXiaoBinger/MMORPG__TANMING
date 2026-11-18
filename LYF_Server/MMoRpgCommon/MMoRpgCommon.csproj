@@ -165,6 +165,7 @@
         <Compile Include="SceneEntity\EntityTransformSnapshot.cs" />
         <Compile Include="SceneEntity\EntitySnapshot.cs" />
         <Compile Include="SceneEntity\SceneEntityData.cs" />
+        <Compile Include="SceneEntity\CombatResourceDefaults.cs" />
         <Compile Include="SceneEntity\IEntityComponent.cs" />
     </ItemGroup>
     <ItemGroup>

@@ -12,14 +12,14 @@ namespace GameServer.SceneEntity
         public MonsterEntity(ulong uid, EntityType entityType, int configId)
             : base(uid, entityType, configId)
         {
+            // 普通怪与首领共用此构造，四项资源默认只在这里应用一次。
+            MaxRage = CombatResourceDefaults.DefaultRageMax;
+            CurrentRage = CombatResourceDefaults.DefaultRage;
+            MaxTrueQi = CombatResourceDefaults.DefaultTrueQiMax;
+            CurrentTrueQi = CombatResourceDefaults.DefaultTrueQi;
+            // 无既有蓝量配置时使用共享默认法力，明确正数配置随后可覆盖。
+            MaxMp = CombatResourceDefaults.DefaultMonsterMpMax;
+            CurrentMp = CombatResourceDefaults.DefaultMonsterMp;
         }
     }
 }
-
-
-
-
-
-
-
-

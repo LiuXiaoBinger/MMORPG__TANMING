@@ -19,6 +19,14 @@ public class GeneTestAttributes : IAttributeComponent
     public int MaxHp { get { return (int)CalculateAttribute(GeneAttributeType.MaxHp, 1000); } }
     /// <summary>测试基础法力上限为 100。</summary>
     public int MaxMp { get { return (int)CalculateAttribute(GeneAttributeType.MaxMp, 100); } }
+    /// <summary>测试怒气上限，默认共享常量。</summary>
+    public int MaxRage { get { return CombatResourceDefaults.DefaultRageMax; } }
+    /// <summary>测试当前怒气点数。</summary>
+    public int CurrRage { get; private set; }
+    /// <summary>测试真气上限，默认共享常量。</summary>
+    public int MaxTrueQi { get { return CombatResourceDefaults.DefaultTrueQiMax; } }
+    /// <summary>测试当前真气点数，出生为满。</summary>
+    public int CurrTrueQi { get; private set; } = CombatResourceDefaults.DefaultTrueQi;
     /// <summary>测试基础治疗增益为零。</summary>
     public double HealBonus { get { return CalculateAttribute(GeneAttributeType.HealBonus, 0); } }
     /// <summary>由正式状态计数逻辑合成的有效状态。</summary>
@@ -54,5 +62,37 @@ public class GeneTestAttributes : IAttributeComponent
         Calls++;
         LastMpDelta = delta;
         Mp = System.Math.Max(0, System.Math.Min(MaxMp, Mp + delta));
+    }
+    /// <summary>消耗怒气，余额不足返回失败且不扣减。</summary>
+    /// <param name="amount">本次消耗点数。</param>
+    /// <returns>足额扣减返回 true。</returns>
+    public bool TryConsumeRage(int amount)
+    {
+        if (!CombatResourceDefaults.CanConsume(CurrRage, amount)) return false;
+        CurrRage = CombatResourceDefaults.ApplyDelta(CurrRage, MaxRage, -amount);
+        return true;
+    }
+    /// <summary>消耗真气，余额不足返回失败且不扣减。</summary>
+    /// <param name="amount">本次消耗点数。</param>
+    /// <returns>足额扣减返回 true。</returns>
+    public bool TryConsumeTrueQi(int amount)
+    {
+        if (!CombatResourceDefaults.CanConsume(CurrTrueQi, amount)) return false;
+        CurrTrueQi = CombatResourceDefaults.ApplyDelta(CurrTrueQi, MaxTrueQi, -amount);
+        return true;
+    }
+    /// <summary>恢复怒气，非正恢复量忽略，按上限裁切不溢出。</summary>
+    /// <param name="amount">本次恢复点数。</param>
+    public void RestoreRage(int amount)
+    {
+        if (amount <= 0) return;
+        CurrRage = CombatResourceDefaults.ApplyDelta(CurrRage, MaxRage, amount);
+    }
+    /// <summary>恢复真气，非正恢复量忽略，按上限裁切不溢出。</summary>
+    /// <param name="amount">本次恢复点数。</param>
+    public void RestoreTrueQi(int amount)
+    {
+        if (amount <= 0) return;
+        CurrTrueQi = CombatResourceDefaults.ApplyDelta(CurrTrueQi, MaxTrueQi, amount);
     }
 }

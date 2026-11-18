@@ -41,6 +41,14 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     public int MaxMp { get { return Math.Max(0, (int)CalculateAttribute(GeneAttributeType.MaxMp, Owner.mainRoleInfo.BaseInfo.MaxMp)); } }
     /// <summary>当前治疗增益，单位百分点。</summary>
     public double HealBonus { get { return CalculateAttribute(GeneAttributeType.HealBonus, Owner.mainRoleInfo.BaseInfo.HealBonus); } }
+    /// <summary>当前怒气上限，直接读角色权威快照，不做基因复算以免与最终上限叠加。</summary>
+    public int MaxRage { get { return Math.Max(0, Owner.mainRoleInfo.BaseInfo.MaxRage); } }
+    /// <summary>当前怒气点数，权威值保存在角色快照中。</summary>
+    public int CurrRage { get { return Owner.mainRoleInfo.BaseInfo.CurrRage; } }
+    /// <summary>当前真气上限，直接读角色权威快照，不做基因复算。</summary>
+    public int MaxTrueQi { get { return Math.Max(0, Owner.mainRoleInfo.BaseInfo.MaxTrueQi); } }
+    /// <summary>当前真气点数，权威值保存在角色快照中。</summary>
+    public int CurrTrueQi { get { return Owner.mainRoleInfo.BaseInfo.CurrTrueQi; } }
 
     /// <summary>绑定真实在线角色，复用其原有裸属性和当前资源。</summary>
     /// <param name="owner">本组件所属的在线角色。</param>
@@ -110,6 +118,9 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         }
         result.CurrHp = Math.Min(result.CurrHp, result.MaxHp);
         result.CurrMp = Math.Min(result.CurrMp, result.MaxMp);
+        // 四项通用资源同样裁切到最终上限，避免权威快照超出范围。
+        result.CurrRage = CombatResourceDefaults.Clamp(result.CurrRage, result.MaxRage);
+        result.CurrTrueQi = CombatResourceDefaults.Clamp(result.CurrTrueQi, result.MaxTrueQi);
         return result;
     }
 
@@ -121,7 +132,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         // 沿用真实资源对象，不创建另一份待结算数据。
         RoleBaseInfo resources = Owner.mainRoleInfo.BaseInfo;
         if (resources.CurrHp <= 0) return;
-        resources.CurrHp = Math.Max(0, Math.Min(MaxHp, resources.CurrHp + delta));
+        resources.CurrHp = CombatResourceDefaults.ApplyDelta(resources.CurrHp, MaxHp, delta);
         ResourcesChanged = true;
         if (resources.CurrHp == 0)
         {
@@ -131,10 +142,57 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     }
 
     /// <summary>复活入口专用：按最终装备和基因属性恢复满生命、满法力，不改变裸属性上限。</summary>
+    /// <remarks>只回满生命与法力，不重置怒气和真气，避免复活回包意外清空另外两项。</remarks>
     public void RestoreReviveResources()
     {
         Owner.mainRoleInfo.BaseInfo.CurrHp = MaxHp;
         Owner.mainRoleInfo.BaseInfo.CurrMp = MaxMp;
+        ResourcesChanged = true;
+    }
+
+    /// <summary>消耗怒气的权威入口；死亡角色不可消耗，余额不足返回失败且不扣减。</summary>
+    /// <param name="amount">本次要消耗的怒气点数。</param>
+    /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+    public bool TryConsumeRage(int amount)
+    {
+        RoleBaseInfo info = Owner.mainRoleInfo.BaseInfo;
+        if (info.CurrHp <= 0) return false;
+        if (!CombatResourceDefaults.CanConsume(info.CurrRage, amount)) return false;
+        info.CurrRage = CombatResourceDefaults.ApplyDelta(info.CurrRage, MaxRage, -amount);
+        ResourcesChanged = true;
+        return true;
+    }
+
+    /// <summary>消耗真气的权威入口；死亡角色不可消耗，余额不足返回失败且不扣减。</summary>
+    /// <param name="amount">本次要消耗的真气点数。</param>
+    /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+    public bool TryConsumeTrueQi(int amount)
+    {
+        RoleBaseInfo info = Owner.mainRoleInfo.BaseInfo;
+        if (info.CurrHp <= 0) return false;
+        if (!CombatResourceDefaults.CanConsume(info.CurrTrueQi, amount)) return false;
+        info.CurrTrueQi = CombatResourceDefaults.ApplyDelta(info.CurrTrueQi, MaxTrueQi, -amount);
+        ResourcesChanged = true;
+        return true;
+    }
+
+    /// <summary>恢复怒气，死亡角色不再恢复，过大增量按上限裁切不溢出。</summary>
+    /// <param name="amount">本次恢复的怒气点数。</param>
+    public void RestoreRage(int amount)
+    {
+        RoleBaseInfo info = Owner.mainRoleInfo.BaseInfo;
+        if (info.CurrHp <= 0) return;
+        info.CurrRage = CombatResourceDefaults.ApplyDelta(info.CurrRage, MaxRage, amount);
+        ResourcesChanged = true;
+    }
+
+    /// <summary>恢复真气，死亡角色不再恢复，过大增量按上限裁切不溢出。</summary>
+    /// <param name="amount">本次恢复的真气点数。</param>
+    public void RestoreTrueQi(int amount)
+    {
+        RoleBaseInfo info = Owner.mainRoleInfo.BaseInfo;
+        if (info.CurrHp <= 0) return;
+        info.CurrTrueQi = CombatResourceDefaults.ApplyDelta(info.CurrTrueQi, MaxTrueQi, amount);
         ResourcesChanged = true;
     }
 
@@ -145,7 +203,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         // 当前资源始终写入角色原数据，最终上限由本属性组件计算。
         RoleBaseInfo resources = Owner.mainRoleInfo.BaseInfo;
         if (resources.CurrHp <= 0) return;
-        resources.CurrMp = Math.Max(0, Math.Min(MaxMp, resources.CurrMp + delta));
+        resources.CurrMp = CombatResourceDefaults.ApplyDelta(resources.CurrMp, MaxMp, delta);
         ResourcesChanged = true;
     }
 
@@ -156,6 +214,9 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         RoleBaseInfo attributes = CalculateAttribute();
         Owner.mainRoleInfo.BaseInfo.CurrHp = attributes.CurrHp;
         Owner.mainRoleInfo.BaseInfo.CurrMp = attributes.CurrMp;
+        // 裁切后的怒气与真气一并写回权威快照，使属性通知承载四项完整资源。
+        Owner.mainRoleInfo.BaseInfo.CurrRage = attributes.CurrRage;
+        Owner.mainRoleInfo.BaseInfo.CurrTrueQi = attributes.CurrTrueQi;
         ResourcesChanged = false;
         // 原属性通知同时承载本次节点变化，保持网关和角色UI的既有入口。
         RoleAttributeUpdateNtf notification = new RoleAttributeUpdateNtf { BaseInfo = attributes };

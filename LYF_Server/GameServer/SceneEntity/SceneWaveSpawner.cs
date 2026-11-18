@@ -102,6 +102,7 @@ public sealed partial class SceneWaveSpawner
             monster.Transform.Yaw = point.Facing;
             monster.MaxHp = point.Creature.maxHp;
             monster.CurrentHp = monster.MaxHp;
+            // 出生资源默认由 MonsterEntity 构造统一提供，固定波不重复硬填；正数法力配置在其后覆盖。
             world_.Add(monster);
             monsters_.Add(monster);
             if (Battle != null)
@@ -204,7 +205,7 @@ public sealed partial class SceneWaveSpawner
     /// <param name="notice">本实例的同帧通知，只有产生变化才会发送。</param>
     public void Update(int deltaMilliseconds, MonsterAttrUpdateNtf notice)
     {
-        // GeneComponent 在世界帧内写真实资源，保留帧前 HP 用于同帧网络变化和新死亡判定。
+        // 只保留帧前 HP 用于同帧伤害与新死亡判定；资源变化改由属性组件标记驱动。
         int[] previousHp = new int[monsters_.Count];
         for (int i = 0; i < monsters_.Count; i++) previousHp[i] = monsters_[i].CurrentHp;
         sharedGeneChanged.Clear(); sharedGeneDied = false;
@@ -215,8 +216,9 @@ public sealed partial class SceneWaveSpawner
         for (int i = 0; i < previousHp.Length; i++)
         {
             if (sharedGeneChanged.Contains(monsters_[i].UID)) continue;
+            // 本循环只处理真实生命变化，纯资源变化留给帧末按标记合并，不经 OnHit。
             if (previousHp[i] == monsters_[i].CurrentHp) continue;
-            // 周期变化后的实际资源差，治疗只同步 HP，不显示负伤害。
+            // 实际生命损失作为本次伤害，治疗不显示负伤害。
             int damage = Math.Max(0, previousHp[i] - monsters_[i].CurrentHp);
             notice.Monsters.Add(GetHpData(i, damage));
             // 归因使用施加角色编号，不能把装备 UID 用来查在线角色。
@@ -483,7 +485,67 @@ public sealed partial class SceneWaveSpawner
         // 战斗怪物的基础MaxHp保持原值，通知读取已经含Gene的权威上限。
         MoshentaActor actor = FindActor(monsters_[index].UID);
         if (actor != null) return HpData(actor, damage);
-        return new MonsterHpData { SpawnId = activePoints[index].SpawnId, Hp = monsters_[index].CurrentHp, MaxHp = monsters_[index].MaxHp, Damage = damage };
+        // 入场与周期同步均携带四项完整资源，客户端据此还原血/蓝/怒/真气。
+        MonsterHpData data = new MonsterHpData
+        {
+            SpawnId = activePoints[index].SpawnId, Hp = monsters_[index].CurrentHp,
+            MaxHp = monsters_[index].MaxHp, Damage = damage, HasResources = true
+        };
+        // 法力、怒气、真气统一从实体已有的属性组件读取已生效上限。
+        FillResources(monsters_[index], data);
+        return data;
+    }
+
+    /// <summary>按同一属性组件写入已生效的四项资源终值，固定怪、Boss 与召唤共用。</summary>
+    /// <param name="unit">资源的权威场景实体。</param>
+    /// <param name="data">要写入资源字段的通知条目。</param>
+    internal static void FillResources(GameServer.SceneEntity.MonsterEntity unit, MonsterHpData data)
+    {
+        // 未装配属性组件的纯表现实体回退到承载字段，避免重建第二份权威余额。
+        AttributesComponent attributes = unit.Components.Get<AttributesComponent>(EntityComponentType.Attributes);
+        if (attributes == null)
+        {
+            data.MaxMp = unit.MaxMp; data.Mp = unit.CurrentMp;
+            data.MaxRage = unit.MaxRage; data.Rage = unit.CurrentRage;
+            data.MaxTrueQi = unit.MaxTrueQi; data.TrueQi = unit.CurrentTrueQi;
+            return;
+        }
+        // 法力上限取基因修正后的有效值，当前值仍以实体余额为准。
+        data.MaxMp = attributes.MaxMp; data.Mp = unit.CurrentMp;
+        data.MaxRage = attributes.MaxRage; data.Rage = attributes.CurrRage;
+        data.MaxTrueQi = attributes.MaxTrueQi; data.TrueQi = attributes.CurrTrueQi;
+    }
+
+    /// <summary>帧末按资源变化标记把终值合并进当帧通知，晚于 AI 与既有伤害条目。</summary>
+    /// <param name="notice">将广播的同帧通知。</param>
+    private void FlushResourceChanges(MonsterAttrUpdateNtf notice)
+    {
+        for (int index = 0; index < monsters_.Count; index++)
+        {
+            GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
+            AttributesComponent attributes = monster.Components.Get<AttributesComponent>(EntityComponentType.Attributes);
+            if (attributes == null || !attributes.ResourcesChanged) continue;
+            // 消费标记后再合并，避免后续帧重复上报同一变化。
+            attributes.ClearResourcesChanged();
+            ulong spawnId = activePoints[index].SpawnId;
+            MonsterHpData existing = null;
+            // 同帧可出现两行同 SpawnId，TeamData 顺序消费后一项覆盖终值，从末项向前查才能取到最后的终值。
+            for (int row = notice.Monsters.Count - 1; row >= 0; row--)
+            {
+                if (notice.Monsters[row].SpawnId == spawnId) { existing = notice.Monsters[row]; break; }
+            }
+            if (existing != null)
+            {
+                // 当帧已有生命条目：只补三项资源终值，保留 damage 与 HP，避免重复伤害。
+                existing.HasResources = true;
+                FillResources(monster, existing);
+            }
+            else
+            {
+                // 无生命条目则发权威快照，Damage 为 0，不触发跳字或死亡。
+                notice.Monsters.Add(GetHpData(index, 0));
+            }
+        }
     }
 
     /// <summary>最后一名队员离开时释放此实例中的实体和组件。</summary>

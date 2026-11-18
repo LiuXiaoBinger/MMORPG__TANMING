@@ -59,7 +59,7 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
         CurrentHp = System.Math.Min(CurrentHp, MaxHp);
         CurrentMp = System.Math.Min(CurrentMp, MaxMp);
         attributesChanged = false;
-        NotifyResourceChange(previousMaxHp, previousHp, previousMaxMp, previousMp);
+        NotifyResourceChange(previousMaxHp, previousHp, previousMaxMp, previousMp, false, false);
     }
     /// <summary>增加或撤销节点贡献的一份状态来源。</summary>
     /// <param name="state">本节点提供的状态位。</param>
@@ -93,6 +93,40 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
         if (CurrentHp <= 0) return;
         Apply(baseMaxHp, CurrentHp, baseMaxMp, CurrentMp + delta);
     }
+    /// <summary>消耗怒气的客户端入口；余额不足返回失败且不扣减，与服务端权威规则一致。</summary>
+    /// <param name="amount">本次要消耗的怒气点数。</param>
+    /// <returns>足额扣减返回 true，否则返回 false。</returns>
+    public bool TryConsumeRage(int amount)
+    {
+        if (CurrentHp <= 0) return false;
+        if (!CombatResourceDefaults.CanConsume(CurrRage, amount)) return false;
+        CurrRage = CombatResourceDefaults.ApplyDelta(CurrRage, MaxRage, -amount);
+        return true;
+    }
+    /// <summary>消耗真气的客户端入口；余额不足返回失败且不扣减。</summary>
+    /// <param name="amount">本次要消耗的真气点数。</param>
+    /// <returns>足额扣减返回 true，否则返回 false。</returns>
+    public bool TryConsumeTrueQi(int amount)
+    {
+        if (CurrentHp <= 0) return false;
+        if (!CombatResourceDefaults.CanConsume(CurrTrueQi, amount)) return false;
+        CurrTrueQi = CombatResourceDefaults.ApplyDelta(CurrTrueQi, MaxTrueQi, -amount);
+        return true;
+    }
+    /// <summary>恢复怒气，按 0 至 MaxRage 裁切，过大增量不溢出。</summary>
+    /// <param name="amount">本次恢复的怒气点数。</param>
+    public void RestoreRage(int amount)
+    {
+        if (CurrentHp <= 0 || amount <= 0) return;
+        CurrRage = CombatResourceDefaults.ApplyDelta(CurrRage, MaxRage, amount);
+    }
+    /// <summary>恢复真气，按 0 至 MaxTrueQi 裁切，过大增量不溢出。</summary>
+    /// <param name="amount">本次恢复的真气点数。</param>
+    public void RestoreTrueQi(int amount)
+    {
+        if (CurrentHp <= 0 || amount <= 0) return;
+        CurrTrueQi = CombatResourceDefaults.ApplyDelta(CurrTrueQi, MaxTrueQi, amount);
+    }
 
     #region 字段与属性
     /// <summary>最大生命值。</summary>
@@ -110,6 +144,19 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
 
     /// <summary>当前魔法值，不会超过 MaxMp。</summary>
     public int CurrentMp { get; private set; }
+
+    /// <summary>最近的怒气上限，基因修正不写回该基础值。</summary>
+    private int baseMaxRage;
+    /// <summary>当前怒气值，不会超过 MaxRage。</summary>
+    public int CurrRage { get; private set; }
+    /// <summary>怒气上限，使用资源默认值，不做基因复算。</summary>
+    public int MaxRage { get { return System.Math.Max(0, baseMaxRage); } }
+    /// <summary>最近的真气上限，基因修正不写回该基础值。</summary>
+    private int baseMaxTrueQi;
+    /// <summary>当前真气值，不会超过 MaxTrueQi。</summary>
+    public int CurrTrueQi { get; private set; }
+    /// <summary>真气上限，使用资源默认值，不做基因复算。</summary>
+    public int MaxTrueQi { get { return System.Math.Max(0, baseMaxTrueQi); } }
 
     /// <summary>组件类型标识，固定为 <see cref="EntityComponentType.Attributes"/>。</summary>
     public override EntityComponentType ComponentType
@@ -208,6 +255,10 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
         previousMaxHp = 0;
         previousMaxMp = 0;
         CurrentMp = 0;
+        baseMaxRage = 0;
+        CurrRage = 0;
+        baseMaxTrueQi = 0;
+        CurrTrueQi = 0;
     }
     #endregion
 
@@ -232,11 +283,58 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
         int previousMaxMp = MaxMp;
         // 修改前法力。
         int previousMp = CurrentMp;
+        SetHpMp(maxHp, currentHp, maxMp, currentMp);
+        NotifyResourceChange(previousMaxHp, previousHp, previousMaxMp, previousMp, false, false);
+    }
+
+    /// <summary>只写回四项生命法力权威值，不派发任何事件，供全量应用统一后再通知。</summary>
+    /// <param name="maxHp">生命上限。</param>
+    /// <param name="currentHp">当前生命。</param>
+    /// <param name="maxMp">法力上限。</param>
+    /// <param name="currentMp">当前法力。</param>
+    private void SetHpMp(int maxHp, int currentHp, int maxMp, int currentMp)
+    {
+        // 上限裁到非负，当前值裁到 0 与上限之间。
         baseMaxHp = System.Math.Max(0, maxHp);
         baseMaxMp = System.Math.Max(0, maxMp);
         CurrentHp = System.Math.Max(0, System.Math.Min(MaxHp, currentHp));
         CurrentMp = System.Math.Max(0, System.Math.Min(MaxMp, currentMp));
-        NotifyResourceChange(previousMaxHp, previousHp, previousMaxMp, previousMp);
+    }
+
+    /// <summary>一次性应用服务端下发的四项完整资源；旧 Apply 四参入口保持不变。</summary>
+    /// <param name="maxHp">生命上限。</param>
+    /// <param name="currentHp">当前生命。</param>
+    /// <param name="maxMp">法力上限。</param>
+    /// <param name="currentMp">当前法力。</param>
+    /// <param name="maxRage">怒气上限。</param>
+    /// <param name="currentRage">当前怒气。</param>
+    /// <param name="maxTrueQi">真气上限。</param>
+    /// <param name="currentTrueQi">当前真气。</param>
+    public void ApplyAll(int maxHp, int currentHp, int maxMp, int currentMp,
+        int maxRage, int currentRage, int maxTrueQi, int currentTrueQi)
+    {
+        // 保存修改前四项，全部应用完成后再统一派发一次事件。
+        int previousMaxHp = MaxHp;
+        int previousHp = CurrentHp;
+        int previousMaxMp = MaxMp;
+        int previousMp = CurrentMp;
+        int previousMaxRage = MaxRage;
+        int previousRage = CurrRage;
+        int previousMaxTrueQi = MaxTrueQi;
+        int previousTrueQi = CurrTrueQi;
+        // 旧协议缺字段或仅 HP/MP 更新时，按共享默认补齐四项，避免清空已有怒气与真气。
+        if (maxRage <= 0) { maxRage = CombatResourceDefaults.DefaultRageMax; currentRage = CombatResourceDefaults.DefaultRage; }
+        if (maxTrueQi <= 0) { maxTrueQi = CombatResourceDefaults.DefaultTrueQiMax; currentTrueQi = CombatResourceDefaults.DefaultTrueQi; }
+        // 先写回四项权威值，不在中途触发事件。
+        SetHpMp(maxHp, currentHp, maxMp, currentMp);
+        baseMaxRage = System.Math.Max(0, maxRage);
+        baseMaxTrueQi = System.Math.Max(0, maxTrueQi);
+        CurrRage = CombatResourceDefaults.Clamp(currentRage, MaxRage);
+        CurrTrueQi = CombatResourceDefaults.Clamp(currentTrueQi, MaxTrueQi);
+        // 四项应用完毕后再按真实变化派发，仅怒气/真气变化也发一次综合事件。
+        bool rageChanged = previousMaxRage != MaxRage || previousRage != CurrRage;
+        bool qiChanged = previousMaxTrueQi != MaxTrueQi || previousTrueQi != CurrTrueQi;
+        NotifyResourceChange(previousMaxHp, previousHp, previousMaxMp, previousMp, rageChanged, qiChanged);
     }
 
     /// <summary>沿用项目原 HP、MP 和综合属性事件，供血条与面板更新。</summary>
@@ -244,7 +342,10 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
     /// <param name="previousHp">修改前当前生命。</param>
     /// <param name="previousMaxMp">修改前法力上限。</param>
     /// <param name="previousMp">修改前当前法力。</param>
-    private void NotifyResourceChange(int previousMaxHp, int previousHp, int previousMaxMp, int previousMp)
+    /// <param name="rageChanged">怒气当前值或上限是否变化。</param>
+    /// <param name="qiChanged">真气当前值或上限是否变化。</param>
+    private void NotifyResourceChange(int previousMaxHp, int previousHp, int previousMaxMp, int previousMp,
+        bool rageChanged, bool qiChanged)
     {
         // 上限或当前值变化均属于资源显示变化。
         bool hpChanged = previousMaxHp != MaxHp || previousHp != CurrentHp;
@@ -252,7 +353,8 @@ public sealed class EntityAttributesComponent : EntityComponentBase, IAttributeC
         bool mpChanged = previousMaxMp != MaxMp || previousMp != CurrentMp;
         if (hpChanged) DispatchEvent(MEventType.HpChanged, null);
         if (mpChanged) DispatchEvent(MEventType.MpChanged, null);
-        if (hpChanged || mpChanged) DispatchEvent(MEventType.AttributesChanged, null);
+        // 任一项资源变化都派发一次综合事件，供面板与 HUD 统一刷新。
+        if (hpChanged || mpChanged || rageChanged || qiChanged) DispatchEvent(MEventType.AttributesChanged, null);
     }
     #endregion
 }

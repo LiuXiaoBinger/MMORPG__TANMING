@@ -521,11 +521,26 @@ public class MSceneDungeon : MonoBehaviour
     /// <returns>属性确实改变时为真，重复通知不重播动作或跳字。</returns>
     private static bool ChangeHP(MEntity monster, MonsterHpData data, bool hit)
     {
-        // 原无生命机制和Dummy仅承载动作/特效，零上限不能派发死亡状态。
-        if (data.MaxHp == 0 || !(monster is MonsterEntity)) return false;
-        // 重复通知不能重播死亡；初次装载时 MaxHp 仍为零。
-        if (monster.AttrComp.MaxHp == data.MaxHp && monster.AttrComp.CurrentHp == data.Hp) return false;
-        monster.AttrComp.Apply(data.MaxHp, data.Hp, 0, 0);
+        // 非怪物与无扩展的零上限旧包仅承载动作/特效，不能派发死亡状态。
+        if (!(monster is MonsterEntity) || (!data.HasResources && data.MaxHp == 0)) return false;
+        // 血量是否变化单独判定；纯资源变化不能被同帧血量快照遮掉。
+        bool hpChanged = monster.AttrComp.MaxHp != data.MaxHp || monster.AttrComp.CurrentHp != data.Hp;
+        // 旧包无扩展资源时沿用实体已知值，不重置法力/怒气/真气。
+        if (data.HasResources)
+        {
+            // 全量应用四项资源；生命仍沿旧条与伤害入口刷新。
+            monster.AttrComp.ApplyAll(data.MaxHp, data.Hp, data.MaxMp, data.Mp,
+                data.MaxRage, data.Rage, data.MaxTrueQi, data.TrueQi);
+        }
+        else
+        {
+            // 兼容旧包：只更新生命，法力保持实体当前值，怒气与真气不动。
+            monster.AttrComp.Apply(data.MaxHp, data.Hp, monster.AttrComp.MaxMp, monster.AttrComp.CurrentMp);
+        }
+        // 带扩展的零上限机制怪资源已应用，但不进入受击与死亡状态。
+        if (data.MaxHp == 0) return false;
+        // 重复血量通知不重播死亡，但纯资源更新仍算一次成功的属性应用。
+        if (!hpChanged) return false;
         // 受击与死亡走实体动作机，先解除当前普攻专用的慢速播放倍率。
         if (hit || data.Hp == 0)
             monster.Skill.InterruptDungeonPlayback();

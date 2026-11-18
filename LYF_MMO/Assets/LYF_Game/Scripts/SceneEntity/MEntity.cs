@@ -509,6 +509,9 @@ public abstract class MEntity : MSceneObject, IGeneOwner
     internal void SetAttComponent(EntityAttributesComponent component)
     {
         AttrComp = component;
+        // 角色基础信息可能早于属性组件挂载；组件就绪后补一次四项资源应用。
+        RoleEntity role = this as RoleEntity;
+        if (component != null && role != null) role.SyncResourcesFromBaseInfo();
     }
 
     /// <summary>

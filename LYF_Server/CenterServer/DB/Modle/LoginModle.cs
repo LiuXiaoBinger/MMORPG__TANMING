@@ -540,6 +540,11 @@ public class LoginModle
                 CurrHp = attrTable.CurrHP,
                 MaxMp = attrTable.MaxMP,
                 CurrMp = attrTable.CurrMP,
+                // 四项通用资源初次登录从共享默认值开始；旧档缺字段时同样落到默认，不扩展数据库。
+                MaxRage = CombatResourceDefaults.DefaultRageMax,
+                CurrRage = CombatResourceDefaults.DefaultRage,
+                MaxTrueQi = CombatResourceDefaults.DefaultTrueQiMax,
+                CurrTrueQi = CombatResourceDefaults.DefaultTrueQi,
                 AtkExternalMin = attrTable.AtkExternalMin,
                 AtkExternalMax = attrTable.AtkExternalMax,
                 AtkInternalMin = attrTable.AtkInternalMin,

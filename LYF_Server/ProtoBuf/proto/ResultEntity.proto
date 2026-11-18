@@ -155,6 +155,16 @@ message RoleBaseInfo{
 	int32 instance_id = 32;      //副本实例ID，0 表示公共场景；同一地图内不同队伍分属不同实例
 	// 高级属性：键为 GeneAttributeType 的 101 至 144，值缺省 0；只下发非零项。
 	map<int32, double> advanced_attributes = 33;
+
+	// 通用战斗资源：以新字段号承载，原生命/法力字段号与语义保持不变。
+	// 怒气上限，单位怒气点；旧快照缺字段时由登录入口填充默认上限。
+	int32 max_rage = 34;
+	// 当前怒气，单位怒气点，范围 0 至 max_rage。
+	int32 curr_rage = 35;
+	// 真气上限，单位真气点；旧快照缺字段时由登录入口填充默认上限。
+	int32 max_true_qi = 36;
+	// 当前真气，单位真气点，范围 0 至 max_true_qi。
+	int32 curr_true_qi = 37;
 }
 
 // 队伍成员基础信息，对应 RO TeamData.memberList 的单条记录。
@@ -209,6 +219,16 @@ message MonsterHpData {
 	int32 hp = 2;//当前生命值，零表示已死亡
 	int32 max_hp = 3;//本次出生的生命上限
 	int32 damage = 4;//本次普攻实际扣除的生命值，入场血量快照为零
+
+	// 通用战斗资源扩展：用新字段号传法力、怒气、真气的当前值与上限。
+	// 生命沿用原 hp/max_hp，不做重复字段；四条资源下面均有独立上下限。
+	bool has_resources = 5;//true 表示本条携带扩展资源；旧包缺失时为 false，客户端保留已知值
+	int32 max_mp = 6;//本次出生的法力上限
+	int32 mp = 7;//当前法力值
+	int32 max_rage = 8;//怒气上限，单位怒气点
+	int32 rage = 9;//当前怒气，单位怒气点
+	int32 max_true_qi = 10;//真气上限，单位真气点
+	int32 true_qi = 11;//当前真气，单位真气点
 }
 
 // GameServer 向同一副本实例可靠广播本次命中的属性变化。

@@ -23,6 +23,14 @@ namespace MMoRpgCommon.SceneEntity
         public int MaxMp { get; set; }
         /// <summary>当前法力值。</summary>
         public int CurrentMp { get; set; }
+        /// <summary>怒气上限，单位怒气点。</summary>
+        public int MaxRage { get; set; }
+        /// <summary>当前怒气点数。</summary>
+        public int CurrentRage { get; set; }
+        /// <summary>真气上限，单位真气点。</summary>
+        public int MaxTrueQi { get; set; }
+        /// <summary>当前真气点数。</summary>
+        public int CurrentTrueQi { get; set; }
 
         /// <summary>为新实体建立位置对象，并设置为尚未初始化的 Created 阶段。</summary>
         public SceneEntityData()
@@ -51,7 +59,11 @@ namespace MMoRpgCommon.SceneEntity
                 MaxHp = MaxHp,
                 CurrentHp = CurrentHp,
                 MaxMp = MaxMp,
-                CurrentMp = CurrentMp
+                CurrentMp = CurrentMp,
+                MaxRage = MaxRage,
+                CurrentRage = CurrentRage,
+                MaxTrueQi = MaxTrueQi,
+                CurrentTrueQi = CurrentTrueQi
             };
         }
     }

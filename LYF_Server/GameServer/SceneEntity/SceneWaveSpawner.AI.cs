@@ -108,6 +108,8 @@ public sealed partial class SceneWaveSpawner
         target.BuffChanges.Add(Notice.BuffChanges);
         // 选中目标的结果表现与当前动作在同一实例回包中传递。
         target.SkillResultFx.Add(Notice.SkillResultFx);
+        // AI/世界帧内变化的资源终值在既有 HP、动作、召唤条目全部合并后再补入同一通知。
+        FlushResourceChanges(target);
         Notice.Monsters.Clear(); Notice.MonsterActions.Clear(); Notice.PlayerHits.Clear(); Notice.MonsterSpawns.Clear(); Notice.RemovedSpawnIds.Clear(); Notice.AiNotices.Clear();
         Notice.BuffChanges.Clear();
         Notice.SkillResultFx.Clear();
@@ -365,6 +367,7 @@ public sealed partial class SceneWaveSpawner
         ServerMonster monster = (ServerMonster)EntityFactory.Create(EntityType.Monster, entityId);
         monster.MapId = Dungeon.SceneID; monster.Transform.X = position.X; monster.Transform.Y = position.Y; monster.Transform.Z = position.Z; monster.Transform.Yaw = facing;
         monster.MaxHp = MoshentaSkillCatalog.I(Battle.Catalog.Entity(entityId), "BaseHP"); monster.CurrentHp = monster.MaxHp;
+        // 召唤物出生资源与固定怪共用 MonsterEntity 构造默认，不重复硬填；正数法力配置随后可覆盖。
         ulong spawnId = 0xFFFFFFFF00000000UL | ++summonSequence;
         MoshentaActor actor = new MoshentaActor(this, monster, entityId, spawnId, -1, 0, new XElement[0], "");
         actor.SummonerId = caster.UnitId;
@@ -379,7 +382,18 @@ public sealed partial class SceneWaveSpawner
     /// <summary>生成动态出生完整位置数据。</summary><param name="actor">运行中的召唤物。</param>
     private static MonsterSpawnData SpawnData(MoshentaActor actor) { return new MonsterSpawnData { SpawnId = actor.SpawnId, EntityId = actor.EntityId, X = actor.Position.X, Y = actor.Position.Y, Z = actor.Position.Z, Face = actor.Facing }; }
     /// <summary>生成真实HP的同帧通知。</summary><param name="actor">实际实体。</param><param name="damage">本次真实损失。</param>
-    private static MonsterHpData HpData(MoshentaActor actor, int damage) { return new MonsterHpData { SpawnId = actor.SpawnId, Hp = actor.CurrentHp, MaxHp = actor.MaxHp, Damage = damage }; }
+    private static MonsterHpData HpData(MoshentaActor actor, int damage)
+    {
+        // 同帧通知同样携带四项完整资源；Actor 的怪物实体是资源权威。
+        MonsterHpData data = new MonsterHpData
+        {
+            SpawnId = actor.SpawnId, Hp = actor.CurrentHp, MaxHp = actor.MaxHp, Damage = damage,
+            HasResources = true
+        };
+        // 与 GetHpData 共用同一属性组件读取已生效上限。
+        FillResources(actor.Monster, data);
+        return data;
+    }
     /// <summary>原强制怪物位置通过动作快照广播。</summary><param name="actor">实际怪物。</param><param name="position">目的地米制坐标。</param>
     internal void TeleportActor(MoshentaActor actor, Vector3 position) { actor.Teleport(position); }
     /// <summary>原强制玩家位置沿既有DungeonInteract可靠通道。</summary><param name="role">同实例玩家。</param><param name="position">目的地。</param>

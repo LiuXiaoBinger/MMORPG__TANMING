@@ -17,7 +17,24 @@ namespace GameServer.SceneEntity
         /// <param name="attribute">被修改的属性。</param>
         /// <param name="delta">固定点数或百分点增量。</param>
         /// <param name="valueType">0 为固定值，1 为百分比。</param>
-        public void ChangeAttribute(GeneAttributeType attribute, double delta, int valueType) { modifiers.ChangeAttribute(attribute, delta, valueType); }
+        public void ChangeAttribute(GeneAttributeType attribute, double delta, int valueType)
+        {
+            // 只有法力上限变化需要记录旧值，先应用增减再裁切当前法力并判断是否真实变化。
+            bool maxMpChanged = attribute == GeneAttributeType.MaxMp;
+            int previousMaxMp = 0;
+            int previousMp = 0;
+            if (maxMpChanged)
+            {
+                previousMaxMp = MaxMp;
+                previousMp = Owner.CurrentMp;
+            }
+            modifiers.ChangeAttribute(attribute, delta, valueType);
+            if (!maxMpChanged) return;
+            // 按生效后的新上限裁切当前法力，避免余额超出上限。
+            Owner.CurrentMp = CombatResourceDefaults.Clamp(Owner.CurrentMp, MaxMp);
+            // 上限或当前法力实际变化才标记，正数恢复到同一余额无需上报。
+            if (previousMaxMp != MaxMp || previousMp != Owner.CurrentMp) ResourcesChanged = true;
+        }
         /// <summary>增加或撤销节点贡献的一份状态来源。</summary>
         /// <param name="state">本节点提供的状态位。</param>
         /// <param name="delta">增加为 1，撤销为 -1。</param>
@@ -28,8 +45,20 @@ namespace GameServer.SceneEntity
         public int MaxMp { get { return System.Math.Max(0, (int)CalculateAttribute(GeneAttributeType.MaxMp, Owner.MaxMp)); } }
         /// <summary>场景实体的治疗增益，未配置基础值时从零开始。</summary>
         public double HealBonus { get { return CalculateAttribute(GeneAttributeType.HealBonus, 0); } }
+        /// <summary>当前怒气上限，权威值保存在场景实体上。</summary>
+        public int MaxRage { get { return System.Math.Max(0, Owner.MaxRage); } }
+        /// <summary>当前怒气点数。</summary>
+        public int CurrRage { get { return Owner.CurrentRage; } }
+        /// <summary>当前真气上限，权威值保存在场景实体上。</summary>
+        public int MaxTrueQi { get { return System.Math.Max(0, Owner.MaxTrueQi); } }
+        /// <summary>当前真气点数。</summary>
+        public int CurrTrueQi { get { return Owner.CurrentTrueQi; } }
         /// <summary>最近一次造成实际生命损失的角色编号，供场景死亡归因。</summary>
         public ulong LastDamageFirerId { get; private set; }
+        /// <summary>本帧法力、怒气或真气当前值与有效上限是否实际变化，供场景帧统一合并资源快照。</summary>
+        public bool ResourcesChanged { get; private set; }
+        /// <summary>场景帧合并资源通知后清除变化标记，避免重复上报。</summary>
+        public void ClearResourcesChanged() { ResourcesChanged = false; }
         /// <summary>魔神塔共享生命处理，接收真实来源和已算好的生命增量。</summary>
         internal System.Func<ulong, int, bool> SharedHpChange;
         /// <summary>直接修改实际场景实体生命，并沿用共享生命与伤害归因。</summary>
@@ -39,7 +68,7 @@ namespace GameServer.SceneEntity
         {
             if (Owner.CurrentHp <= 0) return;
             if (SharedHpChange == null || !SharedHpChange(firerId, delta))
-                Owner.CurrentHp = System.Math.Max(0, System.Math.Min(MaxHp, Owner.CurrentHp + delta));
+                Owner.CurrentHp = CombatResourceDefaults.ApplyDelta(Owner.CurrentHp, MaxHp, delta);
             if (delta < 0) LastDamageFirerId = firerId;
         }
         /// <summary>直接改变场景实体法力，普通恢复不复活死亡对象。</summary>
@@ -47,7 +76,48 @@ namespace GameServer.SceneEntity
         public void ChangeMp(int delta)
         {
             if (Owner.CurrentHp <= 0) return;
-            Owner.CurrentMp = System.Math.Max(0, System.Math.Min(MaxMp, Owner.CurrentMp + delta));
+            int next = CombatResourceDefaults.ApplyDelta(Owner.CurrentMp, MaxMp, delta);
+            if (next == Owner.CurrentMp) return;
+            Owner.CurrentMp = next;
+            ResourcesChanged = true;
+        }
+        /// <summary>消耗怒气的权威入口；死亡实体不可消耗，余额不足返回失败且不扣减。</summary>
+        /// <param name="amount">本次要消耗的怒气点数。</param>
+        /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+        public bool TryConsumeRage(int amount)
+        {
+            if (Owner.CurrentHp <= 0) return false;
+            if (!CombatResourceDefaults.CanConsume(Owner.CurrentRage, amount)) return false;
+            Owner.CurrentRage = CombatResourceDefaults.ApplyDelta(Owner.CurrentRage, MaxRage, -amount);
+            ResourcesChanged = true;
+            return true;
+        }
+        /// <summary>消耗真气的权威入口；死亡实体不可消耗，余额不足返回失败且不扣减。</summary>
+        /// <param name="amount">本次要消耗的真气点数。</param>
+        /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+        public bool TryConsumeTrueQi(int amount)
+        {
+            if (Owner.CurrentHp <= 0) return false;
+            if (!CombatResourceDefaults.CanConsume(Owner.CurrentTrueQi, amount)) return false;
+            Owner.CurrentTrueQi = CombatResourceDefaults.ApplyDelta(Owner.CurrentTrueQi, MaxTrueQi, -amount);
+            ResourcesChanged = true;
+            return true;
+        }
+        /// <summary>恢复怒气，死亡实体不再恢复，过大增量按上限裁切不溢出。</summary>
+        /// <param name="amount">本次恢复的怒气点数。</param>
+        public void RestoreRage(int amount)
+        {
+            if (Owner.CurrentHp <= 0 || amount <= 0) return;
+            Owner.CurrentRage = CombatResourceDefaults.ApplyDelta(Owner.CurrentRage, MaxRage, amount);
+            ResourcesChanged = true;
+        }
+        /// <summary>恢复真气，死亡实体不再恢复，过大增量按上限裁切不溢出。</summary>
+        /// <param name="amount">本次恢复的真气点数。</param>
+        public void RestoreTrueQi(int amount)
+        {
+            if (Owner.CurrentHp <= 0 || amount <= 0) return;
+            Owner.CurrentTrueQi = CombatResourceDefaults.ApplyDelta(Owner.CurrentTrueQi, MaxTrueQi, amount);
+            ResourcesChanged = true;
         }
         /// <summary>场景实体释放时清空属性修正和共享生命出口。</summary>
         public override void Shutdown() { modifiers.Clear(); SharedHpChange = null; base.Shutdown(); }

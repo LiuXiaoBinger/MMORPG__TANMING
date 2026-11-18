@@ -30,4 +30,26 @@ public interface IAttributeComponent
     /// <summary>直接修改当前法力，并由属性组件限制资源范围。</summary>
     /// <param name="delta">本次法力增量。</param>
     void ChangeMp(int delta);
+    /// <summary>当前怒气点数，范围 0 至 MaxRage，权威值由真实组件保存。</summary>
+    int CurrRage { get; }
+    /// <summary>怒气上限点数，使用资源默认值，不做基因复算。</summary>
+    int MaxRage { get; }
+    /// <summary>当前真气点数，范围 0 至 MaxTrueQi，权威值由真实组件保存。</summary>
+    int CurrTrueQi { get; }
+    /// <summary>真气上限点数，使用资源默认值，不做基因复算。</summary>
+    int MaxTrueQi { get; }
+    /// <summary>消耗怒气的权威入口；余额不足时不扣减并返回失败，避免白扣。</summary>
+    /// <param name="amount">本次要消耗的怒气点数。</param>
+    /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+    bool TryConsumeRage(int amount);
+    /// <summary>消耗真气的权威入口；余额不足时不扣减并返回失败，避免白扣。</summary>
+    /// <param name="amount">本次要消耗的真气点数。</param>
+    /// <returns>足额扣减时返回 true，否则返回 false。</returns>
+    bool TryConsumeTrueQi(int amount);
+    /// <summary>恢复怒气，按 0 至 MaxRage 裁切，过大增量不会溢出。</summary>
+    /// <param name="amount">本次恢复的怒气点数。</param>
+    void RestoreRage(int amount);
+    /// <summary>恢复真气，按 0 至 MaxTrueQi 裁切，过大增量不会溢出。</summary>
+    /// <param name="amount">本次恢复的真气点数。</param>
+    void RestoreTrueQi(int amount);
 }
