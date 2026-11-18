@@ -708,3 +708,10 @@
 
 - 为 14 个现有独立美术预制体添加 `MModelPrepareData` 和共享的 `MMonsterAnimator`，Showcases 保留自身的预览覆盖配置。在 Common 下制作男女骨架各 1 套，18 条实体配置使用 14 套继承服装变体，保留不同服装与姿态。4 个重复服装预制体复用对应变体。已迁移的 5514 和通用隐身机关沿用原配置。
 - 退役 32 个编号预制体及其 `.meta` 文件，44 条实体配置共引用 30 个资源地址。资产及配置变更包含 31 个修改文件、28 个新增文件和 64 个删除文件。业务提交 `8df526d` 已推送到 `codex/feature-development`。逐项文件清单见 `项目修改日志/2026-11-18-魔神塔怪物Boss与NPC原预制体复用.md`。
+
+## [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] MJS 技能与跳跃的课程音效接入
+
+- 在 `LYF_MMO/Assets/LYF_Game/Audios/Shared/CourseChapter03/` 下新增 23 个音效片段，并复用 3 个字节完全一致、GUID 相同的片段。将已有的 `Anim_JX_Hit.FBX` 及其 `.meta` 从相对 `LYF_MMO/Assets/` 的 `UnusedAssets/Editor/GM_Game/Animas/Role/JX/Common/` 移至 `LYF_Game/Animas/Role/JX/Common/`；该动画引用已有的 `Modle_Avatar01.FBX`。
+- 替换 9 个 MJS 音效事件，覆盖起跳、落地、Q 的三段普攻、E 的两段斩击、R 的后续攻击以及按键 2 的首击。更新 8 个编辑期配置和 7 个运行时配置，保留原有触发帧并调整部分音量。
+- 提交 `44f6a114f240f6b861713046b6210408e5dfb2f0` 已在 `origin/codex/feature-development` 核验；文件清单与逐事件映射见 `项目修改日志/2026-11-18-课程音效与受击动画接入.md`。
+- 后续提交 `7451eaf18722aeed687667ee12f5ed6bfca90519` 已推送至 `codex/feature-development`。替换剩余 5 个技能片段以及走、跑、战斗走、战斗跑的全部 8 个左右脚步事件。22 个已配置的 MJS 事件现全部使用课程片段。`SkillEditorAudioMotionSetup.cs` 现在仅以课程片段作为初始数据。现有 RO 式角色动画触发由 `MDefaultActionComponent` 依据动画脚步时间调用模型 `SoundComponent`，LYF_MMO 复用自身对应的播放路径。

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `da29111873f324cf7795f1603e867088a339ee2e975a454d9a8531ba20138954`
+Source normalized SHA256: `de50e7d9d70be2811bd4b94ddeb473756202b724a1cec91b2d4d4e072e7839a1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -102,11 +102,12 @@ Source normalized SHA256: `da29111873f324cf7795f1603e867088a339ee2e975a454d9a853
 | [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-698 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
 | [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-711 |
-| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 712-715 |
+| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 712-716 |
+| [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 717-722 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `26d27d381c289e2a97a78e7f863e55826e09c51878a41de700cfd0b0ca87bbd7`
+Source normalized SHA256: `f356c9edd8b215c79cf2e6983f95b43d14d2e7e5d562ad847af755f421d00dcc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -200,7 +201,8 @@ Source normalized SHA256: `26d27d381c289e2a97a78e7f863e55826e09c51878a41de700cfd
 | [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-730 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
 | [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-743 |
-| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 744-747 |
+| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 744-748 |
+| [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 749-753 |
 
 ## Docs/AI/DECISIONS.en.md
 
