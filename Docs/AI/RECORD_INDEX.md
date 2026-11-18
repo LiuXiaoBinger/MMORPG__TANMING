@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `1c7b0a4506ebac4447a5ebff86d1cdf09166e0348d108e98df35fbc735c473e9`
+Source normalized SHA256: `5933b0cc9b153b82bdf515fc91d4273a357e3acded3026ecfacf88d1832a7235`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -101,11 +101,12 @@ Source normalized SHA256: `1c7b0a4506ebac4447a5ebff86d1cdf09166e0348d108e98df35f
 | [CODE][FILES][HANDOFF][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Moshenta monsters use their entity components | 689-693 |
 | [CODE][FILES][HANDOFF][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Unified NPC models, dialogue and dungeon actions | 694-698 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Moshenta soldier 5514 uses its original prefab | 699-703 |
-| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-708 |
+| [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-709 |
+| [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 710-713 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `504cf54731ffb759dec34623d8a735a906b0fde7db6b5ff5bde846c193f40bda`
+Source normalized SHA256: `8b49a95460589fdda9cd0e4cdf345c01d0a8aa69218bb8bcab5ddbb40a7afeb4`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -198,7 +199,8 @@ Source normalized SHA256: `504cf54731ffb759dec34623d8a735a906b0fde7db6b5ff5bde84
 | [VERIFY][副本][怪物实体][MOSHENTA-MONSTER-ENTITY-20261118] Verified wave 18 orc attack and effects | 720-724 |
 | [VERIFY][副本][NPC实体][RO-NPC-ENTITY-CLEANUP-20261118] Verified city NPC dialogue and Moshenta story effects | 725-730 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-SOLDIER-PREFAB-20261118] Verified original prefab and both soldier waves | 731-735 |
-| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-740 |
+| [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-741 |
+| [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 742-745 |
 
 ## Docs/AI/DECISIONS.en.md
 

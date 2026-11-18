@@ -729,3 +729,8 @@
 - 首轮隔离 Play Mode 执行 154 项检查。主 Agent 验收复现了设置入口丢失。应用仅保留招募的左栏后，收起再打开聊天，无法进入设置。证据见 `_temp/yimeng-chat-channel-management-20261118/main-only-recruit-repro.log`。
 - Unity 2023.2.20f1c1 对最终预制体和脚本独立复验，通过 164 项 Play Mode 检查，覆盖 16:9 和 16:10 布局、左右独立滚动、草稿撤销和应用、通过设置恢复、常用页发言菜单、既有频道路由及新旧聊天切换。
 - Editor 与 Windows Player 各编译 394 个源文件，均通过。52 个保护路径的 SHA-256 与任务前一致。主验收日志见 `_temp/yimeng-chat-channel-management-20261118/main-acceptance-channel-management.log`。真实服务器、物理麦克风和用户当前场景仍待验证。完整记录见 `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`。
+
+## [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] 魔神塔原预制体复用的实机与战斗回放验证
+
+- 隔离 Unity Play Mode 通过 1,111 项检查，退出码为 0，包含 149 个动作槽位和 447 个网格样本。回放真实 GameServer 数据包，验证了第 18 波攻击、第 34、35、46 波的 Boss、第 34 波攻击特效及第 47 波 NPC 对话和技能特效。
+- 主 Unity 在新的单人实例中重新进入魔神塔，入场时加载 84 个角色，触发前线后加载 136 个角色。挥击粒子和玩家受击粒子均正常播放，玩家生命值下降。测试角色在战斗中死亡，使用现有复活按钮后满血返回出生点。检查时，主 Unity 的 Console 未捕获错误。完整真人多人联机流程和独立 Player 尚未验证。详见 `项目修改日志/2026-11-18-魔神塔怪物Boss与NPC原预制体复用.md`。

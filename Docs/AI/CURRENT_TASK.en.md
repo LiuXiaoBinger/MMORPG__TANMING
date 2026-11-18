@@ -706,3 +706,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - In Yimeng chat, Settings > Receive Messages > Manage Channels opens a separate scroll panel on the right and keeps the Receive Messages page active. The 18 serialized rows mirror the actual sidebar and distinguish interregional world from world.
 - Eye clicks and handle drag edit a draft. Apply updates visibility and order in the current MainView session. Closing discards un-applied changes. The draft needs a visible channel with a settings entry so the player can restore hidden tabs later.
 - The eight options on the frequent-tab posting menu and existing world, current scene and team routes remain available. Implementation is in `YimengChat.prefab` and `YimengChatChannelManagement.cs`. Commit `ec6b032` was pushed to `codex/feature-development`. The scoped file list and open verification are in `项目修改日志/2026-11-18-一梦江湖聊天界面复刻_CHANGELOG.md`.
+
+## [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs
+
+- Added MModelPrepareData and the shared MMonsterAnimator to 14 existing standalone art prefabs. The Showcases keep their preview overrides. Two authored Common male/female rigs supply 14 inherited outfit variants for 18 entity rows, preserving distinct clothes and poses. Four duplicate outfit prefabs share variants. The previously migrated 5514 and common invisible mechanism remain configured.
+- Retired 32 numbered prefabs and their meta files, using 30 asset paths for 44 entity rows. Asset/configuration scope is 31 modified, 28 added, and 64 removed files. Business commit 8df526d is pushed on codex/feature-development. See `项目修改日志/2026-11-18-魔神塔怪物Boss与NPC原预制体复用.md` for the exact files.
