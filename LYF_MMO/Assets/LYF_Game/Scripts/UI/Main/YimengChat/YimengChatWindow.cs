@@ -14,8 +14,10 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private Button _collapse;
     /// <summary>侧栏内全部频道，按预制体中的顺序列出。</summary>
     [SerializeField] private YimengChatChannelTab[] _channels;
-    /// <summary>可切换为发言目标的三个已有频道。</summary>
+    /// <summary>常用页发言菜单，包含项目已接通和仅展示的频道。</summary>
     [SerializeField] private YimengChatChannelTab[] _sendChoices;
+    /// <summary>第一次打开常用页时使用的单服发言目标，对应现有世界频道。</summary>
+    [SerializeField] private YimengChatChannelTab _defaultSendChoice;
     /// <summary>消息区的可滚动视口和内容定位。</summary>
     [SerializeField] private ScrollRect _scroll;
     /// <summary>消息列表的可滚动内容容器。</summary>
@@ -56,6 +58,8 @@ public sealed class YimengChatWindow : WindowBase
     [SerializeField] private TMP_InputField _input;
     /// <summary>底部文字发言目标的标识。</summary>
     [SerializeField] private TMP_Text _sendCaption;
+    /// <summary>常用页发言标签的边框、箭头和点击区域，固定频道页隐藏这部分。</summary>
+    [SerializeField] private GameObject _sendPickerButton;
     /// <summary>文本模式的发送按钮。</summary>
     [SerializeField] private Button _send;
     /// <summary>用于在文字和已有按住录音模式间切换。</summary>
@@ -90,14 +94,24 @@ public sealed class YimengChatWindow : WindowBase
     private readonly List<YimengChatMessageRow> _rows = new List<YimengChatMessageRow>();
     /// <summary>左栏正在阅读的频道。</summary>
     private YimengChatChannelTab _viewed;
-    /// <summary>底栏正在发消息的频道选项，与左栏阅读态独立。</summary>
-    private YimengChatChannelTab _destination;
+    /// <summary>常用页记住的发言选项，切换到固定频道时继续保留。</summary>
+    private YimengChatChannelTab _frequentDestination;
     /// <summary>是否由用户锁定消息列表的位置。</summary>
     private bool _locked;
     /// <summary>挂起自动归底时到达的当前频道消息数。</summary>
     private int _pending;
     /// <summary>输入框已通知外部暂停角色输入。</summary>
     private bool _inputHasFocus;
+
+    /// <summary>常用页使用菜单选中的目标，独立频道页按当前页发言。</summary>
+    private YimengChatChannelTab PostingTarget
+    {
+        get
+        {
+            if (_viewed.ShowAllHistory) return _frequentDestination;
+            return _viewed;
+        }
+    }
 
     /// <summary>主视图持有窗口后绑定一次正式控件。</summary>
     public override void InitWindow()
@@ -121,15 +135,15 @@ public sealed class YimengChatWindow : WindowBase
             YimengChatChannelTab tab = _channels[i];
             tab.Button.onClick.AddListener(() => SelectChannel(tab));
         }
-        // 遍历真实可发言的目标按钮，菜单独立于正在阅读的频道。
+        // 逐项绑定常用页菜单，未接入的选项仍可切换标签。
         for (int i = 0; i < _sendChoices.Length; i++)
         {
-            // 捕获发言菜单中对应的已有频道。
+            // 捕获本行的发言选项和绑定的频道能力。
             YimengChatChannelTab destination = _sendChoices[i];
             destination.Button.onClick.AddListener(() => SelectSendChannel(destination));
         }
         _viewed = _channels[0];
-        _destination = _sendChoices[0];
+        _frequentDestination = _defaultSendChoice;
     }
 
     /// <summary>借用旧聊天列表的数据源，打开时由窗口按频道渲染。</summary>
@@ -177,9 +191,10 @@ public sealed class YimengChatWindow : WindowBase
         _palette.SetActive(show);
     }
 
-    /// <summary>开关真实可发言的频道菜单。</summary>
+    /// <summary>仅常用页能开关发言目标菜单。</summary>
     public void ToggleSendPicker()
     {
+        if (!_viewed.ShowAllHistory) return;
         // 保存本次点击希望触发的显隐动作。
         bool show = !_channelPicker.activeSelf;
         ClosePopups();
@@ -272,15 +287,14 @@ public sealed class YimengChatWindow : WindowBase
     private void SelectChannel(YimengChatChannelTab tab)
     {
         _viewed = tab;
-        if (!tab.ShowAllHistory) _destination = tab;
         ApplyChannel();
     }
 
     /// <summary>更换发言目标，保留左栏阅读频道。</summary>
-    /// <param name="destination">选择的真实发言目标。</param>
+    /// <param name="destination">在常用菜单选择的发言目标，尚未接入的频道只更新显示。</param>
     private void SelectSendChannel(YimengChatChannelTab destination)
     {
-        _destination = destination;
+        _frequentDestination = destination;
         SetVoiceMode(false);
         RefreshDestination();
         ClosePopups();
@@ -316,11 +330,16 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>更新发言目标及控件可用状态。</summary>
     private void RefreshDestination()
     {
-        _sendCaption.text = "[" + _destination.Caption + "]";
-        _sendCaption.color = YimengChatMessageRow.ChannelColor(_destination.Channel);
-        _input.interactable = _destination.CanPost;
-        _send.interactable = _destination.CanPost;
-        _mic.interactable = _destination.CanPost;
+        // 本页当前有效目标，用来同步标签、文字和语音控件。
+        YimengChatChannelTab destination = PostingTarget;
+        _sendPickerButton.SetActive(_viewed.ShowAllHistory);
+        _sendCaption.text = "[" + destination.Caption + "]";
+        _sendCaption.color = YimengChatMessageRow.ChannelColor(destination.Channel);
+        if (_viewed.ShowAllHistory)
+            _sendCaption.color = destination.Button.GetComponentInChildren<TMP_Text>(true).color;
+        _input.interactable = destination.CanPost;
+        _send.interactable = destination.CanPost;
+        _mic.interactable = destination.CanPost;
     }
 
     /// <summary>从正式记录重建本频道的可见行。</summary>
@@ -408,8 +427,10 @@ public sealed class YimengChatWindow : WindowBase
     {
         // 保留正文中间空白，项目服务端负责最终长度和冷却校验。
         string text = _input.text.Trim();
-        if (!_destination.CanPost || text.Length == 0) return;
-        TextRequested?.Invoke(_destination.Channel, text);
+        // 发言时读取当前页的目标，常用页和固定频道使用各自的选择。
+        YimengChatChannelTab destination = PostingTarget;
+        if (!destination.CanPost || text.Length == 0) return;
+        TextRequested?.Invoke(destination.Channel, text);
         _input.text = string.Empty;
     }
 
@@ -467,8 +488,10 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>开始在当前发言目标进行长按录音。</summary>
     private bool OnRecordStart()
     {
-        if (!_destination.CanPost) return false;
-        return VoiceStartRequested?.Invoke(_destination.Channel) == true;
+        // 录音和文字使用相同的发言目标，避免切页后投递到之前的菜单频道。
+        YimengChatChannelTab destination = PostingTarget;
+        if (!destination.CanPost) return false;
+        return VoiceStartRequested?.Invoke(destination.Channel) == true;
     }
 
     /// <summary>结束本次长按录音。</summary>
