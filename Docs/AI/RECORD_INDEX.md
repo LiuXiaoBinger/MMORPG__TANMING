@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8e1e6b6c986089ba8e6e475cc978e252c75ebf1432cd2c3cd48b442a169766b5`
+Source normalized SHA256: `ca88b90f800bad64d37310c8aaa16e399fe69be14f7687ba116c15dc2473e927`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -104,11 +104,11 @@ Source normalized SHA256: `8e1e6b6c986089ba8e6e475cc978e252c75ebf1432cd2c3cd48b4
 | [CODE][FILES][HANDOFF][聊天][YIMENG-CHAT-20261118] Restore the channel management panel | 704-715 |
 | [CODE][FILES][HANDOFF][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Moshenta monsters, bosses and NPCs reuse their source prefabs | 716-720 |
 | [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 721-727 |
-| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-731 |
+| [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 728-732 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0ea12b0727a15363f31901a0381ba0e1b53f269a1af611e3abbb430b4d1132ed`
+Source normalized SHA256: `bc70c833a59938bb38bd54f005b028b13f383b8796d56de9d233470158bb7da2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -204,7 +204,7 @@ Source normalized SHA256: `0ea12b0727a15363f31901a0381ba0e1b53f269a1af611e3abbb4
 | [VERIFY][聊天][YIMENG-CHAT-20261118] Channel manager layout, apply and settings recovery | 736-747 |
 | [VERIFY][副本][怪物预制体][MOSHENTA-ORIGINAL-PREFABS-20261118] Verified reused prefabs in live Moshenta and recorded combat | 748-752 |
 | [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 753-758 |
-| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-762 |
+| [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 759-763 |
 
 ## Docs/AI/DECISIONS.en.md
 
