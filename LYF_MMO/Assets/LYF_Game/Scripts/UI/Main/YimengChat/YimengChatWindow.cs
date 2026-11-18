@@ -8,9 +8,7 @@ using UnityEngine.UI;
 /// <summary>管理江湖聊天的可编辑预制体控件、频道和消息展示。</summary>
 public sealed class YimengChatWindow : WindowBase
 {
-    /// <summary>关闭聊天时在主界面底部出现的独立入口。</summary>
-    [SerializeField] private Button _launcher;
-    /// <summary>聊天右缘的收起箭头。</summary>
+    /// <summary>完整聊天右缘返回速览的收起箭头。</summary>
     [SerializeField] private Button _collapse;
     /// <summary>完整聊天的背景与操作区，进入速览时整体隐藏。</summary>
     [SerializeField] private GameObject _fullChat;
@@ -122,8 +120,7 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>主视图持有窗口后绑定一次正式控件。</summary>
     public override void InitWindow()
     {
-        _launcher.onClick.AddListener(RequestToggle);
-        _collapse.onClick.AddListener(RequestToggle);
+        _collapse.onClick.AddListener(ShowCompactFeed);
         _showCompactFeed.onClick.AddListener(ShowCompactFeed);
         _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
             () => _compactFeed.Refresh(_history, _palette), RequestToggle);
@@ -261,23 +258,19 @@ public sealed class YimengChatWindow : WindowBase
         }
     }
 
-    /// <summary>实际显示时恢复窗口状态及当前频道历史，然后告知控制器。</summary>
+    /// <summary>主界面打开此窗口时直接显示短档速览，并通知控制器让出旧版的显示位置。</summary>
     private void OnEnable()
     {
-        _launcher.gameObject.SetActive(false);
-        _compactFeed.gameObject.SetActive(false);
-        _fullChat.SetActive(true);
-        ApplyChannel();
+        ShowCompactFeed();
         VisibilityChanged?.Invoke(true);
     }
 
-    /// <summary>收起时还原入口并释放编辑焦点、临时弹窗和旧窗口遮挡状态。</summary>
+    /// <summary>切到旧版或退出窗口时释放编辑焦点、临时弹窗和旧窗口遮挡状态。</summary>
     private void OnDisable()
     {
         ReleaseInputFocus();
         SetVoiceMode(false);
         ClosePopups();
-        _launcher.gameObject.SetActive(true);
         VisibilityChanged?.Invoke(false);
     }
 
@@ -297,12 +290,12 @@ public sealed class YimengChatWindow : WindowBase
         _compactFeed.Open(_history, _palette);
     }
 
-    /// <summary>回到当前阅读频道，并渲染速览期间已经收到的正式消息。</summary>
+    /// <summary>按当前阅读频道初始化完整聊天的工具栏、发言目标与消息行。</summary>
     private void RestoreFullChat()
     {
         _compactFeed.gameObject.SetActive(false);
         _fullChat.SetActive(true);
-        RebuildRows();
+        ApplyChannel();
     }
 
     /// <summary>切换阅读频道及其配套工具栏和输入状态。</summary>

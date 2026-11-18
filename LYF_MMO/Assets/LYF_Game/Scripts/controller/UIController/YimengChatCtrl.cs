@@ -19,7 +19,7 @@ public sealed class YimengChatCtrl : IDisposable
     /// <summary>打开新版时临时盖住旧版的显示和点击，旧版生命周期继续运行。</summary>
     private CanvasGroup _legacyPresentation;
 
-    /// <summary>复用既有聊天数据和语音，并接通新版的开关及文字入口。</summary>
+    /// <summary>复用既有聊天数据和语音，接好窗口路由与收发事件后打开默认速览。</summary>
     /// <param name="view">由 MainView 加载并初始化的江湖聊天子窗口。</param>
     /// <param name="legacy">由既有 ChatMgr 绑定的正式聊天窗口。</param>
     /// <param name="toggleWindow">由 MainCtrl 提供的新版窗口切换方法。</param>
@@ -42,6 +42,8 @@ public sealed class YimengChatCtrl : IDisposable
         view.VoicePlayRequested += _audio.PlayRecordedFile;
         legacy.MessageSent += view.OnMessage;
         legacy.MessageReceived += view.OnMessage;
+        // 预制体中的新版窗口初始隐藏，通过主界面既有路由打开左下角速览。
+        _toggleWindow();
     }
 
     /// <summary>停止接收旧窗口事件；若新版正打开，先释放焦点并恢复旧版的显示。</summary>
@@ -62,7 +64,7 @@ public sealed class YimengChatCtrl : IDisposable
     }
 
     /// <summary>控制旧聊天的可见性与点击，保留消息接收、音频回包与滚动协程。</summary>
-    /// <param name="visible">新版是否在主界面左侧展开。</param>
+    /// <param name="visible">新版正在主界面左侧显示速览或完整聊天时为 true。</param>
     private void OnVisibilityChanged(bool visible)
     {
         if (visible)
