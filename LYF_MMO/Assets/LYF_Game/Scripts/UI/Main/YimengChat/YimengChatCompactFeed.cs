@@ -10,18 +10,16 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     /// <summary>首次打开时最多显示的消息条数。</summary>
     private const int CompactRows = 3;
     /// <summary>包含快捷图标及三条消息的速览高度，单位为 Canvas 像素。</summary>
-    private const float CompactHeight = 154f;
+    private const float CompactHeight = 196f;
     /// <summary>预制体内每增加一条消息所需的高度，单位为 Canvas 像素。</summary>
-    private const float RowHeight = 30f;
+    private const float RowHeight = 36f;
 
     /// <summary>右栏顶部切换速览三条和全部预设行的按钮。</summary>
     [SerializeField] private Button _more;
     /// <summary>短档向上、长档向下的箭头图形，随消息区高度旋转。</summary>
     [SerializeField] private RectTransform _heightArrow;
-    /// <summary>顶部打开同一窗口中完整聊天的图标按钮。</summary>
-    [SerializeField] private Button _expand;
-    /// <summary>顶部打开完整聊天原长按录音控件的图标按钮。</summary>
-    [SerializeField] private Button _voice;
+    /// <summary>覆盖半透明消息及空态区域，点击后打开同一窗口中的完整聊天。</summary>
+    [SerializeField] private Button _openChat;
     /// <summary>顶部打开现有表情选择器的图标按钮。</summary>
     [SerializeField] private Button _emoji;
     /// <summary>右栏底部开关速览频道筛选面板的齿轮。</summary>
@@ -32,8 +30,6 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     [SerializeField] private Button _closeFilter;
     /// <summary>按 ChatChannel 的连续枚举值排列的频道开关，勾选值随本窗口实例保留。</summary>
     [SerializeField] private Toggle[] _channelFilters;
-    /// <summary>交给主界面路由切回旧版聊天。</summary>
-    [SerializeField] private Button _legacy;
     /// <summary>无频道选择或没有匹配记录时显示的提示。</summary>
     [SerializeField] private TMP_Text _empty;
     /// <summary>从上往下排列的频道标签，与正文槽位同序。</summary>
@@ -45,20 +41,17 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
 
     /// <summary>绑定由主聊天窗口持有的数据和切换动作。</summary>
     /// <param name="toggleHeight">使用最新正式历史调整本面板的高度。</param>
-    /// <param name="expand">恢复当前频道的完整聊天。</param>
-    /// <param name="openVoice">展开完整聊天并切到原有长按录音模式。</param>
-    /// <param name="openEmoji">展开完整聊天并显示现有表情选择器。</param>
+    /// <param name="openChat">从消息区进入当前频道的完整聊天。</param>
+    /// <param name="toggleEmoji">留在速览并开关现有表情选择器。</param>
+    /// <param name="toggleFilter">开关频道筛选并收起同侧的表情选择器。</param>
     /// <param name="refresh">频道选择改变后按最新的正式历史重绘速览。</param>
-    /// <param name="showLegacy">沿主界面窗口路由关闭新版。</param>
-    internal void Init(Action toggleHeight, Action expand, Action openVoice, Action openEmoji, Action refresh, Action showLegacy)
+    internal void Init(Action toggleHeight, Action openChat, Action toggleEmoji, Action toggleFilter, Action refresh)
     {
         _more.onClick.AddListener(() => toggleHeight());
-        _expand.onClick.AddListener(() => expand());
-        _voice.onClick.AddListener(() => openVoice());
-        _emoji.onClick.AddListener(() => openEmoji());
-        _settings.onClick.AddListener(ToggleFilter);
+        _openChat.onClick.AddListener(() => openChat());
+        _emoji.onClick.AddListener(() => toggleEmoji());
+        _settings.onClick.AddListener(() => toggleFilter());
         _closeFilter.onClick.AddListener(CloseFilter);
-        _legacy.onClick.AddListener(() => showLegacy());
 
         // 按 ChatChannel 编号绑定各开关，回调直接读取控件已保存的新勾选值。
         for (int i = 0; i < _channelFilters.Length; i++)
@@ -141,13 +134,13 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
     }
 
     /// <summary>在速览旁开关频道筛选，并保持速览当前高度。</summary>
-    private void ToggleFilter()
+    internal void ToggleFilter()
     {
         _filterPanel.SetActive(!_filterPanel.activeSelf);
     }
 
     /// <summary>关闭筛选面板，保留本窗口内各频道的勾选状态。</summary>
-    private void CloseFilter()
+    internal void CloseFilter()
     {
         _filterPanel.SetActive(false);
     }

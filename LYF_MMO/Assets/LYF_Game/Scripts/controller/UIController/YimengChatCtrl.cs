@@ -12,12 +12,8 @@ public sealed class YimengChatCtrl : IDisposable
     private readonly ChatWindows _legacy;
     /// <summary>旧窗口已经启用的录音、上传、下载与回放入口。</summary>
     private readonly ChatAudioMgr _audio;
-    /// <summary>主界面通过独立 WindowType 切换新版显隐。</summary>
-    private readonly Action _toggleWindow;
     /// <summary>主控制器已有的角色输入暂停和恢复回调。</summary>
     private readonly Action<bool> _inputFocusChanged;
-    /// <summary>打开新版时临时盖住旧版的显示和点击，旧版生命周期继续运行。</summary>
-    private CanvasGroup _legacyPresentation;
 
     /// <summary>复用既有聊天数据和语音，接好窗口路由与收发事件后打开默认速览。</summary>
     /// <param name="view">由 MainView 加载并初始化的江湖聊天子窗口。</param>
@@ -29,12 +25,9 @@ public sealed class YimengChatCtrl : IDisposable
         _view = view;
         _legacy = legacy;
         _audio = legacy.GetComponent<ChatAudioMgr>();
-        _toggleWindow = toggleWindow;
         _inputFocusChanged = inputFocusChanged;
 
         view.UseHistory(legacy.Messages);
-        view.ToggleRequested += _toggleWindow;
-        view.VisibilityChanged += OnVisibilityChanged;
         view.InputFocusChanged += _inputFocusChanged;
         view.TextRequested += SendText;
         view.VoiceStartRequested += _audio.StartRecord;
@@ -42,56 +35,43 @@ public sealed class YimengChatCtrl : IDisposable
         view.VoicePlayRequested += _audio.PlayRecordedFile;
         legacy.MessageSent += view.OnMessage;
         legacy.MessageReceived += view.OnMessage;
+        HideLegacyPresentation();
         // 预制体中的新版窗口初始隐藏，通过主界面既有路由打开左下角速览。
-        _toggleWindow();
+        toggleWindow();
     }
 
-    /// <summary>停止接收旧窗口事件；若新版正打开，先释放焦点并恢复旧版的显示。</summary>
+    /// <summary>结束新窗口并解绑回调，旧聊天的呈现随主界面实例一直隐藏。</summary>
     public void Dispose()
     {
         _view.CloseWindow();
         _legacy.MessageSent -= _view.OnMessage;
         _legacy.MessageReceived -= _view.OnMessage;
-        _view.ToggleRequested -= _toggleWindow;
-        _view.VisibilityChanged -= OnVisibilityChanged;
         _view.InputFocusChanged -= _inputFocusChanged;
         _view.TextRequested -= SendText;
         _view.VoiceStartRequested -= _audio.StartRecord;
         _view.VoiceEndRequested -= _audio.FinishRecord;
         _view.VoicePlayRequested -= _audio.PlayRecordedFile;
-        if (_legacyPresentation != null)
-            UnityEngine.Object.Destroy(_legacyPresentation);
     }
 
-    /// <summary>控制旧聊天的可见性与点击，保留消息接收、音频回包与滚动协程。</summary>
-    /// <param name="visible">新版正在主界面左侧显示速览或完整聊天时为 true。</param>
-    private void OnVisibilityChanged(bool visible)
+    /// <summary>关闭旧聊天的显示和点击，保持消息接收和语音组件运行。</summary>
+    private void HideLegacyPresentation()
     {
-        if (visible)
+        // 若主界面重建前曾选中旧聊天输入，先释放其选中状态。
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem != null)
         {
-            // 如果是代码打开新版，也要退出仍在接收按键的旧聊天输入框。
-            EventSystem eventSystem = EventSystem.current;
-            if (eventSystem != null)
-            {
-                // 当前事件系统的选中对象，可能是旧聊天的文字输入。
-                GameObject selected = eventSystem.currentSelectedGameObject;
-                if (selected != null && selected.transform.IsChildOf(_legacy.transform))
-                    eventSystem.SetSelectedGameObject(null);
-            }
-            if (_legacyPresentation == null)
-                _legacyPresentation = _legacy.gameObject.AddComponent<CanvasGroup>();
-            _legacyPresentation.alpha = 0f;
-            _legacyPresentation.interactable = false;
-            _legacyPresentation.blocksRaycasts = false;
-            _legacyPresentation.enabled = true;
+            // 当前事件系统的选中对象，只在它属于旧聊天时清除。
+            GameObject selected = eventSystem.currentSelectedGameObject;
+            if (selected != null && selected.transform.IsChildOf(_legacy.transform))
+                eventSystem.SetSelectedGameObject(null);
         }
-        else if (_legacyPresentation != null)
-        {
-            _legacyPresentation.alpha = 1f;
-            _legacyPresentation.interactable = true;
-            _legacyPresentation.blocksRaycasts = true;
-            _legacyPresentation.enabled = false;
-        }
+        // 复用主界面实例的显隐层，防止程序关闭新版时重新露出旧入口。
+        CanvasGroup legacyPresentation = _legacy.GetComponent<CanvasGroup>();
+        if (legacyPresentation == null) legacyPresentation = _legacy.gameObject.AddComponent<CanvasGroup>();
+        legacyPresentation.alpha = 0f;
+        legacyPresentation.interactable = false;
+        legacyPresentation.blocksRaycasts = false;
+        legacyPresentation.enabled = true;
     }
 
     /// <summary>通过既有客户端 RPC 发言；旧版 ChatMgr 统一接收状态和正式广播。</summary>
