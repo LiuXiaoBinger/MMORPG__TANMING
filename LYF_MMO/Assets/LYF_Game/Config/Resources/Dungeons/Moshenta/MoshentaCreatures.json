@@ -1189,7 +1189,7 @@
             "scale": 1.100000023841858,
             "idleAnimation": "Monster_XieHaiZhanShi_Idle",
             "bornAnimation": "",
-            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/RuntimeCreatures/Monster_5514.prefab",
+            "runtimePrefabPath": "Assets/LYF_Game/Models/Monster/RO/Art/Resources/Prefabs/Monster_XieHaiZhanShi.prefab",
             "hitAnimation": "Monster_XieHaiZhanShi_BeHit",
             "isNpc": false
         },
