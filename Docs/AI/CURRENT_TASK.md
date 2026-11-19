@@ -752,6 +752,7 @@
 - `RoleInfoCtrl.RefreshCurrentRole` 提供 `BaseInfo.Level`、`BaseInfo.JobId` 和 `MainRoleInfo.Exp`。经验进度使用当前等级配置的 `NeedExp`，缺失等级配置时为 0，达到配置的最高等级时为 1。
 - 「安全」按钮经 MainCtrl 打开已注册的 `ArenaSettingsWindow`。关闭监听在窗口隐藏和重新显示后继续生效。竞技和保护选项均为禁用展示。证据与范围见 `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`。
 - 「安全」右侧的上排显示 Wi-Fi 图标和已连接网关的 ICMP 往返耗时，角色等级右侧的下排以 `M月d HH:mm` 格式显示本机系统时间。`MNetClient.PollGatewayLatency` 异步探测已连接的 IPv4 网关，无法测得结果时底栏显示 `-- ms`。绿色经验槽从加宽后的状态区右侧开始。
+- 左下底栏背景由职业、「安全」控件、网络、等级和时钟各自独立的五块斜角 `Image` 组成，共用九宫格切片纹理 `RoleHudSegment.png`。经验条使用独立底轨，控件间的缝隙可见场景。
 
 ## [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] 龙卷斩技能接入与本地服务更新
 

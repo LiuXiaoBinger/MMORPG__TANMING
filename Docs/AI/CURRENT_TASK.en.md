@@ -757,6 +757,7 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - `RoleInfoCtrl.RefreshCurrentRole` supplies `BaseInfo.Level`, `BaseInfo.JobId`, and `MainRoleInfo.Exp`. The configured level's `NeedExp` determines progress. A missing level uses 0 and the configured maximum level uses 1.
 - The Safety button opens the registered `ArenaSettingsWindow` through MainCtrl. Its close listener survives hide/show. Arena and protection options are presented as disabled. Evidence and scope are recorded in `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`.
 - The upper row beside Safety now shows a Wi-Fi icon and the connected gateway's ICMP round-trip time. The lower row beside the role level shows local system time in `M月d HH:mm` format. `MNetClient.PollGatewayLatency` samples the connected IPv4 gateway asynchronously, and the footer shows `-- ms` when a sample is unavailable. The green EXP track starts after the longer status group.
+- The footer background is composed of five independent beveled Image elements for the profession, Safety control, network, level, and clock. They share the nine-sliced `RoleHudSegment.png` texture. The experience bar uses its own track and the world is visible in the gaps between the controls.
 
 ## [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout
 
