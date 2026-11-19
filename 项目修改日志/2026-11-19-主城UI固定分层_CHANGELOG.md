@@ -28,4 +28,5 @@
 
 ## Git
 
-代码与资源验收后按任务差异暂存。提交与推送回执在实际操作后补录。
+- 本次实现提交为 `c9d5d571691c984cbcf6604d6b0a11057bc47a0d`。提交包括三个业务文件、本修改日志、四份协作记录的对应条目及生成后的目录。`MainView.cs` 中本地已有的货币兑换开发改动保留在工作区。
+- `git push origin HEAD:refs/heads/codex/feature-development` 成功，远端范围为 `76bf2cf..c9d5d57`。`git ls-remote` 核对了 `refs/heads/codex/feature-development` 的实现提交。推送原始回执在 `_temp/main-ui-layers-20261119-01a1f424/git-feature-push.txt`。
