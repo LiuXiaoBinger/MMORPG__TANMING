@@ -4,7 +4,7 @@ using UnityEngine.UI;
 /// <summary>控制设置窗口的画幅、八个页签和画质页的展示状态。</summary>
 public sealed class SettingPanel : WindowBase
 {
-    /// <summary>按 1920×1080 主界面画布设计的窗体，等比缩放后仍保持居中。</summary>
+    /// <summary>保留八页原始布局的窗体，按主界面可用宽高缩放到全屏。</summary>
     [SerializeField] private RectTransform _frame;
 
     /// <summary>右侧页签列表，可在基础、镜头、画质、偏好、热键、观战、状态和跳字之间滚动。</summary>
@@ -25,15 +25,16 @@ public sealed class SettingPanel : WindowBase
     /// <summary>选择预设画质时提示如何打开细项的说明。</summary>
     [SerializeField] private GameObject _graphicsHint;
 
-    /// <summary>每次打开窗口时回到基础页和页签列表顶部。</summary>
+    /// <summary>打开时置于聊天等主界面窗口上方，回到基础页和页签列表顶部。</summary>
     private void OnEnable()
     {
+        transform.SetAsLastSibling();
         OnRectTransformDimensionsChange();
         ScrollTabs(1);
         SelectOneHandler(0);
     }
 
-    /// <summary>窗口可用面积变化后，按短边比例缩放，保证标题、导航和关闭按钮都留在画面内。</summary>
+    /// <summary>窗口可用面积变化后，让原始窗体的四边与主界面可用区域重合。</summary>
     private void OnRectTransformDimensionsChange()
     {
         if (_frame == null)
@@ -43,10 +44,10 @@ public sealed class SettingPanel : WindowBase
 
         // 根节点随主界面拉伸，宽高以 Canvas 单位表示。
         Rect available = ((RectTransform)transform).rect;
-        // 以 1920×1080 为原始画幅，选取可完整容纳窗体的缩放比例。
-        float scale = Mathf.Min(available.width / 1920f, available.height / 1080f);
-        _frame.localScale = Vector3.one * scale;
-        _frame.anchoredPosition = new Vector2(0f, 18f * scale);
+        // 窗体原始宽高以 Canvas 单位表示，内部控件保留预制体中的布局。
+        Vector2 frameSize = _frame.rect.size;
+        _frame.localScale = new Vector3(available.width / frameSize.x, available.height / frameSize.y, 1f);
+        _frame.anchoredPosition = Vector2.zero;
     }
 
     /// <summary>切换内容与对应页签外观，同时仅显示一个主页面。</summary>
