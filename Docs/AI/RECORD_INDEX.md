@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `2d9435f70ed00cf5b14abe3c9b2a6cd5bbb805ea213452b3c28c09fb77473e6a`
+Source normalized SHA256: `7612445ba6f0581b541f9c7516accb4b33545535de8ae1c59eb444d1674d6d4b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -107,13 +107,13 @@ Source normalized SHA256: `2d9435f70ed00cf5b14abe3c9b2a6cd5bbb805ea213452b3c28c0
 | [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 733-739 |
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
-| [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-761 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 762-768 |
-| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 769-773 |
+| [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-762 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-769 |
+| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 770-774 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1c132187d487b8907fabeea681d93a7dc1d2a6f0c103a6d00bd68bc40f42052c`
+Source normalized SHA256: `6b68984d76c0fd5995c8d8b7ac62e2b65cbd3f73e20e3e074499e4854f89800e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -212,9 +212,9 @@ Source normalized SHA256: `1c132187d487b8907fabeea681d93a7dc1d2a6f0c103a6d00bd68
 | [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 764-770 |
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
-| [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-793 |
-| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 794-800 |
-| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 801-805 |
+| [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-794 |
+| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-801 |
+| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 802-806 |
 
 ## Docs/AI/DECISIONS.en.md
 
