@@ -9,10 +9,8 @@ public sealed class CombatStatusWindow : WindowBase
     [SerializeField] private Button _permanentTab;
     /// <summary>限时状态页签。</summary>
     [SerializeField] private Button _timedTab;
-    /// <summary>展开或收起增益管理。</summary>
+    /// <summary>通过齿轮展开或收起增益管理。</summary>
     [SerializeField] private Button _manageButton;
-    /// <summary>关闭状态窗。</summary>
-    [SerializeField] private Button _closeButton;
     /// <summary>永久状态页内容。</summary>
     [SerializeField] private GameObject _permanentPage;
     /// <summary>限时状态页内容。</summary>
@@ -28,7 +26,7 @@ public sealed class CombatStatusWindow : WindowBase
     /// <summary>状态列表滚动区域，切换页签时回到顶部。</summary>
     [SerializeField] private ScrollRect _scroll;
 
-    /// <summary>绑定常驻预制体上四个按钮，关闭窗口后监听仍有效。</summary>
+    /// <summary>绑定预制体上的分页和增益管理按钮，关闭窗口后监听仍有效。</summary>
     public override void InitWindow()
     {
         _permanentTab.onClick.RemoveListener(ShowPermanent);
@@ -37,8 +35,6 @@ public sealed class CombatStatusWindow : WindowBase
         _timedTab.onClick.AddListener(ShowTimed);
         _manageButton.onClick.RemoveListener(ToggleManagement);
         _manageButton.onClick.AddListener(ToggleManagement);
-        _closeButton.onClick.RemoveListener(CloseWindow);
-        _closeButton.onClick.AddListener(CloseWindow);
     }
 
     /// <summary>打开时将面板置顶，并优先显示正在生效的护盾。</summary>
