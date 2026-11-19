@@ -23,6 +23,12 @@ public class OnlineRole : IGeneOwner
     /// <summary>护盾当前剩余可吸收量，零表示当前没有生效中的护盾。</summary>
     private int _shieldAbsorb;
 
+    /// <summary>当前护盾的可吸收余额，随权威属性快照下发，单位为生命值点数。</summary>
+    internal int ShieldRemaining => _shieldAbsorb;
+
+    /// <summary>当次开盾的总容量，用于客户端计算白色护盾条的填充比例。</summary>
+    internal int ShieldCapacity { get; private set; }
+
     /// <summary>护盾到期的服务器逻辑 Tick，到期后不再吸收任何伤害。</summary>
     private long _shieldExpireTick;
 
@@ -39,7 +45,9 @@ public class OnlineRole : IGeneOwner
     {
         // 非正容量按零处理，护盾池不允许出现负值。
         _shieldAbsorb = Math.Max(absorb, 0);
+        ShieldCapacity = _shieldAbsorb;
         _shieldExpireTick = expireTick;
+        AttrComp?.MarkShieldChanged();
         // 角色数据尚未就绪时把开盾地点记为零，与承伤时的零口径一致，不会误判成跨场景。
         if (mainRoleInfo == null || mainRoleInfo.BaseInfo == null)
         {
@@ -55,10 +63,14 @@ public class OnlineRole : IGeneOwner
     /// <summary>清除护盾，死亡或离开场景、副本实例时调用，避免跨场景遗留。</summary>
     public void ClearShield()
     {
+        // 破盾时余额已经扣到零，用本次开盾容量确认是否需要下发清除快照。
+        bool hadShield = ShieldCapacity > 0;
         _shieldAbsorb = 0;
+        ShieldCapacity = 0;
         _shieldExpireTick = 0;
         _shieldMapId = 0;
         _shieldInstanceId = 0;
+        if (hadShield) AttrComp?.MarkShieldChanged();
     }
 
     /// <summary>扣血前先扣护盾池，返回真正还需要从生命里扣除的伤害。</summary>
@@ -94,7 +106,14 @@ public class OnlineRole : IGeneOwner
         int absorbed = Math.Min(_shieldAbsorb, incoming);
         _shieldAbsorb -= absorbed;
         // 耗尽即视为结束，避免残留零值状态影响后续施放判断。
-        if (_shieldAbsorb <= 0) ClearShield();
+        if (_shieldAbsorb <= 0)
+        {
+            ClearShield();
+        }
+        else
+        {
+            AttrComp?.MarkShieldChanged();
+        }
         return incoming - absorbed;
     }
     #endregion
@@ -270,6 +289,8 @@ public class OnlineRole : IGeneOwner
     /// <param name="deltaMilliseconds">本逻辑帧推进的毫秒数，由 GameGlobal 固定帧统一给出。</param>
     public void Update(int deltaMilliseconds)
     {
+        // 即使这期间没有再次受击，护盾也在权威逻辑步到期并发送清除快照。
+        if (_shieldAbsorb > 0 && GameGlobal.Instance.LogicTick >= _shieldExpireTick) ClearShield();
         _components.Update(deltaMilliseconds);
         // 后置阶段对应 RO 的 LateUpdate：吟唱请求队列在技能动作推进之后再取队首重试。
         _components.LateUpdate(deltaMilliseconds);

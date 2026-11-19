@@ -204,47 +204,48 @@ public static partial class ResultEntityReflection {
           "BCADKAUSKQoKb2JqZWN0aXZlcxgFIAMoCzIVLkR1bmdlb25PYmplY3RpdmVE",
           "YXRhEhAKCGZpbmlzaGVkGAYgASgIImUKEUVxdWlwT3BlcmF0aW9uUmV0EhoK",
           "CGNtZF9jb2RlGAEgASgOMgguQ21kQ29kZRIQCghpdGVtX3VpZBgCIAEoAxIi",
-          "CglvcGVyYXRpb24YAyABKA4yDy5FcXVpcE9wZXJhdGlvbiKDAQoWUm9sZUF0",
+          "CglvcGVyYXRpb24YAyABKA4yDy5FcXVpcE9wZXJhdGlvbiK2AQoWUm9sZUF0",
           "dHJpYnV0ZVVwZGF0ZU50ZhIgCgliYXNlX2luZm8YASABKAsyDS5Sb2xlQmFz",
           "ZUluZm8SEgoKZ2VuZXNfZnVsbBgCIAEoCBIcCgVnZW5lcxgDIAMoCzINLlJv",
-          "bGVHZW5lRGF0YRIVCg1nZW5lX3NjZW5hcmlvGAQgASgFIsMCCgxSb2xlR2Vu",
-          "ZURhdGESDwoHZ2VuZV9pZBgBIAEoBRIRCglzb3VyY2VfaWQYAiABKAQSEwoL",
-          "c291cmNlX3Nsb3QYAyABKAUSEAoIZmlyZXJfaWQYBCABKAQSEwoLc3RhY2tf",
-          "Y291bnQYBSABKAUSFAoMcmVtYWluaW5nX21zGAYgASgDEg8KB3JlbW92ZWQY",
-          "ByABKAgSDAoEbmFtZRgIIAEoCRITCgtlZmZlY3RfdHlwZRgJIAEoBRIUCgxh",
-          "dHRyaWJ1dGVfaWQYCiABKAUSDQoFc3RhdGUYCyABKAUSGgoScmVtYWluaW5n",
-          "X3RyaWdnZXJzGAwgASgFEhUKDXRyaWdnZXJfZXZlbnQYDSABKAUSHwoIY2hp",
-          "bGRyZW4YDiADKAsyDS5Sb2xlR2VuZURhdGESEAoIc2NlbmFyaW8YDyABKAUi",
-          "rQEKD01vbnN0ZXJCdWZmRGF0YRIXCg90YXJnZXRfc3Bhd25faWQYASABKAQS",
-          "FgoOdGFyZ2V0X3JvbGVfaWQYAiABKAUSFwoPY2FzdGVyX3NwYXduX2lkGAMg",
-          "ASgEEg8KB2J1ZmZfaWQYBCABKAUSFAoMcmVtYWluaW5nX21zGAUgASgFEg8K",
-          "B3JlbW92ZWQYBiABKAgSGAoQYnVmZl9pbnN0YW5jZV9pZBgHIAEoBCImChZE",
-          "dW5nZW9uQ29tbWFuZEV2ZW50UmVxEgwKBG5hbWUYASABKAkiDwoNUm9sZVJl",
-          "dml2ZVJlcSJSCg1Sb2xlUmV2aXZlUmV0Eg8KB3N1Y2Nlc3MYASABKAgSDgoG",
-          "cmVhc29uGAIgASgJEiAKCWJhc2VfaW5mbxgDIAEoCzINLlJvbGVCYXNlSW5m",
-          "byrYBQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4aXN0EAESDwoL",
-          "U2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1QYXNzd29yZEVy",
-          "cm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVycm9yEAYSEQoN",
-          "Tmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAIEhMKD1Bob25l",
-          "TnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIKDlVzZXJPZnRl",
-          "bkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90RXhpc3QQDRIT",
-          "Cg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1ZXN0EA8SFQoR",
-          "Tm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZvdW5kEBESGAoU",
-          "UHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMSEgoOSW52YWxp",
-          "ZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJbnZhbGlkU2hv",
-          "cBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZmaWNpZW50SXRl",
-          "bXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJdGVtTm90RXhp",
-          "c3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RMZWFybmVkEBwS",
-          "FgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNvb2xkb3duEB4S",
-          "FwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3RhdGVCbG9ja2Vk",
-          "ECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhEhkKFUR1bmdlb25BbHJl",
-          "YWR5RW50ZXJlZBAiKqUBChJNb25zdGVyQWN0aW9uUGhhc2USGgoWTW9uc3Rl",
-          "ckFjdGlvblBoYXNlSWRsZRAAEhoKFk1vbnN0ZXJBY3Rpb25QaGFzZU1vdmUQ",
-          "ARIcChhNb25zdGVyQWN0aW9uUGhhc2VBdHRhY2sQAhIaChZNb25zdGVyQWN0",
-          "aW9uUGhhc2VEZWFkEAMSHQoZTW9uc3RlckFjdGlvblBoYXNlU2luZ2luZxAE",
-          "KmMKDkVxdWlwT3BlcmF0aW9uEggKBE5vbmUQABIICgRXZWFyEAESCwoHVGFr",
-          "ZU9mZhACEhYKElN3aXRjaFNwZWNpYWxTa2lsbBADEhgKFE9wZW5TcGVjaWFs",
-          "U2tpbGxTbG90EARiBnByb3RvMw=="));
+          "bGVHZW5lRGF0YRIVCg1nZW5lX3NjZW5hcmlvGAQgASgFEhgKEHNoaWVsZF9y",
+          "ZW1haW5pbmcYBSABKAUSFwoPc2hpZWxkX2NhcGFjaXR5GAYgASgFIsMCCgxS",
+          "b2xlR2VuZURhdGESDwoHZ2VuZV9pZBgBIAEoBRIRCglzb3VyY2VfaWQYAiAB",
+          "KAQSEwoLc291cmNlX3Nsb3QYAyABKAUSEAoIZmlyZXJfaWQYBCABKAQSEwoL",
+          "c3RhY2tfY291bnQYBSABKAUSFAoMcmVtYWluaW5nX21zGAYgASgDEg8KB3Jl",
+          "bW92ZWQYByABKAgSDAoEbmFtZRgIIAEoCRITCgtlZmZlY3RfdHlwZRgJIAEo",
+          "BRIUCgxhdHRyaWJ1dGVfaWQYCiABKAUSDQoFc3RhdGUYCyABKAUSGgoScmVt",
+          "YWluaW5nX3RyaWdnZXJzGAwgASgFEhUKDXRyaWdnZXJfZXZlbnQYDSABKAUS",
+          "HwoIY2hpbGRyZW4YDiADKAsyDS5Sb2xlR2VuZURhdGESEAoIc2NlbmFyaW8Y",
+          "DyABKAUirQEKD01vbnN0ZXJCdWZmRGF0YRIXCg90YXJnZXRfc3Bhd25faWQY",
+          "ASABKAQSFgoOdGFyZ2V0X3JvbGVfaWQYAiABKAUSFwoPY2FzdGVyX3NwYXdu",
+          "X2lkGAMgASgEEg8KB2J1ZmZfaWQYBCABKAUSFAoMcmVtYWluaW5nX21zGAUg",
+          "ASgFEg8KB3JlbW92ZWQYBiABKAgSGAoQYnVmZl9pbnN0YW5jZV9pZBgHIAEo",
+          "BCImChZEdW5nZW9uQ29tbWFuZEV2ZW50UmVxEgwKBG5hbWUYASABKAkiDwoN",
+          "Um9sZVJldml2ZVJlcSJSCg1Sb2xlUmV2aXZlUmV0Eg8KB3N1Y2Nlc3MYASAB",
+          "KAgSDgoGcmVhc29uGAIgASgJEiAKCWJhc2VfaW5mbxgDIAEoCzINLlJvbGVC",
+          "YXNlSW5mbyrYBQoHQ21kQ29kZRILCgdTdWNjZWVkEAASDQoJQWNjdEV4aXN0",
+          "EAESDwoLU2VydmVyRXJyb3IQAhIQCgxBY2N0Tm90RXhpc3QQAxIRCg1QYXNz",
+          "d29yZEVycm9yEAQSDwoLQWNjdERpc2FibGUQBRIRCg1SZXFQYXJhbUVycm9y",
+          "EAYSEQoNTmlja25hbWVFeGlzdBAHEhMKD1VzZXJOYW1lSWxsZWdhbBAIEhMK",
+          "D1Bob25lTnVtSWxsZWdhbBAJEhMKD1Bhc3N3b3JkSWxsZWdhbBAKEhIKDlVz",
+          "ZXJPZnRlbkxvZ2luEAsSDwoLVmFyaWZ5RXJyb3IQDBIQCgxSb2xlTm90RXhp",
+          "c3QQDRITCg9GZWF0dXJlTm90UmVhZHkQDhIUChBEdXBsaWNhdGVSZXF1ZXN0",
+          "EA8SFQoRTm90RW5vdWdoQ3VycmVuY3kQEBIUChBTaG9wSXRlbU5vdEZvdW5k",
+          "EBESGAoUUHVyY2hhc2VMaW1pdFJlYWNoZWQQEhILCgdCYWdGdWxsEBMSEgoO",
+          "SW52YWxpZFNlc3Npb24QFBITCg9JbnZhbGlkUXVhbnRpdHkQFRIPCgtJbnZh",
+          "bGlkU2hvcBAWEhUKEVRyYW5zYWN0aW9uRmFpbGVkEBcSFQoRSW5zdWZmaWNp",
+          "ZW50SXRlbXMQGBIZChVJbmNvcnJlY3RCYWNrcGFja1R5cGUQGRIQCgxJdGVt",
+          "Tm90RXhpc3QQGhIRCg1JdGVtTm90RW5vdWdoEBsSEwoPU2tpbGxOb3RMZWFy",
+          "bmVkEBwSFgoSU2tpbGxDb25maWdNaXNzaW5nEB0SEwoPU2tpbGxPbkNvb2xk",
+          "b3duEB4SFwoTU2tpbGxJbnN1ZmZpY2llbnRNcBAfEhUKEVNraWxsU3RhdGVC",
+          "bG9ja2VkECASGgoWU2tpbGxUYXJnZXRVbnN1cHBvcnRlZBAhEhkKFUR1bmdl",
+          "b25BbHJlYWR5RW50ZXJlZBAiKqUBChJNb25zdGVyQWN0aW9uUGhhc2USGgoW",
+          "TW9uc3RlckFjdGlvblBoYXNlSWRsZRAAEhoKFk1vbnN0ZXJBY3Rpb25QaGFz",
+          "ZU1vdmUQARIcChhNb25zdGVyQWN0aW9uUGhhc2VBdHRhY2sQAhIaChZNb25z",
+          "dGVyQWN0aW9uUGhhc2VEZWFkEAMSHQoZTW9uc3RlckFjdGlvblBoYXNlU2lu",
+          "Z2luZxAEKmMKDkVxdWlwT3BlcmF0aW9uEggKBE5vbmUQABIICgRXZWFyEAES",
+          "CwoHVGFrZU9mZhACEhYKElN3aXRjaFNwZWNpYWxTa2lsbBADEhgKFE9wZW5T",
+          "cGVjaWFsU2tpbGxTbG90EARiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::CmdCode), typeof(global::MonsterActionPhase), typeof(global::EquipOperation), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -301,7 +302,7 @@ public static partial class ResultEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonObjectiveData), global::DungeonObjectiveData.Parser, new[]{ "Id", "Description", "Current", "Total", "Completed" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonFlowState), global::DungeonFlowState.Parser, new[]{ "ActiveWaveIds", "CompletedWaveIds", "ActiveObjectIds", "ActiveWallIds", "Objectives", "Finished" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationRet), global::EquipOperationRet.Parser, new[]{ "CmdCode", "ItemUid", "Operation" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "BaseInfo", "GenesFull", "Genes", "GeneScenario" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RoleAttributeUpdateNtf), global::RoleAttributeUpdateNtf.Parser, new[]{ "BaseInfo", "GenesFull", "Genes", "GeneScenario", "ShieldRemaining", "ShieldCapacity" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RoleGeneData), global::RoleGeneData.Parser, new[]{ "GeneId", "SourceId", "SourceSlot", "FirerId", "StackCount", "RemainingMs", "Removed", "Name", "EffectType", "AttributeId", "State", "RemainingTriggers", "TriggerEvent", "Children", "Scenario" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MonsterBuffData), global::MonsterBuffData.Parser, new[]{ "TargetSpawnId", "TargetRoleId", "CasterSpawnId", "BuffId", "RemainingMs", "Removed", "BuffInstanceId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::DungeonCommandEventReq), global::DungeonCommandEventReq.Parser, new[]{ "Name" }, null, null, null, null),
@@ -21208,6 +21209,8 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     genesFull_ = other.genesFull_;
     genes_ = other.genes_.Clone();
     geneScenario_ = other.geneScenario_;
+    shieldRemaining_ = other.shieldRemaining_;
+    shieldCapacity_ = other.shieldCapacity_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -21276,6 +21279,36 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     }
   }
 
+  /// <summary>Field number for the "shield_remaining" field.</summary>
+  public const int ShieldRemainingFieldNumber = 5;
+  private int shieldRemaining_;
+  /// <summary>
+  ///当前剩余可吸收生命值，0表示无护盾
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ShieldRemaining {
+    get { return shieldRemaining_; }
+    set {
+      shieldRemaining_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "shield_capacity" field.</summary>
+  public const int ShieldCapacityFieldNumber = 6;
+  private int shieldCapacity_;
+  /// <summary>
+  ///本次护盾建立时的最大吸收量，0表示无护盾
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ShieldCapacity {
+    get { return shieldCapacity_; }
+    set {
+      shieldCapacity_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -21295,6 +21328,8 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     if (GenesFull != other.GenesFull) return false;
     if(!genes_.Equals(other.genes_)) return false;
     if (GeneScenario != other.GeneScenario) return false;
+    if (ShieldRemaining != other.ShieldRemaining) return false;
+    if (ShieldCapacity != other.ShieldCapacity) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -21306,6 +21341,8 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     if (GenesFull != false) hash ^= GenesFull.GetHashCode();
     hash ^= genes_.GetHashCode();
     if (GeneScenario != 0) hash ^= GeneScenario.GetHashCode();
+    if (ShieldRemaining != 0) hash ^= ShieldRemaining.GetHashCode();
+    if (ShieldCapacity != 0) hash ^= ShieldCapacity.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -21337,6 +21374,14 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
       output.WriteRawTag(32);
       output.WriteInt32(GeneScenario);
     }
+    if (ShieldRemaining != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ShieldRemaining);
+    }
+    if (ShieldCapacity != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(ShieldCapacity);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -21360,6 +21405,14 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
       output.WriteRawTag(32);
       output.WriteInt32(GeneScenario);
     }
+    if (ShieldRemaining != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ShieldRemaining);
+    }
+    if (ShieldCapacity != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(ShieldCapacity);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -21379,6 +21432,12 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     size += genes_.CalculateSize(_repeated_genes_codec);
     if (GeneScenario != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(GeneScenario);
+    }
+    if (ShieldRemaining != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ShieldRemaining);
+    }
+    if (ShieldCapacity != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ShieldCapacity);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -21404,6 +21463,12 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
     genes_.Add(other.genes_);
     if (other.GeneScenario != 0) {
       GeneScenario = other.GeneScenario;
+    }
+    if (other.ShieldRemaining != 0) {
+      ShieldRemaining = other.ShieldRemaining;
+    }
+    if (other.ShieldCapacity != 0) {
+      ShieldCapacity = other.ShieldCapacity;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -21443,6 +21508,14 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
           GeneScenario = input.ReadInt32();
           break;
         }
+        case 40: {
+          ShieldRemaining = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ShieldCapacity = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -21479,6 +21552,14 @@ public sealed partial class RoleAttributeUpdateNtf : pb::IMessage<RoleAttributeU
         }
         case 32: {
           GeneScenario = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          ShieldRemaining = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          ShieldCapacity = input.ReadInt32();
           break;
         }
       }

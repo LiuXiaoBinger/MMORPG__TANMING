@@ -196,6 +196,7 @@ public class MainCtrl : CtrlBase
             NetDefine.CMD_EquipOperationCode, EquipOperationHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleAttributeUpdateCode, RoleAttributeUpdateHandle);
+        _mainView.RoleShieldWidget?.Clear();
         if (_mainInputRegistered && PlayerInputCtr.Instance != null)
         {
             PlayerInputCtr.Instance.MainUIKeyHandler -= MainUIKeyHandler;
@@ -353,7 +354,7 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>应用服务器最终属性，同时刷新实体资源和现有角色窗口。</summary>
-    /// <param name="data">包含最终 RoleBaseInfo 与基因完整/增量列表的权威通知。</param>
+    /// <param name="data">包含最终属性、护盾数值与基因完整或增量列表的权威通知。</param>
     private void RoleAttributeUpdateHandle(ByteString data)
     {
         // 服务器已结算装备与基因，客户端直接采用最终属性。
@@ -361,6 +362,7 @@ public class MainCtrl : CtrlBase
         // 当前本地角色是此通知的唯一应用目标。
         PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
         if (localRole == null || !localRole.ApplyAttributeUpdate(result)) return;
+        _mainView.RoleShieldWidget?.SetShield(localRole, result.ShieldRemaining, result.ShieldCapacity);
         // 兼容已有攻击入口通过角色控制器读取基础属性的流程。
         RoleCtrlBase controller = localRole.GetEntityCtrl();
         if (controller != null) controller.InitCtrl(controller._roleType, localRole.BaseInfo);
@@ -373,6 +375,7 @@ public class MainCtrl : CtrlBase
     /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
     {
+        _mainView.RoleShieldWidget?.Clear();
         _roleInfoCtrl.BindGeneRole(role);
         if (_knapsackCtrl != null)
         {

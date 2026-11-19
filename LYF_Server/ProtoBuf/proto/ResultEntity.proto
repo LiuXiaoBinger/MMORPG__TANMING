@@ -612,6 +612,8 @@ message RoleAttributeUpdateNtf {
     bool genes_full = 2;//true先清空再装载完整列表；false且genes为空表示基因没有变化
     repeated RoleGeneData genes = 3;//本角色根节点的完整列表或真实增删/刷新项
     int32 gene_scenario = 4;//当前基因场景类别，0公共、1副本、2PvP
+    int32 shield_remaining = 5;//当前剩余可吸收生命值，0表示无护盾
+    int32 shield_capacity = 6;//本次护盾建立时的最大吸收量，0表示无护盾
 }
 
 // 运行节点的展示同步边界；客户端仍由具体类型工厂创建GeneBase，不保存协议对象为运行状态。

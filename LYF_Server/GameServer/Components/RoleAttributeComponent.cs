@@ -35,6 +35,12 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
 
     /// <summary>资源或属性修正已变化，角色基因组件在本帧结束时发送最终面板。</summary>
     internal bool ResourcesChanged { get; private set; }
+
+    /// <summary>护盾余额变化时沿用本角色下一次权威属性同步。</summary>
+    internal void MarkShieldChanged()
+    {
+        ResourcesChanged = true;
+    }
     /// <summary>当前生效的最大生命值，至少为 1。</summary>
     public int MaxHp { get { return Math.Max(1, (int)CalculateAttribute(GeneAttributeType.MaxHp, Owner.mainRoleInfo.BaseInfo.MaxHp)); } }
     /// <summary>当前生效的最大法力值，至少为 0。</summary>
@@ -136,6 +142,8 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         ResourcesChanged = true;
         if (resources.CurrHp == 0)
         {
+            // 节点直接改血导致死亡时，护盾与本帧死亡状态一并清掉。
+            Owner.ClearShield();
             Owner.GetComponent<RoleSkillComponent>().InterruptActiveCast(true);
             Owner.GetComponent<StateMachineComponent>().ForceToDefaultState(true);
         }
@@ -219,7 +227,12 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         Owner.mainRoleInfo.BaseInfo.CurrTrueQi = attributes.CurrTrueQi;
         ResourcesChanged = false;
         // 原属性通知同时承载本次节点变化，保持网关和角色UI的既有入口。
-        RoleAttributeUpdateNtf notification = new RoleAttributeUpdateNtf { BaseInfo = attributes };
+        RoleAttributeUpdateNtf notification = new RoleAttributeUpdateNtf
+        {
+            BaseInfo = attributes,
+            ShieldRemaining = Owner.ShieldRemaining,
+            ShieldCapacity = Owner.ShieldCapacity
+        };
         Owner.Gene.AppendSynchronization(notification);
         Owner.SendToClient(NetDefine.CMD_RoleAttributeUpdateCode, notification.ToByteString());
     }

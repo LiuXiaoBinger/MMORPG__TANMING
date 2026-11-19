@@ -774,9 +774,9 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             // 龙卷风抵达前方结果点时，沿用副本技能的范围查询与抵扣流程。
             skill_ = new ROMovingTornadoSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point);
         }
-        else if (core.SkillID() == 10120 && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        else if (core.SkillID() == 10120)
         {
-            // 苍蓝屏障不产生伤害段，提交瞬间建立五秒护盾池。
+            // 苍蓝屏障成功施放时建立五秒护盾池，主城和副本使用相同的护盾容量。
             // 容量取属性组件的实际生命上限，装备与基因加成都会计入，再用 long 乘法避免极端数值溢出。
             long barrierAbsorb = (long)Owner.AttrComp.MaxHp * BarrierAbsorbPercent / 100;
             Owner.OpenShield((int)Math.Min(barrierAbsorb, int.MaxValue),

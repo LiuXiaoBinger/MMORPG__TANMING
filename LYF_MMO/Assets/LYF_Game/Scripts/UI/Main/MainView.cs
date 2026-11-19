@@ -10,6 +10,12 @@ using UnityEngine.UI;
 /// <summary>持有主城各窗口和常驻快捷栏，提供控制器访问入口，并登记窗口、绑定视图间引用。</summary>
 public class MainView : UIBase
 {
+   /// <summary>随本地角色移动的护盾提示，内容和资源引用保存在 UIRoot 预制体。</summary>
+   [SerializeField] private RoleShieldWidget _roleShieldWidget;
+
+   /// <summary>供主界面控制器下发权威护盾数值的显示入口。</summary>
+   public RoleShieldWidget RoleShieldWidget => _roleShieldWidget;
+
    /// <summary>原魔神塔剧情黑幕，显隐沿主视图窗口生命周期管理。</summary>
    [SerializeField] private MoshentaBlackCurtainWindow _moshentaBlackCurtainWindow;
    /// <summary>提供给TeamCtrl的强类型黑幕展示入口。</summary>
