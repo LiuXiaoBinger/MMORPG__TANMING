@@ -261,8 +261,8 @@ public class MainView : UIBase
          {
             // 模块留在主界面下，重新进入主城时只重新登记窗口和业务事件。
             GameObject module = Instantiate(_yimengChatPrefab, transform, false);
-            // 聊天排在主界面最底层，给同一画布中覆盖它的属性、背包等前景窗口优先绘制和接收点击。
-            module.transform.SetAsFirstSibling();
+            // UIRoot 将常驻 HUD 排在技能信息窗之前，聊天插在两组之间，让前景业务窗优先绘制和接收点击。
+            module.transform.SetSiblingIndex(_skillInfoWindow.transform.GetSiblingIndex());
             YimengChat = module.GetComponentInChildren<YimengChatWindow>(true);
             YimengChat.InitWindow();
          }
