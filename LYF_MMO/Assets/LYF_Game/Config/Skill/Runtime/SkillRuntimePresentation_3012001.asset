@@ -28,6 +28,11 @@ MonoBehaviour:
     LocalEulerAngles: {x: 0, y: 0, z: 0}
     LocalScale: {x: 0.68, y: 0.68, z: 0.68}
     ForwardDistance: 0
-  AudioEvents: []
+  AudioEvents:
+  - SourceEventIndex: 1
+    Frame: 0
+    TimeSeconds: 0
+    Clip: {fileID: 8300000, guid: 085c1c73ced7abe40b9041a43eaf85f7, type: 3}
+    Volume: 0.65
   ChargeList: []
   Collisions: []

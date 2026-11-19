@@ -111,6 +111,25 @@ MonoBehaviour:
     pitchVariation: 0.1
     volumeVariation: 0.05
     baseVolume: 1
+  - contentKind: 2
+    keyNumber: 0
+    endKeyNumber: 0
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 085c1c73ced7abe40b9041a43eaf85f7, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 0.65
   cancelList: []
   projectileList: []
   hitFxList: []
