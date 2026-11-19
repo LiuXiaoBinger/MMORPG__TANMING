@@ -9,15 +9,15 @@ namespace Ethan.ActionEditor.Editor
     public static class ActionEditorHelp
     {
         /// <summary>打开包内中文使用手册，不依赖网络地址。</summary>
-        [MenuItem("Tools/ACT Action Editor/Help/User Guide (Chinese)")]
+        [MenuItem("工具/技能/帮助/中文使用手册")]
         public static void OpenUserGuide() => Open("Documentation~/UserGuide.zh-CN.md");
 
         /// <summary>打开原 Y 的入门教程，介绍通用包功能而非本项目运行支持范围。</summary>
-        [MenuItem("Tools/ACT Action Editor/Help/Getting Started")]
+        [MenuItem("工具/技能/帮助/入门教程")]
         public static void OpenTutorial() => Open("Documentation~/index.html");
 
         /// <summary>打开原 Y 自动化接口说明，不自动执行指南中的操作。</summary>
-        [MenuItem("Tools/ACT Action Editor/Help/Agent Guide")]
+        [MenuItem("工具/技能/帮助/Agent 指南")]
         public static void OpenAgentGuide() => Open("Documentation~/AgentGuide.md");
 
         /// <summary>从保留的 Runtime 程序集定位嵌入包目录，检查文档存在后打开本机文件 URI。</summary>

@@ -17,7 +17,7 @@ public static class SkillCastingRulesExportTool
     private const string ServerJsonRelativePath = "LYF_Server/GameServer/Config/SkillCastingRules.json";
 
     /// <summary>首次创建五技能默认规则；已存在资产不覆写编辑内容，然后导出两端同源 JSON。</summary>
-    [MenuItem("Tools/技能/YCombat/创建并导出施法规则")]
+    [MenuItem("工具/技能/批处理/创建并导出施法规则")]
     public static void CreateDefaultAssetAndExport()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)

@@ -811,3 +811,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - Isolated Unity `2023.2.20f1c1` Play Mode verified a 100% slider and 0 dB SFX gain without a saved volume. The mixed output RMS was `0.0163003` at the new default and `0.0097475` at 60%. A saved 60% volume and disabled state were retained.
 - Evidence: `_temp/sfx-default-volume-20261119/play-verification.txt` and `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Live networked client audio and packaged build are unverified.
+
+## [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19)
+
+- The first script-only compilation used stale asset inputs and returned CS2001 for removed scripts. A forced asset refresh and compilation on Unity `2023.2.20f1c1` reloaded the script domain and returned zero error entries.
+- Native inspection counted 16 entries under `工具`, confirmed all 11 relocated entries, and found none of the 14 retired paths. Six YooAsset items, `Tools/Demigiant/DOTween Utility Panel` and `Build/BuildDll` remained at their original paths. Invoking `工具/技能/打开技能编辑器` returned true and found `SkillEditorWindow`.
+- Verification covered compilation, actual menu paths, opening the skill editor and the existence of saved assets. Batch operation outputs and Play Mode were not exercised. Evidence is in `_temp/skill-editor-menu-20261119/cleanup-verification.json` and `项目修改日志/2026-11-19-Unity项目编辑工具菜单整理.md`.

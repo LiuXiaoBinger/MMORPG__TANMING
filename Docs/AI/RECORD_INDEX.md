@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e350b540f4da1596cf94c1a5129c01516eca62cc2c075a5b1fbca575890a548f`
+Source normalized SHA256: `f8a7ba334b2e7ac1059ee289f48101a2342e84855cc020d2e43971a20fcf7253`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -110,11 +110,12 @@ Source normalized SHA256: `e350b540f4da1596cf94c1a5129c01516eca62cc2c075a5b1fbca
 | [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-762 |
 | [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-771 |
 | [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 772-777 |
-| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19) | 778-781 |
+| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19) | 778-782 |
+| [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 783-787 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `526a63d5994a72fa6a4a3eff925476abe0eaf58181036c6d3b2c64f7f2d9bd2e`
+Source normalized SHA256: `2fe8d1004d6c29526d05cc6783b838d0bb179f0609e4ee3b5d3f2e1a2562b34b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -216,7 +217,8 @@ Source normalized SHA256: `526a63d5994a72fa6a4a3eff925476abe0eaf58181036c6d3b2c6
 | [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-794 |
 | [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-803 |
 | [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 804-809 |
-| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19) | 810-813 |
+| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19) | 810-814 |
+| [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 815-819 |
 
 ## Docs/AI/DECISIONS.en.md
 

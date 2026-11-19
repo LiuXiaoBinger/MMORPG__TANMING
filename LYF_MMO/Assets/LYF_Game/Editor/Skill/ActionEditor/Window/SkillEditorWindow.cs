@@ -333,7 +333,7 @@ public partial class SkillEditorWindow : EditorWindow
     #endregion
 
     #region 窗口打开与事件注册
-    [MenuItem("Tools/ACT Action Editor/Open Editor")]
+    [MenuItem("工具/技能/打开技能编辑器", false, 0)]
     /// <summary>通过保留的固定菜单身份打开技能窗口，显示标题使用个人语言。</summary>
     static void Open()
     {

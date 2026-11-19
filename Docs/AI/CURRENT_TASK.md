@@ -774,3 +774,9 @@
 
 - 提交 `6a4fa75` 在 `codex/feature-development` 分支中，将游戏音效默认音量从 `SoundVolumeData.cs` 和 `SettingPanel.prefab` 中的 `EffectsVolume` 滑块的 60% 更改为 100%。新默认值在没有本地音量值时生效。已保存的音量值或禁用状态仍会被保留。
 - 音效最大值和 BGM 默认值保持不变。详情：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。
+
+## [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] 整理编辑器工具菜单并移除一次性命令 (2026-11-19)
+
+- 项目自有编辑器命令使用 `工具` 下的原生 MenuItem 路径。通过 `工具/技能/打开技能编辑器` 打开集成的 ACT 编辑器。技能帮助、批量发布和测试与编辑器归入同一分组。聊天测试仍位于 `工具/聊天/新版聊天测试`。已核实 YooAsset、`Tools/Demigiant/DOTween Utility Panel` 和 `Build/BuildDll` 的原有路径。
+- 移除了 7 个用于 UI 生成、截图、聊天迁移和动画迁移的一次性脚本，以及未跟踪的全局菜单重写脚本。移除了 E-to-2 示例生成器和课程音频导入器。已有的 UI 预制体、7 个已迁移的动画剪辑、组合资源及 8 个移动动作制作资源仍然可用。组合导出器和移动音效导出器仍然可用。
+- 本地恢复引用 `refs/codex/backups/unity-editor-menu-cleanup-20261119` 保存了 21 份经过字节校验的源文件和 .meta 快照，包含 `SkillUpgradeUIBuilder.cs` 先前已有的本地修改及未跟踪脚本。文件清单和 Git 回执见 `项目修改日志/2026-11-19-Unity项目编辑工具菜单整理.md`。

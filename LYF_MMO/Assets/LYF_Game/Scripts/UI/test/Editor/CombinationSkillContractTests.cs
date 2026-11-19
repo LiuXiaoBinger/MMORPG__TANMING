@@ -12,7 +12,7 @@ public static class CombinationSkillContractTests
     private const string ReportPath = "../_temp/skill-cancel-feel-20261103/client-contract.txt";
 
     /// <summary>加载真实保存资产，验证组合装配、同 UUID、确认、动作归属和中断回收。</summary>
-    [MenuItem("Tools/技能/测试/组合技能验收")]
+    [MenuItem("工具/技能/测试/组合技能验收")]
     public static void Run()
     {
         if (EditorApplication.isPlaying) throw new InvalidOperationException("请在编辑态运行组合技能验收。");

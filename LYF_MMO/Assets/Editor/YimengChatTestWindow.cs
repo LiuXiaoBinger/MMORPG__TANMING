@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class YimengChatTestWindow : EditorWindow
 {
     /// <summary>从 Unity Tools 菜单打开新版聊天的专用测试窗口。</summary>
-    [MenuItem("Tools/Chat/新版聊天测试")]
+    [MenuItem("工具/聊天/新版聊天测试")]
     private static void OpenWindow()
     {
         GetWindow<YimengChatTestWindow>("新版聊天测试");

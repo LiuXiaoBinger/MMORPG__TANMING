@@ -779,3 +779,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 
 - Commit `6a4fa75` on `codex/feature-development` changes the game SFX default from 60% to 100% in `SoundVolumeData.cs` and the `EffectsVolume` slider in `SettingPanel.prefab`. The new default applies when no local volume value exists. An existing saved volume or disabled state is still honored.
 - The SFX maximum and BGM default are unchanged. Details: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`.
+
+## [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19)
+
+- Project-owned editor commands use native MenuItem paths under `工具`. Open the integrated ACT editor at `工具/技能/打开技能编辑器`. Skill help, batch publishing and tests are grouped with the editor. Chat testing remains at `工具/聊天/新版聊天测试`. YooAsset, `Tools/Demigiant/DOTween Utility Panel` and `Build/BuildDll` were verified at their original paths.
+- Retired seven one-time scripts for UI generation, screenshots, chat migration and animation migration, plus the untracked global menu rewriter. Removed the E-to-2 example generator and the course audio importer. The existing UI prefabs, seven migrated clips, combination assets and eight locomotion authoring assets remain available. The combination exporter and locomotion sound exporter are still available.
+- The local recovery ref `refs/codex/backups/unity-editor-menu-cleanup-20261119` contains 21 byte-verified source and meta snapshots, including the pre-existing local edits to `SkillUpgradeUIBuilder.cs` and the untracked scripts. File inventory and Git receipt are in `项目修改日志/2026-11-19-Unity项目编辑工具菜单整理.md`.

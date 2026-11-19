@@ -341,7 +341,7 @@ public static class SkillEditorAssetTools
 
     #region 数据读写
     /// <summary>先校验全部绑定再发布，任何不支持轨道都会阻止此轮运行资产更新。</summary>
-    [MenuItem("Tools/技能/YCombat/校验并导出全部表现")]
+    [MenuItem("工具/技能/批处理/校验并导出全部表现")]
     public static void ExportAll()
     {
         EnsureEditMode();
@@ -512,7 +512,7 @@ public static class SkillEditorAssetTools
 
     #region 校验发布与资源准备
     /// <summary>按正式表创建缺失的 MJS 与独立 JX 参考资产；已有编辑资产仅校验，不重置用户编辑。</summary>
-    [MenuItem("Tools/技能/YCombat/生成缺失技能资产并导出")]
+    [MenuItem("工具/技能/批处理/生成缺失技能资产并导出")]
     public static void GenerateAndExport()
     {
         EnsureEditMode();
@@ -553,7 +553,7 @@ public static class SkillEditorAssetTools
     }
 
     /// <summary>重新读取保存后的全部资产并核对运行内容、量化误差和依赖；适用于 batch 验收。</summary>
-    [MenuItem("Tools/技能/YCombat/验证已保存资产与依赖")]
+    [MenuItem("工具/技能/批处理/验证已保存资产与依赖")]
     public static void ValidateAll()
     {
         // 编辑资产 GUID 数组，不依赖 Unity 当前选择。
