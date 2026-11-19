@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e0b54b3119f53ba964b65601547d1c864a7c07ef531175d4cd5bcd39b4e74c74`
+Source normalized SHA256: `54321719f7f75e9c23a3bcd5a6e22afbd70f6b8d124f954025b9f49d7bd8f33e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -108,15 +108,15 @@ Source normalized SHA256: `e0b54b3119f53ba964b65601547d1c864a7c07ef531175d4cd5bc
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
 | [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-762 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-771 |
-| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 772-777 |
-| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19) | 778-782 |
-| [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 783-788 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 789-793 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-772 |
+| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 773-778 |
+| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19) | 779-783 |
+| [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 784-789 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 790-794 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7536d1bc6b396ba54dab933fa9eb8d2387b3b96fa2f9eaee06f2e309dd839795`
+Source normalized SHA256: `01b68531649100c3adbeffde2ffd3164e4c0adcbf3b859b4f13192c4543bfe75`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -216,11 +216,11 @@ Source normalized SHA256: `7536d1bc6b396ba54dab933fa9eb8d2387b3b96fa2f9eaee06f2e
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
 | [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-794 |
-| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-803 |
-| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 804-809 |
-| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19) | 810-814 |
-| [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 815-820 |
-| [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 821-825 |
+| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-804 |
+| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 805-810 |
+| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19) | 811-815 |
+| [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 816-821 |
+| [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 822-826 |
 
 ## Docs/AI/DECISIONS.en.md
 
