@@ -4899,6 +4899,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3542841099132037448}
     m_Modifications:
+    - target: {fileID: 95555927189113526, guid: 55f33ef629396d74a9d019456171899a, type: 3}
+      propertyPath: m_Controller
+      value:
+      objectReference: {fileID: 22100000, guid: 51c2078bb75504541a07182c6883695d, type: 2}
     - target: {fileID: 1061636866439696, guid: 55f33ef629396d74a9d019456171899a, type: 3}
       propertyPath: m_Name
       value: Skill-1053-yidonglongjuanfeng
