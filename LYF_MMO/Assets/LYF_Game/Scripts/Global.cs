@@ -12,6 +12,12 @@ public class Global : MonoBehaviour {
     /// <summary>动画索引加载失败后的重试间隔，单位为秒，使用不受时间缩放影响的时钟。</summary>
     private const float AnimationPreloadRetryIntervalSeconds = 3f;
 
+    /// <summary>两次低内存通知触发托管回收的最短间隔，单位为不受时间缩放影响的秒。</summary>
+    private const float LowMemoryCollectionIntervalSeconds = 600f;
+
+    /// <summary>下一次允许低内存通知触发托管回收的运行时间，单位为不受缩放影响的秒，初始为零。</summary>
+    private float _nextLowMemoryCollectionTime;
+
     /// <summary>全局 Unity 生命周期入口。</summary>
     public static Global Instance;
 
@@ -93,6 +99,21 @@ public class Global : MonoBehaviour {
         // 先读完角色状态之间的允许关系，角色创建后才能据此判断是否能切换动作或施法。
         StateExclusionManager.singleton.Initialize();
         BeginAnimationPreload();
+        Application.lowMemory += OnLowMemory;
+    }
+
+    /// <summary>收到系统低内存通知时主动回收托管垃圾，并限制连续通知造成的回收频率。</summary>
+    private void OnLowMemory()
+    {
+        // 本帧未缩放的运行秒数，游戏暂停时也可用于判断回收间隔。
+        float now = Time.unscaledTime;
+        if (now < _nextLowMemoryCollectionTime)
+        {
+            return;
+        }
+
+        GC.Collect();
+        _nextLowMemoryCollectionTime = now + LowMemoryCollectionIntervalSeconds;
     }
 
     /// <summary>推进动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
@@ -152,6 +173,7 @@ public class Global : MonoBehaviour {
         }
 
         _isShuttingDown = true;
+        Application.lowMemory -= OnLowMemory;
         ClearLocalRoleSession();
         SceneWorld = null;
         LocalRoleLoadCompleted = null;

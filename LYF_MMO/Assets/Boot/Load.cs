@@ -300,9 +300,11 @@ public class Load : MonoBehaviour {
         }
     }
 
-    /// <summary>加载登录场景，只有句柄成功才记录已进入登录。</summary>
+    /// <summary>回收启动阶段的托管垃圾后加载登录场景，只有句柄成功才记录已进入登录。</summary>
     private IEnumerator EnterGame() {
         _hotUpdateView.RefreshUI(1, "正在进入登录..");
+        // 资源更新和代码装载已完成，在离开启动加载界面前集中回收托管垃圾。
+        GC.Collect();
         // 默认资源包中的正式登录场景异步加载句柄。
         SceneOperationHandle handle = _package.LoadSceneAsync("Assets/LYF_Game/Scenes/Scene_Login");
         yield return handle;

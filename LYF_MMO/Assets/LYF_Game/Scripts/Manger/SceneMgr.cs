@@ -3,7 +3,7 @@ using UniRx;
 using UnityEngine;
 using YooAsset;
 
-/// <summary>加载目标场景时显示进度；成功后更新当前场景、读取导航数据、启用业务根节点，再调用回调。</summary>
+/// <summary>加载目标场景时显示进度；成功后回收资源，再更新当前场景、读取导航、启用业务根节点并调用回调。</summary>
 public class SceneMgr : Singleton<SceneMgr>
 {
     /// <summary>已成功加载的业务场景类型，失败时保留原值。</summary>
@@ -52,8 +52,10 @@ public class SceneMgr : Singleton<SceneMgr>
     private void LoadSceneLocation(SceneType sceneType, string sceneLocation, Action callback)
     {
         PrepareLocalRoleForSceneChange(sceneType);
+        // 本次加载所用的默认资源包，切换成功后由同一个包卸载零引用资源。
+        ResourcePackage package = Global.Instance.YooPackage;
         // 本次场景加载句柄；Single模式自动卸载旧场景并激活目标场景。
-        SceneOperationHandle handle = Global.Instance.YooPackage.LoadSceneAsync(
+        SceneOperationHandle handle = package.LoadSceneAsync(
             sceneLocation,
             UnityEngine.SceneManagement.LoadSceneMode.Single);
         if (_loadingView != null)
@@ -75,11 +77,21 @@ public class SceneMgr : Singleton<SceneMgr>
                 return;
             }
             _obs.Dispose();
+
+            // 加载句柄已完成；只有切换成功才具备清理旧场景资源的时机。
+            bool sceneLoaded = handle.Status == EOperationStatus.Succeed;
+            if (sceneLoaded)
+            {
+                // Single 切换已释放旧场景句柄，回收 YooAsset 零引用资源后再回收托管垃圾。
+                package.UnloadUnusedAssets();
+                GC.Collect();
+            }
+
             if (_loadingView != null)
             {
                 _loadingView.Show(false);
             }
-            if (handle.Status != EOperationStatus.Succeed)
+            if (!sceneLoaded)
             {
                 Debug.LogError($"场景 {sceneType} 加载失败：{handle.LastError}");
                 return;
