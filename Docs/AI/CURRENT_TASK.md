@@ -799,3 +799,9 @@
 - `UIRoot.prefab` 为 `MainView` 提供四个按顺序排列的容器。`NormalLayer` 承载常驻 HUD，`ChatLayer` 承载展开的聊天窗口，`FunctionLayer` 承载常规窗口，`TipsLayer` 承载覆盖在前景的提示窗口。技能窗口和背包拖拽用的 Canvas 继承所在层的排序。拖拽物在背包内部最后绘制。
 - `MainView.cs` 在 `ChatLayer` 下实例化 `YimengChat`，并绑定功能层和提示层的窗口。`WindowBase.cs` 通过 `SetPanelParentData` 记录预制体父容器，打开窗口时沿用 RO 先挂到父容器、再调用 `SetAsLastSibling()` 的流程。`ShowMainWindow` 仍负责切换窗口显隐。
 - 使用独立实例通过 Unity 预制体、窗口显隐和 Play 射线命中验证。登录后在真实主城运行、实际物品拖拽和打包后的客户端尚未验证。完整文件清单和 Git 回执见 `项目修改日志/2026-11-19-主城UI固定分层_CHANGELOG.md`。
+
+## [CODE][FILES][HANDOFF][网络][HUD][RO-GATE-RTT-20261119] 在现有底栏显示游戏网关 TCP RTT
+
+- RO 的 `MServerTimeMgr` 通过网关连接用 `RpcC2T_SyncTime` 采样，`SystemInfoCtrl` 读取所得的网络状态。LYF 注册 `NetDefine.RpcC2T_SyncTime = 11191`，网关在同一 TCP 会话原样回显 8 字节单调时钟时间戳。
+- 主城发起实时绑定后，`Global` 驱动 `MNetClient.UpdateGatewayLatency`。探测间隔 5 秒，单次超时 2 秒，收包时匹配回显的时间戳和现有连接代次。回包时间戳在投递到 Unity 主线程前采集。
+- `RoleStatusFooterWidget` 通过现有文本和图标呈现测量结果。不可用时以灰色显示 `-- ms`，不足 1 ms 时显示 `<1 ms`，按 RO 的 100/250/500 ms 界限使用绿、黄、橙、红四档。Unity 客户端插件使用从更新后的共用源码构建的 Debug `Network.dll`。完整改动见 `项目修改日志/2026-11-19-底栏网关TCP延迟_CHANGELOG.md`。新版本仍需验证真实主城运行与打包客户端。

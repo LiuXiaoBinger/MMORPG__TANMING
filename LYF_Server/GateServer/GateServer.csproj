@@ -42,6 +42,7 @@
         <Compile Include="Ctrl\GateTeamCtrl.cs" />
         <Compile Include="Ctrl\GateChatCtrl.cs" />
         <Compile Include="Ctrl\GateKcpCtrl.cs" />
+        <Compile Include="Ctrl\GateSyncTimeCtrl.cs" />
         <Compile Include="GateServerApp.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

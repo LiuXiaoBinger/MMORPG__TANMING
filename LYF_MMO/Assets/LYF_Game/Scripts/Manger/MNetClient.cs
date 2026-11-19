@@ -1,9 +1,8 @@
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using Google.Protobuf;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 /// <summary>
 /// 客户端网络入口：建立和关闭连接、发送协议，并把网络线程收到的消息交回 Unity 主线程。
@@ -49,23 +48,40 @@ public class MNetClient : Singleton<MNetClient>
     /// <summary>相邻网关探测的最短间隔，单位为秒。</summary>
     private const float LatencyProbeIntervalSeconds = 5f;
 
-    /// <summary>单次网关探测的等待上限，单位为秒。</summary>
-    private const float LatencyProbeTimeoutSeconds = 2f;
+    /// <summary>单次网关探测的 2 秒等待上限，以单调时钟刻度表示。</summary>
+    private static readonly long LatencyProbeTimeoutTicks = 2 * Stopwatch.Frequency;
 
-    /// <summary>尚无有效网关探测结果时返回的负值；0 毫秒属于有效结果。</summary>
-    private const int UnavailableGatewayLatency = -1;
+    /// <summary>尚无有效网关探测结果时返回的负值，单位为毫秒。</summary>
+    private const double UnavailableGatewayLatency = -1d;
 
-    /// <summary>当前正在等待回包的 IPv4 探测，仅在 Unity 主线程访问。</summary>
-    private Ping _gatewayLatencyProbe;
+    /// <summary>在途探测的发送时钟刻度，也是回包必须原样携带的标记；为空表示没有在途探测。</summary>
+    private long? _gatewayLatencySentAtTicks;
 
-    /// <summary>当前探测和显示结果所属的 TCP 连接代次，0 表示无归属。</summary>
+    /// <summary>发起实时绑定时的 TCP 连接代次，当前探测和最近结果均归属该代次，0 表示尚未开始。</summary>
     private long _gatewayLatencyGeneration;
 
-    /// <summary>上次发出探测时的非缩放时间，单位为秒；未探测时允许立即发出。</summary>
-    private float _gatewayLatencyStartedAt = float.NegativeInfinity;
+    /// <summary>允许发送下一次探测的 Unity 非缩放时间，单位为秒，初始为 0。</summary>
+    private float _nextGatewayLatencyProbeAt;
 
-    /// <summary>最近一次有效网关探测的毫秒数，负值表示不可用。</summary>
-    private int _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+    /// <summary>最近一次有效的网关 TCP 往返毫秒数，保留亚毫秒精度，负值表示不可用。</summary>
+    private double _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+
+    /// <summary>该 TCP 连接仍属于已经开始实时绑定的游戏会话时，允许访问本次会话的探测状态。</summary>
+    private bool IsGatewayLatencySessionCurrent => _realtimeBindRequested && _gatewayLatencyGeneration > 0 &&
+        _gatewayLatencyGeneration == CurrentConnectionGeneration;
+
+    /// <summary>供 Unity 主线程读取当前网关最近一次往返耗时，单位为毫秒，负值表示不可用。</summary>
+    public double GatewayLatencyMilliseconds
+    {
+        get
+        {
+            if (!IsGatewayLatencySessionCurrent)
+            {
+                return UnavailableGatewayLatency;
+            }
+            return _gatewayLatencyMilliseconds;
+        }
+    }
 
     /// <summary>当前连接的可靠 KCP 通道；为空表示实时协议没有可用通道，此时实时上行直接丢弃。</summary>
     private KcpClient _realtimeClient;
@@ -157,6 +173,13 @@ public class MNetClient : Singleton<MNetClient>
             }
         }
 
+        // TCP 探测回包的单调时钟刻度，在投递前采集，避免把主线程排队计入 RTT。
+        long? gatewayLatencyReceivedAtTicks = null;
+        if (!fromRealtime && protoCode == NetDefine.RpcC2T_SyncTime)
+        {
+            gatewayLatencyReceivedAtTicks = Stopwatch.GetTimestamp();
+        }
+
         PostToMainThread(() =>
         {
             if (fromRealtime)
@@ -183,6 +206,11 @@ public class MNetClient : Singleton<MNetClient>
             if (!fromRealtime && protoCode == NetDefine.CMD_KcpBindCode)
             {
                 HandleKcpBindResponse(data);
+                return;
+            }
+            if (gatewayLatencyReceivedAtTicks.HasValue)
+            {
+                HandleGatewayLatencyResponse(sourceGeneration, data, gatewayLatencyReceivedAtTicks.Value);
                 return;
             }
             SocketDispatcher.Instance.DispatchEvent(protoCode, data, sourceGeneration);
@@ -447,6 +475,7 @@ public class MNetClient : Singleton<MNetClient>
     /// <summary>
     /// 请求把移动与技能实时协议绑定到 KCP 通道；在本地主角创建模型前调用。
     /// 实时协议只走 KCP，绑定失败按现有断线流程恢复，不保持 TCP 继续游戏。
+    /// 当前游戏会话也从此时开始允许测量网关 TCP 往返时间。
     /// </summary>
     public void RequestRealtimeBind()
     {
@@ -466,6 +495,9 @@ public class MNetClient : Singleton<MNetClient>
         }
 
         _realtimeBindRequested = true;
+        // 探测归属于这次绑定请求的 TCP 连接，重连后的新代次不能沿用旧会话的探测状态。
+        ResetGatewayLatency();
+        _gatewayLatencyGeneration = CurrentConnectionGeneration;
         // 绑定请求只带协议号，参数由服务端生成的会话号和令牌决定。
         client.Send(NetDefine.CMD_KcpBindCode, ByteString.Empty);
     }
@@ -572,72 +604,76 @@ public class MNetClient : Singleton<MNetClient>
 
     #region 核心逻辑
 
-    /// <summary>在 Unity 主线程轮询当前网关的 ICMP 往返时间；不可测时返回负值。</summary>
-    /// <param name="now">当前帧的 Unity 非缩放时间，单位为秒。</param>
-    /// <returns>网关 ICMP 往返毫秒数，0 为有效结果，负值表示不可用。</returns>
-    public int PollGatewayLatency(float now)
+    /// <summary>在 Unity 主线程按固定间隔发起网关 TCP 探测，并清空超时或已断开的测量结果。</summary>
+    /// <param name="now">当前帧的 Unity 非缩放时间，单位为秒，用于安排下一次探测。</param>
+    public void UpdateGatewayLatency(float now)
     {
-        // 本帧使用的连接代次，用于失效同一地址上重连前的缓存或探测。
-        long generation = CurrentConnectionGeneration;
-        if (!IsConnected || generation <= 0)
+        if (!IsGatewayLatencySessionCurrent)
         {
-            ReleaseGatewayLatency();
-            return UnavailableGatewayLatency;
-        }
-        if (_gatewayLatencyGeneration != generation)
-        {
-            ReleaseGatewayLatency();
-            _gatewayLatencyGeneration = generation;
+            ResetGatewayLatency();
+            return;
         }
 
-        // 距上次发包的秒数，也用于限制下次发包频率。
-        float elapsed = now - _gatewayLatencyStartedAt;
-        if (_gatewayLatencyProbe != null)
+        if (_gatewayLatencySentAtTicks.HasValue)
         {
-            if (_gatewayLatencyProbe.isDone)
+            if (Stopwatch.GetTimestamp() - _gatewayLatencySentAtTicks.Value < LatencyProbeTimeoutTicks)
             {
-                _gatewayLatencyMilliseconds = _gatewayLatencyProbe.time;
-                DestroyGatewayLatencyProbe();
+                return;
             }
-            else if (elapsed >= LatencyProbeTimeoutSeconds)
-            {
-                _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
-                DestroyGatewayLatencyProbe();
-            }
+            _gatewayLatencySentAtTicks = null;
+            _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
         }
-        if (_gatewayLatencyProbe == null && elapsed >= LatencyProbeIntervalSeconds)
+        if (now < _nextGatewayLatencyProbeAt)
         {
-            _gatewayLatencyStartedAt = now;
-            // 复用已连接网关的 IPv4；域名与其他地址类型不触发额外解析。
-            if (IPAddress.TryParse(_serverHost, out IPAddress address) && address.AddressFamily == AddressFamily.InterNetwork)
-            {
-                _gatewayLatencyProbe = new Ping(address.ToString());
-            }
+            return;
         }
-        // Socket 回调可在探测过程中切换代次，失效后不再返回这次结果。
-        if (generation != CurrentConnectionGeneration)
+
+        _nextGatewayLatencyProbeAt = now + LatencyProbeIntervalSeconds;
+        // 发送时的单调时钟刻度，按 8 字节发出；回显后用同一时钟计算本次 RTT。
+        long sentAtTicks = Stopwatch.GetTimestamp();
+        if (Send(NetDefine.RpcC2T_SyncTime, ByteString.CopyFrom(BitConverter.GetBytes(sentAtTicks))))
         {
-            ReleaseGatewayLatency();
+            _gatewayLatencySentAtTicks = sentAtTicks;
         }
-        return _gatewayLatencyMilliseconds;
+        else
+        {
+            _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+        }
     }
 
-    /// <summary>在 Unity 主线程丢弃当前网关探测及其显示结果，保留已有发包间隔。</summary>
-    public void ReleaseGatewayLatency()
+    /// <summary>在 Unity 主线程处理本次探测对应的 TCP 回包，保存尚未超时的往返毫秒数。</summary>
+    /// <param name="sourceGeneration">TCP 收包时记录的连接代次，已在分发入口验证。</param>
+    /// <param name="data">网关原样回显的 8 字节客户端发送时间标记。</param>
+    /// <param name="receivedAtTicks">TCP 收到回包时记录的单调时钟刻度。</param>
+    private void HandleGatewayLatencyResponse(long sourceGeneration, ByteString data, long receivedAtTicks)
     {
-        DestroyGatewayLatencyProbe();
+        if (sourceGeneration != _gatewayLatencyGeneration || !_realtimeBindRequested || !_gatewayLatencySentAtTicks.HasValue)
+        {
+            return;
+        }
+        if (data.Length != sizeof(long) || BitConverter.ToInt64(data.ToByteArray(), 0) != _gatewayLatencySentAtTicks.Value)
+        {
+            return;
+        }
+
+        // TCP 发送至收到回包之间经过的单调时钟刻度，便于精确判定超时并换算毫秒。
+        long elapsedTicks = receivedAtTicks - _gatewayLatencySentAtTicks.Value;
+        _gatewayLatencySentAtTicks = null;
+        if (elapsedTicks >= LatencyProbeTimeoutTicks)
+        {
+            _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+            return;
+        }
+        _gatewayLatencyMilliseconds = elapsedTicks * 1000d / Stopwatch.Frequency;
+    }
+
+    /// <summary>在 Unity 主线程清空网关探测、最近结果和所属代次，允许下一次游戏会话立即探测。</summary>
+    private void ResetGatewayLatency()
+    {
+        _gatewayLatencySentAtTicks = null;
         _gatewayLatencyGeneration = 0;
+        _nextGatewayLatencyProbeAt = 0f;
         _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
-    }
-
-    /// <summary>释放已结束或已超时的原生探测句柄。</summary>
-    private void DestroyGatewayLatencyProbe()
-    {
-        if (_gatewayLatencyProbe != null)
-        {
-            _gatewayLatencyProbe.DestroyPing();
-            _gatewayLatencyProbe = null;
-        }
     }
 
     /// <summary>关闭旧连接后连接 host:port，并分配新连接编号；成功或失败后在主线程调用对应回调。</summary>
@@ -669,12 +705,14 @@ public class MNetClient : Singleton<MNetClient>
     {
         // 先释放 UDP 通道，旧会话的实时数据不能落到后续连接。
         ReleaseRealtimeClient();
+        // 保存即将断开的 TCP 客户端，以便清空公共引用后关闭实际连接。
         NetClient disconnectedClient = _client;
+        // 立即失效的代次传给业务清理入口，用于释放该次连接的等待状态。
         long disconnectedGeneration = Interlocked.Exchange(ref _activeConnectionGeneration, 0);
         Volatile.Write(ref _pendingConnectionGeneration, 0);
         Volatile.Write(ref _isConnected, 0);
         _client = null;
-        ReleaseGatewayLatency();
+        ResetGatewayLatency();
 
         ShopMgr.Instance.HandleDisconnected(disconnectedGeneration);
         ClearSceneWorld();

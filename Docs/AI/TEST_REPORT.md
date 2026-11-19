@@ -827,3 +827,9 @@
 - 使用 Unity 2023.2.20f1c1 的 Roslyn 编译 `LYF_Game`，退出码为 0。50 条警告均来自本次修改的脚本以外。验收后查询 Unity Editor Console，错误条目为 0。
 - 加载 `UIRoot.prefab` 的独立副本，核对四个层、三个序列化绑定及十个已登记窗口的父容器。通过 `ShowMainWindow` 开关聊天、背包和其他前景窗口。重新打开背包后，它在 `FunctionLayer` 同层内置顶，关闭时保持同级位置。
 - 在使用 `ScreenSpaceCamera` 的 1920×1080 独立 Play 副本中，重叠探针经 `EventSystem.RaycastAll` 得到 `Tips>Function>Chat>HUD`。关闭并重新打开聊天，命中顺序为 `Chat>HUD → HUD → Chat>HUD`。测试操作限定在独立实例中，并跳过无关的技能槽异步加载。完整的登录并进入主城流程、实际物品拖拽和打包后的客户端尚未验证。证据见 `_temp/main-ui-layers-20261119-01a1f424/unity-layer-check.json`。
+
+## [VERIFY][网络][HUD][RO-GATE-RTT-20261119] 网关回显、已编译客户端 RTT 与底栏绑定检查
+
+- `GateServer` 的 Release 构建及共用 `Network` 的 Debug、Release 构建通过。Unity 2023.2.20f1c1 Roslyn 编译 `LYF_Game` 的退出码为 0，有 0 条错误、50 条警告。同步后的 Unity 插件 SHA-256 为 `2AB5422E7D987D55A45EE1713963540243B8D3BB57C39D7F871148B7F41712D1`。
+- 使用两个 TCP 客户端验证了实际网关处理器，确认其拒绝 0/7/9 字节载荷。隔离客户端通过 TCP 运行已编译的 `MNetClient` 和正式回显处理器。服务端注入 120 ms 延迟时实测 RTT 为 321.09 ms。RTT 计时排除了测试额外加入的主线程等待。核对了 5 秒探测间隔、错标记丢弃、2 秒超时和旧连接代次回包丢弃。
+- Unity 解析到现有底栏文本和图标引用。`<1 ms`、`2000 ms` 等样本字符串均能放入宽度为 125 个单位的文本标签。当前打开的主城 Play 会话仍加载此前的程序集。新版在真实主城的显示及打包客户端尚未验证。证据见 `_temp/ro-gate-rtt-20261119-01a1f424/`，包括 `client-fixture/results.log` 和 `unity-footer-fit.json`。

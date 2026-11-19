@@ -116,9 +116,10 @@ public class Global : MonoBehaviour {
         _nextLowMemoryCollectionTime = now + LowMemoryCollectionIntervalSeconds;
     }
 
-    /// <summary>推进动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
+    /// <summary>推进网关延迟探测、动画资源缓存、唯一 RO 时间轴时钟和客户端角色模型组件。</summary>
     private void Update()
     {
+        MNetClient.Instance.UpdateGatewayLatency(Time.unscaledTime);
         MAnimationMgr.singleton.UpdateCache();
         UpdateAnimationPreload();
         UpdatePendingLocalRoleLoad();

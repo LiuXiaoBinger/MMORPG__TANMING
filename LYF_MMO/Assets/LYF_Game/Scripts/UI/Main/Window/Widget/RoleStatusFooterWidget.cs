@@ -27,7 +27,7 @@ public sealed class RoleStatusFooterWidget : MonoBehaviour
     /// <summary>底栏第一行的网关延迟文本，探测不可用时显示占位。</summary>
     [SerializeField] private TMP_Text _latencyText;
 
-    /// <summary>位于延迟左侧的网络状态图标，颜色跟随延迟可用性。</summary>
+    /// <summary>位于延迟左侧的网络状态图标，颜色跟随网关延迟档位。</summary>
     [SerializeField] private Image _latencyIcon;
 
     /// <summary>底栏采用的月份、日和 24 小时时分格式。</summary>
@@ -36,8 +36,26 @@ public sealed class RoleStatusFooterWidget : MonoBehaviour
     /// <summary>未收到网关探测结果时的延迟占位文本。</summary>
     private const string UnavailableLatencyText = "-- ms";
 
-    /// <summary>真实延迟可用时文字和网络图标的青绿色。</summary>
-    private static readonly Color AvailableLatencyColor = new Color(0.48f, 0.91f, 0.76f);
+    /// <summary>沿用 RO 的快速档上限，单位为毫秒。</summary>
+    private const double FastLatencyLimitMilliseconds = 100d;
+
+    /// <summary>沿用 RO 的正常档上限，单位为毫秒。</summary>
+    private const double NormalLatencyLimitMilliseconds = 250d;
+
+    /// <summary>沿用 RO 的慢速档上限，单位为毫秒，超过该值为很慢。</summary>
+    private const double SlowLatencyLimitMilliseconds = 500d;
+
+    /// <summary>延迟快速档的文字和网络图标绿色。</summary>
+    private static readonly Color FastLatencyColor = new Color(0.48f, 0.91f, 0.76f);
+
+    /// <summary>延迟正常档的文字和网络图标黄色。</summary>
+    private static readonly Color NormalLatencyColor = new Color(0.96f, 0.83f, 0.37f);
+
+    /// <summary>延迟慢速档的文字和网络图标橙色。</summary>
+    private static readonly Color SlowLatencyColor = new Color(0.98f, 0.58f, 0.28f);
+
+    /// <summary>延迟很慢档的文字和网络图标红色，沿用 RO 的红色状态颜色。</summary>
+    private static readonly Color VerySlowLatencyColor = new Color(1f, 0.3125f, 0.3125f);
 
     /// <summary>真实延迟不可用时文字和网络图标的灰色。</summary>
     private static readonly Color UnavailableLatencyColor = new Color(0.64f, 0.71f, 0.72f);
@@ -60,16 +78,7 @@ public sealed class RoleStatusFooterWidget : MonoBehaviour
         _nextStatusRefreshAt = 0f;
     }
 
-    /// <summary>底栏隐藏或销毁时清理网关探测结果。</summary>
-    private void OnDisable()
-    {
-        if (_latencyText != null)
-        {
-            MNetClient.Instance.ReleaseGatewayLatency();
-        }
-    }
-
-    /// <summary>每秒用本机时间和当前连接的网关探测结果刷新底栏。</summary>
+    /// <summary>每秒用本机时间和网络模块最近一次网关 RTT 刷新底栏。</summary>
     private void Update()
     {
         // 使用非缩放秒数，暂停或调整战斗时间倍率时也能更新。
@@ -89,20 +98,42 @@ public sealed class RoleStatusFooterWidget : MonoBehaviour
             return;
         }
 
-        // 负值表示未获得有效回包，0 毫秒保留显示。
-        int latencyMilliseconds = MNetClient.Instance.PollGatewayLatency(now);
-        if (latencyMilliseconds < 0)
+        // 当前网关最近一次往返毫秒数，保留小数用于判断亚毫秒显示和 RO 档位。
+        double latencyMilliseconds = MNetClient.Instance.GatewayLatencyMilliseconds;
+        if (latencyMilliseconds < 0d)
         {
             _latencyText.text = UnavailableLatencyText;
             _latencyText.color = UnavailableLatencyColor;
             _latencyIcon.color = UnavailableLatencyColor;
+            return;
+        }
+
+        if (latencyMilliseconds < 1d)
+        {
+            _latencyText.text = "<1 ms";
         }
         else
         {
-            _latencyText.SetText("{0} ms", latencyMilliseconds);
-            _latencyText.color = AvailableLatencyColor;
-            _latencyIcon.color = AvailableLatencyColor;
+            // 向上取整使紧邻档位上限的整数毫秒文本与对应颜色一致。
+            _latencyText.SetText("{0} ms", (float)Math.Ceiling(latencyMilliseconds));
         }
+
+        // 当前有效 RTT 的档位颜色，超过慢速档上限时使用红色。
+        Color latencyColor = VerySlowLatencyColor;
+        if (latencyMilliseconds <= FastLatencyLimitMilliseconds)
+        {
+            latencyColor = FastLatencyColor;
+        }
+        else if (latencyMilliseconds <= NormalLatencyLimitMilliseconds)
+        {
+            latencyColor = NormalLatencyColor;
+        }
+        else if (latencyMilliseconds <= SlowLatencyLimitMilliseconds)
+        {
+            latencyColor = SlowLatencyColor;
+        }
+        _latencyText.color = latencyColor;
+        _latencyIcon.color = latencyColor;
     }
 
     /// <summary>用当前角色数据刷新底栏；角色等级未就绪时显示占位并保持空进度。</summary>

@@ -20,6 +20,8 @@ namespace GateServer
             client.StartConnect();
             //网关服务器 开启服务器端
             NetServer server = new NetServer(client);
+            // TCP 往返测量由接入会话直接应答，在开始监听前登记处理器。
+            server.RegistCommand(NetDefine.RpcC2T_SyncTime, new GateSyncTimeCtrl());
             server.StartServer(NetDefine.IPHost,NetDefine.GateServerPort);
 
             // 实时通道：移动与技能只走可靠 UDP（KCP），其余业务仍走上面的 TCP 监听。

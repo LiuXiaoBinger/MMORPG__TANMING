@@ -54,6 +54,8 @@ public class NetDefine
     public const ushort CMD_SyncMoveCode = 11181;
     /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
     public const ushort CMD_KcpBindCode = 11190;
+    /// <summary>客户端与网关之间的 TCP 往返测量协议号，请求和回包共用，携带 8 字节客户端计时标记。</summary>
+    public const ushort RpcC2T_SyncTime = 11191;
     /// <summary>16 kHz 单声道 16 位 PCM 每秒字节数。</summary>
     public const int ChatAudioBytesPerSecond = 32000;
     /// <summary>录音上限 30 秒。</summary>
