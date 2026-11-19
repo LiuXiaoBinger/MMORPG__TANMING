@@ -26,10 +26,11 @@ public static class MAudioMgr
     }
 
     /// <summary>设置游戏音效混音组的有效音量，对正在播放的声音立即生效。</summary>
-    /// <param name="volume">零至一的线性音量，零表示静音。</param>
+    /// <param name="volume">音效滑杆的零至一档位，零表示静音。</param>
     public static void SetSEVolume(float volume)
     {
-        SetVolume("SEVolume", volume);
+        // 用平方根提高低档位的增益，10% 从 -20 分贝提高到 -10 分贝，满档仍为 0 分贝。
+        SetVolume("SEVolume", Mathf.Sqrt(Mathf.Max(0f, volume)));
     }
 
     /// <summary>将线性音量换成 Unity 混音器使用的分贝值。</summary>

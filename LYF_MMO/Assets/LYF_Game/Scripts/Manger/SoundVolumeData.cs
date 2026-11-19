@@ -12,7 +12,7 @@ public static class SoundVolumeData
     /// <summary>游戏音效开关的本机存档键，1 表示开启。</summary>
     private const string SoundSeStateKey = "LYF.Audio.SeEnabled";
 
-    /// <summary>游戏音效滑杆的本机存档键，保存零至一的线性音量。</summary>
+    /// <summary>游戏音效滑杆的本机存档键，保存零至一的滑杆档位。</summary>
     private const string SoundSeVolumeKey = "LYF.Audio.SeVolume";
 
     /// <summary>音乐的开关，首次运行默认开启，关闭时保留滑杆数值。</summary>
@@ -48,10 +48,10 @@ public static class SoundVolumeData
         }
     }
 
-    /// <summary>游戏音效滑杆保存的音量，本机没有保存值时使用原始音量 100%。</summary>
+    /// <summary>游戏音效滑杆档位，本机没有保存值时从 60% 档启动。</summary>
     public static float SoundSeVolume
     {
-        get => PlayerPrefs.GetFloat(SoundSeVolumeKey, 1f);
+        get => PlayerPrefs.GetFloat(SoundSeVolumeKey, 0.6f);
         set
         {
             PlayerPrefs.SetFloat(SoundSeVolumeKey, value);
