@@ -32,4 +32,5 @@
 
 ## Git
 
-验收后按本任务差异暂存。实现和推送的实际回执另行补录。
+- 实现提交为 `d123137fb19e1a274a15ef240b6838e2f518c3bf`，包含 8 个业务文件和本次获准写入的记录。两个原有 UTF-8 BOM 改动保留在工作区。
+- `git push origin HEAD:refs/heads/codex/feature-development` 成功，推送范围为 `0c673ac..d123137`。`git ls-remote` 核对了远端分支上的实现提交。命令回执保存在 `_temp/ro-gate-rtt-20261119-01a1f424/git-feature-push.txt`。
