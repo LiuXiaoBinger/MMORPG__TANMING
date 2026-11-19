@@ -116,7 +116,7 @@ public sealed class YimengChatCompactFeed : MonoBehaviour
             // 读取同一份只读记录里的原消息，速览只保留显示文字。
             ChatMessage message = history[start++];
             _channels[i].text = YimengChatMessageRow.ChannelCaption(message.Channel);
-            _channels[i].color = YimengChatMessageRow.ChannelColor(message.Channel);
+            _channels[i].color = YimengChatMessageRow.ChannelColor(message.Channel, onScene: true);
             _summaries[i].text = FormatSummary(message, emojiPicker);
         }
 

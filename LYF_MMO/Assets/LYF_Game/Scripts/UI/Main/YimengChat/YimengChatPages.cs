@@ -9,6 +9,8 @@ public sealed class YimengChatPages : MonoBehaviour
     [SerializeField] private Image[] _selection;
     /// <summary>分页文字，通过颜色区分普通和选中态。</summary>
     [SerializeField] private TMP_Text[] _captions;
+    /// <summary>由预制体指定的常态字色，设置页在蓝底上、表情分类在浅底上展示。</summary>
+    [SerializeField] private Color _unselectedCaptionColor = new Color32(34, 54, 76, 255);
     /// <summary>分页各自的 UI 容器，同时只显示一个。</summary>
     [SerializeField] private GameObject[] _pages;
     /// <summary>当前选中页，从零计数。</summary>
@@ -26,10 +28,11 @@ public sealed class YimengChatPages : MonoBehaviour
             bool selected = i == index;
             _pages[i].SetActive(selected);
             _selection[i].enabled = selected;
+            // 选中底纹统一使用深蓝文字，常态字色由这组页签的实际背景指定。
             if (selected)
-                _captions[i].color = new Color32(16, 26, 38, 255);
+                _captions[i].color = new Color32(22, 49, 79, 255);
             else
-                _captions[i].color = new Color32(194, 210, 224, 255);
+                _captions[i].color = _unselectedCaptionColor;
         }
     }
 

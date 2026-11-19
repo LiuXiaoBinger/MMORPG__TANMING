@@ -52,15 +52,15 @@ public sealed class YimengChatChannelTab : MonoBehaviour
     /// <summary>是否为聚合记录的常用频道。</summary>
     public bool ShowAllHistory => _showAllHistory;
 
-    /// <summary>显示选中底纹并保持标题的对比度。</summary>
+    /// <summary>切换频道选中底纹，正文侧栏使用深蓝标题。</summary>
     /// <param name="selected">当前窗口是否正展示这个频道。</param>
     public void SetSelected(bool selected)
     {
         _selection.enabled = selected;
         if (selected)
-            _caption.color = new Color32(16, 26, 38, 255);
+            _caption.color = new Color32(22, 49, 79, 255);
         else
-            _caption.color = new Color32(218, 231, 242, 255);
+            _caption.color = new Color32(34, 54, 76, 255);
     }
 
     /// <summary>确定该频道是否展示一条既有聊天记录。</summary>

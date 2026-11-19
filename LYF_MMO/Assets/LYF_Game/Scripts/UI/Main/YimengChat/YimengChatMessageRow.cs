@@ -77,10 +77,11 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         if (hasSticker) emoji.CopyIconTo(_emoji);
         _message.gameObject.SetActive(!hasSticker && !string.IsNullOrEmpty(message.Text));
         _message.text = message.Text;
+        // 使用同一浅色气泡，自己的消息用蓝色区分，正文保持深色。
         if (message.IsLocalPlayer)
-            _bubbleImage.color = new Color32(39, 68, 96, 225);
+            _bubbleImage.color = new Color32(206, 228, 249, 255);
         else
-            _bubbleImage.color = new Color32(18, 29, 43, 194);
+            _bubbleImage.color = new Color32(247, 251, 255, 255);
         UpdateLayout(((RectTransform)transform).rect.width);
     }
 
@@ -216,10 +217,24 @@ public sealed class YimengChatMessageRow : MonoBehaviour
         }
     }
 
-    /// <summary>给频道标签和当前发言目标选择统一的可读颜色。</summary>
+    /// <summary>按频道区分标签颜色，并适配完整聊天与场景速览的明暗背景。</summary>
     /// <param name="channel">要上色的既有聊天频道。</param>
-    public static Color32 ChannelColor(ChatChannel channel)
+    /// <param name="onScene">速览叠在场景上时使用浅色；完整窗口和发言区使用深色。</param>
+    public static Color32 ChannelColor(ChatChannel channel, bool onScene = false)
     {
+        if (!onScene)
+        {
+            switch (channel)
+            {
+                case ChatChannel.Nearby: return new Color32(40, 87, 125, 255);
+                case ChatChannel.Team: return new Color32(33, 96, 68, 255);
+                case ChatChannel.Guild: return new Color32(113, 63, 124, 255);
+                case ChatChannel.Profession: return new Color32(121, 69, 34, 255);
+                case ChatChannel.System: return new Color32(119, 82, 29, 255);
+                default: return new Color32(57, 101, 39, 255);
+            }
+        }
+
         switch (channel)
         {
             case ChatChannel.Nearby: return new Color32(177, 212, 221, 255);
