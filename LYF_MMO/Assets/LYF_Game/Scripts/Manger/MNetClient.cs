@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using Google.Protobuf;
 using UnityEngine;
@@ -43,6 +45,27 @@ public class MNetClient : Singleton<MNetClient>
 
     /// <summary>当前连接的主机地址，UDP 握手复用同一主机，避免另配地址。</summary>
     private string _serverHost;
+
+    /// <summary>相邻网关探测的最短间隔，单位为秒。</summary>
+    private const float LatencyProbeIntervalSeconds = 5f;
+
+    /// <summary>单次网关探测的等待上限，单位为秒。</summary>
+    private const float LatencyProbeTimeoutSeconds = 2f;
+
+    /// <summary>尚无有效网关探测结果时返回的负值；0 毫秒属于有效结果。</summary>
+    private const int UnavailableGatewayLatency = -1;
+
+    /// <summary>当前正在等待回包的 IPv4 探测，仅在 Unity 主线程访问。</summary>
+    private Ping _gatewayLatencyProbe;
+
+    /// <summary>当前探测和显示结果所属的 TCP 连接代次，0 表示无归属。</summary>
+    private long _gatewayLatencyGeneration;
+
+    /// <summary>上次发出探测时的非缩放时间，单位为秒；未探测时允许立即发出。</summary>
+    private float _gatewayLatencyStartedAt = float.NegativeInfinity;
+
+    /// <summary>最近一次有效网关探测的毫秒数，负值表示不可用。</summary>
+    private int _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
 
     /// <summary>当前连接的可靠 KCP 通道；为空表示实时协议没有可用通道，此时实时上行直接丢弃。</summary>
     private KcpClient _realtimeClient;
@@ -548,6 +571,75 @@ public class MNetClient : Singleton<MNetClient>
     }
 
     #region 核心逻辑
+
+    /// <summary>在 Unity 主线程轮询当前网关的 ICMP 往返时间；不可测时返回负值。</summary>
+    /// <param name="now">当前帧的 Unity 非缩放时间，单位为秒。</param>
+    /// <returns>网关 ICMP 往返毫秒数，0 为有效结果，负值表示不可用。</returns>
+    public int PollGatewayLatency(float now)
+    {
+        // 本帧使用的连接代次，用于失效同一地址上重连前的缓存或探测。
+        long generation = CurrentConnectionGeneration;
+        if (!IsConnected || generation <= 0)
+        {
+            ReleaseGatewayLatency();
+            return UnavailableGatewayLatency;
+        }
+        if (_gatewayLatencyGeneration != generation)
+        {
+            ReleaseGatewayLatency();
+            _gatewayLatencyGeneration = generation;
+        }
+
+        // 距上次发包的秒数，也用于限制下次发包频率。
+        float elapsed = now - _gatewayLatencyStartedAt;
+        if (_gatewayLatencyProbe != null)
+        {
+            if (_gatewayLatencyProbe.isDone)
+            {
+                _gatewayLatencyMilliseconds = _gatewayLatencyProbe.time;
+                DestroyGatewayLatencyProbe();
+            }
+            else if (elapsed >= LatencyProbeTimeoutSeconds)
+            {
+                _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+                DestroyGatewayLatencyProbe();
+            }
+        }
+        if (_gatewayLatencyProbe == null && elapsed >= LatencyProbeIntervalSeconds)
+        {
+            _gatewayLatencyStartedAt = now;
+            // 复用已连接网关的 IPv4；域名与其他地址类型不触发额外解析。
+            if (IPAddress.TryParse(_serverHost, out IPAddress address) && address.AddressFamily == AddressFamily.InterNetwork)
+            {
+                _gatewayLatencyProbe = new Ping(address.ToString());
+            }
+        }
+        // Socket 回调可在探测过程中切换代次，失效后不再返回这次结果。
+        if (generation != CurrentConnectionGeneration)
+        {
+            ReleaseGatewayLatency();
+        }
+        return _gatewayLatencyMilliseconds;
+    }
+
+    /// <summary>在 Unity 主线程丢弃当前网关探测及其显示结果，保留已有发包间隔。</summary>
+    public void ReleaseGatewayLatency()
+    {
+        DestroyGatewayLatencyProbe();
+        _gatewayLatencyGeneration = 0;
+        _gatewayLatencyMilliseconds = UnavailableGatewayLatency;
+    }
+
+    /// <summary>释放已结束或已超时的原生探测句柄。</summary>
+    private void DestroyGatewayLatencyProbe()
+    {
+        if (_gatewayLatencyProbe != null)
+        {
+            _gatewayLatencyProbe.DestroyPing();
+            _gatewayLatencyProbe = null;
+        }
+    }
+
     /// <summary>关闭旧连接后连接 host:port，并分配新连接编号；成功或失败后在主线程调用对应回调。</summary>
     public void ConnectServer(string host, int port, Action connSucced = null,
         Action connFail = null)
@@ -582,6 +674,7 @@ public class MNetClient : Singleton<MNetClient>
         Volatile.Write(ref _pendingConnectionGeneration, 0);
         Volatile.Write(ref _isConnected, 0);
         _client = null;
+        ReleaseGatewayLatency();
 
         ShopMgr.Instance.HandleDisconnected(disconnectedGeneration);
         ClearSceneWorld();
