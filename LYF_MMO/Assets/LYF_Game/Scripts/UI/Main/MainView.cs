@@ -110,6 +110,15 @@ public class MainView : UIBase
    /// <summary>功能菜单中的技能入口，打开现有技能窗口。</summary>
    [SerializeField, Header("技能入口")] private Button _skillButton;
 
+   /// <summary>战斗快捷栏下方的角色状态底栏，展示职业剑形标记、等级与经验进度。</summary>
+   [SerializeField, Header("角色状态底栏")] private RoleStatusFooterWidget _roleStatusFooter;
+
+   /// <summary>竞技设置窗口，仅展示攻击与保护模式外观，初始隐藏。</summary>
+   [SerializeField, Header("竞技设置窗口")] private ArenaSettingsWindow _arenaSettingsWindow;
+
+   /// <summary>供角色信息控制器刷新底栏的职业、等级与经验。</summary>
+   public RoleStatusFooterWidget RoleStatusFooter => _roleStatusFooter;
+
    /// <summary>供主界面控制器注册与注销设置入口点击事件。</summary>
    public Button SettingButton => _settingButton;
 
@@ -224,6 +233,13 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      // 竞技设置窗口登记到主视图窗口表并初始化关闭按钮，初始保持隐藏。
+      if (_arenaSettingsWindow != null)
+      {
+         windowDic[WindowType.ArenaSettingsWindow] = _arenaSettingsWindow;
+         _arenaSettingsWindow.InitWindow();
+         _arenaSettingsWindow.Show(false);
+      }
       windowDic[WindowType.DeathWindow] = _deathWindow;
       _deathWindow.InitWindow();
       windowDic[WindowType.MoshentaBlackCurtainWindow] = _moshentaBlackCurtainWindow;

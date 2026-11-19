@@ -15,6 +15,9 @@ public sealed class RoleInfoCtrl : CtrlBase
     /// <summary>技能窗口，用于更新职业和点数标题。</summary>
     private readonly SkillInfoWindow _skillWindow;
 
+    /// <summary>战斗栏下方的角色状态底栏，展示职业剑形、等级与经验进度。</summary>
+    private readonly RoleStatusFooterWidget _roleStatusFooter;
+
     /// <summary>创建角色信息控制器并初始化当前角色显示。</summary>
     /// <param name="mainView">提供状态栏、装备窗口和技能标题的主界面。</param>
     public RoleInfoCtrl(MainView mainView) : base(mainView)
@@ -22,6 +25,7 @@ public sealed class RoleInfoCtrl : CtrlBase
         _roleCurrentWindow = mainView.RoleCurrentWindow;
         _roleAttributeWindow = mainView.RoleAttributeWindow;
         _skillWindow = mainView.SkillWindow;
+        _roleStatusFooter = mainView.RoleStatusFooter;
         _roleAttributeWindow.GeneVisibilityChanged += OnGeneVisibilityChanged;
         RefreshCurrentRole();
     }
@@ -183,6 +187,8 @@ public sealed class RoleInfoCtrl : CtrlBase
             (mpRatio * 100f).ToString("F0") + "%";
         _roleCurrentWindow.UpdateRoleInfo(new RoleCurrentViewData(roleInfo.BaseInfo.Nickname,
             jobName, roleInfo.BaseInfo.Level, headIconPath, hpRatio, mpRatio, hpText, mpText));
+        // 底栏跟随权威刷新：等级、职业剑形与本级经验占比都取当前角色数据。
+        RefreshStatusFooter(roleInfo);
         // 在权威信息刷新处接入 HUD：满怒 R 提示与真气弧条都读取服务器最终资源值。
         _roleCurrentWindow.UpdateRage(roleInfo.BaseInfo.CurrRage, roleInfo.BaseInfo.MaxRage);
         _roleCurrentWindow.UpdateTrueQi(roleInfo.BaseInfo.CurrTrueQi, roleInfo.BaseInfo.MaxTrueQi);
@@ -291,6 +297,33 @@ public sealed class RoleInfoCtrl : CtrlBase
                 equip.GetItemID(), config.EquipName, config.Icon, equip.StrengthenLevel, equip.GetItemUID()));
         }
         _roleAttributeWindow.ReFreshUI(equipments);
+    }
+
+    /// <summary>把当前角色的等级、职业和经验占比写入战斗栏下方的状态底栏。</summary>
+    /// <param name="roleInfo">当前本地角色数据，等级与职业取基础信息，经验取角色经验字段。</param>
+    private void RefreshStatusFooter(MainRoleInfo roleInfo)
+    {
+        if (_roleStatusFooter == null)
+        {
+            return;
+        }
+        // 本级所需经验来自等级配置表；配置缺失时保留空进度，不伪造满条。
+        RoleLevelInfo levelInfo = LubanMgr.Instance.GetRoleLevelInfoById(roleInfo.BaseInfo.Level);
+        float expRatio = 0f;
+        if (levelInfo != null)
+        {
+            if (levelInfo.NeedExp <= 0)
+            {
+                // 最高级的 NeedExp 为 0，按已满处理。
+                expRatio = 1f;
+            }
+            else
+            {
+                // 普通等级按当前经验除以本级所需经验，并裁剪到 0 到 1。
+                expRatio = CalculateRatio(roleInfo.Exp, levelInfo.NeedExp);
+            }
+        }
+        _roleStatusFooter.SetRoleProgress(roleInfo.BaseInfo.Level, roleInfo.BaseInfo.JobId, expRatio);
     }
 
     /// <summary>计算并约束角色属性比例。</summary>

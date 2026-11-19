@@ -773,3 +773,9 @@
 - GameServer、CenterServer、Unity Network/Common 插件及 Unity LYF_Game 编译均为 0 错误。隔离的 .NET Framework 运行时通过 46 项检查，覆盖角色、普通怪物和 Boss 的资源、边界、旧消息、快照，以及同帧多条命中记录后的资源终值。隔离的正式 Unity HUD 通过 8 项检查。
 - `Tests/Gene/GeneRuntimeTests.cs` 在任务基线即存在一处 `CS1061`，原因是它访问 `GeneComponent` 上的 `LastDamageFirerId`。资源冒烟测试验证了 `AttributesComponent` 上的伤害归因。证据见 `_temp/combat-resources-20261118/server-runtime-proof.txt`、`hud-proof.txt` 和 `gene-baseline-evidence.txt`。
 - 部署到运行中的服务、完整联机副本流程和独立 Player 仍未验证。
+
+## [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] 底部角色状态栏与竞技设置验证
+
+- Unity 编译了客户端脚本，并导入两个已绑定 `Button` 组件的嵌套预制体。隔离 MainView 走实际的 MainCtrl 事件注册流程，连续三次打开和关闭竞技设置。
+- 隔离数据检查使用生成的 100 行等级表。等级 1 在经验为 0、25、1000 时，进度分别为 0%、25%、100%。等级 100、经验为 0 时，进度为 100%。等级 101 缺少配置且职业不匹配，进度为 0%，职业图标隐藏。
+- `Scene_MainCity` 在运行中画布的临时预览内，以 1920×1080 和 1366×768 渲染最终资源。两个界面按钮均可被指针命中，遮罩拦截点击，最终资源显示与 RO 原图字节一致的单剑图标。截图与证据见 `_temp/2026-11-19-role-footer-arena/`。使用最终资源重新正式登录及客户端资源包发布仍未验证。详见 `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`。

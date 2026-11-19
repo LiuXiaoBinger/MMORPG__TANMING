@@ -782,3 +782,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - GameServer, CenterServer, the Unity Network/Common plugins and Unity LYF_Game compiled with 0 errors. The isolated .NET Framework runtime passed 46 checks covering role, ordinary-monster and boss resources, bounds, old messages, snapshots and final resource values after multiple hit records in one frame. The isolated formal Unity HUD passed 8 checks.
 - `Tests/Gene/GeneRuntimeTests.cs` has an existing `CS1061` at the task baseline because it accesses `LastDamageFirerId` on `GeneComponent`. The resource smoke test verified attribution on `AttributesComponent`. See `_temp/combat-resources-20261118/server-runtime-proof.txt`, `hud-proof.txt` and `gene-baseline-evidence.txt`.
 - Deployment to running services, a full online dungeon session and standalone Player remain unverified.
+
+## [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification
+
+- Unity compiled the client scripts and imported the two nested prefabs with the assigned Button components. An isolated MainView executed the actual MainCtrl event registration and three consecutive open/close cycles.
+- An isolated data check used the generated 100-row level table. Level 1 at 0, 25, and 1000 EXP produced 0%, 25%, and 100%. Level 100 at 0 EXP produced 100%. Missing level 101 with an unmatched profession produced 0% and hid the profession icon.
+- `Scene_MainCity` rendered the final assets at 1920×1080 and 1366×768 in a temporary preview of the live canvas. Both UI buttons received pointer hits, the mask intercepted clicks, and the final source displayed the byte-identical RO sword. Screenshots and evidence are in `_temp/2026-11-19-role-footer-arena/`. A fresh official login with the final source and client bundle publication remain unverified. See `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`.

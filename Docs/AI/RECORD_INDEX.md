@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b1d607efda1ef271a4c95e17116e02f7722140a99a8160332f28f25bef89b0a1`
+Source normalized SHA256: `dc5f3f4ecd4a60332f8228d1fe94720163ca32751375293d110a0d8e78947f08`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -106,11 +106,12 @@ Source normalized SHA256: `b1d607efda1ef271a4c95e17116e02f7722140a99a8160332f28f
 | [FILES][HANDOFF][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Course audio for MJS skills and jumps | 725-732 |
 | [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 733-739 |
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
-| [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-752 |
+| [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
+| [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-758 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `fe2de90a6fce3e3af6147cdcf1fbfcbe0f58dd9693d6f95805342d6f2695f662`
+Source normalized SHA256: `09464e7cfc444c0ea91f7dcc5cc6f67b93f8d545ca0b1426444f3f5e5ec6726a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -208,7 +209,8 @@ Source normalized SHA256: `fe2de90a6fce3e3af6147cdcf1fbfcbe0f58dd9693d6f95805342
 | [VERIFY][技能][音效][跳跃][COURSE-SFX-HIT-20261118] Verified course clips and saved MJS audio bindings | 757-763 |
 | [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 764-770 |
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
-| [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-784 |
+| [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
+| [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-790 |
 
 ## Docs/AI/DECISIONS.en.md
 

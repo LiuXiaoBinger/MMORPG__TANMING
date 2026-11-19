@@ -745,3 +745,9 @@
 - 玩家、普通怪物和 Boss 均由服务端权威保存当前与最大的生命、法力、怒气和真气。玩家生命与法力沿用原有数据来源。配置的出生默认值为怒气 0/100、真气 100/100，以及怪物兜底法力 100/100。两个新增资源池支持扣减，余额不足时拒绝扣减，恢复时按上限裁切。
 - 登录、角色属性通知和副本怪物快照均携带这四项资源。同帧存在多条命中记录时，由该出生位的最后一条记录接收终值法力、怒气和真气，已有命中记录保留其生命与伤害。现有玩家 HUD 从角色数据读取真气与满怒气状态。
 - 业务提交 `670518a` 与 `27af1e5` 已推送到 `codex/feature-development`；第二次提交从第一次提交的 24 文件范围中移除了一个仅含空白的文件，净业务文件为 23 个。详见 `项目修改日志/2026-11-18-角色与怪物四项战斗资源.md`。
+
+## [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] 底部角色状态栏与竞技设置
+
+- `UIRoot.prefab` 在 MainView 下嵌套 `RoleStatusFooter.prefab` 和 `ArenaSettings.prefab`。左下底栏显示职业图标和当前等级，「安全」按钮位于等级上方，绿色经验槽贴近画面底缘。JobId 1 使用导入为 `RoleProfessionSwordRO.png` 的 RO 原始单剑图标。
+- `RoleInfoCtrl.RefreshCurrentRole` 提供 `BaseInfo.Level`、`BaseInfo.JobId` 和 `MainRoleInfo.Exp`。经验进度使用当前等级配置的 `NeedExp`，缺失等级配置时为 0，达到配置的最高等级时为 1。
+- 「安全」按钮经 MainCtrl 打开已注册的 `ArenaSettingsWindow`。关闭监听在窗口隐藏和重新显示后继续生效。竞技和保护选项均为禁用展示。证据与范围见 `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`。

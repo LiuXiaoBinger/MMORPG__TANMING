@@ -124,6 +124,11 @@ public class MainCtrl : CtrlBase
         {
             _mainView.ThemeDungeonButton.onClick.AddListener(OnThemeDungeonRequested);
         }
+        // 底栏安全入口绑定竞技设置窗口的切换处理。
+        if (_mainView.RoleStatusFooter != null && _mainView.RoleStatusFooter.SafetyButton != null)
+        {
+            _mainView.RoleStatusFooter.SafetyButton.onClick.AddListener(OnSafetyButtonClicked);
+        }
         if (_mainView.TalkWindow != null)
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
@@ -171,6 +176,11 @@ public class MainCtrl : CtrlBase
         if (_mainView != null && _mainView.ThemeDungeonButton != null)
         {
             _mainView.ThemeDungeonButton.onClick.RemoveListener(OnThemeDungeonRequested);
+        }
+        // 解绑底栏安全入口，避免控制器销毁后残留点击监听。
+        if (_mainView != null && _mainView.RoleStatusFooter != null && _mainView.RoleStatusFooter.SafetyButton != null)
+        {
+            _mainView.RoleStatusFooter.SafetyButton.onClick.RemoveListener(OnSafetyButtonClicked);
         }
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
@@ -441,6 +451,12 @@ public class MainCtrl : CtrlBase
     private void OnThemeDungeonRequested()
     {
         ShowMainWindow(WindowType.ThemeDungeonArroundWindow);
+    }
+
+    /// <summary>点击底栏安全入口时切换竞技设置窗口，窗口仅展示外观选项。</summary>
+    private void OnSafetyButtonClicked()
+    {
+        ShowMainWindow(WindowType.ArenaSettingsWindow);
     }
 
     /// <summary>角色到达交互范围后，让当前 NPC 面向角色并打开既有对话窗。</summary>

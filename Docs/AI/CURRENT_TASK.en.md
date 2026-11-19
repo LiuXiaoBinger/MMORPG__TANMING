@@ -750,3 +750,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Players, ordinary monsters and bosses have server-authoritative current and maximum HP, MP, rage and true qi. Player HP/MP retain their original data source. The configured spawn defaults are rage 0/100, true qi 100/100 and fallback monster MP 100/100. The two new resource pools support spending with insufficient-balance rejection and restoration capped at the maximum.
 - Login, role attribute notifications and instance monster snapshots carry the four resources. An existing hit record keeps its HP and damage when the last record for its spawn receives the final MP, rage and true qi. The existing player HUD reads true qi and the full-rage state from role data.
 - Business commits `670518a` and `27af1e5` were pushed to `codex/feature-development`. The second removed a whitespace-only file from the first commit's 24-file scope, leaving 23 net business files. See `项目修改日志/2026-11-18-角色与怪物四项战斗资源.md`.
+
+## [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings
+
+- `UIRoot.prefab` nests `RoleStatusFooter.prefab` and `ArenaSettings.prefab` under MainView. The left footer shows the profession icon, the Safety button above the current level, and a green EXP track along the bottom edge. For JobId 1 the original RO single-sword sprite is imported as `RoleProfessionSwordRO.png`.
+- `RoleInfoCtrl.RefreshCurrentRole` supplies `BaseInfo.Level`, `BaseInfo.JobId`, and `MainRoleInfo.Exp`. The configured level's `NeedExp` determines progress. A missing level uses 0 and the configured maximum level uses 1.
+- The Safety button opens the registered `ArenaSettingsWindow` through MainCtrl. Its close listener survives hide/show. Arena and protection options are presented as disabled. Evidence and scope are recorded in `项目修改日志/2026-11-19-底部角色状态与竞技设置.md`.
