@@ -10,6 +10,15 @@ using UnityEngine.UI;
 /// <summary>持有主城各窗口和常驻快捷栏，提供控制器访问入口，并登记窗口、绑定视图间引用。</summary>
 public class MainView : UIBase
 {
+   /// <summary>主城聊天层，承载预制体中的聊天组件及运行时实例化的聊天模块。</summary>
+   [SerializeField] private RectTransform _chatLayer;
+
+   /// <summary>主城功能层，承载背包、角色和任务等可以在同层内叠放的窗口。</summary>
+   [SerializeField] private RectTransform _functionLayer;
+
+   /// <summary>主城提示层，承载按预制体层级显示在功能窗口上方的提示窗口。</summary>
+   [SerializeField] private RectTransform _tipsLayer;
+
    /// <summary>随本地角色移动的护盾提示，内容和资源引用保存在 UIRoot 预制体。</summary>
    [SerializeField] private RoleShieldWidget _roleShieldWidget;
 
@@ -247,10 +256,12 @@ public class MainView : UIBase
          return _chatWindow;
       }
    }
-   /// <summary>登记主城窗口并收起功能菜单；初始化任务、副本和快捷栏，再连接副本选择页与详情页。</summary>
+   /// <summary>绑定功能与提示窗口所属层，登记主城窗口并收起功能菜单。初始化任务、副本和快捷栏，再连接副本选择页与详情页。</summary>
    public override void InitView()
    {
       base.InitView();
+      SetLayerPanelParentData(_functionLayer);
+      SetLayerPanelParentData(_tipsLayer);
       // 竞技设置窗口登记到主视图窗口表并初始化关闭按钮，初始保持隐藏。
       if (_arenaSettingsWindow != null)
       {
@@ -277,10 +288,8 @@ public class MainView : UIBase
       {
          if (YimengChat == null)
          {
-            // 模块留在主界面下，重新进入主城时只重新登记窗口和业务事件。
-            GameObject module = Instantiate(_yimengChatPrefab, transform, false);
-            // UIRoot 将常驻 HUD 排在技能信息窗之前，聊天插在两组之间，让前景业务窗优先绘制和接收点击。
-            module.transform.SetSiblingIndex(_skillInfoWindow.transform.GetSiblingIndex());
+            // 聊天模块根节点挂在聊天层，主城重新初始化时复用这一实例。
+            GameObject module = Instantiate(_yimengChatPrefab, _chatLayer, false);
             YimengChat = module.GetComponentInChildren<YimengChatWindow>(true);
             YimengChat.InitWindow();
          }
@@ -335,5 +344,20 @@ public class MainView : UIBase
       }
       _quickPanel.InitWidget();
       _roleCurrInfoWindow.InitWindow();
+   }
+
+   /// <summary>按预制体层级绑定直接子窗口的父容器，供窗口显示时更新同级顺序。</summary>
+   /// <param name="layer">UIRoot 预制体绑定的主城功能层或提示层。</param>
+   private void SetLayerPanelParentData(RectTransform layer)
+   {
+      // i 是当前层的直接子节点索引，绑定期间子节点顺序不变。
+      for (int i = 0; i < layer.childCount; i++)
+      {
+         // 子节点上的窗口组件保存所属层，供后续显示时使用。
+         if (layer.GetChild(i).TryGetComponent(out WindowBase window))
+         {
+            window.SetPanelParentData(layer);
+         }
+      }
    }
 }

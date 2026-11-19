@@ -798,3 +798,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Code commits 0059634 and 168ae28 on codex/feature-development. Load.EnterGame collects before opening the login scene. On a successful Single load, SceneMgr replaces the old navigation data, then unloads zero-reference YooAsset resources and collects managed garbage before enabling the business root and invoking the completion callback.
 - Global subscribes to Application.lowMemory, limits collection to once per 600 unscaled seconds, and unsubscribes during shutdown or destruction. Unity incremental GC is enabled.
 - See 项目修改日志/2026-11-19-参考Ro客户端GC_CHANGELOG.md for the file manifest and review findings.
+
+## [CODE][FILES][HANDOFF][界面][MAIN-UI-LAYERS-20261119] Fixed main-city UI layers and sibling order
+
+- `UIRoot.prefab` gives `MainView` four ordered containers: `NormalLayer` for the resident HUD, `ChatLayer` for expanded chat, `FunctionLayer` for regular windows, and `TipsLayer` for overlays. The skill window and bag drag Canvas inherit layer sorting. The drag object renders last within the bag.
+- `MainView.cs` instantiates `YimengChat` under `ChatLayer` and binds the function and tips windows. In `WindowBase.cs`, `SetPanelParentData` records the prefab parent, and opening uses RO's attach-then-`SetAsLastSibling()` flow. `ShowMainWindow` remains the toggle entry.
+- Unity prefab, opening/closing, and Play raycast checks passed in isolated instances. Main-city play after login, actual item dragging, and a packaged player remain unverified. Full file list and Git receipt are in `项目修改日志/2026-11-19-主城UI固定分层_CHANGELOG.md`.

@@ -830,3 +830,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Unity 2023.2.20f1c1 Roslyn compiled LYF_Game and Assembly-CSharp with workspace Bee settings and zero errors. After the review adjustment, LYF_Game recompiled and static checks confirmed navigation replacement, collection order, and the failed-load return.
 - An isolated Unity Editor invocation confirmed the live Global subscription and a collection on the first callback, suppression during the interval, and a collection after simulated expiry.
 - Real device low-memory delivery and scene-transition memory and frame-time measurements remain unverified. See 项目修改日志/2026-11-19-参考Ro客户端GC_CHANGELOG.md and the raw outputs in _temp/20261119-ro-scene-gc/.
+
+## [VERIFY][界面][MAIN-UI-LAYERS-20261119] Main-city UI prefab, window toggle and Play input order
+
+- Unity 2023.2.20f1c1 Roslyn compiled `LYF_Game` with exit code 0. There were 50 warnings outside the changed scripts. Unity Editor console returned zero error entries after verification.
+- Loading an isolated copy of `UIRoot.prefab` verified all four layers and three serialized bindings, including ten registered windows with assigned parents. `ShowMainWindow` opened and closed chat, the bag and other foreground windows. Reopening the bag raised it within `FunctionLayer` and closing preserved its sibling position.
+- On an isolated Play copy with `ScreenSpaceCamera` at 1920×1080, overlapping probes returned `Tips>Function>Chat>HUD` through `EventSystem.RaycastAll`. Closing and reopening chat produced `Chat>HUD → HUD → Chat>HUD`. This fixture bypassed unrelated asynchronous skill-slot loading and left the real scenes and prefab unchanged during testing. Full main-city login, an actual item drag, and a packaged player remain unverified. Evidence is in `_temp/main-ui-layers-20261119-01a1f424/unity-layer-check.json`.

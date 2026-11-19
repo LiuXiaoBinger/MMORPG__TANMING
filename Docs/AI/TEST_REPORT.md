@@ -821,3 +821,9 @@
 - Unity 2023.2.20f1c1 Roslyn 使用本项目 Bee 参数编译 LYF_Game 和 Assembly-CSharp，均为零错误。复查调整后，LYF_Game 复编通过，静态检查确认先替换导航再回收，以及失败分支直接返回。
 - Unity 编辑器隔离调用确认运行中的 Global 已订阅低内存事件。首次回调触发回收，间隔内连续调用被抑制，模拟间隔到期后再次回收。
 - 真实设备的低内存通知和实机切场景的内存、帧耗时尚待验证。完整记录见 项目修改日志/2026-11-19-参考Ro客户端GC_CHANGELOG.md，原始证据在 _temp/20261119-ro-scene-gc/。
+
+## [VERIFY][界面][MAIN-UI-LAYERS-20261119] 主城 UI 预制体、窗口显隐和 Play 输入命中顺序
+
+- 使用 Unity 2023.2.20f1c1 的 Roslyn 编译 `LYF_Game`，退出码为 0。50 条警告均来自本次修改的脚本以外。验收后查询 Unity Editor Console，错误条目为 0。
+- 加载 `UIRoot.prefab` 的独立副本，核对四个层、三个序列化绑定及十个已登记窗口的父容器。通过 `ShowMainWindow` 开关聊天、背包和其他前景窗口。重新打开背包后，它在 `FunctionLayer` 同层内置顶，关闭时保持同级位置。
+- 在使用 `ScreenSpaceCamera` 的 1920×1080 独立 Play 副本中，重叠探针经 `EventSystem.RaycastAll` 得到 `Tips>Function>Chat>HUD`。关闭并重新打开聊天，命中顺序为 `Chat>HUD → HUD → Chat>HUD`。测试操作限定在独立实例中，并跳过无关的技能槽异步加载。完整的登录并进入主城流程、实际物品拖拽和打包后的客户端尚未验证。证据见 `_temp/main-ui-layers-20261119-01a1f424/unity-layer-check.json`。

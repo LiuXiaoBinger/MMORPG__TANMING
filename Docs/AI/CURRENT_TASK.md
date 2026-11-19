@@ -793,3 +793,9 @@
 - 代码提交为 codex/feature-development 的 0059634 和 168ae28。Load.EnterGame 在进入登录场景前主动回收。Single 场景加载成功后，SceneMgr 先替换旧导航数据，再卸载 YooAsset 零引用资源并回收托管垃圾，随后启用业务根节点并执行完成回调。
 - Global 订阅 Application.lowMemory，以 600 秒未缩放时间限频，在退出或销毁时取消订阅。Unity 增量 GC 已启用。
 - 文件清单与复查发现见 项目修改日志/2026-11-19-参考Ro客户端GC_CHANGELOG.md。
+
+## [CODE][FILES][HANDOFF][界面][MAIN-UI-LAYERS-20261119] 固定主城 UI 分层及同层窗口顺序
+
+- `UIRoot.prefab` 为 `MainView` 提供四个按顺序排列的容器。`NormalLayer` 承载常驻 HUD，`ChatLayer` 承载展开的聊天窗口，`FunctionLayer` 承载常规窗口，`TipsLayer` 承载覆盖在前景的提示窗口。技能窗口和背包拖拽用的 Canvas 继承所在层的排序。拖拽物在背包内部最后绘制。
+- `MainView.cs` 在 `ChatLayer` 下实例化 `YimengChat`，并绑定功能层和提示层的窗口。`WindowBase.cs` 通过 `SetPanelParentData` 记录预制体父容器，打开窗口时沿用 RO 先挂到父容器、再调用 `SetAsLastSibling()` 的流程。`ShowMainWindow` 仍负责切换窗口显隐。
+- 使用独立实例通过 Unity 预制体、窗口显隐和 Play 射线命中验证。登录后在真实主城运行、实际物品拖拽和打包后的客户端尚未验证。完整文件清单和 Git 回执见 `项目修改日志/2026-11-19-主城UI固定分层_CHANGELOG.md`。

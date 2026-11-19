@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d141868a768bb90ca7075929d876d9227788bea3c30eacb5d62f3b72f83b6fce`
+Source normalized SHA256: `1fd9469d6ac3a6ab0109de6cccc6ea0c1db58cf38a3fd7efa36ea953e8c5e64d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -113,11 +113,12 @@ Source normalized SHA256: `d141868a768bb90ca7075929d876d9227788bea3c30eacb5d62f3
 | [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19) | 779-783 |
 | [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 784-789 |
 | [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 790-795 |
-| [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries | 796-800 |
+| [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries | 796-801 |
+| [CODE][FILES][HANDOFF][界面][MAIN-UI-LAYERS-20261119] Fixed main-city UI layers and sibling order | 802-806 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `5abd625815a7a53a13880b6ac24a3cf8b1e00ec961ef161cc2fe61fda281f45e`
+Source normalized SHA256: `e3d1d0e7e90ea3b83245dd8dc98a2860631993fae7aacdcdc8598a95e31924a2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -222,7 +223,8 @@ Source normalized SHA256: `5abd625815a7a53a13880b6ac24a3cf8b1e00ec961ef161cc2fe6
 | [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19) | 811-815 |
 | [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 816-821 |
 | [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 822-827 |
-| [VERIFY][资源][RO-CLIENT-GC-20261119] Client GC compilation, static and Editor verification | 828-832 |
+| [VERIFY][资源][RO-CLIENT-GC-20261119] Client GC compilation, static and Editor verification | 828-833 |
+| [VERIFY][界面][MAIN-UI-LAYERS-20261119] Main-city UI prefab, window toggle and Play input order | 834-838 |
 
 ## Docs/AI/DECISIONS.en.md
 
