@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c0960b443cbb443b5e2c7e77ca04fb018bf800682ae7cca7c5fd857c808b6988`
+Source normalized SHA256: `59efe089980536ea177912e85296eca09b4927b73235cc53984366cefdd7a074`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -107,11 +107,12 @@ Source normalized SHA256: `c0960b443cbb443b5e2c7e77ca04fb018bf800682ae7cca7c5fd8
 | [FILES][HANDOFF][界面][技能][COMBAT-HUD-20261118] Bottom combat HUD layout and styling | 733-739 |
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
-| [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-759 |
+| [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-760 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 761-766 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `aebe3c7f98203e9063907e3cd3f73a9365d1e18975df076da543590ccb6614ff`
+Source normalized SHA256: `b01b455d20902c68ce86d26a8bfdc6c188b3bb10862563fd11dfe35a61f01b69`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -210,7 +211,8 @@ Source normalized SHA256: `aebe3c7f98203e9063907e3cd3f73a9365d1e18975df076da5435
 | [VERIFY][界面][技能][COMBAT-HUD-20261118] Unity rendering and existing combat HUD bindings | 764-770 |
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
-| [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-791 |
+| [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-792 |
+| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 793-798 |
 
 ## Docs/AI/DECISIONS.en.md
 

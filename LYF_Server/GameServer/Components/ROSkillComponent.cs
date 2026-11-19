@@ -739,14 +739,14 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         Stop(StateDefine.kStateDefault, null);
     }
 
-    /// <summary>按已提交的权威数据建立唯一当前动作实例；本期仅释放表现，不执行命中伤害。</summary>
+    /// <summary>按已提交的权威数据建立唯一当前动作实例，副本命中与护盾由各自的技能实现处理。</summary>
     /// <param name="core">本次已装载的技能等级核心。</param>
     /// <param name="skill_uuid">客户端本次施法 UUID。</param>
     /// <param name="duration_ms">当前表现段占用动作的毫秒数。</param>
     /// <param name="using_times">权威选定的零起始表现段下标。</param>
     /// <param name="children">组合技能的顺序核心；普通技能为空。</param>
     /// <param name="stateTimes">组合各段状态毫秒数，与 children 对应。</param>
-    /// <param name="cast_point">本次世界瞄准点，用于副本普攻的水平朝向。</param>
+    /// <param name="cast_point">本次世界瞄准点，用于副本普攻和龙卷斩的水平朝向，单位米。</param>
     private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times,
         List<ROSkillCore> children, List<int> stateTimes, ROVector3 cast_point)
     {
@@ -768,6 +768,11 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             // 刀刃风暴在副本内按八段结果点自行查询怪物，不占用普攻的盒判定实例。
             skill_ = new ROBladeStormSkill(core, skill_uuid, end_tick, using_times, Owner);
+        }
+        else if (core.SkillID() == ROMovingTornadoSkill.TornadoSlashSkillId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            // 龙卷风抵达前方结果点时，沿用副本技能的范围查询与抵扣流程。
+            skill_ = new ROMovingTornadoSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point);
         }
         else if (core.SkillID() == 10120 && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
         {

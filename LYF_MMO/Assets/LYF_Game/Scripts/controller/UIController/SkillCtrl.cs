@@ -38,6 +38,9 @@ public sealed class SkillCtrl : CtrlBase
 
     /// <summary>苍蓝屏障技能 ID，护罩跟随自身，选中远处敌人时也必须原地释放。</summary>
     private const int BlueBarrierSkillId = 10120;
+
+    /// <summary>龙卷斩的稳定主表编号，施法沿角色当前水平朝向放出特效。</summary>
+    internal const int TornadoSlashSkillId = 10130;
     #endregion
 
     #region 构造、初始化与事件注册
@@ -362,6 +365,11 @@ public sealed class SkillCtrl : CtrlBase
     {
         // 苍蓝屏障护持自己，施法无需传入敌人。
         if (skillCore.SkillId == BlueBarrierSkillId)
+        {
+            return null;
+        }
+        // 龙卷斩按当前朝向放出，不由当前目标改变方向或启动追敌。
+        if (skillCore.SkillId == TornadoSlashSkillId)
         {
             return null;
         }

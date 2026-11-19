@@ -13,6 +13,9 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>魔剑士主动技能「刀刃风暴」的主表编号，服务端按段自行查询敌人。</summary>
     private const int BladeStormSkillId = 10110;
 
+    /// <summary>龙卷斩的主表编号，沿当前朝向施放并在副本结算一次范围命中。</summary>
+    private const int TornadoSlashSkillId = 10130;
+
     /// <summary>刀刃风暴在无目标模式下唯一允许的命中半径，单位厘米。</summary>
     private const int BladeStormRadiusCm = 300;
 
@@ -331,11 +334,28 @@ public class LubanMgr:Singleton<LubanMgr>
             bool hasDamageValues = effect.DamagePermyriad != 0 || effect.FlatDamage != 0;
             // 上述命中数值任一非零即视为无目标技能误配。
             bool hasAnyHitValue = hasRangeValues || hasTargetHitValues || hasDamageValues;
-            // 刀刃风暴在无目标模式下自行按段查询敌人，是唯一需要携带命中数值的技能。
+            // 刀刃风暴与龙卷斩在无目标模式下均由服务端按各自结果点查询敌人。
             bool isBladeStorm = effect.SkillId == BladeStormSkillId;
-            if (isNoTargetMode && hasAnyHitValue && !isBladeStorm)
+            // 龙卷斩只有一个固定时间的前方圆形结果点。
+            bool isTornadoSlash = effect.SkillId == TornadoSlashSkillId;
+            // 只有已经接入真实范围结算的无目标技能才允许携带命中数值。
+            bool hasAreaHitImplementation = isBladeStorm || isTornadoSlash;
+            if (isNoTargetMode && hasAnyHitValue && !hasAreaHitImplementation)
             {
                 throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);
+            }
+            if (isTornadoSlash)
+            {
+                // 单次无目标命中不使用命中间隔。实际触发时间由该技能与特效时间轴对齐。
+                bool supportedTiming = isNoTargetMode && effect.HitCount == 1 && effect.HitIntervalMs == 0;
+                // 范围配置只描述结果点的有效半径，单位厘米。
+                bool supportedRange = effect.MinRangeCm == 0 && effect.MaxRangeCm == 0 && effect.RadiusCm > 0;
+                // 已接入的参数为正数目标上限、万分比伤害及非负的固定伤害点数。
+                bool supportedDamage = effect.MaxTargets > 0 && effect.DamagePermyriad > 0 && effect.FlatDamage >= 0;
+                if (!supportedTiming || !supportedRange || !supportedDamage)
+                {
+                    throw new InvalidDataException("龙卷斩的单次范围命中配置无效，效果 ID=" + effect.Id);
+                }
             }
             // 刀刃风暴只放行半径、目标上限、段数与倍率四项，射程与固定伤害仍必须为零。
             if (isNoTargetMode && isBladeStorm &&

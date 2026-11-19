@@ -179,9 +179,12 @@ public class MNavigationComponent : EntityComponentBase
         {
             try
             {
-                // 沿用施法标识和主表 ID，只为魔神塔普攻提供世界瞄准点。
+                // 沿用施法标识和主表 ID，为副本方向攻击提供世界瞄准点。
                 SkillCastReq request = new SkillCastReq { SkillUuid = skillUuid, SkillId = skillArgs.Identify };
-                if (skillArgs.Identify == MSceneDungeon.BasicAttackId && TeamData.Instance.DungeonInstanceId != 0UL)
+                // 副本普攻和龙卷斩复用一个瞄准点字段，服务端只取它相对角色的水平朝向。
+                bool needsCastDirection = skillArgs.Identify == MSceneDungeon.BasicAttackId ||
+                    skillArgs.Identify == SkillCtrl.TornadoSlashSkillId;
+                if (needsCastDirection && TeamData.Instance.DungeonInstanceId != 0UL)
                 {
                     // 无锁定目标时沿玩家当前朝向攻击；有目标时与本地转身使用同一世界坐标。
                     Vector3 point = localRole.Position + localRole.Model.GameObject.Transform.forward;

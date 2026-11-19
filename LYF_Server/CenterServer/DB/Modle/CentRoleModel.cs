@@ -321,13 +321,15 @@ public class CentRoleModel
     }
 
     /// <summary>
-    /// 按职业补发刀刃风暴与苍蓝屏障，并规范三、四、五号键的归属。
+    /// 按职业补发魔剑士的新增主动技能，并处理登录回包中的默认键位。
     /// 与数据库和网络连接无关，便于用最小用例覆盖新建角色、老角色和五号键被占用三种输入。
     /// </summary>
     /// <param name="response">登录回包里的技能列表，就地补发新技能并改写快捷键。</param>
     /// <param name="isMageSwordsman">当前角色是否为魔剑士；非魔剑士只补组合技能，键位保持原样。</param>
     private static void ApplyNewSkillKeys(RoleSkillInfoRet response, bool isMageSwordsman)
     {
+        // 龙卷斩的稳定主表编号，已有技能保存记录继续按此编号读取。
+        const int tornadoSlashSkillId = 10130;
         // 两个组成技能均已学会时才提供组合入口。
         bool hasFirst = false;
         // 斩天剑学习标记，与清风剑法共同决定示例是否可用。
@@ -338,12 +340,16 @@ public class CentRoleModel
         RoleSkillInfo bladeStorm = null;
         // 已存在的苍蓝屏障记录，同样可能停在等级 0 且没有任何快捷键。
         RoleSkillInfo barrier = null;
+        // 已存在的龙卷斩记录，优先保留玩家先前为它设置的键位。
+        RoleSkillInfo tornadoSlash = null;
         // 占用三号键的其它技能，键位让给刀刃风暴后只清空它的快捷键，技能本身仍留在列表。
         RoleSkillInfo thirdHolder = null;
         // 占用四号键的技能，仅用于判断屏障能否默认绑定，不用于抢占。
         RoleSkillInfo fourthHolder = null;
         // 占用五号键的技能，组合技能回退到五号键前必须先确认它空闲。
         RoleSkillInfo fifthHolder = null;
+        // 登录快照中数字 6 是否已被某条技能占用，空闲才提供默认绑定。
+        bool sixthSlotOccupied = false;
         // 原技能列表的零起始索引，新技能在遍历完成后追加，一次扫描完成全部占用判定。
         for (int index = 0; index < response.RoleSkillInfoList.Count; index++)
         {
@@ -354,9 +360,11 @@ public class CentRoleModel
             if (skill.SkillId == 10100) combination = skill;
             if (skill.SkillId == 10110) bladeStorm = skill;
             if (skill.SkillId == 10120) barrier = skill;
+            if (skill.SkillId == tornadoSlashSkillId) tornadoSlash = skill;
             if (skill.BindKey == "3") thirdHolder = skill;
             if (skill.BindKey == "4") fourthHolder = skill;
             if (skill.BindKey == "5") fifthHolder = skill;
+            if (skill.BindKey == "6") sixthSlotOccupied = true;
         }
         // 组合学习条件与键位无关，只要 E 与 2 都学会就给组合技能记录。
         if (hasFirst && hasSecond && combination == null)
@@ -387,6 +395,14 @@ public class CentRoleModel
         else if (barrier.Level <= 0) barrier.Level = 1;
         // 四号键空闲且屏障自身没有自定义键时才默认绑定，保留玩家已有的四号键设置。
         if (fourthHolder == null && string.IsNullOrEmpty(barrier.BindKey)) barrier.BindKey = "4";
+        // 新增技能和已有等级 0 的初始记录均补为可施放的一级。
+        if (tornadoSlash == null)
+        {
+            tornadoSlash = new RoleSkillInfo { SkillId = tornadoSlashSkillId, Level = 1 };
+            response.RoleSkillInfoList.Add(tornadoSlash);
+        }
+        else if (tornadoSlash.Level <= 0) tornadoSlash.Level = 1;
+        if (!sixthSlotOccupied && string.IsNullOrEmpty(tornadoSlash.BindKey)) tornadoSlash.BindKey = "6";
         // 组合技能始终以 E 与 2 都学会为学习条件：登录时会为所有主动技能建等级 0 行，
         // 缺少该判定就会让尚未学清风剑法与斩天剑的新角色提前拿到组合技能。
         if (hasFirst && hasSecond && combination != null)

@@ -89,12 +89,27 @@ public sealed class TeamManager
     /// <param name="maxTargets">本段最多命中数。</param>
     public void OnBladeStormHit(OnlineRole caster, int damage, HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets)
     {
+        OnRoleAreaSkillHit(caster, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(),
+            damage, hit_targets, skillId, radius, maxTargets);
+    }
+
+    /// <summary>查询指定结果点周围的副本怪物，并广播同一批扣血与波次结果。</summary>
+    /// <param name="caster">施法角色，决定副本归属、面板属性和受击广播身份。</param>
+    /// <param name="center">服务端计算的世界命中中心，单位米。</param>
+    /// <param name="damage">送入防御链的本段技能伤害点数。</param>
+    /// <param name="hit_targets">当前结果点对怪物实体编号去重的集合。</param>
+    /// <param name="skillId">主表技能编号，用于基因和技能伤害归因。</param>
+    /// <param name="radius">以结果点为中心的范围半径，单位米。</param>
+    /// <param name="maxTargets">本次结果最多命中的怪物数量。</param>
+    public void OnRoleAreaSkillHit(OnlineRole caster, Vector3 center, int damage,
+        HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets)
+    {
         // 施法者不在任何副本实例时本次效果不生效。
         Dungeon team;
         if (!_instances.TryGetValue((ulong)caster.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         // 本段结果点单独一组属性通知，与其他段互不合并。
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
-        team.WaveSpawner.ChangeHPRadius(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), radius, damage, hit_targets, caster, skillId, maxTargets);
+        team.WaveSpawner.ChangeHPRadius(notice, center, radius, damage, hit_targets, caster, skillId, maxTargets);
         team.WaveSpawner.FillFlow(notice);
         // 本段没有任何怪物扣血时不向客户端发送空通知。
         if (notice.Monsters.Count == 0) return;
