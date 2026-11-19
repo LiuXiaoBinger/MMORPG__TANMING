@@ -44,7 +44,7 @@ public class UIRoot : MonoBehaviour
    /// <summary>指针按下 UI 时，在画布局部位置播放的粒子特效。</summary>
    [SerializeField, Header("点击特效")] private ParticleSystem _clichFX;
 
-   /// <summary>随跨场景 UIRoot 保留的二维界面点击声源。</summary>
+   /// <summary>随跨场景 UIRoot 保留的二维界面触摸提示声源。</summary>
    private AudioSource _uiClickSource;
 
    /// <summary>用于坐标换算和 UI 相机查询的画布，Start 从子节点重新获取。</summary>
@@ -74,7 +74,7 @@ public class UIRoot : MonoBehaviour
       SceneMgr.Instance.Init(_loadingView);
    }
 
-   /// <summary>事件系统更新命中后，为鼠标按下或触摸命中的 UI 播放点击粒子与音效。</summary>
+   /// <summary>事件系统更新命中后播放 UI 点击粒子，触摸命中时同时播放提示音。</summary>
    private void LateUpdate()
    {
       // 当前事件系统和输入模块提供同一帧的指针状态与界面命中。
@@ -95,7 +95,8 @@ public class UIRoot : MonoBehaviour
             Touch touch = input.GetTouch(touchIndex);
             if (touch.phase == TouchPhase.Began && eventSystem.IsPointerOverGameObject(touch.fingerId))
             {
-               PlayUIClick(touch.position);
+               _uiClickSource.PlayOneShot(_uiClickSource.clip);
+               PlayUIClickEffect(touch.position);
                return;
             }
          }
@@ -104,15 +105,14 @@ public class UIRoot : MonoBehaviour
 
       if (input.GetMouseButtonDown(0) && eventSystem.IsPointerOverGameObject())
       {
-         PlayUIClick(input.mousePosition);
+         PlayUIClickEffect(input.mousePosition);
       }
    }
 
-   /// <summary>让界面点击声和粒子在一次指针按下中同时反馈。</summary>
+   /// <summary>在鼠标或触摸命中的画布局部位置播放点击粒子。</summary>
    /// <param name="screenPosition">命中界面的屏幕坐标，单位为像素。</param>
-   private void PlayUIClick(Vector2 screenPosition)
+   private void PlayUIClickEffect(Vector2 screenPosition)
    {
-      _uiClickSource.PlayOneShot(_uiClickSource.clip);
       _clichFX.transform.localPosition = ScreenPointToviewPoint(screenPosition);
       _clichFX.Play();
    }
