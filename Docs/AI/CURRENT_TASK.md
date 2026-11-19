@@ -767,3 +767,8 @@
 - 提交 `28c0f6d` 在 `codex/feature-development` 分支上将现有的设置控件连接到 `SoundVolumeData`，并连接到 RO 兼容的 `MAudioMgr.SetBGMVolume` / `SetSEVolume` 入口点。Unity 混音组 `BGM` 和 `SFX` 独立应用音量。两个开关和滑动条在本地持久化。关闭一个通道会静音它，并锁定其滑动条，直到重新启用，保留保存的音量。
 - `SoundComponent` 将现有的技能、移动和战斗音效通过 `SFX` 进行路由。`UIRoot` 播放原始的鼠标和触摸 UI 点击音效。聊天语音有单独的音频源。BGM 组已准备好未来的背景音乐。此次更改中未包含任何音乐轨道。
 - 详情和文件：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。网络客户端音频和打包构建验证仍待确认。
+
+## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] 默认音效使用原始音量（2026-11-19）
+
+- 提交 `6a4fa75` 在 `codex/feature-development` 分支中，将游戏音效默认音量从 `SoundVolumeData.cs` 和 `SettingPanel.prefab` 中的 `EffectsVolume` 滑块的 60% 更改为 100%。新默认值在没有本地音量值时生效。已保存的音量值或禁用状态仍会被保留。
+- 音效最大值和 BGM 默认值保持不变。详情：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。

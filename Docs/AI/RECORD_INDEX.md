@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `7612445ba6f0581b541f9c7516accb4b33545535de8ae1c59eb444d1674d6d4b`
+Source normalized SHA256: `e849642e608c38d511091ec150eba01a6ac563c93f5b07cb51099ce2b5943f65`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -109,11 +109,12 @@ Source normalized SHA256: `7612445ba6f0581b541f9c7516accb4b33545535de8ae1c59eb44
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
 | [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-762 |
 | [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-769 |
-| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 770-774 |
+| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 770-775 |
+| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19) | 776-779 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6b68984d76c0fd5995c8d8b7ac62e2b65cbd3f73e20e3e074499e4854f89800e`
+Source normalized SHA256: `4f8116139b98e2b08f974c06d3ba85c19767b7391165e1eb4127c5a9797aac61`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -214,7 +215,8 @@ Source normalized SHA256: `6b68984d76c0fd5995c8d8b7ac62e2b65cbd3f73e20e3e074499e
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
 | [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-794 |
 | [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-801 |
-| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 802-806 |
+| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 802-807 |
+| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19) | 808-811 |
 
 ## Docs/AI/DECISIONS.en.md
 

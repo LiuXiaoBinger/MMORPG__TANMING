@@ -772,3 +772,8 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Commit `28c0f6d` on `codex/feature-development` connects the existing settings controls to `SoundVolumeData` and the RO-compatible `MAudioMgr.SetBGMVolume` / `SetSEVolume` entry points. Unity mixer groups `BGM` and `SFX` apply volume independently. The two switches and sliders persist locally. Turning a channel off mutes it and locks its slider until re-enabled, preserving the saved volume.
 - `SoundComponent` routes existing skill, movement and combat sounds through `SFX`. `UIRoot` plays an original click on mouse and touch UI hits. Chat voice has a separate audio source. The BGM group is ready for a future background track. No track is included in this change.
 - Details and files: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Networked client audio and packaged build verification remain open.
+
+## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19)
+
+- Commit `6a4fa75` on `codex/feature-development` changes the game SFX default from 60% to 100% in `SoundVolumeData.cs` and the `EffectsVolume` slider in `SettingPanel.prefab`. The new default applies when no local volume value exists. An existing saved volume or disabled state is still honored.
+- The SFX maximum and BGM default are unchanged. Details: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`.
