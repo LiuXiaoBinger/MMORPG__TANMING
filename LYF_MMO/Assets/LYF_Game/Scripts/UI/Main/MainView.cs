@@ -127,6 +127,18 @@ public class MainView : UIBase
 
    /// <summary>供主界面控制器注册与注销设置入口点击事件。</summary>
    public Button SettingButton => _settingButton;
+   /// <summary>战斗 HUD 蓝色状态图标上的详情按钮。</summary>
+   [SerializeField] private Button _combatStatusButton;
+
+   /// <summary>登记到主视图窗口表的角色状态详情。</summary>
+   [SerializeField] private CombatStatusWindow _combatStatusWindow;
+
+   /// <summary>供主控制器绑定状态详情的开关事件。</summary>
+   public Button CombatStatusButton => _combatStatusButton;
+
+   /// <summary>供主控制器向状态列表同步角色的实际护盾状态。</summary>
+   public CombatStatusWindow CombatStatus => _combatStatusWindow;
+
 
    /// <summary>供主控制器注册与注销功能菜单开关事件。</summary>
    public Button FunctionMenuButton => _functionMenuButton;
@@ -244,6 +256,12 @@ public class MainView : UIBase
       {
          windowDic[WindowType.ArenaSettingsWindow] = _arenaSettingsWindow;
          _arenaSettingsWindow.InitWindow();
+      if (_combatStatusWindow != null)
+      {
+         windowDic[WindowType.CombatStatusWindow] = _combatStatusWindow;
+         _combatStatusWindow.InitWindow();
+         _combatStatusWindow.Show(false);
+      }
          _arenaSettingsWindow.Show(false);
       }
       windowDic[WindowType.DeathWindow] = _deathWindow;

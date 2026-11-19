@@ -133,6 +133,10 @@ public class MainCtrl : CtrlBase
         {
             _mainView.TalkWindow.ShopRequested += OnShopRequested;
             _mainView.TalkWindow.MoshentaBattleRequested += OnMoshentaBattleRequested;
+        if (_mainView.CombatStatusButton != null)
+        {
+            _mainView.CombatStatusButton.onClick.AddListener(OnCombatStatusClicked);
+        }
             _mainView.TalkWindow.TalkLeaveRequested += CloseNpcTalk;
         }
         if (_chatWindow != null)
@@ -186,6 +190,10 @@ public class MainCtrl : CtrlBase
             NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_OpenKnapsackGridCode, OpenKnapsackGridHandle);
+        if (_mainView.CombatStatusButton != null)
+        {
+            _mainView.CombatStatusButton.onClick.RemoveListener(OnCombatStatusClicked);
+        }
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_BuyShopItemCode, BuyShopItemHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
@@ -371,6 +379,7 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 交互响应
+        _mainView.CombatStatus?.SetShield(result.ShieldRemaining, result.ShieldCapacity);
     /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
     /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
@@ -384,6 +393,7 @@ public class MainCtrl : CtrlBase
         BindTrackedRole();
     }
 
+        _mainView.CombatStatus?.SetShield(0, 0);
     /// <summary>聊天获得焦点时调用输入控制器 OnDisable，失焦时调用 OnEnable；不修改组件 enabled 属性。</summary>
     /// <param name="focused">聊天框是否正在接收键盘输入。</param>
     private void OnChatInputFocusChanged(bool focused)
@@ -470,6 +480,12 @@ public class MainCtrl : CtrlBase
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
         if (player == null || !player.Model.IsLoaded)
         {
+    /// <summary>点击战斗 HUD 的状态图标时，通过主视图开关状态详情。</summary>
+    private void OnCombatStatusClicked()
+    {
+        ShowMainWindow(WindowType.CombatStatusWindow);
+    }
+
             TipsMgr.Instance.ShowSystemTips("主角尚未创建完成");
             return;
         }
