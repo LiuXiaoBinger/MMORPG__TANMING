@@ -3,7 +3,7 @@ using UniRx;
 using UnityEngine;
 using YooAsset;
 
-/// <summary>加载目标场景时显示进度；成功后回收资源，再更新当前场景、读取导航、启用业务根节点并调用回调。</summary>
+/// <summary>加载目标场景时显示进度；成功后更新当前场景和导航、回收旧资源，再启用业务根节点并调用回调。</summary>
 public class SceneMgr : Singleton<SceneMgr>
 {
     /// <summary>已成功加载的业务场景类型，失败时保留原值。</summary>
@@ -77,21 +77,11 @@ public class SceneMgr : Singleton<SceneMgr>
                 return;
             }
             _obs.Dispose();
-
-            // 加载句柄已完成；只有切换成功才具备清理旧场景资源的时机。
-            bool sceneLoaded = handle.Status == EOperationStatus.Succeed;
-            if (sceneLoaded)
-            {
-                // Single 切换已释放旧场景句柄，回收 YooAsset 零引用资源后再回收托管垃圾。
-                package.UnloadUnusedAssets();
-                GC.Collect();
-            }
-
             if (_loadingView != null)
             {
                 _loadingView.Show(false);
             }
-            if (!sceneLoaded)
+            if (handle.Status != EOperationStatus.Succeed)
             {
                 Debug.LogError($"场景 {sceneType} 加载失败：{handle.LastError}");
                 return;
@@ -103,6 +93,9 @@ public class SceneMgr : Singleton<SceneMgr>
             _currentSceneType = sceneType;
             // 先读取与场景同名的导航文件，之后业务回调才可以查询路线。
             MNavigationMgr.singleton.OnSceneLoaded(handle.SceneObject.name);
+            // Single 已释放旧场景句柄，导航也已解除对旧地图的引用，开始回收旧资源和托管垃圾。
+            package.UnloadUnusedAssets();
+            GC.Collect();
             if (sceneType == SceneType.Scene_Dungeon)
             {
                 // 出生根属于当前副本场景，Single 切走时自动注销该副本的实体。
