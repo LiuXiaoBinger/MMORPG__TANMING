@@ -82359,6 +82359,12 @@ MonoBehaviour:
   - {fileID: 4341332416991853643}
   _customGraphics: {fileID: 3279124946556108868}
   _graphicsHint: {fileID: 4329699788045014641}
+  _musicToggle: {fileID: 7506190203982040418}
+  _effectsToggle: {fileID: 6917788001227418352}
+  _musicVolume: {fileID: 4222694725826313313}
+  _effectsVolume: {fileID: 6025095839903044240}
+  _musicState: {fileID: 3732327744508309909}
+  _effectsState: {fileID: 905245734959724851}
 --- !u!1 &6739150415397831721
 GameObject:
   m_ObjectHideFlags: 0

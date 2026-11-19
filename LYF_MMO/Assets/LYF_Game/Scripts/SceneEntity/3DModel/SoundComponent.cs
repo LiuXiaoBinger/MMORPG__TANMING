@@ -268,6 +268,8 @@ public sealed class SoundComponent
         source.rolloffMode = AudioRolloffMode.Logarithmic;
         source.clip = audioEvent.Clip;
         source.volume = audioEvent.Volume;
+        // 保留每条音效的原始音量，统一由音效混音组控制总音量及静音。
+        source.outputAudioMixerGroup = MAudioMgr.SEOutput;
         source.Play();
         return source;
     }

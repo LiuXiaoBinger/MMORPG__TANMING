@@ -1,7 +1,8 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>控制设置窗口的画幅、八个页签和画质页的展示状态。</summary>
+/// <summary>控制设置窗口的画幅、页签展示和基础页的声音设置控件。</summary>
 public sealed class SettingPanel : WindowBase
 {
     /// <summary>保留八页原始布局的窗体，按主界面可用宽高缩放到全屏。</summary>
@@ -25,6 +26,33 @@ public sealed class SettingPanel : WindowBase
     /// <summary>选择预设画质时提示如何打开细项的说明。</summary>
     [SerializeField] private GameObject _graphicsHint;
 
+    /// <summary>基础页音乐通道的开关。</summary>
+    [SerializeField] private Toggle _musicToggle;
+
+    /// <summary>基础页游戏音效通道的开关。</summary>
+    [SerializeField] private Toggle _effectsToggle;
+
+    /// <summary>基础页音乐通道的零至一音量滑杆。</summary>
+    [SerializeField] private Slider _musicVolume;
+
+    /// <summary>基础页游戏音效通道的零至一音量滑杆。</summary>
+    [SerializeField] private Slider _effectsVolume;
+
+    /// <summary>显示音乐当前开启或关闭的状态文字。</summary>
+    [SerializeField] private TMP_Text _musicState;
+
+    /// <summary>显示游戏音效当前开启或关闭的状态文字。</summary>
+    [SerializeField] private TMP_Text _effectsState;
+
+    /// <summary>每个设置窗口实例仅注册一次声音控件的值变化回调。</summary>
+    private void Awake()
+    {
+        _musicToggle.onValueChanged.AddListener(ChangeMusicEnabled);
+        _effectsToggle.onValueChanged.AddListener(ChangeEffectsEnabled);
+        _musicVolume.onValueChanged.AddListener(ChangeBGMVolume);
+        _effectsVolume.onValueChanged.AddListener(ChangeSEVolume);
+    }
+
     /// <summary>打开时置于聊天等主界面窗口上方，回到基础页和页签列表顶部。</summary>
     private void OnEnable()
     {
@@ -32,6 +60,71 @@ public sealed class SettingPanel : WindowBase
         OnRectTransformDimensionsChange();
         ScrollTabs(1);
         SelectOneHandler(0);
+        RefreshAudioControls();
+    }
+
+    /// <summary>窗口关闭时保存已改动的声音设置，拖动音量滑杆期间只更新内存数值。</summary>
+    private void OnDisable()
+    {
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>打开窗口时无通知地把本机保存的声音开关和音量填回控件。</summary>
+    private void RefreshAudioControls()
+    {
+        _musicToggle.SetIsOnWithoutNotify(SoundVolumeData.SoundBgmVolumeState);
+        _effectsToggle.SetIsOnWithoutNotify(SoundVolumeData.SoundSeVolumeState);
+        _musicVolume.SetValueWithoutNotify(SoundVolumeData.SoundBgmVolume);
+        _effectsVolume.SetValueWithoutNotify(SoundVolumeData.SoundSeVolume);
+        SetVoiceState(_musicVolume, _musicState, _musicToggle.isOn);
+        SetVoiceState(_effectsVolume, _effectsState, _effectsToggle.isOn);
+    }
+
+    /// <summary>应用音乐开关并刷新这一行的状态文字。</summary>
+    /// <param name="enabled">音乐选项的当前开启状态。</param>
+    private void ChangeMusicEnabled(bool enabled)
+    {
+        SoundVolumeData.SoundBgmVolumeState = enabled;
+        SetVoiceState(_musicVolume, _musicState, enabled);
+    }
+
+    /// <summary>应用游戏音效开关并刷新这一行的状态文字。</summary>
+    /// <param name="enabled">音效选项的当前开启状态。</param>
+    private void ChangeEffectsEnabled(bool enabled)
+    {
+        SoundVolumeData.SoundSeVolumeState = enabled;
+        SetVoiceState(_effectsVolume, _effectsState, enabled);
+    }
+
+    /// <summary>将音乐滑杆数值写入本机声音设置。</summary>
+    /// <param name="volume">音乐滑杆提供的零至一音量。</param>
+    private static void ChangeBGMVolume(float volume)
+    {
+        SoundVolumeData.SoundBgmVolume = volume;
+    }
+
+    /// <summary>将游戏音效滑杆数值写入本机声音设置。</summary>
+    /// <param name="volume">游戏音效滑杆提供的零至一音量。</param>
+    private static void ChangeSEVolume(float volume)
+    {
+        SoundVolumeData.SoundSeVolume = volume;
+    }
+
+    /// <summary>与 RO 的开关交互一致，关闭时锁住滑杆并保留其数值。</summary>
+    /// <param name="slider">当前声音通道的音量滑杆。</param>
+    /// <param name="state">当前声音选项的状态文字控件。</param>
+    /// <param name="enabled">为真显示开启，为假显示关闭。</param>
+    private static void SetVoiceState(Slider slider, TMP_Text state, bool enabled)
+    {
+        slider.interactable = enabled;
+        if (enabled)
+        {
+            state.text = "开启";
+        }
+        else
+        {
+            state.text = "关闭";
+        }
     }
 
     /// <summary>窗口可用面积变化后，让原始窗体的四边与主界面可用区域重合。</summary>

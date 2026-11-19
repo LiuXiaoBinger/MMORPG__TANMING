@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 /**
 * Title:UI和控制器管理类
@@ -12,7 +11,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// UI 总根节点：作为跨场景单例持有各业务视图与对应控制器，负责控制器的创建、重复初始化前释放与销毁，
-/// 并处理鼠标点击特效与屏幕坐标到画布本地坐标的换算。
+/// 并处理界面点击的视听反馈与屏幕坐标到画布本地坐标的换算。
 /// </summary>
 public class UIRoot : MonoBehaviour
 {
@@ -42,8 +41,11 @@ public class UIRoot : MonoBehaviour
    /// <summary>提供给 SceneMgr 的场景加载进度界面。</summary>
    [SerializeField,Header("加载界面")] private LoadingView _loadingView;
 
-   /// <summary>鼠标左键点击 UI 时，在画布局部位置播放的粒子特效。</summary>
+   /// <summary>指针按下 UI 时，在画布局部位置播放的粒子特效。</summary>
    [SerializeField, Header("点击特效")] private ParticleSystem _clichFX;
+
+   /// <summary>随跨场景 UIRoot 保留的二维界面点击声源。</summary>
+   private AudioSource _uiClickSource;
 
    /// <summary>用于坐标换算和 UI 相机查询的画布，Start 从子节点重新获取。</summary>
    [SerializeField, Header("画布")]  public Canvas _canvas;
@@ -59,29 +61,60 @@ public class UIRoot : MonoBehaviour
       InitCtrl();
    }
 
-   /// <summary>找到画布，并把加载进度 View 交给场景管理器。</summary>
+   /// <summary>找到画布，恢复声音设置，并把加载进度 View 交给场景管理器。</summary>
    private void Start()
    {
       _canvas = GetComponentInChildren<Canvas>();
+      MAudioMgr.Init();
+      _uiClickSource = gameObject.AddComponent<AudioSource>();
+      _uiClickSource.playOnAwake = false;
+      _uiClickSource.spatialBlend = 0f;
+      _uiClickSource.outputAudioMixerGroup = MAudioMgr.SEOutput;
+      _uiClickSource.clip = Resources.Load<AudioClip>("Audio/InterfaceClick");
       SceneMgr.Instance.Init(_loadingView);
    }
 
-   /// <summary>只在鼠标左键本帧按下且指针位于 UI 上时播放点击粒子。</summary>
-   private void Update()
+   /// <summary>事件系统更新命中后，为鼠标按下或触摸命中的 UI 播放点击粒子与音效。</summary>
+   private void LateUpdate()
    {
-      //输入系统
-      //判断鼠标左键按下
-      if (Mouse.current.leftButton.wasPressedThisFrame)
+      // 当前事件系统和输入模块提供同一帧的指针状态与界面命中。
+      EventSystem eventSystem = EventSystem.current;
+      if (eventSystem == null || eventSystem.currentInputModule == null)
       {
-         
-         //判断点击的是否是ui
-         if (EventSystem.current.IsPointerOverGameObject())
-         {
-            Debug.Log("鼠标点击");
-            _clichFX.transform.localPosition = ScreenPointToviewPoint(Mouse.current.position.ReadValue());
-            _clichFX.Play();
-         }
+         return;
       }
+
+      // 使用 StandaloneInputModule 的输入来源，触摸和鼠标分别按各自的指针编号查命中。
+      BaseInput input = eventSystem.currentInputModule.input;
+      if (input.touchCount > 0)
+      {
+         // touchIndex 为本帧活动触点的下标，同一帧只播放一次点击反馈。
+         for (int touchIndex = 0; touchIndex < input.touchCount; touchIndex++)
+         {
+            // 当前触点的位置为屏幕像素，fingerId 对应事件系统中的触摸指针。
+            Touch touch = input.GetTouch(touchIndex);
+            if (touch.phase == TouchPhase.Began && eventSystem.IsPointerOverGameObject(touch.fingerId))
+            {
+               PlayUIClick(touch.position);
+               return;
+            }
+         }
+         return;
+      }
+
+      if (input.GetMouseButtonDown(0) && eventSystem.IsPointerOverGameObject())
+      {
+         PlayUIClick(input.mousePosition);
+      }
+   }
+
+   /// <summary>让界面点击声和粒子在一次指针按下中同时反馈。</summary>
+   /// <param name="screenPosition">命中界面的屏幕坐标，单位为像素。</param>
+   private void PlayUIClick(Vector2 screenPosition)
+   {
+      _uiClickSource.PlayOneShot(_uiClickSource.clip);
+      _clichFX.transform.localPosition = ScreenPointToviewPoint(screenPosition);
+      _clichFX.Play();
    }
 
    /// <summary>释放本根节点创建的控制器；仅当静态入口仍指向自己时清空入口。</summary>
