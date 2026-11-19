@@ -775,10 +775,10 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - `SoundComponent` routes existing skill, movement and combat sounds through `SFX`. `UIRoot` plays an original click on mouse and touch UI hits. Chat voice has a separate audio source. The BGM group is ready for a future background track. No track is included in this change.
 - Details and files: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Networked client audio and packaged build verification remain open.
 
-## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19)
+## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19)
 
-- Commit `6a4fa75` on `codex/feature-development` changes the game SFX default from 60% to 100% in `SoundVolumeData.cs` and the `EffectsVolume` slider in `SettingPanel.prefab`. The new default applies when no local volume value exists. An existing saved volume or disabled state is still honored.
-- The SFX maximum and BGM default are unchanged. Details: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`.
+- Following the user's clarification, `2bbcb72` on `codex/feature-development` supersedes the 100% default from `6a4fa75`. The first-launch slider is 60% again. The SFX curve raises 10% from -20 dB to -10 dB, keeps 0% at mute, and keeps 100% at 0 dB.
+- `MAudioMgr` applies the new SFX curve. `SoundVolumeData` and `SettingPanel.prefab` restore the 60% default. Saved slider values, saved switches, and BGM behavior are retained. Details: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`.
 
 ## [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19)
 

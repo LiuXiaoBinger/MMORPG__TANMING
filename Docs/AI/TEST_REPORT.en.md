@@ -807,10 +807,10 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - Isolated Play Mode verified independent BGM/SFX gain, restoring saved gain after re-enabling, model routing, and mouse/touch clicks on UI only. Offline mixed audio RMS was `0.0163003` at 100%, `0.0040556` at 25%, and `0.0000000` with SFX disabled. A separate Unity process read back the saved settings.
 - Evidence: `_temp/settings-audio-20261119/audio-verification.txt` and `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Networked client audio and packaged build verification remain open.
 
-## [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19)
+## [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19)
 
-- Isolated Unity `2023.2.20f1c1` Play Mode verified a 100% slider and 0 dB SFX gain without a saved volume. The mixed output RMS was `0.0163003` at the new default and `0.0097475` at 60%. A saved 60% volume and disabled state were retained.
-- Evidence: `_temp/sfx-default-volume-20261119/play-verification.txt` and `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Live networked client audio and packaged build are unverified.
+- Unity `2023.2.20f1c1` isolated Play Mode measured old 10% RMS `0.0016305`, new 10% RMS `0.0052044`, 100% RMS `0.0163003`, and 0% RMS `0.0000000`. The off switch applies the same -80 dB mute as slider zero. The 60% default and retention of a saved 10% value were verified. Evidence: `_temp/sfx-low-volume-20261119/play-verification.txt`.
+- Historical evidence for the superseded 100% default is in `_temp/sfx-default-volume-20261119/play-verification.txt`. Live networked client listening and packaged build are unverified. Details: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`.
 
 ## [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19)
 

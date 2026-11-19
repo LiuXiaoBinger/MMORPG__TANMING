@@ -770,10 +770,10 @@
 - `SoundComponent` 将现有的技能、移动和战斗音效通过 `SFX` 进行路由。`UIRoot` 播放原始的鼠标和触摸 UI 点击音效。聊天语音有单独的音频源。BGM 组已准备好未来的背景音乐。此次更改中未包含任何音乐轨道。
 - 详情和文件：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。网络客户端音频和打包构建验证仍待确认。
 
-## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] 默认音效使用原始音量（2026-11-19）
+## [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] 恢复 SFX 默认值并改善低音量 (2026-11-19)
 
-- 提交 `6a4fa75` 在 `codex/feature-development` 分支中，将游戏音效默认音量从 `SoundVolumeData.cs` 和 `SettingPanel.prefab` 中的 `EffectsVolume` 滑块的 60% 更改为 100%。新默认值在没有本地音量值时生效。已保存的音量值或禁用状态仍会被保留。
-- 音效最大值和 BGM 默认值保持不变。详情：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。
+- 根据用户的澄清，`2bbcb72` 在 `codex/feature-development` 分支上取代了 `6a4fa75` 的 100% 默认值。首次启动的滑块值再次为 60%。音效滑杆在 10% 档的混音衰减从 -20 dB 减轻为 -10 dB，保持 0% 在静音状态，保持 100% 在 0 dB。
+- `MAudioMgr` 应用了新的 SFX 曲线。`SoundVolumeData` 和 `SettingPanel.prefab` 恢复了 60% 的默认值。已保存的滑块值、已保存的开关状态以及 BGM 行为均保留。详情：`项目修改日志/2026-11-19-设置音量与游戏音效接入.md`。
 
 ## [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] 整理编辑器工具菜单并移除一次性命令 (2026-11-19)
 
