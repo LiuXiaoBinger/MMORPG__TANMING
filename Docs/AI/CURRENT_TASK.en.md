@@ -764,3 +764,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Unity presentation 3013001 emits the wrapper prefab MjsTornadoSlash at frame 24. The separate MjsTornadoMist material set keeps the wind translucent on D3D11. The imported Skill-1053 prefab and shared materials are preserved. The skill reuses the Twinblade Storm icon.
 - The reported missing skill was reproduced on a live Unity session served by old local Debug processes and stale output tables. CenterServer and GameServer were started from verified local builds, GateServer reconnected, and the normal Debug outputs were also synchronized. The same role entered MainCity and received 10130 in slot 6.
 - Evidence and file inventory are in `项目修改日志/2026-11-19-龙卷斩技能接入与风效优化.md`. Local networked casting in MainCity and isolated dungeon damage were verified. Networked dungeon damage, multiplayer playback, and the Player build remain unverified.
+
+## [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19)
+
+- Commit `28c0f6d` on `codex/feature-development` connects the existing settings controls to `SoundVolumeData` and the RO-compatible `MAudioMgr.SetBGMVolume` / `SetSEVolume` entry points. Unity mixer groups `BGM` and `SFX` apply volume independently. The two switches and sliders persist locally. Turning a channel off mutes it and locks its slider until re-enabled, preserving the saved volume.
+- `SoundComponent` routes existing skill, movement and combat sounds through `SFX`. `UIRoot` plays an original click on mouse and touch UI hits. Chat voice has a separate audio source. The BGM group is ready for a future background track. No track is included in this change.
+- Details and files: `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Networked client audio and packaged build verification remain open.

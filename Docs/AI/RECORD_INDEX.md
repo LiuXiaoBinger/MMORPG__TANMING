@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `59efe089980536ea177912e85296eca09b4927b73235cc53984366cefdd7a074`
+Source normalized SHA256: `f7b879f8d63c950cb27819dc4dd73d9c6aa1b3e402fc40f65f755f412d0580b6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -108,11 +108,12 @@ Source normalized SHA256: `59efe089980536ea177912e85296eca09b4927b73235cc5398436
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
 | [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-760 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 761-766 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 761-767 |
+| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 768-772 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b01b455d20902c68ce86d26a8bfdc6c188b3bb10862563fd11dfe35a61f01b69`
+Source normalized SHA256: `e0e47cbde1d66cb83008db5c5a542b491ed0806c45636373b3e8e0a0a032f9a9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -212,7 +213,8 @@ Source normalized SHA256: `b01b455d20902c68ce86d26a8bfdc6c188b3bb10862563fd11dfe
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
 | [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-792 |
-| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 793-798 |
+| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 793-799 |
+| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 800-804 |
 
 ## Docs/AI/DECISIONS.en.md
 

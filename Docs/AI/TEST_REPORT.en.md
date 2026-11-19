@@ -796,3 +796,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - The 80-frame Direct3D11 preview used the published animation and effect. The role root stayed in place, and the wind rendered as translucent blue-white ribbons without the dark solid column or rectangular floor patch.
 - On November 19, the running local Unity client went through real role selection on the updated local services. The skill snapshot grew from 10 to 11 records, with 10130 at level 1 in slot 6. One input dispatch received 11170 Succeed (effect 2013001, duration 3133 ms, cooldown 8000 ms), 11171 start and 11173 normal end. The client spawned MjsTornadoSlash(Clone) during that cast. All 18 updated Debug output files matched the verified artifacts.
 - Raw evidence is under `_temp/mjs-moving-tornado-20261119/`, including `live-deploy/unity-cast.txt` and `build/GameServer/tornado-smoke.log`. Networked dungeon damage, multiplayer playback, and the Player build remain unverified.
+
+## [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19)
+
+- Unity `2023.2.20f1c1` compiled `LYF_Game` without compile errors and found six prefab references, both mixer groups and the click clip.
+- Isolated Play Mode verified independent BGM/SFX gain, restoring saved gain after re-enabling, model routing, and mouse/touch clicks on UI only. Offline mixed audio RMS was `0.0163003` at 100%, `0.0040556` at 25%, and `0.0000000` with SFX disabled. A separate Unity process read back the saved settings.
+- Evidence: `_temp/settings-audio-20261119/audio-verification.txt` and `项目修改日志/2026-11-19-设置音量与游戏音效接入.md`. Networked client audio and packaged build verification remain open.
