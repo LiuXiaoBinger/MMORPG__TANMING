@@ -75,8 +75,26 @@ MonoBehaviour:
     - SourceEventIndex: 0
       Frame: 0
       TimeSeconds: 0
-      Clip: {fileID: 8300000, guid: 1d56dd5b8894ad6438b5426a1c40c8cf, type: 3}
-      Volume: 0.35
+      Clip: {fileID: 8300000, guid: 28e739deefff8034d9759107d1065535, type: 3}
+      Volume: 0.65
+  JumpStart2:
+    AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_MJS_Jump_2.anim
+    DurationSeconds: 1.5000001
+    AudioEvents:
+    - SourceEventIndex: 0
+      Frame: 0
+      TimeSeconds: 0
+      Clip: {fileID: 8300000, guid: e0ae4a051fa38a841ab00e9d805fb7f1, type: 3}
+      Volume: 0.65
+  JumpStart3:
+    AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_MJS_Jump_3.anim
+    DurationSeconds: 0.6666667
+    AudioEvents:
+    - SourceEventIndex: 0
+      Frame: 0
+      TimeSeconds: 0
+      Clip: {fileID: 8300000, guid: 366bb4983042e594c9ae3a21a3d19976, type: 3}
+      Volume: 0.65
   JumpEnd:
     AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Jump_End.anim
     DurationSeconds: 0.83333343

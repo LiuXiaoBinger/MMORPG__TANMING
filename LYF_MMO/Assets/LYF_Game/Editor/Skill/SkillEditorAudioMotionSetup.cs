@@ -18,24 +18,30 @@ public static class SkillEditorAudioMotionSetup
     /// <summary>七个已有表现行，不新增主技能或表格记录。</summary>
     private static readonly int[] PresentationIds = { 3001001, 3001002, 3001003, 3004001, 3005001, 3006001, 3007001 };
 
-    /// <summary>六个普通动作作者文件后缀，包含战斗持剑走跑，不作为服务器技能 ID。</summary>
-    private static readonly string[] LocomotionNames = { "Walk", "Run", "JumpStart", "JumpEnd", "BattleWalk", "BattleRun" };
+    /// <summary>八个普通动作作者文件后缀，含战斗持剑走跑与二、三段起跳，不作为服务器技能 ID。</summary>
+    private static readonly string[] LocomotionNames = { "Walk", "Run", "JumpStart", "JumpEnd", "BattleWalk", "BattleRun", "JumpStart2", "JumpStart3" };
 
-    /// <summary>普通动作对应的原完整剪辑文件名，不改原 Animator 资源。</summary>
-    private static readonly string[] LocomotionClips = { "Anim_MJS_Walk.anim", "Anim_MJS_Run_F.anim", "Anim_JX_Jump_Start.anim", "Anim_JX_Jump_End.anim", "Anim_MJS_Walk_ZD.anim", "Anim_MJS_Run_F_ZD.anim" };
+    /// <summary>普通动作对应的原完整剪辑文件名，不改原 Animator 资源；末两条是魔剑士二、三段起跳剪辑。</summary>
+    private static readonly string[] LocomotionClips = { "Anim_MJS_Walk.anim", "Anim_MJS_Run_F.anim", "Anim_JX_Jump_Start.anim", "Anim_JX_Jump_End.anim", "Anim_MJS_Walk_ZD.anim", "Anim_MJS_Run_F_ZD.anim", "Anim_MJS_Jump_2.anim", "Anim_MJS_Jump_3.anim" };
     #endregion
 
     #region 音频与移动技能配置装配导出
     /// <summary>追加固定音量单次声音，重复执行时同一帧同一声音不会再次插入。</summary>
     /// <param name="config">接收新增声音的原作者对象。</param>
-    /// <param name="fileName">课程音效根目录下的相对资源路径，含音频扩展名。</param>
+    /// <param name="fileName">以 Assets/ 开头的完整音源路径，或课程音效根目录下的相对资源路径。</param>
     /// <param name="frame">明确的时间轴触发帧，零起始。</param>
     /// <param name="volume">制作时固定音量，范围零至一。</param>
     private static void AddAudio(SkillConfigSO config, string fileName, int frame, float volume)
     {
+        // 新录制的完整 Assets/ 路径直接使用，旧课程素材仍沿用相对根目录的写法。
+        string assetPath = fileName;
+        if (!fileName.StartsWith("Assets/"))
+        {
+            assetPath = AudioDirectory + fileName;
+        }
         // Unity 解析实际音频身份，禁止猜测 GUID 或 fileID。
-        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + fileName);
-        if (clip == null) throw new InvalidOperationException("课程音效尚未导入：" + fileName);
+        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath);
+        if (clip == null) throw new InvalidOperationException("课程音效尚未导入：" + assetPath);
         // 原 Y 声音事件列表，通过序列化边界保留所有已有事件引用。
         SerializedObject serialized = new SerializedObject(config);
         // 当前粒子与声音混合列表，新增时只扩展尾部。
@@ -73,7 +79,7 @@ public static class SkillEditorAudioMotionSetup
         EnsureTrack(config, 2);
     }
 
-    /// <summary>将六份普通动作稿单独发布，不改变技能表身份或原角色预制体。</summary>
+    /// <summary>将八份普通动作稿单独发布，不改变技能表身份或原角色预制体。</summary>
     [MenuItem("Tools/技能/YCombat/导出MJS走跑跳声音")]
     public static void ExportLocomotion()
     {
@@ -83,9 +89,9 @@ public static class SkillEditorAudioMotionSetup
         // 已存在时修改同一运行配置，保留 GUID 和依赖引用。
         SkillRuntimeLocomotionConfig runtime = AssetDatabase.LoadAssetAtPath<SkillRuntimeLocomotionConfig>(path);
         if (runtime != null && EditorUtility.IsDirty(runtime)) throw new InvalidOperationException("普通动作运行配置存在未保存修改，未覆盖：" + path);
-        // 先转换六份作者稿，任何稿件无效时不修改当前运行资产。
+        // 先转换八份作者稿，任何稿件无效时不修改当前运行资产。
         List<SkillRuntimeLocomotionAction> actions = new List<SkillRuntimeLocomotionAction>();
-        // Walk/Run/JumpStart/JumpEnd 的稳定顺序与配置字段对应。
+        // Walk/Run/JumpStart/JumpEnd 的稳定顺序与配置字段对应，末尾追加二、三段起跳。
         for (int index = 0; index < LocomotionNames.Length; index++)
         {
             // 已通过 Unity 加载的普通动作作者稿。
@@ -108,11 +114,14 @@ public static class SkillEditorAudioMotionSetup
         runtime.JumpEnd = actions[3];
         runtime.BattleWalk = actions[4];
         runtime.BattleRun = actions[5];
+        // 二、三段起跳写入新增具名字段，索引六、七对应数组末两条。
+        runtime.JumpStart2 = actions[6];
+        runtime.JumpStart3 = actions[7];
         EditorUtility.SetDirty(runtime);
         AssetDatabase.SaveAssetIfDirty(runtime);
     }
 
-    /// <summary>为七份技能作者稿及六个走跑跳动作补齐课程音效，并发布对应运行配置。</summary>
+    /// <summary>为七份技能作者稿及八个走跑跳动作补齐课程音效，并发布对应运行配置。</summary>
     [MenuItem("Tools/技能/YCombat/编入魔剑士课程音效")]
     public static void PrepareAndExport()
     {
@@ -187,7 +196,13 @@ public static class SkillEditorAudioMotionSetup
     /// <summary>创建缺失普通动作稿，已有稿不重置，声音事件通过同一技能编辑器编辑。</summary>
     private static void PrepareLocomotion()
     {
-        // 六份作者稿均沿用原动画资源，每份仅新增声音制作数据。
+        // 三段起跳各自的视频截取录音，按段号依次对应一段、二段、三段。
+        string[] jumpAudios = {
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage01_Yimeng.wav",
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage02_Yimeng.wav",
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage03_Yimeng.wav"
+        };
+        // 八份作者稿均沿用原动画资源，每份仅新增声音制作数据。
         for (int index = 0; index < LocomotionNames.Length; index++)
         {
             // 本条作者资产路径，没有数字主技能身份。
@@ -215,7 +230,15 @@ public static class SkillEditorAudioMotionSetup
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EnsureTrack(config, 0);
             EnsureTrack(config, 2);
-            if (index < 2 || index > 3)
+            // 第一段起跳改用视频截取的一段落录音，零帧触发且固定音量。
+            if (index == 2) AddAudio(config, jumpAudios[0], 0, 0.65f);
+            // 第二段起跳改用独立的二段录音，与一段各播各的。
+            else if (index == 6) AddAudio(config, jumpAudios[1], 0, 0.65f);
+            // 第三段起跳改用独立的三段录音，索引七不会落入脚步分支。
+            else if (index == 7) AddAudio(config, jumpAudios[2], 0, 0.65f);
+            // 落地声保持原有零帧配置不变。
+            else if (index == 3) AddAudio(config, "Footstep/Dirt_footstep8.wav", 0, 0.28f);
+            else
             {
                 // 根据原脚掌高度曲线的最低接地点制作左右脚步点。
                 int leftFrame = FootContactFrame(clip, "LeftFootT.y", config.timelineFrameRate);
@@ -224,8 +247,6 @@ public static class SkillEditorAudioMotionSetup
                 AddAudio(config, "Footstep/Dirt_footstep8.wav", leftFrame, 0.28f);
                 AddAudio(config, "Footstep/Dirt_footstep9.wav", rightFrame, 0.30f);
             }
-            else if (index == 2) AddAudio(config, "Footstep/Female_Jump_02_Kimlinh.wav", 0, 0.35f);
-            else AddAudio(config, "Footstep/Dirt_footstep8.wav", 0, 0.28f);
             AssetDatabase.CreateAsset(config, path);
             EditorUtility.SetDirty(config);
             AssetDatabase.SaveAssetIfDirty(config);
@@ -293,12 +314,21 @@ public static class SkillEditorAudioMotionSetup
             "Attack/tianshen2_attack1.wav", "Attack/tianshen2_attack2.wav", "Attack/Clip_Test010.wav",
             "Skill/tianshen8_skill2.wav", "Skill/Female_Attack_11_Kimlinh.wav", "Skill/JuQi/Clip_Skill05_Juqi.wav",
             "Explosion/K Electric Impact.mp3", "Footstep/Dirt_footstep8.wav", "Footstep/Dirt_footstep9.wav",
-            "Footstep/Female_Jump_02_Kimlinh.wav"
+            // 三段起跳改用视频截取的三条独立录音，不再要求旧课程起跳声。
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage01_Yimeng.wav",
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage02_Yimeng.wav",
+            "Assets/LYF_Game/Audios/Characters/MJS/Jump/Jump_Stage03_Yimeng.wav"
         };
-        // 新建作者音轨所需的课程素材路径，统一相对于 AudioDirectory。
+        // 新建作者音轨所需素材：完整 Assets/ 路径直接检查，其余按 AudioDirectory 拼接。
         for (int index = 0; index < sounds.Length; index++)
         {
-            if (AssetDatabase.LoadAssetAtPath<AudioClip>(AudioDirectory + sounds[index]) == null) throw new InvalidOperationException("课程音效尚未导入：" + sounds[index]);
+            // 本条素材的实际资源路径：完整 Assets/ 路径原样使用，课程相对路径稍后拼接根目录。
+            string assetPath = sounds[index];
+            if (!assetPath.StartsWith("Assets/"))
+            {
+                assetPath = AudioDirectory + assetPath;
+            }
+            if (AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath) == null) throw new InvalidOperationException("课程音效尚未导入：" + assetPath);
         }
         // 普通动作的运行配置也在全部制作前检查脏状态。
         SkillRuntimeLocomotionConfig locomotion = AssetDatabase.LoadAssetAtPath<SkillRuntimeLocomotionConfig>(SkillEditorAssetTools.RuntimeDirectory + "/SkillRuntimeLocomotionConfig_MJS.asset");
@@ -350,8 +380,8 @@ public static class SkillEditorAudioMotionSetup
         return first;
     }
 
-    /// <summary>得到六份普通动作的固定作者资产路径，独立于正式技能数字 ID。</summary>
-    /// <param name="index">普通动作索引，范围零至五。</param>
+    /// <summary>得到八份普通动作的固定作者资产路径，独立于正式技能数字 ID。</summary>
+    /// <param name="index">普通动作索引，范围零至七；六、七为二、三段起跳。</param>
     /// <returns>现有作者目录下的完整 Unity 资源路径。</returns>
     private static string LocomotionAuthoringPath(int index)
     {

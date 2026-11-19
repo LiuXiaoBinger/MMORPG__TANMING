@@ -13,6 +13,12 @@ public sealed class SoundComponent
     /// <summary>MJS普通动作导出资产的固定资源地址。</summary>
     private const string LocomotionLocation = "Assets/LYF_Game/Config/Skill/Runtime/SkillRuntimeLocomotionConfig_MJS.asset";
 
+    /// <summary>二段起跳专属状态名，直接绑定控制器，无就绪剪辑信息可供动画时钟派发。</summary>
+    private const string SecondJumpStartState = "Jump_Start_2";
+
+    /// <summary>三段起跳专属状态名，直接绑定控制器，无就绪剪辑信息可供动画时钟派发。</summary>
+    private const string ThirdJumpStartState = "Jump_Start_3";
+
     /// <summary>仍被模型持有的普通动作共享加载记录，最后模型释放时归还。</summary>
     private static LocomotionCacheEntry _sharedEntry;
 
@@ -150,48 +156,69 @@ public sealed class SoundComponent
         if (config.BattleWalk != null && config.BattleWalk.AnimationLocation == location) return config.BattleWalk;
         if (config.BattleRun != null && config.BattleRun.AnimationLocation == location) return config.BattleRun;
         if (config.JumpStart != null && config.JumpStart.AnimationLocation == location) return config.JumpStart;
+        // 二、三段起跳不在此按路径匹配：其专属状态无就绪剪辑，改由过渡被接受后显式派发，避免异步登记后同段双响。
         if (config.JumpEnd != null && config.JumpEnd.AnimationLocation == location) return config.JumpEnd;
         return null;
     }
 
     #region 核心逻辑
-    /// <summary>追加起跳或移动落地时，播放对应基础跳跃轨道的零秒音效。</summary>
-    /// <param name="stateName">基础跳跃音轨状态名，取 Jump_Start 或 Jump_End。</param>
+    /// <summary>按状态名播放零秒音效；基础起跳与落地沿用就绪剪辑校验，二、三段专属状态在过渡被接受后直接派发。</summary>
+    /// <param name="stateName">起跳或落地状态名，取 Jump_Start、Jump_Start_2、Jump_Start_3 或 Jump_End。</param>
     public void Play(string stateName)
     {
-        // 专属二、三段起跳与移动落地都会从对应基础动画复用声音。
-        if (stateName != MAnimator.STATE_JUMP_START && stateName != MAnimator.STATE_JUMP_END)
+        // 专属二、三段起跳由发起处过渡结果保证，无需就绪剪辑信息。
+        bool isAdditionalJump = stateName == SecondJumpStartState ||
+            stateName == ThirdJumpStartState;
+        // 只接受基础起跳、二段、三段与落地四种音轨状态。
+        if (!isAdditionalJump && stateName != MAnimator.STATE_JUMP_START &&
+            stateName != MAnimator.STATE_JUMP_END)
         {
             return;
         }
-        // 宿主模型或其 Animator 缺失时无法确认职业动画绑定。
-        if (_host == null || _host.Ator == null)
+        // 宿主模型缺失时无法创建跟随模型的三维声源。
+        if (_host == null)
         {
             return;
         }
-        // 普通动作声音配置在模型初始化后异步加载。
+        // 基础起跳与落地仍需 Animator 确认绑定剪辑，专属二、三段不依赖该信息。
+        if (!isAdditionalJump && _host.Ator == null)
+        {
+            return;
+        }
+        // 普通动作声音配置在模型初始化后异步加载，专属状态也以配置就绪为发声边界。
         if (_entry == null || _entry.Config == null)
         {
             return;
         }
-        // 本次即时发声所复用的基础起跳或落地轨道。
+        // 本次即时发声复用的音轨，二、三段取专属字段，其余取基础起跳或落地字段。
         SkillRuntimeLocomotionAction action = _entry.Config.JumpStart;
         if (stateName == MAnimator.STATE_JUMP_END)
         {
             action = _entry.Config.JumpEnd;
         }
+        else if (stateName == SecondJumpStartState)
+        {
+            action = _entry.Config.JumpStart2;
+        }
+        else if (stateName == ThirdJumpStartState)
+        {
+            action = _entry.Config.JumpStart3;
+        }
         if (action == null || action.AudioEvents == null)
         {
             return;
         }
-        // 已登记的基础剪辑需与音轨资源地址一致，确保声音属于当前职业。
-        MAnimator.MAnimInfo animation = _host.Ator.GetAnimInfo(stateName);
-        if (animation == null || !animation.IsClipReady ||
-            animation.ReadyClipPath != action.AnimationLocation)
+        // 基础起跳与落地的剪辑须与音轨地址一致，确保声音属于当前职业。
+        if (!isAdditionalJump)
         {
-            return;
+            MAnimator.MAnimInfo animation = _host.Ator.GetAnimInfo(stateName);
+            if (animation == null || !animation.IsClipReady ||
+                animation.ReadyClipPath != action.AnimationLocation)
+            {
+                return;
+            }
         }
-        // index 为基础跳跃音轨事件的零起始下标。
+        // index 为本次音轨事件的零起始下标。
         for (int index = 0; index < action.AudioEvents.Count; index++)
         {
             // 当前轨道事件，只消费起点触发的单次声音。

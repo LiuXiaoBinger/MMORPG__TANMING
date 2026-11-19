@@ -372,10 +372,11 @@ public sealed class MJumpComponent : EntityComponentBase
         }
         if (played)
         {
+            // 二、三段专属状态直接绑控制器，尚无就绪剪辑信息可供声音组件按动画时钟派发。
+            // 过渡被接受后在此显式派发该专属状态的零秒音轨；基础一段仍由声音组件自动播放。
             if (isAdditionalJump)
             {
-                // 专属状态直接绑定剪辑，复用基础起跳轨道的零秒音效。
-                Entity.Model.Sound.Play(MAnimator.STATE_JUMP_START);
+                Entity.Model.Sound.Play(_pendingStateName);
             }
             _pendingStateName = string.Empty;
         }

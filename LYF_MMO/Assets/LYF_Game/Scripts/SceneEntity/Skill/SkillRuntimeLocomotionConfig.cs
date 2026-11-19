@@ -14,8 +14,12 @@ public sealed class SkillRuntimeLocomotionConfig : ScriptableObject
     public SkillRuntimeLocomotionAction BattleWalk = new SkillRuntimeLocomotionAction();
     /// <summary>战斗跑步原动画与脚步声音轨道，不与普通跑步的不同长度混用。</summary>
     public SkillRuntimeLocomotionAction BattleRun = new SkillRuntimeLocomotionAction();
-    /// <summary>每次起跳动画的单次声音轨道。</summary>
+    /// <summary>第一段起跳动画的单次声音轨道。</summary>
     public SkillRuntimeLocomotionAction JumpStart = new SkillRuntimeLocomotionAction();
+    /// <summary>第二段起跳动画的独立单次声音轨道，绑定 Anim_MJS_Jump_2 剪辑。</summary>
+    public SkillRuntimeLocomotionAction JumpStart2 = new SkillRuntimeLocomotionAction();
+    /// <summary>第三段起跳动画的独立单次声音轨道，绑定 Anim_MJS_Jump_3 剪辑。</summary>
+    public SkillRuntimeLocomotionAction JumpStart3 = new SkillRuntimeLocomotionAction();
     /// <summary>每次落地动作的单次声音轨道。</summary>
     public SkillRuntimeLocomotionAction JumpEnd = new SkillRuntimeLocomotionAction();
 }
