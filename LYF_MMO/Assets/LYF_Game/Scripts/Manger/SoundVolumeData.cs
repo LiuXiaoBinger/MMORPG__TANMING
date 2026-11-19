@@ -48,10 +48,10 @@ public static class SoundVolumeData
         }
     }
 
-    /// <summary>游戏音效滑杆保存的音量，默认沿用设置页的 60%。</summary>
+    /// <summary>游戏音效滑杆保存的音量，本机没有保存值时使用原始音量 100%。</summary>
     public static float SoundSeVolume
     {
-        get => PlayerPrefs.GetFloat(SoundSeVolumeKey, 0.6f);
+        get => PlayerPrefs.GetFloat(SoundSeVolumeKey, 1f);
         set
         {
             PlayerPrefs.SetFloat(SoundSeVolumeKey, value);
