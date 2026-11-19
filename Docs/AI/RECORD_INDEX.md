@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `e849642e608c38d511091ec150eba01a6ac563c93f5b07cb51099ce2b5943f65`
+Source normalized SHA256: `e350b540f4da1596cf94c1a5129c01516eca62cc2c075a5b1fbca575890a548f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -108,13 +108,13 @@ Source normalized SHA256: `e849642e608c38d511091ec150eba01a6ac563c93f5b07cb51099
 | [CODE][FILES][HANDOFF][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Magic Swordsman stage 2 and 3 jump animations | 740-747 |
 | [CODE][FILES][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Four base combat resources for roles and monsters (2026-11-18) | 748-753 |
 | [CODE][FILES][HANDOFF][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role status footer and Arena Settings | 754-762 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-769 |
-| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 770-775 |
-| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19) | 776-779 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-771 |
+| [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 772-777 |
+| [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX uses original volume (2026-11-19) | 778-781 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4f8116139b98e2b08f974c06d3ba85c19767b7391165e1eb4127c5a9797aac61`
+Source normalized SHA256: `526a63d5994a72fa6a4a3eff925476abe0eaf58181036c6d3b2c64f7f2d9bd2e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -214,9 +214,9 @@ Source normalized SHA256: `4f8116139b98e2b08f974c06d3ba85c19767b7391165e1eb4127c
 | [VERIFY][魔剑士][跳跃][MJS-JUMP-STAGES-20261118] Compiled and replayed the three jump stages | 771-779 |
 | [VERIFY][战斗][角色][怪物][COMBAT-RESOURCES-20261118] Combat resource compilation and isolated checks (2026-11-18) | 780-785 |
 | [VERIFY][HUD][竞技][ROLE-FOOTER-ARENA-20261119] Role footer and Arena Settings verification | 786-794 |
-| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-801 |
-| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 802-807 |
-| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19) | 808-811 |
+| [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-803 |
+| [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 804-809 |
+| [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] Default SFX volume verification (2026-11-19) | 810-813 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -35,7 +35,7 @@ MonoBehaviour:
   actionEditorSchemaVersion: 1
   timingVersion: 1
   phases: []
-  timelineFrameRate: 30
+  timelineFrameRate: 60
   flowNodes: []
   skillID: 10130
   skillName: "\u9F99\u5377\u65A9"
@@ -93,7 +93,7 @@ MonoBehaviour:
   cameraCues: []
   fxList:
   - contentKind: 1
-    keyNumber: 24
+    keyNumber: 30
     endKeyNumber: 0
     particleSystem: {fileID: 1896660141153071907, guid: 43163386f704a7744acb988da93a8ed1, type: 3}
     offset: {x: 0, y: 0, z: 0}
@@ -103,7 +103,26 @@ MonoBehaviour:
     audioClip: {fileID: 0}
     followCharacter: 0
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0.5, y: 0.5, z: 0.5}
+    scale: {x: 1, y: 1, z: 1}
+    playbackSpeed: 1
+    useWorldSpace: 0
+    customLifetime: 0
+    audioRandomize: 0
+    pitchVariation: 0.1
+    volumeVariation: 0.05
+    baseVolume: 1
+  - contentKind: 2
+    keyNumber: 25
+    endKeyNumber: 25
+    particleSystem: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    socketPath:
+    placementKind: 0
+    forwardDistance: 0
+    audioClip: {fileID: 8300000, guid: 1c53623f1d09b7145b65845539cdf41b, type: 3}
+    followCharacter: 1
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     playbackSpeed: 1
     useWorldSpace: 0
     customLifetime: 0

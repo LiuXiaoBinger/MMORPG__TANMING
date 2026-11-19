@@ -9,11 +9,11 @@ public sealed class ROMovingTornadoSkill : ROSkill
     /// <summary>龙卷斩的技能主表编号，和角色学习记录保持一致。</summary>
     public const int TornadoSlashSkillId = 10130;
 
-    /// <summary>动作第 24 帧放出龙卷风，0.3 秒后的结果点距施法开始 1100 毫秒。</summary>
-    private const int ImpactMilliseconds = 1100;
+    /// <summary>动作第 30 帧（60 帧每秒）放出龙卷风，施法开始后 600 毫秒命中，比动作结束早一个服务端逻辑步。</summary>
+    private const int ImpactMilliseconds = 600;
 
-    /// <summary>龙卷风起点前移 0.65 米，原特效 0.3 秒处向前移动约 5.86 米，再按 0.5 倍缩放。</summary>
-    private const float ImpactDistance = 3.58f;
+    /// <summary>风体放出 100 毫秒后的世界距离，包含起点前移的 0.65 米。</summary>
+    private const float ImpactDistance = 2.95f;
 
     /// <summary>提交本次施法的在线角色，用于判断副本归属及查询伤害属性。</summary>
     private readonly OnlineRole caster_;

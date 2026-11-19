@@ -15,19 +15,24 @@ MonoBehaviour:
   PresentationId: 3013001
   SkillId: 10130
   AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_TornadoSlash.anim
-  DurationSeconds: 3.133
-  TimelineDurationSeconds: 3.1333334
+  DurationSeconds: 0.65
+  TimelineDurationSeconds: 0.65
   FxEvents:
   - SourceEventIndex: 0
-    Frame: 24
-    TimeSeconds: 0.8
+    Frame: 30
+    TimeSeconds: 0.5
     Particle: {fileID: 1896660141153071907, guid: 43163386f704a7744acb988da93a8ed1, type: 3}
     PlacementKind: 3
     SocketPath:
     LocalPosition: {x: 0, y: 0, z: 0}
     LocalEulerAngles: {x: 0, y: 0, z: 0}
-    LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+    LocalScale: {x: 1, y: 1, z: 1}
     ForwardDistance: 0.65
-  AudioEvents: []
+  AudioEvents:
+  - SourceEventIndex: 1
+    Frame: 25
+    TimeSeconds: 0.41666666
+    Clip: {fileID: 8300000, guid: 1c53623f1d09b7145b65845539cdf41b, type: 3}
+    Volume: 1
   ChargeList: []
   Collisions: []
