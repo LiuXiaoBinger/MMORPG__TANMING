@@ -808,3 +808,9 @@
 - 首次仅执行脚本编译时沿用了旧资源输入，已移除的脚本触发 CS2001。在 Unity `2023.2.20f1c1` 中强制刷新资源并编译后，脚本域完成重载，错误记录为 0 条。
 - Unity 原生菜单检查在 `工具` 下计得 16 项，确认了全部 11 个迁移后的入口，且 14 条已移除的路径均未发现。6 个 YooAsset 菜单项、`Tools/Demigiant/DOTween Utility Panel` 和 `Build/BuildDll` 仍位于原有路径。调用 `工具/技能/打开技能编辑器` 返回 true，并找到 `SkillEditorWindow`。
 - 验证覆盖编译、实际菜单路径、打开技能编辑器，以及已保存资源的存在性。批处理操作的输出和 Play Mode 未验证。证据见 `_temp/skill-editor-menu-20261119/cleanup-verification.json` 和 `项目修改日志/2026-11-19-Unity项目编辑工具菜单整理.md`。
+
+## [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] 服务端护盾快照与 Unity 头顶显示验证
+
+- 使用正式技能配置，GameServer 的干净构建和 7 项回环检查均通过。有效最大生命值为 50,000 时，主城和副本施法均生成 10,000 点护盾。受到 2,350 点伤害后，剩余护盾为 7,650 点，HP 仍为 50,000。再次受到 8,000 点伤害时，护盾耗尽，HP 降至 49,650。重新施法、无后续受击时按固定逻辑步到期和场景清理的检查也通过。
+- Unity 导入已保存的 `UIRoot` 预制体和重新构建的 `Network` 插件。隔离 Play Mode 场景解析服务端实测的同一批 11162 通知载荷，验证了初始隐藏、显示 10,000 和 7,650 点、白色条填充为 100% 和 76.5%、跟随移动以及零值快照时隐藏。位置实测与头部锚点的投影一致，最终 Console 检查的错误数为 0。
+- 证据位于 `_temp/mjs-shield-overhead-20261119/`，包括 `server-shield-smoke.log`、`unity-shield-smoke.txt`、`shield-hud-preview.png` 和 `live-final/services.json`。当前登录角色已在本地主城通过快捷键 4 完成联机施法。有效最大生命值为 47496，服务端下发 9499 点护盾，头顶显示 9499 和满格白条。4.948 秒后收到 `11162` 零值快照，护盾清空且显示隐藏。同目录下的 `live-main-city-shield.txt` 和 `shield-main-city.png` 记录了本次验证。Player 打包仍待验证。

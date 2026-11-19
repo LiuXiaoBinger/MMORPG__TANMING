@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c73fcbdd4cb24908b0cd03fd7d246108632b918cfcafbf6a127f19a817d6a3f3`
+Source normalized SHA256: `e0b54b3119f53ba964b65601547d1c864a7c07ef531175d4cd5bcd39b4e74c74`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -111,11 +111,12 @@ Source normalized SHA256: `c73fcbdd4cb24908b0cd03fd7d246108632b918cfcafbf6a127f1
 | [CODE][FILES][HANDOFF][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Moving Tornado Slash and local game rollout | 763-771 |
 | [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 772-777 |
 | [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19) | 778-782 |
-| [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 783-787 |
+| [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 783-788 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 789-793 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `cc620e981a59d2eb256902cf34ccf7b861d9c4894fcc55b4a09b2de5b623bcb5`
+Source normalized SHA256: `7536d1bc6b396ba54dab933fa9eb8d2387b3b96fa2f9eaee06f2e309dd839795`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -218,7 +219,8 @@ Source normalized SHA256: `cc620e981a59d2eb256902cf34ccf7b861d9c4894fcc55b4a09b2
 | [VERIFY][技能][魔剑士][龙卷斩][MJS-TORNADO-SLASH-20261119] Tornado Slash login, cast, rendering and hit timing | 795-803 |
 | [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 804-809 |
 | [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19) | 810-814 |
-| [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 815-819 |
+| [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 815-820 |
+| [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 821-825 |
 
 ## Docs/AI/DECISIONS.en.md
 
