@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `54321719f7f75e9c23a3bcd5a6e22afbd70f6b8d124f954025b9f49d7bd8f33e`
+Source normalized SHA256: `d141868a768bb90ca7075929d876d9227788bea3c30eacb5d62f3b72f83b6fce`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -112,11 +112,12 @@ Source normalized SHA256: `54321719f7f75e9c23a3bcd5a6e22afbd70f6b8d124f954025b9f
 | [CODE][FILES][HANDOFF][设置][音频][SETTINGS-AUDIO-20261119] Settings music and game sound volume (2026-11-19) | 773-778 |
 | [CODE][FILES][HANDOFF][设置][音频][SFX-DEFAULT-VOLUME-20261119] Restore the SFX default and improve low volume (2026-11-19) | 779-783 |
 | [CODE][FILES][HANDOFF][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Consolidate editor tools and retire one-time commands (2026-11-19) | 784-789 |
-| [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 790-794 |
+| [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 790-795 |
+| [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries | 796-800 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `01b68531649100c3adbeffde2ffd3164e4c0adcbf3b859b4f13192c4543bfe75`
+Source normalized SHA256: `5abd625815a7a53a13880b6ac24a3cf8b1e00ec961ef161cc2fe61fda281f45e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -220,7 +221,8 @@ Source normalized SHA256: `01b68531649100c3adbeffde2ffd3164e4c0adcbf3b859b4f1319
 | [VERIFY][设置][音频][SETTINGS-AUDIO-20261119] Settings audio verification (2026-11-19) | 805-810 |
 | [VERIFY][设置][音频][SFX-DEFAULT-VOLUME-20261119] SFX low-volume verification (2026-11-19) | 811-815 |
 | [VERIFY][编辑器][菜单][UNITY-EDITOR-MENUS-20261119] Unity editor menu validation after cleanup (2026-11-19) | 816-821 |
-| [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 822-826 |
+| [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 822-827 |
+| [VERIFY][资源][RO-CLIENT-GC-20261119] Client GC compilation, static and Editor verification | 828-832 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -792,3 +792,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Blue Barrier 10120 (default hotkey 4) opens the existing five-second shield in MainCity as well as dungeons. Capacity remains 20% of effective maximum HP. The server publishes remaining and starting capacity as fields 5 and 6 on the existing 11162 role attribute notification.
 - MainCtrl feeds the local role's snapshot into RoleShieldWidget on the existing UIRoot/MainView, using the actual humanoid head bone when available. The white curved meter follows the remaining fraction and the number shows exact remaining points. Breaking the ward, expiry and leaving the role clear the display.
 - The final GameServer and GateServer are running locally at the usual endpoints; the regular Debug artifacts were synchronized. The signed-in role cast via the formal key 4 in MainCity, displayed 9,499 shield, and hid the meter on the server's natural expiry. The Player build remains unverified. File inventory and evidence links are in `项目修改日志/2026-11-19-苍蓝屏障头顶护盾显示.md`.
+
+## [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries
+
+- Code commits 0059634 and 168ae28 on codex/feature-development. Load.EnterGame collects before opening the login scene. On a successful Single load, SceneMgr replaces the old navigation data, then unloads zero-reference YooAsset resources and collects managed garbage before enabling the business root and invoking the completion callback.
+- Global subscribes to Application.lowMemory, limits collection to once per 600 unscaled seconds, and unsubscribes during shutdown or destruction. Unity incremental GC is enabled.
+- See 项目修改日志/2026-11-19-参考Ro客户端GC_CHANGELOG.md for the file manifest and review findings.
