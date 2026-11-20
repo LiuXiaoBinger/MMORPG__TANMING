@@ -265,8 +265,9 @@ public sealed class CRoleWriteTask
             if (role.ItemSaveVersion == _request.Version)
             {
                 // 同版本要通过下方字段比较才当作重复保存；物品创建和到期时间、次数刷新时间不参与本次比较。
-                if (!SnapshotMatches(db, _request.ItemDataLists) ||
-                    (_request.RoleCountSnapshot && !RoleCountSnapshotMatches(db, _request.RoleCountInfoList)))
+                // 三类快照共用同一版本，任一数据不一致都不能确认旧请求。
+                bool countsMatch = !_request.RoleCountSnapshot || RoleCountSnapshotMatches(db, _request.RoleCountInfoList);
+                if (!SnapshotMatches(db, _request.ItemDataLists) || !countsMatch || !SkillLevelsMatch(db))
                 {
                     // 内容不一致：同版本但数据不同，拒绝并返回权威版本，GameServer 不得清脏。
                     result.Message = "角色物品保存版本内容冲突";
@@ -301,6 +302,7 @@ public sealed class CRoleWriteTask
             {
                 SaveRoleCountData(db, _request.RoleId, _request.Version, _request.RoleCountInfoList);
             }
+            SaveSkillLevels(db);
 
             // 更新角色表的保存版本为请求版本，作为新的权威版本基线。
             role.ItemSaveVersion = _request.Version;
@@ -357,9 +359,23 @@ public sealed class CRoleWriteTask
         bool hasNoItemData = _request.ItemDataLists.Count == 0;
         bool hasNoCountInfo = _request.RoleCountInfoList.Count == 0;
         bool noCountSnapshot = !_request.RoleCountSnapshot;
-        if (hasNoItemData && hasNoCountInfo && noCountSnapshot)
+        // 有些成长行可以免费升级，此时存档可能只有等级变化。
+        bool noSkillLevels = _request.SkillLevels.Count == 0;
+        bool noInventoryOrCounts = hasNoItemData && hasNoCountInfo && noCountSnapshot;
+        if (noInventoryOrCounts && noSkillLevels)
         {
             throw new InvalidOperationException("角色保存请求参数无效，缺少物品或次数快照");
+        }
+        // 所有要写入的技能等级都必须在权威表中，并且同一请求只写一次。
+        HashSet<int> skillIds = new HashSet<int>();
+        for (int index = 0; index < _request.SkillLevels.Count; index++)
+        {
+            // GameServer 保存的正式学习等级，不携带快捷键变更。
+            RoleSkillInfo skill = _request.SkillLevels[index];
+            // 配置有学习门槛的行属于正式技能成长，旧模拟等级不能进入数据库。
+            cfg.SkillEffectInfo effect = LubanMgr.Instance.GetSkillEffectInfoBySkillAndLevel(skill.SkillId, skill.Level);
+            if (effect == null || effect.RequireRoleLevel <= 0 || !skillIds.Add(skill.SkillId))
+                throw new InvalidOperationException("技能等级无效或重复");
         }
 
         // bagTypes 用于检测同一背包类型是否在请求中重复出现。
@@ -409,6 +425,66 @@ public sealed class CRoleWriteTask
             }
         }
 
+    }
+
+    /// <summary>查找已有的角色技能记录，存档只更新等级与更新时间。</summary>
+    /// <param name="db">当前角色保存事务的连接。</param>
+    /// <param name="skillId">稳定技能主表编号。</param>
+    /// <returns>已有记录，旧角色的登录派生技能可能没有数据库行。</returns>
+    private RoleSkillTable FindSkillRow(SqlSugarClient db, int skillId)
+    {
+        // 条件按实际角色和技能定位，同一技能的其他角色记录不参与。
+        int roleId = _request.RoleId;
+        return db.Queryable<RoleSkillTable>().Where(row => row.RoleID == roleId && row.SkillID == skillId).First();
+    }
+
+    /// <summary>检查同一版本的重复写入是否已经保存了相同的技能等级。</summary>
+    /// <param name="db">当前用于读取已存快照的数据库连接。</param>
+    /// <returns>所有本次级别字段一致时为真。</returns>
+    private bool SkillLevelsMatch(SqlSugarClient db)
+    {
+        for (int index = 0; index < _request.SkillLevels.Count; index++)
+        {
+            // 快照只比较当前批次携带的技能，其他技能沿用各自记录。
+            RoleSkillInfo skill = _request.SkillLevels[index];
+            // 缺行或者不同等级都意味着同版本内容冲突。
+            RoleSkillTable stored = FindSkillRow(db, skill.SkillId);
+            if (stored == null || stored.SkillLevel != skill.Level) return false;
+        }
+        return true;
+    }
+
+    /// <summary>在物品和角色版本的同一事务内保存已经升级的技能。</summary>
+    /// <param name="db">正在写入本次角色版本的数据库连接。</param>
+    private void SaveSkillLevels(SqlSugarClient db)
+    {
+        for (int index = 0; index < _request.SkillLevels.Count; index++)
+        {
+            // 只读取级别与编号，网络快照不修改 DB 中已有的快捷键。
+            RoleSkillInfo skill = _request.SkillLevels[index];
+            // 角色过往没有保存过此技能时，创建对应角色行，登录仍按原规则分配快捷键。
+            RoleSkillTable stored = FindSkillRow(db, skill.SkillId);
+            if (stored == null)
+            {
+                // 老表把解锁、经验与等级字段标为忽略插入，首次存档直接写明这些必需字段。
+                const string insert = "INSERT INTO role_skill " +
+                    "(RoleID, SkillID, IsUnlocked, SkillLevel, SkillExp, Bindkey, CreateDate, UpdateDate) " +
+                    "VALUES (@role, @skill, 1, @level, 0, '', @time, @time)";
+                // 创建和更新时间保持同一逻辑写入时刻。
+                DateTime now = DateTime.Now;
+                if (db.Ado.ExecuteCommand(insert, new SugarParameter("@role", _request.RoleId),
+                    new SugarParameter("@skill", skill.SkillId), new SugarParameter("@level", skill.Level),
+                    new SugarParameter("@time", now)) <= 0)
+                    throw new InvalidOperationException("首次保存角色技能等级失败");
+                continue;
+            }
+            if (stored.SkillLevel == skill.Level) continue;
+            // 只更新现有记录的等级与更新时间，快捷键和其他属性仍用旧行。
+            stored.SkillLevel = skill.Level;
+            stored.UpdateDate = DateTime.Now;
+            if (db.Updateable(stored).UpdateColumns(row => new { row.SkillLevel, row.UpdateDate }).ExecuteCommand() <= 0)
+                throw new InvalidOperationException("角色技能等级保存失败");
+        }
     }
 
     /// <summary>比较同版本次数记录的条数、行为、键和数值；空列表代表清空，刷新时间不参与比较。</summary>

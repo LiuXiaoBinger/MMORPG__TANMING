@@ -254,10 +254,13 @@ public sealed partial class SceneWaveSpawner
         int incoming = Math.Max(0, damage);
         double reduction = equipment.Runtime.ResolveDamageReduction(caster.IsBoss);
         if (reduction > 0) incoming = (int)(incoming * (1 - Math.Min(95, reduction) / 100));
+        // 攻击的实际来源用于给打到屏障的怪物添加风冻。
+        GeneRuntime sourceGenes = caster.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+        incoming = MjsSkillGenes.ReducePhysicalDamage(target, incoming);
         // 苍蓝屏障先吸收，剩余部分才受当前生命上限约束。
-        incoming = target.AbsorbDamage(incoming);
+        incoming = target.AbsorbDamage(incoming, sourceGenes, caster.IsBoss);
         int actual = Math.Min(info.CurrHp, incoming); info.CurrHp -= actual;
-        if (actual > 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, caster.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime, skillId, actual, critical));
+        if (actual > 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, sourceGenes, skillId, actual, critical));
         Notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = caster.SpawnId, TargetRoleId = info.RoleId, Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = actual, SkillId = skillId, ResultIndex = resultIndex, Critical = critical });
         if (info.CurrHp > 0) return;
         // 死亡后屏障不再保留，避免复活或重新进场继承旧护盾。

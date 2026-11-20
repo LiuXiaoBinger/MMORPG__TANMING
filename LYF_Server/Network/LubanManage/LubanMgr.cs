@@ -464,6 +464,20 @@ public class LubanMgr:Singleton<LubanMgr>
         return _skillEffectInfos;
     }
 
+    /// <summary>把真实等级行解析到要播放的动作，从而能够复用同一组表现资源。</summary>
+    /// <param name="effectId">客户端和服务端确认的本次技能等级效果编号。</param>
+    /// <returns>用于匹配 SkillPresentationInfo 的效果编号。</returns>
+    public int ResolveSkillPresentationEffectId(int effectId)
+    {
+        // 只有等级行显式指定复用时才改用已有表现，其他技能保持自身编号。
+        SkillEffectInfo effect;
+        if (_skillEffectInfos.TryGetValue(effectId, out effect) && effect.PresentationEffectId > 0)
+        {
+            return effect.PresentationEffectId;
+        }
+        return effectId;
+    }
+
     /// <summary>返回表现配置 ID 到动画变体的索引，调用方不得修改集合。</summary>
     /// <returns>服务端启动时加载的技能表现集合。</returns>
     public Dictionary<int, SkillPresentationInfo> GetSkillPresentationInfos()

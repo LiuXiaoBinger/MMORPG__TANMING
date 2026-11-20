@@ -201,6 +201,8 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <param name="motion">本实体的权威起点、终点、朝向、时长和收包时刻。</param>
     internal void ApplyDungeonMotion(MSceneMonsterMotion motion)
     {
+        // 旧攻击停止包可能伴随击飞到来，已有腾空动作完成前保持其地面落点和弧线。
+        if (motion.Action.Phase == MonsterActionPhase.Idle && IsDungeonKnockUpPlaying()) return;
         // 比较新旧路段是否追击，连续移动中切换巡逻/追击时也刷新默认动作。
         bool wasChasing = DungeonMotion != null && DungeonMotion.Action.TargetRoleId != 0;
         DungeonMotion = motion;
@@ -209,6 +211,16 @@ public sealed class MMoveComponent : EntityComponentBase
         {
             Entity.Machine.MarkTriggered();
         }
+    }
+
+    /// <summary>判断服务端给出的击飞动作是否仍在播放窗口内。</summary>
+    /// <returns>动作相位为击飞且尚未到达落地点时返回真。</returns>
+    private bool IsDungeonKnockUpPlaying()
+    {
+        if (DungeonMotion == null || DungeonMotion.Action.Phase != MonsterActionPhase.KnockUp) return false;
+        // 迟于包到达的时长仍算入完整腾空阶段。
+        double elapsed = (Time.realtimeSinceStartupAsDouble - DungeonMotion.ReceivedAt) * 1000d;
+        return elapsed < DungeonMotion.Action.DurationMs;
     }
 
     /// <summary>按副本服务器给出的起终点和实际毫秒时钟跟进怪物路段。</summary>
@@ -234,6 +246,14 @@ public sealed class MMoveComponent : EntityComponentBase
                 position = UVEC3.Lerp(position, destination, ageMs / action.DurationMs);
             }
             else position = destination;
+        }
+        else if (action.Phase == MonsterActionPhase.KnockUp && action.DurationMs > 0)
+        {
+            // 按真实收包时间推进，模型异步加载后仍从正确的腾空比例开始。
+            float age = (float)((Time.realtimeSinceStartupAsDouble - DungeonMotion.ReceivedAt) * 1000d);
+            // 弧线在起点和终点回到同一导航高度，中点到达服务器给定的最高点。
+            float progress = Mathf.Clamp01(age / action.DurationMs);
+            position.y += 4f * progress * (1f - progress) * (action.ToY - action.Y);
         }
         Entity.Position = position;
         Entity.Model.Rotation = Quaternion.Euler(0f, action.Face, 0f);

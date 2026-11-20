@@ -34,6 +34,36 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         HitIntervalMs = _buf.ReadInt();
         DamagePermyriad = _buf.ReadInt();
         FlatDamage = _buf.ReadInt();
+        RequireRoleLevel = _buf.ReadInt();
+        UpgradeCopper = _buf.ReadInt();
+        ChiCost = _buf.ReadInt();
+        ShieldAbsorbPermyriad = _buf.ReadInt();
+        ShieldDurationMs = _buf.ReadInt();
+        ShieldRefundMinMs = _buf.ReadInt();
+        ShieldRefundMaxMs = _buf.ReadInt();
+        ShieldBurstRadiusCm = _buf.ReadInt();
+        ShieldBurstDamagePermyriad = _buf.ReadInt();
+        ShieldBurstControlMs = _buf.ReadInt();
+        SuperArmorMs = _buf.ReadInt();
+        BasicAttackBonusPermyriad = _buf.ReadInt();
+        FrostSlowPermyriad = _buf.ReadInt();
+        FrostSlowDurationMs = _buf.ReadInt();
+        FrostMaxStack = _buf.ReadInt();
+        FrostRootMs = _buf.ReadInt();
+        ChiVulnPermyriad = _buf.ReadInt();
+        ChiVulnDurationMs = _buf.ReadInt();
+        GuardDefensePermyriad = _buf.ReadInt();
+        GuardRecoverMs = _buf.ReadInt();
+        DualTargetReducePermyriad = _buf.ReadInt();
+        DualTargetSuperArmorMs = _buf.ReadInt();
+        DualTargetReduceMs = _buf.ReadInt();
+        PresentationEffectId = _buf.ReadInt();
+        TornadoDamageBonusPermyriad = _buf.ReadInt();
+        TrueQiDamageStep = _buf.ReadInt();
+        TrueQiStepBonusPermyriad = _buf.ReadInt();
+        MissingTrueQiBonusPermyriad = _buf.ReadInt();
+        TrueQiDamage = _buf.ReadInt();
+        DualTargetProtectionPermyriad = _buf.ReadInt();
     }
 
     public static SkillEffectInfo DeserializeSkillEffectInfo(ByteBuf _buf)
@@ -113,6 +143,126 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
     /// 后续固定伤害
     /// </summary>
     public readonly int FlatDamage;
+    /// <summary>
+    /// 学习/升级到本行所需的角色等级门槛
+    /// </summary>
+    public readonly int RequireRoleLevel;
+    /// <summary>
+    /// 从上一级升到本级消耗铜币；首级为0
+    /// </summary>
+    public readonly int UpgradeCopper;
+    /// <summary>
+    /// 本技能主消耗真气；-1 表示一次成功提交用尽当前真气
+    /// </summary>
+    public readonly int ChiCost;
+    /// <summary>
+    /// 屏障吸收有效最大生命万分比
+    /// </summary>
+    public readonly int ShieldAbsorbPermyriad;
+    /// <summary>
+    /// 屏障持续毫秒
+    /// </summary>
+    public readonly int ShieldDurationMs;
+    /// <summary>
+    /// 未破到期按剩余占比缩短冷却的最少毫秒
+    /// </summary>
+    public readonly int ShieldRefundMinMs;
+    /// <summary>
+    /// 未破到期按剩余占比缩短冷却的最多毫秒
+    /// </summary>
+    public readonly int ShieldRefundMaxMs;
+    /// <summary>
+    /// 屏障到期或破碎时自身爆炸半径厘米
+    /// </summary>
+    public readonly int ShieldBurstRadiusCm;
+    /// <summary>
+    /// 屏障爆炸伤害，外功攻击万分比
+    /// </summary>
+    public readonly int ShieldBurstDamagePermyriad;
+    /// <summary>
+    /// 屏障爆炸附加击倒控制毫秒
+    /// </summary>
+    public readonly int ShieldBurstControlMs;
+    /// <summary>
+    /// 施放时给自身的霸体毫秒
+    /// </summary>
+    public readonly int SuperArmorMs;
+    /// <summary>
+    /// 力强：普攻增伤万分比，主动技能不吃
+    /// </summary>
+    public readonly int BasicAttackBonusPermyriad;
+    /// <summary>
+    /// 风冻每层攻速降低万分比
+    /// </summary>
+    public readonly int FrostSlowPermyriad;
+    /// <summary>
+    /// 风冻每层持续毫秒
+    /// </summary>
+    public readonly int FrostSlowDurationMs;
+    /// <summary>
+    /// 风冻最大层数
+    /// </summary>
+    public readonly int FrostMaxStack;
+    /// <summary>
+    /// 风冻满层定身毫秒
+    /// </summary>
+    public readonly int FrostRootMs;
+    /// <summary>
+    /// 破强：目标受到的真气伤害提高万分比
+    /// </summary>
+    public readonly int ChiVulnPermyriad;
+    /// <summary>
+    /// 破强易伤持续毫秒
+    /// </summary>
+    public readonly int ChiVulnDurationMs;
+    /// <summary>
+    /// 护体：施放瞬间基础内外防提高万分比
+    /// </summary>
+    public readonly int GuardDefensePermyriad;
+    /// <summary>
+    /// 护体防御加成线性恢复毫秒
+    /// </summary>
+    public readonly int GuardRecoverMs;
+    /// <summary>
+    /// 恰命中两个目标时施法者内外功减伤万分比
+    /// </summary>
+    public readonly int DualTargetReducePermyriad;
+    /// <summary>
+    /// 恰命中两个目标时施法者霸体毫秒
+    /// </summary>
+    public readonly int DualTargetSuperArmorMs;
+    /// <summary>
+    /// 恰命中两个目标时减伤持续毫秒
+    /// </summary>
+    public readonly int DualTargetReduceMs;
+    /// <summary>
+    /// 复用动画表现的效果 ID，0 使用本行 ID
+    /// </summary>
+    public readonly int PresentationEffectId;
+    /// <summary>
+    /// 苍云斩固定最终增伤，万分比
+    /// </summary>
+    public readonly int TornadoDamageBonusPermyriad;
+    /// <summary>
+    /// 每达到这一点数的已消耗真气追加一档增伤
+    /// </summary>
+    public readonly int TrueQiDamageStep;
+    /// <summary>
+    /// 每档消耗追加的最终增伤，万分比
+    /// </summary>
+    public readonly int TrueQiStepBonusPermyriad;
+    /// <summary>
+    /// 目标真气耗尽时的主动技能增伤上限，万分比
+    /// </summary>
+    public readonly int MissingTrueQiBonusPermyriad;
+    /// <summary>
+    /// 命中扣除目标的基础真气点数
+    /// </summary>
+    public readonly int TrueQiDamage;
+    /// <summary>
+    /// 双目标触发的自身内外功伤害减免，万分比
+    /// </summary>
+    public readonly int DualTargetProtectionPermyriad;
    
     public const int __ID__ = 1242812144;
     public override int GetTypeId() => __ID__;
@@ -142,6 +292,36 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         + "HitIntervalMs:" + HitIntervalMs + ","
         + "DamagePermyriad:" + DamagePermyriad + ","
         + "FlatDamage:" + FlatDamage + ","
+        + "RequireRoleLevel:" + RequireRoleLevel + ","
+        + "UpgradeCopper:" + UpgradeCopper + ","
+        + "ChiCost:" + ChiCost + ","
+        + "ShieldAbsorbPermyriad:" + ShieldAbsorbPermyriad + ","
+        + "ShieldDurationMs:" + ShieldDurationMs + ","
+        + "ShieldRefundMinMs:" + ShieldRefundMinMs + ","
+        + "ShieldRefundMaxMs:" + ShieldRefundMaxMs + ","
+        + "ShieldBurstRadiusCm:" + ShieldBurstRadiusCm + ","
+        + "ShieldBurstDamagePermyriad:" + ShieldBurstDamagePermyriad + ","
+        + "ShieldBurstControlMs:" + ShieldBurstControlMs + ","
+        + "SuperArmorMs:" + SuperArmorMs + ","
+        + "BasicAttackBonusPermyriad:" + BasicAttackBonusPermyriad + ","
+        + "FrostSlowPermyriad:" + FrostSlowPermyriad + ","
+        + "FrostSlowDurationMs:" + FrostSlowDurationMs + ","
+        + "FrostMaxStack:" + FrostMaxStack + ","
+        + "FrostRootMs:" + FrostRootMs + ","
+        + "ChiVulnPermyriad:" + ChiVulnPermyriad + ","
+        + "ChiVulnDurationMs:" + ChiVulnDurationMs + ","
+        + "GuardDefensePermyriad:" + GuardDefensePermyriad + ","
+        + "GuardRecoverMs:" + GuardRecoverMs + ","
+        + "DualTargetReducePermyriad:" + DualTargetReducePermyriad + ","
+        + "DualTargetSuperArmorMs:" + DualTargetSuperArmorMs + ","
+        + "DualTargetReduceMs:" + DualTargetReduceMs + ","
+        + "PresentationEffectId:" + PresentationEffectId + ","
+        + "TornadoDamageBonusPermyriad:" + TornadoDamageBonusPermyriad + ","
+        + "TrueQiDamageStep:" + TrueQiDamageStep + ","
+        + "TrueQiStepBonusPermyriad:" + TrueQiStepBonusPermyriad + ","
+        + "MissingTrueQiBonusPermyriad:" + MissingTrueQiBonusPermyriad + ","
+        + "TrueQiDamage:" + TrueQiDamage + ","
+        + "DualTargetProtectionPermyriad:" + DualTargetProtectionPermyriad + ","
         + "}";
     }
 }

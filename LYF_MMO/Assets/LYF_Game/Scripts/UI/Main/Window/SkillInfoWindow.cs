@@ -325,6 +325,32 @@ public class SkillInfoWindow : WindowBase
 
     /// <summary>本地模拟的铜币余额，未接货币协议。</summary>
     private int _currency = 224516;
+    /// <summary>正式成长技能的货币余额，取自当前本地角色的权威同步。</summary>
+    private long _growthCopper;
+    /// <summary>用于显示升级可用性的当前角色等级。</summary>
+    private int _growthRoleLevel;
+    /// <summary>请求控制器向服务端提升一次当前学习等级。</summary>
+    public event System.Action<SkillViewData> UpgradeRequested;
+    /// <summary>打开面板时由控制器补入最新的权威角色成长信息。</summary>
+    public event System.Action GrowthContextRequested;
+
+    /// <summary>沿用窗口管理器的显示入口，开启时向控制器请求刷新。</summary>
+    /// <param name="isShow">本次是否显示当前技能窗口。</param>
+    /// <param name="obj">窗口原有数据，由基类按原逻辑处理。</param>
+    public override void Show(bool isShow = true, object obj = null)
+    {
+        base.Show(isShow, obj);
+        if (isShow) GrowthContextRequested?.Invoke();
+    }
+
+    /// <summary>接收当前角色等级与铜币，供下一次技能快照刷新展示。</summary>
+    /// <param name="roleLevel">当前角色的服务端等级。</param>
+    /// <param name="copper">虚拟背包中的铜币点数。</param>
+    public void SetGrowthContext(int roleLevel, long copper)
+    {
+        _growthRoleLevel = roleLevel;
+        _growthCopper = copper;
+    }
 
     /// <summary>本地模拟的绝学心得值。</summary>
     private int _ultimateExp;
@@ -1221,8 +1247,12 @@ public class SkillInfoWindow : WindowBase
             {
                 rangeText = "效果范围：" + skill.Range + " 米";
             }
+            // 真气技能显示独立消耗项，读同一等级行取得的实际消耗方式。
+            string costText = "消耗内力：" + skill.MpCost;
+            if (skill.TrueQiCost < 0) costText = "消耗真气：全部剩余真气";
+            if (skill.TrueQiCost > 0) costText = "消耗真气：" + skill.TrueQiCost;
             _detailCond.text = "调息时间：" + skill.Cooldown.ToString("0.0") + " 秒\n" +
-                rangeText + "\n消耗内力：" + skill.MpCost;
+                rangeText + "\n" + costText;
         }
         RefreshUpgradeBlock(skill);
         if (_page == PageList && _selectedListItem >= 0)
@@ -1378,16 +1408,19 @@ public class SkillInfoWindow : WindowBase
         }
         // 绝学走心得升级，普通技能走铜币。
         bool ultimate = skill.Tag == UltimateTag;
-        SetActive(_normalUpgradeRoot, !ultimate);
+        // 正式成长技能没有下一行时只显示满级说明。
+        bool hasUpgrade = !skill.HasGrowthConfig || (skill.Level > 0 && skill.NextRoleLevel > 0);
+        SetActive(_normalUpgradeRoot, !ultimate && hasUpgrade);
         SetActive(_ultimateUpgradeRoot, ultimate);
         // 等级门槛在滚动内容里，不随升级区隐藏，按技能类型单独显隐。
         // 描述正文若已带「下一级」行，就不再追加第二条，避免滚动区出现两行一样的提示。
         bool descHasNextLevel = !string.IsNullOrEmpty(skill.Description)
             && skill.Description.Contains("下一级");
-        SetNextLevelActive(!ultimate && !descHasNextLevel);
+        SetNextLevelActive(!ultimate && !descHasNextLevel && !skill.HasGrowthConfig);
         if (_currencyText != null)
         {
-            _currencyText.text = _currency.ToString();
+            if (skill.HasGrowthConfig) _currencyText.text = _growthCopper.ToString();
+            else _currencyText.text = _currency.ToString();
         }
         if (ultimate)
         {
@@ -1415,6 +1448,12 @@ public class SkillInfoWindow : WindowBase
     /// <summary>普通技能：显示角色等级门槛、单级铜币消耗与余额是否足够。</summary>
     private void RefreshNormalBlock(SkillViewData skill)
     {
+        if (skill.HasGrowthConfig)
+        {
+            if (_costText != null) _costText.text = skill.UpgradeCost.ToString();
+            if (_upgradeButton != null) _upgradeButton.interactable = CanUpgradeGrowth(skill);
+            return;
+        }
         // 参考实机为「2级 → 角色3级可提升」；本地升级后门槛同步递增，不显示过期等级。
         int levelGap = GetSkillLevel(skill) - skill.Level;
         int requiredRoleLevel = skill.NextRoleLevel > 0
@@ -1434,6 +1473,16 @@ public class SkillInfoWindow : WindowBase
         {
             _upgradeButton.interactable = _currency >= cost;
         }
+    }
+
+    /// <summary>用已显示的下一等级门槛和当前余额决定正式升级按钮的可用性。</summary>
+    /// <param name="skill">已配置逐级数值的已学技能。</param>
+    /// <returns>存在下一行且满足展示条件时为真，最终结果由服务器确认。</returns>
+    private bool CanUpgradeGrowth(SkillViewData skill)
+    {
+        // 角色和铜币条件只用于引导点击，权威处理会重新读同一等级行。
+        bool hasNextLevel = skill.Level > 0 && skill.NextRoleLevel > 0;
+        return hasNextLevel && _growthRoleLevel >= skill.NextRoleLevel && _growthCopper >= skill.UpgradeCost;
     }
 
     /// <summary>绝学：显示心得进度、道具余量与「攒满才可升级」状态。</summary>
@@ -1478,7 +1527,11 @@ public class SkillInfoWindow : WindowBase
             bool canUpgrade = false;
             if (skill != null && skill.Level > 0)
             {
-                if (skill.Tag == UltimateTag)
+                if (skill.HasGrowthConfig)
+                {
+                    canUpgrade = CanUpgradeGrowth(skill);
+                }
+                else if (skill.Tag == UltimateTag)
                 {
                     canUpgrade = _ultimateExp >= UltimateExpMax;
                 }
@@ -1497,6 +1550,11 @@ public class SkillInfoWindow : WindowBase
         SkillViewData skill = _currentSkill;
         if (skill == null || skill.Tag == UltimateTag)
         {
+            return;
+        }
+        if (skill.HasGrowthConfig)
+        {
+            if (CanUpgradeGrowth(skill)) UpgradeRequested?.Invoke(skill);
             return;
         }
         int cost = GetUpgradeCost(skill);
@@ -1522,6 +1580,11 @@ public class SkillInfoWindow : WindowBase
             // 普攻不算技能，绝学走心得制，都不吃铜币。
             if (skill.SkillType == BasicAttackType || skill.Tag == UltimateTag)
             {
+                continue;
+            }
+            if (skill.HasGrowthConfig)
+            {
+                if (CanUpgradeGrowth(skill)) UpgradeRequested?.Invoke(skill);
                 continue;
             }
             int cost = GetUpgradeCost(skill);
@@ -1577,6 +1640,7 @@ public class SkillInfoWindow : WindowBase
     /// <summary>取技能当前等级，叠加本地模拟的升级增量。</summary>
     private int GetSkillLevel(SkillViewData skill)
     {
+        if (skill.HasGrowthConfig) return skill.Level;
         int extra;
         if (_levelOverrides.TryGetValue(skill.SkillId, out extra))
         {

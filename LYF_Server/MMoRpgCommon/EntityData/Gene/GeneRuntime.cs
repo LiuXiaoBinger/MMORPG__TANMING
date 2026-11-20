@@ -219,6 +219,34 @@ public class GeneRuntime
     /// <summary>读取属性组件按来源维护的有效状态。</summary>
     /// <returns>当前生效的状态位。</returns>
     public virtual GeneState GetStates() { return Owner.AttrComp.States; }
+
+    /// <summary>驱散指定的控制位，保留同一根基因中的其他效果。</summary>
+    /// <param name="states">本次允许清除的控制状态。</param>
+    public void DispelStates(GeneState states)
+    {
+        // 由尾到头遍历，纯控制根被移除时其前面的下标不变。
+        for (int index = genes.Count - 1; index >= 0; index--)
+        {
+            // 当前实际生效的根基因，包含当时登记的叶节点。
+            GeneBase gene = genes[index];
+            // 记录此根是否有状态被解除，以便同步所有包含控制的组合。
+            bool changed = false;
+            for (int nodeIndex = 0; nodeIndex < gene.ActiveNodes.Count; nodeIndex++)
+            {
+                // 只解除当前场景实际登记的状态来源。
+                StateGene node = gene.ActiveNodes[nodeIndex] as StateGene;
+                if (node != null && node.AppliesToScenario(Scenario)) changed |= node.Dispel(Owner, states);
+            }
+            if (!changed) continue;
+            // 没有组合效果的空状态根立即移除，其他子项保留原时限。
+            StateGene rootState = gene as StateGene;
+            if (rootState != null && rootState.States == GeneState.None && gene.Children.Count == 0)
+            {
+                RemoveGene(gene);
+            }
+            else Changed?.Invoke(gene, false);
+        }
+    }
     /// <summary>眩晕、定身或击倒禁止移动。</summary>
     public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root | GeneState.Knockdown)) == 0; } }
     /// <summary>眩晕、沉默或击倒禁止施法。</summary>

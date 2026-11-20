@@ -56,6 +56,27 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     /// <summary>当前真气点数，权威值保存在角色快照中。</summary>
     public int CurrTrueQi { get { return Owner.mainRoleInfo.BaseInfo.CurrTrueQi; } }
 
+    /// <summary>
+    /// 当前生效的外功攻击点数：取角色快照外功上下限并叠加基因修正后的均值，
+    /// 供龙卷斩与屏障爆炸按外功比例结算，不再用旧主表 Hurt 冒充外功。
+    /// </summary>
+    public int ExternalAttack
+    {
+        get
+        {
+            // 下限走同一套基因修正，装备与基因加成都会体现在最终外功上。
+            double minimum = CalculateAttribute(GeneAttributeType.AtkExternalMin,
+                Owner.mainRoleInfo.BaseInfo.AtkExternalMin);
+            // 上限与下限同源，避免只取一端造成区间偏差。
+            double maximum = CalculateAttribute(GeneAttributeType.AtkExternalMax,
+                Owner.mainRoleInfo.BaseInfo.AtkExternalMax);
+            // 区间均值代表本次结算的外功点数，负值按零处理。
+            double average = (minimum + maximum) / 2;
+            if (average < 0) average = 0;
+            return (int)average;
+        }
+    }
+
     /// <summary>绑定真实在线角色，复用其原有裸属性和当前资源。</summary>
     /// <param name="owner">本组件所属的在线角色。</param>
     public RoleAttributeComponent(OnlineRole owner) : base(owner) { }

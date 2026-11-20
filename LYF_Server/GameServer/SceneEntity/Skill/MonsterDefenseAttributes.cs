@@ -37,12 +37,10 @@ public class MonsterDefenseAttributes
     /// <returns>经过防御及承伤修正的生命点数，由调用方按剩余 HP 裁切。</returns>
     public virtual int CalculateDamage(RoleBaseInfo attacker, GeneRuntime target, int skillDamage)
     {
-        // RO damage_def.cpp 怪物分支使用防御点数构成有理式；本项目直接接现有外内攻面板均值。
-        double physicalDefense = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DefExternal, DefExternal));
         // 内防独立，外破甲不能降低内功防御。
         double magicDefense = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DefInternal, DefInternal));
-        // RO 怪物物防和魔防分支的基础系数分别为 4000 与 1000，最低保留 5% 伤害。
-        double physicalRate = Math.Max((physicalDefense + 4000) / (physicalDefense * 10 + 4000), 0.05);
+        // 普攻继续复用外防曲线，基础外攻与固定伤害沿旧公式合并。
+        double physicalRate = GetExternalDefenseRate(target);
         // 两种防御都按点数处理，没有把一梦江湖面板点数当成概率。
         double magicRate = Math.Max((magicDefense + 1000) / (magicDefense * 10 + 1000), 0.05);
         // 本项目普攻以区间均值消费当前外功攻击，不额外引入暴击或命中概率公式。
@@ -50,5 +48,26 @@ public class MonsterDefenseAttributes
         // 内功攻击部分独立经过内防，使内破甲能影响真实扣血。
         double magical = Math.Max(0, ((double)attacker.AtkInternalMin + attacker.AtkInternalMax) / 2) * magicRate;
         return Math.Max(0, (int)((physical + magical) * target.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
+    }
+
+    /// <summary>已经按外功攻击计算好的专属技能值，只经过目标外防和承伤修正。</summary>
+    /// <param name="target">目标怪物的基因容器，受临时破甲影响。</param>
+    /// <param name="externalDamage">技能自身合成的外功伤害，单位生命点数。</param>
+    /// <returns>外防结算后的数值，由调用方追加最终增伤及扣血。</returns>
+    public int CalculateExternalSkillDamage(GeneRuntime target, int externalDamage)
+    {
+        // 承伤系数包含目标自己的既有战斗基因，百分数 100 为原值。
+        double damageTaken = target.CalculateAttribute(GeneAttributeType.DamageTaken, 100);
+        return Math.Max(0, (int)(externalDamage * GetExternalDefenseRate(target) * damageTaken / 100));
+    }
+
+    /// <summary>使用统一的外功防御曲线，基础防御与实际破甲一起结算。</summary>
+    /// <param name="target">目标怪物的属性基因。</param>
+    /// <returns>进攻值经过外防后保留的比例。</returns>
+    private double GetExternalDefenseRate(GeneRuntime target)
+    {
+        // RO 怪物外防分支以 4000 为基础系数，最低保留 5%。
+        double defense = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DefExternal, DefExternal));
+        return Math.Max((defense + 4000) / (defense * 10 + 4000), 0.05);
     }
 }

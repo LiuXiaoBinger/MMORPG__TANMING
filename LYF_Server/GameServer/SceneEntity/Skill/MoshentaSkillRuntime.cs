@@ -171,15 +171,25 @@ internal sealed class MoshentaSkillRuntime
     /// <summary>原ASPD仅影响声明受其影响的动作和CD。</summary><param name="skill">原技能。</param>
     private float TimeScale(MoshentaSkillDefinition skill)
     {
-        if (MoshentaSkillCatalog.I(skill.Table, "IsAffectedASPD") == 0) return 1;
+        // 风冻走同一条攻击时间轴，普攻和标为受攻速影响的技能都会延长。
+        bool basicAttack = MoshentaSkillCatalog.I(skill.Table, "SkillDamType") == 0;
+        // 同一个怪物的基因容器也是 CanCastCore 的权威状态来源。
+        GeneRuntime genes = Actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+        // 普攻总是受风冻，其他技能沿原攻速配置决定是否缩放。
+        float frostScale = (float)MjsSkillGenes.AttackTimeScale(genes);
+        if (MoshentaSkillCatalog.I(skill.Table, "IsAffectedASPD") == 0)
+        {
+            if (basicAttack) return frostScale;
+            return 1;
+        }
         // 原怪物最终ASPD，基础字段本副本均低于200。
         float speed = (int)(50.0 / (200 - MoshentaSkillCatalog.F(Actor.Owner.Battle.Catalog.Entity(Actor.EntityId), "ASPD")) * 10000) / 10000f;
-        if (MoshentaSkillCatalog.I(skill.Table, "SkillDamType") != 0)
+        if (!basicAttack)
         {
-            if (speed <= 1) return 1;
+            if (speed <= 1) return frostScale;
             speed = 1 + (speed - 1) * MoshentaSkillCatalog.F(skill.Table, "ASPDPercent");
         }
-        return 1 / speed;
+        return frostScale / speed;
     }
     /// <summary>吟唱结束后开启动作、CD和原结果计时器。</summary><param name="now">精确Fire时点，非本帧终点。</param>
     private void Fire(long now)
@@ -193,7 +203,11 @@ internal sealed class MoshentaSkillRuntime
         // 原ASPD缩放仍先计算，只有普通攻击受副本配置的最小起手间隔约束。
         long cooldownMilliseconds = (long)(MoshentaSkillCatalog.F(current.Skill.Effect, "PVECoolTime") * current.TimeScale * 1000);
         if (MoshentaSkillCatalog.I(current.Skill.Table, "SkillDamType") == 0)
-            cooldownMilliseconds = Math.Max(cooldownMilliseconds, Actor.BasicAttackIntervalMs);
+        {
+            // 既有保底起手间隔也受风冻，否则在受保底约束的副本看不到攻速变化。
+            GeneRuntime genes = Actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+            cooldownMilliseconds = Math.Max(cooldownMilliseconds, (long)(Actor.BasicAttackIntervalMs * MjsSkillGenes.AttackTimeScale(genes)));
+        }
         cooldowns[current.Skill.Id] = now + cooldownMilliseconds;
         Actor.Owner.PublishSkillAction(Actor, MonsterActionPhase.Attack, current.Skill.Id, current.Level, current.TargetId, current.Point, now, endTime);
         for (int index = 0; index < current.Skill.Results.Count; index++)

@@ -148,5 +148,11 @@ public enum GeneAttributeType
     /// <summary>拒芒·衔命，单位百分点。</summary>
     JumangXianming = 143,
     /// <summary>拒芒·烹香，单位百分点。</summary>
-    JumangPengxiang = 144
+    JumangPengxiang = 144,
+    /// <summary>风冻叠加的攻速下降，单位百分点。</summary>
+    AttackSpeedSlow = 145,
+    /// <summary>受到的真气伤害增幅，单位百分点。</summary>
+    TrueQiDamageTaken = 146,
+    /// <summary>接收内外功伤害时的减免，单位百分点。</summary>
+    PhysicalDamageReduction = 147
 }

@@ -5,12 +5,15 @@ using System.Linq;
 using System.Numerics;
 using System.Web.Script.Serialization;
 using System.Xml.Linq;
+using cfg;
 using GameServer.SceneEntity;
 using MMoRpgCommon.SceneEntity;
 
 /// <summary>对应 RO 的 SceneWaveSpawner；每个副本实例拥有独立的怪物实体世界和生命值。</summary>
 public sealed partial class SceneWaveSpawner
 {
+    /// <summary>屏障击飞动作的最高点，相对于怪物落地位置，单位米。</summary>
+    private const float ShieldBurstLiftMeters = 1.2f;
     /// <summary>仅反序列化正式目录中的实体配置，模型动作列表由 Unity 使用。</summary>
     private sealed class CreatureCatalog
     {
@@ -307,7 +310,10 @@ public sealed partial class SceneWaveSpawner
     /// <param name="damage">本段送入防御链的技能伤害值。</param>
     /// <param name="skillId">产生本次伤害的技能主表编号，基因事件按它归因。</param>
     /// <param name="monsterDied">本窗口是否出现新的死亡，供场景目标推进。</param>
-    private void SettlePlayerHit(MonsterAttrUpdateNtf notice, int index, Vector3 origin, OnlineRole caster, int damage, int skillId, ref bool monsterDied)
+    /// <param name="effect">当前技能的可选命中基因等级配置。</param>
+    /// <param name="damageBonusPermyriad">本段所有专属效果合成后的最终伤害增幅。</param>
+    private void SettlePlayerHit(MonsterAttrUpdateNtf notice, int index, Vector3 origin, OnlineRole caster,
+        int damage, int skillId, ref bool monsterDied, SkillEffectInfo effect = null, int damageBonusPermyriad = 0)
     {
         // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
         GameServer.SceneEntity.MonsterEntity monster = monsters_[index];
@@ -332,7 +338,9 @@ public sealed partial class SceneWaveSpawner
                 else defense = MonsterDefenseAttributes.Get(point.Creature.id);
                 // 本次结算的最终面板只取一次，背水等按已含装备与基因的生命上限判断。
                 RoleBaseInfo finalAttributes = equipment.CalculateAttribute();
-                calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
+                // 屏障爆炸和龙卷斩的输入已经包含自身外功，防御环节保留该技能的原公式。
+                if (effect != null) calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
+                else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
                 // 条件增伤读取本次扣血前的真实双方血量、目标类别与背面判定，系数只作用于本次伤害。
                 if (calculatedDamage > 0)
                 {
@@ -350,8 +358,15 @@ public sealed partial class SceneWaveSpawner
                         monster.CurrentHp, GetHpData(index).MaxHp, targetIsBoss, fromBehind);
                     double bonus = equipment.Runtime.ResolveDamageBonus(damageContext);
                     if (bonus > 0) calculatedDamage = (int)(calculatedDamage * (1 + bonus / 100));
+                    calculatedDamage = MjsSkillGenes.ApplyLearnedDamageBonus(caster, targetGenes.Owner.AttrComp,
+                        skillId, calculatedDamage);
+                    if (damageBonusPermyriad != 0)
+                        calculatedDamage = MjsSkillGenes.ScaleDamage(calculatedDamage, damageBonusPermyriad);
                 }
             }
+            // 龙卷命中先扣真气，本帧产生的生命通知便能同时读取真气终值。
+            if (effect != null && skillId == MjsSkillGenes.TornadoSkillId && calculatedDamage > 0)
+                MjsSkillGenes.HitTornado(targetGenes, effect);
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
             if (hitActor != null) DamageActor(hitActor, calculatedDamage, caster);
@@ -370,6 +385,38 @@ public sealed partial class SceneWaveSpawner
                 monsterDied = true;
                 if (hitActor == null) CountDeath(point.Creature.id);
             }
+            else if (effect != null && skillId == MjsSkillGenes.BarrierSkillId)
+            {
+                // 沿用副本的首领分类保护免疫控制的目标，爆炸伤害仍然成立。
+                bool boss = (monster.EntityType & EntityType.Boss) != 0;
+                if (hitActor != null) boss = hitActor.IsBoss;
+                if (!boss)
+                {
+                    MjsSkillGenes.ApplyBurstControl(targetGenes, effect, caster.GetID());
+                    // 控制期间停止正在执行的技能和移动，具体落地时机随运行基因结束。
+                    bool knockedDown = (targetGenes.GetStates() & GeneState.Knockdown) != 0;
+                    if (hitActor != null && knockedDown)
+                    {
+                        hitActor.Skills.Cancel();
+                        hitActor.SetIdle();
+                    }
+                    if (knockedDown)
+                    {
+                        // 与本次伤害一起可靠广播短弧线，场景的导航面位置仍作为落点。
+                        Notice.MonsterActions.Add(new MonsterActionData
+                        {
+                            SpawnId = point.SpawnId,
+                            Phase = MonsterActionPhase.KnockUp,
+                            X = monster.Transform.X,
+                            Y = monster.Transform.Y,
+                            Z = monster.Transform.Z,
+                            ToY = monster.Transform.Y + ShieldBurstLiftMeters,
+                            Face = monster.Transform.Yaw,
+                            DurationMs = effect.ShieldBurstControlMs
+                        });
+                    }
+                }
+            }
             if (hitActor == null) notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
     }
 
@@ -382,7 +429,11 @@ public sealed partial class SceneWaveSpawner
     /// <param name="caster">发起技能的在线角色。</param>
     /// <param name="skillId">产生本次伤害的技能主表编号。</param>
     /// <param name="maxTargets">本段最多命中数，零或负数表示不限制。</param>
-    internal void ChangeHPRadius(MonsterAttrUpdateNtf notice, Vector3 origin, float radius, int damage, HashSet<ulong> hit_targets, OnlineRole caster, int skillId, int maxTargets)
+    /// <param name="effect">带附加基因的技能等级行，普通范围伤害允许为空。</param>
+    /// <param name="damageBonusPermyriad">本次施放的最终伤害增幅，万分比。</param>
+    internal void ChangeHPRadius(MonsterAttrUpdateNtf notice, Vector3 origin, float radius, int damage,
+        HashSet<ulong> hit_targets, OnlineRole caster, int skillId, int maxTargets,
+        SkillEffectInfo effect = null, int damageBonusPermyriad = 0)
     {
         // 同一攻击窗口共用施害位置，观察者按自己的镜头投影受击方向。
         notice.FirerX = origin.X;
@@ -390,6 +441,9 @@ public sealed partial class SceneWaveSpawner
         notice.FirerZ = origin.Z;
         // 本窗口是否真实产生新死亡，避免非致命伤害误触发场景目标。
         bool monsterDied = false;
+        // 龙卷斩要先确定实际目标数，其他技能仍每选中一名就沿既有路径结算。
+        List<int> tornadoTargets = null;
+        if (effect != null && skillId == MjsSkillGenes.TornadoSkillId) tornadoTargets = new List<int>(Math.Max(0, maxTargets));
         // 本段已经结算的怪物数量，用于执行技能表给定的目标上限。
         int settled = 0;
         for (int index = 0; index < monsters_.Count; index++)
@@ -411,8 +465,26 @@ public sealed partial class SceneWaveSpawner
             float horizontal = (float)Math.Sqrt(delta.X * delta.X + delta.Z * delta.Z);
             if (horizontal > radius + point.Creature.boundRadius) continue;
             hit_targets.Add(monster.UID);
-            SettlePlayerHit(notice, index, origin, caster, damage, skillId, ref monsterDied);
+            if (tornadoTargets != null) tornadoTargets.Add(index);
+            else SettlePlayerHit(notice, index, origin, caster, damage, skillId, ref monsterDied, effect);
             settled++;
+        }
+        if (tornadoTargets != null)
+        {
+            if (tornadoTargets.Count == 2)
+            {
+                // 双目标惩罚乘在包含苍云斩的最终伤害上，经防御后统一兑现。
+                damageBonusPermyriad = (int)((10000L + damageBonusPermyriad) *
+                    (10000L - effect.DualTargetReducePermyriad) / 10000L) - 10000;
+                MjsSkillGenes.ApplySplitProtection(caster, effect);
+            }
+            for (int targetIndex = 0; targetIndex < tornadoTargets.Count; targetIndex++)
+            {
+                // 上一名目标的共享血量变化可能已经让当前实体死亡。
+                int index = tornadoTargets[targetIndex];
+                if (monsters_[index].CurrentHp <= 0) continue;
+                SettlePlayerHit(notice, index, origin, caster, damage, skillId, ref monsterDied, effect, damageBonusPermyriad);
+            }
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
         CheckCompletedWaves();

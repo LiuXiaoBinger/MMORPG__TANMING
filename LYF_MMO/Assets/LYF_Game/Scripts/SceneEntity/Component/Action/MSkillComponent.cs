@@ -1007,6 +1007,16 @@ public sealed class MSkillComponent : MBasicActionComponent
             cd, groupCD, realtimeSeconds, data.UsingTimes);
     }
 
+    /// <summary>只应用屏障自然到期发出的单技能冷却变更。</summary>
+    /// <param name="data">服务端生成时间与本技能的新截止时间。</param>
+    /// <param name="realtimeSeconds">当前不缩放的本地时间，单位秒。</param>
+    public void ApplyCooldownUpdate(SkillCastRet data, float realtimeSeconds)
+    {
+        // 时间差从同一服务端消息计算，不复用客户端墙上时钟。
+        float remaining = GetServerRemainingSeconds(data.CooldownEndUnixMs, data.ServerTimeUnixMs);
+        SetSkillCD(data.SkillId, remaining, realtimeSeconds);
+    }
+
     /// <summary>把同一服务器回包的截止与生成时间相减，得到非负剩余冷却秒数。</summary>
     /// <param name="endUnixMs">服务器冷却截止Unix毫秒。</param>
     /// <param name="serverUnixMs">服务器生成该消息的Unix毫秒。</param>

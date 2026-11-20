@@ -54,4 +54,12 @@ public sealed class RoleDataFieldManager
     {
         return _request;
     }
+
+    /// <summary>把一个技能的新已学等级加入本次角色存档，保留数据库原快捷键。</summary>
+    /// <param name="skillId">已升级的技能主表编号。</param>
+    /// <param name="level">应保存的权威已学等级。</param>
+    public void SaveSkillLevel(int skillId, int level)
+    {
+        _request.SkillLevels.Add(new RoleSkillInfo { SkillId = skillId, Level = level });
+    }
 }

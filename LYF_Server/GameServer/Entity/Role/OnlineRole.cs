@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using cfg;
 using Google.Protobuf;
 using MMoRpgCommon.SceneEntity;
 
@@ -37,16 +38,20 @@ public class OnlineRole : IGeneOwner
 
     /// <summary>开盾时角色所在的副本实例 ID，切换实例后旧盾必须失效。</summary>
     private int _shieldInstanceId;
+    /// <summary>本次开盾采样的技能等级配置，升级后旧盾依旧按原数值结算。</summary>
+    private SkillEffectInfo _shieldEffect;
 
     /// <summary>以本次施放给定的容量与时限重建护盾；重复施放直接覆盖旧盾，不与旧盾叠加。</summary>
     /// <param name="absorb">本次护盾总共可吸收的生命值。</param>
     /// <param name="expireTick">护盾到期的服务器逻辑 Tick。</param>
-    public void OpenShield(int absorb, long expireTick)
+    /// <param name="effect">苍蓝屏障的已学等级行；其他护盾允许为空。</param>
+    public void OpenShield(int absorb, long expireTick, SkillEffectInfo effect = null)
     {
         // 非正容量按零处理，护盾池不允许出现负值。
         _shieldAbsorb = Math.Max(absorb, 0);
         ShieldCapacity = _shieldAbsorb;
         _shieldExpireTick = expireTick;
+        _shieldEffect = effect;
         AttrComp?.MarkShieldChanged();
         // 角色数据尚未就绪时把开盾地点记为零，与承伤时的零口径一致，不会误判成跨场景。
         if (mainRoleInfo == null || mainRoleInfo.BaseInfo == null)
@@ -70,13 +75,46 @@ public class OnlineRole : IGeneOwner
         _shieldExpireTick = 0;
         _shieldMapId = 0;
         _shieldInstanceId = 0;
+        _shieldEffect = null;
         if (hadShield) AttrComp?.MarkShieldChanged();
     }
 
-    /// <summary>扣血前先扣护盾池，返回真正还需要从生命里扣除的伤害。</summary>
+    /// <summary>在生效地点结束屏障，将自然到期与被打破的结算结果发给同实例。</summary>
+    /// <param name="expired">按完整时限走完时为真，被伤害打破时为假。</param>
+    private void FinishShield(bool expired)
+    {
+        // 移除护盾前保存此次施放配置以及实际比例，避免爆炸回调重复触发。
+        SkillEffectInfo effect = _shieldEffect;
+        // 当前实体必须仍在开盾时的场景中，换图和离线只移除。
+        RoleBaseInfo role = mainRoleInfo?.BaseInfo;
+        // 使用原池容量计算返还，以点数计算避免百分数过早取整。
+        int capacity = ShieldCapacity;
+        // 自然到期时剩余仍大于零，破盾时余额已经扣到零。
+        int remaining = _shieldAbsorb;
+        // 清除与业务换图共用同一个权威护盾通知。
+        bool sameScene = role != null && role.MapId == _shieldMapId && role.InstanceId == _shieldInstanceId;
+        ClearShield();
+        if (!sameScene || effect == null || State != OnlineRoleState.Online) return;
+        if (role.CurrHp <= 0) return;
+        if (expired)
+        {
+            // 满盾返还最大值，部分剩余按比例落在最小与最大之间。
+            int refund = effect.ShieldRefundMinMs + (int)((long)(effect.ShieldRefundMaxMs - effect.ShieldRefundMinMs) * remaining / capacity);
+            GetComponent<RoleSkillComponent>().RefundBarrierCooldown(refund);
+        }
+        if (role.InstanceId == 0 || effect.ShieldBurstRadiusCm <= 0) return;
+        // 爆炸以当前角色有效外攻为基数，沿副本普通命中管线计算防御。
+        int damage = MjsSkillGenes.ScaleDamage(AttrComp.ExternalAttack, effect.ShieldBurstDamagePermyriad - 10000);
+        TeamManager.Instance.OnRoleAreaSkillHit(this, role.Pos.ToVector3(), damage, new HashSet<ulong>(),
+            MjsSkillGenes.BarrierSkillId, effect.ShieldBurstRadiusCm / 100f, 0, effect);
+    }
+
+    /// <summary>扣血前先扣护盾池，按实际吸收触发风冻并返回溢出伤害。</summary>
     /// <param name="incoming">本次已经过减伤计算的最终伤害。</param>
+    /// <param name="attacker">本次有效攻击来源，环境伤害允许为空。</param>
+    /// <param name="attackerIsBoss">来源为首领时保留风冻减速并免疫定身。</param>
     /// <returns>护盾吸收后的溢出伤害，零表示本次伤害被完全吸收。</returns>
-    public int AbsorbDamage(int incoming)
+    public int AbsorbDamage(int incoming, GeneRuntime attacker = null, bool attackerIsBoss = false)
     {
         // 非正伤害不参与吸收，也不消耗护盾。
         if (incoming <= 0) return 0;
@@ -99,16 +137,21 @@ public class OnlineRole : IGeneOwner
         // 到期后立刻失效，本次及之后伤害都不再由它承担。
         if (GameGlobal.Instance.LogicTick >= _shieldExpireTick)
         {
-            ClearShield();
+            FinishShield(true);
             return incoming;
         }
         // 护盾只承担自己剩余的份额，超出部分作为溢出伤害继续走原链路。
         int absorbed = Math.Min(_shieldAbsorb, incoming);
         _shieldAbsorb -= absorbed;
+        if (_shieldEffect != null)
+            MjsSkillGenes.ApplyFrost(attacker, _shieldEffect, GetID(), attackerIsBoss);
         // 耗尽即视为结束，避免残留零值状态影响后续施放判断。
         if (_shieldAbsorb <= 0)
         {
-            ClearShield();
+            // 溢出伤害会致死时随死亡清除，避免阵亡角色再引爆。
+            if (mainRoleInfo?.BaseInfo != null && mainRoleInfo.BaseInfo.CurrHp > incoming - absorbed)
+                FinishShield(false);
+            else ClearShield();
         }
         else
         {
@@ -290,7 +333,7 @@ public class OnlineRole : IGeneOwner
     public void Update(int deltaMilliseconds)
     {
         // 即使这期间没有再次受击，护盾也在权威逻辑步到期并发送清除快照。
-        if (_shieldAbsorb > 0 && GameGlobal.Instance.LogicTick >= _shieldExpireTick) ClearShield();
+        if (_shieldAbsorb > 0 && GameGlobal.Instance.LogicTick >= _shieldExpireTick) FinishShield(true);
         _components.Update(deltaMilliseconds);
         // 后置阶段对应 RO 的 LateUpdate：吟唱请求队列在技能动作推进之后再取队首重试。
         _components.LateUpdate(deltaMilliseconds);

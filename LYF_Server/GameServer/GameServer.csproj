@@ -72,6 +72,7 @@
         <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
         <Compile Include="SceneEntity\Skill\ROBladeStormSkill.cs" />
         <Compile Include="SceneEntity\Skill\ROMovingTornadoSkill.cs" />
+        <Compile Include="SceneEntity\Skill\MjsSkillGenes.cs" />
         <Compile Include="SceneEntity\Skill\OrcBasicAttackDamage.cs" />
         <EmbeddedResource Include="Config\MonsterAI\OrcBasicAttack.xml">
             <LogicalName>Moshenta.OrcBasicAttack.xml</LogicalName>
@@ -163,6 +164,7 @@
         <Compile Include="MessageHandler\Role\EnterWorldHandler.cs" />
         <Compile Include="MessageHandler\Role\RoleSkillInfoHandler.cs" />
         <Compile Include="MessageHandler\Skill\SkillCastHandler.cs" />
+        <Compile Include="MessageHandler\Skill\SkillUpgradeHandler.cs" />
         <Compile Include="MessageHandler\Role\SaveRoleDataHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\RoleKnapsackInfoHandler.cs" />
         <Compile Include="MessageHandler\Knapsack\EquipOperationHandler.cs" />

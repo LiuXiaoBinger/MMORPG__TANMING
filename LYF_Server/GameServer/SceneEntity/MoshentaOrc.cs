@@ -11,6 +11,11 @@ internal sealed class MoshentaOrc
     private readonly List<Threat> hatred = new List<Threat>();
     /// <summary>场景实际出生的同一怪物对象。</summary>
     private readonly ServerMonster monster;
+    /// <summary>普攻与移动实际使用的战斗基因容器。</summary>
+    private GeneRuntime SkillGenes
+    {
+        get { return monster.Components.Get<GeneComponent>(MMoRpgCommon.SceneEntity.EntityComponentType.Gene).Runtime; }
+    }
     /// <summary>跨端出生标识，保留波次及波内序号。</summary>
     private readonly ulong spawnId;
     /// <summary>所属副本实例号，只接受本实例内仍在线的玩家。</summary>
@@ -155,7 +160,7 @@ internal sealed class MoshentaOrc
     {
         if (phase == MonsterActionPhase.Dead) return;
         instance = notice.InstanceId;
-        if (phase == MonsterActionPhase.Attack && !Valid(attackTarget))
+        if (phase == MonsterActionPhase.Attack && (!Valid(attackTarget) || !SkillGenes.CanCast))
         {
             nextResult = long.MaxValue;
             attackTarget = null;
@@ -164,6 +169,7 @@ internal sealed class MoshentaOrc
             nextThink = now;
         }
         else if (Target != null && !Valid(Target)) nextThink = now;
+        if (navigation.Moving && !SkillGenes.CanMove) Stop(notice);
         // 截止点前按实际先后处理转角、结果和决策。
         long until = now + elapsed;
         while (now < until)
@@ -290,7 +296,7 @@ internal sealed class MoshentaOrc
     /// <param name="notice">待下发的新段。</param>
     internal bool Chase(Vector3 dest, MonsterAttrUpdateNtf notice)
     {
-        if (phase == MonsterActionPhase.Attack) return false;
+        if (phase == MonsterActionPhase.Attack || !SkillGenes.CanMove) return false;
         if (!patrolLeg && navigation.GoingTo(dest)) return true;
         patrolLeg = false;
         if (!navigation.Begin(dest, now))
@@ -309,6 +315,7 @@ internal sealed class MoshentaOrc
     internal int FilterSkill(int group, ulong roleId)
     {
         if (group != MoshentaOrcDefinition.SkillGroup || Target == null || roleId != Target.GetID()) return 0;
+        if (!SkillGenes.CanCast) return 0;
         if (phase == MonsterActionPhase.Attack || now < cooldownEnd || DistanceTo(Target) > MoshentaOrcDefinition.Range) return 0;
         return MoshentaOrcDefinition.SkillId;
     }
@@ -325,9 +332,11 @@ internal sealed class MoshentaOrc
         navigation.Face(attackTarget.mainRoleInfo.BaseInfo.Pos.ToVector3());
         phase = MonsterActionPhase.Attack;
         attackStart = now;
-        attackEnd = now + MoshentaOrcDefinition.ActionDuration;
-        cooldownEnd = now + MoshentaOrcDefinition.Cooldown;
-        nextResult = now + MoshentaOrcDefinition.ResultOffset;
+        // 风冻把这一刀的显式时间点与下次起手一起变慢。
+        double scale = MjsSkillGenes.AttackTimeScale(SkillGenes);
+        attackEnd = now + (long)(MoshentaOrcDefinition.ActionDuration * scale);
+        cooldownEnd = now + (long)(MoshentaOrcDefinition.Cooldown * scale);
+        nextResult = now + (long)(MoshentaOrcDefinition.ResultOffset * scale);
         notice.MonsterActions.Add(Snapshot());
         return true;
     }
@@ -347,16 +356,16 @@ internal sealed class MoshentaOrc
         // 本刀完整来伤，命中、暴击、防御等仍取原伤害脚本，仅把负数修正为 0。
         int incoming = Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical)
             * equipment.Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
+        incoming = MjsSkillGenes.ReducePhysicalDamage(attackTarget, incoming);
         // 苍蓝屏障先用完整来伤扣盾池，溢出量才是真正落到角色身上的伤害。
-        int penetrating = attackTarget.AbsorbDamage(incoming);
+        int penetrating = attackTarget.AbsorbDamage(incoming, SkillGenes);
         // 真正掉血不能超过当前生命，护盾吸收后剩余的部分才受当前 HP 截断。
         int damage = Math.Min(info.CurrHp, penetrating);
         info.CurrHp -= damage;
         if (damage > 0)
         {
             // 受击特技只在实际扣血后处理，对方是同一只权威怪物的容器。
-            GeneRuntime attackerGenes = monster.Components.Get<GeneComponent>(MMoRpgCommon.SceneEntity.EntityComponentType.Gene).Runtime;
-            equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, attackerGenes, MoshentaOrcDefinition.SkillId, damage, critical));
+            equipment.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, SkillGenes, MoshentaOrcDefinition.SkillId, damage, critical));
         }
         notice.PlayerHits.Add(new MonsterPlayerHitData { SpawnId = spawnId, TargetRoleId = info.RoleId,
             Hp = info.CurrHp, MaxHp = equipment.CalculateAttribute().MaxHp, Damage = damage });

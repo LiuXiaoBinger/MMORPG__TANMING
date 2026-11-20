@@ -33,6 +33,10 @@ public sealed class SkillViewData
 
     /// <summary>升到下一级所需的角色等级，0 表示由界面按当前技能等级推算。</summary>
     public int NextRoleLevel { get; }
+    /// <summary>当前技能已接入真实逐级配置与服务端升级协议。</summary>
+    public bool HasGrowthConfig { get; }
+    /// <summary>技能消耗的真气点数，负数表示全部真气，零表示法力技能。</summary>
+    public int TrueQiCost { get; }
 
     /// <summary>创建技能展示数据。</summary>
     /// <param name="skillId">技能配置编号。</param>
@@ -49,10 +53,12 @@ public sealed class SkillViewData
     /// <param name="range">有效距离，单位为米。</param>
     /// <param name="upgradeCost">升到下一级消耗的铜币，默认 40。</param>
     /// <param name="nextRoleLevel">下一级所需角色等级，默认 0 由界面推算。</param>
+    /// <param name="hasGrowthConfig">此技能是否从正式等级表展示成长。</param>
+    /// <param name="trueQiCost">单次消耗的真气，-1 表示用尽剩余真气。</param>
     public SkillViewData(int skillId, string name, string description, string iconPath,
         int level, float cooldown, string bindKey, float remainingCooldown,
         int skillType, string tag, int mpCost, int range,
-        int upgradeCost = 40, int nextRoleLevel = 0)
+        int upgradeCost = 40, int nextRoleLevel = 0, bool hasGrowthConfig = false, int trueQiCost = 0)
     {
         SkillId = skillId;
         Name = name;
@@ -88,5 +94,7 @@ public sealed class SkillViewData
         Range = range;
         UpgradeCost = upgradeCost;
         NextRoleLevel = nextRoleLevel;
+        HasGrowthConfig = hasGrowthConfig;
+        TrueQiCost = trueQiCost;
     }
 }

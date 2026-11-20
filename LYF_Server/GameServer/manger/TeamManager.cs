@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using cfg;
 using Google.Protobuf;
 using System.Numerics;
 
@@ -101,18 +102,22 @@ public sealed class TeamManager
     /// <param name="skillId">主表技能编号，用于基因和技能伤害归因。</param>
     /// <param name="radius">以结果点为中心的范围半径，单位米。</param>
     /// <param name="maxTargets">本次结果最多命中的怪物数量。</param>
+    /// <param name="effect">带命中基因的技能等级行，普通范围命中可以不传。</param>
+    /// <param name="damageBonusPermyriad">本次施放的最终伤害增幅，万分比。</param>
     public void OnRoleAreaSkillHit(OnlineRole caster, Vector3 center, int damage,
-        HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets)
+        HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets,
+        SkillEffectInfo effect = null, int damageBonusPermyriad = 0)
     {
         // 施法者不在任何副本实例时本次效果不生效。
         Dungeon team;
         if (!_instances.TryGetValue((ulong)caster.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         // 本段结果点单独一组属性通知，与其他段互不合并。
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
-        team.WaveSpawner.ChangeHPRadius(notice, center, radius, damage, hit_targets, caster, skillId, maxTargets);
+        team.WaveSpawner.ChangeHPRadius(notice, center, radius, damage, hit_targets, caster, skillId,
+            maxTargets, effect, damageBonusPermyriad);
         team.WaveSpawner.FillFlow(notice);
-        // 本段没有任何怪物扣血时不向客户端发送空通知。
-        if (notice.Monsters.Count == 0) return;
+        // 零伤害时若仍触发击飞，需要下发这一权威动作。
+        if (notice.Monsters.Count == 0 && notice.MonsterActions.Count == 0) return;
         // 整段范围伤害来自同一玩家，供该客户端播放一次命中反馈。
         notice.AttackerRoleId = (ulong)caster.mainRoleInfo.BaseInfo.RoleId;
         SendMonsterNotice(team, notice);

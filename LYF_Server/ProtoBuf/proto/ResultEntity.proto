@@ -37,6 +37,9 @@ enum CmdCode{
 	SkillStateBlocked = 32;//角色当前状态不允许释放技能
 	SkillTargetUnsupported = 33;//目标模式尚未接入权威场景实体链
 	DungeonAlreadyEntered = 34;//角色实际身处副本，必须先退出后再发起挑战
+	SkillUpgradeMaxLevel = 35;//当前等级已经没有下一条成长配置
+	SkillUpgradeRoleLevel = 36;//角色未满足下一级成长配置的等级要求
+	SkillUpgradeLevelChanged = 37;//当前技能等级已变化，本次请求不可再次扣费
 }
 
 message RegistVarifyRet{
@@ -298,6 +301,17 @@ message SkillCastRet
 	int64 group_cooldown_end_unix_ms = 9;//公共 CD 结束的服务器 UTC Unix 毫秒，无公共 CD 时为零
 	int32 cast_duration_ms = 10;//本次施法持续毫秒数，失败时为零
 	int32 using_times = 11;//成功施法采用的表现列表下标，从零开始；本人据此确认预测段数
+	bool cooldown_only = 12;//技能自然效果返还冷却时只修改本技能 CD，不处理施法或 MP
+}
+
+// 权威技能升级结果，客户端用当前等级刷新本次受影响的技能。
+message SkillUpgradeRet
+{
+	CmdCode cmd_code = 1;//服务端升级校验或扣除结果
+	int32 role_id = 2;//当前会话角色 ID
+	int32 skill_id = 3;//本次请求的主表技能编号
+	int32 level = 4;//本角色当前权威已学等级
+	int64 copper = 5;//本次处理后的权威铜币余额
 }
 
 // 服务器确认施法后给本人和同地图附近角色的表现通知，不表示命中或伤害。
@@ -497,6 +511,7 @@ enum MonsterActionPhase {
 	MonsterActionPhaseAttack = 2; // 正在播放本次普攻，伤害另由服务端结果点下发
 	MonsterActionPhaseDead = 3;   // 生命已归零，停止移动和攻击
 	MonsterActionPhaseSinging = 4; // 当前为吟唱，结束后攻击时间轴从零开始
+	MonsterActionPhaseKnockUp = 5; // 短时击飞，y 为落地高度、to_y 为腾空最高点
 }
 
 // 同一出生位的一段动作。入场快照从怪物此刻的位置开始，使用该段剩余时间。

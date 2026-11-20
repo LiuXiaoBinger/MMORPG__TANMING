@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using cfg;
+using Google.Protobuf;
 
 /// <summary>
 /// 对应 RO 服务器技能释放组件；以既有 OnlineRole 生命周期驱动核心、施法、冷却和权威通知。
@@ -16,12 +17,6 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     private const int LogicFrameMilliseconds = 50;
     /// <summary>RO 服务端 SkillComboTime 默认窗口，超过六秒后从第零段重新开始。</summary>
     private const int SkillComboMilliseconds = 6000;
-
-    /// <summary>苍蓝屏障的持续逻辑帧数，五秒按二十赫兹固定帧换算为一百帧。</summary>
-    private const int BarrierDurationTicks = 100;
-
-    /// <summary>苍蓝屏障按最大生命百分比计算的吸收上限。</summary>
-    private const int BarrierAbsorbPercent = 20;
 
     /// <summary>单技能下次可释放的逻辑 Tick，CD 不跨重新登录持久化。</summary>
     private readonly Dictionary<int, long> skill_cd_ = new Dictionary<int, long>();
@@ -351,6 +346,15 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         return Owner.State == OnlineRoleState.Online;
     }
 
+    /// <summary>查看角色当前能否起手，屏障自己就是解除控制的技能入口。</summary>
+    /// <param name="skillId">欲提交施放的稳定技能编号。</param>
+    /// <returns>存活且能够施法，或存活且选择解控屏障时为真。</returns>
+    private bool CanStartSkill(int skillId)
+    {
+        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0) return false;
+        return skillId == MjsSkillGenes.BarrierSkillId || Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast;
+    }
+
     /// <summary>检查当前动作是否可由该核心接管，并检查单技能及公共组冷却。</summary>
     /// <param name="core">已经装载的主动技能核心。</param>
     public bool CheckDoSkill(ROSkillCore core)
@@ -545,6 +549,8 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <returns>排序后的表现行快照，未配置时为空，不修改原配置集合。</returns>
     private List<SkillPresentationInfo> FindPresentations(int effectId)
     {
+        // 等级数值独立，动作表现使用这门技能指定的复用编号。
+        effectId = LubanMgr.Instance.ResolveSkillPresentationEffectId(effectId);
         // 只读候选列表，行对象仍指向 Luban 原始配置。
         List<SkillPresentationInfo> result = new List<SkillPresentationInfo>();
         // 本项目尚未接入武器表现属性，与客户端一样使用默认武器零。
@@ -652,11 +658,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
-        // 眩晕或沉默复用现有拒绝/中断分支，不另建施法状态。
-        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
-        {
-            return Reject(result, CmdCode.SkillStateBlocked);
-        }
+        if (!CanStartSkill(skill_id)) return Reject(result, CmdCode.SkillStateBlocked);
 
         // 已经过了结束 Tick 的上一技能先完成，避免网络消息先于本轮 Update 阻塞新请求。
         if (IsCasting() && skill_.IsStateTimeEnd())
@@ -706,10 +708,13 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
 
         // 拒绝结果也包含当前技能与公共组的剩余 CD 快照。
         FillCooldownSnapshot(result, effect.CooldownGroupId, server_unix_ms);
-        if (result.CurrentMp < effect.MpCost)
+        // 真气技能不校验法力，主消耗在提交时按 ChiCost 结算真气。
+        if (effect.ChiCost == 0 && result.CurrentMp < effect.MpCost)
         {
             return Reject(result, CmdCode.SkillInsufficientMp);
         }
+        if (effect.ChiCost > Owner.AttrComp.CurrTrueQi)
+            return Reject(result, CmdCode.SkillStateBlocked);
 
         prepared = new PreparedCast();
         prepared.skill_id_ = skill_id;
@@ -747,8 +752,9 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <param name="children">组合技能的顺序核心；普通技能为空。</param>
     /// <param name="stateTimes">组合各段状态毫秒数，与 children 对应。</param>
     /// <param name="cast_point">本次世界瞄准点，用于副本普攻和龙卷斩的水平朝向，单位米。</param>
+    /// <param name="trueQiSpent">本次施放已经实际扣除的真气点数。</param>
     private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times,
-        List<ROSkillCore> children, List<int> stateTimes, ROVector3 cast_point)
+        List<ROSkillCore> children, List<int> stateTimes, ROVector3 cast_point, int trueQiSpent)
     {
         // 向上取整为固定帧期限；零时长也留一帧，保持 Start 先于 End 的原顺序。
         long end_tick = CalculateEndTick(GameGlobal.Instance.LogicTick, duration_ms);
@@ -769,18 +775,27 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             // 刀刃风暴在副本内按八段结果点自行查询怪物，不占用普攻的盒判定实例。
             skill_ = new ROBladeStormSkill(core, skill_uuid, end_tick, using_times, Owner);
         }
-        else if (core.SkillID() == ROMovingTornadoSkill.TornadoSlashSkillId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        else if (core.SkillID() == MjsSkillGenes.TornadoSkillId)
         {
-            // 龙卷风抵达前方结果点时，沿用副本技能的范围查询与抵扣流程。
-            skill_ = new ROMovingTornadoSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point);
+            MjsSkillGenes.BeginTornado(Owner, core.GetEffect());
+            if (Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+            {
+                // 动作实例保存这次真气消耗，结果点读取不到下一次施放的资源。
+                skill_ = new ROMovingTornadoSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point, trueQiSpent);
+            }
+            else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         }
-        else if (core.SkillID() == 10120)
+        else if (core.SkillID() == MjsSkillGenes.BarrierSkillId)
         {
-            // 苍蓝屏障成功施放时建立五秒护盾池，主城和副本使用相同的护盾容量。
-            // 容量取属性组件的实际生命上限，装备与基因加成都会计入，再用 long 乘法避免极端数值溢出。
-            long barrierAbsorb = (long)Owner.AttrComp.MaxHp * BarrierAbsorbPercent / 100;
+            // 苍蓝屏障的容量、持续时间全部取当前已学等级的正式效果行，等级越高容量越高。
+            SkillEffectInfo barrierEffect = core.GetEffect();
+            // 容量按有效最大生命的万分比换算，装备与基因加成都会计入，用 long 乘法避免极端数值溢出。
+            long barrierAbsorb = (long)Owner.AttrComp.MaxHp * barrierEffect.ShieldAbsorbPermyriad / 10000;
+            // 持续时间按固定逻辑帧向上取整，不足一帧也保留一帧，避免零时长护盾不生效。
+            int barrierTicks = (barrierEffect.ShieldDurationMs + LogicFrameMilliseconds - 1) / LogicFrameMilliseconds;
             Owner.OpenShield((int)Math.Min(barrierAbsorb, int.MaxValue),
-                GameGlobal.Instance.LogicTick + BarrierDurationTicks);
+                GameGlobal.Instance.LogicTick + barrierTicks, barrierEffect);
+            MjsSkillGenes.BeginBarrier(Owner, barrierEffect);
             skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         }
         else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
@@ -793,6 +808,32 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     public void SetSkillCoolDown(int skill_id, int cool_down)
     {
         skill_cd_[skill_id] = CalculateEndTick(GameGlobal.Instance.LogicTick, cool_down);
+    }
+
+    /// <summary>屏障自然到期后扣除已有单技能冷却，并把新结束时间同步给本人。</summary>
+    /// <param name="milliseconds">按实际护盾余额换算出的返还毫秒数。</param>
+    internal void RefundBarrierCooldown(int milliseconds)
+    {
+        // 和正常施法结果共用单技能的服务端绝对时间。
+        int skillId = MjsSkillGenes.BarrierSkillId;
+        // 返还不能把冷却扣成负值，也不会改变公共冷却组。
+        int oldRemaining = GetSkillCoolDown(skillId);
+        if (oldRemaining == 0 || milliseconds <= 0) return;
+        SetSkillCoolDown(skillId, Math.Max(0, oldRemaining - milliseconds));
+        // 客户端通过独立标志应用时间，完全不干涉施法 UUID 和 MP。
+        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // 向上取整到逻辑帧后重新读取，客户端看到的是最终剩余量。
+        int remaining = GetSkillCoolDown(skillId);
+        // 消息沿已有可靠技能结果路由下发给该角色。
+        SkillCastRet update = new SkillCastRet
+        {
+            CmdCode = CmdCode.Succeed,
+            SkillId = skillId,
+            ServerTimeUnixMs = now,
+            CooldownOnly = true
+        };
+        if (remaining > 0) update.CooldownEndUnixMs = now + remaining;
+        Owner.SendToClient(NetDefine.CMD_SkillCastCode, update.ToByteString());
     }
 
     /// <summary>清除指定技能自身的剩余冷却，供「行云流水」类施法特技在成功提交后调用。</summary>
@@ -850,16 +891,14 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             return Reject(result, CmdCode.SkillStateBlocked);
         }
-        // 眩晕或沉默复用现有拒绝/中断分支，不另建施法状态。
-        if (Owner.mainRoleInfo.BaseInfo.CurrHp <= 0 || !Owner.GetComponent<RoleEquipComponent>().Runtime.CanCast)
-        {
-            return Reject(result, CmdCode.SkillStateBlocked);
-        }
-        if (result.CurrentMp < prepared.effect_.MpCost)
+        if (!CanStartSkill(prepared.skill_id_)) return Reject(result, CmdCode.SkillStateBlocked);
+        if (prepared.effect_.ChiCost == 0 && result.CurrentMp < prepared.effect_.MpCost)
         {
             FillCooldownSnapshot(result, prepared.effect_.CooldownGroupId, server_unix_ms);
             return Reject(result, CmdCode.SkillInsufficientMp);
         }
+        if (prepared.effect_.ChiCost > Owner.AttrComp.CurrTrueQi)
+            return Reject(result, CmdCode.SkillStateBlocked);
 
         if (IsCasting())
         {
@@ -924,15 +963,27 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             }
         }
 
-        // 所有拒绝条件已结束；同一逻辑线程内一次性提交 MP、单技能 CD 与组 CD。
-        Owner.mainRoleInfo.BaseInfo.CurrMp -= prepared.effect_.MpCost;
+        // 所有拒绝条件已结束；同一逻辑线程内一次性提交消耗、单技能 CD 与组 CD。
+        // 以这次提交成功的资源为快照，只有一条扣除分支会运行。
+        int trueQiSpent = 0;
+        if (prepared.effect_.ChiCost != 0)
+        {
+            trueQiSpent = prepared.effect_.ChiCost;
+            if (trueQiSpent < 0) trueQiSpent = Owner.AttrComp.CurrTrueQi;
+            if (trueQiSpent > 0) Owner.AttrComp.TryConsumeTrueQi(trueQiSpent);
+        }
+        else
+        {
+            Owner.mainRoleInfo.BaseInfo.CurrMp -= prepared.effect_.MpCost;
+        }
         SetSkillCoolDown(prepared.skill_id_, prepared.effect_.CooldownMs);
         if (prepared.effect_.CooldownGroupId > 0)
         {
             SetSkillGroupCoolDown(prepared.effect_.CooldownGroupId, prepared.effect_.GroupCooldownMs);
         }
 
-        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times, children, stateTimes, prepared.cast_point_);
+        FireSkill(prepared.core_, prepared.skill_uuid_, cast_duration_ms, using_times,
+            children, stateTimes, prepared.cast_point_, trueQiSpent);
         // 施法特技的冷却刷新回调只对主表 Type=2 的普通技能开放，绝学、滑行与普攻不参与。
         SkillInfo cast_definition = prepared.core_.GetSkillTable();
         System.Func<int, bool> try_reset_skill_cd = null;

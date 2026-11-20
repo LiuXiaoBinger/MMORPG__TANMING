@@ -37,7 +37,7 @@ public sealed class SkillCtrl : CtrlBase
     private bool _inputRegistered;
 
     /// <summary>苍蓝屏障技能 ID，护罩跟随自身，选中远处敌人时也必须原地释放。</summary>
-    private const int BlueBarrierSkillId = 10120;
+    internal const int BlueBarrierSkillId = 10120;
 
     /// <summary>龙卷斩的稳定主表编号，施法沿角色当前水平朝向放出特效。</summary>
     internal const int TornadoSlashSkillId = 10130;
@@ -58,6 +58,13 @@ public sealed class SkillCtrl : CtrlBase
             OnSkillCastStart);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SkillCastEndCode,
             OnSkillCastEnd);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SkillUpgradeCode,
+            OnSkillUpgradeResult);
+        if (_skillWindow != null)
+        {
+            _skillWindow.UpgradeRequested += RequestSkillUpgrade;
+            _skillWindow.GrowthContextRequested += RefreshVisibleSkills;
+        }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged += OnLocalRoleChanged;
@@ -97,6 +104,13 @@ public sealed class SkillCtrl : CtrlBase
             OnSkillCastStart);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SkillCastEndCode,
             OnSkillCastEnd);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SkillUpgradeCode,
+            OnSkillUpgradeResult);
+        if (_skillWindow != null)
+        {
+            _skillWindow.UpgradeRequested -= RequestSkillUpgrade;
+            _skillWindow.GrowthContextRequested -= RefreshVisibleSkills;
+        }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
         {
             Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
@@ -269,7 +283,7 @@ public sealed class SkillCtrl : CtrlBase
         }
         // 本次服务器权威施法结果，失败同样带 MP/CD 快照。
         SkillCastRet result = SkillCastRet.Parser.ParseFrom(data);
-        if (result == null || result.SkillUuid == 0)
+        if (result == null || (result.SkillUuid == 0 && !result.CooldownOnly))
         {
             return;
         }
@@ -278,6 +292,12 @@ public sealed class SkillCtrl : CtrlBase
         if (localRole != null && localRole.Skill != null &&
             localRole.GetID() == _skillViewRoleId)
         {
+            if (result.CooldownOnly)
+            {
+                localRole.Skill.ApplyCooldownUpdate(result, Time.realtimeSinceStartup);
+                RefreshSkillWindows();
+                return;
+            }
             // 身份与快照角色一致后才把权威结果写入技能核心，同步失败则不刷新界面。
             if (localRole.Skill.OnSkillCoreSync(result, Time.realtimeSinceStartup))
             {
@@ -294,6 +314,63 @@ public sealed class SkillCtrl : CtrlBase
                 }
             }
         }
+    }
+
+    /// <summary>向服务端发送一次技能升级，等权威结果后刷新等级和钱包。</summary>
+    /// <param name="skill">窗口当前显示的技能与在点击时的已学等级。</param>
+    private void RequestSkillUpgrade(SkillViewData skill)
+    {
+        if (MNetClient.Instance == null || _skillViewRoleId <= 0) return;
+        // 只传技能及当前等级，下一行、角色身份、费用由服务端读取。
+        SkillUpgradeReq request = new SkillUpgradeReq { SkillId = skill.SkillId, CurrentLevel = skill.Level };
+        MNetClient.Instance.Send(NetDefine.CMD_SkillUpgradeCode, request.ToByteString());
+    }
+
+    /// <summary>打开武学页时读取最新的同步角色等级和虚拟背包余额。</summary>
+    private void RefreshVisibleSkills()
+    {
+        RefreshSkillWindows();
+    }
+
+    /// <summary>只用当前连接和当前角色的服务端结果刷新学习等级与技能核心。</summary>
+    /// <param name="payload">服务器确认的强类型升级结果。</param>
+    private void OnSkillUpgradeResult(ByteString payload)
+    {
+        if (MNetClient.Instance == null || SocketDispatcher.Instance.CurrentDispatchGeneration !=
+            MNetClient.Instance.CurrentConnectionGeneration) return;
+        // 成功及失败都携带当前服务端学习等级和铜币余额。
+        SkillUpgradeRet result = SkillUpgradeRet.Parser.ParseFrom(payload);
+        // 技能等级只写进对应的本地主角，切换角色后的旧回包无效。
+        PlayerEntity role = GetLocalRole();
+        if (role == null || result.RoleId != _skillViewRoleId || role.GetID() != result.RoleId) return;
+        for (int index = 0; index < _skillViews.Count; index++)
+        {
+            // 替换本次命中的一条技能，快捷键由此前权威快照继续提供。
+            SkillViewData previous = _skillViews[index];
+            if (previous.SkillId != result.SkillId) continue;
+            if (result.Level > previous.Level)
+            {
+                // 主表提供技能名称和图标，最新成长行负责真正的数值。
+                SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(previous.SkillId);
+                _skillViews[index] = CreateSkillView(definition, result.Level, previous.BindKey);
+                role.Skill.AttachSkillInfo(result.SkillId, result.Level);
+            }
+            break;
+        }
+        RefreshSkillWindows(result.Copper);
+
+        // 一次拒绝提示只说明用户可见的失败原因，不改本地模拟等级。
+        string message;
+        switch (result.CmdCode)
+        {
+            case CmdCode.Succeed: return;
+            case CmdCode.SkillUpgradeMaxLevel: message = "该技能已满级"; break;
+            case CmdCode.SkillUpgradeRoleLevel: message = "角色等级还未达到升级要求"; break;
+            case CmdCode.NotEnoughCurrency: message = "铜币不足"; break;
+            case CmdCode.SkillUpgradeLevelChanged: message = "技能等级已更新"; break;
+            default: message = "当前无法升级该技能"; break;
+        }
+        TipsMgr.Instance.ShowSystemTips(message);
     }
 
     /// <summary>服务器广播开始时按持久化 RoleId 定位场景实体并去重播放。</summary>
@@ -504,7 +581,8 @@ public sealed class SkillCtrl : CtrlBase
 
     #region 技能视图刷新与应用
     /// <summary>用技能核心的实时 CD 生成视图快照并刷新两个正式窗口。</summary>
-    private void RefreshSkillWindows()
+    /// <param name="authoritativeCopper">服务器本次动作返回的铜币余额，普通刷新从本地同步钱包读取。</param>
+    private void RefreshSkillWindows(long? authoritativeCopper = null)
     {
         // 当前角色持有的技能组件，在角色尚未进入世界时为空。
         PlayerEntity localRole = GetLocalRole();
@@ -537,10 +615,21 @@ public sealed class SkillCtrl : CtrlBase
             views.Add(new SkillViewData(previous.SkillId, previous.Name,
                 previous.Description, previous.IconPath, previous.Level, duration,
                 previous.BindKey, remaining, previous.SkillType, previous.Tag,
-                previous.MpCost, previous.Range));
+                previous.MpCost, previous.Range, previous.UpgradeCost, previous.NextRoleLevel,
+                previous.HasGrowthConfig, previous.TrueQiCost));
         }
         if (_skillWindow != null)
         {
+            if (localRole != null && localRole.BaseInfo != null)
+            {
+                // 有升级权威结果时立即显示成交余额，否则复用本地虚拟背包的同步余额。
+                long copper = authoritativeCopper.GetValueOrDefault();
+                // 角色创建期间背包组件尚未挂载时暂显示零。
+                RoItemComponent items;
+                if (!authoritativeCopper.HasValue && localRole.TryGetRoleComponent(out items))
+                    copper = items.GetVirtualItemCount((int)ItemEnum.ZENY);
+                _skillWindow.SetGrowthContext(localRole.BaseInfo.Level, copper);
+            }
             _skillWindow.ReFreshUI(views);
         }
         if (_roleCurrentWindow != null)
@@ -587,11 +676,7 @@ public sealed class SkillCtrl : CtrlBase
             {
                 bindKey = bindKey.ToUpperInvariant();
             }
-            _skillViews.Add(new SkillViewData(skillConfig.Id, skillConfig.Name,
-                skillConfig.Desc, skillConfig.Icon, roleSkill.Level,
-                skillConfig.CDTime, bindKey, 0f, skillConfig.Type,
-                GetSkillTag(skillConfig), skillConfig.SpendMP,
-                skillConfig.AtkDistance));
+            _skillViews.Add(CreateSkillView(skillConfig, roleSkill.Level, bindKey));
             if (roleSkill.Level > 0 && !string.IsNullOrEmpty(roleSkill.BindKey))
             {
                 // 快捷键统一使用大写，兼容服务器快照中的小写配置。
@@ -600,6 +685,39 @@ public sealed class SkillCtrl : CtrlBase
         }
         ApplySkillCores(localRole);
         RefreshSkillWindows();
+    }
+
+    /// <summary>构建技能面板快照，已接入成长的技能从服务器同版表取本级与下一级。</summary>
+    /// <param name="definition">配置提供的技能主身份。</param>
+    /// <param name="level">服务器确认的当前学习等级。</param>
+    /// <param name="bindKey">服务器保存的快捷键。</param>
+    /// <returns>当前详情和预览都已解析的技能展示对象。</returns>
+    private static SkillViewData CreateSkillView(SkillInfo definition, int level, string bindKey)
+    {
+        // 尚未学习时可浏览该技能的一级效果，实际显示与施法仍记录零级。
+        SkillEffectInfo current = LubanMgr.Instance.GetSkillEffectInfoBySkillAndLevel(definition.Id, Math.Max(1, level));
+        if (current != null && current.RequireRoleLevel > 0)
+        {
+            // 只有已学技能才会有提升一级的目标行，满级查询返回空。
+            SkillEffectInfo next = null;
+            if (level > 0) next = LubanMgr.Instance.GetSkillEffectInfoBySkillAndLevel(definition.Id, level + 1);
+            // 门槛与价格直接取下一等级，避免界面依据当前级别自己推算。
+            int requiredLevel = 0;
+            // 缺少下一行时由界面隐藏升级入口。
+            int copper = 0;
+            if (next != null)
+            {
+                requiredLevel = next.RequireRoleLevel;
+                copper = next.UpgradeCopper;
+            }
+            return new SkillViewData(definition.Id, definition.Name, MjsSkillDescription.Build(current, next, level > 0),
+                definition.Icon, level, current.CooldownMs / 1000f, bindKey, 0f, definition.Type,
+                GetSkillTag(definition), current.MpCost, definition.AtkDistance,
+                copper, requiredLevel, true, current.ChiCost);
+        }
+        return new SkillViewData(definition.Id, definition.Name, definition.Desc, definition.Icon,
+            level, definition.CDTime, bindKey, 0f, definition.Type, GetSkillTag(definition),
+            definition.SpendMP, definition.AtkDistance);
     }
 
     /// <summary>用已学等级和职业配置建立本地角色技能核心。</summary>

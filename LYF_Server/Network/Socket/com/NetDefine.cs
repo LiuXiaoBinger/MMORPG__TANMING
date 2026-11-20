@@ -48,6 +48,8 @@ public class NetDefine
     public const ushort CMD_SkillCastEndCode = 11173;
     /// <summary>副本实例内怪物的权威生命值变化，走可靠下行。</summary>
     public const ushort CMD_MonsterAttrUpdateCode = 11174;
+    /// <summary>技能成长的客户端请求与权威结果，使用可靠 TCP 通道。</summary>
+    public const ushort CMD_SkillUpgradeCode = 11175;
     /// <summary>Unity 按 RO UpdateMove 上报位置和朝向的请求协议号。</summary>
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>

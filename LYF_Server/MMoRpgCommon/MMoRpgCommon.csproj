@@ -134,6 +134,7 @@
         <Compile Include="EntityData\Gene\NormalGene\ZhuXinGene.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\DamageBuff\DamageBuffGeneBase.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\TimeBuffGeneBase.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\TimeBuff\SkillAttributeGene.cs" />
     <Compile Include="enum\BackPackEnum.cs" />
         <Compile Include="enum\EquipEnum.cs" />
         <Compile Include="enum\Item.cs" />

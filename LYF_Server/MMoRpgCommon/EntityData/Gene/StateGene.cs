@@ -19,4 +19,18 @@ public class StateGene : GeneBase
     /// <summary>只撤销当前节点贡献的一份状态来源。</summary>
     /// <param name="role">此前承受状态的角色。</param>
     public override void OnRemove(IGeneOwner role) { role.AttrComp.ChangeState(States, -1); }
+
+    /// <summary>解除当前节点提供的指定控制位，保留同节点的其余状态。</summary>
+    /// <param name="role">已经登记此状态的宿主。</param>
+    /// <param name="states">允许解除的控制状态集合。</param>
+    /// <returns>实际撤销了至少一个状态时返回 true。</returns>
+    internal bool Dispel(IGeneOwner role, GeneState states)
+    {
+        // 仅撤销受到此节点计数影响的状态来源。
+        GeneState removed = States & states;
+        if (removed == GeneState.None) return false;
+        role.AttrComp.ChangeState(removed, -1);
+        States &= ~removed;
+        return true;
+    }
 }

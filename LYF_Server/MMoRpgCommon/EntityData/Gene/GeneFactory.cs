@@ -70,6 +70,9 @@ public abstract class GeneFactory
             case GeneAttributeType.Qi: return new QiGene();
             case GeneAttributeType.MoveSpeed: return new MoveSpeedGene();
             case GeneAttributeType.DamageTaken: return new DamageTakenGene();
+            case GeneAttributeType.AttackSpeedSlow:
+            case GeneAttributeType.TrueQiDamageTaken:
+            case GeneAttributeType.PhysicalDamageReduction: return new SkillAttributeGene(attribute);
             case GeneAttributeType.HealingReceived: return new HealingReceivedGene();
 
             // 高级属性共用同一个具体类，构造时传入实际属性编号。

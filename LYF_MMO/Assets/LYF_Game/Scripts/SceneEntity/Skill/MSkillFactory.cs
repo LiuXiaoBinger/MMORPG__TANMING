@@ -137,6 +137,8 @@ public sealed class MSkillFactory
     private static List<MSkillData> FindPresentations(int effectId,
         ProfessionInfo profession)
     {
+        // 成长行可以共用第一等级预制资源，当前等级的战斗效果仍用原效果编号。
+        effectId = LubanMgr.Instance.ResolveSkillPresentationEffectId(effectId);
         // 仅收集当前职业默认武器的数据，不推测尚未接入的武器属性。
         List<MSkillData> result = MListPool<MSkillData>.Get();
         if (profession == null)
