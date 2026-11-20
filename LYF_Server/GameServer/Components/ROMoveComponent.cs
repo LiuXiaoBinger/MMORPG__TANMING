@@ -5,8 +5,8 @@ using Google.Protobuf;
 /// <summary>按 RO MoveComponent.OnMoveStart 消费在线角色移动上报，使用现有角色位置和附近同步。</summary>
 public sealed class ROMoveComponent : RoleComponentBase
 {
-    /// <summary>触发位置纠正所需的两秒静默时长，单位为 Stopwatch 刻度。</summary>
-    private static readonly long PositionReportTimeoutTicks = 2 * Stopwatch.Frequency;
+    /// <summary>触发位置纠正所需的 1.2 秒静默时长，单位为 Stopwatch 刻度。</summary>
+    private static readonly long PositionReportTimeoutTicks = Stopwatch.Frequency * 1200 / 1000;
 
     /// <summary>按单调时钟计算的上报截止刻度，0 表示尚未计时，long.MaxValue 表示本次静默已纠正。</summary>
     private long _positionReportDeadlineTimestamp;
@@ -72,7 +72,7 @@ public sealed class ROMoveComponent : RoleComponentBase
     /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
-        // 按当前收包时刻重设两秒截止刻度，站立心跳和未通过位置限制的上报也会续期。
+        // 按当前收包时刻重设 1.2 秒后的截止刻度，站立心跳和未通过位置限制的上报也会续期。
         _positionReportDeadlineTimestamp = Stopwatch.GetTimestamp() + PositionReportTimeoutTicks;
         // 眩晕和定身阻止继续提交位移，同时结束角色现有的移动标记。
         if (!Owner.GetComponent<RoleEquipComponent>().Runtime.CanMove)
