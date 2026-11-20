@@ -245,7 +245,7 @@ public class SkillInfoWindow : WindowBase
     /// <summary>出战页是否正在查看技能所属槽位，查看时不改动实际装备。</summary>
     private bool _viewingSlots;
 
-    /// <summary>出战页是否展开右侧详情，列表页始终显示。</summary>
+    /// <summary>武功出战页是否显示图标下的短标签，轻功出战页则用于控制右侧详情。</summary>
     private bool _showDescription = true;
 
     /// <summary>每组普通武功的展示槽位数，槽位 8 是单列的绝学。</summary>
@@ -652,8 +652,12 @@ public class SkillInfoWindow : WindowBase
         bool battle = content && _page == PageBattle;
         // 只在轻功分类显示三个轻功槽。
         bool light = _category == CategoryLight;
-        // 配置遮住右侧详情；其余页面按描述开关显示。
-        bool detail = content && !_viewingSlots && (!battle || _showDescription);
+        // 右侧详情在配置视图收起，轻功出战页还可用描述按钮收起。
+        bool detail = content && !_viewingSlots;
+        if (battle && light && !_showDescription)
+        {
+            detail = false;
+        }
         SetActive(_stage.gameObject, content);
         SetActive(_emptyPage, !content);
         SetActive(_portraitRoot, content);
@@ -685,6 +689,14 @@ public class SkillInfoWindow : WindowBase
         if (!_showDescription)
         {
             _descriptionLabel.text = "显示描述";
+        }
+        if (battle && !light)
+        {
+            // index 对应预制体绑定的武功槽位，标签包含技能类型和空槽状态。
+            for (int index = 0; index < _nodeTags.Length; index++)
+            {
+                _nodeTags[index].enabled = _showDescription;
+            }
         }
         SetPortraitPosition(battle, light);
     }
@@ -727,12 +739,12 @@ public class SkillInfoWindow : WindowBase
         }
     }
 
-    /// <summary>收起或打开出战说明，场上节点和升级全部入口保持在原位置。</summary>
+    /// <summary>切换武功图标下方的短标签，轻功出战页沿用详情展开操作。</summary>
     private void ToggleDescription()
     {
         _showDescription = !_showDescription;
         RefreshPageLayout();
-        if (_showDescription)
+        if (_category == CategoryLight && _showDescription)
         {
             ResetScroll(_descScroll);
         }
