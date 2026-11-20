@@ -293,6 +293,8 @@ public sealed partial class SceneWaveSpawner
             float dx = Math.Max(0f, side - 1.5f);
             float dz = Math.Max(0f, depth - 1.5f);
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
+            // 记录当前普攻窗口已命中的目标，后续同窗口扫描不重复触发伤害与增伤。
+            hit_targets.Add(monster.UID);
             SettlePlayerHit(notice, index, origin, caster, damage, ROArtSkill.BasicAttackId, ref monsterDied);
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。

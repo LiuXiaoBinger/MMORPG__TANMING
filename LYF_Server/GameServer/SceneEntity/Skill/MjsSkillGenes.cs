@@ -139,9 +139,12 @@ internal static class MjsSkillGenes
     /// <returns>加成后的伤害点数。</returns>
     internal static int ApplyLearnedDamageBonus(OnlineRole role, IAttributeComponent target, int skillId, int damage)
     {
+        // 命中技能的主表定义提供普通攻击标记，快捷键与动作编号不参与增伤归类。
+        SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(skillId);
+        if (definition == null) return damage;
         // 权威学习组件提供当前有效等级，玩家请求没有覆盖它的入口。
         RoleSkillComponent skills = role.GetComponent<RoleSkillComponent>();
-        if (skillId == ROArtSkill.BasicAttackId)
+        if (definition.IsBasicAttack)
         {
             // 力强只为已经习得屏障的普通攻击计算其当前等级加成。
             SkillEffectInfo barrier = skills.FindLearnedEffect(BarrierSkillId);
@@ -149,8 +152,7 @@ internal static class MjsSkillGenes
             return damage;
         }
         // 只对主动武学补苍云斩的常驻增幅，滑步、普攻和无来源伤害不参加。
-        SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(skillId);
-        if (definition == null || definition.Type != 2 || target.MaxTrueQi <= 0) return damage;
+        if (definition.Type != 2 || target.MaxTrueQi <= 0) return damage;
         // 真气亏空占上限的比例在扣减本次命中的真气之前读取。
         SkillEffectInfo tornado = skills.FindLearnedEffect(TornadoSkillId);
         if (tornado == null) return damage;

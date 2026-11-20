@@ -505,16 +505,15 @@ public sealed class SkillCtrl : CtrlBase
         return null;
     }
 
-    /// <summary>取技能节点的两字定位标签，优先按魔剑士技能编号给出表现层标签，未收录技能按类型回退。</summary>
-    /// <param name="skillConfig">技能主表配置，提供技能编号与类型。</param>
+    /// <summary>取技能节点的两字定位标签，普攻读取主表标记，其他武功按招式编号或类型展示。</summary>
+    /// <param name="skillConfig">技能主表配置，提供普攻标记、技能编号与类型。</param>
     /// <returns>固定两个汉字的定位标签，例如“突进”“绝学”。</returns>
     private static string GetSkillTag(SkillInfo skillConfig)
     {
+        if (skillConfig.IsBasicAttack) return "普攻";
         // 已收录的魔剑士技能使用各自的招式定位，便于玩家在环形节点上快速辨认。
         switch (skillConfig.Id)
         {
-            case 10010:
-                return "普攻";
             case 10040:
                 return "突进";
             case 10050:
@@ -537,10 +536,6 @@ public sealed class SkillCtrl : CtrlBase
                 return "真气";
         }
         // 未收录技能按主表类型回退，保证任何职业都不会出现空标签。
-        if (skillConfig.Type == 1)
-        {
-            return "普攻";
-        }
         if (skillConfig.Type == 3)
         {
             return "滑行";

@@ -34,6 +34,7 @@ public sealed partial class SkillInfo : Luban.BeanBase
         CanJumpCancel = _buf.ReadInt();
         CanSkillCancel = _buf.ReadInt();
         StopAtEnemy = _buf.ReadBool();
+        IsBasicAttack = _buf.ReadBool();
     }
 
     public static SkillInfo DeserializeSkillInfo(ByteBuf _buf)
@@ -110,6 +111,10 @@ public sealed partial class SkillInfo : Luban.BeanBase
     /// 位移遇敌截停（TRUE 开启，FALSE 沿原曲线）
     /// </summary>
     public readonly bool StopAtEnemy;
+    /// <summary>
+    /// 是否为普通攻击，TRUE 命中时可触发普通攻击增伤
+    /// </summary>
+    public readonly bool IsBasicAttack;
    
     public const int __ID__ = -300141953;
     public override int GetTypeId() => __ID__;
@@ -139,6 +144,7 @@ public sealed partial class SkillInfo : Luban.BeanBase
         + "CanJumpCancel:" + CanJumpCancel + ","
         + "CanSkillCancel:" + CanSkillCancel + ","
         + "StopAtEnemy:" + StopAtEnemy + ","
+        + "IsBasicAttack:" + IsBasicAttack + ","
         + "}";
     }
 }
