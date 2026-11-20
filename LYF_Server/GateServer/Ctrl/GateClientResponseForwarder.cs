@@ -136,7 +136,8 @@ public static class GateClientResponseForwarder
                 RoleReviveRet.Parser.ParseFrom(package.Data);
                 return true;
             case NetDefine.CMD_SyncMoveCode:
-                // 移动是无错误码的附近状态通知，验证协议后按原载荷转发。
+            case NetDefine.CMD_MovePositionCorrectionCode:
+                // 附近状态和本人纠正复用移动消息载荷，按网关会话转发。
                 SyncMoveNtf.Parser.ParseFrom(package.Data);
                 return true;
             case NetDefine.RpcC2M_UploadChatAudio:

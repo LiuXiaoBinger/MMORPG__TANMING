@@ -52,6 +52,8 @@ public class NetDefine
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>
     public const ushort CMD_SyncMoveCode = 11181;
+    /// <summary>位置上报超时后向本人发送的 TCP 纠正通知，载荷复用 SyncMoveNtf 的角色和坐标字段。</summary>
+    public const ushort CMD_MovePositionCorrectionCode = 11182;
     /// <summary>客户端请求把实时协议绑定到 KCP 通道，网关回包携带会话号与令牌。</summary>
     public const ushort CMD_KcpBindCode = 11190;
     /// <summary>客户端与网关之间的 TCP 往返测量协议号，请求和回包共用，携带 8 字节客户端计时标记。</summary>

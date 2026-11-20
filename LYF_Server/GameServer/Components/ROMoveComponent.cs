@@ -1,8 +1,16 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
+using Google.Protobuf;
 
 /// <summary>按 RO MoveComponent.OnMoveStart 消费在线角色移动上报，使用现有角色位置和附近同步。</summary>
 public sealed class ROMoveComponent : RoleComponentBase
 {
+    /// <summary>触发位置纠正所需的两秒静默时长，单位为 Stopwatch 刻度。</summary>
+    private static readonly long PositionReportTimeoutTicks = 2 * Stopwatch.Frequency;
+
+    /// <summary>按单调时钟计算的上报截止刻度，0 表示尚未计时，long.MaxValue 表示本次静默已纠正。</summary>
+    private long _positionReportDeadlineTimestamp;
+
     /// <summary>最近一次上报的主动移动状态，生命周期与当前在线角色相同。</summary>
     private bool is_moving_;
 
@@ -22,24 +30,70 @@ public sealed class ROMoveComponent : RoleComponentBase
         return is_moving_;
     }
 
-    /// <summary>持续控制生效后结束已有移动标记，后续位移仍由 OnMoveStart 拒绝。</summary>
-    /// <param name="deltaMilliseconds">角色固定帧间隔；控制读取当前状态，不另建时钟。</param>
+    /// <summary>推进移动控制状态，并在位置上报持续缺失时向本人发出一次位置纠正。</summary>
+    /// <param name="deltaMilliseconds">固定逻辑帧的推进毫秒数，位置上报超时使用独立的单调时钟。</param>
     public override void Update(int deltaMilliseconds)
     {
         if (is_moving_ && !Owner.GetComponent<RoleEquipComponent>().Runtime.CanMove) is_moving_ = false;
+
+        if (Owner.State != OnlineRoleState.Online)
+        {
+            // 离线清除截止刻度，重新在线后从首次更新的时刻开始计时。
+            _positionReportDeadlineTimestamp = 0;
+            return;
+        }
+
+        // 当前单调时钟刻度，固定逻辑帧补跑时不会随逻辑推进量跳跃。
+        long nowTimestamp = Stopwatch.GetTimestamp();
+        if (_positionReportDeadlineTimestamp == 0)
+        {
+            _positionReportDeadlineTimestamp = nowTimestamp + PositionReportTimeoutTicks;
+            return;
+        }
+        if (nowTimestamp < _positionReportDeadlineTimestamp)
+        {
+            return;
+        }
+        // 同一次静默只纠正一次，接到下一包后才重新设定截止刻度。
+        _positionReportDeadlineTimestamp = long.MaxValue;
+
+        // 基础快照保存的是服务器接受的位置，坐标分量单位为米。
+        System.Numerics.Vector3 position = Owner.mainRoleInfo.BaseInfo.Pos.ToVector3();
+        Owner.SendToClient(NetDefine.CMD_MovePositionCorrectionCode, new SyncMoveNtf
+        {
+            RoleId = Owner.mainRoleInfo.BaseInfo.RoleId,
+            Dx = position.X,
+            Dy = position.Y,
+            Dz = position.Z
+        }.ToByteString());
     }
 
-    /// <summary>按 RO 顺序更新上报位置和移动状态，再同步给现有附近角色。</summary>
+    /// <summary>记录上报时间，并按现有移动流程处理发生变化的位置和姿态。</summary>
     /// <param name="action">本段终点（米）、朝向（度）、耗时（秒）、移动标志及当前跳跃段（0为落地，1到3为跳跃）。</param>
     public void OnMoveStart(MoveOperationReq action)
     {
+        // 按当前收包时刻重设两秒截止刻度，站立心跳和未通过位置限制的上报也会续期。
+        _positionReportDeadlineTimestamp = Stopwatch.GetTimestamp() + PositionReportTimeoutTicks;
         // 眩晕和定身阻止继续提交位移，同时结束角色现有的移动标记。
         if (!Owner.GetComponent<RoleEquipComponent>().Runtime.CanMove)
         {
             is_moving_ = false;
             return;
         }
-        // 先验证权威起点到上报终点的整段，拒绝时不修改角色位置或动作。
+        // 请求的世界位置沿用基础快照的下划线坐标格式，坐标单位为米。
+        string reportedPosition = string.Format(CultureInfo.InvariantCulture,
+            "{0}_{1}_{2}", action.Dx, action.Dy, action.Dz);
+        // 已处于静止且没有任何位移的上报可以仅用于续期。
+        bool isIdleReport = !action.IsMoving && !action.IsMoved && !is_moving_;
+        if (isIdleReport)
+        {
+            // 同坐标、同朝向、同跳跃状态的站立心跳不触发区域事件或附近广播。
+            if (reportedPosition == Owner.mainRoleInfo.BaseInfo.Pos && action.Face == Facing && action.JumpCount == jump_count_)
+            {
+                return;
+            }
+        }
+        // 验证权威起点到上报终点的整段，拒绝时不修改角色位置或动作。
         if (!TeamManager.Instance.AllowDungeonMove(Owner, new System.Numerics.Vector3(action.Dx, action.Dy, action.Dz))) return;
         // 新跳跃沿用现有移动协议；同一空中姿势的后续同步不重复触发技能取消。
         if (action.JumpCount > jump_count_ && action.JumpCount <= 3)
@@ -63,9 +117,8 @@ public sealed class ROMoveComponent : RoleComponentBase
                 state_machine.OnMove();
             }
         }
-        // 复用正式基础快照的下划线坐标格式，使进入世界和技能附近广播读取同一位置。
-        Owner.mainRoleInfo.BaseInfo.Pos = string.Format(CultureInfo.InvariantCulture,
-            "{0}_{1}_{2}", action.Dx, action.Dy, action.Dz);
+        // 进入世界和技能附近广播都读取这份已通过限制的基础位置。
+        Owner.mainRoleInfo.BaseInfo.Pos = reportedPosition;
         // 与即将同步给其他角色的Face保存同一值，供原RO背对伤害判定读取。
         Facing = action.Face;
         TeamManager.Instance.OnDungeonMove(Owner);

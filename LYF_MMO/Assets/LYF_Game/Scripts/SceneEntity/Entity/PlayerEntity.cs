@@ -5,7 +5,7 @@ using UnityEngine;
 
 /// <summary>
 /// 本地玩家的场景实体，连接角色基础数据、背包/计数组件和场景表现。
-/// 每帧完成移动后按位置、朝向及跳跃变化上报服务器；销毁时清理目标与本地角色数据。
+/// 角色在场时定期上报位置、朝向及跳跃状态；销毁时清理目标与本地角色数据。
 /// </summary>
 public sealed class PlayerEntity : RoleEntity
 {
@@ -23,8 +23,14 @@ public sealed class PlayerEntity : RoleEntity
     /// <summary>本地玩家上次生成的施法 UUID，零表示该实体尚未释放技能。</summary>
     private ulong _nextSkillUuid;
 
-    /// <summary>上次已上报的水平移动状态，用于发送松键后的最后位置。</summary>
-    private bool _isMoving;
+    /// <summary>落地状态的位置上报间隔，单位秒，站立时也按此间隔上报。</summary>
+    private const double GroundPositionReportIntervalSeconds = 0.2d;
+
+    /// <summary>跳跃状态的位置上报间隔，单位秒。</summary>
+    private const double JumpPositionReportIntervalSeconds = 0.1d;
+
+    /// <summary>当前位置上报周期的起点，单位为 Unity 启动后经过的非缩放秒数。</summary>
+    private double _positionReportCycleStartedAtSeconds;
 
     /// <summary>上次上报的跳跃段号；零表示落地，1 至 3 表示本轮滞空已起跳次数。</summary>
     private int _jumpCount;
@@ -89,7 +95,7 @@ public sealed class PlayerEntity : RoleEntity
         _roleComponents = new RoleComponentContainer(this);
         // 直接沿用 MEntity 已有 RO 同步字段；玩家第一次上报从当前世界位置开始计时。
         sysnOldPos = Position;
-        _lastSyncTime = 0f;
+        _positionReportCycleStartedAtSeconds = Time.realtimeSinceStartupAsDouble;
         CacheMainCameraTransform();
     }
 
@@ -105,39 +111,28 @@ public sealed class PlayerEntity : RoleEntity
         {
             return;
         }
-        // 与 RO 一样，在本帧运动完成后比较上次位置，厘米以下变化不触发位置包。
-        Vector3 destPos = Position;
-        // 当前点相对上次上报点的三维位移，单位为米。
-        Vector3 sub = destPos - sysnOldPos;
-        // 世界 X 轴变化的整数厘米数。
-        int subX = (int)(sub.x * 100f);
-        // 世界 Y 轴变化的整数厘米数；用于同步本项目已有跳跃及落地位置。
-        int subY = (int)(sub.y * 100f);
-        // 世界 Z 轴变化的整数厘米数。
-        int subZ = (int)(sub.z * 100f);
-        // 当前模型水平朝向角，单位为度。
-        float ang = Model.Rotation.eulerAngles.y;
-        _lastSyncTime += deltaMilliseconds * 0.001f;
-        // 起跳、追加段和落地立即上报；即使尚无厘米位移或累计时间为零，也不能漏掉表现状态。
+        // 起跳、追加段和落地立即上报，由 UpdateMove 重置周期起点。
         if (_jumpCount != MoveComp.JumpCount)
         {
             UpdateMove();
             return;
         }
-        // 移动结算时间与同步间隔均满足上报节拍。
-        bool movementTimingValid = MoveComp.CostTime > 0f && _lastSyncTime > 0.1f;
-        // 移动状态标志发生变化。
-        bool moveStateChanged = _isMoving != IsMoving;
-        // 三维位置任一轴向上有整数厘米级位移。
-        bool positionShifted = Mathf.Abs(subX) > 0 || Mathf.Abs(subZ) > 0 || Mathf.Abs(subY) > 0;
-        // 水平朝向角相对上次上报偏转超过 1 度。
-        bool faceChanged = Mathf.Abs(ang - _face) > 1f;
-        // 姿态发生实质变化（状态标志、位置或朝向任一成立）。
-        bool poseChanged = moveStateChanged || positionShifted || faceChanged;
-        if (movementTimingValid && poseChanged)
+
+        // 当前姿态的位置上报间隔，单位秒。
+        double reportIntervalSeconds = GroundPositionReportIntervalSeconds;
+        if (MoveComp.JumpCount > 0)
         {
-            _face = ang;
+            reportIntervalSeconds = JumpPositionReportIntervalSeconds;
+        }
+        // 用 Unity 启动后的非缩放时间计时，不累计取整后的逻辑帧毫秒。
+        double nowSeconds = Time.realtimeSinceStartupAsDouble;
+        // 当前上报周期已经经过的实际秒数。
+        double elapsedSeconds = nowSeconds - _positionReportCycleStartedAtSeconds;
+        if (elapsedSeconds >= reportIntervalSeconds)
+        {
             UpdateMove();
+            // 周期包只发一次，保留未满一个周期的余量供下一帧使用。
+            _positionReportCycleStartedAtSeconds = nowSeconds - elapsedSeconds % reportIntervalSeconds;
         }
     }
 
@@ -150,7 +145,7 @@ public sealed class PlayerEntity : RoleEntity
     #endregion
 
     #region 界面刷新、事件回调等
-    /// <summary>上传当前位置、朝向、经过时间和移动/跳跃状态，再清零本次同步计时。</summary>
+    /// <summary>上传当前位置、朝向、经过时间和移动/跳跃状态，从本次上报重新计时。</summary>
     public void UpdateMove()
     {
         // 主城实例和角色模型对应 RO 已进入场景；创角阶段不发送世界移动。
@@ -158,13 +153,7 @@ public sealed class PlayerEntity : RoleEntity
         {
             return;
         }
-        // 普通移动保留原有正耗时发送规则；起跳或落地状态变化允许零耗时即时上报。
-        if (MoveComp.CostTime <= 0f && _jumpCount == MoveComp.JumpCount)
-        {
-            return;
-        }
         _face = Model.Rotation.eulerAngles.y;
-        _isMoving = IsMoving;
         _jumpCount = MoveComp.JumpCount;
         // 本时间段是否实际发生位移；跳跃和技能程序位移也需要同步最终坐标。
         bool isMoved = Position != sysnOldPos;
@@ -181,7 +170,7 @@ public sealed class PlayerEntity : RoleEntity
         ptc.JumpCount = _jumpCount;
         MoveComp.CostTime = 0f;
         MNetClient.Instance.Send(NetDefine.CMD_MoveOperationCode, ptc.ToByteString());
-        _lastSyncTime = 0f;
+        _positionReportCycleStartedAtSeconds = Time.realtimeSinceStartupAsDouble;
     }
 
     /// <summary>
@@ -577,15 +566,14 @@ public sealed class PlayerEntity : RoleEntity
         _disposed = false;
         _addedToWorldNotified = false;
         IsLocal = false;
-        _isMoving = false;
         _jumpCount = 0;
         RoleInfo = null;
         _flags.Clear();
         DirtyTracker.ClearAll();
         base.PrepareForReuse(uid, entityType, configId);
-        // 基类已经清除朝向和上次位置，玩家恢复 0.1 秒同步计时起点。
+        // 基类已经清除朝向和上次位置，复用时从当前位置和当前时刻开始上报周期。
         sysnOldPos = Position;
-        _lastSyncTime = 0f;
+        _positionReportCycleStartedAtSeconds = Time.realtimeSinceStartupAsDouble;
     }
 
     /// <summary>

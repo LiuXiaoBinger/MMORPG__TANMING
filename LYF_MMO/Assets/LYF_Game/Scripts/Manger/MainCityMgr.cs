@@ -26,6 +26,9 @@ public class MainCityMgr : MonoBehaviour
    /// <summary>本主城实例持有的移动同步委托，场景销毁时解除注册。</summary>
    private OnActionHandler _syncMoveHandler;
 
+   /// <summary>本场景持有的主角位置纠正委托，场景销毁时解除注册。</summary>
+   private OnActionHandler _movePositionCorrectionHandler;
+
    /// <summary>角色离开视野通知处理器，仅销毁服务器指定远端角色。</summary>
    private OnActionHandler _roleLeaveHandler;
 
@@ -62,6 +65,9 @@ public class MainCityMgr : MonoBehaviour
          NetDefine.CMD_SyncotherOnlineCode, _syncOtherOnlineHandler);
       _syncMoveHandler = SyncMoveHandle;
       SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
+      _movePositionCorrectionHandler = MovePositionCorrectionHandle;
+      SocketDispatcher.Instance.AddEventHandler(
+         NetDefine.CMD_MovePositionCorrectionCode, _movePositionCorrectionHandler);
       _roleLeaveHandler = RoleLeaveHandle;
       SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_RoleLeaveCode, _roleLeaveHandler);
       _localRoleLoadCompletedHandler = OnLocalRoleLoadCompleted;
@@ -126,6 +132,9 @@ public class MainCityMgr : MonoBehaviour
    {
       SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SyncMoveCode, _syncMoveHandler);
       _syncMoveHandler = null;
+      SocketDispatcher.Instance.RemoveEventHandler(
+         NetDefine.CMD_MovePositionCorrectionCode, _movePositionCorrectionHandler);
+      _movePositionCorrectionHandler = null;
       if (_roleLeaveHandler != null)
       {
          SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RoleLeaveCode, _roleLeaveHandler);
@@ -324,6 +333,21 @@ public class MainCityMgr : MonoBehaviour
       return "Role/Role_JX";
    }
     #endregion
+
+   /// <summary>按服务器最近保存的世界坐标修正已加载的本地主角位置。</summary>
+   /// <param name="data">11182 位置纠正的 Protobuf 消息体，包含角色 ID 和三个世界坐标分量。</param>
+   private void MovePositionCorrectionHandle(ByteString data)
+   {
+      // 纠正通知复用移动消息的角色 ID 和世界坐标，坐标单位为米。
+      SyncMoveNtf notice = SyncMoveNtf.Parser.ParseFrom(data);
+      // 场景当前加载完成的本地主角，角色 ID 用于排除不属于当前角色的通知。
+      PlayerEntity localRole = Global.Instance?.SceneWorld?.LocalRole;
+      if (localRole == null || !localRole.Model.IsLoaded || localRole.BaseInfo.RoleId != notice.RoleId)
+      {
+         return;
+      }
+      localRole.Position = new Vector3(notice.Dx, notice.Dy, notice.Dz);
+   }
 
     #region 其他玩家同步
    /// <summary>把服务器移动通知转换为 RO 移动事件，交由既有远端角色组件追赶目标。</summary>
