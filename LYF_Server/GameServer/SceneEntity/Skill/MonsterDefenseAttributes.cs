@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web.Script.Serialization;
+using cfg;
 
 /// <summary>当前正式副本怪物的 RO DEF/MDEF 最小切片及本项目外功、内功伤害适配。</summary>
 public class MonsterDefenseAttributes
@@ -59,6 +60,41 @@ public class MonsterDefenseAttributes
         // 承伤系数包含目标自己的既有战斗基因，百分数 100 为原值。
         double damageTaken = target.CalculateAttribute(GeneAttributeType.DamageTaken, 100);
         return Math.Max(0, (int)(externalDamage * GetExternalDefenseRate(target) * damageTaken / 100));
+    }
+
+    /// <summary>计算本次命中额外附带的一个元素伤害，由对应抵抗独立结算。</summary>
+    /// <param name="attacker">叠加装备及临时基因后的角色属性快照。</param>
+    /// <param name="target">受击怪物的属性基因，包含当前该系抵抗与承伤修正。</param>
+    /// <param name="effect">该段使用的技能等级行，未配置元素时保留原伤害。</param>
+    /// <returns>经对应元素抗性和通用承伤处理、向下取整后的生命点数。</returns>
+    internal static int CalculateElementSkillDamage(RoleBaseInfo attacker, GeneRuntime target, SkillEffectInfo effect)
+    {
+        if (effect == null || effect.ElementAttackAttributeId == 0) return 0;
+
+        // 属性编号按攻击、穿透、抵抗及穿透上限分组，每组内水、毒、火、风、元顺序相同。
+        int elementIndex = effect.ElementAttackAttributeId - (int)GeneAttributeType.WaterAttack;
+        // 角色这系的最终攻击点数，缺省零；技能自带的固定元素伤害可独立生效。
+        double attack;
+        attacker.AdvancedAttributes.TryGetValue(effect.ElementAttackAttributeId, out attack);
+        // 当前元素的穿透点数，可用于抵消同系抗性。
+        double penetration;
+        attacker.AdvancedAttributes.TryGetValue((int)GeneAttributeType.WaterPenetration + elementIndex, out penetration);
+        // 当前元素的超额穿透上限，以点数保存。
+        double penetrationCap;
+        attacker.AdvancedAttributes.TryGetValue((int)GeneAttributeType.WaterPenetrationCap + elementIndex, out penetrationCap);
+        // 怪物这系的最终抵抗，未挂对应属性基因时以零为基底。
+        double resistance = Math.Max(0, target.CalculateAttribute(GeneAttributeType.WaterResistance + elementIndex, 0));
+        // 同系穿透先抵消抵抗。剩余抵抗用于减伤，超出的穿透受对应上限约束后折算为增伤百分点。
+        double netResistance = resistance - Math.Max(0, penetration);
+        // 剩余 100 点抵抗时伤害保留一半，更高的抵抗继续递减。
+        double resistanceRate = 100 / (100 + Math.Max(0, netResistance));
+        // 抵消后每点有效超额穿透提高 1% 的该系伤害。
+        double penetrationRate = 1 + Math.Min(Math.Max(0, -netResistance), Math.Max(0, penetrationCap)) / 100;
+        // 万分比仅缩放面板攻击，固定伤害独立加入并同样受该系防御与通用承伤影响。
+        double baseDamage = Math.Max(0, attack) * (effect.ElementDamagePermyriad / 10000.0) + effect.ElementFlatDamage;
+        // 通用承伤在每个伤害分量只应用一次，100 表示原有的 100% 承伤。
+        double damageTaken = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DamageTaken, 100));
+        return (int)Math.Min(int.MaxValue, baseDamage * resistanceRate * penetrationRate * damageTaken / 100);
     }
 
     /// <summary>使用统一的外功防御曲线，基础防御与实际破甲一起结算。</summary>

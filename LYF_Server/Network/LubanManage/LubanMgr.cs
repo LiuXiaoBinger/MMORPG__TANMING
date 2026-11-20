@@ -10,6 +10,12 @@ public class LubanMgr:Singleton<LubanMgr>
 {
 
     #region 字段与常量
+    /// <summary>剑气攻击的主表编号，服务端按近战盒体判定命中。</summary>
+    private const int BasicAttackSkillId = 10010;
+
+    /// <summary>苍蓝屏障的主表编号，只有屏障结束时的爆炸会命中敌人。</summary>
+    private const int BlueBarrierSkillId = 10120;
+
     /// <summary>魔剑士主动技能「刀刃风暴」的主表编号，服务端按段自行查询敌人。</summary>
     private const int BladeStormSkillId = 10110;
 
@@ -337,6 +343,24 @@ public class LubanMgr:Singleton<LubanMgr>
             bool isTornadoSlash = effect.SkillId == TornadoSlashSkillId;
             // 只有已经接入真实范围结算的无目标技能才允许携带命中数值。
             bool hasAreaHitImplementation = isBladeStorm || isTornadoSlash;
+            // 非零元素编号只接受五系攻击属性；零编号要求伤害列同时不生效。
+            bool hasElement = effect.ElementAttackAttributeId != 0;
+            // 元素倍率为万分比，固定伤害为点数，至少一列有实际数值。
+            bool hasElementDamage = effect.ElementDamagePermyriad > 0 || effect.ElementFlatDamage > 0;
+            // 当前确实会进入服务端扣血结果点的技能才允许配置元素伤害。
+            bool hasElementHitImplementation = hasAreaHitImplementation || effect.SkillId == BasicAttackSkillId ||
+                effect.SkillId == BlueBarrierSkillId;
+            // 五系攻击编号是现有基因数据中的连续区间，其他类型不能当成攻击系。
+            bool isElementAttackAttribute = effect.ElementAttackAttributeId >= (int)GeneAttributeType.WaterAttack &&
+                effect.ElementAttackAttributeId <= (int)GeneAttributeType.YuanAttack;
+            if (effect.ElementDamagePermyriad < 0 || effect.ElementFlatDamage < 0 || hasElement != hasElementDamage)
+            {
+                throw new InvalidDataException("技能等级效果的元素伤害配置无效，效果 ID=" + effect.Id);
+            }
+            if (hasElement && (!isElementAttackAttribute || !hasElementHitImplementation))
+            {
+                throw new InvalidDataException("技能等级效果的属性编号或命中入口无效，效果 ID=" + effect.Id);
+            }
             if (isNoTargetMode && hasAnyHitValue && !hasAreaHitImplementation)
             {
                 throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);

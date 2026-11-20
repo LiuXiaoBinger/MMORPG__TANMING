@@ -15,7 +15,7 @@ internal static class MjsSkillDescription
         bool barrier = current.SkillId == SkillCtrl.BlueBarrierSkillId;
         // 当前技能的完整效果，与相同等级的服务端行为一一对应。
         string description;
-        if (barrier) description = DescribeBarrier(current);
+        if (barrier) description = DescribeBarrier(current) + DescribeElementDamage(current);
         else description = DescribeTornado(current);
         if (!learned) return description;
         if (next == null) return description + "\n\n已达技能最高等级（" + current.Level + "级）";
@@ -30,7 +30,7 @@ internal static class MjsSkillDescription
         {
             growth = "基础伤害 " + Damage(next) + "，命中扣除" + next.TrueQiDamage + "点真气。";
         }
-        return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth;
+        return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth + DescribeElementDamage(next);
     }
 
     /// <summary>用武功当前和下一成长行显示真实调息、魔力和已接入的伤害成长。</summary>
@@ -48,13 +48,14 @@ internal static class MjsSkillDescription
         if (bladeStorm)
             description = "挥动双刃回旋，连续斩击周围敌人" + current.HitCount + "次。每段技能伤害系数为" +
                 Percent(current.DamagePermyriad) + "。";
+        description += DescribeElementDamage(current);
         if (!learned) return description;
         if (next == null) return description + "\n\n已达技能最高等级（" + current.Level + "级）";
         // 下一行和服务器升级门槛同源，魔力是每次正式提交的消耗。
         string preview = "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" +
             "调息 " + Seconds(next.CooldownMs) + " 秒，消耗魔力 " + next.MpCost + " 点。";
         if (bladeStorm) preview += "\n每段技能伤害系数 " + Percent(next.DamagePermyriad) + "。";
-        return description + preview;
+        return description + preview + DescribeElementDamage(next);
     }
 
     /// <summary>生成一次苍蓝屏障当前等级的说明。</summary>
@@ -81,7 +82,7 @@ internal static class MjsSkillDescription
     private static string DescribeTornado(SkillEffectInfo effect)
     {
         return "以全部剩余真气催动前方龙卷，在落点" + Meters(effect.RadiusCm) + "米范围内命中最多" +
-            effect.MaxTargets + "名敌人，造成" + Damage(effect) + "。\n" +
+            effect.MaxTargets + "名敌人，造成" + Damage(effect) + "。" + DescribeElementDamage(effect) + "\n" +
             "苍云斩：龙卷斩增伤" + Percent(effect.TornadoDamageBonusPermyriad) + "，每消耗" + effect.TrueQiDamageStep +
             "点真气再增加" + Percent(effect.TrueQiStepBonusPermyriad) + "。习得后，主动技能按目标真气亏空比例最多增伤" +
             Percent(effect.MissingTrueQiBonusPermyriad) + "。\n" +
@@ -101,6 +102,23 @@ internal static class MjsSkillDescription
     {
         return (effect.DamagePermyriad / 100.0).ToString("0.00", CultureInfo.InvariantCulture)
             + "%外功攻击+" + effect.FlatDamage + "点伤害";
+    }
+
+    /// <summary>显示本级附加的属攻倍率及固定元素伤害，名称沿用角色高级属性页。</summary>
+    /// <param name="effect">当前级或下一级的权威技能效果行。</param>
+    /// <returns>附加伤害说明行，无对应元素时为空。</returns>
+    private static string DescribeElementDamage(SkillEffectInfo effect)
+    {
+        // 只扫描属性攻击组，不使用后续的穿透或抵抗名称。
+        for (int index = 0; index < RoleAttributeViewData.AdvancedGroupSizes[0]; index++)
+        {
+            // 高级属性第一组依次为五系攻击，文字与角色属性面板保持一致。
+            RoleAttributeViewData.AdvancedEntry entry = RoleAttributeViewData.AdvancedEntries[index];
+            if (entry.Id != effect.ElementAttackAttributeId) continue;
+            return "\n附加 " + Percent(effect.ElementDamagePermyriad) + entry.Label + " + " +
+                effect.ElementFlatDamage + "点" + entry.Label[0] + "属性伤害。";
+        }
+        return string.Empty;
     }
 
     /// <summary>将万分比显示为玩家可读的百分比。</summary>

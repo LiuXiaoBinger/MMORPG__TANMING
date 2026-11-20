@@ -341,6 +341,11 @@ public sealed partial class SceneWaveSpawner
                 // 屏障爆炸和龙卷斩的输入已经包含自身外功，防御环节保留该技能的原公式。
                 if (effect != null) calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
                 else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
+                // 已固定的等级行优先用于龙卷和盾爆，其他命中读取角色本技能的已学习等级行。
+                SkillEffectInfo elementEffect = effect ?? caster.GetComponent<RoleSkillComponent>().FindLearnedEffect(skillId);
+                // 元素部分只经过对应元素防御，合并后与原伤害走同一最终增伤和扣血路径。
+                int elementDamage = MonsterDefenseAttributes.CalculateElementSkillDamage(finalAttributes, targetGenes, elementEffect);
+                calculatedDamage = (int)Math.Min(int.MaxValue, (long)calculatedDamage + elementDamage);
                 // 条件增伤读取本次扣血前的真实双方血量、目标类别与背面判定，系数只作用于本次伤害。
                 if (calculatedDamage > 0)
                 {

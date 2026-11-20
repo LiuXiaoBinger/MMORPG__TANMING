@@ -64,6 +64,9 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         MissingTrueQiBonusPermyriad = _buf.ReadInt();
         TrueQiDamage = _buf.ReadInt();
         DualTargetProtectionPermyriad = _buf.ReadInt();
+        ElementAttackAttributeId = _buf.ReadInt();
+        ElementDamagePermyriad = _buf.ReadInt();
+        ElementFlatDamage = _buf.ReadInt();
     }
 
     public static SkillEffectInfo DeserializeSkillEffectInfo(ByteBuf _buf)
@@ -263,6 +266,18 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
     /// 双目标触发的自身内外功伤害减免，万分比
     /// </summary>
     public readonly int DualTargetProtectionPermyriad;
+    /// <summary>
+    /// 对应属性攻击编号，0为空，101水/102毒/103火/104风/105元
+    /// </summary>
+    public readonly int ElementAttackAttributeId;
+    /// <summary>
+    /// 本次命中的属性攻击倍率（万分比）
+    /// </summary>
+    public readonly int ElementDamagePermyriad;
+    /// <summary>
+    /// 本次命中的固定属性伤害（点）
+    /// </summary>
+    public readonly int ElementFlatDamage;
    
     public const int __ID__ = 1242812144;
     public override int GetTypeId() => __ID__;
@@ -322,6 +337,9 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         + "MissingTrueQiBonusPermyriad:" + MissingTrueQiBonusPermyriad + ","
         + "TrueQiDamage:" + TrueQiDamage + ","
         + "DualTargetProtectionPermyriad:" + DualTargetProtectionPermyriad + ","
+        + "ElementAttackAttributeId:" + ElementAttackAttributeId + ","
+        + "ElementDamagePermyriad:" + ElementDamagePermyriad + ","
+        + "ElementFlatDamage:" + ElementFlatDamage + ","
         + "}";
     }
 }
