@@ -821,3 +821,9 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - Blue Barrier clears removable control, gives three seconds of super armor, opens a ten-second shield, applies stacking Frost to attackers and knocks nearby enemies up on normal expiry or break. Natural expiry refunds two to five seconds of its remaining cooldown in proportion to remaining capacity.
 - Tornado Slash consumes the caster's remaining true qi on accepted cast. It applies external-attack damage to up to two targets at the existing impact point, applies qi loss and vulnerability, and runs the double-hit protection and timed defense effects. The current and next level values are read from the same table as combat.
 - The authoritative upgrade command uses virtual copper and saves the new level in `role_skill` within the same versioned transaction as the wallet. Scope and test boundaries: `项目修改日志/2026-11-20-苍蓝屏障龙卷斩与170级技能成长.md`.
+
+## [CODE][FILES][技能][WEAPON-SKILL-GROWTH-20261120] Eight active weapon skills share the level-170 upgrade flow
+
+- Commit `fc7a889f23dc8cc6925b8cc1fda62aeabdc1a43c` extends the same copper and learned-level transaction to skills 10040, 10050, 10060, 10070, 10100 and 10110. Their 1,014 additional rows join the prior 340 growth rows. The configured level cap for the eight active weapon skills is 170.
+- The six skills preserve level-one combat values. At level 170 their configured cooldown is 20% shorter and mana cost 25% lower. Blade Storm retains eight hits and its target cap, with a level-dependent damage multiplier. The ultimate skill uses the same authoritative copper screen, and all six use the real next-level row and existing animation resources.
+- The original skill learning requirement still applies. File list and validation scope: `项目修改日志/2026-11-20-苍蓝屏障龙卷斩与170级技能成长.md`.

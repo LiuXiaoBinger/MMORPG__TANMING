@@ -843,3 +843,8 @@
 - 按本次改动范围编译 GameServer、CenterServer、GateServer、Unity 客户端插件和 Unity `LYF_Game` 脚本程序集，均为零错误。Luban 源表与生成数据覆盖两项技能共 340 条等级数据。
 - 调用实际业务方法的隔离测试通过 101 项，覆盖施放与资源变化、击飞消息、真气易伤、角色等级门槛、升级和 170 级封顶。隔离 SQLite 库通过 9 项检查，覆盖原子保存、重放、旧角色记录以及重新读取技能等级和快捷键。编译后的客户端说明生成通过 5 项检查。
 - 证据位于 `_temp/shield-whirlwind-level-20261120/combat-test.log`、同目录的 `save-test.log`、`tooltip-test.log` 与 `git-push.log`。运行中服务部署、完整 Unity 联机和独立 Player 打包待验。
+
+## [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] 其余武功的实际施放入口读取成长数值
+
+- 扩充后的配置表沿用现有结构并完成生成。共享 `Network` 的两种构建和 Unity `LYF_Game` 编译均通过。基于实际配置表的测试通过 51 项检查，覆盖六项技能的升级、施放、存档包、当前与下一级说明、等级上限以及刀刃风暴伤害。同一份最终配置表上的苍蓝屏障和龙卷斩隔离回归通过全部 101 项检查。
+- 证据位于 `_temp/weapon-skill-growth-20261120/weapon-growth-test.log`、同目录的 `shield-tornado-regression.log`、`unity-compile.log` 与 `luban.log`。运行中服务部署、完整 Unity 联机和独立 Player 打包待验。

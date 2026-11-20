@@ -852,3 +852,8 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - GameServer, CenterServer, GateServer, the Unity plugin and the Unity `LYF_Game` script assembly compiled with zero errors from the scoped changes. The Luban workbook and generated data cover all 340 levels for the two skills.
 - The isolated production-method harness passed 101 checks, including cast/resource changes, knock-up messages, true qi vulnerability, level requirements, upgrade and level-170 limits. An isolated SQLite database passed nine checks on atomic saving, replay, old records and reloading levels and bindings. The compiled client description builder passed five checks.
 - Evidence: `_temp/shield-whirlwind-level-20261120/combat-test.log`, `save-test.log`, `tooltip-test.log` and `git-push.log` in the same directory. Live rollout, a full networked Unity play session and standalone player packaging remain unverified.
+
+## [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] Other weapon skills use higher-level numbers in real cast methods
+
+- The extended table generated with the existing schema. Both shared Network builds and the Unity `LYF_Game` compilation passed. A real-table harness checked the six skills' upgrade, cast, save bundle, current/next description, cap and Blade Storm damage through 51 checks. The earlier Blue Barrier and Tornado Slash isolation suite passed all 101 checks on the same final table.
+- Evidence: `_temp/weapon-skill-growth-20261120/weapon-growth-test.log`, `shield-tornado-regression.log`, `unity-compile.log` and `luban.log` in that directory. Live deployment, a full networked Unity play session and standalone player packaging remain unverified.
