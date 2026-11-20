@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// 主界面常驻的快捷任务面板，从 TaskMgr 读取追踪列表和快捷页签，按需克隆并复用条目。
 /// 点击条目依次通知控制器选择任务、前往目标；放弃和打开主窗口也只转发请求。
 /// 任务、玩法、奇遇页签控制的是快捷面板，折叠时隐藏左侧整组 UI（竖排页签、页签行、任务列表与队伍面板），只保留折叠按钮。
-/// 折叠时按钮移到左侧竖排页签所在的列，展开时回到页签行右侧原坐标，恢复完整面板布局。
+/// 主界面的折叠按钮固定在左侧竖排页签下方，通过箭头朝向表示展开或折叠状态。
 /// </summary>
 public class QuickTaskPanelWidget : MonoBehaviour
 {
@@ -32,9 +32,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
     [SerializeField] private GameObject[] _pageOffNodes;
 
     /// <summary>
-    /// 折叠按钮，绑定 QuickTaskPanel 根下正式新增的 Btn_Fold（复用 Btn_Small_02 项目视觉资源）。
-    /// 点击在折叠与展开之间切换：折叠隐藏左侧整组 UI 只保留本按钮，按钮贴到左边并绕 Z 轴旋转 180 度指示状态；
-    /// 展开时按钮回到页签行右侧原坐标、旋转归零。
+    /// 折叠按钮，主界面绑定任务和队伍共用的 Btn_Fold，折叠时按钮保留可见且箭头朝右。
     /// </summary>
     [SerializeField] private Button _foldButton;
 
@@ -44,7 +42,7 @@ public class QuickTaskPanelWidget : MonoBehaviour
     /// <summary>队伍快捷面板，绑定 Bg/QuickPanel/QuickTeamPanel，折叠时隐藏，展开时按页签状态恢复。</summary>
     [SerializeField] private GameObject _teamPanel;
 
-    /// <summary>外层页签控件，绑定 QuickPanel 根节点；折叠前切回任务内容层，展开后按原页签状态恢复显隐。</summary>
+    /// <summary>外层页签控件，绑定 QuickPanel 根节点，展开时恢复所选页签的内容。</summary>
     [SerializeField] private QuickPanelWidget _panelWidget;
 
     /// <summary>点击任务条目切换追踪。</summary>
@@ -71,13 +69,13 @@ public class QuickTaskPanelWidget : MonoBehaviour
     /// <summary>当前是否处于折叠状态，折叠时左侧整组 UI 隐藏、只保留折叠按钮。</summary>
     private bool _isFolded;
 
-    /// <summary>折叠时按钮停靠的 X 坐标，相对 QuickTaskPanel 左上角锚点，单位 UI 像素；取 20 使按钮落在左侧竖排页签那一列。</summary>
+    /// <summary>内嵌折叠按钮的旧布局停靠坐标，相对任务面板左上角，单位为 UI 像素。</summary>
     private const float FoldedButtonX = 20f;
 
-    /// <summary>展开状态下折叠按钮的锚点坐标，首次切换折叠状态时从预制体记录，展开时据此恢复页签行右侧的位置。</summary>
+    /// <summary>内嵌折叠按钮的展开坐标，首次更新时从预制体记录，单位为 UI 像素。</summary>
     private Vector2 _expandedButtonPosition;
 
-    /// <summary>是否已记录展开态按钮坐标，避免初始化前先收到展开调用时把按钮移到锚点原点。</summary>
+    /// <summary>内嵌折叠按钮的预制体坐标是否已保存，防止后续状态更新覆盖原坐标。</summary>
     private bool _expandedPositionRecorded;
     #endregion
 
@@ -263,15 +261,15 @@ public class QuickTaskPanelWidget : MonoBehaviour
         UpdateFoldButtonState();
     }
 
-    /// <summary>设置左侧整组 UI 的折叠状态：折叠时只保留移到左边的折叠按钮，展开时恢复全部左侧界面与按钮原坐标。</summary>
+    /// <summary>折叠时仅显示收起按钮，展开时恢复左侧页签与内容。</summary>
     /// <param name="folded">true 折叠隐藏左侧 UI，false 展开恢复。</param>
     public void SetFolded(bool folded)
     {
         _isFolded = folded;
         if (folded)
         {
-            // 先切回任务内容层：队伍内容显示时整个任务容器含折叠按钮会被隐藏，用户将无法点开。
-            if (_panelWidget != null)
+            // 仅内嵌按钮需要切回任务容器，以保持展开入口可见。
+            if (_panelWidget != null && _foldButton != null && _foldButton.transform.parent == transform)
             {
                 _panelWidget.ShowTaskPanel();
             }
@@ -345,35 +343,40 @@ public class QuickTaskPanelWidget : MonoBehaviour
         return TaskPageFilter.Other;
     }
 
-    /// <summary>按折叠状态更新按钮位置与朝向：折叠时贴到左侧页签列且箭头朝右，展开时回到预制体原坐标且箭头朝左。</summary>
+    /// <summary>按展开或折叠状态更新箭头朝向，内嵌按钮沿用旧布局的停靠位置。</summary>
     private void UpdateFoldButtonState()
     {
         if (_foldButton == null)
         {
             return;
         }
-        // 折叠按钮自身的矩形变换，移动与旋转都由它承载。
+        // 按钮的矩形变换，用于旋转箭头和更新内嵌按钮位置。
         RectTransform foldRect = _foldButton.GetComponent<RectTransform>();
         if (foldRect == null)
         {
             return;
         }
-        if (_expandedPositionRecorded == false)
+        if (foldRect.parent == transform)
         {
-            _expandedButtonPosition = foldRect.anchoredPosition;
-            _expandedPositionRecorded = true;
+            if (_expandedPositionRecorded == false)
+            {
+                _expandedButtonPosition = foldRect.anchoredPosition;
+                _expandedPositionRecorded = true;
+            }
+            // 内嵌按钮保留展开坐标和纵向位置，折叠时仅将横坐标移到左侧。
+            Vector2 buttonPosition = _expandedButtonPosition;
+            if (_isFolded)
+            {
+                buttonPosition.x = FoldedButtonX;
+            }
+            foldRect.anchoredPosition = buttonPosition;
         }
         if (_isFolded)
         {
-            // 折叠后的坐标：只改 X 贴到左边缘，Y 保持页签行高度不变。
-            Vector2 foldedPosition = _expandedButtonPosition;
-            foldedPosition.x = FoldedButtonX;
-            foldRect.anchoredPosition = foldedPosition;
             foldRect.localEulerAngles = new Vector3(0f, 0f, 180f);
         }
         else
         {
-            foldRect.anchoredPosition = _expandedButtonPosition;
             foldRect.localEulerAngles = Vector3.zero;
         }
     }
