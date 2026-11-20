@@ -837,3 +837,9 @@
 ## [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] 位置上报超时与续期验证
 
 - `GameServer` 编译通过。回环测试确认超时阈值为 1,200 ms，1,111.9 ms 时不发纠正。到期后的首次更新只向本人发出一条纠正，站立心跳会续期。双客户端在真实网络丢包环境下的测试仍待完成。证据和验证范围见 `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`。
+
+## [VERIFY][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] 技能成长、副本效果和铜币存档验收
+
+- 按本次改动范围编译 GameServer、CenterServer、GateServer、Unity 客户端插件和 Unity `LYF_Game` 脚本程序集，均为零错误。Luban 源表与生成数据覆盖两项技能共 340 条等级数据。
+- 调用实际业务方法的隔离测试通过 101 项，覆盖施放与资源变化、击飞消息、真气易伤、角色等级门槛、升级和 170 级封顶。隔离 SQLite 库通过 9 项检查，覆盖原子保存、重放、旧角色记录以及重新读取技能等级和快捷键。编译后的客户端说明生成通过 5 项检查。
+- 证据位于 `_temp/shield-whirlwind-level-20261120/combat-test.log`、同目录的 `save-test.log`、`tooltip-test.log` 与 `git-push.log`。运行中服务部署、完整 Unity 联机和独立 Player 打包待验。

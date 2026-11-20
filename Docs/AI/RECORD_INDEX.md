@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `cfb4452c25ac594312818f197662fb232ce7a7da813383afd3c2c50c7c783f11`
+Source normalized SHA256: `f81fdc4abce27fee548c0f1c7dce89954461c63d14a6d1ce3fb9b10236f4de93`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -116,11 +116,12 @@ Source normalized SHA256: `cfb4452c25ac594312818f197662fb232ce7a7da813383afd3c2c
 | [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries | 796-801 |
 | [CODE][FILES][HANDOFF][界面][MAIN-UI-LAYERS-20261119] Fixed main-city UI layers and sibling order | 802-807 |
 | [CODE][FILES][HANDOFF][网络][HUD][RO-GATE-RTT-20261119] Gameplay gateway TCP RTT in the existing footer | 808-813 |
-| [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds | 814-816 |
+| [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds | 814-817 |
+| [CODE][FILES][HANDOFF][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Blue Barrier and Tornado Slash growth through level 170 | 818-823 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `f2a1e1df277a0ec6714e098c10e8dab342fa261903f862d271ddae4265a9d98f`
+Source normalized SHA256: `8f7a2a2869903baa8a3a17e23f74a70e9f634bb75e764f73107a04e12ad075c3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -228,7 +229,8 @@ Source normalized SHA256: `f2a1e1df277a0ec6714e098c10e8dab342fa261903f862d271dda
 | [VERIFY][资源][RO-CLIENT-GC-20261119] Client GC compilation, static and Editor verification | 828-833 |
 | [VERIFY][界面][MAIN-UI-LAYERS-20261119] Main-city UI prefab, window toggle and Play input order | 834-839 |
 | [VERIFY][网络][HUD][RO-GATE-RTT-20261119] Gateway echo, compiled client RTT and footer binding checks | 840-845 |
-| [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal | 846-848 |
+| [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal | 846-849 |
+| [VERIFY][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Skill growth, dungeon effects and persisted copper | 850-854 |
 
 ## Docs/AI/DECISIONS.en.md
 

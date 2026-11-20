@@ -846,3 +846,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 ## [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal
 
 - `GameServer` compiled and the loopback test confirmed the 1,200 ms deadline, no correction at 1,111.9 ms, one owner-only correction on the first update after expiry, and renewal on a standing heartbeat. A two-client test under real network loss is still pending. Evidence and scope are in `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`.
+
+## [VERIFY][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Skill growth, dungeon effects and persisted copper
+
+- GameServer, CenterServer, GateServer, the Unity plugin and the Unity `LYF_Game` script assembly compiled with zero errors from the scoped changes. The Luban workbook and generated data cover all 340 levels for the two skills.
+- The isolated production-method harness passed 101 checks, including cast/resource changes, knock-up messages, true qi vulnerability, level requirements, upgrade and level-170 limits. An isolated SQLite database passed nine checks on atomic saving, replay, old records and reloading levels and bindings. The compiled client description builder passed five checks.
+- Evidence: `_temp/shield-whirlwind-level-20261120/combat-test.log`, `save-test.log`, `tooltip-test.log` and `git-push.log` in the same directory. Live rollout, a full networked Unity play session and standalone player packaging remain unverified.

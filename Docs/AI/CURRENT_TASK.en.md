@@ -814,3 +814,10 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 ## [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds
 
 - `ROMoveComponent` now issues one correction to the owner after 1.2 seconds without a position report (previously 2 seconds) and restarts the timer on each report, including a standing heartbeat. See `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`.
+
+## [CODE][FILES][HANDOFF][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Blue Barrier and Tornado Slash growth through level 170
+
+- Business commit `35513debcbf168fd61a3c87b1aed9ee20ae040a3` was pushed to `codex/feature-development`. Shield 10120 and Tornado Slash 10130 each have 170 Luban effect rows. The character cap is still 100. Level 2 requires character level 21 or 26 respectively. Both use the existing animation resources, learned skill snapshot and saved hotkeys.
+- Blue Barrier clears removable control, gives three seconds of super armor, opens a ten-second shield, applies stacking Frost to attackers and knocks nearby enemies up on normal expiry or break. Natural expiry refunds two to five seconds of its remaining cooldown in proportion to remaining capacity.
+- Tornado Slash consumes the caster's remaining true qi on accepted cast. It applies external-attack damage to up to two targets at the existing impact point, applies qi loss and vulnerability, and runs the double-hit protection and timed defense effects. The current and next level values are read from the same table as combat.
+- The authoritative upgrade command uses virtual copper and saves the new level in `role_skill` within the same versioned transaction as the wallet. Scope and test boundaries: `项目修改日志/2026-11-20-苍蓝屏障龙卷斩与170级技能成长.md`.
