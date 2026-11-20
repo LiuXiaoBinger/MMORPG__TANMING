@@ -25,9 +25,6 @@ public class LubanMgr:Singleton<LubanMgr>
     /// <summary>刀刃风暴的结果点段数，与技能类内的八段时间轴一一对应。</summary>
     private const int BladeStormHitCount = 8;
 
-    /// <summary>刀刃风暴的伤害万分比，对应原版 damageMul=0.39。</summary>
-    private const int BladeStormDamagePermyriad = 3900;
-
     // 技能ID到主表定义的索引，用于职业、技能类型等基础判断。
     private Dictionary<int, SkillInfo> _skillInfos;
 
@@ -364,13 +361,16 @@ public class LubanMgr:Singleton<LubanMgr>
             {
                 throw new InvalidDataException("刀刃风暴不能配置射程或固定伤害字段，效果 ID=" + effect.Id);
             }
-            // 刀刃风暴的四个命中字段必须与代码时间轴一致，避免表与实现脱节后静默打错伤害。
-            if (isNoTargetMode && isBladeStorm &&
-                (effect.RadiusCm != BladeStormRadiusCm || effect.MaxTargets != BladeStormMaxTargets ||
-                 effect.HitCount != BladeStormHitCount ||
-                 effect.DamagePermyriad != BladeStormDamagePermyriad))
+            // 刀刃风暴的范围及八段时点由既有实现约束，伤害倍率从当前等级行读取。
+            if (isNoTargetMode && isBladeStorm)
             {
-                throw new InvalidDataException("刀刃风暴命中字段与实现不一致，效果 ID=" + effect.Id);
+                // 范围、数量和段数限定为该技能的实际命中形状。
+                bool invalidShape = effect.RadiusCm != BladeStormRadiusCm ||
+                    effect.MaxTargets != BladeStormMaxTargets || effect.HitCount != BladeStormHitCount;
+                if (invalidShape || effect.DamagePermyriad <= 0)
+                {
+                    throw new InvalidDataException("刀刃风暴命中字段与实现不一致，效果 ID=" + effect.Id);
+                }
             }
 
             // 一个技能 ID 下每个学习等级只允许映射到一条效果配置。

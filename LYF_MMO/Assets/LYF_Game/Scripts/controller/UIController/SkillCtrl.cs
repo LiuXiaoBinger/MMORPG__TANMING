@@ -710,7 +710,13 @@ public sealed class SkillCtrl : CtrlBase
                 requiredLevel = next.RequireRoleLevel;
                 copper = next.UpgradeCopper;
             }
-            return new SkillViewData(definition.Id, definition.Name, MjsSkillDescription.Build(current, next, level > 0),
+            // 两门特殊 Buff 技能保留完整词条，其他正式武功展示各自能生效的成长数值。
+            bool hasSpecialTraits = definition.Id == BlueBarrierSkillId || definition.Id == TornadoSlashSkillId;
+            // 已习得的技能才有下一级或满级提示，未解锁时只浏览其实际一级说明。
+            string description;
+            if (hasSpecialTraits) description = MjsSkillDescription.Build(current, next, level > 0);
+            else description = MjsSkillDescription.BuildWeapon(definition, current, next, level > 0);
+            return new SkillViewData(definition.Id, definition.Name, description,
                 definition.Icon, level, current.CooldownMs / 1000f, bindKey, 0f, definition.Type,
                 GetSkillTag(definition), current.MpCost, definition.AtkDistance,
                 copper, requiredLevel, true, current.ChiCost);

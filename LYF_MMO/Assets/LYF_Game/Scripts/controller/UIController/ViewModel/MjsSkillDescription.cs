@@ -1,7 +1,7 @@
 using System.Globalization;
 using cfg;
 
-/// <summary>把苍蓝屏障和龙卷斩的权威效果数值转换为现有技能面板中的中文说明。</summary>
+/// <summary>把魔剑士武功的权威等级数值转换为技能面板中的中文说明。</summary>
 internal static class MjsSkillDescription
 {
     /// <summary>用于展示实际效果数值与下一级预览的文字。</summary>
@@ -31,6 +31,30 @@ internal static class MjsSkillDescription
             growth = "基础伤害 " + Damage(next) + "，命中扣除" + next.TrueQiDamage + "点真气。";
         }
         return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth;
+    }
+
+    /// <summary>用武功当前和下一成长行显示真实调息、魔力和已接入的伤害成长。</summary>
+    /// <param name="definition">技能主表文本与本技能身份。</param>
+    /// <param name="current">当前可显示的成长配置。</param>
+    /// <param name="next">可升级时的下一等级效果，满级时为空。</param>
+    /// <param name="learned">角色已经习得这门武功时才显示提升预览或满级状态。</param>
+    /// <returns>含目标等级实际效果的武功描述。</returns>
+    internal static string BuildWeapon(SkillInfo definition, SkillEffectInfo current, SkillEffectInfo next, bool learned)
+    {
+        // 刀刃风暴的每段系数在当前技能等级行生效，随等级替换主表中的旧静态数字。
+        bool bladeStorm = current.SkillId == 10110;
+        // 其他武功继续使用原招式说明，实际增长的消耗和调息从等级行读出。
+        string description = definition.Desc;
+        if (bladeStorm)
+            description = "挥动双刃回旋，连续斩击周围敌人" + current.HitCount + "次。每段技能伤害系数为" +
+                Percent(current.DamagePermyriad) + "。";
+        if (!learned) return description;
+        if (next == null) return description + "\n\n已达技能最高等级（" + current.Level + "级）";
+        // 下一行和服务器升级门槛同源，魔力是每次正式提交的消耗。
+        string preview = "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" +
+            "调息 " + Seconds(next.CooldownMs) + " 秒，消耗魔力 " + next.MpCost + " 点。";
+        if (bladeStorm) preview += "\n每段技能伤害系数 " + Percent(next.DamagePermyriad) + "。";
+        return description + preview;
     }
 
     /// <summary>生成一次苍蓝屏障当前等级的说明。</summary>

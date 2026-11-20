@@ -1249,9 +1249,10 @@ public class SkillInfoWindow : WindowBase
             }
             // 真气技能显示独立消耗项，读同一等级行取得的实际消耗方式。
             string costText = "消耗内力：" + skill.MpCost;
+            if (skill.HasGrowthConfig) costText = "消耗魔力：" + skill.MpCost;
             if (skill.TrueQiCost < 0) costText = "消耗真气：全部剩余真气";
             if (skill.TrueQiCost > 0) costText = "消耗真气：" + skill.TrueQiCost;
-            _detailCond.text = "调息时间：" + skill.Cooldown.ToString("0.0") + " 秒\n" +
+            _detailCond.text = "调息时间：" + skill.Cooldown.ToString("0.###") + " 秒\n" +
                 rangeText + "\n" + costText;
         }
         RefreshUpgradeBlock(skill);
@@ -1406,8 +1407,8 @@ public class SkillInfoWindow : WindowBase
             SetNextLevelActive(false);
             return;
         }
-        // 绝学走心得升级，普通技能走铜币。
-        bool ultimate = skill.Tag == UltimateTag;
+        // 有权威成长配置的武功统一显示真实铜币费用，绝学标签仍用于武功分类。
+        bool ultimate = skill.Tag == UltimateTag && !skill.HasGrowthConfig;
         // 正式成长技能没有下一行时只显示满级说明。
         bool hasUpgrade = !skill.HasGrowthConfig || (skill.Level > 0 && skill.NextRoleLevel > 0);
         SetActive(_normalUpgradeRoot, !ultimate && hasUpgrade);
@@ -1544,11 +1545,11 @@ public class SkillInfoWindow : WindowBase
         }
     }
 
-    /// <summary>点击右下角升级按钮：扣铜币并把当前普通技能提升一级。</summary>
+    /// <summary>点击右下角升级按钮，正式成长武功交由服务端扣币确认。</summary>
     private void OnUpgradeClicked()
     {
         SkillViewData skill = _currentSkill;
-        if (skill == null || skill.Tag == UltimateTag)
+        if (skill == null)
         {
             return;
         }
@@ -1557,6 +1558,7 @@ public class SkillInfoWindow : WindowBase
             if (CanUpgradeGrowth(skill)) UpgradeRequested?.Invoke(skill);
             return;
         }
+        if (skill.Tag == UltimateTag) return;
         int cost = GetUpgradeCost(skill);
         if (_currency < cost)
         {
