@@ -533,6 +533,8 @@ public sealed class SkillCtrl : CtrlBase
                 return "群攻";
             case 10120:
                 return "护盾";
+            case TornadoSlashSkillId:
+                return "真气";
         }
         // 未收录技能按主表类型回退，保证任何职业都不会出现空标签。
         if (skillConfig.Type == 1)

@@ -28,7 +28,7 @@ internal static class MjsSkillDescription
         }
         else
         {
-            growth = "基础伤害 " + Damage(next) + "，命中扣除" + next.TrueQiDamage + "点真气。";
+            growth = "造成 " + Damage(next) + "，并造成 " + next.TrueQiDamage + " 点真气伤害。";
         }
         return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth + DescribeElementDamage(next);
     }
@@ -86,7 +86,7 @@ internal static class MjsSkillDescription
             "苍云斩：龙卷斩增伤" + Percent(effect.TornadoDamageBonusPermyriad) + "，每消耗" + effect.TrueQiDamageStep +
             "点真气再增加" + Percent(effect.TrueQiStepBonusPermyriad) + "。习得后，主动技能按目标真气亏空比例最多增伤" +
             Percent(effect.MissingTrueQiBonusPermyriad) + "。\n" +
-            "破强：命中扣除" + effect.TrueQiDamage + "点真气。此后" + Seconds(effect.ChiVulnDurationMs) +
+            "破强使本次命中造成 " + effect.TrueQiDamage + " 点真气伤害。此后" + Seconds(effect.ChiVulnDurationMs) +
             "秒内，目标受到的真气伤害提高" + Percent(effect.ChiVulnPermyriad) + "。\n" +
             "风散：同时命中两名敌人时，本次伤害降低" + Percent(effect.DualTargetReducePermyriad) +
             "，自身获得" + Seconds(effect.DualTargetSuperArmorMs) + "秒霸体和" +
@@ -101,7 +101,7 @@ internal static class MjsSkillDescription
     private static string Damage(SkillEffectInfo effect)
     {
         return (effect.DamagePermyriad / 100.0).ToString("0.00", CultureInfo.InvariantCulture)
-            + "%外功攻击+" + effect.FlatDamage + "点伤害";
+            + "%外功攻击 + " + effect.FlatDamage + " 点外功伤害";
     }
 
     /// <summary>显示本级附加的属攻倍率及固定元素伤害，名称沿用角色高级属性页。</summary>
