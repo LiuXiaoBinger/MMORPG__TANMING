@@ -810,3 +810,7 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 - RO's `MServerTimeMgr` samples `RpcC2T_SyncTime` on the gateway connection and its `SystemInfoCtrl` reads the resulting network state. LYF registers `NetDefine.RpcC2T_SyncTime = 11191` for an eight-byte monotonic timestamp echoed on the same gateway TCP session.
 - `Global` drives `MNetClient.UpdateGatewayLatency` after the main-city bind is requested. It probes every five seconds with a two-second timeout and matches the echoed timestamp and existing connection generation. The receive timestamp is collected before dispatch to the Unity main thread.
 - `RoleStatusFooterWidget` renders this measurement in the existing text and icon. Unavailable is gray `-- ms`, sub-millisecond values display `<1 ms`, and the RO 100/250/500 ms boundaries map to green/yellow/orange/red. The client plugin is the Debug `Network.dll` built from the updated shared source. Full changes are in `项目修改日志/2026-11-19-底栏网关TCP延迟_CHANGELOG.md`. The new version still needs a live main-city run and a packaged client check.
+
+## [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds
+
+- `ROMoveComponent` now issues one correction to the owner after 1.2 seconds without a position report (previously 2 seconds) and restarts the timer on each report, including a standing heartbeat. See `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`.

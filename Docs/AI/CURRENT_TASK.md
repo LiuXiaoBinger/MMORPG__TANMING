@@ -805,3 +805,7 @@
 - RO 的 `MServerTimeMgr` 通过网关连接用 `RpcC2T_SyncTime` 采样，`SystemInfoCtrl` 读取所得的网络状态。LYF 注册 `NetDefine.RpcC2T_SyncTime = 11191`，网关在同一 TCP 会话原样回显 8 字节单调时钟时间戳。
 - 主城发起实时绑定后，`Global` 驱动 `MNetClient.UpdateGatewayLatency`。探测间隔 5 秒，单次超时 2 秒，收包时匹配回显的时间戳和现有连接代次。回包时间戳在投递到 Unity 主线程前采集。
 - `RoleStatusFooterWidget` 通过现有文本和图标呈现测量结果。不可用时以灰色显示 `-- ms`，不足 1 ms 时显示 `<1 ms`，按 RO 的 100/250/500 ms 界限使用绿、黄、橙、红四档。Unity 客户端插件使用从更新后的共用源码构建的 Debug `Network.dll`。完整改动见 `项目修改日志/2026-11-19-底栏网关TCP延迟_CHANGELOG.md`。新版本仍需验证真实主城运行与打包客户端。
+
+## [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] 位置上报中断 1.2 秒后纠正
+
+- `ROMoveComponent` 在连续 1.2 秒未收到位置上报后向本人发送一条纠正，此前阈值为 2 秒。每次收到位置上报时重新计时，站立心跳也会续期。详见 `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`。

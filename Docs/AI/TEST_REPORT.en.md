@@ -842,3 +842,7 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 - GateServer Release and shared Network Debug/Release compiled. Unity 2023.2.20f1c1 Roslyn compiled `LYF_Game` with exit code 0, zero errors and 50 warnings. The synchronized Unity plugin SHA-256 is `2AB5422E7D987D55A45EE1713963540243B8D3BB57C39D7F871148B7F41712D1`.
 - The actual gateway handler was verified with two TCP clients and rejected 0/7/9-byte payloads. An isolated client ran the compiled `MNetClient` and production echo handler over TCP. A fixture with a 120 ms server delay observed 321.09 ms, excluded the added main-thread wait, checked the five-second interval, ignored a mismatched stamp, expired after two seconds and discarded an old-generation reply.
 - Unity resolved the existing footer text and icon. Sample strings including `<1 ms` and `2000 ms` fit the 125-unit label. The open main-city Play session still held the earlier assembly. The new live main-city display and packaged client remain unverified. Evidence is in `_temp/ro-gate-rtt-20261119-01a1f424/`, including `client-fixture/results.log` and `unity-footer-fit.json`.
+
+## [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal
+
+- `GameServer` compiled and the loopback test confirmed the 1,200 ms deadline, no correction at 1,111.9 ms, one owner-only correction on the first update after expiry, and renewal on a standing heartbeat. A two-client test under real network loss is still pending. Evidence and scope are in `项目修改日志/2026-11-20-位置上报节拍与超时纠正.md`.

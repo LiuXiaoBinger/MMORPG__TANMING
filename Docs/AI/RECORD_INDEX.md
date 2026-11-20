@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `14200eb9d4d23dd1e30c318e5b60b8def3da0402b2be99aa5cfa22dcc1e1befc`
+Source normalized SHA256: `cfb4452c25ac594312818f197662fb232ce7a7da813383afd3c2c50c7c783f11`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -115,11 +115,12 @@ Source normalized SHA256: `14200eb9d4d23dd1e30c318e5b60b8def3da0402b2be99aa5cfa2
 | [CODE][FILES][HANDOFF][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Blue Barrier overhead shield meter | 790-795 |
 | [CODE][资源][RO-CLIENT-GC-20261119] Client GC at transition and low-memory boundaries | 796-801 |
 | [CODE][FILES][HANDOFF][界面][MAIN-UI-LAYERS-20261119] Fixed main-city UI layers and sibling order | 802-807 |
-| [CODE][FILES][HANDOFF][网络][HUD][RO-GATE-RTT-20261119] Gameplay gateway TCP RTT in the existing footer | 808-812 |
+| [CODE][FILES][HANDOFF][网络][HUD][RO-GATE-RTT-20261119] Gameplay gateway TCP RTT in the existing footer | 808-813 |
+| [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds | 814-816 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b27e1fa067cce6c817ceeae60d9acc1ff9c9eeccb354dcb934c3275fdde2d9bf`
+Source normalized SHA256: `f2a1e1df277a0ec6714e098c10e8dab342fa261903f862d271ddae4265a9d98f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -226,7 +227,8 @@ Source normalized SHA256: `b27e1fa067cce6c817ceeae60d9acc1ff9c9eeccb354dcb934c32
 | [VERIFY][技能][魔剑士][护盾][MJS-BARRIER-HUD-20261119] Authoritative shield snapshots and Unity overhead display | 822-827 |
 | [VERIFY][资源][RO-CLIENT-GC-20261119] Client GC compilation, static and Editor verification | 828-833 |
 | [VERIFY][界面][MAIN-UI-LAYERS-20261119] Main-city UI prefab, window toggle and Play input order | 834-839 |
-| [VERIFY][网络][HUD][RO-GATE-RTT-20261119] Gateway echo, compiled client RTT and footer binding checks | 840-844 |
+| [VERIFY][网络][HUD][RO-GATE-RTT-20261119] Gateway echo, compiled client RTT and footer binding checks | 840-845 |
+| [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal | 846-848 |
 
 ## Docs/AI/DECISIONS.en.md
 
