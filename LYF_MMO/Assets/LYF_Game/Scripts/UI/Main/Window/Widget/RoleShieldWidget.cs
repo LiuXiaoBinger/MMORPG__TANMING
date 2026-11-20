@@ -18,6 +18,9 @@ public sealed class RoleShieldWidget : MonoBehaviour
     /// <summary>显示整点剩余吸收量的数字，零盾时随内容一起隐藏。</summary>
     [SerializeField] private TMP_Text _amount;
 
+    /// <summary>同一画布的角色名牌，护盾要显示在昵称和称谓上方。</summary>
+    [SerializeField] private RoleNameHudWidget _nameHud;
+
     /// <summary>护盾生效期间跟随的本地场景角色。</summary>
     private PlayerEntity _role;
 
@@ -102,6 +105,10 @@ public sealed class RoleShieldWidget : MonoBehaviour
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, screen, uiCamera,
             out Vector2 anchor))
         {
+            if (_nameHud != null)
+            {
+                anchor.y += _nameHud.GetShieldOffset(_role);
+            }
             _content.anchoredPosition = anchor;
             _content.gameObject.SetActive(true);
         }
