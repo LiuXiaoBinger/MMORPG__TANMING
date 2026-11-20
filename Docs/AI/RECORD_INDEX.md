@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `6b056e2823df0a998203356734a786f0fdf994be7ca4985cf001c0c376f39827`
+Source normalized SHA256: `ce831dc42e2430f1389d99a3ec283395bb02350d4871bf49383508a6169c83da`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -118,11 +118,12 @@ Source normalized SHA256: `6b056e2823df0a998203356734a786f0fdf994be7ca4985cf001c
 | [CODE][FILES][HANDOFF][网络][HUD][RO-GATE-RTT-20261119] Gameplay gateway TCP RTT in the existing footer | 808-813 |
 | [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds | 814-817 |
 | [CODE][FILES][HANDOFF][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Blue Barrier and Tornado Slash growth through level 170 | 818-824 |
-| [CODE][FILES][技能][WEAPON-SKILL-GROWTH-20261120] Eight active weapon skills share the level-170 upgrade flow | 825-829 |
+| [CODE][FILES][技能][WEAPON-SKILL-GROWTH-20261120] Eight active weapon skills share the level-170 upgrade flow | 825-830 |
+| [CODE][FILES][技能][基因][ELEMENTAL-DAMAGE-20261120] Five-element damage and Tornado Slash wind growth | 831-836 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d506b262b27af6e304b52affe4b14e9799179ab151f08dbf956c31febcac09ee`
+Source normalized SHA256: `a10d1d07e79579105f7cddc9a58349ca3a5180f7a18b6590836f90df337ba028`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -232,7 +233,8 @@ Source normalized SHA256: `d506b262b27af6e304b52affe4b14e9799179ab151f08dbf956c3
 | [VERIFY][网络][HUD][RO-GATE-RTT-20261119] Gateway echo, compiled client RTT and footer binding checks | 840-845 |
 | [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal | 846-849 |
 | [VERIFY][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Skill growth, dungeon effects and persisted copper | 850-855 |
-| [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] Other weapon skills use higher-level numbers in real cast methods | 856-859 |
+| [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] Other weapon skills use higher-level numbers in real cast methods | 856-860 |
+| [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss | 861-865 |
 
 ## Docs/AI/DECISIONS.en.md
 

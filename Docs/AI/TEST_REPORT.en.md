@@ -857,3 +857,9 @@ Actual 1366x768/1920x1080 screenshots were inspected. Button-center raycasts pas
 
 - The extended table generated with the existing schema. Both shared Network builds and the Unity `LYF_Game` compilation passed. A real-table harness checked the six skills' upgrade, cast, save bundle, current/next description, cap and Blade Storm damage through 51 checks. The earlier Blue Barrier and Tornado Slash isolation suite passed all 101 checks on the same final table.
 - Evidence: `_temp/weapon-skill-growth-20261120/weapon-growth-test.log`, `shield-tornado-regression.log`, `unity-compile.log` and `luban.log` in that directory. Live deployment, a full networked Unity play session and standalone player packaging remain unverified.
+
+## [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss
+
+- Luban generated 1,362 level rows, including 170 wind rows, with the original 49 columns preserved. GameServer, CenterServer, GateServer, the Unity Network plugin and Unity `LYF_Game` script assembly built with zero errors.
+- The game server isolation suite passed 305 checks, the weapon regression passed 51, and the current/next tooltip suite passed nine. In real level-one casts against the same isolated dungeon monster, fixed wind only dealt 1,972 total damage, adding 100 wind attack dealt 2,062, adding 100 target wind resistance gave 2,008, and matching the resistance with 100 penetration returned to 2,062. With target resistance 100, penetration 150 and cap 20, the hit dealt 2,084. Cross-element isolation and all five defensive mappings passed.
+- Evidence under `_temp/elemental-skill-damage-20261120/` includes `combat-test.log`, `weapon-regression.log`, `tooltip-test.log`, `unity-compile.log` and `git-push.log`. Live deployment, full networked Unity play, PvP and standalone Player packaging remain unverified.

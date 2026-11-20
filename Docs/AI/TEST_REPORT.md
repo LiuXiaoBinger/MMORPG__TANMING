@@ -848,3 +848,9 @@
 
 - 扩充后的配置表沿用现有结构并完成生成。共享 `Network` 的两种构建和 Unity `LYF_Game` 编译均通过。基于实际配置表的测试通过 51 项检查，覆盖六项技能的升级、施放、存档包、当前与下一级说明、等级上限以及刀刃风暴伤害。同一份最终配置表上的苍蓝屏障和龙卷斩隔离回归通过全部 101 项检查。
 - 证据位于 `_temp/weapon-skill-growth-20261120/weapon-growth-test.log`、同目录的 `shield-tornado-regression.log`、`unity-compile.log` 与 `luban.log`。运行中服务部署、完整 Unity 联机和独立 Player 打包待验。
+
+## [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] 风系基因改变副本实际扣血
+
+- Luban 生成 1362 条等级配置，其中风伤配置 170 条，保留原有 49 列。GameServer、CenterServer、GateServer、Unity `Network` 插件与 Unity `LYF_Game` 脚本程序集均以零错误完成构建。
+- 服务端隔离测试通过 305 项，武功回归通过 51 项，当前与下一级技能说明通过 9 项。对同一只隔离副本怪物实际施放 1 级技能时，仅固定风伤条件下总扣血为 1972 点。加入 100 点风系攻击后为 2062 点，再给目标加入 100 点风抗后为 2008 点，以 100 点风系穿透抵消风抗后回到 2062 点。目标风抗为 100、风系穿透为 150、穿透上限为 20 时，实测总扣血为 2084 点。跨系隔离与五系防御属性映射均通过。
+- `_temp/elemental-skill-damage-20261120/` 下的证据包括 `combat-test.log`、`weapon-regression.log`、`tooltip-test.log`、`unity-compile.log` 与 `git-push.log`。运行中服务部署、完整 Unity 联机、PvP 与独立 Player 打包待验。
