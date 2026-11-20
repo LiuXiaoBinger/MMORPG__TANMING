@@ -175,19 +175,25 @@ public class MNavigationComponent : EntityComponentBase
         }
         // RO实体施法UUID在1至9999循环，请求与本地预表现共用这一笔身份。
         ulong skillUuid = localRole.NextSkillUUID;
+        // 当前招式的主表配置用于发送瞄准点，并同步本地攻击朝向。
+        cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillArgs.Identify);
+        // 普攻及主动武功采用水平瞄准点，移动动作不使用该字段。
+        bool needsCastDirection = skillInfo.Type == 1 || skillInfo.Type == 2;
         if (MNetClient.Client != null)
         {
             try
             {
                 // 沿用施法标识和主表 ID，为副本方向攻击提供世界瞄准点。
                 SkillCastReq request = new SkillCastReq { SkillUuid = skillUuid, SkillId = skillArgs.Identify };
-                // 副本普攻和龙卷斩复用一个瞄准点字段，服务端只取它相对角色的水平朝向。
-                bool needsCastDirection = skillArgs.Identify == MSceneDungeon.BasicAttackId ||
-                    skillArgs.Identify == SkillCtrl.TornadoSlashSkillId;
                 if (needsCastDirection && TeamData.Instance.DungeonInstanceId != 0UL)
                 {
                     // 无锁定目标时沿玩家当前朝向攻击；有目标时与本地转身使用同一世界坐标。
-                    Vector3 point = localRole.Position + localRole.Model.GameObject.Transform.forward;
+                    Vector3 direction = localRole.Model.GameObject.Transform.forward;
+                    // 无限剑决沿用特效在无锁定目标时向前十米的落点，其他招式取该点的朝向。
+                    float aimDistance = 1f;
+                    if (skillInfo.Id == 10070) aimDistance = 10f;
+                    // 状态机接收的瞄准点使用世界水平坐标，服务端按技能射程取合法位置。
+                    Vector3 point = localRole.Position + direction * aimDistance;
                     if (skillArgs.Target != null) point = skillArgs.Target.Position;
                     request.CastPoint = new DungeonCastPoint { X = point.x, Z = point.z };
                 }
@@ -203,9 +209,7 @@ public class MNavigationComponent : EntityComponentBase
         // 只有已通过原技能准入的攻击辅助转向；目标只是选择辅助，不改变无目标技能的施法点。
         if (skillArgs.Target != null)
         {
-            // 当前主表类别，Type 三的滑步不自动转向目标。
-            cfg.SkillInfo skillInfo = LubanMgr.Instance.GetSkillInfoById(skillArgs.Identify);
-            if (skillInfo.Type == 1 || skillInfo.Type == 2)
+            if (needsCastDirection)
             {
                 // 只使用水平朝向，单位米；目标与自己重合时保持原旋转。
                 Vector3 direction = skillArgs.Target.Position - localRole.Position;

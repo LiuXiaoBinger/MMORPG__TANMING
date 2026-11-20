@@ -67,6 +67,7 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         ElementAttackAttributeId = _buf.ReadInt();
         ElementDamagePermyriad = _buf.ReadInt();
         ElementFlatDamage = _buf.ReadInt();
+        ImpactDelayMs = _buf.ReadInt();
     }
 
     public static SkillEffectInfo DeserializeSkillEffectInfo(ByteBuf _buf)
@@ -123,7 +124,7 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
     /// </summary>
     public readonly int MaxRangeCm;
     /// <summary>
-    /// 后续范围半径，厘米
+    /// 命中范围（厘米），圆形为半径，普通武功碰撞盒为水平半边
     /// </summary>
     public readonly int RadiusCm;
     /// <summary>
@@ -278,6 +279,10 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
     /// 本次命中的固定属性伤害（点）
     /// </summary>
     public readonly int ElementFlatDamage;
+    /// <summary>
+    /// 普通武功首段碰撞开启时间（毫秒），0表示使用其他命中方式
+    /// </summary>
+    public readonly int ImpactDelayMs;
    
     public const int __ID__ = 1242812144;
     public override int GetTypeId() => __ID__;
@@ -340,6 +345,7 @@ public sealed partial class SkillEffectInfo : Luban.BeanBase
         + "ElementAttackAttributeId:" + ElementAttackAttributeId + ","
         + "ElementDamagePermyriad:" + ElementDamagePermyriad + ","
         + "ElementFlatDamage:" + ElementFlatDamage + ","
+        + "ImpactDelayMs:" + ImpactDelayMs + ","
         + "}";
     }
 }

@@ -32,6 +32,9 @@ public sealed class ROBladeStormSkill : ROSkill
     /// <summary>本次技能主表配置的基准伤害，各段按万分比与附加值换算。</summary>
     private readonly int base_damage_;
 
+    /// <summary>本次施放固定的等级行，提供每段物理倍率和元素伤害。</summary>
+    private readonly cfg.SkillEffectInfo effect_;
+
     /// <summary>主表配置的单段伤害万分比，对应原版 damageMul=0.39。</summary>
     private readonly int damage_permyriad_;
 
@@ -64,10 +67,10 @@ public sealed class ROBladeStormSkill : ROSkill
         base_damage_ = core.GetSkillTable().Hurt;
         // 当前技能等级对应的效果行（等级效果表的一行），含单段伤害万分比、命中半径厘米与最大目标数。
         // 命中参数只认这一行，避免表与实现各存一套导致静默打错伤害。
-        var effect = core.GetEffect();
-        damage_permyriad_ = effect.DamagePermyriad;
-        radius_ = effect.RadiusCm / 100f;
-        max_targets_ = effect.MaxTargets;
+        effect_ = core.GetEffect();
+        damage_permyriad_ = effect_.DamagePermyriad;
+        radius_ = effect_.RadiusCm / 100f;
+        max_targets_ = effect_.MaxTargets;
     }
 
     /// <summary>按固定逻辑帧推进八段结果点，同一帧内的多个到期段依次结算。</summary>
@@ -95,7 +98,7 @@ public sealed class ROBladeStormSkill : ROSkill
             // 每段重新查询目标，同一只怪可在下一段再次受击。
             hit_targets_.Clear();
             TeamManager.Instance.OnBladeStormHit(caster_, SegmentDamage(segment_index_),
-                hit_targets_, BladeStormSkillId, radius_, max_targets_);
+                hit_targets_, BladeStormSkillId, radius_, max_targets_, effect_);
             segment_index_++;
         }
         return playing;

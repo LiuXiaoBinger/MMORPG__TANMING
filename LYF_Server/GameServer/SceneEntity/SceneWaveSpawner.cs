@@ -266,6 +266,24 @@ public sealed partial class SceneWaveSpawner
     /// <param name="caster">同实例的在线攻击者，旧的无来源扣血流程允许空值。</param>
     internal void ChangeHP(MonsterAttrUpdateNtf notice, Vector3 origin, Vector2 forward, int damage, HashSet<ulong> hit_targets, OnlineRole caster)
     {
+        ChangeHPBox(notice, origin, forward, damage, hit_targets, caster, ROArtSkill.BasicAttackId, 1.7f, 1.5f, null);
+    }
+
+    /// <summary>在一次矩形命中窗口内查询存活敌人，按实际招式归因并结算物理和属性伤害。</summary>
+    /// <param name="notice">本副本本段命中的属性与动作通知。</param>
+    /// <param name="origin">角色所在处或瞄准落点的地面世界坐标，单位米。</param>
+    /// <param name="forward">本次施法的水平单位朝向。</param>
+    /// <param name="damage">本段使用的基础伤害参数，单位生命点数。</param>
+    /// <param name="hit_targets">本窗口内已经结算的目标实例编号。</param>
+    /// <param name="caster">同一副本中的在线施法者。</param>
+    /// <param name="skillId">触发装备特技及基因的技能主表编号。</param>
+    /// <param name="forwardOffset">碰撞盒中心沿朝向的偏移，单位米。</param>
+    /// <param name="halfWidth">水平正方形碰撞盒的半边长度，单位米。</param>
+    /// <param name="effect">本次施法固定的属性伤害等级行，普通攻击可以为空。</param>
+    internal void ChangeHPBox(MonsterAttrUpdateNtf notice, Vector3 origin, Vector2 forward, int damage,
+        HashSet<ulong> hit_targets, OnlineRole caster, int skillId, float forwardOffset, float halfWidth,
+        SkillEffectInfo effect)
+    {
         // 同一攻击窗口共用施害位置，观察者按自己的镜头投影受击方向。
         notice.FirerX = origin.X;
         notice.FirerY = origin.Y;
@@ -281,7 +299,7 @@ public sealed partial class SceneWaveSpawner
             // 原IsDummy/不可受击状态必须早于防御查询，机制实体不参加玩家命中循环。
             MoshentaActor hitActor = FindActor(monster.UID);
             if (hitActor != null && !hitActor.CanBeAttacked) continue;
-            // 当前普攻使用宽3、高2.5、深3米的前向盒，中心位于施法者前1.7米、高1.1米。
+            // 基础近战碰撞盒高2.5米、中心高1.1米，水平尺寸和偏移由当前招式传入。
             SpawnPoint point = activePoints[index];
             if (point.Creature.nonCombatant) continue;
             // 怪物行走后，命中盒必须与服务端当前实体坐标比较，出生点只提供体积配置。
@@ -289,13 +307,13 @@ public sealed partial class SceneWaveSpawner
             if (delta.Y > 2.35f || delta.Y + point.Creature.boundHeight < -0.15f) continue;
             // 在盒体局部水平面取离怪物中心最近的点，与怪物圆柱半径比较。
             float side = Math.Abs(delta.X * forward.Y - delta.Z * forward.X);
-            float depth = Math.Abs(delta.X * forward.X + delta.Z * forward.Y - 1.7f);
-            float dx = Math.Max(0f, side - 1.5f);
-            float dz = Math.Max(0f, depth - 1.5f);
+            float depth = Math.Abs(delta.X * forward.X + delta.Z * forward.Y - forwardOffset);
+            float dx = Math.Max(0f, side - halfWidth);
+            float dz = Math.Max(0f, depth - halfWidth);
             if (dx * dx + dz * dz > point.Creature.boundRadius * point.Creature.boundRadius) continue;
-            // 记录当前普攻窗口已命中的目标，后续同窗口扫描不重复触发伤害与增伤。
+            // 当前窗口内同一目标只触发一次伤害和命中基因。
             hit_targets.Add(monster.UID);
-            SettlePlayerHit(notice, index, origin, caster, damage, ROArtSkill.BasicAttackId, ref monsterDied);
+            SettlePlayerHit(notice, index, origin, caster, damage, skillId, ref monsterDied, effect);
         }
         // 本攻击窗口结束后再推进清波，避免创建新怪物时改变本次命中集合。
         CheckCompletedWaves();
@@ -341,9 +359,12 @@ public sealed partial class SceneWaveSpawner
                 // 本次结算的最终面板只取一次，背水等按已含装备与基因的生命上限判断。
                 RoleBaseInfo finalAttributes = equipment.CalculateAttribute();
                 // 屏障爆炸和龙卷斩的输入已经包含自身外功，防御环节保留该技能的原公式。
-                if (effect != null) calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
+                // 仅盾爆和龙卷的输入已经合成外功，其余技能传等级行只为锁定属性伤害。
+                bool hasExternalSkillDamage = skillId == MjsSkillGenes.BarrierSkillId || skillId == MjsSkillGenes.TornadoSkillId;
+                if (effect != null && hasExternalSkillDamage)
+                    calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
                 else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
-                // 已固定的等级行优先用于龙卷和盾爆，其他命中读取角色本技能的已学习等级行。
+                // 优先使用施放时固定的等级行，老命中入口仍可查询角色当前已学习等级。
                 SkillEffectInfo elementEffect = effect ?? caster.GetComponent<RoleSkillComponent>().FindLearnedEffect(skillId);
                 // 元素部分只经过对应元素防御，合并后与原伤害走同一最终增伤和扣血路径。
                 int elementDamage = MonsterDefenseAttributes.CalculateElementSkillDamage(finalAttributes, targetGenes, elementEffect);

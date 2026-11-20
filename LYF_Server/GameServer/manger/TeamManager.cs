@@ -67,12 +67,32 @@ public sealed class TeamManager
     /// <param name="stop_skill_uuid">需要命中确认后截停的施法 UUID，零表示本次无需截停。</param>
     public void OnMonsterHit(OnlineRole caster, Vector2 forward, int damage, HashSet<ulong> hit_targets, ulong stop_skill_uuid = 0UL)
     {
+        OnRoleBoxSkillHit(caster, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets,
+            ROArtSkill.BasicAttackId, 1.7f, 1.5f, null, stop_skill_uuid);
+    }
+
+    /// <summary>使用指定碰撞盒在当前副本结算玩家招式，并广播权威伤害。</summary>
+    /// <param name="caster">施法者，提供当前副本归属和属性快照。</param>
+    /// <param name="origin">碰撞盒相对的世界地面坐标，单位米。</param>
+    /// <param name="forward">施法时确定的水平单位朝向。</param>
+    /// <param name="damage">招式本次命中的基础伤害参数。</param>
+    /// <param name="hit_targets">当前窗口内已命中的敌人实例编号。</param>
+    /// <param name="skillId">本次伤害和被动触发归属的技能主表编号。</param>
+    /// <param name="forwardOffset">盒心相对原点的向前偏移，单位米。</param>
+    /// <param name="halfWidth">正方形水平范围的半边长度，单位米。</param>
+    /// <param name="effect">施放时固定的等级效果行，包含元素伤害。</param>
+    /// <param name="stop_skill_uuid">普攻截停前冲的 UUID，零表示普通伤害通知。</param>
+    internal void OnRoleBoxSkillHit(OnlineRole caster, Vector3 origin, Vector2 forward, int damage,
+        HashSet<ulong> hit_targets, int skillId, float forwardOffset, float halfWidth,
+        SkillEffectInfo effect, ulong stop_skill_uuid = 0UL)
+    {
         // 以施法者当前所在的副本查找本机运行状态。
         Dungeon team;
         if (!_instances.TryGetValue((ulong)caster.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
         // 同一逻辑线程先扣血、再构造一份全队共享的可靠下行载荷。
         MonsterAttrUpdateNtf notice = new MonsterAttrUpdateNtf { InstanceId = team.InstanceId };
-        team.WaveSpawner.ChangeHP(notice, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(), forward, damage, hit_targets, caster);
+        team.WaveSpawner.ChangeHPBox(notice, origin, forward, damage, hit_targets, caster, skillId, forwardOffset,
+            halfWidth, effect);
         team.WaveSpawner.FillFlow(notice);
         if (notice.Monsters.Count == 0) return;
         // 实际扣血回传攻击者身份，需截停的施法额外带入自己的 UUID。
@@ -88,10 +108,12 @@ public sealed class TeamManager
     /// <param name="skillId">产生本次伤害的技能主表编号，基因事件按它归因。</param>
     /// <param name="radius">本段命中半径，单位米。</param>
     /// <param name="maxTargets">本段最多命中数。</param>
-    public void OnBladeStormHit(OnlineRole caster, int damage, HashSet<ulong> hit_targets, int skillId, float radius, int maxTargets)
+    /// <param name="effect">动作开始时固定的技能等级行。</param>
+    public void OnBladeStormHit(OnlineRole caster, int damage, HashSet<ulong> hit_targets, int skillId, float radius,
+        int maxTargets, SkillEffectInfo effect = null)
     {
         OnRoleAreaSkillHit(caster, caster.mainRoleInfo.BaseInfo.Pos.ToVector3(),
-            damage, hit_targets, skillId, radius, maxTargets);
+            damage, hit_targets, skillId, radius, maxTargets, effect);
     }
 
     /// <summary>查询指定结果点周围的副本怪物，并广播同一批扣血与波次结果。</summary>

@@ -10,11 +10,11 @@ public class LubanMgr:Singleton<LubanMgr>
 {
 
     #region 字段与常量
-    /// <summary>剑气攻击的主表编号，服务端按近战盒体判定命中。</summary>
-    private const int BasicAttackSkillId = 10010;
-
     /// <summary>苍蓝屏障的主表编号，只有屏障结束时的爆炸会命中敌人。</summary>
     private const int BlueBarrierSkillId = 10120;
+
+    /// <summary>清风接斩天的主表编号，实际碰撞由原组合配置内的子动作提供。</summary>
+    private const int CombineWeaponSkillId = 10100;
 
     /// <summary>魔剑士主动技能「刀刃风暴」的主表编号，服务端按段自行查询敌人。</summary>
     private const int BladeStormSkillId = 10110;
@@ -303,8 +303,9 @@ public class LubanMgr:Singleton<LubanMgr>
             {
                 throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
             }
-            // 技能 ID 必须命中旧技能表索引，且目标模式不能为负。
-            if (effect.SkillId <= 0 || !_skillInfos.ContainsKey(effect.SkillId) ||
+            // 对应的技能主表行提供普通攻击标记和招式分类。
+            SkillInfo definition;
+            if (effect.SkillId <= 0 || !_skillInfos.TryGetValue(effect.SkillId, out definition) ||
                 effect.TargetMode < 0)
             {
                 throw new InvalidDataException("技能等级效果含无效服务端参数，效果 ID=" + effect.Id);
@@ -341,15 +342,20 @@ public class LubanMgr:Singleton<LubanMgr>
             bool isBladeStorm = effect.SkillId == BladeStormSkillId;
             // 龙卷斩只有一个固定时间的前方圆形结果点。
             bool isTornadoSlash = effect.SkillId == TornadoSlashSkillId;
-            // 只有已经接入真实范围结算的无目标技能才允许携带命中数值。
-            bool hasAreaHitImplementation = isBladeStorm || isTornadoSlash;
+            // 首段碰撞时间大于零时由普通武功的矩形命中入口执行。
+            bool hasBoxHit = effect.ImpactDelayMs > 0;
+            // 组合行保存总段数和属伤，各段的时间与碰撞尺寸取子动作。
+            bool isCombine = effect.SkillId == CombineWeaponSkillId;
+            // 普通武功统一使用矩形碰撞；龙卷和刀刃风暴使用各自的结果点。
+            bool hasAreaHitImplementation = isBladeStorm || isTornadoSlash || hasBoxHit;
+            // 组合不直接查询范围，但可以按等级配置总段数。
+            bool hasHitImplementation = hasAreaHitImplementation || isCombine;
             // 非零元素编号只接受五系攻击属性；零编号要求伤害列同时不生效。
             bool hasElement = effect.ElementAttackAttributeId != 0;
             // 元素倍率为万分比，固定伤害为点数，至少一列有实际数值。
             bool hasElementDamage = effect.ElementDamagePermyriad > 0 || effect.ElementFlatDamage > 0;
-            // 当前确实会进入服务端扣血结果点的技能才允许配置元素伤害。
-            bool hasElementHitImplementation = hasAreaHitImplementation || effect.SkillId == BasicAttackSkillId ||
-                effect.SkillId == BlueBarrierSkillId;
+            // 盾爆通过盾被击破或自然结束触发；其他带属伤的技能需要已有命中入口。
+            bool hasElementHitImplementation = hasHitImplementation || effect.SkillId == BlueBarrierSkillId;
             // 五系攻击编号是现有基因数据中的连续区间，其他类型不能当成攻击系。
             bool isElementAttackAttribute = effect.ElementAttackAttributeId >= (int)GeneAttributeType.WaterAttack &&
                 effect.ElementAttackAttributeId <= (int)GeneAttributeType.YuanAttack;
@@ -357,13 +363,23 @@ public class LubanMgr:Singleton<LubanMgr>
             {
                 throw new InvalidDataException("技能等级效果的元素伤害配置无效，效果 ID=" + effect.Id);
             }
-            if (hasElement && (!isElementAttackAttribute || !hasElementHitImplementation))
+            // 只有可造成伤害的非普攻可以配置元素；普通攻击沿用技能主表的同一标记。
+            bool canHaveElement = hasElementHitImplementation && definition.Type == 2 && !definition.IsBasicAttack;
+            if (hasElement && (!isElementAttackAttribute || !canHaveElement))
             {
                 throw new InvalidDataException("技能等级效果的属性编号或命中入口无效，效果 ID=" + effect.Id);
             }
-            if (isNoTargetMode && hasAnyHitValue && !hasAreaHitImplementation)
+            if (isNoTargetMode && hasAnyHitValue && !hasHitImplementation)
             {
                 throw new InvalidDataException("无目标表现技能不能配置本期未实现的命中数值，效果 ID=" + effect.Id);
+            }
+            // 多段矩形命中必须按正的时间间隔推进。
+            bool hasInvalidHitInterval = effect.HitCount > 1 && effect.HitIntervalMs <= 0;
+            // 矩形的水平半边长度和命中段数都必须为正。
+            bool hasInvalidBox = effect.RadiusCm <= 0 || effect.HitCount <= 0 || hasInvalidHitInterval;
+            if (effect.ImpactDelayMs < 0 || (hasBoxHit && hasInvalidBox))
+            {
+                throw new InvalidDataException("武功矩形碰撞尺寸或时间无效，效果 ID=" + effect.Id);
             }
             if (isTornadoSlash)
             {

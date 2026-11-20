@@ -27,12 +27,15 @@ public class MSkillCollision
     {
         // 当前是否处于服务器同步战斗的副本实例。
         bool inDungeon = TeamData.Instance.DungeonInstanceId != 0UL;
-        // 联机魔神塔的普攻由 GameServer 按同段动作结算，两端只在属性通知到达时播放受击。
-        if (presentation.SkillId == MSceneDungeon.BasicAttackId && inDungeon) return;
+        if (inDungeon)
+        {
+            // 副本中的角色攻击由服务端统一结算，避免本地表现再次播放一次受击。
+            cfg.SkillInfo definition = LubanMgr.Instance.GetSkillInfoById(presentation.SkillId);
+            if (definition != null && (definition.Type == 1 || definition.Type == 2)) return;
+        }
         if (!firer.Model.IsLoaded) return;
-        // 本次查询可播放一次本地命中震屏；副本刀刃风暴的震屏由扣血通知驱动。
-        bool playHitShake = firer.IsPlayer &&
-            (!inDungeon || presentation.SkillId != MWaitingDataMgr.BladeStormSkillId);
+        // 本地表现的同次查询最多播放一次命中震屏。
+        bool playHitShake = firer.IsPlayer;
         // 使用当前真实模型变换，与编辑器 ActionCollisionGeometry 的坐标语义一致。
         Transform actor = firer.Model.GameObject.Transform;
         for (int index = 0; index < presentation.Collisions.Count; index++)

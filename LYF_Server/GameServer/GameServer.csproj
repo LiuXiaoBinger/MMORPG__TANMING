@@ -72,6 +72,7 @@
         <Compile Include="SceneEntity\Skill\ROArtSkill.cs" />
         <Compile Include="SceneEntity\Skill\ROBladeStormSkill.cs" />
         <Compile Include="SceneEntity\Skill\ROMovingTornadoSkill.cs" />
+        <Compile Include="SceneEntity\Skill\ROWeaponHitSkill.cs" />
         <Compile Include="SceneEntity\Skill\MjsSkillGenes.cs" />
         <Compile Include="SceneEntity\Skill\OrcBasicAttackDamage.cs" />
         <EmbeddedResource Include="Config\MonsterAI\OrcBasicAttack.xml">

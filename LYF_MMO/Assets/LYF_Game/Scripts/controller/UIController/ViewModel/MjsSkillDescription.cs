@@ -48,6 +48,8 @@ internal static class MjsSkillDescription
         if (bladeStorm)
             description = "挥动双刃回旋，连续斩击周围敌人" + current.HitCount + "次。每段技能伤害系数为" +
                 Percent(current.DamagePermyriad) + "。";
+        else if (current.HitCount > 0)
+            description = DescribeWeaponMotion(definition) + "\n按动作至多命中 " + current.HitCount + " 段。";
         description += DescribeElementDamage(current);
         if (!learned) return description;
         if (next == null) return description + "\n\n已达技能最高等级（" + current.Level + "级）";
@@ -56,6 +58,26 @@ internal static class MjsSkillDescription
             "调息 " + Seconds(next.CooldownMs) + " 秒，消耗魔力 " + next.MpCost + " 点。";
         if (bladeStorm) preview += "\n每段技能伤害系数 " + Percent(next.DamagePermyriad) + "。";
         return description + preview + DescribeElementDamage(next);
+    }
+
+    /// <summary>保留各招式的动作说明，命中段数由实际结算表统一提供。</summary>
+    /// <param name="definition">对应的稳定技能主表配置。</param>
+    /// <returns>当前招式的动作与打击位置介绍。</returns>
+    private static string DescribeWeaponMotion(SkillInfo definition)
+    {
+        switch (definition.Id)
+        {
+            case 10040:
+                return "向前突刺，斩击前方范围内的敌人。";
+            case 10050:
+                return "凝聚剑气向前冲刺，斩击前方范围内的敌人。";
+            case 10060:
+                return "跃起挥剑，斩击前方范围内的敌人。";
+            case 10070:
+                return "引巨剑落向瞄准位置，斩击落点周围的敌人。";
+            default:
+                return definition.Desc;
+        }
     }
 
     /// <summary>生成一次苍蓝屏障当前等级的说明。</summary>
@@ -115,7 +137,11 @@ internal static class MjsSkillDescription
             // 高级属性第一组依次为五系攻击，文字与角色属性面板保持一致。
             RoleAttributeViewData.AdvancedEntry entry = RoleAttributeViewData.AdvancedEntries[index];
             if (entry.Id != effect.ElementAttackAttributeId) continue;
-            return "\n附加 " + Percent(effect.ElementDamagePermyriad) + entry.Label + " + " +
+            // 属伤倍率是单次命中的数值。盾爆与连续斩击明确显示各自触发时机。
+            string timing = "附加 ";
+            if (effect.SkillId == SkillCtrl.BlueBarrierSkillId) timing = "盾爆时附加 ";
+            else if (effect.HitCount > 1) timing = "每段附加 ";
+            return "\n" + timing + Percent(effect.ElementDamagePermyriad) + entry.Label + " + " +
                 effect.ElementFlatDamage + "点" + entry.Label[0] + "属性伤害。";
         }
         return string.Empty;

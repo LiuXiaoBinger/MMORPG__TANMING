@@ -751,7 +751,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <param name="using_times">权威选定的零起始表现段下标。</param>
     /// <param name="children">组合技能的顺序核心；普通技能为空。</param>
     /// <param name="stateTimes">组合各段状态毫秒数，与 children 对应。</param>
-    /// <param name="cast_point">本次世界瞄准点，用于副本普攻和龙卷斩的水平朝向，单位米。</param>
+    /// <param name="cast_point">副本攻击使用的水平世界瞄准点，单位米。</param>
     /// <param name="trueQiSpent">本次施放已经实际扣除的真气点数。</param>
     private void FireSkill(ROSkillCore core, ulong skill_uuid, int duration_ms, int using_times,
         List<ROSkillCore> children, List<int> stateTimes, ROVector3 cast_point, int trueQiSpent)
@@ -764,7 +764,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         }
         if (children != null)
         {
-            skill_ = new ROCombineSkill(core, skill_uuid, end_tick, children, stateTimes);
+            skill_ = new ROCombineSkill(core, skill_uuid, end_tick, children, stateTimes, Owner, cast_point);
         }
         else if (core.SkillID() == ROArtSkill.BasicAttackId && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
         {
@@ -797,6 +797,11 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
                 GameGlobal.Instance.LogicTick + barrierTicks, barrierEffect);
             MjsSkillGenes.BeginBarrier(Owner, barrierEffect);
             skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
+        }
+        else if (core.GetEffect().ImpactDelayMs > 0 && Owner.mainRoleInfo.BaseInfo.InstanceId != 0)
+        {
+            // 单次武功各窗口锁定同一学习等级，沿现有服务端碰撞入口扣血。
+            skill_ = new ROWeaponHitSkill(core, skill_uuid, end_tick, using_times, Owner, cast_point, core.GetEffect());
         }
         else skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         last_used_skill_effect_id_ = core.SkillEffectID();
