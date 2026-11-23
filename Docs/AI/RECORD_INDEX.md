@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b48eb5caf1d15d1202d39b26a9e2799723758f956c02b7d84aba85621e928c61`
+Source normalized SHA256: `b771582bc4a55cfb36948c467e7b74aad594537c79a1a5ae288748c6e9c46591`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -130,11 +130,12 @@ Source normalized SHA256: `b48eb5caf1d15d1202d39b26a9e2799723758f956c02b7d84aba8
 | [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-879 |
 | [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 880-884 |
 | [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 885-888 |
-| [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 889-893 |
+| [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 889-894 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 895-898 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `46d9c5a648a875ac0777f3c55b50946482a22779911a7747e9ebb4fcf424da5d`
+Source normalized SHA256: `08247006c94331e955f446e8ed6d7eb2af620c5042150f17f2eebff0d6e05fa1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -256,7 +257,8 @@ Source normalized SHA256: `46d9c5a648a875ac0777f3c55b50946482a22779911a7747e9ebb
 | [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-909 |
 | [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 910-914 |
 | [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 915-918 |
-| [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 919-923 |
+| [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 919-924 |
+| [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 925-928 |
 
 ## Docs/AI/DECISIONS.en.md
 
