@@ -16,6 +16,13 @@ public class EventGene : GeneBase
     /// <summary>关联子项须等事件成功后才激活。</summary>
     public override bool WaitsForEvent { get { return true; } }
 
+    /// <summary>换装重建同族节点后继承上一次触发的截止点。</summary>
+    /// <param name="untilMilliseconds">同一宿主逻辑时间轴上的冷却截止毫秒。</param>
+    public void RestoreCooldown(long untilMilliseconds)
+    {
+        CooldownUntilMilliseconds = System.Math.Max(CooldownUntilMilliseconds, untilMilliseconds);
+    }
+
     /// <summary>独立施加的事件副本从未冷却状态开始；原事件节点的冷却保持不变。</summary>
     /// <returns>拥有独立子树与冷却的同类型节点。</returns>
     public override GeneBase Clone()
@@ -36,7 +43,11 @@ public class EventGene : GeneBase
         // 冷却与概率属于原角色的基因模块，效果目标可以是事件对方。
         GeneRuntime host = role.GeneRuntime;
         if (!AppliesToScenario(host.Scenario)) return 0;
-        if (TriggerEvent != GeneEventType.None && TriggerEvent != args.Event) return 0;
+        if (TriggerEvent == GeneEventType.CriticalAttack)
+        {
+            if (args.Event != GeneEventType.AttackHit || !args.IsCritical) return 0;
+        }
+        else if (TriggerEvent != GeneEventType.None && TriggerEvent != args.Event) return 0;
         // 嵌套事件沿祖先继承目标选择，普通子项随后直接施加到选中的容器。
         GeneRuntime target = host;
         GeneBase ancestor = this;

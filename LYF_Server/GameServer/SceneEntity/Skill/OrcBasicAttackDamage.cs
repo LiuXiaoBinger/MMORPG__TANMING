@@ -62,9 +62,10 @@ public static class OrcBasicAttackDamage
     /// <param name="target">读取最终装备属性的受击在线角色。</param>
     /// <param name="critical">本刀权威暴击结果。</param>
     /// <returns>未按剩余生命裁切的整点伤害。</returns>
-    public static int Calculate(OnlineRole target, out bool critical)
+    /// <param name="weakened">攻击者此刻受虚弱影响时固定取伤害浮动下限。</param>
+    public static int Calculate(OnlineRole target, out bool critical, bool weakened = false)
     {
-        return Calculate(target.GetComponent<RoleEquipComponent>().CalculateAttribute(), combatRandom, out critical);
+        return Calculate(target.GetComponent<RoleEquipComponent>().CalculateAttribute(), combatRandom, out critical, weakened);
     }
 
     /// <summary>按 RO 的判定次序和 PvE 玩家分支，用指定随机源一次结算无属性普通攻击。</summary>
@@ -83,7 +84,8 @@ public static class OrcBasicAttackDamage
     /// <param name="rolls">本刀唯一随机源。</param>
     /// <param name="critical">实际暴击成功为 true，闪避必为 false。</param>
     /// <returns>未按剩余生命裁切的整点伤害。</returns>
-    public static int Calculate(RoleBaseInfo target, Random rolls, out bool critical)
+    /// <param name="weakened">本刀是否使用原公式攻击浮动下限。</param>
+    public static int Calculate(RoleBaseInfo target, Random rolls, out bool critical, bool weakened = false)
     {
         // 当前职业没有 RO 的格挡技能状态和卡片概率，BlockPoint 是面板点数，不能当万分比使用。
         // RO 普攻先判暴击，成功的暴击绕过普通命中判定。暴抗来自玩家实际面板。
@@ -104,7 +106,8 @@ public static class OrcBasicAttackDamage
         // 5515 是无独立武器类型的怪物，技能攻击属性为无，玩家无属性抗性、种族和体型修正均为 1。
         double physical = (2.0 * statusAttack + weaponAttack) * skillRate;
         // 原 C++ 先生成 97% 至 103% 的浮动，再由 Lua 对素质减防后的伤害和固定附加值应用。
-        double variation = (float)(0.97 + rolls.NextDouble() * 0.06);
+        double variation = (float)0.97;
+        if (!weakened) variation = (float)(0.97 + rolls.NextDouble() * 0.06);
         double damage = Math.Max(hitCount, (Math.Max(0.0, physical * defenseRate - statusDefense) + skillFlatDamage) * variation);
         if (critical)
         {

@@ -384,7 +384,10 @@ internal sealed class MoshentaSkillRuntime
     internal void HitPlayer(MoshentaSkillCast cast, int index, OnlineRole target, int targetIndex, int count)
     {
         if (PlayerBuffs(Actor.Owner, target).Invulnerable) return;
-        MoshentaDamageResult damage = Calculator.Calculate(cast.Skill, index, cast.Snapshot, PlayerSnapshot(Actor.Owner, target), targetIndex, count);
+        // 虚弱在实际命中时判断，覆盖怪物起手后才被附加的情况。
+        bool weakened = (Actor.Monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime.GetStates() & GeneState.MinAttack) != 0;
+        // 沿用同一伤害公式和暴击、命中判定，仅固定攻击浮动。
+        MoshentaDamageResult damage = Calculator.Calculate(cast.Skill, index, cast.Snapshot, PlayerSnapshot(Actor.Owner, target), targetIndex, count, weakened);
         Actor.Owner.ApplyPlayerDamage(Actor, target, cast.Skill.Id, damage.Damage, damage.Critical, index);
         if (damage.Type == 1 || damage.Type == 2) AddResultBuff(cast, index, target);
     }

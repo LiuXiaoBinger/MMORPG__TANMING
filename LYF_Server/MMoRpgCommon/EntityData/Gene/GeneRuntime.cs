@@ -249,6 +249,18 @@ public class GeneRuntime
     }
     /// <summary>眩晕、定身或击倒禁止移动。</summary>
     public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root | GeneState.Knockdown)) == 0; } }
+    /// <summary>结算内外功区间。虚弱优先取下限，对应神力取上限，常态沿用均值。</summary>
+    /// <param name="states">本次读取攻击值时生效的状态位。</param>
+    /// <param name="maximumState">该攻击类别对应的神力状态。</param>
+    /// <param name="minimum">本次区间下端的攻击点数。</param>
+    /// <param name="maximum">本次区间上端的攻击点数。</param>
+    public static double ResolveAttack(GeneState states, GeneState maximumState, double minimum, double maximum)
+    {
+        if ((states & GeneState.MinAttack) != 0) return minimum;
+        if ((states & maximumState) != 0) return maximum;
+        return (minimum + maximum) / 2;
+    }
+
     /// <summary>眩晕、沉默或击倒禁止施法。</summary>
     public bool CanCast { get { return (GetStates() & (GeneState.Stun | GeneState.Silence | GeneState.Knockdown)) == 0; } }
 

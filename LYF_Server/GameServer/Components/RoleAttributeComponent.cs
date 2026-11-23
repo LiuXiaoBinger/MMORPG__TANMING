@@ -70,10 +70,8 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
             // 上限与下限同源，避免只取一端造成区间偏差。
             double maximum = CalculateAttribute(GeneAttributeType.AtkExternalMax,
                 Owner.mainRoleInfo.BaseInfo.AtkExternalMax);
-            // 区间均值代表本次结算的外功点数，负值按零处理。
-            double average = (minimum + maximum) / 2;
-            if (average < 0) average = 0;
-            return (int)average;
+            // 屏障爆炸与龙卷斩同样遵循当前神力或虚弱状态。
+            return (int)Math.Max(0, GeneRuntime.ResolveAttack(States, GeneState.MaxExternalAttack, minimum, maximum));
         }
     }
 

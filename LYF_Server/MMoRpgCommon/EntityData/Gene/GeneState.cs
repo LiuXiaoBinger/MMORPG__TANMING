@@ -15,5 +15,11 @@ public enum GeneState
     /// <summary>霸体，存续期间屏蔽眩晕和定身，不驱散原基因。</summary>
     SuperArmor = 8,
     /// <summary>击倒，禁止移动和施法；霸体存续期间同样被屏蔽。</summary>
-    Knockdown = 16
+    Knockdown = 16,
+    /// <summary>神力外持续期间，外功结算取区间上限。</summary>
+    MaxExternalAttack = 32,
+    /// <summary>神力内持续期间，内功结算取区间上限。</summary>
+    MaxInternalAttack = 64,
+    /// <summary>虚弱期间内外功均取下限，覆盖同时生效的神力。</summary>
+    MinAttack = 128
 }

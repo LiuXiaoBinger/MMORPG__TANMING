@@ -349,6 +349,8 @@ public sealed partial class SceneWaveSpawner
             RoleEquipComponent equipment = null;
             // 保留旧的无来源调用伤害；真实角色普攻同时结算外功和内功对应防御。
             int calculatedDamage = damage;
+            // 同一段只判一次暴击，扣血和攻守双方的事件共同使用。
+            bool critical = false;
             if (caster != null)
             {
                 equipment = caster.GetComponent<RoleEquipComponent>();
@@ -363,7 +365,7 @@ public sealed partial class SceneWaveSpawner
                 bool hasExternalSkillDamage = skillId == MjsSkillGenes.BarrierSkillId || skillId == MjsSkillGenes.TornadoSkillId;
                 if (effect != null && hasExternalSkillDamage)
                     calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
-                else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage);
+                else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage, equipment.Runtime.GetStates());
                 // 优先使用施放时固定的等级行，老命中入口仍可查询角色当前已学习等级。
                 SkillEffectInfo elementEffect = effect ?? caster.GetComponent<RoleSkillComponent>().FindLearnedEffect(skillId);
                 // 元素部分只经过对应元素防御，合并后与原伤害走同一最终增伤和扣血路径。
@@ -384,6 +386,24 @@ public sealed partial class SceneWaveSpawner
                     int attackerHp = Math.Min(caster.mainRoleInfo.BaseInfo.CurrHp, Math.Max(0, attackerMaxHp));
                     GeneDamageContext damageContext = new GeneDamageContext(attackerHp, attackerMaxHp,
                         monster.CurrentHp, GetHpData(index).MaxHp, targetIsBoss, fromBehind);
+                    // 原怪物表的基础暴抗与其临时抗暴基因，单位为点。
+                    double baseResist = 0;
+                    if (hitActor != null)
+                    {
+                        // 原 RO 快照同样按 CRI_RES 加五分之一幸运构造基础暴抗。
+                        XElement row = hitActor.Owner.Battle.Catalog.Entity(hitActor.EntityId);
+                        baseResist = MoshentaSkillCatalog.I(row, "CRI_RES") + MoshentaSkillCatalog.I(row, "LUK") / 5;
+                    }
+                    // 每一万点净暴击对应满概率，扣除目标抗暴后裁切，由副本随机源判定。
+                    double netCrit = finalAttributes.CritPoint - targetGenes.CalculateAttribute(GeneAttributeType.CritResistPoint, baseResist);
+                    if (netCrit > 0) critical = Random.Next(10000) < Math.Min(10000, netCrit);
+                    if (critical)
+                    {
+                        // 暴虐只作为暴击倍率的额外百分点，目标暴伤减免在这里抵扣一次。
+                        double multiplier = Math.Max(100, finalAttributes.CritDamage - targetGenes.CalculateAttribute(GeneAttributeType.CritDamageReduce, 0));
+                        calculatedDamage = (int)Math.Min(int.MaxValue, calculatedDamage * multiplier / 100);
+                    }
+                    // 背水等特技依然按扣血前的双方生命值结算。
                     double bonus = equipment.Runtime.ResolveDamageBonus(damageContext);
                     if (bonus > 0) calculatedDamage = (int)(calculatedDamage * (1 + bonus / 100));
                     calculatedDamage = MjsSkillGenes.ApplyLearnedDamageBonus(caster, targetGenes.Owner.AttrComp,
@@ -404,8 +424,8 @@ public sealed partial class SceneWaveSpawner
             if (equipment != null && actualDamage > 0)
             {
                 // 受击事件由该怪物自己的基因组件派发，结算容器与传入对方保持原样。
-                targetGene.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, skillId, actualDamage));
-                equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, skillId, actualDamage));
+                targetGene.Trigger(new GeneTriggerArgs(GeneEventType.BeHit, equipment.Runtime, skillId, actualDamage, critical));
+                equipment.Trigger(new GeneTriggerArgs(GeneEventType.AttackHit, targetGenes, skillId, actualDamage, critical));
                 if (monster.CurrentHp == 0) equipment.Trigger(new GeneTriggerArgs(GeneEventType.Kill, targetGenes, skillId, actualDamage));
             }
             if (monster.CurrentHp == 0)

@@ -59,6 +59,35 @@ public sealed class TeamManager
     /// <summary>由游戏进程统一创建副本运行入口。</summary>
     private TeamManager() { }
 
+    /// <summary>队友治疗招式的结果入口。只有本次实际回了血才允许施法者触发妙手。</summary>
+    /// <param name="caster">已成功施放治疗技能的在线角色。</param>
+    /// <param name="target">同副本队伍内被该治疗招式命中的队友。</param>
+    /// <param name="skillId">本次治疗招式的配置编号。</param>
+    /// <param name="amount">本次治疗已结算的生命点数。</param>
+    public void ApplyAllySkillHeal(OnlineRole caster, OnlineRole target, int skillId, int amount)
+    {
+        if (caster == target || amount <= 0) return;
+        // 成员来自当前副本实际入场名单，离队、离场者不能接受本次治疗。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)caster.mainRoleInfo.BaseInfo.InstanceId, out team)) return;
+        if (!team.Members.Contains(caster.GetID()) || !team.Members.Contains(target.GetID())) return;
+        // 死亡和溢出治疗不触发额外回复。
+        int before = target.mainRoleInfo.BaseInfo.CurrHp;
+        target.AttrComp.ChangeHp(amount, caster.GetID());
+        if (target.mainRoleInfo.BaseInfo.CurrHp <= before) return;
+        // 初始候选为刚接受治疗的队友，比例相同时保留先选者。
+        OnlineRole lowest = target;
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            // 只考虑同队尚存活成员；施法者自身也可能是队内血量最低的人。
+            OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            if (member == null || member.mainRoleInfo.BaseInfo.CurrHp <= 0) continue;
+            if ((long)member.mainRoleInfo.BaseInfo.CurrHp * lowest.AttrComp.MaxHp <
+                (long)lowest.mainRoleInfo.BaseInfo.CurrHp * member.AttrComp.MaxHp) lowest = member;
+        }
+        caster.Gene.Trigger(new GeneTriggerArgs(GeneEventType.AllySkillHeal, lowest.Gene.Runtime, skillId));
+    }
+
     /// <summary>由已提交的普攻在逻辑线程调用，只向角色所在实例的成员广播本窗口实际命中的怪物。</summary>
     /// <param name="caster">从网关会话确认且正在施法的在线角色。</param>
     /// <param name="forward">释放时确认的水平单位朝向。</param>

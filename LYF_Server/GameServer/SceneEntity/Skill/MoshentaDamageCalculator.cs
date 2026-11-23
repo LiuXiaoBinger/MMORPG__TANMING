@@ -53,8 +53,9 @@ internal sealed class MoshentaDamageCalculator
     /// <param name="target">命中时的实际目标属性。</param>
     /// <param name="targetIndex">本结果中的目标顺序，从1开始。</param>
     /// <param name="opponents">本结果实际目标数量。</param>
+    /// <param name="weakened">当前命中时攻击者是否虚弱，控制原公式浮动取下限。</param>
     internal MoshentaDamageResult Calculate(MoshentaSkillDefinition skill, int index, MoshentaDamageSnapshot caster,
-        MoshentaDamageSnapshot target, int targetIndex, int opponents)
+        MoshentaDamageSnapshot target, int targetIndex, int opponents, bool weakened = false)
     {
         // Damage=false仍会进入后续结果Buff，但原C++不调用伤害Lua。
         XElement point = skill.Results[index];
@@ -66,6 +67,7 @@ internal sealed class MoshentaDamageCalculator
         Dictionary<string, double> calculated = Calculated(skill, index, caster, target);
         // 只把数字和固定字段名写到Lua，不将业务object转换为动态载荷。
         StringBuilder input = new StringBuilder("{caster=").Append(EntityLua(caster)).Append(",target=").Append(EntityLua(target));
+        if (weakened) input.Append(",weakened=true");
         input.Append(",skillId=").Append(skill.Id).Append(",resultIndex=").Append(index).Append(",targetIndex=").Append(targetIndex);
         input.Append(",opponents=").Append(opponents).Append(",distance=").Append(Number(System.Numerics.Vector3.Distance(caster.Position, target.Position)));
         input.Append(",count=").Append(count).Append(",damageType=").Append(MoshentaSkillCatalog.I(skill.Table, "SkillDamType"));

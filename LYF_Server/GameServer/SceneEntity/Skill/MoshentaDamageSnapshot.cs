@@ -110,6 +110,12 @@ internal sealed class MoshentaDamageSnapshot
         double flat = (ReadGeneAttribute(actor, genes, minimum, 0, forSummon) + ReadGeneAttribute(actor, genes, maximum, 0, forSummon)) / 2;
         // 以1为基底减去固定项，得到百分比倍率；避免将固定加值应用到两个组成各一次。
         double scale = (ReadGeneAttribute(actor, genes, minimum, 1, forSummon) + ReadGeneAttribute(actor, genes, maximum, 1, forSummon)) / 2 - flat;
+        // 同时冻结两端中的低端；若起手后受虚弱，命中时能用当次攻击的真实下限。
+        double minimumFlat = ReadGeneAttribute(actor, genes, minimum, 0, forSummon);
+        // 基础为一时扣除固定增量，得到低端倍率。
+        double minimumScale = ReadGeneAttribute(actor, genes, minimum, 1, forSummon) - minimumFlat;
+        result.Set(baseKey + "_MIN", result.Get(baseKey) * minimumScale);
+        result.Set(weaponKey + "_MIN", result.Get(weaponKey) * minimumScale + minimumFlat);
         result.Set(baseKey, result.Get(baseKey) * scale);
         result.Set(weaponKey, result.Get(weaponKey) * scale + flat);
     }

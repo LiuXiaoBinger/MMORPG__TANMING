@@ -38,16 +38,26 @@ public class MonsterDefenseAttributes
     /// <returns>经过防御及承伤修正的生命点数，由调用方按剩余 HP 裁切。</returns>
     public virtual int CalculateDamage(RoleBaseInfo attacker, GeneRuntime target, int skillDamage)
     {
+        return CalculateDamage(attacker, target, skillDamage, GeneState.None);
+    }
+
+    /// <summary>按当前攻击状态选取内外功后，分别结算对应防御。</summary>
+    /// <param name="attacker">出手角色此刻的最终攻击区间。</param>
+    /// <param name="target">受击怪物的基因容器。</param>
+    /// <param name="skillDamage">归入外功的招式固定伤害。</param>
+    /// <param name="states">本次出手时攻击者的神力或虚弱状态。</param>
+    public int CalculateDamage(RoleBaseInfo attacker, GeneRuntime target, int skillDamage, GeneState states)
+    {
         // 内防独立，外破甲不能降低内功防御。
         double magicDefense = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DefInternal, DefInternal));
         // 普攻继续复用外防曲线，基础外攻与固定伤害沿旧公式合并。
         double physicalRate = GetExternalDefenseRate(target);
         // 两种防御都按点数处理，没有把一梦江湖面板点数当成概率。
         double magicRate = Math.Max((magicDefense + 1000) / (magicDefense * 10 + 1000), 0.05);
-        // 本项目普攻以区间均值消费当前外功攻击，不额外引入暴击或命中概率公式。
-        double physical = (Math.Max(0, ((double)attacker.AtkExternalMin + attacker.AtkExternalMax) / 2) + skillDamage) * physicalRate;
+        // 选择本次外功取值后再追加招式固定伤害。
+        double physical = (Math.Max(0, GeneRuntime.ResolveAttack(states, GeneState.MaxExternalAttack, attacker.AtkExternalMin, attacker.AtkExternalMax)) + skillDamage) * physicalRate;
         // 内功攻击部分独立经过内防，使内破甲能影响真实扣血。
-        double magical = Math.Max(0, ((double)attacker.AtkInternalMin + attacker.AtkInternalMax) / 2) * magicRate;
+        double magical = Math.Max(0, GeneRuntime.ResolveAttack(states, GeneState.MaxInternalAttack, attacker.AtkInternalMin, attacker.AtkInternalMax)) * magicRate;
         return Math.Max(0, (int)((physical + magical) * target.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
     }
 

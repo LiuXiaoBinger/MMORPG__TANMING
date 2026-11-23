@@ -354,7 +354,7 @@ internal sealed class MoshentaOrc
         // 受击事件沿用本刀权威暴击结果，不能使用默认 false 丢失它。
         bool critical;
         // 本刀完整来伤，命中、暴击、防御等仍取原伤害脚本，仅把负数修正为 0。
-        int incoming = Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical)
+        int incoming = Math.Max(0, (int)(OrcBasicAttackDamage.Calculate(attackTarget, out critical, (SkillGenes.GetStates() & GeneState.MinAttack) != 0)
             * equipment.Runtime.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
         incoming = MjsSkillGenes.ReducePhysicalDamage(attackTarget, incoming);
         // 苍蓝屏障先用完整来伤扣盾池，溢出量才是真正落到角色身上的伤害。

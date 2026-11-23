@@ -45,6 +45,18 @@ end
 
 -- 每次真正结算调用原DamageCalculator中配置的函数名。
 function MoshentaCalculate(input)
+    if input.weakened then
+        -- 当前这次调用独享的属性副本，设置后不会写回怪物或其他目标。
+        local attrs = input.caster.attrs
+        attrs.ATTR_BASIC_BASE_ATK_FINAL = attrs.ATTR_BASIC_BASE_ATK_FINAL_MIN
+        attrs.ATTR_BASIC_BASE_MATK_FINAL = attrs.ATTR_BASIC_BASE_MATK_FINAL_MIN
+        attrs.ATTR_BASIC_WEAPON_ATK_FINAL = attrs.ATTR_BASIC_WEAPON_ATK_FINAL_MIN
+        attrs.ATTR_BASIC_WEAPON_MATK_FINAL = attrs.ATTR_BASIC_WEAPON_MATK_FINAL_MIN
+        input.calculated.atk = attrs.ATTR_BASIC_BASE_ATK_FINAL
+        input.calculated.matk = attrs.ATTR_BASIC_BASE_MATK_FINAL
+        input.calculated.wuqi_atk = attrs.ATTR_BASIC_WEAPON_ATK_FINAL
+        input.calculated.wuqi_matk = attrs.ATTR_BASIC_WEAPON_MATK_FINAL
+    end
     local caster = entity(input.caster)
     local target = entity(input.target)
     local result = {damage=0,real=0,kind=0,count=input.count,attr=0}
@@ -81,7 +93,12 @@ function MoshentaCalculate(input)
     end
     function args:CalculatorProcess()
         -- 原damage_def.cpp在完成命中/暴击判定后才抽本次伤害浮动。
-        self.calculate_data_.dam_float=moshenta_float(RORandom:randDouble(0.97,1.03))
+        -- 虚弱命中的怪物固定取原伤害区间下限，暴击与命中仍由原公式独立判定。
+        if input.weakened then
+            self.calculate_data_.dam_float=moshenta_float(0.97)
+        else
+            self.calculate_data_.dam_float=moshenta_float(RORandom:randDouble(0.97,1.03))
+        end
     end
     local util = {}
     function util:LuaGetMobMonsterOwner(value) return caster end

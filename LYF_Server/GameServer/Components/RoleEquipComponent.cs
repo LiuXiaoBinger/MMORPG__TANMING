@@ -8,6 +8,8 @@ public class RoleEquipComponent : RoleComponentBase
     private readonly HashSet<long> attachedEquipment = new HashSet<long>();
     /// <summary>按特技族保存当前唯一生效等级，未变等级保留原次数和冷却。</summary>
     private readonly Dictionary<int, GeneBase> activeSpecialSkills = new Dictionary<int, GeneBase>();
+    /// <summary>在线期间各神力特技的触发截止时刻，跨换装和装备件数变动保留。</summary>
+    private readonly Dictionary<int, long> criticalCooldowns = new Dictionary<int, long>();
     /// <summary>装备操作访问角色自己的基因容器，本装备组件不再持有通用基因集合。</summary>
     public GeneRuntime Runtime { get { return Owner.Gene.Runtime; } }
 
@@ -129,7 +131,7 @@ public class RoleEquipComponent : RoleComponentBase
         for (int i = 0; i < oldFamilies.Count; i++)
         {
             if (counts.ContainsKey(oldFamilies[i])) continue;
-            Runtime.RemoveGene(activeSpecialSkills[oldFamilies[i]]);
+            UnmountSpecialSkill(oldFamilies[i], activeSpecialSkills[oldFamilies[i]]);
             activeSpecialSkills.Remove(oldFamilies[i]);
         }
         // 配置是族与等级的扁平表，仅检查当前启用的族。
@@ -155,15 +157,33 @@ public class RoleEquipComponent : RoleComponentBase
             if (activeSpecialSkills.TryGetValue(family, out existing))
             {
                 if (existing.GeneID == selected.GeneId && existing.SourceId == sources[family]) continue;
-                Runtime.RemoveGene(existing);
+                UnmountSpecialSkill(family, existing);
             }
-            activeSpecialSkills[family] = Runtime.AddGene(selected.GeneId, sources[family], null, 100 + family, Owner.GetID());
+            // 不同等级使用不同根节点，但同族神力沿用同一角色逻辑时钟的截止点。
+            GeneBase mounted = Runtime.AddGene(selected.GeneId, sources[family], null, 100 + family, Owner.GetID());
+            activeSpecialSkills[family] = mounted;
+            // 只有卸下时实际触发过的暴击事件才有冷却可恢复。
+            long until;
+            if (mounted is EventGene special && criticalCooldowns.TryGetValue(family, out until))
+                special.RestoreCooldown(until);
         }
     }
 
     /// <summary>既有装备面板入口转交角色属性组件计算。</summary>
     /// <returns>包含当前所有生效修正的最终属性。</returns>
     public virtual RoleBaseInfo CalculateAttribute() { return Owner.AttrComp.CalculateAttribute(); }
+
+    /// <summary>撤销装备根节点时保存神力已经开始的冷却，防止切换装备提前重置。</summary>
+    /// <param name="family">装备实例存储的同名特技族编号。</param>
+    /// <param name="node">当前在角色运行容器中的原节点。</param>
+    private void UnmountSpecialSkill(int family, GeneBase node)
+    {
+        // 神力内、外、属分别计时，允许角色同时持有多个不同神力状态。
+        EventGene special = node as EventGene;
+        if (special != null && special.TriggerEvent == GeneEventType.CriticalAttack)
+            criticalCooldowns[family] = special.CooldownUntilMilliseconds;
+        Runtime.RemoveGene(node);
+    }
 
     /// <summary>既有装备特技入口转交角色自己的基因组件。</summary>
     /// <param name="args">实际战斗事件及目标。</param>
@@ -178,6 +198,7 @@ public class RoleEquipComponent : RoleComponentBase
     {
         attachedEquipment.Clear();
         activeSpecialSkills.Clear();
+        criticalCooldowns.Clear();
         base.Dispose();
     }
 }

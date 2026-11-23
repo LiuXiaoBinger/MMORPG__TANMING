@@ -10,5 +10,9 @@ public enum GeneEventType
     /// <summary>宿主完成一次有效施法，编号 3。</summary>
     SkillCast = 3,
     /// <summary>宿主击败目标，编号 4。</summary>
-    Kill = 4
+    Kill = 4,
+    /// <summary>命中事件的暴击条件；沿用同次伤害的暴击结果。</summary>
+    CriticalAttack = 5,
+    /// <summary>治疗招式实际恢复了队友生命，事件目标为队中生命比例最低的存活成员。</summary>
+    AllySkillHeal = 6
 }
