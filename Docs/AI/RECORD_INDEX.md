@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `587f4271a34570a1779b1345be6606b9b4f07d1612ce239b769d660fab0ed2af`
+Source normalized SHA256: `9c2c9efd978e47d7ab25353f06b530990fd4082ff5b4ec63b2e4b7b25487777f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -121,11 +121,12 @@ Source normalized SHA256: `587f4271a34570a1779b1345be6606b9b4f07d1612ce239b769d6
 | [CODE][FILES][技能][WEAPON-SKILL-GROWTH-20261120] Eight active weapon skills share the level-170 upgrade flow | 825-830 |
 | [CODE][FILES][技能][基因][ELEMENTAL-DAMAGE-20261120] Five-element damage and Tornado Slash wind growth | 831-837 |
 | [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window | 838-841 |
-| [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-844 |
+| [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
+| [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-851 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0d30a1ea7f2c66eeb0a7e76d4f6396308d03c1067d7e9623599137922d428b23`
+Source normalized SHA256: `59cfaadb93a30a5c480e3b01dfa1f5a97a26206322b6753190fd548c4f647f17`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -238,7 +239,8 @@ Source normalized SHA256: `0d30a1ea7f2c66eeb0a7e76d4f6396308d03c1067d7e962359913
 | [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] Other weapon skills use higher-level numbers in real cast methods | 856-860 |
 | [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss | 861-866 |
 | [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] Formation, progression and persistence | 867-870 |
-| [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-873 |
+| [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
+| [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-879 |
 
 ## Docs/AI/DECISIONS.en.md
 

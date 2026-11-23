@@ -842,3 +842,10 @@ Use 武学 → 秘笈 for formation, catalogue and cultivation. GameServer/Confi
 ## [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents
 
 Keys 3/4/6 use one short local camera accent on landing, shield formation and wind release respectively. Tune `CastShakeTimeSeconds` and `CastShakeOffset` in `SkillEditorBinding_3011001.asset`, `SkillEditorBinding_3012001.asset` and `SkillEditorBinding_3013001.asset`, then export. The two adjusted Blade Storm slashes start on frames 1 and 10 at 30 FPS. Azure Barrier starts its trimmed recording on frame 0. Tornado Slash starts its sound on frame 20 at 60 FPS and releases wind on frame 30. Live character input and a packaged Player remain unverified. See `项目修改日志/2026-11-23-魔剑士新技能声音与振屏.md`.
+
+## [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop
+
+- Clicking 强化 carries the selected item UID through EquipmentDetailWindow, KnapsackCtrl and MainView into EquipmentWorkshopWindow in UIRoot's FunctionLayer. Its tabs are 强化, 镶嵌, 洗炼, 继承 and 升级. The top actions in the detail card now have a 39-unit vertical pitch.
+- The bag and equipped filters read the role's real items. The selected instance supplies the icon and strengthening level. Existing configuration supplies the cap, base attributes and socket count. The header reads the four existing currency balances.
+- The progress bar represents the current strengthening level divided by the configured cap. Material costs and the five operations await gameplay definitions. The buttons currently cover navigation, selection, scrolling and closing.
+- Files, previews and verification are recorded in `项目修改日志/2026-11-23-装备强化入口与五页界面.md`.

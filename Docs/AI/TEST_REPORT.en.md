@@ -871,3 +871,9 @@ Unity 2023.2 isolated Play Mode passed 16 checks through the actual window hiera
 ## [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts
 
 Unity 2023.2.20f1c1 compiled three assemblies. In an isolated Editor, 21/21 checks passed through `Fire` using the published presentation data, actual cast timers and Cinemachine FreeLook. Each skill covered local and remote actors, cancellation, action-slot exit, late loading, mute and a zero offset. Blade Storm landing sound/camera peaks were 810/814 ms. Barrier sound/camera peaks were 170/180 ms. Tornado wind sound accent, authored release and camera peak were 493/500/514 ms. Audio measurements use an offline mix. The isolated camera scene used a test particle. Original-character network play, multi-client listening and a packaged Player remain unverified. Evidence in `_temp/mjs-skill-feel-20261123/`. See `项目修改日志/2026-11-23-魔剑士新技能声音与振屏.md`.
+
+## [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation
+
+- The full LYF_Game client assembly compiled. Isolated Unity 2023.2.20f1c1 Play Mode passed 27 checks each at 1920×1080 and 1366×768 (54 total). The fixture used the production detail/workshop UI, controller and equipment configuration with an isolated inventory.
+- Pointer clicks verified the entry UID for two same-name items, both sources, all five tabs, current attributes and six configured sockets, offscreen selection, empty inventory, close and reopen. The first row is fully visible and strengthening 10/80 fills one eighth of the track. The test observed zero item-operation messages.
+- Screenshots of the detail card and all five pages, `acceptance.txt`, `visual-pass.log` and `client-compile.log` are under `_temp/equipment-workshop-20261123/`. A logged-in city character and a published client bundle remain unverified. Full record in `项目修改日志/2026-11-23-装备强化入口与五页界面.md`.

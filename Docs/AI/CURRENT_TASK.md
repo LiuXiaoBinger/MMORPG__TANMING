@@ -837,3 +837,10 @@
 ## [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] 魔剑士三招的声音时机与动作振屏
 
 快捷键 3/4/6 分别在落地、成盾、出风时给本机角色一次短振屏。在 `SkillEditorBinding_3011001.asset`、`SkillEditorBinding_3012001.asset`、`SkillEditorBinding_3013001.asset` 调整 `CastShakeTimeSeconds` 和 `CastShakeOffset` 后导出。刀刃风暴两段斩声的起点是 30 FPS 下的第 1、10 帧，苍蓝屏障首帧播放剪短弱起的录音，龙卷斩在 60 FPS 下第 20 帧起声、第 30 帧出风。原角色联机实按和 Player 包待验。见 `项目修改日志/2026-11-23-魔剑士新技能声音与振屏.md`。
+
+## [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] 从装备详情打开五页装备工坊
+
+- 在装备详情点击“强化”时，EquipmentDetailWindow、KnapsackCtrl 和 MainView 依次传递所选装备实例的 UID，在 UIRoot 的 FunctionLayer 下打开 EquipmentWorkshopWindow。窗口包含强化、镶嵌、洗炼、继承和升级五个页签。详情卡顶部相邻操作按钮的纵向排列间距为 39 个界面单位。
+- “背包”和“已装备”筛选读取角色实际持有的装备。图标和强化等级取自选中的装备实例，强化上限、基础属性和镶嵌孔数取自现有配置。窗口顶部显示四种现有货币的余额。
+- 进度条按当前强化等级除以配置上限显示。材料消耗和五项装备操作的规则待策划定义，当前按钮支持页面切换、装备选择、滚动和关闭。
+- 文件、预览图和验证结果详见 `项目修改日志/2026-11-23-装备强化入口与五页界面.md`。
