@@ -87,6 +87,8 @@ public sealed class MartialManualPanel : MonoBehaviour
     public event Action<ManualRequest> Requested;
     /// <summary>最近一次服务端回执。</summary>
     private ManualReply state;
+    /// <summary>具有已录入详情的书目行号，与服务端目录和角色进度共用原下标。</summary>
+    private readonly List<int> detailRows = new List<int>();
     /// <summary>当前显示目录或出战页。</summary>
     private bool listPage;
     /// <summary>出战配置正在本地预览，保存后才写入角色。</summary>
@@ -159,6 +161,10 @@ public sealed class MartialManualPanel : MonoBehaviour
         feedback.text = reply.Message;
         if (reply.Catalog == null) return;
         state = reply;
+        detailRows.Clear();
+        // 只露过书名的记录没有简介，排除其卡片，同时保留服务器原书号和槽位。
+        for (int row = 0; row < reply.Catalog.Books.Count; row++)
+            if (!string.IsNullOrWhiteSpace(reply.Catalog.Books[row].Description)) detailRows.Add(row);
         if (reply.Success && reply.Action == ManualAction.ManualSave)
         {
             Editing = false;
@@ -242,10 +248,10 @@ public sealed class MartialManualPanel : MonoBehaviour
     private string[] FilterChoices()
     {
         List<string> choices = new List<string> { "全部" };
-        for (int index = 0; index < state.Catalog.Books.Count; index++)
+        for (int index = 0; index < detailRows.Count; index++)
         {
-            // 没有展示过门派归属的目录项仅在全部中出现。
-            string school = state.Catalog.Books[index].School;
+            // 门派选项只从可见书目中收集。
+            string school = state.Catalog.Books[detailRows[index]].School;
             if (school.Length > 0 && !choices.Contains(school)) choices.Add(school);
         }
         return choices.ToArray();
@@ -254,14 +260,19 @@ public sealed class MartialManualPanel : MonoBehaviour
     /// <summary>查找书籍在当前目录及进度数组中的位置。</summary><param name="id">书号。</param>
     private int Index(int id)
     {
-        for (int i = 0; i < state.Catalog.Books.Count; i++) if (state.Catalog.Books[i].Id == id) return i;
+        for (int i = 0; i < detailRows.Count; i++)
+        {
+            // 返回原书目行号，以便直接读取这一角色的对应进度。
+            int row = detailRows[i];
+            if (state.Catalog.Books[row].Id == id) return row;
+        }
         return -1;
     }
 
     /// <summary>第一个已装备的位置，没有装备时返回零。</summary>
     private int FirstEquipped()
     {
-        for (int i = 0; i < state.Slots.Count; i++) if (state.Slots[i] != 0) return state.Slots[i];
+        for (int i = 0; i < state.Slots.Count; i++) if (Index(state.Slots[i]) >= 0) return state.Slots[i];
         return 0;
     }
 
@@ -316,7 +327,7 @@ public sealed class MartialManualPanel : MonoBehaviour
             targetSlot = index;
             Render();
         }
-        else if (state.Slots[index] == 0) Edit(index);
+        else if (Index(state.Slots[index]) < 0) Edit(index);
         else { selected = state.Slots[index]; Render(); }
     }
 
@@ -402,10 +413,12 @@ public sealed class MartialManualPanel : MonoBehaviour
         {
             // 切换筛选后，详情跟随筛选结果中的第一本书。
             string selectedSchool = FilterChoices()[filterMode];
-            for (int i = 0; i < state.Progress.Count; i++)
+            for (int i = 0; i < detailRows.Count; i++)
             {
-                if (filterMode > 0 && state.Catalog.Books[i].School != selectedSchool) continue;
-                selected = state.Progress[i].Book;
+                // 选中筛选结果中第一本有详情的书，并沿用服务端书号。
+                int row = detailRows[i];
+                if (filterMode > 0 && state.Catalog.Books[row].School != selectedSchool) continue;
+                selected = state.Progress[row].Book;
                 break;
             }
         }
@@ -418,6 +431,8 @@ public sealed class MartialManualPanel : MonoBehaviour
             {
                 book = state.Slots[i];
                 if (Editing) book = draft[i];
+                // 旧方案里的未展示书号保留在数据中，界面按空位绘制。
+                if (Index(book) < 0) book = 0;
                 sign = "＋";
                 if (book > 0) sign = "";
             }
@@ -450,12 +465,14 @@ public sealed class MartialManualPanel : MonoBehaviour
         for (int i = root.childCount - 1; i >= 0; i--) { root.GetChild(i).gameObject.SetActive(false); Destroy(root.GetChild(i).gameObject); }
         int learned = 0, visible = 0, insightCount = 0;
         string filter = FilterChoices()[filterMode];
-        for (int i = 0; i < state.Progress.Count; i++)
+        for (int i = 0; i < detailRows.Count; i++)
         {
-            insightCount += state.Progress[i].Insights;
-            if (which == 0 && filterMode > 0 && state.Catalog.Books[i].School != filter) continue;
+            // 目录分组计数与下方实际生成的卡片共用可见行。
+            int row = detailRows[i];
+            insightCount += state.Progress[row].Insights;
+            if (which == 0 && filterMode > 0 && state.Catalog.Books[row].School != filter) continue;
             visible++;
-            if (state.Progress[i].Level > 0) learned++;
+            if (state.Progress[row].Level > 0) learned++;
         }
         insightsText.text = "已明悟:" + insightCount + "次";
         filterText.text = filter;
@@ -477,11 +494,13 @@ public sealed class MartialManualPanel : MonoBehaviour
             }
             int count = 0, columns = 1;
             if (which == 0) columns = 2;
-            for (int i = 0; i < state.Progress.Count; i++)
+            for (int i = 0; i < detailRows.Count; i++)
             {
+                // 回查原始行号，避免隐藏中间的条目后错配其他书的等级和残页。
+                int row = detailRows[i];
                 // 捕获本卡片的书号，未学卡仅在目录显示。
-                ManualProgress p = state.Progress[i];
-                ManualBook b = state.Catalog.Books[i];
+                ManualProgress p = state.Progress[row];
+                ManualBook b = state.Catalog.Books[row];
                 if (which == 0 && filterMode > 0 && b.School != filter) continue;
                 if ((p.Level == 0) != (group == 1)) continue;
                 ManualCard card = Instantiate(cardTemplate, root);
