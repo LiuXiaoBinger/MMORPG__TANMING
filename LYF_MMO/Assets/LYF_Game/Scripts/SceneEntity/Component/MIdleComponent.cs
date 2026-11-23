@@ -3,7 +3,7 @@ using MMoRpgCommon.SceneEntity;
 
 /// <summary>
 /// 在角色模型可用后，给 Idle 和 FIdle 分别绑定普通待机、战斗待机动画。
-/// 本组件只准备动画；当前该播放哪种动作，由状态机和默认动作组件决定。
+/// 同时按现有战斗和技能状态切换武器挂点，动作选择由默认动作组件决定。
 /// </summary>
 public sealed class MIdleComponent : EntityComponentBase
 {
@@ -15,6 +15,9 @@ public sealed class MIdleComponent : EntityComponentBase
 
     /// <summary>两条待机剪辑是否均已提交给 Animator 异步准备，成功后无需重复装配。</summary>
     private bool _isPrepared;
+
+    /// <summary>当前模型预制体上的武器挂点，未配置背负武器的角色为空。</summary>
+    private MRoleWeaponMount _weaponMount;
 
     /// <summary>本轮实体生命周期内是否已记录缺失表现表或动画索引的错误，避免逐帧重复输出。</summary>
     private bool _hasLoggedPrepareFailure;
@@ -28,11 +31,18 @@ public sealed class MIdleComponent : EntityComponentBase
     }
 
     /// <summary>
-    /// 等待角色模型 Animator 就绪后登记普通与战斗待机动画。
+    /// 装配普通与战斗待机动画，并按实体战斗状态切换武器挂点。
     /// </summary>
-    /// <param name="deltaMilliseconds">当前逻辑帧间隔，单位为毫秒；本组件只检测就绪状态，不使用该数值。</param>
+    /// <param name="deltaMilliseconds">当前逻辑帧间隔，单位为毫秒；本组件按实体状态切换表现，不使用该数值。</param>
     public override void Update(int deltaMilliseconds)
     {
+        if (_weaponMount != null)
+        {
+            // 战斗或技能状态使用手持姿态，脱战后恢复背剑。
+            bool drawWeapon = Entity.BattleIdle || Entity.CurrentState == StateDefine.kStateSkill;
+            _weaponMount.SetDrawn(drawWeapon);
+        }
+
         if (_isPrepared)
         {
             return;
@@ -56,6 +66,7 @@ public sealed class MIdleComponent : EntityComponentBase
     public override void Shutdown()
     {
         _isPrepared = false;
+        _weaponMount = null;
         _hasLoggedPrepareFailure = false;
         base.Shutdown();
     }
@@ -105,6 +116,7 @@ public sealed class MIdleComponent : EntityComponentBase
         }
 
         _isPrepared = true;
+        _weaponMount = Entity.Model.GameObject.NativeObject.GetComponent<MRoleWeaponMount>();
         _hasLoggedPrepareFailure = false;
         if (Entity.Machine != null)
         {

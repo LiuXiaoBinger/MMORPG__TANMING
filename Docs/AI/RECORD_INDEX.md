@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `fcbdee45d9012a895162bd84ee132fee9456b2745cf791521352dd98d36c01e3`
+Source normalized SHA256: `24de7aa8b61ee81396c3e758665ffbb190be482bc475632f2de06eaf30edccb3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -126,11 +126,12 @@ Source normalized SHA256: `fcbdee45d9012a895162bd84ee132fee9456b2745cf791521352d
 | [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-858 |
 | [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 859-864 |
 | [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 865-868 |
-| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-871 |
+| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-872 |
+| [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-878 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `156dccda77b9fdc7fedd19ef99ba16a977e6978cbbaa1250fc3859d0bf6bcd30`
+Source normalized SHA256: `d5f8979f92e0dcfd00008e620736ed9b2b311c4fc4460eb96679156af6188d2f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -248,7 +249,8 @@ Source normalized SHA256: `156dccda77b9fdc7fedd19ef99ba16a977e6978cbbaa1250fc385
 | [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-886 |
 | [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-894 |
 | [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 895-898 |
-| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-901 |
+| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-902 |
+| [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-908 |
 
 ## Docs/AI/DECISIONS.en.md
 

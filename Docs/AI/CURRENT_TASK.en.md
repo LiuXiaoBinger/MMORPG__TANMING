@@ -869,3 +869,10 @@ GameServer now samples ordinary attack power as `min + (max - min) * u`, with `0
 ## [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break
 
 Skill 10120 (key 4) keeps its shell until the server ends that cast's barrier. `SkillCastEndNtf.barrier_burst` is absent for the ordinary cast ending, true for natural expiry with shield remaining, and false for removal such as depletion. `MjsBarrierVisual` expands the shell in place for 0.28 s on expiry. The level 1 barrier lasts 10 s and launches controllable dungeon enemies within 5 m for 0.8 s without dealing damage. A partial hit still permits expiry. An early break immediately removes the shell. See `项目修改日志/2026-11-23-苍蓝屏障到期盾爆与无伤击飞.md`.
+
+## [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword
+
+- Codex directly completed the task; the user explicitly declined other agents and approved this log manifest. Source: `D:/unitypro/moxing1/Assets/IdaFaber/Demo/A_Idle_F.fbx`. Extracted `Anim_MJS_Idle_Normal.anim` as a 5.00000048-second looping Humanoid clip. Present row 1 now uses it for `IdleAnim`; `IdleFAnim` remains `Anim_JX_Idle_1_ZD`.
+- `MRoleWeaponMount` and the chest socket on `Role_MJS.prefab` / `Role_MJS_Other.prefab` move the existing main sword to the back outside combat. `MIdleComponent` requests the original hand pose when `BattleIdle` is true or the current state is `kStateSkill`. Existing decorative back sword is preserved.
+- Passed isolated Unity retargeting, zero root drift, and 20 back/hand cycles per prefab with zero local pose error; the two edited scripts compile against the current game assembly. Full client build failed with 14 errors outside this task's files (camera references and `MjsBarrierVisual`). Login gameplay, two clients and standalone package remain unverified. Back-draw animation was researched only, not downloaded or integrated.
+- Full manifest, evidence, online sources and Git receipt: `项目修改日志/2026-11-23-魔剑士非战斗待机与背剑.md`.

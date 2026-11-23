@@ -1,5 +1,10 @@
 [
   [
+    "Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_MJS_Idle_Normal.anim",
+    "5.0000005",
+    "True"
+  ],
+  [
     "Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Anim_JX_Idle_1_ZD.anim",
     "2.0333335",
     "True"

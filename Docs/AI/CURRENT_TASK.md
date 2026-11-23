@@ -864,3 +864,10 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 ## [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] 苍蓝屏障自然到期爆开与提前破盾
 
 技能 10120（快捷键 4）的罩体跟随服务器确认的本次护盾。`SkillCastEndNtf.barrier_burst` 缺省表示施法动作结束，true 表示仍有盾量时自然到期，false 表示提前打破等移除。`MjsBarrierVisual` 在到期位置用 0.28 秒裂开罩体。1 级护盾持续 10 秒，到期将 5 米内可受控的副本敌人击飞 0.8 秒，伤害为零。部分吸收伤害后仍能自然到期，提前打空则马上收盾。见 `项目修改日志/2026-11-23-苍蓝屏障到期盾爆与无伤击飞.md`。
+
+## [CODE][角色][MJS-IDLE-BACKSWORD-20261123] 非战斗待机与主武器背负
+
+- 用户选择 Codex 直接执行并批准本次日志清单，未调用其他 Agent。源动作：`D:/unitypro/moxing1/Assets/IdaFaber/Demo/A_Idle_F.fbx`。提取约 5.00000048 秒循环人形动画 `Anim_MJS_Idle_Normal.anim`，表现表 ID 1 的 `IdleAnim` 已切换，`IdleFAnim` 仍为 `Anim_JX_Idle_1_ZD`。
+- `MRoleWeaponMount` 与 `Role_MJS.prefab`、`Role_MJS_Other.prefab` 的胸骨背挂点负责移动现有主剑；`MIdleComponent` 按 `BattleIdle` 或 `kStateSkill` 恢复原握剑姿态，非战斗时背负。已有背部装饰剑保留。
+- 隔离 Unity 人形重定向、零根漂移、每个预制体 20 轮背剑/手持切换零局部误差通过；本次两个脚本针对当前游戏程序集独立编译通过。完整客户端被本次范围外相机引用和 `MjsBarrierVisual` 的 14 个错误阻断；登录实机、双客户端、独立包未验证。背后拔剑资源仅查询，未下载接入。
+- 完整清单、证据、在线来源及 Git 回执：`项目修改日志/2026-11-23-魔剑士非战斗待机与背剑.md`。

@@ -890,3 +890,10 @@ GameServer 编译通过。旧版固定取中点的实现在新增的取值变化
 ## [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] 盾爆零伤害击飞与两种收尾验收
 
 GameServer、GateServer、Network 与 Unity 游戏程序集编译通过。副本 4060 及游戏服至网关方向的本机 TCP 会话通过 24/24 项，覆盖生命值、远近目标、等量与溢出破盾、到期同帧和不同施法 UUID。分支构建的 Network.dll 也通过 24/24。隔离 Unity 2023.2.20f1c1 Play Mode 使用正式护罩预制体及材质通过 15/15 项，以测试角色模型实渲多个时点。原角色联机实按、两个实机客户端同屏和 Player 包待验。证据见 `_temp/mjs-shield-expiry-20261123/`，完整记录见 `项目修改日志/2026-11-23-苍蓝屏障到期盾爆与无伤击飞.md`。
+
+## [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] 待机与背剑验收边界
+
+- 官方 Luban 导出成功。ZIP/XML 比较确认 `#PresentTable.xlsx` 仅修改 `Sheet1!J4`；二进制比较确认 `tbpresenttable.bytes` 仅替换首个 `IdleAnim` 字符串，正式 bytes 与导出一致。动画索引仅新增一条循环资源，正式动画与 Unity 导出一致。
+- Unity 2023.2.20f1c1 隔离工程：目标女角色 Humanoid 有效，源动作 5.00000048 秒、30 fps，最大根漂移 0 米、手部位移 0.0397620536 米，Idle/FIdle 状态采样通过。两个序列化预制体的根组件、主剑和胸骨挂点引用有效，各 20 轮背剑/手持切换位置误差 0 米、角度误差 0 度；新待机 150 帧内主剑根节点在角色坐标中的最大深度为 -0.200553417 米。
+- 本次两个脚本针对当前项目程序集独立编译通过。完整客户端存在 `MSceneDungeon.cs`、`MjsBarrierVisual.cs`、`SettingPanel.cs` 的 14 个错误，未扩修无关文件。早期编辑模式测试已改用手动 Playable 图及解包的临时预制体实例；预览图使用临时中性材质，不代表正式外观。
+- 证据：`_temp/2026-11-23-moxing1-idle/asset-verification.json`、`unity-idle-verification.txt`、`weapon-mount-verification.txt`、`isolated-compile-retry.log`、`client-build.log`。登录实机、网络同步、独立构建及背后拔剑剪辑未验证。完整记录：`项目修改日志/2026-11-23-魔剑士非战斗待机与背剑.md`。
