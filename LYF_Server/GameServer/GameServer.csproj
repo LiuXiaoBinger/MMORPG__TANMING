@@ -183,6 +183,7 @@
         <Compile Include="MessageHandler\Shop\BuyShopItemCenterResultHandler.cs" />
         <Compile Include="Service\item\BagListener.cs" />
         <Compile Include="Service\item\BagTransition.cs" />
+        <Compile Include="Service\item\GemWorkshopTrade.cs" />
         <Compile Include="manger\BackstageActivityManager.cs" />
         <Compile Include="manger\DecoupleManager.cs" />
         <Compile Include="manger\GvgManager.cs" />

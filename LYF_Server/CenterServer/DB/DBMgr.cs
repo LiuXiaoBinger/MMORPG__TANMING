@@ -37,6 +37,8 @@ public class DBMgr:Singleton<DBMgr>
         Db.DbMaintenance.CreateDatabase();//达梦和Oracle不支持建库
  
         //建表（看文档迁移）
+        // SqlSugar 无法直接调整复合主键，先就地升级旧次数表再校验全部模型。
+        RoleCountTable.MigratePrimaryKey(Db);
         Db.CodeFirst.InitTables(typeof(AccoutTable)
             , typeof(GameServerTable)
             ,typeof(RoleTable),typeof(RoleBaseArrtTable)

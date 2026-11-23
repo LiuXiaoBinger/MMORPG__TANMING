@@ -195,5 +195,7 @@ message EquipOperationReq {
 	EquipOperation operation = 2;//穿戴、卸下或切换特技
 	int32 special_skill_index = 3;//切换特技时使用，范围0到2
 	int32 gem_socket_index = 4;//镶嵌的装备孔位，左起 0 到 5
-	int32 gem_item_id = 5;//需要从本角色背包扣除一颗的宝石物品编号，含品种和等级
+	int32 gem_item_id = 5;//镶嵌材料、合成目标或商会商品的实际物品编号
+	repeated int32 bag_gem_counts = 6;//按一至七级排列的背包投入颗数；只能用低于目标的同品种宝石
+	repeated int32 market_gem_counts = 7;//按一至三级排列的商会投入颗数；单价由服务器计算
 }

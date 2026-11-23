@@ -886,13 +886,17 @@ public class BagWearItemTransition : BagTransition
         int family;
         int grade;
         if (!EquipmentGemRules.TryRead(gemId, out family, out grade)) return BagTransitionResult.InvalidArgument;
-        if (!EquipmentGemRules.Allows((EquipType)config.EquipType, family) || grade > config.MaxGemLevel)
+        if (!EquipmentGemRules.AllowsInSocket((EquipType)config.EquipType, slot, family) || grade > config.MaxGemLevel)
             return BagTransitionResult.InvalidArgument;
         if (LubanMgr.Instance.GetItemInfoById(gemId) == null) return BagTransitionResult.InvalidArgument;
         SetReason(ItemChangeReason.ITEM_REASON_REFINE);
-        // 现有背包扣料逻辑会把清空的堆叠下发为删除，剩余数量下发为更新。
-        CmdCode result = m_roItemComponent.ReduceItem(gemId, 1, GetReason(), ItemBind.kItemBindIs);
-        if (result != CmdCode.Succeed) return BagTransitionResult.MissingGem;
+        // 选材清单按所有背包汇总，结算也从实际存放该宝石的格位扣除一颗。
+        List<ItemBase> stacks = m_roItemComponent.GetItemForReduce(gemId, ItemBind.kItemBindIs, -2);
+        if (stacks.Count == 0) return BagTransitionResult.MissingGem;
+        // 优先扣绑定堆叠；最后一颗需要删除增量，部分扣除发送剩余量。
+        ItemBase material = stacks[0];
+        if (material.GetItemCount() == 1) m_roItemComponent.DeleteItem(material.GetItemUID(), record.GetTotalReason());
+        else m_roItemComponent.DeleteItem(material.GetItemUID(), 1, record.GetTotalReason(), UpdateType.eUT_Normal);
         equip.GemItemIds[slot] = gemId;
         m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
         CompleteEquipmentChange();

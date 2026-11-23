@@ -615,6 +615,9 @@ enum EquipOperation {
 	SwitchSpecialSkill = 3;//切换装备实例唯一启用的特技槽位
 	OpenSpecialSkillSlot = 4;//消耗铜币开启装备的下一个特技孔
 	SocketGem = 5;//消耗一颗真实宝石，装入本角色装备的指定空孔
+	GemMarket = 6;//读取指定品种三级商会商品的剩余额度
+	ComposeGem = 7;//扣除背包材料和商会材料价款，产出一颗合成目标
+	BuyGem = 8;//按服务器定价直接购买选定品种的一颗一级至三级宝石
 }
 
 // 装备操作结果；成功后的完整物品位置和装备字段沿用 UpdateItemRet 下发。
@@ -622,6 +625,9 @@ message EquipOperationRet {
 	CmdCode cmd_code = 1;//权威操作结果
 	int64 item_uid = 2;//本次请求操作的装备实例UID
 	EquipOperation operation = 3;//本次执行的装备操作
+	int32 gem_item_id = 4;//对应本次操作的宝石物品编号
+	repeated int32 market_remaining = 5;//该品种一至三级的最新个人剩余限购量
+	string gem_message = 6;//合成或购买结果的界面提示
 }
 
 // 装备和基因效果计算后的最终角色属性，裸属性仍由角色存档保存。

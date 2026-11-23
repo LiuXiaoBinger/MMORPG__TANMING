@@ -18,5 +18,7 @@ public enum RoleCountAction
     /// <summary>角色正在使用的出战方案编号。</summary>
     ManualScheme = 7,
     /// <summary>各出战方案的槽位书籍编号。</summary>
-    ManualSlot = 8
+    ManualSlot = 8,
+    /// <summary>商会中某个品种、某个等级宝石已购买的颗数，业务键为物品配置编号。</summary>
+    GemMarketPurchase = 9
 }

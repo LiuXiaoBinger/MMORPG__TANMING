@@ -48,6 +48,12 @@ public sealed class EquipOperationHandler : IGameMessageHandler
                     // 开孔复用同一请求结构，槽下标表示本次要开启的那一孔。
                     operationResult = transition.OpenSpecialSkillSlot(request.ItemUid, request.SpecialSkillIndex);
                     break;
+                case EquipOperation.GemMarket:
+                case EquipOperation.ComposeGem:
+                case EquipOperation.BuyGem:
+                    GemWorkshopTrade.Execute(role, request, result);
+                    context.Transport.Send(context.Package, NetDefine.CMD_EquipOperationCode, result.ToByteString());
+                    return;
                 case EquipOperation.SocketGem:
                     operationResult = transition.SocketGem(request.ItemUid, request.GemSocketIndex, request.GemItemId);
                     break;

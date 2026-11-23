@@ -147,6 +147,8 @@ public sealed class KnapsackCtrl : IDisposable
             _workshopWindow.EquipmentSelected += RenderWorkshopEquipment;
             _workshopWindow.StockRequested += RenderWorkshopStock;
             _workshopWindow.SocketRequested += SocketWorkshopGem;
+            _workshopWindow.Owned = OwnedGem;
+            _workshopWindow.SendTrade = SendGemTrade;
         }
 
         PlayerEntity localRole = null;
@@ -183,6 +185,8 @@ public sealed class KnapsackCtrl : IDisposable
             _workshopWindow.EquipmentSelected -= RenderWorkshopEquipment;
             _workshopWindow.StockRequested -= RenderWorkshopStock;
             _workshopWindow.SocketRequested -= SocketWorkshopGem;
+            _workshopWindow.Owned = null;
+            _workshopWindow.SendTrade = null;
         }
         if (_itemComponent != null) _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
         _itemComponent = null;
@@ -620,10 +624,35 @@ public sealed class KnapsackCtrl : IDisposable
     private void OnWorkshopStockChanged(KnapsackChangedEventArgs change)
     {
         if (!_workshopWindow.isActiveAndEnabled) return;
+        if (change.ItemTypeId == CopperItemId || change.ItemTypeId == 0)
+            _workshopWindow.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId), _itemComponent.GetVirtualItemCount(SilverItemId),
+                _itemComponent.GetVirtualItemCount(TicketItemId), _itemComponent.GetVirtualItemCount(YuanbaoItemId));
         _workshopWindow.RefreshStock(change.ItemTypeId);
         // 只在当前装备被服务器更新、或收到整包快照时重绘宝石孔。
         long uid = _workshopWindow.SelectedItemUid;
         if (uid != 0 && (change.ItemUid == uid || change.ItemTypeId == 0)) RenderWorkshopEquipment(uid);
+    }
+
+    /// <summary>统一统计角色背包里可选中的绑定与未绑定宝石。</summary>
+    /// <param name="id">包含品种与等级的真实物品编号。</param>
+    private int OwnedGem(int id) { return _itemComponent.GetItemNum(id, ItemBind.kItemBindIs, true); }
+
+    /// <summary>通过现有装备命令发送材料或商会查询，断线时允许玩家重新提交。</summary>
+    /// <param name="request">合成、购买或查询的强类型消息。</param>
+    private bool SendGemTrade(EquipOperationReq request)
+    {
+        if (MNetClient.Instance.Send(NetDefine.CMD_EquipOperationCode, request.ToByteString())) return true;
+        TipsMgr.Instance.ShowSystemTips("未连接服务器");
+        return false;
+    }
+
+    /// <summary>将服务器的个人配额和真实交易结果转发到养成界面。</summary>
+    /// <param name="reply">本角色通过现有装备命令收到的交易回执。</param>
+    public void ApplyGemTrade(EquipOperationRet reply)
+    {
+        if (_workshopWindow != null) _workshopWindow.RenderTrade(reply);
+        if (reply.GemMessage.Length > 0) TipsMgr.Instance.ShowSystemTips(reply.GemMessage);
+        else if (reply.CmdCode != CmdCode.Succeed) TipsMgr.Instance.ShowSystemTips("宝石操作失败：" + reply.CmdCode);
     }
 
     /// <summary>向服务器请求一次镶嵌，材料库存与孔位均沿用服务器物品增量更新。</summary>

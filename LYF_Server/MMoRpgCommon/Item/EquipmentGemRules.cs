@@ -57,4 +57,31 @@ public static class EquipmentGemRules
             default: return false;
         }
     }
+
+    /// <summary>常规合成最高七级；八至十级另需特殊材料。</summary>
+    public const int ComposeCap = 7;
+    /// <summary>商会只提供一、二、三级材料。</summary>
+    public const int MarketGrades = 3;
+    /// <summary>每个角色对每种、每级商会宝石的独立配额。</summary>
+    public const int MarketLimit = 900;
+
+    /// <summary>按实际部位和从左起的孔号选择基础、元素两类孔；已有镶嵌仍按存档展示。</summary>
+    /// <param name="part">装备配置中的部位。</param>
+    /// <param name="slot">左起零基孔位，一、二、五孔为基础属性孔。</param>
+    /// <param name="family">物品编号解析得到的宝石品种。</param>
+    public static bool AllowsInSocket(EquipType part, int slot, int family)
+    {
+        if (slot < 0 || slot >= SocketCount || !Allows(part, family)) return false;
+        // 前八种石、玉提升基础属性，其余是元素攻击、抗性及穿透。
+        bool basic = slot == 0 || slot == 1 || slot == 4;
+        return basic == (family < 8);
+    }
+
+    /// <summary>同品种的两颗低一级宝石折一颗高一级宝石，以一级为一份。</summary>
+    /// <param name="grade">一至七级的有效合成材料或目标等级。</param>
+    public static int Units(int grade) { return 1 << (grade - 1); }
+
+    /// <summary>商会一、二、三级宝石分别定价六万、十二万和二十四万铜币。</summary>
+    /// <param name="grade">一至三级的商会商品等级。</param>
+    public static int MarketPrice(int grade) { return 60000 * Units(grade); }
 }
