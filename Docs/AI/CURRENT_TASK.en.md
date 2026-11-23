@@ -881,3 +881,7 @@ Skill 10120 (key 4) keeps its shell until the server ends that cast's barrier. `
 
 - The existing MainView settings window now drives five modes and twelve options. Smart 3D is the first-run desktop mode. Tuned 2.5D captures the current pitch, default 2.5D uses 0.72, and switching presets preserves independent custom choices. Right drag, wheel, middle-button reset and optional double-click ground are wired to the scene FreeLook. Mobile gestures were deferred by the user.
 - CameraMgr uses world-space orbit heading, follows navigation/strafe and applies temporary combat framing. Authored skill accents and Type 4 lightness ground hints have separate switches. The Moshenta and Beisen catalogs retain five visible combat boss IDs from EntityTable.UnitTypeLevel for camera framing. Full paths, verification boundaries and Git receipts are in `项目修改日志/2026-11-23-PC镜头设置与世界相机.md`.
+
+## [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate
+
+Skill 10120 uses `MjsBarrierLights.prefab` for a casting sweep, a tilted band and a glint, followed by a transparent silver-blue shell. Only natural expiry plays the central flash, horizontal wave, splinters and sparks. The owner widget and nameplate use `RoleNameHudWidget.TryGetHeadAnchor`. `UIRoot.prefab` lays out a white arc, pale shield amount, teal nickname and gold bracketed profession, from top to bottom. An absent profession takes no line. See `项目修改日志/2026-11-23-苍蓝屏障录像特效与头顶排版.md`.
