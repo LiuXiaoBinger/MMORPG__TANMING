@@ -17,6 +17,8 @@ MonoBehaviour:
   AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_TornadoSlash.anim
   DurationSeconds: 0.65
   TimelineDurationSeconds: 0.65
+  CastShakeTimeSeconds: 0.46666667
+  CastShakeOffset: {x: -0.06, y: 0.02}
   FxEvents:
   - SourceEventIndex: 0
     Frame: 30
@@ -30,8 +32,8 @@ MonoBehaviour:
     ForwardDistance: 0.65
   AudioEvents:
   - SourceEventIndex: 1
-    Frame: 25
-    TimeSeconds: 0.41666666
+    Frame: 20
+    TimeSeconds: 0.33333334
     Clip: {fileID: 8300000, guid: 1c53623f1d09b7145b65845539cdf41b, type: 3}
     Volume: 1
   ChargeList: []

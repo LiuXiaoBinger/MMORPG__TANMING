@@ -37,6 +37,12 @@ public sealed class SkillEditorBinding : ScriptableObject
     /// <summary>旧技能状态窗口的毫秒值，仅供核对；不由编辑器时间轴改写。</summary>
     public int SkillStateTimeMs;
 
+    /// <summary>从施法开始到本机角色动作重音振屏的秒数。</summary>
+    [Min(0f)] public float CastShakeTimeSeconds;
+
+    /// <summary>动作重音在相机平面上的位移，单位米，正值向右或向上，零向量关闭该重音。</summary>
+    public Vector2 CastShakeOffset;
+
     /// <summary>目标落点攻击使用选中实体为碰撞原点；普通近战仍相对施法者。</summary>
     public bool CollisionAtTarget;
 

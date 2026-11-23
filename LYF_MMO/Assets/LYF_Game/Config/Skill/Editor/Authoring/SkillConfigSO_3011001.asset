@@ -196,7 +196,7 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 1
   - contentKind: 2
-    keyNumber: 0
+    keyNumber: 1
     endKeyNumber: 0
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}
@@ -272,7 +272,7 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 0.25
   - contentKind: 2
-    keyNumber: 11
+    keyNumber: 10
     endKeyNumber: 0
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}

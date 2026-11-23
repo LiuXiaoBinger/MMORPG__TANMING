@@ -22,6 +22,12 @@ public sealed class SkillRuntimePresentation : ScriptableObject
     /// <summary>作者制作时间轴的最后触发秒数，至少覆盖原动画；零兼容尚未重新导出的旧资产。</summary>
     public float TimelineDurationSeconds;
 
+    /// <summary>本机角色施放该表现后触发动作重音振屏的时刻，单位秒。</summary>
+    public float CastShakeTimeSeconds;
+
+    /// <summary>动作重音在相机平面上的右向、上向位移，单位米，零向量表示关闭。</summary>
+    public Vector2 CastShakeOffset;
+
     /// <summary>时间轴允许触发事件的最后时刻，单位秒，不包含声音或粒子继续播放的尾部时间。
     /// TimelineDurationSeconds 为 0 时使用完整动画时长；这不改变技能状态的结束时刻。</summary>
     public float EffectiveTimelineDurationSeconds

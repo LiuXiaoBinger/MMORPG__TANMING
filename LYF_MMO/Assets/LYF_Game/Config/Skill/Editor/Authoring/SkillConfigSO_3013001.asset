@@ -112,8 +112,8 @@ MonoBehaviour:
     volumeVariation: 0.05
     baseVolume: 1
   - contentKind: 2
-    keyNumber: 25
-    endKeyNumber: 25
+    keyNumber: 20
+    endKeyNumber: 20
     particleSystem: {fileID: 0}
     offset: {x: 0, y: 0, z: 0}
     socketPath:

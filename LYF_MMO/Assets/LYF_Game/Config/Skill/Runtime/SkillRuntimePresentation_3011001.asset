@@ -17,6 +17,8 @@ MonoBehaviour:
   AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/TwinbladeStorm_MJS.anim
   DurationSeconds: 1.533
   TimelineDurationSeconds: 1.5333333
+  CastShakeTimeSeconds: 0.7666667
+  CastShakeOffset: {x: 0.02, y: -0.095}
   FxEvents:
   - SourceEventIndex: 0
     Frame: 0
@@ -30,8 +32,8 @@ MonoBehaviour:
     ForwardDistance: 0
   AudioEvents:
   - SourceEventIndex: 1
-    Frame: 0
-    TimeSeconds: 0
+    Frame: 1
+    TimeSeconds: 0.033333335
     Clip: {fileID: 8300000, guid: aa8c9d9025746404a99b55f6ace04667, type: 3}
     Volume: 0.3
   - SourceEventIndex: 2
@@ -50,8 +52,8 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 5fc3d147e3444e640b5af0114385aeff, type: 3}
     Volume: 0.25
   - SourceEventIndex: 5
-    Frame: 11
-    TimeSeconds: 0.36666667
+    Frame: 10
+    TimeSeconds: 0.33333334
     Clip: {fileID: 8300000, guid: 709c3a028c7b19c409522cbf51502724, type: 3}
     Volume: 0.22
   - SourceEventIndex: 6

@@ -17,6 +17,8 @@ MonoBehaviour:
   AnimationLocation: Assets/LYF_Game/Animas/Role/MJS/Common/ALL/Skill/Anim_MJS_Skill04.anim
   DurationSeconds: 1.133
   TimelineDurationSeconds: 1.1333333
+  CastShakeTimeSeconds: 0.13333334
+  CastShakeOffset: {x: 0, y: 0.026}
   FxEvents:
   - SourceEventIndex: 0
     Frame: 0

@@ -171,7 +171,7 @@ public class MArtSkill : MSkill
     #endregion
 
     #region 核心逻辑
-    /// <summary>把本次粒子、声音、程序位移和原滑行残影采样一次登记到MTimerMgr。</summary>
+    /// <summary>把本次粒子、声音、程序位移、滑行残影和本机的动作重音一次登记到 MTimerMgr。</summary>
     protected virtual void FireEvents() // 注册各种 timeline 回调。
     {
         // 已经登记或已失效时不重复登记；施法已结束或正在等资源通知时直接返回。
@@ -285,12 +285,19 @@ public class MArtSkill : MSkill
                 return;
             }
         }
+        // 距动作重音的剩余秒数，冷加载时跳过已经过去的重音。
+        float shakeDelay = presentation.CastShakeTimeSeconds - TimelineElapsedSeconds;
+        if (_firer.IsPlayer && presentation.CastShakeOffset != Vector2.zero && shakeDelay >= 0f)
+        {
+            AddedTimerToken(MTimerMgr.singleton.SetTimer(shakeDelay, _onProcessTimer,
+                new MSkillTimerArgs(SkillUuid, (int)EArtsSkillTimerCb.ECastShake, fireGeneration)));
+        }
     }
 
-    /// <summary>沿 RO 同名回调分发到期事件，模型未就绪时保留独立轨道的等待顺序。</summary>
-    /// <param name="id">RO粒子/声音/位移编号，或本项目原滑行残影采样编号EGhost。</param>
+    /// <summary>分发到期的表现事件，动作重音只在本次施法仍占用动作槽时振屏。</summary>
+    /// <param name="id">粒子、声音、位移、滑行残影或本机动作重音的事件编号。</param>
     /// <param name="param">统一回调已经验证施法 UUID 的强类型事件载荷。</param>
-    /// <returns>本类接管粒子、声音、程序位移或原滑行残影采样时返回true。</returns>
+    /// <returns>本类接管该表现事件时返回 true。</returns>
     protected override bool InnerProcessTimer(int id, MSkillTimerArgs param)
     {
         if (base.InnerProcessTimer(id, param))
@@ -310,6 +317,10 @@ public class MArtSkill : MSkill
                 return true;
             case EArtsSkillTimerCb.EGhost:
                 ghost();
+                return true;
+            case EArtsSkillTimerCb.ECastShake:
+                if (!_animationReleased)
+                    CameraMgr.Instance?.PlaySkillAccentShake(_runtimePresentation.CastShakeOffset);
                 return true;
         }
         return false;
@@ -735,7 +746,7 @@ public class MArtSkill : MSkill
     }
     #endregion
 
-    /// <summary>RO粒子、声音、位移回调身份，以及本项目恢复的滑行残影采样编号。</summary>
+    /// <summary>标识技能计时器派发的粒子、声音、位移、残影或动作重音事件。</summary>
     protected enum EArtsSkillTimerCb
     {
         /// <summary>RO 原值 10，执行一条已导出的单次粒子指令。</summary>
@@ -745,6 +756,8 @@ public class MArtSkill : MSkill
         /// <summary>RO 原值十三，到期交付一条程序水平位移指令。</summary>
         ECharge = 13,
         /// <summary>本项目追加的滑行网格残影采样编号，非RO原事件编号。</summary>
-        EGhost = 100
+        EGhost = 100,
+        /// <summary>本机施法者的一次动作重音，绑定当前技能的计时和取消。</summary>
+        ECastShake = 101
     }
 }

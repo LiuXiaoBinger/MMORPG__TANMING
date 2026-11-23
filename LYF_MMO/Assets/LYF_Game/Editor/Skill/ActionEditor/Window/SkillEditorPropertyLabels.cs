@@ -301,6 +301,8 @@ public static class SkillEditorPropertyLabels
         { "PreviewModel" , new LabelEntry("Preview actor", "预览角色", "Preview actor", "预览角色") },
         { "SourceClip" , new LabelEntry("Original animation clip", "原动画剪辑", "Original animation clip", "原动画剪辑") },
         { "SkillStateTimeMs" , new LabelEntry("Skill state duration (ms)", "技能状态时长（毫秒）", "Action-slot duration in milliseconds; independent from the full animation length.", "动作槽占用时长，单位为毫秒；与完整动画长度独立。") },
+        { "CastShakeTimeSeconds" , new LabelEntry("Cast accent time (s)", "动作重音时刻（秒）", "Time from cast start to the camera accent.", "从开始施法到动作重音振屏的秒数。") },
+        { "CastShakeOffset" , new LabelEntry("Cast accent offset (m)", "动作振屏位移（米）", "Camera-space offset, right and up. Zero disables the accent.", "沿画面向右和向上的位移。两个分量都为零时关闭动作重音振屏。") },
         { "FxSources" , new LabelEntry("Original effect event references", "原特效事件参考", "Original effect event references", "原特效事件参考") },
         { "SourceEventIndex" , new LabelEntry("Original event index", "原事件索引", "Original event index", "原事件索引") },
         { "OriginalTimeSeconds" , new LabelEntry("Original event time (s)", "原事件时刻（秒）", "Original event time (s)", "原事件时刻（秒）") },

@@ -186,6 +186,13 @@ public class CameraMgr : MonoBehaviour
         PlayCombatShake(SkillCastImpulse, new Vector3(0.04f, -0.03f, 0f));
     }
 
+    /// <summary>在本机角色的动作重音处播放短振屏，沿用起手冲量的衰减曲线。</summary>
+    /// <param name="offset">相机平面上的右向与上向位移，单位米。</param>
+    public void PlaySkillAccentShake(Vector2 offset)
+    {
+        PlayCombatShake(SkillCastImpulse, offset);
+    }
+
     /// <summary>本地主角命中目标时，沿画面平面播放更强、更快起峰的冲量。</summary>
     public void PlaySkillHitShake()
     {

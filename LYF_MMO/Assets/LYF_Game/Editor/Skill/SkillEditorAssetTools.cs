@@ -594,6 +594,9 @@ public static class SkillEditorAssetTools
                 throw new InvalidOperationException("运行动画或时长尚未同步：" + binding.name +
                     " actual=[" + runtime.AnimationLocation + "," + runtime.DurationSeconds.ToString("R") +
                     "] expected=[" + row.ClipLocation + "," + expectedDuration.ToString("R") + "]");
+            if (!SerializedFloatEquals(runtime.CastShakeTimeSeconds, binding.CastShakeTimeSeconds) ||
+                runtime.CastShakeOffset != binding.CastShakeOffset)
+                throw new InvalidOperationException("动作重音振屏与编辑绑定不一致：" + binding.name);
             // 强引用粒子必须在资源依赖图内，而非仅在字符串中出现。
             string[] dependencies = AssetDatabase.GetDependencies(runtimePath, true);
             // 当前编辑资产解析出的完整强类型粒子事件列表。
@@ -765,6 +768,8 @@ public static class SkillEditorAssetTools
         runtime.AnimationLocation = row.ClipLocation;
         runtime.DurationSeconds = row.DurationMs / 1000f;
         runtime.TimelineDurationSeconds = ReadTimelineDuration(binding.Config, runtime.DurationSeconds);
+        runtime.CastShakeTimeSeconds = binding.CastShakeTimeSeconds;
+        runtime.CastShakeOffset = binding.CastShakeOffset;
         runtime.FxEvents = ReadFx(binding);
         runtime.AudioEvents = SkillEditorAudioMotionTools.ReadAudio(binding.Config, runtime.TimelineDurationSeconds);
         runtime.ChargeList = SkillEditorAudioMotionTools.ReadCharge(binding.Config, runtime.DurationSeconds);
