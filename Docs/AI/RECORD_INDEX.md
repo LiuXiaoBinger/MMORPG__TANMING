@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `c4ce8ffc1b56c36f3d2b015c41b588e212f78dac2cb7deddfd0140faa5eddd76`
+Source normalized SHA256: `fe86f7e68de0c2e9cfd1df5f14f70bf326974173b1bf9b3a975275c345e68f22`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -132,11 +132,12 @@ Source normalized SHA256: `c4ce8ffc1b56c36f3d2b015c41b588e212f78dac2cb7deddfd014
 | [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 887-890 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 891-896 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 897-901 |
-| [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 902-906 |
+| [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 902-907 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 908-910 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4b774127d308ea6e1ee20492903d99a6876f7f87212b677eefa906b5b93ec866`
+Source normalized SHA256: `9c4a80aeae2666834aef445083e736d6c6cb65fe0393edd8979962a93cec3be2`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -260,7 +261,8 @@ Source normalized SHA256: `4b774127d308ea6e1ee20492903d99a6876f7f87212b677eefa90
 | [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 917-920 |
 | [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 921-926 |
 | [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 927-931 |
-| [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 932-936 |
+| [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 932-937 |
+| [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 938-940 |
 
 ## Docs/AI/DECISIONS.en.md
 
