@@ -27,6 +27,7 @@ public static class GeneEquipmentTests
         {
             UIDHelper.ConfigureServerInstanceId(253);
             LubanMgr.Instance.Init();
+            VerifyAttackRange();
             VerifyEquipmentAndResources();
             VerifyMonsterCombat();
             VerifyControlAndCritical();
@@ -214,6 +215,43 @@ public static class GeneEquipmentTests
         target.CritResistPoint = 1000;
         Server::OrcBasicAttackDamage.Calculate(target, new Random(17), out critical);
         Check(!critical, "非暴击结果正确透传");
+    }
+
+    /// <summary>用零防御目标和纯外功或纯内功命中验证随机区间、神力端点和虚弱优先级。</summary>
+    private static void VerifyAttackRange()
+    {
+        // 只初始化怪物组件，不挂副本难度或装备基因，避免目标携带额外减伤。
+        SceneMonster monster = (SceneMonster)Server::GameServer.SceneEntity.EntityFactory.Create(EntityType.Monster, 5515);
+        monster.Initialize();
+        // 正式受击入口读取这只怪物的属性和基因。
+        GeneRuntime target = ((IGeneOwner)monster).GeneRuntime;
+        // 零防御使内外功伤害系数都为一。
+        MonsterDefenseAttributes defense = new MonsterDefenseAttributes();
+        // 两个面板分别只启用一种攻击，防止一种攻击的浮动掩盖另一种仍在取均值。
+        RoleBaseInfo external = new RoleBaseInfo { AtkExternalMin = 100, AtkExternalMax = 500 };
+        // 内功使用相同区间，另一种神力不应将它固定在端点。
+        RoleBaseInfo internalAttack = new RoleBaseInfo { AtkInternalMin = 100, AtkInternalMax = 500 };
+        // 分别记录两种攻击实际造成的伤害，以便识别固定取均值的回归。
+        HashSet<int> externalHits = new HashSet<int>();
+        // 内功单独统计不同的命中值。
+        HashSet<int> internalHits = new HashSet<int>();
+        for (int sample = 0; sample < 64; sample++)
+        {
+            // 本轮外功、内功各命中一次，另一种神力不应改变常态区间。
+            int physical = defense.CalculateDamage(external, target, 0, GeneState.MaxInternalAttack);
+            int magical = defense.CalculateDamage(internalAttack, target, 0, GeneState.MaxExternalAttack);
+            Check(physical >= 100 && physical < 500, "常态外功在左闭右开区间内");
+            Check(magical >= 100 && magical < 500, "常态内功在左闭右开区间内");
+            externalHits.Add(physical);
+            internalHits.Add(magical);
+        }
+        Check(externalHits.Count > 1 && internalHits.Count > 1, "外功和内功均按次浮动");
+        Equal(500, defense.CalculateDamage(external, target, 0, GeneState.MaxExternalAttack), "神力外命中精确上限");
+        Equal(500, defense.CalculateDamage(internalAttack, target, 0, GeneState.MaxInternalAttack), "神力内命中精确上限");
+        Equal(100, defense.CalculateDamage(external, target, 0, GeneState.MinAttack | GeneState.MaxExternalAttack), "虚弱优先于神力外");
+        Equal(100, defense.CalculateDamage(internalAttack, target, 0, GeneState.MinAttack | GeneState.MaxInternalAttack), "虚弱优先于神力内");
+        external.AtkExternalMax = external.AtkExternalMin;
+        Equal(100, defense.CalculateDamage(external, target, 0), "相同上下限固定取该值");
     }
 
     /// <summary>建立具有正式组件生命周期的测试角色，只存在于独立进程。</summary>

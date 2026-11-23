@@ -10,6 +10,8 @@ public class GeneRuntime
     protected readonly List<GeneBase> genes = new List<GeneBase>();
     /// <summary>当前角色事件概率使用的独立随机源。</summary>
     private readonly Random random;
+    /// <summary>战斗攻击区间共用的随机源。各场景同步抽样，独立于基因事件的触发概率。</summary>
+    private static readonly Random attackRandom = new Random();
     /// <summary>直接接受节点行为的真实角色或怪物，不是结算包装。</summary>
     public IGeneOwner Owner { get; private set; }
     /// <summary>当前角色已经经过的逻辑毫秒，用于事件冷却。</summary>
@@ -249,7 +251,7 @@ public class GeneRuntime
     }
     /// <summary>眩晕、定身或击倒禁止移动。</summary>
     public bool CanMove { get { return (GetStates() & (GeneState.Stun | GeneState.Root | GeneState.Knockdown)) == 0; } }
-    /// <summary>结算内外功区间。虚弱优先取下限，对应神力取上限，常态沿用均值。</summary>
+    /// <summary>结算内外功区间。虚弱优先取下限，对应神力取上限，常态按 RO 的浮点区间公式采样。</summary>
     /// <param name="states">本次读取攻击值时生效的状态位。</param>
     /// <param name="maximumState">该攻击类别对应的神力状态。</param>
     /// <param name="minimum">本次区间下端的攻击点数。</param>
@@ -258,7 +260,12 @@ public class GeneRuntime
     {
         if ((states & GeneState.MinAttack) != 0) return minimum;
         if ((states & maximumState) != 0) return maximum;
-        return (minimum + maximum) / 2;
+        if (minimum == maximum) return minimum;
+        lock (attackRandom)
+        {
+            // NextDouble 取 [0, 1)，先得到本次攻击点数，取整沿用各伤害入口原有的时机。
+            return minimum + (maximum - minimum) * attackRandom.NextDouble();
+        }
     }
 
     /// <summary>眩晕、沉默或击倒禁止施法。</summary>

@@ -73,7 +73,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     public int CurrTrueQi { get { return Owner.mainRoleInfo.BaseInfo.CurrTrueQi; } }
 
     /// <summary>
-    /// 当前生效的外功攻击点数：取角色快照外功上下限并叠加基因修正后的均值，
+    /// 本次使用的外功攻击点数：按叠加基因后的上下限及当前神力、虚弱状态取值，
     /// 供龙卷斩与屏障爆炸按外功比例结算，不再用旧主表 Hurt 冒充外功。
     /// </summary>
     public int ExternalAttack
