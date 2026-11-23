@@ -130,7 +130,7 @@ Source normalized SHA256: `49dafefb1929b9b1c292ec275c5b6549c0bfa69ffb21972ec1063
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `2b4a9f5eff87df6dd151693195952d5ab741efd4795561a065a1d9d066b15d0e`
+Source normalized SHA256: `062ce09975889574e708a5760b868d206b7e50db52fd9197c7719d4b797017d9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -246,9 +246,9 @@ Source normalized SHA256: `2b4a9f5eff87df6dd151693195952d5ab741efd4795561a065a1d
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
 | [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-886 |
-| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-890 |
-| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 891-894 |
-| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 895-897 |
+| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-892 |
+| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 893-896 |
+| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 897-899 |
 
 ## Docs/AI/DECISIONS.en.md
 
