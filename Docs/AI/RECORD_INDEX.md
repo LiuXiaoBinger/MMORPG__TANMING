@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `75e95eed5559f2810a32c0a0853d4c9e1da1127f8205b5802f7b5e13d85d2799`
+Source normalized SHA256: `c4ce8ffc1b56c36f3d2b015c41b588e212f78dac2cb7deddfd0140faa5eddd76`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -131,11 +131,12 @@ Source normalized SHA256: `75e95eed5559f2810a32c0a0853d4c9e1da1127f8205b5802f7b5
 | [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 881-886 |
 | [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 887-890 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 891-896 |
-| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 897-900 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 897-901 |
+| [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 902-906 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6f2522300fc7cb2f70f28936e792ba25845b039c0022e0657d623d81a8d13a4b`
+Source normalized SHA256: `4b774127d308ea6e1ee20492903d99a6876f7f87212b677eefa906b5b93ec866`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -258,7 +259,8 @@ Source normalized SHA256: `6f2522300fc7cb2f70f28936e792ba25845b039c0022e0657d623
 | [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 911-916 |
 | [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 917-920 |
 | [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 921-926 |
-| [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 927-930 |
+| [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 927-931 |
+| [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 932-936 |
 
 ## Docs/AI/DECISIONS.en.md
 
