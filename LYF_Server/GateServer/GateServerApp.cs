@@ -65,9 +65,11 @@ namespace GateServer
             // Unity→GameServer 施法请求上行转发。
             server.RegistCommand(NetDefine.CMD_SkillCastCode, gateSkillCtrl);
             server.RegistCommand(NetDefine.CMD_SkillUpgradeCode, gateSkillCtrl);
+            server.RegistCommand(NetDefine.CMD_MartialManual, gateSkillCtrl);
             // GameServer→Unity 施法权威结果、开始/结束通知下行转发。
             client.RegistCommand(NetDefine.CMD_SkillCastCode, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_SkillUpgradeCode, gateSkillCtrl);
+            client.RegistCommand(NetDefine.CMD_MartialManual, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_SkillCastStartCode, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_SkillCastEndCode, gateSkillCtrl);
             client.RegistCommand(NetDefine.CMD_MonsterAttrUpdateCode, gateSkillCtrl);

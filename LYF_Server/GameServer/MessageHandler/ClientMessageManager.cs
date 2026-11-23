@@ -387,6 +387,7 @@ public static class GameMessageProtocolRegister
         server.RegistCommand(NetDefine.CMD_BuyShopItemCode, messageManager);
         server.RegistCommand(NetDefine.CMD_SkillCastCode, messageManager);
         server.RegistCommand(NetDefine.CMD_SkillUpgradeCode, messageManager);
+        server.RegistCommand(NetDefine.CMD_MartialManual, messageManager);
         // 移动请求沿用总逻辑队列，网络线程不写角色坐标。
         server.RegistCommand(NetDefine.CMD_MoveOperationCode, messageManager);
         server.RegistCommand(NetDefine.CMD_DungeonInteractCode, messageManager);
@@ -436,6 +437,8 @@ public static class GameMessageProtocolRegister
             NetDefine.CMD_SkillCastCode, new SkillCastHandler(), CenterMessageRoute.Internal);
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_SkillUpgradeCode, new SkillUpgradeHandler(), CenterMessageRoute.Internal);
+        RegisterHandler(messageManager, GameCommandSource.GateServer,
+            NetDefine.CMD_MartialManual, new MartialManualHandler(), CenterMessageRoute.Internal);
         // RO 移动入口由正式在线角色组件消费，不转交中心服。
         RegisterHandler(messageManager, GameCommandSource.GateServer,
             NetDefine.CMD_MoveOperationCode, new MoveOperationHandler(), CenterMessageRoute.Internal);

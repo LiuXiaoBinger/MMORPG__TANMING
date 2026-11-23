@@ -439,7 +439,8 @@ public class RoItemComponent : RoleComponentBase
         else
         {
             LogMsg.Info($"[道具系统]角色id: {Owner.GetID()} 删除道具uid:{itemUid}, id:{item.GetItemID()}, 数量:{originItemCount}");
-            UpdateItemRet ret =  new UpdateItemRet();
+            // 最后一份材料耗尽时，删除列表需要已初始化的背包增量消息。
+            UpdateItemRet ret = new UpdateItemRet { ItemDate = new UpdateItem() };
             ret.CmdCode = CmdCode.Succeed;
             MapKey64Value32 map = new MapKey64Value32();
             map.Key = (ulong)itemUid;

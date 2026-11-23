@@ -23,7 +23,7 @@ public class SkillInfoWindow : WindowBase
     /// <summary>轻功分类编号，同时包含滑行与轻功两类技能。</summary>
     private const int CategoryLight = 1;
 
-    /// <summary>秘笈分类编号，当前只有空壳页。</summary>
+    /// <summary>秘笈分类编号，包含出战和目录子页。</summary>
     private const int CategorySecret = 2;
 
     /// <summary>子页编号：出战页。</summary>
@@ -166,6 +166,25 @@ public class SkillInfoWindow : WindowBase
 
     /// <summary>秘笈空壳页。</summary>
     [SerializeField, Header("秘笈页")] private GameObject _emptyPage;
+    /// <summary>包含出战、目录和培养控件的正式秘笈预制体。</summary>
+    [SerializeField] private MartialManualPanel _manualPrefab;
+    /// <summary>随武学窗口复用的秘笈页实例。</summary>
+    private MartialManualPanel _manualPanel;
+    /// <summary>当前页面产生的秘笈操作，由技能控制器发送。</summary>
+    public event System.Action<ManualRequest> ManualRequested;
+
+    /// <summary>把服务器秘笈状态交给仍可见的页面。</summary><param name="reply">当前角色的权威进度。</param>
+    public void ApplyManual(ManualReply reply)
+    {
+        if (_manualPanel != null && _manualPanel.isActiveAndEnabled) _manualPanel.Apply(reply);
+    }
+
+    /// <summary>角色切换时丢弃现有角色的秘笈视图。</summary>
+    public void ClearManual()
+    {
+        if (_manualPanel != null) _manualPanel.gameObject.SetActive(false);
+    }
+
 
     /// <summary>右侧技能详情面板。</summary>
     [SerializeField, Header("详情面板")] private GameObject _detailPanel;
@@ -505,11 +524,6 @@ public class SkillInfoWindow : WindowBase
         {
             return;
         }
-        // 秘笈分类只有空壳页，不接受子页切换。
-        if (_category == CategorySecret)
-        {
-            return;
-        }
         _page = page;
         _viewingSlots = false;
         _showDescription = true;
@@ -530,7 +544,7 @@ public class SkillInfoWindow : WindowBase
         }
         else if (_category == CategorySecret)
         {
-            battleText = "秘笈";
+            battleText = "出战秘笈";
             listText = "秘笈列表";
         }
         if (_tabLabels != null && _tabLabels.Length > 0 && _tabLabels[0] != null)
@@ -545,12 +559,6 @@ public class SkillInfoWindow : WindowBase
         {
             if (_tabButtons[index] == null)
             {
-                continue;
-            }
-            // 秘笈分类只保留一个子页签，避免出现两个同样内容的入口。
-            if (_category == CategorySecret && index > 0)
-            {
-                _tabButtons[index].gameObject.SetActive(false);
                 continue;
             }
             _tabButtons[index].gameObject.SetActive(true);
@@ -622,8 +630,16 @@ public class SkillInfoWindow : WindowBase
         RefreshPageLayout();
         if (_category == CategorySecret)
         {
+            if (!isActiveAndEnabled) return;
+            if (_manualPanel == null)
+            {
+                _manualPanel = Instantiate(_manualPrefab, _panelLayout, false);
+                _manualPanel.Requested += request => ManualRequested?.Invoke(request);
+            }
+            _manualPanel.Open(_page == PageList);
             return;
         }
+        ClearManual();
         if (_page == PageList)
         {
             FillList();
@@ -646,7 +662,7 @@ public class SkillInfoWindow : WindowBase
     /// <summary>切换预制体里已摆好的页面区块，不创建或销毁控件。</summary>
     private void RefreshPageLayout()
     {
-        // 秘笈使用原有占位说明，没有出战数据。
+        // 秘笈由窗口持有的独立页面展示。
         bool content = _category != CategorySecret;
         // 配置查看与出战页共用相同的槽位和角色舞台。
         bool battle = content && _page == PageBattle;
@@ -659,7 +675,7 @@ public class SkillInfoWindow : WindowBase
             detail = false;
         }
         SetActive(_stage.gameObject, content);
-        SetActive(_emptyPage, !content);
+        SetActive(_emptyPage, false);
         SetActive(_portraitRoot, content);
         SetActive(_portraitHalo, battle);
         SetActive(_battleRoot, battle && !light);

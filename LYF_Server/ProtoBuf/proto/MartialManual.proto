@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+// 角色仅提交操作意图及点击时所见的培养进度。
+enum ManualAction {
+  MANUAL_READ = 0;
+  MANUAL_SAVE = 1;
+  MANUAL_UPGRADE = 2;
+  MANUAL_RANK = 3;
+  MANUAL_INSIGHT = 4;
+  MANUAL_LEARN = 5;
+  MANUAL_SELECT_SCHEME = 6;
+}
+message ManualRequest {
+  ManualAction action = 1;
+  int32 book = 2;
+  int32 level = 3;
+  int32 rank = 4;
+  int32 insights = 5;
+  int32 scheme = 6;
+  repeated int32 slots = 7; // 开放槽按从左至右提交，空槽为零。
+}
+// 缺少费用行意味着该步尚未开放。材料及铜币共用角色背包。
+message ManualCost {
+  int32 level = 1;
+  int32 item = 2;
+  int32 amount = 3;
+  int32 copper = 4;
+}
+// 间隔和伤害由策划补全；未指定时仅挂载有时限的流血状态。
+message ManualBleed {
+  int32 effect_id = 1;
+  int32 duration_seconds = 2;
+  repeated int32 chance_percent = 3;
+  int32 tick_ms = 4;
+  int32 tick_damage = 5;
+}
+message ManualBook {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 start_level = 4;
+  ManualCost learn = 5;
+  repeated ManualCost upgrades = 6;
+  repeated ManualCost ranks = 7;
+  repeated ManualCost insights = 8;
+  int32 collect_def = 9;
+  int32 collect_hp = 10;
+  int32 equip_def = 11;
+  int32 equip_hp = 12;
+  int32 collect_def_step = 13;
+  int32 collect_hp_step = 14;
+  int32 equip_def_step = 15;
+  int32 equip_hp_step = 16;
+  string passive = 17;
+  repeated string rank_text = 18;
+  int32 first_rank_attack = 19;
+  string source = 20;
+  ManualBleed bleed = 21;
+}
+message ManualCatalog {
+  repeated ManualBook books = 1;
+  repeated string schemes = 2;
+  int32 open_slots = 3;
+}
+message ManualProgress {
+  int32 book = 1;
+  int32 level = 2;
+  int32 rank = 3;
+  int32 insights = 4;
+}
+message ManualReply {
+  int32 role_id = 1;
+  ManualCatalog catalog = 2;
+  repeated ManualProgress progress = 3;
+  int32 scheme = 4;
+  repeated int32 slots = 5;
+  map<int32,int32> materials = 6;
+  int64 copper = 7;
+  string message = 8;
+  ManualAction action = 9;
+  bool success = 10;
+}

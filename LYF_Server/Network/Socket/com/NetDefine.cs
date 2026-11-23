@@ -50,6 +50,8 @@ public class NetDefine
     public const ushort CMD_MonsterAttrUpdateCode = 11174;
     /// <summary>技能成长的客户端请求与权威结果，使用可靠 TCP 通道。</summary>
     public const ushort CMD_SkillUpgradeCode = 11175;
+    /// <summary>武学秘笈目录、出战和培养的请求与回执。</summary>
+    public const ushort CMD_MartialManual = 11176;
     /// <summary>Unity 按 RO UpdateMove 上报位置和朝向的请求协议号。</summary>
     public const ushort CMD_MoveOperationCode = 11180;
     /// <summary>服务器向现有附近角色转发移动状态的通知协议号。</summary>

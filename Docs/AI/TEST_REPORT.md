@@ -854,3 +854,7 @@
 - Luban 生成 1362 条等级配置，其中风伤配置 170 条，保留原有 49 列。GameServer、CenterServer、GateServer、Unity `Network` 插件与 Unity `LYF_Game` 脚本程序集均以零错误完成构建。
 - 服务端隔离测试通过 305 项，武功回归通过 51 项，当前与下一级技能说明通过 9 项。对同一只隔离副本怪物实际施放 1 级技能时，仅固定风伤条件下总扣血为 1972 点。加入 100 点风系攻击后为 2062 点，再给目标加入 100 点风抗后为 2008 点，以 100 点风系穿透抵消风抗后回到 2062 点。目标风抗为 100、风系穿透为 150、穿透上限为 20 时，实测总扣血为 2084 点。跨系隔离与五系防御属性映射均通过。
 - `_temp/elemental-skill-damage-20261120/` 下的证据包括 `combat-test.log`、`weapon-regression.log`、`tooltip-test.log`、`unity-compile.log` 与 `git-push.log`。运行中服务部署、完整 Unity 联机、PvP 与独立 Player 打包待验。
+
+## [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] 出战、培养和存档回读
+
+Unity 2023.2 隔离 Play Mode 通过正式窗口层级的 16 项检查。Editor 与 Windows Player 脚本在工作区先以 410 个源文件通过，并行改动到位后以 412 个源文件复验通过。另用纯暂存源编译完整客户端时遇到基线 5c9aad6 的 MainCtrl.cs 第 382、396 行语法错误，GameServer 与 GateServer 编译通过。游戏服隔离 30 项断言覆盖 1 至 10 级、进阶、装备、余额不足、限时流血、残页领悟和角色计数存档回读。修复扣最后一份物品时背包增量消息为空。未验证正式客户端联机、数据库重登及安装包。证据位于 `_temp/manual-system-20261123/`，详见 `项目修改日志/2026-11-23-武学秘笈系统.md`。

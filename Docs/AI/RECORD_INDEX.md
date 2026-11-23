@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `ce831dc42e2430f1389d99a3ec283395bb02350d4871bf49383508a6169c83da`
+Source normalized SHA256: `3d3494c8b4fff5b09532af8e825efdbb04827a2b01917d3b3161e2a14da0610a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -119,11 +119,12 @@ Source normalized SHA256: `ce831dc42e2430f1389d99a3ec283395bb02350d4871bf4938350
 | [CODE][FILES][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report correction after 1.2 seconds | 814-817 |
 | [CODE][FILES][HANDOFF][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Blue Barrier and Tornado Slash growth through level 170 | 818-824 |
 | [CODE][FILES][技能][WEAPON-SKILL-GROWTH-20261120] Eight active weapon skills share the level-170 upgrade flow | 825-830 |
-| [CODE][FILES][技能][基因][ELEMENTAL-DAMAGE-20261120] Five-element damage and Tornado Slash wind growth | 831-836 |
+| [CODE][FILES][技能][基因][ELEMENTAL-DAMAGE-20261120] Five-element damage and Tornado Slash wind growth | 831-837 |
+| [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window | 838-840 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a10d1d07e79579105f7cddc9a58349ca3a5180f7a18b6590836f90df337ba028`
+Source normalized SHA256: `fa80bedf3b64b68cba59cde2b6900b56267baf43809c24d1bb4b8f3bd9a2c0c3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -234,7 +235,8 @@ Source normalized SHA256: `a10d1d07e79579105f7cddc9a58349ca3a5180f7a18b6590836f9
 | [VERIFY][网络][移动][MOVE-POSITION-CORRECTION-20261120] Position report timeout and renewal | 846-849 |
 | [VERIFY][技能][基因][MJS-SHIELD-TORNADO-GROWTH-20261120] Skill growth, dungeon effects and persisted copper | 850-855 |
 | [VERIFY][技能][WEAPON-SKILL-GROWTH-20261120] Other weapon skills use higher-level numbers in real cast methods | 856-860 |
-| [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss | 861-865 |
+| [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss | 861-866 |
+| [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] Formation, progression and persistence | 867-869 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -85533,6 +85533,7 @@ MonoBehaviour:
   _listContent: {fileID: 6367815551781940973}
   _listItemTemplate: {fileID: 3656340132847710577}
   _emptyPage: {fileID: 2162134708557764766}
+  _manualPrefab: {fileID: 3230484155916927586, guid: 02f9a1ab59790ec4182f420b8f40986f, type: 3}
   _detailPanel: {fileID: 4349820491809223193}
   _nodeButtons:
   - {fileID: 404075621092337953}

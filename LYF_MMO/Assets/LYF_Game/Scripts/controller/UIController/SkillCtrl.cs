@@ -58,11 +58,13 @@ public sealed class SkillCtrl : CtrlBase
             OnSkillCastStart);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SkillCastEndCode,
             OnSkillCastEnd);
+        SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_MartialManual, OnManualResult);
         SocketDispatcher.Instance.AddEventHandler(NetDefine.CMD_SkillUpgradeCode,
             OnSkillUpgradeResult);
         if (_skillWindow != null)
         {
             _skillWindow.UpgradeRequested += RequestSkillUpgrade;
+            _skillWindow.ManualRequested += RequestManual;
             _skillWindow.GrowthContextRequested += RefreshVisibleSkills;
         }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
@@ -106,11 +108,13 @@ public sealed class SkillCtrl : CtrlBase
             OnSkillCastStart);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SkillCastEndCode,
             OnSkillCastEnd);
+        SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_MartialManual, OnManualResult);
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_SkillUpgradeCode,
             OnSkillUpgradeResult);
         if (_skillWindow != null)
         {
             _skillWindow.UpgradeRequested -= RequestSkillUpgrade;
+            _skillWindow.ManualRequested -= RequestManual;
             _skillWindow.GrowthContextRequested -= RefreshVisibleSkills;
         }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
@@ -135,6 +139,7 @@ public sealed class SkillCtrl : CtrlBase
     /// <param name="localRole">刚加入场景世界的本地角色，离场时为空。</param>
     private void OnLocalRoleChanged(PlayerEntity localRole)
     {
+        if (_skillWindow != null) _skillWindow.ClearManual();
         if (localRole == null)
         {
             TouchObject.singleton.Clear();
@@ -326,6 +331,23 @@ public sealed class SkillCtrl : CtrlBase
         // 只传技能及当前等级，下一行、角色身份、费用由服务端读取。
         SkillUpgradeReq request = new SkillUpgradeReq { SkillId = skill.SkillId, CurrentLevel = skill.Level };
         MNetClient.Instance.Send(NetDefine.CMD_SkillUpgradeCode, request.ToByteString());
+    }
+
+    /// <summary>沿当前连接发送秘笈操作，费用与身份由游戏服决定。</summary><param name="request">本次界面意图。</param>
+    private void RequestManual(ManualRequest request)
+    {
+        if (MNetClient.Instance != null) MNetClient.Instance.Send(NetDefine.CMD_MartialManual, request.ToByteString());
+    }
+
+    /// <summary>只把当前连接与角色的秘笈回执交给武学窗口。</summary><param name="payload">网关转交的秘笈消息。</param>
+    private void OnManualResult(ByteString payload)
+    {
+        if (MNetClient.Instance == null || SocketDispatcher.Instance.CurrentDispatchGeneration != MNetClient.Instance.CurrentConnectionGeneration) return;
+        // 校验角色归属，角色未就绪的业务提示没有目录。
+        ManualReply reply = ManualReply.Parser.ParseFrom(payload);
+        PlayerEntity role = GetLocalRole();
+        if (reply.Catalog != null && (role == null || role.GetID() != reply.RoleId)) return;
+        if (_skillWindow != null) _skillWindow.ApplyManual(reply);
     }
 
     /// <summary>打开武学页时读取最新的同步角色等级和虚拟背包余额。</summary>

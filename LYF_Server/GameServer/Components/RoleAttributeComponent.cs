@@ -12,11 +12,38 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     private const int AdvancedAttributeLastId = 144;
     /// <summary>读取按来源计数并处理霸体冲突后的有效状态。</summary>
     public GeneState States { get { return modifiers.States; } }
+    /// <summary>已读取本角色存档中的秘笈加成。</summary>
+    private bool manualLoaded;
+    /// <summary>领悟与出战提供的外功防御点数。</summary>
+    private int manualDef;
+    /// <summary>领悟与出战提供的气血上限点数。</summary>
+    private int manualHp;
+    /// <summary>当前出战秘笈的进阶外功最大值加成。</summary>
+    private int manualAttack;
+
+    /// <summary>方案或培养成功后重算属性并通知角色面板。</summary>
+    internal void RefreshManualAttributes()
+    {
+        manualLoaded = false;
+        NotifyAttributeUpdate();
+    }
+
     /// <summary>使用属性组件中已生效的修正计算最终属性。</summary>
     /// <param name="attribute">要读取的属性。</param>
     /// <param name="baseValue">不含基因的原始基础值。</param>
     /// <returns>应用固定值和百分比后的结果。</returns>
-    public double CalculateAttribute(GeneAttributeType attribute, double baseValue) { return modifiers.CalculateAttribute(attribute, baseValue); }
+    public double CalculateAttribute(GeneAttributeType attribute, double baseValue)
+    {
+        if (!manualLoaded && Owner.IsRoleDataReady())
+        {
+            MartialManualSystem.Bonuses(Owner.GetComponent<RoleCountComponent>(), out manualDef, out manualHp, out manualAttack);
+            manualLoaded = true;
+        }
+        if (attribute == GeneAttributeType.MaxHp) baseValue += manualHp;
+        else if (attribute == GeneAttributeType.DefExternal) baseValue += manualDef;
+        else if (attribute == GeneAttributeType.AtkExternalMax) baseValue += manualAttack;
+        return modifiers.CalculateAttribute(attribute, baseValue);
+    }
     /// <summary>节点执行或撤销时直接更新属性组件。</summary>
     /// <param name="attribute">被修改的属性。</param>
     /// <param name="delta">固定点数或百分点增量。</param>

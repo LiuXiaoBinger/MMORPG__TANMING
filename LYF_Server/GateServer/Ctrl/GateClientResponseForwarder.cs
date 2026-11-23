@@ -122,6 +122,10 @@ public static class GateClientResponseForwarder
             case NetDefine.CMD_SkillCastStartCode:
                 SkillCastStartNtf.Parser.ParseFrom(package.Data);
                 return true;
+            case NetDefine.CMD_MartialManual:
+                // 培养失败也需要透传余额和当前等级。
+                ManualReply.Parser.ParseFrom(package.Data);
+                return true;
             case NetDefine.CMD_SkillUpgradeCode:
                 // 即使升级失败也保留权威等级和铜币，供客户端纠正当前显示。
                 resultCode = SkillUpgradeRet.Parser.ParseFrom(package.Data).CmdCode;

@@ -87,6 +87,9 @@ public class GeneComponent : IEntityComponent
         {
             return activated;
         }
+        // 秘笈仅由角色的实际攻击命中触发，目标沿用战斗结算选中的容器。
+        if (args.Event == GeneEventType.AttackHit && args.TargetRuntime != null && args.Damage > 0)
+            MartialManualSystem.OnAttackHit((OnlineRole)owner, args.TargetRuntime);
         if (activated > 0 || changedGenes.Count > 0)
         {
             roleAttributes.NotifyAttributeUpdate();
