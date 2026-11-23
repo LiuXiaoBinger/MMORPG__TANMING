@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `3abb4fba22d39c226d70ba025620780498f915d0b7b9314a0705ff1b38b1b70f`
+Source normalized SHA256: `b48eb5caf1d15d1202d39b26a9e2799723758f956c02b7d84aba85621e928c61`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -129,11 +129,12 @@ Source normalized SHA256: `3abb4fba22d39c226d70ba025620780498f915d0b7b9314a0705f
 | [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-872 |
 | [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-879 |
 | [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 880-884 |
-| [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 885-887 |
+| [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 885-888 |
+| [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 889-893 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b05b95e911032af2bdfd197c7b9a22fa6a287a5d47af7be9c6418c7d751a3afb`
+Source normalized SHA256: `46d9c5a648a875ac0777f3c55b50946482a22779911a7747e9ebb4fcf424da5d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -254,7 +255,8 @@ Source normalized SHA256: `b05b95e911032af2bdfd197c7b9a22fa6a287a5d47af7be9c6418
 | [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-902 |
 | [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-909 |
 | [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 910-914 |
-| [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 915-917 |
+| [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 915-918 |
+| [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 919-923 |
 
 ## Docs/AI/DECISIONS.en.md
 
