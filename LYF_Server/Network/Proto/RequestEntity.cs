@@ -63,9 +63,10 @@ public static partial class RequestEntityReflection {
           "VGVhbUJ5VGVhbUlkQXJnEg8KB3RlYW1faWQYASABKAQicgoYQ2FwdGFpblJl",
           "cXVlc3RFbnRlckZCQXJnEhIKCmR1bmdlb25faWQYASABKAUSEgoKY2hhcHRl",
           "cl9pZBgCIAEoBRIXCg9kdW5nZW9uc19kZWdyZWUYAyABKAUSFQoNZHVuZ2Vv",
-          "bl9sYXllchgEIAEoBSJmChFFcXVpcE9wZXJhdGlvblJlcRIQCghpdGVtX3Vp",
-          "ZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5FcXVpcE9wZXJhdGlvbhIb",
-          "ChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFYgZwcm90bzM="));
+          "bl9sYXllchgEIAEoBSKVAQoRRXF1aXBPcGVyYXRpb25SZXESEAoIaXRlbV91",
+          "aWQYASABKAMSIgoJb3BlcmF0aW9uGAIgASgOMg8uRXF1aXBPcGVyYXRpb24S",
+          "GwoTc3BlY2lhbF9za2lsbF9pbmRleBgDIAEoBRIYChBnZW1fc29ja2V0X2lu",
+          "ZGV4GAQgASgFEhMKC2dlbV9pdGVtX2lkGAUgASgFYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -94,7 +95,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::LeaveTeamArg), global::LeaveTeamArg.Parser, new[]{ "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BegInTeamByTeamIdArg), global::BegInTeamByTeamIdArg.Parser, new[]{ "TeamId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::CaptainRequestEnterFBArg), global::CaptainRequestEnterFBArg.Parser, new[]{ "DungeonId", "ChapterId", "DungeonsDegree", "DungeonLayer" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::EquipOperationReq), global::EquipOperationReq.Parser, new[]{ "ItemUid", "Operation", "SpecialSkillIndex", "GemSocketIndex", "GemItemId" }, null, null, null, null)
         }));
   }
   #endregion
@@ -6837,6 +6838,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     itemUid_ = other.itemUid_;
     operation_ = other.operation_;
     specialSkillIndex_ = other.specialSkillIndex_;
+    gemSocketIndex_ = other.gemSocketIndex_;
+    gemItemId_ = other.gemItemId_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -6891,6 +6894,36 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
   }
 
+  /// <summary>Field number for the "gem_socket_index" field.</summary>
+  public const int GemSocketIndexFieldNumber = 4;
+  private int gemSocketIndex_;
+  /// <summary>
+  ///镶嵌的装备孔位，左起 0 到 5
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GemSocketIndex {
+    get { return gemSocketIndex_; }
+    set {
+      gemSocketIndex_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gem_item_id" field.</summary>
+  public const int GemItemIdFieldNumber = 5;
+  private int gemItemId_;
+  /// <summary>
+  ///需要从本角色背包扣除一颗的宝石物品编号，含品种和等级
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GemItemId {
+    get { return gemItemId_; }
+    set {
+      gemItemId_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -6909,6 +6942,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     if (ItemUid != other.ItemUid) return false;
     if (Operation != other.Operation) return false;
     if (SpecialSkillIndex != other.SpecialSkillIndex) return false;
+    if (GemSocketIndex != other.GemSocketIndex) return false;
+    if (GemItemId != other.GemItemId) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -6919,6 +6954,8 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     if (ItemUid != 0L) hash ^= ItemUid.GetHashCode();
     if (Operation != global::EquipOperation.None) hash ^= Operation.GetHashCode();
     if (SpecialSkillIndex != 0) hash ^= SpecialSkillIndex.GetHashCode();
+    if (GemSocketIndex != 0) hash ^= GemSocketIndex.GetHashCode();
+    if (GemItemId != 0) hash ^= GemItemId.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -6949,6 +6986,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(24);
       output.WriteInt32(SpecialSkillIndex);
     }
+    if (GemSocketIndex != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(GemSocketIndex);
+    }
+    if (GemItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(GemItemId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -6971,6 +7016,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
       output.WriteRawTag(24);
       output.WriteInt32(SpecialSkillIndex);
     }
+    if (GemSocketIndex != 0) {
+      output.WriteRawTag(32);
+      output.WriteInt32(GemSocketIndex);
+    }
+    if (GemItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(GemItemId);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -6989,6 +7042,12 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
     if (SpecialSkillIndex != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(SpecialSkillIndex);
+    }
+    if (GemSocketIndex != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GemSocketIndex);
+    }
+    if (GemItemId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GemItemId);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -7010,6 +7069,12 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
     }
     if (other.SpecialSkillIndex != 0) {
       SpecialSkillIndex = other.SpecialSkillIndex;
+    }
+    if (other.GemSocketIndex != 0) {
+      GemSocketIndex = other.GemSocketIndex;
+    }
+    if (other.GemItemId != 0) {
+      GemItemId = other.GemItemId;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -7042,6 +7107,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
           SpecialSkillIndex = input.ReadInt32();
           break;
         }
+        case 32: {
+          GemSocketIndex = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          GemItemId = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -7071,6 +7144,14 @@ public sealed partial class EquipOperationReq : pb::IMessage<EquipOperationReq>
         }
         case 24: {
           SpecialSkillIndex = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          GemSocketIndex = input.ReadInt32();
+          break;
+        }
+        case 40: {
+          GemItemId = input.ReadInt32();
           break;
         }
       }

@@ -48,6 +48,9 @@ public sealed class EquipOperationHandler : IGameMessageHandler
                     // 开孔复用同一请求结构，槽下标表示本次要开启的那一孔。
                     operationResult = transition.OpenSpecialSkillSlot(request.ItemUid, request.SpecialSkillIndex);
                     break;
+                case EquipOperation.SocketGem:
+                    operationResult = transition.SocketGem(request.ItemUid, request.GemSocketIndex, request.GemItemId);
+                    break;
             }
             result.CmdCode = ToCommandCode(operationResult);
         }
@@ -66,6 +69,7 @@ public sealed class EquipOperationHandler : IGameMessageHandler
             case BagTransitionResult.KnapsackUnavailable: return CmdCode.FeatureNotReady;
             // 开孔余额不足沿用既有货币错误码，客户端据此提示铜币不够。
             case BagTransitionResult.NotEnoughCurrency: return CmdCode.NotEnoughCurrency;
+            case BagTransitionResult.MissingGem: return CmdCode.ItemNotExist;
             default: return CmdCode.ReqParamError;
         }
     }

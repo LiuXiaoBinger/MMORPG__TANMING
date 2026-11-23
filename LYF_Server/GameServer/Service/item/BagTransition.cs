@@ -206,7 +206,9 @@ public enum BagTransitionResult
     BagFull = 5,
 
     /// <summary>开孔或扣费时铜币余额不足，孔位和货币都保持不变。</summary>
-    NotEnoughCurrency = 6
+    NotEnoughCurrency = 6,
+    /// <summary>没有可消耗的指定等级宝石。</summary>
+    MissingGem = 7
 }
 
 // ============================================================
@@ -860,6 +862,41 @@ public class BagWearItemTransition : BagTransition
             }
         }
         return false;
+    }
+
+    /// <summary>把材料包的一颗真实宝石装进本角色装备的指定空孔，扣料与装备同时进入角色保存快照。</summary>
+    /// <param name="itemUid">装备实例 UID，可以是已穿戴装备或装备背包中的装备。</param>
+    /// <param name="slot">目标孔位从左到右编号 0 至 5。</param>
+    /// <param name="gemId">包含品种及等级的宝石物品配置编号。</param>
+    public virtual BagTransitionResult SocketGem(long itemUid, int slot, int gemId)
+    {
+        // 沿用装备事务的角色装载状态和逻辑线程。
+        BagTransitionResult context = ValidateContext();
+        if (context != BagTransitionResult.Success) return context;
+        // 与养成页的穿戴栏、装备背包和普通背包一致，按本角色实际持有的实例定位。
+        EquipBase equip = m_roItemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack).GetItemByUid(itemUid) as EquipBase;
+        if (equip == null) equip = m_roItemComponent.GetContainer(KnapsackType.RolePackEquip).GetItemByUid(itemUid) as EquipBase;
+        if (equip == null) equip = m_roItemComponent.GetContainer(KnapsackType.RolePackPlain).GetItemByUid(itemUid) as EquipBase;
+        if (equip == null) return BagTransitionResult.InvalidArgument;
+        // 孔数、部位和等级上限由服务器的真实装备表决定。
+        cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+        if (config == null || slot < 0 || slot >= equip.GemItemIds.Length) return BagTransitionResult.InvalidArgument;
+        if (slot >= config.GemSlotCount || equip.GemItemIds[slot] != 0) return BagTransitionResult.InvalidArgument;
+        // 宝石族用于部位准入，等级用于本装备的镶嵌上限。
+        int family;
+        int grade;
+        if (!EquipmentGemRules.TryRead(gemId, out family, out grade)) return BagTransitionResult.InvalidArgument;
+        if (!EquipmentGemRules.Allows((EquipType)config.EquipType, family) || grade > config.MaxGemLevel)
+            return BagTransitionResult.InvalidArgument;
+        if (LubanMgr.Instance.GetItemInfoById(gemId) == null) return BagTransitionResult.InvalidArgument;
+        SetReason(ItemChangeReason.ITEM_REASON_REFINE);
+        // 现有背包扣料逻辑会把清空的堆叠下发为删除，剩余数量下发为更新。
+        CmdCode result = m_roItemComponent.ReduceItem(gemId, 1, GetReason(), ItemBind.kItemBindIs);
+        if (result != CmdCode.Succeed) return BagTransitionResult.MissingGem;
+        equip.GemItemIds[slot] = gemId;
+        m_roItemComponent.OnItemChange(equip, record.GetTotalReason(), UpdateType.eUT_Normal);
+        CompleteEquipmentChange();
+        return BagTransitionResult.Success;
     }
 
     /// <summary>操作成功后先发送完整装备增量，再由装备组件重算并通知最终属性。</summary>

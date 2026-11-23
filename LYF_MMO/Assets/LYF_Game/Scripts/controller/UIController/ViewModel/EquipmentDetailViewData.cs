@@ -41,7 +41,10 @@ public sealed class EquipmentDetailViewData
     public string InfoLayerText;
     public string InscribeRowText;
     public string WashRowText;
+    /// <summary>当前装备已镶数量与开放孔数，取自实例和部位配置。</summary>
     public string GemInfoText;
+    /// <summary>六个孔位各自的透明宝石图，空引用沿用详情预制体里的空槽图。</summary>
+    public UnityEngine.Sprite[] GemSprites = new UnityEngine.Sprite[EquipmentGemRules.SocketCount];
     /// <summary>按六个固定套装部位排列的穿戴状态，每行两个部位。</summary>
     public string SetExpandText;
     public string ForgeExpandText;
@@ -51,7 +54,7 @@ public sealed class EquipmentDetailViewData
     public string BaseAttributeText;
     /// <summary>底栏展开后的单行短说明，只放交易与耐久的中性占位，不重复说明层正文。</summary>
     public string FooterExtraText;
-    /// <summary>镶嵌下拉展开后的空槽中性占位文本。</summary>
+    /// <summary>镶嵌下拉展开后的宝石名与等级，无宝石时显示空槽。</summary>
     public string GemDropText;
     /// <summary>静态配置里的宝石孔数量，用于决定空槽图标显示几个。</summary>
     public int GemSlotCount;

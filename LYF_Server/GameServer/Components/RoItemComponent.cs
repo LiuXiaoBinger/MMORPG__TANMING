@@ -314,6 +314,7 @@ public class RoItemComponent : RoleComponentBase
             equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
             // 已开孔数是实例玩法状态，读档时必须沿用存档值，不能按槽位内容重新推导。
             equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
+            equip.RestoreGems(itemInfo.EquipInfo.GemItemIds);
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {
@@ -1143,6 +1144,7 @@ public class RoItemComponent : RoleComponentBase
                 // 已开孔数必须跟随物品增量下发，客户端据此区分未开孔与已开孔空槽。
                 OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
             };
+            info.EquipInfo.GemItemIds.Add(equip.GemItemIds);
             info.EquipGeneInfo = new RoleEquipGeneInfo
             {
                 ItemUid = equip.GetItemUID(), RoleId = equip.GetRoleID(),

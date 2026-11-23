@@ -150,7 +150,8 @@
         <Compile Include="enum\Time.cs" />
         <Compile Include="Time\ITimer.cs" />
         <Compile Include="Time\CTimerMgr.cs" />
-        <Compile Include="Item\EquipBase.cs" />
+    <Compile Include="Item\EquipBase.cs" />
+    <Compile Include="Item\EquipmentGemRules.cs" />
         <Compile Include="Item\ItemBase.cs" />
         <Compile Include="Item\ItemFactory.cs" />
         <Compile Include="Item\ItemDesc.cs" />

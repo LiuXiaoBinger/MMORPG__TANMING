@@ -145,6 +145,8 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _workshopWindow.SourceSelected += ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected += RenderWorkshopEquipment;
+            _workshopWindow.StockRequested += RenderWorkshopStock;
+            _workshopWindow.SocketRequested += SocketWorkshopGem;
         }
 
         PlayerEntity localRole = null;
@@ -155,7 +157,7 @@ public sealed class KnapsackCtrl : IDisposable
         BindRole(localRole);
     }
 
-    /// <summary>解除窗口事件，清空角色引用和格子缓存；当前没有订阅角色组件事件。</summary>
+    /// <summary>解除窗口和材料库存事件，清空角色引用与格子缓存。</summary>
     public void Dispose()
     {
         if (_window != null)
@@ -179,7 +181,10 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _workshopWindow.SourceSelected -= ChangeWorkshopSource;
             _workshopWindow.EquipmentSelected -= RenderWorkshopEquipment;
+            _workshopWindow.StockRequested -= RenderWorkshopStock;
+            _workshopWindow.SocketRequested -= SocketWorkshopGem;
         }
+        if (_itemComponent != null) _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
         _itemComponent = null;
         _role = null;
         _slotDataByIndex.Clear();
@@ -387,7 +392,7 @@ public sealed class KnapsackCtrl : IDisposable
         }
         if (_itemComponent != null)
         {
-            // 背包数据变化不再直接驱动窗口刷新，改由帧循环消费角色脏标记。
+            _itemComponent.KnapsackChangedDetailed -= OnWorkshopStockChanged;
         }
 
         _role = role;
@@ -398,6 +403,8 @@ public sealed class KnapsackCtrl : IDisposable
         if (role != null)
         {
             role.TryGetComponent(out _itemComponent);
+            if (_itemComponent != null && _workshopWindow != null)
+                _itemComponent.KnapsackChangedDetailed += OnWorkshopStockChanged;
         }
         if (_role != null && _role.DirtyTracker != null)
         {
@@ -594,6 +601,46 @@ public sealed class KnapsackCtrl : IDisposable
     /// <param name="worn">为真时列出穿戴栏，为假时列出背包内的装备实例。</param>
     private void ChangeWorkshopSource(bool worn) { FillWorkshopSource(worn, 0); }
 
+    /// <summary>按实际物品编号统计每个等级的所有背包堆叠，包含绑定材料。</summary>
+    /// <param name="firstId">当前栏位中一级强化石或一级宝石的配置编号。</param>
+    /// <param name="levels">强化石栏有五级，每个宝石品种有十级。</param>
+    private void RenderWorkshopStock(int firstId, int levels)
+    {
+        // index 为当前物品等级减一，对应连续的物品 ID。
+        for (int index = 0; index < levels; index++)
+        {
+            // 统计角色全部背包，同级材料拆成多个堆叠时在此相加。
+            int count = _itemComponent.GetItemNum(firstId + index, ItemBind.kItemBindIs, true);
+            _workshopWindow.RenderStockCount(index, count);
+        }
+    }
+
+    /// <summary>物品变动或整包同步后更新打开的材料栏，背包自身继续使用原有脏标记。</summary>
+    /// <param name="change">已完成写入的物品变更，整包同步携带的物品编号为零。</param>
+    private void OnWorkshopStockChanged(KnapsackChangedEventArgs change)
+    {
+        if (!_workshopWindow.isActiveAndEnabled) return;
+        _workshopWindow.RefreshStock(change.ItemTypeId);
+        // 只在当前装备被服务器更新、或收到整包快照时重绘宝石孔。
+        long uid = _workshopWindow.SelectedItemUid;
+        if (uid != 0 && (change.ItemUid == uid || change.ItemTypeId == 0)) RenderWorkshopEquipment(uid);
+    }
+
+    /// <summary>向服务器请求一次镶嵌，材料库存与孔位均沿用服务器物品增量更新。</summary>
+    /// <param name="uid">玩家选中的装备实例。</param>
+    /// <param name="slot">当前装备从左到右的宝石孔下标。</param>
+    /// <param name="gemId">按品种和等级区分的背包物品编号。</param>
+    private void SocketWorkshopGem(long uid, int slot, int gemId)
+    {
+        // 客户端只表达选材，不自行修改装备或扣减库存。
+        EquipOperationReq request = new EquipOperationReq
+        {
+            ItemUid = uid, Operation = EquipOperation.SocketGem, GemSocketIndex = slot, GemItemId = gemId
+        };
+        if (!MNetClient.Instance.Send(NetDefine.CMD_EquipOperationCode, request.ToByteString()))
+            TipsMgr.Instance.ShowSystemTips("镶嵌请求发送失败");
+    }
+
     /// <summary>按穿戴栏或背包实际格位顺序生成列表，并传递本次需要定位的实例。</summary>
     /// <param name="worn">当前选择的来源是否为穿戴栏。</param>
     /// <param name="selectedUid">打开入口时的真实实例 UID，切换来源时为零。</param>
@@ -637,6 +684,7 @@ public sealed class KnapsackCtrl : IDisposable
         // 强化等级上限来自装备表，强化材料和升级数值留待玩法定义。
         cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
         _workshopWindow.RenderDetail(BuildEquipmentDetail(equip), equip.StrengthenLevel, config.MaxStrengthenLevel);
+        _workshopWindow.RenderGems(equip, config.MaxGemLevel);
     }
 
     /// <summary>请求卸下当前详情装备，业务结果由服务器回复。</summary>
@@ -757,8 +805,24 @@ public sealed class KnapsackCtrl : IDisposable
         result.WashRowText = "暂无信息";
         // 宝石孔数取真实配置，必须先于说明文本赋值，否则界面会显示「共 0 孔」。
         result.GemSlotCount = config.GemSlotCount;
-        // 镶嵌只报真实孔数与是否已有宝石，属性未知一律写暂无信息。
-        result.GemInfoText = "共 " + config.GemSlotCount + " 孔，暂无宝石信息";
+        // 收集各孔中实际存在的宝石，顺序与装备实例相同。
+        List<string> gemNames = new List<string>();
+        for (int slot = 0; slot < result.GemSlotCount && slot < equip.GemItemIds.Length; slot++)
+        {
+            // 零是空孔，旧存档还原时也按空孔处理。
+            int gemId = equip.GemItemIds[slot];
+            if (gemId == 0) continue;
+            // 物品表中保存该颗宝石的带等级名称。
+            cfg.ItemInfo gem = LubanMgr.Instance.GetItemInfoById(gemId);
+            if (gem == null) continue;
+            gemNames.Add(gem.Name);
+            // 品种决定透明孔内图，背包里的等级底色只用于选材。
+            if (_workshopWindow != null && EquipmentGemRules.TryRead(gemId, out int family, out _))
+                result.GemSprites[slot] = _workshopWindow.GetGemArt(family);
+        }
+        result.GemInfoText = "已镶嵌 " + gemNames.Count + " / " + result.GemSlotCount;
+        result.GemDropText = "镶嵌：空槽";
+        if (gemNames.Count > 0) result.GemDropText = string.Join("、", gemNames);
         FillSetDetails(result, _itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack));
         result.ForgeExpandText = "暂无淬锋信息";
         // 已开孔数量来自服务器权威实例，决定哪些槽可以安装特技。
@@ -855,8 +919,6 @@ public sealed class KnapsackCtrl : IDisposable
         result.FooterText = "交易：—    耐久：—/—";
         result.InfoLayerText = BuildInfoText(config);
         result.FooterExtraText = result.InfoLayerText;
-        // 无真实宝石实例时只显示空槽，不断言已镶嵌或未镶嵌。
-        result.GemDropText = "镶嵌：空槽";
         // 独立行控件的数据：强化取真实配置，其余保持中性占位；宝石孔数已在前文写入。
         result.EnhanceRowText = "强化 " + equip.StrengthenLevel + "/" + config.MaxStrengthenLevel + "  ·  阶位 —";
         // 淬锋与铭缀是两个子系统，淬锋行只写自身内容，不再拼成一大段混写文字。

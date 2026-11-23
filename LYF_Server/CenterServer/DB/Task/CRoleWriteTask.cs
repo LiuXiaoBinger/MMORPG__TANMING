@@ -138,13 +138,16 @@ public sealed class CRoleWriteTask
             // 装备扩展表：仅当物品携带装备信息时插入。
             if (item.EquipInfo != null)
             {
-                equips.Add(new EquipTable
+                // 角色物品快照中的宝石与同一事务内的材料堆叠一并落库。
+                EquipTable equipRow = new EquipTable
                 {
                     ItemUID = item.ItemUid,
                     RoleID = item.RoleId,
                     EquipType = item.EquipInfo.EquipType,
                     StrengthenLevel = item.EquipInfo.StrengthenLevel
-                });
+                };
+                equipRow.ReadGemSlots(item.EquipInfo);
+                equips.Add(equipRow);
                 // 特技实例单独成行：三个槽位和启用槽位全部来自协议快照，不再回填配置默认值。
                 specialSkills.Add(new EquipSpecialSkillTable
                 {
@@ -595,6 +598,7 @@ public sealed class CRoleWriteTask
                 {
                     return false;
                 }
+                if (!storedEquip.HasSameGemSlots(requested.EquipInfo)) return false;
                 // 特技三个槽位与启用下标存放在独立特技表，重复保存必须与数据库完全一致。
                 // 旧装备可能根本没有特技行（三个槽都是空），缺失行等价于全 0，不能判定为内容冲突。
                 EquipSpecialSkillTable storedSpecialSkill;

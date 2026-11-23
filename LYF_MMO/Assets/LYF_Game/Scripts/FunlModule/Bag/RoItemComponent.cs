@@ -24,7 +24,7 @@ public class RoItemComponent : RoleComponentBase
     /// <summary>保留的背包变化事件；当前刷新入口使用 DirtyTracker，类内没有触发此事件。</summary>
     public event Action KnapsackChanged;
 
-    /// <summary>保留的逐格变化事件；当前类内没有触发，变化数据用于生成刷新标记。</summary>
+    /// <summary>格子或整包更新完成后通知装备养成界面，供可见材料按物品编号更新数量。</summary>
     public event Action<KnapsackChangedEventArgs> KnapsackChangedDetailed;
 
     // 背包容器按 KnapsackType 分类保存；容器本身负责物品位置和容量校验。
@@ -153,6 +153,7 @@ public class RoItemComponent : RoleComponentBase
                 Owner.DirtyTracker.MarkKnapsack(change.PreviousBagType, false,
                     change.PreviousBagIndex, context);
             }
+            KnapsackChangedDetailed?.Invoke(change);
         }
     }
 
@@ -327,6 +328,7 @@ public class RoItemComponent : RoleComponentBase
             equip.ActiveSpecialSkillIndex = itemInfo.EquipInfo.ActiveSpecialSkillIndex;
             // 已开孔数是服务端权威状态，客户端只按下发值展示，不自行推导。
             equip.OpenedSpecialSkillCount = itemInfo.EquipInfo.OpenedSpecialSkillCount;
+            equip.RestoreGems(itemInfo.EquipInfo.GemItemIds);
             // 词条信息可能为空，按存在性恢复三个词条槽位。
             if (itemInfo.EquipGeneInfo != null)
             {

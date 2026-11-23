@@ -207,6 +207,10 @@ public sealed class EquipmentDetailWindow : WindowBase
     private static readonly string[] MoreMenuNames = { "淬锋", "进阶", "重铸", "属性转换" };
     /// <summary>当前装备真实宝石孔数量，供折叠复位时恢复空槽显示个数。</summary>
     private int _gemSlotCount;
+    /// <summary>详情预制体中缩略行与展开格各自的空槽底色。</summary>
+    private Color _emptySlotTint;
+    /// <summary>展开格空槽的原始着色，切换到另一件装备时还原。</summary>
+    private Color _emptyCellTint;
     /// <summary>淬锋行是否处于折叠态：正文清透明但保留占位，按钮不离开行末。</summary>
     private bool _forgeRowCollapsed;
     /// <summary>当前装备的静态说明与获取途径，供信息按钮还原说明层正文。</summary>
@@ -246,6 +250,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     /// <summary>注册正式预制体中的固定按钮，窗口生命周期内执行一次。</summary>
     public override void InitWindow()
     {
+        _emptySlotTint = _gemSlots[0].GetComponent<Image>().color;
+        _emptyCellTint = _gemCells[0].GetComponent<Image>().color;
         _wearButton.onClick.AddListener(OnWearRequested);
         _takeOffButton.onClick.AddListener(OnTakeOffRequested);
         _cardUseButton.onClick.AddListener(OnCardUseClicked);
@@ -348,6 +354,12 @@ public sealed class EquipmentDetailWindow : WindowBase
         // gemSlotCount 是当前装备真实宝石孔数量，SetFoldableRows 按它显示空槽图标。
         int gemSlotCount = data.GemSlotCount;
         _gemSlotCount = gemSlotCount;
+        // 同一孔在缩略行和展开格都叠加透明宝石图，切换装备时复原空槽。
+        for (int slot = 0; slot < gemSlotCount && slot < data.GemSprites.Length; slot++)
+        {
+            ShowSocketArt(_gemSlots[slot].GetComponent<Image>(), data.GemSprites[slot], _emptySlotTint);
+            ShowSocketArt(_gemCells[slot].GetComponent<Image>(), data.GemSprites[slot], _emptyCellTint);
+        }
         CacheSpecialSkillDetails(data);
         ApplyGemSlots();
         // 正文分区已改为滚动区内的自然排列，不再有总折叠与固定高度空壳。
@@ -633,6 +645,17 @@ public sealed class EquipmentDetailWindow : WindowBase
         }
         // 开孔费用文本随数据下发，未给出时保持空串，界面不显示价格。
         _specialSkillOpenCostText = data.SpecialSkillOpenCostText;
+    }
+
+    /// <summary>替换既有孔位的显示图，空引用时回到预制体指定的空槽外观。</summary>
+    /// <param name="cell">缩略行或展开区中的正式孔位图片。</param>
+    /// <param name="gem">服务器当前孔位对应的透明宝石图。</param>
+    /// <param name="emptyTint">该组空槽在预制体中使用的原始颜色。</param>
+    private static void ShowSocketArt(Image cell, Sprite gem, Color emptyTint)
+    {
+        cell.overrideSprite = gem;
+        cell.color = emptyTint;
+        if (gem != null) cell.color = Color.white;
     }
 
     /// <summary>按真实宝石孔数量显示空槽图标与展开区孔位格，其余隐藏。</summary>

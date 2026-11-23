@@ -53,12 +53,12 @@ public sealed class EquipmentWorkshopRow : MonoBehaviour
         _subtitle.gameObject.SetActive(page != EquipmentWorkshopWindow.Page.Socket);
         if (page == EquipmentWorkshopWindow.Page.Strengthen)
         {
-            _subtitle.color = new Color32(105, 222, 172, 255);
+            _subtitle.color = new Color32(29, 112, 108, 255);
             _subtitle.text = "强化" + Entry.StrengthenLevel;
         }
         else
         {
-            _subtitle.color = new Color32(236, 196, 114, 255);
+            _subtitle.color = new Color32(127, 86, 32, 255);
             _subtitle.text = LevelText;
         }
     }

@@ -1,0 +1,3127 @@
+fileFormatVersion: 2
+guid: 081d3e2216e55607abc65291ce893e01
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: StrengthStone1
+  - first:
+      213: 21300002
+    second: StrengthStone2
+  - first:
+      213: 21300004
+    second: StrengthStone3
+  - first:
+      213: 21300006
+    second: StrengthStone4
+  - first:
+      213: 21300008
+    second: StrengthStone5
+  - first:
+      213: 21300010
+    second: MoonstoneSocket
+  - first:
+      213: 21300012
+    second: MoonstoneGreen
+  - first:
+      213: 21300014
+    second: MoonstoneBlue
+  - first:
+      213: 21300016
+    second: MoonstonePurple
+  - first:
+      213: 21300018
+    second: MoonstoneAmber
+  - first:
+      213: 21300020
+    second: AmazoniteSocket
+  - first:
+      213: 21300022
+    second: AmazoniteGreen
+  - first:
+      213: 21300024
+    second: AmazoniteBlue
+  - first:
+      213: 21300026
+    second: AmazonitePurple
+  - first:
+      213: 21300028
+    second: AmazoniteAmber
+  - first:
+      213: 21300030
+    second: LapisSocket
+  - first:
+      213: 21300032
+    second: LapisGreen
+  - first:
+      213: 21300034
+    second: LapisBlue
+  - first:
+      213: 21300036
+    second: LapisPurple
+  - first:
+      213: 21300038
+    second: LapisAmber
+  - first:
+      213: 21300040
+    second: ShoushanSocket
+  - first:
+      213: 21300042
+    second: ShoushanGreen
+  - first:
+      213: 21300044
+    second: ShoushanBlue
+  - first:
+      213: 21300046
+    second: ShoushanPurple
+  - first:
+      213: 21300048
+    second: ShoushanAmber
+  - first:
+      213: 21300050
+    second: MalachiteSocket
+  - first:
+      213: 21300052
+    second: MalachiteGreen
+  - first:
+      213: 21300054
+    second: MalachiteBlue
+  - first:
+      213: 21300056
+    second: MalachitePurple
+  - first:
+      213: 21300058
+    second: MalachiteAmber
+  - first:
+      213: 21300060
+    second: PurpleFangSocket
+  - first:
+      213: 21300062
+    second: PurpleFangGreen
+  - first:
+      213: 21300064
+    second: PurpleFangBlue
+  - first:
+      213: 21300066
+    second: PurpleFangPurple
+  - first:
+      213: 21300068
+    second: PurpleFangAmber
+  - first:
+      213: 21300070
+    second: PlumJadeSocket
+  - first:
+      213: 21300072
+    second: PlumJadeGreen
+  - first:
+      213: 21300074
+    second: PlumJadeBlue
+  - first:
+      213: 21300076
+    second: PlumJadePurple
+  - first:
+      213: 21300078
+    second: PlumJadeAmber
+  - first:
+      213: 21300080
+    second: BloodJadeSocket
+  - first:
+      213: 21300082
+    second: BloodJadeGreen
+  - first:
+      213: 21300084
+    second: BloodJadeBlue
+  - first:
+      213: 21300086
+    second: BloodJadePurple
+  - first:
+      213: 21300088
+    second: BloodJadeAmber
+  - first:
+      213: 21300090
+    second: BlueCrystalSocket
+  - first:
+      213: 21300092
+    second: BlueCrystalGreen
+  - first:
+      213: 21300094
+    second: BlueCrystalBlue
+  - first:
+      213: 21300096
+    second: BlueCrystalPurple
+  - first:
+      213: 21300098
+    second: BlueCrystalAmber
+  - first:
+      213: 21300100
+    second: BlackCrystalSocket
+  - first:
+      213: 21300102
+    second: BlackCrystalGreen
+  - first:
+      213: 21300104
+    second: BlackCrystalBlue
+  - first:
+      213: 21300106
+    second: BlackCrystalPurple
+  - first:
+      213: 21300108
+    second: BlackCrystalAmber
+  - first:
+      213: 21300110
+    second: RedCrystalSocket
+  - first:
+      213: 21300112
+    second: RedCrystalGreen
+  - first:
+      213: 21300114
+    second: RedCrystalBlue
+  - first:
+      213: 21300116
+    second: RedCrystalPurple
+  - first:
+      213: 21300118
+    second: RedCrystalAmber
+  - first:
+      213: 21300120
+    second: GreenCrystalSocket
+  - first:
+      213: 21300122
+    second: GreenCrystalGreen
+  - first:
+      213: 21300124
+    second: GreenCrystalBlue
+  - first:
+      213: 21300126
+    second: GreenCrystalPurple
+  - first:
+      213: 21300128
+    second: GreenCrystalAmber
+  - first:
+      213: 21300130
+    second: GoldCrystalSocket
+  - first:
+      213: 21300132
+    second: GoldCrystalGreen
+  - first:
+      213: 21300134
+    second: GoldCrystalBlue
+  - first:
+      213: 21300136
+    second: GoldCrystalPurple
+  - first:
+      213: 21300138
+    second: GoldCrystalAmber
+  - first:
+      213: 21300140
+    second: BlueAgateSocket
+  - first:
+      213: 21300142
+    second: BlueAgateGreen
+  - first:
+      213: 21300144
+    second: BlueAgateBlue
+  - first:
+      213: 21300146
+    second: BlueAgatePurple
+  - first:
+      213: 21300148
+    second: BlueAgateAmber
+  - first:
+      213: 21300150
+    second: BlackAgateSocket
+  - first:
+      213: 21300152
+    second: BlackAgateGreen
+  - first:
+      213: 21300154
+    second: BlackAgateBlue
+  - first:
+      213: 21300156
+    second: BlackAgatePurple
+  - first:
+      213: 21300158
+    second: BlackAgateAmber
+  - first:
+      213: 21300160
+    second: RedAgateSocket
+  - first:
+      213: 21300162
+    second: RedAgateGreen
+  - first:
+      213: 21300164
+    second: RedAgateBlue
+  - first:
+      213: 21300166
+    second: RedAgatePurple
+  - first:
+      213: 21300168
+    second: RedAgateAmber
+  - first:
+      213: 21300170
+    second: GreenAgateSocket
+  - first:
+      213: 21300172
+    second: GreenAgateGreen
+  - first:
+      213: 21300174
+    second: GreenAgateBlue
+  - first:
+      213: 21300176
+    second: GreenAgatePurple
+  - first:
+      213: 21300178
+    second: GreenAgateAmber
+  - first:
+      213: 21300180
+    second: GoldAgateSocket
+  - first:
+      213: 21300182
+    second: GoldAgateGreen
+  - first:
+      213: 21300184
+    second: GoldAgateBlue
+  - first:
+      213: 21300186
+    second: GoldAgatePurple
+  - first:
+      213: 21300188
+    second: GoldAgateAmber
+  - first:
+      213: 21300190
+    second: BlueGlazeSocket
+  - first:
+      213: 21300192
+    second: BlueGlazeGreen
+  - first:
+      213: 21300194
+    second: BlueGlazeBlue
+  - first:
+      213: 21300196
+    second: BlueGlazePurple
+  - first:
+      213: 21300198
+    second: BlueGlazeAmber
+  - first:
+      213: 21300200
+    second: BlackGlazeSocket
+  - first:
+      213: 21300202
+    second: BlackGlazeGreen
+  - first:
+      213: 21300204
+    second: BlackGlazeBlue
+  - first:
+      213: 21300206
+    second: BlackGlazePurple
+  - first:
+      213: 21300208
+    second: BlackGlazeAmber
+  - first:
+      213: 21300210
+    second: RedGlazeSocket
+  - first:
+      213: 21300212
+    second: RedGlazeGreen
+  - first:
+      213: 21300214
+    second: RedGlazeBlue
+  - first:
+      213: 21300216
+    second: RedGlazePurple
+  - first:
+      213: 21300218
+    second: RedGlazeAmber
+  - first:
+      213: 21300220
+    second: GreenGlazeSocket
+  - first:
+      213: 21300222
+    second: GreenGlazeGreen
+  - first:
+      213: 21300224
+    second: GreenGlazeBlue
+  - first:
+      213: 21300226
+    second: GreenGlazePurple
+  - first:
+      213: 21300228
+    second: GreenGlazeAmber
+  - first:
+      213: 21300230
+    second: GoldGlazeSocket
+  - first:
+      213: 21300232
+    second: GoldGlazeGreen
+  - first:
+      213: 21300234
+    second: GoldGlazeBlue
+  - first:
+      213: 21300236
+    second: GoldGlazePurple
+  - first:
+      213: 21300238
+    second: GoldGlazeAmber
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: StrengthStone1
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 304978c22f135f0da477eb7e5ee1bb98
+      internalID: 21300000
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrengthStone2
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82f82096e0a75e58b7293c913259594d
+      internalID: 21300002
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrengthStone3
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd98f69e904853fbb1a27d1cc3bebbfa
+      internalID: 21300004
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrengthStone4
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94480dc1847f527eb8981f9b0c8982f3
+      internalID: 21300006
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrengthStone5
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e32767bef6aa5f3c8038ac5e6f568024
+      internalID: 21300008
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonstoneSocket
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f0fe528bc1252559036e3dae55c5fab
+      internalID: 21300010
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonstoneGreen
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5a293a5e555530694ea93842a201c53
+      internalID: 21300012
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonstoneBlue
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cca48d780c595af6ada2607b0e6de567
+      internalID: 21300014
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonstonePurple
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07c75e2747e5f628e6ace8a7b3a4c3b
+      internalID: 21300016
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonstoneAmber
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f2388ca44a85bea8dfcff6af12c6884
+      internalID: 21300018
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmazoniteSocket
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c6c8f8d03cc5ff09cfd96b5b9e5bf63
+      internalID: 21300020
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmazoniteGreen
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1882
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12c1aea4c7b254bd91b03616b8e6781c
+      internalID: 21300022
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmazoniteBlue
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f841883105f7557d813fc394c3f54916
+      internalID: 21300024
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmazonitePurple
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 050a78ee72595b1e8eb3b0034e693956
+      internalID: 21300026
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmazoniteAmber
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad5a8c2e59bd5c2b9b0faeea94e7d8b0
+      internalID: 21300028
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LapisSocket
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04a79544e5d15311a223f0dc8736cdec
+      internalID: 21300030
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LapisGreen
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d96f4599c075ffbb8526a6f5f29379f
+      internalID: 21300032
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LapisBlue
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ee79d5b97865333b15df4b93f190ea2
+      internalID: 21300034
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LapisPurple
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4176e61708bc598280f355a25a0eb883
+      internalID: 21300036
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LapisAmber
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a75bc103465527083cf013ea669ec63
+      internalID: 21300038
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShoushanSocket
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8547b5b89d15b038008315bd4a4f63c
+      internalID: 21300040
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShoushanGreen
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e2ada9b5aa65c34a6f5ef6ff4ed1c9d
+      internalID: 21300042
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShoushanBlue
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ebdde3740805b98a967b9e2b93f704e
+      internalID: 21300044
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShoushanPurple
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1713
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae5114afa4f35639bae9dc28739deeb5
+      internalID: 21300046
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShoushanAmber
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bba23eb8cde2595d9e0834d92aad4ddc
+      internalID: 21300048
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MalachiteSocket
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73769fd48f9a510b8134453d8847f581
+      internalID: 21300050
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MalachiteGreen
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec8b2e6ad33a5949a2d866dba2f8a041
+      internalID: 21300052
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MalachiteBlue
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98e60e2b97b560dbec7a65540d3cd7d
+      internalID: 21300054
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MalachitePurple
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c83f11ec4eb455d69c36fa7e21de89ad
+      internalID: 21300056
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MalachiteAmber
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c07f6e7365555104b7a083058270d1b3
+      internalID: 21300058
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PurpleFangSocket
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a190c06fad25dc0b3fbbd1d8ebf76aa
+      internalID: 21300060
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PurpleFangGreen
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d0893ecedf35871a9a025df6731c772
+      internalID: 21300062
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PurpleFangBlue
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4e4db4fab73504cbdc3288cd2b3a3cc
+      internalID: 21300064
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PurpleFangPurple
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3420f06c41458c889fa421c9b4c4313
+      internalID: 21300066
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PurpleFangAmber
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70621318e9cb58f9876ec3550b25dd64
+      internalID: 21300068
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlumJadeSocket
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1544
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1eff95311635667a77c9ccf14415801
+      internalID: 21300070
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlumJadeGreen
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6b97b3de575511a8c12d9db0785aedd
+      internalID: 21300072
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlumJadeBlue
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c217ca478a415e70855a872cb3215648
+      internalID: 21300074
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlumJadePurple
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cb0005ae54d58599562dcf49de115fe
+      internalID: 21300076
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlumJadeAmber
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7965e51fff45ad2ae58b3e9e7e8b2b9
+      internalID: 21300078
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodJadeSocket
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02f980de4f6b51d9be510ac814f5611b
+      internalID: 21300080
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodJadeGreen
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2c627b0d25c5c0ea9eb6e9efa6cc875
+      internalID: 21300082
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodJadeBlue
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8f3bedc96465ecf9daa75888ffbe61a
+      internalID: 21300084
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodJadePurple
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce10736899a3501bb1a86500bcf35392
+      internalID: 21300086
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodJadeAmber
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f1ba675742454038c4275e29629297f
+      internalID: 21300088
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueCrystalSocket
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a6b1c4bbbe05586b5b9b3ab9ca8e8b1
+      internalID: 21300090
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueCrystalGreen
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53af79071885358aeee991ba719ac64
+      internalID: 21300092
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueCrystalBlue
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1375
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a89ce2c116ed5f95b708c60b72bd0fe5
+      internalID: 21300094
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueCrystalPurple
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3edca27e6c665985a47c2d4744d946e7
+      internalID: 21300096
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueCrystalAmber
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b053dbc3db65c228b9956e2e23d8e22
+      internalID: 21300098
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackCrystalSocket
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea28d8e5da245a2ca29f2d43f4d4101c
+      internalID: 21300100
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackCrystalGreen
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2303ffec2b8f5e12a19d43b90bd80577
+      internalID: 21300102
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackCrystalBlue
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f87b1cfcc85aee9d189ccc4f13db48
+      internalID: 21300104
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackCrystalPurple
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d203edf94b55f5aa1a8bd943d91f2d1
+      internalID: 21300106
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackCrystalAmber
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59764175938d5eeda8af70b1d01f55e1
+      internalID: 21300108
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedCrystalSocket
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd37305b6d3c50b68d8f66024d91e932
+      internalID: 21300110
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedCrystalGreen
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51d162218c3e52f78896d8947083f3bb
+      internalID: 21300112
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedCrystalBlue
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8e4d8cd932758ff8dd14efe354c557c
+      internalID: 21300114
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedCrystalPurple
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5115baf393db5d93afcc9cfdbd618d6d
+      internalID: 21300116
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedCrystalAmber
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1206
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4df294a285e563c87b4a624b745e489
+      internalID: 21300118
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenCrystalSocket
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b21d99fb4f1958469b8059b74f8e187c
+      internalID: 21300120
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenCrystalGreen
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aff29d8c54f757149bae46afffa5fde9
+      internalID: 21300122
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenCrystalBlue
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca31a71c49145b56b11ba14eb8174b1d
+      internalID: 21300124
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenCrystalPurple
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0865cdff41215f9680497a54a127951a
+      internalID: 21300126
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenCrystalAmber
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34d7d931d85159278223b321d19cf1ce
+      internalID: 21300128
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCrystalSocket
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7657d09fe73d58ddaf5b82b86854a65c
+      internalID: 21300130
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCrystalGreen
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce00c1ee572350a7b34d2cdda3ceaf55
+      internalID: 21300132
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCrystalBlue
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72245f1b30ea5940b4920fadfe70d9dd
+      internalID: 21300134
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCrystalPurple
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca947d6b6d0552949c44e91e8300d3b4
+      internalID: 21300136
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCrystalAmber
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a817b79e9c0052099d31111e086e15c8
+      internalID: 21300138
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueAgateSocket
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 737c131f8bed506799cc6b8df477c6bf
+      internalID: 21300140
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueAgateGreen
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 1037
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b55e909b0e4f557ca27e62f3d640ea44
+      internalID: 21300142
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueAgateBlue
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1963a29879205d5c8d8763140a8141e2
+      internalID: 21300144
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueAgatePurple
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1587cc6abef2513e92807fbc9e4efc0b
+      internalID: 21300146
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueAgateAmber
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 213bfd70d1f6578eae650c66a63a1602
+      internalID: 21300148
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackAgateSocket
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21848aa0f3895048b71c3b7e6f7b7f4b
+      internalID: 21300150
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackAgateGreen
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 900a673a1b0e508da007bf912b565886
+      internalID: 21300152
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackAgateBlue
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d2b31b0b735ac39dbc0c9b4be472ff
+      internalID: 21300154
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackAgatePurple
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25c820093536561a92e558064f857741
+      internalID: 21300156
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackAgateAmber
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6ae1a189c8d58b0958259de870a938e
+      internalID: 21300158
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedAgateSocket
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0adb77240a3504695b0ccfe8da068bd
+      internalID: 21300160
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedAgateGreen
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 322ab30e5fd95ad2a9cb2a8b0664feb6
+      internalID: 21300162
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedAgateBlue
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37a8407a6a315993ac4f8947f80762b0
+      internalID: 21300164
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedAgatePurple
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 868
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d31030a1237b571db63eb1b2327f6089
+      internalID: 21300166
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedAgateAmber
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79de19e30c215b299bde208bc337af14
+      internalID: 21300168
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenAgateSocket
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34b2e61e4697593b83ebabc2f394379a
+      internalID: 21300170
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenAgateGreen
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e632ab6f5e2548095212e81e02c9a8c
+      internalID: 21300172
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenAgateBlue
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30fa38cdfba2547a890bdffa84a83738
+      internalID: 21300174
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenAgatePurple
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e91153ea3dd05c96abc89a609eb2acda
+      internalID: 21300176
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenAgateAmber
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b889b908f22f52d4bacd6fb1de26f9be
+      internalID: 21300178
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldAgateSocket
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22a216a04f5f589fa7ac7238d750fc89
+      internalID: 21300180
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldAgateGreen
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b328dfeaf6953c5be467fd9658b8de6
+      internalID: 21300182
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldAgateBlue
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f85e12a26a25845a934ae2cca9f4d01
+      internalID: 21300184
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldAgatePurple
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a44b68fcbd4f528ea03c1763c26ecbce
+      internalID: 21300186
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldAgateAmber
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 202bc6d4ff7356459e346f1ed9d9ae9a
+      internalID: 21300188
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueGlazeSocket
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 699
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25fe6c4a2f485f3fb394a7bf35a8ea7c
+      internalID: 21300190
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueGlazeGreen
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91f2e31e9570507b92d6a8e914f4aa49
+      internalID: 21300192
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueGlazeBlue
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 861be11d4439505eb26132d3d6fb467c
+      internalID: 21300194
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueGlazePurple
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2de0ce0d70c158b8b3dd089719d52a56
+      internalID: 21300196
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlueGlazeAmber
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6db09245b8ba520b9bb2aa4d0cd730aa
+      internalID: 21300198
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackGlazeSocket
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dba376d7af6a562baf66d59b83e9cac4
+      internalID: 21300200
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackGlazeGreen
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d20b0ed7141258ca99abfb92936c8264
+      internalID: 21300202
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackGlazeBlue
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdad9daf62fb5781a9fabb13734120ea
+      internalID: 21300204
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackGlazePurple
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b722190d69f459a8af68454c91068794
+      internalID: 21300206
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BlackGlazeAmber
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20c6ae2be58e5802855fd07106cd8b2b
+      internalID: 21300208
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGlazeSocket
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46c1325cc1e056df94b2a34970347253
+      internalID: 21300210
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGlazeGreen
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81de623b16ff5b6383d049728c07d54e
+      internalID: 21300212
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGlazeBlue
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 530
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccdaf74143e3519d871c52c391605b98
+      internalID: 21300214
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGlazePurple
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7132df5ac6b45642ac12f799aa63422f
+      internalID: 21300216
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGlazeAmber
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec8f468c08bc53b48efeb44c2052ab84
+      internalID: 21300218
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGlazeSocket
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee5b55ed7423516fb5e9a3f559397307
+      internalID: 21300220
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGlazeGreen
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 797e364eea145d538af6f7931bf45265
+      internalID: 21300222
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGlazeBlue
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e90dc9fc5e15f63a934e5d3abaa3125
+      internalID: 21300224
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGlazePurple
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea0c0552faf65dfabbfa2c549b54e8ec
+      internalID: 21300226
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGlazeAmber
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 285f2fe077895302b8f349a9bff66406
+      internalID: 21300228
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldGlazeSocket
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9886d3a8005b50b8b7e5346c7939d970
+      internalID: 21300230
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldGlazeGreen
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ea9bbff7832549a9e08c8b932bbe790
+      internalID: 21300232
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldGlazeBlue
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f219c4fc4405562aa5f2ae3225c72b36
+      internalID: 21300234
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldGlazePurple
+      rect:
+        serializedVersion: 2
+        x: 1694
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22b205cb9db8527e81aa889d702ae1d5
+      internalID: 21300236
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldGlazeAmber
+      rect:
+        serializedVersion: 2
+        x: 1863
+        y: 361
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47ea661ad3f05c4c876b8f1b62730098
+      internalID: 21300238
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      StrengthStone1: 21300000
+      StrengthStone2: 21300002
+      StrengthStone3: 21300004
+      StrengthStone4: 21300006
+      StrengthStone5: 21300008
+      MoonstoneSocket: 21300010
+      MoonstoneGreen: 21300012
+      MoonstoneBlue: 21300014
+      MoonstonePurple: 21300016
+      MoonstoneAmber: 21300018
+      AmazoniteSocket: 21300020
+      AmazoniteGreen: 21300022
+      AmazoniteBlue: 21300024
+      AmazonitePurple: 21300026
+      AmazoniteAmber: 21300028
+      LapisSocket: 21300030
+      LapisGreen: 21300032
+      LapisBlue: 21300034
+      LapisPurple: 21300036
+      LapisAmber: 21300038
+      ShoushanSocket: 21300040
+      ShoushanGreen: 21300042
+      ShoushanBlue: 21300044
+      ShoushanPurple: 21300046
+      ShoushanAmber: 21300048
+      MalachiteSocket: 21300050
+      MalachiteGreen: 21300052
+      MalachiteBlue: 21300054
+      MalachitePurple: 21300056
+      MalachiteAmber: 21300058
+      PurpleFangSocket: 21300060
+      PurpleFangGreen: 21300062
+      PurpleFangBlue: 21300064
+      PurpleFangPurple: 21300066
+      PurpleFangAmber: 21300068
+      PlumJadeSocket: 21300070
+      PlumJadeGreen: 21300072
+      PlumJadeBlue: 21300074
+      PlumJadePurple: 21300076
+      PlumJadeAmber: 21300078
+      BloodJadeSocket: 21300080
+      BloodJadeGreen: 21300082
+      BloodJadeBlue: 21300084
+      BloodJadePurple: 21300086
+      BloodJadeAmber: 21300088
+      BlueCrystalSocket: 21300090
+      BlueCrystalGreen: 21300092
+      BlueCrystalBlue: 21300094
+      BlueCrystalPurple: 21300096
+      BlueCrystalAmber: 21300098
+      BlackCrystalSocket: 21300100
+      BlackCrystalGreen: 21300102
+      BlackCrystalBlue: 21300104
+      BlackCrystalPurple: 21300106
+      BlackCrystalAmber: 21300108
+      RedCrystalSocket: 21300110
+      RedCrystalGreen: 21300112
+      RedCrystalBlue: 21300114
+      RedCrystalPurple: 21300116
+      RedCrystalAmber: 21300118
+      GreenCrystalSocket: 21300120
+      GreenCrystalGreen: 21300122
+      GreenCrystalBlue: 21300124
+      GreenCrystalPurple: 21300126
+      GreenCrystalAmber: 21300128
+      GoldCrystalSocket: 21300130
+      GoldCrystalGreen: 21300132
+      GoldCrystalBlue: 21300134
+      GoldCrystalPurple: 21300136
+      GoldCrystalAmber: 21300138
+      BlueAgateSocket: 21300140
+      BlueAgateGreen: 21300142
+      BlueAgateBlue: 21300144
+      BlueAgatePurple: 21300146
+      BlueAgateAmber: 21300148
+      BlackAgateSocket: 21300150
+      BlackAgateGreen: 21300152
+      BlackAgateBlue: 21300154
+      BlackAgatePurple: 21300156
+      BlackAgateAmber: 21300158
+      RedAgateSocket: 21300160
+      RedAgateGreen: 21300162
+      RedAgateBlue: 21300164
+      RedAgatePurple: 21300166
+      RedAgateAmber: 21300168
+      GreenAgateSocket: 21300170
+      GreenAgateGreen: 21300172
+      GreenAgateBlue: 21300174
+      GreenAgatePurple: 21300176
+      GreenAgateAmber: 21300178
+      GoldAgateSocket: 21300180
+      GoldAgateGreen: 21300182
+      GoldAgateBlue: 21300184
+      GoldAgatePurple: 21300186
+      GoldAgateAmber: 21300188
+      BlueGlazeSocket: 21300190
+      BlueGlazeGreen: 21300192
+      BlueGlazeBlue: 21300194
+      BlueGlazePurple: 21300196
+      BlueGlazeAmber: 21300198
+      BlackGlazeSocket: 21300200
+      BlackGlazeGreen: 21300202
+      BlackGlazeBlue: 21300204
+      BlackGlazePurple: 21300206
+      BlackGlazeAmber: 21300208
+      RedGlazeSocket: 21300210
+      RedGlazeGreen: 21300212
+      RedGlazeBlue: 21300214
+      RedGlazePurple: 21300216
+      RedGlazeAmber: 21300218
+      GreenGlazeSocket: 21300220
+      GreenGlazeGreen: 21300222
+      GreenGlazeBlue: 21300224
+      GreenGlazePurple: 21300226
+      GreenGlazeAmber: 21300228
+      GoldGlazeSocket: 21300230
+      GoldGlazeGreen: 21300232
+      GoldGlazeBlue: 21300234
+      GoldGlazePurple: 21300236
+      GoldGlazeAmber: 21300238
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

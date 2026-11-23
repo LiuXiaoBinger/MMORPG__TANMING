@@ -509,6 +509,7 @@ public class CentRoleModel
                     StrengthenLevel = equip.StrengthenLevel,
                     EquipType = equip.EquipType
                 };
+                equip.WriteGemSlots(itemInfo.EquipInfo);
                 // 三个特技槽和启用槽来自独立特技表；没有记录时保持协议默认值 0，表示槽位全空。
                 EquipSpecialSkillTable specialSkill;
                 if (specialSkillByItemUid.TryGetValue(equip.ItemUID, out specialSkill))

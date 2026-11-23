@@ -194,4 +194,6 @@ message EquipOperationReq {
 	int64 item_uid = 1;//需要操作的装备实例UID
 	EquipOperation operation = 2;//穿戴、卸下或切换特技
 	int32 special_skill_index = 3;//切换特技时使用，范围0到2
+	int32 gem_socket_index = 4;//镶嵌的装备孔位，左起 0 到 5
+	int32 gem_item_id = 5;//需要从本角色背包扣除一颗的宝石物品编号，含品种和等级
 }

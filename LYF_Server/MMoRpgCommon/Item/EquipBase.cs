@@ -31,6 +31,19 @@ public class EquipBase : ItemBase
     /// </summary>
     public int StrengthenLevel { get; set; }
 
+    /// <summary>本件装备六个宝石孔的物品配置编号，按孔位保存；0 表示空孔。</summary>
+    public int[] GemItemIds { get; } = new int[EquipmentGemRules.SocketCount];
+
+    /// <summary>从存档、首次同步或装备增量恢复孔位；旧装备没有宝石字段时六孔全空。</summary>
+    /// <param name="ids">按孔位顺序保存的宝石物品编号，包含空孔。</param>
+    public void RestoreGems(System.Collections.Generic.IList<int> ids)
+    {
+        System.Array.Clear(GemItemIds, 0, GemItemIds.Length);
+        // 只写本装备实际支持的六个孔；旧数据可以省略尾部空孔。
+        int count = System.Math.Min(ids.Count, GemItemIds.Length);
+        for (int index = 0; index < count; index++) GemItemIds[index] = ids[index];
+    }
+
     /// <summary>第一个装备特技的配置族编号，0 表示该槽位为空。</summary>
     public int SpecialSkillId0 { get; set; }
     /// <summary>第二个装备特技的配置族编号，0 表示该槽位为空。</summary>

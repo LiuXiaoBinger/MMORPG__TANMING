@@ -173,6 +173,7 @@ public sealed class ItemDataListDB
                     // 已开孔数随装备实例一起存档，重新登录后孔位状态与装入的特技保持一致。
                     OpenedSpecialSkillCount = equip.OpenedSpecialSkillCount
                 };
+                itemInfo.EquipInfo.GemItemIds.Add(equip.GemItemIds);
                 itemInfo.EquipGeneInfo = new RoleEquipGeneInfo
                 {
                     ItemUid = item.GetItemUID(),
