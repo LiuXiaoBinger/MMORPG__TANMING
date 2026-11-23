@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>从装备详情打开的五页养成界面，负责分页、装备选择与只读属性展示。</summary>
+public sealed class EquipmentWorkshopWindow : WindowBase
+{
+    /// <summary>顺序与预制体右侧导航和页面引用一一对应。</summary>
+    public enum Page
+    {
+        Strengthen, // 强化进度、属性和材料栏。
+        Socket, // 宝石方案和镶嵌孔。
+        Refine, // 洗炼方案与萃石栏。
+        Inherit, // 装备及材料位和三项继承。
+        Upgrade // 当前装备的属性和升级状态。
+    }
+
+    /// <summary>右上角花形返回按钮。</summary>
+    [SerializeField] private Button _close;
+    /// <summary>展开装备来源选择的按钮。</summary>
+    [SerializeField] private Button _filter;
+    /// <summary>显示当前查看的装备来源。</summary>
+    [SerializeField] private Text _filterLabel;
+    /// <summary>叠在列表上方的两个来源选项。</summary>
+    [SerializeField] private GameObject _filterMenu;
+    /// <summary>切换到已装备列表的选项。</summary>
+    [SerializeField] private Button _worn;
+    /// <summary>切换到背包装备列表的选项。</summary>
+    [SerializeField] private Button _bag;
+    /// <summary>按 Page 枚举顺序排列的五个纵向分页按钮。</summary>
+    [SerializeField] private Button[] _tabs;
+    /// <summary>选中分页时点亮的浅色签纸。</summary>
+    [SerializeField] private GameObject[] _tabPapers;
+    /// <summary>各页签可着色的图形与标题，依次为图标、文字。</summary>
+    [SerializeField] private Graphic[] _tabInk;
+    /// <summary>五页互斥显示的内容节点。</summary>
+    [SerializeField] private GameObject[] _pages;
+    /// <summary>顶部铜币、银两、银票和元宝余额。</summary>
+    [SerializeField] private Text[] _money;
+    /// <summary>可滚动的装备列表。</summary>
+    [SerializeField] private ScrollRect _scroll;
+    /// <summary>预制体内用于生成可重复行的隐藏模板。</summary>
+    [SerializeField] private EquipmentWorkshopRow _rowTemplate;
+    /// <summary>当前容器没有装备时居中显示的说明。</summary>
+    [SerializeField] private GameObject _empty;
+    /// <summary>铁砧上方的装备纹框和当前装备图标。</summary>
+    [SerializeField] private GameObject _hero;
+    /// <summary>已选择装备的大图，五页共用。</summary>
+    [SerializeField] private Image _heroIcon;
+    /// <summary>镶嵌、洗炼、升级三页的装备名称。</summary>
+    [SerializeField] private Text[] _itemLabels;
+    /// <summary>强化页和镶嵌页的强化等级及上限。</summary>
+    [SerializeField] private Text[] _strengthLabels;
+    /// <summary>按当前强化等级与上限比例填充的水平进度条。</summary>
+    [SerializeField] private Image _progress;
+    /// <summary>进度条中心显示的实际数值。</summary>
+    [SerializeField] private Text _progressLabel;
+    /// <summary>强化、升级两页的基础属性列表。</summary>
+    [SerializeField] private Text[] _attributeLists;
+    /// <summary>镶嵌页的六个可见孔位，按配置孔数显示。</summary>
+    [SerializeField] private GameObject[] _sockets;
+    /// <summary>列表已实例化的行，在切换来源时复用。</summary>
+    private readonly List<EquipmentWorkshopRow> _rows = new List<EquipmentWorkshopRow>();
+    /// <summary>当前选中的实际行，空列表时为 null。</summary>
+    private EquipmentWorkshopRow _selected;
+    /// <summary>当前导航页，切换装备时沿用。</summary>
+    private Page _page;
+    /// <summary>请求控制器读取已穿戴或背包中的装备。</summary>
+    public event Action<bool> SourceSelected;
+    /// <summary>通知控制器读取指定装备 UID 的详细属性。</summary>
+    public event Action<long> EquipmentSelected;
+
+    /// <summary>将预制体入口绑定到界面交互。</summary>
+    public override void InitWindow()
+    {
+        _close.onClick.AddListener(CloseWindow);
+        _filter.onClick.AddListener(() => _filterMenu.SetActive(!_filterMenu.activeSelf));
+        _worn.onClick.AddListener(() => SourceSelected?.Invoke(true));
+        _bag.onClick.AddListener(() => SourceSelected?.Invoke(false));
+        // index 是对应 Page 的固定按钮序号。
+        for (int index = 0; index < _tabs.Length; index++)
+        {
+            // 此按钮始终对应同一页。
+            Page page = (Page)index;
+            _tabs[index].onClick.AddListener(() => SelectPage(page));
+        }
+    }
+
+    /// <summary>将四项真实账户余额显示在标题栏。</summary>
+    /// <param name="copper">铜币数量。</param>
+    /// <param name="silver">银两数量。</param>
+    /// <param name="ticket">银票数量。</param>
+    /// <param name="yuanbao">元宝数量。</param>
+    public void RenderMoney(long copper, long silver, long ticket, long yuanbao)
+    {
+        _money[0].text = copper.ToString();
+        _money[1].text = silver.ToString();
+        _money[2].text = ticket.ToString();
+        _money[3].text = yuanbao.ToString();
+    }
+
+    /// <summary>刷新来源、列表与选中条目，初次打开时将入口装备滚动到视野内。</summary>
+    /// <param name="entries">当前来源下按实际格位排序的装备。</param>
+    /// <param name="worn">当前来源是否为已穿戴栏。</param>
+    /// <param name="selectedUid">入口选中的装备实例，切换来源时为零。</param>
+    public void RenderItems(List<EquipmentViewData> entries, bool worn, long selectedUid)
+    {
+        _filterLabel.text = "背包装备";
+        if (worn) _filterLabel.text = "已装备";
+        _filterMenu.SetActive(false);
+        _selected = null;
+        // index 对应当前数据及其复用行，剩余旧行在下一次循环中隐藏。
+        for (int index = 0; index < entries.Count; index++)
+        {
+            if (index == _rows.Count) _rows.Add(Instantiate(_rowTemplate, _scroll.content));
+            // 当前实例行，存下 UID 后才允许玩家点击。
+            EquipmentWorkshopRow row = _rows[index];
+            row.Bind(entries[index], SelectRow);
+            row.gameObject.SetActive(true);
+            if (index == 0 || entries[index].ItemUid == selectedUid) _selected = row;
+        }
+        // index 指向旧列表中本次不再需要的行。
+        for (int index = entries.Count; index < _rows.Count; index++) _rows[index].gameObject.SetActive(false);
+        _empty.SetActive(_selected == null);
+        _hero.SetActive(_selected != null);
+        SelectPage(_page);
+        _scroll.StopMovement();
+        _scroll.verticalNormalizedPosition = 1f;
+        if (_selected == null) return;
+        SelectRow(_selected);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_scroll.content);
+        // 超出遮罩的实际内容高度，用于定位从背包或穿戴栏点进来的那一件。
+        float overflow = _scroll.content.rect.height - _scroll.viewport.rect.height;
+        if (overflow > 0f)
+        {
+            // 布局组件按行的轴心定位，先换算到上边沿，避免首行被裁掉半行。
+            RectTransform rowRect = (RectTransform)_selected.transform;
+            // 相对列表顶端的纵坐标，第一行的上沿为零。
+            float rowTop = rowRect.anchoredPosition.y + (1f - rowRect.pivot.y) * rowRect.rect.height;
+            _scroll.verticalNormalizedPosition = Mathf.Clamp01(1f + rowTop / overflow);
+        }
+    }
+
+    /// <summary>切换中央页面和右栏选中颜色，并保持当前装备。</summary>
+    /// <param name="page">需要展示的养成页。</param>
+    public void SelectPage(Page page)
+    {
+        _page = page;
+        _filterMenu.SetActive(false);
+        // index 为固定的右侧页签和内容下标。
+        for (int index = 0; index < _tabs.Length; index++)
+        {
+            // 当前页用浅底深墨，未选项用暗底浅墨。
+            bool active = index == (int)page;
+            _tabPapers[index].SetActive(active);
+            _pages[index].SetActive(active && _selected != null);
+            // 文字与图案共用同一墨色，随签纸状态一起切换。
+            Color32 ink = new Color32(192, 210, 216, 255);
+            if (active) ink = new Color32(18, 24, 26, 255);
+            _tabInk[index * 2].color = ink;
+            _tabInk[index * 2 + 1].color = ink;
+        }
+        // index 遍历已创建行，只更新当前容器可见的摘要。
+        for (int index = 0; index < _rows.Count; index++)
+        {
+            if (_rows[index].gameObject.activeSelf) _rows[index].Display(page, _rows[index] == _selected);
+        }
+    }
+
+    /// <summary>按所选行更新主图、名称和当前页属性。</summary>
+    /// <param name="row">装备列表中被点击或首次定位到的行。</param>
+    private void SelectRow(EquipmentWorkshopRow row)
+    {
+        if (_selected != null) _selected.Display(_page, false);
+        _selected = row;
+        row.Display(_page, true);
+        // 捕获本次装备摘要，防止切换后旧的异步图标覆盖当前选择。
+        EquipmentViewData entry = row.Entry;
+        _heroIcon.enabled = false;
+        ResourceMgr.Instance.LoadSpriteAsync(entry.IconPath, sprite =>
+        {
+            if (_selected == null || _selected.Entry != entry) return;
+            _heroIcon.sprite = sprite;
+            _heroIcon.enabled = sprite != null;
+        });
+        _itemLabels[0].text = entry.Name;
+        _itemLabels[1].text = entry.Name;
+        if (entry.RequiredLevel > 0) _itemLabels[1].text += "（" + row.LevelText + "）";
+        _itemLabels[2].text = _itemLabels[1].text;
+        EquipmentSelected?.Invoke(entry.ItemUid);
+    }
+
+    /// <summary>把当前装备的属性、强化等级和宝石孔数同步到对应页面。</summary>
+    /// <param name="detail">与详情窗同源的装备属性和孔数。</param>
+    /// <param name="level">实例当前的强化等级。</param>
+    /// <param name="limit">装备表设置的强化等级上限。</param>
+    public void RenderDetail(EquipmentDetailViewData detail, int level, int limit)
+    {
+        // 纯色进度条的右锚点直接表示占满轨道的比例，零级时宽度为零。
+        float fraction = 0f;
+        if (limit > 0) fraction = Mathf.Clamp01((float)level / limit);
+        _progress.rectTransform.anchorMax = new Vector2(fraction, 1f);
+        _progressLabel.text = level + " / " + limit;
+        // index 对应强化、镶嵌两页需要显示的强化等级标题。
+        for (int index = 0; index < _strengthLabels.Length; index++)
+            _strengthLabels[index].text = "强化 " + level + "/" + limit;
+        // index 对应需要重复显示同一装备基础属性的页面。
+        for (int index = 0; index < _attributeLists.Length; index++)
+            _attributeLists[index].text = detail.BaseAttributeText;
+        // index 对应从左到右的宝石孔，展示数量由装备配置决定。
+        for (int index = 0; index < _sockets.Length; index++)
+            _sockets[index].SetActive(index < detail.GemSlotCount);
+    }
+}

@@ -35,6 +35,8 @@ public sealed class KnapsackCtrl : IDisposable
     private readonly MainView _mainView;
     /// <summary>显示当前装备详情的正式子窗口。</summary>
     private readonly EquipmentDetailWindow _detailWindow;
+    /// <summary>展示当前选中装备及五个养成分页的主城子窗口。</summary>
+    private readonly EquipmentWorkshopWindow _workshopWindow;
     /// <summary>已穿戴装备槽的点击来源。</summary>
     private readonly RoleAttriibuteWindow _equipmentWindow;
     /// <summary>当前详情所选实例的 UID，切换角色时清空。</summary>
@@ -68,6 +70,7 @@ public sealed class KnapsackCtrl : IDisposable
             _window = mainView.KnapsackWindow;
             _mainView = mainView;
             _detailWindow = mainView.EquipmentDetailWindow;
+            _workshopWindow = mainView.EquipmentWorkshopWindow;
             _equipmentWindow = mainView.RoleAttributeWindow;
         }
         Initialize();
@@ -136,6 +139,12 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.WearRequested += WearSelectedEquipment;
             _detailWindow.TakeOffRequested += TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested += SwitchSelectedSpecialSkill;
+            _detailWindow.StrengthenRequested += OpenEquipmentWorkshop;
+        }
+        if (_workshopWindow != null)
+        {
+            _workshopWindow.SourceSelected += ChangeWorkshopSource;
+            _workshopWindow.EquipmentSelected += RenderWorkshopEquipment;
         }
 
         PlayerEntity localRole = null;
@@ -164,6 +173,12 @@ public sealed class KnapsackCtrl : IDisposable
             _detailWindow.WearRequested -= WearSelectedEquipment;
             _detailWindow.TakeOffRequested -= TakeOffSelectedEquipment;
             _detailWindow.SpecialSkillRequested -= SwitchSelectedSpecialSkill;
+            _detailWindow.StrengthenRequested -= OpenEquipmentWorkshop;
+        }
+        if (_workshopWindow != null)
+        {
+            _workshopWindow.SourceSelected -= ChangeWorkshopSource;
+            _workshopWindow.EquipmentSelected -= RenderWorkshopEquipment;
         }
         _itemComponent = null;
         _role = null;
@@ -368,6 +383,7 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _selectedEquipmentUid = 0;
             if (_detailWindow != null) _detailWindow.CloseWindow();
+            if (_workshopWindow != null) _workshopWindow.CloseWindow();
         }
         if (_itemComponent != null)
         {
@@ -558,6 +574,71 @@ public sealed class KnapsackCtrl : IDisposable
 
     /// <summary>请求穿戴当前详情装备，业务结果由服务器回复。</summary>
     private void WearSelectedEquipment() { SubmitSelectedOperation(EquipOperation.Wear, 0); }
+
+    /// <summary>从详情携带装备 UID 打开强化页，并读取该角色当前四种货币的余额。</summary>
+    private void OpenEquipmentWorkshop()
+    {
+        // 详情和养成页指向同一件实例，同名的背包装备也能正确定位。
+        EquipBase equip = _itemComponent.GetItemByUID(_selectedEquipmentUid) as EquipBase;
+        if (equip == null) return;
+        _detailWindow.CloseWindow();
+        _mainView.ShowMainWindow(WindowType.EquipmentWorkshopWindow);
+        _workshopWindow.SelectPage(EquipmentWorkshopWindow.Page.Strengthen);
+        _workshopWindow.RenderMoney(_itemComponent.GetVirtualItemCount(CopperItemId),
+            _itemComponent.GetVirtualItemCount(SilverItemId), _itemComponent.GetVirtualItemCount(TicketItemId),
+            _itemComponent.GetVirtualItemCount(YuanbaoItemId));
+        FillWorkshopSource(equip.GetBagType() == (int)KnapsackType.RoleCurrtEquipPack, equip.GetItemUID());
+    }
+
+    /// <summary>玩家切换左侧来源后选择新列表中的第一件装备。</summary>
+    /// <param name="worn">为真时列出穿戴栏，为假时列出背包内的装备实例。</param>
+    private void ChangeWorkshopSource(bool worn) { FillWorkshopSource(worn, 0); }
+
+    /// <summary>按穿戴栏或背包实际格位顺序生成列表，并传递本次需要定位的实例。</summary>
+    /// <param name="worn">当前选择的来源是否为穿戴栏。</param>
+    /// <param name="selectedUid">打开入口时的真实实例 UID，切换来源时为零。</param>
+    private void FillWorkshopSource(bool worn, long selectedUid)
+    {
+        // 从角色物品组件拿到的原始格位，用已有排序与装备详情保持一致。
+        List<ItemBase> items = new List<ItemBase>();
+        if (worn)
+        {
+            items.AddRange(_itemComponent.GetContainer(KnapsackType.RoleCurrtEquipPack).GetItemMap().Values);
+        }
+        else
+        {
+            items.AddRange(_itemComponent.GetContainer(KnapsackType.RolePackEquip).GetItemMap().Values);
+            items.AddRange(_itemComponent.GetContainer(KnapsackType.RolePackPlain).GetItemMap().Values);
+        }
+        items.Sort(CompareItem);
+        // 列表只带实际装备和图标，完整属性按玩家选中的那一行读取。
+        List<EquipmentViewData> entries = new List<EquipmentViewData>();
+        // index 遍历选定来源中已经占用的格位。
+        for (int index = 0; index < items.Count; index++)
+        {
+            // 普通背包里非装备物品不进入养成列表。
+            EquipBase equip = items[index] as EquipBase;
+            if (equip == null) continue;
+            // 正式装备表提供名称、部位、图标路径和穿戴需求。
+            cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+            entries.Add(new EquipmentViewData((EquipType)config.EquipType, equip.GetItemID(),
+                config.EquipName, config.Icon, equip.StrengthenLevel, equip.GetItemUID(), config.NeedLevel));
+        }
+        _workshopWindow.RenderItems(entries, worn, selectedUid);
+    }
+
+    /// <summary>把左侧选中的真实装备属性交给中央分页，全程只读取模型。</summary>
+    /// <param name="itemUid">这次选中的装备实例 UID。</param>
+    private void RenderWorkshopEquipment(long itemUid)
+    {
+        // 与装备详情使用同一份配置、属性格式及宝石孔数。
+        EquipBase equip = _itemComponent.GetItemByUID(itemUid) as EquipBase;
+        if (equip == null) return;
+        // 强化等级上限来自装备表，强化材料和升级数值留待玩法定义。
+        cfg.EquipInfo config = LubanMgr.Instance.GetEquipInfoById(equip.GetItemID());
+        _workshopWindow.RenderDetail(BuildEquipmentDetail(equip), equip.StrengthenLevel, config.MaxStrengthenLevel);
+    }
+
     /// <summary>请求卸下当前详情装备，业务结果由服务器回复。</summary>
     private void TakeOffSelectedEquipment() { SubmitSelectedOperation(EquipOperation.TakeOff, 0); }
     /// <summary>请求启用当前装备的指定保存特技槽；该槽未开孔时改为提交开孔请求。</summary>
@@ -668,6 +749,7 @@ public sealed class KnapsackCtrl : IDisposable
             cardAttr.Append("<b>").Append(cardNames[index]).Append("</b>　").Append(cardValue).Append('\n');
         }
         if (cardAttr.Length == 0) cardAttr.Append("暂无信息\n");
+        result.BaseAttributeText = cardAttr.ToString().TrimEnd('\n');
         cardAttr.Append("<color=#4E7E9C>基础贡献：—　强化贡献：—　进阶贡献：—</color>");
         result.AttributeCardText = cardAttr.ToString();
         // 铭缀与洗练暂无实例数据，写中性空态，不推算任何数值。

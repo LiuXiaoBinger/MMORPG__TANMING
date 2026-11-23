@@ -45,6 +45,11 @@ public class MainView : UIBase
    /// <summary>供背包控制器绑定装备详情的展示与按钮事件。</summary>
    public EquipmentDetailWindow EquipmentDetailWindow => _equipmentDetailWindow;
 
+   /// <summary>装备详情「强化」打开的全屏养成窗口，归主城功能层管理。</summary>
+   [SerializeField] private EquipmentWorkshopWindow _equipmentWorkshopWindow;
+   /// <summary>供背包控制器填充选中装备及其所属容器。</summary>
+   public EquipmentWorkshopWindow EquipmentWorkshopWindow => _equipmentWorkshopWindow;
+
    /// <summary>主角血蓝、资源弧条、技能快捷栏及当前目标文字区域。</summary>
    [SerializeField,Header("角色当前信息window")] private RoleCurrInfoWindow _roleCurrInfoWindow;
    /// <summary>技能列表和快捷技能槽窗口，数据由技能控制器提供。</summary>
@@ -281,6 +286,8 @@ public class MainView : UIBase
       _moshentaBlackCurtainWindow.InitWindow();
       windowDic[WindowType.EquipmentDetailWindow] = _equipmentDetailWindow;
       _equipmentDetailWindow.InitWindow();
+      windowDic[WindowType.EquipmentWorkshopWindow] = _equipmentWorkshopWindow;
+      _equipmentWorkshopWindow.InitWindow();
       windowDic[WindowType.DungeonFlowWindow] = _dungeonFlowWindow;
       _dungeonFlowWindow.InitWindow();
       if (ChatWindow != null) windowDic[WindowType.ChatWindow] = ChatWindow;

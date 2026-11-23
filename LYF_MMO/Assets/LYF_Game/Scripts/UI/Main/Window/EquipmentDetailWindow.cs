@@ -103,7 +103,7 @@ public sealed class EquipmentDetailWindow : WindowBase
     #endregion
 
     #region 右侧主按钮与更多菜单
-    /// <summary>右侧强化主按钮，点击只给暂未开放提示。</summary>
+    /// <summary>右侧强化主按钮，打开当前实例的装备养成窗口。</summary>
     [SerializeField] private Button _strengthenButton;
     /// <summary>右侧铭缀主按钮，点击只给暂未开放提示。</summary>
     [SerializeField] private Button _inscribeButton;
@@ -156,6 +156,8 @@ public sealed class EquipmentDetailWindow : WindowBase
     public event Action WearRequested;
     /// <summary>玩家请求卸下当前详情装备。</summary>
     public event Action TakeOffRequested;
+    /// <summary>通知背包控制器以当前装备实例打开强化页。</summary>
+    public event Action StrengthenRequested;
     /// <summary>玩家请求启用特技槽，参数范围0至2。</summary>
     public event Action<int> SpecialSkillRequested;
 
@@ -203,8 +205,6 @@ public sealed class EquipmentDetailWindow : WindowBase
     private const string MoreText = "更多";
     /// <summary>四个更多菜单项的准确名称，与用户展开菜单截图一致。</summary>
     private static readonly string[] MoreMenuNames = { "淬锋", "进阶", "重铸", "属性转换" };
-    /// <summary>三个右侧主按钮的准确名称，与用户展开菜单截图一致。</summary>
-    private static readonly string[] MainButtonNames = { "强化", "铭缀", "熔锻" };
     /// <summary>当前装备真实宝石孔数量，供折叠复位时恢复空槽显示个数。</summary>
     private int _gemSlotCount;
     /// <summary>淬锋行是否处于折叠态：正文清透明但保留占位，按钮不离开行末。</summary>
@@ -263,7 +263,7 @@ public sealed class EquipmentDetailWindow : WindowBase
         _forgeFoldButton.onClick.AddListener(OnForgeFoldClicked);
         _inscribeRowButton.onClick.AddListener(OnInscribeRowClicked);
         _washRowButton.onClick.AddListener(OnWashRowClicked);
-        _strengthenButton.onClick.AddListener(OnMainButtonFirst);
+        _strengthenButton.onClick.AddListener(OnStrengthenClicked);
         _inscribeButton.onClick.AddListener(OnMainButtonSecond);
         _forgeButton.onClick.AddListener(OnMainButtonThird);
         _moreButton.onClick.AddListener(OnMoreClicked);
@@ -789,19 +789,12 @@ public sealed class EquipmentDetailWindow : WindowBase
         TipsMgr.Instance.ShowSystemTips("外观：暂未开放");
     }
 
-    /// <summary>三个右侧主按钮共用提示，按下标取准确名称。</summary>
-    private void OnMainButtonFirst() { ShowUnavailable(0); }
+    /// <summary>把本次强化入口点击交给持有当前装备 UID 的背包控制器。</summary>
+    private void OnStrengthenClicked() { StrengthenRequested?.Invoke(); }
     /// <summary>铭缀主按钮提示。</summary>
-    private void OnMainButtonSecond() { ShowUnavailable(1); }
+    private void OnMainButtonSecond() { TipsMgr.Instance.ShowSystemTips("铭缀：暂未开放"); }
     /// <summary>熔锻主按钮提示。</summary>
-    private void OnMainButtonThird() { ShowUnavailable(2); }
-
-    /// <summary>按主按钮下标显示准确名称与暂未开放提示。</summary>
-    /// <param name="index">主按钮下标，范围0至2。</param>
-    private void ShowUnavailable(int index)
-    {
-        TipsMgr.Instance.ShowSystemTips(MainButtonNames[index] + "：暂未开放");
-    }
+    private void OnMainButtonThird() { TipsMgr.Instance.ShowSystemTips("熔锻：暂未开放"); }
 
     /// <summary>更多按钮真实切换下拉菜单显隐并改写按钮标签。</summary>
     private void OnMoreClicked()
