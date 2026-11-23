@@ -50,13 +50,14 @@ Shader "LYF/MjsBarrierLight"
                 }
                 else if (frame < 2)
                 {
-                    float bend = 0.44 * p.y * p.y + 0.15 * p.y - 0.13; // 弧形壳面碎片的中线。
-                    float width = max(0.0, min(0.52 - 0.48 * p.y, 0.43 + 0.54 * p.y)); // 两端不对称收尖的宽度。
-                    float inside = width - abs(p.x - bend); // 正值为碎片内部，零为切边。
-                    half facet = smoothstep(-0.09, -0.035, p.x - bend + 0.23 * p.y); // 折面的一侧反射冷光。
-                    ice = saturate(1 - smoothstep(0.025, 0.13, inside) + facet * 0.46h);
-                    alpha = smoothstep(-0.025, 0.025, inside) * (1 - smoothstep(0.90, 1.0, abs(p.y))) * (0.25h + 0.72h * ice);
-                    ice *= 0.58h;
+                    float crossCut = p.x - 0.18 * p.y; // 冰晶的斜轴，让长尖与短底错开。
+                    float envelope = min(0.53 * (1.0 - p.y), 0.96 * (p.y + 0.91)); // 两个斜切端相交形成晶柱尖端。
+                    float inside = min(envelope, 0.53) - abs(crossCut); // 平行的侧棱和斜切端围出的晶体轮廓。
+                    float ridge = crossCut + 0.15 - 0.16 * p.y; // 偏心棱线分出明暗大小不同的切面。
+                    half face = smoothstep(-0.035, 0.035, ridge); // 朝光的晶面比背光面明亮。
+                    half edge = 1.0h - smoothstep(0.015h, 0.105h, min(inside, abs(ridge))); // 外边和内棱上的冰白反光。
+                    ice = saturate(0.12h + 0.36h * face + 0.65h * edge);
+                    alpha = smoothstep(-0.028, 0.028, inside) * (0.42h + 0.46h * face + 0.12h * edge);
                 }
                 else if (frame < 3)
                 {
