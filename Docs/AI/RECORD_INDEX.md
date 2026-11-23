@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `551dfee8731f466f112712a81213036ea65adb6e1ae19fb23ad2d419fd034d53`
+Source normalized SHA256: `3624009f83df344e7ce73d57082fc15deed88d57e00d4e3f8d07f396be081973`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -123,11 +123,12 @@ Source normalized SHA256: `551dfee8731f466f112712a81213036ea65adb6e1ae19fb23ad2d
 | [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window | 838-841 |
 | [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
-| [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-855 |
+| [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-856 |
+| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 857-859 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0edb1421f9b4ba413c829d1b43a8e8e52a74c56c4fcb7ccaade733c72f142cd3`
+Source normalized SHA256: `1de840b7adb521af7321f5cb28b9ee71ad5eb1caf1bd830f8a0fcae4c4b8ce88`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -242,7 +243,8 @@ Source normalized SHA256: `0edb1421f9b4ba413c829d1b43a8e8e52a74c56c4fcb7ccaade73
 | [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] Formation, progression and persistence | 867-870 |
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
-| [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-883 |
+| [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-884 |
+| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 885-887 |
 
 ## Docs/AI/DECISIONS.en.md
 

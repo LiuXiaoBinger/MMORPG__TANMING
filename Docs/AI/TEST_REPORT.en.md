@@ -881,3 +881,7 @@ Unity 2023.2.20f1c1 compiled three assemblies. In an isolated Editor, 21/21 chec
 ## [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit
 
 GameServer and Unity gameplay scripts compiled. Seven loopback steps verified reciprocal appearance on 102→99 m, movement only at 100 m, reciprocal leave at 101 m, no frames farther out, re-entry by the other player and map/instance isolation. Unity 2023.2.20f1c1 batch verified latest pending pose/jump, leave and pooled re-entry, zero-HP death, idle and point correction, and pursuit of the same monster around a 4 m obstacle. One local cast UUID/prediction was observed after reaching range, including a repeat correction. Two-device weak-network play and server-side skill settlement were not exercised. Evidence and file list in `项目修改日志/2026-11-23-玩家进出视野与导航纠位.md`.
+
+## [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification
+
+Luban generated three tables, 103 tier entries and 241 new genes. GameServer and GateServer built. Isolated game-server checks passed 56 assertions. Unity Play Mode passed 21 checks including six Huashan cards and valid sprite references. The working client compiled 413 scripts for each Editor/Windows Player target. Standalone branch sources still fail in pre-existing MainCtrl.cs lines 382 and 396. Live network play, database relogin and packaging were not exercised. Bleed/poison ticks and systems without an authoritative resource consumer require further configuration. See `项目修改日志/2026-11-23-秘笈图鉴与Luban基因.md`.
