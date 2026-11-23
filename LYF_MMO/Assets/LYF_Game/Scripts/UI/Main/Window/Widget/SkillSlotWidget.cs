@@ -2,15 +2,20 @@ using System;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
 /// 快捷技能槽，显示图标并从当前角色技能核心逐帧读取冷却剩余时间。
 /// </summary>
-public class SkillSlotWidget : MonoBehaviour
+// Unity 的指针分发要求实现 IPointerClickHandler，槽位只向窗口报告绑定的快捷键。
+public class SkillSlotWidget : MonoBehaviour, IPointerClickHandler
 {
 
     #region 字段
+    /// <summary>左键点击已绑定的技能槽时，派发当前槽位的固定快捷键。</summary>
+    public event Action<string> CastRequested;
+
     /// <summary>技能图标。</summary>
     [SerializeField, Header("技能图标")] private Image _imgIcon;
 
@@ -91,6 +96,16 @@ public class SkillSlotWidget : MonoBehaviour
     }
 
     #region 核心逻辑
+    /// <summary>接受左键点击，仅在槽位已绑定技能时发出施法请求。</summary>
+    /// <param name="eventData">Unity UI 传入的指针事件，用于区分鼠标按键。</param>
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left && _skillId > 0)
+        {
+            CastRequested?.Invoke(_skillKey);
+        }
+    }
+
     /// <summary>设置 key 对应的固定快捷键文字；清空技能时仍保留此文字。</summary>
     public void SetKey(string key)
     {

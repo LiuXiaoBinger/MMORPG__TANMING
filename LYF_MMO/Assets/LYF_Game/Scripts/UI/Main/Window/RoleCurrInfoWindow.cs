@@ -16,6 +16,9 @@ public class RoleCurrInfoWindow : WindowBase
     /// <summary>正式瞄准按钮点击通知，控制器接入 RO 同名目标切换流程。</summary>
     public event Action AimButtonClicked;
 
+    /// <summary>已绑定的技能槽收到左键点击，将固定快捷键交给技能控制器。</summary>
+    public event Action<string> SkillCastRequested;
+
     /// <summary>当前窗口生命周期内创建的瞄准按钮，重复初始化时复用。</summary>
     private Button _aimButton;
 
@@ -335,9 +338,17 @@ public class RoleCurrInfoWindow : WindowBase
             {
                 slot.SetRageFull(_rageIsFull);
             }
+            slot.CastRequested += OnSkillSlotClicked;
             _slots[key] = slot;
             _slotBindings.Remove(key);
         }
+    }
+
+    /// <summary>将槽位点击转发给技能控制器，由控制器执行施法流程。</summary>
+    /// <param name="key">发生点击的已绑定槽位的固定快捷键。</param>
+    private void OnSkillSlotClicked(string key)
+    {
+        SkillCastRequested?.Invoke(key);
     }
     #endregion
 

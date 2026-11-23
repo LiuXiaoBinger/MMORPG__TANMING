@@ -44,7 +44,7 @@ public sealed class SkillCtrl : CtrlBase
     #endregion
 
     #region 构造、初始化与事件注册
-    /// <summary>创建控制器并登记 11080 与三个施法协议的唯一处理器。</summary>
+    /// <summary>创建控制器并登记技能协议、目标切换和快捷栏点击。</summary>
     /// <param name="mainView">持有技能列表与快捷栏窗口的主界面。</param>
     public SkillCtrl(MainView mainView) : base(mainView)
     {
@@ -72,6 +72,7 @@ public sealed class SkillCtrl : CtrlBase
         if (_roleCurrentWindow != null)
         {
             _roleCurrentWindow.AimButtonClicked += OnAimButton;
+            _roleCurrentWindow.SkillCastRequested += OnSkillKey;
         }
         MSkillTargetMgr.singleton.TargetChanged += OnTargetChanged;
         RegisterInput();
@@ -95,6 +96,7 @@ public sealed class SkillCtrl : CtrlBase
         if (_roleCurrentWindow != null)
         {
             _roleCurrentWindow.AimButtonClicked -= OnAimButton;
+            _roleCurrentWindow.SkillCastRequested -= OnSkillKey;
         }
         SocketDispatcher.Instance.RemoveEventHandler(NetDefine.CMD_RoleSkillInfoCode,
             OnRoleSkillInfo);
@@ -227,8 +229,8 @@ public sealed class SkillCtrl : CtrlBase
         ApplyRoleSkillInfo(result, localRole);
     }
 
-    /// <summary>快捷键入口：查找该键绑定的已学技能，交给 MSkillClassicsHandler 发起施法，再刷新冷却显示。</summary>
-    /// <param name="key">输入系统上报的固定技能快捷键。</param>
+    /// <summary>键盘或快捷栏点击共用的入口，按当前绑定发起施法并刷新显示。</summary>
+    /// <param name="key">键盘输入或鼠标点中的技能槽对应的固定快捷键。</param>
     private void OnSkillKey(string key)
     {
         if (string.IsNullOrEmpty(key))
