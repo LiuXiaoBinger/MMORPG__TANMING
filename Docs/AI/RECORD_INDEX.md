@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `49dafefb1929b9b1c292ec275c5b6549c0bfa69ffb21972ec1063baa6fa5535c`
+Source normalized SHA256: `fcbdee45d9012a895162bd84ee132fee9456b2745cf791521352dd98d36c01e3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -124,13 +124,13 @@ Source normalized SHA256: `49dafefb1929b9b1c292ec275c5b6549c0bfa69ffb21972ec1063
 | [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
 | [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-858 |
-| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 859-862 |
-| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 863-866 |
-| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 867-869 |
+| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 859-864 |
+| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 865-868 |
+| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-871 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `062ce09975889574e708a5760b868d206b7e50db52fd9197c7719d4b797017d9`
+Source normalized SHA256: `156dccda77b9fdc7fedd19ef99ba16a977e6978cbbaa1250fc3859d0bf6bcd30`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -246,9 +246,9 @@ Source normalized SHA256: `062ce09975889574e708a5760b868d206b7e50db52fd9197c7719
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
 | [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-886 |
-| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-892 |
-| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 893-896 |
-| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 897-899 |
+| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-894 |
+| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 895-898 |
+| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-901 |
 
 ## Docs/AI/DECISIONS.en.md
 
