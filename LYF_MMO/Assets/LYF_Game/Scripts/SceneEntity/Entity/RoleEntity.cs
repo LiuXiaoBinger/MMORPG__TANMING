@@ -1,4 +1,5 @@
 using MMoRpgCommon.SceneEntity;
+using UnityEngine;
 
 /// <summary>
 /// 保存角色基础同步信息的场景实体，也是本地玩家 PlayerEntity 的基类。
@@ -6,6 +7,62 @@ using MMoRpgCommon.SceneEntity;
 /// </summary>
 public class RoleEntity : MEntity
 {
+    /// <summary>本次进入视野后、模型绑定前收到的最后一条位姿；离场或应用后清除。</summary>
+    private SyncMoveNtf _pendingVisibleMove;
+
+    /// <summary>接收本次入场的远端移动；模型未就绪时仅保留最新一条，已就绪时交给移动组件。</summary>
+    /// <param name="notice">此角色的 11181 消息，含世界米坐标、水平角度和当前移动、跳跃状态。</param>
+    internal void ApplyVisibleMove(SyncMoveNtf notice)
+    {
+        if (!Model.IsLoaded)
+        {
+            _pendingVisibleMove = notice;
+            return;
+        }
+        // 现有移动事件使用水平方向向量，协议提供绕世界 Y 轴的角度。
+        Vector3 face = Quaternion.Euler(0f, notice.Face, 0f) * Vector3.forward;
+        // 由实体事件池回收，正常移动和绑定首帧都沿用同一套追赶与跳跃表现。
+        MMoveEventArgs move = MMoveEventArgs.Create(notice.IsMoving,
+            new Vector3(notice.Dx, notice.Dy, notice.Dz), face, notice.IsMoved, notice.Time, false, notice.JumpCount);
+        DispatchEvent(MEventType.MEvent_Move, move);
+    }
+
+    /// <summary>绑定预制体前，以加载期间最后收到的位姿落地，没有移动更新则使用入场资料。</summary>
+    /// <param name="root">本次异步加载完成、即将交给模型系统的角色根节点。</param>
+    internal void PlaceVisibleModel(Transform root)
+    {
+        if (_pendingVisibleMove != null)
+        {
+            root.SetPositionAndRotation(new Vector3(_pendingVisibleMove.Dx, _pendingVisibleMove.Dy, _pendingVisibleMove.Dz),
+                Quaternion.Euler(0f, _pendingVisibleMove.Face, 0f));
+            return;
+        }
+        // 基础资料中的 Pos 使用 x_y_z 格式，转换结果为世界米数。
+        System.Numerics.Vector3 position = BaseInfo.Pos.ToVector3();
+        root.position = new Vector3(position.X, position.Y, position.Z);
+    }
+
+    /// <summary>模型绑定后恢复当前移动姿势及基础资料已有的死亡状态，不重播加载期间的旧动作。</summary>
+    internal void RestoreVisibleState()
+    {
+        if (_pendingVisibleMove != null)
+        {
+            ApplyVisibleMove(_pendingVisibleMove);
+            _pendingVisibleMove = null;
+        }
+        if (IsDead && CurrentState != StateDefine.kStateDead)
+        {
+            DispatchEvent(MEventType.Death, null);
+        }
+    }
+
+    /// <summary>离开视野或切换场景时丢弃未绑定的位姿，再沿实体原流程释放模型和组件。</summary>
+    protected override void OnDestroying()
+    {
+        _pendingVisibleMove = null;
+        base.OnDestroying();
+    }
+
     /// <summary>
     /// 构造其他角色场景实体（默认 Role 类型）
     /// </summary>

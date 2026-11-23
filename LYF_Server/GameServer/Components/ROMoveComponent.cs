@@ -117,6 +117,8 @@ public sealed class ROMoveComponent : RoleComponentBase
                 state_machine.OnMove();
             }
         }
+        // 获准移动前的世界坐标（米），用于判断玩家是否刚跨过视野边界。
+        System.Numerics.Vector3 previousPosition = Owner.mainRoleInfo.BaseInfo.Pos.ToVector3();
         // 进入世界和技能附近广播都读取这份已通过限制的基础位置。
         Owner.mainRoleInfo.BaseInfo.Pos = reportedPosition;
         // 与即将同步给其他角色的Face保存同一值，供原RO背对伤害判定读取。
@@ -135,6 +137,6 @@ public sealed class ROMoveComponent : RoleComponentBase
             IsMoved = action.IsMoved,
             // 只转发本段跳跃姿势，不由坐标高度猜测动画，也不另做服务器跳跃物理。
             JumpCount = action.JumpCount
-        });
+        }, previousPosition);
     }
 }

@@ -315,6 +315,15 @@ public class MNavigationComponent : EntityComponentBase
         }
     }
 
+    /// <summary>主角应用服务器纠位后，从新落点重算仍在执行的路线，沿用原目标、射程和到达动作。</summary>
+    internal void ReplanAfterPositionCorrection()
+    {
+        if (_isNavigation)
+        {
+            navigate();
+        }
+    }
+
     /// <summary>按RO顺序判定范围、选择目标或位置查询，再启动既有移动动画。</summary>
     private void navigate()
     {

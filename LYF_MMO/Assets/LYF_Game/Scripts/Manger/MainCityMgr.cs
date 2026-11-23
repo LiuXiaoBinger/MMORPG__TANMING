@@ -334,7 +334,7 @@ public class MainCityMgr : MonoBehaviour
    }
     #endregion
 
-   /// <summary>按服务器最近保存的世界坐标修正已加载的本地主角位置。</summary>
+   /// <summary>按服务器坐标修正本地主角，并从落点继续仍在执行的导航。</summary>
    /// <param name="data">11182 位置纠正的 Protobuf 消息体，包含角色 ID 和三个世界坐标分量。</param>
    private void MovePositionCorrectionHandle(ByteString data)
    {
@@ -347,6 +347,7 @@ public class MainCityMgr : MonoBehaviour
          return;
       }
       localRole.Position = new Vector3(notice.Dx, notice.Dy, notice.Dz);
+      localRole.NavComp?.ReplanAfterPositionCorrection();
    }
 
     #region 其他玩家同步
@@ -356,19 +357,13 @@ public class MainCityMgr : MonoBehaviour
    {
       // 服务端协议中的角色 ID 使用持久化 ID，位置为世界米、Time 为秒。
       SyncMoveNtf ptc = SyncMoveNtf.Parser.ParseFrom(data);
-      // 当前主城世界已存在的角色；移动消息不负责创建额外实体或缓存等待队列。
+      // 只让本次已进入视野的角色接收移动，离场后的晚到消息不能重新创建角色。
       RoleEntity role;
       if (!Global.Instance.SceneWorld.TryGetRole(ptc.RoleId, out role) || role.IsPlayer)
       {
          return;
       }
-      // Y 轴角度转换成水平单位朝向，沿用 RO 移动事件的 face 字段。
-      Vector3 face = Quaternion.Euler(0f, ptc.Face, 0f) * Vector3.forward;
-      // 事件池负责本次同步载荷生命周期，分发结束自动归还。
-      MMoveEventArgs moveArgs = MMoveEventArgs.Create(ptc.IsMoving,
-         new Vector3(ptc.Dx, ptc.Dy, ptc.Dz), face, ptc.IsMoved, ptc.Time, false,
-         ptc.JumpCount);
-      role.DispatchEvent(MEventType.MEvent_Move, moveArgs);
+      role.ApplyVisibleMove(ptc);
    }
 
    /// <summary>处理服务器下发的角色离开视野通知，只销毁指定远端角色，保留本地主角。</summary>
@@ -645,9 +640,7 @@ public class MainCityMgr : MonoBehaviour
             }
             else
             {
-               // 远端玩家入场消息已经携带服务器当前位置，沿现有网络坐标转换读取世界米数。
-               System.Numerics.Vector3 serverPosition = baseInfo.Pos.ToVector3();
-               obj.transform.position = new Vector3(serverPosition.X, serverPosition.Y, serverPosition.Z);
+               roleEntity.PlaceVisibleModel(obj.transform);
             }
             transformComponent.Apply(new EntityTransformSnapshot
             {
@@ -672,8 +665,9 @@ public class MainCityMgr : MonoBehaviour
             {
                // 正式其他玩家预制体上的旧兼容控制器绑定实体后停止自己的重力与根运动写入。
                OtherRoleCtrl otherRoleController = obj.GetComponent<OtherRoleCtrl>();
-               otherRoleController.InitCtrl(RoleType.OtherRole, baseInfo);
+               otherRoleController.InitCtrl(RoleType.OtherRole, roleEntity.BaseInfo);
                otherRoleController.SetROObject(sceneEntity);
+               roleEntity.RestoreVisibleState();
             }
             if (roleType == RoleType.MainRole && CameraMgr.Instance != null)
             {

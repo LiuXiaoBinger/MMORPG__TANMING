@@ -560,11 +560,18 @@ public class RoleManager
         }
     }
 
-    /// <summary>向现有同地图 100 米范围的其他在线角色同步移动终点和朝向。</summary>
+    /// <summary>在同图同实例角色跨过 100 米边界时双向通知进出视野，并向范围内的观察者同步移动。</summary>
     /// <param name="pRole">本次移动的原在线角色，其基础位置已由移动组件更新。</param>
     /// <param name="notice">客户端本段移动数据，角色 ID 由服务器填充。</param>
-    public void SyncMove(OnlineRole pRole, SyncMoveNtf notice)
+    /// <param name="previousPosition">本次获准移动前的世界坐标（米）；仅补发当前位置时省略。</param>
+    public void SyncMove(OnlineRole pRole, SyncMoveNtf notice, Vector3? previousPosition = null)
     {
+        // 移动者的当前权威资料，刚进入视野的观察者用它创建角色。
+        RoleBaseInfo movingInfo = pRole.mainRoleInfo.BaseInfo;
+        // 本次上报已接受的世界坐标，单位米。
+        Vector3 endPosition = movingInfo.Pos.ToVector3();
+        // 补发位置时起点与终点相同，不产生进出通知。
+        Vector3 startPosition = previousPosition.GetValueOrDefault(endPosition);
         // 序列化一次后复用不可变字节；本人继续本地移动，不等待移动回包。
         ByteString payload = notice.ToByteString();
         // 使用现有索引的引用快照，保持角色对象和既有附近判断一致。
@@ -575,11 +582,30 @@ public class RoleManager
             // 目标仍是正式索引中的原角色对象，用于读取当前会话与地图。
             OnlineRole observer = onlineRoles[index];
             if (observer == pRole || observer.State != OnlineRoleState.Online ||
-                !IsNearbyRole(observer, pRole.mainRoleInfo))
+                !IsInSameRoleScene(observer, pRole.mainRoleInfo))
             {
                 continue;
             }
-            observer.SendToClient(NetDefine.CMD_SyncMoveCode, payload);
+            // 同场景观察者的权威资料，供移动者创建或移除对方。
+            RoleBaseInfo observerInfo = observer.mainRoleInfo.BaseInfo;
+            // 用同一个观察者位置比较移动前后，双方同时走动时按游戏服处理顺序更新。
+            Vector3 observerPosition = observerInfo.Pos.ToVector3();
+            // 正好 100 米仍可见，连续留在同一侧不重复发送出现或离开。
+            bool wasNearby = IsWithinSight(observerPosition, startPosition);
+            if (IsWithinSight(observerPosition, endPosition))
+            {
+                if (!wasNearby)
+                {
+                    observer.SendToClient(NetDefine.CMD_SyncotherOnlineCode, movingInfo.ToByteString());
+                    pRole.SendToClient(NetDefine.CMD_SyncotherOnlineCode, observerInfo.ToByteString());
+                }
+                observer.SendToClient(NetDefine.CMD_SyncMoveCode, payload);
+            }
+            else if (wasNearby)
+            {
+                observer.SendToClient(NetDefine.CMD_RoleLeaveCode, BuildRoleLeavePayload(movingInfo));
+                pRole.SendToClient(NetDefine.CMD_RoleLeaveCode, BuildRoleLeavePayload(observerInfo));
+            }
         }
     }
 
@@ -598,13 +624,8 @@ public class RoleManager
         }
         // 离开者的基础信息，此时 MapId/InstanceId 仍是离开前的旧值，是本次过滤与通知内容的依据。
         RoleBaseInfo leavingInfo = leavingRole.mainRoleInfo.BaseInfo;
-        // 离开通知：携带角色ID与离开前的场景、实例，客户端据此删除对应远端模型。
-        RoleLeaveNtf notice = new RoleLeaveNtf();
-        notice.RoleId = (ulong)leavingInfo.RoleId;
-        notice.SceneId = leavingInfo.MapId;
-        notice.InstanceId = (ulong)leavingInfo.InstanceId;
         // 已序列化的通知字节，整轮广播复用同一份，避免每个观察者重复序列化。
-        ByteString payload = notice.ToByteString();
+        ByteString payload = BuildRoleLeavePayload(leavingInfo);
 
         // 使用现有索引的引用快照，与移动、技能广播保持同一份收件人来源。
         // onlineRoles 是遍历用的副本，避免广播过程中索引被并发修改。
@@ -722,6 +743,41 @@ public class RoleManager
     /// <returns>应收到该广播返回 true。</returns>
     public static bool IsNearbyRole(OnlineRole role, MainRoleInfo currentRole)
     {
+        if (!IsInSameRoleScene(role, currentRole))
+        {
+            return false;
+        }
+        return IsWithinSight(role.mainRoleInfo.BaseInfo.Pos.ToVector3(), currentRole.BaseInfo.Pos.ToVector3());
+    }
+
+    /// <summary>按三维世界距离判断玩家是否在 100 米视野内，包含边界。</summary>
+    /// <param name="observer">观察者的世界坐标，单位米。</param>
+    /// <param name="subject">被观察者的世界坐标，单位米。</param>
+    /// <returns>距离不超过 100 米时为真。</returns>
+    private static bool IsWithinSight(Vector3 observer, Vector3 subject)
+    {
+        return Vector3.DistanceSquared(observer, subject) <= 100f * 100f;
+    }
+
+    /// <summary>自然走出视野和切换场景共用的 11213 离开通知。</summary>
+    /// <param name="role">接收方需要移除的角色及其离开前的地图和实例。</param>
+    /// <returns>可发给观察者的离开消息字节。</returns>
+    private static ByteString BuildRoleLeavePayload(RoleBaseInfo role)
+    {
+        return new RoleLeaveNtf
+        {
+            RoleId = (ulong)role.RoleId,
+            SceneId = role.MapId,
+            InstanceId = (ulong)role.InstanceId
+        }.ToByteString();
+    }
+
+    /// <summary>检查两个角色是否都具备基础资料并位于同一地图和副本实例。</summary>
+    /// <param name="role">候选观察者。</param>
+    /// <param name="currentRole">被观察角色的权威资料。</param>
+    /// <returns>可以在同一场景内比较视野距离时为真。</returns>
+    private static bool IsInSameRoleScene(OnlineRole role, MainRoleInfo currentRole)
+    {
         // 先过滤空对象和地图，再计算三维距离，避免无效坐标触发异常。
         // 角色一侧的主角色快照或基础信息缺失时按不邻近处理。
         if (role == null || role.mainRoleInfo == null || role.mainRoleInfo.BaseInfo == null)
@@ -740,14 +796,7 @@ public class RoleManager
         }
     #endregion
         // 同一地图内不同队伍分属不同副本实例，实例不同即互相不可见。
-        if (role.mainRoleInfo.BaseInfo.InstanceId != currentRole.BaseInfo.InstanceId)
-        {
-            return false;
-        }
-
-        return Vector3.Distance(
-            role.mainRoleInfo.BaseInfo.Pos.ToVector3(),
-            currentRole.BaseInfo.Pos.ToVector3()) <= 100f;
+        return role.mainRoleInfo.BaseInfo.InstanceId == currentRole.BaseInfo.InstanceId;
     }
 
     private static long CreateSessionKey(int gateSessionID, int unitySessionID)
