@@ -347,6 +347,14 @@ public sealed class SkillCtrl : CtrlBase
         ManualReply reply = ManualReply.Parser.ParseFrom(payload);
         PlayerEntity role = GetLocalRole();
         if (reply.Catalog != null && (role == null || role.GetID() != reply.RoleId)) return;
+        if (reply.Action == ManualAction.ManualCompose || reply.Action == ManualAction.ManualLearn)
+        {
+            // 背包内操作也可收到结果；两种操作分别报告入包与学会。
+            string message = reply.Message;
+            if (reply.Success && reply.Action == ManualAction.ManualCompose) message = "合成成功，整本秘笈已放入背包";
+            if (reply.Success && reply.Action == ManualAction.ManualLearn) message = "领悟成功";
+            TipsMgr.Instance.ShowSystemTips(message);
+        }
         if (_skillWindow != null) _skillWindow.ApplyManual(reply);
     }
 

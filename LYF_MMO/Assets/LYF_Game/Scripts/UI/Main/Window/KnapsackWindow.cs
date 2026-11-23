@@ -155,7 +155,30 @@ public class KnapsackWindow : WindowBase
     // ============================================================
 
     #region 生命周期
-    /// <summary>完成一次性事件和格子池初始化，再按当前布局显示背包。</summary>
+    /// <summary>当前背包显示的秘笈物品详情模板。</summary>
+    [SerializeField, Tooltip("背包内秘笈整本和碎片共用的物品详情预制体")]
+    private MartialManualItemPopup manualItemPrefab;
+    /// <summary>当前窗口打开的物品弹层，随背包关闭。</summary>
+    private MartialManualItemPopup manualItem;
+
+    /// <summary>打开所点秘笈的物品卡，并绑定本次点击的两项业务。</summary>
+    /// <param name="item">物品文本、使用等级和图标。</param><param name="book">所属秘笈及配方。</param>
+    /// <param name="fragment">当前实例是否为碎片。</param><param name="held">本物品的背包合计。</param>
+    /// <param name="train">进入该书培养页。</param><param name="use">合成或使用整本领悟。</param>
+    public void ShowManualItem(cfg.ItemInfo item, cfg.MartialManualInfo book, bool fragment, int held, System.Action train, System.Action use)
+    {
+        if (manualItem == null) manualItem = Instantiate(manualItemPrefab, transform, false);
+        manualItem.transform.SetAsLastSibling();
+        manualItem.Show(item, book, fragment, held, train, use);
+    }
+
+    /// <summary>收起随背包和当前角色复用的秘笈详情。</summary>
+    public void CloseManualItem()
+    {
+        if (manualItem != null) manualItem.gameObject.SetActive(false);
+    }
+
+    /// <summary>首次打开时绑定当前背包控件。</summary>
     private void Awake()
     {
         // 首次初始化：注册事件、回收模板、计算布局、刷新列表
@@ -209,6 +232,7 @@ public class KnapsackWindow : WindowBase
     /// <summary>关闭背包，并沿B键关闭流程更新背包状态及角色展示镜头。</summary>
     public override void CloseWindow()
     {
+        CloseManualItem();
         base.CloseWindow();
         CameraMgr.Instance.KnapsackWindowAngle(this);
     }

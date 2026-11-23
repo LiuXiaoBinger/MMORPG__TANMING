@@ -173,6 +173,18 @@ public class SkillInfoWindow : WindowBase
     /// <summary>当前页面产生的秘笈操作，由技能控制器发送。</summary>
     public event System.Action<ManualRequest> ManualRequested;
 
+    /// <summary>背包培养按钮直达当前书籍，在一次页面刷新中打开秘笈列表和培养窗口。</summary>
+    /// <param name="bookId">背包物品对应的书目编号。</param>
+    public void OpenManualTraining(int bookId)
+    {
+        _category = CategorySecret;
+        _page = PageList;
+        _viewingSlots = false;
+        RefreshTabs();
+        ApplyPage();
+        _manualPanel.OpenBookTraining(bookId);
+    }
+
     /// <summary>把服务器秘笈状态交给仍可见的页面。</summary><param name="reply">当前角色的权威进度。</param>
     public void ApplyManual(ManualReply reply)
     {

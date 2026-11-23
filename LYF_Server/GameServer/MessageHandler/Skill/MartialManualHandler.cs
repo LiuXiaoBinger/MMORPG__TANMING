@@ -19,7 +19,7 @@ public sealed class MartialManualHandler : IGameMessageHandler
         // 原网关会话当前登录的角色。
         OnlineRole role = RoleManager.Instance.GetOnlineRoleBySession(context.Package.GateSessionId, context.Package.UnitySessionId);
         // 角色未载入时向原窗口说明原因。
-        ManualReply reply = new ManualReply { Message = "角色数据尚未就绪" };
+        ManualReply reply = new ManualReply { Action = request.Action, Message = "角色数据尚未就绪" };
         if (role != null && role.State == OnlineRoleState.Online && role.IsRoleDataReady())
             reply = MartialManualSystem.Execute(role, request);
         context.Transport.Send(context.Package, NetDefine.CMD_MartialManual, reply.ToByteString());

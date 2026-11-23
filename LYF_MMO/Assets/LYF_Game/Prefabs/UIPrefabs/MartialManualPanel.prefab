@@ -5837,6 +5837,7 @@ MonoBehaviour:
   copperBalance: {fileID: 754123307124472532}
   materialIcon: {fileID: 5730699179318089836}
   previewArrow: {fileID: 4853061700573372218}
+  fragmentSprite: {fileID: 21300454, guid: e15d8e79f27738640b905c64822b9363, type: 3}
   trainingMaterial: {fileID: 21300282, guid: e15d8e79f27738640b905c64822b9363, type: 3}
   detailContent: {fileID: 4232021123129624464}
   filterText: {fileID: 3176076075291480123}

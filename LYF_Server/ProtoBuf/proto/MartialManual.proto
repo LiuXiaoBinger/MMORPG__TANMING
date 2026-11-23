@@ -9,6 +9,7 @@ enum ManualAction {
   MANUAL_INSIGHT = 4;
   MANUAL_LEARN = 5;
   MANUAL_SELECT_SCHEME = 6;
+  MANUAL_COMPOSE = 7; // 将同名碎片合为一本背包物品。
 }
 message ManualRequest {
   ManualAction action = 1;
@@ -39,7 +40,7 @@ message ManualBook {
   string name = 2;
   string description = 3;
   int32 start_level = 4;
-  ManualCost learn = 5;
+  ManualCost learn = 5; // 同名碎片合成一本的配方。
   repeated ManualCost upgrades = 6;
   repeated ManualCost ranks = 7;
   repeated ManualCost insights = 8;
@@ -60,6 +61,7 @@ message ManualBook {
   bool collect_inner = 23; // 领悟防御属于内功。
   bool equip_inner = 24; // 装备防御属于内功。
   int32 equip_extra_inner = 25; // 同时具有外防和内防的额外内防点数。
+  int32 volume_item = 27; // 整本在背包中的物品号，使用一本领悟。
   repeated string tier_passive = 26; // 从零阶开始的当前被动说明。
 }
 message ManualCatalog {

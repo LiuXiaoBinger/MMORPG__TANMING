@@ -30,7 +30,7 @@ public static partial class MartialManualReflection {
           "Y29wcGVyGAQgASgFIngKC01hbnVhbEJsZWVkEhEKCWVmZmVjdF9pZBgBIAEo",
           "BRIYChBkdXJhdGlvbl9zZWNvbmRzGAIgASgFEhYKDmNoYW5jZV9wZXJjZW50",
           "GAMgAygFEg8KB3RpY2tfbXMYBCABKAUSEwoLdGlja19kYW1hZ2UYBSABKAUi",
-          "zwQKCk1hbnVhbEJvb2sSCgoCaWQYASABKAUSDAoEbmFtZRgCIAEoCRITCgtk",
+          "5AQKCk1hbnVhbEJvb2sSCgoCaWQYASABKAUSDAoEbmFtZRgCIAEoCRITCgtk",
           "ZXNjcmlwdGlvbhgDIAEoCRITCgtzdGFydF9sZXZlbBgEIAEoBRIaCgVsZWFy",
           "bhgFIAEoCzILLk1hbnVhbENvc3QSHQoIdXBncmFkZXMYBiADKAsyCy5NYW51",
           "YWxDb3N0EhoKBXJhbmtzGAcgAygLMgsuTWFudWFsQ29zdBIdCghpbnNpZ2h0",
@@ -42,29 +42,30 @@ public static partial class MartialManualReflection {
           "dBgSIAMoCRIZChFmaXJzdF9yYW5rX2F0dGFjaxgTIAEoBRIOCgZzb3VyY2UY",
           "FCABKAkSGwoFYmxlZWQYFSABKAsyDC5NYW51YWxCbGVlZBIOCgZzY2hvb2wY",
           "FiABKAkSFQoNY29sbGVjdF9pbm5lchgXIAEoCBITCgtlcXVpcF9pbm5lchgY",
-          "IAEoCBIZChFlcXVpcF9leHRyYV9pbm5lchgZIAEoBRIUCgx0aWVyX3Bhc3Np",
-          "dmUYGiADKAkiUAoNTWFudWFsQ2F0YWxvZxIaCgVib29rcxgBIAMoCzILLk1h",
-          "bnVhbEJvb2sSDwoHc2NoZW1lcxgCIAMoCRISCgpvcGVuX3Nsb3RzGAMgASgF",
-          "Ik0KDk1hbnVhbFByb2dyZXNzEgwKBGJvb2sYASABKAUSDQoFbGV2ZWwYAiAB",
-          "KAUSDAoEcmFuaxgDIAEoBRIQCghpbnNpZ2h0cxgEIAEoBSK0AgoLTWFudWFs",
-          "UmVwbHkSDwoHcm9sZV9pZBgBIAEoBRIfCgdjYXRhbG9nGAIgASgLMg4uTWFu",
-          "dWFsQ2F0YWxvZxIhCghwcm9ncmVzcxgDIAMoCzIPLk1hbnVhbFByb2dyZXNz",
-          "Eg4KBnNjaGVtZRgEIAEoBRINCgVzbG90cxgFIAMoBRIuCgltYXRlcmlhbHMY",
-          "BiADKAsyGy5NYW51YWxSZXBseS5NYXRlcmlhbHNFbnRyeRIOCgZjb3BwZXIY",
-          "ByABKAMSDwoHbWVzc2FnZRgIIAEoCRIdCgZhY3Rpb24YCSABKA4yDS5NYW51",
-          "YWxBY3Rpb24SDwoHc3VjY2VzcxgKIAEoCBowCg5NYXRlcmlhbHNFbnRyeRIL",
-          "CgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAU6AjgBKpUBCgxNYW51YWxBY3Rp",
-          "b24SDwoLTUFOVUFMX1JFQUQQABIPCgtNQU5VQUxfU0FWRRABEhIKDk1BTlVB",
-          "TF9VUEdSQURFEAISDwoLTUFOVUFMX1JBTksQAxISCg5NQU5VQUxfSU5TSUdI",
-          "VBAEEhAKDE1BTlVBTF9MRUFSThAFEhgKFE1BTlVBTF9TRUxFQ1RfU0NIRU1F",
-          "EAZiBnByb3RvMw=="));
+          "IAEoCBIZChFlcXVpcF9leHRyYV9pbm5lchgZIAEoBRITCgt2b2x1bWVfaXRl",
+          "bRgbIAEoBRIUCgx0aWVyX3Bhc3NpdmUYGiADKAkiUAoNTWFudWFsQ2F0YWxv",
+          "ZxIaCgVib29rcxgBIAMoCzILLk1hbnVhbEJvb2sSDwoHc2NoZW1lcxgCIAMo",
+          "CRISCgpvcGVuX3Nsb3RzGAMgASgFIk0KDk1hbnVhbFByb2dyZXNzEgwKBGJv",
+          "b2sYASABKAUSDQoFbGV2ZWwYAiABKAUSDAoEcmFuaxgDIAEoBRIQCghpbnNp",
+          "Z2h0cxgEIAEoBSK0AgoLTWFudWFsUmVwbHkSDwoHcm9sZV9pZBgBIAEoBRIf",
+          "CgdjYXRhbG9nGAIgASgLMg4uTWFudWFsQ2F0YWxvZxIhCghwcm9ncmVzcxgD",
+          "IAMoCzIPLk1hbnVhbFByb2dyZXNzEg4KBnNjaGVtZRgEIAEoBRINCgVzbG90",
+          "cxgFIAMoBRIuCgltYXRlcmlhbHMYBiADKAsyGy5NYW51YWxSZXBseS5NYXRl",
+          "cmlhbHNFbnRyeRIOCgZjb3BwZXIYByABKAMSDwoHbWVzc2FnZRgIIAEoCRId",
+          "CgZhY3Rpb24YCSABKA4yDS5NYW51YWxBY3Rpb24SDwoHc3VjY2VzcxgKIAEo",
+          "CBowCg5NYXRlcmlhbHNFbnRyeRILCgNrZXkYASABKAUSDQoFdmFsdWUYAiAB",
+          "KAU6AjgBKqkBCgxNYW51YWxBY3Rpb24SDwoLTUFOVUFMX1JFQUQQABIPCgtN",
+          "QU5VQUxfU0FWRRABEhIKDk1BTlVBTF9VUEdSQURFEAISDwoLTUFOVUFMX1JB",
+          "TksQAxISCg5NQU5VQUxfSU5TSUdIVBAEEhAKDE1BTlVBTF9MRUFSThAFEhgK",
+          "FE1BTlVBTF9TRUxFQ1RfU0NIRU1FEAYSEgoOTUFOVUFMX0NPTVBPU0UQB2IG",
+          "cHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ManualAction), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualRequest), global::ManualRequest.Parser, new[]{ "Action", "Book", "Level", "Rank", "Insights", "Scheme", "Slots" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualCost), global::ManualCost.Parser, new[]{ "Level", "Item", "Amount", "Copper" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualBleed), global::ManualBleed.Parser, new[]{ "EffectId", "DurationSeconds", "ChancePercent", "TickMs", "TickDamage" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ManualBook), global::ManualBook.Parser, new[]{ "Id", "Name", "Description", "StartLevel", "Learn", "Upgrades", "Ranks", "Insights", "CollectDef", "CollectHp", "EquipDef", "EquipHp", "CollectDefStep", "CollectHpStep", "EquipDefStep", "EquipHpStep", "Passive", "RankText", "FirstRankAttack", "Source", "Bleed", "School", "CollectInner", "EquipInner", "EquipExtraInner", "TierPassive" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ManualBook), global::ManualBook.Parser, new[]{ "Id", "Name", "Description", "StartLevel", "Learn", "Upgrades", "Ranks", "Insights", "CollectDef", "CollectHp", "EquipDef", "EquipHp", "CollectDefStep", "CollectHpStep", "EquipDefStep", "EquipHpStep", "Passive", "RankText", "FirstRankAttack", "Source", "Bleed", "School", "CollectInner", "EquipInner", "EquipExtraInner", "VolumeItem", "TierPassive" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualCatalog), global::ManualCatalog.Parser, new[]{ "Books", "Schemes", "OpenSlots" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualProgress), global::ManualProgress.Parser, new[]{ "Book", "Level", "Rank", "Insights" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualReply), global::ManualReply.Parser, new[]{ "RoleId", "Catalog", "Progress", "Scheme", "Slots", "Materials", "Copper", "Message", "Action", "Success" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
@@ -85,6 +86,10 @@ public enum ManualAction {
   [pbr::OriginalName("MANUAL_INSIGHT")] ManualInsight = 4,
   [pbr::OriginalName("MANUAL_LEARN")] ManualLearn = 5,
   [pbr::OriginalName("MANUAL_SELECT_SCHEME")] ManualSelectScheme = 6,
+  /// <summary>
+  /// 将同名碎片合为一本背包物品。
+  /// </summary>
+  [pbr::OriginalName("MANUAL_COMPOSE")] ManualCompose = 7,
 }
 
 #endregion
@@ -1216,6 +1221,7 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     collectInner_ = other.collectInner_;
     equipInner_ = other.equipInner_;
     equipExtraInner_ = other.equipExtraInner_;
+    volumeItem_ = other.volumeItem_;
     tierPassive_ = other.tierPassive_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -1277,6 +1283,9 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
   /// <summary>Field number for the "learn" field.</summary>
   public const int LearnFieldNumber = 5;
   private global::ManualCost learn_;
+  /// <summary>
+  /// 同名碎片合成一本的配方。
+  /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public global::ManualCost Learn {
@@ -1534,6 +1543,21 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     }
   }
 
+  /// <summary>Field number for the "volume_item" field.</summary>
+  public const int VolumeItemFieldNumber = 27;
+  private int volumeItem_;
+  /// <summary>
+  /// 整本在背包中的物品号，使用一本领悟。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int VolumeItem {
+    get { return volumeItem_; }
+    set {
+      volumeItem_ = value;
+    }
+  }
+
   /// <summary>Field number for the "tier_passive" field.</summary>
   public const int TierPassiveFieldNumber = 26;
   private static readonly pb::FieldCodec<string> _repeated_tierPassive_codec
@@ -1588,6 +1612,7 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     if (CollectInner != other.CollectInner) return false;
     if (EquipInner != other.EquipInner) return false;
     if (EquipExtraInner != other.EquipExtraInner) return false;
+    if (VolumeItem != other.VolumeItem) return false;
     if(!tierPassive_.Equals(other.tierPassive_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -1621,6 +1646,7 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     if (CollectInner != false) hash ^= CollectInner.GetHashCode();
     if (EquipInner != false) hash ^= EquipInner.GetHashCode();
     if (EquipExtraInner != 0) hash ^= EquipExtraInner.GetHashCode();
+    if (VolumeItem != 0) hash ^= VolumeItem.GetHashCode();
     hash ^= tierPassive_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -1729,6 +1755,10 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
       output.WriteInt32(EquipExtraInner);
     }
     tierPassive_.WriteTo(output, _repeated_tierPassive_codec);
+    if (VolumeItem != 0) {
+      output.WriteRawTag(216, 1);
+      output.WriteInt32(VolumeItem);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1828,6 +1858,10 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
       output.WriteInt32(EquipExtraInner);
     }
     tierPassive_.WriteTo(ref output, _repeated_tierPassive_codec);
+    if (VolumeItem != 0) {
+      output.WriteRawTag(216, 1);
+      output.WriteInt32(VolumeItem);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1904,6 +1938,9 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     }
     if (EquipExtraInner != 0) {
       size += 2 + pb::CodedOutputStream.ComputeInt32Size(EquipExtraInner);
+    }
+    if (VolumeItem != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeInt32Size(VolumeItem);
     }
     size += tierPassive_.CalculateSize(_repeated_tierPassive_codec);
     if (_unknownFields != null) {
@@ -1990,6 +2027,9 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     }
     if (other.EquipExtraInner != 0) {
       EquipExtraInner = other.EquipExtraInner;
+    }
+    if (other.VolumeItem != 0) {
+      VolumeItem = other.VolumeItem;
     }
     tierPassive_.Add(other.tierPassive_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -2121,6 +2161,10 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
           tierPassive_.AddEntriesFrom(input, _repeated_tierPassive_codec);
           break;
         }
+        case 216: {
+          VolumeItem = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -2248,6 +2292,10 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
         }
         case 210: {
           tierPassive_.AddEntriesFrom(ref input, _repeated_tierPassive_codec);
+          break;
+        }
+        case 216: {
+          VolumeItem = input.ReadInt32();
           break;
         }
       }

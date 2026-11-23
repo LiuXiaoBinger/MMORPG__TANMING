@@ -21,7 +21,7 @@ internal static class MartialManualSystem
         {
             // 负防御表示内防，传给客户端的数值始终为正。
             cfg.MartialManualInfo row = tables.TbMartialManualInfo.DataList[index];
-            ManualBook book = new ManualBook { Id = row.Id, Name = row.Name, School = row.School,
+            ManualBook book = new ManualBook { Id = row.Id, VolumeItem = row.VolumeItem, Name = row.Name, School = row.School,
                 Description = row.Description, StartLevel = row.StartLevel, CollectInner = row.CollectDef < 0,
                 CollectDef = Math.Abs(row.CollectDef), CollectHp = row.CollectHp, EquipInner = row.EquipDef < 0,
                 EquipDef = Math.Abs(row.EquipDef), EquipHp = row.EquipHp, EquipExtraInner = row.EquipInnerDef,
@@ -137,8 +137,9 @@ internal static class MartialManualSystem
             if (request.Scheme < 1 || request.Scheme > Catalog.Schemes.Count) error = "出战方案无效";
             else counts.SetCount(RoleCountAction.ManualScheme, 1, request.Scheme);
         }
+        else if (request.Action == ManualAction.ManualCompose) error = Compose(items, Find(request.Book));
         else if (request.Action != ManualAction.ManualRead) error = Train(counts, items, request);
-        if (error.Length == 0 && request.Action != ManualAction.ManualRead)
+        if (error.Length == 0 && request.Action != ManualAction.ManualRead && request.Action != ManualAction.ManualCompose)
             role.GetComponent<RoleAttributeComponent>().RefreshManualAttributes();
         // 返回成功与失败后的真实数值，客户端可以据此纠正预览。
         ManualReply reply = new ManualReply { RoleId = role.mainRoleInfo.BaseInfo.RoleId, Catalog = Catalog,
@@ -153,6 +154,7 @@ internal static class MartialManualSystem
             reply.Progress.Add(new ManualProgress { Book = book.Id, Level = Level(counts, book),
                 Rank = (int)counts.GetCount(RoleCountAction.ManualRank, book.Id),
                 Insights = (int)counts.GetCount(RoleCountAction.ManualInsight, book.Id) });
+            reply.Materials[book.VolumeItem] = items.GetItemNum(book.VolumeItem);
             AddMaterial(reply, items, book.Learn);
             for (int step = 0; step < book.Upgrades.Count; step++) AddMaterial(reply, items, book.Upgrades[step]);
             for (int step = 0; step < book.Ranks.Count; step++) AddMaterial(reply, items, book.Ranks[step]);
@@ -190,6 +192,42 @@ internal static class MartialManualSystem
         return "";
     }
 
+    /// <summary>用本书碎片合成一本实体秘笈，满包时允许使用刚好耗尽的原格。</summary>
+    /// <param name="items">当前角色背包，所有扣发在同一游戏逻辑线程完成。</param>
+    /// <param name="book">目录中的目标书，配方及产物均由服务端指定。</param>
+    private static string Compose(RoItemComponent items, ManualBook book)
+    {
+        if (book == null || book.Learn == null) return "未配置合成配方";
+        // 配方的物品号就是这一本的同名碎片，整本数量固定为一。
+        ManualCost recipe = book.Learn;
+        if (items.GetItemNum(recipe.Item) < recipe.Amount) return "同名碎片不足";
+        // 获取实际扣除顺序，判断满包时首个堆叠是否会腾出同一背包的位置。
+        List<ItemBase> shards = items.GetItemForReduce(recipe.Item, ItemBind.kItemBindNo);
+        // 背包类型直接取物品配置，避免把其他分类空格算进容量。
+        ItemConfigBase output = LubanMgr.Instance.GetItemConfigById(book.VolumeItem);
+        if (output == null) return "整本物品未配置";
+        // 变更原因供背包增量同步与持久化使用。
+        ChangeReason reason = new ChangeReason(ItemChangeReason.ITEM_REASON_USE);
+        // 先尝试占用空位或整本已有堆叠；新增失败时背包没有发生改变。
+        ItemBase volume = items.AddItem(book.VolumeItem, 1, reason, ItemSign.IsNoSign, 0, 0, UpdateType.eUT_Update_All, default(IdipParam));
+        if (volume == null)
+        {
+            if (shards.Count == 0 || shards[0].GetBagType() != (int)output.PackType || shards[0].GetItemCount() > recipe.Amount)
+                return "背包空间不足";
+        }
+        items.ReduceItem(recipe.Item, recipe.Amount, ItemChangeReason.ITEM_REASON_USE, ItemBind.kItemBindNo);
+        if (volume == null)
+        {
+            volume = items.AddItem(book.VolumeItem, 1, reason, ItemSign.IsNoSign, 0, 0, UpdateType.eUT_Update_All, default(IdipParam));
+            if (volume == null)
+            {
+                items.AddItem(recipe.Item, recipe.Amount, reason, ItemSign.IsNoSign, 0, 0, UpdateType.eUT_Update_All, default(IdipParam));
+                return "背包空间不足";
+            }
+        }
+        return "";
+    }
+
     /// <summary>先核对当前进度、材料和铜币，再提升一档。</summary>
     /// <param name="counts">负责持久化的角色记录。</param><param name="items">权威背包。</param><param name="request">所选培养操作。</param>
     private static string Train(RoleCountComponent counts, RoItemComponent items, ManualRequest request)
@@ -207,12 +245,13 @@ internal static class MartialManualSystem
         int next = level + 1;
         // 缺少下一档时不收取资源。
         ManualCost cost = null;
-        if (level == 0 && request.Action == ManualAction.ManualLearn) cost = book.Learn;
+        if (level == 0 && request.Action == ManualAction.ManualLearn) cost = new ManualCost { Item = book.VolumeItem, Amount = 1 };
         if (level > 0)
         {
             switch (request.Action)
             {
                 case ManualAction.ManualUpgrade:
+                    if (rank < book.Ranks.Count && level >= book.Ranks[rank].Level) return "请先完成本阶进阶";
                     if (level <= book.Upgrades.Count) cost = book.Upgrades[level - 1];
                     break;
                 case ManualAction.ManualRank:

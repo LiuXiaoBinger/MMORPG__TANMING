@@ -32,6 +32,7 @@ public sealed partial class MartialManualInfo : Luban.BeanBase
         CollectHpStep = _buf.ReadInt();
         EquipDefStep = _buf.ReadInt();
         EquipHpStep = _buf.ReadInt();
+        VolumeItem = _buf.ReadInt();
     }
 
     public static MartialManualInfo DeserializeMartialManualInfo(ByteBuf _buf)
@@ -103,6 +104,10 @@ public sealed partial class MartialManualInfo : Luban.BeanBase
     /// 每级装备气血
     /// </summary>
     public readonly int EquipHpStep;
+    /// <summary>
+    /// 整本物品号（领悟消耗一本）
+    /// </summary>
+    public readonly int VolumeItem;
    
     public const int __ID__ = -910914606;
     public override int GetTypeId() => __ID__;
@@ -130,6 +135,7 @@ public sealed partial class MartialManualInfo : Luban.BeanBase
         + "CollectHpStep:" + CollectHpStep + ","
         + "EquipDefStep:" + EquipDefStep + ","
         + "EquipHpStep:" + EquipHpStep + ","
+        + "VolumeItem:" + VolumeItem + ","
         + "}";
     }
 }

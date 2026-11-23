@@ -5650,6 +5650,7 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2bdb1bba68adbef4ca55219c6f9c134a, type: 3}
+  manualItemPrefab: {fileID: 6881209372476917861, guid: 3b58b1f1c73e92645bf145a8254193b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _content: {fileID: 3850838517645835527}
@@ -24845,6 +24846,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2bdb1bba68adbef4ca55219c6f9c134a, type: 3}
+  manualItemPrefab: {fileID: 6881209372476917861, guid: 3b58b1f1c73e92645bf145a8254193b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _content: {fileID: 1343932655818179947}

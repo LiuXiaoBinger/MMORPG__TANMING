@@ -128,7 +128,7 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _window.CategorySelected += OnCategorySelected;
             _window.FrameUpdated += OnWindowFrameUpdated;
-            _window.ItemSelected += OpenEquipmentDetail;
+            _window.ItemSelected += OpenBagItem;
         }
         if (_equipmentWindow != null)
         {
@@ -166,7 +166,7 @@ public sealed class KnapsackCtrl : IDisposable
         {
             _window.CategorySelected -= OnCategorySelected;
             _window.FrameUpdated -= OnWindowFrameUpdated;
-            _window.ItemSelected -= OpenEquipmentDetail;
+            _window.ItemSelected -= OpenBagItem;
         }
         if (_equipmentWindow != null)
         {
@@ -391,6 +391,7 @@ public sealed class KnapsackCtrl : IDisposable
         if (_role != role)
         {
             _selectedEquipmentUid = 0;
+            if (_window != null) _window.CloseManualItem();
             if (_detailWindow != null) _detailWindow.CloseWindow();
             if (_workshopWindow != null) _workshopWindow.CloseWindow();
         }
@@ -550,6 +551,43 @@ public sealed class KnapsackCtrl : IDisposable
             SpecialSkillIndex = specialSkillIndex
         };
         return MNetClient.Instance.Send(NetDefine.CMD_EquipOperationCode, request.ToByteString());
+    }
+
+    /// <summary>将背包格对应的整本或碎片交给秘笈物品详情；装备沿用原有入口。</summary>
+    /// <param name="itemUid">当前格子里被点击的实例编号。</param>
+    private void OpenBagItem(long itemUid)
+    {
+        if (_itemComponent == null) return;
+        // 从实例反查当前配置，兼容已有角色持有的旧物品号。
+        ItemBase item = _itemComponent.GetItemByUID(itemUid);
+        if (item == null) return;
+        if (item is EquipBase) { OpenEquipmentDetail(itemUid); return; }
+        // 物品、书目和合成数量均来自同一份客户端 Luban 数据。
+        cfg.Tables tables = LubanMgr.Instance.ConfigTables;
+        for (int index = 0; index < tables.TbMartialManualInfo.DataList.Count; index++)
+        {
+            // 每本书的碎片与整本分别有独立的背包物品号。
+            cfg.MartialManualInfo book = tables.TbMartialManualInfo.DataList[index];
+            bool fragment = item.GetItemID() == book.FragmentId;
+            if (!fragment && item.GetItemID() != book.VolumeItem) continue;
+            // 当次操作引用的是目录书号，扣发数量始终由服务端计算。
+            ManualAction action = ManualAction.ManualLearn;
+            if (fragment) action = ManualAction.ManualCompose;
+            _window.ShowManualItem(tables.TbItemInfo.Get(item.GetItemID()), book, fragment,
+                _itemComponent.GetItemNum(item.GetItemID()), () => OpenManualTraining(book.Id),
+                () => MNetClient.Instance.Send(NetDefine.CMD_MartialManual,
+                    new ManualRequest { Book = book.Id, Action = action }.ToByteString()));
+            return;
+        }
+    }
+
+    /// <summary>关闭背包镜头并沿主视图窗口入口进入所点书籍的培养页。</summary>
+    /// <param name="bookId">碎片或整本所属的稳定书号。</param>
+    private void OpenManualTraining(int bookId)
+    {
+        _window.CloseWindow();
+        if (!_mainView.SkillWindow.gameObject.activeSelf) _mainView.ShowMainWindow(WindowType.SkillInfoWindow);
+        _mainView.SkillWindow.OpenManualTraining(bookId);
     }
 
     /// <summary>由背包或已穿戴槽打开同一装备详情窗口。</summary>

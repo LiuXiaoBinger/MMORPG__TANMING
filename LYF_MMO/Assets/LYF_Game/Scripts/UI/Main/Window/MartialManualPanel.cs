@@ -130,10 +130,25 @@ public sealed class MartialManualPanel : MonoBehaviour
         Render();
     }
 
+    /// <summary>背包打开指定书号时保留选中值，收到角色数据后再绘制培养内容。</summary>
+    /// <param name="bookId">当前物品所属的书目编号。</param>
+    public void OpenBookTraining(int bookId)
+    {
+        selected = bookId;
+        tab = 0;
+        training.SetActive(state != null);
+        bagBook = bookId;
+        Render();
+    }
+
+    /// <summary>从背包指定的培养书号；使仅有书名的书也能从物品打开。</summary>
+    private int bagBook;
+
     /// <summary>离开窗口或切换角色时清空上一角色的数据。</summary>
     private void OnDisable()
     {
         state = null;
+        bagBook = 0;
         copperBalance.text = "";
         selected = 0;
         filterMode = 0;
@@ -149,6 +164,7 @@ public sealed class MartialManualPanel : MonoBehaviour
     {
         Editing = false;
         targetSlot = -1;
+        bagBook = 0;
         training.SetActive(false);
         editorList.SetActive(false);
         info.SetActive(false);
@@ -161,6 +177,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         feedback.text = reply.Message;
         if (reply.Catalog == null) return;
         state = reply;
+        if (bagBook > 0) training.SetActive(true);
         detailRows.Clear();
         // 只露过书名的记录没有简介，排除其卡片，同时保留服务器原书号和槽位。
         for (int row = 0; row < reply.Catalog.Books.Count; row++)
@@ -191,7 +208,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         insight.onClick.AddListener(() => StartTraining(2));
         cultivate.onClick.AddListener(() => StartTraining(0));
         closeInfo.onClick.AddListener(() => info.SetActive(false));
-        closeTraining.onClick.AddListener(() => { training.SetActive(false); Render(); });
+        closeTraining.onClick.AddListener(() => { bagBook = 0; training.SetActive(false); Render(); });
         execute.onClick.AddListener(Train);
         goToUpgrade.onClick.AddListener(() => StartTraining(0));
         for (int i = 0; i < trainTabs.Length; i++)
@@ -260,6 +277,9 @@ public sealed class MartialManualPanel : MonoBehaviour
     /// <summary>查找书籍在当前目录及进度数组中的位置。</summary><param name="id">书号。</param>
     private int Index(int id)
     {
+        if (bagBook > 0 && id == bagBook)
+            for (int row = 0; row < state.Catalog.Books.Count; row++)
+                if (state.Catalog.Books[row].Id == id) return row;
         for (int i = 0; i < detailRows.Count; i++)
         {
             // 返回原书目行号，以便直接读取这一角色的对应进度。
@@ -331,12 +351,22 @@ public sealed class MartialManualPanel : MonoBehaviour
         else { selected = state.Slots[index]; Render(); }
     }
 
-    /// <summary>从目录装备已学秘笈，或使用残页领悟。</summary>
+    /// <summary>进阶所扣的同名碎片图标，与背包使用同一图集切片。</summary>
+    [SerializeField] private Sprite fragmentSprite;
+
+    /// <summary>从目录装备已学秘笈，或合成、使用整本领悟。</summary>
     private void EquipOrLearn()
     {
         // 当前目录行的权威等级。
         ManualProgress progress = state.Progress[Index(selected)];
-        if (progress.Level == 0) { Send(ManualAction.ManualLearn); return; }
+        if (progress.Level == 0)
+        {
+            // 整本可以直接领悟；只有碎片时点击先合成并入包。
+            ManualBook book = state.Catalog.Books[Index(selected)];
+            if (HeldItem(book.VolumeItem) > 0) Send(ManualAction.ManualLearn);
+            else Send(ManualAction.ManualCompose);
+            return;
+        }
         draft.Clear();
         draft.AddRange(state.Slots);
         // 已装备项可直接卸下，其他项优先填第一个空位。
@@ -476,6 +506,14 @@ public sealed class MartialManualPanel : MonoBehaviour
         }
         insightsText.text = "已明悟:" + insightCount + "次";
         filterText.text = filter;
+        // 目录始终仅展示已录入详情的书；背包可以直接预览手里这件物品。
+        List<int> rows = detailRows;
+        if (which == 2 && bagBook > 0)
+        {
+            // 仅有名称的物品也使用它自己的培养页，不替换为列表第一本。
+            int row = Index(bagBook);
+            if (row >= 0 && !rows.Contains(row)) rows = new List<int>(detailRows) { row };
+        }
         float y = 0;
         for (int group = 0; group <= 1; group++)
         {
@@ -494,15 +532,16 @@ public sealed class MartialManualPanel : MonoBehaviour
             }
             int count = 0, columns = 1;
             if (which == 0) columns = 2;
-            for (int i = 0; i < detailRows.Count; i++)
+            for (int i = 0; i < rows.Count; i++)
             {
                 // 回查原始行号，避免隐藏中间的条目后错配其他书的等级和残页。
-                int row = detailRows[i];
-                // 捕获本卡片的书号，未学卡仅在目录显示。
+                int row = rows[i];
+                // 从背包指定的未学书也允许作为培养预览项。
                 ManualProgress p = state.Progress[row];
                 ManualBook b = state.Catalog.Books[row];
                 if (which == 0 && filterMode > 0 && b.School != filter) continue;
-                if ((p.Level == 0) != (group == 1)) continue;
+                bool bagPreview = which == 2 && b.Id == bagBook;
+                if (!bagPreview && (p.Level == 0) != (group == 1)) continue;
                 ManualCard card = Instantiate(cardTemplate, root);
                 card.gameObject.SetActive(true);
                 ((RectTransform)card.transform).anchoredPosition = new Vector2(count % columns * 404, -y - count / columns * 144);
@@ -574,7 +613,10 @@ public sealed class MartialManualPanel : MonoBehaviour
         equip.gameObject.SetActive(listPage);
         equipText.text = "装备";
         if (state.Slots.Contains(b.Id)) equipText.text = "卸下";
+        if (listPage && p.Level == 0) equipText.text = "领悟";
+        // 合成所需的碎片数与可用于领悟的整本分别计算。
         bool composing = listPage && p.Level == 0 && b.Learn != null;
+        if (composing && HeldItem(b.VolumeItem) > 0) composing = false;
         fragmentIcon.gameObject.SetActive(composing);
         fragmentCount.gameObject.SetActive(composing);
         RectTransform actionRect = (RectTransform)equip.transform;
@@ -584,7 +626,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         {
             position.x = 495;
             equipText.text = "合成";
-            fragmentIcon.sprite = detailIcon.sprite;
+            fragmentIcon.sprite = fragmentSprite;
             fragmentCount.text = Held(b.Learn) + "/" + b.Learn.Amount;
         }
         actionRect.anchoredPosition = position;
@@ -637,8 +679,16 @@ public sealed class MartialManualPanel : MonoBehaviour
     /// <summary>读取该材料的背包持有数。</summary><param name="cost">培养或领悟的费用。</param>
     private int Held(ManualCost cost)
     {
+        return HeldItem(cost.Item);
+    }
+
+    /// <summary>未出现在本角色快照中的背包物品按零件计算。</summary>
+    /// <param name="itemId">物品配置编号。</param>
+    private int HeldItem(int itemId)
+    {
+        // 角色快照统计的可消费数量。
         int amount;
-        state.Materials.TryGetValue(cost.Item, out amount);
+        state.Materials.TryGetValue(itemId, out amount);
         return amount;
     }
 
@@ -646,7 +696,7 @@ public sealed class MartialManualPanel : MonoBehaviour
     private void DrawTraining(ManualBook b, ManualProgress p)
     {
         trainIcon.sprite = Cover(b.Id);
-        trainTitle.text = "秘笈培养";
+        trainTitle.text = b.Name + " · 秘笈培养";
         currentStats.gameObject.SetActive(tab != 1);
         nextStats.gameObject.SetActive(tab == 0);
         if (tab != 1) rankScroll.gameObject.SetActive(false);
@@ -657,7 +707,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         {
             currentStats.text = "◇ 基础属性\n" + Stats(b, p.Level, true) + "\n\n◇ 收集属性\n" + Stats(b, p.Level, false);
             nextStats.text = "已达当前等级上限";
-            if (p.Level <= b.Upgrades.Count)
+            if (p.Level > 0 && p.Level <= b.Upgrades.Count)
             {
                 cost = b.Upgrades[p.Level - 1];
                 nextStats.text = "下级预览\n" + Stats(b, p.Level + 1, true) + "\n\n下级预览\n" + Stats(b, p.Level + 1, false);
@@ -720,13 +770,24 @@ public sealed class MartialManualPanel : MonoBehaviour
             costText.text += "</indent>";
             return;
         }
+        if (p.Level == 0)
+        {
+            costStrip.SetActive(false);
+            nextStats.text = "";
+            costText.text = "尚未领悟，请在背包使用整本秘笈";
+            return;
+        }
         if (cost == null)
         {
             costText.text = "当前暂无下一阶段";
             return;
         }
         materialIcon.sprite = trainingMaterial;
-        if (tab == 1) materialIcon.sprite = Cover(b.Id);
+        if (tab == 1)
+        {
+            // 进阶底栏使用与背包一致的碎片图标。
+            materialIcon.sprite = fragmentSprite;
+        }
         // 实际库存和余额分别决定数字颜色，底栏保留材料、货币各自的图标。
         int held = Held(cost);
         materialCount.text = held + "/" + cost.Amount;
