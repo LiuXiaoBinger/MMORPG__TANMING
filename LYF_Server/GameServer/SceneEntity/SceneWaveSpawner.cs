@@ -341,6 +341,11 @@ public sealed partial class SceneWaveSpawner
         SpawnPoint point = activePoints[index];
         // 原IsDummy/不可受击状态必须早于防御查询，机制实体不参加玩家命中循环。
         MoshentaActor hitActor = FindActor(monster.UID);
+        if (skillId == MjsSkillGenes.BarrierSkillId && effect != null)
+        {
+            KnockUpBarrierTarget(notice, monster, point, hitActor, effect, caster.GetID());
+            return;
+        }
             // 命中的真实怪物持有自己的临时减防，角色装备容器属于在线角色组件。
             GeneComponent targetGene = monster.Components.Get<GeneComponent>(EntityComponentType.Gene);
             // 伤害结算与事件对方仍用这只怪物自己的同一份运行容器。
@@ -360,9 +365,8 @@ public sealed partial class SceneWaveSpawner
                 else defense = MonsterDefenseAttributes.Get(point.Creature.id);
                 // 本次结算的最终面板只取一次，背水等按已含装备与基因的生命上限判断。
                 RoleBaseInfo finalAttributes = equipment.CalculateAttribute();
-                // 屏障爆炸和龙卷斩的输入已经包含自身外功，防御环节保留该技能的原公式。
-                // 仅盾爆和龙卷的输入已经合成外功，其余技能传等级行只为锁定属性伤害。
-                bool hasExternalSkillDamage = skillId == MjsSkillGenes.BarrierSkillId || skillId == MjsSkillGenes.TornadoSkillId;
+                // 龙卷斩的输入已计入自身外攻，防御环节沿用该技能的公式。
+                bool hasExternalSkillDamage = skillId == MjsSkillGenes.TornadoSkillId;
                 // 暗香武籍只乘外功伤害分量，内功和后续元素伤害单独结算。
                 double externalBonus = equipment.Runtime.CalculateAttribute(GeneAttributeType.ExternalDamageBonus, 0);
                 if (effect != null && hasExternalSkillDamage)
@@ -446,39 +450,43 @@ public sealed partial class SceneWaveSpawner
                 monsterDied = true;
                 if (hitActor == null) CountDeath(point.Creature.id);
             }
-            else if (effect != null && skillId == MjsSkillGenes.BarrierSkillId)
-            {
-                // 沿用副本的首领分类保护免疫控制的目标，爆炸伤害仍然成立。
-                bool boss = (monster.EntityType & EntityType.Boss) != 0;
-                if (hitActor != null) boss = hitActor.IsBoss;
-                if (!boss)
-                {
-                    MjsSkillGenes.ApplyBurstControl(targetGenes, effect, caster.GetID());
-                    // 控制期间停止正在执行的技能和移动，具体落地时机随运行基因结束。
-                    bool knockedDown = (targetGenes.GetStates() & GeneState.Knockdown) != 0;
-                    if (hitActor != null && knockedDown)
-                    {
-                        hitActor.Skills.Cancel();
-                        hitActor.SetIdle();
-                    }
-                    if (knockedDown)
-                    {
-                        // 与本次伤害一起可靠广播短弧线，场景的导航面位置仍作为落点。
-                        Notice.MonsterActions.Add(new MonsterActionData
-                        {
-                            SpawnId = point.SpawnId,
-                            Phase = MonsterActionPhase.KnockUp,
-                            X = monster.Transform.X,
-                            Y = monster.Transform.Y,
-                            Z = monster.Transform.Z,
-                            ToY = monster.Transform.Y + ShieldBurstLiftMeters,
-                            Face = monster.Transform.Yaw,
-                            DurationMs = effect.ShieldBurstControlMs
-                        });
-                    }
-                }
-            }
             if (hitActor == null) notice.Monsters.Add(GetHpData(index, hpBeforeHit - monster.CurrentHp));
+    }
+
+    /// <summary>向范围内的存活普通怪施加盾爆控制，只广播腾空动作。</summary>
+    /// <param name="notice">本次盾爆发往同一副本的权威结果。</param>
+    /// <param name="monster">已通过圆形范围及可攻击筛选的怪物实体。</param>
+    /// <param name="point">该怪物的出生标识，用于定位观察端模型。</param>
+    /// <param name="actor">有战斗 AI 的怪物运行数据，普通切片怪可为空。</param>
+    /// <param name="effect">开盾时保存的等级行，决定击飞毫秒数。</param>
+    /// <param name="source">护盾所属角色的服务端实体编号。</param>
+    private void KnockUpBarrierTarget(MonsterAttrUpdateNtf notice, GameServer.SceneEntity.MonsterEntity monster,
+        SpawnPoint point, MoshentaActor actor, SkillEffectInfo effect, ulong source)
+    {
+        // 首领沿用副本的原控制免疫，其他地图使用实体分类。
+        bool boss = (monster.EntityType & EntityType.Boss) != 0;
+        if (actor != null) boss = actor.IsBoss;
+        if (boss) return;
+        // 怪物的运行基因决定是否进入击倒状态，只广播成功的控制。
+        GeneRuntime genes = monster.Components.Get<GeneComponent>(EntityComponentType.Gene).Runtime;
+        MjsSkillGenes.ApplyBurstControl(genes, effect, source);
+        if ((genes.GetStates() & GeneState.Knockdown) == 0) return;
+        if (actor != null)
+        {
+            actor.Skills.Cancel();
+            actor.SetIdle();
+        }
+        notice.MonsterActions.Add(new MonsterActionData
+        {
+            SpawnId = point.SpawnId,
+            Phase = MonsterActionPhase.KnockUp,
+            X = monster.Transform.X,
+            Y = monster.Transform.Y,
+            Z = monster.Transform.Z,
+            ToY = monster.Transform.Y + ShieldBurstLiftMeters,
+            Face = monster.Transform.Yaw,
+            DurationMs = effect.ShieldBurstControlMs
+        });
     }
 
     /// <summary>按圆形半径查询施法者周围存活可攻击怪物，逐只沿同一伤害链结算。</summary>

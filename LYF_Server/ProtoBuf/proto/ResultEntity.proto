@@ -334,6 +334,7 @@ message SkillCastEndNtf
 	int32 skill_id = 3;//结束的原技能 ID
 	int64 end_server_time_unix_ms = 4;//服务器结束施法的 UTC Unix 毫秒
 	bool interrupted = 5;//死亡、断线、切图等中断为 true，正常结束为 false
+	optional bool barrier_burst = 6;//存在时只结束这个 UUID 的护盾，true 为自然到期爆开，false 为直接移除；缺省仍表示施法动作结束
 }
 //返回的角色背包信息
 message RoleKanpsackInfoRet

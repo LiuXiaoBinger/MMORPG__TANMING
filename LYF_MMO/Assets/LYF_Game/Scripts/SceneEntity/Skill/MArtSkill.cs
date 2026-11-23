@@ -462,6 +462,8 @@ public class MArtSkill : MSkill
     /// <param name="data">本次计时器已经交付的粒子指令。</param>
     private void fx(SkillRuntimeFxEvent data)
     {
+        // 首轨罩体由权威开盾广播创建，避免本地预测和远端持续效果各生成一个罩体。
+        if (SkillId == SkillCtrl.BlueBarrierSkillId && data.SourceEventIndex == 0) return;
         // 原施法模型，生命周期内不替换，实体归还前会先取消技能票据。
         MModel model = _firer.Model;
         if (model == null)

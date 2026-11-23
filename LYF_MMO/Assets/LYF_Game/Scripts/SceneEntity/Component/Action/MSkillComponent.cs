@@ -9,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public sealed class MSkillComponent : MBasicActionComponent
 {
+    /// <summary>服务器确认后持续附着在本角色上的苍蓝屏障，可独立于施法动作收尾。</summary>
+    private MjsBarrierVisual _barrier;
 
     #region 字段与常量
     /// <summary>实体当前已学习/可用的技能 ID 集合。</summary>
@@ -566,6 +568,8 @@ public sealed class MSkillComponent : MBasicActionComponent
     /// <summary>清理技能列表、公共 CD 和施法表现，供角色重载或实体回收使用。</summary>
     public void ClearSkillCores()
     {
+        _barrier?.Finish(false);
+        _barrier = null;
         StopAllSkill();
         _skills.Clear();
         _latestSkillUuid = 0;
@@ -890,15 +894,30 @@ public sealed class MSkillComponent : MBasicActionComponent
         if (core != null)
         {
             core.SelectPresentation(data.UsingTimes, Time.realtimeSinceStartup);
+            if (data.SkillId == SkillCtrl.BlueBarrierSkillId)
+            {
+                if (_barrier == null || _barrier.SkillUuid != data.SkillUuid)
+                {
+                    _barrier?.Finish(false);
+                    _barrier = new MjsBarrierVisual(data.SkillUuid, core.PresentationId, role.Model);
+                }
+            }
         }
         return ApplyServerStart(core, data.SkillUuid);
     }
 
-    /// <summary>RO同名服务器结束入口，按UUID结束原实例；自然结束保留时间轴事件和声音尾段。</summary>
-    /// <param name="data">服务器结束广播，Interrupted为真表示立即清理该次施法。</param>
-    /// <returns>匹配当前主技能或独立列表的原实例时为真。</returns>
+    /// <summary>按原 UUID 分发动作或护盾的结束结果，长效护盾有独立的结束时点。</summary>
+    /// <param name="data">服务器结束广播，带 BarrierBurst 的包只结束该次护盾。</param>
+    /// <returns>结束了匹配的护盾或原施法实例时为真。</returns>
     public bool OnSkillEnd(SkillCastEndNtf data)
     {
+        if (data.HasBarrierBurst)
+        {
+            if (_barrier == null || _barrier.SkillUuid != data.SkillUuid) return false;
+            _barrier.Finish(data.BarrierBurst);
+            _barrier = null;
+            return true;
+        }
         return ApplyServerEnd(data.SkillUuid, data.Interrupted);
     }
     #endregion

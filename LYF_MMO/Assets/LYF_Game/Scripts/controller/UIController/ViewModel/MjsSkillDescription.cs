@@ -15,7 +15,7 @@ internal static class MjsSkillDescription
         bool barrier = current.SkillId == SkillCtrl.BlueBarrierSkillId;
         // 当前技能的完整效果，与相同等级的服务端行为一一对应。
         string description;
-        if (barrier) description = DescribeBarrier(current) + DescribeElementDamage(current);
+        if (barrier) description = DescribeBarrier(current);
         else description = DescribeTornado(current);
         if (!learned) return description;
         if (next == null) return description + "\n\n已达技能最高等级（" + current.Level + "级）";
@@ -28,9 +28,9 @@ internal static class MjsSkillDescription
         }
         else
         {
-            growth = "造成 " + Damage(next) + "，并造成 " + next.TrueQiDamage + " 点真气伤害。";
+            growth = "造成 " + Damage(next) + "，并造成 " + next.TrueQiDamage + " 点真气伤害。" + DescribeElementDamage(next);
         }
-        return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth + DescribeElementDamage(next);
+        return description + "\n\n下一级（角色" + next.RequireRoleLevel + "级可提升）\n" + growth;
     }
 
     /// <summary>用武功当前和下一成长行显示真实调息、魔力和已接入的伤害成长。</summary>
@@ -93,9 +93,8 @@ internal static class MjsSkillDescription
             "，持续" + Seconds(effect.FrostSlowDurationMs) + "秒。达到" + effect.FrostMaxStack +
             "层时转为定身" + Seconds(effect.FrostRootMs) + "秒。\n" +
             "霸体：施放后获得" + Seconds(effect.SuperArmorMs) + "秒霸体。\n" +
-            "盾爆：屏障自然到期或被打破时，对周围" + Meters(effect.ShieldBurstRadiusCm) + "米内敌人造成" +
-            Percent(effect.ShieldBurstDamagePermyriad) + "外功攻击的基础伤害，并击飞可受控目标" +
-            Seconds(effect.ShieldBurstControlMs) + "秒。";
+            "盾爆：屏障自然到期时爆开，将周围" + Meters(effect.ShieldBurstRadiusCm) + "米内可受控的敌人击飞" +
+            Seconds(effect.ShieldBurstControlMs) + "秒，不造成伤害。护盾提前被打破时直接消失。";
     }
 
     /// <summary>生成一次龙卷斩当前等级的说明。</summary>
@@ -137,10 +136,9 @@ internal static class MjsSkillDescription
             // 高级属性第一组依次为五系攻击，文字与角色属性面板保持一致。
             RoleAttributeViewData.AdvancedEntry entry = RoleAttributeViewData.AdvancedEntries[index];
             if (entry.Id != effect.ElementAttackAttributeId) continue;
-            // 属伤倍率是单次命中的数值。盾爆与连续斩击明确显示各自触发时机。
+            // 属伤倍率是单次命中的数值，连续斩击逐段显示。
             string timing = "附加 ";
-            if (effect.SkillId == SkillCtrl.BlueBarrierSkillId) timing = "盾爆时附加 ";
-            else if (effect.HitCount > 1) timing = "每段附加 ";
+            if (effect.HitCount > 1) timing = "每段附加 ";
             return "\n" + timing + Percent(effect.ElementDamagePermyriad) + entry.Label + " + " +
                 effect.ElementFlatDamage + "点" + entry.Label[0] + "属性伤害。";
         }

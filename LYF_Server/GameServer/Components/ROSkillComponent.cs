@@ -794,7 +794,7 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
             // 持续时间按固定逻辑帧向上取整，不足一帧也保留一帧，避免零时长护盾不生效。
             int barrierTicks = (barrierEffect.ShieldDurationMs + LogicFrameMilliseconds - 1) / LogicFrameMilliseconds;
             Owner.OpenShield((int)Math.Min(barrierAbsorb, int.MaxValue),
-                GameGlobal.Instance.LogicTick + barrierTicks, barrierEffect);
+                GameGlobal.Instance.LogicTick + barrierTicks, barrierEffect, skill_uuid);
             MjsSkillGenes.BeginBarrier(Owner, barrierEffect);
             skill_ = new ROSkill(core, skill_uuid, end_tick, using_times);
         }
