@@ -838,3 +838,7 @@ Domestic WorkBuddy deepseek-v4.1-flash implemented the changes; Codex inspected,
 ## [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window
 
 Use 武学 → 秘笈 for formation, catalogue and cultivation. GameServer/Config/MartialManuals.json under LYF_Server defines seven visible books, one scheme, four open slots, nine steel-blade upgrade prices, first promotion, and bleed. Role counts persist progress and slots. Real inventory pays costs. Unseen catalogue entries, drops, insight thresholds and later costs await design data. Bleed applies for five seconds. Tick interval and damage await configuration. See `项目修改日志/2026-11-23-武学秘笈系统.md`.
+
+## [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents
+
+Keys 3/4/6 use one short local camera accent on landing, shield formation and wind release respectively. Tune `CastShakeTimeSeconds` and `CastShakeOffset` in `SkillEditorBinding_3011001.asset`, `SkillEditorBinding_3012001.asset` and `SkillEditorBinding_3013001.asset`, then export. The two adjusted Blade Storm slashes start on frames 1 and 10 at 30 FPS. Azure Barrier starts its trimmed recording on frame 0. Tornado Slash starts its sound on frame 20 at 60 FPS and releases wind on frame 30. Live character input and a packaged Player remain unverified. See `项目修改日志/2026-11-23-魔剑士新技能声音与振屏.md`.

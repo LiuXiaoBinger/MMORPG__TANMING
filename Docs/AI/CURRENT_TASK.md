@@ -833,3 +833,7 @@
 ## [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] 武学窗口的秘笈出战与培养
 
 从武学 → 秘笈进入出战、目录与培养。`LYF_Server/GameServer/Config/MartialManuals.json` 收录七本可见秘笈、一个方案、四个开放槽、钢刃九次升级价格、首阶进阶与流血。角色计数保存等级、阶位和槽位，培养扣实际背包。其余目录、掉落、明悟门槛及后续费用待配置，流血标记持续五秒，跳伤间隔与数值待填。详见 `项目修改日志/2026-11-23-武学秘笈系统.md`。
+
+## [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] 魔剑士三招的声音时机与动作振屏
+
+快捷键 3/4/6 分别在落地、成盾、出风时给本机角色一次短振屏。在 `SkillEditorBinding_3011001.asset`、`SkillEditorBinding_3012001.asset`、`SkillEditorBinding_3013001.asset` 调整 `CastShakeTimeSeconds` 和 `CastShakeOffset` 后导出。刀刃风暴两段斩声的起点是 30 FPS 下的第 1、10 帧，苍蓝屏障首帧播放剪短弱起的录音，龙卷斩在 60 FPS 下第 20 帧起声、第 30 帧出风。原角色联机实按和 Player 包待验。见 `项目修改日志/2026-11-23-魔剑士新技能声音与振屏.md`。
