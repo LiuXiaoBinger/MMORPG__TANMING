@@ -1216,6 +1216,8 @@ public sealed class MSkillComponent : MBasicActionComponent
             Finish();
             return;
         }
+        // 每次成功施法刷新持剑时间，离开技能动作后才开始扣时。
+        Entity.BattleIdle = true;
         if (Entity.IsPlayer)
         {
             // 已通过施法检查并启动新表现的本地主角，在起手时立即反馈一次。
@@ -1262,12 +1264,11 @@ public sealed class MSkillComponent : MBasicActionComponent
         }
     }
 
-    /// <summary>正常动作结束时设置后摇与战斗待机标记，随后由默认动作处理动画恢复。</summary>
+    /// <summary>技能自然结束时保留后摇标记，供默认动作恢复动画。</summary>
     protected override void OnFinished()
     {
         base.OnFinished();
         Entity.IsHouyao = true;
-        Entity.BattleIdle = true;
     }
 
     /// <summary>主动打断时立即清除当前施法和未来事件；自然结束仍由 AfterFinish 保留表现尾部。</summary>

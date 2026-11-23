@@ -82,8 +82,22 @@ public abstract class MEntity : MSceneObject, IGeneOwner
     /// <summary>是否吼妖状态</summary>
     public bool IsHouyao { get { return _is_houyao; } set { _is_houyao = value; } }
 
-    /// <summary>是否战斗待机</summary>
-    public bool BattleIdle { get; set; } = false;
+    /// <summary>技能动作结束后保留持剑姿态的游戏时间，单位毫秒。</summary>
+    private const int BattleIdleDurationMilliseconds = 3000;
+
+    /// <summary>本实体持剑姿态的剩余毫秒数，零表示普通待机。施法期间保留完整时长。</summary>
+    private int _battleIdleRemainingMilliseconds;
+
+    /// <summary>供待机、走跑与武器挂点共用的战斗姿态。再次置真时重新计时，置假时立即收剑。</summary>
+    public bool BattleIdle
+    {
+        get { return _battleIdleRemainingMilliseconds > 0; }
+        set
+        {
+            if (value) _battleIdleRemainingMilliseconds = BattleIdleDurationMilliseconds;
+            else _battleIdleRemainingMilliseconds = 0;
+        }
+    }
 
     /// <summary>碰撞半径（含缩放）</summary>
     public float Radius { get { return _radius * _scale; } set { _radius = value; } }
@@ -273,7 +287,7 @@ public abstract class MEntity : MSceneObject, IGeneOwner
     }
 
     /// <summary>
-    /// 每帧先推进普通位移组件，再驱动原专用组件和其余普通组件，最后消费模型位移。
+    /// 先按本帧开始时的动作推进战斗姿态倒计时，再更新位移、专用组件、普通组件与模型移动。
     /// </summary>
     /// <param name="deltaMilliseconds">帧间隔毫秒数</param>
     public override void Update(int deltaMilliseconds)
@@ -281,6 +295,14 @@ public abstract class MEntity : MSceneObject, IGeneOwner
         if (LifecycleState != EntityLifecycleState.Active)
         {
             return;
+        }
+
+        // 状态机稍后才会结算技能结束，因此施法的最后一帧也不会扣掉技能后的持剑时间。
+        if (BattleIdle && CurrentState != StateDefine.kStateSkill)
+        {
+            _battleIdleRemainingMilliseconds = System.Math.Max(0, _battleIdleRemainingMilliseconds - deltaMilliseconds);
+            // 静止和走跑由默认状态刷新动画，其他动作结束时会自行选择下一个姿态。
+            if (!BattleIdle && CurrentState == StateDefine.kStateDefault) Machine?.MarkTriggered();
         }
 
         // 程序差量先求值，专用 Move 再统一提交碰撞；保留 Move 先于技能离槽处理的原顺序。
