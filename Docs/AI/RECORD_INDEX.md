@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9c2c9efd978e47d7ab25353f06b530990fd4082ff5b4ec63b2e4b7b25487777f`
+Source normalized SHA256: `551dfee8731f466f112712a81213036ea65adb6e1ae19fb23ad2d419fd034d53`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -122,11 +122,12 @@ Source normalized SHA256: `9c2c9efd978e47d7ab25353f06b530990fd4082ff5b4ec63b2e4b
 | [CODE][FILES][技能][基因][ELEMENTAL-DAMAGE-20261120] Five-element damage and Tornado Slash wind growth | 831-837 |
 | [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window | 838-841 |
 | [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
-| [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-851 |
+| [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
+| [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-855 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `59cfaadb93a30a5c480e3b01dfa1f5a97a26206322b6753190fd548c4f647f17`
+Source normalized SHA256: `0edb1421f9b4ba413c829d1b43a8e8e52a74c56c4fcb7ccaade733c72f142cd3`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -240,7 +241,8 @@ Source normalized SHA256: `59cfaadb93a30a5c480e3b01dfa1f5a97a26206322b6753190fd5
 | [VERIFY][技能][基因][ELEMENTAL-DAMAGE-20261120] Wind genes change actual dungeon health loss | 861-866 |
 | [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] Formation, progression and persistence | 867-870 |
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
-| [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-879 |
+| [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
+| [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-883 |
 
 ## Docs/AI/DECISIONS.en.md
 

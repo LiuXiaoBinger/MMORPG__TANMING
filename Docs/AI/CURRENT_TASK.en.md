@@ -849,3 +849,7 @@ Keys 3/4/6 use one short local camera accent on landing, shield formation and wi
 - The bag and equipped filters read the role's real items. The selected instance supplies the icon and strengthening level. Existing configuration supplies the cap, base attributes and socket count. The header reads the four existing currency balances.
 - The progress bar represents the current strengthening level divided by the configured cap. Material costs and the five operations await gameplay definitions. The buttons currently cover navigation, selection, scrolling and closing.
 - Files, previews and verification are recorded in `项目修改日志/2026-11-23-装备强化入口与五页界面.md`.
+
+## [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction
+
+GameServer uses each accepted move’s previous and current positions to send reciprocal appearance (`11100`) or leave (`11213`) at the inclusive 100 m boundary in the same map and instance. Unity keeps the newest movement for a registered remote role during model loading and restores death from current HP. Owner correction (`11182`) replans an active route from its landing while retaining the original destination or target and arrival action. Code `2a8edbb`. See `项目修改日志/2026-11-23-玩家进出视野与导航纠位.md`.
