@@ -6,14 +6,17 @@ using UnityEngine;
 [DefaultExecutionOrder(100)]
 public sealed class RoleNameHudWidget : MonoBehaviour
 {
-    /// <summary>从头骨向上投影的世界间距，单位为米，与既有护盾提示的锚点一致。</summary>
-    private const float HeadGap = 0.28f;
+    /// <summary>四行信息共用的底边距头骨的距离，单位为米，近景下称谓仍高于头部。</summary>
+    private const float HeadGap = 0.62f;
 
     /// <summary>昵称上缘与护盾下缘之间的距离，单位为画布逻辑像素。</summary>
-    private const float ShieldGap = 4f;
+    private const float ShieldGap = 1f;
 
     /// <summary>称谓与昵称之间的距离，单位为画布逻辑像素。</summary>
     private const float TitleGap = 1f;
+
+    /// <summary>按职业编号预先加上尖括号，避免名牌跟随时逐帧拼接称谓；jobName 为职业配置中的原名。</summary>
+    private static readonly List<string> JobTitles = ConstDefine.RoleJobName.ConvertAll(jobName => "<" + jobName + ">");
 
     /// <summary>存放字体、描边和对齐样式的常驻 TMP 模板，模板本身始终隐藏。</summary>
     [SerializeField] private TMP_Text _labelTemplate;
@@ -53,13 +56,6 @@ public sealed class RoleNameHudWidget : MonoBehaviour
             return;
         }
 
-        // 屏幕覆盖画布转换坐标时使用空相机。
-        Camera uiCamera = null;
-        if (_canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-        {
-            uiCamera = _canvas.worldCamera;
-        }
-
         world.CopyEntities(_entities);
         // 已占用的标签数，同时是下一张可复用标签的下标。
         int visibleCount = 0;
@@ -74,29 +70,8 @@ public sealed class RoleNameHudWidget : MonoBehaviour
                 continue;
             }
 
-            // 优先使用经过动画更新的人形头骨，其他模型使用实体身高。
-            Vector3 head = role.Position + Vector3.up * role.Height;
-            Animator animator = role.Model.Ator?.UnityAnimator;
-            if (animator != null && animator.isHuman)
-            {
-                // 头骨位置已经是世界坐标。
-                Transform bone = animator.GetBoneTransform(HumanBodyBones.Head);
-                if (bone != null)
-                {
-                    head = bone.position;
-                }
-            }
-
-            // 屏幕坐标为像素，z 为到摄像机的前向距离。
-            Vector3 screen = worldCamera.WorldToScreenPoint(head + Vector3.up * HeadGap);
-            if (screen.z <= worldCamera.nearClipPlane || !worldCamera.pixelRect.Contains(screen))
-            {
-                continue;
-            }
-
-            // 画布锚点为最下方文字的底边，单位为画布逻辑像素。
-            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_root, screen, uiCamera,
-                out Vector2 anchor))
+            // anchor 为称谓底边中点，昵称、盾量及弧条都从此点向上排列。
+            if (!TryGetHeadAnchor(role, worldCamera, out Vector2 anchor))
             {
                 continue;
             }
@@ -104,6 +79,33 @@ public sealed class RoleNameHudWidget : MonoBehaviour
             visibleCount++;
         }
         HideUnused(visibleCount);
+    }
+
+    /// <summary>把头骨位置投影到主画布，供护盾和名牌共用同一条垂直中线。</summary>
+    /// <param name="role">当前显示名牌或护盾的角色。</param>
+    /// <param name="worldCamera">本帧观察角色的场景相机。</param>
+    /// <param name="anchor">名牌最下缘的中点，以画布中心为原点，单位为逻辑像素。</param>
+    /// <returns>头部锚点在场景相机的可见屏幕内时为真。</returns>
+    public bool TryGetHeadAnchor(RoleEntity role, Camera worldCamera, out Vector2 anchor)
+    {
+        anchor = Vector2.zero;
+        // 非人形或尚未载入骨架的模型使用既有实体身高。
+        Vector3 head = role.Position + Vector3.up * role.Height;
+        // 已完成动画更新的人形骨架提供这帧的头部世界位置。
+        Animator animator = role.Model.Ator?.UnityAnimator;
+        if (animator != null && animator.isHuman)
+        {
+            // 不同职业的头骨随动作上下移动，四行信息一起跟随。
+            Transform bone = animator.GetBoneTransform(HumanBodyBones.Head);
+            if (bone != null) head = bone.position;
+        }
+        // 屏幕纵横坐标以像素计，深度与近裁剪面使用相同单位。
+        Vector3 screen = worldCamera.WorldToScreenPoint(head + Vector3.up * HeadGap);
+        if (screen.z <= worldCamera.nearClipPlane || !worldCamera.pixelRect.Contains(screen)) return false;
+        // 覆盖画布传空相机，相机画布用自身 UI 相机来换算屏幕坐标。
+        Camera uiCamera = null;
+        if (_canvas.renderMode != RenderMode.ScreenSpaceOverlay) uiCamera = _canvas.worldCamera;
+        return RectTransformUtility.ScreenPointToLocalPointInRectangle(_root, screen, uiCamera, out anchor);
     }
 
     /// <summary>提供护盾下缘需要让出的两行文字高度。</summary>
@@ -124,11 +126,11 @@ public sealed class RoleNameHudWidget : MonoBehaviour
     /// <returns>职业名，缺少配置时为空。</returns>
     private static string ResolveTitle(int jobId)
     {
-        if (jobId <= 0 || jobId >= ConstDefine.RoleJobName.Count)
+        if (jobId <= 0 || jobId >= JobTitles.Count)
         {
             return string.Empty;
         }
-        return ConstDefine.RoleJobName[jobId];
+        return JobTitles[jobId];
     }
 
     /// <summary>计算称谓下方占用的高度及两行间距。</summary>

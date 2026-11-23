@@ -3,7 +3,7 @@ Shader "LYF/MjsBarrierRim"
     Properties
     {
         _TintColor ("护罩边缘颜色和透明度", Color) = (0.30, 0.71, 1, 0.58)
-        [PerRendererData] _Burst ("单次盾爆的开裂进度", Range(0,1)) = 0
+        [PerRendererData] _OpenTime ("本次开盾的关卡时间（秒）", Float) = -10
     }
     SubShader
     {
@@ -21,8 +21,8 @@ Shader "LYF/MjsBarrierRim"
 
             // RGB 是边缘色，A 是正切处的最大不透明度。
             fixed4 _TintColor;
-            // 独立罩体的零至一爆裂进度，零保持完整的球面。
-            half _Burst;
+            // 与 Unity 的关卡时钟同源，供各个角色独立播放开盾亮带。
+            float _OpenTime;
 
             // 球面片元绘制所需的插值数据。
             struct RimSample
@@ -47,38 +47,19 @@ Shader "LYF/MjsBarrierRim"
             {
                 // 从球面采样点指向相机的单位向量。
                 float3 viewDirection = normalize(UnityWorldSpaceViewDir(sample.worldPosition));
-                // 视线越贴近球面切线，边缘强度越接近 1。
-                half rim = pow(1.0h - saturate(dot(normalize(sample.worldNormal), viewDirection)), 4.0h);
-                if (_Burst > 0)
-                {
-                    // 用球面的方向划分壳片，裂口跨过网格接缝时依然连续。
-                    half3 normal = normalize(sample.worldNormal);
-                    half nearest = -1, runnerUp = -1; // 最接近的两片壳面中心与法线的点积。
-                    half fadeOrder = 0; // 各壳片独立的消散次序。
-                    // index 是绕球面分布的壳片序号；固定采样点可在编译时展开。
-                    [unroll] for (int index = 0; index < 24; index++)
-                    {
-                        float height = 1.0 - (index + 0.5) / 12.0; // 该中心在单位球上的高度。
-                        float ring = sqrt(1.0 - height * height); // 该高度的纬圈半径。
-                        float angle = index * 2.399963 + 0.31 * sin(index * 1.71); // 稍微错开相邻中心的经度。
-                        half alignment = dot(normal, float3(ring * cos(angle), height, ring * sin(angle))); // 中心方向与此片元的接近程度。
-                        if (alignment > nearest)
-                        {
-                            runnerUp = nearest;
-                            nearest = alignment;
-                            fadeOrder = frac((index + 1) * 0.618034);
-                        }
-                        else runnerUp = max(runnerUp, alignment);
-                    }
-                    half gap = nearest - runnerUp; // 两片中心等距处为零，对应实际裂缝。
-                    half opening = lerp(0.002h, 0.12h, _Burst); // 爆开时裂缝从细线向两侧张开。
-                    half surface = smoothstep(opening, opening + 0.01h, gap); // 裂缝内剔除壳面。
-                    half edge = 1 - smoothstep(opening + 0.01h, opening + 0.045h, gap); // 壳片新露出的亮边。
-                    half fade = 1 - smoothstep(0.38h + 0.23h * fadeOrder, 0.74h + 0.26h * fadeOrder, _Burst); // 各片逐一淡出。
-                    return fixed4(lerp(_TintColor.rgb, fixed3(0.84h, 0.96h, 1), 0.3h + 0.7h * edge),
-                        saturate(_TintColor.a * (0.29h + rim + 0.9h * edge) * surface * fade));
-                }
-                return fixed4(_TintColor.rgb, _TintColor.a * rim);
+                half3 normal = normalize(sample.worldNormal); // 球面朝向，用来定位两侧银蓝高光和下缘反光。
+                half grazing = 1 - saturate(dot(normal, viewDirection)); // 正面接近零，轮廓处接近一。
+                half haze = grazing * grazing; // 轮廓向内缓慢衰减的一层薄雾。
+                half edge = pow(grazing, 7.0h); // 紧贴几何轮廓的细白边。
+                half drift = sin(dot(normal, half3(5, 3, 2)) + _Time.y * 0.62); // 沿球面缓慢移动的反光。
+                half glint = smoothstep(0.28h, 0.89h, drift); // 左右明暗变化使球罩保持玻璃质感。
+                float age = max(0.0, _Time.y - _OpenTime); // 本次开盾经过的秒数。
+                half formed = smoothstep(0.18, 0.7, age); // 起手横扫后显出持续罩面。
+                half sweep = saturate(1 - abs(normal.y - (age * 3.0 - 1.4)) * 7); // 由下而上掠过球面的一线亮光。
+                half opacity = (0.012h + haze * (0.34h + 0.55h * glint) + 0.62h * edge) * formed;
+                // 透出角色和场景，只有弧光经过处以及球罩边缘泛出近白色。
+                half3 silver = lerp(_TintColor.rgb, half3(0.90h, 0.95h, 1), 0.44h + 0.48h * glint);
+                return fixed4(silver, saturate(_TintColor.a * opacity + sweep * (0.06h + 0.3h * haze)));
             }
             ENDCG
         }

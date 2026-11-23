@@ -1,13 +1,10 @@
-using DG.Tweening;
 using UnityEngine;
 
 /// <summary>持有单次权威开盾的模型和资源，直到服务器确认破盾或自然到期。</summary>
 internal sealed class MjsBarrierVisual
 {
-    /// <summary>壳面从开裂到消散的秒数。</summary>
-    private const float BurstSeconds = 0.28f;
-    /// <summary>球罩材质的开裂进度属性，零表示完好，一表示完全消散。</summary>
-    private static readonly int BurstProperty = Shader.PropertyToID("_Burst");
+    /// <summary>球面材质使用的开盾时刻，单位为当前关卡开始后的秒数。</summary>
+    private static readonly int OpenTime = Shader.PropertyToID("_OpenTime");
     /// <summary>本次施法锁定的表现行，持有期间允许异步等待角色模型。</summary>
     private readonly int _presentationId;
     /// <summary>开盾角色的模型，罩体随该模型移动。</summary>
@@ -50,6 +47,13 @@ internal sealed class MjsBarrierVisual
             SkillRuntimeFxLifetime lifetime = _shield.gameObject.AddComponent<SkillRuntimeFxLifetime>();
             lifetime.Bind(_presentationId);
             lifetime.enabled = false;
+            // 正式罩面按本次开盾的时间逐渐显现，角色之间独立计时。
+            MeshRenderer rim = _shield.GetComponentInChildren<MeshRenderer>();
+            // 只写入这个罩体实例的起点，不修改共享材质。
+            MaterialPropertyBlock properties = new MaterialPropertyBlock();
+            rim.GetPropertyBlock(properties);
+            properties.SetFloat(OpenTime, Time.timeSinceLevelLoad);
+            rim.SetPropertyBlock(properties);
             _shield.Play(true);
         });
     }
@@ -62,8 +66,9 @@ internal sealed class MjsBarrierVisual
         if (_modelToken != 0) _model.RemoveLoadGoCallback(_modelToken);
         SkillRuntimePresentationCache.Release(_presentationId);
         if (_shield == null) return;
-        // 从本次持有者移交给短暂的世界空间爆裂动画，后续开盾不会覆盖它。
+        // 罩体在本次施法结束后交给粒子生命周期组件回收。
         GameObject shell = _shield.gameObject;
+        _shield.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         _shield = null;
         if (!burst)
         {
@@ -72,18 +77,11 @@ internal sealed class MjsBarrierVisual
             return;
         }
         shell.transform.SetParent(null, true);
-        // 壳面从当前实际大小扩展；沿用头顶护盾条使用的可见球罩网格。
-        Vector3 startScale = shell.transform.localScale;
-        MeshRenderer rim = shell.GetComponentInChildren<MeshRenderer>();
-        // 每个角色只改变自己这一层罩体的材质参数。
-        MaterialPropertyBlock properties = new MaterialPropertyBlock();
-        rim.GetPropertyBlock(properties);
-        // progress 为 0 到 1 的爆裂进度，壳面向外冲出后化成碎光。
-        DOVirtual.Float(0f, 1f, BurstSeconds, progress =>
-        {
-            shell.transform.localScale = startScale * (1f + 1.25f * progress);
-            properties.SetFloat(BurstProperty, progress);
-            rim.SetPropertyBlock(properties);
-        }).SetEase(Ease.OutQuad).SetLink(shell).OnComplete(() => Object.Destroy(shell));
+        shell.GetComponentInChildren<MeshRenderer>().enabled = false;
+        // 白闪、横向冲击波及飞散碎片是正式预制体中的同一组，只有自然到期才播放。
+        ParticleSystem expiryLight = shell.transform.Find("MjsBarrierLights/ExpiryBurst").GetComponent<ParticleSystem>();
+        expiryLight.gameObject.SetActive(true);
+        expiryLight.Play(true);
+        shell.GetComponent<SkillRuntimeFxLifetime>().enabled = true;
     }
 }
