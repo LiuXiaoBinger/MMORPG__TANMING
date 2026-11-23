@@ -885,3 +885,7 @@ GameServer and Unity gameplay scripts compiled. Seven loopback steps verified re
 ## [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification
 
 Luban generated three tables, 103 tier entries and 241 new genes. GameServer and GateServer built. Isolated game-server checks passed 56 assertions. Unity Play Mode passed 21 checks including six Huashan cards and valid sprite references. The working client compiled 413 scripts for each Editor/Windows Player target. Standalone branch sources still fail in pre-existing MainCtrl.cs lines 382 and 396. Live network play, database relogin and packaging were not exercised. Bleed/poison ticks and systems without an authoritative resource consumer require further configuration. See `项目修改日志/2026-11-23-秘笈图鉴与Luban基因.md`.
+
+## [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints
+
+GameServer compiled. The old midpoint failed the new variation check. The patched zero-defense combat fixture passed 134 assertions, including normal internal and external rolls, their exact Divine Power maxima, Weakness priority, and equal endpoints. For a 100–500 range, 512 reads of the online-role external attack produced 284 distinct integers. The legacy equipment suite still fails its old special-skill stacking expectation (actual 12, expected 16), reproduced with both implementations. Running service deployment, live Unity multiplayer and Player packaging were not tested. Evidence in `_temp/ro-attack-roll-20261123/`. See `项目修改日志/2026-11-23-内外功区间随机取值.md`.

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `3624009f83df344e7ce73d57082fc15deed88d57e00d4e3f8d07f396be081973`
+Source normalized SHA256: `b3c501dbb7f4314a51b189d0d3f29621e0c7d35778211c561ab847fb72f8df8c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -124,11 +124,12 @@ Source normalized SHA256: `3624009f83df344e7ce73d57082fc15deed88d57e00d4e3f8d07f
 | [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
 | [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-856 |
-| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 857-859 |
+| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 857-860 |
+| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 861-863 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1de840b7adb521af7321f5cb28b9ee71ad5eb1caf1bd830f8a0fcae4c4b8ce88`
+Source normalized SHA256: `ff5ae54101e9272c56cae0b5969aa72d1cfa130ea229ce421ad5ea198449d122`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -244,7 +245,8 @@ Source normalized SHA256: `1de840b7adb521af7321f5cb28b9ee71ad5eb1caf1bd830f8a0fc
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
 | [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-884 |
-| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 885-887 |
+| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 885-888 |
+| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 889-891 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -857,3 +857,7 @@ GameServer uses each accepted move’s previous and current positions to send re
 ## [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes
 
 Open 武学 → 秘笈列表. The catalogue contains 32 identified books, including 18 detail views. The MartialManualInfo, MartialManualTier and MartialManualCost Luban sheets provide metadata, per-rank gene IDs, descriptions and known costs. Gene and ItemInfo provide effects and fragments. Equipped ranks replace the previous passive, earlier rank stats accumulate, and unequipped dungeon bonuses are exclusive. Existing book IDs and counts remain compatible. See `项目修改日志/2026-11-23-秘笈图鉴与Luban基因.md`.
+
+## [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range
+
+GameServer now samples ordinary attack power as `min + (max - min) * u`, with `0 <= u < 1`. The matching Divine Power state selects the exact maximum, Weakness takes precedence and selects the minimum, and equal endpoints stay fixed. Basic-hit settlement samples the external and internal components independently. Tornado Slash takes its external roll when it prepares its cast. RO samples its damage fluctuation coefficient separately; this change adapts its interpolation to this project's displayed attack ranges. The character panel keeps the two endpoints. Code `cbb3417`. See `项目修改日志/2026-11-23-内外功区间随机取值.md`.
