@@ -43,6 +43,26 @@ public sealed class MartialManualPanel : MonoBehaviour
     [SerializeField] private TMP_Text filterText, insightsText, schemeText, feedback;
     /// <summary>属性预览、下级数值、材料及铜币。</summary>
     [SerializeField] private TMP_Text currentStats, nextStats, costText;
+    /// <summary>进阶说明的独立裁剪区，仅在进阶页接收拖动和滚轮。</summary>
+    [SerializeField] private ScrollRect rankScroll;
+    /// <summary>从第一阶向下排版的正文，高度随本书的属性和被动说明变化。</summary>
+    [SerializeField] private TMP_Text rankBody;
+    /// <summary>将消耗标题、材料和铜币从左至右排成一行的底栏。</summary>
+    [SerializeField] private GameObject costStrip;
+    /// <summary>背包材料的持有数与本次需求数。</summary>
+    [SerializeField] private TMP_Text materialCount;
+    /// <summary>与铜币图标并列的本次铜币费用。</summary>
+    [SerializeField] private TMP_Text copperCost;
+    /// <summary>秘笈等级未达到进阶条件时，返回本书升级页的按钮。</summary>
+    [SerializeField] private Button goToUpgrade;
+    /// <summary>录屏展示了进阶条件的秘笈书号，供预览区选用对应文案。</summary>
+    [SerializeField] private int previewBookId;
+    /// <summary>录屏可见的各阶秘笈等级，从一阶起排列，仅用于未开放费用的预览。</summary>
+    [SerializeField] private int[] previewBookLevels;
+    /// <summary>录屏条件栏的角色等级标记，仅参与显示颜色。</summary>
+    [SerializeField] private int previewRoleLevel;
+    /// <summary>武学窗口从控制器收到的当前角色等级，用于条件栏的达成标记。</summary>
+    private int roleLevel;
     /// <summary>培养标题、说明弹层正文及确定操作的文字。</summary>
     [SerializeField] private TMP_Text trainTitle, infoText, actionText;
     /// <summary>随选中页签一起着色的图示。</summary>
@@ -82,9 +102,24 @@ public sealed class MartialManualPanel : MonoBehaviour
 
     /// <summary>打开页面，只在进入或重新进入时向服务器读取。</summary>
     /// <param name="showList">是否显示秘笈列表页。</param>
-    public void Open(bool showList)
+    /// <param name="currentRoleLevel">控制器同步给武学窗口的角色等级，供进阶条件着色。</param>
+    public void Open(bool showList, int currentRoleLevel = 0)
     {
-        if (initialized && gameObject.activeSelf && state != null && listPage == showList) return;
+        // 同一页内更新角色等级时只刷新条件栏所在的培养视图。
+        bool roleChanged = roleLevel != currentRoleLevel;
+        roleLevel = currentRoleLevel;
+        // 已绑定且收到角色回包的可见页面可直接复用。
+        bool alreadyOpen = initialized && gameObject.activeSelf && state != null;
+        if (alreadyOpen && listPage == showList)
+        {
+            if (roleChanged && training.activeSelf)
+            {
+                // 角色升级时，当前培养页沿用选中书籍和已读位置。
+                int index = Index(selected);
+                DrawTraining(state.Catalog.Books[index], state.Progress[index]);
+            }
+            return;
+        }
         if (!initialized) Bind();
         if (listPage != showList) { ResetOverlays(); selected = 0; feedback.text = ""; }
         listPage = showList;
@@ -152,6 +187,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         closeInfo.onClick.AddListener(() => info.SetActive(false));
         closeTraining.onClick.AddListener(() => { training.SetActive(false); Render(); });
         execute.onClick.AddListener(Train);
+        goToUpgrade.onClick.AddListener(() => StartTraining(0));
         for (int i = 0; i < trainTabs.Length; i++)
         {
             // 记录此按钮固定的页签序号。
@@ -546,6 +582,39 @@ public sealed class MartialManualPanel : MonoBehaviour
         return string.Join("\n\n", lines);
     }
 
+    /// <summary>将各阶属性和被动分行，换行后的正文与属性左端对齐。</summary>
+    /// <param name="book">当前选中秘笈的逐阶配置。</param>
+    /// <param name="rank">角色已经达成的阶数，零表示尚未进阶。</param>
+    private void DrawRankPreview(ManualBook book, int rank)
+    {
+        // 每段对应配置中的一阶，阶数从一开始显示。
+        List<string> paragraphs = new List<string>();
+        for (int index = 0; index < book.RankText.Count; index++)
+        {
+            // 表格用第一个全角分号分隔本阶属性和被动，保留被动自身的标点。
+            string entry = book.RankText[index];
+            // 分隔符不存在时保留完整原文。
+            int separator = entry.IndexOf('；');
+            if (separator >= 0) entry = entry.Substring(0, separator) + "\n" + entry.Substring(separator + 1);
+            // 已达成的阶使用实心菱形及绿色正文，未达成阶沿用灰色正文。
+            string marker = "<color=#879394>◇</color>";
+            if (index < rank)
+            {
+                marker = "<color=#FFFFFF>◆</color>";
+                entry = "<color=#55E750>" + entry + "</color>";
+            }
+            paragraphs.Add(marker + " <color=#D4BD92>" + (index + 1) + "阶-</color><indent=3.5em>" + entry + "</indent>");
+        }
+        // 文字变化或重新进入进阶页时从第一阶开始，其他回包保留阅读位置。
+        string preview = string.Join("\n", paragraphs);
+        if (rankScroll.gameObject.activeSelf && rankBody.text == preview) return;
+        rankScroll.gameObject.SetActive(true);
+        rankBody.text = preview;
+        rankBody.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rankBody.preferredHeight);
+        rankScroll.StopMovement();
+        rankScroll.verticalNormalizedPosition = 1f;
+    }
+
     /// <summary>读取该材料的背包持有数。</summary><param name="cost">培养或领悟的费用。</param>
     private int Held(ManualCost cost)
     {
@@ -559,6 +628,9 @@ public sealed class MartialManualPanel : MonoBehaviour
     {
         trainIcon.sprite = Cover(b.Id);
         trainTitle.text = "秘笈培养";
+        currentStats.gameObject.SetActive(tab != 1);
+        nextStats.gameObject.SetActive(tab == 0);
+        if (tab != 1) rankScroll.gameObject.SetActive(false);
         // 仅在配置了下一档时允许扣除资源。
         ManualCost cost = null;
         string action = "升级";
@@ -575,8 +647,7 @@ public sealed class MartialManualPanel : MonoBehaviour
         else if (tab == 1)
         {
             action = "进阶";
-            currentStats.text = Ranks(b);
-            nextStats.text = "";
+            DrawRankPreview(b, p.Rank);
             if (p.Rank < b.Ranks.Count) cost = b.Ranks[p.Rank];
         }
         else
@@ -586,6 +657,7 @@ public sealed class MartialManualPanel : MonoBehaviour
             nextStats.text = "";
             if (p.Insights < b.Insights.Count) cost = b.Insights[p.Insights];
         }
+        // 依照三个培养页签的排列刷新选中色。
         for (int i = 0; i < trainTabs.Length; i++)
         {
             // 与武学主页相同，浅底深字为当前页。
@@ -601,15 +673,48 @@ public sealed class MartialManualPanel : MonoBehaviour
             trainGlyphs[i].color = label.color;
         }
         actionText.text = action;
-        execute.interactable = false;
-        costText.text = "当前暂无下一阶段";
-        materialIcon.enabled = cost != null;
         previewArrow.enabled = tab == 0 && cost != null;
-        if (cost == null) return;
+        // 等级未达时仅展示配置条件，指向同一本秘笈的升级页。
+        int requiredLevel = 0;
+        if (tab == 1)
+        {
+            if (cost != null) requiredLevel = cost.Level;
+            else if (b.Id == previewBookId && p.Rank < previewBookLevels.Length) requiredLevel = previewBookLevels[p.Rank];
+        }
+        // 达标或费用未知时均沿用原来的操作状态，预览条件不参与扣费。
+        bool needsUpgrade = p.Level < requiredLevel;
+        goToUpgrade.gameObject.SetActive(needsUpgrade);
+        execute.gameObject.SetActive(!needsUpgrade);
+        execute.interactable = false;
+        costStrip.SetActive(cost != null && !needsUpgrade);
+        costText.text = "";
+        if (needsUpgrade)
+        {
+            costText.text = "进阶条件：<indent=5.4em><color=#F15D56>◇  秘笈升级到" + requiredLevel + "级</color>";
+            if (b.Id == previewBookId && p.Rank < previewBookLevels.Length)
+            {
+                // 只在录屏有依据的阶次展示角色条件，颜色跟随实际等级。
+                string roleMark = "<color=#F15D56>◇  ";
+                if (roleLevel >= previewRoleLevel) roleMark = "<color=#FFFFFF>◆  ";
+                costText.text += "\n" + roleMark + "角色升级到" + previewRoleLevel + "级</color>";
+            }
+            costText.text += "</indent>";
+            return;
+        }
+        if (cost == null)
+        {
+            costText.text = "当前暂无下一阶段";
+            return;
+        }
         materialIcon.sprite = trainingMaterial;
         if (tab == 1) materialIcon.sprite = Cover(b.Id);
-        costText.text = "消耗    " + Held(cost) + "/" + cost.Amount + "     铜币  " + cost.Copper;
-        if (p.Level < cost.Level) costText.text = "需要" + cost.Level + "级　" + costText.text;
-        execute.interactable = p.Level >= cost.Level && Held(cost) >= cost.Amount && state.Copper >= cost.Copper;
+        // 实际库存和余额分别决定数字颜色，底栏保留材料、货币各自的图标。
+        int held = Held(cost);
+        materialCount.text = held + "/" + cost.Amount;
+        copperCost.text = cost.Copper.ToString();
+        if (held < cost.Amount) materialCount.text = "<color=#E58B7C>" + materialCount.text + "</color>";
+        if (state.Copper < cost.Copper) copperCost.text = "<color=#E58B7C>" + copperCost.text + "</color>";
+        if (p.Level < cost.Level) costText.text = "需要" + cost.Level + "级";
+        execute.interactable = p.Level >= cost.Level && held >= cost.Amount && state.Copper >= cost.Copper;
     }
 }

@@ -636,7 +636,7 @@ public class SkillInfoWindow : WindowBase
                 _manualPanel = Instantiate(_manualPrefab, _panelLayout, false);
                 _manualPanel.Requested += request => ManualRequested?.Invoke(request);
             }
-            _manualPanel.Open(_page == PageList);
+            _manualPanel.Open(_page == PageList, _growthRoleLevel);
             return;
         }
         ClearManual();
