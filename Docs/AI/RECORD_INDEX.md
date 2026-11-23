@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `24de7aa8b61ee81396c3e758665ffbb190be482bc475632f2de06eaf30edccb3`
+Source normalized SHA256: `0cf2b2fbe5eb628222776e131c2a611959348ac18834ef2e3037157447930f71`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -127,11 +127,12 @@ Source normalized SHA256: `24de7aa8b61ee81396c3e758665ffbb190be482bc475632f2de06
 | [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 859-864 |
 | [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 865-868 |
 | [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-872 |
-| [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-878 |
+| [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-879 |
+| [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 880-883 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `d5f8979f92e0dcfd00008e620736ed9b2b311c4fc4460eb96679156af6188d2f`
+Source normalized SHA256: `56bc2885cdadb9aa5f76a5ba0d20e861a0539ffd28da6e64e699af5b251604cc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -250,7 +251,8 @@ Source normalized SHA256: `d5f8979f92e0dcfd00008e620736ed9b2b311c4fc4460eb966791
 | [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-894 |
 | [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 895-898 |
 | [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-902 |
-| [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-908 |
+| [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-909 |
+| [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 910-913 |
 
 ## Docs/AI/DECISIONS.en.md
 

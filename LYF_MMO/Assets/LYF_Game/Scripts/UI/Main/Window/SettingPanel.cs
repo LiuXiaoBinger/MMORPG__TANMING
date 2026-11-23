@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>控制设置窗口的画幅、页签展示和基础页的声音设置控件。</summary>
+/// <summary>控制设置窗口的画幅和页签，将声音和世界镜头选项交给对应设置。</summary>
 public sealed class SettingPanel : WindowBase
 {
     /// <summary>保留八页原始布局的窗体，按主界面可用宽高缩放到全屏。</summary>
@@ -44,13 +44,51 @@ public sealed class SettingPanel : WindowBase
     /// <summary>显示游戏音效当前开启或关闭的状态文字。</summary>
     [SerializeField] private TMP_Text _effectsState;
 
-    /// <summary>每个设置窗口实例仅注册一次声音控件的值变化回调。</summary>
+    /// <summary>按 WorldCameraMode 顺序绑定的五个互斥选项。</summary>
+    [SerializeField] private Toggle[] _cameraModes;
+    /// <summary>从功能列到基础功能列排列的十二个选项，与 WorldCameraFeature 的位序一致。</summary>
+    [SerializeField] private Toggle[] _cameraFeatures;
+    /// <summary>两列功能共用的交互区域，固定预设会将整个区域淡化并锁定。</summary>
+    [SerializeField] private CanvasGroup _cameraOptions;
+    /// <summary>贴在选中模式下方的说明，随后各行按说明实际高度下移。</summary>
+    [SerializeField] private TMP_Text _cameraHint;
+    /// <summary>镜头模式的操作说明，顺序与左侧五个模式一致。</summary>
+    private static readonly string[] CameraHints =
+    {
+        "战斗中自动拉远镜头，右键拖动可自由环绕。",
+        "锁定当前俯角。可先在 3D 模式调好角度，再切回此模式。",
+        "普通战斗保持当前视野，首领战自动拉高镜头。",
+        "锁定默认俯角，仍可水平环绕和滚轮缩放。",
+        "可逐项调整镜头功能，切换模式后仍保留此组合。"
+    };
+
+    /// <summary>每个窗口实例仅注册一次声音、镜头模式与自定义勾选回调。</summary>
     private void Awake()
     {
         _musicToggle.onValueChanged.AddListener(ChangeMusicEnabled);
         _effectsToggle.onValueChanged.AddListener(ChangeEffectsEnabled);
         _musicVolume.onValueChanged.AddListener(ChangeBGMVolume);
         _effectsVolume.onValueChanged.AddListener(ChangeSEVolume);
+
+        // modeIndex 对应预制体的一行；分别捕获模式值，避免回调共用循环末尾的下标。
+        for (int modeIndex = 0; modeIndex < _cameraModes.Length; modeIndex++)
+        {
+            // 本行代表的唯一镜头模式，互斥组取消旧行时不切换设置。
+            WorldCameraMode mode = (WorldCameraMode)modeIndex;
+            _cameraModes[modeIndex].onValueChanged.AddListener(selected =>
+            {
+                if (!selected) return;
+                WorldCameraSettings.SelectMode(mode);
+                RefreshCameraControls();
+            });
+        }
+        // featureIndex 从复位键到轻功地面提示依次映射为单个开关位。
+        for (int featureIndex = 0; featureIndex < _cameraFeatures.Length; featureIndex++)
+        {
+            // 此控件独立持有的功能位，勾选时仅更新这一项。
+            WorldCameraFeature feature = (WorldCameraFeature)(1 << featureIndex);
+            _cameraFeatures[featureIndex].onValueChanged.AddListener(enabled => WorldCameraSettings.SetCustomFeature(feature, enabled));
+        }
     }
 
     /// <summary>打开时置于聊天等主界面窗口上方，回到基础页和页签列表顶部。</summary>
@@ -63,7 +101,7 @@ public sealed class SettingPanel : WindowBase
         RefreshAudioControls();
     }
 
-    /// <summary>窗口关闭时保存已改动的声音设置，拖动音量滑杆期间只更新内存数值。</summary>
+    /// <summary>关闭窗口时统一将已改动的音量与镜头设置写入本机存档。</summary>
     private void OnDisable()
     {
         PlayerPrefs.Save();
@@ -153,6 +191,38 @@ public sealed class SettingPanel : WindowBase
             _pages[pageIndex].SetActive(pageIndex == index);
             _tabOn[pageIndex].SetActive(pageIndex == index);
             _tabOff[pageIndex].SetActive(pageIndex != index);
+        }
+        if (index == 1) RefreshCameraControls();
+    }
+
+    /// <summary>回显当前模式和全部有效勾选，在选中行下展开说明，仅开放自定义项编辑。</summary>
+    private void RefreshCameraControls()
+    {
+        // 模式枚举和预制体行顺序一致，选项布局以画布单位计。
+        int selected = (int)WorldCameraSettings.Mode;
+        _cameraHint.text = CameraHints[selected];
+        // 按当前字体和说明宽度换行，给后续行预留实际需要的高度。
+        float hintHeight = _cameraHint.GetPreferredValues(_cameraHint.text, _cameraHint.rectTransform.rect.width, Mathf.Infinity).y;
+        _cameraHint.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, hintHeight);
+        // 五行共用原始横向对齐，选中行之后才为说明让位。
+        for (int row = 0; row < _cameraModes.Length; row++)
+        {
+            _cameraModes[row].SetIsOnWithoutNotify(row == selected);
+            // 行首距页面顶边的画布坐标，说明展开后下方各行同步平移。
+            float y = -93f - row * 96f;
+            if (row > selected) y -= hintHeight;
+            ((RectTransform)_cameraModes[row].transform).anchoredPosition = new Vector2(7f, y);
+            if (row == selected) _cameraHint.rectTransform.anchoredPosition = new Vector2(66f, y - 48f);
+        }
+        // 固定预设可查看各项的开关状态，自定义才能修改。
+        bool editable = WorldCameraSettings.Mode == WorldCameraMode.Custom;
+        _cameraOptions.interactable = editable;
+        _cameraOptions.alpha = 0.48f;
+        if (editable) _cameraOptions.alpha = 1f;
+        // featureIndex 的位对应当前行，不通知回调以保留自定义存档。
+        for (int featureIndex = 0; featureIndex < _cameraFeatures.Length; featureIndex++)
+        {
+            _cameraFeatures[featureIndex].SetIsOnWithoutNotify(WorldCameraSettings.Allows((WorldCameraFeature)(1 << featureIndex)));
         }
     }
 

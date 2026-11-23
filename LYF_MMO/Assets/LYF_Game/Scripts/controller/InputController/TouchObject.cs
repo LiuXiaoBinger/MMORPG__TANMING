@@ -22,6 +22,12 @@ public sealed class TouchObject
     private MEntity _downEntity;
     /// <summary>本次按下的屏幕像素坐标，用于区分拖动镜头与点击实体。</summary>
     private Vector2 _lastPos;
+    /// <summary>本次按下是否从场景空白处开始，实体和 UI 上的按下不能拼成地面双击。</summary>
+    private bool _groundPress;
+    /// <summary>上次有效地面单击的真实时间，秒；负值表示没有等待第二击。</summary>
+    private float _lastGroundTime = -1f;
+    /// <summary>上次地面单击的屏幕像素位置，用于排除不同位置的连续点击。</summary>
+    private Vector2 _lastGroundPosition;
 
     /// <summary>单例只处理选择输入，不挂载正式场景组件。</summary>
     private TouchObject() { }
@@ -30,6 +36,8 @@ public sealed class TouchObject
     public void Clear()
     {
         _downEntity = null;
+        _groundPress = false;
+        _lastGroundTime = -1f;
         _entities.Clear();
         _uiHits.Clear();
     }
@@ -119,6 +127,8 @@ public sealed class TouchObject
         if (phase == TouchPhase.Began)
         {
             _downEntity = selectEnt;
+            _groundPress = selectEnt == null;
+            if (!_groundPress) _lastGroundTime = -1f;
             _lastPos = position;
             return false;
         }
@@ -127,6 +137,12 @@ public sealed class TouchObject
             // 角色与敌人保持原按下松开同一实体的选择规则。
             bool sameEntity = selectEnt != null && selectEnt == _downEntity;
             _downEntity = null;
+            // 两端均未命中实体且移动不超过十像素才按场景点击处理。
+            bool groundClick = _groundPress && selectEnt == null && (position - _lastPos).sqrMagnitude <= 100f;
+            _groundPress = false;
+            if (groundClick && WorldCameraSettings.Allows(WorldCameraFeature.DoubleClickGround))
+                return HandleGroundClick(position, ray, camera.farClipPlane);
+            _lastGroundTime = -1f;
             if (sameEntity)
             {
                 // 当前命中的 NPC 原实体，导航直接保存该领域对象。
@@ -142,6 +158,32 @@ public sealed class TouchObject
                 return setPlayerTarget(selectEnt, selectOnly);
             }
         }
+        return false;
+    }
+
+    /// <summary>两次在同一处可见地面点击后通知相机，墙面、天空和拖动不参与配对。</summary>
+    /// <param name="position">本次松开左键的屏幕像素坐标。</param>
+    /// <param name="ray">主相机从点击位置发出的世界射线。</param>
+    /// <param name="distance">主相机的远裁剪距离，单位米。</param>
+    private bool HandleGroundClick(Vector2 position, Ray ray, float distance)
+    {
+        // Geometry 同时承载地面和建筑，使用表面法线排除竖墙。
+        RaycastHit hit;
+        if (!Physics.Raycast(ray, out hit, distance, LayerMask.GetMask("Geometry"), QueryTriggerInteraction.Ignore) || hit.normal.y < 0.5f)
+        {
+            _lastGroundTime = -1f;
+            return false;
+        }
+        // 双击依据真实输入时间，允许两次落点在十六个屏幕像素内。
+        float now = Time.unscaledTime;
+        if (_lastGroundTime >= 0f && now - _lastGroundTime <= 0.3f && (position - _lastGroundPosition).sqrMagnitude <= 256f)
+        {
+            _lastGroundTime = -1f;
+            CameraMgr.Instance?.TurnToGround(hit.point);
+            return true;
+        }
+        _lastGroundPosition = position;
+        _lastGroundTime = now;
         return false;
     }
 
@@ -163,7 +205,7 @@ public sealed class TouchObject
     /// <summary>检查点击位置上的 UI Graphic，包含本帧鼠标位置而不依赖旧指针缓存。</summary>
     /// <param name="position">当前点击的屏幕像素坐标。</param>
     /// <returns>命中 UI 时为 true，世界点击应被取消。</returns>
-    private bool IsPointerOverUI(Vector2 position)
+    internal bool IsPointerOverUI(Vector2 position)
     {
         if (EventSystem.current == null)
         {

@@ -337,7 +337,10 @@ public class MSceneDungeon : MonoBehaviour
             else
             {
                 // 尸体和伤员仍按原点位生成，其能否被攻击由本条实体配置决定。
-                ((MonsterEntity)entity).NonCombatant = creature.nonCombatant;
+                // 已有怪物实体沿用出生身份，只补入原表标记的首领档位。
+                MonsterEntity spawnedMonster = (MonsterEntity)entity;
+                spawnedMonster.NonCombatant = creature.nonCombatant;
+                if (creature.isBoss) spawnedMonster.Rank = MonsterRank.Boss;
             }
             entity.Model.SetGameObject(model, string.Empty, false);
             // 实体碰撞尺寸与实际模型包围盒一致，不使用角色职业表猜测怪物尺寸。
@@ -478,6 +481,10 @@ public class MSceneDungeon : MonoBehaviour
         MEntity caster;
         // 数字只依赖权威命中和受击者；施害者模型晚加载或已移除时仍能显示伤害。
         bool hasCaster = monsters.TryGetValue(hit.SpawnId, out caster);
+        if (target == world.LocalRole && hit.Damage > 0)
+        {
+            CameraMgr.Instance?.RecordIncomingHit(caster);
+        }
         if (target.Model.IsLoaded && battleHudWord != null)
         {
             // 有施害者时沿真实攻击方向漂移，模型缺失时从受击者位置向上显示。

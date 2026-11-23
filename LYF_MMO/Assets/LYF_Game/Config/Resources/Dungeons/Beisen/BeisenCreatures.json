@@ -2,6 +2,7 @@
   "entities": [
     {
       "id": 9751,
+      "isBoss": true,
       "displayName": "凯思利亚斯",
       "modelName": "NPC_M_KaiSiLiYaSi",
       "scale": 1.5,
@@ -211,6 +212,7 @@
     },
     {
       "id": 9801,
+      "isBoss": true,
       "displayName": "凯思利亚斯",
       "modelName": "NPC_M_KaiSiLiYaSi",
       "scale": 1.5,

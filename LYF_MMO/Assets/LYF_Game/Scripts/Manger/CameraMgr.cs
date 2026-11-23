@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 
 
 /// <summary>本地主角的自由视角相机管理器，同时管理世界与UI相机之间的声音监听所有权。</summary>
-public class CameraMgr : MonoBehaviour
+public partial class CameraMgr : MonoBehaviour
 {
     /// <summary>本地招式反馈使用的 Cinemachine 脉冲通道掩码。</summary>
     private const int CombatShakeChannel = 1 << 1;
@@ -84,6 +84,12 @@ public class CameraMgr : MonoBehaviour
 
     private Mouse _mouse;
 
+    /// <summary>把原桌面相机灵敏度换算为每像素增量的参考帧率。</summary>
+    private const float RotationReferenceFps = 60f;
+
+    /// <summary>当前轨道渐变，连续缩放或切换展示时从当前高度接续。</summary>
+    private Tween _orbitTween;
+
     #region 设置角色属性window视角
 
     private float _oldOrbitesOffet;
@@ -104,7 +110,8 @@ public class CameraMgr : MonoBehaviour
         Instance = this;
         _cinemachine = GetComponent<CinemachineFreeLook>();
         _mouse = Mouse.current;
-        // SetOrbites(12);
+        // 两个世界场景原有的 SimpleFollow 会逐帧清空水平轴，改用世界航向保存玩家转过的角度。
+        _cinemachine.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
     }
 
 
@@ -118,27 +125,17 @@ public class CameraMgr : MonoBehaviour
     }
 
 
+    /// <summary>逐帧处理本地主角的世界镜头，属性展示期间由展示窗口接管。</summary>
     private void Update()
     {
-        if(_isOpenRoleAtttWindow ==true)return;
-
-        //摄像机缩放功能
-        // 指针位于界面上时交给正文滚动，避免同一滚轮同时缩放场景镜头。
-        if (_mouse.scroll.y.ReadValue() != 0 && !EventSystem.current.IsPointerOverGameObject())
-        {
-            SetOrbites(_cinemachine.m_Orbits[0].m_Height - _mouse.scroll.y.ReadValue()*2 );
-        }
-
-
-        //摄像机旋转功能 替代Mouse Y
-        CameraRotation();
-
+        UpdateWorldView();
     }
-
 
     /// <summary>相机管理器临时停用时归还UI监听器，避免停用的世界相机长期占用声音位置。</summary>
     private void OnDisable()
     {
+        ReleaseWorldDrag();
+        UpdateGroundHint(false);
         if (_uiAudioListener != null)
         {
             _uiAudioListener.enabled = _uiAudioListenerWasEnabled;
@@ -162,6 +159,7 @@ public class CameraMgr : MonoBehaviour
     /// <summary>相机场景销毁后解除声音监听接管，并清理属于自身的静态实例入口。</summary>
     private void OnDestroy()
     {
+        if (_groundHint != null) Destroy(_groundHint);
         ReleaseAudioListener();
         // index覆盖本管理器所有自建组件，旧相机场景已经销毁的项无需再次处理。
         for (int index = 0; index < _ownedAudioListeners.Count; index++)
@@ -190,12 +188,13 @@ public class CameraMgr : MonoBehaviour
     /// <param name="offset">相机平面上的右向与上向位移，单位米。</param>
     public void PlaySkillAccentShake(Vector2 offset)
     {
-        PlayCombatShake(SkillCastImpulse, offset);
+        if (WorldCameraSettings.Allows(WorldCameraFeature.SkillAccent)) PlayCombatShake(SkillCastImpulse, offset);
     }
 
     /// <summary>本地主角命中目标时，沿画面平面播放更强、更快起峰的冲量。</summary>
     public void PlaySkillHitShake()
     {
+        _combatUntil = Time.time + 3f;
         PlayCombatShake(SkillHitImpulse, new Vector3(0.075f, -0.065f, 0f));
     }
 
@@ -234,8 +233,14 @@ public class CameraMgr : MonoBehaviour
             }
             _cinemachine.Follow = _roleMainTransform;
             _cinemachine.LookAt = _lookAtTransform;
+            _cinemachine.m_XAxis.Value = roleTransform.eulerAngles.y;
+            _worldZoom = DefaultWorldZoom;
+            _combatLift = 0f;
+            _combatUntil = 0f;
+            _attackingBoss = null;
+            ApplyWorldMode();
+            SetOrbites(_worldZoom);
         }
-        SetOrbites(12);
         BindAudioListener();
     }
 
@@ -322,54 +327,24 @@ public class CameraMgr : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 摄像机旋转功能
-    /// </summary>
-    private void CameraRotation()
-    {
-
-        //鼠标右键按下时
-        if (_mouse.rightButton.isPressed)
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            if (_mouse.delta.ReadValue() != Vector2.zero)
-            {
-                _cinemachine.m_YAxis.Value -= _mouse.delta.ReadValue().y * Time.deltaTime * _yAxisSpeed;
-                _cinemachine.m_XAxis.Value += _mouse.delta.ReadValue().x * Time.deltaTime * _xAxisSpeed;
-            }
-        }
-        //鼠标抬起时
-        if (_mouse.rightButton.wasReleasedThisFrame)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-
-    }
-
-    /// <summary>
-    /// 设置轨道数据
-    /// </summary>
-    /// <param name="offset"></param>
+    /// <summary>从当前高度平滑过渡到新的 FreeLook 轨道，连续滚轮共用一个可中断动画。</summary>
+    /// <param name="offset">顶部轨道目标高度，限制在 3 至 50 米。</param>
     private void SetOrbites(float offset)
     {
+        _orbitTween.Kill();
+        _orbitTween = DOTween.To(() => _cinemachine.m_Orbits[0].m_Height, SetOrbitHeight,
+            Mathf.Clamp(offset, 3f, 50f), _delayTimer).SetLink(gameObject);
+    }
 
-        //限制缩放值
-        offset = Mathf.Clamp(offset, 3f, 50f);
-
-        //Top Rig
-        DOTween.To(() => _cinemachine.m_Orbits[0].m_Height, x => _cinemachine.m_Orbits[0].m_Height = x, offset, _delayTimer);
-        DOTween.To(() => _cinemachine.m_Orbits[0].m_Radius, x => _cinemachine.m_Orbits[0].m_Radius = x, offset * 0.25f, _delayTimer);
-
-
-        DOTween.To(() => _cinemachine.m_Orbits[1].m_Height, x => _cinemachine.m_Orbits[1].m_Height = x, offset * 0.5f, _delayTimer);
-        DOTween.To(() => _cinemachine.m_Orbits[1].m_Radius, x => _cinemachine.m_Orbits[1].m_Radius = x, offset * 0.7f, _delayTimer);
-
-
-        DOTween.To(() => _cinemachine.m_Orbits[2].m_Radius, x => _cinemachine.m_Orbits[2].m_Radius = x, offset * 0.15f, _delayTimer);
-
+    /// <summary>按项目原有三层高度及半径比例调整环绕距离，保留底层原始高度和避障扩展。</summary>
+    /// <param name="height">当前插值后的顶部轨道高度，单位米。</param>
+    private void SetOrbitHeight(float height)
+    {
+        _cinemachine.m_Orbits[0].m_Height = height;
+        _cinemachine.m_Orbits[0].m_Radius = height * 0.25f;
+        _cinemachine.m_Orbits[1].m_Height = height * 0.5f;
+        _cinemachine.m_Orbits[1].m_Radius = height * 0.7f;
+        _cinemachine.m_Orbits[2].m_Radius = height * 0.15f;
     }
 
     /// <summary>
@@ -380,9 +355,11 @@ public class CameraMgr : MonoBehaviour
     {
         if (roleAtttWindow.gameObject.activeSelf)
         {
+            ReleaseWorldDrag();
+            UpdateGroundHint(false);
             _isOpenRoleAtttWindow = true;
             _roleAtttWindowRectTransform =roleAtttWindow.transform as RectTransform;
-            _oldOrbitesOffet = _cinemachine.m_Orbits[0].m_Height;
+            _oldOrbitesOffet = _worldZoom * (1f + 2f * _combatLift);
             _oldeulerAnglesY = Camera.main.transform.eulerAngles.y;
             _oldcimeYaxis = _cinemachine.m_YAxis.Value;
             if (isOpenKnapsackWindow)
