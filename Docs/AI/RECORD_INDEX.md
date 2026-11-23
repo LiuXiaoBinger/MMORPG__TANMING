@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `52ad71578d4ab9be15a53a598ced7ea8f5bee69e18479004434db9b7432aa435`
+Source normalized SHA256: `49dafefb1929b9b1c292ec275c5b6549c0bfa69ffb21972ec1063baa6fa5535c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -123,14 +123,14 @@ Source normalized SHA256: `52ad71578d4ab9be15a53a598ced7ea8f5bee69e18479004434db
 | [CODE][FILES][武学][秘笈][MARTIAL-MANUAL-20261123] Martial manuals in the martial arts window | 838-841 |
 | [CODE][FILES][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Magic Swordsman cast audio and camera accents | 842-845 |
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
-| [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-856 |
-| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 857-860 |
-| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 861-864 |
-| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 865-867 |
+| [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-858 |
+| [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 859-862 |
+| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 863-866 |
+| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 867-869 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `8558fd841a2fafd196602d6aa688b111b705c29582a891192b50e767496b40dd`
+Source normalized SHA256: `2b4a9f5eff87df6dd151693195952d5ab741efd4795561a065a1d9d066b15d0e`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -245,10 +245,10 @@ Source normalized SHA256: `8558fd841a2fafd196602d6aa688b111b705c29582a891192b50e
 | [VERIFY][武学][秘笈][MARTIAL-MANUAL-20261123] Formation, progression and persistence | 867-870 |
 | [VERIFY][技能][音效][振屏][MJS-SKILL-FEEL-20261123] Measured audio and camera timing for three casts | 871-874 |
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
-| [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-884 |
-| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 885-888 |
-| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 889-892 |
-| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 893-895 |
+| [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-886 |
+| [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 887-890 |
+| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 891-894 |
+| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 895-897 |
 
 ## Docs/AI/DECISIONS.en.md
 

@@ -854,6 +854,8 @@ Keys 3/4/6 use one short local camera accent on landing, shield formation and wi
 
 GameServer uses each accepted move’s previous and current positions to send reciprocal appearance (`11100`) or leave (`11213`) at the inclusive 100 m boundary in the same map and instance. Unity keeps the newest movement for a registered remote role during model loading and restores death from current HP. Owner correction (`11182`) replans an active route from its landing while retaining the original destination or target and arrival action. Code `2a8edbb`. See `项目修改日志/2026-11-23-玩家进出视野与导航纠位.md`.
 
+Editor follow-up (`dd08918`). Rebuilt both Unity plugin copies of `MMoRpgCommon.dll` with `BuildForUnity=true` to remove the duplicate navigation types that blocked `LYF.Navigation.Editor`. The public navigation types remain available in `LYF_Game` and in the server build of the shared assembly.
+
 ## [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes
 
 Open 武学 → 秘笈列表. The catalogue contains 32 identified books, including 18 detail views. The MartialManualInfo, MartialManualTier and MartialManualCost Luban sheets provide metadata, per-rank gene IDs, descriptions and known costs. Gene and ItemInfo provide effects and fragments. Equipped ranks replace the previous passive, earlier rank stats accumulate, and unequipped dungeon bonuses are exclusive. Existing book IDs and counts remain compatible. See `项目修改日志/2026-11-23-秘笈图鉴与Luban基因.md`.
