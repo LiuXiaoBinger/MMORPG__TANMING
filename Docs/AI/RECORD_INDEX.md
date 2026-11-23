@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b3c501dbb7f4314a51b189d0d3f29621e0c7d35778211c561ab847fb72f8df8c`
+Source normalized SHA256: `52ad71578d4ab9be15a53a598ced7ea8f5bee69e18479004434db9b7432aa435`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -125,11 +125,12 @@ Source normalized SHA256: `b3c501dbb7f4314a51b189d0d3f29621e0c7d35778211c561ab84
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-WORKSHOP-20261123] Equipment detail opens the five-page workshop | 846-852 |
 | [CODE][FILES][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Reciprocal player visibility and navigation after owner correction | 853-856 |
 | [CODE][FILES][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue, costs and passive genes | 857-860 |
-| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 861-863 |
+| [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 861-864 |
+| [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 865-867 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `ff5ae54101e9272c56cae0b5969aa72d1cfa130ea229ce421ad5ea198449d122`
+Source normalized SHA256: `8558fd841a2fafd196602d6aa688b111b705c29582a891192b50e767496b40dd`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -246,7 +247,8 @@ Source normalized SHA256: `ff5ae54101e9272c56cae0b5969aa72d1cfa130ea229ce421ad5e
 | [VERIFY][装备][EQUIPMENT-WORKSHOP-20261123] Workshop entry, layout and tab navigation | 875-880 |
 | [VERIFY][网络][移动][导航][AOI-NAV-CORRECTION-20261123] Visibility boundary and corrected pursuit | 881-884 |
 | [VERIFY][武学][秘笈][基因][MANUAL-GENES-20261123] Catalogue and equipped passive verification | 885-888 |
-| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 889-891 |
+| [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 889-892 |
+| [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 893-895 |
 
 ## Docs/AI/DECISIONS.en.md
 

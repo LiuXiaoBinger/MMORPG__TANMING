@@ -861,3 +861,7 @@ Open 武学 → 秘笈列表. The catalogue contains 32 identified books, includ
 ## [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range
 
 GameServer now samples ordinary attack power as `min + (max - min) * u`, with `0 <= u < 1`. The matching Divine Power state selects the exact maximum, Weakness takes precedence and selects the minimum, and equal endpoints stay fixed. Basic-hit settlement samples the external and internal components independently. Tornado Slash takes its external roll when it prepares its cast. RO samples its damage fluctuation coefficient separately; this change adapts its interpolation to this project's displayed attack ranges. The character panel keeps the two endpoints. Code `cbb3417`. See `项目修改日志/2026-11-23-内外功区间随机取值.md`.
+
+## [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break
+
+Skill 10120 (key 4) keeps its shell until the server ends that cast's barrier. `SkillCastEndNtf.barrier_burst` is absent for the ordinary cast ending, true for natural expiry with shield remaining, and false for removal such as depletion. `MjsBarrierVisual` expands the shell in place for 0.28 s on expiry. The level 1 barrier lasts 10 s and launches controllable dungeon enemies within 5 m for 0.8 s without dealing damage. A partial hit still permits expiry. An early break immediately removes the shell. See `项目修改日志/2026-11-23-苍蓝屏障到期盾爆与无伤击飞.md`.
