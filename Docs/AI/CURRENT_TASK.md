@@ -867,6 +867,7 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 
 ## [CODE][角色][MJS-IDLE-BACKSWORD-20261123] 非战斗待机与主武器背负
 
+- 2026-11-23 返修。成功施法后，从技能动作退出起保留 3000 毫秒游戏时间的持剑姿态。原地、走动和休闲动作共用剩余时间。成功连放重新计时，明确脱战立即清除。到期时处于默认动作的角色刷新一次动画。改动位于 `MEntity` 和 `MSkillComponent`，详见 `项目修改日志/2026-11-23-魔剑士非战斗待机与背剑.md` 的返修段。
 - 用户选择 Codex 直接执行并批准本次日志清单，未调用其他 Agent。源动作：`D:/unitypro/moxing1/Assets/IdaFaber/Demo/A_Idle_F.fbx`。提取约 5.00000048 秒循环人形动画 `Anim_MJS_Idle_Normal.anim`，表现表 ID 1 的 `IdleAnim` 已切换，`IdleFAnim` 仍为 `Anim_JX_Idle_1_ZD`。
 - `MRoleWeaponMount` 与 `Role_MJS.prefab`、`Role_MJS_Other.prefab` 的胸骨背挂点负责移动现有主剑；`MIdleComponent` 按 `BattleIdle` 或 `kStateSkill` 恢复原握剑姿态，非战斗时背负。已有背部装饰剑保留。
 - 隔离 Unity 人形重定向、零根漂移、每个预制体 20 轮背剑/手持切换零局部误差通过；本次两个脚本针对当前游戏程序集独立编译通过。完整客户端被本次范围外相机引用和 `MjsBarrierVisual` 的 14 个错误阻断；登录实机、双客户端、独立包未验证。背后拔剑资源仅查询，未下载接入。
