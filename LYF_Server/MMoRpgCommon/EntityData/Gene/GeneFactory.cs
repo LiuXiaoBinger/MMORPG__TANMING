@@ -33,6 +33,7 @@ public abstract class GeneFactory
             case GeneEffectType.DamageHeal: return new DamageHealGene();
             case GeneEffectType.AttackerKindReduce: return new AttackerKindReduceGene();
             case GeneEffectType.TargetBehindDamage: return new TargetBehindDamageGene();
+            case GeneEffectType.PoisonThreshold: return new PoisonThresholdGene();
             case GeneEffectType.SkillCooldownReset: return new SkillCooldownResetGene();
             default: throw new InvalidOperationException("未知基因效果类型：" + effect);
         }
@@ -72,7 +73,32 @@ public abstract class GeneFactory
             case GeneAttributeType.DamageTaken: return new DamageTakenGene();
             case GeneAttributeType.AttackSpeedSlow:
             case GeneAttributeType.TrueQiDamageTaken:
-            case GeneAttributeType.PhysicalDamageReduction: return new SkillAttributeGene(attribute);
+            case GeneAttributeType.PhysicalDamageReduction:
+            case GeneAttributeType.SkillCooldownReduction:
+            case GeneAttributeType.ExternalDamageBonus:
+            case GeneAttributeType.UltimateDamageBonus:
+            case GeneAttributeType.DungeonUltimateBonus:
+            case GeneAttributeType.CritRateBonus:
+            case GeneAttributeType.AllyCritRateBonus:
+            case GeneAttributeType.EmptyQiLifeSteal:
+            case GeneAttributeType.EmptyQiDamageBonus:
+            case GeneAttributeType.ShieldHpBonus:
+            case GeneAttributeType.DamageReflection:
+            case GeneAttributeType.MaxTrueQi:
+            case GeneAttributeType.TrueQiDamageBonus:
+            case GeneAttributeType.PartyTrueQiDamageBonus:
+            case GeneAttributeType.StaminaRecoveryBonus:
+            case GeneAttributeType.RageRecoveryBonus:
+            case GeneAttributeType.ControlledDamageReduction:
+            case GeneAttributeType.MainElementDamageBonus:
+            case GeneAttributeType.ElementDamageReduction:
+            case GeneAttributeType.QiBreakDuration:
+            case GeneAttributeType.LightnessCapacity:
+            case GeneAttributeType.SwordSongCooldown:
+            case GeneAttributeType.SnowSkillCooldown:
+            case GeneAttributeType.EvadeStaminaCost:
+            case GeneAttributeType.EmptyQiGraceSeconds:
+                return new SkillAttributeGene(attribute);
             case GeneAttributeType.HealingReceived: return new HealingReceivedGene();
 
             // 高级属性共用同一个具体类，构造时传入实际属性编号。

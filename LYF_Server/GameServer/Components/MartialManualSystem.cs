@@ -6,12 +6,94 @@ using Google.Protobuf;
 /// <summary>读取秘笈目录，在角色主循环内结算出战、培养及角色属性。</summary>
 internal static class MartialManualSystem
 {
-    /// <summary>由游戏逻辑线程用于命中被动的百分比判定。</summary>
-    private static readonly Random HitRoll = new Random();
+    /// <summary>随角色首次使用装载的展示目录，培养价格和战斗基因均来自 Luban。</summary>
+    private static readonly ManualCatalog Catalog = LoadCatalog();
 
-    /// <summary>随游戏服加载的秘笈目录，配置顺序也是客户端目录顺序。</summary>
-    private static readonly ManualCatalog Catalog = JsonParser.Default.Parse<ManualCatalog>(
-        File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "MartialManuals.json")));
+    /// <summary>从书目、阶位、消耗表组装下发给客户端的只读目录。</summary>
+    private static ManualCatalog LoadCatalog()
+    {
+        // 方案名称及开放槽位沿用原服配置。
+        ManualCatalog catalog = JsonParser.Default.Parse<ManualCatalog>(File.ReadAllText(
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "MartialManuals.json")));
+        // 书目顺序用于客户端分组与选中定位。
+        cfg.Tables tables = LubanMgr.Instance.ConfigTables;
+        for (int index = 0; index < tables.TbMartialManualInfo.DataList.Count; index++)
+        {
+            // 负防御表示内防，传给客户端的数值始终为正。
+            cfg.MartialManualInfo row = tables.TbMartialManualInfo.DataList[index];
+            ManualBook book = new ManualBook { Id = row.Id, Name = row.Name, School = row.School,
+                Description = row.Description, StartLevel = row.StartLevel, CollectInner = row.CollectDef < 0,
+                CollectDef = Math.Abs(row.CollectDef), CollectHp = row.CollectHp, EquipInner = row.EquipDef < 0,
+                EquipDef = Math.Abs(row.EquipDef), EquipHp = row.EquipHp, EquipExtraInner = row.EquipInnerDef,
+                CollectDefStep = row.CollectDefStep, CollectHpStep = row.CollectHpStep,
+                EquipDefStep = row.EquipDefStep, EquipHpStep = row.EquipHpStep };
+            if (row.FragmentCount > 0) book.Learn = new ManualCost { Item = row.FragmentId, Amount = row.FragmentCount };
+            for (int rank = 0; ; rank++)
+            {
+                // 阶数从零起连续排列；后续未展示的阶位可以独立补表。
+                cfg.MartialManualTier tier = tables.TbMartialManualTier.GetOrDefault(row.Id * 10 + rank);
+                if (tier == null) break;
+                // 使用同一组基因参数填入说明，改触发概率后服务端和预览同步变化。
+                string passive = FormatPassive(tier);
+                if (rank == 0) book.Passive = passive;
+                book.TierPassive.Add(passive);
+                if (rank > 0)
+                {
+                    string stat = string.Format(System.Globalization.CultureInfo.InvariantCulture, tier.RankStat, GeneValue(tier.RankGene1));
+                    if (passive.Length > 0) stat += "；" + passive;
+                    book.RankText.Add(stat);
+                }
+            }
+            for (int indexCost = 0; indexCost < tables.TbMartialManualCost.DataList.Count; indexCost++)
+            {
+                // 显式配置某一步费用才开放扣费，操作顺序按目标档次写入。
+                cfg.MartialManualCost price = tables.TbMartialManualCost.DataList[indexCost];
+                if (price.BookId != row.Id) continue;
+                ManualCost cost = new ManualCost { Item = price.Item, Amount = price.Amount, Level = price.Level, Copper = price.Copper };
+                Google.Protobuf.Collections.RepeatedField<ManualCost> costs = book.Upgrades;
+                if (price.Kind == 2) costs = book.Ranks;
+                else if (price.Kind == 3) costs = book.Insights;
+                if (price.Step != costs.Count + 1) throw new InvalidDataException("秘笈培养费用档次不连续：" + price.Id);
+                costs.Add(cost);
+            }
+            catalog.Books.Add(book);
+        }
+        return catalog;
+    }
+
+    /// <summary>读取基因百分数或点数；事件行的万分比换算成界面的百分数。</summary>
+    /// <param name="id">被动或进阶属性的基因编号，空槽为零。</param>
+    private static float GeneValue(int id)
+    {
+        if (id == 0) return 0;
+        cfg.Gene gene = LubanMgr.Instance.ConfigTables.TbGene.Get(id);
+        if (gene.EffectType == (int)GeneEffectType.Event) return gene.TriggerChance / 100f;
+        return gene.Value;
+    }
+
+    /// <summary>用装备、未装备及事件子效果的实际参数生成被动说明。</summary>
+    /// <param name="tier">当前书籍的单个阶位，展示模板使用从零开始的参数占位符。</param>
+    private static string FormatPassive(cfg.MartialManualTier tier)
+    {
+        // 前四项对应三个装备根和一个未装备根。
+        float[] values = { GeneValue(tier.EquipGene1), GeneValue(tier.EquipGene2), GeneValue(tier.EquipGene3),
+            GeneValue(tier.UnequippedGene), 0, 0, 0, 0 };
+        cfg.TbGene genes = LubanMgr.Instance.ConfigTables.TbGene;
+        cfg.Gene root = genes.GetOrDefault(tier.EquipGene1);
+        if (root != null && root.EffectType == (int)GeneEffectType.Event)
+        {
+            // 后四项对应命中效果时长、施毒次数、满层惩罚的数值和时长。
+            cfg.Gene child = genes.Get(root.AttachGeneId0);
+            values[4] = child.GeneTime;
+            values[5] = child.Condition;
+            cfg.Gene penalty = genes.GetOrDefault(child.AttachGeneId0);
+            if (penalty != null) { values[6] = penalty.Value; values[7] = penalty.GeneTime; }
+        }
+        string text = tier.Passive;
+        for (int index = 0; index < values.Length; index++)
+            text = text.Replace("{" + index + "}", values[index].ToString("0.##", System.Globalization.CultureInfo.InvariantCulture));
+        return text;
+    }
 
     /// <summary>从角色存档读取等级，首次领悟的起点由目录配置。</summary>
     /// <param name="counts">角色永久记录。</param><param name="book">当前书籍。</param>
@@ -157,55 +239,86 @@ internal static class MartialManualSystem
         return "";
     }
 
-    /// <summary>出战秘笈在一次实际攻击命中时，按当前阶位判定目标流血。</summary>
-    /// <param name="role">攻击者。</param><param name="target">已命中目标的效果容器。</param>
-    internal static void OnAttackHit(OnlineRole role, GeneRuntime target)
+    /// <summary>从当前领悟、出战、阶数恢复对应来源的基因，保留仍生效的同一节点。</summary>
+    /// <param name="role">已载入计数存档的在线角色。</param>
+    internal static void ApplyGenes(OnlineRole role)
     {
-        // 仅遍历当前方案的开放槽，同一本书不会重复判定。
+        // 负槽位专用于角色秘笈根，不匹配装备和命中后独立施加的状态。
+        GeneRuntime runtime = role.Gene.Runtime;
         RoleCountComponent counts = role.GetComponent<RoleCountComponent>();
         int scheme = Scheme(counts);
-        for (int slot = 0; slot < Catalog.OpenSlots; slot++)
+        HashSet<int> usedSlots = new HashSet<int>();
+        for (int index = 0; index < Catalog.Books.Count; index++)
         {
-            // 出战书、被动和当前阶都来自服务端配置与存档。
-            ManualBook book = Find((int)counts.GetCount(RoleCountAction.ManualSlot, SlotKey(scheme, slot)));
-            if (book == null || book.Bleed == null) continue;
-            ManualBleed bleed = book.Bleed;
+            // 同一本书领悟属性永久保留，其余按当前方案取值。
+            ManualBook book = Catalog.Books[index];
+            int level = Level(counts, book);
+            if (level == 0) continue;
+            bool equipped = false;
+            for (int slot = 0; slot < Catalog.OpenSlots; slot++)
+                if (counts.GetCount(RoleCountAction.ManualSlot, SlotKey(scheme, slot)) == book.Id) equipped = true;
+            // 每书预留一百个独立来源槽，普通属性使用现有同编号基础基因。
+            int first = -10000 - book.Id * 100;
+            int defense = 7;
+            if (book.CollectInner) defense = 9;
+            SetGene(role, usedSlots, first, defense, book.CollectDef + (level - 1) * book.CollectDefStep);
+            SetGene(role, usedSlots, first - 1, 1, book.CollectHp + (level - 1) * book.CollectHpStep);
+            if (equipped)
+            {
+                defense = 7;
+                if (book.EquipInner) defense = 9;
+                SetGene(role, usedSlots, first - 2, defense, book.EquipDef + (level - 1) * book.EquipDefStep);
+                SetGene(role, usedSlots, first - 3, 1, book.EquipHp + (level - 1) * book.EquipHpStep);
+                SetGene(role, usedSlots, first - 4, 9, book.EquipExtraInner);
+            }
+            // 被动只取当前阶；进阶新增属性从一阶起累计。
             int rank = (int)counts.GetCount(RoleCountAction.ManualRank, book.Id);
-            if (rank >= bleed.ChancePercent.Count || HitRoll.Next(100) >= bleed.ChancePercent[rank]) continue;
-            // 未提供跳伤数值时只施加限时标记，不推算录屏未展示的伤害。
-            GeneBase effect = new StateGene();
-            if (bleed.TickMs > 0 && bleed.TickDamage > 0)
-                effect = new PeriodicDamageGene { IntervalMilliseconds = bleed.TickMs, Value = bleed.TickDamage };
-            effect.GeneID = bleed.EffectId;
-            effect.DisplayName = "流血";
-            effect.DurationSeconds = bleed.DurationSeconds;
-            target.AddGene(effect, role.GetID(), 0, role.GetID());
+            for (int step = 0; step <= rank; step++)
+            {
+                cfg.MartialManualTier tier = LubanMgr.Instance.ConfigTables.TbMartialManualTier.GetOrDefault(book.Id * 10 + step);
+                if (tier == null) continue;
+                if (equipped)
+                {
+                    SetGene(role, usedSlots, first - 10 - step * 2, tier.RankGene1);
+                    SetGene(role, usedSlots, first - 11 - step * 2, tier.RankGene2);
+                }
+                if (step != rank) continue;
+                if (equipped)
+                {
+                    SetGene(role, usedSlots, first - 5, tier.EquipGene1);
+                    SetGene(role, usedSlots, first - 6, tier.EquipGene2);
+                    SetGene(role, usedSlots, first - 7, tier.EquipGene3);
+                }
+                else SetGene(role, usedSlots, first - 8, tier.UnequippedGene);
+            }
+        }
+        for (int index = runtime.ActiveGenes.Count - 1; index >= 0; index--)
+        {
+            // 撤下本角色已失效的根，命中施加给目标的计时效果仍自行到期。
+            GeneBase gene = runtime.ActiveGenes[index];
+            if (gene.SourceSlot <= -10000 && gene.SourceId == role.GetID() && !usedSlots.Contains(gene.SourceSlot))
+                runtime.RemoveGene(gene);
         }
     }
 
-    /// <summary>合计永久领悟属性与当前方案装备属性，仅在进度发生变化时重算。</summary>
-    /// <param name="counts">已加载的角色存档。</param><param name="def">外功防御点数。</param><param name="hp">气血上限。</param><param name="attack">外功最大值。</param>
-    internal static void Bonuses(RoleCountComponent counts, out int def, out int hp, out int attack)
+    /// <summary>将表行绑定到稳定来源槽；进阶或升级时替换旧节点。</summary>
+    /// <param name="role">持有该秘笈的角色。</param><param name="used">本次仍有效的槽。</param>
+    /// <param name="slot">书号派生的负槽。</param><param name="id">对应 Luban 基因。</param>
+    /// <param name="value">普通面板属性的当前等级值；被动直接用基因表。</param>
+    private static void SetGene(OnlineRole role, HashSet<int> used, int slot, int id, float? value = null)
     {
-        def = hp = attack = 0;
-        // 当前方案的一组开放槽。
-        int scheme = Scheme(counts);
-        for (int i = 0; i < Catalog.Books.Count; i++)
+        if (id == 0 || value == 0) return;
+        used.Add(slot);
+        // 同一位置稳定复用事件树，以免无关培养刷新触发计时。
+        GeneRuntime runtime = role.Gene.Runtime;
+        for (int index = 0; index < runtime.ActiveGenes.Count; index++)
         {
-            // 同一本书的基础值由领悟与装备两个来源累加。
-            ManualBook book = Catalog.Books[i];
-            int level = Level(counts, book);
-            if (level <= 0) continue;
-            def += book.CollectDef + (level - 1) * book.CollectDefStep;
-            hp += book.CollectHp + (level - 1) * book.CollectHpStep;
-            for (int slot = 0; slot < Catalog.OpenSlots; slot++)
-            {
-                if (counts.GetCount(RoleCountAction.ManualSlot, SlotKey(scheme, slot)) != book.Id) continue;
-                def += book.EquipDef + (level - 1) * book.EquipDefStep;
-                hp += book.EquipHp + (level - 1) * book.EquipHpStep;
-                if (counts.GetCount(RoleCountAction.ManualRank, book.Id) > 0) attack += book.FirstRankAttack;
-                break;
-            }
+            GeneBase previous = runtime.ActiveGenes[index];
+            if (previous.SourceId != role.GetID() || previous.SourceSlot != slot) continue;
+            if (previous.GeneID == id && (!value.HasValue || previous.Value == value.Value)) return;
+            runtime.RemoveGene(previous);
+            break;
         }
+        runtime.AddGene(id, role.GetID(), value, slot, role.GetID());
     }
 }

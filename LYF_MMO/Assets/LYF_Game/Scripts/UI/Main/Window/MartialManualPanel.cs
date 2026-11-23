@@ -59,6 +59,10 @@ public sealed class MartialManualPanel : MonoBehaviour
     [SerializeField] private Button closeTraining, execute, closeInfo;
     /// <summary>装备入口在未领悟状态下改为领悟。</summary>
     [SerializeField] private TMP_Text equipText;
+    /// <summary>未学书籍详情底部，显示本次合成所需书页对应的封面。</summary>
+    [SerializeField] private Image fragmentIcon;
+    /// <summary>与合成按钮并排的背包持有份数和所需份数。</summary>
+    [SerializeField] private TMP_Text fragmentCount;
     /// <summary>发送给已持有该窗口的控制器。</summary>
     public event Action<ManualRequest> Requested;
     /// <summary>最近一次服务端回执。</summary>
@@ -171,8 +175,9 @@ public sealed class MartialManualPanel : MonoBehaviour
         if (isFilter)
         {
             options.anchoredPosition = new Vector2(118.5f, -303);
-            choices = new[] { "全部", "已领悟", "未领悟" };
+            choices = FilterChoices();
         }
+        options.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, choices.Length * 57);
         options.gameObject.SetActive(true);
         for (int i = 0; i < choices.Length; i++)
         {
@@ -197,6 +202,19 @@ public sealed class MartialManualPanel : MonoBehaviour
         }
     }
 
+    /// <summary>由当前已收录的门派分类生成筛选菜单，首项展示全部书籍。</summary>
+    private string[] FilterChoices()
+    {
+        List<string> choices = new List<string> { "全部" };
+        for (int index = 0; index < state.Catalog.Books.Count; index++)
+        {
+            // 没有展示过门派归属的目录项仅在全部中出现。
+            string school = state.Catalog.Books[index].School;
+            if (school.Length > 0 && !choices.Contains(school)) choices.Add(school);
+        }
+        return choices.ToArray();
+    }
+
     /// <summary>查找书籍在当前目录及进度数组中的位置。</summary><param name="id">书号。</param>
     private int Index(int id)
     {
@@ -215,9 +233,8 @@ public sealed class MartialManualPanel : MonoBehaviour
     private Sprite Cover(int id)
     {
         if (id <= 0) return null;
-        if (id == 1) return covers[0];
-        if (id == 4 || id == 6) return covers[2];
-        return covers[1];
+        if (id <= covers.Length && covers[id - 1] != null) return covers[id - 1];
+        return covers[0];
     }
 
     /// <summary>进入草稿配置并显示可出战的已领悟书籍。</summary><param name="slot">指定空槽或负一。</param>
@@ -312,18 +329,21 @@ public sealed class MartialManualPanel : MonoBehaviour
     /// <summary>汇总已领悟书籍的永久收益。</summary>
     private void ShowBonuses()
     {
-        // 所有已领悟书籍的累计外防与生命。
-        int def = 0, hp = 0;
+        // 所有已领悟书籍的累计内外防和生命点数。
+        int def = 0, inner = 0, hp = 0;
         for (int i = 0; i < state.Progress.Count; i++)
         {
             // 零级书籍尚未提供收集属性。
             int level = state.Progress[i].Level;
             if (level == 0) continue;
             ManualBook b = state.Catalog.Books[i];
-            def += b.CollectDef + (level - 1) * b.CollectDefStep;
+            // 每级加成沿本书原有防御类别累加。
+            int points = b.CollectDef + (level - 1) * b.CollectDefStep;
+            if (b.CollectInner) inner += points;
+            else def += points;
             hp += b.CollectHp + (level - 1) * b.CollectHpStep;
         }
-        ShowInfo("领悟加成\n\n外功防御 +" + def + "\n气血上限 +" + hp);
+        ShowInfo("领悟加成\n\n外功防御 +" + def + "\n内功防御 +" + inner + "\n气血上限 +" + hp);
     }
 
     /// <summary>根据当前页、草稿与权威数据刷新显示。</summary>
@@ -345,10 +365,10 @@ public sealed class MartialManualPanel : MonoBehaviour
         if (listPage && Index(selected) < 0)
         {
             // 切换筛选后，详情跟随筛选结果中的第一本书。
+            string selectedSchool = FilterChoices()[filterMode];
             for (int i = 0; i < state.Progress.Count; i++)
             {
-                if (filterMode == 1 && state.Progress[i].Level == 0) continue;
-                if (filterMode == 2 && state.Progress[i].Level > 0) continue;
+                if (filterMode > 0 && state.Catalog.Books[i].School != selectedSchool) continue;
                 selected = state.Progress[i].Book;
                 break;
             }
@@ -392,17 +412,23 @@ public sealed class MartialManualPanel : MonoBehaviour
         // 三处列表共享同一种预制卡，目录排两列，其他排一列。
         RectTransform root = lists[which];
         for (int i = root.childCount - 1; i >= 0; i--) { root.GetChild(i).gameObject.SetActive(false); Destroy(root.GetChild(i).gameObject); }
-        int learned = 0, insightCount = 0;
+        int learned = 0, visible = 0, insightCount = 0;
+        string filter = FilterChoices()[filterMode];
         for (int i = 0; i < state.Progress.Count; i++)
-        { if (state.Progress[i].Level > 0) learned++; insightCount += state.Progress[i].Insights; }
+        {
+            insightCount += state.Progress[i].Insights;
+            if (which == 0 && filterMode > 0 && state.Catalog.Books[i].School != filter) continue;
+            visible++;
+            if (state.Progress[i].Level > 0) learned++;
+        }
         insightsText.text = "已明悟:" + insightCount + "次";
-        string[] filters = { "全部", "已领悟", "未领悟" };
-        filterText.text = filters[filterMode];
+        filterText.text = filter;
         float y = 0;
         for (int group = 0; group <= 1; group++)
         {
             if (group == 1 && which != 0) break;
-            if (which == 0 && filterMode > 0 && filterMode != group + 1) continue;
+            if (which == 0 && group == 0 && learned == 0) continue;
+            if (which == 0 && group == 1 && visible == learned) continue;
             if (which == 0)
             {
                 // 分组数量反映当前配置，不使用录屏账号的总数。
@@ -410,7 +436,7 @@ public sealed class MartialManualPanel : MonoBehaviour
                 header.gameObject.SetActive(true);
                 header.rectTransform.anchoredPosition = new Vector2(0, -y);
                 header.text = "已领悟 (" + learned + ")";
-                if (group == 1) header.text = "未领悟 (" + (state.Progress.Count - learned) + ")";
+                if (group == 1) header.text = "未领悟 (" + (visible - learned) + ")";
                 y += 48;
             }
             int count = 0, columns = 1;
@@ -420,6 +446,7 @@ public sealed class MartialManualPanel : MonoBehaviour
                 // 捕获本卡片的书号，未学卡仅在目录显示。
                 ManualProgress p = state.Progress[i];
                 ManualBook b = state.Catalog.Books[i];
+                if (which == 0 && filterMode > 0 && b.School != filter) continue;
                 if ((p.Level == 0) != (group == 1)) continue;
                 ManualCard card = Instantiate(cardTemplate, root);
                 card.gameObject.SetActive(true);
@@ -454,8 +481,23 @@ public sealed class MartialManualPanel : MonoBehaviour
     {
         // 一级基础值不含升级增量。
         int step = Mathf.Max(0, level - 1);
-        if (equipped) return "外功防御+" + (b.EquipDef + step * b.EquipDefStep) + "\n气血上限+" + (b.EquipHp + step * b.EquipHpStep);
-        return "外功防御+" + (b.CollectDef + step * b.CollectDefStep) + "\n气血上限+" + (b.CollectHp + step * b.CollectHpStep);
+        int defense = b.CollectDef + step * b.CollectDefStep;
+        int hp = b.CollectHp + step * b.CollectHpStep;
+        bool inner = b.CollectInner;
+        if (equipped)
+        {
+            defense = b.EquipDef + step * b.EquipDefStep;
+            hp = b.EquipHp + step * b.EquipHpStep;
+            inner = b.EquipInner;
+        }
+        // 极品秘笈可能同时提供内防与外防，也可能没有领悟属性。
+        List<string> lines = new List<string>();
+        string label = "外功防御+";
+        if (inner) label = "内功防御+";
+        if (defense > 0) lines.Add(label + defense);
+        if (equipped && b.EquipExtraInner > 0) lines.Add("内功防御+" + b.EquipExtraInner);
+        if (hp > 0) lines.Add("气血上限+" + hp);
+        return string.Join("\n", lines);
     }
 
     /// <summary>构建分节属性说明并选择正确的操作。</summary><param name="b">书籍配置。</param><param name="p">角色进度。</param>
@@ -466,19 +508,31 @@ public sealed class MartialManualPanel : MonoBehaviour
         if (p.Level > 0) detailTitle.text += " <color=#98DCCB>(" + p.Level + "级)</color>";
         description.text = b.Description;
         string text = "";
-        if (b.Bleed != null && p.Rank < b.Bleed.ChancePercent.Count)
-            text += "◇ 被动技能\n每次攻击有" + b.Bleed.ChancePercent[p.Rank] + "%概率为目标附加" + b.Bleed.DurationSeconds + "秒的流血效果。\n\n";
-        else if (b.Passive.Length > 0) text += "◇ 被动技能\n" + b.Passive + "\n\n";
-        if (b.CollectDef != 0 || b.CollectHp != 0) text += "◇ 领悟属性\n" + Stats(b, p.Level, false) + "\n\n◇ 装备属性\n" + Stats(b, p.Level, true) + "\n\n";
+        if (p.Rank < b.TierPassive.Count && b.TierPassive[p.Rank].Length > 0) text += "◇ 被动技能\n" + b.TierPassive[p.Rank] + "\n\n";
+        if (b.CollectDef != 0 || b.CollectHp != 0) text += "◇ 领悟属性\n" + Stats(b, p.Level, false) + "\n\n";
+        if (b.EquipDef != 0 || b.EquipHp != 0) text += "◇ 装备属性\n" + Stats(b, p.Level, true) + "\n\n";
         if (b.RankText.Count > 0) text += "◇ 进阶属性\n" + Ranks(b);
-        if (text.Length == 0 && b.Learn != null) text = "◇ 领悟条件\n" + b.Name + "残页  " + Held(b.Learn) + "/" + b.Learn.Amount;
+        // 合成消耗单独放在底栏，长篇进阶说明滚动时也能看到剩余材料。
         if (b.Source.Length > 0) text += "\n\n◇ 获取途径\n" + b.Source;
         body.text = text;
         body.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, body.preferredHeight + 16);
         equip.gameObject.SetActive(listPage);
         equipText.text = "装备";
         if (state.Slots.Contains(b.Id)) equipText.text = "卸下";
-        if (p.Level == 0) equipText.text = "领悟";
+        bool composing = listPage && p.Level == 0 && b.Learn != null;
+        fragmentIcon.gameObject.SetActive(composing);
+        fragmentCount.gameObject.SetActive(composing);
+        RectTransform actionRect = (RectTransform)equip.transform;
+        Vector2 position = actionRect.anchoredPosition;
+        position.x = 18;
+        if (composing)
+        {
+            position.x = 495;
+            equipText.text = "合成";
+            fragmentIcon.sprite = detailIcon.sprite;
+            fragmentCount.text = Held(b.Learn) + "/" + b.Learn.Amount;
+        }
+        actionRect.anchoredPosition = position;
         insight.gameObject.SetActive(p.Level > 0);
         cultivate.gameObject.SetActive(p.Level > 0);
     }

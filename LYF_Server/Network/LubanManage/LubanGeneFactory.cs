@@ -63,6 +63,9 @@ public class LubanGeneFactory : GeneFactory
     {
         // 配置装载和客户端同步使用相同的具体类型映射。
         GeneBase node = GeneFactory.CreateNode((GeneEffectType)definition.EffectType, (GeneAttributeType)definition.AttributeId);
+        // 毒经在同一目标上累计成功施毒次数，次数由 Condition 列配置。
+        PoisonThresholdGene poison = node as PoisonThresholdGene;
+        if (poison != null) poison.Threshold = definition.Condition;
         // 状态位属于该具体节点的参数，运行过程中不再读取配置行。
         StateGene state = node as StateGene;
         if (state != null) state.States = (GeneState)definition.State;

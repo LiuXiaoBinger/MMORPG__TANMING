@@ -154,5 +154,53 @@ public enum GeneAttributeType
     /// <summary>受到的真气伤害增幅，单位百分点。</summary>
     TrueQiDamageTaken = 146,
     /// <summary>接收内外功伤害时的减免，单位百分点。</summary>
-    PhysicalDamageReduction = 147
+    PhysicalDamageReduction = 147,
+    /// <summary>技能调息缩减百分点。</summary>
+    SkillCooldownReduction = 148,
+    /// <summary>外功部分增伤百分点。</summary>
+    ExternalDamageBonus = 149,
+    /// <summary>装备时绝学增伤百分点。</summary>
+    UltimateDamageBonus = 150,
+    /// <summary>未装备时副本绝学增伤百分点。</summary>
+    DungeonUltimateBonus = 151,
+    /// <summary>自身实际暴击率百分点。</summary>
+    CritRateBonus = 152,
+    /// <summary>提供给队友的暴击率百分点。</summary>
+    AllyCritRateBonus = 153,
+    /// <summary>真气耗尽时按实际伤害回血的百分数。</summary>
+    EmptyQiLifeSteal = 154,
+    /// <summary>真气耗尽时最终增伤百分点。</summary>
+    EmptyQiDamageBonus = 155,
+    /// <summary>获得普通护盾时追加最大生命的百分数。</summary>
+    ShieldHpBonus = 156,
+    /// <summary>受击后返还实际生命伤害的百分数。</summary>
+    DamageReflection = 157,
+    /// <summary>真气上限点数或相对基础上限的百分比。</summary>
+    MaxTrueQi = 158,
+    /// <summary>自身真气伤害增幅百分点。</summary>
+    TrueQiDamageBonus = 159,
+    /// <summary>提供给全队的真气伤害增幅百分点。</summary>
+    PartyTrueQiDamageBonus = 160,
+    /// <summary>气力回复速度增幅百分点。</summary>
+    StaminaRecoveryBonus = 161,
+    /// <summary>怒气回复速度增幅百分点。</summary>
+    RageRecoveryBonus = 162,
+    /// <summary>受强控期间最终承伤减免百分点。</summary>
+    ControlledDamageReduction = 163,
+    /// <summary>主属性伤害增幅百分点。</summary>
+    MainElementDamageBonus = 164,
+    /// <summary>所有属性伤害减免百分点。</summary>
+    ElementDamageReduction = 165,
+    /// <summary>真气破除持续时间变化百分数。</summary>
+    QiBreakDuration = 166,
+    /// <summary>轻功点数上限。</summary>
+    LightnessCapacity = 167,
+    /// <summary>弹剑啸歌调息增减秒数。</summary>
+    SwordSongCooldown = 168,
+    /// <summary>千山吹雪调息增减秒数。</summary>
+    SnowSkillCooldown = 169,
+    /// <summary>跳跃和翻滚气力消耗增幅百分点。</summary>
+    EvadeStaminaCost = 170,
+    /// <summary>真气从正数变为空后的宽限秒数。</summary>
+    EmptyQiGraceSeconds = 171
 }

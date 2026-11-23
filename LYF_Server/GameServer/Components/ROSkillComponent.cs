@@ -981,7 +981,10 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
         {
             Owner.mainRoleInfo.BaseInfo.CurrMp -= prepared.effect_.MpCost;
         }
-        SetSkillCoolDown(prepared.skill_id_, prepared.effect_.CooldownMs);
+        // 调息基因缩短本招自身冷却，通用公共冷却仍读技能组配置。
+        double reduction = Owner.AttrComp.CalculateAttribute(GeneAttributeType.SkillCooldownReduction, 0);
+        int cooldown = Math.Max(0, (int)Math.Round(prepared.effect_.CooldownMs * (1 - reduction / 100)));
+        SetSkillCoolDown(prepared.skill_id_, cooldown);
         if (prepared.effect_.CooldownGroupId > 0)
         {
             SetSkillGroupCoolDown(prepared.effect_.CooldownGroupId, prepared.effect_.GroupCooldownMs);

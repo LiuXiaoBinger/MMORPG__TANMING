@@ -87,9 +87,20 @@ public class GeneComponent : IEntityComponent
         {
             return activated;
         }
-        // 秘笈仅由角色的实际攻击命中触发，目标沿用战斗结算选中的容器。
-        if (args.Event == GeneEventType.AttackHit && args.TargetRuntime != null && args.Damage > 0)
-            MartialManualSystem.OnAttackHit((OnlineRole)owner, args.TargetRuntime);
+        // 返伤和吸血按本次真实扣血计算，直接改变资源不会再次派发命中。
+        if (args.Damage > 0 && args.TargetRuntime != null)
+        {
+            if (args.Event == GeneEventType.BeHit)
+            {
+                int reflected = (int)(args.Damage * roleAttributes.CalculateAttribute(GeneAttributeType.DamageReflection, 0) / 100);
+                if (reflected > 0) args.TargetRuntime.Owner.AttrComp.ChangeHp(-reflected, ((OnlineRole)owner).GetID());
+            }
+            if (args.Event == GeneEventType.AttackHit && roleAttributes.InEmptyQiWindow)
+            {
+                int healed = (int)(args.Damage * roleAttributes.CalculateAttribute(GeneAttributeType.EmptyQiLifeSteal, 0) / 100);
+                if (healed > 0) roleAttributes.ChangeHp(healed, ((OnlineRole)owner).GetID());
+            }
+        }
         if (activated > 0 || changedGenes.Count > 0)
         {
             roleAttributes.NotifyAttributeUpdate();

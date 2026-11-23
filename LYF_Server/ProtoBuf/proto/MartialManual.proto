@@ -56,6 +56,11 @@ message ManualBook {
   int32 first_rank_attack = 19;
   string source = 20;
   ManualBleed bleed = 21;
+  string school = 22; // 目录分类，例如通用或华山专属。
+  bool collect_inner = 23; // 领悟防御属于内功。
+  bool equip_inner = 24; // 装备防御属于内功。
+  int32 equip_extra_inner = 25; // 同时具有外防和内防的额外内防点数。
+  repeated string tier_passive = 26; // 从零阶开始的当前被动说明。
 }
 message ManualCatalog {
   repeated ManualBook books = 1;

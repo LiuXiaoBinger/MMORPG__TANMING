@@ -86,14 +86,21 @@ internal static class MjsSkillGenes
     /// <summary>龙卷斩命中后先按已有易伤扣真气，再应用本次的易伤。</summary>
     /// <param name="target">本次命中的实体基因容器。</param>
     /// <param name="effect">本次龙卷斩的技能等级行。</param>
-    internal static void HitTornado(GeneRuntime target, SkillEffectInfo effect)
+    /// <param name="caster">施放角色，提供自身与队友的秘笈真气增伤。</param>
+    internal static void HitTornado(GeneRuntime target, SkillEffectInfo effect, OnlineRole caster = null)
     {
         // 从目标实体自己的权威属性读取资源，真气伤害不进入生命结算。
         IAttributeComponent attributes = target.Owner.AttrComp;
         // 使用当前已存在的易伤，新的易伤只影响之后的命中。
         double vulnerability = target.CalculateAttribute(GeneAttributeType.TrueQiDamageTaken, 0);
         // 取整后钳制到目标余额，确保只扣到零且使用现有资源同步。
-        int amount = Math.Min(attributes.CurrTrueQi, (int)(effect.TrueQiDamage * (1 + vulnerability / 100)));
+        // 清心诀分别提供自身和全队加成，施法者也属于全队。
+        double bonus = 0;
+        if (caster != null)
+            bonus = caster.AttrComp.CalculateAttribute(GeneAttributeType.TrueQiDamageBonus, 0)
+                + caster.AttrComp.CalculateAttribute(GeneAttributeType.PartyTrueQiDamageBonus, 0)
+                + TeamManager.Instance.OtherMemberBonus(caster, GeneAttributeType.PartyTrueQiDamageBonus);
+        int amount = Math.Min(attributes.CurrTrueQi, (int)(effect.TrueQiDamage * (1 + vulnerability / 100) * (1 + bonus / 100)));
         if (amount > 0) attributes.TryConsumeTrueQi(amount);
         // 同一技能的易伤刷新为当前数值，多个施加者也不会重复相乘。
         AddStat(target, QiVulnerability, "破强·真气易伤", GeneAttributeType.TrueQiDamageTaken,
@@ -128,7 +135,12 @@ internal static class MjsSkillGenes
     {
         // 同一角色的临时减伤值来自其基因组件，不直接改写装备属性。
         double percent = role.Gene.Runtime.CalculateAttribute(GeneAttributeType.PhysicalDamageReduction, 0);
-        return (int)(incoming * (1 - percent / 100));
+        // 强控读取霸体抵消后的有效状态；浮空沿用服务端击倒状态。
+        GeneState control = GeneState.Stun | GeneState.Root | GeneState.Knockdown;
+        double controlledReduction = 0;
+        if ((role.AttrComp.States & control) != 0)
+            controlledReduction = role.AttrComp.CalculateAttribute(GeneAttributeType.ControlledDamageReduction, 0);
+        return (int)(incoming * (1 - percent / 100) * Math.Max(0, 1 - controlledReduction / 100));
     }
 
     /// <summary>按已学技能等级处理玩家命中时的力强或目标真气亏损增伤。</summary>

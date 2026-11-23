@@ -30,7 +30,7 @@ public static partial class MartialManualReflection {
           "Y29wcGVyGAQgASgFIngKC01hbnVhbEJsZWVkEhEKCWVmZmVjdF9pZBgBIAEo",
           "BRIYChBkdXJhdGlvbl9zZWNvbmRzGAIgASgFEhYKDmNoYW5jZV9wZXJjZW50",
           "GAMgAygFEg8KB3RpY2tfbXMYBCABKAUSEwoLdGlja19kYW1hZ2UYBSABKAUi",
-          "4gMKCk1hbnVhbEJvb2sSCgoCaWQYASABKAUSDAoEbmFtZRgCIAEoCRITCgtk",
+          "zwQKCk1hbnVhbEJvb2sSCgoCaWQYASABKAUSDAoEbmFtZRgCIAEoCRITCgtk",
           "ZXNjcmlwdGlvbhgDIAEoCRITCgtzdGFydF9sZXZlbBgEIAEoBRIaCgVsZWFy",
           "bhgFIAEoCzILLk1hbnVhbENvc3QSHQoIdXBncmFkZXMYBiADKAsyCy5NYW51",
           "YWxDb3N0EhoKBXJhbmtzGAcgAygLMgsuTWFudWFsQ29zdBIdCghpbnNpZ2h0",
@@ -40,28 +40,31 @@ public static partial class MartialManualReflection {
           "X2hwX3N0ZXAYDiABKAUSFgoOZXF1aXBfZGVmX3N0ZXAYDyABKAUSFQoNZXF1",
           "aXBfaHBfc3RlcBgQIAEoBRIPCgdwYXNzaXZlGBEgASgJEhEKCXJhbmtfdGV4",
           "dBgSIAMoCRIZChFmaXJzdF9yYW5rX2F0dGFjaxgTIAEoBRIOCgZzb3VyY2UY",
-          "FCABKAkSGwoFYmxlZWQYFSABKAsyDC5NYW51YWxCbGVlZCJQCg1NYW51YWxD",
-          "YXRhbG9nEhoKBWJvb2tzGAEgAygLMgsuTWFudWFsQm9vaxIPCgdzY2hlbWVz",
-          "GAIgAygJEhIKCm9wZW5fc2xvdHMYAyABKAUiTQoOTWFudWFsUHJvZ3Jlc3MS",
-          "DAoEYm9vaxgBIAEoBRINCgVsZXZlbBgCIAEoBRIMCgRyYW5rGAMgASgFEhAK",
-          "CGluc2lnaHRzGAQgASgFIrQCCgtNYW51YWxSZXBseRIPCgdyb2xlX2lkGAEg",
-          "ASgFEh8KB2NhdGFsb2cYAiABKAsyDi5NYW51YWxDYXRhbG9nEiEKCHByb2dy",
-          "ZXNzGAMgAygLMg8uTWFudWFsUHJvZ3Jlc3MSDgoGc2NoZW1lGAQgASgFEg0K",
-          "BXNsb3RzGAUgAygFEi4KCW1hdGVyaWFscxgGIAMoCzIbLk1hbnVhbFJlcGx5",
-          "Lk1hdGVyaWFsc0VudHJ5Eg4KBmNvcHBlchgHIAEoAxIPCgdtZXNzYWdlGAgg",
-          "ASgJEh0KBmFjdGlvbhgJIAEoDjINLk1hbnVhbEFjdGlvbhIPCgdzdWNjZXNz",
-          "GAogASgIGjAKDk1hdGVyaWFsc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1",
-          "ZRgCIAEoBToCOAEqlQEKDE1hbnVhbEFjdGlvbhIPCgtNQU5VQUxfUkVBRBAA",
-          "Eg8KC01BTlVBTF9TQVZFEAESEgoOTUFOVUFMX1VQR1JBREUQAhIPCgtNQU5V",
-          "QUxfUkFOSxADEhIKDk1BTlVBTF9JTlNJR0hUEAQSEAoMTUFOVUFMX0xFQVJO",
-          "EAUSGAoUTUFOVUFMX1NFTEVDVF9TQ0hFTUUQBmIGcHJvdG8z"));
+          "FCABKAkSGwoFYmxlZWQYFSABKAsyDC5NYW51YWxCbGVlZBIOCgZzY2hvb2wY",
+          "FiABKAkSFQoNY29sbGVjdF9pbm5lchgXIAEoCBITCgtlcXVpcF9pbm5lchgY",
+          "IAEoCBIZChFlcXVpcF9leHRyYV9pbm5lchgZIAEoBRIUCgx0aWVyX3Bhc3Np",
+          "dmUYGiADKAkiUAoNTWFudWFsQ2F0YWxvZxIaCgVib29rcxgBIAMoCzILLk1h",
+          "bnVhbEJvb2sSDwoHc2NoZW1lcxgCIAMoCRISCgpvcGVuX3Nsb3RzGAMgASgF",
+          "Ik0KDk1hbnVhbFByb2dyZXNzEgwKBGJvb2sYASABKAUSDQoFbGV2ZWwYAiAB",
+          "KAUSDAoEcmFuaxgDIAEoBRIQCghpbnNpZ2h0cxgEIAEoBSK0AgoLTWFudWFs",
+          "UmVwbHkSDwoHcm9sZV9pZBgBIAEoBRIfCgdjYXRhbG9nGAIgASgLMg4uTWFu",
+          "dWFsQ2F0YWxvZxIhCghwcm9ncmVzcxgDIAMoCzIPLk1hbnVhbFByb2dyZXNz",
+          "Eg4KBnNjaGVtZRgEIAEoBRINCgVzbG90cxgFIAMoBRIuCgltYXRlcmlhbHMY",
+          "BiADKAsyGy5NYW51YWxSZXBseS5NYXRlcmlhbHNFbnRyeRIOCgZjb3BwZXIY",
+          "ByABKAMSDwoHbWVzc2FnZRgIIAEoCRIdCgZhY3Rpb24YCSABKA4yDS5NYW51",
+          "YWxBY3Rpb24SDwoHc3VjY2VzcxgKIAEoCBowCg5NYXRlcmlhbHNFbnRyeRIL",
+          "CgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAU6AjgBKpUBCgxNYW51YWxBY3Rp",
+          "b24SDwoLTUFOVUFMX1JFQUQQABIPCgtNQU5VQUxfU0FWRRABEhIKDk1BTlVB",
+          "TF9VUEdSQURFEAISDwoLTUFOVUFMX1JBTksQAxISCg5NQU5VQUxfSU5TSUdI",
+          "VBAEEhAKDE1BTlVBTF9MRUFSThAFEhgKFE1BTlVBTF9TRUxFQ1RfU0NIRU1F",
+          "EAZiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ManualAction), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualRequest), global::ManualRequest.Parser, new[]{ "Action", "Book", "Level", "Rank", "Insights", "Scheme", "Slots" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualCost), global::ManualCost.Parser, new[]{ "Level", "Item", "Amount", "Copper" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualBleed), global::ManualBleed.Parser, new[]{ "EffectId", "DurationSeconds", "ChancePercent", "TickMs", "TickDamage" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ManualBook), global::ManualBook.Parser, new[]{ "Id", "Name", "Description", "StartLevel", "Learn", "Upgrades", "Ranks", "Insights", "CollectDef", "CollectHp", "EquipDef", "EquipHp", "CollectDefStep", "CollectHpStep", "EquipDefStep", "EquipHpStep", "Passive", "RankText", "FirstRankAttack", "Source", "Bleed" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ManualBook), global::ManualBook.Parser, new[]{ "Id", "Name", "Description", "StartLevel", "Learn", "Upgrades", "Ranks", "Insights", "CollectDef", "CollectHp", "EquipDef", "EquipHp", "CollectDefStep", "CollectHpStep", "EquipDefStep", "EquipHpStep", "Passive", "RankText", "FirstRankAttack", "Source", "Bleed", "School", "CollectInner", "EquipInner", "EquipExtraInner", "TierPassive" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualCatalog), global::ManualCatalog.Parser, new[]{ "Books", "Schemes", "OpenSlots" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualProgress), global::ManualProgress.Parser, new[]{ "Book", "Level", "Rank", "Insights" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ManualReply), global::ManualReply.Parser, new[]{ "RoleId", "Catalog", "Progress", "Scheme", "Slots", "Materials", "Copper", "Message", "Action", "Success" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
@@ -1209,6 +1212,11 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     firstRankAttack_ = other.firstRankAttack_;
     source_ = other.source_;
     bleed_ = other.bleed_ != null ? other.bleed_.Clone() : null;
+    school_ = other.school_;
+    collectInner_ = other.collectInner_;
+    equipInner_ = other.equipInner_;
+    equipExtraInner_ = other.equipExtraInner_;
+    tierPassive_ = other.tierPassive_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1466,6 +1474,80 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     }
   }
 
+  /// <summary>Field number for the "school" field.</summary>
+  public const int SchoolFieldNumber = 22;
+  private string school_ = "";
+  /// <summary>
+  /// 目录分类，例如通用或华山专属。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string School {
+    get { return school_; }
+    set {
+      school_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "collect_inner" field.</summary>
+  public const int CollectInnerFieldNumber = 23;
+  private bool collectInner_;
+  /// <summary>
+  /// 领悟防御属于内功。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool CollectInner {
+    get { return collectInner_; }
+    set {
+      collectInner_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "equip_inner" field.</summary>
+  public const int EquipInnerFieldNumber = 24;
+  private bool equipInner_;
+  /// <summary>
+  /// 装备防御属于内功。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool EquipInner {
+    get { return equipInner_; }
+    set {
+      equipInner_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "equip_extra_inner" field.</summary>
+  public const int EquipExtraInnerFieldNumber = 25;
+  private int equipExtraInner_;
+  /// <summary>
+  /// 同时具有外防和内防的额外内防点数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int EquipExtraInner {
+    get { return equipExtraInner_; }
+    set {
+      equipExtraInner_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "tier_passive" field.</summary>
+  public const int TierPassiveFieldNumber = 26;
+  private static readonly pb::FieldCodec<string> _repeated_tierPassive_codec
+      = pb::FieldCodec.ForString(210);
+  private readonly pbc::RepeatedField<string> tierPassive_ = new pbc::RepeatedField<string>();
+  /// <summary>
+  /// 从零阶开始的当前被动说明。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public pbc::RepeatedField<string> TierPassive {
+    get { return tierPassive_; }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -1502,6 +1584,11 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     if (FirstRankAttack != other.FirstRankAttack) return false;
     if (Source != other.Source) return false;
     if (!object.Equals(Bleed, other.Bleed)) return false;
+    if (School != other.School) return false;
+    if (CollectInner != other.CollectInner) return false;
+    if (EquipInner != other.EquipInner) return false;
+    if (EquipExtraInner != other.EquipExtraInner) return false;
+    if(!tierPassive_.Equals(other.tierPassive_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1530,6 +1617,11 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     if (FirstRankAttack != 0) hash ^= FirstRankAttack.GetHashCode();
     if (Source.Length != 0) hash ^= Source.GetHashCode();
     if (bleed_ != null) hash ^= Bleed.GetHashCode();
+    if (School.Length != 0) hash ^= School.GetHashCode();
+    if (CollectInner != false) hash ^= CollectInner.GetHashCode();
+    if (EquipInner != false) hash ^= EquipInner.GetHashCode();
+    if (EquipExtraInner != 0) hash ^= EquipExtraInner.GetHashCode();
+    hash ^= tierPassive_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1620,6 +1712,23 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
       output.WriteRawTag(170, 1);
       output.WriteMessage(Bleed);
     }
+    if (School.Length != 0) {
+      output.WriteRawTag(178, 1);
+      output.WriteString(School);
+    }
+    if (CollectInner != false) {
+      output.WriteRawTag(184, 1);
+      output.WriteBool(CollectInner);
+    }
+    if (EquipInner != false) {
+      output.WriteRawTag(192, 1);
+      output.WriteBool(EquipInner);
+    }
+    if (EquipExtraInner != 0) {
+      output.WriteRawTag(200, 1);
+      output.WriteInt32(EquipExtraInner);
+    }
+    tierPassive_.WriteTo(output, _repeated_tierPassive_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1702,6 +1811,23 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
       output.WriteRawTag(170, 1);
       output.WriteMessage(Bleed);
     }
+    if (School.Length != 0) {
+      output.WriteRawTag(178, 1);
+      output.WriteString(School);
+    }
+    if (CollectInner != false) {
+      output.WriteRawTag(184, 1);
+      output.WriteBool(CollectInner);
+    }
+    if (EquipInner != false) {
+      output.WriteRawTag(192, 1);
+      output.WriteBool(EquipInner);
+    }
+    if (EquipExtraInner != 0) {
+      output.WriteRawTag(200, 1);
+      output.WriteInt32(EquipExtraInner);
+    }
+    tierPassive_.WriteTo(ref output, _repeated_tierPassive_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1767,6 +1893,19 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
     if (bleed_ != null) {
       size += 2 + pb::CodedOutputStream.ComputeMessageSize(Bleed);
     }
+    if (School.Length != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeStringSize(School);
+    }
+    if (CollectInner != false) {
+      size += 2 + 1;
+    }
+    if (EquipInner != false) {
+      size += 2 + 1;
+    }
+    if (EquipExtraInner != 0) {
+      size += 2 + pb::CodedOutputStream.ComputeInt32Size(EquipExtraInner);
+    }
+    size += tierPassive_.CalculateSize(_repeated_tierPassive_codec);
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -1840,6 +1979,19 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
       }
       Bleed.MergeFrom(other.Bleed);
     }
+    if (other.School.Length != 0) {
+      School = other.School;
+    }
+    if (other.CollectInner != false) {
+      CollectInner = other.CollectInner;
+    }
+    if (other.EquipInner != false) {
+      EquipInner = other.EquipInner;
+    }
+    if (other.EquipExtraInner != 0) {
+      EquipExtraInner = other.EquipExtraInner;
+    }
+    tierPassive_.Add(other.tierPassive_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
 
@@ -1949,6 +2101,26 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
           input.ReadMessage(Bleed);
           break;
         }
+        case 178: {
+          School = input.ReadString();
+          break;
+        }
+        case 184: {
+          CollectInner = input.ReadBool();
+          break;
+        }
+        case 192: {
+          EquipInner = input.ReadBool();
+          break;
+        }
+        case 200: {
+          EquipExtraInner = input.ReadInt32();
+          break;
+        }
+        case 210: {
+          tierPassive_.AddEntriesFrom(input, _repeated_tierPassive_codec);
+          break;
+        }
       }
     }
   #endif
@@ -2056,6 +2228,26 @@ public sealed partial class ManualBook : pb::IMessage<ManualBook>
             Bleed = new global::ManualBleed();
           }
           input.ReadMessage(Bleed);
+          break;
+        }
+        case 178: {
+          School = input.ReadString();
+          break;
+        }
+        case 184: {
+          CollectInner = input.ReadBool();
+          break;
+        }
+        case 192: {
+          EquipInner = input.ReadBool();
+          break;
+        }
+        case 200: {
+          EquipExtraInner = input.ReadInt32();
+          break;
+        }
+        case 210: {
+          tierPassive_.AddEntriesFrom(ref input, _repeated_tierPassive_codec);
           break;
         }
       }

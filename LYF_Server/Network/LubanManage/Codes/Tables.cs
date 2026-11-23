@@ -27,6 +27,9 @@ public partial class Tables
     public TbEquipInfo TbEquipInfo {get; }
     public TbEquipSpecialSkillInfo TbEquipSpecialSkillInfo {get; }
     public TbGene TbGene {get; }
+    public TbMartialManualCost TbMartialManualCost {get; }
+    public TbMartialManualInfo TbMartialManualInfo {get; }
+    public TbMartialManualTier TbMartialManualTier {get; }
     public TbItemInfo TbItemInfo {get; }
     public TbKnapsackInfo TbKnapsackInfo {get; }
     public TbNpcInfo TbNpcInfo {get; }
@@ -52,6 +55,9 @@ public partial class Tables
         TbEquipInfo = new TbEquipInfo(loader("tbequipinfo"));
         TbEquipSpecialSkillInfo = new TbEquipSpecialSkillInfo(loader("tbequipspecialskillinfo"));
         TbGene = new TbGene(loader("tbgene"));
+        TbMartialManualCost = new TbMartialManualCost(loader("tbmartialmanualcost"));
+        TbMartialManualInfo = new TbMartialManualInfo(loader("tbmartialmanualinfo"));
+        TbMartialManualTier = new TbMartialManualTier(loader("tbmartialmanualtier"));
         TbItemInfo = new TbItemInfo(loader("tbiteminfo"));
         TbKnapsackInfo = new TbKnapsackInfo(loader("tbknapsackinfo"));
         TbNpcInfo = new TbNpcInfo(loader("tbnpcinfo"));
@@ -79,6 +85,9 @@ public partial class Tables
         TbEquipInfo.ResolveRef(this);
         TbEquipSpecialSkillInfo.ResolveRef(this);
         TbGene.ResolveRef(this);
+        TbMartialManualCost.ResolveRef(this);
+        TbMartialManualInfo.ResolveRef(this);
+        TbMartialManualTier.ResolveRef(this);
         TbItemInfo.ResolveRef(this);
         TbKnapsackInfo.ResolveRef(this);
         TbNpcInfo.ResolveRef(this);

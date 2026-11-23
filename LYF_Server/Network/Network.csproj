@@ -90,6 +90,12 @@
     <Compile Include="LubanManage\Codes\TbEquipSpecialSkillInfo.cs" />
     <Compile Include="LubanManage\Codes\TbCountInfo.cs" />
     <Compile Include="LubanManage\Codes\TbGene.cs" />
+    <Compile Include="LubanManage\Codes\MartialManualCost.cs" />
+    <Compile Include="LubanManage\Codes\TbMartialManualCost.cs" />
+    <Compile Include="LubanManage\Codes\MartialManualInfo.cs" />
+    <Compile Include="LubanManage\Codes\TbMartialManualInfo.cs" />
+    <Compile Include="LubanManage\Codes\MartialManualTier.cs" />
+    <Compile Include="LubanManage\Codes\TbMartialManualTier.cs" />
     <Compile Include="LubanManage\Codes\TbItemInfo.cs" />
     <Compile Include="LubanManage\Codes\TbKnapsackInfo.cs" />
     <Compile Include="LubanManage\Codes\TbNpcInfo.cs" />
@@ -154,6 +160,9 @@
     <Content Include="LubanManage\Tb\tbequipinfo.bytes" />
     <Content Include="LubanManage\Tb\tbequipspecialskillinfo.bytes" />
     <Content Include="LubanManage\Tb\tbgene.bytes" />
+    <Content Include="LubanManage\Tb\tbmartialmanualcost.bytes" />
+    <Content Include="LubanManage\Tb\tbmartialmanualinfo.bytes" />
+    <Content Include="LubanManage\Tb\tbmartialmanualtier.bytes" />
     <Content Include="LubanManage\Tb\tbiteminfo.bytes" />
     <Content Include="LubanManage\Tb\tbknapsackinfo.bytes" />
     <Content Include="LubanManage\Tb\tbnpcinfo.bytes" />

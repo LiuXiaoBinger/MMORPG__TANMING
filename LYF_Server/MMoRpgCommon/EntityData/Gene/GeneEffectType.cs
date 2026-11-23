@@ -36,5 +36,7 @@ public enum GeneEffectType
     /// <summary>从目标背后攻击时按百分点提高本次伤害，朝向由权威结算方判定。</summary>
     TargetBehindDamage = 16,
     /// <summary>成功提交施法后刷新本次技能自身的剩余冷却，由技能组件提供的权威入口执行。</summary>
-    SkillCooldownReset = 17
+    SkillCooldownReset = 17,
+    /// <summary>受击施毒按目标和施加者独立累计，达到配置次数触发关联效果。</summary>
+    PoisonThreshold = 18
 }

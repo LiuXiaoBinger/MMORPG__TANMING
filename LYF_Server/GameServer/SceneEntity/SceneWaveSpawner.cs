@@ -363,9 +363,11 @@ public sealed partial class SceneWaveSpawner
                 // 屏障爆炸和龙卷斩的输入已经包含自身外功，防御环节保留该技能的原公式。
                 // 仅盾爆和龙卷的输入已经合成外功，其余技能传等级行只为锁定属性伤害。
                 bool hasExternalSkillDamage = skillId == MjsSkillGenes.BarrierSkillId || skillId == MjsSkillGenes.TornadoSkillId;
+                // 暗香武籍只乘外功伤害分量，内功和后续元素伤害单独结算。
+                double externalBonus = equipment.Runtime.CalculateAttribute(GeneAttributeType.ExternalDamageBonus, 0);
                 if (effect != null && hasExternalSkillDamage)
-                    calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, damage);
-                else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage, equipment.Runtime.GetStates());
+                    calculatedDamage = defense.CalculateExternalSkillDamage(targetGenes, (int)(damage * (1 + externalBonus / 100)));
+                else calculatedDamage = defense.CalculateDamage(finalAttributes, targetGenes, damage, equipment.Runtime.GetStates(), externalBonus);
                 // 优先使用施放时固定的等级行，老命中入口仍可查询角色当前已学习等级。
                 SkillEffectInfo elementEffect = effect ?? caster.GetComponent<RoleSkillComponent>().FindLearnedEffect(skillId);
                 // 元素部分只经过对应元素防御，合并后与原伤害走同一最终增伤和扣血路径。
@@ -396,6 +398,9 @@ public sealed partial class SceneWaveSpawner
                     }
                     // 每一万点净暴击对应满概率，扣除目标抗暴后裁切，由副本随机源判定。
                     double netCrit = finalAttributes.CritPoint - targetGenes.CalculateAttribute(GeneAttributeType.CritResistPoint, baseResist);
+                    // 面板暴击点和秘笈直接暴击率分别换算到万分制。
+                    netCrit += 100 * (caster.AttrComp.CalculateAttribute(GeneAttributeType.CritRateBonus, 0)
+                        + TeamManager.Instance.OtherMemberBonus(caster, GeneAttributeType.AllyCritRateBonus));
                     if (netCrit > 0) critical = Random.Next(10000) < Math.Min(10000, netCrit);
                     if (critical)
                     {
@@ -405,6 +410,14 @@ public sealed partial class SceneWaveSpawner
                     }
                     // 背水等特技依然按扣血前的双方生命值结算。
                     double bonus = equipment.Runtime.ResolveDamageBonus(damageContext);
+                    // 清水诀按真气窗口，绝学按本项目武学页同一招式定义。
+                    if (caster.AttrComp.InEmptyQiWindow) bonus += equipment.Runtime.CalculateAttribute(GeneAttributeType.EmptyQiDamageBonus, 0);
+                    if (skillId == 10070)
+                    {
+                        bonus += equipment.Runtime.CalculateAttribute(GeneAttributeType.UltimateDamageBonus, 0);
+                        if (caster.mainRoleInfo.BaseInfo.InstanceId != 0)
+                            bonus += equipment.Runtime.CalculateAttribute(GeneAttributeType.DungeonUltimateBonus, 0);
+                    }
                     if (bonus > 0) calculatedDamage = (int)(calculatedDamage * (1 + bonus / 100));
                     calculatedDamage = MjsSkillGenes.ApplyLearnedDamageBonus(caster, targetGenes.Owner.AttrComp,
                         skillId, calculatedDamage);
@@ -414,7 +427,7 @@ public sealed partial class SceneWaveSpawner
             }
             // 龙卷命中先扣真气，本帧产生的生命通知便能同时读取真气终值。
             if (effect != null && skillId == MjsSkillGenes.TornadoSkillId && calculatedDamage > 0)
-                MjsSkillGenes.HitTornado(targetGenes, effect);
+                MjsSkillGenes.HitTornado(targetGenes, effect, caster);
             // 只报告这只怪本次实际失去的生命值，致死一击最多扣到零。
             int hpBeforeHit = monster.CurrentHp;
             if (hitActor != null) DamageActor(hitActor, calculatedDamage, caster);

@@ -46,7 +46,7 @@ public class MonsterDefenseAttributes
     /// <param name="target">受击怪物的基因容器。</param>
     /// <param name="skillDamage">归入外功的招式固定伤害。</param>
     /// <param name="states">本次出手时攻击者的神力或虚弱状态。</param>
-    public int CalculateDamage(RoleBaseInfo attacker, GeneRuntime target, int skillDamage, GeneState states)
+    public int CalculateDamage(RoleBaseInfo attacker, GeneRuntime target, int skillDamage, GeneState states, double externalBonus = 0)
     {
         // 内防独立，外破甲不能降低内功防御。
         double magicDefense = Math.Max(0, target.CalculateAttribute(GeneAttributeType.DefInternal, DefInternal));
@@ -57,6 +57,7 @@ public class MonsterDefenseAttributes
         // 选择本次外功取值后再追加招式固定伤害。
         double physical = (Math.Max(0, GeneRuntime.ResolveAttack(states, GeneState.MaxExternalAttack, attacker.AtkExternalMin, attacker.AtkExternalMax)) + skillDamage) * physicalRate;
         // 内功攻击部分独立经过内防，使内破甲能影响真实扣血。
+        physical *= 1 + externalBonus / 100;
         double magical = Math.Max(0, GeneRuntime.ResolveAttack(states, GeneState.MaxInternalAttack, attacker.AtkInternalMin, attacker.AtkInternalMax)) * magicRate;
         return Math.Max(0, (int)((physical + magical) * target.CalculateAttribute(GeneAttributeType.DamageTaken, 100) / 100));
     }

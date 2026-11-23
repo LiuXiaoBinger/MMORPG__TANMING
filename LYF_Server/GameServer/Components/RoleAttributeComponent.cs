@@ -12,19 +12,10 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     private const int AdvancedAttributeLastId = 144;
     /// <summary>读取按来源计数并处理霸体冲突后的有效状态。</summary>
     public GeneState States { get { return modifiers.States; } }
-    /// <summary>已读取本角色存档中的秘笈加成。</summary>
-    private bool manualLoaded;
-    /// <summary>领悟与出战提供的外功防御点数。</summary>
-    private int manualDef;
-    /// <summary>领悟与出战提供的气血上限点数。</summary>
-    private int manualHp;
-    /// <summary>当前出战秘笈的进阶外功最大值加成。</summary>
-    private int manualAttack;
-
     /// <summary>方案或培养成功后重算属性并通知角色面板。</summary>
     internal void RefreshManualAttributes()
     {
-        manualLoaded = false;
+        MartialManualSystem.ApplyGenes(Owner);
         NotifyAttributeUpdate();
     }
 
@@ -34,14 +25,6 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     /// <returns>应用固定值和百分比后的结果。</returns>
     public double CalculateAttribute(GeneAttributeType attribute, double baseValue)
     {
-        if (!manualLoaded && Owner.IsRoleDataReady())
-        {
-            MartialManualSystem.Bonuses(Owner.GetComponent<RoleCountComponent>(), out manualDef, out manualHp, out manualAttack);
-            manualLoaded = true;
-        }
-        if (attribute == GeneAttributeType.MaxHp) baseValue += manualHp;
-        else if (attribute == GeneAttributeType.DefExternal) baseValue += manualDef;
-        else if (attribute == GeneAttributeType.AtkExternalMax) baseValue += manualAttack;
         return modifiers.CalculateAttribute(attribute, baseValue);
     }
     /// <summary>节点执行或撤销时直接更新属性组件。</summary>
@@ -74,12 +57,18 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     public int MaxMp { get { return Math.Max(0, (int)CalculateAttribute(GeneAttributeType.MaxMp, Owner.mainRoleInfo.BaseInfo.MaxMp)); } }
     /// <summary>当前治疗增益，单位百分点。</summary>
     public double HealBonus { get { return CalculateAttribute(GeneAttributeType.HealBonus, Owner.mainRoleInfo.BaseInfo.HealBonus); } }
+    /// <summary>不足一整点的秘笈怒气回复，达到上限时清空。</summary>
+    private double rageRemainder;
     /// <summary>当前怒气上限，直接读角色权威快照，不做基因复算以免与最终上限叠加。</summary>
     public int MaxRage { get { return Math.Max(0, Owner.mainRoleInfo.BaseInfo.MaxRage); } }
     /// <summary>当前怒气点数，权威值保存在角色快照中。</summary>
     public int CurrRage { get { return Owner.mainRoleInfo.BaseInfo.CurrRage; } }
-    /// <summary>当前真气上限，直接读角色权威快照，不做基因复算。</summary>
-    public int MaxTrueQi { get { return Math.Max(0, Owner.mainRoleInfo.BaseInfo.MaxTrueQi); } }
+    /// <summary>从非空扣至零后的剩余宽限时间，使用角色逻辑帧推进，单位毫秒。</summary>
+    private int emptyQiRemainingMs;
+    /// <summary>真气耗尽类秘笈可在真气为零或恢复后的剩余宽限时间内生效。</summary>
+    internal bool InEmptyQiWindow { get { return CurrTrueQi == 0 || emptyQiRemainingMs > 0; } }
+    /// <summary>裸真气上限叠加固定点数和按基础上限的百分比。</summary>
+    public int MaxTrueQi { get { return Math.Max(0, (int)CalculateAttribute(GeneAttributeType.MaxTrueQi, Owner.mainRoleInfo.BaseInfo.MaxTrueQi)); } }
     /// <summary>当前真气点数，权威值保存在角色快照中。</summary>
     public int CurrTrueQi { get { return Owner.mainRoleInfo.BaseInfo.CurrTrueQi; } }
 
@@ -118,6 +107,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     public override void Update(int deltaMilliseconds)
     {
         // 同一份基因实例由属性槽位推进，角色不再单独占用组件槽位。
+        emptyQiRemainingMs = Math.Max(0, emptyQiRemainingMs - deltaMilliseconds);
         Owner.Gene.Update(deltaMilliseconds);
     }
 
@@ -172,6 +162,7 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         result.CurrMp = Math.Min(result.CurrMp, result.MaxMp);
         // 四项通用资源同样裁切到最终上限，避免权威快照超出范围。
         result.CurrRage = CombatResourceDefaults.Clamp(result.CurrRage, result.MaxRage);
+        result.MaxTrueQi = MaxTrueQi;
         result.CurrTrueQi = CombatResourceDefaults.Clamp(result.CurrTrueQi, result.MaxTrueQi);
         return result;
     }
@@ -226,6 +217,8 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
         if (info.CurrHp <= 0) return false;
         if (!CombatResourceDefaults.CanConsume(info.CurrTrueQi, amount)) return false;
         info.CurrTrueQi = CombatResourceDefaults.ApplyDelta(info.CurrTrueQi, MaxTrueQi, -amount);
+        if (amount > 0 && info.CurrTrueQi == 0)
+            emptyQiRemainingMs = (int)(CalculateAttribute(GeneAttributeType.EmptyQiGraceSeconds, 0) * 1000);
         ResourcesChanged = true;
         return true;
     }
@@ -236,7 +229,12 @@ public class RoleAttributeComponent : RoleComponentBase, IAttributeComponent
     {
         RoleBaseInfo info = Owner.mainRoleInfo.BaseInfo;
         if (info.CurrHp <= 0) return;
-        info.CurrRage = CombatResourceDefaults.ApplyDelta(info.CurrRage, MaxRage, amount);
+        // 怒气按点结算；零碎的百分比增量累积到下一次回复。
+        double gain = amount * CalculateAttribute(GeneAttributeType.RageRecoveryBonus, 100) / 100 + rageRemainder;
+        int points = (int)gain;
+        info.CurrRage = CombatResourceDefaults.ApplyDelta(info.CurrRage, MaxRage, points);
+        rageRemainder = gain - points;
+        if (info.CurrRage == MaxRage) rageRemainder = 0;
         ResourcesChanged = true;
     }
 

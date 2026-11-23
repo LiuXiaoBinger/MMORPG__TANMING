@@ -59,6 +59,25 @@ public sealed class TeamManager
     /// <summary>由游戏进程统一创建副本运行入口。</summary>
     private TeamManager() { }
 
+    /// <summary>读取同一副本实际在场的队伍增益，离场或卸书后下一次命中立即更新。</summary>
+    /// <param name="role">本次发起攻击的角色。</param><param name="attribute">队友提供的被动属性编号。</param>
+    internal double OtherMemberBonus(OnlineRole role, GeneAttributeType attribute)
+    {
+        // 同战斗实例的在场队员决定本次增益来源。
+        Dungeon team;
+        if (!_instances.TryGetValue((ulong)role.mainRoleInfo.BaseInfo.InstanceId, out team)) return 0;
+        double bonus = 0;
+        for (int index = 0; index < team.Members.Count; index++)
+        {
+            if (team.Members[index] == role.GetID()) continue;
+            // 实际在线且存活的队员才提供出战秘笈加成。
+            OnlineRole member = RoleManager.Instance.GetOnlineRole((int)team.Members[index]);
+            if (member != null && member.mainRoleInfo.BaseInfo.CurrHp > 0)
+                bonus += member.AttrComp.CalculateAttribute(attribute, 0);
+        }
+        return bonus;
+    }
+
     /// <summary>队友治疗招式的结果入口。只有本次实际回了血才允许施法者触发妙手。</summary>
     /// <param name="caster">已成功施放治疗技能的在线角色。</param>
     /// <param name="target">同副本队伍内被该治疗招式命中的队友。</param>

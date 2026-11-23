@@ -48,6 +48,9 @@ public class OnlineRole : IGeneOwner
     public void OpenShield(int absorb, long expireTick, SkillEffectInfo effect = null)
     {
         // 非正容量按零处理，护盾池不允许出现负值。
+        // 普通技能实际获得护盾时追加生命上限比例；暗器不走此技能护盾入口。
+        if (absorb > 0 && AttrComp != null)
+            absorb += (int)(AttrComp.MaxHp * AttrComp.CalculateAttribute(GeneAttributeType.ShieldHpBonus, 0) / 100);
         _shieldAbsorb = Math.Max(absorb, 0);
         ShieldCapacity = _shieldAbsorb;
         _shieldExpireTick = expireTick;
@@ -322,6 +325,8 @@ public class OnlineRole : IGeneOwner
         }
 
         _roleDataLoaded = true;
+        // 计数存档已就绪，首次面板与第一段攻击都读取恢复后的秘笈来源。
+        MartialManualSystem.ApplyGenes(this);
         _saveRoleDataTimer.Start();
         return true;
     }

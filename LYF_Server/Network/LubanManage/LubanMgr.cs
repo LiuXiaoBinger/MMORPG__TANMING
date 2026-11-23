@@ -9,6 +9,9 @@ using cfg;
 public class LubanMgr:Singleton<LubanMgr>
 {
 
+    /// <summary>秘笈目录与阶位配置沿用启动时已加载的同一批 Luban 表。</summary>
+    public Tables ConfigTables { get; private set; }
+
     #region 字段与常量
     /// <summary>苍蓝屏障的主表编号，只有屏障结束时的爆炸会命中敌人。</summary>
     private const int BlueBarrierSkillId = 10120;
@@ -130,6 +133,7 @@ public class LubanMgr:Singleton<LubanMgr>
         Tables tables = new Tables((string file) => new Luban.ByteBuf(
             File.ReadAllBytes(Path.Combine(dataDirectory, file + ".bytes"))));
 
+        ConfigTables = tables;
         _skillInfos = tables.TbSkillInfo.DataMap;
         _skillEffectInfos = tables.TbSkillEffectInfo.DataMap;
         _skillEffectsByLevel = BuildSkillEffectsByLevel(tables.TbSkillEffectInfo.DataList);

@@ -94,6 +94,7 @@
         <Compile Include="EntityData\Gene\ConditionGene\SelfHpLostDamageGene.cs" />
         <Compile Include="EntityData\Gene\ConditionGene\TargetKindDamageGene.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\DamageHealGene.cs" />
+        <Compile Include="EntityData\Gene\SpecialGene\PoisonThresholdGene.cs" />
         <Compile Include="EntityData\Gene\SpecialGene\SkillCooldownResetGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\DamageTakenGene.cs" />
         <Compile Include="EntityData\Gene\NormalGene\HealingReceivedGene.cs" />
