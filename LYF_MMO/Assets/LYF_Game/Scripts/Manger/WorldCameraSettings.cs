@@ -9,8 +9,10 @@ public static class WorldCameraSettings
     private const string FeaturesKey = "LYF.Camera.CustomFeatures";
     /// <summary>定制 2.5D 俯角的存档键，FreeLook 的竖轴范围为零至一。</summary>
     private const string PitchKey = "LYF.Camera.TunedPitch";
-    /// <summary>默认 2.5D 在中层与顶层轨道之间的固定俯视位置。</summary>
-    public const float DefaultOverheadPitch = 0.72f;
+    /// <summary>默认 2.5D 在零至一的竖轴上略高于中层轨道，主城复位时约向下看 33 度。</summary>
+    public const float DefaultOverheadPitch = 0.57f;
+    /// <summary>默认 2.5D 的垂直视野角，单位为度，复位时主角全身约占屏高的六分之一。</summary>
+    public const float Default25DFieldOfView = 55f;
 
     /// <summary>两种 2.5D 共用的操作，保留水平转动、滚轮和轻功落点。</summary>
     private const WorldCameraFeature Overhead = WorldCameraFeature.Reset | WorldCameraFeature.TurnWithMovement |

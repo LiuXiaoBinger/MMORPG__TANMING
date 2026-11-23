@@ -7,6 +7,8 @@ public partial class CameraMgr
 {
     /// <summary>复位及初次入场时的顶部轨道高度，单位米。</summary>
     private const float DefaultWorldZoom = 12f;
+    /// <summary>场景 FreeLook 自带的垂直视野角，单位为度，供自由镜头和角色展示使用。</summary>
+    private float _sceneFieldOfView;
     /// <summary>手动缩放的目标高度，单位米；战斗构图只在此基础上临时放大。</summary>
     private float _worldZoom = DefaultWorldZoom;
     /// <summary>玩家选定的 FreeLook 俯角，零为底层轨道，一为顶层轨道。</summary>
@@ -45,7 +47,16 @@ public partial class CameraMgr
             case WorldCameraMode.Default25D: _worldPitch = WorldCameraSettings.DefaultOverheadPitch; break;
             default: _worldPitch = Mathf.Clamp01(_worldPitch - _combatLift); break;
         }
+        ApplyWorldFieldOfView();
         if (!_isOpenRoleAtttWindow) _cinemachine.m_YAxis.Value = _worldPitch;
+    }
+
+    /// <summary>默认 2.5D 用较宽的垂直视野保留身前街景，角色展示和其余模式使用场景原值。</summary>
+    private void ApplyWorldFieldOfView()
+    {
+        _cinemachine.m_Lens.FieldOfView = _sceneFieldOfView;
+        if (!_isOpenRoleAtttWindow && WorldCameraSettings.Mode == WorldCameraMode.Default25D)
+            _cinemachine.m_Lens.FieldOfView = WorldCameraSettings.Default25DFieldOfView;
     }
 
     /// <summary>一个世界帧内先处理玩家输入，再用本地主角的实际状态调整距离和航向。</summary>

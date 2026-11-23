@@ -109,6 +109,7 @@ public partial class CameraMgr : MonoBehaviour
     {
         Instance = this;
         _cinemachine = GetComponent<CinemachineFreeLook>();
+        _sceneFieldOfView = _cinemachine.m_Lens.FieldOfView;
         _mouse = Mouse.current;
         // 两个世界场景原有的 SimpleFollow 会逐帧清空水平轴，改用世界航向保存玩家转过的角度。
         _cinemachine.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
@@ -404,7 +405,9 @@ public partial class CameraMgr : MonoBehaviour
         {
             return;
         }
-        //设置轨道
+        // 展示时使用场景原视野，返回世界时恢复当前镜头预设。
+        ApplyWorldFieldOfView();
+        // 设置展示或返回世界时的轨道距离。
         SetOrbites(cinemOffset);
         //设置角色选择，让角色正对摄像机 Camera.main.transform.eulerAngles.y
         _roleMainTransform.eulerAngles = new Vector3(0, roleRotaY, 0);
