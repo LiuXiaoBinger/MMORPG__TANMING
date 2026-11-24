@@ -945,6 +945,7 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 - The working client compiled with 0 errors and 56 warnings. Unity 2023.2.20f1c1 passed 44 isolated checks using the compiled client, project tables, imported sprites, a test role and UI raycasts. NPC QuQu opened shop 1 with 4 sundries and 12 equipment items. Coverage includes scroll and search, stock and balance updates, four payment IDs, quantities, and the item and count passed by the purchase button.
 - Captures cover 1920×1080, 1366×768 and 2560×1080. The 1366×768 image and layout check confirm the full six-digit price with insufficient funds. A Git-only build before and after the change reproduced the same 11 existing MainCtrl.cs errors on base `5d81aa3`. Live server settlement and a Player build are unverified.
 - Evidence is in `_temp/npc-shop-20261124/`. See `项目修改日志/2026-11-24-NPC商店双栏与分类货架.md` for the manifest and receipts.
+- The RO revision compiled with 0 errors and 56 warnings. Unity 2023.2.20f1c1 passed 51 isolated checks, including the original 44 behavioral checks and 7 visual checks. All 42 serialized shop and card references match the prior prefab. A 1366×768 capture shows the neutral disabled button with its complete six-digit price. Further captures cover both shelves at 1920×1080 and the single-category layout at 2560×1080. Live payment, device touch and a Player build were not exercised. Evidence is under `_temp/npc-shop-ro-20261124/`.
 
 ## [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock
 

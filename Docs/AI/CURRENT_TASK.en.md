@@ -915,6 +915,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - The existing MainView shop entry opens a moon-patterned two-column catalogue with item details. Mixed stock gets sundries/equipment tabs. Short category shelves align with the detail portrait, while long shelves support name search and scrolling. An individual item can be bought in multiple units through the existing request.
 - Displayed unit prices, wallet balances and checkout reuse the bag sprites for currency item IDs 101 (copper), 102 (silver), 106 (silver ticket) and 103 (yuanbao). Bag and purchase-limit changes refresh the visible selection.
 - Manifest and Git receipts are in `项目修改日志/2026-11-24-NPC商店双栏与分类货架.md`.
+- The RO visual revision uses the reference project’s nine-sliced Common window, blue title, category and selection sprites, red close control, and amber purchase button. Its shopkeeper and scenery decorate the header and the item portrait. The existing two shelf layouts, four currency bindings and purchase request retain their behavior. Four business and art files changed, all within the shop prefab and its illustrations.
 
 ## [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services
 

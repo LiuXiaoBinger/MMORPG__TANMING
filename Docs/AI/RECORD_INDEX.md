@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `11f8ff3922c308f734d1063d2c75a1a63046b5e20284b34d628afe3cf2ff6569`
+Source normalized SHA256: `49335bfc76a6a541c70b7356186851aa13baf56e3a4739cca26fe82809d810ff`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -134,12 +134,12 @@ Source normalized SHA256: `11f8ff3922c308f734d1063d2c75a1a63046b5e20284b34d628af
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 898-902 |
 | [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 903-908 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-912 |
-| [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-918 |
-| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 919-924 |
+| [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
+| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-925 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `f71994405cfdb4985fc141e8c244d452507d63dfee9bca83abb69eb09f2cff27`
+Source normalized SHA256: `ea9fe20320f7df1c9fc0be3d1b855e21fa68e3b7f43bca3d97ab584c85ee50ec`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -265,8 +265,8 @@ Source normalized SHA256: `f71994405cfdb4985fc141e8c244d452507d63dfee9bca83abb69
 | [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 928-932 |
 | [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 933-938 |
 | [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-942 |
-| [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-948 |
-| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 949-955 |
+| [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
+| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-956 |
 
 ## Docs/AI/DECISIONS.en.md
 
