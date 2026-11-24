@@ -16,7 +16,7 @@ public class TalkWindow : WindowBase
     [SerializeField] private ScrollRect _options;
     /// <summary>在正式预制体中排版的服务按钮，首个子节点保留为隐藏模板。</summary>
     [SerializeField] private Button _optionTemplate;
-    /// <summary>RO 普通剧情选项的紫边底图，商店服务沿用模板自带的蓝边底图。</summary>
+    /// <summary>剧情选项使用浅色底图，商店服务使用按钮模板的蓝色底图。</summary>
     [SerializeField] private Sprite _storyOptionBackground;
     /// <summary>与主界面隔离显示的常驻 HUD 和聊天层。</summary>
     [SerializeField] private CanvasGroup[] _hudLayers;
