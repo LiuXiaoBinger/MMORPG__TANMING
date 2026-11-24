@@ -16,6 +16,8 @@ public class TalkWindow : WindowBase
     [SerializeField] private ScrollRect _options;
     /// <summary>在正式预制体中排版的服务按钮，首个子节点保留为隐藏模板。</summary>
     [SerializeField] private Button _optionTemplate;
+    /// <summary>RO 普通剧情选项的紫边底图，商店服务沿用模板自带的蓝边底图。</summary>
+    [SerializeField] private Sprite _storyOptionBackground;
     /// <summary>与主界面隔离显示的常驻 HUD 和聊天层。</summary>
     [SerializeField] private CanvasGroup[] _hudLayers;
     /// <summary>以 NPC 配置编号为键的服务资源，交给控制器选取当前货架。</summary>
@@ -65,26 +67,45 @@ public class TalkWindow : WindowBase
         }
         if (dialogue.ShowMoshentaBossChoices)
         {
-            AddOption("帮助他（进入战斗）", () => MoshentaBattleRequested?.Invoke());
-            AddOption("暂时离开", OnTalkLeaveClick);
+            AddOption("帮助他（进入战斗）", () => MoshentaBattleRequested?.Invoke(), _storyOptionBackground);
+            AddOption("暂时离开", OnTalkLeaveClick, _storyOptionBackground);
         }
         _options.gameObject.SetActive(dialogue.Services.Length > 0 || dialogue.ShowMoshentaBossChoices);
+        ScrollToFirstOption();
+    }
+
+    /// <summary>框架先在隐藏状态填充对白，打开窗口、激活全部按钮后再定位列表。</summary>
+    /// <param name="isShow">显示对话时需让首个服务进入可视区。</param>
+    /// <param name="obj">窗口基类的刷新参数，传入对白时由 ReFreshUI 完成列表定位。</param>
+    public override void Show(bool isShow = true, object obj = null)
+    {
+        base.Show(isShow, obj);
+        if (isShow && obj == null) ScrollToFirstOption();
+    }
+
+    /// <summary>窗口可见后按实际选项数排版，让超出可视区的列表从第一个服务开始显示。</summary>
+    private void ScrollToFirstOption()
+    {
+        if (!_options.isActiveAndEnabled) return;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_options.content);
         _options.verticalNormalizedPosition = 1f;
     }
 
     /// <summary>从实装按钮模板生成一行，将点击绑定到本次选项。</summary>
     /// <param name="label">货架名称或剧情选项的正文。</param>
     /// <param name="onClick">控制器应接收的单次选择。</param>
-    private void AddOption(string label, UnityAction onClick)
+    /// <param name="background">剧情选项的底图，留空时使用服务按钮的预制体样式。</param>
+    private void AddOption(string label, UnityAction onClick, Sprite background = null)
     {
-        // 只复制美术已排版的按钮，动态改变标签和回调。
+        // 新行继承服务模板的排版，剧情选项替换底图。
         Button row = Instantiate(_optionTemplate, _options.content, false);
+        if (background != null) row.image.sprite = background;
         row.GetComponentInChildren<TMP_Text>(true).text = label;
         row.onClick.AddListener(onClick);
         row.gameObject.SetActive(true);
     }
 
-    /// <summary>点击底部对白区域或双箭头时进入下一句，末句结束本次对话。</summary>
+    /// <summary>点击底部对白区域或翻页箭头时进入下一句，末句结束本次对话。</summary>
     public void OnAdvanceClick()
     {
         if (_lines != null && _lineIndex + 1 < _lines.Length)

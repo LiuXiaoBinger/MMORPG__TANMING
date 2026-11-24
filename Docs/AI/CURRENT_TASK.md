@@ -916,3 +916,4 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 - PC 端单击 NPC 后，沿用现有的碰撞体检测、走近 NPC 的流程和 10 m 交互范围。MainCtrl 打开已注册的 TalkWindow，世界相机对准实际说话的 NPC。结束对话后，HUD 和先前可见的本地玩家模型部件恢复显示。原有 FreeLook 保留朝向、俯仰和缩放。
 - NPC 名称和用下划线分隔的台词在 `Luaban/MiniTemplate/Datas/#NpcInfo.xlsx` 中编辑。每个 NPC 的服务标签及排列顺序、ShopId 和可选的 GoodsIds 在 `LYF_MMO/Assets/LYF_Game/Config/NpcDialogueServices.asset` 中编辑。服务列表明确配置为空时只进行对话，未列入配置的原有商人仍使用原商店。4001 提供三项服务，分别为补给、武器和防具/饰品，4002 仅提供武器，4003 只说一句台词。
 - 库存、价格和购买限制沿用现有商品数据与购买请求。Moshenta 中的 NPC 20186 保留原有的战斗和离开选项。文件清单、验收记录与回执见 `项目修改日志/2026-11-24-NPC对话镜头与服务配置.md`。
+- RO TalkDlg2 样式使用现有的 NewTalk、Common1 和 Chat 图集，沿用已注册的 NPC 对话窗口。底部半透明横条显示青色的说话者姓名、白色台词和继续箭头。右侧的服务选项使用蓝色边框，剧情选项使用紫色边框。只有台词的 NPC 也显示继续箭头。打开或刷新较长的选项列表时，首先显示配置中的第一项。
