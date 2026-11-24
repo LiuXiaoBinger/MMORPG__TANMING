@@ -50,35 +50,35 @@ public class SkillInfoWindow : WindowBase
     /// <summary>技能未提供升级消耗时使用的默认铜币价格。</summary>
     private const int DefaultUpgradeCost = 40;
 
-    /// <summary>技能升级文案的绿色：详情卡改回深蓝底，绿色恢复亮绿 #6BE08A，深底上对比度约 6.9:1。</summary>
-    private static readonly Color UpgradeGreen = new Color(0.42f, 0.88f, 0.55f, 1f);
+    /// <summary>浅色详情卡上标记可升级状态的松绿色。</summary>
+    private static readonly Color UpgradeGreen = new Color(0.14f, 0.44f, 0.28f, 1f);
 
-    /// <summary>技能升级文案未达成时的灰蓝色，深蓝底上要提亮。</summary>
-    private static readonly Color UpgradeGray = new Color(0.62f, 0.70f, 0.78f, 1f);
+    /// <summary>浅色详情卡上标记升级条件不足的灰蓝色。</summary>
+    private static readonly Color UpgradeGray = new Color(0.34f, 0.42f, 0.51f, 1f);
 
-    /// <summary>节点外圈常态颜色。</summary>
-    private static readonly Color NodeRingNormal = new Color(0.40f, 0.60f, 0.63f, 1f);
+    /// <summary>已装备普通技能的雾蓝色外圈。</summary>
+    private static readonly Color NodeRingNormal = new Color(0.45f, 0.67f, 0.88f, 1f);
 
     /// <summary>绝学大节点的金色外圈。</summary>
     private static readonly Color NodeRingUltimate = new Color(0.98f, 0.78f, 0.42f, 1f);
 
-    /// <summary>空槽位的暗色外圈。</summary>
-    private static readonly Color NodeRingEmpty = new Color(0.27f, 0.37f, 0.39f, 1f);
+    /// <summary>未装备槽位的灰蓝色外圈。</summary>
+    private static readonly Color NodeRingEmpty = new Color(0.31f, 0.41f, 0.54f, 1f);
 
-    /// <summary>当前选中节点的亮色外圈。</summary>
-    private static readonly Color NodeRingSelected = new Color(0.87f, 0.98f, 0.89f, 1f);
+    /// <summary>当前选择的技能节点使用冰蓝高光。</summary>
+    private static readonly Color NodeRingSelected = new Color(0.88f, 0.96f, 1f, 1f);
 
-    /// <summary>子页签及分类选中时使用暖玉浅底，区别于深色内容区。</summary>
-    private static readonly Color TabOnColor = new Color(0.83f, 0.90f, 0.84f, 1f);
+    /// <summary>当前子页签或技能分类的蓝色底纹。</summary>
+    private static readonly Color TabOnColor = new Color(0.25f, 0.47f, 0.76f, 1f);
 
-    /// <summary>未选中的子页签与墨青页签条保持近似明度。</summary>
-    private static readonly Color TabOffColor = new Color(0.10f, 0.17f, 0.20f, 0.94f);
+    /// <summary>未选子页签的浅蓝底纹。</summary>
+    private static readonly Color TabOffColor = new Color(0.87f, 0.93f, 0.99f, 1f);
 
-    /// <summary>浅底上的深墨文字和图标。</summary>
-    private static readonly Color TabOnTextColor = new Color(0.08f, 0.16f, 0.18f, 1f);
+    /// <summary>选中页签蓝底上的白色文字和图标。</summary>
+    private static readonly Color TabOnTextColor = new Color(0.98f, 0.99f, 1f, 1f);
 
-    /// <summary>深底上的冷玉白文字和图标。</summary>
-    private static readonly Color TabOffTextColor = new Color(0.76f, 0.84f, 0.84f, 1f);
+    /// <summary>未选页签浅底上的深蓝文字和图标。</summary>
+    private static readonly Color TabOffTextColor = new Color(0.14f, 0.26f, 0.39f, 1f);
 
     /// <summary>当前职业名称文本。</summary>
     [SerializeField, Header("职业")] private TMP_Text _texJob;
@@ -611,13 +611,13 @@ public class SkillInfoWindow : WindowBase
                 }
             }
         }
-        // 右侧分类与横向页签统一用暖玉选中颜色，未开放项保持低亮。
+        // 右侧分类与横向页签统一使用蓝色选中底纹，未开放项保持低亮。
         for (int index = 0; index < _navLabels.Length; index++)
         {
             // 当前条目的文字与图标公用一种前景色。
             Color foreground = TabOffTextColor;
             // 当前条目的底色。
-            Color background = new Color(0.07f, 0.13f, 0.16f, 0.71f);
+            Color background = new Color(0.84f, 0.88f, 0.93f, 0.94f);
             if (index == _category)
             {
                 foreground = TabOnTextColor;
@@ -625,7 +625,7 @@ public class SkillInfoWindow : WindowBase
             }
             else if (index > CategorySecret)
             {
-                foreground = new Color(0.52f, 0.60f, 0.61f, 1f);
+                foreground = new Color(0.32f, 0.40f, 0.49f, 1f);
             }
             _navLabels[index].color = foreground;
             _navButtons[index].image.color = background;

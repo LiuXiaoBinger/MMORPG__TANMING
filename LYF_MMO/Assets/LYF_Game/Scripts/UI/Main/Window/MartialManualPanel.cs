@@ -729,15 +729,16 @@ public sealed class MartialManualPanel : MonoBehaviour
         // 依照三个培养页签的排列刷新选中色。
         for (int i = 0; i < trainTabs.Length; i++)
         {
-            // 与武学主页相同，浅底深字为当前页。
+            // 页签底板区分普通项与当前培养项。
             Image plate = trainTabs[i].GetComponent<Image>();
+            // 页签文字与图案共用前景色。
             TMP_Text label = trainTabs[i].GetComponentInChildren<TMP_Text>();
-            plate.color = new Color32(38, 57, 54, 230);
-            label.color = new Color32(235, 234, 226, 255);
+            plate.color = new Color32(221, 237, 252, 255);
+            label.color = new Color32(36, 67, 99, 255);
             if (i == tab)
             {
-                plate.color = new Color32(201, 211, 207, 255);
-                label.color = new Color32(28, 42, 42, 255);
+                plate.color = new Color32(64, 120, 194, 255);
+                label.color = new Color32(250, 253, 255, 255);
             }
             trainGlyphs[i].color = label.color;
         }

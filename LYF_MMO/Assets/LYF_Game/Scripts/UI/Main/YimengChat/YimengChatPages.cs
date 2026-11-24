@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>管理江湖聊天的设置及表情、玩具弹窗中的本地分页。</summary>
 public sealed class YimengChatPages : MonoBehaviour
 {
-    /// <summary>各页选中时显示的浅色底纹，数组顺序与内容页一致。</summary>
+    /// <summary>各页选中时显示的蓝色底纹，数组顺序与内容页一致。</summary>
     [SerializeField] private Image[] _selection;
     /// <summary>分页文字，通过颜色区分普通和选中态。</summary>
     [SerializeField] private TMP_Text[] _captions;
@@ -28,9 +28,9 @@ public sealed class YimengChatPages : MonoBehaviour
             bool selected = i == index;
             _pages[i].SetActive(selected);
             _selection[i].enabled = selected;
-            // 选中底纹统一使用深蓝文字，常态字色由这组页签的实际背景指定。
+            // 选中蓝底使用白色文字，常态字色由这组页签的实际背景指定。
             if (selected)
-                _captions[i].color = new Color32(22, 49, 79, 255);
+                _captions[i].color = new Color32(249, 252, 255, 255);
             else
                 _captions[i].color = _unselectedCaptionColor;
         }

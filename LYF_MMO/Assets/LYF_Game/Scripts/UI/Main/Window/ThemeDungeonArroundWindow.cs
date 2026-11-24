@@ -41,11 +41,11 @@ public sealed class ThemeDungeonArroundWindow : WindowBase
     /// <summary>红色，用于"未解锁"提示文本。</summary>
     private static readonly Color ColRed = new Color(1f, 0.42f, 0.38f, 1f);
 
-    /// <summary>书位未选中时的描边色：RO 原版书位没有边框，这里直接透明，只留选中态金边。</summary>
+    /// <summary>未选书位的边框保持透明，以突出当前选中的副本。</summary>
     private static readonly Color ColFrameIdle = new Color(0.36f, 0.29f, 0.18f, 0f);
 
-    /// <summary>书位选中时的高亮边框色。</summary>
-    private static readonly Color ColFrameOn = new Color(1f, 0.86f, 0.55f, 1f);
+    /// <summary>选择副本书位时显示的冰蓝色描边。</summary>
+    private static readonly Color ColFrameOn = new Color(0.55f, 0.81f, 1f, 1f);
 
     /// <summary>全部副本条目，由配置文件反序列化得到。</summary>
     private ThemeDungeonEntry[] _items = new ThemeDungeonEntry[0];

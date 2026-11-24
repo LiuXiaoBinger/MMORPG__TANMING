@@ -7,7 +7,7 @@ public sealed class YimengChatChannelTab : MonoBehaviour
 {
     /// <summary>玩家点击此按钮切换频道。</summary>
     [SerializeField] private Button _button;
-    /// <summary>选中时显示的浅色底纹；发言菜单中的按钮可沿用常驻底纹。</summary>
+    /// <summary>选中时显示的蓝色底纹；发言菜单中的按钮可沿用常驻底纹。</summary>
     [SerializeField] private Image _selection;
     /// <summary>呈现录屏里的频道标题并随选中状态变色。</summary>
     [SerializeField] private TMP_Text _caption;
@@ -52,13 +52,13 @@ public sealed class YimengChatChannelTab : MonoBehaviour
     /// <summary>是否为聚合记录的常用频道。</summary>
     public bool ShowAllHistory => _showAllHistory;
 
-    /// <summary>切换频道选中底纹，正文侧栏使用深蓝标题。</summary>
+    /// <summary>切换频道选中底纹，正文侧栏用白字标记当前频道。</summary>
     /// <param name="selected">当前窗口是否正展示这个频道。</param>
     public void SetSelected(bool selected)
     {
         _selection.enabled = selected;
         if (selected)
-            _caption.color = new Color32(22, 49, 79, 255);
+            _caption.color = new Color32(249, 252, 255, 255);
         else
             _caption.color = new Color32(34, 54, 76, 255);
     }

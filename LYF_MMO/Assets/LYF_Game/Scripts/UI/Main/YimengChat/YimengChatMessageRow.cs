@@ -44,6 +44,14 @@ public sealed class YimengChatMessageRow : MonoBehaviour
     /// <summary>当前实例绑定到旧聊天记录里的哪一条消息。</summary>
     public ChatMessage Message { get; private set; }
 
+    /// <summary>收回本行并释放上一条记录和语音引用，等待下次绑定。</summary>
+    public void Recycle()
+    {
+        gameObject.SetActive(false);
+        Message = null;
+        _voice.Bind(null, null);
+    }
+
     /// <summary>绑定真实消息并按当前行宽排版。</summary>
     /// <param name="message">旧聊天记录提供的完整消息对象。</param>
     /// <param name="emoji">由完整正文找到的表情格，普通文字消息传空。</param>

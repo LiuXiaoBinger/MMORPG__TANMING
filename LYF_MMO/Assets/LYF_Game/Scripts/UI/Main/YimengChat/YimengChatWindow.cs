@@ -103,6 +103,8 @@ public sealed class YimengChatWindow : WindowBase
     private IReadOnlyList<ChatMessage> _history = Array.Empty<ChatMessage>();
     /// <summary>当前频道的游戏对象实例，随频道或窗口显隐重建。</summary>
     private readonly List<YimengChatMessageRow> _rows = new List<YimengChatMessageRow>();
+    /// <summary>本窗口已创建且暂不展示的消息行，随窗口销毁，数量受正式聊天历史上限约束。</summary>
+    private readonly Stack<YimengChatMessageRow> _spareRows = new Stack<YimengChatMessageRow>();
     /// <summary>左栏正在阅读的频道。</summary>
     private YimengChatChannelTab _viewed;
     /// <summary>常用页记住的发言选项，切换到固定频道时继续保留。</summary>
@@ -468,11 +470,10 @@ public sealed class YimengChatWindow : WindowBase
         // 从尾部倒序停用旧列表中的渲染节点，以便布局立即刷新。
         for (int i = _rows.Count - 1; i >= 0; i--)
         {
-            _rows[i].gameObject.SetActive(false);
-            Destroy(_rows[i].gameObject);
+            _rows[i].Recycle();
+            _spareRows.Push(_rows[i]);
         }
         _rows.Clear();
-        Canvas.ForceUpdateCanvases();
         // 从最早到最新渲染符合当前频道的记录。
         for (int i = 0; i < _history.Count; i++)
         {
@@ -483,12 +484,22 @@ public sealed class YimengChatWindow : WindowBase
         GoToLatest();
     }
 
-    /// <summary>从已保存的预制模板实例化一个消息展示行。</summary>
+    /// <summary>优先复用本窗口的空闲消息行，并在列表末尾绑定新记录。</summary>
     /// <param name="message">要绑定的当前频道聊天记录。</param>
     private void AddRow(ChatMessage message)
     {
         // 行仅向列表渲染，消息规格及音频由已有聊天数据携带。
-        YimengChatMessageRow row = Instantiate(_rowPrefab, _content, false);
+        YimengChatMessageRow row;
+        if (_spareRows.Count > 0)
+        {
+            row = _spareRows.Pop();
+            row.transform.SetAsLastSibling();
+            row.gameObject.SetActive(true);
+        }
+        else
+        {
+            row = Instantiate(_rowPrefab, _content, false);
+        }
         row.Bind(message, _palette.Find(message.Text), PlayVoice);
         _rows.Add(row);
     }
@@ -496,8 +507,8 @@ public sealed class YimengChatWindow : WindowBase
     /// <summary>将已从旧聊天历史淘汰的最早行从视图移除。</summary>
     private void RemoveOldestRow()
     {
-        _rows[0].gameObject.SetActive(false);
-        Destroy(_rows[0].gameObject);
+        _rows[0].Recycle();
+        _spareRows.Push(_rows[0]);
         _rows.RemoveAt(0);
     }
 

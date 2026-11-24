@@ -23,7 +23,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     private Dictionary<string, AssetOperationHandle> effectDic = new Dictionary<string, AssetOperationHandle>();
     /// <summary>普通 Sprite 的资源句柄，用于维持已缓存资源的生命周期。</summary>
     private Dictionary<string, AssetOperationHandle> _spriteHandleDic = new Dictionary<string, AssetOperationHandle>();
-    /// <summary>图集子 Sprite 的资源句柄，用于维持已缓存切片的生命周期。</summary>
+    /// <summary>按图集地址持有已加载的子资源句柄，同页切片共享其生命周期。</summary>
     private Dictionary<string, SubAssetsOperationHandle> _spriteAtlasHandleDic = new Dictionary<string, SubAssetsOperationHandle>();
     /// <summary>按原始配置路径缓存已经加载的 Sprite。</summary>
     private Dictionary<string, Sprite> _spriteDic = new Dictionary<string, Sprite>();
@@ -188,36 +188,60 @@ public class ResourceMgr : Singleton<ResourceMgr>
             return;
         }
 
-        Global.Instance.YooPackage.LoadSubAssetsAsync<Sprite>(atlasLocation)
-            .Completed += (SubAssetsOperationHandle atlasHandle) =>
+        // 已完成的同一图集可以直接查找另一张切片。
+        if (_spriteAtlasHandleDic.TryGetValue(atlasLocation, out SubAssetsOperationHandle sharedAtlas))
         {
-            Sprite sprite = null;
-            if (atlasHandle.Status == EOperationStatus.Succeed)
-            {
-                sprite = atlasHandle.GetSubAssetObject<Sprite>(spriteName);
-            }
+            CacheAtlasSprite(sharedAtlas, atlasLocation, spriteName, path, callback);
+            return;
+        }
 
-            if (sprite == null)
+        Global.Instance.YooPackage.LoadSubAssetsAsync<Sprite>(atlasLocation)
+            .Completed += (SubAssetsOperationHandle loadedAtlas) =>
+        {
+            // 失败的临时句柄及时归还，下次请求仍可重新加载。
+            if (loadedAtlas.Status != EOperationStatus.Succeed)
             {
-                Debug.LogError($"图集切片加载失败，图集：{atlasLocation}，切片：{spriteName}");
-                atlasHandle.Release();
+                Debug.LogError($"图集加载失败：{atlasLocation}");
+                loadedAtlas.Release();
                 callback?.Invoke(null);
                 return;
             }
 
-            if (!_spriteDic.ContainsKey(path))
+            // 同帧请求可由同一 YooAsset 提供者完成，管理器只保留一个有效句柄。
+            if (!_spriteAtlasHandleDic.TryGetValue(atlasLocation, out SubAssetsOperationHandle retainedAtlas))
             {
-                _spriteDic.Add(path, sprite);
-                _spriteAtlasHandleDic.Add(path, atlasHandle);
+                retainedAtlas = loadedAtlas;
+                _spriteAtlasHandleDic.Add(atlasLocation, retainedAtlas);
             }
             else
             {
-                // 同一路径并发完成时只保留首个有效句柄，避免重复占用资源。
-                atlasHandle.Release();
+                loadedAtlas.Release();
             }
-
-            callback?.Invoke(sprite);
+            CacheAtlasSprite(retainedAtlas, atlasLocation, spriteName, path, callback);
         };
 
+    }
+    /// <summary>从共享图集取出指定切片，沿用调用方原始路径缓存成功结果。</summary>
+    /// <param name="atlas">持有整页切片的已完成图集句柄。</param>
+    /// <param name="atlasLocation">报错时标识缺少切片的图集地址。</param>
+    /// <param name="spriteName">配置路径末段对应的切片名称。</param>
+    /// <param name="path">供后续相同请求直接命中的完整配置路径。</param>
+    /// <param name="callback">把真实切片或缺失时的空值返回本次调用方。</param>
+    private void CacheAtlasSprite(SubAssetsOperationHandle atlas, string atlasLocation, string spriteName, string path, Action<Sprite> callback)
+    {
+        // 并发请求完成时也可能已由前一回调缓存这张切片。
+        if (!_spriteDic.TryGetValue(path, out Sprite sprite))
+        {
+            sprite = atlas.GetSubAssetObject<Sprite>(spriteName);
+            if (sprite != null)
+            {
+                _spriteDic.Add(path, sprite);
+            }
+            else
+            {
+                Debug.LogError($"图集切片加载失败，图集：{atlasLocation}，切片：{spriteName}");
+            }
+        }
+        callback?.Invoke(sprite);
     }
 }
