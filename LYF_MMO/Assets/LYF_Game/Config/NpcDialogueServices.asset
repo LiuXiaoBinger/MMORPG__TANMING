@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   _npcs:
   - NpcId: 4001
+    Title: 杂货商人
     Services:
     - Label: 生活用品
       ShopId: 1
@@ -24,3 +25,12 @@ MonoBehaviour:
     - Label: 防具与饰品
       ShopId: 1
       GoodsIds: 0700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000
+  - NpcId: 4002
+    Title: 武器铁匠
+    Services:
+    - Label: 选购兵器
+      ShopId: 1
+      GoodsIds: 0500000006000000
+  - NpcId: 4003
+    Title: 游历学者
+    Services: []

@@ -29,6 +29,8 @@ public sealed class NpcDialogueCatalog : ScriptableObject
     {
         /// <summary>主城或副本 NPC 的配置编号。</summary>
         public int NpcId;
+        /// <summary>头顶显示的职业或身份，填写原文，例如“杂货商人”。</summary>
+        public string Title;
         /// <summary>该 NPC 在对话中提供的全部货架。</summary>
         public Service[] Services;
     }
@@ -36,18 +38,36 @@ public sealed class NpcDialogueCatalog : ScriptableObject
     /// <summary>策划在资源中填写的 NPC 对话服务。</summary>
     [SerializeField] private Entry[] _npcs;
 
+    /// <summary>按编号读取同一位 NPC 的称谓和服务配置。</summary>
+    /// <param name="npcId">出生表中的 NPC 编号。</param>
+    private Entry FindEntry(int npcId)
+    {
+        // 同一份角色配置同时供主城出生和对话窗口读取。
+        for (int index = 0; index < _npcs.Length; index++)
+        {
+            if (_npcs[index].NpcId == npcId) return _npcs[index];
+        }
+        return null;
+    }
+
+    /// <summary>在实体出生时生成名牌称谓，沿用玩家名牌的尖括号格式。</summary>
+    /// <param name="npcId">当前生成的 NPC 编号。</param>
+    public string GetNameplateTitle(int npcId)
+    {
+        // 缺少称谓的 NPC 继续沿用自身的显示入口。
+        Entry entry = FindEntry(npcId);
+        if (entry == null || string.IsNullOrEmpty(entry.Title)) return string.Empty;
+        return "<" + entry.Title + ">";
+    }
+
     /// <summary>取指定 NPC 的服务；未单独配置的旧商人继续使用其默认商店。</summary>
     /// <param name="npcId">当前实体对应的 NPC 配置编号。</param>
     /// <param name="defaultShopId">NPC 表原有商店编号，零表示没有默认商店。</param>
     public Service[] GetServices(int npcId, int defaultShopId)
     {
-        // 按资源中的行号查找当前说话者。
-        for (int index = 0; index < _npcs.Length; index++)
-        {
-            // 当前配置行；明确配置为空时也直接采用。
-            Entry entry = _npcs[index];
-            if (entry.NpcId == npcId) return entry.Services;
-        }
+        // 已配置的服务包括有意留空的纯对白选项。
+        Entry entry = FindEntry(npcId);
+        if (entry != null) return entry.Services;
         if (defaultShopId > 0)
             return new[] { new Service { Label = "浏览商品", ShopId = defaultShopId } };
         return Array.Empty<Service>();

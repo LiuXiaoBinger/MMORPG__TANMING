@@ -31,6 +31,9 @@ public sealed class NpcEntity : MEntity
     /// <summary>NPC 显示名称</summary>
     public string Name { get; set; }
 
+    /// <summary>主城名牌的第二行称谓，实体从对象池取出后由当前 NPC 配置填写。</summary>
+    public string NameplateTitle { get; set; }
+
     /// <summary>所在地图 ID</summary>
     public int MapID { get; set; }
 
@@ -62,6 +65,7 @@ public sealed class NpcEntity : MEntity
         NpcID = 0;
         NpcType = 0;
         Name = null;
+        NameplateTitle = null;
         MapID = 0;
         PrefabPath = null;
         Think = null;

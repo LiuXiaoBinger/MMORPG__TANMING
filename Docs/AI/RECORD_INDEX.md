@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9e9be9dbebe5c6d08aefc29dffd932ab8e9d5a49931e6ecd4abf503ce903344a`
+Source normalized SHA256: `8be3320e331a1b96d2c1feb6d9ba7775bfcf70dc35825db3cc2c927dd6a6b213`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -135,11 +135,11 @@ Source normalized SHA256: `9e9be9dbebe5c6d08aefc29dffd932ab8e9d5a49931e6ecd4abf5
 | [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 903-908 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-912 |
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
-| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-926 |
+| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-927 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `e43720d9870d77ed248c346db683a2effc350123e5cf0622246cab406bd8b193`
+Source normalized SHA256: `68e5be48b5ad7e3904153cc758b0a3f1896266f38b2b2c4d94a497ea0ef69bb5`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -266,7 +266,7 @@ Source normalized SHA256: `e43720d9870d77ed248c346db683a2effc350123e5cf0622246ca
 | [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 933-938 |
 | [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-942 |
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
-| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-957 |
+| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-958 |
 
 ## Docs/AI/DECISIONS.en.md
 

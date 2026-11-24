@@ -12,6 +12,9 @@ public class NpcManager : MonoBehaviour
     #region 字段
     [SerializeField, Header("NPC 实例父节点，可为空")] private Transform _npcRoot;
 
+    /// <summary>与对话窗口共用的配置，按出生编号读取该人物的头顶称谓。</summary>
+    [SerializeField] private NpcDialogueCatalog _dialogueCatalog;
+
     private readonly Dictionary<int, NpcEntity> _npcEntities =
         new Dictionary<int, NpcEntity>();
 
@@ -116,6 +119,7 @@ public class NpcManager : MonoBehaviour
         }
 
         ApplyEntityConfig(entity, info);
+        if (_dialogueCatalog != null) entity.NameplateTitle = _dialogueCatalog.GetNameplateTitle(info.ID);
         Vector3 spawnPosition = ResolveSpawnPosition(info);
         ApplyEntityTransform(entity, spawnPosition, info.RotationY);
         _npcEntities.Add(info.ID, entity);
@@ -173,6 +177,11 @@ public class NpcManager : MonoBehaviour
         entity.Model.SetGameObject(npcObject, string.Empty, false);
         // 绑定待机动画会重置模型根节点，完成后再写入配置的世界位置和朝向。
         npcObject.transform.SetPositionAndRotation(spawnPosition, Quaternion.Euler(0f, info.RotationY, 0f));
+        // 根碰撞体与该模型站立高度匹配，供头顶名牌和对话机位共用，单位为米。
+        if (npcObject.TryGetComponent(out CharacterController capsule))
+        {
+            entity.Height = (capsule.center.y + capsule.height * 0.5f) * npcObject.transform.lossyScale.y;
+        }
     }
 
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)

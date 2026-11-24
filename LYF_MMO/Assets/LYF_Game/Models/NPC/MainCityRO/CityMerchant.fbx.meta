@@ -1,0 +1,313 @@
+fileFormatVersion: 2
+guid: c03727cc16c65e95b854718e7c9e8005
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Bip001
+    100002: Bip001 Head
+    100004: Bip001 L Calf
+    100006: Bip001 L Clavicle
+    100008: Bip001 L Finger0
+    100010: Bip001 L Finger01
+    100012: Bip001 L Finger1
+    100014: Bip001 L Finger11
+    100016: Bip001 L Finger2
+    100018: Bip001 L Finger21
+    100020: Bip001 L Foot
+    100022: Bip001 L Forearm
+    100024: Bip001 L Hand
+    100026: Bip001 L Thigh
+    100028: Bip001 L Toe0
+    100030: Bip001 L UpperArm
+    100032: Bip001 Neck
+    100034: Bip001 Pelvis
+    100036: Bip001 R Calf
+    100038: Bip001 R Clavicle
+    100040: Bip001 R Finger0
+    100042: Bip001 R Finger01
+    100044: Bip001 R Finger1
+    100046: Bip001 R Finger11
+    100048: Bip001 R Finger2
+    100050: Bip001 R Finger21
+    100052: Bip001 R Foot
+    100054: Bip001 R Forearm
+    100056: Bip001 R Hand
+    100058: Bip001 R Thigh
+    100060: Bip001 R Toe0
+    100062: Bip001 R UpperArm
+    100064: Bip001 Spine
+    100066: Bip001 Spine1
+    100068: Bone001
+    100070: Bone002
+    100072: Bone003
+    100074: Bone004
+    100076: NPC_F_YongBingWuPinShangRen
+    100078: //RootNode
+    100080: BackPoint
+    100082: Bip001 Prop1
+    100084: Bip001 Prop2
+    100086: Bow_01
+    100088: Bow_02
+    100090: Bow_03
+    100092: ChangBian_01
+    100094: ChangBian_02
+    100096: ChangBian_03
+    100098: ChangBian_04
+    100100: ChangPiFa_01
+    100102: ChangPiFa_02
+    100104: ChangPiFa_03
+    100106: ChangPiFa_04
+    100108: DouPeng_L_01
+    100110: DouPeng_R_01
+    100112: HelmetPoint
+    100114: MaWeiBian_L_01
+    100116: MaWeiBian_L_02
+    100118: MaWeiBian_L_03
+    100120: MaWeiBian_R_01
+    100122: MaWeiBian_R_02
+    100124: MaWeiBian_R_03
+    100126: PiFa_L_01
+    100128: PiFa_L_02
+    100130: PiFa_L_03
+    100132: PiFa_M_01
+    100134: PiFa_M_02
+    100136: PiFa_M_03
+    100138: PiFa_R_01
+    100140: PiFa_R_02
+    100142: PiFa_R_03
+    100144: PiFeng_01
+    100146: PiFeng_02
+    100148: PiFeng_03
+    100150: PiFeng_04
+    100152: QunBai_B_01
+    100154: QunBai_B_02
+    100156: QunBai_B_03
+    100158: QunBai_B_04
+    100160: QunBai_F_01
+    100162: QunBai_F_02
+    100164: QunBai_F_03
+    100166: QunBai_F_04
+    100168: QunBai_L_01
+    100170: QunBai_L_02
+    100172: QunBai_L_03
+    100174: QunBai_R_01
+    100176: QunBai_R_02
+    100178: QunBai_R_03
+    100180: ShadowPoint
+    100182: ShuiXiu_L_01
+    100184: ShuiXiu_L_02
+    100186: ShuiXiu_L_03
+    100188: ShuiXiu_R_01
+    100190: ShuiXiu_R_02
+    100192: ShuiXiu_R_03
+    100194: TailPoint
+    100196: Weapon_L
+    100198: Weapon_R
+    100200: WeaponFx_L
+    100202: WeaponFx_R
+    400000: Bip001
+    400002: Bip001 Head
+    400004: Bip001 L Calf
+    400006: Bip001 L Clavicle
+    400008: Bip001 L Finger0
+    400010: Bip001 L Finger01
+    400012: Bip001 L Finger1
+    400014: Bip001 L Finger11
+    400016: Bip001 L Finger2
+    400018: Bip001 L Finger21
+    400020: Bip001 L Foot
+    400022: Bip001 L Forearm
+    400024: Bip001 L Hand
+    400026: Bip001 L Thigh
+    400028: Bip001 L Toe0
+    400030: Bip001 L UpperArm
+    400032: Bip001 Neck
+    400034: Bip001 Pelvis
+    400036: Bip001 R Calf
+    400038: Bip001 R Clavicle
+    400040: Bip001 R Finger0
+    400042: Bip001 R Finger01
+    400044: Bip001 R Finger1
+    400046: Bip001 R Finger11
+    400048: Bip001 R Finger2
+    400050: Bip001 R Finger21
+    400052: Bip001 R Foot
+    400054: Bip001 R Forearm
+    400056: Bip001 R Hand
+    400058: Bip001 R Thigh
+    400060: Bip001 R Toe0
+    400062: Bip001 R UpperArm
+    400064: Bip001 Spine
+    400066: Bip001 Spine1
+    400068: Bone001
+    400070: Bone002
+    400072: Bone003
+    400074: Bone004
+    400076: NPC_F_YongBingWuPinShangRen
+    400078: //RootNode
+    400080: BackPoint
+    400082: Bip001 Prop1
+    400084: Bip001 Prop2
+    400086: Bow_01
+    400088: Bow_02
+    400090: Bow_03
+    400092: ChangBian_01
+    400094: ChangBian_02
+    400096: ChangBian_03
+    400098: ChangBian_04
+    400100: ChangPiFa_01
+    400102: ChangPiFa_02
+    400104: ChangPiFa_03
+    400106: ChangPiFa_04
+    400108: DouPeng_L_01
+    400110: DouPeng_R_01
+    400112: HelmetPoint
+    400114: MaWeiBian_L_01
+    400116: MaWeiBian_L_02
+    400118: MaWeiBian_L_03
+    400120: MaWeiBian_R_01
+    400122: MaWeiBian_R_02
+    400124: MaWeiBian_R_03
+    400126: PiFa_L_01
+    400128: PiFa_L_02
+    400130: PiFa_L_03
+    400132: PiFa_M_01
+    400134: PiFa_M_02
+    400136: PiFa_M_03
+    400138: PiFa_R_01
+    400140: PiFa_R_02
+    400142: PiFa_R_03
+    400144: PiFeng_01
+    400146: PiFeng_02
+    400148: PiFeng_03
+    400150: PiFeng_04
+    400152: QunBai_B_01
+    400154: QunBai_B_02
+    400156: QunBai_B_03
+    400158: QunBai_B_04
+    400160: QunBai_F_01
+    400162: QunBai_F_02
+    400164: QunBai_F_03
+    400166: QunBai_F_04
+    400168: QunBai_L_01
+    400170: QunBai_L_02
+    400172: QunBai_L_03
+    400174: QunBai_R_01
+    400176: QunBai_R_02
+    400178: QunBai_R_03
+    400180: ShadowPoint
+    400182: ShuiXiu_L_01
+    400184: ShuiXiu_L_02
+    400186: ShuiXiu_L_03
+    400188: ShuiXiu_R_01
+    400190: ShuiXiu_R_02
+    400192: ShuiXiu_R_03
+    400194: TailPoint
+    400196: Weapon_L
+    400198: Weapon_R
+    400200: WeaponFx_L
+    400202: WeaponFx_R
+    2100000: NPC_F_YongBingWuPinShangRen
+    2100002: 'Material #1'
+    4300000: NPC_F_YongBingWuPinShangRen
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: NPC_F_YongBingWuPinShangRen
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName:
+    rigImportErrors:
+    rigImportWarnings:
+    animationImportErrors:
+    animationImportWarnings:
+    animationRetargetingWarnings:
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths:
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/BackPoint
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 L Clavicle/Bip001 L UpperArm/Bip001
+      L Forearm/Bip001 L Hand/Bip001 Prop2/Weapon_L
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 L Clavicle/Bip001 L UpperArm/Bip001
+      L Forearm/Bip001 L Hand/Bip001 Prop2/WeaponFx_L
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/HelmetPoint
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 R Clavicle/Bip001 R UpperArm/Bip001
+      R Forearm/Bip001 R Hand/Bip001 Prop1/Weapon_R
+    - Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 R Clavicle/Bip001 R UpperArm/Bip001
+      R Forearm/Bip001 R Hand/Bip001 Prop1/WeaponFx_R
+    - Bip001/Bip001 Pelvis/ShadowPoint
+    - Bip001/Bip001 Pelvis/TailPoint
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 2
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName:
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

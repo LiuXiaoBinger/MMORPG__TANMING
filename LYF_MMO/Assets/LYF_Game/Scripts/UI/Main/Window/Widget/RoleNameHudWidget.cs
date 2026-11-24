@@ -2,13 +2,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-/// <summary>在主界面画布上跟随已加载的玩家角色，显示昵称和职业称谓。</summary>
+/// <summary>在主界面画布上跟随玩家和已配置称谓的主城 NPC，显示名字及身份。</summary>
 // 主城 CinemachineBrain 的顺序为 100，名牌和护盾都在最终镜头确定后投影。
 [DefaultExecutionOrder(110)]
 public sealed class RoleNameHudWidget : MonoBehaviour
 {
     /// <summary>四行信息共用的底边距头骨的距离，单位为米，近景下称谓仍高于头部。</summary>
     private const float HeadGap = 0.62f;
+
+    /// <summary>NPC 名牌底边高出站立碰撞体顶端的距离，单位为米。</summary>
+    private const float NpcHeadGap = 0.14f;
 
     /// <summary>角色投影达到约六分之一参考屏高时使用预制体原字号，单位为画布逻辑像素。</summary>
     private const float FullSizeBodyHeight = 180f;
@@ -31,7 +34,7 @@ public sealed class RoleNameHudWidget : MonoBehaviour
     /// <summary>每帧复用的场景实体快照，内容由统一场景世界提供。</summary>
     private readonly List<MEntity> _entities = new List<MEntity>();
 
-    /// <summary>按可见角色顺序复用的两行文本，最大数量取决于同时可见的玩家数量。</summary>
+    /// <summary>按可见角色顺序复用的两行文本，数量取决于同时可见的玩家和 NPC。</summary>
     private readonly List<(TMP_Text Name, TMP_Text Title)> _labels =
         new List<(TMP_Text Name, TMP_Text Title)>();
 
@@ -65,21 +68,28 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         int visibleCount = 0;
         for (int index = 0; index < _entities.Count; index++)
         {
-            // 怪物与 NPC 沿用各自的显示入口，只处理有玩家身份数据的角色。
-            RoleEntity role = _entities[index] as RoleEntity;
-            // 昵称来自角色快照，角色退出或复用时不保留上次文本。
-            string nickname = role?.BaseInfo?.Nickname;
-            if (string.IsNullOrWhiteSpace(nickname) || !role.Model.IsLoaded || !role.Model.Visible)
+            // 场景快照同时包含玩家、NPC 和其他实体，只有前两者使用这套两行名牌。
+            MEntity entity = _entities[index];
+            // 第一行显示玩家昵称或出生表里的 NPC 名字。
+            string nickname;
+            // 第二行显示玩家职业或 NPC 配置的身份称谓。
+            string title;
+            if (entity is RoleEntity role && role.BaseInfo != null)
             {
-                continue;
+                nickname = role.BaseInfo.Nickname;
+                title = ResolveTitle(role.BaseInfo.JobId);
             }
+            else if (entity is NpcEntity npc && !string.IsNullOrEmpty(npc.NameplateTitle))
+            {
+                nickname = npc.Name;
+                title = npc.NameplateTitle;
+            }
+            else continue;
 
-            // anchor 为称谓底边中点，昵称、盾量及弧条都从此点向上排列。
-            if (!TryGetHeadAnchor(role, worldCamera, out Vector2 anchor, out float scale))
-            {
-                continue;
-            }
-            ShowName(visibleCount, nickname, ResolveTitle(role.BaseInfo.JobId), anchor, scale);
+            if (string.IsNullOrWhiteSpace(nickname) || !entity.Model.IsLoaded || !entity.Model.Visible) continue;
+            // 两行共用最终游戏镜头的屏幕锚点和随距离变化的字号倍率。
+            if (!TryProjectHead(entity, worldCamera, out Vector2 anchor, out float scale)) continue;
+            ShowName(visibleCount, nickname, title, anchor, scale);
             visibleCount++;
         }
         HideUnused(visibleCount);
@@ -93,20 +103,33 @@ public sealed class RoleNameHudWidget : MonoBehaviour
     /// <returns>头部锚点在场景相机的可见屏幕内时为真。</returns>
     public bool TryGetHeadAnchor(RoleEntity role, Camera worldCamera, out Vector2 anchor, out float scale)
     {
+        return TryProjectHead(role, worldCamera, out anchor, out scale);
+    }
+
+    /// <summary>用最终游戏相机投影名牌，玩家跟随头骨，NPC 使用按模型标定的站立高度。</summary>
+    /// <param name="entity">正在显示名字的场景实体。</param>
+    /// <param name="worldCamera">当前绘制主城的世界相机。</param>
+    /// <param name="anchor">名牌底边在主界面画布内的位置。</param>
+    /// <param name="scale">按模型在屏幕上的高度计算的文字缩放比例。</param>
+    private bool TryProjectHead(MEntity entity, Camera worldCamera, out Vector2 anchor, out float scale)
+    {
         anchor = Vector2.zero;
         scale = 0f;
         // 非人形或尚未载入骨架的模型使用既有实体身高。
-        Vector3 head = role.Position + Vector3.up * role.Height;
+        Vector3 head = entity.Position + Vector3.up * entity.Height;
         // 已完成动画更新的人形骨架提供这帧的头部世界位置。
-        Animator animator = role.Model.Ator?.UnityAnimator;
-        if (animator != null && animator.isHuman)
+        Animator animator = entity.Model.Ator?.UnityAnimator;
+        // NPC 从含帽饰的模型顶端留小间距，玩家继续使用角色头骨的间距。
+        float gap = HeadGap;
+        if (entity is NpcEntity) gap = NpcHeadGap;
+        else if (animator != null && animator.isHuman)
         {
             // 不同职业的头骨随动作上下移动，四行信息一起跟随。
             Transform bone = animator.GetBoneTransform(HumanBodyBones.Head);
             if (bone != null) head = bone.position;
         }
         // 屏幕纵横坐标以像素计，深度与近裁剪面使用相同单位。
-        Vector3 screen = worldCamera.WorldToScreenPoint(head + Vector3.up * HeadGap);
+        Vector3 screen = worldCamera.WorldToScreenPoint(head + Vector3.up * gap);
         if (screen.z <= worldCamera.nearClipPlane || !worldCamera.pixelRect.Contains(screen)) return false;
         // 覆盖画布传空相机，相机画布用自身 UI 相机来换算屏幕坐标。
         Camera uiCamera = null;
@@ -118,13 +141,13 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         if (!worldCamera.orthographic)
         {
             // 角色站立中心的世界坐标；待机动作只移动名牌锚点。
-            Vector3 bodyCenter = role.Position + Vector3.up * (role.Height * 0.5f);
+            Vector3 bodyCenter = entity.Position + Vector3.up * (entity.Height * 0.5f);
             // 相机前向上量得的中心深度，单位为米，与透视投影分母一致。
             float depth = Vector3.Dot(bodyCenter - worldCamera.transform.position, worldCamera.transform.forward);
             pixelsPerMeter /= Mathf.Max(depth, worldCamera.nearClipPlane);
         }
         // 俯视时站立高度会缩短，正上方仍能看到角色的横截面直径。
-        float visibleHeight = Mathf.Max(role.Height * Mathf.Abs(worldCamera.transform.up.y), role.Radius * 2f);
+        float visibleHeight = Mathf.Max(entity.Height * Mathf.Abs(worldCamera.transform.up.y), entity.Radius * 2f);
         scale = Mathf.Min(1f, visibleHeight * pixelsPerMeter / (_canvas.scaleFactor * FullSizeBodyHeight));
         return true;
     }
