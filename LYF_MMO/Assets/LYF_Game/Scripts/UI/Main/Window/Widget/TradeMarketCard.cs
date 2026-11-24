@@ -17,8 +17,12 @@ public sealed class TradeMarketCard : MonoBehaviour
     [SerializeField] private Text _summary;
     /// <summary>加入或移除关注的心形按钮。</summary>
     [SerializeField] private Button _heart;
-    /// <summary>心形的高亮颜色跟随关注状态。</summary>
+    /// <summary>商品卡右上角的关注标记，切换空心与实心图标。</summary>
     [SerializeField] private Image _heartInk;
+    /// <summary>商品已关注时使用的彩色标记。</summary>
+    [SerializeField] private Sprite _favoriteOn;
+    /// <summary>商品尚未关注时使用的轮廓标记。</summary>
+    [SerializeField] private Sprite _favoriteOff;
     /// <summary>打开物品求购单或拍品出价单的小按钮。</summary>
     [SerializeField] private Button _order;
     /// <summary>单据操作的显示文字。</summary>
@@ -39,17 +43,17 @@ public sealed class TradeMarketCard : MonoBehaviour
         _icon.enabled = icon != null;
         if (_name != null) _name.text = item.ItemName;
         _summary.text = summary;
-        // 道具品质取实际表值，装备图标沿用录屏的暖铜底板。
+        // 道具表提供品质阶数，单列于装备表的装备使用暖金色底板。
         var info = LubanMgr.Instance.GetItemInfoById(item.ItemId);
-        _quality.color = new Color32(117, 82, 54, 255);
+        _quality.color = new Color32(255, 232, 183, 255);
         if (info != null)
         {
             switch (info.Quality)
             {
-                case 1: _quality.color = new Color32(76, 91, 94, 255); break;
-                case 2: _quality.color = new Color32(57, 97, 73, 255); break;
-                case 3: _quality.color = new Color32(55, 81, 108, 255); break;
-                case 4: _quality.color = new Color32(94, 72, 112, 255); break;
+                case 1: _quality.color = new Color32(235, 241, 247, 255); break;
+                case 2: _quality.color = new Color32(211, 240, 205, 255); break;
+                case 3: _quality.color = new Color32(204, 229, 255, 255); break;
+                case 4: _quality.color = new Color32(229, 213, 253, 255); break;
             }
         }
         _open.onClick.RemoveAllListeners();
@@ -59,8 +63,8 @@ public sealed class TradeMarketCard : MonoBehaviour
             _heart.gameObject.SetActive(toggle != null);
             _heart.onClick.RemoveAllListeners();
             if (toggle != null) _heart.onClick.AddListener(() => toggle());
-            _heartInk.color = Color.white;
-            if (favorite) _heartInk.color = new Color32(255, 123, 131, 255);
+            _heartInk.sprite = _favoriteOff;
+            if (favorite) _heartInk.sprite = _favoriteOn;
         }
         if (_order != null)
         {
