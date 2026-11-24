@@ -32,23 +32,23 @@ public class GameServerWindow : WindowBase
         }
 
         _serverId = viewData.ServerId;
-        // 状态 1/2/3 分别显示红/黄/绿，未知状态保持白色和空文字。
-        Color color = Color.white;
+        // 爆满、拥挤和正常分别用砖红、赭黄和深绿表示，未知状态使用灰色和空文字。
+        Color color = new Color32(84, 94, 95, 255);
         // 与颜色配套的服务器负载文字。
         string runState = string.Empty;
         if (viewData.RunState == 1)
         {
-            color = Color.red;
+            color = new Color32(157, 60, 52, 255);
             runState = "爆满";
         }
         else if (viewData.RunState == 2)
         {
-            color = Color.yellow;
+            color = new Color32(143, 92, 28, 255);
             runState = "拥挤";
         }
         else if (viewData.RunState == 3)
         {
-            color = Color.green;
+            color = new Color32(28, 108, 81, 255);
             runState = "正常";
         }
 

@@ -12,6 +12,10 @@ public sealed class TradeMarketWindow : WindowBase
     [SerializeField] private RectTransform _layout;
     /// <summary>设计配置的分类、物品编号和原图索引。</summary>
     [SerializeField] private TradeMarketCatalog _catalog;
+    /// <summary>当前打开窗口所使用的搜索、关注和求购入口设置。</summary>
+    private TradeMarketVisibility _visibility;
+    /// <summary>已应用一级与二级显示开关的有序货架。</summary>
+    private List<Shelf> _visibleShelves;
     /// <summary>右侧六个市场按钮，顺序对应 Market。</summary>
     [SerializeField] private TradeMarketChoice[] _markets;
     /// <summary>六个右侧市场印记。</summary>
@@ -140,6 +144,8 @@ public sealed class TradeMarketWindow : WindowBase
     /// <summary>打开时读取余额，从本服摆摊目录开始浏览。</summary>
     private void OnEnable()
     {
+        _visibility = _catalog.ReadVisibility();
+        _visibleShelves = _visibility.VisibleShelves(_catalog.Shelves);
         if (_inventory != null) _inventory.KnapsackChangedDetailed += OnBagChanged;
         Resize();
         RefreshWallet();
@@ -298,19 +304,19 @@ public sealed class TradeMarketWindow : WindowBase
         }
         if (selling) RefreshBag();
         if (!_browse.activeSelf) return;
-        _search.gameObject.SetActive(!auction);
+        _search.gameObject.SetActive(!auction && _visibility.showSearch);
         // 拍场目录没有搜索栏，首个分类贴近左栏顶端。
         RectTransform categoryArea = (RectTransform)_categories.transform;
         // 预留搜索框的参考高度，单位为界面像素。
         float top = 93f;
-        if (auction) top = 10f;
+        if (!_search.gameObject.activeSelf) top = 10f;
         categoryArea.offsetMax = new Vector2(categoryArea.offsetMax.x, -top);
         _personal = auction && index == 1;
         // 选中此频道第一个真实货架，保证首屏可立即浏览物品。
-        for (int i = 0; i < _catalog.Shelves.Length; i++)
+        for (int i = 0; i < _visibleShelves.Count; i++)
         {
-            if (!Here(_catalog.Shelves[i])) continue;
-            _shelf = _catalog.Shelves[i];
+            if (!Here(_visibleShelves[i])) continue;
+            _shelf = _visibleShelves[i];
             _expanded = _shelf.Group;
             break;
         }
@@ -328,7 +334,10 @@ public sealed class TradeMarketWindow : WindowBase
     {
         // 覆盖可复用按钮时从第一行开始。
         int count = 0;
-        if (_market != Market.Auction)
+        // 普通浏览与求购分别使用文件内对应的个人列表开关。
+        bool showPersonal = _visibility.showFavorites;
+        if (WantedPage) showPersonal = _visibility.showMyRequests;
+        if (_market != Market.Auction && showPersonal)
         {
             // 摆摊求购入口第一行显示本人的求购记录。
             string label = "关注";
@@ -338,10 +347,10 @@ public sealed class TradeMarketWindow : WindowBase
         // 同一组的一级行只出现一次。
         string lastGroup = null;
         // i 按正式目录顺序逐个访问货架。
-        for (int i = 0; i < _catalog.Shelves.Length; i++)
+        for (int i = 0; i < _visibleShelves.Count; i++)
         {
             // 保留配置对象供各行的点击回调引用。
-            Shelf shelf = _catalog.Shelves[i];
+            Shelf shelf = _visibleShelves[i];
             if (!Here(shelf)) continue;
             // 有二级货架的组在点击一级时展开或收起。
             bool children = !string.IsNullOrEmpty(shelf.Leaf);
@@ -434,10 +443,10 @@ public sealed class TradeMarketWindow : WindowBase
         // 有输入时允许跨当前市场的分类搜索。
         bool searching = query.Length > 0;
         // i 遍历可参与本轮筛选的货架。
-        for (int i = 0; i < _catalog.Shelves.Length; i++)
+        for (int i = 0; i < _visibleShelves.Count; i++)
         {
             // 同分类全服货架在玩家主动查看全服时纳入。
-            Shelf shelf = _catalog.Shelves[i];
+            Shelf shelf = _visibleShelves[i];
             // 用户勾选查看全服后，加入全服市场内的同名分类。
             bool adjacent = _cross && shelf.Market == Market.Global && shelf.Group == _shelf?.Group;
             if (!Here(shelf) && !adjacent) continue;

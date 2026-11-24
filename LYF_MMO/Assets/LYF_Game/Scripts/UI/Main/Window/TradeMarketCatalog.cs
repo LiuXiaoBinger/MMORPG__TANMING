@@ -43,11 +43,22 @@ public sealed class TradeMarketCatalog : ScriptableObject
 
     /// <summary>从右侧市场到左侧子分类的陈列顺序。</summary>
     [SerializeField] private Shelf[] _shelves;
+    /// <summary>可直接编辑的中文分类 JSON，跟随交易目录一起打包。</summary>
+    [SerializeField] private TextAsset _visibilityFile;
     /// <summary>按物品编号升序保存，供图标快速查找。</summary>
     [SerializeField] private Illustration[] _art;
 
     /// <summary>供窗口构造当前市场的分类按钮。</summary>
     public Shelf[] Shelves => _shelves;
+
+    /// <summary>打开商城时读取显示配置，旧目录未绑定文件时保留全部货架。</summary>
+    public TradeMarketVisibility ReadVisibility()
+    {
+        // 先保留默认值，允许文件只列出本项目实际需要覆盖的字段。
+        TradeMarketVisibility visibility = new TradeMarketVisibility();
+        if (_visibilityFile != null) JsonUtility.FromJsonOverwrite(_visibilityFile.text, visibility);
+        return visibility;
+    }
 
     /// <summary>取陈列图标，未配图的物品沿用调用端的背包加载流程。</summary>
     /// <param name="itemId">物品配置编号。</param>

@@ -46,19 +46,19 @@ public class GameServerItem : MonoBehaviour
         }
         _serverId = viewData.ServerId;
         _serverName = viewData.ServerName;
-        // 状态 1 为红色爆满、2 为黄色拥挤、3 为绿色正常，其他值保持白色。
-        Color color = Color.white;
+        // 浅色底上的状态标记按爆满、拥挤、正常显示砖红、赭黄、深绿，未识别状态显示灰色。
+        Color color = new Color32(84, 94, 95, 255);
         if (viewData.RunState == 1)
         {
-            color = Color.red;
+            color = new Color32(157, 60, 52, 255);
         }
         else if (viewData.RunState == 2)
         {
-            color = Color.yellow;
+            color = new Color32(143, 92, 28, 255);
         }
         else if (viewData.RunState == 3)
         {
-            color = Color.green;
+            color = new Color32(28, 108, 81, 255);
         }
         if (_imageRun != null)
         {

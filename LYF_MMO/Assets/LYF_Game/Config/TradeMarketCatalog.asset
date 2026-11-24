@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43689fe5697b54ada3bf96542e801170, type: 3}
   m_Name: TradeMarketCatalog
   m_EditorClassIdentifier:
+  _visibilityFile: {fileID: 4900000, guid: d9e5a737c4f747f2a424d80cf9e32eb5, type: 3}
   _shelves:
   - Market: 0
     Venue: 0
