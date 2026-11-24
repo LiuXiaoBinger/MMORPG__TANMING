@@ -130,6 +130,12 @@ public class NpcManager : MonoBehaviour
     }
 
     /// <summary>异步完成时同时校验管理器生命周期、实体 ID 和世界内对象身份。</summary>
+    /// <param name="info">当前 NPC 的名字、配置编号和出生朝向。</param>
+    /// <param name="entity">拥有本次加载结果的场景实体。</param>
+    /// <param name="requestUID">发起加载时的实体运行时编号。</param>
+    /// <param name="requestVersion">发起加载时所属的管理器生命周期。</param>
+    /// <param name="spawnPosition">该 NPC 在地图中的出生世界坐标，单位为米。</param>
+    /// <param name="npcObject">资源加载器为该实体实例化的模型。</param>
     private void HandleNpcLoaded(NpcParseInfo info, NpcEntity entity,
         ulong requestUID, int requestVersion, Vector3 spawnPosition,
         GameObject npcObject)
@@ -154,9 +160,6 @@ public class NpcManager : MonoBehaviour
         {
             npcObject.transform.SetParent(_npcRoot, true);
         }
-        npcObject.transform.position = spawnPosition;
-        // Pos 的第四段为 NPC 的 Y 轴朝向，位置和朝向都由配置驱动。
-        npcObject.transform.rotation = Quaternion.Euler(0f, info.RotationY, 0f);
         if (string.IsNullOrEmpty(info.Name))
         {
             npcObject.name = "NPC_" + info.ID;
@@ -168,6 +171,8 @@ public class NpcManager : MonoBehaviour
 
         // NPC 模型直接绑定已有实体，点击按实体模型层级定位，模型随实体统一回收。
         entity.Model.SetGameObject(npcObject, string.Empty, false);
+        // 绑定待机动画会重置模型根节点，完成后再写入配置的世界位置和朝向。
+        npcObject.transform.SetPositionAndRotation(spawnPosition, Quaternion.Euler(0f, info.RotationY, 0f));
     }
 
     private void RemoveNpcEntity(int npcId, NpcEntity expectedEntity)
