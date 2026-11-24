@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8be3320e331a1b96d2c1feb6d9ba7775bfcf70dc35825db3cc2c927dd6a6b213`
+Source normalized SHA256: `010206971b5c2720a391b0c37fa4df92c26795865fa04c7bf10103d75329686f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -135,11 +135,12 @@ Source normalized SHA256: `8be3320e331a1b96d2c1feb6d9ba7775bfcf70dc35825db3cc2c9
 | [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 903-908 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-912 |
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
-| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-927 |
+| [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
+| [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-932 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `68e5be48b5ad7e3904153cc758b0a3f1896266f38b2b2c4d94a497ea0ef69bb5`
+Source normalized SHA256: `1d2c0a0ddd96fe651b95203d8ccc6777eae8ece94dfeb33fe04d141af6ad5c72`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -266,7 +267,8 @@ Source normalized SHA256: `68e5be48b5ad7e3904153cc758b0a3f1896266f38b2b2c4d94a49
 | [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 933-938 |
 | [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-942 |
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
-| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-958 |
+| [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
+| [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-963 |
 
 ## Docs/AI/DECISIONS.en.md
 

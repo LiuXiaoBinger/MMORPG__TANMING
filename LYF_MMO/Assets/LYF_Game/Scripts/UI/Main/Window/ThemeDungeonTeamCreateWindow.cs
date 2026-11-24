@@ -85,6 +85,9 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <summary>申请列表页的申请行，显示当前申请人。</summary>
     [SerializeField] private GameObject _applyRowRoot;
 
+    /// <summary>申请列表页签上的红点，正在查看申请时隐藏。</summary>
+    [SerializeField] private Image _applicationRedSign;
+
     /// <summary>申请行上的申请人昵称。</summary>
     [SerializeField] private Text _applyName;
 
@@ -778,6 +781,7 @@ public sealed class ThemeDungeonTeamCreateWindow : WindowBase
     /// <param name="applicantName">申请人昵称。</param>
     public void SetPendingApplication(bool hasApplication, string applicantName)
     {
+        _applicationRedSign.enabled = hasApplication && _currentPage != TeamPage.Applications;
         if (_applyRowRoot != null)
         {
             _applyRowRoot.SetActive(hasApplication);

@@ -35,6 +35,12 @@ public sealed class QuickPanelWidget : MonoBehaviour
     /// <summary>队伍页签未选中图形。</summary>
     [SerializeField] private GameObject _teamOff;
 
+    /// <summary>队伍页签右上角的申请提醒，使用公共图集中的静态红点。</summary>
+    [SerializeField] private Image _teamRedSign;
+
+    /// <summary>任务与队伍共用折叠按钮上的提醒，面板收起时仍可见。</summary>
+    [SerializeField] private Image _foldRedSign;
+
     /// <summary>快捷任务面板控件，折叠期间抑制任务/队伍内容切换，左侧只保留折叠按钮。</summary>
     [SerializeField] private QuickTaskPanelWidget _taskPanelWidget;
 
@@ -61,6 +67,14 @@ public sealed class QuickPanelWidget : MonoBehaviour
     public void ShowTeamPanel()
     {
         ShowPanel(true);
+    }
+
+    /// <summary>让两个快捷入口同时反映队长当前是否有待审批申请。</summary>
+    /// <param name="hasApplication">当前队伍存在待审批申请时为 true。</param>
+    public void SetPendingApplication(bool hasApplication)
+    {
+        _teamRedSign.enabled = hasApplication;
+        _foldRedSign.enabled = hasApplication;
     }
 
     /// <summary>同步内容显隐及页签图形，始终只展开一套快捷内容；折叠期间任务容器保留以容纳折叠按钮，队伍内容不弹出。</summary>

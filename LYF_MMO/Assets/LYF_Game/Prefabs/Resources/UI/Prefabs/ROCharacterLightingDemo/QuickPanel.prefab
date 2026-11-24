@@ -170,7 +170,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 224741377902309896}
-  - {fileID: 224985748736901860}
   m_Father: {fileID: 224150570616862538}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -530,6 +529,8 @@ MonoBehaviour:
   _taskOff: {fileID: 5849634000545529385}
   _teamOn: {fileID: 1285159136298753179}
   _teamOff: {fileID: 7131211958317672589}
+  _foldRedSign: {fileID: 731146018114250301}
+  _teamRedSign: {fileID: 731146018114250302}
   _taskPanelWidget: {fileID: 2863729576397418375}
 --- !u!114 &6008604100385379375
 MonoBehaviour:
@@ -558,6 +559,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224985748736901860}
   - component: {fileID: 222172234750217590}
+  - component: {fileID: 731146018114250301}
   m_Layer: 5
   m_Name: RedSignParentTeamAndTask
   m_TagString: Untagged
@@ -577,12 +579,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 224595304866630154}
+  m_Father: {fileID: 636015530031488560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: -0}
-  m_SizeDelta: {x: 19, y: 22}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -5, y: -5}
+  m_SizeDelta: {x: 16, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222172234750217590
 CanvasRenderer:
@@ -592,6 +594,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469747187527108}
   m_CullTransparentMesh: 0
+--- !u!114 &731146018114250301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469747187527108}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300304, guid: c46212db0fcbdd547a2a319e0ab42aba, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1510542785713044
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224967839048861698}
   - component: {fileID: 222892819504638152}
+  - component: {fileID: 731146018114250302}
   m_Layer: 5
   m_Name: RedSignParentTeam
   m_TagString: Untagged
@@ -743,10 +776,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 224640733492146566}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 7.94}
-  m_SizeDelta: {x: 27.01, y: 68}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -6, y: -7}
+  m_SizeDelta: {x: 16, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222892819504638152
 CanvasRenderer:
@@ -756,6 +789,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1553615296866814}
   m_CullTransparentMesh: 0
+--- !u!114 &731146018114250302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553615296866814}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300304, guid: c46212db0fcbdd547a2a319e0ab42aba, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1573736543058664
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,8 +926,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2551883494823980299}
-  - {fileID: 224967839048861698}
   - {fileID: 2945880861038482526}
+  - {fileID: 224967839048861698}
   m_Father: {fileID: 224687608491756608}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -3319,6 +3382,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7800527664157830154}
+  - {fileID: 224985748736901860}
   m_Father: {fileID: 224640067242407076}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}

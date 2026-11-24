@@ -116,12 +116,15 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         _teamCtrl.AskMemberEnterFBReceived += OnAskMemberEnterFB;
         _teamCtrl.MemberReplyEnterFBReceived += OnSyncMemberReplyEnterFB;
         _teamCtrl.FailEnterFBReceived += OnFailEnterFB;
+        TeamData.Instance.InvitationChanged += RefreshPendingApplication;
+        RefreshPendingApplication();
         RefreshViews();
     }
 
     /// <summary>注销窗口、快捷栏与副本选择窗事件，避免控制器释放后仍被回调。</summary>
     public override void Dispose()
     {
+        TeamData.Instance.InvitationChanged -= RefreshPendingApplication;
         if (_mainView != null && _mainView.ThemeDungeonArroundWindow != null)
         {
             _mainView.ThemeDungeonArroundWindow.OnChallengeRequested -= OnChallengeRequested;
@@ -224,8 +227,6 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
             _teamWindow.SetPendingInvitation(TeamData.Instance.HasInvitation,
                 TeamData.Instance.InviteInviterName, members.Count, TeamData.Instance.MaxMember,
                 string.Empty);
-            _teamWindow.SetPendingApplication(TeamData.Instance.HasApplication,
-                TeamData.Instance.ApplyApplicantName);
             ApplyMemberSprites(members, localRoleId);
             // 队伍状态变化后一并刷新附近候选，入队或离队会改变同队过滤结果。
             RefreshInviteCandidates();
@@ -459,9 +460,25 @@ public sealed class ThemeDungeonTeamCtrl : CtrlBase
         RefreshViews();
     }
 
-    /// <summary>打开或切换队伍界面后刷新邀请页附近候选，不做每帧轮询。</summary>
+    /// <summary>按同一份待审批状态刷新快捷入口与窗口里的申请行和页签红点。</summary>
+    private void RefreshPendingApplication()
+    {
+        // 队伍数据目前只保存最近一位申请人，三个入口均使用有无申请的状态。
+        bool hasApplication = TeamData.Instance.HasApplication;
+        if (_mainView.QuickPanel != null)
+        {
+            _mainView.QuickPanel.SetPendingApplication(hasApplication);
+        }
+        if (_teamWindow != null)
+        {
+            _teamWindow.SetPendingApplication(hasApplication, TeamData.Instance.ApplyApplicantName);
+        }
+    }
+
+    /// <summary>切页时同步申请页签上的提示和邀请页的附近候选。</summary>
     private void OnPageOpened()
     {
+        RefreshPendingApplication();
         RefreshInviteCandidates();
     }
 

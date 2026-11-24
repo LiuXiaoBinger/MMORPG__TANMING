@@ -406,10 +406,18 @@ public sealed class TeamData
         {
             _members.Add(notice.Members[index]);
         }
-        // 已入队则邀请与申请都不再需要保留。
+        // 已入队时撤下加入其他队伍的邀请。
         if (TeamId != 0UL)
         {
             ClearInvitation();
+        }
+        // 队长仍在原队伍且申请人尚未入队时，普通名单同步保留待审批申请。
+        if (HasApplication && (TeamId != _applyTeamId || !IsCaptain(LocalRoleId)))
+        {
+            ClearApplication();
+        }
+        else if (HasApplication && FindMember(_applyApplicantId) != null)
+        {
             ClearApplication();
         }
         if (TeamInfoChanged != null)
