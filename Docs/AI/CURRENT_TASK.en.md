@@ -883,6 +883,7 @@ Skill 10120 (key 4) keeps its shell until the server ends that cast's barrier. `
 - The existing MainView settings window now drives five modes and twelve options. Smart 3D is the first-run desktop mode. Tuned 2.5D captures the current pitch and switching presets preserves independent custom choices. Right drag, wheel, middle-button reset and optional double-click ground are wired to the scene FreeLook. Mobile gestures were deferred by the user.
 - CameraMgr uses world-space orbit heading, follows navigation/strafe and applies temporary combat framing. Authored skill accents and Type 4 lightness ground hints have separate switches. The Moshenta and Beisen catalogs retain five visible combat boss IDs from EntityTable.UnitTypeLevel for camera framing. Full paths, verification boundaries and Git receipts are in `项目修改日志/2026-11-23-PC镜头设置与世界相机.md`.
 - The street reference prompted a default 2.5D framing adjustment. The fixed FreeLook axis is now 0.57 and vertical FOV is 55 degrees. Other modes and the role showcase use the authored scene lens. Saved tuned angles and the wheel distance are preserved.
+- Camera pullback also scales each player's overhead nickname and profession. The local shield amount, arc and row gaps use the same factor. Projection uses the final camera lens, pitch, character depth and canvas scale. The authored size caps close views.
 
 ## [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate
 

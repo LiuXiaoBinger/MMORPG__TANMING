@@ -3,11 +3,15 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>在主界面画布上跟随已加载的玩家角色，显示昵称和职业称谓。</summary>
-[DefaultExecutionOrder(100)]
+// 主城 CinemachineBrain 的顺序为 100，名牌和护盾都在最终镜头确定后投影。
+[DefaultExecutionOrder(110)]
 public sealed class RoleNameHudWidget : MonoBehaviour
 {
     /// <summary>四行信息共用的底边距头骨的距离，单位为米，近景下称谓仍高于头部。</summary>
     private const float HeadGap = 0.62f;
+
+    /// <summary>角色投影达到约六分之一参考屏高时使用预制体原字号，单位为画布逻辑像素。</summary>
+    private const float FullSizeBodyHeight = 180f;
 
     /// <summary>昵称上缘与护盾下缘之间的距离，单位为画布逻辑像素。</summary>
     private const float ShieldGap = 1f;
@@ -71,11 +75,11 @@ public sealed class RoleNameHudWidget : MonoBehaviour
             }
 
             // anchor 为称谓底边中点，昵称、盾量及弧条都从此点向上排列。
-            if (!TryGetHeadAnchor(role, worldCamera, out Vector2 anchor))
+            if (!TryGetHeadAnchor(role, worldCamera, out Vector2 anchor, out float scale))
             {
                 continue;
             }
-            ShowName(visibleCount, nickname, ResolveTitle(role.BaseInfo.JobId), anchor);
+            ShowName(visibleCount, nickname, ResolveTitle(role.BaseInfo.JobId), anchor, scale);
             visibleCount++;
         }
         HideUnused(visibleCount);
@@ -85,10 +89,12 @@ public sealed class RoleNameHudWidget : MonoBehaviour
     /// <param name="role">当前显示名牌或护盾的角色。</param>
     /// <param name="worldCamera">本帧观察角色的场景相机。</param>
     /// <param name="anchor">名牌最下缘的中点，以画布中心为原点，单位为逻辑像素。</param>
+    /// <param name="scale">角色投影相对原版名牌的比例，近景最大为一，文字、盾条和行距共用。</param>
     /// <returns>头部锚点在场景相机的可见屏幕内时为真。</returns>
-    public bool TryGetHeadAnchor(RoleEntity role, Camera worldCamera, out Vector2 anchor)
+    public bool TryGetHeadAnchor(RoleEntity role, Camera worldCamera, out Vector2 anchor, out float scale)
     {
         anchor = Vector2.zero;
+        scale = 0f;
         // 非人形或尚未载入骨架的模型使用既有实体身高。
         Vector3 head = role.Position + Vector3.up * role.Height;
         // 已完成动画更新的人形骨架提供这帧的头部世界位置。
@@ -105,7 +111,22 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         // 覆盖画布传空相机，相机画布用自身 UI 相机来换算屏幕坐标。
         Camera uiCamera = null;
         if (_canvas.renderMode != RenderMode.ScreenSpaceOverlay) uiCamera = _canvas.worldCamera;
-        return RectTransformUtility.ScreenPointToLocalPointInRectangle(_root, screen, uiCamera, out anchor);
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_root, screen, uiCamera, out anchor)) return false;
+
+        // 投影矩阵给出距镜头一米处每米对应的屏幕像素；正交相机的倍率与深度无关。
+        float pixelsPerMeter = worldCamera.pixelHeight * worldCamera.projectionMatrix.m11 * 0.5f;
+        if (!worldCamera.orthographic)
+        {
+            // 角色站立中心的世界坐标；待机动作只移动名牌锚点。
+            Vector3 bodyCenter = role.Position + Vector3.up * (role.Height * 0.5f);
+            // 相机前向上量得的中心深度，单位为米，与透视投影分母一致。
+            float depth = Vector3.Dot(bodyCenter - worldCamera.transform.position, worldCamera.transform.forward);
+            pixelsPerMeter /= Mathf.Max(depth, worldCamera.nearClipPlane);
+        }
+        // 俯视时站立高度会缩短，正上方仍能看到角色的横截面直径。
+        float visibleHeight = Mathf.Max(role.Height * Mathf.Abs(worldCamera.transform.up.y), role.Radius * 2f);
+        scale = Mathf.Min(1f, visibleHeight * pixelsPerMeter / (_canvas.scaleFactor * FullSizeBodyHeight));
+        return true;
     }
 
     /// <summary>提供护盾下缘需要让出的两行文字高度。</summary>
@@ -150,7 +171,8 @@ public sealed class RoleNameHudWidget : MonoBehaviour
     /// <param name="nickname">服务器角色快照中的原始昵称。</param>
     /// <param name="title">由当前职业取得的显示称谓。</param>
     /// <param name="anchor">最下方文字相对名牌层中心的画布坐标。</param>
-    private void ShowName(int index, string nickname, string title, Vector2 anchor)
+    /// <param name="scale">当前角色的屏幕缩放比例，两行文字及其间距一起缩放。</param>
+    private void ShowName(int index, string nickname, string title, Vector2 anchor, float scale)
     {
         if (index == _labels.Count)
         {
@@ -158,15 +180,16 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         }
         // 缓存组中的昵称在上、称谓在下；空称谓时昵称直接使用头顶锚点。
         var labels = _labels[index];
-        ShowLine(labels.Name, nickname, anchor + Vector2.up * GetTitleOffset(title));
-        ShowLine(labels.Title, title, anchor);
+        ShowLine(labels.Name, nickname, anchor + Vector2.up * (GetTitleOffset(title) * scale), scale);
+        ShowLine(labels.Title, title, anchor, scale);
     }
 
     /// <summary>更新一行文本，有内容变化时才重建 TMP 文本。</summary>
     /// <param name="label">当前缓存的昵称或称谓标签。</param>
     /// <param name="value">本帧的文本，空值隐藏。</param>
     /// <param name="anchor">这一行底边的画布坐标。</param>
-    private static void ShowLine(TMP_Text label, string value, Vector2 anchor)
+    /// <param name="scale">相对模板的等比缩放，按本帧角色投影更新。</param>
+    private static void ShowLine(TMP_Text label, string value, Vector2 anchor, float scale)
     {
         if (string.IsNullOrEmpty(value))
         {
@@ -177,6 +200,7 @@ public sealed class RoleNameHudWidget : MonoBehaviour
         {
             label.SetText(value);
         }
+        label.rectTransform.localScale = Vector3.one * scale;
         label.rectTransform.anchoredPosition = anchor;
         if (!label.gameObject.activeSelf)
         {

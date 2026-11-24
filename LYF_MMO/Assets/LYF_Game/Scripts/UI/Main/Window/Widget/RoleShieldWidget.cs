@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>在本地角色名牌上方显示盾量，再在盾量上方显示按剩余比例填充的弧条。</summary>
+// 与名牌一起在世界相机更新后计算位置和尺寸。
+[DefaultExecutionOrder(110)]
 public sealed class RoleShieldWidget : MonoBehaviour
 {
     /// <summary>可整体隐藏的护盾内容，锚点位于主画布中央。</summary>
@@ -55,13 +57,14 @@ public sealed class RoleShieldWidget : MonoBehaviour
 
         // 与昵称、称谓使用同一帧的场景相机及同一个头部锚点。
         Camera worldCamera = Camera.main;
-        // anchor 是底行文字的中点，盾数加上实际占用的两行高度后位于昵称上方。
-        if (worldCamera == null || !_nameHud.TryGetHeadAnchor(_role, worldCamera, out Vector2 anchor))
+        // anchor 是称谓底边中点，scale 是该角色本帧的投影比例。
+        if (worldCamera == null || !_nameHud.TryGetHeadAnchor(_role, worldCamera, out Vector2 anchor, out float scale))
         {
             _content.gameObject.SetActive(false);
             return;
         }
-        anchor.y += _nameHud.GetShieldOffset(_role);
+        anchor.y += _nameHud.GetShieldOffset(_role) * scale;
+        _content.localScale = Vector3.one * scale;
         _content.anchoredPosition = anchor;
         _content.gameObject.SetActive(true);
     }

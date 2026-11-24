@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `fe86f7e68de0c2e9cfd1df5f14f70bf326974173b1bf9b3a975275c345e68f22`
+Source normalized SHA256: `0e28a1648a8c4ef1a1d1bd319685b24ca55533f70a1648addfedfa7b5f4c3e54`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -128,16 +128,16 @@ Source normalized SHA256: `fe86f7e68de0c2e9cfd1df5f14f70bf326974173b1bf9b3a97527
 | [CODE][FILES][战斗][基因][ATTACK-RANGE-ROLL-20261123] Sample each attack from the active internal or external range | 865-868 |
 | [CODE][FILES][HANDOFF][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Azure Barrier expiry burst and damage break | 869-872 |
 | [CODE][角色][MJS-IDLE-BACKSWORD-20261123] Noncombat idle and back-mounted main sword | 873-880 |
-| [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 881-886 |
-| [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 887-890 |
-| [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 891-896 |
-| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 897-901 |
-| [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 902-907 |
-| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 908-910 |
+| [CODE][FILES][HANDOFF][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop world camera settings (2026-11-23) | 881-887 |
+| [CODE][FILES][HANDOFF][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference-based Azure Barrier light and four-line nameplate | 888-891 |
+| [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 892-897 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 898-902 |
+| [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 903-908 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-911 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `9c4a80aeae2666834aef445083e736d6c6cb65fe0393edd8979962a93cec3be2`
+Source normalized SHA256: `308a760526ece6898a4dbdfc60aec73293f941108b3f79f6ecb24ad6e03a8567`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -257,12 +257,12 @@ Source normalized SHA256: `9c4a80aeae2666834aef445083e736d6c6cb65fe0393edd897996
 | [VERIFY][战斗][基因][ATTACK-RANGE-ROLL-20261123] Damage-entry range and forced endpoints | 895-898 |
 | [VERIFY][技能][护盾][MJS-BARRIER-EXPIRY-20261123] Zero-damage launch and both shield endings | 899-902 |
 | [VERIFY][角色][MJS-IDLE-BACKSWORD-20261123] Idle and weapon mount acceptance boundaries | 903-910 |
-| [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 911-916 |
-| [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 917-920 |
-| [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 921-926 |
-| [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 927-931 |
-| [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 932-937 |
-| [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 938-940 |
+| [VERIFY][镜头][设置][PC-WORLD-CAMERA-20261123] Desktop camera UI, solved orbit and persistence (2026-11-23) | 911-917 |
+| [VERIFY][技能][护盾][HUD][MJS-BARRIER-REFERENCE-20261123] Reference video, real avatar rendering and nameplate checks | 918-921 |
+| [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 922-927 |
+| [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 928-932 |
+| [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 933-938 |
+| [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-941 |
 
 ## Docs/AI/DECISIONS.en.md
 
