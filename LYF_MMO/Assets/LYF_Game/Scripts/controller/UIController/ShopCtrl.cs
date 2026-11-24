@@ -101,15 +101,26 @@ public sealed class ShopCtrl : CtrlBase
         ItemConfigBase money = LubanMgr.Instance.GetItemConfigById(row.CurrencyItemId);
         string icon = money?.Icon ?? string.Empty;
         string currencyName = money?.ItemName ?? "货币 " + row.CurrencyItemId;
-        // 四种通用货币和背包、兑换窗口使用相同的江湖图标。
-        for (int index = 0; index < CurrencyExchangeRule.CurrencyName.Length; index++)
+        // 公共物品枚举与服务端扣款编号一致，显示名称与背包货币栏一致。
+        const string iconPrefix = "Icon/Currency/Jianghu_";
+        switch ((ItemEnum)row.CurrencyItemId)
         {
-            if (CurrencyExchangeRule.ItemIdOf(index) == row.CurrencyItemId)
-            {
-                currencyName = CurrencyExchangeRule.CurrencyName[index];
-                icon = CurrencyIcons[index];
+            case ItemEnum.ZENY:
+                currencyName = "铜币";
+                icon = iconPrefix + "Copper.png";
                 break;
-            }
+            case ItemEnum.ROMONEY:
+                currencyName = "银两";
+                icon = iconPrefix + "Silver.png";
+                break;
+            case ItemEnum.SILVER_TICKET:
+                currencyName = "银票";
+                icon = iconPrefix + "Ticket.png";
+                break;
+            case ItemEnum.DIAMOND:
+                currencyName = "元宝";
+                icon = iconPrefix + "Yuanbao.png";
+                break;
         }
         // 包裹持有量包含绑定物品，支付余额遵循 ShopMgr 的可扣款口径。
         int owned = 0;
@@ -144,13 +155,6 @@ public sealed class ShopCtrl : CtrlBase
             LimitText = limitText
         };
     }
-
-    /// <summary>按 CurrencyExchangeRule 的铜币、银两、银票、元宝顺序引用背包现用贴图。</summary>
-    private static readonly string[] CurrencyIcons =
-    {
-        "Icon/Currency/Jianghu_Copper.png", "Icon/Currency/Jianghu_Silver.png",
-        "Icon/Currency/Jianghu_Ticket.png", "Icon/Currency/Jianghu_Yuanbao.png"
-    };
 
     /// <summary>背包推送到账时更新持有量与可支付份数。</summary>
     /// <param name="change">触发刷新的背包变更，可能同时影响商品数量和支付余额。</param>
