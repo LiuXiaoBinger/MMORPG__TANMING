@@ -915,3 +915,9 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - The existing MainView shop entry opens a moon-patterned two-column catalogue with item details. Mixed stock gets sundries/equipment tabs. Short category shelves align with the detail portrait, while long shelves support name search and scrolling. An individual item can be bought in multiple units through the existing request.
 - Displayed unit prices, wallet balances and checkout reuse the bag sprites for currency item IDs 101 (copper), 102 (silver), 106 (silver ticket) and 103 (yuanbao). Bag and purchase-limit changes refresh the visible selection.
 - Manifest and Git receipts are in `项目修改日志/2026-11-24-NPC商店双栏与分类货架.md`.
+
+## [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services
+
+- A single PC click uses the existing NPC collider, approach and 10 m interaction range. MainCtrl opens the registered TalkWindow, the world camera frames the actual speaker, and the HUD and local player's rendered parts return after dialogue. The original FreeLook keeps its heading, pitch and zoom.
+- Edit the name and underscore-separated speech in `Luaban/MiniTemplate/Datas/#NpcInfo.xlsx`. Edit each NPC's ordered labels, ShopId and optional GoodsIds in `LYF_MMO/Assets/LYF_Game/Config/NpcDialogueServices.asset`. An explicit empty service list means dialogue only. An unlisted legacy merchant uses its original shop. 4001 offers supplies, weapons and armour/accessories; 4002 offers weapons only; 4003 says one line.
+- Stock, prices and purchase limits still use the existing goods and purchase request. Moshenta 20186 keeps its original battle/leave options. Manifest, verification and receipts are in `项目修改日志/2026-11-24-NPC对话镜头与服务配置.md`.

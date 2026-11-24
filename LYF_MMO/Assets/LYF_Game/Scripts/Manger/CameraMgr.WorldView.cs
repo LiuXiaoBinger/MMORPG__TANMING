@@ -62,6 +62,7 @@ public partial class CameraMgr
     /// <summary>一个世界帧内先处理玩家输入，再用本地主角的实际状态调整距离和航向。</summary>
     private void UpdateWorldView()
     {
+        if (UpdateNpcTalkCamera()) return;
         if (_roleMainTransform == null || _isOpenRoleAtttWindow) return;
         ReadWorldPointer();
         // 当前世界的玩家实体，角色绑定早于实体入场时仍可手动观察。

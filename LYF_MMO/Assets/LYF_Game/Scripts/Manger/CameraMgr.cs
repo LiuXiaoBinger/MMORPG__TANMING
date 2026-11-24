@@ -135,6 +135,8 @@ public partial class CameraMgr : MonoBehaviour
     /// <summary>相机管理器临时停用时归还UI监听器，避免停用的世界相机长期占用声音位置。</summary>
     private void OnDisable()
     {
+        _talkLost?.Invoke();
+        ReleaseNpcTalkCamera();
         ReleaseWorldDrag();
         UpdateGroundHint(false);
         if (_uiAudioListener != null)
@@ -160,6 +162,7 @@ public partial class CameraMgr : MonoBehaviour
     /// <summary>相机场景销毁后解除声音监听接管，并清理属于自身的静态实例入口。</summary>
     private void OnDestroy()
     {
+        if (_talkCamera != null) Destroy(_talkCamera.gameObject);
         if (_groundHint != null) Destroy(_groundHint);
         ReleaseAudioListener();
         // index覆盖本管理器所有自建组件，旧相机场景已经销毁的项无需再次处理。

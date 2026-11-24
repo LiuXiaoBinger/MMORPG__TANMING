@@ -1,65 +1,136 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
-/// <summary>
-/// NPC 对话窗口，只接收展示数据并抛出商城或原副本对话选项事件。
-/// </summary>
+/// <summary>在场景人物前展示逐句对白和该 NPC 可用的服务，管理对话期间的界面显隐。</summary>
 public class TalkWindow : WindowBase
 {
-    /// <summary>对话正文文本控件，绑定预制体已有的 tex_content。</summary>
+    /// <summary>从 NPC 表逐句显示的对白。</summary>
     [SerializeField] private TMP_Text _talkContent;
-    /// <summary>NPC 名字文本控件，绑定预制体已有的标题 Image/Text (TMP)。</summary>
+    /// <summary>对白区左侧显示的说话者。</summary>
     [SerializeField] private TMP_Text _talkTitle;
+    /// <summary>按服务数量显隐的右侧滚动区域。</summary>
+    [SerializeField] private ScrollRect _options;
+    /// <summary>在正式预制体中排版的服务按钮，首个子节点保留为隐藏模板。</summary>
+    [SerializeField] private Button _optionTemplate;
+    /// <summary>与主界面隔离显示的常驻 HUD 和聊天层。</summary>
+    [SerializeField] private CanvasGroup[] _hudLayers;
+    /// <summary>以 NPC 配置编号为键的服务资源，交给控制器选取当前货架。</summary>
+    [SerializeField] private NpcDialogueCatalog _catalog;
+    /// <summary>主控制器从正式窗口引用读取服务配置。</summary>
+    public NpcDialogueCatalog Catalog => _catalog;
+    /// <summary>窗口当前正在显示的逐句对白。</summary>
+    private string[] _lines;
+    /// <summary>当前对白的零基序号。</summary>
+    private int _lineIndex;
 
-    /// <summary>既有任务、商店等NPC功能按钮容器，普通NPC仍使用此分支。</summary>
-    [SerializeField] private GameObject _standardOptions;
-    /// <summary>正式预制体保存的原20186帮助/暂离两个选项，不在运行时创建按钮。</summary>
-    [SerializeField] private GameObject _moshentaBossOptions;
-    /// <summary>玩家明确选择原“帮助他（进入战斗）”选项。</summary>
+    /// <summary>玩家选择一个具体货架，请求商店控制器展示对应商品。</summary>
+    public event Action<NpcDialogueCatalog.Service> ShopRequested;
+    /// <summary>玩家选择帮助魔神塔剧情 NPC。</summary>
     public event Action MoshentaBattleRequested;
-    /// <summary>玩家明确选择原“暂时离开”选项。</summary>
+    /// <summary>选择离开、点完最后一句或按 Esc 时请求关闭。</summary>
     public event Action TalkLeaveRequested;
+    /// <summary>窗口经任何入口隐藏时通知控制器归还世界镜头。</summary>
+    public event Action Closed;
 
-    /// <summary>打开 NPC 商城事件。</summary>
-    public event Action ShopRequested;
-
-    /// <summary>接收控制器生成的 NPC 对话展示数据。</summary>
-    /// <param name="obj">既有 UI 基类边界参数，内部只按 NpcTalkViewData 解析，不另开业务接口。</param>
+    /// <summary>通过主视图的框架边界接收一次真实 NPC 对话并重建本次选项。</summary>
+    /// <param name="obj">项目 WindowBase 规定的参数，窗口使用具名的 NPC 展示数据。</param>
     public override void ReFreshUI(object obj)
     {
-        // 基类边界保持 object，强类型转换失败时保留原界面。
-        NpcTalkViewData viewData = obj as NpcTalkViewData;
-        if (viewData == null)
+        // 当前说话者的强类型数据来自主控制器。
+        if (!(obj is NpcTalkViewData dialogue)) return;
+        _talkTitle.text = dialogue.Name;
+        _lines = dialogue.Lines;
+        _lineIndex = 0;
+        _talkContent.text = string.Empty;
+        if (_lines.Length > 0) _talkContent.text = _lines[0];
+
+        // 逆序移除上次的实例，索引零保留给正式模板。
+        for (int index = _options.content.childCount - 1; index >= 1; index--)
         {
+            // 清掉上一位说话者的按钮，模板始终保留在首位。
+            GameObject previous = _options.content.GetChild(index).gameObject;
+            previous.SetActive(false);
+            Destroy(previous);
+        }
+        // 按配置序号决定服务的显示顺序。
+        for (int index = 0; index < dialogue.Services.Length; index++)
+        {
+            // 点击时需携带对应选项的商店与商品清单。
+            NpcDialogueCatalog.Service service = dialogue.Services[index];
+            AddOption(service.Label, () => ShopRequested?.Invoke(service));
+        }
+        if (dialogue.ShowMoshentaBossChoices)
+        {
+            AddOption("帮助他（进入战斗）", () => MoshentaBattleRequested?.Invoke());
+            AddOption("暂时离开", OnTalkLeaveClick);
+        }
+        _options.gameObject.SetActive(dialogue.Services.Length > 0 || dialogue.ShowMoshentaBossChoices);
+        _options.verticalNormalizedPosition = 1f;
+    }
+
+    /// <summary>从实装按钮模板生成一行，将点击绑定到本次选项。</summary>
+    /// <param name="label">货架名称或剧情选项的正文。</param>
+    /// <param name="onClick">控制器应接收的单次选择。</param>
+    private void AddOption(string label, UnityAction onClick)
+    {
+        // 只复制美术已排版的按钮，动态改变标签和回调。
+        Button row = Instantiate(_optionTemplate, _options.content, false);
+        row.GetComponentInChildren<TMP_Text>(true).text = label;
+        row.onClick.AddListener(onClick);
+        row.gameObject.SetActive(true);
+    }
+
+    /// <summary>点击底部对白区域或双箭头时进入下一句，末句结束本次对话。</summary>
+    public void OnAdvanceClick()
+    {
+        if (_lines != null && _lineIndex + 1 < _lines.Length)
+        {
+            _talkContent.text = _lines[++_lineIndex];
             return;
         }
-
-        // 标题写入 NPC 名字，正文按 _ 分隔的短句逐段换行。
-        _talkTitle.text = viewData.Name;
-        _talkContent.text = viewData.Talk.Replace("_", "\n");
-        _standardOptions.SetActive(!viewData.ShowMoshentaBossChoices);
-        _moshentaBossOptions.SetActive(viewData.ShowMoshentaBossChoices);
+        OnTalkLeaveClick();
     }
 
-    /// <summary>正式帮助按钮只通知控制器，由控制器发送原剧情事件。</summary>
-    public void OnMoshentaBattleClick()
+    /// <summary>关闭按钮和剧情暂离选项沿主控制器离开对话。</summary>
+    public void OnTalkLeaveClick() => TalkLeaveRequested?.Invoke();
+
+    /// <summary>进入人物特写时隐藏世界 HUD，保留各子窗口自己的显隐状态。</summary>
+    private void OnEnable() => SetHudVisible(false);
+
+    /// <summary>外部关窗、切场景和正常退出都归还 HUD 和镜头。</summary>
+    private void OnDisable()
     {
-        MoshentaBattleRequested?.Invoke();
+        SetHudVisible(true);
+        Closed?.Invoke();
     }
 
-    /// <summary>正式暂离按钮只通知控制器停止对话，不发开战事件。</summary>
-    public void OnTalkLeaveClick()
+    /// <summary>仅切换预制体内为对话设置的两组透明度与鼠标穿透。</summary>
+    /// <param name="visible">是否恢复常驻世界和聊天界面。</param>
+    private void SetHudVisible(bool visible)
     {
-        TalkLeaveRequested?.Invoke();
-    }
-
-    /// <summary>Inspector 绑定入口：请求打开当前 NPC 的商店。</summary>
-    public void OnShopBtnClick()
-    {
-        if (ShopRequested != null)
+        // 两个专用透明组使用相同的显隐值，画布内部状态继续更新。
+        float alpha = 0f;
+        if (visible) alpha = 1f;
+        for (int index = 0; index < _hudLayers.Length; index++)
         {
-            ShopRequested.Invoke();
+            // 同层原本关闭的子窗口不会因为恢复透明度而被打开。
+            CanvasGroup layer = _hudLayers[index];
+            if (layer == null) continue;
+            layer.alpha = alpha;
+            layer.blocksRaycasts = visible;
+            layer.interactable = visible;
         }
+    }
+
+    /// <summary>PC 对话接受 Esc 退出，鼠标可操作全部对白与服务。</summary>
+    private void Update()
+    {
+        // 当前键盘可能在设备热拔插后为空。
+        Keyboard keys = Keyboard.current;
+        if (keys != null && keys.escapeKey.wasPressedThisFrame) OnTalkLeaveClick();
     }
 }

@@ -138,6 +138,7 @@ public class MainCtrl : CtrlBase
             _mainView.CombatStatusButton.onClick.AddListener(OnCombatStatusClicked);
         }
             _mainView.TalkWindow.TalkLeaveRequested += CloseNpcTalk;
+            _mainView.TalkWindow.Closed += OnNpcTalkClosed;
         }
         if (_chatWindow != null)
         {
@@ -215,6 +216,7 @@ public class MainCtrl : CtrlBase
             _mainView.TalkWindow.ShopRequested -= OnShopRequested;
             _mainView.TalkWindow.MoshentaBattleRequested -= OnMoshentaBattleRequested;
             _mainView.TalkWindow.TalkLeaveRequested -= CloseNpcTalk;
+            _mainView.TalkWindow.Closed -= OnNpcTalkClosed;
         }
         if (_chatWindow != null)
         {
@@ -250,7 +252,8 @@ public class MainCtrl : CtrlBase
             Global.Instance.SceneWorld.LocalRoleChanged -= OnLocalRoleChanged;
         }
         _deathCtrl.Dispose();
-        _currentTalkNpc = null;
+        if (_currentTalkNpc != null) CloseNpcTalk();
+        OnNpcTalkClosed();
     }
     #endregion
 
@@ -268,9 +271,19 @@ public class MainCtrl : CtrlBase
     {
         if (windowType == WindowType.TalkWindow)
         {
-            _currentTalkNpc = obj as NpcEntity;
-            NpcTalkViewData viewData = CreateNpcTalkViewData(_currentTalkNpc);
-            base.ShowMainWindow(windowType, viewData);
+            // 窗口基类沿用 object，实际交互始终以当前点击的 NPC 为准。
+            NpcEntity speaker = obj as NpcEntity;
+            if (speaker == null || !speaker.Model.IsLoaded)
+            {
+                CloseNpcTalk();
+                return;
+            }
+            _currentTalkNpc = speaker;
+            // 切换说话者时刷新正在显示的窗口，避免通用窗口入口将它反向关闭。
+            NpcTalkViewData dialogue = CreateNpcTalkViewData(speaker);
+            if (_mainView.TalkWindow.gameObject.activeSelf) _mainView.TalkWindow.ReFreshUI(dialogue);
+            else base.ShowMainWindow(windowType, dialogue);
+            CameraMgr.Instance?.BeginNpcTalk(speaker, CloseNpcTalk);
             return;
         }
         if (windowType == WindowType.ShopWindow)
@@ -376,6 +389,7 @@ public class MainCtrl : CtrlBase
         PlayerEntity localRole = Global.Instance.SceneWorld.LocalRole;
         if (localRole == null || !localRole.ApplyAttributeUpdate(result)) return;
         _mainView.RoleShieldWidget?.SetShield(localRole, result.ShieldRemaining, result.ShieldCapacity);
+        _mainView.CombatStatus?.SetShield(result.ShieldRemaining, result.ShieldCapacity);
         // 兼容已有攻击入口通过角色控制器读取基础属性的流程。
         RoleCtrlBase controller = localRole.GetEntityCtrl();
         if (controller != null) controller.InitCtrl(controller._roleType, localRole.BaseInfo);
@@ -384,12 +398,12 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 交互响应
-        _mainView.CombatStatus?.SetShield(result.ShieldRemaining, result.ShieldCapacity);
     /// <summary>角色切换或断线清理时重新绑定背包控制器。</summary>
     /// <param name="role">新的本地角色，null 表示角色已离场。</param>
     private void OnLocalRoleChanged(PlayerEntity role)
     {
         _mainView.RoleShieldWidget?.Clear();
+        _mainView.CombatStatus?.SetShield(0, 0);
         _roleInfoCtrl.BindGeneRole(role);
         if (_knapsackCtrl != null)
         {
@@ -398,7 +412,6 @@ public class MainCtrl : CtrlBase
         BindTrackedRole();
     }
 
-        _mainView.CombatStatus?.SetShield(0, 0);
     /// <summary>聊天获得焦点时调用输入控制器 OnDisable，失焦时调用 OnEnable；不修改组件 enabled 属性。</summary>
     /// <param name="focused">聊天框是否正在接收键盘输入。</param>
     private void OnChatInputFocusChanged(bool focused)
@@ -477,6 +490,12 @@ public class MainCtrl : CtrlBase
         ShowMainWindow(WindowType.ArenaSettingsWindow);
     }
 
+    /// <summary>点击战斗 HUD 的状态图标时，通过主视图开关状态详情。</summary>
+    private void OnCombatStatusClicked()
+    {
+        ShowMainWindow(WindowType.CombatStatusWindow);
+    }
+
     /// <summary>角色到达交互范围后，让当前 NPC 面向角色并打开既有对话窗。</summary>
     /// <param name="npc">本次点击并走近的场景 NPC 实体。</param>
     internal void OpenNpcTalk(NpcEntity npc)
@@ -485,12 +504,6 @@ public class MainCtrl : CtrlBase
         PlayerEntity player = Global.Instance.SceneWorld.LocalRole;
         if (player == null || !player.Model.IsLoaded)
         {
-    /// <summary>点击战斗 HUD 的状态图标时，通过主视图开关状态详情。</summary>
-    private void OnCombatStatusClicked()
-    {
-        ShowMainWindow(WindowType.CombatStatusWindow);
-    }
-
             TipsMgr.Instance.ShowSystemTips("主角尚未创建完成");
             return;
         }
@@ -504,14 +517,18 @@ public class MainCtrl : CtrlBase
     }
 
     /// <summary>处理 NPC 对话窗口发出的商城请求。</summary>
-    private void OnShopRequested()
+    /// <param name="service">所选按钮对应的商店和商品清单。</param>
+    private void OnShopRequested(NpcDialogueCatalog.Service service)
     {
         if (_currentTalkNpc == null)
         {
             TipsMgr.Instance.ShowSystemTips("当前没有可交互的 NPC");
             return;
         }
-        _shopCtrl.OpenNpcShop(_currentTalkNpc);
+        // 关窗会释放当前说话者，先保留本次开店的真实 NPC。
+        NpcEntity merchant = _currentTalkNpc;
+        CloseNpcTalk();
+        _shopCtrl.OpenNpcShop(merchant, service);
     }
 
     /// <summary>仅原NPC20186帮助选项发送BossEnterCombat，黑幕结束不调用此入口。</summary>
@@ -527,6 +544,12 @@ public class MainCtrl : CtrlBase
     private void CloseNpcTalk()
     {
         _mainView.TalkWindow.CloseWindow();
+    }
+
+    /// <summary>对话从任何路径隐藏时归还世界相机，并释放本次说话者。</summary>
+    private void OnNpcTalkClosed()
+    {
+        CameraMgr.Instance?.EndNpcTalk();
         _currentTalkNpc = null;
     }
 
@@ -553,7 +576,9 @@ public class MainCtrl : CtrlBase
             return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name,
                 "啊啊！！啊啊啊啊！！！我好痛苦，让我死个痛快！！！", true);
         }
-        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk);
+        // 已单独配置的 NPC 使用自己的服务顺序，旧商人保留默认货架。
+        NpcDialogueCatalog.Service[] services = _mainView.TalkWindow.Catalog.GetServices(npcEntity.NpcID, npcEntity.ShopId);
+        return new NpcTalkViewData(npcEntity.NpcID, npcEntity.Name, npcEntity.Talk, services: services);
     }
 
     /// <summary>接收服务器次数增量并写入当前角色次数组件。</summary>
@@ -651,6 +676,7 @@ public class MainCtrl : CtrlBase
     /// <param name="key">L 切技能、B 切背包、I 切角色属性；其他字符不处理。</param>
     public void MainUIKeyHandler(string key)
     {
+        if (_currentTalkNpc != null) return;
         switch (key)
         {
             case "L":

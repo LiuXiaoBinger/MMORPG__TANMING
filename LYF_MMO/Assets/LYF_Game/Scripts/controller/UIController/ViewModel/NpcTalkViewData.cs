@@ -1,30 +1,32 @@
-/// <summary>
-/// NPC 对话展示数据，不向 View 暴露角色领域对象。
-/// </summary>
+using System;
+
+/// <summary>本次 NPC 对话的名字、分句和可选服务；窗口只接收展示数据。</summary>
 public sealed class NpcTalkViewData
 {
-    /// <summary>NPC 配置编号。</summary>
+    /// <summary>当前说话者的配置编号。</summary>
     public int NpcId { get; }
-
-    /// <summary>NPC 显示名称。</summary>
+    /// <summary>对白区显示的 NPC 名称。</summary>
     public string Name { get; }
-
-    /// <summary>NPC 对话文本。</summary>
-    public string Talk { get; }
-
-    /// <summary>当前原魔神塔NPC20186是否展示帮助/暂离两项，普通NPC保持原功能按钮。</summary>
+    /// <summary>按 NPC 表中下划线拆出的对白，点击继续时逐句展示。</summary>
+    public string[] Lines { get; }
+    /// <summary>当前说话者按顺序提供的商店服务。</summary>
+    public NpcDialogueCatalog.Service[] Services { get; }
+    /// <summary>魔神塔波次 47 使用原剧情的帮助和离开选项。</summary>
     public bool ShowMoshentaBossChoices { get; }
 
-    /// <summary>创建 NPC 对话展示数据。</summary>
-    /// <param name="npcId">NPC 配置编号，供后续商店入口识别 NPC。</param>
-    /// <param name="name">对话窗口标题显示的名字。</param>
-    /// <param name="talk">正文；窗口会把下划线替换为换行。</param>
-    /// <param name="showMoshentaBossChoices">仅原魔神塔波47的NPC20186对话为true。</param>
-    public NpcTalkViewData(int npcId, string name, string talk, bool showMoshentaBossChoices = false)
+    /// <summary>把配置对白分句，并保留明确给当前说话者的服务。</summary>
+    /// <param name="npcId">NPC 配置编号。</param>
+    /// <param name="name">画面左下角的说话者名字。</param>
+    /// <param name="talk">NPC 表中以下划线分隔的对白。</param>
+    /// <param name="showMoshentaBossChoices">当前交互是否为魔神塔开战剧情。</param>
+    /// <param name="services">该 NPC 对话期间可进入的货架。</param>
+    public NpcTalkViewData(int npcId, string name, string talk, bool showMoshentaBossChoices = false,
+        NpcDialogueCatalog.Service[] services = null)
     {
         NpcId = npcId;
         Name = name;
-        Talk = talk;
+        Lines = (talk ?? string.Empty).Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+        Services = services ?? Array.Empty<NpcDialogueCatalog.Service>();
         ShowMoshentaBossChoices = showMoshentaBossChoices;
     }
 }

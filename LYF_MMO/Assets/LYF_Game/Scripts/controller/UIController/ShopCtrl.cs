@@ -10,6 +10,8 @@ public sealed class ShopCtrl : CtrlBase
     private readonly NpcShopWindow _shopWindow;
     /// <summary>当前商人实体，商店开放期间用于重读商品配置。</summary>
     private NpcEntity _currentNpc;
+    /// <summary>本次从对话选择的货架；主界面直接打开时沿用 NPC 默认商店。</summary>
+    private NpcDialogueCatalog.Service _dialogueService;
     /// <summary>当前角色背包，库存及货币变化时刷新正在浏览的商品。</summary>
     private RoItemComponent _items;
 
@@ -40,10 +42,12 @@ public sealed class ShopCtrl : CtrlBase
 
     /// <summary>从 NPC 对话或主界面入口打开货架，默认选中首件商品。</summary>
     /// <param name="npcEntity">玩家正在交互的商人。</param>
-    public void OpenNpcShop(NpcEntity npcEntity)
+    /// <param name="service">可选的对话货架，限定商店编号和陈列商品。</param>
+    public void OpenNpcShop(NpcEntity npcEntity, NpcDialogueCatalog.Service service = null)
     {
         if (_shopWindow == null) return;
         _currentNpc = npcEntity;
+        _dialogueService = service;
         if (_items != null) _items.KnapsackChangedDetailed -= OnBagChanged;
         // 场景角色持有的背包与商城购买校验共用同一份虚拟物品余额。
         PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
@@ -64,13 +68,14 @@ public sealed class ShopCtrl : CtrlBase
         if (_currentNpc != null)
         {
             // 接入 NPC 所属的商店表，具体货币以每行商品的支付物品为准。
-            ShopTable shop = LubanMgr.Instance.GetShopTableById(_currentNpc.ShopId);
+            ShopTable shop = LubanMgr.Instance.GetShopTableById(_dialogueService?.ShopId ?? _currentNpc.ShopId);
             if (shop != null && shop.ShopType == (int)ShopType.Npc)
             {
                 // 表里的 NPC 前缀供配置分类；窗口标题显示商店名称，缺省时显示商人的名字。
                 title = shop.Name ?? string.Empty;
                 if (title.StartsWith("NPC", StringComparison.Ordinal)) title = title.Substring(3).Trim();
                 if (string.IsNullOrEmpty(title)) title = _currentNpc.Name ?? "商店";
+                if (_dialogueService != null) title = _dialogueService.Label;
                 // 当前所有商店的商品字典，按 GoodsId 排序使每次打开的陈列顺序一致。
                 Dictionary<int, ShopItemInfo> entries = LubanMgr.Instance.GetShopItemInfos();
                 if (entries != null)
@@ -82,6 +87,7 @@ public sealed class ShopCtrl : CtrlBase
                         // 货架配置及其对应的物品定义。
                         ShopItemInfo row = rows[index];
                         if (row == null || row.ShopId != shop.Id) continue;
+                        if (_dialogueService != null && !_dialogueService.Includes(row.GoodsId)) continue;
                         ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(row.ItemId);
                         if (item != null) goods.Add(BuildGoods(row, item));
                     }
