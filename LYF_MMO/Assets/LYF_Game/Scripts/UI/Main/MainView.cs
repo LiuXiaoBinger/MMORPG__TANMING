@@ -50,6 +50,15 @@ public class MainView : UIBase
    /// <summary>供背包控制器填充选中装备及其所属容器。</summary>
    public EquipmentWorkshopWindow EquipmentWorkshopWindow => _equipmentWorkshopWindow;
 
+   /// <summary>功能菜单的交易入口，与 NPC 商店独立。</summary>
+   [SerializeField] private Button _tradeMarketButton;
+   /// <summary>主城功能层中持有的交易窗口。</summary>
+   [SerializeField] private TradeMarketWindow _tradeMarketWindow;
+   /// <summary>供主控制器注册交易按钮。</summary>
+   public Button TradeMarketButton => _tradeMarketButton;
+   /// <summary>供主控制器下发当前角色包裹。</summary>
+   public TradeMarketWindow TradeMarketWindow => _tradeMarketWindow;
+
    /// <summary>主角血蓝、资源弧条、技能快捷栏及当前目标文字区域。</summary>
    [SerializeField,Header("角色当前信息window")] private RoleCurrInfoWindow _roleCurrInfoWindow;
    /// <summary>技能列表和快捷技能槽窗口，数据由技能控制器提供。</summary>
@@ -307,6 +316,7 @@ public class MainView : UIBase
       windowDic[WindowType.KnapsackWindow] = _knapsackWindow;
       windowDic[WindowType.TalkWindow] = _talkWindow;
       windowDic[WindowType.ShopWindow] = _shopWindow;
+      windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;
       windowDic[WindowType.TaskWindow] = _taskWindow;

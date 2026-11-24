@@ -108,6 +108,7 @@ public class MainCtrl : CtrlBase
     private void RegisterViewActions()
     {
         _mainView.FunctionMenuButton.onClick.AddListener(OnFunctionMenuRequested);
+        _mainView.TradeMarketButton.onClick.AddListener(OnTradeMarketRequested);
         _mainView.KnapsackButton.onClick.AddListener(OnKnapsackRequested);
         _mainView.RoleButton.onClick.AddListener(OnRoleRequested);
         _mainView.SkillButton.onClick.AddListener(OnSkillRequested);
@@ -166,6 +167,7 @@ public class MainCtrl : CtrlBase
         _yimengChatCtrl?.Dispose();
         _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
+        _mainView.TradeMarketButton.onClick.RemoveListener(OnTradeMarketRequested);
         _mainView.KnapsackButton.onClick.RemoveListener(OnKnapsackRequested);
         _mainView.RoleButton.onClick.RemoveListener(OnRoleRequested);
         _mainView.SkillButton.onClick.RemoveListener(OnSkillRequested);
@@ -285,6 +287,14 @@ public class MainCtrl : CtrlBase
             else base.ShowMainWindow(windowType, dialogue);
             CameraMgr.Instance?.BeginNpcTalk(speaker, CloseNpcTalk);
             return;
+        }
+        if (windowType == WindowType.TradeMarketWindow)
+        {
+            // 交易目录和出售包裹读取本地角色当前的背包组件。
+            PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+            RoItemComponent items = null;
+            if (role != null) role.TryGetComponent(out items);
+            _mainView.TradeMarketWindow.BindInventory(items);
         }
         if (windowType == WindowType.ShopWindow)
         {
@@ -432,6 +442,12 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 事件回调、创建与添加等
+    /// <summary>从主城功能菜单打开或收起交易窗口。</summary>
+    private void OnTradeMarketRequested()
+    {
+        ShowMainWindow(WindowType.TradeMarketWindow);
+    }
+
     /// <summary>切换左上入口组，展开和收起只修改视图展示。</summary>
     private void OnFunctionMenuRequested()
     {
