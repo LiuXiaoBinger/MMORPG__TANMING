@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `0e28a1648a8c4ef1a1d1bd319685b24ca55533f70a1648addfedfa7b5f4c3e54`
+Source normalized SHA256: `177c008b83c5241b49aaaed92fc855b1f25c4ead1354241798b50296e448d408`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -133,11 +133,12 @@ Source normalized SHA256: `0e28a1648a8c4ef1a1d1bd319685b24ca55533f70a1648addfedf
 | [CODE][FILES][HANDOFF][装备][EQUIPMENT-GEM-SOCKET-20261123] Equipment socketing, inventory and persistence | 892-897 |
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Show only manuals with recorded detail | 898-902 |
 | [CODE][FILES][HANDOFF][装备][GEM-PICKER-COMPOSE-20261123] Socket-specific gem picker, synthesis and merchant | 903-908 |
-| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-911 |
+| [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-912 |
+| [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-917 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `308a760526ece6898a4dbdfc60aec73293f941108b3f79f6ecb24ad6e03a8567`
+Source normalized SHA256: `f4ce6bf4634b5a1b9269f8fb974c2550cfd617df4f833137fc690d1e93d0730c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -262,7 +263,8 @@ Source normalized SHA256: `308a760526ece6898a4dbdfc60aec73293f941108b3f79f6ecb24
 | [VERIFY][装备][EQUIPMENT-GEM-SOCKET-20261123] Gem filtering, pointer clicks and MySQL login restoration | 922-927 |
 | [VERIFY][武学][秘笈][MANUAL-DETAIL-ONLY-20261123] Eighteen visible manuals and original ID alignment | 928-932 |
 | [VERIFY][装备][GEM-PICKER-COMPOSE-20261123] Socket picker clicks, composition settlement and relogin | 933-938 |
-| [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-941 |
+| [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-942 |
+| [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-947 |
 
 ## Docs/AI/DECISIONS.en.md
 

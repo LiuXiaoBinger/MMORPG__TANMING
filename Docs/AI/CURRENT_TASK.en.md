@@ -909,3 +909,9 @@ Skill 10120 uses `MjsBarrierLights.prefab` for a casting sweep, a tilted band an
 ## [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices
 
 The 32 books map to distinct whole/fragment items. The bag links to the selected book and synthesis awards a whole item. Spend one whole item to learn. Each book has nine level prices. 26 have five verified rank prices and six gold groups remain unknown. See the cost workbook and complete change log. `项目修改日志/2026-11-23-秘笈物品合成与进阶.md`
+
+## [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views
+
+- The existing MainView shop entry opens a moon-patterned two-column catalogue with item details. Mixed stock gets sundries/equipment tabs. Short category shelves align with the detail portrait, while long shelves support name search and scrolling. An individual item can be bought in multiple units through the existing request.
+- Displayed unit prices, wallet balances and checkout reuse the bag sprites for currency item IDs 101 (copper), 102 (silver), 106 (silver ticket) and 103 (yuanbao). Bag and purchase-limit changes refresh the visible selection.
+- Manifest and Git receipts are in `项目修改日志/2026-11-24-NPC商店双栏与分类货架.md`.

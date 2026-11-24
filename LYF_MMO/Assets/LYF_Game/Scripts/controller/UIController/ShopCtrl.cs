@@ -1,206 +1,195 @@
+using System;
 using System.Collections.Generic;
 using cfg;
 using MMoRpgCommon;
-using UnityEngine;
 
-/// <summary>
-/// 商城控制器，负责配置查询、购买流程和界面刷新。
-/// </summary>
+/// <summary>从当前 NPC、商品配置和角色背包准备商店页面，并提交玩家确认的购买份数。</summary>
 public sealed class ShopCtrl : CtrlBase
 {
-    /// <summary>商城窗口视图。</summary>
+    /// <summary>主界面已注册的 NPC 商店窗口。</summary>
     private readonly NpcShopWindow _shopWindow;
-
-    /// <summary>当前正在浏览商店的 NPC。</summary>
+    /// <summary>当前商人实体，商店开放期间用于重读商品配置。</summary>
     private NpcEntity _currentNpc;
+    /// <summary>当前角色背包，库存及货币变化时刷新正在浏览的商品。</summary>
+    private RoItemComponent _items;
 
-    #region 构造与初始化
-    /// <summary>创建商城控制器并注册视图和模型事件。</summary>
-    /// <param name="mainView">提供 NPC 商店窗口的主界面。</param>
+    /// <summary>连接商店窗口和购买回包。</summary>
+    /// <param name="mainView">持有商店窗口的主城视图。</param>
     public ShopCtrl(MainView mainView) : base(mainView)
     {
         _shopWindow = mainView.ShopWindow;
         if (_shopWindow != null)
         {
-            _shopWindow.GoodsClicked += OnGoodsClicked;
+            _shopWindow.BuyRequested += OnBuyRequested;
             _shopWindow.FrameUpdated += OnShopWindowFrameUpdated;
         }
         ShopMgr.Instance.PurchaseCompleted += OnPurchaseCompleted;
     }
 
-    /// <summary>注销商城窗口和模型事件。</summary>
+    /// <summary>离开主城时解除与窗口、角色背包和购买模型的订阅。</summary>
     public override void Dispose()
     {
         ShopMgr.Instance.PurchaseCompleted -= OnPurchaseCompleted;
+        if (_items != null) _items.KnapsackChangedDetailed -= OnBagChanged;
         if (_shopWindow != null)
         {
-            _shopWindow.GoodsClicked -= OnGoodsClicked;
+            _shopWindow.BuyRequested -= OnBuyRequested;
             _shopWindow.FrameUpdated -= OnShopWindowFrameUpdated;
         }
     }
-    #endregion
 
-    #region 商品展示数据构建与商店界面
-    /// <summary>把配置和角色次数状态转换为商城展示模型。</summary>
-    /// <param name="npcEntity">商店所属 NPC，从 ShopId 查询商店和商品配置。</param>
-    private List<ShopGoodsViewData> BuildGoodsViewData(NpcEntity npcEntity)
-    {
-        // 该 NPC 商店的商品展示列表，无效商店返回空列表。
-        List<ShopGoodsViewData> result = new List<ShopGoodsViewData>();
-        if (npcEntity == null)
-        {
-            return result;
-        }
-
-        // NPC 引用的商店配置，必须是 NPC 类型商店。
-        ShopTable shopTable = LubanMgr.Instance.GetShopTableById(npcEntity.ShopId);
-        if (shopTable == null || shopTable.ShopType != (int)ShopType.Npc)
-        {
-            Debug.LogWarning("NPC 商店配置无效：" + npcEntity.ShopId);
-            return result;
-        }
-
-        // 全部商品配置，下面只保留当前商店的条目。
-        Dictionary<int, ShopItemInfo> shopItems = LubanMgr.Instance.GetShopItemInfos();
-        if (shopItems == null)
-        {
-            return result;
-        }
-        // 把配置值复制成可按下标遍历的列表，条目仍是原配置引用。
-        List<ShopItemInfo> itemSnapshot = new List<ShopItemInfo>(shopItems.Values);
-        for (int index = 0; index < itemSnapshot.Count; index++)
-        {
-            // 当前检查的商品配置，所属商店不匹配时跳过。
-            ShopItemInfo shopItem = itemSnapshot[index];
-            if (shopItem == null || shopItem.ShopId != shopTable.Id)
-            {
-                continue;
-            }
-
-            // 商品实际获得的物品配置，提供名称和图标。
-            ItemConfigBase itemConfig = LubanMgr.Instance.GetItemConfigById(shopItem.ItemId);
-            if (itemConfig == null)
-            {
-                continue;
-            }
-            // 支付货币也用物品配置表示，缺失时只显示编号文字。
-            ItemConfigBase currencyConfig = LubanMgr.Instance.GetItemConfigById(shopItem.CurrencyItemId);
-            string currencyName = "货币物品 " + shopItem.CurrencyItemId;
-            string currencyIconPath = string.Empty;
-            if (currencyConfig != null)
-            {
-                currencyName = currencyConfig.ItemName;
-                currencyIconPath = currencyConfig.Icon;
-            }
-
-            // 是否不限购买次数，与玩家当前货币数量不是同一限制。
-            bool unlimited = ShopMgr.Instance.IsUnlimitedPurchase(shopItem.GoodsId);
-            // 角色计数与商品限购规则算出的剩余可买份数。
-            int remainingCount = ShopMgr.Instance.GetRemainingPurchaseCount(shopItem.GoodsId);
-            // 弹窗数量上限；不限次数商品使用 int.MaxValue，实际购买仍会校验。
-            int maxPurchaseCount = remainingCount;
-            if (unlimited)
-            {
-                maxPurchaseCount = int.MaxValue;
-            }
-            result.Add(new ShopGoodsViewData(shopTable.Id, shopItem.GoodsId,
-                itemConfig.ItemName, itemConfig.Icon, shopItem.Price, shopItem.CurrencyItemId,
-                currencyName, currencyIconPath, remainingCount, maxPurchaseCount, unlimited));
-        }
-        return result;
-    }
-
-    /// <summary>打开指定 NPC 的商店并生成展示数据。</summary>
-    /// <param name="npcEntity">本次打开商店的 NPC，保存到控制器供后续刷新。</param>
+    /// <summary>从 NPC 对话或主界面入口打开货架，默认选中首件商品。</summary>
+    /// <param name="npcEntity">玩家正在交互的商人。</param>
     public void OpenNpcShop(NpcEntity npcEntity)
     {
+        if (_shopWindow == null) return;
         _currentNpc = npcEntity;
-        RefreshShopWindow();
-        if (_shopWindow != null)
-        {
-            _shopWindow.Show(true);
-        }
+        if (_items != null) _items.KnapsackChangedDetailed -= OnBagChanged;
+        // 场景角色持有的背包与商城购买校验共用同一份虚拟物品余额。
+        PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+        _items = null;
+        if (role != null) role.TryGetComponent(out _items);
+        if (_items != null) _items.KnapsackChangedDetailed += OnBagChanged;
+        _shopWindow.Show(true);
+        RefreshShopWindow(true);
     }
 
-    /// <summary>重新生成当前 NPC 商店的展示数据。</summary>
-    private void RefreshShopWindow()
+    /// <summary>从当前商店表读取货架，刷新期间保留搜索词、选中商品和购买份数。</summary>
+    /// <param name="opening">新开商店时重置上次浏览位置。</param>
+    private void RefreshShopWindow(bool opening)
     {
-        if (_shopWindow == null)
+        // 无商人或无有效配置时交给窗口展示空货架。
+        List<ShopGoodsViewData> goods = new List<ShopGoodsViewData>();
+        string title = "商店";
+        if (_currentNpc != null)
         {
-            return;
+            // 接入 NPC 所属的商店表，具体货币以每行商品的支付物品为准。
+            ShopTable shop = LubanMgr.Instance.GetShopTableById(_currentNpc.ShopId);
+            if (shop != null && shop.ShopType == (int)ShopType.Npc)
+            {
+                // 表里的 NPC 前缀供配置分类；窗口标题显示商店名称，缺省时显示商人的名字。
+                title = shop.Name ?? string.Empty;
+                if (title.StartsWith("NPC", StringComparison.Ordinal)) title = title.Substring(3).Trim();
+                if (string.IsNullOrEmpty(title)) title = _currentNpc.Name ?? "商店";
+                // 当前所有商店的商品字典，按 GoodsId 排序使每次打开的陈列顺序一致。
+                Dictionary<int, ShopItemInfo> entries = LubanMgr.Instance.GetShopItemInfos();
+                if (entries != null)
+                {
+                    // 快照保留原配置对象，只陈列当前商店里实际存在的物品。
+                    List<ShopItemInfo> rows = new List<ShopItemInfo>(entries.Values);
+                    for (int index = 0; index < rows.Count; index++)
+                    {
+                        // 货架配置及其对应的物品定义。
+                        ShopItemInfo row = rows[index];
+                        if (row == null || row.ShopId != shop.Id) continue;
+                        ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(row.ItemId);
+                        if (item != null) goods.Add(BuildGoods(row, item));
+                    }
+                }
+            }
         }
-        _shopWindow.ReFreshUI(BuildGoodsViewData(_currentNpc));
+        goods.Sort((left, right) => left.GoodsId.CompareTo(right.GoodsId));
+        _shopWindow.SetGoods(title, goods, opening);
     }
 
-    /// <summary>处理商品点击并打开购买确认弹窗。</summary>
-    /// <param name="goods">玩家点击的商品展示数据。</param>
-    private void OnGoodsClicked(ShopGoodsViewData goods)
+    /// <summary>组装一格商品与其详情，价格、余额和图标使用同一货币物品编号。</summary>
+    /// <param name="row">当前 NPC 货架的商品行。</param>
+    /// <param name="item">购买后实际发放的物品配置。</param>
+    private ShopGoodsViewData BuildGoods(ShopItemInfo row, ItemConfigBase item)
     {
-        if (goods == null)
+        // 非通用货币沿用本身的物品图标和显示名。
+        ItemConfigBase money = LubanMgr.Instance.GetItemConfigById(row.CurrencyItemId);
+        string icon = money?.Icon ?? string.Empty;
+        string currencyName = money?.ItemName ?? "货币 " + row.CurrencyItemId;
+        // 四种通用货币和背包、兑换窗口使用相同的江湖图标。
+        for (int index = 0; index < CurrencyExchangeRule.CurrencyName.Length; index++)
         {
-            return;
+            if (CurrencyExchangeRule.ItemIdOf(index) == row.CurrencyItemId)
+            {
+                currencyName = CurrencyExchangeRule.CurrencyName[index];
+                icon = CurrencyIcons[index];
+                break;
+            }
         }
-        // 当前逻辑只提示已有请求，下面仍会继续打开购买弹窗。
-        if (ShopMgr.Instance.IsPurchasePending())
+        // 包裹持有量包含绑定物品，支付余额遵循 ShopMgr 的可扣款口径。
+        int owned = 0;
+        long balance = 0;
+        if (_items != null)
         {
-            TipsMgr.Instance.ShowSystemTips("购买请求处理中");
-            //return;
+            owned = Math.Max(0, _items.GetItemNum(row.ItemId, ItemBind.kItemBindIs));
+            balance = _items.GetVirtualItemCount(row.CurrencyItemId);
         }
-        if (!goods.IsUnlimitedPurchase && goods.RemainingPurchaseCount <= 0)
+        // 次数限制和角色余额同时约束“满”的份数，服务端逐行使用 int 结算总价。
+        int remaining = ShopMgr.Instance.GetRemainingPurchaseCount(row.GoodsId);
+        int maximum = remaining;
+        if (row.Price > 0)
+            maximum = (int)Math.Min(remaining, Math.Min(balance, int.MaxValue) / row.Price);
+        // 同店内可混售每日限购和永久限购商品，说明按选中商品生成。
+        CountInfo limit = LubanMgr.Instance.GetCountInfo(RoleCountAction.ShopPurchase, row.GoodsId);
+        bool unlimited = limit == null || limit.Limit <= 0;
+        string limitText = "不限购";
+        if (!unlimited)
         {
-            TipsMgr.Instance.ShowSystemTips("该商品已达到限购数量");
-            return;
+            limitText = "还可购买　" + remaining;
+            if (limit.RefreshType == 1) limitText = "今日还可购　" + remaining;
         }
-
-        TipsMgr.Instance.ShowBuyGoodsDialog(null, goods.ProductName, goods.ProductIconPath,
-            goods.Price, goods.CurrencyItemId, goods.CurrencyName, goods.CurrencyIconPath,
-            goods.MaxPurchaseCount, buyCount => OnBuyConfirmed(goods, buyCount));
+        return new ShopGoodsViewData(row.ShopId, row.GoodsId, item.ItemName, item.Icon,
+            row.Price, row.CurrencyItemId, currencyName, icon, remaining, maximum, unlimited)
+        {
+            Description = item.Description,
+            BindAfterPurchase = row.BindAfterPurchase == 1,
+            IsEquipment = item.ItemMainType == ItemMainType.ItemType_Equip,
+            OwnedCount = owned,
+            Balance = balance,
+            LimitText = limitText
+        };
     }
-    #endregion
 
-    #region 事件回调
-    /// <summary>商城可见时检查角色次数是否变化；有变化就重建商品展示并清除标记。</summary>
+    /// <summary>按 CurrencyExchangeRule 的铜币、银两、银票、元宝顺序引用背包现用贴图。</summary>
+    private static readonly string[] CurrencyIcons =
+    {
+        "Icon/Currency/Jianghu_Copper.png", "Icon/Currency/Jianghu_Silver.png",
+        "Icon/Currency/Jianghu_Ticket.png", "Icon/Currency/Jianghu_Yuanbao.png"
+    };
+
+    /// <summary>背包推送到账时更新持有量与可支付份数。</summary>
+    /// <param name="change">触发刷新的背包变更，可能同时影响商品数量和支付余额。</param>
+    private void OnBagChanged(KnapsackChangedEventArgs change)
+    {
+        if (_shopWindow != null && _shopWindow.isActiveAndEnabled) RefreshShopWindow(false);
+    }
+
+    /// <summary>继续沿用次数脏标记接收服务端的限购更新。</summary>
     private void OnShopWindowFrameUpdated()
     {
-        if (_shopWindow == null || !_shopWindow.isActiveAndEnabled)
-        {
-            return;
-        }
-        if (Global.Instance == null || Global.Instance.SceneWorld == null)
-        {
-            return;
-        }
-        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
-        if (role == null || role.DirtyTracker == null)
-        {
-            return;
-        }
-        ClientDirtySnapshot snapshot;
-        if (!role.DirtyTracker.TryGet(ClientDirtyModule.RoleCount, out snapshot))
-        {
-            return;
-        }
-        RefreshShopWindow();
+        // 只有可见商店发出帧事件；次数变化时再重读货架。
+        PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+        if (role == null || role.DirtyTracker == null) return;
+        // 本轮商店次数变化，货架读完后沿用原控制器的清理时机。
+        if (!role.DirtyTracker.TryGet(ClientDirtyModule.RoleCount, out ClientDirtySnapshot snapshot)) return;
+        RefreshShopWindow(false);
         role.DirtyTracker.Clear(ClientDirtyModule.RoleCount);
     }
 
-    /// <summary>把弹窗确认数量提交给商城模型。</summary>
-    /// <param name="goods">打开弹窗时的商品数据。</param>
-    /// <param name="buyCount">用户确认的购买份数。</param>
-    private void OnBuyConfirmed(ShopGoodsViewData goods, int buyCount)
+    /// <summary>右侧购买按钮确认份数后，沿现有商店请求提交。</summary>
+    /// <param name="goods">确认时右侧详情对应的商品。</param>
+    /// <param name="quantity">玩家选择的购买份数。</param>
+    private void OnBuyRequested(ShopGoodsViewData goods, int quantity)
     {
-        // 发送前的参数、限购和货币校验由商城模型统一完成，失败时模型已经提示原因。
-        ShopMgr.Instance.SendBuyRequest(goods.ShopId, goods.GoodsId, buyCount);
+        if (ShopMgr.Instance.IsPurchasePending())
+        {
+            TipsMgr.Instance.ShowSystemTips("购买请求处理中");
+            return;
+        }
+        ShopMgr.Instance.SendBuyRequest(goods.ShopId, goods.GoodsId, quantity);
     }
 
-    /// <summary>显示购买结果提示；本方法不刷新商品，限购刷新由窗口帧事件读取次数变化标记完成。</summary>
-    /// <param name="success">购买是否成功，当前显示逻辑不单独使用。</param>
-    /// <param name="goodsId">本次商品编号，当前显示逻辑不单独使用。</param>
-    /// <param name="message">商城模型生成的结果提示。</param>
+    /// <summary>展示原购买模型返回的结果提示，实际到账由角色背包和次数推送驱动。</summary>
+    /// <param name="success">服务器是否接受本次购买。</param>
+    /// <param name="goodsId">本次回包对应的商品编号。</param>
+    /// <param name="message">购买结果的玩家可读说明。</param>
     private void OnPurchaseCompleted(bool success, int goodsId, string message)
     {
-        // 这里只使用 message 显示提示，success 和 goodsId 当前未参与分支。
         TipsMgr.Instance.ShowSystemTips(message);
     }
-    #endregion
 }

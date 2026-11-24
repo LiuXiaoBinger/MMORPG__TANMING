@@ -939,3 +939,9 @@ The complete working LYF_Game assembly compiled with 0 errors. Isolated Unity 20
 ## [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices
 
 Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. The workspace Editor and Windows Player assemblies compiled. A clean branch client build hit pre-existing MainCtrl.cs CS1519. Migrated the two-column role_count PK after backup, verified role 1 save version 48, deployed GameServer and observed the gateway reconnect. Account relog UI and installation package remain unverified. `项目修改日志/2026-11-23-秘笈物品合成与进阶.md`
+
+## [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification
+
+- The working client compiled with 0 errors and 56 warnings. Unity 2023.2.20f1c1 passed 44 isolated checks using the compiled client, project tables, imported sprites, a test role and UI raycasts. NPC QuQu opened shop 1 with 4 sundries and 12 equipment items. Coverage includes scroll and search, stock and balance updates, four payment IDs, quantities, and the item and count passed by the purchase button.
+- Captures cover 1920×1080, 1366×768 and 2560×1080. The 1366×768 image and layout check confirm the full six-digit price with insufficient funds. A Git-only build before and after the change reproduced the same 11 existing MainCtrl.cs errors on base `5d81aa3`. Live server settlement and a Player build are unverified.
+- Evidence is in `_temp/npc-shop-20261124/`. See `项目修改日志/2026-11-24-NPC商店双栏与分类货架.md` for the manifest and receipts.
