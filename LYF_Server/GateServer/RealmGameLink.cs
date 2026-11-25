@@ -173,6 +173,18 @@ internal sealed class RealmGameLink : NetClient
                 player.LoginRequest = packet.ProtoCode;
                 return true;
             }
+            if(packet.ProtoCode==StallCode.Deal)
+            {
+                // 玩家不能填写内网角色、成交额或持久凭证。
+                StallDeal deal=new StallDeal{Arg=StallDealArg.Parser.ParseFrom(packet.Data)};
+                if(trade!=null && trade.Ready && player.Current!=null)
+                {
+                    deal.Actor=new StallIdentity{RealmId=realm.RealmId,GameId=player.Current.GameId,RoleId=player.Role,SessionId=id};
+                    if(!player.Switching && trade.Send(id,StallCode.Deal,deal.ToByteString()))return true;
+                }
+                deal.Finished=true;deal.Reason=StallCode.Unavailable;
+                SessionMgr.Instance.GetSession(id)?.Send(StallCode.Settled,deal.ToByteString());return true;
+            }
             if (packet.ProtoCode == StallCode.StallSellItemCancel)
             {
                 // 客户端只能指定目标挂牌，区号及角色身份取自已登录会话。
@@ -235,7 +247,7 @@ internal sealed class RealmGameLink : NetClient
             if (!players.TryGetValue(id, out player)) return;
             if (peer == trade)
             {
-                if (packet.ProtoCode == StallCode.Result || packet.ProtoCode == StallCode.StallSellItemCancelResult) SessionMgr.Instance.GetSession(id)?.Send(packet);
+                if (packet.ProtoCode == StallCode.Result || packet.ProtoCode == StallCode.StallSellItemCancelResult || packet.ProtoCode == StallCode.Settled) SessionMgr.Instance.GetSession(id)?.Send(packet);
                 return;
             }
             if (peer == center) { CenterReply(id, player, packet); return; }

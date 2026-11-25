@@ -53,6 +53,7 @@ public class DBMgr:Singleton<DBMgr>
             ,typeof(EquipSpecialSkillTable)
             ,typeof(RoleShopPurchaseTable)
             ,typeof(TradeListingTable)
+            ,typeof(StallReceiptTable)
             ,typeof(RoleCountTable)); //角色通用次数
 
         // 新表建好后再迁移旧 equip 行的特技数值：先保证旧数据保留，再按新模型读写。

@@ -24,6 +24,8 @@ namespace CenterServer
         {
             // 加载 Luban 技能、职业等静态配置表，供建角与查询时读取。
             LubanMgr.Instance.Init();
+            // 共享中心使用实例零生成本库交易凭证与挂牌号。
+            UIDHelper.ConfigureServerInstanceId(0);
 
             // 中心服作为网络服务器监听，接收 LoginServer/GameServer 转发的协议包。
             NetServer server = new NetServer(null);
@@ -50,6 +52,9 @@ namespace CenterServer
             StallLoadCtrl stall = new StallLoadCtrl(db.CurrentConnectionConfig);
             server.RegistCommand(StallCode.Load, stall);
             server.RegistCommand(StallCode.StallSellItemCancelCommit, stall);
+            server.RegistCommand(StallCode.Prepare, stall);
+            server.RegistCommand(StallCode.Resume, stall);
+            server.RegistCommand(StallCode.Abort, stall);
             RedisMgr.Instance.Init();
             
             // 角色模块控制器：处理进入世界回包、背包容量同步、商城购买转发、角色物品快照保存。

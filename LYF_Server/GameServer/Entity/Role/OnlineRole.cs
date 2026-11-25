@@ -567,6 +567,15 @@ public class OnlineRole : IGeneOwner
     /// <summary>原 GS 交接后由目标 GS 装载的运行期信息，仅在首次分线装载使用。</summary>
     internal SceneRoleTransfer IncomingScene;
 
+    /// <summary>本次角色对象已处理的最后一个交易凭证，原单成功重发不再变更背包。</summary>
+    internal long LastStallTicket;
+    /// <summary>保留未获确认的拒绝原因，交易服重连时可解除占用。</summary>
+    internal string StallError = "";
+    /// <summary>普通存档必须先确认，下一份快照才可携带本笔交易。</summary>
+    internal bool StallSaveBusy => _roleNetSender.HasInFlightRequest();
+    /// <summary>角色真实物品变动已在本逻辑帧完成，立即交由中心服原子提交。</summary><param name="ticket">中心凭证号。</param><param name="escrow">新寄售的材料实例。</param>
+    internal void SaveStallAssets(long ticket,RoleItemInfo escrow) { _roleNetSender.SendStall(ticket,escrow); }
+
     /// <summary>请求立即保存脏模块，切线要等既有中心服保存回执后才交出角色。</summary>
     internal void FlushForSceneChange() { _roleNetSender.SendRoleDataToDB(); }
 

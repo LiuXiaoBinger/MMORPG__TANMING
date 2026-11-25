@@ -78,10 +78,12 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.AddEventHandler(StallCode.Result, OnStallResult);
+        SocketDispatcher.Instance.AddEventHandler(StallCode.Settled, OnStallDeal);
         SocketDispatcher.Instance.AddEventHandler(StallCode.StallSellItemCancelResult, OnStallSellItemCancelRsp);
         if (_mainView.TradeMarketWindow != null)
         {
             _mainView.TradeMarketWindow.StallRequested += RequestStall;
+            _mainView.TradeMarketWindow.StallDealRequested += SendStallDeal;
             _mainView.TradeMarketWindow.StallCancelRequested += SendStallSellItemCancelReq;
         }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.List, OnSceneLineList);
@@ -200,10 +202,12 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
+        SocketDispatcher.Instance.RemoveEventHandler(StallCode.Settled, OnStallDeal);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.StallSellItemCancelResult, OnStallSellItemCancelRsp);
         if (_mainView.TradeMarketWindow != null)
         {
             _mainView.TradeMarketWindow.StallRequested -= RequestStall;
+            _mainView.TradeMarketWindow.StallDealRequested -= SendStallDeal;
             _mainView.TradeMarketWindow.StallCancelRequested -= SendStallSellItemCancelReq;
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.List, OnSceneLineList);
@@ -490,6 +494,18 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 事件回调、创建与添加等
+    /// <summary>经游戏网关提交玩家确认的摆摊操作。</summary><param name="request">背包堆或挂牌和本次数量、单价。</param>
+    private void SendStallDeal(StallDealArg request)
+    {
+        MNetClient.Instance.Send(StallCode.Deal, request.ToByteString());
+    }
+
+    /// <summary>将已结算的回执交给打开的商城。</summary><param name="data">网关返回的摆摊结算结果。</param>
+    private void OnStallDeal(ByteString data)
+    {
+        _mainView.TradeMarketWindow?.OnStallDeal(StallDeal.Parser.ParseFrom(data));
+    }
+
     /// <summary>用当前网关连接发起玩家摆摊查询，角色身份由服务端确定。</summary><param name="query">窗口选择的视图、物品与游标。</param>
     private void RequestStall(StallQuery query)
     {

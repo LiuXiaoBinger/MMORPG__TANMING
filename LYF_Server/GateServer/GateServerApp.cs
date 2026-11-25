@@ -138,6 +138,7 @@ namespace GateServer
             GateStallCtrl stall = new GateStallCtrl(router);
             server.RegistCommand(StallCode.Browse, stall);
             server.RegistCommand(StallCode.StallSellItemCancel, stall);
+            server.RegistCommand(StallCode.Deal,stall);
             if (router != null)
             {
                 server.RegistCommand(SceneLineCode.List, gateMoveCtrl);

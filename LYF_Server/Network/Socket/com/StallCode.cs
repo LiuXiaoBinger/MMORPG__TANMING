@@ -19,6 +19,20 @@ public static class StallCode
     public const ushort StallSellItemCancelCommit = 11407;
     /// <summary>卖家撤单操作的最终结果。</summary>
     public const ushort StallSellItemCancelResult = 11408;
+    /// <summary>玩家提交摆摊业务操作。</summary>
+    public const ushort Deal = 11409;
+    /// <summary>中心库准备挂牌和操作回执。</summary>
+    public const ushort Prepare = 11410;
+    /// <summary>交易服要求角色当前宿主执行已准备的资产操作。</summary>
+    public const ushort Apply = 11411;
+    /// <summary>宿主因余额或背包条件不满足而解除占用。</summary>
+    public const ushort Abort = 11412;
+    /// <summary>中心库公布已提交的挂牌版本与玩家回执。</summary>
+    public const ushort Settled = 11413;
+    /// <summary>角色登记后查回之前未完成的业务单。</summary>
+    public const ushort Resume = 11414;
+    /// <summary>本服材料交易使用银两的虚拟物品编号。</summary>
+    public const int Silver = 102;
     /// <summary>交易服务离线或正在恢复时显示给玩家的提示。</summary>
     public const string Unavailable = "本服交易市场暂不可用，请稍后再试。";
 }

@@ -30,6 +30,12 @@ public sealed class TradeListingTable
     public int Status { get; set; }
     /// <summary>持久化挂牌的变更版本。</summary>
     public long ListingVersion { get; set; }
+    /// <summary>已成交尚未领取的税后收入；旧挂单缺省为零。</summary>
+    [SugarColumn(IsNullable = true)] public long? Income { get; set; }
+    /// <summary>持有本挂单操作权的交易单，空值允许下一个操作。</summary>
+    [SugarColumn(IsNullable = true)] public long? PendingTicket { get; set; }
+    /// <summary>累计税金尚不足一银两的万分位尾数，范围零至 9999。</summary>
+    [SugarColumn(IsNullable = true)] public int? TaxRemainder { get; set; }
     /// <summary>成交手续费，以万分比保存。</summary>
     public int FeeBps { get; set; }
     /// <summary>挂单建立的 UTC 时间。</summary>
@@ -46,6 +52,8 @@ public sealed class TradeListingTable
     public byte[] ItemPayload { get; set; }
     /// <summary>托管快照格式版本。</summary>
     public int PayloadVersion { get; set; }
+    /// <summary>托管材料原成本的货币，历史记录可为空。</summary>
+    [SugarColumn(IsNullable = true)] public int? CostCurrency { get; set; }
     /// <summary>仍由市场托管的原始购入成本，以货币最小单位计。</summary>
     public long HeldAcquisitionCost { get; set; }
 }

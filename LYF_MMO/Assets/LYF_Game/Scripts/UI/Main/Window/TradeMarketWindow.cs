@@ -134,12 +134,48 @@ public sealed class TradeMarketWindow : WindowBase
     public event Action<StallQuery> StallRequested;
     /// <summary>当前卖家点选在售行撤单时向控制器提供真实挂牌号。</summary>
     public event Action<long> StallCancelRequested;
-    /// <summary>我的摊位每页三个可点选的寄存行。</summary>
+    /// <summary>我的摊位八个可点选的寄存行。</summary>
     [SerializeField] private Button[] _sellRows;
     /// <summary>与寄存行按序对应，展示单价、余量和可执行操作。</summary>
     [SerializeField] private Text[] _sellLabels;
-    /// <summary>当前页各行对应的在售挂牌号，零表示不可撤。</summary>
-    private readonly long[] _sellListings = new long[3];
+    /// <summary>当前页面点选的交易参数，由 MainCtrl 发送。</summary>
+    public event Action<StallDealArg> StallDealRequested;
+    /// <summary>八格摊位的真实物品图标。</summary>
+    [SerializeField] private Image[] _saleIcons;
+    /// <summary>公开挂单当前页的三个购买按钮和对应标价。</summary>
+    [SerializeField] private Button[] _buyRows;
+    /// <summary>公开行中的价格、余量与购买入口。</summary>
+    [SerializeField] private Text[] _buyLabels;
+    /// <summary>摆摊双栏弹层，覆盖现有窗口。</summary>
+    [SerializeField] private GameObject _dealPanel;
+    /// <summary>单据标题、同类行情、物品名称、结算说明。</summary>
+    [SerializeField] private Text _dealTitle, _dealCompare, _dealName, _dealTotal;
+    /// <summary>选中商品的大图。</summary>
+    [SerializeField] private Image _dealIcon;
+    /// <summary>输入实际单价和交易份数，允许使用键盘。</summary>
+    [SerializeField] private InputField _dealPrice, _dealQuantity;
+    /// <summary>单据主操作与两个业务动作，各自显示当前可做的操作。</summary>
+    [SerializeField] private Button[] _dealButtons;
+    /// <summary>与操作顺序对应的按钮名称。</summary>
+    [SerializeField] private Text[] _dealLabels;
+    /// <summary>减一、加一与上架全部按钮。</summary>
+    [SerializeField] private Button[] _quantityButtons;
+    /// <summary>个人摊位或公开列表当前显示的挂牌。</summary>
+    private readonly StallOffer[] _salePage = new StallOffer[8], _buyPage = new StallOffer[3];
+    /// <summary>正在查看的挂单；新寄售直接使用背包 UID。</summary>
+    private StallOffer _selectedOffer;
+    /// <summary>本单包含的物品、可用数量及操作种类。</summary>
+    private int _dealItem, _dealLimit;
+    /// <summary>新寄售的实际物品堆叠。</summary>
+    private long _dealUid;
+    /// <summary>面板主操作，购买和新上架允许调整份数。</summary>
+    private StallAction _dealAction;
+    /// <summary>已点确认的同一单据使用固定 UUID，收到结果再允许发起下一单。</summary>
+    private string _dealRequest;
+    /// <summary>撤单使用既有协议，回执后解除按钮占用。</summary>
+    private bool _cancelPending;
+    /// <summary>上次更新摊位倒计时的 UTC 分钟，打开面板后每分钟刷新。</summary>
+    private long _saleMinute;
     /// <summary>当前本服目录的真实在售价格与数量，按物品配置索引。</summary>
     private readonly Dictionary<int, StallQuote> _quotes = new Dictionary<int, StallQuote>();
     /// <summary>行情尚在装载或服务不可用时显示的状态。</summary>
@@ -178,7 +214,7 @@ public sealed class TradeMarketWindow : WindowBase
     private void OnEnable()
     {
         _visibility = _catalog.ReadVisibility();
-        _visibleShelves = _visibility.VisibleShelves(_catalog.Shelves);
+        _visibleShelves = _visibility.VisibleShelves(_catalog.StallShelves());
         if (_inventory != null) _inventory.KnapsackChangedDetailed += OnBagChanged;
         Resize();
         RefreshWallet();
@@ -292,6 +328,7 @@ public sealed class TradeMarketWindow : WindowBase
         _expanded = null;
         _search.SetTextWithoutNotify(string.Empty);
         _dialog.Close();
+        CloseDeal();
         _levelMenu.SetActive(false);
         _bagFilterMenu.SetActive(false);
         // 根据当前市场替换顶部标签，顺序与录像一致。
@@ -643,6 +680,7 @@ public sealed class TradeMarketWindow : WindowBase
     private static string CurrencyName(int id)
     {
         // 货币也由统一物品表提供名称。
+        if (id == StallCode.Silver) return "银两";
         ItemConfigBase currency = LubanMgr.Instance.GetItemConfigById(id);
         if (currency != null) return currency.ItemName;
         return "币种" + id;
@@ -667,6 +705,9 @@ public sealed class TradeMarketWindow : WindowBase
         // 没有关联查询的回包表示整个市场断开，清除旧报价。
         if (page.Query == null)
         {
+            _dealRequest = null;
+            _cancelPending = false;
+            CloseDeal();
             _quotes.Clear();
             _quoteState = page.Reason;
             _nextOffer = 0;
@@ -692,7 +733,16 @@ public sealed class TradeMarketWindow : WindowBase
                 StallQuote offer = page.Quotes[0];
                 quote = "本服最低 " + offer.Price + CurrencyName(offer.CurrencyId) + "/件　共 " + offer.Quantity + " 件在售";
             }
-            _dialog.ShowStallQuote(page.Query.ItemId, quote);
+            if (_dealPanel.activeSelf && _dealItem == page.Query.ItemId && _dealAction == StallAction.StallSellItem)
+            {
+                _dealCompare.text = quote;
+                for (int i = 0; i < page.Offers.Count; i++)
+                {
+                    // 行情按交易服给出的价格顺序排列。
+                    StallOffer similar = page.Offers[i];
+                    _dealCompare.text += "\n\n" + similar.Price.ToString("N0") + " 银两 / 件　　 ×" + similar.Quantity;
+                }
+            }
             return;
         }
         if (page.Query.View == StallView.StallSummary)
@@ -714,7 +764,7 @@ public sealed class TradeMarketWindow : WindowBase
         bool own = page.Query.View == StallView.StallOwn;
         if (own && _tab != 1) return;
         if (!own && (_listedItem == null || page.Query.ItemId != _listedItem.ItemId)) return;
-        if (own) ClearSellRows();
+        ClearSellRows();
         _nextOffer = page.NextId;
         // 每页最多三条记录，分页控件在末页提供刷新。
         string action = "刷新";
@@ -735,17 +785,29 @@ public sealed class TradeMarketWindow : WindowBase
             if (own)
             {
                 // 已撤或到期的余货继续显示在本人的寄存页。
-                string state = "已到期 · 待取回";
-                if (row.Status == 3) state = "已撤 · 待取回";
-                if (row.Status == 1) { state = "撤下"; _sellListings[i] = row.ListingId; }
-                if (item == null) label = "物品 " + row.ItemId;
-                _sellLabels[i].text = label + "　×" + row.Quantity + "\n" + row.Price + CurrencyName(row.CurrencyId) + "/件　·　" + state;
-                _sellRows[i].interactable = row.Status == 1;
+                _salePage[i] = row;
+                _sellLabels[i].text = label + "　×" + row.Quantity + "\n" + SaleState(row);
+                _saleIcons[i].sprite = _catalog.GetIcon(row.ItemId);
+                _saleIcons[i].enabled = _saleIcons[i].sprite != null;
+                _sellRows[i].interactable = true;
                 _sellRows[i].gameObject.SetActive(true);
                 continue;
             }
-            if (i > 0) caption += "\n\n";
-            caption += label + "　×" + row.Quantity + "　" + row.Price + CurrencyName(row.CurrencyId) + "/件";
+            _buyPage[i] = row;
+            _buyLabels[i].text = row.Price.ToString("N0") + " " + CurrencyName(row.CurrencyId) + " / 件　　　 剩余 " + row.Quantity + " 件　　　 购买";
+            _buyRows[i].gameObject.SetActive(true);
+        }
+        if (own && page.Reason.Length == 0)
+        {
+            _stallHeading.text = "我的摊位　" + page.Offers.Count + " / 8";
+            caption = "";
+            for (int i = page.Offers.Count; i < _sellRows.Length; i++)
+            {
+                _sellRows[i].gameObject.SetActive(true);
+                _sellRows[i].interactable = false;
+                _sellLabels[i].text = "空摊位";
+                _saleIcons[i].enabled = false;
+            }
         }
         if (own) { _ownLines.text = caption; _ownPager.text = action; }
         else { ShowOfferText(caption, page.Offers.Count > 0); _draftLabel.text = action; }
@@ -757,21 +819,30 @@ public sealed class TradeMarketWindow : WindowBase
         // 每个按钮只可操作自己当前显示的挂牌。
         for (int index = 0; index < _sellRows.Length; index++)
         {
-            _sellListings[index] = 0;
+            _salePage[index] = null;
             _sellRows[index].gameObject.SetActive(false);
+        }
+        for (int i = 0; i < _buyRows.Length; i++)
+        {
+            _buyRows[i].gameObject.SetActive(false);
+            _buyPage[i] = null;
         }
     }
 
     /// <summary>从我的摊位点选一条尚在出售的商品。</summary><param name="index">预制体传入的行序号，从零开始。</param>
     public void CancelSellRow(int index)
     {
-        if (_sellListings[index] > 0) StallCancelRequested?.Invoke(_sellListings[index]);
+        StallOffer row = _salePage[index];
+        if (row == null) return;
+        OpenDeal(StallAction.StallDrawMoney, row.ItemId, row.Quantity, 0, row);
     }
 
     /// <summary>按中心库回执显示结果并刷新自己的货架。</summary><param name="result">包含原挂牌号和业务结果。</param>
     public void OnStallSellItemCancelRsp(StallSellItemCancelRes result)
     {
+        _cancelPending = false;
         if (!isActiveAndEnabled || _market != Market.Stall || _tab != 1) return;
+        CloseDeal();
         // 回执后的最新货架仍从交易服读取。
         string message = result.Reason;
         if (message.Length == 0) message = "挂单 " + result.ListingId + " 已撤下，余货保留在我的摊位。";
@@ -784,7 +855,8 @@ public sealed class TradeMarketWindow : WindowBase
     private void ShowOfferText(string caption, bool hasRows)
     {
         _offerEmptyState.SetActive(!hasRows);
-        _offerLines.gameObject.SetActive(hasRows);
+        _offerLines.gameObject.SetActive(false);
+        if (!hasRows) ClearSellRows();
         if (hasRows) _offerLines.text = caption;
         else _listedEmpty.text = caption;
     }
@@ -883,13 +955,19 @@ public sealed class TradeMarketWindow : WindowBase
                 // 用该堆叠的配置查找实际图标和名称。
                 ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(stack.GetItemID());
                 if (item == null) continue;
+                if (_market == Market.Stall && item.ItemMainType != ItemMainType.ItemType_Material) continue;
+                if (_market == Market.Stall && (stack.GetItemSign() != 0 || stack.GetExpireTime() != DateTime.MinValue)) continue;
                 if (count == _bagCards.Count) _bagCards.Add(Instantiate(_bagTemplate, _bag.content));
                 // 当前堆叠占用的可复用展示格。
                 TradeMarketCard card = _bagCards[count++];
                 // 草稿允许的份数取当前这一堆，在界面整数范围内显示。
                 int amount = (int)Math.Min(int.MaxValue, stack.GetItemCount());
                 card.gameObject.SetActive(true);
-                card.Bind(item, _catalog.GetIcon(item.ItemId), amount.ToString(), () => OpenForm(TradeMarketDialog.Form.Sell, item, amount), false, null, "", null);
+                card.Bind(item, _catalog.GetIcon(item.ItemId), amount.ToString(), () =>
+                {
+                    if (_market == Market.Stall) OpenDeal(StallAction.StallSellItem, item.ItemId, amount, stack.GetItemUID(), null);
+                    else OpenForm(TradeMarketDialog.Form.Sell, item, amount);
+                }, false, null, "", null);
             }
         }
         // i 从首个未用格起收起上一次筛选的多余包裹格。
@@ -916,15 +994,215 @@ public sealed class TradeMarketWindow : WindowBase
     public void ShowInfo(int index)
     {
         if (index == 0) _dialog.Message("交易记录", "暂无交易记录");
-        if (index == 1) _dialog.Message("上架说明", "点包裹物品可查本服最低在售价。在「我的摊位」点在售行可撤单，剩余物品保留在摊位待取回。");
+        if (index == 1) _dialog.Message("上架说明", "选择背包中的未绑定材料，填写数量和单价后上架，有效期为24小时。成交后按每笔金额扣除8%交易税。在我的摊位领取货款，下架或到期的余货可取回或重新上架。");
         if (index == 2) _dialog.Message("积分", "暂无交易积分记录");
     }
+
+    /// <summary>显示卖家最需要处理的状态，保留部分成交后的可提货款。</summary><param name="row">真实托管行。</param>
+    private static string SaleState(StallOffer row)
+    {
+        if (row.Income > 0) return "可提取　" + row.Income.ToString("N0") + " 银两";
+        if (row.Status == 3) return "已下架 · 可取回";
+        // 每次打开或刷新从服务端的绝对截止时间换算。
+        TimeSpan left = DateTimeOffset.FromUnixTimeSeconds(row.ExpiresAt) - DateTimeOffset.UtcNow;
+        if (left.TotalSeconds <= 0) return "已到期 · 可取回";
+        return "在售　" + (int)left.TotalHours + "时" + left.Minutes + "分";
+    }
+
+    /// <summary>打开公开市场上选中的一笔挂牌。</summary><param name="index">同类挂单页内序号。</param>
+    public void OpenBuyRow(int index)
+    {
+        // 每个购买按钮持有服务器刚返回的单价与可买余量。
+        StallOffer row = _buyPage[index];
+        if (row != null) OpenDeal(StallAction.StallItemBuy, row.ItemId, row.Quantity, 0, row);
+    }
+
+    /// <summary>用 RO 面板展示行情与实际物品单据。</summary>
+    /// <param name="action">上架、购买或管理。</param><param name="itemId">材料配置编号。</param>
+    /// <param name="maximum">可操作的真实件数。</param><param name="uid">背包物品 UID。</param><param name="row">公开或个人挂牌。</param>
+    private void OpenDeal(StallAction action, int itemId, int maximum, long uid, StallOffer row)
+    {
+        _selectedOffer = row;
+        _dealUid = uid;
+        _dealAction = action;
+        _dealItem = itemId;
+        _dealLimit = maximum;
+        // 复用商城目录实际加载的道具图标。
+        ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(itemId);
+        if (item == null) return;
+        _dealName.text = item.ItemName;
+        _dealIcon.sprite = _catalog.GetIcon(itemId);
+        _dealIcon.enabled = _dealIcon.sprite != null;
+        _dealPrice.SetTextWithoutNotify("1");
+        if (row != null) _dealPrice.SetTextWithoutNotify(row.Price.ToString());
+        _dealQuantity.SetTextWithoutNotify("1");
+        _dealTitle.text = "上架商品";
+        _dealCompare.text = "正在读取同类挂单…";
+        _dealPrice.interactable = action == StallAction.StallSellItem;
+        _dealQuantity.interactable = action != StallAction.StallDrawMoney;
+        for (int i = 0; i < _quantityButtons.Length; i++)
+            _quantityButtons[i].gameObject.SetActive(_dealQuantity.interactable);
+        for (int i = 0; i < _dealButtons.Length; i++) _dealButtons[i].gameObject.SetActive(false);
+        if (action == StallAction.StallSellItem)
+        {
+            DealButton(0, "确认上架");
+            _dealPanel.SetActive(true);
+            StallRequested?.Invoke(new StallQuery { View = StallView.StallGetPreSellItemInfo, ItemId = itemId });
+        }
+        else if (action == StallAction.StallItemBuy)
+        {
+            _dealTitle.text = "购买商品";
+            _dealCompare.text = "当前挂单\n\n单价　" + row.Price.ToString("N0") + " 银两\n\n在售　" + row.Quantity + " 件";
+            DealButton(0, "确认购买");
+        }
+        else
+        {
+            _dealTitle.text = "我的商品";
+            _dealQuantity.SetTextWithoutNotify(row.Quantity.ToString());
+            _dealCompare.text = SaleState(row) + "\n\n已售　" + row.Sold + " 件\n\n余货　" + row.Quantity + " 件\n\n待领取　" + row.Income.ToString("N0") + " 银两";
+            if (row.Income > 0) DealButton(0, "提取货款");
+            if (row.Quantity > 0)
+            {
+                if (row.Status == 1 && row.ExpiresAt > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) DealButton(1, "下架商品");
+                else
+                {
+                    _dealPrice.interactable = true;
+                    DealButton(1, "取回余货");
+                    DealButton(2, "重新上架");
+                }
+            }
+        }
+        // 按实际可用操作居中，单按钮与双按钮使用相同的点击范围。
+        int shown = 0;
+        for (int i = 0; i < _dealButtons.Length; i++) if (_dealButtons[i].gameObject.activeSelf) shown++;
+        int position = 0;
+        for (int i = 0; i < _dealButtons.Length; i++)
+        {
+            if (!_dealButtons[i].gameObject.activeSelf) continue;
+            RectTransform button = (RectTransform)_dealButtons[i].transform;
+            button.anchoredPosition = new Vector2((position++ - (shown - 1) * 0.5f) * 164f, button.anchoredPosition.y);
+        }
+        _dealPanel.SetActive(true);
+        RefreshDealTotal("");
+    }
+
+    /// <summary>配置当前单据上确实可用的操作。</summary><param name="index">操作序号。</param><param name="label">中文按钮文案。</param>
+    private void DealButton(int index, string label)
+    {
+        _dealLabels[index].text = label;
+        _dealButtons[index].gameObject.SetActive(true);
+        _dealButtons[index].interactable = true;
+    }
+
+    /// <summary>根据数量和单价即时重算玩家看见的金额。</summary><param name="value">输入框变化后的原文。</param>
+    public void RefreshDealTotal(string value)
+    {
+        // 玩家输入期间允许暂时清空；提交时检查正整数和上限。
+        int.TryParse(_dealQuantity.text, out int count);
+        int.TryParse(_dealPrice.text, out int price);
+        long total = (long)count * price;
+        if (_dealAction == StallAction.StallSellItem)
+            _dealTotal.text = "总价　" + total.ToString("N0") + " 银两\n上架费 0　·　成交税 8%　·　有效期 24 小时";
+        else if (_dealAction == StallAction.StallItemBuy)
+            _dealTotal.text = "应付　" + total.ToString("N0") + " 银两\n持有　" + (_inventory?.GetVirtualItemCount(StallCode.Silver) ?? 0).ToString("N0") + " 银两";
+        else _dealTotal.text = "可提取货款　" + _selectedOffer.Income.ToString("N0") + " 银两\n货款已扣除成交税";
+    }
+
+    /// <summary>微调件数或选中这一堆的全部数量。</summary><param name="step">负一减一，正一加一，零选全部。</param>
+    public void SetDealQuantity(int step)
+    {
+        int.TryParse(_dealQuantity.text, out int count);
+        if (step == 0) count = _dealLimit;
+        else count = (int)Math.Max(1L, Math.Min(_dealLimit, (long)count + step));
+        _dealQuantity.text = count.ToString();
+    }
+
+    /// <summary>提交当前按钮所代表的交易；成交前不修改本地钱包或背包。</summary><param name="index">主操作、下架或取回、重新上架。</param>
+    public void SubmitDeal(int index)
+    {
+        if (_dealRequest != null || _cancelPending) return;
+        // 输入的价格和数量分别对应单件银两与件数。
+        int.TryParse(_dealQuantity.text, out int count);
+        int.TryParse(_dealPrice.text, out int price);
+        StallAction action = _dealAction;
+        if (_dealAction == StallAction.StallDrawMoney && index == 1)
+        {
+            if (_selectedOffer.Status == 1 && _selectedOffer.ExpiresAt > DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            {
+                _cancelPending = true;
+                StallCancelRequested?.Invoke(_selectedOffer.ListingId);
+                return;
+            }
+            action = StallAction.StallTakeBack;
+        }
+        if (_dealAction == StallAction.StallDrawMoney && index == 2) action = StallAction.StallReSellItem;
+        if (action != StallAction.StallDrawMoney && action != StallAction.StallTakeBack)
+        {
+            if (count < 1 || count > _dealLimit || price < 1) { _dealTotal.text = "请填写有效的单价和数量。"; return; }
+            if (price > int.MaxValue / count) { _dealTotal.text = "单笔总价超过上限。"; return; }
+        }
+        // 凭证按本次确认生成，回执用于匹配当前单据。
+        _dealRequest = Guid.NewGuid().ToString("N");
+        StallDealArg request = new StallDealArg { RequestId = _dealRequest, Action = action, ItemId = _dealItem, ItemUid = _dealUid, Price = price, Quantity = count };
+        if (_selectedOffer != null) request.ListingId = _selectedOffer.ListingId;
+        _dealTotal.text = "正在结算…";
+        StallDealRequested?.Invoke(request);
+    }
+
+    /// <summary>显示成交结果，重新获取当前真实货架。</summary><param name="deal">交易服对本次操作的终态回执。</param>
+    public void OnStallDeal(StallDeal deal)
+    {
+        if (deal.Arg == null || deal.Arg.RequestId != _dealRequest) return;
+        _dealRequest = null;
+        if (!isActiveAndEnabled || _market != Market.Stall) return;
+        CloseDeal();
+        string message = deal.Reason;
+        if (message.Length == 0)
+        {
+            switch (deal.Arg.Action)
+            {
+                case StallAction.StallSellItem: message = "上架成功　" + deal.Count + " 件\n单价 " + deal.Arg.Price.ToString("N0") + " 银两，有效期 24 小时。"; break;
+                case StallAction.StallItemBuy: message = "购买成功　" + deal.Count + " 件材料已入包\n实付 " + deal.Amount.ToString("N0") + " 银两。"; break;
+                case StallAction.StallDrawMoney: message = "已提取 " + deal.Amount.ToString("N0") + " 银两，已扣除交易税。"; break;
+                case StallAction.StallTakeBack: message = "已取回 " + deal.Count + " 件余货，请在背包中查看。"; break;
+                case StallAction.StallReSellItem: message = "余货已重新上架，有效期 24 小时。"; break;
+            }
+        }
+        if (deal.Arg.Action == StallAction.StallSellItem && deal.Reason.Length == 0) _dialog.SellReceipt(message);
+        else _dialog.Message("交易结果", message);
+        if (_tab == 1) { RefreshBag(); RequestOffers(0); }
+        else if (_tab == 0)
+        {
+            StallRequested?.Invoke(new StallQuery { View = StallView.StallSummary });
+            if (_listedItem != null) RequestOffers(0);
+        }
+    }
+
+    /// <summary>关闭双栏单据，返回原市场页。</summary>
+    public void CloseDeal() => _dealPanel.SetActive(false);
 
     /// <summary>按 Esc 先退弹层、下拉或挂单页，最后离开交易窗口。</summary>
     private void Update()
     {
+        if (_market == Market.Stall && _tab == 1)
+        {
+            // 八格摊位共用一个分钟触发点，避免逐帧重排文本。
+            long minute = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 60;
+            if (minute != _saleMinute)
+            {
+                _saleMinute = minute;
+                for (int i = 0; i < _salePage.Length; i++)
+                {
+                    StallOffer row = _salePage[i];
+                    if (row == null || row.Status != 1) continue;
+                    ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(row.ItemId);
+                    if (item != null) _sellLabels[i].text = item.ItemName + "　×" + row.Quantity + "\n" + SaleState(row);
+                }
+            }
+        }
         if (!Input.GetKeyDown(KeyCode.Escape)) return;
-        if (_dialog.gameObject.activeSelf) _dialog.Close();
+        if (_dealPanel.activeSelf) CloseDeal();
+        else if (_dialog.gameObject.activeSelf) _dialog.Close();
         else if (_levelMenu.activeSelf) _levelMenu.SetActive(false);
         else if (_bagFilterMenu.activeSelf) _bagFilterMenu.SetActive(false);
         else if (_listedItem != null) BackToCatalog();

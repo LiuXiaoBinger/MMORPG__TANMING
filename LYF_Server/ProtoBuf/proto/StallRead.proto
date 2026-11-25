@@ -32,6 +32,9 @@ message StallOffer {
   int32 quantity = 5; // 托管余量。
   int64 expires_at = 6; // 截止 UTC Unix 秒。
   int32 status = 7; // 1 在售、2 售罄、3 已撤、4 到期。
+  int64 income = 9; // 已成交待领取的税后银两。
+  int64 version = 10; // 数据库提交版本，按版本更新货架。
+  int32 sold = 11; // 已售总件数。
   int32 seller_id = 8; // 卖家角色号。
 }
 message StallQuote {
@@ -69,4 +72,35 @@ message StallSellItemCancelForward {
   int64 listing_id = 2; // 属于该角色的挂牌号。
   int32 gate_link = 3; // 交易服本机接收这次请求的网关连接号。
   string reason = 4; // 中心服回送的处理结果。
+}
+
+// RO 本服摆摊操作，撤下仍走原撤单命令。
+enum StallAction {
+  STALL_SELL_ITEM = 0; // 从实际背包格寄售。
+  STALL_ITEM_BUY = 1; // 买入指定挂单的部分或全部。
+  STALL_DRAW_MONEY = 2; // 领取该挂单已结算收益。
+  STALL_TAKE_BACK = 3; // 取回已撤或到期的余货。
+  STALL_RE_SELL_ITEM = 4; // 对已撤或到期的余货重新定价上架。
+}
+message StallDealArg {
+  string request_id = 1; // 客户端为一次确认生成的 UUID。
+  StallAction action = 2; // 本次操作。
+  int64 listing_id = 3; // 购买、领取或重新上架时的挂牌号。
+  int64 item_uid = 4; // 新上架时实际背包堆叠的 UID。
+  int32 item_id = 5; // 新上架时用于核对实例的配置号。
+  int32 quantity = 6; // 上架或购买的件数。
+  int64 price = 7; // 卖家标价或买家所见单价。
+}
+message StallDeal {
+  StallIdentity actor = 1; // 服务端填充的角色路由。
+  StallDealArg arg = 2; // 玩家确认的参数。
+  int32 gate_link = 3; // 原网关内网连接。
+  int64 ticket = 4; // 中心库给本次资产写入分配的单号。
+  StallOffer offer = 5; // 已确认单价与实际托管行。
+  int64 amount = 6; // 本次收付的银两。
+  int32 count = 7; // 本次实际流转的材料件数。
+  string reason = 8; // 中心库或宿主返回的失败原因。
+  bool finished = 9; // 已有终态，可直接返回玩家。
+  int64 held_cost = 10; // 本次流转的原购成本。
+  int32 money_type = 11; // 托管材料的成本货币。
 }

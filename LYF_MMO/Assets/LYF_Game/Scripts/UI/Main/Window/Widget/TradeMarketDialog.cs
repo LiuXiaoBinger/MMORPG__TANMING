@@ -62,6 +62,25 @@ public sealed class TradeMarketDialog : MonoBehaviour
     [SerializeField] private Text _bidItem;
     /// <summary>当前草稿的银票出价。</summary>
     [SerializeField] private Text _bidPrice;
+    /// <summary>上架成功提示内的七天免提示按钮。</summary>
+    [SerializeField] private Button _muteSellReceipt;
+    /// <summary>将同一设备的上架提示静默至指定 UTC 秒。</summary>
+    private const string SellReceiptUntil = "Stall.SellReceiptUntil";
+    /// <summary>按设备偏好显示上架成功提示。</summary><param name="message">本次真实上架件数和价格。</param>
+    public void SellReceipt(string message)
+    {
+        long.TryParse(PlayerPrefs.GetString(SellReceiptUntil), out long until);
+        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() < until) return;
+        Message("上架成功", message);
+        _muteSellReceipt.gameObject.SetActive(true);
+    }
+    /// <summary>七天内免去成功上架的弹窗，失败和领钱仍显示。</summary>
+    public void MuteSellReceipt()
+    {
+        PlayerPrefs.SetString(SellReceiptUntil, DateTimeOffset.UtcNow.AddDays(7).ToUnixTimeSeconds().ToString());
+        PlayerPrefs.Save();
+        Close();
+    }
     /// <summary>当前查看的表配置，为来源按钮提供说明。</summary>
     private ItemConfigBase _item;
     /// <summary>当前单据类型。</summary>
@@ -91,6 +110,7 @@ public sealed class TradeMarketDialog : MonoBehaviour
     /// <param name="message">当前无记录的原因或规则正文。</param>
     public void Message(string heading, string message)
     {
+        _muteSellReceipt.gameObject.SetActive(false);
         _title.text = heading;
         _messageText.text = message;
         _itemPanel.SetActive(false);

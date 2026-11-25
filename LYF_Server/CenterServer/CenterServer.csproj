@@ -117,7 +117,9 @@
     <Compile Include="Ctrl\CenterRoleCtrl.cs" />
     <Compile Include="OnlineRealmDirectory.cs" />
     <Compile Include="Ctrl\StallLoadCtrl.cs" />
+    <Compile Include="Ctrl\StallSettlement.cs" />
     <Compile Include="DB\Table\TradeListingTable.cs" />
+    <Compile Include="DB\Table\StallReceiptTable.cs" />
     <Compile Include="Ctrl\Center_LoginCtrl.cs" />
     <Compile Include="DB\DBMgr.cs" />
     <Compile Include="DB\Modle\CentRoleModel.cs" />

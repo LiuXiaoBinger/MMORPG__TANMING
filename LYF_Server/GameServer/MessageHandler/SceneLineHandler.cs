@@ -111,6 +111,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
     internal static void FlushDepartures()
     {
         if (active == null) return;
+        active.trade?.Update();
         for (int index = active.loggingOut.Count - 1; index >= 0; index--)
         {
             // 正常离线已经走原保存流程，中心服确认后向调度归还角色名额。

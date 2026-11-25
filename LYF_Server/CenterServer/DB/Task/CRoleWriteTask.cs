@@ -235,6 +235,22 @@ public sealed class CRoleWriteTask
     /// <param name="db">SqlSugar 数据库客户端，事务由此对象管理。</param>
     public void Execute(SqlSugarClient db)
     {
+        if (_request != null && _request.StallTicket != 0)
+        {
+            lock (StallSettlement.Sync)
+            {
+                // 从持久凭证恢复已授权的参数，不接受客户端提供的资产金额。
+                StallDeal deal = StallSettlement.Load(db,_request);
+                ExecuteSnapshot(db,deal);
+            }
+            return;
+        }
+        ExecuteSnapshot(db,null);
+    }
+
+    /// <summary>把角色快照及可选的摆摊操作作为一次版本提交。</summary><param name="db">中心主循环连接。</param><param name="deal">普通存档为空。</param>
+    private void ExecuteSnapshot(SqlSugarClient db,StallDeal deal)
+    {
         // 构造默认失败回包，成功路径会覆盖 CmdCode。
         int roleId = 0;
         long version = 0L;
@@ -282,6 +298,7 @@ public sealed class CRoleWriteTask
 
                 // 内容一致：视为幂等重试，直接提交空事务返回成功。
                 db.Ado.CommitTran();
+                StallSettlement.Publish(deal);
                 result.CmdCode = CmdCode.Succeed;
                 result.PersistedVersion = role.ItemSaveVersion;
                 Reply(result);
@@ -314,6 +331,7 @@ public sealed class CRoleWriteTask
             {
                 throw new InvalidOperationException("角色物品版本更新失败");
             }
+            StallSettlement.Commit(db,deal,_request.StallEscrow);
             // 全部写入成功后提交事务。
             db.Ado.CommitTran();
             result.CmdCode = CmdCode.Succeed;
@@ -336,6 +354,7 @@ public sealed class CRoleWriteTask
                 result.Version + ": " + ex, LogMsgType.Error);
         }
 
+        if (result.CmdCode == CmdCode.Succeed) StallSettlement.Publish(deal);
         // 无论成功或失败，最终都向 GameServer 回包。
         Reply(result);
     }

@@ -44,30 +44,32 @@ public static partial class RequestEntityReflection {
           "Y2tfdHlwZRgDIAEoBSJdChhTeW5jS25hcHNhY2tHcmlkQ291bnRSZXESDwoH",
           "cm9sZV9pZBgBIAEoBRIZChFvcGVuZWRfZ3JpZF9jb3VudBgCIAEoBRIVCg1r",
           "bmFwc2Fja190eXBlGAMgASgFIj4KDEl0ZW1EYXRhTGlzdBIQCghiYWdfdHlw",
-          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyLSAQoPU2F2",
-          "ZVJvbGVEYXRhUmVxEg8KB3JvbGVfaWQYASABKAUSDwoHdmVyc2lvbhgCIAEo",
-          "AxImCg9pdGVtX2RhdGFfbGlzdHMYAyADKAsyDS5JdGVtRGF0YUxpc3QSLAoU",
-          "cm9sZV9jb3VudF9pbmZvX2xpc3QYBSADKAsyDi5Sb2xlQ291bnRJbmZvEhsK",
-          "E3JvbGVfY291bnRfc25hcHNob3QYBiABKAgSJAoMc2tpbGxfbGV2ZWxzGAcg",
-          "AygLMg4uUm9sZVNraWxsSW5mb0oECAQQBSIyCgtCdXlTaG9wSXRlbRIQCghn",
-          "b29kc19pZBgBIAEoDRIRCglidXlfY291bnQYAiABKA0iTwoOQnV5U2hvcEl0",
-          "ZW1SZXESDwoHc2hvcF9pZBgBIAEoDRIbCgVpdGVtcxgCIAMoCzIMLkJ1eVNo",
-          "b3BJdGVtEg8KB3JvbGVfaWQYBSABKA0iiwEKEE1vdmVPcGVyYXRpb25SZXES",
-          "CgoCZHgYASABKAISCgoCZHkYAiABKAISCgoCZHoYAyABKAISDAoEZmFjZRgE",
-          "IAEoAhIMCgR0aW1lGAUgASgCEhEKCWlzX21vdmluZxgGIAEoCBIQCghpc19t",
-          "b3ZlZBgHIAEoCBISCgpqdW1wX2NvdW50GAggASgFIiIKDUNyZWF0ZVRlYW1B",
-          "cmcSEQoJdGFyZ2V0X2lkGAEgASgFIiQKEUludml0ZUpvaW5UZWFtQXJnEg8K",
-          "B3VzZXJfaWQYASABKAQiTQoXQWNjZXB0VGVhbUludmF0YXRpb25BcmcSDwoH",
-          "dGVhbV9pZBgBIAEoBBISCgppbnZpdGVyX2lkGAIgASgEEg0KBWFncmVlGAMg",
-          "ASgIIh8KDExlYXZlVGVhbUFyZxIPCgdyb2xlX2lkGAEgASgEIicKFEJlZ0lu",
-          "VGVhbUJ5VGVhbUlkQXJnEg8KB3RlYW1faWQYASABKAQicgoYQ2FwdGFpblJl",
-          "cXVlc3RFbnRlckZCQXJnEhIKCmR1bmdlb25faWQYASABKAUSEgoKY2hhcHRl",
-          "cl9pZBgCIAEoBRIXCg9kdW5nZW9uc19kZWdyZWUYAyABKAUSFQoNZHVuZ2Vv",
-          "bl9sYXllchgEIAEoBSLIAQoRRXF1aXBPcGVyYXRpb25SZXESEAoIaXRlbV91",
-          "aWQYASABKAMSIgoJb3BlcmF0aW9uGAIgASgOMg8uRXF1aXBPcGVyYXRpb24S",
-          "GwoTc3BlY2lhbF9za2lsbF9pbmRleBgDIAEoBRIYChBnZW1fc29ja2V0X2lu",
-          "ZGV4GAQgASgFEhMKC2dlbV9pdGVtX2lkGAUgASgFEhYKDmJhZ19nZW1fY291",
-          "bnRzGAYgAygFEhkKEW1hcmtldF9nZW1fY291bnRzGAcgAygFYgZwcm90bzM="));
+          "ZRgBIAEoBRIcCgVpdGVtcxgCIAMoCzINLlJvbGVJdGVtSW5mbyKNAgoPU2F2",
+          "ZVJvbGVEYXRhUmVxEhQKDHN0YWxsX3RpY2tldBgIIAEoAxIjCgxzdGFsbF9l",
+          "c2Nyb3cYCSABKAsyDS5Sb2xlSXRlbUluZm8SDwoHcm9sZV9pZBgBIAEoBRIP",
+          "Cgd2ZXJzaW9uGAIgASgDEiYKD2l0ZW1fZGF0YV9saXN0cxgDIAMoCzINLkl0",
+          "ZW1EYXRhTGlzdBIsChRyb2xlX2NvdW50X2luZm9fbGlzdBgFIAMoCzIOLlJv",
+          "bGVDb3VudEluZm8SGwoTcm9sZV9jb3VudF9zbmFwc2hvdBgGIAEoCBIkCgxz",
+          "a2lsbF9sZXZlbHMYByADKAsyDi5Sb2xlU2tpbGxJbmZvSgQIBBAFIjIKC0J1",
+          "eVNob3BJdGVtEhAKCGdvb2RzX2lkGAEgASgNEhEKCWJ1eV9jb3VudBgCIAEo",
+          "DSJPCg5CdXlTaG9wSXRlbVJlcRIPCgdzaG9wX2lkGAEgASgNEhsKBWl0ZW1z",
+          "GAIgAygLMgwuQnV5U2hvcEl0ZW0SDwoHcm9sZV9pZBgFIAEoDSKLAQoQTW92",
+          "ZU9wZXJhdGlvblJlcRIKCgJkeBgBIAEoAhIKCgJkeRgCIAEoAhIKCgJkehgD",
+          "IAEoAhIMCgRmYWNlGAQgASgCEgwKBHRpbWUYBSABKAISEQoJaXNfbW92aW5n",
+          "GAYgASgIEhAKCGlzX21vdmVkGAcgASgIEhIKCmp1bXBfY291bnQYCCABKAUi",
+          "IgoNQ3JlYXRlVGVhbUFyZxIRCgl0YXJnZXRfaWQYASABKAUiJAoRSW52aXRl",
+          "Sm9pblRlYW1BcmcSDwoHdXNlcl9pZBgBIAEoBCJNChdBY2NlcHRUZWFtSW52",
+          "YXRhdGlvbkFyZxIPCgd0ZWFtX2lkGAEgASgEEhIKCmludml0ZXJfaWQYAiAB",
+          "KAQSDQoFYWdyZWUYAyABKAgiHwoMTGVhdmVUZWFtQXJnEg8KB3JvbGVfaWQY",
+          "ASABKAQiJwoUQmVnSW5UZWFtQnlUZWFtSWRBcmcSDwoHdGVhbV9pZBgBIAEo",
+          "BCJyChhDYXB0YWluUmVxdWVzdEVudGVyRkJBcmcSEgoKZHVuZ2Vvbl9pZBgB",
+          "IAEoBRISCgpjaGFwdGVyX2lkGAIgASgFEhcKD2R1bmdlb25zX2RlZ3JlZRgD",
+          "IAEoBRIVCg1kdW5nZW9uX2xheWVyGAQgASgFIsgBChFFcXVpcE9wZXJhdGlv",
+          "blJlcRIQCghpdGVtX3VpZBgBIAEoAxIiCglvcGVyYXRpb24YAiABKA4yDy5F",
+          "cXVpcE9wZXJhdGlvbhIbChNzcGVjaWFsX3NraWxsX2luZGV4GAMgASgFEhgK",
+          "EGdlbV9zb2NrZXRfaW5kZXgYBCABKAUSEwoLZ2VtX2l0ZW1faWQYBSABKAUS",
+          "FgoOYmFnX2dlbV9jb3VudHMYBiADKAUSGQoRbWFya2V0X2dlbV9jb3VudHMY",
+          "ByADKAViBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { global::ResultEntityReflection.Descriptor, },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -86,7 +88,7 @@ public static partial class RequestEntityReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::OpenKnapsackGridReq), global::OpenKnapsackGridReq.Parser, new[]{ "RoleId", "OpenGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::SyncKnapsackGridCountReq), global::SyncKnapsackGridCountReq.Parser, new[]{ "RoleId", "OpenedGridCount", "KnapsackType" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::ItemDataList), global::ItemDataList.Parser, new[]{ "BagType", "Items" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::SaveRoleDataReq), global::SaveRoleDataReq.Parser, new[]{ "StallTicket", "StallEscrow", "RoleId", "Version", "ItemDataLists", "RoleCountInfoList", "RoleCountSnapshot", "SkillLevels" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItem), global::BuyShopItem.Parser, new[]{ "GoodsId", "BuyCount" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::BuyShopItemReq), global::BuyShopItemReq.Parser, new[]{ "ShopId", "Items", "RoleId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::MoveOperationReq), global::MoveOperationReq.Parser, new[]{ "Dx", "Dy", "Dz", "Face", "Time", "IsMoving", "IsMoved", "JumpCount" }, null, null, null, null),
@@ -4040,6 +4042,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public SaveRoleDataReq(SaveRoleDataReq other) : this() {
+    stallTicket_ = other.stallTicket_;
+    stallEscrow_ = other.stallEscrow_ != null ? other.stallEscrow_.Clone() : null;
     roleId_ = other.roleId_;
     version_ = other.version_;
     itemDataLists_ = other.itemDataLists_.Clone();
@@ -4053,6 +4057,36 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public SaveRoleDataReq Clone() {
     return new SaveRoleDataReq(this);
+  }
+
+  /// <summary>Field number for the "stall_ticket" field.</summary>
+  public const int StallTicketFieldNumber = 8;
+  private long stallTicket_;
+  /// <summary>
+  /// 摆摊资产变更和本次角色快照在同一事务内提交。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long StallTicket {
+    get { return stallTicket_; }
+    set {
+      stallTicket_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "stall_escrow" field.</summary>
+  public const int StallEscrowFieldNumber = 9;
+  private global::RoleItemInfo stallEscrow_;
+  /// <summary>
+  /// 新寄售时保存的实际材料快照。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::RoleItemInfo StallEscrow {
+    get { return stallEscrow_; }
+    set {
+      stallEscrow_ = value;
+    }
   }
 
   /// <summary>Field number for the "role_id" field.</summary>
@@ -4157,6 +4191,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
     if (ReferenceEquals(other, this)) {
       return true;
     }
+    if (StallTicket != other.StallTicket) return false;
+    if (!object.Equals(StallEscrow, other.StallEscrow)) return false;
     if (RoleId != other.RoleId) return false;
     if (Version != other.Version) return false;
     if(!itemDataLists_.Equals(other.itemDataLists_)) return false;
@@ -4170,6 +4206,8 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
+    if (StallTicket != 0L) hash ^= StallTicket.GetHashCode();
+    if (stallEscrow_ != null) hash ^= StallEscrow.GetHashCode();
     if (RoleId != 0) hash ^= RoleId.GetHashCode();
     if (Version != 0L) hash ^= Version.GetHashCode();
     hash ^= itemDataLists_.GetHashCode();
@@ -4209,6 +4247,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteBool(RoleCountSnapshot);
     }
     skillLevels_.WriteTo(output, _repeated_skillLevels_codec);
+    if (StallTicket != 0L) {
+      output.WriteRawTag(64);
+      output.WriteInt64(StallTicket);
+    }
+    if (stallEscrow_ != null) {
+      output.WriteRawTag(74);
+      output.WriteMessage(StallEscrow);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -4234,6 +4280,14 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
       output.WriteBool(RoleCountSnapshot);
     }
     skillLevels_.WriteTo(ref output, _repeated_skillLevels_codec);
+    if (StallTicket != 0L) {
+      output.WriteRawTag(64);
+      output.WriteInt64(StallTicket);
+    }
+    if (stallEscrow_ != null) {
+      output.WriteRawTag(74);
+      output.WriteMessage(StallEscrow);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -4244,6 +4298,12 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
+    if (StallTicket != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(StallTicket);
+    }
+    if (stallEscrow_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(StallEscrow);
+    }
     if (RoleId != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoleId);
     }
@@ -4267,6 +4327,15 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
   public void MergeFrom(SaveRoleDataReq other) {
     if (other == null) {
       return;
+    }
+    if (other.StallTicket != 0L) {
+      StallTicket = other.StallTicket;
+    }
+    if (other.stallEscrow_ != null) {
+      if (stallEscrow_ == null) {
+        StallEscrow = new global::RoleItemInfo();
+      }
+      StallEscrow.MergeFrom(other.StallEscrow);
     }
     if (other.RoleId != 0) {
       RoleId = other.RoleId;
@@ -4323,6 +4392,17 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
           skillLevels_.AddEntriesFrom(input, _repeated_skillLevels_codec);
           break;
         }
+        case 64: {
+          StallTicket = input.ReadInt64();
+          break;
+        }
+        case 74: {
+          if (stallEscrow_ == null) {
+            StallEscrow = new global::RoleItemInfo();
+          }
+          input.ReadMessage(StallEscrow);
+          break;
+        }
       }
     }
   #endif
@@ -4364,6 +4444,17 @@ public sealed partial class SaveRoleDataReq : pb::IMessage<SaveRoleDataReq>
         }
         case 58: {
           skillLevels_.AddEntriesFrom(ref input, _repeated_skillLevels_codec);
+          break;
+        }
+        case 64: {
+          StallTicket = input.ReadInt64();
+          break;
+        }
+        case 74: {
+          if (stallEscrow_ == null) {
+            StallEscrow = new global::RoleItemInfo();
+          }
+          input.ReadMessage(StallEscrow);
           break;
         }
       }

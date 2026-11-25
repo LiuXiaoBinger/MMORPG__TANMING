@@ -103,12 +103,23 @@ public sealed class RoleNetSender
             return;
         }
 
+        if (_inFlightRequest.StallTicket!=0) _role.GetComponent<RoItemComponent>().NotifyItemChanges();
         _role.OnRoleDataSaved(result.Version);
         _inFlightRequest = null;
         _inFlightMilliseconds = 0;
 
         // 在途期间产生的新版本不能再等待下一个 60 秒周期，旧版本确认后立即续发。
         SendRoleDataToDB();
+    }
+
+    /// <summary>把已授权交易与本帧背包变化绑在同一在途请求，沿用存档的原版本重试。</summary>
+    /// <param name="ticket">中心准备的操作号。</param><param name="escrow">新寄售的实际物品快照。</param>
+    internal void SendStall(long ticket,RoleItemInfo escrow)
+    {
+        _inFlightRequest=_role.SaveAllMoudle();
+        _inFlightRequest.StallTicket=ticket;
+        if(escrow!=null)_inFlightRequest.StallEscrow=escrow;
+        SendInFlightRequest();
     }
 
     /// <summary>存在已生成但尚未收到成功确认的保存请求时返回 true。</summary>

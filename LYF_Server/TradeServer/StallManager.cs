@@ -26,6 +26,7 @@ internal sealed class StallManager : IContainer
         this.realm = realm;
         center = new NetClient(realm.CenterHost, realm.CenterPort, ClientType.TradeServer);
         center.RegistCommand(StallCode.Load, this);
+        center.RegistCommand(StallCode.Settled,this);
         center.RegistCommand(StallCode.StallSellItemCancelCommit, this);
         center.OnConnSucceed = () => { lock (goods) { Reset(); Next(0); } };
         center.OnConnFailed = () => { lock (goods) Reset(); };
@@ -42,6 +43,22 @@ internal sealed class StallManager : IContainer
     /// <param name="link">存档中心连接。</param><param name="packet">已提交挂单分页。</param>
     public void OnClientCommand(BaseLink link, BasePackage packet)
     {
+        if (packet.ProtoCode == StallCode.Settled)
+        {
+            // 准备好的指令送给当前宿主，终态按版本更新共享货架。
+            StallDeal deal=StallDeal.Parser.ParseFrom(packet.Data);
+            lock(goods)
+            {
+                if (deal.Finished)
+                {
+                    if(deal.Offer!=null && deal.Reason.Length==0) Upsert(deal.Offer);
+                    if (Online(deal.Actor)) SessionMgr.Instance.GetSession(deal.GateLink)?.Send(deal.Actor.SessionId,StallCode.Settled,deal.ToByteString());
+                }
+                else if(Online(deal.Actor))
+                    SessionMgr.Instance.GetSession(hosts[deal.Actor.GameId])?.Send(StallCode.Apply,deal.ToByteString());
+            }
+            return;
+        }
         if (packet.ProtoCode == StallCode.StallSellItemCancelCommit)
         {
             // 中心库已处理的结果，内存货架仅在落库成功后撤下该行。
@@ -63,10 +80,7 @@ internal sealed class StallManager : IContainer
             {
                 // 记录按主键递增返回，卖家索引保留稳定顺序。
                 StallOffer row = page.Offers[i];
-                if (!goods.ContainsKey(row.ItemId)) goods.Add(row.ItemId, new List<StallOffer>());
-                if (!sellers.ContainsKey(row.SellerId)) sellers.Add(row.SellerId, new List<StallOffer>());
-                goods[row.ItemId].Add(row);
-                sellers[row.SellerId].Add(row);
+                Upsert(row);
             }
             if (page.More) { Next(page.AfterId); return; }
             // 同价按主键排序，单品页始终可使用挂牌号恢复位置。
@@ -78,6 +92,15 @@ internal sealed class StallManager : IContainer
                 return a.ListingId.CompareTo(b.ListingId);
             });
             ready = true;
+            // 中心服迟于角色路由恢复时，补查已登记角色的未完成凭证。
+            List<int> nodes=hosts.Keys.ToList();
+            for(int n=0;n<nodes.Count;n++)
+            {
+                Dictionary<int,int> online=roles[hosts[nodes[n]]];
+                List<int> ids=online.Keys.ToList();
+                for(int i=0;i<ids.Count;i++)
+                    center.Send(StallCode.Resume,new StallDeal{Actor=new StallIdentity{RealmId=realm.RealmId,GameId=nodes[n],RoleId=ids[i],SessionId=online[ids[i]]},Arg=new StallDealArg()}.ToByteString());
+            }
         }
     }
     /// <summary>交易服只接受已配置节点的登记以及与角色归属相符的网关查询。</summary>
@@ -88,6 +111,20 @@ internal sealed class StallManager : IContainer
         int connection = ((Session)link).SessionID;
         lock (goods)
         {
+            if(packet.ProtoCode==StallCode.Deal || packet.ProtoCode==StallCode.Abort)
+            {
+                // 网关只提供已认证身份和业务参数，中心路由号由本进程赋值。
+                StallDeal d=StallDeal.Parser.ParseFrom(packet.Data);
+                if(packet.ProtoCode==StallCode.Abort)
+                {
+                    if(BoundHost(d.Actor,connection))center.Send(StallCode.Abort,d.ToByteString());
+                    return;
+                }
+                d.GateLink=connection;
+                if(ready && Online(d.Actor) && center.Send(StallCode.Prepare,d.ToByteString()))return;
+                d.Reason=StallCode.Unavailable;d.Finished=true;
+                link.Send(d.Actor.SessionId,StallCode.Settled,d.ToByteString());return;
+            }
             if (packet.ProtoCode == StallCode.StallSellItemCancel)
             {
                 // 实际来源连接由交易服填入，中心回执才能送回原网关。
@@ -112,7 +149,11 @@ internal sealed class StallManager : IContainer
                     return;
                 }
                 if (!BoundHost(actor, connection)) return;
-                if (packet.ProtoCode == StallCode.Bind) roles[connection][actor.RoleId] = actor.SessionId;
+                if (packet.ProtoCode == StallCode.Bind)
+                {
+                    roles[connection][actor.RoleId] = actor.SessionId;
+                    center.Send(StallCode.Resume,new StallDeal{Actor=actor,Arg=new StallDealArg()}.ToByteString());
+                }
                 else roles[connection].Remove(actor.RoleId);
                 return;
             }
@@ -125,6 +166,24 @@ internal sealed class StallManager : IContainer
             link.Send(packet.UnitySessionId, StallCode.Result, result.ToByteString());
         }
     }
+    /// <summary>初次加载和交易回执共用按版本替换的索引。</summary><param name="offer">中心库提交的挂牌。</param>
+    private void Upsert(StallOffer offer)
+    {
+        // 旧版本的重放不覆盖后来的购买或领取。
+        StallOffer old = FindOwnOffer(offer.SellerId,offer.ListingId);
+        if(old!=null && old.Version>=offer.Version)return;
+        if(!goods.ContainsKey(offer.ItemId))goods.Add(offer.ItemId,new List<StallOffer>());
+        if(!sellers.ContainsKey(offer.SellerId))sellers.Add(offer.SellerId,new List<StallOffer>());
+        if(old!=null){goods[old.ItemId].Remove(old);sellers[old.SellerId].Remove(old);}
+        if(offer.Quantity==0 && offer.Income==0)return;
+        goods[offer.ItemId].Add(offer); sellers[offer.SellerId].Add(offer);
+        if(ready)
+        {
+            goods[offer.ItemId].Sort((left,right)=>{int price=left.Price.CompareTo(right.Price);if(price!=0)return price;return left.ListingId.CompareTo(right.ListingId);});
+            sellers[offer.SellerId].Sort((left,right)=>left.ListingId.CompareTo(right.ListingId));
+        }
+    }
+
     /// <summary>在当前卖家的寄存记录中匹配指定挂牌号。</summary>
     /// <param name="role">已登录卖家编号。</param><param name="listing">要操作的挂牌号。</param>
     private StallOffer FindOwnOffer(int role, long listing)
@@ -199,7 +258,17 @@ internal sealed class StallManager : IContainer
         {
             // 本项目以本区实时最低挂牌价供卖家参考，无在售量时不返回虚构报价。
             StallQuote quote = GetStallItemSellBasePrice(query.ItemId, now);
-            if (quote.Quantity > 0) result.Quotes.Add(quote);
+            if (quote.Quantity > 0)
+            {
+                result.Quotes.Add(quote);
+                // 预售面板按当前最低单价列出前三笔可买的真实挂单。
+                List<StallOffer> similar = goods[query.ItemId];
+                for (int i = 0; i < similar.Count && result.Offers.Count < 3; i++)
+                {
+                    StallOffer row = similar[i];
+                    if (row.Status == 1 && row.ExpiresAt > now) result.Offers.Add(row);
+                }
+            }
             return;
         }
         if (query.View == StallView.StallSummary)
@@ -233,7 +302,14 @@ internal sealed class StallManager : IContainer
             // 展示层只需每页三条，不暴露可写的托管快照。
             StallOffer row = offers[i];
             if (query.View == StallView.StallOffers && (row.Status != 1 || row.ExpiresAt <= now)) continue;
-            if (result.Offers.Count == 3) { result.NextId = result.Offers[2].ListingId; break; }
+            // 新角色最多八个托管位，历史超量的卖家仍可翻页逐笔处理。
+            int pageSize = 3;
+            if (query.View == StallView.StallOwn) pageSize = 8;
+            if (result.Offers.Count == pageSize)
+            {
+                result.NextId = result.Offers[pageSize - 1].ListingId;
+                break;
+            }
             if (row.Status == 1 && row.ExpiresAt <= now) { row = row.Clone(); row.Status = 4; }
             result.Offers.Add(row);
         }

@@ -16,6 +16,8 @@ internal static class TradeServerApp
         NetServer server = new NetServer(null);
         server.RegistCommand(StallCode.Read, market);
         server.RegistCommand(StallCode.StallSellItemCancel, market);
+        server.RegistCommand(StallCode.Deal,market);
+        server.RegistCommand(StallCode.Abort,market);
         server.RegistCommand(StallCode.Bind, market);
         server.RegistCommand(StallCode.Unbind, market);
         server.OnSessionDisconnected = market.Disconnected;

@@ -20,16 +20,28 @@ internal sealed class StallLoadCtrl : IContainer
     /// <param name="link">发起装载的内网交易服。</param><param name="packet">区号和上一页末挂牌号。</param>
     public void OnServerCommand(BaseLink link, BasePackage packet)
     {
+        if (packet.ProtoCode == StallCode.Prepare || packet.ProtoCode == StallCode.Resume || packet.ProtoCode == StallCode.Abort)
+        {
+            // 玩家身份已经由交易服核对，只有中心库能生成可扣款的凭证。
+            StallDeal requestDeal = StallDeal.Parser.ParseFrom(packet.Data);
+            using (SqlSugarClient db = new SqlSugarClient(config))
+            {
+                StallDeal reply = StallSettlement.Handle(db, requestDeal, packet.ProtoCode);
+                if (reply != null) link.Send(StallCode.Settled,reply.ToByteString());
+            }
+            return;
+        }
         if (packet.ProtoCode == StallCode.StallSellItemCancelCommit)
         {
             // 协议解析沿用网络层约定，只有数据库调用处理 I/O 错误。
             StallSellItemCancelForward cancel = StallSellItemCancelForward.Parser.ParseFrom(packet.Data);
-            cancel.Reason = StallSellItemCancel(cancel);
+            lock (StallSettlement.Sync) cancel.Reason = StallSellItemCancel(cancel);
             link.Send(StallCode.StallSellItemCancelCommit, cancel.ToByteString());
             return;
         }
         // 每条查询均重新构造结果，忽略调用方传入的显示字段。
         StallLoadPage request = StallLoadPage.Parser.ParseFrom(packet.Data);
+        StallSettlement.Subscribe(request.RealmId,link);
         // 稳定按挂牌号读取，防止不同区服之间串货。
         StallLoadPage page = new StallLoadPage { RealmId = request.RealmId };
         using (SqlSugarClient db = new SqlSugarClient(config))
@@ -37,10 +49,10 @@ internal sealed class StallLoadCtrl : IContainer
             // 只取浏览所需的列；额外一行用来判断是否还有下一批。
             var rows = db.Queryable<TradeListingTable>()
                 .Where(row => row.ServerId == request.RealmId && row.MarketType == 0)
-                .Where(row => row.HeldQty > 0 && row.ListingId > request.AfterId)
+                .Where(row => row.HeldQty > 0 || row.Income > 0).Where(row => row.ListingId > request.AfterId)
                 .OrderBy(row => row.ListingId).Take(PageSize + 1)
                 .Select(row => new { row.ListingId, row.ItemTypeId, row.CurrencyItemId, row.UnitPrice,
-                    row.HeldQty, row.ExpiresAt, row.Status, row.SellerRoleId }).ToList();
+                    row.HeldQty, row.ExpiresAt, row.Status, row.SellerRoleId, row.Income, row.ListingVersion, row.InitialQty, row.ReturnedQty }).ToList();
             page.More = rows.Count > PageSize;
             for (int index = 0; index < Math.Min(rows.Count, PageSize); index++)
             {
@@ -49,7 +61,7 @@ internal sealed class StallLoadCtrl : IContainer
                 page.Offers.Add(new StallOffer { ListingId = row.ListingId, ItemId = row.ItemTypeId,
                     CurrencyId = row.CurrencyItemId, Price = row.UnitPrice, Quantity = row.HeldQty,
                     ExpiresAt = new DateTimeOffset(DateTime.SpecifyKind(row.ExpiresAt, DateTimeKind.Utc)).ToUnixTimeSeconds(),
-                    Status = row.Status, SellerId = row.SellerRoleId });
+                    Status = row.Status, SellerId = row.SellerRoleId, Income = row.Income.GetValueOrDefault(), Version = row.ListingVersion, Sold = row.InitialQty-row.HeldQty-row.ReturnedQty });
                 page.AfterId = row.ListingId;
             }
         }
@@ -70,7 +82,7 @@ internal sealed class StallLoadCtrl : IContainer
                     .SetColumns(row => new TradeListingTable { Status = 3, ClosedAt = now, ListingVersion = row.ListingVersion + 1 })
                     .Where(row => row.ListingId == cancel.ListingId && row.ServerId == cancel.Actor.RealmId)
                     .Where(row => row.SellerRoleId == cancel.Actor.RoleId && row.MarketType == 0)
-                    .Where(row => row.Status == 1 && row.HeldQty > 0 && row.ExpiresAt > now).ExecuteCommand();
+                    .Where(row => row.PendingTicket == null).Where(row => row.Status == 1 && row.HeldQty > 0 && row.ExpiresAt > now).ExecuteCommand();
                 if (changed == 1) return string.Empty;
                 // 只对同一个卖家已撤的挂牌确认重发成功。
                 bool cancelled = db.Queryable<TradeListingTable>()

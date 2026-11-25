@@ -51,6 +51,39 @@ public sealed class TradeMarketCatalog : ScriptableObject
     /// <summary>供窗口构造当前市场的分类按钮。</summary>
     public Shelf[] Shelves => _shelves;
 
+    /// <summary>进程内共用的分类与补充材料，首次加载 Luban 后建立。</summary>
+    private Shelf[] _stallShelves;
+    /// <summary>保留策划分类，并将没有摆摊分类的材料收进可由原 JSON 控制的其他材料页。</summary>
+    public Shelf[] StallShelves()
+    {
+        if (_stallShelves != null) return _stallShelves;
+        // 编辑器预览或配置尚未加载时仍能打开原市场。
+        var definitions = LubanMgr.Instance.GetItemConfigInfos();
+        if (definitions == null) return _shelves;
+        // 已分类的材料即使被运营隐藏也不会重新出现在其他材料页。
+        var assigned = new System.Collections.Generic.HashSet<int>();
+        for (int i = 0; i < _shelves.Length; i++)
+        {
+            if (_shelves[i].Market == Market.Stall) assigned.UnionWith(_shelves[i].Items);
+        }
+        // Luban 配置和服务端上架检查使用同一物品主类型。
+        var items = new System.Collections.Generic.List<int>();
+        var configs = new System.Collections.Generic.List<ItemConfigBase>(definitions.Values);
+        for (int i = 0; i < configs.Count; i++)
+        {
+            ItemConfigBase item = configs[i];
+            if (item.ItemMainType == ItemMainType.ItemType_Material && !assigned.Contains(item.ItemId)) items.Add(item.ItemId);
+        }
+        if (items.Count == 0) { _stallShelves = _shelves; return _stallShelves; }
+        items.Sort();
+        // 扩展仅存在本次打开的窗口；原 ScriptableObject 继续保有策划目录。
+        Shelf[] shelves = new Shelf[_shelves.Length + 1];
+        Array.Copy(_shelves, shelves, _shelves.Length);
+        shelves[_shelves.Length] = new Shelf { Market = Market.Stall, Group = "其他材料", Leaf = "", Items = items.ToArray() };
+        _stallShelves = shelves;
+        return _stallShelves;
+    }
+
     /// <summary>打开商城时读取显示配置，旧目录未绑定文件时保留全部货架。</summary>
     public TradeMarketVisibility ReadVisibility()
     {

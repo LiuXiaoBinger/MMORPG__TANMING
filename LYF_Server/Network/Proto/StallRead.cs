@@ -27,38 +27,53 @@ public static partial class StallReadReflection {
           "KAMiVwoNU3RhbGxJZGVudGl0eRIQCghyZWFsbV9pZBgBIAEoBRIPCgdnYW1l",
           "X2lkGAIgASgFEg8KB3JvbGVfaWQYAyABKAUSEgoKc2Vzc2lvbl9pZBgEIAEo",
           "BSJOChFTdGFsbFJlYWRFbnZlbG9wZRIdCgVhY3RvchgBIAEoCzIOLlN0YWxs",
-          "SWRlbnRpdHkSGgoFcXVlcnkYAiABKAsyCy5TdGFsbFF1ZXJ5Ip4BCgpTdGFs",
+          "SWRlbnRpdHkSGgoFcXVlcnkYAiABKAsyCy5TdGFsbFF1ZXJ5Is0BCgpTdGFs",
           "bE9mZmVyEhIKCmxpc3RpbmdfaWQYASABKAMSDwoHaXRlbV9pZBgCIAEoBRIT",
           "CgtjdXJyZW5jeV9pZBgDIAEoBRINCgVwcmljZRgEIAEoAxIQCghxdWFudGl0",
-          "eRgFIAEoBRISCgpleHBpcmVzX2F0GAYgASgDEg4KBnN0YXR1cxgHIAEoBRIR",
-          "CglzZWxsZXJfaWQYCCABKAUiUwoKU3RhbGxRdW90ZRIPCgdpdGVtX2lkGAEg",
-          "ASgFEhAKCHF1YW50aXR5GAIgASgDEg0KBXByaWNlGAMgASgDEhMKC2N1cnJl",
-          "bmN5X2lkGAQgASgFIoQBCgtTdGFsbFJlc3VsdBIaCgVxdWVyeRgBIAEoCzIL",
-          "LlN0YWxsUXVlcnkSDgoGcmVhc29uGAIgASgJEhsKBm9mZmVycxgDIAMoCzIL",
-          "LlN0YWxsT2ZmZXISGwoGcXVvdGVzGAQgAygLMgsuU3RhbGxRdW90ZRIPCgdu",
-          "ZXh0X2lkGAUgASgDIl4KDVN0YWxsTG9hZFBhZ2USEAoIcmVhbG1faWQYASAB",
-          "KAUSEAoIYWZ0ZXJfaWQYAiABKAMSGwoGb2ZmZXJzGAMgAygLMgsuU3RhbGxP",
-          "ZmZlchIMCgRtb3JlGAQgASgIIiwKFlN0YWxsU2VsbEl0ZW1DYW5jZWxBcmcS",
-          "EgoKbGlzdGluZ19pZBgBIAEoAyI8ChZTdGFsbFNlbGxJdGVtQ2FuY2VsUmVz",
-          "EhIKCmxpc3RpbmdfaWQYASABKAMSDgoGcmVhc29uGAIgASgJInIKGlN0YWxs",
-          "U2VsbEl0ZW1DYW5jZWxGb3J3YXJkEh0KBWFjdG9yGAEgASgLMg4uU3RhbGxJ",
-          "ZGVudGl0eRISCgpsaXN0aW5nX2lkGAIgASgDEhEKCWdhdGVfbGluaxgDIAEo",
-          "BRIOCgZyZWFzb24YBCABKAkqYQoJU3RhbGxWaWV3EhEKDVNUQUxMX1NVTU1B",
-          "UlkQABIQCgxTVEFMTF9PRkZFUlMQARINCglTVEFMTF9PV04QAhIgChxTVEFM",
-          "TF9HRVRfUFJFX1NFTExfSVRFTV9JTkZPEANiBnByb3RvMw=="));
+          "eRgFIAEoBRISCgpleHBpcmVzX2F0GAYgASgDEg4KBnN0YXR1cxgHIAEoBRIO",
+          "CgZpbmNvbWUYCSABKAMSDwoHdmVyc2lvbhgKIAEoAxIMCgRzb2xkGAsgASgF",
+          "EhEKCXNlbGxlcl9pZBgIIAEoBSJTCgpTdGFsbFF1b3RlEg8KB2l0ZW1faWQY",
+          "ASABKAUSEAoIcXVhbnRpdHkYAiABKAMSDQoFcHJpY2UYAyABKAMSEwoLY3Vy",
+          "cmVuY3lfaWQYBCABKAUihAEKC1N0YWxsUmVzdWx0EhoKBXF1ZXJ5GAEgASgL",
+          "MgsuU3RhbGxRdWVyeRIOCgZyZWFzb24YAiABKAkSGwoGb2ZmZXJzGAMgAygL",
+          "MgsuU3RhbGxPZmZlchIbCgZxdW90ZXMYBCADKAsyCy5TdGFsbFF1b3RlEg8K",
+          "B25leHRfaWQYBSABKAMiXgoNU3RhbGxMb2FkUGFnZRIQCghyZWFsbV9pZBgB",
+          "IAEoBRIQCghhZnRlcl9pZBgCIAEoAxIbCgZvZmZlcnMYAyADKAsyCy5TdGFs",
+          "bE9mZmVyEgwKBG1vcmUYBCABKAgiLAoWU3RhbGxTZWxsSXRlbUNhbmNlbEFy",
+          "ZxISCgpsaXN0aW5nX2lkGAEgASgDIjwKFlN0YWxsU2VsbEl0ZW1DYW5jZWxS",
+          "ZXMSEgoKbGlzdGluZ19pZBgBIAEoAxIOCgZyZWFzb24YAiABKAkicgoaU3Rh",
+          "bGxTZWxsSXRlbUNhbmNlbEZvcndhcmQSHQoFYWN0b3IYASABKAsyDi5TdGFs",
+          "bElkZW50aXR5EhIKCmxpc3RpbmdfaWQYAiABKAMSEQoJZ2F0ZV9saW5rGAMg",
+          "ASgFEg4KBnJlYXNvbhgEIAEoCSKYAQoMU3RhbGxEZWFsQXJnEhIKCnJlcXVl",
+          "c3RfaWQYASABKAkSHAoGYWN0aW9uGAIgASgOMgwuU3RhbGxBY3Rpb24SEgoK",
+          "bGlzdGluZ19pZBgDIAEoAxIQCghpdGVtX3VpZBgEIAEoAxIPCgdpdGVtX2lk",
+          "GAUgASgFEhAKCHF1YW50aXR5GAYgASgFEg0KBXByaWNlGAcgASgDIu0BCglT",
+          "dGFsbERlYWwSHQoFYWN0b3IYASABKAsyDi5TdGFsbElkZW50aXR5EhoKA2Fy",
+          "ZxgCIAEoCzINLlN0YWxsRGVhbEFyZxIRCglnYXRlX2xpbmsYAyABKAUSDgoG",
+          "dGlja2V0GAQgASgDEhoKBW9mZmVyGAUgASgLMgsuU3RhbGxPZmZlchIOCgZh",
+          "bW91bnQYBiABKAMSDQoFY291bnQYByABKAUSDgoGcmVhc29uGAggASgJEhAK",
+          "CGZpbmlzaGVkGAkgASgIEhEKCWhlbGRfY29zdBgKIAEoAxISCgptb25leV90",
+          "eXBlGAsgASgFKmEKCVN0YWxsVmlldxIRCg1TVEFMTF9TVU1NQVJZEAASEAoM",
+          "U1RBTExfT0ZGRVJTEAESDQoJU1RBTExfT1dOEAISIAocU1RBTExfR0VUX1BS",
+          "RV9TRUxMX0lURU1fSU5GTxADKnkKC1N0YWxsQWN0aW9uEhMKD1NUQUxMX1NF",
+          "TExfSVRFTRAAEhIKDlNUQUxMX0lURU1fQlVZEAESFAoQU1RBTExfRFJBV19N",
+          "T05FWRACEhMKD1NUQUxMX1RBS0VfQkFDSxADEhYKElNUQUxMX1JFX1NFTExf",
+          "SVRFTRAEYgZwcm90bzM="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::StallView), }, null, new pbr::GeneratedClrTypeInfo[] {
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::StallView), typeof(global::StallAction), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::StallQuery), global::StallQuery.Parser, new[]{ "View", "ItemId", "AfterId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallIdentity), global::StallIdentity.Parser, new[]{ "RealmId", "GameId", "RoleId", "SessionId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallReadEnvelope), global::StallReadEnvelope.Parser, new[]{ "Actor", "Query" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::StallOffer), global::StallOffer.Parser, new[]{ "ListingId", "ItemId", "CurrencyId", "Price", "Quantity", "ExpiresAt", "Status", "SellerId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallOffer), global::StallOffer.Parser, new[]{ "ListingId", "ItemId", "CurrencyId", "Price", "Quantity", "ExpiresAt", "Status", "Income", "Version", "Sold", "SellerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallQuote), global::StallQuote.Parser, new[]{ "ItemId", "Quantity", "Price", "CurrencyId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallResult), global::StallResult.Parser, new[]{ "Query", "Reason", "Offers", "Quotes", "NextId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallLoadPage), global::StallLoadPage.Parser, new[]{ "RealmId", "AfterId", "Offers", "More" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelArg), global::StallSellItemCancelArg.Parser, new[]{ "ListingId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelRes), global::StallSellItemCancelRes.Parser, new[]{ "ListingId", "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelForward), global::StallSellItemCancelForward.Parser, new[]{ "Actor", "ListingId", "GateLink", "Reason" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelForward), global::StallSellItemCancelForward.Parser, new[]{ "Actor", "ListingId", "GateLink", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallDealArg), global::StallDealArg.Parser, new[]{ "RequestId", "Action", "ListingId", "ItemUid", "ItemId", "Quantity", "Price" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallDeal), global::StallDeal.Parser, new[]{ "Actor", "Arg", "GateLink", "Ticket", "Offer", "Amount", "Count", "Reason", "Finished", "HeldCost", "MoneyType" }, null, null, null, null)
         }));
   }
   #endregion
@@ -85,6 +100,32 @@ public enum StallView {
   /// 出售前查询同物品当前最低单价及在售数量。
   /// </summary>
   [pbr::OriginalName("STALL_GET_PRE_SELL_ITEM_INFO")] StallGetPreSellItemInfo = 3,
+}
+
+/// <summary>
+/// RO 本服摆摊操作，撤下仍走原撤单命令。
+/// </summary>
+public enum StallAction {
+  /// <summary>
+  /// 从实际背包格寄售。
+  /// </summary>
+  [pbr::OriginalName("STALL_SELL_ITEM")] StallSellItem = 0,
+  /// <summary>
+  /// 买入指定挂单的部分或全部。
+  /// </summary>
+  [pbr::OriginalName("STALL_ITEM_BUY")] StallItemBuy = 1,
+  /// <summary>
+  /// 领取该挂单已结算收益。
+  /// </summary>
+  [pbr::OriginalName("STALL_DRAW_MONEY")] StallDrawMoney = 2,
+  /// <summary>
+  /// 取回已撤或到期的余货。
+  /// </summary>
+  [pbr::OriginalName("STALL_TAKE_BACK")] StallTakeBack = 3,
+  /// <summary>
+  /// 对已撤或到期的余货重新定价上架。
+  /// </summary>
+  [pbr::OriginalName("STALL_RE_SELL_ITEM")] StallReSellItem = 4,
 }
 
 #endregion
@@ -996,6 +1037,9 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     quantity_ = other.quantity_;
     expiresAt_ = other.expiresAt_;
     status_ = other.status_;
+    income_ = other.income_;
+    version_ = other.version_;
+    sold_ = other.sold_;
     sellerId_ = other.sellerId_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -1111,6 +1155,51 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     }
   }
 
+  /// <summary>Field number for the "income" field.</summary>
+  public const int IncomeFieldNumber = 9;
+  private long income_;
+  /// <summary>
+  /// 已成交待领取的税后银两。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Income {
+    get { return income_; }
+    set {
+      income_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "version" field.</summary>
+  public const int VersionFieldNumber = 10;
+  private long version_;
+  /// <summary>
+  /// 数据库提交版本，按版本更新货架。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Version {
+    get { return version_; }
+    set {
+      version_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "sold" field.</summary>
+  public const int SoldFieldNumber = 11;
+  private int sold_;
+  /// <summary>
+  /// 已售总件数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Sold {
+    get { return sold_; }
+    set {
+      sold_ = value;
+    }
+  }
+
   /// <summary>Field number for the "seller_id" field.</summary>
   public const int SellerIdFieldNumber = 8;
   private int sellerId_;
@@ -1148,6 +1237,9 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     if (Quantity != other.Quantity) return false;
     if (ExpiresAt != other.ExpiresAt) return false;
     if (Status != other.Status) return false;
+    if (Income != other.Income) return false;
+    if (Version != other.Version) return false;
+    if (Sold != other.Sold) return false;
     if (SellerId != other.SellerId) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -1163,6 +1255,9 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     if (Quantity != 0) hash ^= Quantity.GetHashCode();
     if (ExpiresAt != 0L) hash ^= ExpiresAt.GetHashCode();
     if (Status != 0) hash ^= Status.GetHashCode();
+    if (Income != 0L) hash ^= Income.GetHashCode();
+    if (Version != 0L) hash ^= Version.GetHashCode();
+    if (Sold != 0) hash ^= Sold.GetHashCode();
     if (SellerId != 0) hash ^= SellerId.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -1214,6 +1309,18 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
       output.WriteRawTag(64);
       output.WriteInt32(SellerId);
     }
+    if (Income != 0L) {
+      output.WriteRawTag(72);
+      output.WriteInt64(Income);
+    }
+    if (Version != 0L) {
+      output.WriteRawTag(80);
+      output.WriteInt64(Version);
+    }
+    if (Sold != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(Sold);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1256,6 +1363,18 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
       output.WriteRawTag(64);
       output.WriteInt32(SellerId);
     }
+    if (Income != 0L) {
+      output.WriteRawTag(72);
+      output.WriteInt64(Income);
+    }
+    if (Version != 0L) {
+      output.WriteRawTag(80);
+      output.WriteInt64(Version);
+    }
+    if (Sold != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(Sold);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1286,6 +1405,15 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     }
     if (Status != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(Status);
+    }
+    if (Income != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Income);
+    }
+    if (Version != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Version);
+    }
+    if (Sold != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Sold);
     }
     if (SellerId != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(SellerId);
@@ -1322,6 +1450,15 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
     }
     if (other.Status != 0) {
       Status = other.Status;
+    }
+    if (other.Income != 0L) {
+      Income = other.Income;
+    }
+    if (other.Version != 0L) {
+      Version = other.Version;
+    }
+    if (other.Sold != 0) {
+      Sold = other.Sold;
     }
     if (other.SellerId != 0) {
       SellerId = other.SellerId;
@@ -1377,6 +1514,18 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
           SellerId = input.ReadInt32();
           break;
         }
+        case 72: {
+          Income = input.ReadInt64();
+          break;
+        }
+        case 80: {
+          Version = input.ReadInt64();
+          break;
+        }
+        case 88: {
+          Sold = input.ReadInt32();
+          break;
+        }
       }
     }
   #endif
@@ -1426,6 +1575,18 @@ public sealed partial class StallOffer : pb::IMessage<StallOffer>
         }
         case 64: {
           SellerId = input.ReadInt32();
+          break;
+        }
+        case 72: {
+          Income = input.ReadInt64();
+          break;
+        }
+        case 80: {
+          Version = input.ReadInt64();
+          break;
+        }
+        case 88: {
+          Sold = input.ReadInt32();
           break;
         }
       }
@@ -3186,6 +3347,1075 @@ public sealed partial class StallSellItemCancelForward : pb::IMessage<StallSellI
         }
         case 34: {
           Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class StallDealArg : pb::IMessage<StallDealArg>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<StallDealArg> _parser = new pb::MessageParser<StallDealArg>(() => new StallDealArg());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<StallDealArg> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::StallReadReflection.Descriptor.MessageTypes[10]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDealArg() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDealArg(StallDealArg other) : this() {
+    requestId_ = other.requestId_;
+    action_ = other.action_;
+    listingId_ = other.listingId_;
+    itemUid_ = other.itemUid_;
+    itemId_ = other.itemId_;
+    quantity_ = other.quantity_;
+    price_ = other.price_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDealArg Clone() {
+    return new StallDealArg(this);
+  }
+
+  /// <summary>Field number for the "request_id" field.</summary>
+  public const int RequestIdFieldNumber = 1;
+  private string requestId_ = "";
+  /// <summary>
+  /// 客户端为一次确认生成的 UUID。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string RequestId {
+    get { return requestId_; }
+    set {
+      requestId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "action" field.</summary>
+  public const int ActionFieldNumber = 2;
+  private global::StallAction action_ = global::StallAction.StallSellItem;
+  /// <summary>
+  /// 本次操作。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::StallAction Action {
+    get { return action_; }
+    set {
+      action_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "listing_id" field.</summary>
+  public const int ListingIdFieldNumber = 3;
+  private long listingId_;
+  /// <summary>
+  /// 购买、领取或重新上架时的挂牌号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ListingId {
+    get { return listingId_; }
+    set {
+      listingId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "item_uid" field.</summary>
+  public const int ItemUidFieldNumber = 4;
+  private long itemUid_;
+  /// <summary>
+  /// 新上架时实际背包堆叠的 UID。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ItemUid {
+    get { return itemUid_; }
+    set {
+      itemUid_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "item_id" field.</summary>
+  public const int ItemIdFieldNumber = 5;
+  private int itemId_;
+  /// <summary>
+  /// 新上架时用于核对实例的配置号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int ItemId {
+    get { return itemId_; }
+    set {
+      itemId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "quantity" field.</summary>
+  public const int QuantityFieldNumber = 6;
+  private int quantity_;
+  /// <summary>
+  /// 上架或购买的件数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Quantity {
+    get { return quantity_; }
+    set {
+      quantity_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "price" field.</summary>
+  public const int PriceFieldNumber = 7;
+  private long price_;
+  /// <summary>
+  /// 卖家标价或买家所见单价。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Price {
+    get { return price_; }
+    set {
+      price_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as StallDealArg);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(StallDealArg other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (RequestId != other.RequestId) return false;
+    if (Action != other.Action) return false;
+    if (ListingId != other.ListingId) return false;
+    if (ItemUid != other.ItemUid) return false;
+    if (ItemId != other.ItemId) return false;
+    if (Quantity != other.Quantity) return false;
+    if (Price != other.Price) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (RequestId.Length != 0) hash ^= RequestId.GetHashCode();
+    if (Action != global::StallAction.StallSellItem) hash ^= Action.GetHashCode();
+    if (ListingId != 0L) hash ^= ListingId.GetHashCode();
+    if (ItemUid != 0L) hash ^= ItemUid.GetHashCode();
+    if (ItemId != 0) hash ^= ItemId.GetHashCode();
+    if (Quantity != 0) hash ^= Quantity.GetHashCode();
+    if (Price != 0L) hash ^= Price.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (RequestId.Length != 0) {
+      output.WriteRawTag(10);
+      output.WriteString(RequestId);
+    }
+    if (Action != global::StallAction.StallSellItem) {
+      output.WriteRawTag(16);
+      output.WriteEnum((int) Action);
+    }
+    if (ListingId != 0L) {
+      output.WriteRawTag(24);
+      output.WriteInt64(ListingId);
+    }
+    if (ItemUid != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(ItemUid);
+    }
+    if (ItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ItemId);
+    }
+    if (Quantity != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(Quantity);
+    }
+    if (Price != 0L) {
+      output.WriteRawTag(56);
+      output.WriteInt64(Price);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (RequestId.Length != 0) {
+      output.WriteRawTag(10);
+      output.WriteString(RequestId);
+    }
+    if (Action != global::StallAction.StallSellItem) {
+      output.WriteRawTag(16);
+      output.WriteEnum((int) Action);
+    }
+    if (ListingId != 0L) {
+      output.WriteRawTag(24);
+      output.WriteInt64(ListingId);
+    }
+    if (ItemUid != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(ItemUid);
+    }
+    if (ItemId != 0) {
+      output.WriteRawTag(40);
+      output.WriteInt32(ItemId);
+    }
+    if (Quantity != 0) {
+      output.WriteRawTag(48);
+      output.WriteInt32(Quantity);
+    }
+    if (Price != 0L) {
+      output.WriteRawTag(56);
+      output.WriteInt64(Price);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (RequestId.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(RequestId);
+    }
+    if (Action != global::StallAction.StallSellItem) {
+      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Action);
+    }
+    if (ListingId != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ListingId);
+    }
+    if (ItemUid != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ItemUid);
+    }
+    if (ItemId != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ItemId);
+    }
+    if (Quantity != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Quantity);
+    }
+    if (Price != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Price);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(StallDealArg other) {
+    if (other == null) {
+      return;
+    }
+    if (other.RequestId.Length != 0) {
+      RequestId = other.RequestId;
+    }
+    if (other.Action != global::StallAction.StallSellItem) {
+      Action = other.Action;
+    }
+    if (other.ListingId != 0L) {
+      ListingId = other.ListingId;
+    }
+    if (other.ItemUid != 0L) {
+      ItemUid = other.ItemUid;
+    }
+    if (other.ItemId != 0) {
+      ItemId = other.ItemId;
+    }
+    if (other.Quantity != 0) {
+      Quantity = other.Quantity;
+    }
+    if (other.Price != 0L) {
+      Price = other.Price;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          RequestId = input.ReadString();
+          break;
+        }
+        case 16: {
+          Action = (global::StallAction) input.ReadEnum();
+          break;
+        }
+        case 24: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 32: {
+          ItemUid = input.ReadInt64();
+          break;
+        }
+        case 40: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          Quantity = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          Price = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          RequestId = input.ReadString();
+          break;
+        }
+        case 16: {
+          Action = (global::StallAction) input.ReadEnum();
+          break;
+        }
+        case 24: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 32: {
+          ItemUid = input.ReadInt64();
+          break;
+        }
+        case 40: {
+          ItemId = input.ReadInt32();
+          break;
+        }
+        case 48: {
+          Quantity = input.ReadInt32();
+          break;
+        }
+        case 56: {
+          Price = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class StallDeal : pb::IMessage<StallDeal>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<StallDeal> _parser = new pb::MessageParser<StallDeal>(() => new StallDeal());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<StallDeal> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::StallReadReflection.Descriptor.MessageTypes[11]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDeal() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDeal(StallDeal other) : this() {
+    actor_ = other.actor_ != null ? other.actor_.Clone() : null;
+    arg_ = other.arg_ != null ? other.arg_.Clone() : null;
+    gateLink_ = other.gateLink_;
+    ticket_ = other.ticket_;
+    offer_ = other.offer_ != null ? other.offer_.Clone() : null;
+    amount_ = other.amount_;
+    count_ = other.count_;
+    reason_ = other.reason_;
+    finished_ = other.finished_;
+    heldCost_ = other.heldCost_;
+    moneyType_ = other.moneyType_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallDeal Clone() {
+    return new StallDeal(this);
+  }
+
+  /// <summary>Field number for the "actor" field.</summary>
+  public const int ActorFieldNumber = 1;
+  private global::StallIdentity actor_;
+  /// <summary>
+  /// 服务端填充的角色路由。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::StallIdentity Actor {
+    get { return actor_; }
+    set {
+      actor_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "arg" field.</summary>
+  public const int ArgFieldNumber = 2;
+  private global::StallDealArg arg_;
+  /// <summary>
+  /// 玩家确认的参数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::StallDealArg Arg {
+    get { return arg_; }
+    set {
+      arg_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gate_link" field.</summary>
+  public const int GateLinkFieldNumber = 3;
+  private int gateLink_;
+  /// <summary>
+  /// 原网关内网连接。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GateLink {
+    get { return gateLink_; }
+    set {
+      gateLink_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "ticket" field.</summary>
+  public const int TicketFieldNumber = 4;
+  private long ticket_;
+  /// <summary>
+  /// 中心库给本次资产写入分配的单号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Ticket {
+    get { return ticket_; }
+    set {
+      ticket_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "offer" field.</summary>
+  public const int OfferFieldNumber = 5;
+  private global::StallOffer offer_;
+  /// <summary>
+  /// 已确认单价与实际托管行。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::StallOffer Offer {
+    get { return offer_; }
+    set {
+      offer_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "amount" field.</summary>
+  public const int AmountFieldNumber = 6;
+  private long amount_;
+  /// <summary>
+  /// 本次收付的银两。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long Amount {
+    get { return amount_; }
+    set {
+      amount_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "count" field.</summary>
+  public const int CountFieldNumber = 7;
+  private int count_;
+  /// <summary>
+  /// 本次实际流转的材料件数。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int Count {
+    get { return count_; }
+    set {
+      count_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 8;
+  private string reason_ = "";
+  /// <summary>
+  /// 中心库或宿主返回的失败原因。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "finished" field.</summary>
+  public const int FinishedFieldNumber = 9;
+  private bool finished_;
+  /// <summary>
+  /// 已有终态，可直接返回玩家。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Finished {
+    get { return finished_; }
+    set {
+      finished_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "held_cost" field.</summary>
+  public const int HeldCostFieldNumber = 10;
+  private long heldCost_;
+  /// <summary>
+  /// 本次流转的原购成本。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long HeldCost {
+    get { return heldCost_; }
+    set {
+      heldCost_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "money_type" field.</summary>
+  public const int MoneyTypeFieldNumber = 11;
+  private int moneyType_;
+  /// <summary>
+  /// 托管材料的成本货币。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int MoneyType {
+    get { return moneyType_; }
+    set {
+      moneyType_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as StallDeal);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(StallDeal other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(Actor, other.Actor)) return false;
+    if (!object.Equals(Arg, other.Arg)) return false;
+    if (GateLink != other.GateLink) return false;
+    if (Ticket != other.Ticket) return false;
+    if (!object.Equals(Offer, other.Offer)) return false;
+    if (Amount != other.Amount) return false;
+    if (Count != other.Count) return false;
+    if (Reason != other.Reason) return false;
+    if (Finished != other.Finished) return false;
+    if (HeldCost != other.HeldCost) return false;
+    if (MoneyType != other.MoneyType) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (actor_ != null) hash ^= Actor.GetHashCode();
+    if (arg_ != null) hash ^= Arg.GetHashCode();
+    if (GateLink != 0) hash ^= GateLink.GetHashCode();
+    if (Ticket != 0L) hash ^= Ticket.GetHashCode();
+    if (offer_ != null) hash ^= Offer.GetHashCode();
+    if (Amount != 0L) hash ^= Amount.GetHashCode();
+    if (Count != 0) hash ^= Count.GetHashCode();
+    if (Reason.Length != 0) hash ^= Reason.GetHashCode();
+    if (Finished != false) hash ^= Finished.GetHashCode();
+    if (HeldCost != 0L) hash ^= HeldCost.GetHashCode();
+    if (MoneyType != 0) hash ^= MoneyType.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (actor_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Actor);
+    }
+    if (arg_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Arg);
+    }
+    if (GateLink != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(GateLink);
+    }
+    if (Ticket != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(Ticket);
+    }
+    if (offer_ != null) {
+      output.WriteRawTag(42);
+      output.WriteMessage(Offer);
+    }
+    if (Amount != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(Amount);
+    }
+    if (Count != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(Count);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(Reason);
+    }
+    if (Finished != false) {
+      output.WriteRawTag(72);
+      output.WriteBool(Finished);
+    }
+    if (HeldCost != 0L) {
+      output.WriteRawTag(80);
+      output.WriteInt64(HeldCost);
+    }
+    if (MoneyType != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(MoneyType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (actor_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Actor);
+    }
+    if (arg_ != null) {
+      output.WriteRawTag(18);
+      output.WriteMessage(Arg);
+    }
+    if (GateLink != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(GateLink);
+    }
+    if (Ticket != 0L) {
+      output.WriteRawTag(32);
+      output.WriteInt64(Ticket);
+    }
+    if (offer_ != null) {
+      output.WriteRawTag(42);
+      output.WriteMessage(Offer);
+    }
+    if (Amount != 0L) {
+      output.WriteRawTag(48);
+      output.WriteInt64(Amount);
+    }
+    if (Count != 0) {
+      output.WriteRawTag(56);
+      output.WriteInt32(Count);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(66);
+      output.WriteString(Reason);
+    }
+    if (Finished != false) {
+      output.WriteRawTag(72);
+      output.WriteBool(Finished);
+    }
+    if (HeldCost != 0L) {
+      output.WriteRawTag(80);
+      output.WriteInt64(HeldCost);
+    }
+    if (MoneyType != 0) {
+      output.WriteRawTag(88);
+      output.WriteInt32(MoneyType);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (actor_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Actor);
+    }
+    if (arg_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Arg);
+    }
+    if (GateLink != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GateLink);
+    }
+    if (Ticket != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Ticket);
+    }
+    if (offer_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Offer);
+    }
+    if (Amount != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(Amount);
+    }
+    if (Count != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Count);
+    }
+    if (Reason.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (Finished != false) {
+      size += 1 + 1;
+    }
+    if (HeldCost != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(HeldCost);
+    }
+    if (MoneyType != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MoneyType);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(StallDeal other) {
+    if (other == null) {
+      return;
+    }
+    if (other.actor_ != null) {
+      if (actor_ == null) {
+        Actor = new global::StallIdentity();
+      }
+      Actor.MergeFrom(other.Actor);
+    }
+    if (other.arg_ != null) {
+      if (arg_ == null) {
+        Arg = new global::StallDealArg();
+      }
+      Arg.MergeFrom(other.Arg);
+    }
+    if (other.GateLink != 0) {
+      GateLink = other.GateLink;
+    }
+    if (other.Ticket != 0L) {
+      Ticket = other.Ticket;
+    }
+    if (other.offer_ != null) {
+      if (offer_ == null) {
+        Offer = new global::StallOffer();
+      }
+      Offer.MergeFrom(other.Offer);
+    }
+    if (other.Amount != 0L) {
+      Amount = other.Amount;
+    }
+    if (other.Count != 0) {
+      Count = other.Count;
+    }
+    if (other.Reason.Length != 0) {
+      Reason = other.Reason;
+    }
+    if (other.Finished != false) {
+      Finished = other.Finished;
+    }
+    if (other.HeldCost != 0L) {
+      HeldCost = other.HeldCost;
+    }
+    if (other.MoneyType != 0) {
+      MoneyType = other.MoneyType;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (actor_ == null) {
+            Actor = new global::StallIdentity();
+          }
+          input.ReadMessage(Actor);
+          break;
+        }
+        case 18: {
+          if (arg_ == null) {
+            Arg = new global::StallDealArg();
+          }
+          input.ReadMessage(Arg);
+          break;
+        }
+        case 24: {
+          GateLink = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          Ticket = input.ReadInt64();
+          break;
+        }
+        case 42: {
+          if (offer_ == null) {
+            Offer = new global::StallOffer();
+          }
+          input.ReadMessage(Offer);
+          break;
+        }
+        case 48: {
+          Amount = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          Count = input.ReadInt32();
+          break;
+        }
+        case 66: {
+          Reason = input.ReadString();
+          break;
+        }
+        case 72: {
+          Finished = input.ReadBool();
+          break;
+        }
+        case 80: {
+          HeldCost = input.ReadInt64();
+          break;
+        }
+        case 88: {
+          MoneyType = input.ReadInt32();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          if (actor_ == null) {
+            Actor = new global::StallIdentity();
+          }
+          input.ReadMessage(Actor);
+          break;
+        }
+        case 18: {
+          if (arg_ == null) {
+            Arg = new global::StallDealArg();
+          }
+          input.ReadMessage(Arg);
+          break;
+        }
+        case 24: {
+          GateLink = input.ReadInt32();
+          break;
+        }
+        case 32: {
+          Ticket = input.ReadInt64();
+          break;
+        }
+        case 42: {
+          if (offer_ == null) {
+            Offer = new global::StallOffer();
+          }
+          input.ReadMessage(Offer);
+          break;
+        }
+        case 48: {
+          Amount = input.ReadInt64();
+          break;
+        }
+        case 56: {
+          Count = input.ReadInt32();
+          break;
+        }
+        case 66: {
+          Reason = input.ReadString();
+          break;
+        }
+        case 72: {
+          Finished = input.ReadBool();
+          break;
+        }
+        case 80: {
+          HeldCost = input.ReadInt64();
+          break;
+        }
+        case 88: {
+          MoneyType = input.ReadInt32();
           break;
         }
       }
