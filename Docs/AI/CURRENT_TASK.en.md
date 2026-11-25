@@ -966,5 +966,6 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 ## [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map
 
-- The top-right minimap opens `AreaMapWindow` through `MainCtrl` and `MainView`. The two regions are Sky City (`天空中之城`) and Main City (`Scene_MainCity`). Regional terrain is drawn from each scene's own navigation mesh and shared with the HUD. The world view uses RO's two original `RO_Map_BG1/2` textures, blue city banners and the red current-region crystal.
+- The top-right minimap opens `AreaMapWindow` through `MainCtrl` and `MainView`. The two regions are Sky City (`天空中之城`) and Main City (`Scene_MainCity`). Regional terrain is drawn from each scene's own navigation mesh and shared with the HUD. The world view uses RO's two original `RO_Map_BG1/2` textures, curled parchment city labels and the red current-region crystal.
 - Live coordinates, heading and nearby actor markers use the scene projection. Drag, wheel zoom and landmark search work in the regional view. Clicking the local map uses the player's existing navigation and stop flow. A remote region opens for browsing. Main sources and screenshots are listed in `项目修改日志/2026-11-25-RO小地图与世界地图.md`.
+- The world title, city strips and search, close and map-mode controls use the existing RO parchment, brass motifs and the project's FlyFlowerSong font in `AreaMapWindow.prefab`. The controls sit inside the illustrated border. The search directory shares the ink-and-paper palette.
