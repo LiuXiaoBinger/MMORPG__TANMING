@@ -135,6 +135,7 @@ public class MainCtrl : CtrlBase
     {
         _mainView.FunctionMenuButton.onClick.AddListener(OnFunctionMenuRequested);
         _mainView.TradeMarketButton.onClick.AddListener(OnTradeMarketRequested);
+        _mainView.TreasurePavilionButton.onClick.AddListener(OnTreasurePavilionRequested);
         _mainView.KnapsackButton.onClick.AddListener(OnKnapsackRequested);
         _mainView.RoleButton.onClick.AddListener(OnRoleRequested);
         _mainView.SkillButton.onClick.AddListener(OnSkillRequested);
@@ -216,6 +217,7 @@ public class MainCtrl : CtrlBase
         _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
         _mainView.TradeMarketButton.onClick.RemoveListener(OnTradeMarketRequested);
+        _mainView.TreasurePavilionButton.onClick.RemoveListener(OnTreasurePavilionRequested);
         _mainView.KnapsackButton.onClick.RemoveListener(OnKnapsackRequested);
         _mainView.RoleButton.onClick.RemoveListener(OnRoleRequested);
         _mainView.SkillButton.onClick.RemoveListener(OnSkillRequested);
@@ -339,6 +341,15 @@ public class MainCtrl : CtrlBase
             else base.ShowMainWindow(windowType, dialogue);
             CameraMgr.Instance?.BeginNpcTalk(speaker, CloseNpcTalk);
             return;
+        }
+        if (windowType == WindowType.TreasurePavilionWindow)
+        {
+            // 珍宝阁只读取本角色的背包和等级，操作意图由窗口事件传出。
+            PlayerEntity role = Global.Instance?.SceneWorld?.LocalRole;
+            // 未加载角色时仍可浏览公开陈列。
+            RoItemComponent inventory = null;
+            if (role != null) role.TryGetComponent(out inventory);
+            _mainView.TreasurePavilionWindow.BindRole(inventory, role?.BaseInfo?.Level ?? 0);
         }
         if (windowType == WindowType.TradeMarketWindow)
         {
@@ -528,6 +539,12 @@ public class MainCtrl : CtrlBase
     private void OnStallResult(ByteString data)
     {
         _mainView.TradeMarketWindow?.ApplyStall(StallResult.Parser.ParseFrom(data));
+    }
+
+    /// <summary>从主城功能菜单切换珍宝阁。</summary>
+    private void OnTreasurePavilionRequested()
+    {
+        ShowMainWindow(WindowType.TreasurePavilionWindow);
     }
 
     /// <summary>从主城功能菜单打开或收起交易窗口。</summary>

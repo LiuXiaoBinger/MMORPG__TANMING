@@ -33,6 +33,7 @@ public enum WindowType
     CombatStatusWindow = 1002, // 点击战斗 HUD 的状态图标打开的状态详情窗口。
     EquipmentWorkshopWindow = 1003, // 从装备详情进入的强化、镶嵌、洗炼、继承和升级窗口。
     TradeMarketWindow = 1004, // 主城交易目录、个人摊位与风雷藏拍。
+    TreasurePavilionWindow = 1006, // 主城珍宝阁的四个频道。
     AreaMapWindow = 1005 // 从小地图进入的区域与世界地图。
 }
 

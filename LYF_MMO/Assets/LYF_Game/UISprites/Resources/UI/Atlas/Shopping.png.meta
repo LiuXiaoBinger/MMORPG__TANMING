@@ -1,0 +1,2471 @@
+fileFormatVersion: 2
+guid: d47243f567c744843b535fb502fc5fb3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: UI_Shopping_Button_01.png
+  - first:
+      213: 21300002
+    second: UI_Shopping_Button_02.png
+  - first:
+      213: 21300004
+    second: UI_Shopping_Icon_01.png
+  - first:
+      213: 21300006
+    second: UI_Shopping_Icon_02.png
+  - first:
+      213: 21300008
+    second: UI_Shopping_Icon_03.png
+  - first:
+      213: 21300010
+    second: UI_Shopping_Icon_04.png
+  - first:
+      213: 21300012
+    second: UI_Shopping_Icon_05.png
+  - first:
+      213: 21300014
+    second: UI_Shopping_Icon_06.png
+  - first:
+      213: 21300016
+    second: UI_Shopping_Img_Fangshexian.png
+  - first:
+      213: 21300018
+    second: UI_Shopping_Img_JiageBg.png
+  - first:
+      213: 21300020
+    second: UI_Shopping_Img_Jinbi01.png
+  - first:
+      213: 21300022
+    second: UI_Shopping_Img_Jinbi02.png
+  - first:
+      213: 21300024
+    second: UI_Shopping_Img_Shenmishangdian01.png
+  - first:
+      213: 21300026
+    second: UI_Shopping_Img_Shenmishangdian02.png
+  - first:
+      213: 21300028
+    second: UI_Shopping_Img_Toushi01.png
+  - first:
+      213: 21300030
+    second: UI_Shopping_Img_Toushi02.png
+  - first:
+      213: 21300032
+    second: UI_Shopping_Img_Wanshiwu01.png
+  - first:
+      213: 21300034
+    second: UI_Shopping_Img_Wanshiwu02.png
+  - first:
+      213: 21300036
+    second: UI_Shopping_Icon_Renminbi.png
+  - first:
+      213: 21300038
+    second: UI_Shopping_Button_Toushi.png
+  - first:
+      213: 21300040
+    second: UI_Timelimitpay_Icon_01.png
+  - first:
+      213: 21300042
+    second: UI_Timelimitpay_Icon_02.png
+  - first:
+      213: 21300044
+    second: UI_Timelimitpay_Icon_03.png
+  - first:
+      213: 21300046
+    second: UI_Timelimitpay_Icon_04.png
+  - first:
+      213: 21300048
+    second: UI_Timelimitpay_Icon_05.png
+  - first:
+      213: 21300050
+    second: UI_Timelimitpay_Icon_06.png
+  - first:
+      213: 21300052
+    second: UI_Timelimitpay_Img_BoliBg.png
+  - first:
+      213: 21300054
+    second: UI_Timelimitpay_Img_Fangshexian.png
+  - first:
+      213: 21300056
+    second: UI_Timelimitpay_Img_Jinbi.png
+  - first:
+      213: 21300058
+    second: UI_Timelimitpay_Img_Mao.png
+  - first:
+      213: 21300060
+    second: UI_Timelimitpay_Img_SaleBg.png
+  - first:
+      213: 21300062
+    second: UI_Timelimitpay_Img_Star.png
+  - first:
+      213: 21300064
+    second: UI_Timelimitpay_Img_Time.png
+  - first:
+      213: 21300066
+    second: UI_Timelimitpay_Img_XianshiBg.png
+  - first:
+      213: 21300068
+    second: UI_Timelimitpay_Img_Zhuomian.png
+  - first:
+      213: 21300070
+    second: UI_Shopping_Bg_Discount_01.png
+  - first:
+      213: 21300072
+    second: UI_Shopping_Btn_Checked_02.png
+  - first:
+      213: 21300074
+    second: UI_Shopping_Btn_Normal_01.png
+  - first:
+      213: 21300076
+    second: UI_Shopping_Btn_Uncheck_01.png
+  - first:
+      213: 21300078
+    second: UI_Shopping_Btn_Uncheck_01 .png
+  - first:
+      213: 21300080
+    second: UI_Shopping_Divide_Line_01.png
+  - first:
+      213: 21300082
+    second: UI_Shopping_Bg_Icon_01.png
+  - first:
+      213: 21300084
+    second: UI_Shopping_Btn_Normal_02.png
+  - first:
+      213: 21300086
+    second: UI_Shopping_Icon_sellout_01.png
+  - first:
+      213: 21300088
+    second: UI_Shopping_Bg_Left_01.png
+  - first:
+      213: 21300090
+    second: UI_Shopping_Icon__time_01.png
+  - first:
+      213: 21300092
+    second: UI_Shopping_Btn_Add_01.png
+  - first:
+      213: 21300094
+    second: UI_Shopping_Bg_Discount_02.png
+  - first:
+      213: 21300096
+    second: UI_Shopping_Bg_Icon_02.png
+  - first:
+      213: 21300098
+    second: UI_Shopping_Bg_Icon_03.png
+  - first:
+      213: 21300100
+    second: UI_Shopping_Icon_Kefu_01.png
+  - first:
+      213: 21300102
+    second: UI_Shopping_Icon_yueka1.png
+  - first:
+      213: 21300104
+    second: UI_Shopping_Icon_yueka2.png
+  - first:
+      213: 21300106
+    second: UI_Shopping__icon_huiyuan.png
+  - first:
+      213: 21300108
+    second: UI_Shopping_Bg_Icon_04.png
+  - first:
+      213: 21300110
+    second: UI_Shopping_Bg_Icon_05.png
+  - first:
+      213: 21300112
+    second: UI_Shopping_Bg_Icon_06.png
+  - first:
+      213: 21300114
+    second: UI_Shopping_Btn_Close_01.png
+  - first:
+      213: 21300116
+    second: UI_Shopping_Btn_Open_01.png
+  - first:
+      213: 21300118
+    second: UI_Shopping_Btn_Pay_01.png
+  - first:
+      213: 21300120
+    second: UI_Shopping_Btn_Shuaxin_01.png
+  - first:
+      213: 21300122
+    second: UI_Shopping_Icon_Stone_01.png
+  - first:
+      213: 21300124
+    second: UI_Shopping_Bg_Left_02.png
+  - first:
+      213: 21300126
+    second: UI_Shopping_Btn_Checked_03.png
+  - first:
+      213: 21300128
+    second: UI_Shopping_Btn_Normal_03.png
+  - first:
+      213: 21300130
+    second: UI_Shopping_Bg_quan_01.png
+  - first:
+      213: 21300132
+    second: UI_Shopping_Icon_quan_01.png
+  - first:
+      213: 21300134
+    second: UI_Shopping_Btn_Shuaxin_02.png
+  - first:
+      213: 21300136
+    second: UI_Shopping_Btn_xinfeng_01.png
+  - first:
+      213: 21300138
+    second: UI_Shopping_Bg_Shadow_01.png
+  - first:
+      213: 21300140
+    second: UI_Shopping_Btn_Shuaxin_03.png
+  - first:
+      213: 21300142
+    second: UI_Shopping_time1.png
+  - first:
+      213: 21300144
+    second: UI_Shopping_Bg_Icon_daojjishi.png
+  - first:
+      213: 21300146
+    second: UI_Shopping_Bg_Icon_07.png
+  - first:
+      213: 21300148
+    second: UI_Shopping_Bg_Icon_08.png
+  - first:
+      213: 21300150
+    second: UI_Shopping_Bg_Icon_09.png
+  - first:
+      213: 21300152
+    second: UI_Shopping__icon_libao1.png
+  - first:
+      213: 21300154
+    second: UI_Shopping__icon_libao2.png
+  - first:
+      213: 21300156
+    second: UI_Shopping__icon_libao3.png
+  - first:
+      213: 21300158
+    second: UI_Shopping__icon_libao4.png
+  - first:
+      213: 21300160
+    second: UI_Shopping__icon_libao5.png
+  - first:
+      213: 21300162
+    second: UI_Shopping__icon_libao6.png
+  - first:
+      213: 21300164
+    second: UI_Shopping__icon_libao7.png
+  - first:
+      213: 21300166
+    second: UI_Shopping__icon_libao8.png
+  - first:
+      213: 21300168
+    second: UI_Shopping__icon_libao10.png
+  - first:
+      213: 21300170
+    second: UI_Shopping__icon_libao11.png
+  - first:
+      213: 21300172
+    second: UI_Shopping__icon_libao12.png
+  - first:
+      213: 21300174
+    second: UI_Shopping__icon_libao9.png
+  - first:
+      213: 21300176
+    second: UI_Shopping__icon_libao13.png
+  - first:
+      213: 21300178
+    second: UI_Shopping__icon_libao14.png
+  - first:
+      213: 21300180
+    second: UI_Shopping_icon_libao15.png
+  - first:
+      213: 21300182
+    second: UI_Shopping_icon_libao16.png
+  - first:
+      213: 21300184
+    second: UI_Shopping_icon_libao17.png
+  - first:
+      213: 21300186
+    second: UI_Shopping_icon_libao18.png
+  - first:
+      213: 21300188
+    second: UI_Shopping_icon_libao19.png
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 4
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 1
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 47
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 48
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Discount_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 88
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fab6a4f2c6d1e7c4688b4d7af29205e9
+      internalID: 21300070
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Discount_02.png
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 0
+        width: 60
+        height: 58
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5594fb04233bd654abebd532aadd18a6
+      internalID: 21300094
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 0
+        width: 194
+        height: 229
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a020d852a741ba43b9b6b584fd57848
+      internalID: 21300082
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 0
+        width: 252
+        height: 264
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156cd12c288b71a4c927f2b820bbb160
+      internalID: 21300096
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_03.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 230
+        width: 252
+        height: 264
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d92bfe50c67dc64e8828714178d5c8c
+      internalID: 21300098
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_04.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 33
+        width: 53
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 24, y: 28, z: 20, w: 19}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d716d9f5817f97b4ca644ec7889356e2
+      internalID: 21300108
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_05.png
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 0
+        width: 402
+        height: 351
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fd941a065517884580c878b3113703a
+      internalID: 21300110
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_06.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 265
+        width: 317
+        height: 106
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 415bcc2c3b43af94caa0acaae208c959
+      internalID: 21300112
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_07.png
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 0
+        width: 257
+        height: 404
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c975bc267e94f2043a4771bc1a29c566
+      internalID: 21300146
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_08.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 83
+        width: 145
+        height: 34
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb61527fbfd9bb94eba64f45bafe6f76
+      internalID: 21300148
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_09.png
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 352
+        width: 272
+        height: 115
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ecbcf3b89fa67748a7a6d6aac4fbccf
+      internalID: 21300150
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Icon_daojjishi.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 33
+        width: 10
+        height: 14
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de49fdd0f6da15e43aaea862a564d0e6
+      internalID: 21300144
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Left_01.png
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 352
+        width: 144
+        height: 384
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 53, y: 149, z: 65, w: 131}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8f5bf9874fa6542a87c5049690b058
+      internalID: 21300088
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Left_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 118
+        width: 31
+        height: 49
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 16, y: 17, z: 11, w: 18}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3ae0b8fac638ae49863222c44330d14
+      internalID: 21300124
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_quan_01.png
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 48
+        width: 31
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 14, z: 12, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abc90bcd0f1eaa84186068d3ab744604
+      internalID: 21300130
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Bg_Shadow_01.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 372
+        width: 231
+        height: 215
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eaa5b9b4cd4c9e4d9a95968e8859f27
+      internalID: 21300138
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Add_01.png
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 230
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5afe4d3c72d43824f8b6e6440d7aa77b
+      internalID: 21300092
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Checked_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 495
+        width: 177
+        height: 115
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b34dc35d5b5b8ee41941a7136511fcf0
+      internalID: 21300072
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Checked_03.png
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 468
+        width: 206
+        height: 93
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e62cfad4ec7f88b45bc2b5d8d8b56284
+      internalID: 21300126
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Close_01.png
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 372
+        width: 76
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4913b96ea85d8694bbea28c51bc99afe
+      internalID: 21300114
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Normal_01.png
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 403
+        width: 29
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 14, y: 22, z: 13, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e65a0d99e7fecbf43bd2ec58ccfe87fd
+      internalID: 21300074
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Normal_02.png
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 403
+        width: 27
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 13, y: 22, z: 12, w: 20}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9e5aa40f35974a43a0554e4deadddb4
+      internalID: 21300084
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Normal_03.png
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 403
+        width: 27
+        height: 44
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 20, z: 11, w: 21}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b138b4657771e544f89021f3e59f0daa
+      internalID: 21300128
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Open_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 168
+        width: 76
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9913645aac343574dbe9932a8b011840
+      internalID: 21300116
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Pay_01.png
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 562
+        width: 161
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cafdf49063ba3d4faf81b1145c15a75
+      internalID: 21300118
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Shuaxin_01.png
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 118
+        width: 47
+        height: 47
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 861c8395aa968ea47817a200437cf39d
+      internalID: 21300120
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Shuaxin_02.png
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 166
+        width: 41
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4287f578ee49ccb43b2d3f5f403f3b4d
+      internalID: 21300134
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_Uncheck_01 .png
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 468
+        width: 116
+        height: 180
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 344047843a7bb454e9cf42d7ad7225af
+      internalID: 21300078
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Btn_xinfeng_01.png
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 230
+        width: 42
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57fe36d5b2285fa449a7ab7a924a0bac
+      internalID: 21300136
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Button_01.png
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 588
+        width: 180
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 056dab2d88710714493eddd29be9b56f
+      internalID: 21300000
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Button_02.png
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 608
+        width: 189
+        height: 59
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0b6998392c14d44f833fa6d48a4b2db
+      internalID: 21300002
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Button_Toushi.png
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 608
+        width: 124
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 60, y: 0, z: 60, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be4716db7b5591d4dafc7beadc35ffc3
+      internalID: 21300038
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Divide_Line_01.png
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 562
+        width: 16
+        height: 134
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 079b7d346e541b1469a30c66b767befc
+      internalID: 21300080
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 691
+        y: 649
+        width: 87
+        height: 114
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03c04e0a5cda43e4598735cee3bad9fb
+      internalID: 21300004
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 611
+        width: 121
+        height: 111
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f681cab194a1e2f40ae08ec004fa4e40
+      internalID: 21300006
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_03.png
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 648
+        width: 139
+        height: 122
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9af7dae6cde0b49a562d7fe5ec86cf
+      internalID: 21300008
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_04.png
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 668
+        width: 174
+        height: 132
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cb40c0943dee3f40a55110241f0e3ee
+      internalID: 21300010
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_05.png
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 670
+        width: 186
+        height: 133
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8c781896cac657408cca5994d163a62
+      internalID: 21300012
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_06.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 771
+        width: 156
+        height: 134
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d2179a08bb82294bb5e57b079894396
+      internalID: 21300014
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_Kefu_01.png
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 611
+        width: 30
+        height: 29
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90773239cfa6ab4479c31028aeec1e37
+      internalID: 21300100
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_icon_libao15.png
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 801
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c455ffcd5f579174490244444aed562f
+      internalID: 21300180
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_icon_libao16.png
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 0
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f4b9a68058d9984da56376ab3bb3cd6
+      internalID: 21300182
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_icon_libao17.png
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 0
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38c33deab7b15f3489211368c97e6dd1
+      internalID: 21300184
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_icon_libao18.png
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 0
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb3cb7da5e8c404599389a8ceaab4a5
+      internalID: 21300186
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_icon_libao19.png
+      rect:
+        serializedVersion: 2
+        x: 1772
+        y: 0
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c84546abb51a23c45864d859eecedc6c
+      internalID: 21300188
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_quan_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 199
+        width: 46
+        height: 27
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ccec705500bd9a41b688cbae840b9ce
+      internalID: 21300132
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_Renminbi.png
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 230
+        width: 14
+        height: 17
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e769df416e1a0fe46aab991d59aadaa5
+      internalID: 21300036
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_sellout_01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 906
+        width: 125
+        height: 111
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1df3001ec252cdc4a99cad3cda2abb27
+      internalID: 21300086
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_Stone_01.png
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 118
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45ce5b77c13196f42bdbe3dd17b8062a
+      internalID: 21300122
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_yueka1.png
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 131
+        width: 167
+        height: 127
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d2e1eebeb3e3ba4da680bca7f910e0d
+      internalID: 21300102
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon_yueka2.png
+      rect:
+        serializedVersion: 2
+        x: 1427
+        y: 131
+        width: 180
+        height: 132
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1cdc9f38f7b6f641be9bb85d91c89b8
+      internalID: 21300104
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Icon__time_01.png
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 611
+        width: 22
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f96b5b57e6679074391ed9d2a8ae8afc
+      internalID: 21300090
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Fangshexian.png
+      rect:
+        serializedVersion: 2
+        x: 1608
+        y: 131
+        width: 211
+        height: 161
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ed8efa3ac8da5c41b756bb87eb13f43
+      internalID: 21300016
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_JiageBg.png
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 199
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 12, y: 12, z: 12, w: 12}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bac151f954ab97448e0958c6eb7b0b4
+      internalID: 21300018
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Jinbi01.png
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 723
+        width: 42
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e4eff90a52c50849883ae4842581bfd
+      internalID: 21300020
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Jinbi02.png
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 118
+        width: 32
+        height: 32
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c656ddc6dc8e211418d369cc914051f8
+      internalID: 21300022
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Shenmishangdian01.png
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 723
+        width: 38
+        height: 37
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0da780b9511e9774587b6f69ff12e473
+      internalID: 21300024
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Shenmishangdian02.png
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 723
+        width: 33
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa541507920f3424ea06ba61e0851a52
+      internalID: 21300026
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Toushi01.png
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 495
+        width: 35
+        height: 42
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 574517ac02ba2ac4c86d99491aef6cf1
+      internalID: 21300028
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Toushi02.png
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 151
+        width: 30
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 029b92faa0a4ffd40b83795b9494faff
+      internalID: 21300030
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Wanshiwu01.png
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 538
+        width: 40
+        height: 36
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc83b12bd51b2424ebdb0510f8cd0c1f
+      internalID: 21300032
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_Img_Wanshiwu02.png
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 495
+        width: 36
+        height: 31
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e07b6525e635ac14686dd731600b86d3
+      internalID: 21300034
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping_time1.png
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 801
+        width: 67
+        height: 50
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b40e6708077f72044b4fbe151068ba2d
+      internalID: 21300142
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_huiyuan.png
+      rect:
+        serializedVersion: 2
+        x: 1820
+        y: 131
+        width: 177
+        height: 131
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5806714a81383c04f9dbcc242089dea9
+      internalID: 21300106
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao1.png
+      rect:
+        serializedVersion: 2
+        x: 1820
+        y: 263
+        width: 170
+        height: 118
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dcb28d8ebb20034498056cbbc35fb0a
+      internalID: 21300152
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao10.png
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 264
+        width: 170
+        height: 127
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15a69554780c8734b80765f5241d7f28
+      internalID: 21300168
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao11.png
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 264
+        width: 170
+        height: 130
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05a8a50411675f843a394176d9efe385
+      internalID: 21300170
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao12.png
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 392
+        width: 150
+        height: 110
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12ed850b64260c48ae15bd536329fe0
+      internalID: 21300172
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao13.png
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 293
+        width: 126
+        height: 124
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b599c30868003b14a8aa1fdaae6d4115
+      internalID: 21300176
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao14.png
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 395
+        width: 160
+        height: 147
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa1df4e3a6092cb41a2263aa8971b8ad
+      internalID: 21300178
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao2.png
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 405
+        width: 170
+        height: 131
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ab2e42d231b22d49a06768e22971661
+      internalID: 21300154
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao3.png
+      rect:
+        serializedVersion: 2
+        x: 1943
+        y: 0
+        width: 92
+        height: 95
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 566620b482c49a14387f25f597c51cb8
+      internalID: 21300156
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao4.png
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 503
+        width: 132
+        height: 120
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60ebc5a087222064d8b7569325433c5f
+      internalID: 21300158
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao5.png
+      rect:
+        serializedVersion: 2
+        x: 1293
+        y: 503
+        width: 113
+        height: 104
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c21e832c3aa6774a9f24c05ad01e458
+      internalID: 21300160
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao6.png
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 537
+        width: 146
+        height: 107
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f69039360a7cf145afa2c19b8d7e2b7
+      internalID: 21300162
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao7.png
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 382
+        width: 142
+        height: 139
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fb76386ec282f64aa0e7de15b877b5f
+      internalID: 21300164
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao8.png
+      rect:
+        serializedVersion: 2
+        x: 1871
+        y: 382
+        width: 157
+        height: 157
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1fec0bc27bb47a42bf486f908c269b5
+      internalID: 21300166
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Shopping__icon_libao9.png
+      rect:
+        serializedVersion: 2
+        x: 1571
+        y: 418
+        width: 130
+        height: 127
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f435043d80e8d745920035b85e4f979
+      internalID: 21300174
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_01.png
+      rect:
+        serializedVersion: 2
+        x: 1407
+        y: 543
+        width: 127
+        height: 129
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f5ed65ec88506d48854d32d706db6af
+      internalID: 21300040
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_02.png
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 522
+        width: 116
+        height: 140
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f269f7ecac46c14188c9f2f2dcc853c
+      internalID: 21300042
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_03.png
+      rect:
+        serializedVersion: 2
+        x: 1535
+        y: 546
+        width: 133
+        height: 135
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ce3a00175adb15439128a642f5d8f02
+      internalID: 21300044
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_04.png
+      rect:
+        serializedVersion: 2
+        x: 1819
+        y: 540
+        width: 133
+        height: 135
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc52a026b92f1d646b3de575940f4388
+      internalID: 21300046
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_05.png
+      rect:
+        serializedVersion: 2
+        x: 1136
+        y: 624
+        width: 163
+        height: 133
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bd4cfadca891114c8839cdbe9629bb0
+      internalID: 21300048
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Icon_06.png
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 673
+        width: 175
+        height: 135
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 138f5739258bcbb4aa294022688f8111
+      internalID: 21300050
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_BoliBg.png
+      rect:
+        serializedVersion: 2
+        x: 1991
+        y: 263
+        width: 46
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5dc934643481b943b19c3848f7e8bf6
+      internalID: 21300052
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Fangshexian.png
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 737
+        width: 206
+        height: 175
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71e237f14cc76f84b8b7a7de2bb41799
+      internalID: 21300054
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Jinbi.png
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 59
+        width: 32
+        height: 22
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c832a92753d9a8b43b96a6fe6197331b
+      internalID: 21300056
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Mao.png
+      rect:
+        serializedVersion: 2
+        x: 1953
+        y: 540
+        width: 91
+        height: 111
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e348ab4312f6f9046bafc087a4bce5ea
+      internalID: 21300058
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_SaleBg.png
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 562
+        width: 26
+        height: 26
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 10, y: 10, z: 10, w: 10}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8b85585af7794c49a133f5fb9f9095e
+      internalID: 21300060
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Star.png
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 188
+        width: 29
+        height: 33
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11e9b688c54bcc4ca9f01cab88a74c7
+      internalID: 21300062
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Time.png
+      rect:
+        serializedVersion: 2
+        x: 1136
+        y: 537
+        width: 19
+        height: 61
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 8, y: 0, z: 8, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b518285adc905614ab3703c729085423
+      internalID: 21300064
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_XianshiBg.png
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 293
+        width: 72
+        height: 75
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bd3ecaa53236824fa99fb916e177593
+      internalID: 21300066
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Timelimitpay_Img_Zhuomian.png
+      rect:
+        serializedVersion: 2
+        x: 1476
+        y: 682
+        width: 568
+        height: 120
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4f2b9122c68f274596fa4ae8c2e88b7
+      internalID: 21300068
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: be2bdb05bd60eec4d8a32a693c352288
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Shopping_Bg_Discount_01.png: 21300070
+      UI_Shopping_Bg_Discount_02.png: 21300094
+      UI_Shopping_Bg_Icon_01.png: 21300082
+      UI_Shopping_Bg_Icon_02.png: 21300096
+      UI_Shopping_Bg_Icon_03.png: 21300098
+      UI_Shopping_Bg_Icon_04.png: 21300108
+      UI_Shopping_Bg_Icon_05.png: 21300110
+      UI_Shopping_Bg_Icon_06.png: 21300112
+      UI_Shopping_Bg_Icon_07.png: 21300146
+      UI_Shopping_Bg_Icon_08.png: 21300148
+      UI_Shopping_Bg_Icon_09.png: 21300150
+      UI_Shopping_Bg_Icon_daojjishi.png: 21300144
+      UI_Shopping_Bg_Left_01.png: 21300088
+      UI_Shopping_Bg_Left_02.png: 21300124
+      UI_Shopping_Bg_Shadow_01.png: 21300138
+      UI_Shopping_Bg_quan_01.png: 21300130
+      UI_Shopping_Btn_Add_01.png: 21300092
+      UI_Shopping_Btn_Checked_02.png: 21300072
+      UI_Shopping_Btn_Checked_03.png: 21300126
+      UI_Shopping_Btn_Close_01.png: 21300114
+      UI_Shopping_Btn_Normal_01.png: 21300074
+      UI_Shopping_Btn_Normal_02.png: 21300084
+      UI_Shopping_Btn_Normal_03.png: 21300128
+      UI_Shopping_Btn_Open_01.png: 21300116
+      UI_Shopping_Btn_Pay_01.png: 21300118
+      UI_Shopping_Btn_Shuaxin_01.png: 21300120
+      UI_Shopping_Btn_Shuaxin_02.png: 21300134
+      UI_Shopping_Btn_Uncheck_01 .png: 21300078
+      UI_Shopping_Btn_xinfeng_01.png: 21300136
+      UI_Shopping_Button_01.png: 21300000
+      UI_Shopping_Button_02.png: 21300002
+      UI_Shopping_Button_Toushi.png: 21300038
+      UI_Shopping_Divide_Line_01.png: 21300080
+      UI_Shopping_Icon_01.png: 21300004
+      UI_Shopping_Icon_02.png: 21300006
+      UI_Shopping_Icon_03.png: 21300008
+      UI_Shopping_Icon_04.png: 21300010
+      UI_Shopping_Icon_05.png: 21300012
+      UI_Shopping_Icon_06.png: 21300014
+      UI_Shopping_Icon_Kefu_01.png: 21300100
+      UI_Shopping_Icon_Renminbi.png: 21300036
+      UI_Shopping_Icon_Stone_01.png: 21300122
+      UI_Shopping_Icon__time_01.png: 21300090
+      UI_Shopping_Icon_quan_01.png: 21300132
+      UI_Shopping_Icon_sellout_01.png: 21300086
+      UI_Shopping_Icon_yueka1.png: 21300102
+      UI_Shopping_Icon_yueka2.png: 21300104
+      UI_Shopping_Img_Fangshexian.png: 21300016
+      UI_Shopping_Img_JiageBg.png: 21300018
+      UI_Shopping_Img_Jinbi01.png: 21300020
+      UI_Shopping_Img_Jinbi02.png: 21300022
+      UI_Shopping_Img_Shenmishangdian01.png: 21300024
+      UI_Shopping_Img_Shenmishangdian02.png: 21300026
+      UI_Shopping_Img_Toushi01.png: 21300028
+      UI_Shopping_Img_Toushi02.png: 21300030
+      UI_Shopping_Img_Wanshiwu01.png: 21300032
+      UI_Shopping_Img_Wanshiwu02.png: 21300034
+      UI_Shopping__icon_huiyuan.png: 21300106
+      UI_Shopping__icon_libao1.png: 21300152
+      UI_Shopping__icon_libao10.png: 21300168
+      UI_Shopping__icon_libao11.png: 21300170
+      UI_Shopping__icon_libao12.png: 21300172
+      UI_Shopping__icon_libao13.png: 21300176
+      UI_Shopping__icon_libao14.png: 21300178
+      UI_Shopping__icon_libao2.png: 21300154
+      UI_Shopping__icon_libao3.png: 21300156
+      UI_Shopping__icon_libao4.png: 21300158
+      UI_Shopping__icon_libao5.png: 21300160
+      UI_Shopping__icon_libao6.png: 21300162
+      UI_Shopping__icon_libao7.png: 21300164
+      UI_Shopping__icon_libao8.png: 21300166
+      UI_Shopping__icon_libao9.png: 21300174
+      UI_Shopping_icon_libao15.png: 21300180
+      UI_Shopping_icon_libao16.png: 21300182
+      UI_Shopping_icon_libao17.png: 21300184
+      UI_Shopping_icon_libao18.png: 21300186
+      UI_Shopping_icon_libao19.png: 21300188
+      UI_Shopping_time1.png: 21300142
+      UI_Timelimitpay_Icon_01.png: 21300040
+      UI_Timelimitpay_Icon_02.png: 21300042
+      UI_Timelimitpay_Icon_03.png: 21300044
+      UI_Timelimitpay_Icon_04.png: 21300046
+      UI_Timelimitpay_Icon_05.png: 21300048
+      UI_Timelimitpay_Icon_06.png: 21300050
+      UI_Timelimitpay_Img_BoliBg.png: 21300052
+      UI_Timelimitpay_Img_Fangshexian.png: 21300054
+      UI_Timelimitpay_Img_Jinbi.png: 21300056
+      UI_Timelimitpay_Img_Mao.png: 21300058
+      UI_Timelimitpay_Img_SaleBg.png: 21300060
+      UI_Timelimitpay_Img_Star.png: 21300062
+      UI_Timelimitpay_Img_Time.png: 21300064
+      UI_Timelimitpay_Img_XianshiBg.png: 21300066
+      UI_Timelimitpay_Img_Zhuomian.png: 21300068
+  mipmapLimitGroupName:
+  pSDRemoveMatte: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

@@ -59,6 +59,15 @@ public class MainView : UIBase
    /// <summary>供主控制器下发当前角色包裹。</summary>
    public TradeMarketWindow TradeMarketWindow => _tradeMarketWindow;
 
+   /// <summary>功能菜单中的珍宝阁入口。</summary>
+   [SerializeField] private Button _treasurePavilionButton;
+   /// <summary>主城功能层中的珍宝阁面板。</summary>
+   [SerializeField] private TreasurePavilionWindow _treasurePavilionWindow;
+   /// <summary>供控制器绑定珍宝阁入口按钮。</summary>
+   public Button TreasurePavilionButton => _treasurePavilionButton;
+   /// <summary>控制器打开窗口时传入当前角色。</summary>
+   public TreasurePavilionWindow TreasurePavilionWindow => _treasurePavilionWindow;
+
    /// <summary>主角血蓝、资源弧条、技能快捷栏及当前目标文字区域。</summary>
    [SerializeField,Header("角色当前信息window")] private RoleCurrInfoWindow _roleCurrInfoWindow;
    /// <summary>技能列表和快捷技能槽窗口，数据由技能控制器提供。</summary>
@@ -332,6 +341,7 @@ public class MainView : UIBase
       windowDic[WindowType.TalkWindow] = _talkWindow;
       windowDic[WindowType.ShopWindow] = _shopWindow;
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
+      windowDic[WindowType.TreasurePavilionWindow] = _treasurePavilionWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;
       windowDic[WindowType.TaskWindow] = _taskWindow;
