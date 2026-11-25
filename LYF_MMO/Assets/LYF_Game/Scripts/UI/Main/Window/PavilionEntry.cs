@@ -62,6 +62,8 @@ public sealed class PavilionEntry
     {
         /// <summary>一级分类标题。</summary>
         public string name;
+        /// <summary>为 true 时隐藏整个商会货架及子分类，未配置时照常展示。</summary>
+        public bool hidden;
         /// <summary>二级分类名称，空数组表示直接打开一级分类。</summary>
         public string[] children;
     }

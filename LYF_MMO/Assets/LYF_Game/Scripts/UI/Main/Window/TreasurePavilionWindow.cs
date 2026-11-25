@@ -193,6 +193,8 @@ public sealed class TreasurePavilionWindow : WindowBase
         if (catalog == null)
         {
             catalog = JsonUtility.FromJson<PavilionEntry.Catalog>(catalogFile.text);
+            // 导航和商品匹配共用可见货架，隐藏分类不会成为默认选项。
+            catalog.chamber = Array.FindAll(catalog.chamber, shelf => !shelf.hidden);
             search.onValueChanged.AddListener(OnSearch);
         }
         Fit();
@@ -350,7 +352,7 @@ public sealed class TreasurePavilionWindow : WindowBase
     {
         if (channel == 2) return row.channel == "商城" && row.group == catalog.mall[tab];
         if (channel == 3) return row.channel == "绑元商城" && row.group == catalog.bound[tab];
-        if (row.channel != "商会" || row.group != catalog.chamber[group].name) return false;
+        if (catalog.chamber.Length == 0 || row.channel != "商会" || row.group != catalog.chamber[group].name) return false;
         // 直接目录没有子分类。
         string[] children = catalog.chamber[group].children;
         return children.Length == 0 || row.shelf == children[leaf];
