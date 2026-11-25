@@ -10,6 +10,8 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
     private NetClient _client;
     /// <summary>连接是否实际建立过，用于只在真实断链时清除已失效的队伍展示与场景。</summary>
     private int _connected;
+    /// <summary>集群节点向 MS 登记的物理编号；旧单节点模式为空。</summary>
+    internal SceneNodeRegistration RealmNode;
 
     /// <summary>队伍服连接由游戏服入口统一初始化。</summary>
     private MasterTeamLink() { }
@@ -38,7 +40,21 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         _client.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, this);
         _client.RegistCommand(NetDefine.PtcM2T_ChatBroadCastM2T, this);
         _client.RegistCommand(NetDefine.PtcM2G_ChatBroadCastM2Gs, this);
-        _client.OnConnSucceed = () => Interlocked.Exchange(ref _connected, 1);
+        if (RealmNode != null)
+        {
+            _client.RegistCommand(SceneLineCode.Gather, this);
+            ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.MasterServer, SceneLineCode.Gather),
+                this, CenterMessageRoute.Internal);
+            ClientMessageManager.Instance.Register(new GameMessageHandlerKey(GameCommandSource.MasterServer, SceneLineCode.Register),
+                this, CenterMessageRoute.Internal);
+        }
+        _client.OnConnSucceed = () =>
+        {
+            if (RealmNode != null) _client.Send(SceneLineCode.Register, RealmNode.ToByteString());
+            Interlocked.Exchange(ref _connected, 1);
+            if (RealmNode != null) GameGlobal.Instance.EnqueueGameCommand(GameCommandSource.MasterServer, _client,
+                new BasePackage { ProtoCode = SceneLineCode.Register });
+        };
         _client.OnConnFailed = OnDisconnected;
         _client.StartConnect();
     }
@@ -82,6 +98,16 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
     public bool SendToMaster(BasePackage packet)
     {
         return Volatile.Read(ref _connected) != 0 && _client.Send(packet);
+    }
+
+    /// <summary>把实际在线角色和队伍界面需要的属性登记到同区 MS。</summary><param name="role">当前 GS 持有的角色。</param>
+    internal void PublishLocation(OnlineRole role)
+    {
+        if (RealmNode == null || Volatile.Read(ref _connected) == 0) return;
+        // 按正式属性组件取得装备生效后的角色摘要。
+        RoleBaseInfo info = role.AttrComp.CalculateAttribute();
+        _client.Send(SceneLineCode.Presence, new TeamMemberInfo { RoleId = role.GetID(), Nickname = info.Nickname,
+            JobId = info.JobId, Level = info.Level, CurrHp = info.CurrHp, MaxHp = info.MaxHp, SceneId = info.MapId }.ToByteString());
     }
 
     /// <summary>GS 下线时让 MS 删除该角色的组队关系。</summary>
@@ -132,6 +158,8 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
             case NetDefine.CMD_MasterTeamEnter:
             case NetDefine.CMD_MasterTeamExit:
             case NetDefine.CMD_MasterTeamLost:
+            case SceneLineCode.Gather:
+            case SceneLineCode.Register:
                 return true;
             default:
                 return false;
@@ -146,6 +174,17 @@ public sealed class MasterTeamLink : IContainer, IGameMessageHandler
         ByteString data = context.Package.Data;
         switch (context.Package.ProtoCode)
         {
+            case SceneLineCode.Register:
+                // MS 重启后从游戏线程重新发布当前在线角色。
+                var roles = new System.Collections.Generic.List<OnlineRole>(RoleManager.Instance.GetOnlineRoleMap().Values);
+                for (int index = 0; index < roles.Count; index++)
+                    if (roles[index].State == OnlineRoleState.Online) PublishLocation(roles[index]);
+                break;
+            case SceneLineCode.Gather:
+                // 已确认的队员由其真实网关路由到同一副本宿主。
+                SceneRouteRequest gather = SceneRouteRequest.Parser.ParseFrom(data);
+                RoleManager.Instance.GetOnlineRole(gather.RoleId)?.SendToClient(SceneLineCode.Gather, data);
+                break;
             case NetDefine.CMD_MasterTeamDelivery:
                 // 指定单一游戏角色的错误或邀请。
                 MasterTeamRolePacket delivery = MasterTeamRolePacket.Parser.ParseFrom(data);

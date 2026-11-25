@@ -402,6 +402,7 @@ public class OnlineRole : IGeneOwner
             state_machine.ForceToDefaultState(true);
         }
         State = OnlineRoleState.Offline;
+        SceneLineHandler.TrackLogout(this);
         // 掉线进入离线保存阶段时立即清理队伍关系，避免队伍残留僵尸成员。
         // 此时会话已不可用，队伍清理内部不向本人发包，只通知仍在线的队友。
         TeamManager.Instance.OnRoleOffline((ulong)GetID());
@@ -559,6 +560,15 @@ public class OnlineRole : IGeneOwner
     #region 成员变量
     // Unity 客户端在网关侧的会话 ID，用于向指定客户端回包。
     public int UnitySessionId;
+
+    /// <summary>当前所属的公共地图分线；独立副本由 BaseInfo.InstanceId 区分。</summary>
+    public PublicSceneLine PublicScene;
+
+    /// <summary>原 GS 交接后由目标 GS 装载的运行期信息，仅在首次分线装载使用。</summary>
+    internal SceneRoleTransfer IncomingScene;
+
+    /// <summary>请求立即保存脏模块，切线要等既有中心服保存回执后才交出角色。</summary>
+    internal void FlushForSceneChange() { _roleNetSender.SendRoleDataToDB(); }
 
     // GameServer 与 GateServer 连接的会话 ID，用于定位网关连接。
     public int GateSessionId;

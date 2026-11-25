@@ -12,16 +12,26 @@ internal static class MasterServerApp
         // 服务端没有上游转发器，直接在收到请求的游戏服连接上回复。
         NetServer server = new NetServer(null);
         // 同一游戏服的队伍请求沿一条 TCP 链路顺序到达。
-        MasterTeamService teams = new MasterTeamService();
+        // 无参数或仅端口号保留原开发入口；集群由 XML 指定逻辑区服和监听地址。
+        int port = NetDefine.MasterServerPort;
+        string host = NetDefine.IPHost;
+        RealmTopology realm = null;
+        if (args.Length > 0 && !int.TryParse(args[0], out port))
+        {
+            realm = new RealmTopology(args[0]);
+            port = realm.MasterPort;
+            host = realm.Host;
+        }
+        MasterTeamService teams = new MasterTeamService(realm);
+        server.RegistCommand(SceneLineCode.Register, teams);
+        server.RegistCommand(SceneLineCode.Presence, teams);
         server.RegistCommand(NetDefine.RpcC2M_SendChatMsg, teams);
         server.RegistCommand(NetDefine.PtcG2M_ChatAudioTransfer, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamRequest, teams);
         server.RegistCommand(NetDefine.CMD_MasterTeamOffline, teams);
         server.OnSessionDisconnected = teams.RemoveGame;
         // 独立分区或隔离验证可单独配置监听端口。
-        int port = NetDefine.MasterServerPort;
-        if (args.Length > 0) port = int.Parse(args[0]);
-        server.StartServer(NetDefine.IPHost, port);
+        server.StartServer(host, port);
         // 确认超时由 MS 主循环结束，100 毫秒粒度不承担任何副本或战斗运算。
         while (true)
         {

@@ -320,6 +320,44 @@ public abstract class ROSkillComponent : ActionStateComponent<ROAttackActionArgs
     /// <summary>当前存在且仍在释放的动作技能时为 true。</summary>
     public bool IsCasting() { return skill_ != null && skill_.Casting(); }
 
+    /// <summary>把进程本地逻辑帧冷却转换为跨 GS 可还原的绝对截止毫秒。</summary>
+    /// <param name="transfer">随角色一起转移的场景数据。</param>
+    internal void ExportSceneCooldowns(SceneRoleTransfer transfer)
+    {
+        // 一次交接用同一个时钟基准。
+        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // 只传输仍有效的技能 CD。
+        List<int> ids = new List<int>(skill_cd_.Keys);
+        for (int index = 0; index < ids.Count; index++)
+        {
+            // 当前技能在源 GS 的剩余毫秒数。
+            int remaining = GetSkillCoolDown(ids[index]);
+            if (remaining > 0) transfer.SkillEndMs.Add(ids[index], now + remaining);
+        }
+        ids = new List<int>(skill_cd_group_cd_.Keys);
+        for (int index = 0; index < ids.Count; index++)
+        {
+            // 同组技能共享一个截止时刻。
+            int remaining = GetSkillGroupCoolDown(ids[index]);
+            if (remaining > 0) transfer.GroupEndMs.Add(ids[index], now + remaining);
+        }
+    }
+
+    /// <summary>在目标 GS 的当前帧重建仍有效的冷却，不延长转场耗时。</summary>
+    /// <param name="transfer">源 GS 已确认的交接数据。</param>
+    internal void ImportSceneCooldowns(SceneRoleTransfer transfer)
+    {
+        // 两台 GS 的逻辑帧起点不同，以实际时间差重建剩余帧数。
+        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // 当前仍有效的单技能与公共组键值。
+        List<int> ids = new List<int>(transfer.SkillEndMs.Keys);
+        for (int index = 0; index < ids.Count; index++)
+            SetSkillCoolDown(ids[index], (int)Math.Max(0, transfer.SkillEndMs[ids[index]] - now));
+        ids = new List<int>(transfer.GroupEndMs.Keys);
+        for (int index = 0; index < ids.Count; index++)
+            SetSkillGroupCoolDown(ids[index], (int)Math.Max(0, transfer.GroupEndMs[ids[index]] - now));
+    }
+
     /// <summary>技能自转移交给 OnGetEvent 校验新技能的互断权限、MP 和 CD，通过后才停止原动作。</summary>
     /// <param name="state">请求切入的状态；其他状态继续沿用原许可。</param>
     public override bool IsPermitted(StateDefine state)

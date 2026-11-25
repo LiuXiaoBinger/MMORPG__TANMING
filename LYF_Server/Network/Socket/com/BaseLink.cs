@@ -127,7 +127,7 @@ public class BaseLink
     /// <param name="protoCode">非 -1 时覆盖封包协议号。</param>
     /// <param name="data">非空时覆盖封包载荷。</param>
     /// <returns>本地提交结果：KCP 已接管或 TCP 帧已提交写出返回 true，实时协议被丢弃、无可用 Socket 或发送异常返回 false；不代表帧已完整写出，也不代表对端已收到或业务处理完成。</returns>
-    public bool Send(BasePackage basePackage, int protoCode = -1, ByteString data = null)
+    public virtual bool Send(BasePackage basePackage, int protoCode = -1, ByteString data = null)
     {
         try
         {

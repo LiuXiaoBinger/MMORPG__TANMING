@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 /**
 * Title:
@@ -14,6 +15,12 @@ public class MinMapWindow : WindowBase
 {
 
    #region 字段
+   /// <summary>小地图下方的分线下拉框，由区服返回可用线路后显示。</summary>
+   [SerializeField] private TMP_Dropdown _lineSelector;
+   /// <summary>下拉索引对应的真实线路编号，有空号时仍能请求正确目标。</summary>
+   private readonly List<int> _lineIds = new List<int>();
+   /// <summary>玩家选择新线路时通知主界面控制器发送请求。</summary>
+   public event System.Action<int> LineSelected;
    /// <summary>小地图底图，通过尺寸和偏移显示角色附近区域。</summary>
    [SerializeField,Header("小地图背景图片")]private Image _imgMinMap;
 
@@ -34,6 +41,7 @@ public class MinMapWindow : WindowBase
    /// <summary>初始化图片边长并订阅场景切换，保持常驻窗口与场景辅助点的生命周期一致。</summary>
    private void Start()
    {
+      if (_lineSelector != null) _lineSelector.onValueChanged.AddListener(SelectLine);
       _mapsize=_imgMinMap.sprite.rect.width;
       Debug.Log("_mapsize:"+_mapsize);
       SceneManager.sceneLoaded += OnSceneLoaded;
@@ -69,11 +77,46 @@ public class MinMapWindow : WindowBase
    /// <summary>窗口销毁时释放场景订阅；仅隐藏时保留订阅，以便下一场景重新启用。</summary>
    private void OnDestroy()
    {
+      if (_lineSelector != null) _lineSelector.onValueChanged.RemoveListener(SelectLine);
       SceneManager.sceneLoaded -= OnSceneLoaded;
    }
    #endregion
 
    #region 交互响应
+   /// <summary>用服务器登记的人数、容量和当前线刷新线路选择。</summary>
+   /// <param name="result">本地图的实际线路列表；空值用于隐藏副本内的选择器。</param>
+   public void ShowLines(SceneLineResult result)
+   {
+      if (_lineSelector == null) return;
+      _lineIds.Clear();
+      _lineSelector.ClearOptions();
+      if (result == null || result.Lines.Count == 0)
+      {
+         _lineSelector.gameObject.SetActive(false);
+         return;
+      }
+      // 下拉显示顺序按区服目录；当前线的真实编号单独匹配。
+      List<string> labels = new List<string>();
+      int currentIndex = 0;
+      for (int index = 0; index < result.Lines.Count; index++)
+      {
+         // 本条线路的可见编号与实时占用。
+         PublicSceneLine line = result.Lines[index];
+         _lineIds.Add(line.LineId);
+         labels.Add(line.LineId + "线  " + line.Population + "/" + line.Capacity);
+         if (line.LineId == result.CurrentLine) currentIndex = index;
+      }
+      _lineSelector.AddOptions(labels);
+      _lineSelector.SetValueWithoutNotify(currentIndex);
+      _lineSelector.RefreshShownValue();
+      _lineSelector.gameObject.SetActive(true);
+   }
+
+   /// <summary>把控件选中行转换为地图线路编号。</summary><param name="index">下拉框的零基行号。</param>
+   private void SelectLine(int index)
+   {
+      if (index >= 0 && index < _lineIds.Count) LineSelected?.Invoke(_lineIds[index]);
+   }
    /// <summary>将地图边长放大为当前的 1.1 倍，并限制在 512 到 2048。</summary>
    public void OnPluseBtnClicked()
    {

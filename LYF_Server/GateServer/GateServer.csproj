@@ -44,6 +44,7 @@
         <Compile Include="Ctrl\GateKcpCtrl.cs" />
         <Compile Include="Ctrl\GateSyncTimeCtrl.cs" />
         <Compile Include="GateServerApp.cs" />
+        <Compile Include="RealmGameLink.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>

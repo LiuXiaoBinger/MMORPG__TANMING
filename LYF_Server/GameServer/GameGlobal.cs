@@ -146,6 +146,7 @@ public class GameGlobal:Singleton<GameGlobal>
         UpdateManager("RedisManager", RedisManager.Instance.Update, deltaMilliseconds);
         UpdateManager("RoGamesManager", RoGamesManager.Instance.Update, deltaMilliseconds);
         UpdateManager("RoleManager", RoleManager.Instance.Update, deltaMilliseconds);
+        SceneLineHandler.FlushDepartures();
         UpdateManager("DecoupleManager", DecoupleManager.Instance.Update, deltaMilliseconds);
         //UpdateManager("HttpTaskManager", HttpTaskManager.Instance.Update, deltaMilliseconds);
         UpdateManager("MonsterWaveManager", MonsterWaveManager.Instance.Update, deltaMilliseconds);

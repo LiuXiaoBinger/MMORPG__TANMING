@@ -162,6 +162,7 @@
         <Compile Include="MessageHandler\Login\LoginGameServerHandler.cs" />
         <Compile Include="MessageHandler\Login\CreateRoleHandler.cs" />
         <Compile Include="MessageHandler\Login\StartGameHandler.cs" />
+        <Compile Include="MessageHandler\SceneLineHandler.cs" />
         <Compile Include="MessageHandler\Role\EnterWorldHandler.cs" />
         <Compile Include="MessageHandler\Role\RoleSkillInfoHandler.cs" />
         <Compile Include="MessageHandler\Skill\SkillCastHandler.cs" />

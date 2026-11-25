@@ -97,8 +97,19 @@ public sealed class RoleKnapsackInfoHandler : IGameMessageHandler
         role.GetComponent<RoleEquipComponent>().OnEquipChange();
         // 首次登录在装备生效后补满当前资源；既有资源接口不会恢复已死亡角色。
         // CompleteRoleDataLoad 只成功一次，重复背包回包及普通换装不会进入此处补血。
-        role.AttrComp.ChangeHp(role.AttrComp.MaxHp, (ulong)role.GetID());
-        role.AttrComp.ChangeMp(role.AttrComp.MaxMp);
+        if (role.IncomingScene != null)
+        {
+            // 切线继续使用源 GS 的即时资源，避免通过切换线路反复回满。
+            role.mainRoleInfo.BaseInfo.CurrHp = role.IncomingScene.Role.BaseInfo.CurrHp;
+            role.mainRoleInfo.BaseInfo.CurrMp = role.IncomingScene.Role.BaseInfo.CurrMp;
+            SceneLineHandler.FinishArrival(role);
+        }
+        else
+        {
+            role.AttrComp.ChangeHp(role.AttrComp.MaxHp, (ulong)role.GetID());
+            role.AttrComp.ChangeMp(role.AttrComp.MaxMp);
+        }
         role.AttrComp.NotifyAttributeUpdate();
+        MasterTeamLink.Instance.PublishLocation(role);
     }
 }

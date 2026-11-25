@@ -12,22 +12,37 @@ namespace GateServer
         /// <summary>
         /// 进程主入口：连接游戏服→监听 Unity→注册各协议双向转发→进入休眠主循环。
         /// </summary>
-        /// <param name="args">命令行参数，当前未使用。</param>
+        /// <param name="args">可选的区服拓扑 XML 路径。无参数时使用原单节点开发入口。</param>
         public static void Main(string[] args)
         {
-            //网关逻辑客户端 去连接游戏逻辑服务器服务器
-            NetClient client = new NetClient(NetDefine.IPHost, NetDefine.GameServerPort, ClientType.GateServer);
-            client.StartConnect();
-            //网关服务器 开启服务器端
+            // 单节点与区服集群共用原 TCP/KCP 协议登记表。
+            NetClient client;
+            // 多节点部署按玩家场景选择不同内网上游。
+            RealmGameLink router = null;
+            // 监听地址和端口默认与旧客户端兼容。
+            string host = NetDefine.IPHost;
+            int port = NetDefine.GateServerPort;
+            int udpPort = KcpDefine.GateUdpPort;
+            if (args.Length > 0)
+            {
+                // 独立区服的网关和各个 GS 读取相同的部署描述。
+                RealmTopology config = new RealmTopology(args[0]);
+                router = new RealmGameLink(config);
+                client = router;
+                host = config.Host;
+                port = config.GatePort;
+                udpPort = config.UdpPort;
+            }
+            else client = new NetClient(host, NetDefine.GameServerPort, ClientType.GateServer);
+            // 玩家连接仍由原网关接受。
             NetServer server = new NetServer(client);
             // TCP 往返测量由接入会话直接应答，在开始监听前登记处理器。
             server.RegistCommand(NetDefine.RpcC2T_SyncTime, new GateSyncTimeCtrl());
-            server.StartServer(NetDefine.IPHost,NetDefine.GateServerPort);
 
             // 实时通道：移动与技能只走可靠 UDP（KCP），其余业务仍走上面的 TCP 监听。
             // 本次运行的 UDP 网络实例，负责监听、认证与 KCP 会话路由。
             UdpNetwork udpNetwork = new UdpNetwork();
-            if (!udpNetwork.Start(NetDefine.IPHost, KcpDefine.GateUdpPort))
+            if (!udpNetwork.Start(host, udpPort))
             {
                 // 启动失败时仅告警：客户端绑定会被明确拒绝，并沿现有断线恢复流程重建连接。
                 LogMsg.Info("KCP UDP 通道启动失败，客户端实时绑定将被拒绝", LogMsgType.Warn);
@@ -117,6 +132,15 @@ namespace GateServer
             // 绑定协议处理器实例，只在网关与客户端之间分配参数并回包。
             GateKcpCtrl gateKcpCtrl = new GateKcpCtrl();
             server.RegistCommand(NetDefine.CMD_KcpBindCode, gateKcpCtrl);
+            if (router != null)
+            {
+                server.RegistCommand(SceneLineCode.List, gateMoveCtrl);
+                server.RegistCommand(SceneLineCode.Change, gateMoveCtrl);
+                server.OnSessionDisconnected = router.PlayerLeft;
+                router.StartRealm();
+            }
+            else client.StartConnect();
+            server.StartServer(host, port);
             // 网关系程不做业务，仅挂起等待网络事件。
             while (true)
             {

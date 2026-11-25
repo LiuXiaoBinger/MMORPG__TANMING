@@ -7,26 +7,47 @@ namespace GameServer
     internal class GameServerApp
     {
         /// <summary>加载配置和网络链路后启动游戏主循环。</summary>
-        /// <param name="args">命令行参数，当前未使用。</param>
+        /// <param name="args">集群启动时依次传入区服 XML 和物理 GS 编号。</param>
         public static void Main(string[] args)
         {
             LubanMgr.Instance.Init();
             // 每个逻辑服实例必须使用不同编号，避免跨进程生成重复物品 UID。
-            UIDHelper.ConfigureServerInstanceId(GetServerInstanceId());
+            // 默认端口与原单节点部署一致；集群使用配置里的物理节点地址。
+            int instance = GetServerInstanceId();
+            string host = NetDefine.IPHost;
+            string listenHost = host;
+            int listenPort = NetDefine.GameServerPort;
+            int masterPort = NetDefine.MasterServerPort;
+            int centerPort = NetDefine.CenterServerPort;
+            RealmTopology realm = null;
+            if (args.Length > 0)
+            {
+                realm = new RealmTopology(args[0]);
+                instance = int.Parse(args[1]);
+                // 该节点编号同时决定监听端口与跨服唯一物品编号的实例位。
+                SceneNodeRegistration node = realm.Games[instance];
+                listenHost = node.Host;
+                listenPort = node.Port;
+                host = realm.Host;
+                masterPort = realm.MasterPort;
+                centerPort = realm.CenterPort;
+            }
+            UIDHelper.ConfigureServerInstanceId(instance);
             // GameServer 作为客户端连接 CenterServer，接收登录、角色和持久化结果。
-            NetClient client = new NetClient(NetDefine.IPHost, NetDefine.CenterServerPort, ClientType.GameServer);
+            NetClient client = new NetClient(host, centerPort, ClientType.GameServer);
             RoleNetSender.Configure(client);
             client.StartConnect();
             // GameServer 作为服务端监听 GateServer 转发的客户端请求。
             NetServer server = new NetServer(client);
             server.OnSessionDisconnected = GameGlobal.Instance.EnqueueGateSessionDisconnected;
-            server.StartServer(NetDefine.IPHost,NetDefine.GameServerPort);
             GameGlobal.Instance.Init();
             
             // 协议注册只绑定网络入口和独立处理器，业务仍由逻辑线程执行。
             GameMessageProtocolRegister.Register(server, client);
+            if (realm != null) SceneLineHandler.Start(server, realm, instance);
+            server.StartServer(listenHost, listenPort);
             // 组队请求经已有玩家会话认证后转交独立 MS。
-            MasterTeamLink.Instance.Connect(NetDefine.IPHost, NetDefine.MasterServerPort);
+            MasterTeamLink.Instance.Connect(host, masterPort);
             while (true)
             {
                 // 每轮先消费网络命令，再由 GameGlobal 按 50ms 固定步长推进业务模块。

@@ -120,8 +120,7 @@ public sealed class ChatMessageHandler : IGameMessageHandler
             if (target.State != OnlineRoleState.Online) continue;
             if (channel == ChatMsgType.ChatTypeCurscene)
             {
-                if (target.mainRoleInfo.BaseInfo.MapId != sender.mainRoleInfo.BaseInfo.MapId) continue;
-                if (target.mainRoleInfo.BaseInfo.InstanceId != sender.mainRoleInfo.BaseInfo.InstanceId) continue;
+                if (!RoleManager.IsInSameRoleScene(target, sender.mainRoleInfo)) continue;
             }
             target.SendToClient(NetDefine.PtcT2C_ChattingMsgNtf, payload);
         }

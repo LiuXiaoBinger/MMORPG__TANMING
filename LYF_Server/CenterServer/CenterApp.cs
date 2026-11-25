@@ -19,7 +19,7 @@ namespace CenterServer
         /// <summary>
         /// 进程主入口，按配置→网络监听→数据库→协议注册→Redis→主循环的顺序完成中心服启动。
         /// </summary>
-        /// <param name="args">命令行参数，当前未使用。</param>
+        /// <param name="args">可选的区服 XML 路径，用于指定中心服监听地址和端口。</param>
         static void Main(string[] args)
         {
             // 加载 Luban 技能、职业等静态配置表，供建角与查询时读取。
@@ -27,7 +27,6 @@ namespace CenterServer
 
             // 中心服作为网络服务器监听，接收 LoginServer/GameServer 转发的协议包。
             NetServer server = new NetServer(null);
-            server.StartServer(NetDefine.IPHost, NetDefine.CenterServerPort);
 
             // 初始化 MySQL 连接并按 CodeFirst 建库建表，返回共享数据库客户端。
             SqlSugarClient db = DBMgr.Instance.initDB();
@@ -49,6 +48,17 @@ namespace CenterServer
             server.RegistCommand(NetDefine.CMD_SyncKnapsackGridCountCode, RoleCtrl);//同步背包已开格子数量
             server.RegistCommand(NetDefine.CMD_BuyShopItemCode, RoleCtrl);//处理 GameServer 转发的商城购买请求
             server.RegistCommand(NetDefine.CMD_SaveRoleDataCode, RoleCtrl);//接收 GameServer 定时角色物品快照
+            // 独立部署从同一份区服文件读取内网地址，数据库和处理器就绪后再开放端口。
+            string host = NetDefine.IPHost;
+            int port = NetDefine.CenterServerPort;
+            if (args.Length > 0)
+            {
+                // 中心服实例承载的区服部署描述。
+                RealmTopology realm = new RealmTopology(args[0]);
+                host = realm.Host;
+                port = realm.CenterPort;
+            }
+            server.StartServer(host, port);
 
             // 中心服主循环：单消费者顺序执行数据库写任务，1ms 唤醒一次。
             while (true)

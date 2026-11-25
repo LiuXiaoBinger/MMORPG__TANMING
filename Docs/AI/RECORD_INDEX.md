@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `1c11e327bf388955003343975de882121939447e4cfb721f6221bdd5a1d16d62`
+Source normalized SHA256: `f1e737127ae6d09dd8159cfe0c567e859443881fcf74e636d3ebf451ee5fce93`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,11 +137,12 @@ Source normalized SHA256: `1c11e327bf388955003343975de882121939447e4cfb721f6221b
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-942 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-943 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 944-946 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `8f0d4f832f6c9113bec290ff3be4f86d8c538be0e3cf3b0c816d81a94e60e186`
+Source normalized SHA256: `6b7bb8d92cf2c379916a5954aec2429d39ba581ec65b7193fef24452a5fce5cc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -270,7 +271,8 @@ Source normalized SHA256: `8f0d4f832f6c9113bec290ff3be4f86d8c538be0e3cf3b0c816d8
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-973 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-974 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 975-978 |
 
 ## Docs/AI/DECISIONS.en.md
 

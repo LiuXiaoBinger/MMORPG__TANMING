@@ -6,6 +6,20 @@ internal sealed class MasterTeamService : IContainer
     /// <summary>每条游戏服连接对应原游戏分区的队伍集合，分区间的角色、队伍和实例编号相互独立。</summary>
     private readonly Dictionary<int, GamePartition> _games = new Dictionary<int, GamePartition>();
 
+    /// <summary>多节点部署共享一份区服业务，单节点开发沿用原连接分区。</summary>
+    private readonly RealmTopology realm;
+    /// <summary>按当前角色宿主路由的区服出口。</summary>
+    private readonly RealmSocialLink cluster;
+
+    /// <summary>为配置的区服建立一份社交权威。</summary><param name="config">启用多 GS 的区服配置。</param>
+    internal MasterTeamService(RealmTopology config = null)
+    {
+        realm = config;
+        if (realm == null) return;
+        cluster = new RealmSocialLink();
+        _games.Add(0, new GamePartition(cluster));
+    }
+
     /// <summary>同一个 GS 连接共享队伍权威与聊天频道，不跨游戏分区广播。</summary>
     private sealed class GamePartition
     {
@@ -38,7 +52,26 @@ internal sealed class MasterTeamService : IContainer
         {
             // 该游戏服分区的唯一组队权威，成员变更与连接清理按顺序执行。
             GamePartition partition;
-            if (!_games.TryGetValue(session.SessionID, out partition))
+            if (cluster != null)
+            {
+                if (basePackage.ProtoCode == SceneLineCode.Register)
+                {
+                    // 多台 GS 分别登记实际物理编号，全部加入同一份区服队伍目录。
+                    SceneNodeRegistration game = SceneNodeRegistration.Parser.ParseFrom(basePackage.Data);
+                    if (game.RealmId == realm.RealmId && realm.Games.ContainsKey(game.GameId))
+                        cluster.Nodes[session.SessionID] = game.GameId;
+                    return;
+                }
+                if (!cluster.Nodes.ContainsKey(session.SessionID)) return;
+                cluster.Sender = session;
+                if (basePackage.ProtoCode == SceneLineCode.Presence)
+                {
+                    cluster.Present(session, TeamMemberInfo.Parser.ParseFrom(basePackage.Data));
+                    return;
+                }
+                partition = _games[0];
+            }
+            else if (!_games.TryGetValue(session.SessionID, out partition))
             {
                 partition = new GamePartition(session);
                 _games.Add(session.SessionID, partition);
@@ -59,6 +92,7 @@ internal sealed class MasterTeamService : IContainer
             {
                 // 同一角色的社交状态一并释放。
                 ulong uid = LeaveTeamArg.Parser.ParseFrom(basePackage.Data).RoleId;
+                if (cluster != null && !cluster.Remove(session, uid)) return;
                 partition.Teams.OnRoleOffline(uid);
                 partition.Chat.OnRoleOffline(uid);
                 partition.Audio.Offline(uid);
@@ -73,6 +107,7 @@ internal sealed class MasterTeamService : IContainer
     {
         lock (_games)
         {
+            if (cluster != null) cluster.Update();
             // 分区快照持有原对象引用；断链移除分区同样受此锁保护。
             List<GamePartition> partitions = new List<GamePartition>(_games.Values);
             for (int index = 0; index < partitions.Count; index++)
@@ -86,7 +121,20 @@ internal sealed class MasterTeamService : IContainer
     {
         lock (_games)
         {
-            _games.Remove(sessionId);
+            if (cluster == null) { _games.Remove(sessionId); return; }
+            // 只清掉实际仍归属于失效节点的玩家，同区其他 GS 的队伍继续存在。
+            List<ulong> ids = new List<ulong>(cluster.Owners.Keys);
+            for (int index = 0; index < ids.Count; index++)
+            {
+                // 同一角色可能已经切换到另一物理节点。
+                Session owner = cluster.Owners[ids[index]];
+                if (owner.SessionID != sessionId) continue;
+                cluster.Remove(owner, ids[index]);
+                _games[0].Teams.OnRoleOffline(ids[index]);
+                _games[0].Chat.OnRoleOffline(ids[index]);
+                _games[0].Audio.Offline(ids[index]);
+            }
+            cluster.Lost(sessionId);
         }
     }
 

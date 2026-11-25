@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 同一区服的一组进程。Gate、Master 和全部 GS 加载同一份文件；角色存档继续使用 realmId。 -->
+<realm id="1" host="127.0.0.1" gatePort="10140" udpPort="10141" masterPort="10150" centerPort="10110" controlPort="10160">
+  <!-- id 用于跨进程物品 UID；host、port 是网关可连接的内网地址。 -->
+  <game id="1" host="127.0.0.1" port="10130" />
+  <game id="2" host="127.0.0.1" port="10131" />
+  <!-- map 为角色持久地图编号；同地图的 line 是玩家看到的线路号，game 指定场景宿主。 -->
+  <scene map="1" line="1" game="1" capacity="500" />
+  <scene map="1" line="2" game="2" capacity="500" />
+  <scene map="0" line="1" game="1" capacity="500" />
+  <scene map="0" line="2" game="2" capacity="500" />
+  <!-- 所有已开放线路同时达到警戒人数时增加一条线；额外线路无人后可回收。 -->
+  <expansion map="1" warning="400" maxLines="8" />
+  <expansion map="0" warning="400" maxLines="8" />
+</realm>

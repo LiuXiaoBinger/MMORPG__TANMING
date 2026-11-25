@@ -294,8 +294,7 @@ public sealed class TeamManager
         {
             // 只广播到相同地图及实例，不把另一队伍的角色复活到当前场景。
             OnlineRole observer = observers[index];
-            if (observer.mainRoleInfo.BaseInfo.MapId == role.mainRoleInfo.BaseInfo.MapId &&
-                observer.mainRoleInfo.BaseInfo.InstanceId == role.mainRoleInfo.BaseInfo.InstanceId)
+            if (RoleManager.IsInSameRoleScene(observer, role.mainRoleInfo))
                 observer.SendToClient(NetDefine.CMD_RoleReviveResultCode, payload);
         }
     }
@@ -683,6 +682,8 @@ public sealed class TeamManager
         // 离队后回到公共主城：实例归零、地图回到主城、出生点回到主城真实坐标，避免残留在副本视野。
         role.mainRoleInfo.BaseInfo.InstanceId = 0;
         role.mainRoleInfo.BaseInfo.MapId = MainCityMapId;
+        // 集群角色回到进本前保留名额的公共场景，两种主城地图编号沿用各自存档。
+        if (role.PublicScene != null) role.mainRoleInfo.BaseInfo.MapId = role.PublicScene.MapId;
         role.mainRoleInfo.BaseInfo.Pos = MainCitySpawnPos;
         // 离开副本实例回城时清掉护盾；即使之后再次进入同一实例编号也不会带回来。
         role.ClearShield();
@@ -698,7 +699,7 @@ public sealed class TeamManager
         backNotice.DungeonId = 0;
         backNotice.SceneId = MainCitySceneId;
         backNotice.InstanceId = 0UL;
-        backNotice.MapId = MainCityMapId;
+        backNotice.MapId = role.mainRoleInfo.BaseInfo.MapId;
         backNotice.Pos = MainCitySpawnPos;
         role.SendToClient(NetDefine.CMD_TeamEnterDungeonCode, backNotice.ToByteString());
         // 回城后按新的主城位置向主城观察者补发出现，否则只有本人收到附近列表、其他人仍看不到该角色。

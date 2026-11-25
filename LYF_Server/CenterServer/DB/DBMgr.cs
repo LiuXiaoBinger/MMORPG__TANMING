@@ -29,6 +29,9 @@ public class DBMgr:Singleton<DBMgr>
             DbType = DbType.MySql,
             IsAutoCloseConnection = true
         };
+        // 各区可指定独立存档库，未配置时沿用已有开发数据库。
+        string deployedConnection = Environment.GetEnvironmentVariable("LYF_CENTER_CONNECTION_STRING");
+        if (!string.IsNullOrWhiteSpace(deployedConnection)) connectionConfig.ConnectionString = deployedConnection;
         //创建并保存中心服复用的数据库客户端；new 只创建实例，本身不保证并发访问安全。
         SqlSugarClient Db = new SqlSugarClient(connectionConfig);
         _db = Db;

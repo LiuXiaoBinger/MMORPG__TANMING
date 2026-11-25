@@ -541,7 +541,7 @@ public class RoleManager
         }
 
         // 引用快照允许下线流程同时维护角色索引，仍修改原在线角色对象。
-        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        List<OnlineRole> onlineRoles = SceneObservers(caster);
         for (int index = 0; index < onlineRoles.Count; index++)
         {
             // 只向现有同地图 100 米可见范围的其他在线角色转发表现事件。
@@ -575,7 +575,7 @@ public class RoleManager
         // 序列化一次后复用不可变字节；本人继续本地移动，不等待移动回包。
         ByteString payload = notice.ToByteString();
         // 使用现有索引的引用快照，保持角色对象和既有附近判断一致。
-        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        List<OnlineRole> onlineRoles = SceneObservers(pRole);
         // 快照下标只在本次广播内有效。
         for (int index = 0; index < onlineRoles.Count; index++)
         {
@@ -629,7 +629,7 @@ public class RoleManager
 
         // 使用现有索引的引用快照，与移动、技能广播保持同一份收件人来源。
         // onlineRoles 是遍历用的副本，避免广播过程中索引被并发修改。
-        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        List<OnlineRole> onlineRoles = SceneObservers(leavingRole);
         // index 为快照列表的零基下标，范围 [0, onlineRoles.Count)，仅用于本次广播。
         for (int index = 0; index < onlineRoles.Count; index++)
         {
@@ -669,7 +669,7 @@ public class RoleManager
     private void BroadcastRoleEnterWorld(MainRoleInfo currentRole)
     {
         // 广播范围限定为同地图且距离不超过 100 的在线角色。
-        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        List<OnlineRole> onlineRoles = SceneObservers(GetOnlineRole(currentRole.BaseInfo.RoleId));
         for (int i = 0; i < onlineRoles.Count; i++)
         {
             OnlineRole role = onlineRoles[i];
@@ -719,7 +719,7 @@ public class RoleManager
             return;
         }
 
-        List<OnlineRole> onlineRoles = new List<OnlineRole>(m_onlineRoleMap.Values);
+        List<OnlineRole> onlineRoles = SceneObservers(currentOnlineRole);
         for (int i = 0; i < onlineRoles.Count; i++)
         {
             OnlineRole role = onlineRoles[i];
@@ -776,7 +776,7 @@ public class RoleManager
     /// <param name="role">候选观察者。</param>
     /// <param name="currentRole">被观察角色的权威资料。</param>
     /// <returns>可以在同一场景内比较视野距离时为真。</returns>
-    private static bool IsInSameRoleScene(OnlineRole role, MainRoleInfo currentRole)
+    internal static bool IsInSameRoleScene(OnlineRole role, MainRoleInfo currentRole)
     {
         // 先过滤空对象和地图，再计算三维距离，避免无效坐标触发异常。
         // 角色一侧的主角色快照或基础信息缺失时按不邻近处理。
@@ -790,15 +790,55 @@ public class RoleManager
             return false;
         }
 
-        if (role.mainRoleInfo.BaseInfo.MapId != currentRole.BaseInfo.MapId)
+        if (role.mainRoleInfo.ServerId != currentRole.ServerId || role.mainRoleInfo.BaseInfo.MapId != currentRole.BaseInfo.MapId)
         {
             return false;
         }
     #endregion
+        if (currentRole.BaseInfo.InstanceId == 0 && role.PublicScene != null)
+        {
+            // 施法、移动和视野补发都按玩家实际所在的公共场景实例比较。
+            OnlineRole source = Instance.GetOnlineRole(currentRole.BaseInfo.RoleId);
+            if (source == null || source.PublicScene == null || role.PublicScene.SceneUid != source.PublicScene.SceneUid) return false;
+        }
         // 同一地图内不同队伍分属不同副本实例，实例不同即互相不可见。
         return role.mainRoleInfo.BaseInfo.InstanceId == currentRole.BaseInfo.InstanceId;
     }
 
+    /// <summary>公共场景遍历本线成员，单节点旧档与副本继续使用已有索引。</summary>
+    /// <param name="role">视野事件所在的角色实例。</param>
+    private List<OnlineRole> SceneObservers(OnlineRole role)
+    {
+        return SceneLineHandler.Observers(role) ?? new List<OnlineRole>(m_onlineRoleMap.Values);
+    }
+
+    /// <summary>离开公共场景时双方同时清除旧视野，客户端可直接复用地图资源。</summary>
+    /// <param name="role">正在切换分线的在线角色。</param>
+    internal void LeavePublicScene(OnlineRole role)
+    {
+        BroadcastRoleLeave(role);
+        // 旧场景内需要从本人视野移除的角色。
+        List<OnlineRole> others = SceneObservers(role);
+        for (int index = 0; index < others.Count; index++)
+        {
+            // 离场前的旧实例仍有效，沿用既有位置判定。
+            OnlineRole other = others[index];
+            if (other != role && IsNearbyRole(other, role.mainRoleInfo))
+                role.SendToClient(NetDefine.CMD_RoleLeaveCode, BuildRoleLeavePayload(other.mainRoleInfo.BaseInfo));
+        }
+    }
+
+    /// <summary>已确认存档的公共角色交给目标宿主；保持区服队伍关系。</summary>
+    /// <param name="role">刚完成持久化且已通知离场的角色。</param>
+    internal void DetachForSceneChange(OnlineRole role)
+    {
+        m_roleIdBySessionMap.Remove(CreateSessionKey(role.GateSessionId, role.UnitySessionId));
+        m_onlineRoleMap.Remove((int)role.GetID());
+        role.Dispose();
+    }
+    /// <summary>把网关与客户端两个编号组合成一个字典键，区分不同网关上相同的客户端编号。</summary>
+    /// <param name="gateSessionID">高 32 位保存的网关连接编号。</param>
+    /// <param name="unitySessionID">低 32 位保存的客户端会话编号。</param>
     private static long CreateSessionKey(int gateSessionID, int unitySessionID)
     {
         // 将两个 32 位会话拼成一个 64 位键，避免不同网关的会话号冲突。

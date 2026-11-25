@@ -63,6 +63,10 @@ public class MainCtrl : CtrlBase
         }
 
         _mainView.InitView();
+        if (_mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected += SelectSceneLine;
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.State, OnSceneLineState);
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.List, OnSceneLineList);
+        SocketDispatcher.Instance.AddEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _shopCtrl = new ShopCtrl(_mainView);
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
@@ -164,6 +168,10 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
+        if (_mainView != null && _mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.List, OnSceneLineList);
+        SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _yimengChatCtrl?.Dispose();
         _dungeonFlowCtrl?.Dispose();
         _mainView.FunctionMenuButton.onClick.RemoveListener(OnFunctionMenuRequested);
@@ -651,6 +659,36 @@ public class MainCtrl : CtrlBase
             localRole = Global.Instance.SceneWorld.LocalRole;
         }
         _mainView.MinMapWindow.SetTrackedRole(localRole);
+    }
+
+    /// <summary>从小地图提交所选线路；地图和角色归属由区服确定。</summary><param name="line">目标线路编号。</param>
+    private void SelectSceneLine(int line)
+    {
+        MNetClient.Instance.Send(SceneLineCode.Change, new SceneLineRequest { LineId = line }.ToByteString());
+    }
+
+    /// <summary>进入公共地图后请求线路人数，副本内直接收起选择器。</summary><param name="data">网关确认的场景状态。</param>
+    private void OnSceneLineState(ByteString data)
+    {
+        if (SceneLineResult.Parser.ParseFrom(data).CurrentLine == 0) _mainView.MinMapWindow?.ShowLines(null);
+        else MNetClient.Instance.Send(SceneLineCode.List, ByteString.Empty);
+    }
+
+    /// <summary>将本地图真实目录交给已注册的小地图窗口。</summary><param name="data">控制服返回的线路目录。</param>
+    private void OnSceneLineList(ByteString data)
+    {
+        _mainView.MinMapWindow?.ShowLines(SceneLineResult.Parser.ParseFrom(data));
+    }
+
+    /// <summary>拒绝请求后提示原因并恢复权威选择；成功时等待同一网关的场景状态刷新。</summary>
+    /// <param name="data">本次手动切线回执。</param>
+    private void OnSceneLineChanged(ByteString data)
+    {
+        // 失败原因由区服容量或角色当前状态决定。
+        string reason = SceneLineResult.Parser.ParseFrom(data).Reason;
+        if (reason.Length == 0) return;
+        TipsMgr.Instance.ShowSystemTips(reason);
+        MNetClient.Instance.Send(SceneLineCode.List, ByteString.Empty);
     }
 
     /// <summary>把商城购买回包交给商城模型解析。</summary>

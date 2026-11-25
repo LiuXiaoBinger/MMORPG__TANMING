@@ -458,8 +458,10 @@ public class LoginModle
                 accountTable.LastLoginServerId = req.GameServerId;
                 if (_db.Updateable(accountTable).ExecuteCommand() > 0)
                 {
-                    // 按账号查第一条角色记录，当前查询未按所选服务器再次过滤；没有记录时保留默认响应。
-                    RoleTable roleTable = _db.Queryable<RoleTable>().Where(v => v.AccountID == req.AccountId).First();
+                    // 角色归属取登录选择的逻辑区服，同一账号在其他区创建的角色不能出现在这里。
+                    RoleTable roleTable = _db.Queryable<RoleTable>()
+                        .Where(v => v.AccountID == req.AccountId && v.ServerId == req.GameServerId)
+                        .OrderBy(v => v.Id).First();
                     if (roleTable != null)
                     {
                         ret.CreateRoleInfo = new CreateRoleRet();

@@ -14,12 +14,16 @@
   <ItemGroup>
     <Compile Include="MasterServerApp.cs" />
     <Compile Include="MasterTeamService.cs" />
+    <Compile Include="RealmSocialLink.cs" />
     <Compile Include="TeamManager.cs" />
     <Compile Include="CChatMgr.cs" />
     <Compile Include="ChatAudioRecordMgr.cs" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Google.Protobuf"><HintPath>..\packages\Google.Protobuf.3.31.1\lib\net45\Google.Protobuf.dll</HintPath></Reference>
+    <Reference Include="System.Buffers"><HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath></Reference>
+    <Reference Include="System.Numerics.Vectors"><HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath></Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe"><HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath></Reference>
     <Reference Include="System.Memory"><HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath></Reference>
     <ProjectReference Include="..\Network\Network.csproj">
       <Project>{E695F887-4879-41C0-85F3-D86A91150282}</Project>
