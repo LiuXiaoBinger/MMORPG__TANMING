@@ -1,5 +1,7 @@
 using System.Threading;
 
+using Google.Protobuf;
+
 namespace GateServer
 {
     /// <summary>
@@ -137,15 +139,55 @@ namespace GateServer
                 server.RegistCommand(SceneLineCode.List, gateMoveCtrl);
                 server.RegistCommand(SceneLineCode.Change, gateMoveCtrl);
                 server.OnSessionDisconnected = router.PlayerLeft;
-                router.StartRealm();
             }
-            else client.StartConnect();
             server.StartServer(host, port);
+            if (router != null) router.StartRealm();
+            else StartLegacy(client);
             // 网关系程不做业务，仅挂起等待网络事件。
             while (true)
             {
                 Thread.Sleep(1);
             }
+        }
+        /// <summary>保留无参数单 GS 入口，把实际可用的本机一区登记到选服目录。</summary>
+        /// <param name="game">旧式网关转发游戏消息的唯一 GS 连接。</param>
+        private static void StartLegacy(NetClient game)
+        {
+            // 老式网关没有集群的查档链路，使用独立内网连接登记一区。
+            NetClient directory = new NetClient(NetDefine.IPHost, NetDefine.CenterServerPort, ClientType.GateServer);
+            // 仅当前 GS 已接通时允许中心服发布一区。
+            bool gameReady = false;
+            // 首次连上任一侧或重连时，只向已经建立的中心链路发送。
+            bool centerReady = false;
+            // 中心或游戏服先后上线及重连时共用同一区号。
+            ByteString notice = new SceneNodeRegistration { RealmId = 1 }.ToByteString();
+            directory.OnConnSucceed = () =>
+            {
+                lock (directory)
+                {
+                    centerReady = true;
+                    if (gameReady) directory.Send(SceneLineCode.RealmOnline, notice);
+                }
+            };
+            directory.OnConnFailed = () => { lock (directory) centerReady = false; };
+            game.OnConnSucceed = () =>
+            {
+                lock (directory)
+                {
+                    gameReady = true;
+                    if (centerReady) directory.Send(SceneLineCode.RealmOnline, notice);
+                }
+            };
+            game.OnConnFailed = () =>
+            {
+                lock (directory)
+                {
+                    gameReady = false;
+                    if (centerReady) directory.Send(SceneLineCode.RealmOffline, ByteString.Empty);
+                }
+            };
+            directory.StartConnect();
+            game.StartConnect();
         }
     }
 }

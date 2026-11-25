@@ -16,6 +16,20 @@ public sealed class RealmTopology
     public readonly int UdpPort;
     /// <summary>存档中心的 TCP 端口。</summary>
     public readonly int CenterPort;
+    /// <summary>各区 GS 和网关连接同一存档中心的内网地址。</summary>
+    public readonly string CenterHost;
+    /// <summary>账号登录入口的监听地址，所有逻辑区共用。</summary>
+    public readonly string LoginHost;
+    /// <summary>客户端进入选服流程前使用的登录端口。</summary>
+    public readonly int LoginPort;
+    /// <summary>受部署文件控制的选服展示信息及玩家可达的网关地址。</summary>
+    public readonly GameServer PublicGate;
+    /// <summary>本区新创建角色的公共地图编号；历史单区配置默认使用地图 1。</summary>
+    public readonly int SpawnMap;
+    /// <summary>公共配置列出的区服文件绝对路径，供中心服加载选服目录。</summary>
+    public readonly List<string> RealmFiles = new List<string>();
+    /// <summary>共享部署使用显式的可开区清单；空清单代表尚未配置区服。</summary>
+    public readonly bool UsesRealmCatalog;
     /// <summary>本区队伍和频道权威服务的 TCP 端口。</summary>
     public readonly int MasterPort;
     /// <summary>区服场景调度的 TCP 端口。</summary>
@@ -48,9 +62,42 @@ public sealed class RealmTopology
         XmlElement root = document.DocumentElement;
         RealmId = Number(root, "id", 1, int.MaxValue);
         Host = root.GetAttribute("host");
+        SpawnMap = 1;
+        if (root.HasAttribute("spawnMap")) SpawnMap = Number(root, "spawnMap", 0, int.MaxValue);
         GatePort = Number(root, "gatePort", 1, 65535);
         UdpPort = Number(root, "udpPort", 1, 65535);
-        CenterPort = Number(root, "centerPort", 1, 65535);
+        PublicGate = new GameServer { ServerId = RealmId, ServerName = root.GetAttribute("name"),
+            IpHost = root.GetAttribute("publicHost"), Prot = GatePort, RunState = 3 };
+        if (PublicGate.ServerName.Length == 0) PublicGate.ServerName = RealmId + "区";
+        if (PublicGate.IpHost.Length == 0) PublicGate.IpHost = Host;
+        if (root.HasAttribute("runState")) PublicGate.RunState = Number(root, "runState", 1, 3);
+        if (root.HasAttribute("isNew")) PublicGate.IsNew = Number(root, "isNew", 0, 1);
+        // 旧版单文件保留内嵌的中心服端口。新部署文件把各区共享的地址放在一个位置。
+        XmlElement shared = root;
+        CenterHost = Host;
+        LoginHost = Host;
+        LoginPort = NetDefine.LoginServerPort;
+        if (root.HasAttribute("shared"))
+        {
+            UsesRealmCatalog = true;
+            // 相对引用始终按所属 XML 所在目录解析，各服务可从自己的输出目录启动。
+            string sharedPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(path)), root.GetAttribute("shared")));
+            XmlDocument services = new XmlDocument { XmlResolver = null };
+            services.Load(sharedPath);
+            shared = services.DocumentElement;
+            CenterHost = shared.GetAttribute("centerHost");
+            LoginHost = shared.GetAttribute("loginHost");
+            LoginPort = Number(shared, "loginPort", 1, 65535);
+            // 配置目录决定哪些逻辑区有资格登记。
+            XmlNodeList entries = shared.SelectNodes("realm");
+            for (int index = 0; index < entries.Count; index++)
+            {
+                // 每个条目指到一份独立的区服部署文件。
+                XmlElement entry = (XmlElement)entries[index];
+                RealmFiles.Add(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sharedPath), entry.GetAttribute("file"))));
+            }
+        }
+        CenterPort = Number(shared, "centerPort", 1, 65535);
         MasterPort = Number(root, "masterPort", 1, 65535);
         ControlPort = Number(root, "controlPort", 1, 65535);
         // GS 先登记，让后面每个场景都能检查实际宿主。
@@ -80,6 +127,8 @@ public sealed class RealmTopology
             Scenes.Add(scene);
         }
         if (Scenes.Count == 0) throw new InvalidDataException("区服至少需要一条公共地图分线。");
+        if (root.HasAttribute("spawnMap") && !Scenes.Exists(scene => scene.MapId == SpawnMap))
+            throw new InvalidDataException("出生地图缺少公共线路：" + SpawnMap);
         nodes = root.SelectNodes("expansion");
         for (int index = 0; index < nodes.Count; index++)
         {

@@ -32,8 +32,14 @@ namespace CenterServer
             SqlSugarClient db = DBMgr.Instance.initDB();
 
             // 登录模块控制器：处理注册、登录、服务器列表、选服、建角、开始游戏等账号类协议。
-            Center_LoginCtrl loginCtrl = new Center_LoginCtrl(new LoginModle(db));
-
+            // 同一中心服读取所有获准开放的区号，并登记当前在线的区服网关。
+            RealmTopology realm = null;
+            if (args.Length > 0) realm = new RealmTopology(args[0]);
+            LoginModle model = new LoginModle(db, realm);
+            Center_LoginCtrl loginCtrl = new Center_LoginCtrl(model);
+            server.RegistCommand(SceneLineCode.RealmOnline, loginCtrl);
+            server.RegistCommand(SceneLineCode.RealmOffline, loginCtrl);
+            server.OnSessionDisconnected = model.Realms.Close;
             server.RegistCommand(NetDefine.CMD_RegistCode, loginCtrl);//注册
             server.RegistCommand(NetDefine.CMD_LoginCode, loginCtrl);//登录
             server.RegistCommand(NetDefine.CMD_GetServerListCode, loginCtrl);//获取服务器列表
@@ -51,11 +57,9 @@ namespace CenterServer
             // 独立部署从同一份区服文件读取内网地址，数据库和处理器就绪后再开放端口。
             string host = NetDefine.IPHost;
             int port = NetDefine.CenterServerPort;
-            if (args.Length > 0)
+            if (realm != null)
             {
-                // 中心服实例承载的区服部署描述。
-                RealmTopology realm = new RealmTopology(args[0]);
-                host = realm.Host;
+                host = realm.CenterHost;
                 port = realm.CenterPort;
             }
             server.StartServer(host, port);

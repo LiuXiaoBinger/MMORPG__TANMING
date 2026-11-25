@@ -350,13 +350,15 @@ public class LoginCtrl : CtrlBase
         if (result != null && result.CmdCode == CmdCode.Succeed)
         {
             Global.Instance.LoginInfo = result;
-            TipsMgr.Instance.ShowSystemTips("登录成功");
+            _gameServers.Clear();
             GameServer gameServer = result.GameServer;
             if (gameServer != null && gameServer.ServerId > 0)
             {
+                TipsMgr.Instance.ShowSystemTips("登录成功");
                 _gameServers[gameServer.ServerId] = gameServer;
                 ShowWindow(WindowType.GameServerWindow, CreateServerViewData(gameServer));
             }
+            else TipsMgr.Instance.ShowSystemTips("当前没有开放的区服");
             return;
         }
         TipsMgr.Instance.ShowSystemTips("登录失败");

@@ -19,6 +19,8 @@ namespace GameServer
             int listenPort = NetDefine.GameServerPort;
             int masterPort = NetDefine.MasterServerPort;
             int centerPort = NetDefine.CenterServerPort;
+            // 多区共用的存档中心可以部署在独立于本区的主机上。
+            string centerHost = host;
             RealmTopology realm = null;
             if (args.Length > 0)
             {
@@ -31,10 +33,11 @@ namespace GameServer
                 host = realm.Host;
                 masterPort = realm.MasterPort;
                 centerPort = realm.CenterPort;
+                centerHost = realm.CenterHost;
             }
             UIDHelper.ConfigureServerInstanceId(instance);
             // GameServer 作为客户端连接 CenterServer，接收登录、角色和持久化结果。
-            NetClient client = new NetClient(host, centerPort, ClientType.GameServer);
+            NetClient client = new NetClient(centerHost, centerPort, ClientType.GameServer);
             RoleNetSender.Configure(client);
             client.StartConnect();
             // GameServer 作为服务端监听 GateServer 转发的客户端请求。

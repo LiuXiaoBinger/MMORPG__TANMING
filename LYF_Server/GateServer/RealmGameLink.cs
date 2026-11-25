@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf;
 
 /// <summary>区服网关的上行连接。登录数据沿中心服读取，游戏包按玩家已进入的场景选择 GS。</summary>
@@ -15,6 +16,8 @@ internal sealed class RealmGameLink : NetClient
     private readonly Peer center;
     /// <summary>负责预留场景名额的区服调度。</summary>
     private readonly Peer control;
+    /// <summary>本次中心服连接已发布的选服状态，最后一台可连 GS 退出时撤回。</summary>
+    private bool listed;
 
     /// <summary>一次玩家会话的场景位置和交接中的数据。</summary>
     private sealed class Player
@@ -51,8 +54,8 @@ internal sealed class RealmGameLink : NetClient
         internal Peer(RealmGameLink router, string host, int port) : base(host, port, ClientType.GateServer)
         {
             owner = router;
-            OnConnSucceed = () => Ready = true;
-            OnConnFailed = () => { if (Ready) { Ready = false; owner.Lost(this); } };
+            OnConnSucceed = () => owner.SetReady(this, true);
+            OnConnFailed = () => owner.SetReady(this, false);
         }
         /// <summary>将内网来包连同真实链路一起交给路由器。</summary><param name="packet">服务回包。</param>
         protected override void HandleCommand(BasePackage packet) { owner.Receive(this, packet); }
@@ -62,7 +65,7 @@ internal sealed class RealmGameLink : NetClient
     internal RealmGameLink(RealmTopology config) : base(config.Host, config.ControlPort, ClientType.GateServer)
     {
         realm = config;
-        center = new Peer(this, realm.Host, realm.CenterPort);
+        center = new Peer(this, realm.CenterHost, realm.CenterPort);
         control = new Peer(this, realm.Host, realm.ControlPort);
         // 每个 GS 内网连接可服务任意数量的网关玩家。
         List<SceneNodeRegistration> nodes = new List<SceneNodeRegistration>(realm.Games.Values);
@@ -78,6 +81,33 @@ internal sealed class RealmGameLink : NetClient
         // 每个宿主独立重连。
         List<Peer> peers = new List<Peer>(games.Values);
         for (int index = 0; index < peers.Count; index++) peers[index].StartConnect();
+    }
+
+    /// <summary>中心、调度和至少一个场景宿主可用时，对外发布已经开始监听的区服网关。</summary>
+    /// <param name="peer">状态改变的内网连接。</param><param name="ready">该连接是否已建立。</param>
+    private void SetReady(Peer peer, bool ready)
+    {
+        lock (players)
+        {
+            if (peer.Ready == ready) return;
+            peer.Ready = ready;
+            if (!ready) Lost(peer);
+            if (!center.Ready)
+            {
+                listed = false;
+                return;
+            }
+            // 只需要一台已连接的场景宿主，无需等待配置中的全部 GS。
+            bool available = control.Ready && games.Values.Any(game => game.Ready);
+            if (available == listed) return;
+            if (available)
+                listed = center.Send(SceneLineCode.RealmOnline, new SceneNodeRegistration { RealmId = realm.RealmId }.ToByteString());
+            else
+            {
+                center.Send(SceneLineCode.RealmOffline, ByteString.Empty);
+                listed = false;
+            }
+        }
     }
 
     /// <summary>从玩家已认证的会话路由普通请求，分线命令由调度服答复。</summary>

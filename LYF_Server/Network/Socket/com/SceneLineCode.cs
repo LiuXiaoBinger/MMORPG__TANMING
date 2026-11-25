@@ -27,4 +27,8 @@ public static class SceneLineCode
     public const ushort State = 11311;
     /// <summary>原 GS 已完成离线保存，可以释放角色归属并允许再次登录。</summary>
     public const ushort Saved = 11312;
+    /// <summary>网关向共享中心登记本区已经可以接入，载荷仅使用节点登记消息的 RealmId。</summary>
+    public const ushort RealmOnline = 11313;
+    /// <summary>网关撤下当前连接登记的区服入口。</summary>
+    public const ushort RealmOffline = 11314;
 }

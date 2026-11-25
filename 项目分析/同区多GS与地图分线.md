@@ -2,24 +2,41 @@
 
 玩家在选服页选的是逻辑区服。在公共地图中选择的是该地图的一条线。每条线在开放期间对应一份场景实例，由一台 GameServer 承载。同一台 GameServer 可以运行同一地图的多条线。切线不会改变角色 ID、所属区服或网关连接。
 
-## 本机运行
+## 本机启动、选服与停服
 
-1. 使用 Visual Studio 或 MSBuild 构建 `LYF_Server/LYF_Server.sln` 的 Debug 配置。
-2. 启动现有的 CenterServer 和 LoginServer。本机示例使用中心服默认端口 10110。多个逻辑区可以共用账号登录和存档中心。
-3. 确认数据库 `game_server` 中所选区的 `Id` 等于 XML 根节点的 `id`，`IpHost`、`Port` 指向玩家能访问的 **GateServer**。每个逻辑区一条选服记录。默认开发示例使用 127.0.0.1:10140。
-4. 在项目根目录运行 `./LYF_Server/Start-Realm.ps1`。脚本读取 `LYF_Server/Config/RealmServers.xml`，依次启动 ControlServer、MasterServer、配置列出的各个 GameServer 和一个 GateServer。从另一台机器访问时，按实际网卡与客户端可达的网关地址修改配置和选服记录。
-5. 登录后通过小地图下方的线路选择器查看线路人数、选择目标。独立副本期间隐藏选线。启动其他区服时指定对应 XML，同机部署需错开监听端口，共用物品 UID 空间的物理 GS 使用不同编号。
+在项目根目录以 Visual Studio 或 MSBuild 构建 `LYF_Server/LYF_Server.sln` 的 Debug 配置。以下为 PowerShell 命令。
 
-启动脚本适用于区服各进程在同一台开发机运行。分机器启动时，在各程序的输出目录中执行 `ControlServer.exe <区服XML>`、`MasterServer.exe <区服XML>`、`GameServer.exe <区服XML> <game编号>`、`GateServer.exe <区服XML>`。示例中 Gate、Master、Control 和 Center 共用根节点的 `host`，GS 可以有独立 `host`。旧开发启动方式仍可使用无参数 Gate、Master 和 GS 运行单节点。
+```powershell
+# 首次开一区，同时启动共享的登录服和中心服。
+& '.\LYF_Server\区服部署\启动区服.ps1' -IncludeShared
+# 后续开二区，复用前面已经启动的登录服和中心服。
+& '.\LYF_Server\区服部署\启动区服.ps1' -RealmFile '.\LYF_Server\区服部署\配置\2区.xml'
+# 停二区，只处理该配置启动的区进程。
+& '.\LYF_Server\区服部署\停止区服.ps1' -RealmFile '.\LYF_Server\区服部署\配置\2区.xml'
+# 全部玩家下线并完成保存后，用最初启动公共服务的配置停一区和公共服务。
+& '.\LYF_Server\区服部署\停止区服.ps1' -IncludeShared
+```
+
+启动脚本适用于同机部署，从每个项目自己的 `bin/Debug` 运行可执行文件。Release 构建使用 `-Configuration Release`。停止脚本按可执行路径和启动参数中的完整 XML 路径匹配进程，属于开发服强制停服工具。原 `LYF_Server/Start-Realm.ps1` 保留为启动入口。多机部署时，每个进程可单独传入同一份区服 XML，GS 再传物理节点编号；各机器需有相同版本的配置文件。
+
+| 要修改的内容 | 配置位置 |
+|---|---|
+| 所有区共享的登录地址、中心服地址，以及允许登记的区清单 | `LYF_Server/区服部署/公共服务.xml` |
+| 一区名称、对外网关、GS 节点、固定地图线路 | `LYF_Server/区服部署/配置/1区.xml` |
+| 二区的独立监听端口、物理节点和相同的两图两线结构 | `LYF_Server/区服部署/配置/2区.xml` |
+
+中心服在启动时读取开区清单和各区的显示信息。改名、对外地址或开区清单后重新启动公共服务，让网关重新登记；只调整场景和节点时重启对应区。网关开始监听、连接上中心服、调度服和至少一个 GS 后，登录列表才显示该区。网关断开、调度断开或全部 GS 失联后撤下入口。优先推荐账号上次进入的在线区，上次区服关闭时推荐当前开放的最小区号。旧 `game_server` 行可以保留，集群选服从文件和实际登记状态取值。账号、角色和背包沿用原数据库。
+
+两个区都提供地图 `1`（当前建角出生地图）和 `0`（当前主城编号），每图固定 1、2 线，默认每线 500 人。一区的两条线分别由 GS 1、2 承载，二区使用 GS 3、4。两个地图的同号线路有各自的运行实例和人数。接入新 Unity 场景时，把各条 `scene.map` 改成真实地图 ID；`realm.spawnMap` 指定本区新角色出生在哪张已配置的地图，改后需重启共享中心及对应区。现有角色继续按存档的地图号进入，客户端场景路由也需与地图号一致。当前小地图选线只切换所在地图的线路。
 
 ## 配置与运行数据
 
 | 配置 | 作用 |
 |---|---|
-| `realm.id` | 对应选服列表和角色表的 `ServerId` |
+| `realm.id / name / publicHost` | 逻辑区号、选服名称与客户端可达的网关地址；区号对应角色表的 `ServerId` |
 | `game.id / host / port` | 物理 GS 编号及其内网监听地址 |
 | `scene.map / line / game / capacity` | 地图、玩家看到的线号、固定宿主、单线人数上限 |
-| `expansion.warning / maxLines` | 本地图所有在线线路均达到警戒值时，向在线 GS 中承载人数较少的一台增加一条线，常驻线和弹性线总数受上限约束 |
+| 可选的 `expansion.warning / maxLines` | 配置后按人数阈值扩线。本次两个区均省略此项，每图固定两条线 |
 
 ControlServer 在内存中维护已登记的 GS、每条线的场景实例编号、已占和预留名额。弹性线空闲且其他线有余量时回收。实例编号在当前调度进程内有效。MySQL 保留账号、逻辑区服、角色、背包和技能等既有记录；下次登录按存档地图重新选线。
 

@@ -946,3 +946,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 ## [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm
 
 - A realm XML defines Gate, Control, Master, physical GS nodes and public map lines. Control reserves scene slots and tracks ownership. Gate keeps the player connection. Source GS flushes dirty modules before transfer. Master shares teams and chat, and gathers dungeon members onto one host. Center selects characters by account and realm. The minimap selector displays runtime lines. Launch and configuration: `项目分析/同区多GS与地图分线.md`. Inventory and receipts: `项目修改日志/2026-11-25-同区多GS与地图分线.md`.
+
+## [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory
+
+- Deployment scripts and XML live in `LYF_Server/区服部署/`. Shared login/center endpoints and the allowed realm files are in `公共服务.xml`. Realms 1 and 2 each configure maps 1 and 0 with exactly two fixed lines. The center lists configured gates that announce availability. Account recommendation and selection use the same directory. The existing character/account schema and legacy directory rows are retained. Launch details: `项目分析/同区多GS与地图分线.md`. Inventory: `项目修改日志/2026-11-25-多区服部署与双地图双线.md`.
+- Each realm's `spawnMap` selects the persisted map for newly created characters; existing characters use their saved map.

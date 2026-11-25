@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `2864e2d9a869c46127df9a5030ed4dd1e9543ed36b9831be22b6f65a29605a20`
+Source normalized SHA256: `8816e235e846fd4149dc47486947a894251306a119a49238cac34e3b40cdc47b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -138,11 +138,12 @@ Source normalized SHA256: `2864e2d9a869c46127df9a5030ed4dd1e9543ed36b9831be22b6f
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
 | [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-945 |
-| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 946-948 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 946-949 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 950-953 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `626b572b1414d0492090d73141301a44936b3d5d1123a2a72d18a877ff6f627b`
+Source normalized SHA256: `449df0ed3339aa58d3ffec64a531ef41074744b6e21c62ed73e23097affecab6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -272,7 +273,8 @@ Source normalized SHA256: `626b572b1414d0492090d73141301a44936b3d5d1123a2a72d18a
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
 | [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-976 |
-| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 977-980 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 977-981 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 982-986 |
 
 ## Docs/AI/DECISIONS.en.md
 

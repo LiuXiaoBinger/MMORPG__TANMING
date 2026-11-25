@@ -13,14 +13,18 @@ public class LoginModle
 {
     /// <summary>共享数据库客户端，由 CenterApp 注入。</summary>
     private SqlSugarClient _db = null;
+    /// <summary>登录、选服和建角共用同一份在线区服目录。</summary>
+    internal readonly OnlineRealmDirectory Realms;
 
     /// <summary>
     /// 构造登录数据访问层。
     /// </summary>
     /// <param name="db">已初始化的 SqlSugar 客户端。</param>
-    public LoginModle(SqlSugarClient db)
+    /// <param name="realm">共享中心启动时读取的区服入口，省略时使用本机一区。</param>
+    public LoginModle(SqlSugarClient db, RealmTopology realm = null)
     {
         _db = db;
+        Realms = new OnlineRealmDirectory(realm);
     }
 
     #region 创建与添加
@@ -33,6 +37,11 @@ public class LoginModle
     public CreateRoleRet CreateRole(CreateRoleReq req)
     {
         CreateRoleRet ret = new CreateRoleRet();
+        if (!Realms.IsOpen(req.GameServerId))
+        {
+            ret.CmdCode = CmdCode.ReqParamError;
+            return ret;
+        }
         RoleTable roleTable = _db.Queryable<RoleTable>()
             .Where(v => v.Nickname == req.Nickname && v.ServerId == req.GameServerId).First();
         if (roleTable != null)
@@ -64,7 +73,7 @@ public class LoginModle
                 SkillUpPoint = 6, //用于测试
                 Pos = "", //角色默认位置
                 CameraOffset = "",
-                MapId = 1,
+                MapId = Realms.SpawnMap(req.GameServerId),
                 ServerId = req.GameServerId,
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
@@ -260,25 +269,7 @@ public class LoginModle
         GetServerListRet ret = new GetServerListRet();
         if (req.ServerId == 0)
         {
-            List<GameServerTable> listTable = _db.Queryable<GameServerTable>().ToList();
-            if (listTable != null && listTable.Count > 0)
-            {
-                List<GameServerTable> tableSnapshot = new List<GameServerTable>(listTable);
-                for (int index = 0; index < tableSnapshot.Count; index++)
-                {
-                    GameServerTable table = tableSnapshot[index];
-                    GameServer gameServer = new GameServer()
-                    {
-                        ServerId = table.Id,
-                        ServerName = table.ServerName,
-                        RunState = table.RunState,
-                        IsNew = table.IsNew,
-                        IpHost = table.IpHost,
-                        Prot = table.Port
-                    };
-                    ret.GameServers.Add(gameServer);
-                }
-            }
+            Realms.Fill(ret);
         }
         else
         {
@@ -357,23 +348,8 @@ public class LoginModle
                 }
                 else
                 {
-                    //todo 判断账号是否已经登录
-                    //登录成功
-                    GameServerTable gameServer = _db.Queryable<GameServerTable>()
-                        .Where(v => v.Id == table.LastLoginServerId).First();
-                    if (gameServer != null)
-                    {
-                        ret.GameServer = new GameServer()
-                        {
-                            ServerId = gameServer.Id,
-                            ServerName = gameServer.ServerName,
-                            RunState = gameServer.RunState,
-                            IsNew = gameServer.IsNew,
-                            IpHost = gameServer.IpHost,
-                            Prot = gameServer.Port
-                        };
-                    }
-
+                    // 上次区服已关闭时，推荐当前开放的最小区号。
+                    ret.GameServer = Realms.Recommend(table.LastLoginServerId);
                     ret.CmdCode = CmdCode.Succeed;
                     ret.AccountId = table.Id;
 
@@ -450,9 +426,7 @@ public class LoginModle
         if (accountTable != null)
         {
 
-            GameServerTable gameServerTable =
-                _db.Queryable<GameServerTable>().Where(v => v.Id == req.GameServerId).First();
-            if (gameServerTable != null)
+            if (Realms.IsOpen(req.GameServerId))
             {
 
                 accountTable.LastLoginServerId = req.GameServerId;

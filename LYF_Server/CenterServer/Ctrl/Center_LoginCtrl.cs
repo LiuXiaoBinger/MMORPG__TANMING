@@ -48,6 +48,14 @@ public class Center_LoginCtrl : IContainer
     {
         switch (basePackage.ProtoCode)
         {
+            case SceneLineCode.RealmOnline:
+                // 区号来自网关的登记消息，客户端可达地址由中心服的部署文件决定。
+                SceneNodeRegistration registration = SceneNodeRegistration.Parser.ParseFrom(basePackage.Data);
+                _loginModle.Realms.Open(registration.RealmId, ((Session)serverBase).SessionID);
+                break;
+            case SceneLineCode.RealmOffline:
+                _loginModle.Realms.Close(((Session)serverBase).SessionID);
+                break;
             // 注册账号。
             case NetDefine.CMD_RegistCode:
                 OnRegistHandle(serverBase, basePackage);

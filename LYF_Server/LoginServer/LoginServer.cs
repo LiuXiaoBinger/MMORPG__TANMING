@@ -21,17 +21,29 @@ namespace LoginServer
         /// <summary>
         /// 进程主入口：连接中心服→监听 Unity 登录端口→注册登录类协议双向转发→初始化 gRPC 验证码客户端→休眠。
         /// </summary>
-        /// <param name="args">命令行参数，当前未使用。</param>
+        /// <param name="args">可选区服 XML 路径，从共享配置读取中心服和登录入口。</param>
         static void Main(string[] args)
         {
             
             
-            NetClient client = new NetClient(NetDefine.IPHost, 10110, ClientType.LoginServer);
-            client.StartConnect();
-            
+            // 无启动参数时使用原本机开发端口。
+            string centerHost = NetDefine.IPHost;
+            int centerPort = NetDefine.CenterServerPort;
+            // 登录地址由所有区服共享，客户端只在选服后连接区服网关。
+            string loginHost = NetDefine.IPHost;
+            int loginPort = NetDefine.LoginServerPort;
+            if (args.Length > 0)
+            {
+                // 多区部署从同一份公共配置读取登录和存档地址。
+                RealmTopology realm = new RealmTopology(args[0]);
+                centerHost = realm.CenterHost;
+                centerPort = realm.CenterPort;
+                loginHost = realm.LoginHost;
+                loginPort = realm.LoginPort;
+            }
+            // 先注册收发处理器，再接入中心与接受玩家连接。
+            NetClient client = new NetClient(centerHost, centerPort, ClientType.LoginServer);
             NetServer server = new NetServer(client);
-            server.StartServer(NetDefine.IPHost,NetDefine.LoginServerPort);
-            
             LoginCtrl loginCtrl = new LoginCtrl();
             //注册指令
             server.RegistCommand(NetDefine.CMD_RegistCode,loginCtrl);
@@ -50,7 +62,9 @@ namespace LoginServer
             server.RegistCommand(NetDefine.CMD_CreateRoleCode, loginCtrl);//创建角色
             client.RegistCommand(NetDefine.CMD_CreateRoleCode, loginCtrl);//创建角色
             
-            server.RegistCommand(NetDefine.CMD_RegistVarifyCode, loginCtrl);//获取验证码
+            server.RegistCommand(NetDefine.CMD_RegistVarifyCode, loginCtrl);
+            client.StartConnect();
+            server.StartServer(loginHost, loginPort);
             /*new Timer(_ =>
             {
 
