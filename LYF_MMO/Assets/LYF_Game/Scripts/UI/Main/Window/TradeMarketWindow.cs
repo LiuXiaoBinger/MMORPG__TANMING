@@ -132,6 +132,14 @@ public sealed class TradeMarketWindow : WindowBase
 
     /// <summary>浏览交互只发出查询意图；主控制器负责网络请求。</summary>
     public event Action<StallQuery> StallRequested;
+    /// <summary>当前卖家点选在售行撤单时向控制器提供真实挂牌号。</summary>
+    public event Action<long> StallCancelRequested;
+    /// <summary>我的摊位每页三个可点选的寄存行。</summary>
+    [SerializeField] private Button[] _sellRows;
+    /// <summary>与寄存行按序对应，展示单价、余量和可执行操作。</summary>
+    [SerializeField] private Text[] _sellLabels;
+    /// <summary>当前页各行对应的在售挂牌号，零表示不可撤。</summary>
+    private readonly long[] _sellListings = new long[3];
     /// <summary>当前本服目录的真实在售价格与数量，按物品配置索引。</summary>
     private readonly Dictionary<int, StallQuote> _quotes = new Dictionary<int, StallQuote>();
     /// <summary>行情尚在装载或服务不可用时显示的状态。</summary>
@@ -330,6 +338,7 @@ public sealed class TradeMarketWindow : WindowBase
         }
         // 本服出售页独立读取角色的全部寄存物品，分类隐藏配置仅影响公共目录。
         bool own = selling && _market == Market.Stall;
+        ClearSellRows();
         _ownLines.gameObject.SetActive(own);
         _ownPageButton.gameObject.SetActive(own);
         if (own) _stallHeading.text = "我的摊位";
@@ -661,9 +670,29 @@ public sealed class TradeMarketWindow : WindowBase
             _quotes.Clear();
             _quoteState = page.Reason;
             _nextOffer = 0;
-            if (_tab == 1) { _ownLines.text = page.Reason; _ownPager.text = "刷新"; }
+            if (_tab == 1)
+            {
+                ClearSellRows();
+                _ownLines.text = page.Reason;
+                _ownPager.text = "刷新";
+                _dialog.ShowStallQuote(0, page.Reason);
+            }
             if (_tab == 0 && _listedItem != null) { ShowOfferText(page.Reason, false); _draftLabel.text = "刷新"; }
             if (_tab == 0 && _listedItem == null) RefreshGoods();
+            return;
+        }
+        if (page.Query.View == StallView.StallGetPreSellItemInfo)
+        {
+            // 回包只更新仍然打开的同一商品出售单。
+            string quote = page.Reason;
+            if (quote.Length == 0 && page.Quotes.Count == 0) quote = "当前暂无同类在售挂单";
+            if (page.Quotes.Count > 0)
+            {
+                // 交易服按实际货币、单件价格和有效余量给出参考。
+                StallQuote offer = page.Quotes[0];
+                quote = "本服最低 " + offer.Price + CurrencyName(offer.CurrencyId) + "/件　共 " + offer.Quantity + " 件在售";
+            }
+            _dialog.ShowStallQuote(page.Query.ItemId, quote);
             return;
         }
         if (page.Query.View == StallView.StallSummary)
@@ -685,6 +714,7 @@ public sealed class TradeMarketWindow : WindowBase
         bool own = page.Query.View == StallView.StallOwn;
         if (own && _tab != 1) return;
         if (!own && (_listedItem == null || page.Query.ItemId != _listedItem.ItemId)) return;
+        if (own) ClearSellRows();
         _nextOffer = page.NextId;
         // 每页最多三条记录，分页控件在末页提供刷新。
         string action = "刷新";
@@ -702,13 +732,51 @@ public sealed class TradeMarketWindow : WindowBase
             // 公开页显示挂牌号，卖家页优先显示物品名。
             string label = "挂单 " + row.ListingId;
             if (own && item != null) label = item.ItemName;
-            if (row.Status == 4) label += "（已到期）";
-            if (row.Status == 3) label += "（已撤）";
+            if (own)
+            {
+                // 已撤或到期的余货继续显示在本人的寄存页。
+                string state = "已到期 · 待取回";
+                if (row.Status == 3) state = "已撤 · 待取回";
+                if (row.Status == 1) { state = "撤下"; _sellListings[i] = row.ListingId; }
+                if (item == null) label = "物品 " + row.ItemId;
+                _sellLabels[i].text = label + "　×" + row.Quantity + "\n" + row.Price + CurrencyName(row.CurrencyId) + "/件　·　" + state;
+                _sellRows[i].interactable = row.Status == 1;
+                _sellRows[i].gameObject.SetActive(true);
+                continue;
+            }
             if (i > 0) caption += "\n\n";
             caption += label + "　×" + row.Quantity + "　" + row.Price + CurrencyName(row.CurrencyId) + "/件";
         }
         if (own) { _ownLines.text = caption; _ownPager.text = action; }
         else { ShowOfferText(caption, page.Offers.Count > 0); _draftLabel.text = action; }
+    }
+
+    /// <summary>切页和断服时解除上一页的挂牌号与按钮。</summary>
+    private void ClearSellRows()
+    {
+        // 每个按钮只可操作自己当前显示的挂牌。
+        for (int index = 0; index < _sellRows.Length; index++)
+        {
+            _sellListings[index] = 0;
+            _sellRows[index].gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>从我的摊位点选一条尚在出售的商品。</summary><param name="index">预制体传入的行序号，从零开始。</param>
+    public void CancelSellRow(int index)
+    {
+        if (_sellListings[index] > 0) StallCancelRequested?.Invoke(_sellListings[index]);
+    }
+
+    /// <summary>按中心库回执显示结果并刷新自己的货架。</summary><param name="result">包含原挂牌号和业务结果。</param>
+    public void OnStallSellItemCancelRsp(StallSellItemCancelRes result)
+    {
+        if (!isActiveAndEnabled || _market != Market.Stall || _tab != 1) return;
+        // 回执后的最新货架仍从交易服读取。
+        string message = result.Reason;
+        if (message.Length == 0) message = "挂单 " + result.ListingId + " 已撤下，余货保留在我的摊位。";
+        _dialog.Message("撤单结果", message);
+        RequestOffers(0);
     }
 
     /// <summary>挂单有数据时用原区域展示列表，空页和错误沿用原提示图。</summary>
@@ -765,6 +833,11 @@ public sealed class TradeMarketWindow : WindowBase
     private void OpenForm(TradeMarketDialog.Form form, ItemConfigBase item, int maximum)
     {
         _dialog.Open(form, item, _catalog.GetIcon(item.ItemId), maximum, _market != Market.Stall);
+        if (form == TradeMarketDialog.Form.Sell && _market == Market.Stall)
+        {
+            _dialog.ShowStallQuote(item.ItemId, "正在查询本服参考价…");
+            StallRequested?.Invoke(new StallQuery { View = StallView.StallGetPreSellItemInfo, ItemId = item.ItemId });
+        }
     }
 
     /// <summary>展开目录的等级选择列表。</summary>
@@ -843,7 +916,7 @@ public sealed class TradeMarketWindow : WindowBase
     public void ShowInfo(int index)
     {
         if (index == 0) _dialog.Message("交易记录", "暂无交易记录");
-        if (index == 1) _dialog.Message("上架说明", "从包裹中选择物品，可查看上架单。当前尚未开放玩家挂单。");
+        if (index == 1) _dialog.Message("上架说明", "点包裹物品可查本服最低在售价。在「我的摊位」点在售行可撤单，剩余物品保留在摊位待取回。");
         if (index == 2) _dialog.Message("积分", "暂无交易积分记录");
     }
 

@@ -15,6 +15,13 @@ internal sealed class GateStallCtrl : IContainer
     public void OnServerCommand(BaseLink link, BasePackage packet)
     {
         if (router != null) { router.Send(packet); return; }
+        if (packet.ProtoCode == StallCode.StallSellItemCancel)
+        {
+            // 单 GS 模式同样回送原挂牌号，以便出售页展示停服原因。
+            StallSellItemCancelArg cancel = StallSellItemCancelArg.Parser.ParseFrom(packet.Data);
+            link.Send(StallCode.StallSellItemCancelResult, new StallSellItemCancelRes { ListingId = cancel.ListingId, Reason = StallCode.Unavailable }.ToByteString());
+            return;
+        }
         link.Send(StallCode.Result, new StallResult { Query = StallQuery.Parser.ParseFrom(packet.Data), Reason = StallCode.Unavailable }.ToByteString());
     }
 }

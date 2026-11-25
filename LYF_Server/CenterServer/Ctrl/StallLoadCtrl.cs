@@ -20,6 +20,14 @@ internal sealed class StallLoadCtrl : IContainer
     /// <param name="link">发起装载的内网交易服。</param><param name="packet">区号和上一页末挂牌号。</param>
     public void OnServerCommand(BaseLink link, BasePackage packet)
     {
+        if (packet.ProtoCode == StallCode.StallSellItemCancelCommit)
+        {
+            // 协议解析沿用网络层约定，只有数据库调用处理 I/O 错误。
+            StallSellItemCancelForward cancel = StallSellItemCancelForward.Parser.ParseFrom(packet.Data);
+            cancel.Reason = StallSellItemCancel(cancel);
+            link.Send(StallCode.StallSellItemCancelCommit, cancel.ToByteString());
+            return;
+        }
         // 每条查询均重新构造结果，忽略调用方传入的显示字段。
         StallLoadPage request = StallLoadPage.Parser.ParseFrom(packet.Data);
         // 稳定按挂牌号读取，防止不同区服之间串货。
@@ -46,5 +54,36 @@ internal sealed class StallLoadCtrl : IContainer
             }
         }
         link.Send(StallCode.Load, page.ToByteString());
+    }
+    /// <summary>仅撤本区、本人的在售挂单。数据库一次更新保留余量与快照，重发不重复改变版本。</summary>
+    /// <param name="cancel">交易服核实过角色归属的撤单请求。</param>
+    private string StallSellItemCancel(StallSellItemCancelForward cancel)
+    {
+        // UTC 时间同时决定有效期和本次关闭时间。
+        DateTime now = DateTime.UtcNow;
+        using (SqlSugarClient db = new SqlSugarClient(config))
+        {
+            try
+            {
+                // 所有权、截止时间和在售状态一起参与写条件，避免两个撤单重复生效。
+                int changed = db.Updateable<TradeListingTable>()
+                    .SetColumns(row => new TradeListingTable { Status = 3, ClosedAt = now, ListingVersion = row.ListingVersion + 1 })
+                    .Where(row => row.ListingId == cancel.ListingId && row.ServerId == cancel.Actor.RealmId)
+                    .Where(row => row.SellerRoleId == cancel.Actor.RoleId && row.MarketType == 0)
+                    .Where(row => row.Status == 1 && row.HeldQty > 0 && row.ExpiresAt > now).ExecuteCommand();
+                if (changed == 1) return string.Empty;
+                // 只对同一个卖家已撤的挂牌确认重发成功。
+                bool cancelled = db.Queryable<TradeListingTable>()
+                    .Where(row => row.ListingId == cancel.ListingId && row.ServerId == cancel.Actor.RealmId)
+                    .Where(row => row.SellerRoleId == cancel.Actor.RoleId && row.MarketType == 0 && row.Status == 3).Any();
+                if (cancelled) return string.Empty;
+                return "该挂单无法撤下，请刷新摊位。";
+            }
+            catch (Exception error)
+            {
+                LogMsg.Info("摆摊撤单写库失败：" + error.Message, LogMsgType.Error);
+                return "撤单结果暂时无法确认，请刷新或重试。";
+            }
+        }
     }
 }

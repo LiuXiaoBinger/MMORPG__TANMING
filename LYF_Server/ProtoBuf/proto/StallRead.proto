@@ -1,10 +1,11 @@
 syntax = "proto3";
 
-// 本服摆摊的三种只读视图。
+// 本服摆摊的只读视图。
 enum StallView {
   STALL_SUMMARY = 0; // 目录按物品汇总数量及最低单价。
   STALL_OFFERS = 1; // 一个物品的公开挂牌。
   STALL_OWN = 2; // 当前角色仍有寄存数量的挂牌，包含已到期或已撤的余货。
+  STALL_GET_PRE_SELL_ITEM_INFO = 3; // 出售前查询同物品当前最低单价及在售数量。
 }
 
 // 客户端仅选择视图、商品和游标，区服与角色身份由服务端填写。
@@ -51,4 +52,21 @@ message StallLoadPage {
   int64 after_id = 2; // 按挂牌主键升序分批装载，首次为零。
   repeated StallOffer offers = 3; // Center 返回的已提交、仍有托管量的记录。
   bool more = 4; // 还有后续批次时继续请求。
+}
+
+// 卖家点选一条自己的挂牌撤单，身份由网关填入内网请求。
+message StallSellItemCancelArg {
+  int64 listing_id = 1; // 要从公开货架撤下的挂牌号。
+}
+// 同一连接回送对应挂牌号；余货继续由市场托管。
+message StallSellItemCancelRes {
+  int64 listing_id = 1; // 本次处理的挂牌号。
+  string reason = 2; // 空串表示中心库已确认撤单。
+}
+// 网关、交易服与中心服之间的撤单路由；客户端只可提交挂牌号。
+message StallSellItemCancelForward {
+  StallIdentity actor = 1; // 网关依据实际角色路由填写的身份。
+  int64 listing_id = 2; // 属于该角色的挂牌号。
+  int32 gate_link = 3; // 交易服本机接收这次请求的网关连接号。
+  string reason = 4; // 中心服回送的处理结果。
 }

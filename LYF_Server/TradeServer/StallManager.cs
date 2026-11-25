@@ -4,7 +4,7 @@ using System.Linq;
 using Google.Protobuf;
 
 /// <summary>本区市场目录和角色路由，网络框架以 IContainer 交付内网消息。</summary>
-internal sealed class StallMarket : IContainer
+internal sealed class StallManager : IContainer
 {
     /// <summary>当前市场的区号、所属 GS 和中心地址。</summary>
     private readonly RealmTopology realm;
@@ -21,11 +21,12 @@ internal sealed class StallMarket : IContainer
     /// <summary>完整目录装载完毕后允许受理查询。</summary>
     private bool ready;
     /// <summary>分批装载使用与 Gate 和 GS 相同的标准重连客户端。</summary><param name="realm">本区共享配置。</param>
-    internal StallMarket(RealmTopology realm)
+    internal StallManager(RealmTopology realm)
     {
         this.realm = realm;
         center = new NetClient(realm.CenterHost, realm.CenterPort, ClientType.TradeServer);
         center.RegistCommand(StallCode.Load, this);
+        center.RegistCommand(StallCode.StallSellItemCancelCommit, this);
         center.OnConnSucceed = () => { lock (goods) { Reset(); Next(0); } };
         center.OnConnFailed = () => { lock (goods) Reset(); };
     }
@@ -41,6 +42,19 @@ internal sealed class StallMarket : IContainer
     /// <param name="link">存档中心连接。</param><param name="packet">已提交挂单分页。</param>
     public void OnClientCommand(BaseLink link, BasePackage packet)
     {
+        if (packet.ProtoCode == StallCode.StallSellItemCancelCommit)
+        {
+            // 中心库已处理的结果，内存货架仅在落库成功后撤下该行。
+            StallSellItemCancelForward cancel = StallSellItemCancelForward.Parser.ParseFrom(packet.Data);
+            lock (goods)
+            {
+                // 卖家索引和公开货架引用同一个挂牌对象。
+                StallOffer row = FindOwnOffer(cancel.Actor.RoleId, cancel.ListingId);
+                if (row != null && cancel.Reason.Length == 0) row.Status = 3;
+                if (Online(cancel.Actor)) ReplyCancel(SessionMgr.Instance.GetSession(cancel.GateLink), cancel);
+            }
+            return;
+        }
         // 每批最多 128 条，引用同一条挂单避免复制托管数据。
         StallLoadPage page = StallLoadPage.Parser.ParseFrom(packet.Data);
         lock (goods)
@@ -74,6 +88,18 @@ internal sealed class StallMarket : IContainer
         int connection = ((Session)link).SessionID;
         lock (goods)
         {
+            if (packet.ProtoCode == StallCode.StallSellItemCancel)
+            {
+                // 实际来源连接由交易服填入，中心回执才能送回原网关。
+                StallSellItemCancelForward cancel = StallSellItemCancelForward.Parser.ParseFrom(packet.Data);
+                cancel.GateLink = connection;
+                if (!ready || !Online(cancel.Actor)) cancel.Reason = StallCode.Unavailable;
+                else if (FindOwnOffer(cancel.Actor.RoleId, cancel.ListingId) == null) cancel.Reason = "该挂单无法撤下，请刷新摊位。";
+                else if (center.Send(StallCode.StallSellItemCancelCommit, cancel.ToByteString())) return;
+                else cancel.Reason = StallCode.Unavailable;
+                ReplyCancel(link, cancel);
+                return;
+            }
             if (packet.ProtoCode != StallCode.Read)
             {
                 // GS 首包用空角色登记节点，之后只登记这条链路上的角色。
@@ -98,6 +124,22 @@ internal sealed class StallMarket : IContainer
             else Read(request.Query, request.Actor.RoleId, result);
             link.Send(packet.UnitySessionId, StallCode.Result, result.ToByteString());
         }
+    }
+    /// <summary>在当前卖家的寄存记录中匹配指定挂牌号。</summary>
+    /// <param name="role">已登录卖家编号。</param><param name="listing">要操作的挂牌号。</param>
+    private StallOffer FindOwnOffer(int role, long listing)
+    {
+        // 只从当前角色自己的寄存记录中查找。
+        List<StallOffer> rows;
+        if (!sellers.TryGetValue(role, out rows)) return null;
+        return rows.Find(row => row.ListingId == listing);
+    }
+    /// <summary>经原网关将撤单结果送给对应玩家。</summary>
+    /// <param name="gate">原网关连接，断开后允许为空。</param><param name="cancel">中心回执或本地业务错误。</param>
+    private static void ReplyCancel(BaseLink gate, StallSellItemCancelForward cancel)
+    {
+        gate?.Send(cancel.Actor.SessionId, StallCode.StallSellItemCancelResult,
+            new StallSellItemCancelRes { ListingId = cancel.ListingId, Reason = cancel.Reason }.ToByteString());
     }
     /// <summary>物理编号只接受当前登记连接的角色更新。</summary><param name="actor">GS 身份。</param><param name="connection">来包连接。</param>
     private bool BoundHost(StallIdentity actor, int connection)
@@ -128,28 +170,46 @@ internal sealed class StallMarket : IContainer
             for (int i = 0; i < nodes.Count; i++) if (hosts[nodes[i]] == connection) hosts.Remove(nodes[i]);
         }
     }
+    /// <summary>汇总本区同种商品的有效数量，从已排序挂牌中取得最低单价。</summary>
+    /// <param name="itemId">商品配置号。</param><param name="now">本次查询的 UTC 秒。</param>
+    private StallQuote GetStallItemSellBasePrice(int itemId, long now)
+    {
+        // 没有有效挂单时数量为零。
+        StallQuote quote = new StallQuote { ItemId = itemId };
+        // 同类挂牌按单价和挂牌号升序排列。
+        List<StallOffer> rows;
+        if (!goods.TryGetValue(itemId, out rows)) return quote;
+        for (int index = 0; index < rows.Count; index++)
+        {
+            // 已到期、已撤和售罄的物品不参与报价。
+            StallOffer row = rows[index];
+            if (row.Status != 1 || row.ExpiresAt <= now) continue;
+            if (quote.Quantity == 0) { quote.Price = row.Price; quote.CurrencyId = row.CurrencyId; }
+            quote.Quantity += row.Quantity;
+        }
+        return quote;
+    }
     /// <summary>使用服务器 UTC 截止时间过滤公开行情，个人列表保留期满待取回记录。</summary>
     /// <param name="query">只读视图及游标。</param><param name="role">已查证的卖家号。</param><param name="result">当前请求的响应。</param>
     private void Read(StallQuery query, int role, StallResult result)
     {
         // 同一个响应中的所有行使用同一 UTC 秒作比较。
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (query.View == StallView.StallGetPreSellItemInfo)
+        {
+            // 本项目以本区实时最低挂牌价供卖家参考，无在售量时不返回虚构报价。
+            StallQuote quote = GetStallItemSellBasePrice(query.ItemId, now);
+            if (quote.Quantity > 0) result.Quotes.Add(quote);
+            return;
+        }
         if (query.View == StallView.StallSummary)
         {
             // 每页最多返回 96 个不同的物品配置。
             List<int> ids = goods.Keys.Where(id => id > query.AfterId).ToList();
             for (int i = 0; i < ids.Count; i++)
             {
-                // 同一物品列表按单价排序，第一个有效挂单提供最低报价。
-                StallQuote quote = new StallQuote { ItemId = ids[i] };
-                // 该配置编号下含已关闭的个人寄存记录，公开统计需逐行过滤。
-                List<StallOffer> rows = goods[ids[i]];
-                for (int j = 0; j < rows.Count; j++)
-                {
-                    if (rows[j].Status != 1 || rows[j].ExpiresAt <= now) continue;
-                    if (quote.Quantity == 0) { quote.Price = rows[j].Price; quote.CurrencyId = rows[j].CurrencyId; }
-                    quote.Quantity += rows[j].Quantity;
-                }
+                // 目录与卖家询价使用同一份当前有效报价。
+                StallQuote quote = GetStallItemSellBasePrice(ids[i], now);
                 if (quote.Quantity == 0) continue;
                 if (result.Quotes.Count == 96) { result.NextId = result.Quotes[95].ItemId; break; }
                 result.Quotes.Add(quote);

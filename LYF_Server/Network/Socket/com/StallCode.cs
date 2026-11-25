@@ -13,6 +13,12 @@ public static class StallCode
     public const ushort Unbind = 11404;
     /// <summary>交易服按区分页从中心服装载已提交挂单。</summary>
     public const ushort Load = 11405;
+    /// <summary>卖家撤单请求，网关附上当前角色身份后转给交易服。</summary>
+    public const ushort StallSellItemCancel = 11406;
+    /// <summary>交易服请求中心服撤下托管挂单，中心服用同一协议回执。</summary>
+    public const ushort StallSellItemCancelCommit = 11407;
+    /// <summary>卖家撤单操作的最终结果。</summary>
+    public const ushort StallSellItemCancelResult = 11408;
     /// <summary>交易服务离线或正在恢复时显示给玩家的提示。</summary>
     public const string Unavailable = "本服交易市场暂不可用，请稍后再试。";
 }

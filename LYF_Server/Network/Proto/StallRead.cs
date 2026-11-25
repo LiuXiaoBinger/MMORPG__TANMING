@@ -38,9 +38,14 @@ public static partial class StallReadReflection {
           "LlN0YWxsT2ZmZXISGwoGcXVvdGVzGAQgAygLMgsuU3RhbGxRdW90ZRIPCgdu",
           "ZXh0X2lkGAUgASgDIl4KDVN0YWxsTG9hZFBhZ2USEAoIcmVhbG1faWQYASAB",
           "KAUSEAoIYWZ0ZXJfaWQYAiABKAMSGwoGb2ZmZXJzGAMgAygLMgsuU3RhbGxP",
-          "ZmZlchIMCgRtb3JlGAQgASgIKj8KCVN0YWxsVmlldxIRCg1TVEFMTF9TVU1N",
-          "QVJZEAASEAoMU1RBTExfT0ZGRVJTEAESDQoJU1RBTExfT1dOEAJiBnByb3Rv",
-          "Mw=="));
+          "ZmZlchIMCgRtb3JlGAQgASgIIiwKFlN0YWxsU2VsbEl0ZW1DYW5jZWxBcmcS",
+          "EgoKbGlzdGluZ19pZBgBIAEoAyI8ChZTdGFsbFNlbGxJdGVtQ2FuY2VsUmVz",
+          "EhIKCmxpc3RpbmdfaWQYASABKAMSDgoGcmVhc29uGAIgASgJInIKGlN0YWxs",
+          "U2VsbEl0ZW1DYW5jZWxGb3J3YXJkEh0KBWFjdG9yGAEgASgLMg4uU3RhbGxJ",
+          "ZGVudGl0eRISCgpsaXN0aW5nX2lkGAIgASgDEhEKCWdhdGVfbGluaxgDIAEo",
+          "BRIOCgZyZWFzb24YBCABKAkqYQoJU3RhbGxWaWV3EhEKDVNUQUxMX1NVTU1B",
+          "UlkQABIQCgxTVEFMTF9PRkZFUlMQARINCglTVEFMTF9PV04QAhIgChxTVEFM",
+          "TF9HRVRfUFJFX1NFTExfSVRFTV9JTkZPEANiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::StallView), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -50,7 +55,10 @@ public static partial class StallReadReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::StallOffer), global::StallOffer.Parser, new[]{ "ListingId", "ItemId", "CurrencyId", "Price", "Quantity", "ExpiresAt", "Status", "SellerId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallQuote), global::StallQuote.Parser, new[]{ "ItemId", "Quantity", "Price", "CurrencyId" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StallResult), global::StallResult.Parser, new[]{ "Query", "Reason", "Offers", "Quotes", "NextId" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::StallLoadPage), global::StallLoadPage.Parser, new[]{ "RealmId", "AfterId", "Offers", "More" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallLoadPage), global::StallLoadPage.Parser, new[]{ "RealmId", "AfterId", "Offers", "More" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelArg), global::StallSellItemCancelArg.Parser, new[]{ "ListingId" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelRes), global::StallSellItemCancelRes.Parser, new[]{ "ListingId", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::StallSellItemCancelForward), global::StallSellItemCancelForward.Parser, new[]{ "Actor", "ListingId", "GateLink", "Reason" }, null, null, null, null)
         }));
   }
   #endregion
@@ -58,7 +66,7 @@ public static partial class StallReadReflection {
 }
 #region Enums
 /// <summary>
-/// 本服摆摊的三种只读视图。
+/// 本服摆摊的只读视图。
 /// </summary>
 public enum StallView {
   /// <summary>
@@ -73,6 +81,10 @@ public enum StallView {
   /// 当前角色仍有寄存数量的挂牌，包含已到期或已撤的余货。
   /// </summary>
   [pbr::OriginalName("STALL_OWN")] StallOwn = 2,
+  /// <summary>
+  /// 出售前查询同物品当前最低单价及在售数量。
+  /// </summary>
+  [pbr::OriginalName("STALL_GET_PRE_SELL_ITEM_INFO")] StallGetPreSellItemInfo = 3,
 }
 
 #endregion
@@ -2393,6 +2405,787 @@ public sealed partial class StallLoadPage : pb::IMessage<StallLoadPage>
         }
         case 32: {
           More = input.ReadBool();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 卖家点选一条自己的挂牌撤单，身份由网关填入内网请求。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class StallSellItemCancelArg : pb::IMessage<StallSellItemCancelArg>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<StallSellItemCancelArg> _parser = new pb::MessageParser<StallSellItemCancelArg>(() => new StallSellItemCancelArg());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<StallSellItemCancelArg> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::StallReadReflection.Descriptor.MessageTypes[7]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelArg() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelArg(StallSellItemCancelArg other) : this() {
+    listingId_ = other.listingId_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelArg Clone() {
+    return new StallSellItemCancelArg(this);
+  }
+
+  /// <summary>Field number for the "listing_id" field.</summary>
+  public const int ListingIdFieldNumber = 1;
+  private long listingId_;
+  /// <summary>
+  /// 要从公开货架撤下的挂牌号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ListingId {
+    get { return listingId_; }
+    set {
+      listingId_ = value;
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as StallSellItemCancelArg);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(StallSellItemCancelArg other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ListingId != other.ListingId) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ListingId != 0L) hash ^= ListingId.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ListingId != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ListingId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ListingId != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ListingId);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ListingId != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ListingId);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(StallSellItemCancelArg other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ListingId != 0L) {
+      ListingId = other.ListingId;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 同一连接回送对应挂牌号；余货继续由市场托管。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class StallSellItemCancelRes : pb::IMessage<StallSellItemCancelRes>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<StallSellItemCancelRes> _parser = new pb::MessageParser<StallSellItemCancelRes>(() => new StallSellItemCancelRes());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<StallSellItemCancelRes> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::StallReadReflection.Descriptor.MessageTypes[8]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelRes() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelRes(StallSellItemCancelRes other) : this() {
+    listingId_ = other.listingId_;
+    reason_ = other.reason_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelRes Clone() {
+    return new StallSellItemCancelRes(this);
+  }
+
+  /// <summary>Field number for the "listing_id" field.</summary>
+  public const int ListingIdFieldNumber = 1;
+  private long listingId_;
+  /// <summary>
+  /// 本次处理的挂牌号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ListingId {
+    get { return listingId_; }
+    set {
+      listingId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 2;
+  private string reason_ = "";
+  /// <summary>
+  /// 空串表示中心库已确认撤单。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as StallSellItemCancelRes);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(StallSellItemCancelRes other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (ListingId != other.ListingId) return false;
+    if (Reason != other.Reason) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (ListingId != 0L) hash ^= ListingId.GetHashCode();
+    if (Reason.Length != 0) hash ^= Reason.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (ListingId != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ListingId);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (ListingId != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ListingId);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (ListingId != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ListingId);
+    }
+    if (Reason.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(StallSellItemCancelRes other) {
+    if (other == null) {
+      return;
+    }
+    if (other.ListingId != 0L) {
+      ListingId = other.ListingId;
+    }
+    if (other.Reason.Length != 0) {
+      Reason = other.Reason;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 网关、交易服与中心服之间的撤单路由；客户端只可提交挂牌号。
+/// </summary>
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class StallSellItemCancelForward : pb::IMessage<StallSellItemCancelForward>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<StallSellItemCancelForward> _parser = new pb::MessageParser<StallSellItemCancelForward>(() => new StallSellItemCancelForward());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<StallSellItemCancelForward> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::StallReadReflection.Descriptor.MessageTypes[9]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelForward() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelForward(StallSellItemCancelForward other) : this() {
+    actor_ = other.actor_ != null ? other.actor_.Clone() : null;
+    listingId_ = other.listingId_;
+    gateLink_ = other.gateLink_;
+    reason_ = other.reason_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public StallSellItemCancelForward Clone() {
+    return new StallSellItemCancelForward(this);
+  }
+
+  /// <summary>Field number for the "actor" field.</summary>
+  public const int ActorFieldNumber = 1;
+  private global::StallIdentity actor_;
+  /// <summary>
+  /// 网关依据实际角色路由填写的身份。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public global::StallIdentity Actor {
+    get { return actor_; }
+    set {
+      actor_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "listing_id" field.</summary>
+  public const int ListingIdFieldNumber = 2;
+  private long listingId_;
+  /// <summary>
+  /// 属于该角色的挂牌号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public long ListingId {
+    get { return listingId_; }
+    set {
+      listingId_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "gate_link" field.</summary>
+  public const int GateLinkFieldNumber = 3;
+  private int gateLink_;
+  /// <summary>
+  /// 交易服本机接收这次请求的网关连接号。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int GateLink {
+    get { return gateLink_; }
+    set {
+      gateLink_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 4;
+  private string reason_ = "";
+  /// <summary>
+  /// 中心服回送的处理结果。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as StallSellItemCancelForward);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(StallSellItemCancelForward other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (!object.Equals(Actor, other.Actor)) return false;
+    if (ListingId != other.ListingId) return false;
+    if (GateLink != other.GateLink) return false;
+    if (Reason != other.Reason) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (actor_ != null) hash ^= Actor.GetHashCode();
+    if (ListingId != 0L) hash ^= ListingId.GetHashCode();
+    if (GateLink != 0) hash ^= GateLink.GetHashCode();
+    if (Reason.Length != 0) hash ^= Reason.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (actor_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Actor);
+    }
+    if (ListingId != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ListingId);
+    }
+    if (GateLink != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(GateLink);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (actor_ != null) {
+      output.WriteRawTag(10);
+      output.WriteMessage(Actor);
+    }
+    if (ListingId != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ListingId);
+    }
+    if (GateLink != 0) {
+      output.WriteRawTag(24);
+      output.WriteInt32(GateLink);
+    }
+    if (Reason.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (actor_ != null) {
+      size += 1 + pb::CodedOutputStream.ComputeMessageSize(Actor);
+    }
+    if (ListingId != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ListingId);
+    }
+    if (GateLink != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(GateLink);
+    }
+    if (Reason.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(StallSellItemCancelForward other) {
+    if (other == null) {
+      return;
+    }
+    if (other.actor_ != null) {
+      if (actor_ == null) {
+        Actor = new global::StallIdentity();
+      }
+      Actor.MergeFrom(other.Actor);
+    }
+    if (other.ListingId != 0L) {
+      ListingId = other.ListingId;
+    }
+    if (other.GateLink != 0) {
+      GateLink = other.GateLink;
+    }
+    if (other.Reason.Length != 0) {
+      Reason = other.Reason;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          if (actor_ == null) {
+            Actor = new global::StallIdentity();
+          }
+          input.ReadMessage(Actor);
+          break;
+        }
+        case 16: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 24: {
+          GateLink = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          if (actor_ == null) {
+            Actor = new global::StallIdentity();
+          }
+          input.ReadMessage(Actor);
+          break;
+        }
+        case 16: {
+          ListingId = input.ReadInt64();
+          break;
+        }
+        case 24: {
+          GateLink = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          Reason = input.ReadString();
           break;
         }
       }

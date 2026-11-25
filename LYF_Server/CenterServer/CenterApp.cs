@@ -46,7 +46,10 @@ namespace CenterServer
             server.RegistCommand(NetDefine.CMD_LoginGameServerCode, loginCtrl);//登录游戏服务器
             server.RegistCommand(NetDefine.CMD_CreateRoleCode, loginCtrl);//创建角色
             server.RegistCommand(NetDefine.CMD_StartGameCode, loginCtrl);//游戏开始
-            server.RegistCommand(StallCode.Load, new StallLoadCtrl(db.CurrentConnectionConfig));
+            // 市场托管数据的读取与撤单共用中心服数据库配置。
+            StallLoadCtrl stall = new StallLoadCtrl(db.CurrentConnectionConfig);
+            server.RegistCommand(StallCode.Load, stall);
+            server.RegistCommand(StallCode.StallSellItemCancelCommit, stall);
             RedisMgr.Instance.Init();
             
             // 角色模块控制器：处理进入世界回包、背包容量同步、商城购买转发、角色物品快照保存。

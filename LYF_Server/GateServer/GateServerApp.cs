@@ -134,7 +134,10 @@ namespace GateServer
             // 绑定协议处理器实例，只在网关与客户端之间分配参数并回包。
             GateKcpCtrl gateKcpCtrl = new GateKcpCtrl();
             server.RegistCommand(NetDefine.CMD_KcpBindCode, gateKcpCtrl);
-            server.RegistCommand(StallCode.Browse, new GateStallCtrl(router));
+            // 市场查询和卖家撤单共用已登录玩家的网关路由。
+            GateStallCtrl stall = new GateStallCtrl(router);
+            server.RegistCommand(StallCode.Browse, stall);
+            server.RegistCommand(StallCode.StallSellItemCancel, stall);
             if (router != null)
             {
                 server.RegistCommand(SceneLineCode.List, gateMoveCtrl);

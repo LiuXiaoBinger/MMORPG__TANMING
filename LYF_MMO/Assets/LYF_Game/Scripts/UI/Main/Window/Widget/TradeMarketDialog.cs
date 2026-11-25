@@ -73,6 +73,19 @@ public sealed class TradeMarketDialog : MonoBehaviour
     /// <summary>当前草稿的一份价格。</summary>
     private int _price;
 
+    /// <summary>当前出售草稿的实时参考价说明，切换单据时清空。</summary>
+    private string _stallQuote;
+
+    /// <summary>更新当前出售草稿的市场提示，保留玩家正在编辑的价格。</summary>
+    /// <param name="itemId">商品编号，零表示全市场断线。</param><param name="quote">交易服的报价或状态说明。</param>
+    public void ShowStallQuote(int itemId, string quote)
+    {
+        if (!gameObject.activeSelf || !_terms.activeSelf || _form != Form.Sell) return;
+        if (itemId != 0 && _item.ItemId != itemId) return;
+        _stallQuote = quote;
+        RefreshCost();
+    }
+
     /// <summary>在同一遮罩内显示标题与空态说明。</summary>
     /// <param name="heading">来源页面的标题。</param>
     /// <param name="message">当前无记录的原因或规则正文。</param>
@@ -97,6 +110,7 @@ public sealed class TradeMarketDialog : MonoBehaviour
     public void Open(Form form, ItemConfigBase item, Sprite icon, int maximum, bool ticket)
     {
         _form = form;
+        _stallQuote = null;
         _item = item;
         _maximum = Mathf.Max(1, maximum);
         _quantity = 1;
@@ -176,6 +190,8 @@ public sealed class TradeMarketDialog : MonoBehaviour
         _priceText.text = _price.ToString();
         _bidPrice.text = _price.ToString();
         _total.text = "合计  " + ((long)_quantity * _price).ToString("N0") + "　 ·　 玩家交易尚未开放";
+        if (_form == Form.Sell && !string.IsNullOrEmpty(_stallQuote))
+            _total.text = _stallQuote + "\n草稿合计  " + ((long)_quantity * _price).ToString("N0");
         if (_form == Form.Bid) _total.text = "当前暂无有效拍卖挂单";
     }
 

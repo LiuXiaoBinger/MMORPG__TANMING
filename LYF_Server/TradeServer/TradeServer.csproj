@@ -13,7 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="TradeServerApp.cs" />
-    <Compile Include="StallMarket.cs" />
+    <Compile Include="StallManager.cs" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Google.Protobuf"><HintPath>..\packages\Google.Protobuf.3.31.1\lib\net45\Google.Protobuf.dll</HintPath></Reference>

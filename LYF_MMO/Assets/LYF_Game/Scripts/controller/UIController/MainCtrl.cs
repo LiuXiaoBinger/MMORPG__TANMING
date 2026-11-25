@@ -30,6 +30,9 @@ public class MainCtrl : CtrlBase
     /// <summary>背包角色组件与背包窗口之间的控制器。</summary>
     private readonly KnapsackCtrl _knapsackCtrl;
 
+    /// <summary>货币兑换控制器，依赖背包控制器读写虚拟货币。</summary>
+    private readonly CurrencyExchangeCtrl _currencyExchangeCtrl;
+
     /// <summary>聊天窗口视图。</summary>
     private readonly ChatWindows _chatWindow;
     /// <summary>管理正式聊天窗口的文字及录音请求与回包。</summary>
@@ -75,13 +78,19 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.AddEventHandler(StallCode.Result, OnStallResult);
-        if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested += RequestStall;
+        SocketDispatcher.Instance.AddEventHandler(StallCode.StallSellItemCancelResult, OnStallSellItemCancelRsp);
+        if (_mainView.TradeMarketWindow != null)
+        {
+            _mainView.TradeMarketWindow.StallRequested += RequestStall;
+            _mainView.TradeMarketWindow.StallCancelRequested += SendStallSellItemCancelReq;
+        }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _shopCtrl = new ShopCtrl(_mainView);
         _skillCtrl = new SkillCtrl(_mainView);
         _roleInfoCtrl = new RoleInfoCtrl(_mainView);
         _knapsackCtrl = new KnapsackCtrl(_mainView);
+        _currencyExchangeCtrl = new CurrencyExchangeCtrl(_mainView, _knapsackCtrl);
         _taskCtrl = new TaskCtrl(_mainView);
         _themeDungeonTeamCtrl = new ThemeDungeonTeamCtrl(_mainView);
         _dungeonFlowCtrl = new DungeonFlowCtrl(_mainView);
@@ -145,14 +154,14 @@ public class MainCtrl : CtrlBase
         {
             _mainView.RoleStatusFooter.SafetyButton.onClick.AddListener(OnSafetyButtonClicked);
         }
-        if (_mainView.TalkWindow != null)
-        {
-            _mainView.TalkWindow.ShopRequested += OnShopRequested;
-            _mainView.TalkWindow.MoshentaBattleRequested += OnMoshentaBattleRequested;
         if (_mainView.CombatStatusButton != null)
         {
             _mainView.CombatStatusButton.onClick.AddListener(OnCombatStatusClicked);
         }
+        if (_mainView.TalkWindow != null)
+        {
+            _mainView.TalkWindow.ShopRequested += OnShopRequested;
+            _mainView.TalkWindow.MoshentaBattleRequested += OnMoshentaBattleRequested;
             _mainView.TalkWindow.TalkLeaveRequested += CloseNpcTalk;
             _mainView.TalkWindow.Closed += OnNpcTalkClosed;
         }
@@ -191,7 +200,12 @@ public class MainCtrl : CtrlBase
         }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
-        if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested -= RequestStall;
+        SocketDispatcher.Instance.RemoveEventHandler(StallCode.StallSellItemCancelResult, OnStallSellItemCancelRsp);
+        if (_mainView.TradeMarketWindow != null)
+        {
+            _mainView.TradeMarketWindow.StallRequested -= RequestStall;
+            _mainView.TradeMarketWindow.StallCancelRequested -= SendStallSellItemCancelReq;
+        }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _yimengChatCtrl?.Dispose();
@@ -219,14 +233,14 @@ public class MainCtrl : CtrlBase
         {
             _mainView.RoleStatusFooter.SafetyButton.onClick.RemoveListener(OnSafetyButtonClicked);
         }
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
-        SocketDispatcher.Instance.RemoveEventHandler(
-            NetDefine.CMD_OpenKnapsackGridCode, OpenKnapsackGridHandle);
         if (_mainView.CombatStatusButton != null)
         {
             _mainView.CombatStatusButton.onClick.RemoveListener(OnCombatStatusClicked);
         }
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_RoleKnapsackInfoCode, RoleKnapsackInfoHandle);
+        SocketDispatcher.Instance.RemoveEventHandler(
+            NetDefine.CMD_OpenKnapsackGridCode, OpenKnapsackGridHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
             NetDefine.CMD_BuyShopItemCode, BuyShopItemHandle);
         SocketDispatcher.Instance.RemoveEventHandler(
@@ -270,6 +284,10 @@ public class MainCtrl : CtrlBase
         if (_knapsackCtrl != null)
         {
             _knapsackCtrl.Dispose();
+        }
+        if (_currencyExchangeCtrl != null)
+        {
+            _currencyExchangeCtrl.Dispose();
         }
         if (_taskCtrl != null)
         {
@@ -476,6 +494,18 @@ public class MainCtrl : CtrlBase
     private void RequestStall(StallQuery query)
     {
         MNetClient.Instance.Send(StallCode.Browse, query.ToByteString());
+    }
+
+    /// <summary>参照 RO 的卖家撤单请求，只传选中行的挂牌号。</summary><param name="listing">本次要撤下的挂牌号。</param>
+    private void SendStallSellItemCancelReq(long listing)
+    {
+        MNetClient.Instance.Send(StallCode.StallSellItemCancel, new StallSellItemCancelArg { ListingId = listing }.ToByteString());
+    }
+
+    /// <summary>将中心服确认的撤单结果交回出售页。</summary><param name="data">网关回送的撤单结果。</param>
+    private void OnStallSellItemCancelRsp(ByteString data)
+    {
+        _mainView.TradeMarketWindow?.OnStallSellItemCancelRsp(StallSellItemCancelRes.Parser.ParseFrom(data));
     }
 
     /// <summary>把网关返回的本服市场结果交给当前窗口。</summary><param name="data">市场查询回包。</param>
@@ -810,6 +840,12 @@ public class MainCtrl : CtrlBase
                 ShowMainWindow(WindowType.KnapsackWindow);
                 CameraMgr.Instance.KnapsackWindowAngle(
                     _mainView.GetWindow(WindowType.KnapsackWindow));
+                break;
+            case "E":
+                if (_currencyExchangeCtrl != null)
+                {
+                    _currencyExchangeCtrl.Open(0);
+                }
                 break;
             case "I":
                 ShowMainWindow(WindowType.RoleAttriibuteWindow);
