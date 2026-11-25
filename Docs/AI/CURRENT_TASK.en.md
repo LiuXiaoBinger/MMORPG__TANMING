@@ -956,6 +956,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - Deployment scripts and XML live in `LYF_Server/区服部署/`. Shared login/center endpoints and the allowed realm files are in `公共服务.xml`. Realms 1 and 2 each configure maps 1 and 0 with exactly two fixed lines. The center lists configured gates that announce availability. Account recommendation and selection use the same directory. The existing character/account schema and legacy directory rows are retained. Launch details: `项目分析/同区多GS与地图分线.md`. Inventory: `项目修改日志/2026-11-25-多区服部署与双地图双线.md`.
 - Each realm's `spawnMap` selects the persisted map for newly created characters; existing characters use their saved map.
 - Double-click `LYF_Server/区服部署/启动区服.bat` to start realm 1 or `LYF_Server/区服部署/停止区服.bat` to stop it. Each runs immediately and includes the enabled TradeServer and shared LoginServer and CenterServer.
+- The start batch passes `-ShowConsole` so each service displays its own live console. Direct PowerShell deployment continues to start services in the background by default.
 
 ## [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection
 

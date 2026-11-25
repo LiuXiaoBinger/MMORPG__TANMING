@@ -989,6 +989,7 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 - Server solution and workspace client built. The isolated feature client and its baseline both have the same three QuickTaskPanelWidget.cs errors. Realm 2 configuration was inspected but never launched. New Unity scenes, device/Player, KCP movement, production load and multi-machine deployment were not exercised. Evidence: `_temp/realm-deployment-20261125/e2e.txt`, `branch-check.json`. Full record: `项目修改日志/2026-11-25-多区服部署与双地图双线.md`.
 - With the isolated realm configured for spawnMap 0, an additional new character entered map 0 on line 1 directly through creation and switched to line 2. A pre-existing character kept map 1. Evidence: `_temp/realm-deployment-20261125/e2e-final.txt`.
 - Opened each batch file via Windows Shell Open from another working directory, with no keyboard input. In a local isolated path containing Chinese characters and a space, Start brought up all eight realm 1 processes and TCP listeners, including TradeServer and two GameServers. Stop closed all eight processes and listeners. Tested realm 1 only. Evidence: `_temp/realm-direct-bat-20261125/accept.txt`.
+- In local isolated realm 1, double-clicking Start opened eight distinct visible service consoles. Each console buffer contained actual service output. Double-clicking Stop closed all eight windows, processes and TCP listeners. Evidence: `_temp/realm-console-20261125/accept.txt`.
 
 ## [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing
 

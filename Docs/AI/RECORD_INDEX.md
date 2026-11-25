@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `9ad9c7debd558323ef1ed06b625d5e041c37700bf00862de95b640d4855404fc`
+Source normalized SHA256: `da9048885ca421ca1b1fb32e301eadb94d664439d13dbeeaeb7e00a8f3b5aa3d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -139,13 +139,13 @@ Source normalized SHA256: `9ad9c7debd558323ef1ed06b625d5e041c37700bf00862de95b64
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
 | [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-949 |
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 950-953 |
-| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-959 |
-| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 960-965 |
-| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 966-969 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-960 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 961-966 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 967-970 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `8fb446b8fb02f4555b8d3add4f414dd15269c31c9bd699528a9813fdc656625d`
+Source normalized SHA256: `1011799512231e7f01f554baaa2a1e09890783b83fda2ddc41919d66d6819c5c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -276,9 +276,9 @@ Source normalized SHA256: `8fb446b8fb02f4555b8d3add4f414dd15269c31c9bd699528a981
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
 | [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-980 |
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 981-985 |
-| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-992 |
-| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 993-998 |
-| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 999-1002 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-993 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 994-999 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1000-1003 |
 
 ## Docs/AI/DECISIONS.en.md
 

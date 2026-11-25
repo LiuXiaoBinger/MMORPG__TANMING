@@ -980,6 +980,7 @@ Luban、隔离游戏服 27 项和 Unity Play Mode 14 项通过，当前工作区
 - 服务端解决方案和工作区客户端构建成功。隔离的功能分支客户端与其基线均有 QuickTaskPanelWidget.cs 中相同的三处错误。区服 2 仅核查配置，未启动。尚未验证新的 Unity 场景、真机或 Player、KCP 移动、生产负载及多机部署。证据见 `_temp/realm-deployment-20261125/e2e.txt`、`branch-check.json`，完整记录见 `项目修改日志/2026-11-25-多区服部署与双地图双线.md`。
 - 在隔离测试区服将 spawnMap 设为 0 后，另用一个新角色通过建角协议直接进入地图 0 的 1 线，随后成功切到 2 线。一个已有角色仍在其存档中的地图 1。证据见 `_temp/realm-deployment-20261125/e2e-final.txt`。
 - Windows 双击启停已在含中文和空格的本机隔离路径验证。从另一工作目录通过 Windows Shell Open 分别打开两个批处理文件，全程无需键盘输入。启动脚本拉起一区全部 8 个进程（含 TradeServer 和两个 GameServer），各 TCP 监听均已就绪。停止脚本关闭全部 8 个进程及其监听。本次仅验证一区。证据见 `_temp/realm-direct-bat-20261125/accept.txt`。
+- 在本机隔离的一区双击启动脚本后，8 个服务各自打开了可见的控制台窗口，每个窗口的缓冲区均有对应服务的实际输出。双击停止脚本后，8 个窗口全部关闭，8 个进程全部退出，8 个 TCP 监听全部关闭。证据见 `_temp/realm-console-20261125/accept.txt`。
 
 ## [VERIFY][场景][分线][SKY-CITY-LINES-20261125] 双城线路界面与单区服分线验证
 
