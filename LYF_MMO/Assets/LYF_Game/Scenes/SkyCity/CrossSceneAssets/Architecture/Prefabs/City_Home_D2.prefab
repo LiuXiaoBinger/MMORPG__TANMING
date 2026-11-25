@@ -228,8 +228,8 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6711005948152586012}
   serializedVersion: 2
-  m_LocalReferencePoint: {x: 0.0005598068, y: 9.133711, z: -0.00054073334}
-  m_Size: 18.830217
+  m_LocalReferencePoint: {x: 0.0004386902, y: 11.007916, z: -0.00054073334}
+  m_Size: 22.015833
   m_FadeMode: 0
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
@@ -247,8 +247,8 @@ LODGroup:
     renderers:
     - renderer: {fileID: 2497469111094836519}
   m_Enabled: 1
---- !u!65 &6881964890724468947
-BoxCollider:
+--- !u!64 &6881964890724468947
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -265,9 +265,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 14.1979265, y: 13.153974, z: 15.2516}
-  m_Center: {x: 0, y: 6.576987, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 0a2b70f74406f7e43b7838e31b410062, type: 2}
 --- !u!1 &8004280069955587123
 GameObject:
   m_ObjectHideFlags: 0

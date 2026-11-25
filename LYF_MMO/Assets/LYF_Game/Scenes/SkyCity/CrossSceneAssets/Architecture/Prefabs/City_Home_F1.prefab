@@ -136,8 +136,8 @@ LODGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1895384589628582864}
   serializedVersion: 2
-  m_LocalReferencePoint: {x: 0.000011444092, y: 11.7349, z: 0.010699749}
-  m_Size: 25.993658
+  m_LocalReferencePoint: {x: 0.000009536743, y: 13.589796, z: 0.010699749}
+  m_Size: 27.18148
   m_FadeMode: 0
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
@@ -174,8 +174,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 21.286325, y: 16.898937, z: 15.647113}
-  m_Center: {x: 0, y: 8.449469, z: 0}
+  m_Size: {x: 21.577408, y: 20.082983, z: 15.647113}
+  m_Center: {x: 0.00000047683716, y: 10.0414915, z: 0}
 --- !u!1 &2041375359228553275
 GameObject:
   m_ObjectHideFlags: 0
