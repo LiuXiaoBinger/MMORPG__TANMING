@@ -1022,3 +1022,7 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 
 - The workspace client compiled and 25 isolated Unity Play Mode checks passed. All six regular-shop and four bound-shop tabs were empty; searches and switching back from a chamber item did not expose its purchase action. The other nine chamber groups remained available, and enabling the hidden shelf in a test configuration restored its original products.
 - Evidence: `_temp/pavilion-assortment-20261125/checks.log`. No standalone Player build or device test was run. Full record: `项目修改日志/2026-11-25-珍宝阁四频道界面.md`.
+
+## [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload
+
+- The same isolated Unity Play Mode path reproduced one Favorites row and zero item cards before the fix. After the fix it loaded 35 stall shelves and 12 items on the first shelf. The client compiled and all 15 checks passed, including an empty quote response, search, a quoted price, and reopening the market. Evidence and screenshots are under `_temp/trade-catalog-reload-20261125/`. Live listing totals, two-role online settlement and a standalone Player were not verified. See `项目修改日志/2026-11-25-交易商城货架重载修复.md`.

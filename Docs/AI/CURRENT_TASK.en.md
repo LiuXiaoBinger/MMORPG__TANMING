@@ -990,3 +990,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 - Removed all 39 regular and bound-currency merchandise placements (26 distinct product keys). Both channels and their tabs remain available with empty shelves.
 - In `LYF_MMO/Assets/LYF_Game/Config/TreasurePavilion.json`, the commerce chamber group `江湖杂货` has `hidden: true`. Its three subcategories and three products are kept in the configuration. Setting the flag to false restores the group; nine other chamber groups remain visible.
 - Files and feature-branch receipt: `项目修改日志/2026-11-25-珍宝阁四频道界面.md`.
+
+## [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload
+
+- Marked the generated shelf cache in `TradeMarketCatalog.cs` as nonserialized. Opening the stall from the main menu now rebuilds the configured shelves and additional materials after a domain reload. Feature commit `e3a789f`. See `项目修改日志/2026-11-25-交易商城货架重载修复.md`.

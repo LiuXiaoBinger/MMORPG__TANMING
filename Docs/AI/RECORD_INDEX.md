@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `92065589120cbb303c0491d175537e15f943b31a58714b8f7d2e871adb9f8bc2`
+Source normalized SHA256: `d9315cf401ab3aa8d881f114552894b7dc68f2d19467286899994dc0345e66fa`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -144,11 +144,12 @@ Source normalized SHA256: `92065589120cbb303c0491d175537e15f943b31a58714b8f7d2e8
 | [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 971-977 |
 | [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 978-982 |
 | [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 983-987 |
-| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 988-992 |
+| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 988-993 |
+| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 994-996 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `39a85a6469c0538b97df084842db310a2dd479a2d4bff1bef8283b7ad9b2f66d`
+Source normalized SHA256: `63dac32d5cbc0233b49ce90b1269df891906adb4e96952b385f0877fbba01fdf`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -284,7 +285,8 @@ Source normalized SHA256: `39a85a6469c0538b97df084842db310a2dd479a2d4bff1bef8283
 | [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1004-1010 |
 | [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1011-1015 |
 | [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1016-1020 |
-| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1021-1024 |
+| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1021-1025 |
+| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1026-1028 |
 
 ## Docs/AI/DECISIONS.en.md
 
