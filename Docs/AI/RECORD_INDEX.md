@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `1e4d89e2046383c605de2a5f2b21a77b6e45e459491978d11379c42b07e01bc4`
+Source normalized SHA256: `0e15435b17326f7368c7d44e58640f7e96c7f2c4e4ab7430822998292523b95f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -142,11 +142,12 @@ Source normalized SHA256: `1e4d89e2046383c605de2a5f2b21a77b6e45e459491978d11379c
 | [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-960 |
 | [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 961-966 |
 | [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 967-973 |
-| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 974-976 |
+| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 974-978 |
+| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 979-982 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `af600c0a0d2f505584b7bc851785ee3800d2a46075cde10c08a2fd02150cbd3c`
+Source normalized SHA256: `47811a838d401527e63908019421d74f52f363523f347c5acad26f7c3a96ce18`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -280,7 +281,8 @@ Source normalized SHA256: `af600c0a0d2f505584b7bc851785ee3800d2a46075cde10c08a2f
 | [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-993 |
 | [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 994-999 |
 | [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1000-1006 |
-| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1007-1009 |
+| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1007-1011 |
+| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1012-1015 |
 
 ## Docs/AI/DECISIONS.en.md
 

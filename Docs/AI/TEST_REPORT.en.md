@@ -1007,3 +1007,9 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 ## [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks
 
 - Two TCP roles on different GSs and isolated MySQL verified ownership, expiry, repeat withdrawal, shared pricing and recovery. Unity ran 12 separate UI checks. Listings were seeded. No asset settlement or Player build in this milestone. Evidence: `_temp/stall-seller-20261125/accept.txt` and `ui-checks.txt`.
+
+
+## [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors
+
+- The first layout produced two partial paths at existing smithies in the abbey and royal forecourt. The final layout includes existing solid colliders in site selection. All 24 statue approaches and all 116 new front doors are reachable from their scene spawn using navigation built from scene colliders. Both existing landmark routes per scene also passed (16 total).
+- Unity re-opened all eight scenes, checked spawn collisions, missing scripts and materials, and built eight scene bundles. Full-client character traversal and target-device frame rates were not tested. Evidence: `_temp/lostark-eight-20261125/codex/雕像街巷/`. Full report: `项目修改日志/2026-11-25_方舟八图雕像与街巷增建.md`.

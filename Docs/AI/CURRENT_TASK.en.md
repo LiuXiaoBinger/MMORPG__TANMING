@@ -974,3 +974,9 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 ## [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal
 
 - The seller draft reads the realm minimum without changing the typed price. An owned live listing can be withdrawn while preserving escrow. Commit `62a9ee9`. See `项目修改日志/2026-11-25-RO摆摊询价与撤单.md`.
+
+
+## [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes
+
+- Codex added 24 statues and 116 buildings, and remodeled 40 existing street houses. All eight Chinese scene names are retained. Eight European building types use shared prefabs and meshes, including half-timbered oriel houses, stepped-gable warehouses, arcaded halls, lancet-window halls, belfries and mansard houses.
+- Scope and file manifest: `项目修改日志/2026-11-25_方舟八图雕像与街巷增建.md`. Scene assets are under `LYF_MMO/Assets/LYF_Game/Scenes/LostArk/`.
