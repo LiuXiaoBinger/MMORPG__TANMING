@@ -960,3 +960,4 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Public map 0 uses Scene_MainCity. Map 1 loads SkyCity/天空中之城 from the character's stored map and remains the default spawn in the realm templates. Both maps have fixed lines 1 and 2. Sky City uses its authored SpawnPoint, a player-follow camera, its baked navigation and a minimap derived from the same mesh.
 - A compact minimap button opens the two-line list to the left. The marker and caption follow the server-confirmed current line. The interconnection feature is outside this task. Inventory and Git receipt: `项目修改日志/2026-11-25-天空中之城与主城双线界面.md`.
+- Visual revision: the minimap line picker uses the RO atlas and marks the confirmed line in green and full lines in red. Sky City has warmer stone, cyan and cobalt roofs, gate pennants and a plaza inlay. Its game camera reads a global volume on the Post layer from the independent SkyCity_PostProcess.asset profile.

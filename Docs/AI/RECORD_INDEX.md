@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `abd534cbcc8b8292a0f0e1865ec45fe25d454f5f29bbbc71e40926f8524fb749`
+Source normalized SHA256: `5fbca34e705f54b04a89d9574d2ef3460e13c8762a03e0ef5c342cdc0c9d858a`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -140,11 +140,11 @@ Source normalized SHA256: `abd534cbcc8b8292a0f0e1865ec45fe25d454f5f29bbbc71e4092
 | [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-949 |
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 950-953 |
 | [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-958 |
-| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 959-962 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 959-963 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `45c45bbef76df52e152fe6535dc77c4e8dc1ad33aa78836779c3a654b0f0b924`
+Source normalized SHA256: `fbd242daeeacd710a7ceb226dd4baa567da4c094c83f392a5cdbf420210480be`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -276,7 +276,7 @@ Source normalized SHA256: `45c45bbef76df52e152fe6535dc77c4e8dc1ad33aa78836779c3a
 | [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-980 |
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 981-985 |
 | [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-991 |
-| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 992-995 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 992-996 |
 
 ## Docs/AI/DECISIONS.en.md
 
