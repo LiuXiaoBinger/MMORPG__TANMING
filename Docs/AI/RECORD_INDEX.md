@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d9315cf401ab3aa8d881f114552894b7dc68f2d19467286899994dc0345e66fa`
+Source normalized SHA256: `34bb31cefd5d7fae7e3e4610453ea108da4a49436e4a20bdc39ca140c0284170`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,19 +137,19 @@ Source normalized SHA256: `d9315cf401ab3aa8d881f114552894b7dc68f2d19467286899994
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-953 |
-| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 954-957 |
-| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 958-964 |
-| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 965-970 |
-| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 971-977 |
-| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 978-982 |
-| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 983-987 |
-| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 988-993 |
-| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 994-996 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-955 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 956-959 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 960-966 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 967-972 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 973-979 |
+| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 980-984 |
+| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 985-989 |
+| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 990-995 |
+| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 996-998 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `63dac32d5cbc0233b49ce90b1269df891906adb4e96952b385f0877fbba01fdf`
+Source normalized SHA256: `36aed52e917458e3c82cb871552efb3c33b8e00b1d7182ccabd20d7cc302b456`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -278,15 +278,15 @@ Source normalized SHA256: `63dac32d5cbc0233b49ce90b1269df891906adb4e96952b385f08
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-984 |
-| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 985-989 |
-| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 990-997 |
-| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 998-1003 |
-| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1004-1010 |
-| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1011-1015 |
-| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1016-1020 |
-| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1021-1025 |
-| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1026-1028 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-986 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 987-991 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 992-999 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 1000-1005 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1006-1012 |
+| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1013-1017 |
+| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1018-1022 |
+| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1023-1027 |
+| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1028-1030 |
 
 ## Docs/AI/DECISIONS.en.md
 
