@@ -14,8 +14,8 @@ public class MainCityMgr : MonoBehaviour
    private const string RoleAnimatorControllerLocation =
       "Assets/LYF_Game/Animas/Resources/Controller/MAnimator.controller";
 
-   /// <summary>副本角色低于本场景出生点的最大允许距离，单位米；超过后回到出生点。</summary>
-   private const float DungeonFallResetDistance = 100f;
+   /// <summary>天空中之城和副本中角色可低于本场景出生点的最大距离，单位米。</summary>
+   private const float FallResetDistance = 100f;
 
    /// <summary>主城管理器单例。</summary>
    public static MainCityMgr Instance;
@@ -86,18 +86,21 @@ public class MainCityMgr : MonoBehaviour
       }
    }
 
-   /// <summary>补齐角色订阅和表现，并将跌出副本出生点下方一百米的主角送回出生点。</summary>
+   /// <summary>补齐角色订阅和表现，并将跌出天空中之城或副本下界的主角送回出生点。</summary>
    private void Update()
    {
       TrySubscribeLocalRoleLoad();
       TryCreateCurrentLocalRole();
-      RecoverFallenDungeonRole();
+      RecoverFallenLocalRole();
    }
 
-   /// <summary>仅检查已加载副本的本地主角，复用出生定位和原有移动同步，不重复发送进场请求。</summary>
-   private void RecoverFallenDungeonRole()
+   /// <summary>在天空中之城和副本中检查本地主角的下落高度，越界后复用场景出生定位。</summary>
+   private void RecoverFallenLocalRole()
    {
-      if (_localRoleSpawnPoint == null || SceneMgr.Instance._currentSceneType != SceneType.Scene_Dungeon)
+      if (_localRoleSpawnPoint == null) return;
+      // 当前已加载的场景类型，浮空主城与副本共用已有的越界高度和出生点。
+      SceneType sceneType = SceneMgr.Instance._currentSceneType;
+      if (sceneType != SceneType.Scene_Dungeon && sceneType != SceneType.Scene_SkyCity)
       {
          return;
       }
@@ -115,7 +118,7 @@ public class MainCityMgr : MonoBehaviour
       }
       // 尸体留在死亡位置，等待玩家主动选择复活；一百米保护仅用于存活角色。
       if (localRole.BaseInfo.CurrHp <= 0) return;
-      if (localRole.Position.y >= _localRoleSpawnPoint.position.y - DungeonFallResetDistance)
+      if (localRole.Position.y >= _localRoleSpawnPoint.position.y - FallResetDistance)
       {
          return;
       }

@@ -88,6 +88,12 @@ public sealed class MMoveComponent : EntityComponentBase
     /// <summary>是否已经在移动更新中读取过一次 CharacterController 接地结果。</summary>
     private bool _groundedStateInitialized;
 
+    /// <summary>角色控制器已完成过移动，且最近一次碰撞移动没有脚下支撑。</summary>
+    private bool IsOffGround
+    {
+        get { return _groundedStateInitialized && Entity.Model.HasCharacterController && !Entity.Model.IsGrounded; }
+    }
+
     /// <summary>当前是否按住 Shift 使用跑步模式；false 表示使用普通移动速度。</summary>
     private bool _isRunning;
 
@@ -394,36 +400,34 @@ public sealed class MMoveComponent : EntityComponentBase
     }
     #endregion
 
-    /// <summary>根据当前跳跃阶段推进垂直速度与重力。</summary>
+    /// <summary>有支撑时贴地，主动起跳和走出平台后都按重力推进垂直速度。</summary>
     /// <param name="deltaSeconds">当前逻辑帧间隔，单位为秒且不小于零。</param>
     private void UpdateVerticalMovement(float deltaSeconds)
     {
-        if (_isjump)
+        if (!_isjump && !IsOffGround)
         {
-            _airborneElapsedSeconds += deltaSeconds;
-            // 上升使用较缓重力，下落使用较强重力，保证起跳清晰且落地利落。
-            float gravity = FallingGravity;
-            if (_verticalVelocity > 0f)
-            {
-                gravity = RisingGravity;
-            }
-            _verticalVelocity -= gravity * deltaSeconds;
-            if (_verticalVelocity < -MaximumFallingSpeed)
-            {
-                _verticalVelocity = -MaximumFallingSpeed;
-            }
+            _verticalVelocity = GroundStickSpeed;
             return;
         }
 
-        // 非跳跃状态仍施加轻微向下速度，使 CharacterController 持续贴住地面。
-        _verticalVelocity = GroundStickSpeed;
+        if (_isjump)
+        {
+            _airborneElapsedSeconds += deltaSeconds;
+        }
+        // 当前重力加速度取正值，单位米/秒平方，下降沿用跳跃原有的重力和限速。
+        float gravity = FallingGravity;
+        if (_verticalVelocity > 0f)
+        {
+            gravity = RisingGravity;
+        }
+        _verticalVelocity = Mathf.Max(-MaximumFallingSpeed, _verticalVelocity - gravity * deltaSeconds);
     }
 
     #region 查询与判定
     /// <summary>
     /// 处理本地玩家按键跳跃：地面一段、空中二段和三段；成功起跳可以取消当前技能。
     /// </summary>
-    /// <returns>按键立即起跳或进入三段缓存时返回 true；未接地或达到三段后返回 false。</returns>
+    /// <returns>起跳或进入三段缓存时返回 true，动作受限或跳跃段数用尽时返回 false。</returns>
     public bool TryJump()
     {
         // 宿主或模型缺失时不允许起跳；保持原 || 短路顺序逐组早退。
@@ -437,16 +441,15 @@ public sealed class MMoveComponent : EntityComponentBase
             return false;
         }
 
-        // 下一段跳跃编号；地面固定从一段开始，空中在当前次数上递增。
+        // 本次按键的跳跃段号，站稳从第一段起跳，走出平台后仍有第二、三段可用。
         int nextJumpCount = 1;
         if (_isjump)
         {
             nextJumpCount = JumpCount + 1;
         }
-        else if (Entity.Model.HasCharacterController && _groundedStateInitialized &&
-            !Entity.Model.IsGrounded)
+        else if (IsOffGround)
         {
-            return false;
+            nextJumpCount = 2;
         }
 
         // 跳跃表现组件知道二段空翻的实际进度，提前按下的三段请求由它暂存。
@@ -530,17 +533,17 @@ public sealed class MMoveComponent : EntityComponentBase
         return true;
     }
 
-    /// <summary>通知移动组件落地并派发一次跳跃结束事件。</summary>
+    /// <summary>落地或回出生点时清除垂直动量，结束主动跳跃时通知表现组件。</summary>
     public void EndJump()
     {
+        _verticalVelocity = GroundStickSpeed;
+        _airborneElapsedSeconds = 0f;
         if (!_isjump)
         {
             return;
         }
         _isjump = false;
         JumpCount = 0;
-        _verticalVelocity = GroundStickSpeed;
-        _airborneElapsedSeconds = 0f;
         DispatchEvent(MEventType.JumpEnded, null);
     }
 
