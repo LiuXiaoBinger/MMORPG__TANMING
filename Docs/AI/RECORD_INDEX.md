@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `f1e737127ae6d09dd8159cfe0c567e859443881fcf74e636d3ebf451ee5fce93`
+Source normalized SHA256: `2864e2d9a869c46127df9a5030ed4dd1e9543ed36b9831be22b6f65a29605a20`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,12 +137,12 @@ Source normalized SHA256: `f1e737127ae6d09dd8159cfe0c567e859443881fcf74e636d3ebf
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-943 |
-| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 944-946 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-945 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 946-948 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `6b7bb8d92cf2c379916a5954aec2429d39ba581ec65b7193fef24452a5fce5cc`
+Source normalized SHA256: `626b572b1414d0492090d73141301a44936b3d5d1123a2a72d18a877ff6f627b`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -271,8 +271,8 @@ Source normalized SHA256: `6b7bb8d92cf2c379916a5954aec2429d39ba581ec65b7193fef24
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-974 |
-| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 975-978 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-976 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 977-980 |
 
 ## Docs/AI/DECISIONS.en.md
 
