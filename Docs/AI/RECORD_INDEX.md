@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `458ef2caef424ae686f3ffc06e9473a069ac2f8985c8ec681091e22f8ce49b0c`
+Source normalized SHA256: `5f883e0dbd631046c6fa3ce1c2c9c073a601d79a7c9d6af6c84fcd8a411e2bc1`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,11 +137,11 @@ Source normalized SHA256: `458ef2caef424ae686f3ffc06e9473a069ac2f8985c8ec681091e
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-938 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-940 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `a8561571d4bd1b83fcbbafb2ccbf5bf374e700c0ef5440dbadae0e3b3186f8ba`
+Source normalized SHA256: `30075cf5430779b80b8ce2881b19205762cbdad5f4326c01b7113855ca1d03cb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -270,7 +270,7 @@ Source normalized SHA256: `a8561571d4bd1b83fcbbafb2ccbf5bf374e700c0ef5440dbadae0
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-969 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-971 |
 
 ## Docs/AI/DECISIONS.en.md
 
