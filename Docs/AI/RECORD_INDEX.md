@@ -149,7 +149,7 @@ Source normalized SHA256: `34bb31cefd5d7fae7e3e4610453ea108da4a49436e4a20bdc39ca
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `36aed52e917458e3c82cb871552efb3c33b8e00b1d7182ccabd20d7cc302b456`
+Source normalized SHA256: `7b609f5d35fccd9119fd4945755856814691098b462e6ee4d4663f09b6602b9c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -286,7 +286,8 @@ Source normalized SHA256: `36aed52e917458e3c82cb871552efb3c33b8e00b1d7182ccabd20
 | [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1013-1017 |
 | [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1018-1022 |
 | [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1023-1027 |
-| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1028-1030 |
+| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1028-1031 |
+| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1032-1037 |
 
 ## Docs/AI/DECISIONS.en.md
 
