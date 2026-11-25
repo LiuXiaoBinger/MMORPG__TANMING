@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `d5ace3af1ecf98e72423ac4a303b486a769d49a38dd504eb9823e215f058eb5e`
+Source normalized SHA256: `341eb5b0cd08ee786c3ac9aafd75714815cf39a55356575ee8f5f27814acc725`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -141,11 +141,12 @@ Source normalized SHA256: `d5ace3af1ecf98e72423ac4a303b486a769d49a38dd504eb9823e
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 950-953 |
 | [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-960 |
 | [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 961-966 |
-| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 967-971 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 967-972 |
+| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 973-975 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `0ddb188badb924faa92c3148a04a412f6bec4c561665e44d2acb4db1e12127a3`
+Source normalized SHA256: `43db7d0df80e9ac382d0e8f0b9b32b00242606b12bbbfd844537a48fe314c125`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -278,7 +279,8 @@ Source normalized SHA256: `0ddb188badb924faa92c3148a04a412f6bec4c561665e44d2acb4
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 981-985 |
 | [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-993 |
 | [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 994-999 |
-| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1000-1004 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1000-1005 |
+| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1006-1008 |
 
 ## Docs/AI/DECISIONS.en.md
 

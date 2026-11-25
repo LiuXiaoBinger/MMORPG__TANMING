@@ -1002,3 +1002,7 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 - The current working client compiled. In isolated Unity Play Mode at 1920×1080 and 1366×768, 34 checks passed, including real UI raycasts, line/zoom controls, world/region switching, search, stop and actual movement to XZ (17, -10). A second main-city check verified three landmark projections and a five-corner walkable path at the merchant. Both world map textures matched the RO files byte-for-byte.
 - The clean feature tree and its parent produced the same three CS0117 errors in `QuickTaskPanelWidget.cs` for `TaskPageFilter.Adventure/Story/Other`. Live account multiplayer and a release bundle were not tested. Evidence: `_temp/minimap-20261125/ro-verify.log`, `ro-town.log`, `release-check.json` in the same directory, and `项目修改日志/2026-11-25-RO小地图与世界地图.md`.
 - The parchment control revision passed 55 isolated Unity Play checks. At 1920×1080 and 1366×768 the title, both city names and map-mode text fit, all four edge controls were within the border, and city selection, search, map switching and closing worked. Evidence and before/after captures are in `_temp/world-map-ink-20261125/`.
+
+## [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks
+
+- Two TCP roles on different GSs and isolated MySQL verified ownership, expiry, repeat withdrawal, shared pricing and recovery. Unity ran 12 separate UI checks. Listings were seeded. No asset settlement or Player build in this milestone. Evidence: `_temp/stall-seller-20261125/accept.txt` and `ui-checks.txt`.
