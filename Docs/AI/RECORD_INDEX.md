@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8816e235e846fd4149dc47486947a894251306a119a49238cac34e3b40cdc47b`
+Source normalized SHA256: `8256fcb4e4e8449d4f23ff4a553653aad48c85fcf9620c6f092c0401482fc670`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,13 +137,13 @@ Source normalized SHA256: `8816e235e846fd4149dc47486947a894251306a119a49238cac34
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-945 |
-| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 946-949 |
-| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 950-953 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-947 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 948-951 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 952-955 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `449df0ed3339aa58d3ffec64a531ef41074744b6e21c62ed73e23097affecab6`
+Source normalized SHA256: `7e3961910f1230dd8756de6c61d06e559321f2473ef43672997b66a0e170d106`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -272,9 +272,9 @@ Source normalized SHA256: `449df0ed3339aa58d3ffec64a531ef41074744b6e21c62ed73e23
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-976 |
-| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 977-981 |
-| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 982-986 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-978 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 979-983 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 984-988 |
 
 ## Docs/AI/DECISIONS.en.md
 
