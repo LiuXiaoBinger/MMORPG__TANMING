@@ -18,6 +18,8 @@ internal sealed class StallManager : IContainer
     private readonly Dictionary<int, int> hosts = new Dictionary<int, int>();
     /// <summary>GS 内网连接号到仍在该节点的角色与玩家会话。</summary>
     private readonly Dictionary<int, Dictionary<int, int>> roles = new Dictionary<int, Dictionary<int, int>>();
+    /// <summary>打开本人摊位的在线卖家和原网关，成交时刷新其提取按钮。</summary>
+    private readonly Dictionary<int, (StallIdentity Actor, int Gate)> watching = new Dictionary<int, (StallIdentity, int)>();
     /// <summary>完整目录装载完毕后允许受理查询。</summary>
     private bool ready;
     /// <summary>分批装载使用与 Gate 和 GS 相同的标准重连客户端。</summary><param name="realm">本区共享配置。</param>
@@ -51,7 +53,16 @@ internal sealed class StallManager : IContainer
             {
                 if (deal.Finished)
                 {
-                    if(deal.Offer!=null && deal.Reason.Length==0) Upsert(deal.Offer);
+                    if (deal.Offer != null && deal.Reason.Length == 0)
+                    {
+                        Upsert(deal.Offer);
+                        if (deal.Arg.Action == StallAction.StallItemBuy)
+                        {
+                            NotifySeller(deal.Offer.SellerId);
+                            // 买方只收到其购买结果；待领余额仅在卖家自己的页面展示。
+                            deal.Offer = PublicOffer(deal.Offer);
+                        }
+                    }
                     if (Online(deal.Actor)) SessionMgr.Instance.GetSession(deal.GateLink)?.Send(deal.Actor.SessionId,StallCode.Settled,deal.ToByteString());
                 }
                 else if(Online(deal.Actor))
@@ -154,7 +165,12 @@ internal sealed class StallManager : IContainer
                     roles[connection][actor.RoleId] = actor.SessionId;
                     center.Send(StallCode.Resume,new StallDeal{Actor=actor,Arg=new StallDealArg()}.ToByteString());
                 }
-                else roles[connection].Remove(actor.RoleId);
+                else
+                {
+                    roles[connection].Remove(actor.RoleId);
+                    if (watching.TryGetValue(actor.RoleId, out var route) && route.Actor.Equals(actor))
+                        watching.Remove(actor.RoleId);
+                }
                 return;
             }
             // 收到的参数只包含网关确认的角色和客户端选择的浏览页。
@@ -162,10 +178,33 @@ internal sealed class StallManager : IContainer
             // 原查询随结果返回，便于窗口识别切页后的迟到结果。
             StallResult result = new StallResult { Query = request.Query };
             if (!ready || !Online(request.Actor)) result.Reason = StallCode.Unavailable;
-            else Read(request.Query, request.Actor.RoleId, result);
+            else
+            {
+                if (request.Query.View == StallView.StallOwn) watching[request.Actor.RoleId] = (request.Actor, connection);
+                else if (request.Query.View != StallView.StallGetPreSellItemInfo) watching.Remove(request.Actor.RoleId);
+                Read(request.Query, request.Actor.RoleId, result);
+            }
             link.Send(packet.UnitySessionId, StallCode.Result, result.ToByteString());
         }
     }
+    /// <summary>卖家停在个人摊位时，主动显示买家刚产生的可提取货款。</summary><param name="role">收款卖家角色号。</param>
+    private void NotifySeller(int role)
+    {
+        if (!watching.TryGetValue(role, out var route) || !Online(route.Actor)) return;
+        // 沿用个人货架结果协议，只发送到登记时的网关和会话。
+        StallResult result = new StallResult { Query = new StallQuery { View = StallView.StallOwn } };
+        Read(result.Query, role, result);
+        SessionMgr.Instance.GetSession(route.Gate)?.Send(route.Actor.SessionId, StallCode.Result, result.ToByteString());
+    }
+
+    /// <summary>构造可公开的挂牌视图，保留价格与货量。</summary><param name="row">包含卖家待领取余额的内部挂牌。</param>
+    private static StallOffer PublicOffer(StallOffer row)
+    {
+        StallOffer visible = row.Clone();
+        visible.Income = 0;
+        return visible;
+    }
+
     /// <summary>初次加载和交易回执共用按版本替换的索引。</summary><param name="offer">中心库提交的挂牌。</param>
     private void Upsert(StallOffer offer)
     {
@@ -223,6 +262,13 @@ internal sealed class StallManager : IContainer
     {
         lock (goods)
         {
+            // 宿主或网关断开后丢弃对应的个人订阅，重新登录会重新登记。
+            List<int> readers = watching.Keys.ToList();
+            for (int i = 0; i < readers.Count; i++)
+            {
+                var route = watching[readers[i]];
+                if (route.Gate == connection || BoundHost(route.Actor, connection)) watching.Remove(readers[i]);
+            }
             if (!roles.Remove(connection)) return;
             // 只在 GS 连接断开时扫描配置数量级的节点。
             List<int> nodes = hosts.Keys.ToList();
@@ -266,7 +312,7 @@ internal sealed class StallManager : IContainer
                 for (int i = 0; i < similar.Count && result.Offers.Count < 3; i++)
                 {
                     StallOffer row = similar[i];
-                    if (row.Status == 1 && row.ExpiresAt > now) result.Offers.Add(row);
+                    if (row.Status == 1 && row.ExpiresAt > now) result.Offers.Add(PublicOffer(row));
                 }
             }
             return;
@@ -311,6 +357,7 @@ internal sealed class StallManager : IContainer
                 break;
             }
             if (row.Status == 1 && row.ExpiresAt <= now) { row = row.Clone(); row.Status = 4; }
+            if (query.View == StallView.StallOffers) row = PublicOffer(row);
             result.Offers.Add(row);
         }
     }

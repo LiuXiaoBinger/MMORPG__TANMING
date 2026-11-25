@@ -1001,6 +1001,7 @@ public sealed class TradeMarketWindow : WindowBase
     /// <summary>显示卖家最需要处理的状态，保留部分成交后的可提货款。</summary><param name="row">真实托管行。</param>
     private static string SaleState(StallOffer row)
     {
+        if (row.Status == 2 && row.Income > 0) return "已售罄 · 提取 " + row.Income.ToString("N0");
         if (row.Income > 0) return "可提取　" + row.Income.ToString("N0") + " 银两";
         if (row.Status == 3) return "已下架 · 可取回";
         // 每次打开或刷新从服务端的绝对截止时间换算。
