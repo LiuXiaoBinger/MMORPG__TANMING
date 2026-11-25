@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8256fcb4e4e8449d4f23ff4a553653aad48c85fcf9620c6f092c0401482fc670`
+Source normalized SHA256: `2ce422087700c7df7487ad434d6bdfdb6135746a2a4c35d81519f5ef802c3e83`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -139,11 +139,12 @@ Source normalized SHA256: `8256fcb4e4e8449d4f23ff4a553653aad48c85fcf9620c6f092c0
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
 | [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-947 |
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 948-951 |
-| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 952-955 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 952-956 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 957-960 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7e3961910f1230dd8756de6c61d06e559321f2473ef43672997b66a0e170d106`
+Source normalized SHA256: `e87c334b184171eaa9a0b77236000740863fa1f2ab08ccc9224146548affc66f`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -274,7 +275,8 @@ Source normalized SHA256: `7e3961910f1230dd8756de6c61d06e559321f2473ef43672997b6
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
 | [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-978 |
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 979-983 |
-| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 984-988 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 984-989 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 990-993 |
 
 ## Docs/AI/DECISIONS.en.md
 
