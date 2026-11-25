@@ -11,7 +11,8 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 # 启动脚本为配置绝对路径保留双引号，因此区号或目录名相似不会被模糊匹配。
-$configArgument = '"' + (Resolve-Path -LiteralPath $RealmFile).Path + '"'
+$configPath = (Resolve-Path -LiteralPath $RealmFile).Path
+$configArgument = '"' + $configPath + '"'
 # 每区只涉及自身网关、游戏节点、调度与社交进程。
 $names = @('GateServer', 'GameServer', 'MasterServer', 'ControlServer', 'TradeServer')
 if ($TradeOnly) { $names = @('TradeServer') }
@@ -27,7 +28,11 @@ for ($i = 0; $i -lt $names.Count; $i++) {
         # 通过本次部署程序路径和配置参数找到实际的进程号。
         $process = $processes[$j]
         if ($process.ExecutablePath -ne $expectedExe -or !$process.CommandLine) { continue }
-        if ($process.CommandLine.IndexOf($configArgument,[StringComparison]::OrdinalIgnoreCase) -lt 0) { continue }
+        if ($process.CommandLine.IndexOf($configArgument,[StringComparison]::OrdinalIgnoreCase) -lt 0) {
+            # 直接运行交易服时，Windows 对无空格的最后一个 XML 参数不加引号。
+            if ($name -ne 'TradeServer') { continue }
+            if (!$process.CommandLine.TrimEnd().EndsWith(' ' + $configPath,[StringComparison]::OrdinalIgnoreCase)) { continue }
+        }
         Stop-Process -Id $process.ProcessId -Force
         Write-Output ("{0} PID={1}" -f $name, $process.ProcessId)
     }
