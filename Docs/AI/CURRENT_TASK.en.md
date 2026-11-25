@@ -982,3 +982,9 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Codex added 24 statues and 116 buildings, and remodeled 40 existing street houses. All eight Chinese scene names are retained. Eight European building types use shared prefabs and meshes, including half-timbered oriel houses, stepped-gable warehouses, arcaded halls, lancet-window halls, belfries and mansard houses.
 - Scope and file manifest: `项目修改日志/2026-11-25_方舟八图雕像与街巷增建.md`. Scene assets are under `LYF_MMO/Assets/LYF_Game/Scenes/LostArk/`.
+
+## [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves
+
+- Removed all 39 regular and bound-currency merchandise placements (26 distinct product keys). Both channels and their tabs remain available with empty shelves.
+- In `LYF_MMO/Assets/LYF_Game/Config/TreasurePavilion.json`, the commerce chamber group `江湖杂货` has `hidden: true`. Its three subcategories and three products are kept in the configuration. Setting the flag to false restores the group; nine other chamber groups remain visible.
+- Files and feature-branch receipt: `项目修改日志/2026-11-25-珍宝阁四频道界面.md`.

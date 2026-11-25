@@ -1015,3 +1015,8 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 
 - The first layout produced two partial paths at existing smithies in the abbey and royal forecourt. The final layout includes existing solid colliders in site selection. All 24 statue approaches and all 116 new front doors are reachable from their scene spawn using navigation built from scene colliders. Both existing landmark routes per scene also passed (16 total).
 - Unity re-opened all eight scenes, checked spawn collisions, missing scripts and materials, and built eight scene bundles. Full-client character traversal and target-device frame rates were not tested. Evidence: `_temp/lostark-eight-20261125/codex/雕像街巷/`. Full report: `项目修改日志/2026-11-25_方舟八图雕像与街巷增建.md`.
+
+## [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf
+
+- The workspace client compiled and 25 isolated Unity Play Mode checks passed. All six regular-shop and four bound-shop tabs were empty; searches and switching back from a chamber item did not expose its purchase action. The other nine chamber groups remained available, and enabling the hidden shelf in a test configuration restored its original products.
+- Evidence: `_temp/pavilion-assortment-20261125/checks.log`. No standalone Player build or device test was run. Full record: `项目修改日志/2026-11-25-珍宝阁四频道界面.md`.

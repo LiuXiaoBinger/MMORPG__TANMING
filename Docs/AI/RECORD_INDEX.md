@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a145e9bd35748f747bd090b7b19b190308e3f067c44039763359c76ca6ce53bc`
+Source normalized SHA256: `585dc82d9085267e988d465be36db0753b3c0f2b1fa3885364599d48662ca826`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -143,11 +143,12 @@ Source normalized SHA256: `a145e9bd35748f747bd090b7b19b190308e3f067c44039763359c
 | [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 963-968 |
 | [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 969-975 |
 | [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 976-980 |
-| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 981-984 |
+| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 981-985 |
+| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 986-990 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1664e3e2873c4c45ac073503e14272931903a80ed3767a89dbfee7353c10706a`
+Source normalized SHA256: `80f572c86ec11d42e69d78c5efb1c558a16671d917a623842e829a2adff1f1a9`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -282,7 +283,8 @@ Source normalized SHA256: `1664e3e2873c4c45ac073503e14272931903a80ed3767a89dbfee
 | [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 996-1001 |
 | [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1002-1008 |
 | [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1009-1013 |
-| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1014-1017 |
+| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1014-1018 |
+| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1019-1022 |
 
 ## Docs/AI/DECISIONS.en.md
 
