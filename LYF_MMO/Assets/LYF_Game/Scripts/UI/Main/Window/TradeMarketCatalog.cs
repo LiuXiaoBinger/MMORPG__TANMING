@@ -51,8 +51,8 @@ public sealed class TradeMarketCatalog : ScriptableObject
     /// <summary>供窗口构造当前市场的分类按钮。</summary>
     public Shelf[] Shelves => _shelves;
 
-    /// <summary>进程内共用的分类与补充材料，首次加载 Luban 后建立。</summary>
-    private Shelf[] _stallShelves;
+    /// <summary>首次读取物品表后生成的货架缓存。Unity 重载时应重新生成，否则未初始化的数组会被恢复为空目录。</summary>
+    [NonSerialized] private Shelf[] _stallShelves;
     /// <summary>保留策划分类，并将没有摆摊分类的材料收进可由原 JSON 控制的其他材料页。</summary>
     public Shelf[] StallShelves()
     {
@@ -76,7 +76,7 @@ public sealed class TradeMarketCatalog : ScriptableObject
         }
         if (items.Count == 0) { _stallShelves = _shelves; return _stallShelves; }
         items.Sort();
-        // 扩展仅存在本次打开的窗口；原 ScriptableObject 继续保有策划目录。
+        // 只把补充材料并入运行时缓存，保留资源中配置的货架顺序和内容。
         Shelf[] shelves = new Shelf[_shelves.Length + 1];
         Array.Copy(_shelves, shelves, _shelves.Length);
         shelves[_shelves.Length] = new Shelf { Market = Market.Stall, Group = "其他材料", Leaf = "", Items = items.ToArray() };
