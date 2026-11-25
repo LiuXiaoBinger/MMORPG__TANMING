@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `34f762118b106b92d5104fb56dda223528f5f471c7df3e0e2f59f29dd590cde2`
+Source normalized SHA256: `9ad9c7debd558323ef1ed06b625d5e041c37700bf00862de95b640d4855404fc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -145,7 +145,7 @@ Source normalized SHA256: `34f762118b106b92d5104fb56dda223528f5f471c7df3e0e2f59f
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `f500f18fdc1666885557805f0cc62a346ecaaa21219913d29902a54d2a2a6529`
+Source normalized SHA256: `8fb446b8fb02f4555b8d3add4f414dd15269c31c9bd699528a9813fdc656625d`
 
 | Topic / record ID / title | Lines |
 |---|---|
