@@ -7,7 +7,9 @@ param(
     # 开发机首次启动此组区服时同时启动公共服务。
     [switch]$IncludeShared,
     # 仅操作所选区的独立交易服，玩家所在的 GS 和网关继续运行。
-    [switch]$TradeOnly
+    [switch]$TradeOnly,
+    # 双击开服时为每个服务显示独立控制台，以便查看实时输出。
+    [switch]$ShowConsole
 )
 $ErrorActionPreference = 'Stop'
 # 绝对路径供每个进程在自己的二进制目录下读取同一份配置。
@@ -29,11 +31,15 @@ for ($i = 0; $i -lt $names.Count; $i++) {
     $name = $names[$i]
     $programs[$name] = (Resolve-Path -LiteralPath (Join-Path $serverRoot "$name/bin/$Configuration/$name.exe")).Path
 }
-# 按调度、区级社交、各 GS、网关的顺序启动。
+# 双击入口要求显示窗口，自动部署沿用后台启动。
+$windowStyle = 'Hidden'
+if ($ShowConsole) { $windowStyle = 'Normal' }
+# 用服务名 Name 定位程序，ServiceArgs 传入区服配置和可选的 GS 节点编号。
 function Start-RealmProcess([string]$Name, [string[]]$ServiceArgs) {
-    # 本进程拥有独立目录与启动参数，输出 PID 便于查找日志和进程。
+    # 从已检查的服务清单中取出本进程的可执行文件路径。
     $exe = $programs[$Name]
-    $process = Start-Process -FilePath $exe -WorkingDirectory (Split-Path -Parent $exe) -ArgumentList $ServiceArgs -WindowStyle Hidden -PassThru
+    # 保存本次启动的进程以便输出其 PID。
+    $process = Start-Process -FilePath $exe -WorkingDirectory (Split-Path -Parent $exe) -ArgumentList $ServiceArgs -WindowStyle $windowStyle -PassThru
     Write-Output ("{0} PID={1}" -f $Name, $process.Id)
 }
 # Start-Process 会把参数拼成一个命令行，保留配置路径两侧的引号以支持含空格路径。
