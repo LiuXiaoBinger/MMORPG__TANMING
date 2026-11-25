@@ -31,6 +31,24 @@ public class MinMapWindow : WindowBase
    /// <summary>本地角色朝向箭头，随角色绕 Y 轴的方向旋转。</summary>
    [SerializeField,Header("小地图箭头图片")]private Image _imgArrow;
 
+   /// <summary>点地图本身通知主控打开当前区域。</summary>
+   public event System.Action RegionRequested;
+   /// <summary>地图中央的透明热区，与原有缩放和切线按钮独立。</summary>
+   [SerializeField] private Button _openRegion;
+   /// <summary>两种地图共用的区域目录预制体，提供同一张可行走道路图。</summary>
+   [SerializeField] private AreaMapWindow _atlas;
+   /// <summary>当前小地图底图宽高比，用来让矩形区域图在 HUD 中保持等比例。</summary>
+   private float _mapAspect = 1f;
+   /// <summary>常驻地图上的场景名和主角实时坐标。</summary>
+   [SerializeField] private TMP_Text _mapCaption;
+   /// <summary>背景下面用于复制附近 NPC、怪物和玩家图标的样板。</summary>
+   [SerializeField] private Image _entityTemplate;
+   /// <summary>该 HUD 独有的实体标记列表。</summary>
+   private MapEntityMarkers _markers;
+   /// <summary>下次更新附近实体的未缩放时间，单位秒。</summary>
+   private float _refreshAt;
+   /// <summary>进入区域时生成一次的坐标格式，避免跟随箭头时每帧拼接地名。</summary>
+   private string _coordinateFormat;
    /// <summary>当前本地玩家实体；模型异步加载完成后从实体中读取真实 Transform。</summary>
    private PlayerEntity _mainRole;
 
@@ -47,8 +65,9 @@ public class MinMapWindow : WindowBase
    {
       if (_lineSelector != null) _lineSelector.onValueChanged.AddListener(SelectLine);
       _defaultMapSprite = _imgMinMap.sprite;
-      _mapsize = _defaultMapSprite.rect.width;
-      Debug.Log("_mapsize:"+_mapsize);
+      _mapsize = _imgMinMap.rectTransform.rect.height;
+      _openRegion.onClick.AddListener(OpenRegion);
+      _markers = new MapEntityMarkers(_entityTemplate);
       SceneManager.sceneLoaded += OnSceneLoaded;
       BindSceneMap();
 
@@ -61,6 +80,14 @@ public class MinMapWindow : WindowBase
       {
          return;
       }
+      if (Time.unscaledTime >= _refreshAt)
+      {
+         _refreshAt = Time.unscaledTime + 0.15f;
+         // 模型进入或离开视野时，从现有场景世界刷新标记。
+         SceneWorldSystem world = null;
+         if (Global.Instance != null) world = Global.Instance.SceneWorld;
+         _markers.Refresh(_mapHelp, world, _mapAspect);
+      }
       if (_mainRole != null && _mainRole.Model != null &&
           _mainRole.Model.GameObject != null)
       {
@@ -70,10 +97,10 @@ public class MinMapWindow : WindowBase
          {
             return;
          }
-         // 把场景辅助点移到角色世界位置，再利用辅助点父节点的比例换算地图偏移。
-         _mapHelp.transform.position = roleTransform.position;
-         
-         _imgMinMap.rectTransform.anchoredPosition = new Vector2((_mapHelp.transform.localPosition.x*-_mapsize),(_mapHelp.transform.localPosition.z*-_mapsize));
+         // 角色保持在圆心，底图与活动图标一起向相反方向平移。
+         Vector3 position = roleTransform.position;
+         _imgMinMap.rectTransform.anchoredPosition = -_mapHelp.WorldToMap(position) * _mapsize;
+         _mapCaption.SetText(_coordinateFormat, Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
          // 角色绕 Y 轴的朝向转成 UI 绕 Z 轴旋转，并补偿底图的 90 度方向差。
          _imgArrow.transform.localEulerAngles = new Vector3(0,0,360-roleTransform.localEulerAngles.y+90);
       }
@@ -83,11 +110,18 @@ public class MinMapWindow : WindowBase
    private void OnDestroy()
    {
       if (_lineSelector != null) _lineSelector.onValueChanged.RemoveListener(SelectLine);
+      if (_openRegion != null) _openRegion.onClick.RemoveListener(OpenRegion);
       SceneManager.sceneLoaded -= OnSceneLoaded;
    }
    #endregion
 
    #region 交互响应
+   /// <summary>仅点圆形地图时打开区域图，原有切线控件继续独立响应。</summary>
+   private void OpenRegion()
+   {
+      RegionRequested?.Invoke();
+   }
+
    /// <summary>根据服务器登记的线路和当前位置刷新小地图入口及选中行。</summary>
    /// <param name="result">本地图的实际线路列表；空值用于隐藏副本内的选择器。</param>
    public void ShowLines(SceneLineResult result)
@@ -141,7 +175,7 @@ public class MinMapWindow : WindowBase
    {
       Debug.Log("OnPluseBtnClicked");
       _mapsize = Mathf.Clamp(_mapsize * 1.1f,512,2048);
-      _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize,_mapsize);
+      _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize * _mapAspect, _mapsize);
    }
 
    /// <summary>将地图边长缩小为当前的 1/1.1，并限制在 512 到 2048。</summary>
@@ -149,7 +183,7 @@ public class MinMapWindow : WindowBase
    {
       Debug.Log("OnDecBtnClicked");
       _mapsize = Mathf.Clamp(_mapsize / 1.1f,512,2048);
-      _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize,_mapsize);
+      _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize * _mapAspect, _mapsize);
    }
    #endregion
 
@@ -169,8 +203,13 @@ public class MinMapWindow : WindowBase
       if (_mapHelp != null)
       {
          // 按场景切图，同时保留玩家设置的缩放倍率。
-         _imgMinMap.sprite = _mapHelp.MapSprite;
+         _mapCaption.text = _mapHelp.AreaName;
+         _coordinateFormat = _mapHelp.AreaName + " ({0}, {1})";
+         _imgMinMap.sprite = _atlas.TerrainForScene(_mapHelp.gameObject.scene.name);
+         if (_imgMinMap.sprite == null) _imgMinMap.sprite = _mapHelp.MapSprite;
          if (_imgMinMap.sprite == null) _imgMinMap.sprite = _defaultMapSprite;
+         _mapAspect = _imgMinMap.sprite.rect.width / _imgMinMap.sprite.rect.height;
+         _imgMinMap.rectTransform.sizeDelta = new Vector2(_mapsize * _mapAspect, _mapsize);
       }
       gameObject.SetActive(_mapHelp != null);
    }

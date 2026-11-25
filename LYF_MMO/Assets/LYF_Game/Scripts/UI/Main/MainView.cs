@@ -258,6 +258,13 @@ public class MainView : UIBase
       }
    }
 
+   /// <summary>常驻主视图引用的正式区域地图预制体。</summary>
+   [SerializeField] private AreaMapWindow _areaMapPrefab;
+   /// <summary>随主视图创建一次并登记在功能层的地图窗口实例。</summary>
+   private AreaMapWindow _areaMap;
+   /// <summary>主界面控制器沿此引用提交地图输入和绑定本地玩家。</summary>
+   public AreaMapWindow AreaMap => _areaMap;
+
    /// <summary>获取聊天窗口，兼容尚未绑定序列化字段的旧预制体。</summary>
    public ChatWindows ChatWindow
    {
@@ -274,8 +281,16 @@ public class MainView : UIBase
    public override void InitView()
    {
       base.InitView();
+      if (_areaMap == null && _areaMapPrefab != null)
+         _areaMap = Instantiate(_areaMapPrefab, _functionLayer, false);
       SetLayerPanelParentData(_functionLayer);
       SetLayerPanelParentData(_tipsLayer);
+      if (_areaMap != null)
+      {
+         windowDic[WindowType.AreaMapWindow] = _areaMap;
+         _areaMap.InitWindow();
+         _areaMap.Show(false);
+      }
       // 竞技设置窗口登记到主视图窗口表并初始化关闭按钮，初始保持隐藏。
       if (_arenaSettingsWindow != null)
       {

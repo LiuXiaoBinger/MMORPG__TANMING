@@ -32,7 +32,8 @@ public enum WindowType
     ArenaSettingsWindow = 1001, // 竞技设置窗口，仅展示攻击与保护模式的外观选项，不参与任何战斗规则。
     CombatStatusWindow = 1002, // 点击战斗 HUD 的状态图标打开的状态详情窗口。
     EquipmentWorkshopWindow = 1003, // 从装备详情进入的强化、镶嵌、洗炼、继承和升级窗口。
-    TradeMarketWindow = 1004 // 主城交易目录、个人摊位与风雷藏拍。
+    TradeMarketWindow = 1004, // 主城交易目录、个人摊位与风雷藏拍。
+    AreaMapWindow = 1005 // 从小地图进入的区域与世界地图。
 }
 
 /// <summary>

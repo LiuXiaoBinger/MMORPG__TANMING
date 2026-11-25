@@ -63,7 +63,16 @@ public class MainCtrl : CtrlBase
         }
 
         _mainView.InitView();
-        if (_mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected += SelectSceneLine;
+        if (_mainView.MinMapWindow != null)
+        {
+            _mainView.MinMapWindow.LineSelected += SelectSceneLine;
+            _mainView.MinMapWindow.RegionRequested += OpenAreaMap;
+        }
+        if (_mainView.AreaMap != null)
+        {
+            _mainView.AreaMap.TravelRequested += NavigateMapPoint;
+            _mainView.AreaMap.StopRequested += StopMapNavigation;
+        }
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.AddEventHandler(StallCode.Result, OnStallResult);
         if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested += RequestStall;
@@ -170,7 +179,16 @@ public class MainCtrl : CtrlBase
     /// <summary>注销主控制器持有的全部协议、输入和视图事件。</summary>
     public override void Dispose()
     {
-        if (_mainView != null && _mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
+        if (_mainView != null && _mainView.MinMapWindow != null)
+        {
+            _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
+            _mainView.MinMapWindow.RegionRequested -= OpenAreaMap;
+        }
+        if (_mainView != null && _mainView.AreaMap != null)
+        {
+            _mainView.AreaMap.TravelRequested -= NavigateMapPoint;
+            _mainView.AreaMap.StopRequested -= StopMapNavigation;
+        }
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
         SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
         if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested -= RequestStall;
@@ -675,6 +693,42 @@ public class MainCtrl : CtrlBase
             localRole = Global.Instance.SceneWorld.LocalRole;
         }
         _mainView.MinMapWindow.SetTrackedRole(localRole);
+        if (_mainView.AreaMap != null) _mainView.AreaMap.Track(localRole);
+    }
+
+    /// <summary>沿既有主视图窗口栈打开当前地区的地图。</summary>
+    private void OpenAreaMap()
+    {
+        ShowMainWindow(WindowType.AreaMapWindow);
+    }
+
+    /// <summary>从点图位置取得可走地面，沿本地玩家已有的导航事件移动。</summary>
+    /// <param name="point">点在区域图上的位置，XZ 是场景米制坐标。</param>
+    private void NavigateMapPoint(Vector3 point)
+    {
+        // 导航与手动移动使用同一个本地角色及同一张场景导航网。
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
+        if (role == null) return;
+        // 俯视图没有高度；先沿实际地形取高度，未命中碰撞体时沿角色当前的步行高度找最近面。
+        point.y = role.Position.y;
+        if (MNavigationMgr.singleton.TryRaycastTerrain(point + Vector3.up * 512f,
+            point + Vector3.down * 512f, out Vector3 ground)) point.y = ground.y;
+        if (!MNavigationMgr.singleton.TrySetHeight(ref point))
+        {
+            _mainView.AreaMap.ShowUnreachable();
+            return;
+        }
+        role.DispatchEvent(MEventType.MEvent_Navigation, MNavigationEventArgs.Create(point));
+        if (!role.NavComp.IsNavigation && (role.Position - point).sqrMagnitude > 1f)
+            _mainView.AreaMap.ShowUnreachable();
+    }
+
+    /// <summary>中止已有角色组件持有的路线，主角留在当前位置。</summary>
+    private void StopMapNavigation()
+    {
+        // 由移动组件切回待机，与键盘中止寻路的行为一致。
+        PlayerEntity role = Global.Instance.SceneWorld.LocalRole;
+        if (role != null && role.NavComp != null) role.NavComp.Interrupt();
     }
 
     /// <summary>从小地图提交所选线路；地图和角色归属由区服确定。</summary><param name="line">目标线路编号。</param>
