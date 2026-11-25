@@ -110,13 +110,17 @@ public class MinMapWindow : WindowBase
          PublicSceneLine line = result.Lines[index];
          _lineIds.Add(line.LineId);
          // 入口和高亮行都以服务端当前线为准，其他线路用低亮度圆点区分。
-         Color32 statusColor = new Color32(129, 146, 141, 255);
+         Color32 statusColor = new Color32(137, 166, 204, 255);
          if (line.LineId == result.CurrentLine)
          {
             currentIndex = index;
-            statusColor = new Color32(109, 200, 150, 255);
+            statusColor = new Color32(38, 180, 116, 255);
          }
-         labels.Add(new TMP_Dropdown.OptionData(line.LineId + " 线", _lineSelector.itemImage.sprite, statusColor));
+         // 满员线路使用 RO 线路列表的红字；真实可切状态仍由服务器判定。
+         string lineLabel = line.LineId + " 线";
+         if (line.Capacity > 0 && line.Population >= line.Capacity)
+            lineLabel = "<color=#FF4F4F>" + lineLabel + "</color>";
+         labels.Add(new TMP_Dropdown.OptionData(lineLabel, _lineSelector.itemImage.sprite, statusColor));
       }
       _lineSelector.AddOptions(labels);
       _currentLineIndex = currentIndex;
