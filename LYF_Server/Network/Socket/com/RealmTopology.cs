@@ -32,6 +32,10 @@ public sealed class RealmTopology
     public readonly bool UsesRealmCatalog;
     /// <summary>本区队伍和频道权威服务的 TCP 端口。</summary>
     public readonly int MasterPort;
+    /// <summary>本区交易服的内网地址，可与网关部署在不同主机。</summary>
+    public readonly string TradeHost;
+    /// <summary>本区交易服监听端口，旧配置缺省或取零时关闭市场入口。</summary>
+    public readonly int TradePort;
     /// <summary>区服场景调度的 TCP 端口。</summary>
     public readonly int ControlPort;
     /// <summary>以物理节点编号索引 GS，编号同时用于物品 UID 的实例位。</summary>
@@ -64,6 +68,9 @@ public sealed class RealmTopology
         Host = root.GetAttribute("host");
         SpawnMap = 1;
         if (root.HasAttribute("spawnMap")) SpawnMap = Number(root, "spawnMap", 0, int.MaxValue);
+        TradeHost = Host;
+        if (root.HasAttribute("tradeHost")) TradeHost = root.GetAttribute("tradeHost");
+        if (root.HasAttribute("tradePort")) TradePort = Number(root, "tradePort", 0, 65535);
         GatePort = Number(root, "gatePort", 1, 65535);
         UdpPort = Number(root, "udpPort", 1, 65535);
         PublicGate = new GameServer { ServerId = RealmId, ServerName = root.GetAttribute("name"),

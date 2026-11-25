@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+// 本服摆摊的三种只读视图。
+enum StallView {
+  STALL_SUMMARY = 0; // 目录按物品汇总数量及最低单价。
+  STALL_OFFERS = 1; // 一个物品的公开挂牌。
+  STALL_OWN = 2; // 当前角色仍有寄存数量的挂牌，包含已到期或已撤的余货。
+}
+
+// 客户端仅选择视图、商品和游标，区服与角色身份由服务端填写。
+message StallQuery {
+  StallView view = 1; // 查询页面。
+  int32 item_id = 2; // 公开挂牌页的配置编号。
+  int64 after_id = 3; // 上页末尾的商品号或挂牌号，首页为零。
+}
+message StallIdentity {
+  int32 realm_id = 1; // 所属逻辑区。
+  int32 game_id = 2; // 当前实际宿主 GS。
+  int32 role_id = 3; // 权威角色号。
+  int32 session_id = 4; // 该区网关分配的玩家 TCP 会话。
+}
+message StallReadEnvelope {
+  StallIdentity actor = 1; // 网关按已接管角色重填。
+  StallQuery query = 2; // 原始浏览参数。
+}
+message StallOffer {
+  int64 listing_id = 1; // 区内稳定的挂牌游标。
+  int32 item_id = 2; // 商品物品配置号。
+  int32 currency_id = 3; // 实际计价的货币物品号。
+  int64 price = 4; // 单件价格。
+  int32 quantity = 5; // 托管余量。
+  int64 expires_at = 6; // 截止 UTC Unix 秒。
+  int32 status = 7; // 1 在售、2 售罄、3 已撤、4 到期。
+  int32 seller_id = 8; // 卖家角色号。
+}
+message StallQuote {
+  int32 item_id = 1; // 物品配置号。
+  int64 quantity = 2; // 当前有效挂牌剩余件数之和。
+  int64 price = 3; // 最低单价，币种为首期市场唯一的银两。
+  int32 currency_id = 4; // 报价使用的货币配置号。
+}
+message StallResult {
+  StallQuery query = 1; // 原查询，用于识别当前页和游标。
+  string reason = 2; // 空串表示读取成功。
+  repeated StallOffer offers = 3; // 当前页的具体挂牌。
+  repeated StallQuote quotes = 4; // 当前页的目录行情。
+  int64 next_id = 5; // 有下一页时为本页末条编号，末页为零。
+}
+message StallLoadPage {
+  int32 realm_id = 1; // 交易服所属区号。
+  int64 after_id = 2; // 按挂牌主键升序分批装载，首次为零。
+  repeated StallOffer offers = 3; // Center 返回的已提交、仍有托管量的记录。
+  bool more = 4; // 还有后续批次时继续请求。
+}

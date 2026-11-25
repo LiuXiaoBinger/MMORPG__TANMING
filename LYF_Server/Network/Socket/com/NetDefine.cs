@@ -161,4 +161,6 @@ public enum ClientType
     LoginServer,
     GameServer,
     GateServer,
+    /// <summary>独立交易进程连接共享中心服，使用普通内网 TCP。</summary>
+    TradeServer,
 }

@@ -5,14 +5,17 @@ param(
     # 仅停止这个构建配置下的可执行文件。
     [ValidateSet('Debug','Release')][string]$Configuration = 'Debug',
     # 最后一个区下线后，按启动公共服务时的配置路径一并停止。
-    [switch]$IncludeShared
+    [switch]$IncludeShared,
+    # 仅操作所选区的独立交易服，玩家所在的 GS 和网关继续运行。
+    [switch]$TradeOnly
 )
 $ErrorActionPreference = 'Stop'
 # 启动脚本为配置绝对路径保留双引号，因此区号或目录名相似不会被模糊匹配。
 $configArgument = '"' + (Resolve-Path -LiteralPath $RealmFile).Path + '"'
 # 每区只涉及自身网关、游戏节点、调度与社交进程。
-$names = @('GateServer', 'GameServer', 'MasterServer', 'ControlServer')
-if ($IncludeShared) { $names += @('LoginServer', 'CenterServer') }
+$names = @('GateServer', 'GameServer', 'MasterServer', 'ControlServer', 'TradeServer')
+if ($TradeOnly) { $names = @('TradeServer') }
+elseif ($IncludeShared) { $names += @('LoginServer', 'CenterServer') }
 # 仅匹配项目输出目录下的可执行文件和本次选定的配置。
 $serverRoot = Split-Path -Parent $PSScriptRoot
 for ($i = 0; $i -lt $names.Count; $i++) {

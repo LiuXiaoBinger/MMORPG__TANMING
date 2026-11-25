@@ -16,12 +16,15 @@ public sealed class SceneLineHandler : IGameMessageHandler
     private readonly SceneNodeRegistration node;
     /// <summary>长期持有的调度连接；重连时重新注册节点。</summary>
     private readonly NetClient control;
+    /// <summary>当前区启用市场时向其报告入场和离场角色。</summary>
+    private readonly StallRoleLink trade;
 
     /// <summary>为本机物理 GS 建立调度登记连接。</summary>
     /// <param name="realm">所属逻辑区服。</param><param name="gameId">本机的物理编号。</param>
     private SceneLineHandler(RealmTopology realm, int gameId)
     {
         node = realm.Games[gameId];
+        if (realm.TradePort > 0) trade = new StallRoleLink(realm, gameId);
         control = new NetClient(realm.Host, realm.ControlPort, ClientType.GameServer);
         control.OnConnSucceed = () => control.Send(SceneLineCode.Register, node.ToByteString());
     }
@@ -160,6 +163,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
             scenes.Add(role.PublicScene.SceneUid, members);
         }
         members.Add(role);
+        trade?.SetRole(role, true);
     }
 
     /// <summary>从原公共场景摘除该角色，最后一人离场时释放实例成员集合。</summary><param name="role">离场角色。</param>
@@ -169,6 +173,7 @@ public sealed class SceneLineHandler : IGameMessageHandler
         List<OnlineRole> members;
         if (!active.scenes.TryGetValue(role.PublicScene.SceneUid, out members)) return;
         members.Remove(role);
+        active.trade?.SetRole(role, false);
         if (members.Count == 0) active.scenes.Remove(role.PublicScene.SceneUid);
     }
 

@@ -65,6 +65,8 @@ public class MainCtrl : CtrlBase
         _mainView.InitView();
         if (_mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected += SelectSceneLine;
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.State, OnSceneLineState);
+        SocketDispatcher.Instance.AddEventHandler(StallCode.Result, OnStallResult);
+        if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested += RequestStall;
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.AddEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _shopCtrl = new ShopCtrl(_mainView);
@@ -170,6 +172,8 @@ public class MainCtrl : CtrlBase
     {
         if (_mainView != null && _mainView.MinMapWindow != null) _mainView.MinMapWindow.LineSelected -= SelectSceneLine;
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.State, OnSceneLineState);
+        SocketDispatcher.Instance.RemoveEventHandler(StallCode.Result, OnStallResult);
+        if (_mainView.TradeMarketWindow != null) _mainView.TradeMarketWindow.StallRequested -= RequestStall;
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.List, OnSceneLineList);
         SocketDispatcher.Instance.RemoveEventHandler(SceneLineCode.Change, OnSceneLineChanged);
         _yimengChatCtrl?.Dispose();
@@ -450,6 +454,18 @@ public class MainCtrl : CtrlBase
     #endregion
 
     #region 事件回调、创建与添加等
+    /// <summary>用当前网关连接发起玩家摆摊查询，角色身份由服务端确定。</summary><param name="query">窗口选择的视图、物品与游标。</param>
+    private void RequestStall(StallQuery query)
+    {
+        MNetClient.Instance.Send(StallCode.Browse, query.ToByteString());
+    }
+
+    /// <summary>把网关返回的本服市场结果交给当前窗口。</summary><param name="data">市场查询回包。</param>
+    private void OnStallResult(ByteString data)
+    {
+        _mainView.TradeMarketWindow?.ApplyStall(StallResult.Parser.ParseFrom(data));
+    }
+
     /// <summary>从主城功能菜单打开或收起交易窗口。</summary>
     private void OnTradeMarketRequested()
     {

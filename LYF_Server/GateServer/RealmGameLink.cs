@@ -16,6 +16,8 @@ internal sealed class RealmGameLink : NetClient
     private readonly Peer center;
     /// <summary>负责预留场景名额的区服调度。</summary>
     private readonly Peer control;
+    /// <summary>本区所有玩家共用的可选市场链路，断开仅影响交易窗口。</summary>
+    private readonly Peer trade;
     /// <summary>本次中心服连接已发布的选服状态，最后一台可连 GS 退出时撤回。</summary>
     private bool listed;
 
@@ -40,6 +42,8 @@ internal sealed class RealmGameLink : NetClient
         internal int LoginRequest;
         /// <summary>客户端刚收到的权威副本实例，零表示可以切公共场景。</summary>
         internal ulong Dungeon;
+        /// <summary>本次登录是否打开过交易市场，用于通知断服。</summary>
+        internal bool ReadMarket;
     }
 
     /// <summary>保留真实来包节点，所有分发在同一份会话路由表上进行。</summary>
@@ -67,6 +71,7 @@ internal sealed class RealmGameLink : NetClient
         realm = config;
         center = new Peer(this, realm.CenterHost, realm.CenterPort);
         control = new Peer(this, realm.Host, realm.ControlPort);
+        if (realm.TradePort > 0) trade = new Peer(this, realm.TradeHost, realm.TradePort);
         // 每个 GS 内网连接可服务任意数量的网关玩家。
         List<SceneNodeRegistration> nodes = new List<SceneNodeRegistration>(realm.Games.Values);
         for (int index = 0; index < nodes.Count; index++)
@@ -78,6 +83,7 @@ internal sealed class RealmGameLink : NetClient
     {
         center.StartConnect();
         control.StartConnect();
+        trade?.StartConnect();
         // 每个宿主独立重连。
         List<Peer> peers = new List<Peer>(games.Values);
         for (int index = 0; index < peers.Count; index++) peers[index].StartConnect();
@@ -91,6 +97,18 @@ internal sealed class RealmGameLink : NetClient
         {
             if (peer.Ready == ready) return;
             peer.Ready = ready;
+            if (peer == trade)
+            {
+                // 已在浏览的窗口收到停服状态，其余游戏连接正常工作。
+                if (!ready)
+                {
+                    // 掉线通知按本区仍持有的玩家快照派发。
+                    List<int> readers = players.Keys.ToList();
+                    for (int i = 0; i < readers.Count; i++)
+                        if (players[readers[i]].ReadMarket) MarketUnavailable(readers[i], null);
+                }
+                return;
+            }
             if (!ready) Lost(peer);
             if (!center.Ready)
             {
@@ -155,6 +173,19 @@ internal sealed class RealmGameLink : NetClient
                 player.LoginRequest = packet.ProtoCode;
                 return true;
             }
+            if (packet.ProtoCode == StallCode.Browse)
+            {
+                // 客户端不能自选区服、角色或宿主，身份由当前网关路由填充。
+                StallQuery query = StallQuery.Parser.ParseFrom(packet.Data);
+                player.ReadMarket = true;
+                if (trade == null || !trade.Ready || player.Current == null) return MarketUnavailable(id, query);
+                if (player.Switching) return MarketUnavailable(id, query);
+                // 当前区号、宿主和真实连接共同标识角色。
+                StallIdentity actor = new StallIdentity { RealmId = realm.RealmId, RoleId = player.Role,
+                    GameId = player.Current.GameId, SessionId = id };
+                if (trade.Send(id, StallCode.Read, new StallReadEnvelope { Actor = actor, Query = query }.ToByteString())) return true;
+                return MarketUnavailable(id, query);
+            }
             if (player.Current == null) return Error(id);
             if (packet.ProtoCode == SceneLineCode.List || packet.ProtoCode == SceneLineCode.Change)
             {
@@ -189,6 +220,11 @@ internal sealed class RealmGameLink : NetClient
             // 当前客户端仍然占用的路由记录。
             Player player;
             if (!players.TryGetValue(id, out player)) return;
+            if (peer == trade)
+            {
+                if (packet.ProtoCode == StallCode.Result) SessionMgr.Instance.GetSession(id)?.Send(packet);
+                return;
+            }
             if (peer == center) { CenterReply(id, player, packet); return; }
             if (peer == control) { ControlReply(id, player, packet); return; }
             if (packet.ProtoCode == SceneLineCode.Arrive && player.Target != null && games[player.Target.GameId] == peer)
@@ -372,6 +408,14 @@ internal sealed class RealmGameLink : NetClient
             if (player.Target != null) games[player.Target.GameId].Send(id, SceneLineCode.Disconnect, ByteString.Empty);
             Control(id, player, SceneLineCode.Disconnect, 0);
         }
+    }
+
+    /// <summary>将市场离线回应给当前玩家，不阻塞场景和背包的上行。</summary>
+    /// <param name="id">真实客户端会话。</param><param name="query">正在读取的页面，主动通知时为空。</param>
+    private static bool MarketUnavailable(int id, StallQuery query)
+    {
+        SessionMgr.Instance.GetSession(id)?.Send(StallCode.Result, new StallResult { Query = query, Reason = StallCode.Unavailable }.ToByteString());
+        return true;
     }
 
     /// <summary>内部连接失效时终止受影响的会话，避免将旧角色的消息直接路由到另一台 GS。</summary>

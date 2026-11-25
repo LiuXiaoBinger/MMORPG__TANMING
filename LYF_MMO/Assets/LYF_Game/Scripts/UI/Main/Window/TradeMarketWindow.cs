@@ -130,6 +130,31 @@ public sealed class TradeMarketWindow : WindowBase
     /// <summary>进入挂单前的滚动位置，返回时定位到同一批商品。</summary>
     private float _catalogPosition;
 
+    /// <summary>浏览交互只发出查询意图；主控制器负责网络请求。</summary>
+    public event Action<StallQuery> StallRequested;
+    /// <summary>当前本服目录的真实在售价格与数量，按物品配置索引。</summary>
+    private readonly Dictionary<int, StallQuote> _quotes = new Dictionary<int, StallQuote>();
+    /// <summary>行情尚在装载或服务不可用时显示的状态。</summary>
+    private string _quoteState;
+    /// <summary>当前单品或我的摊位的下一页游标，零时点击刷新首页。</summary>
+    private long _nextOffer;
+    /// <summary>公开挂单页的行文案，使用原面板范围。</summary>
+    [SerializeField] private Text _offerLines;
+    /// <summary>空挂单时展示的图标和提示。</summary>
+    [SerializeField] private GameObject _offerEmptyState;
+    /// <summary>自己的寄存记录，可浏览隐藏分类的剩货。</summary>
+    [SerializeField] private Text _ownLines;
+    /// <summary>其它市场出售页沿用的空摊位底图。</summary>
+    [SerializeField] private GameObject _stallSlots;
+    /// <summary>个人摊位翻页按钮文字，末页可回到首页。</summary>
+    [SerializeField] private Text _ownPager;
+    /// <summary>出售页的实际翻页按钮。</summary>
+    [SerializeField] private Button _ownPageButton;
+    /// <summary>摆摊标题，由服务端读取时去掉旧版固定的空位计数。</summary>
+    [SerializeField] private Text _stallHeading;
+    /// <summary>其他市场的固定页号，实时摆摊使用游标分页。</summary>
+    [SerializeField] private GameObject _legacyPage;
+
     /// <summary>由主控制器绑定当前本地角色，关注随角色分开。</summary>
     /// <param name="items">角色的真实背包及虚拟货币组件。</param>
     public void BindInventory(RoItemComponent items)
@@ -254,6 +279,7 @@ public sealed class TradeMarketWindow : WindowBase
         _level = 0;
         _bagFilter = 0;
         _listedItem = null;
+        _nextOffer = 0;
         _shelf = null;
         _expanded = null;
         _search.SetTextWithoutNotify(string.Empty);
@@ -301,6 +327,25 @@ public sealed class TradeMarketWindow : WindowBase
             if (_market == Market.Global && index == 3) _standaloneText.text = "暂无关注排行";
             if (auction && index == 2) _standaloneText.text = "暂无持标记录";
             if (auction && index == 3) _standaloneText.text = "暂无上架拍品";
+        }
+        // 本服出售页独立读取角色的全部寄存物品，分类隐藏配置仅影响公共目录。
+        bool own = selling && _market == Market.Stall;
+        _ownLines.gameObject.SetActive(own);
+        _ownPageButton.gameObject.SetActive(own);
+        if (own) _stallHeading.text = "我的摊位";
+        else _stallHeading.text = "我的摊位  0/8";
+        _stallSlots.SetActive(!own);
+        if (own)
+        {
+            _ownLines.text = "正在读取我的摊位…";
+            _ownPager.text = "刷新";
+            RequestOffers(0);
+        }
+        if (_market == Market.Stall && index == 0)
+        {
+            _quotes.Clear();
+            _quoteState = "读取中";
+            StallRequested?.Invoke(new StallQuery { View = StallView.StallSummary });
         }
         if (selling) RefreshBag();
         if (!_browse.activeSelf) return;
@@ -473,7 +518,7 @@ public sealed class TradeMarketWindow : WindowBase
                 if (item == null || !MatchesLevel(item.NeedLevel)) continue;
                 if (searching && item.ItemName.IndexOf(query, StringComparison.OrdinalIgnoreCase) < 0) continue;
                 if (count == _cards.Count) _cards.Add(Instantiate(_cardTemplate, _goods.content));
-                // 界面仅展示目录，未接入玩家挂单时标示未知的在售数量。
+                // 同一张卡在摆摊页显示真实行情，其余市场沿用各自的展示。
                 TradeMarketCard card = _cards[count++];
                 card.gameObject.SetActive(true);
                 BindCard(card, item, false);
@@ -514,6 +559,15 @@ public sealed class TradeMarketWindow : WindowBase
     {
         // 求购页显示求购数量，买入侧展示在售状态。
         string state = "在售：—";
+        if (_market == Market.Stall && _tab == 0)
+        {
+            // 行情只含有余货的物品，成功装载后缺项即代表零件在售。
+            StallQuote quote;
+            if (_quotes.TryGetValue(item.ItemId, out quote))
+                state = "在售 " + quote.Quantity + "  ·  " + quote.Price + CurrencyName(quote.CurrencyId) + "起";
+            else if (_quoteState.Length == 0) state = "在售 0";
+            else state = _quoteState;
+        }
         if (WantedPage) state = "求购：—";
         // 材料与藏拍货物的单据按钮使用不同的标题。
         string action = "求购";
@@ -559,11 +613,112 @@ public sealed class TradeMarketWindow : WindowBase
         _listings.SetActive(true);
         SetAuctionListLayout(_market == Market.Auction);
         BindCard(_listedCard, item, true);
+        _legacyPage.SetActive(_market != Market.Stall || _tab != 0);
+        _offerEmptyState.SetActive(true);
+        _offerLines.gameObject.SetActive(false);
         _listedEmpty.text = "暂无在售挂单";
         _draftLabel.text = "物品简介";
         if (_market == Market.Stall) _draftLabel.text = "求购";
+        if (_market == Market.Stall && _tab == 0)
+        {
+            _nextOffer = 0;
+            _listedEmpty.text = "正在读取挂单…";
+            _draftLabel.text = "刷新";
+            RequestOffers(0);
+        }
         if (WantedPage) _listedEmpty.text = "暂无求购挂单";
         if (_market == Market.Auction) { _listedEmpty.text = "暂时无任何拍卖商品"; _draftLabel.text = "查看出价"; }
+    }
+
+    /// <summary>读取货币配置名称，未装入对应配置时保留币种编号。</summary><param name="id">挂单的实际货币物品编号。</param>
+    private static string CurrencyName(int id)
+    {
+        // 货币也由统一物品表提供名称。
+        ItemConfigBase currency = LubanMgr.Instance.GetItemConfigById(id);
+        if (currency != null) return currency.ItemName;
+        return "币种" + id;
+    }
+
+    /// <summary>翻阅自己的寄存记录，最后一页点击可刷新首页。</summary>
+    public void NextOwnOffers() { RequestOffers(_nextOffer); }
+
+    /// <summary>发起当前具体挂单页面的读取。</summary><param name="after">上页最后一条记录的挂牌号，零为首页。</param>
+    private void RequestOffers(long after)
+    {
+        // 个人摊位不携带卖家号，服务端从角色路由取得。
+        StallQuery query = new StallQuery { View = StallView.StallOwn, AfterId = after };
+        if (_listedItem != null) { query.View = StallView.StallOffers; query.ItemId = _listedItem.ItemId; }
+        StallRequested?.Invoke(query);
+    }
+
+    /// <summary>让当前摆摊页面展示已提交的真实数据或市场离线信息。</summary><param name="page">由交易服或网关返回的当前页。</param>
+    public void ApplyStall(StallResult page)
+    {
+        if (!isActiveAndEnabled || _market != Market.Stall) return;
+        // 没有关联查询的回包表示整个市场断开，清除旧报价。
+        if (page.Query == null)
+        {
+            _quotes.Clear();
+            _quoteState = page.Reason;
+            _nextOffer = 0;
+            if (_tab == 1) { _ownLines.text = page.Reason; _ownPager.text = "刷新"; }
+            if (_tab == 0 && _listedItem != null) { ShowOfferText(page.Reason, false); _draftLabel.text = "刷新"; }
+            if (_tab == 0 && _listedItem == null) RefreshGoods();
+            return;
+        }
+        if (page.Query.View == StallView.StallSummary)
+        {
+            if (_tab != 0) return;
+            if (page.Query.AfterId == 0) _quotes.Clear();
+            _quoteState = page.Reason;
+            for (int i = 0; i < page.Quotes.Count; i++) _quotes[page.Quotes[i].ItemId] = page.Quotes[i];
+            if (page.NextId != 0)
+            {
+                StallRequested?.Invoke(new StallQuery { View = StallView.StallSummary, AfterId = page.NextId });
+                return;
+            }
+            if (_listedItem == null) RefreshGoods();
+            else BindCard(_listedCard, _listedItem, true);
+            return;
+        }
+        // 其他商品或其他页面的迟到结果不替换正在浏览的内容。
+        bool own = page.Query.View == StallView.StallOwn;
+        if (own && _tab != 1) return;
+        if (!own && (_listedItem == null || page.Query.ItemId != _listedItem.ItemId)) return;
+        _nextOffer = page.NextId;
+        // 每页最多三条记录，分页控件在末页提供刷新。
+        string action = "刷新";
+        if (_nextOffer != 0) action = "下一页";
+        // 本页的服务提示或多行商品详情。
+        string caption = page.Reason;
+        if (caption.Length == 0 && page.Offers.Count == 0) caption = "暂无在售挂单";
+        if (own && page.Reason.Length == 0 && page.Offers.Count == 0) caption = "暂无寄存物品";
+        for (int i = 0; i < page.Offers.Count; i++)
+        {
+            // 自己的摊位显示物品名称和过期余货，公开页按真实挂牌显示单价。
+            StallOffer row = page.Offers[i];
+            // 寄存物品的本地显示配置。
+            ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(row.ItemId);
+            // 公开页显示挂牌号，卖家页优先显示物品名。
+            string label = "挂单 " + row.ListingId;
+            if (own && item != null) label = item.ItemName;
+            if (row.Status == 4) label += "（已到期）";
+            if (row.Status == 3) label += "（已撤）";
+            if (i > 0) caption += "\n\n";
+            caption += label + "　×" + row.Quantity + "　" + row.Price + CurrencyName(row.CurrencyId) + "/件";
+        }
+        if (own) { _ownLines.text = caption; _ownPager.text = action; }
+        else { ShowOfferText(caption, page.Offers.Count > 0); _draftLabel.text = action; }
+    }
+
+    /// <summary>挂单有数据时用原区域展示列表，空页和错误沿用原提示图。</summary>
+    /// <param name="caption">该页挂单或状态文字。</param><param name="hasRows">本次是否返回真实记录。</param>
+    private void ShowOfferText(string caption, bool hasRows)
+    {
+        _offerEmptyState.SetActive(!hasRows);
+        _offerLines.gameObject.SetActive(hasRows);
+        if (hasRows) _offerLines.text = caption;
+        else _listedEmpty.text = caption;
     }
 
     /// <summary>藏拍挂单页使用整幅货架；其它页面留出分类栏。</summary>
@@ -597,6 +752,7 @@ public sealed class TradeMarketWindow : WindowBase
     /// <summary>从挂单页打开该市场支持的单据或说明。</summary>
     public void OpenListedForm()
     {
+        if (_market == Market.Stall && _tab == 0) { RequestOffers(_nextOffer); return; }
         if (_market == Market.Stall) OpenForm(TradeMarketDialog.Form.Wanted, _listedItem, 99);
         else if (_market == Market.Auction) OpenForm(TradeMarketDialog.Form.Bid, _listedItem, 1);
         else OpenForm(TradeMarketDialog.Form.Detail, _listedItem, 1);
