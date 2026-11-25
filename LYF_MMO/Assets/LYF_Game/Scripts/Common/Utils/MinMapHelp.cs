@@ -14,6 +14,11 @@ public class MinMapHelp : MonoBehaviour
    /// <summary>当前场景的小地图辅助点，由 Awake 登记、OnDestroy 清理，供常驻窗口重新绑定。</summary>
    public static MinMapHelp instance;
 
+   /// <summary>场景自己的俯视底图；未指定时沿用主城窗口的默认底图。</summary>
+   [SerializeField] private Sprite _mapSprite;
+   /// <summary>供常驻小地图窗口在场景加载时切换底图。</summary>
+   public Sprite MapSprite => _mapSprite;
+
    /// <summary>组件加载时把自身写入静态单例，便于全局取用小地图节点。</summary>
    private void Awake()
    {

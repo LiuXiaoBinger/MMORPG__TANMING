@@ -19,6 +19,10 @@ public class MinMapWindow : WindowBase
    [SerializeField] private TMP_Dropdown _lineSelector;
    /// <summary>下拉索引对应的真实线路编号，有空号时仍能请求正确目标。</summary>
    private readonly List<int> _lineIds = new List<int>();
+   /// <summary>上次服务端确认的线路索引，等待切线回包期间入口仍显示实际所在的线。</summary>
+   private int _currentLineIndex;
+   /// <summary>预制体配置的主城底图，从天空中之城返回时恢复。</summary>
+   private Sprite _defaultMapSprite;
    /// <summary>玩家选择新线路时通知主界面控制器发送请求。</summary>
    public event System.Action<int> LineSelected;
    /// <summary>小地图底图，通过尺寸和偏移显示角色附近区域。</summary>
@@ -42,7 +46,8 @@ public class MinMapWindow : WindowBase
    private void Start()
    {
       if (_lineSelector != null) _lineSelector.onValueChanged.AddListener(SelectLine);
-      _mapsize=_imgMinMap.sprite.rect.width;
+      _defaultMapSprite = _imgMinMap.sprite;
+      _mapsize = _defaultMapSprite.rect.width;
       Debug.Log("_mapsize:"+_mapsize);
       SceneManager.sceneLoaded += OnSceneLoaded;
       BindSceneMap();
@@ -83,7 +88,7 @@ public class MinMapWindow : WindowBase
    #endregion
 
    #region 交互响应
-   /// <summary>用服务器登记的人数、容量和当前线刷新线路选择。</summary>
+   /// <summary>根据服务器登记的线路和当前位置刷新小地图入口及选中行。</summary>
    /// <param name="result">本地图的实际线路列表；空值用于隐藏副本内的选择器。</param>
    public void ShowLines(SceneLineResult result)
    {
@@ -92,21 +97,29 @@ public class MinMapWindow : WindowBase
       _lineSelector.ClearOptions();
       if (result == null || result.Lines.Count == 0)
       {
+         _lineSelector.Hide();
          _lineSelector.gameObject.SetActive(false);
          return;
       }
       // 下拉显示顺序按区服目录；当前线的真实编号单独匹配。
-      List<string> labels = new List<string>();
+      List<TMP_Dropdown.OptionData> labels = new List<TMP_Dropdown.OptionData>();
       int currentIndex = 0;
       for (int index = 0; index < result.Lines.Count; index++)
       {
          // 本条线路的可见编号与实时占用。
          PublicSceneLine line = result.Lines[index];
          _lineIds.Add(line.LineId);
-         labels.Add(line.LineId + "线  " + line.Population + "/" + line.Capacity);
-         if (line.LineId == result.CurrentLine) currentIndex = index;
+         // 入口和高亮行都以服务端当前线为准，其他线路用低亮度圆点区分。
+         Color32 statusColor = new Color32(129, 146, 141, 255);
+         if (line.LineId == result.CurrentLine)
+         {
+            currentIndex = index;
+            statusColor = new Color32(109, 200, 150, 255);
+         }
+         labels.Add(new TMP_Dropdown.OptionData(line.LineId + " 线", _lineSelector.itemImage.sprite, statusColor));
       }
       _lineSelector.AddOptions(labels);
+      _currentLineIndex = currentIndex;
       _lineSelector.SetValueWithoutNotify(currentIndex);
       _lineSelector.RefreshShownValue();
       _lineSelector.gameObject.SetActive(true);
@@ -115,7 +128,9 @@ public class MinMapWindow : WindowBase
    /// <summary>把控件选中行转换为地图线路编号。</summary><param name="index">下拉框的零基行号。</param>
    private void SelectLine(int index)
    {
-      if (index >= 0 && index < _lineIds.Count) LineSelected?.Invoke(_lineIds[index]);
+      if (index < 0 || index >= _lineIds.Count || index == _currentLineIndex) return;
+      _lineSelector.SetValueWithoutNotify(_currentLineIndex);
+      LineSelected?.Invoke(_lineIds[index]);
    }
    /// <summary>将地图边长放大为当前的 1.1 倍，并限制在 512 到 2048。</summary>
    public void OnPluseBtnClicked()
@@ -147,6 +162,12 @@ public class MinMapWindow : WindowBase
    private void BindSceneMap()
    {
       _mapHelp = MinMapHelp.instance;
+      if (_mapHelp != null)
+      {
+         // 按场景切图，同时保留玩家设置的缩放倍率。
+         _imgMinMap.sprite = _mapHelp.MapSprite;
+         if (_imgMinMap.sprite == null) _imgMinMap.sprite = _defaultMapSprite;
+      }
       gameObject.SetActive(_mapHelp != null);
    }
 

@@ -27,6 +27,12 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="callback">目标场景加载成功后执行一次的业务回调。</param>
     public void LoadSceneMode(SceneType sceneType, Action callback = null)
     {
+        // 天空中之城沿用场景原名和目录；其他类型继续使用既有的同名资源。
+        if (sceneType == SceneType.Scene_SkyCity)
+        {
+            LoadSceneLocation(sceneType, ConstDefine.ScenePath + "SkyCity/天空中之城", callback);
+            return;
+        }
         LoadSceneLocation(sceneType, ConstDefine.ScenePath + sceneType, callback);
     }
 
@@ -124,7 +130,7 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <param name="sceneType">主城和副本携带主角；登录与创角沿用原有角色清理流程。</param>
     private static void PrepareLocalRoleForSceneChange(SceneType sceneType)
     {
-        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_Dungeon)
+        if (sceneType != SceneType.Scene_MainCity && sceneType != SceneType.Scene_SkyCity && sceneType != SceneType.Scene_Dungeon)
         {
             return;
         }

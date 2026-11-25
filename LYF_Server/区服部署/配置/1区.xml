@@ -5,7 +5,7 @@
   <!-- 共用一个数据库的各区，物理 GS 的 id 也要不同；该编号参与物品 UID 生成。 -->
   <game id="1" host="127.0.0.1" port="10130" />
   <game id="2" host="127.0.0.1" port="10131" />
-  <!-- 地图 1 是现有建角出生地图，地图 0 是现有主城编号。line 只在所属地图内计数。 -->
+  <!-- 地图 1 是天空中之城，地图 0 是主城。line 只在所属地图内计数。 -->
   <scene map="1" line="1" game="1" capacity="500" />
   <scene map="1" line="2" game="2" capacity="500" />
   <scene map="0" line="1" game="1" capacity="500" />

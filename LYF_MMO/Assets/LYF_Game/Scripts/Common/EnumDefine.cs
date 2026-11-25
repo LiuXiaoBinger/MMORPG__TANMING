@@ -77,7 +77,8 @@ public enum SceneType
     Scene_Login,//登录场景
     Scene_CreateRole,//创建角色场景
     Scene_MainCity,//主城
-    Scene_Dungeon//副本场景类别；保留原枚举数值，具体地址按服务器 SceneID 读取资源登记。
+    Scene_Dungeon,//副本场景类别；保留原枚举数值，具体地址按服务器 SceneID 读取资源登记。
+    Scene_SkyCity // 公共地图 1，资源位于 SkyCity 子目录。
 }
 
 
