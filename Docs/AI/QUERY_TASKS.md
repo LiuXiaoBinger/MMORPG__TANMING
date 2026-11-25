@@ -169,3 +169,10 @@
 - 属性通知将服务端 CurValue 传入 AttrComp.OnStateSync。针对适用的来源类型，随后携带属性增量调用 RoleInfoMgr.OnShowRoleAttrChange；该 Lua 函数通过 MEntityMgr:GetMyPlayerAttr 读取当前值，再调用 RefreshView。因此，已检查的面板路径读取同步后的属性，不要求每个 Buff 每帧重新计算属性。源码：clientcode/CSProject/MoonClient/Network/protocol/process/attribute/process_ptcg2c_attrupdatenotify.cs:48,56,65；clientproj/Assets/Scripts/Lua/ModuleMgr/RoleInfoMgr.lua:209,219,251。
 - HP/MaxHP 变化会单独安排一个待执行的 0.01 秒刷新定时器；其回调发送 MEvent_HP_Change 并更新 Lua HP 模型。OnStateSync 根据接收值赋值 HP/MaxHP，并在 !IsSoloMode 时复制完整属性字典。源码：clientcode/CSProject/MoonClient/Components/Attribute/MAttrComponent.cs:215,231,257,273,710,738。这些属于事件/数值变化路径，不能作为每帧计算属性公式的证据。
 - 未修改 LYF/RO 的玩法、配置或资源；未启动、构建 RO，未抓包，也未穷尽检查特殊模式。主 Agent Codex 核验实际函数体；既有 Codex 原生文档子 Agent 仅同步、检查这段已批准的双语记录。本次调查使用的技能：karpathy-guidelines 用于限定源码核验范围，task-log-policy 用于已批准的记录写入，project-subagent-coordination 用于文档同步，token-monitor 用于 collect/report 与原始会话压缩计数。本地证据：_temp/ro-client-buff-update-query-20261108/。
+
+## [QUERY][RO][区服][分线][交易][RO-REALM-SCENE-LINES-20261125] 登录区服、静态地图分线与摆摊可见范围
+
+- 只读查阅 `F:/UnityPro/ro/Ro_cs422nb`。登录时返回推荐区服、账号已有角色的区服及可见服务器列表，各条目包含 `serverID`、`zoneName` 和 `serverName`。证据见 `roserver/loginserver/protocol/login/rpcc2i_querygateipnew.cpp:115`、`roserver/loginserver/gatemgr/gateinfo.cpp:214`。
+- 场景分线以地图为范围。ControlServer 列出该地图的分线号和拥挤状态，结合角色当前地图 ID 与请求的分线号查找目标，检查场景是否允许切线及目标线容量后，将同一角色切到目标线。场景分线号、场景实例 UID 和承载场景的 GS 线号分别记录。证据见 `roserver/controlserver/scene/scenemanager.cpp:382`、`roserver/controlserver/protocol/scene/rpcc2n_changesceneline.cpp:60` 和 `:129`。
+- 按预警人数、容量、回收阈值的顺序，普隆德拉（地图 7）的默认值为 400 / 500 / 300，见 `config/Table/CSV/SceneTable.csv:9`。普隆德拉西门（地图 1）为 100 / 120 / 60，见同一 CSV 第 3 行。允许扩线的地图会检查现有各线人数与预警阈值的关系，见 `scenemanager.cpp:905`。这些人数取自源码配置，线上实际人数未经测量。
+- 本服摊位按 `serverid` 重新加载，在售条目按物品 ID 建立索引，见 `roserver/tradeserver/stall/stall_manager.cpp:937` 和 `:599`。据此判断，同一区服的不同地图分线共享本服摆摊目录。此结论只覆盖本服摆摊，未运行 RO 客户端，也未实测切线或交易。

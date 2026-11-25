@@ -284,7 +284,7 @@ Source normalized SHA256: `9dc9b1322a13e41b1e73836a1dbce9429c435228660a07c4fcb33
 
 ## Docs/AI/QUERY_TASKS.en.md
 
-Source normalized SHA256: `b97b8d0da974bb2b89baaf3c74fbe4790c2848bcad70cb90b7926ebe05456340`
+Source normalized SHA256: `4d4aca30139c23c1637edb0e790b37e9849040c383ad524a71c02c5ddf89a770`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -307,7 +307,8 @@ Source normalized SHA256: `b97b8d0da974bb2b89baaf3c74fbe4790c2848bcad70cb90b7926
 | [QUERY][场景编辑器][副本][STAGE-CONFIG-EXPLAIN-20261107] Stage order, spawning and mechanism timing | 144-151 |
 | [QUERY][受击][动画][NONCONTROL-HIT-FEEDBACK-20261108] Non-control damage feedback during locomotion | 152-160 |
 | [QUERY][装备][基因][EQUIP-GENE-FLOW-20261108] Equipment attachment and removal flow | 161-168 |
-| [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO client effect ticks and attribute UI refresh | 169-176 |
+| [QUERY][基因][属性][RO-CLIENT-BUFF-UPDATE-20261108] RO client effect ticks and attribute UI refresh | 169-177 |
+| [QUERY][RO][区服][分线][交易][RO-REALM-SCENE-LINES-20261125] Login realms, static-map lines and stall scope | 178-183 |
 
 ## Older records
 
