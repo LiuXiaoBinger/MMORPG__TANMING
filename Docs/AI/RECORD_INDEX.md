@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `010206971b5c2720a391b0c37fa4df92c26795865fa04c7bf10103d75329686f`
+Source normalized SHA256: `458ef2caef424ae686f3ffc06e9473a069ac2f8985c8ec681091e22f8ce49b0c`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -136,11 +136,12 @@ Source normalized SHA256: `010206971b5c2720a391b0c37fa4df92c26795865fa04c7bf1010
 | [CODE][FILES][HANDOFF][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 909-912 |
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
-| [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-932 |
+| [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-938 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `1d2c0a0ddd96fe651b95203d8ccc6777eae8ece94dfeb33fe04d141af6ad5c72`
+Source normalized SHA256: `a8561571d4bd1b83fcbbafb2ccbf5bf374e700c0ef5440dbadae0e3b3186f8ba`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -268,7 +269,8 @@ Source normalized SHA256: `1d2c0a0ddd96fe651b95203d8ccc6777eae8ece94dfeb33fe04d1
 | [VERIFY][武学][秘笈][MANUAL-ITEM-RANK-20261123] Manual items, fragment synthesis and rank prices | 939-942 |
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
-| [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-963 |
+| [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-969 |
 
 ## Docs/AI/DECISIONS.en.md
 

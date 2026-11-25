@@ -930,3 +930,9 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - The team tab, live fold button and applications tab use the existing Common1 red-point sprite and the same pending-application event. Viewing applications hides the tab's own reminder. Ordinary roster refreshes preserve the pending applicant. Joining, a captain change or leaving clears the stale application.
 - The client represents the latest pending applicant as a boolean. Full file list, verification and Git receipts are in `项目修改日志/2026-11-24-RO队伍申请红点.md`.
+
+## [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment
+
+- Codex authored `LYF_MMO/Assets/LYF_Game/Scenes/SkyCity/天空中之城.unity`. Eighteen Elysium FBX models appear in 71 instances across five floating terraces. Four bridges link the south gate, central compass plaza, northern palace, western garden and eastern market. Fourteen source materials use the built-in pipeline and the sky uses the project's existing cloud cubemap.
+- The scene contains a southern `SpawnPoint`, Geometry-layer collision and a baked Humanoid NavMesh. It can be opened directly and falls under the existing scene collection. Account login and travel to the city are outside this scene delivery.
+- Full inventory, verification evidence and Git receipt are in `项目修改日志/2026-11-25-天空中之城场景.md`.

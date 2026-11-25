@@ -961,3 +961,9 @@ Luban passed, 27 isolated server checks and 14 Unity Play Mode checks passed. Th
 
 - Local client compilation succeeded. An isolated Unity 2023.2.20f1c1 Play Mode run passed 29 checks with the two production prefabs and test notification data, including fold/unfold, tab clicks, roster changes and controller disposal/recreation. Before/after probes reproduced and corrected both roster errors.
 - The feature branch before and after the patch has the same three existing QuickTaskPanelWidget.cs errors for TaskPageFilter.Adventure, Story and Other. A two-client network session, a standalone Player build and device input were not tested. Evidence and scope are in `项目修改日志/2026-11-24-RO队伍申请红点.md`.
+
+## [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle
+
+- An isolated Unity 2023.2.20f1c1 editor reopened the actual project scene. It resolved 174 renderers and 720 material slots, with 136 colliders. Ten ground and NavMesh samples passed. All six tested routes returned `PathComplete`. A ray outside the south bridge found open space. Four camera renders are in `_temp/sky-city-20261125/`.
+- The Windows x64 LZ4 scene bundle built in strict mode, reloaded and listed `Assets/LYF_Game/Scenes/SkyCity/天空中之城.unity`. The project contains 86 new resources and 91 new metadata files. All 18 FBX files match the source SHA-256 and all 91 new GUIDs are unique in the client Assets tree.
+- The full client login and scene transition, full YooAsset release and target-device frame rate were not exercised. Detailed evidence is in `项目修改日志/2026-11-25-天空中之城场景.md`.
