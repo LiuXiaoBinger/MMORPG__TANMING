@@ -985,3 +985,8 @@ Luban、隔离游戏服 27 项和 Unity Play Mode 14 项通过，当前工作区
 - 工作区客户端构建成功。隔离环境中的 Unity Editor 和 Play Mode 检查通过 18 项断言，覆盖天空中之城出生点位于烘焙导航网格上、相机跟随、小地图、线路弹窗、选中线路、服务器确认后更新当前线路文字，以及恢复默认主城图像。另一次单区服测试使用真实 TCP 连接和 MySQL，验证六个角色分布于地图 0 和地图 1、每图两线、可见性隔离，以及两张地图各自的往返切线。截图和验证证据见 `_temp/sky-lines-20261125/展开.png`、`收起.png`、`verified.log`、`server-acceptance.txt`。
 - 隔离环境中的功能分支和基线客户端构建都复现了 QuickTaskPanelWidget.cs 已有的三处错误。未测试两个完整 Unity 客户端同时运行、真机或 Player，也未运行区服 2。完整记录见 `项目修改日志/2026-11-25-天空中之城与主城双线界面.md`。
 - 视觉调整后，工作区客户端构建成功。隔离环境中的 Unity Editor 和 Play Mode 全部 26 项断言通过，涵盖当前游戏相机的层遮罩、全局后处理体积及其配置文件、环境光遮蔽（AO）参数 0.4 / 1.07、自动曝光范围 -0.1 至 0.6 EV 和曝光补偿 0.87、Bloom 已关闭，以及 RO 分线列表的两行布局和满员线路颜色。候选版本和基线均复现 `QuickTaskPanelWidget.cs` 的三处错误。证据见 `_temp/sky-ro-polish-20261125/verified-final.log` 及同目录的入口和广场对比图。真机、Player 构建和 GPU 耗时均未测试。
+
+## [VERIFY][UI][地图][RO-CITY-MAPS-20261125] RO 两城地图的 Play Mode 与寻路验证
+
+- 当前工作区的客户端编译通过。隔离的 Unity Play Mode 在 1920×1080 和 1366×768 两种分辨率下通过了 34 项检查，覆盖真实 UI 射线检测、线路与缩放控件、世界地图与区域地图切换、搜索、停止，以及角色实际移动到 XZ (17, -10)。另一次主城验证确认了 3 个地标的投影，以及商人位置一条含 5 个路径角点的可行走路线。两张世界地图纹理与 RO 原文件逐字节一致。
+- 干净的功能分支工作树及其父提交都在 `QuickTaskPanelWidget.cs` 出现相同的 3 个 CS0117 错误，涉及 `TaskPageFilter.Adventure/Story/Other`。真实账号多人联机与发布资源包尚未验证。验证证据见 `_temp/minimap-20261125/ro-verify.log`、同目录的 `ro-town.log`、`release-check.json` 及 `项目修改日志/2026-11-25-RO小地图与世界地图.md`。

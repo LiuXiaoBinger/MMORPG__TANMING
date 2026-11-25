@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `5fbca34e705f54b04a89d9574d2ef3460e13c8762a03e0ef5c342cdc0c9d858a`
+Source normalized SHA256: `798b486249b21cd373a35484b4e4eac6101d1a0d0ee1c1ae32ff6a6efc102997`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -140,11 +140,12 @@ Source normalized SHA256: `5fbca34e705f54b04a89d9574d2ef3460e13c8762a03e0ef5c342
 | [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-949 |
 | [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 950-953 |
 | [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 954-958 |
-| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 959-963 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 959-964 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 965-968 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `fbd242daeeacd710a7ceb226dd4baa567da4c094c83f392a5cdbf420210480be`
+Source normalized SHA256: `0445db3895338bc1b498f9d226bd03dfb24abac29febe6d2ad5e45772d8483bf`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -276,7 +277,8 @@ Source normalized SHA256: `fbd242daeeacd710a7ceb226dd4baa567da4c094c83f392a5cdbf
 | [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-980 |
 | [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 981-985 |
 | [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 986-991 |
-| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 992-996 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 992-997 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 998-1001 |
 
 ## Docs/AI/DECISIONS.en.md
 
