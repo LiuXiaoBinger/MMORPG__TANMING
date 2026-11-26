@@ -1004,3 +1004,8 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 
 - Login takes the first line below the warning in line-number order. City portals prefer the current GS when it has room, then use ordinary map selection. On expanding maps, the all-at-warning fallback takes the lowest occupancy; manual line and required-GS requests enforce capacity. Reservations guide selection; confirmed arrivals trigger expansion. A new scene UID is published only after its host creates the instance and acknowledges it.
 - Realm 1 keeps two permanent lines per city, warning 400, capacity 500, up to eight lines per map. Ordinary host selection defaults to round-robin; mode 2 uses CPU and active scenes. Opening the existing minimap selector fetches the current directory. Configuration: `LYF_Server/区服部署/配置/1区.xml`. Files and receipts: `项目修改日志/2026-11-26-RO进图选线扩线与双城传送.md`.
+
+## [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors
+
+- Sky City map 1 connects to shared map 41 晨钟教堂 and map 60 金穗餐馆. Crossing an exterior door loads its matching RO-based interior, leaving returns to that building, and login restores the last confirmed public doorway from the existing role table. Client and hosts share `LYF_Server/区服部署/配置/公共地图传送.xml` through Network.dll. Each indoor map has one public line.
+- Room scales are 90% and 88% of the RO geometry, respectively. Both use native indoor navigation, floor maps, static baked textures and baked light probes. The gate ignores outgoing old-scene movement after host handoff until the existing world-entry message. Detailed file list and configuration are in `项目修改日志/2026-11-26-天空中之城教堂与餐馆子场景.md`.
