@@ -452,6 +452,9 @@ public class MNavigationComponent : EntityComponentBase
         Vector3 dir = _tarPosition - Entity.Position;
         if (_target is NpcEntity && !_useAfterAction)
         {
+            // 任务请求较短的靠近距离；未明确指定时仍按模型点击的交谈范围判定。
+            if (_upperRange > 0f && _upperRange < NpcEntity.TalkDistance)
+                return dir.sqrMagnitude <= _upperRange * _upperRange;
             return dir.magnitude <= NpcEntity.TalkDistance;
         }
         // 沿RO先排除超过6米的不同高度，再判水平距离；保留原参考范围语义。

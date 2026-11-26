@@ -130,7 +130,8 @@ public partial class TaskCtrl
             if (target == null) TipsMgr.Instance.ShowSystemTips("本场景没有可交谈的任务人物");
             else
             {
-                TouchObject.singleton.ClickNpc(target);
+                // 任务抵达后可立即交谈，留出移动上报间隔内的步行距离。
+                TouchObject.singleton.ClickNpc(target, NpcEntity.TalkDistance - 3f);
                 if (!role.NavComp.IsNavigation && Vector3.Distance(role.Position, target.Position) > NpcEntity.TalkDistance)
                     TipsMgr.Instance.ShowSystemTips("当前没有通往任务人物的路线");
             }

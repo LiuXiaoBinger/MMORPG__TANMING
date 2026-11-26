@@ -190,13 +190,14 @@ public sealed class TouchObject
     /// <summary>点击 NPC 模型或附近交谈按钮时，沿同一条导航流程进入对话距离。</summary>
     /// <param name="entity">当前点击的 NPC 实体，提供模型上的实际世界位置。</param>
     /// <returns>已提交本次NPC导航事件时为true。</returns>
-    internal bool ClickNpc(NpcEntity entity)
+    /// <param name="approachDistance">导航停止的最大交谈距离，单位米；手动点击沿用人物的交谈范围。</param>
+    internal bool ClickNpc(NpcEntity entity, float approachDistance = NpcEntity.TalkDistance)
     {
         // 只在同步派发期间借用事件；导航组件保存目标原引用，不保存池化载荷。
         MNavigationEventArgs args = MNavigationEventArgs.Create(entity.Position);
         args.NeedTarget = true;
         args.Target = entity;
-        args.UpperRange = NpcEntity.TalkDistance;
+        args.UpperRange = approachDistance;
         Global.Instance.SceneWorld.LocalRole.DispatchEvent(MEventType.MEvent_Navigation,
             args);
         return true;
