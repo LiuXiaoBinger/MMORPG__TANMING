@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `b223f36dc299bb43753394bea7fa089c133910c41c8c389fca8cebdffc56f9db`
+Source normalized SHA256: `9cba323f1abf34be864770329e1602095fd2108e42362612246df4edc57d26e6`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -148,15 +148,15 @@ Source normalized SHA256: `b223f36dc299bb43753394bea7fa089c133910c41c8c389fca8ce
 | [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 1000-1003 |
 | [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1004-1008 |
 | [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1009-1013 |
-| [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1014-1021 |
-| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1022-1026 |
-| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1027-1031 |
-| [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Residents for both cities and the working carriage launcher | 1032-1036 |
-| [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1037-1040 |
+| [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1014-1022 |
+| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1023-1027 |
+| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1028-1032 |
+| [CODE][FILES][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Residents for both cities and the working carriage launcher | 1033-1037 |
+| [FILES][场景][碰撞][SKY-CITY-SURFACE-PHYSICS-20261126] Map 1 bridge seams and street collision | 1038-1041 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `391c0b1eaec429e71054b974d7b0d7429d4f1358924c0316a5a097d2bd830772`
+Source normalized SHA256: `f8f620b184864eb4bd9b4bc18912ce106e7e47d615d7d3588d8d7740b671765d`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -297,11 +297,11 @@ Source normalized SHA256: `391c0b1eaec429e71054b974d7b0d7429d4f1358924c0316a5a09
 | [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1036-1042 |
 | [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1043-1047 |
 | [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1048-1052 |
-| [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1053-1060 |
-| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1061-1065 |
-| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1066-1070 |
-| [VERIFY][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Two-city residency, dialogue and carriage arrivals | 1071-1075 |
-| [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1076-1079 |
+| [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1053-1061 |
+| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1062-1066 |
+| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1067-1071 |
+| [VERIFY][场景][NPC][传送点][TWIN-CITY-BUILDING-NPCS-COACH-20261126] Two-city residency, dialogue and carriage arrivals | 1072-1076 |
+| [VERIFY][场景][碰撞][导航][SKY-CITY-SURFACE-PHYSICS-20261126] Role movement and moving-camera seam checks | 1077-1080 |
 
 ## Docs/AI/DECISIONS.en.md
 

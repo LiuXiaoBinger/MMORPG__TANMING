@@ -1048,6 +1048,7 @@ Luban、隔离游戏服 27 项和 Unity Play Mode 14 项通过，当前工作区
 - 新工作簿保留原表全部 340 行。隔离运行 Luban 导出后，原记录数据保持一致，新增 20 条记录。工作区内的服务端项目和 Unity 客户端程序集编译通过。干净分支与候选版本均报告了相同的既有编译错误 `CurrencyExchangeCtrl`（`CS0246`）。本次未验证正式 1 服、移动端安装包及副本商店兑换。
 - 证据位于 `_temp/gem-chamber-20261126/` 下的 `server-checks.log`、`unity-checks.txt`、`mjs-catalog.png`、`mjs-no-stock.png` 和 `branch-client-check.json`。文件清单与回执见 `项目修改日志/2026-11-26-宝石商会直购与交易所下架.md`。
 - 本次补充 6 项 Unity Play Mode 检查。98 个 1 级特技系列各有独立的物品 ID 和盾形铁牌图标，品质与背包图标路径均匹配。检查覆盖原有 6 个物品 ID 及排列顺序、蓝绿两种品质的弱水、无货时的妙手介绍，以及真实背包变动后卖家背包格显示同一图标。原物品表 360 行中，354 行完全一致，另 6 行仅修改 `Icon` 和 `Desc`。Luban 导出新增 92 件物品，高等级特技均复用基础物品。本次证据见 `_temp/gem-chamber-20261126/feats/item-proof.json` 和同目录的 `unity-checks.txt`、`technique-stall.png`、`特技铁牌图鉴.png`。正式服及移动真机仍待验证。
+- 按品质划分市场的规则通过 23 项隔离 Unity Play Mode 检查和 5 组服务端检查。对全部 98 件铁牌核对摆摊上架、旧单购买及公开和私有索引。按新规则排除的 45 份旧单均无法重新上架。在隔离结算准备中，每份旧单的卖家均可取回余下 2 件物品并领取 92 银两。界面检查覆盖货架、搜索、收藏、卖家背包、无货的金色特技详情及本服集市的出售草稿。工作区客户端和服务端均编译通过。在干净环境构建客户端，应用本次变更前后均出现相同的既有编译错误 `CurrencyExchangeCtrl`（`CS0246`）。证据见 `_temp/technique-markets-20261126/`。正式服和移动端测试超出本次验证范围。
 
 ## [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] 两台 Unity 客户端与三个真实 Socket 角色的验证
 
