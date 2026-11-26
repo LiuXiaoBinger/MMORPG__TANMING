@@ -221,7 +221,7 @@ internal sealed class StallManager : IContainer
         if(offer.Quantity==0 && offer.Income==0)return;
         sellers[offer.SellerId].Add(offer);
         if (ready) sellers[offer.SellerId].Sort((left,right)=>left.ListingId.CompareTo(right.ListingId));
-        if (StallCode.IsWorkshopOnly(offer.ItemId)) return;
+        if (StallCode.TradeRestriction(offer.ItemId, false).Length != 0) return;
         if (!goods.ContainsKey(offer.ItemId)) goods.Add(offer.ItemId, new List<StallOffer>());
         goods[offer.ItemId].Add(offer);
         if (ready) goods[offer.ItemId].Sort((left, right) =>

@@ -43,4 +43,21 @@ public static class StallCode
         if (itemId >= 8101 && itemId <= 8105) return true;
         return EquipmentGemRules.TryRead(itemId, out _, out _);
     }
+
+    /// <summary>返回物品在指定玩家市场受限的原因，空串表示可按该市场原规则交易。</summary>
+    /// <param name="itemId">玩家选中的物品编号，特技铁牌沿用 7600 加特技族编号。</param>
+    /// <param name="localExchange">仅本服集市为真，其他玩家交易入口为假。</param>
+    public static string TradeRestriction(int itemId, bool localExchange)
+    {
+        if (IsWorkshopOnly(itemId)) return "宝石和强化石不能在交易所交易。";
+        // 7601～7699 是基础特技物品的编号段，段内保留空号。
+        if (itemId < 7601 || itemId > 7699) return "";
+        // 以实际物品的特技族及品质判定，普通材料沿用原来的交易范围。
+        cfg.ItemInfo item = LubanMgr.Instance.GetItemInfoById(itemId);
+        if (item == null || item.ItemSubType != itemId - 7600) return "";
+        if (item.Quality == 1 || item.Quality == 2) return "白色和绿色特技不能交易。";
+        if (item.Quality == 5 && !localExchange) return "金色特技只能在集市交易。";
+        if (localExchange && item.Quality != 5) return "集市仅陈列金色特技。";
+        return "";
+    }
 }

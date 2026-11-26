@@ -554,6 +554,8 @@ public sealed class TradeMarketWindow : WindowBase
             {
                 // 目录仅保存配置编号，名称与描述始终以当前项目表为准。
                 int id = shelf.Items[j];
+                // 搜索、关注与跨服浏览共用商品格，均按当前入口检查特技品质。
+                if (StallCode.TradeRestriction(id, _market == Market.Local).Length != 0) continue;
                 if (!shown.Add(id)) continue;
                 if (_personal && !searching)
                 {
@@ -962,7 +964,7 @@ public sealed class TradeMarketWindow : WindowBase
                 ItemBase stack = entries[j];
                 // 用该堆叠的配置查找实际图标和名称。
                 ItemConfigBase item = LubanMgr.Instance.GetItemConfigById(stack.GetItemID());
-                if (item == null || StallCode.IsWorkshopOnly(item.ItemId)) continue;
+                if (item == null || StallCode.TradeRestriction(item.ItemId, _market == Market.Local).Length != 0) continue;
                 if (_market == Market.Stall && item.ItemMainType != ItemMainType.ItemType_Material) continue;
                 if (_market == Market.Stall && (stack.GetItemSign() != 0 || stack.GetExpireTime() != DateTime.MinValue)) continue;
                 if (count == _bagCards.Count) _bagCards.Add(Instantiate(_bagTemplate, _bag.content));
@@ -1076,7 +1078,7 @@ public sealed class TradeMarketWindow : WindowBase
                 else
                 {
                     DealButton(1, "取回余货");
-                    if (!StallCode.IsWorkshopOnly(row.ItemId))
+                    if (StallCode.TradeRestriction(row.ItemId, false).Length == 0)
                     {
                         _dealPrice.interactable = true;
                         DealButton(2, "重新上架");

@@ -10,6 +10,8 @@ internal static class TradeServerApp
         // 每个进程只服务一个逻辑区；端口零为运营关闭市场。
         RealmTopology realm = new RealmTopology(args[0]);
         if (realm.TradePort == 0) return;
+        // 在读入旧挂单前装载物品品质，公开行情和中心服使用同一份特技交易规则。
+        LubanMgr.Instance.Init();
         // 市场索引和 GS 的角色归属都只在这个区服有效。
         StallManager market = new StallManager(realm);
         // 先注册市场和角色路由入口，再开放监听并向中心装载数据。
