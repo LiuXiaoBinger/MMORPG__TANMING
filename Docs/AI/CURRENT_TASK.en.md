@@ -1043,3 +1043,7 @@ The 32 books map to distinct whole/fragment items. The bag links to the selected
 ## [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill
 
 All 11 active skill definitions now reference named slices of `MartialSkillIcons.png`. Each 248×248 sprite has a distinct silhouette and four pixels of edge padding. The skill table and the two prefab defaults point to the new art. All 14 battle, movement, enlarged movement and detail masks use the existing round sprite. The hotbar uses its existing slot geometry. See `项目修改日志/2026-11-26-技能图标暗黑风格统一.md`.
+
+## [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release
+
+Positive HP loss interrupts an unprotected basic attack while its damage result is still pending. GameServer removes that cast’s remaining actions, keeps the existing cooldown and identifies the interrupted skill in the live Idle notice. RO armor families 9501/9020 protect the swing. A released arrow keeps flying. Unity removes the interrupted timeline, retains BeHit and shows a still-valid attack even when damage or a new windup arrives during BeHit. Five implementation files and Git receipts are listed in `项目修改日志/2026-11-26-副本怪物受击与攻击命中时序.md`. Codex completed development without WorkBuddy. No live deployment or full dungeon playthrough.

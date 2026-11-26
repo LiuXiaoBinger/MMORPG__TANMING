@@ -268,6 +268,23 @@ internal sealed class MoshentaSkillRuntime
             current = null;
         }
     }
+    /// <summary>怪物在普攻出手前实际失血时取消本次挥击，已发射的弹道及其他技能继续结算。</summary>
+    internal void InterruptBasicAttackOnHit()
+    {
+        if (current == null || MoshentaSkillCatalog.I(current.Skill.Table, "SkillDamType") != 0) return;
+        // 原 Buff 家族 9501 和 9020 均赋予免僵直，持有期间保持攻击动作。
+        if (Buffs.Has(9501) || Buffs.Has(9020)) return;
+        // 结果事件出队后，近战已经判定或箭矢已经离弦，受击不能撤销这次出手。
+        bool awaitingStrike = events.Exists(pending => pending.Cast == current && pending.Kind == MoshentaSkillEvent.Result
+            && MoshentaSkillCatalog.I(pending.Data, "Damage") != 0);
+        if (!awaitingStrike) return;
+
+        // 通知客户端结束同一普攻的动画和未播放轨道，技能原有冷却从起手继续计算。
+        int interruptedSkillId = current.Skill.Id;
+        events.RemoveAll(pending => pending.Cast == current && pending.Kind != MoshentaSkillEvent.Delayed);
+        current = null;
+        Actor.SetIdle(interruptedSkillId);
+    }
     /// <summary>取消尚未发生的技能结果；死亡和场景清理同时清空原Buff。</summary>
     internal void Cancel()
     {

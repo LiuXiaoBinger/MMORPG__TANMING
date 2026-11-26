@@ -160,7 +160,7 @@ public sealed class MSkillComponent : MBasicActionComponent
         return _dungeonPlayback;
     }
 
-    /// <summary>推进副本原技能时间轴，受击或死亡动作优先由实体状态机播放。</summary>
+    /// <summary>按服务端动作推进副本技能。攻击仍有效时从当前进度播放，被打断后由状态机接管受击动画。</summary>
     internal void LateUpdateDungeonPlayback()
     {
         if (_dungeonPlayback == null) return;
@@ -170,11 +170,14 @@ public sealed class MSkillComponent : MBasicActionComponent
             return;
         }
 
-        // 受击期间只推进时间轴和特效，不抢占实体当前的受击动画。
-        bool allowAnimation = Entity.CurrentState != StateDefine.kStateBehit;
-        // 本帧仍由原技能时间轴驱动的动画槽位。
-        bool animating = _dungeonPlayback.Update(allowAnimation);
-        if (_dungeonAnimationActive && !animating && allowAnimation)
+        // 服务端仍保留的动作继续驱动模型，已收到中断通知的技能在这里返回假。
+        bool animating = _dungeonPlayback.Update(true);
+        if (Entity.CurrentState == StateDefine.kStateBehit)
+        {
+            // 霸体挥击或受击期间新起手的攻击仍有效，结束受击状态，避免它一直等待已被替换的剪辑。
+            if (animating) Entity.Machine.Stop();
+        }
+        else if (_dungeonAnimationActive && !animating)
         {
             Entity.Machine.MarkTriggered();
         }

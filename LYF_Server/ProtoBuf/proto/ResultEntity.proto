@@ -528,7 +528,7 @@ message MonsterActionData {
 	float to_z = 8;            // 当前移动段终点 Z，单位米
 	int32 duration_ms = 9;     // 移动段或本次攻击剩余时长，单位毫秒
 	float face = 10;           // 绕世界 Y 轴的朝向，单位度，零度朝世界正 Z
-	int32 skill_id = 11;       // 攻击阶段使用的怪物技能配置号
+	int32 skill_id = 11;       // 吟唱或攻击的技能配置号；受击打断的实时待机通知携带被截断的技能号
 	int32 target_role_id = 12; // 当前追击或攻击的玩家角色 ID，无目标为零
 	int32 elapsed_ms = 13;     // 当前攻击已经过的毫秒数，恢复进行中的挥刀时使用
 	float cast_x = 14;         // 本次技能锁定的地面或目标点X，单位米

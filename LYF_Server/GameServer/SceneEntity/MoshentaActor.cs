@@ -242,11 +242,13 @@ internal sealed class MoshentaActor
     }
     /// <summary>检查角色当前是否仍是同实例在线存活玩家。</summary><param name="role">待检查角色。</param>
     internal bool Valid(OnlineRole role) { return role != null && Owner.FindRole(role.GetID()) == role && role.mainRoleInfo.BaseInfo.CurrHp > 0; }
-    /// <summary>接受本次实际伤害仇恨，死亡立即取消未发生技能结果。</summary><param name="role">玩家施害者，可空。</param><param name="damage">实际扣血。</param>
+    /// <summary>按实际失血打断可受击的普攻前摇，再把玩家伤害计入仇恨。</summary><param name="role">玩家施害者，可空。</param><param name="damage">本次实际扣除的生命点数。</param>
     internal void OnHit(OnlineRole role, int damage)
     {
         if (IsDead) { Die(); return; }
-        if (!Valid(role) || damage <= 0) return;
+        if (damage <= 0) return;
+        Skills.InterruptBasicAttackOnHit();
+        if (!Valid(role)) return;
         AddHatred(role, damage, false);
         nextThink = Now;
     }
@@ -384,7 +386,16 @@ internal sealed class MoshentaActor
     /// <summary>真实技能开始时停止导航，面向施法点并保存动作。</summary><param name="data">技能组件产生的权威动作。</param>
     internal void SetSkillAction(MonsterActionData data) { navigation.Stop(); navigation.Face(new Vector3(data.CastX, data.CastY, data.CastZ)); action = data; Owner.Notice.MonsterActions.Add(Snapshot()); }
     /// <summary>结束当前移动或技能表现并发布待机快照。</summary>
-    internal void SetIdle() { navigation.Stop(); action = new MonsterActionData { SpawnId = SpawnId, Phase = MonsterActionPhase.Idle }; Owner.Notice.MonsterActions.Add(Snapshot()); }
+    /// <param name="interruptedSkillId">受击截断时为本次普攻编号，自然收招或停止移动时为零。</param>
+    internal void SetIdle(int interruptedSkillId = 0)
+    {
+        navigation.Stop();
+        action = new MonsterActionData { SpawnId = SpawnId, Phase = MonsterActionPhase.Idle };
+        // 仅此次实时通知携带被截断的技能号，后续入场快照只需还原待机姿势。
+        MonsterActionData idle = Snapshot();
+        idle.SkillId = interruptedSkillId;
+        Owner.Notice.MonsterActions.Add(idle);
+    }
     /// <summary>发布当前路径段，客户端从真实当前位置插值。</summary>
     private void PublishMotion() { action = new MonsterActionData { SpawnId = SpawnId, Phase = MonsterActionPhase.Move }; Owner.Notice.MonsterActions.Add(Snapshot()); }
     /// <summary>当前位置瞬移，停止旧路径与未结束动作。</summary><param name="position">原技能指定目的地。</param>

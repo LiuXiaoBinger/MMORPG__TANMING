@@ -122,6 +122,12 @@ public sealed class MSceneMonsterSkillPlayer
         if (motion.Action.Phase == MonsterActionPhase.Dead) { Clear(); return; }
         if (motion.Action.Phase != MonsterActionPhase.Attack && motion.Action.Phase != MonsterActionPhase.Singing)
         {
+            if (active != null)
+            {
+                // 受击打断的待机通知带原技能号，普通收招仍允许技能的尾部特效播完。
+                bool interruptedAttack = motion.Action.Phase == MonsterActionPhase.Idle && motion.Action.SkillId == active.Motion.Action.SkillId;
+                if (interruptedAttack || motion.Action.Phase == MonsterActionPhase.KnockUp) FinishPlayback(active);
+            }
             EndPhase();
             return;
         }
@@ -189,7 +195,7 @@ public sealed class MSceneMonsterSkillPlayer
     }
 
     /// <summary>更新实际特效寿命和原技能轨道，返回当前阶段是否仍占用动作。</summary>
-    /// <param name="allowAnimation">受击态由既有状态机播放时为false。</param>
+    /// <param name="allowAnimation">允许当前技能驱动模型动画时为真，只更新特效和声音时为假。</param>
     public bool Update(bool allowAnimation)
     {
         PruneEffects();
