@@ -1082,3 +1082,8 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 - All 15 humanoid appearances use staggered occupational idle and a short upper-body contact layer. Eight previously unbound humanoid prefabs now reference standalone RO avatars. Each visible player's capsule detects new contact with an NPC's body surface.
 - Nine residents without service entries walk short GameServer-authoritative routes around their posts in Main City (3), Sky City (4), Morning Bell Chapel (1) and Golden Wheat Restaurant (1). Return-to-post waits are 3–5 seconds. The three existing guard routes continue without a home wait.
 - Full file list, verification and limits in `项目修改日志/2026-11-27-居民待机碰撞与街坊走动.md`.
+
+## [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials
+
+- Added 11 stackable materials (10701–10711) and eight equippable level-60 gold items (21101–21108, Job 1, Quality 5). The player chose the RO Stone Sword and silver knight armor selection. Seven sprites come from the RO reference project and the greaves from FLARE (icon 163). The local rare equipment shelf lists all eight items, its weapon shelf both blades, and the stall material shelf all eleven materials.
+- Classic-server synthesis, 60–160 leveling and tier 2–10 material counts, item mapping and source links are in `项目分析/一梦江湖金装材料与魔剑士成品.md`. The main-hand initial recipe and offhand per-level amounts remain unverified. The project has the items and the reference quantities. Workshop recipe settlement is still pending. The 13-file feature and Git receipt are in `项目修改日志/2026-11-27-魔剑士金装物品与材料.md`.

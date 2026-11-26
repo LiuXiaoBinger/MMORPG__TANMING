@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `29aef30c63bf33b81077afc0f82b7a2c7377267591caad714a52136e68a7e9ec`
+Source normalized SHA256: `ae6fb81780ae335385b0aa2eeb931110440cba73ce65b168f96da24c0a986018`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -161,11 +161,12 @@ Source normalized SHA256: `29aef30c63bf33b81077afc0f82b7a2c7377267591caad714a521
 | [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1065-1069 |
 | [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1074 |
 | [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1079 |
-| [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1084 |
+| [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1085 |
+| [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials | 1086-1089 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `266863da042bb4a99a088bb58538991aec0fff1b74fd51170c7cfd2954af7002`
+Source normalized SHA256: `993108662ce08c1242a51d6140d23c7c88e7f15aae97a2a472b27ba8e2a9f6bb`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -320,7 +321,8 @@ Source normalized SHA256: `266863da042bb4a99a088bb58538991aec0fff1b74fd51170c7cf
 | [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1110-1114 |
 | [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1119 |
 | [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1124 |
-| [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1128 |
+| [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1129 |
+| [VERIFY][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Gold item data, sprite references and eight-slot wear | 1130-1133 |
 
 ## Docs/AI/DECISIONS.en.md
 
