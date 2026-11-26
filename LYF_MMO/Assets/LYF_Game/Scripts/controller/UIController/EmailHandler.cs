@@ -15,6 +15,14 @@ public sealed class EmailHandler
     private int selectedIndex;
     /// <summary>本次主城窗口显示的角色编号。</summary>
     private int roleId;
+    /// <summary>服务器未读变化时通知所有可见的社交侧栏。</summary>
+    internal event System.Action HintChanged;
+    /// <summary>以同一份未读状态更新菜单及侧栏。</summary><param name="unread">本角色邮箱是否有未读来信。</param>
+    private void SetHint(bool unread)
+    {
+        hint.SetActive(unread);
+        HintChanged?.Invoke();
+    }
 
     /// <summary>接入窗口、行模板和网络事件。</summary><param name="panel">主城邮箱窗口。</param><param name="hint">入口未读红点。</param>
     public EmailHandler(EmailPanel panel, GameObject hint)
@@ -23,7 +31,7 @@ public sealed class EmailHandler
         this.hint = hint;
         mgr.Init += RefreshList;
         mgr.Reset += RefreshDetail;
-        mgr.UnreadChanged += hint.SetActive;
+        mgr.UnreadChanged += SetHint;
         mgr.NewMail += RefreshIfOpen;
         mgr.Failed += panel.SetStatus;
         panel.Opened += RefreshIfOpen;
@@ -108,7 +116,7 @@ public sealed class EmailHandler
         panel.delBtn.onClick.RemoveListener(OnBtnDel);
         panel.getAllBtn.onClick.RemoveListener(OnBtnGetAll);
         panel.confirmBtn.onClick.RemoveListener(OnBtnDelAll);
-        mgr.UnreadChanged -= hint.SetActive;
+        mgr.UnreadChanged -= SetHint;
         mgr.Dispose();
     }
 }

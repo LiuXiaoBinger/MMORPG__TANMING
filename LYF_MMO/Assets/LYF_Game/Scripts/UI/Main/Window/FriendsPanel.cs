@@ -14,8 +14,28 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] internal Button friends;
     /// <summary>只看有聊天记录的联系人。</summary>
     [SerializeField] internal Button recent;
-    /// <summary>当前联系人页签的底部选中线。</summary>
-    [SerializeField] internal RectTransform underline;
+    /// <summary>最近和联系人页签的两块浅色选中底板，顺序与录像相同。</summary>
+    [SerializeField] private GameObject[] selectedTabs;
+    /// <summary>切页时切换深色或浅色文字的页签标题。</summary>
+    [SerializeField] private Text[] tabLabels;
+    /// <summary>联系人折叠列表、筛选和本机分组选择器。</summary>
+    [SerializeField] internal FriendsDirectory directory;
+    /// <summary>显示货币余额与右侧导航的共用页头。</summary>
+    [SerializeField] internal SocialPanelHeader header;
+    /// <summary>左下打开按昵称添加好友的弹层。</summary>
+    [SerializeField] private Button openAdd;
+    /// <summary>添加好友弹层。</summary>
+    [SerializeField] internal GameObject addDialog;
+    /// <summary>添加弹层内输入为空时显示的提示。</summary>
+    [SerializeField] internal Text addStatus;
+    /// <summary>放弃本次添加并收起弹层。</summary>
+    [SerializeField] private Button cancelAdd;
+    /// <summary>将当前联系人加入或移出特别关注。</summary>
+    [SerializeField] internal Button star;
+    /// <summary>根据个人关注状态显示操作名。</summary>
+    [SerializeField] internal Text starLabel;
+    /// <summary>已有会话但暂无消息时展示的侠客空态。</summary>
+    [SerializeField] private GameObject noHistory;
     /// <summary>同区角色完整昵称输入框。</summary>
     [SerializeField] internal ChatInputField nickname;
     /// <summary>确认按昵称添加。</summary>
@@ -24,8 +44,6 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] internal GameObject conversation;
     /// <summary>尚未选择联系人的 RO 波利空态。</summary>
     [SerializeField] internal GameObject empty;
-    /// <summary>当前页没有联系人时的文字。</summary>
-    [SerializeField] internal Text noFriends;
     /// <summary>当前正在对话的角色昵称。</summary>
     [SerializeField] internal Text title;
     /// <summary>删除自己的关系或回加对方。</summary>
@@ -40,6 +58,8 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] internal EmojiPackageTemplate emojis;
     /// <summary>群邀请和未读群消息的红点。</summary>
     [SerializeField] internal GameObject roomHint;
+    /// <summary>最近页签上的实际未读数量徽标。</summary>
+    [SerializeField] internal Text recentUnread;
     /// <summary>当前聊天草稿。</summary>
     [SerializeField] internal ChatInputField input;
     /// <summary>发送一条私聊文字。</summary>
@@ -48,38 +68,43 @@ public sealed class FriendsPanel : WindowBase
     [SerializeField] internal ChatRecordObj record;
     /// <summary>会话记录的滚动位置。</summary>
     [SerializeField] private ScrollRect chatScroll;
-    /// <summary>左列复用的联系人模板。</summary>
-    [SerializeField] private FriendsItemTemplate friendTemplate;
     /// <summary>右列复用的消息模板。</summary>
     [SerializeField] private FriendChatTemplate chatTemplate;
     /// <summary>网络或输入失败的当前提示。</summary>
     [SerializeField] internal Text status;
-    /// <summary>当前面板已实例化的联系人行。</summary>
-    private readonly List<FriendsItemTemplate> contacts = new List<FriendsItemTemplate>();
     /// <summary>当前面板已实例化的历史消息行。</summary>
     private readonly List<FriendChatTemplate> messages = new List<FriendChatTemplate>();
     /// <summary>打开时重新查询当前玩家好友。</summary>
     internal event Action Opened;
 
     /// <summary>初始化预制体上的关闭操作。</summary>
-    private void Awake() { close.onClick.AddListener(CloseWindow); emoji.onClick.AddListener(() => emojis.gameObject.SetActive(!emojis.gameObject.activeSelf)); }
+    private void Awake()
+    {
+        close.onClick.AddListener(CloseWindow);
+        emoji.onClick.AddListener(() => emojis.gameObject.SetActive(!emojis.gameObject.activeSelf));
+        openAdd.onClick.AddListener(() => { nickname.text = ""; addStatus.text = ""; addDialog.SetActive(true); nickname.ActivateInputField(); });
+        cancelAdd.onClick.AddListener(() => addDialog.SetActive(false));
+    }
     /// <summary>恢复布局并交控制器读取会话。</summary>
-    private void OnEnable() { emojis.gameObject.SetActive(false); OnRectTransformDimensionsChange(); Opened?.Invoke(); }
+    private void OnEnable() { addDialog.SetActive(false); emojis.gameObject.SetActive(false); OnRectTransformDimensionsChange(); Opened?.Invoke(); }
     /// <summary>小屏幕按比例完整显示好友框。</summary>
     private void OnRectTransformDimensionsChange()
     {
         if (frame == null) return;
         // 功能层的可用 Canvas 尺寸。
         Rect area = ((RectTransform)transform).rect;
-        frame.localScale = Vector3.one * Mathf.Min(1f, area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
+        frame.localScale = Vector3.one * Mathf.Min(area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
     }
-    /// <summary>按当前好友或最近列表的行数准备原生滚动区域。</summary><param name="count">当前页联系人个数。</param>
-    internal List<FriendsItemTemplate> FriendRows(int count)
+    /// <summary>使最近和联系人两个页签的选中颜色与当前目录一致。</summary><param name="recentOnly">显示最近联系人时为真。</param>
+    internal void SetPage(bool recentOnly)
     {
-        while (contacts.Count < count) contacts.Add(Instantiate(friendTemplate, friendTemplate.transform.parent));
-        // 按实际联系人条数显示或收起行。
-        for (int i = 0; i < contacts.Count; i++) contacts[i].gameObject.SetActive(i < count);
-        noFriends.gameObject.SetActive(count == 0); return contacts;
+        selectedTabs[0].SetActive(recentOnly);
+        selectedTabs[1].SetActive(!recentOnly);
+        // 纸色选中底上的字使用深墨，暗底则显示浅灰。
+        Color ink = new Color32(26, 34, 36, 255);
+        Color light = new Color32(202, 213, 211, 255);
+        if (recentOnly) { tabLabels[0].color = ink; tabLabels[1].color = light; }
+        else { tabLabels[0].color = light; tabLabels[1].color = ink; }
     }
     /// <summary>复用右侧消息行，打开新会话时定位到最新消息。</summary><param name="history">当前联系人的有序本机记录。</param><param name="onPlay">播放该行语音。</param><param name="jump">选择新联系人时为真。</param>
     internal void ShowChat(ReadPrivateMessageRes history, Action<AudioChat> onPlay, bool jump)
@@ -88,6 +113,7 @@ public sealed class FriendsPanel : WindowBase
         bool bottom = jump || chatScroll.verticalNormalizedPosition < .02f;
         // 本地缓存中应显示的消息数。
         int count = history.PrivateChatList.Count;
+        noHistory.SetActive(count == 0);
         while (messages.Count < count) messages.Add(Instantiate(chatTemplate, chatTemplate.transform.parent));
         // 将本会话有序消息绑定到复用行。
         for (int i = 0; i < messages.Count; i++)

@@ -127,6 +127,11 @@ public class MainCtrl : CtrlBase
         {
             _emailHandler = new EmailHandler(_mainView.emailPanel, _mainView.emailHint);
             _mainView.emailButton.onClick.AddListener(OpenEmail);
+            _emailHandler.HintChanged += SocialHintsChanged;
+            _mainView.emailPanel.header.Opened += SocialBalances;
+            _mainView.emailPanel.header.PageRequested += OpenSocialPage;
+            _mainView.emailPanel.sendGift.onClick.AddListener(OpenMailGift);
+            _mainView.emailPanel.market.onClick.AddListener(OpenMailMarket);
             _emailHandler.BindRole(Global.Instance?.SceneWorld?.LocalRole?.BaseInfo?.RoleId ?? 0);
         }
         if (Global.Instance != null && Global.Instance.SceneWorld != null)
@@ -141,7 +146,16 @@ public class MainCtrl : CtrlBase
             _friendsHandler = new FriendsHandler(_mainView.friendsPanel, _mainView.friendsHint, _chatWindow?.GetComponent<ChatAudioMgr>());
             _chatRoomCtrl = new ChatRoomCtrl(_mainView.chatRoomPanel, _friendsHandler, _chatWindow?.GetComponent<ChatAudioMgr>());
             _mainView.friendsPanel.rooms.onClick.AddListener(OpenChatRoom);
-            _mainView.chatRoomPanel.BackToFriends += OpenFriends;
+            _friendsHandler.HintChanged += SocialHintsChanged;
+            _mainView.friendsPanel.header.Opened += SocialBalances;
+            _mainView.friendsPanel.header.PageRequested += OpenSocialPage;
+            _mainView.chatRoomPanel.header.Opened += SocialBalances;
+            _mainView.chatRoomPanel.header.PageRequested += OpenSocialPage;
+            _mainView.chatRoomPanel.recent.onClick.AddListener(OpenRecentTab);
+            _mainView.chatRoomPanel.contacts.onClick.AddListener(OpenContactsTab);
+            _mainView.friendsPanel.directory.search.FocusChanged += OnChatInputFocusChanged;
+            _mainView.friendsPanel.directory.pickerSearch.FocusChanged += OnChatInputFocusChanged;
+            _mainView.friendsPanel.directory.groupName.FocusChanged += OnChatInputFocusChanged;
             _mainView.friendsPanel.nickname.FocusChanged += OnChatInputFocusChanged;
             _mainView.friendsPanel.input.FocusChanged += OnChatInputFocusChanged;
             _mainView.chatRoomPanel.groupName.FocusChanged += OnChatInputFocusChanged;
@@ -371,7 +385,16 @@ public class MainCtrl : CtrlBase
         if (_friendsHandler != null)
         {
             _mainView.friendsPanel.rooms.onClick.RemoveListener(OpenChatRoom);
-            _mainView.chatRoomPanel.BackToFriends -= OpenFriends;
+            _friendsHandler.HintChanged -= SocialHintsChanged;
+            _mainView.friendsPanel.header.Opened -= SocialBalances;
+            _mainView.friendsPanel.header.PageRequested -= OpenSocialPage;
+            _mainView.chatRoomPanel.header.Opened -= SocialBalances;
+            _mainView.chatRoomPanel.header.PageRequested -= OpenSocialPage;
+            _mainView.chatRoomPanel.recent.onClick.RemoveListener(OpenRecentTab);
+            _mainView.chatRoomPanel.contacts.onClick.RemoveListener(OpenContactsTab);
+            _mainView.friendsPanel.directory.search.FocusChanged -= OnChatInputFocusChanged;
+            _mainView.friendsPanel.directory.pickerSearch.FocusChanged -= OnChatInputFocusChanged;
+            _mainView.friendsPanel.directory.groupName.FocusChanged -= OnChatInputFocusChanged;
             _mainView.friendsPanel.nickname.FocusChanged -= OnChatInputFocusChanged;
             _mainView.friendsPanel.input.FocusChanged -= OnChatInputFocusChanged;
             _mainView.chatRoomPanel.groupName.FocusChanged -= OnChatInputFocusChanged;
@@ -385,6 +408,11 @@ public class MainCtrl : CtrlBase
         if (_emailHandler != null)
         {
             _mainView.emailButton.onClick.RemoveListener(OpenEmail);
+            _emailHandler.HintChanged -= SocialHintsChanged;
+            _mainView.emailPanel.header.Opened -= SocialBalances;
+            _mainView.emailPanel.header.PageRequested -= OpenSocialPage;
+            _mainView.emailPanel.sendGift.onClick.RemoveListener(OpenMailGift);
+            _mainView.emailPanel.market.onClick.RemoveListener(OpenMailMarket);
             _emailHandler.Dispose();
         }
         if (_currentTalkNpc != null) CloseNpcTalk();
@@ -643,6 +671,43 @@ public class MainCtrl : CtrlBase
         _mainView.friendsPanel.CloseWindow();
         ShowMainWindow(WindowType.ChatRoomPanel);
     }
+
+    /// <summary>切回好友窗并选录像中的最近页。</summary>
+    private void OpenRecentTab() { _friendsHandler.OnRecent(); OpenSocialPage(WindowType.FriendsPanel); }
+    /// <summary>切回联系人页并保留本角色的通讯录分组。</summary>
+    private void OpenContactsTab() { _friendsHandler.OnFriends(); OpenSocialPage(WindowType.FriendsPanel); }
+
+    /// <summary>从社交侧栏切页，关闭原页后通过现有主城窗口栈显示目标。</summary><param name="page">好友或飞鹰邮箱所在的窗口类型。</param>
+    private void OpenSocialPage(WindowType page)
+    {
+        if (_mainView.friendsPanel != null && _mainView.friendsPanel.isActiveAndEnabled) _mainView.friendsPanel.CloseWindow();
+        if (_mainView.chatRoomPanel != null && _mainView.chatRoomPanel.isActiveAndEnabled) _mainView.chatRoomPanel.CloseWindow();
+        if (_mainView.emailPanel != null && _mainView.emailPanel.isActiveAndEnabled) _mainView.emailPanel.CloseWindow();
+        ShowMainWindow(page);
+    }
+
+    /// <summary>给当前打开的页头填充真实背包余额。</summary><param name="header">本次显示的社交页头。</param>
+    private void SocialBalances(SocialPanelHeader header)
+    {
+        // 依次为当前角色拥有的铜币、银两、银票和元宝数量。
+        _knapsackCtrl.ReadMoney(out long copper, out long silver, out long ticket, out long yuanbao);
+        header.SetBalances(copper, silver, ticket, yuanbao);
+        header.SetHints(_mainView.friendsHint.activeSelf, _mainView.emailHint.activeSelf);
+    }
+    /// <summary>将服务端未读变化反映在当前可见的社交页侧栏。</summary>
+    private void SocialHintsChanged()
+    {
+        // 两项分别来自主菜单已有的好友与邮箱状态。
+        bool friend = _mainView.friendsHint.activeSelf;
+        bool mail = _mainView.emailHint.activeSelf;
+        if (_mainView.friendsPanel != null) _mainView.friendsPanel.header.SetHints(friend, mail);
+        if (_mainView.chatRoomPanel != null) _mainView.chatRoomPanel.header.SetHints(friend, mail);
+        if (_mainView.emailPanel != null) _mainView.emailPanel.header.SetHints(friend, mail);
+    }
+    /// <summary>发送飞鹰沿用背包的好友赠礼流程，载入真实物品与收件人。</summary>
+    private void OpenMailGift() { _giftCtrl.Open(); }
+    /// <summary>从传书下方进入已有交易窗口。</summary>
+    private void OpenMailMarket() { _mainView.emailPanel.CloseWindow(); OnTradeMarketRequested(); }
 
     /// <summary>从主城功能菜单打开或收起交易窗口。</summary>
     private void OnTradeMarketRequested()

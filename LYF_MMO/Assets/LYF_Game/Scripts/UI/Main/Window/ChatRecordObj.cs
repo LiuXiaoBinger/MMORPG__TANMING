@@ -11,6 +11,8 @@ public sealed class ChatRecordObj : MonoBehaviour, IPointerDownHandler, IPointer
     [SerializeField] private TMP_Text _label;
     /// <summary>RO 好友与群聊预制体使用的项目中文字体标签。</summary>
     [SerializeField] private Text _textLabel;
+    /// <summary>社交面板采用麦克风图标，平时收起录音状态文字。</summary>
+    [SerializeField] private bool iconOnly;
     /// <summary>长按开始时由聊天控制器检查频道与麦克风。</summary>
     public event Func<bool> RecordStarted;
     /// <summary>停止时传入是否发送录音。</summary>
@@ -71,6 +73,7 @@ public sealed class ChatRecordObj : MonoBehaviour, IPointerDownHandler, IPointer
         string caption = "按住说话";
         if (_recording && _inside) caption = "松开发送，移出取消";
         else if (_recording) caption = "松开取消";
+        if (iconOnly && !_recording) caption = "";
         if (_label != null) _label.text = caption;
         if (_textLabel != null) _textLabel.text = caption;
     }

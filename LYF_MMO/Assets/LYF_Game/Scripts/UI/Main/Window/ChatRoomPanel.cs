@@ -18,8 +18,8 @@ public sealed class ChatRoomPanel : WindowBase
     [SerializeField] internal Text capacityLabel;
     /// <summary>创建新群。</summary>
     [SerializeField] internal Button create;
-    /// <summary>无群或尚未选择群的提示。</summary>
-    [SerializeField] internal Text empty;
+    /// <summary>未选择群时一并显示的插画和阅读提示。</summary>
+    [SerializeField] internal GameObject empty;
     /// <summary>展示当前群名和成员数量。</summary>
     [SerializeField] internal Text title;
     /// <summary>群成员真实昵称。</summary>
@@ -48,6 +48,8 @@ public sealed class ChatRoomPanel : WindowBase
     [SerializeField] internal GameObject confirmPanel;
     /// <summary>确认解散当前群。</summary>
     [SerializeField] internal Button confirm;
+    /// <summary>解散确认弹层右上角的花饰关闭按钮。</summary>
+    [SerializeField] private Button closeConfirm;
     /// <summary>取消解散。</summary>
     [SerializeField] private Button cancel;
     /// <summary>确认时展示的目标群名称。</summary>
@@ -80,26 +82,44 @@ public sealed class ChatRoomPanel : WindowBase
     private readonly List<FriendsItemTemplate> friends = new List<FriendsItemTemplate>();
     /// <summary>受本窗管理的消息行。</summary>
     private readonly List<FriendChatTemplate> rows = new List<FriendChatTemplate>();
-    /// <summary>玩家点关闭时回到好友页。</summary>
-    internal event Action BackToFriends;
+    /// <summary>同一社交界面的最近联系人页签。</summary>
+    [SerializeField] internal Button recent;
+    /// <summary>从群目录切换到联系人页签。</summary>
+    [SerializeField] internal Button contacts;
+    /// <summary>共用页头、角色余额及好友与飞鹰的侧栏。</summary>
+    [SerializeField] internal SocialPanelHeader header;
+    /// <summary>群目录末尾的新建群聊按钮。</summary>
+    [SerializeField] private Button newGroup;
+    /// <summary>输入群名与容量的居中弹层。</summary>
+    [SerializeField] internal GameObject createDialog;
+    /// <summary>关闭群名弹层。</summary>
+    [SerializeField] private Button cancelCreate;
+    /// <summary>建群回执失败时在命名窗中显示原因。</summary>
+    [SerializeField] internal Text createStatus;
+    /// <summary>当前群名已用字符数。</summary>
+    [SerializeField] private Text nameCount;
     /// <summary>显示时通知控制器查询最新群目录。</summary>
     internal event Action Opened;
     /// <summary>只绑定视图自身的展开与收起动作。</summary>
     private void Awake()
     {
-        close.onClick.AddListener(() => { CloseWindow(); BackToFriends?.Invoke(); }); cancelInvite.onClick.AddListener(() => invitePanel.SetActive(false));
+        close.onClick.AddListener(CloseWindow);
+        newGroup.onClick.AddListener(() => { groupName.text = ""; createStatus.text = ""; createDialog.SetActive(true); groupName.ActivateInputField(); });
+        cancelCreate.onClick.AddListener(() => createDialog.SetActive(false));
+        groupName.onValueChanged.AddListener(value => nameCount.text = value.Length + " / " + groupName.characterLimit); cancelInvite.onClick.AddListener(() => invitePanel.SetActive(false));
         cancel.onClick.AddListener(() => confirmPanel.SetActive(false));
+        closeConfirm.onClick.AddListener(() => confirmPanel.SetActive(false));
         emoji.onClick.AddListener(() => emojis.gameObject.SetActive(!emojis.gameObject.activeSelf));
     }
     /// <summary>每次打开时先收起弹层。</summary>
-    private void OnEnable() { invitePanel.SetActive(false); confirmPanel.SetActive(false); emojis.gameObject.SetActive(false); OnRectTransformDimensionsChange(); Opened?.Invoke(); }
+    private void OnEnable() { createDialog.SetActive(false); invitePanel.SetActive(false); confirmPanel.SetActive(false); emojis.gameObject.SetActive(false); OnRectTransformDimensionsChange(); Opened?.Invoke(); }
     /// <summary>适应小屏画布的可用宽高。</summary>
     private void OnRectTransformDimensionsChange()
     {
         if (frame == null) return;
         // 计算含所有按钮在内的整体缩放。
         Rect area = ((RectTransform)transform).rect;
-        frame.localScale = Vector3.one * Mathf.Min(1f, area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
+        frame.localScale = Vector3.one * Mathf.Min(area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
     }
     /// <summary>按当前目录逐项展示群名、人数、邀请及未读。</summary><param name="list">已加入和受邀的目录。</param><param name="selected">选中群。</param><param name="choose">选择群回调。</param>
     internal void ShowRooms(ChatRoomList list, ulong selected, Action<ulong> choose)
@@ -117,6 +137,7 @@ public sealed class ChatRoomPanel : WindowBase
             if (item.Invited) detail = "邀请你加入";
             rooms[i].BindRoom(item.RoomUid, item.RoomSetting.RoomName, detail, item.UnreadCount, selected == item.RoomUid, choose);
         }
+        newGroup.transform.SetAsLastSibling();
     }
     /// <summary>选择当前角色好友作为邀请对象。</summary><param name="list">与赠礼共用的真实好友名单。</param><param name="choose">提交实名邀请。</param>
     internal void ShowInvites(List<GiftFriendInfo> list, Action<ulong> choose)

@@ -9,6 +9,22 @@ public sealed class ChatDataMgr
     private string prefix;
     /// <summary>随主角改变切换存档，角色号不会跨区混用。</summary><param name="realm">登录区号。</param><param name="role">主角数据库编号。</param>
     internal void BindRole(int realm, int role) { prefix = "PrivateChat." + realm + "." + role + "."; }
+    /// <summary>读取当前区及角色的本机好友分组和特别关注。</summary>
+    internal FriendContactGroups GetGroups()
+    {
+        // 分组和私聊记录使用不同的键，旧版客户端创建的角色首次从空目录开始。
+        string saved = PlayerPrefs.GetString(prefix + "Groups");
+        if (saved.Length == 0) return new FriendContactGroups();
+        return JsonUtility.FromJson<FriendContactGroups>(saved);
+    }
+
+    /// <summary>在玩家确认更改时持久化联系人目录。</summary><param name="groups">本角色当前所有分类和特别关注。</param>
+    internal void SaveGroups(FriendContactGroups groups)
+    {
+        PlayerPrefs.SetString(prefix + "Groups", JsonUtility.ToJson(groups));
+        PlayerPrefs.Save();
+    }
+
     /// <summary>从独立存档读取该对端最近的私聊行及最后成功补读的序号。</summary><param name="uid">对端角色号。</param>
     internal ReadPrivateMessageRes Get(ulong uid)
     {

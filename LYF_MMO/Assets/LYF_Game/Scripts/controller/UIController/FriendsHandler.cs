@@ -21,7 +21,9 @@ public sealed class FriendsHandler
     /// <summary>在开始录音时保存目标，即使上传期间切换会话也不改变收件人。</summary>
     private ulong recordingPeer;
     /// <summary>为真时左侧只展示已有会话的联系人。</summary>
-    private bool recentOnly;
+    private bool recentOnly = true;
+    /// <summary>当前区和角色的本机目录分组及特别关注。</summary>
+    private FriendContactGroups groups = new FriendContactGroups();
 
     /// <summary>把好友窗口、红点和现有语音通道接到同一个管理器。</summary><param name="panel">主城好友窗。</param><param name="hint">入口红点。</param><param name="audio">主城已绑定的录音和播放组件。</param>
     internal FriendsHandler(FriendsPanel panel, GameObject hint, ChatAudioMgr audio)
@@ -29,6 +31,7 @@ public sealed class FriendsHandler
         this.panel = panel; this.hint = hint; this.audio = audio;
         mgr.Changed += Refresh; mgr.PrivateChat += OnPrivateChat; mgr.History += OnReadPrivateMessage; mgr.Failed += ShowError;
         panel.emojis.Selected += SendEmoji; panel.Opened += Open; panel.friends.onClick.AddListener(OnFriends); panel.recent.onClick.AddListener(OnRecent);
+        panel.directory.ContactsRequested += OnFriends; panel.directory.Changed += Refresh; panel.directory.GroupCreated += CreateGroup; panel.star.onClick.AddListener(ToggleStar);
         panel.add.onClick.AddListener(AddFriend); panel.relation.onClick.AddListener(ChangeRelation); panel.send.onClick.AddListener(SendText); panel.input.onSubmit.AddListener(SubmitText);
         if (audio != null)
         {
@@ -39,6 +42,7 @@ public sealed class FriendsHandler
     internal void Dispose()
     {
         mgr.Dispose(); panel.emojis.Selected -= SendEmoji; panel.Opened -= Open; panel.friends.onClick.RemoveListener(OnFriends); panel.recent.onClick.RemoveListener(OnRecent);
+        panel.directory.ContactsRequested -= OnFriends; panel.directory.Changed -= Refresh; panel.directory.GroupCreated -= CreateGroup; panel.star.onClick.RemoveListener(ToggleStar);
         panel.add.onClick.RemoveListener(AddFriend); panel.relation.onClick.RemoveListener(ChangeRelation); panel.send.onClick.RemoveListener(SendText); panel.input.onSubmit.RemoveListener(SubmitText);
         if (audio != null)
         {
@@ -49,8 +53,9 @@ public sealed class FriendsHandler
     internal void BindRole(int id)
     {
         if (id == role) return;
-        role = id; selected = 0; recordingPeer = 0; recentOnly = false;
+        role = id; selected = 0; recordingPeer = 0; recentOnly = true;
         chat.BindRole(Global.Instance?.LoginInfo?.GameServer?.ServerId ?? 0, id);
+        groups = chat.GetGroups(); panel.directory.ResetRole();
         mgr.ClearData(); panel.input.text = ""; panel.nickname.text = ""; panel.status.text = ""; Refresh();
         if (role > 0) mgr.RequestGetFriendInfo();
     }
@@ -63,9 +68,9 @@ public sealed class FriendsHandler
         if (selected != 0) SelectFriend(selected);
     }
     /// <summary>显示所有联系人。</summary>
-    private void OnFriends() { recentOnly = false; Refresh(); }
+    internal void OnFriends() { recentOnly = false; Refresh(); }
     /// <summary>按最近聊天时间过滤并排序。</summary>
-    private void OnRecent() { recentOnly = true; Refresh(); }
+    internal void OnRecent() { recentOnly = true; Refresh(); }
     /// <summary>返回当前选择对应的有效角色资料。</summary>
     private GiftFriendInfo SelectedFriend()
     { return mgr.Friends.Find(friend => (ulong)friend.RoleId == selected); }
@@ -90,7 +95,7 @@ public sealed class FriendsHandler
     /// <summary>更新红点和左侧列表，不切换正在编辑的会话。</summary>
     private void Refresh()
     {
-        hint.SetActive(roomUnread || mgr.Unread.TotalUnreadCount > 0);
+        UpdateHint();
         if (!panel.isActiveAndEnabled) return;
         // 当前已被双方删除的会话退出编辑状态。
         GiftFriendInfo active = SelectedFriend();
@@ -99,23 +104,34 @@ public sealed class FriendsHandler
         if (active != null)
         {
             panel.title.text = active.Name;
+            if (groups.stars.Contains(active.RoleId)) panel.starLabel.text = "取消关注"; else panel.starLabel.text = "特别关注";
             if (active.Added) panel.relationLabel.text = "删除好友"; else panel.relationLabel.text = "加为好友";
         }
         // 当前页签只改变左侧可见名单。
         var visible = new List<GiftFriendInfo>(mgr.Friends);
         if (recentOnly) visible.RemoveAll(friend => Summary(friend.RoleId) == null);
         visible.Sort(CompareRecent);
-        if (recentOnly) { panel.underline.anchoredPosition = new Vector2(71, -19); panel.noFriends.text = "暂无最近聊天"; }
-        else { panel.underline.anchoredPosition = new Vector2(-71, -19); panel.noFriends.text = "暂无好友"; }
-        // 当前页可见联系人对应的复用行。
-        var rows = panel.FriendRows(visible.Count);
-        // 把可见名单逐一绑定到对应行。
-        for (int i = 0; i < visible.Count; i++)
-        {
-            // 行显示的红点只取该玩家自己的未读。
-            GiftFriendInfo contact = visible[i];
-            rows[i].Bind(contact, Summary(contact.RoleId)?.Count ?? 0, selected == (ulong)contact.RoleId, SelectFriend);
-        }
+        panel.recentUnread.text = mgr.Unread.TotalUnreadCount.ToString();
+        panel.recentUnread.transform.parent.gameObject.SetActive(mgr.Unread.TotalUnreadCount > 0);
+        panel.SetPage(recentOnly);
+        panel.directory.Show(visible, groups, recentOnly, selected, UnreadCount, SelectFriend);
+    }
+    /// <summary>返回指定联系人的实际未读条数。</summary><param name="id">同区联系人角色号。</param>
+    private int UnreadCount(int id) { return Summary(id)?.Count ?? 0; }
+
+    /// <summary>将玩家确认的本机分组与成员保存后刷新目录。</summary><param name="name">分组名称。</param><param name="members">选中的好友角色号。</param>
+    private void CreateGroup(string name, List<int> members)
+    {
+        groups.groups.Add(new FriendContactGroups.Group { name = name, members = members });
+        chat.SaveGroups(groups); Refresh();
+    }
+
+    /// <summary>切换当前联系人的个人特别关注状态。</summary>
+    private void ToggleStar()
+    {
+        if (selected == 0) return;
+        if (!groups.stars.Remove((int)selected)) groups.stars.Add((int)selected);
+        chat.SaveGroups(groups); Refresh();
     }
     /// <summary>玩家点选联系人后才对其会话标记已读。</summary><param name="uid">该行的真实角色号。</param>
     private void SelectFriend(ulong uid)
@@ -132,7 +148,7 @@ public sealed class FriendsHandler
         // 输入为空时保留输入框，直接显示原因。
         string name = panel.nickname.text.Trim();
         if (name.Length == 0) { ShowError("请输入好友角色名"); return; }
-        recentOnly = false; panel.status.text = ""; mgr.RequestAddFriend(name, 0);
+        recentOnly = false; panel.addDialog.SetActive(false); panel.status.text = ""; Refresh(); mgr.RequestAddFriend(name, 0);
     }
     /// <summary>删除自己的关系，或回加已主动添加自己的角色。</summary>
     private void ChangeRelation()
@@ -162,10 +178,21 @@ public sealed class FriendsHandler
     }
     /// <summary>当前长期群是否有消息或邀请。</summary>
     private bool roomUnread;
+    /// <summary>主菜单好友红点改变时同步社交侧栏。</summary>
+    internal event System.Action HintChanged;
+    /// <summary>用私聊未读和群提醒的合计状态更新两个入口。</summary>
+    private void UpdateHint()
+    {
+        // 两种聊天共用一个入口红点。
+        bool visible = roomUnread || mgr.Unread.TotalUnreadCount > 0;
+        if (hint.activeSelf == visible) return;
+        hint.SetActive(visible);
+        HintChanged?.Invoke();
+    }
     /// <summary>主菜单红点汇总本人私聊及群聊。</summary><param name="unread">至少一个群有未读消息或待接邀请。</param>
     internal void SetRoomHint(bool unread)
     {
-        roomUnread = unread; panel.roomHint.SetActive(unread); hint.SetActive(roomUnread || mgr.Unread.TotalUnreadCount > 0);
+        roomUnread = unread; panel.roomHint.SetActive(unread); UpdateHint();
     }
     /// <summary>向房间邀请面板提供本角色已取得的好友名单。</summary>
     internal List<GiftFriendInfo> Contacts => mgr.Friends;
@@ -209,5 +236,9 @@ public sealed class FriendsHandler
         if (page.HasMore) mgr.RequestReadPrivateMessage(selected, page.Squence);
     }
     /// <summary>将输入和服务端错误显示在当前窗口。</summary><param name="message">可直接展示的原因。</param>
-    private void ShowError(string message) { panel.status.text = message; }
+    private void ShowError(string message)
+    {
+        panel.status.text = message;
+        if (panel.addDialog.activeSelf) panel.addStatus.text = message;
+    }
 }

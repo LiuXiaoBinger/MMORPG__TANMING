@@ -8,6 +8,14 @@ public sealed class EmailPanel : WindowBase
 {
     /// <summary>按参考分辨率排版的邮箱面板。</summary>
     [SerializeField] private RectTransform frame;
+    /// <summary>飞鹰和好友共用的货币栏及侧栏。</summary>
+    [SerializeField] internal SocialPanelHeader header;
+    /// <summary>通过既有好友赠礼流程发送附物传书。</summary>
+    [SerializeField] internal Button sendGift;
+    /// <summary>录像中传书下方的既有集市入口。</summary>
+    [SerializeField] internal Button market;
+    /// <summary>关闭批量删除浮层的右上角按钮。</summary>
+    [SerializeField] private Button closeConfirm;
     /// <summary>左栏 ScrollRect 内按顺序排列邮件行的父节点。</summary>
     [SerializeField] private RectTransform emailItemParent;
     /// <summary>左侧列表的隐藏行模板。</summary>
@@ -73,6 +81,7 @@ public sealed class EmailPanel : WindowBase
         closeBtn.onClick.AddListener(CloseWindow);
         delAllBtn.onClick.AddListener(ShowConfirmation);
         cancelBtn.onClick.AddListener(HideConfirmation);
+        closeConfirm.onClick.AddListener(HideConfirmation);
         confirmBtn.onClick.AddListener(HideConfirmation);
     }
 
@@ -92,10 +101,8 @@ public sealed class EmailPanel : WindowBase
         // 当前主城功能层的可用 UI 尺寸。
         Rect area = ((RectTransform)transform).rect;
         // 小屏幕按窗口比例缩放，宽屏两侧仍由确认遮罩完整覆盖。
-        float scale = Mathf.Min(1f, area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
+        float scale = Mathf.Min(area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
         frame.localScale = Vector3.one * scale;
-        if (scale > 0f && confirmPanel != null)
-            ((RectTransform)confirmPanel.transform).sizeDelta = area.size / scale;
     }
 
     /// <summary>显示批量删除确认，对应 RO 的 DelAll 提示。</summary>
@@ -174,6 +181,12 @@ public sealed class EmailPanel : WindowBase
         // 每条附件包含独立的物品编号、数量与绑定状态。
         int count = body?.MailItems.Count ?? 0;
         attachmentPanel.SetActive(count > 0);
+        // 保持正文顶边固定，空出的附件区交给长信滚动阅读。
+        float height = 206f;
+        if (count == 0) height = 324f;
+        RectTransform textArea = (RectTransform)bodyScroll.transform;
+        textArea.sizeDelta = new Vector2(textArea.sizeDelta.x, height);
+        textArea.anchoredPosition = new Vector2(textArea.anchoredPosition.x, 129.5f - height * .5f);
         claimedSeal.SetActive(claimed && count > 0);
         if (count == 0) return;
         while (attachmentCards.Count < count)

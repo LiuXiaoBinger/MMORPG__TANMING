@@ -43,7 +43,7 @@ public sealed class GiftCtrl
     }
 
     /// <summary>从背包进入赠礼，重新读取当前角色的可赠实例与好友列表。</summary>
-    private void Open()
+    internal void Open()
     {
         view.ShowMainWindow(WindowType.GiftPanel);
         receiver = 0;

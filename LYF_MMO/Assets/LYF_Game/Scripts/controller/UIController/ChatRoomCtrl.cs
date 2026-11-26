@@ -92,8 +92,8 @@ public sealed class ChatRoomCtrl
         panel.ShowRooms(mgr.Rooms, selected, Select);
         panel.conversation.SetActive(room != null && !room.Invited);
         panel.invitation.SetActive(room != null && room.Invited);
-        panel.empty.gameObject.SetActive(room == null);
-        if (room == null) { panel.title.text = "群聊"; panel.members.text = ""; return; }
+        panel.empty.SetActive(room == null);
+        if (room == null) { panel.title.text = ""; panel.members.text = ""; return; }
         panel.title.text = room.RoomSetting.RoomName;
         if (room.Invited) { panel.members.text = "你收到了这个群的邀请"; return; }
         // 只显示服务端返回的群成员昵称。
@@ -173,6 +173,11 @@ public sealed class ChatRoomCtrl
     /// <summary>按实际变动种类更新目录选中项与邀请反馈。</summary><param name="change">发生变更的群及操作。</param>
     private void OnChange(RoomChangeNtf change)
     {
+        if (change.Command == ChatRoomCode.CreateChatRoom)
+        {
+            panel.createDialog.SetActive(false);
+            panel.groupName.text = "";
+        }
         if (change.Command == ChatRoomCode.CreateChatRoom || change.Command == ChatRoomCode.ApplyJoinRoom) newlyJoined = change.RoomUid;
         if (change.Command == ChatRoomCode.InviteRoomMember) panel.status.text = "已发送群邀请";
     }
@@ -203,5 +208,9 @@ public sealed class ChatRoomCtrl
         if (page.BeforeSquence == 0) mgr.RequestGetChatRoomInfo();
     }
     /// <summary>返回操作失败原因。</summary><param name="text">面向玩家的提示。</param>
-    private void ShowError(string text) { panel.status.text = text; }
+    private void ShowError(string text)
+    {
+        panel.status.text = text;
+        if (panel.createDialog.activeSelf) panel.createStatus.text = text;
+    }
 }
