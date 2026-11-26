@@ -26,6 +26,29 @@ if ($TradeOnly) {
     if ([int]$topology.realm.tradePort -le 0) { throw '此区未启用交易服，请先配置 tradePort。' }
     $names = @('TradeServer')
 } elseif ($IncludeShared) { $names += @('CenterServer', 'LoginServer') }
+# 开发目录先做增量编译，避免客户端已发送新门号、网关却仍运行上一次的程序。
+$solution = Join-Path $serverRoot 'LYF_Server.sln'
+if (Test-Path -LiteralPath $solution -PathType Leaf) {
+    # 交易服单独启动时只构建它和工程引用，其余情况统一更新区服程序及共享配置。
+    $buildTarget = $solution
+    if ($TradeOnly) { $buildTarget = Join-Path $serverRoot 'TradeServer/TradeServer.csproj' }
+    # 优先使用开发命令行里的 MSBuild，普通双击通过 Visual Studio 安装器定位构建工具。
+    $msbuild = (Get-Command 'MSBuild.exe' -ErrorAction SilentlyContinue).Source
+    if (!$msbuild) {
+        # 启动脚本同样支持仅安装 Visual Studio Build Tools 的机器。
+        $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+        if (Test-Path -LiteralPath $vswhere) {
+            $msbuild = & $vswhere -latest -products '*' -requires Microsoft.Component.MSBuild -find 'MSBuild\Current\Bin\MSBuild.exe' | Select-Object -First 1
+        }
+    }
+    if ($msbuild) {
+        & $msbuild $buildTarget /nologo /verbosity:minimal "/p:Configuration=$Configuration"
+    } else {
+        # 已安装 .NET SDK 的开发环境也可以构建同一工程。
+        & dotnet msbuild $buildTarget /nologo /verbosity:minimal "/p:Configuration=$Configuration"
+    }
+    if ($LASTEXITCODE -ne 0) { throw "区服编译失败（$LASTEXITCODE），请查看上方构建输出。" }
+}
 for ($i = 0; $i -lt $names.Count; $i++) {
     # 每个服务从自己的输出目录加载依赖。
     $name = $names[$i]

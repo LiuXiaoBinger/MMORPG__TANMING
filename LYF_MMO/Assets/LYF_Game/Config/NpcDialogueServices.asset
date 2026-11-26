@@ -147,3 +147,785 @@ MonoBehaviour:
   - NpcId: 4145
     Title: 空港巡卫
     Services: []
+  - NpcId: 4201
+    Title: 石阶养护工
+    Services: []
+  - NpcId: 4202
+    Title: 磨坊铁匠
+    Services: []
+  - NpcId: 4203
+    Title: 旅舍管家
+    Services: []
+  - NpcId: 4204
+    Title: 读图学徒
+    Services: []
+  - NpcId: 4205
+    Title: 秤量员
+    Services: []
+  - NpcId: 4206
+    Title: 挑线裁缝
+    Services: []
+  - NpcId: 4207
+    Title: 揉面师
+    Services: []
+  - NpcId: 4208
+    Title: 花坛照料人
+    Services: []
+  - NpcId: 4209
+    Title: 铜扣匠
+    Services: []
+  - NpcId: 4210
+    Title: 行李保管员
+    Services: []
+  - NpcId: 4211
+    Title: 修书师
+    Services: []
+  - NpcId: 4212
+    Title: 瓷货掌柜
+    Services: []
+  - NpcId: 4213
+    Title: 织机修理工
+    Services: []
+  - NpcId: 4214
+    Title: 酱料师
+    Services: []
+  - NpcId: 4215
+    Title: 街巷报童
+    Services: []
+  - NpcId: 4216
+    Title: 木器学徒
+    Services: []
+  - NpcId: 4217
+    Title: 街屋街坊代收员
+    Services: []
+  - NpcId: 4218
+    Title: 洗衣女工
+    Services: []
+  - NpcId: 4219
+    Title: 街坊教师
+    Services: []
+  - NpcId: 4220
+    Title: 账簿学徒
+    Services: []
+  - NpcId: 4221
+    Title: 染料商
+    Services: []
+  - NpcId: 4222
+    Title: 跑堂学徒
+    Services: []
+  - NpcId: 4223
+    Title: 净水看守
+    Services: []
+  - NpcId: 4224
+    Title: 城楼值守
+    Services: []
+  - NpcId: 4225
+    Title: 城楼值守
+    Services: []
+  - NpcId: 4226
+    Title: 城楼驻街联络员
+    Services: []
+  - NpcId: 4227
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4228
+    Title: 星象塔观测站联络员
+    Services: []
+  - NpcId: 4229
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4230
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4231
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4232
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4233
+    Title: 星象记录员
+    Services: []
+  - NpcId: 4234
+    Title: 星象塔观测站联络员
+    Services: []
+  - NpcId: 4235
+    Title: 晚灯巡值
+    Services: []
+  - NpcId: 4236
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4237
+    Title: 城楼值守
+    Services: []
+  - NpcId: 4238
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4239
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4240
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4241
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4242
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4243
+    Title: 城防塔驻街联络员
+    Services: []
+  - NpcId: 4244
+    Title: 城楼值守
+    Services: []
+  - NpcId: 4245
+    Title: 城墙哨塔驻街联络员
+    Services: []
+  - NpcId: 4246
+    Title: 城楼值守
+    Services: []
+  - NpcId: 4247
+    Title: 山脊望楼驻街联络员
+    Services: []
+  - NpcId: 4248
+    Title: 桥头掌柜
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 4249
+    Title: 驿站信差
+    Services: []
+  - NpcId: 4250
+    Title: 鞍具师
+    Services: []
+  - NpcId: 4251
+    Title: 城东钟表匠
+    Services: []
+  - NpcId: 4252
+    Title: 公会议长
+    Services: []
+  - NpcId: 4253
+    Title: 卷宗管理员
+    Services: []
+  - NpcId: 4254
+    Title: 西塔轮值卫士
+    Services: []
+  - NpcId: 4255
+    Title: 议员助理
+    Services: []
+  - NpcId: 4256
+    Title: 石匠师傅
+    Services: []
+  - NpcId: 4257
+    Title: 染坊师傅
+    Services: []
+  - NpcId: 4258
+    Title: 铜器匠
+    Services: []
+  - NpcId: 4259
+    Title: 陶工
+    Services: []
+  - NpcId: 4260
+    Title: 装帧师
+    Services: []
+  - NpcId: 4261
+    Title: 织坊领班
+    Services: []
+  - NpcId: 4262
+    Title: 商旅会长
+    Services: []
+  - NpcId: 4263
+    Title: 盐铺掌柜
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 4264
+    Title: 账房先生
+    Services: []
+  - NpcId: 4265
+    Title: 主城烘焙师
+    Services: []
+  - NpcId: 4266
+    Title: 香料商
+    Services: []
+  - NpcId: 5001
+    Title: 栈货验收员
+    Services: []
+  - NpcId: 5002
+    Title: 商庭茶侍
+    Services: []
+  - NpcId: 5003
+    Title: 会馆理事
+    Services: []
+  - NpcId: 5004
+    Title: 桥头库吏
+    Services: []
+  - NpcId: 5005
+    Title: 绸布掌柜
+    Services: []
+  - NpcId: 5006
+    Title: 候船报班员
+    Services: []
+  - NpcId: 5007
+    Title: 议事书记
+    Services: []
+  - NpcId: 5008
+    Title: 临街铺主
+    Services: []
+  - NpcId: 5009
+    Title: 廊灯看守
+    Services: []
+  - NpcId: 5010
+    Title: 画稿学徒
+    Services: []
+  - NpcId: 5011
+    Title: 修钟匠
+    Services: []
+  - NpcId: 5012
+    Title: 花廊园丁
+    Services: []
+  - NpcId: 5013
+    Title: 碑铭抄写员
+    Services: []
+  - NpcId: 5014
+    Title: 花环编织人
+    Services: []
+  - NpcId: 5015
+    Title: 侍塔卫士
+    Services: []
+  - NpcId: 5016
+    Title: 典礼侍从
+    Services: []
+  - NpcId: 5017
+    Title: 礼器保管员
+    Services: []
+  - NpcId: 5018
+    Title: 内殿司礼
+    Services: []
+  - NpcId: 5019
+    Title: 殿前侍卫长
+    Services: []
+  - NpcId: 5020
+    Title: 旗语卫士
+    Services: []
+  - NpcId: 5021
+    Title: 城门向导
+    Services: []
+  - NpcId: 5022
+    Title: 东望塔哨兵
+    Services: []
+  - NpcId: 5023
+    Title: 西望塔哨兵
+    Services: []
+  - NpcId: 5024
+    Title: 旧货鉴定人
+    Services: []
+  - NpcId: 5025
+    Title: 香草货商
+    Services: []
+  - NpcId: 5026
+    Title: 行商护卫
+    Services: []
+  - NpcId: 5027
+    Title: 行会文员
+    Services: []
+  - NpcId: 5028
+    Title: 货栈伙计
+    Services: []
+  - NpcId: 5029
+    Title: 货架木匠
+    Services: []
+  - NpcId: 5030
+    Title: 秤量员
+    Services: []
+  - NpcId: 5031
+    Title: 瓷货掌柜
+    Services: []
+  - NpcId: 5032
+    Title: 账簿学徒
+    Services: []
+  - NpcId: 5033
+    Title: 旧货鉴定人
+    Services: []
+  - NpcId: 5034
+    Title: 香草货商
+    Services: []
+  - NpcId: 5035
+    Title: 泉市杂货商
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 5036
+    Title: 信封印工
+    Services: []
+  - NpcId: 5037
+    Title: 转运员
+    Services: []
+  - NpcId: 5038
+    Title: 邮路绘师
+    Services: []
+  - NpcId: 5039
+    Title: 邮袋学徒
+    Services: []
+  - NpcId: 5040
+    Title: 驿站值守
+    Services: []
+  - NpcId: 5041
+    Title: 航邮联络员
+    Services: []
+  - NpcId: 5042
+    Title: 邮务员
+    Services: []
+  - NpcId: 5043
+    Title: 制墨师
+    Services: []
+  - NpcId: 5044
+    Title: 抄谱员
+    Services: []
+  - NpcId: 5045
+    Title: 纸坊学徒
+    Services: []
+  - NpcId: 5046
+    Title: 编年史家
+    Services: []
+  - NpcId: 5047
+    Title: 校勘员
+    Services: []
+  - NpcId: 5048
+    Title: 书信代笔人
+    Services: []
+  - NpcId: 5049
+    Title: 天象学徒
+    Services: []
+  - NpcId: 5050
+    Title: 读图学徒
+    Services: []
+  - NpcId: 5051
+    Title: 典藏员
+    Services: []
+  - NpcId: 5052
+    Title: 奶酪商
+    Services: []
+  - NpcId: 5053
+    Title: 香草栽培人
+    Services: []
+  - NpcId: 5054
+    Title: 烤鱼厨师
+    Services: []
+  - NpcId: 5055
+    Title: 磨麦工
+    Services: []
+  - NpcId: 5056
+    Title: 果酿师
+    Services: []
+  - NpcId: 5057
+    Title: 送菜伙计
+    Services: []
+  - NpcId: 5058
+    Title: 茶点师
+    Services: []
+  - NpcId: 5059
+    Title: 采蜜人
+    Services: []
+  - NpcId: 5060
+    Title: 碗碟修补师
+    Services: []
+  - NpcId: 5061
+    Title: 早点铺掌柜
+    Services: []
+  - NpcId: 5062
+    Title: 食谱抄录人
+    Services: []
+  - NpcId: 5063
+    Title: 揉面师
+    Services: []
+  - NpcId: 5064
+    Title: 酱料师
+    Services: []
+  - NpcId: 5065
+    Title: 跑堂学徒
+    Services: []
+  - NpcId: 5066
+    Title: 面包师
+    Services: []
+  - NpcId: 5067
+    Title: 餐馆迎宾
+    Services: []
+  - NpcId: 5068
+    Title: 烛坊女工
+    Services: []
+  - NpcId: 5069
+    Title: 花束编织人
+    Services: []
+  - NpcId: 5070
+    Title: 唱诗少年
+    Services: []
+  - NpcId: 5071
+    Title: 巡礼记录员
+    Services: []
+  - NpcId: 5072
+    Title: 施粥厨工
+    Services: []
+  - NpcId: 5073
+    Title: 教袍缝纫师
+    Services: []
+  - NpcId: 5074
+    Title: 钟楼杂役
+    Services: []
+  - NpcId: 5075
+    Title: 祷歌领唱
+    Services: []
+  - NpcId: 5076
+    Title: 烛坊女工
+    Services: []
+  - NpcId: 5077
+    Title: 花束编织人
+    Services: []
+  - NpcId: 5078
+    Title: 唱诗少年
+    Services: []
+  - NpcId: 5079
+    Title: 礼拜引导员
+    Services: []
+  - NpcId: 5080
+    Title: 引路少年
+    Services: []
+  - NpcId: 5081
+    Title: 旅人绘图师
+    Services: []
+  - NpcId: 5082
+    Title: 驿马护理员
+    Services: []
+  - NpcId: 5083
+    Title: 旅行补给商
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 5084
+    Title: 地毯织工
+    Services: []
+  - NpcId: 5085
+    Title: 旅舍管家
+    Services: []
+  - NpcId: 5086
+    Title: 行李保管员
+    Services: []
+  - NpcId: 5087
+    Title: 洗衣女工
+    Services: []
+  - NpcId: 5088
+    Title: 引路少年
+    Services: []
+  - NpcId: 5089
+    Title: 旅人绘图师
+    Services: []
+  - NpcId: 5090
+    Title: 驿马护理员
+    Services: []
+  - NpcId: 5091
+    Title: 旅行补给商
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 5092
+    Title: 白鹿掌柜
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 5093
+    Title: 草药师
+    Services: []
+  - NpcId: 5094
+    Title: 制革工
+    Services: []
+  - NpcId: 5095
+    Title: 制钉匠
+    Services: []
+  - NpcId: 5096
+    Title: 修伞人
+    Services: []
+  - NpcId: 5097
+    Title: 量尺学徒
+    Services: []
+  - NpcId: 5098
+    Title: 陶轮匠
+    Services: []
+  - NpcId: 5099
+    Title: 炉炭看守
+    Services: []
+  - NpcId: 5100
+    Title: 绳匠
+    Services: []
+  - NpcId: 5101
+    Title: 皮靴匠
+    Services: []
+  - NpcId: 5102
+    Title: 漆器师
+    Services: []
+  - NpcId: 5103
+    Title: 磨坊铁匠
+    Services: []
+  - NpcId: 5104
+    Title: 铜扣匠
+    Services: []
+  - NpcId: 5105
+    Title: 木器学徒
+    Services: []
+  - NpcId: 5106
+    Title: 炉边铁匠
+    Services:
+    - Label: 选购兵器
+      Function: 0
+      ShopId: 1
+      GoodsIds: 0500000006000000
+  - NpcId: 5107
+    Title: 行会联络员
+    Services: []
+  - NpcId: 5108
+    Title: 瞭望亭接引员
+    Services: []
+  - NpcId: 5109
+    Title: 风向观测员
+    Services: []
+  - NpcId: 5110
+    Title: 观礼引座员
+    Services: []
+  - NpcId: 5111
+    Title: 观礼记录员
+    Services: []
+  - NpcId: 5112
+    Title: 廊下书商
+    Services: []
+  - NpcId: 5113
+    Title: 圆厅文书
+    Services: []
+  - NpcId: 5114
+    Title: 迎客侍从
+    Services: []
+  - NpcId: 5115
+    Title: 钟亭值守
+    Services: []
+  - NpcId: 5116
+    Title: 敲钟人
+    Services: []
+  - NpcId: 5117
+    Title: 调茶师
+    Services: []
+  - NpcId: 5118
+    Title: 南铺货郎
+    Services:
+    - Label: 选购旅行补给
+      Function: 0
+      ShopId: 1
+      GoodsIds: 01000000020000000300000004000000
+  - NpcId: 5119
+    Title: 东侧天文圆廊联络员
+    Services: []
+  - NpcId: 5120
+    Title: 东侧钟楼联络员
+    Services: []
+  - NpcId: 5121
+    Title: 西侧双塔会所联络员
+    Services: []
+  - NpcId: 5122
+    Title: 西侧附楼联络员
+    Services: []
+  - NpcId: 5123
+    Title: 行会门卫
+    Services: []
+  - NpcId: 5124
+    Title: 东北圆塔守卫
+    Services: []
+  - NpcId: 5125
+    Title: 行商护卫
+    Services: []
+  - NpcId: 5126
+    Title: 修书师
+    Services: []
+  - NpcId: 5127
+    Title: 行会文员
+    Services: []
+  - NpcId: 5128
+    Title: 货栈伙计
+    Services: []
+  - NpcId: 5129
+    Title: 货架木匠
+    Services: []
+  - NpcId: 5130
+    Title: 秤量员
+    Services: []
+  - NpcId: 5131
+    Title: 制革工
+    Services: []
+  - NpcId: 5132
+    Title: 东南圆塔守卫
+    Services: []
+  - NpcId: 5133
+    Title: 披风裁剪师
+    Services: []
+  - NpcId: 5134
+    Title: 绣样学徒
+    Services: []
+  - NpcId: 5135
+    Title: 布匹经纪
+    Services: []
+  - NpcId: 5136
+    Title: 旗帜缝纫员
+    Services: []
+  - NpcId: 5137
+    Title: 亚麻梳理工
+    Services: []
+  - NpcId: 5138
+    Title: 制钉匠
+    Services: []
+  - NpcId: 5139
+    Title: 修伞人
+    Services: []
+  - NpcId: 5140
+    Title: 花木商
+    Services: []
+  - NpcId: 5141
+    Title: 街道书记
+    Services: []
+  - NpcId: 5142
+    Title: 街坊厨师
+    Services: []
+  - NpcId: 5143
+    Title: 修窗匠
+    Services: []
+  - NpcId: 5144
+    Title: 窗边裁缝
+    Services: []
+  - NpcId: 5145
+    Title: 城墙守望员
+    Services: []
+  - NpcId: 5146
+    Title: 旧物店主
+    Services: []
+  - NpcId: 5147
+    Title: 风筝手艺人
+    Services: []
+  - NpcId: 5148
+    Title: 石阶养护工
+    Services: []
+  - NpcId: 5149
+    Title: 花坛照料人
+    Services: []
+  - NpcId: 5150
+    Title: 地毯织工
+    Services: []
+  - NpcId: 5151
+    Title: 街巷报童
+    Services: []
+  - NpcId: 5152
+    Title: 旅舍管家
+    Services: []
+  - NpcId: 5153
+    Title: 净水看守
+    Services: []
+  - NpcId: 5154
+    Title: 西北圆塔守卫
+    Services: []
+  - NpcId: 5155
+    Title: 街坊教师
+    Services: []
+  - NpcId: 5156
+    Title: 制墨师
+    Services: []
+  - NpcId: 5157
+    Title: 抄谱员
+    Services: []
+  - NpcId: 5158
+    Title: 纸坊学徒
+    Services: []
+  - NpcId: 5159
+    Title: 编年史家
+    Services: []
+  - NpcId: 5160
+    Title: 校勘员
+    Services: []
+  - NpcId: 5161
+    Title: 书信代笔人
+    Services: []
+  - NpcId: 5162
+    Title: 西南圆塔守卫
+    Services: []
+  - NpcId: 5163
+    Title: 工坊守门人
+    Services: []
+  - NpcId: 5164
+    Title: 量尺学徒
+    Services: []
+  - NpcId: 5165
+    Title: 陶轮匠
+    Services: []
+  - NpcId: 5166
+    Title: 炉炭看守
+    Services: []
+  - NpcId: 5167
+    Title: 绳匠
+    Services: []
+  - NpcId: 5168
+    Title: 皮靴匠
+    Services: []
+  - NpcId: 5169
+    Title: 漆器师
+    Services: []
+  - NpcId: 5170
+    Title: 磨坊铁匠
+    Services: []
+  - NpcId: 5171
+    Title: 花庭侍者
+    Services: []
+  - NpcId: 5172
+    Title: 观星师
+    Services: []
+  - NpcId: 5173
+    Title: 东境圣树台联络员
+    Services: []
+  - NpcId: 5174
+    Title: 东境浮塔联络员
+    Services: []
+  - NpcId: 5175
+    Title: 云海尖塔联络员
+    Services: []
+  - NpcId: 5176
+    Title: 南境巡望塔联络员
+    Services: []
+  - NpcId: 5177
+    Title: 天际望楼联络员
+    Services: []
+  - NpcId: 5178
+    Title: 西北浮庭联络员
+    Services: []
+  - NpcId: 5179
+    Title: 远方钟塔联络员
+    Services: []
+  - NpcId: 5180
+    Title: 亚麻摊主
+    Services: []
+  - NpcId: 5181
+    Title: 布样商人
+    Services: []
+  - NpcId: 5182
+    Title: 缎带摊主
+    Services: []
+  - NpcId: 5183
+    Title: 补衣师傅
+    Services: []
+  - NpcId: 5184
+    Title: 行会布料经纪
+    Services: []
