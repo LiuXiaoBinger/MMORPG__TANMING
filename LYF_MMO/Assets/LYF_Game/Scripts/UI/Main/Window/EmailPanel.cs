@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,16 +14,34 @@ public sealed class EmailPanel : WindowBase
     [SerializeField] private EmailItemTemplate emailItemPrefab;
     /// <summary>右栏整封邮件的展示节点。</summary>
     [SerializeField] private GameObject detailObj;
-    /// <summary>空信箱或请求中的提示。</summary>
-    [SerializeField] private Text empty;
+    /// <summary>列表为空时显示 RO 邮箱空态图和提示。</summary>
+    [SerializeField] private GameObject emptyState;
+    /// <summary>有来信时展示左侧列表底板和滚动区域。</summary>
+    [SerializeField] private GameObject listArea;
+    /// <summary>详情抬头中的发件人图像。</summary>
+    [SerializeField] private Image senderIcon;
+    /// <summary>RO 社交面板已有的卡普拉职员立绘，用于其投递的掉落邮件。</summary>
+    [SerializeField] private Sprite kafraIcon;
+    /// <summary>未配置发件人头像的邮件使用 RO 邮件页签图标。</summary>
+    [SerializeField] private Sprite mailIcon;
     /// <summary>右栏邮件标题。</summary>
     [SerializeField] private Text title;
-    /// <summary>发件人、发送日期和过期日期。</summary>
-    [SerializeField] private Text senderTime;
+    /// <summary>详情头像右侧显示的发件人署名。</summary>
+    [SerializeField] private Text sender;
+    /// <summary>署名下方的发送时间，使用玩家本地时区。</summary>
+    [SerializeField] private Text sentTime;
     /// <summary>可滚动正文。</summary>
     [SerializeField] private Text content;
-    /// <summary>正文下方的附件名称及数量清单。</summary>
-    [SerializeField] private Text items;
+    /// <summary>详情底部的物品列表，无附件时为正文让出空间。</summary>
+    [SerializeField] private GameObject attachmentPanel;
+    /// <summary>附件领取后叠在物品区右侧的原版领取印章。</summary>
+    [SerializeField] private GameObject claimedSeal;
+    /// <summary>多件附件横向滚动，切换信件时回到首件。</summary>
+    [SerializeField] private ScrollRect attachmentScroll;
+    /// <summary>预制体中的隐藏附件卡片原型。</summary>
+    [SerializeField] private EmailAttachmentItem attachmentPrefab;
+    /// <summary>复用本窗口已经创建的附件卡片。</summary>
+    private readonly List<EmailAttachmentItem> attachmentCards = new List<EmailAttachmentItem>();
     /// <summary>切换信件时将正文滚回顶部。</summary>
     [SerializeField] private ScrollRect bodyScroll;
     /// <summary>保留最近一次操作的失败原因。</summary>
@@ -74,7 +91,11 @@ public sealed class EmailPanel : WindowBase
         if (frame == null) return;
         // 当前主城功能层的可用 UI 尺寸。
         Rect area = ((RectTransform)transform).rect;
-        frame.localScale = Vector3.one * Mathf.Min(1f, area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
+        // 小屏幕按窗口比例缩放，宽屏两侧仍由确认遮罩完整覆盖。
+        float scale = Mathf.Min(1f, area.width / frame.sizeDelta.x, area.height / frame.sizeDelta.y);
+        frame.localScale = Vector3.one * scale;
+        if (scale > 0f && confirmPanel != null)
+            ((RectTransform)confirmPanel.transform).sizeDelta = area.size / scale;
     }
 
     /// <summary>显示批量删除确认，对应 RO 的 DelAll 提示。</summary>
@@ -92,7 +113,7 @@ public sealed class EmailPanel : WindowBase
     {
         // 参照 RO 的行模板池，仅在已有行不够时实例化。
         while (rows.Count < mails.Count) rows.Add(Instantiate(emailItemPrefab, emailItemParent));
-        // 本页含有可领取或可删除的已读邮件。
+        // 本页存在未读时允许一键领取。
         bool unread = false;
         // 至少一封已读时允许批删。
         bool read = false;
@@ -100,13 +121,17 @@ public sealed class EmailPanel : WindowBase
         {
             rows[i].gameObject.SetActive(i < mails.Count);
             if (i >= mails.Count) continue;
-            rows[i].SetData(mails[i], mails[i].MailUid == uid, clicked);
+            rows[i].SetData(mails[i], mails[i].MailUid == uid, clicked, GetSenderIcon(mails[i].MailId));
             if (mails[i].IsRead) read = true;
             else unread = true;
         }
         // 一键服务作用于整个信箱，即使最新一百封都已读，仍可领取更早的未读信。
         getAllBtn.interactable = unread || mails.Count == MailCode.MaxClientMailCount;
         delAllBtn.interactable = read || mails.Count == MailCode.MaxClientMailCount;
+        // 与 RO 空信箱相同，收起列表底板及两个批量按钮。
+        listArea.SetActive(mails.Count > 0);
+        getAllBtn.gameObject.SetActive(mails.Count > 0);
+        delAllBtn.gameObject.SetActive(mails.Count > 0);
     }
 
     /// <summary>右栏显示当前邮件、附件或空态，正文较长时由原生滚动区域承载。</summary>
@@ -114,40 +139,49 @@ public sealed class EmailPanel : WindowBase
     /// <param name="resetScroll">切换选中项时滚到顶部。</param>
     internal void ShowDetail(MailBaseInfo mail, MailContent body, bool resetScroll)
     {
-        empty.gameObject.SetActive(mail == null);
+        emptyState.SetActive(mail == null);
         detailObj.SetActive(mail != null);
         getBtn.gameObject.SetActive(mail != null && mail.IsHasItem && !mail.IsRead);
         delBtn.gameObject.SetActive(mail != null && mail.IsRead);
         if (mail == null) return;
         title.text = mail.Title;
-        // 发送和过期时间按玩家本机时区显示。
-        string sender = "";
-        if (body != null) sender = body.SendName;
-        senderTime.text = sender + "    " + DateTimeOffset.FromUnixTimeSeconds(mail.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm")
-            + "    到期 " + DateTimeOffset.FromUnixTimeSeconds(mail.ExpireTime).LocalDateTime.ToString("MM-dd HH:mm");
+        EmailItemTemplate.SetSenderIcon(senderIcon, GetSenderIcon(mail.MailId));
+        // 正文到达后显示该信的真实署名。
+        sender.text = body?.SendName ?? "";
+        sentTime.text = DateTimeOffset.FromUnixTimeSeconds(mail.CreateTime).LocalDateTime.ToString("HH:mm   yyyy-MM-dd");
         content.text = "正在读取正文…";
-        items.text = "";
-        if (body != null)
+        if (body != null) content.text = body.Content.Replace("\\n", "\n");
+        ShowAttachments(body, mail.IsRead);
+        if (resetScroll)
         {
-            content.text = body.Content.Replace("\\n", "\n");
-            // 使用本项目物品表显示名字；旧配置缺失时仍能辨认道具编号。
-            var lines = new StringBuilder();
-            if (body.MailItems.Count > 0)
-            {
-                lines.Append("附件");
-                if (mail.IsRead) lines.Append("  ·  已领取");
-            }
-            for (int i = 0; i < body.MailItems.Count; i++)
-            {
-                // 原信保留附件清单，领取后依然可查看。
-                MailItem item = body.MailItems[i];
-                // 客户端本地配置将物品编号转换成可读名称。
-                ItemConfigBase config = LubanMgr.Instance.GetItemConfigById(item.ItemId);
-                lines.Append("\n").Append(config?.ItemName ?? item.ItemId.ToString()).Append("  × ").Append(item.Count);
-                if (item.IsBind) lines.Append("  (绑定)");
-            }
-            items.text = lines.ToString();
+            bodyScroll.verticalNormalizedPosition = 1f;
+            attachmentScroll.horizontalNormalizedPosition = 0f;
         }
-        if (resetScroll) bodyScroll.verticalNormalizedPosition = 1f;
+    }
+
+    /// <summary>按 RO 邮件模板的发件人选择图标，当前 20、21 均由 NPC 1021 卡普拉职员投递。</summary>
+    /// <param name="mailId">服务器发送的邮件模板编号，自定义信为零。</param>
+    private Sprite GetSenderIcon(int mailId)
+    {
+        if (mailId == 20 || mailId == 21) return kafraIcon;
+        return mailIcon;
+    }
+
+    /// <summary>依本封信实际附件数复用物品格，并按领取状态显示印章。</summary>
+    /// <param name="body">当前正文，尚在读取时为空。</param><param name="claimed">附件是否已入包。</param>
+    private void ShowAttachments(MailContent body, bool claimed)
+    {
+        // 每条附件包含独立的物品编号、数量与绑定状态。
+        int count = body?.MailItems.Count ?? 0;
+        attachmentPanel.SetActive(count > 0);
+        claimedSeal.SetActive(claimed && count > 0);
+        if (count == 0) return;
+        while (attachmentCards.Count < count)
+            attachmentCards.Add(Instantiate(attachmentPrefab, attachmentScroll.content));
+        for (int i = 0; i < attachmentCards.Count; i++)
+        {
+            attachmentCards[i].gameObject.SetActive(i < count);
+            if (i < count) attachmentCards[i].SetData(body.MailItems[i]);
+        }
     }
 }

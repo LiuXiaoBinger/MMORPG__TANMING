@@ -1056,6 +1056,7 @@ Two distinct equipped items with the same active special-skill family in allowed
 
 - The main-city menu opens the native EmailPanel. EmailMgr, EmailHandler and EmailItemTemplate mirror the RO client split. Gate and GS validate the player route, MS manages RoleMail, and Center owns role_mail. Game services can send personal/offline or realm mail through MailAction. Templates 20/21 have a 30-day expiry.
 - Inventory updates and claim UIDs share the same role-save transaction. The authorized branch build also restores the existing currency exchange dependencies and keeps the numeric 1/2/3 quest-tab mapping compatible. See 项目分析/RO邮箱系统与本项目实现.md and 项目修改日志/RO邮箱系统移植-2026-11-26.md. Codex performed development without WorkBuddy.
+- Mailbox UI revision (2026-11-26). The existing main-city inbox now uses RO Email inside the Community / Panel_Common shell, its mail-only side tab, list selection, gift states, claim stamp and empty artwork. Templates 20 and 21 use the Kafra portrait cropped from the original Friends atlas for RO sender NPC 1021. Other senders use the RO mail icon. Attachment slots use configured inventory icons, quantities and bind marks. Details and file manifest remain in `项目修改日志/RO邮箱系统移植-2026-11-26.md`.
 
 ## [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation
 

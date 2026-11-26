@@ -1051,6 +1051,7 @@ GameServer 在常规情况下按 `min + (max - min) * u` 计算攻击力，其�
 
 - 主城菜单可打开原生 `EmailPanel`。`EmailMgr`、`EmailHandler`、`EmailItemTemplate` 沿用 RO 客户端的职责划分。Gate 和 GS 校验玩家路由，MS 管理 `RoleMail`，Center 负责 `role_mail`。游戏服务可通过 `MailAction` 发送个人邮件（含离线角色）和全服邮件。模板 20、21 的有效期均为 30 天。
 - 背包更新和附件领取 UID 在同一角色存档事务中提交。为完成已获授权的分支构建，补齐了已有货币兑换功能的依赖，并保留了任务页签数字 1/2/3 的映射。详见 `项目分析/RO邮箱系统与本项目实现.md`、`项目修改日志/RO邮箱系统移植-2026-11-26.md`。本次开发由 Codex 独立完成，未使用 WorkBuddy。
+- 邮箱界面返修（2026-11-26）。主城现有邮箱使用 RO 的社区通用窗口 `Community / Panel_Common` 承载 `Email` 界面，接入仅显示邮件的侧页签、列表选中态、礼物状态、领取印章和空邮箱插图。模板 20、21 使用 RO 发件 NPC 1021 的卡普拉（Kafra）头像，裁自原版 `Friends` 图集。其他发件人使用 RO 邮件图标。附件格按背包配置显示物品图标、数量和绑定标记。详情与文件清单见 `项目修改日志/RO邮箱系统移植-2026-11-26.md`。
 
 ## [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] 角色委托与副本阶段寻路
 

@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `8dad11da3d8d8a7325c88835d0a24d633a4d0ea6909e984cef0f569bc444ed83`
+Source normalized SHA256: `e6a2ec8bd262bf7762a86ab9d2945057f365422904f58a9787f834f11d2925ee`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -156,14 +156,14 @@ Source normalized SHA256: `8dad11da3d8d8a7325c88835d0a24d633a4d0ea6909e984cef0f5
 | [CODE][FILES][HANDOFF][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Dark fantasy art for every configured skill | 1043-1046 |
 | [CODE][FILES][HANDOFF][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Interrupting an ordinary monster attack before release | 1047-1050 |
 | [CODE][FILES][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Rank by worn items with the same active family | 1051-1054 |
-| [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1059 |
-| [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1060-1063 |
-| [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1064-1068 |
-| [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1069-1072 |
+| [CODE][FILES][邮箱][MAIL-RO-20261126] RO role inbox and Unity integration | 1055-1060 |
+| [CODE][FILES][HANDOFF][任务][导航][WORLD-QUEST-NAV-20261126] Playable role quests and dungeon objective navigation | 1061-1064 |
+| [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1065-1069 |
+| [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1073 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `4b7a6563b29d220ea204096ad2f9cb35bc22c4d23bf42e05e43d1754f4f7679f`
+Source normalized SHA256: `70f6da9be385cc720f00b8e7e1c0a1b63893780e816bc199db3fd787121f4125`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -312,11 +312,11 @@ Source normalized SHA256: `4b7a6563b29d220ea204096ad2f9cb35bc22c4d23bf42e05e43d1
 | [VERIFY][技能][界面][MJS-SKILL-DARK-ICONS-20261126] Skill atlas loading, crop and small-size rendering | 1082-1085 |
 | [VERIFY][副本][怪物AI][DUNGEON-ATTACK-IMPACT-20261126] Hit frames, interruption and released projectiles | 1086-1089 |
 | [VERIFY][装备][特技][EQUIP-ACTIVE-SKILL-RANK-20261126] Same-family activation on two items | 1090-1093 |
-| [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1098 |
-| [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1099-1102 |
-| [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1103-1108 |
-| [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1109-1113 |
-| [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1114-1117 |
+| [VERIFY][邮箱][MAIL-RO-20261126] Inbox, item claims and client build | 1094-1099 |
+| [VERIFY][装备][特技][EQUIP-DIVINE-LIVE-20261126] Divine Power (external) on two weapons in Unity Play | 1100-1103 |
+| [VERIFY][任务][导航][WORLD-QUEST-NAV-20261126] Role quest progression and route verification | 1104-1109 |
+| [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1110-1114 |
+| [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1118 |
 
 ## Docs/AI/DECISIONS.en.md
 
