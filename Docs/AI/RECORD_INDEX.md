@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `bb80dd68c82d7df55bde5d1d331c1acb88511b8995311d28d9d15e849528ac2d`
+Source normalized SHA256: `dbf6cd4a6cde26e1f679be21501f740d261987b736b9412f0626ad107489b383`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -137,24 +137,24 @@ Source normalized SHA256: `bb80dd68c82d7df55bde5d1d331c1acb88511b8995311d28d9d15
 | [CODE][FILES][NPC][商店][货币][NPC-SHOP-UI-20261124] NPC merchant shelf and category views | 913-919 |
 | [CODE][FILES][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Click-to-focus NPC dialogue and configurable services | 920-928 |
 | [CODE][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Show pending applications on the three RO team controls | 929-933 |
-| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-957 |
-| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 958-961 |
-| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 962-968 |
-| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 969-974 |
-| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 975-982 |
-| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 983-987 |
-| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 988-992 |
-| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 993-998 |
-| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 999-1002 |
-| [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1003-1007 |
-| [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1008-1012 |
-| [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1013-1020 |
-| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1021-1025 |
-| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1026-1029 |
+| [FILES][场景][SKYCITY-ELYSIUM-20261125] Sky City main-city environment | 934-958 |
+| [CODE][网络][分线][REALM-GS-LINES-20261125] Multiple GameServers per logical realm | 959-962 |
+| [CODE][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] File-based realm deployment and live login directory | 963-969 |
+| [CODE][场景][分线][SKY-CITY-LINES-20261125] Sky City and Main City map selection | 970-975 |
+| [CODE][UI][地图][RO-CITY-MAPS-20261125] RO minimap, region maps and world map | 976-983 |
+| [CODE][交易][STALL-SELLER-20261125] Seller quote and withdrawal | 984-988 |
+| [CODE][场景][ARK-EUROPEAN-STREETS-20261125] Monument courts and European streets in eight Lost Ark scenes | 989-993 |
+| [CODE][商城][PAVILION-STOCK-20261125] Treasure Pavilion shelves | 994-999 |
+| [CODE][UI][交易][TRADE-CATALOG-RELOAD-20261125] Restore the player market catalog after Unity reload | 1000-1003 |
+| [CODE][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] RO entry routing for the two public cities | 1004-1008 |
+| [CODE][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] Sky City chapel and restaurant interiors | 1009-1013 |
+| [CODE][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Chamber gems, player listings and Magic Swordsman upgrade patterns | 1014-1021 |
+| [CODE][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Sky City professions and public-line guard patrols | 1022-1026 |
+| [FILES][场景][主城][MAIN-CITY-EAST-WARDS-20261126] Public map 0 eastward city expansion | 1027-1030 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `b2e27ab5d48c3b0a8c1622ddca4232df837119871c3463027f7653b9f0092ad7`
+Source normalized SHA256: `128d87f7a2fa12deb5d588b6fbbc86254f28722aaa8acba7f0f19d3756e67979`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -283,21 +283,21 @@ Source normalized SHA256: `b2e27ab5d48c3b0a8c1622ddca4232df837119871c3463027f765
 | [VERIFY][NPC][商店][货币][NPC-SHOP-UI-20261124] Merchant layout and checkout verification | 943-949 |
 | [VERIFY][NPC][镜头][对话][NPC-DIALOGUE-FOCUS-20261124] Scene click, dialogue portrait and real stock | 950-959 |
 | [VERIFY][UI][组队][RO-TEAM-APPLY-REDSIGN-20261124] Team application badge verification | 960-964 |
-| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-988 |
-| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 989-993 |
-| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 994-1001 |
-| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 1002-1007 |
-| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1008-1015 |
-| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1016-1020 |
-| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1021-1025 |
-| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1026-1030 |
-| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1031-1034 |
-| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1035-1041 |
-| [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1042-1046 |
-| [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1047-1051 |
-| [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1052-1059 |
-| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1060-1064 |
-| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1065-1068 |
+| [VERIFY][场景][SKYCITY-ELYSIUM-20261125] Sky City scene, navigation and bundle | 965-989 |
+| [VERIFY][网络][分线][REALM-GS-LINES-20261125] Realm deployment and public line transfer | 990-994 |
+| [VERIFY][区服][分线][REALM-DEPLOY-TWO-MAPS-20261125] Single-realm two-map line acceptance | 995-1002 |
+| [VERIFY][场景][分线][SKY-CITY-LINES-20261125] Two-city line presentation and single-realm routing | 1003-1008 |
+| [VERIFY][UI][地图][RO-CITY-MAPS-20261125] Two-city RO map Play Mode and navigation | 1009-1016 |
+| [VERIFY][交易][STALL-SELLER-20261125] Seller quote and withdrawal checks | 1017-1021 |
+| [VERIFY][场景][ARK-EUROPEAN-STREETS-20261125] Eight scenes, statue approaches and front doors | 1022-1026 |
+| [VERIFY][商城][PAVILION-STOCK-20261125] Empty shops and hidden chamber shelf | 1027-1031 |
+| [VERIFY][UI][交易][TRADE-CATALOG-RELOAD-20261125] Player market catalog after Unity reload | 1032-1035 |
+| [VERIFY][交易][STALL-REALM1-LIVE-20261126] One authenticated, partially filled stall order on running realm 1 | 1036-1042 |
+| [VERIFY][网络][分线][传送点][REALM-RO-ENTRY-PORTALS-20261126] One-realm expansion and live portal travel | 1043-1047 |
+| [VERIFY][场景][传送点][烘焙][SKY-PUBLIC-INTERIORS-20261126] One-realm interior travel, character scale and baked lighting | 1048-1052 |
+| [VERIFY][交易][商会][装备][GEM-CHAMBER-MARKET-20261126] Gem settlement and stock-aware item introductions | 1053-1060 |
+| [VERIFY][场景][NPC][网络][SKY-TOWNSFOLK-PATROL-20261126] Two Unity players and three real socket roles | 1061-1065 |
+| [VERIFY][场景][主城][导航][MAIN-CITY-EAST-WARDS-20261126] East wards scale, access and navigation | 1066-1069 |
 
 ## Docs/AI/DECISIONS.en.md
 
