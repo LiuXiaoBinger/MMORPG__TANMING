@@ -36,6 +36,8 @@ public enum WindowType
     TradeMarketWindow = 1004, // 主城交易目录、个人摊位与风雷藏拍。
     TreasurePavilionWindow = 1006, // 主城珍宝阁的四个频道。
     GiftPanel = 1010, // 背包赠礼窗口，选择好友及实际物品实例。
+    FriendsPanel = 1011, // 好友列表、最近联系人和一对一私聊。
+    ChatRoomPanel = 1012, // 长期群的创建、邀请、消息及成员操作。
     EmailPanel = 1008, // 主城角色收件箱，列出信件并领取附件。
     NpcTalkPromptWindow = 1007, // 靠近场景说话者时在主 HUD 显示的交谈入口。
     GMPanel = 1009, // 主聊天栏打开的游戏内 GM 窗口。

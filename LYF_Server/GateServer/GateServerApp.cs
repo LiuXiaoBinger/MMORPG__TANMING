@@ -108,6 +108,20 @@ namespace GateServer
             // 网关只做会话寻址，队伍状态与实例分配全部由 GameServer 权威决定。
             // 发言请求和两种客户端回包由正式聊天通道转发。
             GateChatCtrl gateChatCtrl = new GateChatCtrl();
+            // 上行仅登记角色可操作的五个好友命令。
+            for (ushort code = FriendCode.GetFriendInfo; code <= FriendCode.ReadPrivateMessage; code++)
+                server.RegistCommand(code, gateChatCtrl);
+            // 下行仅向指定会话转发列表、补读、消息和提示。
+            client.RegistCommand(FriendCode.GetFriendInfo, gateChatCtrl);
+            for (ushort code = FriendCode.ReadPrivateMessage; code <= FriendCode.Error; code++)
+                client.RegistCommand(code, gateChatCtrl);
+            for (ushort code = ChatRoomCode.GetChatRoomInfo; code <= ChatRoomCode.SendChatMsg; code++)
+                server.RegistCommand(code, gateChatCtrl);
+            client.RegistCommand(ChatRoomCode.GetChatRoomInfo, gateChatCtrl);
+            client.RegistCommand(ChatRoomCode.PullChat, gateChatCtrl);
+            client.RegistCommand(ChatRoomCode.RoomInfoNtf, gateChatCtrl);
+            client.RegistCommand(ChatRoomCode.RoomChatNtf, gateChatCtrl);
+            client.RegistCommand(ChatRoomCode.Error, gateChatCtrl);
             server.RegistCommand(NetDefine.RpcC2M_SendChatMsg, gateChatCtrl);
             server.RegistCommand(NetDefine.RpcC2M_UploadChatAudio, gateChatCtrl);
             server.RegistCommand(NetDefine.RpcC2M_DownloadChatAudio, gateChatCtrl);

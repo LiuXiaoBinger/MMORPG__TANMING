@@ -74,6 +74,14 @@ public class MainView : UIBase
    [SerializeField] internal EmailPanel emailPanel;
    /// <summary>从背包入口打开、与收件箱同层的赠礼窗口。</summary>
    [SerializeField] internal GiftPanel giftPanel;
+   /// <summary>功能菜单的 RO 好友入口。</summary>
+   [SerializeField] internal Button friendsButton;
+   /// <summary>由主城功能层管理的好友与私聊子窗。</summary>
+   [SerializeField] internal FriendsPanel friendsPanel;
+   /// <summary>好友入口汇总的未读红点。</summary>
+   [SerializeField] internal GameObject friendsHint;
+   /// <summary>长期群目录、聊天与成员窗口。</summary>
+   [SerializeField] internal ChatRoomPanel chatRoomPanel;
    /// <summary>信封按钮上显示本角色有未读邮件的红点。</summary>
    [SerializeField] internal GameObject emailHint;
 
@@ -398,6 +406,8 @@ public class MainView : UIBase
       windowDic[WindowType.TradeMarketWindow] = _tradeMarketWindow;
       windowDic[WindowType.EmailPanel] = emailPanel;
       if (giftPanel != null) windowDic[WindowType.GiftPanel] = giftPanel;
+      if (friendsPanel != null) windowDic[WindowType.FriendsPanel] = friendsPanel;
+      if (chatRoomPanel != null) windowDic[WindowType.ChatRoomPanel] = chatRoomPanel;
       windowDic[WindowType.TreasurePavilionWindow] = _treasurePavilionWindow;
       windowDic[WindowType.RoleAttriibuteWindow] = _roleAttriibuteWindow;
       windowDic[WindowType.SettingPanel] = _settingPanel;

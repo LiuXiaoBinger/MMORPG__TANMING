@@ -53,6 +53,8 @@ namespace CenterServer
             server.RegistCommand(StallCode.Load, stall);
             // 本区 MS 经内部连接向共享角色库操作邮箱。
             server.RegistCommand(MailCode.MailOperation, new MailStore(db.CurrentConnectionConfig));
+            server.RegistCommand(FriendCode.Operation, new RoleMessage(db.CurrentConnectionConfig));
+            server.RegistCommand(ChatRoomCode.Operation, new ChatRoomManager(db.CurrentConnectionConfig));
             server.RegistCommand(StallCode.StallSellItemCancelCommit, stall);
             server.RegistCommand(StallCode.Prepare, stall);
             server.RegistCommand(StallCode.Resume, stall);

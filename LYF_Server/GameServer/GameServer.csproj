@@ -62,6 +62,7 @@
         <Compile Include="Components\RoleAttributeComponent.Growth.cs" />
         <Compile Include="MessageHandler\RpcC2G_GSLocalGMCmd.cs" />
         <Compile Include="MessageHandler\Chat\ChatMessageHandler.cs" />
+        <Compile Include="MessageHandler\Chat\FriendMessageHandler.cs" />
         <Compile Include="manger\TeamManager.cs" />
         <Compile Include="Service\MasterTeamLink.cs" />
         <Compile Include="SceneEntity\MoshentaSceneFlow.cs" />

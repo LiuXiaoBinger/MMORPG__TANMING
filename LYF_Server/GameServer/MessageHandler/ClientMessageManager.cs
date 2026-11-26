@@ -389,6 +389,7 @@ public static class GameMessageProtocolRegister
         RegisterHandler(messageManager, GameCommandSource.GateServer, NetDefine.RpcC2G_GSLocalGMCmd,
             new RpcC2G_GSLocalGMCmd(), CenterMessageRoute.Internal);
         ChatMessageHandler.Register(server, messageManager);
+        FriendMessageHandler.Register(server, messageManager);
         MailMessageHandler.Register(server, messageManager);
         IGameMessageHandler loginGameServerHandler = new LoginGameServerHandler();
         IGameMessageHandler createRoleHandler = new CreateRoleHandler();

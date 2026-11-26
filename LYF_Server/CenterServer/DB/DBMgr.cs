@@ -55,6 +55,8 @@ public class DBMgr:Singleton<DBMgr>
             ,typeof(TradeListingTable)
             ,typeof(RoleMailTable)
             ,typeof(RoleFriendTable)
+            ,typeof(RoleChatTable)
+            ,typeof(ChatRoomTable),typeof(ChatRoomMemberTable),typeof(ChatRoomMessageTable)
             ,typeof(StallReceiptTable)
             ,typeof(RoleCountTable)); //角色通用次数
 

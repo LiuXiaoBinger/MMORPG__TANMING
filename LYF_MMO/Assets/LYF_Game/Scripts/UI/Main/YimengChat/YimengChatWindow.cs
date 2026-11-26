@@ -11,6 +11,10 @@ public sealed class YimengChatWindow : WindowBase
 {
     /// <summary>完整聊天右缘返回速览的收起箭头。</summary>
     [SerializeField] private Button _collapse;
+    /// <summary>聊天工具栏中的好友私聊入口。</summary>
+    [SerializeField] private Button _friends;
+    /// <summary>交给主城控制器打开好友列表。</summary>
+    public event Action PrivateRequested;
     /// <summary>完整聊天的背景与操作区，进入速览时整体隐藏。</summary>
     [SerializeField] private GameObject _fullChat;
     /// <summary>与完整聊天互斥的左下角近期消息面板。</summary>
@@ -131,6 +135,7 @@ public sealed class YimengChatWindow : WindowBase
     {
         _rootCanvas = GetComponentInParent<Canvas>().rootCanvas;
         _collapse.onClick.AddListener(ShowCompactFeed);
+        _friends.onClick.AddListener(() => PrivateRequested?.Invoke());
         _compactFeed.Init(() => _compactFeed.ToggleHeight(_history, _palette), RestoreFullChat,
             TogglePalette, ToggleCompactFilter, () => _compactFeed.Refresh(_history, _palette));
         _send.onClick.AddListener(SubmitText);

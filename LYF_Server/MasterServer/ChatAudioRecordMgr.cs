@@ -14,6 +14,8 @@ internal sealed class ChatAudioRecordMgr
     private readonly Dictionary<ulong, AudioChat> _ready = new Dictionary<ulong, AudioChat>();
     /// <summary>程序相邻的语音缓存，所有文件名均由服务端生成。</summary>
     private static readonly string Folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChatAudioCache");
+    /// <summary>已用于长期好友消息的录音，在服务重启后仍可回放。</summary>
+    private static readonly string SocialFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SocialChatAudio");
     /// <summary>最多每小时检查一次缓存的 24 小时保留期。</summary>
     private static DateTime _nextCleanup;
 
@@ -50,6 +52,26 @@ internal sealed class ChatAudioRecordMgr
         if (!_ready.TryGetValue(uid, out saved) || saved.AudioId != audio.AudioId) return false;
         audio.Duration = saved.Duration;
         return true;
+    }
+
+    /// <summary>验证实际录制者，并在持久消息入库前保留该录音文件，避免公共频道的 24 小时回收影响好友历史。</summary><param name="uid">发言人。</param><param name="audio">服务端签发的录音引用。</param>
+    internal bool PrepareSocialMessage(ulong uid, AudioChat audio)
+    {
+        if (!PrepareMessage(uid, audio)) return false;
+        // 文件名取自本服务为该角色生成并核实的 GUID。
+        string name = audio.AudioId + ".pcm";
+        string saved = Path.Combine(SocialFolder, name);
+        try
+        {
+            if (!File.Exists(saved))
+            {
+                Directory.CreateDirectory(SocialFolder);
+                File.Move(Path.Combine(Folder, name), saved);
+            }
+            return true;
+        }
+        catch (IOException) { return false; }
+        catch (UnauthorizedAccessException) { return false; }
     }
 
     /// <summary>释放下线角色的部分上传与发布资格，已发布文件在保留期内仍可收听。</summary><param name="uid">下线角色。</param>
@@ -103,7 +125,10 @@ internal sealed class ChatAudioRecordMgr
         string path = Path.Combine(Folder, id.ToString("N") + ".pcm");
         try
         {
-            if (File.GetLastWriteTimeUtc(path) < DateTime.UtcNow.AddHours(-24)) return result;
+            // 社交消息已有独立的持久化文件，公共频道继续执行原缓存期限。
+            string saved = Path.Combine(SocialFolder, id.ToString("N") + ".pcm");
+            if (File.Exists(saved)) path = saved;
+            else if (File.GetLastWriteTimeUtc(path) < DateTime.UtcNow.AddHours(-24)) return result;
             using (FileStream stream = File.OpenRead(path))
             {
                 if (arg.Offset >= stream.Length || stream.Length > NetDefine.ChatAudioMaxBytes) return result;

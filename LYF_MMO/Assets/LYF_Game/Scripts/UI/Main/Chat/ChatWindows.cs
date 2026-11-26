@@ -24,7 +24,9 @@ public enum ChatChannel
     // 职业频道。
     Profession,
     // 系统提示消息频道。
-    System
+    System,
+    // 仅用于好友群的已有录音回调，不作为公开聊天页签。
+    ChatRoom
 }
 
 // 一条聊天消息的数据模型；只保存数据，不负责显示 UI。
@@ -66,6 +68,8 @@ public sealed class ChatWindows : WindowBase
     public event Action<ChatChannel, AudioChat> VoiceReady;
     /// <summary>主界面据此暂停或恢复角色输入。</summary>
     public event Action<bool> InputFocusChanged;
+    /// <summary>选择旧版私聊页签时进入同一个主城好友窗口。</summary>
+    internal event Action PrivateRequested;
     // 所有频道合计保存的消息上限，至少按 1 处理；超过时删除最早记录，实际显示行数另受 pooledMessageRows 限制。
     [SerializeField] private int maxVisibleMessages = 1000;
 
@@ -1245,7 +1249,12 @@ public sealed class ChatWindows : WindowBase
             UpdateChannelToggleGraphic(capturedToggle);
             if (isOn && capturedToggle.interactable)
             {
-                SelectChannel(channel);
+                if (channel == ChatChannel.Private && PrivateRequested != null)
+                {
+                    SetSelectedChannelToggle(currentChannel);
+                    PrivateRequested.Invoke();
+                }
+                else SelectChannel(channel);
             }
         });
         channelToggles.Add(toggle);

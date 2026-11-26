@@ -54,6 +54,17 @@ public static class GateClientResponseForwarder
         resultCode = CmdCode.Succeed;
         switch (package.ProtoCode)
         {
+            case ChatRoomCode.GetChatRoomInfo: ChatRoomList.Parser.ParseFrom(package.Data); return true;
+            case ChatRoomCode.PullChat: PullRoomChatRes.Parser.ParseFrom(package.Data); return true;
+            case ChatRoomCode.RoomInfoNtf: RoomChangeNtf.Parser.ParseFrom(package.Data); return true;
+            case ChatRoomCode.RoomChatNtf: RoomChatMsg.Parser.ParseFrom(package.Data); return true;
+            case ChatRoomCode.Error: FriendError.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.GetFriendInfo: GetFriendInfoRes.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.ReadPrivateMessage: ReadPrivateMessageRes.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.PrivateChatNtf: PrivateDetailChatInfo.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.UnReadMessageCountNtf: UnReadMessageCountData.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.FriendChangedNtf: GetFriendInfoArg.Parser.ParseFrom(package.Data); return true;
+            case FriendCode.Error: FriendError.Parser.ParseFrom(package.Data); return true;
             case NetDefine.RpcC2G_GSLocalGMCmd:
                 // RO 的拒绝和成功均通过同一个文字结果返回面板。
                 GSLocalGMCmdRes.Parser.ParseFrom(package.Data);

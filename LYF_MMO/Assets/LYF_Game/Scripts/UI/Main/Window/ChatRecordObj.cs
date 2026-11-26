@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +9,8 @@ public sealed class ChatRecordObj : MonoBehaviour, IPointerDownHandler, IPointer
 {
     /// <summary>预制体中的按住说话文本。</summary>
     [SerializeField] private TMP_Text _label;
+    /// <summary>RO 好友与群聊预制体使用的项目中文字体标签。</summary>
+    [SerializeField] private Text _textLabel;
     /// <summary>长按开始时由聊天控制器检查频道与麦克风。</summary>
     public event Func<bool> RecordStarted;
     /// <summary>停止时传入是否发送录音。</summary>
@@ -64,9 +67,11 @@ public sealed class ChatRecordObj : MonoBehaviour, IPointerDownHandler, IPointer
     /// <summary>显示当前手势含义。</summary>
     private void RefreshLabel()
     {
-        if (_label == null) return;
-        if (!_recording) _label.text = "按住说话";
-        else if (_inside) _label.text = "松开发送，移出取消";
-        else _label.text = "松开取消";
+        // 同一手势状态写入该预制体实际使用的标签。
+        string caption = "按住说话";
+        if (_recording && _inside) caption = "松开发送，移出取消";
+        else if (_recording) caption = "松开取消";
+        if (_label != null) _label.text = caption;
+        if (_textLabel != null) _textLabel.text = caption;
     }
 }

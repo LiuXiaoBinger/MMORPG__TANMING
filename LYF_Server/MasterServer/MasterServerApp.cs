@@ -31,6 +31,8 @@ internal static class MasterServerApp
         server.RegistCommand(NetDefine.CMD_MasterTeamOffline, teams);
         // 区服邮箱和队伍共用此 MS 监听器，各自处理本领域的内部命令。
         RoleMail mail = new RoleMail(realm);
+        server.RegistCommand(FriendCode.RoleRequest, new RoleFriend(realm, teams));
+        server.RegistCommand(ChatRoomCode.RoleRequest, new ChatRoomService(realm, teams));
         server.RegistCommand(MailCode.RoleRequest, mail);
         server.RegistCommand(MailCode.Subscribe, mail);
         server.RegistCommand(MailCode.GiftArrived, mail);

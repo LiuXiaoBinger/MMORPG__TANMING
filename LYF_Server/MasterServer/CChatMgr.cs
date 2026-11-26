@@ -75,7 +75,7 @@ internal sealed class CChatMgr
         if (msg.Medium == ChatMediumType.Text)
         {
             msg.MsgContent = msg.MsgContent.Trim();
-            if (msg.MsgContent.Length == 0 || TextLength(msg.MsgContent) > 74) { result.Reason = "聊天内容为空或超出 74 个计数单位"; return; }
+            if (msg.MsgContent.Length == 0 || FriendCode.TextLength(msg.MsgContent) > 74) { result.Reason = "聊天内容为空或超出 74 个计数单位"; return; }
             msg.Audio = null;
         }
         else if (msg.Medium == ChatMediumType.Audio)
@@ -83,7 +83,7 @@ internal sealed class CChatMgr
             // 只有此角色上传并由服务端确认的录音才能发布。
             AudioChat audio = msg.Audio;
             if (audio == null || !_audio.PrepareMessage(uid, audio)) { result.Reason = "语音文件尚未上传"; return; }
-            if (!(audio.Duration > 0 && audio.Duration <= 30) || TextLength(audio.Text) > 70) { result.Reason = "语音长度或转写超出限制"; return; }
+            if (!(audio.Duration > 0 && audio.Duration <= 30) || FriendCode.TextLength(audio.Text) > 70) { result.Reason = "语音长度或转写超出限制"; return; }
             msg.MsgContent = string.Empty;
         }
         else { result.Reason = "未知聊天媒介"; return; }
@@ -107,19 +107,5 @@ internal sealed class CChatMgr
         times[channel] = now;
         result.ResidueChatCd = cooldown;
         msg.MsgHead.MsgTime = (ulong)now;
-    }
-
-    /// <summary>按 ASCII 计 1、非 ASCII 码点计 2 的频道长度单位计数。</summary>
-    /// <param name="text">文字或转写。</param><returns>消息占用的频道长度单位。</returns>
-    private static int TextLength(string text)
-    {
-        // 多字节码点按一个字符处理，包括补充平面的表情。
-        int units = 0;
-        for (int i = 0; i < text.Length; i++)
-        {
-            if (text[i] <= 127) units++;
-            else { units += 2; if (char.IsSurrogatePair(text, i)) i++; }
-        }
-        return units;
     }
 }

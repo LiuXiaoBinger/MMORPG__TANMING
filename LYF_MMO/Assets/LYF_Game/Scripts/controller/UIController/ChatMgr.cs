@@ -38,6 +38,8 @@ public sealed class ChatMgr : IDisposable
     /// <summary>上传完成后才将录音 ID 发布到录制时选择的频道。</summary><param name="channel">开始录制时的频道。</param><param name="audio">服务端签发的录音引用。</param>
     private void SendAudioMsg(ChatChannel channel, AudioChat audio)
     {
+        // 私聊录音由 FriendsHandler 携带固定收件人提交。
+        if (channel == ChatChannel.Private || channel == ChatChannel.ChatRoom) return;
         Send(channel, new ChatMsg { Medium = ChatMediumType.Audio, Audio = audio });
     }
 

@@ -20,6 +20,10 @@ public class MainCtrl : CtrlBase
     private readonly EmailHandler _emailHandler;
     /// <summary>背包好友赠礼的选择和寄出交互。</summary>
     private readonly GiftCtrl _giftCtrl;
+    /// <summary>绑定主城好友窗口、私聊回执和录音组件。</summary>
+    private readonly FriendsHandler _friendsHandler;
+    /// <summary>当前主角的长期好友群控制器。</summary>
+    private readonly ChatRoomCtrl _chatRoomCtrl;
 
     #region 字段
     /// <summary>主界面视图集合。</summary>
@@ -132,6 +136,22 @@ public class MainCtrl : CtrlBase
         BindTrackedRole();
         _chatWindow = _mainView.ChatWindow;
         if (_chatWindow != null) _chatMgr = new ChatMgr(_chatWindow);
+        if (_mainView.friendsPanel != null)
+        {
+            _friendsHandler = new FriendsHandler(_mainView.friendsPanel, _mainView.friendsHint, _chatWindow?.GetComponent<ChatAudioMgr>());
+            _chatRoomCtrl = new ChatRoomCtrl(_mainView.chatRoomPanel, _friendsHandler, _chatWindow?.GetComponent<ChatAudioMgr>());
+            _mainView.friendsPanel.rooms.onClick.AddListener(OpenChatRoom);
+            _mainView.chatRoomPanel.BackToFriends += OpenFriends;
+            _mainView.friendsPanel.nickname.FocusChanged += OnChatInputFocusChanged;
+            _mainView.friendsPanel.input.FocusChanged += OnChatInputFocusChanged;
+            _mainView.chatRoomPanel.groupName.FocusChanged += OnChatInputFocusChanged;
+            _mainView.chatRoomPanel.input.FocusChanged += OnChatInputFocusChanged;
+            _chatRoomCtrl.BindRole(Global.Instance?.SceneWorld?.LocalRole?.BaseInfo?.RoleId ?? 0);
+            _mainView.friendsButton.onClick.AddListener(OpenFriends);
+            if (_chatWindow != null) _chatWindow.PrivateRequested += OpenFriends;
+            if (_mainView.YimengChat != null) _mainView.YimengChat.PrivateRequested += OpenFriends;
+            _friendsHandler.BindRole(Global.Instance?.SceneWorld?.LocalRole?.BaseInfo?.RoleId ?? 0);
+        }
         if (_mainView.YimengChat != null)
             _yimengChatCtrl = new YimengChatCtrl(_mainView.YimengChat, _chatWindow, ToggleYimengChat, OnChatInputFocusChanged);
         RegisterCommands();
@@ -348,6 +368,20 @@ public class MainCtrl : CtrlBase
         _gmCtrl?.Dispose();
         _deathCtrl.Dispose();
         _giftCtrl?.Dispose();
+        if (_friendsHandler != null)
+        {
+            _mainView.friendsPanel.rooms.onClick.RemoveListener(OpenChatRoom);
+            _mainView.chatRoomPanel.BackToFriends -= OpenFriends;
+            _mainView.friendsPanel.nickname.FocusChanged -= OnChatInputFocusChanged;
+            _mainView.friendsPanel.input.FocusChanged -= OnChatInputFocusChanged;
+            _mainView.chatRoomPanel.groupName.FocusChanged -= OnChatInputFocusChanged;
+            _mainView.chatRoomPanel.input.FocusChanged -= OnChatInputFocusChanged;
+            _chatRoomCtrl.Dispose();
+            _mainView.friendsButton.onClick.RemoveListener(OpenFriends);
+            if (_chatWindow != null) _chatWindow.PrivateRequested -= OpenFriends;
+            if (_mainView.YimengChat != null) _mainView.YimengChat.PrivateRequested -= OpenFriends;
+            _friendsHandler.Dispose();
+        }
         if (_emailHandler != null)
         {
             _mainView.emailButton.onClick.RemoveListener(OpenEmail);
@@ -524,6 +558,8 @@ public class MainCtrl : CtrlBase
     private void OnLocalRoleChanged(PlayerEntity role)
     {
         _emailHandler?.BindRole(role?.BaseInfo?.RoleId ?? 0);
+        _friendsHandler?.BindRole(role?.BaseInfo?.RoleId ?? 0);
+        _chatRoomCtrl?.BindRole(role?.BaseInfo?.RoleId ?? 0);
         _mainView.RoleShieldWidget?.Clear();
         _mainView.CombatStatus?.SetShield(0, 0);
         _roleInfoCtrl.BindGeneRole(role);
@@ -598,6 +634,15 @@ public class MainCtrl : CtrlBase
 
     /// <summary>从主城信封入口走既有 WindowType 显隐流程。</summary>
     private void OpenEmail() { ShowMainWindow(WindowType.EmailPanel); }
+
+    /// <summary>功能菜单和聊天入口都打开同一好友窗口。</summary>
+    private void OpenFriends() { ShowMainWindow(WindowType.FriendsPanel); }
+    /// <summary>从好友页进入同层的持久群聊子窗。</summary>
+    private void OpenChatRoom()
+    {
+        _mainView.friendsPanel.CloseWindow();
+        ShowMainWindow(WindowType.ChatRoomPanel);
+    }
 
     /// <summary>从主城功能菜单打开或收起交易窗口。</summary>
     private void OnTradeMarketRequested()

@@ -1,0 +1,92 @@
+syntax = "proto3";
+import "pbc_chat.proto";
+import "pbc_gift.proto";
+
+// 查询本人联系人，无请求参数。
+message GetFriendInfoArg {
+}
+
+// 按同区昵称添加或按 UID 回加。
+message AddFriendArg {
+  uint64 uid = 1; // 对端的持久角色编号。
+  string name = 2; // 同区角色的完整昵称。
+}
+
+// 删除本人主动添加的那条关系。
+message DeleteFriendArg {
+  uint64 uid = 1; // 对端的持久角色编号。
+}
+
+// 联系人及该角色的未读摘要。
+message GetFriendInfoRes {
+  repeated GiftFriendInfo friends = 1; // 已合并主动和反向关系的联系人。
+  UnReadMessageCountData unread = 2; // 当前回执所属收件人的未读摘要。
+}
+
+// RO 私聊发言请求，仅包含对端和媒介。
+message PrivateChatInfo {
+  uint64 uid = 1; // 对端的持久角色编号。
+  string content = 2; // 普通文字或 [z编号] 表情标记，语音时为空。
+  ChatMediumType medium_type = 3; // RO 媒介值，1 为文字、2 为录音。
+  AudioChat audio = 4; // 服务器签发的音频编号、权威时长及可选转写。
+}
+
+// RO 对话行，保存当前接收者视角及会话内序号。
+message PrivateDetailChatInfo {
+  uint64 chat_uid = 1; // 从当前玩家视角看到的对端角色号。
+  int32 chat_type = 2; // 气泡媒介，1 为文字或表情、2 为语音。
+  string content = 4; // 普通文字或 [z编号] 表情标记，语音时为空。
+  uint64 chat_time = 5; // 服务端记录的 UTC Unix 秒。
+  int32 who_type = 6; // 气泡方向，1 为本人、2 为对方。
+  int32 squence = 7; // 同一对角色共享的递增消息序号。
+  AudioChat audio = 8; // 服务器签发的音频编号、权威时长及可选转写。
+}
+
+// 请求这段会话中游标之后的消息。
+message ReadPrivateMessageArg {
+  uint64 uid = 1; // 对端的持久角色编号。
+  int32 squence = 2; // 这个角色在本机已经确认补到的位置。
+}
+
+// 一次补读的正向消息页与回执游标。
+message ReadPrivateMessageRes {
+  repeated PrivateDetailChatInfo private_chat_list = 2; // 按序号从小到大排列的实际消息。
+  uint64 uid = 3; // 对端的持久角色编号。
+  int32 squence = 4; // 本批次确认补读到的最后序号。
+  bool has_more = 5; // 本页之后仍有待补读的序号。
+}
+
+// 一位联系人的未读计数与最近聊天时间。
+message UnReadMessageCountInfo {
+  uint64 uid = 1; // 对端的持久角色编号。
+  int32 count = 2; // 对端发来且本人未读的条数。
+  uint64 last_chat_time = 3; // 本段会话最近的服务端 Unix 秒。
+}
+
+// 本角色可见会话的未读统计。
+message UnReadMessageCountData {
+  int32 total_unread_count = 1; // 所有可见联系人未读合计。
+  repeated UnReadMessageCountInfo unread_counts = 2; // 按联系人分组的未读及最近时间。
+}
+
+// 面向动作发起人的失败原因。
+message FriendError {
+  string error = 1; // 向实际操作人反馈的业务失败原因。
+}
+
+// GS、MS 与中心库之间的可信好友存取调用。
+message FriendCall {
+  int32 role_id = 1; // 由 GS 当前会话确认的持久角色号。
+  int32 realm_id = 2; // 服务部署所绑定的逻辑区号。
+  int32 game_link = 3; // MS 本地可回送请求的 GS 连接编号。
+  int32 command = 4; // 此次请求的客户端公开协议编号。
+  uint64 peer = 5; // 同区对端角色号。
+  string name = 6; // 同区角色的完整昵称。
+  int32 squence = 7; // 同一对角色共享的递增消息序号。
+  PrivateChatInfo chat = 8; // 待入库的真实私聊内容。
+  GetFriendInfoRes info = 9; // 返回给角色的好友摘要。
+  ReadPrivateMessageRes history = 10; // 存储服务已查出的消息页。
+  PrivateDetailChatInfo posted = 11; // 持久化成功后用于本人回显和收件人通知的正文。
+  UnReadMessageCountData unread = 12; // 当前回执所属收件人的未读摘要。
+  string error = 13; // 向实际操作人反馈的业务失败原因。
+}

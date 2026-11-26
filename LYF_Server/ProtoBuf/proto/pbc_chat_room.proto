@@ -1,0 +1,105 @@
+syntax = "proto3";
+import "pbc_chat.proto";
+import "pbc_gift.proto";
+
+// 沿用 RO 聊天室名称和人数档位的设置。
+message RoomSetting {
+  string room_name = 1; // 群主输入的群名称。
+  int32 room_capacity = 3; // RO 档位为 5、10、15、20 人。
+}
+
+// 群内已接受邀请的成员资料。
+message RoomMemberInfo {
+  repeated GiftFriendInfo info = 1; // 已入群成员的真实角色号与昵称。
+}
+
+// 本人目录中可见的一个群或邀请。
+message ChatRoomInfo {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+  uint64 room_captain_uid = 2; // 当前可解散该群的群主角色号。
+  RoomMemberInfo room_member = 3; // 此群已加入成员的实际角色名与编号。
+  RoomSetting room_setting = 4; // 当前群名称及容量。
+  uint64 create_time = 5; // 中心库建群时的 UTC Unix 秒。
+  int32 unread_count = 6; // 本角色加入以后尚未读到的他人群消息数。
+  bool invited = 7; // 本人尚未接受邀请时为真。
+}
+
+// 以当前登录角色为首任群主创建长期群。
+message CreateChatRoomArg {
+  RoomSetting setting = 1; // 建群时提交的名称和容量。
+}
+
+// 查询群目录或分页历史。
+message ChatRoomInfoArg {
+  uint64 room_uid = 1; // 读取历史时指定的群号，查询本人群目录时为空。
+  int32 before_squence = 2; // 零取最新一页，正数取严格早于该序号的一页。
+}
+
+// 接受已存入自己名下的群邀请。
+message ApplyJoinRoomArg {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+}
+
+// 邀请当前角色的同区好友。
+message InviteRoomMemberArg {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+  uint64 role_uid = 2; // 操作选中的受邀好友角色号。
+}
+
+// 主动退群或拒绝尚未接受的邀请。
+message LeaveRoomArg {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+}
+
+// 群主确认后永久解散对应的群。
+message DissolveRoomArg {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+}
+
+// 关系变化时通知相关角色刷新目录。
+message RoomChangeNtf {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+  int32 command = 2; // 发起人刚完成的操作，其他成员收到时为零。
+}
+
+// 当前角色已加入和受邀的所有群。
+message ChatRoomList {
+  repeated ChatRoomInfo rooms = 1; // 本人有成员关系或仍待接受邀请的群。
+}
+
+// 用于长期存储和定向投递的群消息。
+message RoomChatMsg {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+  uint64 sender_uid = 2; // 中心服从已登录会话确认的发件人角色号。
+  string sender_name = 3; // 中心服从角色资料读取的发件人昵称。
+  int32 squence = 4; // 在同一个群内由中心库递增分配的消息号。
+  string content = 5; // 普通文字或 [z编号] 表情标记，语音时为空。
+  ChatMediumType medium_type = 6; // RO 媒介值，1 为文字、2 为录音。
+  AudioChat audio = 7; // 服务器签发的音频编号、权威时长及可选转写。
+  uint64 chat_time = 8; // 服务端记录的 UTC Unix 秒。
+}
+
+// 按群内序号分页返回的历史。
+message PullRoomChatRes {
+  uint64 room_uid = 1; // 角色库生成的持久群号。
+  repeated RoomChatMsg messages = 2; // 按真实群内序号升序返回的一页消息。
+  bool has_older = 3; // 这页之前仍有当前成员可读的更早消息。
+  int32 before_squence = 4; // 零取最新一页，正数取严格早于该序号的一页。
+}
+
+// MS 向中心库提交的可信群操作和存储回执。
+message ChatRoomCall {
+  int32 role_id = 1; // 由 GS 当前会话确认的持久角色号。
+  int32 realm_id = 2; // 服务部署所绑定的逻辑区号。
+  int32 game_link = 3; // MS 本地可回送请求的 GS 连接编号。
+  int32 command = 4; // 此次请求的客户端公开协议编号。
+  uint64 room_uid = 5; // 角色库生成的持久群号。
+  uint64 target = 6; // 邀请动作指定的同区好友角色号。
+  int32 before_squence = 7; // 零取最新一页，正数取严格早于该序号的一页。
+  RoomSetting setting = 8; // 建群时提交的名称和容量。
+  RoomChatMsg msg = 9; // 本次提交或已落库的群消息。
+  ChatRoomList list = 10; // 中心库查询出的本人群目录。
+  PullRoomChatRes history = 11; // 存储服务已查出的消息页。
+  repeated int32 notify_roles = 12; // 中心库确定应单独收到本次通知的角色。
+  string error = 13; // 向实际操作人反馈的业务失败原因。
+}

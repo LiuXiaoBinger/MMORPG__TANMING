@@ -117,6 +117,13 @@
     <Compile Include="Ctrl\CenterRoleCtrl.cs" />
     <Compile Include="Ctrl\MailStore.cs" />
     <Compile Include="Ctrl\GiftStore.cs" />
+    <Compile Include="Ctrl\FriendStore.cs" />
+    <Compile Include="Ctrl\RoleMessage.cs" />
+    <Compile Include="DB\Table\RoleChatTable.cs" />
+    <Compile Include="Ctrl\ChatRoomManager.cs" />
+    <Compile Include="DB\Table\ChatRoomTable.cs" />
+    <Compile Include="DB\Table\ChatRoomMemberTable.cs" />
+    <Compile Include="DB\Table\ChatRoomMessageTable.cs" />
     <Compile Include="DB\Table\RoleFriendTable.cs" />
     <Compile Include="DB\Table\RoleMailTable.cs" />
     <Compile Include="OnlineRealmDirectory.cs" />

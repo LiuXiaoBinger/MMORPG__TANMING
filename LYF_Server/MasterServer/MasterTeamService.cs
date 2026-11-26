@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Google.Protobuf;
 
 /// <summary>接收游戏服的队伍消息。框架注册命令要求实现现有的 IContainer 回调契约。</summary>
 internal sealed class MasterTeamService : IContainer
@@ -99,6 +100,31 @@ internal sealed class MasterTeamService : IContainer
                 return;
             }
             partition.Teams.Handle(MasterTeamRolePacket.Parser.ParseFrom(basePackage.Data));
+        }
+    }
+
+    /// <summary>核实私聊语音属于本角色刚上传的录音。</summary><param name="game">请求来源 GS 连接。</param><param name="role">发言人。</param><param name="audio">待发布的音频引用。</param>
+    internal bool PreparePrivateAudio(int game, ulong role, AudioChat audio)
+    {
+        lock (_games)
+        {
+            if (cluster != null) game = 0;
+            return _games.TryGetValue(game, out GamePartition partition) && partition.Audio.PrepareSocialMessage(role, audio);
+        }
+    }
+
+    /// <summary>通过现有角色宿主路由，把私聊仅交给指定角色当前所在的 GS。</summary><param name="target">唯一收件角色。</param><param name="game">单机模式使用的来源分区。</param><param name="code">客户端好友命令。</param><param name="data">该收件人视角的协议正文。</param>
+    internal void SendToContact(ulong target, int game, ushort code, ByteString data)
+    {
+        lock (_games)
+        {
+            // 正式多节点区从在线目录取目标宿主，离线时由中心库留待补读。
+            Session owner;
+            if (cluster != null) cluster.Owners.TryGetValue(target, out owner);
+            else owner = SessionMgr.Instance.GetSession(game);
+            if (owner == null) return;
+            owner.Send(NetDefine.CMD_MasterTeamDelivery, new MasterTeamRolePacket { RoleId = target,
+                Packet = new BasePackage { ProtoCode = code, Data = data } }.ToByteString());
         }
     }
 
