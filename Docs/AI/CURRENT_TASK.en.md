@@ -1082,6 +1082,7 @@ Codex completed five configured quests, GS persistence and NPC options, public p
 - All 15 humanoid appearances use staggered occupational idle and a short upper-body contact layer. Eight previously unbound humanoid prefabs now reference standalone RO avatars. Each visible player's capsule detects new contact with an NPC's body surface.
 - Nine residents without service entries walk short GameServer-authoritative routes around their posts in Main City (3), Sky City (4), Morning Bell Chapel (1) and Golden Wheat Restaurant (1). Return-to-post waits are 3–5 seconds. The three existing guard routes continue without a home wait.
 - Full file list, verification and limits in `项目修改日志/2026-11-27-居民待机碰撞与街坊走动.md`.
+- Contact sync follow-up (2026-11-27). Only the controlling character detects the start of physical contact and plays the reaction immediately. GameServer forwards event 11321 to other players in the same scene instance and interest area. Remote player movement no longer generates contact reactions independently.
 
 ## [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials
 

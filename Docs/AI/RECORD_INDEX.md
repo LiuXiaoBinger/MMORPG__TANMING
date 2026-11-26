@@ -9,7 +9,7 @@ If a heading/range is stale, regenerate before reading. Historical status is not
 
 ## Docs/AI/CURRENT_TASK.en.md
 
-Source normalized SHA256: `a17e4599238def401bc5201eb5fbf0d42b5d258b2a03494eb28070ec2c640515`
+Source normalized SHA256: `778ddcf194d5efbab26aef855b59fe76cd6c83c7f0d5b245e1da1f0bc057affa`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -161,13 +161,13 @@ Source normalized SHA256: `a17e4599238def401bc5201eb5fbf0d42b5d258b2a03494eb2807
 | [CODE][FILES][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Choose each nearby speaker by name | 1065-1069 |
 | [CODE][FILES][HANDOFF][GM][RO-GM-20261126] In-game GM commands from the RO chat button | 1070-1074 |
 | [CODE][FILES][邮箱][MAIL-GIFT-20261126] RO friend gift mail from the bag | 1075-1079 |
-| [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1085 |
-| [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials | 1086-1090 |
-| [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1091-1094 |
+| [CODE][FILES][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Resident idle, contact reactions and local walking routes | 1080-1086 |
+| [CODE][FILES][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Magic Swordsman silver knight gold equipment and materials | 1087-1091 |
+| [CODE][FILES][HANDOFF][好友聊天][SOCIAL-CHAT-20261127] RO friend conversations and persistent friend groups | 1092-1095 |
 
 ## Docs/AI/TEST_REPORT.en.md
 
-Source normalized SHA256: `7e4ece7c4270dc8370eee113d9b35e585f80bdb81fb30d2a6345626eb625dc64`
+Source normalized SHA256: `6f29073f68e7d4bc265fc50945e896005bec9b4f6f23517eb3010c7026eb44cc`
 
 | Topic / record ID / title | Lines |
 |---|---|
@@ -322,9 +322,9 @@ Source normalized SHA256: `7e4ece7c4270dc8370eee113d9b35e585f80bdb81fb30d2a63456
 | [VERIFY][NPC][对话][UI][NPC-NEARBY-TALK-LIST-20261126] Simultaneous named choices and actual NPC destinations | 1110-1114 |
 | [VERIFY][GM][RO-GM-20261126] GM authentication, real commands and persistence | 1115-1119 |
 | [VERIFY][邮箱][MAIL-GIFT-20261126] Two-character gift delivery and claim | 1120-1124 |
-| [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1129 |
-| [VERIFY][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Gold item data, sprite references and eight-slot wear | 1130-1134 |
-| [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1135-1138 |
+| [VERIFY][NPC][场景][网络][NPC-RESIDENT-MOTION-20261127] Actual bones, physical contact and line-authoritative residents | 1125-1130 |
+| [VERIFY][装备][交易][GOLD-EQUIPMENT-ITEMS-20261127] Gold item data, sprite references and eight-slot wear | 1131-1135 |
+| [VERIFY][好友聊天][SOCIAL-CHAT-20261127] Private delivery, group persistence and Unity input | 1136-1139 |
 
 ## Docs/AI/DECISIONS.en.md
 
